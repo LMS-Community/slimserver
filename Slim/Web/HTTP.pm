@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.82 2004/03/08 07:49:00 daniel Exp $
+# $Id: HTTP.pm,v 1.83 2004/03/10 07:04:44 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -286,7 +286,8 @@ sub processHTTP {
 
 			$response->code(RC_UNAUTHORIZED);
 			$response->header('Connection' => 'close');
-			$response->content(filltemplatefile('html/errors/401.html', $params));
+			$response->content_type('text/html');
+			$response->content(${filltemplatefile('html/errors/401.html', $params)});
 			$response->www_authenticate(sprintf('Basic realm="%s"', string('SLIMSERVER')));
 
 			$httpClient->send_response($response);
@@ -344,15 +345,30 @@ sub processHTTP {
 				$::d_http && msg("Alternate skin $desiredskin requested\n");
 
 				my %skins = Slim::Web::Setup::skins();
-
-				foreach my $skin (keys %skins) {
-					 if ($skin =~ /$desiredskin$/i) {
-						$params->{'skinOverride'} = $desiredskin;
-						$params->{'webroot'} = $params->{'webroot'} . "$desiredskin/";
-						$path =~ s{^/.+?/}{/};
-
-						last;
-					}
+				my $skinlist = join '|',keys %skins;
+				if ($desiredskin =~ /($skinlist)/i) {
+					$params->{'skinOverride'} = $1;
+					$params->{'webroot'} = $params->{'webroot'} . "$1/";
+					$path =~ s{^/.+?/}{/};
+				} else {
+					# we can either throw a 404 here or just ignore the requested skin
+					
+					# ignore: commented out
+					# $path =~ s{^/.+?/}{/};
+					
+					# throw 404
+					$params->{'suggestion'} = qq(There is no "$desiredskin")
+						. qq( skin, try ) . HomeURL() . qq( instead.);
+					$::d_http && msg("Invalid skin requested: [" . join(' ', ($request->method(), $request->uri())) . "]\n");
+			
+					$response->code(RC_NOT_FOUND);
+					$response->content_type('text/html');
+					$response->header('Connection' => 'close');
+					$response->content(${filltemplatefile('html/errors/404.html', $params)});
+			
+					$httpClient->send_response($response);
+					closeHTTPSocket($httpClient);
+					return;
 				}
 			}
 
@@ -401,9 +417,11 @@ sub processHTTP {
 
 		$response->code(RC_METHOD_NOT_ALLOWED);
 		$response->header('Connection' => 'close');
-		$response->content(filltemplatefile('html/errors/405.html', $params));
+		$response->content_type('text/html');
+		$response->content(${filltemplatefile('html/errors/405.html', $params)});
 
 		$httpClient->send_response($response);
+		closeHTTPSocket($httpClient);
 	}
 
 	# what does our response look like?
@@ -713,6 +731,9 @@ sub generateHTTPResponse {
 			# otherwise just send back the binary file
 			($body, $mtime) = getStaticContent($path, $params);
 		}
+	} else {
+		# who knows why we're here, we just know that something ain't right
+		$$body = undef;
 	}
 
 	# if there's a reference to an empty value, then there is no valid page at all
