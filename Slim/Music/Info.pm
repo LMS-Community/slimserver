@@ -363,7 +363,7 @@ sub setCurrentTitle {
 	if (($currentTitles{$url} || '') ne ($title || '')) {
 		no strict 'refs';
 		
-		for my $changecallback (keys %currentTitleCallbacks) {
+		for my $changecallback (values %currentTitleCallbacks) {
 			&$changecallback($url, $title);
 		}
 	}

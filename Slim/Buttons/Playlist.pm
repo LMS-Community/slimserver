@@ -18,6 +18,8 @@ our %functions = ();
 sub init {
 
 	Slim::Buttons::Common::addMode('playlist', getFunctions(), \&setMode);
+	
+	Slim::Music::Info::setCurrentTitleChangeCallback(\&Slim::Buttons::Playlist::newTitle);
 
 	# Each button on the remote has a function:
 	%functions = (
@@ -177,12 +179,24 @@ sub setMode {
 sub jump {
 	my $client = shift;
 	my $pos = shift;
+	
 	if (Slim::Buttons::Common::mode($client) eq 'playlist') {
 		if (!defined($pos)) { 
 			$pos = Slim::Player::Source::playingSongIndex($client);
 		}
+		
+		#kill the animation to allow the information to update;
+		$client->killAnimation();
 		browseplaylistindex($client,$pos);
 	}
+}
+
+sub newTitle {
+		my $url = shift;
+
+		for my $client (Slim::Player::Client::clients()) {
+			jump($client) if ((Slim::Player::Playlist::song($client) || '') eq $url);
+		}
 }
 
 #
