@@ -82,7 +82,7 @@ our %keepAlives     = ();
 my $mdnsIDslimserver;
 my $mdnsIDhttp;
 
-our @templateDirs;
+our @templateDirs = ();
 
 our %pageFunctions = ();
 tie %pageFunctions, 'Tie::RegexpHash';
@@ -101,14 +101,12 @@ our %dangerousCommands = (
 # initialize the http server
 sub init {
 
-	@templateDirs = ();
-
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		push @templateDirs, $ENV{'HOME'} . "/Library/SlimDevices/html/";
-		push @templateDirs, "/Library/SlimDevices/html/";
+		unshift @templateDirs, $ENV{'HOME'} . "/Library/SlimDevices/html/";
+		unshift @templateDirs, "/Library/SlimDevices/html/";
 	}
 
-	push @templateDirs, catdir($Bin, 'HTML');
+	unshift @templateDirs, catdir($Bin, 'HTML');
 
 	#
 	my %addToFunctions = (
@@ -1709,7 +1707,7 @@ sub addTemplateDirectory {
 	my $dir = shift;
 
 	$::d_http && msg("Adding template directory $dir\n");
-	push @templateDirs, $dir;
+	unshift @templateDirs, $dir;
 }
 
 sub isCsrfAuthCodeValid {
