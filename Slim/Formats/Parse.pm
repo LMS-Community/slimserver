@@ -386,19 +386,17 @@ sub writePLS {
 
 		$itemnum++;
 
-		my $path  = Slim::Music::Info::isFileURL($item) ? Slim::Utils::Misc::pathFromFileURL($item) : $item;
 		my $track = $ds->objectForUrl($item);
 
-		print $output "File$itemnum=$path\n";
+		printf($output "File%d=%s\n", $itemnum, _pathForItem($item));
 
 		my $title = $track->title();
 
 		if ($title) {
-			print $output "Title$itemnum=$title\n";
+			printf($output "Title%d=%s\n", $itemnum, $title);
 		}
 
-		my $dur = $track->duration() || -1;
-		print $output "Length$itemnum=$dur\n";
+		printf($output "Length%d=%s\n", $itemnum, ($track->duration() || -1));
 	}
 
 	print $output "NumberOfItems=$itemnum\nVersion=2\n";
@@ -449,8 +447,7 @@ sub writeM3U {
 			}
 		}
 
-		my $path = Slim::Music::Info::isFileURL($item) ? Slim::Utils::Misc::pathFromFileURL($item) : $item;
-		print $output "$path\n";
+		printf($output "%s\n", _pathForItem($item));
 	}
 
 	if ($filename) {
@@ -668,6 +665,16 @@ sub readASX {
 	$::d_parse && Slim::Utils::Misc::msg("parsed " . scalar(@items) . " items in asx playlist\n");
 
 	return @items;
+}
+
+sub _pathForItem {
+	my $item = shift;
+
+	if (Slim::Music::Info::isFileURL($item) && !Slim::Music::Info::isFragment($item)) {
+		return Slim::Utils::Misc::pathFromFileURL($item);
+	}
+
+	return $item;
 }
 
 1;
