@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.37 2004/11/19 04:04:25 kdf Exp $
+# $Id: Player.pm,v 1.38 2004/11/27 06:30:35 kdf Exp $
 #
 package Slim::Player::Player;
 use strict;
@@ -248,7 +248,7 @@ sub power {
 	my $client = shift;
 	my $on = shift;
 	
-	my $currOn = Slim::Utils::Prefs::clientGet($client,'power');
+	my $currOn = Slim::Utils::Prefs::clientGet($client,'power') || 0;
 	
 	if (!defined $on) {
 		return ($currOn);
