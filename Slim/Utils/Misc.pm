@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.52 2004/08/18 22:49:45 dean Exp $
+# $Id: Misc.pm,v 1.53 2004/09/24 01:45:21 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -95,7 +95,7 @@ sub findbin {
 	return $path;	
 }
 
-sub urlFromWinShortcut {
+sub pathFromWinShortcut {
 	my $fullpath = shift;
 	$fullpath = pathFromFileURL($fullpath);
 	my $path = "";
@@ -112,7 +112,7 @@ sub urlFromWinShortcut {
 				$path = fileURLFromPath($path);
 				#collapse shortcuts to shortcuts into a single hop
 				if (Slim::Music::Info::isWinShortcut($path)) {
-					$path = urlFromWinShortcut($path);
+					$path = pathFromWinShortcut($path);
 				}
 			} else {
 				$::d_files && msg("Bad path in $fullpath\n");
@@ -124,7 +124,7 @@ sub urlFromWinShortcut {
 	} else {
 		$::d_files && msg("Windows shortcuts not supported on non-windows platforms\n");
 	}
-	$::d_files && msg("urlFromWinShortuct: path $path from shortcut $fullpath\n");	
+	$::d_files && msg("pathFromWinShortcut: path $path from shortcut $fullpath\n");	
 	return $path;
 }
 	
@@ -461,7 +461,7 @@ sub virtualToAbsolute {
 			if (defined($Slim::Utils::Scan::playlistCache{Slim::Utils::Misc::fileURLFromPath($curdir)})) {
 				$curdir = $Slim::Utils::Scan::playlistCache{Slim::Utils::Misc::fileURLFromPath($curdir)}
 			} else {
-				$curdir = pathFromFileURL(urlFromWinShortcut(Slim::Utils::Misc::fileURLFromPath($curdir)));
+				$curdir = pathFromWinShortcut(Slim::Utils::Misc::fileURLFromPath($curdir));
 			}
 		}
 		#continue traversing if curdir is a list

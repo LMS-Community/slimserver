@@ -1,4 +1,4 @@
-# $Id: Client.pm,v 1.57 2004/09/09 19:12:24 dean Exp $
+# $Id: Client.pm,v 1.58 2004/09/24 01:45:20 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -635,6 +635,8 @@ my $defaultPrefs = {
 		,'playername'			=> undef
 		,'repeat'				=> 2
 		,'shuffle'				=> 0
+		,'titleFormat'			=> [5, 1, 3, 6]
+		,'titleFormatCurr'		=> 1
 	};
 
 sub new {

@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.29 2004/09/11 14:50:55 dean Exp $
+# $Id: Player.pm,v 1.30 2004/09/24 01:45:20 kdf Exp $
 #
 package Slim::Player::Player;
 use strict;
@@ -59,8 +59,6 @@ my $defaultPrefs = {
 		,'silent'				=> 0
 		,'syncPower'			=> 0
 		,'syncVolume'			=> 0
-		,'titleFormat'			=> [5, 1, 3, 6]
-		,'titleFormatCurr'		=> 1
 		,'treble'				=> 50
 		,'volume'				=> 50
 	};

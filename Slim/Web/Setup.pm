@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.105 2004/09/23 08:07:31 kdf Exp $
+# $Id: Setup.pm,v 1.106 2004/09/24 01:45:21 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -120,7 +120,7 @@ sub initSetupConfig {
 							$pageref->{'Prefs'}{'screensaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
 						}
 					} else {
-						$pageref->{'GroupOrder'} = ['Default'];
+						$pageref->{'GroupOrder'} = ['Default','TitleFormats'];
 					}
 					
 					Slim::Buttons::Plugins::addSetupGroups();
