@@ -703,7 +703,7 @@ sub browser {
 
 			$list_form{'dir'} = Slim::Web::HTTP::escape($aggregate);
 			
-			$list_form{'shortdir'} = Slim::Music::Info::standardTitle(undef, Slim::Utils::Misc::virtualToAbsolute($c));
+			$list_form{'shortdir'} = Slim::Music::Info::standardTitle(undef, Slim::Utils::Misc::virtualToAbsolute($aggregate));
 
 			$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browse_pwdlist.html", \%list_form)};
 		}
