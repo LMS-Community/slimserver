@@ -63,11 +63,12 @@ our %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );
 	$class->table('tracks');
 
 	$class->columns(Primary => keys %primaryColumns);
-	$class->columns(Essential => keys %allColumns);
+	$class->columns(Essential => keys %essentialColumns);
+	#$class->columns(Essential => keys %allColumns);
 
 	# Combine essential and other for now for performance, at the price of
 	# larger in-memory object size
-	#$class->columns(Others => keys %otherColumns);
+	$class->columns(Others => keys %otherColumns);
 	$class->columns(Stringify => qw/url/);
 
 	# setup our relationships
