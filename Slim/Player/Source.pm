@@ -12,6 +12,9 @@ use FileHandle;
 use FindBin qw($Bin);
 use IO::Socket qw(:DEFAULT :crlf);
 use Time::HiRes;
+use Fcntl qw(SEEK_CUR);
+sub systell { sysseek($_[0], 0, SEEK_CUR) }
+
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -406,7 +409,7 @@ sub gototime {
 	my $dataoffset =  $client->songoffset;
 	$client->songBytes($newoffset);
 	$client->lastskip($newoffset);
-	$client->mp3filehandle->seek($newoffset+$dataoffset, 0);
+	$client->mp3filehandle->sysseek($newoffset+$dataoffset, 0);
 	$client->songStartStreamTime($newtime);
 
 	foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
@@ -715,7 +718,7 @@ sub openSong {
 
 					$::d_source && msg(" seeking in $offset into $filepath\n");
 					if ($offset) {
-						if (!seek ($client->mp3filehandle, $offset, 0) ) {
+						if (!defined(sysseek($client->mp3filehandle, $offset, 0))) {
 							msg("couldn't seek to $offset for $filepath");
 						};
 					}
@@ -887,7 +890,7 @@ sub readNextChunk {
 						# trying to seek past the beginning, let's let opennext do it's job
 						$chunksize = 0;
 					} else {
-						$client->mp3filehandle->seek($seekpos, 0);
+						$client->mp3filehandle->sysseek($seekpos, 0);
 						$client->songBytes($client->songBytes() + $howfar);
 						$client->lastskip($client->songBytes());
 					}
@@ -949,7 +952,7 @@ sub readNextChunk {
 	# so open the next filehandle.
 	if ($endofsong) {
 		$::d_source && msg("end of file or error on socket, opening next song, (song pos: " .
-				$client->songBytes() . "(tell says: . " . tell($client->mp3filehandle()). "), totalbytes: " . $client->songtotalbytes() . ")\n");
+				$client->songBytes() . "(tell says: . " . systell($client->mp3filehandle()). "), totalbytes: " . $client->songtotalbytes() . ")\n");
 		if (!openNext($client)) {
 			$::d_source && msg("Can't opennext, returning no chunk.");
 		}

@@ -889,10 +889,10 @@ SETUP_GROUP_NONMENUITEMS_INTRO
 	SE	Inaktiva meny-val:
 
 SETUP_GROUP_XPL
-	EN	xPL Support
+	EN	xPL Settings
 
 SETUP_GROUP_XPL_DESC
-	EN	These settings control whether xPL support is enabled.
+	EN	These settings control the behavior of the xPL protocol
 
 SETUP_SCROLLPAUSE
 	EN	Scroll Pause
@@ -2780,14 +2780,38 @@ SETUP_UDPCHUNKSIZE_CHOOSE
 SETUP_XPLSUPPORT
 	EN	xPL support
 
-SETUP_XPLSUPPORT_DESC
-	EN	Controls whether SlimServer will support the xPL automation protocol.
+SETUP_XPLSUPPORT_CHOOSE
+	EN	xPL support:
 
 SETUP_XPLSUPPORT_ENABLED
 	EN	Enabled
 
 SETUP_XPLSUPPORT_DISABLED
 	EN	Disabled
+
+SETUP_XPLINTERVAL
+	EN	Heartbeat Interval
+
+SETUP_XPLINTERVAL_CHOOSE
+	EN	Heartbeat Interval:
+
+SETUP_XPLIR
+	EN	Infra-red Processing
+
+SETUP_XPLIR_CHOOSE
+	EN	Infra-red Processing:
+
+SETUP_XPLIR_NONE
+	EN	None
+
+SETUP_XPLIR_BUTTONS
+	EN	Buttons
+
+SETUP_XPLIR_RAW
+	EN	Raw
+
+SETUP_XPLIR_BOTH
+	EN	Both
 
 SETUP_TITLEFORMATWEB
 	DE	Aktuelles Web-Format

@@ -26,11 +26,10 @@ is recommended reading for anyone who is interested in using the xPL protocol to
 </p>
 
 <h4>Enabling xPL Support in SlimServer</h4>
-<p>To enable xPL support, add the following line to your slimserver.pref file and restart the SlimServer software:
+<p>To enable xPL support, go to Server Settings -&gt; Additional Server Settings -&gt; Network.<br>
+Scroll to the xPL section, and set xPL support to Enabled.<br>
+Click Change, then restart your SlimServer software.
 </p>
-<blockquote>
-xplsupport = 1
-</blockquote>
 <p>Once enabled, each player that is connected to SlimServer (including software players) will generate an xPL heartbeat message, 
 alerting other nodes on the network of it's presence.
 </p>
@@ -52,7 +51,8 @@ audio.basic</a> messages can be used to provide basic control of SlimServer. Thi
 <p><a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=32&page=1" target="_blank">
 audio.slimserv</a> messages are used to harness the more advanced features of SlimServer, performing any of the commands that can be performed
 via the command-line interface.</p>
-<p><a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=13&page=1">remote.basic</a> messages are used to control SlimServer by simulating button presses on a remote control,
+<p><a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=13&page=1" target="_blank">
+remote.basic</a> messages are used to control SlimServer by simulating button presses on a remote control,
 in a similar way to the &quot;button&quot; command in the command-line interface.</p>
 <p><a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=8&page=1" target="_blank">
 osd.basic</a> messages are used to display text on a players screen.</p>
@@ -67,16 +67,18 @@ You can request this information at any time by sending an audio.request message
 to the player you wish to query.
 </p>
 
-<h4>Remote Control Messages</h4>
+<h4>Infra-red Remote Control Messages</h4>
 <p>When buttons are pressed on a player's remote control, it is possible to have xPL messages generated to inform
 other nodes on your network, e.g. to fire macros in your home automation software.<br>
-Operation of this feature is controlled through the xplir setting in the slimserver.pref file.
+Operation of this feature can be controlled either via the Web interface (Server Settings -&gt; Additional Server Settings -&gt; Network), or remotely by an xPL configuration manager.<br>
 The following values are supported:<br>
-<i>xplir = none</i> : No xPL message will be sent when a button is pressed.<br>
-<i>xplir = button</i> : An xPL message will be sent when a recognised button code is 
+<i>None</i> : No xPL message will be sent when a button is pressed.<br>
+<i>Buttons</i> : An xPL message will be sent when a recognised button code is 
 received, and the name of the button will be included.<br>
-<i>xplir = raw</i> : All infra-red codes that the player can receive will cause an xPL message to be sent.
-The message will contain the raw hex value of the infra-red code. This allows the player to be used as a general purpose infra-red receiver.
+<i>Raw</i> : All infra-red codes that the player can receive will cause an xPL message to be sent.
+The message will contain the raw hex value of the infra-red code. This allows the player to be used as a general purpose infra-red receiver.<br>
+<i>Both</i> : This is a combination of <i>Buttons</i> and <i>Raw</i>. The player will send an xPL message for every remote control signal it receives, including the raw hex codes. It will also send messages when recognised buttons are pressed, including the name of the button.
+Users should be aware that this configuration will result in two messages being transmitted for recognised button codes - one containing the hex value, and one containing the recognised button name.
 </p>
 
 

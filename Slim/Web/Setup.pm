@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.28 2003/12/21 11:50:43 kdf Exp $
+# $Id: Setup.pm,v 1.29 2003/12/22 23:53:23 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1250,7 +1250,16 @@ sub initSetupConfig {
 					,'GroupSub' => 1
 				}
 			,'xPL_Params' => {
-					'PrefOrder' => ['xplsupport']
+					'PrefOrder' => ['xplsupport','xplinterval','xplir']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupHead' => string('SETUP_GROUP_XPL')
+					,'GroupDesc' => string('SETUP_GROUP_XPL_DESC')
+					,'GroupLine' => 1
+					,'GroupSub' => 1
 				}
 			}
 		,'Prefs' => {
@@ -1297,6 +1306,18 @@ sub initSetupConfig {
 						,'options' => {
 								'0' => string('SETUP_XPLSUPPORT_DISABLED')
 								,'1' => string('SETUP_XPLSUPPORT_ENABLED')
+								}
+				}
+			,'xplinterval' => {
+						'validate' => \&validateInt
+							,'validateArgs' => [5,30,1,1]
+					}
+			,'xplir' => {
+						'options' => {
+								'none' => string('SETUP_XPLIR_NONE')
+								,'buttons' => string('SETUP_XPLIR_BUTTONS')
+								,'raw' => string('SETUP_XPLIR_RAW')
+								,'both' => string('SETUP_XPLIR_BOTH')
 								}
 				}
 			}

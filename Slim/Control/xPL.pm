@@ -30,11 +30,15 @@ sub init() {
 	my $computername = hostname;
 	$localip = inet_ntoa((gethostbyname($computername))[4]);
 	$xpl_interval =	Slim::Utils::Prefs::get("xplinterval");
-	if (!defined($xpl_interval)) { $xpl_interval = 5; }
-
+	if (!defined($xpl_interval)) {
+		$xpl_interval = 5;
+		Slim::Utils::Prefs::set("xplinterval",$xpl_interval);
+	}
 	$xpl_ir =	Slim::Utils::Prefs::get("xplir");
-	if (!defined($xpl_ir)) { $xpl_ir = 'none'; }
-
+	if (!defined($xpl_ir)) {
+		$xpl_ir = 'none'; 
+		Slim::Utils::Prefs::set("xplir",$xpl_ir);
+	}
 	$xpl_port = 50000;
 
 	# Try and bind to a free port
@@ -289,6 +293,7 @@ sub sendxplmsg {
 sub getparam {
 # Retrieves a parameter from the body of an xPL message
 	my $buff = $_[0];  
+        $buff =~ s/$_[1]/$_[1]/gi;
 	$buff = substr($buff,index($buff,"}"),length($buff)-index($buff,"}"));
 	$buff = substr($buff,index($buff,"{")+2,length($buff)-index($buff,"{")-2);
 	$buff = substr($buff,0,index($buff,"}")-1);
@@ -299,6 +304,7 @@ sub getparam {
 sub gethdrparam {
 # Retrieves a parameter from the header of an xPL message
 	my $buff = $_[0];  
+        $buff =~ s/$_[1]/$_[1]/gi;
 	$buff = substr($buff,index($buff,"{")+2,length($buff)-index($buff,"{")-2);
 	$buff = substr($buff,0,index($buff,"}")-1);
 	my %params = map { split /=/, $_, 2 } split /\n/, $buff ;
@@ -336,18 +342,19 @@ sub handleOsdMessage {
 		my $osdcmd = lc getparam($_[0],"command");
 		my $osdmsg = getparam($_[0],"text");
 		my $osddelay = getparam($_[0],"delay");
-		my $text1;
-		my $text2;
 	
 		# Extract text
-		($text1, $text2) = split /\\n/, $osdmsg;
+		my ($text1, $text2) = split /\\n/, $osdmsg;
+		if ($text1 eq '') {
+			$text1 = ' ';
+		}
 		if (!defined($text2)) {
 			$text2 = ' ';
 		}	
 
 		# Escape text
-		$text1 = Slim::Web::HTTP::escape($text1);
-		$text2 = Slim::Web::HTTP::escape($text2);
+		my $esctext1 = Slim::Web::HTTP::escape($text1);
+		my $esctext2 = Slim::Web::HTTP::escape($text2);
 	
 		# If delay is unspecified, set to default of 5 seconds
 		if (!defined($osddelay)) {
@@ -358,10 +365,11 @@ sub handleOsdMessage {
 		}
 
 		# Display the text
-		xplExecuteCmd("display $text1 $text2 $osddelay",$_[1]);
+		xplExecuteCmd("display $esctext1 $esctext2 $osddelay",$_[1]);
 
 		# Send a confirmation message
 		my $clientname = validInstance(Slim::Player::Client::getClient($_[1])->name);	
+
 		sendxplmsg("xpl-trig","*","osd.confirm","command=clear\ntext=$text1\\n$text2\ndelay=$osddelay",$clientname);
 	}
 }
@@ -402,7 +410,7 @@ sub handleConfigResponse {
 		$xpl_interval = $new_interval;
 	}
 	if (defined($new_ir)) {
-		if ($new_ir =~ "^none|buttons|raw") {
+		if ($new_ir =~ "^(none)|(buttons)|(raw)|(both)") {
 			$xpl_ir = $new_ir;
 		}
 	}
@@ -420,10 +428,10 @@ sub processircode {
 
 	my $clientname = validInstance($_[0]->name);
 	my $power = ($_[0]->power()==0 ? 'off' : 'on');
-	if ($xpl_ir eq 'raw') {
+	if ($xpl_ir eq 'raw' || $xpl_ir eq 'both') {
 		sendxplmsg("xpl-trig","*","remote.basic","zone=slimserver\ndevice=$clientname\nkeys=$_[2]\npower=$power",$clientname);
 	}
-	elsif (defined($_[1]) && $xpl_ir eq 'buttons') {
+	if (defined($_[1]) && ($xpl_ir eq 'buttons' || $xpl_ir eq 'both')) {
 		sendxplmsg("xpl-trig","*","remote.basic","zone=slimserver\ndevice=$clientname\nkeys=$_[1]\npower=$power",$clientname);
 	}
 }
