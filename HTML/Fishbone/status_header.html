@@ -12,6 +12,15 @@ function openRemote()
 	window.open('status_header.html?player={%player}&start={start}&refresh=1', 'access', 'width=500,height=240');
 &rbrc;
 
+function setCookie(name, value)
+&lbrc;
+	var expires = new Date();
+	expires.setTime(expires.getTime() + 1000*60*60);
+	document.cookie =
+		name + "=" + escape(value) +
+		((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
+&rbrc;
+
 function checkReload()
 &lbrc;
    if (parent.playlist.location != 'playlist.html?player={%player}')
@@ -34,7 +43,7 @@ function checkReload()
 	      <td width="34%"><img border="0" src="html/images/{playermodel}_logo.small.gif" width="98" height="17"></td>
   	         [IF player_chooser_list]
   	            <form method="get" action="/index.html" target="_top"><td colspan="3">
-					<select name="player" onchange="this.form.submit()" class="stdedit">{player_chooser_list}</select>
+					<select name="player" onchange="this.form.submit();setCookie('Slimd-player',this.form.player.value)" class="stdedit">{player_chooser_list}</select>
 					</td></form>[/IF]
 					
 			</table>

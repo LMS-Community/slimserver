@@ -26,7 +26,7 @@ function getCookie(Name)
 document.write('<frameset cols="45%,*" border="2" framespacing="2">');
 document.write('<frame src="' +getCookie('Slimd-Browserpage') +'&player={%player}'[IF nofolder]+'&nofolder=1'[/IF] +'" name="browser">');
 document.write('<frameset name="player_frame" ID="player_frame" border="0" frameborder="no" framespacing="0" rows="240,*">');
-document.write('<frame name="statusframe" noresize scrolling="no" src="status_header.html?player={%player}">');
+document.write('<frame name="statusframe" noresize scrolling="no" src="status_header.html?player='+getCookie('Slimd-player')+'">');
 document.write('<frame name="playlist" noresize src="playlist.html?player={%player}">');
 document.write('</frameset>');
 document.write('</frameset>');

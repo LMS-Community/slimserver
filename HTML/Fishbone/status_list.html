@@ -36,13 +36,3 @@
    	</a></td>
    <td [IF currentsong]class="listing2"[/IF][IFN currentsong]class="listing"[/IFN] width="3" align="center">&nbsp;</td>
 </tr>
-[IF currentsong]
-<script language="JavaScript">
-<!-- Hide
-	var expires = new Date();
-	expires.setTime(expires.getTime() + 1000*60*60);
-	document.cookie = 
-		"Slimd-CurrentSong" + "=" + escape([EVAL]defined($client) ? (Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Source::currentSongIndex($client)] : '';[/EVAL]) +
-		((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
--->
-</script>[/IF]
