@@ -1,6 +1,6 @@
 package Slim::Utils::Strings;
 
-# $Id: Strings.pm,v 1.2 2003/07/24 23:14:04 dean Exp $
+# $Id: Strings.pm,v 1.3 2003/07/31 19:10:57 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,6 +10,8 @@ package Slim::Utils::Strings;
 use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK @EXPORT_FAIL);
 use File::Spec::Functions qw(:ALL);
+use FindBin qw($Bin);
+
 require Exporter;
 @ISA = qw(Exporter);
 @EXPORT = qw( );
@@ -24,8 +26,6 @@ my $failsafe_language ="";
 #
 # Initializes the module
 #
-# strings_file is the file containing all the strings
-#
 # When a new string is added in strings.txt, it will probably take 
 # a while before someome gets around to translating it. $failsafe_language
 # is the fallback. If a string is not available in the user's
@@ -33,37 +33,47 @@ my $failsafe_language ="";
 #
 
 sub init {
-	my ($strings_file, $failsafe) = @_;
 	my $usr_strings;
+	$Slim::Utils::Strings::failsafe_language = 'EN';
 
-	$Slim::Utils::Strings::failsafe_language = $failsafe;
-	
-	load_strings_file($strings_file); # First load the defaults
-	
-	my $userFile;
-	if (Slim::Utils::OSDetect::OS() eq 'unix') {
-		$userFile = ".slimserver-strings.txt";
-	} else {
-		$userFile = "slimserver-strings.txt"; 
-	}
-	
-	$usr_strings = catdir(Slim::Utils::Prefs::preferencesPath(), $userFile);
-	
-	if ( -e $usr_strings ) { 
-	    load_strings_file($usr_strings); # Then load any user preferences over the top
-	}
+      foreach my $dir (stringsDirs()) {
+              foreach my $stringfile (stringsFiles()) {
+                      load_strings_file(catdir($dir, $stringfile));
+              }
+      }
 
     foreach my $lang (keys(%languages)) {
 		$languages{$lang} = languageName($lang);
 	}
 }
 
+sub stringsDirs {
+      my @pluginDirs;
+      push @pluginDirs, $Bin;
+      push @pluginDirs, Slim::Utils::Prefs::preferencesPath();
+      if ($^O eq 'darwin') {
+              push @pluginDirs, $ENV{'HOME'} . "/Library/SlimDevices/";
+              push @pluginDirs, "/Library/SlimDevices/";
+      }
+      return @pluginDirs;
+}
+
+sub stringsFiles {
+      my @stringsFiles;
+      push @stringsFiles, 'strings.txt';
+      push @stringsFiles, ".slimp3-strings.txt";
+      push @stringsFiles, "slimp3-strings.txt"; 
+      return @stringsFiles;
+}
+
 #
 # Loads a file containing strings
 #
 sub load_strings_file {
-
-	my ($strings_file) = @_;
+	my $strings_file = shift;
+      if (!-e $strings_file) {
+              return;
+      }
 		
 	open STRINGS, $strings_file || die "couldn't open $strings_file\n";
 	my $strings = join('', <STRINGS>);
