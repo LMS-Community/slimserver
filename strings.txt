@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.142 2004/10/13 00:51:36 dean Exp $
+# $Id: strings.txt,v 1.143 2004/10/25 22:17:28 vidur Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -7071,4 +7071,16 @@ COLON
 	FR	 : 
 	NO	:
 	SE	: 
+
+TUNE_IN
+	EN	Tune In
+
+TUNED_INTO_STATION
+	EN	Tuned into station
+
+TUNE_IN_DESC
+	EN	Enter the URL of the station you would like to listen to and hit the "Tune In" button. You can enter the URL of either the radio stream itself (e.g. http://62.49.59.50:8000) or the playlist file that is pointing to the stream (e.g. http://www.hitzradio.com/hitzradio.pls).
+
+RADIO_URL
+	EN	Radio URL
 
