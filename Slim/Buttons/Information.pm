@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.13 2003/10/31 22:09:02 dean Exp $
+#	$Id: Information.pm,v 1.1 2003/11/03 23:22:32 dean Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -40,20 +40,22 @@
 #
 #
 
-package Plugins::Information;
+package Slim::Buttons::Information;
+
 use POSIX qw(strftime);
 use File::Spec::Functions qw(catfile);
 use Slim::Utils::Strings qw(string);
 use strict;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.13 $,10);
+$VERSION = substr(q$Revision: 1.1 $,10);
 
 my $modes_set;
 my $modules;
 my %enabled;
 my %context;
 
+Slim::Buttons::Common::addMode('information', getFunctions(), \&Slim::Buttons::Information::setMode);
 
 sub main_list {
 	return ['library','player','server','module'];
@@ -81,7 +83,7 @@ sub server_list {
 sub player_list {
 	my $client = shift;
 	my @player_list = ( 
-		[ 'PLAYER_NAME',  'string',  1,  sub { Slim::Utils::Prefs::clientGet(shift,'playername') || '' } ],
+		[ 'PLAYER_NAME',  'string',  1,  sub { shift->name } ],
 		[ 'PLAYER_MODEL', 'string',  1,  sub { shift->model() } ],
 		[ 'FIRMWARE',     'string',  1,  sub { shift->revision } ],
 		[ 'PLAYER_IP',    'string',  1,  sub { shift->ip } ],
@@ -90,7 +92,7 @@ sub player_list {
 	);
 
 	if (defined($client->signalStrength)) {
-		push (@player_list,[ 'PLAYER_SIGNAL_STRENGTH', 'string', 1, sub { return (shift->signalStrength() . '%'; } ]);
+		push (@player_list,[ 'PLAYER_SIGNAL_STRENGTH', 'string', 1, sub { return (shift->signalStrength() . '%'); } ]);
 	}
 	
 	return \@player_list;
@@ -158,7 +160,7 @@ my %functions = (
 		if ($nextmode && ref(&$listfunc($client))) {
 			Slim::Buttons::Common::pushModeLeft(
 			$client,
-			"plugins-information-$nextmode",
+			"information-$nextmode",
 			);
 		}
 		else {
@@ -222,7 +224,7 @@ sub main_lines {
 	
     return (
     	(
-	    string('PLUGIN_INFORMATION_MODULE_NAME') .
+	    string('INFORMATION') .
 	    ' (' .
 	    ($current + 1) .
 	    ' ' .
@@ -232,7 +234,7 @@ sub main_lines {
 	    ')'
 	),
 	string(
-	    'PLUGIN_INFORMATION_MENU_' .
+	    'INFORMATION_MENU_' .
 	    uc($list->[$current])
 	),
 	undef,
@@ -254,7 +256,7 @@ sub info_lines {
 
     return (
 	(
-	    string('PLUGIN_INFORMATION_MENU_' . uc($ref->{current})) .
+	    string('INFORMATION_MENU_' . uc($ref->{current})) .
 	    ' (' .
 	    ($current + 1) .
 	    ' ' .
@@ -264,7 +266,7 @@ sub info_lines {
 	    ')'
 	),
 	(
-	    string('PLUGIN_INFORMATION_' . uc($item->[0])) .
+	    string('INFORMATION_' . uc($item->[0])) .
 	    ': ' .
 	    $format{$item->[1]}->($item->[3]->($item->[2] ? $client : undef))
 	)
@@ -285,7 +287,7 @@ sub module_lines {
     my @info;
 
     $lines[0] = (
-	string('PLUGIN_INFORMATION_MENU_' . uc($ref->{current})) .
+	string('INFORMATION_MENU_' . uc($ref->{current})) .
 	' (' .
 	($current + 1) .
 	' ' .
@@ -297,34 +299,24 @@ sub module_lines {
     );
 
     push(@info,$modules->{$item});
-    push(@info,string('PLUGIN_INFORMATION_DISABLED')) unless $enabled{$item};
+    push(@info,string('INFORMATION_DISABLED')) unless $enabled{$item};
 
     my $version = eval {
 	no strict 'refs';
 	${"Plugins::${item}::VERSION"};
     };
     if ($@ || !$version) {
-	push(@info,string('PLUGIN_INFORMATION_NO_VERSION'));
+	push(@info,string('INFORMATION_NO_VERSION'));
     }
     else {
     	$version =~ s/^\s+//;
     	$version =~ s/\s+$//;
-	push(@info,string('PLUGIN_INFORMATION_VERSION') . ": $version");
+	push(@info,string('INFORMATION_VERSION') . ": $version");
     }
 
     $lines[1] = join(' ' . Slim::Hardware::VFD::symbol('rightarrow') . ' ',@info);
     @lines;
 }	
-
-#
-#	strings()
-#	---------
-#	Read the string localisation data.
-#
-sub strings {
-    local $/ = undef;
-    <DATA>;
-}
 
 sub setmode_submenu {
     my $client = shift;
@@ -348,7 +340,7 @@ sub setMode {
 			next if $_ eq 'main';
 
 			Slim::Buttons::Common::addMode(
-			"plugins-information-$_",
+			"information-$_",
 			\%functions,
 			\&setmode_submenu,
 			);
@@ -371,120 +363,5 @@ sub getFunctions {
 	\%functions;
 }
 
-sub getDisplayName {
-	string('PLUGIN_INFORMATION_MODULE_NAME');
-}
-
-
-
 1;
-
-__DATA__
-
-PLUGIN_INFORMATION_MODULE_NAME
-	EN	Information
-	FR	Infos
-
-PLUGIN_INFORMATION_MENU_PLAYER
-	EN	Player Information
-	FR	Infos lecteur
-
-PLUGIN_INFORMATION_MENU_SERVER
-	EN	Server Information
-	FR	Infos serveur
-
-PLUGIN_INFORMATION_MENU_LIBRARY
-	EN	Library statistics
-	FR	Statistiques
-
-PLUGIN_INFORMATION_MENU_MODULE
-	EN	Plugin Modules
-	FR	Modules plugins
-
-PLUGIN_INFORMATION_PLAYER_NAME
-	EN	Player Name
-	FR	Nom lecteur
-
-PLUGIN_INFORMATION_PLAYER_MODEL
-	EN	Player Model
-	FR	Modele lecteur
-
-PLUGIN_INFORMATION_FIRMWARE
-	EN	Player Firmware Version
-	FR	Version firmware lecteur
-
-PLUGIN_INFORMATION_PLAYER_IP
-	EN	Player IP Address
-	FR	Adresse IP lecteur
-
-PLUGIN_INFORMATION_PLAYER_PORT
-	EN	Player UDP Port Number
-	FR	Port UDP lecteur
-
-PLUGIN_INFORMATION_PLAYER_MAC
-	EN	Player MAC Address
-	FR	Adresse MAC lecteur
-
-PLUGIN_INFORMATION_PLAYER_SIGNAL_STRENGTH
-	EN	Wireless Signal Strength
-
-PLUGIN_INFORMATION_VERSION
-	EN	Server Version
-	FR	Version serveur
-
-PLUGIN_INFORMATION_CLIENTS
-	EN	Total Players Recognised
-	FR	Lecteur(s) identifié(s)
-
-PLUGIN_INFORMATION_SERVER_IP
-	EN	Server IP Address
-	FR	Adresse IP serveur
-
-PLUGIN_INFORMATION_SERVER_PORT
-	EN	Server UDP Port Number
-	FR	Port UDP serveur
-
-PLUGIN_INFORMATION_SERVER_HTTP
-	EN	Server HTTP Port Number
-	FR	Port HTTP serveur
-
-PLUGIN_INFORMATION_ALBUMS
-	EN	Total Albums
-	FR	Albums
-	
-PLUGIN_INFORMATION_ARTISTS
-	EN	Total Artists
-	FR	Artistes
-
-PLUGIN_INFORMATION_GENRES
-	EN	Total Genres
-	FR	Genres
-
-PLUGIN_INFORMATION_TRACKS
-	EN	Total Tracks
-	FR	Morceaux
-
-PLUGIN_INFORMATION_TIME
-	EN	Total Playing Time
-	FR	Durée totale
-
-PLUGIN_INFORMATION_VERSION
-	EN	Version
-	FR	Version
-
-PLUGIN_INFORMATION_INSTALLED
-	EN	Installed
-	FR	Installé
-
-PLUGIN_INFORMATION_DISABLED
-	EN	DISABLED
-	FR	DESACTIVE
-
-PLUGIN_INFORMATION_NO_VERSION
-	EN	No version number
-	FR	Pas de version
-
-PLUGIN_INFORMATION_DATE_FORMAT
-	EN	${shortdateFormat} at ${timeFormat}
-	FR	${shortdateFormat} à ${timeFormat}
 

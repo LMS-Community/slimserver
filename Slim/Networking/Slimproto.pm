@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.34 2003/11/01 22:48:26 sadams Exp $
+# $Id: Slimproto.pm,v 1.35 2003/11/03 23:22:33 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -436,7 +436,7 @@ sub signalStrength {
 
 	my $client = shift;
 
-	if (exists($status{$client}) && $status{$client}->{'signal_strength'} le 100) {
+	if (exists($status{$client}) && ($status{$client}->{'signal_strength'} <= 100)) {
 		return $status{$client}->{'signal_strength'};
 	} else {
 		return undef;

@@ -14,9 +14,10 @@ use Slim::Buttons::AlarmClock;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw (string);
 use Slim::Utils::Prefs;
+use Slim::Buttons::Information;
 
 # button functions for browse directory
-my @defaultSettingsChoices = ('ALARM','VOLUME', 'BASS','TREBLE','REPEAT','SHUFFLE','TITLEFORMAT','TEXTSIZE','OFFDISPLAYSIZE');
+my @defaultSettingsChoices = ('ALARM','VOLUME', 'BASS','TREBLE','REPEAT','SHUFFLE','TITLEFORMAT','TEXTSIZE','OFFDISPLAYSIZE','INFORMATION');
 my @settingsChoices;
 my %functions = (
 	'up' => sub  {
@@ -58,6 +59,8 @@ my %functions = (
 			Slim::Buttons::Common::pushModeLeft($client, 'volume');
 		} elsif ($settingsChoices[$client->settingsSelection] eq 'ALARM') {
 			Slim::Buttons::Common::pushModeLeft($client, 'alarm');
+		} elsif ($settingsChoices[$client->settingsSelection] eq 'INFORMATION') {
+			Slim::Buttons::Common::pushModeLeft($client, 'information');
 		}
 	}
 );
@@ -87,7 +90,15 @@ sub updateMenu {
 sub lines {
 	my $client = shift;
 	my ($line1, $line2);
-	$line1 = string('SETTINGS');
+	$line1 = string('SETTINGS') . 	    
+		' (' .
+	    ($client->settingsSelection + 1) .
+	    ' ' .
+	    string('OF') .
+	    ' ' .
+	    ($#settingsChoices + 1) .
+	    ')'
+;
 	$line2 = string($settingsChoices[$client->settingsSelection]);
 	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
 }

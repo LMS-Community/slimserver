@@ -5523,3 +5523,109 @@ PLAYLIST_AS
 PLAYLIST_SAVING
 	EN	Saving current playlist as:
 
+INFORMATION
+	EN	Information
+	FR	Infos
+
+INFORMATION_MENU_PLAYER
+	EN	Player Information
+	FR	Infos lecteur
+
+INFORMATION_MENU_SERVER
+	EN	Server Information
+	FR	Infos serveur
+
+INFORMATION_MENU_LIBRARY
+	EN	Library statistics
+	FR	Statistiques
+
+INFORMATION_MENU_MODULE
+	EN	Plugin Modules
+	FR	Modules plugins
+
+INFORMATION_PLAYER_NAME
+	EN	Player Name
+	FR	Nom lecteur
+
+INFORMATION_PLAYER_MODEL
+	EN	Player Model
+	FR	Modele lecteur
+
+INFORMATION_FIRMWARE
+	EN	Player Firmware Version
+	FR	Version firmware lecteur
+
+INFORMATION_PLAYER_IP
+	EN	Player IP Address
+	FR	Adresse IP lecteur
+
+INFORMATION_PLAYER_PORT
+	EN	Player UDP Port Number
+	FR	Port UDP lecteur
+
+INFORMATION_PLAYER_MAC
+	EN	Player MAC Address
+	FR	Adresse MAC lecteur
+
+INFORMATION_PLAYER_SIGNAL_STRENGTH
+	EN	Wireless Signal Strength
+
+INFORMATION_VERSION
+	EN	Server Version
+	FR	Version serveur
+
+INFORMATION_CLIENTS
+	EN	Total Players Recognised
+	FR	Lecteur(s) identifié(s)
+
+INFORMATION_SERVER_IP
+	EN	Server IP Address
+	FR	Adresse IP serveur
+
+INFORMATION_SERVER_PORT
+	EN	Server UDP Port Number
+	FR	Port UDP serveur
+
+INFORMATION_SERVER_HTTP
+	EN	Server HTTP Port Number
+	FR	Port HTTP serveur
+
+INFORMATION_ALBUMS
+	EN	Total Albums
+	FR	Albums
+	
+INFORMATION_ARTISTS
+	EN	Total Artists
+	FR	Artistes
+
+INFORMATION_GENRES
+	EN	Total Genres
+	FR	Genres
+
+INFORMATION_TRACKS
+	EN	Total Tracks
+	FR	Morceaux
+
+INFORMATION_TIME
+	EN	Total Playing Time
+	FR	Durée totale
+
+INFORMATION_VERSION
+	EN	Version
+	FR	Version
+
+INFORMATION_INSTALLED
+	EN	Installed
+	FR	Installé
+
+INFORMATION_DISABLED
+	EN	DISABLED
+	FR	DESACTIVE
+
+INFORMATION_NO_VERSION
+	EN	No version number
+	FR	Pas de version
+
+INFORMATION_DATE_FORMAT
+	EN	${shortdateFormat} at ${timeFormat}
+	FR	${shortdateFormat} à ${timeFormat}

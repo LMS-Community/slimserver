@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.14 2003/10/22 20:06:51 dean Exp $
+# $Id: Common.pm,v 1.15 2003/11/03 23:22:32 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -21,36 +21,82 @@ use Slim::Display::Display;
 my $SCAN_RATE_MULTIPLIER = 2;
 
 # hash of references to functions to call when we enter a mode
+# Note:  don't add to this list, rather use the addMode() function 
+#below to have the module add its mode itself
+# TODO: get rid of this initialization and do what it says in the line above.
 my %modes = (		
+	'bass' =>					\&Slim::Buttons::Settings::setBassMode,
 	'block' => 					\&Slim::Buttons::Block::setMode,
 	'browse' => 				\&Slim::Buttons::Browse::setMode,
-	'browsemenu' => 			\&Slim::Buttons::BrowseMenu::setMode,
 	'browseid3' => 				\&Slim::Buttons::BrowseID3::setMode,
+	'browsemenu' => 			\&Slim::Buttons::BrowseMenu::setMode,
 	'home' => 					\&Slim::Buttons::Home::setMode,
+	'INPUT.Text' =>				\&Slim::Buttons::Input::Text::setMode,
+	'moodlogic_instant_mix' =>	\&Slim::Buttons::InstantMix::setMode,
+	'moodlogic_mood_wheel' =>	\&Slim::Buttons::MoodWheel::setMode,
+	'off' => 					\&Slim::Buttons::Power::setMode,
+	'offdisplaysize' =>			\&Slim::Buttons::Settings::setOffDisplaySettingsMode,
 	'playlist' => 				\&Slim::Buttons::Playlist::setMode,
 	'plugins' => 				\&Slim::Buttons::Plugins::setMode,
-	'off' => 					\&Slim::Buttons::Power::setMode,
+	'repeat' =>					\&Slim::Buttons::Settings::setRepeatMode,
 	'screensaver' =>			\&Slim::Buttons::ScreenSaver::setMode,
 	'search' => 				\&Slim::Buttons::Search::setMode,
 	'searchfor' =>  			\&Slim::Buttons::SearchFor::setMode,
 	'settings' =>				\&Slim::Buttons::Settings::setMode,
 	'shooter' =>  				\&Slim::Buttons::Shooter::setMode,
+	'shuffle' =>				\&Slim::Buttons::Settings::setShuffleMode,
 	'slimtris' =>  				\&Slim::Buttons::SlimTris::setMode,
 	'synchronize' =>			\&Slim::Buttons::Synchronize::setMode,
-	'trackinfo' => 				\&Slim::Buttons::TrackInfo::setMode,
-	'repeat' =>					\&Slim::Buttons::Settings::setRepeatMode,
-	'shuffle' =>				\&Slim::Buttons::Settings::setShuffleMode,
 	'textsize' =>				\&Slim::Buttons::Settings::setTextSizeMode,
-	'offdisplaysize' =>			\&Slim::Buttons::Settings::setOffDisplaySettingsMode,
 	'titleformat' =>			\&Slim::Buttons::Settings::setTitleFormatMode,
+	'trackinfo' => 				\&Slim::Buttons::TrackInfo::setMode,
 	'treble' =>					\&Slim::Buttons::Settings::setTrebleMode,
-	'bass' =>					\&Slim::Buttons::Settings::setBassMode,
 	'volume' =>					\&Slim::Buttons::Settings::setVolumeMode,
-	'moodlogic_mood_wheel' =>	\&Slim::Buttons::MoodWheel::setMode,
-	'moodlogic_instant_mix' =>	\&Slim::Buttons::InstantMix::setMode,
-	'INPUT.Text' =>				\&Slim::Buttons::Input::Text::setMode,
 );
 
+#
+# The address of the function hash is set at run time rather than compile time
+# so initialize the modeFunctions hash here
+sub init {
+	$modeFunctions{'home'} = Slim::Buttons::Home::getFunctions();
+	$modeFunctions{'block'} = Slim::Buttons::Block::getFunctions();
+	$modeFunctions{'browse'} = Slim::Buttons::Browse::getFunctions();
+	$modeFunctions{'browsemenu'} = Slim::Buttons::BrowseMenu::getFunctions();
+	$modeFunctions{'browseid3'} = Slim::Buttons::BrowseID3::getFunctions();
+	$modeFunctions{'playlist'} = Slim::Buttons::Playlist::getFunctions();
+	$modeFunctions{'plugins'} = Slim::Buttons::Plugins::getFunctions();
+	$modeFunctions{'off'} = Slim::Buttons::Power::getFunctions();
+	$modeFunctions{'screensaver'} = Slim::Buttons::ScreenSaver::getFunctions();
+	$modeFunctions{'search'} = Slim::Buttons::Search::getFunctions();
+	$modeFunctions{'searchfor'} = Slim::Buttons::SearchFor::getFunctions();
+	$modeFunctions{'settings'} = Slim::Buttons::Settings::getFunctions();
+	$modeFunctions{'synchronize'} = Slim::Buttons::Synchronize::getFunctions();
+	$modeFunctions{'trackinfo'} = Slim::Buttons::TrackInfo::getFunctions();
+	$modeFunctions{'repeat'} = Slim::Buttons::Settings::getRepeatFunctions();
+	$modeFunctions{'shuffle'} = Slim::Buttons::Settings::getShuffleFunctions();
+	$modeFunctions{'textsize'} = Slim::Buttons::Settings::getTextSizeFunctions();
+	$modeFunctions{'offdisplaysize'} = Slim::Buttons::Settings::getOffDisplaySettingsFunctions();
+	$modeFunctions{'titleformat'} = Slim::Buttons::Settings::getTitleFormatFunctions();
+	$modeFunctions{'bass'} = Slim::Buttons::Settings::getBassFunctions();
+	$modeFunctions{'treble'} = Slim::Buttons::Settings::getTrebleFunctions();
+	$modeFunctions{'volume'} = Slim::Buttons::Settings::getVolumeFunctions();
+	$modeFunctions{'moodlogic_mood_wheel'} = Slim::Buttons::MoodWheel::getFunctions();
+	$modeFunctions{'moodlogic_instant_mix'} = Slim::Buttons::InstantMix::getFunctions();
+	$modeFunctions{'INPUT.Text'} = Slim::Buttons::Input::Text::getFunctions();
+	Slim::Buttons::Plugins::getPluginModes(\%modes);
+	Slim::Buttons::Plugins::getPluginFunctions(\%modeFunctions);
+}
+
+ sub addMode {
+ 	my $name = shift;
+ 	my $buttonFunctions = shift;
+ 	my $setModeFunction = shift;
+ 	my $leaveModeFunction = shift;
+ 	$modeFunctions{$name} = $buttonFunctions;
+ 	$modes{$name} = $setModeFunction;
+ 	$leaveMode{$name} = $leaveModeFunction;
+ }
+ 	
 # hash of references to functions to call when we leave a mode
 my %leaveMode = ();
 
@@ -461,49 +507,6 @@ my %functions = (
 
 );
 
-#
-# The address of the function hash is set at run time rather than compile time
-# so initialize the modeFunctions hash here
-sub init {
-	$modeFunctions{'home'} = Slim::Buttons::Home::getFunctions();
-	$modeFunctions{'block'} = Slim::Buttons::Block::getFunctions();
-	$modeFunctions{'browse'} = Slim::Buttons::Browse::getFunctions();
-	$modeFunctions{'browsemenu'} = Slim::Buttons::BrowseMenu::getFunctions();
-	$modeFunctions{'browseid3'} = Slim::Buttons::BrowseID3::getFunctions();
-	$modeFunctions{'playlist'} = Slim::Buttons::Playlist::getFunctions();
-	$modeFunctions{'plugins'} = Slim::Buttons::Plugins::getFunctions();
-	$modeFunctions{'off'} = Slim::Buttons::Power::getFunctions();
-	$modeFunctions{'screensaver'} = Slim::Buttons::ScreenSaver::getFunctions();
-	$modeFunctions{'search'} = Slim::Buttons::Search::getFunctions();
-	$modeFunctions{'searchfor'} = Slim::Buttons::SearchFor::getFunctions();
-	$modeFunctions{'settings'} = Slim::Buttons::Settings::getFunctions();
-	$modeFunctions{'synchronize'} = Slim::Buttons::Synchronize::getFunctions();
-	$modeFunctions{'trackinfo'} = Slim::Buttons::TrackInfo::getFunctions();
-	$modeFunctions{'repeat'} = Slim::Buttons::Settings::getRepeatFunctions();
-	$modeFunctions{'shuffle'} = Slim::Buttons::Settings::getShuffleFunctions();
-	$modeFunctions{'textsize'} = Slim::Buttons::Settings::getTextSizeFunctions();
-	$modeFunctions{'offdisplaysize'} = Slim::Buttons::Settings::getOffDisplaySettingsFunctions();
-	$modeFunctions{'titleformat'} = Slim::Buttons::Settings::getTitleFormatFunctions();
-	$modeFunctions{'bass'} = Slim::Buttons::Settings::getBassFunctions();
-	$modeFunctions{'treble'} = Slim::Buttons::Settings::getTrebleFunctions();
-	$modeFunctions{'volume'} = Slim::Buttons::Settings::getVolumeFunctions();
-	$modeFunctions{'moodlogic_mood_wheel'} = Slim::Buttons::MoodWheel::getFunctions();
-	$modeFunctions{'moodlogic_instant_mix'} = Slim::Buttons::InstantMix::getFunctions();
-	$modeFunctions{'INPUT.Text'} = Slim::Buttons::Input::Text::getFunctions();
-	Slim::Buttons::Plugins::getPluginModes(\%modes);
-	Slim::Buttons::Plugins::getPluginFunctions(\%modeFunctions);
-}
-
- sub addMode {
- 	my $name = shift;
- 	my $buttonFunctions = shift;
- 	my $setModeFunction = shift;
- 	my $leaveModeFunction = shift;
- 	$modeFunctions{$name} = $buttonFunctions;
- 	$modes{$name} = $setModeFunction;
- 	$leaveMode{$name} = $leaveModeFunction;
- }
- 	
  sub getFunction {
  	my $client = shift;
  	my $function = shift;
