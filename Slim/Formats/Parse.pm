@@ -257,7 +257,7 @@ sub parseCUE {
 			$genre = $1;
 		} elsif (/^(?:REM\s+)?COMMENT\s+\"(.*)\"/i) {
 			$comment = $1;
-		} elsif (/^FILE\s+\"(.*)\"/i) {
+		} elsif (/^FILE\s+\"?(.*)\"?/i) {
 			$filename = $1;
 			$filename = Slim::Utils::Misc::fixPath($filename, $cuedir);
 		} elsif (/^\s+TRACK\s+(\d+)\s+AUDIO/i) {
