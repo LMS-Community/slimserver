@@ -1,8 +1,11 @@
-<!-- Page setup.html -->
-[% title = '[% playermodel | string %' %]:[% pagetitle %]] [% pageicon = 'MUSIC' %] [% setup = '1' %]
-
-[% PROCESS pageheader.html %]
-[% PROCESS menu.html %]
+[%# Page setup.html %]
+[% title = BLOCK %]
+[%- playermodel | string %] : [% pagetitle -%]
+[%- END -%]
+[%- pageicon = 'MUSIC'
+    setup    = '1' -%]
+[%- PROCESS pageheader.html -%]
+[%- PROCESS menu.html -%]
 
 <font face="arial,helvetica">
 
@@ -42,4 +45,4 @@
 </font>
 
 [% PROCESS pagefooter.html %]
-<!-- /Page setup.html -->
+[%# /Page setup.html %]

@@ -1,8 +1,10 @@
-<!-- Page songinfo.html -->
-[% title = '[% playermodel | string %' %]:[% "SONG_INFO" | string %]] [% pageicon = 'MUSIC' %]
-
-[% PROCESS pageheader.html %]
-[% PROCESS menu.html %]
+[%# Page songinfo.html %]
+[% title = BLOCK %]
+[%- playermodel | string %] : [% "SONG_INFO" | string -%]
+[%- END -%]
+[%- pageicon = 'MUSIC' -%]
+[%- PROCESS pageheader.html -%]
+[%- PROCESS menu.html -%]
 
 <font face="arial,helvetica">
 
@@ -141,4 +143,4 @@
 
 </font>
 [% PROCESS pagefooter.html %]
-<!-- /Page songinfo.html -->
+[%# /Page songinfo.html %]

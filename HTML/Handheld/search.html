@@ -1,10 +1,11 @@
-<!-- Page search.html -->
-[% title = '[% playermodel | string %' %]:[% "SEARCH" | string %]] [% pageicon = 'MUSIC' %]
-
-[% PROCESS pageheader.html %]
-[% PROCESS menu.html %]
-
-[% IF not query %][% PROCESS searchinput.html %][% END %]
+[%# Page search.html %]
+[% title = BLOCK %]
+[%- playermodel | string %] : [% "SEARCH" | string -%]
+[%- END -%]
+[%- pageicon = 'MUSIC' -%]
+[%- PROCESS pageheader.html -%]
+[%- PROCESS menu.html -%]
+[%- IF not query %][% PROCESS searchinput.html %][% END -%]
 
 <font face="arial,helvetica">
 [% IF numresults != '-1' %]
@@ -20,4 +21,4 @@
 [% IF searchlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>[% END %]
 </font>
 [% PROCESS pagefooter.html %]
-<!-- /Page search.html -->
+[%# /Page search.html %]

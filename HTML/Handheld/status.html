@@ -1,8 +1,14 @@
-<!-- Page status.html -->
-[% title = '[% playermodel | string %' %]:[% "PLAYING" | string %]] [% pageicon = 'MUSIC' %] [% setup = '1' %] [% music = '0' %][% playlist = '0' %] [% status = '1' %]
-
-[% PROCESS pageheader.html %]
-[% PROCESS menu.html %]
+[%# Page status.html %]
+[%- title = BLOCK %]
+[%- playermodel | string %] : [% "PLAYING" | string -%]
+[%- END -%]
+[%- pageicon = 'MUSIC'
+    setup    = '1'
+    music    = '0'
+    playlist = '0'
+    status   = '1' -%]
+[%- PROCESS pageheader.html -%]
+[%- PROCESS menu.html -%]
 
 <font face="arial,helvetica">
 <table width=100%>
@@ -96,4 +102,4 @@
 </font>
 
 [% PROCESS pagefooter.html %]
-<!-- /Page status.html -->
+[%# /Page status.html %]

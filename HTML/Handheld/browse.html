@@ -1,8 +1,13 @@
-<!-- Page browse.html -->
-[% title = '[% playermodel | string %' %]:[% "BROWSEMUSIC" | string %]] [% pageicon = 'MUSIC' %] [% browse = '1' %] [% music = '1' %][% playlist = '0' %]
-
-[% PROCESS pageheader.html %]
-[% PROCESS menu.html %]
+[%# Page browse.html %]
+[%- title = BLOCK %]
+[%- playermodel | string %] : [% "BROWSE_MUSIC" | string -%]
+[%- END -%]
+[%- pageicon = 'MUSIC'
+    browse   = '1' 
+    music    = '1' 
+    playlist = '0' -%]
+[%- PROCESS pageheader.html -%]
+[%- PROCESS menu.html -%]
 
 <font face="arial,helvetica">
 
@@ -43,4 +48,4 @@
 
 </font>
 [% PROCESS pagefooter.html %]
-<!-- /Page browse.html -->
+[%# /Page browse.html %]
