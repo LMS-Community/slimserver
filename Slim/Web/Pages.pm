@@ -357,35 +357,6 @@ sub init {
 			'title' => 'BROWSE_BY_YEAR',
 			'allTitle' => 'ALL_YEARS',
 
-			'idToName' => sub {
-				my $ds  = shift;
-				my $id  = shift;
-				return $id;
-			},
-
-			'resultToId' => sub {
-				my $obj = shift;
-				return $obj;
-			},
-
-			'resultToName' => sub {
-				my $obj = shift;
-				return $obj;
-			},
-
-			'resultToSortedName' => sub {
-				my $obj = shift;
-				return $obj;
-			},
-
-			'find' => sub {
-				my $ds = shift;
-				my $level = shift;
-				my $findCriteria = shift;
-
-				return $ds->find($level, $findCriteria, $level);
-			},
-
 			'listItem' => sub {
 				my $ds = shift;
 				my $list_form = shift;
@@ -419,6 +390,30 @@ sub init {
 			'ignoreArticles' => 0
 		}
 	);
+
+	# These can refer to other entries.
+	$fieldInfo{'age'} = {
+		'title' => 'BROWSE_BY_AGE',
+		'allTitle' => 'ALL_ALBUMS',
+
+		'idToName'           => $fieldInfo{'album'}->{'idToName'},
+		'resultToId'         => $fieldInfo{'album'}->{'resultToId'},
+		'resultToName'       => $fieldInfo{'album'}->{'resultToName'},
+		'resultToSortedName' => $fieldInfo{'album'}->{'resultToSortedName'},
+		'listItem'           => $fieldInfo{'album'}->{'listItem'},
+
+		'find' => sub {
+			my $ds = shift;
+			my $level = shift;
+			my $findCriteria = shift;
+
+			# Limit to retrieving 100 records. This should be configurable.
+			return $ds->find('album', $findCriteria, 'age', 100, 0);
+		},
+
+		'ignoreArticles' => 1,
+		'alphaPageBar' => 0,
+	};
 }
 
 sub home {
@@ -441,6 +436,7 @@ sub home {
 		addLinks("browse",{'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
 		addLinks("browse",{'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0"});
 		addLinks("browse",{'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0"});
+		addLinks("browse",{'BROWSE_BY_AGE'    => "browsedb.html?hierarchy=age,track&level=0"});
 		#addLinks("browse",{'BROWSE_BY_ARTIST' => "browseid3.html?genre=*"});
 		#addLinks("browse",{'BROWSE_BY_GENRE'  => "browseid3.html"});
 		#addLinks("browse",{'BROWSE_BY_ALBUM'  => "browseid3.html?genre=*&artist=*"});
@@ -2264,7 +2260,7 @@ sub alphaPageBar {
 		# and getSortName() more times than we need to be.
 		for (my $j = 0; $j < $itemcount; $j++) {
 
-			my $curLetter = anchor(Slim::Utils::Text::getSortName($itemsref->[$j]), $ignorearticles);
+			my $curLetter = anchor(Slim::Utils::Text::getSortName($itemsref->[$j]), $ignorearticles) || '';
 
 			if ($lastLetter ne $curLetter) {
 

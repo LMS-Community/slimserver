@@ -6484,6 +6484,9 @@ BROWSE_BY_ARTWORK
 BROWSE_BY_ARTWORK_DBL
 	FR	Parcours pochettes
 
+BROWSE_BY_AGE
+	EN	New Music
+
 BROWSE_BY_SONG
 	DE	Titel nachschlagen
 	DK	Gennemse sange

@@ -117,13 +117,9 @@ sub db_Main {
 	my $version;
 	my $nextversion;
 	do {
-		my @tables = $dbh->tables();
 	
-		for my $table (@tables) {
-			if ($table =~ /metainformation/) {
-				($version) = $dbh->selectrow_array("SELECT version FROM metainformation");
-				last;
-			}
+		if (grep { /metainformation/ } $dbh->tables()) {
+			($version) = $dbh->selectrow_array("SELECT version FROM metainformation");
 		}
 
 		if (defined $version) {
@@ -349,6 +345,7 @@ our %sortFieldMap = (
 	'year' => ['tracks.year'],
 	'lastPlayed' => ['tracks.lastPlayed'],
 	'playCount' => ['tracks.playCount'],
+	'age' => ['tracks.age desc', 'tracks.tracknum','tracks.titlesort'],
 );
 
 # This is a weight table which allows us to do some basic table reordering,
