@@ -1305,28 +1305,30 @@ sub initSetupConfig {
 				,'changeMsg' => string('SETUP_PLUGINLIST_CHANGE')
 				,'onChange' => \&Slim::Buttons::Plugins::clearGroups
 				,'externalValue' => sub {
-							my ($client,$value,$key) = @_;
+					my ($client,$value,$key) = @_;
 
-							if ($key !~ /\D+(\d+)$/) {
-								return $value;
-							}
+					if ($key !~ /\D+(\d+)$/) {
+						return $value;
+					}
 
-							my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
+					my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
 
-							# Stick real names in the list - so we can be I18N'd properly.
-							for my $plugin (keys %{$pluginlistref}) {
-								$pluginlistref->{$plugin} = string($pluginlistref->{$plugin});
-							}
+					# Stick real names in the list - so we can be I18N'd properly.
+					# fallback to the plugin package name, so we at least have 
+					# something, instead of a blank space.
+					for my $plugin (keys %{$pluginlistref}) {
+						$pluginlistref->{$plugin} = string($pluginlistref->{$plugin}) || $plugin;
+					}
 
-							return $pluginlistref->{(sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref}))[$1]};
-						}
+					return $pluginlistref->{(sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref}))[$1]};
+				}
 			}
 			,'plugins-onthefly' => {
-					'validate' => \&validateTrueFalse
-					,'options' => {
-							'1' => string('SETUP_PLUGINS-ONTHEFLY_1')
-							,'0' => string('SETUP_PLUGINS-ONTHEFLY_0')
-						}
+				'validate' => \&validateTrueFalse
+				,'options' => {
+						'1' => string('SETUP_PLUGINS-ONTHEFLY_1')
+						,'0' => string('SETUP_PLUGINS-ONTHEFLY_0')
+					}
 				}
 			}
 		} #end of setup{'plugins'}
