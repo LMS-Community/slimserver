@@ -1,6 +1,6 @@
 package Plugins::Snow;
 
-# Snow.pm
+# $Id: Snow.pm,v 1.8 2003/12/24 07:56:46 kdf Exp $
 # by Phil Barrett, December 2003
 # screensaver conversion by Kevin Deane-Freeman Dec 2003
 
@@ -23,7 +23,7 @@ use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.7 $,10);
+$VERSION = substr(q$Revision: 1.8 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_SNOW');}
 
@@ -80,26 +80,49 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
 	EN	Snow Screensaver: Style of snow
 	FR	Ecran de veille Neige: Type
 
-PLUGIN_SCREENSAVER_SNOW_STYLE_0
+PLUGIN_SCREENSAVER_SNOW_STYLE_1
 	EN	Now Playing, snow falling behind
 	FR	Lecture + neige en arrière-plan
 
-PLUGIN_SCREENSAVER_SNOW_STYLE_1
+PLUGIN_SCREENSAVER_SNOW_STYLE_2
 	EN	Now Playing, snow falling in front
 	FR	Lecture +  neige en avant-plan
 
-PLUGIN_SCREENSAVER_SNOW_STYLE_2
+PLUGIN_SCREENSAVER_SNOW_STYLE_3
 	EN	Date/Time
 	FR	Date/Heure
 
-PLUGIN_SCREENSAVER_SNOW_STYLE_3
+PLUGIN_SCREENSAVER_SNOW_STYLE_4
 	EN	Just snow
 	FR	Neige seule
 
-PLUGIN_SCREENSAVER_SNOW_STYLE_4
+PLUGIN_SCREENSAVER_SNOW_STYLE_5
 	EN	Automatic
 	FR	Automatique
 
+PLUGIN_SCREENSAVER_SNOW_STYLE_6
+	EN	Season\'s Greetings
+
+PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS
+	EN	5
+	FR	2
+
+PLUGIN_SCREENSAVER_SNOW_WORD_0
+	EN	MERRY
+	FR	JOYEUX
+
+PLUGIN_SCREENSAVER_SNOW_WORD_1
+	EN	CHRISTMAS
+	FR	NOEL
+
+PLUGIN_SCREENSAVER_SNOW_WORD_2
+	EN	AND A VERY
+
+PLUGIN_SCREENSAVER_SNOW_WORD_3
+	EN	HAPPY
+
+PLUGIN_SCREENSAVER_SNOW_WORD_4
+	EN	NEW YEAR !
 '};
 
 ##################################################
@@ -145,8 +168,8 @@ my %menuParams = (
 	}
 	,catdir('snow','PLUGIN_SCREENSAVER_SNOW_STYLE') => {
 		'useMode' => 'INPUT.List'
-		,'listRef' => [0,1,2,3,4]
-		,'externRef' => [ 'PLUGIN_SCREENSAVER_SNOW_STYLE_0','PLUGIN_SCREENSAVER_SNOW_STYLE_1','PLUGIN_SCREENSAVER_SNOW_STYLE_2','PLUGIN_SCREENSAVER_SNOW_STYLE_3','PLUGIN_SCREENSAVER_SNOW_STYLE_4']
+		,'listRef' => [1,2,3,4,5,6]
+		,'externRef' => [ 'PLUGIN_SCREENSAVER_SNOW_STYLE_1','PLUGIN_SCREENSAVER_SNOW_STYLE_2','PLUGIN_SCREENSAVER_SNOW_STYLE_3','PLUGIN_SCREENSAVER_SNOW_STYLE_4','PLUGIN_SCREENSAVER_SNOW_STYLE_5','PLUGIN_SCREENSAVER_SNOW_STYLE_6']
 		,'stringExternRef' => 1
 		,'header' => 'PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE'
 		,'stringHeader' => 1
@@ -214,7 +237,7 @@ sub setMode {
 	}
 
 	# install prefs
-	Slim::Utils::Prefs::clientSet($client,'snowStyle',4)
+	Slim::Utils::Prefs::clientSet($client,'snowStyle',6)
 	    unless defined Slim::Utils::Prefs::clientGet($client,'snowStyle');
 	Slim::Utils::Prefs::clientSet($client,'snowQuantity',1)
 	    unless defined Slim::Utils::Prefs::clientGet($client,'snowQuantity');
@@ -273,7 +296,7 @@ sub setScreensaverSnowMode() {
 	$wasDoubleSize{$client} = Slim::Utils::Prefs::clientGet($client,'doublesize');
 	Slim::Utils::Prefs::clientSet($client,'doublesize',0);
 	# save time on later lookups - we know these can't change while we're active
-	$snowStyle{$client} = Slim::Utils::Prefs::clientGet($client,'snowStyle') || 4;
+	$snowStyle{$client} = Slim::Utils::Prefs::clientGet($client,'snowStyle') || 6;
 	$snowQuantity{$client} = Slim::Utils::Prefs::clientGet($client,'snowQuantity') || 1;
 }
 
@@ -288,24 +311,30 @@ sub screensaverSnowlines {
 	my ($line1, $line2) = ('','');
 	my $onlyInSpaces = 0;
 	my $simple = 0;
+	my $words = 0;
 	my $style = $snowStyle{$client};
 	
-	if($style == 4) {
+	if($style == 5) {
 	    # automatic
 	    if (Slim::Player::Source::playmode($client) eq "pause") {
-		$style = 3; # Just snow when paused
+		$style = 4; # Just snow when paused
 	    } elsif (Slim::Player::Source::playmode($client) eq "stop") {
-		$style = 3; # Just snow when stopped
+		$style = 4; # Just snow when stopped
 	    } else {
-		$style = 0; # Now Playing when playing
+		$style = 1; # Now Playing when playing
 	    }
 	}
 
-	if($style == 0 || $style == 1) {
+	if($style == 6) {
+	    $style = 4; # Just snow
+	    $words = 2; # With words
+	}
+
+	if($style == 1 || $style == 2) {
 		# Now Playing
 		($line1, $line2) = Slim::Display::Display::renderOverlay(&Slim::Buttons::Playlist::currentSongLines($client));
-		$onlyInSpaces = ($style == 0);
-	} elsif($style == 2) {
+		$onlyInSpaces = ($style == 1);
+	} elsif($style == 3) {
 		# Date/Time
 		($line1, $line2) = Slim::Display::Display::renderOverlay(&Slim::Buttons::Common::dateTime($client));
 		$onlyInSpaces = 1;
@@ -313,11 +342,11 @@ sub screensaverSnowlines {
 		# Just snow
 		$simple = 1;
 	}
-	($line1, $line2) = letItSnow($client, $line1, $line2, $onlyInSpaces, $simple);
+	($line1, $line2) = letItSnow($client, $line1, $line2, $onlyInSpaces, $simple, $words);
 	return ($line1, $line2);
 }
 
-Slim::Hardware::VFD::setCustomChar('star01',
+Slim::Hardware::VFD::setCustomChar('snow01',
                                  ( 0b00000010,
                                    0b00000111,
                                    0b00000010,
@@ -326,7 +355,7 @@ Slim::Hardware::VFD::setCustomChar('star01',
                                    0b00000000,
                                    0b00000000,
                                    0b00000000 ));
-Slim::Hardware::VFD::setCustomChar('star00',
+Slim::Hardware::VFD::setCustomChar('snow00',
                                  ( 0b00001000,
                                    0b00011100,
                                    0b00001000,
@@ -335,7 +364,7 @@ Slim::Hardware::VFD::setCustomChar('star00',
                                    0b00000000,
                                    0b00000000,
                                    0b00000000 ));
-Slim::Hardware::VFD::setCustomChar('star11',
+Slim::Hardware::VFD::setCustomChar('snow11',
                                  ( 0b00000000,
                                    0b00000000,
                                    0b00000010,
@@ -344,7 +373,7 @@ Slim::Hardware::VFD::setCustomChar('star11',
                                    0b00000000,
                                    0b00000000,
                                    0b00000000 ));
-Slim::Hardware::VFD::setCustomChar('star10',
+Slim::Hardware::VFD::setCustomChar('snow10',
                                  ( 0b00000000,
                                    0b00000000,
                                    0b00001000,
@@ -353,7 +382,7 @@ Slim::Hardware::VFD::setCustomChar('star10',
                                    0b00000000,
                                    0b00000000,
                                    0b00000000 ));
-Slim::Hardware::VFD::setCustomChar('star21',
+Slim::Hardware::VFD::setCustomChar('snow21',
                                  ( 0b00000000,
                                    0b00000000,
                                    0b00000000,
@@ -362,7 +391,7 @@ Slim::Hardware::VFD::setCustomChar('star21',
                                    0b00000111,
                                    0b00000010,
                                    0b00000000 ));
-Slim::Hardware::VFD::setCustomChar('star20',
+Slim::Hardware::VFD::setCustomChar('snow20',
                                  ( 0b00000000,
                                    0b00000000,
                                    0b00000000,
@@ -370,6 +399,33 @@ Slim::Hardware::VFD::setCustomChar('star20',
                                    0b00001000,
                                    0b00011100,
                                    0b00001000,
+                                   0b00000000 ));
+Slim::Hardware::VFD::setCustomChar('snow7',
+                                 ( 0b00001000,
+                                   0b00011100,
+                                   0b00001000,
+                                   0b00000000,
+                                   0b00001000,
+                                   0b00011100,
+                                   0b00001000,
+                                   0b00000000 ));
+Slim::Hardware::VFD::setCustomChar('snow8',
+                                 ( 0b00000000,
+                                   0b00000000,
+                                   0b00001000,
+                                   0b00011100,
+                                   0b00001010,
+                                   0b00000111,
+                                   0b00000010,
+                                   0b00000000 ));
+Slim::Hardware::VFD::setCustomChar('snow9',
+                                 ( 0b00001000,
+                                   0b00011100,
+                                   0b00001000,
+                                   0b00000000,
+                                   0b00000010,
+                                   0b00000111,
+                                   0b00000010,
                                    0b00000000 ));
 
 sub tick {
@@ -388,14 +444,186 @@ sub insertChar {
 	($col < (40-$len) ? Slim::Hardware::VFD::subString($line, $col+$len, 40 - $len - $col) : '');
 }
 
+#sub drawFlake {
+#    my $bigrow = shift;
+#    my $bigcol = shift;
+#    my $onlyInSpaces = shift;
+#    my @lines = (shift, shift);
+#
+#    my $row = int($bigrow / 3);
+#    my $col = int($bigcol / 2);
+#    my $sym = Slim::Hardware::VFD::symbol('snow' . ($bigrow - $row * 3) . ($bigcol - $col * 2));
+#    
+#    if(! $onlyInSpaces
+#       ||
+#       Slim::Hardware::VFD::subString($lines[$row], $col, 1) eq ' ') {
+#	$lines[$row] = insertChar($lines[$row], $sym, $col, 1);
+#    }
+#    return @lines;
+#}
+
+my %flakeMap = (0 => ' ',
+		1 => Slim::Hardware::VFD::symbol('snow00'),
+		2 => Slim::Hardware::VFD::symbol('snow10'),
+		4 => Slim::Hardware::VFD::symbol('snow20'),
+		8 => Slim::Hardware::VFD::symbol('snow01'),
+		16 => Slim::Hardware::VFD::symbol('snow11'),
+		32 => Slim::Hardware::VFD::symbol('snow21'),
+		5 => Slim::Hardware::VFD::symbol('snow7'),
+		34 => Slim::Hardware::VFD::symbol('snow8'),
+		33 => Slim::Hardware::VFD::symbol('snow9'),
+		);
+
+my %letters = (A => [3, [2], [], [0,4], [0,2,4], [], [0,4] ],
+	       B => [3, [0,2], [4], [0,2], [0], [4], [0,2] ],
+	       C => [3, [2,4], [1], [], [1], [], [2,4] ],
+	       D => [3, [0,2], [4], [0], [0,4], [], [0,2] ],
+	       E => [3, [0,2,4], [], [0,2], [0], [], [0,2,4] ],
+	       F => [3, [0,2,4], [], [0], [0,2], [], [0] ],
+	       G => [3, [2,4], [1], [], [1,4], [], [2,4] ],
+	       H => [3, [0,4], [], [0,2,4], [0,4], [], [0,4] ],
+	       I => [1, [0], [], [0], [0], [], [0] ],
+	       J => [3, [0,2,4], [], [2], [2], [0], [1,2] ],
+	       K => [3, [0,4], [], [0,2], [0,3], [], [0,4] ],
+	       L => [3, [0], [], [0], [0], [], [0,2,4] ],
+	       M => [4, [0,6], [2,4], [0,3,6], [0,6], [], [0,6] ],
+	       N => [3, [0,4], [], [0,2,4], [0,3,4], [], [0,4] ],
+	       O => [3, [2], [], [0,4], [0,4], [], [2] ],
+	       P => [3, [0,2], [], [0,4], [0,2], [], [0] ],
+	       Q => [3, [2], [], [0,4], [0,4], [], [2,5] ],
+	       R => [3, [0,2], [], [0,4], [0,2], [], [0,4] ],
+	       S => [3, [2,4], [1], [2], [4], [], [1,3] ],
+	       T => [3, [0,2,4], [], [2], [2], [], [2] ],
+	       U => [3, [0,4], [], [0,4], [0,4], [], [1,3] ],
+	       V => [4, [0,6], [], [1,5], [2,4], [], [3] ],
+	       W => [3, [0,4], [], [0,2,4], [0,2,4], [], [1,3] ],
+	       X => [3, [0,4], [], [1,3], [2,4], [], [0,5] ],
+	       Y => [3, [0,4], [], [1,3], [2], [], [2] ],
+	       Z => [3, [0,2,4], [], [3], [2], [], [0,2,4] ],
+	       ' ' => [0, [], [], [], [], [], [] ],
+	       '!' => [1, [0], [], [0], [], [], [0] ],
+	       );
+
+sub paintFlake {
+    my $bigrow = shift;
+    my $bigcol = shift;
+    my $torender = shift;
+    my $onlyIfCanRender = shift;
+    my $onlyInSpaces = shift;
+    my $lines = shift;
+
+    my $row = int($bigrow / 3);
+    my $col = int($bigcol / 2);
+    my $bit = (1 << (($bigrow - $row * 3) + 3 * ($bigcol - $col * 2)));
+    
+    if(! $onlyInSpaces
+       ||
+       Slim::Hardware::VFD::subString($lines->[$row], $col, 1) eq ' ') {
+	if($torender->[$row][$col] != -1) {
+	    return 0 if($onlyIfCanRender && !exists($flakeMap{($torender->[$row][$col]) | $bit}));
+	    $torender->[$row][$col] |= $bit;
+	} else {
+	    $torender->[$row][$col] = $bit;
+	}
+	return 1;
+    } 
+    return 0;
+}
+
+sub renderFlakes {
+    my $torender = shift;
+    my $lines = shift;
+    my $row;
+    my $col;
+    my @newlines = ('', '');;
+
+    foreach $row (0,1) {
+	foreach $col (0..39) {
+	    my $bits = $torender->[$row][$col];
+	    if($bits == -1) {
+		$newlines[$row] .= Slim::Hardware::VFD::subString($lines->[$row], $col, 1);
+	    } elsif(exists $flakeMap{$bits}) {
+		$newlines[$row] .= $flakeMap{$bits};
+	    } else {
+		print "No symbol for $bits\n";
+		$newlines[$row] .= '*';
+	    }
+	}
+    }
+    return @newlines;
+}
+
+my $holdTime = 70;
+
+sub paintWord {
+    my $word = shift;
+    my $state = shift;
+    my $offsets = shift;
+    my $torender = shift;
+    my $lines = shift;
+    my @text;
+    my $letter;
+    my $row;
+    my $col;
+	
+    my $totallen = -1;
+    map {$totallen += @{$letters{$_}}[0] + 1} (split //, $word);
+    
+    my $startcol = 2 * int((40 - $totallen) / 2);
+    
+    # Wipe out any falling snow under the letters
+    foreach $row (0..1) {
+	foreach $col (0..($totallen-1)) {
+	    $torender->[$row][$startcol/2+$col] = 0;
+	}
+    }
+    
+    my $exiting = 0;
+    if($state > $holdTime) {
+	$state -= $holdTime;
+	$exiting = 1;
+    }
+
+    my $paintedSomething = 0;
+
+    foreach $letter (split //, $word) {
+	my $charwidth = @{$letters{$letter}}[0];
+	foreach $row (0..5) {
+	    foreach $col (@{$letters{$letter}[$row+1]}) {
+		my $outrow = 3 * $row - 15 + $state - $offsets->[int($col/2)];
+		if(!$exiting) {
+		    $outrow = $row if($outrow > $row); # stop at correct row
+		} else {
+		    $outrow = $row if($outrow < $row); # start at correct row
+		}
+
+		if($outrow >= 0 && $outrow < 6) {
+		    paintFlake($outrow, $startcol + $col, $torender, 0, 0, $lines);
+		    $paintedSomething = 1;
+		}
+	    }
+	}
+	$startcol += $charwidth * 2 + 2;
+    }
+
+    return $paintedSomething;
+}
+
+my %wordState;
+my %word;
+my %offsets;
+my %wordIndex;
+
 sub letItSnow {
 	my $client = shift;
 	my @lines = (shift, shift);
 	my $onlyInSpaces = shift;
 	my $simple = shift;
-	
+	my $showWords = shift;
+
 	$lastTime{$client} = defined($lastTime{$client}) ? $lastTime{$client} : 0;
-	if (Time::HiRes::time() - $lastTime{$client} > 0.25) {
+	my $animate = (Time::HiRes::time() - $lastTime{$client} > 0.25);
+	if($animate) {
 		$lastTime{$client} = Time::HiRes::time();
 		my $flake;
 		foreach $flake (@{$flakes{$client}}) {
@@ -427,19 +655,48 @@ sub letItSnow {
 		$lines[$i] = Slim::Hardware::VFD::subString($lines[$i] . (' ' x 40), 0, 40);
 	}
 
-	foreach my $flake (@{$flakes{$client}}) {
-		my $row = int(@{$flake}[0] / 3);
-		my $col = int(@{$flake}[1] / 2);
-		my $sym = Slim::Hardware::VFD::symbol('star' . (@{$flake}[0] - $row * 3) . (@{$flake}[1] - $col * 2));
-	
-		if(! $onlyInSpaces
-		   ||
-		   Slim::Hardware::VFD::subString($lines[$row], $col, 1) eq ' ') {
-		    $lines[$row] = insertChar($lines[$row], $sym, $col, 1);
-		}
+	my $torender = [[-1,-1], [-1,-1]];
+	my $row;
+	my $col;
+	foreach $row (0..1) {
+	    foreach $col (0..39) {
+		$torender->[$row][$col] = -1;
+	    }
 	}
 
+	foreach my $flake (@{$flakes{$client}}) {
+	    paintFlake(@{$flake}[0], @{$flake}[1], $torender, 1, $onlyInSpaces, \@lines);
+	}
+	    
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.25, \&tick);
+
+	if($showWords) {
+	    if(!exists $wordState{$client}) {
+		$wordState{$client} = -1; 
+		$wordIndex{$client} = 0;
+	    }
+	    
+	    if($wordState{$client} == -1) {
+		# Not showing a word right now. Should we start next time?
+		$word{$client} = string('PLUGIN_SCREENSAVER_SNOW_WORD_' . $wordIndex{$client});
+		$wordIndex{$client}++;
+		$wordIndex{$client} = 0 if($wordIndex{$client} == string('PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS'));
+		$wordState{$client} = 0;
+		foreach $col (0..39) {
+		    $offsets{$client}->[$col] = int(rand(24));
+		}
+	    } else {
+		my $paintedSomething = paintWord($word{$client}, $wordState{$client}, $offsets{$client}, $torender, \@lines);
+		$wordState{$client} ++ if($animate);
+		
+		if($wordState{$client} > $holdTime && !$paintedSomething) {
+		    # finished with this word. Resume normal snowing
+		    $wordState{$client} = -1;
+		}
+	    }
+	}
+
+	@lines = renderFlakes($torender, \@lines);
 
 	return @lines;
 }

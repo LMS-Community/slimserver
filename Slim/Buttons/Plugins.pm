@@ -9,6 +9,8 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
+# $ Id: this module $
+#
 package Slim::Buttons::Plugins;
 use strict;
 use File::Spec::Functions qw(:ALL);
@@ -155,6 +157,7 @@ sub read_plugins {
 			if (!$@ && $strings) { Slim::Utils::Strings::addStrings($strings); }
 			# load screensaver, if one exists.
 			eval { &{$fullname . "::screenSaver"}() };
+			if ($@ && !($@ =~ m/\:\:screenSaver/)) { $::d_plugins && msg("No screensaver for $fullname: " . $@);}
 			my $names;
 			eval {$names = &{$fullname . "::getDisplayName"}()};
 			if (!$@ && $names) {
