@@ -429,7 +429,7 @@ sub processHTTP {
 				$params->{'webroot'} = "/slimserver/"
 			}
 			
-			if ($path =~ m|/([a-zA-Z]+)$| && isaSkin($1)) {
+			if ($path =~ m|/([a-zA-Z0-9]+)$| && isaSkin($1)) {
 					$::d_http && msg("Alternate skin $1 requested, redirecting to $uri/ append a slash.\n");
 					$response->code(RC_MOVED_PERMANENTLY);
 					$response->header('Location' => $uri . '/');
@@ -444,7 +444,9 @@ sub processHTTP {
 				$::d_http && msg("Alternate skin $desiredskin requested\n");
 
 				my $skinname = isaSkin($desiredskin);
+				
 				if ($skinname) {
+					$::d_http && msg("Rendering using $skinname\n");
 					$params->{'skinOverride'} = $skinname;
 					$params->{'webroot'} = $params->{'webroot'} . "$skinname/";
 					$path =~ s{^/.+?/}{/};
