@@ -1,5 +1,5 @@
 package Slim::Buttons::InstantMix;
-#$Id: InstantMix.pm,v 1.6 2004/11/25 03:51:02 kdf Exp $
+#$Id: InstantMix.pm,v 1.7 2004/11/27 06:51:54 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -72,8 +72,11 @@ my %functions = (
 		} else {
 			$line1 = string('NOW_PLAYING_FROM')
 		}
-		$line2 = string('MOODLOGIC_INSTANT_MIX');
-
+		if (Slim::Music::MoodLogic::useMoodLogic()) {
+			$line2 = string('MOODLOGIC_INSTANT_MIX');
+		} else {
+			$line2 = string('MUSICMAGIC_INSTANT_MIX');
+		}
 		$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')));
 		
 		Slim::Control::Command::execute($client, ["playlist", $append ? "append" : "play", $instantMix[0]]);

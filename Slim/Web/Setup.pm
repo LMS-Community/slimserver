@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.112 2004/11/25 03:51:06 kdf Exp $
+# $Id: Setup.pm,v 1.113 2004/11/27 06:51:53 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1124,7 +1124,7 @@ sub initSetupConfig {
 	,'server' => {
 		'children' => ['server','interface','behavior',
 		'itunes','formats',
-		'formatting','security','performance','network','debug']
+		'formatting','security','performance','network','debug',undef,undef]
 		,'title' => string('SERVER_SETTINGS')
 		,'singleChildLinkText' => string('ADDITIONAL_SERVER_SETTINGS')
 		,'preEval' => sub {
@@ -1137,18 +1137,18 @@ sub initSetupConfig {
 
 				if (Slim::Music::MoodLogic::canUseMoodLogic()) {
 					$pageref->{'GroupOrder'}[2] = 'moodlogic';
-					push @{$pageref->{'children'}}, 'moodlogic' if $pageref->{'children'}[-1] ne 'moodlogic';
+					$pageref->{'children'}[12] = 'moodlogic';
 				} else {
 					$pageref->{'GroupOrder'}[2] = undef;
-					pop @{$pageref->{'children'}} if $pageref->{'children'}[-1] eq 'moodlogic';
+					$pageref->{'children'}[12] = undef;
 				}
 				
 				if (Slim::Music::MusicMagic::canUseMusicMagic()) {
 					$pageref->{'GroupOrder'}[3] = 'musicmagic';
-					push @{$pageref->{'children'}}, 'musicmagic' if $pageref->{'children'}[-1] ne 'musicmagic';
+					$pageref->{'children'}[13] = 'musicmagic';
 				} else {
 					$pageref->{'GroupOrder'}[3] = undef;
-					pop @{$pageref->{'children'}} if $pageref->{'children'}[-1] eq 'musicmagic';
+					$pageref->{'children'}[13] = undef;
 				}
 
 				$paramref->{'versionInfo'} = string('SERVER_VERSION') . string("COLON") . $::VERSION;
@@ -2401,6 +2401,7 @@ sub buildLinkList {
 	my $pagenum = 0;
 	my %linkinfo;
 	foreach my $page (@pages) {
+		next if !defined $page;
 		%linkinfo = ();
 		#usePrefix is true for all but first item
 		$linkinfo{'usePrefix'} = $pagenum;
