@@ -103,6 +103,12 @@
 
 <h4>Notes</h4>
 <ul>
+<li>The Security settings of the SlimServer preferences apply to CLI connections when they are established. A
+  change in security settings do not affect established connections. The connection is only accepted from
+  allowed hosts. If password protection is enabled, the &quot;<a href="#login">login</a>&quot; command must be the first command sent after
+  the connection. Any error in the user and/or password, or using any other command as the first one, results in
+  the server disconnecting.</li>
+
 <li>Commands that use paths to songs or playlists (<code>&lt;item&gt;</code> parameters below)  can use 
   relative paths from the root of the Music Library folder to specify songs.  For example, if the Music Library is 
   specified as &quot;D:\mymusic&quot; and you'd like to refer to a song in that folder named &quot;foo.mp3&quot;  you 
@@ -160,6 +166,20 @@ information. For example:</li>
 
 <hr>
 <h4 id="GC">General commands</h4>
+
+<p id="login"><strong><code>login &lt;user&gt; &lt;password&gt;</code></strong></p>
+<p>The &quot;login&quot; command allows the caller to authenticate itself on the server, as
+  defined in the Security pane of the SlimServer preferences. Like any other command, the user
+  and password must be escaped. If successful, the server replaces the password with 6 star characters.
+  If unsuccessful, the server disconnects.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;login user correctpassword&lt;LF&gt;&quot;<br>
+    Response: &quot;login user ******&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;login user wrongpassword&lt;LF&gt;&quot;<br>
+    Response:  (Connection terminated)</p>
+  </p>
+</blockquote>
 
 <p><strong><code>debug &lt;debugflag&gt; &lt;0|1|?|&gt;</code></strong></p>
 <p>The &quot;debug&quot; command allows the caller to query, clear, set or toggle 
@@ -713,7 +733,7 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td>tags</td>
-		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is all info except the url or id, depending on the given parameter.</td>
+		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is all info except the url, depending on the given parameter.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
@@ -735,8 +755,9 @@ preferences values.</p>
 		<td>Number of results returned by the query, that is, total number of elements to return for this song.</td>
 	</tr>
 	<tr>
+		<td></td>
 		<td>id</td>
-		<td>Track ID</td>
+		<td>Track ID.</td>
 	</tr>
 	<tr>
 		<td></td>
@@ -900,7 +921,7 @@ preferences values.</p>
 		<td>tags</td>
 		<td>Determines which tags are returned. Each returned tag is identified by a letter (see command 
 		    &quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible fields and their identifying 
-		    letter). The default tags value for this command is &quot;galdx&quot;.</td>
+		    letter). The default tags value for this command is &quot;gald&quot;.</td>
 	</tr>
 	<tr>
 		<td>search</td>
@@ -930,10 +951,6 @@ preferences values.</p>
 	<tr>
 		<td><em>For each title:</em></td>
 		<td></td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;<b>id</b></td>
-		<td>Track ID (even if x is not specified by tags:). Item delimiter.</td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;<em>Tags</em></td>
@@ -970,7 +987,7 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td>tags</td>
-		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is &quot;galdx&quot;.</td>
+		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is &quot;gald&quot;.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
@@ -993,12 +1010,12 @@ preferences values.</p>
 		<td></td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;<em>If item is path:</em></td>
-		<td></td>
+		<td>&nbsp;&nbsp;<b>index</b></td>
+		<td>Item index, zero-based. Item delimiter.</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;&nbsp;&nbsp;<b>index</b></td>
-		<td>Item index, zero-based. Item delimiter.</td>
+		<td>&nbsp;&nbsp;<em>If item is path:</em></td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;&nbsp;&nbsp;item</td>
@@ -1011,10 +1028,6 @@ preferences values.</p>
 	<tr>
 		<td>&nbsp;&nbsp;<em>If item is song:</em></td>
 		<td></td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;&nbsp;&nbsp;<b>id</b></td>
-		<td>Track ID (even if x is not specified by tags:). Item delimiter.</td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;&nbsp;&nbsp;<em>Tags</em></td>
@@ -1384,7 +1397,7 @@ to &quot;-&quot; to have the command return the playlist data starting from the 
 		<td>tags</td>
 		<td>Determines which tags are returned. Each returned tag is identified by a letter (see command 
 		    &quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible fields and their identifying 
-		    letter). The default tags value for this command is &quot;galdx&quot;.</td>
+		    letter). The default tags value for this command is &quot;gald&quot;.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
@@ -1436,11 +1449,11 @@ to &quot;-&quot; to have the command return the playlist data starting from the 
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;sleep</td>
-		<td>If set to sleep, the amount it was set to.</td>
+		<td>If set to sleep, the amount (in seconds) it was set to.</td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;will_sleep_in</td>
-		<td>Minutes lefts until sleeping. Only if set to sleep.</td>
+		<td>Seconds left until sleeping. Only if set to sleep.</td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;mixer volume</td>

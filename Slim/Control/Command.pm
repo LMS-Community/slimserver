@@ -365,7 +365,7 @@ sub execute {
  	
 		my $label = 'track';
  		my $sort  = 'title';
- 		my $tags  = 'galdx';
+ 		my $tags  = 'gald';
  		
  		my %params = parseParams($parrayref, \@returnArray);
 
@@ -385,12 +385,8 @@ sub execute {
  		
  		$sort = $params{'sort'} if defined($params{'sort'});
  		$tags = $params{'tags'} if defined($params{'tags'});
- 		#always include id
- 		if ($tags !~ /x/){
- 			$tags = $tags . "x";
- 		}
  		
- 		if ($sort eq "tracknum") {
+ 		if ($sort eq "tracknum" && !($tags =~ /t/)) {
  			$tags = $tags . "t";
  		}
  		
@@ -422,9 +418,8 @@ sub execute {
  	} elsif ($p0 eq "playlists") {
 
  		$pushParams = 0;
- #		${$pcmdIsQuery} = 1;
  	
- 		my $tags = "galdx";
+ 		my $tags = "gald";
  		my $dir = "__playlists";
  		my $search = "*";
  		
@@ -513,9 +508,10 @@ sub execute {
  					
  					next if $eachitem =~ /__current.m3u$/;
  					
+					push @returnArray, "index:" . ($cur);
+
  					if (Slim::Music::Info::isList($eachitem)) {
 
- 						push @returnArray, "index:" . ($cur);
  						push @returnArray, "item:" . Slim::Music::Info::standardTitle(undef, $eachitem);
  						push @returnArray, "dir:"  . Slim::Utils::Misc::descendVirtual($dir, $eachitem, $cur);
 
@@ -658,12 +654,20 @@ sub execute {
 					$p1 = 0;
 				}
 			} else {
-				Slim::Utils::Timers::killTimers($client, \&gotoSleep);
+				Slim::Utils::Timers::killTimers($client, \&sleepStartFade);
+				Slim::Utils::Timers::killTimers($client, \&sleepPowerOff);
 				
 				if ($p1 != 0) {
-					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $p1, \&gotoSleep);
-					$client->sleepTime(Time::HiRes::time() + $p1);
-					$client->currentSleepTime($p1 / 60);
+					my $fadeTime = 0;
+					$fadeTime = $p1 - 40 if ($p1>40);
+					my $offTime = $p1;
+				
+					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $offTime, \&sleepPowerOff);
+					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $fadeTime, \&sleepStartFade);
+
+
+					$client->sleepTime(Time::HiRes::time() + $offTime);
+					$client->currentSleepTime($offTime / 60);
 				} else {
 					$client->sleepTime(0);
 					$client->currentSleepTime(0);
@@ -1422,7 +1426,7 @@ sub execute {
 
  			$pushParams = 0;
  
- 			my $tags = "galdx";
+ 			my $tags = "gald";
  			
  			my %params = parseParams($parrayref, \@returnArray);
  			
@@ -1739,15 +1743,29 @@ sub singletonRef {
 	}
 }
 
-sub gotoSleep {
+sub sleepStartFade {
 	my $client = shift;
 
+	$::d_command && msg("sleepStartFade()\n");
+	
 	if ($client->isPlayer()) {
-		$client->fade_volume(-60, \&turnItOff, [$client]);
+		$client->fade_volume(-60, undef, [$client]);
 	}
+
+#	$client->sleepTime(0);
+#	$client->currentSleepTime(0);
+}
+
+sub sleepPowerOff {
+	my $client = shift;
+	
+	$::d_command && msg("sleepPowerOff()\n");
 
 	$client->sleepTime(0);
 	$client->currentSleepTime(0);
+	
+	execute($client, ['stop', 0]);
+	execute($client, ['power', 0]);
 }
 
 sub mute {
@@ -1755,13 +1773,6 @@ sub mute {
 	$client->mute();
 }
 
-sub turnItOff {
-	my $client = shift;
-	
-	# Turn off quietly
-	execute($client, ['stop', 0]);
-	execute($client, ['power', 0]);
-}
 
 sub parseSearchTerms {
 	my $terms = shift;
@@ -1808,7 +1819,7 @@ sub parseListRef {
 
 # This maps the extended CLI commands to methods on Track.
 # Allocation map: capital letters are still free:
-#  a b c d e f g h i j k l m n o p q r s t u v x y z
+#  a b c d e f g h i j k l m n o p q r s t u v X y z
 
 our %cliTrackMap = (
 	'g' => 'genre',
@@ -1838,7 +1849,6 @@ our %cliTrackMap = (
 # e album_id
 # p genre_id
 # s artist_id
-# x id
 
 sub pushSong {
 	my $pathOrObj = shift;
@@ -1854,10 +1864,7 @@ sub pushSong {
 	}
 
 	
-	if ($tags =~ /x/){
-		push @returnArray, sprintf('id:%s', $track->id());
-	}
-	
+	push @returnArray, sprintf('id:%s', $track->id());	
 	push @returnArray, sprintf('title:%s', $track->title());
 	
 	for my $tag (split //, $tags) {
