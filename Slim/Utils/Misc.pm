@@ -520,7 +520,7 @@ sub virtualToAbsolute {
 	$virtual = Slim::Web::HTTP::unescape($virtual);
 
 	# The incoming may be utf8 - flag it.
-	if ($locale eq 'utf8') {
+	if ($locale eq 'utf8' && $] > 5.007) {
 		Encode::_utf8_on($virtual);
 	}
 
