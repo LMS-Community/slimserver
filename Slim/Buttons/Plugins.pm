@@ -147,6 +147,10 @@ sub read_plugins {
 		my $strings = eval { &{$fullname . "::strings"}() };
 
 		if (!$@ && $strings) {
+
+			# flag strings as UTF8
+			$strings = pack "U0C*", unpack "C*", $strings;
+
 			Slim::Utils::Strings::addStrings(\$strings);
 		}
 
