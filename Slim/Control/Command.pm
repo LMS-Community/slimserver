@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.29 2004/03/12 06:11:22 kdf Exp $
+# $Id: Command.pm,v 1.30 2004/03/18 02:57:15 kdf Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -300,11 +300,17 @@ sub execute {
 
 		} elsif ($p0 eq "power") {
 			if (!defined $p1) {
+				if (Slim::Player::Sync::isSynced($client)) {
+					syncFunction($client,!$client->power(), "power",undef);
+				}
 				$client->power(!$client->power());
 			} elsif ($p1 eq "?") {
 				$p1 = $client->power();
 			} else {
-				$client->power($p1)
+				if (Slim::Player::Sync::isSynced($client)) {
+					syncFunction($client,$p1, "power",undef);
+				}
+				$client->power($p1);
 			}
 
 		} elsif ($p0 eq "playlist") {
@@ -674,6 +680,11 @@ sub syncFunction {
 				}
 				if ($setting eq "volume") {
 					Slim::Display::Display::volumeDisplay($eachclient);
+				}
+			}
+			if (Slim::Utils::Prefs::clientGet($client,'syncPower')) {
+				if ($setting eq "power") {
+					$eachclient->power($newval);
 				}
 			}
 		}

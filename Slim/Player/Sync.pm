@@ -51,6 +51,7 @@ sub syncwith {
 # unsync a client from its buddies
 sub unsync {
 	my $client = shift;
+	my $temp = shift;
 	
 	$::d_sync && msg( $client->id() . ": unsyncing\n");
 	
@@ -109,7 +110,7 @@ sub unsync {
 	}
 	# when we unsync, we stop.
 	Slim::Control::Command::execute($client, ["stop"]);
-	saveSyncPrefs($client);
+	saveSyncPrefs($client,defined $temp);
 }
 
 # sync a given client to another client
@@ -152,6 +153,7 @@ sub sync {
 sub saveSyncPrefs {
 	
 	my $client = shift;
+	my $temp = shift;
 	my $clientID = $client->id();
 	if (isSynced($client)) {
 	
@@ -165,7 +167,7 @@ sub saveSyncPrefs {
 		Slim::Utils::Prefs::clientSet($client,'syncgroupid',$masterID);
 		Slim::Utils::Prefs::clientSet($client->master,'syncgroupid',$masterID);
 		
-	} else {
+	} elsif (!$temp) {
 		$client->syncgroupid(undef);
 		Slim::Utils::Prefs::clientDelete($client,'syncgroupid');
 		$::d_sync && msg("Clearing Sync master for $clientID\n");
@@ -180,12 +182,13 @@ sub restoreSync {
 		my @players = Slim::Player::Client::clients();
 		foreach my $other (@players) {
 			next if ($other eq $client);
+			next if (!$other->power());
 			my $othermasterID = Slim::Utils::Prefs::clientGet($other,'syncgroupid');
 			if ($othermasterID && ($othermasterID eq $masterID)) {
-			  	$client->syncgroupid($masterID);
-			  	$other->syncgroupid($masterID);
-			   	sync($client, $other);
-			   	last;
+				$client->syncgroupid($masterID);
+				$other->syncgroupid($masterID);
+				sync($client, $other);
+				last;
 			}
 		}
 	}

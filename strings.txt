@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.68 2004/03/18 00:36:31 dean Exp $
+# $Id: strings.txt,v 1.69 2004/03/18 02:57:14 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1312,6 +1312,18 @@ SETUP_SYNCVOLUME_DESC
 	NO	Du kan velge å synkronisere lyd nivåene for de synkroniserte spiller eller la dem være uavhengige. Velg nedenfor og trykk Endre.
 	PT	Aqui pode activar ou desactivar a sincronização do volume entre os vários clientes. Altere abaixo e clique em "Modificar"
 	SE	Du kan få dina synkroniserade spelare använda samma volym eller vara oberoende. Gör ditt val och klicka på Ändra.
+
+SETUP_SYNCPOWER_ON
+	EN	Power off/on with group
+
+SETUP_SYNCPOWER_OFF
+	EN	Power off/on separately
+
+SETUP_SYNCPOWER
+	EN	Synchronize Power
+
+SETUP_SYNCPOWER_DESC
+	EN	You can choose to have this player turn off on its own, or turn off as a group with all other players in the group. Make a selection below and click Change.
 
 SETUP_DIGITALVOLUMECONTROL_ON
 	DE	Lautstärkekontrolle der digitalen Ausgabe

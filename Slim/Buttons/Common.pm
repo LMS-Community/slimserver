@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.30 2004/03/10 06:48:34 kdf Exp $
+# $Id: Common.pm,v 1.31 2004/03/18 02:57:14 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -416,11 +416,11 @@ my %functions = (
 		my $button = shift;
 		my $power= undef;
 		if ($button eq 'power_on') {
-			$power = $client->power(1);
+			Slim::Control::Command::execute($client,["power",1]);
 		} elsif ($button eq 'power_off') {
-			$power = $client->power(0);
+			Slim::Control::Command::execute($client,["power",0]);
 		} else {
-			$power = $client->power(!$client->power);
+			Slim::Control::Command::execute($client,["power"]);
 		}
 	},
 	'shuffle' => sub  {
@@ -973,6 +973,7 @@ sub paramOrPref {
 		return Slim::Utils::Prefs::clientGet($client,$paramname);
 	}
 }
+
 # pushMode takes the following parameters:
 #   client - reference to a client structure
 #   setmode - name of mode we are pushing into

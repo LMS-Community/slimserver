@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.49 2004/03/18 00:42:43 dean Exp $
+# $Id: Setup.pm,v 1.50 2004/03/18 02:57:14 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -134,12 +134,14 @@ sub initSetupConfig {
 					if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0))  {
 						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[2] = 'synchronize';
 						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = 'syncVolume';
+						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[4] = 'syncPower';
 						my $syncGroupsRef = syncGroups($client);
 						$pageref->{'Prefs'}{'synchronize'}{'options'} = $syncGroupsRef;
 						$pageref->{'Prefs'}{'synchronize'}{'validateArgs'} = [$syncGroupsRef];
 					} else {
 						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[2] = undef;
 						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = undef;
+						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[4] = undef;
 					}
 				}
 		,'postChange' => sub {
@@ -169,7 +171,7 @@ sub initSetupConfig {
 		#,'template' => 'setup_player.html'
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['playername','playingDisplayMode','synchronize','syncVolume','digitalVolumeControl','maxBitrate'] 
+					'PrefOrder' => ['playername','playingDisplayMode','synchronize','syncVolume','syncPower','digitalVolumeControl','maxBitrate'] 
 				}
 			,'Brightness' => {
 					'PrefOrder' => ['powerOnBrightness','powerOffBrightness']
@@ -267,6 +269,27 @@ sub initSetupConfig {
 									,'0' => string('SETUP_SYNCVOLUME_OFF')
 								}
 						}			
+			,'syncPower' => {
+							'validate' => \&validateTrueFalse  
+							,'options' => {
+									'1' => string('SETUP_SYNCPOWER_ON')
+									,'0' => string('SETUP_SYNCPOWER_OFF')
+								}
+							,'onChange' => sub {
+								my ($client,$changeref,$paramref,$pageref) = @_;
+								my $value = $changeref->{'syncPower'}{'new'};
+								my @buddies = Slim::Player::Sync::syncedWith($client);
+								if (scalar(@buddies) > 0) {
+									foreach my $eachclient (@buddies) {
+										if (!$value && !$eachclient->power()) {
+											#temporarily unsync off players if on/off set to separate
+											Slim::Player::Sync::unsync($client,1);
+										} 
+										Slim::Utils::Prefs::clientSet($eachclient,'syncPower',$value);
+									}
+								}
+							}
+						}
 			,'digitalVolumeControl' => {
 							'validate' => \&validateTrueFalse  
 							,'options' => {
