@@ -34,14 +34,6 @@ BEGIN {
 
 # We inherit new() completely from our parent class.
 
-sub init {
-	my $client = shift;
-
-	$client->SUPER::init();
-	# Ensure that a new client is stopped
-	$client->stop();
-}
-
 # squeezebox does not need an update here, so a noop is OK.
 sub refresh {
 	# my $client = shift;
@@ -86,6 +78,9 @@ sub reconnect {
 			Slim::Player::Source::playmode($client, "play", $bytes_received);
 		} elsif ($client->playmode() eq 'pause') {
 			Slim::Player::Source::playmode($client, "stop");
+		} elsif ($client->playmode() eq 'stop') {
+			# Ensure that a new client is stopped
+			$client->stop();
 		}
 	}
 
