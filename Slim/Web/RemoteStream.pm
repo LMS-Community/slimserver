@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.23 2004/04/17 14:57:40 dean Exp $
+# $Id: RemoteStream.pm,v 1.24 2004/04/22 20:41:09 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -38,12 +38,19 @@ sub openRemoteStream {
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
 
  	my $timeout = Slim::Utils::Prefs::get('remotestreamtimeout');
+	my $proxy = Slim::Utils::Prefs::get('webproxy');
+
+	my $peeraddr = "$server:$port";
+	if ($proxy) {
+	    $peeraddr = $proxy;
+	    $path = "http://$server:$port$path";
+	}
 	
 	$::d_remotestream && msg("Opening connection to $url: [$server on port $port with path $path with timeout $timeout]\n");
 	
    	my $sock = IO::Socket::INET->new(
 
-		PeerAddr  => "$server:$port",
+		PeerAddr  => $peeraddr,
  		LocalAddr => $main::localStreamAddr,
  		Timeout   => $timeout,
 

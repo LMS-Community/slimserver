@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.59 2004/04/19 19:31:05 grotus Exp $
+# $Id: Setup.pm,v 1.60 2004/04/22 20:41:09 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1065,7 +1065,7 @@ sub initSetupConfig {
 					'PrefOrder' => ['displaytexttimeout',
 							,'composerInArtists','playtrackalbum','artistinalbumsearch', 'ignoredarticles','filesort'
 							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
-							,'savehistory','historylength','checkVersion']
+							,'savehistory','historylength','checkVersion','ignoredisableditunestracks']
 				}
 			}
 		,'Prefs' => {
@@ -1142,6 +1142,13 @@ sub initSetupConfig {
 						,'options' => {
 								'1' => string('SETUP_CHECKVERSION_1')
 								,'0' => string('SETUP_CHECKVERSION_0')
+							}
+					}
+			,'ignoredisableditunestracks' => {
+						'validate' => \&validateTrueFalse
+						,'options' => {
+								'1' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_1')
+								,'0' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_0')
 							}
 					}
 			,'groupdiscs' => {
@@ -1431,23 +1438,6 @@ sub initSetupConfig {
 								,'1' => string('SETUP_CACHE')
 								}
 					}
-			,'useplaylistcache' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'0' => string('SETUP_DONT_CACHE')
-								,'1' => string('SETUP_CACHE')
-								}
-					}
-#			,'animationLevel' => {
-#						'validate' => \&validateInt
-#						,'validateArgs' => [0,3,1,1]
-#						,'options' => {
-#								'0' => string('SETUP_NO_ANIMATIONS')
-#								,'1' => string('SETUP_BRIEF_MESSAGES')
-#								,'2' => string('SETUP_SCREEN_WIPES')
-#								,'3' => string('SETUP_FULL_ANIMATION')
-#								}
-#					}
 			,'lookForArtwork' => {
 						'validate' => \&validateTrueFalse
 						,'options' => {
@@ -1455,13 +1445,6 @@ sub initSetupConfig {
 								,'1' => string('SETUP_LOOKFORARTWORK')
 								}
 					}
-#			,'ignoreMP3Tags' => {
-#						'validate' => \&validateTrueFalse
-#						,'options' => {
-#								'0' => string('SETUP_READMP3TAGS')
-#								,'1' => string('SETUP_IGNOREMP3TAGS')
-#								}
-#					}
 			,'buildItemsPerPass' => {
 						'validate' => \&validateInt
 						}
@@ -1480,7 +1463,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default','TCP_Params','xPL_Params']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['httpport','cliport','mDNSname','remotestreamtimeout']
+					'PrefOrder' => ['webproxy','httpport','cliport','mDNSname','remotestreamtimeout']
 				}
 			,'TCP_Params' => {
 					'PrefOrder' => ['tcpReadMaximum','tcpWriteMaximum','tcpConnectMaximum','udpChunkSize']
@@ -1521,6 +1504,9 @@ sub initSetupConfig {
 					}
 			,'cliport'	=> {
 						'validate' => \&validatePort
+					}
+			,'webproxy'	=> {
+						'validate' => \&validateIPPort
 					}
 			,'mDNSname'	=> {
 							'validateArgs' => [] #will be set by preEval
@@ -1572,7 +1558,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['useinfocache','usetagdatabase']
+					'PrefOrder' => ['usetagdatabase']
 				}
 			}
 		,'Prefs' => {
@@ -1583,14 +1569,7 @@ sub initSetupConfig {
 								,'1' => string('SETUP_SAVE_TAG_INFO')
 							}
 						}
-			,'useinfocache' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'0' => string('SETUP_DONT_CACHE')
-								,'1' => string('SETUP_CACHE')
-								}
-					}
-			}
+		}
 		} #end of setup{'advanced'} hash
 	,'debug' => {
 		'title' => string('DEBUGGING_SETTINGS')
@@ -2480,6 +2459,30 @@ sub validatePort {
 	return $val;
 
 }
+
+sub validateIPPort {
+	my $val = shift;
+
+	if (length($val) == 0) {
+		return $val;
+	}
+	
+	if ($val !~ /^(\d+)\.(\d+)\.(\d+)\.(\d+):(\d+)$/) { 
+		#not formatted properly
+		return undef;
+	}
+
+	if (
+		($1 < 0) || ($2 < 0) || ($3 < 0) || ($4 < 0) || ($5 < 0) ||
+		($1 > 255) || ($2 > 255) || ($3 > 255) || ($4 > 255) || ($5 > 65535)
+		) {
+		# bad number
+		return undef;
+	}
+
+	return $val;
+}
+
 sub validateNumber {
 	my ($val,$low,$high,$setLow,$setHigh) = @_;
 	if ($val !~ /^-?\d+\.?\d*$/) { # this doesn't recognize scientific notation

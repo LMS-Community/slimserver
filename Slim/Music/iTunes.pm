@@ -414,7 +414,7 @@ sub scanFunction {
 			}
 			
 			# skip track if Disabled in iTunes
-			return 1 if $curTrack{'Disabled'};
+			return 1 if $curTrack{'Disabled'} && Slim::Utils::Prefs::get('ignoredisableditunestracks');
 
 			$::d_itunes && msg("got a track named " . $curTrack{'Name'} . "\n");
 			my $kind = $curTrack{'Kind'};
@@ -482,7 +482,6 @@ sub scanFunction {
 					
 					if ($url) {
 						Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
-						Slim::Music::Info::updateGenreCache($url, \%cacheEntry);
 						if ($cacheEntry{'ALBUM'} && !exists $artwork{$cacheEntry{'ALBUM'}} && !defined Slim::Music::Info::cacheItem($url,'THUMB')) {
 							$artwork{$cacheEntry{'ALBUM'}} = $url;
 						}

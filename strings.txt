@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.86 2004/04/22 05:47:09 kdf Exp $
+# $Id: strings.txt,v 1.87 2004/04/22 20:41:05 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -2336,6 +2336,18 @@ SETUP_CHECKVERSION_0
 	PT	Não Verificar
 	SE	Kontrollera INTE automatiskt
 
+SETUP_IGNOREDISABLEDITUNESTRACKS
+	EN	Ignore Songs Disabled in iTunes
+
+SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
+	EN	If SlimServer is using your iTunes Music Library, it can ignore the songs that you have unchecked in iTunes.  If you want to access all the songs in your iTunes Library even if they are unchecked, you can change that setting here.
+
+SETUP_IGNOREDISABLEDITUNESTRACKS_1
+	EN	Ignore songs unchecked in iTunes
+
+SETUP_IGNOREDISABLEDITUNESTRACKS_0
+	EN	Don't ignore songs unchecked in iTunes
+
 SETUP_HISTORYLENGTH
 	DE	Länge des Verlaufs
 	DK	Historiklængde
@@ -2755,50 +2767,6 @@ SETUP_TEMPLATECACHE_DESC
 	PT	O servidor pode criar "cache" do HTML ou das imagens para tornar a interface Web mais rápida. Em situações de desenvolvimento, desligue a "cache".
 	SE	Servern kan spara sina HTML-filer och bilder i minnet för att snabba upp webgränssnittet. Stäng av detta för att underlätta utveckling av webgränssnittet.
 
-SETUP_USEPLAYLISTCACHE
-	DE	Playlist und Verzeichnis im Cache ablegen
-	DK	Cache af playlister og mapper
-	EN	Playlist & Directory Caching
-	ES	Cachear listas discográficas y carpetas
-	FI	Soittolista/Hakemisto välimuisti
-	FR	Mise en cache des listes de lecture et des dossiers
-	NL	Playlist en Folder Caching
-	PT	Cache das Playlists e Directorias
-	SE	Spara låtlistor och mappinformation i minnet
-
-SETUP_USEPLAYLISTCACHE_DESC
-	DE	Der Server kann die Playlist und das Verzeichnis im Cache ablegen um die Navigation zu beschleunigen. Änderungen, wie z. B. hinzugefügte und gelöschte Titel sollten automatisch berücksichtigt werden. Deaktivieren Sie das Ablegen im Cache nur, wenn Änderungen unberücksichtigt bleiben.
-	DK	Serveren kan cache playlister og mapper for at øge hastigheden for navigation. Ændringer, såsom nye eller slettede filer, bør automatisk bliv medtaget. Slå caching fra hvis du opdager at ændringer ikke medtages af serveren.
-	EN	The server can cache playlists and directories to speed up navigation. Changes, such as newly added or deleted files, should be automatically detected. Turn caching off only if you notice that changes are being ignored.
-	ES	El servidor puede cachear listas y carpetas para accelerar navegación. Cambios, por ejemplo ficheros que se han añadido o borrado, deberían detecarse automaticamente. Debe quitar esta opción solamente si vea que cambios no aparezcan.
-	FI	Palvelin voi tallentaa soittolistat ja hakemistot välimuistiin selailun nopeuttamiseksi. Muutokset, kuten lisätyt/poistetut tiedostot huomataan automaattiesti. Kytke asetus pois päältä vain mikäli huomaat toimintahäiriöitä.
-	FR	Le serveur peut mettre en cache les listes de lecture et le contenu du dossier de musique pour accélérer la navigation. Les changements, tels que l'ajout ou la suppression de morceaux, devraient être détectés automatiquement. Ne désactivez cette fonctionnalité que si vous constatez que les changements ne sont pas pris en compte.
-	NL	De server kan een cache aanleggen van playlists en folder om de navigatie te versnellen. Veranderingen, zoals nieuw toegevoegde of verwijderde bestanden worden automatisch gedetecteerd. Zet de cache alleen uit als U merkt dat wijzigingen niet worden waargenomen.
-	PT	O servidor poderá manter uma "cache" das playlists e das directorias para que a navegação seja mais rápida. Se houverem alterações, tais como novos ficheiros ou ficheiros apagados, serão automaticamente detectados. Se notar que as alterações não estão a ser reflectidas, desabilite esta "cache".
-	SE	Servern kan spara låtlistor och mappinformation i minnet för att snabba upp navigering. Ändringar som tillagda eller borttagna filer skall upptäckas automatiskt. Stäng av detta endast om du märker att ändringar inte upptäcks.
-
-SETUP_USEINFOCACHE
-	DE	Ablegen von ID3 und anderen Informationen im Cache
-	DK	Cache af ID3 og anden information
-	EN	ID3 & Other Information Caching
-	ES	Cachear ID3 y otra información
-	FI	ID3 tietojen välimuisti
-	FR	Conservation des repères ID3 et autre information
-	NL	Cache ID3 en andere informatie
-	PT	Cache da informação ID3 ou outra
-	SE	Spara ID3 och övrig information i minnet
-
-SETUP_USEINFOCACHE_DESC
-	DE	Der Server kann die ID3-Tag und andere Informationen im Cache ablegen, um Festplattenzugriffe zu reduzieren und die Navigation zu beschleunigen. Deaktivieren Sie diese Option nur dann, wenn Sie über schnelle Festplatten aber knappen Arbeitsspeicher verfügen.
-	DK	Serveren kan cache ID3-tag- og anden information for at reducerer mængden af disk-adgang og derved øge hastigheden for navigation. Dette er en god ting med mindre du oplever at serveren anvender for meget hukommelse. Slå kun denne funktion fra hvis du har et hurtigt filsystem og har brug for at kontrollere serverens forbrug af hukommelse.
-	EN	The server can cache id3 tag and other information to reduce disk accesses and speed up navigation. This is a good thing unless you notice the server is using too much memory. Turn off only if you have a fast file system and need to control server memory usage.
-	ES	El servidor puede cachear ID3 y otra información para reducir actividad del disco duro y para accelerar navegación. Eso es bueno se el servidor no usa demasiada memoría. Quita esta opción si tiene un sistema de ficheros rápido y es necesario controlar la cantidad de memoría usada.
-	FI	Palvelin voi tallentaa ID3 tiedot välimuistiin selailun nopeuttamiseksi. Tämä on suositeltavaa, mikäli palvelimessasi on riittävästi muistia. Kytke asetus pois päältä vain mikäli huomaat palvelimen muistin olevan vähissä.
-	FR	Afin de réduire les accès au disque et d'accélérer la navigation, le serveur peut conserver en mémoire des informations telle que noms d'artistes, albums, etc. Cette façon de procéder est recommandée sauf si la mémoire vive de l'ordinateur est limitée. Vous pouvez désactiver cette fonctionnalité si vous avez un disque dur rapide et peu de mémoire vive.
-	NL	De server kan een cache bijhouden van ID3 tags en andere informatie. Daardoor hoeft er minder gebruik gemaakt worden van de hard disk en vernelt het navigeren. Dit is nuttig tenzij U merkt dat de server te veel geheugen gebruikt. Schakel deze optie uit als U een snel filesystem heeft en zuinig wil omgaan met geheugen.
-	PT	O servidor pode manter em "cache" as informações das tags ID3 (entre outras) para reduzir os acessos ao disco e aumentar a velocidade de navegação. Deve activar esta opção a menos que detecte que o servidor está a ocupar demasiada memória, ou no caso do sistema de ficheiros rápidos.
-	SE	Servern kan spara ID3-information och annan information i minnet för att minimera diskåtkomst och snabba upp navigation. Detta är bra såvida du inte upptäcker att servern använder för mycket minne. Stäng endast av detta om du har ett snabbt filsystem och behöver kontrollera serverns minnes-utnyttjande.
-
 SETUP_USETAGDATABASE
 	DE	MP3 Datenbank
 	DK	MP3 Tag-database
@@ -3058,6 +3026,15 @@ SETUP_UDPCHUNKSIZE_CHOOSE
 	NL	Maximaal aantal bytes audio data dat in een UDP packet naar de speler wordt gestuurd (SLIMP3): 
 	PT	Máximo de bytes de dados áudio a enviar ao cliente por pacote UDP (SLIMP): 
 	SE	Maximalt antal bytes ljud-data att skicka till spelaren i ett UDP-paket (SLIMP3): 
+
+SETUP_WEBPROXY
+	EN	Web Proxy
+
+SETUP_WEBPROXY_DESC
+	EN	You can specify the IP address and port for an HTTP/Web proxy to use when SlimServer connects to servers outside your local network.  Use the format xx.xx.xx.xx:yyyy where xx.xx.xx.xx is the IP address of the proxy, and yyyy is the port number.  Leave this field blank of you don't use a HTTP web proxy.
+
+SETUP_WEBPROXY_CHOOSE
+	EN	Web Proxy Address
 
 SETUP_SHOWBUFFERFULLNESS
 	DE	Puffer-Füllstatus anzeigen

@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.6 2004/04/22 05:47:13 kdf Exp $
+# $Id: Scan.pm,v 1.7 2004/04/22 20:41:07 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -419,7 +419,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 				$numitems++;
 			}
 			# add the loaded dir to the cache...
-			if ($numitems && Slim::Utils::Prefs::get('useplaylistcache') ) {
+			if ($numitems) {
 				my @cachelist = @$listref[ (0 - $numitems) .. -1];
 				Slim::Music::Info::cachePlaylist($playlistpath, \@cachelist, (stat($playlistpath))[9]);	
 				$::d_scan && msg("adding $numitems to playlist cache: $playlistpath\n"); 

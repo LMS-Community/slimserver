@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.49 2004/04/22 05:47:12 kdf Exp $
+# $Id: Prefs.pm,v 1.50 2004/04/22 20:41:07 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -94,11 +94,10 @@ my %DEFAULT = (
 	,"tcpWriteMaximum"		=> 20
 	,"tcpConnectMaximum"	=> 30
 	,"streamWriteMaximum"	=> 30
+    ,'webproxy'				=> ''
 	,"udpChunkSize"			=> 1400
 	,"usetagdatabase"		=> 0				# use 0 for false, 1 for true
 	,"templatecache"		=> 1				# use 0 for false, 1 for true
-	,"useplaylistcache"		=> 1 				# use 0 for false, 1 for true
-	,"useinfocache"			=> 1				# Perhaps should be 0 for unix?
 	,'animationLevel'		=> 3
 	,'itemsPerPage'			=> 100
 	,'lookForArtwork'		=> 1
@@ -114,6 +113,7 @@ my %DEFAULT = (
 	,'MoodLogicplaylistprefix'	=> 'MoodLogic: '
  	,'MoodLogicplaylistsuffix'	=> ''
  	,'itunesscaninterval'	=> 60
+ 	,'ignoredisableditunestracks' => 1
  	,'instantMixMax'		=> 12
  	,'varietyCombo'			=> 50
     ,'ignoreDirRE'          => ''
@@ -254,20 +254,6 @@ my %prefChange = (
 		} else { #was true, now false
 			Slim::Music::Info::saveDBCache();
 			Slim::Music::Info::clearDBCache();
-		}
-	}
-	,'useplaylistcache' => sub {
-		my $newvalue = shift;
-		Slim::Music::Info::clearCache();
-		if ($newvalue || get('useinfocache')) {
-			Slim::Music::MusicFolderScan::startScan(1);
-		}
-	}
-	,'useinfocache' => sub {
-		my $newvalue = shift;
-		Slim::Music::Info::clearCache();
-		if ($newvalue || get('useplaylistcache')) {
-			Slim::Music::MusicFolderScan::startScan(1);
 		}
 	}
 	,'templatecache' => sub {

@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.104 2004/04/22 05:47:12 kdf Exp $
+# $Id: Info.pm,v 1.105 2004/04/22 20:41:06 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -683,46 +683,44 @@ sub updateCacheEntry {
 	return unless defined $url;
 	return unless defined $cacheEntryHash;
 
-	if (Slim::Utils::Prefs::get('useinfocache') || Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic()) {
-		if (exists($infoCache{$url})) {
-			#my %merged = (%{cacheEntry($url)}, %{$cacheEntryHash});
-			#$cacheEntryHash = \%merged;
-			$::d_info && Slim::Utils::Misc::msg("merging $url\n");
-		} else {
-			$newsong = 1;
+	if (exists($infoCache{$url})) {
+		#my %merged = (%{cacheEntry($url)}, %{$cacheEntryHash});
+		#$cacheEntryHash = \%merged;
+		$::d_info && Slim::Utils::Misc::msg("merging $url\n");
+	} else {
+		$newsong = 1;
+	}
+	$::d_info && Slim::Utils::Misc::msg("Newsong: $newsong for $url\n");
+	
+	$cacheEntryArray=$infoCache{$url};
+	
+	my $i = 0;
+	foreach my $key (@infoCacheItems) {
+		my $val = $cacheEntryHash->{$key};
+		if (defined $val) {
+			$cacheEntryArray->[$i] = $val;
+			$::d_info && Slim::Utils::Misc::msg("updating $url with " . $val . " for $key\n");
 		}
-		$::d_info && Slim::Utils::Misc::msg("Newsong: $newsong for $url\n");
-		
-		$cacheEntryArray=$infoCache{$url};
-		
-		my $i = 0;
-		foreach my $key (@infoCacheItems) {
-			my $val = $cacheEntryHash->{$key};
-			if (defined $val) {
-				$cacheEntryArray->[$i] = $val;
-				$::d_info && Slim::Utils::Misc::msg("updating $url with " . $val . " for $key\n");
-			}
-			$i++;
-		}
+		$i++;
+	}
 
-		$infoCache{$url} = $cacheEntryArray;
-		
-		$dbCacheDirty=1;
-				
-		my $type = typeFromSuffix($url);
-		if ($newsong && isSong($url,$type) && !isHTTPURL($url) && (-e $url || Slim::Music::iTunes::useiTunesLibrary())) { 
-		
-			$cacheEntryHash=cacheEntry($url);
-			updateGenreCache($url, $cacheEntryHash);
-			updateArtworkCache($url, $cacheEntryHash);
-			updateSortCache($url, $cacheEntryHash);
-			$::d_info && Slim::Utils::Misc::msg("Inc SongCount $url\n");
-			my $time = $cacheEntryHash->{SECS};
-			if ($time) {
-				$total_time += $time;
-			}
-			$songCount++;
+	$infoCache{$url} = $cacheEntryArray;
+	
+	$dbCacheDirty=1;
+			
+	my $type = typeFromSuffix($url);
+	if ($newsong && isSong($url,$type) && !isHTTPURL($url) && (-e $url || Slim::Music::iTunes::useiTunesLibrary())) { 
+	
+		$cacheEntryHash=cacheEntry($url);
+		updateGenreCache($url, $cacheEntryHash);
+		updateArtworkCache($url, $cacheEntryHash);
+		updateSortCache($url, $cacheEntryHash);
+		$::d_info && Slim::Utils::Misc::msg("Inc SongCount $url\n");
+		my $time = $cacheEntryHash->{SECS};
+		if ($time) {
+			$total_time += $time;
 		}
+		$songCount++;
 	}
 }
 
@@ -2012,16 +2010,6 @@ sub readTags {
 
 	$::d_info && Slim::Utils::Misc::msg("Updating cache for: " . $file . "\n");
 
-	if (Slim::Utils::Prefs::get('ignoreMP3Tags')) {
-		$tempCacheEntry->{'TITLE'} = plainTitle($file, $type);
-		$tempCacheEntry->{'CT'} = $type;
-		$tempCacheEntry->{'TAG'} = 1;
-		$tempCacheEntry->{'VALID'} = 1;
-	
-		updateCacheEntry($file, $tempCacheEntry);
-		return $tempCacheEntry;
-	}
-	
 	if (isSong($file, $type) ) {
 		if (isHTTPURL($file)) {
 			# if it's an HTTP URL, guess the title from the the last part of the URL,
@@ -2274,7 +2262,7 @@ sub readCoverArtTags {
 	my $filepath;
 	my $image = shift || 'cover';
 
-	if (! Slim::Utils::Prefs::get('lookForArtwork') || Slim::Utils::Prefs::get('ignoreMP3Tags')) { return undef};
+	if (! Slim::Utils::Prefs::get('lookForArtwork')) { return undef};
 
 	my $body;	
 	my $contenttype;
