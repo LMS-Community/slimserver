@@ -1822,6 +1822,18 @@ SETUP_TRANSCODE-MOV_0
 	PT	Não converter automaticamente
 	SE	Konvertera INTE automatiskt
 
+SETUP_SAVESHUFFLED
+	EN	Save Shuffled Playlist
+
+SETUP_SAVESHUFFLED_DESC
+	EN	When you choose to save a playlist, and it's been shuffled, you can choose to save it in the original order the songs were added or in the shuffled order.
+
+SETUP_SAVESHUFFLED_1
+	EN	Save playlists in shuffled order
+
+SETUP_SAVESHUFFLED_0
+	EN	Save playlists in order songs were added
+	
 SETUP_SAVEHISTORY
 	DE	Speicherung des Verlaufs
 	EN	Save History
