@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.32 2003/10/02 21:00:40 dean Exp $
+# $Id: HTTP.pm,v 1.33 2003/10/03 21:44:09 grotus Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -120,12 +120,8 @@ sub openport {
 
 	die "can't setup the listening port $listenerport for the HTTP server: $!" unless $http_server_socket;
 	
- 	if( $^O =~ /Win32/ ) {
- 		my $temp = 1;
- 		ioctl($http_server_socket, 0x8004667e, \$temp);
- 	} else {
- 		defined($http_server_socket->blocking(0))  || die "Cannot set port nonblocking";
- 	}
+	defined(Slim::Utils::Misc::blocking($http_server_socket,0)) || die "Cannot set port nonblocking";
+
 	$openedport = $listenerport;
 
 	$httpSelRead->add(Slim::Web::HTTP::serverSocket());   # readability on the HTTP server
@@ -252,9 +248,7 @@ sub acceptHTTP {
 	my $httpclientsock = $http_server_socket->accept();
 
 	if ($httpclientsock) {
-		if( $^O !~ /Win32/ ) {
-			defined($httpclientsock->blocking(0))  || die "Cannot set port nonblocking";
-		}
+		defined(Slim::Utils::Misc::blocking($httpclientsock,0)) || die "Cannot set port nonblocking";
 
 		my $peer = $httpclientsock->peeraddr;
 		if ($httpclientsock->connected && $peer) {
