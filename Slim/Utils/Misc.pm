@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.5 2003/07/30 18:22:47 sadams Exp $
+# $Id: Misc.pm,v 1.6 2003/08/14 20:15:34 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -19,24 +19,6 @@ use Sys::Hostname;
 use Socket;
 
 use FindBin qw($Bin);
-
-BEGIN {
-	# Try to load a system Time::HiRes first, if not use the local one.
-	eval "use Time::HiRes";
-
-	if ($@ =~ /Can't locate/) {
-
-		unshift @INC, catdir($Bin,'CPAN','arch',$Config::Config{archname});
-
-		eval "use Time::HiRes";
-
-		if ($@ =~ /Can't locate/) {
-			require Time::HiRes;
-			# die "Couldn't load shipped Time::HiRes module: $@";
-		}
-	}
-}
-
 
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK @EXPORT_FAIL);
 require Exporter;

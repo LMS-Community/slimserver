@@ -82,9 +82,9 @@ use FileHandle;
 use POSIX qw(:signal_h :errno_h :sys_wait_h);
 use Socket qw(:DEFAULT :crlf);
 
-use lib ($Bin, catdir($Bin,'CPAN'));
+use lib ($Bin, catdir($Bin,'CPAN'), catdir($Bin,'CPAN','arch',$Config::Config{archname}) );
+use Time::HiRes;
 
-# this goes first to make sure we load up Time::HiRes properly
 use Slim::Utils::Misc;
 
 use Slim::Display::Animation;
@@ -247,7 +247,7 @@ sub init {
 		unshift @INC, $ENV{'HOME'} . "/Library/SlimDevices";
 		unshift @INC, "/Library/SlimDevices/";
 	}
-
+	 unshift @INC, catdir($Bin,'CPAN','arch',$Config::Config{archname});
 	$::d_server && msg("Slim Server settings init...\n");
 	initSettings();
 
