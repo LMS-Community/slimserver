@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.38 2004/12/07 20:19:48 dsully Exp $
+# $Id: Playlist.pm,v 1.39 2004/12/15 23:39:46 grotus Exp $
 
 # Slim Server Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -115,6 +115,7 @@ my %functions = (
 			Slim::Control::Command::execute($client, ["playlist", "delete", browseplaylistindex($client)]);	
 			$client->showBriefly( $client->string('REMOVING_FROM_PLAYLIST'), $songtitle, undef, 1);
 		}
+		jump($client);
 	},
 	
  	'zap' => sub {
@@ -126,6 +127,7 @@ my %functions = (
 					Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, browseplaylistindex($client))), undef, 1);
 			Slim::Control::Command::execute($client, ["playlist", "zap", browseplaylistindex($client)]);
 		}
+		jump($client);
 	},
 
 	'play' => sub  {
