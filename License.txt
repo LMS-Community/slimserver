@@ -1,3 +1,51 @@
+
+		SLIM DEVICES LICENSE NOTICE
+
+Please be aware that not all software distributed by Slim Devices
+is licensed under the GPL. If you wish to redistribute any of our
+software, please be sure to first read the GPL, and then make sure
+that you are only distributing materials which we've explicity 
+licensed for such use. Feel free to contact us if you have any
+questions, or would like permission to distribute our other non-GPL
+programs. Also, be aware that standard copyright rules apply in any
+case where no particular license is given. 
+
+Each of the software products we ship are licensed as follows:
+
+- All of SlimServer's perl code is licensed for redistribution 
+or inclusion in other software per version 2 of the GPL license, 
+included below for your convenience. 
+
+- SoftSqueeze is (c) Richard Titmuss and is licensed under GPL.
+
+- Certain integral components of Slim Server, such as CPAN modules, 
+are (c) of their respective authors, and are included in SlimServer
+per GPL.
+
+- Certain ancillary programs included in the SlimServer distribution 
+on our web site are licensed to us only for direct distribution to
+end-users. These include the Windows installer and Activestate 
+binaries. 
+
+- Squeezebox firmare may not be redistributed under any 
+circumstances. It is (c) Slim Devices, and additonally contains
+code which is (c) Ubicom. Ubicom's code is licenced to us only
+for direct distribution in binary form. You may use the firmware
+only on hardware purchased from Slim Devices.
+
+- SLIMP3 firmware is (c) Slim Devices, and source is available
+under the Slim Devices Public Source Licence, for certain educational 
+and hobbyist uses. Please read the license carefully.
+
+- Slim Devices logos, graphics, animations, and documentation are
+(c) Slim Devices and are not licensed for redistribution. When in
+doubt look for a GPL notice at the top of the file, or ask us for
+written permission to redistribute, which we will grant for any
+reasonable purpose.
+
+#------------------------------------------------------------------
+
+
 		    GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
 
