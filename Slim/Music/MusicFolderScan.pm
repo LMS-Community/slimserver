@@ -40,6 +40,7 @@ sub startScan {
 	}
 
 	$stillScanning=1;
+	$::d_info && msg("Starting music folder scan\n");
 	Slim::Utils::Scan::addToList(\@dummylist, Slim::Utils::Prefs::get('audiodir'), 1, 0, \&doneScanning, 0);
 }
 
@@ -48,6 +49,7 @@ sub doneScanning {
 	Slim::Music::Info::saveDBCache();
 	$stillScanning=0;
 	@dummylist = ();
+	exit;
 }
 
 sub stillScanning {

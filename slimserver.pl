@@ -85,8 +85,8 @@ use lib (
 	catdir($Bin,'CPAN'), 
 	catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{archname}), 
 	catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{archname}), 
-	catdir($Bin,'CPAN','arch',$Config::Config{archname}), 
-	@INC);
+	catdir($Bin,'CPAN','arch',$Config::Config{archname})
+	);
 
 use Time::HiRes;
 

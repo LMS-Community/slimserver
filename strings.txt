@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.95 2004/04/30 16:42:11 dean Exp $
+# $Id: strings.txt,v 1.96 2004/05/02 06:00:02 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1621,9 +1621,9 @@ SETUP_LANGUAGE
 	SE	Språk
 
 SETUP_LANGUAGE_DESC
-	DE	Sie können die Sprache auswählen, die Sie für das Slim System verwenden wollen.
+	DE	Sie können die Sprache auswählen, die Sie für das SlimServer verwenden wollen.
 	DK	Du kan ændre sproget for dit Slim-system.
-	EN	You can change the language that you'd like the Slim system to use.
+	EN	You can change the language that you'd like the SlimServer to use.
 	ES	Puede cambiar el idioma que quiere que usa el Slim.
 	FI	Voit vaihtaa Slim soittimesi kieltä halutessasi.
 	FR	Vous pouvez modifier la langue utilisée par le système Slim.
@@ -1659,7 +1659,7 @@ SETUP_AUDIODIR
 SETUP_AUDIODIR_DESC
 	DE	Das Verzeichnis, in dem sich ihre MP3 Dateien auf ihrer Festplatte befinden:
 	DK	Mappen hvor dine MP3-filer er gemt på din harddisk.
-	EN	The directory where your MP3 files are stored on your hard disk:
+	EN	The directory where your music files are stored on your hard disk:
 	ES	La carpeta en su disco duro donde están guardados sus ficheros MP3:
 	FI	Hakemisto kovalevyllä minne MP3 -tiedostosi on tallenettu:
 	FR	Le dossier qui contient les fichiers MP3 sur votre disque dur :
@@ -1671,7 +1671,7 @@ SETUP_AUDIODIR_DESC
 SETUP_AUDIODIR_OK
 	DE	Der Server verwendet den folgenden Pfad zu ihren MP3 Dateien:
 	DK	OK, anvender:
-	EN	The server will use the following path to your MP3 files:
+	EN	The server will use the following path to your music files:
 	ES	Vale. Utilizando:
 	FI	Palvelin käyttää seuraavaa polkua MP3 -tiedostoihisi:
 	FR	Le serveur utilisera le chemin d'accès suivant pour repérer vos fichiers MP3 :
@@ -1719,7 +1719,7 @@ SETUP_BAD_DIRECTORY
 SETUP_OK_USING
 	DE	O.K., verwendet:
 	DK	OK, anvender:
-	EN	The server will use the following path to your MP3 files:
+	EN	The server will use the following path to your music files:
 	ES	Vale. Utilizando:
 	FI	Palvelin käyttää seuraavaa polkua mp3 -tiedostoihisi:
 	FR	Le serveur utilisera le chemin suivant pour vos fichiers MP3 :
@@ -2135,7 +2135,7 @@ SETUP_IGNOREMP3TAGS
 
 SETUP_IGNOREMP3TAGS_DESC
 	DE	Sie können angeben, ob der SlimServer die Informationen, die ev. in den ID3 Tags der MP3 Dateien gespeichert sind, ignorieren und seine Informationen nur aus Datei- und Ordnernamen beziehen soll.
-	EN	You can choose whether SlimServer should ignore the MP3 ID3 tag information that may be embedded in the MP3 files and just use the file and folder names to identify your music library.
+	EN	You can choose whether SlimServer should ignore the tag information that may be embedded in the music files and just use the file and folder names to identify your music library.
 
 SETUP_READMP3TAGS
 	DE	MP3 Tags einlesen
@@ -2625,7 +2625,7 @@ SETUP_THROTTLESCAN
 SETUP_THROTTLESCAN_DESC
 	DE	Wenn der Server damit beginnt, in ihrem Musikverzeichnis in den ID-Tags der MP3 Dateien nach Informationen zu suchen, kann das bei langsamen Systemen und PCs mit einem FAT oder FAT32 Datensystem zu einer inakzeptablen Verlangsamung ihres Computers kommen. Sie können mit folgender Einstellung diesen Prozess verlangsamen und ihrem Rechner mehr Ressourcen überlassen.
 	DK	Når serveren starter, gennemlæser den din musiksamling for at indlæse kunstner, album og anden information fra de tags der er tilknyttet dine musikfiler. På ældre systemer og Windows-PCere der anvender FAT eller FAT32 filsystemerne kan dette betyde at computeren belastes i en uacceptabel grad. Du kan ændre denne indstilling så gennemlæsningen af musiksamlingen ikke benytter så mange ressourcer.
-	EN	When the server starts it scans your music folder to load the artist, album and other information from the tags in the MP3 files. On some slower systems and Windows PCs using FAT and FAT32 filesystems this may unacceptably slow down your computer. You can change this setting to slow down scanning and use less computer resources.
+	EN	When the server starts it scans your music folder to load the artist, album and other information from the tags in the files. On some slower systems and Windows PCs using FAT and FAT32 filesystems this may unacceptably slow down your computer. You can change this setting to slow down scanning and use less computer resources.
 	ES	Cuando arranca el servidor, hace un escaneo total de su carpeta de música para determinar todos los artistas, discos y canciones. Si este proceso ralentiza demasiado su ordenador puede cambiar esta opción para hacer que el escaneo se hace más despacio.
 	FI	Kun palvelin käynnistyy, se lukee musiikkikansion läpi saadakseen mm. esittäjän ja levyn tiedot. Vanhoissa tietokoneissa, jotka käyttävät FAT/FAT32 tiedostojärjestelmää, tämä voi kestää luvattoman kauan. Tätä asetusta säätämällä voit vaikuttaa siihen, kuinka paljon aikaa operaatioon käytetään.
 	FR	Lorsqu'il démarre, le serveur répertorie votre dossier de musique afin de mettre à jour sa base de données contenant l'information sur les albums, les artistes, etc. à partir des repères ID3 de vos fichiers de musique. Ceci peut taxer exagérément les ressources des ordinateurs plus lents. Vous pouvez réduire la vitesse de balayage afin d'éviter que le temps de réponse de l'ordinateur ne soit trop long.
@@ -2911,7 +2911,7 @@ SETUP_USETAGDATABASE
 SETUP_USETAGDATABASE_DESC
 	DE	Die ID3-Tag Informationen der MP3 Dateien können beim Stoppen des Servers gespeichert und beim Neustart wieder ausgelesen werden, um das Durchsuchen des Musik-Verzeichnisses zu beschleunigen. 
 	DK	Informationerne fra MP3-tag'ene kan gemmes når serveren stoppes og genindlæses når den starter igen, hvilket vil få serveren til at starte hurtigere op. 
-	EN	The MP3 tag information from each MP3 file can be saved in a cache when the server finishes scanning and reloaded quickly when it starts again. This setting has no effect if you are using iTunes or MoodLogic.
+	EN	The tag information from each file can be saved in a cache when the server finishes scanning and reloaded quickly when it starts again. This setting has no effect if you are using iTunes or MoodLogic.
 	ES	El "tag" de un MP3 puede guardarse cuando se para el servidor para accelerar el escaneo de la carpeta de música una vez arrancado de nuevo.
 	FI	MP3 -tiedostot sisältävät tietoa kuten esittäjän nimen. Tämä tieto voidaan tallentaa, jotta palvelimen käynnistys nopeutuu.
 	FR	Les informations contenues dans le repère ID3 de chaque fichier MP3 peuvent être sauvegardées sur disque lorsque le serveur est arrêté et relues lorsqu'il est redémarré afin d'accélérer le balayage du dossier de musique.
@@ -5603,7 +5603,7 @@ FORGET_PLAYER_LINK
 MP3DIR_IS_NOW
 	DE	Das Verzeichnis, in dem sich ihre MP3 Dateien auf der Festplatte befinden:
 	DK	Mappen hvor dine MP3-filer er gemt på din harddisk.
-	EN	The directory where your MP3 files are stored on your hard disk:
+	EN	The directory where your music files are stored on your hard disk:
 	ES	La carpeta en su disco duro donde están guardados sus ficheros MP3:
 	FI	Hakemisto kovalevyllä minne MP3 -tiedostosi on tallenettu:
 	FR	Le dossier où vos fichiers MP3 sont stockés sur votre disque dur :
@@ -5833,7 +5833,7 @@ UPGRADE_COMPLETE
 NEED_PATH
 	DE	Sie müssen einen Pfad zum Verzeichnis mit ihren MP3 Dateien angeben.
 	DK	Du skal angive stien til mappen med dine MP3-filer.
-	EN	You need to specify a path to your directory containing your MP3 files.
+	EN	You need to specify a path to your directory containing your music files.
 	ES	Es necesario especificar el camino a la carpeta que contiene sus ficheros MP3.
 	FI	Sinun pitää syöttää polku mp3 -tiedostoihisi.
 	FR	Vous devez spécifier le chemin d'accès au dossier qui contient vos fichiers MP3.

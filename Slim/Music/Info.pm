@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.113 2004/04/30 20:44:23 dean Exp $
+# $Id: Info.pm,v 1.114 2004/05/02 06:00:03 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -187,9 +187,13 @@ if (defined @Storable::EXPORT) {
 
 			if (! -f $dbname || -z $dbname) {
 
-				$::d_info && warn "Tag database $dbname does not exist or has zero size";
+				$::d_info && Slim::Utils::Misc::msg("Tag database $dbname does not exist or has zero size\n");
 
-				$dbCacheDirty = 0;
+				%infoCache = ();
+
+				Slim::Music::MusicFolderScan::startScan(1);
+
+				$dbCacheDirty = 1;
 
 				return;
 			}

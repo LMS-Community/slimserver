@@ -463,10 +463,11 @@ sub scanFunction {
 				my $url = $location;
 				if (Slim::Music::Info::isFileURL($url)) {
 					if (Slim::Utils::OSDetect::OS() eq 'unix') {
-						my $base = Slim::Utils::Prefs::get('audiodir');
-						$url =~ s/$iBase/$base\//isg;
+						my $base = Slim::Utils::Prefs::get('itunes_basedir')
+							|| Slim::Utils::Prefs::get('audiodir');
+						$base = Slim::Utils::Misc::fileURLFromPath($base);
+						$url =~ s,$iBase,$base/,isg;
 						$::d_itunes && msg("Correcting for Linux: $iBase to $url\n");
-						$url = Slim::Web::HTTP::unescape($url);
 					};
 					$url =~ s/\/$//;
 				}

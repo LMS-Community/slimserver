@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.39 2004/04/30 20:44:24 dean Exp $
+# $Id: Misc.pm,v 1.40 2004/05/02 06:00:03 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -132,6 +132,7 @@ sub pathFromFileURL {
 	my $url = shift;
 	my $file;
 	
+	assert(Slim::Music::Info::isFileURL($url), "Path isn't a file URL: $url\n");
 	
 	my $uri = URI->new($url);
 
@@ -167,7 +168,6 @@ sub fileURLFromPath {
 	my $path = shift;
 	my $uri  = URI::file->new($path);
 	$uri->host('');
-	$::d_files && msg("convert path: $path to file URL: $uri\n");	
 	return $uri->as_string;
 }
 
@@ -586,8 +586,12 @@ sub fracSecToMinSec {
 
 sub assert {
 	my $exp = shift;
+	my $msg = shift;
+	
 	defined($exp) && $exp && return;
-
+	
+	msg($msg) if $msg;
+	
 	bt();
 }
 
