@@ -1,12 +1,12 @@
 package LWP::MediaTypes;
 
-# $Id: MediaTypes.pm,v 1.1 2004/02/21 22:26:09 daniel Exp $
+# $Id: MediaTypes.pm,v 1.2 2004/08/10 23:08:19 dean Exp $
 
 require Exporter;
 @ISA = qw(Exporter);
 @EXPORT = qw(guess_media_type media_suffix);
 @EXPORT_OK = qw(add_type add_encoding read_media_types);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 require LWP::Debug;
 use strict;
@@ -220,10 +220,10 @@ LWP::MediaTypes - guess media type for a file or a URL
 =head1 DESCRIPTION
 
 This module provides functions for handling media (also known as
-MIME) types and encodings.  The mapping from file extentions to media
+MIME) types and encodings.  The mapping from file extensions to media
 types is defined by the F<media.types> file.  If the F<~/.media.types>
 file exists it is used instead.
-For backwards compatability we will also look for F<~/.mime.types>.
+For backwards compatibility we will also look for F<~/.mime.types>.
 
 The following functions are exported by default:
 
@@ -235,9 +235,9 @@ The following functions are exported by default:
 
 =item guess_media_type( $filename_or_uri, $header_to_modify )
 
-This function tries to guess media type and encoding for a file or url.
-It returns the content-type, which is a string like C<"text/html">.
-In array context it also returns any content-encodings applied (in the
+This function tries to guess media type and encoding for a file or a URI.
+It returns the content type, which is a string like C<"text/html">.
+In array context it also returns any content encodings applied (in the
 order used to encode the file).  You can pass a URI object
 reference, instead of the file name.
 
@@ -263,7 +263,7 @@ context it will return the first suffix found. Examples:
 
 =back
 
-The following functions are only exported by explict request:
+The following functions are only exported by explicit request:
 
 =over 4
 

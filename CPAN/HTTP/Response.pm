@@ -1,10 +1,10 @@
 package HTTP::Response;
 
-# $Id: Response.pm,v 1.1 2004/02/21 22:26:08 daniel Exp $
+# $Id: Response.pm,v 1.2 2004/08/10 23:08:15 dean Exp $
 
 require HTTP::Message;
 @ISA = qw(HTTP::Message);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 use strict;
 use HTTP::Status ();
@@ -17,6 +17,27 @@ sub new
     my $self = $class->SUPER::new($header, $content);
     $self->code($rc);
     $self->message($msg);
+    $self;
+}
+
+
+sub parse
+{
+    my($class, $str) = @_;
+    my $status_line;
+    if ($str =~ s/^(.*)\n//) {
+	$status_line = $1;
+    }
+    else {
+	$status_line = $str;
+	$str = "";
+    }
+
+    my $self = $class->SUPER::parse($str);
+    my($protocol, $code, $message) = split(' ', $status_line, 3);
+    $self->protocol($protocol) if $protocol;
+    $self->code($code) if defined($code);
+    $self->message($message) if defined($message);
     $self;
 }
 
@@ -64,8 +85,9 @@ sub as_string
 {
     require HTTP::Status;
     my $self = shift;
-    my @result;
-    #push(@result, "---- $self ----");
+    my($eol) = @_;
+    $eol = "\n" unless defined $eol;
+
     my $code = $self->code;
     my $status_message = HTTP::Status::status_message($code) || "Unknown code";
     my $message = $self->message || "";
@@ -75,14 +97,8 @@ sub as_string
     $status_line = "$proto $status_line" if $proto;
     $status_line .= " ($status_message)" if $status_message ne $message;
     $status_line .= " $message";
-    push(@result, $status_line);
-    push(@result, $self->headers_as_string);
-    my $content = $self->content;
-    if (defined $content) {
-	push(@result, $content);
-    }
-    #push(@result, ("-" x 40));
-    join("\n", @result, "");
+
+    return join($eol, $status_line, $self->SUPER::as_string(@_));
 }
 
 
@@ -112,7 +128,7 @@ EOM
 sub current_age
 {
     my $self = shift;
-    # Implementation of <draft-ietf-http-v11-spec-07> section 13.2.3
+    # Implementation of RFC 2616 section 13.2.3
     # (age calculations)
     my $response_time = $self->client_date;
     my $date = $self->date;
@@ -174,9 +190,9 @@ sub freshness_lifetime
 	    }
 	    elsif ($h_exp > 24 * 3600) {
 		# Should give a warning if more than 24 hours according to
-		# <draft-ietf-http-v11-spec-07> section 13.2.4, but I don't
-		# know how to do it from this function interface, so I just
-		# make this the maximum value.
+		# RFC 2616 section 13.2.4, but I don't know how to do it
+		# from this function interface, so I just make this the
+		# maximum value.
 		return 24 * 3600;
 	    }
 	    return $h_exp;
@@ -248,9 +264,14 @@ inherits its methods.  The following additional methods are available:
 
 Constructs a new C<HTTP::Response> object describing a response with
 response code $code and optional message $msg.  The optional $header
-argument should be a reference to an C<HTTP::Headers> object.  The
-optional $content argument should be a string of bytes.  The meaning
-these arguments are described below.
+argument should be a reference to an C<HTTP::Headers> object or a
+plain array reference of key/value pairs.  The optional $content
+argument should be a string of bytes.  The meaning these arguments are
+described below.
+
+=item $r = HTTP::Response->parse( $str )
+
+This constructs a new response object by parsing the given string.
 
 =item $r->code
 
@@ -329,7 +350,7 @@ in HTML documents.
 
 A "Content-Base:" or a "Content-Location:" header in the response.
 
-For backwards compatability with older HTTP implementations we will
+For backwards compatibility with older HTTP implementations we will
 also look for the "Base:" header.
 
 =item 3.
@@ -348,8 +369,9 @@ either).
 
 =item $r->as_string
 
-Returns a textual representation of the response.  Mainly
-useful for debugging purposes. It takes no arguments.
+=item $r->as_string( $eol )
+
+Returns a textual representation of the response.
 
 =item $r->is_info
 
@@ -359,7 +381,7 @@ useful for debugging purposes. It takes no arguments.
 
 =item $r->is_error
 
-These methods indicate if the response was informational, sucessful, a
+These methods indicate if the response was informational, successful, a
 redirection, or an error.  See L<HTTP::Status> for the meaning of these.
 
 =item $r->error_as_HTML
@@ -396,7 +418,7 @@ server.
 
 =item $r->fresh_until
 
-Returns the time when this entiy is no longer fresh.
+Returns the time when this entity is no longer fresh.
 
 =back
 
@@ -406,7 +428,7 @@ L<HTTP::Headers>, L<HTTP::Message>, L<HTTP::Status>, L<HTTP::Request>
 
 =head1 COPYRIGHT
 
-Copyright 1995-2001 Gisle Aas.
+Copyright 1995-2004 Gisle Aas.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.

@@ -1,4 +1,4 @@
-# $Id: media.types,v 1.1 2004/04/16 15:33:08 dean Exp $
+# $Id: media.types,v 1.2 2004/08/10 23:08:21 dean Exp $
 #
 # This file defines the mapping from file name extentions to media types.
 # Media types where the subtype does not have the "x-" prefix should be

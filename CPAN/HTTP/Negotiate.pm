@@ -1,9 +1,9 @@
-# $Id: Negotiate.pm,v 1.1 2004/02/21 22:26:08 daniel Exp $
+# $Id: Negotiate.pm,v 1.2 2004/08/10 23:08:14 dean Exp $
 #
 
 package HTTP::Negotiate;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 sub Version { $VERSION; }
 
 require 5.002;
@@ -464,7 +464,7 @@ F<draft-ietf-http-v11-spec-00.ps>):
 =item Accept
 
 This header can be used to indicate a list of media ranges which are
-acceptable as a reponse to the request.  The "*" character is used to
+acceptable as a response to the request.  The "*" character is used to
 group media types into ranges, with "*/*" indicating all media types
 and "type/*" indicating all subtypes of that type.
 

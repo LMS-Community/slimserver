@@ -1,10 +1,10 @@
 package HTTP::Request;
 
-# $Id: Request.pm,v 1.1 2004/02/21 22:26:08 daniel Exp $
+# $Id: Request.pm,v 1.2 2004/08/10 23:08:14 dean Exp $
 
 require HTTP::Message;
 @ISA = qw(HTTP::Message);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 use strict;
 
@@ -16,6 +16,27 @@ sub new
     my $self = $class->SUPER::new($header, $content);
     $self->method($method);
     $self->uri($uri);
+    $self;
+}
+
+
+sub parse
+{
+    my($class, $str) = @_;
+    my $request_line;
+    if ($str =~ s/^(.*)\n//) {
+	$request_line = $1;
+    }
+    else {
+	$request_line = $str;
+	$str = "";
+    }
+
+    my $self = $class->SUPER::parse($str);
+    my($method, $uri, $protocol) = split(' ', $request_line);
+    $self->method($method) if defined($method);
+    $self->uri($uri) if defined($uri);
+    $self->protocol($protocol) if $protocol;
     $self;
 }
 
@@ -71,23 +92,17 @@ sub uri
 sub as_string
 {
     my $self = shift;
-    my @result;
-    #push(@result, "---- $self -----");
-    my $req_line = $self->method || "[NO METHOD]";
+    my($eol) = @_;
+    $eol = "\n" unless defined $eol;
+
+    my $req_line = $self->method || "-";
     my $uri = $self->uri;
-    $uri = (defined $uri) ? $uri->as_string : "[NO URI]";
+    $uri = (defined $uri) ? $uri->as_string : "-";
     $req_line .= " $uri";
     my $proto = $self->protocol;
     $req_line .= " $proto" if $proto;
 
-    push(@result, $req_line);
-    push(@result, $self->headers_as_string);
-    my $content = $self->content;
-    if (defined $content) {
-	push(@result, $content);
-    }
-    #push(@result, ("-" x 40));
-    join("\n", @result, "");
+    return join($eol, $req_line, $self->SUPER::as_string(@_));
 }
 
 
@@ -130,10 +145,14 @@ inherits its methods.  The following additional methods are available:
 
 Constructs a new C<HTTP::Request> object describing a request on the
 object $uri using method $method.  The $method argument must be a
-string.  The $uri argument can be either a string, or a reference
-to a C<URI> object.  The optional $header argument should be a
-reference to an C<HTTP::Headers> object.  The optional $content
-argument should be a string of bytes.
+string.  The $uri argument can be either a string, or a reference to a
+C<URI> object.  The optional $header argument should be a reference to
+an C<HTTP::Headers> object or a plain array reference of key/value
+pairs.  The optional $content argument should be a string of bytes.
+
+=item $r = HTTP::Request->parse( $str )
+
+This constructs a new request object by parsing the given string.
 
 =item $r->method
 
@@ -173,8 +192,9 @@ module can be used to turn such strings into a string of bytes.
 
 =item $r->as_string
 
+=item $r->as_string( $eol )
+
 Method returning a textual representation of the request.
-Mainly useful for debugging purposes. It takes no arguments.
 
 =back
 
@@ -185,7 +205,7 @@ L<HTTP::Response>
 
 =head1 COPYRIGHT
 
-Copyright 1995-2001 Gisle Aas.
+Copyright 1995-2004 Gisle Aas.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.

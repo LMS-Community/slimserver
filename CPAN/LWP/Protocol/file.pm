@@ -1,5 +1,5 @@
 #
-# $Id: file.pm,v 1.1 2004/04/16 15:33:09 dean Exp $
+# $Id: file.pm,v 1.2 2004/08/10 23:08:23 dean Exp $
 
 package LWP::Protocol::file;
 
@@ -48,7 +48,7 @@ sub request
     my $scheme = $url->scheme;
     if ($scheme ne 'file') {
 	return new HTTP::Response &HTTP::Status::RC_INTERNAL_SERVER_ERROR,
-				  "LWP::file::request called for '$scheme'";
+			   "LWP::Protocol::file::request called for '$scheme'";
     }
 
     # URL OK, look at file

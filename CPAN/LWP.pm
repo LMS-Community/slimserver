@@ -1,9 +1,9 @@
 #
-# $Id: LWP.pm,v 1.1 2004/04/16 15:33:07 dean Exp $
+# $Id: LWP.pm,v 1.2 2004/08/10 23:08:12 dean Exp $
 
 package LWP;
 
-$VERSION = "5.79";
+$VERSION = "5.800";
 sub Version { $VERSION; }
 
 require 5.005;
@@ -625,7 +625,7 @@ Hwa Lin, Radu Greab, Randal L. Schwartz, Richard Chen, Robin Barker,
 Roy Fielding, Sander van Zoest, Sean M. Burke, shildreth, Slaven
 Rezic, Steve A Fink, Steve Hay, Steven Butler, Steve_Kilbane, Takanori
 Ugai, Thomas Lotterer, Tim Bunce, Tom Hughes, Tony Finch, Ville
-Skyttä, Ward Vandewege, William York and Yale Huang.
+Skyttä, Ward Vandewege, William York, Yale Huang and Yitzchak Scott-Thoennes.
 
 LWP owes a lot in motivation, design, and code, to the libwww-perl
 library for Perl4 by Roy Fielding, which included work from Alberto

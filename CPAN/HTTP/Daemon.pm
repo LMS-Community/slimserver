@@ -1,11 +1,11 @@
 package HTTP::Daemon;
 
-# $Id: Daemon.pm,v 1.1 2004/02/21 22:26:07 daniel Exp $
+# $Id: Daemon.pm,v 1.2 2004/08/10 23:08:14 dean Exp $
 
 use strict;
 use vars qw($VERSION @ISA $PROTO $DEBUG);
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 use IO::Socket qw(AF_INET INADDR_ANY inet_ntoa);
 @ISA=qw(IO::Socket::INET);
@@ -584,7 +584,7 @@ HTTP::Daemon - a simple http server class
   while (my $c = $d->accept) {
       while (my $r = $c->get_request) {
 	  if ($r->method eq 'GET' and $r->url->path eq "/xyzzy") {
-              # remember, this is *not* recommened practice :-)
+              # remember, this is *not* recommended practice :-)
 	      $c->send_file_response("/etc/passwd");
 	  }
 	  else {
@@ -610,7 +610,7 @@ return an C<HTTP::Request> object.  The ClientConn object also provide
 methods to send back various responses.
 
 This HTTP daemon does not fork(2) for you.  Your application, i.e. the
-user of the C<HTTP::Daemon> is reponsible for forking if that is
+user of the C<HTTP::Daemon> is responsible for forking if that is
 desirable.  Also note that the user is responsible for generating
 responses that conform to the HTTP/1.1 protocol.
 
@@ -836,7 +836,7 @@ Return a reference to the corresponding C<HTTP::Daemon> object.
 
 =head1 SEE ALSO
 
-RFC 2068
+RFC 2616
 
 L<IO::Socket::INET>, L<IO::Socket>
 

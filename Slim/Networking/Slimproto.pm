@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.58 2004/08/03 17:29:16 vidur Exp $
+# $Id: Slimproto.pm,v 1.59 2004/08/10 23:08:33 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -94,8 +94,7 @@ sub slimproto_accept {
 		
 	my $tmpaddr = inet_ntoa($peer);
 
-	if ((Slim::Utils::Prefs::get('filterHosts')) &&
-		!(Slim::Utils::Misc::isAllowedHost($tmpaddr))) {
+	if (Slim::Utils::Prefs::get('filterHosts') && !(Slim::Utils::Misc::isAllowedHost($tmpaddr))) {
 		$::d_slimproto && msg ("Slimproto unauthorized host, accept denied: $tmpaddr\n");
 		$clientsock->close();
 		return;

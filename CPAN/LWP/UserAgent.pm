@@ -1,13 +1,13 @@
 package LWP::UserAgent;
 
-# $Id: UserAgent.pm,v 1.1 2004/04/16 15:33:08 dean Exp $
+# $Id: UserAgent.pm,v 1.2 2004/08/10 23:08:21 dean Exp $
 
 use strict;
 use vars qw(@ISA $VERSION);
 
 require LWP::MemberMixin;
 @ISA = qw(LWP::MemberMixin);
-$VERSION = sprintf("%d.%03d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%03d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 use HTTP::Request ();
 use HTTP::Response ();
@@ -80,6 +80,7 @@ sub new
 
     my $self = bless {
 		      from         => $from,
+		      def_headers  => undef,
 		      timeout      => $timeout,
 		      use_eval     => $use_eval,
 		      parse_head   => $parse_head,
@@ -240,8 +241,8 @@ sub prepare_request
     $self->_request_sanity_check($request);
 
     # Extract fields that will be used below
-    my ($agent, $from, $cookie_jar, $max_size) =
-      @{$self}{qw(agent from cookie_jar max_size)};
+    my ($agent, $from, $cookie_jar, $max_size, $def_headers) =
+      @{$self}{qw(agent from cookie_jar max_size def_headers)};
 
     # Set User-Agent and From headers if they are defined
     $request->init_header('User-Agent' => $agent) if $agent;
@@ -252,6 +253,12 @@ sub prepare_request
 	$request->init_header('Range' => "bytes=0-$last");
     }
     $cookie_jar->add_cookie_header($request) if $cookie_jar;
+
+    if ($def_headers) {
+	for my $h ($def_headers->header_field_names) {
+	    $request->init_header($h => [$def_headers->header($h)]);
+	}
+    }
 
     return($request);
 }
@@ -599,6 +606,20 @@ sub cookie_jar {
     $old;
 }
 
+sub default_headers {
+    my $self = shift;
+    my $old = $self->{def_headers} ||= HTTP::Headers->new;
+    if (@_) {
+	$self->{def_headers} = shift;
+    }
+    return $old;
+}
+
+sub default_header {
+    my $self = shift;
+    return $self->default_headers->header(@_);
+}
+
 
 sub conn_cache {
     my $self = shift;
@@ -850,6 +871,7 @@ The following options correspond to attribute methods described below:
    from                    undef
    conn_cache              undef
    cookie_jar              undef
+   default_headers         HTTP::Headers->new
    max_size                undef
    max_redirect            7
    parse_head              1
@@ -922,7 +944,8 @@ the requests.  Example:
 
   $ua->from('gaas@cpan.org');
 
-The default is to not send a "From" header.
+The default is to not send a "From" header.  See the default_headers()
+method for the more general interface that allow any header to be defaulted.
 
 =item $ua->cookie_jar
 
@@ -949,6 +972,25 @@ is really just a shortcut for:
 
   require HTTP::Cookies;
   $ua->cookie_jar(HTTP::Cookies->new(file => "$ENV{HOME}/.cookies.txt"));
+
+=item $ua->default_headers
+
+=item $ua->default_headers( $headers_obj )
+
+Get/set the headers object that will provide default header values for
+any requests sent.  By default this will be an empty C<HTTP::Headers>
+object.  Example:
+
+  $ua->default_headers->push_header('Accept-Language' => "no, en");
+
+=item $ua->default_header( $field )
+
+=item $ua->default_header( $field => $value )
+
+This is just a short-cut for $ua->default_headers->header( $field =>
+$value ). Example:
+
+  $ua->default_header('Accept-Language' => "no, en");
 
 =item $ua->conn_cache
 

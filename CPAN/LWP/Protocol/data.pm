@@ -1,5 +1,5 @@
 #
-# $Id: data.pm,v 1.1 2004/04/16 15:33:09 dean Exp $
+# $Id: data.pm,v 1.2 2004/08/10 23:08:23 dean Exp $
 #
 # Implements access to data:-URLs as specified in RFC 2397
 

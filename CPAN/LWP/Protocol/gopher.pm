@@ -1,5 +1,5 @@
 #
-# $Id: gopher.pm,v 1.1 2004/04/16 15:33:09 dean Exp $
+# $Id: gopher.pm,v 1.2 2004/08/10 23:08:24 dean Exp $
 
 # Implementation of the gopher protocol (RFC 1436)
 #

@@ -1,6 +1,6 @@
 package Net::HTTP::Methods;
 
-# $Id: Methods.pm,v 1.1 2004/04/16 15:45:36 dean Exp $
+# $Id: Methods.pm,v 1.2 2004/08/10 23:08:31 dean Exp $
 
 require 5.005;  # 4-arg substr
 

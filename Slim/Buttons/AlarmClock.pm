@@ -195,7 +195,6 @@ sub visibleAlarm {
 sub lines {
 	my $client = shift;
 	my ($line1, $line2, $overlay);
-	my $timeFormat = Slim::Utils::Prefs::get("timeFormat");
 
 	$overlay = overlay($client);
 	$line1 = string('ALARM');

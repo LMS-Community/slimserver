@@ -1,6 +1,6 @@
 package Slim::Networking::Select;
 
-# $Id: Select.pm,v 1.13 2004/08/05 22:59:51 dean Exp $
+# $Id: Select.pm,v 1.14 2004/08/10 23:08:33 dean Exp $
 
 # SlimServer Copyright (c) 2003-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -143,7 +143,6 @@ sub writeNoBlock {
 	my $chunkRef = shift;
 
 	assert($socket);
-	assert($chunkRef);
 	
 	if (defined $chunkRef) {	
 		push @{$writeQueue{"$socket"}}, {

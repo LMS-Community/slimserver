@@ -1,6 +1,6 @@
 package LWP::Simple;
 
-# $Id: Simple.pm,v 1.1 2004/04/16 15:33:08 dean Exp $
+# $Id: Simple.pm,v 1.2 2004/08/10 23:08:20 dean Exp $
 
 use strict;
 use vars qw($ua %loop_check $FULL_LWP @EXPORT @EXPORT_OK $VERSION);
@@ -16,7 +16,7 @@ require Exporter;
 use HTTP::Status;
 push(@EXPORT, @HTTP::Status::EXPORT);
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 $FULL_LWP++ if grep {lc($_) eq "http_proxy"} keys %ENV;
 
 
@@ -252,9 +252,10 @@ successful.
 =item getprint($url)
 
 Get and print a document identified by a URL. The document is printed
-to STDOUT as data is received from the network.  If the request fails,
-then the status code and message are printed on STDERR.  The return
-value is the HTTP response code.
+to the selected default filehandle for output (normally STDOUT) as
+data is received from the network.  If the request fails, then the
+status code and message are printed on STDERR.  The return value is
+the HTTP response code.
 
 =item getstore($url, $file)
 
