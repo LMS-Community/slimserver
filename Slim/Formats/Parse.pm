@@ -8,7 +8,7 @@ package Slim::Formats::Parse;
 use strict;
 use File::Spec::Functions qw(:ALL);
 use FileHandle;
-use IO::Socket qw(:DEFAULT :crlf);
+use IO::Socket qw(:crlf);
 use IO::String;
 
 use Slim::Utils::Misc;
@@ -28,17 +28,37 @@ sub parseList {
 	}
 }
 
-sub M3U {
-	my $m3u = shift;
-	my $m3udir = shift;
-	my @items;
-	
-	my $title;
-	my $itemCount = 0;
+sub _updateMetaData {
+	my $entry = shift;
+	my $title = shift;
 
+	if (Slim::Music::Info::isCached($entry)) {
+
+		if (!Slim::Music::Info::isKnownType($entry)) {
+			$::d_parse && msg("    entry: $entry not known type\n"); 
+			Slim::Music::Info::setContentType($entry,'mp3');
+		}
+
+	} else {
+		Slim::Music::Info::setContentType($entry,'mp3');
+	}
+
+	if (defined($title)) {
+		Slim::Music::Info::setTitle($entry, $title);
+		$title = undef;
+	}
+}
+
+sub M3U {
+	my $m3u    = shift;
+	my $m3udir = shift;
+
+	my @items  = ();
+	
 	$::d_parse && msg("parsing M3U: $m3u\n");
 	
-	while(my $entry = <$m3u>) {
+	while (my $entry = <$m3u>) {
+
 		chomp($entry);
 		# strip carriage return from dos playlists
 		$entry =~ s/\cM//g;  
@@ -49,41 +69,43 @@ sub M3U {
 
 		$::d_parse && msg("  entry from file: $entry\n");
 
+		my $title;
+
 		if ($entry =~ /^#EXTINF:.*?,(.*)$/) {
 			$title = $1;	
 		}
 		
 		next if $entry =~ /^#/;
 		next if $entry eq "";
+
 		$entry =~ s|$LF||g;
 		
 		$entry = Slim::Utils::Misc::fixPath($entry, $m3udir);
 		
 		$::d_parse && msg("    entry: $entry\n");
 
-		if (defined($title)) {
-			Slim::Music::Info::setTitle($entry, $title);
-			$title = undef;
-		}
+		_updateMetaData($entry, $title);
 		
-		$items[$itemCount++] = $entry;
+		push @items, $entry;
 	}
+
 	$::d_parse && msg("parsed " . scalar(@items) . " items in m3u playlist\n");
+
 	return @items;
 }
 
 sub PLS {
 	my $pls = shift;
-	my $i;
-	my @urls;
-	my @titles;
-	my @items;
+
+	my @urls   = ();
+	my @titles = ();
+	my @items  = ();
 	
 	# parse the PLS file format
 
 	$::d_parse && msg("Parsing playlist: $pls \n");
 	
-	while(<$pls>) {
+	while (<$pls>) {
 		$::d_parse && msg("Parsing line: $_\n");
 
 		# strip carriage return from dos playlists
@@ -103,19 +125,16 @@ sub PLS {
 		}	
 	}
 
-	for ($i = 1; $i <= $#urls; $i++) {
-		if (defined($urls[$i])) {
-			my $entry = $urls[$i];
-			my $title = $titles[$i];
-			
-			if(!Slim::Music::Info::isURL($entry)) { $entry=Slim::Utils::Misc::fileURLFromPath($entry); }
-			
-			push @items, $entry;
+	for (my $i = 1; $i <= $#urls; $i++) {
 
-			if (defined($title)) {
-				Slim::Music::Info::setTitle($entry, $title);
-			}
-		}
+		next unless defined $urls[$i];
+
+		my $entry = $urls[$i];
+		my $title = $titles[$i];
+
+		_updateMetaData($entry, $title);
+
+		push @items, $entry;
 	}
 
 	return @items;
@@ -228,8 +247,11 @@ sub parseCUE {
 sub CUE {
 	my $cue = shift;
 	my $cuefile = shift;
+
 	$::d_parse && msg("Parsing cue: $cuefile \n");
-	my @lines;
+
+	my @lines = ();
+
 	while (my $line = <$cue>) {
 		chomp($line);
 		$line =~ s/\cM//g;  
@@ -246,34 +268,46 @@ sub writePLS {
 	my $output;
 	my $outstring = '';
 	my $writeproc;
-	if ($filename) {
-		$output =FileHandle->new($filename, "w");
-		if (!$output) {
+
+	if ($filename && -e $filename) {
+
+		$output = FileHandle->new($filename, "w") || do {
 			msg("Could not open $filename for writing.\n");
 			return;
-		}
+		};
+
 	} else {
-		$output = new IO::String $outstring;
+
+		$output = IO::String->new($outstring);
 	}
+
 	print $output "[playlist]\nPlaylistName=$playlistname\n";
 	my $itemnum = 0;
+
 	foreach my $item (@{$listref}) {
+
 		$itemnum++;
+
 		print $output "File$itemnum=$item\n";
+
 		my $title = Slim::Music::Info::title($item);
+
 		if ($title) {
 			print $output "Title$itemnum=$title\n";
 		}
+
 		my $dur = Slim::Music::Info::duration($item) || -1;
 		print $output "Length$itemnum=$dur\n";
 	}
+
 	print $output "NumberOfItems=$itemnum\nVersion=2\n";
+
 	if ($filename) {
 		close $output;
 		return;
-	} else {
-		return $outstring;
 	}
+
+	return $outstring;
 }
 
 sub writeM3U {
@@ -284,33 +318,41 @@ sub writeM3U {
 	my $output;
 	my $outstring = '';
 	my $writeproc;
-	if ($filename) {
-		$output =FileHandle->new($filename, "w");
-		if (!$output) {
+
+	if ($filename && -e $filename) {
+
+		$output = FileHandle->new($filename, "w") || do {
 			msg("Could not open $filename for writing.\n");
 			return;
-		}
+		};
+
 	} else {
-		$output = new IO::String $outstring;
+		$output = IO::String->new($outstring);
 	}
+
 	print $output "#CURTRACK $resumetrack\n" if defined($resumetrack);
 	print $output "#EXTM3U\n" if $addTitles;
 	
 	foreach my $item (@{$listref}) {
+
 		if ($addTitles && Slim::Music::Info::isURL($item)) {
+
 			my $title = Slim::Music::Info::title($item);
+
 			if ($title) {
 				print $output "#EXTINF:-1,$title\n";
 			}
 		}
+
 		print $output "$item\n";
 	}
+
 	if ($filename) {
 		close $output;
 		return;
-	} else {
-		return $outstring;
 	}
+
+	return $outstring;
 }
 
 1;
