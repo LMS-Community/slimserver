@@ -131,7 +131,7 @@ use vars qw($VERSION @AUTHORS);
 	'Dan Sully',
 );
 
-$VERSION = '5.1';
+$VERSION = '5.1.1';
 
 # old preferences settings, only used by the .slim.conf configuration.
 # real settings are stored in the new preferences file:  .slim.pref
@@ -467,6 +467,7 @@ to the console via stderr:
     --d_display      => Show what (should be) on the player's display 
     --d_factorytest  => Information used during factory testing
     --d_files        => Files, paths, opening and closing
+    --d_filehandle   => Information about the custom FileHandle object
     --d_firmware     => Information during Squeezebox firmware updates 
     --d_formats      => Information about importing data from various file formats
     --d_http         => HTTP activity
@@ -484,7 +485,6 @@ to the console via stderr:
     --d_protocol     => Client protocol information
     --d_prefs        => Preferences file information
     --d_remotestream => Information about remote HTTP streams and playlists
-    --d_filehandle => Information about the custom FileHandle object
     --d_scan         => Information about scanning directories and filelists
     --d_select       => Information about the select process
     --d_server       => Basic server functionality
@@ -517,7 +517,7 @@ sub initOptions {
 		'httpaddr=s'   		=> \$httpaddr,
 		'httpport=s'   		=> \$httpport,
 		'logfile=s'   		=> \$logfile,
-		'audiodir=s' 			=> \$audiodir,
+		'audiodir=s' 		=> \$audiodir,
 		'pidfile=s' 		=> \$pidfile,
 		'playeraddr=s'		=> \$localClientNetAddr,
 		'priority=i'        => \$priority,

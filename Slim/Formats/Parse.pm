@@ -61,15 +61,6 @@ sub M3U {
 
 		$::d_parse && msg("    entry: $entry\n");
 
-		if (Slim::Music::Info::isCached($entry)) {
-			if (!Slim::Music::Info::isKnownType($entry)) {
-				$::d_parse && msg("    entry: $entry not known type\n"); 
-				Slim::Music::Info::setContentType($entry,'mp3');
-			}
-		} else {
-			Slim::Music::Info::setContentType($entry,'mp3');
-		}
-		
 		if (defined($title)) {
 			Slim::Music::Info::setTitle($entry, $title);
 			$title = undef;
@@ -118,15 +109,6 @@ sub PLS {
 			my $title = $titles[$i];
 			push @items, $entry;
 
-			if (Slim::Music::Info::isCached($entry)) {
-				if (!Slim::Music::Info::isKnownType($entry)) {
-					$::d_parse && msg("entry: $entry not known type\n"); 
-					Slim::Music::Info::setContentType($entry,'mp3');
-				}
-			} else {
-				Slim::Music::Info::setContentType($entry,'mp3');
-			}
-			
 			if (defined($title)) {
 				Slim::Music::Info::setTitle($entry, $title);
 			}

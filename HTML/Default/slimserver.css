@@ -16,3 +16,5 @@ table, td, tr, form 																		{ padding: 0px; margin: 0px; }
 .even 																						{ padding: 4px; background-color: #ffffff;}
 a 																							{ text-decoration:none; }
 img 																						{ border-style: none; }
+.nowrap																						{ white-space: nowrap; }
+

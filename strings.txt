@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.57 2004/02/02 23:52:14 dean Exp $
+# $Id: strings.txt,v 1.58 2004/02/06 19:48:25 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1731,7 +1731,7 @@ SETUP_REFRESHRATE_OK
 SETUP_COVERART
 	DE	Plattencover
 	DK	Cover-billeder
-	EN	Cover Art
+	EN	Artwork
 	FR	Pochettes
 	NL	Hoesjes
 	PT	Capa Álbum
@@ -1740,7 +1740,7 @@ SETUP_COVERART
 SETUP_COVERART_DESC
 	DE	Bilder der Plattenhülle werden, falls vorhanden, beim Anschauen der Album- oder Titelinformationen angezeigt. Sie befinden sich in den ID3 Tags für einen einzelnen Titel oder im selben Verzeichnis, wie die Titel Dateien.  Per Voreinstellung werden Dateien mit den folgenden Namen benutzt: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", "thumb.jpg".  Sie können einen zusätzlichen Dateinamen für die Plattenhülle festlegen und unterschiedliche Namen für kleine und grosse Bilder verwenden.
 	DK	Billeder fra covers vises når du vælger albums eller sang information. Cover-billederne hentes fra ID3-tagget i de enkelte sange eller fra mappen hvori sangene er placeret. Som standard indlæses følgende grafikfiler, hvis der ikke er et billede i ID3-tagget: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" eller "thumb.jpg". Du kan angive yderligere filnavne der skal anvendes. Du kan endvidere angive forskellige filnavne for billeder i fuld størrelse og mindre størrelse.
-	EN	Images of album cover art, when available, are displayed when viewing an album or song information.  Cover art images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail or full size images. Prefix the option with % and you can follow it with any string made up of the same elements available for Title Formats (eq %ARTIST - ALBUM, will look for Artist - Album.jpg to fit the artist and album information found.
+	EN	Images of album artwork, when available, are displayed when viewing an album or song information.  Artwork images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail or full size images. Prefix the option with % and you can follow it with any string made up of the same elements available for Title Formats (eq %ARTIST - ALBUM, will look for Artist - Album.jpg to fit the artist and album information found.
 	FR	Si elle existe, l'image de la pochette du disque est affichée en regard de l'information d'un album ou d'un morceau. Les images se trouvent soit dans un tag ID3 par morceau, soit dans le même répertoire que les fichiers. Le serveur recherche de lui-même les noms de fichiers suivants: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", ou "thumb.jpg". Vous pouvez spécifier d'autres noms de fichiers pour les images de pochettes, et spécifier différents noms de fichiers pour les vignettes ou les images.
 	NL	Indien er een afbeelding beschikbaar is van de hoezen wordt deze getoond als U een album bekijkt of informatie over een liedje opvraagt. Deze beelden worden opgegeven in de ID3 tag voor liedjes of staan in dezelfde map als de muziekbestanden. Standaard worden de bestanden "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" en "thumb.jpg" gebruikt. Bijkomende bestandsnamen kunnen gedefinieerd worden. Voor de verkleinde beelden (thumbmails) en de volledige afbeeldingen kunnen afzonderlijke namen opgegeven worden.  
 	PT	As imagens da capa do álbum, quando disponíveis, são mostradas na visualização da informação do álbum ou da música. As capas dos álbuns poderão estar integradas nas "tags ID3" do próprio ficheiro, ou em ficheiros separados na pasta dos ficheiros de música. Por omissão, serão usados os nomes de ficheiros "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Pode especificar nomes de ficheiros adicionais para a imagem da capa do álbum. Pode especificar nomes diferentes para a miniatura ou para a imagem completa.
@@ -1748,7 +1748,7 @@ SETUP_COVERART_DESC
 SETUP_COVERART_OK
 	DE	Dateiname des Plattencovers:
 	DK	Filnavne for cover-billeder gemt som:
-	EN	Cover art image file name set to
+	EN	Artwork image file name set to
 	FR	Nom de fichier pour les images de pochette :
 	NL	Naam van de afbeelding van de hoes ingesteld op
 	PT	Nome do ficheiro para a Capa do Álbum é
@@ -1757,7 +1757,7 @@ SETUP_COVERART_OK
 SETUP_COVERTHUMB
 	DE	Dateiname des Plattencovers (klein)
 	DK	Små cover-billeder
-	EN	Cover Art Thumbnail
+	EN	Artwork Thumbnail
 	FR	Vignettes
 	NL	Verkleinde afbeelding van de hoes
 	PT	Miniatura da Capa do Álbum
@@ -1766,7 +1766,7 @@ SETUP_COVERTHUMB
 SETUP_COVERTHUMB_DESC
 	DE	Dateiname des Plattencovers
 	DK	Filnavne for små cover-billeder
-	EN	Cover art thumbnail image file name
+	EN	Artwork thumbnail image file name
 	FR	Nom de fichier pour les vignettes
 	NL	Bestandsnaam voor verkleinde afbeelding van de hoes
 	PT	Nome do ficheiro da miniatura da Capa do Álbum
@@ -1775,7 +1775,7 @@ SETUP_COVERTHUMB_DESC
 SETUP_COVERTHUMB_OK
 	DE	Dateiname des Plattencovers (klein):
 	DK	Filnavne for cover-billeder gemt som:
-	EN	Cover art thumbnail image file name set to
+	EN	Artwork thumbnail image file name set to
 	FR	Nom de fichier pour les vignettes des images de pochette :
 	NL	Bestandsnaam voor verkleinde afbeelding van de hoes ingesteld op
 	PT	O nome do ficheiro para a miniatura da Capa do Álbum é
@@ -1786,7 +1786,7 @@ SETUP_THUMBSIZE
 	FR	Taille des vignettes
 
 SETUP_THUMBSIZE_DESC
-	EN	Choose the size in pixels (25-250) for the default thumbnail image when browsing by cover art. Default is 100.
+	EN	Choose the size in pixels (25-250) for the default thumbnail image when browsing by artwork. Default is 100.
 	FR	Choisissez une taille en pixels (entre 25 et 250) pour l'affichage par défaut de la vignette en mode "Parcourir les pochettes". La valeur par défaut est 100.
 
 SETUP_INCLUDENOART_0
@@ -4117,7 +4117,7 @@ MODTIME
 COVERART
 	DE	Plattencover
 	DK	Cover-billede
-	EN	Cover art
+	EN	Artwork
 	FR	Pochette
 	NL	Hoesjes
 	NO	Platecover

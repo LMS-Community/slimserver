@@ -1,6 +1,6 @@
 package Slim::Formats::Wav;
 
-# $Id: Wav.pm,v 1.10 2004/01/26 05:44:16 dean Exp $
+# $Id: Wav.pm,v 1.11 2004/02/06 19:48:29 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -18,7 +18,6 @@ package Slim::Formats::Wav;
 #   This code has only been tested on Linux.
 ###############################################################################
 use strict;
-
 use Audio::Wav;
 use MP3::Info;  # because WAV files sometimes have ID3 tags in them!
 use Slim::Utils::Misc; # this will give a sub redefined error because we ues Slim::Music::Info;
@@ -31,7 +30,7 @@ sub getTag {
 
 	my $file = shift || "";
 
-	$::d_wav && Slim::Utils::Misc::msg( "Reading WAV information for $file\n");
+	$::d_formats && Slim::Utils::Misc::msg( "Reading WAV information for $file\n");
 
 	# This hash will map the keys in the tag to their values.
 	my $tags = MP3::Info::get_mp3tag($file);
@@ -79,11 +78,11 @@ sub myErrorHandler {
 
 	if ( $parameters{'warning'} ) {
 		# This is a non-critical warning
-		$::d_wav && Slim::Utils::Misc::msg( "Warning: $parameters{'filename'}: $parameters{'message'}\n");
+		$::d_formats && Slim::Utils::Misc::msg( "Warning: $parameters{'filename'}: $parameters{'message'}\n");
 	} else {
 		# Critical error!
 		$bail = 1;
-		$::d_wav && Slim::Utils::Misc::msg( "ERROR: $parameters{'filename'}: $parameters{'message'}\n");
+		$::d_formats && Slim::Utils::Misc::msg( "ERROR: $parameters{'filename'}: $parameters{'message'}\n");
 	}
 }
 

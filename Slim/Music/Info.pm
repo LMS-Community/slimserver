@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.73 2004/02/04 21:16:52 dean Exp $
+# $Id: Info.pm,v 1.74 2004/02/06 19:48:30 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -637,7 +637,7 @@ sub updateCacheEntry {
 
 	#$::d_info && Slim::Utils::Misc::bt();
 	my $newsong = 0;
-	
+
 	if (Slim::Utils::Prefs::get('useinfocache')) {
 		# if we've already got this in the cache, then merge the new over the old
 		if (exists($infoCache{$url})) {
@@ -2191,16 +2191,17 @@ sub readCoverArtTags {
 	my $contenttype;
 	$::d_info && Slim::Utils::Misc::msg("Updating image for $fullpath\n");
 	
-	if (isFileURL($fullpath)) {
-		$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
-	} else {
-		$filepath = $fullpath;
-	}
-	if (isSong($filepath) && isFile($filepath)) {
-		
+	if (isSong($fullpath) && isFile($fullpath)) {
+	
+		if (isFileURL($fullpath)) {
+			$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
+		} else {
+			$filepath = $fullpath;
+		}
+
 		my $file = Slim::Utils::Misc::virtualToAbsolute($filepath);
 		
-		if (isMP3($filepath) || isWav($filepath)) {
+		if (isMP3($fullpath) || isWav($fullpath)) {
 			$::d_info && Slim::Utils::Misc::msg("Looking for image in ID3 tag\n");
 				
 			my $tags = MP3::Info::get_mp3tag($file, 2, 1);
@@ -2668,7 +2669,6 @@ sub typeFromSuffix {
 		}
 	}
 	if (!defined($type)) { $type = $defaultType; }
-
 	return $type;
 }
 

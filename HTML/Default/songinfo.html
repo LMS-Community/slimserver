@@ -34,60 +34,60 @@
     <p> <a href="status_header.html?p0=playlist&amp;p1=play&amp;p2={%itempath}&amp;player={%player}" target="status">[S 
       PLAY_THIS_SONG]</a><p><a href="status_header.html?p0=playlist&amp;p1=append&amp;p2={%itempath}&amp;player={%player}" target="status">[NB][S 
       ADD_THIS_SONG_TO_PLAYLIST][/NB]</a> </p>
-<table cellspacing="0">
+<table cellspacing="5">
       <tr> 
-        <td> <nobr> [S TITLE]: </nobr> </td>
+        <td class="nowrap">[S TITLE]:</td>
         <td> {&title} </td>
       </tr>
       [IF artist] 
       <tr> 
-        <td> [S ARTIST]: </td>
+        <td class="nowrap"> [S ARTIST]: </td>
         <td> <a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{&artist}</a> 
         </td>
       </tr>
       [/IF] [IF composer] 
       <tr> 
-        <td> [S COMPOSER]: </td>
+        <td class="nowrap"> [S COMPOSER]: </td>
         <td> <a href="browseid3.html?genre=*&amp;artist={%composer}&amp;player={%player}" target="browser">{&composer}</a> 
         </td>
       </tr>
       [/IF] [IF conductor] 
       <tr> 
-        <td> [S CONDUCTOR]: </td>
+        <td class="nowrap"> [S CONDUCTOR]: </td>
         <td> <a href="browseid3.html?genre=*&amp;artist={%conductor}&amp;player={%player}" target="browser">{&conductor}</a> 
         </td>
       </tr>
       [/IF] [IF band] 
       <tr> 
-        <td> [S BAND]: </td>
+        <td class="nowrap"> [S BAND]: </td>
         <td> <a href="browseid3.html?genre=*&amp;artist={%band}&amp;player={%player}" target="browser">{&band}</a> 
         </td>
       </tr>
       [/IF] [IF album] 
       <tr> 
-        <td> [S ALBUM]: </td>
+        <td class="nowrap"> [S ALBUM]: </td>
         <td> <a href="browseid3.html?genre=*&amp;artist=*&amp;album={%album}&amp;player={%player}" target="browser">{&album}</a> 
         </td>
       </tr>
       [/IF] [IF genre] 
       <tr> 
-        <td> [S GENRE]: </td>
+        <td class="nowrap"> [S GENRE]: </td>
         <td> <a href="browseid3.html?genre={%genre}&amp;player={%player}" target="browser">{&genre} 
           </a></td>
       </tr>
 	  [/IF] [IF disc] 
 	  <tr> 
-	    <td> [S DISC]: </td>
+	    <td class="nowrap"> [S DISC]: </td>
 	    <td> {&disc} </td>
 	  </tr>
       [/IF] [IF track] 
       <tr> 
-        <td> [S TRACK]: </td>
+        <td class="nowrap"> [S TRACK]: </td>
         <td> {&track} </td>
       </tr>
       [/IF] [IF type] 
 	<tr>
-		<td>
+		<td class="nowrap">
 			[S TYPE]: 
 		</td>
 		<td>
@@ -96,42 +96,42 @@
 	</tr>
 	[/IF] [IF duration] 
       <tr> 
-        <td> [S LENGTH]: </td>
+        <td class="nowrap"> [S LENGTH]: </td>
         <td> {&duration} </td>
       </tr>
       [/IF] [IF year] 
       <tr> 
-        <td> [S YEAR]: </td>
+        <td class="nowrap"> [S YEAR]: </td>
         <td> {&year} </td>
       </tr>
       [/IF] [IF comment] 
       <tr> 
-        <td> [S COMMENT]: </td>
+        <td class="nowrap"> [S COMMENT]: </td>
         <td> {&comment} </td>
       </tr>
       [/IF] [IF filelength] 
       <tr> 
-        <td> [S FILELENGTH]: </td>
+        <td class="nowrap"> [S FILELENGTH]: </td>
         <td> {&filelength} [S BYTES] </td>
       </tr>
       [/IF] [IF bitrate] 
       <tr> 
-        <td> [S BITRATE]: </td>
+        <td class="nowrap"> [S BITRATE]: </td>
         <td> {&bitrate} </td>
       </tr>
       [/IF] [IF tagversion] 
       <tr> 
-        <td> [S TAGVERSION]: </td>
+        <td class="nowrap"> [S TAGVERSION]: </td>
         <td> {&tagversion} </td>
       </tr>
       [/IF] [IF url] 
       <tr> 
-        <td> [S LOCATION]: </td>
+        <td class="nowrap"> [S LOCATION]: </td>
         <td> <a href="{url}">{&url}</a> </td>
       </tr>
       [/IF] [IF modtime] 
       <tr> 
-        <td> [S MODTIME]: </td>
+        <td class="nowrap"> [S MODTIME]: </td>
         <td> {&modtime} </td>
       </tr>
       [/IF] [IF coverart] 
