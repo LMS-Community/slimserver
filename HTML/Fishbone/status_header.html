@@ -39,7 +39,7 @@ function openRemote()
 
 <script language="JavaScript">
 <!--
-var _progressEnd = [IF songduration]{songduration}[/IF][IFN songduration]1[/IFN];
+var _progressEnd = [IF songduration]{songduration}[/IF][IFN songduration]2[/IFN];
 var _progressAt = [IF songtime]{songtime}[/IF][IFN songtime]0[/IFN];
 var p = 1;
 
@@ -87,7 +87,7 @@ else
 				<p class="label"><img src="html/images/spacer.gif" border="0" width="2" height="14">[IF modeplay][S PLAYING][/IF]
                 [IF modepause][S PAUSED_ON][/IF]
                 [IF modestop][S STOPPED_ON][/IF]
-                [IF currentsong]<b>{currentsong}</b> [S OUT_OF] <b>&nbsp;{songcount}</b>&nbsp;<a class="label" href="status_header.html?p0=button&p1=modefunction_playlist->zap&player={%player}&start={start}">[zap]</a>[/IF]:</p>
+                [IF currentsong]<b>{currentsong}</b> [S OUT_OF] <b>&nbsp;{songcount}</b>&nbsp;<a class="label" href="status_header.html?p0=playlist&p1=zap&p2={thissongnum}&player={%player}&start={start}">[zap]</a>[/IF]:</p>
                 <p><img src="html/images/spacer.gif" border="0" width="5"><a class="songtitle" href="songinfo.html?songurl={%itempath}&player={%player}" target="browser">{title}</a>
                 [IF duration]&nbsp;({&duration})[/IF][IF bitrate]&nbsp;({bitrate})[/IF]</p>
                 [IFN coverart]<script language="JavaScript">top.document.getElementById('player_frame').rows = '215, *';</script>

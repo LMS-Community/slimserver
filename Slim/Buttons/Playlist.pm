@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.9 2003/10/04 20:16:34 sadams Exp $
+# $Id: Playlist.pm,v 1.10 2003/10/06 06:40:56 kdf Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -119,31 +119,15 @@ my %functions = (
  	'zap' => sub {
  		my $client = shift;
  		my $zapped=catfile(Slim::Utils::Prefs::get('playlistdir'), string('ZAPPED_SONGS') . '.m3u');
- 
- 		my $currsong = Slim::Player::Playlist::song($client);
- 		my $currindex = Slim::Player::Source::currentSongIndex($client);
- 		$::d_stdio && msg("ZAP SONG!! $currsong, Index: $currindex\n");
- 		
- 		#Remove from current playlist
- 		if (Slim::Player::Playlist::count($client) > 0) {
- 			# rec button deletes an entry if you are browsing the playlist...
- 			Slim::Display::Animation::showBriefly($client,
- 					string('ZAPPING_FROM_PLAYLIST'),
- 					Slim::Music::Info::standardTitle($client, $currsong), undef, 1);
- 			Slim::Control::Command::execute($client, ["playlist", "delete", $currindex]);
- 		}
- 		# Append the zapped song to the zapped playlist
- 		# This isn't as nice as it should be, but less work than loading and rewriting the whole list
- 		my $zapref = new FileHandle $zapped, "a";
- 		if ($zapref) {
-	 		my @zaplist = ($currsong);
- 			my $zapitem = Slim::Formats::Parse::writeM3U(\@zaplist);
- 			print $zapref $zapitem;
- 			close $zapref;
- 		} else {
- 			msg("Could not open $zapped for writing.\n");
+		my $currsong = Slim::Player::Playlist::song($client);
+		my $currindex = Slim::Player::Source::currentSongIndex($client);
+		if (Slim::Player::Playlist::count($client) > 0) {
+			Slim::Display::Animation::showBriefly($client,
+					string('ZAPPING_FROM_PLAYLIST'),
+					Slim::Music::Info::standardTitle($client, $currsong), undef, 1);
+			Slim::Control::Command::execute($client, ["playlist", "zap", $currindex]);
 		}
- 	},
+	},
 
 	'play' => sub  {
 		my $client = shift;
@@ -307,7 +291,6 @@ sub songTime {
 	}	    
 
 	$time = sprintf("%s%02d:%02d", ($playingDisplayMode % 3 == 2 ? '-' : ''), $delta / 60, $delta % 60);
-
 	return $time;	
 }
 

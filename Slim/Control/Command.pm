@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.13 2003/09/19 20:05:13 dean Exp $
+# $Id: Command.pm,v 1.14 2003/10/06 06:40:56 kdf Exp $
 
 # Slim Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -97,6 +97,7 @@ sub execute {
 	# playlist		title		<index>						?	
 	# playlist		duration	<index>						?	
 	# playlist		tracks		?	
+	# playlist		zap		<index>
 	# mixer			volume		(0 .. 100)|(-100 .. +100)	
 	# mixer			volume		?	
 	# mixer			balance		(-100 .. 100)|(-200 .. +200)			(not implemented!)
@@ -437,6 +438,25 @@ sub execute {
 				$p3 = Slim::Music::Info::genre(Slim::Player::Playlist::song($client,$p2)) || 0;
 			} elsif ($p1 eq "path") {
 				$p3 = Slim::Player::Playlist::song($client,$p2) || 0;
+			} elsif ($p1 eq "zap") {
+				my $zapped=catfile(Slim::Utils::Prefs::get('playlistdir'), string('ZAPPED_SONGS') . '.m3u');
+				my $zapsong = Slim::Player::Playlist::song($client,$p2);
+				my $zapindex = $p2 || Slim::Player::Source::currentSongIndex($client);;
+				#Remove from current playlist
+				if (Slim::Player::Playlist::count($client) > 0) {
+					Slim::Control::Command::execute($client, ["playlist", "delete", $zapindex]);
+				}
+				# Append the zapped song to the zapped playlist
+				# This isn't as nice as it should be, but less work than loading and rewriting the whole list
+				my $zapref = new FileHandle $zapped, "a";
+				if ($zapref) {
+					my @zaplist = ($zapsong);
+					my $zapitem = Slim::Formats::Parse::writeM3U(\@zaplist);
+					print $zapref $zapitem;
+					close $zapref;
+				} else {
+					msg("Could not open $zapped for writing.\n");
+				}
 			}
 		} elsif ($p0 eq "mixer") {
 			if ($p1 eq "volume") {
