@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.72 2004/03/18 00:36:32 dean Exp $
+# $Id: Source.pm,v 1.73 2004/03/18 23:08:18 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -798,7 +798,7 @@ sub openSong {
 						$fullCommand =~ s/\$END\$/Slim::Utils::Misc::fracSecToMinSec($end)/eg;
 					} else {
 						$fullCommand =~ s/\$START\$/0/g;
-						$fullCommand =~ s/\$END\$/Slim::Music::Info::duration($fullpath)/eg;
+						$fullCommand =~ s/\$END\$/-0/g;
 					}
 				}
 				
