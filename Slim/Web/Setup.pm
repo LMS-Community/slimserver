@@ -1489,7 +1489,7 @@ sub initSetupConfig {
 					'PrefOrder' => ['displaytexttimeout',
 							,'composerInArtists','playtrackalbum','artistinalbumsearch', 'searchSubString', 'ignoredarticles','splitList','filesort'
 							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
-							,'savehistory','historylength','checkVersion']
+							,'checkVersion']
 				}
 			}
 		,'Prefs' => {
@@ -1560,17 +1560,6 @@ sub initSetupConfig {
 								'1' => string('SETUP_SAVESHUFFLED_1')
 								,'0' => string('SETUP_SAVESHUFFLED_0')
 							}
-					}
-			,'savehistory' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_SAVEHISTORY_1')
-								,'0' => string('SETUP_SAVEHISTORY_0')
-							}
-					}
-			,'historylength' => {
-						'validate' => \&validateInt
-						,'validateArgs' => [0,undef,1]
 					}
 			,'checkVersion' => {
 						'validate' => \&validateTrueFalse

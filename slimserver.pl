@@ -482,9 +482,6 @@ sub start {
 		Slim::Control::xPL::init();
 	}		
 
-	$::d_server && msg("SlimServer History load...\n");
-	Slim::Web::History::load();
-
 	# start background scanning based on a timer...
 	Slim::Music::Import::startup() unless $noScan;
 	

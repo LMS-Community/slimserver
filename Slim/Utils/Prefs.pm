@@ -199,8 +199,6 @@ our %DEFAULT = (
 	,'saveShuffled'			=> 0
 	,'searchSubString'		=> 0
 	,'maxBitrate'			=> 320	# Maximum bitrate for maximum quality.  MPEG-1 layer III bitrates (kbps): 32 40 48 56 64 80 96 112 128 160 192 224 256 320
-	,'savehistory'			=> 1
-	,'historylength'		=> 1000
 	,'composerInArtists'	=> 0 # include composer and band information in the artists list
 	,'groupdiscs' 			=> 0
 	,'livelog'				=> 102400 # keep around an in-memory log of 100kbytes, available from the web interfaces
@@ -294,10 +292,6 @@ our %prefChange = (
 		} else {
 			Slim::Control::Command::clearExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
 		}
-	}
-	,'historylength' => sub {
-		my $newvalue = shift;
-		Slim::Web::History::adjustHistoryLength();
 	}
 );
 

@@ -6,148 +6,52 @@ package Slim::Web::History;
 # version 2.
 
 use strict;
-use File::Spec::Functions qw(:ALL);
 
-use Slim::Formats::Parse;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
-use Slim::Utils::Strings qw(string);
-
-# a cache of songs played
-our @history = ();
-
-sub get_history {
-	return @history;
-}
-
-# Clear can be used to clear the history cache.
-sub clear {
-	@history = ();
-	unlink(catfile(Slim::Utils::Prefs::get('playlistdir'),'__history.m3u'));
-	undef;
-};
-
-# recount processes the history list by counting the number of times a song appears, and then
-# sorting the list based on that number.  The sorted list is returned.  The returned list 
-# will be a two dimensional array (N by 2).  Each element contains the song name, and the number
-# of times it appeared in the history.
-sub recount {
-	my $listcount = 0;
-	my @outlist   = ();
-        my %outhash   = ();
-	
-	if (scalar(@history)) {        
-        
-		# Cycle through the history and count songs. 
-		for my $item (@history) {
-
-			if (!exists($outhash{$item})) {
-				$outhash{$item}[0] = $item;
-				$outhash{$item}[2] = $listcount;
-			}
-
-			$outhash{$item}[1]++;
-			$listcount++;
-		}
-
-		# Sort array by song count descending and (for ties) last played ascending
-		@outlist = sort {$b->[1] <=> $a->[1] || $a->[2] <=> $b->[2]} values %outhash;
-		#return @outlist[sort {$outlist[$b][1] <=> $outlist[$a][1] || $outlist[$a][2] <=> $outlist[$b][2]} 0..$#outlist];
-	}
-
-	return @outlist;
-}
-
-# load the track history from an M3U file
-# (don't worry if the file doesn't exist)
-sub load {
-	@history = ();
-	return undef unless Slim::Utils::Prefs::get('savehistory');
-
-	my $filename = catfile(Slim::Utils::Prefs::get('playlistdir'),'__history.m3u');
-
-	open (FILE,$filename) or return undef;
-	@history = Slim::Formats::Parse::readM3U(\*FILE, Slim::Utils::Prefs::get('audiodir'));
-	close FILE;
-
-	return undef;
-}
-
-# Record takes a song name and stores it at the first position of an array.  The max 
-sub record {
-	my $song = shift;
-
-	return unless Slim::Utils::Prefs::get('historylength');
-
-	# Add the newest song to the font of the list, so that the most recent song is at the top.
-	unshift @history,$song;
-
-	if (scalar(@history) > Slim::Utils::Prefs::get('historylength')) {
-		pop @history;
-	}
-
-	if (Slim::Utils::Prefs::get('savehistory') && Slim::Utils::Prefs::get('playlistdir')) {
-		Slim::Formats::Parse::writeM3U( \@history, undef, catfile(Slim::Utils::Prefs::get('playlistdir'),'__history.m3u'));
-	}
-}
-
-# shrink history array if historylength is modified to be smaller than the current history array
-sub adjustHistoryLength {
-	my $newlen = Slim::Utils::Prefs::get('historylength');
-
-	if (!$newlen) {
-		clear();
-	} elsif ($newlen < scalar(@history)) {
-
-		splice @history, $newlen;
-
-		if (Slim::Utils::Prefs::get('savehistory') && Slim::Utils::Prefs::get('playlistdir')) {
-			Slim::Formats::Parse::writeM3U(\@history,undef,catfile(Slim::Utils::Prefs::get('playlistdir'),'__history.m3u'));
-		}
-	}
-}
+use Slim::Web::Pages;
 
 # Histlist fills variables for populating an html file. 
 sub hitlist {
 	my ($client, $params) = @_;
 
-	my $itemnumber = 0;
-	my $maxplayed  = 0;
+	my $itemNumber = 0;
+	my $maxPlayed  = 0;
 
-	my @items = recount();
-	my $ds    = Slim::Music::Info::getCurrentDataStore();
+	my $ds     = Slim::Music::Info::getCurrentDataStore();
 
-	if (scalar(@items)) {
+	# Fetch 50 tracks that have been played at least once.
+	# Limit is hardcoded for now.. This should make use of
+	# Class::DBI::Pager or similar. Requires reworking of template
+	# generation.
+	my $tracks = $ds->find('track', { 'playCount' => { '>' => 0 } }, 'playCount', 50, 0);
 
-		for (my $i = 0; $i < scalar(@items); $i++) {
+	for my $track (reverse @$tracks) {
 
-			if ($maxplayed == 0) {
-				$maxplayed = $items[$i][1];
-			}
+		my $playCount = $track->playCount();
 
-			my %form  = %$params;
-			my $track = $ds->objectForUrl($items[$i][0]) || next;
-
-			$form{'title'} 	      = Slim::Music::Info::standardTitle(undef, $track);
-			$form{'artist'}       = $track->artist();
-			$form{'album'} 	      = $track->album();
-			$form{'itempath'}     = $track->url();
-			$form{'odd'}	      = ($itemnumber + 1) % 2;
-			$form{'song_bar'}     = hitlist_bar($params, $items[$i][1], $maxplayed);
-			$form{'player'}	      = $params->{'player'};
-			$form{'skinOverride'} = $params->{'skinOverride'};
-			$form{'song_count'}   = $items[$i][1];
-
-			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("hitlist_list.html", \%form)};
-
-			$itemnumber++;
+		if ($maxPlayed == 0) {
+			$maxPlayed = $playCount;
 		}
+
+		my %form  = %$params;
+
+		$form{'title'} 	      = Slim::Music::Info::standardTitle(undef, $track);
+		$form{'artist'}       = $track->artist();
+		$form{'album'} 	      = $track->album();
+		$form{'itempath'}     = $track->url();
+		$form{'odd'}	      = ($itemNumber + 1) % 2;
+		$form{'song_bar'}     = hitlist_bar($params, $playCount, $maxPlayed);
+		$form{'player'}	      = $params->{'player'};
+		$form{'skinOverride'} = $params->{'skinOverride'};
+		$form{'song_count'}   = $playCount;
+
+		$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("hitlist_list.html", \%form)};
+
+		$itemNumber++;
 	}
 
-	$params->{'total_song_count'} = $ds->count('track', {});
-	$params->{'genre_count'}      = $ds->count('genre', {});
-	$params->{'artist_count'}     = $ds->count('artist', {});
-	$params->{'album_count'}      = $ds->count('album', {});
+	Slim::Web::Pages::addLibraryStats($params);
 
 	return Slim::Web::HTTP::filltemplatefile("hitlist.html", $params);
 }

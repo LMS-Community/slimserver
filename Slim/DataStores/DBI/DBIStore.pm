@@ -262,7 +262,7 @@ sub find {
 sub count {
 	my $self = shift;
 	my $field = shift;
-	my $findCriteria = shift;
+	my $findCriteria = shift || {};
 
 	# Optimize the all case
 	if (scalar(keys %$findCriteria) == 0) {
@@ -469,7 +469,7 @@ sub updateOrCreate {
 		while (my ($key, $val) = each %$attributeHash) {
 
 			if (defined $val && exists $trackAttrs->{lc $key}) {
-				$columnValueHash->{$key} = $val;
+				$columnValueHash->{lc $key} = $val;
 			}
 		}
 

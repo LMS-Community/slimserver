@@ -902,6 +902,7 @@ sub openSong {
 					$client->audioFilehandleIsSocket(2);
 					
 				}
+
 				$client->remoteStreamStartTime(Time::HiRes::time());
 				$client->pauseTime(0);
 
@@ -1094,7 +1095,12 @@ sub openSong {
 		if ($client->audioFilehandle()->opened()) {
 			binmode($client->audioFilehandle());
 		}
-		Slim::Web::History::record(Slim::Player::Playlist::song($client));
+
+		# keep track of some stats for this track
+		$track->set('playCount'  => ($track->playCount() || 0) + 1);
+		$track->set('lastPlayed' => time());
+		$track->update();
+		$ds->forceCommit();
 
 	} else {
 

@@ -308,6 +308,8 @@ our %searchFieldMap = (
 	'samplesize' => 'tracks.samplesize', 
 	'channels' => 'tracks.channels', 
 	'bpm' => 'tracks.bpm', 
+	'lastPlayed' => 'tracks.lastPlayed',
+	'playCount' => 'tracks.playCount',
 	'album' => 'tracks.album',
 	'album.title' => 'albums.titlesort',
 	'genre' => 'genre_track.genre', 
@@ -340,6 +342,8 @@ our %sortFieldMap = (
 	'track' => ['contributor_track.namesort','albums.titlesort','albums.disc','tracks.tracknum','tracks.titlesort'],
 	'tracknum' => ['tracks.tracknum','tracks.titlesort'],
 	'year' => ['tracks.year'],
+	'lastPlayed' => ['tracks.lastPlayed'],
+	'playCount' => ['tracks.playCount'],
 );
 
 # This is a weight table which allows us to do some basic table reordering,

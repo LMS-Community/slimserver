@@ -268,7 +268,7 @@ sub execute {
 			$field = 'track'       if $field eq 'song';
 			$field = 'contributor' if $field eq 'artist';
 
-			$p3 = $ds->count($field, {});
+			$p3 = $ds->count($field);
 		}
 
 		$client = undef;
@@ -725,11 +725,7 @@ sub execute {
 
 		} elsif ($p0 eq "playlist") {
 
-			my ($obj, $results);
-
-			if (my $url = Slim::Player::Playlist::song($client, $p2)) {
-				$obj = $ds->objectForUrl($url);
-			}
+			my $results;
 
 			# Query for the passed params
 			if ($p1 =~ /^(play|load|add|insert|delete)album$/) {
@@ -1085,7 +1081,10 @@ sub execute {
 
 				$p2 = Slim::Player::Playlist::count($client);
 
-			} elsif (defined $obj && $p1 =~ /(?:duration|artist|album|title|genre)/) {
+			} elsif ($p1 =~ /(?:duration|artist|album|title|genre)/) {
+
+				my $url = Slim::Player::Playlist::song($client, $p2);
+				my $obj = $ds->objectForUrl($url);
 
 				# Just call the method on Track
 				$p3 = $obj->$p1();

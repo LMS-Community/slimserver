@@ -475,7 +475,7 @@ sub home {
 
 	_addPlayerList($client, $params);
 	
-	_addStats($params, [], [], [], []);
+	addLibraryStats($params);
 
 	my $template = $params->{"path"}  =~ /home\.(htm|xml)/ ? 'home.html' : 'index.html';
 	
@@ -510,12 +510,11 @@ sub _lcPlural {
 	return sprintf("%s %s", $count, lc(($count == 1 ? string($singular) : string($plural))));
 }
 
-sub _addStats {
+sub addLibraryStats {
 	my ($params, $genre, $artist, $album) = @_;
 	
 	return if Slim::Utils::Misc::stillScanning();
 
-	my $count = 0;
 	my $ds    = Slim::Music::Info::getCurrentDataStore();
 	my $find  = {};
 
@@ -526,6 +525,7 @@ sub _addStats {
 	$params->{'song_count'}   = _lcPlural($ds->count('track', $find), 'SONG', 'SONGS');
 	$params->{'artist_count'} = _lcPlural($ds->count('contributor', $find), 'ARTIST', 'ARTISTS');
 	$params->{'album_count'}  = _lcPlural($ds->count('album', $find), 'ALBUM', 'ALBUMS');
+	$params->{'genre_count'}  = _lcPlural($ds->count('genre', $find), 'GENRE', 'GENRES');
 }
 
 sub browser {
@@ -1756,7 +1756,7 @@ sub browsedb {
 	}
 
 	# Just go directly to the params.
-	_addStats($params, [$params->{'genre'}], [$params->{'artist'}], [$params->{'album'}], [$params->{'song'}]);
+	addLibraryStats($params, [$params->{'genre'}], [$params->{'artist'}], [$params->{'album'}], [$params->{'song'}]);
 
 	# warn the user if the scanning isn't complete.
 	if (Slim::Utils::Misc::stillScanning()) {

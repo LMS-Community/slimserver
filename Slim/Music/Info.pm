@@ -72,7 +72,7 @@ sub init {
 
 	$currentDB = $localDB = Slim::DataStores::DBI::DBIStore->new();
 
-	if (!$::noScan && $currentDB->count('track', {}) == 0) {
+	if (!$::noScan && $currentDB->count('track') == 0) {
 		Slim::Music::Import::startScan();
 	}
 	
