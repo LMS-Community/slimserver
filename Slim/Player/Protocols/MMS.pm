@@ -33,6 +33,7 @@ sub new {
 
 	unless (defined($command) && $command ne '-') {
 		$::d_remotestream && msg "Couldn't find conversion command for wma\n";
+		Slim::Player::Source::errorOpening($client,Slim::Utils::Strings::string('WMA_NO_CONVERT_CMD'));
 		return undef;
 	}
 

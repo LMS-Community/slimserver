@@ -35,6 +35,7 @@ use Slim::Utils::Scan;
 use Slim::Player::Pipeline;
 use Slim::Web::RemoteStream;
 use Slim::Player::Protocols::HTTP;
+use Slim::Player::Protocols::MMS;
 
 my $TRICKSEGMENTDURATION = 1.0;
 my $FADEVOLUME         = 0.3125;
@@ -49,13 +50,9 @@ our %commandTable = ();
 our %protocolHandlers = ( 
 	http => qw(Slim::Player::Protocols::HTTP),
 	icy => qw(Slim::Player::Protocols::HTTP),
+	mms => qw(Slim::Player::Protocols::MMS),
 	file => '0'
 );
-
-if ($^O =~ /Win32/) {
-	eval 'require Slim::Player::Protocols::MMS';
-	$protocolHandlers{mms} = qw(Slim::Player::Protocols::MMS);
-}
 
 sub systell {
 	$_[0]->sysseek(0, SEEK_CUR)
