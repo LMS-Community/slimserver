@@ -1,6 +1,6 @@
 # ShoutcastBrowser.pm Copyright (C) 2003 Peter Heslin
 # version 3.0, 5 Apr, 2004
-#$Id: ShoutcastBrowser.pm,v 1.16 2004/12/07 20:19:45 dsully Exp $
+#$Id$
 #
 # A Slim plugin for browsing the Shoutcast directory of mp3
 # streams.  Inspired by streamtuner.
@@ -23,7 +23,22 @@
 # * Add a web interface
 
 package Plugins::ShoutcastBrowser;
+
 use strict;
+
+use IO::Socket qw(:DEFAULT :crlf);
+use File::Spec::Functions ();
+use Slim::Control::Command;
+use Slim::Utils::OSDetect;
+use Slim::Utils::Prefs;
+use Slim::Display::Display;
+use LWP::Simple ();
+use HTML::Entities ();
+use XML::Simple ();
+
+eval { require Compress::Zlib };
+
+my $have_zlib = 1 unless $@;
 
 ################### Configuration Section ########################
 
@@ -153,7 +168,7 @@ my $sort_bitrate_up = 0;
 my ($recent_name, $misc_genre, $position_of_recent);
 my (%recent_filename, %recent_data);
 my $recent_dirname = 'ShoutcastBrowser_Recently_Played';
-my $recent_dir = catdir(Slim::Utils::Prefs::get('playlistdir'), $recent_dirname);
+my $recent_dir = File::Spec::Functions::catdir(Slim::Utils::Prefs::get('playlistdir'), $recent_dirname);
 mkdir $recent_dir unless (-d $recent_dir);
 
 my ($top_limit, $most_popular_name, $custom_genres, %custom_genres);
@@ -213,22 +228,6 @@ for my $g (@legit_genres)
     $legit_genres{$g}++;
 }
 
-use FileHandle;
-use IO::Socket qw(:DEFAULT :crlf);
-use File::Spec::Functions qw(:ALL);
-use Slim::Control::Command;
-use Slim::Utils::OSDetect;
-use Slim::Utils::Prefs;
-use Slim::Display::Display;
-use LWP::Simple;
-use HTML::Entities;
-
-eval
-{
-    require Compress::Zlib;
-    import Compress::Zlib;
-};
-my $have_zlib = 1 unless $@;
 
 sub getDisplayName {
 	return 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME';
@@ -308,11 +307,9 @@ sub get_prefs
 sub setup_custom_genres
 {
     my $i = 1;
-    my $fh = FileHandle->new();
-    $fh->open('< '. $custom_genres);
-    if (defined $fh)
+    open FH, $custom_genres or return;
     {
-	while(my $entry = <$fh>)
+	while(my $entry = <FH>)
 	{
 	    chomp $entry;
 	    next if $entry =~ m/^\s*$/;
@@ -328,7 +325,7 @@ sub setup_custom_genres
 	    $keyword_index{$genre} = $i;
 	    $i++;
 	}
-	$fh->close;
+	close FH;
     }
 }
 
@@ -345,9 +342,7 @@ sub setMode
     $recent_name = $client->string('PLUGIN_SHOUTCASTBROWSER_RECENT');
     $most_popular_name = $client->string('PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR');
     $misc_genre= $client->string('PLUGIN_SHOUTCASTBROWSER_MISC');
-    $recent_filename{$client} =
-	catfile($recent_dir,
-		$client->name() . '.m3u');
+    $recent_filename{$client} = File::Spec::Functions::catfile($recent_dir, $client->name() . '.m3u');
 
     # Get streams
     unless (@genres)
@@ -366,7 +361,7 @@ sub setMode
 };
 	$u .= '&no_compress=1' unless $have_zlib;
 	$u .= "&limit=$how_many_streams" if $how_many_streams;
-	my $xml = get($u);
+	my $xml = LWP::Simple::get($u);
 	$last_time = time;
 	&setup_custom_genres() if $custom_genres;
 	unless ($xml)
@@ -380,18 +375,19 @@ sub setMode
 	    $xml = Compress::Zlib::uncompress($xml);
 	}
 
-	my ($label) = $xml =~ m#<playlist[^>]*label="?([^">]+)"?>#s;
+	# Using XML::Simple reduces the memory footprint by nearly 2 megs vs the old manual scanning.
+	my $data  = XML::Simple::XMLin($xml);
+	my $label = $ref->{'playlist'}->{'label'};
 
-	while ($xml =~ m#<entry([^>]*)>(.*?)</entry>#gs)
+	for my $entry (@{$ref->{'playlist'}->{'entry'}})
 	{
-	    my $attr = $1;
-	    my $entry = $2;
-	    my ($url) = $attr =~ m#playstring="?([^">]+)"?#is;
-	    my ($name) = $entry =~ m#<name[^>]*>(.*?)</name>#is;
-	    my ($genre) = $entry =~ m#<genre[^>]*>(.*?)</genre>#is;
-	    my ($now_playing) = $entry =~ m#<Nowplaying[^>]*>(.*?)</Nowplaying>#is;
-	    my ($listeners) = $entry =~ m#<listeners[^>]*>(.*?)</listeners>#is;
-	    my ($bitrate) = $entry =~ m#<bitrate[^>]*>(.*?)</bitrate>#is;
+
+		my $url         = $entry->{'Playstring'};
+		my $name        = $entry->{'Name'};
+		my $genre       = $entry->{'Genre'};
+		my $now_playing = $entry->{'Nowplaying'};
+		my $listeners   = $entry->{'Listeners'};
+		my $bitrate     = $entry->{'Bitrate'};
 
 	    next if ($min_bitrate and $bitrate < $min_bitrate);
 	    next if ($max_bitrate and $bitrate > $max_bitrate);
@@ -400,9 +396,9 @@ sub setMode
 	    $name =~ s/%([\dA-F][\dA-F])/chr hex $1/gei;
 	    $now_playing =~ s/%([\dA-F][\dA-F])/chr hex $1/gei;
 
-	    decode_entities ($name);
-	    decode_entities ($genre);
-	    decode_entities ($now_playing);
+	    HTML::Entities::decode_entities($name);
+	    HTML::Entities::decode_entities($genre);
+	    HTML::Entities::decode_entities($now_playing);
 
 	    $name =~ s#\b([\w-]) ([\w-]) #$1$2#g;#S P A C E D  W O R D S
 	    $name =~ s#\b(ICQ|AIM|MP3Pro)\b##i;# we don't care
@@ -474,6 +470,9 @@ sub setMode
 	    $stream_data{$all_name}{$name}{$bitrate} = $data;
 	}
 
+	undef $xml;
+	undef $data;
+
 	if ($lump_singletons and not $custom_genres)
 	{
 	    foreach my $g (keys %stream_data)
@@ -498,8 +497,7 @@ sub setMode
 		}
 	    }
 	}
-	@genres = keys %stream_data;
-	@genres = sort genre_sort @genres;
+	@genres = sort genre_sort keys %stream_data;
 
 	unshift @genres, $most_popular_name;
 
@@ -1367,22 +1365,21 @@ my %InfoFunctions =
 sub get_recent_streams
 {
     my $client = shift;
-    if (-f $recent_filename{$client})
-    {
+
 	my @recent = ();
-	my $fh = FileHandle->new();
-	$fh->open('< '. $recent_filename{$client});
-	if (defined $fh)
+	open FH, $recent_filename{$client} or do {
+    		return [ $client->string('PLUGIN_SHOUTCASTBROWSER_NONE') ];
+	};
+
+	# Using Slim::Formats::Parse::M3U is unreliable, since it
+	# forces us to use Slim::Music::Info::title to get the
+	# title, but Info.pm may refuse to give it to us if it
+	# thinks the data is "invalid" or something.  Also, we
+	# want a list of titles with URLs attached, not vice
+	# versa.
+	my $title;
+	while(my $entry = <FH>)
 	{
-	    # Using Slim::Formats::Parse::M3U is unreliable, since it
-	    # forces us to use Slim::Music::Info::title to get the
-	    # title, but Info.pm may refuse to give it to us if it
-	    # thinks the data is "invalid" or something.  Also, we
-	    # want a list of titles with URLs attached, not vice
-	    # versa.
-	    my $title;
-	    while(my $entry = <$fh>)
-	    {
 		chomp($entry);
 		# strip carriage return from dos playlists
 		$entry =~ s/\cM//g;
@@ -1406,14 +1403,11 @@ sub get_recent_streams
 		    push @recent, $title;
 		    $title = undef;
 		}
-	    }
-	    $fh->close;
-	    return [ @recent ];
 	}
-    }
-    return [ $client->string('PLUGIN_SHOUTCASTBROWSER_NONE') ];
-}
 
+	close FH;
+	return [ @recent ];
+}
 
 sub add_recent_stream
 {
@@ -1451,20 +1445,19 @@ sub add_recent_stream
 
     if (defined $recent_filename{$client})
     {
-	my $fh = FileHandle->new;
-	$fh->open('> '. $recent_filename{$client});
-	if (not defined $fh)
-	{
+	open FH, ">$recent_filename{$client}" or do {
 	    print STDERR "Could not open $recent_filename{$client} for writing.\n";
 	    return;
-	}
-	$fh->print("#EXTM3U\n");
+	};
+
+	print FH "#EXTM3U\n";
 
 	foreach my $name (@recent)
 	{
-	    $fh->print("#EXTINF:-1,$name\n");
-	    $fh->print($recent_data{$client}{$name}."\n");
+	    print FH "#EXTINF:-1,$name\n";
+	    print FH $recent_data{$client}{$name}."\n";
 	}
+	close FH;
     }
     $streams{$client}{$position_of_recent} = [ @recent ];
 }
@@ -1498,7 +1491,7 @@ PLUGIN_SHOUTCASTBROWSER_CONNECTING
 
 PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
 	EN	Error: SHOUTcast web site not available
-	DE	Fehler: SHOUTcast Web-Seite nicht verfügbar
+	DE	Fehler: SHOUTcast Web-Seite nicht verfÃ¼gbar
 
 PLUGIN_SHOUTCASTBROWSER_SHOUTCAST
 	EN	SHOUTcast
@@ -1522,11 +1515,11 @@ PLUGIN_SHOUTCASTBROWSER_KBPS
 
 PLUGIN_SHOUTCASTBROWSER_RECENT
 	EN	Recently played
-	DE	Kürzlich gehört
+	DE	KÃ¼rzlich gehÃ¶rt
 
 PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR
 	EN	Most Popular
-	DE	Populäre Streams
+	DE	PopulÃ¤re Streams
 
 PLUGIN_SHOUTCASTBROWSER_MISC
 	EN	Misc. genres
@@ -1545,7 +1538,7 @@ SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER
 
 SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER_DESC
 	EN	Browse SHOUTcast list of Internet Radio streams.  Hit rewind after changing any settings to reload the list of streams.
-	DE	Blättere durch die Liste der SHOUTcast Internet Radiostationen. Drücke nach jedem Einstellungswechsel REW, um die Liste neu zu laden.
+	DE	BlÃ¤ttere durch die Liste der SHOUTcast Internet Radiostationen. DrÃ¼cke nach jedem Einstellungswechsel REW, um die Liste neu zu laden.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_HOW_MANY_STREAMS
 	EN	Number of Streams
@@ -1557,35 +1550,35 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_HOW_MANY_STREAMS_DESC
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_PRIMARY_CRITERION
 	EN	Main Sort Criterion for Genres
-	DE	Haupt Sortierkriterium für Musikstile
+	DE	Haupt Sortierkriterium fÃ¼r Musikstile
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_PRIMARY_CRITERION_DESC
 	EN	Primary criterion for sorting genres.
-	DE	Erstes Kriterium für die Sortierung der Musikstile
+	DE	Erstes Kriterium fÃ¼r die Sortierung der Musikstile
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_SECONDARY_CRITERION
 	EN	Other Sort Criterion for Genres
-	DE	Weiteres Sortierkriterium für Musikstile
+	DE	Weiteres Sortierkriterium fÃ¼r Musikstile
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_SECONDARY_CRITERION_DESC
 	EN	Secondary criterion for sorting genres, if the primary is equal.
-	DE	Das zweite Sortierkriterium für Musikstile, falls das erste mehrere Vorkommen hat.
+	DE	Das zweite Sortierkriterium fÃ¼r Musikstile, falls das erste mehrere Vorkommen hat.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_PRIMARY_CRITERION
 	EN	Main Sort Criterion for Streams
-	DE	Haupt Sortierkriterium für Streams
+	DE	Haupt Sortierkriterium fÃ¼r Streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_PRIMARY_CRITERION_DESC
 	EN	Primary criterion for sorting streams.
-	DE	Erstes Kriterium für die Sortierung der Streams (Radiostationen)
+	DE	Erstes Kriterium fÃ¼r die Sortierung der Streams (Radiostationen)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_SECONDARY_CRITERION
 	EN	Other Sort Criterion for Streams
-	DE	Weiteres Sortierkriterium für Streams
+	DE	Weiteres Sortierkriterium fÃ¼r Streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_SECONDARY_CRITERION_DESC
 	EN	Secondary criterion for sorting streams, if the primary is equal.
-	DE	Das zweite Sortierkriterium für Streams (Radiostationen), falls das erste mehrere Vorkommen hat.
+	DE	Das zweite Sortierkriterium fÃ¼r Streams (Radiostationen), falls das erste mehrere Vorkommen hat.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MIN_BITRATE
 	EN	Minimum Bitrate
@@ -1593,7 +1586,7 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_MIN_BITRATE
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MIN_BITRATE_DESC
 	EN	Minimum Bitrate in which you are interested (0 for no limit).
-	DE	Minimal erwünschte Bitrate (0 für unbeschränkt).
+	DE	Minimal erwÃ¼nschte Bitrate (0 fÃ¼r unbeschrÃ¤nkt).
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_BITRATE
 	EN	Maximum Bitrate
@@ -1601,11 +1594,11 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_BITRATE
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_BITRATE_DESC
 	EN	Maximum Bitrate in which you are interested (0 for no limit).
-	DE	Maximal erwünschte Bitrate (0 für unbeschränkt).
+	DE	Maximal erwÃ¼nschte Bitrate (0 fÃ¼r unbeschrÃ¤nkt).
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT
 	EN	Recent Streams
-	DE	Zuletzt gehörte Streams
+	DE	Zuletzt gehÃ¶rte Streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT_DESC
 	EN	Maximum number of recently played streams to remember.
@@ -1613,11 +1606,11 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT_DESC
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR
 	EN	Most Popular
-	DE	Populäre Streams
+	DE	PopulÃ¤re Streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR_DESC
 	EN	Number of streams to include in the category of most popular streams, measured by the total of all listeners at all bitrates.
-	DE	Die Anzahl Streams, die unter "Populäre Streams" aufgeführt werden sollen. Die Beliebtheit misst sich an der Anzahl Hörer aller Bitraten.
+	DE	Die Anzahl Streams, die unter "PopulÃ¤re Streams" aufgefÃ¼hrt werden sollen. Die Beliebtheit misst sich an der Anzahl HÃ¶rer aller Bitraten.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_CUSTOM_GENRES
 	EN	Custom Genre Definitions
@@ -1625,7 +1618,7 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_CUSTOM_GENRES
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_CUSTOM_GENRES_DESC
 	EN	You can define your own SHOUTcast categories by indicating the name of a custom genre definition file here.  Each line in this file defines a category per line, and each line consists of a series of terms separated by whitespace.  The first term is the name of the genre, and each subsequent term is a pattern associated with that genre.  If any of these patterns matches the advertised genre of a stream, that stream is considered to belong to that genre.  You may use an underscore to represent a space within any of these terms, and in the patterns, case does not matter.
-	DE	Sie können eigene SHOUTcast-Kategorien definieren, indem Sie hier eine Datei mit den eigenen Musikstil-Definitionen angeben. Jede Zeile dieser Datei bezeichnet eine Kategorie, und besteht aus einer Serie von Ausdrücken, die durch Leerzeichen getrennt sind. Der erste Ausdruck ist der Name des Musikstils, alle folgenden bezeichnen ein Textmuster, das mit diesem Musikstil assoziiert wird. Jeder Stream, dessen Stil eines dieser Textmuster enthält, wird diesem Musikstil zugeordnet. Leerzeichen innerhalb eines Begriffs können durch Unterstriche (_) definiert werden. Gross-/Kleinschreibung ist irrelevant.
+	DE	Sie kÃ¶nnen eigene SHOUTcast-Kategorien definieren, indem Sie hier eine Datei mit den eigenen Musikstil-Definitionen angeben. Jede Zeile dieser Datei bezeichnet eine Kategorie, und besteht aus einer Serie von AusdrÃ¼cken, die durch Leerzeichen getrennt sind. Der erste Ausdruck ist der Name des Musikstils, alle folgenden bezeichnen ein Textmuster, das mit diesem Musikstil assoziiert wird. Jeder Stream, dessen Stil eines dieser Textmuster enthÃ¤lt, wird diesem Musikstil zugeordnet. Leerzeichen innerhalb eines Begriffs kÃ¶nnen durch Unterstriche (_) definiert werden. Gross-/Kleinschreibung ist irrelevant.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE
 	EN	Alphabetical (reverse)
@@ -1645,11 +1638,11 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_DEFAULT_ALPHA
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS
 	EN	Number of listeners
-	DE	Anzahl Hörer
+	DE	Anzahl HÃ¶rer
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS_REVERSE
 	EN	Number of listeners (reverse)
-	DE	Anzahl Hörer (umgekehrte Reihenfolge)
+	DE	Anzahl HÃ¶rer (umgekehrte Reihenfolge)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD
 	EN	Order of definition
