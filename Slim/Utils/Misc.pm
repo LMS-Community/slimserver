@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.51 2004/08/12 17:25:17 dean Exp $
+# $Id: Misc.pm,v 1.52 2004/08/18 22:49:45 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -575,21 +575,22 @@ sub timeF {
 }
 
 sub localeStrftime {
-      my $format = shift;
-      my $ltime = shift;
-      
-      (my $language = Slim::Utils::Prefs::get('language')) =~ tr/A-Z/a-z/;
-      (my $country = $language) =~ tr/a-z/A-Z/;
-      
-      my $serverlocale = $language . "_" . $country;
-
-      my $saved_locale = setlocale(LC_TIME, $serverlocale);
-      my $time = strftime $format, localtime($ltime);
-      if ($] > 5.007) {
-            Encode::_utf8_on($time);
-      }
-      setlocale(LC_TIME, "");
-      return $time;
+	my $format = shift;
+	my $ltime = shift;
+	
+	(my $language = Slim::Utils::Prefs::get('language')) =~ tr/A-Z/a-z/;
+	(my $country = $language) =~ tr/a-z/A-Z/;
+	
+	my $serverlocale = $language . "_" . $country;
+	
+	my $saved_locale = setlocale(LC_TIME, $serverlocale);
+	my $time = strftime $format, localtime($ltime);
+	
+	# these strings may come back as utf8, make sure they are latin1 when we display them
+	$time = utf8toLatin1($time);
+	
+	setlocale(LC_TIME, "");
+	return $time;
 }
 
 sub fracSecToMinSec {

@@ -36,7 +36,7 @@ sub string {
 	
 	my $interspace = $font->[0];
 	my $cursorpos = undef;
-	my $cursorend = undef;
+	my $cursorend = 0;
 	foreach my $char (split(//, $string)) {
 		if ($char eq "\x1d") { 
 			$interspace = ''; 
@@ -45,7 +45,7 @@ sub string {
 		} elsif ($char eq "\x0a") {
 			$cursorpos = length($bits);
 		} else {
-			if (defined($cursorpos) && !defined($cursorend)) { 
+			if (defined($cursorpos) && !$cursorend) { 
 				$cursorend = length($font->[ord($char)])/2; 
 			}
 			$bits .= $font->[ord($char)] . $interspace;

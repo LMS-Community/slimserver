@@ -151,6 +151,9 @@ sub hasDigitalOut {
 #
 sub needsUpgrade {
 	my $client = shift;
+	my $from = $client->revision;
+	return 0 unless $from;
+
 	my $versionFilePath = catdir($Bin, "Firmware", "squeezebox.version");
 	my $versionFile;
 
@@ -159,19 +162,31 @@ sub needsUpgrade {
 		return 0;
 	}
 
-	my $line;
-	my ($from, $to);
-	while ($line = <$versionFile>) {
-		$line=~/^(\d+)\s+(\d+)\s*$/ || next;
-		($from, $to) = ($1, $2);
-		#print "\"$from\"\t\"$to\"\n";
-		$from == $client->revision && last;
+	my $to;
+	while (<$versionFile>) {
+		chomp;
+		next if /^\s*(#.*)?$/;
+		if (/^(\d+)\s*\.\.\s*(\d+)\s+(\d+)\s*$/) {
+			next unless $from >= $1 && $from <= $2;
+			$to = $3;
+		} elsif (/^(\d+)\s+(\d+)\s*$/) {
+			next unless $1 == $from;
+			$to = $2;
+		} else {
+			msg("Garbage in $versionFilePath at line $.: $_\n");
+		}
+		last;
 	}
 
 	close($versionFile);
 
-	if ((!defined $from) || ($from != $client->revision)) {
-		$::d_firmware && msg ("No upgrades found for squeezebox v. ". $client->revision."\n");
+	unless (defined $to) {
+		$::d_firmware && msg ("No upgrades found for squeezebox v. $from\n");
+		return 0;
+	}
+
+	if ($to == $from) {
+		$::d_firmware && msg ("Squeezebox firmware is up-to-date, v. $from\n");
 		return 0;
 	}
 
@@ -179,12 +194,12 @@ sub needsUpgrade {
 
 	my $file = shift || catdir($Bin, "Firmware", "squeezebox_$to.bin");
 
-	if (!-f$file) {
-		$::d_firmware && msg ("squeezebox v. ".$client->revision." could be upgraded to v. $to if the file existed.\n");
+	unless (-r $file && -s $file) {
+		$::d_firmware && msg ("squeezebox v. $from could be upgraded to v. $to if the file existed.\n");
 		return 0;
 	}
 
-	$::d_firmware && msg ("squeezebox v. ".$client->revision." requires upgrade to $to\n");
+	$::d_firmware && msg ("squeezebox v. $from requires upgrade to $to\n");
 	return $to;
 
 }

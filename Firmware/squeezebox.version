@@ -2,31 +2,12 @@
 # The newest version is always required to talk to the current server 
 # version, so we force them all to go to v.10
 #
-# from	to
-	
-1	10
-2	10
-3	10
-4	10
-5	10
-6	10
-7	10
-8	10
+# from        to
+# from1..from2 to
+
+1..8  10
 
 # version 10 is the same as version 8, except that it has additional
-# support to be updated to version 20 and above. 
-
-10	33
-20	33
-21	33
-22	33
-23	33
-24	33
-25	33
-26	33
-27	33
-28	33
-29	33
-30	33
-31	33
-32	33
+# support to be updated to version 20 and above.
+ 
+10..32        32
