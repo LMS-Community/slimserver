@@ -1,4 +1,4 @@
-# AlarmClock.pm V0.8 by Kevin Deane-Freeman (kevindf@shaw.ca) March 2003
+# AlarmClock.pm by Kevin Deane-Freeman (kevindf@shaw.ca) March 2003
 # Adapted from code by Lukas Hinsch
 # Updated by Dean Blackketter
 #
@@ -13,9 +13,16 @@ package Slim::Buttons::AlarmClock;
 
 use Slim::Player::Playlist;
 use Slim::Utils::Strings qw (string);
+use Slim::Buttons::Common;
 use Time::HiRes;
 
 my $interval = 1; # check every x seconds
+
+# some initialization code, adding modes for this module
+Slim::Buttons::Common::addMode('alarm', getFunctions(), \&Slim::Buttons::AlarmClock::setMode);
+Slim::Buttons::Common::addMode('alarmvolume', getAlarmVolumeFunctions(), \&Slim::Buttons::AlarmClock::setAlarmVolumeMode);
+setTimer();
+
 my @browseMenuChoices;
 my %menuSelection;
 my %searchCursor;
@@ -61,10 +68,31 @@ my %functions = (
 		my @oldlines = Slim::Display::Display::curLines($client);
 
 		if ($browseMenuChoices[$menuSelection{$client}] eq string('ALARM_SET')) {
-			Slim::Buttons::Common::pushModeLeft($client, 'alarmset');
+			my %params = (
+				'header' => string('ALARM_SET')
+				,'valueRef' => Slim::Utils::Prefs::clientGet($client,"alarmtime")
+				,'cursorPos' => 1
+				,'callback' => \&exitSetHandler
+				,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0],"alarmtime",Slim::Buttons::Common::param($_[0],'valueRef')); }
+				,'onChangeArgs' => 'C'
+			);
+			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Time',\%params);
 		}
 		if ($browseMenuChoices[$menuSelection{$client}] eq string('ALARM_SELECT_PLAYLIST')) {
-			Slim::Buttons::Common::pushModeLeft($client, 'alarmplaylist');
+			my @dirItems=();	
+			Slim::Utils::Scan::addToList(\@dirItems, Slim::Utils::Prefs::get('playlistdir'), 0);
+			push @dirItems, @{Slim::Music::Info::playlists()};
+			my %params = (
+				'listRef' => \@dirItems
+				,'externRef' => sub {Slim::Music::Info::standardTitle($_[0],$_[1]);}
+				,'externRefArgs' => 'CV'
+				,'header' => 'ALARM_SELECT_PLAYLIST'
+				,'stringHeader' => 1
+				,'onChange' => sub { 	Slim::Utils::Prefs::clientSet($_[0], "alarmplaylist", $_[1]); }
+				,'onChangeArgs' => 'CV'
+				,'valueRef' => \&Slim::Utils::Prefs::clientGet($client,"alarmplaylist")
+			);
+			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List',\%params);
 		}
 		elsif ($browseMenuChoices[$menuSelection{$client}] eq string('ALARM_OFF')) {
 			Slim::Utils::Prefs::clientSet($client, "alarm", 1);
@@ -86,6 +114,19 @@ my %functions = (
 		my $client = shift;
 	},
 );
+
+sub exitSetHandler {
+	my ($client,$exittype) = @_;
+	$exittype = uc($exittype);
+	if ($exittype eq 'LEFT' || $exittype eq 'PLAY') {
+		Slim::Utils::Prefs::clientSet($client,"alarmtime",Slim::Buttons::Common::param($client,'valueRef'));
+		Slim::Buttons::Common::popModeRight($client);
+	} elsif ($exittype eq 'RIGHT') {
+			Slim::Display::Animation::bumpRight($client);
+	} else {
+		return;
+	}
+}
 
 sub setTimer {
 #timer to check alarms on an interval
@@ -177,7 +218,7 @@ sub overlay {
 	return undef;
 }
 
-sub getFunctions() {
+sub getFunctions {
 	return \%functions;
 }
 
@@ -263,208 +304,6 @@ sub alarmVolumeLines {
 	if (Slim::Utils::Prefs::clientGet($client,'doublesize')) { $line2 = $line1; }
 	return ($line1, $line2);
 }
-
-
-#################################################################################
-
-my %alarmSetFunctions = (
-	'up' => sub {
-		my $client = shift;
-		my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime") || 0;
-		Slim::Utils::Prefs::clientSet($client, "alarmtime", Slim::Buttons::Common::scrollTime($client, +1,$time,$searchCursor{$client}));
-		$client->update();
-	},
-	'down' => sub {
-		my $client = shift;
-		my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime") || 0;
-		Slim::Utils::Prefs::clientSet($client, "alarmtime", Slim::Buttons::Common::scrollTime($client, -1,$time,$searchCursor{$client}));
-		$client->update();
-	},
-
-	'left' => sub {
-		my $client = shift;
-		$searchCursor{$client}--;
-		if ($searchCursor{$client} < 0) {
-			Slim::Buttons::Common::popModeRight($client);
-		} else {
-			$client->update();
-		}
-	 },
-	'right' => sub {
-		my $client = shift;
-
-		my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
-		my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Common::timeDigits($client,$time);
-
-		$searchCursor{$client}++;
-
-		my $max = defined($p) ? 4 : 3;
-		if ($searchCursor{$client} > $max) {
-			$searchCursor{$client} = $max;
-			#Slim::Buttons::Common::popModeRight($client);
-		}
-		$client->update();
-	},
-
-	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'play' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'numberScroll' => sub  {
-		my $client = shift;
-		my $button = shift;
-		my $digit = shift;
-		
-		my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
-		my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Common::timeDigits($client,$time);
-
-		my $h = $h0 * 10 + $h1;
-		if ($p && $h == 12) { $h = 0 };
-
-		my $c = $searchCursor{$client};
-		if ($c == 0 && $digit < ($p ? 2:3)) { $h0 = $digit; $searchCursor{$client}++; };
-		if ($c == 1 && (($h0 * 10 + $digit) < 24)) { $h1 = $digit; $searchCursor{$client}++; };
-		if ($c == 2) { $m0 = $digit; $searchCursor{$client}++; };
-		if ($c == 3) { $m1 = $digit };
-
-		$p = (defined $p && $p eq 'PM') ? 1 : 0;
-		if ($c == 4) { $p = $digit % 2; }
-
-		$time = ($h0 * 10 + $h1) * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
-		Slim::Utils::Prefs::clientSet($client, "alarmtime", $time);
-		$client->update();
-
-		#update the display
-		$client->update();
-	}
-);
-
-sub getAlarmSetFunctions {
-	return \%alarmSetFunctions;
-}
-
-sub setAlarmSetMode {
-	my $client = shift;
-	$searchCursor{$client} = 0;
-	$client->lines(\&alarmSetSettingsLines);
-}
-
- sub alarmSetSettingsLines {
-	my $client = shift;
-
-	my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
-	my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Common::timeDigits($client,$time);
-
-	my $cs = Slim::Hardware::VFD::symbol('cursorpos');
-	my $c = $searchCursor{$client};
-
-	my $timestring = ($c == 0 ? $cs : '') . ((defined($p) && $h0 == 0) ? ' ' : $h0) . ($c == 1 ? $cs : '') . $h1 . ":" . ($c == 2 ? $cs : '') .  $m0 . ($c == 3 ? $cs : '') . $m1 . " " . ($c == 4 ? $cs : '') . (defined($p) ? $p : '');
-
-	return (string('ALARM_SET'), $timestring);
-}
-
-
-#################################################################################
-# Alarm Playlist Mode
-my %alarmPlaylistSettingsFunctions = (
-	'left' => sub {
-		my $client = shift;
-
-		@{$client->dirItems}=(); #Clear list and get outta here
-		Slim::Buttons::Common::popModeRight($client);
-	},
-
-	'up' => sub {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, -1, $client->numberOfDirItems(), $client->currentDirItem());
-
-		$client->currentDirItem($newposition);
-		Slim::Utils::Prefs::clientSet($client, "alarmplaylist", $client->dirItems($client->currentDirItem));
-
-		$client->update();
-	},
-
-	'down' => sub {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, +1, $client->numberOfDirItems(), $client->currentDirItem());
-
-		$client->currentDirItem($newposition);
-		Slim::Utils::Prefs::clientSet($client, "alarmplaylist", $client->dirItems($client->currentDirItem) );
-
-		$client->update();
-	},
-
-	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'play' => sub { Slim::Display::Animation::bumpRight(shift); },
-
-	'numberScroll' => sub  {
-		my $client = shift;
-		my $button = shift;
-		my $digit = shift;
-		my $i = Slim::Buttons::Common::numberScroll($client, $digit, $client->dirItems);
-
-		$client->currentDirItem($i);
-		$client->update();
-	},
-
-);
-
-sub getAlarmPlaylistFunctions {
-	return \%alarmPlaylistSettingsFunctions;
-}
-
-sub setAlarmPlaylistMode {
-	my $client = shift;
-	$client->lines(\&alarmPlaylistLines);
-
-	@{$client->dirItems}=();	
-	
-	Slim::Utils::Scan::addToList($client->dirItems, Slim::Utils::Prefs::get('playlistdir'), 0);
-	push @{$client->dirItems}, @{Slim::Music::Info::playlists()};
-
-	$client->numberOfDirItems(scalar @{$client->dirItems});
-	$client->currentDirItem(0);
-	my $list = Slim::Utils::Prefs::clientGet($client, "alarmplaylist");
-	if ($list) {
-		my $i = 0;
-		my $items = $client->dirItems;
-		foreach my $cur (@$items) {
-			if ($list eq $cur) {
-				$client->currentDirItem($i);
-				last;
-			}
-			$i++;
-		}
-	}
-	Slim::Utils::Prefs::clientSet($client, "alarmplaylist", $client->dirItems($client->currentDirItem) );
-}
-
-sub alarmPlaylistLines {
-	my $client = shift;
-	my $line1;
-	my $line2;
-
-	$line1 = string('ALARM_SELECT_PLAYLIST');
-
-	if (defined $client->dirItems($client->currentDirItem)) {
-		$line2 = Slim::Music::Info::standardTitle($client,$client->dirItems($client->currentDirItem));
-	} else {
-		$line2 = string('EMPTY');
-	}
-
-	if ($client->numberOfDirItems()) {
-		$line1 .= sprintf(" (%d ".string('OUT_OF')." %s)", $client->currentDirItem + 1, $client->numberOfDirItems());
-	}
-	
-	return ($line1, $line2);
-}
-
-# some initialization code, adding modes for this module
-Slim::Buttons::Common::addMode('alarm', getFunctions(), \&Slim::Buttons::AlarmClock::setMode);
-Slim::Buttons::Common::addMode('alarmvolume', getAlarmVolumeFunctions(), \&Slim::Buttons::AlarmClock::setAlarmVolumeMode);
-Slim::Buttons::Common::addMode('alarmset', getAlarmSetFunctions(), \&Slim::Buttons::AlarmClock::setAlarmSetMode);
-Slim::Buttons::Common::addMode('alarmplaylist', getAlarmPlaylistFunctions(), \&Slim::Buttons::AlarmClock::setAlarmPlaylistMode);
-setTimer();
-
 
 1;
 
