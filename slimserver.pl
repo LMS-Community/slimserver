@@ -133,7 +133,7 @@ use vars qw($VERSION @AUTHORS);
 	'Dan Sully',
 );
 
-$VERSION = '5.1.4';
+$VERSION = '5.1.5';
 
 # old preferences settings, only used by the .slim.conf configuration.
 # real settings are stored in the new preferences file:  .slim.pref
