@@ -1,46 +1,46 @@
 <tr>
 	<td  class="listing">&nbsp;
 		[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
-		[% IF descend %]<a href="browseid3.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]"><font style="color:yellow">+ </font>[% title %]</a>  [% END %]
+		[% IF descend %]<a href="browseid3.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]" title='Descend' ><font style="color:yellow">+ </font>[% title %]</a>  [% END %]
 		[% IF not descend %]<b><a href="songinfo.html?songurl=[% itempath | uri %]&player=[% player | uri %]">[% title %]</a></b>
-			[% IF includeArtist %][% "BY" | string %]
+			[% IF includeArtist && artist %][% "BY" | string %]
 				<a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist %]</a>
 			[% END %]
-			[% IF includeAlbum %][% "FROM" | string %]
+			[% IF includeAlbum && album %][% "FROM" | string %]
 				<i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album %]</a></i>
 			[% END %]
 		[% END %]
 	</td>
 	<td class="listing" width="11" align="center">
-		[% IF descend %]<nobr><a href="status_header.html?p0=playlist&p1=insertalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/queue.gif" border=0 align="center" width="6" height="9" onMouseOver="self.status='Queue This List';return true"></a></nobr>[% END %]
-		[% IF not descend %]<nobr><a href="status_header.html?p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/queue.gif" border=0 align="center" width="6" height="9" onMouseOver="self.status='Queue This Item';return true"></a></nobr>[% END %]
+		[% IF descend %]<nobr><a href="status_header.html?p0=playlist&p1=insertalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/queue.gif" border=0 align="center" width="6" height="9" alt='Queue' title='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]';return true"></a></nobr>[% END %]
+		[% IF not descend %]<nobr><a href="status_header.html?p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/queue.gif" border=0 align="center" width="6" height="9" alt='Queue' title='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]';return true"></a></nobr>[% END %]
 	</td>
 	<td class="listing" width="3" align="center">&nbsp;</td>
 	<td class="listing" width="11" align="center">
-		[% IF descend %]<nobr><a href="status_header.html?p0=playlist&p1=loadalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/play.this.gif" border=0 align="center" width="5" height="9" onMouseOver="self.status='Play This Item';return true"></a></nobr>[% END %]
-		[% IF not descend %]<nobr><a href="status_header.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/play.this.gif" border=0 align="center" width="5" height="9" onMouseOver="self.status='Play This Item';return true"></a></nobr>[% END %]
+		[% IF descend %]<nobr><a href="status_header.html?p0=playlist&p1=loadalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/play.this.gif" border=0 align="center" width="5" height="9"  alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a></nobr>[% END %]
+		[% IF not descend %]<nobr><a href="status_header.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/play.this.gif" border=0 align="center" width="5" height="9"  alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a></nobr>[% END %]
 	</td>
 	<td class="listing" width="3" align="center">&nbsp;</td>
 	<td class="listing" width="11" align="center">
-		[% IF descend %]<nobr><a href="status_header.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/add.gif" border=0 align="center" width="8" height="8" onMouseOver="self.status='Add This Item';return true"></a></nobr>[% END %]
-		[% IF not descend %]<nobr><a href="status_header.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/add.gif" border=0 align="center" width="8" height="8" onMouseOver="self.status='Add This Item';return true"></a></nobr>[% END %]
+		[% IF descend %]<nobr><a href="status_header.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/add.gif" border=0 align="center" width="8" height="8" alt='Add' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a></nobr>[% END %]
+		[% IF not descend %]<nobr><a href="status_header.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/add.gif" border=0 align="center" width="8" height="8" alt='Add' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a></nobr>[% END %]
 	</td>
 	<td class="listing" width="3" align="center">&nbsp;</td>
 	<td class="listing" width="11" align="center">
-		[% IF descend %]<nobr><a href="status_header.html?p0=playlist&p1=deletealbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/subtract.gif" border=0 align="center" width="8" height="8" onMouseOver="self.status='Delete List';return true"></a></nobr>[% END %]
-		[% IF not descend %]<nobr><a href="status_header.html?p0=playlist&p1=deleteitem&p2=[% itempath | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/subtract.gif" border=0 align="center" width="8" height="8" onMouseOver="self.status='Delete List';return true"></a></nobr>[% END %]
+		[% IF descend %]<nobr><a href="status_header.html?p0=playlist&p1=deletealbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/subtract.gif" border=0 align="center" width="8" height="8" alt='Delete' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a></nobr>[% END %]
+		[% IF not descend %]<nobr><a href="status_header.html?p0=playlist&p1=deleteitem&p2=[% itempath | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/subtract.gif" border=0 align="center" width="8" height="8" alt='Delete' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a></nobr>[% END %]
 	</td>
 	[% IF mixable_descend %]<td class="listing" width="3" align="center">&nbsp;</td>
 		<td class="listing" align="center" width="13">
-			<nobr><a href="mood_wheel.html?genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]"><font style="color:#EE3823"><b>M</b></font></a></nobr>
+			<nobr><a href="mood_wheel.html?genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" alt="[% "MOODLOGIC_SELECT_MOOD_SHORT" | string %]"><font style="color:#EE3823"><b>M</b></font></a></nobr>
 		</td>
 	[% END %]
 	[% IF mixable_not_descend %]<td  class="listing" width="3" align="center">&nbsp;</td>
 		<td class="listing" align="center" width="13">
-			<nobr><a href="instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]"><font style="color:#EE3823"><b>M</b></font></a></nobr>
+			<nobr><a href="instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" alt="[% "MOODLOGIC_MIX" | string %]"><font style="color:#EE3823"><b>M</b></font></a></nobr>
 		</td>
 	[% END %]
-	<td  class="listing" width="3" align="center">
+	<td class="listing" width="3" align="center">
 		&nbsp;
 	</td>
 </tr>

@@ -14,6 +14,29 @@
 				((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
 		}
 		
+		function getHomeCookie(Name) 
+		{
+			var search = Name + "=";
+			if (document.cookie.length > 0) {
+				offset = document.cookie.indexOf(search);
+				if (offset != -1) {
+					offset += search.length;
+					end = document.cookie.indexOf(";", offset);
+					if (end == -1)
+						end = document.cookie.length;
+					url = unescape(document.cookie.substring(offset, end));
+					if (url == 'undefined') [% IF not nofolder %]return "browse.html?"[% END %]
+											[% IF nofolder and noartwork %]return "browseid3.html?noartwork=1"[% END %]
+											[% IF nofolder and not noartwork %]return "browseid3.html?nofolder=1"[% END %]
+					return url [% IF noartwork %]+"&noartwork=1"[% END %][% IF nofolder %]+"&nofolder=1"[% END %][% IF nosetup %]+"&nosetup=1"[% END %];
+				}
+			}
+			[% IF not nofolder %]return "browse.html?"[% END %]
+			[% IF nofolder %]return "browseid3.html?nofolder=1"[% END %]
+			[% IF noartwork %]return "browseid3.html?noartwork=1"[% END %]
+			
+		}
+		
 		function chooseBrowser(value,option)
 		{
 			var url;

@@ -17,6 +17,9 @@
    <hr>
 [% END %]
 
-    [% IF versionInfo %][% versionInfo %]<hr>[% END %]
+    [% IF versionInfo %][% versionInfo %][% END %]
+    [% IF newVersion %]<p>[% newVersion %]</p>[% END %]
+    [% IF ipaddress %]<p>[% "PLAYER_IP_ADDRESS" | string %] [% ipaddress %]</p>[% END %]
+    [% IF macaddress %]<p>[% "PLAYER_MAC_ADDRESS" | string %] [% macaddress %]</p>[% END %] 
   </body>
 </html>
