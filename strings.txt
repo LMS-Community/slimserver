@@ -3909,6 +3909,14 @@ WAV
 	PT	WAV
 	SE	WAV
 
+FLC
+	EN	FLAC
+	FR	FLAC
+	NL	FLAC
+	NO	FLAC
+	PT	FLAC
+	SE	FLAC
+
 OGG
 	EN	Ogg Vorbis
 	FR	Ogg Vorbis
