@@ -93,7 +93,7 @@ sub newStream {
 sub fullness {
 	my ($client) = @_;
 
-	return $fullness{$client};
+	return $fullness{$client} || 0;
 }
 
 # 
