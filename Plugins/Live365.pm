@@ -648,8 +648,6 @@ sub getPlaylist {
 		#$client->songduration($nextRefresh) if $nextRefresh;
 	}
 
-	my $currentSong = Slim::Player::Playlist::playList( $client );
-
 	if ( $nextRefresh and $currentSong->[0] =~ /^live365:/ ) {
 		Slim::Utils::Timers::setTimer(
 			$client,

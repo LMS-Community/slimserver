@@ -545,7 +545,7 @@ sub WRITE {
     $self->{wrote_bom} = 1;
   }
 
-  $buf = decode_utf8($buf, 1) unless Encode::is_utf8($buf, 1);
+  $buf = Encode::decode_utf8($buf) unless Encode::is_utf8($buf, 1);
 
   print $fh $buf;
 
