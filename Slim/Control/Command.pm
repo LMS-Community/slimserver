@@ -914,7 +914,7 @@ sub execute {
 				unless ($p2 =~ /listref/) {	
 					push(@{Slim::Player::Playlist::playList($client)}, parseSearchTerms($p2));
 				} else {
-					push(@{Slim::Player::Playlist::playList($client)}, parseListRef($client,$p2,$p3));					
+					push(@{Slim::Player::Playlist::playList($client)}, parseListRef($client,$p2,$p3));
 				}
 					
 				Slim::Player::Playlist::reshuffle($client);
@@ -1663,15 +1663,24 @@ sub parseSearchTerms {
 	my $ds     = Slim::Music::Info::getCurrentDataStore();
 	my %find   = ();
 	my @fields = Slim::Web::Pages::queryFields();
+	my ($sort, $limit, $offset);
 
 	for my $term (split '&', $terms) {
 
 		if ($term =~ /(.*)=(.*)/ && grep $_ eq $1, @fields) {
 			$find{URI::Escape::uri_unescape($1)} = Slim::Utils::Text::ignoreCaseArticles( URI::Escape::uri_unescape($2) );
 		}
+
+		# modifiers to the search
+		$sort   = $2 if $1 eq 'sort';
+		$limit  = $2 if $1 eq 'limit';
+		$offset = $2 if $1 eq 'offset';
 	}
 
-	return @{ $ds->find('track', \%find, exists $find{'album'} ? 'tracknum' : 'track') };
+	# default to a sort
+	$sort ||= exists $find{'album'} ? 'tracknum' : 'track';
+
+	return @{ $ds->find('track', \%find, $sort, $limit, $offset) };
 }
 
 sub parseListRef {

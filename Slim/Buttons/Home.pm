@@ -15,6 +15,7 @@ use Slim::Buttons::Playlist;
 our %home = ();
 our %defaultParams = ();
 our %homeChoices;
+our %functions = ();
 
 sub init {
 	Slim::Buttons::Common::addMode('home',getFunctions(),\&setMode);
@@ -66,7 +67,69 @@ sub init {
 		'SETTINGS' => {
 			'useMode' => 'settings'
 		}
-	)
+	);
+
+	# This is also a big source of the inconsistency in "play" and "add" functions.
+	# We might want to make this a simple...'add' = clear playlist, 'play' = play everything
+	%functions = (
+		'add' => sub  {
+			my $client = shift;
+		
+			if ($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
+
+				$client->showBriefly($client->string('CLEARING_PLAYLIST'), '');
+				Slim::Control::Command::execute($client, ['playlist', 'clear']);
+
+			} else {
+
+				Slim::Buttons::Common::pushModeLeft($client,'playlist');
+			}	
+		},
+
+		'play' => sub  {
+			my $client = shift;
+		
+			if ($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
+
+				Slim::Control::Command::execute($client, ['play']);
+
+				# The address of the %functions hash changes from compile time to run time
+				# so it is necessary to get a reference to it from a function outside of the hash
+				Slim::Buttons::Common::pushModeLeft($client,'playlist');
+
+			} elsif (($client->curSelection($client->curDepth()) eq 'BROWSE_BY_GENRE')  ||
+					  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_ARTIST') ||
+					  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_ALBUM')  ||
+					  ($client->curSelection($client->curDepth()) eq 'BROWSE_NEW_MUSIC')  ||
+					  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_SONG')) {
+
+				if (Slim::Player::Playlist::shuffle($client)) {
+
+					Slim::Buttons::Block::block($client, $client->string('PLAYING_RANDOMLY'), $client->string('EVERYTHING'));
+
+				} else {
+
+					Slim::Buttons::Block::block($client, $client->string('NOW_PLAYING'), $client->string('EVERYTHING'));
+				}
+
+				my $command = [qw(playlist loadalbum * * *)];
+
+				# Hand a special command if we only want to play new music.
+				if ($client->curSelection($client->curDepth()) eq 'BROWSE_NEW_MUSIC') {
+
+					my $limit = Slim::Utils::Prefs::get('browseagelimit');
+
+					$command = ['playlist', 'loadtracks', "sort=age&offset=0&limit=$limit"];
+				}
+
+				Slim::Control::Command::execute($client, $command, \&Slim::Buttons::Block::unblock, [$client]);
+
+			} else {
+
+				Slim::Buttons::Common::pushModeLeft($client,'playlist');
+			}
+		},
+	);
 }
 
 ######################################################################
@@ -139,56 +202,6 @@ sub delMenuOption {
 
 	delete $home{$option};
 }
-
-# TODO: some of this is obvious cruft.  'MUSIC' doesn't seem to exist an a menu option any more.
-# This is also a big source of the inconsistency in "play" and "add" functions.
-# We might want to make this a simple...'add' = clear playlist, 'play' = play everything
-our %functions = (
-	'add' => sub  {
-		my $client = shift;
-	
-		if ($client->curSelection($client->curDepth()) eq 'MUSIC') {
-			# add the whole of the music folder to the playlist!
-			Slim::Buttons::Block::block($client, $client->string('ADDING_TO_PLAYLIST'), $client->string('MUSIC'));
-			Slim::Control::Command::execute($client, ['playlist', 'add', Slim::Utils::Prefs::get('audiodir')], \&Slim::Buttons::Block::unblock, [$client]);
-		} elsif($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
-			$client->showBriefly($client->string('CLEARING_PLAYLIST'), '');
-			Slim::Control::Command::execute($client, ['playlist', 'clear']);
-		} else {
-			Slim::Buttons::Common::pushModeLeft($client,'playlist');
-		}	
-	},
-	'play' => sub  {
-		my $client = shift;
-	
-		if ($client->curSelection($client->curDepth()) eq 'MUSIC') {
-			# play the whole of the music folder!
-			if (Slim::Player::Playlist::shuffle($client)) {
-				Slim::Buttons::Block::block($client, $client->string('PLAYING_RANDOMLY_FROM'), $client->string('MUSIC'));
-			} else {
-				Slim::Buttons::Block::block($client, $client->string('NOW_PLAYING_FROM'), $client->string('MUSIC'));
-			}
-			Slim::Control::Command::execute($client, ['playlist', 'load', Slim::Utils::Prefs::get('audiodir')], \&Slim::Buttons::Block::unblock, [$client]);
-		} elsif($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
-			Slim::Control::Command::execute($client, ['play']);
-			#The address of the %functions hash changes from compile time to run time
-			#so it is necessary to get a reference to it from a function outside of the hash
-			Slim::Buttons::Common::pushModeLeft($client,'playlist');
-		} elsif (($client->curSelection($client->curDepth()) eq 'BROWSE_BY_GENRE')  ||
-				  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_ARTIST') ||
-				  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_ALBUM')  ||
-				  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_SONG')) {
-			if (Slim::Player::Playlist::shuffle($client)) {
-				Slim::Buttons::Block::block($client, $client->string('PLAYING_RANDOMLY'), $client->string('EVERYTHING'));
-			} else {
-				Slim::Buttons::Block::block($client, $client->string('NOW_PLAYING'), $client->string('EVERYTHING'));
-			}
-			Slim::Control::Command::execute($client, ["playlist", "loadalbum", "*", "*", "*"], \&Slim::Buttons::Block::unblock, [$client]);
-		} else {
-			Slim::Buttons::Common::pushModeLeft($client,'playlist');
-		}
-	},
-);
 
 sub getFunctions {
 	return \%functions;
