@@ -186,11 +186,13 @@ sub read_plugins {
 
 sub addMenus {
 	no strict 'refs';
-
+	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
+	
 	for my $plugin (keys %{installedPlugins()}) {
 
 		next unless UNIVERSAL::can("Plugins::${plugin}","addMenu");
-
+		next if exists $disabledplugins{$plugin};
+		
 		my $menu = eval { &{"Plugins::${plugin}::addMenu"}() };
 
 		if (!$@ && defined $menu) {
@@ -214,11 +216,13 @@ sub addMenus {
 
 sub addScreensavers {
 	no strict 'refs';
-
+	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
+	
 	for my $plugin (keys %{installedPlugins()}) {
 
 		# load screensaver, if one exists.
 		next unless UNIVERSAL::can("Plugins::${plugin}","screenSaver");
+		next if exists $disabledplugins{$plugin};
 
 		eval { &{"Plugins::${plugin}::screenSaver"}() };
 
@@ -257,8 +261,11 @@ sub addDefaultMaps {
 
 sub addWebPages {
 	no strict 'refs';
-
+	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
+	
 	for my $plugin (keys %{installedPlugins()}) {
+
+		next if exists $disabledplugins{$plugin};
 
 		if (exists($plugins{$plugin}) && UNIVERSAL::can("Plugins::${plugin}","webPages")) {
 
@@ -305,12 +312,14 @@ sub clearGroups {
 
 sub addSetupGroups {
 	no strict 'refs';
-
+	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
+	
 	return if $addGroups && !Slim::Utils::Prefs::get('plugins-onthefly');
 
 	for my $plugin (keys %{installedPlugins()}) {
 
 		next unless UNIVERSAL::can("Plugins::${plugin}","setupGroup");
+		next if exists $disabledplugins{$plugin};
 
 		my ($groupRef, $prefRef, $isClient) = eval { &{"Plugins::${plugin}::setupGroup"}() };
 
