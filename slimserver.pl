@@ -152,8 +152,9 @@ use vars qw(
 		$d_command
 		$d_display
 		$d_factorytest
-		$d_firmware
 		$d_files
+		$d_firmware
+		$d_formats
 		$d_http
 		$d_info
 		$d_ir
@@ -474,6 +475,7 @@ to the console via stderr:
     --d_factorytest  => Information used during factory testing
     --d_files        => Files, paths, opening and closing
     --d_firmware     => Information during Squeezebox firmware updates 
+    --d_formats      => Information about importing data from various file formats
     --d_http         => HTTP activity
     --d_info         => MP3/ID3 track information
     --d_ir           => Infrared activity
@@ -534,8 +536,9 @@ sub initOptions {
 		'd_control'			=> \$d_control,
 		'd_display'			=> \$d_display,
 		'd_factorytest'		=> \$d_factorytest,
-		'd_firmware'		=> \$d_firmware,
 		'd_files'			=> \$d_files,
+		'd_firmware'		=> \$d_firmware,
+		'd_formats'			=> \$d_formats,
 		'd_http'			=> \$d_http,
 		'd_info'			=> \$d_info,
 		'd_ir'				=> \$d_ir,

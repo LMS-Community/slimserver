@@ -1,6 +1,6 @@
 package Slim::Formats::Ogg;
 
-# $Id: Ogg.pm,v 1.5 2003/12/05 16:56:43 daniel Exp $
+# $Id: Ogg.pm,v 1.6 2003/12/20 07:10:36 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -48,6 +48,11 @@ sub getTag {
 	my $tags = {};
 
 	my $ogg  = $oggHeaderClass->new($file);
+
+	if (!$ogg) {
+			$::d_formats && msg("Can't open ogg handle for $file\n");
+			return $tags;
+	}
 
 	# why this is an array, I don't know.
 	foreach my $key ($ogg->comment_tags()) {
