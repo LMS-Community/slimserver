@@ -132,7 +132,7 @@ sub songTime {
 
 	$client = Slim::Player::Sync::masterOrSelf($client);
 
-	if ($client->mp3filehandleIsSocket) {
+	if ($client->mp3filehandleIsSocket == 1) {
 		my $startTime = $client->remoteStreamStartTime;
 		if ($startTime) {
 			return Time::HiRes::time() - $startTime;
@@ -741,7 +741,7 @@ sub openSong {
 				
 				$client->remoteStreamStartTime(time());
 				
-				$size = $duration * $bitrate / 8;
+				$size = $duration * ($bitrate * 1000) / 8;
 				$offset = 0;
 			}
 		

@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.12 2003/11/10 23:15:02 dean Exp $
+# $Id: Misc.pm,v 1.13 2003/11/21 16:02:36 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -45,6 +45,7 @@ sub findbin {
 	
 	push @paths, catdir( $Bin, 'bin', $Config::Config{archname});
 	push @paths, catdir( $Bin, 'bin', $^O);
+	push @paths, catdir( $Bin, 'bin');
 		
 	if (Slim::Utils::OSDetect::OS() ne "win") {
 		push @paths, (split(/:/, $ENV{'PATH'}),'/usr/bin','/usr/local/bin','/sw/bin');

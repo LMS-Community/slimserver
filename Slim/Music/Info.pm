@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.19 2003/11/20 22:23:18 dean Exp $
+# $Id: Info.pm,v 1.20 2003/11/21 16:02:35 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1604,7 +1604,7 @@ sub readTags {
 				
 				if ($discNum && $tempCacheEntry->{'ALBUM'} && ($tempCacheEntry->{'ALBUM'} !~ /(${discWord})|(Disc)\s+[0-9]+/i)) {
 					# Add space to handle > 10 album sets and sorting. Is suppressed in the HTML.
-					if ($discCount > 9 && $discNum < 10) { $discNum = ' ' . $discNum; };
+					if ($discCount && $discCount > 9 && $discNum < 10) { $discNum = ' ' . $discNum; };
 						
 					$tempCacheEntry->{'ALBUM'} = $tempCacheEntry->{'ALBUM'} . " ($discWord $discNum";
 					if ($discCount) {
