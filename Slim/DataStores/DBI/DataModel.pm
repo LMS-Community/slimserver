@@ -672,6 +672,24 @@ sub get {
 	return $data;
 }
 
+# Walk any table and check for foreign rows that still exist.
+sub removeStaleDBEntries {
+	my $class   = shift;
+	my $foreign = shift;
+
+	my $items = $class->retrieve_all();
+
+	while (my $item = $items->next()) {
+
+		if ($item->$foreign()->count() == 0) {
+
+			$::d_info && Slim::Utils::Misc::msg("DB garbage collection - removing $class: $item - no more tracks!\n");
+
+			$item->delete();
+		}
+	}
+}
+
 1;
 
 __END__

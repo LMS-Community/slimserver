@@ -11,6 +11,8 @@ use base 'Slim::DataStores::DBI::DataModel';
 	$class->table('contributors');
 	$class->columns(Essential => qw/id name namesort/);
 	$class->columns(Stringify => qw/name/);
+
+	$class->has_many('contributorTracks' => ['Slim::DataStores::DBI::ContributorTrack' => 'contributor']);
 }
 
 our @fields = qw(contributor artist composer conductor band);

@@ -495,7 +495,7 @@ sub delete {
 		}
 
 		$track->delete();
-		$self->{'dbh'}->commit();
+		$self->{'dbh'}->commit() if $commit;
 
 		$::d_info && Slim::Utils::Misc::msg("cleared $url from database\n");
 	}
@@ -506,6 +506,8 @@ sub markAllEntriesStale {
 	my $self = shift;
 
 	$self->{'validityCache'} = {};
+
+	%lastFind = ();
 }
 
 # Mark a track entry as valid.
@@ -524,12 +526,43 @@ sub clearStaleEntries {
 
 	my $validityCache = $self->{'validityCache'};
 
-	foreach my $url (keys %$validityCache) {
+	for my $url (keys %$validityCache) {
 
 		if (!$validityCache->{$url}->[VALID_INDEX]) {
 			$self->delete($url, 0);
 		}
 	}
+
+	# Cleanup any stale entries in the database.
+	# 
+	# First walk the list of tracks, checking to see if the
+	# file/directory/shortcut still exists on disk. If it doesn't, delete
+	# it. This will cascade ::Track's has_many relationships, including
+	# contributor_track, etc.
+	#
+	# After that, walk the Album, Contributor & Genre tables, to see if
+	# each item has valid tracks still. If it doesn't, remove the object.
+	$::d_info && Slim::Utils::Misc::msg("Starting db garbage collection..\n");
+
+	my $tracks = Slim::DataStores::DBI::Track->retrieve_all();
+
+	while (my $track = $tracks->next()) {
+
+		my $filepath = Slim::Utils::Misc::pathFromFileURL($track->url());
+
+		# Don't use _hasChanged - because that does more than we want.
+		if (!-e $filepath) {
+			$self->delete($track, 0);
+		}
+
+		undef $track;
+	}
+
+	Slim::DataStores::DBI::Contributor->removeStaleDBEntries('contributorTracks');
+	Slim::DataStores::DBI::Album->removeStaleDBEntries('tracks');
+	Slim::DataStores::DBI::Genre->removeStaleDBEntries('genreTracks');
+
+	$::d_info && Slim::Utils::Misc::msg("Ending db garbage collection.\n");
 
 	$self->forceCommit();
 }
@@ -581,6 +614,9 @@ sub forceCommit {
 	$self->{'zombieList'} = {};
 
 	$self->{'dbh'}->commit();
+
+	# clear our find cache
+	%lastFind = ();
 }
 
 sub addExternalPlaylist {

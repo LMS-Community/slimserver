@@ -11,6 +11,8 @@ use base 'Slim::DataStores::DBI::DataModel';
 	$class->table('genres');
 	$class->columns(Essential => qw/id name namesort/);
 	$class->columns(Stringify => qw/name/);
+
+	$class->has_many('genreTracks' => ['Slim::DataStores::DBI::GenreTrack' => 'genre']);
 }
 
 tie my %_cache, 'Tie::Cache::LRU', 5000;
