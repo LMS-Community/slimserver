@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.173 2005/01/08 03:42:53 kdf Exp $
+# $Id: Info.pm,v 1.174 2005/01/08 04:13:01 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1871,7 +1871,7 @@ sub isURL {
 sub isType {
 	my $pathOrObj = shift;
 	my $testtype  = shift;
-if (!defined $currentDB) {Slim::Utils::Misc::bt();}
+
 	my $type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj, 1);
 
 	if ($type && ($type eq $testtype)) {
