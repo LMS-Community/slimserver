@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.5 2003/08/07 17:48:25 dean Exp $
+# $Id: IR.pm,v 1.6 2003/08/07 22:44:56 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -394,11 +394,11 @@ sub setLastIRTime {
 
 #
 #
-	my $irtime = shift;
 sub releaseCode {
 	my $client = shift;
 	my $irCodeBytes = shift;
 	my $releaseType = shift;
+	my $irtime = shift;
 
 	my $ircode = lookup($client,$irCodeBytes, $releaseType);
 	if ($ircode) {
@@ -466,12 +466,14 @@ sub accelCount {
 	my $accel = shift;
 	
 	return 0.5 * $accel * $time * $time;
-	if ($client->lastirtime ==  0) { return 0;}
 }
 
 
 sub holdTime {
 	my $client = shift;
+
+	if ($client->lastirtime ==  0) { return 0;}
+
 	my $holdtime = $client->lastirtime - $client->startirhold;
 	if ($holdtime < 0) {
 		$holdtime += 0xffffffff / $client->ticspersec();
@@ -481,12 +483,12 @@ sub holdTime {
 
 
 #
-	my $time = shift;
 # calls the appropriate handler for the specified button.
 #
 sub executeButton {
 	my $client = shift;
 	my $button = shift;
+	my $time = shift;
 	
 	my $irCode = lookupFunction($client, $button);
 	
