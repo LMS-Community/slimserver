@@ -8,7 +8,7 @@
 function setCookie(name, value)
 &lbrc;
 	var expires = new Date();
-	expires.setTime(expires.getTime() + 1000*60*60);
+	expires.setTime(expires.getTime() + 1000*60*60*24*365);
 	document.cookie =
 		name + "=" + escape(value) +
 		((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
@@ -41,7 +41,7 @@ function chooseBrowser(value)
 		url="{webroot}browse.html?";
 		break
 	&rbrc;
-	setCookie("Slimd-Browserpage",url);
+	setCookie("SlimServer-Browserpage",url);
 	parent.browser.location = url + '&player={%player}';
 &rbrc;
 -->
