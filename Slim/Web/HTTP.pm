@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.109 2004/06/16 17:29:52 vidur Exp $
+# $Id: HTTP.pm,v 1.110 2004/06/17 19:11:17 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -996,15 +996,18 @@ sub sendStreamingResponse {
 	my $sentbytes;
 
 	my $client = $peerclient{$httpClient};
-	assert($client);
+	
+	# when we are streaming a file, we may not have a client, rather it might just be going to a web browser.
+	# assert($client);
 
 	my $segment = shift(@{$outbuf{$httpClient}});
 	my $streamingFile = $streamingFiles{$httpClient};
+
 	my $silence = 0;
 	
 	$::d_http && msg("sendstreaming response begun...\n");
 
-	if (($client->model eq 'squeezebox') && defined($httpClient) &&
+	if ($client && ($client->model eq 'squeezebox') && defined($httpClient) &&
 		(!defined($client->streamingsocket()) || $httpClient != $client->streamingsocket())) {
 
 		$::d_http && msg($client->id() . " We're done streaming this socket to client\n");
