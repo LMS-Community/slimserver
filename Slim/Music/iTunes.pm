@@ -143,8 +143,10 @@ sub canUseiTunesLibrary {
 
 sub findMusicLibraryFile {
 	my $filename;
+	my $base = "";
+	$base = $ENV{HOME} if $ENV{HOME};
 	
-	my $plist = $ENV{HOME} . '/Library/Preferences/com.apple.iApps.plist';
+	my $plist = $base . '/Library/Preferences/com.apple.iApps.plist';
 
 	if (-r $plist) {
 		open (PLIST, "< $plist");
@@ -161,12 +163,12 @@ sub findMusicLibraryFile {
 	}
 	
 	
-	$filename = $ENV{HOME} . '/Music/iTunes/iTunes Music Library.xml';
+	$filename = $base . '/Music/iTunes/iTunes Music Library.xml';
 	if (-r $filename) {
 		return $filename;
 	}
 
-	$filename = $ENV{HOME} . '/Documents/iTunes/iTunes Music Library.xml';
+	$filename = $base . '/Documents/iTunes/iTunes Music Library.xml';
 	if (-r $filename) {
 		return $filename;
 	}
@@ -193,11 +195,6 @@ sub findMusicLibraryFile {
 				}
 			}
 		}		
-	}
-
-	my $base = '';
-	if ($ENV{HOME}) {
-		$base = $ENV{HOME};
 	}
 	
 	$filename = catdir($base, 'iTunes Music Library.xml');

@@ -14,6 +14,19 @@ use Slim::Hardware::VFD;
 
 our $DOUBLEWIDTH = 10;
 my $rightarrow = Slim::Hardware::VFD::symbol('rightarrow');
+
+my @numberLettersMixed = ([' ','0'], # 0
+					 ['.',',',"'",'?','!','@','-','1'], # 1
+					 ['a','b','c','A','B','C','2'], 				# 2
+					 ['d','e','f','D','E','F','3'], 				# 3
+					 ['g','h','i','G','H','I','4'], 				# 4
+					 ['j','k','l','J','K','L','5'], 				# 5
+					 ['m','n','o','M','N','O','6'], 				# 6
+					 ['p','q','r','s','P','Q','R','S','7'], 	# 7
+					 ['t','u','v','T','U','V','8'], 				# 8
+					 ['w','x','y','z','W','X','Y','Z','9']); 			# 9
+
+
 ###########################
 #Button mode specific junk#
 ###########################
@@ -161,7 +174,7 @@ my %functions = (
 			if (Slim::Buttons::Common::testSkipNextNumberLetter($client, $functarg)) {
 				nextChar($client);
 			}
-			my $char = validateChar($client,Slim::Buttons::Common::numberLetter($client, $functarg));
+			my $char = validateChar($client,Slim::Buttons::Common::numberLetter($client, $functarg, \@numberLettersMixed));
 			if (!defined($char)) { $char = ''; }
 			my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 			my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
@@ -244,11 +257,11 @@ my @UpperChars = (
 );
 my @BothChars = (
 	Slim::Hardware::VFD::symbol('rightarrow'),
-	'A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f',
-	'G', 'g', 'H', 'h', 'I', 'i', 'J', 'j', 'K', 'k', 'L', 'l', 'M', 'm',
-	'N', 'n', 'O', 'o', 'P', 'p', 'Q', 'q', 'R', 'r', 'S', 's', 'T', 't',
-	'U', 'u', 'V', 'v', 'W', 'w', 'X', 'x', 'Y', 'y', 'Z', 'z',
-	' ',
+	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+	'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+	'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+ 	' ',
 	'.', ',', "'", '?', '!', '@', '-', '_', '#', '$', '%', '^', '&',
 	'(', ')', '{', '}', '[', ']', '\\','|', ';', ':', '"', '<', '>',
 	'*', '=', '+', '`', '/', 'ß', 
@@ -423,7 +436,7 @@ sub exitInput {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
-	&$callbackFunct(@_);
+	$callbackFunct->(@_);
 	return;
 }
 

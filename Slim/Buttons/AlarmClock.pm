@@ -497,7 +497,7 @@ sub alarmPlaylistLines {
 	my $line1;
 	my $line2;
 
-	$line1 = string('ALARM_PLAYLIST_ENTRY');
+	$line1 = string('ALARM_SELECT_PLAYLIST');
 
 	if (defined $client->dirItems($client->currentDirItem)) {
 		$line2 = Slim::Music::Info::standardTitle($client,$client->dirItems($client->currentDirItem));

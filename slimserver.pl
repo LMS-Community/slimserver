@@ -13,7 +13,7 @@
 
 require 5.006_000;
 use strict;  # _NOPERL2EXE_
-#use diagnostics;
+#use diagnostics;  # don't use this as it slows down regexp parsing dramatically
 #use utf8;
 
 # This package section is used for the windows service version of the application, 
@@ -21,7 +21,7 @@ use strict;  # _NOPERL2EXE_
 
 package PerlSvc;
 
-our $Name = 'slimserversvc';
+our $Name = 'slimsvc';
 our $DisplayName = 'Slim Server';
 
 sub Startup {

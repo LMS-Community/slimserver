@@ -37,12 +37,16 @@ where: </p>
 <p><strong>player count ?<br>
   </strong><strong>player name &lt;<em>playerindex</em>&gt; ?<br>
   </strong><strong>player address &lt;<em>playerindex</em>&gt; ?</strong></p>
+  </strong><strong>player ip &lt;<em>playerindex</em>&gt; ?</strong></p>
 <p>To obtain information about the players in the system, use the &quot;player 
   count&quot;, &quot;player name&quot; and &quot;player address&quot; commands. 
   The &quot;player count&quot; command returns the number of players in the system. 
   The &quot;player name&quot; command returns the human-readable name for the 
-  specified player. The &quot;player address&quot; command returns the player's 
-  IP address and port. This value is used when specifying a player in subsequent 
+  specified player.  (If the name has not been specified by the user in the Player 
+  Settings, then the IP address will be returned.) 
+  The &quot;player ip&quot; command returns the IP address of the specified player.
+  The &quot;player address&quot; command returns the player's unique MAC address. 
+  This value is used when specifying a player in subsequent 
   commands. </p>
 <blockquote> 
   <p> Request: &quot;player count ?&lt;CR&gt;&quot;<br>

@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.13 2003/10/17 19:34:51 dean Exp $
+# $Id: Common.pm,v 1.14 2003/10/22 20:06:51 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -829,20 +829,21 @@ sub mixer {
 	$client->update();
 }
 
-my @numberletters = ([' ','0'], # 0
+my @numberLetters = ([' ','0'], # 0
 					 ['.',',',"'",'?','!','@','-','1'], # 1
 					 ['A','B','C','2'], 				# 2
 					 ['D','E','F','3'], 				# 3
 					 ['G','H','I','4'], 				# 4
 					 ['J','K','L','5'], 				# 5
 					 ['M','N','O','6'], 				# 6
-					 ['P','Q','R','S','7'], 			# 7
+					 ['P','Q','R','S','7'], 	# 7
 					 ['T','U','V','8'], 				# 8
 					 ['W','X','Y','Z','9']); 			# 9
 
 sub numberLetter {
 	my $client = shift;
 	my $digit = shift;
+	my $table = shift || \@numberLetters;
 	my $letter;
 	my $index;
 
@@ -853,10 +854,10 @@ sub numberLetter {
 		$index = 0;
 	} else {
 		$index = $client->lastLetterIndex + 1;
-		$index = $index % scalar @{$numberletters[$digit]};
+		$index = $index % (scalar(@{$table->[$digit]}));
 	}
 
-	$letter = $numberletters[$digit][$index];
+	$letter = $table->[$digit][$index];
 	$client->lastLetterDigit($digit);
 	$client->lastLetterIndex($index);
 	$client->lastLetterTime($now);

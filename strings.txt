@@ -111,6 +111,7 @@ ABOUT_SLIMDEVICES
 	EN	About Slim Devices
 	FR	A propos de Slim Devices
 	NO	Om Slim Devices
+	PT	Acerca de Slim Devices
 	SE	Om Slim Devices
 
 #
@@ -280,6 +281,7 @@ NOW_SCANNING
 	EN	Now Scanning
 	FR	Recherche
 	NO	Søker
+	PT	A Procurar
 	SE	Scannar
 
 NOW_REWINDING
@@ -287,6 +289,7 @@ NOW_REWINDING
 	EN	Now Rewinding
 	FR	Retour rapide
 	NO	Spoler tilbake
+	PT	A Rebobinar
 	SE	Spelar tillbaka
 
 EVERYTHING
@@ -681,16 +684,6 @@ ALARM_SET_ENTRY
 	NO	Sett Alarm tid
 	PT	Hora do Alarme
 	SE	Ställ väckningstid
-
-ALARM_PLAYLIST_ENTRY
-	DE	Wählen Sie die Playlist für den Wecker
-	DK	Vælg playliste for alarmen
-	EN	Select Alarm Playlist
-	FR	Playlist de réveil
-	NL	Kies Playlist Wekker 
-	NO	Velg Alarm Spilleliste
-	PT	Escolha a Playlist do Alarme
-	SE	Välj väckningsspellista
 
 ALARM_TURNING_ON
 	DE	Einschalten des Weckers...
@@ -1159,6 +1152,7 @@ SETUP_SYNCVOLUME_ON
 	EN	Sync player's volume
 	FR	Synchroniser le volume du lecteur
 	NO	Synkroniser spillerens volum
+	PT	Sincronizar o volume do cliente
 	SE	Synkronisera spelarens volym
 
 SETUP_SYNCVOLUME_OFF
@@ -1166,6 +1160,7 @@ SETUP_SYNCVOLUME_OFF
 	EN	Don't sync player's volume
 	FR	Ne pas synchroniser le volume du lecteur
 	NO	Ikke synkroniser spillerens volum
+	PT	Não sincronizar o volume do cliente
 	SE	Synkronisera Inte spelarens volym
 
 SETUP_SYNCVOLUME
@@ -1173,6 +1168,7 @@ SETUP_SYNCVOLUME
 	EN	Synchronize Volume
 	FR	Synchroniser le volume
 	NO	Synkroniser volum
+	PT	Sincronizar o volume 
 	SE	Synkronisera volym
 
 SETUP_SYNCVOLUME_DESC
@@ -1180,6 +1176,7 @@ SETUP_SYNCVOLUME_DESC
 	EN	You can choose to have the volume levels for the synced players track each other or be independent.  Make a selection below and click Change.
 	FR	Vous pouvez faire en sorte que le réglage du volume sur un lecteur modifie le volume sur les lecteurs synchronisés. Faites un choix et cliquez sur Modifier.
 	NO	Du kan velge å synkronisere lyd nivåene for de synkroniserte spiller eller la dem være uavhengige. Velg nedenfor og trykk Endre.
+	PT	Aqui pode activar ou desactivar a sincronização do volume entre os vários clientes. Altere abaixo e clique em "Modificar"
 	SE	Du kan få dina synkroniserade spelare använda samma volym eller vara oberoende. Gör ditt val och klicka på Ändra.
 
 SETUP_TITLEFORMATCURR
@@ -3458,6 +3455,7 @@ TEXTSIZE
 
 OFFDISPLAYSIZE
 	EN	Power Off Text Size
+	PT	Tamanho do Texto ao Desligar
 
 LARGE
 	DE	Gross
@@ -4257,6 +4255,7 @@ SYNCHRONIZED_WITH
 	DK	Synkroniseret med
 	EN	Synced with
 	FR	Synchronisé avec
+	PT	Sincronizado com
 	SE	Synkroniserad med
 
 SLIMTRIS

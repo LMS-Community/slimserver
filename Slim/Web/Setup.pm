@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.13 2003/10/14 19:13:21 dean Exp $
+# $Id: Setup.pm,v 1.14 2003/10/22 20:06:51 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -379,7 +379,9 @@ sub initSetupConfig {
 	} # end of setup{'ADDITIONAL_PLAYER'} hash
 			
 	,'server' => {
-		'children' => ['interface','behavior','formats','formatting','security','performance','network','debug']
+		'children' => ['interface','behavior',
+#		'formats',
+		'formatting','security','performance','network','debug']
 		,'title' => string('SERVER_SETTINGS')
 		,'singleChildLinkText' => string('ADDITIONAL_SERVER_SETTINGS')
 		,'preEval' => sub {

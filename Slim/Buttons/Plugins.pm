@@ -144,7 +144,7 @@ sub read_plugins {
 
     foreach my $name (keys %{installedPlugins()}) {
 		my $fullname = "Plugins::$name";
-	
+		$::d_plugins && msg("Requiring $fullname plugin.\n");	
 		eval "require $fullname";
 		if ($@) {
 			$::d_plugins && msg("Can't require $fullname for Plugins menu: " . $@);
