@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.29 2003/12/26 20:12:55 dean Exp $
+# $Id: Prefs.pm,v 1.30 2004/01/01 21:25:10 daniel Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -206,9 +206,10 @@ my %prefChange = (
 	,'usetagdatabase' => sub {
 		my $newvalue = shift;
 		if ($newvalue) { #was false, now true
-			Slim::Music::Info::init();
+			Slim::Music::Info::loadDBCache();
 		} else { #was true, now false
-			#Is there anything to do here?
+			Slim::Music::Info::saveDBCache();
+			Slim::Music::Info::clearDBCache();
 		}
 	}
 	,'useplaylistcache' => sub {

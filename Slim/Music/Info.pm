@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.42 2003/12/24 07:19:02 dean Exp $
+# $Id: Info.pm,v 1.43 2004/01/01 21:22:57 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -133,6 +133,11 @@ if (defined @Storable::EXPORT) {
 		
 		sub loadDBCache {
 			if (Slim::Utils::Prefs::get('usetagdatabase')) {
+			
+				$::d_info && Slim::Utils::Misc::msg("ID3 tag database support is ON, saving into: $dbname\n");
+
+				clearDBCache();
+
 				if (-f $dbname)	{
 					my $hashref= retrieve($dbname);
 					%infoCacheDB=%$hashref;
@@ -174,21 +179,21 @@ sub init {
 		$infoCacheItemsIndex{$tag} = $i;
 		$i++;
 	}
+
+	# Setup $dbname regardless of if we're caching as cache could be turned on later
+
+	# TODO: MacOS X should really store this in a visible, findable place.
+	if (Slim::Utils::OSDetect::OS() eq 'unix') {
+		$dbname = '.slimserver.db';
+	} else {
+		$dbname ='slimserver.db';
+	}
+
+	# put it in the same folder as the preferences.
+	$dbname = catdir(Slim::Utils::Prefs::preferencesPath(), $dbname);
+
 	
 	if (Slim::Utils::Prefs::get('usetagdatabase')) {
-
-		# TODO: MacOS X should really store this in a visible, findable place.
-		if (Slim::Utils::OSDetect::OS() eq 'unix') {
-			$dbname = '.slimserver.db';
-		} else {
-			$dbname ='slimserver.db';
-		}
-		
-		# put it in the same folder as the preferences.
-		$dbname = catdir(Slim::Utils::Prefs::preferencesPath(), $dbname);
-
-		$::d_info && Slim::Utils::Misc::msg("ID3 tag database support is ON, saving into: $dbname\n");
-
 		loadDBCache();
 	}
 	
@@ -362,6 +367,11 @@ sub clearCache {
 	}
 }
 
+sub clearDBCache {
+	%infoCacheDB = ();	# Empty the cache
+	$::d_info && Slim::Utils::Misc::msg("Cleared infoCacheDB\n");
+}
+
 sub total_time {
 	return $total_time;
 }
@@ -478,9 +488,10 @@ sub cacheItem {
 
 		my $type = typeFromSuffix($url);
 		
-		if (isSong($url,$type) && !isHTTPURL($url)) { 
+		if (isSong($url,$type) && !isHTTPURL($url) && -e $url) { 
 		    updateGenreCache($url, $cacheEntryHash); 
-  		    $songCount++;
+  		    $::d_info && Slim::Utils::Misc::msg("Inc SoungCount(1) $url\n");
+		    $songCount++;
 		    my $time = $cacheEntryHash->{SECS};
 		    if ($time) {
 			$total_time += $time;
@@ -530,8 +541,9 @@ sub cacheEntry {
 
 	if ($cachemiss) {
 		my $type = typeFromSuffix($url);
-		if (isSong($url,$type) && !isHTTPURL($url)) { 
+		if (isSong($url,$type) && !isHTTPURL($url)  && -e $url) { 
 		    updateGenreCache($url, $cacheEntryHash); 
+      		    $::d_info && Slim::Utils::Misc::msg("Inc SongCount(2) $url\n");
   		    $songCount++;
 		    my $time = $cacheEntryHash->{SECS};
 		    if ($time) {
@@ -590,7 +602,8 @@ sub updateCacheEntry {
 			$infoCacheDB{$url} = $cacheEntryArray;
 		}
 		
-		if ($newsong && isSong($url) && !isHTTPURL($url)) {
+		if ($newsong && isSong($url) && !isHTTPURL($url) && -e $url) {
+  		        $::d_info && Slim::Utils::Misc::msg("Inc SongCount(3) $url\n");
 			$songCount++;
 			my $time = $cacheEntryHash->{SECS};
 			if ($time) {
