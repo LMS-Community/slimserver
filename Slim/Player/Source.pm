@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.64 2004/03/06 05:56:45 kdf Exp $
+# $Id: Source.pm,v 1.65 2004/03/10 19:20:24 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -248,6 +248,7 @@ sub playmode {
 					
 				} elsif ($newmode =~ /^playout/) {
 					closeSong($everyclient);
+					if ($newmode eq 'playout-play') { $everyclient->resume() };
 					$everyclient->playmode($newmode);
 				} else {
 					$everyclient->playmode($newmode);
