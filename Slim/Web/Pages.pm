@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.79 2004/05/14 07:55:55 kdf Exp $
+# $Id: Pages.pm,v 1.80 2004/05/15 19:15:29 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -1014,7 +1014,7 @@ sub _addSongInfo {
 	$params->{'type'}       = string(uc(Slim::Music::Info::contentType($song)));
 	$params->{'tagversion'} = Slim::Music::Info::tagVersion($song);
 	$params->{'mixable'}    = Slim::Music::Info::isSongMixable($song);
-	$params->{'bitrate'}    = Slim::Music::Info::bitrate($song);
+	$params->{'bitrate'}    = Slim::Player::Source::underMax($client,$song) ? Slim::Music::Info::bitrate($song) : Slim::Utils::Prefs::clientGet($client,'maxBitrate').Slim::Utils::Strings::string('KBPS').' CBR';
 	
 	# handle artwork bits
 	my ($body, $type, $mtime) =  Slim::Music::Info::coverArt($song,'cover');

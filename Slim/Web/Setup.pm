@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.79 2004/05/15 01:27:14 kdf Exp $
+# $Id: Setup.pm,v 1.80 2004/05/15 19:15:29 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -113,40 +113,40 @@ sub initSetupConfig {
 					if ($client->isPlayer()) {
 						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[1] = 'playingDisplayMode';
 						if ($client->hasDigitalOut()) {
-							$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = 'digitalVolumeControl';
-							$pageref->{'Groups'}{'Default'}{'PrefOrder'}[4] = 'mp3SilencePrelude';
+							$pageref->{'GroupOrder'}[2] = 'Digital';
 						} else {
-							$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = undef;
-							$pageref->{'Groups'}{'Default'}{'PrefOrder'}[4] = undef;
+							$pageref->{'GroupOrder'}[2] = undef;
 						}
 						$pageref->{'children'} = ['additional_player'];
-						$pageref->{'GroupOrder'}[1] = 'Brightness';
-						$pageref->{'GroupOrder'}[2] = 'Synchronize';
+						$pageref->{'GroupOrder'}[3] = 'Brightness';
+						$pageref->{'GroupOrder'}[4] = 'Synchronize';
 					} else {
 						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[1] = undef;
-						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = undef;
 						$pageref->{'children'} = undef;
 						$pageref->{'GroupOrder'}[1] = undef;
 						$pageref->{'GroupOrder'}[2] = undef;
 					}
 					my @formats = $client->formats();
 					if ($formats[0] ne 'mp3') {
-						$pageref->{'Prefs'}{'maxBitrate'}{'PrefDesc'} = string('SETUP_MAXBITRATE_DESC');
+						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = string('SETUP_MAXBITRATE_DESC');
 						$pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'} = '  '.string('NO_LIMIT');
 					} else {
 						delete $pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'};
-						$pageref->{'Prefs'}{'maxBitrate'}{'PrefDesc'} = string('SETUP_MP3BITRATE_DESC');
+						$pageref->$pageref->{'Groups'}{'Format'}{'GroupDesc'} = string('SETUP_MP3BITRATE_DESC');
 					}
 					$pageref->{'Prefs'}{'titleFormatCurr'}{'validateArgs'} = [0,$titleFormatMax,1,1];
 					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [$client->defaultName()];
 					removeExtraArrayEntries($client,'titleFormat',$paramref,$pageref);
+					
+					$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = Slim::Utils::Misc::findbin('lame') ? string('SETUP_LAME_FOUND') : string('SETUP_LAME_NOT_FOUND');
+					
 					if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0))  {
-						$pageref->{'GroupOrder'}[2] = 'Synchronize';
+						$pageref->{'GroupOrder'}[4] = 'Synchronize';
 						my $syncGroupsRef = syncGroups($client);
 						$pageref->{'Prefs'}{'synchronize'}{'options'} = $syncGroupsRef;
 						$pageref->{'Prefs'}{'synchronize'}{'validateArgs'} = [$syncGroupsRef];
 					} else {
-						$pageref->{'GroupOrder'}[2] = undef;
+						$pageref->{'GroupOrder'}[4] = undef;
 					}
 				}
 		,'postChange' => sub {
@@ -159,6 +159,7 @@ sub initSetupConfig {
 					}
 					$paramref->{'ipaddress'} = $client->ipport();
 					$paramref->{'macaddress'} = $client->macaddress;
+					$paramref->{'signalstrength'} = $client->signalStrength;
 					if (Slim::Player::Client::clientCount() > 1 ) {
 						$pageref->{'Prefs'}{'synchronize'}{'options'} = syncGroups($client);
 						if (!exists($paramref->{'synchronize'})) {
@@ -172,11 +173,23 @@ sub initSetupConfig {
 					}
 					$client->update();
 				}
-		,'GroupOrder' => ['Default','Brightness','Synchronize','TitleFormats']
+		,'GroupOrder' => ['Default','Format','Digital','Brightness','Synchronize','TitleFormats']
 		#,'template' => 'setup_player.html'
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['playername','playingDisplayMode','maxBitrate','digitalVolumeControl','mp3SilencePrelude'] 
+					'PrefOrder' => ['playername','playingDisplayMode']
+				}
+			,'Format' => {
+					'PrefOrder' => ['lame','maxBitrate']
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupHead' => string('SETUP_MAXBITRATE')
+					,'GroupLine' => 1
+					,'GroupSub' => 1
+				}
+			,'Digital' => {
+					'PrefOrder' => ['digitalVolumeControl','mp3SilencePrelude']
 				}
 			,'Brightness' => {
 					'PrefOrder' => ['powerOnBrightness','powerOffBrightness']
@@ -323,6 +336,14 @@ sub initSetupConfig {
 									,'256' => '256 '.string('KBPS')
 									,'320' => '320 '.string('KBPS')
 								}
+							,'PrefDesc' => undef
+						}
+			,'lame' => {
+						'validate' => \&validateAcceptAll
+						,'validateArgs' => [] #filled by preEval
+						,'noWarning' => 1
+						,'dontSet' => 1
+						,'inputTemplate' => undef
 						}
 			,'titleFormat'		=> {
 							'isArray' => 1
@@ -999,7 +1020,7 @@ sub initSetupConfig {
 						$paramref->{"formatslist$i"} = $paramref->{"formatslist$i"} && Slim::Player::Source::checkBin($formats);
 						unless ($paramref->{"formatslist$i"}) {$paramref->{"warning"} = string('SETUP_FORMATSLIST_MISSING_BINARY')." ".$formatslistref->{$formats};}
 					}
-					unless ($paramref->{"formatslist$i"}) {
+					unless ($paramref->{"formatslist$i"} && $formats ne 'mp3-lame-*-*') {
 						Slim::Utils::Prefs::push('disabledformats',$formats);
 					}
 					$i++;
@@ -1971,7 +1992,9 @@ sub buildHTTP {
 				} else {
 					$prefparams{'PrefSelected'} = $paramref->{$pref2} ? 'checked' : undef;
 				}
-				$prefparams{'PrefInput'} = ${Slim::Web::HTTP::filltemplatefile($prefparams{'inputTemplate'},\%prefparams)};
+				if (defined $prefparams{'inputTemplate'}) {
+					$prefparams{'PrefInput'} = ${Slim::Web::HTTP::filltemplatefile($prefparams{'inputTemplate'},\%prefparams)};
+				}
 				$groupparams{'PrefList'} .= ${Slim::Web::HTTP::filltemplatefile('setup_pref.html',\%prefparams)};
 			}
 		}

@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.89 2004/05/14 23:07:50 dean Exp $
+# $Id: Source.pm,v 1.90 2004/05/15 19:15:30 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1044,11 +1044,22 @@ sub checkBin {
 		if (!Slim::Utils::Misc::findbin($1)) {
 			$command = undef;
 			$::d_source && msg("   drat, missing binary $1\n");
-			Slim::Utils::Prefs::push('disabledformats',$profile);
+			unless ($profile eq 'mp3-lame-*-*') {Slim::Utils::Prefs::push('disabledformats',$profile);}
 		}
 	}
 			
 	return $command;
+}
+
+sub underMax {
+	my $client = shift;
+	my $fullpath = shift;
+	
+	my $rate = (Slim::Music::Info::bitratenum($fullpath) || 0)/1000;
+	my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate') ||
+	Slim::Utils::Prefs::clientGet($client,'maxBitrate');
+
+	return ($maxRate > $rate) || ($maxRate == 0);
 }
 
 sub getConvertCommand {
@@ -1066,13 +1077,7 @@ sub getConvertCommand {
 	my %formatcounter    = ();
 	my $audibleplayers   = 0;
 
-	my $rate = (Slim::Music::Info::bitratenum($fullpath) || 0)/1000;
-
-	my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate') ||
-		Slim::Utils::Prefs::clientGet($client,'maxBitrate');
-
-	my $undermax = ($maxRate > $rate) || ($maxRate == 0);
-	
+	my $undermax = underMax($client,$fullpath);
 	# make sure we only test formats that are supported.
 	foreach my $everyclient (@playergroup) {
 
@@ -1095,6 +1100,8 @@ sub getConvertCommand {
 	foreach my $checkformat (@supportedformats) {
 		
 		# if there is a limiting bitrate, don't even check WAV or AIFF
+		my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate') ||
+					Slim::Utils::Prefs::clientGet($client,'maxBitrate');
 		next if ($maxRate != 0 && $checkformat ne 'mp3');
 
 		my @profiles = (
@@ -1114,11 +1121,7 @@ sub getConvertCommand {
 		$format = $checkformat;
 
 		# special case for mp3 to mp3 when input is higher than specified max bitrate.
-		my $downsample = "$type-$checkformat-downsample-*";
-		
-		if (defined $command && $command eq "-" && !$undermax &&
-			$type eq "mp3" && enabledFormat($downsample)) {
-
+		if (defined $command && $command eq "-" && !$undermax && $type eq "mp3") {
 				$command = $commandTable{"$type-lame-*-*"};
 				$undermax = 1;
 		}
@@ -1241,7 +1244,7 @@ sub readNextChunk {
 				
 				if ($client->trickSegmentRemaining()) {
 					# we're in the middle of a trick segment
-					!$::d_source && msg("still in the middle of a trick segment: ". $client->trickSegmentRemaining() . " bytes remaining\n");
+					$::d_source && msg("still in the middle of a trick segment: ". $client->trickSegmentRemaining() . " bytes remaining\n");
 					
 				} else {
 					# starting a new trick segment, calculate the chunk offset and length
