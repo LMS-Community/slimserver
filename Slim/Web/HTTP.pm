@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.41 2003/11/06 18:37:06 dean Exp $
+# $Id: HTTP.pm,v 1.42 2003/11/10 06:14:12 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -644,7 +644,7 @@ sub sendstreamingresponse {
 		if ($metaDataBytes{$httpclientsock} == $METADATAINTERVAL) {
 			unshift @{$outbuf{$httpclientsock}},$segmentref;
 			my $song = Slim::Player::Playlist::song($client);
-			my $title = $song ? Slim::Music::Info::standardTitle($client, $song) : string('WELCOME_TO_SQUEEZEBOX');
+			my $title = $song ? Slim::Music::Info::standardTitle($client, $song) : string('WELCOME_TO_SLIM_SERVER');
 			$title =~ tr/'/ /;
 			my $metastring = "StreamTitle='" . $title . "';";
 			my $length = length($metastring);
@@ -1024,7 +1024,7 @@ sub generateresponse {
 			$headers{"x-audiocast-name"} = string('SLIM_SERVER');
 			if ($sendMetaData{$httpclientsock}) {
 				$headers{"icy-metaint"} = $METADATAINTERVAL;
-				$headers{"icy-name"} = string('WELCOME_TO_SQUEEZEBOX');
+				$headers{"icy-name"} = string('WELCOME_TO_SLIM_SERVER');
 			}
 			my $output = $result . $EOL . printheaders(%headers, %paramheaders);
 			$metaDataBytes{$httpclientsock} = - length($output);

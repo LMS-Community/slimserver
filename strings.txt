@@ -747,6 +747,19 @@ WELCOME_TO_SQUEEZEBOX
 	PT	Bem-vindo ao Squeezebox
 	SE	Välkommen till Squeezebox
 
+WELCOME_TO_SLIM_SERVER
+	DE	Willkommen bei Slim Server
+	DK	Velkommen til Slim Server
+	EN	Welcome to Slim Server
+	ES	Bienvenido al Slim Server
+	FI	Slim Server Tervetuloa!
+	FR	Bienvenue sur le Slim Server
+	IT	Benvenuto a Slim Server
+	NL	Welkom bij Slim Server
+	NO	Velkommen til Slim Server
+	PT	Bem-vindo ao Slim Server
+	SE	Välkommen till Slim Server
+
 FREE_YOUR_MUSIC
 	DK	Lyt til din musik!
 	EN	Free your music

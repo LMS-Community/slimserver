@@ -65,7 +65,7 @@ sub bufferFullness {
 
 sub bytesReceived {
 	my $client = shift;
-	return $client->songBytes(shift);
+	return @_ ? $client->songBytes(shift) : $client->songBytes();
 }
 
 sub formats {
