@@ -154,10 +154,9 @@ sub artScan {
 	my $url    = $artwork{$album};
 	my $ds     = Slim::Music::Info::getCurrentDataStore();
 	my $track  = $ds->objectForUrl($url); 
-	
-	my $thumb  = $track->coverArt('thumb');
-	
-	if (defined $thumb && $thumb) {
+
+	# Make sure we have an object for the url, and it has a thumbnail.
+	if (defined $track && $track->coverArt('thumb')) {
 
 		my $thumb = Slim::Utils::Misc::pathFromFileURL($url);
 		
