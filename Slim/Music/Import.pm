@@ -165,7 +165,7 @@ sub artScan {
 	
 	my $thumb  = $track->coverArt('thumb');
 	
-	if (defined $thumb && thumb) {
+	if (defined $thumb && $thumb) {
 
 		my $thumb = Slim::Utils::Misc::pathFromFileURL($url);
 		
