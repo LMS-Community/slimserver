@@ -70,7 +70,7 @@ function chooseBrowser(value)
 	<option [EQ type album]selected[/EQ] value="album">[S SEARCH_FOR_ALBUMS]</option>
 	<option [EQ type song]selected[/EQ] value="song">[S SEARCH_FOR_SONGS]</option>
 	[IFN nofolder]<OPTION [IF browse]selected[/IF] value="song">[S BROWSE_MUSIC_FOLDER]</OPTION>[/IFN]
-	</SELECT> for 
+	</SELECT> [S FOR]
 	<input type=text class="stdedit" name="query" value="{query}" size="20">
 	<input type=hidden value="{player}" name="player">
 	[IF nofolder]<input type=hidden value="1" name="nofolder">[/IF]</p><nobr></center></td></FORM>

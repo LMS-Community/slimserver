@@ -23,11 +23,11 @@ function getCookie(Name)
 &rbrc;
 			
 			if ("{%player}") var player = "{%player}";
-			if (!player) parent.statusframe.location="{webroot}status.html?player={%player}";
+			if (!player) parent.statusframe.location="{webroot}status_header.html?player={%player}";
 			else {
 				var playing = getCookie("Slimd-CurrentSong");
 				var current = [EVAL]defined($client)&&defined(Slim::Utils::Prefs::clientGet($client,"currentSong")) ? Slim::Utils::Prefs::clientGet($client,"currentSong") : 0;[/EVAL];
-				if ((current != playing)&&(parent.statusframe.location.href != "about:blank")) parent.statusframe.location="{webroot}status.html?player={%player}";
+				if ((current != playing)&&(parent.statusframe.location.href != "about:blank")) parent.statusframe.location="{webroot}status_header.html?player={%player}";
 			};
 			//-->
 		</script>
