@@ -193,6 +193,10 @@ sub getSubFileTag {
 	$tags = getCDDBTag($file, $anchor, $flac);
 	return $tags if defined $tags && keys %$tags > 0;	
 
+	# parse cuesheet stuffed into a vorbis comment
+	$tags = getCUEinVC($file, $anchor, $flac);
+	return $tags if defined $tags && keys %$tags > 0;	
+
 	# try parsing stacked vorbis comments
 	$tags = getStackedVC($file, $anchor, $flac);
 	return $tags if defined $tags && keys %$tags > 0;
@@ -488,6 +492,76 @@ sub getCDDBTag {
 			delete $tags->{$key};
 		}
 	}
+
+	doTagMapping($tags);
+	addInfoTags($flac, $tags) if keys %$tags > 0;
+	return $tags;
+}
+
+sub getCUEinVC {
+	my $file   = shift;
+	my $anchor = shift;
+	my $flac   = shift;
+	my $tags   = {};
+
+	# foobar2000 alternately can stuff an entire cuesheet, along with
+	# the CDTEXT hack for storing metadata, into a vorbis comment tag.
+
+	# TODO: we really should sanity check that this cuesheet matches the
+        # cuesheet we pulled from the vorbis file.
+
+        # Right now this section borrows heavily from the existing cuesheet
+        # parsing code. Perhaps this should be abstracted out at some point.
+
+	$tags = $flac->tags() || {};
+
+	return undef unless defined $tags->{'CUESHEET'};
+
+	# grab the cuesheet and figure out which track is current
+	my $track    = _trackFromAnchor($flac->cuesheet(), $anchor);
+
+	my $currtrack;
+
+	# as mentioned, this parsing is ripped right out of Parse.pm
+	# it's repeated here instead of calling Parse->parseCUE()
+	# because we don't want to tweak song definitions or create
+	# loops, just read tags.
+
+	foreach (split(/\n/ ,$tags->{'CUESHEET'})) {
+
+	  s/\s*$//;
+
+	  if (/^TITLE\s+\"(.*)\"/i) {
+	    $tags->{'ALBUM'} = $1;
+
+	  } elsif (/^YEAR\s+\"(.*)\"/i) {
+	    $tags->{'YEAR'} = $1
+
+	  } elsif (/^GENRE\s+\"(.*)\"/i) {
+	    $tags->{'GENRE'} = $1;
+
+	  } elsif (/^COMMENT\s+\"(.*)\"/i) {
+	    $tags->{'COMMENT'} = $1;
+
+	  #} elsif (/^FILE\s+\"(.*)\"/i) {
+	  #  $filename = $1;
+	  #  $filename = Slim::Utils::Misc::fixPath($filename, $cuedir);
+
+	  } elsif (/^\s+TRACK\s+(\d+)\s+AUDIO/i) {
+	    $currtrack = int ($1);
+	    next if ($currtrack < $track);
+	    last if ($currtrack > $track);
+
+	  } elsif (defined $currtrack and /^\s+PERFORMER\s+\"(.*)\"/i) {
+	    $tags->{'ARTIST'} = $1;
+
+	  } elsif (defined $currtrack and
+		   /^\s+(TITLE|YEAR|GENRE|COMMENT)\s+\"(.*)\"/i) {
+	    $tags->{uc $1} = $2;
+	  }
+
+	}
+	$tags->{'TRACKNUM'} = $track;
 
 	doTagMapping($tags);
 	addInfoTags($flac, $tags) if keys %$tags > 0;

@@ -1,6 +1,6 @@
 package Audio::FLAC;
 
-# $Id: FLAC.pm,v 1.9 2004/07/29 19:32:21 daniel Exp $
+# $Id: FLAC.pm,v 1.10 2005/01/03 06:05:46 dsully Exp $
 
 use strict;
 use vars qw($VERSION);
@@ -450,7 +450,7 @@ sub _parseVorbisComments {
 		push(@$rawTags, $tagStr);
 
 		# Match the key and value
-		if ($tagStr =~ /^(.*?)=(.*)$/) {
+		if ($tagStr =~ /^(.*?)=(.*)$/s) {
 			# Make the key uppercase
 			my $tkey = $1;
 			$tkey =~ tr/a-z/A-Z/;
