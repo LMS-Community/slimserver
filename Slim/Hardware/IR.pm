@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.3 2003/08/03 04:02:32 sadams Exp $
+# $Id: IR.pm,v 1.4 2003/08/04 13:34:39 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -26,6 +26,10 @@ sub enqueue {
 	my $client = shift;
 	my $irCodeBytes = shift;
 	my $irTime = shift;
+
+	assert($client);
+	assert($irCodeBytes);
+	assert($irTime);
 	
 	push @queuedBytes, $irCodeBytes;
 	push @queuedTime, $irTime;
@@ -228,7 +232,7 @@ sub lookupFunction {
 	assert($client);
 	assert($map);
 	assert($mode);
-	assert($code);
+	assert($code); # FIXME: somhow we keep getting here with no $code.
 
 	if (defined $irMap{$map}{$mode}{$code}) {
 		$::d_ir && msg("found function " . $irMap{$map}{$mode}{$code} . " for button $code in mode $mode from map $map\n");

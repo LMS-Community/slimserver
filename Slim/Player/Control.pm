@@ -28,7 +28,10 @@ sub play {
 	my $paused = shift;
 	my $pcm = shift;
 
+	print "play\n";
+
 	if (!Slim::Player::Client::isPlayer($client)) {
+		print "!player\n";
 		return 1;
 	}
 
@@ -36,12 +39,14 @@ sub play {
 	Slim::Hardware::Decoder::reset($client, $pcm);
 
 	if ($client->model eq 'slimp3') {
+		print "slimp3\n";
 	
 		Slim::Networking::Stream::newStream($client, $paused);
 		return 1;
 	
 	} else {
 		assert($client->model eq 'squeezebox');
+		print "squeezebox";
 
 		Slim::Networking::Sendclient::stream($client, 's');
 		return 1;

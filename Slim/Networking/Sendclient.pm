@@ -79,7 +79,7 @@ sub stream {
 
 	assert($client->model eq 'squeezebox');
 
-	my $frame = pack 'aaaaaaaCaanL', (
+	my $frame = 's   '.pack 'aaaaaaaCaanL', (
 		$command,
 		'3',
 		'm',
@@ -93,10 +93,15 @@ sub stream {
 		0		# server IP of 0 means use IP of control server
 	);
 
-	assert(length($frame) == 16);
+	assert(length($frame) == 4+16);
 
-	my $path = '/music/Sean/Mellow/Pink%20Floyd/The%20Dark%20Side%20Of%20The%20Moon/05%20Money.mp3';
-	$frame .= "GET $path HTTP/1.0\n\n";
+	my $path = '/test.mp3';
+#	my $path = '/music/test.mp3';
+	my $request_string = "GET $path HTTP/1.0\n\n";
+
+	print "$request_string";
+	
+	$frame .= $request_string;
 
 	my $len = pack('n', length($frame));
 
