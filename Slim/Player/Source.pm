@@ -750,7 +750,7 @@ sub gotoNext {
 		# the current song or to just continue streaming
 		if (($client->playmode() eq 'play') && 
 			(($oldstreamformat ne $newstreamformat) || Slim::Player::Sync::isSynced($client) || $client->isa("Slim::Player::Squeezebox2")) ||
-			$client->rate() != 1) {
+			($client->rate() != 1 && $client->playmode() ne 'playout-play')) {
 
 			$::d_source && msg(
 				"playing out before starting next song. (old format: " .
@@ -1417,10 +1417,22 @@ sub getConvertCommand {
 
 		$format = $checkformat;
 
-		# special case for mp3 to mp3 when input is higher than specified max bitrate.
-		if (defined $command && $command eq "-" && !$undermax && $type eq "mp3") {
-				$command = $commandTable{"$type-lame-*-*"};
-				$undermax = 1;
+		if (defined $command && $command eq "-") {
+
+			# special case for mp3 to mp3 when input is higher than
+			# specified max bitrate.
+			if (!$undermax && $type eq "mp3") {
+				$command = $commandTable{"mp3-mp3-transcode-*"};
+			}			
+			# special case for FLAC cuesheets for SB2. For now, we
+			# let flac do the seeking to the correct point and transcode
+			# to a complete stream that we can send to SB2.
+			# Yucky, but a stopgap until we get FLAC seeking code into
+			# a Perl invokable form.
+			elsif (($type eq "flc") && ($fullpath =~ /#([^-]+)-([^-]+)$/)) {
+				$command = $commandTable{"flc-flc-transcode-*"};
+			}
+			$undermax = 1;
 		}
 
 		# only finish if the rate isn't over the limit
@@ -1443,7 +1455,8 @@ sub tokenizeConvertCommand {
 	# XXX what is this?
 	my $swap = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
 
-	# XXX - what is this actually doing? CUE sheet stuff? Ick.
+	# Special case for FLAC cuesheets. We pass the start and end
+	# of the track within the FLAC file.
 	if ($type eq 'flc') {
 
 		if ($fullpath =~ /#([^-]+)-([^-]+)$/) {
@@ -1549,13 +1562,13 @@ sub readNextChunk {
 
 					my $byterate = $track->bitrate(1) / 8;
 				
-					my $howfar = ($rate -  $TRICKSEGMENTDURATION) * $byterate;					
+					my $howfar = int(($rate -  $TRICKSEGMENTDURATION) * $byterate);					
 					$howfar -= $howfar % $song->{blockalign};
 					$::d_source && msg("trick mode seeking to: $howfar\n");
 
 					my $seekpos = $now + $howfar;
 
-					my $tricksegmentbytes = $byterate * $TRICKSEGMENTDURATION;				
+					my $tricksegmentbytes = int($byterate * $TRICKSEGMENTDURATION);				
 
 					$tricksegmentbytes -= $tricksegmentbytes % $song->{blockalign};
 					if ($client->streamformat() eq 'mp3') {
