@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DBIStore;
 
-# $Id: DBIStore.pm,v 1.7 2005/01/06 03:41:07 vidur Exp $
+# $Id: DBIStore.pm,v 1.8 2005/01/06 03:44:02 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -331,9 +331,7 @@ sub searchWithCriteria {
 
 	# Then search using the above id's. I wonder if it'd be possible to do
 	# a big join, and just have 1 query.
-	my $songs  = $class->find('track', $findCriteria, $sortBy);
-
-	return map { $_->url } @$songs;
+	return map { $_->url } @{ $class->find('track', $findCriteria, $sortBy) };
 }
 
 sub albumsWithArtwork {

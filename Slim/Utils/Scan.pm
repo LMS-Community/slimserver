@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.24 2005/01/06 03:41:07 vidur Exp $
+# $Id: Scan.pm,v 1.25 2005/01/06 03:44:02 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -159,8 +159,11 @@ sub addToList {
 sub stopAddToList {
 	my $listref = shift;
 	Slim::Utils::Scheduler::remove_task(\&addToList_run, $listref);
-	&addToList_done($listref);
+
+	addToList_done($listref);
+
 	$addToList_jobs{$listref} = undef;
+	delete $addToList_jobs{$listref};
 }	
 
 #
@@ -172,13 +175,18 @@ sub addToList_run {
 
 	my $jobState = $addToList_jobs{$listref};
 	my $stackRef = $jobState->stack;
-	my $curdirState = @$stackRef[$jobState->numstack-1]; # The directory we're currently in is stack[numstack-1]
+
+	# The directory we're currently in is stack[numstack-1]
+	my $curdirState = @$stackRef[$jobState->numstack-1];
+
 	$::d_scan && msg("numitems: ".$jobState->numitems."\n");
+
 	if (!$curdirState) {
 		$::d_scan && msg("couldn't find curdirstate in addToList_run");
 		&addToList_done($listref);
 		return 0;
 	}
+
 	########## index==-1 means we need to read the directory
 
 	$::d_scan && msg("index: ".$curdirState->index."\n");

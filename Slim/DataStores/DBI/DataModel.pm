@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DataModel;
 
-# $Id: DataModel.pm,v 1.9 2005/01/04 03:38:52 dsully Exp $
+# $Id: DataModel.pm,v 1.10 2005/01/06 03:44:02 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -91,7 +91,7 @@ sub db_Main {
 	my $username = Slim::Utils::Prefs::get('dbusername');
 	my $password = Slim::Utils::Prefs::get('dbpassword');
 
-	$dbh = DBI->connect($source, $username, $password, { 
+	$dbh = DBI->connect_cached($source, $username, $password, { 
 		RaiseError => 1,
 		AutoCommit => 0,
 		PrintError => 1,

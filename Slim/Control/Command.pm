@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.55 2005/01/04 03:38:52 dsully Exp $
+# $Id: Command.pm,v 1.56 2005/01/06 03:44:02 dsully Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -472,7 +472,7 @@ sub execute {
 					$p2 = $path;
 				}
 			
-			} elsif ($p1 eq "loadalbum" | $p1 eq "playalbum") {
+			} elsif ($p1 eq "loadalbum" || $p1 eq "playalbum") {
 
 				Slim::Player::Source::playmode($client, "stop");
 				Slim::Player::Playlist::clear($client);
@@ -517,7 +517,7 @@ sub execute {
 				#Slim::Player::Playlist::reshuffle($client);
 				$client->currentPlaylistModified(1);
 			
-			} elsif ($p1 eq "loadtracks" | $p1 eq "playtracks") {
+			} elsif ($p1 eq "loadtracks" || $p1 eq "playtracks") {
 					
 				Slim::Player::Source::playmode($client, "stop");
 				Slim::Player::Playlist::clear($client);

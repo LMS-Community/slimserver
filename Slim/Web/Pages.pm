@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.114 2005/01/04 08:53:38 dsully Exp $
+# $Id: Pages.pm,v 1.115 2005/01/06 03:44:02 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -72,7 +72,7 @@ sub init {
 				$form->{'includeArtist'}       = ($webFormat !~ /ARTIST/);
 				$form->{'includeAlbum'}        = ($webFormat !~ /ALBUM/) ;
 				$form->{'item'}	               = $item->id;
-				$form->{'itempath'}	       = $item->id;
+				$form->{'itempath'}	       = $item->url;
 				$form->{'mixable_not_descend'} = Slim::Music::Info::isSongMixable($item->url);
 
 				my ($body, $type, $mtime) =  Slim::Music::Info::coverArt($item->url);
@@ -605,9 +605,9 @@ sub browser {
 		}
 	}
 
-	# Scan the directories - don't recurse, and don't sort.
+	# Scan the directories - don't recurse
 	Slim::Utils::Scan::addToList(
-		$items, $fulldir, 0, 0,  
+		$items, $fulldir, 0, undef,  
 		\&browser_addtolist_done, $current_player, $callback, 
 		$httpClient, $params, $items, $response
 	);
@@ -2455,7 +2455,7 @@ sub browseid3_old {
 				$list_form{'artist'}              = $item->artist();
 				$list_form{'album'}	          = $item->album();
 				$list_form{'itempath'}            = $item->url(); 
-				$list_form{'item'}                = $item;
+				$list_form{'item'}                = $item->url();
 				$list_form{'title'}               = $item->title();
 				$list_form{'descend'}             = $descend;
 				$list_form{'player'}              = $player;
