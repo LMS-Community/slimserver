@@ -29,7 +29,7 @@ sub getTag {
 
 	my ($tag, $size, $format) = unpack "a4Na4", $chunkheader;
 	
-	return undef if ($tag ne 'FORM' || $format ne 'AIFF' || $size > $filesize);
+	return undef if ($tag ne 'FORM' || $format ne 'AIFF');  # itunes rips with bogus size info...  disabling: || $size > $filesize);
 
 	my $chunkpos = tell($f);
 
