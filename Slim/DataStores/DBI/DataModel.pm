@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DataModel;
 
-# $Id: DataModel.pm,v 1.2 2004/12/13 07:32:07 vidur Exp $
+# $Id: DataModel.pm,v 1.3 2004/12/13 19:46:01 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -400,8 +400,10 @@ my %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );
 
 __PACKAGE__->table('tracks');
 __PACKAGE__->columns(Primary => keys %primaryColumns);
-__PACKAGE__->columns(Essential => keys %essentialColumns);
-__PACKAGE__->columns(Others => keys %otherColumns);
+__PACKAGE__->columns(Essential => keys %allColumns);
+# Combine essential and other for now for performance, at the price of
+# larger in-memory object size
+#__PACKAGE__->columns(Others => keys %otherColumns);
 __PACKAGE__->columns(Stringify => qw/url/);
 
 __PACKAGE__->has_a(album => 'Slim::DataStores::DBI::Album');
@@ -574,7 +576,7 @@ package Slim::DataStores::DBI::Genre;
 use base 'Slim::DataStores::DBI::DataModel';
 
 __PACKAGE__->table('genres');
-__PACKAGE__->columns(All => qw/id name/);
+__PACKAGE__->columns(Essential => qw/id name/);
 __PACKAGE__->columns(Stringify => qw/name/);
 __PACKAGE__->set_sql(count_all => "SELECT COUNT(*) FROM __TABLE__");
 
@@ -604,7 +606,7 @@ package Slim::DataStores::DBI::Album;
 use base 'Slim::DataStores::DBI::DataModel';
 
 __PACKAGE__->table('albums');
-__PACKAGE__->columns(All => qw/id title titlesort artwork_path disc discc/);
+__PACKAGE__->columns(Essential => qw/id title titlesort artwork_path disc discc/);
 __PACKAGE__->columns(Stringify => qw/title/);
 __PACKAGE__->set_sql(count_all => "SELECT COUNT(*) FROM __TABLE__");
 __PACKAGE__->add_constructor('hasArtwork' => 'artwork_path IS NOT NULL');
@@ -635,7 +637,7 @@ package Slim::DataStores::DBI::Contributor;
 use base 'Slim::DataStores::DBI::DataModel';
 
 __PACKAGE__->table('contributors');
-__PACKAGE__->columns(All => qw/id name namesort/);
+__PACKAGE__->columns(Essential => qw/id name namesort/);
 __PACKAGE__->columns(Stringify => qw/name/);
 __PACKAGE__->set_sql(count_all => "SELECT COUNT(*) FROM __TABLE__");
 
@@ -673,7 +675,7 @@ package Slim::DataStores::DBI::PlaylistTrack;
 use base 'Slim::DataStores::DBI::DataModel';
 
 __PACKAGE__->table('playlist_track');
-__PACKAGE__->columns(All => qw/id position playlist track/);
+__PACKAGE__->columns(Essential => qw/id position playlist track/);
 __PACKAGE__->has_a(playlist => 'Slim::DataStores::DBI::Track');
 __PACKAGE__->has_a(track => 'Slim::DataStores::DBI::Track');
 __PACKAGE__->add_constructor('tracksof' => 'playlist=? ORDER BY position');
@@ -688,7 +690,7 @@ package Slim::DataStores::DBI::DirlistTrack;
 use base 'Slim::DataStores::DBI::DataModel';
 
 __PACKAGE__->table('dirlist_track');
-__PACKAGE__->columns(All => qw/id position dirlist item/);
+__PACKAGE__->columns(Essential => qw/id position dirlist item/);
 __PACKAGE__->has_a(dirlist => 'Slim::DataStores::DBI::Track');
 __PACKAGE__->add_constructor('tracksof' => 'dirlist=? ORDER BY position');
 
@@ -707,7 +709,7 @@ use constant ROLE_CONDUCTOR => 3;
 use constant ROLE_BAND => 4;
 
 __PACKAGE__->table('contributor_track');
-__PACKAGE__->columns(All => qw/id role contributor track album namesort/);
+__PACKAGE__->columns(Essential => qw/id role contributor track album namesort/);
 __PACKAGE__->has_a(contributor => 'Slim::DataStores::DBI::Contributor');
 __PACKAGE__->has_a(track => 'Slim::DataStores::DBI::Track');
 __PACKAGE__->has_a(album => 'Slim::DataStores::DBI::Album');
@@ -756,7 +758,7 @@ package Slim::DataStores::DBI::GenreTrack;
 use base 'Slim::DataStores::DBI::DataModel';
 
 __PACKAGE__->table('genre_track');
-__PACKAGE__->columns(All => qw/id genre track/);
+__PACKAGE__->columns(Essential => qw/id genre track/);
 __PACKAGE__->has_a(genre => 'Slim::DataStores::DBI::Genre');
 __PACKAGE__->has_a(track => 'Slim::DataStores::DBI::Track');
 __PACKAGE__->add_constructor('genresfor' => 'track=?');
@@ -790,7 +792,7 @@ package Slim::DataStores::DBI::Comment;
 use base 'Slim::DataStores::DBI::DataModel';
 
 __PACKAGE__->table('comments');
-__PACKAGE__->columns(All => qw/id track value/);
+__PACKAGE__->columns(Essential => qw/id track value/);
 __PACKAGE__->has_a(track => 'Slim::DataStores::DBI::Track');
 __PACKAGE__->add_constructor('commentsof' => 'track=?');
 
