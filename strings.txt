@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.61 2004/02/23 01:14:23 dean Exp $
+# $Id: strings.txt,v 1.62 2004/02/28 02:05:49 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1136,6 +1136,25 @@ SETUP_ALARM
 	NO	Alarm
 	PT	Alarme
 	SE	Väckarklocka
+
+SETUP_ALARMVOLUME
+	DE	Lautstärke für den Wecker einstellen (0-100)
+	DK	Indstil volume for alarmen (0-100)
+	EN	Set Alarm Volume (0-100)
+	FR	Réglage du volume de réveil (0-100)
+	NL	Kies het wekvolume (0-100)
+	NO	Sett Alarm volum (0-100)
+	PT	Mudar Volume do Alarme (0-100)
+	SE	Välj volym för väckning (0-100)
+
+SETUP_ALARMPLAYLIST
+	DE	Playlist für den Wecker
+	DK	Playliste for alarmen
+	EN	Playlist for Alarm
+	FR	Liste de lecture pour le réveil
+	NL	Kies een playlist voor de wekker
+	NO	Velg Spilleliste for Alarm
+	PT	Playlist para o Alarme
 
 SETUP_PLAYINGDISPLAYMODE
 	DE	Abspielen im Anzeigemodus

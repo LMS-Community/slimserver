@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.39 2004/02/19 16:53:45 dean Exp $
+# $Id: Setup.pm,v 1.40 2004/02/28 02:05:49 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -354,6 +354,7 @@ sub initSetupConfig {
 			}
 			,'AlarmClock' => {
 				'PrefOrder' => ['alarm','alarmtime','alarmvolume','alarmplaylist']
+				,'PrefsInTable' => 1
 				,'Suppress_PrefHead' => 1
 				,'Suppress_PrefDesc' => 1
 				,'Suppress_PrefLine' => 1
@@ -437,16 +438,20 @@ sub initSetupConfig {
 							my $time = $changeref->{'alarmtime'}{'new'};
 							my $newtime = 0;
 							$time =~ s{
-								^(0?[0-9]|1[0-9]|2[0-4]):([0-5][0-9]).?(P|PM)?$
+								^(0?[0-9]|1[0-9]|2[0-4]):([0-5][0-9])\s*(P|PM|A|AM)?$
 							}{
-								$newtime = $1 * 60 * 60 + $2 * 60 + ((defined($3))?(12 * 60 * 60):0);
+								if (defined $3) {
+									$newtime = ($1 == 12?0:$1 * 60 * 60) + ($2 * 60) + ($3 =~ /P/?12 * 60 * 60:0);
+								} else {
+									$newtime = ($1 * 60 * 60) + ($2 * 60);
+								}
 							}iegsx;
 							Slim::Utils::Prefs::clientSet($client,'alarmtime',$newtime);
 						}
 			},
 			'alarmvolume'	=> {
 				'validate' => \&validateNumber
-				,'PrefChoose' => string('ALARM_SET_VOLUME')
+				,'PrefChoose' => string('SETUP_ALARMVOLUME')
 				,'validateArgs' => [0,$Slim::Player::Client::maxVolume,1,1]
 			},
 			'alarmplaylist' => {
