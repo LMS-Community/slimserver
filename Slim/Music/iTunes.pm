@@ -88,13 +88,20 @@ sub iTunesPlaylist {
 
 # mac file types
 my %filetypes = (
-	1095321158 => 'aif',# mac file type 'AIFF'
-	1297106739 => 'mp3',# mac file type 'MPG3' or 'Mp3 '
-	1299198752 => 'mp3',
-	1463899717 => 'wav',# mac file type 'WAVE'
-	1295270176 => 'mov',# these are quicktime movie files, either 'MooV' or 'M4A '
-	1299148630 => 'mov',	
-	1295274016 => 'm4p',# we don't support this, but it would be good to know they are there....
+	1095321158 => 'aif', # AIFF
+	1295270176 => 'mov', # M4A 
+	1295274016 => 'm4p', # M4P  we don't support this, but it would be good to know they are there....
+	1297101600 => 'mp3', # MP3 	
+	1297101601 => 'mp3', # MP3! 
+	1297106247 => 'mp3', # MPEG
+	1297106738 => 'mp3', # MPG2 
+	1297106739 => 'mp3', # MPG3 
+	1299148630 => 'mov', # MooV
+	1299198752 => 'mp3', # Mp3 
+	1463899717 => 'wav', # WAVE
+	1836069665 => 'mp3', # mp3! 
+	1836082995 => 'mp3', # mpg3 
+	1836082996 => 'mov', # mpg4
 );
 
 # this library imports the iTunes Music Library.xml file for use as the music

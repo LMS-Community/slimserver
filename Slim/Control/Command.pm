@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.10 2003/09/02 15:50:10 kdf Exp $
+# $Id: Command.pm,v 1.11 2003/09/03 20:08:06 dean Exp $
 
 # Slim Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -147,7 +147,7 @@ sub execute {
 				} elsif ($p1 eq "address") {
 					$p3 = $p2client->id();
 				} elsif ($p1 eq "ip") {
-					$p3 = $p2client->ipaddress();
+					$p3 = $p2client->ipport();
 				}
 			}
 		} 
@@ -341,13 +341,17 @@ sub execute {
 					my $savename = basename ($p2);
                     # save the current playlist position as a comment at the head of the list
 					my $annotatedlistRef;
+
 					if (Slim::Utils::Prefs::get('saveShuffled')) {
 						foreach my $shuffleitem (@{Slim::Player::Playlist::shuffleList($client)}) {
+
 							push (@$annotatedlistRef,@{Slim::Player::Playlist::playList($client)}[$shuffleitem]);
+
 						}
 					} else {
 						$annotatedlistRef = Slim::Player::Playlist::playList($client);
 					}
+
 					Slim::Formats::Parse::writeM3U( $annotatedlistRef, catfile(Slim::Utils::Prefs::get('playlistdir'), $savename . ".m3u"), 1, Slim::Player::Source::currentSongIndex($client));
 				}				
 			} elsif ($p1 eq "deletealbum") {

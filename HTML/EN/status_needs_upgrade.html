@@ -1,0 +1,14 @@
+<html>
+<head>
+<title>[S {playermodel}_MUSIC_PLAYER]</title>
+<meta http-equiv="refresh" content="30; url=status.html">
+<link rel="stylesheet" href="slimserver.css">
+</head>
+<body bgcolor="#FFFFFF">
+  	[IF player_chooser_list]<form method="get" action="{webroot}index.html" target="_top">[S CURRENT_PLAYER] <select name="player">{player_chooser_list}</select><input class="stdclick" type="submit" value="Change"></form>[/IF]
+<p><h3>[S PLAYER_NEEDS_UPGRADE]</h3></p>
+ <hr>
+ <p>
+<p>[S PLAYER_NEEDS_UPGRADE_DETAILS]</p>
+</body>
+</html>	

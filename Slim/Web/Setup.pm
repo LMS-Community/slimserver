@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.10 2003/08/31 07:19:06 kdf Exp $
+# $Id: Setup.pm,v 1.11 2003/09/03 20:08:09 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -138,7 +138,7 @@ sub initSetupConfig {
 						$pageref->{'title'} = string('PLAYER_SETTINGS') . ' ' . string('FOR') . ' ' . $paramref->{'playername'};
 					}
 					$paramref->{'versionInfo'} = string("PLAYER_VERSION") . ': ' .  defined($client->revision)?$client->revision:'0';
-					$paramref->{'ipaddress'} = $client->ipaddress();
+					$paramref->{'ipaddress'} = $client->ipport();
 					$paramref->{'macaddress'} = $client->macaddress;
 					if (Slim::Player::Client::clientCount > 1 ) {
 						$pageref->{'Prefs'}{'synchronize'}{'options'} = syncGroups($client);

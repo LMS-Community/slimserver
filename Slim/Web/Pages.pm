@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.7 2003/08/31 07:19:06 kdf Exp $
+# $Id: Pages.pm,v 1.8 2003/09/03 20:08:09 dean Exp $
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -350,7 +350,7 @@ sub browser_addtolist_done {
 		$$paramsref{'browse_list'} = &Slim::Web::HTTP::filltemplatefile("browse_list_empty.html", {'skinOverride' => $$paramsref{'skinOverride'}});
 	}
 
-	$output .=  &Slim::Web::HTTP::filltemplatefile(($$paramsref{'playlist'} ? "browse_playlist.html" : "browse.html"), $paramsref);
+	$output .=  Slim::Web::HTTP::filltemplatefile(($$paramsref{'playlist'} ? "browse_playlist.html" : "browse.html"), $paramsref);
 
 	&Slim::Web::HTTP::addresponse($httpclientsock, $output);
 }
@@ -358,8 +358,35 @@ sub browser_addtolist_done {
 #
 # Send the status page (what we're currently playing, contents of the playlist)
 #
+
+sub status_header {
+	my($client, $main_form_ref) = @_;
+	return status($client, $main_form_ref, 0);
+}
+
 sub status {
 	my($client, $main_form_ref, $add_playlist) = @_;
+
+	$$main_form_ref{'playercount'} = Slim::Player::Client::clientCount();
+	
+	my @players = Slim::Player::Client::clients();
+	if (scalar(@players) > 1) {
+		my %clientlist = ();
+		foreach my $eachclient (@players) {
+			$clientlist{$eachclient->id()} =  $eachclient->name();
+			if (Slim::Player::Sync::isSynced($eachclient)) {
+				$clientlist{$eachclient->id()} .= " (".string('SYNCHRONIZED_WITH')." ".Slim::Player::Sync::syncwith($eachclient).")";
+			}	
+		}
+		$$main_form_ref{'player_chooser_list'} = options($client->id(),\%clientlist,$$main_form_ref{'skinOverride'});
+	}
+
+	if (!defined($client)) {
+		return Slim::Web::HTTP::filltemplatefile("status_noclients.html", $main_form_ref);
+	} elsif ($client->needsUpgrade()) {
+		return Slim::Web::HTTP::filltemplatefile("status_needs_upgrade.html", $main_form_ref);
+	}
+
 	my $current_player;
 	my $songcount = 0;
 	 
@@ -439,32 +466,30 @@ sub status {
 	}
 	
 	my $output = "";
-
-	$$main_form_ref{'playercount'} = Slim::Player::Client::clientCount();
-	
-	my @players = Slim::Player::Client::clients();
-	if (scalar(@players) > 1) {
-		my %clientlist = ();
-		foreach my $eachclient (@players) {
-			$clientlist{$eachclient->id()} =  $eachclient->name();
-			if (Slim::Player::Sync::isSynced($eachclient)) {
-				$clientlist{$eachclient->id()} .= " (".string('SYNCHRONIZED_WITH')." ".Slim::Player::Sync::syncwith($eachclient).")";
-			}	
-		}
-		$$main_form_ref{'player_chooser_list'} = options($client->id(),\%clientlist,$$main_form_ref{'skinOverride'});
-	}
 	
 	if ($add_playlist) {
 		$$main_form_ref{'playlist'} = playlist($client, $main_form_ref);
 	}
 			  
 	$output .= &Slim::Web::HTTP::filltemplatefile($add_playlist ? "status.html" : "status_header.html", $main_form_ref);
+
+	if (($$main_form_ref{'Content-Type'} eq 'text/html') && 
+	    (!$$main_form_ref{'refresh'} || !$client->htmlstatusvalid() || !Slim::Utils::Prefs::get('templatecache'))) {
+		$::d_http && msg("Generating new status\n");
+		$client->htmlstatus($output);
+		$client->htmlstatusvalid(1);
+	}
+	
 	return $output;
 }
 
 sub playlist {
 	my $client = shift; 
 	my $main_form_ref = shift;
+	
+	if (defined($client) && $client->needsUpgrade()) {
+		return Slim::Web::HTTP::filltemplatefile("playlist_needs_upgrade.html", $main_form_ref);
+	}
 	
 	my $songcount = 0;
 	if (defined($client)) {$songcount = Slim::Player::Playlist::count($client);}
@@ -1482,4 +1507,16 @@ sub alphapagebar {
 	}
 	
 	return ($start,$end);
+}
+
+sub firmware {
+	my($client, $paramsref) = @_;
+	Slim::Web::HTTP::filltemplatefile("firmware.html", $paramsref);	
+}
+sub update_firmware {
+	my($client, $paramsref) = @_;
+	my $result;
+	$result = Slim::Player::Squeezebox::upgradeFirmware($paramsref->{'ipaddress'});
+	$$paramsref{'warning'} = $result;
+	Slim::Web::HTTP::filltemplatefile("update_firmware.html", $paramsref);	
 }

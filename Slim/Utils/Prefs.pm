@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.7 2003/08/31 07:19:06 kdf Exp $
+# $Id: Prefs.pm,v 1.8 2003/09/03 20:08:08 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -74,7 +74,7 @@ my %DEFAULT = (
 	,'transcode-ogg'		=> 1
 	,'transcode-mov'		=> 1
 	,'transcode-wav'		=> 1
-	,'wavmp3samplerate'		=> 320	# MPEG-1 layer III bitrates (kbps): 32 40 48 56 64 80 96 112 128 160 192 224 256 320
+	,'transcodeBitrate'		=> 320	# Maximum bitrate for maximum quality.  MPEG-1 layer III bitrates (kbps): 32 40 48 56 64 80 96 112 128 160 192 224 256 320
 	,'savehistory'			=> 1
 	,'historylength'		=> 1000
 	,'composerInArtists'	=> 1 # include composer and band information in the artists list

@@ -143,7 +143,7 @@ my %fvolume;  # keep temporary fade volume for each client
 sub fade_volume {
 	my($client, $fade, $callback, $callbackargs) = @_;
 
-	my $faderate = 10;  # how often do we send updated fade volume commands per second
+	my $faderate = 20;  # how often do we send updated fade volume commands per second
 	
 	Slim::Utils::Timers::killTimers($client, \&fade_volume);
 	

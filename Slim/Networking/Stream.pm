@@ -104,7 +104,7 @@ sub pause {
 	my ($client) = @_;
 	$::d_stream && msg($client->id() ." pause\n");
 	
-	if ($streamState{$client} ne 'play') {
+	if ($streamState{$client} ne 'play' && $streamState{$client} ne 'buffering') {
 		$::d_stream && msg("Attempted to pause a " . $streamState{$client} .  " stream.\n");
 		return 0;
 	}
@@ -319,6 +319,7 @@ sub gotAck {
 	} elsif ($packetInFlight{$client}->{'seq'} != $seq) { 
 		$::d_stream && msg("***Unexpected packet acked: $seq, was expecting " . $packetInFlight{$client}->{'seq'} . "\n");
 	} else {
+		$client->songpos($client->songpos + $packetInFlight{$client}->{'len'});
 		$packetInFlight{$client} = undef;
 		Slim::Utils::Timers::killOneTimer($client, \&timeout);
 		$lastAck{$client} = Time::HiRes::time();

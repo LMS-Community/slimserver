@@ -12,7 +12,9 @@ package Slim::Player::Squeezebox;
 #
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
+use IO::Socket;
 use Slim::Player::Player;
+use Slim::Utils::Misc;
 
 @ISA = ("Slim::Player::Player");
 
@@ -117,34 +119,53 @@ sub buffersize {
 	return 131072;
 }
 
-sub bytesReceived {
+sub songpos {
 	return Slim::Networking::Slimproto::bytesReceived(@_);
 }
 
-sub updateFirmware {
-	my $ip = shift;
+sub needsUpgrade {
+	my $client = shift;
+	my $versionFilePath = catdir($Bin, "Firmware", "squeezebox.version");
+	my $versionFile;
+	return 0 if !open $versionFile, "<$versionFilePath";
+	my $version = <$versionFile>;
+	close $versionFile;
+	chomp $version;
+	if ($version != $client->revision) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
 
-	my $file = shift || dircat($Bin, "Firmware", "squeezebox.bin");
-
-	$::d_firmware && msg("Connecting to squeezebox at $remote:$port\n");
+sub upgradeFirmware {
+	my $client = shift;
+	my $ip = $client->ip;
 	
+	# give the player a chance to get into upgrade mode
+	sleep(2);
+	
+	my $port = 31337;  # upgrade port
+	
+	my $file = shift || catdir($Bin, "Firmware", "squeezebox.bin");
+
 	my $iaddr   = inet_aton($ip) || return("Bad IP address: $ip\n");
 	
 	my $paddr   = sockaddr_in($port, $iaddr);
 	
 	my $proto   = getprotobyname('tcp');
 
-	socket(SOCK, PF_INET, SOCK_STREAM, $proto)	|| msg("Couldn't open socket: $!\n");
+	socket(SOCK, PF_INET, SOCK_STREAM, $proto)	|| return("Couldn't open socket: $!\n");
 
-	connect(SOCK, $paddr) || msg("Connect failed $!\n");
+	connect(SOCK, $paddr) || return("Connect failed $!\n");
 	
-	open FS, $file || msg("Open failed for: $file\n");
+	open FS, $file || return("Open failed for: $file\n");
 	
 	binmode FS;
 	
 	my $size = -s $file;	
 	
-	$::d_firmware && msg("Updating firmware: Sending $size bytes\n");
+	!$::d_firmware && msg("Updating firmware: Sending $size bytes\n");
 	
 	my $bytesread=0;
 	my $totalbytesread=0;

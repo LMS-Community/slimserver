@@ -320,7 +320,7 @@ sub new {
 	# add the new client all the currently known clients so we can say hello to them later
 	my $clientlist = Slim::Utils::Prefs::get("clients");
 
-	my $newplayeraddr = $client->ipaddress();
+	my $newplayeraddr = $client->ipport();
 	if (defined($clientlist)) {
 		$clientlist .= ",$newplayeraddr";
 	} else {
@@ -346,7 +346,7 @@ sub new {
 sub clientIPs {
 	my @players;
 	foreach my $client (values %clientHash) {
-		push @players, ipaddress($client);
+		push @players, $client->ipport();
 	}
 	return @players;
 }
@@ -359,11 +359,22 @@ sub clients {
 	return values %clientHash;
 }
 
-sub ipaddress {
+# returns ip:port
+sub ipport {
 	my $client = shift;
 	assert(defined($client->paddr));
 	assert($client->paddr);
 	return Slim::Networking::Protocol::paddr2ipaddress($client->paddr);
+}
+
+# returns IP address
+sub ip {
+	return (split(':',shift->ipport))[0];
+}
+
+# returns port
+sub port {
+	return (split(':',shift->ipport))[1];
 }
 
 sub name {
@@ -382,7 +393,7 @@ sub name {
 }
 
 sub defaultName {
-	my ($name) = split(':', ipaddress(shift));
+	my ($name) = split(':', ipport(shift));
 	return $name;
 }
 
@@ -429,7 +440,7 @@ sub startup {
 		}
 	
 		if (defined $restoredPlaylist) {
-			Slim::Control::Command::execute($client,['playlist','add',$restoredPlaylist],\&initial_add_done,[$client,0]);
+			Slim::Control::Command::execute($client,['playlist','add',$restoredPlaylist],\&initial_add_done,[$client,$currsong]);
 		}
 	}
 }
@@ -458,6 +469,10 @@ sub initial_add_done {
 		Slim::Control::Command::execute($client,['play']);
 	}
 }	
+
+sub needsUpgrade {
+	return 0;
+}
 
 sub id {
 	my $r = shift;

@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.21 2003/08/31 04:55:59 fm Exp $
+# $Id: Slimproto.pm,v 1.22 2003/09/03 20:08:07 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -53,7 +53,7 @@ sub init {
 		Timeout   => 0.001
 	) || die "Can't listen on port $listenerport for Slim protocol: $!";
 
-        defined($slimproto_socket->blocking(0))  || die "Cannot set port nonblocking";
+    defined($slimproto_socket->blocking(0))  || die "Cannot set port nonblocking";
 
 	$slimSelRead->add($slimproto_socket);
 	$main::selRead->add($slimproto_socket);
@@ -272,7 +272,6 @@ sub process_slimproto_frame {
 			return;
 		}
 		my ($deviceid, $revision, @mac) = unpack("CCH2H2H2H2H2H2", $data);
-		$revision = int($revision / 16) + ($revision % 16)/10.0;
 		my $mac = join(':', @mac);
 		$::d_slimproto && msg("Squeezebox says hello. Deviceid: $deviceid, revision: $revision, mac: $mac\n");
 
@@ -297,6 +296,12 @@ sub process_slimproto_frame {
 		
 		$sock2client{$s}=$client;
 		
+		if ($client->needsUpgrade()) {
+			Slim::Hardware::VFD::vfdBrightness($client,4);
+			Slim::Buttons::Block::block($client, string('PLAYER_NEEDS_UPGRADE_1'), string('PLAYER_NEEDS_UPGRADE_2'));
+		} else {
+			Slim::Buttons::Block::unblock($client);
+		}
 		return;
 	} 
 
@@ -390,6 +395,18 @@ sub process_slimproto_frame {
 		"	byteoffset:      $status{$client}->{'byteoffset'}\n".
 		"	bytes_received   $status{$client}->{'bytes_received'}\n".
 		"");
+	} elsif ($op eq 'BYE!') {
+		$::d_slimproto && msg("Slimproto: Saying goodbye\n");
+		if ($data eq chr(1)) {
+			$::d_slimproto && msg("Going out for upgrade...\n");
+			my $success = $client->upgradeFirmware();
+			if (defined($success)) {
+				msg("Problem with upgrade: $success\n");
+			}
+		}
+		
+	} else {
+		msg("Unknown slimproto op: $op\n");
 	}
 }
 
@@ -402,7 +419,7 @@ sub fullness {
 sub bytesReceived {
 	my $client = shift;
 	my $preset = shift;
-	
+
 	if (defined($preset)) {
 		$::d_slimproto && msg("presetting streamed bytes to: $preset\n");
 		$status{$client}->{'byteoffset'} = $status{$client}->{'bytes_received'} + $preset;

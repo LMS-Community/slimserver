@@ -4817,6 +4817,18 @@ NO_PLAYER_DETAILS
 	PT	Verifique se o cliente está ligado e se as configurações da rede estão correctas. Actualize esta página para verificar de novo a presença do leitor.
 	SE	Se till att din spelare är påslagen, inkopplad och har korrekta nätverksinställningar. Tryck på F5 (Uppdatera/Refresh) i din webbläsare för att försöka koppla upp mot din spelare igen.
 
+PLAYER_NEEDS_UPGRADE
+	EN	Squeezebox Software Update Required
+
+PLAYER_NEEDS_UPGRADE_DETAILS
+	EN	The software in your Squeezebox needs to be updated to the latest version.  Please press and hold the BRIGHTNESS button on your remote until the display on your Squeezebox indicates that the upgrade has begun.  The upgrade only takes a few seconds.
+
+PLAYER_NEEDS_UPGRADE_1
+	EN	Squeezebox Software Update
+	
+PLAYER_NEEDS_UPGRADE_2
+	EN	Press and hold BRIGHTNESS key to begin.
+
 NEED_PATH
 	DE	Sie müssen einen Pfad zum Verzeichnis mit Ihrem MP3 Dateien angeben.
 	DK	Du skal angive stien til mappen med dine MP3-filer.

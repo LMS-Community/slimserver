@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.23 2003/09/03 08:54:06 fm Exp $
+# $Id: HTTP.pm,v 1.24 2003/09/03 20:08:09 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -51,6 +51,7 @@ my($defaultskin)="Default";
 my($baseskin)="EN";
 my($METADATAINTERVAL) = 32768;
 
+
 #
 # Package variables
 #
@@ -80,6 +81,24 @@ my $mdnsIDhttp;
 
 my %pageFunctions;
 tie %pageFunctions, 'Tie::RegexpHash';
+
+$pageFunctions{qr/^$/} = \&Slim::Web::Pages::home;
+$pageFunctions{qr/^index\.(?:htm|xml)/} = \&Slim::Web::Pages::home;
+$pageFunctions{qr/browseid3\.(?:htm|xml)/} = \&Slim::Web::Pages::browseid3;
+$pageFunctions{qr/edit_playlist\.(?:htm|xml)/} = \&Slim::Web::EditPlaylist::editplaylist;  # Needs to be before playlist
+$pageFunctions{qr/firmware\.(?:html|xml)/} = \&Slim::Web::Pages::firmware;
+$pageFunctions{qr/hitlist\.(?:htm|xml)/} = \&Slim::Web::History::hitlist;
+$pageFunctions{qr/home\.(?:htm|xml)/} = \&Slim::Web::Pages::home;
+$pageFunctions{qr/instant_mix\.(?:htm|xml)/} = \&Slim::Web::Pages::instant_mix;
+$pageFunctions{qr/mood_wheel\.(?:htm|xml)/} = \&Slim::Web::Pages::mood_wheel;
+$pageFunctions{qr/olsondetail\.(?:htm|xml)/} = \&Slim::Web::Olson::olsondetail;
+$pageFunctions{qr/olsonmain\.(?:htm|xml)/} = \&Slim::Web::Olson::olsonmain;
+$pageFunctions{qr/playlist\.(?:htm|xml)/} = \&Slim::Web::Pages::playlist;
+$pageFunctions{qr/search\.(?:htm|xml)/} = \&Slim::Web::Pages::search;
+$pageFunctions{qr/songinfo\.(?:htm|xml)/} = \&Slim::Web::Pages::songinfo;
+$pageFunctions{qr/status_header\.(?:htm|xml)/} = \&Slim::Web::Pages::status_header;
+$pageFunctions{qr/status\.(?:htm|xml)/} = \&Slim::Web::Pages::status;
+$pageFunctions{qr/updatefirmware\.(?:htm|xml)/} = \&Slim::Web::Pages::update_firmware;
 
 # initialize the http server
 sub init {
@@ -989,25 +1008,6 @@ sub fixHttpPath {
 	return undef;
 }
 
-#
-# generate HTTP response - TODO: commments...what exactly does this do?
-#
-
-$pageFunctions{qr/home\.(?:htm|xml)/} = \&Slim::Web::Pages::home;
-$pageFunctions{qr/^index\.(?:htm|xml)/} = \&Slim::Web::Pages::home;
-$pageFunctions{qr/^$/} = \&Slim::Web::Pages::home;
-$pageFunctions{qr/browseid3\.(?:htm|xml)/} = \&Slim::Web::Pages::browseid3;
-$pageFunctions{qr/mood_wheel\.(?:htm|xml)/} = \&Slim::Web::Pages::mood_wheel;
-$pageFunctions{qr/instant_mix\.(?:htm|xml)/} = \&Slim::Web::Pages::instant_mix;
-$pageFunctions{qr/hitlist\.(?:htm|xml)/} = \&Slim::Web::History::hitlist;
-$pageFunctions{qr/olsonmain\.(?:htm|xml)/} = \&Slim::Web::Olson::olsonmain;
-$pageFunctions{qr/olsondetail\.(?:htm|xml)/} = \&Slim::Web::Olson::olsondetail;
-$pageFunctions{qr/songinfo\.(?:htm|xml)/} = \&Slim::Web::Pages::songinfo;
-$pageFunctions{qr/search\.(?:htm|xml)/} = \&Slim::Web::Pages::search;
-$pageFunctions{qr/status_header\.(?:htm|xml)/} = \&Slim::Web::Pages::status;
-$pageFunctions{qr/edit_playlist\.(?:htm|xml)/} = \&Slim::Web::EditPlaylist::editplaylist;  # Needs to be before playlist
-$pageFunctions{qr/playlist\.(?:htm|xml)/} = \&Slim::Web::Pages::playlist;
-
 
 sub generateresponse {
 	my($client, $httpclientsock, $paramsref, $pRef) = @_;
@@ -1033,7 +1033,8 @@ sub generateresponse {
 	my $contentType = $Slim::Music::Info::types{$type};
 	
 	$headers{"Content-Type"} = $contentType;
-
+	$$paramsref{'Content-Type'} = $contentType;
+	
 	$::d_http && msg("Generating response for ($type, $contentType) $path\n");
 
 	# some generally useful form details...
@@ -1177,26 +1178,6 @@ sub generateresponse {
 			} else {
 				# otherwise just send back the binary file
 				$body = getStaticContent($path, $paramsref);
-			}
-	    } elsif ($path =~ /status\.(?:htm|xml)/) {
-	   		if ($contentType eq 'text/html') {
-				# status page
-				if (defined($client)) {
-					if (!$$paramsref{'refresh'} || !$client->htmlstatusvalid() || !Slim::Utils::Prefs::get('templatecache')) {
-						$::d_http && msg("Generating new status\n");
-						$client->htmlstatus(Slim::Web::Pages::status($client, $paramsref, 1));
-						$client->htmlstatusvalid(1);
-					}
-					$body = $client->htmlstatus();
-				} else {
-					$body = &filltemplatefile("status_noclients.html", $paramsref);
-				}
-			} else {
-				if (defined($client)) {
-					$body = Slim::Web::Pages::status($client, $paramsref, 1);
-				} else {
-					$body = &filltemplatefile("status_noclients.html", $paramsref);
-				}
 			}
 	    }  else {
 			$result = "HTTP/1.0 404 Not Found";

@@ -56,7 +56,4 @@ sub fade_volume {
 sub bufferFullness {
 	return 0;
 }
-sub bytesReceived {
-	return shift->songpos;
-}
 1;

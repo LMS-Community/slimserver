@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.4 2003/08/22 21:05:48 dean Exp $
+# $Id: Info.pm,v 1.5 2003/09/03 20:08:07 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -14,7 +14,6 @@ use File::Spec::Functions qw(:ALL);
 use Fcntl;
 
 use MP3::Info;
-use MP3::Tag;
 use Slim::Formats::Movie;
 use Slim::Formats::AIFF;
 use Slim::Formats::Wav;
@@ -1536,6 +1535,13 @@ sub readTags {
 
 	# get the type without updating the cache
 	$type = typeFromPath($file);
+	if (	$type eq 'unk' && 
+			exists($infoCache{$file}) && 
+			exists(cacheEntry($file)->{'CT'})
+		) {
+		$type = cacheEntry($file)->{'CT'};
+	}
+
 
 	$::d_info && Slim::Utils::Misc::msg("Updating cache for: " . $file . "\n");
 	
