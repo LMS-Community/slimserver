@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.23 2003/12/02 05:18:58 grotus Exp $
+# $Id: Prefs.pm,v 1.24 2003/12/04 06:19:16 grotus Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -195,7 +195,7 @@ my %prefChange = (
 		if ($newvalue) { #was false, now true
 			Slim::Music::Info::init();
 		} else { #was true, now false
-			Slim::Music::Info::stopCache();
+			#Is there anything to do here?
 		}
 	}
 	,'useplaylistcache' => sub {
