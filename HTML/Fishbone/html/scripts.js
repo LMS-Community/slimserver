@@ -85,3 +85,47 @@ function getPlayer(Player)
 	}
 	return "";
 }
+
+function goHome(plyr)
+{
+	var loc = getHomeCookie('SlimServer-Browserpage')+'&player='+plyr;
+	parent.browser.location = loc;
+}
+
+function getHomeCookie(Name) 
+{
+	var search = Name + "=";
+	if (document.cookie.length > 0) {
+		offset = document.cookie.indexOf(search);
+		if (offset != -1) {
+			offset += search.length;
+			end = document.cookie.indexOf(";", offset);
+			if (end == -1)
+				end = document.cookie.length;
+			url = unescape(document.cookie.substring(offset, end));
+			if (url == 'undefined') return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
+			return url;
+		}
+	}
+	return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
+}
+
+var selectedLink;
+
+function selectLink(lnk) {
+
+	if (selectedLink) selectedLink.style.fontWeight='normal';
+
+	lnk.style.fontWeight='bold';
+
+	selectedLink=lnk;
+}
+
+var homeLink;
+
+function setLink(lnk,plyr) {
+
+	lnk.href = getHomeCookie('SlimServer-Browserpage')+'&player='+plyr;
+
+	homeLink=lnk;
+}
