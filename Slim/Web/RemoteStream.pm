@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.24 2004/04/22 20:41:09 dean Exp $
+# $Id: RemoteStream.pm,v 1.25 2004/06/11 18:34:08 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -215,6 +215,7 @@ sub readMetaData {
 		my $metadatapart;
 		
 		do {
+			$metadatapart = '';
 			$byteRead = $handle->sysread($metadatapart, $metadataSize);
 			if ($!) {
 				 if ($! ne "Unknown error" && $! != EWOULDBLOCK) {
