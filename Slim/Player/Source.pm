@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.110 2004/09/13 05:08:04 kdf Exp $
+# $Id: Source.pm,v 1.111 2004/09/16 15:34:17 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1219,6 +1219,10 @@ sub tokenizeConvertCommand {
 	# files with [] in their names.
 	$command =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
+	# escape $ and * in file names and URLs.
+	$filepath =~ s/([\$\"\`])/\\$1/g;
+	$fullpath =~ s/([\$\"\`])/\\$1/g;
+	
 	$command =~ s/\$FILE\$/"$filepath"/g;
 	$command =~ s/\$URL\$/"$fullpath"/g;
 	$command =~ s/\$RATE\$/$samplerate/g;
@@ -1255,7 +1259,7 @@ sub readNextChunk {
 		# use the maximum silence prelude for the whole sync group...
 		foreach my $buddy (Slim::Player::Sync::syncedWith($client), $client) {
 			my $asilence = Slim::Utils::Prefs::clientGet($buddy,'mp3SilencePrelude');
-			$silence = $asilence if ($asilence > $silence);
+			$silence = $asilence if ($asilence && ($asilence > $silence));
 		}
 
 		$::d_source && msg("We need to send $silence seconds of silence...\n");
