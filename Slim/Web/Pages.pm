@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.22 2003/12/06 00:37:20 grotus Exp $
+# $Id: Pages.pm,v 1.23 2003/12/06 00:52:14 grotus Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -94,7 +94,7 @@ sub browser {
 
 		if (!defined(Slim::Utils::Prefs::get("playlistdir") && !Slim::Music::iTunes::useiTunesLibrary())) {
 			$::d_http && msg("no valid playlists directory!!\n");
-			return ${Slim::Web::HTTP::filltemplatefile("badpath.html", $paramsref)};
+			return Slim::Web::HTTP::filltemplatefile("badpath.html", $paramsref);
 		}
 
 		if ($dir =~ /__current.m3u$/) {
@@ -107,14 +107,14 @@ sub browser {
 				}
 			} else {
 				$::d_http && msg("no client, so we can't save a file!!\n");
-				return ${Slim::Web::HTTP::filltemplatefile("badpath.html", $paramsref)};
+				return Slim::Web::HTTP::filltemplatefile("badpath.html", $paramsref);
 			}
 		}
 
 	} else {
 		if (!defined(Slim::Utils::Prefs::get("mp3dir"))) {
 			$::d_http && msg("no mp3dir, so we can't save a file!!\n");
-			return ${Slim::Web::HTTP::filltemplatefile("badpath.html", $paramsref)};
+			return Slim::Web::HTTP::filltemplatefile("badpath.html", $paramsref);
 		}
 	}
 
@@ -122,10 +122,10 @@ sub browser {
 		# check if we're just showing itunes playlists
 		if (Slim::Music::iTunes::useiTunesLibrary()) {
 			browser_addtolist_done($current_player, $httpclientsock, $paramsref, [], $result, $headersref, $paramheadersref);
-			return;
+			return undef;
 		} else {
 			$::d_http && msg("the selected playlist $fulldir isn't good!!.\n");
-			return ${Slim::Web::HTTP::filltemplatefile("badpath.html", $paramsref)};
+			return Slim::Web::HTTP::filltemplatefile("badpath.html", $paramsref);
 		}
 	}
 
