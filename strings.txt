@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.128 2004/09/02 23:03:16 dean Exp $
+# $Id: strings.txt,v 1.129 2004/09/03 01:34:44 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1034,6 +1034,9 @@ SETUP_GROUP_SCROLLRATE_DESC
 
 DOUBLE-LINE
 	EN	Double-Size
+
+SINGLE-LINE
+	EN	Single Line
 
 SETUP_GROUP_ALARM
 	DE	Wecker
@@ -5544,7 +5547,7 @@ AUDIO_SETTINGS
 ADDITIONAL_PLAYER_SETTINGS
 	DE	Erweiterte Player Einstellungen
 	DK	Yderligere afspiller-indstillinger
-	EN	Additional Player Settings
+	EN	Additional Settings
 	ES	Configuración avanzada del reproductor
 	FI	Lisää soittimen asetuksia
 	FR	Réglages supplémentaires de la platine

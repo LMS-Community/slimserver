@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.93 2004/09/02 23:03:19 dean Exp $
+# $Id: Setup.pm,v 1.94 2004/09/03 01:34:44 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -104,18 +104,18 @@ sub initSetupConfig {
 	%setup = (
 	'player' => {
 		'title' => string('PLAYER_SETTINGS') #may be modified in postChange to reflect player name
-		,'children' => ['player','alarm','audio','misc'] #defined also in preEval
+		,'children' => ['player','audio','alarm','misc']
 		,'isClient' => 1
 		,'preEval' => sub {
 					my ($client,$paramref,$pageref) = @_;
 					my $titleFormatMax = Slim::Utils::Prefs::clientGetArrayMax($client,'titleFormat') + $pageref->{'Prefs'}{'titleFormat'}{'arrayAddExtra'};
 					if ($client->isPlayer()) {
-						$pageref->{'children'} = ['player','alarm','audio','misc'];
+						$pageref->{'children'}[3] = 'misc';
 						$pageref->{'GroupOrder'}[2] = 'Brightness';
 						$pageref->{'GroupOrder'}[3] = 'TextSize';
 						$pageref->{'GroupOrder'}[4] = 'Display';
 					} else {
-						$pageref->{'children'} = undef;
+						$pageref->{'children'}[3] = undef;
 						$pageref->{'GroupOrder'}[2] = undef;
 						$pageref->{'GroupOrder'}[3] = undef;
 						$pageref->{'GroupOrder'}[4] = undef;
@@ -685,7 +685,7 @@ sub initSetupConfig {
 			'scrollPause' => {
 				'validate' => \&validateNumber
 				,'validateArgs' => [0,undef,1]
-				,'PrefChoose' => string('SETUP_GROUP_SCROLLPAUSE').string('COLON')
+				,'PrefChoose' => string('SINGLE-LINE').' '.string('SETUP_GROUP_SCROLLPAUSE').string('COLON')
 			},
 			'scrollPauseDouble' => {
 				'validate' => \&validateNumber
@@ -695,7 +695,7 @@ sub initSetupConfig {
 			'scrollRate' => {
 				'validate' => \&validateNumber
 				,'validateArgs' => [0,undef,1]
-				,'PrefChoose' => string('SETUP_GROUP_SCROLLRATE').string('COLON')
+				,'PrefChoose' => string('SINGLE-LINE').' '.string('SETUP_GROUP_SCROLLRATE').string('COLON')
 			},
 			'scrollRateDouble' => {
 				'validate' => \&validateNumber
@@ -719,6 +719,15 @@ sub initSetupConfig {
 						}
 			},
 		}
+	}
+	,'player_plugins' => {
+		'title' => string('PLUGINS')
+		,'parent' => 'player'
+		,'isClient' => 1
+		,'preEval' => sub {
+				my ($client,$paramref,$pageref) = @_;
+				Slim::Buttons::Plugins::addSetupGroups();
+			}
 	} # end of setup{'ADDITIONAL_PLAYER'} hash
 
 	,'server' => {
@@ -737,10 +746,10 @@ sub initSetupConfig {
 
 				if (Slim::Music::MoodLogic::canUseMoodLogic()) {
 					$pageref->{'GroupOrder'}[2] = 'moodlogic';
-					$pageref->{'children'}[10] = 'moodlogic';
+					$pageref->{'children'}[11] = 'moodlogic';
 				} else {
 					$pageref->{'GroupOrder'}[2] = undef;
-					pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
+					pop @{$pageref->{'children'}} if $pageref->{'children'}[11];
 				}
 				
 				$paramref->{'versionInfo'} = string('SERVER_VERSION') . string("COLON") . $::VERSION;
@@ -1911,6 +1920,9 @@ sub initSetupConfig {
 	}
 	if (scalar(keys %{Slim::Buttons::Plugins::installedPlugins()})) {
 		push @{$setup{'server'}{'children'}},'plugins';
+		
+		#TODO: figure out why this doesn't show plugins first time the page loads.
+		#push @{$setup{'player'}{'children'}},'player_plugins';
 	}
 }
 
@@ -2717,14 +2729,15 @@ sub delGroup {
 
 sub addCategory {
 	my ($category,$categoryref) = @_;
-
+	
 	unless (defined $category && defined $categoryref) {
 		warn "No category information supplied!\n";
 		return;
 	}
-
+	
 	$setup{$category} = $categoryref;
 }
+
 sub delCategory {
 	my $category = shift;
 
