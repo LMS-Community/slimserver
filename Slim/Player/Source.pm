@@ -453,7 +453,6 @@ sub openNext {
 	do {
 	
 		if (Slim::Player::Playlist::repeat($client) == 2  && $result) {
-			# play the next song and start over if necessary
 			$nextsong = nextsong($client);
 		} elsif (Slim::Player::Playlist::repeat($client) == 1 && $result) {
 			#play the same song again
@@ -517,18 +516,6 @@ sub currentSongIndex {
 	return $client->currentsong;
 }
 
-# todo: hook this in
-sub reshuffleOnRepeat {
-	my $client = shift;
-	
-	if (Slim::Player::Playlist::shuffle($client) && Slim::Utils::Prefs::get('reshuffleOnRepeat')) {
-		my $playmode = playmode($client);
-		playmode($client,'stop');
-		Slim::Player::Playlist::reshuffle($client);
-		playmode($client,$playmode);
-	}
-}
-
 # nextsong is for figuring out what the next song will be.
 sub nextsong {
 	my ($client) = @_;
@@ -544,6 +531,13 @@ sub nextsong {
 	$nextsong = currentSongIndex($client) + $direction;
 
 	if ($nextsong >= Slim::Player::Playlist::count($client)) {
+		# play the next song and start over if necessary
+		if (Slim::Player::Playlist::shuffle($client) && 
+			Slim::Player::Playlist::repeat($client) == 2 &&
+			Slim::Utils::Prefs::get('reshuffleOnRepeat')) {
+			
+				Slim::Player::Playlist::reshuffle($client, 1);
+		}
 		$nextsong = 0;
 	}
 	

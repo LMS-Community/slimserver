@@ -276,17 +276,19 @@ sub fischer_yates_shuffle {
 	if ($#$listRef == -1 || $#$listRef == 0) {
 		return;
 	}
-	for (my $i = $#$listRef; --$i; ) {
+	for (my $i = ($#$listRef + 1); --$i;) {
 		# swap each item with a random item;
 		my $a = int(rand($i + 1));
 		@$listRef[$i,$a] = @$listRef[$a,$i];
 	}
 }
 
+
 #reshuffle - every time the playlist is modified, the shufflelist should be updated
 #		We also invalidate the htmlplaylist at this point
 sub reshuffle {
 	my($client) = shift;
+	my($dontpreservecurrsong) = shift;
 	my($realsong);
 	my($i);
 	my($temp);
@@ -298,7 +300,7 @@ sub reshuffle {
 	if ($songcount) {
 		$realsong = ${$listRef}[Slim::Player::Source::currentSongIndex($client)];
 
-		if (!defined($realsong)) {
+		if (!defined($realsong) || $dontpreservecurrsong) {
 			$realsong = -1;
 		} elsif ($realsong > $songcount) {
 			$realsong = $songcount;
@@ -379,7 +381,10 @@ sub reshuffle {
 			}
 		}
 	
-		if (Slim::Player::Source::currentSongIndex($client) >= $songcount) { Slim::Player::Source::currentSongIndex($client, 0); };
+		if (Slim::Player::Source::currentSongIndex($client) >= $songcount) { 
+			Slim::Player::Source::currentSongIndex($client, 0);
+		};
+		
 	} else {
 		@{$listRef} = ();
 		Slim::Player::Source::currentSongIndex($client, 0);

@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.15 2003/11/03 23:22:32 dean Exp $
+# $Id: Common.pm,v 1.16 2003/11/04 00:36:14 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -17,6 +17,12 @@ use Slim::Utils::Misc;
 use Slim::Buttons::Plugins;
 use Slim::Buttons::Input::Text;
 use Slim::Display::Display;
+
+# hash of references to functions to call when we leave a mode
+my %leaveMode = ();
+
+#references to mode specific function hashes
+my %modeFunctions = ();
 
 my $SCAN_RATE_MULTIPLIER = 2;
 
@@ -97,12 +103,6 @@ sub init {
  	$leaveMode{$name} = $leaveModeFunction;
  }
  	
-# hash of references to functions to call when we leave a mode
-my %leaveMode = ();
-
-#references to mode specific function hashes
-my %modeFunctions = ();
-
 # Common functions for more than one mode:
 my %functions = (
 	'dead' => sub  {},
