@@ -62,7 +62,7 @@
 					[% FOREACH bitrate = streams.$stream %]
 						<tr>
 							<td class="listing">
-								<a href="index.html?p0=[% stream | uri %]&p1=[% genreID | uri %]&p2=[% bitrate.key | uri %]&player=[% player | uri %]">[% stream %]</a> ([% bitrate.key %][% "PLUGIN_SHOUTCASTBROWSER_KBPS" | string %])
+								<a href="index.html?p0=[% stream | uri %]&p1=[% genreID | uri %]&p2=[% bitrate.key | uri %]&player=[% player | uri %]">[% stream %]</a> ([% bitrate.key %][% "PLUGIN_SHOUTCASTBROWSER_KBPS" | string %], [% bitrate.value.1 %] [% "SETUP_PLUGIN_SHOUTCASTBROWSER_LISTENERS" | string %])
 							</td>
 
 							<td class="listing" width="11" align="center">

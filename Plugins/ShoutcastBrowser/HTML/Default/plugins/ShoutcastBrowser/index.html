@@ -83,7 +83,7 @@
 					[% FOREACH bitrate = streams.$stream %]
 						<tr>
 							<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-								<a href="index.html?p0=[% stream | uri %]&p1=[% genreID | uri %]&p2=[% bitrate.key | uri %]&player=[% player | uri %]">[% stream %]</a> ([% bitrate.key %][% "PLUGIN_SHOUTCASTBROWSER_KBPS" | string %])
+								<a href="index.html?p0=[% stream | uri %]&p1=[% genreID | uri %]&p2=[% bitrate.key | uri %]&player=[% player | uri %]">[% stream %]</a> ([% bitrate.key %][% "PLUGIN_SHOUTCASTBROWSER_KBPS" | string %], [% bitrate.value.1 %] [% "SETUP_PLUGIN_SHOUTCASTBROWSER_LISTENERS" | string %])
 							</td>
 							<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
 								<a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% bitrate.value.0 | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
