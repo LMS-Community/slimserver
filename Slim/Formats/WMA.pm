@@ -1,6 +1,6 @@
 package Slim::Formats::WMA;
 
-# $Id: WMA.pm,v 1.4 2004/02/09 19:00:07 dean Exp $
+# $Id: WMA.pm,v 1.5 2004/09/23 02:20:40 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -48,7 +48,8 @@ sub getTag {
 	$tags->{'SIZE'}	    = -s $file;
 	$tags->{'SECS'}	    = $wma->info('playtime_seconds');
 	$tags->{'RATE'}	    = $wma->info('max_bitrate');
-	$tags->{'BITRATE'}  = $wma->info('bitrate');
+	# WMA bitrate is reported in kbps
+	$tags->{'BITRATE'}  = $wma->info('bitrate')*1000;
 
 	# not supported yet - slimserver doesn't appear to use them anyways
 	#$tags->{'STEREO'}   = $wma->info('channels') == 2 ? 1 : 0;
