@@ -860,9 +860,8 @@ sub browser_addtolist_done {
 				$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
 				$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
 
-				my ($artist) = $obj->album()->contributors();
-				$list_form{'artist'}	= $list_form{'includeArtist'} ? $artist : undef;
-				$list_form{'album'}		= $list_form{'includeAlbum'}  ? $obj->album() : undef;
+				$list_form{'artist'}	= $list_form{'includeArtist'} ? ($obj->contributors)[0] : undef;
+				$list_form{'album'}	= $list_form{'includeAlbum'}  ? $obj->album() : undef;
 				
 				if (!defined $cover) {
 
