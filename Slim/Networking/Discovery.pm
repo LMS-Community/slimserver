@@ -1,6 +1,6 @@
 package Slim::Network::Discovery;
 
-# $Id: Discovery.pm,v 1.6 2003/08/09 00:17:51 dean Exp $
+# $Id: Discovery.pm,v 1.7 2003/08/09 19:55:22 kdf Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -42,6 +42,7 @@ sub gotDiscoveryRequest {
 	$::d_protocol && msg(" Got discovery request, deviceid = $deviceid, revision = $revision, MAC = $mac\n");
 
 	my $response;
+	$deviceid = 2;
 
 	if ($deviceid == 1) {
 		$::d_protocol && msg("It's a SLIMP3 (note: firmware v2.2 always sends revision of 1.1).\n");
