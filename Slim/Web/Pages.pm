@@ -417,6 +417,24 @@ sub init {
 		'ignoreArticles' => 1,
 		'alphaPageBar' => 0
 	};
+
+	addLinks("browse",{'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=artist,album,track&level=0"});
+	addLinks("browse",{'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
+	addLinks("browse",{'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0"});
+	addLinks("browse",{'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0"});
+	addLinks("browse",{'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&level=0"});
+	addLinks("search", {'SEARCH' => "livesearch.html"});
+	addLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
+	addLinks("help",{'GETTING_STARTED' => "html/docs/quickstart.html"});
+	addLinks("help",{'PLAYER_SETUP' => "html/docs/ipconfig.html"});
+	addLinks("help",{'USING_REMOTE' => "html/docs/interface.html"});
+	addLinks("help",{'HELP_REMOTE' => "html/help_remote.html"});
+	addLinks("help",{'HELP_RADIO' => "html/docs/radio.html"});
+	addLinks("help",{'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
+	addLinks("help",{'FAQ' => "html/docs/faq.html"});
+	addLinks("help",{'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
+	addLinks("help",{'TECHNICAL_INFORMATION' => "html/docs/index.html"});
+
 }
 
 sub home {
