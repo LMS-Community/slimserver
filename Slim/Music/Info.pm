@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.170 2005/01/04 03:38:53 dsully Exp $
+# $Id: Info.pm,v 1.171 2005/01/06 05:19:37 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1853,17 +1853,17 @@ sub isHTTPURL {
 
 sub isRemoteURL {
 	my $url = shift;
-	return (defined($url) && ($url =~ /^([a-zA-Z\-]+):/) && $Slim::Player::Source::protocolHandlers{$1});
+	return (defined($url) && ($url =~ /^([a-zA-Z0-9\-]+):/) && $Slim::Player::Source::protocolHandlers{$1});
 }
 
 sub isPlaylistURL {
 	my $url = shift;
-	return (defined($url) && ($url =~ /^([a-zA-Z\-]+):/) && exists($Slim::Player::Source::protocolHandlers{$1}) && !isFileURL($url));
+	return (defined($url) && ($url =~ /^([a-zA-Z0-9\-]+):/) && exists($Slim::Player::Source::protocolHandlers{$1}) && !isFileURL($url));
 }
 
 sub isURL {
 	my $url = shift;
-	return (defined($url) && ($url =~ /^([a-zA-Z\-]+):/) && exists($Slim::Player::Source::protocolHandlers{$1}));
+	return (defined($url) && ($url =~ /^([a-zA-Z0-9\-]+):/) && exists($Slim::Player::Source::protocolHandlers{$1}));
 }
 
 sub isType {
