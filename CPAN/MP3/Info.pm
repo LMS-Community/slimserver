@@ -848,6 +848,8 @@ sub get_mp3info {
 		# now walk the bytes looking for the head
 		for ($i = 0; $i < $tot; $i++) {
 
+			last if ($tot - $i) < 4;
+
 			my $head = substr($byte, $i, 4);
 
 			next if (ord($head) != 0xff);
