@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.88 2004/03/27 09:13:19 kdf Exp $
+# $Id: HTTP.pm,v 1.89 2004/04/01 02:11:52 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -20,6 +20,7 @@ use MIME::Base64;
 use HTML::Entities;
 use Socket qw(:DEFAULT :crlf);
 use Sys::Hostname;
+use Template;
 use Tie::RegexpHash;
 use URI::Escape;
 
@@ -608,6 +609,7 @@ sub generateHTTPResponse {
 	}
 
 	if ($contentType =~ /text/) {
+		$params->{'params'} = $params;
 		filltemplatefile('include.html', $params);
 	}
 
@@ -1250,6 +1252,29 @@ sub nonBreaking {
 	$string =~ s/\s/\&nbsp;/g;
 	return $string;
 }
+my %skinTemplates;
+
+sub newSkinTemplate {
+	my $skin = shift;
+	my $baseSkin = baseSkin();
+	my @include_path = ();
+	my @templatedirs = HTMLTemplateDirs();
+	foreach my $dir ($skin, $baseSkin) {
+		foreach my $rootdir (@templatedirs) {
+			push @include_path, catdir($rootdir,$dir);
+		}
+	}
+	$skinTemplates{$skin} = Template->new({
+		INCLUDE_PATH => \@include_path
+		,COMPILE_DIR => catdir($Bin,'Cache')
+		,FILTERS => {
+			'string' => \&Slim::Utils::Strings::string
+			,'nbsp' => \&nonBreaking
+		}
+		,EVAL_PERL => 1
+	});
+	return $skinTemplates{$skin};
+}
 
 # Fills the template file specified as $path, using either the currently
 # selected skin, or an override. Returns the filled template string
@@ -1271,17 +1296,17 @@ sub _generateContentFromFile {
 	my ($type, $path, $params) = @_;
 
 	my ($content, $mtime);
-
-	if (defined $params->{'skinOverride'}) {
-		($content, $mtime) = _getFileContent($path, $params->{'skinOverride'}, 1);
-	} else {
-		($content, $mtime) = _getFileContent($path, Slim::Utils::Prefs::get('skin'), 1);
-	}
+	my $skin = $params->{'skinOverride'} || Slim::Utils::Prefs::get('skin');
 
 	if ($type eq 'fill') {
-		return &filltemplate($$content, $params);
+		my $template = $skinTemplates{$skin} || newSkinTemplate($skin);
+		my $output = '';
+		unless ($template->process($path,$params,\$output)) {
+			print $template->error() . "\n";
+	 	}
+		return \$output;
 	} else {
-
+		($content, $mtime) = _getFileContent($path, $skin, 1);
 		# some callers want the mtime for last-modified
 		if (wantarray()) {
 			return ($content, $mtime);
