@@ -240,6 +240,10 @@ sub main {
 
 	chdir($pwd) or die "Couldn't change to $pwd : $!";
 
+	print "All done!\n\n";
+	return;
+
+	# We don't really want the tarball..
 	print "Bundling up tarball to send to Slim Devices..\n";
 
 	open(PERLCONFIG, ">$cpanDest/perl-config") or die "Couldn't open $downloadPath/perl-config for writing!: $!\n";
