@@ -110,7 +110,7 @@ sub editplaylist {
 	}
 
 	# close and reopen.
-	$filehandle->close;
+	$filehandle->close if defined($filehandle);
 
 	$filehandle = FileHandle->new($fulldir, "r") || do {
 
