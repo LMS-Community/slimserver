@@ -1,6 +1,6 @@
 package Slim::Formats::Movie;
 
-# $Id: Movie.pm,v 1.19 2004/12/17 23:11:49 dean Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -53,6 +53,7 @@ my %tagMapping = (
 	'©alb'	=> 'ALBUM',
 	'©wrt'	=> 'COMPOSER',
 	'©day'	=> 'YEAR',
+	'©gen'	=> 'GENRE',
 );
 
 my %binaryTags = (
@@ -74,18 +75,21 @@ sub getTag {
 	# lazy? no. efficient. =)
 	if (ref $tags eq "HASH") {
 
-		while (my ($old,$new) = each %tagMapping) {
+		while (my ($old,$new) = each %binaryTags) {
 
-			if (exists $tags->{$old}) {
+			if (exists $tags->{$old} && !exists $tags->{$new}) {
 
 				$tags->{$new} = $tags->{$old};
 				delete $tags->{$old};
 			}
 		}
-
-		while (my ($old,$new) = each %binaryTags) {
+		# clean up binary Genre is we found one.
+		$tags->{'GENRE'} = $genre[unpack('n', $tags->{'GENRE'})] if $tags->{'GENRE'};
+		
+		while (my ($old,$new) = each %tagMapping) {
 
 			if (exists $tags->{$old}) {
+
 				$tags->{$new} = $tags->{$old};
 				delete $tags->{$old};
 			}
@@ -106,7 +110,6 @@ sub getTag {
 	# clean up binary tags
 	$tags->{'COVER'} = 1 if ($tags->{'COVER'});
 	$tags->{'TRACKNUM'} = unpack('N', $tags->{'TRACKNUM'}) if $tags->{'TRACKNUM'};
-	$tags->{'GENRE'} = $genre[unpack('n', $tags->{'GENRE'})] if $tags->{'GENRE'};
 	($tags->{'DISC'}, $tags->{'DISCC'}) = unpack('Nn', $tags->{'DISC'}) if $tags->{'DISC'};	
 	$tags->{'COMPILATION'} = unpack('N', $tags->{'COMPILATION'}) if $tags->{'COMPILATION'};	
 
