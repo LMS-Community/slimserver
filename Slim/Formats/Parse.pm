@@ -1,5 +1,7 @@
 package Slim::Formats::Parse;
 
+# $Id: Parse.pm,v 1.13 2004/05/05 07:01:21 kdf Exp $
+
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -321,7 +323,7 @@ sub writeM3U {
 	my $outstring = '';
 	my $writeproc;
 
-	if ($filename && -e $filename) {
+	if ($filename) {
 
 		$output = FileHandle->new($filename, "w") || do {
 			msg("Could not open $filename for writing.\n");
@@ -334,7 +336,7 @@ sub writeM3U {
 
 	print $output "#CURTRACK $resumetrack\n" if defined($resumetrack);
 	print $output "#EXTM3U\n" if $addTitles;
-	
+
 	foreach my $item (@{$listref}) {
 
 		if ($addTitles && Slim::Music::Info::isURL($item)) {
