@@ -64,6 +64,12 @@ sub reconnect {
 	$client->update();	
 }
 
+sub connected { 
+	my $client = shift;
+
+	return ($client->tcpsock() && $client->tcpsock->connected()) ? 1 : 0;
+}
+
 sub model {
 	return 'squeezebox';
 }

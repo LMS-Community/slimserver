@@ -136,6 +136,14 @@ where: </p>
   <p>Request: &quot;04:20:00:12:23:45 power ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 power 1&lt;CR&gt;&quot;</p>
 </blockquote>
 <hr>
+<p><strong>connected &lt;?&gt;</strong></p>
+<p> Return the connected state of the player.  HTTP and Squeezebox players will indicate 1 or 0 depending on if the TCP connection to the player is active.
+    SLIMP3 players, since they use UDP always return 1. </p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 connected ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 connected 1&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
 <p><strong>playlist play &lt;<em>item</em>&gt;</strong></p>
 <p>The &quot;playlist play&quot; command puts the specified song URL, playlist or directory contents into the current playlist and plays starting at the first item. Any songs previously in the playlist are discarded.</p>
 <p>Examples: </p>

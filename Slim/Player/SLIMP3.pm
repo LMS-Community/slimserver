@@ -51,6 +51,10 @@ sub new {
 	return $client;
 }
 
+sub connected {
+	return 1;
+}
+
 sub model {
 	return 'slimp3';
 }

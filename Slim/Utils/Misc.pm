@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.40 2004/05/02 06:00:03 dean Exp $
+# $Id: Misc.pm,v 1.41 2004/05/04 17:08:46 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -166,6 +166,9 @@ sub pathFromFileURL {
 
 sub fileURLFromPath {
 	my $path = shift;
+	
+	return $path if (Slim::Music::Info::isURL($path));
+	
 	my $uri  = URI::file->new($path);
 	$uri->host('');
 	return $uri->as_string;
@@ -446,7 +449,9 @@ sub virtualToAbsolute {
 		#otherwise stop traversing, non-list items cannot be traversed
 		last;
 	}
+	
 	$::d_paths && msg("became: $curdir\n");
+	
 	if (!$recursion && $virtual =~ /\.(?:m3u|pls|cue)$/ && $virtual !~ /^__playlists/ && !-e $curdir) {
 		#Not a real file, could be a naked saved playlist
 		return virtualToAbsolute(catdir('__playlists',$virtual),1);

@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.72 2004/05/01 16:35:45 vidur Exp $
+# $Id: Pages.pm,v 1.73 2004/05/04 17:08:46 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -134,7 +134,7 @@ sub browser {
 
 		# check if we're just showing itunes playlists
 		if (Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic()) {
-			browser_addtolist_done($current_player, $httpClient, $params, [], $response);
+			browser_addtolist_done($current_player, $callback, $httpClient, $params, [], $response);
 			return undef;
 		} else {
 			$::d_http && msg("the selected playlist $fulldir isn't good!!.\n");
@@ -302,7 +302,7 @@ sub browser_addtolist_done {
 	
 	my $numitems = scalar @{$itemsref};
 	
-	$::d_http && msg("browser_addtolist_done with $numitems items (". scalar @{ $itemsref } . ")\n");
+	$::d_http && msg("browser_addtolist_done with $numitems items (". scalar @{ $itemsref } . " " . $params->{'dir'} . ")\n");
 
 	$params->{'browse_list'} = " ";
 

@@ -38,6 +38,12 @@ sub bytesReceived {
 	return @_ ? $client->songBytes(shift) : $client->songBytes();
 }
 
+sub connected { 
+	my $client = shift;
+
+	return ($client->streamingsocket() && $client->streamingsocket->connected()) ? 1 : 0;
+}
+
 # dummy methods
 sub update		{ }
 sub isPlayer		{ 0 }
@@ -53,7 +59,7 @@ sub bufferFullness	{ 0 }
 sub formats		{ 'mp3' }
 sub model		{ 'http' }
 sub decoder		{ 'http' }
-sub vfdmodel		{ 'http' }
+sub vfdmodel	{ 'http' }
 sub vfd			{ undef }
 
 1;

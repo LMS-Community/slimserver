@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.35 2004/04/27 20:48:47 dean Exp $
+# $Id: Command.pm,v 1.36 2004/05/04 17:08:45 dean Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -294,6 +294,9 @@ sub execute {
 
 		} elsif ($p0 eq "path") {
 			$p1 = Slim::Player::Playlist::song($client) || 0;
+
+		} elsif ($p0 eq "connected") {
+			$p1 = $client->connected() || 0;
 
 		} elsif ($p0 eq "power") {
 			if (!defined $p1) {

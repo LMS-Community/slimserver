@@ -1,6 +1,6 @@
 # ShoutcastBrowser.pm Copyright (C) 2003 Peter Heslin
 # version 3.0, 5 Apr, 2004
-#$Id: ShoutcastBrowser.pm,v 1.11 2004/05/03 15:33:01 dean Exp $
+#$Id: ShoutcastBrowser.pm,v 1.12 2004/05/04 17:08:45 dean Exp $
 #
 # A Slim plugin for browsing the Shoutcast directory of mp3
 # streams.  Inspired by streamtuner.
@@ -981,7 +981,7 @@ my %StreamsFunctions =
 	 my $client = shift;
 	 $number{$client} = undef;
 	 my @streams = @{ $streams{$client}{$current_genre{$client}} };
-	 $current_stream{$client} = 
+	 $current_stream{$client} =
 	     Slim::Buttons::Common::scroll(
 					   $client,
 					   -1,
@@ -1280,7 +1280,7 @@ sub infoLines
     {
 	$current_data =
 	    $stream_data{$current_genre}{$current_stream}{$current_bitrate};
-    } 
+    }
     my $cur = $current_info{$client} || 0;
 
     if (defined $current_stream and defined $current_bitrate)
@@ -1299,7 +1299,7 @@ my %InfoFunctions =
      'up' => sub
      {
 	 my $client = shift;
-	 $current_info{$client} = 
+	 $current_info{$client} =
 	     Slim::Buttons::Common::scroll(
 					   $client,
 					   -1,
@@ -1513,7 +1513,7 @@ PLUGIN_SHOUTCASTBROWSER_SHOUTCAST
 
 PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS
 	EN	All Streams
-	DE	Alle Streams (Radiostationen)
+	DE	Alle Streams
 
 PLUGIN_SHOUTCASTBROWSER_NONE
 	EN	None
@@ -1529,9 +1529,11 @@ PLUGIN_SHOUTCASTBROWSER_KBPS
 
 PLUGIN_SHOUTCASTBROWSER_RECENT
 	EN	Recently played
+	DE	Kürzlich gehört
 
 PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR
 	EN	Most Popular
+	DE	Populäre Streams
 
 PLUGIN_SHOUTCASTBROWSER_MISC
 	EN	Misc. genres
@@ -1618,15 +1620,19 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT_DESC
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR
 	EN	Most Popular
+	DE	Populäre Streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR_DESC
 	EN	Number of streams to include in the category of most popular streams, measured by the total of all listeners at all bitrates.
+	DE	Die Anzahl Streams, die unter "Populäre Streams" aufgeführt werden sollen. Die Beliebtheit misst sich an der Anzahl Hörer aller Bitraten.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_CUSTOM_GENRES
 	EN	Custom Genre Definitions
+	DE	Eigene Musikstil-Definitionen
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_CUSTOM_GENRES_DESC
 	EN	You can define your own SHOUTcast categories by indicating the name of a custom genre definition file here.  Each line in this file defines a category per line, and each line consists of a series of terms separated by whitespace.  The first term is the name of the genre, and each subsequent term is a pattern associated with that genre.  If any of these patterns matches the advertised genre of a stream, that stream is considered to belong to that genre.  You may use an underscore to represent a space within any of these terms, and in the patterns, case does not matter.
+	DE	Sie können eigene SHOUTcast-Kategorien definieren, indem Sie hier eine Datei mit den eigenen Musikstil-Definitionen angeben. Jede Zeile dieser Datei bezeichnet eine Kategorie, und besteht aus einer Serie von Ausdrücken, die durch Leerzeichen getrennt sind. Der erste Ausdruck ist der Name des Musikstils, alle folgenden bezeichnen ein Textmuster, das mit diesem Musikstil assoziiert wird. Jeder Stream, dessen Stil eines dieser Textmuster enthält, wird diesem Musikstil zugeordnet. Leerzeichen innerhalb eines Begriffs können durch Unterstriche (_) definiert werden. Gross-/Kleinschreibung ist irrelevant.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE
 	EN	Alphabetical (reverse)
@@ -1654,7 +1660,8 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS_REVERSE
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD
 	EN	Order of definition
+	DE	Definitions-Reihenfolge
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD_REVERSE
 	EN	Order of definition (reverse)
-
+	DE	Definitions-Reihenfolge (umgekehrt)
