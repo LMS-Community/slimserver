@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.5 2003/12/13 08:29:16 kdf Exp $
+#	$Id: Information.pm,v 1.6 2004/01/15 09:28:35 kdf Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -8,9 +8,9 @@
 #
 #	----------------------------------------------------------------------
 #
-#	SLIMP3 server, player library and module information.
+#	SlimServer, player library and module information.
 #
-#	Displays various bits of information relating to the SLIMP3 server,
+#	Displays various bits of information relating to the SlimServer,
 #	the current player, the music library and the installed plug-in
 #	modules.
 #
@@ -48,7 +48,7 @@ use Slim::Utils::Strings qw(string);
 use strict;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.5 $,10);
+$VERSION = substr(q$Revision: 1.6 $,10);
 
 my $modules;
 my %enabled;
