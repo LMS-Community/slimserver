@@ -13,10 +13,8 @@
 # version 2.
 
 package Plugins::RssNews;
-use strict;
 
-# User Agent used to retrieve RSS feeds via HTTP
-our $ua;
+use strict;
 
 # plugin state variables.
 our %feed_urls;
@@ -78,14 +76,13 @@ our %default_feeds = (
 
 # INTERNAL VARIABLES and STUFF!. Do not edit.
 use Slim::Buttons::Common;
-use Slim::Web::RemoteStream;
 use Slim::Control::Command;
+use Slim::Player::Source;
 use Slim::Utils::Timers;
 use Slim::Utils::Misc;
 use Socket;
 use vars qw($VERSION);
 
-use LWP::UserAgent;
 use XML::Simple;
 use File::Spec::Functions qw(:ALL);
 
@@ -334,16 +331,6 @@ sub updateFeedNames {
     @feed_order = @names;	
 }
 
-sub initUserAgent {
-    my $proxy = Slim::Utils::Prefs::get('webproxy');
-    # set parse_head to 0 so news feeds which claim to be HTML do not cause HeadParser.pm not to be found. (i.e. Rolling Stones Music News)
-    $ua = LWP::UserAgent->new('parse_head' => 0);
-    $ua->timeout(5);
-    if ($proxy) {
-        $ua->proxy('http', "http://$proxy");
-    }
-}
-
 sub unescape {
 	my $data = shift;
 
@@ -401,27 +388,28 @@ sub unescapeAndTrim {
 sub getFeedXml {
     my $feed_url = shift;
     
-    if (!$ua) {
-        initUserAgent();
-    }
-
-    my $response = $ua->get($feed_url);
+    my $http = Slim::Player::Source::openRemoteStream($feed_url);
     
-    if ($response->is_success && $response->content) {
-        my $xml;
-		# forcearray to treat items as array,
-		# keyattr => [] prevents id attrs from overriding
-        eval {
-			$xml = XMLin($response->content,
-						 forcearray => ["item"],
-						 keyattr => []);
-		};
+    if (defined $http) {
+
+	my $content = $http->content();
+
+	$http->close();
+
+	return 0 unless defined $content;
+
+	# forcearray to treat items as array,
+	# keyattr => [] prevents id attrs from overriding
+        my $xml = eval { XMLin($content, forcearray => ["item"], keyattr => []) };
+
         if ($@) {
-			$::d_plugins && msg("RssNews failed to parse feed <$feed_url> because:\n$@");
-            return 0;  
+		$::d_plugins && msg("RssNews failed to parse feed <$feed_url> because:\n$@");
+		return 0;  
         }
+
         return $xml;
     }
+
     return 0;
 }
 

@@ -32,7 +32,6 @@ use Slim::Control::Command;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Display::Display;
-use LWP::Simple ();
 use HTML::Entities ();
 use XML::Simple ();
 
@@ -359,7 +358,14 @@ sub setMode {
 		$u .= '&no_compress=1' unless $have_zlib;
 		$u .= "&limit=$how_many_streams" if $how_many_streams;
 		
-		my $xml = LWP::Simple::get($u);
+		my $http = Slim::Player::Source::openRemoteStream($u) || do {
+			$status{$client} = -1;
+			$client->update();
+			return;
+		};
+
+		my $xml  = $http->content();
+		$http->close();
 		
 		$last_time = time;
 		&setup_custom_genres() if $custom_genres;

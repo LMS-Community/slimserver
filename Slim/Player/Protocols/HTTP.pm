@@ -34,8 +34,9 @@ sub new {
 	my $url = shift;
 	my $client = shift;
 	my $infoUrl = shift || $url;
+	my $post = shift;
 
-	my $self = $class->open($url, $infoUrl);
+	my $self = $class->open($url, $infoUrl, $post);
 
 	if (defined($self)) {
 		${*$self}{'url'} = $url;
@@ -50,11 +51,12 @@ sub open {
 	my $class = shift;
 	my $url = shift;
 	my $infoUrl = shift;
+	my $post = shift;
 
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
 
 	my $timeout = Slim::Utils::Prefs::get('remotestreamtimeout');
-	my $proxy = Slim::Utils::Prefs::get('webproxy');
+	my $proxy   = Slim::Utils::Prefs::get('webproxy');
 
 	my $peeraddr = "$server:$port";
 	if ($proxy) {
@@ -69,6 +71,7 @@ sub open {
 		PeerAddr  => $peeraddr,
 		LocalAddr => $main::localStreamAddr,
 		Timeout	  => $timeout,
+		Blocking  => 0,
 
 	) || do {
 
@@ -78,28 +81,36 @@ sub open {
 		return undef;
 	};
 
-	$sock->autoflush(1);
+	Slim::Utils::Misc::blocking($sock, 0);
 
-	return $sock->request($url, $infoUrl);
+	# store a IO::Select object in ourself.
+	# used for non blocking I/O
+	${*$sock}{'_sel'} = IO::Select->new($sock);
+
+	return $sock->request($url, $infoUrl, $post);
 }
 
 sub request {
 	my $self = shift;
 	my $url = shift;
 	my $infoUrl = shift;
+	my $post = shift;
+
 	my $class = ref $self;
 
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
- 	my $timeout = Slim::Utils::Prefs::get('remotestreamtimeout');
+ 	my $timeout = $self->timeout();
 
 	my $proxy = Slim::Utils::Prefs::get('webproxy');
 	if ($proxy) {
 		$path = "http://$server:$port$path";
 	}
 
+	my $type = $post ? 'POST' : 'GET';
+
 	# make the request
 	my $request = join($CRLF, (
-		"GET $path HTTP/1.0",
+		"$type $path HTTP/1.0",
 		"Host: $server:$port",
 #		"User-Agent: SlimServer/$::VERSION ($^O)",
 		"User-Agent: iTunes/3.0 ($^O; SlimServer $::VERSION)",
@@ -113,7 +124,17 @@ sub request {
 		$request .= "Authorization: Basic " . MIME::Base64::encode_base64($user . ":" . $password,'') . $CRLF;
 	}
 
-	$request .= $CRLF;
+	# Send additional information if we're POSTing
+	if ($post) {
+
+		$request .= "Content-Type: application/x-www-form-urlencoded$CRLF";
+		$request .= sprintf("Content-Length: %d$CRLF", length($post));
+		$request .= $CRLF . $post . $CRLF;
+
+	} else {
+
+		$request .= $CRLF;
+	}
 
 	$::d_remotestream && msg("Request: $request");
 
@@ -145,10 +166,13 @@ sub request {
 	
 	my $redir = '';
 	my $ct = Slim::Music::Info::typeFromPath($infoUrl, 'mp3');
+
 	Slim::Music::Info::setContentType($infoUrl, $ct);
+
 	while(my $header = Slim::Utils::Misc::sysreadline($self, $timeout)) {
 
 		$::d_remotestream && msg("header: " . $header);
+
 		if ($header =~ /^ic[ey]-name:\s*(.+)$CRLF$/i) {
 
 			my $title = $1;
@@ -186,6 +210,11 @@ sub request {
 			Slim::Music::Info::setContentType($infoUrl,$contenttype);
 		}
 		
+		if ($header =~ /^Content-Length:\s*(.*)$CRLF$/i) {
+
+			${*$self}{'contentLength'} = $1;
+		}
+
 		if ($header eq $CRLF) { 
 			$::d_remotestream && msg("Recieved final blank line...\n");
 			last; 
@@ -240,35 +269,87 @@ sub request {
 	return $self;
 }
 
-sub sysread {
-	my $self = $_[0];
-	my $chunksize = $_[2];
-	my $metaInterval = ${*$self}{'metaInterval'};
-	my $metaPointer = ${*$self}{'metaPointer'};
+# small wrapper to grab the content in a non-blocking fashion.
+sub content {
+	my $self   = shift;
+	my $length = shift || $self->contentLength() || Slim::Web::HTTP::MAXCHUNKSIZE();
 
-	if ($metaInterval &&
-		($metaPointer + $chunksize) > $metaInterval) {
-		$chunksize = $metaInterval - $metaPointer;
-		$::d_source && msg("reduced chunksize to $chunksize for metadata\n");
+        my $content = '';
+
+	while (($self->sysread($content, $length) != 0)) {
+
+		::idleStreams();
 	}
 
-	my $readlen = $self->SUPER::sysread($_[1], $chunksize);
+	return $content;
+}
 
-	if ($metaInterval && $readlen) {
-		$metaPointer += $readlen;
+sub sysread {
+	my $self = $_[0];
+	my $chunkSize = $_[2];
+
+	my $metaInterval = ${*$self}{'metaInterval'};
+	my $metaPointer  = ${*$self}{'metaPointer'};
+ 	my $timeout      = $self->timeout();
+
+	if ($metaInterval && ($metaPointer + $chunkSize) > $metaInterval) {
+
+		$chunkSize = $metaInterval - $metaPointer;
+		$::d_source && msg("reduced chunksize to $chunkSize for metadata\n");
+	}
+
+	unless (${*$self}{'_sel'}->can_read($timeout)) {
+		Slim::Utils::Misc::bt("Couldn't read - hit timeout: $timeout!\n");
+		return;
+	}
+
+	my $readLength = CORE::sysread($self, $_[1], $chunkSize, length($_[1]));
+
+	if ($metaInterval && $readLength) {
+
+		$metaPointer += $readLength;
 		${*$self}{'metaPointer'} = $metaPointer;
 
 		# handle instream metadata for shoutcast/icecast
 		if ($metaPointer == $metaInterval) {
+
 			$self->readMetaData();
 			${*$self}{'metaPointer'} = 0;
-		}
-		elsif ($metaPointer > $metaInterval) {
+
+		} elsif ($metaPointer > $metaInterval) {
+
 			msg("Problem: the shoutcast metadata overshot the interval.\n");
 		}	
 	}
 
-	return $readlen;
+	return $readLength;
+}
+
+sub syswrite {
+	my $self = $_[0];
+	my $data = $_[1];
+
+	my $length = length $data;
+
+	while (length $data > 0) {
+
+		return unless ${*$self}{'_sel'}->can_write(0.05);
+
+		local $SIG{'PIPE'} = 'IGNORE';
+
+		my $wc = CORE::syswrite($self, $data, length($data));
+
+		if (defined $wc) {
+
+			substr($data, 0, $wc) = '';
+
+		} elsif ($! == EWOULDBLOCK) {
+
+			return;
+		}
+	}
+
+	return $length;
 }
 
 sub readMetaData {
@@ -278,10 +359,10 @@ sub readMetaData {
 	my $metadataSize = 0;
 	my $byteRead = 0;
 
+	while ($byteRead == 0) {
 
-	while ($byteRead == 0)
-	{
 		$byteRead = $self->SUPER::sysread($metadataSize, 1);
+
 		if ($!) {
 			if ($! ne "Unknown error" && $! != EWOULDBLOCK) {
 			 	$::d_remotestream && msg("Metadata byte not read! $!\n");  
@@ -290,12 +371,14 @@ sub readMetaData {
 			 	$::d_remotestream && msg("Metadata byte not read, trying again: $!\n");  
 			 }			 
 		}
+
 		$byteRead = defined $byteRead ? $byteRead : 0;
 	}
 	
 	$metadataSize = ord($metadataSize) * 16;
 	
 	$::d_remotestream && msg("metadata size: $metadataSize\n");
+
 	if ($metadataSize > 0) {
 		my $metadata;
 		my $metadatapart;
@@ -367,6 +450,12 @@ sub title {
 	my $self = shift;
 
 	return ${*$self}{'title'};
+}
+
+sub contentLength {
+	my $self = shift;
+
+	return ${*$self}{'contentLength'};
 }
 
 sub skipForward {

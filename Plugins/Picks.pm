@@ -12,11 +12,9 @@
 #
 package Plugins::Picks;
 
-use LWP::UserAgent;
-use HTTP::Request;
-
-use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
+use Slim::Utils::Scan;
 
 # Could be configurable through preferences if we wanted.
 use constant PLAYLIST_RELOAD_INTERVAL => 600;
@@ -214,9 +212,7 @@ sub detailsSetMode {
 	$client->update();
 }
 
-Slim::Buttons::Common::addMode('PLUGIN.Picks.details', 
-							   \%detailsModeFunctions, 
-							   \&detailsSetMode);
+Slim::Buttons::Common::addMode('PLUGIN.Picks.details', \%detailsModeFunctions, \&detailsSetMode);
 
 sub getDisplayName { 
 	return 'PLUGIN_PICKS_MODULE_NAME';

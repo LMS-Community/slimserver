@@ -1546,6 +1546,7 @@ sub registerProtocolHandler {
 sub openRemoteStream {
 	my $url = shift;
 	my $client = shift;
+	my $post   = shift;
 	
 	$::d_source && msg("Trying to open protocol stream for $url\n");
 	if ($url =~ /^(.*?):\/\//i) {
@@ -1554,7 +1555,7 @@ sub openRemoteStream {
 		$::d_source && msg("Looking for handler for protocol $proto\n");
 		if (my $protoClass = $Slim::Player::Source::protocolHandlers{lc $proto}) {
 			$::d_source && msg("Found handler for protocol $proto\n");
-			return $protoClass->new($url, $client);
+			return $protoClass->new($url, $client, undef, $post);
 		}
 	}
 

@@ -922,8 +922,8 @@ sub sysreadline(*;$) {
 
 	my $start_time = Time::HiRes::time();
 
-	my $selector = IO::Select->new();
-	$selector->add($handle);
+	# Try to use an existing IO::Select object if we have one.
+	my $selector = ${*$handle}{'_sel'} || IO::Select->new($handle);
 
 	my $line = '';
 	my $result;
