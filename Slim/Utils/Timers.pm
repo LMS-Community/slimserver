@@ -88,7 +88,7 @@ sub adjustAllTimers {
 #
 
 sub nextTimer {
-	return (undef) if (!scalar(@timers));
+	return (undef) if (!scalar(@timers) || $checkingTimers );
 
 	my $delta = $timers[0]{'when'} - Time::HiRes::time();
 	
