@@ -714,6 +714,10 @@ sub openSong {
 				$fullCommand =~ s/\$FILE\$/"$filepath"/g;
 				$fullCommand =~ s/\$URL\$/"$fullpath"/g;
 				$fullCommand =~ s/\$RATE\$/$samplerate/g;
+				
+				my $swap = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
+				$fullCommand =~ s/\$-x\$/$swap/g;
+				
 				$fullCommand =~ s/\$([^\$]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
 				my $bitrate = Slim::Utils::Prefs::get('transcodeBitrate');				
