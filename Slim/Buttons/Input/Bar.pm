@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Bar;
 
-# $Id: Bar.pm,v 1.3 2004/08/25 04:26:50 kdf Exp $
+# $Id: Bar.pm,v 1.4 2004/08/27 04:51:30 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -110,15 +110,22 @@ sub lines {
 	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 	$valueRef = \$value if defined $value;
 	$line1 = defined $header ? $header : Slim::Buttons::Input::List::getExtVal($client,$$valueRef,undef,'header');
-	if (!($client->linesPerScreen() == 1)) {
-		my $max = Slim::Buttons::Common::param($client,'max') || 100;
-		my $mid = Slim::Buttons::Common::param($client,'mid') || 0;
-		my $min = Slim::Buttons::Common::param($client,'min') || 0;
 
-		my $val = int(($$valueRef - $min)*100/($max-$min));
-		$line2 = $client->sliderBar($client->displayWidth(), $val,($mid-$min)/($max-$min)*100,1);
-	} elsif (!Slim::Buttons::Common::param($client,'barOnDouble')) {
-		$line2 = $line1;
+	my $max = Slim::Buttons::Common::param($client,'max') || 100;
+	my $mid = Slim::Buttons::Common::param($client,'mid') || 0;
+	my $min = Slim::Buttons::Common::param($client,'min') || 0;
+
+	my $val = int(($$valueRef - $min)*100/($max-$min));
+	$line2 = $client->sliderBar($client->displayWidth(), $val,($mid-$min)/($max-$min)*100,1);
+
+	if ($client->linesPerScreen() == 1) {
+		if (Slim::Buttons::Common::param($client,'barOnDouble')) {
+			$line1 = $line2;
+			$line2 = '';
+		} else {
+			$line2 = $line1;
+			#$line1 = '';
+		}
 	}
 
 	return ($line1,$line2);
@@ -141,29 +148,19 @@ sub setMode {
 	$client->lines(\&lines);
 }
 # set unsupplied parameters to the defaults
-# listRef = none # reference to list of internal values, exit mode if not supplied
 # header = 'Select item:' # message displayed on top line, can be a scalar, a code ref
 	# , or an array ref to a list of scalars or code refs
 # headerArgs = CV
-# stringHeader = undef # if true, put the value of header through the string function
-	# before displaying it.
-# headerAddCount = undef # if true add (I of T) to end of header
-	# where I is the 1 based index and T is the total # of items
 # valueRef =  # reference to value to be selected
 # callback = undef # function to call to exit mode
-# listIndex = 0 or position of valueRef in listRef
-# noWrap = undef # whether or not the list wraps at the ends
-# externRef = undef
-# externRefArgs = CV
-# stringExternRef = undef # same as with stringHeader, but for the value of externRef
-# overlayRef = undef
-# overlayRefArgs = CV
 # onChange = undef
 # onChangeArgs = CV
+# min = 0 # minimum value for slider scale
+# max = 100 #maximum value for slider scale
+# mid = 0 # midpoint value for marking the division point for a balance bar.
+# increment = 2.5 # step value for each bar character or button press.
+# barOnDouble = 0 # set to 1 if the bar is preferred when using large text.
 
-# other parameters used
-# isSorted = undef # whether the interal or external list is sorted 
-	#(I for internal, E for external, undef or anything else for unsorted)
 
 sub init {
 	my $client = shift;
