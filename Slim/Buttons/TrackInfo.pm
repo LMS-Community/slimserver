@@ -225,22 +225,22 @@ sub preloadLines {
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (my $artist = $track->artist()) {
+	if (my ($artist) = $track->artist()) {
 		push (@{$client->trackInfoLines}, $client->string('ARTIST') . ": $artist");
 		push (@{$client->trackInfoContent}, 'ARTIST');
 	}
 
-	if (my $band = $track->band()) {
-		push (@{$client->trackInfoLines}, $client->string('BAND') . ": $track");
+	if (my ($band) = $track->band()) {
+		push (@{$client->trackInfoLines}, $client->string('BAND') . ": $band");
 		push (@{$client->trackInfoContent}, 'BAND');
 	}
 
-	if (my $composer = $track->composer()) {
+	if (my ($composer) = $track->composer()) {
 		push (@{$client->trackInfoLines}, $client->string('COMPOSER') . ": $composer");
 		push (@{$client->trackInfoContent}, 'COMPOSER');
 	}
 
-	if (my $conductor = $track->conductor()) {
+	if (my ($conductor) = $track->conductor()) {
 		push (@{$client->trackInfoLines}, $client->string('CONDUCTOR') . ": $conductor");
 		push (@{$client->trackInfoContent}, 'CONDUCTOR');
 	}
