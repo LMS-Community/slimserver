@@ -29,6 +29,7 @@ sub vfd {
 	} else {
 		assert($client->model eq 'squeezebox');
 		assert($client->tcpsock);
+
 		$frame = 'l   '.$data;
 		my $len = pack('n',length($frame));
 		$::d_protocol && msg ("sending squeezebox frame, length ".length($frame)."\n");
@@ -79,24 +80,26 @@ sub stream {
 
 	assert($client->model eq 'squeezebox');
 
-	my $frame = 's   '.pack 'aaaaaaaCaanL', (
-		$command,
-		'3',
-		'm',
-		'1',
-		'3',
-		'1',
-		'0',
-		5,
-		0,
-		9000,
+	my $frame = 's   '.pack 'aaaaaaaCCCnL', (
+		$command,	# command
+		'3',		# autostart at 75%
+		'm',		# mpeg
+		'1',		# pcm 16-bit (pcm options are ignored for mpeg)
+		'3',		# pcm 44.1
+		'1',		# pcm mono
+		'0',		# pcm big endian
+		5,		# mpeg pre-buffer 5 frames of silence
+		0,		# s/pdif auto
+		0,		# reserved
+		9000,		# port
 		0		# server IP of 0 means use IP of control server
 	);
 
 	assert(length($frame) == 4+16);
 
-	my $path = '/test.mp3';
-#	my $path = '/music/test.mp3';
+#	my $path='/music/AC-DC/Back%20In%20Black/07%20You%20Shook%20Me%20All%20Night%20Long.mp3';
+	my $path = '/stream.mp3';
+
 	my $request_string = "GET $path HTTP/1.0\n\n";
 
 	print "$request_string";

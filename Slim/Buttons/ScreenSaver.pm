@@ -1,6 +1,6 @@
 package Slim::Buttons::ScreenSaver;
 
-# $Id: ScreenSaver.pm,v 1.2 2003/07/24 23:14:03 dean Exp $
+# $Id: ScreenSaver.pm,v 1.3 2003/08/04 22:23:22 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -43,6 +43,7 @@ sub screenSaver {
 	my $now = Time::HiRes::time();
 	$::d_time && msg("screenSaver idle display " . ($now - Slim::Hardware::IR::lastIRTime($client) - Slim::Utils::Prefs::get("screensavertimeout")) . "(mode:" . Slim::Buttons::Common::mode($client) . ")\n");
 	my $mode = Slim::Buttons::Common::mode($client);
+	assert($mode);
 	
 	# dim the screen if we're not playing...  will restore brightness on next IR input.
 	if (Slim::Utils::Prefs::get("screensavertimeout") && 

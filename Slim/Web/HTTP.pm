@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.6 2003/08/04 17:57:19 dean Exp $
+# $Id: HTTP.pm,v 1.7 2003/08/04 22:23:23 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -494,17 +494,24 @@ sub addstreamingresponse {
 	my $client = Slim::Player::Client::getClient($address);
 	
 	if (!defined($client) && !defined($streamingFiles{$httpclientsock})) {
-		$client = Slim::Player::Client::newClient($address);
+		$client = Slim::Player::Client::newClient(
+			$address,
+			getpeername($httpclientsock), 
+			getpeername($httpclientsock), 
+			0, 
+			0, 
+			0, 
+			$httpclientsock);
 		$newclient = 1;
 	}
 	
-	if (defined($client)) {
-		$client->paddr(getpeername($httpclientsock));
-		$client->usage(undef);
-		$client->streamingsocket($httpclientsock);
-		$client->type('http');
-		$client->decoder('shoutcast');
-	}
+#	if (defined($client)) {
+#		$client->paddr(getpeername($httpclientsock));
+#		$client->usage(undef);
+#		$client->streamingsocket($httpclientsock);
+#		$client->type('http');
+#		$client->decoder('shoutcast');
+#	}
 	
 	push @{$outbuf{$httpclientsock}}, $message;
 	$streamingSelWrite->add($httpclientsock);
@@ -514,10 +521,10 @@ sub addstreamingresponse {
 	$httpSelRead->remove($httpclientsock);
 	$main::selRead->remove($httpclientsock);
 	
-	# once the client is initialized, then we can start it right up.
-	if ($newclient) {
-		Slim::Player::Client::startup($client);
-	}
+#	# once the client is initialized, then we can start it right up.
+#	if ($newclient) {
+#		Slim::Player::Client::startup($client);
+#	}
 	
 	if (defined $paramref->{'p0'} && $paramref->{'p0'} eq 'playlist') {
 		Slim::Control::Command::execute($client, [$paramref->{'p0'},$paramref->{'p1'},$paramref->{'p2'}]);

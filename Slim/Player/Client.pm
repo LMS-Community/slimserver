@@ -316,7 +316,6 @@ sub newClient {
 	# the rest of this stuff is set each time the client connects, even if we know him already.
 
 	$client->paddr($paddr);
-	$client->type('player');
 
 	# initialize model-specific features:
 
@@ -325,8 +324,14 @@ sub newClient {
 	$client->udpsock($udpsock);
 	$client->tcpsock($tcpsock);
 
-	if ($deviceid==1) {
+	if ($deviceid==0) {
+		$client->type('http');
+		
+		$client->streamingsocket($tcpsock);
+		
+	} elsif ($deviceid==1) {
 
+		$client->type('player');
 		$client->model('slimp3');
 		$client->ticspersec(625000);
 
@@ -349,6 +354,7 @@ sub newClient {
 		}		
 
 	} elsif ($deviceid==2) {	# squeezebox
+		$client->type('player');
 		$client->model('squeezebox');
 		$client->ticspersec(1000);
 
@@ -366,7 +372,7 @@ sub newClient {
 	if (defined($clientlist)) {
 		$clientlist .= ",$newplayeraddr";
 	} else {
-	$clientlist = $newplayeraddr;
+		$clientlist = $newplayeraddr;
 	}
 
 	my %seen = ();
@@ -378,11 +384,11 @@ sub newClient {
 	Slim::Utils::Prefs::set("clients", join(',', @uniq));
 
 	# fire it up!
-	Slim::Player::Client::power($client,Slim::Utils::Prefs::clientGet($client, 'power'));
+	($client->type eq 'player') && Slim::Player::Client::power($client,Slim::Utils::Prefs::clientGet($client, 'power'));
 	Slim::Player::Client::startup($client);
                 
 	# start the screen saver
-	Slim::Buttons::ScreenSaver::screenSaver($client);
+	($client->type eq 'player') && Slim::Buttons::ScreenSaver::screenSaver($client);
 
 	return $client;
 }

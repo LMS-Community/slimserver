@@ -13,6 +13,7 @@
 
 require 5.006_000;
 use strict;  # _NOPERL2EXE_
+use diagnostics;
 #use utf8;
 
 # This package section is used for the windows service version of the application, 

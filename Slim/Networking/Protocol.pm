@@ -99,6 +99,8 @@ sub init {
 		foreach my $addr (split( /,/, $clients)) {
 			#make sure any new preferences get set to default values
 
+			assert($addr);
+			### FIXME don't say hello to http clients!!!
 			Slim::Network::Discovery::sayHello($udpsock, ipaddress2paddr($addr));
 			
 			#throttle the broadcasts
