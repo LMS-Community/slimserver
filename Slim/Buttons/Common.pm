@@ -64,9 +64,6 @@ sub init {
 	# Home must come first!
 	Slim::Buttons::Home::init();
 
-	Slim::Buttons::Plugins::getPluginModes(\%modes);
-	Slim::Buttons::Plugins::getPluginFunctions(\%modeFunctions);
-
 	Slim::Buttons::AlarmClock::init();
 	Slim::Buttons::Browse::init();
 	Slim::Buttons::BrowseID3::init();

@@ -23,15 +23,17 @@ use Slim::Utils::Misc;
 use FindBin qw($Bin);
 
 my $addGroups = 0;
+our @pluginDirs = ();
 
 sub pluginDirs {
-	my @pluginDirs = catdir($Bin, "Plugins");
-
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		push @pluginDirs, $ENV{'HOME'} . "/Library/SlimDevices/Plugins/";
-		push @pluginDirs, "/Library/SlimDevices/Plugins/";
+	if (!scalar @pluginDirs) {
+		if (Slim::Utils::OSDetect::OS() eq 'mac') {
+			push @pluginDirs, $ENV{'HOME'} . "/Library/SlimDevices/Plugins/";
+			push @pluginDirs, "/Library/SlimDevices/Plugins/";
+		}
+		push @pluginDirs, catdir($Bin, "Plugins");
 	}
-
+		
 	return @pluginDirs;
 }
 
@@ -52,9 +54,7 @@ sub init {
 	# Do this at runtime, not compile time.
 	$read_onfly = Slim::Utils::Prefs::get('plugins-onthefly');
 
-	for my $plugindir (pluginDirs()) {
-		unshift @INC,  $plugindir;
-	}
+	addPluginModes();
 
 	for my $plugin (enabledPlugins()) {
 		# We use initPlugin() instead of the more succinct
@@ -402,27 +402,17 @@ sub unusedPluginOptions {
 	return sort { $menuChoices{$a} cmp $menuChoices{$b} } keys %menuChoices;
 }
 
-sub getPluginModes {
-	my $mode = shift;
-
+sub addPluginModes {
 	read_plugins() unless $plugins_read;
 
+	no strict 'refs';
 	for my $plugin (keys %plugins) {
-		$mode->{$plugins{$plugin}->{'mode'}} = \&{$plugins{$plugin}->{'module'} . '::setMode'};
+		Slim::Buttons::Common::addMode($plugins{$plugin}{'mode'},
+										&{$plugins{$plugin}->{'module'} . '::getFunctions'},
+										\&{$plugins{$plugin}->{'module'} . '::setMode'});
 	}
 }
-
-sub getPluginFunctions {
-	my $function = shift;
-
-	read_plugins() unless $plugins_read;
-
-	for my $plugin (keys %plugins) {
-		no strict 'refs';
-		$function->{$plugins{$plugin}->{'mode'}} = &{$plugins{$plugin}->{'module'} . '::getFunctions'};
-	}
-}
-
+										
 sub pluginCount {
 	return scalar(enabledPlugins(shift));
 }
