@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.113 2005/01/04 03:38:53 dsully Exp $
+# $Id: Pages.pm,v 1.114 2005/01/04 08:53:38 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -497,7 +497,9 @@ sub browser {
 		# don't allow periods, colons, control characters, slashes, backslashes, just to be safe.
 		$newname =~ tr|.:\x00-\x1f\/\\| |s;
 
-		if (defined($suffix)) { $newname .= $suffix; };
+		if (defined($suffix)) {
+			$newname .= $suffix;
+		};
 		
 		if ($newname) {
 
@@ -603,8 +605,9 @@ sub browser {
 		}
 	}
 
+	# Scan the directories - don't recurse, and don't sort.
 	Slim::Utils::Scan::addToList(
-		$items, $fulldir, 0, undef,  
+		$items, $fulldir, 0, 0,  
 		\&browser_addtolist_done, $current_player, $callback, 
 		$httpClient, $params, $items, $response
 	);
@@ -638,18 +641,12 @@ sub browser_addtolist_done {
 
 	if ($numitems) {
 
-		my @namearray = ();
 		my ($start, $end, $cover, $thumb, $lastAnchor) = '';
 
 		my $otherparams = '&';
 		
 		$otherparams .= 'dir=' . Slim::Web::HTTP::escape($params->{'dir'}) . '&' if ($params->{'dir'});
 		$otherparams .= 'player=' . Slim::Web::HTTP::escape($current_player) . '&' if ($current_player);
-							
-		for my $item (@{$itemsref}) {
-			$::d_http && msg("browser_addtolist_done getting name for $item\n");
-			push @namearray, Slim::Music::Info::standardTitle(undef, $item) if $item;
-		}
 
 		if (defined $params->{'nopagebar'}) {
 
@@ -683,9 +680,12 @@ sub browser_addtolist_done {
 
 		# don't look up cover art info if we're browsing a playlist.
 		if ($params->{'dir'} && $params->{'dir'} =~ /^__playlists/) {
+
 			$thumb = 1;
 			$cover = 1;
+
 		} else {
+
 			if (scalar(@{$itemsref}) > 1) {
 
 				my %list_form = %$params;
@@ -765,8 +765,6 @@ sub browser_addtolist_done {
 			$list_form{'player'}	          = $current_player;
 			$list_form{'mixable_not_descend'} = Slim::Music::Info::isSongMixable($item);
 
-			_addStats($params, [],[],[],[]);
- 						
 			my $anchor = anchor(Slim::Utils::Text::getSortName($list_form{'title'}),1);
 
 			if ($lastAnchor && $lastAnchor ne $anchor) {

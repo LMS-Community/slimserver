@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.22 2005/01/04 03:38:53 dsully Exp $
+# $Id: Scan.pm,v 1.23 2005/01/04 08:53:38 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -123,14 +123,13 @@ sub addToList {
 	} else {	
 		# Initialize the base directory, with index == -1 to indicate 
 		# that we haven't read the dir yet
-		my $basedir = addToList_dirState -> new();
+		my $basedir = addToList_dirState->new();
 		$basedir->path($playlisturl);
 		$basedir->numcontents(0);
 		$basedir->index(-1);
 	
 		# Initialize the stack to one level, the basedir
-	
-		$addToList_jobs{$listref} = addToList_jobState -> new();
+		$addToList_jobs{$listref} = addToList_jobState->new();
 		$addToList_jobs{$listref}->recursive($recursive);
 		$addToList_jobs{$listref}->sorted($sorted);
 		$addToList_jobs{$listref}->stack(0, $basedir);
@@ -148,10 +147,12 @@ sub addToList {
 			if (addToList_run($listref)) {
 				Slim::Utils::Scheduler::add_task(\&addToList_run, $listref);
 			}
-		} else {
-		# without a callback function, we block until it's done.
-			while (addToList_run($listref)) {};
+
+			return;
 		}
+
+		# without a callback function, we block until it's done.
+		while (addToList_run($listref)) {};
 	}
 }
 
@@ -181,29 +182,42 @@ sub addToList_run {
 	########## index==-1 means we need to read the directory
 
 	$::d_scan && msg("index: ".$curdirState->index."\n");
+
 	if ($curdirState->index == -1) {
+
 		# check to see if it's a list.  assume it's a list if it's our initial path
 		if (Slim::Music::Info::isList($curdirState->path) || ($jobState->playlisturl eq $curdirState->path)) {
+
 			my $contentsref = $curdirState->contents;
-			@$contentsref=();
+
+			@$contentsref = ();
+
 			my $numcontents = readList($curdirState->path, $contentsref, $jobState->sorted);
 			$curdirState->index(0);
 			$curdirState->numcontents($numcontents);
+
 			if (Slim::Music::Info::isWinShortcut($curdirState->path) && 
 					Slim::Music::Info::isDir(@{Slim::Music::Info::cachedPlaylist($curdirState->path)})) {
 				$curdirState->path(@{Slim::Music::Info::cachedPlaylist($curdirState->path)});
 			}
+
 			my $itemsToAddref = $curdirState->itemsToAdd;
-			@$itemsToAddref=();
+
+			@$itemsToAddref = ();
+
 			$::d_scan && msg("Descending into ".$curdirState->path.", contains ".$curdirState->numcontents." items\n");
+
 			return 1;
-		} else {
-			# special case - single item at the top
-			$::d_scan && msg("special case - single item at top: $curdirState->path\n");
-			push @$listref, $curdirState->path();
-			&addToList_done($listref);
-			return 0;
 		}
+
+		# special case - single item at the top
+		$::d_scan && msg("special case - single item at top: $curdirState->path\n");
+
+		push @$listref, $curdirState->path();
+
+		addToList_done($listref);
+
+		return 0;
 	}
 	
 	########## OK, the directory has been opened, and index points to the entry we should look at
@@ -211,6 +225,7 @@ sub addToList_run {
 	my $item = '';
 
 	if (defined($curdirState->numcontents) && $curdirState->index == $curdirState->numcontents) {
+
 		### todo: move sorting out of scan.pm
 		#### we've made it to the end of this directory. 
 		#### Sort it, append it to the big list, and then pop it from the stack
@@ -219,14 +234,19 @@ sub addToList_run {
 		my $itemstoaddref = $curdirState->itemsToAdd;
 
 		if ($jobState->sorted)  {
+
 			$::d_scan && msg("Beginning scan sort...\n");
+
 			if (Slim::Utils::Prefs::get('filesort')) {
+
 				push @$listref, (Slim::Music::Info::sortFilename(@{$itemstoaddref}));
+
 			} else {
+
 				# if there are duplicate track numbers, then sort as multiple albums
 				my $duptracknum = 0;
 				my @seen = ();
-				foreach my $item (@{$itemstoaddref}) {
+				for my $item (@{$itemstoaddref}) {
 					my $trnum = Slim::Music::Info::trackNumber($item);
 					if ($trnum) { 
 						if ($seen[$trnum]) {
@@ -243,8 +263,11 @@ sub addToList_run {
 					push @$listref, (Slim::Music::Info::sortByAlbum(@{$itemstoaddref}));
 				}
 			}
+
 			$::d_scan && msg("...sort done.\n");
+
 		} else {
+
 			push @$listref, @$itemstoaddref;		
 		}
 		
@@ -255,7 +278,7 @@ sub addToList_run {
 			return 1;
 		} else {
 			$::d_scan && msg("Got to end of dir, done!\n");
-			&addToList_done($listref);
+			addToList_done($listref);
 			return 0;
 		}
 	}
@@ -272,8 +295,8 @@ sub addToList_run {
 	}
 
 	my $itempath = Slim::Utils::Misc::fixPath($item, $curdirState->path);
-	$::d_scan && msg("itempath: $item and " .  $curdirState->path . " made $itempath\n");
 
+	$::d_scan && msg("itempath: $item and " .  $curdirState->path . " made $itempath\n");
 
 	######### If it's a directory or playlist and we're recursing, push it onto the stack, othwerwise add it to the list
 
@@ -281,30 +304,39 @@ sub addToList_run {
 
 	# todo: don't let us recurse indefinitely
 	if (Slim::Music::Info::isList($itempath)) {
+
 		# if we're recursing and it's a remote playlist, then recurse
 		if ($jobState->recursive && !Slim::Music::Info::isRemoteURL($itempath)) {
+
 			# don't recurse into playlists, only into directories	
-			if (Slim::Music::Info::isPlaylist($itempath) && !Slim::Music::Info::isCUE($itempath) && !Slim::Utils::Misc::inPlaylistFolder($itempath)) { 
+			if (Slim::Music::Info::isPlaylist($itempath) && 
+			   !Slim::Music::Info::isCUE($itempath) && 
+			   !Slim::Utils::Misc::inPlaylistFolder($itempath)) { 
+
 				return 1;
 			}
-			my $newdir =  addToList_dirState -> new();
+
+			my $newdir = addToList_dirState->new();
 			$newdir->path($itempath);
 			$newdir->index(-1);		
 
 			$jobState->stack($jobState->numstack, $newdir);
 			$jobState->numstack($jobState->numstack + 1);
 			return 1;
-		} else {
-			my $arrayref = $curdirState->itemsToAdd;
-			push @$arrayref, $itempath;
-			$jobState->numitems($jobState->numitems+1);
-			return 1;
 		}
+
+		my $arrayref = $curdirState->itemsToAdd;
+		push @$arrayref, $itempath;
+		$jobState->numitems($jobState->numitems+1);
+
+		return 1;
 	}
 
 	######### Else if it's a single item - look up the sort key (takes a while)
 	$::d_scan && msg("not a list: $itempath\n");
+
 	if (Slim::Music::Info::isSong($itempath)) {
+
 		$::d_scan && msg("adding single item: $itempath, type " . Slim::Music::Info::contentType($itempath) . "\n");
 		my $arrayref = $curdirState->itemsToAdd;
 		push @$arrayref, $itempath;
@@ -313,14 +345,15 @@ sub addToList_run {
 		# force the loading of ID3 data
 		#Slim::Music::Info::title($itempath);
 		Slim::Music::Info::markAsScanned($itempath);
+
+		# Try not to kill the CPU - leave a little time for streaming
+		Time::HiRes::sleep(0.25);
+
 		return 1;
 	}
 
 	######## Else we don't know what it is
 	$::d_scan && msg("Skipping unknown type: $itempath\n");
-
-	# Try not to kill the CPU - leave a little time for streaming
-	Time::HiRes::sleep(0.25);
 
 	return 1;
 }
@@ -374,6 +407,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		    $playlist_filehandle->close if defined($playlist_filehandle);
 		    $playlist_filehandle = undef;
 		}
+
 	} else {
 
 		# it's pointing to a local file...
@@ -420,29 +454,36 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			}
 			
 		} elsif (Slim::Music::Info::isDir($playlistpath)) {
+
 			$::d_scan && msg("*** didn't find $playlistpath in playlist cache ***\n");
 			$::d_scan && msg("Treating directory like a playlist\n");
-			my @dircontents;
-			$numitems = 0;
-			my $playlistpathpath = Slim::Utils::Misc::pathFromFileURL($playlistpath);
-			@dircontents = Slim::Utils::Misc::readDirectory($playlistpathpath);
 
-			foreach my $dir ( @dircontents ) {
+			$numitems = 0;
+
+			my $playlistpathpath = Slim::Utils::Misc::pathFromFileURL($playlistpath);
+
+			my @dircontents = Slim::Utils::Misc::readDirectory($playlistpathpath);
+
+			for my $dir (@dircontents) {
 
 				$::d_scan && msg(" directory entry:" . Slim::Utils::Misc::fileURLFromPath(catfile($playlistpathpath, $dir)) . "\n");
 
 				push @$listref, $dir;
 				$numitems++;
 			}
+
 			# add the loaded dir to the cache...
 			if ($numitems) {
 				my @cachelist = @$listref[ (0 - $numitems) .. -1];
 				Slim::Music::Info::cachePlaylist($playlistpath, \@cachelist, (stat($playlistpathpath))[9]);	
 				$::d_scan && msg("adding $numitems to playlist cache: $playlistpath\n"); 
 			}
+
 		} else {
+
 			# it's a playlist file
-			$playlist_filehandle = new FileHandle;
+			$playlist_filehandle = FileHandle->new();
+
 			if (!open($playlist_filehandle, Slim::Utils::Misc::pathFromFileURL($playlistpath))) {
 				$::d_scan && msg("Couldn't open playlist file $playlistpath : $!");
 				$playlist_filehandle = undef;

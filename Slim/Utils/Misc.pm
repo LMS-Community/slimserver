@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.61 2004/12/17 10:09:36 kdf Exp $
+# $Id: Misc.pm,v 1.62 2005/01/04 08:53:38 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -38,6 +38,9 @@ BEGIN {
         if ($^O =~ /Win32/) {
                 *EWOULDBLOCK = sub () { 10035 };
                 *EINPROGRESS = sub () { 10036 };
+
+		require Win32::Shortcut;
+
         } else {
                 require Errno;
                 import Errno qw(EWOULDBLOCK EINPROGRESS);
@@ -97,35 +100,43 @@ sub findbin {
 }
 
 sub pathFromWinShortcut {
-	my $fullpath = shift;
-	$fullpath = pathFromFileURL($fullpath);
+	my $fullpath = pathFromFileURL(shift);
+
 	my $path = "";
-	if (Slim::Utils::OSDetect::OS() eq "win") {
-		require Win32::Shortcut;
-		my $shortcut = Win32::Shortcut->new($fullpath);
-		if (defined($shortcut)) {
-			$path = $shortcut->Path();
-			# the following pattern match throws out the path returned from the
-			# shortcut if the shortcut is contained in a child directory of the path
-			# to avoid simple loops, loops involving more than one shortcut are still
-			# possible and should be dealt with somewhere, just not here.
-			if (defined($path) && !$path eq "" && $fullpath !~ /^\Q$path\E/i) {
-				$path = fileURLFromPath($path);
-				#collapse shortcuts to shortcuts into a single hop
-				if (Slim::Music::Info::isWinShortcut($path)) {
-					$path = pathFromWinShortcut($path);
-				}
-			} else {
-				$::d_files && msg("Bad path in $fullpath\n");
-				$::d_files && defined($path) && msg("Path was $path\n");
-			}
-		} else {
-			$::d_files && msg("Shortcut $fullpath is invalid\n");
-		}
-	} else {
+
+	if (Slim::Utils::OSDetect::OS() ne "win") {
 		$::d_files && msg("Windows shortcuts not supported on non-windows platforms\n");
+		return $path;
 	}
+
+	my $shortcut = Win32::Shortcut->new($fullpath);
+	if (defined($shortcut)) {
+
+		$path = $shortcut->Path();
+		# the following pattern match throws out the path returned from the
+		# shortcut if the shortcut is contained in a child directory of the path
+		# to avoid simple loops, loops involving more than one shortcut are still
+		# possible and should be dealt with somewhere, just not here.
+		if (defined($path) && !$path eq "" && $fullpath !~ /^\Q$path\E/i) {
+
+			$path = fileURLFromPath($path);
+
+			#collapse shortcuts to shortcuts into a single hop
+			if (Slim::Music::Info::isWinShortcut($path)) {
+				$path = pathFromWinShortcut($path);
+			}
+
+		} else {
+			$::d_files && msg("Bad path in $fullpath\n");
+			$::d_files && defined($path) && msg("Path was $path\n");
+		}
+
+	} else {
+		$::d_files && msg("Shortcut $fullpath is invalid\n");
+	}
+
 	$::d_files && msg("pathFromWinShortcut: path $path from shortcut $fullpath\n");	
+
 	return $path;
 }
 	
@@ -134,7 +145,7 @@ sub pathFromFileURL {
 	my $file;
 	
 	assert(Slim::Music::Info::isFileURL($url), "Path isn't a file URL: $url\n");
-	
+
 	my $uri = URI->new($url);
 
 	# TODO - FIXME - this isn't mac or dos friendly with the path...
@@ -152,6 +163,7 @@ sub pathFromFileURL {
 		if (($path !~ /\.\.[\/\\]/) || Slim::Music::Info::isCached($url)) {
 			$file = $uri->file() ;
 		} 
+
 	} else {
 		msg("pathFromFileURL: $url isn't a file URL...\n");
 		bt();
@@ -192,7 +204,6 @@ sub anchorFromURL {
 	}
 	return undef;
 }
-
 
 ##################################################################################
 #
@@ -253,13 +264,11 @@ if (0) {
 # URLs are left alone
         
 sub fixPath {
-	my $file = shift;
+	my $file = shift || return;
 	my $base = shift;
 
 	my $fixed;
-			   
-	if (!defined($file) || $file eq "") { return; }   
-	
+
 	if (Slim::Music::Info::isURL($file)) { 
 
 		my $uri = URI->new($file);
@@ -267,26 +276,34 @@ sub fixPath {
 		if ($uri->scheme() && $uri->scheme() eq 'file') {
 
 			$uri->host('');
-
 		}
 
 		return $uri->as_string;
 	}
 
-	if (Slim::Music::Info::isFileURL($base)) { $base=Slim::Utils::Misc::pathFromFileURL($base); } 
-		 
+	if (Slim::Music::Info::isFileURL($base)) {
+		$base = Slim::Utils::Misc::pathFromFileURL($base);
+	} 
+
 	# the only kind of absolute file we like is one in 
 	# the music directory or the playlist directory...
 	my $audiodir = Slim::Utils::Prefs::get("audiodir");
 	my $savedplaylistdir = Slim::Utils::Prefs::get("playlistdir");
 
 	if ($audiodir && $file =~ /^\Q$audiodir\E/) {
-			$fixed = $file;
+
+		$fixed = $file;
+
 	} elsif ($savedplaylistdir && $file =~ /^\Q$savedplaylistdir\E/) {
-			$fixed = $file;
+
+		$fixed = $file;
+
 	} elsif (Slim::Music::Info::isURL($file) && (!defined($audiodir) || ! -r catfile($audiodir, $file))) {
-			$fixed = $file;
+
+		$fixed = $file;
+
 	} elsif ($base) {
+
 		if (file_name_is_absolute($file)) {
 			if (Slim::Utils::OSDetect::OS() eq "win") {
 				my ($volume) = splitpath($file);
@@ -299,15 +316,17 @@ sub fixPath {
 		} else {
 			$fixed = fixPath(catfile($base, $file));
 		}
+
 	} elsif (file_name_is_absolute($file)) {
-			$fixed = $file;
+		$fixed = $file;
 	} else {
-			$file =~ s/\Q$audiodir\E//;
-			$fixed = catfile($audiodir, $file);
+		$file =~ s/\Q$audiodir\E//;
+		$fixed = catfile($audiodir, $file);
 	}
 	
 	$::d_paths && ($file ne $fixed) && msg("*****fixed: " . $file . " to " . $fixed . "\n");
 	$::d_paths && ($file ne $fixed) && ($base) && msg("*****base: " . $base . "\n");
+
 	if (Slim::Music::Info::isFileURL($fixed)) {
 		return $fixed;
 	} else {
