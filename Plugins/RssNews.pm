@@ -1,5 +1,5 @@
 # RssNews Ticker v1.0
-# $Id: RssNews.pm,v 1.13 2004/11/29 19:03:47 dave Exp $
+# $Id: RssNews.pm,v 1.14 2004/11/29 20:24:57 dave Exp $
 # Copyright (c) 2004 Slim Devices, Inc. (www.slimdevices.com)
 
 # Based on BBCTicker 1.3 which had this copyright...
@@ -41,6 +41,12 @@ my $screensaver_sec_per_letter_double = (1/4); # When extra large fonts shown
 # %2\$s is item title
 # %3\%s is item description
 my $screensaver_item_format = "%2\$s -- %3\$s                         ";
+# if user is running perl 5.6, we're going to run into trouble.
+# first the sprintf format defined above will not work.
+if ($] < 5.008) {
+	# perl version < 5.8 does not support the sprintf syntax above
+	$screensaver_item_format = "%s) %s -- %s                           ";
+}
 
 # defaults only if file not found...
 use constant FEEDS_VERSION => 1.0;
@@ -53,17 +59,6 @@ my %default_feeds = (
 					 'Yahoo! News: Business' => 'http://rss.news.yahoo.com/rss/business',
 );
 
-# if user is running perl 5.6, we're going to run into trouble.
-# first the sprintf format defined above will not work.
-# second, XML::Simple will fail on feeds encoded ISO-8859-1, which includes almost all the default feeds above.
-# so here we redefine those values when running 5.6
-if ($] < 5.008) {
-	# perl version < 5.8 does not support the sprintf syntax above
-	$screensaver_item_format = "%s) %s -- %s                           ";
-	%default_feeds = (
-					  'CNET News.com' => 'http://news.com.com/2547-1_3-0-5.xml',
-					  );
-}
 
 
 
@@ -97,7 +92,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Prefs;
 
-$VERSION = substr(q$Revision: 1.13 $,10);
+$VERSION = substr(q$Revision: 1.14 $,10);
 my %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
