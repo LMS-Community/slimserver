@@ -103,115 +103,144 @@ my $refresh_sec = 30 * 60;
 sub strings { return q!
 PLUGIN_RSSNEWS
 	EN	RSS News Ticker
+	ES	Ticker de Noticias RSS
 	
 PLUGIN_RSSNEWS_ADD_NEW
 	DE	Neuer Newsfeed -->
 	EN	Add new feed -->
+	ES	Añadir nuevo feed -->
 	
 PLUGIN_RSSNEWS_WAIT
 	DE	Bitte warten...
 	EN	Please wait requesting...
+	ES	Por favor esperar, solicitando...
 
 PLUGIN_RSSNEWS_ERROR
 	DE	Fehler beim Laden des RSS Feeds
 	EN	Failed to retrieve RSS feed
+	ES	Fallo al recuperar feed de RSS
 
 PLUGIN_RSSNEWS_NO_DESCRIPTION
 	DE	Keine Beschreibung verfügbar
 	EN	Description not available
+	ES	Descripción no disponible
 
 PLUGIN_RSSNEWS_NO_TITLE
 	DE	Kein Titel verfübar
 	EN	Title not available
+	ES	Título no disponible
 
 PLUGIN_RSSNEWS_SCREENSAVER
 	EN	RSS News Ticker
+	ES	Ticker de Noticias RSS
 
 PLUGIN_RSSNEWS_NAME
 	EN	RSS News Ticker
+	ES	Ticker de Noticias RSS
 
 PLUGIN_RSSNEWS_SCREENSAVER_SETTINGS
 	DE	RSS News Bildschirmschoner Einstellunge
 	EN	RSS News Screensaver Settings
+	ES	Confugarión de Salvapantallas de Noticias RSS
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE
 	DE	Diesen Bildschirmschoner wählen
 	EN	Select Current Screensaver
+	ES	Elegir Salvapantallas Actual
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE_TITLE
 	DE	Dieser Bildschirmschoner
 	EN	Current Screensaver
+	ES	Salvapantallas actual
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATED
 	DE	RSS News als Bildschirmschoner verwenden
 	EN	Use RSS News as current screensaver
+	ES	Utilizar Noticias RSS como el Salvapantallas actual
 
 PLUGIN_RSSNEWS_SCREENSAVER_DEFAULT
 	DE	Standard Bildschirmschoner verwenden (nicht RSS News)
 	EN	Use default screensaver (not RSS News)
+	ES	Utilizar salvapantallas por defecto (No el de Noticias RSS)
 
 PLUGIN_RSSNEWS_SCREENSAVER_ENABLE
 	DE	Newsticker als Bildschirmschoner verwenden
 	EN	Activating ticker as current screensaver
+	ES	Activando ticker como nuevo salvapantallas
 
 PLUGIN_RSSNEWS_SCREENSAVER_DISABLE
 	DE	Standard Bildschirmschoner wird verwendet
 	EN	Returning to default screensaver
+	ES	Volviendo al Salvapantallas por defecto
 
 PLUGIN_RSSNEWS_ERROR_IN_FEED
 	DE	Fehler beim Parsen dess RSS Feeds
 	EN	Error parsing RSS feed
+	ES	Error analizando feed de RSS
 
 PLUGIN_RSSNEWS_LOADING_FEED
 	DE	RSS Feed wird geladen...
 	EN	Loading RSS feed...
+	ES	Cargando feed de RSS
 
 SETUP_GROUP_PLUGIN_RSSNEWS
 	EN	RSS News Ticker
+	ES	Ticker de noticias de RSS
 
 SETUP_GROUP_PLUGIN_RSSNEWS_DESC
 	DE	Das RSS News Ticker Plugin kann verwendet werden, um RSS Feeds zu durchsuchen und lesen. Die folgenden Einstellungen helfen ihnen beim Definieren der anzuzeigenden RSS Feeds, und wie diese dargestellt werden sollen. Klicken Sie auf Ändern, um die Änderungen zu aktivieren.
 	EN	The RSS News Ticker plugin can be used to browse and display items from RSS Feeds. The preferences below can be used to determine which RSS Feeds to use and control how they are displayed. Click on the Change button when you are done.
+	ES	El plugin de Ticker de Noticias RSS puede utilizarse para buscar y mostrar artículos de feeds de RSS. Las preferencias debajo pueden utilizarse para elegir que feed utilizar y controlar como se muestra. Presionar el botón Cambiar cuando se haya finalizado.
 
 SETUP_PLUGIN_RSSNEWS_FEEDS
 	DE	RSS Feeds ändern
 	EN	Modify RSS feeds
+	ES	Modificar feeds de RSS
 
 SETUP_PLUGIN_RSSNEWS_FEEDS_DESC
 	DE	Dies ist die Liste der anzuzeigenden RSS Feeds. Um einen neuen zu abonnieren, tippen Sie einfach dessen URL in eine leere Zeile. Um einen Feed zu entfernen, löschen Sie dessen URL. Bestehende URLs können im entsprechenden Feld bearbeitet werden. Klicken Sie auf Ändern, um die Änderungen zu aktivieren.
 	EN	This is the list of RSS Feeds to display. To add a new one, just type its URL into the empty line. To remove one, simply delete the URL from the corresponding line. To change the URL of an existing feed, edit its text value. Click on the Change button when you are done.
+	ES	Esta es la lista de feeds de RSS. Para añadir un nuevo feed, escribir la URL en la línea vacía. Para elminar uno, simplemente borrar la URL de la línea correspondiente. Para cambiar la URL de un feed existente, editar el texto correspondiente. Hacer click en Cambiar cuando se haya finalizado.
 
 SETUP_PLUGIN_RSSNEWS_RESET
 	DE	Standard Feeds wieder herstellen
 	EN	Reset default RSS feeds
+	ES	Reestablecer feeds de RSS por defecto
 
 SETUP_PLUGIN_RSSNEWS_RESET_DESC
 	DE	Klicken Sie auf den Reset Knopf, um die Standard RSS Feeds zu reaktivieren.
 	EN	Click the Reset button to revert to the default set of RSS Feeds.
+	ES	Presionar el botón de Restablecer para volver al conjunto de valores por defecto de feeds de RSS.
 
 PLUGIN_RSSNEWS_RESETTING
 	DE	RSS Feeds wurden auf Standardwerte zurückgesetzt.
 	EN	Resetting to default RSS Feeds.
+	ES	Reestableciendo el feed  de RSS por defecto
 
 SETUP_PLUGIN_RSSNEWS_RESET_BUTTON
 	DE	Zurücksetzen
 	EN	Reset
+	ES	Reestablecer
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED
 	DE	Anzahl Einträge pro Feed
 	EN	Items displayed per channel
+	ES	Elementos mostrados por canal
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
 	DE	Definieren Sie die Anzahl Einträge, die im Bildschirmschonermodus pro Feed angezeigt werden sollen. Eine grössere Anzahl hat zur Folge, dass mehr Einträge angezeigt werden, bevor der nächste Feed angezeigt wird.
 	EN	The maximum number of items displayed for each feed while the screensaver is active. A larger value implies that the screensaver will display more items before switching to the next feed.
+	ES	El número máximo de elementos mostrados, para cada feed, mientras el salvapantallas está activo. Un valor más alto implica que el salvapantal>las mostrará más elementos antes de pasar al próximo feed.
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_CHOOSE
 	DE	Einträge pro Feed
 	EN	Items per channel
+	ES	Elementos por canal
 
 SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE
 	DE	RSS Feed Liste wurde geändert.
 	EN	RSS Feeds list changed.
+	ES	Lista de feeds de RSS modificada.
 !};
 
 # Plugin descriptions

@@ -46,6 +46,7 @@ sub strings { return '
 PLUGIN_SCREENSAVER_LINEX
 	DE	LineX Bildschirmschoner
 	EN	LineX Screensaver
+	ES	Salvapantallas LineX
 
 PLUGIN_SCREENSAVER_LINEX_SETTINGS
 	DE	LineX Bildschirmschoner Einstellungen
@@ -54,50 +55,62 @@ PLUGIN_SCREENSAVER_LINEX_SETTINGS
 PLUGIN_SCREENSAVER_LINEX_ACTIVATE
 	DE	Diesen Bildschirmschoner wählen
 	EN	Select Current Screensaver
+	ES	Elegir Salvapantallas Actual
 
 PLUGIN_SCREENSAVER_LINEX_ACTIVATE_TITLE
 	DE	Aktuellen Bildschirmschoner
 	EN	Current Screensaver
+	ES	Salvapantallas Actual
 
 PLUGIN_SCREENSAVER_LINEX_ACTIVATED
 	DE	LineX als Bildschirmschoner verwenden
 	EN	Use LineX as current screensaver
+	ES	Utilizar LineX com salvapantallas actual
 
 PLUGIN_SCREENSAVER_LINEX_DEFAULT
 	DE	Standard Bildschirmschoner verwenden (nicht LineX)
 	EN	Use default screensaver (not LineX)
+	ES	Utilizar salvapantallas por defecto (No LineX)
 
 PLUGIN_SCREENSAVER_LINEX_NUMBER
 	DE	Anzahl Objekte wählen
 	EN	Select number of objects
+	ES	Elegir número de objetos
 
 PLUGIN_SCREENSAVER_LINEX_NUMBER_TITLE
 	DE	LineX Bildschirmschoner: Anzahl wählen
 	EN	LineX Screensaver: Select number
+	ES	Salvapantallas LineX: elegir número
 
 PLUGIN_SCREENSAVER_LINEX_OBJECT
 	DE	Objekttyp wählen
 	EN	Select type of object
+	ES	Elegir tipo de objeto
 
 PLUGIN_SCREENSAVER_LINEX_OBJECT_TITLE
 	DE	LineX Bildschirmschoner: Objekttyp wählen
 	EN	LineX Screensaver: Select type
+	ES	Salvapantallas LineX: elegir tipo
 
 PLUGIN_SCREENSAVER_LINEX_OBJECT_LINE
 	DE	Linie
 	EN	Line
+	ES	Línea
 
 PLUGIN_SCREENSAVER_LINEX_OBJECT_RECTANGLE
 	DE	Rechteck
 	EN	Rectangle
+	ES	Rectángulo
 
 PLUGIN_SCREENSAVER_LINEX_OBJECT_RANDOM
 	DE	Zufällig
 	EN	Random
+	ES	Al azar
 
 PLUGIN_SCREENSAVER_LINEX_NEEDS_GRAPHICS_DISPLAY
 	DE	Benötigt graphisches Display
 	EN	Needs graphics display
+	ES	Hace falta un display gráfico
 
 '};
 

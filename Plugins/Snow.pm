@@ -32,127 +32,153 @@ sub strings { return '
 PLUGIN_SCREENSAVER_SNOW
 	DE	Schnee Bildschirmschoner
 	EN	Snow Screensaver
+	ES	Salvapantallas de Nieve
 	FR	Ecran de veille Neige
 
 PLUGIN_SCREENSAVER_SNOW_SETTINGS
 	DE	Schnee Einstellungen
 	EN	Snow Screensaver settings
+	ES	Parámetros para Salvapantallas de Nieve
 	FR	Réglages Ecran de veille Neige
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATE
 	DE	Diesen Bildschirmschoner aktivieren
 	EN	Select Current Screensaver
+	ES	Elegir Salvapantallas Actual
 	FR	Choisir écran de veille courant
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATE_TITLE
 	DE	Aktueller Bildschirmschoner
 	EN	Current Screensaver
+	ES	Salvapantallas Actual
 	FR	Ecran de veille courant
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATED
 	DE	Schnee Bildschirmschoner aktivieren
 	EN	Use Snow as current screensaver
+	ES	Utilizar Nieve como salvapantallas actual.
 	FR	Utiliser Neige comme écran de veille
 
 PLUGIN_SCREENSAVER_SNOW_DEFAULT
 	DE	Standard-Bildschirmschoner aktivieren
 	EN	Use default screensaver (not Snow)
+	ES	Utilizar salvapantallas por defecto (No Nieve)
 	FR	Utiliser écran de veille par défaut (hors Neige)
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY
 	DE	Schneemenge
 	EN	Quantity of snow
+	ES	Cantidad de nieve
 	FR	Intensité neige
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
 	DE	Schnee Bildschirmschoner: Schneemenge
 	EN	Snow Screensaver: Quantity of snow
+	ES	Salvapantallas de Nieve: Cantidad de nieve
 	FR	Ecran de veille neige: Intensité
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
 	DE	Ein paar Schneeflocken
 	EN	Light flurries
+	ES	Copos livianos
 	FR	Quelques flocons
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
 	DE	Weihnächtlich weiss
 	EN	Christmassy
+	ES	Estilo Navidad
 	FR	C\'est Noël !
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
 	DE	Heftiges Schneegestöber
 	EN	Blizzard
+	ES	Tormenta
 	FR	Tempête
 
 PLUGIN_SCREENSAVER_SNOW_STYLE
 	DE	Schneetyp
 	EN	Style of snow
+	ES	Estilo de nieve
 	FR	Type neige
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
 	DE	Schnee Bildschirmschoner: Schneetyp
 	EN	Snow Screensaver: Style of snow
+	ES	Salvapantallas de Nieve: Estilo de nieve
 	FR	Ecran de veille Neige: Type
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_1
 	DE	Es läuft gerade... mit Schnee im Hintergrund
 	EN	Now Playing, snow falling behind
+	ES	Se está escuchando, la nieve cae detrás
 	FR	Lecture + neige en arrière-plan
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_2
 	DE	Es läuft gerade... mit Schnee im Vordergrund
 	EN	Now Playing, snow falling in front
+	ES	Se está escuchando, la nieve cae delante
 	FR	Lecture +  neige en avant-plan
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_3
 	DE	Datum/Zeit
 	EN	Date/Time
+	ES	Fecha/Hora
 	FR	Date/Heure
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_4
 	DE	Nur Schnee
 	EN	Just snow
+	ES	Solo nieve
 	FR	Neige seule
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_5
 	DE	Automatisch
 	EN	Automatic
+	ES	Automático
 	FR	Automatique
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_6
 	DE	Frohe Feiertage!
 	EN	Season\'s Greetings
+	ES	Saludos para las Fiestas
 
 PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS
 	DE	4
 	EN	5
+	ES	5
 	FR	2
 
 PLUGIN_SCREENSAVER_SNOW_WORD_0
 	DE	FROHE
 	EN	MERRY
+	ES	FELIZ
 	FR	JOYEUX
 
 PLUGIN_SCREENSAVER_SNOW_WORD_1
 	DE	WEIHNACHTEN
 	EN	CHRISTMAS
+	ES	NAVIDAD
 	FR	NOEL
 
 PLUGIN_SCREENSAVER_SNOW_WORD_2
 	DE	UND EIN GUTES
 	EN	AND A VERY
+	ES	Y UN MUY
 
 PLUGIN_SCREENSAVER_SNOW_WORD_3
 	DE	GLÜCKLICHES
 	EN	HAPPY
+	ES	PRÓSPERO
 
 PLUGIN_SCREENSAVER_SNOW_WORD_4
-	de	NEUES JAHR!
+	DE	NEUES JAHR!
 	EN	NEW YEAR !
+	ES	AÑO NUEVO !
 
 PLUGIN_SCREENSAVER_SNOW_SORRY
 	DE	Sorry, Schnee funktioniert auf diesem Gerät nicht.
 	EN	Sorry, Snow doesn\'t work with this player.
+	ES	Lo siento, la Nieve no funciona en este reproductor.
 '};
 
 ##################################################

@@ -159,12 +159,14 @@ sub strings
 {
 	return "
 PLUGIN_RADIOIO_MODULE_NAME
-	EN	radioio.com - no boundaries.
 	DE	radioio.com Internet Radio
+	EN	radioio.com - no boundaries.
+	ES	radioio.com - sin límites.
 
 PLUGIN_RADIOIO_MODULE_TITLE
-	EN	radioio.com
 	DE	radioio.com
+	EN	radioio.com
+	ES	radioio.com
 ";}
 
 1;

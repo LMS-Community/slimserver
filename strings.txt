@@ -2102,9 +2102,11 @@ MUSICMAGIC_MIXING
 
 MOODLOGIC_MIXING
 	EN	MoodLogic Mixing
+	ES	Mezcla MoodLogic
 
 FOLDER
 	EN	Folder
+	ES	Carpeta
 
 ITUNES
 	EN	iTunes
@@ -4017,9 +4019,11 @@ SORTBYFILENAME
 
 SETUP_BROWSEAGELIMIT
 	EN	New Music Limit
+	ES	Límite para Música Nueva
 
 SETUP_BROWSEAGELIMIT_DESC
 	EN	Choose the number of tracks to display when browsing for new music. Default is 100
+	ES	Elegir el número de temas a mostrar cuendo se examina Música Nueva. Por defecto es 100
 
 SETUP_TEMPLATECACHE
 	DE	HTML im Cache ablegen
@@ -4146,10 +4150,12 @@ SETUP_ITEMSPERPASS_DESC
 SETUP_PREFSWRITEDELAY
 	DE	Schreib-Intervall für Einstellungen
 	EN	Prefs write interval
+	ES	Intervalo de escritura de Preferencias
 
 SETUP_PREFSWRITEDELAY_DESC
 	DE	Diese Einstellung definiert, wie oft die Einstellungen auf die Harddisk geschrieben werden. Die Angabe "0" führt dazu, dass jede Änderung sofort geschrieben wird. Höhere Werte puffert die Änderungen und schreibt sie in einem Rutsch nach der angegeben Anzahl Sekunden.
 	EN	This setting determines how often preferences are written to disk.  Set to 0 to write every change to disk, higher values batch changes and writes the preferences after the given number of seconds pass.
+	ES	Esta configuración determina que tan seguido se graban en disco las preferencias. Poner en 0 para escribir cada cambio en el momento, o valores mayores para agrupar los cambios y grabarlos después del número indicado de segundos.
 
 SETUP_LONGDATEFORMAT
 	DE	Format des langen Datums
@@ -5215,7 +5221,7 @@ ONE
 	DE	Eins
 	DK	denne
 	EN	one
-	ES	uno
+	ES	encendido
 	FI	yksi
 	FR	un
 	JP	1曲
@@ -5267,7 +5273,7 @@ OFF
 	DE	Aus
 	DK	fra
 	EN	off
-	ES	apagada
+	ES	apagado
 	FI	pois päälltä
 	FR	éteint
 	JP	オフ
@@ -6569,6 +6575,7 @@ BROWSE_BY_ARTWORK_DBL
 
 BROWSE_NEW_MUSIC
 	EN	New Music
+	ES	Música nueva
 
 BROWSE_BY_SONG
 	DE	Titel nachschlagen
@@ -7999,6 +8006,7 @@ MUSICMAGIC_MIX
 
 MOODLOGIC_INSTANT_MIX
 	EN	MoodLogic Instant Mix
+	ES	Mezcla instantánea de MoodLogic
 
 MOODLOGIC_MOOD_0
 	DE	Überraschung
@@ -8538,7 +8546,7 @@ IS
 EQUALS
 	DE	gleich
 	EN	equals
-	ES	están los iguales
+	ES	igual a
 	FR	les égales moins
 	IT	uguali
 	JP	同輩

@@ -1507,6 +1507,7 @@ PLUGIN_LIVE365_LOGOUT
 PLUGIN_LIVE365_LOGIN
 	DE	Anmelden
 	EN	Log in
+	ES	Conectarse
 
 PLUGIN_LIVE365_NOT_LOGGED_IN
 	DE	Nicht bei Live365 angemeldet
@@ -1559,6 +1560,7 @@ PLUGIN_LIVE365_PRESETS
 PLUGIN_LIVE365_BROWSEGENRES
 	DE	Musikstile durchsuchen
 	EN	Browse genres
+	ES	Examinar géneros
 
 PLUGIN_LIVE365_BROWSEALL
 	DE	Alle Stationen durchsuchen (viele)
@@ -1611,6 +1613,7 @@ PLUGIN_LIVE365_LISTENER_ACCESS
 PLUGIN_LIVE365_STATION_QUALITY_LEVEL
 	DE	Sender Qualität
 	EN	Station quality
+	ES	Calidad de la estación
 
 PLUGIN_LIVE365_STATION_CONNECTION
 	DE	Bandbreite

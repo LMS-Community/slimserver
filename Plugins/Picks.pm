@@ -227,18 +227,22 @@ sub strings {
 PLUGIN_PICKS_MODULE_NAME
 	DE	Slim Devices Auswahl
 	EN	Slim Devices Picks
+	ES	Preferidas de Slim Devices
 
 PLUGIN_PICKS_LOADING_PICKS
 	DE	Lade Slim Devices Picks...
 	EN	Loading Slim Devices Picks...
+	ES	Cargando las Preferidas de Slim Devices...
 
 PLUGIN_PICKS_STATION
 	DE	Sender
 	EN	Station
+	ES	Estación
 
 PLUGIN_PICKS_LOADING_ERROR
 	DE	Fehler beim Laden der Slim Devices Picks
 	EN	Error loading Slim Devices Picks
+	ES	Error al cargar las Preferidas de Slim Devices
 ";}
 
 1;
