@@ -33,11 +33,6 @@ our $defaultPrefs = {
 	'transitionDuration'		=> 0,
 };
 
-my $VISUALIZER_NONE = 0;
-my $VISUALIZER_VUMETER = 1;
-my $VISUALIZER_SPECTRUM_ANALYZER = 2;
-my $VISUALIZER_WAVEFORM = 3;
-
 # Parameters for the vumeter:
 #   0 - Channels: stereo == 0, mono == 1
 #   1 - Style: digital == 0, analog == 1
@@ -73,34 +68,90 @@ my $VISUALIZER_WAVEFORM = 3;
 #    5 - text + full screen spectrum analyser
 #    6 - text + indicator
 
-my @showBar =         (  0,   1,   0,   0,   0,   1,  1 );
-my @showTime =        (  0,   1,   0,   1,   1,   1,  0 );
-my @showFullness =    (  0,   0,   0,   0,   0,   0,  1 );
-my @displayWidth = 	  (  320, 320, 278, 278, 278, 320, 320  );
+my $VISUALIZER_NONE = 0;
+my $VISUALIZER_VUMETER = 1;
+my $VISUALIZER_SPECTRUM_ANALYZER = 2;
+my $VISUALIZER_WAVEFORM = 3;
 
-my @visualizerParameters = ( 	
-	[$VISUALIZER_NONE],
-	[$VISUALIZER_NONE], 
-	[$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18], 
-	[$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18], 
-	[$VISUALIZER_SPECTRUM_ANALYZER, 1, 1, 0x10000, 280, 40, 0, 4, 1, 0, 1, 3], 
-	[$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1],
-	[$VISUALIZER_NONE],
+my @modes = ( 	
+	{ bar => 0, 
+	  secs => 0, 
+	  width => 320, 
+	  params => [$VISUALIZER_NONE] } , 
+	{ bar => 1, 
+	  secs => 1,
+	  width => 320, 
+	  params => [$VISUALIZER_NONE] } , 
+	{ bar => 1, 
+	  secs => -1, 
+	  width => 320, 
+	  params => [$VISUALIZER_NONE] } , 
+	  
+	{ bar => 0, 
+	  secs => 0, 
+	  width => 278, 
+	  params => [$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18] } , 
+	{ bar => 1, 
+	  secs => 1,
+	  width => 278, 
+	  params => [$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18] } , 
+	{ bar => 1, 
+	  secs => -1, 
+	  width => 278, 
+	  params => [$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18] } , 
+	  
+	{ bar => 0, 
+	  secs => 0, 
+	  width => 278, 
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 1, 1, 0x10000, 280, 40, 0, 4, 1, 0, 1, 3] } , 
+	{ bar => 1, 
+	  secs => 1,
+	  width => 278, 
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 1, 1, 0x10000, 280, 40, 0, 4, 1, 0, 1, 3] } , 
+	{ bar => 1, 
+	  secs => -1, 
+	  width => 278, 
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 1, 1, 0x10000, 280, 40, 0, 4, 1, 0, 1, 3] } , 
+	  
+	{ bar => 0, 
+	  secs => 0, 
+	  width => 320, 
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1] } , 
+	{ bar => 1, 
+	  secs => 1,
+	  width => 320, 
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1] } , 
+	{ bar => 1, 
+	  secs => -1, 
+	  width => 320, 
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1] } , 
+	  
+	{ bar => 0, 
+	  secs => 0, 
+	  width => 320, 
+	  params => [$VISUALIZER_NONE], fullness => 1 }
 );
-
 
 sub playingModeOptions { 
 	my $client = shift;
 	my %options = (
-		'0' => $client->string('BLANK')
-		,'1' => $client->string('ELAPSED') . ' ' . $client->string('AND') . ' ' . $client->string('PROGRESS_BAR')
-		,'2' => $client->string('VISUALIZER_VUMETER_SMALL')
-		,'3' => $client->string('ELAPSED') . ' ' . $client->string('AND') . ' ' . $client->string('VISUALIZER_VUMETER_SMALL')
-		,'4' => $client->string('ELAPSED') . ' ' . $client->string('AND') . ' ' . $client->string('VISUALIZER_SPECTRUM_ANALYZER_SMALL')
-		,'5' => $client->string('ELAPSED') . ', ' . $client->string('PROGRESS_BAR') . ' ' . $client->string('AND') . ' ' . $client->string('VISUALIZER_SPECTRUM_ANALYZER')
+		'0' => $client->string('BLANK'),
+		'1' => $client->string('REMAINING'),
+		'2' => $client->string('ELAPSED') ,
+		'3' => $client->string('VISUALIZER_VUMETER_SMALL'),
+		'4' => $client->string('VISUALIZER_VUMETER_SMALL'). ' ' . $client->string('AND') . ' ' . $client->string('ELAPSED'),
+		'5' => $client->string('VISUALIZER_VUMETER_SMALL'). ' ' . $client->string('AND') . ' ' . $client->string('REMAINING'),
+		'6' => $client->string('VISUALIZER_SPECTRUM_ANALYZER_SMALL'),
+		'7' => $client->string('VISUALIZER_SPECTRUM_ANALYZER_SMALL'). ' ' . $client->string('AND') . ' ' . $client->string('ELAPSED'),
+		'8' => $client->string('VISUALIZER_SPECTRUM_ANALYZER_SMALL'). ' ' . $client->string('AND') . ' ' . $client->string('REMAINING'),
+		'9' => $client->string('VISUALIZER_SPECTRUM_ANALYZER'),
+		'10' => $client->string('VISUALIZER_SPECTRUM_ANALYZER'). ' ' . $client->string('AND') . ' ' . $client->string('ELAPSED'),
+		'11' => $client->string('VISUALIZER_SPECTRUM_ANALYZER'). ' ' . $client->string('AND') . ' ' . $client->string('REMAINING'),
 	);
-	
-	$options{'6'} = $client->string('SETUP_SHOWBUFFERFULLNESS') if Slim::Utils::Prefs::clientGet($client,'showbufferfullness');
+
+	if (Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {	
+		$options{'12'} = $client->string('SETUP_SHOWBUFFERFULLNESS');
+	}
 	
 	return \%options;
 }
@@ -128,8 +179,13 @@ sub init {
 
 sub nowPlayingModes {
 	my $client = shift;
+	my $count = scalar(@modes);
 	
-	return scalar(keys %{$client->playingModeOptions()});
+	if (!Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {
+		$count--;
+	}
+	
+	return $count;
 }
 
 sub showVisualizer {
@@ -146,7 +202,7 @@ sub displayWidth {
 	# hasn't overridden, then use the playing display mode to index
 	# into the display width, otherwise, it's fullscreen.
 	my $mode = ($client->showVisualizer() && !defined($client->modeParam('visu'))) ? Slim::Utils::Prefs::clientGet($client, "playingDisplayMode") : 0;
-	return $displayWidth[$mode || 0];
+	return $modes[$mode || 0]{width};
 }
 
 sub bytesPerColumn {
@@ -245,7 +301,7 @@ sub visualizer {
 			$visu = $nmodes - 1;
 		}
 		
-		$paramsref = $visualizerParameters[$visu];
+		$paramsref = $modes[$visu]{params};
 	}
 	
 	my @params = @{$paramsref};
@@ -322,6 +378,14 @@ sub bumpDown {
 	$client->drawFrameBuf($startbits, undef, 'D', 0);
 }
 
+my @brightmap = (
+	65535,
+	0,
+	1,
+	3,
+	4,
+);
+
 sub brightness {
 	my $client = shift;
 	my $delta = shift;
@@ -329,7 +393,8 @@ sub brightness {
 	my $brightness = $client->Slim::Player::Player::brightness($delta, 1);
 		
 	if (defined($delta)) {
-		my $brightnesscode = pack('n', $brightness);
+		
+		my $brightnesscode = pack('n', $brightmap[$brightness]);
 		$client->sendFrame('grfb', \$brightnesscode); 
 	}
 	
@@ -376,22 +441,23 @@ sub nowPlayingModeLines {
 	my ($client, $parts) = @_;
 	my $overlay;
 	my $fractioncomplete   = 0;
-	my $playingDisplayMode = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
+	
+	my $mode = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
 	my $songtime = '';
 	
 	Slim::Buttons::Common::param(
 		$client,
 		'animateTop',
-		(Slim::Player::Source::playmode($client) ne "stop") ? $playingDisplayMode : 0
+		(Slim::Player::Source::playmode($client) ne "stop") ? $mode : 0
 	);
 
-	unless (defined $playingDisplayMode) {
-		$playingDisplayMode = 1;
+	unless (defined $mode) {
+		$mode = 1;
 	};
 
-	my $showBar = $showBar[$playingDisplayMode];
-	my $showTime = $showTime[$playingDisplayMode];
-	my $showFullness = $showFullness[$playingDisplayMode];
+	my $showBar =  $modes[$mode]{bar};
+	my $showTime = $modes[$mode]{secs};
+	my $showFullness = $modes[$mode]{fullness};
 	
 	# check if we don't know how long the track is...
 	if (!Slim::Player::Source::playingSongDuration($client)) {
@@ -407,7 +473,7 @@ sub nowPlayingModeLines {
 	if ($showFullness) {
 		$songtime = ' ' . int($fractioncomplete * 100 + 0.5)."%";
 	} elsif ($showTime) { 
-		$songtime = ' ' . $client->textSongTime();
+		$songtime = ' ' . $client->textSongTime($showTime < 0);
 	}
 
 	if ($showTime || $showFullness) {

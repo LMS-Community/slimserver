@@ -301,8 +301,6 @@ sub upgradeFirmware_SDK5 {
 	# disable visualizer in this mode
 	$client->modeParam('visu',[0]);
 
-#	Slim::Utils::Misc::blocking($client->tcpsock, 1);
-
 	open FS, $filename || return("Open failed for: $filename\n");
 
 	binmode FS;
