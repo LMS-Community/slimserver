@@ -1,5 +1,5 @@
 package Slim::Buttons::BrowseID3;
-# $Id: BrowseID3.pm,v 1.12 2004/03/21 19:11:38 kdf Exp $
+# $Id: BrowseID3.pm,v 1.13 2004/04/03 02:33:43 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -74,10 +74,10 @@ my %functions = (
 				setSelection($client,'curalbum', selection($client,'album'));
 				loadDir($client);
 				# skip album, if there is only one
-                                if (scalar @{browseID3dir($client)} == 1) {
-                                        setSelection($client,'curartist', selection($client,'artist'));
-                                        loadDir($client);
-                                }
+				if (scalar @{browseID3dir($client)} == 1) {
+					setSelection($client,'curartist', selection($client,'artist'));
+					loadDir($client);
+				}
 			} elsif (specified($artist)) {
 				# we're at the album level
 				# forget we knew the artist
@@ -170,8 +170,9 @@ my %functions = (
 		my $album = selection($client,'curalbum');
 		my $all_albums;
 		my $sortbytitle;
-		if (defined($album) && $album eq string('ALL_SONGS')) { $album = '*'; $sortbytitle = 1;};
-		if (defined($artist) && ($artist eq string('ALL_ALBUMS'))) { $artist = '*';  $sortbytitle = 1; $all_albums = 1;};
+		if (defined($album) && ($album eq string('ALL_SONGS'))) { $album = '*'; $sortbytitle = 1;};
+		if (defined($artist) && ($artist eq string('ALL_ALBUMS'))) { $artist = '*';  $sortbytitle = 1;};
+		if (defined($genre) && ($genre eq string('ALL_ARTISTS'))) { $genre = '*';};
 		
 		my $currentItem = browseID3dir($client,browseID3dirIndex($client));
 		my $line1;
@@ -226,19 +227,23 @@ my %functions = (
 					
 		# if we've picked an album or song to play then play the album 
 		# if we've picked an album to append, then append the album
-		} elsif (picked($genre) && picked($artist) && !$all_albums) { 
+		} elsif (picked($genre) && picked($artist)) {
+			$::d_files && msg("song  or album $currentItem\n"); 
 			my $whichalbum = picked($album) ?  $album : (($currentItem eq string('ALL_SONGS')) ? '*' : $currentItem);
 			Slim::Control::Command::execute($client, ["playlist", $command, $genre, $artist, $whichalbum,undef,  $currentItem eq string('ALL_SONGS')]);	
 		# if we've picked an artist to append or play, then do so.
 		} elsif (picked($genre)) {
+			$::d_files && msg("artist $currentItem\n");
 			my $whichartist = picked($artist) ? $artist : (($currentItem eq string('ALL_ALBUMS')) ? '*' : $currentItem);
-			my $whichalbum = ($artist eq string('ALL_ALBUMS')) ? $currentItem : '*';
-			my $whichgenre = ($genre eq string('ALL_ALBUMS')) ? '*' : $genre;
+			#TODO this sometime causes a warning
+			my $whichalbum = (defined $album && $album ne string('ALL_ALBUMS')) ? $currentItem : '*';
+			my $whichgenre = ($genre eq string('ALL_ARTISTS')) ? '*' : $genre;
 			Slim::Control::Command::execute($client, ["playlist", $command, $whichgenre, $whichartist, $whichalbum,undef, $sortbytitle]);		
 		# if we've picked a genre to play or append, then do so
 		} else {
+			$::d_files && msg("genre: $currentItem\n");
 			$currentItem = ($currentItem eq string('ALL_ALBUMS')) ? '*' : $currentItem;
-			Slim::Control::Command::execute($client, ["playlist", $command, $currentItem, "*", "*"]);
+			Slim::Control::Command::execute($client, ["playlist", $command,$currentItem, "*", "*"]);
 		}
 		$::d_files && msg("currentItem == $currentItem\n");
 	},
@@ -355,7 +360,7 @@ sub loadDir {
 		$sortbytitle = picked($album) ? 0 : 1;
 	};
 
-	if (defined($genre) && ($genre eq string('ALL_ALBUMS'))) {
+	if (defined($genre) && ($genre eq string('ALL_ARTISTS'))) {
 		$genre = '*';
 		$sortbytitle = picked($album) ? 0 : 1;
 	};
@@ -415,7 +420,7 @@ sub loadDir {
 		);
 		
 		if (scalar @{browseID3dir($client)} > 1) { 
-			push @{browseID3dir($client)}, string('ALL_ALBUMS'); }
+			push @{browseID3dir($client)}, string('ALL_ARTISTS'); }
 	}
 
 	return browseID3dirIndex($client, getLastSelection($client));
