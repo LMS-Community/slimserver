@@ -294,18 +294,21 @@ sub find {
 }
 
 sub count {
-	my $self = shift;
+	my $self  = shift;
 	my $field = shift;
-	my $findCriteria = shift || {};
+	my $find  = shift || {};
+
+	# make a copy, because we might modify it below.
+	my %findCriteria = %$find;
 
 	# The user may not want to include all the composers / conductors
 	if ($field eq 'contributor' && !Slim::Utils::Prefs::get('composerInArtists')) {
 
-		$findCriteria->{'contributor.role'} = $Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'};
+		$findCriteria{'contributor.role'} = $Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'};
 	}
 
 	# Optimize the all case
-	if (scalar(keys %$findCriteria) == 0) {
+	if (scalar(keys %findCriteria) == 0) {
 
 		if ($field eq 'track') {
 
@@ -327,7 +330,7 @@ sub count {
 
 	# XXX Brute force implementation. For now, retrieve from the database.
 	# Last option to find() is $count - don't instansiate objects
-	return $self->find($field, $findCriteria, undef, undef, undef, 1);
+	return $self->find($field, \%findCriteria, undef, undef, undef, 1);
 }
 
 sub albumsWithArtwork {
