@@ -245,65 +245,75 @@ sub newClient {
 	) = @_;
 	
 	# if we haven't seen this client, initialialize a new one
+	my $client;	
+	my $clientAlreadyKnown = 0;
 
-	$::d_protocol && msg("New client connected: $id\n");
-	my $client = clientState->new();
-	$client->revision(0);
-	$client->lastirtime(0);
-	$client->lastircode(0);
-	$client->lastircodebytes(0);
-	$client->startirhold(0);
-	$client->epochirtime(0);
-	$client->irrepeattime(0);
-	$client->irtimediff(0);
+	if (defined(getClient($id))) {
+		$::d_protocol && msg("We know this client. Skipping client prefs and state initialization.\n");
+		$client=getClient($id);
+		$clientAlreadyKnown = 1;
+	} else {
+		$::d_protocol && msg("New client connected: $id\n");
+		$client = clientState->new();
+		$client->revision(0);
+		$client->lastirtime(0);
+		$client->lastircode(0);
+		$client->lastircodebytes(0);
+		$client->startirhold(0);
+		$client->epochirtime(0);
+		$client->irrepeattime(0);
+		$client->irtimediff(0);
 	
-	$client->vfdmodel('');
-	$client->decoder('');
+		$client->vfdmodel('');
+		$client->decoder('');
 
-	$client->id($id);
-	$client->prevwptr(-1);
-	$client->pwd('');  # start browsing at the root MP3 directory
+		$client->id($id);
+		$client->prevwptr(-1);
+		$client->pwd('');  # start browsing at the root MP3 directory
 
-	$client->prevline1('');
-	$client->prevline2('');
+		$client->prevline1('');
+		$client->prevline2('');
 
-	$client->lastircode('');
+		$client->lastircode('');
 
-	$client->lastLetterIndex(0);
-	$client->lastLetterDigit('');
-	$client->lastLetterTime(0);
+		$client->lastLetterIndex(0);
+		$client->lastLetterDigit('');
+		$client->lastLetterTime(0);
 
-	$client->playmode("stop");
-	$client->rate(1);
-	$client->lastskip(0);
+		$client->playmode("stop");
+		$client->rate(1);
+		$client->lastskip(0);
 	
-	$client->currentsong(0);
-	$client->songpos(0);
-	$client->songtotalbytes(0);
-	$client->currentplayingsong("");
+		$client->currentsong(0);
+		$client->songpos(0);
+		$client->songtotalbytes(0);
+		$client->currentplayingsong("");
 	
-	$client->lastchunk(undef);
+		$client->lastchunk(undef);
 
-	$client->readytosync(0);
+		$client->readytosync(0);
 
-	$client->currentSleepTime(0);
-	$client->sleepTime(0);
+		$client->currentSleepTime(0);
+		$client->sleepTime(0);
 		
-	$client->htmlstatus("");
-	$client->htmlstatusvalid(0);
+		$client->htmlstatus("");
+		$client->htmlstatusvalid(0);
 
-	$client->RTT(.5);
+		$client->RTT(.5);
 
-	$client->searchCursor(0);
+		$client->searchCursor(0);
 	
-	$client->vfdbrightness(1);
+		$client->vfdbrightness(1);
 
-	$clientHash{$id} = $client;
-	# make sure any preferences this client may not have set are set to the default
-	Slim::Utils::Prefs::checkClientPrefs($client);
+		$clientHash{$id} = $client;
+		# make sure any preferences this client may not have set are set to the default
+		Slim::Utils::Prefs::checkClientPrefs($client);
 
-	# skip player initialization for http clients
-	return unless (defined($newplayeraddr) && $newplayeraddr);
+		# skip player initialization for http clients
+		return unless (defined($newplayeraddr) && $newplayeraddr);
+	}
+
+	# the rest of this stuff is set each time the client connects, even if we know him already.
 
 	$client->paddr($paddr);
 	$client->type('player');
@@ -344,8 +354,12 @@ sub newClient {
 
 		$client->vfdmodel('noritake-european');
 		$client->decoder('mas35x9');
-	} 
-	
+	}
+
+	# skip the rest of this if the client was already known
+	$clientAlreadyKnown && 
+		return($client);
+
 	# add the new client all the currently known clients so we can say hello to them later
 	my $clientlist = Slim::Utils::Prefs::get("clients");
 

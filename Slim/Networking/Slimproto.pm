@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.5 2003/08/03 04:02:33 sadams Exp $
+# $Id: Slimproto.pm,v 1.6 2003/08/03 04:54:58 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -276,33 +276,16 @@ sub process_slimproto_frame {
 		my $id=$mac;
 		my $paddr = sockaddr_in($s->peerport, $s->peeraddr);
 
-		my $client = Slim::Player::Client::getClient($id);
-		if (defined($client)) {
-			$::d_protocol && msg("found this client\n");	
-		} else {
-			$::d_protocol && msg("creating new client, id:$id ipport: $ipport{$s}\n");
-			$client=Slim::Player::Client::newClient(
-				$id, 		# mac
-				$paddr,		# sockaddr_in
-				$ipport{$s},	# ascii ip:port
-				$deviceid,	# devieid
-				$revision,	# rev
-				undef,		# udp sock
-				$s		# tcp sock
-			);
-
-#			$client->paddr($paddr);
-#			$client->deviceid($deviceid);
-#			$client->revision($revision);
-#			$client->udpsock(0);
-#			$client->macaddress($mac);
-#
-#			$client->vfdmodel('noritake-european');
-#			$client->decoder('mas35x9');
-#			$client->ticspersec(1000);
-#			$client->model('squeezebox');
-
-		}	
+		$::d_protocol && msg("creating new client, id:$id ipport: $ipport{$s}\n");
+		my $client=Slim::Player::Client::newClient(
+			$id, 		# mac
+			$paddr,		# sockaddr_in
+			$ipport{$s},	# ascii ip:port
+			$deviceid,	# devieid
+			$revision,	# rev
+			undef,		# udp sock
+			$s		# tcp sock
+		);
 
 		$sock2client{$s}=$client;
 		return;

@@ -129,7 +129,7 @@ sub idle {
 		if ($clientpaddr) {
 			# check that it's a message type we know: starts with i r 2 d a or h (but not h followed by 0x00 0x00)
 			if ($msg =~ /^(?:[ir2a]|h(?!\x00\x00))/) {
-				my $client = getClient($clientpaddr, $sock, $msg);
+				my $client = getUdpClient($clientpaddr, $sock, $msg);
 
 				if (!defined($client)) {
 					next;
@@ -194,7 +194,7 @@ sub ipaddress2paddr {
 ###################
 # return the client based on IP address and socket.  will create a new one if
 # necessary 
-sub getClient {
+sub getUdpClient {
 	my ($clientpaddr,$udpsock, $msg) = @_;
 
 	my ($msgtype, $deviceid, $revision, @mac) = unpack 'aCCxxxxxxxxxH2H2H2H2H2H2', $msg;
@@ -203,7 +203,7 @@ sub getClient {
 
 	my $mac = join(':', @mac);
 	my $id = $mac;
-							
+
 	my $client = Slim::Player::Client::getClient($id);
 
 # DISABLING FIRMWARE 2.0 SUPPORT
