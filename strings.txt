@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.117 2004/07/02 13:22:37 dean Exp $
+# $Id: strings.txt,v 1.118 2004/07/07 03:38:17 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -3493,11 +3493,7 @@ SETUP_SHOWBUFFERFULLNESS
 	SE	Visa bufferminnets fyllnadsgrad
 
 SETUP_SHOWBUFFERFULLNESS_CHOOSE
-	DE	Puffer-Füllstatus an Stelle der Fortschrittsanzeige verwenden:
-	EN	Show buffer fullness in place of progress indicator:
-	FR	Afficher l'état de la mémoire tampon à la place du graphique de progression :
-	NO	Vis hvor fullt bufferet er istedet for progress-bar
-	SE	Visa bufferminnets fyllnadsgrad istället för progress-bar
+	EN	Show buffer fullness in Playing Display Mode list:
 
 SETUP_SHOWBUFFERFULLNESS_ENABLED
 	DE	Aktiviert

@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.29 2004/05/17 19:46:38 kdf Exp $
+# $Id: Playlist.pm,v 1.30 2004/07/07 03:38:18 kdf Exp $
 
 # Slim Server Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -40,7 +40,7 @@ my %functions = (
 			# 4 show elapsed time and progress bar
 			# 5 show remaining time and progress bar
 			if (($playlistlen > 0) && (showingNowPlaying($client))) {
-				$pdm = ($pdm + 1) % 6;
+				$pdm = ($pdm + 1) % (Slim::Utils::Prefs::clientGet($client,'showbufferfullness') ? 7 : 6);
 			} elsif ($playlistlen > 0) {
 				browseplaylistindex($client,Slim::Player::Source::currentSongIndex($client));
 			}
@@ -257,7 +257,7 @@ sub currentSongLines {
 		$line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
 		$overlay2 = Slim::Hardware::VFD::symbol('notesymbol');
 
-		($line1,$overlay1) = nowPlayingModeLines($client, $line1, $overlay1);
+		$line1 = nowPlayingModeLines($client, $line1);
 	}
 
 	return ($line1, $line2, $overlay1, $overlay2);
@@ -265,10 +265,6 @@ sub currentSongLines {
 
 sub nowPlayingModeLines {
 	my ($client,$line1,$overlay1) = @_;
-
-	unless (defined $overlay1) {
-		$overlay1 = '';
-	};
 
 	my $fractioncomplete   = 0;
 	my $playingDisplayMode = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
@@ -285,14 +281,14 @@ sub nowPlayingModeLines {
 
 	# check if we're streaming...
 	if (Slim::Music::Info::isHTTPURL(Slim::Player::Playlist::song($client)) &&
-	   !Slim::Utils::Prefs::get('showbufferfullness')) {
+	   !($playingDisplayMode == 6)) {
 
 		# no progress bar, remaining time is meaningless
 		$playingDisplayMode = ($playingDisplayMode % 3) ? 1 : 0;
 
 	} else {
 
-		if (Slim::Utils::Prefs::get('showbufferfullness')) {
+		if (Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {
 			$fractioncomplete = $client->usage();
 		} else {
 			$fractioncomplete = Slim::Player::Source::progress($client);
@@ -300,43 +296,61 @@ sub nowPlayingModeLines {
 	}
 
 	my $songtime = songTime($client, $playingDisplayMode);
+	my $usageLine = int($fractioncomplete * 100 + 0.5)."%";
 
 	my $line1LineLength = Slim::Hardware::VFD::lineLength($line1);
 	my $songLineLength  = Slim::Hardware::VFD::lineLength($songtime);
-	my $overlay1Length  = Slim::Hardware::VFD::lineLength($overlay1);
+	my $usageLineLength = Slim::Hardware::VFD::lineLength($usageLine);
 
+	if ( $playingDisplayMode == 6) {
+		if (!Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {
+			$playingDisplayMode = 1; #sanity check.  revert to showing nothign is showbufferfullnes has been turned off.
+		} else {
+			# show both the usage bar and numberical usage
+			my $barlen = $displayColumns - $line1LineLength - $usageLineLength - 1;
+			my $bar    = Slim::Display::Display::progressBar($client, $barlen, $fractioncomplete);
+	
+			my $barLineLength = Slim::Hardware::VFD::lineLength($bar);
+	
+			$line1 .= " " x $displayColumns;
+			$line1  = Slim::Hardware::VFD::subString(
+				$line1, 0, $displayColumns - $barLineLength - $usageLineLength - 1
+			) . $bar . " " . $usageLine;
+		}
+	}
+	
 	if ($playingDisplayMode == 1 || $playingDisplayMode == 2) {
 
 		# just show the song time
 		$line1 .= " " x $displayColumns;
 		$line1  = Slim::Hardware::VFD::subString(
-			$line1, 0, $displayColumns - $songLineLength - $overlay1Length
+			$line1, 0, $displayColumns - $songLineLength
 		) . $songtime;
 
 	} elsif ($playingDisplayMode == 3) {
 
 		# just show the bar
-		my $barlen = $displayColumns - $line1LineLength - $overlay1Length;
-		my $bar    = Slim::Display::Display::progressBar($client, $barlen, $fractioncomplete);	
+		my $barlen = $displayColumns - $line1LineLength;
+		my $bar    = Slim::Display::Display::progressBar($client, $barlen, $fractioncomplete);
 
 		$line1 .= " " x $displayColumns;
-		$line1  = Slim::Hardware::VFD::subString($line1, 0, $displayColumns - $barlen - $overlay1Length) . $bar;
+		$line1  = Slim::Hardware::VFD::subString($line1, 0, $displayColumns - $barlen) . $bar;
 
 	} elsif ($playingDisplayMode == 4 || $playingDisplayMode == 5) {
 
 		# show both the bar and the time
-		my $barlen = $displayColumns - $line1LineLength - $songLineLength - 1 - $overlay1Length;
-		my $bar    = Slim::Display::Display::progressBar($client, $barlen, $fractioncomplete);	
+		my $barlen = $displayColumns - $line1LineLength - $songLineLength - 1;
+		my $bar    = Slim::Display::Display::progressBar($client, $barlen, $fractioncomplete);
 
 		my $barLineLength = Slim::Hardware::VFD::lineLength($bar);
 
 		$line1 .= " " x $displayColumns;
 		$line1  = Slim::Hardware::VFD::subString(
-			$line1, 0, $displayColumns - $barLineLength - $songLineLength - 1 - $overlay1Length
+			$line1, 0, $displayColumns - $barLineLength - $songLineLength - 1
 		) . $bar . " " . $songtime;
 	}
 
-	return ($line1,$overlay1);
+	return $line1;
 }
 
 sub songTime {

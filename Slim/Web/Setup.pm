@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.86 2004/06/25 00:53:34 dean Exp $
+# $Id: Setup.pm,v 1.87 2004/07/07 03:38:18 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -136,7 +136,13 @@ sub initSetupConfig {
 					$pageref->{'Prefs'}{'titleFormatCurr'}{'validateArgs'} = [0,$titleFormatMax,1,1];
 					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [$client->defaultName()];
 					removeExtraArrayEntries($client,'titleFormat',$paramref,$pageref);
-					
+					if (Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {
+					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'options'}{'6'} =  string('SETUP_SHOWBUFFERFULLNESS');
+					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,6,1,1];
+					} else {
+						delete $pageref->{'Prefs'}{'playingDisplayMode'}{'options'}{'6'};
+					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,5,1,1];
+					}
 					$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = Slim::Utils::Misc::findbin('lame') ? string('SETUP_LAME_FOUND') : string('SETUP_LAME_NOT_FOUND');
 					
 					if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0))  {
@@ -159,6 +165,13 @@ sub initSetupConfig {
 					$paramref->{'ipaddress'} = $client->ipport();
 					$paramref->{'macaddress'} = $client->macaddress;
 					$paramref->{'signalstrength'} = $client->signalStrength;
+					if (Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {
+					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'options'}{'6'} =  string('SETUP_SHOWBUFFERFULLNESS');
+					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,6,1,1];
+					} else {
+						delete $pageref->{'Prefs'}{'playingDisplayMode'}{'options'}{'6'};
+					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,5,1,1];
+					}
 					if (Slim::Player::Client::clientCount() > 1 ) {
 						$pageref->{'Prefs'}{'synchronize'}{'options'} = syncGroups($client);
 						if (!exists($paramref->{'synchronize'})) {
@@ -176,7 +189,7 @@ sub initSetupConfig {
 		#,'template' => 'setup_player.html'
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['playername','playingDisplayMode']
+					'PrefOrder' => ['playername','playingDisplayMode','showbufferfullness']
 				}
 			,'Format' => {
 					'PrefOrder' => ['lame','maxBitrate']
@@ -250,7 +263,7 @@ sub initSetupConfig {
 						}
 			,'playingDisplayMode' 	=> {
 							'validate' => \&validateInt
-							,'validateArgs' => [0,5,1,1]
+							,'validateArgs' => [0,6,1,1]
 							,'options' => {
 									'0' => string('BLANK')
 									,'1' => string('ELAPSED')
@@ -258,8 +271,16 @@ sub initSetupConfig {
 									,'3' => string('PROGRESS_BAR')
 									,'4' => string('ELAPSED') . ' ' . string('AND') . ' ' . string('PROGRESS_BAR')
 									,'5' => string('REMAINING') . ' ' . string('AND') . ' ' . string('PROGRESS_BAR')
+									,'6' => string('SETUP_SHOWBUFFERFULLNESS')
 									}
 						}
+			,'showbufferfullness' => {
+						'validate' => \&validateTrueFalse
+						,'options' => {
+								'0' => string('SETUP_SHOWBUFFERFULLNESS_DISABLED')
+								,'1' => string('SETUP_SHOWBUFFERFULLNESS_ENABLED')
+								}
+					}
 			,'synchronize' => {
 							'dontSet' => 1
 							,'options' => {} #filled by preEval
@@ -1422,7 +1443,7 @@ sub initSetupConfig {
 			'Default' => {
 					'PrefOrder' => ['usetagdatabase','wipecache','templatecache','useplaylistcache',
 									# 'animationLevel',
-									'lookForArtwork','buildItemsPerPass','showbufferfullness']
+									'lookForArtwork','buildItemsPerPass']
 				}
 			}
 		,'Prefs' => {
@@ -1463,13 +1484,6 @@ sub initSetupConfig {
 			,'buildItemsPerPass' => {
 						'validate' => \&validateInt
 						}
-			,'showbufferfullness' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'0' => string('SETUP_SHOWBUFFERFULLNESS_DISABLED')
-								,'1' => string('SETUP_SHOWBUFFERFULLNESS_ENABLED')
-								}
-					}
 			}
 		} #end of setup{'performance'} hash
 	,'network' => {

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.75 2004/07/01 05:10:32 dean Exp $
+# $Id: Prefs.pm,v 1.76 2004/07/07 03:38:18 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -142,7 +142,6 @@ my %DEFAULT = (
 	,'ignoreDirRE'          => ''
 	,'checkVersion'			=> 1
 	,'mDNSname'				=> 'SlimServer'
-	,'showbufferfullness'   => 0
 	,'titleFormat'			=> ['TITLE',
 		'DISC-TRACKNUM. TITLE',
 		'TRACKNUM. TITLE',
@@ -198,6 +197,7 @@ my %DEFAULT = (
 			,'scrollPause'			=> 3.6
 			,'scrollRate'			=> 0.15
 			,'shuffle'				=> 0
+			,'showbufferfullness'   => 0
 			,'silent'				=> 0
 			,'syncPower'			=> 0
 			,'syncVolume'			=> 0
