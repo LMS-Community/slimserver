@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.22 2003/08/30 15:40:48 kdf Exp $
+# $Id: HTTP.pm,v 1.23 2003/09/03 08:54:06 fm Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -29,6 +29,7 @@ use Slim::Web::Olson;
 use Slim::Utils::OSDetect;
 use Slim::Web::Pages;
 use Slim::Utils::Strings qw(string);
+use Slim::Web::EditPlaylist;
 
 BEGIN {
  		if ($^O =~ /Win32/) {
@@ -1004,6 +1005,7 @@ $pageFunctions{qr/olsondetail\.(?:htm|xml)/} = \&Slim::Web::Olson::olsondetail;
 $pageFunctions{qr/songinfo\.(?:htm|xml)/} = \&Slim::Web::Pages::songinfo;
 $pageFunctions{qr/search\.(?:htm|xml)/} = \&Slim::Web::Pages::search;
 $pageFunctions{qr/status_header\.(?:htm|xml)/} = \&Slim::Web::Pages::status;
+$pageFunctions{qr/edit_playlist\.(?:htm|xml)/} = \&Slim::Web::EditPlaylist::editplaylist;  # Needs to be before playlist
 $pageFunctions{qr/playlist\.(?:htm|xml)/} = \&Slim::Web::Pages::playlist;
 
 

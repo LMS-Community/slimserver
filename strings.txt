@@ -5221,3 +5221,24 @@ STATISTICS
 	NO	Statistikk
 	PT	Estatísticas
 	SE	Statistik
+
+SLIM_PLAYLIST_EDITOR
+	DE	SLIM Playlist Editor
+	EN	SLIM Playlist Editor
+
+UP
+	DE	Rauf
+	EN	Up
+
+DOWN
+	DE	Runter
+	EN	Down
+
+EDIT
+	DE	Editieren
+	EN	Edit
+
+URL
+	DE	URL
+	EN	URL
+
