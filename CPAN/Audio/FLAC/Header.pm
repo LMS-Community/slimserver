@@ -115,7 +115,7 @@ sub new_PP {
 			return $self;
 		};
 
-		# Parse cuesheet
+		# Parse seekpoint table
 		$errflag = $self->_parseSeekTable();
 		if ($errflag < 0) {
 			warn "[$file] Problem parsing seekpoint table!";
