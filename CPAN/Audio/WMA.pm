@@ -3,7 +3,7 @@ package Audio::WMA;
 use strict;
 use vars qw($VERSION);
 
-$VERSION = '0.01';
+$VERSION = '0.2';
 
 my %guidMapping   = _knownGUIDs();
 my %reversedGUIDs = reverse %guidMapping;
@@ -28,7 +28,7 @@ sub new {
 	$self->{'filename'}   = $file;
 	$self->{'fileHandle'} = \*FILE;
 	$self->{'offset'}     = 0;
-	$self->{'size'} = -s $file;
+	$self->{'size'}	      = -s $file;
 
 	$self->_parseWMAHeader();
 
@@ -84,7 +84,7 @@ sub _denull {
 sub _parseWMAHeader {
 	my $self = shift;
 
-	my $fh		= $self->{'fileHandle'};
+	my $fh		  = $self->{'fileHandle'};
 
 	read($fh, my $headerObjectData, 30) or return -1;
 
@@ -125,7 +125,8 @@ sub _parseWMAHeader {
 			print "nextObjectSize: [" . $nextObjectSize . "]\n";
 		}
         
-        if (defined($nextObjectGUIDName)) {
+        	if (defined($nextObjectGUIDName)) {
+
 			# start the different header types parsing              
 			if ($nextObjectGUIDName eq 'GETID3_ASF_File_Properties_Object') {
 	
