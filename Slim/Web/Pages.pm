@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.15 2003/10/11 01:49:55 kdf Exp $
+# $Id: Pages.pm,v 1.16 2003/10/12 19:43:57 kdf Exp $
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -335,6 +335,7 @@ sub browser_addtolist_done {
 			$list_form{'itempath'}  = Slim::Utils::Misc::virtualToAbsolute($item);
 			$list_form{'odd'}	  	= ($itemnumber + $offset) % 2;
 			$list_form{'player'}	= $current_player;
+			$list_form{'mixable_not_descend'} = Slim::Music::Info::isSongMixable($item);
 			addStats($paramsref, [],[],[],[]);
  						
 			my $anchor = anchor($list_form{'title'},1);
@@ -727,6 +728,7 @@ sub addsonginfo {
 		$$paramsref{'year'} = Slim::Music::Info::year($song);
 		$$paramsref{'type'} = string(uc(Slim::Music::Info::contentType($song)));
 		$$paramsref{'tagversion'} = Slim::Music::Info::tagVersion($song);
+		$$paramsref{'mixable'} = Slim::Music::Info::isSongMixable($song);
 		
 		my ($body, $type) =  Slim::Music::Info::coverArt($song,'cover');
 		if (defined($body)) { $$paramsref{'coverart'} = 1; }
@@ -1259,11 +1261,13 @@ sub mood_wheel {
                 my %list_form=();
                 $list_form{'mood'} = $item;
                 $list_form{'genre'} = $genre;
-		$list_form{'artist'}  = $artist;
-		$list_form{'album'} = $album;
-		$list_form{'player'} = $player;
-		$list_form{'odd'} = ($itemnumber + 1) % 2;
-		$itemnumber++;
+                $list_form{'artist'}  = $artist;
+                $list_form{'album'} = $album;
+                $list_form{'player'} = $player;
+                $list_form{'itempath'} = $item; 
+                $list_form{'item'} = $item; 
+                $list_form{'odd'} = ($itemnumber + 1) % 2;
+                $itemnumber++;
                 $$paramsref{'mood_list'} .= &Slim::Web::HTTP::filltemplatefile("mood_wheel_list.html", \%list_form);
 	}
         
@@ -1311,6 +1315,12 @@ sub instant_mix {
         
 	foreach my $item ( @items ) {
                 my %list_form=();
+                $list_form{'artist'} = $artist;
+                $list_form{'album'} = $album;
+                $list_form{'genre'} = $genre;
+                $list_form{'player'} = $player;
+                $list_form{'itempath'} = $item; 
+                $list_form{'item'} = $item; 
                 $list_form{'title'} = Slim::Music::Info::infoFormat($item, 'TITLE (ARTIST)', 'TITLE');
 		$list_form{'odd'} = ($itemnumber + 1) % 2;
 		$itemnumber++;
