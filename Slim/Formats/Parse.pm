@@ -180,13 +180,15 @@ sub parseCUE {
 			 /^\s+INDEX\s+01\s+(\d+):(\d+):(\d+)/i) {
 			$tracks{$currtrack}->{'START'} = ($1 * 60) + $2 + ($3 / 75);
 		} elsif (defined $currtrack and
-			 /^\s+END\s+01\s+(\d+):(\d+):(\d+)/i) {
+			 /^\s*REM\s+END\s+(\d+):(\d+):(\d+)/i) {
 			$tracks{$currtrack}->{'END'} = ($1 * 60) + $2 + ($3 / 75);
 		}
 	}
 
 	# calc song ending times from start of next song from end to beginning.
-	my $lastpos = Slim::Music::Info::durationSeconds($filename);
+	my $lastpos = (defined $tracks{$currtrack}->{'END'}) 
+		? $tracks{$currtrack}->{'END'} 
+		: Slim::Music::Info::durationSeconds($filename);
 	foreach my $key (sort {$b <=> $a} keys %tracks) {
 		my $track = $tracks{$key};
 		if (!defined $track->{'END'}) {$track->{'END'} = $lastpos};
