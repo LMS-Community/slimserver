@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.50 2004/01/13 18:05:53 dean Exp $
+# $Id: Info.pm,v 1.51 2004/01/14 00:11:29 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2091,7 +2091,7 @@ sub readCoverArt {
 			if ($contenttype && $contenttype eq 'image/jpeg')	{
 				$body =~ s/^.*?\xff\xd8\xff\xe0/\xff\xd8\xff\xe0/;
 			}
-			$cover = $filepath;
+			$cover = $fullpath;
 		} else {
 			my @components = splitdir($file);
 			if (!isDir($file)) {
