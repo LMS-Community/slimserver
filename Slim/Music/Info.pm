@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.168 2004/12/17 20:33:04 dsully Exp $
+# $Id: Info.pm,v 1.169 2004/12/17 22:33:00 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -352,7 +352,7 @@ sub cacheItem {
 
 	$::d_info_v && Slim::Utils::Misc::msg("CacheItem called for item $item in $url\n");
 
-	my $track = $currentDB->objectForUrl($url, 0);
+	my $track = $currentDB->objectForUrl($url, 0) || return undef;
 
 	if ($item eq 'ALBUM') {
 		return $track->album()->title();
