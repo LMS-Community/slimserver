@@ -91,8 +91,20 @@ sub _init {
 	read $fh, $apetest, 8 or return -1;
 
 	if ($apetest ne APEHEADERFLAG) {
-		# OK, there's no APE tag here.  Try at the beginning
-		# of the file.
+		# OK, there's no APE tag here.  
+		# If there was ID3V1, try again at the end, as a sanity check
+
+		if ($id3chk eq ID3V1FLAG) {
+			seek $fh, -(APEHEADFOOT), 2;
+			read $fh, $apetest, 8 or return -1;
+
+			if ($apetest eq APEHEADERFLAG) {
+				$self->{'APETagLoc'} = (tell $fh)-8;
+				return 0;
+			}
+		}
+		
+		# Try at the beginning of the file.
 		seek $fh, 0, 0;
 		read $fh, $apetest, 8 or return -1;
 
@@ -125,7 +137,7 @@ sub _init {
 			}
 		} else {
 			# Proper tags haven't been found, so warn and return an error
-			warn "header not found, tags corrupt or not a supported version";
+			warn "header not found, ID3 tags corrupt";
 			return -1;
 		}
 	}
