@@ -80,7 +80,7 @@ sub init {
 		LocalAddr => $main::localClientNetAddr
 
 	) or do {
-		msg("Problem: There is already another copy of the SlimServer running on this machine.\n");
+		msg("Problem: There is already another copy of the SlimServer running on this machine. ($!)\n");
 		# XXX - exiting in a deep sub is kinda bad. should propagate
 		# up. Too bad perl doesn't have real exceptions.
 		exit 1;
