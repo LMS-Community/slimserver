@@ -1617,7 +1617,8 @@ sub _fillInSearchResults {
 	my $player = $params->{'player'};
 	my $query  = $params->{'query'}  || '';
 	my $type   = $params->{'type'}   || 'track';
-
+	$params->{'type'} = $type;
+	
 	my $otherParams = 'player=' . Slim::Web::HTTP::escape($player) . 
 			  '&type=' . ($type ? $type : ''). 
 			  '&query=' . Slim::Web::HTTP::escape($query) . '&' .
@@ -1687,8 +1688,7 @@ sub _fillInSearchResults {
 			$list_form{'includeAlbum'}     = ($webFormat !~ /ALBUM/) ;
 
 			if ($type eq 'track') {
-
-				$list_form{'title'}    = Slim::Music::Info::standardTitle(undef, $item);
+				$list_form{'text'}    = Slim::Music::Info::standardTitle(undef, $item);
 				$list_form{'artist'}   = $item->artist();
 				$list_form{'album'}    = $item->album();
 				$list_form{'item'}     = $item->id();
@@ -1696,14 +1696,13 @@ sub _fillInSearchResults {
 
 			} else {
 
-				$list_form{'title'} = $title;
+				$list_form{'text'} = $title;
 			}
 
 			$list_form{'itemobj'}      = $item;
 			$list_form{'attributes'}   = '&' . join('=', $type, $item->id());
 			$list_form{'hierarchy'}	   = $hierarchy{$type};
 			$list_form{'level'}        = 0;
-			$list_form{'text'}         = $title;
 			$list_form{'descend'}      = $descend;
 			$list_form{'player'}       = $player;
 			$list_form{'odd'}          = ($itemnumber + 1) % 2;

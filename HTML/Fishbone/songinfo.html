@@ -37,7 +37,7 @@
 			<td>
 
 			[% FOREACH contributor = contributors.sort %]
-				<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% contributor.id %]&amp;player=[% player | uri %]" target="browser">[% contributor.name | html %]</a>
+				<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% contributor.id %]&amp;player=[% player | uri %]" target="browser">[% contributor.name | html %]</a>
 			[% END %]
 
 			</td>
@@ -52,7 +52,7 @@
 				[% "ALBUM" | string; "COLON" | string %]
 			</td>
 			<td>
-				<a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&amp;player=[% player | uri %]" target="browser">[% track.album.title %]</a>
+				<a href="browsedb.html?hierarchy=album,track&level=1&album=[% track.album.id %]&amp;player=[% player | uri %]" target="browser">[% track.album.title %]</a>
 			</td>
 		</tr>
 	[% END %]
@@ -207,7 +207,8 @@
 				[% "COVERART" | string; "COLON" | string %]
 			</td>
 			<td>
-				<a href="/music/[% track.id %]/cover.jpg" target="cover"><img src="/music/[% track.id %]/cover.jpg"></a>
+				<a href="/music/[% track.id %]/cover.jpg" target="cover" width="100%")><img src="/music/[% track.id %]/cover.jpg"></a>
+				<br>(click image for full size)
 			</td>
 		</tr>
 	</table>
