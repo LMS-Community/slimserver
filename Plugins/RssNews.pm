@@ -1,5 +1,5 @@
 # RssNews Ticker v1.0
-# $Id: RssNews.pm,v 1.7 2004/11/15 17:59:27 dave Exp $
+# $Id: RssNews.pm,v 1.8 2004/11/23 18:15:36 dave Exp $
 # Copyright (c) 2004 Slim Devices, Inc. (www.slimdevices.com)
 
 # Based on BBCTicker 1.3 which had this copyright...
@@ -85,7 +85,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Prefs;
 
-$VERSION = substr(q$Revision: 1.7 $,10);
+$VERSION = substr(q$Revision: 1.8 $,10);
 my %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
@@ -371,7 +371,11 @@ sub getFeedXml {
     
     if ($response->is_success && $response->content) {
         my $xml;
-        eval '$xml = XMLin($response->content, "ForceArray" => ["item"])';
+		# forcearray to treat items as array,
+		# keyattr => [] prevents id attrs from overriding
+        eval {$xml = XMLin($response->content,
+						   forcearray => ["item"],
+						   keyattr => [])};
         if ($@) {
             return 0;  
         }
@@ -803,7 +807,8 @@ sub mainModeCallback {
         my $feedname = $feed_order[$listIndex];
         
         retrieveNews($client, $feedname);
-        if ($thenews{$feedname} &&
+		
+		if ($thenews{$feedname} &&
 			$thenews{$feedname}->{title} &&
 			@{$thenews{$feedname}->{item}}) {
             Slim::Buttons::Common::pushModeLeft($client, 
