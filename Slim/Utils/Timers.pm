@@ -154,14 +154,18 @@ sub killTimers {
 	my $killed = 0;
 	my $timer;
 	
-	while ($timer = $timers[$i]) {
-		if (($timer->{'client'} eq $client) && ($timer->{'subptr'} eq $subptr)) {
-			splice( @timers, $i, 1);
-			$killed++;
-		} else {
-			$i++;
+	if (defined($client) && defined($subptr)) {
+
+		while ($timer = $timers[$i]) {
+			if (($timer->{'client'} eq $client) && ($timer->{'subptr'} eq $subptr)) {
+				splice( @timers, $i, 1);
+				$killed++;
+			} else {
+				$i++;
+			}
 		}
 	}
+
 	return $killed;
 }
 
