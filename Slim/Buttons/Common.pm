@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.34 2004/07/22 02:03:46 kdf Exp $
+# $Id: Common.pm,v 1.35 2004/07/23 06:27:08 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -790,33 +790,7 @@ sub scroll_original {
 
 # DEPRECATED: Use INPUT.Time mode instead
 sub scrollTime {
-	my $client = shift;
-	my $dir = shift;
-	my $time = shift || 0;
-	my $c = shift;
-	
-	my ($h0, $h1, $m0, $m1, $p) = timeDigits($client,$time);
-	my $h = $h0 * 10 + $h1;
-	
-	if ($c == 0) {$c++;};
-	if ($p && $h == 12) { $h = 0 };
-	
-	$p = ($p && $p eq 'PM') ? 1 : 0;
-	
-	if ($c == 1) {
-	   $h = Slim::Buttons::Common::scroll($client, $dir, ($p == 1) ? 12 : 24, $h);
-	   #change AM and PM if we scroll past midnight or noon boundary
-	   if (Slim::Utils::Prefs::get('timeFormat') =~ /%p/) {
-	   	if (($h == 0 && $dir == 1)||($h == 11 && $dir == -1)) { $p = Slim::Buttons::Common::scroll($client, +1, 2, $p); };
-		};
-	};
-	if ($c == 2) { $m0 = Slim::Buttons::Common::scroll($client, $dir, 6, $m0) };
-	if ($c == 3) { $m1 = Slim::Buttons::Common::scroll($client, $dir, 10, $m1)};
-	if ($c == 4) { $p = Slim::Buttons::Common::scroll($client, +1, 2, $p); }
-
-	$time = $h * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
-
-	return $time;
+	Slim::Buttons::Input::scrollTime(@_);
 }
 
 sub mixer {

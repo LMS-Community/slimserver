@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Time;
 
-# $Id: Time.pm,v 1.2 2004/07/22 02:03:47 kdf Exp $
+# $Id: Time.pm,v 1.3 2004/07/23 06:27:08 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -21,11 +21,11 @@ my %functions = (
 	#change character at cursorPos (both up and down)
 	'up' => sub {
 			my ($client,$funct,$functarg) = @_;
-			scrollTime($client,1);
+			scroll($client,1);
 		}
 	,'down' => sub {
 			my ($client,$funct,$functarg) = @_;
-			scrollTime($client,-1);
+			scroll($client,-1);
 		}
 	#moving one position to the left, exiting on leftmost position
 	,'left' => sub {
@@ -249,12 +249,25 @@ sub moveCursor {
 	return;
 }
 
+sub scroll {
+	my ($client,$dir) = @_;
+	my $time = scrollTime($client,$dir);
+	my $onChange = Slim::Buttons::Common::param($client,'onChange');
+	if (ref($onChange) eq 'CODE') {
+		my $onChangeArgs = Slim::Buttons::Common::param($client,'onChangeArgs');
+		my @args;
+		push @args, $client if $onChangeArgs =~ /c/i;
+		push @args, $time if $onChangeArgs =~ /v/i;
+		$onChange->(@args);
+	}
+	$client->update();
+}
+
 sub scrollTime {
-	my $client = shift;
-	my $dir = shift;
+	my ($client,$dir,$valueRef,$c) = @_;
 	
-	my $c = Slim::Buttons::Common::param($client,'cursorPos');
-	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
+	$c = Slim::Buttons::Common::param($client,'cursorPos') unless defined $c;
+	$valueRef = Slim::Buttons::Common::param($client,'valueRef') unless defined $valueRef;
 	
 	my ($h0, $h1, $m0, $m1, $p) = timeDigits($client,$valueRef);
 	my $h = $h0 * 10 + $h1;
@@ -283,15 +296,8 @@ sub scrollTime {
 
 	my $time = $h * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
 	Slim::Buttons::Common::param($client,'valueRef',$time);
-	my $onChange = Slim::Buttons::Common::param($client,'onChange');
-	if (ref($onChange) eq 'CODE') {
-		my $onChangeArgs = Slim::Buttons::Common::param($client,'onChangeArgs');
-		my @args;
-		push @args, $client if $onChangeArgs =~ /c/i;
-		push @args, $$valueRef if $onChangeArgs =~ /v/i;
-		$onChange->(@args);
-	}
-	$client->update();
+	
+	return $time;
 }
 
 
