@@ -123,10 +123,6 @@ sub get {
 
 			# defer thumb information until needed
 			$loader->updateCoverArt($self->SUPER::get('url'), 'thumb');
-
-		} elsif (!$self->SUPER::get('tag')) {
-
-			$loader->readTags($self);
 		}
 
 		$item = $self->SUPER::get($attr);

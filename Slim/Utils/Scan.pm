@@ -355,19 +355,12 @@ sub addToList_run {
 		push @$arrayref, $itempath;
 		$jobState->numitems($jobState->numitems+1);
 		
-		# force the loading of ID3 data. Getting the object isn't
-		# enough - getting the tag attribute will ensure that
-		# we've read from file.
+		# force the loading of tag data. the 3rd argument to
+		# objectForUrl tells it to read the tags.
 		my $ds = Slim::Music::Info::getCurrentDataStore();
 		my $track = $ds->objectForUrl($itempath, 1, 1);
-		#$track->tag if defined($track);
 
 		$ds->markEntryAsValid($itempath);
-
-		# Try not to kill the CPU - leave a little time for streaming
-		# This slows down the scan a bit too much - it'd be better to
-		# sleep every X items, or every X seconds. Disable for now.
-		# Time::HiRes::sleep(0.25);
 
 		return 1;
 	}

@@ -37,7 +37,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
 
 # Save the persistant DB cache on an interval
-use constant DB_SAVE_INTERVAL => 300;
+use constant DB_SAVE_INTERVAL => 30;
 
 # Entries in the database are assumed to be valid for approximately 5
 # minutes before we check date/time stamps again
@@ -379,13 +379,18 @@ sub newTrack {
 	
 	$::d_info && Slim::Utils::Misc::msg("New track for $url\n");
 
-	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($attributeHash, 1);
+	# We're not reading tags - url is remote, etc.
+	unless ($readTag) {
+		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($attributeHash, 1);
+	}
 
 	# Creating the track only wants lower case values from valid columns.
 	my $columnValueHash = { url => $url };
 
 	my $trackAttrs = Slim::DataStores::DBI::Track::attributes();
 
+	# Walk our list of valid attributes, and turn them into something
+	# ->create() can use.
 	while (my ($key, $val) = each %$attributeHash) {
 
 		if (defined $val && exists $trackAttrs->{lc $key}) {
@@ -396,15 +401,18 @@ sub newTrack {
 	# Create the track - or bail. We should probably spew an error.
 	my $track = Slim::DataStores::DBI::Track->create($columnValueHash) || return undef;
 
-	# Explictly read the tag, and call through to updateOrCreate again.
+	# Explictly read the tag, and start populating the database.
+	# If this is a new track - all $track has is a url -> $url mapping, and an id.
 	if ($readTag) {
 
-		$self->readTags($track);
+		$attributeHash = $self->readTags($track);
 
-	} else {
-
-		$self->_postCheckAttributes($track, $deferredAttributes, 1);
+		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($attributeHash, 1);
 	}
+
+	# Now that we've created the track, and possibly an album object -
+	# update genres, etc - that we need the track ID for.
+	$self->_postCheckAttributes($track, $deferredAttributes, 1);
 
 	$self->{'lastTrackURL'} = $url;
 	$self->{'lastTrack'}    = $track;
@@ -858,7 +866,7 @@ sub readTags {
 	# note that we've read in the tags.
 	$attributesHash->{'TAG'} = 1;
 	
-	return $self->updateOrCreate($track, $attributesHash);
+	return $attributesHash;
 }
 
 sub setAlbumArtwork {
@@ -880,7 +888,7 @@ sub setAlbumArtwork {
 
 		$::d_artwork && Slim::Utils::Misc::msg("Updating $album artwork cache: $filepath\n");
 
-		$self->{'artworkCache'}->{$album} = $filepath;
+		$self->{'artworkCache'}->{$contributors}->{$album} = $filepath;
 
 		my ($album) = Slim::DataStores::DBI::Album->search(
 			title => $album,
