@@ -92,15 +92,29 @@ sub defaultPlaylistDir {
 	my $path;
 
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
+
 		$path = $ENV{'HOME'} . '/Music/Playlists';
+
 	} elsif (Slim::Utils::OSDetect::OS() eq 'win') {
+
 		$path = $Bin . '/Playlists';
+
 	} else {
+
 		$path = '';
 	}
 
-	if ($path && !-d $path) {
-		mkpath($path) or Slim::Utils::Misc::msg("Couldn't create playlist path: $path - $!\n");
+	if ($path) {
+
+		# We've seen people have the defaultPlayListDir be a file. So
+		# change the path slightly to allow for that.
+		if (-f $path) {
+			$path .= 'SlimServer';
+		}
+
+		if (!-d $path) {
+			mkpath($path) or Slim::Utils::Misc::msg("Couldn't create playlist path: $path - $!\n");
+		}
 	}
 
 	return $path;
@@ -534,35 +548,51 @@ sub clientSet {
 }
 
 sub maxRate {
-	my $client = shift;
-	my $solorate = shift;
-	return 0 if (!$client);
-	my $rate = clientGet($client,'maxBitrate');
+	my $client   = shift || return 0;
+	my $soloRate = shift;
+
+	# The default for a new client will be undef.
+	my $rate     = clientGet($client, 'maxBitrate');
+
 	if (!defined $rate) {
+
 		# Possibly the first time this pref has been accessed
 		# if maxBitrate hasn't been set yet, allow wired squeezeboxen and ALL SB2's to default to no limit, others to 320kbps
-		$rate = ($client->isa("Slim::Player::Squeezebox2") 
-				|| ($client->isa("Slim::Player::Squeezebox") && !defined $client->signalStrength())) 
-				? 0 : 320;
+		if ($client->isa("Slim::Player::Squeezebox2")) {
+
+			$rate = 0;
+
+		} elsif ($client->isa("Slim::Player::Squeezebox") && !defined $client->signalStrength()) {
+
+			$rate = 0;
+
+		} else {
+
+			$rate = 320;
+		}
 	}
-	
+
 	# override the saved or default bitrate if a transcodeBitrate has been set via HTTP parameter
-	$rate = clientGet($client,'transcodeBitrate') || $rate;
+	$rate = clientGet($client, 'transcodeBitrate') || $rate;
+
+	$::d_source && Slim::Utils::Misc::msgf("Setting maxBitRate for %s to: %d\n", $client->name(), $rate);
 	
-	return $rate if ($solorate);
+	return $rate if $soloRate;
 	
 	# if we're the master, make sure we return the lowest common denominator bitrate.
 	my @playergroup = ($client, Slim::Player::Sync::syncedWith($client));
 	
 	for my $everyclient (@playergroup) {
+
 		next if Slim::Utils::Prefs::clientGet($everyclient,'silent');
+
 		my $otherRate = maxRate($everyclient, 1);
 		
-		#find the lowest bitrate limit of the sync group. Zero refers to no limit.
+		# find the lowest bitrate limit of the sync group. Zero refers to no limit.
 		$rate = ($otherRate && (($rate && $otherRate < $rate) || !$rate)) ? $otherRate : $rate;
 	}
 
-	#return lowest bitrate limit.
+	# return lowest bitrate limit.
 	return $rate;
 }
 
