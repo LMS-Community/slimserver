@@ -651,7 +651,7 @@ sub mixerFunction {
 	my @oldlines    = Slim::Display::Display::curLines($client);
 
 	my $ds          = Slim::Music::Info::getCurrentDataStore();
-	my @mix  = ();
+	my $mix;
 	
 	# if we've chosen a particular song
 	if (Slim::Buttons::BrowseID3::picked($genre) && 
@@ -663,7 +663,7 @@ sub mixerFunction {
 		if ($obj && $obj->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			@mix = getMix(Slim::Utils::Misc::pathFromFileURL($currentItem), 'song');
+			$mix = getMix(Slim::Utils::Misc::pathFromFileURL($currentItem), 'song');
 		}
 
 	# if we've picked an artist 
@@ -676,7 +676,7 @@ sub mixerFunction {
 		if ($obj && $obj->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			@mix = getMix($currentItem, 'artist');
+			$mix = getMix($currentItem, 'artist');
 		}
 
 	# if we've picked an album 
@@ -699,7 +699,7 @@ sub mixerFunction {
 				Slim::Utils::Misc::pathFromFileURL($obj->{'url'}) : 
 				"$artist\@\@$currentItem";
 				
-			@mix = getMix($key, 'album');
+			$mix = getMix($key, 'album');
 		}
 
 	} else {
@@ -710,40 +710,20 @@ sub mixerFunction {
 		if ($obj && $obj->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			@mix = getMix($currentItem, 'genre');
+			$mix = getMix($currentItem, 'genre');
 		}
 	}
 
-	if (scalar @mix) {
+	if (defined $mix && scalar @$mix) {
 		my %params = (
-			'listRef' => \@mix,
-	
-			'externRef' => sub {
-				my $client = shift;
-				my $string = shift;
-	
-				return Slim::Music::Info::standardTitle($client,$string);
-			},
-			'externRefArgs' => 'CV',
-			'stringExternRef' => 1,
-	
-			'onChange' => sub {
-				my ($client, $value) = @_;
-				my $curMenu = Slim::Buttons::Common::param($client,'curMenu');
-				$client->curSelection($curMenu,$value);
-			},
-			'onChangeArgs' => 'CV',
-			
+			'listRef' => $mix,
+			'externRef' => \&Slim::Music::Info::standardTitle,
 			'header' => 'MUSICMAGIC_MIX',
 			'headerAddCount' => 1,
 			'stringHeader' => 1,
-			
 			'callback' => \&mixExitHandler,
-	
 			'overlayRef' => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
-	
 			'overlayRefArgs' => '',
-			'valueRef' => undef,
 			'parentMode' => 'musicmagic_mix',
 		);
 		
