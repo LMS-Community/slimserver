@@ -43,6 +43,11 @@ sub init {
 				return $obj->title;
 			},
 
+			'resultToSortedName' => sub {
+				my $obj = shift;
+				return $obj->titlesort;
+			},
+
 			'find' => sub {
 				my $ds = shift;
 				my $level = shift;
@@ -108,6 +113,11 @@ sub init {
 				return $obj->name;
 			},
 
+			'resultToSortedName' => sub {
+				my $obj = shift;
+				return $obj->namesort;
+			},
+
 			'find' => sub {
 				my $ds = shift;
 				my $level = shift;
@@ -152,6 +162,11 @@ sub init {
 				return $obj->title;
 			},
 
+			'resultToSortedName' => sub {
+				my $obj = shift;
+				return $obj->titlesort;
+			},
+
 			'find' => sub {
 				my $ds = shift;
 				my $level = shift;
@@ -187,6 +202,11 @@ sub init {
 			'resultToName' => sub {
 				my $obj = shift;
 				return $obj->title;
+			},
+
+			'resultToSortedName' => sub {
+				my $obj = shift;
+				return $obj->titlesort;
 			},
 
 			'find' => sub {
@@ -248,6 +268,11 @@ sub init {
 				return $obj->name;
 			},
 
+			'resultToSortedName' => sub {
+				my $obj = shift;
+				return $obj->namesort;
+			},
+
 			'find' => sub {
 				my $ds = shift;
 				my $level = shift;
@@ -290,6 +315,11 @@ sub init {
 				return $obj;
 			},
 
+			'resultToSortedName' => sub {
+				my $obj = shift;
+				return $obj;
+			},
+
 			'find' => sub {
 				my $ds = shift;
 				my $level = shift;
@@ -318,6 +348,7 @@ sub init {
 			'idToName' => sub { my $ds = shift; return shift },
 			'resultToId' => sub { return shift },
 			'resultToName' => sub { return shift },
+			'resultToSortedName' => sub { return shift },
 
 			'find' => sub { 
 				my $ds = shift;
@@ -1789,7 +1820,7 @@ sub browsedb {
 
 		} elsif ($alpha) {
 			
-			my $alphaitems = [ map &{$levelInfo->{'resultToName'}}($_), @$items ];
+			my $alphaitems = [ map &{$levelInfo->{'resultToSortedName'}}($_), @$items ];
 
 			($start, $end) = alphaPageBar(
 				$alphaitems,
