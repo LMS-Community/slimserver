@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DataModel;
 
-# $Id: DataModel.pm,v 1.11 2005/01/06 08:29:15 vidur Exp $
+# $Id: DataModel.pm,v 1.12 2005/01/06 20:50:24 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -339,10 +339,10 @@ my %tableSort = (
 # the arcs describing the relationship.
 my %joinGraph = (
 	'genres' => {
-		'genre_track' => 'genres.id = genre_tracks.genre',
+		'genre_track' => 'genres.id = genre_track.genre',
 	},		 
 	'genre_track' => {
-		'genres' => 'genres.id = genre_tracks.genre',
+		'genres' => 'genres.id = genre_track.genre',
 		'contributor_track' => 'genre_track.track = contributor_track.track',
 		'tracks' => 'genre_track.track = tracks.id',
 	},
@@ -383,7 +383,7 @@ my %queryPath = (
 	'contributor:contributor' => ['contributor_track', 'contributors'],
 	'contributor:default' => ['contributor_track', 'tracks'],
 	'album:album' => ['albums', 'tracks'],
-	'album:genre' => ['albums', 'tracks', 'genre_track', 'genre'],
+	'album:genre' => ['albums', 'tracks', 'genre_track', 'genres'],
 	'album:contributor' => ['albums', 'tracks', 'contributor_track', 'contributors'],
 	'album:default' => ['albums', 'tracks'],
 	'default:album' => ['tracks', 'albums'],

@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.115 2005/01/06 03:44:02 dsully Exp $
+# $Id: Pages.pm,v 1.116 2005/01/06 20:50:24 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1186,7 +1186,7 @@ sub search {
 
 		my $results = $ds->search($params->{'type'}, searchStringSplit($query));
 
-		_searchArtistOrAlbum($player, $params, undef, 1, $results, $otherparams);
+		_searchArtistOrAlbum($player, $params, $results, $otherparams);
 
 	} elsif ($params->{'type'} eq 'song') {
 
@@ -1258,7 +1258,7 @@ sub search {
 }
 
 sub _searchArtistOrAlbum {
-	my ($player, $params, $artist, $album, $searchresults, $otherparams) = @_;
+	my ($player, $params, $searchresults, $otherparams) = @_;
 
 	$params->{'numresults'} = scalar @$searchresults;
 
@@ -1295,7 +1295,7 @@ sub _searchArtistOrAlbum {
 			);
 		}
 
-		#
+		# 
 		for my $item (@$searchresults[$start..$end]) {
 
 			# Contributor/Artist uses name, Album uses title.
@@ -1303,8 +1303,8 @@ sub _searchArtistOrAlbum {
 			my %list_form = %$params;
 
 			$list_form{'genre'}	   = '*';
-			$list_form{'artist'}       = $artist ? $title : '*';
-			$list_form{'album'}	   = $album  ? $title : '';
+			$list_form{'artist'}       = $params->{'type'} eq 'artist' ? $title : '*';
+			$list_form{'album'}        = $params->{'type'} eq 'album'  ? $title : '';
 			$list_form{'song'}	   = '';
 			$list_form{'title'}        = $title;
 			$list_form{'descend'}      = $descend;
@@ -1553,6 +1553,8 @@ sub browsedb {
 	my $hierarchy = $params->{'hierarchy'} || "genre";
 	my $level     = $params->{'level'} || 0;
 	my $player    = $params->{'player'};
+
+	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
 
 	my @levels = split(",", $hierarchy);
 
@@ -1819,10 +1821,12 @@ sub browseid3 {
 		'level'  => 0,
 	};
 
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
 	# Turn the browseid3 params into something browsedb can use.
 	for my $category (keys %categories) {
 
-		next unless defined $params->{$category};
+		next unless $params->{$category};
 
 		$find->{ $categories{$category} } = $params->{$category};
 	}
@@ -1837,6 +1841,10 @@ sub browseid3 {
 		} elsif ($find->{$category} eq '*') {
 
 			delete $find->{$category};
+
+		} elsif ($find->{$category}) {
+
+			$find->{$category} = (@{$ds->search($category, [$find->{$category}])})[0];
 		}
 	}
 
