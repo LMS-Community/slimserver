@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.174 2005/01/08 04:13:01 kdf Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -33,16 +33,16 @@ use Slim::Utils::Text;
 
 # three hashes containing the types we know about, populated by the loadTypesConfig routine below
 # hash of default mime type index by three letter content type e.g. 'mp3' => audio/mpeg
-%Slim::Music::Info::types = ();
+our %types = ();
 
 # hash of three letter content type, indexed by mime type e.g. 'text/plain' => 'txt'
-%Slim::Music::Info::mimeTypes = ();
+our %mimeTypes = ();
 
 # hash of three letter content types, indexed by file suffixes (past the dot)  'aiff' => 'aif'
-%Slim::Music::Info::suffixes = ();
+our %suffixes = ();
 
 # hash of types that the slim server recoginzes internally e.g. aif => audio
-%Slim::Music::Info::slimTypes = ();
+our %slimTypes = ();
 
 # Global caches:
 
@@ -143,22 +143,22 @@ sub loadTypesConfig {
 					
 					foreach my $suffix (@suffixes) {
 						next if ($suffix eq '-');
-						$Slim::Music::Info::suffixes{$suffix} = $type;
+						$suffixes{$suffix} = $type;
 					}
 					
 					foreach my $mimeType (@mimeTypes) {
 						next if ($mimeType eq '-');
-						$Slim::Music::Info::mimeTypes{$mimeType} = $type;
+						$mimeTypes{$mimeType} = $type;
 					}
 
 					foreach my $slimType (@slimTypes) {
 						next if ($slimType eq '-');
-						$Slim::Music::Info::slimTypes{$type} = $slimType;
+						$slimTypes{$type} = $slimType;
 					}
 					
 					# the first one is the default
 					if ($mimeTypes[0] ne '-') {
-						$Slim::Music::Info::types{$type} = $mimeTypes[0];
+						$types{$type} = $mimeTypes[0];
 					}				
 				}
 			}
@@ -166,7 +166,6 @@ sub loadTypesConfig {
 		}
 	}
 }
-
 
 sub clearCache {
 	my $item = shift;
@@ -446,10 +445,10 @@ sub setContentType {
 	
 	$type = lc($type);
 	
-	if ($Slim::Music::Info::types{$type}) {
+	if ($types{$type}) {
 		# we got it
-	} elsif ($Slim::Music::Info::mimeTypes{$type}) {
-		$type = $Slim::Music::Info::mimeTypes{$type};
+	} elsif ($mimeTypes{$type}) {
+		$type = $mimeTypes{$type};
 	} else {
 		my $guessedtype = typeFromPath($url);
 		if ($guessedtype ne 'unk') {
@@ -1074,7 +1073,7 @@ sub coverArt {
 	my $image;
 
 	# return with nothing if this isn't a file.  We dont need to search on streams, for example.
-	if (! Slim::Utils::Prefs::get('lookForArtwork') || ! Slim::Music::Info::isSong($file)) { return undef};
+	if (! Slim::Utils::Prefs::get('lookForArtwork') || ! isSong($file)) { return undef};
 	
 	$::d_artwork && Slim::Utils::Misc::msg("Retrieving artwork ($art) for: $file\n");
 	
@@ -1111,8 +1110,10 @@ sub cachedPlaylist {
 
 	my $song = $currentDB->objectForUrl($url, 0) || return undef;
 
+	# We want any PlayListTracks this item may have
 	my @urls = map { $_->url } $song->tracks();
 
+	# Otherwise, we're actually a directory.
 	if (!scalar @urls) {
 		@urls = $song->diritems();
 	}
@@ -1130,13 +1131,15 @@ sub cachePlaylist {
 	my $song = $currentDB->objectForUrl($url, 1);
 
 	if (scalar(@$list) && isURL($list->[0])) {
-		my @tracks = map { $currentDB->objectForUrl($_, 1); } @$list;
-		$song->setTracks(@tracks);
+
+		$song->setTracks(map { $currentDB->objectForUrl($_, 1); } @$list);
+
 	} else {
+
 		$song->setDirItems(@$list);
 	}
 
-	$age = Time::HiRes::time() unless defined $age;
+	$age = time() unless defined $age;
 
 	$song->timestamp($age);
 	$currentDB->updateTrack($song);
@@ -1832,7 +1835,7 @@ sub isFile {
 	return 0 if (isURL($fullpath));
 	
 	# check against types.conf
-	return 0 unless $Slim::Music::Info::suffixes{ (split /\./, $fullpath)[-1] };
+	return 0 unless $suffixes{ (split /\./, $fullpath)[-1] };
 
 	my $stat = (-f $fullpath && -r $fullpath ? 1 : 0);
 
@@ -1923,7 +1926,7 @@ sub isSong {
 
 	$type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj, 1) unless defined $type;
 
-	if ($type && $Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} eq 'audio') {
+	if ($type && $slimTypes{$type} && $slimTypes{$type} eq 'audio') {
 		return $type;
 	}
 }
@@ -1964,7 +1967,7 @@ sub isList {
 
 	$type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj, 1) unless defined $type;
 
-	if ($type && $Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} =~ /list/) {
+	if ($type && $slimTypes{$type} && $slimTypes{$type} =~ /list/) {
 		return $type;
 	}
 }
@@ -1975,7 +1978,7 @@ sub isPlaylist {
 
 	$type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj, 1) unless defined $type;
 
-	if ($type && $Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} eq 'playlist') {
+	if ($type && $slimTypes{$type} && $slimTypes{$type} eq 'playlist') {
 		return $type;
 	}
 }
@@ -2036,8 +2039,8 @@ sub mimeType {
 
 	my $contentType = contentType($file);
 
-	foreach my $mt (keys %Slim::Music::Info::mimeTypes) {
-		if ($contentType eq $Slim::Music::Info::mimeTypes{ $mt }) {
+	foreach my $mt (keys %mimeTypes) {
+		if ($contentType eq $mimeTypes{$mt}) {
 			return $mt;
 		}
 	}
@@ -2053,7 +2056,7 @@ sub typeFromSuffix {
 	my $defaultType = shift || 'unk';
 	
 	if (defined $path && $path =~ /\.([^.]+)$/) {
-		return $Slim::Music::Info::suffixes{lc($1)};
+		return $suffixes{lc($1)};
 	}
 
 	return $defaultType;
@@ -2065,10 +2068,15 @@ sub typeFromPath {
 	my $type;
 
 	if (defined($fullpath) && $fullpath ne "" && $fullpath !~ /\x00/) {
+
 		if (isRemoteURL($fullpath)) {
+
 			$type = typeFromSuffix($fullpath, $defaultType);
-		} elsif ( $fullpath =~ /^([a-z]+:)/ && defined($Slim::Music::Info::suffixes{$1})) {
-			$type = $Slim::Music::Info::suffixes{$1};
+
+		} elsif ($fullpath =~ /^([a-z]+:)/ && defined($suffixes{$1})) {
+
+			$type = $suffixes{$1};
+
 		} else {
 			my $filepath;
 
@@ -2081,19 +2089,25 @@ sub typeFromPath {
 
 #			$filepath = Slim::Utils::Misc::fixPath($filepath);
 			if (defined($filepath) && $filepath ne "") {
+
 				if (-f $filepath) {
+
 					if ($filepath =~ /\.lnk$/i && Slim::Utils::OSDetect::OS() eq 'win') {
 						require Win32::Shortcut;
 						if ((Win32::Shortcut->new($filepath)) ? 1 : 0) {
 							$type = 'lnk';
 						}
+
 					} else {
 						$type = typeFromSuffix($filepath, $defaultType);
 					}
+
 				} elsif (-d $filepath) {
+
 					$type = 'dir';
+
 				} else {
-					#file doesn't exist, go ahead and do typeFromSuffix
+					# file doesn't exist, go ahead and do typeFromSuffix
 					$type = typeFromSuffix($filepath, $defaultType);
 				}
 			}

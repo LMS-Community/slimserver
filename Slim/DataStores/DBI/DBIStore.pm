@@ -965,7 +965,9 @@ sub _preCheckAttributes {
 	if (my $artist = $attributes->{'ARTIST'}) {
 
 		$deferredAttributes->{'ARTIST'} = $artist;
-		$deferredAttributes->{'ARTISTSORT'} = $attributes->{'ARTISTSORT'};
+
+		# Always normalize the sort, as ARTISTSORT could come from a TSOP tag.
+		$deferredAttributes->{'ARTISTSORT'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ARTISTSORT'});
 		delete $attributes->{'ARTIST'};
 	}
 
@@ -977,7 +979,7 @@ sub _preCheckAttributes {
 
 	if ($album) {
 
-		my $sortable_title = $attributes->{'ALBUMSORT'} || Slim::Utils::Text::ignoreCaseArticles($album);
+		my $sortable_title = $attributes->{'ALBUMSORT'} || $album;
 
 		my $disc  = $attributes->{'DISC'};
 		my $discc = $attributes->{'DISCC'};
@@ -986,7 +988,8 @@ sub _preCheckAttributes {
 			title => $album,
 		});
 
-		$albumObj->titlesort($sortable_title) if $sortable_title;
+		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
+		$albumObj->titlesort(Slim::Utils::Text::ignoreCaseArticles($sortable_title)) if $sortable_title;
 		$albumObj->disc($disc) if $disc;
 		$albumObj->discc($discc) if $discc;
 		$albumObj->update();
@@ -1002,8 +1005,11 @@ sub _preCheckAttributes {
 	delete $attributes->{'DISCC'};
 
 	if ($attributes->{'TITLE'} && !$attributes->{'TITLESORT'}) {
-		$attributes->{'TITLESORT'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'TITLE'});
+		$attributes->{'TITLESORT'} = $attributes->{'TITLE'};
 	}
+
+	# Always normalize the sort, as TITLESORT could come from a TSOT tag.
+	$attributes->{'TITLESORT'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'TITLESORT'});
 	
 	return ($attributes, $deferredAttributes);
 }
