@@ -1185,33 +1185,49 @@ sub initSetupConfig {
 		,'parent' => 'server'
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
+
 				Slim::Buttons::Plugins::addSetupGroups();
+
 				my $i = 0;
 				my %plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 				my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
-				foreach my $plugin (sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}}(keys %{$pluginlistref})) {
+
+print "first:";
+Slim::Utils::Misc::msg("");
+				foreach my $plugin (sort {string($pluginlistref->{$a}) cmp string($pluginlistref->{$b})}(keys %{$pluginlistref})) {
+Slim::Utils::Misc::msg("");
+
 					if (exists $paramref->{"pluginlist$i"} && $paramref->{"pluginlist$i"} == (exists $plugins{$plugin} ? 0 : 1)) {
 						delete $paramref->{"pluginlist$i"};
 					}
+
 					$i++;
 				}
+
 				$pageref->{'Prefs'}{'pluginlist'}{'arrayMax'} = $i - 1;
 			}
 		,'postChange' => sub {
 				my ($client,$paramref,$pageref) = @_;
 				my $i = 0;
 				my %plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
+
 				Slim::Utils::Prefs::delete('disabledplugins');
+
 				my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
-				foreach my $plugin (sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}}(keys %{$pluginlistref})) {
+
+				foreach my $plugin (sort {string($pluginlistref->{$a}) cmp string($pluginlistref->{$b})}(keys %{$pluginlistref})) {
+
 					if (!exists $paramref->{"pluginlist$i"}) {
 						$paramref->{"pluginlist$i"} = exists $plugins{$plugin} ? 0 : 1;
 					}
+
 					unless ($paramref->{"pluginlist$i"}) {
 						Slim::Utils::Prefs::push('disabledplugins',$plugin);
 					}
+
 					$i++;
 				}
+
 				foreach my $group (Slim::Utils::Prefs::getArray('disabledplugins')) {
 					delGroup('plugins',$group,1);
 				}
@@ -2914,19 +2930,25 @@ sub addGroup {
 # Deletes a group from a category and optionally the associated preferences
 sub delGroup {
 	my ($category,$groupname,$andPrefs) = @_;
+	
 	unless (exists $setup{$category}) {
 		warn "Category $category does not exist\n";
 		return;
 	}
+	
 	my @preflist;
+	
 	if (exists $setup{$category}{'Groups'}{$groupname} && $andPrefs) {
 		#hold on to preferences for later deletion
 		@preflist = @{$setup{$category}{'Groups'}{$groupname}{'PrefOrder'}};
 	}
+	
 	#remove from Groups hash
 	delete $setup{$category}{'Groups'}{$groupname};
+	
 	#remove from GroupOrder array
 	my $i=0;
+	
 	for my $currgroup (@{$setup{$category}{'GroupOrder'}}) {
 		if ($currgroup eq $groupname) {
 			splice (@{$setup{$category}{'GroupOrder'}},$i,1);
@@ -2934,12 +2956,14 @@ sub delGroup {
 		}
 		$i++;
 	}
+	
 	#delete associated preferences if requested
 	if ($andPrefs) {
 		for my $pref (@preflist) {
 			delPref($category,$pref);
 		}
 	}
+	
 	return;
 }
 
