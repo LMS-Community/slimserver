@@ -1928,7 +1928,8 @@ sub initSetupConfig {
 						'validate' => \&validatePort
 					}
 			,'webproxy'	=> {
-						'validate' => \&validateIPPort
+						'validate' => \&validateHostNameOrIPAndPort,
+						'PrefSize' => 'large'
 					}
 			,'mDNSname'	=> {
 							'validateArgs' => [] #will be set by preEval
@@ -3045,17 +3046,41 @@ sub validatePort {
 	if ($val !~ /^-?\d+$/) { #not an integer
 		return undef;
 	}
+
 	if ($val == 0) {
 		return $val;
 	}
+
 	if ($val < 1024) {
 		return undef;
 	}
+
 	if ($val > 65535) {
 		return undef;
 	}
-	return $val;
 
+	return $val;
+}
+
+sub validateHostNameOrIPAndPort {
+	my $val = shift || return undef;
+
+	# If we're just an IP:Port - hand off
+	if ($val =~ /^[\d\.:]+$/) {
+		return validateIPPort($val);
+	}
+
+	my ($host, $port) = split /:/, $val;
+
+	# port is bogus - return here.
+	unless (validatePort($port)) {
+		return undef;
+	}
+
+	# Otherwise - try to make sure it has at least valid chars
+	return undef if $host !~ /^[\w\d\._-]+$/;
+
+        return $val;
 }
 
 sub validateIPPort {
