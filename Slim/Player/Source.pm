@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.102 2004/06/15 05:45:04 dean Exp $
+# $Id: Source.pm,v 1.103 2004/06/17 22:22:26 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -259,6 +259,10 @@ sub playmode {
 		return _returnPlayMode($client);
 	}
 
+	if ($newmode eq "play" && $prevmode eq "pause") {
+		$newmode = "resume";
+	}
+	
 	# This function is likely doing too much.
 	if ($newmode eq "pause" && $client->rate != 1) {
 		$newmode = "pausenow";
