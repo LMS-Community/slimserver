@@ -1,4 +1,4 @@
-# $Id: Picks.pm,v 1.4 2004/12/07 20:19:43 dsully Exp $
+# $Id: Picks.pm,v 1.5 2004/12/23 07:28:57 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -232,12 +232,15 @@ PLUGIN_PICKS_MODULE_NAME
 	EN	Slim Devices Picks
 
 PLUGIN_PICKS_LOADING_PICKS
+	DE	Lade Slim Devices Picks...
 	EN	Loading Slim Devices Picks...
 
 PLUGIN_PICKS_STATION
+	DE	Sender
 	EN	Station
 
 PLUGIN_PICKS_LOADING_ERROR
+	DE	Fehler beim Laden der Slim Devices Picks
 	EN	Error loading Slim Devices Picks
 ";}
 

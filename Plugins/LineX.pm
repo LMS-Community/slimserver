@@ -34,7 +34,7 @@ use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.2 $,10);
+$VERSION = substr(q$Revision: 1.3 $,10);
 
 # ----------------------------------------------------------------------------
 sub getDisplayName {
@@ -44,45 +44,59 @@ sub getDisplayName {
 # ----------------------------------------------------------------------------
 sub strings { return '
 PLUGIN_SCREENSAVER_LINEX
+	DE	LineX Bildschirmschoner
 	EN	LineX Screensaver
 
 PLUGIN_SCREENSAVER_LINEX_SETTINGS
+	DE	LineX Bildschirmschoner Einstellungen
 	EN	LineX Screensaver settings
 
 PLUGIN_SCREENSAVER_LINEX_ACTIVATE
+	DE	Diesen Bildschirmschoner wählen
 	EN	Select Current Screensaver
 
 PLUGIN_SCREENSAVER_LINEX_ACTIVATE_TITLE
+	DE	Aktuellen Bildschirmschoner
 	EN	Current Screensaver
 
 PLUGIN_SCREENSAVER_LINEX_ACTIVATED
+	DE	LineX als Bildschirmschoner verwenden
 	EN	Use LineX as current screensaver
 
 PLUGIN_SCREENSAVER_LINEX_DEFAULT
+	DE	Standard Bildschirmschoner verwenden (nicht LineX)
 	EN	Use default screensaver (not LineX)
 
 PLUGIN_SCREENSAVER_LINEX_NUMBER
+	DE	Anzahl Objekte wählen
 	EN	Select number of objects
 
 PLUGIN_SCREENSAVER_LINEX_NUMBER_TITLE
+	DE	LineX Bildschirmschoner: Anzahl wählen
 	EN	LineX Screensaver: Select number
 
 PLUGIN_SCREENSAVER_LINEX_OBJECT
+	DE	Objekttyp wählen
 	EN	Select type of object
 
 PLUGIN_SCREENSAVER_LINEX_OBJECT_TITLE
+	DE	LineX Bildschirmschoner: Objekttyp wählen
 	EN	LineX Screensaver: Select type
 
 PLUGIN_SCREENSAVER_LINEX_OBJECT_LINE
+	DE	Linie
 	EN	Line
 
 PLUGIN_SCREENSAVER_LINEX_OBJECT_RECTANGLE
+	DE	Rechteck
 	EN	Rectangle
 
 PLUGIN_SCREENSAVER_LINEX_OBJECT_RANDOM
+	DE	Zufällig
 	EN	Random
 
 PLUGIN_SCREENSAVER_LINEX_NEEDS_GRAPHICS_DISPLAY
+	DE	Benötigt graphisches Display
 	EN	Needs graphics display
 
 '};

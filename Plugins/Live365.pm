@@ -1490,168 +1490,221 @@ PLUGIN_LIVE365_MODULE_NAME
 	EN	Live365 Internet Radio
 
 PLUGIN_LIVE365_LOGOUT
+	DE	Abmelden
 	EN	Log out
 
 PLUGIN_LIVE365_LOGIN
+	DE	Anmelden
 	EN	Log in
 
 PLUGIN_LIVE365_NOT_LOGGED_IN
+	DE	Nicht bei Live365 angemeldet
 	EN	Not logged in to Live365
 
 PLUGIN_LIVE365_NO_CREDENTIALS
+	DE	Keine Live365 Anmeldeinformationen
 	EN	No Live365 account information
 
 PLUGIN_LIVE365_LOGIN_SUCCESS
+	DE	Erfolgreich
 	EN	Successful
 
 PLUGIN_LIVE365_LOGIN_ERROR_NAME
+	DE	Problem mit Anmeldenamen
 	EN	Member name problem
 
 PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
+	DE	Problem beim Anmelden
 	EN	Login problem
 
 PLUGIN_LIVE365_LOGIN_ERROR_ACTION
+	DE	Unbekannter Vorgang
 	EN	Unknown action
 
 PLUGIN_LIVE365_LOGIN_ERROR_ORGANIZATION
+	DE	Unbekannte Organisation
 	EN	Unknown organization
 
 PLUGIN_LIVE365_LOGIN_ERROR_SESSION
+	DE	Sitzung abgelaufen. Bitte neu anmelden.
 	EN	Session no longer valid. Log in again.
 
 PLUGIN_LIVE365_LOGIN_ERROR_HTTP
+	DE	Problem mit Live365 Website. Bitte neu versuchen.
 	EN	Live365 website error, try again
 
 PLUGIN_LIVE365_LOADING_GENRES
+	DE	Genre-Liste wird von Live365 geladen...
 	EN	Loading genre list from Live365...
 
 PLUGIN_LIVE365_LOADING_GENRES_ERROR
+	DE	Fehler beim Laden der Genre-Liste. Bitte neu versuchen.
 	EN	Error loading genres, try again
 
 PLUGIN_LIVE365_PRESETS
+	DE	Meine Voreinstellungen
 	EN	My presets
 
 PLUGIN_LIVE365_BROWSEGENRES
+	DE	Musikstile durchsuchen
 	EN	Browse genres
 
 PLUGIN_LIVE365_BROWSEALL
+	DE	Alle Stationen durchsuchen (viele)
 	EN	Browse all stations (many)
 
 PLUGIN_LIVE365_BROWSEPICKS
+	DE	Editor Picks durchsuchen
 	EN	Browse editor picks
 
 PLUGIN_LIVE365_BROWSEPROS
+	DE	Professionelle Stationen durchsuchen
 	EN	Browse professional stations
 
 PLUGIN_LIVE365_SEARCH
+	DE	Live365 durchsuchen
 	EN	Search Live365
 
 PLUGIN_LIVE365_SEARCHPROMPT
+	DE	Live365 durchsuchen nach:
 	EN	Search Live365:
 
 PLUGIN_LIVE365_LOADING_DIRECTORY
+	DE	Lade...
 	EN	Loading...
 
 PLUGIN_LIVE365_NOSTATIONS
+	DE	Keine Station gefunden
 	EN	No stations found
 
 PLUGIN_LIVE365_LOADING_INFORMATION
+	DE	Senderinformation wird geladen...
 	EN	Loading channel information...
 
 PLUGIN_LIVE365_DESCRIPTION
+	DE	Sender Beschreibung
 	EN	Station Description
 
 PLUGIN_LIVE365_STATION_LISTENERS_ACTIVE
+	DE	Aktive Zuhörer
 	EN	Active listeners
 
 PLUGIN_LIVE365_STATION_LISTENERS_MAX
+	DE	Maximale Anzahl Zuhörer
 	EN	Maximum listeners
 
 PLUGIN_LIVE365_LISTENER_ACCESS
+	DE	Zuhörer Zugang
 	EN	Listener access
 
 PLUGIN_LIVE365_STATION_QUALITY_LEVEL
+	DE	Sender Qualität
 	EN	Station quality
 
 PLUGIN_LIVE365_STATION_CONNECTION
+	DE	Bandbreite
 	EN	Bandwidth
 
 PLUGIN_LIVE365_STATION_CODEC
 	EN	Codec
 
 PLUGIN_LIVE365_ERROR
+	DE	Live365 Fehler
 	EN	Live365 ERROR
 
 PLUGIN_LIVE365_SEARCH_TAC
+	DE	Nach Interpret/Song/Album suchen
 	EN	Search Artists/Tracks/CDs
 
 PLUGIN_LIVE365_SEARCH_A
+	DE	Suche Interpret
 	EN	Search Artists
 
 PLUGIN_LIVE365_SEARCH_T
+	DE	Suche Song
 	EN	Search Tracks
 
 PLUGIN_LIVE365_SEARCH_C
+	DE	Suche Album
 	EN	Search Albums
 
 PLUGIN_LIVE365_SEARCH_E
+	DE	Nach Sender suchen
 	EN	Search Stations
 
 PLUGIN_LIVE365_SEARCH_L
+	DE	Nach Region suchen
 	EN	Search Locations
 
 PLUGIN_LIVE365_SEARCH_H
+	DE	Nach Broadcaster suchen
 	EN	Search Broadcasters
 
 SETUP_GROUP_PLUGIN_LIVE365
 	EN	Live365 Internet Radio
 
 SETUP_GROUP_PLUGIN_LIVE365_DESC
+	DE	Suche und höre Live365 Radiostationen
 	EN	Search, browse, and tune Live365 stations
 
 SETUP_PLUGIN_LIVE365_USERNAME
+	DE	Live365 Benutzername
 	EN	Live365 Username
 
 SETUP_PLUGIN_LIVE365_USERNAME_DESC
+	DE	Ihr Live365 Benutzername, besuche live365.com zum Einschreiben
 	EN	Your Live365 username, visit live365.com to sign up
 
 SETUP_PLUGIN_LIVE365_PASSWORD
+	DE	Live365 Passwort
 	EN	Live365 Password
 
 SETUP_PLUGIN_LIVE365_PASSWORD_DESC
+	DE	Dein Live365 Passwort
 	EN	Your Live365 password
 
 SETUP_PLUGIN_LIVE365_PASSWORD_CHANGED
+	DE	Dein Live365 Passwort wurde geändert
 	EN	Your Live365 password has been changed
 
 SETUP_PLUGIN_LIVE365_SORT_ORDER
+	DE	Spalten sortieren
 	EN	Sort columns
 
 SETUP_PLUGIN_LIVE365_SORT_ORDER_DESC
+	DE	Sortierreihenfolge der Sender definieren
 	EN	Define the sort order of stations
 
 SETUP_PLUGIN_LIVE365_SORT_TITLE
+	DE	Sender Sortierung
 	EN	Station title
 
 SETUP_PLUGIN_LIVE365_SORT_BPS
+	DE	Sender Bitrate
 	EN	Station bitrate
 
 SETUP_PLUGIN_LIVE365_SORT_RATING
+	DE	Sender Beurteilung
 	EN	Station rating
 
 SETUP_PLUGIN_LIVE365_SORT_LISTENERS
+	DE	Anzahl Hörer
 	EN	Number of listeners
 
 PLUGIN_LIVE365_GENRES
+	DE	Live365 Musikstile
 	EN	Live365 genres
 
 PLUGIN_LIVE365_STATIONS
+	DE	Live365 Sender
 	EN	Live365 stations
 
 PLUGIN_LIVE365_POPULAR
+	DE	Populär
 	EN	Popular
 
 PLUGIN_LIVE365_RECENT
+	DE	Kürzlich gehört
 	EN	Recent
 
 __END__

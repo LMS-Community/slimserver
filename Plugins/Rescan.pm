@@ -1,6 +1,6 @@
 # Rescan.pm by Andrew Hedges (andrew@hedges.me.uk) October 2002
 # Timer functions added by Kevin Deane-Freeman (kevindf@shaw.ca) June 2004
-# $Id: Rescan.pm,v 1.9 2004/12/07 20:19:43 dsully Exp $
+# $Id: Rescan.pm,v 1.10 2004/12/23 07:28:57 dsully Exp $
 
 # This code is derived from code with the following copyright message:
 #
@@ -20,7 +20,7 @@ use Slim::Control::Command;
 use Time::HiRes;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.9 $,10);
+$VERSION = substr(q$Revision: 1.10 $,10);
 
 my $interval = 1; # check every x seconds
 my @browseMenuChoices;
@@ -258,26 +258,34 @@ PLUGIN_RESCAN_RESCANNING
 	FR	En cours...
 
 PLUGIN_RESCAN_PRESS_PLAY
+	DE	Drücke Play, um Durchsuchen zu starten
 	EN	Press PLAY to rescan now.
 
 PLUGIN_RESCAN_TIMER_NAME
+	DE	Automatisches Durchsuchen 
 	EN	Rescan Timer
 
 PLUGIN_RESCAN_TIMER_SET
+	DE	Startzeit für erneutes Durchsuchen
 	EN	Set Rescan Time
 
 PLUGIN_RESCAN_TIMER_TURNING_OFF
+	DE	Automatisches Durchsuchen deaktivieren...
 	EN	Turning rescan timer off...
 
 PLUGIN_RESCAN_TIMER_TURNING_ON
+	DE	Automatisches Durchsuchen aktivieren...
 	EN	Turning rescan timer on...
 
 PLUGIN_RESCAN_TIMER_ON
+	DE	Automatisches Durchsuchen EIN
 	EN	Rescan Timer ON
 
 PLUGIN_RESCAN_TIMER_DESC
+	DE	Sie können ihre Musiksammlung automatisch alle 24h durchsuchen lassen. Setzen Sie den Zeitpunkt, und schalten Sie die Automatik ein oder aus.
 	EN	You can choose to allow a scheduled rescan of your music library every 24 hours.  Set the time, and set the Rescan Timer to ON to use this feature.
 
 PLUGIN_RESCAN_TIMER_OFF
+	DE	Automatisches Durchsuchen AUS
 	EN	Rescan Timer OFF
 

@@ -1,5 +1,5 @@
 # RssNews Ticker v1.0
-# $Id: RssNews.pm,v 1.16 2004/12/18 04:56:43 kdf Exp $
+# $Id: RssNews.pm,v 1.17 2004/12/23 07:28:57 dsully Exp $
 # Copyright (c) 2004 Slim Devices, Inc. (www.slimdevices.com)
 
 # Based on BBCTicker 1.3 which had this copyright...
@@ -91,7 +91,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Prefs;
 
-$VERSION = substr(q$Revision: 1.16 $,10);
+$VERSION = substr(q$Revision: 1.17 $,10);
 my %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
@@ -108,18 +108,23 @@ PLUGIN_RSSNEWS
 	EN	RSS News Ticker
 	
 PLUGIN_RSSNEWS_ADD_NEW
+	DE	Neuer Newsfeed -->
 	EN	Add new feed -->
 	
 PLUGIN_RSSNEWS_WAIT
+	DE	Bitte warten...
 	EN	Please wait requesting...
 
 PLUGIN_RSSNEWS_ERROR
+	DE	Fehler beim Laden des RSS Feeds
 	EN	Failed to retrieve RSS feed
 
 PLUGIN_RSSNEWS_NO_DESCRIPTION
+	DE	Keine Beschreibung verfügbar
 	EN	Description not available
 
 PLUGIN_RSSNEWS_NO_TITLE
+	DE	Kein Titel verfübar
 	EN	Title not available
 
 PLUGIN_RSSNEWS_SCREENSAVER
@@ -129,66 +134,85 @@ PLUGIN_RSSNEWS_NAME
 	EN	RSS News Ticker
 
 PLUGIN_RSSNEWS_SCREENSAVER_SETTINGS
+	DE	RSS News Bildschirmschoner Einstellunge
 	EN	RSS News Screensaver Settings
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE
+	DE	Diesen Bildschirmschoner wählen
 	EN	Select Current Screensaver
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE_TITLE
+	DE	Dieser Bildschirmschoner
 	EN	Current Screensaver
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATED
+	DE	RSS News als Bildschirmschoner verwenden
 	EN	Use RSS News as current screensaver
 
 PLUGIN_RSSNEWS_SCREENSAVER_DEFAULT
+	DE	Standard Bildschirmschoner verwenden (nicht RSS News)
 	EN	Use default screensaver (not RSS News)
 
 PLUGIN_RSSNEWS_SCREENSAVER_ENABLE
+	DE	Newsticker als Bildschirmschoner verwenden
 	EN	Activating ticker as current screensaver
 
 PLUGIN_RSSNEWS_SCREENSAVER_DISABLE
+	DE	Standard Bildschirmschoner wird verwendet
 	EN	Returning to default screensaver
 
 PLUGIN_RSSNEWS_ERROR_IN_FEED
+	DE	Fehler beim Parsen dess RSS Feeds
 	EN	Error parsing RSS feed
 
 PLUGIN_RSSNEWS_LOADING_FEED
+	DE	RSS Feed wird geladen...
 	EN	Loading RSS feed...
 
 SETUP_GROUP_PLUGIN_RSSNEWS
 	EN	RSS News Ticker
 
 SETUP_GROUP_PLUGIN_RSSNEWS_DESC
+	DE	Das RSS News Ticker Plugin kann verwendet werden, um RSS Feeds zu durchsuchen und lesen. Die folgenden Einstellungen helfen ihnen beim Definieren der anzuzeigenden RSS Feeds, und wie diese dargestellt werden sollen. Klicken Sie auf Ändern, um die Änderungen zu aktivieren.
 	EN	The RSS News Ticker plugin can be used to browse and display items from RSS Feeds. The preferences below can be used to determine which RSS Feeds to use and control how they are displayed. Click on the Change button when you are done.
 
 SETUP_PLUGIN_RSSNEWS_FEEDS
+	DE	RSS Feeds ändern
 	EN	Modify RSS feeds
 
 SETUP_PLUGIN_RSSNEWS_FEEDS_DESC
+	DE	Dies ist die Liste der anzuzeigenden RSS Feeds. Um einen neuen zu abonnieren, tippen Sie einfach dessen URL in eine leere Zeile. Um einen Feed zu entfernen, löschen Sie dessen URL. Bestehende URLs können im entsprechenden Feld bearbeitet werden. Klicken Sie auf Ändern, um die Änderungen zu aktivieren.
 	EN	This is the list of RSS Feeds to display. To add a new one, just type its URL into the empty line. To remove one, simply delete the URL from the corresponding line. To change the URL of an existing feed, edit its text value. Click on the Change button when you are done.
 
 SETUP_PLUGIN_RSSNEWS_RESET
+	DE	Standard Feeds wieder herstellen
 	EN	Reset default RSS feeds
 
 SETUP_PLUGIN_RSSNEWS_RESET_DESC
+	DE	Klicken Sie auf den Reset Knopf, um die Standard RSS Feeds zu reaktivieren.
 	EN	Click the Reset button to revert to the default set of RSS Feeds.
 
 PLUGIN_RSSNEWS_RESETTING
+	DE	RSS Feeds wurden auf Standardwerte zurückgesetzt.
 	EN	Resetting to default RSS Feeds.
 
 SETUP_PLUGIN_RSSNEWS_RESET_BUTTON
 	EN	Reset
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED
+	DE	Anzahl Einträge pro Feed
 	EN	Items displayed per channel
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
+	DE	Definieren Sie die Anzahl Einträge, die im Bildschirmschonermodus pro Feed angezeigt werden sollen. Eine grössere Anzahl hat zur Folge, dass mehr Einträge angezeigt werden, bevor der nächste Feed angezeigt wird.
 	EN	The maximum number of items displayed for each feed while the screensaver is active. A larger value implies that the screensaver will display more items before switching to the next feed.
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_CHOOSE
+	DE	Einträge pro Feed
 	EN	Items per channel
 
 SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE
+	DE	RSS Feed Liste wurde geändert.
 	EN	RSS Feeds list changed.
 !};
 

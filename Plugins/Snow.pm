@@ -1,6 +1,6 @@
 package Plugins::Snow;
 
-# $Id: Snow.pm,v 1.15 2004/12/07 20:19:46 dsully Exp $
+# $Id: Snow.pm,v 1.16 2004/12/23 07:28:58 dsully Exp $
 # by Phil Barrett, December 2003
 # screensaver conversion by Kevin Deane-Freeman Dec 2003
 
@@ -22,7 +22,7 @@ use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.15 $,10);
+$VERSION = substr(q$Revision: 1.16 $,10);
 
 sub getDisplayName {
 	return 'PLUGIN_SCREENSAVER_SNOW';
@@ -143,13 +143,15 @@ PLUGIN_SCREENSAVER_SNOW_WORD_2
 	EN	AND A VERY
 
 PLUGIN_SCREENSAVER_SNOW_WORD_3
-	DE	NEUES JAHR!
+	DE	GLÜCKLICHES
 	EN	HAPPY
 
 PLUGIN_SCREENSAVER_SNOW_WORD_4
+	de	NEUES JAHR!
 	EN	NEW YEAR !
 
 PLUGIN_SCREENSAVER_SNOW_SORRY
+	DE	Sorry, Schnee funktioniert auf diesem Gerät nicht.
 	EN	Sorry, Snow doesn\'t work with this player.
 '};
 
