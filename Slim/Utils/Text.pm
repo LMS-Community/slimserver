@@ -35,7 +35,16 @@ sub matchCase {
 		{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAAABBCCDEEEEIIIINOOOOOOUUUUXYAAAAAABCEEEEIIIINOOOOOOUUUUYYD!o};
 
 	# Turn Æ & æ into AE
-	$s =~ s/[\x{C6}\x{E6}]/AE/go;
+	# Silence perl 5.6 stupidity.
+	if ($] < 5.007) {
+
+		use utf8;
+		$s =~ s/[\x{C6}\x{E6}]/AE/go;
+
+	} else {
+
+		$s =~ s/[\x{C6}\x{E6}]/AE/go;
+	}
 
 	return $s;
 }
