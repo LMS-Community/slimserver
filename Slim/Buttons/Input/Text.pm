@@ -305,8 +305,6 @@ sub init {
 		} else {
 			Slim::Buttons::Common::param($client,'charsRef',\@UpperChars);
 		}
-	} else {
-		Slim::Buttons::Common::param($client,'charsRef',\@UpperChars);
 	}
 	$charsRef = Slim::Buttons::Common::param($client,'charsRef');
 	cleanArray($charsRef);
