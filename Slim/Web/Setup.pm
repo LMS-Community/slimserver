@@ -124,14 +124,8 @@ sub initSetupConfig {
 							$pageref->{'Prefs'}{'idlesaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
 							$pageref->{'Prefs'}{'offsaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
 						}
-						if (Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {
-							$pageref->{'Prefs'}{'playingDisplayMode'}{'options'}{'6'} =  string('SETUP_SHOWBUFFERFULLNESS');
-							$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,6,1,1];
-						} else {
-							delete $pageref->{'Prefs'}{'playingDisplayMode'}{'options'}{'6'};
-							$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,5,1,1];
-						}
-					} else {
+						$pageref->{'Prefs'}{'playingDisplayMode'}{'options'} = $client->playingModeOptions();
+						$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,scalar($pageref->{'Prefs'}{'playingDisplayMode'}{'options'}),1,1];					} else {
 						$pageref->{'GroupOrder'} = ['Default','TitleFormats'];
 					}
 					
@@ -212,7 +206,7 @@ sub initSetupConfig {
 						}
 			,'playingDisplayMode' 	=> {
 							'validate' => \&validateInt
-							,'validateArgs' => [0,6,1,1]
+							,'validateArgs' => undef
 							,'options' => undef
 							,'PrefChoose' => string('SETUP_PLAYINGDISPLAYMODE').string('COLON')
 							,'onChange'   => sub { shift->update(); }
