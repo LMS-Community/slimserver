@@ -1,6 +1,184 @@
-<h2><a name="v6.0.0" id="v6.0.0"></a>Version 6.0.0</h2>
+<h2><a name="v6.0a1" id="v6.0a1"></a>Version 6.0a1 - 2005-2-23</h2>
 <ul>
-	<li>Coming Soon!
+	<li>Usability & Features:<p>
+		<ul>
+			<li>Added a Browse by New Music to the web UI.
+			<li>Extracting Conductor, Composer and Band metadata.
+			<li>Comments are available and searchable.
+			<li>Fixed the "Greatest Hits" problem - multiple albums with the same name.
+			<li>Files removed from disk are deleted from the database on a rescan.
+			<li>Combined Artist, Album & Track search into one interface.
+			<li>Standard Search results are "live" - no submit button needed.
+			<li>Added Advanced Search - for complex queries.
+			<li>The Add button will clear the playlist if you hold or just press it.
+		</ul>
+	<br>
+
+	<li>Integration:<p>
+		<ul> 
+			<li>Addition of MusicMagic Mixer integration.
+			<li>Improved MoodLogic & iTunes importers.
+		</ul>
+	<br>
+
+	<li>Internationalization & Translations:<p>
+		<ul>
+			<li>Full UTF-8 server support.
+			<li>Japanese translation (Thanks Ken!) - available in the Web UI only.
+			<li>Updates to:<p>
+				<ul>
+					<li>German  - Michael
+					<li>Spanish - Nestor
+					<li>Swedish - Peter
+				</ul>
+		</ul>
+	<br>
+
+	<li>Performance & Memory usage:<p>
+		<ul>
+			<li>MP3 scanning has been optimized even more.
+			<li>Memory footprint reduced considerably, and stays constant even with large (100k track) libraries.
+		</ul>
+	<br>
+
+	<li>Platform Support:<p>
+		<ul>
+			<li>Added binary modules for Debian Woody (stable) & SuSe i586
+			<li>Windows binaries use perl 5.8.6 - previously was 5.8.3
+		</ul>
+	<br>
+
+	<li>File Formats:<p>
+		<ul>
+			<li>FLAC / Cuesheets - Improved support for internal & external cuesheets.
+			<li>Apple lossless files may have a binary tag for genre.
+			<li>Monkey's Audio support (Currently Windows only)
+		</ul>
+	<br>
+
+	<li>Backend Database:<p>
+		<ul>
+			<li>Massively improved library scanning speed & resource consumption.
+			<li>Fast and complex searching ability.
+		</ul>
+	<br>
+
+	<li>Developer API changes:<p>
+		<ul>
+			<li>New DataStores API - allowing access to the backend database, 
+			  and other plugable data stores. This replaces most of the old Info API.
+
+			<li>Add non-blocking HTTP requests. This will allow requests to
+			  external sources to not interrupt the currently playing audio.
+			  Update plugins to use the new API. Any Plugin that wishes to make
+			  a HTTP request (GET or POST) should use this API.
+
+			<li>Changes to the string() API - $client->string() should be used where
+			  $client is available. Plugins should return the token for getDisplayName()
+			  rather than the string itself.
+		</ul>
+	<br>
+	
+	<li>Command Line API:<p>
+		<ul>
+			<li>Extended CLI, allowing more access to server information - Fred.
+		</ul>
+	<br>
+
+	<li>Skin Developer changes:<p>
+		<ul>
+			<li>browseid3 has been deprecated by browsedb.
+			<li>songinfo.html prefers an item (id), but can still deal with an itempath.
+		</ul>
+	<br>
+
+	<li>SoftSqueeze version 1.17:<p>
+		<ul>
+			<li>Improved buffering when playing Internet radio stations. (playback starts if bufer is 5% full after 5 seconds)
+			<li>Increased the JavaSound audio buffer size when using the primary sound driver, this may improve playback on some PCs.
+			<li>Improved the JavaSound audio buffering, it should now be much harder to get buffer under runs.
+			<li>Add support for Sun's new Java MP3 Plugin.
+			<li>Upgraded JLayer MP3 library to version 1.0
+			<li>Added ssh gateway server. (Patch from Avi Schwartz).
+			<li>Added ssh proxy (socks5 and http) support. (Patch from Ben Fried)
+			<li>Use simple encryption to store ssh password, it used to be stored in the clear.
+			<li>Added a playlist mode to the music search (still work in progress).
+			<li>Added an 'Escape' keyboard shortcut to exit fullscreen mode.
+			<li>Fixed java web start desktop shortcut and menus. (Java 1.5 only)
+			<li>Fixed bug that caused the slimproto connection to drop. (Patch from David Cohen)
+			<li>Fixed headless mode. (use -Dskins=headless to run with out the gui)
+			<li>Fixed audio buffer bug, sometimes the start of a song was clipped.
+			<li>Fixed CPU usage when listening to Internet radio with slimserver 6.0.
+			<li>Fixed SlimServer name in preferences to keep the value entered by the user.
+			<li>Fixed on the fly switching between graphics and noritake modes.
+			<li>Fixed music search to use the browser http tunnel over ssh.
+		</ul>
+	<br>
+
+	<li>Skins:<p>
+		<ul>
+			<li>Added ExBrowse2
+			<li>Removed Experimental, Olson skins.
+		</ul>
+	<br>
+
+	<li>Known Issues:<p>
+		<ul>
+			<li>Artists or Albums with '*' in the string cause the Player UI to behave strangely.
+			<li>Browse New Music & Browse Years don't exist in the Player UI
+			<li>MusicMagic connection settings need to be exposed when plugin is enabled, even
+			  though connection cannot be established. 
+			<li>Some bitrates in songinfo are still showing 0.
+			<li>Play entire playlist, Add entire playlist is missing from search results. 
+			  Right now, you have to add them one by one.
+			<li>Not all skins have been updated to use browsedb. (xmlTelCanto may be broken.)
+		</ul>
+	<br>
+
+	<li>Bugs fixed:<p>
+		<ul>
+			<li># 44 - Browse new music - partially fixed, available in the Web UI.
+			<li># 67 - Browse via CLI
+			<li>#198 - Playlists with title information overrides ID3 tags. Make this optional.
+			<li>#246 - Issuing pause from CLI doesn't update screen immediately.
+			<li>#271 - Allow hostnames and IP addresses for the web proxy.
+			<li>#295 - Split sort order tags.
+			<li>#365 - Browsing should allow for multiple albums with the same name.
+			<li>#379 - Add ability to search by other tags, such as comments.
+			<li>#433 - 'Multiple Items In Tags' should be able to split on words.
+			<li>#469 - Sort order tags being ignored again.
+			<li>#469 - Use the sorted tags as the alphapagebar data.
+			<li>#504 - status_header doesn't load properly in Camino, Firefox, possibly other browsers.
+			<li>#586 - Determine if player has graphic display from the CLI.
+			<li>#633 - Artwork not searched for Flac files w/ CUE sheets.
+			<li>#664 - iTunes Playlists won't go away.
+			<li>#668 - RssNews plugin crashes on Perl 5.6.1 - Undefined subroutine: utf8::decode.
+			<li>#671 - Slimserver bug with .m3u playlist format.
+			<li>#677 - RssNews Plugin crashed when feed contains items with id attributes.
+			<li>#679 - ASX parsing when there are unescaped special chars (&) in the playlist cause mayhem and havoc.
+			<li>#683 - Playing FLAC files from directories with a $ (dollar) sign fails.
+			<li>#686 - "Now playing ... Moodlogic mix" text shown in MusicMagic mode.
+			<li>#700 - SlimServer truncates ID3 tag info when headers include repalygain info.
+			<li>#718 - Parsing cuesheet in flac tag.
+			<li>#737 - listen 1 induces CLI API change.
+			<li>#738 - Searching behavior is poorly designed.
+			<li>#756 - Setup links broken when running on port 80.
+			<li>#758 - CSRF vulnerabilities in Web UI, non-Referer test needed.
+			<li>#763 - Selecting Play from Browse Artwork doesn't work.
+			<li>#764 - HTML output gets cut off when special characters are displayed.
+			<li>#769 - Rescan causes server to crash.
+			<li>#770 - itemsPerPage param does not work for album lists.
+			<li>#771 - Browse artwork pwd list has extra album param.
+			<li>#772 - Browse year pwd shows DBIstore hash instead of year.
+			<li>#774 - Splitting Artists doesn't work anymore with 2005-01-06
+			<li>#778 - Names of plugins in web interface uses output of getDisplayName directly.
+			<li>#789 - itemsPerPage=-1 == BOOM
+			<li>#794 - Search + drill down to album not working.
+			<li>#800 - Playlist commands broken.
+			<li>#822 - Moodlogic features and playlists missing on restart.
+		</ul>
+	</ul>
+
 </ul>
 <h2><a name="v5.4.0" id="v5.4.0"></a>Version 5.4.0 - 2004-11-9</h2>
 <ul>
