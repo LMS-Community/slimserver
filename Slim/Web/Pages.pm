@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.10 2003/09/22 23:42:48 dean Exp $
+# $Id: Pages.pm,v 1.11 2003/09/26 04:12:49 kdf Exp $
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -426,7 +426,7 @@ sub status {
 		if("play" eq Slim::Player::Source::playmode($client)) {
 			$$main_form_ref{'modeplay'} = "Play";
 			my $remaining = $$main_form_ref{'songduration'} - $$main_form_ref{'songtime'};
-			if ($remaining < $$main_form_ref{'refresh'} && $remaining > 2) { $$main_form_ref{'refresh'} = $remaining;}
+			if ($remaining < $$main_form_ref{'refresh'}) { $$main_form_ref{'refresh'} = ($remaining < 2) ? 2 : $remaining;}
 		} elsif ("pause" eq Slim::Player::Source::playmode($client)) {
 			$$main_form_ref{'modepause'} = "Pause";
 		

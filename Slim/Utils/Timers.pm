@@ -1,6 +1,6 @@
 package Slim::Utils::Timers;
 
-# $Id: Timers.pm,v 1.3 2003/07/24 23:14:04 dean Exp $
+# $Id: Timers.pm,v 1.4 2003/09/26 04:12:49 kdf Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -94,7 +94,7 @@ sub listTimers {
 	msg("timers: \n");
 
 	foreach my $timer (@timers) {
-		msg(join("\t", $timer->{'client'}, $timer->{'when'}, $timer->{'subptr'}), "\n");
+		msg(join("\t", $timer->{'client'}, $timer->{'when'}, $timer->{'subptr'}, "\n"));
 	}
 }
 

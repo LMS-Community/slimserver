@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::Animation;
 
-# $Id: Animation.pm,v 1.4 2003/08/09 14:22:19 dean Exp $
+# $Id: Animation.pm,v 1.5 2003/09/26 04:12:49 kdf Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -359,7 +359,20 @@ sub scrollBottom {
 
 	# special case scrolling for nowplaying
 	if (Slim::Buttons::Playlist::showingNowPlaying($client)) {
-		Slim::Display::Animation::scroll($client);
+		#Slim::Display::Animation::scroll($client);
+		# scroll - Start Scrolling (if necessary) what's on the display and keep doing
+		# it until killAnimation is called.  This is not the only supported interface
+		# for starting scrolling.  It figures out what's on the screen and whether it
+		# needs scrolling.  If scrolling not necessary, just refreshes the screen.
+		# Otherwise, it starts the appropriate kind of scrolling (depending on display
+		# mode, etc.)
+		#
+		if (Slim::Utils::Prefs::clientGet($client,'doublesize')) {
+			scrollDouble($client,$line2, $overlay2);
+		}
+		else {
+			scrollSingle($client,$line2, $overlay2);
+		}
 		return;
 	}
 	
@@ -408,26 +421,6 @@ sub scrollBottom {
 		
 	} else {
 		$client->update();
-	}
-}
-
-# scroll - Start Scrolling (if necessary) what's on the display and keep doing
-# it until killAnimation is called.  This is not the only supported interface
-# for starting scrolling.  It figures out what's on the screen and whether it
-# needs scrolling.  If scrolling not necessary, just refreshes the screen.
-# Otherwise, it starts the appropriate kind of scrolling (depending on display
-# mode, etc.)
-#
-sub scroll {
-	my $client = shift;
-
-	my ($line1, $line2, $overlay1, $overlay2) = Slim::Buttons::Playlist::currentSongLines($client);
-
-	if (Slim::Utils::Prefs::clientGet($client,'doublesize')) {
-		scrollDouble($client,$line2, $overlay2);
-	}
-	else {
-		scrollSingle($client,$line2, $overlay2);
 	}
 }
 
