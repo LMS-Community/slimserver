@@ -1,6 +1,6 @@
 package Slim::Buttons::Synchronize;
 
-# $Id: Synchronize.pm,v 1.7 2003/11/10 23:14:55 dean Exp $
+# $Id: Synchronize.pm,v 1.8 2003/12/13 08:29:18 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -12,6 +12,8 @@ use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use Slim::Utils::Strings qw(string);
 use Slim::Display::Display;
+
+Slim::Buttons::Common::addMode('synchronize',getFunctions(),\&setMode);
 
 # Each button on the remote has a function:
 my %functions = (

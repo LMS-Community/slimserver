@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.25 2003/12/06 00:30:13 grotus Exp $
+# $Id: Prefs.pm,v 1.26 2003/12/13 08:29:20 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -61,7 +61,6 @@ my %DEFAULT = (
 	,"refreshRate"			=> 30
 	,"displaytexttimeout" 	=> 2.0
 	,"filesort"				=> 0
-	,"screensavertimeout" 	=> 30
 	,"screensaverjump" 		=> 1
 	,"playtrackalbum" 		=> 1
 	,"artistinalbumsearch" 	=> 0
@@ -114,8 +113,12 @@ my %DEFAULT = (
 			,'treble'		=> 50
 			,'bass'			=> 50
 			,'shuffle'		=> 0
+			,'offDisplaySize'	=> 0
 			,'playingDisplayMode'	=> 0
 			,'playername'		=> undef
+			,'screensaver'		=> 'screensaver'
+			,"screensavertimeout" 	=> 30
+			,"scrollPause"		=> 3.6
 			,'titleFormatCurr'	=> 1
 			,'titleFormat'		=> [5, 1, 3, 6]
 			,'disabledirsets'	=> []

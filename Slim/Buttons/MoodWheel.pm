@@ -7,6 +7,8 @@ use Slim::Buttons::Common;
 use Slim::Music::MoodLogic;
 use Slim::Utils::Strings qw (string);
 
+Slim::Buttons::Common::addMode('moodlogic_mood_wheel',getFunctions(),\&setMode);
+
 # 
 my @browseMoodChoices = ();
 

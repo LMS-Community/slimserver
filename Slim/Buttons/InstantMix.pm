@@ -9,6 +9,8 @@ use Slim::Utils::Strings qw (string);
 use Slim::Utils::Timers;
 use Slim::Hardware::VFD;
 
+Slim::Buttons::Common::addMode('moodlogic_instant_mix',getFunctions(),\&setMode);
+
 # button functions for browse directory
 my @instantMix = ();
 

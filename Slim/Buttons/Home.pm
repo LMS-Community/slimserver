@@ -17,6 +17,8 @@ use Slim::Buttons::Settings;
 use Slim::Buttons::Synchronize;
 use Slim::Utils::Strings qw (string);
 
+Slim::Buttons::Common::addMode('home',getFunctions(),\&setMode);
+
 # button functions for top-level home directory
 
 my @homeChoices;

@@ -16,8 +16,13 @@ use Slim::Utils::Strings qw (string);
 use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
 
+Slim::Buttons::Common::addMode('settings',Slim::Buttons::Settings::getFunctions(),\&Slim::Buttons::Settings::setMode);
+Slim::Buttons::Common::addMode('treble',getTrebleFunctions(),\&setTrebleMode);
+Slim::Buttons::Common::addMode('volume',getVolumeFunctions(),\&setVolumeMode);
+Slim::Buttons::Common::addMode('bass',getBassFunctions(),\&setBassMode);
+
 # button functions for browse directory
-my @defaultSettingsChoices = ('ALARM','VOLUME', 'BASS','TREBLE','REPEAT','SHUFFLE','TITLEFORMAT','TEXTSIZE','OFFDISPLAYSIZE','INFORMATION');
+my @defaultSettingsChoices = ('ALARM','VOLUME', 'BASS','TREBLE','REPEAT','SHUFFLE','TITLEFORMAT','TEXTSIZE','OFFDISPLAYSIZE','INFORMATION','SETUP_SCREENSAVER');
 my @settingsChoices;
 
 my %current;
@@ -108,7 +113,16 @@ my %menuParams = (
 	#	'useMode' => 'INPUT.Text'
 		#add more params here after the rest is working
 	#}
-
+	,catdir('settings','SETUP_SCREENSAVER') => {
+		'useMode' => 'INPUT.List'
+		,'listRef' => undef
+		,'externRef' => undef
+		,'stringExternRef' => 0
+		,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0], "screensaver", $_[1]); }
+		,'header' => 'SETUP_SCREENSAVER'
+		,'stringHeader' => 1
+		,'initialValue' => 'screensaver'
+	}
 );
 
 sub settingsExitHandler {
@@ -135,8 +149,14 @@ sub settingsExitHandler {
 				$nextParams{'listRef'} = \@titleFormat;
 				my @externTF = map {Slim::Utils::Prefs::getInd('titleFormat',$_)} @titleFormat;
 				$nextParams{'externRef'} = \@externTF;
-				$nextParams{'listIndex'} = Slim::Utils::Prefs::clientGet($client,'titleFormatCurr');
-				
+				$nextParams{'listIndex'} = Slim::Utils::Prefs::clientGet($client,'titleFormatCurr');	
+			}
+			if ($nextmenu eq catdir('settings','SETUP_SCREENSAVER')) {
+				my %hash = %{&Slim::Buttons::Common::hash_of_savers};
+				my @modes = keys %hash;
+				my @names = values %hash;
+				$nextParams{'listRef'} = \@modes;
+				$nextParams{'externRef'} = \@names;
 			}
 			Slim::Buttons::Common::pushModeLeft(
 				$client

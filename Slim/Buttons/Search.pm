@@ -12,6 +12,8 @@ use Slim::Buttons::Common;
 use Slim::Buttons::SearchFor;
 use Slim::Utils::Strings qw (string);
 
+Slim::Buttons::Common::addMode('search',getFunctions(),\&setMode);
+
 # button functions for search directory
 my @searchChoices = ('ARTISTS','ALBUMS','SONGS');
 my %functions = (

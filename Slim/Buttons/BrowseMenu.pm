@@ -1,4 +1,5 @@
 package Slim::Buttons::BrowseMenu;
+# $Id:
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,6 +12,8 @@ use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
 use Slim::Buttons::Browse;
 use Slim::Utils::Strings qw (string);
+
+Slim::Buttons::Common::addMode('browsemenu',Slim::Buttons::BrowseMenu::getFunctions(),\&Slim::Buttons::BrowseMenu::setMode);
 
 # button functions for browse directory
 my @browseMenuChoices = ('GENRES','ARTISTS','ALBUMS','MUSIC');

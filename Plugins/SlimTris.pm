@@ -12,12 +12,14 @@ use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.2 $,10);
+$VERSION = substr(q$Revision: 1.3 $,10);
 
 # constants
 my $height = 4;
 my $width = 39;
 my $customchar = 1;
+
+Slim::Buttons::Common::addMode('slimtris',Plugins::SlimTris::getFunctions(),\&Plugins::SlimTris::setMode);
 
 sub getDisplayName { 'SlimTris' }
 

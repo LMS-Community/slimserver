@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.17 2003/12/11 17:04:39 dean Exp $
+# $Id: Playlist.pm,v 1.18 2003/12/13 08:29:16 kdf Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -14,6 +14,8 @@ use Slim::Buttons::Common;
 use Slim::Buttons::Browse;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+
+Slim::Buttons::Common::addMode('playlist',getFunctions(),\&setMode);
 
 # Each button on the remote has a function:
 
@@ -45,6 +47,7 @@ my %functions = (
 				$pdm = $buttonarg;
 			}
 		}
+		Slim::Buttons::Common::param($client,'animateTop',$pdm);
 		Slim::Utils::Prefs::clientSet($client, "playingDisplayMode", $pdm);
 		$client->update();
 	},
@@ -242,12 +245,11 @@ sub nowPlayingModeLines {
 	if (!defined($overlay1)) { $overlay1 = ""; };
 	#if (!defined($line2)) { $line2 = ""; };
 	#if (!defined($overlay2)) { $overlay2 = ""; };
-	
 	my $playingDisplayMode = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
+	Slim::Buttons::Common::param($client,'animateTop',$playingDisplayMode);
 	my $fractioncomplete = 0;
 	
 	if (!defined($playingDisplayMode)) { $playingDisplayMode = 1; };
-	
 	# check if we're streaming...
 	if (Slim::Music::Info::isHTTPURL(Slim::Player::Playlist::song($client))) {
 	        # no progress bar, remaining time is meaningless

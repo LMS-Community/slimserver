@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.24 2003/12/10 23:02:05 dean Exp $
+# $Id: Setup.pm,v 1.25 2003/12/13 08:29:20 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -298,11 +298,17 @@ sub initSetupConfig {
 		,'isClient' => 1
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
+				if (scalar(keys %{Slim::Buttons::Common::hash_of_savers()}) > 0) {
+					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = 'screensaver';
+					$pageref->{'Prefs'}{'screensaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
+				} else {
+					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = undef;
+				}
 				if (scalar(keys %{Slim::Hardware::IR::mapfiles()}) > 1) {  
-					$pageref->{'GroupOrder'}[2] = 'IRMap';  
+					$pageref->{'GroupOrder'}[4] = 'IRMap';  
 					$pageref->{'Prefs'}{'irmap'}{'options'} = Slim::Hardware::IR::mapfiles();  
 				} else {  
-					$pageref->{'GroupOrder'}[2] = undef;
+					$pageref->{'GroupOrder'}[4] = undef;
 				}
 				my $i = 0;
 				my %irsets = map {$_ => 1} Slim::Utils::Prefs::clientGetArray($client,'disabledirsets');
@@ -341,7 +347,7 @@ sub initSetupConfig {
 		# if more than one ir map exists the undef will be replaced by 'Default'
 		,'Groups' => {
 			'Default' => {
-				'PrefOrder' => ['autobrightness','scrollPause']
+				'PrefOrder' => ['autobrightness','scrollPause','screensavertimeout']
 			}
 			,'IRSets' => {
 				'PrefOrder' => ['irsetlist']
@@ -365,9 +371,14 @@ sub initSetupConfig {
 				,'validateArgs' => [\&Slim::Hardware::IR::mapfiles,1]  
 				,'options' => undef #will be set by preEval  
 			},
-			'scrollPause' => {
+			'screensaver'	=> {
+				'validate' => \&validateInHash
+				,'validateArgs' => [\&Slim::Buttons::Common::hash_of_savers,1]
+				,'options' => undef #will be set by preEval  
+			},
+			'screensavertimeout' => {
 				'validate' => \&validateNumber
-				,'validateArgs' => [0,undef,5]
+				,'validateArgs' => [0,undef,1]
 			},
 			'autobrightness' => {
 				'validate' => \&validateTrueFalse  
@@ -375,8 +386,12 @@ sub initSetupConfig {
 						'1' => string('SETUP_AUTOBRIGHTNESS_ON')
 						,'0' => string('SETUP_AUTOBRIGHTNESS_OFF')
 					}
-			}
-			,'irsetlist' => {
+			},
+			'scrollPause' => {
+				'validate' => \&validateNumber
+				,'validateArgs' => [0,undef,5]
+			},
+			'irsetlist' => {
 				'isArray' => 1
 				,'dontSet' => 1
 				,'validate' => \&validateTrueFalse
@@ -443,18 +458,18 @@ sub initSetupConfig {
 						,'GroupLine' => 1
 						,'GroupSub' => 1
 						},
-                                'moodlogic' => {
-                                                'PrefOrder' => ['moodlogic']
-                                                ,'PrefsInTable' => 1
-                                                ,'Suppress_PrefHead' => 1
-                                                ,'Suppress_PrefDesc' => 1
-                                                ,'Suppress_PrefLine' => 1
-                                                ,'Suppress_PrefSub' => 1
-                                                ,'GroupHead' => string('SETUP_MOODLOGIC')
-                                                ,'GroupDesc' => string('SETUP_MOODLOGIC_DESC')
-                                                ,'GroupLine' => 1
-                                                ,'GroupSub' => 1
-                                                },
+				'moodlogic' => {
+						'PrefOrder' => ['moodlogic']
+						,'PrefsInTable' => 1
+						,'Suppress_PrefHead' => 1
+						,'Suppress_PrefDesc' => 1
+						,'Suppress_PrefLine' => 1
+						,'Suppress_PrefSub' => 1
+						,'GroupHead' => string('SETUP_MOODLOGIC')
+ 						,'GroupDesc' => string('SETUP_MOODLOGIC_DESC')
+						,'GroupLine' => 1
+						,'GroupSub' => 1
+					},
 				'Default' => {
 						'PrefOrder' => [undef,'playlistdir',undef]
 						#if not able to use iTunesLibrary then undef at [0] will be replaced by 'mp3dir'
@@ -482,30 +497,30 @@ sub initSetupConfig {
 									}
 							,'PrefSize' => 'large'
 						}
-                                ,'moodlogic'    => {
-                                                        'onChange' => sub {
-                                                                        my ($client,$changeref,$paramref,$pageref) = @_;
-                                                                        if (defined $changeref->{'moodlogic'}{'new'} &&
-                                                                            defined $changeref->{'moodlogic'}{'old'}) {
-
-                                                                            if ($changeref->{'moodlogic'}{'new'} eq "1" &&
-                                                                                    $changeref->{'moodlogic'}{'old'} eq "0") {
-                                                                                    Slim::Music::MoodLogic::startScan();
-                                                                            } elsif ($changeref->{'moodlogic'}{'new'} eq "0" &&
-                                                                                    $changeref->{'moodlogic'}{'old'} eq "1") {
-                                                                                    Slim::Music::MusicFolderScan::startScan();
-                                                                            }
-                                                                        }
-                                                                    }
-                                                            ,'changeIntro' => ""
-                                                            ,'options' => {
-                                                                       '1' => string('USE_MOODLOGIC')
-                                                                       ,'0' => string('DONT_USE_MOODLOGIC')
-                                                                }
-                                                            ,'optionSort' => 'KR'
-                                                       ,'inputTemplate' => 'setup_input_radio.html'
-                                                       ,'PrefSize' => 'large'
-                                                    }
+				,'moodlogic'    => {
+							'onChange' => sub {
+								my ($client,$changeref,$paramref,$pageref) = @_;
+								if (defined $changeref->{'moodlogic'}{'new'} &&
+									defined $changeref->{'moodlogic'}{'old'}) {
+	
+									if ($changeref->{'moodlogic'}{'new'} eq "1" &&
+										$changeref->{'moodlogic'}{'old'} eq "0") {
+										slim::Music::MoodLogic::startScan();
+									} elsif ($changeref->{'moodlogic'}{'new'} eq "0" &&
+										$changeref->{'moodlogic'}{'old'} eq "1") {
+										slim::Music::MusicFolderScan::startScan();
+									}
+								}
+							}
+							,'changeIntro' => ""
+							,'options' => {
+								'1' => string('USE_MOODLOGIC')
+								,'0' => string('DONT_USE_MOODLOGIC')
+							}
+							,'optionSort' => 'KR'
+							,'inputTemplate' => 'setup_input_radio.html'
+							,'PrefSize' => 'large'
+						}
 				,'mp3dir'	=> {
 							'validate' => \&validateIsMP3Dir
 							,'changeIntro' => string('SETUP_OK_USING')
@@ -839,7 +854,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['screensaverjump','screensavertimeout','displaytexttimeout'
+					'PrefOrder' => ['displaytexttimeout'
 							,'composerInArtists','playtrackalbum','artistinalbumsearch', 'ignoredarticles','filesort'
 							,'persistPlaylists','reshuffleOnRepeat','saveShuffled',
 							,'savehistory','historylength','checkVersion']
@@ -853,17 +868,6 @@ sub initSetupConfig {
 								,'1' => string('SORTBYFILENAME')
 								}
 					}
-			,'screensaverjump'	=> {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'0' => string('SCREENSAVERJUMP_BACK')
-								,'1' => string('SCREENSAVERJUMP_STAY')
-							}
-					}
-			,'screensavertimeout' => {
-						'validate' => \&validateNumber
-						,'validateArgs' => [0,undef,1]
-				}
 			,'displaytexttimeout' => {
 						'validate' => \&validateNumber
 						,'validateArgs' => [0.1,undef,1]

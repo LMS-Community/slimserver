@@ -153,6 +153,8 @@ sub read_plugins {
 			my $strings;
 			eval {$strings = &{$fullname . "::strings"}()};
 			if (!$@ && $strings) { Slim::Utils::Strings::addStrings($strings); }
+			# load screensaver, if one exists.
+			eval { &{$fullname . "::screenSaver"}() };
 			my $names;
 			eval {$names = &{$fullname . "::getDisplayName"}()};
 			if (!$@ && $names) {

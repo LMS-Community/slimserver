@@ -11,12 +11,14 @@ use File::Spec::Functions qw(updir);
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 use Slim::Utils::Misc;
+use Slim::Buttons::Common;
 
 
 my $ticklength = .25;            # length of each tick, seconds
 my $tickdelay = .5;              # wait half a second before starting the display update
 my @tickchars=('|','/','-','\\');
 
+Slim::Buttons::Common::addMode('block',getFunctions(),\&setMode);
 
 # Each button on the remote has a function:
 

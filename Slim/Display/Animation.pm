@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::Animation;
 
-# $Id: Animation.pm,v 1.9 2003/12/09 09:45:14 kdf Exp $
+# $Id: Animation.pm,v 1.10 2003/12/13 08:29:19 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -338,21 +338,18 @@ sub bumpRight {
 
 sub scrollBottom {
 	my $client = shift;
-	my $interlace = shift;
-	my $rate = shift;
 	my $line1 = shift;
 	my $line2 = shift;
 	my $overlay1 = shift;
 	my $overlay2 = shift;
-
+	my $rate = defined(Slim::Buttons::Common::param($client,'scrollRate')) ? Slim::Buttons::Common::param($client,'scrollRate') : $scrollSingleFrameRate;
+	if (!defined($rate) || $rate < 0) {
+		$rate = $scrollSingleFrameRate;
+	}
 	if (!defined($line1)) { $line1 = ""; };
 	if (!defined($overlay1)) { $overlay1 = ""; };
 	if (!defined($line2)) { $line2 = ""; };
 	if (!defined($overlay2)) { $overlay2 = ""; };
-	
-	if (!defined($rate) || $rate < 0) {
-		$rate = $scrollSingleFrameRate;
-	}
 	my $double;
 	my $len;
 
@@ -362,19 +359,20 @@ sub scrollBottom {
 	}
 
 	# special case scrolling for nowplaying
-	if ((Slim::Buttons::Playlist::showingNowPlaying($client)) || ($interlace)) {
+	# now uses a client param, undef or zero for static top line, non-zero for a dynamic top line.
+	if (defined(Slim::Buttons::Common::param($client,'animateTop')) && Slim::Buttons::Common::param($client,'animateTop')) {
 		if (Slim::Utils::Prefs::clientGet($client,'doublesize')) {
-			scrollDouble($client,$line2,$overlay2,$rate);
+			scrollDouble($client,$line2,$overlay2);
 		}
 		else {
-			scrollSingle($client,$line2,$overlay2,$rate);
+			scrollSingle($client,$line2,$overlay2);
 		}
 		return;
 	}
 	
 	# calculate the displayed length
 	if ($double = Slim::Utils::Prefs::clientGet($client,'doublesize')) {
-		$rate = $scrollDoubleFrameRate;
+		my $rate = $scrollDoubleFrameRate;
 		$double = 1;
 		$overlay2 = "";
 		$overlay1 = "";
@@ -388,8 +386,7 @@ sub scrollBottom {
 	#only scroll if our line is long enough
 	if ($len > (40 - Slim::Hardware::VFD::lineLength($overlay2))){
 		
-		my $now = Slim::Utils::Prefs::clientGet($client,'scrollPause');
-		if (!defined($now)) {$now = $scrollPause;}
+		my $now = defined(Slim::Buttons::Common::param($client,'scrollPause')) ? Slim::Buttons::Common::param($client,'scrollPause') : Slim::Utils::Prefs::clientGet($client,'scrollPause');
 		my @newqueue = ();
 		my ($measure1, $measure2);
 		my ($t1, $t2);
@@ -431,9 +428,6 @@ sub scrollSingle {
 	my $rate = shift;
 	
 	if (!defined($overlay2)) { $overlay2 = '' };
-	if (!defined($rate) || $rate < 0) {
-		$rate = $scrollSingleFrameRate;
-	}
 	if (Slim::Hardware::VFD::lineLength($text2) <= 40 - Slim::Hardware::VFD::lineLength($overlay2)) {
 		# No need to actually scroll
 		$client->update();
@@ -442,7 +436,7 @@ sub scrollSingle {
 		$text2 = $text2 . $scrollSeparator;
 		my $text22 = $text2 . $text2;
 
-		startAnimate($client,\&animateScrollSingle1, \$text22, Slim::Hardware::VFD::lineLength($text2), 0,$rate);
+		startAnimate($client,\&animateScrollSingle1, \$text22, Slim::Hardware::VFD::lineLength($text2), 0);
 	}
 }
 
@@ -694,8 +688,8 @@ sub animateScrollSingle1 {
 	my $text22 = shift;
 	my $text22_length = shift;
 	my $pause_count = shift(@_) + $overdue;
-	my $rate = shift;
-	my $hold = Slim::Utils::Prefs::clientGet($client,'scrollPause');
+	my $rate = defined(Slim::Buttons::Common::param($client,'scrollRate')) ? Slim::Buttons::Common::param($client,'scrollRate') : $scrollSingleFrameRate;
+	my $hold = defined(Slim::Buttons::Common::param($client,'scrollPause')) ? Slim::Buttons::Common::param($client,'scrollPause') : Slim::Utils::Prefs::clientGet($client,'scrollPause');
 	if (!defined($hold)) {$hold = $scrollPause;}
 	my ($line1,$line2) = Slim::Display::Display::curLines($client);
 	if (!defined($rate) || $rate < 0) {
@@ -719,7 +713,7 @@ sub animateScrollSingle2 {
 	my $len = shift;
 	my $line1 = shift;
 	my $line1_age = shift(@_) + $overdue;
-	my $rate = shift;
+	my $rate = defined(Slim::Buttons::Common::param($client,'scrollRate')) ? Slim::Buttons::Common::param($client,'scrollRate') : $scrollSingleFrameRate;
 	if (!defined($rate) || $rate < 0) {
 		$rate = $scrollSingleFrameRate;
 	}
@@ -739,9 +733,9 @@ sub animateScrollSingle2 {
 		}
 		Slim::Hardware::VFD::vfdUpdate($client, $$line1, Slim::Hardware::VFD::subString($$text22, $ind, 40), 0);
 		return ($rate, \&animateScrollSingle2, $text22, $ind+1, $len,
-				 $line1, $line1_age + $rate,$rate);
+				 $line1, $line1_age + $rate);
 	} else {
-		return animateScrollSingle1($client, 0, $text22, $len, 0,$rate);
+		return animateScrollSingle1($client, 0, $text22, $len, 0);
 	}
 }
 
@@ -752,7 +746,7 @@ sub animateScrollDouble {
 	my $text22 = shift;
 	my $ind = shift;
 	my $len = shift;
-	my $hold = Slim::Utils::Prefs::clientGet($client,'scrollPause');
+	my $hold = Slim::Buttons::Common::param($client,'scrollPause');
 	if (!defined($hold)) {$hold = $scrollPause;}
 	
 	if ($overdue > $scrollDoubleFrameRate) {

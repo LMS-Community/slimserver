@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.4 2003/11/26 02:58:10 grotus Exp $
+#	$Id: Information.pm,v 1.5 2003/12/13 08:29:16 kdf Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -48,12 +48,12 @@ use Slim::Utils::Strings qw(string);
 use strict;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.4 $,10);
+$VERSION = substr(q$Revision: 1.5 $,10);
 
 my $modules;
 my %enabled;
 
-Slim::Buttons::Common::addMode('information', getFunctions(), \&Slim::Buttons::Information::setMode);
+Slim::Buttons::Common::addMode('information', getFunctions(), \&setMode);
 
 sub module_list {
 	return undef unless $modules;

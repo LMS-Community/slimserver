@@ -1,4 +1,5 @@
 package Slim::Buttons::BrowseID3;
+# $Id:
 
 # SliMP3 Server Copyright (C) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -15,6 +16,7 @@ use Slim::Utils::Strings qw (string);
 use Slim::Utils::Misc;
 
 # Code to browse music folder by ID3 information.
+Slim::Buttons::Common::addMode('browseid3',Slim::Buttons::BrowseID3::getFunctions(),\&Slim::Buttons::BrowseID3::setMode);
 
 # Each button on the remote has a function:
 

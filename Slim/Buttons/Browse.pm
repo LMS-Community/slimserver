@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.7 2003/11/10 23:14:54 dean Exp $
+# $Id: Browse.pm,v 1.8 2003/12/13 08:29:15 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -17,6 +17,8 @@ use Slim::Buttons::TrackInfo;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw (string);
 use Slim::Utils::Scan;
+
+Slim::Buttons::Common::addMode('browse',Slim::Buttons::Browse::getFunctions(),\&Slim::Buttons::Browse::setMode);
 
 # Each button on the remote has a function:
 

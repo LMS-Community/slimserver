@@ -13,6 +13,8 @@ use Slim::Utils::Strings qw (string);
 
 # button functions for track info screens
 
+Slim::Buttons::Common::addMode('trackinfo',Slim::Buttons::TrackInfo::getFunctions(),\&Slim::Buttons::TrackInfo::setMode);
+
 my %functions = (
 
 	'play' => sub  {

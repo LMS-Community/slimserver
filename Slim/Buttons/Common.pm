@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.24 2003/12/11 17:04:39 dean Exp $
+# $Id: Common.pm,v 1.25 2003/12/13 08:29:16 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,7 +10,6 @@ package Slim::Buttons::Common;
 use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
-use Slim::Buttons::Power;
 use Slim::Player::Client;
 use Slim::Utils::Strings qw (string);
 use Slim::Utils::Misc;
@@ -29,61 +28,42 @@ my $SCAN_RATE_MULTIPLIER = 2;
 
 # hash of references to functions to call when we enter a mode
 # Note:  don't add to this list, rather use the addMode() function 
-#below to have the module add its mode itself
-# TODO: get rid of this initialization and do what it says in the line above.
+# below to have the module add its mode itself
 my %modes = (		
-	'bass' =>					\&Slim::Buttons::Settings::setBassMode,
-	'block' => 					\&Slim::Buttons::Block::setMode,
-	'browse' => 				\&Slim::Buttons::Browse::setMode,
-	'browseid3' => 				\&Slim::Buttons::BrowseID3::setMode,
-	'browsemenu' => 			\&Slim::Buttons::BrowseMenu::setMode,
-	'home' => 					\&Slim::Buttons::Home::setMode,
-	'INPUT.Text' =>				\&Slim::Buttons::Input::Text::setMode,
-	'INPUT.List' =>				\&Slim::Buttons::Input::List::setMode,
-	'moodlogic_instant_mix' =>	\&Slim::Buttons::InstantMix::setMode,
-	'moodlogic_mood_wheel' =>	\&Slim::Buttons::MoodWheel::setMode,
-	'off' => 					\&Slim::Buttons::Power::setMode,
-	'playlist' => 				\&Slim::Buttons::Playlist::setMode,
 	'plugins' => 				\&Slim::Buttons::Plugins::setMode,
-	'screensaver' =>			\&Slim::Buttons::ScreenSaver::setMode,
-	'search' => 				\&Slim::Buttons::Search::setMode,
-	'searchfor' =>  			\&Slim::Buttons::SearchFor::setMode,
-	'settings' =>				\&Slim::Buttons::Settings::setMode,
-	'shooter' =>  				\&Slim::Buttons::Shooter::setMode,
-	'slimtris' =>  				\&Slim::Buttons::SlimTris::setMode,
-	'synchronize' =>			\&Slim::Buttons::Synchronize::setMode,
-	'trackinfo' => 				\&Slim::Buttons::TrackInfo::setMode,
-	'treble' =>					\&Slim::Buttons::Settings::setTrebleMode,
-	'volume' =>					\&Slim::Buttons::Settings::setVolumeMode,
+	'INPUT.Text' =>			\&Slim::Buttons::Input::Text::setMode,
+	'INPUT.List' =>			\&Slim::Buttons::Input::List::setMode,
+);
+
+# Hashed list for registered Screensavers. Register these using addSaver. 
+my %savers = (
+	'playlist'	=> 'Now Playing',
 );
 
 #
 # The address of the function hash is set at run time rather than compile time
 # so initialize the modeFunctions hash here
 sub init {
-	$modeFunctions{'home'} = Slim::Buttons::Home::getFunctions();
-	$modeFunctions{'block'} = Slim::Buttons::Block::getFunctions();
-	$modeFunctions{'browse'} = Slim::Buttons::Browse::getFunctions();
-	$modeFunctions{'browsemenu'} = Slim::Buttons::BrowseMenu::getFunctions();
-	$modeFunctions{'browseid3'} = Slim::Buttons::BrowseID3::getFunctions();
-	$modeFunctions{'playlist'} = Slim::Buttons::Playlist::getFunctions();
 	$modeFunctions{'plugins'} = Slim::Buttons::Plugins::getFunctions();
-	$modeFunctions{'off'} = Slim::Buttons::Power::getFunctions();
-	$modeFunctions{'screensaver'} = Slim::Buttons::ScreenSaver::getFunctions();
-	$modeFunctions{'search'} = Slim::Buttons::Search::getFunctions();
-	$modeFunctions{'searchfor'} = Slim::Buttons::SearchFor::getFunctions();
-	$modeFunctions{'settings'} = Slim::Buttons::Settings::getFunctions();
-	$modeFunctions{'synchronize'} = Slim::Buttons::Synchronize::getFunctions();
-	$modeFunctions{'trackinfo'} = Slim::Buttons::TrackInfo::getFunctions();
-	$modeFunctions{'bass'} = Slim::Buttons::Settings::getBassFunctions();
-	$modeFunctions{'treble'} = Slim::Buttons::Settings::getTrebleFunctions();
-	$modeFunctions{'volume'} = Slim::Buttons::Settings::getVolumeFunctions();
-	$modeFunctions{'moodlogic_mood_wheel'} = Slim::Buttons::MoodWheel::getFunctions();
-	$modeFunctions{'moodlogic_instant_mix'} = Slim::Buttons::InstantMix::getFunctions();
 	$modeFunctions{'INPUT.Text'} = Slim::Buttons::Input::Text::getFunctions();
 	$modeFunctions{'INPUT.List'} = Slim::Buttons::Input::List::getFunctions();
 	Slim::Buttons::Plugins::getPluginModes(\%modes);
 	Slim::Buttons::Plugins::getPluginFunctions(\%modeFunctions);
+}
+
+sub addSaver {
+ 	my $name = shift;
+ 	my $buttonFunctions = shift;
+ 	my $setModeFunction = shift;
+ 	my $leaveModeFunction = shift;
+ 	my $displayName = shift;
+   	$savers{$name} = $displayName;
+ 	$::d_plugins && msg("Registering screensaver ".$displayName."\n");
+ 	addMode($name,$buttonFunctions,$setModeFunction,$leaveModeFunction);
+}
+
+sub hash_of_savers {
+ 	return \%savers;
 }
 
  sub addMode {
@@ -518,8 +498,9 @@ my %functions = (
  	my $function = shift;
  	my $clientMode = shift;
  	my $coderef;
+ 	
  	$clientMode = mode($client) unless defined($clientMode);
- 	if ($coderef = $modeFunctions{$clientMode}{$function}) {
+	if ($coderef = $modeFunctions{$clientMode}{$function}) {
  		return $coderef;
  	} elsif (($function =~ /(.+?)_(.+)/) && ($coderef = $modeFunctions{$clientMode}{$1})) {
  		return $coderef,$2;
@@ -959,6 +940,15 @@ sub mode {
 	my $client = shift;
 	Slim::Utils::Misc::assert($client);
 	return $client->modeStack(-1);
+}
+
+sub validMode {
+	my $mode = shift;
+	if (exists ($modes{$mode})) {
+		return 1;
+	} else {
+		return 0
+	}
 }
 
 sub param {

@@ -1081,6 +1081,21 @@ SETUP_AUTOBRIGHTNESS_ON
 	PT	Ajustar o Brilho Automaticamente
 	SE	Ändra ljusstyrka automatiskt
 
+SETUP_SCREENSAVER
+	DE	Bildschirmschoner
+	DK	Pauseskærm
+	EN	Screensaver
+	ES	Salvapantalla
+	FI	Näytönsäästäjä
+	FR	Économiseur d'écran
+	NL	Schermbeveiliging
+	NO	Skjermsparer
+	PT	Protecção de Ecrã
+	SE	Skärmsläckare
+
+SETUP_SCREENSAVER_DESC
+	EN	Choose your custom screensaver
+
 SETUP_PLAYINGDISPLAYMODE
 	DE	Abspielen im Anzeigemodus
 	DK	Display ved afspilning

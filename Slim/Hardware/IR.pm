@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.18 2003/11/29 03:01:17 grotus Exp $
+# $Id: IR.pm,v 1.19 2003/12/13 08:29:19 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -257,8 +257,14 @@ sub lookupFunction {
 	} elsif (defined $irMap{$defaultMapFile}{$mode}{$code}) {
 		$::d_ir && msg("found function " . $irMap{$defaultMapFile}{$mode}{$code} . " for button $code in mode $mode from map " . defaultMap() . "\n");
 		return $irMap{$defaultMapFile}{$mode}{$code};
+	} elsif ($mode =~ /(.+)\..+/ && defined $irMap{$map}{lc($1)}{$code}) {
+		$::d_ir && msg("found function " . $irMap{$map}{lc($1)}{$code} . " for button $code in mode class ".lc($1)." from map $map\n");
+		return $irMap{$map}{lc($1)}{$code};
+	} elsif ($mode =~ /(.+)\..+/ && defined$irMap{$defaultMapFile}{lc($1)}{$code}) {
+		$::d_ir && msg("found function " . $irMap{$defaultMapFile}{lc($1)}{$code} . " for button $code in mode class ".lc($1)." from map " . defaultMap() . "\n");
+		return $irMap{$defaultMapFile}{lc($1)}{$code};			
 	} elsif (defined $irMap{$map}{'common'}{$code}) {
-		$::d_ir && msg("found function " . $irMap{$map}{$mode}{$code} . " for button $code in mode common from map $map\n");
+		$::d_ir && msg("found function " . $irMap{$map}{'common'}{$code} . " for button $code in mode common from map $map\n");
 		return $irMap{$map}{'common'}{$code};
 	} elsif (defined $irMap{$defaultMapFile}{'common'}{$code}) {
 		$::d_ir && msg("found function " . $irMap{$defaultMapFile}{'common'}{$code} . " for button $code in mode common from map " . defaultMap() . "\n");

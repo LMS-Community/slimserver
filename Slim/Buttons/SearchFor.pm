@@ -13,6 +13,8 @@ use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw (string);
 
+Slim::Buttons::Common::addMode('searchfor',getFunctions(),\&setMode);
+
 my @searchChars = (
 	Slim::Hardware::VFD::symbol('rightarrow'),
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
