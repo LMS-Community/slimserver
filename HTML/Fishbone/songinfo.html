@@ -4,8 +4,8 @@
 <a href="javascript:history.back(1)">Back</a>
 <H3>[S SONG_INFO] [S FOR] <i>{title}</i></H3>
 <p>
-[IF coverart]<center><a href="/music/{%itempath}/cover.jpg" target="_top"><img src="/music/{%itempath}/cover.jpg" border="0" width="200"></a></center>[/IF]
-<table>
+[IF coverart]<center><a href="/music/{%itempath}/cover.jpg" target="_top"><img src="/music/{%itempath}/cover.jpg" border="0" width="300"></a></center>[/IF]
+<table width="100%" border="0">
 	<tr>
 		<td>
 			<nobr>
@@ -17,51 +17,56 @@
 		</td>
 	</tr>
 	[IF artist]
-	<tr>
-		<td>
-			[S ARTIST][S COLON]
-		</td>
-		<td>
-			<a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{artist}</a>
-		</td>
-	</tr>
-	[/IF] [IF composer]
-	<tr>
-		<td>
-			[S COMPOSER][S COLON]
-		</td>
-		<td>
-			<a href="browseid3.html?genre=*&amp;artist={%composer}&amp;player={%player}" target="browser">{composer}</a>
-		</td>
-	</tr>
-	[/IF] [IF conductor]
-	<tr>
-		<td>
-			[S CONDUCTOR][S COLON]
-		</td>
-		<td>
-			<a href="browseid3.html?genre=*&amp;artist={%conductor}&amp;player={%player}" target="browser">{conductor}</a>
-		</td>
-	</tr>
-	[/IF] [IF album]
-	<tr>
-		<td>
-			[S ALBUM][S COLON]
-		</td>
-		<td>
-			<a href="browseid3.html?genre=*&amp;artist=*&amp;album={%album}&amp;player={%player}" target="browser">{album}</a>
-		</td>
-	</tr>
-	[/IF] [IF genre]
-	<tr>
-		<td>
-			[S GENRE][S COLON]
-		</td>
-		<td>
-			<a href="browseid3.html?genre={%genre}&amp;player={%player}" target="browser">{genre}
-		</td>
-	</tr>
-	[/IF]  [IF disc] 
+		<tr>
+			<td>
+				[S ARTIST][S COLON]
+			</td>
+			<td>
+				<a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{artist}</a>
+			</td>
+		</tr>
+	[/IF]
+	[IF composer]
+		<tr>
+			<td>
+				[S COMPOSER][S COLON]
+			</td>
+			<td>
+				<a href="browseid3.html?genre=*&amp;artist={%composer}&amp;player={%player}" target="browser">{composer}</a>
+			</td>
+		</tr>
+	[/IF]
+	[IF conductor]
+		<tr>
+			<td>
+				[S CONDUCTOR][S COLON]
+			</td>
+			<td>
+				<a href="browseid3.html?genre=*&amp;artist={%conductor}&amp;player={%player}" target="browser">{conductor}</a>
+			</td>
+		</tr>
+	[/IF]
+	[IF album]
+		<tr>
+			<td>
+				[S ALBUM][S COLON]
+			</td>
+			<td>
+				<a href="browseid3.html?genre=*&amp;artist=*&amp;album={%album}&amp;player={%player}" target="browser">{album}</a>
+			</td>
+		</tr>
+	[/IF]
+	[IF genre]
+		<tr>
+			<td>
+				[S GENRE][S COLON]
+			</td>
+			<td>
+				<a href="browseid3.html?genre={%genre}&amp;player={%player}" target="browser">{genre}
+			</td>
+		</tr>
+	[/IF]
+	[IF disc] 
 		<tr> 
 			<td> 
 				[S DISC][S COLON]
@@ -70,94 +75,106 @@
 				{&disc} 
 			</td>
 		</tr>
-	[/IF] [IF track]
-	<tr>
-		<td>
-			[S TRACK][S COLON]
-		</td>
-		<td>
-			{track}
-		</td>
-	</tr>
-	[/IF] [IF type] 
-	<tr>
-		<td>
-			[S TYPE][S COLON]
-		</td>
-		<td>
-			{type}
-		</td>
-	</tr>
-	[/IF] [IF duration]
-	<tr>
-		<td>
-			[S LENGTH][S COLON]
-		</td>
-		<td>
-			{duration}
-		</td>
-	</tr>
-	[/IF] [IF year]
-	<tr>
-		<td>
-			[S YEAR][S COLON]
-		</td>
-		<td>
-			{year}
-		</td>
-	</tr>
-	[/IF] [IF comment]
-	<tr>
-		<td>
-			[S COMMENT][S COLON]
-		</td>
-		<td>
-			{comment}
-		</td>
-	</tr>
-	[/IF] [IF filelength]
-	<tr>
-		<td>
-			[S FILELENGTH][S COLON]
-		</td>
-		<td>
-			{filelength} [S BYTES]
-		</td>
-	</tr>
-	[/IF] [IF bitrate]
-	<tr>
-		<td>
-			[S BITRATE][S COLON]
-		</td>
-		<td>
-			{bitrate}
-		</td>
-	</tr>
-	[/IF] [IF tagversion]
-	<tr>
-		<td>
-			[S TAGVERSION][S COLON]
-		</td>
-		<td>
-			{tagversion}
-		</td>
-	</tr>
-	[/IF] [IF url]
-	<tr>
-		<td>
-			[S LOCATION][S COLON]
-		</td>
-		<td>
-			<a href="{url}">{&url}</a>
-		</td>
-	</tr>
-	[/IF][IF modtime] 
-      <tr> 
-        <td> [S MODTIME][S COLON]</td>
-        <td> {&modtime} </td>
-      </tr>
-   [/IF]
+	[/IF]
+	[IF track]
+		<tr>
+			<td>
+				[S TRACK][S COLON]
+			</td>
+			<td>
+				{track}
+			</td>
+		</tr>
+	[/IF]
+	[IF type] 
+		<tr>
+			<td>
+				[S TYPE][S COLON]
+			</td>
+			<td>
+				{type}
+			</td>
+		</tr>
+	[/IF]
+	[IF duration]
+		<tr>
+			<td>
+				[S LENGTH][S COLON]
+			</td>
+			<td>
+				{duration}
+			</td>
+		</tr>
+	[/IF]
+	[IF year]
+		<tr>
+			<td>
+				[S YEAR][S COLON]
+			</td>
+			<td>
+				{year}
+			</td>
+		</tr>
+	[/IF]
+	[IF comment]
+		<tr>
+			<td>
+				[S COMMENT][S COLON]
+			</td>
+			<td>
+				{comment}
+			</td>
+		</tr>
+	[/IF]
+	[IF filelength]
+		<tr>
+			<td>
+				[S FILELENGTH][S COLON]
+			</td>
+			<td>
+				{filelength} [S BYTES]
+			</td>
+		</tr>
+	[/IF]
+	[IF bitrate]
+		<tr>
+			<td>
+				[S BITRATE][S COLON]
+			</td>
+			<td>
+				{bitrate}
+			</td>
+		</tr>
+	[/IF]
+	[IF tagversion]
+		<tr>
+			<td>
+				[S TAGVERSION][S COLON]
+			</td>
+			<td>
+				{tagversion}
+			</td>
+		</tr>
+	[/IF]
+	[IF modtime] 
+		<tr> 
+			<td> [S MODTIME][S COLON]</td>
+			<td> {&modtime} </td>
+		</tr>
+	[/IF]
 </table>
+[IF url]
+	<table>
+		<tr>
+			<td>
+				[S LOCATION][S COLON]
+			</td>
+			<td>
+				<a href="{url}">{&url}</a>
+			</td>
+		</tr>
+	</table>
+[/IF]
 <p><a href="status_header.html?p0=playlist&amp;p1=play&amp;p2={%itempath}&amp;player={%player}" target="statusframe">[S PLAY_THIS_SONG]</a></p>
 <p><a href="status_header.html?p0=playlist&amp;p1=append&amp;p2={%itempath}&amp;player={%player}" target="statusframe">[NB][S ADD_THIS_SONG_TO_PLAYLIST][/NB]</a></p>
 [IF mixable]<p><a href="instant_mix.html?song={%itempath}&genre={%genre}&artist={%artist}&album={%album}&player={%player}">[S MOODLOGIC_INSTANT_MIX]</a></p>[/IF]
