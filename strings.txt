@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.60 2004/02/12 16:01:29 dean Exp $
+# $Id: strings.txt,v 1.61 2004/02/23 01:14:23 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1531,12 +1531,15 @@ SETUP_RESCAN_DESC
 
 SETUP_WIPECACHE
 	EN	Wipe Cache
+	FR	Ré-initialiser le cache
 
 SETUP_WIPECACHE_BUTTON
 	EN	Wipe Cache
+	FR	Ré-initialiser
 
 SETUP_WIPECACHE_DESC
 	EN	If you use the tag database you may want to clear the disk based cache of tag information. This option does that and then rescans your music files (in the same way as the rescan button does).
+	FR	Si vous utilisez la mise en cache disque des tags ID3, vous pouvez remettre celle-ci à zéro avec cette option (le serveur va ensuite répertorier à nouveau votre dossier de musique).
 
 RESCANNING
 	DE	Der Server durchsucht nun das Musik-Verzeichnis.
@@ -1804,18 +1807,22 @@ SETUP_THUMBSIZE_DESC
 SETUP_INCLUDENOART_0
 	DE	Keine Platzhalter für nicht vorhandene Plattencovers verwenden.
 	EN	Delete placeholders from the list
+	FR	Ne pas afficher les albums sans pochette
 
 SETUP_INCLUDENOART_1
 	DE	Alle Alben anzeigen, Platzhalter für nicht vorhandene Plattencovers verwenden.
 	EN	Include all albums, using placeholders
+	FR	Afficher tous les albums, avec image vide le cas échéant
 
 SETUP_INCLUDENOART
 	DE	Plattencover nachschlagen
 	EN	Browse By Artwork
+	FR	Parcourir les pochettes
 
 SETUP_INCLUDENOART_DESC
 	DE	Legen Sie fest, ob Albums ohne Plattencover beim Nachschlagen nach Plattencover angezeigt werden sollen. Fehlt das Plattencover, so wird ein leerer Platzhalter eingesetzt, oder das Album wird gänzlich weggelassen.
 	EN	Choose whether or not to include albums that currently have no artwork when browsing by artwork.  Where no art is found, a blank image will be inserted as a placeholder, or they can be left out of the browse entirely.
+	FR	Choisissez si l'interface doit afficher ou non les albums qui ne possèdent pas de pochette en mode Parcourir les pochettes. En l'absence de pochette, vous pouvez soit afficher une image vide, soit ignorer l'album.
 
 SETUP_PLUGINS_OK
 	DE	Ihr Plugin-Menü enthält:
@@ -2633,12 +2640,15 @@ SETUP_ANIMATIONLEVEL_DESC
 
 SETUP_LOOKFORARTWORK
 	EN	Look For Artwork
+	FR	Répertorier les pochettes
 
 SETUP_LOOKFORARTWORK_DESC
 	EN	When SlimServer scans your music library it can automatically look for album artwork.  You can choose to not have it look for album artwork, which may speed up the scan process but may make the artwork not appear in the web interface.
+	FR	Lorsque le SlimServer répertorie votre dossier de musique, il recherche automatiquement les pochettes d'album. Vous pouvez choisir de ne pas rechercher les pochettes pour accélérer ce processus, mais certaines pochettes présentes risquent de ne pas apparaître dans l'interface web.
 
 SETUP_NO_ARTWORK
 	EN	Do not Look For Artwork
+	FR	Ne pas répertorier les pochettes
 
 SETUP_BUILDITEMSPERPASS
 	DE	Anzahl Elemente pro Durchgang
