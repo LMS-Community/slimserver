@@ -148,7 +148,7 @@ use vars qw($VERSION @AUTHORS);
 	'Dan Sully',
 );
 
-$VERSION = '5.3.0';
+$VERSION = '5.3.1';
 
 # old preferences settings, only used by the .slim.conf configuration.
 # real settings are stored in the new preferences file:  .slim.pref
@@ -745,12 +745,23 @@ sub daemonize {
 }
 
 sub checkVersion {
-
 	unless (Slim::Utils::Prefs::get("checkVersion")) {
 		$::newVersion = undef;
 		return;
 	}
 
+	my $lastTime = Slim::Utils::Prefs::get('checkVersionLastTime');
+
+	if ($lastTime) {
+		my $delta = Time::HiRes::time() - $lastTime;
+		if (($delta > 0) && ($delta < Slim::Utils::Prefs::get('checkVersionInterval'))) {
+			$::d_time && msg("checking version in " . ($lastTime + Slim::Utils::Prefs::get('checkVersionInterval') + 2 - Time::HiRes::time()) . " seconds.\n");
+			Slim::Utils::Timers::setTimer(0, $lastTime + Slim::Utils::Prefs::get('checkVersionInterval') + 2, \&checkVersion);
+			return;
+		}
+	}
+			
+	$::d_time && msg("checking version now.\n");
 	my $url  = "http://www.slimdevices.com/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
 
 	# XXX - dsully - this really shouldn't be overloaded like this.
@@ -758,16 +769,13 @@ sub checkVersion {
 
 	if ($sock) {
 
-		$::newVersion = '';
+		$::newVersion = Slim::Utils::Misc::sysreadline($sock,5);
+		chomp($::newVersion);
 		
-		while (my $line = Slim::Utils::Misc::sysreadline($sock,5)) {
-			$::newVersion .= $line;
-		}
-
 		$sock->close();
 	}
-
-	Slim::Utils::Timers::setTimer(0, time() + 60*60*24, \&checkVersion);
+	Slim::Utils::Prefs::set('checkVersionLastTime', Time::HiRes::time());
+	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + Slim::Utils::Prefs::get('checkVersionInterval'), \&checkVersion);
 }
 
 #------------------------------------------
