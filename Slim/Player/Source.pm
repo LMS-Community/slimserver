@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.100 2004/06/10 23:39:06 vidur Exp $
+# $Id: Source.pm,v 1.101 2004/06/11 16:43:40 vidur Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1050,6 +1050,8 @@ sub underMax {
 	my $fullpath = shift;
 	my $type = shift;
 
+	$type = Slim::Music::Info::contentType($fullpath) unless defined $type;
+
 	my $maxRate = Slim::Utils::Prefs::maxRate($client);
 	# If we're not rate limited, we're under the maximum.
 	# If we don't have lame, we can't transcode, so we
@@ -1058,7 +1060,7 @@ sub underMax {
 
 	# If the input type is mp3, we determine whether the 
 	# input bitrate is under the maximum.
-	if ($type eq 'mp3') {
+	if (defined($type) && $type eq 'mp3') {
 		my $rate = (Slim::Music::Info::bitratenum($fullpath) || 0)/1000;
 		return ($maxRate >= $rate);
 	}
@@ -1066,8 +1068,8 @@ sub underMax {
 	# For now, we assume the output is raw 44.1Khz, 16 bit, stereo PCM
 	# in all other cases. In that case, we're over any set maximum. 
 	# In the future, we may want to do finer grained testing here - the 
-	# PCM may be of other types and we may be able to stream other
-	# types.
+	# PCM may have different parameters  and we may be able to stream other
+	# formats.
 	return 0;
 }
 
