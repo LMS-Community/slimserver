@@ -934,11 +934,6 @@ sub prepareResponseForSending {
 	my $mtime   = $response->last_modified() || 0;
 	my $method  = $request->method();
 
-	# Don't send back content for a HEAD request.
-	if ($method eq 'HEAD') {
-		$$body = "";
-	}
-
 	my $ifModified  = $request->if_modified_since();
 	my $requestTime = $request->client_date();
 
@@ -957,8 +952,6 @@ sub prepareResponseForSending {
 		for my $header (qw(Content-Length Cache-Control Content-Type Expires Last-Modified)) {
 			$response->remove_header($header);
 		}
-
-		$$body = "";
 	}
 
 	addHTTPResponse($httpClient, $response, $body);
@@ -1018,7 +1011,8 @@ sub addHTTPResponse {
 	};
 
 	# And now the body.
-	if ($body && length($$body)) {
+	# Don't send back any content on a HEAD or 304 response.
+	if ($response->request()->method() ne 'HEAD' && $response->code() ne RC_NOT_MODIFIED) {
 
 		push @{$outbuf{$httpClient}}, {
 			'data'     => $body,
@@ -1098,7 +1092,7 @@ sub sendResponse {
 			}
 
 			# if either the client or the server has requested a close, respect that.
-			if (($connection && $connection eq 'close') || !$connection) {
+			if (!$connection || $connection =~ /close/i) {
 
 				$::d_http && msg("End request, connection closing for: $httpClient\n");
 				closeHTTPSocket($httpClient);
@@ -1587,8 +1581,6 @@ sub _getFileContent {
 	my $skinkey = "${skin}/${path}";
 
 	# return if we have the template cached.
-	# XXX - this seems broken, and will start returning data of 0 length
-	# at some point. - dsully
 	if (Slim::Utils::Prefs::get('templatecache')) {
 
 		if (defined $templatefiles{$skinkey}) {
@@ -1614,7 +1606,7 @@ sub _getFileContent {
 		my $defaultpath = fixHttpPath($baseSkin, $path);
 
 		if (defined($defaultpath)) {
-			$::d_http && msg("reading template: $defaultpath\n");
+			$::d_http && msg("reading file: $defaultpath\n");
 
 			# try to open language specific files, and if not, the specified one.
 			open($template, $defaultpath . '.' . lc(Slim::Utils::Prefs::get('language'))) || open($template, $defaultpath);
@@ -1639,12 +1631,23 @@ sub _getFileContent {
 	
 	# add this template to the cache if we are using it
 	if (Slim::Utils::Prefs::get('templatecache') && defined($content)) {
-		$templatefiles{$skinkey} = [\$content, $mtime];
+
+		# Don't cache SoftSqueeze files - .jar, etc. They are large,
+		# and are cached on the client side by JWS.
+		if ($path !~ m|html/softsqueeze|) {
+			$templatefiles{$skinkey} = [\$content, $mtime];
+		}
 	}
 
 	# don't return the mtime time the first time to make sure we reload the client cache.
 	# useful when we switch skins.  unfortunately, reloads the clients cache when the server restarts.
-	return (\$content, time());
+	#
+	# Also - return the mtime the first time for SoftSqueeze, since it is skin independent.
+	if ($path !~ m|html/softsqueeze|) {
+		$mtime = time();
+	}
+
+	return (\$content, $mtime);
 }
 
 sub clearCaches {
