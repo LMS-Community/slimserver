@@ -242,8 +242,12 @@ sub coverArt {
 
 	my $image;
 
-	# return with nothing if this isn't a file.  We dont need to search on streams, for example.
-	if (!Slim::Utils::Prefs::get('lookForArtwork') || !Slim::Music::Info::isSong($self)) {
+	# return with nothing if this isn't a file. 
+	# We don't need to search on streams, for example.
+	if (!Slim::Utils::Prefs::get('lookForArtwork') || 
+	    !Slim::Music::Info::isSong($self) ||
+	     Slim::Music::Info::isRemoteURL($self)) {
+
 		return undef;
 	}
 	
