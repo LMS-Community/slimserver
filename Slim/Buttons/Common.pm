@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.38 2004/08/28 04:58:24 dean Exp $
+# $Id: Common.pm,v 1.39 2004/08/29 18:00:51 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -893,7 +893,7 @@ sub scroll_original {
 
 # DEPRECATED: Use INPUT.Time mode instead
 sub scrollTime {
-	Slim::Buttons::Input::scrollTime(@_);
+	Slim::Buttons::Input::Time::scrollTime(@_);
 }
 
 sub mixer {
