@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.100 2004/09/11 16:14:22 dean Exp $
+# $Id: Setup.pm,v 1.101 2004/09/12 04:40:47 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2130,7 +2130,7 @@ sub fillFontOptions {
 sub playerChildren {
 	my $client = shift;
 	my $pageref = shift;
-	
+	return if (!$client);
 	if ($client->isPlayer()) {
 		$pageref->{'children'} = ['player','homemenu','display','alarm','audio','remote'];
 		if (scalar(keys %{Slim::Buttons::Plugins::playerPlugins()})) {
@@ -2232,7 +2232,9 @@ sub setup_HTTP {
 		if (exists $pagesetup{'isClient'}) {
 			$client = Slim::Player::Client::getClient($paramref->{'playerid'});
 		}
-		&{$pagesetup{'postChange'}}($client,$paramref,\%pagesetup);
+		if ($client) {
+			&{$pagesetup{'postChange'}}($client,$paramref,\%pagesetup);
+		}
 	}
 
 	#fill the option lists
@@ -2333,7 +2335,7 @@ sub buildHTTP {
 					if (!exists($pageref->{'Prefs'}{$pref}{'isArray'})) {
 						$paramref->{$pref2} = ($client) ? Slim::Utils::Prefs::clientGet($client,$pref2) : Slim::Utils::Prefs::get($pref2);
 					} else {
-						$paramref->{$pref2} = ($client) ? Slim::Utils::Prefs::clientGet($client,$pref,$i) : Slim::Utils::Prefs::get($pref,$i);
+						$paramref->{$pref2} = ($client) ? Slim::Utils::Prefs::clientGet($client,$pref,$i) : Slim::Utils::Prefs::getInd($pref,$i);
 					}
 				}
 				$prefparams{'PrefValue'} = $paramref->{$pref2};
@@ -2383,7 +2385,7 @@ sub buildHTTP {
 	}
 	
 	#set up children bar and single child link
-	if (defined $pageref->{'children'}) {
+	if (defined $pageref->{'children'} && defined $pageref->{'children'}[0]) {
 		@pages = @{$pageref->{'children'}};
 		$paramref->{'children'} = buildLinkList('list',$paramref,@pages);
 		my %linkinfo = ('linkpage' => 'setup.html'
@@ -2424,7 +2426,7 @@ sub processArrayChange {
 		}
 		my $adval = defined($pageref->{'Prefs'}{$array}{'arrayDeleteValue'}) ? $pageref->{'Prefs'}{$array}{'arrayDeleteValue'} : '';
 		for (my $i = $arrayMax;$i >= 0;$i--) {
-			my $aval = ($client) ? Slim::Utils::Prefs::clientGet($client,$array,$i) : Slim::Utils::Prefs::get($array,$i);
+			my $aval = ($client) ? Slim::Utils::Prefs::clientGet($client,$array,$i) : Slim::Utils::Prefs::getInd($array,$i);
 			if (!defined $aval || $aval eq '' || $aval eq $adval) {
 				if ($client) {
 					Slim::Utils::Prefs::clientDelete($client,$array,$i);
@@ -2462,7 +2464,7 @@ sub processArrayChange {
 		}
 		#update the params hash, since the array entries may have shifted around some
 		for (my $i = 0;$i <= $arrayMax;$i++) {
-			$paramref->{$array . $i} = ($client) ? Slim::Utils::Prefs::clientGet($client,$array,$i) : Slim::Utils::Prefs::get($array,$i);
+			$paramref->{$array . $i} = ($client) ? Slim::Utils::Prefs::clientGet($client,$array,$i) : Slim::Utils::Prefs::getInd($array,$i);
 		}
 		#further update params hash to clear shifted values
 		my $i = $arrayMax + 1;
@@ -2563,7 +2565,7 @@ sub setup_evaluation {
 					if (exists($settingsref->{$key}{'currentValue'})) {
 						$currVal = &{$settingsref->{$key}{'currentValue'}}($client,$key,$i);
 					} else {
-						$currVal = ($client) ? Slim::Utils::Prefs::clientGet($client,$key,$i) : Slim::Utils::Prefs::get($key,$i);
+						$currVal = ($client) ? Slim::Utils::Prefs::clientGet($client,$key,$i) : Slim::Utils::Prefs::getInd($key,$i);
 					}
 				} else {
 					$key2 = $key;

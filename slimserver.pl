@@ -294,7 +294,7 @@ sub start {
 	$::d_server && msg("SlimServer starting up...\n");
 
 	if ($diag) { 
-		use diagnostics;
+		eval "use diagnostics";
 	}
 	# background if requested
 	if (Slim::Utils::OSDetect::OS() ne 'win' && $daemon) {
