@@ -353,7 +353,9 @@ sub parseCUE {
 			$track->{'END'} = $lastpos;
 		}
 
-		$lastpos = (exists $track->{'PREGAP'}) ? $track->{'PREGAP'} : $track->{'START'};
+		#defer pregap handling until we have continuous play through consecutive tracks
+		#$lastpos = (exists $track->{'PREGAP'}) ? $track->{'PREGAP'} : $track->{'START'};
+		$lastpos = $track->{'START'};
 	}
 
 	for my $key (sort {$a <=> $b} keys %$tracks) {
