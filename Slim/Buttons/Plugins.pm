@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.12 2003/12/27 02:05:10 dean Exp $
+# $Id: Plugins.pm,v 1.13 2004/01/13 19:11:39 kdf Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
@@ -40,10 +40,10 @@ my %curr_plugin = ();
 my $plugins_read;
 
 my %functions = (
-    'left' => sub  {
+	'left' => sub  {
 		Slim::Buttons::Common::popModeRight(shift);
-    },
-    'right' => sub  {
+	},
+	'right' => sub  {
 		my $client = shift;
 		my @enabled = enabledPlugins($client);
 		my $current = $plugins{$enabled[$curr_plugin{$client}]};
@@ -63,8 +63,8 @@ my %functions = (
 		else {
 			Slim::Display::Animation::bumpRight($client);
 		}
-    },
-    'up' => sub  {
+	},
+	'up' => sub  {
 		my $client = shift;
 	
 		$curr_plugin{$client} = Slim::Buttons::Common::scroll(
@@ -74,8 +74,8 @@ my %functions = (
 			$curr_plugin{$client},
 		);
 		$client->update();
-    },
-    'down' => sub  {
+	},
+	'down' => sub  {
 		my $client = shift;
 	
 		$curr_plugin{$client} = Slim::Buttons::Common::scroll(
@@ -85,31 +85,33 @@ my %functions = (
 			$curr_plugin{$client},
 		);
 		$client->update();
-    },
+	},
 );
 
 sub lines {
-    my $client = shift;
+	my $client = shift;
 	my @enabled = enabledPlugins($client);
 
-    unless (scalar(@enabled)) {
+	unless (scalar(@enabled)) {
 		return(string('NO_PLUGINS'),'');
-    }
-
+	}
+	if ($curr_plugin{$client} >= scalar(@enabled)) {
+		$curr_plugin{$client} = scalar(@enabled) - 1;
+	}
 	my $current = $plugins{$enabled[$curr_plugin{$client}]};
 
- 	my @lines = (
+	my @lines = (
 		string('PLUGINS') . ' (' . ($curr_plugin{$client} + 1) . ' ' . string('OF') . ' ' . (pluginCount()) . ')',
 		$current->{name},
-    );
-    return (@lines,undef,Slim::Hardware::VFD::symbol('rightarrow'));
+	);
+	return (@lines,undef,Slim::Hardware::VFD::symbol('rightarrow'));
 }
 sub enabledPlugins {
 	my $client = shift;
 	my @enabled;
 	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 	my $pluginlistref = installedPlugins();
-    foreach my $item (keys %{$pluginlistref}) {
+	foreach my $item (keys %{$pluginlistref}) {
 		next if (exists $disabledplugins{$item});
 		next if (!exists $plugins{$item});
 		
@@ -143,9 +145,9 @@ sub installedPlugins {
 }
 
 sub read_plugins {
-    no strict 'refs';
+	no strict 'refs';
 
-    foreach my $name (keys %{installedPlugins()}) {
+	foreach my $name (keys %{installedPlugins()}) {
 		my $fullname = "Plugins::$name";
 		$::d_plugins && msg("Requiring $fullname plugin.\n");	
 		eval "require $fullname";
@@ -157,8 +159,10 @@ sub read_plugins {
 			eval {$strings = &{$fullname . "::strings"}()};
 			if (!$@ && $strings) { Slim::Utils::Strings::addStrings($strings); }
 			# load screensaver, if one exists.
-			eval { &{$fullname . "::screenSaver"}() };
-			if ($@ && !($@ =~ m/\:\:screenSaver/)) { $::d_plugins && msg("No screensaver for $fullname: " . $@);}
+			if (UNIVERSAL::can("$fullname","screenSaver")) {
+				eval { &{$fullname . "::screenSaver"}() };
+				if ($@) { $::d_plugins && msg("Failed screensaver for $fullname: " . $@);}
+			}
 			my $names;
 			eval {$names = &{$fullname . "::getDisplayName"}()};
 			if (!$@ && $names) {
@@ -173,17 +177,19 @@ sub read_plugins {
 			}
 			addDefaultMaps();
 		}
-    }
-    $plugins_read = 1 unless $read_onfly;
+	}
+	$plugins_read = 1 unless $read_onfly;
 }
 
 sub addDefaultMaps {
 	no strict 'refs';
 	foreach my $plugin (keys %{installedPlugins()}) {
 		my $defaultMap;
-		eval {$defaultMap = &{"Plugins::${plugin}::defaultMap"}()};
-		if ($defaultMap && exists($plugins{$plugin})) {
-			Slim::Hardware::IR::addModeDefaultMapping($plugins{$plugin}{'mode'},$defaultMap)
+		if (UNIVERSAL::can("Plugins::${plugin}","defaultMap")) {
+			eval {$defaultMap = &{"Plugins::${plugin}::defaultMap"}()};
+			if ($defaultMap && exists($plugins{$plugin})) {
+				Slim::Hardware::IR::addModeDefaultMapping($plugins{$plugin}{'mode'},$defaultMap)
+			}
 		}
 	}
 }
@@ -192,36 +198,38 @@ sub addSetupGroups {
 	no strict 'refs';
 	foreach my $plugin (enabledPlugins()) {
 		my ($groupRef,$prefRef);
-		eval {($groupRef,$prefRef) = &{"Plugins::${plugin}::setupGroup"}()};
-		if ($@) {
-			$::d_plugins && msg("Can't get setup group for plugin $plugin : " . $@);
-		} else {
-			if ($groupRef && $prefRef && exists($plugins{$plugin})) {
-				Slim::Web::Setup::addGroup('plugins',$plugin,$groupRef,undef,$prefRef)
+		if (UNIVERSAL::can("Plugins::${plugin}","setupGroup")) {
+			eval {($groupRef,$prefRef) = &{"Plugins::${plugin}::setupGroup"}()};
+			if ($@) {
+				$::d_plugins && msg("Can't get setup group for plugin $plugin : " . $@);
+			} else {
+				if ($groupRef && $prefRef && exists($plugins{$plugin})) {
+					Slim::Web::Setup::addGroup('plugins',$plugin,$groupRef,undef,$prefRef)
+				}
 			}
 		}
 	}
 }
 
 sub getPluginModes {
-    my $mode = shift;
+	my $mode = shift;
 
-    read_plugins() unless $plugins_read;
+	read_plugins() unless $plugins_read;
 
-    foreach (keys %plugins){
-    	$mode->{$plugins{$_}->{mode}} = \&{$plugins{$_}->{module} . "::setMode"}
-    }
+	foreach (keys %plugins){
+		$mode->{$plugins{$_}->{mode}} = \&{$plugins{$_}->{module} . "::setMode"}
+	}
 }
 
 sub getPluginFunctions {
-    my $function = shift;
+	my $function = shift;
 
-    read_plugins() unless $plugins_read;
+	read_plugins() unless $plugins_read;
 
-    foreach (keys %plugins){
+	foreach (keys %plugins){
 		no strict 'refs';
-    	$function->{$plugins{$_}->{mode}} = &{$plugins{$_}->{module} . "::getFunctions"}
-    }
+		$function->{$plugins{$_}->{mode}} = &{$plugins{$_}->{module} . "::getFunctions"}
+	}
 }
 
 sub pluginCount {
@@ -229,15 +237,15 @@ sub pluginCount {
 }
 
 sub setMode {
-    my $client = shift;
-    if (!defined $curr_plugin{$client} || $curr_plugin{$client} >= scalar(enabledPlugins($client))) {
-    	$curr_plugin{$client} = 0;
-    }
-    $client->lines(\&lines);
+	my $client = shift;
+	if (!defined $curr_plugin{$client} || $curr_plugin{$client} >= scalar(enabledPlugins($client))) {
+		$curr_plugin{$client} = 0;
+	}
+	$client->lines(\&lines);
 }
 
 sub getFunctions {
-    return \%functions;
+	return \%functions;
 }
 
 1;
