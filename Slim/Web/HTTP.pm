@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.50 2003/12/07 19:16:10 grotus Exp $
+# $Id: HTTP.pm,v 1.51 2003/12/08 19:26:51 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -513,10 +513,18 @@ sub checkAuthorization {
 			my $pwd  = Slim::Utils::Prefs::get('password');
 			if ($pwd eq $password && $pwd eq '') {
 				$ok = 1;
+			} else {
+				my $salt = substr($pwd, 0, 2);
+				if (crypt($password, $salt) eq $pwd) {
+					$ok = 1;
+				}
 			}
-			my $salt = substr($pwd, 0, 2);
-			if (crypt($password, $salt) eq $pwd) {
-				$ok = 1;
+		} else {
+			foreach my $client (Slim::Player::Client::clients()) {
+				if (defined($client->password) && $client->password eq $password) {
+					$ok = 1;
+					last;
+				}
 			}
 		}
 	}

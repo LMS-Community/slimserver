@@ -15,6 +15,7 @@ use FindBin qw($Bin);
 use IO::Socket;
 use Slim::Player::Player;
 use Slim::Utils::Misc;
+use MIME::Base64;
 
 @ISA = ("Slim::Player::Player");
 
@@ -302,8 +303,18 @@ sub stream {
 	
 		my $path = '/stream.mp3?player='.$client->id;
 	
-		my $request_string = "GET $path HTTP/1.0\n\n";
-	
+		my $request_string = "GET $path HTTP/1.0\n";
+		
+		if (Slim::Utils::Prefs::get('authorize')) {
+			$client->password(generate_random_string(10));
+			
+			my $password = encode_base64('squeezebox:' . $client->password);
+			
+			$request_string .= "Authorization: Basic $password\n";
+		}
+		
+		$request_string .= "\n";
+
 		$frame .= $request_string;
 	
 		my $len = pack('n', length($frame));
@@ -312,6 +323,22 @@ sub stream {
 	
 		$client->tcpsock->syswrite($frame, length($frame));
 	}
+}
+
+# This function generates random strings of a given length
+sub generate_random_string
+{
+		#the length of the random string to generate
+        my $length_of_randomstring=shift;
+
+        my @chars=('a'..'z','A'..'Z','0'..'9','_');
+        my $random_string;
+        foreach (1..$length_of_randomstring) 
+        {
+                #rand @chars will generate a random number between 0 and scalar @chars
+                $random_string.=$chars[rand @chars];
+        }
+        return $random_string;
 }
 
 sub i2c {

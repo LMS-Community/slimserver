@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.34 2003/12/05 16:56:44 daniel Exp $
+# $Id: Info.pm,v 1.35 2003/12/08 19:26:50 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1427,13 +1427,12 @@ sub songs {
 		foreach my $item (@uniq) {
 			my $trnum = trackNumber($item);
 			next unless $trnum;
-			if ($trnum)
-			{
-				if ($seen[$trnum]) {
-					$duptracknum = 1;
-					last;
-				}
+
+			if ($seen[$trnum]) {
+				$duptracknum = 1;
+				last;
 			}
+
 			$seen[$trnum]++;
 		}
 		if ($duptracknum) {

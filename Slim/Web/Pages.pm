@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.24 2003/12/06 00:59:04 grotus Exp $
+# $Id: Pages.pm,v 1.25 2003/12/08 19:26:51 dean Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -1412,7 +1412,7 @@ sub options {
 	#with the correct option selected.
 	my ($selected,$optionref,$skinOverride) = @_;
 	my $optionlist = '';
-	foreach my $curroption (sort keys %{$optionref}) {
+	foreach my $curroption (sort { $optionref->{$a} cmp $optionref->{$b} } keys  %{$optionref}) {
 		$optionlist .= ${Slim::Web::HTTP::filltemplatefile("select_option.html",{'selected' => ($curroption eq $selected)
 											, 'key' => $curroption
 											, 'value' => $optionref->{$curroption}

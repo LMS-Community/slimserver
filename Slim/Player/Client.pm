@@ -218,7 +218,7 @@ sub new {
 	$client->[41] = undef; # master
 	$client->[42] = []; # slaves
 	$client->[43] = undef; # syncgroupid
-	$client->[44] = undef; # unused
+	$client->[44] = undef; # password
 	$client->[45] = undef; # lastirbutton
 	$client->[46] = undef; # lastirtime
 	$client->[47] = undef; # lastircode
@@ -623,6 +623,10 @@ sub slaves {
 sub syncgroupid {
 	my $r = shift;
 	@_ ? ($r->[43] = shift) : $r->[43];
+}
+sub password {
+	my $r = shift;
+	@_ ? ($r->[44] = shift) : $r->[44];
 }
 sub lastirbutton {
 	my $r = shift;
