@@ -85,6 +85,26 @@ A:active {
     float: left;
     padding-right: 0.5em;
 }
+
+li.gallery {
+  border: 1px solid rgb(0,51,204);
+  background-color: rgb(214,231,255);
+  text-align: center;
+  padding: 10px;
+  float: left;
+  margin-right: 1em;
+}
+
+.gallery img {
+  display: block;
+  border: 1px solid rgb(0,51,204);
+}
+
+.gallery a {
+  display: block;
+  margin: 5px 0 3px 0;
+}
+
 div.controls {
   clear: none;
 }
@@ -111,6 +131,10 @@ div.controls {
 }
 .controls span {
    padding: 0 0.5em;
+}
+
+.controls .alpha span {
+    padding: 0 0.2em;
 }
 
 .controls .currctl img, .controls .currctl span, .controls a:active, .controls img:active, .controls span:active {
@@ -232,7 +256,7 @@ div.controls {
    padding-left: 0px;
 }
 
-.linktree {
+.linktree, .searchinput {
    border-bottom: 2px solid rgb(71,104,149);
 }
 
@@ -247,10 +271,6 @@ div.controls {
 
 .linktree ul li {
    display: inline;
-}
-
-.linktree .currpage {
-  font-weight: bold;
 }
 
 hr {
@@ -352,7 +372,7 @@ body > div {
 	position: absolute;  /* for the benefit of IE5 Mac */
 	}
 
-#topplaylistpagebar, #playlist_header, #volumectl, #playlist_section, #nowplaying
+.pagebar, #playlist_header, #volumectl, #playlist_section, #nowplaying
 	, #browselist {
 	clear: left;
 }

@@ -1,0 +1,13 @@
+<li class="gallery">
+  <a href="browseid3.html?genre=*&amp;artist={%artist}&amp;album={%album}&amp;player={%player}&amp;artwork={artwork}" target="browser" title="{&album}">
+[IFN coverthumb]{thumbartpath}[/IFN]
+  <img src="[IFN coverthumb]html/images/spacer.gif[/IFN][IF coverthumb]/music/{%thumbartpath}/thumb.jpg[/IF]" border="0" height="{size}" width="{size}" alt="{&album}" /></a>
+  <div class="controls">
+    <ul class="songctl">
+      <li><a href="status.html?p0=playlist&amp;p1=play[IF descend]album&amp;p2={%genre}&amp;p3={%artist}&amp;p4={%album}[/IF][IFN descend]&amp;p2={%itempath}[/IFN]&amp;player={%player}" target="status" title="[S PLAY]"><span>&gt;</span></a></li>
+      <li><a href="status.html?p0=playlist&amp;p1=insert[IF descend]album&amp;p2={%genre}&amp;p3={%artist}&amp;p4={%album}[/IF][IFN descend]&amp;p2={%itempath}[/IFN]&amp;player={%player}" target="status" title="[S PLAY] [S NEXT]"><span>&gt;|</span></a></li>
+      <li><a href="status.html?p0=playlist&amp;p1=add[IF descend]album&amp;p2={%genre}&amp;p3={%artist}&amp;p4={%album}[/IF][IFN descend]&amp;p2={%itempath}[/IFN]&amp;player={%player}"  target="status" title="[S ADD_TO_PLAYLIST]"><span>+</span></a></li>
+    </ul>
+  </div>
+</li>
+

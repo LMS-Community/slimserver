@@ -11,17 +11,23 @@
 [IF song_count]    <div id="counts">{album_count} [S WITH] {song_count} [S BY] {artist_count}</div>[/IF]
     </div>
 [IF warn]    <div id="warning"><b>[S NOTE]</b> [S SCAN_WARNING] [IFN itunes][S SCAN_CLICK] <a href="browse.html?player={%player}">[S HERE]</a>.[/IFN]</div>[/IF]
-[IF browselist_header]    <div id="browselist_header">{browselist_header}<div>[/IF]
-[IF browselist_pagebar]    <div id="topbrowselistpagebar" class="linktree"><ul>{browselist_pagebar}</ul></div>[/IF]
+[IF browselist_header]    <div id="browselist_header">{browselist_header}</div>[/IF]
+[IF browselist_pagebar]    <div id="topbrowselistpagebar" class="pagebar">
+      <div class="controls">
+        <ul[NE browseby BROWSE_BY_ARTWORK] class="alpha"[/NE]>
+          {browselist_pagebar}
+        </ul>
+      </div>
+    </div>[/IF]
 [IF coverart]    <div class="coverart">
       <a href="/music/{%coverartpath}/cover.jpg" target="cover">
       <img src="/music/{%coverartpath}/cover.jpg" /></a>
     </div>[/IF]
     <div id="browselist">
-      <ul>
+      <ul[EQ browseby BROWSE_BY_ARTWORK] class="gallery"[/EQ]>
 {browse_list}
       </ul>
     </div>
-[IF browselist_pagebar]    <div id="bottombrowselistpagebar" class="linktree"><ul>{browselist_pagebar}</ul></div>[/IF]
+[IF browselist_pagebar]    <div id="bottombrowselistpagebar" class="pagebar"><div class="controls"><ul[NE browseby BROWSE_BY_ARTWORK] class="alpha"[/NE]>{browselist_pagebar}</ul></div></div>[/IF]
   </body>
 </html>

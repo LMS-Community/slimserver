@@ -1,17 +1,16 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
   <head>
     <title>[S SAVED_PLAYLISTS]</title>
-    <link rel="stylesheet" href="slimserver.css">
+    <link rel="stylesheet" href="slimserver.css" />
   </head>
-  <body bgcolor="#FFFFFF">
-
-    <p>
-
-    <h3>[S SAVED_PLAYLISTS]</h3><p>
+  <body>
+    <h3>[S SAVED_PLAYLISTS]</h3>
     <div class="linktree"><ul><li><a href="home.html?player={%player}">[S {playermodel}_HOME]</a></li><li> / <a href="browse.html?player={%player}&amp;dir=__playlists">[S SAVED_PLAYLISTS]</a></li>{pwd_list}</ul></div>
 [IF warn]    <div id="warning"><b>[S NOTE]</b> [S SCAN_WARNING] </div>[/IF]
 [IF RENAME_WARNING]<div class="warning"><b>[S NOTE]</b> [S RENAME_WARNING]</div>[/IF]
-	[IF playlistname]<p><form method="get" action="browse.html">{savebuttonname} [S THIS_PLAYLIST_AS] <input name="newname" value="{playlistname}" size=40>
+	[IF playlistname]<form method="get" action="browse.html">{savebuttonname} [S THIS_PLAYLIST_AS] <input name="newname" value="{playlistname}" size=40>
 			<input type=submit value="{savebuttonname}"><input type=hidden value="{player}" name="player">
 			<input type=hidden name="dir" value="{dir}"></form>
 	[/IF]

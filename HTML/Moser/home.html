@@ -1,0 +1,42 @@
+ <html>
+  <head>
+    <title>[S {playermodel}_HOME]</title>
+    <link rel="stylesheet" href="slimserver.css" />
+  </head>
+  <body bgcolor="#FFFFFF">
+  <h3>[S {playermodel}_HOME]</h3><p>
+<hr>
+  <h4>[S BROWSE_MUSIC]</h4>
+  <ul>
+    <li><a href="browseid3.html?player={%player}">[S BROWSE_BY_GENRE]</a></li>
+    <li><a href="browseid3.html?genre=*&player={%player}">[S BROWSE_BY_ARTIST]</a></li>
+    <li><a href="browseid3.html?genre=*&artist=*&player={%player}">[S BROWSE_BY_ALBUM]</a></li>
+    <li><a href="browseid3.html?genre=*&artist=*&player={%player}&artwork=1">[S BROWSE_BY_ARTWORK]</a></li>
+    <li><a href="browse.html?player={%player}">[S BROWSE_MUSIC_FOLDER]</a></li>
+    <li><a href="browse.html?player={%player}&dir=__playlists">[S SAVED_PLAYLISTS]</a></li>
+  </ul>
+  <h4>[S SEARCH]</h4>
+  <ul>
+    <li><a href="search.html?type=artist&player={%player}">[S SEARCHFOR] [S ARTIST]</a></li>
+    <li><a href="search.html?type=album&player={%player}">[S SEARCHFOR] [S ALBUM]</a></li>
+    <li><a href="search.html?type=song&player={%player}">[S SEARCHFOR] [S SONGTITLE]</a></li>
+  </ul>
+[IFN nosetup]  <h4>[S SETTINGS]</h4>
+  <ul>
+    <li><a href="setup.html?page=server&player={%player}">[S SERVER_SETTINGS]</a></li>
+{player_list}
+  </ul>[/IFN]
+  <h4>[S HELP]</h4>
+  <ul>
+    <li><a href="html/docs/quickstart.html" target="_top">[S GETTING_STARTED]</a></li>
+    <li><a href="html/docs/ipconfig.html" target="_top">[S PLAYER_SETUP]</a></li>
+    <li><a href="html/docs/interface.html" target="_top">[S USING_REMOTE]</a></li>
+    <li><a href="html/help_remote.html?player={%player}" target="_top">[S HELP_REMOTE]</a></li>
+    <li><a href="html/docs/radio.html?player={%player}" target="_top">[S RADIO]</a></li>
+    <li><a href="html/docs/remotestream.html?player={%player}" target="_top">[S REMOTE_STREAMING]</a></li>
+    <li><a href="html/docs/faq.html?player={%player}" target="_top">[S FAQ]</a> </li>
+    <li><a href="html/docs/index.html" target="_top">[S TECHNICAL_INFORMATION]</a></li>
+  </ul>
+[IF newVersion]  {newVersion}[/IF]
+  </body>
+</html>
