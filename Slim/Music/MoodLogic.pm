@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.13 2004/05/11 06:30:30 kdf Exp $
+#$Id: MoodLogic.pm,v 1.14 2004/05/13 17:57:35 dean Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -8,16 +8,12 @@ use File::Spec::Functions qw(catfile);
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
-#$::d_moodlogic = 1;
-#$::d_moodlogic_verbose = 1;
-
 my $mixer;
 my $browser;
 my $isScanning = 0;
 my $initialized = 0;
 my @mood_names;
 my %mood_hash;
-my @playlists=();
 my %artwork;
 my $last_error = 0;
 my $isauto = 1;
@@ -57,7 +53,7 @@ sub canUseMoodLogic {
 }
 
 sub playlists {
-	return \@playlists;
+	return Slim::Music::Info::playlists;
 }
 
 sub init {
@@ -164,17 +160,15 @@ sub startScan {
 		
 	$::d_moodlogic && msg("startScan: start export\n");
 	stopScan();
-	@playlists = ();
-
-	$::d_moodlogic && msg("Clearing ID3 cache\n");
-
-	Slim::Music::Info::clearCache();
+	#Slim::Music::Info::clearplaylists = ();
 
 	Slim::Utils::Scheduler::add_task(\&exportFunction);
 	$isScanning = 1;
 
 	# start the checker
 	checker();
+	
+	Slim::Music::Import::addImport();
 	
 } 
 
@@ -197,8 +191,11 @@ sub doneScanning {
 	if (Slim::Utils::Prefs::get('lookForArtwork')) {Slim::Utils::Scheduler::add_task(\&artScan);}
 
 	$lastMusicLibraryFinishTime = time();
-	$lastMusicLibraryDate = (stat $mixer->{JetFilePublic})[9];	
-	@playlists = Slim::Music::Info::sortIgnoringCase(@playlists);
+	$lastMusicLibraryDate = (stat $mixer->{JetFilePublic})[9];
+	
+	Slim::Music::Info::sortPlaylists();
+
+	Slim::Music::Import::delImport();
 }
 
 sub artScan {
@@ -227,7 +224,7 @@ sub getPlaylistItems {
 	my @list;
 	
 	while (!$playlist->EOF && defined($playlist->Fields('name')->value) && ($playlist->Fields('name')->value eq $item)) {
-		push @list,"file://localhost/".catfile($playlist->Fields('volume')->value.$playlist->Fields('path')->value,$playlist->Fields('filename')->value);
+		push @list,Slim::Utils::Misc::fileURLFromPath(catfile($playlist->Fields('volume')->value.$playlist->Fields('path')->value,$playlist->Fields('filename')->value));
 		$playlist->MoveNext;
 	}
 	$::d_moodlogic && msg("adding ". scalar(@list)." items\n");
@@ -297,10 +294,10 @@ sub exportFunction {
 			my $name= $playlist->Fields('name')->value;
 			my %cacheEntry = ();
 			my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
-			if (!defined($playlists[-1]) || $playlists[-1] ne $name) {
-				push @playlists, $url;
+			if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
+				Slim::Music::Info::addPlaylist($url);
 				$::d_moodlogic && msg("Found MoodLogic Playlist: $url\n");
-			} else {print $playlists[-1];}
+			}
 			# add this playlist to our playlist library
 			$cacheEntry{'TITLE'} = Slim::Utils::Prefs::get('MoodLogicplaylistprefix') . $name . Slim::Utils::Prefs::get('MoodLogicplaylistsuffix');
 			$cacheEntry{'LIST'} = getPlaylistItems($playlist);
@@ -317,8 +314,8 @@ sub exportFunction {
 				
 				my %cacheEntry = ();
 				my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
-				if ($playlists[-1] ne $name) {
-					push @playlists, $url;
+				if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
+					Slim::Music::Info::addPlaylist($url);
 					$::d_moodlogic && msg("Found MoodLogic Auto Playlist: $url\n");
 				}
 				# add this playlist to our playlist library
@@ -376,7 +373,7 @@ sub exportFunction {
 	$conn->Close;
 	
 	doneScanning();
-	$::d_moodlogic && msg("exportFunction: finished export ($count records, ".scalar @playlists." playlists)\n");
+	$::d_moodlogic && msg("exportFunction: finished export ($count records, ".scalar @{Slim::Music::Info::playlists()}." playlists)\n");
 	return 0;
 }
 

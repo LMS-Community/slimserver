@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.71 2004/05/11 06:30:30 kdf Exp $
+# $Id: Setup.pm,v 1.72 2004/05/13 17:57:37 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -542,28 +542,32 @@ sub initSetupConfig {
 				my ($client,$paramref,$pageref) = @_;
 				if (Slim::Music::iTunes::canUseiTunesLibrary()) {
 					$pageref->{'GroupOrder'}[1] = 'itunes';
-					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[0] = undef;
 				} else {
 					$pageref->{'GroupOrder'}[1] = undef;
-					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[0] = 'audiodir';
 				}
-
-				if (Slim::Music::iTunes::useiTunesLibrary()) {
-					$pageref->{'children'}[9] = 'itunes';
-				} elsif (Slim::Music::MoodLogic::useMoodLogic()) {
-					$pageref->{'children'}[9] = 'moodlogic';
-				} else {
-					pop @{$pageref->{'children'}} if $pageref->{'children'}[9];
-				}
-				
 				if (Slim::Music::MoodLogic::canUseMoodLogic()) {
 					$pageref->{'GroupOrder'}[2] = 'moodlogic';
 				} else {
 					$pageref->{'GroupOrder'}[2] = undef;
 				}
-
-				if (!Slim::Music::iTunes::useiTunesLibrary() && 
-					!Slim::Music::MoodLogic::useMoodLogic() &&
+				if (Slim::Music::iTunes::useiTunesLibrary()) {
+					$pageref->{'children'}[9] = 'itunes';
+					if (Slim::Music::MoodLogic::useMoodLogic()) {
+						$pageref->{'children'}[10] = 'moodlogic';
+					} else {
+						pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
+					}
+				} elsif (Slim::Music::MoodLogic::useMoodLogic()) {
+					$pageref->{'children'}[9] = 'moodlogic';
+					pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
+				} else {
+					pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
+					pop @{$pageref->{'children'}} if $pageref->{'children'}[9];
+				}
+				
+				# Let Wipe Cache appear unless cache is turned off..
+				if ( #!Slim::Music::iTunes::useiTunesLibrary() && 
+					#!Slim::Music::MoodLogic::useMoodLogic() &&
 					Slim::Utils::Prefs::get('usetagdatabase')) {
 					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = 'wipecache';
 				} else {
@@ -573,6 +577,23 @@ sub initSetupConfig {
 				$paramref->{'versionInfo'} = string('SERVER_VERSION') . string("COLON") . $::VERSION;
 				$paramref->{'newVersion'} = $::newVersion;
 			}
+		,'postChange' => sub {
+				my ($client,$paramref,$pageref) = @_;
+				if (Slim::Music::iTunes::useiTunesLibrary()) {
+					$pageref->{'children'}[9] = 'itunes';
+					if (Slim::Music::MoodLogic::useMoodLogic()) {
+						$pageref->{'children'}[10] = 'moodlogic';
+					} else {
+						pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
+					}
+				} elsif (Slim::Music::MoodLogic::useMoodLogic()) {
+					$pageref->{'children'}[9] = 'moodlogic';
+					pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
+				} else {
+					pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
+					pop @{$pageref->{'children'}} if $pageref->{'children'}[9];
+				}
+			}
 		,'GroupOrder' => ['language', undef, undef, 'Default']
 			#if able to use iTunesLibrary then undef at [1] will be replaced by 'iTunes'
 		#,'template' => 'setup_server.html'
@@ -581,7 +602,7 @@ sub initSetupConfig {
 						'PrefOrder' => ['language']
 						},
 				'itunes' => {
-						'PrefOrder' => ['itunes','audiodir']
+						'PrefOrder' => ['itunes']
 						,'PrefsInTable' => 1
 						,'Suppress_PrefHead' => 1
 						,'Suppress_PrefDesc' => 1
@@ -600,7 +621,7 @@ sub initSetupConfig {
 						,'GroupSub' => 1
 					},
 				'Default' => {
-						'PrefOrder' => [undef,'playlistdir','rescan',undef]
+						'PrefOrder' => ['audiodir','playlistdir','rescan',undef]
 						#if not able to use iTunesLibrary then undef at [0] will be replaced by 'audiodir'
 						#if not using iTunesLibrary then undef at [2] will be replaced by 'rescan'
 						#if not using iTunesLibrary then undef at [3] will be replaced by 'wipecache'
@@ -621,27 +642,9 @@ sub initSetupConfig {
 								}
 							,'optionSort' => 'KR'
 							,'inputTemplate' => 'setup_input_radio.html'
-							,'changeoptions' => {
-									'1' => string('USING_ITUNES')
-									,'0' => string('SETUP_ITUNES_NOT')
-									}
-							,'PrefSize' => 'large'
 						}
 				,'moodlogic' => {
-							'onChange' => sub {
-								my ($client,$changeref,$paramref,$pageref) = @_;
-								if (defined $changeref->{'moodlogic'}{'new'} &&
-									defined $changeref->{'moodlogic'}{'old'}) {
-	
-									if ($changeref->{'moodlogic'}{'new'} eq "1" &&
-										$changeref->{'moodlogic'}{'old'} eq "0") {
-										Slim::Music::MoodLogic::startScan();
-									} elsif ($changeref->{'moodlogic'}{'new'} eq "0" &&
-										$changeref->{'moodlogic'}{'old'} eq "1") {
-										Slim::Music::MusicFolderScan::startScan();
-									}
-								}
-							}
+							'validate' => \&validateTrueFalse
 							,'changeIntro' => ""
 							,'options' => {
 								'1' => string('USE_MOODLOGIC')
@@ -649,10 +652,10 @@ sub initSetupConfig {
 							}
 							,'optionSort' => 'KR'
 							,'inputTemplate' => 'setup_input_radio.html'
-							,'PrefSize' => 'large'
 						}
 				,'audiodir'	=> {
 							'validate' => \&validateIsAudioDir
+							,'validateArgs' => [1]
 							,'changeIntro' => string('SETUP_OK_USING')
 							,'rejectMsg' => string('SETUP_BAD_DIRECTORY')
 							,'PrefSize' => 'large'
@@ -667,7 +670,7 @@ sub initSetupConfig {
 				,'rescan' => {
 							'validate' => \&validateAcceptAll
 							,'onChange' => sub {
-											Slim::Music::MusicFolderScan::startScan();
+											Slim::Music::Import::startScan();
 										}
 							,'inputTemplate' => 'setup_input_submit.html'
 							,'changeIntro' => string('RESCANNING')
@@ -2118,8 +2121,8 @@ sub playlists {
 	my %list_hash;
 	my @list;	
 	Slim::Utils::Scan::addToList(\@list, Slim::Utils::Prefs::get('playlistdir'), 0);
-	if (Slim::Music::iTunes::useiTunesLibrary()) {
-		push @list, @{Slim::Music::iTunes::playlists()};
+	if (Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic()) {
+		push @list, @{Slim::Music::Info::playlists()};
 	}
 	foreach my $item ( @list) {
 		$list_hash{$item} = Slim::Music::Info::standardTitle(undef, $item);

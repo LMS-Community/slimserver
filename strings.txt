@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.103 2004/05/11 06:30:29 kdf Exp $
+# $Id: strings.txt,v 1.104 2004/05/13 17:57:30 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1058,6 +1058,7 @@ SETUP_FORMATSLIST_CHANGE
 	SE	Inställning är ändrad.
 
 SETUP_FORMATSLIST_MISSING_BINARY
+	DE	Ausführbare Datei wurde nicht gefunden:
 	EN	Required binary was not found:
 
 SETUP_FORMATSLIST
@@ -1460,12 +1461,15 @@ SETUP_DIGITALVOLUMECONTROL_DESC
 	SE	Du kan välja mellan att låta ditital volym vara fix på max nivå, eller låta den styras av volymkontroller. När du väljer fix digital signalvolym, får den analoga signalen maximal kvalitet. Oavsett inställning, så påverkar påverkas analog volym av volymknapparna.
 
 SETUP_MAXBITRATE
+	DE	Bitraten-Beschränkung
 	EN	Bitrate Limiting
 
 SETUP_MAXBITRATE_DESC
+	DE	SlimServer kann ihre WAV/AIFF oder MP3 Dateien automatisch während des Abspielens in eine geringere Bitrate umwandeln. Das ist hilfreich, wenn Sie ihren Player übers Internet mit dem SlimServer verbinden oder Probleme mit dem Wireless LAN haben. Sie können die maximale Bitrate definieren, die der SlimServer zu ihrem Player streamen soll. MP3 Lieder, die mit einer geringeren Bitrate kodiert sind, werden nicht umgewandelt. Falls Sie "Keine Einschränkung" wählen, so werden MP3 Dateien nicht konvertiert und andere Dateitypen als unkomprimiertes PCM Audio gestreamt. <br>(Achtung: damit SlimServer MP3 kodieren kann, muss der LAME MP3 Kodierer auf ihrem System installiert sein. Mehr über LAME erfahren Sie <a href="http://lame.sourceforge.net/">hier</a>.)
 	EN	SlimServer can automatically convert your music files to WAV/AIFF or MP3 on-the-fly to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to SlimServer across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that SlimServer will stream to your player.  MP3 songs encoded at a bitrate lower than below won't be converted.  If you choose No Limit, SlimServer will stream your MP3 files without conversion and your other file types as uncompressed PCM audio.  <br>(Note: In order to convert to MP3, SlimServer will need the LAME MP3 encoder installed on your system.  You can find out more about LAME <a href="http://lame.sourceforge.net/">here</a>.)
 
 SETUP_MP3BITRATE_DESC
+	DE	SlimServer kann ihre MP3 Dateien automatisch während des Abspielens in andere Formate als MP3 umwandeln. SlimServer kann MP3 Dateien auch mit einer geringeren Bitrate neu kodieren. Das ist hilfreich, wenn Sie ihren Player übers Internet mit dem SlimServer verbinden oder Probleme mit dem Wireless LAN haben. Sie können die maximale Bitrate definieren, die der SlimServer zu ihrem Player streamen soll. MP3 Lieder, die mit einer geringeren Bitrate kodiert sind, werden nicht umgewandelt. <br>(Achtung: damit SlimServer MP3 kodieren kann, muss der LAME MP3 Kodierer auf ihrem System installiert sein. Mehr über LAME erfahren Sie <a href="http://lame.sourceforge.net/">hier</a>.)
 	EN	SlimServer can automatically convert your music files to MP3 on-the-fly to play back other formats than MP3.  SlimServer can also recompress your MP3 files to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to SlimServer across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that SlimServer will stream to your player.  MP3 songs encoded at a bitrate lower than below won't be converted.  <br>(Note: In order to convert to MP3, SlimServer will need the LAME MP3 encoder installed on your system.  You can find out more about LAME <a href="http://lame.sourceforge.net/">here</a>.)
 
 SETUP_MP3SILENCEPRELUDE
@@ -1675,28 +1679,10 @@ SETUP_LANGUAGE_OK
 	SE	Valt språk är:
 
 SETUP_AUDIODIR
-	DE	Ihr Musik-Verzeichnis
-	DK	Din musiksamling
-	EN	Your Music Folder
-	ES	Su carpeta de música
-	FI	Musiikkikansiosi
-	FR	Votre dossier de musique
-	NL	Uw Muziek Folder
-	NO	Din musikkfolder
-	PT	Directoria com Músicas
-	SE	Din musikmapp
+	EN	Music Folder
 
 SETUP_AUDIODIR_DESC
-	DE	Das Verzeichnis, in dem sich ihre MP3 Dateien auf ihrer Festplatte befinden:
-	DK	Mappen hvor dine MP3-filer er gemt på din harddisk.
-	EN	The directory where your music files are stored on your hard disk:
-	ES	La carpeta en su disco duro donde están guardados sus ficheros MP3:
-	FI	Hakemisto kovalevyllä minne MP3 -tiedostosi on tallenettu:
-	FR	Le dossier qui contient les fichiers MP3 sur votre disque dur :
-	NL	De folder waar Uw MP3 bestanden op Uw hard disk staan:
-	NO	Adresse til folderen hvor dine MP3-filer er lagret:
-	PT	A directoria onde estão guardados os ficheiros áudio
-	SE	Sökväg till mapp på hårddisken där dina MP3-filer är lagrade:
+	EN	You can specify a folder containing music files that SlimServer will scan and add to your music library.  Enter the path to the folder below.  You can leave this field blank if you are importing your music library information from iTunes or MoodLogic.
 
 SETUP_AUDIODIR_OK
 	DE	Der Server verwendet den folgenden Pfad zu ihren MP3 Dateien:
@@ -1727,17 +1713,20 @@ SETUP_ARTFOLDER
 	DE	Ordner für Plattencover
 	EN	Artwork Folder
 	NO	Folder for platecover
+	SE	Grafikmapp
 
 SETUP_ARTFOLDER_DESC
 	DE	Sie können einen Ordner definieren, in welchem alle Plattencovers abgelegt werden sollen. Definieren Sie hier diesen Ordner. Unabhängig von dieser Einstellung wird der Server stets auch in den Verzeichnissen der Musikdateien nach Bilddateien für die Plattencovers schauen, falls in diesem Ordner nichts passendes gefunden wird.
 	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, the server will still look for artwork in the same path as each audio file if no matching artwork in found in the Artwork Folder.
 	NO	Du kan velge å lagre alle platecover i en folder, ved å benytte innstillingen over. Skriv inn adressen til Grafikk folderen her. Serveren vil fremdeles lete etter platecover i samme folder som lydfilen ligger i om ikke det finnes et treff i Grafikk folderen.
+	SE	Du kan välja att lagra all grafik i en enda mapp genom att använda valet för variabla filnamn enligt ovan. Ange sökvägen till Grafikmappen här. Servern kommer ändå att leta efter grafik på samma plats som ljudfilerna om den inte hittar nåhon grafik som passar i Grafikmappen.
 
 SETUP_BAD_FILE
+	DE	Ups! "%s" scheint keine korrekte Datei zu sein. Bitte versuchen Sie es erneut.
 	EN	Oops - "%s" doesn't seem to be a valid file. Try again.
 
 SETUP_BAD_DIRECTORY
-	DE	Oops - "%s" ist kein gültiges Verzeichnis. Bitte versuchen Sie es noch einmal.
+	DE	Ups! "%s" ist kein gültiges Verzeichnis. Bitte versuchen Sie es noch einmal.
 	DK	Desværre, "%s" er ikke en brugbar folder. Prøv en anden.
 	EN	Oops - "%s" doesn't seem to be a valid directory. Try again.
 	ES	Ay! La carpeta "%s" no es válido. Intente de nuevo.
@@ -1842,35 +1831,21 @@ SETUP_WIPECACHE_DESC
 	SE	Om du använder funktionen 'lagra musikdatabas på disken', kanske du vill tömma densamma. Denna inställning tömmer och scannar sedan musikmappen på nytt.
 
 RESCANNING
-	DE	Der Server durchsucht nun das Musik-Verzeichnis.
+	DE	Der Server durchsucht nun das Musiksammlung.
 	DK	Serveren genindlæser nu musikinformationerne fra din musiksamling.
-	EN	The server is now rescanning your Music Folder.
+	EN	The server is now rescanning your Music Library.
 	ES	El servidor está escaneando su carpeta de música.
 	FI	Palvelin lukee uudelleen musiikkikansiosi sisällön.
 	FR	Le serveur répertorie maintenant votre dossier de musique.
 	NL	De server leest nu de Muziek Folder opnieuw in.
 	PT	O servidor está a analisar o arquivo de músicas.
-	SE	Servern läser nu om din Musikmapp.
+	SE	Servern läser nu om din musikbibliotek.
 
 USING_ITUNES
-	DE	Der Server wird nun iTunes für die Musiksammlung verwenden.
-	DK	Serveren vil nu bruges iTunes til din musiksamling.
-	EN	The server will now use iTunes for your music library.
-	ES	El servidor usará iTunes como librería de música.
-	FR	Le serveur utilisera maintenant iTunes pour repérer votre musique.
-	NL	De server zal nu iTunes gebruiken voor Uw muziek bibliotheek.
-	PT	O servidor vai usar o iTunes como arquivo de músicas.
-	SE	Servern kommer nu använda iTunes som musikbibliotek
+	EN	The server will import iTunes information.
 
 NOT_USING_ITUNES
-	DE	Der Server wird nun das Verzeichnis für ihre Musiksammlung verwenden.
-	DK	Serveren vil nu bruge den angivne mappe til din musiksamling.
-	EN	The server will now use the folder for your music library.
-	ES	El servidor usará la carpeta normal como librería de música.
-	FR	Le serveur utilisera maintenant le dossier indiqué pour repérer votre musique.
-	NL	De server zal nu de folder gebruiken voor Uw muziek bibliotheek.
-	PT	O servidor vai usar a directoria como arquivo de músicas.
-	SE	Servern kommer nu använda mappen som musikbibliotek
+	EN	The server will no longer import iTunes information.
 
 USE_ITUNES
 	DE	Verwendung von iTunes
@@ -1883,14 +1858,7 @@ USE_ITUNES
 	SE	Använd iTunes
 
 DONT_USE_ITUNES
-	DE	Verwende dieses Musik Verzeichnis:
-	DK	Anvend denne mappe til musiksamlingen:
-	EN	Use this music folder:
-	ES	Usar esta carpeta de música:
-	FR	Utiliser le dossier de musique :
-	NL	Gebruik deze muziekfolder:
-	PT	Usar esta directoria
-	SE	Använd denna musikmapp:
+	EN	Do Not Use iTunes
 
 SETUP_ITUNES
 	DE	iTunes
@@ -1902,27 +1870,10 @@ SETUP_ITUNES
 	SE	iTunes
 
 SETUP_ITUNES_OK
-	DE	Der Server wird nun iTunes für die Musiksammlung verwenden.
-	DK	Serveren vil nu bruges iTunes til din musiksamling.
-	EN	The server will now use iTunes for your music library.
-	ES	El servidor usará iTunes como librería de música.
-	FR	Le serveur utilisera maintenant iTunes pour repérer votre musique.
-	NL	De server zal nu iTunes gebruiken voor Uw muziek bibliotheek.
-	PT	O servidor vai usar o iTunes como arquivo de músicas.
-	SE	Servern kommer nu använda iTunes som musikbibliotek.
-
-SETUP_ITUNES_NOT
-	EN	The server will no longer use iTunes for your music library.
-
+	EN	The server will import iTunes information.
+  
 SETUP_ITUNES_DESC
-	DE	Der SlimServer kann ihre iTunes Musik Sammlung und Playlists verwenden. Jegliche Änderungen, die Sie in iTunes vornehmen, werden auf ihrem Player abgebildet. Wenn Sie die iTunes Musiksammlung nicht verwenden wollen, dann geben Sie das Verzeichnis der Musiksammlung auf ihrem Computer an.
-	DK	SlimServer kan anvende din iTunes musiksamling og playlister. Ændringer foretaget i iTunes vil kunne ses på din player. Hvis du ikke ønsker at bruge din iTunes musiksamling kan du indtaste stien på den mappe hvor dine musikfiler ligger på din harddisk.
-	EN	The SlimServer can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. If you don't want to use your iTunes music library, you can enter the name of the directory where your music files are stored on your computer.
-	ES	El servidor puede usar su librería de música y listas discográficas de iTunes. Cualquiera cambio que haga en iTunes se reflejerá en el player. Si no quiere usar su librería de música de iTunes puede introducir el camino a la carpeta donde están guardados sus ficheros de música.
-	FR	Le SlimServer peut utiliser iTunes pour accéder à votre musique et à vos listes de lecture. Tous les changements effectués dans iTunes seront pris en considération par votre platine. Si vous ne voulez pas utiliser votre bibliothèque iTunes, vous pouvez saisir le nom du dossier où se trouvent vos fichiers MP3.
-	NL	De SlimServer kan Uw iTunes muziek bibliotheek en playlists gebruiken. Alle wijzigingen die U maakt aan Uw iTunes zullen ook voor de player zichtbaar zijn. Als U Uw iTunes bibliotheek niet wilt gebruiken, kunt U de naam van een folder opgeven waarin Uw muziek bestanden zijn opgeslagen.
-	PT	O SlimServer pode usar a biblioteca de música e as playlists do iTunes 3 e 4. As alterações efectuadas no iTunes serão reflectidas no player. Se não quiser usar a biblioteca do iTunes, introduza a directoria que contém os ficheiros de áudio no seu computador.
-	SE	SlimServer kan använda iTunes musikbibliotek och spellistor. Alla ändringar som du gör i iTunes kommer att återspeglas i din spelare. Om du inte vill använda iTunes som musikbibliotek, kan du skriva in namnet på den mapp där dina musikfiler lagras.
+	EN	The SlimServer can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. Check the box below if you want to import your iTunes Music Library information.
 
 USE_MOODLOGIC
 	DE	MoodLogic verwenden
@@ -1951,12 +1902,7 @@ SETUP_MOODLOGIC
 	SE	MoodLogic
 
 SETUP_MOODLOGIC_DESC
-	DE	Der SlimServer kann ihr MoodLogic Programm als Quelle für Titel und Musikrichtung verwenden. Zusätzlich können Sie einen ad-hoc Mix mit Hilfe der Musikrichtung, des Interpreten und der Titel erstellen.
-	EN	The SlimServer can use your MoodLogic program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level.
-	FR	Le SlimServer peut utiliser votre logiciel MoodLogic comme source pour les titres et les genres. MoodLogic permet par ailleurs de créer des mixes instantanés à partir du genre, de l'artiste ou des caractéristiques du morceau.
-	NL	De SlimServer kan Uw MoodLogic programma gebruiken als basis voor titel en genre informatie. Bijkomend kan U mixen samenstellen op basis van genre, artiest of muziekstuk.
-	PT	O SlimServer pode usar o módulo de Ambiência (MoodLogic) como fonte de títulos e informação do género de música. Adicionalmente, pode gerar misturas instantâneas a partir do género, artista ou nível de som.
-	SE	SlimServer kan använda din MoodLogic-applikation som källa till titel- och genre-information. Dessutom kan du skapa direktmixar baserat på genre, artist och låt-nivå.
+	EN	The SlimServer can use your MoodLogic program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level. Check the box below to import your MoodLogic Library information.
 
 SETUP_INSTANTMIXMAX
 	DE	Maximale Anzahl Lieder für Instant Mix
@@ -2054,16 +2000,19 @@ SETUP_REFRESHRATE_OK
 	SE	Uppdateringsintervall satt till:
 
 SETUP_MOODLOGICSCANINTERVAL
+	DE	Moodlogic Aktualisierungs-Intervall
 	EN	Moodlogic Reload Interval
 
 SETUP_MOODLOGICSCANINTERVAL_DESC
+	DE	Wenn ihre Moodlogic Datenbank verändert wird, importiert SlimServer automatisch die Bibliotheksinformationen. Wählen Sie die minimale Wartezeit (in Sekunden), die SlimServer vor einem erneuten Import der Moodlogic Datenbank abwarten soll.
 	EN	When your Moodlogic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your Moodlogic Database again.  
 
 SETUP_MOODLOGICSCANINTERVAL_OK
+	DE	Minimale Wartezeit für Moodlogic Datenbank Import:
 	EN	Minimum Moodlogic Database reload time:
 
 SETUP_ITUNESSCANINTERVAL
-	DE	iTunes Reload Intervall
+	DE	iTunes Aktualisierungs-Intervall
 	EN	iTunes Reload Interval
 
 SETUP_ITUNESSCANINTERVAL_DESC
@@ -2073,29 +2022,38 @@ SETUP_ITUNESSCANINTERVAL_DESC
 SETUP_ITUNESSCANINTERVAL_OK
 	DE	Minimale Wartezeit fürs Einlesen der iTunes Musiksammlung
 	EN	Minimum iTunes Music Library reload time:
+	SE	Minsta omläsningstid för iTunes musikbibliotek
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE
+	DE	iTunes Musiksammlung automatisch finden
 	EN	Find iTunes Library Automatically
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE_DESC
+	DE	Sie können wählen, ob SlimServer versuchen soll, die iTunes Musiksammlung automatisch zu finden, oder ob Sie dies manuell tun wollen. Für eine manuelle Wahl wählen Sie "iTunes Musiksammlung manuell suchen" und geben den Pfad zur iTunes Music Library.xml Datei an.
 	EN	You may choose to have the server try to find the iTunes Music Library automatically or specify the locations manually.  To specify the locations, choose Specify iTunes Library Locations below and enter the path to the iTunes Music Library.xml file and your iTunes Music folder.
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE_0
+	DE	iTunes Musiksammlung manuell suchen
 	EN	Specify iTunes Library Locations
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE_1
+	DE	iTunes Musiksammlung automatisch finden
 	EN	Find iTunes Library Automatically
 
 SETUP_ITUNES_LIBRARY_XML_PATH
+	DE	Speicherort der iTunes Music Library.xml 
 	EN	iTunes Music Library.xml Locations
 
 SETUP_ITUNES_LIBRARY_XML_PATH_DESC
+	DE	Falls Sie den Speicherort ihrer iTunes Music Library.xml Datei manuell definieren wollen, so geben Sie hier den kompletten Pfad inkl. Dateiname an.
 	EN	If you are specifying the location of your iTunes Music Library, enter the path to the iTunes Music Library.xml file here, including the whole file name.
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH
+	DE	iTunes Musik Ordner
 	EN	iTunes Music Folder
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
+	DE	Falls Sie den Speicherort ihrer iTunes Music Library.xml Datei manuell definieren wollen, so geben Sie hier den kompletten Pfad zu ihrem iTunes Musik Ordner an.
 	EN	If you are specifying the location of your iTunes Music Library, enter the path, including the folder name, containing your iTunes Music.
 
 SETUP_COVERART
@@ -4283,6 +4241,7 @@ SAVED_PLAYLISTS
 SAVED_PLAYLISTS_DBL
 	DE	Playlists
 	FR	Listes de lecture
+	SE	Låtlistor
 
 PLAYLISTDIR
 	DE	Gespeichertes Verzeichnis der Playlists
@@ -4772,6 +4731,7 @@ KBPS
 	SE	kbps
 
 NO_LIMIT
+	DE	Keine Einschränkung
 	EN	No Limit
 
 GENRES
@@ -4847,6 +4807,7 @@ ALL_SONGS
 ALL_ARTISTS
 	DE	Alle Interpreten
 	EN	All Artists
+	SE	Alla artister
 
 ALL_ALBUMS
 	DE	Alle Alben
@@ -6478,7 +6439,7 @@ EDIT
 	EN	Edit
 	FR	Modifier
 	NO	Endre
-	SE	redigera
+	SE	Redigera
 
 URL
 	DE	URL

@@ -11,18 +11,10 @@
     <li>
  		<a href="browseid3.html?genre=*&artist=*&player=[% player | uri %]">[% "BROWSE_BY_ALBUM" | string %]</a>
  	</li>
- 	[% IF not nofolder %]
-    <li>
- 		<a href="browse.html?player=[% player | uri %]">[% "BROWSE_MUSIC_FOLDER" | string %]</a>
- 	</li>
- 	[% END %]
-    <li>
- 		<a href="browse.html?player=[% player | uri %]&dir=__playlists">[% "SAVED_PLAYLISTS" | string %]</a>
- 	</li>
 [% IF additionalLinks.browse %]
-    [% FOREACH key = additionalLinks.browse.keys %]
+    [% FOREACH link = additionalLinks.browse %]
     <li>
- 		<a href="[% additionalLinks.browse.$key %]player=[% player | uri %]">[% key %]</a>
+ 		<a href="[% link.value %]player=[% player | uri %]">[% link.key %]</a>
  	</li>
     [% END %]
 [% END %]

@@ -1,5 +1,5 @@
 
-# $Id: Client.pm,v 1.49 2004/05/06 08:13:58 kdf Exp $
+# $Id: Client.pm,v 1.50 2004/05/13 17:57:36 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -785,6 +785,11 @@ sub new {
 
 	$clientHash{$id} = $client;
 
+	# if maxBitrate hasn't been set yet, allow wired squeezeboxes to default to no limit.
+	if (!defined $client->signalStrength() && !Slim::Utils::Prefs::clientGet($client,'maxBitrate')) {
+		$::d_slimproto && msg ("Detected wired squeezebox. Setting unlimited Bitrate.\n");
+		Slim::Utils::Prefs::clientSet($client,'maxBitrate',0)
+	}
 	# make sure any preferences this client may not have set are set to the default
 	Slim::Utils::Prefs::checkClientPrefs($client);
 

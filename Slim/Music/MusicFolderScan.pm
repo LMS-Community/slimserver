@@ -10,47 +10,30 @@ use Slim::Utils::Misc;
 # background scanning and cache prefilling of music information to speed up UI...
 
 my @dummylist;
-my $stillScanning;
+my $stillScanning=0;
 
 sub startScan {
-	my $savecache = shift;
-	
-	if (Slim::Music::iTunes::useiTunesLibrary()) { 
-		Slim::Music::iTunes::startScan();
-		return;
-	}
-
-	if (Slim::Music::MoodLogic::useMoodLogic()) { 
-		Slim::Music::MoodLogic::startScan();
-		return;
-	}
-
-	# Optionally don't clear the caches...
-	if (!$savecache) {
-		$::d_info && msg("Clearing ID3 cache\n");
-		Slim::Music::Info::clearCache();
-	}
-
 	if (!defined(Slim::Utils::Prefs::get('audiodir')) or not -d Slim::Utils::Prefs::get("audiodir")) {
-		$::d_info && msg("Skipping pre-scan - audiodir is undefined.\n");
-		return 0;
+		$::d_info && msg("Skipping music folder scan - audiodir is undefined.\n");
 	}
-
-	if ($stillScanning) {
-		$::d_info && msg("Scan already in progress. Aborting\n");
-		Slim::Utils::Scan::stopAddToList(\@dummylist);
+	else {
+		if ($stillScanning) {
+			$::d_info && msg("Scan already in progress. Aborting\n");
+			Slim::Utils::Scan::stopAddToList(\@dummylist);
+			Slim::Music::Import::delImport();
+		}
+		$stillScanning=1;
+		$::d_info && msg("Starting music folder scan\n");
+		Slim::Utils::Scan::addToList(\@dummylist, Slim::Utils::Prefs::get('audiodir'), 1, 0, \&doneScanning, 0);
+		Slim::Music::Import::addImport();
 	}
-
-	$stillScanning=1;
-	$::d_info && msg("Starting music folder scan\n");
-	Slim::Utils::Scan::addToList(\@dummylist, Slim::Utils::Prefs::get('audiodir'), 1, 0, \&doneScanning, 0);
 }
 
 sub doneScanning {
 	$::d_info && msg("finished background scan of music folder.\n");
-	Slim::Music::Info::saveDBCache();
 	$stillScanning=0;
 	@dummylist = ();
+	Slim::Music::Import::delImport();
 }
 
 sub stillScanning {

@@ -56,15 +56,10 @@ my $opened = 0;
 my $locked = 0;
 my $iBase = '';
 
-#$::d_itunes = 1;
-#$::d_itunes_verbose = 1;
-
-
 my $inPlaylists;
 my $inTracks;
 my $doneXML;
 my %tracks;
-my @playlists;
 my %artwork;
 my $applicationVersion;
 my $majorVersion;
@@ -322,7 +317,7 @@ sub findMusicLibrary {
 }
 
 sub playlists {
-	return \@playlists;
+	return \@Slim::Music::Info::playlists;
 }
 
 sub isMusicLibraryFileChanged {
@@ -377,12 +372,9 @@ sub startScan {
 	}
 	
 	stopScan();
-	
-	$::d_itunes && msg("Clearing ID3 cache\n");
-
-	Slim::Music::Info::clearCache();
 
 	Slim::Utils::Scheduler::add_task(\&scanFunction);
+	Slim::Music::Import::addImport();
 	$isScanning = 1;
 
 	# start the checker
@@ -419,7 +411,9 @@ sub doneScanning {
 
 	$isScanning = 0;
 	
-	@playlists = Slim::Music::Info::sortIgnoringCase(@playlists); 
+	Slim::Music::Info::sortPlaylists();
+	
+	Slim::Music::Import::delImport();
 }
 
 sub artScan {
@@ -563,10 +557,11 @@ sub scanFunction {
 				if (Slim::Music::Info::isFileURL($url)) {
 					if (Slim::Utils::OSDetect::OS() eq 'unix') {
 						my $base = Slim::Utils::Misc::fileURLFromPath($path);
-						$url =~ s,$iBase,$base/,isg;
+						$url =~ s,$iBase,$base,isg;
 						$::d_itunes && msg("Correcting for Linux: $location to $url\n");
 					};
 					$url =~ s/\/$//;
+					$url =~ s/file:\/\/localhost\//file:\/\/\//;
 				}
 				if ($url) {
 					if (Slim::Music::Info::isFileURL($url)) {
@@ -613,8 +608,8 @@ sub scanFunction {
 			$cacheEntry{'TAG'} = 1;
 			$cacheEntry{'VALID'} = '1';
 			Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
-			push @playlists, $url;
-			$::d_itunes && msg("playlists now has " . scalar(@playlists) . " items...\n");
+			Slim::Music::Info::addPlaylist($url);
+			$::d_itunes && msg("playlists now has " . scalar @{Slim::Music::Info::playlists()} . " items...\n");
 		}
 	} else {
 		if ($curLine eq "<key>Major Version</key>") {
@@ -751,7 +746,7 @@ sub getDict {
 			}			
 			if (defined($key) && defined($value)) { 
 				$dict{$key} = $value;
-				$::d_ttunes && msg("got dictionary entry: $key = $value\n");
+				$::d_itunes_verbose && msg("got dictionary entry: $key = $value\n");
 			} else {
 				warn "iTunes: Couldn't get key and value in dictionary, got $key and $value";
 			}
@@ -774,7 +769,6 @@ sub resetScanState {
 	$majorVersion = undef;
 	$minorVersion = undef;
 	%tracks = ();
-	@playlists = ();
 }
 
 sub strip_automounter {

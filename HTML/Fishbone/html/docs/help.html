@@ -1,4 +1,9 @@
-[% pagetitle = "HELP" | string %] [% pageicon = 'MUSIC' %] [% help = '1' %] [% PROCESS pageheader.html %]
+<html>
+	<head>
+		<title>[% pagetitle %]</title>
+		<link rel="stylesheet" href="[% webroot %]slimserver.css">
+	</head>
+	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
 		<ul>
 			<li><a href="quickstart.html" target="_top">[% "GETTING_STARTED" | string %]</a></li>
 			<li><a href="ipconfig.html" target="_top">[% "PLAYER_SETUP" | string %]</a></li>
@@ -8,11 +13,11 @@
 			<li><a href="faq.html?player=[% player | uri %]" target="_top">[% "FAQ" | string %]</a> </li>
 			<li><a href="index.html">[% "TECHNICAL_INFORMATION" | string %]</a></li>
 			<li><a href="http://www.slimdevices.com/" target="website">[% "ABOUT_SLIMDEVICES" | string %]</a></li>
-			[% IF additionalLinks.help %]
-				[% FOREACH key = additionalLinks.help.keys %]
-					<li><a href="[% additionalLinks.help.$key %]player=[% player | uri %]">[% key %]</a></li>
-				[% END %]
-			[% END %]
+			  [% IF additionalLinks.help %]
+					  [% FOREACH key = additionalLinks.help.keys %]
+							  <li><a href="[% additionalLinks.help.$key %]player=[% player | uri %]">[% key %]</a></li>
+					  [% END %]
+			  [% END %]
 		</ul>
 	</body>
 </html>

@@ -112,6 +112,7 @@ use Slim::Hardware::IR;
 use Slim::Music::Info;
 use Slim::Music::iTunes;
 use Slim::Music::MusicFolderScan;
+use Slim::Music::Import;
 use Slim::Utils::OSDetect;
 use Slim::Player::Playlist;
 use Slim::Player::Sync;
@@ -339,21 +340,10 @@ sub start {
 
 	# start scanning based on a timer...
 	# Currently, it's set to one item (directory or song) scanned per second.
-	if (Slim::Music::iTunes::useiTunesLibrary()) {
 
-		$::d_server && msg("SlimServer iTunes init...\n");
-		Slim::Music::iTunes::startScan();
-
-	} elsif (Slim::Music::MoodLogic::useMoodLogic()) {
-
-		$::d_server && msg("SlimServer MoodLogic init...\n");
-		Slim::Music::MoodLogic::startScan();
-
-	} else {
-		if (!Slim::Utils::Prefs::get('usetagdatabase')) {
-			$::d_server && msg("SlimServer Music Folder Scan init...\n");
-			Slim::Music::MusicFolderScan::startScan(1);
-		}
+	if (!Slim::Utils::Prefs::get('usetagdatabase')) {
+		$::d_server && msg("SlimServer Inital Scan init...\n");
+		Slim::Music::Import::startScan();
 	}
 	
 	$lastlooptime = Time::HiRes::time();
@@ -649,7 +639,8 @@ sub initSettings {
 	if (!(defined Slim::Utils::Prefs::get("audiodir") && 
 		-d Slim::Utils::Prefs::get("audiodir")) && 
 		!$quiet && 
-		!Slim::Music::iTunes::useiTunesLibrary()) {
+		!Slim::Music::iTunes::useiTunesLibrary() &&
+		!Slim::Music::MoodLogic::useMoodLogic()) {
 
 		msg("Your MP3 directory needs to be configured. Please open your web browser,\n");
 		msg("go to the following URL, and click on the \"Server Settings\" link.\n\n");

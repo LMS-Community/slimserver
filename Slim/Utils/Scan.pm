@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.9 2004/04/30 20:44:24 dean Exp $
+# $Id: Scan.pm,v 1.10 2004/05/13 17:57:36 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -308,7 +308,7 @@ sub addToList_run {
 		
 #	force the loading of ID3 data
 		Slim::Music::Info::title($itempath);
-				
+		Slim::Music::Info::markAsScanned ($itempath);
 		return 1;
 	}
 
@@ -436,6 +436,8 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		$numitems = (push @$listref, Slim::Formats::Parse::parseList($playlisturl,$playlist_filehandle, (splitpath(Slim::Utils::Misc::pathFromFileURL($playlisturl)))[0] . (splitpath(Slim::Utils::Misc::pathFromFileURL($playlisturl)))[1])) - $startingsize;
 		$::d_scan && msg("Scan::readList loaded playlist with $numitems items\n");
 	}
+	
+	Slim::Music::Info::markAsScanned($playlistpath);
 	
 	return $numitems
 }

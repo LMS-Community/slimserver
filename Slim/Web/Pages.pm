@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.76 2004/05/10 17:50:49 dean Exp $
+# $Id: Pages.pm,v 1.77 2004/05/13 17:57:37 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -23,12 +23,28 @@ sub home {
 	if (defined $params->{'forget'}) {
 		Slim::Player::Client::forgetClient($params->{'forget'});
 	}
-
 	$params->{'nosetup'} = 1   if $::nosetup;
 	$params->{'newVersion'} = $::newVersion if $::newVersion;
-	$params->{'nofolder'} = 1  if  Slim::Music::iTunes::useiTunesLibrary();
-	$params->{'noartwork'} = 1 if !Slim::Utils::Prefs::get('lookForArtwork');
-	$params->{'noID3'} = 1 if Slim::Utils::Prefs::get('ignoreMP3Tags');
+	
+	if (Slim::Utils::Prefs::get('lookForArtwork')) {
+		addLinks("browse",{string('BROWSE_BY_ARTWORK') => "browseid3.html?genre=*&artist=*&artwork=1"});
+	} else {
+		addLinks("browse",{string('BROWSE_BY_ARTWORK') => undef});
+		$params->{'noartwork'} = 1;
+	}
+	
+	if (Slim::Utils::Prefs::get('audiodir')) {
+		addLinks("browse",{string('BROWSE_MUSIC_FOLDER') => "browse.html?dir="});
+	} else {
+		addLinks("browse",{string('BROWSE_MUSIC_FOLDER') => undef});
+		$params->{'nofolder'}=1;
+	}
+	
+	if (Slim::Utils::Prefs::get('playlistdir')) {
+		addLinks("browse",{string('SAVED_PLAYLISTS') => "browse.html?dir=__playlists"});
+	} else {
+		addLinks("browse",{string('SAVED_PLAYLISTS') => undef});
+	}
 	
 	# fill out the client setup choices
 	foreach my $player (sort { $a->name() cmp $b->name() } Slim::Player::Client::clients()) {
@@ -45,7 +61,7 @@ sub home {
 	Slim::Buttons::Plugins::addSetupGroups();
 	$params->{'additionalLinks'} = \%additionalLinks;
 
-	#
+	
 	_addStats($params, [], [], [], []);
 
 	my $template = $params->{"path"}  =~ /home\.(htm|xml)/ ? 'home.html' : 'index.html';
@@ -59,8 +75,12 @@ sub addLinks {
 	return if (ref($links) ne 'HASH');
 
 	while (my ($title, $path) = each %$links) {
-		$additionalLinks{$category}->{$title} = $path . 
-			(($path =~ /\?/) ? '&' : '?')
+		if (defined($path)) {
+			$additionalLinks{$category}->{$title} = $path . 
+				(($path =~ /\?/) ? '&' : '?');
+		} else {
+			delete($additionalLinks{$category}->{$title});
+		}
 	}
 }
 
@@ -124,7 +144,7 @@ sub browser {
 
 	} else {
 
-		if (!defined(Slim::Utils::Prefs::get("audiodir"))) {
+		if (!Slim::Utils::Prefs::get("audiodir")) {
 			$::d_http && msg("no audiodir, so we can't save a file!!\n");
 			return Slim::Web::HTTP::filltemplatefile("badpath.html", $params);
 		}
@@ -278,24 +298,13 @@ sub browser {
 sub browser_addtolist_done {
 	my ($current_player, $callback, $httpClient, $params, $itemsref, $response) = @_;
 
-	if (defined $params->{'dir'} && $params->{'dir'} eq '__playlists' && Slim::Music::iTunes::useiTunesLibrary()) {
+	if (defined $params->{'dir'} && $params->{'dir'} eq '__playlists' && (Slim::Music::MoodLogic::useMoodLogic() || Slim::Music::iTunes::useiTunesLibrary())) {
 
-		$::d_http && msg("just showing itunes playlists\n");
+		$::d_http && msg("just showing imported playlists\n");
 
-		push @$itemsref, @{Slim::Music::iTunes::playlists()};
+		push @$itemsref, @{Slim::Music::Info::playlists()};
 
-		if (Slim::Music::iTunes::stillScanning()) {
-			$params->{'warn'} = 1;
-		}
-	} 
-	
-	if (defined $params->{'dir'} && $params->{'dir'} eq '__playlists' && Slim::Music::MoodLogic::useMoodLogic()) {
-
-		$::d_http && msg("just showing moodlogic playlists\n");
-
-		push @$itemsref, @{Slim::Music::MoodLogic::playlists()};
-
-		if (Slim::Music::MoodLogic::stillScanning()) {
+		if (Slim::Music::Import::stillScanning()) {
 			$params->{'warn'} = 1;
 		}
 	}
@@ -1425,7 +1434,7 @@ sub browseid3 {
 
 		# Browse by Artist
 		my @items = Slim::Music::Info::artists([$genre], [], [$album], [$song]);
-
+		
 		if (scalar(@items)) {
 
 			my ($start, $end);
@@ -1507,8 +1516,8 @@ sub browseid3 {
 					$lastAnchor          = $anchor;
 				}
 
-				$itemnumber++;
 
+				$itemnumber++;
 				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
 
 				::idleStreams();
@@ -1637,7 +1646,7 @@ sub browseid3 {
 					} else {
 						$list_form{'coverthumb'}   = 0;
 					}
-
+					$list_form{'item'}	   = $item;
 					$list_form{'itemnumber'} = $itemnumber;
 					$list_form{'artwork'}    = 1;
 					$list_form{'size'}       = Slim::Utils::Prefs::get('thumbSize');

@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.43 2004/05/10 14:57:45 dean Exp $
+# $Id: Misc.pm,v 1.44 2004/05/13 17:57:36 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -757,7 +757,7 @@ sub hostaddr {
 }
 
 sub stillScanning {
-	return Slim::Music::MusicFolderScan::stillScanning() || Slim::Music::iTunes::stillScanning() || Slim::Music::MoodLogic::stillScanning();
+	return Slim::Music::Import::stillScanning();
 }
 
 
