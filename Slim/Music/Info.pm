@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.98 2004/04/19 09:16:54 kdf Exp $
+# $Id: Info.pm,v 1.99 2004/04/20 02:40:25 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1281,7 +1281,7 @@ sub bitrate {
 	my $file = shift;
 	my $mode = (defined info($file,'VBR_SCALE')) ? 'VBR' : 'CBR';
 	if (info($file,'BITRATE')) {
-		return int (info($file,'BITRATE')/1000).Slim::Utils::Strings::string('KBPS').' '.$mode;	
+		return int (info($file,'BITRATE')/1000).Slim::Utils::Strings::string('KBPS').' '.$mode;
 	} else {
 		return;
 	}
@@ -2342,24 +2342,25 @@ sub readCoverArtFiles {
 			$artwork = Slim::Utils::Prefs::get('coverArt');
 		}
 	}
-	if (defined $artwork && $artwork =~ /^%(.*?)(\..*?){0,1}$/) {
+	if (defined($artwork) && $artwork =~ /^%(.*?)(\..*?){0,1}$/) {
 		my $suffix = $2 ? $2 : ".jpg";
 		$artwork = infoFormat($file, $1)."$suffix";
 		my $artworktype = $image eq 'thumb' ? "Thumbnail" : "Cover";
 		$::d_artwork && Slim::Utils::Misc::msg("Variable $artworktype: $artwork from $1\n");
 		my $artpath = catdir(@components, $artwork);
 		$body = getImageContent($artpath);
-		if (!$body && defined Slim::Utils::Prefs::get('artfolder')) {
-				$artpath = catdir(Slim::Utils::Prefs::get('artfolder'),$artwork);
-				$body = getImageContent($artpath);
-			}
+		my $artfolder = Slim::Utils::Prefs::get('artfolder');
+		if (!$body && defined $artfolder) {
+			$artpath = catdir(Slim::Utils::Prefs::get('artfolder'),$artwork);
+			$body = getImageContent($artpath);
+		}
 		if ($body) {
 			$::d_artwork && Slim::Utils::Misc::msg("Found $image file: $artpath\n\n");
 			$contenttype = mimeType($artpath);
 			$lastFile{$image} = $artpath;
 			return ($body, $contenttype, $artpath);
 		}
-	} else {
+	} elsif (defined($artwork)) {
 		unshift @filestotry,$artwork;
 	}
 
