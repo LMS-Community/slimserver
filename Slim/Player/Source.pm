@@ -737,7 +737,7 @@ sub openSong {
 				$client->mp3filehandle( FileHandle->new() );
 		
 				$client->mp3filehandle->open($fullCommand);
-				$client->mp3filehandleIsSocket(1);
+				$client->mp3filehandleIsSocket(2);
 				
 				$client->remoteStreamStartTime(time());
 				
@@ -911,10 +911,8 @@ sub readNextChunk {
 					$::d_source && msg("would have blocked, will try again later\n");
 					return undef;	
 				}	
-			}
-			
-			if (!$client->mp3filehandleIsSocket && $readlen == 0) { 
-				$::d_source && msg("readlen undef $!\n");  
+			} elsif ($readlen == 0 && ($client->mp3filehandleIsSocket != 1)) { 
+				$::d_source && msg("Read to end of file or pipe\n");  
 				$endofsong = 1;
 			}
 			

@@ -724,6 +724,19 @@ WELCOME_TO_SLIMP3
 	PT	Bem-vindo ao SLIMP3
 	SE	Välkommen till SLIMP3
 
+WELCOME_TO_SLIMSERVER
+	DE	Willkommen bei SlimServer
+	DK	Velkommen til SlimServer
+	EN	Welcome to SlimServer
+	ES	Bienvenido al SlimServer
+	FI	SlimServer Tervetuloa!
+	FR	Bienvenue sur le SlimServer
+	IT	Benvenuto a SlimServer
+	NL	Welkom bij SlimServer
+	NO	Velkommen til SlimServer
+	PT	Bem-vindo ao SlimServer
+	SE	Välkommen till SlimServer
+
 WELCOME_TO_SQUEEZEBOX
 	DE	Willkommen bei Squeezebox
 	DK	Velkommen til Squeezebox
