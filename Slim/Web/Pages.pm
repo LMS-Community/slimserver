@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.71 2004/04/28 18:54:20 dean Exp $
+# $Id: Pages.pm,v 1.72 2004/05/01 16:35:45 vidur Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -12,6 +12,8 @@ use File::Spec::Functions qw(:ALL);
 use POSIX ();
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+
+my %additionalLinks = ();
 
 sub home {
 	my ($client, $params) = @_;
@@ -40,32 +42,8 @@ sub home {
 		$params->{'player_list'} .= ${Slim::Web::HTTP::filltemplatefile("homeplayer_list.html", \%listform)};
 	}
 
-	# fill out plugin information
 	Slim::Buttons::Plugins::addSetupGroups();
-	my @pluginlist;
-	my $pluginsref = Slim::Buttons::Plugins::installedPlugins();
-	foreach my $plugin (Slim::Buttons::Plugins::enabledPlugins()) {
-		my $pages = Slim::Buttons::Plugins::getWebPages($plugin);
-		my $path;
-		# Check if the plugin handles pages directly
-		if (defined($pages)) {
-			$path = $pages->{'path'} . $pages->{'index'};
-		}
-		# If not, check if it has a setup group
-		elsif (Slim::Web::Setup::existsCategory("PLUGINS.${plugin}")) {
-			$path = "setup.html?page=PLUGINS.${plugin}";
-		}
-		if ($path && $params->{'player'}) {
-			$path .= (($path =~ /\?/) ? '&' : '?') . 'player=' . $params->{'player'};
-		}
-		push @pluginlist, {
-			path => $path,
-			name => $pluginsref->{$plugin},				
-		};
-	}
-	if (scalar(@pluginlist)) {
-		$params->{'pluginlist'} = \@pluginlist;
-	}
+	$params->{'additionalLinks'} = \%additionalLinks;
 
 	#
 	_addStats($params, [], [], [], []);
@@ -73,6 +51,17 @@ sub home {
 	my $template = $params->{"path"}  =~ /home\.(htm|xml)/ ? 'home.html' : 'index.html';
 	
 	return Slim::Web::HTTP::filltemplatefile($template, $params);
+}
+
+sub addLinks {
+	my ($category, $links) = @_;
+
+	return if (ref($links) ne 'HASH');
+
+	while (my ($title, $path) = each %$links) {
+		$additionalLinks{$category}->{$title} = $path . 
+			(($path =~ /\?/) ? '&' : '?')
+	}
 }
 
 sub _addStats {

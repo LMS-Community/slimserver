@@ -233,6 +233,58 @@ PLUGIN_NAME
 </pre></blockquote>
 <p><b>One special note, the format of the strings list is very strict. The whitespace must be a tab, not spaces, which is why the tabs are shown above.</b></p>
 <hr>
+<h4>Web Interface</h4>
+<p>SlimServer Plugins can expose their own web interface, accessible through
+the main server's web pages. To do this, include a function called 
+"webPages" which returns a list of two values: a hash reference to handler 
+functions for the plugin's pages, and a string representing the path of
+the plugin's index page.</p>
+
+<p>The handler function hash contains keys that represent regular
+expression values.  These regular expressions match URL paths that
+will be handled by the corresponding page handler. For example, the
+regular expression "index\.(?:htm|xml)" will match the URL paths
+"index.html", "index.htm" or "index.xml".</p>
+
+<p>The index page string represents the URL path for a link that will
+be included in the "Plugins" section of the SlimServer index
+page. When exposed through the SlimServer's web interface, all plugin
+web pages are prepended with the URL path
+http://&lt;host&gt;/plugins/&lt;pluginname&gt;/. However, neither the regular
+expression keys nor the index URL path need to take this prefix
+into account.</p>
+
+<blockquote>
+<p><em>Example 6</em></p>
+<pre>sub webPages {
+    my %pages = (
+        "index\.(?:htm|xml)" => \&handleIndex,
+	"enable\.(?:htm|xml)" => \&handleEnable,
+    );
+
+    return (\%pages, "index.html");
+}
+</pre>
+</blockquote>
+
+<p>Plugins also have the option of adding links to other sections of
+the SlimServer index page. Specifically, links can be added to the
+"browse", "search", "settings", "plugins" and "help" sections. Note
+that not all skins may support every section. Links can be added using
+the Slim::Web::Pages::addLinks() method. The method takes two
+parameters: the category to which links should be added, and a
+reference to a hash that maps link text to a URL path. In this case,
+the URL path must include the "plugins/&lt;pluginname&gt;/" prefix.
+</p>
+
+<blockquote>
+<pre>Slim::Web::Pages::addLinks("search", {
+    string('PLUGIN_MYPLUGIN_SEARCH_LINK') => "plugins/MyPlugin/search.html",
+);
+</pre>
+</blockquote>
+
+<hr>
 <h4>ScreenSavers</h4>
 You can turn any plugin into a custom screensaver by registering your plugin as a screensaver.  The plugin should 
 be used to give the user any settings options or to set the screensaver as active or reset to default.  You can register the screensaver using the following subroutine:
