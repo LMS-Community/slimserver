@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.164 2005/01/11 09:31:34 kdf Exp $
+# $Id$
 #
 # This tab-delimited file contains all the text strings used in SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -4140,6 +4140,12 @@ SETUP_ITEMSPERPASS_DESC
 	JP	音楽の中断を防ぐ為に、SlimServerは長いリストをまとめて構築します。このセッティングは、いくつのアイテムを１つのパスで構築するかを決めます。
 	NO	For ikke å påvirker avspillingen av musikk bygger SlimServer sine lister i små deler. Denne innstillingen avgjør hvor mange sanger som skal tas med per søk.
 	SE	För att inte störa uppspelinng av musik bygger Slimserver sina listor i mindre delar. Denna instälning avgör hur många låtar som ska indexeras per pass
+
+SETUP_PREFSWRITEDELAY
+	EN	Prefs write interval
+
+SETUP_PREFSWRITEDELAY_DESC
+	EN	This setting determines how often preferences are written to disk.  Set to 0 to write every change to disk, higher values batch changes and writes the preferences after the given number of seconds pass.
 
 SETUP_LONGDATEFORMAT
 	DE	Format des langen Datums

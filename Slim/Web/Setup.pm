@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.119 2005/01/10 08:43:24 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1822,7 +1822,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['wipecache','templatecache','useplaylistcache', 'lookForArtwork','itemsPerPass']
+					'PrefOrder' => ['wipecache','templatecache','useplaylistcache', 'lookForArtwork','itemsPerPass','prefsWriteDelay']
 				}
 			}
 		,'Prefs' => {
@@ -1856,6 +1856,10 @@ sub initSetupConfig {
 			,'itemsPerPass' => {
 						'validate' => \&validateInt
 						}
+			}
+			,'prefsWriteDelay' => {
+						'validate' => \&validateInt
+						,'validateArgs' => [0,undef,1]
 			}
 		} #end of setup{'performance'} hash
 	,'network' => {

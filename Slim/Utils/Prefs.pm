@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.101 2005/01/10 08:43:24 dsully Exp $
+# $Id$
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -21,6 +21,7 @@ my %prefs = ();
 my $prefsPath;
 my $prefsFile;
 my $canWrite;
+my $writePending = 0;
 
 sub makeSecuritySecret {
 	
@@ -207,9 +208,10 @@ my %DEFAULT = (
 	,'xplir'				=> 'both'
 	,'xplinterval'			=> 5
 	,'xplsupport'			=> 0
- 	,'dbsource'				=> 'dbi:SQLite:dbname=%s'
- 	,'dbusername'			=> ''
- 	,'dbpassword'			=> ''
+	,'prefsWriteDelay'		=> 30
+	,'dbsource'				=> 'dbi:SQLite:dbname=%s'
+	,'dbusername'			=> ''
+	,'dbpassword'			=> ''
 );
 
 # The following hash contains functions that are executed when the pref corresponding to
@@ -381,7 +383,7 @@ sub push {
 		bt();
 		warn "Attempted to push a value onto a scalar pref";
 	}
-	writePrefs();
+	scheduleWrite() unless $writePending;
 }
 
 sub clientPush {
@@ -490,8 +492,7 @@ sub set {
 	#must mark $ind as defined or indexed prefs cause an error in this msg
 	$::d_prefs && msg("Setting prefs $key".defined($ind)." equal to " . ((defined $prefs{$key}) ? $prefs{$key} : "undefined") . "\n");
 
-	# We aggressively write out prefs - we probably shouldn't do this.
-	writePrefs();
+	scheduleWrite() unless $writePending;
 }
 
 sub clientSet {
@@ -552,7 +553,7 @@ sub delete {
 	} else {
 		CORE::delete $prefs{$key};
 	}
-	writePrefs();
+	scheduleWrite() unless $writePending;
 }
 
 sub clientDelete {
@@ -580,10 +581,22 @@ sub clientIsDefined {
 	return isDefined($client->id() . "-" . $key,$ind);
 }
 
+sub scheduleWrite {
+	my $writeDelay = get('prefsWriteDelay') || 0;
+	if ($writeDelay > 0) {
+		Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + $writeDelay), \&writePrefs, 1);
+	} else {
+		writePrefs();
+	}
+	$writePending = 1;
+}	
+
 sub writePrefs {
 
 	return unless $canWrite;
 
+	$writePending = 0;
+	
 	my $writeFile = prefsFile();
 		
 	$::d_prefs && msg("Writing out prefs in $writeFile\n");
