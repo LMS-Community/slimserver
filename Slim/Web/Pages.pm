@@ -1086,6 +1086,9 @@ sub status {
 		}
 	}
 
+	$params->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
+	$params->{'noAlbum'}       = Slim::Utils::Strings::string('NO_ALBUM');
+
 	$params->{'nosetup'} = 1   if $::nosetup;
 
 	return Slim::Web::HTTP::filltemplatefile($params->{'omit_playlist'} ? "status_header.html" : "status.html" , $params);
