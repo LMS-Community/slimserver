@@ -400,6 +400,9 @@ sub init {
 		unshift @INC, "/Library/SlimDevices/";
 	}
 
+	$::d_server && msg("SlimServer settings effective user and group if requested...\n");
+	changeEffectiveUserAndGroup();
+
 	$::d_server && msg("SlimServer settings init...\n");
 	initSettings();
 
@@ -439,23 +442,33 @@ sub start {
 	if ($diag) { 
 		eval "use diagnostics";
 	}
+
 	# background if requested
 	if (Slim::Utils::OSDetect::OS() ne 'win' && $daemon) {
+
 		$::d_server && msg("SlimServer daemonizing...\n");
 		daemonize();
 
 	} else {
+
 		save_pid_file();
+
 		if (defined $logfile) {
+
 			$logfilename = $logfile;
+
 			if (substr($logfile, 0, 1) ne "|") {
 				$logfilename = ">>" . $logfile;
 			}
+
 			if ($stdio) {
-				if (!open STDERR, $logfilename) { die "Can't write to $logfilename: $!";}
+
+				open(STDERR, $logfilename) || die "Can't write to $logfilename: $!";
+
 			} else {
-				if (!open STDOUT, $logfilename) { die "Can't write to $logfilename: $!";}
-				if (!open STDERR, '>&STDOUT') { die "Can't dup stdout: $!"; }
+
+				open(STDOUT, $logfilename) || die "Can't write to $logfilename: $!";
+				open(STDERR, '>&STDOUT')   || die "Can't dup stdout: $!";
 			}
 		}
 	};
@@ -901,12 +914,7 @@ sub initSettings {
 }
 
 sub daemonize {
-	my $pid ;
-	my $uname ;
-	my $uid ; 
-	my @grp ; 
-	my $log;
-	my $logfilename;
+	my ($pid, $log, $logfilename);
 	
 	if (!defined($pid = fork)) { die "Can't fork: $!"; }
 	
@@ -915,50 +923,6 @@ sub daemonize {
 		# don't clean up the pidfile!
 		$pidfile = undef;
 		exit;
-	}
-	
-	# Do we want to change the effective user or group?
-	if (defined($user) || defined($group)) {
-		# Can only change effective UID/GID if root
-		if ($> != 0) {
-			$uname = getpwuid($>) ;
-			print STDERR "Current user is ", $uname, "\n" ;
-			print STDERR "Must run as root to change effective user or group.\n" ;
-			die "Aborting" ;
-		}
-
-		# Change effective group ID if necessary
-		# Need to do this while still root, so do group first
-		if (defined($group)) {
-			@grp = getgrnam($group);
-			if (!defined ($grp[0])) {
-				print STDERR "Group ", $group, " not found.\n" ;
-				die "Aborting" ;
-			}
-
-			@) = @grp ;
-			if ($)[0] ne $group) {
-				print STDERR "Unable to set effective group(s)",
-					" to ", $group, " (", @grp, ")!\n" ;
-				die "Aborting" ;
-			}
-		}
-
-		# Change effective user ID if necessary
-		if (defined($user)) {
-			$uid = getpwnam($user);
-			if (!defined ($uid)) {
-				print STDERR "User ", $user, " not found.\n" ;
-				die "Aborting" ;
-			}
-
-			$> = $uid ;
-			if ($> != $uid) {
-				print STDERR "Unable to set effective user to ",
-					$user, " (", $uid, ")!\n" ;
-				die "Aborting" ;
-			}
-		}
 	}
 
 	$log = $logfile ? $logfile : '/dev/null';
@@ -978,6 +942,55 @@ sub daemonize {
 
 	if (!setsid) { die "Can't start a new session: $!"; }
 	if (!open STDERR, '>&STDOUT') { die "Can't dup stdout: $!"; }
+}
+
+sub changeEffectiveUserAndGroup {
+
+	# Do we want to change the effective user or group?
+	if (defined($user) || defined($group)) {
+
+		# Can only change effective UID/GID if root
+		if ($> != 0) {
+			my $uname = getpwuid($>);
+			print STDERR "Current user is $uname\n";
+			print STDERR "Must run as root to change effective user or group.\n";
+			die "Aborting";
+		}
+
+		# Change effective group ID if necessary
+		# Need to do this while still root, so do group first
+		if (defined($group)) {
+
+			my $gid = getgrnam($group);
+
+			if (!defined $gid) {
+				die "Group $group not found.\n";
+			}
+
+			$) = $gid;
+
+			# The $) is space separated "effective real" - so compare against that.
+			if ($) ne "$gid 0") {
+				die "Unable to set effective group(s) to $group ($gid) is: $): $!\n";
+			}
+		}
+
+		# Change effective user ID if necessary
+		if (defined($user)) {
+
+			my $uid = getpwnam($user);
+
+			if (!defined ($uid)) {
+				die "User $user not found.\n";
+			}
+
+			$> = $uid;
+
+			if ($> != $uid) {
+				die "Unable to set effective user to $user, ($uid)!\n";
+			}
+		}
+	}
 }
 
 sub checkDataSource {
