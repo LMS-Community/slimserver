@@ -2063,9 +2063,12 @@ sub initSetupConfig {
 			,'xplsupport' => {
 						'validate' => \&validateTrueFalse
 						,'options' => {
-								'0' => string('DISABLED')
-								,'1' => string('ENABLED')
-								}
+							'0' => string('DISABLED')
+							,'1' => string('ENABLED')
+						}
+						,'onChange' => sub {
+							eval "use Slim::Control::xPL";
+						}
 				}
 			,'xplinterval' => {
 						'validate' => \&validateInt

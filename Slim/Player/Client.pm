@@ -773,7 +773,9 @@ sub new {
 	$client->paddr($paddr);
 
 	# Tell the xPL module that a new client has connected
-	Slim::Control::xPL::newClient($client);
+	if (Slim::Utils::Prefs::get('xplsupport')) {
+		Slim::Control::xPL::newClient($client);
+	}
 
 	return $client;
 }
@@ -881,13 +883,19 @@ sub startup {
 	
 	# restore the old playlist if we aren't already synced with somebody (that has a playlist)
 	if (!Slim::Player::Sync::isSynced($client)) {	
+
 		if (Slim::Utils::Prefs::get('defaultPlaylist')) {
+
 			$restoredPlaylist = Slim::Utils::Prefs::get('defaultPlaylist');
+
 		} elsif (Slim::Utils::Prefs::get('persistPlaylists') && Slim::Utils::Prefs::get('playlistdir')) {
+
 			my $playlistname = "__$id.m3u";
+
 			$playlistname =~ s/\:/_/g;
 			$playlistname = catfile(Slim::Utils::Prefs::get('playlistdir'),$playlistname);
 			$currsong = Slim::Utils::Prefs::clientGet($client,'currentSong');
+
 			if (-e $playlistname) {
 				$restoredPlaylist = $playlistname;
 			}

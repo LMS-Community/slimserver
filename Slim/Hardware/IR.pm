@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.27 2005/01/04 03:38:52 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -455,7 +455,10 @@ sub processIR {
 		processCode($client, $irCode, $irTime);
 
 		# Notify the xPL module that an IR code has been received
-		Slim::Control::xPL::processircode($client,$irCode,$irCodeBytes);    
+		if (Slim::Utils::Prefs::get('xplsupport')) {
+
+			Slim::Control::xPL::processircode($client,$irCode,$irCodeBytes);    
+		}
 	}
 }
 

@@ -219,7 +219,6 @@ use Slim::Buttons::Input::Bar;
 use Slim::Player::Client;
 use Slim::Control::Command;
 use Slim::Control::CLI;
-use Slim::Control::xPL;
 use Slim::Networking::Discovery;
 use Slim::Display::Display;
 use Slim::Display::Graphics;
@@ -521,7 +520,15 @@ sub start {
 	
 	if (Slim::Utils::Prefs::get('xplsupport')) {
 		$::d_server && msg("SlimServer xPL init...\n");
-		Slim::Control::xPL::init();
+
+		eval "use Slim::Control::xPL";
+
+		if ($@) {
+			msg("Problem initializing xPL support: [$@]\n");
+			msg("Trying to continue..\n");
+		} else {
+			Slim::Control::xPL::init();
+		}
 	}		
 
 	$lastlooptime = Time::HiRes::time();
