@@ -1,4 +1,4 @@
-# $Id: SavePlaylist.pm,v 1.8 2004/08/03 17:29:07 vidur Exp $
+# $Id: SavePlaylist.pm,v 1.9 2004/11/30 09:19:38 kdf Exp $
 # This code is derived from code with the following copyright message:
 #
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
@@ -15,7 +15,7 @@ use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.8 $,10);
+$VERSION = substr(q$Revision: 1.9 $,10);
 
 my %context = ();
 
@@ -107,9 +107,9 @@ sub savePlaylist {
 	my $playlistfile = shift;
 	my $playlistref = Slim::Player::Playlist::playList($client);
 	my $playlistdir = Slim::Utils::Prefs::get('playlistdir');
-	$playlistfile = catfile($playlistdir,$playlistfile . ".m3u");
-	Slim::Formats::Parse::writeM3U($playlistref,$playlistfile);
-	$client->showBriefly(string('PLAYLIST_SAVING'),$playlistfile);
+	my $playlistfilename = catfile($playlistdir,$playlistfile . ".m3u");
+	Slim::Formats::Parse::writeM3U($playlistref,$playlistfile,$playlistfilename);
+	$client->showBriefly(string('PLAYLIST_SAVING'),$playlistfilename);
 }
 
 sub getFunctions {
