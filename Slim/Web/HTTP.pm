@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.69 2004/02/12 19:57:12 dean Exp $
+# $Id: HTTP.pm,v 1.70 2004/02/17 18:56:43 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -15,6 +15,7 @@ use Net::hostent;              # for OO version of gethostbyaddr
 use Sys::Hostname;
 use File::Spec::Functions qw(:ALL);
 use MIME::Base64;
+use HTTP::Date;
 
 use POSIX qw(:fcntl_h strftime);
 use Fcntl qw(F_GETFL F_SETFL);
@@ -54,6 +55,8 @@ my($METADATAINTERVAL) = 32768;
 my($MAXCHUNKSIZE) = 32768;
 
 my($RETRY_TIME) = 0.05;
+
+my $ONE_YEAR = 60 * 60 * 24 * 365;
 
 #
 # Package variables
@@ -1030,13 +1033,15 @@ sub generateresponse {
 		if ($contentType =~ /image/) {
 			# images should expire from cache one year from now
 			# get the format right: Thu, 01 Dec 1994 16:00:00 GMT
-			my $imageExpireHeader = strftime "%a, %d %b %Y %H:%M:%S GMT", gmtime(time + 31536000);
-			$headers{"Expires"} = "$imageExpireHeader";
+			$headers{"Expires"} = time2str(time() + $ONE_YEAR);
 		} else {
-			$headers{"Expires"} = "0";
+			$headers{"Expires"} = 0;
 		}
 
 	    $result = "HTTP/1.0 200 OK";
+
+	    # force the cache to always be public.
+	    $headers{'Cache-Control'} = 'public';
 	    
 	    if ($contentType =~ /text/) {
 	    	filltemplatefile('include.html', $paramsref);
@@ -1069,8 +1074,7 @@ sub generateresponse {
 
  			if (defined($imagedata)) {
  				$body = \$imagedata; #$body should be a ref
-				my $imageExpireHeader = strftime "%a %b %d %H:%M:%S %Y", gmtime(time + 31536000);
-				$headers{"Expires"} = "$imageExpireHeader";;
+				$headers{"Expires"} = time2str(time() + $ONE_YEAR);
  			} else {
 				$body = getStaticContentRef("html/images/spacer.gif");
 				$contentType = "image/gif";
@@ -1099,7 +1103,7 @@ sub generateresponse {
 		} elsif ($path =~ /status\.txt/) {
 			# if the HTTP client has asked for a text file, then always return the text on the display
 			%headers = statusHeaders($client);
-			$headers{"Expires"} = "0";
+			$headers{"Expires"} = 0;
 			$headers{"Content-Type"} = "text/plain";
 			$headers{"Refresh"} = "30; url=$path";
 			my ($line1, $line2) = Slim::Display::Display::curLines($client);
@@ -1109,7 +1113,7 @@ sub generateresponse {
 		} elsif ($path =~ /log\.txt/) {
 			# if the HTTP client has asked for a text file, then always return the text on the display
 			%headers = statusHeaders($client);
-			$headers{"Expires"} = "0";
+			$headers{"Expires"} = 0;
 			$headers{"Content-Type"} = "text/plain";
 			$headers{"Refresh"} = "30; url=$path";
 			$$body = $Slim::Utils::Misc::log;
