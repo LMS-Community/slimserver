@@ -26,7 +26,6 @@ my %clientHash = ();
 # client variables id and version info
 	# type							type		"player", "http"
 	# model							string		"slimp3", "squeezebox"
-	# deviceid						id			hardware device id (0x01 for slimp3, 0x02 for squeezebox)
 	# revision						int			firmware rev   0=unknown, 1.2 = old (1.0, 1.1, 1.2), 1.3 = new streaming protocol, 2.0 = client sends MAC address, NEC IR codes supported
 	# macaddress					string		client's MAC (V2.0 firmware)
 	# paddr							sockaddr_in client's ip and port
@@ -166,10 +165,7 @@ sub new {
 		$id,
 		$paddr,			# sockaddr_in
 		$newplayeraddr,		# ASCII ip:port  TODO don't pass both of these in
-		$deviceid,
 		$revision,
-		$udpsock,		# defined only for Slimp3
-		$tcpsock,		# defined only for squeezebox
 	) = @_;
 	
 	# if we haven't seen this client, initialialize a new one
@@ -182,10 +178,6 @@ sub new {
 		$client=getClient($id);
 		$clientAlreadyKnown = 1;
 
-		if (($client->model eq 'squeezebox')&&($deviceid == 0)) {
-			$client->streamingsocket($tcpsock);
-			return undef;
-		}
 	} else {
 		$client->[0] = undef; # id 	
 
@@ -328,21 +320,7 @@ sub new {
 	$client->paddr($paddr);
 
 	# initialize model-specific features:
-	if ($deviceid > 0) {
-		$client->revision($revision);
-	}
-
-	if ($deviceid==0) {
-		$client->streamingsocket($tcpsock);
-		
-	} elsif ($deviceid==1) {
-
-		$client->udpsock($udpsock);
-
-
-	} elsif ($deviceid==2) {	# squeezebox
-		$client->tcpsock($tcpsock);
-	}
+	$client->revision($revision);
 
 	# skip the rest of this if the client was already known
 	$clientAlreadyKnown && return($client);
@@ -548,10 +526,6 @@ sub isPlayer {
 sub id {
 	my $r = shift;
 	@_ ? ($r->[0] = shift) : $r->[0];
-}
-sub deviceid {
-	my $r = shift;
-	@_ ? ($r->[3] = shift) : $r->[3];
 }
 sub revision {
 	my $r = shift;

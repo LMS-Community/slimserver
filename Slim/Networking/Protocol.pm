@@ -234,10 +234,8 @@ sub getUdpClient {
 					$id, 
 					$clientpaddr,
 					$newplayeraddr,
-					$deviceid,
 					$revision,
 					$udpsock,
-					undef
 				);			
 			$client->macaddress($mac);
 			$client->init();

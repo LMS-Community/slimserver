@@ -13,8 +13,16 @@ package Slim::Player::HTTP;
 @ISA = ("Slim::Player::Client");
 
 sub new {
-	my $class = shift;
-	my $client = Slim::Player::Client->new( @_ );
+	my (
+		$class,
+		$id,
+		$paddr,			# sockaddr_in
+		$newplayeraddr,		# ASCII ip:port  TODO don't pass both of these in
+		$tcpsock
+	) = @_;
+	
+	my $client = Slim::Player::Client->new( $id, $paddr, $newplayeraddr, 0,0,0);
+	$client->streamingsocket($tcpsock);
 	bless $client, $class;
 
 	return $client;

@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.10 2003/08/09 00:17:51 dean Exp $
+# $Id: Slimproto.pm,v 1.11 2003/08/09 06:43:26 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -289,9 +289,7 @@ sub process_slimproto_frame {
 			$id, 		# mac
 			$paddr,		# sockaddr_in
 			$ipport{$s},	# ascii ip:port
-			$deviceid,	# devieid
 			$revision,	# rev
-			undef,		# udp sock
 			$s		# tcp sock
 		);
 

@@ -46,8 +46,5 @@ sub type {
 	return 'player';
 }
 
-sub deviceid {
-	return 0x01;
-}
 1;
 

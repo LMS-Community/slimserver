@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.5 2003/08/09 05:47:15 dean Exp $
+# $Id: Display.pm,v 1.6 2003/08/09 06:43:26 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -15,7 +15,7 @@ use Slim::Utils::Timers;
 use Slim::Utils::Strings qw(string);
 use POSIX qw(strftime);
 
-# Kill the animation and display what we expect to be showing
+#depricated, use $client->update
 sub update {
 	my $client = shift;
 	$client->update();

@@ -15,8 +15,19 @@ package Slim::Player::Squeezebox;
 @ISA = ("Slim::Player::Player");
 
 sub new {
-	my $class = shift;
-	my $client = Slim::Player::Player->new( @_ );
+	my (
+		$class,
+		$id,
+		$paddr,			# sockaddr_in
+		$newplayeraddr,		# ASCII ip:port  TODO don't pass both of these in
+		$revision,
+		$tcpsock,		# defined only for squeezebox
+	) = @_;
+	
+	my $client = Slim::Player::Player->new( $id, $paddr, $newplayeraddr, $revision);
+	
+	$client->tcpsock($tcpsock);
+	
 	bless $client, $class;
 	
 	return $client;
@@ -28,10 +39,6 @@ sub model {
 
 sub type {
 	return 'player';
-}
-
-sub deviceid {
-	return 0x02;
 }
 
 sub ticspersec {
