@@ -81,7 +81,7 @@ sub resetSetupGroups {
 
 	for my $importer (keys %Importers) {
 
-		if (exists $Importers{$importer}->{'setup'}) {
+		if (defined $Importers{$importer}->{'setup'}) {
 			&{$Importers{$importer}->{'setup'}};
 		}
 	}
