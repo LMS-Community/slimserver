@@ -80,6 +80,9 @@ our $locale = '';
 			$lc = 'iso-8859-1';
 		}
 
+		# Sometimes underscores can be aliases - Solaris
+		$lc =~ s/_/-/g;
+
 		# ISO encodings with 4 or more digits use a hyphen after "ISO"
 		$lc =~ s/^iso(\d{4})/iso-$1/;
 
