@@ -56,13 +56,15 @@ my %artistMMMixCache = ();
 my %albumMMMixCache = ();
 
 my %artworkCache = ();
-my $artworkDir='';
+my $artworkDir   = '';
 
-my %lastFile;
+# do we ignore articles?
+our $articles = undef;
+
+my %lastFile      = ();
+my %display_cache = ();
 
 my ($currentDB, $localDB);
-
-my %display_cache;
 
 sub init {
 
@@ -1321,9 +1323,6 @@ sub songs {
 	return map { $_->url } @$songs;
 }
 
-# XXX - sigh, globals
-my $articles = undef;
-
 sub sortByTrack {
 
 	$articles = undef;
@@ -1910,7 +1909,7 @@ sub isWinShortcut {
 sub isMP3 {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'mp[23]');
+	return isType($pathOrObj, 'mp3') || isType($pathOrObj, 'mp2');
 }
 
 sub isOgg {
