@@ -21,6 +21,22 @@ use MIME::Base64;
 @ISA = ("Slim::Player::Squeezebox");
 
 
+sub new {
+        my (
+                $class,
+                $id,
+                $paddr,                 # sockaddr_in
+                $revision,
+                $tcpsock,               # defined only for squeezebox
+        ) = @_;
+
+        my $client = Slim::Player::Squeezebox->new($id, $paddr, $revision, $tcpsock);
+	bless $client, $class;
+
+	Slim::Utils::Prefs::clientSet($client, 'autobrightness', 0);
+        return $client;
+}
+
 sub model {
 	return 'softsqueeze';
 }

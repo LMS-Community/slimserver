@@ -241,8 +241,10 @@ sub lines {
 	my ($line1, $line2);
 	if ($client->model() eq 'slimp3') {
 		$line1 = string('SLIMP3_HOME');
-	} else {
+	} elsif ($client->model() eq 'squeezebox') {
 		$line1 = string('SQUEEZEBOX_HOME');
+	} else {
+		$line1 = string('SOFTSQUEEZE_HOME');
 	}
 	my $menuChoice = $homeChoices[$client->homeSelection];
 	for(my $i=0;$i<=$#menuOptions;$i++){
