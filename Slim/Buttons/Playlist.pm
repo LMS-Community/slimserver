@@ -174,6 +174,9 @@ sub setMode {
 	my $how = shift;
 	$client->lines(\&lines);
 	if ($how ne 'pop') { jump($client); }
+
+	# update client every second in this mode
+	$client->param('modeUpdateInterval', 1); # seconds
 }
 
 sub jump {

@@ -187,6 +187,10 @@ sub formats {
 	return ('mp3');
 }
 
+sub refresh {
+	shift->update(@_);
+}
+
 sub vfd {
 	my $client = shift;
 	my $data = shift;

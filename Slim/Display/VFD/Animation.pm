@@ -327,7 +327,9 @@ sub scrollBottom {
 	my $len;
 
 	if ($rate == 0) {
-		$client->update();
+		if (!$client->param('modeUpdateInterval')) {
+			$client->update();
+		}
 		return;
 	}
 
@@ -384,7 +386,9 @@ sub scrollBottom {
 				,[$double,1] #scroll the top if doublesize
 				,$rate,$double);
 	} else {
-		$client->update();
+		if (!$client->param('modeUpdateInterval')) {
+			$client->update();
+		}
 	}
 }
 

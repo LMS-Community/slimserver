@@ -63,6 +63,9 @@ PLUGIN_SCREENSAVER_DATETIME_DISABLING
 sub setMode {
 	my $client = shift;
 	$client->lines(\&lines);
+
+	# setting this param will call client->update() frequently
+	$client->param('modeUpdateInterval', 1); # seconds
 }
 
 our %functions = (
@@ -196,6 +199,9 @@ sub getScreensaverDatetime {
 sub setScreensaverDateTimeMode() {
 	my $client = shift;
 	$client->lines(\&screensaverDateTimelines);
+
+	# setting this param will call client->update() frequently
+	$client->param('modeUpdateInterval', 1); # seconds
 }
 
 sub screensaverDateTimelines {

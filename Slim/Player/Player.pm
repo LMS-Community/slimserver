@@ -668,7 +668,7 @@ sub bumpDown {
 sub scrollBottom {
 	Slim::Display::VFD::Animation::scrollBottom(@_);
 }
-	
+
 sub renderOverlay {
 	my $client = shift;
 	my $line1 = shift || '';

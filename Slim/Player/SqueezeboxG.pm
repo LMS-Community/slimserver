@@ -147,6 +147,7 @@ sub update {
 }	
 
 sub render {
+	use bytes;
 	my $client = shift;
 	my $lines = shift;
 	my $frameHeader = shift || '';
@@ -587,12 +588,6 @@ sub scrollBottom {
 		$client->refresh($parts);
 	}
 }
-
-
-sub refresh {
-	shift->update(shift);
-}
-
 
 sub scrollUpdate {
 	my $client = shift;

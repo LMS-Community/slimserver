@@ -170,6 +170,8 @@ sub setMode {
 	my $client = shift;
 	$::d_time && msg("going into screensaver mode");
 	$client->lines(\&lines);
+	# update client every second in this mode
+	$client->param('modeUpdateInterval', 1); # seconds
 }
 
 sub lines {

@@ -162,15 +162,6 @@ sub model {
 	return 'squeezebox2';
 };
 
-# only refresh if we're in a screen that needs it  (this knowledge needs to be moved to the mode...)
-sub refresh {
-	my $client = shift;
-	if (Slim::Buttons::Playlist::showingNowPlaying($client) || !$client->power()) {
-		$client->update();
-	}
-}
-
-
 # in order of preference based on whether we're connected via wired or wireless...
 sub formats {
 	my $client = shift;

@@ -42,6 +42,11 @@ sub init {
 	$client->stop();
 }
 
+# squeezebox does not need an update here, so a noop is OK.
+sub refresh {
+	# my $client = shift;
+}
+
 sub reconnect {
 	my $client = shift;
 	my $paddr = shift;

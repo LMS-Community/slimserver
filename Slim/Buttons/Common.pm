@@ -1046,6 +1046,9 @@ sub pushMode {
 	my $fun = $modes{$setmode};
 
 	&$fun($client,'push');
+
+	# some modes require periodic updates
+	startPeriodicUpdates($client);
 }
 
 sub popMode {
@@ -1123,6 +1126,34 @@ sub dateTime {
 
 	return @line;
 }
+
+# if and only if the mode has set the modeUpdateInterval parameter,
+# call $client->update every modeUpdateInterval seconds.
+sub startPeriodicUpdates {
+	my $client = shift;
+	# unset any previous timers
+	Slim::Utils::Timers::killTimers($client, \&_periodicUpdate);
+	my $interval = $client->param('modeUpdateInterval');
+	return unless $interval;
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $interval,
+								  \&_periodicUpdate,
+								  $client);
+}
+
+sub _periodicUpdate {
+	my $client = shift;
+	my $interval = $client->param('modeUpdateInterval');
+	# if interval is not set, we have left the mode that needed the update
+	return unless $interval;
+	# do the update
+	$client->update();
+	# do it again at the next period
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $interval,
+								  \&_periodicUpdate,
+								  $client);
+}
+
+
 
 1;
 

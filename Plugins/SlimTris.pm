@@ -307,6 +307,7 @@ sub setMode {
 	if ($customchar) {
 		loadCustomChars($client);
 	}
+	$client->param('modeUpdateInterval', 1);
 	$client->lines(\&lines);
 }
 
