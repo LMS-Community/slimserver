@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.86 2004/03/11 04:27:05 kdf Exp $
+# $Id: HTTP.pm,v 1.87 2004/03/22 18:07:52 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -908,6 +908,9 @@ sub addStreamingResponse {
 
 	push @{$outbuf{$httpClient}}, \%segment;
 
+#   May want to enable this later, if we find that that it has any effect on some platforms...
+#	setsockopt $httpClient, SOL_SOCKET, SO_SNDBUF, MAXCHUNKSIZE;
+	
 	Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse);
 
 	# we aren't going to read from this socket anymore so don't select on it...

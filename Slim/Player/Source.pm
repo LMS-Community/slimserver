@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.73 2004/03/18 23:08:18 dean Exp $
+# $Id: Source.pm,v 1.74 2004/03/22 18:07:51 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -955,7 +955,7 @@ sub getCommand {
 			next if !$command;
 			
 			# if we don't have one or more of the requisite binaries, then move on.
-			while ($command =~ /\[([^]])\]/g) {
+			while ($command =~ /\[([^]]+)\]/g) {
 				if (!Slim::Utils::Misc::findbin($1)) {
 					$command = undef;
 					$::d_source && msg("   drat, missing binary $1\n");

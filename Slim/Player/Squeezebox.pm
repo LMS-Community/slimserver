@@ -268,9 +268,18 @@ sub upgradeFirmware {
 	}
 }
 
-# in order of preference
+# in order of preference based on whether we're connected via wired or wireless...
 sub formats {
-	return ('mp3', 'aif','wav');
+	my $client = shift;
+	
+	if (defined $client->signalStrength()) {
+		$::d_slimproto && msg ("Supporting formats: mp3 aif wav\n");
+		return ('mp3', 'aif','wav');
+	} else {
+		$::d_slimproto && msg ("Supporting formats: aif wav mp3\n");
+		return ('aif','wav','mp3');
+	}
+	
 }
 
 sub vfd {
