@@ -23,16 +23,6 @@ use Slim::DataStores::DBI::Genre;
 use Slim::DataStores::DBI::GenreTrack;
 use Slim::DataStores::DBI::LightWeightTrack;
 
-use Slim::Formats::Movie;
-use Slim::Formats::AIFF;
-use Slim::Formats::FLAC;
-use Slim::Formats::MP3;
-use Slim::Formats::APE;
-use Slim::Formats::Ogg;
-use Slim::Formats::Wav;
-use Slim::Formats::WMA;
-use Slim::Formats::Musepack;
-use Slim::Formats::Shorten;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
@@ -50,19 +40,74 @@ use constant VALID_INDEX => 0;
 use constant TTL_INDEX => 1;
 
 # Hash for tag function per format
-# XXX These should be in Formats, and register themselves
+# Load these on demand, as a memory savings. This variable should move to
+# Slim::Music::Info
 our %tagFunctions = (
-	'mp3' => \&Slim::Formats::MP3::getTag,
-	'mp2' => \&Slim::Formats::MP3::getTag,
-	'ogg' => \&Slim::Formats::Ogg::getTag,
-	'flc' => \&Slim::Formats::FLAC::getTag,
-	'wav' => \&Slim::Formats::Wav::getTag,
-	'aif' => \&Slim::Formats::AIFF::getTag,
-	'wma' => \&Slim::Formats::WMA::getTag,
-	'mov' => \&Slim::Formats::Movie::getTag,
-	'shn' => \&Slim::Formats::Shorten::getTag,
-	'mpc' => \&Slim::Formats::Musepack::getTag,
-	'ape' => \&Slim::Formats::APE::getTag,
+	'mp3' => {
+		'module' => 'Slim::Formats::MP3',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::MP3::getTag,
+	},
+
+	'mp2' => {
+		'module' => 'Slim::Formats::MP3',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::MP3::getTag,
+	},
+
+	'ogg' => {
+		'module' => 'Slim::Formats::Ogg',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::Ogg::getTag,
+	},
+
+	'flc' => {
+		'module' => 'Slim::Formats::FLAC',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::FLAC::getTag,
+	},
+
+	'wav' => {
+		'module' => 'Slim::Formats::Wav',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::Wav::getTag,
+	},
+
+	'aif' => {
+		'module' => 'Slim::Formats::AIFF',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::AIFF::getTag,
+	},
+
+	'wma' => {
+		'module' => 'Slim::Formats::WMA',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::WMA::getTag,
+	},
+
+	'mov' => {
+		'module' => 'Slim::Formats::Movie',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::Movie::getTag,
+	},
+
+	'shn' => {
+		'module' => 'Slim::Formats::Shorten',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::Shorten::getTag,
+	},
+
+	'mpc' => {
+		'module' => 'Slim::Formats::Musepack',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::Musepack::getTag,
+	},
+
+	'ape' => {
+		'module' => 'Slim::Formats::APE',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::APE::getTag,
+	},
 );
 
 # cached value of commonAlbumTitles pref
@@ -809,7 +854,28 @@ sub readTags {
 
 		# Extract tag and audio info per format
 		if (exists $tagFunctions{$type}) {
-			$attributesHash = eval { &{$tagFunctions{$type}}($filepath, $anchor) };
+
+			# Dynamically load the module in.
+			if (!$tagFunctions{$type}->{'loaded'}) {
+
+				$::d_info && Slim::Utils::Misc::msg("Trying to load $tagFunctions{$type}->{'module'}\n");
+
+				eval "require $tagFunctions{$type}->{'module'}";
+
+				if ($@) {
+					Slim::Utils::Misc::msg("Couldn't load module: $tagFunctions{$type}->{'module'} : [$@]\n");
+					Slim::Utils::Misc::bt();
+
+				} else {
+
+					$tagFunctions{$type}->{'loaded'} = 1;
+				}
+
+				# And reset for the eval below.
+				$@ = '';
+			}
+
+			$attributesHash = eval { &{$tagFunctions{$type}->{'getTag'}}($filepath, $anchor) };
 		}
 
 		if ($@) {

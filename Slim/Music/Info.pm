@@ -18,15 +18,6 @@ use Tie::Cache::LRU;
 
 use Slim::DataStores::DBI::DBIStore;
 
-use Slim::Formats::Movie;
-use Slim::Formats::AIFF;
-use Slim::Formats::FLAC;
-use Slim::Formats::MP3;
-use Slim::Formats::Ogg;
-use Slim::Formats::Wav;
-use Slim::Formats::WMA;
-use Slim::Formats::Musepack;
-use Slim::Formats::Shorten;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
