@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.28 2003/12/03 20:19:26 dean Exp $
+# $Id: Info.pm,v 1.29 2003/12/03 21:40:43 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 
-#eval "use Storable";
+eval "use Storable";
 
 #
 # constants
