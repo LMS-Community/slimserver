@@ -18,7 +18,7 @@ use Slim::Control::Command;
 use Slim::Utils::Strings qw (string);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.2 $,10);
+$VERSION = substr(q$Revision: 1.3 $,10);
 
 sub getDisplayName() {return string('PLUGIN_RESCAN_MUSIC_LIBRARY')}
 
@@ -47,11 +47,6 @@ PLUGIN_RESCAN_PRESS_PLAY
 sub setMode() {
 	my $client = shift;
 	$client->lines(\&lines);
-}
-
-sub enabled {
-	my $client = shift;
-	return !Slim::Music::iTunes::useiTunesLibrary();
 }
 
 my %functions = (
