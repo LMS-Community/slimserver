@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.15 2003/11/10 23:14:57 dean Exp $
+# $Id: IR.pm,v 1.16 2003/11/19 02:55:01 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -223,7 +223,7 @@ sub lookup {
 		if (defined $modifier) {
 			$code .= '.' . $modifier;
 		}
-		
+		$client->lastirbutton($code);
 		return lookupFunction($client,$code);
 	} else {
 		$::d_ir && msg("irCode not present\n");
@@ -235,8 +235,9 @@ sub lookup {
 sub lookupFunction {
 	my $client = shift;
 	my $code = shift;
+	my $mode = shift;
 
-	my $mode = Slim::Buttons::Common::mode($client);
+	$mode = Slim::Buttons::Common::mode($client) unless defined($mode);
 	my $map = Slim::Utils::Prefs::clientGet($client,'irmap');
 	assert($client);
 	assert($map);
@@ -497,8 +498,9 @@ sub executeButton {
 	my $client = shift;
 	my $button = shift;
 	my $time = shift;
-	
-	my $irCode = lookupFunction($client, $button);
+	my $mode = shift;
+
+	my $irCode = lookupFunction($client, $button, $mode);
 	
 	if (!defined $irCode || $irCode eq '') {
 		$irCode = $button;
@@ -514,7 +516,7 @@ sub executeButton {
 		$client->lastirtime(0);
 	}
 
-	if (my ($subref,$subarg) = Slim::Buttons::Common::getFunction($client,$irCode) ) {
+	if (my ($subref,$subarg) = Slim::Buttons::Common::getFunction($client,$irCode,$mode) ) {
 
 		unless (defined $subref or ref($subref)) {
 			die "Subroutine for irCode: [$irCode] does not exist!";

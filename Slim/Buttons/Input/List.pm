@@ -27,11 +27,17 @@ my %functions = (
 	#call callback procedure
 	,'exit' => sub {
 			my ($client,$funct,$functarg) = @_;
-			Slim::Utils::Timers::killTimers($client, \&nextChar);
 			if (!defined($functarg) || $functarg eq '') {
 				$functarg = 'exit'
 			}
 			exitInput($client,$functarg);
+		}
+	,'passback' => sub {
+			my ($client,$funct,$functarg) = @_;
+			my $parentMode = Slim::Buttons::Common::param($client,'parentMode');
+			if (defined($parentMode)) {
+				Slim::Hardware::IR::executeButton($client,$client->lastirbutton,$client->lastirtime,$parentMode);
+			}
 		}
 );
 
@@ -130,6 +136,9 @@ sub setMode {
 
 sub init {
 	my $client = shift;
+	if (!defined(Slim::Buttons::Common::param($client,'parentMode'))) {
+		Slim::Buttons::Common::param($client,'parentMode',$client->modeStack->[-2]);
+	}
 	if (!defined(Slim::Buttons::Common::param($client,'header'))) {
 		Slim::Buttons::Common::param($client,'header','Select item:');
 	}

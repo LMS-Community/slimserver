@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.19 2003/11/17 06:12:06 grotus Exp $
+# $Id: Common.pm,v 1.20 2003/11/19 02:53:21 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -517,8 +517,9 @@ my %functions = (
  sub getFunction {
  	my $client = shift;
  	my $function = shift;
+ 	my $clientMode = shift;
  	my $coderef;
- 	my $clientMode = mode($client);
+ 	$clientMode = mode($client) unless defined($clientMode);
  	if ($coderef = $modeFunctions{$clientMode}{$function}) {
  		return $coderef;
  	} elsif (($function =~ /(.+?)_(.+)/) && ($coderef = $modeFunctions{$clientMode}{$1})) {

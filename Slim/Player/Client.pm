@@ -262,6 +262,7 @@ sub new {
 	$client->[82] = undef; # browseMenuSelection
 	$client->[83] = undef; # settingsSelection
 	$client->[84] = undef; # songBytes
+	$client->[85] = undef; # lastirbutton
 
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -663,6 +664,10 @@ sub easteregg {
 sub epochirtime {
 	my $r = shift;
 	@_ ? ($r->[54] = shift) : $r->[54];
+}
+sub lastirbutton {
+	my $r = shift;
+	@_ ? ($r->[85] = shift) : $r->[85];
 }
 sub modeStack {
 	my $r = shift;
