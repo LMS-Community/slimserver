@@ -48,7 +48,7 @@
 				</td>[% END %]
 				<td><img src="html/images/spacer.gif" border="0" width="5"></td>
 				<td valign="top" width="100%"><nobr>
-					<p class="label"><img src="html/images/spacer.gif" border="0" width="2" height="14">[% IF modeplay %][% "PLAYING" | string %][% END %]
+					<p class="label"><img src="html/images/spacer.gif" border="0" width="2" height="8">[% IF modeplay %][% "PLAYING" | string %][% END %]
 					[% IF modepause %][% "PAUSED_ON" | string %][% END %]
 					[% IF modestop %][% "STOPPED_ON" | string %][% END %]
 					[% IF currentsong %]<b>[% currentsong %]</b> [% "OUT_OF" | string %] <b>&nbsp;[% songcount %]</b>&nbsp;<a class="label" href="status_header.html?p0=playlist&p1=zap&p2=[% thissongnum %]&player=[% player | uri %]&start=[% start %]" title='Move to Zapped playlist'>[zap]</a>[% END %][% "COLON" | string %]</p>
