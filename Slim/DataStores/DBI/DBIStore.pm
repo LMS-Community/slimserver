@@ -1008,8 +1008,10 @@ sub _preCheckAttributes {
 		$attributes->{'TITLESORT'} = $attributes->{'TITLE'};
 	}
 
-	# Always normalize the sort, as TITLESORT could come from a TSOT tag.
-	$attributes->{'TITLESORT'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'TITLESORT'});
+	if ($attributes->{'TITLE'} && $attributes->{'TITLESORT'}) {
+		# Always normalize the sort, as TITLESORT could come from a TSOT tag.
+		$attributes->{'TITLESORT'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'TITLESORT'});
+	}
 	
 	return ($attributes, $deferredAttributes);
 }
