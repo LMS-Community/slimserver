@@ -72,6 +72,7 @@ sub get_info_fields {
 	    'ISRC'	=> 'supplier',
 	    'ISRF'	=> 'source',
 	    'ITCH'	=> 'digitizer',
+	    'itrk'  => 'track'
 	  );
 }
 
