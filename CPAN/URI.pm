@@ -2,7 +2,7 @@ package URI;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = "1.35"; # $Date: 2004/11/28 17:55:28 $
+$VERSION = "1.35"; # $Date$
 
 use vars qw($ABS_REMOTE_LEADING_DOTS $ABS_ALLOW_RELATIVE_SCHEME);
 
@@ -12,7 +12,7 @@ my %implements;  # mapping from scheme to implementor class
 
 use vars qw($reserved $mark $unreserved $uric $scheme_re);
 $reserved   = q(;/?:@&=+$,[]);
-$mark       = q(-_.!~*'());                                    #'; emacs
+$mark       = q(-_.!~*());                                    #'; emacs
 $unreserved = "A-Za-z0-9\Q$mark\E";
 $uric       = quotemeta($reserved) . $unreserved . "%";
 
