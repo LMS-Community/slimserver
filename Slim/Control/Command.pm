@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.30 2004/03/18 02:57:15 kdf Exp $
+# $Id: Command.pm,v 1.31 2004/03/19 20:18:57 dean Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -105,6 +105,7 @@ sub execute {
 	# mixer			treble		(0 .. 100)|(-100 .. +100)
 	# display		<line1>		<line2>	<duration>
 	# display		?				?
+	# displaynow	?				?
 	# button			<buttoncode>
 	# player			count			?
 	# player			id				<playerindex|playerid>				?
@@ -618,7 +619,11 @@ sub execute {
 					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newbass, "bass",\&setBass);};
 				}
 			}
-
+		} elsif ($p0 eq "displaynow") {
+			if ($p1 eq "?" && $p2 eq "?") {
+				$p1 = $client->prevline1();
+				$p2 = $client->prevline2();
+			} 		
 		} elsif ($p0 eq "display") {
 			if ($p1 eq "?" && $p2 eq "?") {
 				my ($line1, $line2) = Slim::Display::Display::curLines($client);

@@ -316,6 +316,15 @@ where: </p>
   <p>Request: &quot;04:20:00:12:23:45 display ? ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 display Hello World&lt;CR&gt;&quot;</p>
 </blockquote>
 <hr>
+<p><strong>display &lt;line1&gt; &lt;line2&gt; &lt;duration&gt;<br>
+  </strong><strong>displaynow ? ?</strong></p>
+<p>The &quot;displaynow&quot; command provides access to the data currently on the display.  This differs from the &quot;display&quot; command in that it returns the latest
+data sent to the display, including any animation, double-size fonts, etc...</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 displaynow ? ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 display Hello World&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
 <p><strong>pref &lt;prefname&gt; &lt;prefvalue&gt;<br>
   </strong><strong>pref &lt;prefname&gt; ?</strong></p>
 <p>The &quot;pref&quot; command allows the caller to set and query the Slim 
