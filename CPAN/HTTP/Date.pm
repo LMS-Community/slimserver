@@ -1,6 +1,6 @@
-package HTTP::Date;  # $Date: 2004/02/17 18:57:09 $
+package HTTP::Date;  # $Date: 2004/02/21 22:26:07 $
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 require 5.004;
 require Exporter;
