@@ -31,7 +31,7 @@ our %Config = (
 sub Startup {
 
 	# added to workaround a problem with 5.8 and perlsvc.
-	$SIG{BREAK} = sub {} if RunningAsService();
+	# $SIG{BREAK} = sub {} if RunningAsService();
 
 	main::init();
 	
@@ -215,7 +215,7 @@ sub init {
 
 	autoflush STDERR;
 	autoflush STDOUT;
-
+	
 	$::d_server && msg("SlimServer OSDetect init...\n");
 	Slim::Utils::OSDetect::init();
 
@@ -230,8 +230,12 @@ sub init {
 		$SIG{INT} = \&sigint;
 		$SIG{HUP} = \&initSettings;
 	}		
-	$SIG{TERM} = \&sigint;
-	$SIG{QUIT} = \&sigint;
+	$SIG{TERM} = \&sigterm;
+	if (PerlSvc::RunningAsService()) {
+		$SIG{QUIT} = \&ignoresigquit; 
+	} else {
+		$SIG{QUIT} = \&sigquit;
+	}
 	
 	# we have some special directories under OSX.
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
@@ -276,7 +280,6 @@ sub start {
 		daemonize();
 	} else {
 		save_pid_file();
-		
 		if (defined $logfile) {
 			if ($stdio) {
 				if (!open STDERR, ">>$logfile") { die "Can't write to $logfile: $!";}
@@ -704,6 +707,23 @@ sub stopServer {
 }
 
 sub sigint {
+	$::d_server && msg("Got sigint.\n");
+	cleanup();
+	exit();
+}
+
+sub sigterm {
+	$::d_server && msg("Got sigterm.\n");
+	cleanup();
+	exit();
+}
+
+sub ignoresigquit {
+	$::d_server && msg("Ignoring sigquit.\n");
+}
+
+sub sigquit {
+	$::d_server && msg("Got sigquit.\n");
 	cleanup();
 	exit();
 }
@@ -741,6 +761,7 @@ sub remove_pid_file {
 }
  
 sub END {
+	$::d_server && msg("Got to the END!");
 	sigint();
 }
 
