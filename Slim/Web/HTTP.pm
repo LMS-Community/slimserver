@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.47 2003/11/24 19:23:39 dean Exp $
+# $Id: HTTP.pm,v 1.48 2003/12/01 23:02:47 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -583,7 +583,7 @@ sub sendstreamingresponse {
 	
 	if ( !$streamingFile && $client && ($client->model eq 'squeezebox') && (Slim::Player::Source::playmode($client) eq 'stop')) {
 		closeStreamingSocket($httpclientsock);
-		$::d_http && msg("Streaming client closed connection...\n");
+		$::d_http && msg("Squeezebox closed connection...\n");
 		return undef;
 	}
 	

@@ -154,30 +154,26 @@ sub parseCUE {
 		# strip whitespace from end
 		s/\s*$//; 
 
-		if (/^TITLE \"(.*)\"/) {
+		if (/^TITLE\s+\"(.*)\"/i) {
 			$album = $1;
-		} elsif (/^YEAR \"(.*)\"/) {
+		} elsif (/^YEAR\s+\"(.*)\"/i) {
 			$year = $1;
-		} elsif (/^GENRE \"(.*)\"/) {
+		} elsif (/^GENRE\s+\"(.*)\"/i) {
 			$genre = $1;
-		} elsif (/^COMMENT \"(.*)\"/) {
+		} elsif (/^COMMENT\s+\"(.*)\"/i) {
 			$comment = $1;
-		} elsif (/^FILE \"(.*)\"/) {
+		} elsif (/^FILE\s+\"(.*)\"/i) {
 			$filename = $1;
 			$filename = Slim::Utils::Misc::fixPath($filename, $cuedir);
-		} elsif (/^  TRACK 0*(\d+) AUDIO/) {
-			$currtrack = $1;
-		} elsif (/^    TITLE \"(.*)\"/) {
-			$tracks{$currtrack}->{'TITLE'} = $1;
-		} elsif (/^    PERFORMER \"(.*)\"/) {
+		} elsif (/^\s+TRACK\s+(\d+)\s+AUDIO/i) {
+			$currtrack = int ($1);
+		} elsif (defined $currtrack and /^\s+PERFORMER\s+\"(.*)\"/i) {
 			$tracks{$currtrack}->{'ARTIST'} = $1;
-		} elsif (/^    YEAR \"(.*)\"/) {
-			$tracks{$currtrack}->{'YEAR'} = $1;
-		} elsif (/^    GENRE \"(.*)\"/) {
-			$tracks{$currtrack}->{'GENRE'} = $1;
-		} elsif (/^    COMMENT \"(.*)\"/) {
-			$tracks{$currtrack}->{'COMMENT'} = $1;
-		} elsif (/^    INDEX 01 (\d+):(\d+):(\d+)/) {
+		} elsif (defined $currtrack and
+			 /^\s+(TITLE|YEAR|GENRE|COMMENT)\s+\"(.*)\"/i) {
+		   $tracks{$currtrack}->{uc $1} = $2;
+		} elsif (defined $currtrack and
+			 /^\s+INDEX\s+01\s+(\d+):(\d+):(\d+)/i) {
 			$tracks{$currtrack}->{'START'} = ($1 * 60) + $2 + ($3 / 100);
 		}
 	}

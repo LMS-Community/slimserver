@@ -142,7 +142,7 @@ use vars qw($VERSION
 	'Daniel Sully',
 );
 
-$VERSION = '5.0.1';
+$VERSION = '5.0.3';
 
 # old preferences settings, only used by the .slim.conf configuration.
 # real settings are stored in the new preferences file:  .slim.pref
@@ -231,7 +231,7 @@ sub init {
 		$SIG{HUP} = \&initSettings;
 	}		
 	$SIG{TERM} = \&sigterm;
-	if (PerlSvc::RunningAsService()) {
+	if (defined(&PerlSvc::RunningAsService) && PerlSvc::RunningAsService()) {
 		$SIG{QUIT} = \&ignoresigquit; 
 	} else {
 		$SIG{QUIT} = \&sigquit;

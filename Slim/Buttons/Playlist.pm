@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.13 2003/11/15 03:32:28 kdf Exp $
+# $Id: Playlist.pm,v 1.14 2003/12/01 23:02:45 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -187,7 +187,9 @@ sub lines {
 
 sub showingNowPlaying {
 	my $client = shift;
-	return (((Slim::Buttons::Common::mode($client) eq 'playlist') || (Slim::Buttons::Common::mode($client) eq 'screensaver')) && (browseplaylistindex($client) == Slim::Player::Source::currentSongIndex($client)));
+	return ((Slim::Buttons::Common::mode($client) eq 'screensaver') || 
+			(Slim::Buttons::Common::mode($client) eq 'playlist') && (browseplaylistindex($client) == Slim::Player::Source::currentSongIndex($client))
+		   );
 }
 
 sub currentSongLines {

@@ -1,6 +1,6 @@
 package Slim::Buttons::ScreenSaver;
 
-# $Id: ScreenSaver.pm,v 1.7 2003/11/29 19:06:28 grotus Exp $
+# $Id: ScreenSaver.pm,v 1.8 2003/12/01 23:02:45 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -129,7 +129,6 @@ sub setMode {
 	my $client = shift;
 	$::d_time && msg("going into screensaver mode");
 	$client->lines(\&lines);
-	Slim::Buttons::Common::param($client,'browseplaylistindex',Slim::Player::Source::currentSongIndex($client));
 }
 
 sub lines {

@@ -428,7 +428,9 @@ sub startup {
 
 sub initial_add_done {
 	my ($client,$currsong) = @_;
+	
 	return unless defined($currsong);
+	
 	if (Slim::Player::Playlist::shuffle($client) == 1) {
 		my $i = 0;
 		foreach my $song (@{Slim::Player::Playlist::shuffleList($client)}) {
@@ -438,13 +440,18 @@ sub initial_add_done {
 			}
 			$i++;
 		}
-		Slim::Player::Source::currentSongIndex($client,0);
+		
+		$currsong = 0;
+		
+		Slim::Player::Source::currentSongIndex($client,$currsong);
+		
 	} elsif (Slim::Player::Playlist::shuffle($client) == 2) {
 		# reshuffle set this properly, for album shuffle
 		# no need to move the currentSongIndex
 	} else {
 		Slim::Player::Source::currentSongIndex($client,$currsong);
 	}
+	
 	Slim::Utils::Prefs::clientSet($client,'currentSong',$currsong);
 	if (Slim::Utils::Prefs::get('autoPlay') || Slim::Utils::Prefs::clientGet($client,'autoPlay')) {
 		Slim::Control::Command::execute($client,['play']);
