@@ -2987,6 +2987,18 @@ SETUP_MDNSNAME_CHOOSE
 	PT	Nome Rendezvour
 	SE	Rendezvous namn:
 
+SETUP_REMOTESTREAMTIMEOUT
+	EN	Radio Station Timeout
+
+SETUP_REMOTESTREAMTIMEOUT_OK
+	EN	Radio station timeout:
+
+SETUP_REMOTESTREAMTIMEOUT_DESC
+	EN	You can set the length of time that the Slim Server will try to connect to an internet radio station or other source before giving up. Enter the amount of time, in seconds, below.
+
+SETUP_REMOTESTREAMTIMEOUT_CHOOSE
+	EN	Radio Station Timeout (seconds):
+
 MP3DIR
 	DE	Ihr Musikverzeichnis
 	DK	Din musiksamling

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.14 2003/09/29 22:57:07 dean Exp $
+# $Id: Prefs.pm,v 1.15 2003/10/14 19:13:21 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -79,6 +79,7 @@ my %DEFAULT = (
 	,'historylength'		=> 1000
 	,'composerInArtists'	=> 1 # include composer and band information in the artists list
 	,'livelog'				=> 102400 # keep around an in-memory log of 100kbytes, available from the web interfaces
+	,'remotestreamtimeout'  => 5 # seconds to try to connect for a remote stream
 	,"CLIENTPREFS" => {
 			'autobrightness'	=> 1
 			,'doublesize'		=> 0

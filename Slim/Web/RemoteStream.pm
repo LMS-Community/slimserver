@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.4 2003/09/05 20:40:50 dean Exp $
+# $Id: RemoteStream.pm,v 1.5 2003/10/14 19:13:21 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ sub openRemoteStream {
 	
    	my $sock = IO::Socket::INET->new(PeerAddr => "$server:$port",
  					LocalAddr => $main::localStreamAddr,
- 					 Timeout  => 10);
+ 					 Timeout  => Slim::Utils::Prefs::get('remotestreamtimeout'));
 
 	if (!$sock)	{
 		my $errnum = 0 + $!;

@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.12 2003/10/10 21:59:57 dean Exp $
+# $Id: Setup.pm,v 1.13 2003/10/14 19:13:21 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1143,7 +1143,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default','TCP_Params']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['httpport','cliport','mDNSname']
+					'PrefOrder' => ['httpport','cliport','mDNSname','remotestreamtimeout']
 				}
 			,'TCP_Params' => {
 					'PrefOrder' => ['tcpReadMaximum','tcpWriteMaximum','tcpConnectMaximum','udpChunkSize']
@@ -1176,6 +1176,10 @@ sub initSetupConfig {
 			,'mDNSname'	=> {
 							'validateArgs' => [] #will be set by preEval
 							,'PrefSize' => 'medium'
+					}
+			,'remotestreamtimeout' => {
+						'validate' => \&validateInt
+						,'validateArgs' => [1,undef,1]
 					}
 			,'tcpReadMaximum' => {
 						'validate' => \&validateInt
