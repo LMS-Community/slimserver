@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Text;
 
-# $Id: Text.pm,v 1.19 2004/09/01 02:10:33 kdf Exp $
+# $Id: Text.pm,v 1.20 2004/09/02 06:15:35 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -46,6 +46,7 @@ my %functions = (
 	,'backspace' => sub {
 			my ($client,$funct,$functarg) = @_;
 			Slim::Utils::Timers::killTimers($client, \&nextChar);
+			$client->lastLetterTime(0);
 			my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 			my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
 			Slim::Display::Display::subString($$valueRef,$cursorPos,1,'');
