@@ -797,8 +797,8 @@ sub generateHTTPResponse {
 
 		} else {
 
-			($body, $mtime) = getStaticContent("html/images/spacer.gif");
-			$contentType = "image/gif";
+			($body, $mtime) = getStaticContent("html/images/cover.png");
+			$contentType = "image/png";
 		}
 
 	} elsif ($path =~ /music\/(.+)$/) {
