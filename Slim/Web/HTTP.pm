@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.111 2004/06/18 20:13:57 dean Exp $
+# $Id: HTTP.pm,v 1.112 2004/06/21 20:38:47 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -160,7 +160,7 @@ sub openport {
 	$::d_http && msg("Server $0 accepting http connections on port $listenerport\n");
 	
 	$mdnsIDhttp = Slim::Networking::mDNS::advertise(Slim::Utils::Prefs::get('mDNSname'), '_http._tcp', $listenerport);
-	$mdnsIDslimserver = Slim::Networking::mDNS::advertise(Slim::Utils::Prefs::get('mDNSname'), '_slimdevices_slimserver_http._tcp', $openedport);
+	$mdnsIDslimserver = Slim::Networking::mDNS::advertise(Slim::Utils::Prefs::get('mDNSname'), '_slimhttp._tcp', $openedport);
 }
 
 sub checkHTTP {

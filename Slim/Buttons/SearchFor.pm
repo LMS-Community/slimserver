@@ -72,6 +72,7 @@ my %functions = (
 		} else {
 			$client->searchTerm($client->searchCursor, undef);
 			$client->searchCursor($client->searchCursor - 1);
+			$client->lastLetterDigit('');
 			$client->update();
 		}
 	},

@@ -1,5 +1,5 @@
 package Slim::Buttons::BrowseID3;
-# $Id: BrowseID3.pm,v 1.15 2004/06/15 05:45:03 dean Exp $
+# $Id: BrowseID3.pm,v 1.16 2004/06/21 20:38:46 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -175,8 +175,8 @@ my %functions = (
 		if (defined($genre) && ($genre eq string('ALL_ARTISTS'))) { $genre = '*';};
 		
 		my $currentItem = browseID3dir($client,browseID3dirIndex($client));
-		my $line1;
-		my $line2;
+		my ($line1, $line2) = lines($client);
+		
 		my $command;
 		my $songcommand;
 		
@@ -193,12 +193,6 @@ my %functions = (
 			} else {
 				$line1 = string('NOW_PLAYING_FROM');
 			}
-		}
-		
-		if (defined($genre) && defined($artist) && defined($album)) {
-			$line2 = Slim::Music::Info::standardTitle($client, $currentItem);
-		} else {
-		 	$line2 = $currentItem;
 		}
 		
 		Slim::Display::Animation::showBriefly(

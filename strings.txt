@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.115 2004/06/16 14:54:53 dean Exp $
+# $Id: strings.txt,v 1.116 2004/06/21 20:38:43 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -2152,7 +2152,7 @@ SETUP_ITUNES_LIBRARY_AUTOLOCATE_1
 
 SETUP_ITUNES_LIBRARY_XML_PATH
 	DE	Speicherort der iTunes Music Library.xml 
-	EN	iTunes Music Library.xml Locations
+	EN	iTunes Music Library.xml Location
 	FR	Emplacement de iTunes Music Library.xml
 
 SETUP_ITUNES_LIBRARY_XML_PATH_DESC

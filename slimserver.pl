@@ -131,6 +131,7 @@ use vars qw($VERSION @AUTHORS);
 
 @AUTHORS = (
 	'Sean Adams',
+	'Vidur Apparao',
 	'Dean Blackketter',
 	'Kevin Deane-Freeman',
 	'Amos Hayes',
@@ -138,13 +139,14 @@ use vars qw($VERSION @AUTHORS);
 	'Eric Lyons',
 	'Scott McIntyre',
 	'Robert Moser',
+	'Dave Nanian',
 	'Roy M. Silvernail',
 	'Richard Smith',
 	'Sam Saffron',
 	'Dan Sully',
 );
 
-$VERSION = '5.1.6';
+$VERSION = '5.2.0';
 
 # old preferences settings, only used by the .slim.conf configuration.
 # real settings are stored in the new preferences file:  .slim.pref

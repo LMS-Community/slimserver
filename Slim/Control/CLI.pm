@@ -54,7 +54,7 @@ sub openport {
 	Slim::Networking::Select::addRead($server_socket, \&acceptSocket);
 
 	$mdnsID = Slim::Networking::mDNS::advertise(
-		Slim::Utils::Prefs::get('mDNSname'), 'slimdevices_slimserver_cli._tcp', $listenerport
+		Slim::Utils::Prefs::get('mDNSname'), '_slimcli._tcp', $listenerport
 	);
 
 	Slim::Control::Command::setExecuteCallback(\&Slim::Control::CLI::commandCallback);

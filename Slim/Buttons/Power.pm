@@ -1,6 +1,6 @@
 package Slim::Buttons::Power;
 
-# $Id: Power.pm,v 1.11 2004/04/29 22:21:52 daniel Exp $
+# $Id: Power.pm,v 1.12 2004/06/21 20:38:46 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -19,6 +19,7 @@ Slim::Buttons::Common::addMode('off',getFunctions(),\&setMode);
 my %functions = (
 	'play' => sub  {
 		my $client = shift;
+		Slim::Control::Command::execute($client,["power",1]);
 		Slim::Control::Command::execute($client, ["play"]);
 	},
 	'offsize' => sub  {
