@@ -510,6 +510,7 @@ sub decoderUnderrun {
 	$::d_source && msg($client->id() . ": Decoder underrun while this mode: " . $client->playmode() . "\n");
 	
 	if (!Slim::Player::Sync::isSynced($client) &&
+		$client->rate() >= 0 &&
 		($client->playmode eq 'playout-play')) {
 		skipahead($client);
 	}
