@@ -723,7 +723,7 @@ sub readTags {
 			# cache the content type
 			$attributesHash->{'CT'} = $type;
 			
-			#if (!Slim::Music::iTunes::useiTunesLibrary()) {
+			if (!Slim::Music::iTunes::useiTunesLibrary()) {
 				# Check for Cover Artwork, only if not already present.
 				if (exists $attributesHash->{'COVER'} || exists $attributesHash->{'THUMB'}) {
 					$::d_artwork && Slim::Utils::Misc::msg("already checked artwork for $file\n");
@@ -773,7 +773,7 @@ sub readTags {
 						}
 					}
 				}
-			#}
+			}
 		} 
 
 	} else {

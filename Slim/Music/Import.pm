@@ -7,9 +7,9 @@ package Slim::Music::Import;
 
 use strict;
 use Slim::Utils::Misc;
-#use Slim::Music::iTunes;
-#use Slim::Music::MoodLogic;
-#use Slim::Music::MusicMagic;
+use Slim::Music::iTunes;
+use Slim::Music::MoodLogic;
+use Slim::Music::MusicMagic;
 use Slim::Music::MusicFolderScan;
 
 # background scanning and cache prefilling of music information to speed up UI...
@@ -51,9 +51,9 @@ sub startScan {
 sub startup {
 	$::d_info && msg("Starting background import monitors.\n");
 
-	#Slim::Music::iTunes::checker();
-	#Slim::Music::MoodLogic::checker();
-	#Slim::Music::MusicMagic::checker();
+	Slim::Music::iTunes::checker();
+	Slim::Music::MoodLogic::checker();
+	Slim::Music::MusicMagic::checker();
 }
 
 sub addImporter {

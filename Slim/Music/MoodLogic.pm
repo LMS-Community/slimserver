@@ -1,6 +1,6 @@
-package Plugins::MoodLogic;
+package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm 1757 2005-01-18 21:22:50Z dsully $
+#$Id$
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -56,61 +56,8 @@ sub playlists {
 	return Slim::Music::Info::playlists;
 }
 
-sub getDisplayName {
-	return 'SETUP_MOODLOGIC';
-}
-
-sub setMode() {
-	my $client = shift;
-	
-	$client->lines(\&lines);
-	$client->update();
-}
-
-my %functions = (
-	'up' => sub  {
-		my $client = shift;
-		Slim::Utils::Prefs::set('moodlogic',Slim::Buttons::Common::scroll($client, -1, 2, Slim::Utils::Prefs::get('moodlogic')));
-		$client->update();
-	},
-	'down' => sub  {
-		my $client = shift;
-		Slim::Utils::Prefs::set('moodlogic',Slim::Buttons::Common::scroll($client, +1, 2, Slim::Utils::Prefs::get('moodlogic')));
-		$client->update();
-	},
-	'left' => sub  {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	'right' => sub  {
-		my $client = shift;
-		Slim::Display::Animation::bumpRight($client);
-	}
-);
-
-sub lines {
-	my $client = shift;
-	my ($line1, $line2);
-	$line1 = $client->string('SETUP_MOODLOGIC');
-	if (Slim::Utils::Prefs::get('moodlogic')) {
-		$line2 = $client->string('USE_MOODLOGIC');
-	} else {
-		$line2 = $client->string('DONT_USE_MOODLOGIC');
-	};
-	return ($line1, $line2);
-}
-
-sub getFunctions() {
-	return \%functions;
-}
-
-sub enabled {
-	return Slim::Utils::OSDetect::OS() eq 'win' && init();
-}
-
-sub initPlugin {
+sub init {
 	return $initialized if ($initialized == 1);
-	
 	checkDefaults();
 	
 	require Win32::OLE;
@@ -174,12 +121,7 @@ sub initPlugin {
 	Slim::Music::Import::addImporter('moodlogic',\&startScan,\&mixerFunction,\&addGroups);
 	addGroups();
 
-	Slim::Buttons::InstantMix::init();
-	Slim::Buttons::MoodWheel::init();
-	Slim::Buttons::VarietyCombo::init();
-
 	$initialized = 1;
-	checker();
 	return $initialized;
 }
 

@@ -1,6 +1,6 @@
-package Plugins::MusicMagic;
+package Slim::Music::MusicMagic;
 
-# $Id: MusicMagic.pm 1757 2005-01-18 21:22:50Z dsully $
+# $Id$
 
 use strict;
 
@@ -59,58 +59,6 @@ sub playlists {
 	return Slim::Music::Info::playlists;
 }
 
-sub getDisplayName {
-	return 'SETUP_MUSICMAGIC';
-}
-
-sub setMode() {
-	my $client = shift;
-	
-	$client->lines(\&lines);
-	$client->update();
-}
-
-my %functions = (
-	'up' => sub  {
-		my $client = shift;
-		Slim::Utils::Prefs::set('musicmagic',Slim::Buttons::Common::scroll($client, -1, 2, Slim::Utils::Prefs::get('musicmagic')));
-		$client->update();
-	},
-	'down' => sub  {
-		my $client = shift;
-		Slim::Utils::Prefs::set('musimagic',Slim::Buttons::Common::scroll($client, +1, 2, Slim::Utils::Prefs::get('musicmagic')));
-		$client->update();
-	},
-	'left' => sub  {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	'right' => sub  {
-		my $client = shift;
-		Slim::Display::Animation::bumpRight($client);
-	}
-);
-
-sub lines {
-	my $client = shift;
-	my ($line1, $line2);
-	$line1 = $client->string('SETUP_MUSICMAGIC');
-	if (Slim::Utils::Prefs::get('musicmagic')) {
-		$line2 = $client->string('USE_MUSICMAGIC');
-	} else {
-		$line2 = $client->string('DONT_USE_MUSICMAGIC');
-	};
-	return ($line1, $line2);
-}
-
-sub getFunctions() {
-	return \%functions;
-}
-
-sub enabled {
-	return init();
-}
-
 sub init {
 	return $initialized if ($initialized == 1);
 	checkDefaults();
@@ -127,7 +75,6 @@ sub init {
 	
 		# Note: Check version restrictions if any
 		$initialized = 1;
-		checker();
 		Slim::Music::Import::addImporter('musicmagic',\&startScan,\&mixerFunction,\&addGroups);
 		Slim::Player::Source::registerProtocolHandler("musicmagicplaylist", "0");
 		addGroups();

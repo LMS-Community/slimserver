@@ -1701,9 +1701,9 @@ sub browsedb {
 		$params->{'warn'} = 1;
 	}
 
-	#if (Slim::Music::iTunes::useiTunesLibrary()) {
-	#	$params->{'itunes'} = 1;
-	#}
+	if (Slim::Music::iTunes::useiTunesLibrary()) {
+		$params->{'itunes'} = 1;
+	}
 
 	# This pulls the appropriate anonymous function list out of the
 	# fieldInfo hash, which we then retrieve data from.

@@ -1192,10 +1192,9 @@ sub initSetupConfig {
 				my %plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 				my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
 
-				foreach my $plugin (sort {string($pluginlistref->{$a}) cmp string($pluginlistref->{$b})}(keys %{$pluginlistref})) {	
-					
-					if ((exists $paramref->{"pluginlist$i"} && $paramref->{"pluginlist$i"} == (exists $plugins{$plugin} ? 0 : 1))
-					) {
+				foreach my $plugin (sort {string($pluginlistref->{$a}) cmp string($pluginlistref->{$b})}(keys %{$pluginlistref})) {
+
+					if (exists $paramref->{"pluginlist$i"} && $paramref->{"pluginlist$i"} == (exists $plugins{$plugin} ? 0 : 1)) {
 						delete $paramref->{"pluginlist$i"};
 					}
 
@@ -1215,7 +1214,6 @@ sub initSetupConfig {
 
 				my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
 
-				no strict 'refs';
 				foreach my $plugin (sort {string($pluginlistref->{$a}) cmp string($pluginlistref->{$b})}(keys %{$pluginlistref})) {
 
 					if (!exists $paramref->{"pluginlist$i"}) {
@@ -1226,18 +1224,10 @@ sub initSetupConfig {
 						Slim::Utils::Prefs::push('disabledplugins',$plugin);
 					}
 
-					# disable and remove groups for Plugins that fail enable citeria
-					if (exists &{"Plugins::" . $plugin . "::enabled"} && 
-							! &{"Plugins::" . $plugin . "::enabled"}($client) ) {
-						$paramref->{"pluginlist$i"} = 0;
-						delGroup('plugins',$plugin,1);
-					}
-
 					$i++;
 				}
 
 				foreach my $group (Slim::Utils::Prefs::getArray('disabledplugins')) {
-					print "dis: $group";
 					delGroup('plugins',$group,1);
 				}
 			}

@@ -9,7 +9,7 @@ package Slim::Buttons::MoodWheel;
 
 use strict;
 use Slim::Buttons::Common;
-use Plugins::MoodLogic;
+use Slim::Music::MoodLogic;
 
 # 
 our @browseMoodChoices = ();
@@ -84,13 +84,13 @@ sub setMode {
 	my $push = shift;
 
 	if (defined Slim::Buttons::Common::param($client, 'genre')) {
-		@browseMoodChoices = Plugins::MoodLogic::getMoodWheel(
+		@browseMoodChoices = Slim::Music::MoodLogic::getMoodWheel(
 			Slim::Music::Info::moodLogicGenreId(Slim::Buttons::Common::param($client, 'genre')), 'genre'
 		);
 
 	} elsif (defined Slim::Buttons::Common::param($client, 'artist')) {
 
-		@browseMoodChoices = Plugins::MoodLogic::getMoodWheel(
+		@browseMoodChoices = Slim::Music::MoodLogic::getMoodWheel(
 			Slim::Music::Info::moodLogicArtistId(Slim::Buttons::Common::param($client, 'artist')), 'artist'
 		);
 
