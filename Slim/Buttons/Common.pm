@@ -390,122 +390,30 @@ our %functions = (
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
-		my $inc = 1;
-		my $volumecmd;
-		my $rate = 50; #Hz maximum
-		my $accel = 15; #Hz/s
 		
-		if (Slim::Hardware::IR::holdTime($client) > 0) {
-			$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
-		} else {
-			$inc = 2.5;
-		}
-		if ($buttonarg  eq 'up') {
-			$volumecmd = "+$inc";
-		} elsif ($buttonarg eq 'down') {
-			$volumecmd = "-$inc";
-		} elsif ($buttonarg =~ /(\d+)/) {
-			$volumecmd = $1;
-		} else {
-			Slim::Display::Display::volumeDisplay($client);
-			return;
-		}
-		if (!$inc && $buttonarg =~ /up|down/) {
-			return;
-		}
-		Slim::Control::Command::execute($client, ["mixer", "volume", $volumecmd]);
-		Slim::Display::Display::volumeDisplay($client);
+		mixer($client,'volume',$buttonarg);
 	},
 
 	'pitch' => sub {
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
-		my $inc = 1;
-		my $pitchcmd;
-		my $rate = 50; #Hz maximum
-		my $accel = 15; #Hz/s
-		
-		if (Slim::Hardware::IR::holdTime($client) > 0) {
-			$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
-		} else {
-			$inc = 1;
-		}
-		if ($buttonarg  eq 'up') {
-			$pitchcmd = "+$inc";
-		} elsif ($buttonarg eq 'down') {
-			$pitchcmd = "-$inc";
-		} elsif ($buttonarg =~ /(\d+)/) {
-			$pitchcmd = $1;
-		} else {
-			Slim::Display::Display::pitchDisplay($client);
-			return;
-		}
-		if (!$inc && $buttonarg =~ /up|down/) {
-			return;
-		}
-		Slim::Control::Command::execute($client, ["mixer", "pitch", $pitchcmd]);
-		Slim::Display::Display::pitchDisplay($client);
+
+		mixer($client,'pitch',$buttonarg);
 	},
 	'bass' => sub {
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
-		my $inc = 1;
-		my $basscmd;
-		my $rate = 50; #Hz maximum
-		my $accel = 15; #Hz/s
-		
-		if (Slim::Hardware::IR::holdTime($client) > 0) {
-			$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
-		} else {
-			$inc = 2.5;
-		}
-		if ($buttonarg  eq 'up') {
-			$basscmd = "+$inc";
-		} elsif ($buttonarg eq 'down') {
-			$basscmd = "-$inc";
-		} elsif ($buttonarg =~ /(\d+)/) {
-			$basscmd = $1;
-		} else {
-			Slim::Display::Display::bassDisplay($client);
-			return;
-		}
-		if (!$inc && $buttonarg =~ /up|down/) {
-			return;
-		}
-		Slim::Control::Command::execute($client, ["mixer", "bass", $basscmd]);
-		Slim::Display::Display::bassDisplay($client);
+
+		mixer($client,'bass',$buttonarg);
 	},
 	'treble' => sub {
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
-		my $inc = 1;
-		my $treblecmd;
-		my $rate = 50; #Hz maximum
-		my $accel = 15; #Hz/s
-		
-		if (Slim::Hardware::IR::holdTime($client) > 0) {
-			$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
-		} else {
-			$inc = 2.5;
-		}
-		if ($buttonarg  eq 'up') {
-			$treblecmd = "+$inc";
-		} elsif ($buttonarg eq 'down') {
-			$treblecmd = "-$inc";
-		} elsif ($buttonarg =~ /(\d+)/) {
-			$treblecmd = $1;
-		} else {
-			Slim::Display::Display::trebleDisplay($client);
-			return;
-		}
-		if (!$inc && $buttonarg =~ /up|down/) {
-			return;
-		}
-		Slim::Control::Command::execute($client, ["mixer", "treble", $treblecmd]);
-		Slim::Display::Display::trebleDisplay($client);
+
+		mixer($client,'treble',$buttonarg);
 	},
 	'muting' => sub  {
 		my $client = shift;
@@ -904,20 +812,16 @@ sub mixer {
 	my $accel = 8; # Hz/sec
 	my $rate = 50; # Hz
 	my $inc = 1;
-	my $midpoint = 50;
+	my $midpoint = $client->mixerConstant($feature,'mid');
 
 	my $cmd;
 	if (Slim::Hardware::IR::holdTime($client) > 0) {
 		$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
 	} else {
-		$inc = 2.5;
+		$inc = $client->mixerConstant($feature,'increment');
 	}
-	if ($feature eq 'pitch') {
-		$midpoint = 100; 
-		$inc = 1;
-	};
 	
-	if ((!$inc && $setting =~ /up|down/) || $feature !~ /bass|treble|pitch/) {
+	if ((!$inc && $setting =~ /up|down/) || $feature !~ /volume|bass|treble|pitch/) {
 		return;
 	}
 	
@@ -939,13 +843,14 @@ sub mixer {
 	} elsif ($setting =~ /(\d+)/) {
 		$cmd = $1;
 	} else {
+		# just display current value
+		Slim::Display::Display::mixerDisplay($client,$feature);
 		return;
 	}
 		
 	Slim::Control::Command::execute($client, ["mixer", $feature, $cmd]);
-	#TO DO: make a function like Slim::Display::Display::volumeDisplay for bass/treble
-	#       so that this function can work from anywhere and not just settings
-	$client->update();
+	
+	Slim::Display::Display::mixerDisplay($client,$feature);
 }
 
 sub numberLetter {

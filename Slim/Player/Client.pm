@@ -971,6 +971,51 @@ sub minTreble {	return 50; }
 sub maxBass {	return 50; }
 sub minBass {	return 50; }
 
+# mixerConstant returns the requested aspect of a given mixer feature
+# Supported features: volume, pitch, bass, treble
+# Supported aspects: min       - the minimum setting of the feature
+#                    max       - the maximum setting of the feature
+#                    mid       - the midpoint of the feature, if important
+#                    scale     - the multiplier for display of the feature value
+#                    increment - The inverse of scale  
+#                    balanced  - whether to bias the displayed value by the mid value
+# TODO allow different player types to have their own scale and increment
+sub mixerConstant {
+	my ($client, $feature, $aspect) = @_;
+	
+	if ($feature eq 'volume') {
+		return $client->maxVolume() if $aspect eq 'max';
+		return $client->minVolume() if $aspect eq 'min';
+		return $client->minVolume() if $aspect eq 'mid';
+		return 0.4 if $aspect eq 'scale';
+		return 2.5 if $aspect eq 'increment';
+		return 0 if $aspect eq 'balanced';
+	} elsif ($feature eq 'pitch') {
+		return $client->maxPitch() if $aspect eq 'max';
+		return $client->minPitch() if $aspect eq 'min';
+		return ( ( $client->maxPitch() + $client->minPitch() ) / 2 ) if $aspect eq 'mid';
+		return 1 if $aspect eq 'scale';
+		return 1 if $aspect eq 'increment';
+		return 0 if $aspect eq 'balanced';
+	} elsif ($feature eq 'bass') {
+		return $client->maxBass() if $aspect eq 'max';
+		return $client->minBass() if $aspect eq 'min';
+		return ( ( $client->maxBass() + $client->minBass() ) / 2 ) if $aspect eq 'mid';
+		return 0.4 if $aspect eq 'scale';
+		return 2.5 if $aspect eq 'increment';
+		return 1 if $aspect eq 'balanced';
+	} elsif ($feature eq 'treble') {
+		return $client->maxTreble() if $aspect eq 'max';
+		return $client->minTreble() if $aspect eq 'min';
+		return ( ( $client->maxTreble() + $client->minTreble() ) / 2 ) if $aspect eq 'mid';
+		return 0.4 if $aspect eq 'scale';
+		return 2.5 if $aspect eq 'increment';
+		return 1 if $aspect eq 'balanced';
+	} else {
+		return undef;
+	}
+}
+
 sub volume {
 	my ($client, $volume, $temp) = @_;
 

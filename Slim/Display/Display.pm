@@ -125,50 +125,81 @@ sub curLines {
 	}
 }
 
-#	FUNCTION:	volumeDisplay
+#	FUNCTION:	mixerDisplay
 #
-#	DESCRIPTION:	Used to display a bar graph of the current volume below a label
+#	DESCRIPTION:	Used to display a bar graph of the current mixer feature below a label
 #	
 #	EXAMPLE OUTPUT:	Volume
 #					###############-----------------
 #	
-#	USAGE:		volumeDisplay($client)
+#	USAGE:		mixerDisplay($client,'volume')
+#
+#   AVAILABLE FEATURES: 'volume','pitch','bass','treble'
+
+sub mixerDisplay {
+	my $client = shift;
+	my $feature = shift;
+	
+	return unless $feature =~ /(?:volume|pitch|bass|treble)/;
+
+	my $featureValue = Slim::Utils::Prefs::clientGet($client,$feature);
+	return unless defined $featureValue;
+
+	my $featureHeader;
+	my $mid   = $client->mixerConstant($feature,'mid');
+	my $scale = $client->mixerConstant($feature,'scale');
+	
+	my $headerValue = $client->mixerConstant($feature,'balanced') ? 
+							int( ( ($featureValue - $mid) * $scale) + 0.5) :
+							int( ( $featureValue * $scale) + 0.5);
+
+
+	if ($feature eq 'volume' && $featureValue <= 0) {
+		$headerValue = $client->string('MUTED');
+	} elsif ($feature eq 'pitch') {
+		$headerValue .= '%';
+	}
+	
+	$featureHeader = $client->string(uc($feature)) . " ($headerValue)";
+
+	my @lines = Slim::Buttons::Input::Bar::lines($client, $featureValue, $featureHeader,
+												 $client->mixerConstant($feature,'min'),
+												 $mid,
+												 $client->mixerConstant($feature,'max'));
+	
+	# trim off any overlay for showBriefly
+	$client->showBriefly(@lines[0,1]);
+}
+	
+		
+#	These *Display functions are all deprecated and should not be used
+#   Use mixerDisplay instead.
+#######################################################################
 sub volumeDisplay {
 	my $client = shift;
 
-	my $volume = $client->volume();
-	my $volumestring = $client->string('VOLUME').' ('.($volume <= 0 ? $client->string('MUTED') : int($volume/100*40+0.5)).')';
-	my @lines = Slim::Buttons::Input::Bar::lines($client,$volume,$volumestring ,$client->minVolume(), $client->minVolume(), $client->maxVolume());
-
-	$client->showBriefly(@lines);
+	mixerDisplay($client,'volume');
 }
+
 sub pitchDisplay {
 	my $client = shift;
 
-	my $pitch = $client->pitch();
-	my $pitchstring = $client->string('PITCH').' ('.(int($pitch)).'%)';
-	my @lines = Slim::Buttons::Input::Bar::lines($client,$pitch,$pitchstring, $client->minPitch(), ($client->maxPitch() + $client->minPitch() ) / 2, $client->maxPitch());
-
-	$client->showBriefly(@lines);
+	mixerDisplay($client,'pitch');
 }
+
 sub bassDisplay {
 	my $client = shift;
 
-	my $bass = $client->bass();
-	my $bassstring = $client->string('BASS').' ('.(int($bass/100*40 + 0.5) - 20).')';
-	my @lines = Slim::Buttons::Input::Bar::lines($client,$bass,$bassstring, $client->minBass(), ($client->maxBass() + $client->minBass() ) / 2, $client->maxBass());
-
-	$client->showBriefly(@lines);
+	mixerDisplay($client,'bass');
 }
+
 sub trebleDisplay {
 	my $client = shift;
 
-	my $treble = $client->treble();
-	my $treblestring = $client->string('TREBLE').' ('.(int($treble/100*40 + 0.5) - 20).')';
-	my @lines = Slim::Buttons::Input::Bar::lines($client,$treble,$treblestring, $client->minTreble(), ($client->maxTreble() + $client->minTreble() ) / 2, $client->maxTreble());
-
-	$client->showBriefly(@lines);
+	mixerDisplay($client,'treble');
 }
+#######################################################################
+
 
 sub center {
 	my $line = shift;
