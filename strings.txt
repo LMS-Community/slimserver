@@ -8703,3 +8703,7 @@ ANY_TYPE
 WMA_NO_CONVERT_CMD
 	DE	Fehler beim WMA Konvertieren - bitte Dateityp überprüfen
 	EN	WMA convert error - check file types
+
+MIDWORDS_UPPER
+	DE	1
+	EN	0

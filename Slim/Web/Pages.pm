@@ -526,7 +526,10 @@ sub _refCheck {
 sub _lcPlural {
 	my ($count, $singular, $plural) = @_;
 
-	return sprintf("%s %s", $count, lc(($count == 1 ? string($singular) : string($plural))));
+	# only convert to lowercase if our language does not wand uppercase (default lc)
+	my $word = ($count == 1 ? string($singular) : string($plural));
+	$word = (string('MIDWORDS_UPPER', '', 1) ? $word : lc($word));
+	return sprintf("%s %s", $count, $word);
 }
 
 sub addLibraryStats {
