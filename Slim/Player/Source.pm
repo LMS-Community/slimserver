@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.44 2003/12/26 20:12:55 dean Exp $
+# $Id: Source.pm,v 1.45 2003/12/26 23:57:52 dean Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -228,7 +228,7 @@ sub playmode {
 			
 			# when we change modes, make sure we do it to all the synced clients.
 			foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
-				$::d_source && msg(" New play mode: " . $newmode . "\n");
+				$::d_source && msg($client->id() . " New play mode: " . $newmode . "\n");
 				
 				# wake up the display if we've switched modes.
 				if ($everyclient->isPlayer()) { Slim::Buttons::ScreenSaver::wakeup($everyclient); };
@@ -955,7 +955,7 @@ sub readNextChunk {
 		$::d_source && msg("end of file or error on socket, opening next song, (song pos: " .
 				$client->songBytes() . "(tell says: . " . systell($client->mp3filehandle()). "), totalbytes: " . $client->songtotalbytes() . ")\n");
 		if (!openNext($client)) {
-			$::d_source && msg("Can't opennext, returning no chunk.");
+			$::d_source && msg($client->id() . ": Can't opennext, returning no chunk.\n");
 		}
 		
 		# we'll have to be called again to get a chunk from the next song.

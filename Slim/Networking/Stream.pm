@@ -336,15 +336,11 @@ sub gotAck {
 
 	my $state = $streamState{$client};
 
-	if ($state eq 'eof') {
-		# we're going to poll after BUFFER_FULL_DELAY with an empty chunk so we can know when the player runs out.
-		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $BUFFER_FULL_DELAY, \&sendEmptyChunk);
-	} elsif ($state eq 'stop') {
+	if ($state eq 'stop') {
 		# don't bother sending anything.
 	} else {
 		sendNextChunk($client);
 	}
-
 }
 
 
@@ -378,7 +374,7 @@ sub sendNextChunk {
 		$::d_stream_v && msg($client->id() . "- $streamState -  Buffer full, need to poll to see if there is space\n");
 		# if client's buffer is full, poll it every 50ms until there's room if we're playing
 		# otherwise, we can't send a chunk.
-		if ($streamState eq 'play') {
+		if ($streamState eq 'play' || $streamState eq 'eof') {
 			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $BUFFER_FULL_DELAY, \&sendEmptyChunk);
 		} 
 		return 0;
@@ -400,7 +396,13 @@ sub sendNextChunk {
 	
 	if (!defined($chunkRef)) {
 		$::d_stream && msg("stream not readable\n");
-		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $TIMEOUT, \&sendNextChunk);
+		if ($streamState eq 'eof') {
+			$::d_stream && msg("sending empty chunk...\n");
+          	# we're going to poll after BUFFER_FULL_DELAY with an empty chunk so we can know when the player runs out.
+        	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $BUFFER_FULL_DELAY, \&sendEmptyChunk);
+       	} else {
+			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $TIMEOUT, \&sendNextChunk);
+		}
 		return 0;
 	}
 	

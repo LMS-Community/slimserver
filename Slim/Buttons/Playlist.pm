@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.21 2003/12/26 20:12:55 dean Exp $
+# $Id: Playlist.pm,v 1.22 2003/12/26 23:57:52 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -247,7 +247,7 @@ sub nowPlayingModeLines {
 	
 	if (!defined($playingDisplayMode)) { $playingDisplayMode = 1; };
 	# check if we're streaming...
-	if (Slim::Music::Info::isHTTPURL(Slim::Player::Playlist::song($client))) {
+	if (Slim::Music::Info::isHTTPURL(Slim::Player::Playlist::song($client)) && !Slim::Utils::Prefs::get('showbufferfullness')) {
 		# no progress bar, remaining time is meaningless
 		$playingDisplayMode = ($playingDisplayMode % 3) ? 1 : 0;
 	} else {
