@@ -1,1 +1,22 @@
-8
+# Squeezebox firmware revisions 1..8 all used the "old" update mechanism.
+# The newest version is always required to talk to the current server 
+# version, so we force them all to go to v.10
+#
+# from	to
+	
+1	10
+2	10
+3	10
+4	10
+5	10
+6	10
+7	10
+8	10
+
+# version 10 is the same as version 8, except that it has additional
+# support to be updated to version 20. The upgrade from 10 to 20 is not
+# forced (yet) because 20 is still considered beta. To enable it, install
+# squeezebox_20.bin in the Firmware/ directory.
+
+10	20
+

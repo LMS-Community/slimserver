@@ -134,25 +134,51 @@ sub hasDigitalOut {
 	return 1;
 }
 
+# if an update is required, return the version of the appropriate upgrade image
+#
 sub needsUpgrade {
 	my $client = shift;
 	my $versionFilePath = catdir($Bin, "Firmware", "squeezebox.version");
 	my $versionFile;
-	return 0 if !open $versionFile, "<$versionFilePath";
-	my $version = <$versionFile>;
-	close $versionFile;
-	chomp $version;
-	if ($version != $client->revision) {
-		return 1;
-	} else {
+
+	if (!open($versionFile, "<$versionFilePath")) {
+		warn("can't open $versionFilePath\n");
 		return 0;
 	}
+
+	my $line;
+	my ($from, $to);
+	while ($line = <$versionFile>) {
+		$line=~/^(\d+)\s+(\d+)\s*$/ || next;
+		($from, $to) = ($1, $2);
+		$from == $client->revision || next;
+	}
+
+	close($versionFile);
+
+	if ((!defined $from) || ($from != $client->revision)) {
+		$::d_firmware && msg ("No upgrades found for squeezebox v. ". $client->revision."\n");
+		return 0;
+	}
+
+	# skip upgrade if file doesn't exist
+
+	my $file = shift || catdir($Bin, "Firmware", "squeezebox_$to.bin");
+
+	if (!-f$file) {
+		$::d_firmware && msg ("squeezebox v. ".$client->revision." could be upgraded to v. $to if the file existed.\n");
+		return 0;
+	}
+
+	$::d_firmware && msg ("squeezebox v. ".$client->revision." requires upgrade to $to\n");
+	return $to;
+
 }
 
 # the new way: use slimproto
 sub upgradeFirmware_SDK5 {
 	use bytes;
-	my $client= shift;
+	my ($client, $filename) = @_;
 
 	my $frame;
 
@@ -161,12 +187,11 @@ sub upgradeFirmware_SDK5 {
 
 	Slim::Utils::Misc::blocking($client->tcpsock, 1);
 
-	my $file = shift || catdir($Bin, "Firmware", "squeezebox.bin");
+	open FS, $filename || return("Open failed for: $filename\n");
 
-	open FS, $file || return("Open failed for: $file\n");
 	binmode FS;
 	
-	my $size = -s $file;	
+	my $size = -s $filename;	
 	
 	$::d_firmware && msg("Updating firmware: Sending $size bytes\n");
 	
@@ -207,7 +232,7 @@ sub upgradeFirmware_SDK5 {
 # the old way: connect to 31337 and dump the file
 sub upgradeFirmware_SDK4 {
 	use bytes;
-	my $client = shift;
+	my ($client, $filename) = @_;
 	my $ip;
 	if (ref $client ) {
 		$ip = $client->ip;
@@ -219,8 +244,6 @@ sub upgradeFirmware_SDK4 {
 	
 	my $port = 31337;  # upgrade port
 	
-	my $file = shift || catdir($Bin, "Firmware", "squeezebox.bin");
-
 	my $iaddr   = inet_aton($ip) || return("Bad IP address: $ip\n");
 	
 	my $paddr   = sockaddr_in($port, $iaddr);
@@ -232,10 +255,10 @@ sub upgradeFirmware_SDK4 {
 
 	connect(SOCK, $paddr) || return("Connect failed $!\n");
 	
-	open FS, $file || return("Open failed for: $file\n");
+	open FS, $filename || return("can't open $filename");
 	binmode FS;
 	
-	my $size = -s $file;	
+	my $size = -s $filename;	
 	
 	$::d_firmware && msg("Updating firmware: Sending $size bytes\n");
 	
@@ -256,16 +279,43 @@ sub upgradeFirmware_SDK4 {
 	return undef; 
 }
 
+
 sub upgradeFirmware {
 	my $client = shift;
 
-	if ($client->revision < 20) {
-		$::d_firmware && msg("using old update mechanism");
-		upgradeFirmware_SDK4($client, @_);
+	my $to_version;
+
+	if (ref $client ) {
+		$to_version = $client->needsUpgrade();
 	} else {
-		$::d_firmware && msg("using new update mechanism");
-		upgradeFirmware_SDK5($client, @_);
+		# for the "upgrade by ip address" web form:
+		$to_version = 10;
 	}
+
+	# if no upgrade path is given, then "upgrade" the client to itself.
+
+	$to_version = $client->revision unless $to_version;
+
+	my $filename = catdir($Bin, "Firmware", "squeezebox_$to_version.bin");
+
+	if (!-f$filename) {
+		warn("file does not exist: $filename\n");
+		return(0);
+	}
+
+	my $err;
+
+	if ((!ref $client) || ($client->revision <= 10)) {
+		$::d_firmware && msg("using old update mechanism\n");
+		$err = upgradeFirmware_SDK4($client, $filename);
+	} else {
+		$::d_firmware && msg("using new update mechanism\n");
+		$err = upgradeFirmware_SDK5($client, $filename);
+	}
+
+	if (defined($err)) {
+		msg("upgrade failed: $err");
+	}		
 }
 
 # in order of preference based on whether we're connected via wired or wireless...

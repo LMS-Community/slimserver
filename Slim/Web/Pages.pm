@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.55 2004/03/21 21:54:32 kdf Exp $
+# $Id: Pages.pm,v 1.56 2004/03/24 00:42:58 sadams Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -2063,10 +2063,15 @@ sub firmware {
 	return Slim::Web::HTTP::filltemplatefile("firmware.html", $params);
 }
 
+
+# This is here just to support SDK4.x (version <=10) clients
+# so it always sends an upgrade to version 10 using the old upgrade 
+# method.
+#
 sub update_firmware {
 	my ($client, $params) = @_;
 
-	$params->{'warning'} = Slim::Player::Squeezebox::upgradeFirmware($params->{'ipaddress'}) 
+	$params->{'warning'} = Slim::Player::Squeezebox::upgradeFirmware($params->{'ipaddress'}, 10) 
 		|| string('UPGRADE_COMPLETE_DETAILS');
 	
 	return Slim::Web::HTTP::filltemplatefile("update_firmware.html", $params);
