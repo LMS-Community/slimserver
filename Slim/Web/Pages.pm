@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.106 2004/11/29 06:16:45 kdf Exp $
+# $Id: Pages.pm,v 1.107 2004/12/02 02:24:08 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1247,7 +1247,7 @@ sub browseid3 {
 	my $artistref = []; if (defined($artist) && $artist ne '') { $artistref = [$artist]; }
 	my $albumref  = []; if (defined($album) && $album ne '') { $albumref = [$album]; }
 	my $songref   = []; if (defined($song) && $song ne '') { $songref = [$song]; }
-	
+
 	_addStats($params, $genreref, $artistref, $albumref, $songref);
 
 	if (defined($album) && $album eq '*' && 
@@ -1373,10 +1373,10 @@ sub browseid3 {
 
 	my $otherparams = 
 		'player='  . Slim::Web::HTTP::escape($player || '') . 
-		'&genre='  . Slim::Web::HTTP::escape($genre  || '')  . 
+		'&genre='  . Slim::Web::HTTP::escape($genre  || '') . 
 		'&artist=' . Slim::Web::HTTP::escape($artist || '') . 
-		'&album='  . Slim::Web::HTTP::escape($album  || '')  . 
-		'&song='   . Slim::Web::HTTP::escape($song   || '')   . '&';
+		'&album='  . Slim::Web::HTTP::escape($album  || '') . 
+		'&song='   . Slim::Web::HTTP::escape($song   || '') . '&';
 
 	# XXX - more ick
 	if (!$genre) {
