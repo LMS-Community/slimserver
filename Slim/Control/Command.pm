@@ -23,12 +23,15 @@ use Slim::Utils::Strings qw(string);
 our %executeCallbacks;
 
 # This maps the extended CLI commands to methods on Track.
+# Allocation map: capital letters are still free:
+#  a b c d E f g h i j k l m n o P q r S t u v X y z
+
 our %cliTrackMap = (
 	'g' => 'genre',
 	'a' => 'artist',
 	'c' => 'composer',
 	'b' => 'band',
-	'u' => 'conductor',
+	'h' => 'conductor',
 	'l' => 'album',
 	'd' => 'duration',
 	't' => 'tracknum',
@@ -39,9 +42,14 @@ our %cliTrackMap = (
 	'r' => 'bitrate',
 	'z' => 'drm',
 	'n' => 'modificationTime',
-	'p' => 'url',
+	'u' => 'url',
 	'f' => 'filesize',
 );
+# j Cover art
+# i disc
+# q disc count
+# o type
+
 
 our %searchMap = (
 
@@ -147,7 +155,7 @@ sub execute {
 # Y    album           ?
 # Y    title           ?
 # Y    duration        ?
-# Y    path            ?
+# Y    path|url        ?
  
 # Y    playlist        playtracks                  <searchterms>    
 # Y    playlist        loadtracks                  <searchterms>    
@@ -362,7 +370,7 @@ sub execute {
  		if ($valid) {
 
  			for my $eachitem (@$results[$start..$end]) {
- 				push @returnArray, $label . $eachitem;
+ 				push @returnArray, $label . ':' . $eachitem;
  			}
  		}
 
@@ -374,14 +382,21 @@ sub execute {
  	
 		my $label = 'track';
  		my $sort  = 'title';
- 		my $tags  = 'galdp';
+ 		my $tags  = 'galdu';
  		
  		my %params = parseParams($parrayref, \@returnArray);
 
-		if (defined $params{$label} && !Slim::Buttons::BrowseID3::specified($params{$label})) {
+		if (defined $searchMap{$label} && Slim::Buttons::BrowseID3::specified($params{'search'})) {
 
-			$find->{ $searchMap{$label} } = singletonRef(Slim::Web::Pages::searchStringSplit($params{$label}));
+			$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit(
+				Slim::Utils::Text::ignoreCaseArticles($params{'search'})
+			);
 		}
+
+#		if (defined $params{$label} && !Slim::Buttons::BrowseID3::specified($params{$label})) {
+#
+#			$find->{ $searchMap{$label} } = singletonRef(Slim::Web::Pages::searchStringSplit($params{$label}));
+#		}
  		
  		$sort = $params{'sort'} if defined($params{'sort'});
  		$tags = $params{'tags'} if defined($params{'tags'});
@@ -421,7 +436,7 @@ sub execute {
  		$pushParams = 0;
  #		${$pcmdIsQuery} = 1;
  	
- 		my $tags = "galdp";
+ 		my $tags = "galdu";
  		my $dir = "__playlists";
  		my $search = "*";
  		
@@ -534,11 +549,11 @@ sub execute {
  		$pushParams = 0;
  	
  		my $path;
- 		my $tags = "abcdefghijklmnoqrstuvwxyz"; # all letter EXCEPT p
+ 		my $tags = "abcdefghijklmnopqrstvwxyz"; # all letter EXCEPT u
  		
  		my %params = parseParams($parrayref, \@returnArray);
  		
- 		$path = $params{'path'} if defined($params{'path'});
+ 		$path = $params{'url'} if defined($params{'url'});
  		$tags = $params{'tags'} if defined($params{'tags'});
  				
  		if (Slim::Utils::Misc::stillScanning()) {
@@ -1332,7 +1347,7 @@ sub execute {
 
  			$pushParams = 0;
  
- 			my $tags = "galdp";
+ 			my $tags = "galdu";
  			
  			my %params = parseParams($parrayref, \@returnArray);
  			
@@ -1725,7 +1740,6 @@ sub pushSong {
 
 	my @returnArray = sprintf('title:%s', $track->title());
 	
-	# a b c d E f g h i j k l m n o p q r S t u v X y z
 	for my $tag (split //, $tags) {
 
 		if (my $method = $cliTrackMap{$tag}) {

@@ -210,7 +210,7 @@ Note that the IP address and or port may change if the player reconnects or is r
 
 <br><p><strong><code>player model &lt;playerindex|playerid&gt; ?</code></strong></p>
 <p>The &quot;player model&quot; command returns the model of the player, currently one of 
-&quot;squeezebox&quot;, &quot;slimp3&quot; or &quot;softsqueeze&quot;.</p>
+&quot;squeezebox2&quot;, &quot;squeezebox&quot;, &quot;slimp3&quot; or &quot;softsqueeze&quot;.</p>
 <blockquote> 
   <p> Request: &quot;player model 0 ?&lt;LF&gt;&quot;<br>
      Response: &quot;player model squeezebox&lt;LF&gt;&quot;</p>
@@ -644,12 +644,12 @@ preferences values.</p>
 		<td><b>Description</b></td>
 	</tr>
 	<tr>
-		<td>path</td>
+		<td>url</td>
 		<td>Song path as returned by other CLI commands. This is a mandatory parameter.</td>
 	</tr>
 	<tr>
 		<td>tags</td>
-		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is all info except the path.</td>
+		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is all info except the url.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
@@ -696,7 +696,7 @@ preferences values.</p>
 		<td>Band name. Only if known.</td>
 	</tr>
 	<tr>
-		<td><b>u</b></td>		
+		<td><b>h</b></td>		
 		<td>conductor</td>
 		<td>Conductor name. Only if known.</td>
 	</tr>
@@ -722,7 +722,7 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td><b>t</b></td>
-		<td>track</td>
+		<td>tracknum</td>
 		<td>Track number. Only if known.</td>
 	</tr>
 	<tr>
@@ -757,7 +757,7 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td><b>f</b></td>
-		<td>filelength</td>
+		<td>filesize</td>
 		<td>Song file length in bytes. Only if known.</td>
 	</tr>
 	<tr>
@@ -777,19 +777,19 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td><b>n</b></td>
-		<td>modtime</td>
+		<td>modificationTime</td>
 		<td>Date and time song file was last changed.</td>
 	</tr>
 	<tr>
-		<td>p</td>
-		<td>path</td>
-		<td>Song file path. Used as &lt;item&gt; parameter for the &quot;playlist add&quot; command, for example.</td>
+		<td>u</td>
+		<td>url</td>
+		<td>Song file url. Used as &lt;item&gt; parameter for the &quot;playlist add&quot; command, for example.</td>
 	</tr>
 </table>
 <p>Example:</p>
 <blockquote> 
-  <p> Request: &quot;songinfo 0 6 path:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%2520Outside%2520Alone.mp3&lt;LF&gt;&quot;<br>
-  	 Response: &quot;songinfo 0 6 path:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%2520Outside%2520Alone.mp3 count:17 
+  <p> Request: &quot;songinfo 0 6 url:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%2520Outside%2520Alone.mp3&lt;LF&gt;&quot;<br>
+  	 Response: &quot;songinfo 0 6 url:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%2520Outside%2520Alone.mp3 count:17 
   	 title:Left%20Outside%20Alone genre:Pop artist:Anastacia composer:D.%20Austin/G.%20Ballard album:Anastacia duration:257.488975&lt;LF&gt;&quot;</p>
 </blockquote>
 
@@ -817,7 +817,7 @@ preferences values.</p>
 		<td>tags</td>
 		<td>Determines which tags are returned. Each returned tag is identified by a letter (see command 
 		    &quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible fields and their identifying 
-		    letter). The default tags value for this command is &quot;galdp&quot;.</td>
+		    letter). The default tags value for this command is &quot;galdu&quot;.</td>
 	</tr>
 	<tr>
 		<td>search</td>
@@ -861,12 +861,12 @@ preferences values.</p>
 <blockquote> 
   <p> Request: &quot;titles 0 2&lt;LF&gt;&quot;<br>
   	 Response: &quot;titles 0 2 count:100 index:0 title:Ancestral%20Aid genre:Soundtrack artist:Various%20Artists album:The%20Hunt%20For%20Red%20October
-  	 duration:136.93387755102 disc:1 track:5 year:1990 path:file:///Users/dean/slimp3/Music/Various%20Artists/The%20Hunt%20For%20Red%20October/Ancestral%20Aid.mp3
-  	 index:1 title:Any%20How genre:Acid%20Jazz artist:Llorca album:New%20Comer duration:340.297142857143 track:5 year:2001 path:...&lt;LF&gt;&quot;</p>
+  	 duration:136.93387755102 disc:1 track:5 year:1990 url:file:///Users/dean/slimp3/Music/Various%20Artists/The%20Hunt%20For%20Red%20October/Ancestral%20Aid.mp3
+  	 index:1 title:Any%20How genre:Acid%20Jazz artist:Llorca album:New%20Comer duration:340.297142857143 track:5 year:2001 url:...&lt;LF&gt;&quot;</p>
 
   <p> Request: &quot;titles 0 12 album:Anastacia tags:p&lt;LF&gt;&quot;<br>
-  	 Response: &quot;titles 0 12 album:Anastacia tags:p count:12 index:0 title:Heavy%20On%20My%20Heart path:...
-  	 index:1 title:I%20Do path:... index:2 title:Left%20Outside%20Alone path:...&lt;LF&gt;&quot;</p>
+  	 Response: &quot;titles 0 12 album:Anastacia tags:p count:12 index:0 title:Heavy%20On%20My%20Heart url:...
+  	 index:1 title:I%20Do url:... index:2 title:Left%20Outside%20Alone url:...&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p id="playlists"><strong><code>playlists &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
@@ -887,7 +887,7 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td>tags</td>
-		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is &quot;galdp&quot;.</td>
+		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is &quot;galdu&quot;.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
@@ -943,10 +943,10 @@ preferences values.</p>
   	 Response: &quot;playlists 0 2 dir:__playlists/SUPER.m3u count:3 index:0 
   	 title:Left%20Outside%20Alone genre:Pop artist:Anastacia composer:D.%20Austin/G.%20Ballard 
   	 album:Anastacia duration:257.488975 disc:1 track:2 year:2004 
-  	 path:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%20Outside%20Alone.mp3 
+  	 url:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%20Outside%20Alone.mp3 
   	 index:1 title:Bounce%20[Original%20Version] genre:Pop artist:Sarah%20Connor 
   	 album:Bounce%20[Single] duration:252.630204081633 disc:1 track:3 
-  	 year:2003 path:file:///Users/dean/slimp3/Music/Sarah%20Connor/Bounce%20[Single]/Bounce%20[Original%20Version].mp3&lt;LF&gt;&quot;</p>
+  	 year:2003 url:file:///Users/dean/slimp3/Music/Sarah%20Connor/Bounce%20[Single]/Bounce%20[Original%20Version].mp3&lt;LF&gt;&quot;</p>
 </blockquote>
 
 
