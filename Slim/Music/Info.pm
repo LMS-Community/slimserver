@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.133 2004/07/10 23:10:13 daniel Exp $
+# $Id: Info.pm,v 1.134 2004/07/16 12:55:18 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -131,7 +131,7 @@ my %genreCountMemoize = ();
 my %infoCacheItemsIndex;
 
 my $dbname;
-my $DBVERSION = 10;
+my $DBVERSION = 11;
 
 my %artworkCache = ();
 my $artworkDir;

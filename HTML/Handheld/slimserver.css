@@ -1,3 +1,7 @@
+font {
+	font-family: sans-serif;
+}
+
 BODY, TABLE, INPUT, SELECT, P, li, a {
 	color: #444;
 	font-size: 10px;
@@ -31,4 +35,9 @@ a {
 
 img {
 	border-style: none;
+}
+
+small {
+	font-size: 100%;
+	font-family: sans-serif;
 }

@@ -1,6 +1,6 @@
 package Slim::Utils::Text;
 
-# $Id: Text.pm,v 1.1 2004/07/01 05:10:32 dean Exp $
+# $Id: Text.pm,v 1.2 2004/07/16 12:55:19 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,9 +11,13 @@ my %caseArticlesMemoize = ();
 
 sub ignorePunct {
 	my $s = shift;
+	my $orig = $s;
 	return undef unless defined($s);
 	$s =~ s/[!?,=+<>#%&()\"\'\$\.\\]+/ /g;
 	$s =~ s/  +/ /g; # compact multiple spaces, "L.A. Mix" -> "L A Mix", not "L A  Mix"
+	$s =~ s/^ +//; # zap leading/trailing spaces.
+    $s =~ s/ +$//;
+	$s = $orig if ($s eq '');
 	return $s;
 }
 
