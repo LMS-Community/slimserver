@@ -17,7 +17,7 @@
 #   modify it under the same terms as Perl itself.
 #
 # REVISION
-#   $Id: Constants.pm,v 1.1 2004/03/14 19:02:37 grotus Exp $
+#   $Id: Constants.pm,v 1.2 2004/05/30 16:26:17 dean Exp $
 #
 #============================================================================
 
@@ -32,7 +32,7 @@ use Template::Exception;
 use base qw( Template::Base );
 use vars qw( $VERSION $DEBUG );
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 $DEBUG   = 0 unless defined $DEBUG;
 
 

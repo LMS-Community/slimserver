@@ -31,7 +31,7 @@
 # 
 #----------------------------------------------------------------------------
 #
-# $Id: Parser.pm,v 1.1 2004/03/14 19:02:36 grotus Exp $
+# $Id: Parser.pm,v 1.2 2004/05/30 16:26:15 dean Exp $
 #
 #============================================================================
 
@@ -54,7 +54,7 @@ use constant ACCEPT   => 1;
 use constant ERROR    => 2;
 use constant ABORT    => 3;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 $DEBUG   = 0 unless defined $DEBUG;
 $ERROR   = '';
 

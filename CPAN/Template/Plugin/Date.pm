@@ -18,7 +18,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Date.pm,v 1.1 2004/03/14 19:02:37 grotus Exp $
+# $Id: Date.pm,v 1.2 2004/05/30 16:26:17 dean Exp $
 #
 #============================================================================
 
@@ -31,7 +31,7 @@ use Template::Plugin;
 
 use POSIX ();
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 $FORMAT  = '%H:%M:%S %d-%b-%Y';    # default strftime() format
 @LOCALE_SUFFIX = qw( .ISO8859-1 .ISO_8859-15 .US-ASCII .UTF-8 );
 

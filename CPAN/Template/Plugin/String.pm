@@ -15,7 +15,7 @@
 #   modify it under the same terms as Perl itself.
 #
 # REVISION
-#   $Id: String.pm,v 1.1 2004/03/14 19:02:38 grotus Exp $
+#   $Id: String.pm,v 1.2 2004/05/30 16:26:18 dean Exp $
 #
 #============================================================================
 
@@ -32,7 +32,7 @@ use vars qw( $VERSION $ERROR);
 use overload q|""| => "text",
              fallback => 1;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 $ERROR   = '';
 
 *centre  = \*center;

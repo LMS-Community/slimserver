@@ -17,7 +17,7 @@
 #   modify it under the same terms as Perl itself.
 #
 # REVISION
-#   $Id: Filter.pm,v 1.1 2004/03/14 19:02:37 grotus Exp $
+#   $Id: Filter.pm,v 1.2 2004/05/30 16:26:18 dean Exp $
 #
 #============================================================================
 
@@ -31,7 +31,7 @@ use Template::Plugin;
 use base qw( Template::Plugin );
 use vars qw( $VERSION $DYNAMIC );
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 $DYNAMIC = 0 unless defined $DYNAMIC;
 
 

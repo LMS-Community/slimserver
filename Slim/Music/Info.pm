@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.124 2004/05/25 00:14:44 dean Exp $
+# $Id: Info.pm,v 1.125 2004/05/30 16:26:23 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2702,7 +2702,7 @@ sub splitTag {
 		
 		foreach my $char (split('',$splitpref),'\x00') {
 			my @temp=();
-			foreach my $item (split($char,$tag)) {
+			foreach my $item (split(/\Q$char\E/,$tag)) {
 				push (@temp,$item);
 				$::d_info && Slim::Utils::Misc::msg("Splitting $tag by $char = @temp\n") unless scalar @temp <= 1;
 			}

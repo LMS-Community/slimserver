@@ -19,7 +19,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: HTML.pm,v 1.1 2004/03/14 19:02:38 grotus Exp $
+# $Id: HTML.pm,v 1.2 2004/05/30 16:26:18 dean Exp $
 #
 #============================================================================
 
@@ -32,7 +32,7 @@ use vars qw( $VERSION );
 use base qw( Template::Plugin );
 use Template::Plugin;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 sub new {
     my ($class, $context, @args) = @_;

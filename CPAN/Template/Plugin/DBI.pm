@@ -19,7 +19,7 @@
 #   modify it under the same terms as Perl itself.
 #
 # REVISION
-#   $Id: DBI.pm,v 1.1 2004/03/14 19:02:37 grotus Exp $
+#   $Id: DBI.pm,v 1.2 2004/05/30 16:26:17 dean Exp $
 # 
 #==============================================================================
 
@@ -35,7 +35,7 @@ use DBI;
 use vars qw( $VERSION $DEBUG $QUERY $ITERATOR );
 use base qw( Template::Plugin );
 
-$VERSION  = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION  = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 $DEBUG    = 0 unless defined $DEBUG;
 $QUERY    = 'Template::Plugin::DBI::Query';
 $ITERATOR = 'Template::Plugin::DBI::Iterator';

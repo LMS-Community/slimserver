@@ -19,7 +19,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Plugin.pm,v 1.1 2004/03/14 19:02:36 grotus Exp $
+# $Id: Plugin.pm,v 1.2 2004/05/30 16:26:15 dean Exp $
 #
 #============================================================================
 
@@ -33,7 +33,7 @@ use Template::Base;
 use vars qw( $VERSION $DEBUG $ERROR $AUTOLOAD );
 use base qw( Template::Base );
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 $DEBUG   = 0;
 
 

@@ -18,7 +18,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Filters.pm,v 1.1 2004/03/14 19:02:36 grotus Exp $
+# $Id: Filters.pm,v 1.2 2004/05/30 16:26:15 dean Exp $
 #
 #============================================================================
 
@@ -31,7 +31,7 @@ use base qw( Template::Base );
 use vars qw( $VERSION $DEBUG $FILTERS $URI_ESCAPES $PLUGIN_FILTER );
 use Template::Constants;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 
 #------------------------------------------------------------------------

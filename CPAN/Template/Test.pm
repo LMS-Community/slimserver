@@ -20,7 +20,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Test.pm,v 1.1 2004/03/14 19:02:37 grotus Exp $
+# $Id: Test.pm,v 1.2 2004/05/30 16:26:16 dean Exp $
 #
 #============================================================================
 
@@ -35,7 +35,7 @@ use vars qw( @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS
 use Template qw( :template );
 use Exporter;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 $DEBUG   = 0;
 @ISA     = qw( Exporter );
 @EXPORT  = qw( ntests ok is match flush skip_all test_expect callsign banner );

@@ -16,7 +16,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Wrap.pm,v 1.1 2004/03/14 19:02:39 grotus Exp $
+# $Id: Wrap.pm,v 1.2 2004/05/30 16:26:19 dean Exp $
 #
 #============================================================================
 
@@ -30,7 +30,7 @@ use base qw( Template::Plugin );
 use Template::Plugin;
 use Text::Wrap;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 sub new {
     my ($class, $context, $format) = @_;;

@@ -40,7 +40,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Iterator.pm,v 1.1 2004/03/14 19:02:36 grotus Exp $
+# $Id: Iterator.pm,v 1.2 2004/05/30 16:26:15 dean Exp $
 #
 #============================================================================
 
@@ -54,7 +54,7 @@ use base qw( Template::Base );
 use Template::Constants;
 use Template::Exception;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 $DEBUG   = 0 unless defined $DEBUG;
 
 

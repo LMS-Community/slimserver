@@ -21,7 +21,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Autoformat.pm,v 1.1 2004/03/14 19:02:37 grotus Exp $
+# $Id: Autoformat.pm,v 1.2 2004/05/30 16:26:17 dean Exp $
 #
 #============================================================================
 
@@ -35,7 +35,7 @@ use base qw( Template::Plugin );
 use Template::Plugin;
 use Text::Autoformat;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 sub new {
     my ($class, $context, $options) = @_;

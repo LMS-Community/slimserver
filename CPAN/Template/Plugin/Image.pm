@@ -13,7 +13,7 @@
 #   modify it under the same terms as Perl itself.
 #
 # REVISION
-#   $Id: Image.pm,v 1.1 2004/03/14 19:02:38 grotus Exp $
+#   $Id: Image.pm,v 1.2 2004/05/30 16:26:18 dean Exp $
 #
 #============================================================================
 
@@ -31,7 +31,7 @@ use File::Spec;
 use base qw( Template::Plugin );
 use vars qw( $VERSION $AUTOLOAD );
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 BEGIN {
     if (eval { require Image::Info; }) {

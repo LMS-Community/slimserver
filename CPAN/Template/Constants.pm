@@ -17,7 +17,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Constants.pm,v 1.1 2004/03/14 19:02:36 grotus Exp $
+# $Id: Constants.pm,v 1.2 2004/05/30 16:26:14 dean Exp $
 #
 #============================================================================
  
@@ -31,7 +31,7 @@ use vars qw( $VERSION @ISA @EXPORT_OK %EXPORT_TAGS );
 use vars qw( $DEBUG_OPTIONS @STATUS @ERROR @CHOMP @DEBUG);
 
 @ISA     = qw( Exporter );
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 
 #========================================================================

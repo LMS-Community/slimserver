@@ -16,7 +16,7 @@
 #   modify it under the same terms as Perl itself.
 #
 # REVISION
-#   $Id: Style.pm,v 1.1 2004/03/14 19:04:49 grotus Exp $
+#   $Id: Style.pm,v 1.2 2004/05/30 16:26:22 dean Exp $
 #
 #============================================================================
 
@@ -30,7 +30,7 @@ use Template::Plugin::Filter;
 use base qw( Template::Plugin::Filter );
 use vars qw( $VERSION $DYNAMIC $FILTER_NAME );
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 $DYNAMIC = 1;
 $FILTER_NAME = 'xmlstyle';
 

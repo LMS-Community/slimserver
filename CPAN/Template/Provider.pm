@@ -27,7 +27,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Provider.pm,v 1.1 2004/03/14 19:02:36 grotus Exp $
+# $Id: Provider.pm,v 1.2 2004/05/30 16:26:16 dean Exp $
 #
 #============================================================================
 
@@ -44,7 +44,7 @@ use Template::Document;
 use File::Basename;
 use File::Spec;
 
-$VERSION  = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION  = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 # name of document class
 $DOCUMENT = 'Template::Document' unless defined $DOCUMENT;

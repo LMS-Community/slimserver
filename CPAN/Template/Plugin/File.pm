@@ -16,7 +16,7 @@
 #   modify it under the same terms as Perl itself.
 #
 # REVISION
-#   $Id: File.pm,v 1.1 2004/03/14 19:02:37 grotus Exp $
+#   $Id: File.pm,v 1.2 2004/05/30 16:26:18 dean Exp $
 #
 #============================================================================
 
@@ -34,7 +34,7 @@ use vars qw( $VERSION );
 use base qw( Template::Plugin );
 use vars qw( @STAT_KEYS );
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 @STAT_KEYS = qw( dev ino mode nlink uid gid rdev size 
 		 atime mtime ctime blksize blocks );

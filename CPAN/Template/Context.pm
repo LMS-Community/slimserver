@@ -18,7 +18,7 @@
 #   modify it under the same terms as Perl itself.
 # 
 # REVISION
-#   $Id: Context.pm,v 1.1 2004/03/14 19:02:36 grotus Exp $
+#   $Id: Context.pm,v 1.2 2004/05/30 16:26:14 dean Exp $
 #
 #============================================================================
 
@@ -35,7 +35,7 @@ use Template::Config;
 use Template::Constants;
 use Template::Exception;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 $DEBUG_FORMAT = "\n## \$file line \$line : [% \$text %] ##\n";
 
 

@@ -17,7 +17,7 @@
 #
 #------------------------------------------------------------------------
 #
-#   $Id: Config.pm,v 1.1 2004/03/14 19:02:36 grotus Exp $
+#   $Id: Config.pm,v 1.2 2004/05/30 16:26:14 dean Exp $
 #
 #========================================================================
  
@@ -32,7 +32,7 @@ use vars qw( $VERSION $DEBUG $ERROR $INSTDIR
              $LATEX_PATH $PDFLATEX_PATH $DVIPS_PATH
 	     $STASH $SERVICE $CONTEXT $CONSTANTS @PRELOAD );
 
-$VERSION   = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION   = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 $DEBUG     = 0 unless defined $DEBUG;
 $ERROR     = '';
 $CONTEXT   = 'Template::Context';

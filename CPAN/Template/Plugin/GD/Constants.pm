@@ -18,7 +18,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Constants.pm,v 1.1 2004/03/14 19:04:49 grotus Exp $
+# $Id: Constants.pm,v 1.2 2004/05/30 16:26:20 dean Exp $
 #
 #============================================================================
 
@@ -32,7 +32,7 @@ use Template::Plugin;
 use base qw( Template::Plugin );
 use vars qw( @ISA $VERSION );
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 sub new
 {
