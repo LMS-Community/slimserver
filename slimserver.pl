@@ -165,7 +165,16 @@ BEGIN {
 	# the default system @INC
 	splice(@INC, 0, scalar @SlimINC);
 
-	tryModuleLoad(@failed);
+	my @reallyFailed = tryModuleLoad(@failed);
+
+	if (scalar @reallyFailed) {
+
+		printf("The following modules failed to load: %s\n\n", join(' ', @reallyFailed));
+
+		#print "Compress::Zlib and XML::Parser are optional modules and are not required to run SlimServer.\n\n";
+
+		print "To download and compile them, please run: $Bin/Bin/build-perl-modules.pl\n\n";
+	}
 
 	# And we're done with the trying - put our CPAN path back on @INC.
 	unshift @INC, @SlimINC;

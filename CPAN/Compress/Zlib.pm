@@ -13,7 +13,7 @@ package Compress::Zlib;
 require 5.004 ;
 require Exporter;
 require DynaLoader;
-use AutoLoader;
+#use AutoLoader;
 use Carp ;
 use IO::Handle ;
 
