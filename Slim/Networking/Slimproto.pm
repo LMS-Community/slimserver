@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.19 2003/08/23 17:10:38 grotus Exp $
+# $Id: Slimproto.pm,v 1.20 2003/08/23 20:27:49 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -365,7 +365,7 @@ sub process_slimproto_frame {
 			$firststatus = 1;
 		}
 		
-		$status{$client}->{'bytes_received'} = $status{$client}->{'bytes_received_H'} * 2^32 + $status{$client}->{'bytes_received_L'}; 
+		$status{$client}->{'bytes_received'} = $status{$client}->{'bytes_received_H'} * 2**32 + $status{$client}->{'bytes_received_L'}; 
 		
 		if ($firststatus) {
 			$status{$client}->{'byteoffset'} += $status{$client}->{'bytes_received'};
@@ -388,7 +388,7 @@ sub process_slimproto_frame {
 		"	bytes_rec_L      $status{$client}->{'bytes_received_L'}\n".
 		"	fullness:        $status{$client}->{'fullness'}\n".
 		"	byteoffset:      $status{$client}->{'byteoffset'}\n".
-		"	bytes_recieved   $status{$client}->{'bytes_received'}\n".
+		"	bytes_received   $status{$client}->{'bytes_received'}\n".
 		"");
 	}
 }
