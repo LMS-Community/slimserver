@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.137 2004/09/17 15:03:42 dean Exp $
+# $Id: strings.txt,v 1.138 2004/09/23 01:27:28 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1681,6 +1681,18 @@ SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE
 	FR	Suffixe :
 	NO	Suffix:
 	SE	Suffix:
+
+SETUP_MOODLOGICPLAYLISTPREFIX
+	EN	MoodLogic playlist prefix changed to:
+
+SETUP_MOODLOGICPLAYLISTSUFFIX
+	EN	MoodLogic playlist suffix changed to:
+
+SETUP_ITUNESPLAYLISTPREFIX
+	EN	iTunes playlist prefix changed to:
+
+SETUP_ITUNESPLAYLISTSUFFIX
+	EN	iTunes playlist suffix changed to:
 
 SETUP_SHOWYEAR
 	EN	Show Year with Albums
