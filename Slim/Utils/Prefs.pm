@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.61 2004/05/13 17:57:36 dean Exp $
+# $Id: Prefs.pm,v 1.62 2004/05/14 01:32:30 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -117,6 +117,10 @@ my %DEFAULT = (
 	,'animationLevel'		=> 3
 	,'itemsPerPage'			=> 100
 	,'lookForArtwork'		=> 1
+	,'includeNoArt'			=> 0
+	,'artfolder'			=> ''
+	,'coverThumb'			=> ''
+	,'coverArt'				=> ''
 	,'thumbSize'			=> 100
 	,'buildItemsPerPass'	=> 100
 	,'plugins-onthefly'		=> 0
@@ -158,6 +162,7 @@ my %DEFAULT = (
 	,'disabledplugins'		=> []
 	,'persistPlaylists'		=> 1
 	,'reshuffleOnRepeat'	=> 0
+	,'saveShuffled'			=> 0
 	,'maxBitrate'			=> 320	# Maximum bitrate for maximum quality.  MPEG-1 layer III bitrates (kbps): 32 40 48 56 64 80 96 112 128 160 192 224 256 320
 	,'savehistory'			=> 1
 	,'historylength'		=> 1000
@@ -165,6 +170,9 @@ my %DEFAULT = (
 	,'groupdiscs' 			=> 0
 	,'livelog'				=> 102400 # keep around an in-memory log of 100kbytes, available from the web interfaces
 	,'remotestreamtimeout'	=> 5 # seconds to try to connect for a remote stream
+	,'xplir'				=> 'both'
+	,'xplinterval'			=> 5
+	,'xplsupport'			=> 0
 	,"CLIENTPREFS" => {
 			'autobrightness'		=> 1
 			,'alarmvolume'			=> 50
