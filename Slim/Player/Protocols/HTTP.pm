@@ -465,10 +465,7 @@ sub readMetaData {
 
 			my $url      = ${*$self}{'infoUrl'};
 
-			my $ds       = Slim::Music::Info::getCurrentDataStore();
-			my $track    = $ds->objectForUrl($url);
-
-			my $oldTitle = $track->title();
+			my $oldTitle = Slim::Music::Info::getCurrentTitle(undef, $url) || '';
 			my $title    = $1;
 
 			if ($title && $] > 5.007) {
@@ -486,10 +483,10 @@ sub readMetaData {
 						)
 					/\U$1/xg;
 			}
-			
+
 			if (defined($title) && $title ne '' && $oldTitle ne $title) {
 
-				Slim::Music::Info::setCurrentTitle($track, $title);
+				Slim::Music::Info::setCurrentTitle($url, $title);
 
 				${*$self}{'title'} = $title;
 
