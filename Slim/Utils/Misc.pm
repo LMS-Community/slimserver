@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.56 2004/11/25 03:51:05 kdf Exp $
+# $Id: Misc.pm,v 1.57 2004/12/02 02:28:08 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,11 +10,12 @@ package Slim::Utils::Misc;
 use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Which;
+use FindBin qw($Bin);
 use Fcntl;
 use Slim::Music::Info;
 use Slim::Utils::OSDetect;
 use POSIX qw(strftime setlocale LC_TIME);
-use Net::hostent;              # for OO version of gethostbyaddr
+use Net::hostent qw(gethost);
 use Sys::Hostname;
 use Socket;
 use Symbol qw(qualify_to_ref);
@@ -25,13 +26,13 @@ if ($] > 5.007) {
 	require Encode;
 }
 
-use FindBin qw($Bin);
+use vars qw(@EXPORT @EXPORT_OK);
+use base qw(Exporter);
 
-use vars qw($VERSION @ISA @EXPORT @EXPORT_OK @EXPORT_FAIL);
-require Exporter;
-@ISA = qw(Exporter);
-@EXPORT = qw(assert bt msg msgf watchDog);    # we export these so it's less typing to use them
-@EXPORT_OK = qw(assert bt msg msgf watchDog);    # we export these so it's less typing to use them
+@EXPORT    = qw(assert bt msg msgf watchDog);
+@EXPORT_OK = qw(assert bt msg msgf watchDog);
+
+$Slim::Utils::Misc::log = "";
 
 BEGIN {
         if ($^O =~ /Win32/) {
@@ -57,20 +58,10 @@ sub blocking {
 sub findbin {
 	my $executable = shift;
 	
-	my @paths = ();
+	my @paths;
 	my $path;
-
-	my $arch = $Config::Config{'archname'};
-
-	# This is hackish - unfortunately the Kurobox/Linkstation's perl
-	# identifies itself as ppc-linux, of which there's already binaries
-	# for - GX series Macs, with Altivec. The Motorola 82xx doesn't, so we
-	# need a different binary directory.
-	if ($arch =~ /^ppc-/ && $Config::Config{'cc'} =~ /82xx/) {
-		$arch = 'powerpc-hardhat-linux';
-	}
 	
-	push @paths, catdir( $Bin, 'Bin', $arch);
+	push @paths, catdir( $Bin, 'Bin', $Config::Config{archname});
 	push @paths, catdir( $Bin, 'Bin', $^O);
 	push @paths, catdir( $Bin, 'Bin');
 		
@@ -615,9 +606,9 @@ sub fracSecToMinSec {
 	$sec = "0$sec" if length($sec) < 2;
 	
 	# We want to round the last two decimals but we
-    # always round down to avoid overshooting EOF on last track
-    $fracrounded = int($seconds * 100) + 100;
-    $frac = substr($fracrounded, -2, 2);
+	# always round down to avoid overshooting EOF on last track
+	$fracrounded = int($seconds * 100) + 100;
+	$frac = substr($fracrounded, -2, 2);
 									
 	return "$min:$sec.$frac";
 }
@@ -636,19 +627,20 @@ sub assert {
 sub bt {
 	my $frame = 1;
 
-    my $msg = "Backtrace:\n\n";
+	my $msg = "Backtrace:\n\n";
 
 	my $assertfile = '';
 	my $assertline = 0;
 
-	while( my ($package, $filename, $line, $subroutine, $hasargs, 
-			$wantarray, $evaltext, $is_require) = caller($frame++) ) {
-		$msg.=sprintf("   frame %d: $subroutine ($filename line $line)\n", $frame - 2);
+	while (my ($filename, $line, $subroutine) = (caller($frame++))[1,2,3]) {
+
+		$msg .= sprintf("   frame %d: $subroutine ($filename line $line)\n", $frame - 2);
+
 		if ($subroutine=~/assert$/) {
 			$assertfile = $filename;
 			$assertline = $line;			
 		}
-    }
+	}
         
 	if ($assertfile) {
 		open SRC, $assertfile;
@@ -686,13 +678,12 @@ sub watchDog {
 	return $now;
 }
 
-$Slim::Utils::Misc::log = "";
-
 sub msg {
 	my $entry = strftime "%Y-%m-%d %H:%M:%S.", localtime;
 	my $now = int(Time::HiRes::time() * 10000);
 	$entry .= (substr $now, -4) . " ";
 	$entry .= shift;
+
 	print STDERR $entry;
 	
 	if (Slim::Utils::Prefs::get('livelog')) {
@@ -769,22 +760,20 @@ sub isAllowedHost {
 
 sub hostaddr {
 	my @hostaddr = ();
-	my @hostnames;
-	
-	push @hostnames, 'localhost';
-	push @hostnames, hostname();
+
+	my @hostnames = ('localhost', hostname());
 	
 	foreach my $hostname (@hostnames) {
-		next if (!$hostname);
 
-		my $host = gethost($hostname);
+		next if !$hostname;
 
-		next if (!$host);
-		
+		my $host = gethost($hostname) || next;
+
 		foreach my $addr ( @{$host->addr_list} ) {
 			push @hostaddr, inet_ntoa($addr) if $addr;
 		} 
 	}
+
 	return @hostaddr;
 }
 
@@ -794,8 +783,10 @@ sub stillScanning {
 
 sub utf8toLatin1 {
 	my $data = shift;
+
 	$data =~ s/([\xC0-\xDF])([\x80-\xBF])/chr(ord($1)<<6&0xC0|ord($2)&0x3F)/eg; 
 	$data =~ s/[\xE2][\x80][\x99]/'/g;
+
 	return $data;
 }
 
