@@ -3731,15 +3731,19 @@ SETUP_ARTISTINALBUMSEARCH_DESC
 
 SETUP_SEARCHSUBSTRING
 	EN	Search Within Words
+	ES	Buscar Dentro de Palabras
 
 SETUP_SEARCHSUBSTRING_0
 	EN	Search Beginning of Words
+	ES	Buscar Comienzos de Palabras
 
 SETUP_SEARCHSUBSTRING_1
 	EN	Search Within Words
+	ES	Buscar Dentro de Palabras
 
 SETUP_SEARCHSUBSTRING_DESC
 	EN	When you search for music, you can have SlimServer find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN".
+	ES	Cuando se busca música, se puede hacer que Slimserver encuentre coincidencias entre items que contienen palabras que comiencen con las mismas letras de la cadena de búsqueda, o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar comienzos de palabras con "RAIN", encontrará items con la palabra "RAINBOW". Buscar dentro de palabras, también encontrará la palabra "TRAIN"
 
 SETUP_COMPOSERINARTISTS
 	DE	Komponist, Gruppe und Orchester in Interpreten
@@ -4525,9 +4529,11 @@ SETUP_TITLEFORMATWEB
 
 SETUP_CSRFPROTECTIONLEVEL
 	EN	CSRF Protection Level
+	ES	Nivel de Protección CSRF
 
 SETUP_CSRFPROTECTIONLEVEL_DESC
 	EN	To protect against &quot;Cross Site Request Forgery&quot; (CSRF) security threats, SlimServer applies special scrutiny to HTTP requests for functions that can make changes to your system or manipulate playlists or players.  You may choose the level of scrutiny for the server to use.  The default is Medium. <a href="http://localhost:9000/html/docs/http.html#csrf">See Help Section</a> for more details.
+	ES	Para protegerse contra amenazas de seguridad de &quot;Cross Site Request Forgery&quot; (CSRF), SlimServer utiliza un análisis especial para requerimientos de HTTP que contengan funciones que puedan hacer cambios en tu sistema o manipular las listas de temas o reproductores. Se puede elegir el nivel de análisis a ser utilizado por el servidor. El valor por defecto es Medio. <a href="http://localhost:9000/html/docs/http.html#csrf">Ver Sección de Ayuda</a> Para ver más detalles. more details.
 
 SETUP_IPFILTER_HEAD
 	DE	Blockieren eingehender Verbindungen
@@ -5581,9 +5587,11 @@ HUGE
 
 NONE
 	EN	None
-	
+	ES	Ninguno
+
 HIGH
 	EN	High
+	ES	Alto
 
 TITLEFORMAT
 	DE	Titel Format
@@ -6573,6 +6581,7 @@ BROWSE_BY_SONG_DBL
 
 BROWSE_BY_YEAR
 	EN	Browse Years
+	ES	Examinar Años
 
 BROWSE_MUSIC_FOLDER
 	DE	Musikverzeichnis nachschlagen
@@ -7579,9 +7588,11 @@ NEED_PLAYLIST_PATH
 
 CSRF_ERROR_INFO
 	EN	In order to request this URL from a Bookmark/Favorite, or some means other than following a link from the SlimServer web interface, you will need to use a URL with a \"cauth\" security parameter. If you received this error when following a link from the SlimServer web interface, you will want to make sure your web browser software (including proxy servers and spyware/privacy software) is allowing \"Referer\" headers to be sent. Below is the appropriate URL for the URL you attempted.
+	ES	A fin de requerir esta URL desde un Señalador(Marcador)/Favorito, o de alguna otra forma que no sea seguir un link desde la interfaz web de SlimServer, se necesitará utilizar una URL con un parámetro de seguridad \"cauth\". Si se recibió este error al seguir un link desde la interfaz web de SlimServer, habrá que asegurarse que el software del navegador (incluyendo servidores proxy y software de spyware/privacidad) permite mandar headers \"Referer\". Debajo se muestra la URL apropiada para la URL que se intentó acceder.
 
 CSRF_ERROR_MEDIUM
 	EN	<p>Because your CSRF protection level is set at 'MEDIUM', you can use the same &quot;;cauth=&quot; value for any URL; this means you should be more careful who you share your URLs with.</p>
+	ES	<p>Debido a que el nivel de protección CSRF se ha establecido como 'MEDIO', se puede utuliuza rel mismo valor &quot;;cauth=&quot; para cualquier URL; esto significa que se debe ser muy cuidadoso sobre con quien compartir las URLs.</p>
 
 CLICK_HERE
 	DE	Hier klicken
