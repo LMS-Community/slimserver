@@ -68,6 +68,8 @@ BEGIN {
 			}   
 			return $retval;   
 		};   
+		# suppress "variable only used once" warning:
+		*IO::Socket::blocking = *IO::Socket::blocking;
 	}   
 } 
 
