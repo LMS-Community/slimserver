@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.14 2004/09/11 04:27:30 dean Exp $
+# $Id: SqueezeboxG.pm,v 1.15 2004/09/25 00:47:55 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -498,6 +498,9 @@ sub scrollBottom {
 	my $client = shift;
 	my $lines = shift;
 	return if Slim::Buttons::Common::param($client,'noScroll');
+	
+	my $rate = Slim::Buttons::Common::paramOrPref($client,$client->linesPerScreen() == 1 ? 'scrollRateDouble': 'scrollRate');
+	
 	my $linefunc  = $client->lines();
 	my $parts = $client->parseLines(&$linefunc($client));
 
@@ -514,8 +517,8 @@ sub scrollBottom {
 
 		$parts->{line2} .= $interspace . $parts->{line2};
 		$parts->{endscroll2} = length($line2bits) + length($interspaceBits);
-		$parts->{scroll2} = 14;
-		$parts->{deltaTime} = Slim::Buttons::Common::paramOrPref($client,$client->linesPerScreen() == 1 ? 'scrollRateDouble': 'scrollRate');
+		$parts->{scroll2} = $rate ? 14 : 0;
+		$parts->{deltaTime} = $rate ? $rate : 1;
 		
 		# use a negative offset to indicate that we are going to pause at the beginning
 		my $pause = Slim::Buttons::Common::paramOrPref($client,$client->linesPerScreen() == 1 ? 'scrollPauseDouble': 'scrollPause');
