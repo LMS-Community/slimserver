@@ -868,7 +868,7 @@ sub sortByTitlesAlg ($$) {
 	my $j = $_[0];
 	my $k = $_[1];
 
-	#compare titles
+	# compare titles
 	return ($j->[5] || 0) cmp ($k->[5] || 0);
 }
 
@@ -876,7 +876,7 @@ sub sortByTitlesAlg ($$) {
 sub getInfoForSort {
 	my $item = shift;
 
-	my $obj  = $currentDB->objectForUrl($item) || return [ $item ];
+	my $obj  = $currentDB->objectForUrl($item) || return [ $item, 0, undef, undef, undef, '', undef ];
 
 	my $list = isList($obj);
 
@@ -899,7 +899,7 @@ sub sortByTrackAlg ($$) {
 	my $result;
 	#If both lists compare titles
 	if ($j->[1] && $k->[1]) {
-		#compare titles
+		# compare titles
 		if (defined($j->[5]) && defined($k->[5])) {
 			return $j->[5] cmp $k->[5];
 		} elsif (defined($j->[5])) {
@@ -911,7 +911,7 @@ sub sortByTrackAlg ($$) {
 		}
 	}
 	
-	#compare artists
+	# compare artists
 	if (defined($j->[2]) && defined($k->[2])) {
 		$result = $j->[2] cmp $k->[2];
 		if ($result) { return $result; }
@@ -921,7 +921,7 @@ sub sortByTrackAlg ($$) {
 		return 1;
 	}
 	
-	#compare albums
+	# compare albums
 	if (defined($j->[3]) && defined($k->[3])) {
 		$result = $j->[3] cmp $k->[3];
 		if ($result) { return $result; }
@@ -937,7 +937,7 @@ sub sortByTrackAlg ($$) {
 	   return $result if $result;
 	}
 
-	#compare track numbers
+	# compare track numbers
 	if ($j->[4] && $k->[4]) {
 		$result = $j->[4] <=> $k->[4];
 		if ($result) { return $result; }
@@ -947,19 +947,21 @@ sub sortByTrackAlg ($$) {
 		return 1;
 	}
 
-	#compare titles
+	# compare titles
 	return $j->[5] cmp $k->[5];
 }
 
-#algorithm for sorting by Album, Track
+# algorithm for sorting by Album, Track
 sub sortByAlbumAlg ($$) {
 	my $j = $_[0];
 	my $k = $_[1];
 
 	my $result;
-	#If both are lists compare titles
+
+	# If both are lists compare titles
 	if ($j->[1] && $k->[1]) { 
-		#compare titles
+
+		# compare titles
 		if (defined($j->[5]) && defined($k->[5])) {
 			return $j->[5] cmp $k->[5];
 		} elsif (defined($j->[5])) {
@@ -971,7 +973,7 @@ sub sortByAlbumAlg ($$) {
 		}
 	}
 	
-	#compare albums
+	# compare albums
 	if (defined($j->[3]) && defined($k->[3])) {
 		$result = $j->[3] cmp $k->[3];
 		if ($result) { return $result; }
@@ -983,11 +985,12 @@ sub sortByAlbumAlg ($$) {
 	
 	# compare discs
 	if (defined $j->[6] && defined $k->[6]) {
-	   $result = $j->[6] <=> $k->[6];
-	   return $result if $result;
+
+		$result = $j->[6] <=> $k->[6];
+		return $result if $result;
 	}
 
-	#compare track numbers
+	# compare track numbers
 	if ($j->[4] && $k->[4]) {
 		$result = $j->[4] <=> $k->[4];
 		if ($result) { return $result; }
@@ -997,7 +1000,11 @@ sub sortByAlbumAlg ($$) {
 		return 1;
 	}
 
-	#compare titles
+	# titles might be undef.
+	$j->[5] ||= '';
+	$k->[5] ||= '';
+
+	# compare titles
 	return $j->[5] cmp $k->[5];
 }
 
@@ -1014,13 +1021,15 @@ sub fileName {
 	} else {
 		$j = (splitdir($j))[-1];
 	}
+
 	return $j;
 }
 
 sub sortFilename {
-	#build the sort index
+	# build the sort index
 	my @nocase = map { Slim::Utils::Text::ignoreCaseArticles(fileName($_)) } @_;
-	#return the input array sliced by the sorted array
+
+	# return the input array sliced by the sorted array
 	return @_[sort {$nocase[$a] cmp $nocase[$b]} 0..$#_];
 }
 
