@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.26 2003/12/09 02:29:12 grotus Exp $
+# $Id: Pages.pm,v 1.27 2003/12/10 01:22:13 grotus Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -481,7 +481,7 @@ sub status {
 			#playlist went into background, stash $callback and exit
 			return undef;
 		} else {
-			$$main_form_ref{'playlist'} = $$$main_form_ref{'playlist'};
+			$$main_form_ref{'playlist'} = ${$$main_form_ref{'playlist'}};
 		}
 	}
 			  
