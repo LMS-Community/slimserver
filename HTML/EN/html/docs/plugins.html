@@ -9,12 +9,12 @@
 <h4>Perl Module Basics</h4>
 		<p>Here are a couple of basic calls that should be made at the beginning of the Plugin code:</p>
 		<pre>use strict;</pre>
-		<p>This tells perl to do some useful error checking to help avoid the use of undeclared variables, or ambiguous references to functions. All references must be fully qualified (ie Slim::Display::Animation::showBriefly() instead of showBriefly()).</p>
+		<p>This tells Perl to do some useful error checking to help avoid the use of undeclared variables, or ambiguous references to functions. All references must be fully qualified (ie Slim::Display::Animation::showBriefly() instead of showBriefly()).</p>
 		<p><pre>package Plugins::pluginname;</pre></p>
 		<p>Where <code>pluginname</code> is the name of the module (which should be the same as the filename, without the .pm extension.) This defines the 'namespace' for the module. It essentially sets up the module as an entity of its own, within the server environment. This allows you to then refer to the functions and variables within this plugin by the full reference Plugins::pluginname::function.</p>
 		<hr>
 		<h4>SlimServer Plugin Hooks</h4>
-<p>Each level in the SlimServer menu hierarchy is considered a &quot;mode&quot; by the SlimServer. Each time the server is started, it reads the Plugins directory for modules. Each is added, by name, into a list. Each plugin is given a mode, and a set of functions that are defined within that module. The plugins can each be enabled or disabled at will from the web interface. The plugin module itself must define a mode and fuctions in a form that the server is expecting. This comes from two functions: sub setMode() and sub getFunctions(). A third subroutine, sub getDisplayName() is required to provide the name that the server should display for the plugin. Simple examples of these three functions are below. We will now build a template based on these main functions.</p>
+<p>Each level in the SlimServer menu hierarchy is considered a &quot;mode&quot; by the SlimServer. Each time the server is started, it reads the Plugins directory for modules. Each is added, by name, into a list. Each plugin is given a mode, and a set of functions that are defined within that module. The plugins can each be enabled or disabled at will from the web interface. The plugin module itself must define a mode and functions in a form that the server is expecting. This comes from two functions: sub setMode() and sub getFunctions(). A third subroutine, sub getDisplayName() is required to provide the name that the server should display for the plugin. Simple examples of these three functions are below. We will now build a template based on these main functions.</p>
 <blockquote>
 <p><em>Example 1</em></p>
 <pre>
@@ -35,14 +35,14 @@
 <h4>Modes</h4>
 <p>The remote buttons are context sensitive, meaning that they can serve different roles when the SlimServer is in different modes.  The setMode()
 subroutine defines this mode.  Within this subroutine, there must be a definition for $client->lines, which is the text to be displayed on the
-Slim client while in this plugin mode.  Typically, this is labelled just as above, though it can be any name you wish. The lines subroutine, or other name
+Slim client while in this plugin mode.  Typically, this is labeled just as above, though it can be any name you wish. The lines subroutine, or other name
 if you have chosen one, returns two strings. One for each line of the display.  They can be updated at any time from any point in the plugin module by using the
 line:</p>
 <blockquote>
 			<pre>
 $client->update();
 </pre></blockquote>
-<p>Also included in the setModes subroutine are any commands or functions that must be run each time the plugin is called.  This may be loading an array for a menu system,
+<p>Also included in the setMode subroutine are any commands or functions that must be run each time the plugin is called.  This may be loading an array for a menu system,
 default settings, or running any number of other subroutines that are needed for the operation of the plugin.
 </p><p>
 You may also want to add extra modes under your plugin.  There is a function call that tells the server
@@ -99,7 +99,7 @@ rescan has been started.  The line "my $client = shift;" is very important here 
 function calls such as: </p>
 <blockquote>
 			<pre>Slim::Display::Animation::showBriefly($client, $line1, $line2);</pre></blockquote>
-		<p>Examples of remote control fucntions include: 'up','down','play,'add' (REC button),'left','right','numberScroll' and 'stop' The full button to function map is found in the Default.map file, which is in the IR directory under the SlimServer directory.</p>
+		<p>Examples of remote control functions include: 'up','down','play,'add' (REC button),'left','right','numberScroll' and 'stop' The full button to function map is found in the Default.map file, which is in the IR directory under the SlimServer directory.</p>
 		<hr>
 		<h4>Lines</h4>
 <p>The lines subroutine returns the text that the Slim Client will display while using your plugin. The setMode() function creates the reference for the lines subroutine, and your lines subroutine name must match that. Each mode may have its own set of lines, and each is named after the reference created in each setMode. The input for this function is the current client information, and the return is two strings for main display and optionally a pair of strings which may need to be overlayed on top of the first pair, right justified. The lines are sent to the display at any time using the command:</p>
@@ -119,8 +119,8 @@ $client->update();
 </pre></blockquote>
 <hr>
 	<h4>Settings</h4>
-	<p>Slimserver Plugins have the option to include settings to be accessed from the web interace through the plugins settings page.  To do this, include a fuction called "setupGroup" which returns a hash reference to the Group parameters, and another to the preference parameters. These two hash may contain any or all of the following keys:</p>
-	<h5>Group hashref keys</h5>
+	<p>SlimServer Plugins have the option to include settings to be accessed from the web interface through the plugins settings page.  To do this, include a function called "setupGroup" which returns a hash reference to the Group parameters, and another to the preference parameters. These two hash may contain any or all of the following keys:</p>
+	<h5>Group hash ref keys</h5>
 	<dl>
 <dt>PrefOrder</dt><dd>list of prefs to appear in group, in order</dd>
 <dt>PrefsInTable</dt><dd>set if prefs should appear in a table</dd>
@@ -209,7 +209,7 @@ sub setupGroup &lbrc;
 </pre></blockquote>
 <hr>
 <h4>Strings</h4>
-<p>The plugin API also allows you to add in your own localisation. The format of the strings list follows the same format as the strings.txt file used by the SlimServer for localization. The function strings() can be used used within the plugin to extract a strings for the user's specified language. Defining the strings is done as follows:</p>
+<p>The plugin API also allows you to add in your own localization. The format of the strings list follows the same format as the strings.txt file used by the SlimServer for localization. The function strings() can be used within the plugin to extract a strings for the user's specified language. Defining the strings is done as follows:</p>
 <blockquote>
 <p><em>Example 5</em></p>
 <pre>sub strings() &#123; return '
