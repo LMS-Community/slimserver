@@ -559,7 +559,7 @@ sub main {
 	init();
 	start();
 	
-	while (!idle()) {}
+	eval { while (!idle()) {} };
 	
 	stopServer();
 }
@@ -970,7 +970,7 @@ sub changeEffectiveUserAndGroup {
 			$) = $gid;
 
 			# The $) is space separated "effective real" - so compare against that.
-			if ($) ne "$gid 0") {
+			if ($) !~ /^$gid /) {
 				die "Unable to set effective group(s) to $group ($gid) is: $): $!\n";
 			}
 		}
