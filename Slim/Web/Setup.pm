@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.83 2004/05/19 01:23:07 kdf Exp $
+# $Id: Setup.pm,v 1.84 2004/05/20 20:10:38 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -119,15 +119,14 @@ sub initSetupConfig {
 						}
 						$pageref->{'children'} = ['additional_player'];
 						$pageref->{'GroupOrder'}[3] = 'Brightness';
-						$pageref->{'GroupOrder'}[4] = 'Synchronize';
 					} else {
 						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[1] = undef;
 						$pageref->{'children'} = undef;
-						$pageref->{'GroupOrder'}[1] = undef;
 						$pageref->{'GroupOrder'}[2] = undef;
+						$pageref->{'GroupOrder'}[3] = undef;
 					}
 					my @formats = $client->formats();
-					my $maxRate = Slim::Utils::Prefs::setMaxRate($client);
+					Slim::Utils::Prefs::setMaxRate($client);
 					if ($formats[0] ne 'mp3') {
 						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = string('SETUP_MAXBITRATE_DESC');
 						$pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'} = '  '.string('NO_LIMIT');
