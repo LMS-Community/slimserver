@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Bar;
 
-# $Id: Bar.pm,v 1.1 2004/08/21 17:42:29 kdf Exp $
+# $Id: Bar.pm,v 1.2 2004/08/24 04:28:48 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -62,22 +62,22 @@ sub changePos {
 	my $midpoint = ($mid-$min)/($max-$min)*(scalar(@$listRef) - 1);
 	my $newposition;
 	
-	my $cmd;
 	if (Slim::Hardware::IR::holdTime($client) > 0) {
 		$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
 	}
 	
 	my $currVal = $listIndex;
+	
 	if ($dir == 1) {
 		$newposition = $listIndex+$inc;
-		if ($currVal < ($midpoint - 1.5) && ($currVal + $inc) >= ($midpoint - 1.5)) {
+		if ($currVal < ($midpoint - .5) && ($currVal + $inc) >= ($midpoint - .5)) {
 			# make the midpoint sticky by resetting the start of the hold
-			$cmd = $midpoint;
+			$newposition = $midpoint;
 			Slim::Hardware::IR::resetHoldStart($client);
 		}
 	} else {
 		$newposition = $listIndex-$inc;
-		if ($currVal > ($midpoint + 1.5) && ($currVal - $inc) <= ($midpoint + 1.5)) {
+		if ($currVal > ($midpoint + .5) && ($currVal - $inc) <= ($midpoint + .5)) {
 			# make the midpoint sticky by resetting the start of the hold
 			$newposition = $midpoint;
 			Slim::Hardware::IR::resetHoldStart($client);

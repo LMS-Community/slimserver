@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.6 2004/08/17 22:59:59 dean Exp $
+# $Id: SqueezeboxG.pm,v 1.7 2004/08/24 04:28:47 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -280,7 +280,7 @@ sub sliderBar {
 	my $value = shift;
 	my $midpoint = shift;
 	my $sym;
-	$midpoint = 50 unless defined $midpoint;
+	$midpoint = 0 unless defined $midpoint;
 	if ($value < 0) {
 		$value = 0;
 	}

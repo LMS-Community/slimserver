@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.21 2004/08/06 04:16:49 kdf Exp $
+# $Id: Player.pm,v 1.22 2004/08/24 04:28:47 kdf Exp $
 #
 package Slim::Player::Player;
 
@@ -513,24 +513,26 @@ sub renderOverlay {
 	return Slim::Hardware::VFD::renderOverlay($line1, $line2, $overlay1, $overlay2);
 }
 
-# returns progress bar text AND sets up custom characters if necessary
-sub progressBar {
-	my $client = shift;
-	my $width = shift;
-	my $fractioncomplete = shift;
-
+# Draws a slider bar, bidirectional or single direction is possible.
+# $value should be pre-processed to be from 0-100
+# $midpoint specifies the position of the divider from 0-100 (use 0 for progressBar)
+# returns a +/- balance/bass/treble bar text AND sets up custom characters if necessary
+# range 0 to 100, 50 is middle.
+sub sliderBar {
+	my ($client,$width,$value,$midpoint,$fullstep) = @_;
+	$midpoint = 0 unless defined $midpoint;
 	if ($width == 0) {
 		return "";
 	}
 	
 	my $charwidth = 5;
 
-	if ($fractioncomplete < 0) {
-		$fractioncomplete = 0;
+	if ($value < 0) {
+		$value = 0;
 	}
 	
-	if ($fractioncomplete > 1.0) {
-		$fractioncomplete = 1.0;
+	if ($value > 100) {
+		$value = 100;
 	}
 	
 	my $chart = "";
@@ -540,32 +542,61 @@ sub progressBar {
 	# felix mueller discovered some rounding errors that were causing the
 	# calculations to be off.  Doing it 1000 times up seems to be better.  
 	# go figure.
-	my $dots = int( ( ( $fractioncomplete * 1000) * $totaldots) / 1000);
+	my $dots = int( ( ( $value * 10 ) * $totaldots) / 1000);
+	my $divider = ($midpoint/100) * ($width-2);
+
+	my $val = $value/100 * $width;
+	$width = $width - 1 if $midpoint;
 	
 	if ($dots < 0) { $dots = 0 };
 	
 	if ($dots < $charwidth) {
-		$chart = Slim::Display::Display::symbol('leftprogress'.$dots);
+		$chart = $midpoint ? Slim::Display::Display::symbol('leftprogress4') : Slim::Display::Display::symbol('leftprogress'.$dots);
 	} else {
-		$chart = Slim::Display::Display::symbol('leftprogress4');
+		$chart = $midpoint ? Slim::Display::Display::symbol('leftprogress0') : Slim::Display::Display::symbol('leftprogress4');
 	}
 	
 	$dots -= $charwidth;
 			
-	for (my $i = 1; $i < ($width - 1); $i++) {
-		if ($dots <= 0) {
-			$chart .= Slim::Display::Display::symbol('middleprogress0');					
-		} elsif ($dots < $charwidth) {
-			$chart .= Slim::Display::Display::symbol('middleprogress'.$dots);						
+	if ($midpoint) {
+		for (my $i = 1; $i < $divider; $i++) {
+			if ($dots <= 0) {
+				$chart .= Slim::Display::Display::symbol('solidblock');
+			} else {
+				$chart .= Slim::Display::Display::symbol('middleprogress0');
+			}
+			$dots -= $charwidth;
+		}
+		if ($value < $midpoint) {
+			$chart .= Slim::Display::Display::symbol('solidblock');
+			$dots -= $charwidth;
 		} else {
-			$chart .= Slim::Display::Display::symbol('solidblock');								
+			$chart .= Slim::Display::Display::symbol('leftmark');
+			$dots -= $charwidth;
+		}
+	}
+	for (my $i = $divider + 1; $i < ($width - 1); $i++) {
+		if ($midpoint && $i == $divider + 1) {
+			if ($value > $midpoint) {
+				$chart .= Slim::Display::Display::symbol('solidblock');
+			} else {
+				$chart .= Slim::Display::Display::symbol('rightmark');
+			}
+			$dots -= $charwidth;
+		}
+		if ($dots <= 0) {
+			$chart .= Slim::Display::Display::symbol('middleprogress0');
+		} elsif ($dots < $charwidth && !$fullstep) {
+			$chart .= Slim::Display::Display::symbol('middleprogress'.$dots);
+		} else {
+			$chart .= Slim::Display::Display::symbol('solidblock');
 		}
 		$dots -= $charwidth;
 	}
-	
+		
 	if ($dots <= 0) {
 		$chart .= Slim::Display::Display::symbol('rightprogress0');
-	} elsif ($dots < $charwidth) {
+	} elsif ($dots < $charwidth && !$fullstep) {
 		$chart .= Slim::Display::Display::symbol('rightprogress'.$dots);
 	} else {
 		$chart .= Slim::Display::Display::symbol('rightprogress4');
@@ -574,80 +605,17 @@ sub progressBar {
 	return $chart;
 }
 
-# returns a +/- balance/bass/treble bar text AND sets up custom characters if necessary
-# range 0 to 100, 50 is middle.
-sub balanceBar {
-	my $client = shift;
-	my $width = shift;
-	my $balance = shift;
-	
-	if ($balance < 0) {
-		$balance = 0;
-	}
-	
-	if ($balance > 100) {
-		$balance = 100;
-	}
-	
-	if ($width == 0) {
-		return "";
-	}
-	
-	my $chart = "";
-		
-	my $edgepos = $balance / 100.0 * $width;
-	# do the leftmost char
-	if ($balance <= 0) {
-		$chart = Slim::Display::Display::symbol('leftprogress4');
-	} else {
-		$chart = Slim::Display::Display::symbol('leftprogress0');
-	}
-	
-	my $i;
-	
-	# left half
-	for ($i = 1; $i < $width/2; $i++) {
-		if ($balance >= 50) {
-			if ($i == $width/2-1) {
-				$chart .= Slim::Display::Display::symbol('leftmark');
-			} else {
-				$chart .= Slim::Display::Display::symbol('middleprogress0');
-			}
-		} else {
-			if ($i < $edgepos) {
-				$chart .= Slim::Display::Display::symbol('middleprogress0');
-			} else {
-				$chart .= Slim::Display::Display::symbol('solidblock');
-			}			
-		}
-	}
-	
-	# right half
-	for ($i = $width/2; $i < $width-1; $i++) {
-		if ($balance <= 50) {
-			if ($i == $width/2) {
-				$chart .= Slim::Display::Display::symbol('rightmark');
-			} else {	
-				$chart .= Slim::Display::Display::symbol('middleprogress0');
-			}
-		} else {
-			if ($i < $edgepos) {
-				$chart .= Slim::Display::Display::symbol('solidblock');
-			} else {
-				$chart .= Slim::Display::Display::symbol('middleprogress0');
-			}			
-		}
-	}
-	
-	# do the rightmost char
-	if ($balance >= 100) {
-		$chart .= Slim::Display::Display::symbol('rightprogress4');
-	} else {
-		$chart .= Slim::Display::Display::symbol('rightprogress0');
-	}
-	
-	return $chart;
+# returns progress bar text
+sub progressBar {
+	return sliderBar(shift,shift,(shift)*100,0);
 }
+
+sub balanceBar {
+	return sliderBar(shift,shift,shift,50);
+}
+
+
+
 
 1;
 

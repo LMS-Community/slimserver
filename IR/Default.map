@@ -271,3 +271,11 @@ search.*					= passback
 stop.*						= passback
 pause.*						= passback
 
+[INPUT.Bar]
+arrow_left					= exit_left
+arrow_right					= exit_right
+play.*						= passback
+add.*						= passback
+search.*					= passback
+stop.*						= passback
+pause.*						= passback

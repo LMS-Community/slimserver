@@ -17,10 +17,6 @@ use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
 
 Slim::Buttons::Common::addMode('settings',Slim::Buttons::Settings::getFunctions(),\&Slim::Buttons::Settings::setMode);
-Slim::Buttons::Common::addMode('treble',getTrebleFunctions(),\&setTrebleMode);
-Slim::Buttons::Common::addMode('volume',getVolumeFunctions(),\&setVolumeMode);
-Slim::Buttons::Common::addMode('bass',getBassFunctions(),\&setBassMode);
-Slim::Buttons::Common::addMode('pitch',getPitchFunctions(),\&setPitchMode);
 
 # button functions for browse directory
 my @defaultSettingsChoices = ('ALARM','VOLUME', 'BASS','TREBLE','PITCH','REPEAT','SHUFFLE','TITLEFORMAT','TEXTSIZE','OFFDISPLAYSIZE','INFORMATION','SETUP_SCREENSAVER');
@@ -42,16 +38,40 @@ my %menuParams = (
 		'useMode' => 'alarm'
 	}
 	,catdir('settings','VOLUME') => {
-		'useMode' => 'volume' # replace with INPUT.Bar when available
+		'useMode' => 'INPUT.Bar'
+		,'header' => \&volheader
+		,'onChange' => sub { 
+				my ($subref,$subarg) = Slim::Buttons::Common::getFunction($_[0],'volume_'.$_[1],'Common');
+				&$subref($_[0],'volume',$subarg);}
+		,'onChangeArgs' => 'CV'
+		,'initialValue' => sub { return Slim::Utils::Prefs::clientGet($_[0], "volume");}
 	}
 	,catdir('settings','BASS') => {
-		'useMode' => 'bass' # replace with INPUT.Bar when available
+		'useMode' => 'INPUT.Bar'
+		,'header' => sub {return string('BASS').' ('.(int($_[1]/100*40 + 0.5) - 20).')';}
+		,'mid' => 50
+		,'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'bass',$_[1]);}
+		,'onChangeArgs' => 'CV'
+		,'initialValue' => sub { return Slim::Utils::Prefs::clientGet($_[0], "bass");}
 	}
 	,catdir('settings','PITCH') => {
-		'useMode' => 'pitch' # replace with INPUT.Bar when available
+		'useMode' => 'INPUT.Bar'
+		,'header' => sub {return string('PITCH').' ('.(int($_[1])).'%)';}
+		,'min' => 80
+		,'max' => 120
+		,'mid' => 100
+		,'increment' => 1
+		,'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'pitch',$_[1]);}
+		,'onChangeArgs' => 'CV'
+		,'initialValue' => sub { return Slim::Utils::Prefs::clientGet($_[0], "pitch");}
 	}
 	,catdir('settings','TREBLE') => {
-		'useMode' => 'treble' # replace with INPUT.Bar when available
+		'useMode' => 'INPUT.Bar'
+		,'header' => sub {return string('TREBLE').' ('.(int($_[1]/100*40 + 0.5) - 20).')';}
+		,'mid' => 50
+		,'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'treble',$_[1]);}
+		,'onChangeArgs' => 'CV'
+		,'initialValue' => sub { return Slim::Utils::Prefs::clientGet($_[0], "treble");}
 	}
 	,catdir('settings','REPEAT') => {
 		'useMode' => 'INPUT.List'
@@ -146,7 +166,7 @@ sub settingsExitHandler {
 		my $nextmenu = catdir('settings',$current{$client});
 		if (exists($menuParams{$nextmenu})) {
 			my %nextParams = %{$menuParams{$nextmenu}};
-			if ($nextParams{'useMode'} eq 'INPUT.List' && exists($nextParams{'initialValue'})) {
+			if (($nextParams{'useMode'} eq 'INPUT.List' || $nextParams{'useMode'} eq 'INPUT.Bar')  && exists($nextParams{'initialValue'})) {
 				#set up valueRef for current pref
 				my $value;
 				if (ref($nextParams{'initialValue'}) eq 'CODE') {
@@ -224,169 +244,17 @@ sub setMode {
 	$client->update();
 }
 
-######################################################################
-# settings submodes for: treble, bass, and volume
-#################################################################################
-my %trebleSettingsFunctions = (
-	'up' => sub {
-		my $client = shift;
-		Slim::Buttons::Common::mixer($client,'treble','up');
-	},
-	'down' => sub {
-		my $client = shift;
-		Slim::Buttons::Common::mixer($client,'treble','down');
-	},
-	'left' => sub   {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	'right' => sub { shift->bumpRight(); },
-	'add' => sub { shift->bumpRight(); },
-	'play' => sub { shift->bumpRight(); },
-);
-
-sub getTrebleFunctions {
-	return \%trebleSettingsFunctions;
+sub volheader {
+	my ($client,$arg) = @_;
+	return string('VOLUME').' ('.($arg <= 0 ? string('MUTED') : int($arg/100*40+0.5).'/40').')';
 }
 
-sub setTrebleMode {
-	my $client = shift;
-	$client->lines(\&trebleSettingsLines);
-}
-
- sub trebleSettingsLines {
-	my $client = shift;
-	my ($line1, $line2);
-	my $level = int(Slim::Utils::Prefs::clientGet($client, "treble")/100*40 + 0.5) - 20;
-	$line1 = string('TREBLE') . " ($level)";
-
-	$line2 = Slim::Display::Display::balanceBar($client, $client->displayWidth(), Slim::Utils::Prefs::clientGet($client, "treble"));	
-	if ($client->linesPerScreen() == 1) { $line2 = $line1; }
-	
-	return ($line1, $line2);
-}
-
-#################################################################################
-my %bassSettingsFunctions = (
-	'up' => sub {
-		my $client = shift;
-		Slim::Buttons::Common::mixer($client,'bass','up');
-	},
-	'down' => sub {
-		my $client = shift;
-		Slim::Buttons::Common::mixer($client,'bass','down');
-	},
-	'left' => sub   {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	'right' => sub { shift->bumpRight(); },
-	'add' => sub { shift->bumpRight(); },
-	'play' => sub { shift->bumpRight(); },
-);
-
-sub getBassFunctions {
-	return \%bassSettingsFunctions;
-}
-
-sub setBassMode {
-	my $client = shift;
-	$client->lines(\&bassSettingsLines);
-}
-
- sub bassSettingsLines {
-	my $client = shift;
-	my ($line1, $line2);
-	
-	my $level = int(Slim::Utils::Prefs::clientGet($client, "bass")/100*40 + 0.5) - 20;
-	$line1 = string('BASS') . " ($level)";
-
-	$line2 = Slim::Display::Display::balanceBar($client, $client->displayWidth(), Slim::Utils::Prefs::clientGet($client, "bass"));	
-	if ($client->linesPerScreen() == 1) { $line2 = $line1; }
-	return ($line1, $line2);
-}
-
-#################################################################################
-my %pitchSettingsFunctions = (
-	'up' => sub {
-		my $client = shift;
-		Slim::Buttons::Common::mixer($client,'pitch','up');
-	},
-	'down' => sub {
-		my $client = shift;
-		Slim::Buttons::Common::mixer($client,'pitch','down');
-	},
-	'left' => sub   {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	'right' => sub { shift->bumpRight(); },
-	'add' => sub { shift->bumpRight(); },
-	'play' => sub { shift->bumpRight(); },
-);
-
-sub getPitchFunctions {
-	return \%pitchSettingsFunctions;
-}
-
-sub setPitchMode {
-	my $client = shift;
-	$client->lines(\&pitchSettingsLines);
-}
-
- sub pitchSettingsLines {
-	my $client = shift;
-	my ($line1, $line2);
-	
-	my $level = int(Slim::Utils::Prefs::clientGet($client, "pitch"));
-	$line1 = string('PITCH') . " ($level%)";
-
-	$line2 = Slim::Display::Display::balanceBar($client, $client->displayWidth(), ((Slim::Utils::Prefs::clientGet($client, "pitch") - 80) / 40 * 100));	
-	
-	if ($client->linesPerScreen() == 1) { $line2 = $line1; }
-	return ($line1, $line2);
-}
-
-#################################################################################
-my %volumeSettingsFunctions = (
-	'left' => sub   {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	'right' => sub { shift->bumpRight(); },
-	'add' => sub { shift->bumpRight(); },
-	'play' => sub { shift->bumpRight(); },
-);
-
-sub getVolumeFunctions {
-	return \%volumeSettingsFunctions;
-}
-
-sub setVolumeMode {
-	my $client = shift;
-	$client->lines(\&volumeLines);
-}
-
- sub volumeLines {
+sub volumeLines {
 	my $client = shift;
 
-	my $level = int(Slim::Utils::Prefs::clientGet($client, "volume") / $Slim::Player::Client::maxVolume * 40);
-
-	my $line1;
-	my $line2;
-	
-	if ($level < 0) {
-		$line1 = string('VOLUME')."  (". string('MUTED') . ")";
-		$level = 0;
-	} else {
-		$line1 = string('VOLUME')." (".$level.")";
-	}
-
-	$line2 = Slim::Display::Display::progressBar($client, $client->displayWidth(), $level / 40);	
-	
-	if ($client->linesPerScreen() == 1) { $line2 = $line1; }
-
-	return ($line1, $line2);
+	my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
+	my $volstring = volheader($client,$vol);
+	return Slim::Buttons::Input::Bar::lines($client,$vol,$volstring);
 }
 
 1;
