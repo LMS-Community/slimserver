@@ -14,7 +14,7 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->add_constructor('hasArtwork' => 'artwork_path IS NOT NULL');
 
-	$class->has_many(tracks => ['Slim::DataStores::DBI::Track' => 'album']);
+	$class->has_many(tracks => 'Slim::DataStores::DBI::Track', { order_by => 'tracknum'});
 }
 
 tie my %_cache, 'Tie::Cache::LRU', 5000;
