@@ -2777,6 +2777,18 @@ SETUP_UDPCHUNKSIZE_CHOOSE
 	PT	Máximo de bytes de dados áudio a enviar ao cliente por pacote UDP
 	SE	Maximalt antal bytes ljud-data att skicka till spelaren i ett UDP-paket
 
+SETUP_SHOWBUFFERFULLNESS
+	EN	Show Buffer Fullness
+
+SETUP_SHOWBUFFERFULLNESS_CHOOSE
+	EN	Show buffer fullness in place of progress indicator:
+
+SETUP_SHOWBUFFERFULLNESS_ENABLED
+	EN	Enabled
+
+SETUP_SHOWBUFFERFULLNESS_DISABLED
+	EN	Disabled
+
 SETUP_XPLSUPPORT
 	EN	xPL support
 

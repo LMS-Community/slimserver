@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.28 2003/12/24 07:19:02 dean Exp $
+# $Id: Prefs.pm,v 1.29 2003/12/26 20:12:55 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -89,6 +89,7 @@ my %DEFAULT = (
     ,'ignoreDirRE'          => ''
     ,'checkVersion'			=> 1
     ,'mDNSname'				=> 'SlimServer'
+    ,'showbufferfullness'   => 0
 	,'titleFormat'			=> ['TITLE',
 		'DISC-TRACKNUM. TITLE',
 		'TRACKNUM. TITLE',

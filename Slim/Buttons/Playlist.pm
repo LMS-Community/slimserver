@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.20 2003/12/20 05:42:44 kdf Exp $
+# $Id: Playlist.pm,v 1.21 2003/12/26 20:12:55 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -251,7 +251,11 @@ sub nowPlayingModeLines {
 		# no progress bar, remaining time is meaningless
 		$playingDisplayMode = ($playingDisplayMode % 3) ? 1 : 0;
 	} else {
-		$fractioncomplete = Slim::Player::Source::progress($client);
+		if (Slim::Utils::Prefs::get('showbufferfullness')) {
+			$fractioncomplete = $client->usage();
+		} else {
+			$fractioncomplete = Slim::Player::Source::progress($client);
+		}
 	}
 
 	my $songtime = songTime($client, $playingDisplayMode);

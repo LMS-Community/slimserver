@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.43 2003/12/26 18:44:26 dean Exp $
+# $Id: Source.pm,v 1.44 2003/12/26 20:12:55 dean Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -131,9 +131,6 @@ sub time2offset {
 # fractional progress (0 - 1.0) of playback in the current song.
 sub progress {
 	my $client = shift;
-	
-	# enable this to show buffer fullness instead of the progress indicator...
-	# return $client->usage();
 	
 	$client = Slim::Player::Sync::masterOrSelf($client);
 

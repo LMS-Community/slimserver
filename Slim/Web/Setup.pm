@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.30 2003/12/23 00:36:46 dean Exp $
+# $Id: Setup.pm,v 1.31 2003/12/26 20:12:55 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -453,6 +453,7 @@ sub initSetupConfig {
 				'validate' => \&validateInHash
 				,'PrefChoose' => string('ALARM_SELECT_PLAYLIST')
 				,'validateArgs' => [] #[\&playlists]
+
 				,'options' => {} #{playlists()}
 			},
 			'alarm' => {
@@ -1201,7 +1202,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['usetagdatabase','templatecache','useplaylistcache','animationLevel','buildItemsPerPass']
+					'PrefOrder' => ['usetagdatabase','templatecache','useplaylistcache','animationLevel','buildItemsPerPass','showbufferfullness']
 				}
 			}
 		,'Prefs' => {
@@ -1239,6 +1240,13 @@ sub initSetupConfig {
 			,'buildItemsPerPass' => {
 						'validate' => \&validateInt
 						}
+			,'showbufferfullness' => {
+						'validate' => \&validateTrueFalse
+						,'options' => {
+								'0' => string('SETUP_SHOWBUFFERFULLNESS_DISABLED')
+								,'1' => string('SETUP_SHOWBUFFERFULLNESS_ENABLED')
+								}
+					}
 			}
 		} #end of setup{'performance'} hash
 	,'network' => {
