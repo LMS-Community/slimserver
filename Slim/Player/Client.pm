@@ -252,6 +252,11 @@ sub newClient {
 		$::d_protocol && msg("We know this client. Skipping client prefs and state initialization.\n");
 		$client=getClient($id);
 		$clientAlreadyKnown = 1;
+
+		if (($client->model eq 'squeezebox')&&($deviceid == 0)) {
+			$client->streamingsocket($tcpsock);
+			return;
+		}
 	} else {
 		$::d_protocol && msg("New client connected: $id\n");
 		$client = clientState->new();
@@ -317,10 +322,10 @@ sub newClient {
 
 	# initialize model-specific features:
 
-	$client->deviceid($deviceid);
-	$client->revision($revision);
-	$client->udpsock($udpsock);
-	$client->tcpsock($tcpsock);
+	if ($deviceid > 0) {
+		$client->deviceid($deviceid);
+		$client->revision($revision);
+	}
 
 	if ($deviceid==0) {
 		$client->type('http');
@@ -332,6 +337,7 @@ sub newClient {
 		$client->type('player');
 		$client->model('slimp3');
 		$client->ticspersec(625000);
+		$client->udpsock($udpsock);
 
 		$client->decoder('mas3507d');
 
@@ -355,6 +361,7 @@ sub newClient {
 		$client->type('player');
 		$client->model('squeezebox');
 		$client->ticspersec(1000);
+		$client->tcpsock($tcpsock);
 
 		$client->vfdmodel('noritake-european');
 		$client->decoder('mas35x9');

@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.9 2003/08/05 20:49:17 dean Exp $
+# $Id: HTTP.pm,v 1.10 2003/08/06 02:14:40 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -69,6 +69,7 @@ my %metaDataBytes;
 my %streamingFiles;
 my %peeraddr;
 my %paddr;
+my %peerid;
 
 my $mdnsIDslimserver;
 my $mdnsIDhttp;
@@ -489,7 +490,11 @@ sub addstreamingresponse {
 	
 	my $address = $peeraddr{$httpclientsock};
 
-	$::d_http && msg("addstreamingresponse: $address\n");
+	# Use squeezebox's client id if specified, otherwise just the IP
+	my $id = defined($paramref->{'id'}) ? $paramref->{'id'} : $address;
+	$peerid{$httpclientsock} = $id;
+
+	$::d_http && msg("addstreamingresponse: id=$id, address=$address\n");
 
 	my $client;
 
@@ -497,7 +502,7 @@ sub addstreamingresponse {
 	
 #	if (!defined($client) && !defined($streamingFiles{$httpclientsock})) {
 		$client = Slim::Player::Client::newClient(
-			$address,
+			$id,
 			getpeername($httpclientsock), 
 			$address,
 			0, 
@@ -610,7 +615,8 @@ sub sendstreamingresponse {
 	}
 	
 	my $address = inet_ntoa($httpclientsock->peeraddr);
-	my $client = Slim::Player::Client::getClient($address);
+	my $client = Slim::Player::Client::getClient($peerid{$httpclientsock});
+	assert($client);
 	my $message = shift(@{$outbuf{$httpclientsock}});
 	my $streamingFile = $streamingFiles{$httpclientsock};
 	my $silence = 0;
@@ -1016,6 +1022,7 @@ sub generateresponse {
 			$metaDataBytes{$httpclientsock} = - length($output);
 			addstreamingresponse($httpclientsock, $output, $paramsref);
 			return 0;
+
  		} elsif ($path =~ /music\/(.+)\/(cover|thumb)\.jpg$/) {
  			my $contenttype;
  			my $song = Slim::Utils::Misc::virtualToAbsolute($1);

@@ -98,7 +98,7 @@ sub stream {
 	assert(length($frame) == 4+16);
 
 #	my $path='/music/AC-DC/Back%20In%20Black/07%20You%20Shook%20Me%20All%20Night%20Long.mp3';
-	my $path = '/stream.mp3';
+	my $path = '/stream.mp3?id='.$client->id;
 
 	my $request_string = "GET $path HTTP/1.0\n\n";
 

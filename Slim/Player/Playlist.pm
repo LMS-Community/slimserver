@@ -159,6 +159,8 @@ sub songRealPos {
 sub playmode {
 	my($client, $newmode) = @_;
 
+	assert($client);
+
 	if (!defined($newmode)) {
 		return $client->playmode;
 	}
