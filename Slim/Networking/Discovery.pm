@@ -1,6 +1,6 @@
 package Slim::Network::Discovery;
 
-# $Id: Discovery.pm,v 1.11 2004/01/26 05:44:19 dean Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -57,7 +57,7 @@ sub gotDiscoveryRequest {
 	if ($deviceid == 1) {
 		$::d_protocol && msg("It's a SLIMP3 (note: firmware v2.2 always sends revision of 1.1).\n");
 		$response = 'D'. pack('C', 0) x 17; 
-	} elsif ($deviceid == 2) {
+	} elsif ($deviceid >= 2 || $deviceid <= 4) {
 		$::d_protocol && msg("It's a squeezebox\n");
 		$response = 'D'. serverHostname(); 
 	} else {

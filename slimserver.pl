@@ -567,6 +567,12 @@ sub idle {
 	}
 	
 	Slim::Networking::Select::select($select_time);
+
+	if ($::d_perf) { $to = watchDog(); }
+
+	# check the timers for any new tasks		
+	Slim::Utils::Timers::checkTimers();	
+	if ($::d_perf) { $to = watchDog($to, "checkTimers"); }
 	
 	# handle HTTP and command line interface activity, including:
 	#   opening sockets, 
@@ -938,9 +944,9 @@ sub checkDataSource {
 			Slim::Utils::Prefs::set("audiodir",$audiodir);
 		}
 		my $ds = Slim::Music::Info::getCurrentDataStore();
-		
+
 		if (!$::noScan && $ds->count('track') == 0) {
-			
+
 			Slim::Music::Import::startScan();
 
 		} elsif (!$::noScan) {

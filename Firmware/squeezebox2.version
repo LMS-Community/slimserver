@@ -1,0 +1,12 @@
+# Squeezebox2 firmware 
+#
+# from        to
+# from1..from2 to
+
+1  4
+2  4
+3  4
+4  4
+
+# future versions may be downgraded to this one
+*			  4

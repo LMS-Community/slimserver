@@ -9,6 +9,7 @@ package Slim::Networking::Slimproto;
 
 use strict;
 use FindBin qw($Bin);
+use Socket qw(:all);
 use IO::Socket;
 use FileHandle;
 use Sys::Hostname;
@@ -17,8 +18,8 @@ use File::Spec::Functions qw(:ALL);
 use Slim::Networking::Select;
 use Slim::Player::Squeezebox;
 use Slim::Player::SqueezeboxG;
+use Slim::Player::Squeezebox2;
 use Slim::Player::SoftSqueeze;
-use Slim::Player::SoftSqueezeG;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -26,7 +27,7 @@ use Errno qw(:POSIX);
 
 my $SLIMPROTO_PORT = 3483;
 
-my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox');
+my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2');
 
 my $slimproto_socket;
 
@@ -73,7 +74,7 @@ sub slimproto_accept {
 
 	defined(Slim::Utils::Misc::blocking($clientsock,0)) || die "Cannot set port nonblocking";
 
-#	$clientsock->sockopt(Socket::TCP_NODELAY => 1);
+	setsockopt ($clientsock, IPPROTO_TCP, TCP_NODELAY, 1);
 
 	my $peer;
 
@@ -171,7 +172,7 @@ GETMORE:
 
 	if ($parser_state{$s} eq 'OP') {
 		$bytes_remaining = 4 - length($inputbuffer{$s});
-                assert ($bytes_remaining <= 4);
+        assert ($bytes_remaining <= 4);
 	} elsif ($parser_state{$s} eq 'LENGTH') {
 		$bytes_remaining = 4 - length($inputbuffer{$s});
 		assert ($bytes_remaining <= 4);
@@ -179,24 +180,25 @@ GETMORE:
 		assert ($parser_state{$s} eq 'DATA');
 		$bytes_remaining = $parser_framelength{$s} - length($inputbuffer{$s});
 	}
-	assert ($bytes_remaining > 0);
 
-	$::d_slimproto_v && msg("attempting to read $bytes_remaining bytes\n");
-
-	my $indata;
-	my $bytes_read = $s->sysread($indata, $bytes_remaining);
-
-	if (!defined($bytes_read) || ($bytes_read == 0)) {
-		if ($total_bytes_read == 0) {
-			$::d_slimproto && msg("Slimproto half-close from client: ".$ipport{$s}."\n");
-			slimproto_close($s);
+	my $bytes_read = 0;
+	my $indata = '';
+	if ($bytes_remaining) {
+		$::d_slimproto_v && msg("attempting to read $bytes_remaining bytes\n");
+	
+		$bytes_read = $s->sysread($indata, $bytes_remaining);
+	
+		if (!defined($bytes_read) || ($bytes_read == 0)) {
+			if ($total_bytes_read == 0) {
+				$::d_slimproto && msg("Slimproto half-close from client: ".$ipport{$s}."\n");
+				slimproto_close($s);
+				return;
+			}
+	
+			$::d_slimproto_v && msg("no more to read.\n");
 			return;
 		}
-
-		$::d_slimproto_v && msg("no more to read.\n");
-		return;
 	}
-
 	$total_bytes_read += $bytes_read;
 
 	$inputbuffer{$s}.=$indata;
@@ -248,7 +250,7 @@ sub process_slimproto_frame {
 
 	my $len = length($data);
 
-	$::d_slimproto_v && msg("Got Slimproto frame, op $op, length $len, $s\n");
+	$::d_slimproto && msg("Got Slimproto frame, op $op, length $len, $s\n");
 
 	if ($op eq 'HELO') {
 		my ($deviceid, $revision, @mac, $bitmapped, $reconnect, $wlan_channellist);
@@ -288,6 +290,8 @@ sub process_slimproto_frame {
 			$::d_slimproto && msg("unknown device id $deviceid in HELO framem closing connection\n");
 			slimproto_close($s);
 			return;
+		} elsif ($deviceids[$deviceid] eq 'squeezebox2') {
+	    	$client_class = 'Slim::Player::Squeezebox2';
 		} elsif ($deviceids[$deviceid] eq 'squeezebox') {	
 			if ($bitmapped) {
 			    	$client_class = 'Slim::Player::SqueezeboxG';
@@ -295,11 +299,7 @@ sub process_slimproto_frame {
 			    	$client_class = 'Slim::Player::Squeezebox';
 			}
 		} elsif ($deviceids[$deviceid] eq 'softsqueeze') {
-			if ($bitmapped) {
-			    	$client_class = 'Slim::Player::SoftSqueezeG';
-			} else {
-			    	$client_class = 'Slim::Player::SoftSqueeze';
-			}
+		    	$client_class = 'Slim::Player::SoftSqueeze';
 		} else {
 			$::d_slimproto && msg("unknown device type for $deviceid in HELO framem closing connection\n");
 			slimproto_close($s);
@@ -407,6 +407,8 @@ sub process_slimproto_frame {
 		#	STMt - TIMER        
 		#	STMu - UNDERRUN     
 		#	STMl - FULL		// triggers start of synced playback
+		#	STMd - DECODE_READY	// decoder has no more data
+		#	STMs - TRACK_STARTED	// a new track started playing
 	
 		my ($fullnessA, $fullnessB);
 		
@@ -419,13 +421,17 @@ sub process_slimproto_frame {
 			$status{$client}->{'bytes_received_H'},
 			$status{$client}->{'bytes_received_L'},
 			$status{$client}->{'signal_strength'},
-			$status{$client}->{'jiffies'}
-		) = unpack ('a4CCCNNNNnN', $data);
+			$status{$client}->{'jiffies'},
+			$status{$client}->{'output_buffer_size'},
+			$status{$client}->{'output_buffer_fullness'},
+			$status{$client}->{'elapsed_seconds'},
+		) = unpack ('a4CCCNNNNnNNNN', $data);
 		
 		
 		$status{$client}->{'bytes_received'} = $status{$client}->{'bytes_received_H'} * 2**32 + $status{$client}->{'bytes_received_L'}; 
 		
-		if ($client->revision() < 20 && $client->revision() > 0) {
+		if ($client->revision() < 20 && $client->revision() > 0 &&
+		    $client->model() ne 'squeezebox2') {
 			$client->bufferSize(262144);
 			$status{$client}->{'rptr'} = $fullnessA;
 			$status{$client}->{'wptr'} = $fullnessB;
@@ -439,6 +445,7 @@ sub process_slimproto_frame {
 			$client->bufferSize($fullnessA);
 			$status{$client}->{'fullness'} = $fullnessB;
 		}
+		$client->songElapsedSeconds($status{$client}->{'elapsed_seconds'});
 		
 		$::d_factorytest && msg("FACTORYTEST\tevent=stat\tmac=".$client->id."\tsignalstrength=$status{$client}->{'signal_strength'}\n");
 
@@ -456,6 +463,12 @@ sub process_slimproto_frame {
 		"	signal_strength: $status{$client}->{'signal_strength'}\n".
 		"	jiffies:         $status{$client}->{'jiffies'}\n".
 		"");
+		$::d_slimproto && defined($status{$client}->{'output_buffer_size'}) && msg("".
+		"	output size:     $status{$client}->{'output_buffer_size'}\n".
+		"	output fullness: $status{$client}->{'output_buffer_fullness'}\n".
+		"	elapsed seconds: $status{$client}->{'elapsed_seconds'}\n".
+		"");
+
 		Slim::Player::Sync::checkSync($client);
 		
 		my $callback = $callbacks{$status{$client}->{'event_code'}};
@@ -468,7 +481,8 @@ sub process_slimproto_frame {
 		Slim::Buttons::Block::unblock($client);
 		$client->upgradeFirmware();		
 
-
+	} elsif ($op eq 'ANIC') {
+		$client->animating(0);
 	} elsif ($op eq 'BYE!') {
 		# THIS IS ONLY FOR THE OLD SDK4.X UPDATER
 

@@ -874,12 +874,37 @@ sub initSetupConfig {
 					my ($client,$paramref,$pageref) = @_;
 					return if (!defined($client));
 					playerChildren($client, $pageref);
+					if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0))  {
+						$pageref->{'GroupOrder'}[0] = 'Synchronize';
+						my $syncGroupsRef = syncGroups($client);
+						$pageref->{'Prefs'}{'synchronize'}{'options'} = $syncGroupsRef;
+						$pageref->{'Prefs'}{'synchronize'}{'validateArgs'} = [$syncGroupsRef];
+					} else {
+						$pageref->{'GroupOrder'}[0] = undef;
+					}
+					
+					if ($client->maxTransitionDuration()) {
+						$pageref->{'GroupOrder'}[1] = 'Transition';
+						$pageref->{'Prefs'}{'transitionDuration'}{'validateArgs'} = [0, $client->maxTransitionDuration(),1,1];
+					} else {
+						$pageref->{'GroupOrder'}[1] = undef;
+					}
 					
 					if ($client && $client->hasDigitalOut()) {
-						$pageref->{'GroupOrder'}[3] = 'Digital';
+						$pageref->{'GroupOrder'}[2] = 'Digital';
 					} else {
+						$pageref->{'GroupOrder'}[2] = undef;
+					}
+					
+					if (Slim::Utils::Misc::findbin('lame')) {
+						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = string('SETUP_LAME_FOUND');
+						$pageref->{'GroupOrder'}[3] = 'Quality';
+					} else {
+						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = string('SETUP_LAME_NOT_FOUND');
 						$pageref->{'GroupOrder'}[3] = undef;
 					}
+					
+					$pageref->{'GroupOrder'}[4] ='Format';
 					my @formats = $client->formats();
 					if ($formats[0] ne 'mp3') {
 						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = string('SETUP_MAXBITRATE_DESC');
@@ -887,21 +912,6 @@ sub initSetupConfig {
 					} else {
 						delete $pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'};
 						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = string('SETUP_MP3BITRATE_DESC');
-					}
-					if (Slim::Utils::Misc::findbin('lame')) {
-						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = string('SETUP_LAME_FOUND');
-						$pageref->{'GroupOrder'}[1] = 'Quality';
-					} else {
-						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = string('SETUP_LAME_NOT_FOUND');
-						$pageref->{'GroupOrder'}[1] = undef;
-					}
-					if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0))  {
-						$pageref->{'GroupOrder'}[2] = 'Synchronize';
-						my $syncGroupsRef = syncGroups($client);
-						$pageref->{'Prefs'}{'synchronize'}{'options'} = $syncGroupsRef;
-						$pageref->{'Prefs'}{'synchronize'}{'validateArgs'} = [$syncGroupsRef];
-					} else {
-						$pageref->{'GroupOrder'}[2] = undef;
 					}
 		}
 		,'postChange' => sub {
@@ -939,6 +949,9 @@ sub initSetupConfig {
 				}
 			,'Digital' => {
 					'PrefOrder' => ['digitalVolumeControl','mp3SilencePrelude']
+				}
+			,'Transition' => {
+					'PrefOrder' => ['transitionType', 'transitionDuration']
 				}
 		}
 		,'Prefs' => {
@@ -1046,6 +1059,21 @@ sub initSetupConfig {
 			,'mp3SilencePrelude' => {
 							'validate' => \&validateNumber  
 							,'validateArgs' => [0,undef,5]
+						}
+			,'transitionType' => {
+							'validate' => \&validateInt
+							,'validateArgs' => [0,4,1,1]
+							,'optionSort' => 'K'
+							,'options' => {
+									'0' => string('TRANSITION_NONE')
+									,'1' => string('TRANSITION_CROSSFADE')
+									,'2' => string('TRANSITION_FADE_IN')
+									,'3' => string('TRANSITION_FADE_OUT')
+									,'4' => string('TRANSITION_FADE_IN_OUT')
+								}
+						}
+			,'transitionDuration' => {
+							'validate' => \&validateInt  
 						}
 		}
 	}
@@ -1269,7 +1297,7 @@ sub initSetupConfig {
 
 					$i++;
 				}
-
+				
 				foreach my $group (Slim::Utils::Prefs::getArray('disabledplugins')) {
 					
 					delGroup('plugins',$group,1);

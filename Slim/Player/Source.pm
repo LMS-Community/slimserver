@@ -39,6 +39,9 @@ use Slim::Player::Protocols::HTTP;
 my $TRICKSEGMENTDURATION = 1.0;
 my $FADEVOLUME         = 0.3125;
 
+use constant STATUS_STREAMING => 0;
+use constant STATUS_PLAYING => 1;
+
 our %commandTable = ();
 
 # the protocolHandlers hash contains the modules that handle specific URLs, indexed by the URL protocol.
@@ -128,6 +131,8 @@ sub loadConversionTables {
 sub init {
 	loadConversionTables();
 	Slim::Networking::Slimproto::setEventCallback('STMu', \&underrun);
+	Slim::Networking::Slimproto::setEventCallback('STMd', \&decoderUnderrun);
+	Slim::Networking::Slimproto::setEventCallback('STMs', \&trackStartEvent);
 }
 
 # rate can be negative for rew, zero for pause, 1 for playback and greater than one for ffwd
@@ -162,9 +167,10 @@ sub time2offset {
 	my $client   = shift;
 	my $time     = shift;
 	
-	my $size     = $client->songtotalbytes();
-	my $duration = $client->songduration();
-	my $align    = $client->songblockalign();
+	my $song     = playingSong($client);
+	my $size     = $song->{totalbytes};
+	my $duration = $song->{duration};
+	my $align    = $song->{blockalign};
 	
 	my $byterate = $duration ? ($size / $duration) : 0;
 
@@ -185,7 +191,8 @@ sub progress {
 
 	my $client = Slim::Player::Sync::masterOrSelf(shift);
 	
-	my $songduration = $client->songduration();
+	my $song     = playingSong($client);
+	my $songduration = $song->{duration};
 
 	return 0 unless $songduration;
 	return songTime($client) / $songduration;
@@ -194,6 +201,10 @@ sub progress {
 sub songTime {
 
 	my $client = Slim::Player::Sync::masterOrSelf(shift);
+
+	my $rate	  	= $client->rate();
+	my $songtime = $client->songElapsedSeconds();
+	return $songtime if $rate == 1 && defined($songtime);
 
 	# this used to check against == 1, however, we can't properly
 	# calculate duration for non-native formats (pcm, mp3) unless we treat
@@ -210,14 +221,14 @@ sub songTime {
 		}
 	}
 
-	my $songLengthInBytes	= $client->songtotalbytes();
-	my $duration	  	= $client->songduration();
+	my $song     = playingSong($client);
+	my $songLengthInBytes	= $song->{totalbytes};
+	my $duration	  	= $song->{duration};
 	my $byterate	  	= $duration ? ($songLengthInBytes / $duration) : 0;
 
 	my $bytesReceived 	= ($client->bytesReceived() || 0) - $client->bytesReceivedOffset();
 	my $fullness	  	= $client->bufferFullness() || 0;
 	my $realpos	  	= $bytesReceived - $fullness;
-	my $rate	  	= $client->rate();
 	my $startStream	  	= $client->songStartStreamTime();
 
 	#
@@ -230,7 +241,7 @@ sub songTime {
 		$realpos = 0;
 	}
 
-	my $songtime = $songLengthInBytes ? (($realpos / $songLengthInBytes * $duration * $rate) + $startStream) : 0;
+	$songtime = $songLengthInBytes ? (($realpos / $songLengthInBytes * $duration * $rate) + $startStream) : 0;
 
 	if ($songtime && $duration) {
 		0 && $::d_source && msg("songTime: [$songtime] = ($realpos(realpos) / $songLengthInBytes(size) * ".
@@ -255,7 +266,8 @@ sub textSongTime {
 	
 	# 2 and 5 display remaining time, not elapsed
 	if ($playingDisplayMode % 3 == 2) {
-		my $duration = $client->songduration() || 0;
+		my $song     = playingSong($client);
+		my $duration = $song->{duration} || 0;
 		if ($duration) {
 			$delta = $duration - $delta;	
 			$sign = '-';
@@ -339,7 +351,7 @@ sub playmode {
 
 			$::d_source && msg("Couldn't open song.  Stopping.\n");
 
-			$newmode = 'stop' unless openNext($client);
+			$newmode = 'stop' unless gotoNext($client, 1);
 		};
 
 		$client->bytesReceivedOffset(0);
@@ -352,11 +364,6 @@ sub playmode {
 
 		next if Slim::Utils::Prefs::clientGet($everyclient,'silent');
 
-		# wake up the display if we've switched modes.
-		if ($everyclient->isPlayer()) {
-			Slim::Buttons::ScreenSaver::wakeup($everyclient);
-		}
-		
 		# when you resume, you go back to play mode
 		if (($newmode eq "resume") ||($newmode eq "resumenow")) {
 
@@ -369,7 +376,10 @@ sub playmode {
 		} elsif ($newmode =~ /^playout/) {
 
 			closeSong($everyclient);
-			$everyclient->resume() if $newmode eq 'playout-play';
+			# Resume to make sure that we actually start playing
+			# what we just finished streaming (it may be too short
+			# to have triggered an autostart).
+			$everyclient->resume();
 			$everyclient->playmode($newmode);
 
 		} else {
@@ -387,6 +397,7 @@ sub playmode {
 			$everyclient->stop();
 			closeSong($everyclient);
 			resetSong($everyclient);
+			resetSongQueue($everyclient);
 
 		} elsif ($newmode eq "play") {
 
@@ -395,7 +406,7 @@ sub playmode {
 			$everyclient->streamBytes(0);
 			
 			# if this is a remote stream, then let's start after 5 seconds even if we haven't filled the buffer yet.
-			my $quickstart = Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::song($client)) ? 5 : undef;
+			my $quickstart = Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::song($client, streamingSongIndex($client))) ? 5 : undef;
 			
 			$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat(), $quickstart);
 
@@ -444,6 +455,17 @@ sub playmode {
 	return _returnPlayMode($client);
 }
 
+sub decoderUnderrun {
+	my $client = shift || return;
+
+	$::d_source && msg($client->id() . ": Decoder underrun while this mode: " . $client->playmode() . "\n");
+	
+	if (!Slim::Player::Sync::isSynced($client) &&
+		($client->playmode eq 'playout-play')) {
+		skipahead($client);
+	}
+}
+
 sub underrun {
 	my $client = shift || return;
 	
@@ -451,16 +473,13 @@ sub underrun {
 	
 	$::d_source && msg($client->id() . ": Underrun while this mode: " . $client->playmode() . "\n");
 
-	# the only way we'll get an underrun event while stopped is if we were
-	# playing out.  so we need to open the next item and play it!
-	#
 	# if we're synced, then we tell the player to stop and then let resync restart us.
 
 	if (Slim::Player::Sync::isSynced($client)) {
 		if ($client->playmode =~ /playout/) {
 			$client->stop();
 		}
-	} elsif (($client->playmode eq 'playout-play' || $client->playmode eq 'stop')) {
+	} elsif ($client->playmode eq 'playout-play') {
 
 		skipahead($client);
 
@@ -474,13 +493,15 @@ sub underrun {
 sub skipahead {
 	my $client = shift;
 
-	$::d_source && msg("**skipahead: stopping\n");
-	playmode($client, 'stop');
+	if (!$client->reportsTrackStart()) {
+		$::d_source && msg("**skipahead: stopping\n");
+		playmode($client, 'stop');
+	}
 
 	$::d_source && msg("**skipahead: opening next song\n");
-	openNext($client);
+	gotoNext($client, 0);
 
-	$::d_source && msg("**skipahead: restarting after underrun\n");
+	$::d_source && msg("**skipahead: restarting\n");
 	playmode($client, 'play');
 } 
 
@@ -545,8 +566,9 @@ sub gototime {
 		return unless openSong($client);
 	}
 
-	my $songLengthInBytes = $client->songtotalbytes();
-	my $duration	      = $client->songduration();
+	my $song = playingSong($client);
+	my $songLengthInBytes = $song->{totalbytes};
+	my $duration	      = $song->{duration};
 
 	return if (!$songLengthInBytes || !$duration);
 
@@ -578,13 +600,23 @@ sub gototime {
 		while ($newtime < 0) {
 			jumpto($client, "-1");
 			rate($client, $rate);
-			$newtime = $client->songduration - ((-$newoffset) * $duration / $songLengthInBytes);
+			$newtime = $song->{duration} - ((-$newoffset) * $duration / $songLengthInBytes);
 			$::d_source && msg("gototime: skipping backwards to the previous track to time $newtime\n");
 		}
 
 		gototime($client, $newtime);
 		return;
+	} elsif (playingSongIndex($client) != streamingSongIndex($client)) {
+
+		my $rate = rate($client);
+		jumpto($client, playingSongIndex($client));
+		rate($client, $rate);
+		$::d_source && msg("gototime: resetting to the track that's currently playing (but no longer streaming)\n");
+		gototime($client, $newtime);
+		return;
 	}
+
+
 
 	foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
 		$::d_source && msg("gototime: stopping playback\n");
@@ -593,7 +625,7 @@ sub gototime {
 		@{$everybuddy->chunks} = ();
 	}
 
-	my $dataoffset = $client->songoffset();
+	my $dataoffset = $song->{offset};
 
 	$client->songBytes($newoffset);
 	$client->songStartStreamTime($newtime);
@@ -626,25 +658,28 @@ sub jumpto {
 
 	if ($songcount != 1) {
 
+		my $index;
 		if ($offset =~ /[\+\-]\d+/) {
-			currentSongIndex($client, currentSongIndex($client) + $offset);
+			$index = playingSongIndex($client) + $offset;
 			$::d_source && msgf("jumping by %s\n", $offset);
 		} else {
-			currentSongIndex($client, $offset);
+			$index = $offset;
 			$::d_source && msgf("jumping to %s\n", $offset);
 		}
 	
-		if ($songcount && currentSongIndex($client) >= $songcount) {
-			currentSongIndex($client, currentSongIndex($client) % $songcount);
+		if ($songcount && $index >= $songcount) {
+			$index = $index % $songcount;
 		}
 
-		if ($songcount && currentSongIndex($client) < 0) {
-			currentSongIndex($client, $songcount - ((0 - currentSongIndex($client)) % $songcount));
+		if ($songcount && $index < 0) {
+			$index =  $songcount - ((0 - $index) % $songcount);
 		}
+
+		streamingSongIndex($client, $index, 1);
 
 	} else {
 
-		currentSongIndex($client, 0);
+		streamingSongIndex($client, 0, 1);
 	}
 
 	playmode($client,"play");
@@ -655,12 +690,13 @@ sub jumpto {
 # Private functions below. Do not call from outside this module.
 ################################################################################
 
-# openNext returns 1 if it succeeded opening a new song, 
+# gotoNext returns 1 if it succeeded opening a new song, 
 #                  0 if it stopped at the end of the list or failed to open the current song 
 # note: Only call this with a master or solo client
-sub openNext {
+sub gotoNext {
 	$::d_source && msg("opening next song...\n"); 
 	my $client = shift;
+	my $open = shift;
 	my $result = 1;
 	
 	my $oldstreamformat = $client->streamformat();
@@ -683,13 +719,18 @@ sub openNext {
 		} else {
 
 			# stop at the end of the list or when list is empty
-			if (currentSongIndex($client) == (Slim::Player::Playlist::count($client) - 1) ||
+			if (streamingSongIndex($client) == (Slim::Player::Playlist::count($client) - 1) ||
 				!Slim::Player::Playlist::count($client)) {
 
 				$nextsong = 0;
 
-				currentSongIndex($client, $nextsong);
 				playmode($client, $result ? 'playout-stop' : 'stop');
+
+				# We're done streaming the song, so drop the streaming
+				# connection to the client.
+				if (!scalar(@{$client->chunks})) {
+					Slim::Web::HTTP::forgetClient($client);
+				}
 
 				$client->update();
 
@@ -707,8 +748,8 @@ sub openNext {
 		
 		# here's where we decide whether to start the next song in a new stream after playing out
 		# the current song or to just continue streaming
-		if ((playmode($client) eq 'play') && 
-			(($oldstreamformat ne $newstreamformat) || Slim::Player::Sync::isSynced($client)) ||
+		if (($client->playmode() eq 'play') && 
+			(($oldstreamformat ne $newstreamformat) || Slim::Player::Sync::isSynced($client) || $client->maxTransitionDuration()) ||
 			$client->rate() != 1) {
 
 			$::d_source && msg(
@@ -717,6 +758,13 @@ sub openNext {
 			);
 
 			playmode($client, 'playout-play');
+			
+			# We're done streaming the song, so drop the streaming
+			# connection to the client.
+			if (!scalar(@{$client->chunks})) {
+				Slim::Web::HTTP::forgetClient($client);
+			}
+
 			return 0;
 
 		} else {
@@ -726,7 +774,8 @@ sub openNext {
 				"new: $newstreamformat) current playmode: " . playmode($client) . "\n"
 			);
 
-			currentSongIndex($client, $nextsong);
+			streamingSongIndex($client, $nextsong);
+			return 1 if !$open;
 			$result = openSong($client);
 		}
 
@@ -735,17 +784,92 @@ sub openNext {
 	return $result;
 }
 
-sub currentSongIndex {
-	my $client = shift;
-	my $newindex = shift;
-
-	$client = Slim::Player::Sync::masterOrSelf($client);
+sub streamingSongIndex {
+	my $client = Slim::Player::Sync::masterOrSelf(shift);
+	my $index = shift;
+	my $clear = shift;
 	
-	if (defined($newindex)) {
-		$client->currentsong($newindex);
+	my $queue = $client->currentsongqueue();
+	if (defined($index)) {
+		$::d_source && msg("Adding song index $index to song queue\n");
+		if (!$client->reportsTrackStart() || $clear) {
+			$::d_source && msg("Clearing out song queue first\n");
+			$#{$queue} = -1;
+		}
+		
+		unshift(@{$queue}, { index => $index, 
+							 status => STATUS_STREAMING });
+		$::d_source && msg("Song queue is now " . join(',', map { $_->{index} } @$queue) . "\n");
+	}
+
+	my $song = $client->currentsongqueue()->[0];
+	return 0 if !defined($song);
+
+	return $song->{index};
+}
+
+sub streamingSong {
+	my $client = Slim::Player::Sync::masterOrSelf(shift);
+	return $client->currentsongqueue()->[0];
+}
+
+sub playingSongIndex {
+	my $client = shift;
+
+	my $song = playingSong($client);
+	return 0 if !defined($song);
+
+	return $song->{index};
+}
+
+sub playingSong {
+	my $client = Slim::Player::Sync::masterOrSelf(shift);
+
+	return $client->currentsongqueue()->[-1];
+}
+
+sub playingSongDuration {
+	my $client = shift;
+	my $song = playingSong($client);
+	
+	return defined($song) ? $song->{duration} : 0;
+}
+
+
+sub resetSongQueue {
+	my $client = Slim::Player::Sync::masterOrSelf(shift);
+	my $queue = $client->currentsongqueue();
+
+	$::d_source && msg("Resetting song queue\n");
+	my $playingsong = $client->currentsongqueue()->[-1];
+	$playingsong->{status} = STATUS_STREAMING;
+	$#{$queue} = -1;
+	push @$queue, $playingsong;
+	$::d_source && msg("Song queue is now " . join(',', map { $_->{index} } @$queue) . "\n");
+}
+
+sub trackStartEvent {
+	my $client = shift || return;
+
+	$::d_source && msg("Got a track starting event\n");
+	my $queue = $client->currentsongqueue();
+	my $last_song = $queue->[-1];
+
+	if (defined($last_song) && $last_song->{status} == STATUS_PLAYING && 
+		scalar(@$queue) > 1) {
+		$::d_source && msg("Song " . $last_song->{index} . " had already started, so it's not longer in the queue\n");
+		pop @{$queue};
+		$last_song = $queue->[-1];
 	}
 	
-	return $client->currentsong() || 0;
+	if (defined($last_song)) {
+		$::d_source && msg("Song " . $last_song->{index} . " has now started playing\n");
+		$last_song->{status} = STATUS_PLAYING;
+	}
+
+	Slim::Player::Playlist::refreshPlaylist($client);
+
+	$::d_source && msg("Song queue is now " . join(',', map { $_->{index} } @$queue) . "\n");
 }
 
 # nextsong is for figuring out what the next song will be.
@@ -753,7 +877,7 @@ sub nextsong {
 	my $client = shift;
 
 	my $nextsong;
-	my $currsong = currentSongIndex($client);
+	my $currsong = streamingSongIndex($client);
 	
 	return 0 if (Slim::Player::Playlist::count($client) == 0);
 	
@@ -761,7 +885,7 @@ sub nextsong {
 	
 	if ($client->rate() < 0) { $direction = -1; }
 	 
-	$nextsong = currentSongIndex($client) + $direction;
+	$nextsong = streamingSongIndex($client) + $direction;
 
 	if ($nextsong >= Slim::Player::Playlist::count($client)) {
 
@@ -785,6 +909,18 @@ sub nextsong {
 	return $nextsong;
 }
 
+sub flushStreamingSong {
+	my $client = shift;
+	
+	closeSong($client);
+	if (streamingSongIndex($client) != playingSongIndex($client)) {
+		my $queue = $client->currentsongqueue();
+		shift @{$queue};
+		playmode($client, 'playout-play');
+	}
+	$client->flush();
+}
+
 sub closeSong {
 	my $client = shift;
 
@@ -800,8 +936,6 @@ sub resetSong {
 	my $client = shift;
 
 	# at the end of a song, reset the song time
-	$client->songtotalbytes(0);
-	$client->songduration(0);
 	$client->songBytes(0);
 	$client->songStartStreamTime(0);
 	$client->bytesReceivedOffset($client->bytesReceived());
@@ -812,11 +946,11 @@ sub errorOpening {
 	my $client = shift;
 
 	my $line1 = shift || $client->string('PROBLEM_OPENING');
-	my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
+	my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, streamingSongIndex($client)));
 	
 	$client->showBriefly($line1, $line2, 1,1);
 	$client->param('noUpdate',1);
-	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&errorDone)
+	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&errorDone);
 }
 
 sub errorDone {
@@ -830,7 +964,8 @@ sub openSong {
 	
 	closeSong($client);
 	
-	my $fullpath = Slim::Player::Playlist::song($client) || return undef;
+	my $song = streamingSong($client);
+	my $fullpath = Slim::Player::Playlist::song($client, streamingSongIndex($client)) || return undef;
 	my $ds       = Slim::Music::Info::getCurrentDataStore();
 	my $track    = $ds->objectForUrl($fullpath);
 
@@ -843,7 +978,7 @@ sub openSong {
 		$::d_source && msg("URL is remote : $fullpath\n");
 
 		my $line1 = $client->string('CONNECTING_FOR');
-		my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));			
+		my $line2 = Slim::Music::Info::standardTitle($client, $fullpath);			
 		$client->showBriefly($line1, $line2, undef,1);
 
 		# we don't get the content type until after the stream is opened
@@ -878,7 +1013,7 @@ sub openSong {
 				my $duration  = $track->durationSeconds();
 
 				if (defined($duration)) {
-					$client->songduration($duration);
+					$song->{duration} = $duration;
 				}
 
 				# this case is when we play the file through as-is
@@ -927,7 +1062,7 @@ sub openSong {
 				$client->audioFilehandle(undef);
 
 				# insert the list onto the playlist
-				splice @{Slim::Player::Playlist::playList($client)}, currentSongIndex($client), 1, @items;
+				splice @{Slim::Player::Playlist::playList($client)}, streamingSongIndex($client), 1, @items;
 
 				# update the shuffle list
 				Slim::Player::Playlist::reshuffle($client);
@@ -950,7 +1085,7 @@ sub openSong {
 			$client->audioFilehandle(undef);
 			
 			my $line1 = $client->string('PROBLEM_CONNECTING');
-			my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
+			my $line2 = Slim::Music::Info::standardTitle($client, $fullpath);
 
 			$client->showBriefly($line1, $line2, 5, 1);
 
@@ -977,7 +1112,7 @@ sub openSong {
 			$duration   = $track->durationSeconds();
 			$offset     = $track->audio_offset();
 			$samplerate = $track->samplerate();
-			$blockalign = $track->block_alignment();
+			$blockalign = $track->block_alignment() || 1;
 			$endian     = $track->endian() || '';
 			$drm        = $track->drm();
 
@@ -1070,11 +1205,11 @@ sub openSong {
 			$offset = 0;
 		}
 	
-		$client->songtotalbytes($size);
-		$client->songduration($duration);
-		$client->songoffset($offset);
+		$song->{totalbytes} = $size;
+		$song->{duration} = $duration;
+		$song->{offset} = $offset;
+		$song->{blockalign} = $blockalign;
 		$client->streamformat($format);
-		$client->songblockalign($blockalign);
 		$::d_source && msg("Streaming with format: $format\n");
 		
 	} else {
@@ -1107,21 +1242,18 @@ sub openSong {
 		$::d_source && msg("Can't open [$fullpath] : $!\n");
 
 		my $line1 = $client->string('PROBLEM_OPENING');
-		my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));		
+		my $line2 = Slim::Music::Info::standardTitle($client, $fullpath);
 
 		$client->showBriefly($line1, $line2, 5,1);
 
 		return undef;
 	}
 
-	Slim::Player::Playlist::refreshPlaylist($client);
+	if (!$client->reportsTrackStart()) {
+		Slim::Player::Playlist::refreshPlaylist($client);
+	}
 	
 	Slim::Control::Command::executeCallback($client,  ['open', $fullpath]);
-
-	# We are starting a new song, lets kill any animation so we see the correct new song.
-	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) { 
-		$everyclient->killAnimation();
-	}
 
 	return 1;
 }
@@ -1388,8 +1520,9 @@ sub readNextChunk {
 		return \$chunk if ($len);
 	}
 
+	my $song = streamingSong($client);
 	if ($client->audioFilehandle()) {
-	
+
 		if (!$client->audioFilehandleIsSocket) {
 			# use the rate to seek to an appropriate place in the file.
 			my $rate = rate($client);
@@ -1406,20 +1539,19 @@ sub readNextChunk {
 					
 					my $now   = $client->songBytes();
 					my $ds    = Slim::Music::Info::getCurrentDataStore();
-					my $track = $ds->objectForUrl( Slim::Player::Playlist::song($client) );
+					my $track = $ds->objectForUrl( Slim::Player::Playlist::song($client, streamingSongIndex($client)) );
 
 					my $byterate = $track->bitrate(1) / 8;
 				
 					my $howfar = ($rate -  $TRICKSEGMENTDURATION) * $byterate;					
-					$howfar -= $howfar % $client->songblockalign();
+					$howfar -= $howfar % $song->{blockalign};
 					$::d_source && msg("trick mode seeking to: $howfar\n");
 
 					my $seekpos = $now + $howfar;
 
 					my $tricksegmentbytes = $byterate * $TRICKSEGMENTDURATION;				
 
-					$tricksegmentbytes -= $tricksegmentbytes % $client->songblockalign();					
-
+					$tricksegmentbytes -= $tricksegmentbytes % $song->{blockalign};
 					if ($client->streamformat() eq 'mp3') {
 						($seekpos, undef) = Slim::Formats::MP3::seekNextFrame($client->audioFilehandle(), $seekpos, 1);
 						my (undef, $endsegment) = Slim::Formats::MP3::seekNextFrame($client->audioFilehandle(), $seekpos + $tricksegmentbytes, -1);
@@ -1447,7 +1579,7 @@ sub readNextChunk {
 			}
 
 			# don't send extraneous ID3 data at the end of the file
-			my $songLengthInBytes = $client->songtotalbytes();
+			my $songLengthInBytes = $song->{totalbytes};
 			my $pos		      = $client->songBytes();
 			
 			if ($pos + $chunksize > $songLengthInBytes) {
@@ -1504,9 +1636,9 @@ bail:
 	if ($endofsong) {
 		$::d_source && msg("end of file or error on socket, opening next song, (song pos: " .
 				$client->songBytes() . "(tell says: . " . systell($client->audioFilehandle()).
-				"), totalbytes: " . $client->songtotalbytes() . ")\n");
+				"), totalbytes: " . $song->{totalbytes} . ")\n");
 
-		if (!openNext($client)) {
+		if (!gotoNext($client, 1)) {
 			$::d_source && msg($client->id() . ": Can't opennext, returning no chunk.\n");
 		}
 		
@@ -1558,6 +1690,7 @@ sub openRemoteStream {
 			return $protoClass->new({
 				'url'    => $url,
 				'client' => $client,
+				'create' => 1,
 			});
 		}
 	}

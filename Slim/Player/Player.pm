@@ -65,6 +65,8 @@ our $defaultPrefs = {
 		,'upgrade-5.4b1-script'		=> 1
 		,'upgrade-5.4b2-script'		=> 1
 		,'volume'				=> 50
+		,'syncBufferThreshold'		=> 128
+		,'bufferThreshold'		=> 255
 	};
 
 our %upgradeScripts = (
@@ -119,10 +121,6 @@ sub new {
 
 	my $client = $class->SUPER::new($id, $paddr);
 
-	# make sure any preferences this client may not have set are set to the default
-	# This should be a method on client!
-	Slim::Utils::Prefs::initClientPrefs($client, $defaultPrefs);
-
 	# initialize model-specific features:
 	$client->revision($revision);
 
@@ -132,6 +130,12 @@ sub new {
 sub init {
 	my $client = shift;
 
+	# make sure any preferences this client may not have set are set to the default
+	# This should be a method on client!
+	Slim::Utils::Prefs::initClientPrefs($client, $defaultPrefs);
+
+	$client->SUPER::init();
+	
 	for my $version (sort keys %upgradeScripts) {
 		if (Slim::Utils::Prefs::clientGet($client, "upgrade-$version-script")) {
 			&{$upgradeScripts{$version}}($client);
@@ -147,8 +151,8 @@ sub init {
 
 	# start the screen saver
 	Slim::Buttons::ScreenSaver::screenSaver($client);
+	$client->brightness(Slim::Utils::Prefs::clientGet($client,$client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 }
-
 
 # usage							float		buffer fullness as a percentage
 sub usage {
@@ -420,7 +424,11 @@ sub brightness {
 		}
 	}
 	
-	return $client->currBrightness();
+	my $brightness = $client->currBrightness();
+
+	if (!defined($brightness)) { $brightness = $client->maxBrightness(); }	
+
+	return $brightness;
 }
 
 sub maxBrightness {
@@ -460,67 +468,73 @@ sub displayWidth {
 
 sub currentSongLines {
 	my $client = shift;
-	my ($line1, $line2, $overlay1, $overlay2);
+	my $parts;
 	
 	my $playlistlen = Slim::Player::Playlist::count($client);
 
 	if ($playlistlen < 1) {
 
-		$line1 = $client->string('NOW_PLAYING');
-		$line2 = $client->string('NOTHING');
+		$parts->{line1} = $client->string('NOW_PLAYING');
+		$parts->{line2} = $client->string('NOTHING');
 
 	} else {
 
 		if (Slim::Player::Source::playmode($client) eq "pause") {
 
-			$line1 = sprintf(
+			$parts->{line1} = sprintf(
 				$client->string('PAUSED')." (%d %s %d) ",
-				Slim::Player::Source::currentSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
+				Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
 			);
 
 		# for taking photos of the display, comment out the line above, and use this one instead.
 		# this will cause the display to show the "Now playing" screen to show when paused.
-		# $line1 = "Now playing" . sprintf " (%d %s %d) ", Slim::Player::Source::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen;
+		# line1 = "Now playing" . sprintf " (%d %s %d) ", Slim::Player::Source::playingSongIndex($client) + 1, string('OUT_OF'), $playlistlen;
 
 		} elsif (Slim::Player::Source::playmode($client) eq "stop") {
 
-			$line1 = sprintf(
+			$parts->{line1} = sprintf(
 				$client->string('STOPPED')." (%d %s %d) ",
-				Slim::Player::Source::currentSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
+				Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
 			);
 
 		} else {
 
 			if (Slim::Player::Source::rate($client) != 1) {
-				$line1 = $client->string('NOW_SCANNING') . ' ' . Slim::Player::Source::rate($client) . 'x';
+				$parts->{line1} = $client->string('NOW_SCANNING') . ' ' . Slim::Player::Source::rate($client) . 'x';
 			} elsif (Slim::Player::Playlist::shuffle($client)) {
-				$line1 = $client->string('PLAYING_RANDOMLY');
+				$parts->{line1} = $client->string('PLAYING_RANDOMLY');
 			} else {
-				$line1 = $client->string('PLAYING');
+				$parts->{line1} = $client->string('PLAYING');
 			}
 			
 			if ($client->volume() < 0) {
-				$line1 .= " ". $client->string('LCMUTED');
+				$parts->{line1} .= " ". $client->string('LCMUTED');
 			}
 
-			$line1 = $line1 . sprintf(
+			$parts->{line1} = $parts->{line1} . sprintf(
 				" (%d %s %d) ",
-				Slim::Player::Source::currentSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
+				Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
 			);
 		} 
 
-		$line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
-		$overlay2 = $client->symbols(Slim::Display::Display::symbol('notesymbol'));
+		$parts->{line2} = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
+		$parts->{overlay2} = $client->symbols(Slim::Display::Display::symbol('notesymbol'));
 
-		($line1, $overlay1) = $client->nowPlayingModeLines($line1);
+		# add in the progress bar and time...
+		$client->nowPlayingModeLines($parts);
 	}
 	
-	return $client->renderOverlay($line1, $line2, $overlay1, $overlay2);
+	return $parts;
 }
 
+sub nowPlayingModes {
+	my $client = shift;
+	my $count = Slim::Utils::Prefs::clientGet($client,'showbufferfullness') ? 7 : 6;
+	return $count;
+}
 
 sub nowPlayingModeLines {
-	my ($client, $line1) = @_;
+	my ($client, $parts) = @_;
 	my $overlay;
 	my $fractioncomplete   = 0;
 	my $playingDisplayMode = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
@@ -535,7 +549,7 @@ sub nowPlayingModeLines {
 	};
 
 	# check if we don't know how long the track is...
-	if (!$client->songduration() && ($playingDisplayMode != 6)) {
+	if (!Slim::Player::Source::playingSongDuration($client) && ($playingDisplayMode != 6)) {
 		# no progress bar, remaining time is meaningless
 		$playingDisplayMode = ($playingDisplayMode % 3) ? 1 : 0;
 
@@ -544,8 +558,6 @@ sub nowPlayingModeLines {
 	}
 
 	my $songtime = " " . Slim::Player::Source::textSongTime($client, $playingDisplayMode);
-
-	my $leftLength = $client->measureText($line1, 1);
 
 	if ( $playingDisplayMode == 6) {
 		if (!Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {
@@ -556,8 +568,9 @@ sub nowPlayingModeLines {
 			my $usageLine = ' ' . int($fractioncomplete * 100 + 0.5)."%";
 			my $usageLineLength = $client->measureText($usageLine,1);
 			
+			my $leftLength = $client->measureText($parts->{line1}, 1);
 			my $barlen = $client->displayWidth()  - $leftLength - $usageLineLength;
-			my $bar    = $client->progressBar($barlen, $fractioncomplete);
+			my $bar    = $client->symbols($client->progressBar($barlen, $fractioncomplete));
 	
 			$overlay = $bar . $usageLine;
 		}
@@ -569,22 +582,24 @@ sub nowPlayingModeLines {
 	} elsif ($playingDisplayMode == 3) {
 
 		# just show the bar
+		my $leftLength = $client->measureText($parts->{line1}, 1);
 		my $barlen = $client->displayWidth() - $leftLength;
-		my $bar    = $client->progressBar($barlen, $fractioncomplete);
+		my $bar    = $client->symbols($client->progressBar($barlen, $fractioncomplete));
 
 		$overlay = $bar;
 
 	} elsif ($playingDisplayMode == 4 || $playingDisplayMode == 5) {
 
 		# show both the bar and the time
+		my $leftLength = $client->measureText($parts->{line1}, 1);
 		my $barlen = $client->displayWidth() - $leftLength - $client->measureText($songtime, 1);
 
-		my $bar    = $client->progressBar($barlen, $fractioncomplete);
+		my $bar    = $client->symbols($client->progressBar($barlen, $fractioncomplete));
 
 		$overlay = $bar . $songtime;
 	}
-
-	return ($line1, $overlay);
+	$parts->{overlay1} = $overlay;
+	return $parts;
 }
 
 sub measureText {
@@ -593,10 +608,6 @@ sub measureText {
 	my $line = shift;
 	
 	return Slim::Display::Display::lineLength($text);
-}
-
-sub animating {
-	Slim::Display::VFD::Animation::animating(@_);
 }
 
 sub killAnimation {
@@ -771,6 +782,41 @@ sub progressBar {
 
 sub balanceBar {
 	return sliderBar(shift,shift,shift,50);
+}
+
+sub textSongTime {
+	my $client = shift;
+	my $remaining = shift;
+
+	my $delta = 0;
+	my $sign  = '';
+
+	if (Slim::Player::Source::playmode($client) eq "stop") {
+		$delta = 0;
+	} else {	
+		$delta = Slim::Player::Source::songTime($client);
+	}
+	
+	# 2 and 5 display remaining time, not elapsed
+	if ($remaining) {
+		my $duration = Slim::Player::Source::playingSongDuration($client) || 0;
+		if ($duration) {
+			$delta = $duration - $delta;	
+			$sign = '-';
+		}
+	}
+	
+	my $hrs = int($delta / (60 * 60));
+	my $min = int(($delta - $hrs * 60 * 60) / 60);
+	my $sec = $delta - ($hrs * 60 * 60 + $min * 60);
+	
+	my $time;
+	if ($hrs) {
+		$time = sprintf("%s%d:%02d:%02d", $sign, $hrs, $min, $sec);
+	} else {
+		$time = sprintf("%s%02d:%02d", $sign, $min, $sec);
+	}
+	return $time;
 }
 
 1;

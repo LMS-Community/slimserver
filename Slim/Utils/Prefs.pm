@@ -513,6 +513,7 @@ sub clientSet {
 sub maxRate {
 	my $client = shift;
 	my $solorate = shift;
+	return 0 if (!$client);
 	my $rate = clientGet($client,'maxBitrate');
 	if (!defined $rate) {
 		# Possibly the first time this pref has been accessed

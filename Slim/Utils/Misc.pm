@@ -275,7 +275,7 @@ sub anchorFromURL {
 	return undef;
 }
 
-##################################################################################
+#################################################################################
 #
 # split a URL into (host, port, path)
 #
@@ -625,6 +625,34 @@ sub inPlaylistFolder {
 	}
 }
 
+my %_ignoredItems = (
+
+	# always ignore . and ..
+	'.' => 1,
+	'..' => 1,
+
+	# Items we should ignore on a mac volume
+	'Icon' => 1,
+	'TheVolumeSettingsFolder' => 1,
+	'TheFindByContentFolder' => 1,
+	'Network Trash Folder' => 1,
+	'Desktop' => 1,
+	'Desktop Folder' => 1,
+	'Temporary Items' => 1,
+	'.Trashes' => 1,
+	'.AppleDB' => 1,
+	'.AppleDouble' => 1,
+	'.Metadata' => 1,
+
+	# Items we should ignore on a linux vlume
+	'lost+found' => 1,
+
+	# Items we should ignore  on a Windows volume
+	'System Volume Information' => 1,
+	'RECYCLER' => 1,
+	'Recycled' => 1,
+);
+
 sub readDirectory {
 	my $dirname = shift;
 	my @diritems = ();
@@ -647,25 +675,7 @@ sub readDirectory {
 
 		# Ignore items starting with a period on non-windows machines
 		next if $dir =~ /^\./ && (Slim::Utils::OSDetect::OS() ne 'win');
-
-		if (-d catdir($dirname, $dir)) {
-			# always ignore . and ..
-			next if $dir eq '.';
-			next if $dir eq '..';
-
-			# Bad names on a mac or a mac server
-			next if $dir eq 'Icon';  					
-			next if $dir eq 'TheVolumeSettingsFolder';
-			next if $dir eq 'Network Trash Folder';
-	
-			# Bad names on a windows server
-			next if $dir eq 'Recycled';  					
-			next if $dir eq 'RECYCLER';  					
-			next if $dir eq 'System Volume Information';
-			
-			# Bad names on a linux machine
-			next if $dir eq 'lost+found';
-		}
+		next if (exists $_ignoredItems{$dir} && -d catdir($dirname, $dir));
 		
 		# Ignore our special named files and directories
 		next if $dir =~ /^__/;  

@@ -14,6 +14,7 @@ use Slim::Utils::OSDetect;
 
 our %fonts;
 our %fonthash;
+our %fontheight;
 
 my $char0 = chr(0);
 my $ord0a = ord("\x0a");
@@ -78,7 +79,7 @@ sub string {
 			}
 
 			if (defined($cursorpos) && !$cursorend) { 
-				$cursorend = length($font->[$ord])/2; 
+				$cursorend = length($font->[$ord])/ length($font->[$ord0a]); 
 			}
 
 			$bits .= $font->[$ord] . $interspace;
@@ -96,7 +97,8 @@ sub measureText {
 	my $fontname = shift;
 	my $string = shift;
 	my $bits = string($fontname, $string);
-	my $len = length($bits)/2;
+	return 0 if (!$fontname || !$fontheight{$fontname});
+	my $len = length($bits)/($fontheight{$fontname}/8);
 	
 	return $len;
 }
@@ -139,9 +141,12 @@ sub loadFonts {
 		if ($font =~ m/(.*?).(\d)/i) {
 			$fonthash{$1}->[$2-1] = $font;
 		}
-		my $fontgrid = parseBMP($fontfiles{$font});
+		my ($fontgrid, $height) = parseBMP($fontfiles{$font});
+		$fontheight{$font} = $height - 1;
+		
 		my $fonttable = parseFont($fontgrid);
 		$fonts{$font} = $fonttable;
+		$::d_graphics && msg( "$font had height $height\n");
 	}
 	return;
 }
@@ -235,7 +240,7 @@ sub parseBMP {
 		$font[$biHeight-$i-1] = \@line;
 	}	
 
-	return \@font;
+	return (\@font, $biHeight);
 }
 
 1;

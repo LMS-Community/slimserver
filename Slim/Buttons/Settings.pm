@@ -303,7 +303,6 @@ sub setMode {
 	$params{'listRef'} = \@settingsChoices;
 	
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
-	$client->update();
 }
 
 sub volumeValue {

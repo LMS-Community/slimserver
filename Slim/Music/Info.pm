@@ -561,7 +561,7 @@ sub plainTitle {
 		
 		# directories don't get the suffixes
 		if ($title && !($type && $type eq 'dir')) {
-				$title =~ s/\.[^.]+$//;
+				$title =~ s/\.[^. ]+$//;
 		}
 	}
 

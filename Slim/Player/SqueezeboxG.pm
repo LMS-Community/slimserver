@@ -23,16 +23,7 @@ use Slim::Utils::Misc;
 
 use base qw(Slim::Player::Squeezebox);
 
-my $GRAPHICS_FRAMEBUF_SCRATCH = (0 * 280 * 2);
 my $GRAPHICS_FRAMEBUF_LIVE    = (1 * 280 * 2);
-my $GRAPHICS_FRAMEBUF_MASK    = (2 * 280 * 2);
-my $GRAPHICS_FRAMEBUF_OVERLAY = (3 * 280 * 2);
-
-my $screensize = 560;
-my $blankscreen = chr(0) x $screensize;
-my $fullscreen = chr(255) x $screensize;
-my $topRowMask = (chr(255) . chr(0)) x ($screensize / 2);
-my $bottomRowMask = (chr(0) . chr(255)) x ($screensize / 2);
 
 our $defaultPrefs = {
 	'activeFont'		=> [qw(small medium large huge)],
@@ -47,22 +38,31 @@ sub new {
 
 	my $client = $class->SUPER::new(@_);
 
-	# make sure any preferences unique to this client may not have set are set to the default
-	Slim::Utils::Prefs::initClientPrefs($client, $defaultPrefs);
-
 	return $client;
+}
+
+sub init {
+	my $client = shift;
+	# make sure any preferences unique to this client may not have set are set to the default
+	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
+	$client->SUPER::init();
 }
 
 sub vfdmodel {
 	return 'graphic-280x16';
 }
 
-sub displaySize {
-	return (280, 16);
-}
-
 sub displayWidth {
 	return 280;
+}
+
+sub bytesPerColumn {
+	return 2;
+}
+
+sub screenBytes {
+	my $client = shift;
+	return $client->bytesPerColumn() * $client->displayWidth();
 }
 
 my @brightnessMap = (0, 1, 4, 16, 30);
@@ -72,11 +72,12 @@ sub brightness {
 	my $delta = shift;
 	
 	my $brightness = $client->SUPER::brightness($delta, 1);
-	if (!defined($brightness)) { $brightness = $client->maxBrightness(); }	
+
 	if (defined($delta)) {
 		my $brightnesscode = pack('n', $brightnessMap[$brightness]);
 		$client->sendFrame('grfb', \$brightnesscode); 
 	}
+
 	return $brightness;
 }
 
@@ -141,14 +142,14 @@ sub update {
 			$lines = \@lines;
 		}
 	
-		$client->drawFrameBuf($client->render($lines));
+		$client->drawFrameBuf($client->render($lines),$lines);
 	}
 }	
 
 sub render {
 	my $client = shift;
 	my $lines = shift;
-	my $framebufID = shift || '';
+	my $frameHeader = shift || '';
 
 	my $parts;
 	
@@ -161,6 +162,7 @@ sub render {
 	my $bits = '';
 	my $otherbits = undef;
 	my $fonts = $client->fonts();
+	my $screensize = $client->screenBytes();
 	my $line1same = 1;
 	
 	# check and see if the line 1 bits have already been rendered and use those.
@@ -185,11 +187,11 @@ sub render {
 	if (!defined($parts->{overlay1bits})) {
 		if (defined($parts->{overlay1})) {
 			$parts->{overlay1bits} = Slim::Display::Graphics::string($fonts->[0], "\x00" . $parts->{overlay1});
-			$parts->{overlay1start} = 560 - length($parts->{overlay1bits});
+			$parts->{overlay1start} = $screensize - length($parts->{overlay1bits});
 			$line1same = 0;
 		} else {
 			$parts->{overlay1bits} = '';
-			$parts->{overlay1start} = 560;
+			$parts->{overlay1start} = $screensize;
 			$line1same = 0;
 		}
 	}
@@ -198,17 +200,17 @@ sub render {
 	if (!defined($parts->{overlay2bits})) {
 		if (defined($parts->{overlay2})) {
 			$parts->{overlay2bits} = Slim::Display::Graphics::string($fonts->[1], "\x00" . $parts->{overlay2});
-			$parts->{overlay2start} = 560 - length($parts->{overlay2bits});
+			$parts->{overlay2start} = $screensize - length($parts->{overlay2bits});
 		} else {
 			$parts->{overlay2bits} = '';
-			$parts->{overlay2start} = 560;
+			$parts->{overlay2start} = $screensize;
 		}
 	}
 
 	# fast bitmap assemble for scrolling and no changes - assume no other text
 	if (defined($parts->{scrolling}) && $line1same) {
-		$bits = $parts->{cache} | $framebufID . (substr($parts->{line2bits}, $parts->{offset2}, $parts->{overlay2start}) 
-			. $parts->{overlay2bits});
+		$bits = $parts->{cache} | $frameHeader . substr($parts->{line2bits}, $parts->{offset2}, $parts->{overlay2start})
+			. $parts->{overlay2bits};
 		return \$bits;
 	}
 	
@@ -218,32 +220,34 @@ sub render {
 		my $center2 = '';
 		if (defined($parts->{center1})) {
 			$center1 = Slim::Display::Graphics::string($fonts->[0], $parts->{center1});
-			$center1 = chr(0) x (int((560-length($center1))/4)*2) . $center1;
+			$center1 = chr(0) x ( int( ($screensize-length($center1)) / ($client->bytesPerColumn()*2) )
+					      * $client->bytesPerColumn() ) . $center1;
 		}
 	
 		if (defined($parts->{center2})) {
 			$center2 = Slim::Display::Graphics::string($fonts->[1], $parts->{center2});				
-			$center2 = chr(0) x (int((560-length($center2))/4)*2) . $center2;
+			$center2 = chr(0) x ( int( ($screensize-length($center2)) / ($client->bytesPerColumn()*2) )
+					      * $client->bytesPerColumn() ) . $center2;
 		}
 		$line1same = 0;
-		$otherbits = $framebufID . substr($parts->{bits} | $center1 | $center2 | $blankscreen, 0, 560);
+		$otherbits = $frameHeader . substr($parts->{bits} | $center1 | $center2 , 0, $screensize);
 	}
 
 	# standard bitmap assemble
 	# 1st line
 	if ($parts->{line1finish} < $parts->{overlay1start}) {
-		$parts->{cache} = $framebufID . $parts->{line1bits}. chr(0) x ($parts->{overlay1start} - $parts->{line1finish}) 
+		$parts->{cache} = $frameHeader . $parts->{line1bits}. chr(0) x ($parts->{overlay1start} - $parts->{line1finish}) 
 			. $parts->{overlay1bits};
 	} else {
-		$parts->{cache} = $framebufID . substr($parts->{line1bits}, 0, $parts->{overlay1start}). $parts->{overlay1bits};
+		$parts->{cache} = $frameHeader . substr($parts->{line1bits}, 0, $parts->{overlay1start}). $parts->{overlay1bits};
 	}
 	# 2nd line
 	$parts->{offset2} = 0 unless defined $parts->{offset2};
 	if ($parts->{line2finish} < $parts->{overlay2start}) {
-		$bits = $parts->{cache} | $framebufID . $parts->{line2bits} 
+		$bits = $parts->{cache} | $frameHeader . $parts->{line2bits} 
 		    . chr(0) x ($parts->{overlay2start} - $parts->{line2finish}) . $parts->{overlay2bits};
 	} else {
-		$bits = $parts->{cache} | $framebufID . substr($parts->{line2bits}, $parts->{offset2}, $parts->{overlay2start}) 
+		$bits = $parts->{cache} | $frameHeader . substr($parts->{line2bits}, $parts->{offset2}, $parts->{overlay2start}) 
 			. $parts->{overlay2bits};
 	}
 	$bits |= $otherbits if defined $otherbits;
@@ -269,7 +273,9 @@ sub fonts {
 	}
 	
 	my $fontref = Slim::Display::Graphics::gfonthash();
-
+	
+	if (!$font) { return undef; };
+	
 	return $fontref->{$font};
 }
 	
@@ -304,7 +310,7 @@ sub sliderBar {
 		return "";
 	}
 
-	my $spaces = $width - 4;
+	my $spaces = int($width) - 4;
 	my $dots = int($value/100 * $spaces);
 	my $divider = ($midpoint/100) * ($spaces);	
 	if ($dots < 0) { $dots = 0 };
@@ -362,7 +368,6 @@ sub sliderBar {
 			}
 			if ($i > $dots) { $sym .= 'e' };
 		}
-		
 		$chart .= Slim::Display::Display::symbol($sym);
 	}
 
@@ -399,18 +404,25 @@ sub symbols {
 sub drawFrameBuf {
 	my $client = shift;
 	my $framebufref = shift;
+	my $parts = shift;
 	if ($client->opened()) {
-	
 		my $framebuf = pack('n', $GRAPHICS_FRAMEBUF_LIVE) . $$framebufref;
 		my $len = length($framebuf);
-
-		if ($len != 562) {
-			$framebuf = substr($framebuf .  $blankscreen, 0, 562);
+		if ($len != $client->screenBytes() + 2) {
+			$framebuf = substr($framebuf .  chr(0) x $client->screenBytes(), 0, $client->screenBytes() + 2);
 		}
 
 		$client->sendFrame('grfd', \$framebuf);
 	}
 }	
+
+# preformed frame header for fast scolling - contains header added by sendFrame and drawFrameBuf
+sub scrollHeader {
+	my $client = shift;
+	my $header = 'grfd' . pack('n', $GRAPHICS_FRAMEBUF_LIVE);
+
+	return pack('n', length($header) + $client->screenBytes ) . $header;
+}
 
 sub showBriefly {
 	my $client = shift;
@@ -426,7 +438,8 @@ sub showBriefly {
 		$duration = 1;
 	}
 
-	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $duration,\&update)
+	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $duration,\&update);
+	$client->animating(1);
 }
 
 # push the old screen off the left side
@@ -441,7 +454,7 @@ sub pushLeft {
 	my $allbits = $$startbits . $$endbits;
 
 	$client->killAnimation();
-	$client->pushUpdate([\$allbits, 0, $screensize / 8, $screensize,  0.025]);
+	$client->pushUpdate([\$allbits, 0, $client->screenBytes() / 8, $client->screenBytes(),  0.025]);
 }
 
 # push the old lines (start1,2) off the right side
@@ -456,7 +469,7 @@ sub pushRight {
 	my $allbits = $$endbits . $$startbits;
 	
 	$client->killAnimation();
-	$client->pushUpdate([\$allbits, $screensize, 0 - $screensize / 8, 0, 0.025]);
+	$client->pushUpdate([\$allbits, $client->screenBytes(), 0 - $client->screenBytes() / 8, 0, 0.025]);
 }
 
 sub bumpRight {
@@ -485,12 +498,14 @@ sub pushUpdate {
 	my $len = length($$allbits);
 	my $screen;
 
-	$screen = substr($$allbits, $offset, $screensize);
+	$screen = substr($$allbits, $offset, $client->screenBytes());
 	
 	$client->drawFrameBuf(\$screen);
-	
 	if ($offset != $end) {
 		Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $deltatime,\&pushUpdate,[$allbits,$offset,$delta,$end,$deltatime]);
+		$client->animating(1);
+	} else {
+		$client->animating(0);
 	}
 }
 
@@ -498,25 +513,27 @@ sub bumpDown {
 	my $client = shift;
 
 	my $startbits = $client->render(Slim::Display::Display::curLines($client));
-	$startbits = substr((chr(0) . $$startbits) & $bottomRowMask, 0, $screensize);
+	$startbits = substr((chr(0) . $$startbits) & ((chr(0) . chr(255)) x ($client->screenBytes() / 2)), 0, $client->screenBytes());
 
 	$client->killAnimation();
 	
 	$client->drawFrameBuf(\$startbits);
 
-	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 0.125,\&update)
+	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 0.125,\&update);
+	$client->animating(1);
 }
 
 sub bumpUp {
 	my $client = shift;
 	my $startbits = $client->render(Slim::Display::Display::curLines($client));
-	$startbits = substr(($$startbits . chr(0)) & $bottomRowMask, 1, $screensize);
+	$startbits = substr(($$startbits . chr(0)) & ((chr(0) . chr(255)) x ($client->screenBytes() / 2)), 1, $client->screenBytes());
 	
 	$client->killAnimation();
 
 	$client->drawFrameBuf(\$startbits);
 
-	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 0.125,\&update)
+	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 0.125,\&update);
+	$client->animating(1);
 }
 
 
@@ -544,28 +561,38 @@ sub scrollBottom {
 	my $line2bits = Slim::Display::Graphics::string($fonts->[1], $parts->{line2}) || '';
 	my $overlay2bits = Slim::Display::Graphics::string($fonts->[1], $parts->{overlay2}) || '';
 
-	if ($rate && ((length($line2bits) + length($overlay2bits)) > $screensize)) {
+	if ($rate && ((length($line2bits) + length($overlay2bits)) > $client->screenBytes() )) {
 
 		my $interspaceBits = Slim::Display::Graphics::string($fonts->[1], $interspace) || '';
 
 		$parts->{line2} .= $interspace . $parts->{line2};
 		$parts->{endscroll2} = length($line2bits) + length($interspaceBits);
-		$parts->{scroll2} = 2 * $pixels;
+		$parts->{scroll2} = $client->bytesPerColumn() * $pixels;
 		$parts->{offset2} = 0;
 
-		$parts->{pauseInt} = $pause;
-		$parts->{pauseUntil} = Time::HiRes::time() + $pause;
-		$parts->{updateTime} = 0;
 		$parts->{updateInt} = 0.5; # update at least twice a second
-		$parts->{deltaTime} = $rate;
+		$parts->{pauseInt} = $pause;
+		$parts->{updateTime} = Time::HiRes::time();
+		$parts->{pauseUntil} = $parts->{updateTime} + $pause;
+		$parts->{refresh} = $rate;
+		$parts->{refreshTime} = $parts->{updateTime};
+		$parts->{scrollHeader} = $client->scrollHeader;
+		$parts->{scrollFrameSize} = length($client->scrollHeader) + $client->screenBytes;
 		
 		$client->killAnimation();
 		$client->scrollUpdate($parts);
+		$client->animating(1);
 
 	} else {
-		$client->update($parts);
+		$client->refresh($parts);
 	}
 }
+
+
+sub refresh {
+	shift->update(shift);
+}
+
 
 sub scrollUpdate {
 	my $client = shift;
@@ -573,64 +600,61 @@ sub scrollUpdate {
 	
 	my $timenow = Time::HiRes::time();
 
+	# implement drawFrameBuf in here to avoid string copies
+	my $framebuf = $client->render($parts, $parts->{scrollHeader} );
+	if ($client->tcpsock && $client->tcpsock->connected && length($$framebuf) == $parts->{scrollFrameSize}) {
+		Slim::Networking::Select::writeNoBlock($client->tcpsock, $framebuf);
+	}
+
 	if ($timenow > $parts->{updateTime}) {
-        # get the latest content from line every updateInt
-		$parts->{updateTime} = $timenow + $parts->{updateInt};
+		# get the latest content from line every updateInt
+		# can take some time so do after updating screen
+		$parts->{updateTime} += $parts->{updateInt};
 
 		my $linefunc  = $client->lines();
 		my $parts1 = $client->parseLines(&$linefunc($client));
 
-		my $oldline1 = $parts1->{line1};
-		my $newline1 = $parts->{line1};
+		my $oldline1 = $parts->{line1};
+		my $newline1 = $parts1->{line1};
 	
 		if (defined($oldline1) && defined($newline1) && $oldline1 ne $newline1) {
 			$parts->{line1} = $newline1;
 			$parts->{line1bits} = undef;
 		}
 	
-		my $newoverlay = $parts1->{overlay1};
 		my $oldoverlay = $parts->{overlay1};
-	
+		my $newoverlay = $parts1->{overlay1};	
+
 		if (defined($oldoverlay) && defined($newoverlay) && $oldoverlay ne $newoverlay) {
 			$parts->{overlay1} = $newoverlay;
 			$parts->{overlay1bits} = undef;
 		}
 	}
-	
-	# implement drawFrameBuf in here to avoid string copies
-	my $framebuf = $client->render($parts, pack('n', $GRAPHICS_FRAMEBUF_LIVE));
-	if ($client->tcpsock && $client->tcpsock->connected && length($$framebuf) == 562) {
-		$client->sendFrame('grfd', \$$framebuf);
-	}
 
 	if ($timenow < $parts->{pauseUntil}) {
 		# slow timer for updates during scrolling pause
-		Slim::Utils::Timers::setTimer($client, $timenow + $parts->{updateInt}, \&scrollUpdate, $parts);
+		$parts->{refreshTime} = $parts->{updateTime};
+		Slim::Utils::Timers::setTimer($client, $parts->{updateTime}, \&scrollUpdate, $parts);
 
 	} else {
 
-		$parts->{offset2} += $parts->{scroll2};
+		# update refresh time and skip frame if running behind actual timenow
+		do {
+			$parts->{offset2} += $parts->{scroll2};
+			$parts->{refreshTime} += $parts->{refresh};
+		} while ($parts->{refreshTime} < Time::HiRes::time() );
+
 		$parts->{scrolling} = 1;
 
 		if ($parts->{offset2} > $parts->{endscroll2}) {
 			$parts->{offset2} = 0;
-			$parts->{pauseUntil} = $timenow + $parts->{pauseInt};
-			$parts->{scrolling} = undef;
+			if ($parts->{pauseInt} > 0) {
+				$parts->{pauseUntil} = $parts->{refreshTime} + $parts->{pauseInt};
+				$parts->{scrolling} = undef;
+			}
 		}
 		# fast timer during scroll
-		Slim::Utils::Timers::setTimer($client, $timenow + $parts->{deltaTime}, \&scrollUpdate, $parts);
-	}
-}
-
-sub animating {
-	my $client = shift;
-
-	if ((Slim::Utils::Timers::pendingTimers($client, \&pushUpdate) > 0) || 
-		(Slim::Utils::Timers::pendingTimers($client, \&scrollUpdate) > 0) || 
-	    (Slim::Utils::Timers::pendingTimers($client, \&update) > 0)) {
-		return 1;
-	} else {
-		return 0;
+		Slim::Utils::Timers::setTimer($client, $parts->{refreshTime}, \&scrollUpdate, $parts);
 	}
 }
 
@@ -641,6 +665,7 @@ sub killAnimation {
 	Slim::Utils::Timers::killTimers($client, \&pushUpdate);
 	Slim::Utils::Timers::killTimers($client, \&update);
 	Slim::Utils::Timers::killTimers($client, \&scrollUpdate);
+	$client->animating(0);
 }
 
 sub endAnimation {
@@ -650,8 +675,3 @@ sub endAnimation {
 }
 
 1;
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

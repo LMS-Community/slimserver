@@ -146,11 +146,7 @@ sub init {
 				sub { uc(shift->macaddress) },
 				sub {
 					my $client = shift;
-					
-					# send blank i2cc frame to ensure we get a recent STAT update from the client
-					# and thus a real time signal_strength update
-					
-					$client->sendFrame('i2cc');
+
 					return ($client->signalStrength() . '%') 
 				},
 			],
@@ -257,6 +253,7 @@ sub mainExitHandler {
 	my ($client,$exittype) = @_;
 	$exittype = uc($exittype);
 
+	Slim::Utils::Timers::killTimers($client,\&updateSignalStrength);
 	if ($exittype eq 'LEFT') {
 
 		Slim::Buttons::Common::popModeRight($client);
@@ -279,6 +276,7 @@ sub mainExitHandler {
 			my @nextList = @player_list;
 			push @nextList, 'PLAYER_SIGNAL_STRENGTH' if defined($client->signalStrength());
 			$nextParams{'listRef'} = \@nextList;
+			Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&updateSignalStrength);
 		}
 
 		Slim::Buttons::Common::pushModeLeft($client, "INPUT.List", \%nextParams);
@@ -309,7 +307,17 @@ sub setMode {
 	my %params = %{$menuParams{'main'}};
 	$params{'valueRef'} = \$current{$client}{main};
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
+}
+
+sub updateSignalStrength {
+	my $client = shift;				
+
+	# send blank i2cc frame to ensure we get a recent STAT update from the client
+	# and thus a real time signal_strength update
+	
+	$client->sendFrame('i2cc');
 	$client->update();
+	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&updateSignalStrength);
 }
 
 sub getFunctions {

@@ -11,10 +11,10 @@ package Slim::Player::SoftSqueeze;
 # GNU General Public License for more details.
 
 use strict;
-use Slim::Player::Squeezebox;
+use Slim::Player::Squeezebox2;
 use Slim::Utils::Prefs;
 
-use base qw(Slim::Player::Squeezebox);
+use base qw(Slim::Player::Squeezebox2);
 
 sub new {
         my $class = shift;
@@ -41,6 +41,16 @@ sub hasDigitalOut {
 
 sub needsUpgrade {
 	return 0;
+}
+
+sub formats {
+        my $client = shift;
+
+        return ('aif','wav','mp3');
+}
+
+sub maxTransitionDuration {
+        return 0;
 }
 
 1;

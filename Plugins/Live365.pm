@@ -641,9 +641,12 @@ sub getPlaylist {
 		$client->killAnimation();
 		Slim::Music::Info::setTitle( $url, $newTitle);
 		
-		$::d_plugins && msg( "Live365 setting songtime: $nextRefresh\n" );
+		#XXX Fixme $client->songDuration doesn't exist any more, need
+		# a different way to set the time. perhaps changing setTitle above
+		# to setInfo and accept an args hash.
+		#$::d_plugins && msg( "Live365 setting songtime: $nextRefresh\n" );
 		$client->remoteStreamStartTime(Time::HiRes::time());
-		$client->songduration($nextRefresh) if $nextRefresh;
+		#$client->songduration($nextRefresh) if $nextRefresh;
 	}
 
 	if ($nextRefresh) {

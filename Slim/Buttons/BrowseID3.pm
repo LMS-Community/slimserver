@@ -72,7 +72,7 @@ sub init {
 			my $inc = shift || 1;
 			my $count = scalar @{browseID3dir($client)};
 			if ($count < 2) {
-				$client->bumpUp();
+				$client->bumpUp() if ($button !~ /repeat/);
 			} else {
 				$inc = ($inc =~ /\D/) ? -1 : -$inc;
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, browseID3dirIndex($client));
@@ -88,7 +88,7 @@ sub init {
 			my $inc = shift || 1;
 			my $count = scalar @{browseID3dir($client)};
 			if ($count < 2) {
-				$client->bumpDown();
+				$client->bumpDown() if ($button !~ /repeat/);
 			} else {
 				if ($inc =~ /\D/) {$inc = 1}
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, browseID3dirIndex($client));

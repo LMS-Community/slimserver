@@ -586,19 +586,19 @@ sub execute {
 		} elsif ($p0 eq "pause") {
 
 			if (defined($p1)) {
-				if ($p1 && $client->playmode eq "play") {
+				if ($p1 && Slim::Player::Source::playmode($client) eq "play") {
 					Slim::Player::Source::playmode($client, "pause");
-				} elsif (!$p1 && $client->playmode eq "pause") {
+				} elsif (!$p1 && Slim::Player::Source::playmode($client) eq "pause") {
 					Slim::Player::Source::playmode($client, "resume");
-				} elsif (!$p1 && $client->playmode eq "stop") {
+				} elsif (!$p1 && Slim::Player::Source::playmode($client) eq "stop") {
 					Slim::Player::Source::playmode($client, "play");
 				}
 			} else {
-				if ($client->playmode eq "pause") {
+				if (Slim::Player::Source::playmode($client) eq "pause") {
 					Slim::Player::Source::playmode($client, "resume");
-				} elsif ($client->playmode eq "play") {
+				} elsif (Slim::Player::Source::playmode($client) eq "play") {
 					Slim::Player::Source::playmode($client, "pause");
-				} elsif ($client->playmode eq "stop") {
+				} elsif (Slim::Player::Source::playmode($client) eq "stop") {
 					Slim::Player::Source::playmode($client, "play");
 				}
 			}
@@ -622,9 +622,9 @@ sub execute {
 		} elsif ($p0 eq "mode") {
 
 			if (!defined($p1) || $p1 eq "?") {
-				$p1 = $client->playmode;
+				$p1 = Slim::Player::Source::playmode($client);
 			} else {
-				if ($client->playmode eq "pause" && $p1 eq "play") {
+				if (Slim::Player::Source::playmode($client) eq "pause" && $p1 eq "play") {
 					Slim::Player::Source::playmode($client, "resume");
 				} else {
 					Slim::Player::Source::playmode($client, $p1);
@@ -971,7 +971,7 @@ sub execute {
 						catfile(Slim::Utils::Prefs::get('playlistdir'),
 						$savename . ".m3u"),
 						1,
-						Slim::Player::Source::currentSongIndex($client),
+						Slim::Player::Source::playingSongIndex($client),
 					);
 				}
 			
@@ -1085,7 +1085,7 @@ sub execute {
 			} elsif (($p1 eq "jump") || ($p1 eq "index")) {
 
 				if ($p2 eq "?") {
-					$p2 = Slim::Player::Source::currentSongIndex($client);
+					$p2 = Slim::Player::Source::playingSongIndex($client);
 				} else {
 					Slim::Player::Source::jumpto($client, $p2);
 				}
@@ -1118,7 +1118,7 @@ sub execute {
 
 				my $zapped   = catfile(Slim::Utils::Prefs::get('playlistdir'), string('ZAPPED_SONGS') . '.m3u');
 				my $zapsong  = Slim::Player::Playlist::song($client,$p2);
-				my $zapindex = $p2 || Slim::Player::Source::currentSongIndex($client);;
+				my $zapindex = $p2 || Slim::Player::Source::playingSongIndex($client);;
  
 				#  Remove from current playlist
 				if (Slim::Player::Playlist::count($client) > 0) {
@@ -1572,7 +1572,7 @@ sub load_done {
 
 	# dont' keep current song on loading a playlist
 	Slim::Player::Playlist::reshuffle($client,
-		($client->playmode eq "play" || ($client->power && $client->playmode eq "pause")) ? 0 : 1
+		(Slim::Player::Source::playmode($client) eq "play" || ($client->power && Slim::Player::Source::playmode($client) eq "pause")) ? 0 : 1
 	);
 
 	if (defined($index)) {
@@ -1587,7 +1587,7 @@ sub load_done {
 sub insert_done {
 	my ($client, $listsize, $size, $callbackf, $callbackargs) = @_;
 
-	my $playlistIndex = Slim::Player::Source::currentSongIndex($client)+1;
+	my $playlistIndex = Slim::Player::Source::streamingSongIndex($client)+1;
 	my @reshuffled;
 
 	if (Slim::Player::Playlist::shuffle($client)) {

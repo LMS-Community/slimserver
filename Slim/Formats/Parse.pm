@@ -86,27 +86,18 @@ sub _updateMetaData {
 	my $ds    = Slim::Music::Info::getCurrentDataStore();
 	my $track = $ds->objectForUrl($entry);
 
-	if ($track) {
-
-		if (!Slim::Music::Info::isKnownType($track)) {
-
-			$::d_parse && Slim::Utils::Misc::msg("    entry: $entry not known type\n"); 
-
-			# Track will work because we stringify to the url.
-			Slim::Music::Info::setContentType($track, 'mp3');
-		}
-
-	} else {
-
-		$::d_parse && Slim::Utils::Misc::msg("    entry: $entry forcing type to mp3\n"); 
-		Slim::Music::Info::setContentType($entry, 'mp3');
-	}
+	my $attributes = {};
 
 	# Update title MetaData only if its not a local file with Title information already cached.
 	if (defined($title) && !(Slim::Music::Info::cacheItem($entry, 'TITLE') && Slim::Music::Info::isFileURL($entry))) {
-		Slim::Music::Info::setTitle($entry, $title);
-		$title = undef;
-	}
+		$attributes->{TITLE} = $title;
+	}	
+
+	$ds->updateOrCreate({
+		'url' => $entry,
+		'attributes' => $attributes,
+		'readTags' => 1
+	});
 }
 
 sub readM3U {

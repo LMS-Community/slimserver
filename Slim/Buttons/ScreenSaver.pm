@@ -59,7 +59,7 @@ sub screenSaver {
 	assert($mode);
 	
 	# some variables, so save us calling the same functions multiple times.
-	my $saver = $client->playmode eq 'play' ? Slim::Utils::Prefs::clientGet($client,'screensaver') : Slim::Utils::Prefs::clientGet($client,'idlesaver');
+	my $saver = Slim::Player::Source::playmode($client) eq 'play' ? Slim::Utils::Prefs::clientGet($client,'screensaver') : Slim::Utils::Prefs::clientGet($client,'idlesaver');
 	my $dim = Slim::Utils::Prefs::clientGet($client,'idleBrightness');
 	my $timeout = Slim::Utils::Prefs::clientGet($client,"screensavertimeout");
 	my $irtime = Slim::Hardware::IR::lastIRTime($client);

@@ -237,30 +237,6 @@ rate() - type: float
 
 =item
 
-songtotalbytes() - type: float
-
-	length of this song in bytes
-
-=item
-
-songduration() - type: float
-
-	song length in seconds
-
-=item
-
-songoffset() - type: int
-
-	offset in bytes to beginning of song in file
-
-=item
-
-songblockalign() - type: int
-
-	block alignment of samples in file
-
-=item
-
 songBytes	() - type: int
 
 	number of bytes read from the current song
@@ -685,13 +661,12 @@ sub new {
 	$client->[27] = undef; # prevline2
 	$client->[28] = []; # playlist
 	$client->[29] = []; # shufflelist
-	$client->[30] = undef; # currentsong
+	$client->[30] = []; # currentsongqueue
 	$client->[31] = undef; # playmode
 	$client->[32] = undef; # rate
+	$client->[33] = 0; # bufferThreshold
+	$client->[34] = 0; # visualizer
 
-	$client->[34] = undef; # songtotalbytes
-	$client->[35] = undef; # songduration
-	$client->[36] = undef; # songoffset
 	$client->[37] = 0; # bytesReceived
 	$client->[38] = undef; # currentplayingsong
 	$client->[39] = undef; # currentSleepTime
@@ -740,14 +715,15 @@ sub new {
 	$client->[83] = undef; # settingsSelection
 	$client->[84] = undef; # songBytes
 	$client->[85] = 0; # pauseTime
-	$client->[86] = 1; # songblockalign
 	$client->[87] = 0; # bytesReceivedOffset
 	$client->[88] = 0; # buffersize
 	$client->[89] = 0; # streamBytes
 	$client->[90] = undef; # trickSegmentRemaining
 	$client->[91] = undef; # currentPlaylist
 	$client->[92] = undef; # currentPlaylistModified
-
+	$client->[93] = undef; # songElapsedSeconds
+	$client->[94] = 0; #animating
+	
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
 	$client->lastircode(0);
@@ -773,9 +749,7 @@ sub new {
 	$client->playmode("stop");
 	$client->rate(1);
 
-	$client->currentsong(0);
 	$client->songBytes(0);
-	$client->songtotalbytes(0);
 	$client->currentplayingsong("");
 
 	$client->readytosync(0);
@@ -791,9 +765,6 @@ sub new {
 
 	$clientHash{$id} = $client;
 
-	# make sure any preferences this client may not have set are set to the default
-	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
-
 	$client->paddr($paddr);
 
 	# Tell the xPL module that a new client has connected
@@ -801,6 +772,13 @@ sub new {
 
 	return $client;
 }
+
+sub init {
+	my $client = shift;
+	# make sure any preferences unique to this client may not have set are set to the default
+	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
+}
+
 
 ###################
 # Accessors for the list of known clients
@@ -932,13 +910,16 @@ sub initial_add_done {
 		
 		$currsong = 0;
 		
-		Slim::Player::Source::currentSongIndex($client,$currsong);
+		Slim::Player::Source::streamingSongIndex($client,$currsong);
 		
 	} elsif (Slim::Player::Playlist::shuffle($client) == 2) {
 		# reshuffle set this properly, for album shuffle
-		# no need to move the currentSongIndex
+		# no need to move the streamingSongIndex
 	} else {
-		Slim::Player::Source::currentSongIndex($client,$currsong);
+		if ($currsong >= Slim::Player::Playlist::count($client)) {
+			$currsong = Slim::Player::Playlist::count($client) - 1;
+		}
+		Slim::Player::Source::streamingSongIndex($client,$currsong);
 	}
 	
 	Slim::Utils::Prefs::clientSet($client,'currentSong',$currsong);
@@ -1059,7 +1040,6 @@ sub pitch {
 
 # stub out display functions, some players may not have them.
 sub update {}
-sub animating {}
 sub killAnimation {}
 sub endAnimation {}
 sub showBriefly {}
@@ -1086,6 +1066,8 @@ sub resume {
 	}
 	$client->pauseTime(undef);
 }
+
+sub flush {}
 
 #
 sub string {
@@ -1118,6 +1100,14 @@ sub doubleString {
 
 	# Otherwise return using the failsafe.
 	return Slim::Utils::Strings::doubleString($string, $failsafeLanguage);
+}
+
+sub maxTransitionDuration {
+	return 0;
+}
+
+sub reportsTrackStart {
+	return 0;
 }
 
 sub param {
@@ -1268,9 +1258,11 @@ sub shufflelist {
 	@_ ? ($i = shift) : return $r->[29];
 	@_ ? ($r->[29]->[$i] = shift) : $r->[29]->[$i];
 }
-sub currentsong {
+sub currentsongqueue {
 	my $r = shift;
-	@_ ? ($r->[30] = shift) : $r->[30];
+	my $i;
+	@_ ? ($i = shift) : return $r->[30];
+	@_ ? ($r->[30]->[$i] = shift) : $r->[30]->[$i];
 }
 sub playmode {
 	my $r = shift;
@@ -1281,20 +1273,14 @@ sub rate {
 	@_ ? ($r->[32] = shift) : $r->[32];
 }
 
+sub bufferThreshold {
+	my $r = shift;
+	@_ ? ($r->[33] = shift) : $r->[33];
+}
 
-
-
-sub songtotalbytes {
-	my $r = Slim::Player::Sync::masterOrSelf(shift);
+sub visualizer {
+	my $r = shift;
 	@_ ? ($r->[34] = shift) : $r->[34];
-}
-sub songduration {
-	my $r = Slim::Player::Sync::masterOrSelf(shift);
-	@_ ? ($r->[35] = shift) : $r->[35];
-}
-sub songoffset {
-	my $r = Slim::Player::Sync::masterOrSelf(shift);
-	@_ ? ($r->[36] = shift) : $r->[36];
 }
 
 sub bytesReceived {
@@ -1518,11 +1504,6 @@ sub pauseTime {
 	@_ ? ($r->[85] = shift) : $r->[85];
 }
 
-sub songblockalign {
-	my $r = shift;
-	@_ ? ($r->[86] = shift) : $r->[86];
-}
-
 sub bytesReceivedOffset {
 	my $r = shift;
 	@_ ? ($r->[87] = shift) : $r->[87];
@@ -1550,6 +1531,16 @@ sub currentPlaylist {
 sub currentPlaylistModified {
 	my $r = shift;
 	@_ ? ($r->[92] = shift) : $r->[92];
+}
+
+sub songElapsedSeconds {
+	my $r = shift;
+	@_ ? ($r->[93] = shift) : $r->[93];
+}
+
+sub animating {
+	my $r = shift;
+	@_ ? ($r->[94] = shift) : $r->[94];
 }
 
 1;

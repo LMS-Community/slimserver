@@ -1,5 +1,4 @@
-# $Id$
-#
+﻿#
 # This tab-delimited file contains all the text strings used in SlimServer
 # The format should be self explanatory. To submit a new language, or a better
 # translation of an existing string, please email your changes to
@@ -154,6 +153,19 @@ SQUEEZEBOX_HOME
 	NO	Squeezebox Hjem
 	PT	Início Squeezebox
 	SE	Squeezebox huvudmeny
+
+SQUEEZEBOX2_HOME
+	DE	Squeezebox2 Hauptmenü
+	DK	Squeezebox2 Hovedmenu
+	EN	Squeezebox2 Home
+	ES	Inicio Squeezebox2
+	FI	Squeezebox2 Alkuun
+	FR	Menu Squeezebox2
+	JP	Squeezebox2 �ーム
+	NL	Squeezebox2 Hoofdmenu
+	NO	Squeezebox2 Hjem
+	PT	Início Squeezebox2
+	SE	Squeezebox2 huvudmeny
 
 SOFTSQUEEZE_HOME
 	DE	SoftSqueeze Hauptmenü
@@ -835,6 +847,9 @@ SLIMP3
 SQUEEZEBOX
 	EN	Squeezebox
 
+SQUEEZEBOX2
+	EN	Squeezebox2
+
 SOFTSQUEEZE
 	EN	SoftSqueeze
 	ES	SoftSqueeze
@@ -880,6 +895,20 @@ WELCOME_TO_SQUEEZEBOX
 	NO	Velkommen til Squeezebox
 	PT	Bem-vindo ao Squeezebox
 	SE	Välkommen till Squeezebox
+
+WELCOME_TO_SQUEEZEBOX2
+	DE	Willkommen bei Squeezebox2
+	DK	Velkommen til Squeezebox2
+	EN	Welcome to Squeezebox2
+	ES	Bienvenido al Squeezebox2
+	FI	Squeezebox2 Tervetuloa!
+	FR	Bienvenue sur la Squeezebox2
+	IT	Benvenuto a Squeezebox2
+	JP	Squeezebox2へようこそ
+	NL	Welkom bij Squeezebox2
+	NO	Velkommen til Squeezebox2
+	PT	Bem-vindo ao Squeezebox2
+	SE	Välkommen till Squeezebox2
 
 WELCOME_TO_SOFTSQUEEZE
 	DE	Willkommen bei SoftSqueeze
@@ -1952,6 +1981,33 @@ SETUP_MP3SILENCEPRELUDE_DESC
 	FR	Certains récepteurs audio et convertisseurs numérique/analogique nécessitent un délai avant de pouvoir commencer le décodage d'une source MP3. Vous pouvez définir la durée en secondes de ce délai après l'appui sur la touche lecture. La valeur par défaut est 0, une valeur de 0.25 seconde est recommandée pour la plupart des récepteurs.
 	JP	いくつかのレシーバーやD/Aコンバーターは、MP3を再生する際にデジタル信号をデコードし始めるのに時間がかかることがあります。どれくらいのスタートアップタイムが必要か、秒数で入力してください。標準は0になっています。0.25秒あればほとんどの機器で対応可能です。
 	SE	Vissa förstärkare och D/A-omvandlare behöver lite extra tid för att inleda avkodning av MP3-ljud. Du kan ange hur lång fördröjning (i sekunder) som som ska gälla från det att du trycker Play tills det att MP3-ljud börjar sändas. Standard-värdet är 0. Värdet 0.25 fungerar bra med många förstärkare.
+
+SETUP_TRANSITIONTYPE
+	EN	Transition
+
+SETUP_TRANSITIONTYPE_DESC
+	EN	Squeezebox2 can gradually transition between songs, either by crossfading between them, or by fading songs in or out. Choose the type of transition you would like.
+
+SETUP_TRANSITIONDURATION
+	EN	Transition duration
+
+SETUP_TRANSITIONDURATION_DESC
+	EN	Enter the amount of time to take to transition between songs, in seconds.
+
+TRANSITION_NONE
+	EN	None
+
+TRANSITION_CROSSFADE
+	EN	Crossfade
+
+TRANSITION_FADE_IN
+	EN	Fade in
+
+TRANSITION_FADE_OUT
+	EN	Fade out
+
+TRANSITION_FADE_IN_OUT
+	EN	Fade in and out
 
 SETUP_TITLEFORMATCURR
 	DE	Aktuelles Titelformat
@@ -7444,6 +7500,19 @@ SQUEEZEBOX_MUSIC_PLAYER
 	NO	Squeezebox Musik Player
 	PT	Leitor de Música Squeezebox
 	SE	Squeezebox musikspelare
+
+SQUEEZEBOX2_MUSIC_PLAYER
+	DE	Squeezebox2 Musik Player
+	DK	Squeezebox2-afspiller
+	EN	Squeezebox2 Music Player
+	ES	Reproductor de Música Squeezebox2 
+	FI	Squeezebox2 soitin
+	FR	Platine Squeezebox2
+	JP	Squeezebox2プレーヤー
+	NL	Squeezebox2 Muziek Speler
+	NO	Squeezebox2 Musik Player
+	PT	Leitor de Música Squeezebox2
+	SE	Squeezebox2 musikspelare
 
 SOFTSQUEEZE_MUSIC_PLAYER
 	DE	SoftSqueeze Musik Player

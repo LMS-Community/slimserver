@@ -33,7 +33,7 @@ sub song {
 	}
 
 	if (!defined($index)) {
-		$index = Slim::Player::Source::currentSongIndex($client);
+		$index = Slim::Player::Source::playingSongIndex($client);
 	}
 
 	if (defined ${shuffleList($client)}[$index]) {
@@ -98,7 +98,7 @@ sub copyPlaylist {
 	@{$toclient->playlist}    = @{$fromclient->playlist};
 	@{$toclient->shufflelist} = @{$fromclient->shufflelist};
 
-	$toclient->currentsong(	$fromclient->currentsong);	
+	Slim::Player::Source::streamingSongIndex($toclient, Slim::Player::Source::streamingSongIndex($fromclient));
 
 	Slim::Utils::Prefs::clientSet($toclient, "shuffle", Slim::Utils::Prefs::clientGet($fromclient, "shuffle"));
 	Slim::Utils::Prefs::clientSet($toclient, "repeat", Slim::Utils::Prefs::clientGet($fromclient, "repeat"));
@@ -113,14 +113,27 @@ sub removeTrack {
 	my $stopped = 0;
 	my $oldmode = Slim::Player::Source::playmode($client);
 	
-	if ($tracknum == Slim::Player::Source::currentSongIndex($client)) {
+	if (Slim::Player::Source::playingSongIndex($client) == $tracknum) {
+		$::d_source && msg("Removing currently playing track.\n");
 
 		Slim::Player::Source::playmode($client, "stop");
 		$stopped = 1;
 
-	} elsif ($tracknum < Slim::Player::Source::currentSongIndex($client)) {
+	} elsif (Slim::Player::Source::streamingSongIndex($client) == $tracknum) {
+		# If we're removing the streaming song (which is different from
+		# the playing song), get the client to flush out the current song
+		# from its audio pipeline.
+		$::d_source && msg("Removing currently streaming track.\n");
+		Slim::Player::Source::flushStreamingSong($client);
 
-		Slim::Player::Source::currentSongIndex($client,Slim::Player::Source::currentSongIndex($client) - 1);
+	} else {
+
+		my $queue = $client->currentsongqueue();
+		for my $song (@$queue) {
+			if ($tracknum < $song->{index}) {
+				$song->{index}--;
+			}
+		}
 	}
 	
 	splice(@{playList($client)}, $playlistIndex, 1);
@@ -139,10 +152,18 @@ sub removeTrack {
 	
 	@{$client->shufflelist} = @reshuffled;
 
-	if ($stopped && ($oldmode eq "play")) {
-		Slim::Player::Source::jumpto($client, $tracknum);
+	if ($stopped) {
+		my $songcount = scalar(@{playList($client)});
+		if ($tracknum >= $songcount) {
+			$tracknum = $songcount - 1;
+		}
+		if ($oldmode eq "play") {
+			Slim::Player::Source::jumpto($client, $tracknum);
+		} else {
+			Slim::Player::Source::streamingSongIndex($client, $tracknum, 1);
+		}
 	}
-	
+
 	refreshPlaylist($client,Slim::Buttons::Playlist::browseplaylistindex($client));
 }
 
@@ -161,7 +182,8 @@ sub removeMultipleTracks {
 	my $stopped = 0;
 	my $oldmode = Slim::Player::Source::playmode($client);
 	
-	my $curtrack = ${shuffleList($client)}[Slim::Player::Source::currentSongIndex($client)];
+	my $playingtrack = ${shuffleList($client)}[Slim::Player::Source::playingSongIndex($client)];
+	my $streamingtrack = ${shuffleList($client)}[Slim::Player::Source::streamingSongIndex($client)];
 
 	my $i = 0;
 	my $oldcount = 0;
@@ -175,9 +197,12 @@ sub removeMultipleTracks {
 		my $thistrack=${playList($client)}[$i];
 		if (exists($songlistentries{$thistrack})) {
 			splice(@{playList($client)}, $i, 1);
-			if ($curtrack == $oldcount) {
+			if ($playingtrack == $oldcount) {
 				Slim::Player::Source::playmode($client, "stop");
 				$stopped = 1;
+			}
+			elsif ($streamingtrack == $oldcount) {
+				Slim::Player::Source::flushStreamingSong($client);
 			}
 		} else {
 			$oldToNew{$oldcount}=$i;
@@ -189,19 +214,25 @@ sub removeMultipleTracks {
 	my @reshuffled;
 	my $newtrack;
 	my $getnext = 0;
+	my %oldToNewShuffled = ();
+	my $j = 0;
 	# renumber all of the entries in the shuffle list with their 
 	# new positions, also get an update for the current track, if the 
 	# currently playing track was deleted, try to play the next track 
 	# in the new list
-	for my $oldnum (@{shuffleList($client)}) {
-		if ($oldnum == $curtrack) { $getnext=1; }
+
+	while ($j <= $#{shuffleList($client)}) {
+		my $oldnum = shuffleList($client)->[$j];
+		if ($oldnum == $playingtrack) { $getnext=1; }
 		if (exists($oldToNew{$oldnum})) { 
 			push(@reshuffled,$oldToNew{$oldnum});
+			$oldToNewShuffled{$j} = $#reshuffled;
 			if ($getnext) {
 				$newtrack=$#reshuffled;
 				$getnext=0;
 			}
 		}
+		$j++;
 	}
 
 	# if we never found a next, we deleted eveything after the current
@@ -214,8 +245,12 @@ sub removeMultipleTracks {
 
 	if ($stopped && ($oldmode eq "play")) {
 		Slim::Player::Source::jumpto($client,$newtrack);
-	} else {
-		Slim::Player::Source::currentSongIndex($client,$newtrack);
+	}
+	else {
+		my $queue = $client->currentsongqueue();
+		for my $song (@{$queue}) {
+			$song->{index} = $oldToNewShuffled{$song->{index}} || 0;
+		}
 	}
 
 	refreshPlaylist($client);
@@ -269,21 +304,33 @@ sub moveSong {
 			$listref = Slim::Player::Playlist::playList($client);
 		}
 
-		if (defined $listref) {
+		if (defined $listref) {		
 
 			my @item = splice @{$listref},$src, $size;
 
-			splice @{$listref},$dest, 0, @item;
+			splice @{$listref},$dest, 0, @item;	
 
-			my $currentSong = Slim::Player::Source::currentSongIndex($client);
+			my $playingIndex = Slim::Player::Source::playingSongIndex($client);
+			my $streamingIndex = Slim::Player::Source::streamingSongIndex($client);
+			# If we're streaming a different song than we're playing and
+			# moving either to or from the streaming song position, flush
+			# the streaming song, because it's no longer relevant.
+			if (($playingIndex != $streamingIndex) &&
+				(($streamingIndex == $src) || ($streamingIndex == $dest) ||
+				 ($playingIndex == $src) || ($playingIndex == $dest))) {
+				Slim::Player::Source::flushStreamingSong($client);
+			}
 
-			if ($src == $currentSong) {
 
-				Slim::Player::Source::currentSongIndex($client,$dest);
-
-			} elsif ($dest == $currentSong) {
-
-				Slim::Player::Source::currentSongIndex($client,($dest>$src)? $currentSong - 1 : $currentSong + 1);
+			my $queue = $client->currentsongqueue();
+			for my $song (@$queue) {
+				my $index = $song->{index};
+				if ($src == $index) {
+					$song->{index} = $dest;
+				}
+				elsif (($dest == $index) || (($src < $index) != ($dest < $index))) {
+					$song->{index} = ($dest>$src)? $index - 1 : $index + 1;
+				}
 			}
 
 			Slim::Player::Playlist::refreshPlaylist($client);
@@ -326,18 +373,25 @@ sub reshuffle {
 
 		@{$listRef} = ();
 
-		Slim::Player::Source::currentSongIndex($client, 0);
+		Slim::Player::Source::streamingSongIndex($client, 0);
 		refreshPlaylist($client);
 
 		return;
 	}
 
-	my $realsong = ${$listRef}[Slim::Player::Source::currentSongIndex($client)];
+	my $realsong = ${$listRef}[Slim::Player::Source::playingSongIndex($client)];
 
 	if (!defined($realsong) || $dontpreservecurrsong) {
 		$realsong = -1;
 	} elsif ($realsong > $songcount) {
 		$realsong = $songcount;
+	}
+
+	my @realqueue;
+	my $song;
+	my $queue = $client->currentsongqueue();
+	for $song (@$queue) {
+		push @realqueue, ${$listRef}[$song->{index}];
 	}
 
 	@{$listRef} = (0 .. ($songcount - 1));
@@ -429,17 +483,26 @@ sub reshuffle {
 	} 
 	
 	for (my $i = 0; $i < $songcount; $i++) {
-
-		if ($listRef->[$i] == $realsong) {
-			Slim::Player::Source::currentSongIndex($client, $i);
-			last;
+		for (my $j = 0; $j <= $#$queue; $j++) {
+			if (defined($realqueue[$j]) && $realqueue[$j] == $listRef->[$i]) {
+				$queue->[$j]->{index} = $i;
+			}
 		}
 	}
 
-	if (Slim::Player::Source::currentSongIndex($client) >= $songcount) { 
-		Slim::Player::Source::currentSongIndex($client, 0);
+	for $song (@$queue) {
+		if ($song->{index} >= $songcount) {
+			$song->{index} = 0;
+		}
 	}
-		
+
+	# If we just changed order in the reshuffle and we're already streaming
+	# the next song, flush the streaming song since it's probably not next.
+	if (shuffle($client) && 
+		Slim::Player::Source::playingSongIndex($client) != Slim::Player::Source::streamingSongIndex($client)) {
+		Slim::Player::Source::flushStreamingSong($client);
+	}
+
 	refreshPlaylist($client);
 }
 
@@ -475,11 +538,10 @@ sub modifyPlaylistCallback {
 
 		return if !$savecurrsong;
 
-		$::d_playlist && Slim::Utils::Misc::msg("modifyPlaylistCallback command: $command subCommand: $subCommand\n");
-
-		my @syncedclients = (Slim::Player::Sync::syncedWith($client), $client);
-		my $playlistref   = Slim::Player::Playlist::playList($client);
-		my $currsong      = (Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Source::currentSongIndex($client)];
+		my @syncedclients = Slim::Player::Sync::syncedWith($client);
+		push @syncedclients,$client;
+		my $playlistref = Slim::Player::Playlist::playList($client);
+		my $currsong = (Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Source::playingSongIndex($client)];
 
 		for my $eachclient (@syncedclients) {
 

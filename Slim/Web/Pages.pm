@@ -968,8 +968,8 @@ sub status {
 	
 		$params->{'songtime'} = int(Slim::Player::Source::songTime($client));
 
-		if (Slim::Player::Playlist::song($client)) { 
-			my $dur = $client->songduration;
+		if (Slim::Player::Source::playingSong($client)) { 
+			my $dur = Slim::Player::Source::playingSongDuration($client);
 			if ($dur) { $dur = int($dur); }
 			$params->{'durationseconds'} = $dur; 
 		}
@@ -1038,9 +1038,8 @@ sub status {
 	if ($songcount > 0) {
 		my $song = Slim::Player::Playlist::song($client);
 
-		$params->{'currentsong'} = Slim::Player::Source::currentSongIndex($client) + 1;
-		$params->{'thissongnum'} = Slim::Player::Source::currentSongIndex($client);
-
+		$params->{'currentsong'} = Slim::Player::Source::playingSongIndex($client) + 1;
+		$params->{'thissongnum'} = Slim::Player::Source::playingSongIndex($client);
 		$params->{'songcount'}   = $songcount;
 		$params->{'itempath'}    = $song;
 
@@ -1145,7 +1144,7 @@ sub playlist {
 			($start, $end) = pageBar(
 				$songcount,
 				$params->{'path'},
-				Slim::Player::Source::currentSongIndex($client),
+				Slim::Player::Source::playingSongIndex($client),
 				"player=" . Slim::Web::HTTP::escape($client->id()) . "&", 
 				\$params->{'start'}, 
 				\$params->{'playlist_header'},
@@ -1164,7 +1163,7 @@ sub playlist {
 
 		$listBuild{'includeArtist'} = ($webFormat !~ /ARTIST/);
 		$listBuild{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
-		$listBuild{'currsongind'}   = Slim::Player::Source::currentSongIndex($client);
+		$listBuild{'currsongind'}   = Slim::Player::Source::playingSongIndex($client);
 		$listBuild{'item'}          = $listBuild{'start'};
 
 		if (buildPlaylist($client, $params, $callback, $httpClient, $response, \%listBuild)) {

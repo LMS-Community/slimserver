@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::VFD::Animation;
 
-# $Id: Animation.pm,v 1.8 2004/12/07 20:19:51 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -50,16 +50,6 @@ my $scrollSeparator = "      ";
 
 # All animations will have a pending timer for animate() if they are currently animating
 
-sub animating {
-	my $client = shift;
-
-	if ((Slim::Utils::Timers::pendingTimers($client, \&animate) + Slim::Utils::Timers::pendingTimers($client, \&update)) > 0) {
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
 # find all the queued up animation frames and toss them
 sub killAnimation {
 	my $client = shift;
@@ -68,6 +58,7 @@ sub killAnimation {
 	Slim::Utils::Timers::killTimers($client, \&animate);
 	Slim::Utils::Timers::killTimers($client, \&endAnimation);
 	Slim::Utils::Timers::killTimers($client, \&update);
+	$client->animating(0);
 }
 
 sub endAnimation {
@@ -398,7 +389,6 @@ sub scrollBottom {
 	}
 }
 
-
 # scrollSingle - private.  Starts scrolling text2 across the bottom line of
 # client.
 sub scrollSingle {
@@ -475,6 +465,9 @@ sub animate {
 	if (defined($animationFunction) && $framedelay) {
 		my $when = $now + $framedelay;
 		Slim::Utils::Timers::setTimer($client,$when,\&animate,$animationFunction,$when,@animateArgs);
+		$client->animating(1);
+	} else {
+		$client->animating(0);
 	}
 }
 
@@ -544,7 +537,7 @@ sub animatePush {
 # length.  The animation stops when either window goes over the edge on either end.  The
 # left edge is always 0, the right edge is passed in as a parameter and is usually 40
 # characters from the right end of the string (it denotes the position of the leftmost
-# char of the window.
+# char of the window.)
 # $client - the client whose display is animating
 # for the following array refs the value in position [0] is for the top, and [1] is for the bottom
 # $linesref - reference to an array of strings
@@ -653,7 +646,6 @@ sub animateFunky {
 	}
 	return ($framedelay,\&animateFunky,$linesref,$endref,$posref,$stepref,$framedelay,$noDoubleSize);
 }
-
 
 # Single mode scrolling has two states.  state1 is the paused state.  In this
 # state we have to keep updating the display (because the track timer might be

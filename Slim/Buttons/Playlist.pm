@@ -39,18 +39,19 @@ sub init {
 				# 4 show elapsed time and progress bar
 				# 5 show remaining time and progress bar
 				if (($playlistlen > 0) && (showingNowPlaying($client))) {
-					$pdm = ($pdm + 1) % (Slim::Utils::Prefs::clientGet($client,'showbufferfullness') ? 7 : 6);
+					$pdm = ($pdm + 1) % $client->nowPlayingModes();
 				} elsif ($playlistlen > 0) {
-					browseplaylistindex($client,Slim::Player::Source::currentSongIndex($client));
+					browseplaylistindex($client,Slim::Player::Source::playingSongIndex($client));
 				}
 			} else {
-				if ($buttonarg =~ /[0-5]$/) {
+				if ($buttonarg && $buttonarg < $client->nowPlayingModes()) {
 					$pdm = $buttonarg;
 				}
 			}
 			$client->param('animateTop',$pdm);
 			Slim::Utils::Prefs::clientSet($client, "playingDisplayMode", $pdm);
 			$client->update();
+			$client->visualizer();
 		},
 		'up' => sub  {
 			my $client = shift;
@@ -58,7 +59,7 @@ sub init {
 			my $inc = shift || 1;
 			my($songcount) = Slim::Player::Playlist::count($client);
 			if ($songcount < 2) {
-				$client->bumpUp();
+				$client->bumpUp() if ($button !~ /repeat/);
 			} else {
 				$inc = ($inc =~ /\D/) ? -1 : -$inc;
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $songcount, browseplaylistindex($client));
@@ -72,7 +73,7 @@ sub init {
 			my $inc = shift || 1;
 			my($songcount) = Slim::Player::Playlist::count($client);
 			if ($songcount < 2) {
-				$client->bumpDown();
+				$client->bumpDown() if ($button !~ /repeat/);
 			} else {
 				if ($inc =~ /\D/) {$inc = 1}
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $songcount, browseplaylistindex($client));
@@ -97,7 +98,7 @@ sub init {
 
 				Slim::Buttons::Common::pushMode($client, 'trackinfo', {
 					'track' => Slim::Player::Playlist::song($client, browseplaylistindex($client)),
-					'current' => browseplaylistindex($client) == Slim::Player::Source::currentSongIndex($client)
+					'current' => browseplaylistindex($client) == Slim::Player::Source::playingSongIndex($client)
 				} );
 
 				$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
@@ -178,7 +179,7 @@ sub jump {
 	my $pos = shift;
 	if (Slim::Buttons::Common::mode($client) eq 'playlist') {
 		if (!defined($pos)) { 
-			$pos = Slim::Player::Source::currentSongIndex($client);
+			$pos = Slim::Player::Source::playingSongIndex($client);
 		}
 		browseplaylistindex($client,$pos);
 	}
@@ -219,7 +220,7 @@ sub showingNowPlaying {
 	return (
 		(Slim::Buttons::Common::mode($client) eq 'screensaver') || 
 		(Slim::Buttons::Common::mode($client) eq 'playlist') && 
-			(browseplaylistindex($client) == Slim::Player::Source::currentSongIndex($client))
+			(browseplaylistindex($client) == Slim::Player::Source::playingSongIndex($client))
 	);
 }
 

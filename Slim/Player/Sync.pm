@@ -1,6 +1,6 @@
 package Slim::Player::Sync;
 
-# $Id: Sync.pm,v 1.15 2004/11/29 19:26:49 dean Exp $
+# $Id$
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -294,15 +294,17 @@ sub checkSync {
 	my @group = ($client, syncedWith($client));
 	
 	# if we're synced and waiting for the group's buffers to fill,
-	# check if our buffer has passed the 95% level. If so, indicate
+	# check if our buffer has passed the 64K level. If so, indicate
 	# that we're ready to be unpaused.  If everyone else is now ready,
 	# unpause all the clients at once.
 	if ($client->readytosync == 0) {
 
+		my $fullness = $client->bufferFullness();
 		my $usage = $client->usage();
-		$::d_sync && msg($client->id()." checking buffer usage: $usage\n");
+		$::d_sync && msg($client->id()." checking buffer fullness: $fullness\n");
 
-		if 	(defined($usage) && $usage > 0.90) {
+		if 	((defined($fullness) && $fullness > Slim::Utils::Prefs::clientGet($client, 'syncBufferThreshold')) ||
+			 (defined($usage) && $usage > 0.90)) {
 			$client->readytosync(1);
 		
 			$::d_sync && msg($client->id()." is ready to sync ".Time::HiRes::time()."\n");

@@ -16,6 +16,7 @@ package Plugins::LineX;
 
 # History:
 #
+# 03/02/05 - Check for display size and make clients independent
 # 07/10/04 - Check for Graphics display
 #          - Added rectangle drawing function
 # 06/02/04 - Initial version
@@ -274,8 +275,17 @@ sub getScreensaverLineXFunctions {
   return \%screensaverLineXFunctions;
 }
 
-our %linexObject;
-our %linexNumber;
+my %linexObject;
+my %linexNumber;
+# Display size (bottom left is 0,0 / top right is $xmax-1,$ymax-1)
+my %xmax;
+my %ymax;
+my %lastX;
+my %lastY;
+my %hashDisp;
+my %step;
+my %mode;
+my %lastTime;
 
 # ----------------------------------------------------------------------------
 sub setScreensaverLineXMode() {
@@ -286,24 +296,28 @@ sub setScreensaverLineXMode() {
   # save time on later lookups - we know these can't change while we're active
   $linexObject{$client} = Slim::Utils::Prefs::clientGet( $client, 'linexObject') || 0;
   $linexNumber{$client} = Slim::Utils::Prefs::clientGet( $client, 'linexNumber') || 0;
+  
+  # Get display size from player
+  if( $client && $client->isa( "Slim::Player::SqueezeboxG")) {
+    $xmax{$client} = $client->displayWidth();
+    $ymax{$client} = $client->bytesPerColumn() * 8;
+  } else {
+    $xmax{$client} = 0;
+    $ymax{$client} = 0;
+  }
+    
+  clearDisp( $client);
+  $step{$client} = 0;
+  $mode{$client} = 0;
+  $lastX{$client} = 0;
+  $lastY{$client} = 0;
+  $lastTime{$client} = Time::HiRes::time();
 }
 
 # ----------------------------------------------------------------------------
 sub leaveScreensaverLineXMode {
   my $client = shift;
 }
-
-# Display size (bottom left is 0,0 / top right is 279,15)
-my $xmax = 280;
-my $ymax = 16;
-my @arrDisp = ();
-
-# Initialize all elements of display array
-clearDisp();
-
-my $step = 0;
-my $mode = 0;
-my $lastTime = Time::HiRes::time();
 
 # ----------------------------------------------------------------------------
 sub screensaverLineXlines {
@@ -312,49 +326,42 @@ sub screensaverLineXlines {
   my $line2;
 
   if( $client && $client->isa( "Slim::Player::SqueezeboxG")) {
-    if( Time::HiRes::time() - $lastTime > 0.4) {
-      $lastTime = Time::HiRes::time();
-      $step++;
-      if( $step > ( $linexNumber{$client} + 2)) {
-        $step = 0;
-        clearDisp();
+    if( Time::HiRes::time() - $lastTime{$client} > 0.4) {
+      $lastTime{$client} = Time::HiRes::time();
+      $step{$client}++;
+      if( $step{$client} > ( $linexNumber{$client} + 2)) {
+        $step{$client} = 0;
+        clearDisp( $client);
         if( $linexObject{$client} == 0) {
-          $mode = 0;
+          $mode{$client} = 0;
         } elsif( $linexObject{$client} == 1) {
-          $mode = 1;
+          $mode{$client} = 1;
         } else {
-          $mode = int( rand( 100)) % 2;
+          $mode{$client} = int( rand( 100)) % 2;
         }
       }
-      if( $mode == 0) {
+      if( $mode{$client} == 0) {
         # Random lines
-        randomLine();
+        randomLine( $client);
       } else {
         # Random rectangles
-        randomRectangle();
+        randomRectangle( $client);
       }
     }
     # Prepare line1
-    for( my $i = 0; $i < $xmax; $i++) {
-      my $k = $arrDisp[$i][8] * 0x01;
-      $k += $arrDisp[$i][9] * 0x02;
-      $k += $arrDisp[$i][10] * 0x04;
-      $k += $arrDisp[$i][11] * 0x08;
-      $k += $arrDisp[$i][12] * 0x010;
-      $k += $arrDisp[$i][13] * 0x020;
-      $k += $arrDisp[$i][14] * 0x040;
-      $k += $arrDisp[$i][15] * 0x080;
-      $line1 .= pack( "C", $k);
-
-      $k = $arrDisp[$i][0] * 0x01;
-      $k += $arrDisp[$i][1] * 0x02;
-      $k += $arrDisp[$i][2] * 0x04;
-      $k += $arrDisp[$i][3] * 0x08;
-      $k += $arrDisp[$i][4] * 0x010;
-      $k += $arrDisp[$i][5] * 0x020;
-      $k += $arrDisp[$i][6] * 0x040;
-      $k += $arrDisp[$i][7] * 0x080;
-      $line1 .= pack( "C", $k);
+    for( my $x = 0; $x < $xmax{$client}; $x++) {
+      my $byte = 0;
+      for( my $y = $ymax{$client} / 8; $y > 0; $y--) {
+        $byte = $hashDisp{$client}[$x][$y*8-1] * 0x080;
+        $byte += $hashDisp{$client}[$x][$y*8-2] * 0x040;
+        $byte += $hashDisp{$client}[$x][$y*8-3] * 0x020;
+        $byte += $hashDisp{$client}[$x][$y*8-4] * 0x010;
+        $byte += $hashDisp{$client}[$x][$y*8-5] * 0x08;
+        $byte += $hashDisp{$client}[$x][$y*8-6] * 0x04;
+        $byte += $hashDisp{$client}[$x][$y*8-7] * 0x02;
+        $byte += $hashDisp{$client}[$x][$y*8-8] * 0x01;
+        $line1 .= pack( "C", $byte);
+      }
     }
     $line1 .= Slim::Display::Display::symbol("/framebuf");
     Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.2, \&tick);
@@ -368,9 +375,10 @@ sub screensaverLineXlines {
 
 # ----------------------------------------------------------------------------
 sub clearDisp {
-  for( my $xi = 0; $xi < $xmax; $xi++) {
-    for( my $yi = 0; $yi < $ymax; $yi++) {
-      $arrDisp[$xi][$yi] = 0;
+  my $client = shift;
+  for( my $xi = 0; $xi < $xmax{$client}; $xi++) {
+    for( my $yi = 0; $yi < $ymax{$client}; $yi++) {
+      $hashDisp{$client}[$xi][$yi] = 0;
     }
   }
 }
@@ -384,39 +392,40 @@ sub tick {
 
 # ----------------------------------------------------------------------------
 sub randomRectangle {
-  drawRectangle( int( rand( 279)), int( rand( 15)), int( rand( 279)), int( rand( 15)), 1);
+  my $client = shift;
+  drawRectangle( $client, int( rand( $xmax{$client}-1)), int( rand( $ymax{$client}-1)), int( rand( $xmax{$client}-1)), int( rand( $ymax{$client}-1)), 1);
 }
-
-my $lastX = 0;
-my $lastY = 0;
 
 # ----------------------------------------------------------------------------
 sub randomLine {
-  my $newX = int( rand( 279));
-  my $newY = int( rand( 15));
-  drawLine( $lastX, $lastY, $newX, $newY, 1);
-  $lastX = $newX;
-  $lastY = $newY;
+  my $client = shift;
+  my $newX = int( rand( $xmax{$client}-1));
+  my $newY = int( rand( $ymax{$client}-1));
+  drawLine( $client, $lastX{$client}, $lastY{$client}, $newX, $newY, 1);
+  $lastX{$client} = $newX;
+  $lastY{$client} = $newY;
 }
 
 # ----------------------------------------------------------------------------
 sub drawRectangle {
+  my $client = shift;
   my $x1 = shift;
   my $y1 = shift;
   my $x2 = shift;
   my $y2 = shift;
   my $color = shift; # currently 1 or O
 
-  drawLine( $x1, $y1, $x2, $y1, $color);
-  drawLine( $x2, $y1, $x2, $y2, $color);
-  drawLine( $x1, $y2, $x2, $y2, $color);
-  drawLine( $x1, $y1, $x1, $y2, $color);
+  drawLine( $client, $x1, $y1, $x2, $y1, $color);
+  drawLine( $client, $x2, $y1, $x2, $y2, $color);
+  drawLine( $client, $x1, $y2, $x2, $y2, $color);
+  drawLine( $client, $x1, $y1, $x1, $y2, $color);
 }
 
 # ----------------------------------------------------------------------------
 # Every line can be described as: y = ax + b
 # There is one exception: vertical lines
 sub drawLine {
+  my $client = shift;
   my $x1 = shift;
   my $y1 = shift;
   my $x2 = shift;
@@ -443,7 +452,7 @@ sub drawLine {
       while( $x <= $x2) {
         my $y = $a * $x + $b;
         $y = sprintf( "%.0f", $y);
-        $arrDisp[$x][$y] = $color;
+        $hashDisp{$client}[$x][$y] = $color;
         $x++;
       }
     } else {
@@ -461,7 +470,7 @@ sub drawLine {
       while( $y <= $y2) {
         my $x = ( $y - $b) / $a;
         $x = sprintf( "%.0f", $x);
-        $arrDisp[$x][$y] = $color;
+        $hashDisp{$client}[$x][$y] = $color;
         $y++;
       }
     }
@@ -478,7 +487,7 @@ sub drawLine {
     my $y = $y1;
     while( $y <= $y2) {
       my $x = $x1;
-      $arrDisp[$x][$y] = $color;
+      $hashDisp{$client}[$x][$y] = $color;
       $y++;
     }
   }

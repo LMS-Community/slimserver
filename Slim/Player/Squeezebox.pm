@@ -61,7 +61,9 @@ sub reconnect {
 			Slim::Player::Source::playmode($client, "stop");
 		}
 	}
-	
+	$client->animating(0);
+
+	$client->brightness(Slim::Utils::Prefs::clientGet($client,$client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 	$client->update();	
 }
 
@@ -141,12 +143,22 @@ sub stop {
 	$client->streamingsocket(undef);
 }
 
+sub flush {
+	my $client = shift;
+
+	Slim::Utils::Timers::killTimers($client, \&quickstart);
+
+	$client->stream('f');
+	$client->SUPER::flush();
+	return 1;
+}
+
 sub quickstart {
 	my $client = shift;
-	my $fullness = $client->bufferFullness() / $client->bufferSize();
+	my $fullness = $client->bufferFullness();
 
-	# make sure we have at least 5% buffer fullness before starting with a quickstart.  If not, then check again in a second.
-	if ($fullness > 0.05) {
+	# make sure we have at least 10K before starting with a quickstart.  If not, then check again in a second.
+	if ($fullness > 10 * 1024) {
 		$client->resume();
 	} else {
 		stream($client, 't');
@@ -185,8 +197,9 @@ sub needsUpgrade {
 	my $client = shift;
 	my $from = $client->revision;
 	return 0 unless $from;
-
-	my $versionFilePath = catdir($Bin, "Firmware", "squeezebox.version");
+	my $model = $client->model;
+	
+	my $versionFilePath = catdir($Bin, "Firmware", $model . ".version");
 	my $versionFile;
 
 	if (!open($versionFile, "<$versionFilePath")) {
@@ -221,26 +234,26 @@ sub needsUpgrade {
 			$::d_firmware && msg ("No target found, using default version: $default\n");
 			$to = $default;
 		} else {
-			$::d_firmware && msg ("No upgrades found for squeezebox v. $from\n");
+			$::d_firmware && msg ("No upgrades found for $model v. $from\n");
 			return 0;
 		}
 	}
 
 	if ($to == $from) {
-		$::d_firmware && msg ("Squeezebox firmware is up-to-date, v. $from\n");
+		$::d_firmware && msg ("$model firmware is up-to-date, v. $from\n");
 		return 0;
 	}
 
 	# skip upgrade if file doesn't exist
 
-	my $file = shift || catdir($Bin, "Firmware", "squeezebox_$to.bin");
+	my $file = shift || catdir($Bin, "Firmware", $model . "_$to.bin");
 
 	unless (-r $file && -s $file) {
-		$::d_firmware && msg ("squeezebox v. $from could be upgraded to v. $to if the file existed.\n");
+		$::d_firmware && msg ("$model v. $from could be upgraded to v. $to if the file existed.\n");
 		return 0;
 	}
 
-	$::d_firmware && msg ("squeezebox v. $from requires upgrade to $to\n");
+	$::d_firmware && msg ("$model v. $from requires upgrade to $to\n");
 	return $to;
 
 }
@@ -249,6 +262,8 @@ sub needsUpgrade {
 sub upgradeFirmware_SDK5 {
 	use bytes;
 	my ($client, $filename) = @_;
+
+	$::d_firmware && msg("Updating firmware with file: $filename\n");
 
 	my $frame;
 
@@ -380,10 +395,10 @@ sub upgradeFirmware {
 
 	if ((!ref $client) || ($client->revision <= 10)) {
 		$::d_firmware && msg("using old update mechanism\n");
-		$err = upgradeFirmware_SDK4($client, $filename);
+		$err = $client->upgradeFirmware_SDK4($filename);
 	} else {
 		$::d_firmware && msg("using new update mechanism\n");
-		$err = upgradeFirmware_SDK5($client, $filename);
+		$err = $client->upgradeFirmware_SDK5($filename);
 	}
 
 	if (defined($err)) {
@@ -424,16 +439,17 @@ sub opened {
 # Squeezebox control for tcp stream
 #
 #	u8_t command;		// [1]	's' = start, 'p' = pause, 'u' = unpause, 'q' = stop, 't' = status
-#	u8_t autostart_threshold;// [1]	'0' = don't auto-start, '1' = 25%, '2' = 50%, '3'= 75%, '4' = 100%
+#	u8_t autostart;		// [1]	'0' = don't auto-start, '1' = auto-start
 #	u8_t mode;		// [1]	'm' = mpeg bitstream, 'p' = PCM
 #	u8_t pcm_sample_size;	// [1]	'0' = 8, '1' = 16, '2' = 20, '3' = 32
 #	u8_t pcm_sample_rate;	// [1]	'0' = 11kHz, '1' = 22, '2' = 32, '3' = 44.1, '4' = 48
 #	u8_t pcm_channels;	// [1]	'1' = mono, '2' = stereo
 #	u8_t pcm_endianness;	// [1]	'0' = big, '1' = little
-#	u8_t reserved;	// [1]	reserved
+#	u8_t threshold;		// [1]	Kb of input buffer data before we autostart or notify the server of buffer fullness
 #	u8_t spdif_enable;	// [1]  '0' = auto, '1' = on, '2' = off
-#	u8_t reserved;		// [1]	reserved
-#	u16_t reserved2;	// [2]	reserved
+#	u8_t transition_period;	// [1]	seconds over which transition should happen
+#	u8_t transition_type;	// [1]	'0' = none, '1' = crossfade, '2' = fade in, '3' = fade out, '4' fade in & fade out
+#	u8_t loop_song;		// [1]	'0' = don't loop, '1' = loop infinitely
 #	u16_t visualizer_port;	// [2]	visualizer's port - leave port 0 for no vis
 #	u32_t visualizer_ip;	// [4]	visualizer's ip - leave server 0 to use slim server's ip
 #	u16_t server_port;	// [2]	server's port
@@ -452,7 +468,15 @@ sub stream {
 		if ($paused || $command =~ /^[pq]$/) {
 			$autostart = 0;
 		} else {
-			$autostart = 3;
+			$autostart = 1;
+		}
+
+		my $bufferThreshold;
+		if ($paused) {
+			$bufferThreshold = Slim::Utils::Prefs::clientGet($client, 'syncBufferThreshold');
+		}
+		else {
+			$bufferThreshold = Slim::Utils::Prefs::clientGet($client, 'bufferThreshold');
 		}
 		
 		my $formatbyte;
@@ -476,6 +500,12 @@ sub stream {
 			$pcmsamplerate = '3';
 			$pcmendian = '0';
 			$pcmchannels = '2';
+		} elsif ($format eq 'flc') {
+			$formatbyte = 'f';
+			$pcmsamplesize = '?';
+			$pcmsamplerate = '?';
+			$pcmendian = '?';
+			$pcmchannels = '?';
 		} else { # assume MP3
 			$formatbyte = 'm';
 			$pcmsamplesize = '?';
@@ -486,7 +516,7 @@ sub stream {
 
 		$::d_slimproto && msg("starting with decoder with options: format: $formatbyte samplesize: $pcmsamplesize samplerate: $pcmsamplerate endian: $pcmendian channels: $pcmchannels\n");
 		
-		my $frame = pack 'aaaaaaaCCCnnLnL', (
+		my $frame = pack 'aaaaaaaCCCaCnLnL', (
 			$command,	# command
 			$autostart,
 			$formatbyte,
@@ -494,10 +524,11 @@ sub stream {
 			$pcmsamplerate,
 			$pcmchannels,
 			$pcmendian,
-			0,		# reserved
+			$bufferThreshold,
 			0,		# s/pdif auto
-			0,		# reserved
-			0,		# reserved2
+			Slim::Utils::Prefs::clientGet($client, 'transitionDuration') || 0,
+			Slim::Utils::Prefs::clientGet($client, 'transitionType') || 0,
+			0,		# loop song	     
 			0,		# vis port - call IANA!!!  :)
 			0,		# use slim server's IP
 			Slim::Utils::Prefs::get('httpport'),		# port
@@ -542,14 +573,14 @@ sub sendFrame {
 	return if (!defined($client->tcpsock));  # don't try to send if the player has disconnected.
 	
 	if (!defined($dataRef)) { $dataRef = \$empty; }
-	
+
 	my $len = length($$dataRef);
 
 	assert(length($type) == 4);
 	
 	my $frame = pack('n', $len + 4) . $type . $$dataRef;
 
-	$::d_slimproto_v && msg ("sending squeezebox frame: $type, length: $len\n");
+	$::d_slimproto && msg ("sending squeezebox frame: $type, length: $len\n");
 
 	Slim::Networking::Select::writeNoBlock($client->tcpsock, \$frame);
 }

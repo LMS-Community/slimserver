@@ -219,7 +219,6 @@ sub setMode {
 	$params{'valueRef'} = \$client->curSelection($client->curDepth());
 	$params{'curMenu'} = $client->curDepth();
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
-	$client->update();
 }
 
 #return the reference needed to access the menu one level up.
