@@ -377,9 +377,9 @@ sub setMode
 
 	# Using XML::Simple reduces the memory footprint by nearly 2 megs vs the old manual scanning.
 	my $data  = XML::Simple::XMLin($xml);
-	my $label = $ref->{'playlist'}->{'label'};
+	my $label = $data->{'playlist'}->{'label'};
 
-	for my $entry (@{$ref->{'playlist'}->{'entry'}})
+	for my $entry (@{$data->{'playlist'}->{'entry'}})
 	{
 
 		my $url         = $entry->{'Playstring'};
