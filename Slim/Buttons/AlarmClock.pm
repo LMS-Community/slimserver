@@ -293,8 +293,7 @@ my %alarmSetFunctions = (
 	'right' => sub {
 		my $client = shift;
 
-#		my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
-#		my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Common::timeDigits($client,$time);
+		my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Common::timeDigits($client,$time);
 
 		$searchCursor{$client}++;
 
@@ -314,7 +313,7 @@ my %alarmSetFunctions = (
 		my $digit = shift;
 		
 		my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
-		my ($h0, $h1, $m0, $m1, $p) = timeDigits($client,$time);
+		my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Common::timeDigits($client,$time);
 
 		my $h = $h0 * 10 + $h1;
 		if ($p && $h == 12) { $h = 0 };
