@@ -435,9 +435,10 @@ sub start {
 		msg("Will only scan music library, then exit!\n");
 
 		Slim::Music::Info::init();
-		
-		#FIXME: This will need a method for loading the import plugins
-		#Slim::Music::Import::startup();
+
+		Slim::Buttons::Plugins::init();
+
+		checkDataSource();
 
 		# Run the scanner - but don't kill the CPU.
 		while (Slim::Music::Import::stillScanning()) {
