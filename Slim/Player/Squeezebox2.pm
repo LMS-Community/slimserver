@@ -181,7 +181,7 @@ sub volume {
 	if (defined($newvolume)) {
 		my ($right_level, $left_level);
 	    	$right_level = $left_level = int(0x80 * (($volume / $client->maxVolume) ** 2));
-		my $data = pack('NN', $left_level, $right_level);
+		my $data = pack('NNC', $left_level, $right_level, Slim::Utils::Prefs::clientGet($client, "digitalVolumeControl"));
 		$client->sendFrame('audg', \$data);
 	}
 	return $volume;

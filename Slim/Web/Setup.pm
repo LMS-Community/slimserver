@@ -1045,6 +1045,10 @@ sub initSetupConfig {
 									'1' => string('SETUP_DIGITALVOLUMECONTROL_ON')
 									,'0' => string('SETUP_DIGITALVOLUMECONTROL_OFF')
 								}
+							,'onChange' => sub {
+								my $client = shift;
+								$client->volume($client->volume());
+							}
 						}
 			,'mp3SilencePrelude' => {
 							'validate' => \&validateNumber  
