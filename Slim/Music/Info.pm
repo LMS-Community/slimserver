@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.119 2004/05/14 18:11:08 grotus Exp $
+# $Id: Info.pm,v 1.120 2004/05/15 18:23:24 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -413,40 +413,53 @@ sub loadTypesConfig {
 
 sub hasChanged {
 	my $file = shift;
-	my $filepath;
 	
 	# We return 0 if the file hasn't changed
 	#    return 1 if the file has (cached entry is deleted by us)
 	# As this is an internal cache function we don't sanity check our arguments...	
 
-	$filepath = Slim::Utils::Misc::pathFromFileURL($file);
+	my $filepath = Slim::Utils::Misc::pathFromFileURL($file);
 		
 	# Return if it's a directory - they expire themselves 
 	# Todo - move directory expire code here?
-	return 0 if ( -d $filepath );
+	return 0 if -d $filepath;
 	
-	# See if the file exists	
-	if ( -e $filepath ) {
+	# See if the file exists
+	#
+	# Reuse _, as we only need to stat() once.
+	if (-e _) {
+
 		# Check FS and AGE (TIMESTAMP) to decide if we use the cached data.		
 		my $cacheEntryArray = $infoCache{$file};
-		my $index = $infoCacheItemsIndex{"FS"};
-		my $fsdef=(defined $cacheEntryArray->[$index]);
-		my $fscheck=0;
-		if ($fsdef) { $fscheck= ( -s $filepath == $cacheEntryArray->[$index]); }
+
+		my $index   = $infoCacheItemsIndex{"FS"};
+		my $fsdef   = (defined $cacheEntryArray->[$index]);
+		my $fscheck = 0;
+
+		if ($fsdef) {
+			$fscheck = (-s _ == $cacheEntryArray->[$index]);
+		}
+
+		# Now the AGE
+		$index       = $infoCacheItemsIndex{"AGE"};
+		my $agedef   = (defined $cacheEntryArray->[$index]);
+		my $agecheck = 0;
+
+		if ($agedef) {
+			$agecheck = ((stat(_))[9] == $cacheEntryArray->[$index]);
+		}
 			
-		$index = $infoCacheItemsIndex{"AGE"};
-		my $agedef=(defined $cacheEntryArray->[$index]);
-		my $agecheck=0;
-		if ($agedef) { $agecheck=((stat($filepath))[9] == $cacheEntryArray->[$index]); }
-			
-		if ($fsdef && $fscheck && $agedef && $agecheck) { return 0; }
-		if ($fsdef && $fscheck && !$agedef) { return 0; }
-		if (!$fsdef && $agedef && $agecheck) { return 0; }
+		return 0 if  $fsdef && $fscheck && $agedef && $agecheck;
+		return 0 if  $fsdef && $fscheck && !$agedef;
+		return 0 if !$fsdef && $agedef  && $agecheck;
 	}
 	
-	$dbCacheDirty=1;
-	$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as it has changed or it no longer exists\n");		    
+	$dbCacheDirty = 1;
+
+	$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as it has changed or it no longer exists\n");
+
 	delete $infoCache{$file};
+
 	return 1;
 }
 
