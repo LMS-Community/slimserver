@@ -4,6 +4,7 @@ package Slim::DataStores::DBI::Track;
 
 use strict;
 use base 'Slim::DataStores::DBI::DataModel';
+use Class::DBI::Iterator;
 
 use Slim::Utils::Misc;
 
