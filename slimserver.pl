@@ -911,6 +911,12 @@ sub checkDataSource {
 			$audiodir =~ s|[/\\]$||;
 			Slim::Utils::Prefs::set("audiodir",$audiodir);
 		}
+		my $ds = Slim::Music::Info::getCurrentDataStore();
+		
+		if (!$::noScan && $ds->count('track') == 0) {
+			
+			Slim::Music::Import::startScan();
+		}
 	}
 }
 
