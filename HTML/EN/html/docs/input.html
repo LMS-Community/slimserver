@@ -562,6 +562,15 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         the mode stack from the current location in order to prevent infinite
         recursion.
       </dd>
+      <dt>isSorted</dt>
+      <dd>Default: undef</dd>
+      <dd>
+        Indicates whether the internal or external list is sorted for purposes
+        of the numberScroll function. <strong>I</strong> indicates that the
+        internal list is sorted and <strong>E</strong>, the external. Any other
+        value, or no supplied value, means that the list will be treated as
+        unsorted.
+      </dd>
     </dl>
   </p>
   <h5>Exit Event Types</h5>
