@@ -1,4 +1,4 @@
-# $Id: SavePlaylist.pm,v 1.6 2004/04/29 22:21:51 daniel Exp $
+# $Id: SavePlaylist.pm,v 1.7 2004/05/20 18:57:35 dean Exp $
 # This code is derived from code with the following copyright message:
 #
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
@@ -15,7 +15,7 @@ use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.6 $,10);
+$VERSION = substr(q$Revision: 1.7 $,10);
 
 my %context = ();
 
@@ -50,7 +50,8 @@ sub setMode {
 	my $client = shift;
 	my $push = shift;
 	$client->lines(\&lines);
-	if ($push ne 'push') {
+	if (!Slim::Utils::Prefs::get('playlistdir')) {
+	} elsif ($push ne 'push') {
 		my $playlist = '';
 	} else {
 		$context{$client} = 'A';
@@ -85,9 +86,18 @@ my %functions = (
 sub lines {
 	my $client = shift;
 
-	my $line1 = string('PLAYLIST_SAVE');
-	my $line2 = $context{$client};
-	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
+	my ($line1, $line2, $arrow);
+	
+	if (!Slim::Utils::Prefs::get('playlistdir')) {
+		$line1 = string('NO_PLAYLIST_DIR');
+		$line2 = string('NO_PLAYLIST_DIR_MORE');
+	} else {
+		$line1 = string('PLAYLIST_SAVE');
+		$line2 = $context{$client};
+		$arrow = Slim::Hardware::VFD::symbol('rightarrow');
+	}
+	
+	return ($line1, $line2, undef, $arrow);
 }
 
 sub savePlaylist {

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.65 2004/05/18 22:50:12 dean Exp $
+# $Id: Prefs.pm,v 1.66 2004/05/20 18:57:35 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -454,6 +454,11 @@ sub clientGet {
 	my $client = shift;
 	my $key = shift;
 	my $ind = shift;
+	if (!defined($client)) {
+		$::d_prefs && msg("clientGet on an undefined client\n");
+		bt();
+		return undef;
+	}
 	if (defined($ind)) {
 		return getInd($client->id() . "-" . $key,$ind);
 	} else {

@@ -20,21 +20,27 @@
     [% IF browselist_pagebar %][% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %][% END %]
     </td></tr>
 </table>
+<table cellspacing="0" border="0" cellpadding="0" width="100%">
 
-[% IF coverart %]
+[% IF coverart %]<tr><td>
     <a href="status.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]">
-    <img src="/music/[% coverartpath | uri %]/cover.jpg" border="0"></a>
+    <img src="/music/[% coverartpath | uri %]/cover.jpg" border="0"></a></td></tr>
 [% END %]
 
-<table cellspacing="0" border="0" cellpadding="0" width="100%">
-    [% browse_list %]
-</table>
+<tr><td>
+[% IF browseby != 'BROWSE_BY_ARTWORK' %]<table cellspacing="0" border="0" cellpadding="0" width="100%">[% END %]
+	[% browse_list %] 
+[% IF browseby != 'BROWSE_BY_ARTWORK' %]</table>[% END %]
+</td></tr>
 
+<tr><td>
 [% IF song_count %]
 <table width="100%" bgcolor="#666666"><tr><td>
-    <font face="arial,helvetica" color="#ffffff" size="-1">Browsing <b>[% album_count %]</b> [% "WITH" | string %] <b>[% song_count %]</b> [% "BY" | string %] <b>[% artist_count %]</b></font>
+    <font face="arial,helvetica" color="#ffffff" size="-1"><b>[% album_count %]</b> [% "WITH" | string %] <b>[% song_count %]</b> [% "BY" | string %] <b>[% artist_count %]</b></font>
 </td></tr></table>
 [% END %]
+</td></tr>
+</table>
 </font>
 
 [% PROCESS pagefooter.html %]

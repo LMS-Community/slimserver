@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.109 2004/05/18 21:19:21 dean Exp $
+# $Id: strings.txt,v 1.110 2004/05/20 18:57:34 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -833,6 +833,12 @@ PROBLEM_OPENING
 	NO	Problem: Kan ikke åpne fil for:
 	PT	Não foi possível abrir o ficheiro para
 	SE	Problem: Kan inte öppna fil för:
+
+NO_PLAYLIST_DIR
+	EN	Problem: No Saved Playlist folder.
+
+NO_PLAYLIST_DIR_MORE
+	EN	Visit Server Settings to fix this.
 
 #
 # Setup Group strings
