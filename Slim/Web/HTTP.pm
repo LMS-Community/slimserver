@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.75 2004/03/05 21:59:38 daniel Exp $
+# $Id: HTTP.pm,v 1.76 2004/03/06 04:10:01 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1155,6 +1155,10 @@ sub filltemplate {
 	$template =~ s/{%([^{}]+)}/defined($hashref->{$1}) ? uri_escape($hashref->{$1}) : ""/eg;
 	
 	# first, substitute {%key} with the url escaped value for the given key in the hash
+	#
+	# This is using a slightly modified version of HTML::Entities, that
+	# doesn't rely on HTML::Parser, which is implemented as native code.
+	# When we get around to compiling that, use it. 
 	$template =~ s/{&([^{}]+)}/defined($hashref->{$1}) ? encode_entities($hashref->{$1}) : ""/eg;
 
 	# do the same, but without the escape when given {key}
