@@ -1,6 +1,10 @@
 -- Increment the version below when you change the schema.
 -- You also need to add an Upgrade script to the Upgrades 
 -- directory and alter sql.version
+
+-- It's important that there is a newline between all 
+-- SQL statements, otherwise the parser will skip them.
+
 CREATE TABLE metainformation (
   version integer,        -- version of this schema
   track_count integer,     -- total track count
@@ -52,8 +56,11 @@ CREATE TABLE tracks (
 );
 
 CREATE INDEX trackURLIndex ON tracks (url);
+
 CREATE INDEX trackTitleIndex ON tracks (title);
+
 CREATE INDEX trackAlbumIndex ON tracks (album);
+
 CREATE INDEX trackSortIndex ON tracks (titlesort);
 
 CREATE TABLE playlist_track (
@@ -80,6 +87,7 @@ CREATE TABLE albums (
 );
 
 CREATE INDEX albumsTitleIndex ON albums (title);
+
 CREATE INDEX albumsSortIndex ON albums (titlesort);
 
 CREATE TABLE contributors (
@@ -89,6 +97,7 @@ CREATE TABLE contributors (
 );
 
 CREATE INDEX contributorsNameIndex ON contributors (name);
+
 CREATE INDEX contributorsSortIndex ON contributors (namesort);
 
 CREATE TABLE contributor_track (
@@ -101,8 +110,11 @@ CREATE TABLE contributor_track (
 );
 
 CREATE INDEX contributor_trackContribIndex ON contributor_track (contributor);
+
 CREATE INDEX contributor_trackTrackIndex ON contributor_track (track);
+
 CREATE INDEX contributor_trackAlbumIndex ON contributor_track (album);
+
 CREATE INDEX contributor_trackSortIndex ON contributor_track (namesort);
 
 CREATE TABLE genres (
@@ -112,6 +124,7 @@ CREATE TABLE genres (
 );
 
 CREATE INDEX genreNameIndex ON genres (name);
+
 CREATE INDEX genreSortIndex ON genres (namesort);
 
 CREATE TABLE genre_track (
@@ -121,7 +134,8 @@ CREATE TABLE genre_track (
 );
 
 CREATE INDEX genre_trackGenreIndex ON genre_track (genre);
-CREATE INDEX genre_trackTraclIndex ON genre_track (track);
+
+CREATE INDEX genre_trackTrackIndex ON genre_track (track);
 
 CREATE TABLE comments (
   id integer UNIQUE PRIMARY KEY NOT NULL,

@@ -1,0 +1,7 @@
+# Database upgrade paths
+# the value 99999 is magic and means wipe the database and start again
+# from	to
+	
+1	99999
+2	3
+
