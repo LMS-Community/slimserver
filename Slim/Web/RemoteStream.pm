@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.13 2004/01/19 05:58:45 daniel Exp $
+# $Id: RemoteStream.pm,v 1.14 2004/01/19 22:48:30 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -98,6 +98,10 @@ sub openRemoteStream {
 		$::d_remotestream && msg("header: " . $header);
 		if ($header =~ /^ic[ey]-name:\s*(.+)$CRLF$/i) {
 			Slim::Music::Info::setTitle($url, $1);
+		}
+
+		if ($header =~ /^icy-br:\s*(.+)\015\012$/i) {
+			Slim::Music::Info::setBitrate($url, $1 * 1000);
 		}
 		
 		if ($header =~ /^icy-metaint:\s*(.+)$CRLF$/) {

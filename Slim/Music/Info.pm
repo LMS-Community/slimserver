@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.60 2004/01/17 08:58:27 kdf Exp $
+# $Id: Info.pm,v 1.61 2004/01/19 22:48:30 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -691,6 +691,15 @@ sub setTitle {
 	my $cacheEntry = cacheEntry($url);
 
 	$cacheEntry->{'TITLE'} = $title;
+	updateCacheEntry($url, $cacheEntry);
+}
+
+sub setBitrate {
+	my $url = shift;
+	my $bitrate = shift;
+
+	my $cacheEntry = cacheEntry( $url);
+	$cacheEntry->{'BITRATE'} = $bitrate;
 	updateCacheEntry($url, $cacheEntry);
 }
 

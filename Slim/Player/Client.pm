@@ -198,7 +198,7 @@ sub new {
 	$client->[19] = 0; # audioFilehandleIsSocket
 	$client->[20] = []; # chunks
 	$client->[21] = undef; # songStartStreamTime
-	$client->[22] = undef; # remoteStreamStartTime
+	$client->[22] = 0; # remoteStreamStartTime
 	$client->[23] = undef; # shoutMetaPointer
 	$client->[24] = undef; # shoutMetaInterval
 	$client->[25] = undef; # vfdbrightness
@@ -260,8 +260,8 @@ sub new {
 	$client->[82] = undef; # browseMenuSelection
 	$client->[83] = undef; # settingsSelection
 	$client->[84] = undef; # songBytes
-	$client->[85] = undef; # pauseTime
-	$client->[86] = undef; # songblockalign
+	$client->[85] = 0; # pauseTime
+	$client->[86] = 1; # songblockalign
 
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -478,7 +478,10 @@ sub pause {
 
 sub resume {
 	my $client = shift;
-	$client->remoteStreamStartTime($client->remoteStreamStartTime() + (Time::HiRes::time() - $client->pauseTime()));
+	if ($client->pauseTime()) {
+		$client->remoteStreamStartTime($client->remoteStreamStartTime() + (Time::HiRes::time() - $client->pauseTime()));
+		$client->pauseTime(0);
+	}
 	$client->pauseTime(undef);
 }
 	

@@ -15,8 +15,9 @@
 	<li><a href="#about-display">The fluorescent display looks great, but aren't those pretty expensive? Have you considered using a cheaper LCD display?</a>
 	<li><a href="#about-dhcp">Does Squeezebox support DHCP?</a>
 	<li><a href="#about-80211">What kind of wireless networks can Squeezebox connect to?</a>
+	<li><a href="#about-wirelessperformance">What kind impact will Squeezebox have on my wireless network?</a>
 	<li><a href="#about-slimp3sync">Does SlimServer support synchronization between SLIMP3 and Squeezebox?</a>
-	<li><a href="#about-cable">What kind of network cable do I need? How long can it be?</a>
+	<li><a href="#about-cable">What kind of ethernet cable do I need? How long can it be?</a>
 	<li><a href="#about-networkspeed">How fast does my network need to be to use Squeezebox?</a>
 	<li><a href="#about-os">Which operating systems are supported?</a>
 	<li><a href="#about-minhardware">What are the minimum hardware requirements for the server computer?</a>
@@ -42,17 +43,21 @@
 <h5><a id="about-80211"></a>What kind of wireless networks can Squeezebox connect to?</h5>
 <p>Squeezebox can connect to any 802.11b compatible wireless network including Apple Airport, 802.11g, 802.11b/g, and 802.11a/b/g networks.</p>
 
+<h5><a id="about-wirelessperformance"></a>What kind impact will Squeezebox have on my wireless network?</h5>
+<p>While streaming music, Squeezebox will use some network bandwidth.    The amount of bandwidth depends on the bitrate of the audio file.  MP3 files use up to 320k bits per second, AIFF, WAV, AAC and other formats may use up to 1.5M bits per second.  A solid 802.11b network can generally support around 5M bits per second of data, even though it's rated for 11M bits per second.  This means that you can support more than one Squeezebox on an 802.11 network, but the number depends on the audio data rate.</p>
+<p>If you have an 802.11g network, adding any 802.11b device (including Squeezebox) will cause the overall performance of your network to slow down.  The amount of that slowdown depends on the devices in your network, but our tests indicate that a mixed 802.11b/802.11g network will see overall performance reduced to about half of the full rated 802.11g performance.</p>
+
 <h5><a id="about-wep"></a>Does Squeezebox support WEP? What about computer-to-computer or Ad Hoc networks?</h5>
 <p>Yes, Squeezebox supports both 128 bit and 64 bit WEP encryption.  Squeezebox also supports both Infrastructure and Ad Hoc (aka computer-to-computer) wireless networks.  Squeezebox does not yet support WPA security, but it's something we hope to support soon.</p>
 
 <h5><a id="about-slimp3sync"></a>Does SlimServer support synchronization between SLIMP3 and Squeezebox?</h5>
 <p>Yes, SlimServer can sync multiple SLIMP3 and Squeezebox players.  Software MP3 players cannot be synced with the hardware players due to the inability to control delay through the software players.</p>
 
-<h5><a id="about-cable"></a>What kind of network cable do I need? How long can it be?</h5>
-<p>Since Squeezebox network interface is 10 megabit ethernet, you can use either a CAT3 or CAT5 ethernet cable. 
+<h5><a id="about-cable"></a>What kind of ethernet cable do I need? How long can it be?</h5>
+<p>Since Squeezebox ethernet interface is 10 megabit ethernet, you can use either a CAT3 or CAT5 ethernet cable. 
 If you are connecting directly to a computer you will need a crossover cable, otherwise a regular straight cable will work just fine. 
  (Note: <a href="http://docs.info.apple.com/article.html?artnum=42717">Some Macintosh computers</a> will work with either a regular or crossover cable.)  The maximum length for 10base-T and 100base-T cables is 100 meters or about 328 feet, assuming that the appropriate type of wire is used and it is laid correctly.</p>
-<h5><a id="about-networkspeed"></a>How fast does my network need to be to use Squeezebox?</h5>
+<h5><a id="about-networkspeed"></a>How fast does my ethernet network need to be to use Squeezebox?</h5>
 <p>An inexpensive 10Mbps hub has about 25 times the capacity needed to stream MP3 audio at the highest quality (320Kbps). Typically, MP3s are encoded at 128Kbps to 192Kbps. You do not need 10/100 Ethernet; Squeezebox is compatible with fast Ethernet LANS, as long as your hub/switch also supports 10Mbps (most do).</p>
 <h5><a id="about-os"></a>Which operating systems are supported?</h5>
 <p>Squeezebox and SlimServer is officially supported under Windows 95/98/NT/2000/Me/XP, Linux, and Mac OS X. It is also known to work on a wide variety of other operating systems, so it's safe to say that just about any modern OS will be compatible. Squeezebox has been tested on all of the following platforms:</p>

@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.41 2004/01/12 22:40:30 dean Exp $
+# $Id: Slimproto.pm,v 1.42 2004/01/19 22:48:30 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -392,7 +392,7 @@ sub process_slimproto_frame {
 		$::d_factorytest && msg("FACTORYTEST\tevent=stat\tmac=".$client->id."\tsignalstrength=$status{$client}->{'signal_strength'}\n");
 
 # TODO make a "verbose" option for this
-		$::d_slimproto && msg("Squeezebox stream status:\n".
+		$::d_slimproto && msg($client->id() . " Squeezebox stream status:\n".
 		"	event_code:      $status{$client}->{'event_code'}\n".
 		"	num_crlf:        $status{$client}->{'num_crlf'}\n".
 		"	mas_initiliazed: $status{$client}->{'mas_initialized'}\n".
