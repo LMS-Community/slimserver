@@ -53,9 +53,15 @@ sub string {
 	my $interspace = $font->[0];
 	my $cursorpos = undef;
 	my $cursorend = 0;
+	my $unpackTemplate = 'C*';
 
 	# U - unpacks Unicode chars into ords, much faster than split(//, $string)
-	for my $ord (unpack('U*', $string)) {
+	# C - is needed for older 5.6 perl's
+	if ($] > 5.007) {
+		$unpackTemplate = 'U*';
+	}
+
+	for my $ord (unpack($unpackTemplate, $string)) {
 
 		# 29 == \x1d, 28 == \x1c, 10 == \x0a
 		if ($ord == 29) { 
