@@ -6,6 +6,7 @@ require URI::file::Base;
 use strict;
 use URI::Escape qw(uri_unescape);
 
+# the authority is always null in Win32 file URLs.
 sub extract_authority
 {
     return '';

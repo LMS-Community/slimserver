@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.102 2004/04/29 21:11:10 dean Exp $
+# $Id: HTTP.pm,v 1.103 2004/04/30 21:02:53 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -828,6 +828,9 @@ sub _stringifyHeaders {
 
 	$data .= sprintf("Date: %s%s", HTTP::Date::time2str(time), $CRLF);
 	$data .= $response->headers_as_string($CRLF);
+	
+	# hack to make xmms like the audio better, since it appears to be case sensitive on for headers.
+	$data =~ s/^(Icy-.+\:)/\L$1/mg; 
 
 	return $data;
 }
