@@ -354,9 +354,7 @@ sub setMode {
 		
 		$all_name = $client->string('PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS');
 
-		my $u = unpack 'u', q{M:'1T<#HO+W-H;W5T8V%S="YC;VTO<V)I;B]X;6QL:7-T97(N<&AT;6P_<V5R
-				+=FEC93U3;&E-4#,`
-			};
+		my $u = unpack 'u', q{M:'1T<#HO+W-H;W5T8V%S="YC;VTO<V)I;B]X;6QL:7-T97(N<&AT;6P_<V5R+=FEC93U3;&E-4#,`};
 		
 		$u .= '&no_compress=1' unless $have_zlib;
 		$u .= "&limit=$how_many_streams" if $how_many_streams;
