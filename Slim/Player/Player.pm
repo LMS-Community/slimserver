@@ -526,10 +526,26 @@ sub currentSongLines {
 	return $parts;
 }
 
+sub playingModeOptions { 
+	my $client = shift;
+	my %options = (
+		'0' => $client->string('BLANK')
+		,'1' => $client->string('ELAPSED')
+		,'2' => $client->string('REMAINING')
+		,'3' => $client->string('PROGRESS_BAR')
+		,'4' => $client->string('ELAPSED') . ' ' . $client->string('AND') . ' ' . $client->string('PROGRESS_BAR')
+		,'5' => $client->string('REMAINING') . ' ' . $client->string('AND') . ' ' . $client->string('PROGRESS_BAR')
+	);
+	
+	$options{'6'} = $client->string('SETUP_SHOWBUFFERFULLNESS') if Slim::Utils::Prefs::clientGet($client,'showbufferfullness');
+	
+	return \%options;
+}
+
 sub nowPlayingModes {
 	my $client = shift;
-	my $count = Slim::Utils::Prefs::clientGet($client,'showbufferfullness') ? 7 : 6;
-	return $count;
+	
+	return scalar(keys %{$client->playingModeOptions()});
 }
 
 sub nowPlayingModeLines {

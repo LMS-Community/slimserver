@@ -7236,6 +7236,18 @@ CHOOSE_PLAYING_DISPLAY_MODE
 	PT	O cliente pode mostrar informações da música actual a tocar. Escolha a informação a mostrar.
 	SE	Spelaren kan visa information om aktuell låt. Välj vilken information som skall visas.
 
+VISUALIZER_SPECTRUM_ANALYZER_SMALL
+	EN	Small Spectrum
+
+VISUALIZER_VUMETER_SMALL
+	EN	Small VU
+
+VISUALIZER_SPECTRUM_ANALYZER
+	EN	Spectrum
+
+VISUALIZER_VUMETER
+	EN	VU Meter
+
 BLANK
 	DE	Nichts
 	DK	Intet

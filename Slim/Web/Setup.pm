@@ -153,13 +153,10 @@ sub initSetupConfig {
 					$paramref->{'ipaddress'} = $client->ipport();
 					$paramref->{'macaddress'} = $client->macaddress;
 					$paramref->{'signalstrength'} = $client->signalStrength;
-					if (Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {
-					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'options'}{'6'} =  string('SETUP_SHOWBUFFERFULLNESS');
-					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,6,1,1];
-					} else {
-						delete $pageref->{'Prefs'}{'playingDisplayMode'}{'options'}{'6'};
-					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,5,1,1];
-					}
+
+					$pageref->{'Prefs'}{'playingDisplayMode'}{'options'} = $client->playingModeOptions();
+					$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,scalar($pageref->{'Prefs'}{'playingDisplayMode'}{'options'}),1,1];
+
 					$client->update();
 				}
 		#,'template' => 'setup_player.html'
@@ -214,16 +211,9 @@ sub initSetupConfig {
 			,'playingDisplayMode' 	=> {
 							'validate' => \&validateInt
 							,'validateArgs' => [0,6,1,1]
-							,'options' => {
-									'0' => string('BLANK')
-									,'1' => string('ELAPSED')
-									,'2' => string('REMAINING')
-									,'3' => string('PROGRESS_BAR')
-									,'4' => string('ELAPSED') . ' ' . string('AND') . ' ' . string('PROGRESS_BAR')
-									,'5' => string('REMAINING') . ' ' . string('AND') . ' ' . string('PROGRESS_BAR')
-									,'6' => string('SETUP_SHOWBUFFERFULLNESS')
-									}
+							,'options' => undef
 							,'PrefChoose' => string('SETUP_PLAYINGDISPLAYMODE').string('COLON')
+							,'onChange'   => sub { shift->visualizer(); }
 						}
 			,'showbufferfullness' => {
 						'validate' => \&validateTrueFalse
@@ -1749,6 +1739,12 @@ sub initSetupConfig {
 						'validate' => \&validateInHash
 						,'validateArgs' => undef #filled in initSetup using hash_of_prefs
 						,'options' => undef #filled by initSetup using hash_of_prefs('titleFormatWeb')
+						,'onChange' => sub {
+								for my $client (Slim::Player::Client::clients()) {
+									$client->currentPlaylistModified(1);
+									$client->currentPlaylistChangeTime(time());
+								}
+							}
 					}
 			,'titleFormat'	=> {
 						'isArray' => 1

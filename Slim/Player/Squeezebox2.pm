@@ -95,6 +95,23 @@ my @visualizerParameters = ( 	[],
 				[],
 );
 
+
+sub playingModeOptions { 
+	my $client = shift;
+	my %options = (
+		'0' => $client->string('BLANK')
+		,'1' => $client->string('ELAPSED') . ' ' . $client->string('AND') . ' ' . $client->string('PROGRESS_BAR')
+		,'2' => $client->string('VISUALIZER_VUMETER_SMALL')
+		,'3' => $client->string('ELAPSED') . ' ' . $client->string('AND') . ' ' . $client->string('VISUALIZER_VUMETER_SMALL')
+		,'4' => $client->string('ELAPSED') . ' ' . $client->string('AND') . ' ' . $client->string('VISUALIZER_SPECTRUM_ANALYZER_SMALL')
+		,'5' => $client->string('ELAPSED') . ', ' . $client->string('PROGRESS_BAR') . ' ' . $client->string('AND') . ' ' . $client->string('VISUALIZER_SPECTRUM_ANALYZER')
+	);
+	
+	$options{'6'} = $client->string('SETUP_SHOWBUFFERFULLNESS') if Slim::Utils::Prefs::clientGet($client,'showbufferfullness');
+	
+	return \%options;
+}
+
 sub new {
 	my $class = shift;
 
@@ -118,9 +135,8 @@ sub init {
 
 sub nowPlayingModes {
 	my $client = shift;
-	my $count = scalar(@showBar);
-	$count += Slim::Utils::Prefs::clientGet($client,'showbufferfullness') ? 1 : 0;
-	return $count;
+	
+	return scalar(keys %{$client->playingModeOptions()});
 }
 
 sub displayWidth {
