@@ -104,6 +104,9 @@ menu_pop				= menu_pop
 menu_now_playing		= menu_now_playing
 menu_synchronize		= menu_synchronize
 
+[home]
+add.*					= add
+
 [off]
 # When the player is powered off, most buttons are dead
 add.*					= dead
