@@ -164,6 +164,7 @@ sub quickstart {
 	if ($fullness > 0.05) {
 		$client->resume();
 	} else {
+		stream($client, 't');
 		Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&quickstart);
 	}
 }
@@ -438,7 +439,7 @@ sub opened {
 
 # Squeezebox control for tcp stream
 #
-#	u8_t command;		// [1]	's' = start, 'p' = pause, 'u' = unpause, 'q' = stop 
+#	u8_t command;		// [1]	's' = start, 'p' = pause, 'u' = unpause, 'q' = stop, 't' = status
 #	u8_t autostart_threshold;// [1]	'0' = don't auto-start, '1' = 25%, '2' = 50%, '3'= 75%, '4' = 100%
 #	u8_t mode;		// [1]	'm' = mpeg bitstream, 'p' = PCM
 #	u8_t pcm_sample_size;	// [1]	'0' = 8, '1' = 16, '2' = 20, '3' = 32
