@@ -1,13 +1,12 @@
 [% IF PrefsInTable %]
 <div align="left" style="float:left; width:210;margin:0px">
-	<table width="210" cellspacing="0" cellpadding="0">
-		<td width="10">&nbsp;</td>
+	<table width="210" cellspacing="0" cellpadding="0" border="0">
+		<td width="5">&nbsp;</td>
 		<td align="left">[% END %]
 <b>[% PrefExtValue %]</b>
 		[% IF PrefsInTable %]&nbsp;</td><td width="25">[% END %]
 <a class="linkbtn" href="setup.html?page=[% page %]&playerid=[% playerid | uri %]&player=[% player | uri %]&[% PrefNameRoot %]Action[% PrefIndex %]=Add">+</a>
 		[% IF PrefsInTable %]</td>
-		<td width="10">&nbsp;</td>
 	</table>
 </div>[% END %]
 [% IF not PrefsInTable %]<br>[% END %]
