@@ -1188,9 +1188,11 @@ sub sth_to_objects {
 
 	# XXX - dsully - This is sub-optimal. DBI doesn't handle UTF-8 coming from the
 	# database very well yet. Hopefully it will be fixed before we ship.
-	for my $row (@rows) {
-		for my $key (keys %{$row}) {
-			Encode::_utf8_on($row->{$key});
+	if ($] > 5.007) {
+		for my $row (@rows) {
+			for my $key (keys %{$row}) {
+				Encode::_utf8_on($row->{$key});
+			}
 		}
 	}
 
