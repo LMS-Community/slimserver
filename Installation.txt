@@ -1,5 +1,5 @@
                                 Welcome to Slim Server 
-  
+   
 This document describes the steps for installing the Slim Server on Unix-like 
 platforms.
 
