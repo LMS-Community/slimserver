@@ -57,32 +57,28 @@ no larger than 100x100.
 <h4>Technical details</h4>
 For each place in the skin that references a large cover art image,
 the SlimServer software performs the following search:
-<ol>
-<li>Search in the current music directory for 
- cover.jpg, then  albumartsmall.jpg, folder.jpg, album.jpg,  thumb.jpg
-<li>If needed search for 
- cover.gif, then  albumartsmall.gif, folder.gif, album.gif,  thumb.gif
+<ul>
+<li>Search in the current music directory for (in order): <br>
+<ol><li>cover.jpg, cover.gif, <li>folder.jpg, folder.gif, <li>album.jpg, album.gif, <li>thumb.jpg, thumb.gif, <li>albumartsmall.jpg, albumartsmall.gif</ul>
 </ol>
 <p>
 The SlimServer will use the first image file located in this search.
 For the smaller, thumbnail image, a similar search is performed, except that
 the list is reversed, searching for thumb first. 
 Specifically:
-<ol>
-<li>Search in the current music directory for 
- thumb.jpg album.jpg, folder.jpg, albumartsmall.jpg, cover.jpg, 
-<li>If needed search for 
- thumb.gif album.gif, folder.gif, albumartsmall.gif, cover.gif, 
-</ol>
+<ul>
+<li>Search in the current music directory for (in order):<br>
+<ol><li>thumb.jpg, thumb.gif, <li>albumartsmall.jpg, albumartsmall.gif, <li>cover.jpg, cover.gif, <li>album.jpg, album.gif, <li>folder.jpg, folder.gif</ol>
+</ul>
 
 <p>
 Slimserver looks in the same path as the song, thus you would be looking for the
 same artfile in this case.  However there is an option in Server Settings,
-Additional, Interface for setting filenames for Artwork and Artwork Thumbnail.
- You can enter a specific filename if you use something not found in the list
-(eg, artwork.jpg).  You may also create filenames based on song variables.  If
-your first character is %, the server then parses the rest of the string as an
-InfoFormat, the same as title format is created.
+Additional, Interface for setting filenames for Artwork, Artwork Thumbnail, and
+for setting a central location for artwork files. You can enter a specific filename 
+if you use something not found in the list (eg, artwork.jpg).  You may also create 
+filenames based on song variables.  If your first character is %, the server then parses
+ the rest of the string as an InfoFormat, the same as title format is created.
 </p>
 
 <p>
@@ -155,7 +151,9 @@ ability is in the SlimServer.
 
 <p>
 Artwork internal to the  ID3 tags within a song takes precedence, followed by any specified filename in the server
-settings.  
+settings.  If an Artwork Folder setting is used (in Server Settings, Additional, Interface) then that folder is searched first
+for any file matching those given for Artwork and Artwork Thumbnail.
+
 In the Thumbnail selection, the Server reverses the search list so that thumb is found before cover. This
 way, you can have a set of large images and a set of small ones.  
 

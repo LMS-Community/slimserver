@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.94 2004/04/15 18:49:40 dean Exp $
+# $Id: Info.pm,v 1.95 2004/04/16 01:10:37 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1967,7 +1967,7 @@ sub readTags {
 	$::d_info && Slim::Utils::Misc::msg("Updating cache for: " . $file . "\n");
 
 	if (Slim::Utils::Prefs::get('ignoreMP3Tags')) {
-		$tempCacheEntry->{'TITLE'} = plainTitle($file, $type);;
+		$tempCacheEntry->{'TITLE'} = plainTitle($file, $type);
 		$tempCacheEntry->{'CT'} = $type;
 		$tempCacheEntry->{'TAG'} = 1;
 	
@@ -2349,7 +2349,7 @@ sub readCoverArtFiles {
 		if (Slim::Utils::Prefs::get('coverArt')) {
 			$artwork = Slim::Utils::Prefs::get('coverArt');
 		}
-		@filestotry = map { @{$nameslist{$_}} } qw(cover albumartsmall folder album thumb);
+		@filestotry = map { @{$nameslist{$_}} } qw(cover folder album thumb albumartsmall);
 	}
 	if (defined $artwork && $artwork =~ /^%(.*?)(\..*?){0,1}$/) {
 		my $suffix = $2 ? $2 : ".jpg";
