@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.12 2003/08/09 14:22:19 dean Exp $
+# $Id: Slimproto.pm,v 1.13 2003/08/10 20:27:46 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -156,7 +156,7 @@ sub client_writeable {
 	# just ignore if it shouldn't exist.
 	return unless (defined($ipport{$clientsock})); 
 	
-	$::d_protocol && msg("Slimproto client writeable: ".$ipport{$clientsock}."\n");
+	$::d_protocol_verbose && msg("Slimproto client writeable: ".$ipport{$clientsock}."\n");
 
 	if (!($clientsock->connected)) {
 		$::d_protocol && msg("Slimproto connection closed by peer.\n");
@@ -168,7 +168,7 @@ sub client_writeable {
 sub client_readable {
 	my $s = shift;
 
-	$::d_protocol && msg("Slimproto client readable: ".$ipport{$s}."\n");
+	$::d_protocol_verbose && msg("Slimproto client readable: ".$ipport{$s}."\n");
 
 	my $total_bytes_read=0;
 
@@ -181,7 +181,7 @@ GETMORE:
 
 	my $bytes_remaining;
 
-	$::d_protocol && msg(join(', ', 
+	$::d_protocol_verbose && msg(join(', ', 
 		"state: ".$parser_state{$s},
 		"framelen: ".$parser_framelength{$s},
 		"inbuflen: ".length($inputbuffer{$s})
@@ -199,7 +199,7 @@ GETMORE:
 	}
 	assert ($bytes_remaining > 0);
 
-	$::d_protocol && msg("attempting to read $bytes_remaining bytes\n");
+	$::d_protocol_verbose && msg("attempting to read $bytes_remaining bytes\n");
 
 	my $indata;
 	my $bytes_read = $s->sysread($indata, $bytes_remaining);
@@ -214,7 +214,7 @@ GETMORE:
 			return;
 		}
 
-		$::d_protocol && msg("no more to read.\n");
+		$::d_protocol_verbose && msg("no more to read.\n");
 		return;
 
 	}
@@ -223,7 +223,7 @@ GETMORE:
 	$inputbuffer{$s}.=$indata;
 	$bytes_remaining -= $bytes_read;
 
-	$::d_protocol && msg ("Got $bytes_read bytes from client, $bytes_remaining remaining\n");
+	$::d_protocol_verbose && msg ("Got $bytes_read bytes from client, $bytes_remaining remaining\n");
 
 	assert ($bytes_remaining>=0);
 
@@ -259,7 +259,7 @@ GETMORE:
 		}
 	}
 
-	$::d_protocol && msg("new state: ".$parser_state{$s}."\n");
+	$::d_protocol_verbose && msg("new state: ".$parser_state{$s}."\n");
 	goto GETMORE;
 }
 
@@ -269,7 +269,7 @@ sub process_slimproto_frame {
 
 	my $len = length($data);
 
-	$::d_protocol && msg("Got Slimptoto frame, op $op, length $len\n");
+	$::d_protocol_verbose && msg("Got Slimptoto frame, op $op, length $len\n");
 
 	if ($op eq 'HELO') {
 		if ($len != 8) {

@@ -32,7 +32,7 @@ sub vfd {
 
 		$frame = 'l   '.$data;
 		my $len = pack('n',length($frame));
-		$::d_protocol && msg ("sending squeezebox frame, length ".length($frame)."\n");
+		$::d_protocol_verbose && msg ("sending squeezebox frame, length ".length($frame)."\n");
 		$frame = $len.$frame;
 		$client->tcpsock->syswrite($frame,length($frame));
 	}

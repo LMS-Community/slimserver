@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.7 2003/08/09 16:23:44 dean Exp $
+# $Id: IR.pm,v 1.8 2003/08/10 20:27:45 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -233,7 +233,7 @@ sub lookupFunction {
 	assert($client);
 	assert($map);
 	assert($mode);
-	assert($code); # FIXME: somhow we keep getting here with no $code.
+#	assert($code); # FIXME: somhow we keep getting here with no $code.
 
 	if (defined $irMap{$map}{$mode}{$code}) {
 		$::d_ir && msg("found function " . $irMap{$map}{$mode}{$code} . " for button $code in mode $mode from map $map\n");
