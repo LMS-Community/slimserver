@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.11 2003/12/24 08:35:00 kdf Exp $
+# $Id: Plugins.pm,v 1.12 2003/12/27 02:05:10 dean Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
@@ -20,6 +20,18 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 
 use FindBin qw($Bin);
+
+sub pluginDirs {
+	my @pluginDirs;
+	push @pluginDirs, catdir($Bin, "Plugins");
+	if (Slim::Utils::OSDetect::OS() eq 'mac') {
+		push @pluginDirs, $ENV{'HOME'} . "/Library/SlimDevices/Plugins/";
+		push @pluginDirs, "/Library/SlimDevices/Plugins/";
+	}
+	return @pluginDirs;
+}
+
+use lib (pluginDirs());
 
 my $read_onfly = 0;	# set to 1 to pick up modules on the fly rather than
 			# on the first visit to the plug-ins section
@@ -92,17 +104,6 @@ sub lines {
     );
     return (@lines,undef,Slim::Hardware::VFD::symbol('rightarrow'));
 }
-
-sub pluginDirs {
-	my @pluginDirs;
-	push @pluginDirs, catdir($Bin, "Plugins");
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		push @pluginDirs, $ENV{'HOME'} . "/Library/SlimDevices/Plugins/";
-		push @pluginDirs, "/Library/SlimDevices/Plugins/";
-	}
-	return @pluginDirs;
-}
-
 sub enabledPlugins {
 	my $client = shift;
 	my @enabled;
