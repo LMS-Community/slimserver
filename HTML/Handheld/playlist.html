@@ -13,7 +13,7 @@
 
 <font face="arial,helvetica">
 <table bgcolor="#c5c5c5" width=100%><tr><td align="center">
-       [% "CURRENT_PLAYLIST" | string %] [% IF playlistname %]<b>[% playlistname %]</b>[% END %] ([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])
+       [% "CURRENT_PLAYLIST" | string %]: [% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %] [% IF playlistname %]<b>[% playlistname %]</b>[% END %] ([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])
 </td></tr></table>
 
 [% IF playlist_pagebar %]<font size="-1"><br>[% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %]</font>[% END %]

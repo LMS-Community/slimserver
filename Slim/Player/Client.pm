@@ -1,5 +1,5 @@
 
-# $Id: Client.pm,v 1.52 2004/05/14 23:07:50 dean Exp $
+# $Id: Client.pm,v 1.53 2004/07/25 22:47:38 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -735,6 +735,8 @@ sub new {
 	$client->[88] = 0; # buffersize
 	$client->[89] = 0; # streamBytes
 	$client->[90] = undef; # trickSegmentRemaining
+	$client->[91] = undef; # currentPlaylist
+	$client->[92] = undef; # currentPlaylistModified
 
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -1338,6 +1340,15 @@ sub streamBytes {
 sub trickSegmentRemaining {
 	my $r = shift;
 	@_ ? ($r->[90] = shift) : $r->[90];
+}
+
+sub currentPlaylist {
+	my $r = shift;
+	@_ ? ($r->[91] = shift) : $r->[91];
+}
+sub currentPlaylistModified {
+	my $r = shift;
+	@_ ? ($r->[92] = shift) : $r->[92];
 }
 
 1;

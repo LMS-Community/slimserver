@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.120 2004/07/24 02:05:00 kdf Exp $
+# $Id: strings.txt,v 1.121 2004/07/25 22:47:36 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -848,6 +848,39 @@ NO_PLAYLIST_DIR_MORE
 	EN	Visit Server Settings to fix this.
 	FR	Consultez "Réglages du serveur".
 	SE	Ändra serverinställningar för att korrigera detta
+
+HOME
+	DE	Startseite
+	DK	Hovedmenu
+	EN	Home
+	ES	Inicio
+	FI	Alkuun
+	FR	Menu
+	NL	Hoofdmenu
+	NO	Hjem
+	PT	Início
+	SE	huvudmeny
+
+STATUS
+	DE	Status
+	EN	Status
+	FR	État
+
+SERVER
+	DE	Server
+	DK	Server
+	EN	Server
+	ES	Servidor
+	FR	Serveur
+	NL	Server
+	NO	Server
+	PT	Servidor
+	SE	Server
+
+ABOUT_SHORT
+	DE	Über...
+	EN	About
+	FR	A propos
 
 #
 # Setup Group strings
@@ -4889,6 +4922,9 @@ FLC
 
 OGG
 	EN	Ogg Vorbis
+
+MODIFIED
+	EN	Modified
 
 MODTIME
 	DE	Datum geändert

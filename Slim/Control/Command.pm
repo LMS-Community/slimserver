@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.39 2004/07/22 02:03:47 kdf Exp $
+# $Id: Command.pm,v 1.40 2004/07/25 22:47:38 dean Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -358,6 +358,10 @@ sub execute {
 					if ($p1 =~ /^(play|load|resume)$/) {
 						Slim::Player::Source::playmode($client, "stop");
 						Slim::Player::Playlist::clear($client);
+						$client->currentPlaylist($path);
+						$client->currentPlaylistModified(0);
+					} else {
+						$client->currentPlaylistModified(1);
 					}
 					
 					$path = Slim::Utils::Misc::virtualToAbsolute($path);
@@ -419,10 +423,12 @@ sub execute {
 				push(@{Slim::Player::Playlist::playList($client)}, Slim::Music::Info::songs(singletonRef($p2), singletonRef($p3), singletonRef($p4), singletonRef($p5), $p6));
 				Slim::Player::Playlist::reshuffle($client);
 				Slim::Player::Source::jumpto($client, 0);
+				$client->currentPlaylist(undef);
 			
 			} elsif ($p1 eq "addalbum") {
 				push(@{Slim::Player::Playlist::playList($client)}, Slim::Music::Info::songs(singletonRef($p2), singletonRef($p3), singletonRef($p4), singletonRef($p5), $p6));
 				Slim::Player::Playlist::reshuffle($client);
+				$client->currentPlaylistModified(1);
 			
 			} elsif ($p1 eq "insertalbum") {
 				my @songs = Slim::Music::Info::songs(singletonRef($p2), singletonRef($p3), singletonRef($p4), singletonRef($p5), $p6);
@@ -431,6 +437,7 @@ sub execute {
 				push(@{Slim::Player::Playlist::playList($client)}, @songs);
 				insert_done($client, $playListSize, $size);
 				#Slim::Player::Playlist::reshuffle($client);
+				$client->currentPlaylistModified(1);
 			
 			} elsif ($p1 eq "save") {
 				if ( Slim::Utils::Prefs::get('playlistdir')) {
@@ -457,6 +464,7 @@ sub execute {
 			} elsif ($p1 eq "deletealbum") {
 				my @listToRemove=Slim::Music::Info::songs(singletonRef($p2),singletonRef($p3),singletonRef($p4),singletonRef($p5),$p6);
 				Slim::Player::Playlist::removeMultipleTracks($client,\@listToRemove);
+				$client->currentPlaylistModified(1);
 			
 			} elsif ($p1 eq "deleteitem") {
 				if (defined($p2) && $p2 ne '') {
@@ -484,6 +492,7 @@ sub execute {
 							Slim::Player::Playlist::removeMultipleTracks($client,$contents);
 						}
 					}
+				$client->currentPlaylistModified(1);
 				}
 			
 			} elsif ($p1 eq "repeat") {
@@ -511,14 +520,17 @@ sub execute {
 			} elsif ($p1 eq "clear") {
 				Slim::Player::Playlist::clear($client);
 				Slim::Player::Source::playmode($client, "stop");
+				$client->currentPlaylist(undef);
 			
 			} elsif ($p1 eq "move") {
 				Slim::Player::Playlist::moveSong($client, $p2, $p3);
+				$client->currentPlaylistModified(1);
 			
 			} elsif ($p1 eq "delete") {
 				if (defined($p2)) {
 					Slim::Player::Playlist::removeTrack($client,$p2);
 				}
+				$client->currentPlaylistModified(1);
 			
 			} elsif (($p1 eq "jump") || ($p1 eq "index")) {
 				if ($p2 eq "?") {
@@ -561,6 +573,7 @@ sub execute {
 				} else {
 					msg("Could not open $zapped for writing.\n");
 				}
+				$client->currentPlaylistModified(1);
 			}
 
 		} elsif ($p0 eq "mixer") {
