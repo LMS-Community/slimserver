@@ -9,6 +9,7 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 
 use Slim::Formats::Parse;
+use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -38,7 +39,7 @@ sub recount {
 	if (scalar(@history)) {        
         
 		# Cycle through the history and count songs. 
-		foreach my $item (@history) {
+		for my $item (@history) {
 
 			if (!exists($outhash{$item})) {
 				$outhash{$item}[0] = $item;
@@ -114,6 +115,7 @@ sub hitlist {
 	my $maxplayed  = 0;
 
 	my @items = recount();
+	my $ds    = Slim::Music::Info::getCurrentDataStore();
 
 	if (scalar(@items)) {
 
@@ -123,29 +125,29 @@ sub hitlist {
 				$maxplayed = $items[$i][1];
 			}
 
-			my %list_form = %$params;
-			my $song = $items[$i][0];
+			my %form  = %$params;
+			my $track = $ds->objectForUrl($items[$i][0]) || next;
 
-			$list_form{'title'} 	= Slim::Music::Info::standardTitle(undef,$song);
-			$list_form{'artist'} 	= Slim::Music::Info::artist($song);
-			$list_form{'album'} 	= Slim::Music::Info::album($song);
-			$list_form{'itempath'}  = $song;
-			$list_form{'odd'}	= ($itemnumber + 1) % 2;
-			$list_form{'song_bar'}	= hitlist_bar($params, $items[$i][1], $maxplayed);
-			$list_form{'player'}	= $params->{'player'};
-			$list_form{'skinOverride'} = $params->{'skinOverride'};
-			$list_form{'song_count'} = $items[$i][1];
+			$form{'title'} 	      = Slim::Music::Info::standardTitle(undef, $track);
+			$form{'artist'}       = $track->artist();
+			$form{'album'} 	      = $track->album();
+			$form{'itempath'}     = $track->url();
+			$form{'odd'}	      = ($itemnumber + 1) % 2;
+			$form{'song_bar'}     = hitlist_bar($params, $items[$i][1], $maxplayed);
+			$form{'player'}	      = $params->{'player'};
+			$form{'skinOverride'} = $params->{'skinOverride'};
+			$form{'song_count'}   = $items[$i][1];
 
-			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("hitlist_list.html", \%list_form)};
+			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("hitlist_list.html", \%form)};
 
 			$itemnumber++;
 		}
 	}
 
-	$params->{'total_song_count'}	= Slim::Music::Info::songCount([],[],[],[]);
-	$params->{'genre_count'}	= Slim::Music::Info::genreCount([],[],[],[]);
-	$params->{'artist_count'}	= Slim::Music::Info::artistCount([],[],[],[]);
-	$params->{'album_count'}	= Slim::Music::Info::albumCount([],[],[],[]);
+	$params->{'total_song_count'} = $ds->count('track', {});
+	$params->{'genre_count'}      = $ds->count('genre', {});
+	$params->{'artist_count'}     = $ds->count('artist', {});
+	$params->{'album_count'}      = $ds->count('album', {});
 
 	return Slim::Web::HTTP::filltemplatefile("hitlist.html", $params);
 }
