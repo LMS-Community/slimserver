@@ -1,0 +1,45 @@
+<!-- Page setup.html -->
+[SET title [S {playermodel}]:{pagetitle}] [SET pageicon MUSIC] [SET setup 1]
+
+[INCLUDE pageheader.html]
+[INCLUDE menu.html]
+
+<font face="arial,helvetica">
+
+[IF children]{children}[/IF]
+[IF siblings]{siblings}[/IF]
+
+[IF linktree]
+    <br><small>Current Page:</small> {linktree}<br>
+[/IF]
+
+[IF warning]
+<table width="100%" bgcolor="#cfcfcf">
+    <tr><td><b>{warning}</b></td></tr>
+</table>
+[/IF]
+
+<form method="get" action="setup.html">
+    <input type=hidden value="{player}" name="player">
+    <input type=hidden value="{playerid}" name="playerid">
+    <input type=hidden value="{page}" name="page">
+    {GroupList}
+</form>
+
+[EQ page player]
+    <h3>[S FORGET_PLAYER]</h3>
+    <p>[S FORGET_PLAYER_DESC]</p>
+    <p><a href="{webroot}home.html?player={%player}&forget={%playerid}">[S FORGET_PLAYER_LINK]</a></p>
+    <hr>
+[/EQ]
+
+[IF versionInfo]
+    <table width="100%" bgcolor="#666666">
+        <tr><td align="center"><font color="#ffffff" size="-1">{versionInfo}</td></tr>
+    </table>
+[/IF]
+
+</font>
+
+[INCLUDE pagefooter.html]
+<!-- /Page setup.html -->

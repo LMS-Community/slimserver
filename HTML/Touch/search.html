@@ -1,0 +1,25 @@
+<!-- Page search.html -->
+[SET title [S {playermodel}]:[S SEARCH]] [SET pageicon MUSIC]
+
+[INCLUDE pageheader.html]
+[INCLUDE menu.html]
+
+[IFN query][INCLUDE searchinput.html][/IFN]
+
+<font size="+1">
+[NE numresults -1]
+    [EQ type artist][S ARTISTSMATCHING][/EQ]
+    [EQ type album][S ALBUMSMATCHING][/EQ]
+    [EQ type song][S SONGSMATCHING][/EQ] "{query}": {numresults}<p>
+[/NE]
+
+[IF searchlist_pagebar]<p><font size="-1">[S PAGES]: <font size="+3">{searchlist_pagebar}</p>[/IF]
+[IF searchlist_header]<p>{searchlist_header}:</p>[/IF]
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+    {browse_list}
+</table>
+
+[IF searchlist_pagebar]<p><font size="-1">[S PAGES]: <font size="+3">{searchlist_pagebar}</p>[/IF]
+</font>
+[INCLUDE pagefooter.html]
+<!-- /Page search.html -->

@@ -1,0 +1,40 @@
+<!-- Page browseid3.html -->
+[SET title [S {playermodel}]:[S {browseby}]] [SET browse 0] [SET playlist 0] [SET music 1] [SET pageicon MUSIC]
+
+[INCLUDE pageheader.html]
+[INCLUDE menu.html]
+
+[IF warn]<p><b>[S NOTE]</b> [S SCAN_WARNING] [IFN itunes][S SCAN_CLICK] <a href="browse.html?player={%player}"><font class="pagebartext">[S HERE]</a>.[/IFN]</p>[/IF]
+
+<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
+    <tr><td><font class="pagebartext">&nbsp;&nbsp;{pwd_list}</td></tr>
+    <tr><td>
+    [IF browselist_pagebar]<font class="pagebartext">&nbsp;{browselist_pagebar}[/IF][IF browselist_header]<font class="pagebartext">&nbsp;|&nbsp;{browselist_header}[/IF]
+    </td></tr>
+</table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#FFFFFF">
+<tr><td height="20"></td></tr></table>
+
+[IF coverart]
+<table width="100%"><tr><td>
+    <a href="status.html?p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}">
+    <p align="center"><img src="/music/{%coverartpath}/cover.jpg" STYLE="border: dashed #666666 15px"></a>
+</td><tr>
+[/IF]
+
+
+
+<table cellspacing="0" border="0" cellpadding="0" width="100%">
+    {browse_list}
+</table>
+
+[IF song_count]
+<table width="100%" bgcolor="#666666"><tr><td>
+    <font class="statusbartext">[S BROWSING_MUSIC] <b>{album_count}</b> [S WITH] <b>{song_count}</b> [S BY] <b>{artist_count}</b></font>
+</td></tr>
+</table>
+[/IF]
+</font>
+
+[INCLUDE pagefooter.html]
+<!-- /Page browseid3.html -->

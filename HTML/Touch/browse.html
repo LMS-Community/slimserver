@@ -1,0 +1,58 @@
+<!-- Page browse.html -->
+[SET title [S {playermodel}]:[S BROWSEMUSIC]] [SET pageicon MUSIC] [SET browse 1] [SET music 1][SET playlist 0]
+
+[INCLUDE pageheader.html]
+[INCLUDE menu.html]
+
+<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
+       <tr><td><a href="browse.html?dir=&player={%player}"><font class="pagebartext">&nbsp;&nbsp;[S MUSIC]</a>
+       {pwd_list}</td>
+       [IFN dir]<td width="11" align="right" style="padding-right:15px;"><nobr><a href="status.html?p0=playlist&p1=load&p2=&player={%player}"><font class="actiontext">[S PLAY]</a>
+       <font class="actiontext">|&nbsp;<a href="status.html?p0=playlist&p1=add&p2=&player={%player}"><font class="actiontext">[S ADD]</a></nobr></td>
+       [/IFN]
+       </tr>
+<tr><td>
+
+[IF browselist_pagebar]<p><font class="pagebartext">&nbsp;{browselist_pagebar}[/IF][IF browselist_header]&nbsp;|&nbsp;<font class="pagebartext">{browselist_header}</p>[/IF]</td></tr></table>
+[EQ badpath 1]
+    [IF playlist][S NEED_PLAYLIST_PATH][/IF]
+    [IFN playlist][S NEED_PATH][/IFN]
+    <p><a href="setup.html?page=server&player={%player}">[S CLICK_HERE]</a> [S TO_GO_TO_SERVER_SETTINGS]</p>
+[/EQ]
+[IF coverart]
+    <p><center>
+    <img src="/music/{%coverartpath}/cover.jpg" width="150" STYLE="border: dashed #666666 15px"></a>
+    </center></p>
+[/IF]
+<center>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+    {browse_list}
+</table>
+</center>
+
+[IF browselist_pagebar]
+<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#C5C5C5">
+<tr><td>
+<font class="pagebartext">&nbsp;{browselist_pagebar}
+[/IF]
+
+[IF browselist_header]
+&nbsp;|&nbsp;<font class="pagebartext">{browselist_header}
+[/IF]
+
+</td></tr>
+</table>
+
+
+
+
+[IF song_count]
+    <table width="100%" bgcolor="#666666"><tr><td>
+    <font color="#ffffff" class="statusbartext">[S LIBRARY_CONTAINS] <b>{song_count}</b> [S BY] <b>{artist_count}</b>
+	</td></tr></table>
+[/IF]
+
+
+</font>
+[INCLUDE pagefooter.html]
+<!-- /Page browse.html -->

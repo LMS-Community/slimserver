@@ -1,0 +1,182 @@
+<!-- Page songinfo.html -->
+[SET title [S {playermodel}]:[S SONG_INFO]] [SET pageicon MUSIC]
+
+[INCLUDE pageheader.html]
+[INCLUDE menu.html]
+
+<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#EEEEEE">
+<tr><td width="40" align="left"><img src="html/images/leftcorner.gif"></td>
+<td><p align="center"><font class="pagebartext">[S SONG_INFO] [S FOR] <b>{title}</b></p></td>
+<td width="40" align="right"><img src="html/images/rightcorner.gif"></td>
+</tr>
+</table>
+
+
+
+
+
+[IF coverart]
+<a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}"><p align="center"><img src="/music/{%itempath}/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a>
+[/IF]
+
+<br><br>
+
+
+
+<table width="50%" bgcolor="#EEEEEE" cellspacing="0" cellpadding="0" border="0">
+<tr><td width="40" align="left"><img src="html/images/lefttopcorner.gif"></td><td></td><td width="40" align="right"><img src="html/images/righttopcorner.gif"></td></tr>
+<tr><td></td><td align="center">
+
+<a href="{webroot}{path}?{queryparams}&p0=playlist&amp;p1=play&amp;p2={%itempath}&amp;player={%player}" style="text-decoration:none">
+<font class="menutext">[S PLAY]</a>&nbsp;&nbsp;&nbsp;<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=insert&p2={%itempath}&player={%player}">
+
+<font class="menutext">[S NEXT]</a>
+&nbsp;<a href="{webroot}{path}?{queryparams}&p0=playlist&amp;p1=append&amp;p2={%itempath}&amp;player={%player}" style="text-decoration:none">
+
+<Font class="menutext">&nbsp;[S ADD]</a>&nbsp;</small></td><td></td></tr>
+
+<td align="left"><img src="html/images/leftcorner.gif"></td><td></td><td><img src="html/images/rightcorner.gif"></td>
+</tr>
+
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table width=100%>
+<font size="+1">
+	<tr><td rowspan="20" width="20"></td></tr>
+	<tr><td height="30"></td></tr>
+        <tr>
+                <td>
+                        <nobr><font size="+1">
+                                [S TITLE]:
+                        </nobr>
+                </td>
+                <td>
+                        <font size="+2">{title}
+                </td>
+        </tr>
+        [IF artist]
+        <tr>
+                <td><font size="+1">
+                        [S ARTIST]:
+                </td>
+                <td>
+                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}"style="text-decoration:none">{artist}</a>
+                </td>
+        </tr>
+        [/IF] [IF composer]
+        <tr>
+                <td><font size="+1">
+                        [S COMPOSER]:
+                </td>
+                <td>
+                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist={%composer}&amp;player={%player}"style="text-decoration:none">{composer}</a>
+                </td>
+        </tr>
+       [/IF] [IF conductor]
+        <tr>
+                <td><font size="+1">
+                        [S CONDUCTOR]:
+                </td>
+                <td>
+                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist={%conductor}&amp;player={%player}"style="text-decoration:none">{conductor}</a>
+                </td>
+        </tr>
+        [/IF] [IF album]
+        <tr>
+                <td><font size="+1">
+                        [S ALBUM]:
+                </td>
+                <td>
+                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist=*&amp;album={%album}&amp;player={%player}"style="text-decoration:none">{album}</a>
+                </td>
+        </tr>
+        [/IF] [IF genre]
+        <tr>
+                <td><font size="+1">
+                        [S GENRE]:
+                </td>
+                <td>
+                        <font size="+2"><a href="browseid3.html?genre={%genre}&amp;player={%player}"style="text-decoration:none">{genre}
+                </td>
+        </tr><tr><td height="30"></td><td>
+        [/IF] [IF track]
+        <tr>
+                <td><font size="+1">
+                        [S TRACK]:
+                </td>
+                <td>
+                        <font size="+1">{track}
+                </td>
+        </tr>
+        [/IF] [IF duration]
+        <tr>
+                <td><font size="+1">
+                        [S LENGTH]:
+                </td>
+                <td>
+                        <font size="+1">{duration}
+                </td>
+        </tr>
+        [/IF] [IF year]
+        <tr>
+                <td><font size="+1">
+                        [S YEAR]:
+                </td>
+                <td>
+                        <font size="+1">{year}
+                </td>
+        </tr>
+        [/IF] [IF comment]
+        <tr>
+                <td><font size="+1">
+                        [S COMMENT]:
+                </td>
+                <td>
+                        <font size="+1">{comment}
+                </td>
+        </tr>
+        [/IF] [IF filelength]
+        <tr>
+                <td><font size="+1">
+                        [S FILELENGTH]:
+                </td>
+                <td>
+                        <font size="+1">{filelength} [S BYTES]
+                </td>
+        </tr>
+        [/IF] [IF bitrate]
+        <tr>
+                <td><font size="+1">
+                        [S BITRATE]:
+                </td>
+                <td>
+                        <font size="+1">{bitrate}
+                </td>
+        </tr>
+        [/IF] [IF tagversion]
+        <tr>
+                <td><font size="+1">
+                        [S TAGVERSION]:
+                </td>
+                <td>
+                        <font size="+1">{tagversion}
+                </td>
+        </tr>
+        [/IF]
+</table>
+
+</font>
+[INCLUDE pagefooter.html]
+<!-- /Page songinfo.html -->

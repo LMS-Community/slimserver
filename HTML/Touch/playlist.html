@@ -1,0 +1,64 @@
+<!-- Page playlist.html -->
+[SET title [S {playermodel}]:[S PLAYLIST]] [SET pageicon MUSIC] [SET browse 0] [SET music 0][SET playlist 1] [SET status 0][SET setup 1]
+
+[INCLUDE pageheader.html]
+[INCLUDE menu.html]
+
+<table bgcolor="#EEEEEE" width=100% border="0">
+<tr><td align="center"><font class="normaltext">[S CURRENT_PLAYLIST][IF playlistname]<b>{playlistname}</b>[/IF] ([EVAL]defined($client) ? Slim::Player::Playlist::count($client) : '';[/EVAL] [S SONGS])
+</td></tr>
+
+
+<tr><td>
+[IF playlist_pagebar]<font class="pagebartext">&nbsp;{playlist_pagebar}</font>[/IF]
+[IF playlist_header]<font class="pagebartext">&nbsp;|&nbsp;<font class="pagebartext">{playlist_header}</font>[/IF]
+</td>
+</tr>
+</table>
+
+
+
+
+<table bgcolor="#EEEEEE" width=100% cellspacing="0" cellpadding="0" border="0"><tr><td align="center">
+	<tr><td width="40"><p align="left"><img src="html/images/leftcorner.gif" border="0"></td>
+	<td><center>
+	[IF cansave]
+	<a href="browse.html?player={%player}&dir=__playlists%2f__current.m3u"><font class="normaltext">[S SAVE]</a>|
+	<a href="status.m3u?player={%player}" target="playlist"><font class="normaltext">[S DOWNLOAD]</a>|
+	<a href="playlist.html?p0=playlist&p1=clear&player={%player}"><font class="normaltext">[S CLEAR]</a>
+	[/IF]
+	[IFN cansave]&nbsp;[/IFN]
+	</td><td width="40"><p align="right"><img src="html/images/rightcorner.gif" border="0"></td></tr>
+</font>
+</table>
+
+
+
+
+<table bgcolor="#FFFFFF"><tr><td height="20"></td></tr></table>
+
+
+
+<table cellspacing="0" border="0" cellpadding="0" width="100%"><font class="itemtext">
+       [IFN playlist_items][S EMPTY][/IFN]{playlist_items}
+</table>
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FFFFFF">
+<tr><td height="30"></td></tr></table>
+
+
+[IF playlist_pagebar]
+<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#C5C5C5">
+<tr><td><font class="pagebartext">&nbsp;{playlist_pagebar}</td>
+</table>
+[/IF]
+
+
+
+<script language="JavaScript">
+        [EVAL]defined($client) ? Slim::Utils::Prefs::clientSet($client, "playlistItem",(Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Playlist::currentSongIndex($client)]) : '';[/EVAL]
+</script>
+</font>
+
+[INCLUDE pagefooter.html]
+<!-- /Page playlist.html -->

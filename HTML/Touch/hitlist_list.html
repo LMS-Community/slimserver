@@ -1,0 +1,29 @@
+<!-- Element hitlist_list.html -->
+<tr height="15" [IFN odd]bgcolor="#EEEEEE"[/IFN]>
+<td width="5%" align="right">
+<font class="actiontext">	
+({song_count})
+   </td>  
+
+<td width="75%" style="padding-left:5px">
+       <a href="songinfo.html?songurl={%itempath}&player={%player}"><font class="itemtext">{title}</a>
+   </td>
+
+
+<td>
+<nobr>
+<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=play&p2={%itempath}&player={%player}"><font class="actiontext">[S PLAY]</a>
+|&nbsp;
+<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=insert&p2={%itempath}&player={%player}"><font class="actiontext">[S NEXT]</a>
+|&nbsp;
+<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=add&p2={%itempath}&player={%player}"><font class="actiontext">[S ADD]</a>
+&nbsp;
+</nobr>
+</td>
+
+
+   <td width="20%" align="right" style="padding-right:15px">
+       <nobr>{song_bar}</nobr>
+  </td>
+</tr>
+<!-- /Element hitlist_list.html -->

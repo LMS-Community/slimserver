@@ -1,0 +1,24 @@
+<!-- Element status_list.html -->
+<tr [IFN odd]bgcolor="#EEEEEE"[/IFN]>
+   <td ><a name={num}>
+      <p align="right"><font class="numbertext">&nbsp;[EVAL]$hashref->{'num'} +1[/EVAL].&nbsp;</td><td>
+      <a href="songinfo.html?songurl=[EVAL]Slim::Web::HTTP::escape(Slim::Player::Playlist::song($client, $hashref->{'num'}));[/EVAL]&player={%player}">[IF currentsong]<font class="playingitemtext">&lsqb;&nbsp;[/IF][IFN currentsong]&nbsp;&nbsp;&nbsp;[/IFN]<font class="itemtext">{title}[IF currentsong]<font class="playingitemtext">&nbsp;&rsqb;[/IF]</a>
+   </td>
+   <td align="right"><nobr>
+           <a href="playlist.html?p0=playlist&p1=jump&p2={num}&player={%player}">
+           <font class="actiontext">[S PLAY]
+           </a>
+	   |
+           <a href="playlist.html?p0=playlist&p1=move&p2={num}&p3=%2D1&player={%player}&start={start}">
+           <font class="actiontext">[S UP]
+           </a>
+  
+           |<a href="playlist.html?p0=playlist&p1=move&p2={num}&p3=%2B1&player={%player}&start={start}">
+           <font class="actiontext">[S DOWN]
+           </a>
+   
+           |<a href="playlist.html?p0=playlist&p1=delete&p2={num}&player={%player}&start={start}">
+           <font class="actiontext">[S DELETE]
+           </a></td></nobr>
+</tr>
+<!-- /Element status_list.html -->

@@ -1,0 +1,24 @@
+<!-- Element browser_playlist_list -->
+<table width="100%" border="0" cellspacing="0">
+<tr [IFN odd]bgcolor="#EEEEEE"[/IFN]>
+  <td >
+      [IF anchor]<a name="{anchor}"></a>[/IF]
+      [IF descend]<a href="browse.html?dir={%descend}&player={%player}"><font class="itemtext">{&title}</a> [/IF]
+      [IFN descend]<a href="songinfo.html?songurl={%itempath}&player={%player}"><font class="itemtext">:{&title}</a> [/IFN]
+  </td>
+
+<td align="right" style="padding-right:15px;">
+
+
+<nobr><a href="{webroot}{path}?{queryparams}&p0=playlist&p1=play&p2={%itempath}&player={%player}"><font class="actiontext">[S PLAY]</a>
+[IFN descend]
+<font class="actiontext">|&nbsp;<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=append&p2={%itempath}&player={%player}"><font class="actiontext">[S NEXT]</a>
+[/IFN]
+<font class="actiontext">|&nbsp;<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=add&p2={%itempath}&player={%player}">
+<font class="actiontext">[S ADD]</a></nobr>
+</td>
+
+</tr>
+
+
+<!-- /Element browser_playlist_list -->

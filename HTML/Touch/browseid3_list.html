@@ -1,0 +1,34 @@
+<!-- Element browseid3_list.html -->
+
+<table width=100% border="0" cellspacing="0">
+
+<tr [IFN odd]bgcolor="#EEEEEE"[/IFN]>
+  <td>
+      [IF anchor]<a name="{anchor}"></a>[/IF]
+      [IF  descend]<a href="browseid3.html?song={%song}&artist={%artist}&album={%album}&genre={%genre}&player={%player}">
+<font class="itemtext">{title}</a>[/IF]
+      [IFN descend]<a href="songinfo.html?songurl={%itempath}&player={%player}"><font class="itemtext">:{title}</a>[/IFN]
+  </td>
+<td align="right" style="padding-right:15px;">
+      
+<nobr>
+[IF  descend]<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=loadalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}">
+<font class="actiontext">[S PLAY]</a>[/IF]
+
+
+[IFN descend]<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=play&p2={%itempath}&player={%player}"><font class="actiontext">[S PLAY]</a>[/IFN]
+ 
+
+[IFN descend]|&nbsp;<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=insert&p2={%itempath}&player={%player}"><font class="actiontext">[S NEXT]</a>[/IFN]
+
+
+[IF descend]|<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}">
+<font class="actiontext">[S ADD]</a>[/IF]
+      
+
+[IFN descend]|&nbsp;<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=append&p2={%itempath}&player={%player}"><font class="actiontext">[S ADD]</a>[/IFN]
+</nobr>
+</td>
+
+</tr>
+<!-- /Element browseid3_list.html -->
