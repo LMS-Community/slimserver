@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.57 2004/01/17 03:50:17 kdf Exp $
+# $Id: Info.pm,v 1.58 2004/01/17 04:09:52 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2195,10 +2195,23 @@ sub readCoverArt {
 			}
 			$cover = $fullpath;
 		} else {
+			($body,$contenttype,$cover) = readCoverArtFiles($file,$image);
+		}
+ 	}
+	return ($body, $contenttype,$cover);
+}
+
+sub readCoverArtFiles {
+			use bytes;
+			my $file = shift;
+			my $image = shift || 'cover';
+			my $cover;
+		
+			my $body;	
+			my $contenttype;
+			
 			my @components = splitdir($file);
-			if (!isDir($file)) {
-				pop @components;
-			}
+			pop @components;
 			$::d_info && Slim::Utils::Misc::msg("Looking for image files\n");
 
 			my @filestotry = ();
