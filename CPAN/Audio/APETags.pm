@@ -162,8 +162,11 @@ sub _parseTags {
 		# so we are already at the beginning of the
 		# actual tag info
 	}
-
-	return -1 if (!$self->{'tagTotalSize'} || ($self->{'tagTotalSize'} < 0));
+	
+	if (!$self->{'tagTotalSize'} || ($self->{'tagTotalSize'} < 0) || ($self->{'tagTotalSize'} > -s $fh) ) {
+		warn "tagTotalSize error, these do not appear to be valid APEtags";
+		return -1;
+	}
 	
 	# Read in the entire tag structure
 	read($fh, $tmp, $self->{'tagTotalSize'}) or return -1;
