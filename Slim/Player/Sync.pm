@@ -191,6 +191,8 @@ sub syncedWith {
 	my @buddies = ();
 	my $otherclient;
 	
+	return undef unless $client;
+	
 	# get the master and its slaves
 	if (isSlave($client)) {
 		push @buddies, $client->master;
@@ -333,6 +335,7 @@ sub master {
 
 sub slaves {
 	my $client = shift;
+	return undef unless $client;
 	
 	return @{$client->slaves};
 }
@@ -341,6 +344,7 @@ sub slaves {
 # returns the master if it's a slave, otherwise returns undef
 sub isSlave {
 	my $client = shift;
+	return undef unless $client;
 	return $client->master;
 }
 

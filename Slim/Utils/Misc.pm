@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.24 2004/02/18 17:52:55 dean Exp $
+# $Id: Misc.pm,v 1.25 2004/02/19 17:38:57 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -481,6 +481,9 @@ sub readDirectory {
 
 		push @diritems, $dir;
 	}
+	
+	closedir(DIR);
+	
 	$::d_files && msg("directory: $dirname contains " . scalar(@diritems) . " items\n");
 	
 	return sort(@diritems);

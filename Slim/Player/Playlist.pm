@@ -406,7 +406,7 @@ sub clearExecuteCommandCallback {
 sub modifyPlaylistCallback {
 	my $client = shift;
 	my $paramsRef = shift;
-	if (Slim::Utils::Prefs::get('playlistdir') && Slim::Utils::Prefs::get('persistPlaylists')) {
+	if ($client && Slim::Utils::Prefs::get('playlistdir') && Slim::Utils::Prefs::get('persistPlaylists')) {
 		#Did the playlist change?
 		my $saveplaylist = $paramsRef->[0] eq 'playlist' && ($paramsRef->[1] eq 'play' 
 					|| $paramsRef->[1] eq 'append' || $paramsRef->[1] eq 'load_done'

@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.11 2004/02/09 19:00:07 dean Exp $
+# $Id: Browse.pm,v 1.12 2004/02/19 17:38:56 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -82,7 +82,7 @@ my %functions = (
 				Slim::Buttons::Common::pushMode($client, 'trackinfo', {'track' => $currentItem});
 				Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
 			} else {
-				warn "Error attempting to descend directory or open file: $currentItem\n";
+				$::d_files && msg("Error attempting to descend directory or open file: $currentItem\n");
 			}
 		}
 	},
@@ -122,7 +122,7 @@ my %functions = (
 			# we are looking at a song file, play it and all the other songs in the directory after
 			Slim::Control::Command::execute($client, ["playlist", "append", $currentItem]);
 		} else {
-			warn "Error attempting to add directory or file to playlist.\n";
+			$::d_files && msg("Error attempting to add directory or file to playlist.\n");
 			return;
 		}
 	},
@@ -141,7 +141,7 @@ my %functions = (
 			# we are looking at a song file, play it and all the other songs in the directory after
 			Slim::Control::Command::execute($client, ["playlist", "insert", $currentItem]);
 		} else {
-			warn "Error attempting to add directory or file to playlist.\n";
+			$::d_files && msg("Error attempting to add directory or file to playlist.\n");
 			return;
 		}
 	},
@@ -188,7 +188,7 @@ my %functions = (
 				Slim::Control::Command::execute($client, ["playlist", "play", $currentItem]);
 			}
 		} else {
-			warn "Error attempting to play directory or open file.\n";
+			$::d_files && msg("Error attempting to play directory or open file.\n");
 		}
 	}
 );
@@ -271,7 +271,7 @@ sub loadDir {
 		# addToList will call &opendir_done when it finishes.
 
 	} else {
-		warn "Trying to loadDir on a non directory or playlist: $pwd";
+		$::d_files && msg("Trying to loadDir on a non directory or playlist: $pwd");
 	}
 }
 

@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.14 2004/01/26 05:44:08 dean Exp $
+# $Id: Plugins.pm,v 1.15 2004/02/19 17:38:56 dean Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
@@ -139,6 +139,7 @@ sub installedPlugins {
 					$pluginlist{$plugin} = exists($plugins{$plugin}) ? $plugins{$plugin}{'name'} : $plugin;
 				}
 			}
+			closedir(DIR);
 		}
 	}
 	return \%pluginlist;

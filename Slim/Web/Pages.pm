@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.45 2004/02/18 18:36:59 dean Exp $
+# $Id: Pages.pm,v 1.46 2004/02/19 17:38:57 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -1451,7 +1451,7 @@ sub instant_mix {
 		$$paramsref{'instant_mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("instant_mix_list.html", \%list_form)};
 	}
 
-	if (defined $p0) {
+	if (defined $p0 && defined $client) {
 		Slim::Control::Command::execute($client, ["playlist", $p0 eq "append" ? "append" : "play", $items[0]]);
 		
 		for (my $i=1; $i<=$#items; $i++) {
