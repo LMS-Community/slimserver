@@ -1025,7 +1025,7 @@ sub status {
 		
 		$params->{'rateval'} = Slim::Player::Source::rate($client);
 		$params->{'sync'}    = Slim::Player::Sync::syncwith($client);
-		$params->{'mode'}    = Slim::Buttons::Common::mode($client);
+		$params->{'mode'}    = $client->power() ? 'on' : 'off';
 
 		if ($client->isPlayer()) {
 
