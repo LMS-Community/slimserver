@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Text;
 
-# $Id: Text.pm,v 1.16 2004/08/03 17:29:11 vidur Exp $
+# $Id: Text.pm,v 1.17 2004/08/06 02:27:04 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -234,8 +234,12 @@ sub lines {
 			}
 		}
 	}
-	$line2 = Slim::Display::Display::subString($$valueRef,$displayPos,40);
-	if ($displayPos <= $cursorPos && ($cursorPos - $displayPos < 40)) {
+	
+	$line2 = Slim::Display::Display::subString($$valueRef,$displayPos,$client->displayWidth);
+	
+	my $end = $client->measureText(Slim::Display::Display::subString($line2,0,$cursorPos-$displayPos),2);
+
+	if ($displayPos <= $cursorPos && ($end < $client->displayWidth)) {
 		Slim::Display::Display::subString($line2,$cursorPos - $displayPos,0,Slim::Display::Display::symbol('cursorpos'));
 	}
 
@@ -354,7 +358,7 @@ sub init {
 		$cursorPos = $valueRefLen;
 		Slim::Buttons::Common::param($client,'cursorPos',$cursorPos);
 	}
-	Slim::Buttons::Common::param($client,'displayPos',(($cursorPos < 40) ? 0 : $cursorPos - 39));
+	Slim::Buttons::Common::param($client,'displayPos',(($cursorPos < ($client->displayWidth/2)) ? 0 : $cursorPos - (($client->displayWidth/2)-1)));
 	Slim::Buttons::Common::param($client,'displayPos2X',(($cursorPos < $DOUBLEWIDTH) ? 0 : $cursorPos - $DOUBLEWIDTH));
 	my $charIndex = Slim::Buttons::Common::param($client,'charIndex');
 	if ($cursorPos == $valueRefLen) {
@@ -519,21 +523,25 @@ sub moveCursor {
 sub checkCursorDisplay {
 	my $client = shift;
 	my $cursorPos = shift;
-	my $displayPos = Slim::Buttons::Common::param($client,'displayPos');
-	my $displayPos2X = Slim::Buttons::Common::param($client,'displayPos2X');
-	if ($cursorPos > $displayPos + 39) {
-		$displayPos = $cursorPos - 39;
-		Slim::Buttons::Common::param($client,'displayPos',$displayPos);
+
+	my $displayPos = $client->linesPerScreen() == 1 ? Slim::Buttons::Common::param($client,'displayPos2X') : Slim::Buttons::Common::param($client,'displayPos');
+
+	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
+	my $line = Slim::Display::Display::subString($$valueRef,$displayPos,$client->displayWidth);
+	my $cursor = $client->measureText(Slim::Display::Display::subString($line,0,$cursorPos),2);
+
+	if ($cursor >= $client->displayWidth) {
+		$displayPos += 1;
+		$client->linesPerScreen() == 1 ? 
+			Slim::Buttons::Common::param($client,'displayPos2X',$displayPos)
+		 : 
+			Slim::Buttons::Common::param($client,'displayPos',$displayPos);
 	} elsif ($cursorPos < $displayPos) {
 		$displayPos = $cursorPos;
-		Slim::Buttons::Common::param($client,'displayPos',$displayPos);
-	}
-	if ($cursorPos >= $displayPos2X + $DOUBLEWIDTH) {
-		$displayPos2X = $cursorPos - $DOUBLEWIDTH;
-		Slim::Buttons::Common::param($client,'displayPos2X',$displayPos2X);
-	} elsif ($cursorPos < $displayPos2X) {
-		$displayPos2X = $cursorPos;
-		Slim::Buttons::Common::param($client,'displayPos2X',$displayPos2X);
+		$client->linesPerScreen() == 1 ? 
+			Slim::Buttons::Common::param($client,'displayPos2X',$displayPos)
+		 : 
+			Slim::Buttons::Common::param($client,'displayPos',$displayPos);
 	}
 }
 
