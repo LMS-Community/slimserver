@@ -278,7 +278,7 @@ sub initSetupConfig {
 		'title' => string('DISPLAY_SETTINGS')
 		,'parent' => 'player'
 		,'isClient' => 1
-		,'GroupOrder' => [undef,undef,undef,'ScrollPause','ScrollRate']
+		,'GroupOrder' => [undef,undef,undef,'ScrollPause','ScrollRate', undef]
 		,'preEval' => sub {
 					my ($client,$paramref,$pageref) = @_;
 					return if (!defined($client));
@@ -289,6 +289,7 @@ sub initSetupConfig {
 						if ($client->isa("Slim::Player::SqueezeboxG")) {
 							$pageref->{'GroupOrder'}[1] = 'activeFont'; 
 							$pageref->{'GroupOrder'}[2] = 'idleFont';
+							$pageref->{'GroupOrder'}[5] = 'ScrollPixels';
 
 							my $activeFontMax = Slim::Utils::Prefs::clientGetArrayMax($client,'activeFont') + 1;
 							my $idleFontMax = Slim::Utils::Prefs::clientGetArrayMax($client,'idleFont') + 1;
@@ -308,6 +309,7 @@ sub initSetupConfig {
 						$pageref->{'GroupOrder'}[0] = undef;
 						$pageref->{'GroupOrder'}[1] = undef;
 						$pageref->{'GroupOrder'}[2] = undef;
+						$pageref->{'GroupOrder'}[5] = undef;
 					}
 
 					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [$client->defaultName()];
@@ -396,6 +398,17 @@ sub initSetupConfig {
 				,'GroupDesc' => string('SETUP_SCROLLPAUSE_DESC')
 				,'GroupLine' => 1
 			}
+			,'ScrollPixels' => {
+				'PrefOrder' => ['scrollPixels','scrollPixelsDouble']
+				,'PrefsInTable' => 1
+				,'Suppress_PrefHead' => 1
+				,'Suppress_PrefDesc' => 1
+				,'Suppress_PrefLine' => 1
+				,'GroupHead' => string('SETUP_SCROLLPIXELS')
+				,'GroupDesc' => string('SETUP_SCROLLPIXELS_DESC')
+				,'GroupLine' => 1
+			}
+			
 			}
 		,'Prefs' => {
 			'powerOnBrightness' => {
@@ -535,6 +548,19 @@ sub initSetupConfig {
 				,'changeIntro' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLRATE').string('COLON')
 				,'PrefChoose' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLRATE').string('COLON')
 			},
+			'scrollPixels' => {
+				'validate' => \&validateInt
+				,'validateArgs' => [1,20,1,20]
+				,'PrefChoose' => string('SINGLE-LINE').' '.string('SETUP_SCROLLPIXELS').string('COLON')
+			},
+			'scrollPixelsDouble' => {
+				'validate' => \&validateInt
+				,'validateArgs' => [1,20,1,20]
+				,'changeIntro' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLPIXELS').string('COLON')
+				,'PrefChoose' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLPIXELS').string('COLON')
+			},
+
+
 		}
 	}
 	,'homemenu' => {

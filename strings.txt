@@ -8583,3 +8583,10 @@ SETUP_GROUP_RADIO_DESC
 	EN	SlimServer includes support for Internet Radio through several radio providers. You can configure support for some of these providers, including entering your username and password for premium access, on this page. To save your changes, click Change.
 	ES	Slimserver incluye soporte para Radios de Internet de varios proveedores de radio. Se puede configurar el soporte para algunos de estos proveedodes, incluyendo el ingreso de usuario y contraseña para servicios Premium, en esta página. Para guardar los cambio, haga click en Cambiar.
 	JP	SlimServer は複数の無線の提供者を通してインターネ ットのラジオのためのサポートを含んでいる。あなたはこのペー ジの優れたアクセスのためのあなたのusername そしてパスワード を, 入れることを含むこれらの提供者のいくつかのためのサポー トを, 形成できる。あなたの変更を救うため, かちりと言う音の 変更。
+
+SETUP_SCROLLPIXELS
+	EN	Scroll Pixels
+
+SETUP_SCROLLPIXELS_DESC
+	EN	On a player with a graphical display you can adjust the number of pixels (dots) that the player scrolls in each interval defined above.  Adjust this in conjunction with the Scroll Rate to adjust scrolling speed and quality.  Note that small values with low Scroll Rates look good, but require a higher performance server and uncongested network.  If in doubt leave as the default of 7 pixels.  (Min 1, Max 20).
+
