@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.162 2004/12/11 23:51:32 vidur Exp $
+# $Id: Info.pm,v 1.163 2004/12/13 16:57:24 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -208,7 +208,7 @@ sub total_time {
 }
 
 sub clearPlaylists {
-	return $currentDB->clearExternalPlaylists();
+	return $currentDB->clearExternalPlaylists() if defined($currentDB);
 }
 
 sub playlists {
