@@ -5,8 +5,8 @@
   			 [% IF not currentsong %]<a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]">[% END %][% title | html %][% IF not currentsong %]</a>[% END %]
  		[% IF currentsong %]</b>[% END %]
  		
-[% IF includeAlbum %][% "FROM" | string %] <a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album | html %]</a> [% END %]
-[% IF includeArtist %] [% "BY" | string %] <a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser">[% artist | html %]</a>[% END %]
+[% IF album %][% "FROM" | string %] <a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album | html %]</a> [% END %]
+[% IF artist %] [% "BY" | string %] <a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser">[% artist | html %]</a>[% END %]
 </td>
    <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
       <a href="status.html?p0=playlist&p1=delete&p2=[% num %]&player=[% player | uri %]&start=[% start %]">[% "DELETE" | string %]</a>

@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.63 2004/04/15 18:49:42 dean Exp $
+# $Id: Pages.pm,v 1.64 2004/04/19 08:48:29 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -731,11 +731,11 @@ sub buildPlaylist {
 
 		if ($listBuild->{'includeArtist'}) {
 			$list_form{'artist'} = Slim::Music::Info::artist($song);
-		}
+		} else {$list_form{'artist'} = undef;}
 
 		if ($listBuild->{'includeAlbum'}) {
 			$list_form{'album'}  = Slim::Music::Info::album($song);
-		} 
+		} else {$list_form{'album'} = undef;}
 
 		$list_form{'start'}	   = $params->{'start'};
 		$list_form{'skinOverride'} = $params->{'skinOverride'};
