@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.44 2004/02/13 15:56:37 dean Exp $
+# $Id: Pages.pm,v 1.45 2004/02/18 18:36:59 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -454,6 +454,11 @@ sub status {
 		$$main_form_ref{'mode'} = Slim::Buttons::Common::mode($client);
 		if ($client->isPlayer()) {
 			$$main_form_ref{'sleeptime'} = $client->currentSleepTime();
+			my $sleep = $client->sleepTime() - Time::HiRes::time();
+			if ($sleep < 0) {
+				$sleep = 0;
+			}
+			$$main_form_ref{'sleep'} = $sleep;
 			$$main_form_ref{'isplayer'} = 1;
 			$$main_form_ref{'volume'} = int(Slim::Utils::Prefs::clientGet($client, "volume") + 0.5);
 			$$main_form_ref{'bass'} = int(Slim::Utils::Prefs::clientGet($client, "bass") + 0.5);

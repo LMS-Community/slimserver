@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.25 2004/01/28 04:36:56 dean Exp $
+# $Id: Command.pm,v 1.26 2004/02/18 18:36:58 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -257,8 +257,10 @@ sub execute {
 				if ($p1 != 0) {
 					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $p1, \&gotosleep);
 					$client->sleepTime(Time::HiRes::time() + $p1);
+					$client->currentSleepTime($p1 / 60);
 				} else {
 					$client->sleepTime(0);
+					$client->currentSleepTime(0);
 				}
 			}	
 		} elsif ($p0 eq "gototime" || $p0 eq "time") {

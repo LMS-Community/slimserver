@@ -31,6 +31,9 @@
     		<play_next_url><![CDATA[xml/status.xml?p0=playlist&p1=jump&p2=1]]></play_next_url>
     		[/IF]
  			[IF rate && currentsong]<rate>{&rate}</rate>[/IF]
+ 			[IF rateval && currentsong]<rateval>{&rateval}</rateval>[/IF]
+ 			[IF sleeptime]<sleeptime>{&sleeptime}</sleeptime>[/IF]
+ 			[IF sleep]<sleep>{&sleep}</sleep>[/IF]
  		</transport>
 		<shuffle>
 			[IF shuffleoff]<shuffle_off/>[/IF]

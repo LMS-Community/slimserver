@@ -78,7 +78,8 @@ If there is no player defined on the Server, playercount is 0.
 						stop_url?, 
 						play_prev_url?, 
 						play_next_url?, 
-						rate?
+						rate?,
+						rateval?
 					)>			
 <!ELEMENT mode 			(#PCDATA)>	
 <!-- Player internal mode. The value "off" can be used to check if the player
@@ -99,6 +100,9 @@ change the playlist.
 <!ELEMENT play_prev_url (#PCDATA)>	<!-- Skip forward                        -->
 <!ELEMENT play_next_url (#PCDATA)>	<!-- Skip backward                       -->
 <!ELEMENT rate 			(#PCDATA)>  <!-- Playing rate (ffwd, rwd, norm)      -->
+<!ELEMENT rateval		(#PCDATA)>  <!-- Playing rate (as a float, 1.0 is play)-->
+<!ELEMENT sleeptime		(#PCDATA)>  <!-- Number of minutes set for sleep     -->
+<!ELEMENT sleep			(#PCDATA)>  <!-- Number of seconds until sleep       -->
 
 
 <!ELEMENT shuffle 	( 	(shuffle_off|shuffle_albums|shuffle_songs), 

@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.61 2004/01/26 05:44:21 dean Exp $
+# $Id: Source.pm,v 1.62 2004/02/18 18:36:59 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -655,6 +655,7 @@ sub openSong {
 				$client->audioFilehandleIsSocket(1);
 				$client->streamformat(Slim::Music::Info::contentType($fullpath));
 				$client->remoteStreamStartTime(Time::HiRes::time());
+				$client->pauseTime(0);
 				defined(Slim::Utils::Misc::blocking($sock,0)) || die "Cannot set remote stream nonblocking";
 
 			# if it's one of our playlists, parse it...
@@ -794,6 +795,7 @@ sub openSong {
 				$client->audioFilehandleIsSocket(2);
 				
 				$client->remoteStreamStartTime(Time::HiRes::time());
+				$client->pauseTime(0);
 				
 				$size   = $duration * ($bitrate * 1000) / 8;
 				$offset = 0;

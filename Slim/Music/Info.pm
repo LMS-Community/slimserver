@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.76 2004/02/14 02:21:02 kdf Exp $
+# $Id: Info.pm,v 1.77 2004/02/18 18:36:58 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2027,6 +2027,9 @@ sub readTags {
 				my $header = $tempCacheEntry->{'OFFSET'};
 				my $startbytes = int($byterate * $start);
 				my $endbytes = int($byterate * $end);
+				
+				$startbytes -= $startbytes % $tempCacheEntry->{'BLOCKALIGN'} if $tempCacheEntry->{'BLOCKALIGN'};
+				$endbytes -= $endbytes % $tempCacheEntry->{'BLOCKALIGN'} if $tempCacheEntry->{'BLOCKALIGN'};
 				
 				$tempCacheEntry->{'OFFSET'} = $header + $startbytes;
 				$tempCacheEntry->{'SIZE'} = $endbytes - $startbytes;
