@@ -44,6 +44,7 @@ use constant STATUS_STREAMING => 0;
 use constant STATUS_PLAYING => 1;
 
 our %commandTable = ();
+our %binaries = ();
 
 # the protocolHandlers hash contains the modules that handle specific URLs, indexed by the URL protocol.
 # built-in protocols are exist in the hash, but have a zero value
@@ -1435,8 +1436,15 @@ sub checkBin {
 	
 	# if we don't have one or more of the requisite binaries, then move on.
 	while ($command && $command =~ /\[([^]]+)\]/g) {
-
-		if (!Slim::Utils::Misc::findbin($1)) {
+		my $binary;
+		
+		if (!exists $binaries{$1}) {
+			$binary = Slim::Utils::Misc::findbin($1);
+		}
+		
+		if ($binary) {
+			$binaries{$1} = $binary;
+		} elsif (!exists $binaries{$1}) {
 			$command = undef;
 			$::d_source && msg("   drat, missing binary $1\n");
 		}
