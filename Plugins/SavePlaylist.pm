@@ -1,4 +1,4 @@
-# $Id: SavePlaylist.pm,v 1.1 2003/10/22 20:06:50 dean Exp $
+# $Id: SavePlaylist.pm,v 1.2 2003/10/27 06:52:09 kdf Exp $
 # This code is derived from code with the following copyright message:
 #
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
@@ -17,10 +17,32 @@ use POSIX qw(strftime);
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.1 $,10);
+$VERSION = substr(q$Revision: 1.2 $,10);
 
-my $playlistref;
-#my $blacklist=catfile(Slim::Utils::Prefs::get('playlistdir'),'blacklist.m3u');
+my %context;
+
+my @LegalChars = (
+	Slim::Hardware::VFD::symbol('rightarrow'),
+	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+	'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+	'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+	' ',
+	'.', '-', '_',
+	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+);
+
+my @legalMixed = ([' ','0'], # 0
+					 ['.','-','_','1'], # 1
+					 ['a','b','c','A','B','C','2'], 				# 2
+					 ['d','e','f','D','E','F','3'], 				# 3
+					 ['g','h','i','G','H','I','4'], 				# 4
+					 ['j','k','l','J','K','L','5'], 				# 5
+					 ['m','n','o','M','N','O','6'], 				# 6
+					 ['p','q','r','s','P','Q','R','S','7'], 	# 7
+					 ['t','u','v','T','U','V','8'], 				# 8
+					 ['w','x','y','z','W','X','Y','Z','9']); 			# 9
+
 
 sub getDisplayName { return string('PLUGIN_SAVE_PLAYLIST'); }
 
@@ -40,23 +62,20 @@ PLUGIN_PLAYLIST_SAVING
 '
 };
 
-
 # the routines
 sub setMode {
 	my $client = shift;
 	my $push = shift;
-	my $playlist = Slim::Buttons::Common::param($client, 'saveplaylist');
 	$client->lines(\&lines);
 	if ($push ne 'push') {
-		Slim::Buttons::Common::popModeRight($client);
-	} elsif (defined($playlist) && $playlist ne '__undefined') {
-		$playlistref = $playlist;
+		my $playlist = '';
 	} else {
-		$playlistref = 'a';
+		$context{$client} = 'A';
 		Slim::Buttons::Common::pushMode($client,'INPUT.Text',
 						{'callback' => \&Plugins::SavePlaylist::savePluginCallback
-						,'valueRef' => \$playlistref
-						,'charsRef' => 'Both'
+						,'valueRef' => \$context{$client}
+						,'charsRef' => \@LegalChars
+						,'numberLetterRef' => \@legalMixed
 						,'header' => string('PLUGIN_PLAYLIST_AS')
 						,'cursorPos' => 0
 						});
@@ -70,7 +89,7 @@ my %functions = (
 	},
 	'right' => sub  {
 		my $client = shift;
-		my $playlistfile = $playlistref;
+		my $playlistfile = $context{$client};
 		Slim::Buttons::Common::setMode($client, 'playlist');
 		savePlaylist($client,$playlistfile);
 	},
@@ -84,18 +103,18 @@ sub lines {
 	my $client = shift;
 
 	my $line1 = string('PLUGIN_PLAYLIST_SAVE');
-	my $line2 = $playlistref;
+	my $line2 = $context{$client};
 	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
 }
 
 sub savePlaylist {
 	my $client = shift;
-	my $playlistname = shift;
+	my $playlistfile = shift;
 	my $playlistref = Slim::Player::Playlist::playList($client);
 	my $playlistdir = Slim::Utils::Prefs::get('playlistdir');
-	my $playlistfile = catfile($playlistdir,$playlistname . ".m3u");
+	$playlistfile = catfile($playlistdir,$playlistfile . ".m3u");
 	Slim::Formats::Parse::writeM3U($playlistref,$playlistfile);
-	Slim::Display::Animation::showBriefly($client,string('PLUGIN_PLAYLIST_SAVING'),$playlistname);
+	Slim::Display::Animation::showBriefly($client,string('PLUGIN_PLAYLIST_SAVING'),$playlistfile);
 }
 
 sub getFunctions {
@@ -105,42 +124,18 @@ sub getFunctions {
 sub savePluginCallback {
 	my ($client,$type) = @_;
 	if ($type eq 'nextChar') {
-		my $playlist = Slim::Hardware::VFD::subString($playlistref,0,Slim::Hardware::VFD::lineLength($playlistref)-1);
-		Slim::Buttons::Common::pushModeLeft($client,'PLUGIN.SavePlaylist',{'saveplaylist'=> $playlist});
+		my @oldlines = Slim::Display::Display::curLines($client);
+		$context{$client} = Slim::Hardware::VFD::subString($context{$client},0,Slim::Hardware::VFD::lineLength($context{$client})-1);
+		Slim::Buttons::Common::popMode($client);
+		Slim::Display::Animation::pushLeft($client, @oldlines, lines($client));
 	} elsif ($type eq 'backspace') {
 		Slim::Buttons::Common::popModeRight($client);
+		Slim::Buttons::Common::popModeRight($client);
 	} else {
-		print "EXIT: $type\n";
 		Slim::Display::Animation::bumpRight($client);
 	};
 }
 
-	#switch ($exitMode) {
-	#	case /backspace/
-	#		{print "backspace\n"; next}
-	#	case /cursor_left/
-	#	{print "left\n"; next}
-	#	    #Generated when the cursor is requested to move left, and is already at the beginning of the string. 
-	#	case /cursor_right/
-	#	{print "right\n"; next}
-	#	    #Generated when the cursor is requested to move left, and is already at the beginning of the string. 
-	#	case /delete/
-	#	{print "delete\n"; next}
-	#	    #Generated when the delete function is called on the last character in the string. 
-	#	case /nextChar/
-	#	{print "next\n"; next}
-	#	    #Generated when the nextChar function is called and the current character is the right arrow. 
-	#	case /scroll_left/
-	#	{print "scroll_left\n"; next}
-	#	    #Generated when a scroll to the left is requested, but the beginning of the string is already being displayed. 
-	#	case /scroll_right/
-	#	{print "scroll_right\n"; next}
-	#	    #Generated when a scroll to the right is requested, but the last character of the string is already being displayed in the leftmost column of the display. 
-	#	case /Other/
-	#	{print "other\n"; next}
-	#	    #Generated by the exit function where the type is determined by the argument supplied. Usually will be a button name like play or add, but be prepared for anything.
-	#}
-#};
 
 ####################################################################
 # Adds a mapping for 'save' function in Now Playing mode.

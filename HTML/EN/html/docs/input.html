@@ -42,6 +42,7 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
 					&#123;'callback' =&gt; \&amp;myCallback
 					,'valueRef' =&gt; 'Some Initial String'
 					,'charsRef' =&gt; 'Upper'
+					,'numberLetterRef' =&gt; \@myNumberLetterArray
 					,'header' =&gt; string('SOME_STRING_FOR_THE_TOP')
 					&#125;);
 </pre>
@@ -123,6 +124,12 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         or &quot;both&quot;, which are converted to references to the internal
         @UpperChars and @BothChars arrays, respectively.
       </dd>
+      <dt>numberLetterRef</dt>
+      <dd>Default: reference to internal @numberLettersMixed array</dd>
+      <dd>
+        <em>numberLetterRef</em> contains a reference to the list of characters to use for number key entry.
+        It can be supplied as an array reference, or unsupplied for the default array..
+      </dd>
       <dt>doublesizeReplace</dt>
       <dd>Default: none</dd>
       <dd>
@@ -202,8 +209,8 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       </dd>
       <dt>cursor_right</dt>
       <dd>
-        Generated when the cursor is requested to move left, and is already at the
-        beginning of the string.
+        Generated when the cursor is requested to move right, and is already at the
+        end of the string.
       </dd>
       <dt>delete</dt>
       <dd>

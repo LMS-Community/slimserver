@@ -1,3 +1,4 @@
+# $Id: Text.pm,v 1.6 2003/10/27 06:52:09 kdf Exp $
 package Slim::Buttons::Input::Text;
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
@@ -174,8 +175,7 @@ my %functions = (
 			if (Slim::Buttons::Common::testSkipNextNumberLetter($client, $functarg)) {
 				nextChar($client);
 			}
-			my $char = validateChar($client,Slim::Buttons::Common::numberLetter($client, $functarg, \@numberLettersMixed));
-			if (!defined($char)) { $char = ''; }
+			my $char = validateChar($client,Slim::Buttons::Common::numberLetter($client, $functarg, Slim::Buttons::Common::param($client,'numberLetterRef')));
 			my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 			my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
 			Slim::Hardware::VFD::subString($$valueRef,$cursorPos,1,$char);
@@ -294,6 +294,7 @@ sub init {
 	if (!defined(Slim::Buttons::Common::param($client,'noScroll'))) {
 		Slim::Buttons::Common::param($client,'noScroll',1)
 	}
+	#check for charsref options and set defaults if needed.
 	my $charsRef = Slim::Buttons::Common::param($client,'charsRef');
 	if (!defined($charsRef)) {
 		Slim::Buttons::Common::param($client,'charsRef',\@UpperChars);
@@ -308,6 +309,15 @@ sub init {
 	}
 	$charsRef = Slim::Buttons::Common::param($client,'charsRef');
 	cleanArray($charsRef);
+	# check for numberLetterRef and set defaults if needed
+	my $numberLetterRef = Slim::Buttons::Common::param($client,'numberLetterRef');
+	if (!defined($charsRef)) {
+		Slim::Buttons::Common::param($client,'numberLetterRef',\@numberLettersMixed);
+	} elsif (ref($charsRef) ne 'ARRAY') {
+		Slim::Buttons::Common::param($client,'charsRef',\@numberLettersMixed);
+	}
+	# cannot directly clean multidimensional array, this may need to be done in future
+	#cleanArray($charsRef);
 	my $rightIndex = charIndex($charsRef,$rightarrow);
 	Slim::Buttons::Common::param($client,'rightIndex',$rightIndex);
 	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
