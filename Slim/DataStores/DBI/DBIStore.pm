@@ -752,7 +752,12 @@ sub readTags {
 
 		# Extract tag and audio info per format
 		if (exists $tagFunctions{$type}) {
-			$attributesHash = &{$tagFunctions{$type}}($filepath, $anchor);
+			$attributesHash = eval { &{$tagFunctions{$type}}($filepath, $anchor) };
+		}
+
+		if ($@) {
+			Slim::Utils::Misc::msg("The following error occurred: $@\n");
+			Slim::Utils::Misc::bt();
 		}
 
 		$::d_info && !defined($attributesHash) && Slim::Utils::Misc::msg("Info: no tags found for $filepath\n");
@@ -849,9 +854,9 @@ sub setAlbumArtwork {
 
 		$::d_artwork && Slim::Utils::Misc::msg("Updating $album artwork cache: $filepath\n");
 
-		$self->{'artworkCache'}->{$album->id} = $filepath;
+		$self->{'artworkCache'}->{$album->id} = 1;
 
-		$album->artwork_path($filepath);
+		$album->artwork_path($track->id);
 		$album->update();
 	}
 }
@@ -1196,9 +1201,9 @@ sub _postCheckAttributes {
 
 			if ($artworkPath) {
 
-				$self->{'artworkCache'}->{$albumObj->id} = $artworkPath;
+				$self->{'artworkCache'}->{$albumObj->id} = 1;
 
-				$albumObj->artwork_path($artworkPath);
+				$albumObj->artwork_path($track->id);
 			}
 		}
 

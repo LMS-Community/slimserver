@@ -169,7 +169,7 @@
      [% IF track.coverArt('cover', 1) %]
       <tr>
       	<td valign="top">[% "COVERART" | string; "COLON" | string %]</td>
-      	<td><a href="/music/[% itempath | uri %]/cover.jpg" target="cover"><img src="/music/[% itempath | uri %]/cover.jpg"></a></td>
+      	<td><a href="/music/[% track.id %]/cover.jpg" target="cover"><img src="/music/[% track.id %]/cover.jpg"></a></td>
       </tr>
      [% END %]
 

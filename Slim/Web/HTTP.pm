@@ -775,25 +775,24 @@ sub generateHTTPResponse {
 
 		return 0;
 
-	} elsif ($path =~ /music\/(.+)\/(cover|thumb)\.jpg$/) {
+	} elsif ($path =~ /music\/(\w+)\/(cover|thumb)\.jpg$/) {
 
-		my $song;
+		my ($obj, $imageData);
 		my $image = $2;
+		my $ds    = Slim::Music::Info::getCurrentDataStore();
 		
 		if ($1 eq "current" && defined $client) {
-			$song = Slim::Player::Playlist::song($client);
+
+			$obj  = $ds->objectForUrl(Slim::Utils::Misc::fileURLFromPath(
+				Slim::Player::Playlist::song($client)
+			)) || return 0;
+
 		} else {
-			$song  = Slim::Utils::Misc::virtualToAbsolute($1);
+
+			$obj = $ds->objectForId('track', $1);
 		}
 
-		my $ds    = Slim::Music::Info::getCurrentDataStore();
-		my $obj   = $ds->objectForUrl(Slim::Utils::Misc::fileURLFromPath($song)) || return 0;
-
-		my $imageData;
-
 		$::d_http && msg("Cover Art asking for: $image\n");
-
-		$song = Slim::Utils::Misc::fixPath($song);
 
 		($imageData, $contentType, $mtime) = $obj->coverArt($image);
 

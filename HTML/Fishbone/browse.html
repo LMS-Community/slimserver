@@ -16,8 +16,8 @@
 	[% IF not playlist %][% "NEED_PATH" | string %][% END %]
 		<p><a href="setup.html?page=server&player=[% player | uri %]">[% "CLICK_HERE" | string %]</a> [% "TO_GO_TO_SERVER_SETTINGS" | string %]
 	[% END %]
-	[% IF coverart %]<p><center>
-		<img src="/music/[% coverartpath | uri %]/cover.jpg" border="0" width="150"></a></center></p>
+	[% IF coverArt %]<p><center>
+		<img src="/music/[% coverArt %]/cover.jpg" border="0" width="150"></a></center></p>
 	[% END %]
 	<center><table border="0" cellspacing="0" cellpadding="0" width="100%">
 		[% browse_list %]

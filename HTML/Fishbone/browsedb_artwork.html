@@ -2,8 +2,8 @@
 <table cellpadding="5" cellspacing="0" border="0" align="left">
 <tr>
 	<td>
-		[% IF coverthumb %]<table border="0" cellspacing="0" cellpadding="0"><tr><td width="[% size %]"><a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]" target="browser"><center><img src="/music/[% thumbartpath | uri %]/thumb.jpg" border="0" height="[% size %]" width="[% size %]" alt="[% item | html %][% IF year %] ([% year %])[% END %]" title="[% item | html %][% IF year %] ([% year %])[% END %]"></a></td></table>[% END %]
-		[% IF not coverthumb %]<table border="0" cellspacing="0" cellpadding="0" height="[% size %]"><tr><td width="[% size %]"><a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]" target="browser"><center>[% item | html %][% IF year %] ([% year %])[% END %]</center></a></td><td><a href=""><img src="html/images/spacer.gif" border="0" height="[% size %]" width="0" alt="[% item | html %][% IF year %] ([% year %])[% END %]"></a></td></table>[% END %]
+		[% IF coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><tr><td width="[% size %]"><a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]" target="browser"><center><img src="/music/[% coverThumb %]/thumb.jpg" border="0" height="[% size %]" width="[% size %]" alt="[% item | html %][% IF year %] ([% year %])[% END %]" title="[% item | html %][% IF year %] ([% year %])[% END %]"></a></td></table>[% END %]
+		[% IF not coverThumb %]<table border="0" cellspacing="0" cellpadding="0" height="[% size %]"><tr><td width="[% size %]"><a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]" target="browser"><center>[% item | html %][% IF year %] ([% year %])[% END %]</center></a></td><td><a href=""><img src="html/images/spacer.gif" border="0" height="[% size %]" width="0" alt="[% item | html %][% IF year %] ([% year %])[% END %]"></a></td></table>[% END %]
 	</td>
 </tr>
 <tr>

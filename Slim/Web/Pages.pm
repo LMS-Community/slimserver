@@ -98,8 +98,7 @@ sub init {
 				$form->{'mixerlinks'} = $additionalLinks{'mixer'};
 
 				if ($item->coverArt()) {
-					$form->{'coverart'} = 1;
-					$form->{'coverartpath'} = $item->url();
+					$form->{'coverArt'} = $item->id();
 				}
 			},
 
@@ -271,12 +270,7 @@ sub init {
 				my $item = shift;
 				my $itemname = shift;
 
-				if ($item->artwork_path()) {
-					$form->{'coverthumb'} = 1;
-					$form->{'thumbartpath'} = $item->artwork_path;
-				} else {
-					$form->{'coverthumb'}   = 0;
-				}
+				$form->{'coverThumb'} = $item->artwork_path() || 0;
 
 				# add the year to artwork browsing if requested.
 				if (Slim::Utils::Prefs::get('showYear')) {
@@ -865,22 +859,16 @@ sub browser_addtolist_done {
 				
 				if (!defined $cover) {
 
-					if ($obj->coverArt()) {
-						$params->{'coverart'} = 1;
-						$params->{'coverartpath'} = $shortitem;
+					if ($obj->coverArt('cover')) {
+						$params->{'coverArt'} = $obj->id();
 					}
-
-					$cover = $item;
 				}
 
 				if (!defined $thumb) {
 
 					if ($obj->coverArt('thumb')) {
-						$params->{'coverthumb'} = 1;
-						$params->{'thumbpath'} = $shortitem;
+						$params->{'coverThumb'} = $obj->id();
 					}
-
-					$thumb = $item;
 				}
 			}
 
@@ -1698,7 +1686,7 @@ sub _addSongInfo {
 	
 		# handle artwork bits
 		if ($track->coverArt('thumb')) {
-			$params->{'coverthumb'} = 1;
+			$params->{'coverThumb'} = $track->id;
 		}
 	}
 	
@@ -2026,8 +2014,7 @@ sub browsedb {
 		if ($level == $maxLevel && $levels[$level] eq 'track') {
 
 			if ($items->[$start]->coverArt()) {
-				$params->{'coverart'} = 1;
-				$params->{'coverartpath'} = $items->[$start]->url;
+				$params->{'coverArt'} = $items->[$start]->id;
 			}
 		}
 	}

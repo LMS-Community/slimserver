@@ -18,7 +18,7 @@
 	</table>
 	
 	[% IF track.coverArt('cover', 1) %]
-	    <center><a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]"><img src="/music/[% itempath | uri %]/cover.jpg" border="0" width="200"></a></center>
+	    <center><a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]"><img src="/music/[% track.id %]/cover.jpg" border="0" width="200"></a></center>
 	[% END %]
 	
 	<table width=100%>
