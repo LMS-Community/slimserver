@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.120 2005/01/10 08:43:24 dsully Exp $
+# $Id: Pages.pm,v 1.121 2005/01/10 20:36:24 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1158,7 +1158,10 @@ sub buildPlaylist {
 		# XXX - convert to use item/ds
 		$list_form{'itempath'} = $song;
 
-		my $track = $ds->objectForUrl($song);
+		my $track = $ds->objectForUrl($song) || do {
+			$::d_info && Slim::Utils::Misc::msg("Couldn't retrieve objectForUrl: [$song] - skipping!\n");
+			next;
+		};
 
 		$list_form{'artist'} = $listBuild->{'includeArtist'} ? $track->artist() : undef;
 		$list_form{'album'}  = $listBuild->{'includeAlbum'}  ? $track->album()->title() : undef;
