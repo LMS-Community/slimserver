@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.134 2005/01/04 03:38:53 dsully Exp $
+# $Id: HTTP.pm,v 1.135 2005/01/05 19:25:00 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -868,6 +868,8 @@ sub generateHTTPResponse {
 
 sub prepareResponseForSending {
 	my ($client, $params, $body, $httpClient, $response) = @_;
+
+	use bytes;
 
 	$response->header('Content-Length' => length($$body));
 
