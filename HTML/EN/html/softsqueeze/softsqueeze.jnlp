@@ -14,7 +14,7 @@
   codebase="http://[% host %]/html/softsqueeze/"
   href="softsqueeze.jnlp">
   <information>
-    <title>Softsqueeze 2.0b1</title>
+    <title>Softsqueeze 2.0b2</title>
     <vendor>Richard Titmuss, et.al.</vendor>
     <homepage href="http://softsqueeze.sourceforge.net"/>
     <description>Softsqueeze Slim Devices Squeezebox Emulator</description>
@@ -36,7 +36,7 @@
     <jar href="SoftSqueeze.jar"/>
     <jar href="lib/log4j-1.2.8.jar"/>
     <jar href="lib/tritonus_share.jar"/>
-    <jar href="lib/tritonus_mp3.jar"/>
+    <jar href="lib/mp3spi1.9.2.jar"/>
     <jar href="lib/jl1.0.jar"/>
     <jar href="lib/jflac-1.0.jar"/>
     <jar href="lib/jsch-20040429.jar"/>
