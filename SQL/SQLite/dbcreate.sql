@@ -1,7 +1,7 @@
 -- Increment the version below when you change the schema.
 -- You also need to add an Upgrade script to the Upgrades 
 -- directory and alter sql.version
-
+--
 -- It's important that there is a newline between all 
 -- SQL statements, otherwise the parser will skip them.
 
