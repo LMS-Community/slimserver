@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.44 2004/01/26 05:44:20 dean Exp $
+# $Id: Slimproto.pm,v 1.45 2004/03/11 14:32:31 sadams Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -383,7 +383,7 @@ sub process_slimproto_frame {
 		$::d_factorytest && msg("FACTORYTEST\tevent=stat\tmac=".$client->id."\tsignalstrength=$status{$client}->{'signal_strength'}\n");
 
 # TODO make a "verbose" option for this
-		$::d_slimproto && msg($client->id() . " Squeezebox stream status:\n".
+		0 && $::d_slimproto && msg($client->id() . " Squeezebox stream status:\n".
 		"	event_code:      $status{$client}->{'event_code'}\n".
 		"	num_crlf:        $status{$client}->{'num_crlf'}\n".
 		"	mas_initiliazed: $status{$client}->{'mas_initialized'}\n".
@@ -403,17 +403,22 @@ sub process_slimproto_frame {
 
 		&$callback($client) if $callback;
 		
+	} elsif ($op eq 'UREQ') {
+		# THIS IS ONLY FOR SDK5.X-BASED FIRMWARE OR LATER
+		$::d_slimproto && msg("Client requests firmware update");
+		$client->upgradeFirmware();		
+
+
 	} elsif ($op eq 'BYE!') {
+		# THIS IS ONLY FOR THE OLD SDK4.X UPDATER
+
 		$::d_slimproto && msg("Slimproto: Saying goodbye\n");
 		if ($data eq chr(1)) {
 			$::d_slimproto && msg("Going out for upgrade...\n");
 			# give the player a chance to get into upgrade mode
 			sleep(2);
 			Slim::Buttons::Block::unblock($client);
-			my $success = $client->upgradeFirmware();
-			if (defined($success)) {
-				msg("Problem with upgrade: $success\n");
-			}
+			$client->upgradeFirmware();
 		}
 		
 	} else {

@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.64 2004/03/10 21:29:31 dean Exp $
+# $Id: strings.txt,v 1.65 2004/03/11 14:32:30 sadams Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -760,6 +760,9 @@ FREE_YOUR_MUSIC
 	NO	Sett musikken din fri
 	PT	Liberte a sua música
 	SE	Frige din musik
+
+UPDATING_FIRMWARE
+	EN	Updating Squeezebox firmware.
 
 CONNECTING_FOR
 	DE	Verbindet zum Abspielen:

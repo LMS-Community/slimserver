@@ -15,6 +15,7 @@ use FindBin qw($Bin);
 use IO::Socket;
 use Slim::Player::Player;
 use Slim::Utils::Misc;
+use Slim::Utils::Strings qw (string);
 use MIME::Base64;
 
 @ISA = ("Slim::Player::Player");
@@ -148,7 +149,63 @@ sub needsUpgrade {
 	}
 }
 
-sub upgradeFirmware {
+# the new way: use slimproto
+sub upgradeFirmware_SDK5 {
+	use bytes;
+	my $client= shift;
+
+	my $frame;
+
+	Slim::Utils::Prefs::clientSet($client, "powerOnBrightness", 4);
+	Slim::Utils::Prefs::clientSet($client, "powerOffBrightness", 1);
+
+	Slim::Utils::Misc::blocking($client->tcpsock, 1);
+
+	my $file = shift || catdir($Bin, "Firmware", "squeezebox.bin");
+
+	open FS, $file || return("Open failed for: $file\n");
+	binmode FS;
+	
+	my $size = -s $file;	
+	
+	$::d_firmware && msg("Updating firmware: Sending $size bytes\n");
+	
+	my $bytesread=0;
+	my $totalbytesread=0;
+	my $buf;
+	
+	while ($bytesread=read(FS, $buf, 1024)) {
+		assert(length($buf) == $bytesread);
+
+		$frame = pack('n',$bytesread+4) . 'upda' . $buf;  # upgrade data
+
+		$client->tcpsock->syswrite($frame, length($frame));
+		
+		$totalbytesread += $bytesread;
+		$::d_firmware && msg("Updating firmware: $totalbytesread / $size\n");
+
+		Slim::Display::Animation::showBriefly(
+			$client,
+			string('UPDATING_FIRMWARE'),
+			Slim::Display::Display::progressBar($client, 40, $totalbytesread/$size)
+		)
+
+	}
+	
+
+	$frame = pack('n', 4) . 'updn';	# upgrade done
+	$client->tcpsock->syswrite($frame, length($frame));
+	
+
+	$::d_firmware && msg("Firmware updated successfully.\n");
+	
+	Slim::Utils::Misc::blocking($client->tcpsock, 0);
+	
+	return undef;
+}
+
+# the old way: connect to 31337 and dump the file
+sub upgradeFirmware_SDK4 {
 	use bytes;
 	my $client = shift;
 	my $ip;
@@ -159,7 +216,7 @@ sub upgradeFirmware {
 	} else {
 		$ip = $client;
 	}
-
+	
 	my $port = 31337;  # upgrade port
 	
 	my $file = shift || catdir($Bin, "Firmware", "squeezebox.bin");
@@ -185,7 +242,7 @@ sub upgradeFirmware {
 	my $bytesread=0;
 	my $totalbytesread=0;
 	my $buf;
-	
+
 	while ($bytesread=read(FS, $buf, 256)) {
 		syswrite SOCK, $buf;
 		$totalbytesread += $bytesread;
@@ -197,6 +254,18 @@ sub upgradeFirmware {
 	close (SOCK) || return("Couldn't close socket to player.");
 	
 	return undef; 
+}
+
+sub upgradeFirmware {
+	my $client = shift;
+
+	if ($client->revision < 20) {
+		$::d_firmware && msg("using old update mechanism");
+		upgradeFirmware_SDK4($client, @_);
+	} else {
+		$::d_firmware && msg("using new update mechanism");
+		upgradeFirmware_SDK5($client, @_);
+	}
 }
 
 # in order of preference
