@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.32 2004/04/15 18:49:38 dean Exp $
+# $Id: Common.pm,v 1.33 2004/05/11 06:24:46 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -109,7 +109,9 @@ my %functions = (
 			Slim::Control::Command::execute($client, ["playlist", "jump", "+0"]);
 		}
 		#either starts the same song over, or the previous one, depending on whether we jumped back.
-		Slim::Control::Command::execute($client, ["play"]);
+		if (Slim::Player::Source::playmode($client) ne 'pause') {
+			Slim::Control::Command::execute($client, ["play"]);
+		}
 		Slim::Display::Animation::showBriefly($client, (Slim::Buttons::Playlist::currentSongLines($client))[0..1]);
 	},
 	
@@ -157,8 +159,9 @@ my %functions = (
 		}
 
 		#either starts the same song over, or the previous one, or the next one depending on whether/how we jumped
-		Slim::Control::Command::execute($client, ["play"]);
-		Slim::Display::Animation::showBriefly($client, (Slim::Buttons::Playlist::currentSongLines($client))[0..1]);
+		if (Slim::Player::Source::playmode($client) ne 'pause') {
+			Slim::Control::Command::execute($client, ["play"]);
+		}Slim::Display::Animation::showBriefly($client, (Slim::Buttons::Playlist::currentSongLines($client))[0..1]);
 	},
 	'jumpinsong' => sub {
 		my ($client,$funct,$functarg) = @_;
@@ -523,6 +526,34 @@ sub pushButton {
 	&$subref($client,$sub,$subarg);
 }
 
+sub timeDigits {
+	my $client = shift;
+	my $time = shift || 0;
+
+	my $h = int($time / (60*60));
+	my $m = int(($time - $h * 60 * 60) / 60);
+	my $p = undef;
+
+	my $timestring;
+
+	if (Slim::Utils::Prefs::get('timeFormat') =~ /%p/) {
+		$p = 'AM';
+		if ($h > 11) { $h -= 12; $p = 'PM'; }
+		if ($h == 0) { $h = 12; }
+	} #else { $p = " "; };
+
+	if ($h < 10) { $h = '0' . $h; }
+
+	if ($m < 10) { $m = '0' . $m; }
+
+	my $h0 = substr($h, 0, 1);
+	my $h1 = substr($h, 1, 1);
+	my $m0 = substr($m, 0, 1);
+	my $m1 = substr($m, 1, 1);
+
+	return ($h0, $h1, $m0, $m1, $p);
+}
+
 sub scroll {
 	scroll_dynamic(@_);
 }
@@ -775,6 +806,36 @@ sub scroll_original {
 	}
 
 	return $newposition;
+}
+
+sub scrollTime {
+	my $client = shift;
+	my $dir = shift;
+	my $time = shift || 0;
+	my $c = shift;
+	
+	my ($h0, $h1, $m0, $m1, $p) = timeDigits($client,$time);
+	my $h = $h0 * 10 + $h1;
+	
+	if ($c == 0) {$c++;};
+	if ($p && $h == 12) { $h = 0 };
+	
+	$p = ($p && $p eq 'PM') ? 1 : 0;
+	
+	if ($c == 1) {
+	   $h = Slim::Buttons::Common::scroll($client, $dir, ($p == 1) ? 12 : 24, $h);
+	   #change AM and PM if we scroll past midnight or noon boundary
+	   if (Slim::Utils::Prefs::get('timeFormat') =~ /%p/) {
+	   	if (($h == 0 && $dir == 1)||($h == 11 && $dir == -1)) { $p = Slim::Buttons::Common::scroll($client, +1, 2, $p); };
+		};
+	};
+	if ($c == 2) { $m0 = Slim::Buttons::Common::scroll($client, $dir, 6, $m0) };
+	if ($c == 3) { $m1 = Slim::Buttons::Common::scroll($client, $dir, 10, $m1)};
+	if ($c == 4) { $p = Slim::Buttons::Common::scroll($client, +1, 2, $p); }
+
+	$time = $h * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
+
+	return $time;
 }
 
 sub mixer {

@@ -20,7 +20,6 @@ my @browseMenuChoices;
 my %menuSelection;
 my %searchCursor;
 
-
 # the routines
 sub setMode() {
 	my $client = shift;
@@ -271,11 +270,15 @@ sub alarmVolumeLines {
 my %alarmSetFunctions = (
 	'up' => sub {
 		my $client = shift;
-		scrollDigit($client, +1);
+		my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime") || 0;
+		Slim::Utils::Prefs::clientSet($client, "alarmtime", Slim::Buttons::Common::scrollTime($client, +1,$time,$searchCursor{$client}));
+		$client->update();
 	},
 	'down' => sub {
 		my $client = shift;
-		scrollDigit($client, -1);
+		my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime") || 0;
+		Slim::Utils::Prefs::clientSet($client, "alarmtime", Slim::Buttons::Common::scrollTime($client, -1,$time,$searchCursor{$client}));
+		$client->update();
 	},
 
 	'left' => sub {
@@ -290,7 +293,8 @@ my %alarmSetFunctions = (
 	'right' => sub {
 		my $client = shift;
 
-		my ($h0, $h1, $m0, $m1, $p) = timeDigits($client);
+#		my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
+#		my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Common::timeDigits($client,$time);
 
 		$searchCursor{$client}++;
 
@@ -308,8 +312,9 @@ my %alarmSetFunctions = (
 		my $client = shift;
 		my $button = shift;
 		my $digit = shift;
-
-		my ($h0, $h1, $m0, $m1, $p) = timeDigits($client);
+		
+		my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
+		my ($h0, $h1, $m0, $m1, $p) = timeDigits($client,$time);
 
 		my $h = $h0 * 10 + $h1;
 		if ($p && $h == 12) { $h = 0 };
@@ -323,7 +328,7 @@ my %alarmSetFunctions = (
 		$p = (defined $p && $p eq 'PM') ? 1 : 0;
 		if ($c == 4) { $p = $digit % 2; }
 
-		my $time = ($h0 * 10 + $h1) * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
+		$time = ($h0 * 10 + $h1) * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
 		Slim::Utils::Prefs::clientSet($client, "alarmtime", $time);
 		$client->update();
 
@@ -345,7 +350,8 @@ sub setAlarmSetMode {
  sub alarmSetSettingsLines {
 	my $client = shift;
 
-	my ($h0, $h1, $m0, $m1, $p) = timeDigits($client);
+	my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
+	my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Common::timeDigits($client,$time);
 
 	my $cs = Slim::Hardware::VFD::symbol('cursorpos');
 	my $c = $searchCursor{$client};
@@ -353,64 +359,6 @@ sub setAlarmSetMode {
 	my $timestring = ($c == 0 ? $cs : '') . ((defined($p) && $h0 == 0) ? ' ' : $h0) . ($c == 1 ? $cs : '') . $h1 . ":" . ($c == 2 ? $cs : '') .  $m0 . ($c == 3 ? $cs : '') . $m1 . " " . ($c == 4 ? $cs : '') . (defined($p) ? $p : '');
 
 	return (string('ALARM_SET'), $timestring);
-}
-
-sub scrollDigit {
-		my $client = shift;
-		my $dir = shift;
-		my ($h0, $h1, $m0, $m1, $p) = timeDigits($client);
-		my $h = $h0 * 10 + $h1;
-		
-		if ($p && $h == 12) { $h = 0 };
-		
-		if ($searchCursor{$client} == 0) {$searchCursor{$client}++;};
-		my $c = $searchCursor{$client};
-		
-		$p = ($p && $p eq 'PM') ? 1 : 0;
-		
-		if ($c == 1) {
-		   $h = Slim::Buttons::Common::scroll($client, $dir, ($p == 1) ? 12 : 24, $h);
-		   #change AM and PM if we scroll past midnight or noon boundary
-		   if (Slim::Utils::Prefs::get('timeFormat') =~ /%p/) {
-		   	if (($h == 0 && $dir == 1)||($h == 11 && $dir == -1)) { $p = Slim::Buttons::Common::scroll($client, +1, 2, $p); };
-			};
-		};
-		if ($c == 2) { $m0 = Slim::Buttons::Common::scroll($client, $dir, 6, $m0) };
-		if ($c == 3) { $m1 = Slim::Buttons::Common::scroll($client, $dir, 10, $m1)};
-		if ($c == 4) { $p = Slim::Buttons::Common::scroll($client, +1, 2, $p); }
-
-		my $time = $h * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
-
-		Slim::Utils::Prefs::clientSet($client, "alarmtime", $time);
-		$client->update();
-}
-
-sub timeDigits {
-	my $client = shift;
-	my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime") || 0;
-
-	my $h = int($time / (60*60));
-	my $m = int(($time - $h * 60 * 60) / 60);
-	my $p = undef;
-
-	my $timestring;
-
-	if (Slim::Utils::Prefs::get('timeFormat') =~ /%p/) {
-		$p = 'AM';
-		if ($h > 11) { $h -= 12; $p = 'PM'; }
-		if ($h == 0) { $h = 12; }
-	} #else { $p = " "; };
-
-	if ($h < 10) { $h = '0' . $h; }
-
-	if ($m < 10) { $m = '0' . $m; }
-
-	my $h0 = substr($h, 0, 1);
-	my $h1 = substr($h, 1, 1);
-	my $m0 = substr($m, 0, 1);
-	my $m1 = substr($m, 1, 1);
-
-	return ($h0, $h1, $m0, $m1, $p);
 }
 
 
