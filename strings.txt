@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.80 2004/04/15 18:49:30 dean Exp $
+# $Id: strings.txt,v 1.81 2004/04/16 18:20:09 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -20,7 +20,7 @@ CREDITS
 	NL	Terry Adams, Patrick van Zweden, Carel Bast, Lieven Hollevoet
 	NO	Øyvind L. Eggen, Georg Engstrand
 	PT	Walter Wullschleger, Bruno Rodrigues
-	SE	Andreas Olsson, Hans Nystrom, Johan Hübner
+	SE	Andreas Olsson, Hans Nystrom, Johan Hübner, Peter Nõu
 
 CHOOSE_A_LANGUAGE
 	DE	Wählen Sie bitte eine Sprache aus
@@ -129,7 +129,7 @@ SLIMP3_HOME
 	NL	SLIMP3 Hoofdmenu
 	NO	SLIMP3 Hjem
 	PT	Início SLIMP3
-	SE	SLIMP3 Huvudmeny
+	SE	SLIMP3 huvudmeny
 
 SQUEEZEBOX_HOME
 	DE	Squeezebox Hauptmenü
@@ -141,7 +141,7 @@ SQUEEZEBOX_HOME
 	NL	Squeezebox Hoofdmenu
 	NO	Squeezebox Hjem
 	PT	Início Squeezebox
-	SE	Squeezebox Huvudmeny
+	SE	Squeezebox huvudmeny
 
 LIBRARY_CONTAINS
 	DE	Die Musikbibliothek enthält
@@ -163,7 +163,7 @@ BROWSEMENU
 	NL	Muziek doorzoeken
 	NO	Bla i musikk
 	PT	Escolher Música
-	SE	Bläddra Musik
+	SE	Bläddra musik
 
 MUSIC
 	DE	Musikverzeichnis
@@ -239,7 +239,7 @@ PLAYLIST
 	NL	Playlist
 	NO	Spilleliste
 	PT	Playlist
-	SE	Spellista
+	SE	Låtlista
 
 PAUSED_ON
 	DE	Pause bei
@@ -293,7 +293,7 @@ NOW_REWINDING
 	FR	Retour rapide
 	NO	Spoler tilbake
 	PT	A Rebobinar
-	SE	Spelar tillbaka
+	SE	Spolar tillbaka
 
 EVERYTHING
 	DE	Alles
@@ -384,7 +384,7 @@ REMOVING_FROM_PLAYLIST
 	NL	Verwijderen uit playlist:
 	NO	Fjerner fra spilleliste:
 	PT	Remover da playlist
-	SE	Tar bort ifrån spellista:
+	SE	Tar bort från låtlista:
 
 ZAPPING_FROM_PLAYLIST
 	DE	Zu Zapped Songs Playlist verschieben:
@@ -394,7 +394,7 @@ ZAPPING_FROM_PLAYLIST
 	NL	Verplaatsen naar de lijst van gezapte stukken:
 	NO	Flytter til Zappede Sangers spilleliste:
 	PT	Mover para a playlist rápida de músicas
-	SE	Flyttar till spellistan för Zappade låtar.
+	SE	Flyttar till låtlistan med Zappade låtar.
 
 ZAPPED_SONGS
 	DE	Zapped Songs
@@ -417,7 +417,7 @@ ADDING_TO_PLAYLIST
 	NL	Toevoegen aan playlist:
 	NO	Legger til i spilleliste:
 	PT	Adicionar ao fim da playlist
-	SE	Lägger till i spellista:
+	SE	Lägger till i låtlista:
 
 INSERT_TO_PLAYLIST
 	DE	Hinzufügen und als nächstes spielen:
@@ -465,7 +465,7 @@ CLEARING_PLAYLIST
 	NL	Bezig met leegmaken Playlist...
 	NO	Nullstiller spillelisten...
 	PT	A limpar a playlist...
-	SE	Rensar spellista...
+	SE	Rensar låtlista...
 
 VIEWING_PLAYLIST
 	DE	Playlist anschauen...
@@ -478,7 +478,7 @@ VIEWING_PLAYLIST
 	NL	Bekijken van playlist...
 	NO	Viser spillelisten...
 	PT	Playlist a Tocar...
-	SE	Visar spellista...
+	SE	Visar låtlista...
 
 PLAYLIST_EMPTY
 	DE	Playlist ist leer
@@ -491,7 +491,7 @@ PLAYLIST_EMPTY
 	NL	Playlist is leeg
 	NO	Spillelisten er tom
 	PT	Playlist Vazia
-	SE	Spellistan är tom
+	SE	Låtlistan är tom
 
 BROWSING_MUSIC
 	DE	Durchsuchen der Musik...
@@ -556,7 +556,7 @@ REPEAT_ALL
 	NL	Herhaal playlist
 	NO	Repetér spilleliste
 	PT	A repetir a playlist toda
-	SE	Repetera spellista
+	SE	Repetera låtlista
 
 CANCEL_SLEEP
 	DE	Schlafmodus abgebrochen
@@ -568,7 +568,7 @@ CANCEL_SLEEP
 	NL	Sluimermodus uit
 	NO	Sovefunksjon avslått.
 	PT	Inactividade cancelada
-	SE	Insomning avbruten.
+	SE	Insomning avbruten
 
 SLEEPING_IN
 	DE	Schlafmodus eingeschaltet
@@ -646,7 +646,7 @@ ALARM_SELECT_PLAYLIST
 	NL	Kies een playlist voor de wekker
 	NO	Velg Spilleliste for Alarm
 	PT	Escolha a Playlist para o Alarme
-	SE	Välj spellista för väckning
+	SE	Välj låtlista för väckning
 
 ALARM_SET_VOLUME
 	DE	Stellen Sie die Lautstärke für den Wecker
@@ -686,7 +686,7 @@ ALARM_TURNING_ON
 	NL	Wekker wordt geactiveerd...
 	NO	Slår på alarm...
 	PT	A ligar o alarme...
-	SE	Aktiverar Väckarklocka...
+	SE	Aktiverar väckarklocka...
 
 ALARM_TURNING_OFF
 	DE	Ausschalten des Weckers...
@@ -696,7 +696,7 @@ ALARM_TURNING_OFF
 	NL	Wekker wordt uitgeschakeld...
 	NO	Slår av alarm...
 	PT	A desligar o alarme...
-	SE	Avaktiverar Väckarklocka...
+	SE	Avaktiverar väckarklocka...
 
 ALARM_NOW_PLAYING
 	DE	Der Wecker spielt jetzt
@@ -763,6 +763,7 @@ FREE_YOUR_MUSIC
 
 UPDATING_FIRMWARE
 	EN	Updating Squeezebox firmware.
+	SE	Uppdaterar spelarens mjukvara ('firmware')
 
 CONNECTING_FOR
 	DE	Verbindet zum Abspielen:
@@ -825,7 +826,7 @@ SETUP_GROUP_BRIGHTNESS_DESC
 	NL	De helderheid van het display kan afzonderlijk worden ingesteld voor de aan- en uitgeschakelde toestand.
 	NO	Lysstyrken på displayet kan settes for når enheten er på og av.
 	PT	Pode escolher o brilho do ecrã do cliente para quando estiver ligado ou desligado.
-	SE	Ljusstyrkan på display kan varieras för påslaget och avslaget läge.
+	SE	Ljusstyrkan på displayen kan varieras för påslaget och avslaget läge.
 
 SETUP_GROUP_TCP_PARAMS
 	DE	TCP Parameter
@@ -848,7 +849,7 @@ SETUP_GROUP_TCP_PARAMS_DESC
 	NL	Hier kunnen de parameters van het TCP netwerk van de server worden ingesteld.
 	NO	Disse innstillingene justerer TCP nettverket for serveren.
 	PT	Estas configurações ajustam os parâmetros de rede TCP do servidor.
-	SE	Dessa inställningar ställer in serverns värden för TCP.
+	SE	Detta är inställningar för nätverksprotokollet TCP.
 
 SETUP_GROUP_TITLEFORMATS_DESC
 	DE	Diese verfügbaren Formate sind für die obige Selektion sowie für die Player Einstellung. Zum Entfernen eines Formates, löschen Sie die Textbox, zum Erstellen eines Formates, fügen Sie den Text in das leere Feld ein. Verfügbare Datenelemente sind: CT (Art des Inhalts), TITLE, GENRE, TRACKNUM, FS (Dateigröße), ARTIST (Interpret), ALBUM, COMMENT, YEAR, SECS (Gesamtsekunden), DURATION (Minuten und Sekunden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (Name des Volumens), PATH, FILE, EXT (Dateierweiterung), LONGDATE (Aktuelles Datum, lang), SHORTDATE (Aktuelles Datum, kurz), CURRTIME(Aktuelle Zeit).
@@ -860,7 +861,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	NL	Dit zijn de beschikbare formaten voor zowel hierboven als in de Speler instellingen. Om een formaat te verwijderen, leeg de textbox. Om een formaat toe te voegen, voer deze in in een lege textbox. Beschikbare data elementen zijn: CT (content type), TITLE, GENRE, TRACKNUM, FS (file grootte), ARTIST, ALBUM, COMMENT, YEAR, SECS (totaal seconden), DURATION (minuten en seconden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (album naam), PATH, FILE, EXT (file extention), LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). De elementen kunnen door alles gescheiden geworden. Scheidingstekens worden alleen gebruikt als de data elementen aanwezig zijn.<br>Het op dit moment geselecteerde formaat zal worden gebruikt op de web pagina's.
 	NO	Dette er tilgjengelige for web-interfacet og selve spilleren. For å fjerne et format, tøm boksen. For å legge til et format, skriv det i en tom boks. Tilgengelige elementer: CT (innholds type), TITLE, GENRE, TRACKNUM (spor nummer), FS (filstørrelse), ARTIST, ALBUM, COMMENT, YEAR, SECS (totalt antall sekunder), DURATION (minutter og sekunder), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volumnavn), PATH, FILE, EXT (filending), LONGDATE (dagens dato, langt), SHORTDATE (dagens dato, kort), CURRTIME (klokkeslett nå). Elementer kan skilles med ethvert tegn (eller ingen). Skilletegnet vises bare om dataelementet finnes. Det valgte formatet er det som blir brukt på websidene.
 	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no cliente. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
-	SE	Dessa är de tillgängliga formaten för webbgränssnittet och själva spelaren. För att ta bort ett format, töm textboxen. För att lägga till ett nytt format, skriv i en tom textbox. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, ALBUM, COMMENT, YEAR, SECS (totala antalet sekunder), DURATION (minuter och sekunder, VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volymnamn), PATH, FILE, EXT (filändelse), LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera dataelementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget). Skiljetecken visas endast om dataelementet existerar.Det valda formatet är det som kommer användas på webbsidorna.
+	SE	Dessa är de tillgängliga formaten för webgränssnittet och själva spelaren. För att ta bort ett format, töm textboxen. För att lägga till ett nytt format, skriv i en tom textbox. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, ALBUM, COMMENT(kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME, PATH, FILE, EXT (filändelse), LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera dataelementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget tecken alls). Skiljetecken visas endast om dataelementet existerar. Det valda formatet är det som kommer användas på websidorna.
 
 SETUP_GROUP_MENUITEMS
 	DE	Anpassung des Player-Hauptmenüs
@@ -870,7 +871,7 @@ SETUP_GROUP_MENUITEMS
 	NL	Hoofdmenu aanpassen
 	NO	Tilpass hovedmenyen
 	PT	Personalização do Menu Inicial
-	SE	Konfigurering av Huvudmeny
+	SE	Konfigurering av huvudmenyn
 
 SETUP_GROUP_MENUITEMS_DESC
 	DE	Sie können die verfügbaren Einträge im Hauptmenü anpassen. Klicken Sie zum Hoch- und Runterschieben oder Löschen der Einträge. Klicken Sie auf "Hinzufügen" um einen gelöschten Eintrag wieder hinzuzufügen.
@@ -880,7 +881,7 @@ SETUP_GROUP_MENUITEMS_DESC
 	NL	U kunt instellen welke keuzes aanwezig zijn in het Hoofdmenu. Klik om de items naar boven of naar beneden te verplaatsen of ze te verwijderen. Klik op "Toevoegen" om een verwijderd item terug te plaatsen in het menu.
 	NO	Du kan tilpasse hovedmenyen på din Slim-player. Trykk for å flytte elementer oppover og nedover eller for å fjerne dem. Trykk "Legg til" for å legge til et fjernet element.
 	PT	Pode personalizar as opções disponíveis no menu inicial. Escolha as opções para mover para cima, para baixo, ou para apagar. Escolha "Adicionar" para adicionar um item ao menu.
-	SE	Du kan konfigurera vilka val som skall finnas tillgängliga från din Huvudmeny. Klicka för att flytta upp, ner eller ta bort menyval. Klicka på "Lägg till" för att återställa ett menyval.
+	SE	Du kan välja vilka alternativ som skall finnas tillgängliga på din huvudmeny. Klicka för att flytta upp, ner eller ta bort menyval. Klicka på "Lägg till" för att återställa ett menyval.
 
 SETUP_GROUP_NONMENUITEMS_INTRO
 	DE	Inaktiver Menüeintrag:
@@ -896,25 +897,31 @@ SETUP_GROUP_XPL
 	DE	xPL Einstellungen
 	EN	xPL Settings
 	FR	Paramètres xPL
+	SE	xPL-inställningar
 
 SETUP_GROUP_XPL_DESC
 	DE	Diese Einstellungen steuern das Verhalten des xPL Protokolls
 	EN	These settings control the behavior of the xPL protocol
 	FR	Ces réglages permettent de paramétrer le protocole xPL.
+	SE	Detta är inställningar för xPL-protokollet
 
 SETUP_SCROLLPAUSE
 	DE	Pause vor dem Scrollen
 	EN	Scroll Pause
 	FR	Pause avant défilement
+	SE	Paus under scrollning
 	
 SETUP_SCROLLPAUSE_DESC
 	EN	You can adjust the amount of time that the player waits before starting horizontal scrolling of the text on the display.  Enter a value, in seconds, for the amount of time to wait before scrolling or between scrolling.  Enter zero to not pause at all and scroll immediately. 3.6 seconds is the default.
+	SE	Fördröjning innan scrollning av långa texter börjar. Multipel av 0.9 fungerar bäst. 0.001 rekommenderas som lägsta värde.
 
 SETUP_SCROLLRATE
 	EN	Scroll Rate
+	SE	Scroll-frekvens
 	
 SETUP_SCROLLRATE_DESC
 	EN	You can adjust the amount of time that the player waits before scrolling another letter of text on the display. Enter a value, in seconds, for the amount of time to wait.  Lower numbers make it scroll faster.  0.15 seconds is the default.
+	SE	Tid mellan rullande scroll-bilder. O.15 är standardvärdet. Värden mellan 0 och 1 kan sättas för att öka eller minska scroll-tempot 
 
 SETUP_GROUP_ALARM
 	DE	Wecker
@@ -929,6 +936,7 @@ SETUP_GROUP_ALARM
 SETUP_GROUP_ALARM_DESC
 	DE	Einstellungen für den Wecker. Jeder Player kann einen eigenen Wecker haben. Nach Aktivierung wird der Wecker alle 24h wiederholt.
 	EN	Settings for alarm clock. Each player can have an alarm set.  If active, it will repeat every 24 hours.
+	SE	Inställningar för väckarklockan. Varje spelare kan ha en separat väckarklocka. I aktiverat läge repeteras larmet varje dygn.
 
 SETUP_GROUP_IRSETS
 	DE	Fernbedienungen
@@ -948,7 +956,7 @@ SETUP_GROUP_IRSETS_DESC
 	NL	U kan instellen welke infraroodsignalen door de speler worden begrepen danwel genegeerd. Om een code set voor een afstandsbediening te activeren vinkt U de onderstaande naam aan. Om de code set te deactiveren verwijdert U het vinkje.
 	NO	Du kan velge om spilleren skal reagere på eller ignorere visse signaler fra fjernkontrollen. For å aktivere kodeoppsettet for en fjernkontroll, merk den nedenfor. For å deaktivere den, fjern merket.
 	PT	Pode optar por permitir ou negar alguns sinais do controlo remoto no seu cliente. Para activar um sinal, active a opção junto ao nome abaixo. Para desactivar, limpe a opção.
-	SE	Du kan välja om denna spelare skall svara på eller ignorera signaler från vissa fjärrkontroller. För att aktivera en fjärrkontrolls koduppsättning, markera rutan bredvid namnet nedan och klicka på "Ändra". För att avaktivera en koduppsättning avmarkera rutan och klick på "Ändra".
+	SE	Du kan välja om denna spelare skall svara till eller ignorera signaler från vissa fjärrkontroller. För att aktivera en fjärrkontrolls koduppsättning, markera rutan bredvid namnet nedan och klicka på "Ändra". För att avaktivera en koduppsättning avmarkera rutan och klick på "Ändra".
 
 SETUP_GROUP_PLUGINS
 	DE	Plugins
@@ -968,13 +976,15 @@ SETUP_GROUP_PLUGINS_DESC
 	NL	SlimServer laat toe om extra functies te koppelen aan de afstandsbediening. Deze functies vindt U terug in de Plugins folder. Om een funtie te activeren klikt U het vinkje naast de functie aan. Om de funtie uit te schakelen verwijdert U het vinkje. Om de wijzigingen op te slaan klikt U op 'Aanpassen'.
 	NO	SlimServer inneholder en del tilleggsfunksjoner, Plugins, som du kan benytte deg av med fjernkontrollen. Disse kan aktiveres eller deaktiveres individuelt. For å aktivere en Plugin, merk den. For å deaktivere en Plugin, fjern merket. For å lagre endringene, velg "Endre".
 	PT	O cliente SlimServer inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
-	SE	SlimServer inkluderar tilläggs-funktioner du kan använda med din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras individuellt. För att aktivera ett tillägg, kryssa i rutan bredvid tillägget nedan. För att avaktivera ett tillägg, ta bort krysset. För att spara dina ändringar, klicka på "Ändra".
+	SE	SlimServer inkluderar tilläggs-funktioner som du kan konfigurera och/eller använda via din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras var för sig. Kryssa i rutan bredvid tillägget nedan för att aktivera ett tillägg. Ta bort krysset när du vill avaktivera ett tillägg. Spara dina ändringar genom att klicka på "Ändra".
 
 SETUP_GROUP_FORMATS
 	EN	File Format Conversion Setup
+	SE	Inställningar för konvertering mellan filformat
 
 SETUP_GROUP_FORMATS_DESC
 	EN	SlimServer can convert audio file formats on-the-fly for playback on your player.  You can disable specific formats below by unchecking them.  Click Change to save your changes.
+	SE	Slimserver kan konvertera mellan olika ljud-format för uppspelning i spelaren. 
 	
 SETUP_FORMATSLIST_CHANGE
 	DE	Einstellungen wurden gespeichert.
@@ -987,22 +997,28 @@ SETUP_FORMATSLIST_CHANGE
 
 SETUP_FORMATSLIST
 	EN	File Format Conversions
+	SE	Filformat, konverteringar
 
 
 FILE_FORMAT
 	EN	File Format
+	SE	Filformat
 
 STREAM_FORMAT
 	EN	Stream Format
+	SE	Format för strömmande ljud
 	
 PLAYER_TYPE
 	EN	Player Type
+	SE	Spelartyp
 	
 PLAYER_ID
 	EN	Player ID
+	SE	SpelarID
 	
 COMMAND
 	EN	Command
+	SE	Kommando
 
 #
 # Setup preference strings
@@ -1025,7 +1041,7 @@ SETUP_PLAYERNAME
 	NL	Player Naam
 	NO	Player Navn
 	PT	Nome do Cliente
-	SE	Player Namn
+	SE	Spelarnamn
 
 SETUP_PLAYERNAME_OK
 	DE	Der neue Name für diesen Player ist:
@@ -1049,7 +1065,7 @@ SETUP_PLAYERNAME_DESC
 	NL	U kunt deze speler een naam geven die zal worden gebruikt om de speler te identificeren op de web pagina's.
 	NO	Du kan gi denne spilleren et navn som vil brukes til å identifisere spilleren på disse web-sidene.
 	PT	Pode escolher um nome para identificar este cliente nas páginas web do servidor.
-	SE	Du kan ange ett namn för spelaren som kommer användas för att identifiera spelaren på dessa webbsidor.
+	SE	Du kan ange ett namn för spelaren. Namnet användas sedan för att identifiera spelaren på dessa websidor.
 
 SETUP_PLAYERNAME_CHOOSE
 	DE	Wählen Sie einen Namen für diesen Player:
@@ -1073,7 +1089,7 @@ SETUP_POWERONBRIGHTNESS
 	NL	Helderheid bij ingeschakelde toestand
 	NO	Lysstyrke når på
 	PT	Brilho quando Ligado
-	SE	Ljusstyrka påslagen
+	SE	Ljusstyrka i påslaget läge
 
 SETUP_POWERONBRIGHTNESS_CHOOSE
 	DE	Helligkeit im eingeschalteten Zustand:
@@ -1085,7 +1101,7 @@ SETUP_POWERONBRIGHTNESS_CHOOSE
 	NL	Helderheid bij ingeschakelde toestand:
 	NO	Lysstyrke når på:
 	PT	Brilho quando Ligado
-	SE	Ljusstyrka påslagen:
+	SE	Ljusstyrka i påslaget läge:
 
 SETUP_POWEROFFBRIGHTNESS
 	DE	Helligkeit im ausgeschalteten Zustand
@@ -1097,7 +1113,7 @@ SETUP_POWEROFFBRIGHTNESS
 	NL	Helderheid bij uitgeschakelde toestand
 	NO	Lysstyrke når av
 	PT	Brilho quando Desligado
-	SE	Ljusstyrka avslagen
+	SE	Ljusstyrka i avslaget läge
 
 SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	DE	Helligkeit im ausgeschalteten Zustand:
@@ -1109,7 +1125,7 @@ SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	NL	Helderheid bij uitgeschakelde toestand:
 	NO	Lysstyrke når av:
 	PT	Brilho quando Desligado
-	SE	Ljusstyrka avslagen:
+	SE	Ljusstyrka i avslaget läge:
 
 SETUP_AUTOBRIGHTNESS
 	DE	Automatische Anzeigehelligkeit
@@ -1167,6 +1183,7 @@ SETUP_SCREENSAVER_DESC
 	DE	Wählen Sie einen Bildschirmschoner
 	EN	Choose your custom screensaver
 	FR	Choisissez un écran de veille
+	SE	Välj din anpassade skärmsläckare
 
 SETUP_ALARM
 	DE	Wecker
@@ -1196,6 +1213,7 @@ SETUP_ALARMPLAYLIST
 	NL	Kies een playlist voor de wekker
 	NO	Velg Spilleliste for Alarm
 	PT	Playlist para o Alarme
+	SE	Låtlista för alarm-funktion
 
 SETUP_PLAYINGDISPLAYMODE
 	DE	Abspielen im Anzeigemodus
@@ -1219,7 +1237,7 @@ SETUP_PLAYINGDISPLAYMODE_OK
 	NL	Het display zal nu de voortgang van de huidige song als volgt laten zien:
 	NO	Displayet viser nå status for sangen som spilles slik:
 	PT	O ecrã irá mostrar o progresso da música actual como
-	SE	Displayen visar nu statusen för den nu spelande låten som:
+	SE	Displayen visar nu status för den nu spelande låten som:
 
 SETUP_PLAYINGDISPLAYMODE_DESC
 	DE	Der Player kann den Zeitverlauf des aktuellen Titels anzeigen. Wählen Sie das Anzeigeformat.
@@ -1253,7 +1271,7 @@ SETUP_SYNCHRONIZE_DESC
 	NL	De speler kan gesynchroniseerd worden met andere spelers. De spelers geven dan dezelfde muziek weer. Kies de spelers waarmee gesynchroniseerd moet worden uit de lijst van beschikbare synchonisatiegroepen. Kies 'Geen Synchronisatie' om deze functie te annuleren.
 	NO	Spilleren kan synkroniseres med andre spillere slik at de spiller samme musikken samtidig. Velg spillerene du ønsker å synkronisere med fra listen of synkroniserings grupper. Velg Ingen Synkronisering for å stoppe synkroniseringen.
 	PT	O cliente por estar sincronizado com outros clientes, permitindo que toquem todos a mesma música em simultâneo. Escolha os clientes que deseja sincronizar na lista de grupos disponíveis para sincronizar. Escolha "Não Sincronizado" para parar a sincronização.
-	SE	Spelaren kan synkroniseras med andra spelare, vilket tillåter alla spelare att spela upp samma musik samtidigt. Välj vilken spelare du vill synkronisera med från listan av tillgängliga synkroniseringsgrupper. Välj den nuvarande spelaren för att stoppa synkroniseringen.
+	SE	Spelaren kan synkroniseras med andra spelare. Detta innebär att alla spelare spelar upp samma musik samtidigt. Välj vilken spelare du vill synkronisera med från listan av tillgängliga synkroniseringsgrupper. Välj den nuvarande spelaren för att stoppa synkroniseringen.
 
 SETUP_NO_SYNCHRONIZATION
 	DE	Keine Synchronisation
@@ -1291,7 +1309,7 @@ SETUP_SYNCVOLUME_OFF
 	FR	Ne pas synchroniser le volume de la platine
 	NO	Ikke synkroniser spillerens volum
 	PT	Não sincronizar o volume do cliente
-	SE	Synkronisera Inte spelarens volym
+	SE	Synkronisera inte spelarens volym
 
 SETUP_SYNCVOLUME
 	DE	Lautstärke synchronisieren
@@ -1309,7 +1327,7 @@ SETUP_SYNCVOLUME_DESC
 	FR	Vous pouvez faire en sorte que le réglage du volume sur une platine modifie le volume sur les platines synchronisées. Faites un choix et cliquez sur Modifier.
 	NO	Du kan velge å synkronisere lyd nivåene for de synkroniserte spiller eller la dem være uavhengige. Velg nedenfor og trykk Endre.
 	PT	Aqui pode activar ou desactivar a sincronização do volume entre os vários clientes. Altere abaixo e clique em "Modificar"
-	SE	Du kan få dina synkroniserade spelare använda samma volym eller vara oberoende. Gör ditt val och klicka på Ändra.
+	SE	Du kan låta dina synkroniserade spelare använda samma volym eller vara oberoende. Gör ditt val och klicka på Ändra.
 
 SETUP_SYNCPOWER_ON
 	EN	Power off/on with group
@@ -1319,35 +1337,43 @@ SETUP_SYNCPOWER_OFF
 
 SETUP_SYNCPOWER
 	EN	Synchronize Power
+	SE	Synkronisera på/av
 
 SETUP_SYNCPOWER_DESC
 	EN	You can choose to have this player turn off on its own, or turn off as a group with all other players in the group. Make a selection below and click Change.
+	SE	Du kan välja att låta dena spelare stänga av oberoende andra spelare, eller tillsammans med andra spelare i en grupp. Välj nedan och klicka Ändra.
 
 SETUP_DIGITALVOLUMECONTROL_ON
 	DE	Lautstärkekontrolle der digitalen Ausgabe
 	EN	Volume controls adjust digital outputs
 	FR	Niveau sortie numérique contrôlé par boutons de volume
+	SE	Volymkontrollen påverkar den digitala utsignalen
 
 SETUP_DIGITALVOLUMECONTROL_OFF
 	DE	Lautstärke der digitalen Ausgabe ist fixiert
 	EN	Digital output level is fixed (Best analog quality)
 	FR	Niveau sortie numérique fixe (qualité analogique optimale)
+	SE	Den digitala utnivån är fixerad (ger bäst analog kvalitet)
 
 SETUP_DIGITALVOLUMECONTROL
 	DE	Lautstärkekontrolle des digitalen Ausgangs
 	EN	Digital Volume Control
 	FR	Niveau sortie numérique
+	SE	Digital volymkontroll
 
 SETUP_DIGITALVOLUMECONTROL_DESC
 	DE	Sie können wählen, ob sie die Lautstärke der digitalen Ausgabe auf dem maximalen Level fixieren oder über die Fernsteuerung kontrollieren wollen. Falls Sie die Fixierung wählen, so hat die analoge Ausgabe die höchste Qualität. Mit beiden Einstellungen lässt sich die analoge Ausgabe über die Fernsteuerung regeln.
 	EN	You can choose to have the digital audio output on your player be fixed at maximum level or be controlled by the volume buttons.  If you choose to have a fixed digital audio volume level, the analog outputs will have the highest quality possible.  With either setting, the analog output levels are adjusted by the volume buttons.
 	FR	Le niveau de la sortie audio numérique de votre platine peut être soit fixé à son maximum, soit contrôlé par les boutons de volume. Si le niveau de la sortie audio numérique est fixe, la qualité de la sortie analogique sera optimale. Dans tous les cas, le niveau de la sortie analogique est contrôlé par les boutons de volume.
+	SE	Du kan välja mellan att låta ditital volym vara fix på max nivå, eller låta den styras av volymkontroller. När du väljer fix digital signalvolym, får den analoga signalen maximal kvalitet. Oavsett inställning, så påverkar påverkas analog volym av volymknapparna.
 
 SETUP_MAXBITRATE
 	EN	Maximum Transcoding Bitrate
+	SE	Maximal transkodnings-bitrate
 
 SETUP_MAXBITRATE_DESC
 	EN	Maximum transcoding bitrate for this player.  All transcoded files or streams that are higher will be downsampled.  Lesser rates are left unchanged. Connecting to a stream with a bitrate parameter will override (eg. stream.mp3?bitrate=128). Valid bitrates are 0,32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320. Zero disables maximum Bitrate limits.
+	SE	Maximal transkodnings-bitrate för denna spelare. Alla kodade filer eller strömmar med högre rate, kommer att samplas ned. Lägre bitrate lämnas oförändrade. Sker uppkoppling mot en bitrate med fixt värde (ex. stream.mp3?bitrate=128) är det detta värde som gäller. Godkända värden är 0,32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256 och 320. Värdet 0 stänger av maximal bitrate-begränsningen.
 
 SETUP_TITLEFORMATCURR
 	DE	Aktuelles Titelformat
@@ -1379,24 +1405,30 @@ SETUP_TITLEFORMAT_DESC
 SETUP_ITUNESPLAYLISTFORMAT
 	EN	iTunes Playlist Format
 	FR	Format des listes de lecture iTunes
+	SE	Format iTunes låtlista
 
 SETUP_ITUNESPLAYLISTFORMAT_DESC
 	EN	This option determines the format used when importing iTunes playlists.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture iTunes.
+	SE	Denna inställning avgör vilket format som används vid import av iTunes-låtlistor
 
 SETUP_ITUNESPLAYLISTPREFIX_CHOOSE
 	EN	Prefix:
 	FR	Préfixe :
+	SE	Prefix:
 
 SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE
 	EN	Suffix:
 	FR	Suffixe :
+	SE	Suffix:
 	
 SETUP_GUESSFILEFORMATS
 	EN	Guess Tags Formats
+	SE	Gissa tag-format
 
 SETUP_GROUP_GUESSFILEFORMATS_DESC
 	EN	For files that do not have reasonable tags, you can have the server guess at tags using the path and filename. Using the same variables as Title Format, you can create a pattern to match your file naming conventions so that the server can make a good guess at what the tags should be.  Priority goes in the order listed below.  The first valid pattern match is used.
+	SE	För filer som inte har rimliga metadata (taggar), kan servern gissa genom att använda fil- och mappinformation. Genom att använda samma variabler som för Låt-format kan du skapa mönster som passar det sätt dina filer är namngivna. Prioritet enligt listan nedan; första mönster-matchning används. 
 
 SETUP_IRMAP
 	DE	Funktionen der Fernbedienungstasten
@@ -1482,7 +1514,7 @@ SETUP_LANGUAGE_DESC
 	FR	Vous pouvez modifier la langue utilisée par le système Slim.
 	NL	U kan de taal die het Slim systeem gebruikt instellen.
 	PT	Escolha o idioma a usar pelo sistema Slim.
-	SE	Du kan ändra vilket språk du vill att Slim-systemet skall använda sig av.
+	SE	Du kan ange vilket språk du vill att Slim-systemet skall använda sig av.
 
 SETUP_LANGUAGE_OK
 	DE	Ihre Sprache ist nun:
@@ -1504,7 +1536,7 @@ SETUP_AUDIODIR
 	FR	Votre dossier de musique
 	NL	Uw Muziek Folder
 	PT	Directoria com Músicas
-	SE	Din Musikmapp
+	SE	Din musikmapp
 
 SETUP_AUDIODIR_DESC
 	DE	Das Verzeichnis, in dem sich ihre MP3 Dateien auf ihrer Festplatte befinden:
@@ -1515,7 +1547,7 @@ SETUP_AUDIODIR_DESC
 	FR	Le dossier qui contient les fichiers MP3 sur votre disque dur :
 	NL	De folder waar Uw MP3 bestanden op Uw hard disk staan:
 	PT	A directoria onde estão guardados os ficheiros áudio
-	SE	Sökväg till mappen där dina MP3-filer är lagrade:
+	SE	Sökväg till mapp på hårddisken där dina MP3-filer är lagrade:
 
 SETUP_AUDIODIR_OK
 	DE	Der Server verwendet den folgenden Pfad zu ihren MP3 Dateien:
@@ -1539,7 +1571,7 @@ SETUP_PLAYLISTDIR
 	FR	Dossier contenant les listes de lecture enregistrées
 	NL	Folder voor Bewaarde Playlists
 	PT	Directoria com Playlists
-	SE	Mapp för Sparade Spellistor
+	SE	Mapp för sparade spellistor:
 
 SETUP_ARTFOLDER
 	EN	Artwork Folder
@@ -1558,7 +1590,7 @@ SETUP_BAD_DIRECTORY
 	NL	Oeps! "%s" is geen geldige folder. Probeer opnieuw.
 	NO	Huffda, "%s" er ikke en gyldig katalog. Forsøk igjen.
 	PT	A Pasta "%s" não é válida. Tente de novo.
-	SE	Hoppsan, %s verkar inte vara en godkänd mapp. Försök igen.
+	SE	%s verkar inte vara en godkänd mapp. Försök igen.
 
 SETUP_OK_USING
 	DE	O.K., verwendet:
@@ -1582,7 +1614,7 @@ SETUP_PLAYLISTDIR_OK
 	FR	Le serveur utilisera maintenant le dossier suivant pour conserver vos listes de lecture :
 	NL	De server zal deze folder gebruiken om playlists te bewaren:
 	PT	O servidor irã usar a seguinte directoria para os ficheiros de playlist
-	SE	Använder nu följande mapp för Sparade Spellistor:
+	SE	Använder nu följande mapp för sparade spellistor:
 
 SETUP_PLAYLISTDIR_DESC
 	DE	Sie können hier das Verzeichnis angeben, in dem Sie ihre Playlist Dateien auf der Festplatte abgespeichert haben. (Sie können dieses Feld leer lassen, wenn Sie keine Playlists speichern wollen.)
@@ -1615,7 +1647,7 @@ SETUP_RESCAN_BUTTON
 	FR	Répertorier
 	NL	Opnieuw inlezen
 	PT	Ler Directoria
-	SE	Läs om
+	SE	Scanna musikmappen på nytt
 
 SETUP_RESCAN_DESC
 	DE	Wenn Sie Musik hinzufügen, löschen oder Änderungen in ihrem Musik Verzeichnis vornehmen, dann können Sie die SlimServer Software mit einem erneuten Durchsuchen dazu veranlassen, ihre Datenbank zu aktualisieren.
@@ -1625,19 +1657,22 @@ SETUP_RESCAN_DESC
 	FR	Si vous modifiez le contenu de votre dossier de musique, vous pouvez forcer le système de gestion du SlimServer à répertorier de nouveau son contenu pour garantir que sa base de données est à jour.
 	NL	Als U muziek heeft toegevoegd, verwijderd of veranderd, kunt U de SlimServer software opdracht geven de muziekfolder opnieuw in te lezen.
 	PT	Se adicionar, apagar ou mudar o nome a alguma música na sua directoria de músicas, deverá forçar a re-leitura da directoria de músicas.
-	SE	Om du lägger till, tar bort eller ändrar musik in din Musikmapp kan du tvinga SlimServer att läsa om all din musik för att säkerställa att databasen är korrekt.
+	SE	Om du lägger till, tar bort eller ändrar musik in din Musikmapp kan du tvinga SlimServer att läsa av all din musik på nytt för att säkerställa att databasen är korrekt.
 
 SETUP_WIPECACHE
 	EN	Wipe Cache
 	FR	Ré-initialiser le cache
+	SE	Töm cache-minnet
 
 SETUP_WIPECACHE_BUTTON
 	EN	Wipe Cache
 	FR	Ré-initialiser
+	SE	Töm cache-minnet
 
 SETUP_WIPECACHE_DESC
 	EN	If you use the tag database you may want to clear the disk based cache of tag information. This option does that and then rescans your music files (in the same way as the rescan button does).
 	FR	Si vous utilisez la mise en cache disque des tags ID3, vous pouvez remettre celle-ci à zéro avec cette option (le serveur va ensuite répertorier à nouveau votre dossier de musique).
+	SE	Om du använder funktionen 'lagra musikdatabas på disken', kanske du vill tömma densamma. Denna inställning tömmer och scannar sedan musikmappen på nytt.
 
 RESCANNING
 	DE	Der Server durchsucht nun das Musik-Verzeichnis.
@@ -1658,7 +1693,7 @@ USING_ITUNES
 	FR	Le serveur utilisera maintenant iTunes pour repérer votre musique.
 	NL	De server zal nu iTunes gebruiken voor Uw muziek bibliotheek.
 	PT	O servidor vai usar o iTunes como arquivo de músicas.
-	SE	Servern kommer nu använda iTunes som källa för ditt musikbibliotek.
+	SE	Servern kommer nu använda iTunes som musikbibliotek
 
 NOT_USING_ITUNES
 	DE	Der Server wird nun das Verzeichnis für ihre Musiksammlung verwenden.
@@ -1668,7 +1703,7 @@ NOT_USING_ITUNES
 	FR	Le serveur utilisera maintenant le dossier indiqué pour repérer votre musique.
 	NL	De server zal nu de folder gebruiken voor Uw muziek bibliotheek.
 	PT	O servidor vai usar a directoria como arquivo de músicas.
-	SE	Servern kommer nu använda mappen som källa för ditt musikbibliotek.
+	SE	Servern kommer nu använda mappen som musikbibliotek
 
 USE_ITUNES
 	DE	Verwendung von iTunes
@@ -1707,7 +1742,7 @@ SETUP_ITUNES_OK
 	FR	Le serveur utilisera maintenant iTunes pour repérer votre musique.
 	NL	De server zal nu iTunes gebruiken voor Uw muziek bibliotheek.
 	PT	O servidor vai usar o iTunes como arquivo de músicas.
-	SE	Servern kommer nu använda iTunes som källa för ditt musikbibliotek.
+	SE	Servern kommer nu använda iTunes som musikbibliotek.
 
 SETUP_ITUNES_NOT
 	DE	Der Server wird nun das Verzeichnis ihrer Musiksammlung durchsuchen.
@@ -1717,7 +1752,7 @@ SETUP_ITUNES_NOT
 	FR	Le serveur va maintenant répertorier le contenu de votre dossier de musique.
 	NL	De server zal nu de folder gebruiken voor Uw muziek bibliotheek.
 	PT	O servidor vai analisar a directoria para ser o arquivo de músicas.
-	SE	Servern kommer nu använda mappen som källa för ditt musikbibliotek.
+	SE	Servern kommer nu använda mappen som musikbibliotek.
 
 SETUP_ITUNES_DESC
 	DE	Der SlimServer kann ihre iTunes Musik Sammlung und Playlists verwenden. Jegliche Änderungen, die Sie in iTunes vornehmen, werden auf ihrem Player abgebildet. Wenn Sie die iTunes Musiksammlung nicht verwenden wollen, dann geben Sie das Verzeichnis der Musiksammlung auf ihrem Computer an.
@@ -1727,7 +1762,7 @@ SETUP_ITUNES_DESC
 	FR	Le SlimServer peut utiliser iTunes pour accéder à votre musique et à vos listes de lecture. Tous les changements effectués dans iTunes seront pris en considération par votre platine. Si vous ne voulez pas utiliser votre bibliothèque iTunes, vous pouvez saisir le nom du dossier où se trouvent vos fichiers MP3.
 	NL	De SlimServer kan Uw iTunes muziek bibliotheek en playlists gebruiken. Alle wijzigingen die U maakt aan Uw iTunes zullen ook voor de player zichtbaar zijn. Als U Uw iTunes bibliotheek niet wilt gebruiken, kunt U de naam van een folder opgeven waarin Uw muziek bestanden zijn opgeslagen.
 	PT	O SlimServer pode usar a biblioteca de música e as playlists do iTunes 3 e 4. As alterações efectuadas no iTunes serão reflectidas no player. Se não quiser usar a biblioteca do iTunes, introduza a directoria que contém os ficheiros de áudio no seu computador.
-	SE	SlimServer kan använda iTunes musikbibliotek och spellistor. Alla ändringar som du gör i iTunes kommer märkas på din player. Om du inte vill använda iTunes som musikbibliotek, kan du skriva in namnet på den mapp där din musikfiler är lagrade.
+	SE	SlimServer kan använda iTunes musikbibliotek och spellistor. Alla ändringar som du gör i iTunes kommer att återspeglas i din spelare. Om du inte vill använda iTunes som musikbibliotek, kan du skriva in namnet på den mapp där dina musikfiler lagras.
 
 USE_MOODLOGIC
 	DE	MoodLogic verwenden
@@ -1761,8 +1796,7 @@ SETUP_MOODLOGIC_DESC
 	FR	Le SlimServer peut utiliser votre logiciel MoodLogic comme source pour les titres et les genres. MoodLogic permet par ailleurs de créer des mixes instantanés à partir du genre, de l'artiste ou des caractéristiques du morceau.
 	NL	De SlimServer kan Uw MoodLogic programma gebruiken als basis voor titel en genre informatie. Bijkomend kan U mixen samenstellen op basis van genre, artiest of muziekstuk.
 	PT	O SlimServer pode usar o módulo de Ambiência (MoodLogic) como fonte de títulos e informação do género de música. Adicionalmente, pode gerar misturas instantâneas a partir do género, artista ou nível de som.
-	SE	SlimServer kan använda din MoodLogic-applikation som källa för titel- och genre-information. Utöver det kan du skapa direktmixar på genre, artist och låt nivå.
-
+	SE	SlimServer kan använda din MoodLogic-applikation som källa till titel- och genre-information. Dessutom kan du skapa direktmixar baserat på genre, artist och låt-nivå.
 
 SETUP_INSTANTMIXMAX
 	EN	Instant Mix Max Count
@@ -1795,7 +1829,7 @@ SETUP_SKIN
 	FR	Interface web
 	NL	Web Interface
 	PT	Interface Web
-	SE	Webbgränssnitt
+	SE	Webgränssnitt
 
 SETUP_SKIN_DESC
 	DE	Sie können einen Skin für ihr Web-Interface aus der folgenden Liste auswählen.
@@ -1806,7 +1840,7 @@ SETUP_SKIN_DESC
 	FR	Vous pouvez choisir l'apparence (ou "skin") de l'interface web dans la liste ci-dessous.
 	NL	U kunt uit de onderstaande lijst een look of "skin" kiezen voor de web interface.
 	PT	Existem vários temas visuais para a interface WEB. Pode escolher na lista abaixo.
-	SE	Från listan nedan kan du välja ett utseende för webbgränssnittet.
+	SE	Välj ett utseende för webgränssnittet ('skin') från listan nedan:
 
 SETUP_SKIN_OK
 	DE	Ihr aktueller Skin:
@@ -1817,7 +1851,7 @@ SETUP_SKIN_OK
 	FR	L'interface utilise maintenant :
 	NL	Uw nieuwe skin is nu:
 	PT	O tema escolhido é
-	SE	Det nya utseendet är:
+	SE	Det nyvalda utseendet är:
 
 SETUP_PLUGINS
 	DE	Plugins
@@ -1841,16 +1875,19 @@ SETUP_REFRESHRATE
 	DE	Automatische Browser Aktualisierung
 	EN	Browser Refresh Timing
 	FR	Recharge automatique du navigateur
+	SE	Refresh-intervall för webgränssnittet
 
 SETUP_REFRESHRATE_DESC
 	DE	Setzen Sie die gewünschte Wartezeit in Sekunden zwischen automatischen Browser Aktualisierungen. Während dem Abspielen eines Liedes wird der Server den Refresh nahe dem Lied-Ende durchführen, falls er vor Ablauf der gewünschten Wartezeit liegt. (Vorgabe 30, minimum 2)
 	EN	Set the time between browser reloads in seconds.  While playing a song, the server will set the refresh near a song end if it is less than this value. (Default is 30, minimum is 2)
 	FR	Définissez le délai en secondes entre chaque recharge automatique du navigateur. Pendant l'écoute d'un morceau, le serveur forcera la recharge vers la fin du morceau s'il reste moins que le délai prévu. (Défaut 30, minimum 2)
+	SE	Ställ in tiden mellan uppdatering av webgränssnittet. Anges i sekunder, minimum 2, maximum 30. När en sång spelas sker refresh närs slutet på sången, om återstående tid är mindre än angivet värde.
 
 SETUP_REFRESHRATE_OK
 	DE	Browser Aktualisierung gesetzt auf
 	EN	Refresh time set to
 	FR	Délai d'attente entre recharge réglé à 
+	SE	Uppdateringsintervall satt till:
 
 SETUP_ITUNESSCANINTERVAL
 	EN	iTunes Reload Interval
@@ -1877,6 +1914,7 @@ SETUP_COVERART_DESC
 	FR	Si elle existe, l'image de la pochette du disque est affichée en regard de l'information d'un album ou d'un morceau. Les images se trouvent soit dans un repère ID3 par morceau, soit dans le même répertoire que les fichiers. Le serveur recherche de lui-même les noms de fichiers suivants: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", ou "thumb.jpg". Vous pouvez spécifier d'autres noms de fichiers pour les images de pochettes, et spécifier différents noms de fichiers pour les vignettes ou les images.
 	NL	Indien er een afbeelding beschikbaar is van de hoezen wordt deze getoond als U een album bekijkt of informatie over een liedje opvraagt. Deze beelden worden opgegeven in de ID3 tag voor liedjes of staan in dezelfde map als de muziekbestanden. Standaard worden de bestanden "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" en "thumb.jpg" gebruikt. Bijkomende bestandsnamen kunnen gedefinieerd worden. Voor de verkleinde beelden (thumbmails) en de volledige afbeeldingen kunnen afzonderlijke namen opgegeven worden.  
 	PT	As imagens da capa do álbum, quando disponíveis, são mostradas na visualização da informação do álbum ou da música. As capas dos álbuns poderão estar integradas nas "tags ID3" do próprio ficheiro, ou em ficheiros separados na pasta dos ficheiros de música. Por omissão, serão usados os nomes de ficheiros "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Pode especificar nomes de ficheiros adicionais para a imagem da capa do álbum. Pode especificar nomes diferentes para a miniatura ou para a imagem completa.
+	SE	Bilder på albumomslag kan visas samtidigt med information om sånger. Dessa bilder kan lagras i ID3-tag, eller lagras som separat fil i samma mapp som låten. Bildfiler med namnen "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", eller "thumb.jpg" används  standardmässigt. Du kan ange andra möjliga namn på dessa aalbum-grafik-filer, och även ange separata filnamn för tumnagelsstora bilder. Använd Prefix % och samma element som är tillgängliga för Titelformat. (Exempel: %ARTIST - ALBUM.jpg söker efter filer med det funna värdet på Artist och Album.)
 
 SETUP_COVERART_OK
 	DE	Dateiname des Plattencovers:
@@ -1894,7 +1932,7 @@ SETUP_COVERTHUMB
 	FR	Vignettes
 	NL	Verkleinde afbeelding van de hoes
 	PT	Miniatura da Capa do Álbum
-	SE	Miniatyr av albumomslag
+	SE	Albumomslags-miniatyrer
 
 SETUP_COVERTHUMB_DESC
 	DE	Dateiname des Plattencovers
@@ -1903,7 +1941,7 @@ SETUP_COVERTHUMB_DESC
 	FR	Nom de fichier pour les vignettes
 	NL	Bestandsnaam voor verkleinde afbeelding van de hoes
 	PT	Nome do ficheiro da miniatura da Capa do Álbum
-	SE	Filnamn för Miniatyrer av albumomslag
+	SE	Filnamn för albumomslags-miniatyrer
 
 SETUP_COVERTHUMB_OK
 	DE	Dateiname des Plattencovers (klein):
@@ -1912,37 +1950,43 @@ SETUP_COVERTHUMB_OK
 	FR	Nom de fichier pour les vignettes des images de pochette :
 	NL	Bestandsnaam voor verkleinde afbeelding van de hoes ingesteld op
 	PT	O nome do ficheiro para a miniatura da Capa do Álbum é
-	SE	Filnamn för Miniatyrer av albumomslag satt till:
+	SE	Filnamn för albumomslags-miniatyrer är satt till:
 
 SETUP_THUMBSIZE
 	DE	Grösse der Vorschaubilder
 	EN	Thumbnail Size
 	FR	Taille des vignettes
+	SE	Storlek på miniatyrer
 
 SETUP_THUMBSIZE_DESC
 	DE	Wählen Sie die Grösse der Plattencover Vorschaubilder in Pixeln (25-250). Voreinstellung ist 100.
 	EN	Choose the size in pixels (25-250) for the default thumbnail image when browsing by artwork. Default is 100.
 	FR	Choisissez une taille en pixels (entre 25 et 250) pour l'affichage par défaut de la vignette en mode "Parcourir les pochettes". La valeur par défaut est 100.
+	SE	Välj storlek i antal pixlar (25-250) som albumomslagsminatyrer normalt ska presenteras i. Standardvärdet är 100
 
 SETUP_INCLUDENOART_0
 	DE	Keine Platzhalter für nicht vorhandene Plattencovers verwenden.
 	EN	Delete placeholders from the list
 	FR	Ne pas afficher les albums sans pochette
+	SE	Visa inte tomma bildramar i listan
 
 SETUP_INCLUDENOART_1
 	DE	Alle Alben anzeigen, Platzhalter für nicht vorhandene Plattencovers verwenden.
 	EN	Include all albums, using placeholders
 	FR	Afficher tous les albums, avec image vide le cas échéant
+	SE	Visa alla album i listan, använd ramar när miniatyr saknas
 
 SETUP_INCLUDENOART
 	DE	Plattencover nachschlagen
 	EN	Browse By Artwork
 	FR	Parcourir les pochettes
+	SE	Bläddra bland albumomslag
 
 SETUP_INCLUDENOART_DESC
 	DE	Legen Sie fest, ob Albums ohne Plattencover beim Nachschlagen nach Plattencover angezeigt werden sollen. Fehlt das Plattencover, so wird ein leerer Platzhalter eingesetzt, oder das Album wird gänzlich weggelassen.
 	EN	Choose whether or not to include albums that currently have no artwork when browsing by artwork.  Where no art is found, a blank image will be inserted as a placeholder, or they can be left out of the browse entirely.
 	FR	Choisissez si l'interface doit afficher ou non les albums qui ne possèdent pas de pochette en mode Parcourir les pochettes. En l'absence de pochette, vous pouvez soit afficher une image vide, soit ignorer l'album.
+	SE	Välj om album som inte har någon associerad bild ska inkluderas i listan eller ej. En tom bild (standardstorlek) och albumnamn kan visas, eller exkluderas helt.
 
 SETUP_IGNOREMP3TAGS
 	EN	Ignore MP3 Tags
@@ -1980,7 +2024,7 @@ SETUP_CLIPORT_DESC
 	FR	Vous pouvez changer le port utilisé par l'interface en ligne de commande pour contrôler la platine. La valeur zéro désactive cette fonctionnalité.
 	NL	U kan het poortnummer dat gebruikt wordt om de player via een command line interface te bedienen aanpassen. Zet dit poortnummer op 0 (nul) als U de command line interface wilt uitschakelen.
 	PT	Pode mudar o número da porta para ligação da interface de linha de comando do player. (Escolha o valor 0 para desabilitar a opção)
-	SE	Du kan ändra portnumret som används för att via ett terminalgränssnitt kontrollera din player. (Sätt värdet till 0 (noll) för att avaktivera terminalgränssnittet.)
+	SE	Du kan ändra portnumret som används för att kontrollera din spelare via ett terminalgränssnitt. (Sätt värdet till 0 (noll) för att avaktivera terminalgränssnittet.)
 
 SETUP_CLIPORT_OK
 	DE	Der folgende Port wird für die Kommandozeilen-Schnittstelle verwendet:
@@ -2001,7 +2045,7 @@ SETUP_HTTPPORT
 	FR	Numéro de port du serveur web
 	NL	Web Server Poort Nummer
 	PT	Porta TCP do Servidor WEB
-	SE	Portnummer för webbserver
+	SE	Portnummer för webserver
 
 SETUP_HTTPPORT_DESC
 	DE	Sie können die Port-Nummer wechseln, die Sie für den Web-Server Zugriff verwenden wollen. (Der Standartwert ist 9000.)
@@ -2012,7 +2056,7 @@ SETUP_HTTPPORT_DESC
 	FR	Vous pouvez changer le port utilisé pour accéder au serveur à partir d'un navigateur web. Le port par défaut est 9000.
 	NL	Het nummer van de poort die gebruikt wordt om de server met een browser te bedienen kan worden ingesteld. (Standaard is dit poort 9000). 
 	PT	Pode mudar a porta usada para aceder ao servidor usando um navegador web. (Por omissão é 9000)
-	SE	Du kan ändra portnumret som används för att nå webbservern från en webbläsare. (Standardvärdet är 9000)
+	SE	Du kan ändra portnumret som används för att nå webservern från en webläsare. (Standardvärdet är 9000)
 
 SETUP_HTTPPORT_OK
 	DE	Verwender Port:
@@ -2040,7 +2084,7 @@ SETUP_TRANSCODE-OGG_DESC
 	FR	Si vous disposez de LAME et des outils Ogg Vorbis (ogginfo et ogg123), le SlimServer peut convertir en temps réel vos morceaux au format Ogg pour qu'ils soient lus sur le Slim. La conversion est effectuée sur le serveur pendant la lecture et n'est pas stockée sur le disque.
 	NL	Indien U LAME en de Ogg Vorbis hulpprogramma's (ogginfo en ogg123) geinstalleerd hebt kan U de SlimServer instellen om Ogg bestanden real-time om te zetten zodat deze op Uw SlimServer afgespeeld kunnen worden.
 	PT	Se tiver instalado no sistema o LAME (utilitários de MP3) ou os utilitários do Ogg Vorbis (ogginfo e ogg123), pode configurar o SlimServer para converter automaticamente os ficheiros para MP3, de forma a serem usados no cliente Slim.
-	SE	Om du har LAME och Ogg Vorbis-verktyg installerade (ogginfo & ogg123) kan du få din server att automatiskt konvertera dina Ogg-musikfiler för uppspelning på din Slim-spelare.
+	SE	Om du har LAME och Ogg Vorbis-verktyg (ogginfo & ogg123) installerade kan din server automatiskt konvertera Ogg-musikfiler för uppspelning i din spelare.
 
 SETUP_TRANSCODE-OGG_OK
 	DE	Ogg Vorbis Dateien
@@ -2088,7 +2132,7 @@ SETUP_TRANSCODE-WAV_DESC
 	FR	Si vous disposez de LAME, le SlimServer peut convertir en temps réel vos morceaux non-compressés au format WAV et/ou AIFF pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant sur le serveur pendant la lecture et n'est pas stockée sur le disque.
 	NL	Indien U LAME geinstalleerd hebt kan U de Slim instellen om niet gecomrimeerde WAV en AIFF bestanden om te zetten zodat deze kunnen afgespeeld worden op de SlimServer.
 	PT	Se tiver instalado no sistema o LAME (utilitários de MP3), pode configurar o SlimServer para converter automaticamente os ficheiros WAV e AIFF para MP3, de forma a serem usados no cliente Slim.
-	SE	Om du har LAME installerat kan du få din SlimServer att automatiskt konvertera dina okomprimerade WAV- och AIFF-filer för uppspelning på din Slim-spelare.
+	SE	Om du har LAME installerat kan din SlimServer automatiskt konvertera okomprimerade WAV- och AIFF-filer för uppspelning i din spelare.
 
 SETUP_TRANSCODE-WAV_OK
 	DE	WAV und AIFF Dateien
@@ -2108,7 +2152,7 @@ SETUP_TRANSCODE-WAV_1
 	NL	Automatisch omzetten
 	NO	Konverter automatisk
 	PT	Converter automaticamente
-	SE	Konvertera Automatiskt
+	SE	Konvertera automatiskt
 
 SETUP_TRANSCODE-WAV_0
 	DE	Nicht automatisch konvertieren
@@ -2136,7 +2180,7 @@ SETUP_TRANSCODE-MOV_DESC
 	FR	Uniquement pour Macintosh OS X : Si vous disposez de LAME, le SlimServer peut convertir en temps réel vos morceaux au format Quicktime movie et AAC pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant la lecture sur le serveur et n'est pas stockée sur le disque.
 	NL	Enkel voor Macintosh OS X: Indien U LAME geinstalleerd hebt kan U de SlimServer instellen om QuickTime films (alleen het geluid) en AAC muziekbestanden real-time om te zetten voor weergave op de SlimServer.
 	PT	Apenas Apple OS X
-	SE	Endast Macintosh OS X: Om du har LAME installerade kan du få din SlimServer att automatiskt konvertera QuickTime- och AAC-filer för uppspelning på din Slim-spelare.
+	SE	Endast Mac OS X: Om du har LAME installerade kan din SlimServer automatiskt konvertera QuickTime- och AAC-filer för uppspelning i din spelare.
 
 SETUP_TRANSCODE-MOV_OK
 	DE	QuickTime und AAC
@@ -2172,21 +2216,25 @@ SETUP_SAVESHUFFLED
 	DE	Zufalls-Playlist speichern
 	EN	Save Shuffled Playlist
 	FR	Sauvegarde des listes de lecture aléatoires
+	SE	Spara blandad låtlista
 
 SETUP_SAVESHUFFLED_DESC
 	DE	Wenn Sie eine Playlist speichern, die in zufälliger Reihenfolge wiedergegeben wird, können Sie diese in der Reihenfolge abspeichern, in welcher die Musikstücke hinzugefügt wurden, oder die zufällige Reihenfolge beibehalten.
 	EN	When you choose to save a playlist, and it's been shuffled, you can choose to save it in the original order the songs were added or in the shuffled order.
 	FR	Lorsque vous sauvegardez une liste de lecture aléatoire, vous pouvez soit la sauvegarder dans l'ordre original d'ajout des morceaux, soit préserver l'ordre aléatoire.
+	SE	När du väljer att spara en låtlista som blivit 'blandad', kan du ange om den ska sparas i orginalordning eller blandad
 
 SETUP_SAVESHUFFLED_1
 	DE	Playlist in zufälliger Reihenfolge speichern
 	EN	Save playlists in shuffled order
 	FR	Sauvegarder les listes de lecture dans l'ordre aléatoire
+	SE	Spara låtlistor blandade
 
 SETUP_SAVESHUFFLED_0
 	DE	Playliste so abspeichern, wie die Musikstücke hinzugefügt wurden.
 	EN	Save playlists in order songs were added
 	FR	Sauvegarder les listes de lecture dans l'ordre d'origine
+	SE	Spara låtlistor i orginalordning
 	
 SETUP_SAVEHISTORY
 	DE	Speichern des Verlaufs
@@ -2242,7 +2290,7 @@ SETUP_CHECKVERSION_DESC
 	EN	The server can automatically connect to www.slimdevices.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in the SlimServer web interface.
 	FR	Le SlimServer peut se connecter tous les jours à www.slimdevices.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Un message dans l'interface web signale cette disponibilité le cas échéant.
 	PT	O servidor poderá ligar-se automaticamente a www.slimdevices.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
-	SE	Servern kan automatiskt koppla upp sig mot www.slimdevices.com varje dag för att kontrollera om en nyare version av mjukvaran finns tillgänglig. Om nyare version finns, kommer ett meddelande visas i webb-gränssnittet.
+	SE	Servern kan automatiskt koppla upp sig mot www.slimdevices.com varje dag för att kontrollera om en nyare version av mjukvaran finns tillgänglig. Om nyare version finns, kommer ett meddelande visas i web-gränssnittet.
 
 SETUP_CHECKVERSION_1
 	DE	Automatisch nach aktueller Software suchen
@@ -2291,7 +2339,7 @@ SETUP_SCREENSAVERTIMEOUT
 	NL	Interval van de schermbeveiliging
 	NO	Skjermsparer tid
 	PT	Intervalo para Protecção de Ecrã
-	SE	Fördröjning av skärmsläckaren
+	SE	Fördröjning innan skärmsläckare aktiveras
 
 SETUP_SCREENSAVERTIMEOUT_DESC
 	DE	Hier können Sie die Wartezeit einstellen. Bei Einstellung der Wartezeit auf Null wird der aktuelle Titel nie angezeigt.
@@ -2313,7 +2361,7 @@ SETUP_SCREENSAVERTIMEOUT_CHOOSE
 	FR	Délai de l'écran de veille en secondes :
 	NL	Interval waarna de schermbeveiliging aktief wordt (in seconden): 
 	PT	Tempo de espera da proteção de ecrã, em segundos
-	SE	Fördröjning innan skärmsläckare i sekunder:
+	SE	Fördröjning innan skärmsläckare aktiveras, i sekunder:
 
 SETUP_SCREENSAVERJUMP
 	DE	Bildschirmschoner
@@ -2361,6 +2409,7 @@ SCREENSAVERJUMP_BACK
 SCREENSAVER_JUMP_BACK_NAME
 	DE	Es läuft gerade... (beim Aufwachen zurückspringen)
 	EN	Now Playing (Jump back on wake.)
+	SE	Nu spelas (Hoppa tillbaka när spelaren 'vaknar').
 
 SCREENSAVERJUMP_STAY
 	DE	Im Abspiel-Bereich bleiben.
@@ -2390,7 +2439,7 @@ SETUP_DISPLAYTEXTTIMEOUT_DESC
 	FR	La platine passera automatiquement à la lettre suivante après un certain délai lors de la saisie de texte. Vous pouvez choisir ce délai ci-dessous.
 	NL	Als U tekst invoert om te gaan zoeken zal de speler na een aantal seconden naar de volgende letter doorschuiven. U kunt deze wachttijd hier instellen.
 	PT	Ao introduzir texto para uma procura, ao fim de algum tempo será seleccionado o caracter seguinte. Pode alterar a duração desta espera abaixo.
-	SE	När du matar in text för en sökning kommer spelaren automatiskt flytta till nästa tecken efter en liten fördröjning.<br>Här kan du ställa in tiden för denna fördröjning.
+	SE	När du matar in text för en sökning kommer spelaren automatiskt flytta till nästa teckenposition efter en liten fördröjning.<br>Här kan du ställa in tiden för denna fördröjning.
 
 SETUP_DISPLAYTEXTTIMEOUT_CHOOSE
 	DE	Wartezeit in Sekunden:
@@ -2422,7 +2471,7 @@ SETUP_THROTTLESCAN_DESC
 	FR	Lorsqu'il démarre, le serveur répertorie votre dossier de musique afin de mettre à jour sa base de données contenant l'information sur les albums, les artistes, etc. à partir des repères ID3 de vos fichiers de musique. Ceci peut taxer exagérément les ressources des ordinateurs plus lents. Vous pouvez réduire la vitesse de balayage afin d'éviter que le temps de réponse de l'ordinateur ne soit trop long.
 	NL	Als de server opstart zal deze Uw muziek folder inlezen om uit de MP3 tags de artiest, het album en andere gegevens te lezen. Op langzamere systemen en Windows PCs die FAT of FAT32 bestandsystemen gebruiken kan dit een onacceptabele vertraging van Uw PC tot gevolg hebben. U kunt met deze instelling de inleessnelheid verminderen om zodanig minder computercapaciteit te gebruiken.
 	PT	O servidor, ao iniciar, pesquisa toda a pasta de músicas, indexando o nome do artista, album e outras informações, a partir das tags ID3 dos ficheiros MP3. Em computadores mais lentos ou em sistemas operativos Windows com sistemas de ficheiros FAT ou FAT32, esta operação poderá ocupar demasiados recursos. Pode usar esta opção para adicionar um tempo de espera e abrandar a operação.
-	SE	När servern startar läser den igenom din Musikmapp för att hämta namn på artist, album, etc från dina MP3-filer. På vissa långsammare system och Windows PCs som använder FAT eller FAT32 filsystem kan detta göra datorn väldigt långsam. Du kan ändra denna inställning för att sakta ner inläsningen och använda mindre av datorns resurser.
+	SE	När servern startar läser den igenom din musikmapp för att hämta namn på artist, album, etc från dina MP3-filers ID3-taggar. På vissa långsammare system och Windows-operativ som använder FAT eller FAT32 filsystem kan detta göra datorn väldigt långsam. Du kan ändra denna inställning för att sakta ner inläsningen och använda mindre av datorns resurser.
 
 SETUP_ARTISTINALBUMSEARCH
 	DE	Name des Interpreten in der Album-Suche
@@ -2433,7 +2482,7 @@ SETUP_ARTISTINALBUMSEARCH
 	FR	Nom d'artiste lors de la recherche d'albums
 	NL	Naam van de artiest gebruiken in album zoekopdrachten
 	PT	Usar o nome do artista nas procuras por álbums
-	SE	Artistnamn i albumsökningar
+	SE	Artistnamn vid albumsökningar
 
 SETUP_ARTISTINALBUMSEARCH_1
 	DE	Verwendung des Namen bei der Album-Suche
@@ -2442,7 +2491,7 @@ SETUP_ARTISTINALBUMSEARCH_1
 	FR	Inclure le nom d'artiste
 	NL	Naam van de artiest gebruiken
 	PT	Usar o nome do artista nas procuras por álbums
-	SE	Inkludera artistnamn i albumsökningar
+	SE	Inkludera artistnamn vid albumsökningar
 
 SETUP_ARTISTINALBUMSEARCH_0
 	DE	Keine Verwendung des Namen bei der Album-Suche
@@ -2451,7 +2500,7 @@ SETUP_ARTISTINALBUMSEARCH_0
 	FR	Ne pas inclure le nom d'artiste
 	NL	Naam van de artiest niet gebruiken
 	PT	Não usar o nome do artista nas procuras por álbums
-	SE	Inkludera inte artistnamn i albumsökningar
+	SE	Inkludera inte artistnamn vid albumsökningar
 
 SETUP_ARTISTINALBUMSEARCH_DESC
 	DE	Sie haben die Wahl, ob der Name des Interpreten bei der Album-Suche berücksichtigt wird. Bei Aktivierung dieser Option, liefert die Suche "bach" ein Ergebnis wie "Brandenberg Concertos" von J.S. Bach, obwohl "bach" kein Bestandteil des Titels ist.
@@ -2512,7 +2561,7 @@ SETUP_PERSISTPLAYLISTS_DESC
 	FR	Le serveur peut conserver le contenu de la dernière liste de lecture de la platine lorsqu'il est redémarré. Pour ce faire, il enregistre sur disque le contenu de la listes de lecture des platines à chaque fois que celle-ci est modifiée. La liste de lecture est alors relue sur disque au démarrage du serveur.
 	NL	De server kan de playlist bijhouden die aan het spelen was en deze laden als de server start.
 	PT	O servidor pode manter a playlist de músicas actual quando é re-iniciado.
-	SE	Servern kan behålla innehållet i spelarnas spellistor när servern startas om. Den gör det genom att spara spellistan efter varje ändring. Spellistan laddas in när spelaren startar igen.
+	SE	Servern kan behålla innehållet i spelarnas spellistor när servern startas om. Den gör det genom att spara låtlistan efter varje ändring. Låtlistan laddas in när spelaren startar igen.
 
 SETUP_PERSISTPLAYLISTS_1
 	DE	Merken der Playlist
@@ -2530,7 +2579,7 @@ SETUP_PERSISTPLAYLISTS_0
 	FR	Ne pas conserver la liste de lecture
 	NL	Playlist niet bijhouden
 	PT	Não Manter Playlists
-	SE	Behåll inte spellistor
+	SE	Behåll inte låtlistor
 
 SETUP_RESHUFFLEONREPEAT
 	DE	Erneutes Mischen bei Wiederholung
@@ -2548,7 +2597,7 @@ SETUP_RESHUFFLEONREPEAT_DESC
 	FR	Le serveur peut mélanger de nouveau la liste de lecture à chaque répétition.
 	NL	De server kan de volgorde van de liedjes in een playlist door elkaar gooien nadat een lijst gespeeld werd.
 	PT	O servidor pode re-misturar a lista de músicas no final dela, se necessário.
-	SE	Servern kan, om önskvärt, blanda om den slumpade spellistan efter varje fullständig genomgång av listan.
+	SE	Servern kan, om önskvärt, blanda om den slumpade låtlistan efter varje fullständig genomgång av listan.
 
 SETUP_RESHUFFLEONREPEAT_0
 	DE	Die gleiche Reihenfolge beibehalten
@@ -2678,7 +2727,7 @@ SETUP_TEMPLATECACHE_DESC
 	FR	Le serveur peut mettre en cache les fichiers HTML et les images afin d'accéler l'affichage de l'interface. Vous pouvez désactiver cette fonctionnalité pour faciliter le développement d'une nouvelle interface web.
 	NL	De server kan een cache opbouwen van HTML en plaatjes, dit om de web interface te versnellen. Schakel deze cache uit om onderhoud van de web interface te vereenvoudigen.
 	PT	O servidor pode criar "cache" do HTML ou das imagens para tornar a interface Web mais rápida. Em situações de desenvolvimento, desligue a "cache".
-	SE	Servern kan spara sina HTML-filer och bilder i minnet för att snabba upp webbgränssnittet. Stäng av detta för att underlätta utveckling av webbgränssnittet.
+	SE	Servern kan spara sina HTML-filer och bilder i minnet för att snabba upp webgränssnittet. Stäng av detta för att underlätta utveckling av webgränssnittet.
 
 SETUP_USEPLAYLISTCACHE
 	DE	Playlist und Verzeichnis im Cache ablegen
@@ -2689,7 +2738,7 @@ SETUP_USEPLAYLISTCACHE
 	FR	Mise en cache des listes de lecture et des dossiers
 	NL	Playlist en Folder Caching
 	PT	Cache das Playlists e Directorias
-	SE	Spara spellistor och mappar i minnet
+	SE	Spara låtlistor och mappinformation i minnet
 
 SETUP_USEPLAYLISTCACHE_DESC
 	DE	Der Server kann die Playlist und das Verzeichnis im Cache ablegen um die Navigation zu beschleunigen. Änderungen, wie z. B. hinzugefügte und gelöschte Titel sollten automatisch berücksichtigt werden. Deaktivieren Sie das Ablegen im Cache nur, wenn Änderungen unberücksichtigt bleiben.
@@ -2700,7 +2749,7 @@ SETUP_USEPLAYLISTCACHE_DESC
 	FR	Le serveur peut mettre en cache les listes de lecture et le contenu du dossier de musique pour accélérer la navigation. Les changements, tels que l'ajout ou la suppression de morceaux, devraient être détectés automatiquement. Ne désactivez cette fonctionnalité que si vous constatez que les changements ne sont pas pris en compte.
 	NL	De server kan een cache aanleggen van playlists en folder om de navigatie te versnellen. Veranderingen, zoals nieuw toegevoegde of verwijderde bestanden worden automatisch gedetecteerd. Zet de cache alleen uit als U merkt dat wijzigingen niet worden waargenomen.
 	PT	O servidor poderá manter uma "cache" das playlists e das directorias para que a navegação seja mais rápida. Se houverem alterações, tais como novos ficheiros ou ficheiros apagados, serão automaticamente detectados. Se notar que as alterações não estão a ser reflectidas, desabilite esta "cache".
-	SE	Servern kan spara spellistor och mappar i minnet för att snabba upp navigering. Ändringar som nya eller borttagna filer, skall upptäckas automatiskt. Stäng av detta endast om du märker att ändringar inte upptäcks.
+	SE	Servern kan spara låtlistor och mappinformation i minnet för att snabba upp navigering. Ändringar som tillagda eller borttagna filer skall upptäckas automatiskt. Stäng av detta endast om du märker att ändringar inte upptäcks.
 
 SETUP_USEINFOCACHE
 	DE	Ablegen von ID3 und anderen Informationen im Cache
@@ -2744,7 +2793,7 @@ SETUP_USETAGDATABASE_DESC
 	FR	Les informations contenues dans le repère ID3 de chaque fichier MP3 peuvent être sauvegardées sur disque lorsque le serveur est arrêté et relues lorsqu'il est redémarré afin d'accélérer le balayage du dossier de musique.
 	NL	De MP3 tag informatie uit elk MP3 bestand kan worden bewaard als de server stopt en zal herladen worden als de server weer opstart. Dit zal het scannen van de Muziek Folder zeer versnellen.
 	PT	A informação das tags ID3 para cada ficheiro MP3 pode ser guardada para que esteja disponível quando o servidor for reiniciado. Esta opção aumenta a velocidade de indexação dos ficheiros.
-	SE	ID3-informationen från varje MP3-fil kan sparas när servern stoppas och laddas in igen när server startas igen. Detta snabbar upp inläsningen av musikmappen.
+	SE	ID3-informationen från varje MP3-fil kan sparas när servern stoppas och laddas in igen när servern startas igen. Detta snabbar upp inläsningen av musikmappen.
 
 SETUP_ANIMATIONLEVEL
 	DE	Animation
@@ -2754,7 +2803,7 @@ SETUP_ANIMATIONLEVEL
 	FR	Animations
 	NL	Animatie
 	PT	Animações
-	SE	Animation
+	SE	Animering
 
 SETUP_ANIMATIONLEVEL_DESC
 	DE	Diese Option legt die Menge der verwendeten Animationen fest. Animationen bestehen aus kurzen Mitteilungen, Löschen der Anzeige während der Navigation und Scrollen langer Titel.
@@ -2765,29 +2814,34 @@ SETUP_ANIMATIONLEVEL_DESC
 	FR	Ce réglage contrôle le degré d'animation de l'écran de la platine, comme l'affichage de message durant une courte période, les effets de fondu-déplacé et le défilement des titres trop longs.
 	NL	Deze optie bepaald de mate van toegestane animatie. Animaties zijn onder andere: het tonen van korte boodschappen, het verschuiven van de tekst gedurende navigatie en scrollende lange titles.
 	PT	Esta opção determina a quantidade de animação permitida. As animações são compostas por breves mensagens, animação de ecrãs e deslizamento de títulos compridos.
-	SE	Detta val avgör mängden tillåten animation. Animationer är kortvariga meddelanden, skärmåkningar vid navigering samt rullande långa titlar.
+	SE	Detta val avgör tillåten animering. Animering är kortvariga meddelanden, skärmåkningar vid navigering samt rullande långa titlar.
 
 SETUP_LOOKFORARTWORK
 	EN	Look For Artwork
 	FR	Répertorier les pochettes
+	SE	Sök efter Album-omslag
 
 SETUP_LOOKFORARTWORK_DESC
 	EN	When SlimServer scans your music library it can automatically look for album artwork.  You can choose to not have it look for album artwork, which may speed up the scan process but may make the artwork not appear in the web interface.
 	FR	Lorsque le SlimServer répertorie votre dossier de musique, il recherche automatiquement les pochettes d'album. Vous pouvez choisir de ne pas rechercher les pochettes pour accélérer ce processus, mais certaines pochettes présentes risquent de ne pas apparaître dans l'interface web.
+	SE	När Slimserver scannar din musikmapp kan programvaran automatiskt söka efter album-omslag. Du kan stänga av detta för att öka hastigheten på inläsning, men effekten kan bli att albumomslag inte syns i webgränssnittet.
 
 SETUP_NO_ARTWORK
 	EN	Do not Look For Artwork
 	FR	Ne pas répertorier les pochettes
+	SE	Sök inte efter album-omslag
 
 SETUP_BUILDITEMSPERPASS
 	DE	Anzahl Elemente pro Durchgang
 	EN	Build Items Per Pass
 	FR	Nombre d'éléments par passe
+	SE	Antal musikfiler per sökpass
 
 SETUP_BUILDITEMSPERPASS_DESC
 	DE	Um eine Unterbrechung der Musik zu verhindern, bildet SlimServer lange Listen in mehreren Durchgängen. Diese Einstellung definiert, wieviele Elemente pro Durchgang verarbeitet werden.
 	EN	To avoid interrupting the music, SlimServer builds long lists in chunks. This setting determines how many items to build in a single pass.
 	FR	Pour ne pas interrompre la musique, le SlimServer génère les listes longues en plusieurs passes. Ce réglage détermine le nombre d'éléments générés à chaque passe.
+	SE	För att inte störa uppspelinng av musik bygger Slimserver sina listor i mindre delar. Denna instälning avgör hur många låtar som ska indexeras per pass
 
 SETUP_LONGDATEFORMAT
 	DE	Format des langen Datums
@@ -2798,7 +2852,7 @@ SETUP_LONGDATEFORMAT
 	FR	Format long des dates
 	NL	Lang Datum Formaat
 	PT	Formato Longo da Data
-	SE	Format för långt datum
+	SE	Långt datumformat
 
 SETUP_LONGDATEFORMAT_DESC
 	DE	Diese Option bestimmt das Format des langen Datums, wie es beim ausgeschaltetem Player angezeigt wird. Es gibt die folgenden Alternativen: <br>WWWW ist der voll ausgeschriebene Tag (Samstag, Sonntag usw.)<br>WWW ist die abgekürzte Schreibweise (Sam, Son usw.)<br>DD ist das Tageszahl (ohne führende Null)<br>MM ist der Monat<br>YY ist das zweistellige Jahr<br>YYYY ist das vierstellige Jahr
@@ -2808,7 +2862,7 @@ SETUP_LONGDATEFORMAT_DESC
 	FR	Ce réglage détermine le format long pour les dates (affiché lorsque la platine est en veille). Les codes suivants peuvent être utilisés :<br>WWWW : le jour de la semaine complet (dimanche, lundi, mardi, etc.)<br>WWW : le jour de la semaine en abrégé (dim, lun, mar, etc.)<br>DD : le jour du mois sans zéro non significatif<br>MM : le mois de l'année<br>YY : l'année à deux chiffres<br>YYYY : l'année à quatre chiffres
 	NL	Deze optie bepaalt het lange datum formaat, zoals deze wordt getoond als de speler is uitgeschakeld. De volgende afspraken worden gebruikt in de onderstaande opties:<br> WWWW is de dag van de week voluit geschreven (Zondag, Maandag, etc.)<br> WWW is de afkorting van de dag van de week (Zon, Maa, etc)<br>DD is de dag van de maand (zonder voorloopnul)<br>MM is de maand van het jaar<br>YYYY is het viercijferige jaartal.
 	PT	Esta opção determina o formato longo a usar para datas (tais como a que é mostrada quando o cliente está desligado). São usadas as seguintes convenções para as opções abaixo
-	SE	Detta val avgör formatet för långt datum (som t.ex visas när spelaren är avstängd). Följande konventioner används för valen nedan:<br>WWWW är veckodagen (Lördag, Söndag, osv)<br>WWW är veckodagen förkortad (Lör, Sön, Mån, osv)<br>DD är dagen i månaden (inledande nolla borttagen)<br>MM är månaden<BR>YY är tvåsiffrigt årtal<BR>YYYY är fyrsiffrigt årtal
+	SE	Detta val avgör hur långt datumformat presenteras (som bland annat visas när spelaren är avstängd). Följande konventioner används för valen nedan:<br>WWWW är veckodag (lördag, söndag, osv)<br>WWW är veckodag förkortad (lör, sön, osv)<br>DD är dag i månaden (inledande nolla borttagen)<br>MM är månaden<BR>YY är tvåsiffrigt årtal<BR>YYYY är fyrsiffrigt årtal
 
 SETUP_SHORTDATEFORMAT
 	DE	Format des kurzen Datums
@@ -2819,7 +2873,7 @@ SETUP_SHORTDATEFORMAT
 	FR	Format court des dates
 	NL	Kort Datum Formaat
 	PT	Formato Curto da Data
-	SE	Format för kort datum
+	SE	Kort datumformat
 
 SETUP_SHORTDATEFORMAT_DESC
 	DE	Diese Option bestimmt das Format des kurzen Datums. Es gibt die folgenden Alternativen: <br>YYYY ist das vierstellige Jahr<br>YY ist das zweistellige Jahr<br>MM ist der Monat<br>DD ist das Tagesdatum<br>Alles Folgende ist ausschliesslich Kommentar und wird nicht angezeigt.
@@ -2829,7 +2883,7 @@ SETUP_SHORTDATEFORMAT_DESC
 	FR	Ce réglage détermine le format court pour les dates. Les codes suivants peuvent être utilisés :<br>YYYY : l'année à quatre chiffres<br>YY : l'année à deux chiffres<br>MM : le mois de l'année<br>DD : le jour du mois<br>Tout texte entre parenthèses à la fin du format est un commentaire et ne sera pas affiché.
 	NL	Deze optie bepaalt het korte datum formaat. De volgende afspraken worden gebruikt in de onderstaande opties:<br>DD is de dag van de maand (zonder voorloopnul)<br>MM is de maand van het jaar<br>YYYY is het viercijferige jaartal<br>YY is het jaartal in twee cijfers<br>Alles aan het einde tussen haakjes is commentaar en zal niet worden weergegeven.
 	PT	Esta opção determina o formato curto a usar para datas. São usadas as seguintes convenções para as opções abaixo
-	SE	Detta val avgör formatet för kort datum. Följande konventioner används för valen nedan:<br>YYYY är fyrsiffrigt årtal<br>YY är tvåsiffrigt årtal<br>MM är månadsnummret<br>DD är dagen i månaden<br>Allt i slutet med paranteser är endast kommentarer och visas ej.
+	SE	Detta val hur kort datumformat presenteras. Följande konventioner används för valen nedan:<br>YYYY är fyrsiffrigt årtal<br>YY är tvåsiffrigt årtal<br>MM är månadsnummret<br>DD är dagen i månaden<br>Allt i slutet med paranteser är endast kommentarer och visas ej.
 
 SETUP_TIMEFORMAT
 	DE	Zeitformat
@@ -2840,7 +2894,7 @@ SETUP_TIMEFORMAT
 	FR	Format de l'heure
 	NL	Tijdsformaat
 	PT	Formato da Hora
-	SE	Tidsformat:
+	SE	Tidformat:
 
 SETUP_TIMEFORMAT_DESC
 	DE	Diese Option bestimmt das verwendete Zeitformat. Es gibt die folgenden Alternativen:<br>hh zeigt die Stunden<br>h zeigt die Stunden ohne führende Null<br>mm zeigt die Minuten<br>ss zeigt die Sekunden<br>pm ist entweder AM oder PM<br>Alles Folgende ist ausschliesslich Kommentar und wird nicht angezeigt.
@@ -2850,7 +2904,7 @@ SETUP_TIMEFORMAT_DESC
 	FR	Ce réglage détermine le format utilisé pour l'heure. Les codes suivants peuvent être utilisés :<br>hh : l'heure à deux chiffres<br>h : l'heure sans zéro non significatif<br>mm : les minutes<br>ss : les secondes<br>pm : le texte AM ou PM<br>Tout texte entre parenthèses à la fin du format est un commentaire et ne sera pas affiché.
 	NL	Deze optie bepaald het weergaveformaat van tijden. De volgende afspraken worden gebruikt in de onderstaande keuzes:<br>hh is het uur<br>h is het uur zonder voorloopnul<br>mm zijn de minuten<br>ss zijn de seconden<br>pm geeft AM of PM aan<br>Alles aan het einde tussen haakjes is commentaar en zal niet worden weergegeven.
 	PT	Esta opção determina o formato a usar para horas. São usadas as seguintes convenções para as opções abaixo
-	SE	Detta val avgör formatet för tidsvisning. Följande konventioner används i valen nedan:<br>hh är timman<br>h är timman med inledande nolla borttagen<br>mm är minuten<br>ss är sekunden<br>pm är antingen AM eller PM<br>Allt i slutet med paranteser är endast kommentarer och visas ej.
+	SE	Detta val avgör formatet för tidvisning. Följande konventioner används i valen nedan:<br>hh är timmen<br>h är timmen med inledande nolla borttagen<br>mm är minuten<br>ss är sekunden<br>pm är antingen AM eller PM<br>Allt i slutet med paranteser är endast kommentarer och visas ej.
 
 SETUP_ITEMSPERPAGE
 	DE	Angezeigte Elemente pro Seite
@@ -2983,81 +3037,97 @@ SETUP_SHOWBUFFERFULLNESS
 	DE	Puffer-Füllstatus anzeigen
 	EN	Show Buffer Fullness
 	FR	Affichage état mémoire tampon
+	SE	Visa bufferminnets fyllnadsgrad
 
 SETUP_SHOWBUFFERFULLNESS_CHOOSE
 	DE	Puffer-Füllstatus an Stelle der Fortschrittsanzeige verwenden:
 	EN	Show buffer fullness in place of progress indicator:
 	FR	Afficher l'état de la mémoire tampon à la place du graphique de progression :
+	SE	Visa bufferminnets fyllnadsgrad istället för progress-bar
 
 SETUP_SHOWBUFFERFULLNESS_ENABLED
 	DE	Aktiviert
 	EN	Enabled
 	FR	Activé
+	SE	Aktiverad
 
 SETUP_SHOWBUFFERFULLNESS_DISABLED
 	DE	Desaktiviert
 	EN	Disabled
 	FR	Désactivé
+	SE	Avaktiverad
 
 SETUP_XPLSUPPORT
 	DE	xPL Support
 	EN	xPL support
 	FR	Support du xPL
+	SE	xPL-stöd
 
 SETUP_XPLSUPPORT_CHOOSE
 	DE	xPL Support:
 	EN	xPL support:
 	FR	Support du xPL :
+	SE	xPL-stöd:
 
 SETUP_XPLSUPPORT_ENABLED
 	DE	Aktiviert
 	EN	Enabled
 	FR	Activé
+	SE	Aktiverad
 
 SETUP_XPLSUPPORT_DISABLED
 	DE	Desaktiviert
 	EN	Disabled
 	FR	Désactivé
+	SE	Avaktiverad
 
 SETUP_XPLINTERVAL
 	DE	Heartbeat Intervall
 	EN	Heartbeat Interval
 	FR	Intervale
+	SE	Hjärtrytm, intervall
 
 SETUP_XPLINTERVAL_CHOOSE
 	DE	Heartbeat Intervall:
 	EN	Heartbeat Interval:
 	FR	Intervalle :
+	SE	Hjärtrytm, intervall:
 
 SETUP_XPLIR
 	DE	Infrarot Verarbeitung
 	EN	Infra-red Processing
 	FR	Traitement infrarouge
+	SE	Infraröd, hantering
 
 SETUP_XPLIR_CHOOSE
 	DE	Infrarot Verarbeitung:
 	EN	Infra-red Processing:
 	FR	Traitement infrarouge :
+	SE	Infraröd, hantering:
 
 SETUP_XPLIR_NONE
 	DE	Keine
 	EN	None
 	FR	Aucun
+	SE	Ingen
 
 SETUP_XPLIR_BUTTONS
 	DE	Tasten
 	EN	Buttons
 	FR	Touches
+	SE	Knappar
 
 SETUP_XPLIR_RAW
 	DE	Roh
 	EN	Raw
 	FR	Brut
+	SE	Rå
 
 SETUP_XPLIR_BOTH
 	DE	Beide
 	EN	Both
 	FR	Les deux
+	SE	Båda
 
 SETUP_TITLEFORMATWEB
 	DE	Aktuelles Web-Format
@@ -3067,7 +3137,7 @@ SETUP_TITLEFORMATWEB
 	FR	Format courant des titres web
 	NL	Huidig web title formaat
 	PT	Título da Web actual
-	SE	Aktuellt titelformat för webb
+	SE	Aktuellt titelformat för webgränssnittet
 
 SETUP_IPFILTER_HEAD
 	DE	Blockieren eingehender Verbindungen
@@ -3130,7 +3200,7 @@ SETUP_ALLOWEDHOSTS
 	FR	Adresses IP autorisées pour les connexions entrantes
 	NL	IP adressen die een verbinding mogen maken
 	PT	Endereço IP externo com permissões de ligação
-	SE	IP-adresser tillåtna att skapa inkommande anslutningar
+	SE	IP-adresser som tillåts att skapa inkommande anslutningar
 
 SETUP_FILTERRULE_DESC
 	DE	Wenn Sie das Blockieren aktiviert haben, dann können Sie IP-Adressen angeben, denen Sie die Verbindung zu ihrem SlimServer dennocch genehmigen möchten.<br><br>Dieses Feld akzeptiert eine Liste spezifischer IP-Adressen. Verwenden Sie * als Wildcard und trennen Sie unterschiedliche IP-Adressen durch Komma. Zum Beispiel:<BR><BR><B>10.1.2.2</B> gestattet nur 10.1.2.2 eine Verbindung.<BR><BR><B>10.1.2.*</B> gestattet allen IP-Adressen, die mit 10.1.2. beginnen, den Zugriff.<BR><BR><B>10.1.2.2-50</B> erlaubt 10.1.2.2 - 10.1.2.50 die Verbindung.<BR><BR>Zusätzlich können mehrere Einträge durch Kommas kombiniert werden. Z.B.:<B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>Die spezielle IP-Adresse 127.0.0.1 gestattet einem Webbrowser die Verbindung mit dem SlimServer auf dem gleichen Computer.
@@ -3236,7 +3306,7 @@ SETUP_AUTHORIZE_DESC
 	FR	Vous pouvez protéger l'interface web de votre SlimServer par un mot de passe. Sélectionnez "Mot de passe" ci-dessous et saisissez un mot de passe, puis cliquez sur le bouton "Modifier". À ce moment vous devrez saisir le mot de passe pour pouvoir accéder à l'interface web de votre SlimServer.
 	NL	U kan een paswoord instellen voor de SlimServer webpagina. Kies 'Paswoordbeveiliging' en vul een gebruikersnaam en paswoord in. Klik vervolgens op 'Aanpassen'. Vanaf dan is deze gebruikersnaam en het paswoord vereist om toegang te krijgen tot de SlimServer webpagina.
 	PT	Pode activar uma palavra chave para proteger a interface web. Escolha "Proteção por Palavra Chave" abaixo, escolha um nome de utilizador e uma palavra chave, e seleccione "Mudar". A partir desse momento necessitará de introduzir o utilizador e chave para entrar na interface web com o seu browser.
-	SE	Du kan välja att skydda SlimServer webbgränssnittet med ett lösenord. Välj "Lösenordsskydd" nedan och ange ett användarnamn samt lösenord, klicka sen på "Ändra". Efter detta måste alltid användarnamn och lösenord anges i webbläsaren för att kunna använda webbgränssnittet.
+	SE	Du kan välja att skydda SlimServer webgränssnittet med ett lösenord. Välj "Lösenordsskydd" nedan och ange användarnamn samt lösenord, klicka sedan på "Ändra". Efter detta måste alltid användarnamn och lösenord anges för att kunna använda webgränssnittet.
 
 SETUP_USERNAME
 	DE	Benutzername
@@ -3310,7 +3380,7 @@ SETUP_FULL_ANIMATION
 	FR	Toutes les animations
 	NL	Alle animaties
 	PT	Animação Completa
-	SE	Full animation
+	SE	alla animeringar
 
 SETUP_DONT_SAVE_TAG_INFO
 	DE	Keine Speicherung der ID3-Tag Information
@@ -3338,7 +3408,7 @@ SETUP_MDNSNAME
 	NL	Rendezvous Naam
 	NO	Rendezvous navn
 	PT	Nome "Rendezvous"
-	SE	Rendezvous Namn
+	SE	Rendezvous-namn
 
 SETUP_MDNSNAME_OK
 	DE	Der Rendezvous Name dieses Servers ist:
@@ -3356,7 +3426,7 @@ SETUP_MDNSNAME_DESC
 	FR	Vous pouvez choisir un nom de serveur reconnu par Rendezvous.
 	NL	U kan een naam voor deze server kiezen die gebruikt zal worden met Rendezvous.
 	PT	Pode escolher um nome Rendezvous para este servidor
-	SE	Du kan ange ett namn på denna server för Rendezvous.
+	SE	Du kan ange ett Rendezvous-namn för denna server
 
 SETUP_MDNSNAME_CHOOSE
 	DE	Rendezvous Name:
@@ -3366,27 +3436,31 @@ SETUP_MDNSNAME_CHOOSE
 	NL	Rendezvous naam:
 	NO	Rendezvous navn:
 	PT	Nome Rendezvour
-	SE	Rendezvous namn:
+	SE	Rendezvous-namn:
 
 SETUP_REMOTESTREAMTIMEOUT
 	DE	Internet Radio Timeout
 	EN	Radio Station Timeout
 	FR	Délai d'attente radio
+	SE	Timeout för internet-radio
 
 SETUP_REMOTESTREAMTIMEOUT_OK
 	DE	Internet Radio Timeout:
 	EN	Radio station timeout:
 	FR	Délai d'attente radio :
+	SE	Timeout för internet-radio:
 
 SETUP_REMOTESTREAMTIMEOUT_DESC
 	DE	Sie können die Dauer definieren, während der SlimServer versuchen wird, Internet Radio Stationen oder andere Quelle zu erreichen. Geben Sie die Wartezeit in Sekunden an.
 	EN	You can set the length of time that the SlimServer will try to connect to an internet radio station or other source before giving up. Enter the amount of time, in seconds, below.
 	FR	Vous pouvez régler la durée maximale pendant laquelle le SlimServer tentera de se connecter à une radio internet ou à une autre source distante.  Entrez une valeur en secondes ci-dessous.
+	SE	Du kan ange antal sekunder som Slimserver ska försöka etablera kontakt med internetradio-station eller andra strömmande källor, innan den ger upp.
 
 SETUP_REMOTESTREAMTIMEOUT_CHOOSE
 	DE	Internet Radio Timeout (Sekunden):
 	EN	Radio Station Timeout (seconds):
 	FR	Délai d'attente radio (secondes) :
+	SE	Timeout för internet-radio (sekunder):
 
 MP3DIR
 	DE	Ihr Musikverzeichnis
@@ -3398,7 +3472,7 @@ MP3DIR
 	NL	Uw Muziek Folder
 	NO	Din musikkfolder
 	PT	Pasta de Música Pessoal
-	SE	Din Musikmapp
+	SE	Din musikmapp
 
 LANGUAGE
 	DE	Sprache
@@ -3423,27 +3497,31 @@ SETUP_URL_WILL_BE
 	NL	De URL voor toegang tot de SlimServer is:
 	NO	URL-adressen for å styre SlimServer vil se omtrent slik ut:
 	PT	O URL para aceder ao SlimServer é
-	SE	URLen för att komma åt SlimServer är:
+	SE	URL för att komma åt SlimServer är:
 
 SETUP_GROUPDISCS
 	DE	Albums gruppieren
 	EN	Group Discs
 	FR	Disques multiples
+	SE	Album med flera diskar
 
 SETUP_GROUPDISCS_DESC
 	DE	Sie können angeben, ob Sie mehrere Platten eines Albums als ein Album anzeigen wollen (unter dem gleichen Namen) oder als getrennte Alben (z.B. "Album Titel (Disk 1 von 2)". Aktivieren dieser Option wird einen Rescan der Plattensammlung auslösen.
 	EN	You can specify if multiple disc sets are treated as a single album (with a single name) or as multiple albums, each with a unique name per disc, for example "Album Title (Disc 2 of 3)".  Changing this setting will start a rescan of your music library.
 	FR	Vous pouvez spécifier si les coffrets de plusieurs disques seront considérés comme un seul album (avec un nom unique) ou comme plusieurs albums avec un nom un nom unique pour chaque disque, par exemple "Titre (Disque 2 sur 3)". Si vous modifiez ce réglage, votre dossier de musique sera répertorié à nouveau.
+	SE	Du kan ange om flera diskar ska behandlas som ett eller flera separata album. Ändrar du detta värde scannas din musikmapp på nytt
 
 SETUP_GROUPDISCS_0
 	DE	Mehrfach-Alben nicht gruppieren
 	EN	Treat multi-disc sets as multiple albums
 	FR	Disques multiples en tant qu'albums multiples
+	SE	Behandla multipla diskar som multipla album
 
 SETUP_GROUPDISCS_1
 	DE	Mehrfach-Alben zu einem Album gruppieren
 	EN	Treat multi-disc sets as a single album
 	FR	Disques multiples en tant qu'album unique
+	SE	Behandla multipla diskar som del av samma album
 
 #
 # Web interface
@@ -3547,7 +3625,7 @@ REMOVE_THIS_SONG_FROM_PLAYLIST
 	EN	Remove this song from playlist
 	FR	Supprimer ce morceau de la liste de lecture
 	PT	Remover esta Música da Playlist
-	SE	Ta bort denna låt från spellistan
+	SE	Ta bort denna låt från låtlistan
 
 ADD_THIS_SONG_TO_PLAYLIST
 	DE	Füge diesen Titel zur Playlist hinzu
@@ -3557,7 +3635,7 @@ ADD_THIS_SONG_TO_PLAYLIST
 	FR	Ajouter ce morceau à la liste de lecture
 	NL	Voeg dit nummer toe aan de playlist
 	PT	Adicionar esta Música à Playlist
-	SE	Lägg till denna låt till spellistan
+	SE	Lägg till denna låt i låtlistan
 
 PAUSE
 	DE	Pause
@@ -3621,7 +3699,7 @@ ONE
 	NL	een
 	NO	en
 	PT	uma
-	SE	låt
+	SE	Låt
 
 MCONE
 	DE	Eins
@@ -3645,7 +3723,7 @@ ALL
 	NL	alle
 	NO	alle
 	PT	todas
-	SE	alla
+	SE	Alla
 
 MCALL
 	DE	Alle
@@ -3725,7 +3803,7 @@ MOVEDOWN
 	NL	Naar Beneden
 	NO	Flytt ned
 	PT	Move Down
-	SE	Flytta ner
+	SE	Flytta ned
 
 ADD
 	DE	Hinzufügen
@@ -3768,7 +3846,7 @@ SHUFFLE_ON_ALBUMS
 	NL	Willekeurige volgorde volgens album
 	NO	Vilkårlig på Album
 	PT	Misturar Playlist por Álbum
-	SE	Blanda Album
+	SE	Blanda album
 
 SHUFFLE_ON
 	DE	Zufälliges Abspielen der Playlist 
@@ -3781,7 +3859,7 @@ SHUFFLE_ON
 	NL	Willekeurig afspelen aan
 	NO	Vilkårlig avspilling på
 	PT	Mistura de Playist Ligada
-	SE	Blanda spellista
+	SE	Blanda låtlista
 
 SHUFFLE_OFF
 	DE	Kein zufälliges Abspielen der Playlist
@@ -3794,7 +3872,7 @@ SHUFFLE_OFF
 	NL	Willekeurig afspelen uit
 	NO	Vilkårlig avspilling av
 	PT	Mistura de Playlist Desligada
-	SE	Blanda inte spellista
+	SE	Blanda inte låtlista
 
 CLEAR_PLAYLIST
 	DE	Playlist Löschen
@@ -3807,7 +3885,7 @@ CLEAR_PLAYLIST
 	NL	Playlist leeg maken
 	NO	Tøm spillelisten
 	PT	Limpar Playlist
-	SE	Rensa spellista
+	SE	Rensa låtlista
 
 VOLUME
 	DE	Lautstärke
@@ -3888,6 +3966,7 @@ OFFDISPLAYSIZE
 	EN	Standby Text Size
 	FR	Taille du texte en veille
 	PT	Tamanho do Texto ao Desligar
+	SE	Textstorlek i standby-läge
 
 LARGE
 	DE	Gross
@@ -3939,7 +4018,7 @@ CURRENT_PLAYLIST
 	NL	De huidige playlist
 	NO	Aktiv spilleliste
 	PT	Playlist Actual
-	SE	Aktuell spellista
+	SE	Aktuell låtlista
 
 DOWNLOAD
 	DE	Herunterladen
@@ -3952,7 +4031,7 @@ DOWNLOAD
 	NL	Laden
 	NO	Last ned
 	PT	Gravar Local
-	SE	Ladda ner
+	SE	Ladda ned
 
 CLEAR
 	DE	Löschen
@@ -3999,7 +4078,7 @@ SAVED_PLAYLISTS
 	NL	Bewaarde playlists
 	NO	Lagrede Spillelister
 	PT	Escolher por Playlists Guardadas
-	SE	Sparade Spellistor
+	SE	Sparade låtlistor
 
 SAVED_PLAYLISTS_DBL
 	FR	Listes de lecture
@@ -4014,7 +4093,7 @@ PLAYLISTDIR
 	NL	Bewaarde Playlists Folder
 	NO	Folder med lagrede spillelister
 	PT	Escolher Pasta para Playlists
-	SE	Mapp för sparade spellistor
+	SE	Mapp för sparade låtlistor
 
 PLAYLISTDIR_IS_NOW
 	DE	Sie können den Pfad zu dem Verzeichnis angeben, in welchem Sie ihre Playlists gespeichert haben. (Sie können das Feld leer lassen, wenn Sie keine Playlists speichern wollen)
@@ -4025,7 +4104,7 @@ PLAYLISTDIR_IS_NOW
 	FR	Vous pouvez saisir le chemin d'accès du dossier où seront stockées les listes de lecture. Laissez vide si vous ne désirez pas enregistrer de listes de lecture.
 	NL	U kan hier de volledige naam van de folder opgeven waarin U Uw playlists wil opslaan op Uw harde schijf. (Als de naam leeg wordt gelaten zal de mogelijkheid om playlists op te slaan worden uitgeschakeld).
 	PT	Escolha a directoria onde as playlist serão gravadas no disco. (Deixe vazio para desactivar esta opção)
-	SE	Du kan ange sökvägen till mappen där dina sparade spellistor är lagrade. (Du kan lämna detta fält tomt om du inte vill spara spellistor)
+	SE	Du kan ange sökvägen till mappen där dina sparade låtlistor lagras. (Du kan lämna detta fält tomt om du inte vill spara låtlistor)
 
 THIS_PLAYLIST_AS
 	DE	diese Playlist als:
@@ -4036,7 +4115,7 @@ THIS_PLAYLIST_AS
 	NL	deze playlist als:
 	NO	denne spillelisten som:
 	PT	esta playlist como
-	SE	denna spellista som:
+	SE	denna låtlista som:
 
 SAVE_THIS_PLAYLIST_AS
 	DE	Diese Playlist speichern als:
@@ -4048,7 +4127,7 @@ SAVE_THIS_PLAYLIST_AS
 	NL	Bewaar deze playlist als:
 	NO	Lagre denne spillelisten som:
 	PT	Gravar a Playlist Como
-	SE	Spara spellistan som:
+	SE	Spara låtlistan som:
 
 UNTITLED
 	DE	Ohne Titel
@@ -4072,7 +4151,7 @@ DELETE_THIS_PLAYLIST
 	NL	Verwijder deze playlist
 	NO	Slett denne spillelisten
 	PT	Remover esta Playlist
-	SE	Radera spellistan
+	SE	Radera låtlistan
 
 THIS_ENTIRE_PLAYLIST
 	DE	Diese vollständige Playlist
@@ -4084,7 +4163,7 @@ THIS_ENTIRE_PLAYLIST
 	NL	Deze volledige playlist
 	NO	Hele spillelisten
 	PT	Esta lista inteira
-	SE	Hela spellistan
+	SE	Hela låtlistan
 
 REMOVE_FROM_PLAYLIST
 	DE	Aus Playlist entfernen
@@ -4093,6 +4172,7 @@ REMOVE_FROM_PLAYLIST
 	FR	Enlever de la liste de lecture
 	NO	Slett fra spillelisten
 	PT	Remover da Playlist
+	SE	Ta bort från låtlistan
 
 ADD_TO_PLAYLIST
 	DE	Zur Liste hinzufügen
@@ -4105,7 +4185,7 @@ ADD_TO_PLAYLIST
 	NL	Toevoegen aan de playlist
 	NO	Legg til i spilleliste
 	PT	Adicionar à lista
-	SE	Lägg till i spellista
+	SE	Lägg till i låtlistan
 
 TRACK
 	DE	Lied
@@ -4708,6 +4788,7 @@ BROWSE_BY_ARTWORK
 	DE	Plattencover nachschlagen
 	EN	Browse Artwork
 	FR	Parcourir les pochettes
+	SE	Bläddra i albumomslag
 
 BROWSE_BY_ARTWORK_DBL
 	FR	Parcours pochettes
@@ -4722,7 +4803,7 @@ BROWSE_BY_SONG
 	NL	Doorzoeken op Liedjes
 	NO	Bla i Sanger
 	PT	Escolher por Música
-	SE	Bläddra Låtar
+	SE	Bläddra låtar
 
 BROWSE_BY_SONG_DBL
 	FR	Parcours morceaux
@@ -4737,7 +4818,7 @@ BROWSE_MUSIC_FOLDER
 	NL	Muziek Folder Doorzoeken
 	NO	Bla i Musikk folder
 	PT	Escolher por Directoria
-	SE	Bläddra Musikmapp
+	SE	Bläddra musikmapp
 
 SYNCHRONIZE
 	DE	Synchronisieren
@@ -4908,7 +4989,7 @@ RENAME_WARNING
 	FR	Ce nom est déjà utilisé. Veuillez choisir un autre nom pour votre liste de lecture.
 	NL	De gekozen naam is al in gebruik. Kies een andere naam voor Uw playlist.
 	PT	O nome escolhido já existe. Escolha outro nome para a playlist.
-	SE	Namnet du valde används redan. Välj ett annat namn för din spellista.
+	SE	Namnet du valde används redan. Välj ett annat namn för din låtlista.
 
 SCAN_WARNING
 	DE	Der SlimServer durchsucht immer noch ihr Musikverzeichnis. Deshalb werden einige Lieder in diesem Bereich noch nicht angezeigt.
@@ -5156,7 +5237,7 @@ CHOOSE_NAME_DESCRIPTION
 	FR	Vous pouvez donner à cette platine un nom qui sera utilisé pour l'identifier.
 	NL	U kunt deze speler een naam geven die zal worden gebruikt om de speler te identificeren op de web pagina's.
 	PT	Pode definir um nome para este cliente de forma a identificá-lo.
-	SE	Du kan ge denna spelare ett namn som kommer att användas för att identifiera den på dessa sidor.
+	SE	Du kan ge denna spelare ett namn som kommer att användas för att identifiera den i webgränssnittet.
 
 CHOOSE_A_NAME
 	DE	Wählen Sie einen Namen für diesen Player:
@@ -5179,7 +5260,7 @@ CHOOSE_BRIGHTNESS
 	FR	Il est possible de régler la luminosité de l'écran de la platine lorsqu'elle est allumée ou en veille.
 	NL	De helderheid van het display kan appart worden ingesteld voor de aan- en uitgeschakelde toestand.
 	PT	Escolha o brilho do ecrã do cliente quando está ligado e desligado.
-	SE	Ljusstyrkan på display kan varieras för påslaget och avslaget läge.
+	SE	Ljusstyrkan på displayen kan varieras för påslaget och avslaget läge.
 
 BRIGHTNESS_ON
 	DE	Helligkeit im eingeschalteten Zustand:
@@ -5190,7 +5271,7 @@ BRIGHTNESS_ON
 	FR	Luminosité lorsqu'allumé :
 	NL	Helderheid indien ingeschakeld:
 	PT	O brilho quando está ligado
-	SE	Ljusstyrka påslagen:
+	SE	Ljusstyrka i påslaget läge:
 
 BRIGHTNESS_OFF
 	DE	Helligkeit im ausgeschalteten Zustand:
@@ -5201,7 +5282,7 @@ BRIGHTNESS_OFF
 	FR	Luminosité en veille :
 	NL	Helderheid indien uitgeschakeld:
 	PT	O brilho quando está desligado
-	SE	Ljusstyrka avslagen:
+	SE	Ljusstyrka i avslaget läge:
 
 BRIGHTNESS_DARK
 	DE	Dunkel
@@ -5272,7 +5353,7 @@ CHOOSE_PLAYING_DISPLAY_MODE
 	FR	La platine peut afficher la progression de l'écoute des morceaux. Choisissez l'information qui doit être affichée.
 	NL	De speler kan informatie tonen over de voortgang van een nummer dat gespeeld wordt. Kies de informatie die U wil zien.
 	PT	O cliente pode mostrar informações da música actual a tocar. Escolha a informação a mostrar.
-	SE	Spelaren kan visa information om aktuell låt. Välj vilken information du vill skall visas.
+	SE	Spelaren kan visa information om aktuell låt. Välj vilken information som skall visas.
 
 BLANK
 	DE	Nichts
@@ -5376,7 +5457,7 @@ MP3DIR_IS_NOW
 	FR	Le dossier où vos fichiers MP3 sont stockés sur votre disque dur :
 	NL	De folder waarin Uw MP3 bestanden zijn opgeslagen op Uw hard disk:
 	PT	A directoria que tem os ficheiros MP3 no disco
-	SE	Mappen på din hårddisk där dina MP3-filer är lagrade:
+	SE	Den mapp på din hårddisk där dina MP3-filer är lagrade:
 
 PORT_NUMBER
 	DE	Sie können die Port-Nummer ändern, die für den Server-Zugriff mit Hilfe eines Web-Browsers verwendet wird (Standard ist 9000).
@@ -5387,7 +5468,7 @@ PORT_NUMBER
 	FR	Vous pouvez changer le port utilisé pour accéder au serveur à partir d'un navigateur web. Le port par défaut est 9000.
 	NL	U kunt het poortnummer veranderen dat gebruikt wordt om de server te raadplegen met een webbrowser. (De standaardpoort is 9000).
 	PT	A porta para acesso via navegador web. (por omissão, a 9000)
-	SE	Du kan ändra portnumret som används för att nå webbservern från en webbläsare. (Standardvärdet är 9000)
+	SE	Du kan ändra portnumret som används för att nå webservern från en webläsare. (Standardvärdet är 9000)
 
 SCREENSAVER_TIMEOUT
 	DE	Der Player wird automatisch das aktuelle Lied anzeigen, nachdem Sie die Fernbedienung nicht mehr verwenden. Sie können die Wartezeit einstellen oder eine Null verwenden, um nie das aktuelle Lied anzuzeigen.
@@ -5444,7 +5525,7 @@ CURRENT_WEB_SKIN
 	NL	Huidige Web Skin:
 	NO	Aktivt webutseende:
 	PT	Tema Web actual
-	SE	Aktuellt webbutseende:
+	SE	Aktuellt webutseende (skin):
 
 DISPLAY_PLUGINS
 	DE	Anzeigen des Plugins Menü auf dem Slim Player:
@@ -5485,7 +5566,7 @@ SLIMP3_MUSIC_PLAYER
 	NL	SLIMP3 Muziek Speler
 	NO	SLIMP3 Musikk Spiller
 	PT	Leitor de Música SLIMP3
-	SE	SLIMP3 Musikspelare
+	SE	SLIMP3 musikspelare
 
 SQUEEZEBOX_MUSIC_PLAYER
 	DE	Squeezebox Musik Player
@@ -5497,7 +5578,7 @@ SQUEEZEBOX_MUSIC_PLAYER
 	NL	Squeezebox Muziek Speler
 	NO	Squeezebox Musik Player
 	PT	Leitor de Música Squeezebox
-	SE	Squeezebog Musikspelare
+	SE	Squeezebox musikspelare
 
 BY
 	DE	von
@@ -5553,42 +5634,49 @@ NO_PLAYER_DETAILS
 	FR	Assurez-vous que votre platine est branchée et que ses réglages de réseau sont valides. Cliquez sur le bouton "Actualiser" de votre navigateur pour vérifier de nouveau la présence de la platine.
 	NL	Zorg ervoor dat Uw speler aan het netwerk is aangesloten en dat de netwerk instellingen goed zijn. Druk de Refresh knop om opnieuw contact te maken met de speler.
 	PT	Verifique se o cliente está ligado e se as configurações da rede estão correctas. Actualize esta página para verificar de novo a presença do leitor.
-	SE	Se till att din spelare är påslagen, inkopplad och har korrekta nätverksinställningar. Tryck på F5 (Uppdatera/Refresh) i din webbläsare för att försöka koppla upp mot din spelare igen.
+	SE	Se till att din spelare är påslagen, inkopplad och har korrekta nätverksinställningar. Tryck på F5 (Uppdatera/Refresh) i din webläsare för att försöka koppla upp mot din spelare igen.
 
 PLAYER_NEEDS_UPGRADE
 	DE	Squeezebox Software Update notwendig
 	EN	Squeezebox Software Update Required
 	FR	Mise à jour du logiciel Squeezebox nécessaire
+	SE	Mjukvara ('firmware') i din spelare behöver uppdateras
 
 PLAYER_NEEDS_UPGRADE_DETAILS
 	DE	Die Software in ihrer Squeezebox muss aktualisiert werden.  Bitte drücken Sie den BRIGHTNESS Knopf auf der Fernsteuerung und halten ihn gedrückt, bis ihre Squeezebox anzeigt, dass das Update installiert wird. Dieser Vorgang dauert nur wenige Sekunden.
 	EN	The software in your Squeezebox needs to be updated to the latest version.  Please press and hold the BRIGHTNESS button on your remote until the display on your Squeezebox indicates that the update has begun.  The update only takes a few seconds.<p>If your Squeezebox is stuck on a screen that indicates that it's ready for an upgrade and is displaying its IP address, click <a href="firmware.html">here</a>.
 	FR	Le logiciel de votre Squeezebox doit être mis à jour. Veuillez appuyer et laisser appuyer le bouton BRIGHTNESS de votre télécommande jusqu'à ce que la Squeezbox indique la mise à jour. Cette procédure prendra quelques secondes.
+	SE	Mjukvara i din spelare behöver uppdateras till senaste version. Tryck och håll ned Brightness-knappen på Slim-fjärrkontrollen tills uppdatering inleds automatiskt. Uppdateringen tar endast några sekunder.
 
 PLAYER_NEEDS_UPGRADE_1
 	DE	Squeezebox Software Update
 	EN	Squeezebox Software Update
 	FR	Mise à jour du logiciel Squeezebox
+	SE	Mjukvaruppgradering av spelaren
 	
 PLAYER_NEEDS_UPGRADE_2
 	DE	Drücken und halten Sie BRIGHTNESS gedrückt, um den Vorgang zu starten.
 	EN	Press and hold BRIGHTNESS key to begin.
 	FR	Appuyez sur BRIGHTNESS et laissez appuyé pour lancer la mise à jour
+	SE	Tryck och håll ned BRIGHTNESS på din Slim-fjärrkontroll för att initiera uppgradering
 
 PLAYER_UPGRADE_INSTRUCTIONS
 	DE	Falls die IP Adresse ihres Players nicht angezeigt wirde, drücken Sie den Knopf BRIGHTNESS und lassen ihn gedrückt, bis diese erscheint. Geben Sie dann die angezeigte IP Adresse hier ein:
 	EN	If the IP address of your player is not displayed on its screen, press and hold the BRIGHTNESS button until it is.  Then enter the IP address displayed on the screen here:
 	FR	Si l'adresse IP de votre platine n'est pas affichée sur son écran, appuyez et laissez appuyé BRIGHTNESS jusqu'à ce qu'elle soit affichée, puis entrez l'adresse ici :
+	SE	Om din spelare inte visar IP-adress, tryck och håll ned BRIGHTNESS på din Slim-fjärrkontroll tills IP-adress visas. Mata in denna IP-adress här:
 
 UPGRADE_COMPLETE_DETAILS
 	DE	Update abgeschlossen.
 	EN	Your update is complete.
 	FR	La mise à jour a réussi.
+	SE	Uppdatering av spelaren avslutad
 
 UPGRADE_COMPLETE
 	DE	Firmware Update
 	EN	Firmware Update
 	FR	Mise à jour firmware
+	SE	Mjukvaruuppdatering ('firmware') avslutad
 
 NEED_PATH
 	DE	Sie müssen einen Pfad zum Verzeichnis mit ihren MP3 Dateien angeben.
@@ -5609,7 +5697,7 @@ NEED_PLAYLIST_PATH
 	FR	Vous devez spécifier le chemin d'accès du dossier qui contient vos listes de lecture enregistrées.
 	NL	U dient de volledige naam van de folder waar de playlists moeten worden bewaard op te geven.
 	PT	Deve especificar a directoria que contêm os ficheiros de playlist.
-	SE	Du måste ange en sökväg till en mapp för dina sparade spellistor.
+	SE	Du måste ange en sökväg till en mapp för dina sparade låtlistor.
 
 CLICK_HERE
 	DE	Hier klicken
@@ -5650,6 +5738,7 @@ MUTE
 	DE	Stumm
 	EN	Mute
 	FR	Silence
+	SE	Mute - ljud avstängt
 
 LCMUTED
 	DE	Stumm geschaltet
@@ -5673,7 +5762,7 @@ SEARCH
 	NL	Zoek Muziek
 	NO	Søk Musikk
 	PT	Procurar Música
-	SE	Sök Musik
+	SE	Sök musik
 
 SEARCHFOR
 	DE	Suchen nach
@@ -5697,7 +5786,7 @@ SEARCHFOR_ARTIST
 	NL	Zoek naar Artiest
 	NO	Søk etter Artist
 	PT	Procurar por Artista
-	SE	Sök efter Artist
+	SE	Sök efter artist
 	
 SEARCHFOR_ARTISTS
 	DE	Suchen nach Interpreten
@@ -5709,7 +5798,7 @@ SEARCHFOR_ARTISTS
 	NL	Zoek naar Artiesten
 	NO	Søk etter Artister
 	PT	Procurar por Artistas
-	SE	Sök efter Artister
+	SE	Sök efter artister
 	
 SEARCHFOR_ARTISTS_DBL
 	FR	Cherche artistes
@@ -5724,7 +5813,7 @@ SEARCHFOR_ALBUM
 	NL	Zoek naar Album
 	NO	Søk etter Album
 	PT	Procurar por Álbum
-	SE	Sök efter Album
+	SE	Sök efter album
 
 SEARCHFOR_ALBUMS
 	DE	Suchen nach Alben
@@ -5736,7 +5825,7 @@ SEARCHFOR_ALBUMS
 	NL	Zoek naar Album
 	NO	Søk etter Album
 	PT	Procurar por Albums
-	SE	Sök efter Album
+	SE	Sök efter album
 
 SEARCHFOR_ALBUMS_DBL
 	FR	Cherche albums
@@ -5751,7 +5840,7 @@ SEARCHFOR_SONGS
 	NL	Zoek naar Liedjes
 	NO	Søk etter Sanger
 	PT	Procurar por Músicas
-	SE	Sök efter Låtar
+	SE	Sök efter låtar
 
 
 SEARCHFOR_SONGS_DBL
@@ -5767,7 +5856,7 @@ SEARCHFOR_SONGTITLE
 	NL	Zoek naar Titel van het nummer
 	NO	Søk etter Sangtittel
 	PT	Procurar por Música
-	SE	Sök efter Låt
+	SE	Sök efter låt
 
 SEARCH_FOR_ARTISTS
 	DE	Nach Interpreten suchen
@@ -5779,7 +5868,7 @@ SEARCH_FOR_ARTISTS
 	NL	Zoek naar Artiesten
 	NO	Søk på Artist
 	PT	Procurar por Artistas
-	SE	Sök Artist
+	SE	Sök artist
 
 SEARCH_FOR_ALBUMS
 	DE	Nach Alben suchen
@@ -5791,7 +5880,7 @@ SEARCH_FOR_ALBUMS
 	NL	Zoek naar Albums
 	NO	Søk på Album
 	PT	Procurar por Álbum
-	SE	Sök Album
+	SE	Sök album
 
 SEARCH_FOR_SONGS
 	DE	Nach Titel suchen
@@ -5803,7 +5892,7 @@ SEARCH_FOR_SONGS
 	NL	Zoek naar Liedjes
 	NO	Søk på Sang
 	PT	Procurar por Música
-	SE	Sök Låt
+	SE	Sök låt
 
 SEARCHING
 	DE	Suchen...
@@ -5919,7 +6008,7 @@ UNSYNC_WITH
 	FR	Appuyer sur RIGHT pour se désynchroniser d'avec :
 	NL	Druk nogmaals RIGHT om te desynchroniseren van:
 	PT	Prima DIREITA outra vez para dessincronizar com
-	SE	Tryck HÖGER igen för att inte synkronisera med:
+	SE	Tryck HÖGER igen för att avbryta synkronisering med:
 
 MOODLOGIC_SELECT_MOOD
 	DE	Wählen Sie eine Stimmung für ihren Mix
@@ -5928,6 +6017,7 @@ MOODLOGIC_SELECT_MOOD
 	FR	Sélectionnez une ambiance pour votre mix
 	NL	Kies een sfeer voor Uw Mix
 	PT	Seleccione um ambiente para a mistura
+	SE	Välj stämning (MoodLogic) för din mix
 
 MOODLOGIC_SELECT_MOOD_SHORT
 	DE	Wählen Sie eine Stimmung
@@ -5936,6 +6026,7 @@ MOODLOGIC_SELECT_MOOD_SHORT
 	FR	Choisissez une ambiance
 	NL	Kies een sfeer
 	PT	Seleccione um Ambiente
+	SE	Välj stämning (MoodLogic)
 
 MOODLOGIC_MIX
 	DE	Mix
@@ -5944,6 +6035,7 @@ MOODLOGIC_MIX
 	NL	Mix
 	NO	Mix
 	PT	Mixtura
+	SE	Mix
 
 MOODLOGIC_MIXING
 	DE	MoodLogix mixt...
@@ -5969,6 +6061,7 @@ MOODLOGIC_MOOD_0
 	NL	Verrassing
 	NO	Overraskelse
 	PT	Surpresa
+	SE	Överraskning
 
 MOODLOGIC_MOOD_1
 	DE	Aufwachen
@@ -5978,6 +6071,7 @@ MOODLOGIC_MOOD_1
 	NL	Opstaan
 	NO	Våkn opp
 	PT	Acordar
+	SE	Vakna
 
 MOODLOGIC_MOOD_2
 	DE	Easy
@@ -6044,7 +6138,7 @@ HELP_REMOTE
 	NL	Handleiding Afstandsbediening
 	NO	Hjelp for fjernkontrollen
 	PT	Referência do Controlo Remoto
-	SE	Hjälp med Fjärrkontrollen
+	SE	Hjälp med fjärrkontrollen
 
 TECHNICAL_INFORMATION
 	DE	Technische Informationen
@@ -6088,7 +6182,7 @@ RADIO
 	NL	Internet Radio en Playlist Bestanden
 	NO	Internet Radio og Spillelister
 	PT	Rádio via Internet e Ficheiros de Playlist
-	SE	Internetradio och spellistor
+	SE	Internetradio och låtlistor
 
 REMOTE_STREAMING
 	DE	Fernsteuerung
@@ -6121,7 +6215,7 @@ USING_REMOTE
 	NL	De Slim Devices Afstandsbediening gebruiken
 	NO	Hvordan bruke Slim Devices fjernkontroll
 	PT	Como usar o Controlo Remoto
-	SE	Att använda fjärrkontrollen för Slim Devices
+	SE	Att använda Slim-fjärrkontrollen
 
 STATISTICS
 	DE	Statistik
@@ -6135,175 +6229,211 @@ STATISTICS
 
 EDIT_PLAYLIST
 	EN	Edit Playlist
+	SE	Redigera låtlista
 
 DONE_EDITING
 	EN	Done Editing
+	SE	redigering klar
 
 UP
 	DE	Rauf
 	EN	Up
 	FR	Haut
+	SE	Upp
 
 DOWN
 	DE	Runter
 	EN	Down
 	FR	Bas
+	SE	Ned
 
 EDIT
 	DE	Editieren
 	EN	Edit
 	FR	Modifier
+	Se	redigera
 
 URL
 	DE	URL
 	EN	URL
 	FR	URL
+	SE	URL
 
 SAVE_PLAYLIST
 	DE	Playlist speichern
 	EN	Save Playlist
 	FR	Enregistrer la liste de lecture
+	SE	Lagra låtlista
 
 PLAYLIST_SAVE
 	DE	Zum Speichern der Playlist RIGHT drücken:
 	EN	Press RIGHT again to save playlist as:
 	FR	Appuyez à nouveau sur DROITE pour sauver la liste de lecture sous :
+	SE	Klicka Högerpil igen för att lagra låtlistan som:
 
 PLAYLIST_AS
 	DE	Playliste unter folgendem Namen speichern:
 	EN	Save current playlist as:
 	FR	Enregistrer la liste de lecture sous :
+	SE	Lagra aktuell låtlista som:
 
 PLAYLIST_SAVING
 	DE	Speichere Playlist als:
 	EN	Saving current playlist as:
 	FR	Enregistre la liste de lecture sous :
+	SE	Lagrar aktuell låtlista som:
 
 INFORMATION
 	DE	Informationen
 	EN	Information
 	FR	Infos
+	SE	Information
 
 INFORMATION_MENU_PLAYER
 	DE	Player Informationen
 	EN	Player Information
 	FR	Infos platine
+	SE	Spelar-information
 
 INFORMATION_MENU_SERVER
 	DE	Server Informationen
 	EN	Server Information
 	FR	Infos serveur
+	SE	Server-information
 
 INFORMATION_MENU_LIBRARY
 	DE	Musikbibliotheks Statistiken
 	EN	Library statistics
 	FR	Statistiques
+	SE	Statistik om musikmapp
 
 INFORMATION_MENU_MODULE
 	DE	Plugin Module
 	EN	Plugin Modules
 	FR	Modules d'entension
+	SE	Tillägg
 
 INFORMATION_PLAYER_NAME
 	EN	Player Name
 	FR	Nom platine
+	SE	Spelarens namn
 
 INFORMATION_PLAYER_MODEL
 	DE	Player Modell
 	EN	Player Model
 	FR	Modèle platine
+	SE	Modell, spelare
 
 INFORMATION_FIRMWARE
 	EN	Player Firmware Version
 	FR	Version micrologiciel platine
+	SE	Mjukvaruversion ('firmware'), spelare
 
 INFORMATION_PLAYER_IP
 	DE	Player IP Adresse
 	EN	Player IP Address
 	FR	Adresse IP platine
+	SE	Spelarens IP-adress
 
 INFORMATION_PLAYER_PORT
 	DE	Player UDP Portnummer
 	EN	Player UDP Port Number
 	FR	Port UDP platine
+	SE	Spelarens UDP-port
 
 INFORMATION_PLAYER_MAC
 	DE	Player MAC Adresse
 	EN	Player MAC Address
 	FR	Adresse MAC platine
+	SE	Spelarens MAC-adress
 
 INFORMATION_PLAYER_SIGNAL_STRENGTH
 	DE	Wireless Signalstärke
 	EN	Wireless Signal Strength
 	FR	Puissance signal sans fil
+	SE	Trådlös signalstyrka
 
 INFORMATION_VERSION
 	EN	Server Version
 	FR	Version serveur
+	SE	Mjukvaruversion, serverprogramvaran
 
 INFORMATION_CLIENTS
 	DE	Anzahl erkannte Player
 	EN	Total Players Recognised
 	FR	Platine(s) identifiée(s)
+	SE	Totalt antal anslutna spelare
 
 INFORMATION_SERVER_IP
 	DE	Server IP Adresse
 	EN	Server IP Address
 	FR	Adresse IP serveur
+	SE	Serverns IP-adress
 
 INFORMATION_SERVER_PORT
 	DE	Server UDP Portnummer
 	EN	Server UDP Port Number
 	FR	Port UDP serveur
+	SE	Serverns UDP-port
 
 INFORMATION_SERVER_HTTP
 	DE	Server HTTP Portnummer
 	EN	Server HTTP Port Number
 	FR	Port HTTP serveur
+	SE	Serverns HTTP-port
 
 INFORMATION_ALBUMS
 	DE	Anzahl Alben
 	EN	Total Albums
 	FR	Albums
+	SE	Totalt antal album
 	
 INFORMATION_ARTISTS
 	DE	Anzahl Interpreten
 	EN	Total Artists
 	FR	Artistes
+	SE	Totalt antal artister
 
 INFORMATION_GENRES
 	DE	Anzahl Stilrichtungen
 	EN	Total Genres
 	FR	Genres
+	SE	Totalt antal genrer
 
 INFORMATION_TRACKS
 	DE	Anzahl Titel
 	EN	Total Tracks
 	FR	Morceaux
+	SE	Totalt antal låtar
 
 INFORMATION_TIME
 	DE	Gesamte Spieldauer
 	EN	Total Playing Time
 	FR	Durée totale
+	SE	Total låttid
 
 INFORMATION_VERSION
 	EN	Version
 	FR	Version
+	SE	Version
 
 INFORMATION_INSTALLED
 	DE	Installiert
 	EN	Installed
 	FR	Installé
+	SE	Installerad
 
 INFORMATION_DISABLED
 	DE	DEAKTIVIERT
 	EN	DISABLED
 	FR	DÉSACTIVÉ
+	SE	Avaktiverad
 
 INFORMATION_NO_VERSION
 	DE	Keine Versionsnummer
 	EN	No version number
 	FR	Pas de version
+	SE	Inget versionsnummer
 
 INFORMATION_DATE_FORMAT
 	DE	${shortdateFormat} um ${timeFormat}
@@ -6313,3 +6443,4 @@ INFORMATION_DATE_FORMAT
 COLON
 	EN	: 
 	FR	 : 
+	SE	: 
