@@ -81,6 +81,7 @@ sub enabledPlugins {
 		no strict 'refs';
 		if (exists &{$plugins{$item}->{'module'} . "::enabled"} && 
 			! &{$plugins{$item}->{'module'} . "::enabled"}($client) ) {
+			#Slim::Utils::Prefs::push('disabledplugins',$item);
 			next;
 		}
 		

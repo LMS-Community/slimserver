@@ -197,9 +197,9 @@ use Slim::Buttons::Home;
 use Slim::Buttons::Power;
 use Slim::Buttons::Search;
 use Slim::Buttons::ScreenSaver;
-use Slim::Buttons::MoodWheel;
-use Slim::Buttons::InstantMix;
-use Slim::Buttons::VarietyCombo;
+#use Slim::Buttons::MoodWheel;
+#use Slim::Buttons::InstantMix;
+#use Slim::Buttons::VarietyCombo;
 use Slim::Buttons::Plugins;
 use Slim::Buttons::Synchronize;
 use Slim::Buttons::Input::Text;
@@ -815,7 +815,7 @@ sub initSettings {
 	if (!(defined Slim::Utils::Prefs::get("audiodir") && 
 		-d Slim::Utils::Prefs::get("audiodir")) && 
 		!$quiet && 
-		!Slim::Music::iTunes::useiTunesLibrary() &&
+		#!Slim::Music::iTunes::useiTunesLibrary() &&
 		!Slim::Music::MoodLogic::useMoodLogic() &&
 		!Slim::Music::MusicMagic::useMusicMagic()) {
 

@@ -9,7 +9,7 @@ package Slim::Buttons::VarietyCombo;
 
 use strict;
 use Slim::Buttons::Common;
-use Slim::Music::MoodLogic;
+use Plugins::MoodLogic;
 use Slim::Utils::Timers;
 use Slim::Display::Display;
 
@@ -70,13 +70,13 @@ sub init {
 			
 			if (defined Slim::Buttons::Common::param($client, 'song')) {
 
-				@instantMix = Slim::Music::MoodLogic::getMix(
+				@instantMix = Plugins::MoodLogic::getMix(
 					Slim::Music::Info::moodLogicSongId(Slim::Buttons::Common::param($client, 'song')), undef, 'song'
 				);
 
 			} elsif (defined Slim::Buttons::Common::param($client,'mood') && defined Slim::Buttons::Common::param($client,'artist')) {
 
-				my @instantMix = Slim::Music::MoodLogic::getMix(
+				my @instantMix = Plugins::MoodLogic::getMix(
 					Slim::Music::Info::moodLogicArtistId(Slim::Buttons::Common::param($client, 'artist')),
 					Slim::Buttons::Common::param($client, 'mood'),
 					'artist'
@@ -84,7 +84,7 @@ sub init {
 
 			} elsif (defined Slim::Buttons::Common::param($client,'mood') &&defined Slim::Buttons::Common::param($client,'genre')) {
 
-				my @instantMix = Slim::Music::MoodLogic::getMix(
+				my @instantMix = Plugins::MoodLogic::getMix(
 					Slim::Music::Info::moodLogicGenreId(Slim::Buttons::Common::param($client, 'genre')),
 					Slim::Buttons::Common::param($client, 'mood'),
 					'genre'
