@@ -1192,10 +1192,7 @@ sub initSetupConfig {
 				my %plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 				my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
 
-print "first:";
-Slim::Utils::Misc::msg("");
 				foreach my $plugin (sort {string($pluginlistref->{$a}) cmp string($pluginlistref->{$b})}(keys %{$pluginlistref})) {
-Slim::Utils::Misc::msg("");
 
 					if (exists $paramref->{"pluginlist$i"} && $paramref->{"pluginlist$i"} == (exists $plugins{$plugin} ? 0 : 1)) {
 						delete $paramref->{"pluginlist$i"};
