@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.12 2003/10/06 05:31:37 grotus Exp $
+# $Id: Info.pm,v 1.13 2003/10/06 05:33:29 grotus Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1956,7 +1956,7 @@ sub isHTTPURL {
 sub isURL {
 	my $url = shift;
 
-	return (defined($url) && ($url =~ /^[a-z]{2,}:/) );
+	return (defined($url) && ($url =~ /^[a-z]{2,}:/i) );
 }
 
 sub isType {
