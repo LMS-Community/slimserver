@@ -210,6 +210,10 @@ our %DEFAULT = (
 	,'dbsource'				=> 'dbi:SQLite:dbname=%s'
 	,'dbusername'			=> ''
 	,'dbpassword'			=> ''
+	,'commonAlbumTitles'	=> ['Greatest Hits',
+								'Best of...',
+								'Live'
+								]
 );
 
 # The following hash contains functions that are executed when the pref corresponding to

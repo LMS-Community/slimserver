@@ -64,6 +64,9 @@ our %tagFunctions = (
 	'ape' => \&Slim::Formats::APE::getTag,
 );
 
+# cached value of commonAlbumTitles pref
+our $common_albums;
+
 # Singleton objects for Unknowns
 our ($_unknownArtist, $_unknownGenre, $_unknownAlbum);
 
@@ -113,6 +116,10 @@ sub new {
 	
 	$self->_commitDBTimer();
 
+	$common_albums = Slim::Utils::Prefs::get('commonAlbumTitles');
+	Slim::Utils::Prefs::addPrefChangeHandler('commonAlbumTitles', 
+											 \&commonAlbumTitlesChanged);
+	
 	return $self;
 }
 
@@ -1106,7 +1113,7 @@ sub _postCheckAttributes {
 
 	} elsif ($create && $album) {
 
-		my $sortable_title = $attributes->{'ALBUMSORT'} || $album;
+		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
 		my $disc  = $attributes->{'DISC'};
 		my $discc = $attributes->{'DISCC'};
@@ -1130,11 +1137,16 @@ sub _postCheckAttributes {
 
 		} else {
 
-			if ($contributors[0]) {
-
+			if ((grep $album =~ m/^$_$/i, @$common_albums) &&
+				$contributors[0]) {
 				($albumObj) = Slim::DataStores::DBI::Album->search({ 
-					title => $album,
+					titlesort => $sortable_title,
 					contributors => $contributors[0]->id,
+				});			
+			}
+			else {
+				($albumObj) = Slim::DataStores::DBI::Album->search({ 
+					titlesort => $sortable_title,
 				});
 			}
 
@@ -1163,7 +1175,7 @@ sub _postCheckAttributes {
 		$albumObj->contributors($contributors[0]->id);
 
 		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
-		$albumObj->titlesort(Slim::Utils::Text::ignoreCaseArticles($sortable_title)) if $sortable_title;
+		$albumObj->titlesort($sortable_title) if $sortable_title;
 
 		$albumObj->disc($disc) if $disc;
 		$albumObj->discc($discc) if $discc;
@@ -1318,6 +1330,10 @@ sub updateCoverArt {
 			$self->{'thumbCache'}->{$fullpath} = 0;
  		}
  	}
+}
+
+sub commonAlbumTitlesChanged {
+	$common_albums = shift;
 }
 
 1;

@@ -3823,6 +3823,12 @@ SETUP_PERSISTPLAYLISTS_0
 	PT	Não Manter Playlists
 	SE	Behåll inte låtlistor
 
+SETUP_COMMONALBUMTITLES
+	EN	Common Album Titles
+
+SETUP_COMMONALBUMTITLES_DESC
+	EN	In most cases, SlimServer groups songs from the same album together even if the songs are in different folders. For very common album titles, such as "Greatest Hits", it additionally requires a match on artist name to correctly group tracks from the same album. The list below represents the album titles for which SlimServer requires an artist match for album grouping.
+
 SETUP_RESHUFFLEONREPEAT
 	DE	Erneutes Mischen bei Wiederholung
 	DK	Ny vilkårlig rækkefølge ved gentag

@@ -1511,7 +1511,7 @@ sub initSetupConfig {
 					'PrefOrder' => ['displaytexttimeout', 'composerInArtists'
 							,'playtrackalbum','searchSubString', 'ignoredarticles','splitList','filesort','browseagelimit'
 							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
-							,'checkVersion']
+							,'commonAlbumTitles' ,'checkVersion']
 				}
 			}
 		,'Prefs' => {
@@ -1598,6 +1598,23 @@ sub initSetupConfig {
 								,'0' => string ('SETUP_GROUPDISCS_0')
 							}
 					 }
+			,'commonAlbumTitles'	=> {
+						'isArray' => 1
+						,'arrayAddExtra' => 1
+						,'arrayDeleteNull' => 1
+						,'arrayDeleteValue' => ''
+						,'arrayBasicValue' => 0
+						,'PrefSize' => 'large'
+						,'inputTemplate' => 'setup_input_array_txt.html'
+						,'onChange' => sub {
+									my ($client,$changeref,$paramref,$pageref) = @_;
+									if (exists($changeref->{'commonAlbumTitles'}{'Processed'})) {
+										return;
+									}
+									processArrayChange($client,'commonAlbumTitles',$paramref,$pageref);
+									$changeref->{'commonAlbumTitles'}{'Processed'} = 1;
+								}
+					}
 			}
 		} #end of setup{'behavior'} hash
 	,'formatting' => {
