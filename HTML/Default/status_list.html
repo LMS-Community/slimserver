@@ -24,7 +24,7 @@
 		[% IF album && album != noAlbum %]
 
 			[% "FROM" | string %]
-			<a href="browsedb.html?hierarchy=track&level=0&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a>
+			<a href="browsedb.html?hierarchy=albumtrack&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a>
 		[% END %]
 
 		<!-- Don't display "by No Artist" if it's a single artist / remote stream -->
@@ -36,7 +36,7 @@
 
 				[% "BY" | string %]
 
-				<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
+				<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
 			[% END %]
 
 		[% ELSE %]
