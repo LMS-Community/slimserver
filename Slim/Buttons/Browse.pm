@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.10 2004/01/26 05:44:01 dean Exp $
+# $Id: Browse.pm,v 1.11 2004/02/09 19:00:07 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -393,12 +393,12 @@ sub overlay {
 	my $fullpath;
 	$fullpath = $client->dirItems($client->currentDirItem());
 
-	if ($fullpath && Slim::Music::Info::isSong($fullpath) || Slim::Music::Info::isHTTPURL($fullpath)) {
-		return Slim::Hardware::VFD::symbol('notesymbol');
-	}
-
 	if ($fullpath && Slim::Music::Info::isList($fullpath)) {
 		return Slim::Hardware::VFD::symbol('rightarrow');
+	}
+
+	if ($fullpath && Slim::Music::Info::isSong($fullpath) || Slim::Music::Info::isHTTPURL($fullpath)) {
+		return Slim::Hardware::VFD::symbol('notesymbol');
 	}
 
 	return undef;

@@ -1080,26 +1080,30 @@ sub lastskip {
 	my $r = shift;
 	@_ ? ($r->[33] = shift) : $r->[33];
 }
+
 sub songtotalbytes {
-	my $r = shift;
+	my $r = Slim::Player::Sync::masterOrSelf(shift);
 	@_ ? ($r->[34] = shift) : $r->[34];
 }
 sub songduration {
-	my $r = shift;
+	my $r = Slim::Player::Sync::masterOrSelf(shift);
 	@_ ? ($r->[35] = shift) : $r->[35];
 }
 sub songoffset {
-	my $r = shift;
+	my $r = Slim::Player::Sync::masterOrSelf(shift);
 	@_ ? ($r->[36] = shift) : $r->[36];
 }
+
 sub bytesReceived {
 	my $r = shift;
 	@_ ? ($r->[37] = shift) : $r->[37];
 }
+
 sub currentplayingsong {
-	my $r = shift;
+	my $r = Slim::Player::Sync::masterOrSelf(shift);
 	@_ ? ($r->[38] = shift) : $r->[38];
 }
+
 sub currentSleepTime {
 	my $r = shift;
 	@_ ? ($r->[39] = shift) : $r->[39];

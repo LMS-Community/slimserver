@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.37 2004/01/30 06:19:40 kdf Exp $
+# $Id: Prefs.pm,v 1.38 2004/02/09 19:00:08 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -75,7 +75,7 @@ my %DEFAULT = (
 	"httpport"				=> 9000
 	,"cliport"				=> 9090
 	,"music"				=> defaultAudioDir()
-	,"playlistdir"				=> defaultPlaylistDir()
+	,"playlistdir"			=> defaultPlaylistDir()
 	,"skin"					=> "Default"
 	,"language"				=> "EN"
 	,"refreshRate"			=> 30
@@ -101,9 +101,9 @@ my %DEFAULT = (
 	,"useinfocache"			=> 1				# Perhaps should be 0 for unix?
 	,'animationLevel'		=> 3
 	,'itemsPerPage'			=> 100
-	,'lookForArtwork'			=> 1
+	,'lookForArtwork'		=> 1
 	,'thumbSize'			=> 100
-	,'buildItemsPerPass'		=> 100
+	,'buildItemsPerPass'	=> 100
 	,'longdateFormat'		=> q(%A, %B |%d, %Y)
 	,'shortdateFormat'		=> q(%m/%d/%Y)
 	,'timeFormat'			=> q(|%I:%M:%S %p)
@@ -122,7 +122,7 @@ my %DEFAULT = (
 		'TRACKNUM. TITLE from ALBUM by ARTIST',
 		'TITLE (ARTIST)',
 		'ARTIST - TITLE']
-	,'guessFileFormats'		=> ['(ARTIST - ALBUM) TRACKNUM - TITLE', '/ARTIST/ALBUM/TRACKNUM - TITLE', '/ARTIST/ALBUM/TRACKNUM. TITLE' ]
+	,'guessFileFormats'		=> ['(ARTIST - ALBUM) TRACKNUM - TITLE', '/ARTIST/ALBUM/TRACKNUM - TITLE', '/ARTIST/ALBUM/TRACKNUM TITLE', '/ARTIST/ALBUM/TRACKNUM. TITLE' ]
 	,'menuItem'			=> ['NOW_PLAYING', 'BROWSE_BY_GENRE', 'BROWSE_BY_ARTIST', 'BROWSE_BY_ALBUM', 'BROWSE_MUSIC_FOLDER'
 						, 'SEARCH', 'SAVED_PLAYLISTS', 'PLUGINS', 'SETTINGS']
 	,'disabledplugins'		=> []

@@ -1,6 +1,6 @@
 package Slim::Formats::WMA;
 
-# $Id: WMA.pm,v 1.3 2004/01/28 04:32:03 dean Exp $
+# $Id: WMA.pm,v 1.4 2004/02/09 19:00:07 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -29,10 +29,12 @@ sub getTag {
 	return $tags if (!$wma);
 
 	# why this is an array, I don't know.
-	foreach my $key (keys %{$wma->comment()}) {
-		$tags->{uc $key} = $wma->comment($key);
+	if ($wma->comment()) {
+		foreach my $key (keys %{$wma->comment()}) {
+			$tags->{uc $key} = $wma->comment($key);
+		}
 	}
-
+	
 	# Correct ogginfo tags
 	while (my ($old,$new) = each %tagMapping) {
 

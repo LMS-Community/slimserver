@@ -28,6 +28,7 @@ sub new {
 	$self->{'filename'}   = $file;
 	$self->{'fileHandle'} = \*FILE;
 	$self->{'offset'}     = 0;
+	$self->{'size'} = -s $file;
 
 	$self->_parseWMAHeader();
 
@@ -85,7 +86,7 @@ sub _parseWMAHeader {
 
 	my $fh		= $self->{'fileHandle'};
 
-        read($fh, my $headerObjectData, 30) or return -1;
+	read($fh, my $headerObjectData, 30) or return -1;
 
 	my $objectId	  = substr($headerObjectData, 0, 16);
 	my $objectSize    = unpack('V', substr($headerObjectData, 16, 8) );
@@ -93,6 +94,9 @@ sub _parseWMAHeader {
 	my $reserved1     = vec(substr($headerObjectData, 28, 1), 0, 4);
 	my $reserved2     = vec(substr($headerObjectData, 29, 1), 0, 4);
 
+	# some sanity checks
+	return -1 if ($objectSize > $self->{'size'});
+	
 	if ($DEBUG) {
 		printf("ObjectId: [%s]\n", _byteStringToGUID($objectId));
 		print  "objectSize: [$objectSize]\n";
@@ -111,29 +115,35 @@ sub _parseWMAHeader {
 
 		my $nextObjectGUIDName = $reversedGUIDs{$nextObjectGUIDText};
 
+		# some sanity checks
+		return -1 if (!defined($nextObjectGUIDName));
+		return -1 if (!defined $nextObjectSize || $nextObjectSize > $self->{'size'});
+
 		if ($DEBUG) {
 			print "nextObjectGUID: [" . $nextObjectGUIDText . "]\n";
 			print "nextObjectName: [" . $nextObjectGUIDName . "]\n";
 			print "nextObjectSize: [" . $nextObjectSize . "]\n";
 		}
-                
-		# start the different header types parsing              
-		if ($nextObjectGUIDName eq 'GETID3_ASF_File_Properties_Object') {
-
-			$self->_parseASFFilePropertiesObject();
-			next;
-		}
-
-		if ($nextObjectGUIDName eq 'GETID3_ASF_Content_Description_Object') {
-
-			$self->_parseASFContentDescriptionObject();
-			next;
-		}
-
-		if ($nextObjectGUIDName eq 'GETID3_ASF_Extended_Content_Description_Object') {
-
-			$self->_parseASFExtendedContentDescriptionObject();
-			next;
+        
+        if (defined($nextObjectGUIDName)) {
+			# start the different header types parsing              
+			if ($nextObjectGUIDName eq 'GETID3_ASF_File_Properties_Object') {
+	
+				$self->_parseASFFilePropertiesObject();
+				next;
+			}
+	
+			if ($nextObjectGUIDName eq 'GETID3_ASF_Content_Description_Object') {
+	
+				$self->_parseASFContentDescriptionObject();
+				next;
+			}
+	
+			if ($nextObjectGUIDName eq 'GETID3_ASF_Extended_Content_Description_Object') {
+	
+				$self->_parseASFExtendedContentDescriptionObject();
+				next;
+			}
 		}
 
 		# set our next object size

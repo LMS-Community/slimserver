@@ -30,8 +30,10 @@ my $ITUNESSCANINTERVAL = 60;
 
 my $inPlaylists;
 my $inTracks;
+my $doneXML;
 my %tracks;
 my @playlists;
+my %artwork;
 my $applicationVersion;
 my $majorVersion;
 my $minorVersion;
@@ -307,13 +309,40 @@ sub doneScanning {
 	$locked = 0;
 
 	$opened = 0;
+	
 	$ituneslibrary = undef;
+	
+	$doneXML = 0;
+	
+	%artwork = ();
 	
 	$lastMusicLibraryFinishTime = time();
 
 	$isScanning = 0;
+	
 	@playlists = Slim::Music::Info::sortIgnoringCase(@playlists); 
 }
+
+sub artScan {
+	my @albums = keys %artwork;
+	my $album = $albums[0];
+	my $thumb = Slim::Music::Info::haveThumbArt($artwork{$album});
+
+	if (defined $thumb) {
+		$::d_itunes && Slim::Utils::Misc::msg("Caching thumbnail for $album\n");
+		Slim::Music::Info::updateArtworkCache($artwork{$album}, {'ALBUM' => $album, 'THUMB' => $thumb})
+	}
+
+	delete $artwork{$album};
+
+	if (!%artwork) { 
+		$::d_itunes && Slim::Utils::Misc::msg("Completed Artwork Scan\n");
+		return 0;
+	}
+	
+	return 1;
+}
+
 
 ###########################################################################################
 	# This incredibly ugly parser is highly dependent on the iTunes 3.0 file format.
@@ -323,6 +352,15 @@ sub doneScanning {
     # Abandon all hope ye who enter here...
 ###########################################################################################
 sub scanFunction {
+
+	if ($doneXML) {
+		my $artScan = artScan();
+		if (!$artScan) {
+			doneScanning();
+		}
+		return $artScan;
+	}
+
 	# this assumes that iTunes uses file locking when writing the xml file out.
 	if (!$opened) {
 		my $file = findMusicLibraryFile();
@@ -354,9 +392,10 @@ sub scanFunction {
 	
 	my $curLine = getLine();
 	if (!defined($curLine)) {
+		$::d_itunes && msg("iTunes:  Finished scanning iTunes XML\n");
 		# done scanning
-		$::d_itunes && msg("iTunes: finished scanning, leaving scan function\n");
-		return 0;
+		$doneXML = 1;
+		return 1;
 	}
 	
 	if ($inTracks) {
@@ -442,8 +481,8 @@ sub scanFunction {
 					if ($url) {
 						Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
 						Slim::Music::Info::updateGenreCache($url, \%cacheEntry);
-						if ($cacheEntry{'ALBUM'} && !defined Slim::Music::Info::haveThumbArt($url)) {
-							Slim::Music::Info::updateAlbumCache($url, \%cacheEntry)
+						if ($cacheEntry{'ALBUM'} && !exists $artwork{$cacheEntry{'ALBUM'}} && !defined Slim::Music::Info::cacheItem($url,'THUMB')) {
+							$artwork{$cacheEntry{'ALBUM'}} = $url;
 						}
 						$tracks{$id} = $url;
 					}
@@ -577,7 +616,6 @@ sub getPlaylistTrackArray {
 }
 
 sub getLine {
-#	my $curLine = <ITUNESLIBRARY>;
 	my $curLine;
 	
 	$ituneslibrary =~ /([^\n]*)\n/g;	
@@ -585,7 +623,6 @@ sub getLine {
 	$curLine = $1;
 	
 	if (!defined($curLine)) {
-		doneScanning();
 		return undef;
 	}
 	

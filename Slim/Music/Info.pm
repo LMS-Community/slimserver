@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.74 2004/02/06 19:48:30 dean Exp $
+# $Id: Info.pm,v 1.75 2004/02/09 19:00:07 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -125,7 +125,7 @@ my %caseArticlesMemoize = ();
 my %infoCacheItemsIndex;
 
 my $dbname;
-my $DBVERSION = 1;
+my $DBVERSION = 2;
 
 my %artworkCache = ();
 
@@ -1336,7 +1336,7 @@ sub coverArt {
 	my $cover = haveCoverArt($file);
 	my $thumb = haveThumbArt($file);
 	
-	if (($art eq 'cover') && $cover && ($cover ne $file)) {
+	if (($art eq 'cover') && $cover && ($cover ne '1')) {
 		$body = getImageContent($cover);
 		if ($body) {
 			$::d_info && Slim::Utils::Misc::msg("Found cached cover art: $cover\n");
@@ -1345,7 +1345,7 @@ sub coverArt {
 			($body, $contenttype) = readCoverArt($file,$art);
 		}
 	} 
-	elsif (($art eq 'thumb') && $thumb && ($thumb ne $file)) {
+	elsif (($art eq 'thumb') && $thumb && ($thumb ne '1')) {
 		$body = getImageContent($thumb);
 		if ($body) {
 			$::d_info && Slim::Utils::Misc::msg("Found cached thumb art: $thumb\n");
@@ -2079,8 +2079,8 @@ sub readTags {
 					($body,$contenttype,$path) = readCoverArtTags($filepath,'cover');
 				}
 				if (defined $body) {
-					$tempCacheEntry->{'COVER'} = $path;
-					$tempCacheEntry->{'THUMB'} = $path;
+					$tempCacheEntry->{'COVER'} = 1;
+					$tempCacheEntry->{'THUMB'} = 1;
 					if ($album && !exists $artworkCache{$album}) {
 						$::d_info && Slim::Utils::Misc::msg("ID3 Artwork cache entry for $album: $filepath\n");
 						$artworkCache{$album} = $filepath;
@@ -2189,21 +2189,23 @@ sub readCoverArtTags {
 
 	my $body;	
 	my $contenttype;
+	
 	$::d_info && Slim::Utils::Misc::msg("Updating image for $fullpath\n");
 	
 	if (isSong($fullpath) && isFile($fullpath)) {
 	
-		if (isFileURL($fullpath)) {
-			$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
-		} else {
-			$filepath = $fullpath;
-		}
-
-		my $file = Slim::Utils::Misc::virtualToAbsolute($filepath);
-		
 		if (isMP3($fullpath) || isWav($fullpath)) {
-			$::d_info && Slim::Utils::Misc::msg("Looking for image in ID3 tag\n");
-				
+
+			if (isFileURL($fullpath)) {
+				$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
+			} else {
+				$filepath = $fullpath;
+			}
+	
+			my $file = Slim::Utils::Misc::virtualToAbsolute($filepath);
+			
+			$::d_info && Slim::Utils::Misc::msg("Looking for image in ID3 tag in file $file\n");
+
 			my $tags = MP3::Info::get_mp3tag($file, 2, 1);
 			if ($tags) {
 				# look for ID3 v2.2 picture
@@ -2262,6 +2264,7 @@ sub readCoverArtTags {
 		if ($body) {
 			# iTunes sometimes puts PNG images in and says they are jpeg
 			if ($body =~ /^\x89PNG\x0d\x0a\x1a\x0a/) {
+				$::d_info && Slim::Utils::Misc::msg( "Fixing iTunes PNG image\n");
 				$contenttype = 'image/png';
 			}
 			
@@ -2271,19 +2274,24 @@ sub readCoverArtTags {
 			}
 			$cover = $fullpath;
 		}
+ 	} else {
+ 		$::d_info && Slim::Utils::Misc::msg("Not a song, skipping: $fullpath\n");
  	}
+ 	
 	return ($body, $contenttype,$cover);
 }
 
 sub readCoverArtFiles {
 	use bytes;
-	my $file = shift;
+	my $fullpath = shift;
 	my $image = shift || 'cover';
 	my $cover;
 
 	my $body;	
 	my $contenttype;
-	
+
+	my $file = isFileURL($fullpath) ? Slim::Utils::Misc::pathFromFileURL($fullpath) : $fullpath;
+
 	my @components = splitdir($file);
 	pop @components;
 	$::d_info && Slim::Utils::Misc::msg("Looking for image files for $file\n");
@@ -2367,7 +2375,7 @@ sub updateCoverArt {
  		}
  	}
 
- 	$::d_info && $body && Slim::Utils::Misc::msg("Got image!\n");
+ 	$::d_info && $body && Slim::Utils::Misc::msg("Got image $path for $fullpath!\n");
 
  	updateCacheEntry($fullpath, $info);
 }
@@ -2468,6 +2476,10 @@ sub fileLength {
 sub isFile {
 	my $fullpath = shift;
 
+	$fullpath = isFileURL($fullpath) ? Slim::Utils::Misc::pathFromFileURL($fullpath) : $fullpath;
+	
+	return 0 if (isURL($fullpath));
+	
 	# check against types.conf
 	return 0 unless $Slim::Music::Info::suffixes{ (split /\./, $fullpath)[-1] };
 
@@ -2787,9 +2799,10 @@ sub sortuniq_ignore_articles {
 	}
 	#set up array for sorting items without leading articles
 	my @noarts = map {
-		my $item = $_; 
-		exists($sortCache{$item}) ? $item = $sortCache{$item} : $item =~ s/^($articles)\s+//i; 
-		$item; } @uniq;
+			my $item = $_; 
+			exists($sortCache{$item}) ? $item = $sortCache{$item} : $item =~ s/^($articles)\s+//i; 
+			$item; 
+		} @uniq;
 		
 	#return the uniq array sliced by the sorted articleless array
 	return @uniq[sort {$noarts[$a] cmp $noarts[$b]} 0..$#uniq];
