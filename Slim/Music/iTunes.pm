@@ -49,7 +49,6 @@ if ($] > 5.007) {
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
-my $lastMusicLibraryDate = undef;
 my $lastMusicLibraryFinishTime = undef;
 my $isScanning = 0;
 my $opened = 0;
@@ -344,9 +343,9 @@ sub isMusicLibraryFileChanged {
 	
 	# Only say "yes" if it has been more than one minute since we last finished scanning
 	# and the file mod time has changed since we last scanned. Note that if we are
-	# just starting, $lastMusicLibraryDate is undef, so both $fileMTime
+	# just starting, lastITunesMusicLibraryDate is undef, so both $fileMTime
 	# will be greater than 0 and time()-0 will be greater than 180 :-)
-	if ($file && $fileMTime > $lastMusicLibraryDate) {
+	if ($file && $fileMTime > Slim::Utils::Prefs::get('lastITunesMusicLibraryDate')) {
 		my $itunesscaninterval = Slim::Utils::Prefs::get('itunesscaninterval');
 		$::d_itunes && msg("music library has changed!\n");
 		if (time()-$lastMusicLibraryFinishTime > $itunesscaninterval) {
@@ -483,7 +482,7 @@ sub scanFunction {
 		}
 		$opened = 1;
 		resetScanState();
-		$lastMusicLibraryDate = (stat $file)[9];
+		Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', (stat $file)[9]);
 	}
 	
 	if ($opened && !$locked) {

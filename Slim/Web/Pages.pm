@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.103 2004/10/08 06:04:29 vidur Exp $
+# $Id: Pages.pm,v 1.104 2004/10/13 00:51:39 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -664,6 +664,8 @@ sub playlist {
 		$params->{'player_needs_upgrade'} = '1';
 		return Slim::Web::HTTP::filltemplatefile("playlist_needs_upgrade.html", $params);
 	}
+
+	$params->{'playercount'} = Slim::Player::Client::clientCount();
 	
 	my $songcount = 0;
 
@@ -841,7 +843,7 @@ sub buildPlaylist {
 
 sub playlist_done {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
-
+	$params->{'playercount'} = Slim::Player::Client::clientCount();
 	my $body = Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
 
 	if (ref($callback) eq 'CODE') {

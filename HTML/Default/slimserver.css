@@ -1,7 +1,10 @@
-BODY, TABLE, INPUT, SELECT, P, li, a 														{ color: #444; font-size: 10px; font-family: Verdana, Arial, Helvetica, sans-serif }
-.exlisting, p, ol, ul, dl, dd, td, .stdclick, .stdedit, .exboldlisting, th, h5, a:active 	{ color: #666; }
+BODY, TABLE, INPUT, SELECT, P, li	 														{ color: #444; font-size: 10px; font-family: Verdana, Arial, Helvetica, sans-serif }
+.exlisting, p, ol, ul, dl, dd, td, .stdclick, .stdedit, .exboldlisting, th, h5 				{ color: #666; }
+a 																							{ color: #111; text-decoration:none;  }
+a:active 																					{ color: #000; }
+a:hover 																					{ color: #111; text-decoration:underline;}
 .statusarea 																				{ color: #fff; }
-.exnowplaying, .exboldnowplaying, .textfield, pre, code, a:hover 							{ color: #111; }
+.exnowplaying, .exboldnowplaying, .textfield, pre, code										{ color: #111; }
 .exboldnowplaying, .exboldlisting, th, h3, h4, h5  											{ font-weight: bold; }
 pre, code, h3 																				{ font-size: 11px;}
 .screenshot																					{ font-size: 11px; background-color: #000; color: #0fe; padding: 5px;}
@@ -14,7 +17,6 @@ table, td, tr, form 																		{ padding: 0px; margin: 0px; }
 .greyline																					{ background-color: #9D9D9D; }
 .odd 																						{ padding: 4px; }
 .even 																						{ padding: 4px; background-color: #ffffff;}
-a 																							{ text-decoration:none; }
 img 																						{ border-style: none; }
 .nowrap																						{ white-space: nowrap; }
 .PrefExtValue																				{ width: 200px }

@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.141 2004/10/07 14:50:56 dean Exp $
+# $Id: strings.txt,v 1.142 2004/10/13 00:51:36 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -238,13 +238,16 @@ ONLY_ONE
 	SE	Det finns bara en fil här!
 
 SCREENSAVERS
+	FR	Ecrans de veille
 	DE	Bildschirmschoner
 	EN	Screensavers
 
 RADIO
+	FR	Radio Internet
 	EN	Internet Radio
 
 GAMES
+	FR	Jeux
 	DE	Spiele
 	EN	Games
 
@@ -908,6 +911,7 @@ SETUP_GROUP_BRIGHTNESS
 	SE	Ljusstyrka
 
 SETUP_GROUP_BRIGHTNESS_DESC
+	FR	La luminosité de l'afficheur de la platine peut être modifiée lorsque cette dernière est allumée, éteinte ou en veille (activation de l'écran de veille). Elle peut également être réglée automatiquement lorsque vous pressez une touche de la télécommande, qu'un fichier audio est lancé ou que la platine n'est pas utilisée. Ce réglage automatique peut être désactivé.
 	EN	The brightness of the player's display can be set for when it's on, off, or sitting idle (screensaver). It can also be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
 
 SETUP_GROUP_TCP_PARAMS
@@ -1000,21 +1004,26 @@ SETUP_GROUP_XPL_DESC
 	SE	Detta är inställningar för xPL-protokollet
 
 SETUP_FONTLIST
+	FR	Liste des polices
 	DE	Schriftartenliste
 	EN	Font List
 
 SETUP_ACTIVEFONT
+	FR	Police
 	DE	Schriftart
 	EN	Font
 
 SETUP_ACTIVEFONT_DESC
+	FR	Vous pouvez utiliser la touche SIZE de la télécommande ou les cases à cocher ci-dessous pour modifier la police de caractères utilisée par la platine. L'ordre d'affichage des polices peut être modifié ci-dessous.
 	EN	You can use the SIZE button on the remote or the radio buttons below to switch between fonts on the player display. You may choose the order that they appear using the menus below.  
 
 SETUP_IDLEFONT
+	FR	Police (mode veille)
 	DE	Standby Schriftart
 	EN	Standby Font
 
 SETUP_IDLEFONT_DESC
+	FR	Lorsque la platine est en mode veille, vous pouvez utiliser la touche SIZE de la télécommande ou les cases à cocher ci-dessous pour modifier la police de caractères utilisée. L'ordre d'affichage des polices peut être modifié ci-dessous.
 	EN	When the player is standby, you can use the SIZE button on the remote or the radio buttons below to switch between fonts for the clock display. You may choose the order that they appear using the menus below.  
 
 SETUP_DOUBLESIZE
@@ -1344,10 +1353,12 @@ SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	SE	Ljusstyrka i avslaget läge:
 
 SETUP_IDLEBRIGHTNESS
+	FR	Luminosité en veille
 	DE	Helligkeit falls im Standby Modus
 	EN	Brightness when idle
 
 SETUP_IDLEBRIGHTNESS_CHOOSE
+	FR	Luminosité en veille :
 	DE	Helligkeit falls im Standby Modus:
 	EN	Brightness when idle:
 
@@ -1412,6 +1423,7 @@ SETUP_ALARMPLAYLIST
 	SE	Låtlista för alarm-funktion
 
 SETUP_PLAYINGDISPLAYMODE
+	FR	Affichage en mode Lecture
 	DE	Aktuelle Wiedergabeinformationen
 	EN	Now Playing Information
 
@@ -1725,9 +1737,10 @@ SETUP_ITUNESPLAYLISTSUFFIX
 SETUP_SHOWYEAR
 	DE	Jahr für Alben anzeigen
 	EN	Show Year with Albums
-	FR	Montrez L'an avec L'albums
+	FR	Affichage de l'année avec l'album
 
 SETUP_SHOWYEAR_DESC
+	FR	Vous pouvez afficher l'année de sortie d'un album en mode Parcourir les albums ou Parcourir les pochettes. Si ce réglage est activé, l'année sera affichée à la suite du titre de l'album.
 	EN	You may choose to show the album year when browsing by Albums or by Artwork.  When enabled, the album year will be shown next to the album title.
 
 SETUP_GUESSFILEFORMATS
@@ -2842,6 +2855,7 @@ SETUP_SCREENSAVER_CHOOSE
 	SE	Välj din anpassade skärmsläckare
 
 SETUP_SCREENSAVER_DESC
+	FR	Vous pouvez modifier l'écran de veille courant ainsi que le délai avant son activation. Entrez 0 pour désactiver l'écran de veille courant.
 	EN	You can your current screensaver and the duration to wait before enabling the screensaver. Set this duration to zero to never show the current screensaver.
 
 SETUP_SCREENSAVERTIMEOUT
@@ -4540,6 +4554,7 @@ MEDIUM
 	FR	Moyenne
 
 HUGE
+	FR	Très grand
 	DE	Gross
 	EN	Huge
 
@@ -4938,6 +4953,7 @@ OGG
 	EN	Ogg Vorbis
 
 MODIFIED
+	FR	Modifié
 	DE	Verändert
 	EN	Modified
 
@@ -5052,6 +5068,7 @@ BPM
 	FR	Bats par Minute
 
 DRM
+	FR	Ce fichier est protégé par DRM (Digital Rights Management)
 	DE	Die Datei ist durch einen Kopierschutz geschützt
 	EN	This file is locked by Digital Rights Management
 
@@ -5625,12 +5642,14 @@ PLAYER_SETTINGS
 	SE	Spelarinställningar
 
 ALARM_SETTINGS
+	FR	Réveil
 	EN	Alarm
 
 MENU_SETTINGS
 	EN	Menus
 
 DISPLAY_SETTINGS
+	FR	Affichage
 	DE	Anzeige
 	EN	Display
 
@@ -6189,7 +6208,7 @@ NO_PLAYER_FOUND
 NO_PLAYER_DETAILS
 	DE	Stellen Sie sicher, dass ihr Player angeschlossen ist und die Netzwerkeinstellungen korrekt sind. Drücken Sie auf "Aktualisierung" im Menü ihres Browser zum erneuten Verbindungsversuch zu ihrem Player.
 	DK	Kontroller at din afspiller er sluttet til og at dens netværksindstillinger er korrekte. Tryk F5 (Refresh/Genindlæs) i din web-browser for at prøve at forbinde til afspilleren igen.
-	EN	<b>If you own a Squeezebox:</b><ul><li>Make sure that your player is plugged in and its networking settings are correct. Click the Refresh button once your player is connected.</ul><p><b>If you do not own a Squeezebox:</b><ul><li>You can use MP3 player software (such as WinAmp or iTunes) to listen to your music library with SlimServer by connecting to this URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a><li>You can listen to your music library using <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a> the Squeezebox software emulator.</ul>
+	EN	<b>If you own a Squeezebox:</b><ul><li>Make sure that your player is plugged in and its networking settings are correct. Click the Refresh button once your player is connected.</ul><p><b>If you do not own a Squeezebox:</b><ul><li>You can listen to your music library using <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, a software version of Squeezebox.<li>You can use MP3 player software (such as WinAmp or iTunes) to listen to your music library with SlimServer by connecting to this URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	FR	Assurez-vous que votre platine est branchée et que ses réglages de réseau sont valides. Cliquez sur le bouton "Actualiser" de votre navigateur pour vérifier de nouveau la présence de la platine.
 	NL	Zorg ervoor dat Uw speler aan het netwerk is aangesloten en dat de netwerk instellingen goed zijn. Druk de Refresh knop om opnieuw contact te maken met de speler.
 	NO	Sørg for spilleren din er på, koblet til og har riktige nettverksinnstillinger. Trykk på F5 (oppdater/refresh) i din webbrowser for å prøve å koble opp mot spilleren igjen.

@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.23 2004/09/22 02:51:29 kdf Exp $
+#$Id: MoodLogic.pm,v 1.24 2004/10/13 00:51:39 dean Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -18,7 +18,6 @@ my %artwork;
 my $last_error = 0;
 my $isauto = 1;
 
-my $lastMusicLibraryDate = undef;
 my $lastMusicLibraryFinishTime = undef;
 
 sub useMoodLogic {
@@ -128,7 +127,7 @@ sub isMusicLibraryFileChanged {
 	# and the file mod time has changed since we last scanned. Note that if we are
 	# just starting, $lastMusicLibraryDate is undef, so both $fileMTime
 	# will be greater than 0 and time()-0 will be greater than 180 :-)
-	if ($file && $fileMTime > $lastMusicLibraryDate) {
+	if ($file && $fileMTime > Slim::Utils::Prefs::get('lastMoodLogicLibraryDate')) {
 		my $moodlogicscaninterval = Slim::Utils::Prefs::get('moodlogicscaninterval');
 		$::d_moodlogic && msg("music library has changed!\n");
 		if (time()-$lastMusicLibraryFinishTime > $moodlogicscaninterval) {
@@ -191,7 +190,8 @@ sub doneScanning {
 	if (Slim::Utils::Prefs::get('lookForArtwork')) {Slim::Utils::Scheduler::add_task(\&artScan);}
 
 	$lastMusicLibraryFinishTime = time();
-	$lastMusicLibraryDate = (stat $mixer->{JetFilePublic})[9];
+
+	Slim::Utils::Prefs::set('lastMoodLogicLibraryDate',(stat $mixer->{JetFilePublic})[9]);
 	
 	Slim::Music::Info::generatePlaylists();
 	

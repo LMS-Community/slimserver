@@ -125,9 +125,9 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
               <td class=listing>&nbsp;</td>
             </tr>
             <tr> 
-              <td colspan="2" class=listing> <a href="playlist.html?p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="playlist"><IMG 
+              <td colspan="2" class=listing> <a target="status" href="status.html?p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]"><IMG 
       height=10 alt="Add to playlist" src="html/play.this.gif" width=9 border=0> 
-                [% "PLAY_THIS_SONG" | string %]</a> | <a href="playlist.html?p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="playlist"> 
+                [% "PLAY_THIS_SONG" | string %]</a> | <a target="status" href="status.html?p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]"> 
                 <IMG 
       height=10 alt="Add to playlist" src="html/add.gif" width=9 border=0> [% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a> </td>
             </tr>

@@ -353,9 +353,6 @@ sub start {
 	$::d_server && msg("SlimServer CLI init...\n");
 	Slim::Control::CLI::init();
 
-	$::d_server && msg("SlimServer History load...\n");
-	Slim::Web::History::load();
-
 	$::d_server && msg("Source conversion init..\n");
 	Slim::Player::Source::init();
 	$::d_server && msg("SlimServer Plugins init...\n");
@@ -371,14 +368,18 @@ sub start {
 		Slim::Control::xPL::init();
 	}		
 
-	# start scanning based on a timer...
-	# Currently, it's set to one item (directory or song) scanned per second.
+	$::d_server && msg("SlimServer History load...\n");
+	Slim::Web::History::load();
 
+	# start background scanning based on a timer...
+	Slim::Music::Import::startup();
+	
+	# start folder scanning if we're not persisting the database
 	if (!Slim::Utils::Prefs::get('usetagdatabase')) {
 		$::d_server && msg("SlimServer Inital Scan init...\n");
 		Slim::Music::Import::startScan();
-	}
-	
+	};
+		
 	$lastlooptime = Time::HiRes::time();
 	$loopcount = 0;
 	$loopsecond = int($lastlooptime);

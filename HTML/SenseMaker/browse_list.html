@@ -1,11 +1,11 @@
 <tr>
   <td [% IF odd %]class="listing" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="listing" bgcolor="#FFFFFF"[% END %] width="12">
-      <nobr><a href="playlist.html?p0=playlist&p1=add&p2=[% itempath | uri %]&player=[% player | uri %]"  target="playlist"><IMG 
+      <nobr><a target="status" href="status.?p0=playlist&p1=add&p2=[% itempath | uri %]&player=[% player | uri %]" ><IMG 
       alt="Add to playlist" src="html/add.gif" border=0></a></nobr>
   </td>
 
   <td [% IF odd %]class="listing" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="listing" bgcolor="#FFFFFF"[% END %] width="12">
-      <nobr><a href="playlist.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="playlist"><IMG 
+      <nobr><a target="status" href="status.?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]"><IMG 
       alt="Play this" src="html/play.this.gif" border=0></a></nobr>
   </td>
   

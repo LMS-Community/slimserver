@@ -1,15 +1,15 @@
 <tr>
   <td [% IF odd %]class="listing" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="listing" bgcolor="#FFFFFF"[% END %] width="12">
-      [% IF descend %]   <nobr><a href="playlist.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="playlist"><IMG 
+      [% IF descend %]   <nobr><a target="status" href="status.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]"><IMG 
       alt="Add to playlist" src="html/add.gif" border=0></a></nobr> [% END %]
-      [% IF not descend %]  <nobr><a href="playlist.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target="playlist"><IMG 
+      [% IF not descend %]  <nobr><a target="status" href="status.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]"><IMG 
       alt="Add to playlist" src="html/add.gif" border=0></a></nobr> [% END %]
   </td>
 
   <td [% IF odd %]class="listing" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="listing" bgcolor="#FFFFFF"[% END %] width="12">
-      [% IF descend %]  <nobr><a href="playlist.html?p0=playlist&p1=loadalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="playlist"><IMG 
+      [% IF descend %]  <nobr><a target="status" href="status.html?p0=playlist&p1=loadalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]"><IMG 
       alt="Play this" src="html/play.this.gif" border=0></a></nobr> [% END %]
-      [% IF not descend %] <nobr><a href="playlist.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="playlist"><IMG 
+      [% IF not descend %] <nobr><a target="status" href="status.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]"><IMG 
       alt="Play this" src="html/play.this.gif" border=0></a></nobr> [% END %]
   </td>
   

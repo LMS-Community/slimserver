@@ -19,20 +19,23 @@ sub startScan {
 	$::d_info && msg("Clearing ID3 cache\n");
 	Slim::Music::Info::clearCache();
 	
-	$::d_info && msg("Starting background scanning.\n");
-	$scantime = Time::HiRes::time();
-	if (Slim::Music::iTunes::useiTunesLibrary()) { 
-		Slim::Music::iTunes::startScan();
-	}
-
-	if (Slim::Music::MoodLogic::useMoodLogic()) { 
-		Slim::Music::MoodLogic::startScan();
-	}
-
+	$::d_info && msg("Starting background folder scanning.\n");
 	Slim::Music::MusicFolderScan::startScan();
 }
 
+sub startup {
+	$::d_info && msg("Starting itunes and/or moodlogic background scanning.\n");
+	$scantime = Time::HiRes::time();
+	if (Slim::Music::iTunes::useiTunesLibrary()) { 
+		Slim::Music::iTunes::checker();
+	}
 
+	if (Slim::Music::MoodLogic::useMoodLogic()) { 
+		Slim::Music::MoodLogic::checker();
+	}
+
+
+}
 sub addImport {
 	my $import = shift;
 	$::d_info && msg("Adding $import Scan\n");

@@ -476,7 +476,7 @@ sub stream {
 			0,		# s/pdif auto
 			0,		# reserved
 			0,		# reserved2
-			3484,		# vis port - call IANA!!!  :)
+			0,		# vis port - call IANA!!!  :)
 			0,		# use slim server's IP
 			Slim::Utils::Prefs::get('httpport'),		# port
 			0,		# server IP of 0 means use IP of control server
