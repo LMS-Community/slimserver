@@ -1260,7 +1260,7 @@ SETUP_SCROLLRATE_DESC
 	SE	Tid mellan rullande scroll-bilder. O.15 är standardvärdet. Värden mellan 0 och 1 kan sättas för att öka eller minska scroll-tempot
 
 DOUBLE-LINE
-	DE	Bla i Sanger
+	DE	Doppelte Höhe
 	EN	Double-Size
 	ES	Tamaño Doble
 	JP	ダブルサイズ
@@ -2106,6 +2106,7 @@ MOODLOGIC_MIXING
 	ES	Mezcla MoodLogic
 
 FOLDER
+	DE	Ordner
 	EN	Folder
 	ES	Carpeta
 
@@ -3827,10 +3828,12 @@ SETUP_PERSISTPLAYLISTS_0
 	SE	Behåll inte låtlistor
 
 SETUP_COMMONALBUMTITLES
+	DE	Geläufige Albentitel
 	EN	Common Album Titles
 	ES	Títulos Comunes de Discos
 
 SETUP_COMMONALBUMTITLES_DESC
+	DE	Meist gruppiert SlimServer Songs mit dem gleichen Albumnamen auch dann, wenn sie in unterschiedlichen Ordnern liegen. Für sehr geläufige Albumtitel wie z.B. "Greatest Hits" muss zusätzlich der Artist mit einbezogen werden. Diese Liste definiert die Albumtitel, für welche SlimServer auch den Interpreten berücksichtigen soll.
 	EN	In most cases, SlimServer groups songs from the same album together even if the songs are in different folders. For very common album titles, such as "Greatest Hits", it additionally requires a match on artist name to correctly group tracks from the same album. The list below represents the album titles for which SlimServer requires an artist match for album grouping.
 	ES	En la mayoría de los casos, SlimServer agrupa las canciones del mismo disco, incluso si las canciones estan en carpetas diferentes. Para títulos muy comunes de discos, como "Grandes Exitos", se requiere además que concuerde al nombre del artista, para que la agrupación sea correcta con las canciones del mismo disco. La lista debajo representa los títulos de discos para los cuales SlimServer requerirá que coincida el artista para agrupar el disco.
 
@@ -4021,10 +4024,12 @@ SORTBYFILENAME
 	SE	Sortera efter filnamn
 
 SETUP_BROWSEAGELIMIT
+	DE	Anzahl neuer Musikstücke
 	EN	New Music Limit
 	ES	Límite para Música Nueva
 
 SETUP_BROWSEAGELIMIT_DESC
+	DE	Geben Sie an, wieviele Lieder die Liste der neuen Musikstücke enthalten soll. Vorgabe ist 100.
 	EN	Choose the number of tracks to display when browsing for new music. Default is 100
 	ES	Elegir el número de temas a mostrar cuendo se examina Música Nueva. Por defecto es 100
 
@@ -6577,6 +6582,7 @@ BROWSE_BY_ARTWORK_DBL
 	FR	Parcours pochettes
 
 BROWSE_NEW_MUSIC
+	DE	Neue Musikstücke
 	EN	New Music
 	ES	Música nueva
 
@@ -8596,10 +8602,12 @@ SETUP_GROUP_RADIO_DESC
 	JP	SlimServer は複数の無線の提供者を通してインターネ ットのラジオのためのサポートを含んでいる。あなたはこのペー ジの優れたアクセスのためのあなたのusername そしてパスワード を, 入れることを含むこれらの提供者のいくつかのためのサポー トを, 形成できる。あなたの変更を救うため, かちりと言う音の 変更。
 
 SETUP_SCROLLPIXELS
+	DE	Scroll Pixel
 	EN	Scroll Pixels
 	ES	Desplazamiento de pixels
 
 SETUP_SCROLLPIXELS_DESC
+	DE	Bei Playern mit graphischem Display kann die Anzahl Pixel, die pro Interval gescrollt wird, definiert werden. Optimieren Sie damit die Qualität und Geschwindigkeit der Anzeige. Beachten Sie dabei bitte, dass geringe Werte mit geringer Scrollrate zwar gut aussehen, aber auch erheblich mehr Leistung vom Prozessor und Netzwerk verlangen. Belassen Sie im Zweifelsfall den Vorgabewert von 7 (min. 1, max. 20).
 	EN	On a player with a graphical display you can adjust the number of pixels (dots) that the player scrolls in each interval defined above.  Adjust this in conjunction with the Scroll Rate to adjust scrolling speed and quality.  Note that small values with low Scroll Rates look good, but require a higher performance server and uncongested network.  If in doubt leave as the default of 7 pixels.  (Min 1, Max 20).
 	ES	En un reproductor con pantalla gráfica, se puede ajustar el número de pixels (puntos) que el reproductor desplazará en cada intervalo definido arriba.  Para ajustar la velocidad y calidad de desplazamiento, ajustar este valor junto a la tasa de desplazamiento. Notar que valores muy pequeños, con una tasa de desplazamiento muy lenta se pueden ver muy bien, pero requieren un servidor con mayor perfomance y una red no congestionada. Si hay dudas, dejar el valor por defecto: 7 pixels. (Min 1, Max 20).
 
