@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.17 2003/11/25 06:10:44 grotus Exp $
+# $Id: Command.pm,v 1.18 2003/12/02 05:21:04 grotus Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -388,7 +388,6 @@ sub execute {
 				}
 			} elsif ($p1 eq "repeat") {
 				# change between repeat values 0 (don't repeat), 1 (repeat the current song), 2 (repeat all)
-				$client->htmlstatusvalid(0);
 				if (!defined($p2)) {
 					Slim::Player::Playlist::repeat($client, (Slim::Player::Playlist::repeat($client) + 1) % 3);
 				} elsif ($p2 eq "?") {
@@ -562,8 +561,6 @@ sub execute {
 			# all ir signals go through execute()
 			Slim::Hardware::IR::processIR($client, $p1, $p2);
 		}
-	# mark html status page invalid so it will update
-	$client->htmlstatusvalid(0);
 	}	
 	
 	my @returnArray = ();

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.22 2003/12/01 23:59:07 dean Exp $
+# $Id: Prefs.pm,v 1.23 2003/12/02 05:18:58 grotus Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -155,9 +155,6 @@ my %prefChange = (
 	}
 	,'language' => sub {
 		my $newvalue = shift;
-		foreach my $client (Slim::Player::Client::clients()) {
-			$client->htmlstatusvalid(0);
-		}
 		Slim::Web::Setup::initSetup();
 	}
 	,'checkVersion' => sub {
@@ -191,13 +188,6 @@ my %prefChange = (
 		}
 		foreach my $client (Slim::Player::Client::clients()) {
 			Slim::Buttons::Home::updateMenu($client);
-		}
-	}
-	,'skin' => sub {
-		my $newvalue = shift;
-		# invalidate any old player status
-		foreach my $client (Slim::Player::Client::clients()) {
-			$client->htmlstatusvalid(0);
 		}
 	}
 	,'usetagdatabase' => sub {
