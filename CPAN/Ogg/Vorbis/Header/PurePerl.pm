@@ -4,346 +4,294 @@ use 5.005;
 use strict;
 use warnings;
 
-our $VERSION = '0.02';
+# Heavily modified by dsully - Slim Devices.
+our $VERSION = '0.1';
 
-sub new 
-{
-    my $class = shift;
-    my $file = shift;
+sub new {
+	my $class = shift;
+	my $file = shift;
 
-    return load($class, $file);
+	# open up the file
+	open FILE, $file or do {
+		warn "$class: File $file does not exist or cannot be read: $!";
+		return undef;
+	};
+
+	# make sure dos-type systems can handle it...
+	binmode FILE;
+
+	my %data = (
+		'filename'   => $file,
+		'filesize'   => -s $file,
+		'fileHandle' => \*FILE,
+	);
+
+	_init(\%data);
+	_loadInfo(\%data);
+	_loadComments(\%data);
+	_calculateTrackLength(\%data);
+
+	undef $data{'fileHandle'};
+	close FILE;
+
+	return bless \%data, $class;
 }
 
-sub load 
-{
-    my $class = shift;
-    my $file = shift;
+sub info {
+	my $self = shift;
+	my $key = shift;
 
-    # open up the file
-    open FILE, $file or do {
-	warn "$class: File $file does not exist or cannot be read: $!";
-	return undef;
-    };
+	# if the user did not supply a key, return the entire hash
+	return $self->{'INFO'} unless $key;
 
-    # make sure dos-type systems can handle it...
-    binmode FILE;
-
-    my %data = (
-	    'filename'   => $file,
-	    'fileHandle' => \*FILE,
-    );
-
-    _init(\%data);
-    _loadInfo(\%data);
-    _loadComments(\%data);
-    _calculateTrackLength(\%data);
-
-    undef $data{'fileHandle'};
-    close FILE;
-
-    return bless \%data, $class;
+	# otherwise, return the value for the given key
+	return $self->{'INFO'}{lc $key};
 }
 
-sub info 
-{
-    my $self = shift;
-    my $key = shift;
+sub comment_tags {
+	my $self = shift;
 
-    # if the user did not supply a key, return the entire hash
-    unless ($key)
-    {
-	return $self->{'INFO'};
-    }
-
-    # otherwise, return the value for the given key
-    return $self->{'INFO'}{lc $key};
+	return @{$self->{'COMMENT_KEYS'}};
 }
 
-sub comment_tags 
-{
-    my $self = shift;
+sub comment {
+	my $self = shift;
+	my $key = shift;
 
-    return @{$self->{'COMMENT_KEYS'}};
+	# if the user supplied key does not exist, return undef
+	return undef unless($self->{'COMMENTS'}{lc $key});
+
+	return @{$self->{'COMMENTS'}{lc $key}};
 }
 
-sub comment 
-{
-    my $self = shift;
-    my $key = shift;
+sub path {
+	my $self = shift;
 
-    # if the user supplied key does not exist, return undef
-    unless($self->{'COMMENTS'}{lc $key})
-    {
-	return undef;
-    }
-
-    return @{$self->{'COMMENTS'}{lc $key}};
-}
-
-sub add_comments 
-{
-    warn "Ogg::Vorbis::Header::PurePerl add_comments() unimplemented.";
-}
-
-sub edit_comment 
-{
-    warn "Ogg::Vorbis::Header::PurePerl edit_comment() unimplemented.";
-}
-
-sub delete_comment 
-{
-    warn "Ogg::Vorbis::Header::PurePerl delete_comment() unimplemented.";
-}
-
-sub clear_comments 
-{
-    warn "Ogg::Vorbis::Header::PurePerl clear_comments() unimplemented.";
-}
-
-sub path 
-{
-    my $self = shift;
-
-    return $self->{'fileName'};
-}
-
-sub write_vorbis
-{
-    warn "Ogg::Vorbis::Header::PurePerl write_vorbis unimplemented.";
+	return $self->{'fileName'};
 }
 
 # "private" methods
 
-sub _init
-{
-    my $data = shift;
-    my $fh = $data->{'fileHandle'};
-    my $byteCount = 0;
+sub _init {
+	my $data = shift;
 
-    # check the header to make sure this is actually an Ogg-Vorbis file
-    $byteCount = _checkHeader($data);
-
-    unless($byteCount)
-    {
-	# if it's not, we can't do anything
-	return undef;
-    }
-
-    $data->{'startInfoHeader'} = $byteCount;
+	# check the header to make sure this is actually an Ogg-Vorbis file
+	$data->{'startInfoHeader'} = _checkHeader($data) || return undef;
 }
 
-sub _checkHeader
-{
-    my $data = shift;
-    my $fh = $data->{'fileHandle'};
-    my $buffer;
-    my $pageSegCount;
-    my $byteCount = 0; # stores how far into the file we've read,
-                       # so later reads into the file can skip right
-                       # past all of the header stuff
+sub _checkHeader {
+	my $data = shift;
 
-    # check that the first four bytes are 'OggS'
-    read($fh, $buffer, 27);
+	my $fh = $data->{'fileHandle'};
+	my $buffer;
+	my $pageSegCount;
 
-    if (substr($buffer, 0, 4) ne 'OggS')
-    {
-	warn "This is not an Ogg bitstream (no OggS header).";
-	return undef;
-    }
-    $byteCount += 4;
+	# stores how far into the file we've read, so later reads into the file can
+	# skip right past all of the header stuff
 
-    # check the stream structure version (1 byte, should be 0x00)
-    if (ord(substr($buffer, 4, 1)) != 0x00)
-    {
-	warn "This is not an Ogg bitstream (invalid structure version).";
-	return undef;
-    }
-    $byteCount += 1;
+	my $byteCount = 0; 
 
-    # check the header type flag 
-    # This is a bitfield, so technically we should check all of the bits
-    # that could potentially be set. However, the only value this should
-    # possibly have at the beginning of a proper Ogg-Vorbis file is 0x02,
-    # so we just check for that. If it's not that, we go on anyway, but
-    # give a warning (this behavior may (should?) be modified in the future.
-    if (ord(substr($buffer, 5, 1)) != 0x02)
-    {
-	warn "Invalid header type flag (trying to go ahead anyway).";
-    }
-    $byteCount += 1;
+	# check that the first four bytes are 'OggS'
+	read($fh, $buffer, 27);
 
-    # read the number of page segments
-    $pageSegCount = ord(substr($buffer, 26, 1));
-    $byteCount += 21;
+	if (substr($buffer, 0, 4) ne 'OggS') {
+		warn "This is not an Ogg bitstream (no OggS header).";
+		return undef;
+	}
 
-    # read $pageSegCount bytes, then throw 'em out
-    seek($fh, $pageSegCount, 1);
-    $byteCount += $pageSegCount;
+	$byteCount += 4;
 
-    # check packet type. Should be 0x01 (for indentification header)
-    read($fh, $buffer, 7);
-    if (ord(substr($buffer, 0, 1)) != 0x01)
-    {
-	warn "Wrong vorbis header type, giving up.";
-	return undef;
-    }
-    $byteCount += 1;
+	# check the stream structure version (1 byte, should be 0x00)
+	if (ord(substr($buffer, 4, 1)) != 0x00) {
+		warn "This is not an Ogg bitstream (invalid structure version).";
+		return undef;
+	}
 
-    # check that the packet identifies itself as 'vorbis'
-    if (substr($buffer, 1, 6) ne 'vorbis')
-    {
-	warn "This does not appear to be a vorbis stream, giving up.";
-	return undef;
-    }
-    $byteCount += 6;
+	$byteCount += 1;
 
-    # at this point, we assume the bitstream is valid
-    return $byteCount;
+	# check the header type flag 
+	# This is a bitfield, so technically we should check all of the bits
+	# that could potentially be set. However, the only value this should
+	# possibly have at the beginning of a proper Ogg-Vorbis file is 0x02,
+	# so we just check for that. If it's not that, we go on anyway, but
+	# give a warning (this behavior may (should?) be modified in the future.
+	if (ord(substr($buffer, 5, 1)) != 0x02) {
+		warn "Invalid header type flag (trying to go ahead anyway).";
+	}
+
+	$byteCount += 1;
+
+	# read the number of page segments
+	$pageSegCount = ord(substr($buffer, 26, 1));
+	$byteCount += 21;
+
+	# read $pageSegCount bytes, then throw 'em out
+	seek($fh, $pageSegCount, 1);
+	$byteCount += $pageSegCount;
+
+	# check packet type. Should be 0x01 (for indentification header)
+	read($fh, $buffer, 7);
+	if (ord(substr($buffer, 0, 1)) != 0x01) {
+		warn "Wrong vorbis header type, giving up.";
+		return undef;
+	}
+
+	$byteCount += 1;
+
+	# check that the packet identifies itself as 'vorbis'
+	if (substr($buffer, 1, 6) ne 'vorbis') {
+		warn "This does not appear to be a vorbis stream, giving up.";
+		return undef;
+	}
+
+	$byteCount += 6;
+
+	# at this point, we assume the bitstream is valid
+	return $byteCount;
 }
 
-sub _loadInfo
-{
-    my $data = shift;
+sub _loadInfo {
+	my $data = shift;
 
-    my $start = $data->{'startInfoHeader'};
-    my $fh = $data->{'fileHandle'};
+	my $start = $data->{'startInfoHeader'};
+	my $fh = $data->{'fileHandle'};
 
-    my $byteCount = $start + 23;
-    my %info = ();
-    
-    seek($fh, $start, 0);
- 
-    # read the vorbis version
-    read($fh, my $buffer, 23);
-    $info{'version'} = _decodeInt(substr($buffer, 0, 4, ''));
-    
-    # read the number of audio channels
-    $info{'channels'} = ord(substr($buffer, 0, 1, ''));
+	my $byteCount = $start + 23;
+	my %info = ();
 
-    # read the sample rate
-    $info{'rate'} = _decodeInt(substr($buffer, 0, 4, ''));
-    
-    # read the bitrate maximum
-    $info{'bitrate_upper'} = _decodeInt(substr($buffer, 0, 4, ''));
+	seek($fh, $start, 0);
 
-    # read the bitrate nominal
-    $info{'bitrate_nominal'} = _decodeInt(substr($buffer, 0, 4, ''));
+	# read the vorbis version
+	read($fh, my $buffer, 23);
+	$info{'version'} = _decodeInt(substr($buffer, 0, 4, ''));
 
-    # read the bitrate minimal
-    $info{'bitrate_lower'} = _decodeInt(substr($buffer, 0, 4, ''));
+	# read the number of audio channels
+	$info{'channels'} = ord(substr($buffer, 0, 1, ''));
 
-    # read the blocksize_0 and blocksize_1
-    # these are each 4 bit fields, whose actual value is 2 to the power
-    # of the value of the field
-    my $blocksize = substr($buffer, 0, 1, '');
-    $info{'blocksize_0'} = 2 << ((ord($blocksize) & 0xF0) >> 4);
-    $info{'blocksize_1'} = 2 << (ord($blocksize) & 0x0F);
+	# read the sample rate
+	$info{'rate'} = _decodeInt(substr($buffer, 0, 4, ''));
 
-    # read the framing_flag
-    $info{'framing_flag'} = ord(substr($buffer, 0, 1, ''));
+	# read the bitrate maximum
+	$info{'bitrate_upper'} = _decodeInt(substr($buffer, 0, 4, ''));
 
-    # bitrate_window is -1 in the current version of vorbisfile
-    $info{'bitrate_window'} = -1;
+	# read the bitrate nominal
+	$info{'bitrate_nominal'} = _decodeInt(substr($buffer, 0, 4, ''));
 
-    $data->{'startCommentHeader'} = $byteCount;
+	# read the bitrate minimal
+	$info{'bitrate_lower'} = _decodeInt(substr($buffer, 0, 4, ''));
 
-    $data->{'INFO'} = \%info;
+	# read the blocksize_0 and blocksize_1
+	# these are each 4 bit fields, whose actual value is 2 to the power
+	# of the value of the field
+	my $blocksize = substr($buffer, 0, 1, '');
+	$info{'blocksize_0'} = 2 << ((ord($blocksize) & 0xF0) >> 4);
+	$info{'blocksize_1'} = 2 << (ord($blocksize) & 0x0F);
+
+	# read the framing_flag
+	$info{'framing_flag'} = ord(substr($buffer, 0, 1, ''));
+
+	# bitrate_window is -1 in the current version of vorbisfile
+	$info{'bitrate_window'} = -1;
+
+	$data->{'startCommentHeader'} = $byteCount;
+
+	$data->{'INFO'} = \%info;
 }
 
-sub _loadComments
-{
-    my $data = shift;
-    my $fh = $data->{'fileHandle'};
-    my $start = $data->{'startCommentHeader'};
-    my $page_segments;
-    my $vendor_length;
-    my $user_comment_count;
-    my $byteCount = $start;
-    my %comments;
+sub _loadComments {
 
-    seek($fh, $start, 0);
-    read($fh, my $buffer, 8192);
+	my $data = shift;
+	my $fh = $data->{'fileHandle'};
+	my $start = $data->{'startCommentHeader'};
+	my $page_segments;
+	my $vendor_length;
+	my $user_comment_count;
+	my $byteCount = $start;
+	my %comments;
 
-    # check that the first four bytes are 'OggS'
-    if (substr($buffer, 0, 4, '') ne 'OggS') {
-	warn "No comment header?";
-	return undef;
-    }
+	seek($fh, $start, 0);
+	read($fh, my $buffer, 8192);
 
-    $byteCount += 4;
+	# check that the first four bytes are 'OggS'
+	if (substr($buffer, 0, 4, '') ne 'OggS') {
+		warn "No comment header?";
+		return undef;
+	}
 
-    # read the stream serial number
-    substr($buffer, 0, 10, '');
-    push @{$data->{'commentSerialNumber'}}, _decodeInt(substr($buffer, 0, 4, ''));
-    $byteCount += 14;
+	$byteCount += 4;
 
-    # read the page sequence number (should be 0x01)
-    if (_decodeInt(substr($buffer, 0, 4, '')) != 0x01) {
-	warn "Comment header page sequence number is not 0x01: " + _decodeInt($buffer);
-	warn "Going to keep going anyway.";
-    }
-    $byteCount += 4;
+	# read the stream serial number
+	substr($buffer, 0, 10, '');
+	push @{$data->{'commentSerialNumber'}}, _decodeInt(substr($buffer, 0, 4, ''));
+	$byteCount += 14;
 
-    # get the number of entries in the segment_table...
-    substr($buffer, 0, 4, '');
-    $page_segments = _decodeInt(substr($buffer, 0, 1, ''));
-    $byteCount += 5;
+	# read the page sequence number (should be 0x01)
+	if (_decodeInt(substr($buffer, 0, 4, '')) != 0x01) {
+		warn "Comment header page sequence number is not 0x01: " + _decodeInt($buffer);
+		warn "Going to keep going anyway.";
+	}
+	$byteCount += 4;
 
-    # then skip on past it
-    substr($buffer, 0, $page_segments, '');
-    $byteCount += $page_segments;
+	# get the number of entries in the segment_table...
+	substr($buffer, 0, 4, '');
+	$page_segments = _decodeInt(substr($buffer, 0, 1, ''));
+	$byteCount += 5;
 
-    # check the header type (should be 0x03)
-    if (ord(substr($buffer, 0, 1, '')) != 0x03) {
-	warn "Wrong header type: " . ord($buffer);
-    }    
-    $byteCount += 1;
+	# then skip on past it
+	substr($buffer, 0, $page_segments, '');
+	$byteCount += $page_segments;
 
-    # now we should see 'vorbis'
-    if (substr($buffer, 0, 6, '') ne 'vorbis') {
-	warn "Missing comment header. Should have found 'vorbis', found $buffer\n";
-    }
-    $byteCount += 6;
+	# check the header type (should be 0x03)
+	if (ord(substr($buffer, 0, 1, '')) != 0x03) {
+		warn "Wrong header type: " . ord($buffer);
+	}
+	$byteCount += 1;
 
-    # get the vendor length
-    $vendor_length = _decodeInt(substr($buffer, 0, 4, ''));
-    $byteCount += 4;
+	# now we should see 'vorbis'
+	if (substr($buffer, 0, 6, '') ne 'vorbis') {
+		warn "Missing comment header. Should have found 'vorbis', found $buffer\n";
+	}
+	$byteCount += 6;
 
-    # read in the vendor
-    $comments{'vendor'} = substr($buffer, 0, $vendor_length, '');
-    $byteCount += $vendor_length;
+	# get the vendor length
+	$vendor_length = _decodeInt(substr($buffer, 0, 4, ''));
+	$byteCount += 4;
 
-    # read in the number of user comments
-    $user_comment_count = _decodeInt(substr($buffer, 0, 4, ''));
-    $byteCount += 4;
+	# read in the vendor
+	$comments{'vendor'} = substr($buffer, 0, $vendor_length, '');
+	$byteCount += $vendor_length;
 
-    # finally, read the comments
-    $data->{'COMMENT_KEYS'} = [];
+	# read in the number of user comments
+	$user_comment_count = _decodeInt(substr($buffer, 0, 4, ''));
+	$byteCount += 4;
 
-    for (my $i = 0; $i < $user_comment_count; $i++) {
+	# finally, read the comments
+	$data->{'COMMENT_KEYS'} = [];
+
+	for (my $i = 0; $i < $user_comment_count; $i++) {
 
 	# first read the length
 	my $comment_length = _decodeInt(substr($buffer, 0, 4, ''));
-	$byteCount += 4;
+		$byteCount += 4;
 
-	# then the comment itself
-	$byteCount += $comment_length;
+		# then the comment itself
+		$byteCount += $comment_length;
 
-	my ($key, $value) = split(/=/, substr($buffer, 0, $comment_length, ''));
+		my ($key, $value) = split(/=/, substr($buffer, 0, $comment_length, ''));
 
-	my $lcKey = lc($key);
+		my $lcKey = lc($key);
 
-	push @{$comments{$lcKey}}, $value;
-	push @{$data->{'COMMENT_KEYS'}}, $lcKey;
-    }
-    
-    # read past the framing_bit
-    $byteCount += 1;
-    seek($fh, $byteCount, 1);
+		push @{$comments{$lcKey}}, $value;
+		push @{$data->{'COMMENT_KEYS'}}, $lcKey;
+	}
 
-    $data->{'INFO'}{'offset'} = $byteCount;
+	# read past the framing_bit
+	$byteCount += 1;
+	seek($fh, $byteCount, 1);
 
-    $data->{'COMMENTS'} = \%comments;
+	$data->{'INFO'}{'offset'} = $byteCount;
+
+	$data->{'COMMENTS'} = \%comments;
 }
 
 sub _calculateTrackLength {
@@ -354,7 +302,16 @@ sub _calculateTrackLength {
 	# The original author was doing something pretty lame, and was walking the
 	# entire file to find the last granule_position. Instead, let's seek to
 	# the end of the file - blocksize_0, and read from there.
-	my $len = $data->{'INFO'}{'blocksize_0'};
+	my $len = 0;
+
+	# Bug 1155 - Seek further back to get the granule_position.
+	# However, for short tracks, don't seek that far back.
+	if (($data->{'filesize'} - $data->{'INFO'}{'offset'}) > ($data->{'INFO'}{'blocksize_0'} * 2)) {
+
+		$len = $data->{'INFO'}{'blocksize_0'} * 2;
+	} else {
+		$len = $data->{'INFO'}{'blocksize_0'};
+	}
 
 	if ($len == 0) {
 		print "Ogg::Vorbis::Header::PurePerl:\n";
