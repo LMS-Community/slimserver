@@ -197,7 +197,7 @@ sub new {
 	$client->[16] = undef; # resync
 	$client->[17] = undef; # streamingsocket
 	$client->[18] = undef; # mp3filehandle
-	$client->[19] = undef; # mp3filehandleIsSocket
+	$client->[19] = 0; # mp3filehandleIsSocket
 	$client->[20] = []; # chunks
 	$client->[21] = undef; # songStartStreamTime
 	$client->[22] = undef; # remoteStreamStartTime
