@@ -13,7 +13,7 @@
 	[% pwd_list %]
 
     <p><hr><p>
-	[% IF warn %]<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF not itunes %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]<p><hr><p>[% END %]
+	[% IF warn %]<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]<p><hr><p>[% END %]
 	[% IF browselist_header %][% browselist_header %][% END %]
     [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
     <table cellspacing="0" border="0" cellpadding="4" width="100%">

@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.125 2004/12/07 20:19:54 dsully Exp $
+# $Id: Source.pm,v 1.126 2004/12/17 10:09:35 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -46,9 +46,6 @@ my %commandTable = ();
 %Slim::Player::Source::protocolHandlers = ( 
 	http => qw(Slim::Player::Protocols::HTTP),
 	icy => qw(Slim::Player::Protocols::HTTP),
-	itunesplaylist => '0',
-	moodlogicplaylist => '0',
-	musicmagicplaylist => '0',
 	file => '0'
 );
 

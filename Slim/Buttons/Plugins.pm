@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.31 2004/12/07 20:19:48 dsully Exp $
+# $Id: Plugins.pm,v 1.32 2004/12/17 10:09:30 kdf Exp $
 #
 package Slim::Buttons::Plugins;
 
@@ -21,6 +21,8 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 
 use FindBin qw($Bin);
+
+my $addGroups = 0;
 
 sub pluginDirs {
 	my @pluginDirs = catdir($Bin, "Plugins");
@@ -277,6 +279,8 @@ sub addWebPages {
 sub addSetupGroups {
 	no strict 'refs';
 
+	return if $addGroups && !Slim::Utils::Prefs::get('plugins-onthefly');
+
 	for my $plugin (keys %{installedPlugins()}) {
 
 		next unless UNIVERSAL::can("Plugins::${plugin}","setupGroup");
@@ -320,6 +324,7 @@ sub addSetupGroups {
 			}
 		}
 	}
+	$addGroups = 1;
 }
 
 sub init {

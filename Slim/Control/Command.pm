@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.52 2004/12/16 01:13:53 vidur Exp $
+# $Id: Command.pm,v 1.53 2004/12/17 10:09:31 kdf Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -874,7 +874,7 @@ sub gotosleep {
 
 sub mute {
 	my $client = shift;
-	$client->mute()
+	$client->mute();
 }
 
 sub turnitoff {

@@ -14,7 +14,7 @@
 
 	[% IF song_count %]<p>[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %]</p>[% END %]
     <p><hr><p>
-	[% IF warn %]<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF not itunes %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]<p><hr><p>[% END %]
+	[% IF warn %]<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]<p><hr><p>[% END %]
 	[% IF browselist_header %][% browselist_header %][% END %]
     [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 		[% IF coverart %]

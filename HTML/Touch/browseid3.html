@@ -9,7 +9,7 @@
 [%- PROCESS pageheader.html -%]
 [%- PROCESS menu.html -%]
 
-[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF not itunes %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]"><font class="pagebartext">[% "HERE" | string %]</a>.[% END %]</p>[% END %]
+[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]"><font class="pagebartext">[% "HERE" | string %]</a>.[% END %]</p>[% END %]
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
     <tr><td><font class="pagebartext">&nbsp;&nbsp;[% pwd_list %]</td></tr>

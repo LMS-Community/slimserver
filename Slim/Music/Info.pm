@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.166 2004/12/16 01:13:55 vidur Exp $
+# $Id: Info.pm,v 1.167 2004/12/17 10:09:33 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -55,7 +55,9 @@ my %genreMMMixCache = ();
 my %artistMMMixCache = ();
 my %albumMMMixCache = ();
 
-my $artworkDir;
+my %artworkCache = ();
+my $artworkDir='';
+
 my %lastFile;
 
 my ($currentDB, $localDB);
@@ -1101,31 +1103,19 @@ sub coverArt {
 	$::d_artwork && Slim::Utils::Misc::msg("Retrieving artwork ($art) for: $file\n");
 	
 	my ($body, $contenttype, $mtime, $path);
-	my $artwork = haveCoverArt($file);
-	my $artworksmall = haveThumbArt($file);
+	my $artwork = $art eq 'cover' ? haveCoverArt($file) : haveThumbArt($file);
 	
-	if (($art eq 'cover') && $artwork && ($artwork ne '1')) {
+	if ($artwork && ($artwork ne '1')) {
 		$body = getImageContent($artwork);
 		if ($body) {
-			$::d_artwork && Slim::Utils::Misc::msg("Found cached artwork file: $artwork\n");
+			$::d_artwork && Slim::Utils::Misc::msg("Found cached $art file: $artwork\n");
 			$contenttype = mimeType(Slim::Utils::Misc::fileURLFromPath($artwork));
 			$path = $artwork;
 		} else {
 			($body, $contenttype, $path) = readCoverArt($file, $art);
 		}
 	} 
-	elsif (($art eq 'thumb') && $artworksmall && ($artworksmall ne '1')) {
-		$body = getImageContent($artworksmall);
-		if ($body) {
-			$::d_artwork && Slim::Utils::Misc::msg("Found cached artwork-small file: $artworksmall\n");
-			$contenttype = mimeType(Slim::Utils::Misc::fileURLFromPath($artworksmall));
-			$path = $artworksmall;
-		} else {
-			($body, $contenttype, $path) = readCoverArt($file, $art);
-		}
-	}
-	elsif ( (($art eq 'cover') && $artwork) || 
-			(($art eq 'thumb') && $artworksmall) ) {
+	else {
 		($body, $contenttype,$path) = readCoverArt($file,$art);
 	}
 
@@ -1771,7 +1761,6 @@ sub readCoverArtFiles {
 		if ($body) {
 			$::d_artwork && Slim::Utils::Misc::msg("Found $image file: $artpath\n\n");
 			$contenttype = mimeType(Slim::Utils::Misc::fileURLFromPath($artpath));
-			$lastFile{$image} = $artpath;
 			return ($body, $contenttype, $artpath);
 		}
 	} elsif (defined($artwork)) {

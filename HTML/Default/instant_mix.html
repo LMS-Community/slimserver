@@ -28,7 +28,7 @@
 <tr height="100%">
 				<td width="4" height="100%"></td>
 				
-  <td valign="top" height="100%"><BR> [% IF warn %]<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF not itunes %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %] 
+  <td valign="top" height="100%"><BR> [% IF warn %]<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %] 
     [% END %] [% IF browselist_header %][% browselist_header %][% END %] [% IF browselist_pagebar %] 
     <p>[% browselist_pagebar %]</p>
     <p>[% END %] </p>

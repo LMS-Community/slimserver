@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.116 2004/12/16 22:05:40 dsully Exp $
+# $Id: Setup.pm,v 1.117 2004/12/17 10:09:38 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -544,6 +544,7 @@ sub initSetupConfig {
 					my ($client,$paramref,$pageref) = @_;
 					return if (!defined($client));
 					playerChildren($client, $pageref);
+					Slim::Buttons::Plugins::addSetupGroups();
 					$pageref->{'Prefs'}{'menuItemAction'}{'arrayMax'} = Slim::Utils::Prefs::clientGetArrayMax($client,'menuItem');
 					my $i = 0;
 					foreach my $nonItem (Slim::Buttons::Home::unusedMenuOptions($client)) {
@@ -1115,81 +1116,32 @@ sub initSetupConfig {
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
 				return if (!defined($client));
+				Slim::Buttons::Plugins::addSetupGroups();
 				playerChildren($client, $pageref);
 			}
 	} # end of setup{'ADDITIONAL_PLAYER'} hash
 
 	,'server' => {
 		'children' => ['server','interface','behavior',
-		'itunes','formats',
-		'formatting','security','performance','network','debug',undef,undef]
+		'formats',
+		'formatting','security','performance','network','debug']
 		,'title' => string('SERVER_SETTINGS')
 		,'singleChildLinkText' => string('ADDITIONAL_SERVER_SETTINGS')
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
 				Slim::Buttons::Plugins::addSetupGroups();
-				if (Slim::Music::iTunes::canUseiTunesLibrary()) {
-					$pageref->{'GroupOrder'}[1] = 'itunes';
-				} else {
-					$pageref->{'GroupOrder'}[1] = undef;
-				}
-
-				if (Slim::Music::MoodLogic::canUseMoodLogic()) {
-					$pageref->{'GroupOrder'}[2] = 'moodlogic';
-					$pageref->{'children'}[12] = 'moodlogic';
-				} else {
-					$pageref->{'GroupOrder'}[2] = undef;
-					$pageref->{'children'}[12] = undef;
-				}
 				
-				if (Slim::Music::MusicMagic::canUseMusicMagic()) {
-					$pageref->{'GroupOrder'}[3] = 'musicmagic';
-					$pageref->{'children'}[13] = 'musicmagic';
-				} else {
-					$pageref->{'GroupOrder'}[3] = undef;
-					$pageref->{'children'}[13] = undef;
-				}
-
 				$paramref->{'versionInfo'} = string('SERVER_VERSION') . string("COLON") . $::VERSION;
 				$paramref->{'newVersion'} = $::newVersion;
 			}
-		,'GroupOrder' => ['language', undef, undef, undef, 'Default']
-			#if able to use iTunesLibrary then undef at [1] will be replaced by 'iTunes'
+		,'GroupOrder' => ['language', 'Default']
 		#,'template' => 'setup_server.html'
 		,'Groups' => {
 				'language' => {
 						'PrefOrder' => ['language']
 						},
-				'itunes' => {
-						'PrefOrder' => ['itunes']
-						,'PrefsInTable' => 1
-						,'Suppress_PrefHead' => 1
-						,'Suppress_PrefDesc' => 1
-						,'Suppress_PrefLine' => 1
-						,'Suppress_PrefSub' => 1
-						,'GroupHead' => string('SETUP_ITUNES')
-						,'GroupDesc' => string('SETUP_ITUNES_DESC')
-						,'GroupLine' => 1
-						,'GroupSub' => 1
-						},
-				'moodlogic' => {
-						'PrefOrder' => ['moodlogic']
-						,'Suppress_PrefLine' => 1
-						,'Suppress_PrefSub' => 1
-						,'GroupLine' => 1
-						,'GroupSub' => 1
-					},
-				'musicmagic' => {
-						'PrefOrder' => ['musicmagic']
-						,'Suppress_PrefLine' => 1
-						,'Suppress_PrefSub' => 1
-						,'GroupLine' => 1
-						,'GroupSub' => 1
-					},
 				'Default' => {
 						'PrefOrder' => ['audiodir','playlistdir','rescan',undef]
-						#if not able to use iTunesLibrary then undef at [0] will be replaced by 'audiodir'
-						#if not using iTunesLibrary then undef at [2] will be replaced by 'rescan'
 						}
 			}
 		,'Prefs' => {
@@ -1197,36 +1149,6 @@ sub initSetupConfig {
 							'validate' => \&validateInHash
 							,'validateArgs' => [\&Slim::Utils::Strings::hash_of_languages]
 							,'options' => undef #filled by initSetup using Slim::Utils::Strings::hash_of_languages()
-						}
-				,'itunes'	=> {
-							'validate' => \&validateTrueFalse
-							,'changeIntro' => ""
-							,'options' => {
-									'1' => string('USE_ITUNES')
-									,'0' => string('DONT_USE_ITUNES')
-								}
-							,'optionSort' => 'KR'
-							,'inputTemplate' => 'setup_input_radio.html'
-						}
-				,'moodlogic' => {
-							'validate' => \&validateTrueFalse
-							,'changeIntro' => ""
-							,'options' => {
-								'1' => string('USE_MOODLOGIC')
-								,'0' => string('DONT_USE_MOODLOGIC')
-							}
-							,'optionSort' => 'KR'
-							,'inputTemplate' => 'setup_input_radio.html'
-						}
-				,'musicmagic' => {
-							'validate' => \&validateTrueFalse
-							,'changeIntro' => ""
-							,'options' => {
-								'1' => string('USE_MUSICMAGIC')
-								,'0' => string('DONT_USE_MUSICMAGIC')
-							}
-							,'optionSort' => 'KR'
-							,'inputTemplate' => 'setup_input_radio.html'
 						}
 				,'audiodir'	=> {
 							'validate' => \&validateIsAudioDir
@@ -1262,6 +1184,7 @@ sub initSetupConfig {
 		,'parent' => 'server'
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
+				Slim::Buttons::Plugins::addSetupGroups();
 				my $i = 0;
 				my %plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 				my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
@@ -1346,7 +1269,7 @@ sub initSetupConfig {
 		'title' => string('RADIO')
 		,'parent' => 'server'
 		,'preEval' => sub {
-				Slim::Buttons::Plugins::addSetupGroups();
+				#Slim::Buttons::Plugins::addSetupGroups();
 			}
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
@@ -2057,160 +1980,6 @@ sub initSetupConfig {
 				}
 			}
 		} #end of setup{'debug'} hash
-		
-	,'itunes' => {
-		'title' => string('SETUP_ITUNES')
-		,'parent' => 'server'
-		,'GroupOrder' => ['Default','iTunesPlaylistFormat']
-		,'Groups' => {
-			'Default' => {
-					'PrefOrder' => ['itunesscaninterval','ignoredisableditunestracks','itunes_library_autolocate','itunes_library_xml_path','itunes_library_music_path']
-				}
-			,'iTunesPlaylistFormat' => {
-					'PrefOrder' => ['iTunesplaylistprefix','iTunesplaylistsuffix']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_ITUNESPLAYLISTFORMAT')
-					,'GroupDesc' => string('SETUP_ITUNESPLAYLISTFORMAT_DESC')
-					,'GroupLine' => 1
-					,'GroupSub' => 1
-				}
-
-			}
-		,'Prefs' => {
-			'itunesscaninterval' => {
-						'validate' => \&validateNumber
-						,'validateArgs' => [0,undef,1000]
-				}
-			,'iTunesplaylistprefix' => {
-						'validate' => \&validateAcceptAll
-						,'PrefSize' => 'large'
-					}
-			,'iTunesplaylistsuffix' => {
-						'validate' => \&validateAcceptAll
-						,'PrefSize' => 'large'
-					}
-			,'ignoredisableditunestracks' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_1')
-								,'0' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_0')
-							}
-					}
-			,'itunes_library_xml_path' => {
-						'validate' => \&validateIsFile
-						,'changeIntro' => string('SETUP_OK_USING')
-						,'rejectMsg' => string('SETUP_BAD_FILE')
-						,'PrefSize' => 'large'
-					}
-			,'itunes_library_music_path' => {
-						'validate' => \&validateIsDir
-						,'changeIntro' => string('SETUP_OK_USING')
-						,'rejectMsg' => string('SETUP_BAD_DIRECTORY')
-						,'PrefSize' => 'large'
-					}
-			,'itunes_library_autolocate' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_ITUNES_LIBRARY_AUTOLOCATE_1')
-								,'0' => string('SETUP_ITUNES_LIBRARY_AUTOLOCATE_0')
-							}
-					}
-			}
-		}
-	,'moodlogic' => {
-		'title' => string('SETUP_MOODLOGIC')
-		,'parent' => 'server'
-		,'GroupOrder' => ['Default','MoodLogicPlaylistFormat']
-		,'Groups' => {
-			'Default' => {
-					'PrefOrder' => ['instantMixMax','varietyCombo','moodlogicscaninterval']
-				}
-			,'MoodLogicPlaylistFormat' => {
-					'PrefOrder' => ['MoodLogicplaylistprefix','MoodLogicplaylistsuffix']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_MOODLOGICPLAYLISTFORMAT')
-					,'GroupDesc' => string('SETUP_MOODLOGICPLAYLISTFORMAT_DESC')
-					,'GroupLine' => 1
-					,'GroupSub' => 1
-				}
-			}
-		,'Prefs' => {
-			'MoodLogicplaylistprefix' => {
-						'validate' => \&validateAcceptAll
-						,'PrefSize' => 'large'
-					}
-			,'MoodLogicplaylistsuffix' => {
-						'validate' => \&validateAcceptAll
-						,'PrefSize' => 'large'
-					}
-			,'moodlogicscaninterval' => {
-						'validate' => \&validateNumber
-						,'validateArgs' => [0,undef,1000]
-				}
-			,'instantMixMax'	=> {
-						'validate' => \&validateInt
-						,'validateArgs' => [1,undef,1]
-					}
-			,'varietyCombo'	=> {
-						'validate' => \&validateInt
-						,'validateArgs' => [1,100,1,1]
-					}
-			}
-		}
-	,'musicmagic' => {
-		'title' => string('SETUP_MUSICMAGIC')
-		,'parent' => 'server'
-		,'GroupOrder' => ['Default','MusicMagicPlaylistFormat']
-		,'Groups' => {
-			'Default' => {
-					#'PrefOrder' => ['instantMixMax','varietyCombo','musicmagicscaninterval']
-					'PrefOrder' => ['instantMixMax','musicmagicscaninterval','MMSport']
-				}
-			,'MusicMagicPlaylistFormat' => {
-					'PrefOrder' => ['MusicMagicplaylistprefix','MusicMagicplaylistsuffix']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_MUSICMAGICPLAYLISTFORMAT')
-					,'GroupDesc' => string('SETUP_MUSICMAGICPLAYLISTFORMAT_DESC')
-					,'GroupLine' => 1
-					,'GroupSub' => 1
-				}
-			}
-		,'Prefs' => {
-			'MusicMagicplaylistprefix' => {
-						'validate' => \&validateAcceptAll
-						,'PrefSize' => 'large'
-					}
-			,'MusicMagicplaylistsuffix' => {
-						'validate' => \&validateAcceptAll
-						,'PrefSize' => 'large'
-					}
-			,'musicmagicscaninterval' => {
-						'validate' => \&validateNumber
-						,'validateArgs' => [0,undef,1000]
-				}
-			,'instantMixMax'	=> {
-						'validate' => \&validateInt
-						,'validateArgs' => [1,undef,1]
-					}
-			,'MMSport'	=> {
-						'validate' => \&validateInt
-						,'validateArgs' => [1025,65535,undef,1]
-					}
-			}
-		}
-		
 	); #end of setup hash
 	foreach my $key (sort keys %main:: ) {
 		next unless $key =~ /^d_/;
@@ -2221,11 +1990,13 @@ sub initSetupConfig {
 		$setup{'debug'}{'Prefs'}{$key}{'changeIntro'} = $key;
 	}
 	if (scalar(keys %{Slim::Buttons::Plugins::installedPlugins()})) {
-		$setup{'server'}{'children'}[10]='plugins';
+		#$setup{'server'}{'children'}[10]='plugins';
+		Slim::Web::Setup::addChildren('server','plugins');
 		# XXX This should be added conditionally based on whether there
 		# are any radio plugins. We need to find a place to make that
 		# check *after* plugins have been correctly initialized.
-		$setup{'server'}{'children'}[11]='radio';
+		#$setup{'server'}{'children'}[11]='radio';
+		Slim::Web::Setup::addChildren('server','radio');
 	}
 }
 
@@ -2696,8 +2467,7 @@ sub playlists {
 	
 	return undef unless Slim::Utils::Prefs::get('playlistdir');
 	Slim::Utils::Scan::addToList(\@list, Slim::Utils::Prefs::get('playlistdir'), 0);
-	if (Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic() ||
-		Slim::Music::MusicMagic::useMusicMagic()) {
+	if (scalar  @{Slim::Music::Info::playlists()}) {
 		push @list, @{Slim::Music::Info::playlists()};
 	}
 	foreach my $item ( @list) {
@@ -3080,25 +2850,33 @@ sub delPref {
 # group data must be supplied.  If a reference to a hash of preferences is supplied,
 # they will also be added to the category.
 sub addGroup {
-	my ($category,$groupname,$groupref,$position,$prefsref) = @_;
+	my ($category,$groupname,$groupref,$position,$prefsref,$categoryKey) = @_;
 	unless (exists $setup{$category}) {
 		warn "Category $category does not exist\n";
 		return;
 	}
-	unless (defined $groupname && defined $groupref) {
+	unless (defined $groupname && (defined $groupref || defined $categoryKey)) {
 		warn "No group information supplied!\n";
 		return;
 	}
-	$setup{$category}{'Groups'}{$groupname} = $groupref;
+	
+	$categoryKey = 'GroupOrder' unless defined $categoryKey;
+	
+	if (defined $prefsref) {
+		$setup{$category}{'Groups'}{$groupname} = $groupref;
+	}
+	
 	my $found = 0;
-	foreach (@{$setup{$category}{'GroupOrder'}}) {
+	foreach (@{$setup{$category}{$categoryKey}}) {
+		next if !defined $_;
 		$found = 1,last if $_ eq $groupname;
 	}
 	if (!$found) {
-		if (!defined $position || $position > scalar(@{$setup{$category}{'GroupOrder'}})) {
-			$position = scalar(@{$setup{$category}{'GroupOrder'}});
+		if (!defined $position || $position > scalar(@{$setup{$category}{$categoryKey}})) {
+			$position = scalar(@{$setup{$category}{$categoryKey}});
 		}
-		splice(@{$setup{$category}{'GroupOrder'}},$position,0,$groupname);
+		$::d_prefs && msg("Adding $groupname to $position position in $categoryKey\n");
+		splice(@{$setup{$category}{$categoryKey}},$position,0,$groupname);
 	}
 	if (defined $prefsref) {
 		my ($pref,$prefref);
@@ -3139,6 +2917,14 @@ sub delGroup {
 			delPref($category,$pref);
 		}
 	}
+	return;
+}
+
+sub addChildren {
+	my ($category,$child,$position) = @_;
+	my $categoryKey = 'children';
+	
+	addGroup($category,$child,undef,$position,undef,$categoryKey);
 	return;
 }
 

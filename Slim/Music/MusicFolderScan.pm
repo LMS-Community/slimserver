@@ -39,8 +39,7 @@ sub doneScanning {
 
 	$stillScanning = 0;
 	@dummylist = ();
-
-	Slim::Music::Import::endImport('folder');
+	Slim::Music::Import::endImporter('folder');
 }
 
 sub stillScanning {

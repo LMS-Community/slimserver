@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.60 2004/12/16 01:03:42 dsully Exp $
+# $Id: Misc.pm,v 1.61 2004/12/17 10:09:36 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -424,7 +424,7 @@ sub virtualToAbsolute {
 # this was breaking songinfo and other pages when using windows .lnk files.
 #		last if $level eq "..";
 
-# optimization for pre-cached itunes/moodlogic/musicmagic playlists.
+# optimization for pre-cached imported playlists.
 		if (Slim::Music::Info::isPlaylistURL($curdir)) {
 			my $listref = Slim::Music::Info::cachedPlaylist(Slim::Utils::Misc::fileURLFromPath($curdir));
 			if ($listref) {

@@ -1,6 +1,6 @@
 package Slim::Buttons::InstantMix;
 
-#$Id: InstantMix.pm,v 1.8 2004/12/07 20:19:48 dsully Exp $
+#$Id: InstantMix.pm,v 1.9 2004/12/17 10:09:29 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -9,8 +9,6 @@ package Slim::Buttons::InstantMix;
 
 use strict;
 use Slim::Buttons::Common;
-use Slim::Music::MoodLogic;
-use Slim::Music::MusicMagic;
 use Slim::Utils::Timers;
 use Slim::Hardware::VFD;
 
@@ -72,13 +70,8 @@ my %functions = (
 		} else {
 			$line1 = $client->string('NOW_PLAYING_FROM')
 		}
-
-		if (Slim::Music::MoodLogic::useMoodLogic()) {
-			$line2 = $client->string('MOODLOGIC_INSTANT_MIX');
-		} else {
-			$line2 = $client->string('MUSICMAGIC_INSTANT_MIX');
-		}
-
+		$line2 = $client->string('INSTANT_MIX');
+		
 		$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')));
 		
 		Slim::Control::Command::execute($client, ["playlist", $append ? "append" : "play", $instantMix[0]]);
@@ -100,28 +93,10 @@ sub setMode {
 	if ($push eq "push") {
 		setSelection($client, 'instant_mix_index', 0);
 		
-		if (Slim::Music::MoodLogic::useMoodLogic()) {
-			if (defined Slim::Buttons::Common::param($client, 'song')) {
-				@instantMix = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicSongId(Slim::Buttons::Common::param($client, 'song')), undef, 'song');
-			} elsif (defined Slim::Buttons::Common::param($client, 'artist') && defined Slim::Buttons::Common::param($client, 'mood')) {
-				@instantMix = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicArtistId(Slim::Buttons::Common::param($client, 'artist')), Slim::Buttons::Common::param($client, 'mood'), 'artist');
-			} elsif (defined Slim::Buttons::Common::param($client, 'genre') && defined Slim::Buttons::Common::param($client, 'mood')) {
-				@instantMix = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicGenreId(Slim::Buttons::Common::param($client, 'genre')), Slim::Buttons::Common::param($client, 'mood'), 'genre');
-			} else {
+		if (defined Slim::Buttons::Common::param($client, 'mix')) {
+				@instantMix = @{Slim::Buttons::Common::param($client,'mix')};
+		} else {
 				die 'no/unknown type specified for instant mix';
-			}
-		} elsif (Slim::Music::MusicMagic::useMusicMagic()) {
-			if (defined Slim::Buttons::Common::param($client, 'song')) {
-				@instantMix = Slim::Music::MusicMagic::getMix(Slim::Buttons::Common::param($client, 'song'), 'song');
-			} elsif (defined Slim::Buttons::Common::param($client, 'album')) {
-				@instantMix = Slim::Music::MusicMagic::getMix(Slim::Buttons::Common::param($client, 'album'), 'album');
-			} elsif (defined Slim::Buttons::Common::param($client, 'artist')) {
-				@instantMix = Slim::Music::MusicMagic::getMix(Slim::Buttons::Common::param($client, 'artist'), 'artist');
-			} elsif (defined Slim::Buttons::Common::param($client, 'genre')) {
-				@instantMix = Slim::Music::MusicMagic::getMix(Slim::Buttons::Common::param($client, 'genre'), 'genre');
-			} else {
-				die 'no/unknown type specified for instant mix';
-			}
 		}
 	}
 	$client->lines(\&lines);
@@ -136,13 +111,9 @@ sub lines {
 	my $client = shift;
 	my ($line1, $line2);
 
-	if (Slim::Music::MoodLogic::useMoodLogic()) {
-		$line1 = $client->string('MOODLOGIC_INSTANT_MIX');
-	} else {
-		$line1 = $client->string('MUSICMAGIC_INSTANT_MIX');
-	}
-
-	$line1 .= sprintf(" (%d %s %s)", selection($client, 'instant_mix_index') + 1, $client->string('OUT_OF'), scalar @instantMix);
+	$line1 = $client->string('INSTANT_MIX');
+	
+	$line1 .= sprintf(" (%d ".$client->string('OUT_OF')." %s)", selection($client, 'instant_mix_index') + 1, scalar @instantMix);
 
 	$line2 = Slim::Music::Info::infoFormat($instantMix[selection($client, 'instant_mix_index')], 'TITLE (ARTIST)', 'TITLE');
 

@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.26 2004/12/11 23:51:33 vidur Exp $
+#$Id: MoodLogic.pm,v 1.27 2004/12/17 10:09:33 kdf Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -41,7 +41,8 @@ sub useMoodLogic {
 	}
 	
 	$use = Slim::Utils::Prefs::get('moodlogic') && $can;
-
+	Slim::Music::Import::useImporter('moodlogic',$use);
+	
 	$::d_moodlogic && msg("using moodlogic: $use\n");
 	
 	return $use;
@@ -57,6 +58,7 @@ sub playlists {
 
 sub init {
 	return $initialized if ($initialized == 1);
+	checkDefaults();
 	
 	require Win32::OLE;
 	import Win32::OLE qw(EVENTS);
@@ -113,6 +115,15 @@ sub init {
 	push @mood_names, string('MOODLOGIC_MOOD_6');
 	
 	map { $mood_hash{$_} = $i++ } @mood_names;
+
+	#Slim::Utils::Strings::addStrings($strings);
+	Slim::Web::Setup::addCategory('moodlogic',&setupCategory);
+	Slim::Player::Source::registerProtocolHandler("moodlogicplaylist", "0");
+	Slim::Music::Import::addImporter('moodlogic',\&startScan,\&mixerFunction);
+
+	my ($groupRef,$prefRef) = &setupGroup();
+	Slim::Web::Setup::addGroup('server','moodlogic',$groupRef,2,$prefRef);
+	Slim::Web::Setup::addChildren('server','moodlogic');
 	
 	$initialized = 1;
 	return $initialized;
@@ -165,14 +176,12 @@ sub startScan {
 	stopScan();
 	Slim::Music::Info::clearPlaylists();
 
-	Slim::Utils::Scheduler::add_task(\&exportFunction);
 	$isScanning = 1;
 
 	# start the checker
 	checker();
 	
-	Slim::Music::Import::startImport('moodlogic');
-	
+	Slim::Utils::Scheduler::add_task(\&exportFunction);
 } 
 
 sub stopScan {
@@ -191,37 +200,13 @@ sub doneScanning {
 
 	$isScanning = 0;
 	
-	if (Slim::Utils::Prefs::get('lookForArtwork')) {Slim::Utils::Scheduler::add_task(\&artScan);}
-
 	$lastMusicLibraryFinishTime = time();
 
 	Slim::Utils::Prefs::set('lastMoodLogicLibraryDate',(stat $mixer->{JetFilePublic})[9]);
 	
 	Slim::Music::Info::generatePlaylists();
 	
-	Slim::Music::Import::endImport('moodlogic');
-
-}
-
-sub artScan {
-	my @albums = keys %artwork;
-	my $album = $albums[0];
-	return unless $album;
-	my $thumb = Slim::Music::Info::haveThumbArt(Slim::Utils::Misc::fileURLFromPath($artwork{$album}));
-	
-	if (defined $thumb && $thumb) {
-		$::d_artwork && Slim::Utils::Misc::msg("Caching $thumb for $album\n");
-		Slim::Music::Info::updateArtworkCache($artwork{$album}, {'ALBUM' => $album, 'THUMB' => $thumb});
-	}
-	
-	delete $artwork{$album};
-	
-	if (!%artwork) {
-		$::d_artwork && Slim::Utils::Misc::msg("Completed Artwork Scan\n");
-		return 0;
-	}
-	
-	return 1;
+	Slim::Music::Import::endImporter('moodlogic');
 }
 
 sub getPlaylistItems {
@@ -362,9 +347,8 @@ sub exportFunction {
 		Slim::Music::Info::updateCacheEntry($filename, \%cacheEntry);
 
 		if (Slim::Utils::Prefs::get('lookForArtwork')) {
-			if ($cacheEntry{'ALBUM'} && !exists $artwork{$cacheEntry{'ALBUM'}} && !defined Slim::Music::Info::cacheItem($filename,'THUMB')) { 	 
-				$artwork{$cacheEntry{'ALBUM'}} = Slim::Utils::Misc::pathFromFileURL($filename); 	 
-				$::d_artwork && msg("$cacheEntry{'ALBUM'} refers to ".Slim::Utils::Misc::pathFromFileURL($filename)."\n"); 	 
+			if ($cacheEntry{'ALBUM'} && !Slim::Music::Import::artwork($cacheEntry{'ALBUM'}) && !defined Slim::Music::Info::cacheItem($filename,'THUMB')) {
+				Slim::Music::Import::artwork($cacheEntry{'ALBUM'},$filename);
 			}
 		}
 		Slim::Music::Info::updateGenreMixCache(\%cacheEntry);
@@ -404,6 +388,33 @@ sub getMoodWheel {
 	push @enabled_moods, $mood_names[0] if ($mixer->{MF_0_Enabled});
 	
 	return @enabled_moods;
+}
+
+sub mixerFunction {
+	my $client = shift;
+	
+	my $genre = Slim::Buttons::BrowseID3::selection($client,'curgenre');
+	my $artist = Slim::Buttons::BrowseID3::selection($client,'curartist');
+	my $album = Slim::Buttons::BrowseID3::selection($client,'curalbum');
+	my $currentItem = Slim::Buttons::BrowseID3::browseID3dir($client,Slim::Buttons::BrowseID3::browseID3dirIndex($client));
+	my @oldlines = Slim::Display::Display::curLines($client);
+
+	# if we've chosen a particular song
+	if (Slim::Buttons::BrowseID3::picked($genre) && Slim::Buttons::BrowseID3::picked($artist) && Slim::Buttons::BrowseID3::picked($album) && Slim::Music::Info::isSongMixable($currentItem)) {
+			Slim::Buttons::Common::pushMode($client, 'moodlogic_variety_combo', {'song' => $currentItem});
+			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+	# if we've picked an artist 
+	} elsif (Slim::Buttons::BrowseID3::picked($genre) && ! Slim::Buttons::BrowseID3::picked($album) && Slim::Music::Info::isArtistMixable($currentItem)) {
+			Slim::Buttons::Common::pushMode($client, 'moodlogic_mood_wheel', {'artist' => $currentItem});
+			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+	# if we've picked a genre 
+	} elsif (Slim::Music::Info::isGenreMixable($currentItem)) {
+			Slim::Buttons::Common::pushMode($client, 'moodlogic_mood_wheel', {'genre' => $currentItem});
+			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+	# don't do anything if nothing is mixable
+	} else {
+			$client->bumpLeft();
+	}
 }
 
 sub getMix {
@@ -470,6 +481,106 @@ sub OLEError {
 sub DESTROY {
 	Win32::OLE->Uninitialize();
 }
+
+sub setupGroup {
+	my $client = shift;
+	my %setupGroup = (
+		'PrefOrder' => ['moodlogic']
+		,'Suppress_PrefLine' => 1
+		,'Suppress_PrefSub' => 1
+		,'GroupLine' => 1
+		,'GroupSub' => 1
+	);
+	my %setupPrefs = (
+		'moodlogic' => {
+			'validate' => \&Slim::Web::Setup::validateTrueFalse
+			,'changeIntro' => ""
+			,'options' => {
+				'1' => string('USE_MOODLOGIC')
+				,'0' => string('DONT_USE_MOODLOGIC')
+			}
+			,'onChange' => sub {
+					my ($client,$changeref,$paramref,$pageref) = @_;
+					
+					foreach my $client (Slim::Player::Client::clients()) {
+						Slim::Buttons::Home::updateMenu($client);
+					}
+					Slim::Music::Import::useImporter('moodlogic',$changeref->{'moodlogic'}{'new'});
+					Slim::Music::Import::startScan('moodlogic');
+				}
+			,'optionSort' => 'KR'
+			,'inputTemplate' => 'setup_input_radio.html'
+		}
+	);
+	return (\%setupGroup,\%setupPrefs);
+}
+
+sub checkDefaults {
+
+	if (!Slim::Utils::Prefs::isDefined('moodlogicscaninterval')) {
+		Slim::Utils::Prefs::set('moodlogicscaninterval',60)
+	}
+	if (!Slim::Utils::Prefs::isDefined('MoodLogicplaylistprefix')) {
+		Slim::Utils::Prefs::set('MoodLogicplaylistprefix','MoodLogic: ');
+	}
+	if (!Slim::Utils::Prefs::isDefined('MoodLogicplaylistsuffix')) {
+		Slim::Utils::Prefs::set('MoodLogicplaylistsuffix','');
+	}
+	if (!Slim::Utils::Prefs::isDefined('instantMixMax')) {
+		Slim::Utils::Prefs::set('instantMixMax',12);
+	}
+	if (!Slim::Utils::Prefs::isDefined('varietyCombo')) {
+		Slim::Utils::Prefs::set('varietyCombo',50);
+	}
+}
+
+sub setupCategory {
+	my %setupCategory =(
+		'title' => string('SETUP_MOODLOGIC')
+		,'parent' => 'server'
+		,'GroupOrder' => ['Default','MoodLogicPlaylistFormat']
+		,'Groups' => {
+			'Default' => {
+					'PrefOrder' => ['instantMixMax','varietyCombo','moodlogicscaninterval']
+				}
+			,'MoodLogicPlaylistFormat' => {
+					'PrefOrder' => ['MoodLogicplaylistprefix','MoodLogicplaylistsuffix']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupHead' => string('SETUP_MOODLOGICPLAYLISTFORMAT')
+					,'GroupDesc' => string('SETUP_MOODLOGICPLAYLISTFORMAT_DESC')
+					,'GroupLine' => 1
+					,'GroupSub' => 1
+				}
+			}
+		,'Prefs' => {
+			'MoodLogicplaylistprefix' => {
+					'validate' => \&Slim::Web::Setup::validateAcceptAll
+					,'PrefSize' => 'large'
+				}
+			,'MoodLogicplaylistsuffix' => {
+					'validate' => \&Slim::Web::Setup::validateAcceptAll
+					,'PrefSize' => 'large'
+				}
+			,'moodlogicscaninterval' => {
+					'validate' => \&Slim::Web::Setup::validateNumber
+					,'validateArgs' => [0,undef,1000]
+				}
+			,'instantMixMax'	=> {
+					'validate' => \&Slim::Web::Setup::validateInt
+					,'validateArgs' => [1,undef,1]
+				}
+			,'varietyCombo'	=> {
+					'validate' => \&Slim::Web::Setup::validateInt
+					,'validateArgs' => [1,100,1,1]
+				}
+		}
+	);
+	return (\%setupCategory);
+};
 
 1;
 __END__

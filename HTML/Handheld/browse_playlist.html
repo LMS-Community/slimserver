@@ -11,7 +11,7 @@
 
 <font face="arial,helvetica">
 
-[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF not itunes %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]</p>[% END %]
+[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]</p>[% END %]
 [% IF RENAME_WARNING %]<p><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]</p>[% END %]
 
 

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.95 2004/12/11 23:51:34 vidur Exp $
+# $Id: Prefs.pm,v 1.96 2004/12/17 10:09:37 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -134,21 +134,6 @@ my %DEFAULT = (
 	,'showYear'				=> 0
 	,'timeFormat'			=> q(|%I:%M:%S %p)
 	,'titleFormatWeb'		=> 1
-	,'iTunesplaylistprefix'	=> 'iTunes: '
-	,'iTunesplaylistsuffix'	=> ''
-	,'MoodLogicplaylistprefix'		=> 'MoodLogic: '
-	,'MoodLogicplaylistsuffix'		=> ''
-	,'MusicMagicplaylistprefix'		=> 'MusicMagic: '
-	,'MusicMagicplaylistsuffix'		=> ''
-	,'itunesscaninterval'	=> 60
-	,'moodlogicscaninterval'		=> 60
-	,'musicmagicscaninterval'		=> 60
-	,'MMSport'						=> 10002
-	,'itunes_library_autolocate'	=> 1
-	,'itunes_library_music_path'	=> defaultAudioDir()
-	,'ignoredisableditunestracks'	=> 0
-	,'instantMixMax'		=> 12
-	,'varietyCombo'			=> 50
 	,'ignoreDirRE'			=> ''
 	,'checkVersion'			=> 1
 	,'checkVersionInterval' => 60*60*24
@@ -232,21 +217,6 @@ my %prefChange = (
 	}
 	,'ignoredarticles' => sub {
 		Slim::Utils::Text::clearCaseArticleCache();
-	}
-	,'itunes' => sub {
-		my $newvalue = shift;
-		foreach my $client (Slim::Player::Client::clients()) {
-			Slim::Buttons::Home::updateMenu($client);
-		}
-		Slim::Music::iTunes::startScan();
-	}
-	,'moodlogic' => sub {
-		my $newvalue = shift;
-		Slim::Music::MoodLogic::startScan();
-	}
-	,'musicmagic' => sub {
-		my $newvalue = shift;
-		Slim::Music::MusicMagic::startScan();
 	}
 	,'audiodir' => sub {
 		my $newvalue = shift;

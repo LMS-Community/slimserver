@@ -32,8 +32,11 @@ sub olsonmain {
 		$params->{'warn'} = 1;
 	}
 
-	if (Slim::Music::iTunes::useiTunesLibrary()) {
-		$params->{'itunes'} = 1;
+	#if (Slim::Music::iTunes::useiTunesLibrary()) {
+	#	$params->{'itunes'} = 1;
+	#}
+	if (defined(Slim::Utils::Prefs::get('audiodir'))) {
+		$params->{'audiodir'} = 1;
 	}
 
 	if (defined($genre) && $genre eq '*' && defined($artist) && $artist eq '*') {
@@ -230,8 +233,11 @@ sub olsondetail {
 		$params->{'warn'} = 1;
 	}
 
-	if (Slim::Music::iTunes::useiTunesLibrary()) {
-		$params->{'itunes'} = 1;
+	#if (Slim::Music::iTunes::useiTunesLibrary()) {
+	#	$params->{'itunes'} = 1;
+	#}
+	if (defined(Slim::Utils::Prefs::get('audiodir'))) {
+		$params->{'audiodir'} = 1;
 	}
 
 	$params->{'pwd_list'} = "";

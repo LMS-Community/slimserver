@@ -45,7 +45,7 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
       </TR>
       <TR> 
         <TD colspan="7" class=listing><p>[% IF warn %]<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] 
-            [% IF not itunes %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %][% END %]
+            [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %][% END %]
           <p> [% IF RENAME_WARNING %] 
           <p><b>[% "NOTE" | string %]</b> [S RENAME_WARNIN
           <hr>

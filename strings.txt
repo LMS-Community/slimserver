@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.156 2004/12/16 01:13:52 vidur Exp $
+# $Id: strings.txt,v 1.157 2004/12/17 10:09:07 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1860,6 +1860,45 @@ SETUP_MUSICMAGICPLAYLISTFORMAT_DESC
 	NO	Denne innstillingen avgjør hvilket format som brukes ved import av MusicMagic spillelister.
 	SE	Denna inställning styr format vid import av MusicMagic-låtlistor
 
+SETUP_MMMMIXTYPE
+	EN	MusicMagic Mix Type
+
+SETUP_MMMMIXTYPE_DESC
+	EN	Your MusicMagic Mix size may be set by the number of three types: Tracks, Minutes, MegaBytes (default tracks)
+
+SETUP_MMMSIZE
+	EN	MusicMagic Mix Size
+
+SETUP_MMMSIZE_DESC
+	EN	Choose Mix Size
+
+SETUP_MMSHOST
+	EN	MusicMagic HTTP Host
+
+SETUP_MMSHOST_DESC
+	EN	Choose the hostname or ip of the remote or local MusicMagic server
+
+SETUP_MMSREMOTEROOT
+	EN	MusicMagic Remote Root
+
+SETUP_MMSREMOTEROOT_DESC
+	EN	Enter the root filesystem of the music libary on the remote MusicMagic server.  This is used to convert remote paths to local paths.
+
+SETUP_MMMSTYLE
+	EN	MusicMagic Mix Style
+
+SETUP_MMMSTYLE_DESC
+	EN	How much like the artist style ( 0 = ignore (default), 200 = strict )
+
+SETUP_MMMVARIETY
+	EN	MusicMagic Mix Variety
+
+SETUP_MMMVARIETY_DESC
+	EN	How much variety in the mix ( 0 = less (default), 9 = more )
+
+MUSICMAGIC_MIXING
+	EN	MusicMagic Mixing
+
 SETUP_MOODLOGICPLAYLISTPREFIX_CHOOSE
 	DE	Prefix:
 	EN	Prefix:
@@ -2367,6 +2406,15 @@ SETUP_MUSICMAGIC_DESC
 	EN	SlimServer can use your MusicMagic program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level. Check the box below to import your MusicMagic Library information.
 	ES	El SlimServer puede utilizar el programa MusicMagic como fuente para obtener la información de género y título. Además se pueden generar mezclas instantáneas a nivel de género, artista y canción. Marcar la opción debajo para importar la información de la colección de MusicMagic. 
 
+MMMMIXTYPE_TRACKS
+	EN	Number of Tracks
+
+MMMMIXTYPE_MIN
+	EN	Number of Minutes
+
+MMMMIXTYPE_MBYTES
+	EN	Number of MegaBytes
+
 SETUP_MOODLOGIC_DESC
 	DE	Der SlimServer kann MoodLogic als Quelle für Titel- und Musikstil-Informationen verwenden. Zusätzlich können Sie "Instant Mixes" auf Grund von Musikstil, Interpret und Lied-Intensität erstellen. Aktivieren Sie die folgende Checkbox, falls Sie die Informationen aus MoodLogic verwenden wollen.
 	EN	SlimServer can use your MoodLogic program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level. Check the box below to import your MoodLogic Library information.
@@ -2673,15 +2721,7 @@ SETUP_COVERTHUMB
 	SE	Albumomslags-miniatyrer
 
 SETUP_COVERTHUMB_DESC
-	DE	Dateiname des Plattencovers
-	DK	Filnavne for små cover-billeder
-	EN	Artwork thumbnail image file name
-	ES	Nombre de archivo para la imagen de muestra del Arte de Tapa	
-	FR	Nom de fichier pour les vignettes
-	NL	Bestandsnaam voor verkleinde afbeelding van de hoes
-	NO	Filnavn for platecover-thumbnails
-	PT	Nome do ficheiro da miniatura da Capa do Álbum
-	SE	Filnamn för albumomslags-miniatyrer
+	EN	For Browse By Artwork thumbnails, the server will search the same default image files as above, and in ID3 Tags.  However, if you wish to use the variable filename feature, or specify your own filename, enter that here.
 
 SETUP_COVERTHUMB_OK
 	DE	Dateiname des Plattencovers (klein):
@@ -7206,45 +7246,15 @@ MOODLOGIC_MIX
 	PT	Mixtura
 	SE	Mix
 
-MOODLOGIC_MIXING
-	DE	MoodLogix mixt...
-	DK	MoodLogic Mixning
-	EN	MoodLogic Mixing
-	ES	Mezclando MoodLogic
-	FR	MoodLogic Mix
-	NL	MoodLogix Mix
-	NO	MoodLogic Mix
-	PT	Mistura de Ambiente
-
-MOODLOGIC_INSTANT_MIX
-	DE	MoodLogic Instant Mix
-	DK	MoodLogic Hurtig-mix
-	EN	MoodLogic Instant Mix
-	ES	Mezcla instantánea de MoodLogic
-	FR	ModdLogic Mix instantané
-	NL	MoodLogic Instant Mix
-	NO	MoodLogic Hurtig Mix
-	PT	Mistura instatânea de Ambiente "MoodLogic"
-
-MUSICMAGIC_MIXING
-	DE	MusicMagic mixt...
-	DK	MusicMagic Mixning
-	EN	MusicMagic Mixing
-	ES	Mezclando MusicMagic
-	FR	MusicMagic Mix
-	NL	MusicMagic Mix
-	NO	MusicMagic Mix
-	PT	Mistura de Ambiente
-
-MUSICMAGIC_INSTANT_MIX
-	DE	MusicMagic Instant Mix
-	DK	MusicMagic Hurtig-mix
-	EN	MusicMagic Instant Mix
-	ES	Mezcla instantánea de MusicMagic
-	FR	MusicMagic Mix instantané
-	NL	MusicMagic Instant Mix
-	NO	MusicMagic Hurtig Mix
-	PT	Mistura instatânea de Ambiente "MusicMagic"
+INSTANT_MIX
+	DE	Instant Mix
+	DK	Hurtig-mix
+	EN	Instant Mix
+	ES	Mezcla instantánea
+	FR	Mix instantané
+	NL	Instant Mix
+	NO	Hurtig Mix
+	PT	Mistura instatânea de Ambiente
 
 MOODLOGIC_MOOD_0
 	DE	Überraschung

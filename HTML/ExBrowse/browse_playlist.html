@@ -8,7 +8,7 @@
 [% IF warn %]
 <p class="listing">
  <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] 
- [% IF not itunes %]
+ [% IF audiodir %]
   [% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.
  [% END %]
 </p>

@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.18 2004/12/02 02:34:16 dsully Exp $
+# $Id: SqueezeboxG.pm,v 1.19 2004/12/17 10:09:35 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -122,7 +122,7 @@ my %fontSymbols = (
 	'progress2' => "\x08",
 	'progress3' => "\x09",
 	'cursor'	=> "\x0a",
-	'moodlogic' => "\x0b",
+	'mixable' => "\x0b",
 	
 	'hardspace' => "\x20"
 );

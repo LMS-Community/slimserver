@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.109 2004/12/16 01:13:56 vidur Exp $
+# $Id: Pages.pm,v 1.110 2004/12/17 10:09:37 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -27,29 +27,35 @@ sub home {
 	$params->{'nosetup'} = 1   if $::nosetup;
 	$params->{'newVersion'} = $::newVersion if $::newVersion;
 
-	# Uncomment these lines and comment the ones following to enable
-	# the new web interface scheme using browsedb. Look a few lines
-	# below for cover art related browsing.
-#	addLinks("browse",{'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=artist,album,track&level=0"});
-#	addLinks("browse",{'BROWSE_BY_GENRE' => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
-#	addLinks("browse",{'BROWSE_BY_ALBUM' => "browsedb.html?hierarchy=album,track&level=0"});
-	addLinks("browse",{'BROWSE_BY_ARTIST' => "browseid3.html?genre=*"});
-	addLinks("browse",{'BROWSE_BY_GENRE' => "browseid3.html"});
-	addLinks("browse",{'BROWSE_BY_ALBUM' => "browseid3.html?genre=*&artist=*"});
+	if (!exists $additionalLinks{"browse"}) {
+		# Uncomment these lines and comment the ones following to enable
+		# the new web interface scheme using browsedb. Look a few lines
+		# below for cover art related browsing.
+	#	addLinks("browse",{'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=artist,album,track&level=0"});
+	#	addLinks("browse",{'BROWSE_BY_GENRE' => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
+	#	addLinks("browse",{'BROWSE_BY_ALBUM' => "browsedb.html?hierarchy=album,track&level=0"});
+		addLinks("browse",{'BROWSE_BY_ARTIST' => "browseid3.html?genre=*"});
+		addLinks("browse",{'BROWSE_BY_GENRE' => "browseid3.html"});
+		addLinks("browse",{'BROWSE_BY_ALBUM' => "browseid3.html?genre=*&artist=*"});
+	}
 
-	addLinks("search",{'SEARCHFOR_ARTIST' => "search.html?type=artist"});
-	addLinks("search",{'SEARCHFOR_ALBUM' => "search.html?type=album"});
-	addLinks("search",{'SEARCHFOR_SONGTITLE' => "search.html?type=song"});
-	addLinks("help",{'GETTING_STARTED' => "html/docs/quickstart.html"});
-	addLinks("help",{'PLAYER_SETUP' => "html/docs/ipconfig.html"});
-	addLinks("help",{'USING_REMOTE' => "html/docs/interface.html"});
-	addLinks("help",{'HELP_REMOTE' => "html/help_remote.html"});
-	addLinks("help",{'HELP_RADIO' => "html/docs/radio.html"});
-	addLinks("help",{'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
-	addLinks("help",{'FAQ' => "html/docs/faq.html"});
-	addLinks("help",{'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
-	addLinks("help",{'TECHNICAL_INFORMATION' => "html/docs/index.html"});
+	if (!exists $additionalLinks{"search"}) {
+		addLinks("search",{'SEARCHFOR_ARTIST' => "search.html?type=artist"});
+		addLinks("search",{'SEARCHFOR_ALBUM' => "search.html?type=album"});
+		addLinks("search",{'SEARCHFOR_SONGTITLE' => "search.html?type=song"});
+	}
 
+	if (!exists $additionalLinks{"help"}) {
+		addLinks("help",{'GETTING_STARTED' => "html/docs/quickstart.html"});
+		addLinks("help",{'PLAYER_SETUP' => "html/docs/ipconfig.html"});
+		addLinks("help",{'USING_REMOTE' => "html/docs/interface.html"});
+		addLinks("help",{'HELP_REMOTE' => "html/help_remote.html"});
+		addLinks("help",{'HELP_RADIO' => "html/docs/radio.html"});
+		addLinks("help",{'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
+		addLinks("help",{'FAQ' => "html/docs/faq.html"});
+		addLinks("help",{'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
+		addLinks("help",{'TECHNICAL_INFORMATION' => "html/docs/index.html"});
+	}
 
 	if (Slim::Utils::Prefs::get('lookForArtwork')) {
 		# Uncomment the next lines and comment the one following to enable
@@ -1746,8 +1752,8 @@ sub browseid3 {
 		$params->{'warn'} = 1;
 	}
 
-	if (Slim::Music::iTunes::useiTunesLibrary()) {
-		$params->{'itunes'} = 1;
+	if (defined(Slim::Utils::Prefs::get('audiodir'))) {
+		$params->{'audiodir'} = 1;
 	}
 
 	# XXX

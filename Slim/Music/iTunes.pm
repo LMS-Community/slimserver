@@ -57,9 +57,7 @@ my $iBase = '';
 
 my $inPlaylists;
 my $inTracks;
-my $doneXML;
 my %tracks;
-my %artwork;
 my $applicationVersion;
 my $majorVersion;
 my $minorVersion;
@@ -68,54 +66,7 @@ my $ituneslibrary;
 my $ituneslibraryfile;
 my $ituneslibrarypath;
 
-sub iTunesPlaylist {
-#	'CT',	 # content type
-#	'TITLE', # title
-#	'LIST',	 # list items (array)
-#	'AGE',   # list age
-#	'GENRE', # genre
-#	'TRACKNUM', # tracknumber as an int
-#	'FS',	 # file size
-#	'ARTIST', # artist
-#	'ALBUM',  # album name
-#	'COMMENT',	# ID3 comment
-#	'YEAR',		# year
-#	'SECS', 	# total seconds
-#	'VBR_SCALE', # vbr/cbr
-#	'BITRATE', # bitrate
-#	'TAGSIZE', # size of ID3v2 tag
-#	'COMPOSER', # composer
-
-	my @items = ( 	'TITLE',
-					'ARTIST',
-					'COMPOSER',
-					'ALBUM',
-					'GENRE',
-					'FS',
-					'SECS',
-					'DISC',
-					'DISCC',
-					'TRACKNUM',
-					'COUNT',
-					'YEAR',
-					'MOD',
-					'ADDED',
-					'BITRATE',
-					'SR',
-					'VOL',
-					'KIND',
-					'EQ',
-					'COMMENT',
-					'PLAYCOUNT',
-					'LASTPLAYED',
-					'RATING');
-	my @playlist = @_;
-	my $playliststring = "Name\tArtist\tComposer\tAlbum\tGenre\tSize\tTime\tDisc Number\tDisc Count\tTrack Number\tTrack Count\tYear\tDate Modified\tDate Added\tBit Rate\tSample Rate\tVolume Adjustment\tKind\tEqualizer\tComments\tPlay Count\tLast Played\tMy Rating\tLocation\r";
-	foreach my $item (@playlist) {
-		my $t;
-		
-	}
-}
+my $initialized = 0;
 
 # mac file types
 my %filetypes = (
@@ -158,14 +109,15 @@ sub useiTunesLibrary {
 	
 	my $can = canUseiTunesLibrary();
 	
-   if (!defined($use) && $can) { 
+	if (!defined($use) && $can) { 
 			Slim::Utils::Prefs::set('itunes', 1);
 	} elsif (!defined($use) && !$can) {
 			Slim::Utils::Prefs::set('itunes', 0);
 	}
 	
 	$use = Slim::Utils::Prefs::get('itunes');
-
+	Slim::Music::Import::useImporter('itunes',$use && $can);
+	
 	$::d_itunes && msg("using itunes library: $use\n");
 	
 	return $use && $can;
@@ -173,9 +125,26 @@ sub useiTunesLibrary {
 
 sub canUseiTunesLibrary {
 	$::d_itunes && msg("canUseiTunesLibrary().\n");
+	checkDefaults() unless $initialized;
+	Slim::Web::Setup::addChildren('server','itunes',3);
 	$ituneslibraryfile = defined $ituneslibraryfile ? $ituneslibraryfile : findMusicLibraryFile();
 	$ituneslibrarypath = defined $ituneslibrarypath ? $ituneslibrarypath : findMusicLibrary();
+	if (defined $ituneslibraryfile && $ituneslibrarypath) {
+		init();
+	}
 	return defined $ituneslibraryfile && $ituneslibrarypath;
+}
+
+sub init {
+	return if $initialized;
+	#Slim::Utils::Strings::addStrings($strings);
+	Slim::Music::Import::addImporter('itunes',\&startScan);
+	Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
+	Slim::Web::Setup::addCategory('itunes',&setupCategory);
+	my ($groupRef,$prefRef) = &setupGroup();
+	Slim::Web::Setup::addGroup('server','itunes',$groupRef,1,$prefRef);
+	
+	$initialized = 1;
 }
 
 sub findLibraryFromPlist {
@@ -367,8 +336,6 @@ sub checker {
 
 	return unless (useiTunesLibrary());
 	
-	Slim::Music::Import::addImporter('itunes');
-
 	if (!stillScanning() && isMusicLibraryFileChanged()) {
 		startScan();
 	}
@@ -397,14 +364,12 @@ sub startScan {
 	
 	stopScan();
 
-	Slim::Utils::Scheduler::add_task(\&scanFunction);
-	Slim::Music::Import::startImport('itunes');
-
 	$isScanning = 1;
 
 	# start the checker
 	checker();
 	
+	Slim::Utils::Scheduler::add_task(\&scanFunction);
 } 
 
 sub stopScan {
@@ -428,40 +393,14 @@ sub doneScanning {
 	
 	$ituneslibrary = undef;
 	
-	$doneXML = 0;
-	
-	%artwork = ();
-	
 	$lastMusicLibraryFinishTime = time();
 
 	$isScanning = 0;
 	
 	Slim::Music::Info::generatePlaylists();
 	
-	Slim::Music::Import::endImport('itunes');
+	Slim::Music::Import::endImporter('itunes');
 }
-
-sub artScan {
-	my @albums = keys %artwork;
-	my $album = $albums[0];
-	return unless $album;
-	my $thumb = Slim::Music::Info::haveThumbArt($artwork{$album});
-
-	if (defined $thumb && $thumb) {
-		$::d_artwork && Slim::Utils::Misc::msg("Caching $thumb for $album\n");
-		Slim::Music::Info::updateArtworkCache($artwork{$album}, {'ALBUM' => $album, 'THUMB' => $thumb})
-	}
-
-	delete $artwork{$album};
-
-	if (!%artwork) { 
-		$::d_artwork && Slim::Utils::Misc::msg("Completed Artwork Scan\n");
-		return 0;
-	}
-	
-	return 1;
-}
-
 
 ###########################################################################################
 	# This incredibly ugly parser is highly dependent on the iTunes 3.0 file format.
@@ -474,15 +413,7 @@ sub scanFunction {
 	$::d_itunes_verbose && msg("scanFunction()\n");
 
 	my $file = $ituneslibraryfile || findMusicLibraryFile();;
-
-	if ($doneXML) {
-		my $artScan = artScan();
-		if (!$artScan) {
-			doneScanning();
-		}
-		return $artScan;
-	}
-
+	
 	# this assumes that iTunes uses file locking when writing the xml file out.
 	if (!$opened) {
 		if (!open(ITUNESLIBRARY, "<$file")) {
@@ -515,8 +446,8 @@ sub scanFunction {
 	if (!defined($curLine)) {
 		$::d_itunes && msg("iTunes:  Finished scanning iTunes XML\n");
 		# done scanning
-		$doneXML = 1;
-		return 1;
+		doneScanning();
+		return 0;
 	}
 	
 	if ($inTracks) {
@@ -597,10 +528,12 @@ sub scanFunction {
 				# cacheEntry{'???'} = $curTrack{'Sample Rate'};
 				$cacheEntry{'VALID'} = '1';
 
-				Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
-				if ($cacheEntry{'ALBUM'} && !exists $artwork{$cacheEntry{'ALBUM'}} && !defined Slim::Music::Info::cacheItem($url,'THUMB')) {
-					$artwork{$cacheEntry{'ALBUM'}} = $url;
+				if (Slim::Utils::Prefs::get('lookForArtwork')) {
+					if ($cacheEntry{'ALBUM'} && !Slim::Music::Import::artwork($cacheEntry{'ALBUM'}) && !defined Slim::Music::Info::cacheItem($url,'THUMB')) {
+						Slim::Music::Import::artwork($cacheEntry{'ALBUM'},$url);
+					}
 				}
+				Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
 				$tracks{$id} = $url;
 			} else {
 				$::d_itunes && warn "iTunes: unknown file type " . $curTrack{'Kind'} . " $url";
@@ -830,6 +763,131 @@ sub strip_automounter {
 
 	return $path;
 }
+
+sub setupGroup {
+	my $client = shift;
+	my %setupGroup = (
+		'PrefOrder' => ['itunes']
+		,'PrefsInTable' => 1
+		,'Suppress_PrefHead' => 1
+		,'Suppress_PrefDesc' => 1
+		,'Suppress_PrefLine' => 1
+		,'Suppress_PrefSub' => 1
+		,'GroupHead' => string('SETUP_ITUNES')
+		,'GroupDesc' => string('SETUP_ITUNES_DESC')
+		,'GroupLine' => 1
+				,'GroupSub' => 1
+	);
+	my %setupPrefs = (
+		'itunes'	=> {
+			'validate' => \&Slim::Web::Setup::validateTrueFalse
+			,'changeIntro' => ""
+			,'options' => {
+					'1' => string('USE_ITUNES')
+					,'0' => string('DONT_USE_ITUNES')
+				}
+			,'onChange' => 	sub {
+					my ($client,$changeref,$paramref,$pageref) = @_;
+
+					foreach my $client (Slim::Player::Client::clients()) {
+						Slim::Buttons::Home::updateMenu($client);
+					}
+					Slim::Music::Import::useImporter('itunes',$changeref->{'itunes'}{'new'});
+					Slim::Music::Import::startScan('itunes');
+				}
+			,'optionSort' => 'KR'
+			,'inputTemplate' => 'setup_input_radio.html'
+		}
+	);
+	return (\%setupGroup,\%setupPrefs);
+}
+
+sub checkDefaults {
+	if (!Slim::Utils::Prefs::isDefined('itunesscaninterval')) {
+		Slim::Utils::Prefs::set('itunesscaninterval',60)
+	}
+	if (!Slim::Utils::Prefs::isDefined('iTunesplaylistprefix')) {
+		Slim::Utils::Prefs::set('iTunesplaylistprefix','iTunes: ');
+	}
+	if (!Slim::Utils::Prefs::isDefined('iTunesplaylistsuffix')) {
+		Slim::Utils::Prefs::set('iTunesplaylistsuffix','');
+	}
+	if (!Slim::Utils::Prefs::isDefined('ignoredisableditunestracks')) {
+		Slim::Utils::Prefs::set('ignoredisableditunestracks',0);
+	}
+	if (!Slim::Utils::Prefs::isDefined('itunes_library_music_path')) {
+		Slim::Utils::Prefs::set('itunes_library_music_path',Slim::Utils::Prefs::defaultAudioDir());
+	}
+	if (!Slim::Utils::Prefs::isDefined('itunes_library_autolocate')) {
+		Slim::Utils::Prefs::set('itunes_library_autolocate',1);
+	}
+}
+
+sub setupCategory {
+	my %setupCategory =(
+		'title' => string('SETUP_ITUNES')
+		,'parent' => 'server'
+		,'GroupOrder' => ['Default','iTunesPlaylistFormat']
+		,'Groups' => {
+			'Default' => {
+					'PrefOrder' => ['itunesscaninterval','ignoredisableditunestracks','itunes_library_autolocate','itunes_library_xml_path','itunes_library_music_path']
+				}
+			,'iTunesPlaylistFormat' => {
+					'PrefOrder' => ['iTunesplaylistprefix','iTunesplaylistsuffix']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupHead' => string('SETUP_ITUNESPLAYLISTFORMAT')
+					,'GroupDesc' => string('SETUP_ITUNESPLAYLISTFORMAT_DESC')
+					,'GroupLine' => 1
+					,'GroupSub' => 1
+				}
+			}
+		,'Prefs' => {
+			'itunesscaninterval' => {
+					'validate' => \&Slim::Web::Setup::validateNumber
+					,'validateArgs' => [0,undef,1000]
+				}
+			,'iTunesplaylistprefix' => {
+					'validate' => \&Slim::Web::Setup::validateAcceptAll
+					,'PrefSize' => 'large'
+				}
+			,'iTunesplaylistsuffix' => {
+					'validate' => \&Slim::Web::Setup::validateAcceptAll
+					,'PrefSize' => 'large'
+				}
+			,'ignoredisableditunestracks' => {
+					'validate' => \&Slim::Web::Setup::validateTrueFalse
+					,'options' => {
+							'1' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_1')
+							,'0' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_0')
+						}
+				}
+			,'itunes_library_xml_path' => {
+					'validate' => \&Slim::Web::Setup::validateIsFile
+					,'changeIntro' => string('SETUP_OK_USING')
+					,'rejectMsg' => string('SETUP_BAD_FILE')
+					,'PrefSize' => 'large'
+				}
+			,'itunes_library_music_path' => {
+					'validate' => \&Slim::Web::Setup::validateIsDir
+					,'changeIntro' => string('SETUP_OK_USING')
+					,'rejectMsg' => string('SETUP_BAD_DIRECTORY')
+					,'PrefSize' => 'large'
+				}
+			,'itunes_library_autolocate' => {
+					'validate' => \&Slim::Web::Setup::validateTrueFalse
+					,'options' => {
+							'1' => string('SETUP_ITUNES_LIBRARY_AUTOLOCATE_1')
+							,'0' => string('SETUP_ITUNES_LIBRARY_AUTOLOCATE_0')
+						}
+				}
+		}
+	);
+	return (\%setupCategory);
+};
 1;
 __END__
 

@@ -1,6 +1,6 @@
 package Slim::Hardware::VFD;
 
-# $Id: VFD.pm,v 1.22 2004/12/07 20:19:52 dsully Exp $
+# $Id: VFD.pm,v 1.23 2004/12/17 10:09:32 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -509,7 +509,7 @@ Slim::Hardware::VFD::setCustomChar('rightprogress4',
 				   0b01111100, 
 				   0b00000000 ));
 				   
-Slim::Hardware::VFD::setCustomChar('moodlogic', (
+Slim::Hardware::VFD::setCustomChar('mixable', (
 					0b00011111,
 					0b00000000,
 					0b00011010,
@@ -519,28 +519,6 @@ Slim::Hardware::VFD::setCustomChar('moodlogic', (
 					0b00011111,
 					0b00000000   ));
 					
-Slim::Hardware::VFD::setCustomChar('musicmagicx', (
-					   0b00001010,
-					   0b00010101,
-					   0b00010001,
-					   0b00000000,
-					   0b00010101,
-					   0b00010010,
-					   0b00010101,
-					   0b00000000
-					   ));
-					   
-Slim::Hardware::VFD::setCustomChar('musicmagic', (
-					   0b00001010,
-					   0b00010101,
-					   0b00010001,
-					   0b00000000,
-					   0b00001010,
-					   0b00010101,
-					   0b00010001,
-					   0b00000000
-					   ));
-
 # replaces ~ in format string
 # setup the special characters
 Slim::Hardware::VFD::setCustomChar( 'toplinechar',	

@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.23 2004/12/15 22:35:50 grotus Exp $
+# $Id: Browse.pm,v 1.24 2004/12/17 10:09:29 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -46,9 +46,7 @@ sub init {
 		}
 		if ($name eq 'SAVED_PLAYLISTS' && 
 			!Slim::Utils::Prefs::get('playlistdir') && 
-			!Slim::Music::iTunes::useiTunesLibrary() && 
-			!Slim::Music::MoodLogic::useMoodLogic() && 
-			!Slim::Music::MusicMagic::useMusicMagic() ) {
+			!Slim::Music::Import::countImporters() ) {
 			next;
 		}
 		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC',$name,$browse{$name});
