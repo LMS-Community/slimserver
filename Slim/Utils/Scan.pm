@@ -467,8 +467,13 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		}
 
 		# only do this stat once.
-		my $playlistpathpath = Slim::Utils::Misc::pathFromFileURL($playlistpath);
-		my $playlistpathAge  = (stat($playlistpathpath))[9];
+		my $playlistpathpath;
+		my $playlistpathAge;
+		
+		if (Slim::Music::Info::isFileURL($playlistpath)) {
+			$playlistpathpath = Slim::Utils::Misc::pathFromFileURL($playlistpath);
+			$playlistpathAge = (stat($playlistpathpath))[9];
+		}
 
 		# 315529200 is a bogus windows time value
 		if (Slim::Music::Info::isPlaylistURL($playlistpath) ||
