@@ -1,30 +1,37 @@
-[SET title [S SAVED_PLAYLISTS]] [SET pageicon MUSIC] [SET browse 0] [SET playlist 1] [SET music 1][INCLUDE pageheader.html]
-   [IF warn]<div class="nowplaying"><b>[S NOTE]</b> [S SCAN_WARNING] [IFN itunes][S SCAN_CLICK] <a href="browse.html?player={%player}">[S HERE]</a>.[/IFN]
-	</div>[/IF]
+		[SET title [S SAVED_PLAYLISTS]] [SET pageicon MUSIC] [SET browse 0] [SET playlist 1] [SET music 1][INCLUDE pageheader.html]
+		[IF warn]<div class="nowplaying"><b>[S NOTE]</b> [S SCAN_WARNING] [IFN itunes][S SCAN_CLICK] <a href="browse.html?player={%player}">[S HERE]</a>.[/IFN]
+		</div>[/IF]
 		[IF RENAME_WARNING]<div class="nowplaying"><p><b>[S NOTE]</b> [S RENAME_WARNING]</div>[/IF]
-		<table border="0" cellspacing="0" cellpadding="0" width="100%" class="nowplaying">
-		      [IF playlistname]<tr><form method="get" action="browse.html"><td>{savebuttonname} [S THIS_PLAYLIST_AS]
-		    		<input name="newname" value="{playlistname}" class="stdedit" size="30">
-		   		<input type=submit value="{savebuttonname}" class="stdclick">
-		   		<input type=hidden value="{player}" name="player">
-		   		<input type=hidden name="dir" value="{dir}"></td></form></tr>
-		      [/IF]
-		      [IF titled]<tr><td><a href="browse.html?player={%player}&dir={%dir}&delete=1">[S DELETE_THIS_PLAYLIST]</a></td></tr>[/IF]
-      </table>
-	<center><p>[IF song_count][S LIBRARY_CONTAINS] <B>{song_count}</B> [S BY] <B>{artist_count}</B>[/IF]</p></center>
-    <table border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr><td><a href="browse.html?player={%player}&dir=__playlists">[S SAVED_PLAYLISTS]</a>
-	{pwd_list}</td></tr>
-    </table>
-	[IF browselist_pagebar]<p>[S PAGES][S COLON]{browselist_pagebar}[/IF][IF browselist_header]&nbsp;|&nbsp;{browselist_header}</p>[/IF]
-    <table border="0" cellspacing="0" cellpadding="0" width="100%">
-	[IF playlistname]<tr><td class="listing">[S THIS_ENTIRE_PLAYLIST]</td>
- 	<td class="listing" width="11" align="center"><nobr><a href="status_header.html?p0=playlist&p1=load&p2={%dir}&player={%player}" target="statusframe"><img src="html/play.this.gif" border=0 align="center" hspace="1"></a></nobr></td>
-	<td class="listing" width="3" align="center">&nbsp;</td>
-	<td class="listing" width="11" align="center"><nobr><a href="status_header.html?p0=playlist&p1=add&p2={%dir}&player={%player}" target="statusframe"><img src="html/add.gif" border=0 align="center" hspace="1"></a></nobr></td>
-	<td class="listing" width="3" align="center">&nbsp;</td></tr> [/IF]
-     {browse_list}
-    </table>
-    {browselist_pagebar}
-  </body>
+		[IF titled]<div class="nowplaying">
+			<table border="0" cellspacing="0" cellpadding="0" width="100%">[/IF]
+				[IF playlistname]<tr><form method="get" action="browse.html"><td>{savebuttonname} [S THIS_PLAYLIST_AS]
+						<input name="newname" value="{playlistname}" class="stdedit" size="30">
+						<input type=submit value="{savebuttonname}" class="stdclick">
+						<input type=hidden value="{player}" name="player">
+						<input type=hidden name="dir" value="{dir}"></td></form></tr>
+				[/IF]
+			[IF titled]</table>
+			<table border="0" cellspacing="0" cellpadding="0" class="nowplaying"
+				<td><a href="browse.html?player={%player}&dir={%dir}&delete=1">[S DELETE_THIS_PLAYLIST]</a></td>
+				<td>&nbsp;&nbsp;<img src="html/pixel.grey.gif" width="1" height="100%" border="0">&nbsp;&nbsp;</td>
+				<td><a href="edit_playlist.html?dir={%dir}&player={%player}">[S EDIT_PLAYLIST]</a></td></tr>
+			</table>
+		</div>[/IF]
+		<center><p>[IF song_count][S LIBRARY_CONTAINS] <B>{song_count}</B> [S BY] <B>{artist_count}</B>[/IF]</p></center>
+		<table border="0" cellspacing="0" cellpadding="0" width="100%">
+			<tr><td><a href="browse.html?player={%player}&dir=__playlists">[S SAVED_PLAYLISTS]</a>
+			{pwd_list}</td></tr>
+		</table>
+		[IF browselist_pagebar]<p>[S PAGES]:{browselist_pagebar}[/IF][IF browselist_header]&nbsp;|&nbsp;{browselist_header}</p>[/IF]
+		<table border="0" cellspacing="0" cellpadding="0" width="100%">
+			[IF playlistname]<tr><td class="listing">[S THIS_ENTIRE_PLAYLIST]</td>
+				<td class="listing" width="11" align="center"><nobr><a href="status_header.html?p0=playlist&p1=load&p2={%dir}&player={%player}" target="statusframe"><img src="html/play.this.gif" border=0 align="center" hspace="1"></a></nobr></td>
+				<td class="listing" width="3" align="center">&nbsp;</td>
+				<td class="listing" width="11" align="center"><nobr><a href="status_header.html?p0=playlist&p1=add&p2={%dir}&player={%player}" target="statusframe"><img src="html/add.gif" border=0 align="center" hspace="1"></a></nobr></td>
+				<td class="listing" width="3" align="center">&nbsp;</td></tr>
+			[/IF]
+			{browse_list}
+		</table>
+		{browselist_pagebar}
+	</body>
 </html>
