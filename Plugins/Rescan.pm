@@ -18,20 +18,23 @@ use Slim::Control::Command;
 use Slim::Utils::Strings qw (string);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.1 $,10);
+$VERSION = substr(q$Revision: 1.2 $,10);
 
 sub getDisplayName() {return string('PLUGIN_RESCAN_MUSIC_LIBRARY')}
 
 sub strings() { return '
 PLUGIN_RESCAN_MUSIC_LIBRARY
+	DE	Musikverzeichnis erneut durchsuchen
 	EN	Rescan Music Library
 	FR	Répertorier musique
 	
 PLUGIN_RESCAN_RESCANNING
+	DE	Server durchsucht Verzeichnisse...
 	EN	Server now rescanning...
 	FR	En cours...
 
 PLUGIN_RESCAN_PRESS_PLAY
+	DE	PLAY drücken, um den Vorgang zu starten
 	EN	Press PLAY to rescan your music folder
 	FR	Appuyez sur PLAY pour répertorier votre dossier de musique
 '};
