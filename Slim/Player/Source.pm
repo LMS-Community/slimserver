@@ -747,7 +747,8 @@ sub readNextChunk {
 			
 			if ($pos + $chunksize > $size) {
 				$chunksize = $size - $pos;
-				$::d_source && msg( "Reduced chunksize to $chunksize at end of file");
+				$chunksize = 0 if( $chunksize < 0);
+				$::d_source && msg( "Reduced chunksize to $chunksize at end of file\n");
 			}
 		}
 
