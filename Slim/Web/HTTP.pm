@@ -777,8 +777,14 @@ sub generateHTTPResponse {
 
 	} elsif ($path =~ /music\/(.+)\/(cover|thumb)\.jpg$/) {
 
-		my $song  = Slim::Utils::Misc::virtualToAbsolute($1);
+		my $song;
 		my $image = $2;
+		
+		if ($1 eq "current" && defined $client) {
+			$song = Slim::Player::Playlist::song($client);
+		} else {
+			$song  = Slim::Utils::Misc::virtualToAbsolute($1);
+		}
 
 		my $ds    = Slim::Music::Info::getCurrentDataStore();
 		my $obj   = $ds->objectForUrl(Slim::Utils::Misc::fileURLFromPath($song)) || return 0;
