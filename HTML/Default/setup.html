@@ -28,13 +28,13 @@
 <tr height="100%">
 				<td width="4" height="100%"></td>
 				
-  <td valign="top" height="100%"><hr>
+  <td valign="top" height="100%">
     [% IF warning %]
     <p><b>[% warning %]</b></p>
     <hr>
-    [% END %] [% IF siblings %][% siblings %]
-    <hr>
-    [% END %] 
+    [% END %]
+    [% IF siblings %]<p><br>[% siblings %]<hr>[% END %]
+    [% IF children %]<p><br>[% children %]<hr>[% END %] 
     <form method="get" action="setup.html">
       <input type=hidden value="[% player %]" name="player">
       <input type=hidden value="[% playerid %]" name="playerid">
@@ -46,9 +46,7 @@
     <p>[% "FORGET_PLAYER_DESC" | string %]</p>
     <p><a href="[% webroot %]home.html?player=[% player | uri %]&forget=[% playerid | uri %]">[% "FORGET_PLAYER_LINK" | string %]</a></p>
     <hr>
-    [% END %] [% IF singleChildLink %][% singleChildLink %]
-    <hr>
-    [% END %]
+    [% END %] 
     [% IF versionInfo %]<p>[% versionInfo %]</p>[% END %]
     [% IF newVersion %]<p>[% newVersion %]</p>[% END %]
     [% IF ipaddress %]<p>[% "PLAYER_IP_ADDRESS" | string %] [% ipaddress %]</p>[% END %]

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.83 2004/08/25 23:24:45 dean Exp $
+# $Id: Prefs.pm,v 1.84 2004/09/02 23:03:18 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -99,7 +99,6 @@ my %DEFAULT = (
 	,"refreshRate"			=> 30
 	,"displaytexttimeout" 	=> 1.0
 	,"filesort"				=> 0
-	,"screensaverjump" 		=> 1
 	,"playtrackalbum" 		=> 1
 	,"artistinalbumsearch" 	=> 0
 	,"ignoredarticles"		=> "The El La Los Las Le Les"

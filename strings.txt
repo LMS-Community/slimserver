@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.127 2004/09/01 03:58:50 dean Exp $
+# $Id: strings.txt,v 1.128 2004/09/02 23:03:16 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -901,16 +901,7 @@ SETUP_GROUP_BRIGHTNESS
 	SE	Ljusstyrka
 
 SETUP_GROUP_BRIGHTNESS_DESC
-	DE	Wählen Sie die Helligkeit des Displays im aus- bzw. eingeschalteten Zustand.
-	DK	Lysstyrken på displayet kan angives for når enheden er tændt og slukket.
-	EN	The brightness of the player's display can be set for when it's on, off, or sitting idle (screensaver).
-	ES	Elija la luminosidad de la pantalla.
-	FI	Näytön valoisuuden voi säätää erikseen käyttöä ja lepotilaa varten.
-	FR	Il est possible de régler la luminosité de l'écran de la platine lorsqu'elle est allumée ou en veille.
-	NL	De helderheid van het display kan afzonderlijk worden ingesteld voor de aan- en uitgeschakelde toestand.
-	NO	Lysstyrken på displayet kan settes for når enheten er på og av.
-	PT	Pode escolher o brilho do ecrã do cliente para quando estiver ligado ou desligado.
-	SE	Ljusstyrkan på displayen kan varieras för påslaget och avslaget läge.
+	EN	The brightness of the player's display can be set for when it's on, off, or sitting idle (screensaver). It can also be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
 
 SETUP_GROUP_TCP_PARAMS
 	DE	TCP Parameter
@@ -1014,51 +1005,35 @@ SETUP_OFFDISPLAYSIZE
 	PT	Tamanho do Texto ao Desligar
 	SE	Textstorlek i standby-läge
 
-SETUP_OFFDISPLAYSIZE_DESC
-	EN	Choose the size(font) of text for player when it is in 'off' or 'standby' mode.
-
-SETUP_SCROLLPAUSE
+SETUP_GROUP_SCROLLPAUSE
 	DE	Pause vor dem Scrollen
 	EN	Scroll Pause
 	FR	Pause avant défilement
 	NO	Pause ved scrolling
 	SE	Paus under scrollning
 
-SETUP_SCROLLPAUSE_DESC
+SETUP_GROUP_SCROLLPAUSE_DESC
 	DE	Sie können die Zeit definieren, die der Player wartet, bevor er mit dem horizontalen Scrollen beginnt. Geben Sie einen Wert in Sekunden ein, die vor oder zwischen dem Scrollen gewartet werden soll. Null (0) unterdrückt jegliche Pause und scrollt sofort. Standardwert ist 3.6 Sekunden.
 	EN	You can adjust the amount of time that the player waits before starting horizontal scrolling of the text on the display.  Enter a value, in seconds, for the amount of time to wait before scrolling or between scrolling.  Enter zero to not pause at all and scroll immediately. 3.6 seconds is the default.
 	FR	Vous pouvez ajuster le temps de pause avant que la platine active le défilement horizontal du texte sur l'afficheur. Entrez le temps d'attente avant défilement en secondes. Entrez zéro (0) pour un défilement continu. La valeur par défaut est de 3.6 secondes.
 	SE	Fördröjning innan scrollning av långa texter börjar. Multipel av 0.9 fungerar bäst. 0.001 rekommenderas som lägsta värde.
 
-SETUP_SCROLLPAUSEDOUBLE
-	FR	Pause avant défilement (grande taille)
-	EN	Double-Size Scroll Pause
-
-SETUP_SCROLLPAUSEDOUBLE_DESC
-	FR	Temps de pause avant défilement en mode texte grande taille
-	EN	Scroll Pause control for double-size font.
-
-SETUP_SCROLLRATE
+SETUP_GROUP_SCROLLRATE
 	DE	Scrollrate
 	EN	Scroll Rate
 	FR	Vitesse de défilement
 	NO	Scroll-frekvens
 	SE	Scroll-frekvens
 
-SETUP_SCROLLRATE_DESC
+SETUP_GROUP_SCROLLRATE_DESC
 	DE	Sie können die Zeit definieren, die der Player zwischen dem Scrollen einzelner Buchstaben auf dem Display wartet. Geben Sie die Wartezeit in Sekunden ein. Kleinere Werte beschleunigen den Scrollvorgang. Standardwert ist 0.15 Sekunden.
-	EN	You can adjust the amount of time that the player waits before scrolling another letter of text on the display. Enter a value, in seconds, for the amount of time to wait.  Lower numbers make it scroll faster.  0.15 seconds is the default.
+	EN	You can adjust the amount of time that the player waits before scrolling another letter of text on the display. Enter a value, in seconds, for the amount of time to wait.  Lower numbers make it scroll faster.  0.15 seconds is the default for slingle-line, 0.1 seconds for double-line.
 	FR	Vous pouvez ajuster le temps de pause avant que la platine active le défilement du caractère suivant sur l'afficheur. Entrez le temps d'attente avant défilement en secondes. Plus le nombre est bas, plus le défilement sera rapide. La valeur par défaut est de 0.15 seconde.
 	NO	Du kan justere tiden spilleren venter før den scroller til neste bokstav i teksten på displayet. Skriv inn verdien i sekunder. Lavt nummer scroller fortere. 0.15 sekunder er standard.
 	SE	Tid mellan rullande scroll-bilder. O.15 är standardvärdet. Värden mellan 0 och 1 kan sättas för att öka eller minska scroll-tempot 
 
-SETUP_SCROLLRATEDOUBLE
-	FR	Vitesse de défilement (grande taille)
-	EN	Double-Size Scroll Rate
-
-SETUP_SCROLLRATEDOUBLE_DESC
-	FR	Vous pouvez ajuster le temps de pause avant que la platine active le défilement du caractère suivant sur l'afficheur en mode texte grande taille. Plus le nombre est bas, plus le défilement sera rapide. La valeur par défaut est de 0.1 seconde.
-	EN	You can adjust the amount of time that the player waits before scrolling another letter of text on the display when using Double Size text. Enter a value, in seconds, for the amount of time to wait.  Lower numbers make it scroll faster.  0.1 seconds is the default.
+DOUBLE-LINE
+	EN	Double-Size
 
 SETUP_GROUP_ALARM
 	DE	Wecker
@@ -1071,9 +1046,9 @@ SETUP_GROUP_ALARM
 	SE	Väckarklocka
 
 SETUP_GROUP_ALARM_DESC
-	FR	Réglages du mode réveil. Chaque platine peut activer son propre réveil ; en mode activé, celui-ci se déclenchera toutes les 24 heures.
 	DE	Einstellungen für den Wecker. Jeder Player kann einen eigenen Wecker haben. Nach Aktivierung wird der Wecker alle 24h wiederholt.
 	EN	Settings for alarm clock. Each player can have an alarm set.  If active, it will repeat every 24 hours.
+	FR	Réglages du mode réveil. Chaque platine peut activer son propre réveil ; en mode activé, celui-ci se déclenchera toutes les 24 heures.
 	NO	Innstillinger for vekkerklokka. Hver spiller kan ha en vekkersklokke. Når aktivert går alarmen hvert døgn.
 	SE	Inställningar för väckarklockan. Varje spelare kan ha en separat väckarklocka. I aktiverat läge repeteras larmet varje dygn.
 
@@ -1325,25 +1300,15 @@ SETUP_IDLEBRIGHTNESS
 SETUP_IDLEBRIGHTNESS_CHOOSE
 	EN	Brightness when idle:
 
-SETUP_AUTOBRIGHTNESS
-	DE	Automatische Anzeigehelligkeit
-	DK	Automatisk lysstyrkeindstilling
-	EN	Automatic Display Brightness
-	FR	Réglage automatique de la luminosité de l'affichage
-	NL	Automatische helderheidsregeling van het scherm
-	NO	Vis lysstyrke automatisk
-	PT	Brilho Automático
-	SE	Automatisk ljusstyrka
-
-SETUP_AUTOBRIGHTNESS_DESC
-	DE	Die Helligkeit der Anzeige kann automatisch angepasst werden, wenn Sie einen Knopf drücken, einen Titel abspielen oder eine Zeit lang nichts tun. Sie können dieses automatische Verhalten abschalten.
-	DK	Lysstyrken i displayet på din player kan indstilles automatisk når du trykker en knap, begynder afspilning af en sang eller lader den stå i et stykke tid. Du kan vælge at slå denne automatiske lysstyrkeindstilling fra.
-	EN	The brightness of the display can be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
-	FR	La luminosité de l'affichage de la platine peut être ajustée automatiquement lorsqu'un bouton est pressé, un morceau commence à jouer, ou lorsque la platine est inutilisée pendant un moment. Vous pouvez désactiver ce comportement automatique.
-	NL	De helderheid van het scherm van kan automatisch aangepast worden bij knopdrukken, het begin van een liedje of na een periode van inactiviteit. Deze functie kan ook uitgeschakeld worden.
-	NO	Lyststyrken i displayet kan justeres automatisk når du trykker på en knapp, begynner å spille en sang, eller lar den være for en stund. Du kan velge å slå av denne automatikken.
-	PT	O brilho do ecrã do pode ser ajustado automaticamente quando usar um botão, começa uma música, ou fica inactivo ao fim de algum tempo. Pode desligar este comportamento automático se desejar.
-	SE	Ljusstyrkan på spelaren kan ändras automatiskt när du trycker på en knapp, börjar spela en låt eller lämnar den för en stund. Du kan välja att avaktivera automatiken.
+SETUP_AUTOBRIGHTNESS_CHOOSE
+	DE	Automatische Anzeigehelligkeit:
+	DK	Automatisk lysstyrkeindstilling:
+	EN	Automatic Display Brightness:
+	FR	Réglage automatique de la luminosité de l'affichage :
+	NL	Automatische helderheidsregeling van het scherm:
+	NO	Vis lysstyrke automatisk:
+	PT	Brilho Automático:
+	SE	Automatisk ljusstyrka:
 
 SETUP_AUTOBRIGHTNESS_OFF
 	DE	Helligkeit manuell anpassen
@@ -1364,25 +1329,6 @@ SETUP_AUTOBRIGHTNESS_ON
 	NO	Juster lysstyrke automatisk
 	PT	Ajustar o Brilho Automaticamente
 	SE	Ändra ljusstyrka automatiskt
-
-SETUP_SCREENSAVER
-	DE	Bildschirmschoner
-	DK	Pauseskærm
-	EN	Screensaver
-	ES	Salvapantalla
-	FI	Näytönsäästäjä
-	FR	Ecran de veille
-	NL	Schermbeveiliging
-	NO	Skjermsparer
-	PT	Protecção de Ecrã
-	SE	Skärmsläckare
-
-SETUP_SCREENSAVER_DESC
-	DE	Wählen Sie einen Bildschirmschoner
-	EN	Choose your custom screensaver
-	FR	Choisissez un écran de veille
-	NO	Velg din skjermsparer
-	SE	Välj din anpassade skärmsläckare
 
 SETUP_ALARM
 	DE	Wecker
@@ -1415,16 +1361,7 @@ SETUP_ALARMPLAYLIST
 	SE	Låtlista för alarm-funktion
 
 SETUP_PLAYINGDISPLAYMODE
-	DE	Abspielen im Anzeigemodus
-	DK	Display ved afspilning
-	EN	Playing display mode
-	ES	Modo de la pantalla mientras puesto
-	FI	Soittaa näyttötilassa
-	FR	Mode d'affichage durant la lecture
-	NL	Display modus bij afspelen
-	NO	Display modus ved avspilling
-	PT	Modo de visualização ao tocar
-	SE	Display-format vid uppspelning
+	EN	Now Playing Information
 
 SETUP_PLAYINGDISPLAYMODE_OK
 	DE	Das Display zeigt nun den Fortschritt des aktuell abgespielten Titels an:
@@ -1717,8 +1654,8 @@ SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE
 	SE	Suffix:
 
 SETUP_SHOWYEAR
-	FR	Montrez L'an avec L'albums
 	EN	Show Year with Albums
+	FR	Montrez L'an avec L'albums
 
 SETUP_SHOWYEAR_DESC
 	EN	You may choose to show the album year when browsing by Albums or by Artwork.  When enabled, the album year will be shown next to the album title.
@@ -1748,10 +1685,10 @@ SETUP_IRMAP
 	SE	Knappfunktioner på fjärrkontroll
 
 SETUP_IRMAP_DESC
-	DE	Sie können zwischen Tastenfunktions-Sets auswählen. Diese Sets bilden genau die Funktionen auf der Fernbedienung ab. Das "Default" Set ist in der Dokumentation beschrieben.
+	DE	Sie können zwischen Tastenfunktions-Sets auswählen. Diese Sets bilden genau die Funktionen auf der Fernbedienung ab. Das "Standard" Set ist in der Dokumentation beschrieben.
 	DK	Du kan vælge mellem forskellige funktionssæt. Disse funktionssæt bestemmer hvilken funktion de forskellige knapper på fjernbetjeningen skal have. "Standard"-sættet er den som beskrives i manualen.
-	EN	You can choose between button function sets. These sets map particular buttons on the infrared remote to particular functions. The "Default" set is the one that is described in the documentation.
-	FR	Vous pouvez choisir entre plusieurs jeux de touches de fonction. Ces jeux de configuration permettent d'associer les boutons de la télécommande aux fonctions disponibles. Le jeu intitulé "Défaut" est celui documenté dans le manuel.
+	EN	You can choose between button function sets. These sets map particular buttons on the infrared remote to particular functions. The "Standard" set is the one that is described in the documentation.
+	FR	Vous pouvez choisir entre plusieurs jeux de touches de fonction. Ces jeux de configuration permettent d'associer les boutons de la télécommande aux fonctions disponibles. Le jeu intitulé "Par défaut" est celui documenté dans le manuel.
 	NL	U kan kiezen uit verschillende Knop Functie sets. Deze sets koppelen bepaalde knoppen op de infrarood afstansbediening aan bepaalde functies. The "Standaard" set is degene die beschreven staat in de documentatie.
 	NO	Du kan velge mellom ulike funksjonsgrupper. Disse gruppene angir hva en spesiell knapp på fjernkontrollen har for funksjon. "Standard" grupper en den som er beskrevet i dokumentasjonen.
 	PT	Pode escolher entre vários mapas de botões do seu controlo remoto. Estes mapas associam botões do controlo remoto a determinadas funções. O mapa "Padrão" é o que está descrito na documentação.
@@ -2815,29 +2752,27 @@ SETUP_HISTORYLENGTH_DESC
 	PT	O servidor pode preservar a lista das músicas mais tocadas. Escolha o número máximo de músicas a reter.
 	SE	Servern kan spara en lista på de senaste spelade låtarna. Välj antalet låtar att spara.
 
-SETUP_SCREENSAVERTIMEOUT
-	DE	Bildschirmschoner Zeiteinstellung
-	DK	Tid for pauseskærm
-	EN	Screensaver Timing
+SETUP_SCREENSAVER
+	DE	Bildschirmschoner
+	DK	Pauseskærm
+	EN	Screensaver
 	ES	Salvapantalla
-	FI	Näytönsäästäjän ajastus
-	FR	Délai de l'écran de veille
-	NL	Interval van de schermbeveiliging
-	NO	Skjermsparer tid
-	PT	Intervalo para Protecção de Ecrã
-	SE	Fördröjning innan skärmsläckare aktiveras
+	FI	Näytönsäästäjä
+	FR	Ecran de veille
+	NL	Schermbeveiliging
+	NO	Skjermsparer
+	PT	Protecção de Ecrã
+	SE	Skärmsläckare
 
-SETUP_SCREENSAVERTIMEOUT_DESC
-	DE	Hier können Sie die Wartezeit einstellen. Bei einer Wartezeit von Null wird der Bildschirmschoner nie angezeigt.
-	DK	Du kan angive hvor længe der skal gå før SlimServer skifter til pauseskærm. Sæt tiden til 0 (nul) for aldrig automatisk at skifte til visning af den aktuelle sang.
-	EN	You can change the duration of this wait below. Set this duration to zero to never automatically show the current song.
-	ES	Se puede cambiar el tiempo de espera haste que se activará la salvapantalla del Slim. Pongalo a zero para desactivarlo.
-	FI	Voit säätää alla näytönsäästäjän ajastinta.
-	FR	Vous pouvez changer cette durée ci-dessous. Une durée de zéro fera en sorte que la pièce musicale en cours ne sera jamais affichée automatiquement.
-	NL	U kan het interval hieronder instellen. Zet de tijd op 0 (nul) als U wilt dat de Slim nooit vanzelf de songinformatie dient te tonen.
-	NO	Nedenfor kan du stille inn ventetiden. Sett tiden til 0 for aldri å automatisk vise nåværende sang.
-	PT	Pode alterar o tempo de espera abaixo. Escolha 0 para não mostrar automaticamente a música actual.
-	SE	Nedan kan du ändra längden på denna fördröjning. Sätt fördröjningen till 0 (noll) för att aldrig automatiskt hoppa till "Spelas nu".
+SETUP_SCREENSAVER_CHOOSE
+	DE	Wählen Sie einen Bildschirmschoner
+	EN	Choose your custom screensaver:
+	FR	Choisissez un écran de veille
+	NO	Velg din skjermsparer
+	SE	Välj din anpassade skärmsläckare
+
+SETUP_SCREENSAVER_DESC
+	EN	You can your current screensaver and the duration to wait before enabling the screensaver. Set this duration to zero to never show the current screensaver.
 
 SETUP_SCREENSAVERTIMEOUT_CHOOSE
 	DE	Wartezeit des Bildschirmschoners in Sekunden:
@@ -2851,69 +2786,12 @@ SETUP_SCREENSAVERTIMEOUT_CHOOSE
 	PT	Tempo de espera da proteção de ecrã, em segundos
 	SE	Fördröjning innan skärmsläckare aktiveras, i sekunder:
 
-SETUP_SCREENSAVERJUMP
-	DE	Bildschirmschoner
-	DK	Pauseskærm
-	EN	Screensaver
-	ES	Salvapantalla
-	FI	Näytönsäästäjä
-	FR	Ecran de veille
-	NL	Schermbeveiliging
-	NO	Skjermsparer
-	PT	Protecção de Ecrã
-	SE	Skärmsläckare
-
-SETUP_SCREENSAVERJUMP_DESC
-	DE	Der Player wird automatisch den aktuellen Titel anzeigen, nachdem Sie die Fernbedienung für einige Zeit nicht mehr verwendet haben.
-	DK	SlimServer vil automatisk vise hvilken sang der afspilles hvis fjernbetjeningen ikke anvendes i en periode.
-	EN	The player will automatically show the currently playing song after you stop using the remote for some amount of time. You can change what happens if you use the remote after this happens.
-	ES	El reproductor mostrará automaticamenta la canción actual si no usa el mando durante un tiempo determinado. Se puede cambiar este comportamiento.
-	FI	Kun kaukosäätimen viimeisestä napin painalluksesta on kulunut hieman aikaa, palaa soittimen näyttöön soimassa olevan kappaleen nimi. Voit vaikuttaa tähän toimintoon.
-	FR	Lorsque vous cessez d'utiliser la télécommande pendant un certain temps, la platine affichera automatiquement la pièce musicale en cours d'audition. Vous pouvez déterminer ce qui se produit lorsque vous utilisez la télécommande par la suite.
-	NL	De speler zal automatisch de gegevens van het huidige nummer tonen nadat U de afstandsbediening gedurende een bepaalde tijd niet heeft gebruikt. U kunt instellen wat er dient te gebeuren als U daarna de afstandsbediening weer gaat gebruiken.
-	NO	Spilleren vil automatisk vise nåværende sang etter at du ikke har brukt fjernkontrollen på en gitt tid. Du kan endre hva som skjer når du så bruker fjernkontrollen igjen.
-	PT	O cliente mostra automaticamente a música actualmente a tocar depois depois de algum tempo sem usar o controlo remoto. Pode mudar o comportamento do cliente depois de voltar a usar o controlo remoto.
-	SE	Spelaren kommer efter en fördröjning automatiskt hoppa till "Spelas nu" när du inte använder fjärrkontrollen.<br>Här kan du välja vad som skall hända om du använder fjärrkontrollen igen.
-
-SETUP_SCREENSAVERJUMP_CHOOSE
-	DE	Wenn Sie die Fernbedienung verwenden, nachdem der Bildschirmschoner eingeschaltet ist:
-	DK	Når du anvender fjernbetjeningen når pauseskærmen bliver vist.
-	EN	When you use the remote after the screensaver starts:
-	FI	Käyttäessäsi kaukosäädintä näytönsäästäjän ollessa päällä:
-	FR	Lorsque vous utilisez votre télécommande après l'activation de l'écran de veille :
-	NL	Als U de afstandsbediening gebruikt na het starten van de screensaver:
-	NO	Når du bruker fjernkontrollen etter at skjermspareren har blitt aktivert:
-	PT	Quando usa o controlo remoto depois de começar a protecção de ecrã
-	SE	Om du använder fjärrkontrollen efter att skärmsläckaren startats:
-
-SCREENSAVERJUMP_BACK
-	DE	Zurückgehen zur letzen Stelle, die Sie mit der Fernbedienung besucht haben.
-	DK	Gå tilbage til hvor du var før pauseskærmen startede.
-	EN	Return to the last place you visited with the remote.
-	FI	Takaisin sinne, missä olit ennen näytönsäästäjän aktivoitumista.
-	FR	Retourner au dernier endroit visité
-	NL	Ga terug naar de laatste locatie die U bezocht met de afstandsbediening.
-	NO	Gå tilbake til der du var.
-	PT	Voltar ao ultimo menu selecionado com o controlo remoto.
-	SE	Återgå till där du var innan.
-
 SCREENSAVER_JUMP_BACK_NAME
 	DE	Es läuft gerade... (beim Aufwachen zurückspringen)
 	EN	Now Playing (Jump back on wake.)
 	FR	Lecture (retour veille)
 	NO	Nå spilles (Hopp tilbake ved aktivitet)
 	SE	Nu spelas (Hoppa tillbaka när spelaren 'vaknar').
-
-SCREENSAVERJUMP_STAY
-	DE	Im Abspiel-Bereich bleiben.
-	DK	Forbliv i Afspiller nu området.
-	EN	Stay in the Now Playing area.
-	FI	Pysy siinä missä olet.
-	FR	Rester dans la section Lecture
-	NL	Blijf in 'Speelt nu'.
-	NO	Forbli i "Nå spilles"
-	PT	Ficar na área "A tocar".
-	SE	Stanna kvar i "Spelas nu".
 
 SETUP_DISPLAYTEXTTIMEOUT
 	DE	Text Zeiteingabe
@@ -3589,8 +3467,8 @@ SETUP_SHOWBUFFERFULLNESS
 	SE	Visa bufferminnets fyllnadsgrad
 
 SETUP_SHOWBUFFERFULLNESS_CHOOSE
+	EN	Include buffer fullness in Playing Display Mode list:
 	FR	Inclure l'état de la mémoire tampon dans la liste Mode d'affichage durant la lecture :
-	EN	Show buffer fullness in Playing Display Mode list:
 
 SETUP_XPLSUPPORT
 	DE	xPL Support
@@ -4528,9 +4406,9 @@ BASS
 	SE	Bas
 
 PITCH
-	FR	Voix
 	DE	Pitch
 	EN	Pitch
+	FR	Voix
 	NO	Pitch
 	SE	Pitch
 
@@ -4555,13 +4433,12 @@ OFFDISPLAYSIZE
 	SE	Textstorlek i standby-läge
 
 LARGE
-	FR	Grand
 	DE	Gross
 	DK	Stor
 	EN	Large
 	ES	Grande
 	FI	Iso
-	FR	Grande
+	FR	Grand
 	NL	Groot
 	NO	Stor
 	PT	Grande
@@ -4578,6 +4455,13 @@ SMALL
 	NO	Liten
 	PT	Pequeno
 	SE	Liten
+
+MEDIUM
+	EN	Medium
+	FR	Moyenne
+
+HUGE
+	EN	Huge
 
 TITLEFORMAT
 	DE	Titel Format
@@ -4780,8 +4664,8 @@ ADD_TO_PLAYLIST
 	SE	Lägg till i låtlistan
 
 CONFIRM_OVERWRITE
-	FR	Confirmer remplacement
 	EN	Confirm Overwrite
+	FR	Confirmer remplacement
 
 TRACK
 	DE	Lied
@@ -5079,8 +4963,8 @@ BITRATE
 	SE	Bithastighet
 
 BPM
-	FR	Bats par Minute
 	EN	Beats Per Minute
+	FR	Bats par Minute
 
 YEAR
 	DE	Jahr
@@ -5226,9 +5110,9 @@ ALL_SONGS
 	SE	Alla låtar
 
 ALL_ARTISTS
-	FR	Tous les Artistes
 	DE	Alle Interpreten
 	EN	All Artists
+	FR	Tous les Artistes
 	NO	Alle artister
 	SE	Alla artister
 
@@ -5651,6 +5535,12 @@ PLAYER_SETTINGS
 	PT	Configurações do Cliente
 	SE	Spelarinställningar
 
+ALARM_SETTINGS
+	EN	Alarm Settings
+
+AUDIO_SETTINGS
+	EN	Audio Settings
+
 ADDITIONAL_PLAYER_SETTINGS
 	DE	Erweiterte Player Einstellungen
 	DK	Yderligere afspiller-indstillinger
@@ -5856,18 +5746,6 @@ CHOOSE_A_NAME
 	NO	Spillernavn:
 	PT	Escolha um nome para este cliente
 	SE	Namn:
-
-CHOOSE_BRIGHTNESS
-	DE	Wählen Sie die Helligkeit des Displays in aus- bzw. eingeschaltetem Zustand.
-	DK	Lysstyrken på displayet kan angives for når enheden er tændt og slukket.
-	EN	The brightness of the display can be adjusted for when the player is powered on or in standby.
-	ES	Elija la luminosidad de la pantalla.
-	FI	Näytön valoisuuden voi säätää erikseen käyttöä ja lepotilaa varten.
-	FR	Il est possible de régler la luminosité de l'écran de la platine lorsqu'elle est allumée ou en veille.
-	NL	De helderheid van het display kan appart worden ingesteld voor de aan- en uitgeschakelde toestand.
-	NO	Lysstyrken i displayet kan varieres når på og av.
-	PT	Escolha o brilho do ecrã do cliente quando está ligado e desligado.
-	SE	Ljusstyrkan på displayen kan varieras för påslaget och avslaget läge.
 
 BRIGHTNESS_ON
 	DE	Helligkeit im eingeschalteten Zustand:
@@ -7087,17 +6965,3 @@ COLON
 	NO	:
 	SE	: 
 
-
-# Font Name Strings
-SMALL
-	EN	Small
-
-MEDIUM
-	FR	Moyenne
-	EN	Medium
-
-LARGE
-	EN	Large
-
-HUGE
-	EN	Huge

@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.92 2004/08/27 23:54:54 kdf Exp $
+# $Id: Setup.pm,v 1.93 2004/09/02 23:03:19 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -104,39 +104,36 @@ sub initSetupConfig {
 	%setup = (
 	'player' => {
 		'title' => string('PLAYER_SETTINGS') #may be modified in postChange to reflect player name
-		,'children' => ['additional_player']
-		,'singleChildLinkText' => string('ADDITIONAL_PLAYER_SETTINGS')
+		,'children' => ['player','alarm','audio','misc'] #defined also in preEval
 		,'isClient' => 1
 		,'preEval' => sub {
 					my ($client,$paramref,$pageref) = @_;
 					my $titleFormatMax = Slim::Utils::Prefs::clientGetArrayMax($client,'titleFormat') + $pageref->{'Prefs'}{'titleFormat'}{'arrayAddExtra'};
 					if ($client->isPlayer()) {
-						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[1] = 'playingDisplayMode';
-						if ($client->hasDigitalOut()) {
-							$pageref->{'GroupOrder'}[2] = 'Digital';
-						} else {
-							$pageref->{'GroupOrder'}[2] = undef;
-						}
-						$pageref->{'children'} = ['additional_player'];
-						$pageref->{'GroupOrder'}[3] = 'Brightness';
+						$pageref->{'children'} = ['player','alarm','audio','misc'];
+						$pageref->{'GroupOrder'}[2] = 'Brightness';
+						$pageref->{'GroupOrder'}[3] = 'TextSize';
+						$pageref->{'GroupOrder'}[4] = 'Display';
 					} else {
-						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[1] = undef;
 						$pageref->{'children'} = undef;
 						$pageref->{'GroupOrder'}[2] = undef;
 						$pageref->{'GroupOrder'}[3] = undef;
-					}
-					my @formats = $client->formats();
-					if ($formats[0] ne 'mp3') {
-						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = string('SETUP_MAXBITRATE_DESC');
-						$pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'} = '  '.string('NO_LIMIT');
-					} else {
-						delete $pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'};
-						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = string('SETUP_MP3BITRATE_DESC');
+						$pageref->{'GroupOrder'}[4] = undef;
 					}
 					$pageref->{'Prefs'}{'titleFormatCurr'}{'validateArgs'} = [0,$titleFormatMax,1,1];
 					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [$client->defaultName()];
 					removeExtraArrayEntries($client,'titleFormat',$paramref,$pageref);
-					
+					my @text = (0..$client->maxTextSize);
+					$pageref->{'Prefs'}{'doublesize'}{'validateArgs'} = \@text;
+					$pageref->{'Prefs'}{'doublesize'}{'options'} = fonts($client);
+					$pageref->{'Prefs'}{'offDisplaySize'}{'validateArgs'} = \@text;
+					$pageref->{'Prefs'}{'offDisplaySize'}{'options'} = fonts($client);
+					if (scalar(keys %{Slim::Buttons::Common::hash_of_savers()}) > 0) {
+						$pageref->{'GroupOrder'}[5] = 'ScreenSaver';
+						$pageref->{'Prefs'}{'screensaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
+					} else {
+						$pageref->{'GroupOrder'}[5] = undef;
+					}
 					if (defined $client->maxBrightness) {
 						$pageref->{'Prefs'}{'powerOnBrightness'}{'validateArgs'} = [0,$client->maxBrightness,1,1];
 						$pageref->{'Prefs'}{'powerOffBrightness'}{'validateArgs'} = [0,$client->maxBrightness,1,1];
@@ -159,16 +156,7 @@ sub initSetupConfig {
 						delete $pageref->{'Prefs'}{'playingDisplayMode'}{'options'}{'6'};
 					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,5,1,1];
 					}
-					$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = Slim::Utils::Misc::findbin('lame') ? string('SETUP_LAME_FOUND') : string('SETUP_LAME_NOT_FOUND');
-					
-					if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0))  {
-						$pageref->{'GroupOrder'}[4] = 'Synchronize';
-						my $syncGroupsRef = syncGroups($client);
-						$pageref->{'Prefs'}{'synchronize'}{'options'} = $syncGroupsRef;
-						$pageref->{'Prefs'}{'synchronize'}{'validateArgs'} = [$syncGroupsRef];
-					} else {
-						$pageref->{'GroupOrder'}[4] = undef;
-					}
+
 				}
 		,'postChange' => sub {
 					my ($client,$paramref,$pageref) = @_;
@@ -188,46 +176,13 @@ sub initSetupConfig {
 						delete $pageref->{'Prefs'}{'playingDisplayMode'}{'options'}{'6'};
 					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,5,1,1];
 					}
-					if (Slim::Player::Client::clientCount() > 1 ) {
-						$pageref->{'Prefs'}{'synchronize'}{'options'} = syncGroups($client);
-						if (!exists($paramref->{'synchronize'})) {
-							if (Slim::Player::Sync::isSynced($client)) {
-								my $master = Slim::Player::Sync::master($client);
-								$paramref->{'synchronize'} = $master->id();
-							} else {
-								$paramref->{'synchronize'} = -1;
-							}
-						}
-					}
 					$client->update();
 				}
-		,'GroupOrder' => ['Default','Format','Digital','Brightness','Synchronize','TitleFormats']
+		,'GroupOrder' => ['Default','TitleFormats',undef,undef,undef,undef]
 		#,'template' => 'setup_player.html'
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['playername','playingDisplayMode','showbufferfullness']
-				}
-			,'Format' => {
-					'PrefOrder' => ['lame','maxBitrate']
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_MAXBITRATE')
-					,'GroupLine' => 1
-					,'GroupSub' => 1
-				}
-			,'Digital' => {
-					'PrefOrder' => ['digitalVolumeControl','mp3SilencePrelude']
-				}
-			,'Brightness' => {
-					'PrefOrder' => ['powerOnBrightness','powerOffBrightness','idleBrightness']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'GroupHead' => string('SETUP_GROUP_BRIGHTNESS')
-					,'GroupDesc' => string('SETUP_GROUP_BRIGHTNESS_DESC')
-					,'GroupLine' => 1
+					'PrefOrder' => ['playername',]
 				}
 			,'TitleFormats' => {
 					'PrefOrder' => ['titleFormat']
@@ -241,9 +196,46 @@ sub initSetupConfig {
 										'</th><th></th><th>' . string('SETUP_FORMATS') . '</th><th></th></tr>'
 					,'GroupLine' => 1
 				}
-			,'Synchronize' => {
-					'PrefOrder' => ['synchronize','syncVolume','syncPower']
+			,'Brightness' => {
+					'PrefOrder' => ['powerOnBrightness','powerOffBrightness','idleBrightness','autobrightness']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'GroupHead' => string('SETUP_GROUP_BRIGHTNESS')
+					,'GroupDesc' => string('SETUP_GROUP_BRIGHTNESS_DESC')
+					,'GroupLine' => 1
 				}
+			,'TextSize' => {
+					'PrefOrder' => ['doublesize','offDisplaySize',]
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'GroupHead' => string('SETUP_DOUBLESIZE')
+					,'GroupDesc' => string('SETUP_DOUBLESIZE_DESC')
+					,'GroupLine' => 1
+				}
+			,'Display' => {
+					'PrefOrder' => ['playingDisplayMode','showbufferfullness']
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'GroupHead' => string('SETUP_PLAYINGDISPLAYMODE')
+					,'GroupDesc' => string('SETUP_PLAYINGDISPLAYMODE_DESC')
+					,'GroupLine' => 1
+				}
+			,'ScreenSaver' => {
+				'PrefOrder' => ['screensaver','screensavertimeout']
+				,'Suppress_PrefHead' => 1
+				,'Suppress_PrefDesc' => 1
+				,'Suppress_PrefLine' => 1
+				,'Suppress_PrefSub' => 1
+				,'GroupHead' => string('SETUP_SCREENSAVER')
+				,'GroupDesc' => string('SETUP_SCREENSAVER_DESC')
+				,'GroupLine' => 1
+				,'GroupSub' => 1
+			}
 			}
 		,'Prefs' => {
 			'powerOnBrightness' => {
@@ -300,6 +292,7 @@ sub initSetupConfig {
 									,'5' => string('REMAINING') . ' ' . string('AND') . ' ' . string('PROGRESS_BAR')
 									,'6' => string('SETUP_SHOWBUFFERFULLNESS')
 									}
+							,'PrefChoose' => string('SETUP_PLAYINGDISPLAYMODE').string('COLON')
 						}
 			,'showbufferfullness' => {
 						'validate' => \&validateTrueFalse
@@ -308,6 +301,234 @@ sub initSetupConfig {
 								,'1' => string('ENABLED')
 								}
 					}
+			,'titleFormat'		=> {
+							'isArray' => 1
+							,'arrayAddExtra' => 1
+							,'arrayDeleteNull' => 1
+							,'arrayDeleteValue' => -1
+							,'arrayBasicValue' => 0
+							,'arrayCurrentPref' => 'titleFormatCurr'
+							,'inputTemplate' => 'setup_input_array_sel.html'
+							,'validate' => \&validateInHash
+							,'validateArgs' => [] #filled by initSetup
+							,'options' => {} #filled by initSetup using hash_of_titleFormats()
+							,'onChange' => sub {
+										my ($client,$changeref,$paramref,$pageref) = @_;
+										if (exists($changeref->{'titleFormat'}{'Processed'})) {
+											return;
+										}
+										processArrayChange($client,'titleFormat',$paramref,$pageref);
+										$changeref->{'titleFormat'}{'Processed'} = 1;
+									}
+						}
+			,'screensaver'	=> {
+							'validate' => \&validateInHash
+							,'validateArgs' => [\&Slim::Buttons::Common::hash_of_savers,1]
+							,'options' => undef #will be set by preEval  
+						}
+			,'screensavertimeout' => {
+							'validate' => \&validateNumber
+							,'validateArgs' => [0,undef,1]
+						}
+			,'doublesize' => {
+							'validate' => \&validateInList
+							,'validateArgs' => undef
+							,'options' => undef
+							,'PrefChoose' => string('SETUP_DOUBLESIZE').string('COLON')
+							,'currentValue' => sub { shift->textSize();}
+							,'onChange' => sub { 
+												my ($client,$changeref,$paramref,$pageref) = @_;
+												$client->textSize($changeref->{'textsize'}{'new'});
+									}
+						}
+			,'offDisplaySize' => {
+							'validate' => \&validateInList
+							,'validateArgs' => undef
+							,'options' => undef
+							,'PrefChoose' => string('SETUP_OFFDISPLAYSIZE').string('COLON')
+						}
+			,'autobrightness' => {
+						'validate' => \&validateTrueFalse
+						,'options' => {
+								'1' => string('SETUP_AUTOBRIGHTNESS_ON')
+								,'0' => string('SETUP_AUTOBRIGHTNESS_OFF')
+							}
+					}
+			}
+		} #end of setup{'player'} hash
+	,'alarm' => {
+		'title' => string('ALARM_SETTINGS')
+		,'parent' => 'player'
+		,'isClient' => 1
+		,'preEval' => sub {
+				my ($client,$paramref,$pageref) = @_;
+				my $playlistRef = playlists();
+				$pageref->{'Prefs'}{'alarmplaylist'}{'options'} = $playlistRef;
+				$pageref->{'Prefs'}{'alarmplaylist'}{'validateArgs'} = [$playlistRef];
+				if (!$paramref->{'playername'}) {
+					$paramref->{'playername'} = $client->name();
+				}
+				if ($paramref->{'playername'}) {
+					$pageref->{'title'} = string('ADDITIONAL_PLAYER_SETTINGS') . ' ' . string('FOR') . ' ' . $paramref->{'playername'};
+				}
+				$paramref->{'versionInfo'} = string('PLAYER_VERSION') . string("COLON") . $client->revision;
+			}
+		,'GroupOrder' => ['AlarmClock']
+		,'Groups' => {
+			'AlarmClock' => {
+				'PrefOrder' => ['alarm','alarmtime','alarmvolume','alarmplaylist']
+				,'PrefsInTable' => 1
+				,'Suppress_PrefHead' => 1
+				,'Suppress_PrefDesc' => 1
+				,'Suppress_PrefLine' => 1
+				,'Suppress_PrefSub' => 1
+				,'GroupHead' => string('SETUP_GROUP_ALARM')
+				,'GroupDesc' => string('SETUP_GROUP_ALARM_DESC')
+				,'GroupLine' => 1
+				,'GroupSub' => 1
+			}
+		}
+		,'Prefs' => {
+			'alarmtime' => {
+				'validate' => \&validateAcceptAll
+				,'validateArgs' => [0,undef]
+				,'PrefChoose' => string('ALARM_SET').string('COLON')
+				,'changeIntro' => string('ALARM_SET')
+				,'currentValue' => sub {
+						my $client = shift;
+						my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
+						my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Common::timeDigits($client,$time);
+						my $timestring = ((defined($p) && $h0 == 0) ? ' ' : $h0) . $h1 . ":" . $m0 . $m1 . " " . (defined($p) ? $p : '');
+						return $timestring;
+					}
+				,'onChange' => sub {
+						my ($client,$changeref,$paramref,$pageref) = @_;
+						my $time = $changeref->{'alarmtime'}{'new'};
+						my $newtime = 0;
+						$time =~ s{
+							^(0?[0-9]|1[0-9]|2[0-4]):([0-5][0-9])\s*(P|PM|A|AM)?$
+						}{
+							if (defined $3) {
+								$newtime = ($1 == 12?0:$1 * 60 * 60) + ($2 * 60) + ($3 =~ /P/?12 * 60 * 60:0);
+							} else {
+								$newtime = ($1 * 60 * 60) + ($2 * 60);
+							}
+						}iegsx;
+						Slim::Utils::Prefs::clientSet($client,'alarmtime',$newtime);
+					}
+			},
+			'alarmvolume'	=> {
+				'validate' => \&validateNumber
+				,'PrefChoose' => string('SETUP_ALARMVOLUME').string('COLON')
+				,'validateArgs' => [0,$Slim::Player::Client::maxVolume,1,1]
+			},
+			'alarmplaylist' => {
+				'validate' => \&validateInHash
+				,'PrefChoose' => string('ALARM_SELECT_PLAYLIST').string('COLON')
+				,'validateArgs' => [] #[\&playlists]
+
+				,'options' => {} #{playlists()}
+			},
+			'alarm' => {
+				'validate' => \&validateTrueFalse
+				,'PrefHead' => ' '
+				,'PrefChoose' => string('SETUP_ALARM').string('COLON')
+				,'options' => {
+						'1' => string('ON')
+						,'0' => string('OFF')
+					}
+			},
+		},
+	}
+	,'audio' => {
+		'title' => string('AUDIO_SETTINGS')
+		,'parent' => 'player'
+		,'isClient' => 1
+		,'preEval' => sub {
+					my ($client,$paramref,$pageref) = @_;
+					$pageref->{'GroupOrder'}[1] = 'Display';
+					if ($client->hasDigitalOut()) {
+						$pageref->{'GroupOrder'}[2] = 'Digital';
+					} else {
+						$pageref->{'GroupOrder'}[2] = undef;
+					}
+					my @formats = $client->formats();
+					if ($formats[0] ne 'mp3') {
+						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = string('SETUP_MAXBITRATE_DESC');
+						$pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'} = '  '.string('NO_LIMIT');
+					} else {
+						delete $pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'};
+						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = string('SETUP_MP3BITRATE_DESC');
+					}
+					$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = Slim::Utils::Misc::findbin('lame') ? string('SETUP_LAME_FOUND') : string('SETUP_LAME_NOT_FOUND');
+					
+					if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0))  {
+						$pageref->{'GroupOrder'}[1] = 'Synchronize';
+						my $syncGroupsRef = syncGroups($client);
+						$pageref->{'Prefs'}{'synchronize'}{'options'} = $syncGroupsRef;
+						$pageref->{'Prefs'}{'synchronize'}{'validateArgs'} = [$syncGroupsRef];
+					} else {
+						$pageref->{'GroupOrder'}[1] = undef;
+					}
+		}
+		,'postChange' => sub {
+					my ($client,$paramref,$pageref) = @_;
+					if (Slim::Player::Client::clientCount() > 1 ) {
+						$pageref->{'Prefs'}{'synchronize'}{'options'} = syncGroups($client);
+						if (!exists($paramref->{'synchronize'})) {
+							if (Slim::Player::Sync::isSynced($client)) {
+								my $master = Slim::Player::Sync::master($client);
+								$paramref->{'synchronize'} = $master->id();
+							} else {
+								$paramref->{'synchronize'} = -1;
+							}
+						}
+					}
+					$client->update();
+				}
+		,'GroupOrder' => ['Format',undef,'Digital']
+		,'Groups' => {
+			'Format' => {
+					'PrefOrder' => ['lame','maxBitrate']
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupHead' => string('SETUP_MAXBITRATE')
+					,'GroupLine' => 1
+					,'GroupSub' => 1
+				}
+			,'Synchronize' => {
+					'PrefOrder' => ['synchronize','syncVolume','syncPower']
+				}
+			,'Digital' => {
+					'PrefOrder' => ['digitalVolumeControl','mp3SilencePrelude']
+				}
+		}
+		,'Prefs' => {
+			'maxBitrate' => {
+							'validate' => \&validateInList
+							,'validateArgs' => [0, 64, 96, 128, 160, 192, 256, 320]
+							,'optionSort' => 'V'
+							,'currentValue' => sub { return Slim::Utils::Prefs::maxRate(shift, 1); }
+							,'options' => {
+									'0' => '  '.string('NO_LIMIT')
+									,'64' => ' 64 '.string('KBPS')
+									,'96' => ' 96 '.string('KBPS')
+									,'128' => '128 '.string('KBPS')
+									,'160' => '160 '.string('KBPS')
+									,'192' => '192 '.string('KBPS')
+									,'256' => '256 '.string('KBPS')
+									,'320' => '320 '.string('KBPS')
+								}
+							,'PrefDesc' => undef
+						}
+			,'lame' => {
+						'validate' => \&validateAcceptAll
+						,'validateArgs' => [] #filled by preEval
+						,'noWarning' => 1
+						,'dontSet' => 1
+						,'inputTemplate' => undef
+						}
 			,'synchronize' => {
 							'dontSet' => 1
 							,'options' => {} #filled by preEval
@@ -369,78 +590,19 @@ sub initSetupConfig {
 							'validate' => \&validateNumber  
 							,'validateArgs' => [0,undef,5]
 						}
-			,'maxBitrate' => {
-							'validate' => \&validateInList
-							,'validateArgs' => [0, 64, 96, 128, 160, 192, 256, 320]
-							,'optionSort' => 'V'
-							,'currentValue' => sub { return Slim::Utils::Prefs::maxRate(shift, 1); }
-							,'options' => {
-									'0' => '  '.string('NO_LIMIT')
-									,'64' => ' 64 '.string('KBPS')
-									,'96' => ' 96 '.string('KBPS')
-									,'128' => '128 '.string('KBPS')
-									,'160' => '160 '.string('KBPS')
-									,'192' => '192 '.string('KBPS')
-									,'256' => '256 '.string('KBPS')
-									,'320' => '320 '.string('KBPS')
-								}
-							,'PrefDesc' => undef
-						}
-			,'lame' => {
-						'validate' => \&validateAcceptAll
-						,'validateArgs' => [] #filled by preEval
-						,'noWarning' => 1
-						,'dontSet' => 1
-						,'inputTemplate' => undef
-						}
-			,'titleFormat'		=> {
-							'isArray' => 1
-							,'arrayAddExtra' => 1
-							,'arrayDeleteNull' => 1
-							,'arrayDeleteValue' => -1
-							,'arrayBasicValue' => 0
-							,'arrayCurrentPref' => 'titleFormatCurr'
-							,'inputTemplate' => 'setup_input_array_sel.html'
-							,'validate' => \&validateInHash
-							,'validateArgs' => [] #filled by initSetup
-							,'options' => {} #filled by initSetup using hash_of_titleFormats()
-							,'onChange' => sub {
-										my ($client,$changeref,$paramref,$pageref) = @_;
-										if (exists($changeref->{'titleFormat'}{'Processed'})) {
-											return;
-										}
-										processArrayChange($client,'titleFormat',$paramref,$pageref);
-										$changeref->{'titleFormat'}{'Processed'} = 1;
-									}
-						}
-			}
-		} #end of setup{'player'} hash
-
-	,'additional_player' => {
+		}
+	}
+	,'misc' => {
 		'title' => string('ADDITIONAL_PLAYER_SETTINGS')
 		,'parent' => 'player'
 		,'isClient' => 1
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
-				my $playlistRef = playlists();
-				$pageref->{'Prefs'}{'alarmplaylist'}{'options'} = $playlistRef;
-				$pageref->{'Prefs'}{'alarmplaylist'}{'validateArgs'} = [$playlistRef];
-				my @text = (0..$client->maxTextSize);
-				$pageref->{'Prefs'}{'doublesize'}{'validateArgs'} = \@text;
-				$pageref->{'Prefs'}{'doublesize'}{'options'} = fonts($client);
-				$pageref->{'Prefs'}{'offDisplaySize'}{'validateArgs'} = \@text;
-				$pageref->{'Prefs'}{'offDisplaySize'}{'options'} = fonts($client);
-				if (scalar(keys %{Slim::Buttons::Common::hash_of_savers()}) > 0) {
-					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[7] = 'screensaver';
-					$pageref->{'Prefs'}{'screensaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
-				} else {
-					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[7] = undef;
-				}
 				if (scalar(keys %{Slim::Hardware::IR::mapfiles()}) > 1) {  
-					$pageref->{'GroupOrder'}[3] = 'IRMap';  
+					$pageref->{'GroupOrder'}[1] = 'IRMap';  
 					$pageref->{'Prefs'}{'irmap'}{'options'} = Slim::Hardware::IR::mapfiles();  
 				} else {  
-					$pageref->{'GroupOrder'}[3] = undef;
+					$pageref->{'GroupOrder'}[1] = undef;
 				}
 				my $i = 0;
 				my %irsets = map {$_ => 1} Slim::Utils::Prefs::clientGetArray($client,'disabledirsets');
@@ -475,23 +637,28 @@ sub initSetupConfig {
 					$i++;
 				}
 			}
-		,'GroupOrder' => ['Default', 'AlarmClock','IRSets', undef]
+		,'GroupOrder' => ['IRSets',undef,'ScrollPause','ScrollRate']
 		# if more than one ir map exists the undef will be replaced by 'Default'
 		,'Groups' => {
-			'Default' => {
-				'PrefOrder' => ['autobrightness','doublesize','offDisplaySize','screensavertimeout','scrollPause','scrollPauseDouble','scrollRate','scrollRateDouble']
-			}
-			,'AlarmClock' => {
-				'PrefOrder' => ['alarm','alarmtime','alarmvolume','alarmplaylist']
+			'ScrollRate' => {
+				'PrefOrder' => ['scrollRate','scrollRateDouble']
 				,'PrefsInTable' => 1
 				,'Suppress_PrefHead' => 1
 				,'Suppress_PrefDesc' => 1
 				,'Suppress_PrefLine' => 1
-				,'Suppress_PrefSub' => 1
-				,'GroupHead' => string('SETUP_GROUP_ALARM')
-				,'GroupDesc' => string('SETUP_GROUP_ALARM_DESC')
+				,'GroupHead' => string('SETUP_GROUP_SCROLLRATE')
+				,'GroupDesc' => string('SETUP_GROUP_SCROLLRATE_DESC')
 				,'GroupLine' => 1
-				,'GroupSub' => 1
+			}
+			,'ScrollPause' => {
+				'PrefOrder' => ['scrollPause','scrollPauseDouble']
+				,'PrefsInTable' => 1
+				,'Suppress_PrefHead' => 1
+				,'Suppress_PrefDesc' => 1
+				,'Suppress_PrefLine' => 1
+				,'GroupHead' => string('SETUP_GROUP_SCROLLPAUSE')
+				,'GroupDesc' => string('SETUP_GROUP_SCROLLPAUSE_DESC')
+				,'GroupLine' => 1
 			}
 			,'IRSets' => {
 				'PrefOrder' => ['irsetlist']
@@ -515,52 +682,25 @@ sub initSetupConfig {
 				,'validateArgs' => [\&Slim::Hardware::IR::mapfiles,1]  
 				,'options' => undef #will be set by preEval  
 			},
-			'screensaver'	=> {
-				'validate' => \&validateInHash
-				,'validateArgs' => [\&Slim::Buttons::Common::hash_of_savers,1]
-				,'options' => undef #will be set by preEval  
-			},
-			'screensavertimeout' => {
-				'validate' => \&validateNumber
-				,'validateArgs' => [0,undef,1]
-			},
-			'doublesize' => {
-				'validate' => \&validateInList
-				,'validateArgs' => undef
-				,'options' => undef
-				,'currentValue' => sub { shift->textSize();}
-				,'onChange' => sub { 
-									my ($client,$changeref,$paramref,$pageref) = @_;
-									$client->textSize($changeref->{'textsize'}{'new'});
-						}
-			},
-			'offDisplaySize' => {
-				'validate' => \&validateInList
-				,'validateArgs' => undef
-				,'options' => undef
-			},
-			'autobrightness' => {
-				'validate' => \&validateTrueFalse  
-				,'options' => {
-						'1' => string('SETUP_AUTOBRIGHTNESS_ON')
-						,'0' => string('SETUP_AUTOBRIGHTNESS_OFF')
-					}
-			},
 			'scrollPause' => {
 				'validate' => \&validateNumber
 				,'validateArgs' => [0,undef,1]
+				,'PrefChoose' => string('SETUP_GROUP_SCROLLPAUSE').string('COLON')
 			},
 			'scrollPauseDouble' => {
 				'validate' => \&validateNumber
 				,'validateArgs' => [0,undef,1]
+				,'PrefChoose' => string('DOUBLE-LINE').' '.string('SETUP_GROUP_SCROLLPAUSE').string('COLON')
 			},
 			'scrollRate' => {
 				'validate' => \&validateNumber
 				,'validateArgs' => [0,undef,1]
+				,'PrefChoose' => string('SETUP_GROUP_SCROLLRATE').string('COLON')
 			},
 			'scrollRateDouble' => {
 				'validate' => \&validateNumber
 				,'validateArgs' => [0,undef,1]
+				,'PrefChoose' =>  string('DOUBLE-LINE').' '.string('SETUP_GROUP_SCROLLRATE').string('COLON')
 			},
 			'irsetlist' => {
 				'isArray' => 1
@@ -578,61 +718,12 @@ sub initSetupConfig {
 							}
 						}
 			},
-			'alarmtime' => {
-				'validate' => \&validateAcceptAll
-				,'validateArgs' => [0,undef]
-				,'PrefChoose' => string('ALARM_SET')
-				,'changeIntro' => string('ALARM_SET')
-				,'currentValue' => sub {
-						my $client = shift;
-						my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
-						my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Common::timeDigits($client,$time);
-						my $timestring = ((defined($p) && $h0 == 0) ? ' ' : $h0) . $h1 . ":" . $m0 . $m1 . " " . (defined($p) ? $p : '');
-						return $timestring;
-					}
-				,'onChange' => sub {
-						my ($client,$changeref,$paramref,$pageref) = @_;
-						my $time = $changeref->{'alarmtime'}{'new'};
-						my $newtime = 0;
-						$time =~ s{
-							^(0?[0-9]|1[0-9]|2[0-4]):([0-5][0-9])\s*(P|PM|A|AM)?$
-						}{
-							if (defined $3) {
-								$newtime = ($1 == 12?0:$1 * 60 * 60) + ($2 * 60) + ($3 =~ /P/?12 * 60 * 60:0);
-							} else {
-								$newtime = ($1 * 60 * 60) + ($2 * 60);
-							}
-						}iegsx;
-						Slim::Utils::Prefs::clientSet($client,'alarmtime',$newtime);
-					}
-			},
-			'alarmvolume'	=> {
-				'validate' => \&validateNumber
-				,'PrefChoose' => string('SETUP_ALARMVOLUME')
-				,'validateArgs' => [0,$Slim::Player::Client::maxVolume,1,1]
-			},
-			'alarmplaylist' => {
-				'validate' => \&validateInHash
-				,'PrefChoose' => string('ALARM_SELECT_PLAYLIST')
-				,'validateArgs' => [] #[\&playlists]
-
-				,'options' => {} #{playlists()}
-			},
-			'alarm' => {
-				'validate' => \&validateTrueFalse
-				,'PrefHead' => ' '
-				,'PrefChoose' => string('SETUP_ALARM')
-				,'options' => {
-						'1' => string('ON')
-						,'0' => string('OFF')
-					}
-			},
 		}
 	} # end of setup{'ADDITIONAL_PLAYER'} hash
 
 	,'server' => {
-		'children' => ['interface','behavior',
-		'formats',
+		'children' => ['server','interface','behavior',
+		'itunes','formats',
 		'formatting','security','performance','network','debug']
 		,'title' => string('SERVER_SETTINGS')
 		,'singleChildLinkText' => string('ADDITIONAL_SERVER_SETTINGS')
@@ -651,9 +742,6 @@ sub initSetupConfig {
 					$pageref->{'GroupOrder'}[2] = undef;
 					pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
 				}
-				
-				#show itunes settings all the time
-				$pageref->{'children'}[9] = 'itunes';
 				
 				$paramref->{'versionInfo'} = string('SERVER_VERSION') . string("COLON") . $::VERSION;
 				$paramref->{'newVersion'} = $::newVersion;
