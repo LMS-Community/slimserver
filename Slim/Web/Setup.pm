@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.66 2004/05/05 08:39:14 kdf Exp $
+# $Id: Setup.pm,v 1.67 2004/05/05 08:46:49 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2672,7 +2672,7 @@ sub validateIsFile {
 	} elsif ($allowEmpty && defined($val) && $val eq '') {
 		return $val;
 	} else  {
-		return (undef, "SETUP_BAD_DIRECTORY") ;
+		return (undef, "SETUP_BAD_FILE") ;
 	}
 }
 
