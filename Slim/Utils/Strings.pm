@@ -112,6 +112,11 @@ sub load_strings_file {
 
 		open(STRINGS, $file) || die "couldn't open $file\n";
 		$strings = <STRINGS>;
+
+		if ($Slim::Utils::Misc::locale =~ /^iso-8859/) {
+			$strings = Slim::Utils::Misc::utf8toLatin1($strings);
+		}
+
 		close STRINGS;
 	}
 
