@@ -422,13 +422,21 @@ sub reshuffle {
 
 		for my $track (@{playList($client)}) {
 
-			$track = $ds->objectForUrl($track);
+			my $trackObj = $ds->objectForUrl($track);
 
-			my $album = Slim::Utils::Text::matchCase($track->album()->title()) || $client->string('NO_ALBUM');
+			if (defined $trackObj && ref($trackObj)) {
 
-			push @{$albtracks{$album}}, $i;
+				my $album = Slim::Utils::Text::matchCase($trackObj->album()->title()) || $client->string('NO_ALBUM');
 
-			$trackToNum{$track->url} = $i++;
+				push @{$albtracks{$album}}, $i;
+
+				$trackToNum{$trackObj->url} = $i++;
+
+			} else {
+
+				Slim::Utils::Misc::msg("Couldn't find an object for url: $track\n");
+				Slim::Utils::Misc::bt();
+			}
 		}
 
 		if ($realsong == -1 && !$dontpreservecurrsong) {
