@@ -9,8 +9,8 @@ var playlist = new Array();
 var cansave = 0;
 var playlistinfo = "";
 
-var BY = ' by ';
-var FROM = ' from ';
+var BY;
+var FROM;
 
 //////////////////////////////////////
 //                                  //
@@ -61,10 +61,10 @@ function updatePlaylist_handler(req, url) {
 
 	for (i = 0; i < baselength; i++) {
 		newHTML = '<a onclick="doSelect(event)" class="plstitle">' + newPlaylist[i].title + '</a>'
-		if (!newPlaylist[i].noalbum) {
+		if (!newPlaylist[i].noalbum && newPlaylist[i].album != "") {
 			newHTML += FROM + '<a onclick="doAlbum(event)">' + newPlaylist[i].album + '</a>';
 		}
-		if (!newPlaylist[i].noartist) {
+		if (!newPlaylist[i].noartist && newPlaylist[i].artist != "") {
 			newHTML += BY + '<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
 		}
 
@@ -90,10 +90,10 @@ function updatePlaylist_handler(req, url) {
 
 			titleTD = document.createElement('td');
 			titleTD.innerHTML = '<a onclick="doSelect(event)" class="plstitle">'+newPlaylist[i].title+'</a>';
-			if (!newPlaylist[i].noalbum) {
+			if (!newPlaylist[i].noalbum && newPlaylist[i].album != "") {
 				titleTD.innerHTML += FROM + '<a onclick="doAlbum(event)">' + newPlaylist[i].album + '</a>';
 			}
-			if (!newPlaylist[i].noartist) {
+			if (!newPlaylist[i].noartist && newPlaylist[i].artist != "") {
 				titleTD.innerHTML += BY + '<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
 			}
 

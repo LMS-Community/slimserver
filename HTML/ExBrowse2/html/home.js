@@ -4,6 +4,8 @@
 //
 /////////////////////////////////////////////
 
+var strings;
+
 function goplayersettings() {
 	browseurl("setup.html?page=player&playerid=" + currentPlayer);
 }
@@ -82,6 +84,10 @@ function updateHome_handler(req, url) {
 	playersel.selectedIndex = indexToSelect;
 
 	if (!currentPlayer) currentPlayer = playersel.value;
+
+        strings = resp.getElementsByTagName("strings")[0];
+        FROM = " " + strings.getAttribute("from") + " ";
+        BY = " " + strings.getAttribute("by") + " ";
 
 	if (homeRefs == 0) {
 		loadCookie();

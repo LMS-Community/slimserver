@@ -9,8 +9,8 @@ var playlist = new Array();
 var cansave = 0;
 var playlistinfo = "";
 
-var BY = ' by ';
-var FROM = ' from ';
+var BY;
+var FROM;
 
 //////////////////////////////////////
 //                                  //
@@ -59,8 +59,11 @@ function updatePlaylist_handler(req, url) {
 	else baselength = newPlaylist.length;
 
 	for (i = 0; i < baselength; i++) {
-		newHTML = '<a onclick="doSelect(event)">' + newPlaylist[i].title + '</a>'
-			+ BY + '<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
+		newHTML = '<a onclick="doSelect(event)">' + newPlaylist[i].title + '</a>';
+		if (!newPlaylist[i].noartist && newPlaylist[i].artist != "") {
+			newHTML += BY + '<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
+		}
+
 		if (listbox.rows[i].childNodes[2].innerHTML != newHTML) {
 			listbox.rows[i].childNodes[2].innerHTML = newHTML;
 		}
