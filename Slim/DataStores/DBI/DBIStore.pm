@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DBIStore;
 
-# $Id: DBIStore.pm,v 1.3 2004/12/16 04:45:34 dsully Exp $
+# $Id: DBIStore.pm,v 1.4 2004/12/17 20:33:03 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -13,6 +13,12 @@ use MP3::Info;
 use DBI;
 
 use Slim::DataStores::DBI::DataModel;
+
+use Slim::DataStores::DBI::Album;
+use Slim::DataStores::DBI::Contributor;
+use Slim::DataStores::DBI::ContributorTrack;
+use Slim::DataStores::DBI::Genre;
+use Slim::DataStores::DBI::GenreTrack;
 
 use Slim::Formats::Movie;
 use Slim::Formats::AIFF;
@@ -41,17 +47,20 @@ use constant TTL_INDEX => 1;
 
 # Hash for tag function per format
 my %tagFunctions = (
-			'mp3' => \&Slim::Formats::MP3::getTag
-			,'mp2' => \&Slim::Formats::MP3::getTag
-			,'ogg' => \&Slim::Formats::Ogg::getTag
-			,'flc' => \&Slim::Formats::FLAC::getTag
-			,'wav' => \&Slim::Formats::Wav::getTag
-			,'aif' => \&Slim::Formats::AIFF::getTag
-			,'wma' => \&Slim::Formats::WMA::getTag
-			,'mov' => \&Slim::Formats::Movie::getTag
-			,'shn' => \&Slim::Formats::Shorten::getTag
-			,'mpc' => \&Slim::Formats::Musepack::getTag
-		);
+	'mp3' => \&Slim::Formats::MP3::getTag,
+	'mp2' => \&Slim::Formats::MP3::getTag,
+	'ogg' => \&Slim::Formats::Ogg::getTag,
+	'flc' => \&Slim::Formats::FLAC::getTag,
+	'wav' => \&Slim::Formats::Wav::getTag,
+	'aif' => \&Slim::Formats::AIFF::getTag,
+	'wma' => \&Slim::Formats::WMA::getTag,
+	'mov' => \&Slim::Formats::Movie::getTag,
+	'shn' => \&Slim::Formats::Shorten::getTag,
+	'mpc' => \&Slim::Formats::Musepack::getTag,
+);
+
+# Only look these up once.
+my ($_unknownArtistID, $_unknownGenreID);
 
 #
 # Readable DataStore interface methods:
@@ -61,7 +70,7 @@ sub new {
 
 	my $self = {
 		# Handle to the DBI database we're going to use.
-		dbh => Slim::DataStores::DBI::DataModel::db_Main,
+		dbh => Slim::DataStores::DBI::DataModel->db_Main(),
 		# Values persisted in metainformation table
 		trackCount => 0,
 		totalTime => 0,
@@ -88,12 +97,12 @@ sub new {
 		# we get around to it.
 		zombieList => {},
 	};
+
 	bless $self, $class;
 
-	Slim::DataStores::DBI::Track::setLoader($self);
+	Slim::DataStores::DBI::Track->setLoader($self);
 	
-	($self->{trackCount}, $self->{totalTime}) = 
-	  Slim::DataStores::DBI::DataModel::getMetaInformation;
+	($self->{'trackCount'}, $self->{'totalTime'}) = Slim::DataStores::DBI::DataModel->getMetaInformation();
 	$self->generateExternalPlaylists();
 	
 	$self->_commitDBTimer();
@@ -107,15 +116,16 @@ sub contentType {
 	my $create = shift;
 
 	my $ct = $self->{contentTypeCache}->{$url};
+
 	if (defined($ct)) {
 		return wantarray ? ($ct, $self->_retrieveTrack($url)) : $ct;
 	}
 
 	my $track = $self->objectForUrl($url, $create);
+
 	if (defined($track)) {
-		$ct = $track->content_type;
-	}
-	else {
+		$ct = $track->content_type();
+	} else {
 		$ct = Slim::Music::Info::typeFromPath($url);
 	}
 
@@ -160,6 +170,7 @@ sub objectForId {
 	my $id = shift;
 
 	my $track = Slim::DataStores::DBI::Track->retrieve($id);
+
 	if (defined($track)) {
 		$track = $self->_checkValidity($track);
 	}
@@ -172,10 +183,11 @@ sub find {
 	my $field = shift;
 	my $findCriteria = shift;
 	my $sortby = shift;
-	my $start = shift;
-	my $end = shift;
+	my $limit = shift;
+	my $offset = shift;
 
-	my $items = Slim::DataStores::DBI::DataModel->find($field, $findCriteria, $sortby, $start, $end);
+	my $items = Slim::DataStores::DBI::DataModel->find($field, $findCriteria, $sortby, $limit, $offset);
+	#my $items = Slim::DataStores::DBI::DataModel->find($field, $findCriteria, $sortby);
 
 	if (defined($items) && $field eq 'track') {
 		return [ grep $self->_includeInTrackCount($_), @$items ];
@@ -191,28 +203,29 @@ sub count {
 
 	# Optimize the all case
 	if (scalar(keys %$findCriteria) == 0) {
+
 		if ($field eq 'track') {
-			return $self->{trackCount};	
-		}
-		elsif ($field eq 'genre') {
-			return Slim::DataStores::DBI::Genre->count();
-		}
-		elsif ($field eq 'album') {
-			return Slim::DataStores::DBI::Album->count();
-		}
-		elsif ($field eq 'contributor') {
-			return Slim::DataStores::DBI::Contributor->count();
+
+			return $self->{'trackCount'};
+
+		} elsif ($field eq 'genre') {
+
+			return Slim::DataStores::DBI::Genre->count_all();
+
+		} elsif ($field eq 'album') {
+
+			return Slim::DataStores::DBI::Album->count_all();
+
+		} elsif ($field eq 'contributor') {
+
+			return Slim::DataStores::DBI::Contributor->count_all();
 		}
 	}
 
-	# XXX Brute force implementation. For now, instantiate the objects
-	# to get the counts 
+	# XXX Brute force implementation. For now, instantiate the objects to get the counts 
 	my $items = $self->find($field, $findCriteria);
-	if (defined($items)) {
-		return scalar(@$items);
-	}
 
-	return 0;
+	return defined $items ? scalar @$items : 0;
 }
 
 sub search {
@@ -224,20 +237,23 @@ sub search {
 	my $contributorFields = Slim::DataStores::DBI::Contributor->contributorFields();
 
 	if ($field eq 'track') {
+
 		my $items = Slim::DataStores::DBI::Track->searchTitle($pattern);
+
 		if (defined($items)) {
-			my @tracks = grep $self->_includeInTrackCount($_), @$items;
-			return \@tracks;
+			return [ grep $self->_includeInTrackCount($_), @$items ];
 		}
-	}
-	elsif ($field eq 'genre') {
+
+	} elsif ($field eq 'genre') {
+
 		return Slim::DataStores::DBI::Genre->searchName($pattern);
-	}
-	elsif (grep { $_ eq $field } @$contributorFields) {
-		return Slim::DataStores::DBI::Contributor->searchName($pattern, 
-															  $field);
-	}
-	elsif ($field eq 'album') {
+
+	} elsif (grep { $_ eq $field } @$contributorFields) {
+
+		return Slim::DataStores::DBI::Contributor->searchName($pattern, $field);
+
+	} elsif ($field eq 'album') {
+
 		return Slim::DataStores::DBI::Album->searchTitle($pattern);
 	}
 
@@ -247,20 +263,19 @@ sub search {
 sub albumsWithArtwork {
 	my $self = shift;
 	
-	my @albums = Slim::DataStores::DBI::Album->hasArtwork();
-	return \@albums;
+	return [ Slim::DataStores::DBI::Album->hasArtwork() ];
 }
 
 sub totalTime {
 	my $self = shift;
 
-	return $self->{totalTime};
+	return $self->{'totalTime'};
 }
 
 sub externalPlaylists {
 	my $self = shift;
 
-	return $self->{externalPlaylists};
+	return $self->{'externalPlaylists'};
 }
 
 #
@@ -271,57 +286,54 @@ sub externalPlaylists {
 # attribute setter methods may already have been invoked on the
 # object.
 sub updateTrack {
-	my $self = shift;
-	my $track = shift;
+	my $self   = shift;
+	my $track  = shift;
 	my $commit = shift;
 
-	$track->update;
+	$track->update();
 	$self->_updateTrackValidity($track);
 
-	if ($commit) {
-		$self->{dbh}->commit;
-	}
+	$self->{'dbh'}->commit() if $commit;
 }
 
 # Create a new track with the given attributes
 sub newTrack {
 	my $self = shift;
-	my $url = shift;
+	my $url = shift || return;
  	my $attributeHash = shift;
 	my $commit = shift;
 	my $deferredAttributes;
 	
-	return if !$url;
-
 	$::d_info && Slim::Utils::Misc::msg("New track for $url\n");
+
 	($attributeHash, $deferredAttributes) = _preCheckAttributes($attributeHash, 1);
 	
-	my $track = Slim::DataStores::DBI::Track->create($attributeHash);
-	return undef if !defined($track);
+	my $track = Slim::DataStores::DBI::Track->create($attributeHash) || return undef;
 
 	_postCheckAttributes($track, $deferredAttributes, 1);
 
-	$self->{lastTrackURL} = $url;
-	$self->{lastTrack} = $track;
+	$self->{'lastTrackURL'} = $url;
+	$self->{'lastTrack'}    = $track;
 
 	if ($self->_includeInTrackCount($track)) { 
+
 		my $time = $track->getCached('secs');
+
 		if ($time) {
-			$self->{totalTime} += $time;
+			$self->{'totalTime'} += $time;
 		}
-		$self->{trackCount}++;
+
+		$self->{'trackCount'}++;
 	}
+
 	$self->_updateTrackValidity($track);
 
-	if ($commit) {
-		$self->{dbh}->commit;
-	}
+	$self->{'dbh'}->commit() if $commit;
 
 	return $track;
 }
 
-# Update the attributes of a track or create one if one doesn't 
-# already exist.
+# Update the attributes of a track or create one if one doesn't already exist.
 sub updateOrCreate {
 	my $self = shift;
 	my $urlOrObj = shift;
@@ -329,7 +341,7 @@ sub updateOrCreate {
 	my $commit = shift;
 
 	my $track = ref $urlOrObj ? $urlOrObj : undef;
-	my $url = ref $urlOrObj ? $track->url : $urlOrObj;
+	my $url   = ref $urlOrObj ? $track->url : $urlOrObj;
 
 	if (!defined($url)) {
 		Slim::Utils::Misc::msg("No URL specified for updateOrCreate\n");
@@ -339,16 +351,17 @@ sub updateOrCreate {
 	}
 	
 	if (defined($track)) {
-		my $id = $track->id;
-		delete $self->{zombieList}->{$id};
-	}
-	else {
+		delete $self->{'zombieList'}->{$track->id};
+	} else {
 		$track = $self->_retrieveTrack($url);
 	}
 
 	my $trackAttrs = Slim::DataStores::DBI::Track::attributes();
+
 	if (defined($track)) {
+
 		$::d_info && Slim::Utils::Misc::msg("Merging entry for $url\n");
+
 		my $deferredAttributes;
 		($attributeHash, $deferredAttributes) = _preCheckAttributes($attributeHash, 0);
 
@@ -360,19 +373,23 @@ sub updateOrCreate {
 
 		_postCheckAttributes($track, $deferredAttributes, 0);
 		$self->updateTrack($track, $commit);
-	}
-	else {
+
+	} else {
+
 		my $columnValueHash = { url => $url };
+
 		while (my ($key, $val) = each %$attributeHash) {
+
 			if (defined $val && exists $trackAttrs->{$key}) {
 				$columnValueHash->{$key} = $val;
 			}
 		}
+
 		$track = $self->newTrack($url, $columnValueHash);
 	}
 
-	if ($attributeHash->{CT}) {
-		$self->{contentTypeCache}->{$url} = $attributeHash->{CT};
+	if ($attributeHash->{'CT'}) {
+		$self->{'contentTypeCache'}->{$url} = $attributeHash->{'CT'};
 	}
 
 	return $track;
@@ -385,36 +402,39 @@ sub delete {
 	my $commit = shift;
 
 	my $track = ref $urlOrObj ? $urlOrObj : undef;
-	my $url = ref $urlOrObj ? $track->url : $urlOrObj;
+	my $url   = ref $urlOrObj ? $track->url : $urlOrObj;
 
 	if (!defined($track)) {
 		$track = $self->_retrieveTrack($url);		
 	}
 
 	if (defined($track)) {
-		delete $self->{validityCache}->{$url};
+
+		delete $self->{'validityCache'}->{$url};
 
 		if ($self->_includeInTrackCount($track)) {
-			$self->{trackCount}--;
+
+			$self->{'trackCount'}--;
+
 			my $time = $track->getCached('secs');
+
 			if ($time) {
-				$self->{totalTime} -= $time;
+				$self->{'totalTime'} -= $time;
 			}
 		}
-		$track->delete;
-		if ($commit) {
-			$self->{dbh}->commit;
-		}
+
+		$track->delete();
+		$self->{'dbh'}->commit();
+
 		$::d_info && Slim::Utils::Misc::msg("cleared $url from database\n");
 	}
 }
 
-# Mark all track entries as being stale in preparation for scanning
-# for validity.
+# Mark all track entries as being stale in preparation for scanning for validity.
 sub markAllEntriesStale {
 	my $self = shift;
 
-	$self->{validityCache} = {};
+	$self->{'validityCache'} = {};
 }
 
 # Mark a track entry as valid.
@@ -422,22 +442,25 @@ sub markEntryAsValid {
 	my $self = shift;
 	my $url = shift;
 
-	$self->{validityCache}->{$url}->[VALID_INDEX] = 1;
+	$self->{'validityCache'}->{$url}->[VALID_INDEX] = 1;
 }
-
 
 # Clear all stale track entries.
 sub clearStaleEntries {
 	my $self = shift;
 
 	$::d_info && Slim::Utils::Misc::msg("starting scan for expired items\n");
-	my $validityCache = $self->{validityCache};
+
+	my $validityCache = $self->{'validityCache'};
+
 	foreach my $url (keys %$validityCache) {
+
 		if (!$validityCache->{$url}->[VALID_INDEX]) {
 			$self->delete($url, 0);
 		}
 	}
-	$self->forceCommit;
+
+	$self->forceCommit();
 }
 
 # Wipe all data in the database
@@ -446,54 +469,64 @@ sub wipeAllData {
 
 	$self->forceCommit();
 
-	Slim::DataStores::DBI::DataModel::wipeDB();
-	$self->{validityCache} = {};
-	$self->{totalTime} = 0;
-	$self->{trackCount} = 0;
-	$self->{artworkCache} = {};
-	$self->{coverCache} = {};
-	$self->{thumbCache} = {};	
-	$self->{contentTypeCache} = {};
-	$self->{lastTrackURL} = '';
-	$self->{lastTrack} = undef;
+	Slim::DataStores::DBI::DataModel->wipeDB();
+
+	$self->{'validityCache'}    = {};
+	$self->{'totalTime'}        = 0;
+	$self->{'trackCount'}       = 0;
+	$self->{'artworkCache'}     = {};
+	$self->{'coverCache'}       = {};
+	$self->{'thumbCache'}       = {};	
+	$self->{'contentTypeCache'} = {};
+	$self->{'lastTrackURL'}     = '';
+	$self->{'lastTrack'}        = undef;
+
 	$self->clearExternalPlaylists();
-	$self->{zombieList} = {};
+	$self->{'zombieList'}       = {};
+
 	$::d_info && Slim::Utils::Misc::msg("wipeAllData: Wiped info database\n");
 
-	$self->{dbh} = Slim::DataStores::DBI::DataModel::db_Main();
+	$self->{'dbh'} = Slim::DataStores::DBI::DataModel->db_Main();
 }
 
 # Force a commit of the database
 sub forceCommit {
 	my $self = shift;
-	Slim::DataStores::DBI::DataModel::setMetaInformation($self->{trackCount}, 
-														 $self->{totalTime});
-	for my $id (keys %{$self->{zombieList}}) {
-		if ($self->{zombieList}->{$id}) {
-			my $track = Slim::DataStores::DBI::Track->retrieve($id);
-			delete $self->{zombieList}->{$id};
-			if ($track) {
-				$self->delete($track, 0);
-			}
-		}
-	}
-	$self->{zombieList} = {};
 
-	$self->{dbh}->commit;
+	# Update the track count
+	Slim::DataStores::DBI::DataModel->setMetaInformation($self->{'trackCount'}, $self->{'totalTime'});
+
+	for my $id (keys %{$self->{'zombieList'}}) {
+
+		next unless $self->{'zombieList'}->{$id};
+
+		my $track = Slim::DataStores::DBI::Track->retrieve($id);
+
+		delete $self->{'zombieList'}->{$id};
+
+		$self->delete($track, 0) if $track;
+	}
+
+	$self->{'zombieList'} = {};
+
+	$self->{'dbh'}->commit();
 }
 
 sub addExternalPlaylist {
 	my $self = shift;
-	my $url = shift;
-	my $playlists = $self->{externalPlaylists};
+	my $url  = shift;
+
+	my $playlists = $self->{'externalPlaylists'};
 
 	return if grep $_ eq $url, @$playlists;
+
 	push @$playlists, $url;
 }
 
 sub clearExternalPlaylists {
 	my $self = shift;
-	$self->{externalPlaylists} = [];
+
+	$self->{'externalPlaylists'} = [];
 }
 
 sub generateExternalPlaylists {
@@ -501,28 +534,32 @@ sub generateExternalPlaylists {
 
 	$self->clearExternalPlaylists();
 
-	my @playlists = Slim::Utils::Text::sortIgnoringCase(map {$_->url} Slim::DataStores::DBI::Track->externalPlaylists);
-	$self->{externalPlaylists} = \@playlists;
+	$self->{'externalPlaylists'} = [ Slim::Utils::Text::sortIgnoringCase(
+		map { $_->url() } Slim::DataStores::DBI::Track->externalPlaylists
+	) ];
 }
 
 sub getExternalPlaylists {
 	my $self = shift;
 
-	return $self->{externalPlaylists};
+	return $self->{'externalPlaylists'};
 }
 
 sub readTags {
-	my $self = shift;
+	my $self  = shift;
 	my $track = shift;
-	my $file = $track->getCached('url');
-	my $filepath;
-	my $type;
-	my $attributesHash;
 
-	if (!defined($file) || $file eq "") { return; };
+	my $file  = $track->getCached('url');
+
+	my ($filepath, $attributesHash);
+
+	if (!defined($file) || $file eq '') {
+		return;
+	}
 
 	# get the type without updating the cache
-	$type = Slim::Music::Info::typeFromPath($file);
+	my $type = Slim::Music::Info::typeFromPath($file);
+
 	if ($type eq 'unk' && (my $ct = $track->getCached('ct'))) {
 		$type = $ct;
 	}
@@ -530,19 +567,23 @@ sub readTags {
 	$::d_info && Slim::Utils::Misc::msg("Updating cache for: " . $file . "\n");
 
 	if (Slim::Music::Info::isSong($file, $type) ) {
+
 		if (Slim::Music::Info::isRemoteURL($file)) {
+
 			# if it's an HTTP URL, guess the title from the the last
 			# part of the URL, and don't bother with the other parts
 			if (!defined($track->getCached('title'))) {
+
 				$::d_info && Slim::Utils::Misc::msg("Info: no title found, calculating title from url for $file\n");
-				$attributesHash->{'TITLE'} = 
-				  Slim::Music::Info::plainTitle($file, $type);
+				$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
 			}
+
 		} else {
+
 			my $anchor;
 			if (Slim::Music::Info::isFileURL($file)) {
 				$filepath = Slim::Utils::Misc::pathFromFileURL($file);
-				$anchor = Slim::Utils::Misc::anchorFromURL($file);
+				$anchor   = Slim::Utils::Misc::anchorFromURL($file);
 			} else {
 				$filepath = $file;
 			}
@@ -551,6 +592,7 @@ sub readTags {
 			if (exists $tagFunctions{$type}) {
 				$attributesHash = &{$tagFunctions{$type}}($filepath, $anchor);
 			}
+
 			$::d_info && !defined($attributesHash) && Slim::Utils::Misc::msg("Info: no tags found for $filepath\n");
 
 			if (defined($attributesHash->{'TRACKNUM'})) {
@@ -623,27 +665,34 @@ sub readTags {
 					# update the cache so we can use readCoverArt without recursion.
 					$self->updateOrCreate($track, $attributesHash);
 
-					$attributesHash = {};
-
 					# Look for Cover Art and cache location
-					my ($body,$contenttype,$path);
+					my ($body, $contenttype, $path);
+
 					if (defined $attributesHash->{'PIC'} || defined $attributesHash->{'APIC'}) {
 						($body,$contenttype,$path) = Slim::Music::Info::readCoverArtTags($file, $attributesHash);
 					}
+
 					if (defined $body) {
+
 						$attributesHash->{'COVER'} = 1;
 						$attributesHash->{'THUMB'} = 1;
+
 						if ($album && !exists $self->{artworkCache}->{$album}) {
 							$::d_artwork && Slim::Utils::Misc::msg("ID3 Artwork cache entry for $album: $filepath\n");
 							$self->setAlbumArtwork($album, $filepath);
 						}
+
 					} else {
+
 						($body,$contenttype,$path) = Slim::Music::Info::readCoverArtFiles($file, 'cover');
+
 						if (defined $body) {
 							$attributesHash->{'COVER'} = $path;
 						}
+
 						# look for Thumbnail Art and cache location
 						($body,$contenttype,$path) = Slim::Music::Info::readCoverArtFiles($file, 'thumb');
+
 						if (defined $body) {
 							$attributesHash->{'THUMB'} = $path;
 							if ($album && !exists $self->{artworkCache}->{$album}) {
@@ -655,7 +704,9 @@ sub readTags {
 				}
 			}
 		} 
+
 	} else {
+
 		if (!defined($track->getCached('title'))) {
 			my $title = Slim::Music::Info::plainTitle($file, $type);
 			$attributesHash->{'TITLE'} = $title;
@@ -675,18 +726,26 @@ sub setAlbumArtwork {
 	my $album = shift;
 	my $filepath = shift;
 	
-	if (! Slim::Utils::Prefs::get('lookForArtwork')) { return undef};
+	if (!Slim::Utils::Prefs::get('lookForArtwork')) {
+		return undef
+	}
 
-	if (!exists $self->{artworkCache}->{$album}) { # only cache albums once each
+	# only cache albums once each
+	if (!exists $self->{'artworkCache'}->{$album}) {
+
 		if (Slim::Music::Info::isFileURL($filepath)) {
 			$filepath = Slim::Utils::Misc::pathFromFileURL($filepath);
 		}
+
 		$::d_artwork && Slim::Utils::Misc::msg("Updating $album artwork cache: $filepath\n");
-		$self->{artworkCache}->{$album} = $filepath;
-		my @objs = Slim::DataStores::DBI::Album->search(title => $album);
-		if (scalar(@objs)) {
-			$objs[0]->artwork_path($filepath);
-			$objs[0]->update;
+
+		$self->{'artworkCache'}->{$album} = $filepath;
+
+		my ($album) = Slim::DataStores::DBI::Album->search(title => $album);
+
+		if ($album) {
+			$album->artwork_path($filepath);
+			$album->update();
 		}
 	}
 }
@@ -697,24 +756,26 @@ sub setAlbumArtwork {
 
 sub _retrieveTrack {
 	my $self = shift;
-	my $url = shift;
+	my $url  = shift;
 
-	return undef if $self->{zombieList}->{$url};
+	return undef if $self->{'zombieList'}->{$url};
 
 	my $track;
-	if ($url eq $self->{lastTrackURL}) {
-		$track = $self->{lastTrack};
-	}
-	else {
-		my @tracks = Slim::DataStores::DBI::Track->search('url' => $url);
-		if (scalar(@tracks)) {
-			$track = $tracks[0];
-		}
+
+	if ($url eq $self->{'lastTrackURL'}) {
+
+		$track = $self->{'lastTrack'};
+
+	} else {
+
+		# XXX - keep a url => id cache. so we can use the
+		# live_object_index and not hit the db.
+		($track) = Slim::DataStores::DBI::Track->search('url' => $url);
 	}
 	
 	if (defined($track)) {
-		$self->{lastTrackURL} = $url;
-		$self->{lastTrack} = $track;
+		$self->{'lastTrackURL'} = $url;
+		$self->{'lastTrack'} = $track;
 	}
 
 	return $track;
@@ -722,27 +783,34 @@ sub _retrieveTrack {
 
 sub _commitDBTimer {
 	my $self = shift;
+
 	$self->forceCommit();
+
 	Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + DB_SAVE_INTERVAL, \&_commitDBTimer);
 }
 
 sub _checkValidity {
-	my $self = shift;
+	my $self  = shift;
 	my $track = shift;
 
-	my $id = $track->getCached('id');
+	my $id  = $track->getCached('id');
 	my $url = $track->getCached('url');
 
-	return undef if $self->{zombieList}->{$id};
+	return undef if $self->{'zombieList'}->{$id};
 
-	my $ttl = $self->{validityCache}->{$url}->[TTL_INDEX] || 0;
+	my $ttl = $self->{'validityCache'}->{$url}->[TTL_INDEX] || 0;
+
 	if (Slim::Music::Info::isFileURL($url) && ($ttl < (time()))) {
+
 		$::d_info && Slim::Utils::Misc::msg("CacheItem: Checking status of $url (TTL: $ttl).\n");
-		if ($self->_hasChanged($track)) {
+
+		if ($self->_hasChanged($track, $url, $id)) {
+
 			$track = undef;
-		}
-		else {	
-			$self->{validityCache}->{$url}->[TTL_INDEX] = (time()+ DB_CACHE_LIFETIME + int(rand(DB_CACHE_LIFETIME)));
+
+		} else {	
+
+			$self->{'validityCache'}->{$url}->[TTL_INDEX] = (time()+ DB_CACHE_LIFETIME + int(rand(DB_CACHE_LIFETIME)));
 		}
 	}
 
@@ -750,16 +818,16 @@ sub _checkValidity {
 }
 
 sub _hasChanged {
-	my $self = shift;
+	my $self  = shift;
 	my $track = shift;
-	my $file = $track->getCached('url');
-	my $id = $track->getCached('id');
+	my $url   = shift || $track->getCached('url');
+	my $id    = shift || $track->getCached('id');
 
 	# We return 0 if the file hasn't changed
 	#    return 1 if the file has (cached entry is deleted by us)
 	# As this is an internal cache function we don't sanity check our arguments...	
 
-	my $filepath = Slim::Utils::Misc::pathFromFileURL($file);
+	my $filepath = Slim::Utils::Misc::pathFromFileURL($url);
 		
 	# Return if it's a directory - they expire themselves 
 	# Todo - move directory expire code here?
@@ -770,41 +838,42 @@ sub _hasChanged {
 	# Reuse _, as we only need to stat() once.
 	if (-e _) {
 
+		my $filesize  = $track->filesize();
+		my $timestamp = $track->timestamp();
+
 		# Check filesize and timestamp to decide if we use the cached data.
-		my $fsdef   = (defined $track->filesize);
+		my $fsdef   = (defined $filesize);
 		my $fscheck = 0;
 
 		if ($fsdef) {
-			$fscheck = (-s _ == $track->filesize);
+			$fscheck = (-s _ == $filesize);
 		}
 
 		# Now the AGE
-		my $agedef   = (defined $track->timestamp);
+		my $agedef   = (defined $timestamp);
 		my $agecheck = 0;
 
 		if ($agedef) {
-			$agecheck = ((stat(_))[9] == $track->timestamp);
+			$agecheck = ((stat(_))[9] == $timestamp);
 		}
 			
 		return 0 if  $fsdef && $fscheck && $agedef && $agecheck;
 		return 0 if  $fsdef && $fscheck && !$agedef;
 		return 0 if !$fsdef && $agedef  && $agecheck;
 		
-		$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as it has changed\n");
-	}
-	else {
-		$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as it no longer exists\n");
+		$::d_info && Slim::Utils::Misc::msg("deleting $url from cache as it has changed\n");
+
+	} else {
+		$::d_info && Slim::Utils::Misc::msg("deleting $url from cache as it no longer exists\n");
 	}
 
-	$self->{zombieList}->{$id} = 1;
-
-	return 1;
+	return $self->{'zombieList'}->{$id} = 1;
 }
 
 sub _includeInTrackCount {
-	my $self = shift;
+	my $self  = shift;
 	my $track = shift;
-	my $url = $track->getCached('url');
+	my $url   = $track->getCached('url');
 
 	return 1 if (Slim::Music::Info::isSong($url, $track->getCached('ct')) && 
 				 !Slim::Music::Info::isRemoteURL($url) && 
@@ -817,47 +886,56 @@ sub _preCheckAttributes {
  	my $attributeHash = shift;
  	my $create = shift;
 	my $deferredAttributes = {};
+
 	# Copy the incoming hash, so we don't modify it
 	my $attributes = { %$attributeHash };
 
-	if (my $genre = $attributes->{GENRE}) {
-		$deferredAttributes->{GENRE} = $genre;
-		delete $attributes->{GENRE};
+	if (my $genre = $attributes->{'GENRE'}) {
+		$deferredAttributes->{'GENRE'} = $genre;
+		delete $attributes->{'GENRE'};
 	}
 	
-	if (my $artist = $attributes->{ARTIST}) {
-		$deferredAttributes->{ARTIST} = $artist;
-		$deferredAttributes->{ARTISTSORT} = $attributes->{ARTISTSORT};
-		delete $attributes->{ARTIST};
-	}
-	delete $attributes->{ARTISTSORT};
+	if (my $artist = $attributes->{'ARTIST'}) {
 
-	my $album = $attributes->{ALBUM};
+		$deferredAttributes->{'ARTIST'} = $artist;
+		$deferredAttributes->{'ARTISTSORT'} = $attributes->{'ARTISTSORT'};
+		delete $attributes->{'ARTIST'};
+	}
+
+	delete $attributes->{'ARTISTSORT'};
+
+	my $album = $attributes->{'ALBUM'};
+
 	$album = string('NO_ALBUM') if (!$album && $create);
+
 	if ($album) {
-		my $sortable_title = $attributes->{ALBUMSORT} || 
-		  Slim::Utils::Text::ignoreCaseArticles($album);
-		my $disc = $attributes->{DISC};
-		my $discc = $attributes->{DISCC};
+
+		my $sortable_title = $attributes->{'ALBUMSORT'} || Slim::Utils::Text::ignoreCaseArticles($album);
+
+		my $disc  = $attributes->{'DISC'};
+		my $discc = $attributes->{'DISCC'};
+
 		my $albumObj = Slim::DataStores::DBI::Album->find_or_create({ 
 			title => $album,
 		});
+
 		$albumObj->titlesort($sortable_title) if $sortable_title;
 		$albumObj->disc($disc) if $disc;
 		$albumObj->discc($discc) if $discc;
-		$albumObj->update;
-		$attributes->{ALBUM} = $albumObj;
-	}
-	else {
-		delete $attributes->{ALBUM};
-	}
-	delete $attributes->{ALBUMSORT};
-	delete $attributes->{DISC};
-	delete $attributes->{DISCC};
+		$albumObj->update();
 
-	if ($attributes->{TITLE} &&
-		!$attributes->{TITLESORT}) {
-		$attributes->{TITLESORT} = $attributes->{TITLE};
+		$attributes->{'ALBUM'} = $albumObj;
+
+	} else {
+		delete $attributes->{'ALBUM'};
+	}
+
+	delete $attributes->{'ALBUMSORT'};
+	delete $attributes->{'DISC'};
+	delete $attributes->{'DISCC'};
+
+	if ($attributes->{'TITLE'} && !$attributes->{'TITLESORT'}) {
+		$attributes->{'TITLESORT'} = $attributes->{'TITLE'};
 	}
 	
 	return ($attributes, $deferredAttributes);
@@ -868,116 +946,119 @@ sub _postCheckAttributes {
 	my $attributes = shift;
 	my $create = shift;
 	
-	if (my $genre = $attributes->{GENRE}) {
-		Slim::DataStores::DBI::GenreTrack::add($genre, $track);
+	if (my $genre = $attributes->{'GENRE'}) {
+
+		my @genres = Slim::DataStores::DBI::GenreTrack->add($genre, $track);
 
 		if (!$create) {
-			my @genres = Slim::DataStores::DBI::GenreTrack->genresfor($track->id);
-			
-			my $unknownID;	
-			foreach my $unkwn (Slim::DataStores::DBI::Genre->search(name => string('NO_GENRE'))) {	
-				$unknownID = $unkwn->id;
-			}
-			
+
 			foreach my $gen (@genres) {
-				$gen->delete if ($gen->genre->id eq $unknownID);
+				$gen->delete() if ($gen->id() eq $_unknownGenreID);
+			}
+		}
+
+	} elsif ($create && !defined $_unknownGenreID) {
+
+		($_unknownGenreID) = Slim::DataStores::DBI::GenreTrack->add(string('NO_GENRE'), $track);
+	}
+
+	if (my $artist = $attributes->{'ARTIST'}) {
+
+		my @contributors = Slim::DataStores::DBI::ContributorTrack->add(
+			$artist, 
+			Slim::DataStores::DBI::ContributorTrack::ROLE_ARTIST, 
+			$track,
+			$attributes->{'ARTISTSORT'}
+		);
+
+		if (!$create && defined $_unknownArtistID) {
+			
+			foreach my $contrib (@contributors) {
+				$contrib->delete() if ($contrib->id() eq $_unknownArtistID);
 			} 
 		}
-	}
-	elsif ($create) {
-		Slim::DataStores::DBI::GenreTrack::add(string('NO_GENRE'), $track);
-	}
 
-	
-	
-	if (my $artist=$attributes->{ARTIST}){
-		Slim::DataStores::DBI::ContributorTrack::add($artist, 
-						Slim::DataStores::DBI::ContributorTrack::ROLE_ARTIST, 
-						$track, $attributes->{ARTISTSORT});
+	} elsif ($create && !defined $_unknownArtistID) {
 
-		if (!$create) {
-			my @contributors = Slim::DataStores::DBI::ContributorTrack->artistsfor($track->id);
-			
-			my $unknownID;	
-			foreach my $unkwn (Slim::DataStores::DBI::Contributor->search(name => string('NO_ARTIST'))) {	
-				$unknownID = $unkwn->id;
-			}
-			
-			if (defined($unknownID)) {
-				foreach my $contrib (@contributors) {
-					$contrib->delete if ($contrib->contributor->id eq $unknownID);
-				} 
-			}
-		}
+		($_unknownArtistID) = Slim::DataStores::DBI::ContributorTrack->add(
+			string('NO_ARTIST'),
+			Slim::DataStores::DBI::ContributorTrack::ROLE_ARTIST, 
+			$track
+		);
 	}
-	elsif ($create) {
-		Slim::DataStores::DBI::ContributorTrack::add(string('NO_ARTIST'), 
-						Slim::DataStores::DBI::ContributorTrack::ROLE_ARTIST, 
-						$track);
-	}
-
 }
 
-
 sub _updateTrackValidity {
-	my $self = shift;
+	my $self  = shift;
 	my $track = shift;
 
-	my $url = $track->getCached('url');
-	$self->{validityCache}->{$url}->[0] = 1;
+	my $url   = $track->getCached('url');
+
+	$self->{'validityCache'}->{$url}->[0] = 1;
+
 	if (Slim::Music::Info::isFileURL($url)) {
-		$self->{validityCache}->{$url}->[TTL_INDEX] = 
-			(time() + DB_CACHE_LIFETIME + int(rand(DB_CACHE_LIFETIME)));
+
+		$self->{'validityCache'}->{$url}->[TTL_INDEX] = (time() + DB_CACHE_LIFETIME + int(rand(DB_CACHE_LIFETIME)));
+
 	} else {
-		$self->{validityCache}->{$url}->[TTL_INDEX] = 0;
+
+		$self->{'validityCache'}->{$url}->[TTL_INDEX] = 0;
 	}
 }
 
 
 sub updateCoverArt {
-	my $self = shift;
+	my $self     = shift;
 	my $fullpath = shift;
-	my $type = shift || 'cover';
-	my $body;	
-	my $contenttype;
-	my $path;
+	my $type     = shift || 'cover';
 
 	# Check if we've already attempted to get artwork this session
-	if (($type eq 'cover') && defined($self->{coverCache}->{$fullpath})) {
+	if (($type eq 'cover') && defined($self->{'coverCache'}->{$fullpath})) {
+
 		return;
-	}
-	elsif (($type eq 'thumb') && defined($self->{thumbCache}->{$fullpath})) {
+
+	} elsif (($type eq 'thumb') && defined($self->{'thumbCache'}->{$fullpath})) {
+
 		return;
 	}
 			
-	($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($fullpath, $type);
+	my ($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($fullpath, $type);
 
- 	my $info;
- 	
  	if (defined($body)) {
+
+		my $info = {};
+
  		if ($type eq 'cover') {
+
  			$info->{'COVER'} = $path;
  			$info->{'COVERTYPE'} = $contenttype;
-			$self->{coverCache}->{$fullpath} = $path;
+			$self->{'coverCache'}->{$fullpath} = $path;
+
  		} elsif ($type eq 'thumb') {
+
  			$info->{'THUMB'} = $path;
  			$info->{'THUMBTYPE'} = $contenttype;
-			$self->{thumbCache}->{$fullpath} = $path;
+			$self->{'thumbCache'}->{$fullpath} = $path;
  		}
+
  		$::d_artwork && Slim::Utils::Misc::msg("$type caching $path for $fullpath\n");
+
 		$self->updateOrCreate($fullpath, $info);
+
  	} else {
+
 		if ($type eq 'cover') {
-			$self->{coverCache}->{$fullpath} = 0;
+			$self->{'coverCache'}->{$fullpath} = 0;
  		} elsif ($type eq 'thumb') {
-			$self->{thumbCache}->{$fullpath} = 0;
+			$self->{'thumbCache'}->{$fullpath} = 0;
  		}
  	}
 }
 
-
 1;
+
 __END__
+
 
 # Local Variables:
 # tab-width:4

@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.167 2004/12/17 10:09:33 kdf Exp $
+# $Id: Info.pm,v 1.168 2004/12/17 20:33:04 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -69,7 +69,7 @@ sub init {
 	$currentDB = $localDB = Slim::DataStores::DBI::DBIStore->new();
 
 	if ($currentDB->count('track', {}) == 0) {
-	  Slim::Music::Import::startScan();
+		Slim::Music::Import::startScan();
 	}
 	
 	# use all the genres we know about...
@@ -229,7 +229,8 @@ sub generatePlaylists {
 # called:
 #   undef,undef,undef,undef
 sub songCount {
-	my ($genre,$artist,$album)=@_;
+	my ($genre, $artist, $album) = @_;
+
 	my $findCriteria = {};
 
 	if (defined($genre) && scalar(@$genre) && $genre->[0] ne '*') { 
@@ -237,11 +238,13 @@ sub songCount {
 		return 0 if !scalar(@$genres);
 		$findCriteria->{genre} = $genres;
 	}
+
 	if (defined($artist) && scalar(@$artist) && $artist->[0] ne '*') { 
 		my $artists = $currentDB->search('artist', $artist);
 		return 0 if !scalar(@$artists);
 		$findCriteria->{contributor} = $artists;
 	}
+
 	if (defined($album) && scalar(@$album) && $album->[0] ne '*') { 
 		my $albums = $currentDB->search('album', $album);
 		return 0 if !scalar(@$albums);
@@ -256,7 +259,8 @@ sub songCount {
 #	[$item],[],[],[]
 #	$genreref,$artistref,$albumref,$songref
 sub artistCount {
-	my ($genre,$artist,$album)=@_;
+	my ($genre, $artist, $album) = @_;
+
 	my $findCriteria = {};
 
 	if (defined($genre) && scalar(@$genre) && $genre->[0] ne '*') { 
@@ -264,11 +268,13 @@ sub artistCount {
 		return 0 if !scalar(@$genres);
 		$findCriteria->{genre} = $genres;
 	}
+
 	if (defined($artist) && scalar(@$artist) && $artist->[0] ne '*') { 
 		my $artists = $currentDB->search('artist', $artist);
 		return 0 if !scalar(@$artists);
 		$findCriteria->{contributor} = $artists;
 	}
+
 	if (defined($album) && scalar(@$album) && $album->[0] ne '*') { 
 		my $albums = $currentDB->search('album', $album);
 		return 0 if !scalar(@$albums);
@@ -286,7 +292,8 @@ sub artistCount {
 #   [$genre],[$item],[],[]
 #	$genreref,$artistref,$albumref,$songref
 sub albumCount { 
-	my ($genre,$artist,$album)=@_;
+	my ($genre, $artist, $album) = @_;
+
 	my $findCriteria = {};
 
 	if (defined($genre) && scalar(@$genre) && $genre->[0] ne '*') { 
@@ -311,7 +318,8 @@ sub albumCount {
 # called:
 #   undef,undef,undef,undef
 sub genreCount { 
-	my ($genre,$artist,$album)=@_;
+	my ($genre, $artist, $album) = @_;
+
 	my $findCriteria = {};
 
 	if (defined($genre) && scalar(@$genre) && $genre->[0] ne '*') { 
@@ -343,32 +351,15 @@ sub cacheItem {
 	my $item = shift;
 
 	$::d_info_v && Slim::Utils::Misc::msg("CacheItem called for item $item in $url\n");
-	my $song = $currentDB->objectForUrl($url, 0);
-	if (defined($song)) {
-		if ($item eq "ALBUM") {
-			my $item1 = $song->album;
-			return $item1->title if ($item1);
-		}
-		elsif ($item eq "ALBUMSORT") {
-			return $song->albumsort;
-		}
-		elsif ($item eq "ARTIST") {
-			return $song->artist;
-		}
-		elsif ($item eq "ARTISTSORT") {
-			return $song->artistsort;
-		}
-		elsif ($item eq "GENRE") {
-			return $song->genre;
-		}
-		else {
-			return $song->get($item);
-		}
+
+	my $track = $currentDB->objectForUrl($url, 0);
+
+	if ($item eq 'ALBUM') {
+		return $track->album()->title();
 	}
 
-	return undef;
+        return $track->get(lc $item) || undef;
 }
-
 
 sub updateCacheEntry {
 	my $url = shift;
@@ -1195,8 +1186,11 @@ sub artists {
 	my $genre  = shift;
 	my $artist = shift;
 	my $album  = shift;
+	my $song   = shift;
+	my $limit  = shift || '';
+	my $offset = shift || '';
 
-	$::d_info && Slim::Utils::Misc::msg("artists: $genre - $artist - $album\n");
+	$::d_info && Slim::Utils::Misc::msg("artists: $genre - $artist - $album - $limit - $offset\n");
 
 	my $findCriteria = {};
 
@@ -1219,7 +1213,9 @@ sub artists {
 		$findCriteria->{album} = $albums;
 	}
 
+	#my $artists = $currentDB->find('artist', $findCriteria, 'artist', $limit, $offset);
 	my $artists = $currentDB->find('artist', $findCriteria, 'artist');
+
 	return map { $_->name } @$artists;
 }
 
@@ -1582,6 +1578,8 @@ sub addDiscNumberToAlbumTitle
 
 sub getImageContent {
 	my $path = shift;
+
+	use bytes;
 	my $contentref;
 
 	if (open (TEMPLATE, $path)) { 

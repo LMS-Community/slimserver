@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.110 2004/12/17 10:09:37 kdf Exp $
+# $Id: Pages.pm,v 1.111 2004/12/17 20:33:05 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1991,6 +1991,8 @@ sub browseid3 {
 	} elsif (!$artist) {
 
 		# Browse by Artist
+		#my $limit = $params->{'itemsPerPage'} || Slim::Utils::Prefs::get('itemsPerPage');
+		#my @items = Slim::Music::Info::artists([$genre], [], [$album], [$song], $limit, $params->{'start'});
 		my @items = Slim::Music::Info::artists([$genre], [], [$album], [$song]);
 		
 		if (scalar(@items)) {
@@ -2640,9 +2642,12 @@ sub alphapagebar {
 		my $lastLetterIndex = 0;
 		my $pageslist = '';
 		$end = -1;
+
+		# This seems very inefficient - we're calling into anchor()
+		# and getSortName() more times than we need to be.
 		for (my $j = 0; $j < $itemcount; $j++) {
 
-			my $curLetter = anchor(Slim::Utils::Text::getSortName($$itemsref[$j]), $ignorearticles);
+			my $curLetter = anchor(Slim::Utils::Text::getSortName($itemsref->[$j]), $ignorearticles);
 
 			if ($lastLetter ne $curLetter) {
 

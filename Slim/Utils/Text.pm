@@ -2,7 +2,7 @@ package Slim::Utils::Text;
 
 use strict;
 
-# $Id: Text.pm,v 1.4 2004/12/02 02:23:43 dsully Exp $
+# $Id: Text.pm,v 1.5 2004/12/17 20:33:04 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -99,21 +99,25 @@ sub sortuniq_ignore_articles {
 			push(@uniq, $item);
 		}
 	}
-	#set up array for sorting items without leading articles
+
+	# set up array for sorting items without leading articles
 	my @noarts = map {
-			my $item = $_; 
-			exists($Slim::Music::Info::sortCache{$item}) ? $item = $Slim::Music::Info::sortCache{$item} : $item =~ s/^($articles)\s+//i; 
-			$item; 
-		} @uniq;
+		my $item = $_; 
+		exists($Slim::Music::Info::sortCache{$item}) ? $item = $Slim::Music::Info::sortCache{$item} : $item =~ s/^($articles)\s+//i; 
+		$item; 
+	} @uniq;
 		
-	#return the uniq array sliced by the sorted articleless array
+	# return the uniq array sliced by the sorted articleless array
 	return @uniq[sort {$noarts[$a] cmp $noarts[$b]} 0..$#uniq];
 }
 
+# XXX - %Slim::Music::Info::sortCache is implictly created in
+# sortuniq_ignore_articles() above. It is not explictly created anywhere in
+# Slim::Music::Info
 sub getSortName {
 	my $item = shift;
-	return exists($Slim::Music::Info::sortCache{ignoreCaseArticles($item)}) ? $Slim::Music::Info::sortCache{ignoreCaseArticles($item)} : $item;
 
+	return exists($Slim::Music::Info::sortCache{ignoreCaseArticles($item)}) ? $Slim::Music::Info::sortCache{ignoreCaseArticles($item)} : $item;
 }
 
 1;

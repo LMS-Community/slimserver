@@ -52,10 +52,9 @@ CREATE TABLE tracks (
 );
 
 CREATE INDEX trackURLIndex ON tracks (url);
-
 CREATE INDEX trackTitleIndex ON tracks (title);
-
 CREATE INDEX trackAlbumIndex ON tracks (album);
+CREATE INDEX trackSortIndex ON tracks (titlesort);
 
 CREATE TABLE playlist_track (
   id integer UNIQUE PRIMARY KEY NOT NULL,
@@ -103,6 +102,7 @@ CREATE TABLE contributor_track (
 
 CREATE INDEX contributor_trackContribIndex ON contributor_track (contributor);
 CREATE INDEX contributor_trackTrackIndex ON contributor_track (track);
+CREATE INDEX contributor_trackAlbumIndex ON contributor_track (album);
 CREATE INDEX contributor_trackSortIndex ON contributor_track (namesort);
 
 CREATE TABLE genres (

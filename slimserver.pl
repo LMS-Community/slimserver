@@ -212,6 +212,7 @@ use vars qw(
 	$d_slimproto_v
 	$d_source
 	$d_source_v
+	$d_sql
 	$d_stdio
 	$d_stream
 	$d_stream_v
@@ -554,6 +555,7 @@ to the console via stderr:
     --d_slimproto_v  => Slimproto verbose debugging information
     --d_source       => Information about source audio files and conversion
     --d_source_v     => Verbose information about source audio files
+    --d_sql          => Verbose SQL debugging
     --d_stdio        => Standard I/O command debugging
     --d_stream       => Information about player streaming protocol 
     --d_stream_v     => Verbose information about player streaming protocol 
@@ -630,6 +632,7 @@ sub initOptions {
 		'd_slimproto_v'		=> \$d_slimproto_v,
 		'd_source'			=> \$d_source,
 		'd_source_v'			=> \$d_source_v,
+		'd_sql'			=> \$d_sql,
 		'd_stdio'			=> \$d_stdio,
 		'd_stream'			=> \$d_stream,
 		'd_stream_v'		=> \$d_stream_v,
