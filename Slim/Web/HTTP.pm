@@ -83,7 +83,9 @@ my $mdnsIDslimserver;
 my $mdnsIDhttp;
 
 our @templateDirs;
+
 our %pageFunctions = ();
+tie %pageFunctions, 'Tie::RegexpHash';
 
 our %dangerousCommands = (
 	# name of command => regexp for URI patterns that make it dangerous
@@ -109,9 +111,7 @@ sub init {
 	push @templateDirs, catdir($Bin, 'HTML');
 
 	#
-	tie %pageFunctions, 'Tie::RegexpHash';
-
-	%pageFunctions = (
+	my %addToFunctions = (
 		qr/^$/				=> \&Slim::Web::Pages::home,
 		qr/^index\.(?:htm|xml)/		=> \&Slim::Web::Pages::home,
 		qr/^browseid3\.(?:htm|xml)/	=> \&Slim::Web::Pages::browseid3,
@@ -135,6 +135,15 @@ sub init {
 		qr/^update_firmware\.(?:htm|xml)/ => \&Slim::Web::Pages::update_firmware,
 		qr/^livesearch\.(?:htm|xml)/    => \&Slim::Web::Pages::livesearch,
 	);
+
+	# This is a hack - because Slim::Web::HTTP::init() is called after the
+	# buttons/plugins have added things to the pageHash, we need to
+	# append, not overwrite.
+	while (my ($key, $value) = each %addToFunctions) {
+		$pageFunctions{$key} = $value;
+	}
+
+	%addToFunctions = ();
 
 	# pull in the memory usage module if requested.
 	if ($::d_memory) {
