@@ -13,30 +13,31 @@
   <p>
     The general method of using these input modes is to push into them from
     your module, setting certain parameters as desired. The most important
-    parameter will be <em>callback</em> which is a reference to a function
+    parameter will be <var>callback</var> which is a reference to a function
     that will be called when the input session is complete, and which will
     then handle that input. Other parameters will vary depending on the input
     mode being used.
   </p>
   <p>
     When circumstances indicate the possibility that input is complete, an
-    exit event is generated. The <em>callback</em> function will be invoked
+    exit event is generated. The <var>callback</var> function will be invoked
     to determine the action to be taken. It will be called with parameters
     indicating the client and the type of exit event. The input modes do not
-    exit themselves, it is left to the <em>callback</em> function to decide
+    exit themselves, it is left to the <var>callback</var> function to decide
     when to leave the input mode.
   </p>
   <p>
     It should be noted that the parameters supplied to the input modes are
-    stored in the stack of mode parameter hashes contained in the client struct.
+    stored in the stack of mode parameter hashes contained in the client object.
     As such, all parameters will be accessible to the callback function until
     the input mode is left. If the mode is popped off the mode stack all
     parameters will be lost. Any maintenance of the parameters between entries
     into the input mode are the responsibility of the calling mode.
   </p>
   <p>
-    The input mode names are INPUT.<em>modulename</em>, where <em>modulename</em>
-    is the name of the .pm file. A typical entry into the INPUT.Text mode follows:
+    The input mode names are <strong>INPUT.<em>modulename</em></strong>, where 
+    <em>modulename</em> is the name of the .pm file. A typical entry into the
+    <strong>INPUT.Text</strong> mode follows:
 <pre>
 Slim::Buttons::Common::pushMode($client,'INPUT.Text',
 					&#123;'callback' =&gt; \&amp;myCallback
@@ -52,9 +53,9 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
     <dl>
       <dt><a href="#Text">Text</a></dt>
       <dd>Handles input of arbitrary strings.</dd>
-      <dt><a href="#List">ListSelect</a></dt>
+      <dt><a href="#List">List</a></dt>
       <dd>Handles selection of an item from a list of options.</dd>
-      <dt><a href="#Tree">TreeSelect</a></dt>
+      <dt><a href="#Tree">Tree</a></dt>
       <dd>Handles navigation of and selection from a tree of options.</dd>
       <dt><a href="#Bar">Bar</a></dt>
       <dd>
@@ -87,10 +88,10 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
   </p>
   <h5>Parameters</h5>
   <p>
-    The following parameters are used by the INPUT.Text mode. They are listed
+    The following parameters are used by the <strong>INPUT.Text</strong> mode. They are listed
     in the order of likelyhood to be supplied. Other parameters can be supplied
     for use by the callback function, but will not otherwise have any effect
-    on the INPUT.Text behavior.
+    on the <strong>INPUT.Text</strong> behavior.
   </p>
   <p>
     <dl>
@@ -99,8 +100,8 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       <dd>
         A code reference which is called whenever an exit event occurs. This
         parameter should always be supplied by the calling mode, otherwise
-        INPUT.Text will simply perform a pop mode on an exit event, potentially
-        losing any input. The procedure referenced should take the client struct
+        <strong>INPUT.Text</strong> will simply perform a pop mode on an exit event, potentially
+        losing any input. The procedure referenced should take the client object
         as the first parameter and the exit event type as the second.
       </dd>
       <dt>header</dt>
@@ -112,14 +113,14 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       <dt>valueRef</dt>
       <dd>Default: &quot;&quot;</dd>
       <dd>
-        <em>valueRef</em> contains a reference to the string being edited. It
+        <var>valueRef</var> contains a reference to the string being edited. It
         can initially be set to a plain string scalar, in which case it will
         be converted into a reference to that scalar.
       </dd>
       <dt>charsRef</dt>
       <dd>Default: reference to internal @UpperChars array</dd>
       <dd>
-        <em>charsRef</em> contains a reference to the list of allowable characters.
+        <var>charsRef</var> contains a reference to the list of allowable characters.
         It can be supplied as an array reference, or as the strings &quot;upper&quot;
         or &quot;both&quot;, which are converted to references to the internal
         @UpperChars and @BothChars arrays, respectively.
@@ -127,7 +128,7 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       <dt>numberLetterRef</dt>
       <dd>Default: reference to internal @numberLettersMixed array</dd>
       <dd>
-        <em>numberLetterRef</em> contains a reference to the list of characters to use for number key entry.
+        <var>numberLetterRef</var> contains a reference to the list of characters to use for number key entry.
         It can be supplied as an array reference, or unsupplied for the default array..
       </dd>
       <dt>doublesizeReplace</dt>
@@ -148,14 +149,14 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         supplied, and if cursorPos ends up at the end of the valueRef string,
         the character at this index will be appended to the end of valueRef,
         otherwise, the rightarrow will be used. This parameter will not usually
-        need to be set on entry, but is used within the INPUT.Text mode.
+        need to be set on entry, but is used within the <strong>INPUT.Text</strong> mode.
       </dd>
       <dt>cursorPos</dt>
       <dd>Default: end of initial string</dd>
       <dd>
         The current position of the cursor, which determines which character will
         be modified. This parameter will not usually need to be set on entry, but
-        is used within the INPUT.Text mode.
+        is used within the <strong>INPUT.Text</strong> mode.
       </dd>
       <dt>displayPos</dt>
       <dd>
@@ -166,7 +167,7 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         The position within the string at which to begin the display in
         single-height mode. If supplied when entering the mode it will be
         ignored. This parameter will not usually need to be set on entry, but
-        is used within the INPUT.Text mode.
+        is used within the <strong>INPUT.Text</strong> mode.
       </dd>
       <dt>displayPos2X</dt>
       <dd>
@@ -177,16 +178,25 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         The position within the string at which to begin the display in
         double-size mode. If supplied when entering the mode it will be ignored.
         This parameter will not usually need to be set on entry, but
-        is used within the INPUT.Text mode.
+        is used within the <strong>INPUT.Text</strong> mode.
       </dd>
       <dt>rightIndex</dt>
       <dd>Default: index of rightarrow within the charsRef array</dd>
       <dd>
         If rightarrow is within the list of allowable characters, its index is
-        stored in the <em>rightIndex</em> parameter. Otherwise, the value of
-        <em>rightIndex</em> is set to -1. If supplied when entering the mode it
+        stored in the <var>rightIndex</var> parameter. Otherwise, the value of
+        <var>rightIndex</var> is set to -1. If supplied when entering the mode it
         will be ignored. This parameter will not usually need to be set on entry,
-        but is used within the INPUT.Text mode.
+        but is used within the <strong>INPUT.Text</strong> mode.
+      </dd>
+      <dt>parentMode</dt>
+      <dd>Default: name of mode which called <strong>INPUT.Text</strong></dd>
+      <dd>
+        This parameter is used with the passback function to let a calling mode
+        set up its own button handling functions, which can then be mapped as
+        desired by the user. The default is actually the first non-INPUT mode up
+        the mode stack from the current location in order to prevent infinite
+        recursion.
       </dd>
     </dl>
   </p>
@@ -340,7 +350,7 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         checked against the list of allowable characters, and replaced by a
         space if not present. The cursor is advanced to the next character if
         a different button is pressed than the previous, or after an amount of
-        time equal to the <em>displayTextTimeout</em> setting passes.
+        time equal to the <var>displayTextTimeout</var> setting passes.
         This function is not designed to be used with repeat.
       </dd>
       <dt>letter</dt>
@@ -356,26 +366,30 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         supplied argument. If no argument is supplied, the exit event type is
         <em>exit</em>.
       </dd>
+      <dt>passback</dt>
+      <dd>
+        Executes the last button event (button plus pressing style) in the
+        context of the parent mode (set by the parentMode parameter). This
+        allows for parent modes to map button presses to functions without
+        needing to modify the mapping of the <strong>INPUT.Text</strong> mode.
+      </dd>
     </dl>
   </p>
-  <h4><a id="List"></a>ListSelect</h4>
+  <h4><a id="List"></a>List</h4>
   <h5>Description</h5>
   <p>
-    Not currently implemented.  The following information is only preliminary.
-  </p>
-  <p>
-    The <strong>ListSelect</strong> input mode is used to select one item from
+    The <strong>List</strong> input mode is used to select one item from
     a list of items.  The items in the list can have different representations
     internally and externally.  An onChange handler can be provided for immediate
     effects of changing position in the list.
   </p>
   <p>
     On entry into the mode, the initial selection will depend on the supplied
-    parameters.  If <em>valueRef</em> is supplied, and the value it references
-    is contained in the list referenced by the supplied <em>listRef</em>, then
-    <em>listIndex</em> is updated to reflect the position of the supplied value.
-    If <em>valueRef</em> is not supplied, or if its value does not appear in
-    the list, it will be updated to be the value at position <em>listIndex</em>
+    parameters.  If <var>valueRef</var> is supplied, and the value it references
+    is contained in the list referenced by the supplied <var>listRef</var>, then
+    <var>listIndex</var> is updated to reflect the position of the supplied value.
+    If <var>valueRef</var> is not supplied, or if its value does not appear in
+    the list, it will be updated to be the value at position <var>listIndex</var>
     (if supplied and in bounds, 0 if not supplied or out of bounds).
   <p>
     This mode will not maintain state between invocations, so if such state
@@ -384,43 +398,113 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
   </p>
   <h5>Parameters</h5>
   <p>
-    The following parameters are used by the INPUT.ListSelect mode. They are
+    The following parameters are used by the <strong>INPUT.List</strong> mode. They are
     listed in the order of likelyhood to be supplied. Other parameters can be
     supplied for use by the callback, external display, or change handler
-    functions, but will not otherwise have any effect on the INPUT.ListSelect
+    functions, but will not otherwise have any effect on the <strong>INPUT.List</strong>
     behavior.
+  </p>
+  <p>
+    The <var>header</var>, <var>externRef</var>, and <var>overlayRef</var>
+    parameters can be supplied in a number of different ways.  If a scalar, it
+    will be displayed as is. If a code reference, it will be invoked with the
+    arguments specified in the corresponding <var>Args</var> parameter
+    (<var>header</var> would use <var>headerArgs</var> etc.) and the return value
+    will be displayed. If a hash reference, the value corresponding to the key
+    indicated by the referenced value of <var>valueRef</var> will be displayed.
+    If an array ref, the value at <var>listIndex</var> of the array is extracted
+    and then interpreted as above. If the extracted value is itself an array ref,
+    the array referenced is returned (this would most likely be the case for
+    <var>overlayRef</var>, which expects an array final value).
   </p>
   <p>
     <dl>
       <dt>listRef</dt>
       <dd>Default: none</dd>
       <dd>
-        An array reference to the list of items.  This parameter must be supplied
-        or the INPUT.ListSelect mode will not be entered.  This list should be
-        the internal representations of the item values.
-      </dd>
-      <dt>callback</dt>
-      <dd>Default: none</dd>
-      <dd>
-        A code reference which is called whenever an exit event occurs. This
-        parameter should always be supplied by the calling mode, otherwise
-        INPUT.ListSelect will simply perform a pop mode on an exit event,
-        potentially losing any input. The procedure referenced should take
-        the client struct as the first parameter and the exit event type
-        as the second.
+        An array reference to the list of items. This parameter must be supplied
+        or the <strong>INPUT.List</strong> mode will not be entered. This list
+        should be the internal representations of the item values. If an array
+        ref is supplied for <var>externRef</var> but not <var>listRef</var>,
+        <var>listRef</var> will be set to the same reference as
+        <var>externRef</var>.
       </dd>
       <dt>header</dt>
       <dd>Default: &quot;Select item:&quot; (not localized)</dd>
       <dd>
-        String to display on the top line of the display. This string is displayed
-        as supplied, so be sure to localize any strings used.
+        String to display on the top line of the display. This parameter can
+        be interpreted in a number of ways, see above. After the value to be
+        displayed is determined, it is then modified according to the
+        <var>stringHeader</var> and <var>headerAddCount</var> parameters, below.
+      </dd>
+      <dt>headerArgs</dt>
+      <dd>Default: &quot;CV&quot;</dd>
+      <dd>
+        One of &quot;CV&quot;, &quot;C&quot;, &quot;V&quot;, or &quot;&quot;.
+        The C indicates that the client object should be passed to the function
+        to determine the header value, the V indicates that the internal value
+        should be passed.
+      </dd>
+      <dt>stringHeader</dt>
+      <dd>Default: undef</dd>
+      <dd>
+        If set to a true value, the display value of <var>header</var> is
+        passed to the <code>string()</code> function to be localized. If no
+        localized string is defined for the value of <var>header</var>, it is
+        displayed as is.
+      </dd>
+      <dt>headerAddCount</dt>
+      <dd>Default: undef</dd>
+      <dd>
+        If set to a true value, a string like &quot; (X of Y)&quot; (where the
+        &quot;of&quot; is localized) is appended to the end of the header. The
+        <strong>X</strong> is the one-based index of the current item in the
+        list, and the <strong>Y</strong> is the total number of items in the
+        list. This addition takes place after the header is modified by
+        <var>stringHeader</var>.
+      <dt>externRef</dt>
+      <dd>Default: none</dd>
+      <dd>
+        The value to be displayed on the bottom line of the display, see above
+        for interpretation of this parameter. If this parameter is not supplied,
+        it will be set to the same reference as <var>listRef</var>. After the
+        value to be displayed is determined, it is then modified according to the
+        <var>stringExternRef</var> parameter below.
+      </dd>
+      <dt>externRefArgs</dt>
+      <dd>Default: &quot;CV&quot;</dd>
+      <dd>
+        One of &quot;CV&quot;, &quot;C&quot;, &quot;V&quot;, or &quot;&quot;.
+        The C indicates that the client object should be passed to the function
+        to determine the external value, the V indicates that the internal value
+        should be passed.
+      </dd>
+      <dt>stringExternRef</dt>
+      <dd>Default: undef</dd>
+      <dd>
+        If set to a true value, the display value of <var>externRef</var> is
+        passed to the <code>string()</code> function to be localized. If no
+        localized string is defined for the value of <var>externRef</var>, it
+        is displayed as is.
+      </dd>
+      <dt>callback</dt>
+      <dd>Default: none</dd>
+      <dd>
+        A code reference which is called whenever an exit event occurs. If
+        this parameter is not supplied, <strong>INPUT.List</strong> will 
+        perform a pop mode right on left exit event, bump right on right exit
+        events, and a simple pop mode on other types of exit event. This
+        behavior should be sufficient for simple list displays where nothing
+        needs to happen on a right exit event. The procedure referenced should
+        take the client object as the first parameter and the exit event type
+        as the second.
       </dd>
       <dt>valueRef</dt>
       <dd>
-        Default: reference to copy of item in <em>listIndex</em> position in list
+        Default: reference to copy of item in <var>listIndex</var> position in list
       </dd>
       <dd>
-        <em>valueRef</em> contains a reference to the currently selected item.
+        <var>valueRef</var> contains a reference to the currently selected item.
         Typically this will be a reference to a variable local to the calling
         mode, so that the final value will not need to be explicitly assigned
         to some local variable.
@@ -430,51 +514,105 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       <dd>
         The (zero based) index of the currently selected item.
       </dd>
-      <dt>listWrap</dt>
-      <dd>Default: 1</dd>
+      <dt>overlayRef</dt>
+      <dd>Default: undef</dd>
       <dd>
-        Determines whether or not to wrap around the ends of the list. If set
-        to 0, attempts to scroll past either end of the list will result in a
-        bump up or down animation, depending on the requested direction. When
-        set to 1 (the default), moving up past the beginning of the list will
-        take you to the end of the list, and moving down beyond the end of the
-        list will take you back to the beginning. The ends are sticky, so the
-        wraparound will not take place while repeating.
+        Strings to use as the overlay. See interpretation rules above.
       </dd>
-      <dt>externRef</dt>
-      <dd>Default: none</dd>
-      <dd>
-        This can be either an array ref or a code ref. If an array ref, then
-        the external value is the value at the same index as the internal value.
-        If a code ref, then the client, or internal value, or both are passed
-        as arguments to the supplied function, and the return value is used as
-        the external value.  The arguments are passed according to the value
-        of <em>externRefArgs</em>. If this parameter is not supplied, the
-        internal value will be used as the external value.
-      </dd>
-      <dt>externRefArgs</dt>
+      <dt>overlayRefArgs</dt>
       <dd>Default: &quot;CV&quot;</dd>
       <dd>
-        One of &quot;CV&quot;, &quot;C&quot;, or &quot;V&quot;.  The C indicates
-        that the client struct should be passed to the function to determine
-        the external value, the V indicates that the internal value should be
-        passed.
+        One of &quot;CV&quot;, &quot;C&quot;, &quot;V&quot;, or &quot;&quot;.
+        The C indicates that the client object should be passed to the function
+        to determine the overlay values, the V indicates that the internal value
+        should be passed.
+      </dd>
+      <dt>noWrap</dt>
+      <dd>Default: undef</dd>
+      <dd>
+        Determines whether or not to wrap around the ends of the list. If set
+        to a true value, attempts to scroll past either end of the list will
+        result in a bump up or down animation, depending on the requested
+        direction. When left unset, or set to a false value (the default), moving
+        up past the beginning of the list will take you to the end of the list,
+        and moving down beyond the end of the list will take you back to the
+        beginning. The ends are sticky, so the wraparound will not take place
+        while repeating.
       </dd>
       <dt>onChange</dt>
       <dd>Default: none</dd>
       <dd>
         A code reference which is executed each time the currently selected
         item changes. It is passed arguments according to the value of
-        <em>onChangeArgs</em>. Any return value will be ignored.
+        <var>onChangeArgs</var>. Any return value will be ignored.
       </dd>
       <dt>onChangeArgs</dt>
       <dd>Default: &quot;CV&quot;</dd>
       <dd>
-        One of &quot;CV&quot;, &quot;C&quot;, or &quot;V&quot;.  The C indicates
-        that the client struct should be passed to the function, the V indicates
-        that the internal value should be passed.
+        One of &quot;CV&quot;, &quot;C&quot;, &quot;V&quot;, or &quot;&quot;.
+        The C indicates that the client object should be passed to the function,
+        the V indicates that the internal value should be passed.
       </dd>
-  <h4><a id="Tree"></a>TreeSelect</h4>
+      <dt>parentMode</dt>
+      <dd>Default: name of mode which called <strong>INPUT.List</strong></dd>
+      <dd>
+        This parameter is used with the passback function to let a calling mode
+        set up its own button handling functions, which can then be mapped as
+        desired by the user. The default is actually the first non-INPUT mode up
+        the mode stack from the current location in order to prevent infinite
+        recursion.
+      </dd>
+    </dl>
+  </p>
+  <h5>Exit Event Types</h5>
+  <p>
+    The callback function should handle the following event types in some way.
+    Ignoring them is acceptable, crashing the server is not.
+  </p>
+  <p>
+    <dl>
+      <dt>left</dt>
+      <dd>
+        By default, generated by a left button press. If no callback function
+        specified, this will result in leaving the mode with the animated
+        push to the right.
+      </dd>
+      <dt>right</dt>
+      <dd>
+        By default, generated by a right button press. If no callback function
+        specified, this will result in a bump right animation.
+      </dd>
+      <dt><em>Other</em></dt>
+      <dd>
+        Generated by the exit function where the type is determined by the
+        argument supplied. Usually will be a button name like play or add, but
+        be prepared for anything.
+      </dd>
+    </dl>
+  </p>
+  <h5>Functions</h5>
+  <p>
+    <dl>
+      <dt>up</dt>
+      <dd>Changes the current position in the list. Repeat is allowed and accelerates.</dd>
+      <dt>down</dt>
+      <dd>Changes the current position in the list. Repeat is allowed and accelerates.</dd>
+      <dt>exit</dt>
+      <dd>
+        Takes an argument. An exit event is generated with the type being the
+        supplied argument. If no argument is supplied, the exit event type is
+        <em>exit</em>.
+      </dd>
+      <dt>passback</dt>
+      <dd>
+        Executes the last button event (button plus pressing style) in the
+        context of the parent mode (set by the parentMode parameter). This
+        allows for parent modes to map button presses to functions without
+        needing to modify the mapping of the <strong>INPUT.List</strong> mode.
+      </dd>
+    </dl>
+  </p>
+  <h4><a id="Tree"></a>Tree</h4>
   <h5>Description</h5>
   <p>Not currently implemented.</p>
   <h4><a id="Bar"></a>Bar</h4>
