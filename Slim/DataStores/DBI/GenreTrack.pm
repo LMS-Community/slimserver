@@ -19,7 +19,7 @@ use base 'Slim::DataStores::DBI::DataModel';
 	$class->add_constructor('genresFor' => 'track = ?');
 }
 
-tie my %_cache, 'Tie::Cache::LRU', 5000;
+tie our %_cache, 'Tie::Cache::LRU::Expires', EXPIRES => 1200, ENTRIES => 25;
 
 sub add {
 	my $class = shift;
@@ -41,10 +41,25 @@ sub add {
 
 	for my $genreSub (Slim::Music::Info::splitTag($genre)) {
 
-		$_cache{$genreSub} ||= Slim::DataStores::DBI::Genre->find_or_create({ 
-			name     => $genreSub,
-			namesort => Slim::Utils::Text::ignoreCaseArticles($genreSub),
-		});
+		# Try and fetch the genre from the cache. Otherwise, search
+		# for it based on the normalized namesort. If that doesn't
+		# work, create it, and upper case the first letter.
+		unless ($_cache{$genreSub}) {
+
+			my $namesort = Slim::Utils::Text::ignoreCaseArticles($genreSub);
+
+			($_cache{$genreSub}) = Slim::DataStores::DBI::Genre->search({ 
+				namesort => $namesort
+			});
+
+			unless ($_cache{$genreSub}) {
+
+				$_cache{$genreSub} = Slim::DataStores::DBI::Genre->create({ 
+					name     => ucfirst($genreSub),
+					namesort => $namesort,
+				});
+			}
+		}
 
 		push @genres, $_cache{$genreSub};
 		
