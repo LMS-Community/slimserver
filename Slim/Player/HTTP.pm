@@ -20,7 +20,7 @@ sub new {
 		$tcpsock
 	) = @_;
 	
-	my $client = Slim::Player::Client->new( $id, $paddr, 0,0,0);
+	my $client = Slim::Player::Client->new($id, $paddr);
 	$client->streamingsocket($tcpsock);
 	bless $client, $class;
 
@@ -29,7 +29,7 @@ sub new {
 
 sub init {
 	my $client = shift;
-	Slim::Player::Client::startup($client);
+	$client->startup();
 }
 
 sub update {

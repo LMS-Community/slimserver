@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.4 2003/08/09 05:47:13 dean Exp $
+# $Id: Common.pm,v 1.5 2003/08/09 16:23:43 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -385,11 +385,11 @@ my %functions = (
 		my $button = shift;
 		my $power= undef;
 		if ($button eq 'power_on') {
-			$power = Slim::Player::Client::power($client, 1);
+			$power = $client->power(1);
 		} elsif ($button eq 'power_off') {
-			$power = Slim::Player::Client::power($client, 0);
+			$power = $client->power(0);
 		} else {
-			$power = Slim::Player::Client::power($client, !Slim::Player::Client::power($client));
+			$power = $client->power(!$client->power);
 		}
 	},
 	'shuffle' => sub  {

@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.3 2003/08/09 14:22:21 dean Exp $
+# $Id: Pages.pm,v 1.4 2003/08/09 16:23:46 dean Exp $
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -34,8 +34,8 @@ sub home {
 	foreach my $player (Slim::Player::Client::clients()) {
 		# every player gets a page.
 		# next if (!$player->isPlayer());
-		$listform{'playername'} = Slim::Player::Client::name($player);
-		$listform{'playerid'} = Slim::Player::Client::id($player);
+		$listform{'playername'} = $player->name();
+		$listform{'playerid'} = $player->id();
 		$listform{'player'} = $$paramsref{'player'};
 		$listform{'skinOverride'} = $$paramsref{'skinOverride'};
 		$$paramsref{'player_list'} .= &Slim::Web::HTTP::filltemplatefile("homeplayer_list.html", \%listform);;
@@ -88,7 +88,7 @@ sub browser {
 	$::d_http && msg("with absolute path: " . $fulldir . "\n");
 
 	if (defined($client)) {
-		$current_player = Slim::Player::Client::id($client);
+		$current_player = $client->id();
 	}
 
 	if ($dir =~ /^__playlists/) {
@@ -366,8 +366,8 @@ sub status {
 	if (defined($client)) {
 		$songcount = Slim::Player::Playlist::count($client);
 
-		if (Slim::Player::Client::defaultName($client) ne Slim::Player::Client::name($client)) {
-			$$main_form_ref{'player_name'} = Slim::Player::Client::name($client);
+		if ($client->defaultName() ne $client->name()) {
+			$$main_form_ref{'player_name'} = $client->name();
 		}
 		
 		if (Slim::Player::Playlist::shuffle($client) == 1) {
@@ -418,7 +418,7 @@ sub status {
 			$$main_form_ref{'treble'} = int(Slim::Utils::Prefs::clientGet($client, "treble") + 0.5);
 		}
 		
-		$$main_form_ref{'player'} = Slim::Player::Client::id($client);
+		$$main_form_ref{'player'} = $client->id();
 	}
 	
 	if ($songcount > 0) {
@@ -442,12 +442,12 @@ sub status {
 	if (scalar(@players) > 1) {
 		my %clientlist = ();
 		foreach my $eachclient (@players) {
-			$clientlist{Slim::Player::Client::id($eachclient)} =  Slim::Player::Client::name($eachclient);
+			$clientlist{$eachclient->id()} =  $eachclient->name();
 			if (Slim::Player::Playlist::isSynced($eachclient)) {
-				$clientlist{Slim::Player::Client::id($eachclient)} .= " (".string('SYNCHRONIZED_WITH')." ".Slim::Player::Playlist::syncwith($eachclient).")";
+				$clientlist{$eachclient->id()} .= " (".string('SYNCHRONIZED_WITH')." ".Slim::Player::Playlist::syncwith($eachclient).")";
 			}	
 		}
-		$$main_form_ref{'player_chooser_list'} = options(Slim::Player::Client::id($client),\%clientlist,$$main_form_ref{'skinOverride'});
+		$$main_form_ref{'player_chooser_list'} = options($client->id(),\%clientlist,$$main_form_ref{'skinOverride'});
 	}
 	
 	if ($add_playlist) {
@@ -484,7 +484,7 @@ sub playlist {
 			($start,$end) = pagebar($songcount,
 								$$main_form_ref{'path'},
 								Slim::Player::Playlist::currentSongIndex($client),
-								"player=" . Slim::Web::HTTP::escape(Slim::Player::Client::id($client)) . "&", 
+								"player=" . Slim::Web::HTTP::escape($client->id()) . "&", 
 								\$$main_form_ref{'start'}, 
 								\$$main_form_ref{'playlist_header'},
 								\$$main_form_ref{'playlist_pagebar'},

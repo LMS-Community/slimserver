@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.14 2003/08/09 14:22:21 dean Exp $
+# $Id: HTTP.pm,v 1.15 2003/08/09 16:23:46 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -487,8 +487,6 @@ sub addstreamingresponse {
 	my $message = shift;
 	my $paramref = shift;
 	
-	my $newclient = 0;
-	
 	my $address = $peeraddr{$httpclientsock};
 
 	# Use squeezebox's client id if specified, otherwise just the IP
@@ -505,13 +503,13 @@ sub addstreamingresponse {
 			getpeername($httpclientsock), 
 			$httpclientsock);
 			
-		$newclient = 1;
-		
 		$client->init();
+	} else {
+		# in the case that this is a reconnect, make sure we have up-to-date networking info
+		$client->streamingsocket($httpclientsock);
+		$client->paddr(getpeername($httpclientsock));
 	}
-	
-	$client->streamingsocket($httpclientsock);
-	
+
 	push @{$outbuf{$httpclientsock}}, $message;
 	$streamingSelWrite->add($httpclientsock);
 	$main::selWrite->add($httpclientsock);
@@ -961,8 +959,8 @@ sub generateresponse {
 
 	# some generally useful form details...
 	if (defined($client)) {
-#		$$paramsref{'player'} = escape(Slim::Player::Client::id($client));
-		$$paramsref{'player'} = Slim::Player::Client::id($client);
+#		$$paramsref{'player'} = escape($client->id());
+		$$paramsref{'player'} = $client->id();
 		$$paramsref{'myClientState'} = $client;
 	}
 
@@ -1168,8 +1166,8 @@ sub statusHeaders {
 	
 	# send headers
 	my %headers = ( 
-			"x-player"			=> Slim::Player::Client::id($client),
-			"x-playername"		=> Slim::Player::Client::name($client),
+			"x-player"			=> $client->id(),
+			"x-playername"		=> $client->name(),
 			"x-playertracks" 	=> Slim::Player::Playlist::count($client),
 			"x-playershuffle" 	=> Slim::Player::Playlist::shuffle($client) ? "1" : "0",
 			"x-playerrepeat" 	=> Slim::Player::Playlist::repeat($client),

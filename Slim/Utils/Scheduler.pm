@@ -82,7 +82,7 @@ sub run_tasks {
 			    $client->model eq 'slimp3' && 
 			    $client->usage() < 0.5) {
 				$busy = 1;
-				$::d_perf && msg(Slim::Player::Client::id($client) . " Usage low, not running tasks.\n");
+				$::d_perf && msg($client->id() . " Usage low, not running tasks.\n");
 				last;
 			}
 		}

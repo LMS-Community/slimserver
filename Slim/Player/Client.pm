@@ -24,8 +24,6 @@ my %clientHash = ();
 # Methods:
 
 # client variables id and version info
-	# type							type		"player", "http"
-	# model							string		"slimp3", "squeezebox"
 	# revision						int			firmware rev   0=unknown, 1.2 = old (1.0, 1.1, 1.2), 1.3 = new streaming protocol, 2.0 = client sends MAC address, NEC IR codes supported
 	# macaddress					string		client's MAC (V2.0 firmware)
 	# paddr							sockaddr_in client's ip and port
@@ -107,7 +105,7 @@ my %clientHash = ();
 
 #
 # the remainder are temporary and global client variables are for the various button display modes
-#
+# TODO - These don't belong in the client object
 
 # trackinfo mode
 	# trackInfoLines				strings		current trackinfo lines
@@ -164,7 +162,6 @@ sub new {
 		$class,
 		$id,
 		$paddr,			# sockaddr_in
-		$revision,
 	) = @_;
 	
 	# if we haven't seen this client, initialialize a new one
@@ -176,7 +173,6 @@ sub new {
 		$::d_protocol && msg("We know this client. Skipping client prefs and state initialization.\n");
 		$client=getClient($id);
 		$clientAlreadyKnown = 1;
-
 	} else {
 		$client->[0] = undef; # id 	
 
@@ -315,11 +311,7 @@ sub new {
 	}
 
 	# the rest of this stuff is set each time the client connects, even if we know him already.
-
 	$client->paddr($paddr);
-
-	# initialize model-specific features:
-	$client->revision($revision);
 
 	# skip the rest of this if the client was already known
 	$clientAlreadyKnown && return($client);

@@ -10,15 +10,19 @@
 #
 use Slim::Player::Client;
 package Slim::Player::Player;
-use File::Spec::Functions qw(:ALL);
-
 
 @ISA = ("Slim::Player::Client");
 
 sub new {
 	my $class = shift;
-	my $client = Slim::Player::Client->new( @_ );
+	my $id = shift;
+	my $paddr = shift;
+	my $revision = shift;
+	my $client = Slim::Player::Client->new($id, $paddr);
 	bless $client, $class;
+
+	# initialize model-specific features:
+	$client->revision($revision);
 
 	return $client;
 }

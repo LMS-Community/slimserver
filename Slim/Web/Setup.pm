@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.4 2003/08/09 14:22:21 dean Exp $
+# $Id: Setup.pm,v 1.5 2003/08/09 16:23:46 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -118,7 +118,7 @@ sub initSetupConfig {
 						$pageref->{'GroupOrder'}[1] = undef;
 					}
 					$pageref->{'Prefs'}{'titleFormatCurr'}{'validateArgs'} = [0,$titleFormatMax,1,1];
-					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [Slim::Player::Client::defaultName($client)];
+					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [$client->defaultName()];
 					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[2] = undef;
 					removeExtraArrayEntries($client,'titleFormat',$paramref,$pageref);
 					if (Slim::Player::Playlist::isSynced($client) || (scalar(Slim::Player::Playlist::canSyncWith($client)) > 0))  {
@@ -138,13 +138,14 @@ sub initSetupConfig {
 						$pageref->{'title'} = string('PLAYER_SETTINGS') . ' ' . string('FOR') . ' ' . $paramref->{'playername'};
 					}
 					$paramref->{'versionInfo'} = string("PLAYER_VERSION") . ': ' .  $client->revision;
-					$paramref->{'ipaddress'} = Slim::Player::Client::ipaddress($client);
+					$paramref->{'ipaddress'} = $client->ipaddress();
 					$paramref->{'macaddress'} = $client->macaddress;
 					if (Slim::Player::Client::clientCount > 1 ) {
 						$pageref->{'Prefs'}{'synchronize'}{'options'} = syncGroups($client);
 						if (!exists($paramref->{'synchronize'})) {
 							if (Slim::Player::Playlist::isSynced($client)) {
-								$paramref->{'synchronize'} = Slim::Player::Client::id(Slim::Player::Playlist::master($client));
+								my $master = Slim::Player::Playlist::master($client);
+								$paramref->{'synchronize'} = $master->id();
 							} else {
 								$paramref->{'synchronize'} = -1;
 							}
@@ -233,7 +234,7 @@ sub initSetupConfig {
 							,'currentValue' => sub {
 									my ($client,$key,$ind) = @_;
 									if (Slim::Player::Playlist::isSynced($client)) {
-										return Slim::Player::Client::id($client);
+										return $client->id();
 									} else {
 										return -1;
 									}
@@ -298,7 +299,7 @@ sub initSetupConfig {
 				}
 				$pageref->{'Prefs'}{'irsetlist'}{'arrayMax'} = $i - 1;
 				if (!$paramref->{'playername'}) {
-					$paramref->{'playername'} = Slim::Player::Client::name($client);
+					$paramref->{'playername'} = $client->name();
 				}
 				if ($paramref->{'playername'}) {
 					$pageref->{'title'} = string('ADDITIONAL_PLAYER_SETTINGS') . ' ' . string('FOR') . ' ' . $paramref->{'playername'};
@@ -1309,11 +1310,11 @@ sub syncGroups {
 	my $client = shift;
 	my %clientlist = ();
 	foreach my $eachclient (Slim::Player::Playlist::canSyncWith($client)) {
-		$clientlist{Slim::Player::Client::id($eachclient)} =
+		$clientlist{$eachclient->id()} =
 		Slim::Player::Playlist::syncname($eachclient, $client);
 	}
 	if (Slim::Player::Playlist::isMaster($client)) {
-		$clientlist{Slim::Player::Client::id($client)} =
+		$clientlist{$client->id()} =
 		Slim::Player::Playlist::syncname($client, $client);
 	}
 	$clientlist{-1} = string('SETUP_NO_SYNCHRONIZATION');

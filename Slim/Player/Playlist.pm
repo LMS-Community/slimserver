@@ -165,7 +165,7 @@ sub playmode {
 		return $client->playmode;
 	}
 	
-	$::d_playlist && $newmode && msg(Slim::Player::Client::id($client) . ": Switching to mode $newmode\n");
+	$::d_playlist && $newmode && msg($client->id() . ": Switching to mode $newmode\n");
 
 	my $prevmode = $client->playmode;
 
@@ -217,7 +217,7 @@ sub playmode {
 			if ($newmode eq "stop") {
 				$everyclient->currentplayingsong("");
 			#	$everyclient->songpos(0);
-				$::d_playlist && msg("Stopping and clearing out old chunks for client " . Slim::Player::Client::id($everyclient) . "\n");
+				$::d_playlist && msg("Stopping and clearing out old chunks for client " . $everyclient->id() . "\n");
 				@{$everyclient->chunks} = ();
 
 				Slim::Player::Control::stop($everyclient);
@@ -258,7 +258,7 @@ sub playmode {
 			refreshPlaylist($everyclient);
 		}
 	}
-	$::d_playlist && msg(Slim::Player::Client::id($client) . ": Current playmode: " . $client->playmode() . "\n");
+	$::d_playlist && msg($client->id() . ": Current playmode: " . $client->playmode() . "\n");
 
 	return $client->playmode();
 }
@@ -419,8 +419,8 @@ sub syncname {
 		push @newbuddies, $i;
 	}
 				
-	my @names = map {Slim::Player::Client::name($_) || Slim::Player::Client::id($_)} @newbuddies;
-	$::d_playlist && msg("syncname for " . Slim::Player::Client::id($client) . " is " . (join ' & ',@names) . "\n");
+	my @names = map {$_->name() || $_->id()} @newbuddies;
+	$::d_playlist && msg("syncname for " . $client->id() . " is " . (join ' & ',@names) . "\n");
 	my $last = pop @names;
 	if (scalar @names) {
 		return (join ', ', @names) . ' & ' . $last;
@@ -433,7 +433,7 @@ sub syncwith {
 	my $client = shift;
 	if (Slim::Player::Playlist::isSynced($client)) {
 		my @buddies = Slim::Player::Playlist::syncedWith($client);
-		my @names = map {Slim::Player::Client::name($_) || Slim::Player::Client::id($_)} @buddies;
+		my @names = map {$_->name() || $_->id()} @buddies;
 		return join ' & ',@names;
 	} else { return undef;}
 }
@@ -442,7 +442,7 @@ sub syncwith {
 sub unsync {
 	my $client = shift;
 	
-	$::d_sync && msg( Slim::Player::Client::id($client) . ": unsyncing\n");
+	$::d_sync && msg( $client->id() . ": unsyncing\n");
 	
 	# bail if we aren't synced already
 	if (!isSynced($client)) {
@@ -484,7 +484,7 @@ sub unsync {
 		# if we're a slave, remove us from the master's list
 		my $i = 0;
 		foreach my $c (@{($client->master())->slaves}) {
-			if (Slim::Player::Client::id($c) eq Slim::Player::Client::id($client)) {
+			if ($c->id() eq $client->id()) {
 				splice @{$client->master->slaves}, $i, 1;
 				last;
 			}
@@ -507,7 +507,7 @@ sub sync {
 	my $client = shift;
 	my $buddy = shift;
 	
-	$::d_sync && msg(Slim::Player::Client::id($client) .": syncing\n");
+	$::d_sync && msg($client->id() .": syncing\n");
 
 	if (isSynced($client) && isSynced($buddy) && master($client) eq master($buddy)) {
 		return;  # we're already synced up!
@@ -537,7 +537,7 @@ sub sync {
 sub saveSyncPrefs {
 	
 	my $client = shift;
-	my $clientID = Slim::Player::Client::id($client);
+	my $clientID = $client->id();
 	if (isSynced($client)) {
 	
 		if (!defined($client->master->syncgroupid)) {
@@ -587,14 +587,14 @@ sub syncedWith {
 		foreach $otherclient (@{$client->master()->slaves}) {
 			next if ($client == $otherclient);	# skip ourself
 			push @buddies, $otherclient;
-			$::d_sync && msg(Slim::Player::Client::id($client) .": is synced with other slave " . Slim::Player::Client::id($otherclient) . "\n");
+			$::d_sync && msg($client->id() .": is synced with other slave " . $otherclient->id() . "\n");
 		}
 	}
 	
 	# get our slaves
 	foreach $otherclient (@{$client->slaves()}) {
 		push @buddies, $otherclient;
-		$::d_sync && msg(Slim::Player::Client::id($client) . " : is synced with its slave " . Slim::Player::Client::id($otherclient) . "\n");
+		$::d_sync && msg($client->id() . " : is synced with its slave " . $otherclient->id() . "\n");
 	}
 	
 	return @buddies;
@@ -606,11 +606,11 @@ sub isSyncedWith {
 	
 	foreach my $i (syncedWith($client)) {
 		if ($buddy == $i) {
-			$::d_sync && msg(Slim::Player::Client::id($client) . " : is synced with " . Slim::Player::Client::id($buddy) . "\n");
+			$::d_sync && msg($client->id() . " : is synced with " . $buddy->id() . "\n");
 			return 1;
 		}
 	}
-	$::d_sync && msg(Slim::Player::Client::id($client) . " : is synced NOT with " . Slim::Player::Client::id($buddy) . "\n");
+	$::d_sync && msg($client->id() . " : is synced NOT with " . $buddy->id() . "\n");
 	return 0;
 }
 
@@ -646,7 +646,7 @@ sub uniqueVirtualPlayers {
 sub checkSync {
 	my $client = shift;
 	
-	$::d_playlist_v && msg("checkSync: Player " . Slim::Player::Client::id($client) . " has " . scalar(@{$client->chunks}) . " chunks, and " . $client->usage() . "% full buffer \n");
+	$::d_playlist_v && msg("checkSync: Player " . $client->id() . " has " . scalar(@{$client->chunks}) . " chunks, and " . $client->usage() . "% full buffer \n");
 
 	if (!Slim::Player::Playlist::isSynced($client)) {
 		return;
@@ -664,7 +664,7 @@ sub checkSync {
 		if 	($usage > 0.90) {
 			$client->readytosync(1);
 		
-			$::d_playlist && msg(Slim::Player::Client::id($client)." is ready to sync ".Time::HiRes::time()."\n");
+			$::d_playlist && msg($client->id()." is ready to sync ".Time::HiRes::time()."\n");
 			my $allReady=1;
 			my $everyclient;
 			foreach $everyclient ($client, Slim::Player::Playlist::syncedWith($client)) {
@@ -693,7 +693,7 @@ sub checkSync {
 		my $readyToContinue = 0;
 		# we restart the song as soon as the first player has run out of chunks.
 		foreach $everyclient (@group) {
-			$::d_playlist && msg("Resync: Player " . Slim::Player::Client::id($everyclient) . " has " . scalar(@{$everyclient->chunks}) . " chunks \n");
+			$::d_playlist && msg("Resync: Player " . $everyclient->id() . " has " . scalar(@{$everyclient->chunks}) . " chunks \n");
 			if (scalar(@{$everyclient->chunks}) == 0) { 
 				$readyToContinue = 1; 
 				last; 
@@ -710,7 +710,7 @@ sub checkSync {
 	# sanity check on queued chunks
 	foreach my $everyclient (@group) {
 		if (scalar(@{$everyclient->chunks}) > 200) { 
-			$::d_playlist && msg("Player " . Slim::Player::Client::id($everyclient) . " isn't keeping up with the rest of the synced group.");
+			$::d_playlist && msg("Player " . $everyclient->id() . " isn't keeping up with the rest of the synced group.");
 			@{$everyclient->chunks} = ();
 			last; 
 		}
@@ -1455,7 +1455,7 @@ sub readNextChunk {
 			}
 		}
 	} else {
-		$::d_playlist && msg(Slim::Player::Client::id($client) . ": No filehandle to read from, returning no chunk.\n");
+		$::d_playlist && msg($client->id() . ": No filehandle to read from, returning no chunk.\n");
 		$::d_playlist && bt();
 		return undef;
 	}
@@ -1555,7 +1555,7 @@ sub modifyPlaylistCallback {
 		my $currsong = (Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Playlist::currentSongIndex($client)];
 		foreach my $eachclient (@syncedclients) {
 			if ($saveplaylist) {
-				my $playlistname = "__" . Slim::Player::Client::id($eachclient) . ".m3u";
+				my $playlistname = "__" . $eachclient->id() . ".m3u";
 				$playlistname =~ s/\:/_/g;
 				$playlistname = catfile(Slim::Utils::Prefs::get('playlistdir'),$playlistname);
 				Slim::Formats::Parse::writeM3U($playlistref,$playlistname);

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.2 2003/07/24 23:14:04 dean Exp $
+# $Id: Prefs.pm,v 1.3 2003/08/09 16:23:45 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -280,7 +280,7 @@ sub checkServerPrefs {
 sub checkClientPrefs {
 	my $client = shift;
 	foreach my $key (keys %{$DEFAULT{"CLIENTPREFS"}}) {
-		my $clientkey = Slim::Player::Client::id($client) . '-' . $key;
+		my $clientkey = $client->id() . '-' . $key;
 		if (!defined($prefs{$clientkey})) {
 			if (ref($DEFAULT{"CLIENTPREFS"}{$key}) eq 'ARRAY') {
 				my @temp = @{$DEFAULT{"CLIENTPREFS"}{$key}};
@@ -308,7 +308,7 @@ sub clientPush {
 	my $client = shift;
 	my $arrayPref = shift;
 	my $value = shift;
-	Slim::Utils::Prefs::push((Slim::Player::Client::id($client) . '-' . $arrayPref),$value);
+	Slim::Utils::Prefs::push(($client->id() . '-' . $arrayPref),$value);
 }
 
 # getArrayMax($arrayPref)
@@ -326,7 +326,7 @@ sub getArrayMax{
 sub clientGetArrayMax {
 	my $client = shift;
 	my $arrayPref = shift;
-	return getArrayMax(Slim::Player::Client::id($client) . "-" . $arrayPref);
+	return getArrayMax($client->id() . "-" . $arrayPref);
 }
 
 # getArray($arrayPref)
@@ -338,7 +338,7 @@ sub getArray {
 sub clientGetArray {
 	my $client = shift;
 	my $arrayPref = shift;
-	return getArray(Slim::Player::Client::id($client) . "-" . $arrayPref);
+	return getArray($client->id() . "-" . $arrayPref);
 }
 # get($pref)
 sub get 
@@ -357,9 +357,9 @@ sub clientGet {
 	my $key = shift;
 	my $ind = shift;
 	if (defined($ind)) {
-		return getInd(Slim::Player::Client::id($client) . "-" . $key,$ind);
+		return getInd($client->id() . "-" . $key,$ind);
 	} else {
-		return get(Slim::Player::Client::id($client) . "-" . $key);
+		return get($client->id() . "-" . $key);
 	}
 }
 
@@ -416,7 +416,7 @@ sub clientSet {
 	my $value = shift;
 	my $ind = shift;
 	
-	set(Slim::Player::Client::id($client) . "-" . $key, $value,$ind);
+	set($client->id() . "-" . $key, $value,$ind);
 	onChange($key, $value, $ind, $client);
 }
 
@@ -446,7 +446,7 @@ sub clientDelete {
 	my $key = shift;
 	my $ind = shift;
 	
-	Slim::Utils::Prefs::delete(Slim::Player::Client::id($client) . "-" . $key,$ind);
+	Slim::Utils::Prefs::delete($client->id() . "-" . $key,$ind);
 }
 
 sub isDefined {
@@ -463,7 +463,7 @@ sub clientIsDefined {
 	my $key = shift;
 	my $ind = shift;
 	
-	return isDefined(Slim::Player::Client::id($client) . "-" . $key,$ind);
+	return isDefined($client->id() . "-" . $key,$ind);
 }
 
 sub preferencesPath {

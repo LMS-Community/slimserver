@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.3 2003/08/09 05:47:11 dean Exp $
+#	$Id: Information.pm,v 1.4 2003/08/09 16:23:43 dean Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -47,7 +47,7 @@ use Slim::Utils::Strings qw(string);
 use strict;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.3 $,10);
+$VERSION = substr(q$Revision: 1.4 $,10);
 
 my @main_list = qw(
     library
@@ -68,8 +68,8 @@ my @player_list = (
     [ 'PLAYER_NAME',  'string',  1,  sub { Slim::Utils::Prefs::clientGet(shift,'playername') } ],
     [ 'PLAYER_MODEL', 'string',  1,  sub { shift->model() } ],
     [ 'FIRMWARE',     'string',  1,  sub { shift->revision } ],
-    [ 'PLAYER_IP',    'string',  1,  sub { (split(':',Slim::Player::Client::ipaddress(shift)))[0] } ],
-    [ 'PLAYER_PORT',  'string',  1,  sub { (split(':',Slim::Player::Client::ipaddress(shift)))[1] } ],
+    [ 'PLAYER_IP',    'string',  1,  sub { (split(':',shift->ipaddress))[0] } ],
+    [ 'PLAYER_PORT',  'string',  1,  sub { (split(':',shift->ipaddress))[1] } ],
     [ 'PLAYER_MAC',   'string',  1,  sub { uc(shift->macaddress) } ],
 );
 

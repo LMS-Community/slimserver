@@ -23,7 +23,7 @@ sub new {
 		$tcpsock,		# defined only for squeezebox
 	) = @_;
 	
-	my $client = Slim::Player::Player->new( $id, $paddr, $revision);
+	my $client = Slim::Player::Player->new($id, $paddr, $revision);
 	
 	$client->tcpsock($tcpsock);
 	

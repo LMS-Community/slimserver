@@ -63,7 +63,7 @@ my %lastAck;			# timeout in the case that the player disappears completely.
 sub newStream {
 	my ($client, $paused) = @_;
 	
-	$::d_stream && msg( Slim::Player::Client::id($client) ." new stream" . ($paused ? "paused" : "") . "\n");
+	$::d_stream && msg( $client->id() ." new stream" . ($paused ? "paused" : "") . "\n");
 		
 	if ($paused) {
 		$streamState{$client}='paused';
@@ -101,7 +101,7 @@ sub fullness {
 
 sub pause {
 	my ($client) = @_;
-	$::d_stream && msg(Slim::Player::Client::id($client) ." pause\n");
+	$::d_stream && msg($client->id() ." pause\n");
 	
 	if ($streamState{$client} ne 'play') {
 		$::d_stream && msg("Attempted to pause a " . $streamState{$client} .  " stream.\n");
@@ -122,7 +122,7 @@ sub pause {
 sub stop {
 	my ($client) = @_;
 		
-	$::d_stream && msg( Slim::Player::Client::id($client) ." stream stop\n");
+	$::d_stream && msg( $client->id() ." stream stop\n");
 	if (!$streamState{$client} || $streamState{$client}  eq 'stop') {
 		$::d_stream && msg("Attempted to stop an already stopped stream.\n");
 		return 0;
@@ -134,7 +134,7 @@ sub stop {
 
 sub playout {
 	my ($client) = @_;
-	$::d_stream && msg( Slim::Player::Client::id($client) ." stream play out\n");
+	$::d_stream && msg( $client->id() ." stream play out\n");
 	$streamState{$client}='eof';
 }
 	
@@ -144,7 +144,7 @@ sub playout {
 #
 sub unpause {
 	my ($client) = @_;
-	$::d_stream && msg(Slim::Player::Client::id($client) ." unpause\n");
+	$::d_stream && msg($client->id() ." unpause\n");
 	if ($streamState{$client} eq 'buffering') {
 		return 0;  # can't force unpause while in buffering state.
 	} elsif ($streamState{$client} eq 'stop') {
@@ -208,7 +208,7 @@ sub sendStreamPkt {
 	my $len = $pkt->{'len'};
 	my $wptr = $pkt->{'wptr'};
 	
-	$::d_stream_v && msg(Slim::Player::Client::id($client) . " " . Time::HiRes::time() . " sending stream, seq=$seq len=$len wptr=$wptr state=". 
+	$::d_stream_v && msg($client->id() . " " . Time::HiRes::time() . " sending stream, seq=$seq len=$len wptr=$wptr state=". 
 				$streamState{$client}.
 				" inflight=" . defined($packetInFlight{$client}) . "\n");
 
@@ -268,7 +268,7 @@ sub timeout {
 	Slim::Networking::Protocol::idle();
 	if ($packetInFlight{$client}) {
 		my $packet = $packetInFlight{$client};
-		$::d_stream && msg(Slim::Player::Client::id($client) . " " . Time::HiRes::time() . " Timeout on seq: " . $packet->{'seq'} . "\n");
+		$::d_stream && msg($client->id() . " " . Time::HiRes::time() . " Timeout on seq: " . $packet->{'seq'} . "\n");
 		$packetInFlight{$client} = undef;
 		if (($lastAck{$client} + $ACK_TIMEOUT) < Time::HiRes::time()) {
 			# we haven't gotten an ack in a long time.  shut it down and don't bother resending.
@@ -290,11 +290,11 @@ sub gotAck {
 	my $eachpkt;
 
 	if (!defined($streamState{$client})) {
-		$::d_stream && msg(Slim::Player::Client::id($client) . ": received a stray ack from an unknown client - ignoring.\n");
+		$::d_stream && msg($client->id() . ": received a stray ack from an unknown client - ignoring.\n");
 		return;
 	}
 	
-	$::d_stream_v && msg(Slim::Player::Client::id($client) . " ".Time::HiRes::time() .  " gotAck for seq: $seq ");
+	$::d_stream_v && msg($client->id() . " ".Time::HiRes::time() .  " gotAck for seq: $seq ");
 	$::d_stream_v && msg("ack: wptr:$wptr, rptr:$rptr, seq:$seq, ");
 
 	# calculate buffer usage
@@ -358,7 +358,7 @@ sub sendNextChunk {
 	}
 	
 	if ($fullness > $BUFFER_FULL_THRESHOLD) {
-		$::d_stream && msg(Slim::Player::Client::id($client) . "- $streamState -  Buffer full, need to poll to see if there is space\n");
+		$::d_stream && msg($client->id() . "- $streamState -  Buffer full, need to poll to see if there is space\n");
 		# if client's buffer is full, poll it every 50ms until there's room if we're playing
 		# otherwise, we can't send a chunk.
 		if ($streamState eq 'play') {
@@ -397,12 +397,12 @@ sub sendNextChunk {
 
 	if (($fullness > $UNPAUSE_THRESHOLD) && ($streamState eq 'buffering')) {
 		$streamState{$client}='play';
-		$::d_stream && msg(Slim::Player::Client::id($client) . " Buffer full, starting playback\n");
+		$::d_stream && msg($client->id() . " Buffer full, starting playback\n");
 		$client->currentplayingsong(Slim::Player::Playlist::song($client));
 		$client->remoteStreamStartTime(time());
 
 	} elsif (($fullness < $PAUSE_THRESHOLD) && ($streamState eq 'play')) {
-		$::d_stream && msg(Slim::Player::Client::id($client) . "Buffer drained, pausing playback\n");
+		$::d_stream && msg($client->id() . "Buffer drained, pausing playback\n");
 		$streamState{$client}='buffering';
 	}
 	
@@ -427,7 +427,7 @@ my $empty = '';
 sub sendEmptyChunk {
 	my ($client) = @_;
 
-	$::d_stream_v && msg(Slim::Player::Client::id($client) . " sendEmptyChunk\n");
+	$::d_stream_v && msg($client->id() . " sendEmptyChunk\n");
 
 	my $pkt = {};
 

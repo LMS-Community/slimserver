@@ -104,7 +104,7 @@ sub commandCallback {
 	foreach my $sock (keys %listen) {
 		$sock = $listen{$sock};
 		if ($sock) {
-			my $output = Slim::Player::Client::id($client);
+			my $output = $client->id();
 			foreach my $param (@$paramsRef) {
 				$output .= ' ' . Slim::Web::HTTP::escape($param);
 			}

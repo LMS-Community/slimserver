@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.6 2003/08/07 22:44:56 dean Exp $
+# $Id: IR.pm,v 1.7 2003/08/09 16:23:44 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -526,7 +526,7 @@ sub executeButton {
 sub processCode {
 	my ($client, $irCode, $irTime) = @_;
 
-	$::d_ir && msg("irCode: $irCode, ".Slim::Player::Client::id($client)."\n");
+	$::d_ir && msg("irCode: $irCode, ".$client->id()."\n");
 
 	$client->lastircode($irCode);
 	$client->easteregg($client->easteregg ? ($client->easteregg . ',' . $irCode) : $irCode);

@@ -243,8 +243,6 @@ sub getUdpClient {
 
 	$client->paddr($clientpaddr);
 	
-	$revision = $client->revision;
-		
 	return $client
 }
 

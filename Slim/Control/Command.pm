@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.5 2003/08/09 14:22:19 dean Exp $
+# $Id: Command.pm,v 1.6 2003/08/09 16:23:44 dean Exp $
 
 # Slim Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -42,7 +42,7 @@ sub execute {
 	my $p5 = $$parrayref[5];
 	my $p6 = $$parrayref[6];
 
-	$::d_command && msg(" Executing command " . ($client ? Slim::Player::Client::id($client) : "no client") . ": $p0 (" .
+	$::d_command && msg(" Executing command " . ($client ? $client->id() : "no client") . ": $p0 (" .
 			(defined $p1 ? $p1 : "") . ") (" .
 			(defined $p2 ? $p2 : "") . ") (" .
 			(defined $p3 ? $p3 : "") . ") (" .
@@ -143,11 +143,11 @@ sub execute {
 			
 			if (defined $p2client) {
 				if ($p1 eq "name") {
-					$p3 = Slim::Player::Client::name($p2client);
+					$p3 = $p2client->name();
 				} elsif ($p1 eq "address") {
-					$p3 = Slim::Player::Client::id($p2client);
+					$p3 = $p2client->id();
 				} elsif ($p1 eq "ip") {
-					$p3 = Slim::Player::Client::ipaddress($p2client);
+					$p3 = $p2client->ipaddress();
 				}
 			}
 		} 
@@ -260,11 +260,11 @@ sub execute {
 			$p1 = Slim::Player::Playlist::song($client) || 0;
 		} elsif ($p0 eq "power") {
 			if (!defined $p1) {
-				Slim::Player::Client::power($client, !Slim::Player::Client::power($client));
+				$client->power(!$client->power());
 			} elsif ($p1 eq "?") {
-				$p1 = Slim::Player::Client::power($client);
+				$p1 = $client->power();
 			} else {
-				Slim::Player::Client::power($client, $p1)
+				$client->power($p1)
 			}
 		} elsif ($p0 eq "playlist") {
 			# here are all the commands that add/insert/replace songs/directories/playlists on the current playlist
