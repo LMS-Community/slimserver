@@ -35,21 +35,14 @@ use XML::Simple;
 ################### Configuration Section ########################
 
 ### These first few preferences can only be set by editing this file
-my (%genre_aka, @genre_keywords, $munge_genres, @legit_genres);
-
-# By default, we normalize genres based on keywords, because otherwise
-# there are nearly as many genres as there are streams.  If you would
-# like to see the genre listing as defined by each stream, set this to
-# 0.
-
-$munge_genres = 1;
+my (%genre_aka, @genre_keywords, @legit_genres);
 
 # If you choose to munge the genres, here is the list of keywords that
 # define various genres.  If any of these words or phrases is found in
 # the genre of a stream, then the stream is allocated to the genre
 # indicated by those word(s) or phrase(s).  In phrases, indicate a
 # space by means of an underscore.  The order is significant if
-# @genre_criteria contains "keywords".
+# Slim::Utils::Prefs::getArray('plugin_shoutcastbrowser_genre_criterion') contains "keywords".
 
 @genre_keywords = qw{
 	rock pop trance dance techno various house alternative 80s metal
@@ -129,36 +122,6 @@ $munge_genres = 1;
 	hard_core video_game big_band classic_rock easy_listening new_age
 );
 
-### Warning: These preferences can (and should) be set via the web
-### interface. If you set them here, they will be overriden by the
-### settings in your preferences file put there by the web
-### configuration interface.  If for some reason you want to specify
-### these values here (eg. you really want to have a tertiary sorting
-### criterion), then set $prefs_override to a true value.
-my ($prefs_override, @genre_criteria, @stream_criteria, $how_many_streams, $top_limit, $min_bitrate, $max_bitrate, $recent_max);
-
-my $lump_singletons = 1;
-
-# Maximum number of streams to fetch (default is 300; 2000 is max)
-# $how_many_streams = 2000;
-
-# Sorting criteria for genres: a list of any of the following strings
-# name (alphabetical), name_reverse (reverse alphabetical), keyword
-# (order given in the array @genre_keywords above), keyword_reverse
-# (opposite order), streams (number of streams, high to low),
-# streams_reverse (low to high).
-
-# @genre_criteria = qw(streams name);
-
-# Sorting criteria for streams: a list of any of the following strings:
-# "bitrate" (high to low), "bitrate_reverse" (low to high),
-# "listeners" (many to few), "listeners_reverse" (few to many), "name"
-# (alphabetical), "name_reverse" (reverse alphabetical).  The first
-# sorting criterion listed is used first, then if any two streams are
-# equal, the second criterion is used, and so forth.
-
-# @stream_criteria = qw(listeners bitrate name);
-
 ################### End Configuration Section ####################
 
 # rather constants than variables (never changed in the code)
@@ -169,8 +132,7 @@ my $position_of_recent = 0;
 ## Order for info sub-mode
 my (@info_order, @info_index);
 
-my (%recent_filename, %recent_data);
-my ($custom_genres, %custom_genres);
+my (%recent_filename, %recent_data, %custom_genres);
 
 # keep track of client status
 my (%current_genre, %current_stream, %status, %number, %current_info, %old_stream, %current_bitrate);
@@ -181,10 +143,11 @@ my $last_time = 0;
 # lists and hashes for stream information
 my (@genres, %streams, %stream_data, %bitrates);
 
+checkDefaults();
 
 my %keyword_index;
 
-if (grep {$_ =~ m/keyword/i} @genre_criteria) {
+if (grep {$_ =~ m/keyword/i} Slim::Utils::Prefs::getArray('plugin_shoutcastbrowser_genre_criterion')) {
 	my $i = 1;
 
 	for (@genre_keywords) {
@@ -192,7 +155,6 @@ if (grep {$_ =~ m/keyword/i} @genre_criteria) {
 		$i++;
 	}
 }
-
 
 sub getDisplayName {
 	return 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME';
@@ -214,70 +176,10 @@ sub getMiscName {
 	return string('PLUGIN_SHOUTCASTBROWSER_MISC');
 }
 
-
-sub get_prefs {
-	if ((not $prefs_override) and
-			Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_how_many_streams')) {
-		$how_many_streams =
-		Slim::Utils::Prefs::get('plugin_shoutcastbrowser_how_many_streams');
-	}
-	
-	if ((not $prefs_override) and
-			Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_genre_primary_criterion')
-			and 
-			Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_genre_secondary_criterion')) {
-		@genre_criteria =
-			( Slim::Utils::Prefs::get('plugin_shoutcastbrowser_genre_primary_criterion'),
-			Slim::Utils::Prefs::get('plugin_shoutcastbrowser_genre_secondary_criterion'));
-	}
-	
-	if ((not $prefs_override) and
-			Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_stream_primary_criterion')
-			and
-			Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_stream_secondary_criterion')) {
-		@stream_criteria =
-			( Slim::Utils::Prefs::get('plugin_shoutcastbrowser_stream_primary_criterion'),
-			Slim::Utils::Prefs::get('plugin_shoutcastbrowser_stream_secondary_criterion'));
-	}
-	
-	if ((not $prefs_override) and
-			Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_min_bitrate')) {
-		$min_bitrate = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_min_bitrate');
-	}
-	
-	if ((not $prefs_override) and
-			Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_max_bitrate')) {
-		$max_bitrate = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_bitrate');
-	}
-	
-	if ((not $prefs_override) and
-			Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_max_recent')) {
-		$recent_max = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_recent');
-	}
-	
-	if ((not $prefs_override) and
-			Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_max_popular')) {
-		$top_limit = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_popular');
-	}
-	
-	if ((not $prefs_override) and
-		Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_custom_genres')) {
-		$custom_genres = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_custom_genres');
-	}
-
-	# Fallback defaults if undefined in prefs or at start of this file
-	$how_many_streams = 300 unless $how_many_streams;
-	@genre_criteria  = qw(streams name) unless @genre_criteria;
-	@stream_criteria = qw(listeners bitrate name) unless @stream_criteria;
-	
-	$lump_singletons = 1 if ($genre_criteria[0] =~ m/default/i);
-	$recent_max = 50 unless defined $recent_max;
-}
-
 sub setup_custom_genres {
 	my $i = 1;
 	
-	open FH, $custom_genres or return;
+	open FH, Slim::Utils::Prefs::get('plugin_shoutcastbrowser_custom_genres') or return;
 	{
 		while(my $entry = <FH>) {
 			
@@ -318,8 +220,6 @@ sub setMode {
 	
 	$client->update();
 	
-	&get_prefs;
-	
 	my $recent_dir;
 	if (Slim::Utils::Prefs::get('playlistdir')) {
 		$recent_dir = catdir(Slim::Utils::Prefs::get('playlistdir'), $recent_dirname);
@@ -351,12 +251,12 @@ sub getStreams {
 		$current_stream{$client} = 0;
 		$current_bitrate{$client} = 0;
 	}
-	
+
 	my %in_genres;
 	my $u = unpack 'u', q{M:'1T<#HO+W-H;W5T8V%S="YC;VTO<V)I;B]X;6QL:7-T97(N<&AT;6P_<V5R+=FEC93U3;&E-4#,`};
 	
 	$u .= '&no_compress=1' unless $have_zlib;
-	$u .= "&limit=$how_many_streams" if $how_many_streams;
+	$u .= '&limit=' . Slim::Utils::Prefs::get('plugin_shoutcastbrowser_how_many_streams') if Slim::Utils::Prefs::get('plugin_shoutcastbrowser_how_many_streams');
 
 	my $http = Slim::Player::Source::openRemoteStream($u) || do {
 		$status{$client} = -1;
@@ -369,9 +269,12 @@ sub getStreams {
 	undef $http;
 	
 	$last_time = time();
+
+	my $custom_genres = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_custom_genres');
 	&setup_custom_genres() if $custom_genres;
 	
 	my $genre_list;
+	my $munge_genres = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_munge_genre');
 	if ($munge_genres) {
 		$genre_list = join '|', @genre_keywords;
 		$genre_list = "\L$genre_list";
@@ -388,11 +291,13 @@ sub getStreams {
 		$xml = Compress::Zlib::uncompress($xml);
 	}
 
+	my @criterions = Slim::Utils::Prefs::getArray('plugin_shoutcastbrowser_genre_criterion');
+	my $min_bitrate = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_min_bitrate');
+	my $max_bitrate = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_bitrate');
+
 	# Using XML::Simple reduces the memory footprint by nearly 2 megs vs the old manual scanning.
 	my $data  = XML::Simple::XMLin($xml, SuppressEmpty => '');
-
 	for my $entry (@{$data->{'playlist'}->{'entry'}}) {
-
 		my $url		 = $entry->{'Playstring'};
 		my $name		= cleanMe($entry->{'Name'});
 		my $genre	   = cleanMe($entry->{'Genre'});
@@ -474,8 +379,7 @@ sub getStreams {
 	undef $xml;
 	undef $data;
 
-	if ($lump_singletons and not $custom_genres) {
-
+	if (($criterions[0] =~ /default/i) and not $custom_genres and Slim::Utils::Prefs::get('plugin_shoutcastbrowser_munge_genre')) {
 		foreach my $g (keys %stream_data) {
 
 			if ((grep(/$g/i, @legit_genres)) or (keys %{ $stream_data{$g} } > 1)) {
@@ -505,30 +409,24 @@ sub getStreams {
 		return 1  if $a eq getMiscName();
 		return -1 if $b eq getMiscName();
 		
-		for my $criterion (@genre_criteria) {
+		for my $criterion (@criterions) {
 			
 			if ($criterion =~ m/^streams/i)	{
 				$r = keys %{ $stream_data{$b} } <=> keys %{ $stream_data{$a} };
 			} elsif ($criterion =~ m/^keyword/i) {
-			
 				if ($keyword_index{lc($a)}) {
-			
 					if ($keyword_index{lc($b)}) {
 						$r = $keyword_index{lc($a)} <=> $keyword_index{lc($b)};
 					} else {
 						$r = -1; 
 					}
-			
 				} else {
-					
 					if ($keyword_index{lc($b)}) { 
 						$r = 1; 
 					} else {
 						$r = 0;
 					}
-					
 				}
-			
 			} elsif ($criterion =~ m/^name/i or $criterion =~ m/^default/i) {
 				$r = (lc($a) cmp lc($b));
 			}
@@ -543,6 +441,7 @@ sub getStreams {
 
 	unshift @genres, getMostPopularName();
 	unshift @genres, getRecentName();
+
 }
 
 sub cleanMe {
@@ -692,14 +591,13 @@ sub setupGroup
 		PrefOrder => [
 			'plugin_shoutcastbrowser_how_many_streams',
 			'plugin_shoutcastbrowser_custom_genres',
-			'plugin_shoutcastbrowser_genre_primary_criterion',
-			'plugin_shoutcastbrowser_genre_secondary_criterion',
-			'plugin_shoutcastbrowser_stream_primary_criterion',
-			'plugin_shoutcastbrowser_stream_secondary_criterion',
+			'plugin_shoutcastbrowser_genre_criterion',
+			'plugin_shoutcastbrowser_stream_criterion',
 			'plugin_shoutcastbrowser_min_bitrate',
 			'plugin_shoutcastbrowser_max_bitrate',
 			'plugin_shoutcastbrowser_max_recent',
-			'plugin_shoutcastbrowser_max_popular'
+			'plugin_shoutcastbrowser_max_popular',
+			'plugin_shoutcastbrowser_munge_genre'
 		],
 		GroupHead => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER'),
 		GroupDesc => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER_DESC'),
@@ -710,6 +608,7 @@ sub setupGroup
 	);
 
 	my %genre_options = (
+		'' => '',
 		name_reverse => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE'),
 		streams => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS'),
 		streams_reverse => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS_REVERSE'),
@@ -719,9 +618,10 @@ sub setupGroup
 	);
 
 	my %stream_options = (
+		'' => '',
 		name_reverse => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE'),
 		listeners => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS'),
-		listeners_reverse => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS_REVERSE'),
+		listeners_reverse => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS_REVERSE'),
 		default => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_DEFAULT_ALPHA'),
 	);
 
@@ -739,26 +639,42 @@ sub setupGroup
 			onChange => sub { @genres = (); }
 		},
 		
-		plugin_shoutcastbrowser_genre_primary_criterion => {
+		plugin_shoutcastbrowser_genre_criterion => {
+			isArray => 1,
+			arrayAddExtra => 1,
+			arrayDeleteNull => 1,
+			arrayDeleteValue => '',
 			options => \%genre_options,
-			onChange => sub { @genres = (); }
+			onChange => sub {
+				my ($client,$changeref,$paramref,$pageref) = @_;
+				if (exists($changeref->{'plugin_shoutcastbrowser_genre_criterion'}{'Processed'})) {
+					return;
+				}
+				Slim::Web::Setup::processArrayChange($client, 'plugin_shoutcastbrowser_genre_criterion', $paramref, $pageref);
+				@genres = ();
+				$changeref->{'plugin_shoutcastbrowser_genre_criterion'}{'Processed'} = 1;
+			},
+			
 		},
 	
-		plugin_shoutcastbrowser_genre_secondary_criterion => {
-			options => \%genre_options,
-			onChange => sub { @genres = (); }
-		},
-		
-		plugin_shoutcastbrowser_stream_primary_criterion => {
+		plugin_shoutcastbrowser_stream_criterion => {
+			isArray => 1,
+			arrayAddExtra => 1,
+			arrayDeleteNull => 1,
+			arrayDeleteValue => '',
 			options => \%stream_options,
-			onChange => sub { @genres = (); }
+			onChange => sub {
+				my ($client,$changeref,$paramref,$pageref) = @_;
+				if (exists($changeref->{'plugin_shoutcastbrowser_stream_criterion'}{'Processed'})) {
+					return;
+				}
+				Slim::Web::Setup::processArrayChange($client, 'plugin_shoutcastbrowser_stream_criterion', $paramref, $pageref);
+				@genres = ();
+				$changeref->{'plugin_shoutcastbrowser_stream_criterion'}{'Processed'} = 1;
+			},
+			
 		},
-		
-		plugin_shoutcastbrowser_stream_secondary_criterion => {
-			options => \%stream_options,
-			onChange => sub { @genres = (); }
-		},
-		
+
 		plugin_shoutcastbrowser_min_bitrate => {
 			validate => \&Slim::Web::Setup::validateInt,
 			validateArgs => [0, undef, 0],
@@ -773,14 +689,21 @@ sub setupGroup
 		
 		plugin_shoutcastbrowser_max_recent => {
 			validate => \&Slim::Web::Setup::validateInt,
-			validateArgs => [0, undef, 0],
-			onChange => sub { @genres = (); }
+			validateArgs => [0, undef, 0]
 		},
 		
 		plugin_shoutcastbrowser_max_popular => {
 			validate => \&Slim::Web::Setup::validateInt,
-			validateArgs => [0, undef, 0],
-			onChange => sub { @genres = (); }
+			validateArgs => [0, undef, 0]
+		},
+		
+		plugin_shoutcastbrowser_munge_genre => {
+			'validate' => \&Slim::Web::Setup::validateTrueFalse,
+			'options'  => {
+				'1' => string('ON'),
+				'0' => string('OFF')
+			},
+			'PrefChoose' => string('SETUP_PLUGIN_SHOUTCASTBROWSER_MUNGE_GENRE')
 		}
 	);
 	
@@ -790,25 +713,16 @@ sub setupGroup
 }
 
 sub checkDefaults {
-	
 	if (!Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_how_many_streams')) {
 		Slim::Utils::Prefs::set('plugin_shoutcastbrowser_how_many_streams', 300);
 	}
 	
-	if (!Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_genre_primary_criterion')) {
-		Slim::Utils::Prefs::set('plugin_shoutcastbrowser_genre_primary_criterion', 'default');
+	if (!Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_genre_criterion')) {
+		Slim::Utils::Prefs::set('plugin_shoutcastbrowser_genre_criterion', 'default', 0);
 	}
 	
-	if (!Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_genre_secondary_criterion')) {
-		Slim::Utils::Prefs::set('plugin_shoutcastbrowser_genre_secondary_criterion', 'default');
-	}
-	
-	if (!Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_stream_primary_criterion')) {
-		Slim::Utils::Prefs::set('plugin_shoutcastbrowser_stream_primary_criterion', 'default');
-	}
-	
-	if (!Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_stream_secondary_criterion')) {
-		Slim::Utils::Prefs::set('plugin_shoutcastbrowser_stream_secondary_criterion', 'default');
+	if (!Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_stream_criterion')) {
+		Slim::Utils::Prefs::set('plugin_shoutcastbrowser_stream_criterion', 'default', 0);
 	}
 	
 	if (!Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_min_bitrate')) {
@@ -825,6 +739,10 @@ sub checkDefaults {
 	
 	if (!Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_max_popular')) {
 		Slim::Utils::Prefs::set('plugin_shoutcastbrowser_max_popular', 40);
+	}
+	
+	if (!Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_munge_genre')) {
+		Slim::Utils::Prefs::set('plugin_shoutcastbrowser_munge_genre', 1);
 	}
 }
 
@@ -846,6 +764,35 @@ my $popular_sort = sub {
 	return lc($a) cmp lc($b);
 };
 
+# Closure for the sake of $client
+sub stream_sort {
+	my $client = shift;
+	my $r = 0;
+
+	for my $criterion (Slim::Utils::Prefs::getArray('plugin_shoutcastbrowser_stream_criterion')) {
+		if ($criterion =~ m/^listener/i) {
+			my ($aa, $bb) = (0, 0);
+			my $current_genre = $genres[$current_genre{$client}];
+			
+			$aa += $stream_data{$current_genre}{$a}{$_}[1]
+				foreach keys %{ $stream_data{$current_genre}{$a} };
+			
+			$bb += $stream_data{$current_genre}{$b}{$_}[1]
+				foreach keys %{ $stream_data{$current_genre}{$b} };
+			
+			$r = $bb <=> $aa;
+		} elsif ($criterion =~ m/^name/i or $criterion =~ m/default/i) {
+			$r = lc($a) cmp lc($b);
+		}
+		
+		$r = -1 * $r if $criterion =~ m/reverse$/i;
+		
+		return $r if $r;
+	}
+	
+	return $r;
+};
+	
 my $mode_sub = sub {
 	my $client = shift;
 
@@ -855,35 +802,6 @@ my $mode_sub = sub {
 	$number{$client} = undef;
 	$current_stream{$client} = $old_stream{$client}{$current_genre{$client}};
 	$client->update();
-
-	# Closure for the sake of $client
-	my $stream_sort = sub {
-		my $r = 0;
-	
-		for my $criterion (@stream_criteria) {
-			if ($criterion =~ m/^listener/i) {
-				my ($aa, $bb) = (0, 0);
-				my $current_genre = $genres[$current_genre{$client}];
-				
-				$aa += $stream_data{$current_genre}{$a}{$_}[1]
-					foreach keys %{ $stream_data{$current_genre}{$a} };
-				
-				$bb += $stream_data{$current_genre}{$b}{$_}[1]
-					foreach keys %{ $stream_data{$current_genre}{$b} };
-				
-				$r = $bb <=> $aa;
-			
-			} elsif ($criterion =~ m/^name/i or $criterion =~ m/default/i) {
-				$r = lc($a) cmp lc($b);
-			}
-			
-			$r = -1 * $r if $criterion =~ m/reverse$/i;
-			
-			return $r if $r;
-		}
-		
-		return $r;
-	};
 
 	# %streams is indexed by client, since the streams for recently
 	# played are different for each; for the others, this is somewhat
@@ -897,13 +815,13 @@ my $mode_sub = sub {
 		} elsif ($current_genre eq getMostPopularName()) {
 			my @top = sort $popular_sort keys %{ $stream_data{getAllName()} };
 			
-			splice @top, $top_limit;
+			splice @top, Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_popular');
 			$streams{$client}{$current_genre{$client}} = [ @top ];
 			$stream_data{getMostPopularName()} = $stream_data{getAllName()}
 		
 		} else {
 			$streams{$client}{$current_genre{$client}} =
-			[ sort $stream_sort keys %{ $stream_data{$current_genre} } ];
+			[ sort { stream_sort($client) } keys %{ $stream_data{$current_genre} } ];
 		}
 	}
 	
@@ -1448,7 +1366,7 @@ sub add_recent_stream
 		unshift @recent, $new;
 	} else {
 		unshift @recent, $new;
-		pop @recent if @recent > $recent_max;
+		pop @recent if @recent > Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_recent');
 	}
 
 	if (defined $recent_filename{$client})
@@ -1496,8 +1414,6 @@ sub webPages {
 sub handleWebIndex {
 	my ($client, $params) = @_;
 
-	&get_prefs;
-	
 	if (time() >= $last_time + 3600) {
 		@genres = ();
 	}
@@ -1522,12 +1438,13 @@ sub handleWebIndex {
 			# most popular
 			if ($params->{'p0'} == 1) {
 				my @top = sort $popular_sort keys %{ $stream_data{getAllName()} };
-				splice @top, $top_limit;
+				splice @top, Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_popular');
 				$params->{'mystreams'} = \@top;
 				$params->{'streams'} = \%{ $stream_data{getAllName()} };
 			}
 			else {
-				$params->{'mystreams'} = [ sort keys %{ $stream_data{$params->{'genre'}} } ];
+				# TODO mh: sort is somehow broken for listeners
+				$params->{'mystreams'} = [ sort { stream_sort($client) } keys %{ $stream_data{$params->{'genre'}} } ];
 				$params->{'streams'} = \%{ $stream_data{$params->{'genre'}} };
 			}
 		}
@@ -1639,45 +1556,25 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_HOW_MANY_STREAMS_DESC
 	DE	Anzahl aufzulistender Streams (Radiostationen). Voreinstellung ist 300, das Maximum 2000.
 	ES	Cuántos streams traer. Por defecto es 300, máximo es 2000.
 
-SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_PRIMARY_CRITERION
-	EN	Main Sort Criterion for Genres
-	DE	Haupt Sortierkriterium für Musikstile
-	ES	Criterio principal  para Ordenar por Géneros
+SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_CRITERION
+	EN	Sort Criterion for Genres
+	DE	Sortierkriterium für Musikstile
+	ES	Criterio para Ordenar por Géneros
 
-SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_PRIMARY_CRITERION_DESC
-	EN	Primary criterion for sorting genres.
-	DE	Erstes Kriterium für die Sortierung der Musikstile
-	ES	Criterio principal  para Ordenar por Géneros
+SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_CRITERION_DESC
+	EN	Criterion for sorting genres.
+	DE	Kriterium für die Sortierung der Musikstile
+	ES	Criterio para Ordenar por Géneros
 
-SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_SECONDARY_CRITERION
-	EN	Other Sort Criterion for Genres
-	DE	Weiteres Sortierkriterium für Musikstile
-	ES	Otros Criterios de Búsqueda para Géneros
+SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_CRITERION
+	EN	Sort Criterion for Streams
+	DE	Sortierkriterium für Streams
+	ES	Criterio para ordenar streams.
 
-SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_SECONDARY_CRITERION_DESC
-	EN	Secondary criterion for sorting genres, if the primary is equal.
-	DE	Das zweite Sortierkriterium für Musikstile, falls das erste mehrere Vorkommen hat.
-	ES	Segundo Criterio para ordenar por géneros, si el principal es igual.
-
-SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_PRIMARY_CRITERION
-	EN	Main Sort Criterion for Streams
-	DE	Haupt Sortierkriterium für Streams
-	ES	Criterio principal para ordenar streams.
-
-SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_PRIMARY_CRITERION_DESC
-	EN	Primary criterion for sorting streams.
-	DE	Erstes Kriterium für die Sortierung der Streams (Radiostationen)
-	ES	Criterio principal para ordenar streams.
-
-SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_SECONDARY_CRITERION
-	EN	Other Sort Criterion for Streams
-	DE	Weiteres Sortierkriterium für Streams
-	ES	Otros Criterios de Ordenamiento para Streams
-
-SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_SECONDARY_CRITERION_DESC
-	EN	Secondary criterion for sorting streams, if the primary is equal.
-	DE	Das zweite Sortierkriterium für Streams (Radiostationen), falls das erste mehrere Vorkommen hat.
-	ES	Segundo criterio para ordenar streams, si el principal es igual.
+SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_CRITERION_DESC
+	EN	Criterion for sorting streams.
+	DE	Kriterium für die Sortierung der Streams (Radiostationen)
+	ES	Criterio para ordenar streams.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MIN_BITRATE
 	EN	Minimum Bitrate
@@ -1772,7 +1669,15 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD
 SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD_REVERSE
 	EN	Order of definition (reverse)
 	DE	Definitions-Reihenfolge (umgekehrt)
-	ES	Orden de definición (reverso)^;
+	ES	Orden de definición (reverso)
+
+SETUP_PLUGIN_SHOUTCASTBROWSER_MUNGE_GENRE
+	DE	Musikstile normalisieren
+	EN	Normalise genres
+
+SETUP_PLUGIN_SHOUTCASTBROWSER_MUNGE_GENRE_DESC
+	DE	Standardmässig wird versucht, die Musikstile zu normalisieren, weil sonst beinahe so viele Stile wie Streams aufgeführt werden. Falls Sie alle Stile unverändert aufführen wollen, so deaktivieren Sie diese Option.
+	EN	By default, genres are normalised based on keywords, because otherwise there are nearly as many genres as there are streams. If you would like to see the genre listing as defined by each stream, turn off this parameter.^;
 }
 
 1;
