@@ -147,6 +147,7 @@ use vars qw(
 	$d_firmware
 	$d_formats
 	$d_http
+	$d_http_verbose
 	$d_info
 	$d_ir
 	$d_itunes
@@ -212,21 +213,23 @@ sub init {
 	$::d_server && msg("SlimServer Strings init...\n");
 	Slim::Utils::Strings::init(catdir($Bin,'strings.txt'), "EN");
 
-
 	$::d_server && msg("SlimServer OS Specific init...\n");
+
 	$SIG{CHLD} = 'IGNORE';
 	$SIG{PIPE} = 'IGNORE';
+	$SIG{TERM} = \&sigterm;
+
 	if (Slim::Utils::OSDetect::OS() ne 'win') {
 		$SIG{INT} = \&sigint;
 		$SIG{HUP} = \&initSettings;
 	}		
-	$SIG{TERM} = \&sigterm;
+
 	if (defined(&PerlSvc::RunningAsService) && PerlSvc::RunningAsService()) {
 		$SIG{QUIT} = \&ignoresigquit; 
 	} else {
 		$SIG{QUIT} = \&sigquit;
 	}
-	
+
 	# we have some special directories under OSX.
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		mkdir $ENV{'HOME'} . "/Library/SlimDevices";
@@ -238,9 +241,9 @@ sub init {
 		unshift @INC, $ENV{'HOME'} . "/Library/SlimDevices";
 		unshift @INC, "/Library/SlimDevices/";
 	}
-	
+
 	unshift @INC, catdir($Bin,'CPAN','arch',$Config::Config{archname});
-	
+
 	$::d_server && msg("SlimServer settings init...\n");
 	initSettings();
 
@@ -264,10 +267,11 @@ sub start {
 
 	$::d_server && msg("SlimServer starting up...\n");
 
-	$::d_server && msg("SlimServer daemonizing...\n");
 	# background if requested
 	if (Slim::Utils::OSDetect::OS() ne 'win' && $daemon) {
+		$::d_server && msg("SlimServer daemonizing...\n");
 		daemonize();
+
 	} else {
 		save_pid_file();
 		if (defined $logfile) {
@@ -280,23 +284,29 @@ sub start {
 		}
 	};
 	
-	$::d_server && msg("SlimServer Stdio init...\n");
 	if ($stdio) {
+		$::d_server && msg("SlimServer Stdio init...\n");
 		Slim::Control::Stdio::init(\*STDIN, \*STDOUT);
 	}
 
 	$::d_server && msg("Old SLIMP3 Protocol init...\n");
 	Slim::Networking::Protocol::init();
+
 	$::d_server && msg("Slimproto Init...\n");
 	Slim::Networking::Slimproto::init();
+
 	$::d_server && msg("SlimServer Info init...\n");
 	Slim::Music::Info::init();
+
 	$::d_server && msg("SlimServer HTTP init...\n");
 	Slim::Web::HTTP::init();
+
 	$::d_server && msg("SlimServer CLI init...\n");
 	Slim::Control::CLI::init();
+
 	$::d_server && msg("SlimServer History load...\n");
 	Slim::Web::History::load();
+
 	$::d_server && msg("Source conversion init..\n");
 	Slim::Player::Source::init();
 	$::d_server && msg("SlimServer Plugins init...\n");
@@ -307,21 +317,26 @@ sub start {
 		Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
 	}
 	
-	
 	if (Slim::Utils::Prefs::get('xplsupport')) {
 		$::d_server && msg("SlimServer xPL init...\n");
 		Slim::Control::xPL::init();
 	}		
 
-	$::d_server && msg("SlimServer iTunes init...\n");
-
-# start scanning based on a timer...
-# Currently, it's set to one item (directory or song) scanned per second.
+	# start scanning based on a timer...
+	# Currently, it's set to one item (directory or song) scanned per second.
 	if (Slim::Music::iTunes::useiTunesLibrary()) {
+
+		$::d_server && msg("SlimServer iTunes init...\n");
 		Slim::Music::iTunes::startScan();
+
 	} elsif (Slim::Music::MoodLogic::useMoodLogic()) {
+
+		$::d_server && msg("SlimServer MoodLogic init...\n");
 		Slim::Music::MoodLogic::startScan();
+
 	} else {
+
+		$::d_server && msg("SlimServer Music Folder Scan init...\n");
 		Slim::Music::MusicFolderScan::startScan(1);
 	}
 	
@@ -473,6 +488,7 @@ to the console via stderr:
     --d_firmware     => Information during Squeezebox firmware updates 
     --d_formats      => Information about importing data from various file formats
     --d_http         => HTTP activity
+    --d_http_verbose => Even more HTTP activity 
     --d_info         => MP3/ID3 track information
     --d_ir           => Infrared activity
     --d_itunes       => iTunes synchronization information
@@ -537,6 +553,7 @@ sub initOptions {
 		'd_firmware'		=> \$d_firmware,
 		'd_formats'			=> \$d_formats,
 		'd_http'			=> \$d_http,
+		'd_http_verbose'		=> \$d_http_verbose,
 		'd_info'			=> \$d_info,
 		'd_ir'				=> \$d_ir,
 		'd_itunes'			=> \$d_itunes,

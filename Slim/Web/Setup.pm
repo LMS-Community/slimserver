@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.40 2004/02/28 02:05:49 kdf Exp $
+# $Id: Setup.pm,v 1.41 2004/03/05 21:59:39 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -8,9 +8,10 @@ package Slim::Web::Setup;
 # version 2.
 
 use strict;
+
 use File::Spec::Functions qw(:ALL);
-use POSIX;
-use Sys::Hostname;
+use HTTP::Status;
+
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -148,7 +149,7 @@ sub initSetupConfig {
 					}
 					$paramref->{'ipaddress'} = $client->ipport();
 					$paramref->{'macaddress'} = $client->macaddress;
-					if (Slim::Player::Client::clientCount > 1 ) {
+					if (Slim::Player::Client::clientCount() > 1 ) {
 						$pageref->{'Prefs'}{'synchronize'}{'options'} = syncGroups($client);
 						if (!exists($paramref->{'synchronize'})) {
 							if (Slim::Player::Sync::isSynced($client)) {
@@ -1527,20 +1528,24 @@ sub syncGroups {
 }
 
 sub setup_HTTP {
-	my($client, $paramref, $callback, $httpclientsock, $resultref, $headersref, $paramheadersref) = @_;
+	my ($client, $paramref, $callback, $httpclientsock, $response) = @_;
+
 	my $changed;
 	my $rejected;
+
 	if ($::nosetup) {
-		$$resultref = "HTTP/1.0 403 Forbidden";
+		$response->code(RC_FORBIDDEN);
 		return Slim::Web::HTTP::filltemplatefile('html/errors/403.html',$paramref);
 	}
+
 	if (!defined($paramref->{'page'})) {
-		$$resultref = "HTTP/1.0 404 Not Found";
+		$response->code(RC_NOT_FOUND);
 		$paramref->{'suggestion'} = "Try adding page=server.";
 		return Slim::Web::HTTP::filltemplatefile('html/errors/404.html',$paramref);
 	}
 
 	my %pagesetup = %{$setup{$paramref->{'page'}}};
+
 	if (exists $pagesetup{'isClient'}) {
 		$client = Slim::Player::Client::getClient($paramref->{'playerid'});
 	} else {
@@ -1550,14 +1555,19 @@ sub setup_HTTP {
 	if (defined $pagesetup{'preEval'}) {
 		&{$pagesetup{'preEval'}}($client,$paramref,\%pagesetup);
 	}
+
 	($changed,$rejected) = setup_evaluation($client,$paramref,$pagesetup{'Prefs'});
+
 	setup_changes_HTTP($changed,$paramref,$pagesetup{'Prefs'});
 	setup_rejects_HTTP($rejected,$paramref,$pagesetup{'Prefs'});
+
 	# accept any changes that were posted
 	processChanges($client,$changed,$paramref,\%pagesetup);
+
 	if (defined $pagesetup{'postChange'}) {
 		&{$pagesetup{'postChange'}}($client,$paramref,\%pagesetup);
 	}
+
 	#fill the option lists
 	#puts the list of options in the param 'preference_options'
 	options_HTTP($client,$paramref,$pagesetup{'Prefs'});

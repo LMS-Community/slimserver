@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.47 2004/02/23 18:18:28 daniel Exp $
+# $Id: Pages.pm,v 1.48 2004/03/05 21:59:38 daniel Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -65,7 +65,7 @@ sub _addStats {
 }
 
 sub browser {
-	my ($client, $params, $callback, $httpClient, $result, $headers, $paramHeaders) = @_;
+	my ($client, $params, $callback, $httpClient, $response) = @_;
 
 	my $dir = defined($params->{'dir'}) ? $params->{'dir'} : "";
 
@@ -117,7 +117,7 @@ sub browser {
 
 		# check if we're just showing itunes playlists
 		if (Slim::Music::iTunes::useiTunesLibrary()) {
-			browser_addtolist_done($current_player, $httpClient, $params, [], $result, $headers, $paramHeaders);
+			browser_addtolist_done($current_player, $httpClient, $params, [], $response);
 			return undef;
 		} else {
 			$::d_http && msg("the selected playlist $fulldir isn't good!!.\n");
@@ -248,7 +248,7 @@ sub browser {
 	Slim::Utils::Scan::addToList(
 		$items, $fulldir, 0, undef,  
 		\&browser_addtolist_done, $current_player, $callback, 
-		$httpClient, $params, $items, $result, $headers, $paramHeaders
+		$httpClient, $params, $items, $response
 	);
 	
 	# when this finishes, it calls the next function, browser_addtolist_done:
@@ -259,7 +259,7 @@ sub browser {
 }
 
 sub browser_addtolist_done {
-	my ($current_player, $callback, $httpClient, $params, $itemsref, $result, $headers, $paramHeaders) = @_;
+	my ($current_player, $callback, $httpClient, $params, $itemsref, $response) = @_;
 	
 	if (defined $params->{'dir'} && $params->{'dir'} eq '__playlists' && Slim::Music::iTunes::useiTunesLibrary()) {
 
@@ -413,12 +413,12 @@ sub browser_addtolist_done {
 
 	my $output = Slim::Web::HTTP::filltemplatefile(($params->{'playlist'} ? "browse_playlist.html" : "browse.html"), $params);
 
-	$callback->($current_player, $params, $output, $httpClient, $result, $headers, $paramHeaders);
+	$callback->($current_player, $params, $output, $httpClient, $response);
 }
 
 # Send the status page (what we're currently playing, contents of the playlist)
 sub status_header {
-	my ($client, $params, $callback, $httpClient, $result, $headers, $paramHeaders) = @_;
+	my ($client, $params, $callback, $httpClient, $response) = @_;
 
 	$params->{'omit_playlist'} = 1;
 
@@ -426,7 +426,7 @@ sub status_header {
 }
 
 sub status {
-	my ($client, $params, $callback, $httpClient, $result, $headers, $paramHeaders) = @_;
+	my ($client, $params, $callback, $httpClient, $response) = @_;
 
 	$params->{'playercount'} = Slim::Player::Client::clientCount();
 	
@@ -569,7 +569,7 @@ sub status {
 
 		$params->{'callback'} = $callback;
 
-		$params->{'playlist'} = playlist($client, $params, \&status_done, $httpClient, $result, $headers, $paramHeaders);
+		$params->{'playlist'} = playlist($client, $params, \&status_done, $httpClient, $response);
 
 		if (!$params->{'playlist'}) {
 			# playlist went into background, stash $callback and exit
@@ -583,17 +583,17 @@ sub status {
 }
 
 sub status_done {
-	my ($client, $params, $bodyref, $httpClient, $result, $headers, $paramHeaders) = @_;
+	my ($client, $params, $bodyref, $httpClient, $response) = @_;
 
 	$params->{'playlist'} = $$bodyref;
 
 	my $output = Slim::Web::HTTP::filltemplatefile("status.html" , $params);
 
-	$params->{'callback'}->($client, $params, $output, $httpClient, $result, $headers, $paramHeaders);
+	$params->{'callback'}->($client, $params, $output, $httpClient, $response);
 }
 
 sub playlist {
-	my ($client, $params, $callback, $httpClient, $result, $headers, $paramHeaders) = @_;
+	my ($client, $params, $callback, $httpClient, $response) = @_;
 	
 	if (defined($client) && $client->needsUpgrade()) {
 
@@ -659,7 +659,7 @@ sub playlist {
 		$listBuild{'currsongind'}   = Slim::Player::Source::currentSongIndex($client);
 		$listBuild{'item'}          = $listBuild{'start'};
 
-		if (buildPlaylist($client, $params, $callback, $httpClient, $result, $headers, $paramHeaders, \%listBuild)) {
+		if (buildPlaylist($client, $params, $callback, $httpClient, $response, \%listBuild)) {
 
 			Slim::Utils::Scheduler::add_task(
 				\&buildPlaylist,
@@ -667,9 +667,7 @@ sub playlist {
 				$params,
 				$callback,
 				$httpClient,
-				$result,
-				$headers,
-				$paramHeaders,
+				$response,
 				\%listBuild,
 			);
 		}
@@ -681,7 +679,7 @@ sub playlist {
 }
 
 sub buildPlaylist {
-	my ($client, $params, $callback, $httpClient, $result, $headers, $paramHeaders, $listBuild) = @_;
+	my ($client, $params, $callback, $httpClient, $response, $listBuild) = @_;
 
 	my $itemCount         = 0;
 	my $buildItemsPerPass = Slim::Utils::Prefs::get('buildItemsPerPass');
@@ -740,20 +738,20 @@ sub buildPlaylist {
 
 		undef %$listBuild;
 
-		playlist_done($client, $params, $callback, $httpClient, $result, $headers, $paramHeaders);
+		playlist_done($client, $params, $callback, $httpClient, $response);
 
 		return 0;
 	}
 }
 
 sub playlist_done {
-	my ($client, $params, $callback, $httpClient, $result, $headers, $paramHeaders) = @_;
+	my ($client, $params, $callback, $httpClient, $response) = @_;
 
 	my $body = Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
 
 	if (ref($callback) eq 'CODE') {
 
-		$callback->($client, $params, $body, $httpClient, $result, $headers, $paramHeaders);
+		$callback->($client, $params, $body, $httpClient, $response);
 	}
 }
 
@@ -1019,7 +1017,7 @@ sub _addSongInfo {
 	$params->{'itempath'} = $song;
 }
 
-sub songinfo {
+sub songInfo {
 	my ($client, $params) = @_;
 
 	_addSongInfo($client, $params->{'songurl'}, $params);

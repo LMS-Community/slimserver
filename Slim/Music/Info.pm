@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.77 2004/02/18 18:36:58 dean Exp $
+# $Id: Info.pm,v 1.78 2004/03/05 21:59:38 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1332,7 +1332,7 @@ sub coverArt {
 
 	$::d_info && Slim::Utils::Misc::msg("Cover Art ($art) for: $file\n");
 	
-	my ($body, $contenttype);
+	my ($body, $contenttype, $mtime, $path);
 	my $cover = haveCoverArt($file);
 	my $thumb = haveThumbArt($file);
 	
@@ -1341,8 +1341,9 @@ sub coverArt {
 		if ($body) {
 			$::d_info && Slim::Utils::Misc::msg("Found cached cover art: $cover\n");
 			$contenttype = mimeType($cover);
+			$path = $cover;
 		} else {
-			($body, $contenttype) = readCoverArt($file,$art);
+			($body, $contenttype, $path) = readCoverArt($file, $art);
 		}
 	} 
 	elsif (($art eq 'thumb') && $thumb && ($thumb ne '1')) {
@@ -1350,8 +1351,9 @@ sub coverArt {
 		if ($body) {
 			$::d_info && Slim::Utils::Misc::msg("Found cached thumb art: $thumb\n");
 			$contenttype = mimeType($thumb);
+			$path = $thumb;
 		} else {
-			($body, $contenttype) = readCoverArt($file,$art);
+			($body, $contenttype, $path) = readCoverArt($file, $art);
 		}
 	}
 	elsif ( (($art eq 'cover') && $cover) || 
@@ -1359,10 +1361,16 @@ sub coverArt {
 		(($art eq 'thumb') && $thumb) ) {
 		$::d_info && Slim::Utils::Misc::msg("Reading $art from $file\n");
 
-		($body, $contenttype) = readCoverArt($file,$art);
+		($body, $contenttype, $path) = readCoverArt($file, $art);
 
 	}
-	return ($body, $contenttype);
+
+	# kick this back up to the webserver so we can set last-modified
+	if ($path && -r $path) {
+		$mtime = (stat(_))[9];
+	}
+
+	return ($body, $contenttype, $mtime);
 }
 
 sub tagVersion {
@@ -2175,9 +2183,14 @@ sub getImageContent {
 
 sub readCoverArt {
 	my $fullpath = shift;
-	my $image = shift || 'cover';
+	my $image    = shift || 'cover';
+
 	my ($body,$contenttype,$path) = readCoverArtTags($fullpath,$image);
-	if (!defined ($body)) {($body,$contenttype,$path) = readCoverArtFiles($fullpath,$image);}
+
+	if (!defined $body) {
+		($body,$contenttype,$path) = readCoverArtFiles($fullpath,$image);
+	}
+
 	return ($body,$contenttype,$path);
 }
 	
@@ -2332,7 +2345,8 @@ sub readCoverArtFiles {
 			last;
 		}
 	}
-	return ($body, $contenttype,$cover);
+
+	return ($body, $contenttype, $cover);
 }
 
 sub updateCoverArt {
