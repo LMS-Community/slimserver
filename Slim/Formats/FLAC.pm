@@ -67,20 +67,19 @@ sub getTag {
 	# cue parsing will return file url references with start/end anchors
 	# we can now pretend that this (bare no-anchor) file is a playlist
 
-	my $tags = getStandardTag($file, $flac);
+	my $tags = {};
+	my $taginfo = getStandardTag($file, $flac);
 
 	push(@$cuesheet, "    REM END " . sprintf("%02d:%02d:%02d",
-		int(int($tags->{'SECS'})/60),
-		int($tags->{'SECS'} % 60),
-		(($tags->{'SECS'} - int($tags->{'SECS'})) * 75)
+		int(int($taginfo->{'SECS'})/60),
+		int($taginfo->{'SECS'} % 60),
+		(($taginfo->{'SECS'} - int($taginfo->{'SECS'})) * 75)
 	));
 
 	$tags->{'LIST'} = Slim::Formats::Parse::parseCUE($cuesheet, dirname($file));
 
 	# set fields appropriate for a playlist
 	$tags->{'CT'}    = "fec";
-	$tags->{'TITLE'} = "playlist"; # $tags->{'ARTIST'} . " - " . $tags->{'ALBUM'} . " - playlist";
-
 	return $tags;
 }
 

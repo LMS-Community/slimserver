@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.50 2004/08/12 17:21:02 dean Exp $
+# $Id: Misc.pm,v 1.51 2004/08/12 17:25:17 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -597,7 +597,7 @@ sub fracSecToMinSec {
 
 	my ($min, $sec, $frac, $fracrounded);
 
-	$min = = int($seconds/60);
+	$min = int($seconds/60);
 	$sec = $seconds%60;
 	$sec = "0$sec" if length($sec) < 2;
 	
