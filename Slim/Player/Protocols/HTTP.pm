@@ -149,7 +149,8 @@ sub request {
  	my $timeout = $self->timeout();
 
 	my $proxy = Slim::Utils::Prefs::get('webproxy');
-	if ($proxy) {
+
+	if ($proxy && $server ne 'localhost' && $server ne '127.0.0.1') {
 		$path = "http://$server:$port$path";
 	}
 
