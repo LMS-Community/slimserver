@@ -1,6 +1,6 @@
 # Rescan.pm by Andrew Hedges (andrew@hedges.me.uk) October 2002
 # Timer functions added by Kevin Deane-Freeman (kevindf@shaw.ca) June 2004
-# $Id: Rescan.pm,v 1.11 2005/01/04 03:38:52 dsully Exp $
+# $Id: Rescan.pm,v 1.12 2005/01/12 06:01:25 kdf Exp $
 
 # This code is derived from code with the following copyright message:
 #
@@ -20,7 +20,7 @@ use Slim::Control::Command;
 use Time::HiRes;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.11 $,10);
+$VERSION = substr(q$Revision: 1.12 $,10);
 
 my $interval = 1; # check every x seconds
 my @browseMenuChoices;
@@ -49,7 +49,7 @@ sub setMode {
 	$client->lines(\&lines);
 	#get previous alarm time or set a default
 	my $time = Slim::Utils::Prefs::get($client, "rescan-time");
-	if (!defined($time)) { Slim::Utils::Prefs::get($client, "rescan-time", 9 * 60 * 60 ); }
+	if (!defined($time)) { Slim::Utils::Prefs::set($client, "rescan-time", 9 * 60 * 60 ); }
 
 }
 
