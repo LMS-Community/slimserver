@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.83 2004/05/26 18:21:14 dean Exp $
+# $Id: Pages.pm,v 1.84 2004/05/27 07:10:22 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -26,7 +26,6 @@ sub home {
 	$params->{'nosetup'} = 1   if $::nosetup;
 	$params->{'newVersion'} = $::newVersion if $::newVersion;
 
-	
 	if (Slim::Utils::Prefs::get('lookForArtwork')) {
 		addLinks("browse",{string('BROWSE_BY_ARTWORK') => "browseid3.html?genre=*&artist=*&artwork=1"});
 	} else {
@@ -606,7 +605,8 @@ sub status {
 
 		_addSongInfo($client, $song, $params);
 		# for current song, display the playback bitrate instead.
-		if (!Slim::Player::Source::underMax($client,$song)) {
+		my $undermax = Slim::Player::Source::underMax($client,$song);
+		if (defined $undermax && !$undermax) {
 			$params->{'bitrate'} = string('CONVERTED_TO')." ".Slim::Utils::Prefs::setMaxRate($client).Slim::Utils::Strings::string('KBPS').' CBR';
 		}
 		if (Slim::Utils::Prefs::get("playlistdir")) {

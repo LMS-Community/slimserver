@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.94 2004/05/21 01:21:51 kdf Exp $
+# $Id: Source.pm,v 1.95 2004/05/27 07:10:23 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1057,7 +1057,7 @@ sub underMax {
 	
 	my $rate = (Slim::Music::Info::bitratenum($fullpath) || 0)/1000;
 	my $maxRate = Slim::Utils::Prefs::setMaxRate($client);
-
+	return undef if !Slim::Utils::Misc::findbin('lame');
 	return ($maxRate >= $rate) || ($maxRate == 0);
 }
 
