@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.80 2004/03/10 21:29:37 dean Exp $
+# $Id: Info.pm,v 1.81 2004/03/10 22:52:12 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2759,8 +2759,6 @@ sub matchCase {
 	# Upper case and fold latin1 diacritical characters into their plain versions, surprisingly useful.
  	$s =~ tr{abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜàáâãäåçèéêëìíîïñòóôõöøùúûüÿığĞ}
  			{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAAACEEEEIIIINOOOOOOUUUUAAAAAACEEEEIIIINOOOOOOUUUUYYDD};
- 	$s =~ tr{abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜàáâãäåçèéêëìíîïñòóôõöøùúûüÿ}
- 			{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAAACEEEEIIIINOOOOOOUUUUAAAAAACEEEEIIIINOOOOOOUUUUY};
 	return $s;
 }
 
