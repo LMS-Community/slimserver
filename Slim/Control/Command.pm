@@ -1183,6 +1183,7 @@ sub execute {
 				$client->currentPlaylistModified(1);
 				$client->currentPlaylistChangeTime(time());
 			}
+			Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
 
 		} elsif ($p0 eq "mixer") {
 
