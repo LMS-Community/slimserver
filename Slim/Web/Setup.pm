@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.78 2004/05/14 15:07:50 dean Exp $
+# $Id: Setup.pm,v 1.79 2004/05/15 01:27:14 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -129,7 +129,8 @@ sub initSetupConfig {
 						$pageref->{'GroupOrder'}[1] = undef;
 						$pageref->{'GroupOrder'}[2] = undef;
 					}
-					if ($client->model() ne 'slimp3') {
+					my @formats = $client->formats();
+					if ($formats[0] ne 'mp3') {
 						$pageref->{'Prefs'}{'maxBitrate'}{'PrefDesc'} = string('SETUP_MAXBITRATE_DESC');
 						$pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'} = '  '.string('NO_LIMIT');
 					} else {
