@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.30 2003/10/29 22:27:16 sadams Exp $
+# $Id: Slimproto.pm,v 1.31 2003/10/30 22:11:01 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -304,6 +304,10 @@ sub process_slimproto_frame {
 		$::d_factorytest && msg("FACTORYTEST\tevent=helo\tmac=$mac\tdeviceid=$deviceid\trevision=$revision\twlan_channellist=$wlan_channellist\n");
 
 		my $id=$mac;
+		
+		#sanity check on socket
+		return if (!$s->peerport || !$s->peeraddr);
+		
 		my $paddr = sockaddr_in($s->peerport, $s->peeraddr);
 		my $client = Slim::Player::Client::getClient($id); 
 		

@@ -5052,7 +5052,7 @@ PLAYER_NEEDS_UPGRADE
 	EN	Squeezebox Software Update Required
 
 PLAYER_NEEDS_UPGRADE_DETAILS
-	EN	The software in your Squeezebox needs to be updated to the latest version.  Please press and hold the BRIGHTNESS button on your remote until the display on your Squeezebox indicates that the upgrade has begun.  The upgrade only takes a few seconds.
+	EN	The software in your Squeezebox needs to be updated to the latest version.  Please press and hold the BRIGHTNESS button on your remote until the display on your Squeezebox indicates that the update has begun.  The update only takes a few seconds.
 
 PLAYER_NEEDS_UPGRADE_1
 	EN	Squeezebox Software Update
@@ -5064,10 +5064,10 @@ PLAYER_UPGRADE_INSTRUCTIONS
 	EN	If the IP address of your player is not displayed on its screen, press and hold the BRIGHTNESS button until it is.  Then enter the IP address displayed on the screen here:
 
 UPGRADE_COMPLETE_DETAILS
-	EN	Your upgrade is complete.
+	EN	Your update is complete.
 
 UPGRADE_COMPLETE
-	EN	Upgrade Complete
+	EN	Firmware Update Complete
 
 NEED_PATH
 	DE	Sie müssen einen Pfad zum Verzeichnis mit Ihrem MP3 Dateien angeben.

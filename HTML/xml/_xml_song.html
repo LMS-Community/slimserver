@@ -8,6 +8,17 @@
 		<genre>{&genre}</genre>
 		<genre_browse_url><![CDATA[xml/browseid3.xml?genre={%genre}]]></genre_browse_url>
 	[/IF]
+	[IF year]<year>{&year}</year>[/IF]
+	[IF composer]<composer>{&composer}</composer>[/IF]
+	[IF duration]<duration>{&duration}</duration>[/IF]
+	[IF type]<type>{&type}</type>[/IF]
+	[IF tagversion]<tagversion>{&tagversion}</tagversion>[/IF]
+	[IF mixable]<mixable>{&mixable}</mixable>[/IF]
+	[IF modtime]<modtime>{&modtime}</modtime>[/IF]
+	[IF comment]<comment>{&comment}</comment>[/IF]
+	[IF bitrate]<bitrate>{&bitrate}</bitrate>[/IF]
+	[IF coverart]<coverart_url><![CDATA[music/{%itempath}/cover.jpg]]></coverart_url>[/IF]
+	[IF url]<song_url><![CDATA[{url}]]></url>[/IF]
 	[IF artist]
 		<artist>{&artist}</artist>
 		<artist_browse_url><![CDATA[xml/browseid3.xml?genre=*&artist={%artist}]]></artist_browse_url>
