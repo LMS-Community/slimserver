@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.40 2004/09/01 01:27:18 kdf Exp $
+# $Id: Common.pm,v 1.41 2004/10/06 15:56:06 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -14,10 +14,6 @@ use Slim::Player::Client;
 use Slim::Utils::Strings qw (string);
 use Slim::Utils::Misc;
 use Slim::Buttons::Plugins;
-use Slim::Buttons::Input::Text;
-use Slim::Buttons::Input::Time;
-use Slim::Buttons::Input::List;
-use Slim::Buttons::Input::Bar;
 use Slim::Display::Display;
 
 # hash of references to functions to call when we leave a mode
@@ -31,13 +27,7 @@ my $SCAN_RATE_MULTIPLIER = 2;
 # hash of references to functions to call when we enter a mode
 # Note:  don't add to this list, rather use the addMode() function 
 # below to have the module add its mode itself
-my %modes = (		
-	'plugins' => 				\&Slim::Buttons::Plugins::setMode,
-	'INPUT.Text' =>			\&Slim::Buttons::Input::Text::setMode,
-	'INPUT.List' =>			\&Slim::Buttons::Input::List::setMode,
-	'INPUT.Time' =>			\&Slim::Buttons::Input::Time::setMode,
-	'INPUT.Bar' =>			\&Slim::Buttons::Input::Bar::setMode,
-);
+my %modes = ();
 
 # Hashed list for registered Screensavers. Register these using addSaver. 
 my %savers = (
@@ -48,14 +38,12 @@ my %savers = (
 # The address of the function hash is set at run time rather than compile time
 # so initialize the modeFunctions hash here
 sub init {
-	$modeFunctions{'plugins'} = Slim::Buttons::Plugins::getFunctions();
-	$modeFunctions{'INPUT.Text'} = Slim::Buttons::Input::Text::getFunctions();
-	$modeFunctions{'INPUT.List'} = Slim::Buttons::Input::List::getFunctions();
-	$modeFunctions{'INPUT.Time'} = Slim::Buttons::Input::Time::getFunctions();
-	$modeFunctions{'INPUT.Bar'} = Slim::Buttons::Input::Bar::getFunctions();
 	Slim::Buttons::Plugins::getPluginModes(\%modes);
 	Slim::Buttons::Plugins::getPluginFunctions(\%modeFunctions);
 	Slim::Buttons::ScreenSaver::init();
+	Slim::Buttons::Browse::init();
+	Slim::Buttons::BrowseID3::init();
+	Slim::Buttons::Search::init();
 }
 
 sub addSaver {
@@ -340,7 +328,7 @@ my %functions = (
 		my $buttonarg = shift;
 		my $playdisp = undef;
 		if (mode($client) ne 'search') {
-			Slim::Buttons::Common::pushMode($client, 'search');
+			Slim::Buttons::Home::jumpToMenu($client,"SEARCH");
 			$client->update();
 		}
 	},	

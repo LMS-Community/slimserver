@@ -13,7 +13,7 @@ use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.5 $,10);
+$VERSION = substr(q$Revision: 1.6 $,10);
 
 my @topchars = ("placeholder!", " ", " ",    "^", "v");
 my @btmchars = ("placeholder!", "_", "^", "*", " ");
@@ -21,6 +21,11 @@ my $player = "<";
 
 my $framerate = .1; # 10 FPS
 my $maxobs = 8;
+
+sub addMenu {
+	my $menu = "GAMES";
+	return $menu;
+}
 
 sub getDisplayName { 'Shooter' }
 

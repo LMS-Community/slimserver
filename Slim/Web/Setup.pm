@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.106 2004/09/24 01:45:21 kdf Exp $
+# $Id: Setup.pm,v 1.107 2004/10/06 15:56:16 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -110,6 +110,7 @@ sub initSetupConfig {
 		,'preEval' => sub {
 					my ($client,$paramref,$pageref) = @_;
 					return if (!defined($client));
+					Slim::Buttons::Plugins::addSetupGroups();
 					playerChildren($client, $pageref);
 
 					if ($client->isPlayer()) {
@@ -122,9 +123,6 @@ sub initSetupConfig {
 					} else {
 						$pageref->{'GroupOrder'} = ['Default','TitleFormats'];
 					}
-					
-					Slim::Buttons::Plugins::addSetupGroups();
-	
 					
 					if (Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {
 					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'options'}{'6'} =  string('SETUP_SHOWBUFFERFULLNESS');
@@ -541,7 +539,7 @@ sub initSetupConfig {
 					$pageref->{'Prefs'}{'nonMenuItemAction'}{'arrayMax'} = $i - 1;
 					removeExtraArrayEntries($client,'menuItem',$paramref,$pageref);
 					$i = 0;
-					foreach my $pluginItem (Slim::Buttons::Home::unusedPluginOptions($client)) {
+					foreach my $pluginItem (Slim::Buttons::Plugins::unusedPluginOptions($client)) {
 						$paramref->{'pluginItem' . $i++} = $pluginItem;
 					}
 					$pageref->{'Prefs'}{'pluginItem'}{'arrayMax'} = $i - 1;
@@ -571,7 +569,7 @@ sub initSetupConfig {
 						delete $paramref->{'nonMenuItem' . $i++};
 					}
 					$i = 0;
-					foreach my $pluginItem (Slim::Buttons::Home::unusedPluginOptions($client)) {
+					foreach my $pluginItem (Slim::Buttons::Plugins::unusedPluginOptions($client)) {
 						$paramref->{'pluginItem' . $i++} = $pluginItem;
 					}
 					$pageref->{'Prefs'}{'pluginItem'}{'arrayMax'} = $i - 1;
@@ -2126,6 +2124,7 @@ sub initSetup {
 	$setup{'formatting'}{'Prefs'}{'timeFormat'}{'validateArgs'} = [$setup{'formatting'}{'Prefs'}{'timeFormat'}{'options'}];
 	fillFormatOptions();
 	fillSetupOptions('player','titleFormat','titleFormat');
+	Slim::Buttons::Plugins::addSetupGroups();
 }
 
 

@@ -1,4 +1,4 @@
-# $Id: Client.pm,v 1.58 2004/09/24 01:45:20 kdf Exp $
+# $Id: Client.pm,v 1.59 2004/10/06 15:56:11 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -452,9 +452,9 @@ blocklines() - type: strings
 
 =item
 
-homeSelection() - type: int
+curSelection() - type: hash
 
-	index into home selection: 'music', 'playlist', 'settings', ...
+	currently selected item in player menu
 
 =back
 
@@ -512,9 +512,9 @@ lastSelection() - type: hash
 
 =item
 
-searchSelection() - type: int
+curDepth() - type: strings
 
-	index into search selection
+	string identifier for the current depth of home menu navigation tree (separator: -)
 
 =item
 
@@ -622,7 +622,7 @@ browseMenuSelection() - type: int
 
 settingsSelection() - type: int
 
-	scroll selection when in browse menu
+	scroll selection when in settings menu
 
 =back
 
@@ -711,14 +711,14 @@ sub new {
 	$client->[59] = []; # trackInfoContent
 	$client->[60] = {}; # lastID3Selection
 	$client->[61] = []; # blocklines
-	$client->[62] = undef; # homeSelection
+	$client->[62] = {}; # curSelection
 	$client->[63] = undef; # pluginsSelection
 	$client->[64] = undef; # pwd
 	$client->[65] = undef; # currentDirItem
 	$client->[66] = undef; # numberOfDirItems
 	$client->[67] = []; # dirItems
 	$client->[68] =  {}; # lastSelection
-	$client->[69] = undef; # searchSelection
+	$client->[69] = undef; # curDepth
 	$client->[70] = undef; # searchFor
 	$client->[71] = []; # searchTerm
 	$client->[72] = undef; # searchCursor
@@ -1286,9 +1286,11 @@ sub blocklines {
 	@_ ? ($i = shift) : return $r->[61];
 	@_ ? ($r->[61]->[$i] = shift) : $r->[61]->[$i];
 }
-sub homeSelection {
+sub curSelection {
 	my $r = shift;
-	@_ ? ($r->[62] = shift) : $r->[62];
+	my $i;
+	@_ ? ($i = shift) : return $r->[62];
+	@_ ? ($r->[62]->{$i} = shift) : $r->[62]->{$i};
 }
 sub pluginsSelection {
 	my $r = shift;
@@ -1318,7 +1320,7 @@ sub lastSelection {
 	@_ ? ($i = shift) : return $r->[68];
 	@_ ? ($r->[68]->{$i} = shift) : $r->[68]->{$i};
 }
-sub searchSelection {
+sub curDepth {
 	my $r = shift;
 	@_ ? ($r->[69] = shift) : $r->[69];
 }

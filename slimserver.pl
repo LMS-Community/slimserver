@@ -90,18 +90,37 @@ use lib (
 
 use Time::HiRes;
 
-use Slim::Utils::Misc;
+# Force XML::Simple to use XML::Parser for speed. This is done
+# here so other packages don't have to worry about it. If we
+# don't have XML::Parser installed, we fall back to PurePerl.
+use XML::Simple;
+eval {
+    local($^W) = 0;      # Suppress warning from Expat.pm re File::Spec::load()
+    require XML::Parser; 
+};
+if (!$@) {
+    $XML::Simple::PREFERRED_PARSER = 'XML::Parser';
+}
 
+use Slim::Utils::Misc;
 use Slim::Display::Animation;
+use Slim::Display::Display;
+use Slim::Hardware::VFD;
+use Slim::Buttons::Common;
 use Slim::Buttons::Browse;
-use Slim::Buttons::BrowseMenu;
 use Slim::Buttons::Home;
 use Slim::Buttons::Power;
+use Slim::Buttons::Search;
 use Slim::Buttons::ScreenSaver;
 use Slim::Buttons::MoodWheel;
 use Slim::Buttons::InstantMix;
 use Slim::Buttons::VarietyCombo;
-use Slim::Buttons::ScreenSaver;
+use Slim::Buttons::Plugins;
+use Slim::Buttons::Synchronize;
+use Slim::Buttons::Input::Text;
+use Slim::Buttons::Input::Time;
+use Slim::Buttons::Input::List;
+use Slim::Buttons::Input::Bar;
 use Slim::Player::Client;
 use Slim::Control::Command;
 use Slim::Control::CLI;
@@ -750,7 +769,6 @@ sub checkVersion {
 		$::newVersion = undef;
 		return;
 	}
-print "checking version...\n";
 
 	my $lastTime = Slim::Utils::Prefs::get('checkVersionLastTime');
 

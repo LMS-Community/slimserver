@@ -7,41 +7,153 @@ package Slim::Buttons::Home;
 
 use strict;
 use File::Spec::Functions qw(:ALL);
-use File::Spec::Functions qw(updir);
 
 use Slim::Buttons::BrowseID3;
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
-use Slim::Buttons::Search;
-use Slim::Buttons::Settings;
-use Slim::Buttons::Synchronize;
 use Slim::Utils::Strings qw (string);
+
+my %home = ();
 
 Slim::Buttons::Common::addMode('home',getFunctions(),\&setMode);
 
-# button functions for top-level home directory
+my %defaultParams = (
+	'listRef' => undef
+	,'externRef' => sub {
+		my $client = $_[0];
+		my $line2;
+		$line2 = (defined $client && $client->linesPerScreen() == 1) ? Slim::Utils::Strings::doubleString($_[1]) : string($_[1]);
+		return $line2;
+	}
+	,'onChange' => sub {
+		my ($client, $value) = @_;
+		my $curMenu = Slim::Buttons::Common::param($client,'curMenu');
+		$client->curSelection($curMenu,$value);
+	}
+	,'onChangeArgs' => 'CV'
+	,'externRefArgs' => 'CV'
+	,'stringExternRef' => 0
+	,'header' => undef
+	,'headerAddCount' => 1
+	,'callback' => \&homeExitHandler
+	,'overlayRef' => sub {return (undef,Slim::Display::Display::symbol('rightarrow'));}
+	,'overlayRefArgs' => ''
+	,'valueRef' => undef
+);
+	
+########################################################################
+#
+# Home Menu Hash
+#
+# Home menu defaults are presented here, with default categories and menus.
+# Plugins may use the above manipulation functions to create hooks anywhere in the
+# home menu tree. Top level menu items can be chosen per player from the hash below,
+# plus any installed and active plugins
+###########################################################################
+sub initHomeConfig {
+	%home = (
+		'NOW_PLAYING' => {
+			'useMode' => 'playlist'
+		}
+		,'SETTINGS' => {
+			'useMode' => 'settings'
+		}
+	)
+}
+
+initHomeConfig();
+
+######################################################################
+# Home Hash Manipulation Functions
+######################################################################
+#
+# Adds a submenu item to the supplied menuOption.  A reference to a hash containing the
+# submenu data must be supplied.  If the supplied menuOption does not exist, a new menuOption 
+# will be created 
+sub addSubMenu {
+	my ($menu,$submenuname,$submenuref) = @_;
+	unless (exists $home{$menu}) {
+		#warn "menu $menu does not exist\n";
+		addMenuOption($menu);
+	}
+	if (exists $home{$menu}{'useMode'}) {
+		warn "Menu $menu cannot take submenus\n";
+		return;
+	}
+	unless (defined $submenuname && defined $submenuref) {
+		warn "No submenu information supplied!\n";
+		return;
+	}
+	$home{$menu}{'submenus'}{$submenuname} = $submenuref;
+	return;
+}
+
+# Deletes a subMenu from a menuOption
+sub delSubMenu {
+	my ($menu,$submenuname) = @_;
+	unless (exists $home{$menu}{'submenus'}) {
+		warn "submenu of $menu does not exist\n";
+		return;
+	}
+	unless (defined $submenuname) {
+		warn "No submenu information supplied!\n";
+		return;
+	}
+	if (exists $home{$menu}{'submenus'}{$submenuname}) {
+			delete $home{$menu}{'submenus'}{$submenuname};
+			if (!scalar keys %{$home{$menu}{'submenus'}}) {delete $home{$menu};}
+	}
+	return;
+}
+
+# Create a new menuOption for the top level.  This creates a new menu option at the top level,
+# which can be enabled of disabled per player.
+sub addMenuOption {
+	my ($menu,$menuref) = @_;
+	
+	unless (defined $menu) {
+		warn "No menu information supplied!\n";
+		return;
+	}
+	
+	$home{$menu} = $menuref;
+}
+
+sub delMenuOption {
+	my $option = shift;
+
+	unless (defined $option) {
+		warn "No menu reference supplied!\n";
+		return;
+	}
+
+	delete $home{$option};
+}
 
 my %homeChoices;
 
+# TODO: some of this is obvious cruft.  'MUSIC' doesn't seem to exist an a menu option any more.
+# This is also a big sourc eof the inconsistency in "play" and "add" functions.
+# We might want to make this a simple...'add' = clear playlist, 'play' = play everything
 my %functions = (
 	'add' => sub  {
 		my $client = shift;
 	
-		if ($homeChoices{$client}->[$client->homeSelection] eq 'MUSIC') {
+		if ($client->curSelection($client->curDepth()) eq 'MUSIC') {
 			# add the whole of the music folder to the playlist!
 			Slim::Buttons::Block::block($client, string('ADDING_TO_PLAYLIST'), string('MUSIC'));
 			Slim::Control::Command::execute($client, ['playlist', 'add', Slim::Utils::Prefs::get('audiodir')], \&Slim::Buttons::Block::unblock, [$client]);
-		} elsif($homeChoices{$client}->[$client->homeSelection] eq 'NOW_PLAYING') {
+		} elsif($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
 			$client->showBriefly(string('CLEARING_PLAYLIST'), '');
 			Slim::Control::Command::execute($client, ['playlist', 'clear']);
 		} else {
-			(getFunctions())->{'right'}($client);
-		}
+			Slim::Buttons::Common::pushModeLeft($client,'playlist');
+		}	
 	},
 	'play' => sub  {
 		my $client = shift;
 	
-		if ($homeChoices{$client}->[$client->homeSelection] eq 'MUSIC') {
+		if ($client->curSelection($client->curDepth()) eq 'MUSIC') {
 			# play the whole of the music folder!
 			if (Slim::Player::Playlist::shuffle($client)) {
 				Slim::Buttons::Block::block($client, string('PLAYING_RANDOMLY_FROM'), string('MUSIC'));
@@ -49,15 +161,15 @@ my %functions = (
 				Slim::Buttons::Block::block($client, string('NOW_PLAYING_FROM'), string('MUSIC'));
 			}
 			Slim::Control::Command::execute($client, ['playlist', 'load', Slim::Utils::Prefs::get('audiodir')], \&Slim::Buttons::Block::unblock, [$client]);
-		} elsif($homeChoices{$client}->[$client->homeSelection] eq 'NOW_PLAYING') {
+		} elsif($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
 			Slim::Control::Command::execute($client, ['play']);
 			#The address of the %functions hash changes from compile time to run time
 			#so it is necessary to get a reference to it from a function outside of the hash
-			(getFunctions())->{'right'}($client);
-		}  elsif (($homeChoices{$client}->[$client->homeSelection] eq 'BROWSE_BY_GENRE')  ||
-				  ($homeChoices{$client}->[$client->homeSelection] eq 'BROWSE_BY_ARTIST') ||
-				  ($homeChoices{$client}->[$client->homeSelection] eq 'BROWSE_BY_ALBUM')  ||
-				  ($homeChoices{$client}->[$client->homeSelection] eq 'BROWSE_BY_SONG')) {
+			Slim::Buttons::Common::pushModeLeft($client,'playlist');
+		} elsif (($client->curSelection($client->curDepth()) eq 'BROWSE_BY_GENRE')  ||
+				  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_ARTIST') ||
+				  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_ALBUM')  ||
+				  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_SONG')) {
 			if (Slim::Player::Playlist::shuffle($client)) {
 				Slim::Buttons::Block::block($client, string('PLAYING_RANDOMLY'), string('EVERYTHING'));
 			} else {
@@ -65,77 +177,9 @@ my %functions = (
 			}
 			Slim::Control::Command::execute($client, ["playlist", "loadalbum", "*", "*", "*"], \&Slim::Buttons::Block::unblock, [$client]);
 		} else {
-			(getFunctions())->{'right'}($client);
+			Slim::Buttons::Common::pushModeLeft($client,'playlist');
 		}
 	},
-	'up' => sub  {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, -1, (scalar(@{$homeChoices{$client}})), $client->homeSelection);
-		$client->homeSelection($newposition);
-		$client->update();
-	},
-	'down' => sub  {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, +1, (scalar(@{$homeChoices{$client}})), $client->homeSelection);
-		$client->homeSelection($newposition);
-		$client->update();
-	},
-	'left' => sub  {
-		my $client = shift;
-		# doesn't do anything, we're already at the top level
-		$client->bumpLeft();
-	},
-	'right' => sub  {
-		my $client = shift;
-		my @oldlines = Slim::Display::Display::curLines($client);
-		# navigate to the current selected top level item:
-		if ($homeChoices{$client}->[$client->homeSelection] eq 'NOW_PLAYING') {
-			# reset to the top level of the music
-			Slim::Buttons::Common::pushModeLeft($client, 'playlist');
-		} elsif ($homeChoices{$client}->[$client->homeSelection] eq 'BROWSE_MUSIC') {
-			Slim::Buttons::Common::pushModeLeft($client, 'browsemenu',{});
-		} elsif ($homeChoices{$client}->[$client->homeSelection] eq 'BROWSE_BY_GENRE') {
-			Slim::Buttons::Common::pushModeLeft($client, 'browseid3',{});
-		} elsif ($homeChoices{$client}->[$client->homeSelection] eq 'BROWSE_BY_ARTIST') {
-			Slim::Buttons::Common::pushModeLeft($client, 'browseid3',{'genre'=>'*'});
-		} elsif ($homeChoices{$client}->[$client->homeSelection] eq 'BROWSE_BY_ALBUM') {
-			Slim::Buttons::Common::pushModeLeft($client, 'browseid3', {'genre'=>'*', 'artist'=>'*'});
-		} elsif ($homeChoices{$client}->[$client->homeSelection] eq 'BROWSE_BY_SONG') {
-			Slim::Buttons::Common::pushModeLeft($client, 'browseid3', {'genre'=>'*', 'artist'=>'*', 'album'=>'*'});
-		} elsif ($homeChoices{$client}->[$client->homeSelection] eq 'SETTINGS') {
-			Slim::Buttons::Common::pushModeLeft($client, 'settings');
-		} elsif ($homeChoices{$client}->[$client->homeSelection] eq 'PLUGINS') {
-			Slim::Buttons::Common::pushModeLeft($client, 'plugins');
-		} elsif ($homeChoices{$client}->[$client->homeSelection] eq 'BROWSE_MUSIC_FOLDER') {
-			# reset to the top level of the music
-			Slim::Buttons::Common::pushMode($client, 'browse');
-			Slim::Buttons::Browse::loadDir($client, '', 'right', \@oldlines);
-		} elsif ($homeChoices{$client}->[$client->homeSelection] eq 'SAVED_PLAYLISTS') {
-			Slim::Buttons::Common::pushMode($client, 'browse');
-			Slim::Buttons::Browse::loadDir($client, '__playlists', 'right', \@oldlines);
-		} elsif ($homeChoices{$client}->[$client->homeSelection] eq 'SEARCH_FOR_ARTISTS') {
-			my %params = Slim::Buttons::Search::searchFor($client, 'ARTISTS');
-			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'},\%params);
-		} elsif ($homeChoices{$client}->[$client->homeSelection] eq 'SEARCH_FOR_ALBUMS') {
-			my %params = Slim::Buttons::Search::searchFor($client, 'ALBUMS');
-			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'},\%params);
-		} elsif ($homeChoices{$client}->[$client->homeSelection] eq 'SEARCH_FOR_SONGS') {
-			my %params = Slim::Buttons::Search::searchFor($client, 'SONGS');
-			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'},\%params);
-		} elsif ($homeChoices{$client}->[$client->homeSelection] eq 'SEARCH') {
-			Slim::Buttons::Common::pushModeLeft($client, 'search');
-		} else {
-			Slim::Buttons::Common::pushModeLeft($client, "PLUGIN.".$homeChoices{$client}->[$client->homeSelection]);
-		}
-	},
-	'numberScroll' => sub  {
-		my $client = shift;
-		my $button = shift;
-		my $digit = shift;
-		my $newpos;
-		$client->homeSelection(Slim::Buttons::Common::numberScroll($client, $digit, $homeChoices{$client}, 0));
-		$client->update();
-	}
 );
 
 sub getFunctions {
@@ -144,35 +188,228 @@ sub getFunctions {
 
 sub setMode {
 	my $client = shift;
-
-	$client->lines(\&lines);
+	my $method = shift;
+	
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		updateMenu($client);
+		unless (defined $client->curDepth()) {$client->curDepth('');}
+		if (!defined($client->curSelection($client->curDepth()))) {
+			$client->curSelection($client->curDepth(),'NOW_PLAYING');
+		}
+		return;
+	}
+	
 	updateMenu($client);
- 	if (!defined($client->homeSelection) || $client->homeSelection < 0 || $client->homeSelection >= scalar(@{$homeChoices{$client}})) {
- 		$client->homeSelection(0);
- 	}
- }
- 
- my @menuOptions = ('NOW_PLAYING',
- 					'BROWSE_MUSIC',
- 					'BROWSE_BY_GENRE',
- 					'BROWSE_BY_ARTIST',
- 					'BROWSE_BY_ALBUM',
-					'BROWSE_BY_SONG',
- 					'BROWSE_MUSIC_FOLDER',
- 					'SEARCH_FOR_ARTISTS',
- 					'SEARCH_FOR_ALBUMS',
- 					'SEARCH_FOR_SONGS',
- 					'SEARCH',
- 					'SAVED_PLAYLISTS',
- 					'PLUGINS',
- 					'SETTINGS',
- 					);
- 
+	unless (defined $client->curDepth()) {$client->curDepth('');}
+	if (!defined($client->curSelection($client->curDepth()))) {
+		$client->curSelection($client->curDepth(),'NOW_PLAYING');
+	}
+	my %params = %defaultParams;
+	$params{'header'} = \&homeheader;
+	$params{'listRef'} = \@{$homeChoices{$client}};
+	$params{'valueRef'} = \$client->curSelection($client->curDepth());
+	$params{'curMenu'} = $client->curDepth();
+	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
+	$client->update();
+}
+
+#return the reference needed to access the menu one level up.
+sub getLastDepth {
+	my $client = shift;
+	if ($client->curDepth() eq "") {
+		return ""
+	}
+	
+	my @depth = split(/-/,$client->curDepth());
+	#dropping last item in depth reference, gives the previous depth.
+	pop @depth;
+	my $last = join("-",@depth);
+	return $last;
+}
+
+# grab the portion of the hash for the next menu down
+sub getNextList {
+	my $client = shift;
+	
+	my $next = getCurrentList($client);
+	# return chosen Top Level item
+	if ($client->curDepth() eq "") {
+		return $next->{$client->curSelection($client->curDepth())};
+	} else {
+		#return sub-level items
+		return $next->{'submenus'}->{$client->curSelection($client->curDepth())};
+	}
+}
+
+# get a clients current menu params
+sub getCurrentList {
+	my $client = shift;
+	return getMenu($client->curDepth());
+}
+
+# get a generic menu reference
+sub getMenu {
+	my $depth = shift;
+	
+	my $current = \%home;
+	return $current if $depth eq "";
+	my @depth = split(/-/,$depth);
+	#home reference is "" so drop first item
+	shift @depth;
+	#top level reference
+	$current = $current->{shift @depth};
+	# recursive submenus
+	foreach my $level (@depth) {
+		$current = $current->{'submenus'}->{$level};
+	}
+	return $current;
+}
+
+sub homeExitHandler {
+	my ($client,$exittype) = @_;
+	$exittype = uc($exittype);
+	if ($exittype eq 'LEFT') {
+		if ($client->curDepth() ne "") {
+			$client->curDepth(getLastDepth($client));
+			Slim::Buttons::Common::popModeRight($client);
+		} else {
+			# We've hit the home root
+			$client->curDepth("");
+			updateMenu($client);
+			$client->bumpLeft();
+		}
+	
+	} elsif ($exittype eq 'RIGHT') {
+		my $nextmenu = $client->curSelection($client->curDepth());
+		# map default selection in case no onChange was done in INPUT.List
+		if (!defined($nextmenu)) { 
+			$nextmenu = ${Slim::Buttons::Common::param($client,'valueRef')};
+			$client->curSelection($client->curDepth(),$nextmenu);
+		}
+		unless (defined $nextmenu) {
+			$client->bumpRight();
+			return;
+		}
+		my $nextParams;
+		# some menus might need function return values for params, so test here and grab
+		if (ref(getNextList($client)) eq 'CODE') {
+			$nextParams = {&getNextList($client)->($client)};
+		} elsif (getNextList($client)) { 
+			$nextParams = &getNextList($client);
+		}
+		if (exists ($nextParams->{'submenus'})) {
+			my %params = %defaultParams;
+			
+			$params{'header'} = string($client->curSelection($client->curDepth()));
+			# move reference to new depth
+			$client->curDepth($client->curDepth()."-".$client->curSelection($client->curDepth()));
+			
+			# check for disalbed plugins in item list.
+			$params{'listRef'} = &createList($nextParams);
+			$params{'overlayRef'} = undef if scalar @{$params{'listRef'}} == 0;
+			$params{'curMenu'} = $client->curDepth();
+			
+			$params{'valueRef'} = \$client->curSelection($client->curDepth());
+			# If the ExitHandler is changing, backtrack the pointer for when we return home.
+			if (exists $nextParams->{'callback'}) {$client->curDepth(getLastDepth($client));}
+			# merge next list params over the default params where they exist.
+			@params{keys %{$nextParams}} = values %{$nextParams};
+			Slim::Buttons::Common::pushModeLeft(
+				$client
+				,'INPUT.List'
+				,\%params
+			);
+		# if here are no submenus, check for the way out.
+		} elsif (exists($nextParams->{'useMode'})) {
+			if (($nextParams->{'useMode'} eq 'INPUT.List' || $nextParams->{'useMode'} eq 'INPUT.Bar')  && exists($nextParams->{'initialValue'})) {
+				#set up valueRef for current pref
+				my $value;
+				if (ref($nextParams->{'initialValue'}) eq 'CODE') {
+					$value = $nextParams->{'initialValue'}->($client);
+				} else {
+					$value = Slim::Utils::Prefs::clientGet($client,$nextParams->{'initialValue'});
+				}
+				$nextParams->{'valueRef'} = \$value;
+			}
+			Slim::Buttons::Common::pushModeLeft(
+				$client
+				,$nextParams->{'useMode'}
+				,$nextParams
+			);
+		} elsif (Slim::Buttons::Common::validMode("PLUGIN.".$nextmenu)){
+			Slim::Buttons::Common::pushModeLeft($client,"PLUGIN.".$nextmenu);
+		} else {
+			$client->bumpRight();
+		}
+	} else {
+		return;
+	}
+}
+
+# load the submenu hash keys into an array of valid entries.
+sub createList {
+	my $paramsref = shift;
+	my @list;
+	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
+	
+	foreach my $sub (sort {string($a) cmp string($b)} keys %{$paramsref->{'submenus'}}) {
+		next if (exists $disabledplugins{$sub});
+		push @list, $sub;
+	}
+	return \@list;
+}
+
+# Set a specific home position
+sub jump {
+	my $client = shift;
+	my $item = shift;
+	my $depth = shift;
+	
+	$depth = "" unless defined $depth;
+	$client->curDepth($depth);
+	$client->curSelection($client->curDepth(),$item);
+}
+
+# PushMode to a  specific target pointer within the home menu tree.
+sub jumpToMenu {
+	my $client = shift;
+	my $menu = shift;
+	my $depth = shift;
+	
+	$depth = "" unless defined $depth;
+	Slim::Buttons::Home::jump($client,$menu,$depth);
+	my $nextParams = Slim::Buttons::Home::getNextList($client);
+	Slim::Buttons::Common::pushModeLeft(
+		$client
+		,'INPUT.List'
+		,$nextParams
+	);
+}
+
+sub homeheader {
+	my $client = $_[0];
+	my $line1;
+	
+	if ($client->isa("Slim::Player::SLIMP3")) {
+		$line1 = string('SLIMP3_HOME');
+	} elsif ($client->isa("Slim::Player::Softsqueeze")) {
+		$line1 = string('SOFTSQUEEZE_HOME');
+	} else {
+		$line1 = string('SQUEEZEBOX_HOME');
+	}
+	return $line1;
+}
+
+#######3
+#	Routines for generating settings options.
+#######
 sub menuOptions {
 	my $client = shift;
 	my %menuChoices = ();
 	$menuChoices{""} = "";
-	foreach my $menuOption (@menuOptions) {
+	
+	foreach my $menuOption (sort keys %home) {
 		if ($menuOption eq 'BROWSE_MUSIC_FOLDER' && !Slim::Utils::Prefs::get('audiodir')) {
 			next;
 		}
@@ -188,38 +425,16 @@ sub unusedMenuOptions {
 	my $client = shift;
 	my %menuChoices = menuOptions($client);
 	delete $menuChoices{""};
+	
 	foreach my $usedOption (@{$homeChoices{$client}}) {
 		delete $menuChoices{$usedOption};
 	}
 	return sort { $menuChoices{$a} cmp $menuChoices{$b} } keys %menuChoices;
 }
 
-sub pluginOptions {
+sub getHomeChoices {
 	my $client = shift;
-	my %menuChoices = ();
-	$menuChoices{""} = "";
-	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
-	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
-	foreach my $menuOption (keys %{$pluginsRef}) {
-		next if (exists $disabledplugins{$menuOption});
-		no strict 'refs';
-		if (exists &{"Plugins::" . $menuOption . "::enabled"} && $client &&
-			! &{"Plugins::" . $menuOption . "::enabled"}($client) ) {
-			next;
-		}
-		$menuChoices{$menuOption} = $pluginsRef->{$menuOption};
-	}
-	return %menuChoices;
-}
-
-sub unusedPluginOptions {
-	my $client = shift;
-	my %menuChoices = pluginOptions($client);
-	delete $menuChoices{""};
-	foreach my $usedOption (@{$homeChoices{$client}}) {
-		delete $menuChoices{$usedOption};
-	}
-	return sort { $menuChoices{$a} cmp $menuChoices{$b} } keys %menuChoices;
+	return \@{$homeChoices{$client}};
 }
 
 sub updateMenu {
@@ -227,72 +442,19 @@ sub updateMenu {
 	my @home = ();
 	
 	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
+	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
 	foreach my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
-		if ($menuItem eq 'BROWSE_MUSIC_FOLDER' && !Slim::Utils::Prefs::get('audiodir')) {
-			next;
-		}
-		if ($menuItem eq 'SAVED_PLAYLISTS' && 
-			!Slim::Utils::Prefs::get('playlistdir') && 
-			!Slim::Music::iTunes::useiTunesLibrary() && 
-			!Slim::Music::MoodLogic::useMoodLogic() ) {
-			next;
-		}
 		next if (exists $disabledplugins{$menuItem});
-
+		next if (!exists $home{$menuItem} && !exists $pluginsRef->{$menuItem});
 		push @home, $menuItem;
 	}
 	if (!scalar @home) {
 		push @home, 'NOW_PLAYING';
 	}
 	$homeChoices{$client} = \@home;
+	Slim::Buttons::Common::param($client,'listRef',\@home);
 }
  
-sub jump {
-	my $client = shift;
-	my $item = shift;
-	my $pos = 0;
-
-	if (defined($item)) {
-		foreach my $i (@{$homeChoices{$client}}) {
-			last if ($i eq $item);
-			$pos++;
-		}
-	}
-
-	if ($pos > scalar @{$homeChoices{$client}}) {
-		$pos = 0;
-	}
-
-	$client->homeSelection($pos);
-}
-#
-# figure out the lines to be put up to display the directory
-#
-sub lines {
-	my $client = shift;
-	my ($line1, $line2);
-	if ($client->isa("Slim::Player::SLIMP3")) {
-		$line1 = string('SLIMP3_HOME');
-	} elsif ($client->isa("Slim::Player::Softsqueeze")) {
-		$line1 = string('SOFTSQUEEZE_HOME');
-	} else {
-		$line1 = string('SQUEEZEBOX_HOME');
-	}
-	my $menuChoice = $homeChoices{$client}->[$client->homeSelection];
-	for(my $i=0;$i<=$#menuOptions;$i++){
-
-		if ($menuOptions[$i] eq $menuChoice) {
-			$line2 = $client->linesPerScreen() == 1 ? Slim::Utils::Strings::doubleString($menuChoice) : string($menuChoice);
-			return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));
-		} else {
-			my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
-			$line2 = $pluginsRef->{$menuChoice};
-		}
-
-	}
-
-	return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));
-}
 
 1;
 

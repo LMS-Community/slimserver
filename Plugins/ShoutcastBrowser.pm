@@ -1,6 +1,6 @@
 # ShoutcastBrowser.pm Copyright (C) 2003 Peter Heslin
 # version 3.0, 5 Apr, 2004
-#$Id: ShoutcastBrowser.pm,v 1.14 2004/08/03 17:29:07 vidur Exp $
+#$Id: ShoutcastBrowser.pm,v 1.15 2004/10/06 15:56:01 vidur Exp $
 #
 # A Slim plugin for browsing the Shoutcast directory of mp3
 # streams.  Inspired by streamtuner.
@@ -663,12 +663,17 @@ sub lines {
 			    ($#genres + 1) .  ') ' ;
 	$lines[1] = $current_stream;
 	$lines[3] = Slim::Display::Display::symbol('rightarrow');
-    }
+	}
 
-    return @lines;
+	return @lines;
 }
 
 sub getFunctions { return \%functions; }
+
+sub addMenu {
+	my $menu = "RADIO";
+	return $menu;
+}
 
 sub setupGroup
 {

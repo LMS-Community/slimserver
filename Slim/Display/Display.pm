@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.21 2004/09/02 19:36:04 dean Exp $
+# $Id: Display.pm,v 1.22 2004/10/06 15:56:09 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,8 +10,8 @@ package Slim::Display::Display;
 use strict;
 use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Misc;
-use Slim::Hardware::VFD;
 use Slim::Utils::Timers;
+use Slim::Buttons::Settings;
 use Slim::Utils::Strings qw(string);
 
 my %commandmap = (

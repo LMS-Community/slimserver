@@ -1,4 +1,4 @@
-# $Id: RadioIO.pm,v 1.1 2004/09/10 03:07:40 vidur Exp $
+# $Id: RadioIO.pm,v 1.2 2004/10/06 15:56:01 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -24,16 +24,16 @@ my %current = ();
 my %stations = (
 	'radioio70s'  => '3765',			
 	'radioio80s'  => '3795',
-	'radioioAcoustic' => '3765',
-    'radioioAmbient'  => '3605',
-	'radioioBeat' => '3725',
-	'radioioClassical' => '3635',
-	'radioioEclectic' => '3586',
-	'radioioEdge' => '3995',
-	'radioioJam' => '3970',
-	'radioioJazz' => '3545',
-	'radioioPop' => '3965',
-	'radioioRock' => '3515',
+	'radioioACOUSTIC' => '3765',
+    'radioioAMBIENT'  => '3605',
+	'radioioBEAT' => '3725',
+	'radioioCLASSICAL' => '3635',
+	'radioioECLECTIC' => '3586',
+	'radioioEDGE' => '3995',
+	'radioioJAM' => '3970',
+	'radioioJAZZ' => '3545',
+	'radioioPOP' => '3965',
+	'radioioROCK' => '3515',
 );
 
 my @station_names = sort keys %stations;
@@ -131,7 +131,7 @@ sub lines {
 	my @lines;
 	my $name = $station_names[$current{$client}];
 
-	$lines[0] = Slim::Utils::Strings::string('PLUGIN_RADIOIO_MODULE_NAME').
+	$lines[0] = Slim::Utils::Strings::string('PLUGIN_RADIOIO_MODULE_TITLE').
 	    ' (' .
 		($current{$client} + 1) .  ' ' .
 		  Slim::Utils::Strings::string('OF') .  ' ' .
@@ -152,14 +152,23 @@ sub getFunctions() {
 	return \%functions;
 }
 
+sub addMenu {
+	my $menu = "RADIO";
+	return $menu;
+}
+
 sub getDisplayName() { return string('PLUGIN_RADIOIO_MODULE_NAME') }
 
 sub strings
 {
 	return "
 PLUGIN_RADIOIO_MODULE_NAME
-	EN	RadioIO Internet Radio
-	DE	RadioIO Internet Radio
+	EN	radioio.com - no boundaries.
+	DE	radioio.com Internet Radio
+
+PLUGIN_RADIOIO_MODULE_TITLE
+	EN	radioio.com
+	DE	radioio.com
 ";}
 
 1;

@@ -1,6 +1,6 @@
 package Slim::Utils::Strings;
 
-# $Id: Strings.pm,v 1.15 2004/05/18 19:17:39 dean Exp $
+# $Id: Strings.pm,v 1.16 2004/10/06 15:56:13 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -86,6 +86,16 @@ sub load_strings_file {
 	close STRINGS;
 }
 
+# link a string to a function reference instead of a file
+sub addstringRef {
+	my $stringname = shift;
+	my $stringRef = shift;
+	
+	foreach my $language (&list_of_languages) {
+		$strings{$language.'_'.$stringname} = $stringRef;
+	}
+}
+
 sub addStrings {
 	my $strings = shift;
 	my @list = split('\n', $strings);
@@ -161,7 +171,11 @@ sub string {
 	$stringname = uc($stringname);
 	
 	if ($strings{$language.'_'.$stringname}) {
-		return $strings{$language.'_'.$stringname};
+		if (ref($strings{$language.'_'.$stringname}) eq 'CODE') {
+			return $strings{$language.'_'.$stringname}->();
+		} else {
+			return $strings{$language.'_'.$stringname};
+		}
 	} else {
 		if ($strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname}) {
 			return $strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname};

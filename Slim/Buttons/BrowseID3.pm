@@ -1,5 +1,5 @@
 package Slim::Buttons::BrowseID3;
-# $Id: BrowseID3.pm,v 1.18 2004/09/01 00:14:30 dean Exp $
+# $Id: BrowseID3.pm,v 1.19 2004/10/06 15:56:04 vidur Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -17,6 +17,34 @@ use Slim::Utils::Misc;
 
 # Code to browse music folder by ID3 information.
 Slim::Buttons::Common::addMode('browseid3',Slim::Buttons::BrowseID3::getFunctions(),\&Slim::Buttons::BrowseID3::setMode);
+
+sub init {
+	my %browse = (
+		'BROWSE_BY_GENRE' => {
+			'useMode' => 'browseid3'
+		}
+		,'BROWSE_BY_ARTIST' => {
+			'useMode' => 'browseid3'
+			,'genre'=>'*'
+		}
+		,'BROWSE_BY_ALBUM' => {
+			'useMode' => 'browseid3'
+			,'genre'=>'*'
+			,'artist'=>'*'
+		}
+		,'BROWSE_BY_SONG' => {
+			'useMode' => 'browseid3'
+			,'genre'=>'*'
+			,'artist'=>'*'
+			,'album'=>'*'
+		}
+	);
+	
+	foreach my $name (sort keys %browse) {
+		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC',$name,$browse{$name});
+		Slim::Buttons::Home::addMenuOption($name,$browse{$name});
+	};
+}
 
 # Each button on the remote has a function:
 
@@ -351,8 +379,8 @@ sub loadDir {
 	};
 
 	if ($genre  && $genre  eq '*' &&
-	    $artist && $artist eq '*' &&
-	    $album  && $album  eq '*' && !specified($song)) {
+		$artist && $artist eq '*' &&
+		$album  && $album  eq '*' && !specified($song)) {
 
 		$sortbytitle = 1;
 	};
@@ -468,12 +496,12 @@ sub lines {
 
 		if ($songlist) {
 			$line2 = Slim::Music::Info::standardTitle($client, browseID3dir($client,browseID3dirIndex($client)));
-            $overlay1 = Slim::Display::Display::symbol('moodlogic') if (Slim::Music::Info::isSongMixable(browseID3dir($client,browseID3dirIndex($client))));
+			$overlay1 = Slim::Display::Display::symbol('moodlogic') if (Slim::Music::Info::isSongMixable(browseID3dir($client,browseID3dirIndex($client))));
 			$overlay2 = Slim::Display::Display::symbol('notesymbol');
 		} else {
 			$line2 = browseID3dir($client,browseID3dirIndex($client));
-            $overlay1 = Slim::Display::Display::symbol('moodlogic') if (! defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isGenreMixable($line2));
-            $overlay1 = Slim::Display::Display::symbol('moodlogic') if (defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isArtistMixable($line2));
+			$overlay1 = Slim::Display::Display::symbol('moodlogic') if (! defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isGenreMixable($line2));
+			$overlay1 = Slim::Display::Display::symbol('moodlogic') if (defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isArtistMixable($line2));
 			$overlay2 = Slim::Display::Display::symbol('rightarrow');
 		}
 	}

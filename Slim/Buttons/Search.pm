@@ -9,9 +9,8 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
+use Slim::Display::Display;
 use Slim::Utils::Strings qw (string);
-
-Slim::Buttons::Common::addMode('search',getFunctions(),\&setMode);
 
 # button functions for search directory
 my @defaultSearchChoices = ('ARTISTS','ALBUMS','SONGS');
@@ -21,7 +20,7 @@ my %current;
 my %context;
 
 my %menuParams = (
-	'search' => {
+	'SEARCH' => {
 		'listRef' => \@defaultSearchChoices
 		,'stringExternRef' => 1
 		,'header' => 'SEARCH'
@@ -30,40 +29,45 @@ my %menuParams = (
 		,'callback' => \&searchExitHandler
 		,'overlayRef' => sub {return (undef,Slim::Display::Display::symbol('rightarrow'));}
 		,'overlayRefArgs' => ''
+		,'submenus' => {
+				'ARTISTS' => {
+				'useMode' => 'INPUT.Text'
+				,'header' => 'SEARCHFOR_ARTISTS'
+				,'stringHeader' => 1
+				,'cursorPos' => 0
+				,'charsRef' => 'UPPER'
+				,'callback' => \&searchHandler
+				}
+				,'ALBUMS' => {
+					'useMode' => 'INPUT.Text'
+					,'header' => 'SEARCHFOR_ALBUMS'
+					,'stringHeader' => 1
+					,'cursorPos' => 0
+					,'charsRef' => 'UPPER'
+					,'callback' => \&searchHandler
+				}
+				,'SONGS' => {
+					'useMode' => 'INPUT.Text'
+					,'header' => 'SEARCHFOR_SONGS'
+					,'stringHeader' => 1
+					,'cursorPos' => 0
+					,'charsRef' => 'UPPER'
+					,'callback' => \&searchHandler
+				}
+		}
 	}
-	,'search/ARTISTS' => {
-		'useMode' => 'INPUT.Text'
-		,'header' => 'SEARCHFOR_ARTISTS'
-		,'stringHeader' => 1
-		,'cursorPos' => 0
-		,'charsRef' => 'UPPER'
-		,'callback' => \&searchHandler
-	}
-	,'search/ALBUMS' => {
-		'useMode' => 'INPUT.Text'
-		,'header' => 'SEARCHFOR_ALBUMS'
-		,'stringHeader' => 1
-		,'cursorPos' => 0
-		,'charsRef' => 'UPPER'
-		,'callback' => \&searchHandler
-	}
-	,'search/SONGS' => {
-		'useMode' => 'INPUT.Text'
-		,'header' => 'SEARCHFOR_SONGS'
-		,'stringHeader' => 1
-		,'cursorPos' => 0
-		,'charsRef' => 'UPPER'
-		,'callback' => \&searchHandler
-	}
+
 );
 
 sub searchExitHandler {
 	my ($client,$exittype) = @_;
+	
 	$exittype = uc($exittype);
 	if ($exittype eq 'LEFT') {
 		Slim::Buttons::Common::popModeRight($client);
 	} elsif ($exittype eq 'RIGHT') {
-		my %nextParams = searchFor($client,$current{$client});
+		my $current = Slim::Buttons::Common::param($client,'valueRef');
+		my %nextParams = searchFor($client,$$current);
 		Slim::Buttons::Common::pushModeLeft(
 			$client
 			,$nextParams{'useMode'}
@@ -77,9 +81,9 @@ sub searchExitHandler {
 sub searchFor {
 	my $client = shift;
 	my $search = shift;
-	my $nextmenu = 'search'.'/'.$search;
+	
 	$context{$client} = ('A');
-	my %nextParams = %{$menuParams{$nextmenu}};
+	my %nextParams = %{$menuParams{'SEARCH'}{'submenus'}{$search}};
 	$nextParams{'valueRef'} = \$context{$client};
 	$client->searchFor($search);
 	return %nextParams;
@@ -129,40 +133,25 @@ sub searchTerm {
 	return $term;
 }
 
-my %functions = (
-	'right' => sub  {
-		my ($client,$funct,$functarg) = @_;
-		if (defined(Slim::Buttons::Common::param($client,'useMode'))) {
-			#in a submenu of settings, which is passing back a button press
-			$client->bumpRight();
-		} else {
-			#handle passback of button presses
-			settingsExitHandler($client,'RIGHT');
+sub init {
+	my %subs = (
+		'SEARCH_FOR_ARTISTS' => sub {
+			return Slim::Buttons::Search::searchFor(shift, 'ARTISTS');
 		}
+		,'SEARCH_FOR_ALBUMS' => sub {
+			return Slim::Buttons::Search::searchFor(shift, 'ALBUMS');
+		}
+		,'SEARCH_FOR_SONGS' => sub {
+			return Slim::Buttons::Search::searchFor(shift, 'SONGS');
+		}
+	);
+	foreach my $name (sort keys %menuParams) {
+		Slim::Buttons::Home::addMenuOption($name,$menuParams{$name});
+	}	
+	foreach my $name (sort keys %subs) {
+		Slim::Buttons::Home::addMenuOption($name,$subs{$name});
 	}
-);
 
-sub getFunctions {
-	return \%functions;
-}
-
-sub setMode {
-	my $client = shift;
-	my $method = shift;
-	if ($method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
-	$current{$client} = $defaultSearchChoices[0] unless exists($current{$client});
-	my %params = %{$menuParams{'search'}};
-	$params{'valueRef'} = \$current{$client};
-	
-	my @searchChoices = @defaultSearchChoices;
-	
-	$params{'listRef'} = \@searchChoices;
-	
-	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
-	$client->update();
 }
 
 1;

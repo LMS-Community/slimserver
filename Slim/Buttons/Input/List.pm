@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::List;
 
-# $Id: List.pm,v 1.10 2004/08/03 17:29:11 vidur Exp $
+# $Id: List.pm,v 1.11 2004/10/06 15:56:08 vidur Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -12,6 +12,8 @@ use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 use Slim::Display::Display;
 use Slim::Utils::Strings qw (string);
+
+Slim::Buttons::Common::addMode('INPUT.List',getFunctions(),\&setMode);
 
 ###########################
 #Button mode specific junk#
@@ -155,7 +157,7 @@ sub getFunctions {
 
 sub setMode {
 	my $client = shift;
-	#my $setMethod = shift;
+	my $setMethod = shift;
 	#possibly skip the init if we are popping back to this mode
 	#if ($setMethod ne 'pop') {
 		if (!init($client)) {
@@ -227,11 +229,11 @@ sub init {
 	if (!defined($valueRef)) {
 		$$valueRef = $listRef->[$listIndex];
 		Slim::Buttons::Common::param($client,'valueRef',$valueRef);
-	} elsif (!ref($valueRef)) {
+	} elsif (!ref($valueRef) || !defined($$valueRef)) {
 		$$valueRef = $valueRef;
 		Slim::Buttons::Common::param($client,'valueRef',$valueRef);
 	}
-	if ($$valueRef ne $listRef->[$listIndex]) {
+	if ((scalar(@$listRef) != 0) && $$valueRef ne $listRef->[$listIndex]) {
 		my $newIndex;
 		for ($newIndex = 0; $newIndex < scalar(@$listRef); $newIndex++) {
 			last if $$valueRef eq $listRef->[$newIndex];

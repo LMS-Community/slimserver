@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Time;
 
-# $Id: Time.pm,v 1.4 2004/08/03 17:29:12 vidur Exp $
+# $Id: Time.pm,v 1.5 2004/10/06 15:56:08 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -13,6 +13,8 @@ use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw (string);
 use Slim::Display::Display;
+
+Slim::Buttons::Common::addMode('INPUT.Time',getFunctions(),\&setMode);
 
 ###########################
 #Button mode specific junk#

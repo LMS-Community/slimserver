@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.139 2004/10/02 00:14:39 kdf Exp $
+# $Id: strings.txt,v 1.140 2004/10/06 15:55:41 vidur Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -235,6 +235,15 @@ ONLY_ONE
 	NO	Det er bare én fil her!
 	PT	Existe apenas um item para escolher!
 	SE	Det finns bara en fil här!
+
+SCREENSAVERS
+	EN	Screensavers
+
+RADIO
+	EN	Internet Radio
+
+GAMES
+	EN	Games
 
 PLAYLIST
 	DE	Playlist
@@ -6702,7 +6711,7 @@ FAQ
 	PT	Perguntas Feitas Frequentemente (FAQ)
 	SE	FAQ / Ofta förekommande frågor
 
-RADIO
+HELP_RADIO
 	DE	Internet Radio und Playlists
 	DK	Internetradio- og playlist-filer
 	EN	Internet Radio and Playlist Files

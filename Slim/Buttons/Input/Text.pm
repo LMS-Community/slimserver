@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Text;
 
-# $Id: Text.pm,v 1.21 2004/09/02 07:40:51 kdf Exp $
+# $Id: Text.pm,v 1.22 2004/10/06 15:56:08 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -28,6 +28,7 @@ my @numberLettersMixed = ([' ','0'], # 0
 					 ['t','u','v','T','U','V','8'], 				# 8
 					 ['w','x','y','z','W','X','Y','Z','9']); 			# 9
 
+Slim::Buttons::Common::addMode('INPUT.Text',getFunctions(),\&setMode);
 
 ###########################
 #Button mode specific junk#

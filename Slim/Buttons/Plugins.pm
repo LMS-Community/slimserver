@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.26 2004/09/09 19:12:23 dean Exp $
+# $Id: Plugins.pm,v 1.27 2004/10/06 15:56:06 vidur Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
@@ -40,72 +40,6 @@ my %curr_plugin = ();
 my $plugins_read;
 my %playerplugins = ();
 
-my %functions = (
-	'left' => sub  {
-		Slim::Buttons::Common::popModeRight(shift);
-	},
-	'right' => sub  {
-		my $client = shift;
-		my @enabled = enabledPlugins($client);
-		my $current = $plugins{$enabled[$curr_plugin{$client}]};
-	
-		if (pluginCount()) {
-					my @oldlines = Slim::Display::Display::curLines($client);
-					Slim::Buttons::Common::pushMode(
-					$client,
-					$current->{mode},
-			);
-			$client->pushLeft(
-					\@oldlines,
-					[Slim::Display::Display::curLines($client)],
-			);
-		}
-		else {
-			$client->bumpRight();
-		}
-	},
-	'up' => sub  {
-		my $client = shift;
-	
-		$curr_plugin{$client} = Slim::Buttons::Common::scroll(
-			$client,
-			-1,
-			pluginCount(),
-			$curr_plugin{$client},
-		);
-		$client->update();
-	},
-	'down' => sub  {
-		my $client = shift;
-	
-		$curr_plugin{$client} = Slim::Buttons::Common::scroll(
-			$client,
-			1,
-			pluginCount(),
-			$curr_plugin{$client},
-		);
-		$client->update();
-	},
-);
-
-sub lines {
-	my $client = shift;
-	my @enabled = enabledPlugins($client);
-
-	unless (scalar(@enabled)) {
-		return(string('NO_PLUGINS'),'');
-	}
-	if ($curr_plugin{$client} >= scalar(@enabled)) {
-		$curr_plugin{$client} = scalar(@enabled) - 1;
-	}
-	my $current = $plugins{$enabled[$curr_plugin{$client}]};
-
-	my @lines = (
-		string('PLUGINS') . ' (' . ($curr_plugin{$client} + 1) . ' ' . string('OF') . ' ' . (pluginCount()) . ')',
-		$current->{name},
-	);
-	return (@lines,undef,Slim::Display::Display::symbol('rightarrow'));
-}
 sub enabledPlugins {
 	my $client = shift;
 	my @enabled;
@@ -166,20 +100,21 @@ sub read_plugins {
 			my $strings;
 			eval {$strings = &{$fullname . "::strings"}()};
 			if (!$@ && $strings) { Slim::Utils::Strings::addStrings($strings); }
-			# load screensaver, if one exists.
-			if (UNIVERSAL::can("$fullname","screenSaver")) {
-				eval { &{$fullname . "::screenSaver"}() };
-				if ($@) { $::d_plugins && msg("Failed screensaver for $fullname: " . $@);}
-			}
 			my $names;
 			eval {$names = &{$fullname . "::getDisplayName"}()};
 			if (!$@ && $names) {
+				Slim::Utils::Strings::addstringRef(uc($name),\&{$fullname . "::getDisplayName"});
 				my $ref = {
 					module => $fullname,
 					name => &{$fullname . "::getDisplayName"}(),
 					mode => "PLUGIN.$name",
 				};
 				$plugins{$name} = $ref;
+				my %params = (
+					'useMode' => "PLUGIN.$name"
+					,'header' => $plugins{$name}->{'name'}
+					);
+				Slim::Buttons::Home::addSubMenu("PLUGINS",$name,\%params);
 			} else {
 				$::d_plugins && msg("Can't load $fullname for Plugins menu: " . $@);
 			}
@@ -187,9 +122,52 @@ sub read_plugins {
 		}
 	}
 	addWebPages();
+	addScreensavers();
+	#addSetupGroups();
+	addMenus();
 	$plugins_read = 1 unless $read_onfly;
 }
 
+sub addMenus {
+	no strict 'refs';
+	foreach my $plugin (keys %{installedPlugins()}) {
+		my $menu;
+		if (UNIVERSAL::can("Plugins::${plugin}","addMenu")) {
+			eval { $menu = &{"Plugins::${plugin}::addMenu"}()};
+			if (!$@ && defined $menu) {
+				my %params = (
+					'useMode' => "PLUGIN.$plugin"
+					,'header' => $plugins{$plugin}->{'name'}
+					);
+				$::d_plugins && msg("Adding $plugin to menu: $menu\n");
+				Slim::Buttons::Home::addSubMenu($menu,$plugin,\%params);
+				Slim::Buttons::Home::delSubMenu("PLUGINS",$plugin);
+				Slim::Buttons::Home::addSubMenu("PLUGINS",$menu,&Slim::Buttons::Home::getMenu("-".$menu));
+			}
+		}
+	}
+}
+
+sub addScreensavers {
+	no strict 'refs';
+	foreach my $plugin (keys %{installedPlugins()}) {
+		# load screensaver, if one exists.
+		if (UNIVERSAL::can("Plugins::${plugin}","screenSaver")) {
+			eval { &{"Plugins::${plugin}::screenSaver"}() };
+			if ($@) { $::d_plugins && msg("Failed screensaver for $plugin: " . $@);}
+			else {
+				my %params = (
+					'useMode' => "PLUGIN.$plugin"
+					,'header' => $plugins{$plugin}->{'name'}
+					);
+				Slim::Buttons::Home::addSubMenu("SCREENSAVERS",$plugin,\%params);
+				Slim::Buttons::Home::delSubMenu("PLUGINS",$plugin);
+				Slim::Buttons::Home::addSubMenu("PLUGINS","SCREENSAVERS",&Slim::Buttons::Home::getMenu("-SCREENSAVERS"));
+			}
+		}
+	}
+}
+			
 sub addDefaultMaps {
 	no strict 'refs';
 	foreach my $plugin (keys %{installedPlugins()}) {
@@ -300,6 +278,37 @@ sub shutdownPlugins {
 	}
 }
 
+sub pluginOptions {
+	my $client = shift;
+	
+	my %menuChoices = ();
+	$menuChoices{""} = "";
+	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
+	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
+	
+	foreach my $menuOption (keys %{$pluginsRef}) {
+		next if (exists $disabledplugins{$menuOption});
+		no strict 'refs';
+		if (exists &{"Plugins::" . $menuOption . "::enabled"} && $client &&
+			! &{"Plugins::" . $menuOption . "::enabled"}($client) ) {
+			next;
+		}
+		$menuChoices{$menuOption} = string($menuOption);
+	}
+	return %menuChoices;
+}
+
+sub unusedPluginOptions {
+	my $client = shift;
+	my %menuChoices = pluginOptions($client);
+	
+	delete $menuChoices{""};
+	foreach my $usedOption (@{Slim::Buttons::Home::getHomeChoices($client)}) {
+		delete $menuChoices{$usedOption};
+	}
+	return sort { $menuChoices{$a} cmp $menuChoices{$b} } keys %menuChoices;
+}
+
 sub getPluginModes {
 	my $mode = shift;
 
@@ -323,19 +332,6 @@ sub getPluginFunctions {
 
 sub pluginCount {
 	return scalar(enabledPlugins(shift));
-}
-
-sub setMode {
-	my $client = shift;
-	read_plugins() unless $plugins_read;
-	if (!defined $curr_plugin{$client} || $curr_plugin{$client} >= scalar(enabledPlugins($client))) {
-		$curr_plugin{$client} = 0;
-	}
-	$client->lines(\&lines);
-}
-
-sub getFunctions {
-	return \%functions;
 }
 
 1;

@@ -12,7 +12,7 @@ use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.6 $,10);
+$VERSION = substr(q$Revision: 1.7 $,10);
 
 # constants
 my $height = 4;
@@ -294,6 +294,11 @@ sub resetGame {
 
 sub gameOver {
 	$gamemode = 'gameover';
+}
+
+sub addMenu {
+	my $menu = "GAMES";
+	return $menu;
 }
 
 sub setMode {

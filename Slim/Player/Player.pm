@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.30 2004/09/24 01:45:20 kdf Exp $
+# $Id: Player.pm,v 1.31 2004/10/06 15:56:12 vidur Exp $
 #
 package Slim::Player::Player;
 use strict;
@@ -38,9 +38,9 @@ my $defaultPrefs = {
 									'BROWSE_MUSIC_FOLDER', 
 									'SEARCH', 
 									'SAVED_PLAYLISTS', 
-									'ShoutcastBrowser', 
-									'PLUGINS', 
+									'RADIO', 
 									'SETTINGS',
+									'PLUGINS', 
 									]
 		,'mp3SilencePrelude' 	=> 0
 		,'offDisplaySize'		=> 0

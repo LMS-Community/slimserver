@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.18 2004/09/10 03:07:38 vidur Exp $
+# $Id: Browse.pm,v 1.19 2004/10/06 15:56:03 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -15,10 +15,42 @@ use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
 use Slim::Utils::Misc;
+use Slim::Buttons::Home;
 use Slim::Utils::Strings qw (string);
 use Slim::Utils::Scan;
 
 Slim::Buttons::Common::addMode('browse',Slim::Buttons::Browse::getFunctions(),\&Slim::Buttons::Browse::setMode);
+
+sub init {
+	my %browse = (
+		'BROWSE_MUSIC_FOLDER' => {
+			'useMode' => 'browse'
+			,'valueRef' => sub {
+				Slim::Buttons::Browse::loadDir(shift, '', 'right',shift);
+			}
+		}
+		,'SAVED_PLAYLISTS' => {
+			'useMode' => 'browse'
+			,'valueRef' => sub {
+				Slim::Buttons::Browse::loadDir(shift, '__playlists', 'right',shift);
+			}
+		}
+	);
+	
+	foreach my $name (sort keys %browse) {
+		if ($name eq 'BROWSE_MUSIC_FOLDER' && !Slim::Utils::Prefs::get('audiodir')) {
+			next;
+		}
+		if ($name eq 'SAVED_PLAYLISTS' && 
+			!Slim::Utils::Prefs::get('playlistdir') && 
+			!Slim::Music::iTunes::useiTunesLibrary() && 
+			!Slim::Music::MoodLogic::useMoodLogic() ) {
+			next;
+		}
+		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC',$name,$browse{$name});
+		Slim::Buttons::Home::addMenuOption($name,$browse{$name});
+	};
+}
 
 # Each button on the remote has a function:
 
@@ -95,7 +127,7 @@ my %functions = (
 			sub {
 				my $j = $client->dirItems(shift);
 				if (Slim::Utils::Prefs::get('filesort')) {
- 			       return Slim::Music::Info::plainTitle($j);
+ 					return Slim::Music::Info::plainTitle($j);
 				} elsif (Slim::Music::Info::trackNumber($j)) {
 					return Slim::Music::Info::trackNumber($j);
 				} else {
@@ -213,7 +245,18 @@ sub getFunctions {
 
 sub setMode {
 	my $client = shift;
+	my $method = shift;
+	
+	my @oldlines = Slim::Display::Display::curLines($client);
+
 	$client->lines(\&lines);
+	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
+	if ($method ne 'pop' && defined $valueRef && ref($valueRef) eq 'CODE') {
+		my @args;
+		push @args, $client;
+		push @args, \@oldlines;
+		$valueRef->(@args);
+	}
 }
 
 # create a directory listing, and append it to dirItems
@@ -254,7 +297,7 @@ sub loadDir {
 			 Slim::Music::Info::isITunesPlaylistURL($abspwd) || Slim::Music::Info::isMoodLogicPlaylistURL($abspwd) ||
 			 (Slim::Music::Info::isFileURL($abspwd) && -e (Slim::Utils::Misc::pathFromFileURL($abspwd)))
 			)
-		   ) {
+		) {
 		opendir_done($client, $pwd, $direction, $oldlinesref, 0);
 		$::d_files && msg("No such file or dir: [$pwd] removed out from under?\n");
 		return;
