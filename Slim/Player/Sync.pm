@@ -1,5 +1,7 @@
 package Slim::Player::Sync;
 
+# $Id: Sync.pm,v 1.14 2004/07/22 02:03:47 kdf Exp $
+
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -45,6 +47,15 @@ sub syncwith {
 		my @buddies = syncedWith($client);
 		my @names = map {$_->name() || $_->id()} @buddies;
 		return join ' & ',@names;
+	} else { return undef;}
+}
+
+sub syncIDs {
+	my $client = shift;
+	if (isSynced($client)) {
+		my @buddies = syncedWith($client);
+		my @ids = map {$_->id()} @buddies;
+		return join " ",@ids;
 	} else { return undef;}
 }
 

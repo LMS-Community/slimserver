@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.38 2004/05/18 16:06:48 dean Exp $
+# $Id: Command.pm,v 1.39 2004/07/22 02:03:47 kdf Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -71,6 +71,8 @@ sub execute {
 	# title			?
 	# duration		?
 	# signalstrength 	?
+	# sync			<playerindex|playerid|-|?>
+
 			
 	# playlist		play 			<item>		(item can be a song, playlist or directory. synonym: load)
 	# playlist		insert		<item>		(item can be a song, playlist or directory. synonym: insertlist)
@@ -159,7 +161,7 @@ sub execute {
 					$p3 = $p2client->model();
 				}
 			}
-		} 
+		}
 
 	} elsif ($p0 eq "pref") {
 		if (defined($p2) && $p2 ne '?' && !$::nosetup) {
@@ -316,7 +318,24 @@ sub execute {
 				}
 				$client->power($p1);
 			}
-
+		} elsif ($p0 eq "sync") {
+			if (!defined $p1){
+			} elsif ($p1 eq "?") {
+				$p1 = Slim::Player::Sync::syncIDs($client)
+			} elsif ($p1 eq "-") {
+				Slim::Player::Sync::unsync($client);
+			} else {
+				my $buddy;
+				if (Slim::Player::Client::getClient($p1)) {
+					$buddy = Slim::Player::Client::getClient($p1);
+				} else {
+					my @clients = Slim::Player::Client::clients();
+					if (defined $clients[$p1]) {
+						$buddy = $clients[$p1];
+					}
+				}
+				Slim::Player::Sync::sync($buddy,$client) if defined $buddy;
+			}
 		} elsif ($p0 eq "playlist") {
 			# here are all the commands that add/insert/replace songs/directories/playlists on the current playlist
 			if ($p1 =~ /^(play|load|append|add|resume|insert|insertlist)$/) {

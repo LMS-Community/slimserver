@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Time;
 
-# $Id: Time.pm,v 1.1 2004/07/22 01:38:51 kdf Exp $
+# $Id: Time.pm,v 1.2 2004/07/22 02:03:47 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -12,7 +12,7 @@ use strict;
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw (string);
-use Slim::Display::Display;
+use Slim::Hardware::VFD;
 
 ###########################
 #Button mode specific junk#
@@ -78,7 +78,7 @@ my %functions = (
 			if ($c == 3) { $m1 = $digit };
 	
 			$p = (defined $p && $p eq 'PM') ? 1 : 0;
-			if ($c == 4) { $p = $digit % 2; }
+			if ($c == 4 && (Slim::Utils::Prefs::get('timeFormat') =~ /%p/)) { $p = $digit % 2; }
 	
 			my $time = ($h0 * 10 + $h1) * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
 			Slim::Buttons::Common::param($client,'valueRef',$time);
@@ -199,7 +199,7 @@ sub timeDigits {
 sub timeString {
 	my ($client, $h0, $h1, $m0, $m1, $p) = @_;
 		
-	my $cs = Slim::Display::Display::symbol('cursorpos');
+	my $cs = Slim::Hardware::VFD::symbol('cursorpos');
 	my $c = Slim::Buttons::Common::param($client,'cursorPos') || 0;
 	
 	my $timestring = ($c == 0 ? $cs : '') . ((defined($p) && $h0 == 0) ? ' ' : $h0) . ($c == 1 ? $cs : '') . $h1 . ":" . ($c == 2 ? $cs : '') .  $m0 . ($c == 3 ? $cs : '') . $m1 . " " . ($c == 4 ? $cs : '') . (defined($p) ? $p : '');
@@ -240,7 +240,7 @@ sub moveCursor {
 		}
 	}
 	my $charIndex;
-	if ($cursorPos > 4) {
+	if ($cursorPos > ((Slim::Utils::Prefs::get('timeFormat') =~ /%p/) ? 4 : 3)) {
 		exitInput($client,'right');
 		return;
 	}
@@ -264,7 +264,7 @@ sub scrollTime {
 	
 	$p = ($p && $p eq 'PM') ? 1 : 0;
 
-	if ($c == 4) { $p = Slim::Buttons::Common::scroll($client, +1, 2, $p); }
+	if ($c == 4 && (Slim::Utils::Prefs::get('timeFormat') =~ /%p/)) { $p = Slim::Buttons::Common::scroll($client, +1, 2, $p); }
 	if ($c == 3) { 
 		$m1 = Slim::Buttons::Common::scroll($client, $dir, 10, $m1);
 		$c = ($m1 == 0 && $dir == 1)||($m1 == 9 && $dir == -1) ? $c -1 : $c;

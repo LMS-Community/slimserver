@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::Animation;
 
-# $Id: Animation.pm,v 1.17 2004/07/17 01:33:41 kdf Exp $
+# $Id: Animation.pm,v 1.18 2004/07/22 02:03:47 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -95,11 +95,6 @@ sub showBriefly {
 	
 	if (!$client->isPlayer()) { return; };
 
-	if (Slim::Utils::Prefs::get('animationLevel') < 1) {
-		$client->update();
-		return;
-	}
-
 	if (!$duration) {
 		$duration = 1;
 	}
@@ -125,7 +120,11 @@ sub showBriefly {
 		} else {
 			$rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');
 		}
-		
+		if ($rate == 0) {
+			$client->update();
+			return;
+		}
+	
 		# add some blank space to the end of each line
 		if (Slim::Hardware::VFD::lineLength($line1) > 40) {
 			$measure1 .= $scrollSeparator;		
@@ -184,10 +183,6 @@ sub pushLeft {
 	my $end1 = shift || '';
 	my $end2 = shift || '';
 
-	if (Slim::Utils::Prefs::get('animationLevel') < 2) {
-		$client->update();
-		return;
-	}
 	if (Slim::Utils::Prefs::clientGet($client,'doublesize')) {
 		($start1,$start2) = Slim::Display::Display::doubleSize($client,$start1,$start2);
 		($end1,$end2) = Slim::Display::Display::doubleSize($client,$end1,$end2);
@@ -209,10 +204,6 @@ sub pushRight {
 	my $end1 = (shift) . ' ' x 40;
 	my $end2 = (shift) . ' ' x 40;
 
-	if (Slim::Utils::Prefs::get('animationLevel') < 2) {
-		$client->update();
-		return;
-	}
 	if (Slim::Utils::Prefs::clientGet($client,'doublesize')) {
 		($start1,$start2) = Slim::Display::Display::doubleSize($client,$start1,$start2);
 		($end1,$end2) = Slim::Display::Display::doubleSize($client,$end1,$end2);
@@ -273,11 +264,6 @@ sub doEasterEgg {
 sub bumpLeft {
 	my $client = shift;
 
-	if (Slim::Utils::Prefs::get('animationLevel') < 2) {
-		$client->update();
-		return;
-	}
-
 	my ($end1, $end2) = Slim::Display::Display::curLines($client);
 	my @newqueue = ();
 	push @newqueue, [.125,Slim::Hardware::VFD::symbol('hardspace') 
@@ -289,11 +275,6 @@ sub bumpLeft {
 sub bumpUp {
 	my $client = shift;
 
-	if (Slim::Utils::Prefs::get('animationLevel') < 2) {
-		$client->update();
-		return;
-	}
-
 	my ($end1, $end2) = Slim::Display::Display::curLines($client);
 	my @newqueue = ();
 	push @newqueue, [.125,$end2,' '];
@@ -304,11 +285,6 @@ sub bumpUp {
 sub bumpDown {
 	my $client = shift;
 
-	if (Slim::Utils::Prefs::get('animationLevel') < 2) {
-		$client->update();
-		return;
-	}
-
 	my ($end1, $end2) = Slim::Display::Display::curLines($client);
 	my @newqueue = ();
 	push @newqueue, [.125,' ',$end1];
@@ -318,11 +294,6 @@ sub bumpDown {
 
 sub bumpRight {
 	my $client = shift;
-
-	if (Slim::Utils::Prefs::get('animationLevel') < 2) {
-		$client->update();
-		return;
-	}
 
 	my ($end1, $end2) = Slim::Display::Display::curLines($client);
 
@@ -356,7 +327,7 @@ sub scrollBottom {
 	if (!defined($overlay2)) { $overlay2 = ""; };
 	my $len;
 
-	if (Slim::Utils::Prefs::get('animationLevel') < 3) {
+	if ($rate == 0) {
 		$client->update();
 		return;
 	}
@@ -709,7 +680,10 @@ sub animateScrollSingle2 {
 	my $line1 = shift;
 	my $line1_age = shift(@_) + $overdue;
 	my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');
-	
+	if ($rate == 0) {
+		$client->update();
+		return;
+	}
 	if ($overdue > $rate) {
 		$ind += int($overdue/$rate);
 	}
@@ -741,6 +715,10 @@ sub animateScrollDouble {
 	my $len = shift;
 	my $hold = Slim::Buttons::Common::paramOrPref($client,'scrollPause');
 	my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRateDouble');
+	if ($rate == 0) {
+		$client->update();
+		return;
+	}
 	if ($overdue > $rate) {
 		$ind += int($overdue/$rate);
 	}

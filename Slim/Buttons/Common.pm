@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.33 2004/05/11 06:24:46 kdf Exp $
+# $Id: Common.pm,v 1.34 2004/07/22 02:03:46 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -15,6 +15,7 @@ use Slim::Utils::Strings qw (string);
 use Slim::Utils::Misc;
 use Slim::Buttons::Plugins;
 use Slim::Buttons::Input::Text;
+use Slim::Buttons::Input::Time;
 use Slim::Buttons::Input::List;
 use Slim::Display::Display;
 
@@ -33,6 +34,7 @@ my %modes = (
 	'plugins' => 				\&Slim::Buttons::Plugins::setMode,
 	'INPUT.Text' =>			\&Slim::Buttons::Input::Text::setMode,
 	'INPUT.List' =>			\&Slim::Buttons::Input::List::setMode,
+	'INPUT.Time' =>			\&Slim::Buttons::Input::Time::setMode,
 );
 
 # Hashed list for registered Screensavers. Register these using addSaver. 
@@ -47,6 +49,7 @@ sub init {
 	$modeFunctions{'plugins'} = Slim::Buttons::Plugins::getFunctions();
 	$modeFunctions{'INPUT.Text'} = Slim::Buttons::Input::Text::getFunctions();
 	$modeFunctions{'INPUT.List'} = Slim::Buttons::Input::List::getFunctions();
+	$modeFunctions{'INPUT.Time'} = Slim::Buttons::Input::Time::getFunctions();
 	Slim::Buttons::Plugins::getPluginModes(\%modes);
 	Slim::Buttons::Plugins::getPluginFunctions(\%modeFunctions);
 	Slim::Buttons::ScreenSaver::init();
@@ -526,32 +529,9 @@ sub pushButton {
 	&$subref($client,$sub,$subarg);
 }
 
+# DEPRECATED: Use Slim::Input::Time instead
 sub timeDigits {
-	my $client = shift;
-	my $time = shift || 0;
-
-	my $h = int($time / (60*60));
-	my $m = int(($time - $h * 60 * 60) / 60);
-	my $p = undef;
-
-	my $timestring;
-
-	if (Slim::Utils::Prefs::get('timeFormat') =~ /%p/) {
-		$p = 'AM';
-		if ($h > 11) { $h -= 12; $p = 'PM'; }
-		if ($h == 0) { $h = 12; }
-	} #else { $p = " "; };
-
-	if ($h < 10) { $h = '0' . $h; }
-
-	if ($m < 10) { $m = '0' . $m; }
-
-	my $h0 = substr($h, 0, 1);
-	my $h1 = substr($h, 1, 1);
-	my $m0 = substr($m, 0, 1);
-	my $m1 = substr($m, 1, 1);
-
-	return ($h0, $h1, $m0, $m1, $p);
+	Slim::Buttons::Input::Time::timeDigits(shift,shift);
 }
 
 sub scroll {
@@ -808,6 +788,7 @@ sub scroll_original {
 	return $newposition;
 }
 
+# DEPRECATED: Use INPUT.Time mode instead
 sub scrollTime {
 	my $client = shift;
 	my $dir = shift;
