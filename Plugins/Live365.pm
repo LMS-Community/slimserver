@@ -1472,7 +1472,7 @@ Slim::Buttons::Common::addMode( 'searchMode', \%searchModeFunctions, $setSearchM
 # {{{ Strings
 __DATA__
 PLUGIN_LIVE365_MODULE_NAME
-	EN	Live365
+	EN	Live365 Internet Radio
 
 PLUGIN_LIVE365_LOGIN_MODE
 	EN	Manage your Live365 session
