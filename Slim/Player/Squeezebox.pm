@@ -189,13 +189,25 @@ sub vfd {
 	my $client = shift;
 	my $data = shift;
 
-	assert($client->tcpsock);
+	if ($client->opened()) {
+		$frame = 'l   '.$data;
+		my $len = pack('n',length($frame));
+		$::d_protocol_verbose && msg ("sending squeezebox frame, length ".length($frame)."\n");
+		$frame = $len.$frame;
+		$client->tcpsock->syswrite($frame,length($frame));
+	} 
+}
 
-	$frame = 'l   '.$data;
-	my $len = pack('n',length($frame));
-	$::d_protocol_verbose && msg ("sending squeezebox frame, length ".length($frame)."\n");
-	$frame = $len.$frame;
-	$client->tcpsock->syswrite($frame,length($frame));
+sub opened {
+	my $client = shift;
+	if ($client->tcpsock) {
+		if ($client->tcpsock->connected) {
+			return $client->tcpsock;
+		} else {
+			$client->tcpsock(undef);
+		}
+	}
+	return undef;
 }
 
 # Squeezebox control for tcp stream
@@ -218,51 +230,53 @@ sub vfd {
 sub stream {
 
 	my ($client, $command) = @_;
-	$::d_slimproto && msg("*************stream called: $command\n");
-
-	my $frame = 's   '.pack 'aaaaaaaCCCnL', (
-		$command,	# command
-		($command =~ /^[pq]$/)
-			?'0'
-			:'3', # autostart off when pausing or stopping, otherwise 75%
-		'm',		# mpeg
-		'1',		# pcm 16-bit (pcm options are ignored for mpeg)
-		'3',		# pcm 44.1
-		'1',		# pcm mono
-		'0',		# pcm big endian
-		5,		# mpeg pre-buffer 5 frames of silence
-		0,		# s/pdif auto
-		0,		# reserved
-		Slim::Utils::Prefs::get('httpport'),		# port
-		0		# server IP of 0 means use IP of control server
-	);
-
-	assert(length($frame) == 4+16);
-
-#	my $path='/music/AC-DC/Back%20In%20Black/07%20You%20Shook%20Me%20All%20Night%20Long.mp3';
-	my $path = '/stream.mp3?player='.$client->id;
-
-	my $request_string = "GET $path HTTP/1.0\n\n";
-
-	$frame .= $request_string;
-
-	my $len = pack('n', length($frame));
-
-	$frame = $len.$frame;
-
-	$client->tcpsock->syswrite($frame, length($frame));
-
+	if ($client->opened()) {
+		$::d_slimproto && msg("*************stream called: $command\n");
+	
+		my $frame = 's   '.pack 'aaaaaaaCCCnL', (
+			$command,	# command
+			($command =~ /^[pq]$/)
+				?'0'
+				:'3', # autostart off when pausing or stopping, otherwise 75%
+			'm',		# mpeg
+			'1',		# pcm 16-bit (pcm options are ignored for mpeg)
+			'3',		# pcm 44.1
+			'1',		# pcm mono
+			'0',		# pcm big endian
+			5,		# mpeg pre-buffer 5 frames of silence
+			0,		# s/pdif auto
+			0,		# reserved
+			Slim::Utils::Prefs::get('httpport'),		# port
+			0		# server IP of 0 means use IP of control server
+		);
+	
+		assert(length($frame) == 4+16);
+	
+	#	my $path='/music/AC-DC/Back%20In%20Black/07%20You%20Shook%20Me%20All%20Night%20Long.mp3';
+		my $path = '/stream.mp3?player='.$client->id;
+	
+		my $request_string = "GET $path HTTP/1.0\n\n";
+	
+		$frame .= $request_string;
+	
+		my $len = pack('n', length($frame));
+	
+		$frame = $len.$frame;
+	
+		$client->tcpsock->syswrite($frame, length($frame));
+	}
 }
 
 sub i2c {
 	my ($client, $data) = @_;
-
-	$::d_i2c && msg("i2c: sending ".length($data)." bytes\n");
-
-	my $frame='2   '.$data;
-	my $len = pack('n', length($frame));
-	$frame=$len.$frame;
-	$client->tcpsock->syswrite($frame, length($frame));
+	if ($client->opened()) {
+		$::d_i2c && msg("i2c: sending ".length($data)." bytes\n");
+	
+		my $frame='2   '.$data;
+		my $len = pack('n', length($frame));
+		$frame=$len.$frame;
+		$client->tcpsock->syswrite($frame, length($frame));
+	}
 }
 
 1;

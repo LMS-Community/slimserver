@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.7 2003/09/15 18:50:19 dean Exp $
+# $Id: Info.pm,v 1.8 2003/09/18 22:39:56 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -17,6 +17,7 @@ use MP3::Info;
 
 use Slim::Formats::Movie;
 use Slim::Formats::AIFF;
+use Slim::Formats::Flac;
 use Slim::Formats::Wav;
 use Slim::Formats::Ogg;
 use Slim::Utils::Misc;
@@ -192,7 +193,7 @@ sub init {
 
 sub loadTypesConfig {
 	my @typesFiles;
-	$::d_info && msg("loading types config file...\n");
+	$::d_info && Slim::Utils::Misc::msg("loading types config file...\n");
 	
 	push @typesFiles, catdir($Bin, 'types.conf');
 	if ($^O eq 'darwin') {
@@ -2210,6 +2211,10 @@ sub ignoreCaseArticles {
 	}
 
 	return ($caseArticlesMemoize{$s} = ignoreArticles(matchCase($s)));
+}
+
+sub clearCaseArticleCache {
+	%caseArticlesMemoize = ();
 }
 
 sub sortIgnoringCase {

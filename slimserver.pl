@@ -194,9 +194,10 @@ use vars qw(
 	    $loopsecond
 	    $localClientNetAddr
 	    $localStreamAddr
-            $newVersion
+        $newVersion
 	    $pidfile
 	    $prefsfile
+	    $priority
 	    $quiet
 	    $nosetup
 	    $stdio
@@ -261,6 +262,12 @@ sub init {
 	
 	$::d_server && msg("Slim Server Buttons init...\n");
 	Slim::Buttons::Common::init();
+
+	if ($priority) {
+		$::d_server && msg("SLIMP3 Server - changing process priority to $priority\n");
+		eval { setpriority (0, 0, $priority); };
+		msg("setpriority failed error: $@\n") if $@;
+	}
 }
 
 sub start {
@@ -438,6 +445,7 @@ Usage: $0 [--mp3dir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
           [--group <groupname>]
           [--httpport <portnumber> [--httpaddr <listenip>]]
           [--cliport <portnumber> [--cliaddr <listenip>]]
+          [--priority <priority>]
           [--prefsfile <prefsfilepath> [--pidfile <pidfilepath>]]
           [--d_various]
 
@@ -467,6 +475,8 @@ Usage: $0 [--mp3dir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
     --quiet          => Minimize the amount of text output
     --playeraddr     => Specify the _server's_ IP address to use to connect 
                         to Slim players
+    --priority       => set process priority from -20 (high) to 20 (low)
+                        no effect on non-Unix platforms
     --streamaddr     => Specify the _server's_ IP address to use to connect
                         to streaming audio sources
     --nosetup        => Disable setup via http.
@@ -527,6 +537,7 @@ sub initOptions {
 		'mp3dir=s' 			=> \$mp3dir,
 		'pidfile=s' 		=> \$pidfile,
 		'playeraddr=s'		=> \$localClientNetAddr,
+		'priority=i'        => \$priority,
 		'stdio'				=> \$stdio,
 		'streamaddr=s'		=> \$localStreamAddr,
 		'prefsfile=s' 		=> \$prefsfile,

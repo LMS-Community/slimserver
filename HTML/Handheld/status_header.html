@@ -1,0 +1,71 @@
+<!-- Page status.html -->
+[SET title [S {playermodel}]:[S PLAYING]] [SET pageicon MUSIC] [SET setup 1] [SET music 0][SET playlist 0] [SET status 1]
+
+[INCLUDE pageheader.html]
+[INCLUDE menu.html]
+
+<font face="arial,helvetica">
+<br>
+
+<small>[IF player_name]{player_name}[/IF] [IF sync][S SYNCHRONIZED_WITH] {sync}:[/IF]</small>
+<small>
+[IF modeplay][S PLAYING][/IF]
+[IF modepause][S PAUSED_ON][/IF]
+[IF modestop][S STOPPED_ON][/IF]
+[IF currentsong]<b>{currentsong}</b> [S OUT_OF] <b>&nbsp;{songcount}</b>&nbsp;[/IF]
+</small>
+<p>
+   [IF songtitle]<a href="songinfo.html?songurl={%itempath}&player={%player}">{songtitle}</a> [/IF]
+   [IF artist] [S BY] <a href="browseid3.html?genre=*&artist={%artist}&player={%player}">{artist}</a>   [/IF]
+   [IF album]  [S FROM] <a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}">{album}</a>[/IF]
+   [IF year]&nbsp;({year})[/IF]
+</p>
+
+[IF coverart]
+<p><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}"><img src="/music/{%itempath}/cover.jpg" border="0" height="100"></a></p>[/IF]
+
+<table width=100% bgcolor="#c5c5c5">
+   <tr align="center">
+        <td><a href="status.html?p0=play&player={%player}">[IF modeplay]<b>[/IF][S PLAY][IF modeplay]</b>[/IF]</a></td>
+        <td><a href="status.html?p0=stop&player={%player}">[IF modestop]<b>[/IF][S STOP][IF modestop]</b>[/IF]</a></td>
+        <td><a href="status.html?p0=playlist&p1=jump&p2=-1&player={%player}">[S PREV]</a></td>
+        <td><a href="status.html?p0=playlist&p1=jump&p2=%2b1&player={%player}">[S NEXT]</a></td>
+        <td><a href="status.html?p0=pause&player={%player}">[IF modepause]<b>[/IF][S PAUSE][IF modepause]</b>[/IF]</a></td>
+   </tr>
+</table>
+<table width=100%>
+<tr>
+    <td><font size="-1"><b>[S MUTE]</b></font></td>
+    <td>
+    <a href="status.html?p0=button&p1=muting&player={%player}&start=1"><font size="-1">[LT volume 1]<b>[/LT][S MCON][LT volume 1]</b>[/LT]</font></a>&nbsp;
+    <a href="status.html?p0=button&p1=muting&player={%player}&start=0"><font size="-1">[GT volume 0]<b>[/GT][S MCOFF][GT volume 0]</b>[/GT]</font></a></td>
+</tr>
+<tr>
+    <td><font size="-1"><b>[S REPEAT]</b></font></td>
+    <td>
+    <a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">[IF repeatone]<b>[/IF]<font size="-1">[S MCONE]</font>[IF repeatone]</b>[/IF]</a>&nbsp;
+    <a href="status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}">[IF repeatall]<b>[/IF]<font size="-1">[S MCALL]</font>[IF repeatall]</b>[/IF]</a>&nbsp;
+    <a href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}">[IF repeatoff]<b>[/IF]<font size="-1">[S MCOFF]</font>[IF repeatoff]</b>[/IF]</a>
+    </td>
+</tr>
+<tr>
+    <td><font size="-1"><b>[S SHUFFLE]</b></font></td>
+    <td>
+    <a href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF shuffleon]<b>[/IF]<font size="-1">[S SONG]</font>[IF shuffleon]</b>[/IF]</a>&nbsp;
+    <a href="status.html?p0=playlist&p1=shuffle&p2=2&player={%player}">[IF shufflealbum]<b>[/IF]<font size="-1">[S ALBUM]</font>[IF shufflealbum]</b>[/IF]</a>&nbsp;
+    <a href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">[IF shuffleoff]<b>[/IF]<font size="-1">[S MCOFF]</font>[IF shuffleoff]</b>[/IF]</a>
+    </td>
+</tr>
+<tr>
+    <td><font size="-1"><b>[S POWER]</b></font></td>
+    <td>
+    <a href="index.html?player={%player}&p0=power&p1=1">[NE mode off]<b>[/NE]<font size="-1">[S MCON]</font>[NE mode off]</b>[/NE]</a>&nbsp;
+    <a href="index.html?player={%player}&p0=power&p1=0">[EQ mode off]<b>[/EQ]<font size="-1">[S MCOFF]</font>[EQ mode off]</b>[/EQ]</a>
+    </td>
+</tr>
+</table>
+
+</font>
+
+[INCLUDE pagefooter.html]
+<!-- /Page status.html -->

@@ -320,24 +320,6 @@ sub new {
 
 	$client->paddr($paddr);
 
-	# add the new client all the currently known clients so we can say hello to them later
-	my $clientlist = Slim::Utils::Prefs::get("clients");
-
-	my $newplayeraddr = $client->ipport();
-	if (defined($clientlist)) {
-		$clientlist .= ",$newplayeraddr";
-	} else {
-		$clientlist = $newplayeraddr;
-	}
-
-	my %seen = ();
-	my @uniq = ();  
-
-	foreach my $item (split( /,/, $clientlist)) {
-		push(@uniq, $item) unless $seen{$item}++ || $item eq '';
-	}
-	Slim::Utils::Prefs::set("clients", join(',', @uniq));
-
 	return $client;
 }
 

@@ -93,7 +93,7 @@ sub init {
 	$selUDPRead->add($udpsock); #to allow full processing of all pending UDP requests
 	$::selRead->add($udpsock);
 	
-# say hello to the old clients that we might remember...
+# say hello to the old slimp3 clients that we might remember...
 	my $clients = Slim::Utils::Prefs::get("clients");
 
 	$::d_protocol && msg("Going to say hello to everybody we remember: $clients\n");
