@@ -12,9 +12,12 @@ package Slim::Music::LiveSearch;
 use strict;
 
 use Slim::Music::Info;
+use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
 
 use constant MAXRESULTS => 10;
+
+my @types = qw(artist album track);
 
 our %queries = (
 	'artist' => [qw(contributor contributor.name)],
@@ -32,7 +35,7 @@ sub query {
 
 	my $search = Slim::Web::Pages::searchStringSplit($query);
 
-	for my $type (keys %queries) {
+	for my $type (@types) {
 
 		push @data, [ $type, [$ds->find($queries{$type}->[0], { $queries{$type}->[1] => $search }, undef, $limit, 0)] ];
 	}
@@ -109,21 +112,41 @@ sub renderItem {
 	my $id = $item->id(),
 	my @xml = ();
 	
-	my $name;
-	
+	my $name   = '';
+	my $album  = '';
+	my $artist = '';
+
+	# Track case, followed by album & artist.
 	if ($item->can('url')) {
-		$name = Slim::Music::Info::standardTitle(undef,$item);
+
+		$name = Slim::Music::Info::standardTitle(undef, $item) || '';
 		
 		# Starting work on the standard track list format, but its a work in progress.
-		#my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
+		my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb")) || '';
 
-		#$name .= ($webFormat !~ /ARTIST/ && $item->can('artist')) ? " by ".$item->artist() : "";
-		#$name .= ($webFormat !~ /ALBUM/ && $item->can('album')) ? " from ".$item->album() : "";
+		# This is rather redundant from Pages.pm
+		if ($webFormat !~ /ARTIST/ && $item->can('artist') && $item->artist()) {
+
+			$artist = sprintf(
+				' %s <a href="browsedb.html?hierarchy=album,track&level=0&artist=%d">%s</a>',
+				string('BY'), $item->artist->id(), $item->artist()
+			);
+		}
+
+		if ($webFormat !~ /ALBUM/ && $item->can('album') && $item->album()) {
+
+			$album = sprintf(
+				' %s <a href="browsedb.html?hierarchy=track&level=0&album=%d">%s</a>',
+				string('FROM'), $item->album->id(), $item->album()
+			);
+		}
 
 	} elsif ($item->can('title')) {
+
 		$name = $item->title();
 
 	} else {
+
 		$name = $item->name();
 	}
 	
@@ -133,7 +156,7 @@ sub renderItem {
 	
 	push @xml,"<tr>
 		<td width=\"100%\" class=\"$rowType\">
-			<a href=\"$url\&amp;player=$player\">$name</a>  
+			<a href=\"$url\&amp;player=$player\">$name</a>$artist $album
 		</td>";
 		
 	push @xml,"<td align=\"right\" class=\"$rowType\"></td>\n
