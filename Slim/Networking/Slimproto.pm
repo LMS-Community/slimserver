@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.4 2003/08/02 20:40:59 sadams Exp $
+# $Id: Slimproto.pm,v 1.5 2003/08/03 04:02:33 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -20,6 +20,14 @@ use Fcntl qw(F_GETFL F_SETFL);
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
+use Socket;
+# qw(IPPROTO_TCP
+#TCP_KEEPALIVE
+#TCP_MAXRT
+#TCP_MAXSEG
+#TCP_NODELAY
+#TCP_STDURG);
+
 use Errno qw(EWOULDBLOCK EINPROGRESS);
 
 my $SLIMPROTO_ADDR = 0;
@@ -29,11 +37,12 @@ my $slimproto_socket;
 my $slimSelRead  = IO::Select->new();
 my $slimSelWrite = IO::Select->new();
 
-my %peeraddr;     	# peer address for each socket
+my %ipport;		# ascii IP:PORT
 my %inputbuffer;  	# inefficiently append data here until we have a full slimproto frame
 my %parser_state; 	# 'LENGTH', 'OP', or 'DATA'
 my %parser_framelength; # total number of bytes for data frame
 my %parser_frametype;   # frame type eg "HELO", "IR  ", etc.
+my %sock2client;	# reference to client for each sonnected sock
 
 sub init {
 	my ($listenerport, $listeneraddr) = ($SLIMPROTO_PORT, $SLIMPROTO_ADDR);
@@ -86,6 +95,8 @@ sub slimproto_accept {
 	return unless $clientsock;
 
         defined($clientsock->blocking(0))  || die "Cannot set port nonblocking";
+#	setsockopt($clientsock, SOL_SOCKET, &TCP_NODELAY, 1);  # no nagle
+	$clientsock->setsockopt(Socket::IPPROTO_TCP(), Socket::TCP_NODELAY(), 1);
 
 	my $peer = $clientsock->peeraddr;
 
@@ -102,8 +113,8 @@ sub slimproto_accept {
 		$clientsock->close();
 		return;
 	}
-	
-	$peeraddr{$clientsock} = $tmpaddr;
+
+	$ipport{$clientsock} = $tmpaddr.':'.$clientsock->peerport;
 	$parser_state{$clientsock} = 'OP';
 	$parser_framelength{$clientsock} = 0;
 	$inputbuffer{$clientsock}='';
@@ -129,9 +140,10 @@ sub slimproto_close {
 	$clientsock->close();
 
 	# forget state
-	delete($peeraddr{$clientsock});
+	delete($ipport{$clientsock});
 	delete($parser_state{$clientsock});
 	delete($parser_framelength{$clientsock});
+	delete($sock2client{$clientsock});
 }		
 
 sub client_writeable {
@@ -141,9 +153,9 @@ sub client_writeable {
 	# is caused by trying to close the file handle after it's been closed during the
 	# read pass but it's still in our writeable list. Don't try to close it twice - 
 	# just ignore if it shouldn't exist.
-	return unless (defined($peeraddr{$clientsock})); 
+	return unless (defined($ipport{$clientsock})); 
 	
-	$::d_protocol && msg("Slimproto client writeable: ".$peeraddr{$clientsock}."\n");
+	$::d_protocol && msg("Slimproto client writeable: ".$ipport{$clientsock}."\n");
 
 	if (!($clientsock->connected)) {
 		$::d_protocol && msg("Slimproto connection closed by peer.\n");
@@ -155,7 +167,7 @@ sub client_writeable {
 sub client_readable {
 	my $s = shift;
 
-	$::d_protocol && msg("Slimproto client readable: ".$peeraddr{$s}."\n");
+	$::d_protocol && msg("Slimproto client readable: ".$ipport{$s}."\n");
 
 GETMORE:
 	if (!($s->connected)) {
@@ -188,10 +200,9 @@ GETMORE:
 
 	my $indata;
 	my $bytes_read = $s->sysread($indata, $bytes_remaining);
-	$inputbuffer{$s}.=$indata;
 
 	if (!defined($bytes_read) || ($bytes_read == 0)) {
-#		$::d_protocol && msg("Slimproto half-close from client: ".$peeraddr{$s}."\n");
+#		$::d_protocol && msg("Slimproto half-close from client: ".$ipport{$s}."\n");
 #		slimproto_close($s);
 #		return;
 
@@ -200,6 +211,8 @@ GETMORE:
 
 	}
 
+
+	$inputbuffer{$s}.=$indata;
 	$bytes_remaining -= $bytes_read;
 
 	$::d_protocol && msg ("Got $bytes_read bytes from client, $bytes_remaining remaining\n");
@@ -246,8 +259,72 @@ GETMORE:
 sub process_slimproto_frame {
 	my ($s, $op, $data) = @_;
 
-	print "Got Slimptoto frame, op $op data $data\n";
+	my $len = length($data);
 
+	print "Got Slimptoto frame, op $op, length $len, data $data\n";
+
+	if ($op eq 'HELO') {
+		if ($len != 8) {
+			$::d_protocol && msg("bad length $len for HELO. Ignoring.\n");
+			return;
+		}
+		my ($deviceid, $revision, @mac) = unpack("CCH2H2H2H2H2H2", $data);
+		$revision = int($revision / 16) + ($revision % 16)/10.0;
+		my $mac = join(':', @mac);
+		$::d_protocol && msg("Squeezebox says hello. Deviceid: $deviceid, revision: $revision, mac: $mac\n");
+
+		my $id=$mac;
+		my $paddr = sockaddr_in($s->peerport, $s->peeraddr);
+
+		my $client = Slim::Player::Client::getClient($id);
+		if (defined($client)) {
+			$::d_protocol && msg("found this client\n");	
+		} else {
+			$::d_protocol && msg("creating new client, id:$id ipport: $ipport{$s}\n");
+			$client=Slim::Player::Client::newClient(
+				$id, 		# mac
+				$paddr,		# sockaddr_in
+				$ipport{$s},	# ascii ip:port
+				$deviceid,	# devieid
+				$revision,	# rev
+				undef,		# udp sock
+				$s		# tcp sock
+			);
+
+#			$client->paddr($paddr);
+#			$client->deviceid($deviceid);
+#			$client->revision($revision);
+#			$client->udpsock(0);
+#			$client->macaddress($mac);
+#
+#			$client->vfdmodel('noritake-european');
+#			$client->decoder('mas35x9');
+#			$client->ticspersec(1000);
+#			$client->model('squeezebox');
+
+		}	
+
+		$sock2client{$s}=$client;
+		return;
+	} 
+
+	my $client=$sock2client{$s};
+	assert($client);
+
+	if ($op eq 'IR  ') {
+		# format for IR:
+		# [4]   time since startup in ticks (1KHz)
+		# [1]	code format
+		# [1]	number of bits 
+		# [4]   the IR code, up to 32 bits      
+		if ($len != 10) {
+			$::d_protocol && msg("bad length $len for IR. Ignoring\n");
+			return;
+		}
+
+		my ($irTime, $irCode) =unpack 'NxxH8', $data;
+		Slim::Hardware::IR::enqueue($client, $irCode, $irTime);
+	}
 }
 
 1;

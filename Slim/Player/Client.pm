@@ -42,6 +42,7 @@ struct( clientState => [
 
 # client variables for slim protocol networking
     udpsock                 =>'$', # filehandle the socket we should use to talk to this client
+    tcpsock                 =>'$', # filehandle the socket we should use to talk to this client
     RTT                     =>'$', # float      rtt estimate (seconds)
     prevwptr                =>'$', # int        wptr at previous request - see protocol docs
  
@@ -202,6 +203,8 @@ sub id {
 
 sub ipaddress {
 	my $client = shift;
+	assert(defined($client->paddr));
+	assert($client->paddr);
 	return Slim::Networking::Protocol::paddr2ipaddress($client->paddr);
 }
 
@@ -231,7 +234,15 @@ sub getClient {
 }
 
 sub newClient {
-	my $id = shift;
+	my (
+		$id,
+		$paddr,
+		$newplayeraddr,
+		$deviceid,
+		$revision,
+		$udpsock,		# defined only for Slimp3
+		$tcpsock,		# defined only for squeezebox
+	) = @_;
 	
 	# if we haven't seen this client, initialialize a new one
 
@@ -290,7 +301,75 @@ sub newClient {
 	$clientHash{$id} = $client;
 	# make sure any preferences this client may not have set are set to the default
 	Slim::Utils::Prefs::checkClientPrefs($client);
+
+	# skip player initialization for http clients
+	return unless (defined($newplayeraddr) && $newplayeraddr);
+
+	$client->paddr($paddr);
+	$client->type('player');
+
+	# initialize model-specific features:
+
+	$client->deviceid($deviceid);
+	$client->revision($revision);
+	$client->udpsock($udpsock);
+	$client->tcpsock($tcpsock);
+
+	if ($deviceid==1) {
+
+		$client->model('slimp3');
+		$client->ticspersec(625000);
+
+		$client->decoder('mas3507d');
+
+		if ($revision >= 2.2) {
+			my $mac = $id;
+			$client->macaddress($mac);
+			if ($mac eq '00:04:20:03:04:e0') {
+				$client->vfdmodel('futaba-latin1');
+			} elsif ($mac eq '00:04:20:02:07:6e' ||
+					$mac =~ /^00:04:20:04:1/ ||
+					$mac =~ /^00:04:20:00:/	) {
+				$client->vfdmodel('noritake-european');
+			} else {
+				$client->vfdmodel('noritake-katakana');
+			}
+		} else {
+			$client->vfdmodel('noritake-katakana');
+		}		
+
+	} elsif ($deviceid==2) {	# squeezebox
+		$client->model('squeezebox');
+		$client->ticspersec(1000);
+
+		$client->vfdmodel('noritake-european');
+		$client->decoder('mas35x9');
+	} 
 	
+	# add the new client all the currently known clients so we can say hello to them later
+	my $clientlist = Slim::Utils::Prefs::get("clients");
+
+	if (defined($clientlist)) {
+		$clientlist .= ",$newplayeraddr";
+	} else {
+	$clientlist = $newplayeraddr;
+	}
+
+	my %seen = ();
+	my @uniq = ();  
+
+	foreach my $item (split( /,/, $clientlist)) {
+		push(@uniq, $item) unless $seen{$item}++ || $item eq '';
+	}
+	Slim::Utils::Prefs::set("clients", join(',', @uniq));
+
+	# fire it up!
+	Slim::Player::Client::power($client,Slim::Utils::Prefs::clientGet($client, 'power'));
+	Slim::Player::Client::startup($client);
+                
+	# start the screen saver
+	Slim::Buttons::ScreenSaver::screenSaver($client);
+
 	return $client;
 }
 

@@ -12,7 +12,6 @@ use strict;
 
 use Slim::Hardware::mas3507d;
 use Slim::Hardware::mas35x9;
-use Slim::Hardware::i2c;
 use Slim::Utils::Misc;
 use Slim::Networking::Stream;
 
@@ -28,7 +27,7 @@ sub reset {
 
 	if ($client->decoder eq 'mas3507d') {
 
-		Slim::Hardware::i2c::send($client,
+		Slim::Networking::Sendclient::i2c($client,
 			 Slim::Hardware::mas3507d::masWrite('config','00002')
 			.Slim::Hardware::mas3507d::masWrite('loadconfig')
 			.Slim::Hardware::mas3507d::masWrite('plloffset48','5d9e9')
@@ -43,7 +42,7 @@ sub reset {
 
 	} elsif ($client->decoder eq 'mas35x9') {
 
-#		Slim::Hardware::i2c::send($client,
+#		Slim::Networking::Sendclient::i2c($client,
 #			Slim::Hardware::mas35x9::uncompressed_firmware_init_string()
 #		);
 		;
@@ -61,16 +60,18 @@ sub volume {
 	# optimal, but this is better.
 	my $level = sprintf('%X', 0xFFFFF - 0x7FFFF * $volume * $volume);
 
+	print $client->decoder."\n";
+
 	if ($client->decoder eq 'mas3507d') {
 		
-		Slim::Hardware::i2c::send($client,
+		Slim::Networking::Sendclient::i2c($client,
 			 Slim::Hardware::mas3507d::masWrite('ll', $level)
 			.Slim::Hardware::mas3507d::masWrite('rr', $level)
 		);
 
 	} else {
 
-		Slim::Hardware::i2c::send($client,
+		Slim::Networking::Sendclient::i2c($client,
 			Slim::Hardware::mas35x9::masWrite('out_LL', $level)
 			.Slim::Hardware::mas35x9::masWrite('out_RR', $level)
 		);
@@ -85,16 +86,16 @@ sub treble {
 	my ($client, $treble) = @_;
 
 	if ($client->decoder eq 'mas3507d') {	
-		Slim::Hardware::i2c::send($client,
+		Slim::Networking::Sendclient::i2c($client,
 			Slim::Hardware::mas3507d::masWrite('treble',
 				Slim::Hardware::mas3507d::getToneCode($treble,'treble')
 			)
 		);	
-#		Slim::Hardware::i2c::send($client,
+#		Slim::Networking::Sendclient::i2c($client,
 #			Slim::Hardware::mas3507d::masWrite('prefactor', $prefactorCodes{$treble})
 #		);	
 	} elsif ($client->decoder eq 'mas35x9') {	
-		Slim::Hardware::i2c::send($client,
+		Slim::Networking::Sendclient::i2c($client,
 			Slim::Hardware::mas35x9::masWrite('TREBLE',
 				Slim::Hardware::mas35x9::getToneCode($treble,'treble')
 			)
@@ -114,16 +115,16 @@ sub bass {
 	my ($client, $bass) = @_;
 	
 	if ($client->decoder eq 'mas3507d') {
-		Slim::Hardware::i2c::send($client,
+		Slim::Networkings::Sendclient::i2c($client,
 			Slim::Hardware::mas3507d::masWrite('bass',
 				Slim::Hardware::mas3507d::getToneCode($bass,'bass')
 			)
 		);	
-#		Slim::Hardware::i2c::send($client,
+#		Slim::Networking::Sendclient::i2c($client,
 #			Slim::Hardware::mas3507d::masWrite('prefactor', $prefactorCodes{$bass})
 #		);	
 	} elsif ($client->decoder eq 'mas35x9') {
-		Slim::Hardware::i2c::send($client,
+		Slim::Networking::Sendclient::i2c($client,
 			Slim::Hardware::mas35x9::masWrite('BASS',
 				Slim::Hardware::mas35x9::getToneCode($bass,'bass')
 			)

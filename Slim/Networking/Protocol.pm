@@ -32,19 +32,6 @@ use vars qw(
 	    $selUDPRead
 	    $udpsock);
 
-sub sendClient {
-	my $client = shift;
-	my $sock = $client->udpsock();
-	if (defined $sock) {		
-		return send( $sock, shift, 0, $client->paddr()); 
-	} else {
-		if ($::d_protocol && $client->type eq 'player') {
-			bt();
-			die Slim::Player::Client::id($client) . " no udpsock ready for client";
-		}
-	}	
-}
-
 sub processMessage {
 	my ($client,$msg) = @_;
 
@@ -218,12 +205,13 @@ sub getClient {
 	my $id = $mac;
 							
 	my $client = Slim::Player::Client::getClient($id);
-	
-	# alas, pre 2.2 clients don't always include the MAC address, so we use the IP address as the ID.
-	if (!defined($client)) {
-		$id = paddr2ipaddress($clientpaddr);
-		$client = Slim::Player::Client::getClient($id);
-	}
+
+# DISABLING FIRMWARE 2.0 SUPPORT
+#	# alas, pre 2.2 clients don't always include the MAC address, so we use the IP address as the ID.
+#	if (!defined($client)) {
+#		$id = paddr2ipaddress($clientpaddr);
+#		$client = Slim::Player::Client::getClient($id);
+#	}
 
 	if (!defined($client)) {
 		if ($msgtype eq 'h') {
@@ -236,43 +224,18 @@ sub getClient {
 
 			if ($deviceid > 0x02 || $deviceid < 0x01) { return undef;}
 
-			$client = Slim::Player::Client::newClient($id, $newplayeraddr);
-
 			$::d_protocol && msg("$id ($msgtype) deviceid: $deviceid revision: $revision address: $newplayeraddr\n");
 
-			$client->revision($revision);
-			$client->deviceid($deviceid);
-			$client->udpsock($udpsock);
+			$client = Slim::Player::Client::newClient(
+				$id, 
+				$clientpaddr,
+				$newplayeraddr,
+				$deviceid,
+				$revision,
+				$udpsock,
+				undef
+			);
 
-			if ($revision >= 2.2) {
-				$client->macaddress($mac);
-				if ($mac eq '00:04:20:03:04:e0') {
-					$client->vfdmodel('futaba-latin1');
-				} elsif ($mac eq '00:04:20:02:07:6e' ||
-						 $mac =~ /^00:04:20:04:1/ ||
-						 $mac =~ /^00:04:20:00:/	) {
-					$client->vfdmodel('noritake-european');
-				} else {
-					$client->vfdmodel('noritake-katakana');
-				}			
-			} else {
-				$client->vfdmodel('noritake-katakana');
-			}
-			
-			if ($deviceid == 0x01) {
-				$client->decoder('mas3507d');
-				$client->ticspersec(625000);
-				$client->type('player');
-				$client->model('slimp3');
-			} elsif ($deviceid == 0x02) {
-				$client->decoder('mas35x9');
-				$client->ticspersec(1000);
-				$client->type('player');
-				$client->model('squeezebox');
-			} else {
-				$::d_protocol && msg("bogus client: $id, fugettaboutit\n");
-				return undef;
-			}
 		} else {
 			Slim::Network::Discovery::sayHello($udpsock, $clientpaddr);
 			return undef;
@@ -282,44 +245,19 @@ sub getClient {
 	$client->paddr($clientpaddr);
 	
 	$revision = $client->revision;
-		
-	# alas, the mac address isn't included with the 2.0 hello packet, 
-	# so we need to check subsequently in order to get the MAC and therefor the VFD model...
-	if ($revision < 2.2 && $revision >= 2.0) {
-		if (!defined($client->macaddress)) {
-			$::d_protocol && msg("MAC: $mac from message type: $msgtype\n");
-			if ($mac ne '00:00:00:00:00:00') {
-				$client->macaddress($mac);
-			}
-		}
-	}
-		
-	if ($newplayeraddr) {
-		# add the new client all the currently known clients so we can say hello to them later
-		my $clientlist = Slim::Utils::Prefs::get("clients");
-	
-		if (defined($clientlist)) {
-			$clientlist .= ",$newplayeraddr";
-		} else {
-			$clientlist = $newplayeraddr;
-		}
-	
-		my %seen = ();
-		my @uniq = ();
-		foreach my $item (split( /,/, $clientlist)) {
-			push(@uniq, $item) unless $seen{$item}++ || $item eq '';
-		}
-		Slim::Utils::Prefs::set("clients", join(',', @uniq));
-		
-		# fire it up!
-		Slim::Player::Client::power($client,Slim::Utils::Prefs::clientGet($client, 'power'));
-		
-		Slim::Player::Client::startup($client);
 
-		# start the screen saver
-		Slim::Buttons::ScreenSaver::screenSaver($client);
-	}
-
+# DISABLING FIRMWARE 2.0 SUPPORT		
+#	# alas, the mac address isn't included with the 2.0 hello packet, 
+#	# so we need to check subsequently in order to get the MAC and therefor the VFD model...
+#	if ($revision < 2.2 && $revision >= 2.0) {
+#		if (!defined($client->macaddress)) {
+#			$::d_protocol && msg("MAC: $mac from message type: $msgtype\n");
+#			if ($mac ne '00:00:00:00:00:00') {
+#				$client->macaddress($mac);
+#			}
+#		}
+#	}
+		
 	return $client
 }
 

@@ -1,6 +1,6 @@
 package Slim::Hardware::VFD;
 
-# $Id: VFD.pm,v 1.3 2003/07/31 22:03:13 dean Exp $
+# $Id: VFD.pm,v 1.4 2003/08/03 04:02:33 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,9 +11,6 @@ use strict;
 use Slim::Utils::Misc;
 
 my %vfdCommand = ();
-
-# the display packet header
-my $header = 'l                 ';
 
 # these codes identify the operation to 
 # perform on each byte of data sent.
@@ -291,7 +288,7 @@ sub vfdUpdate {
 	
 	# start calculating the control strings
 	
-	my $vfddata = $header;
+	my $vfddata = '';
 	my $vfdmodel = $client->vfdmodel();
 
 	# force the display out of 4 bit mode if it got there somehow, then set the brightness
@@ -334,7 +331,7 @@ sub vfdUpdate {
 		$vfddata .= $vfdCodeCmd. $vfdCommand{'CUR'};
 	}
 
-	Slim::Networking::Protocol::sendClient($client, $vfddata);
+	Slim::Networking::Sendclient::vfd($client, $vfddata);
 	
 	my $len = length($vfddata);
 	die "Odd vfddata: $vfddata" if ($len % 2);

@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.4 2003/07/24 23:14:04 dean Exp $
+# $Id: HTTP.pm,v 1.5 2003/08/03 04:02:34 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -404,6 +404,7 @@ sub executeurl {
 	}
 
 	$::d_http && msg("ExecuteURL Clients $command: ", join " ", Slim::Player::Client::clientIPs(), "\n");
+
 	if (defined($$paramsref{"player"})) {
 		$client = Slim::Player::Client::getClient($$paramsref{"player"});
 	}

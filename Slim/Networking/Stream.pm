@@ -235,16 +235,9 @@ sub sendStreamPkt {
 		bt();
 	}
 
-	my $udpdata = pack 'aCxxxxn xxn xxxxxx', (
-		'm',				# 'm' == mp3 data
-		$control,			# control code
-		$wptr,				# wptr 
-		$seq);
-	
-	$udpdata .= ${$pkt->{'chunkref'}};
 	my $measuredlen = length(${$pkt->{'chunkref'}});
 	if ($len == $measuredlen && $len < 4097 ) {
-		Slim::Networking::Protocol::sendClient($client, $udpdata);
+		Slim::Networking::Sendclient::udpstream($client, $control, $wptr, $seq, ${$pkt->{'chunkref'}});
 	
 		if ($::d_stream && $packetInFlight{$client}) {
 			msg("Sending packet when we have one in queue!!!!!!\n"); 

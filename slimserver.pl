@@ -114,7 +114,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 use Slim::Music::MoodLogic;
 use Slim::Networking::Slimproto;
-
+use Slim::Networking::Sendclient;
 
 use vars qw($VERSION
 		@AUTHORS);
@@ -694,6 +694,7 @@ sub sigint {
 }
 
 sub cleanup {
+
 	$::d_server && msg("Slim Server cleaning up.\n");
 
 	if (Slim::Utils::Prefs::get('usetagdatabase')) {
