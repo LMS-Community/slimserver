@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.25 2004/10/07 22:52:09 grotus Exp $
+# $Id: IR.pm,v 1.26 2004/12/07 05:31:54 dave Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -21,12 +21,19 @@ my @queuedBytes = ();
 my @queuedTime = ();
 my @queuedClient = ();
 
+# queued variables used for diagnostics.
+my @queuedClientTime = ();
+my @queuedServerTime = ();
+# and more things for diagnostics.  Define d_irtm to turn diagnostics on.
+use Time::HiRes qw(gettimeofday);
+my ($serverStartSeconds, $serverStartMicros) = gettimeofday();
+
 sub enqueue {
 	my $client = shift;
 	my $irCodeBytes = shift;
-	my $irTime = shift;
+	my $clientTime = shift;
 
-	$irTime = $irTime / $client->ticspersec;
+	my $irTime = $clientTime / $client->ticspersec;
 	assert($client);
 	assert($irCodeBytes);
 	assert($irTime);
@@ -34,11 +41,46 @@ sub enqueue {
 	push @queuedBytes, $irCodeBytes;
 	push @queuedTime, $irTime;
 	push @queuedClient, $client;
+
+	if ($::d_irtm) {
+
+		# we can start profiling here
+		if ($DB::profile == 0) {
+			msg("IRTM starting profiler\n");
+			$DB::profile=1;
+		}
+
+		# record information so the client can time each response
+		my ($serverSeconds, $serverMicros) = gettimeofday();
+		my $serverTime = ($serverSeconds - $serverStartSeconds) * 1000000;
+		$serverTime += $serverMicros;
+		push @queuedClientTime, $clientTime;
+		push @queuedServerTime, $serverTime;
+	}
 }
 
 sub idle {
 	if (scalar(@queuedBytes)) {
-		Slim::Control::Command::execute(shift @queuedClient, ['ir', (shift @queuedBytes), (shift @queuedTime)]);
+		my $client = shift @queuedClient;		
+		Slim::Control::Command::execute($client, ['ir', (shift @queuedBytes), (shift @queuedTime)]);
+		
+		if ($::d_irtm) {
+			# compute current time in microseconds
+			my ($nowSeconds, $nowMicros) = gettimeofday();
+			my $nowTime = ($nowSeconds - $serverStartSeconds) * 1000000;
+			$nowTime += $nowMicros;
+			# pop diagnostic info off stack
+			my $clientTime = shift(@queuedClientTime);
+			my $serverReceivedTime = shift(@queuedServerTime);
+			my $clientCount = Slim::Player::Client::clientCount();
+			# send a message to the client that the IR has been processed.
+			# note that during execute() above, the client's display may have been updated a number of times.  So the deltaT we return here may be longer than what the client experienced.  However, a pending command from another client could have been waiting all that time.
+			if ($client->isa("Slim::Player::Squeezebox")) {
+				my $serverDeltaT = $nowTime - $serverReceivedTime;
+				my $msg = "<irtm clientSentTime=$clientTime serverReceivedTime=$serverReceivedTime serverDeltaT=$serverDeltaT clientCount=$clientCount>";
+				$client->sendFrame('irtm', \$msg);
+			}
+		}
 	}
 }
 

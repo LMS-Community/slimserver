@@ -186,6 +186,7 @@ use vars qw(
 	$d_http_verbose
 	$d_info
 	$d_ir
+	$d_irtm
 	$d_itunes
 	$d_itunes_verbose
 	$d_mdns
@@ -532,6 +533,7 @@ to the console via stderr:
     --d_http_verbose => Even more HTTP activity 
     --d_info         => MP3/ID3 track information
     --d_ir           => Infrared activity
+    --d_irtm         => Infrared activity diagnostics
     --d_itunes       => iTunes synchronization information
     --d_itunes_verbose => verbose iTunes Synchronization information
     --d_mdns         => Multicast DNS aka Zeroconf aka Rendezvous information
@@ -606,6 +608,7 @@ sub initOptions {
 		'd_http_verbose'		=> \$d_http_verbose,
 		'd_info'			=> \$d_info,
 		'd_ir'				=> \$d_ir,
+		'd_irtm'			=> \$d_irtm,
 		'd_itunes'			=> \$d_itunes,
 		'd_itunes_verbose'	=> \$d_itunes_verbose,
 		'd_mdns'			=> \$d_mdns,
