@@ -179,7 +179,7 @@ sub addToList_run {
 	# The directory we're currently in is stack[numstack-1]
 	my $curdirState = @$stackRef[$jobState->numstack-1];
 
-	$::d_scan && msg("numitems: ".$jobState->numitems."\n");
+	$::d_scan && msgf("numitems: %d\n", $jobState->numitems);
 
 	if (!$curdirState) {
 		$::d_scan && msg("couldn't find curdirstate in addToList_run");
@@ -189,7 +189,7 @@ sub addToList_run {
 
 	########## index==-1 means we need to read the directory
 
-	$::d_scan && msg("index: ".$curdirState->index."\n");
+	$::d_scan && msgf("index: %d\n", $curdirState->index);
 
 	if ($curdirState->index == -1) {
 
@@ -219,7 +219,7 @@ sub addToList_run {
 		}
 
 		# special case - single item at the top
-		$::d_scan && msg("special case - single item at top: $curdirState->path\n");
+		$::d_scan && msg("special case - single item at top: " . $curdirState->path . "\n");
 
 		push @$listref, $curdirState->path();
 
@@ -304,11 +304,11 @@ sub addToList_run {
 
 	my $itempath = Slim::Utils::Misc::fixPath($item, $curdirState->path);
 
-	$::d_scan && msg("itempath: $item and " .  $curdirState->path . " made $itempath\n");
+	$::d_scan && msg("itempath: $item and " . $curdirState->path . " made $itempath\n");
 
 	######### If it's a directory or playlist and we're recursing, push it onto the stack, othwerwise add it to the list
 
-	$::d_scan && msg("isList(".$itempath.") == ".Slim::Music::Info::isList($itempath)."\n");
+	$::d_scan && msg("isList($itempath) == ". Slim::Music::Info::isList($itempath) . "\n");
 
 	# todo: don't let us recurse indefinitely
 	if (Slim::Music::Info::isList($itempath)) {
@@ -346,6 +346,7 @@ sub addToList_run {
 	if (Slim::Music::Info::isSong($itempath)) {
 
 		$::d_scan && msg("adding single item: $itempath, type " . Slim::Music::Info::contentType($itempath) . "\n");
+
 		my $arrayref = $curdirState->itemsToAdd;
 		push @$arrayref, $itempath;
 		$jobState->numitems($jobState->numitems+1);
@@ -382,7 +383,7 @@ sub addToList_done {
 	
 	if ($::d_scan) {
 
-		msg("addToList_done. returning ".$jobState->numitems." items\n");
+		msgf("addToList_done. returning %d items\n", $jobState->numitems);
 
 		for my $item (@$listref) {
 			msg("  $item\n");
@@ -417,25 +418,36 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		# remote stream. We may have got a different content
 		# type while loading.
 		if (Slim::Music::Info::isSong($playlisturl)) {
-		    $::d_scan && msg("Scan::readList found that $playlisturl is a song\n");
-		    $numitems = (push @$listref, $playlisturl) - $startingsize;
-		    $playlist_filehandle->close if defined($playlist_filehandle);
-		    $playlist_filehandle = undef;
+
+			$::d_scan && msg("Scan::readList found that $playlisturl is a song\n");
+
+			$numitems = (push @$listref, $playlisturl) - $startingsize;
+
+			$playlist_filehandle->close if defined($playlist_filehandle);
+
+			$playlist_filehandle = undef;
 		}
 
 	} else {
 
 		# it's pointing to a local file...
 		if (Slim::Music::Info::isWinShortcut($playlisturl)) {
+
 			if (defined Slim::Music::Info::cachedPlaylist($playlisturl)) {
+
 				$playlistpath = ${Slim::Music::Info::cachedPlaylist($playlisturl)}[0];
+
 			} else {
+
 				$playlistpath = Slim::Utils::Misc::pathFromWinShortcut($playlisturl);
+
 				Slim::Music::Info::cachePlaylist($playlisturl, [$playlistpath]);
 			}
+
 			if ($playlistpath eq "") {
 				return 0;
 			}
+
 			if (Slim::Music::Info::isSong($playlistpath) || Slim::Music::Info::isWinShortcut($playlistpath)) {
 				push @$listref , $playlistpath;
 				return 1;
@@ -456,6 +468,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		my $playlistpathpath = Slim::Utils::Misc::pathFromFileURL($playlistpath);
 		my $playlistpathAge  = (stat($playlistpathpath))[9];
 
+		# 315529200 is a bogus windows time value
 		if (Slim::Music::Info::isPlaylistURL($playlistpath) ||
 			(
 				defined Slim::Music::Info::cachedPlaylist($playlistpath) && 
@@ -505,6 +518,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			$playlist_filehandle = FileHandle->new();
 
 			if (!open($playlist_filehandle, Slim::Utils::Misc::pathFromFileURL($playlistpath))) {
+
 				$::d_scan && msg("Couldn't open playlist file $playlistpath : $!");
 				$playlist_filehandle = undef;
 			}
