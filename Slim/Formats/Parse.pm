@@ -119,7 +119,17 @@ sub readM3U {
 
 		binmode($m3u, ":raw");
 
-		my $enc = File::BOM::get_encoding_from_filehandle($m3u);
+		# Although get_encoding_from_filehandle tries to determine if
+		# the handle is seekable or not - the Protocol handlers don't
+		# implement a seek() method, and even if they did, File::BOM
+		# internally would try to read(), which doesn't mix with
+		# sysread(). So skip those m3u files entirely.
+		my $enc;
+
+		if (ref($m3u) !~ /Slim::Player::Protocols/) {
+
+			$enc = File::BOM::get_encoding_from_filehandle($m3u);
+		}
 
 		$mode = $enc if $enc;
 
