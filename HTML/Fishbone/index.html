@@ -7,30 +7,6 @@
 </head>
 <script language="JavaScript" TYPE="text/javascript">
 //<!--Hide
-function getCookie(Name) 
-&lbrc;
-	var search = Name + "=";
-	if (document.cookie.length > 0) &lbrc;
-		offset = document.cookie.indexOf(search);
-		if (offset != -1) &lbrc;
-			offset += search.length;
-			end = document.cookie.indexOf("nofolder", offset);
-			if (end == -1)
-				end = document.cookie.indexOf(";", offset);
-			if (end == -1)
-				end = document.cookie.length;
-			url = unescape(document.cookie.substring(offset, end));
-			if (url == 'undefined') [IFN nofolder]return "browse.html?"[/IFN]
-											[IF nofolder]return "browseid3.html?"[/IF]
-											[IF noartwork]return "browseid3.html?"[/IF]
-			return url [IF noartwork]+"&noartwork=1"[/IF][IF nofolder]+"&nofolder=1"[/IF];
-		&rbrc;
-	&rbrc;
-	[IFN nofolder]return "browse.html?"[/IFN]
-	[IF nofolder]return "browseid3.html?nofolder=1"[/IF]
-	[IF noartwork]return "browseid3.html?noartwork=1"[/IF]
-&rbrc;
-
 function getPlayer(Player) 
 &lbrc;
 	var search = Player + "=";
@@ -47,11 +23,12 @@ function getPlayer(Player)
 	return "";
 &rbrc;
 
+var cPlayer = getPlayer('SlimServer-player');
 document.write('<frameset cols="45%,*" framespacing="2" border="2">' );
-document.write('<frame src="home.html?player={%player}" name="browser">');
+document.write('<frame src="home.html?player='+cPlayer+'" name="browser">');
 document.write('<frameset name="player_frame" ID="player_frame" border="0" frameborder="no" framespacing="0" rows="240,*">');
-document.write('<frame name="statusframe"  scrolling="no" src="status_header.html?player='+getPlayer('SlimServer-player')+'">');
-document.write('<frame name="playlist" src="playlist.html?player={%player}">');
+document.write('<frame name="statusframe"  scrolling="no" src="status_header.html?player='+cPlayer+'">');
+document.write('<frame name="playlist" src="playlist.html?player='+cPlayer+'">');
 document.write('</frameset>');
 document.write('</frameset>');
 //-->
