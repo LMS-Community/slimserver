@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.54 2004/01/14 19:03:35 kdf Exp $
+# $Id: Source.pm,v 1.55 2004/01/17 22:18:32 kdf Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,7 +10,7 @@ package Slim::Player::Source;
 use strict;
 
 use File::Spec::Functions qw(:ALL);
-use Slim::Utils::FileHandle;
+use FileHandle;
 use FindBin qw($Bin);
 use IO::Socket qw(:DEFAULT :crlf);
 use Time::HiRes;
@@ -736,7 +736,7 @@ sub openSong {
 
 			# this case is when we play the file through as-is
 			if ($command eq '-') {
-				$client->audioFilehandle( Slim::Utils::FileHandle->new() );		
+				$client->audioFilehandle( FileHandle->new() );		
 				$::d_source && msg("openSong: opening file $filepath\n");
 				if ($client->audioFilehandle->open($filepath)) {
 
@@ -773,7 +773,7 @@ sub openSong {
 				
 				$::d_source && msg("Using command for conversion: $fullCommand\n");
 
-				$client->audioFilehandle( Slim::Utils::FileHandle->new() );
+				$client->audioFilehandle( FileHandle->new() );
 				$client->audioFilehandle->open($fullCommand);
 				$client->audioFilehandleIsSocket(2);
 				
