@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.13 2004/08/20 21:33:41 dean Exp $
+# $Id: Scan.pm,v 1.14 2004/09/10 03:07:40 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -58,7 +58,6 @@ use Class::Struct;
 use Slim::Display::Display;
 use Slim::Utils::Misc;
 use Slim::Formats::Parse;
-use Slim::Web::RemoteStream;                
 
 #my $::d_scan=1;  # scan debugging
 
@@ -278,7 +277,7 @@ sub addToList_run {
 	# todo: don't let us recurse indefinitely
 	if (Slim::Music::Info::isList($itempath)) {
 		# if we're recursing and it's a remote playlist, then recurse
-		if ($jobState->recursive && !Slim::Music::Info::isHTTPURL($itempath)) {
+		if ($jobState->recursive && !Slim::Music::Info::isRemoteURL($itempath)) {
 			# don't recurse into playlists, only into directories	
 			if (Slim::Music::Info::isPlaylist($itempath) && !Slim::Music::Info::isCUE($itempath) && !Slim::Utils::Misc::inPlaylistFolder($itempath)) { 
 				return 1;
@@ -350,9 +349,9 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 	my $playlistpath = $playlisturl;
 	
-	if (Slim::Music::Info::isHTTPURL($playlisturl)) {
+	if (Slim::Music::Info::isRemoteURL($playlisturl)) {
 		$::d_scan && msg("Scan::readList opening remote stream $playlisturl\n");
-		$playlist_filehandle = Slim::Web::RemoteStream::openRemoteStream($playlisturl);
+		$playlist_filehandle = Slim::Player::Source::openRemoteStream($playlisturl);
 
 		unless ($playlist_filehandle) {
 			warn "cannot connect to http daemon to get playlist";

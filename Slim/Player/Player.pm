@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.26 2004/09/09 19:12:24 dean Exp $
+# $Id: Player.pm,v 1.27 2004/09/10 03:07:39 vidur Exp $
 #
 package Slim::Player::Player;
 use strict;
@@ -468,9 +468,8 @@ sub nowPlayingModeLines {
 		$playingDisplayMode = 1;
 	};
 
-	# check if we're streaming...
-	if (Slim::Music::Info::isHTTPURL(Slim::Player::Playlist::song($client)) &&
-	   !($playingDisplayMode == 6)) {
+	# check if we don't know how long the track is...
+	if (!$client->songduration() && ($playingDisplayMode != 6)) {
 
 		# no progress bar, remaining time is meaningless
 		$playingDisplayMode = ($playingDisplayMode % 3) ? 1 : 0;

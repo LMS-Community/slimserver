@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.17 2004/08/03 17:29:08 vidur Exp $
+# $Id: Browse.pm,v 1.18 2004/09/10 03:07:38 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -77,7 +77,7 @@ my %functions = (
 				# treat playlist files as directories.
 				# ie - list the contents
 				loadDir($client, $currentItem, "right", \@oldlines);
-			} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isHTTPURL($currentItem)) {
+			} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isRemoteURL($currentItem)) {
 				# enter the trackinfo mode for the track in $currentitem
 				Slim::Buttons::Common::pushMode($client, 'trackinfo', {'track' => $currentItem});
 				$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
@@ -117,7 +117,7 @@ my %functions = (
 			# we are looking at an playlist file or directory
 			Slim::Buttons::Block::block($client, $line1, $line2);
 			Slim::Control::Command::execute($client, ["playlist", "add", $currentItem], \&playDone, [$client]);
-		} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isHTTPURL($currentItem)) {
+		} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isRemoteURL($currentItem)) {
 			$client->showBriefly($line1, $line2, undef, 1);
 			# we are looking at a song file, play it and all the other songs in the directory after
 			Slim::Control::Command::execute($client, ["playlist", "append", $currentItem]);
@@ -136,7 +136,7 @@ my %functions = (
 			# we are looking at an playlist file or directory
 			Slim::Buttons::Block::block($client, $line1, $line2);
 			Slim::Control::Command::execute($client, ["playlist", "insertlist", $currentItem], \&playDone, [$client]);
-		} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isHTTPURL($currentItem)) {
+		} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isRemoteURL($currentItem)) {
 			$client->showBriefly($line1, $line2, undef, 1);
 			# we are looking at a song file, play it and all the other songs in the directory after
 			Slim::Control::Command::execute($client, ["playlist", "insert", $currentItem]);
@@ -162,10 +162,10 @@ my %functions = (
 			# we are looking at an playlist file or directory
 			Slim::Buttons::Block::block($client,$line1, $line2);
 			Slim::Control::Command::execute($client, ["playlist", "load", $currentItem], \&playDone, [$client]);
-		} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isHTTPURL($currentItem)) {
+		} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isRemoteURL($currentItem)) {
 			# put all the songs at this level on the playlist and start playing the selected one.
 			$client->showBriefly($line1, $line2, undef, 1);
-			if (Slim::Utils::Prefs::get('playtrackalbum') && !Slim::Music::Info::isHTTPURL($currentItem)) {
+			if (Slim::Utils::Prefs::get('playtrackalbum') && !Slim::Music::Info::isRemoteURL($currentItem)) {
 				Slim::Control::Command::execute($client, ["playlist", "clear"]);
 				Slim::Control::Command::execute($client, ["playlist", "shuffle" , 0]);
 				my $startindex = 0;
@@ -250,7 +250,7 @@ sub loadDir {
 	$::d_files && msg("virtual directory: $pwd\nabsolute directory: $abspwd\n");
 
 	unless (defined($abspwd) && 
-			(Slim::Music::Info::isHTTPURL($abspwd) || 
+			(Slim::Music::Info::isRemoteURL($abspwd) || 
 			 Slim::Music::Info::isITunesPlaylistURL($abspwd) || Slim::Music::Info::isMoodLogicPlaylistURL($abspwd) ||
 			 (Slim::Music::Info::isFileURL($abspwd) && -e (Slim::Utils::Misc::pathFromFileURL($abspwd)))
 			)
@@ -397,7 +397,7 @@ sub overlay {
 		return Slim::Display::Display::symbol('rightarrow');
 	}
 
-	if ($fullpath && Slim::Music::Info::isSong($fullpath) || Slim::Music::Info::isHTTPURL($fullpath)) {
+	if ($fullpath && Slim::Music::Info::isSong($fullpath) || Slim::Music::Info::isRemoteURL($fullpath)) {
 		return Slim::Display::Display::symbol('notesymbol');
 	}
 

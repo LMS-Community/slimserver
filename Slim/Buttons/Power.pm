@@ -1,6 +1,6 @@
 package Slim::Buttons::Power;
 
-# $Id: Power.pm,v 1.13 2004/08/03 17:29:10 vidur Exp $
+# $Id: Power.pm,v 1.14 2004/09/10 03:07:38 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@ sub setMode {
 	}
 	
 	if (Slim::Player::Source::playmode($client) eq 'play' && Slim::Player::Playlist::song($client)) {
-		if (Slim::Music::Info::isHTTPURL(Slim::Player::Playlist::song($client))) {
+		if (Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::song($client))) {
 			Slim::Control::Command::execute($client, ["stop"]);
 		} else {
 			Slim::Control::Command::execute($client, ["pause", 1]);

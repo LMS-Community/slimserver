@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.142 2004/08/21 00:54:11 kdf Exp $
+# $Id: Info.pm,v 1.143 2004/09/10 03:07:38 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -818,7 +818,7 @@ sub updateCacheEntry {
 sub updateCaches {
 	my $url=shift;
 
-	if (isSong($url) && !isHTTPURL($url) && (-e (Slim::Utils::Misc::pathFromFileURL($url)) )) { 
+	if (isSong($url) && !isRemoteURL($url) && (-e (Slim::Utils::Misc::pathFromFileURL($url)) )) { 
 		my $cacheEntryHash=cacheEntry($url);
 		updateGenreCache($url, $cacheEntryHash);
 		updateArtworkCache($url, $cacheEntryHash);
@@ -1122,7 +1122,7 @@ sub plainTitle {
 
 	$::d_info && Slim::Utils::Misc::msg("Plain title for: " . $file . "\n");
 
-	if (isHTTPURL($file)) {
+	if (isRemoteURL($file)) {
 		$title = Slim::Web::HTTP::unescape($file);
 	} else {
 		if (isFileURL($file)) {
@@ -1186,7 +1186,7 @@ sub guessTags {
 	$::d_info && Slim::Utils::Misc::msg("Guessing tags for: $file\n");
 
 	# Rip off from plainTitle()
-	if (isHTTPURL($file)) {
+	if (isRemoteURL($file)) {
 		$file = Slim::Web::HTTP::unescape($file);
 	} else {
 		if (isFileURL($file)) {
@@ -1993,7 +1993,7 @@ sub fileName {
 		if ($j) {
 			$j = (splitdir($j))[-1];
 		}
-	} elsif (isHTTPURL($j)) {
+	} elsif (isRemoteURL($j)) {
 		$j = Slim::Web::HTTP::unescape($j);
 	} else {
 		$j = (splitdir($j))[-1];
@@ -2053,7 +2053,7 @@ sub readTags {
 	$::d_info && Slim::Utils::Misc::msg("Updating cache for: " . $file . "\n");
 
 	if (isSong($file, $type) ) {
-		if (isHTTPURL($file)) {
+		if (isRemoteURL($file)) {
 			# if it's an HTTP URL, guess the title from the the last part of the URL,
 			# and don't bother with the other parts
 			if (!defined(cacheItem($file, 'TITLE'))) {
@@ -2682,9 +2682,20 @@ sub isHTTPURL {
 	return (defined($url) && ($url =~ /^(http|icy):\/\//i));
 }
 
+sub isRemoteURL {
+	my $url = shift;
+	my @protocols = Slim::Player::Source::protocols();
+
+	return (defined($url) && scalar(grep { $url =~ /^$_:\/\//i } @protocols));
+}
+
 sub isURL {
 	my $url = shift;
-	return (defined($url) && ($url =~ /^(http|icy|itunesplaylist|moodlogicplaylist|file):/i));
+	my @protocols = Slim::Player::Source::protocols();
+
+	push @protocols, ("itunesplaylist", "moodlogicplaylist", "file");
+
+	return (defined($url) && scalar(grep { $url =~ /^$_:\/\//i } @protocols));
 }
 
 sub isType {
@@ -2854,7 +2865,7 @@ sub typeFromPath {
 	my $type;
 
 	if (defined($fullpath) && $fullpath ne "" && $fullpath !~ /\x00/) {
-		if (isHTTPURL($fullpath)) {
+		if (isRemoteURL($fullpath)) {
 			$type = typeFromSuffix($fullpath, $defaultType);
 		} elsif ( $fullpath =~ /^([a-z]+:)/ && defined($Slim::Music::Info::suffixes{$1})) {
 			$type = $Slim::Music::Info::suffixes{$1};

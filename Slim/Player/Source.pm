@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.108 2004/09/10 01:48:47 kdf Exp $
+# $Id: Source.pm,v 1.109 2004/09/10 03:07:39 vidur Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -33,11 +33,16 @@ use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Scan;
 use Slim::Utils::Strings qw(string);
+use Slim::Player::Protocols::HTTP;
 
 my $TRICKSEGMENTDURATION = 1.0;
 my $FADEVOLUME         = 0.3125;
 
 my %commandTable = ();
+my %protocolHandlers = ( 
+	http => qw(Slim::Player::Protocols::HTTP),
+	icy => qw(Slim::Player::Protocols::HTTP),
+);
 
 sub systell {
 	sysseek($_[0], 0, SEEK_CUR)
@@ -775,10 +780,6 @@ sub resetSong {
 	$client->songStartStreamTime(0);
 	$client->bytesReceivedOffset($client->bytesReceived());
 	$client->trickSegmentRemaining(0);
-	
-	# reset shoutcast variables
-	$client->shoutMetaInterval(0);
-	$client->shoutMetaPointer(0);
 }
 
 sub errorOpening {
@@ -802,14 +803,14 @@ sub openSong {
 
 	####################
 	# parse the filetype
-	if (Slim::Music::Info::isHTTPURL($fullpath)) {
+	if (Slim::Music::Info::isRemoteURL($fullpath)) {
 
 		my $line1 = string('CONNECTING_FOR');
 		my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));			
 		$client->showBriefly($line1, $line2, undef,1);
 
 		# we don't get the content type until after the stream is opened
-		my $sock = Slim::Web::RemoteStream::openRemoteStream($fullpath, $client);
+		my $sock = openRemoteStream($fullpath, $client);
 
 		if ($sock) {
 
@@ -822,6 +823,11 @@ sub openSong {
 				$client->remoteStreamStartTime(Time::HiRes::time());
 				$client->pauseTime(0);
 				defined(Slim::Utils::Misc::blocking($sock,0)) || die "Cannot set remote stream nonblocking";
+
+				my $duration  = Slim::Music::Info::durationSeconds($fullpath);
+				if (defined($duration)) {
+					$client->songduration($duration);
+				}
 
 			# if it's one of our playlists, parse it...
 			} elsif (Slim::Music::Info::isList($fullpath)) {
@@ -1270,18 +1276,7 @@ sub readNextChunk {
 
 	if ($client->audioFilehandle()) {
 	
-		if ($client->audioFilehandleIsSocket) {
-
-			# adjust chunksize to lie on metadata boundary (for shoutcast/icecast)
-			if ($client->shoutMetaInterval() &&
-				($client->shoutMetaPointer() + $chunksize) > $client->shoutMetaInterval()) {
-	
-				$chunksize = $client->shoutMetaInterval() - $client->shoutMetaPointer();
-				$::d_source && msg("reduced chunksize to $chunksize for metadata\n");
-			}
-
-		} else {
-		
+		if (!$client->audioFilehandleIsSocket) {
 			# use the rate to seek to an appropriate place in the file.
 			my $rate = rate($client);
 			
@@ -1380,20 +1375,7 @@ sub readNextChunk {
 
 			} else {
 				$::d_source_v && msg("Read $readlen bytes from source\n");
-			}
-			
-			if ($client->shoutMetaInterval() && $readlen) {
-				$client->shoutMetaPointer($client->shoutMetaPointer() + $readlen);
-				# handle instream metadata for shoutcast/icecast
-				if ($client->shoutMetaPointer() == $client->shoutMetaInterval()) {
-		
-					Slim::Web::RemoteStream::readMetaData($client);
-					$client->shoutMetaPointer(0);
-				}
-				elsif ($client->shoutMetaPointer() > $client->shoutMetaInterval()) {
-					msg("Problem: the shoutcast metadata overshot the interval.\n");
-				}	
-			}
+			}		
 		}
 	} else {
 		$::d_source && msg($client->id() . ": No filehandle to read from, returning no chunk.\n");
@@ -1421,7 +1403,6 @@ bail:
 	if ($chunkLength > 0) {
 
 		$::d_source_v && msg("read a chunk of $chunkLength length\n");
-		$::d_source_v && msg("metadata now: " . $client->shoutMetaPointer() . "\n");
 		$client->songBytes($client->songBytes() + $chunkLength);
 		$client->streamBytes($client->streamBytes() + $chunkLength);
 		$client->trickSegmentRemaining($client->trickSegmentRemaining() - $chunkLength) if ($client->trickSegmentRemaining())
@@ -1438,6 +1419,37 @@ sub pauseSynced {
 		$everyclient->pause();
 	}
 }
+
+sub registerProtocolHandler {
+	my $protocol = shift;
+	my $class = shift;
+	
+	$protocolHandlers{$protocol} = $class;
+}
+
+sub protocols {
+	return keys %protocolHandlers;
+}
+
+sub openRemoteStream {
+	my $url = shift;
+	my $client = shift;
+	
+	$::d_source && msg("Trying to open protocol stream for $url\n");
+	if ($url =~ /^(.*?):\/\//i) {
+		my $proto = $1;
+
+		$::d_source && msg("Looking for handler for protocol $proto\n");
+		if (my $protoClass = $protocolHandlers{lc $proto}) {
+			$::d_source && msg("Found handler for protocol $proto\n");
+			return $protoClass->new($url, $client);
+		}
+	}
+
+	$::d_source && msg("Couldn't find protocol handler for $url\n");
+	return undef;
+}
+
 
 1;
 __END__
