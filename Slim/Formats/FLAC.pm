@@ -17,7 +17,7 @@ package Slim::Formats::FLAC;
 
 use strict;
 use File::Basename;
-use Audio::FLAC;
+use Audio::FLAC::Header;
 use MP3::Info ();
 use Slim::Utils::Misc;
 use Slim::Formats::Parse;
@@ -45,7 +45,7 @@ sub getTag {
 	my $file   = shift || "";
 	my $anchor = shift || "";
 
-	my $flac   = Audio::FLAC->new($file) || do {
+	my $flac   = Audio::FLAC::Header->new($file) || do {
 		warn "Couldn't open file: [$file] for reading: $!\n";
 		return {};
 	};

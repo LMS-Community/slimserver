@@ -1,6 +1,6 @@
-package Audio::FLAC;
+package Audio::FLAC::Header;
 
-# $Id: FLAC.pm,v 1.10 2005/01/03 06:05:46 dsully Exp $
+# $Id$
 
 use strict;
 use vars qw($VERSION);
