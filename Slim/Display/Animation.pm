@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::Animation;
 
-# $Id: Animation.pm,v 1.7 2003/12/05 04:54:31 kdf Exp $
+# $Id: Animation.pm,v 1.8 2003/12/07 18:13:03 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -248,8 +248,8 @@ sub doEasterEgg {
 		my ($text1,$text2) = Slim::Display::Display::curLines($client);
 		$text1 = Slim::Hardware::VFD::subString(($text1 . (' ' x (40 - Slim::Hardware::VFD::lineLength($text1)))),0,40);
 		$text2 = Slim::Hardware::VFD::subString(($text2 . (' ' x (40 - Slim::Hardware::VFD::lineLength($text2)))),0,40);
-		my $line1 = $text1 . reverse($text2) . $text1;
-		my $line2 = $text2 . reverse($text1) . $text2;
+		my $line1 = $text1 . join('',reverse(@{Slim::Hardware::VFD::splitString($text2)})) . $text1;
+		my $line2 = $text2 . join('',reverse(@{Slim::Hardware::VFD::splitString($text1)})) . $text2;
 		startAnimate($client,\&animateSlideWindows
 			,[$line1,$line2] #lines
 			,[80,80],[80,0],[-1,1] #end, pos, step
