@@ -1,5 +1,6 @@
 package Slim::Buttons::Input::List;
 
+# $Id: List.pm,v 1.3 2003/11/23 20:41:58 grotus Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -23,6 +24,26 @@ my %functions = (
 	,'down' => sub {
 			my ($client,$funct,$functarg) = @_;
 			changePos($client,1);
+		}
+	,'numberScroll' => sub {
+			my ($client,$funct,$functarg) = @_;
+			my $isSorted = Slim::Buttons::Common::param($client,'isSorted');
+			my $listRef = Slim::Buttons::Common::param($client,'listRef');
+			my $numScrollRef;
+			if ($isSorted && uc($isSorted) eq 'E') {
+				# sorted by the external value
+				$numScrollRef = Slim::Buttons::Common::param($client,'externRef');
+			} else {
+				# not sorted or sorted by the internal value
+				$numScrollRef = $listRef;
+			}
+			my $newIndex = Slim::Buttons::Common::numberScroll($client, $functarg, $numScrollRef, $isSorted ? 1 : 0);
+			if (defined $newIndex) {
+				Slim::Buttons::Common::param($client,'listIndex',$newIndex);
+				my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
+				$$valueRef = $listRef->[$newIndex];
+			}
+			$client->update;
 		}
 	#call callback procedure
 	,'exit' => sub {
@@ -70,6 +91,7 @@ sub lines {
 	my ($line1, $line2);
 	my $listIndex = Slim::Buttons::Common::param($client,'listIndex');
 	my $listRef = Slim::Buttons::Common::param($client,'listRef');
+	if (!defined($listRef)) { return ('','');}
 	$line1 = getExtVal($client,$listRef->[$listIndex],$listIndex,'header');
 	$line2 = getExtVal($client,$listRef->[$listIndex],$listIndex,'externRef');
 	my @overlay = getExtVal($client,$listRef->[$listIndex],$listIndex,'overlayRef');
@@ -133,6 +155,8 @@ sub setMode {
 # onChangeArgs = CV
 
 # other parameters used
+# isSorted = undef # whether the interal or external list is sorted 
+	#(I for internal, E for external, undef or anything else for unsorted)
 
 sub init {
 	my $client = shift;
@@ -153,6 +177,10 @@ sub init {
 		Slim::Buttons::Common::param($client,'externRef',$externRef);
 	}
 	return undef if !defined($listRef);
+	my $isSorted = Slim::Buttons::Common::param($client,'isSorted');
+	if ($isSorted && ($isSorted !~ /[iIeE]/ || (uc($isSorted) eq 'E' && ref($externRef) ne 'ARRAY'))) {
+		Slim::Buttons::Common::param($client,'isSorted',0);
+	}
 	my $listIndex = Slim::Buttons::Common::param($client,'listIndex');
 	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 	if (!defined($listIndex)) {
@@ -201,11 +229,16 @@ sub exitInput {
 	my ($client,$exitType) = @_;
 	my $callbackFunct = Slim::Buttons::Common::param($client,'callback');
 	if (!defined($callbackFunct) || !(ref($callbackFunct) eq 'CODE')) {
-		Slim::Buttons::Common::popMode($client);
+		if ($exitType eq 'right') {
+			Slim::Display::Animation::bumpRight($client);
+		} elsif ($exitType eq 'left') {
+			Slim::Buttons::Common::popModeRight($client);
+		} else {
+			Slim::Buttons::Common::popMode($client);
+		}
 		return;
 	}
 	$callbackFunct->(@_);
-	return;
 }
 
 1;
