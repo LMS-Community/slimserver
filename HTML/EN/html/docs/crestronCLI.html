@@ -1,5 +1,5 @@
 [% pageicon = 'help' %]
-[% tSQUEEZEBOX = 'Command Line Interface' %]
+[% pagetitle = 'Command Line Interface' %]
 [% techinfo = '1' %]
 [% PROCESS helpheader.html %]
 
@@ -265,8 +265,8 @@ with the player used in the query.  Multiple ID's are separated by a space. To u
   playlist artist ?</strong> <strong><br>
   </strong><strong>playlist album ?<br>
   </strong><strong>playlist title ?</strong> <strong></strong><strong><br>
-  playlist duration ?</strong><br>
-  playlist path ?</p>
+  playlist duration ?<br>
+  playlist path ?</strong></p>
 <p>The &quot;playlist genre&quot;, &quot;playlist artist&quot;, &quot;playlist 
   album&quot;, &quot;playlist title&quot;, &quot;playlist path&quot; and &quot;playlist 
   duration&quot; commands will return the requested information for a given song 
@@ -349,6 +349,18 @@ data sent to the display, including any animation, double-size fonts, etc...</p>
 <p>Examples:</p>
 <blockquote> 
   <p>Request: &quot;04:20:00:12:23:45 displaynow ? ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 display Hello World&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>listen &lt;<em>0</em>|1|?&gt;</strong></p>
+<p>The &quot;listen&quot; command tells the server to send command events to the command-line client for all activity in the SlimServer, not just
+the activity triggered by the command line.  This is useful for monitoring user activity from the remote control or web interface.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;listen ?&lt;CR&gt;&quot;<br>Response: &quot;listen 0&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;listen 1&lt;CR&gt;&quot;<br>Response: <br>listen 1&lt;CR&gt;
+  <br>04:20:00:12:23:45 mixer volume 25&lt;CR&gt;
+  <br>04:20:00:12:23:45 pause&lt;CR&gt;
+  <br>...</p>
 </blockquote>
 <hr>
 <p><strong>pref &lt;prefname&gt; &lt;prefvalue&gt;<br>

@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.22 2004/10/06 15:56:09 vidur Exp $
+# $Id: Display.pm,v 1.23 2004/11/24 20:11:30 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -69,6 +69,12 @@ sub subString {
 
 	my $newstring = '';
 	my $oldstring = '';
+
+	if ($start > 32765 || $length > 32765) {
+			msg("substr on string with start or length greater than 32k, returning empty string.\n");
+			bt();
+			return '';
+	}
 
 	if ($string && $string =~ s/^(((?:(\x1e[^\x1e]+\x1e)|)(?:[^\x1e\x1f]|\x1f[^\x1f]+\x1f)){0,$start})//) {
 		$oldstring = $1;

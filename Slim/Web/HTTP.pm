@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.124 2004/11/10 18:56:49 dean Exp $
+# $Id: HTTP.pm,v 1.125 2004/11/24 20:11:30 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -251,6 +251,17 @@ sub acceptHTTP {
 	}
 }
 
+sub isaSkin {
+	my $name = shift;
+	my %skins = Slim::Web::Setup::skins();
+	my $skinlist = join '|',keys %skins;
+	if ($name =~ /^($skinlist)$/i) {
+		return $1;
+	} else {
+		return undef;
+	}
+}
+
 # Handle an HTTP request
 sub processHTTP {
 	my $httpClient = shift || return;
@@ -356,21 +367,24 @@ sub processHTTP {
 				$params->{'webroot'} = "/slimserver/"
 			}
 			
-			# paths that are pure alpha without a trailing slash get a slash added, to make skins easier to find
-			$path =~ s|^/([a-zA-Z]+)$|/$1/|;
-			
-			if ($path =~ m|^/(.+?)/.*| && $path !~ m{^/(?:html|music|plugins)/}i) {
+			if ($path =~ m|/([a-zA-Z]+)$| && isaSkin($1)) {
+					$::d_http && msg("Alternate skin $1 requested, redirecting to $uri/ append a slash.\n");
+					$response->code(RC_MOVED_PERMANENTLY);
+					$response->header('Location' => $uri . '/');
+					$httpClient->send_response($response);
+					closeHTTPSocket($httpClient);
+					return;
+			} elsif ($path =~ m|^/(.+?)/.*| && $path !~ m{^/(?:html|music|plugins)/}i) {
 
 				my $desiredskin = $1;
 
 				# Requesting a specific skin, verify and set the skinOverride param
 				$::d_http && msg("Alternate skin $desiredskin requested\n");
 
-				my %skins = Slim::Web::Setup::skins();
-				my $skinlist = join '|',keys %skins;
-				if ($desiredskin =~ /^($skinlist)$/i) {
-					$params->{'skinOverride'} = $1;
-					$params->{'webroot'} = $params->{'webroot'} . "$1/";
+				my $skinname = isaSkin($desiredskin);
+				if ($skinname) {
+					$params->{'skinOverride'} = $skinname;
+					$params->{'webroot'} = $params->{'webroot'} . "$skinname/";
 					$path =~ s{^/.+?/}{/};
 				} else {
 					# we can either throw a 404 here or just ignore the requested skin
