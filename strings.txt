@@ -247,13 +247,15 @@ NOW_PLAYING
 	PT	A tocar...
 	SE	Nu spelas
 
-EVERYTHING
 NOW_SCANNING
 	EN	Now Scanning
+	FR	Recherche
 
 NOW_REWINDING
 	EN	Now Rewinding
+	FR	Retour rapide
 
+EVERYTHING
 	DE	Alles
 	EN	Everything
 	FR	Tout
