@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.9 2003/09/19 23:08:29 dean Exp $
+# $Id: Common.pm,v 1.10 2003/09/28 15:47:50 kdf Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -41,6 +41,7 @@ my %modes = (
 	'repeat' =>					\&Slim::Buttons::Settings::setRepeatMode,
 	'shuffle' =>				\&Slim::Buttons::Settings::setShuffleMode,
 	'textsize' =>				\&Slim::Buttons::Settings::setTextSizeMode,
+	'offdisplaysize' =>				\&Slim::Buttons::Settings::setOffDisplaySettingsMode,
 	'titleformat' =>			\&Slim::Buttons::Settings::setTitleFormatMode,
 	'treble' =>					\&Slim::Buttons::Settings::setTrebleMode,
 	'bass' =>					\&Slim::Buttons::Settings::setBassMode,
@@ -478,6 +479,7 @@ sub init {
 	$modeFunctions{'repeat'} = Slim::Buttons::Settings::getRepeatFunctions();
 	$modeFunctions{'shuffle'} = Slim::Buttons::Settings::getShuffleFunctions();
 	$modeFunctions{'textsize'} = Slim::Buttons::Settings::getTextSizeFunctions();
+	$modeFunctions{'offdisplaysize'} = Slim::Buttons::Settings::getOffDisplaySettingsFunctions();
 	$modeFunctions{'titleformat'} = Slim::Buttons::Settings::getTitleFormatFunctions();
 	$modeFunctions{'bass'} = Slim::Buttons::Settings::getBassFunctions();
 	$modeFunctions{'treble'} = Slim::Buttons::Settings::getTrebleFunctions();

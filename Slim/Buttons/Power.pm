@@ -1,6 +1,6 @@
 package Slim::Buttons::Power;
 
-# $Id: Power.pm,v 1.4 2003/08/12 00:52:42 dean Exp $
+# $Id: Power.pm,v 1.5 2003/09/28 15:47:51 kdf Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -19,7 +19,14 @@ my %functions = (
 	'play' => sub  {
 		my $client = shift;
 		Slim::Control::Command::execute($client, ["play"]);
-	}
+	},
+	'offsize' => sub  {
+		my $client = shift;
+		my $button = shift;
+		my $offsize = Slim::Utils::Prefs::clientGet($client, "offDisplaySize") ? 0 : 1;
+		Slim::Utils::Prefs::clientSet($client, "offDisplaySize", $offsize);
+		Slim::Display::Display::update($client);
+	},
 );
 
 sub getFunctions {

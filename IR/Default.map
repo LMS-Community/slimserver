@@ -138,6 +138,7 @@ rew.single				= dead
 shuffle					= dead
 shuffle_off				= dead
 shuffle_on				= dead
+size					= offsize
 sleep					= dead
 stop					= dead
 voldown					= dead

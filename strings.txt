@@ -3314,6 +3314,9 @@ TEXTSIZE
 	PT	Tamanho do Texto
 	SE	Textstorlek
 
+OFFDISPLAYSIZE
+	EN	Power Off Text Size
+
 LARGE
 	DE	Gross
 	DK	Stor

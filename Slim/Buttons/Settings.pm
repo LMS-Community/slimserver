@@ -16,7 +16,7 @@ use Slim::Utils::Strings qw (string);
 use Slim::Utils::Prefs;
 
 # button functions for browse directory
-my @defaultSettingsChoices = (sort('REPEAT','SHUFFLE','TEXTSIZE','TITLEFORMAT','TREBLE', 'BASS', 'VOLUME', 'ALARM'));
+my @defaultSettingsChoices = ('ALARM','VOLUME', 'BASS','TREBLE','REPEAT','SHUFFLE','TITLEFORMAT','TEXTSIZE','OFFDISPLAYSIZE');
 my @settingsChoices;
 my %functions = (
 	'up' => sub  {
@@ -44,6 +44,8 @@ my %functions = (
 			Slim::Buttons::Common::pushModeLeft($client, 'repeat');
 		} elsif ($settingsChoices[$client->settingsSelection] eq 'TEXTSIZE') {
 			Slim::Buttons::Common::pushModeLeft($client, 'textsize');
+		} elsif ($settingsChoices[$client->settingsSelection] eq 'OFFDISPLAYSIZE') {
+			Slim::Buttons::Common::pushModeLeft($client, 'offdisplaysize');
 		} elsif ($settingsChoices[$client->settingsSelection] eq 'TITLEFORMAT') {
 			Slim::Buttons::Common::pushModeLeft($client, 'titleformat');
 		} elsif ($settingsChoices[$client->settingsSelection] eq 'SHUFFLE') {
@@ -210,6 +212,46 @@ sub textSizeSettingsLines {
 	my ($line1, $line2);
 	$line1 = string('TEXTSIZE');
 	$line2 = $textSizeSettingsChoices[(Slim::Utils::Prefs::clientGet($client, "doublesize")) ? 1 : 0];
+	return ($line1, $line2);
+}
+
+#################################################################################
+my @offDisplaySettingsChoices;
+
+my %offDisplaySettingsFunctions = (
+	'up' => sub {
+		my $client = shift;
+		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#offDisplaySettingsChoices + 1), (Slim::Utils::Prefs::clientGet($client, "offDisplaySize")) ? 1 : 0 );
+		Slim::Utils::Prefs::clientSet($client, "offDisplaySize", $newposition);
+		$client->update();
+	},
+	'down' => sub {
+		my $client = shift;
+		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#offDisplaySettingsChoices + 1), (Slim::Utils::Prefs::clientGet($client, "offDisplaySize")) ? 1 : 0 );
+		Slim::Utils::Prefs::clientSet($client, "offDisplaySize", $newposition);
+		$client->update();
+	},
+	'left' => $functions{'left'},
+	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
+	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
+	'play' => sub { Slim::Display::Animation::bumpRight(shift); },
+);
+
+sub getOffDisplaySettingsFunctions {
+	return \%offDisplaySettingsFunctions;
+}
+
+sub setOffDisplaySettingsMode {
+	my $client = shift;
+	@offDisplaySettingsChoices = (string('SMALL'),string('LARGE'));
+	$client->lines(\&offDisplaySettingsLines);
+}
+
+sub offDisplaySettingsLines {
+	my $client = shift;
+	my ($line1, $line2);
+	$line1 = string('OFFDISPLAYSIZE');
+	$line2 = $offDisplaySettingsChoices[(Slim::Utils::Prefs::clientGet($client, "offDisplaySize")) ? 1 : 0];
 	return ($line1, $line2);
 }
 
