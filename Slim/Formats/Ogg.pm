@@ -97,8 +97,20 @@ sub getTag {
 	$tags->{'STEREO'}   = $ogg->info('channels') == 2 ? 1 : 0;
 	$tags->{'CHANNELS'} = $ogg->info('channels');
 	$tags->{'RATE'}	    = $ogg->info('rate') / 1000;
-	$tags->{'VBR_SCALE'}= $ogg->info('bitrate_upper') !=
-									$ogg->info('bitrate_lower');
+
+	if (defined $ogg->info('bitrate_upper') && defined $ogg->info('bitrate_lower')) {
+
+		if ($ogg->info('bitrate_upper') != $ogg->info('bitrate_lower')) {
+
+			$tags->{'VBR_SCALE'} = 1;
+		} else {
+			$tags->{'VBR_SCALE'} = 0;
+		}
+
+	} else {
+
+		$tags->{'VBR_SCALE'} = 0;
+	}
 	
 	# temporary for now - Ogg:: doesn't expose this yet.
 	$tags->{'OFFSET'}   = $ogg->info('offset') || 0;
