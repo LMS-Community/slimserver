@@ -45,6 +45,18 @@ voldown					= volume_down
 voldown.repeat			= volume_down
 volup					= volume_up
 volup.repeat			= volume_up
+pitchdown				= pitch_down
+pitchdown.repeat		= pitch_down
+pitchup					= pitch_up
+pitchup.repeat			= pitch_up
+bassdown				= bass_down
+bassdown.repeat			= bass_down
+bassup					= bass_up
+bassup.repeat			= bass_up
+trebledown				= treble_down
+trebledown.repeat		= treble_down
+trebleup				= treble_up
+trebleup.repeat			= treble_up
 
 # playing display modes
 now_playing				= playdisp_toggle

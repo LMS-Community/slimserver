@@ -1,6 +1,6 @@
 package Slim::Hardware::mas3507d;
 
-# $Id: mas3507d.pm,v 1.6 2004/08/25 23:24:44 dean Exp $
+# $Id: mas3507d.pm,v 1.7 2004/08/28 04:58:25 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -211,7 +211,7 @@ sub getToneCode {
 	my $toneSetting = shift;
 	my $toneType = shift;
 	my $toneCodes = ($toneType eq 'bass') ? \@bassCodes : \@trebleCodes;
-	my $index = int($toneSetting / Slim::Player::Client::SLIMP3::maxTreble() * (scalar(@$toneCodes)-1) + 0.5);
+	my $index = int($toneSetting / Slim::Player::Player::maxTreble() * (scalar(@$toneCodes)-1) + 0.5);
 	return $toneCodes->[$index];
 }
 

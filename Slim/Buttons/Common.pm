@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.37 2004/08/21 18:13:16 kdf Exp $
+# $Id: Common.pm,v 1.38 2004/08/28 04:58:24 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -368,7 +368,7 @@ my %functions = (
 		my $button = shift;
 		my $buttonarg = shift;
 		my $inc = 1;
-		my $volcmd;
+		my $volumecmd;
 		my $rate = 50; #Hz maximum
 		my $accel = 15; #Hz/s
 		
@@ -378,11 +378,11 @@ my %functions = (
 			$inc = 2.5;
 		}
 		if ($buttonarg  eq 'up') {
-			$volcmd = "+$inc";
+			$volumecmd = "+$inc";
 		} elsif ($buttonarg eq 'down') {
-			$volcmd = "-$inc";
+			$volumecmd = "-$inc";
 		} elsif ($buttonarg =~ /(\d+)/) {
-			$volcmd = $1;
+			$volumecmd = $1;
 		} else {
 			Slim::Display::Display::volumeDisplay($client);
 			return;
@@ -390,8 +390,99 @@ my %functions = (
 		if (!$inc && $buttonarg =~ /up|down/) {
 			return;
 		}
-		Slim::Control::Command::execute($client, ["mixer", "volume", $volcmd]);
+		Slim::Control::Command::execute($client, ["mixer", "volume", $volumecmd]);
 		Slim::Display::Display::volumeDisplay($client);
+	},
+
+	'pitch' => sub {
+		my $client = shift;
+		my $button = shift;
+		my $buttonarg = shift;
+		my $inc = 1;
+		my $pitchcmd;
+		my $rate = 50; #Hz maximum
+		my $accel = 15; #Hz/s
+		
+		if (Slim::Hardware::IR::holdTime($client) > 0) {
+			$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
+		} else {
+			$inc = 1;
+		}
+		if ($buttonarg  eq 'up') {
+			$pitchcmd = "+$inc";
+		} elsif ($buttonarg eq 'down') {
+			$pitchcmd = "-$inc";
+		} elsif ($buttonarg =~ /(\d+)/) {
+			$pitchcmd = $1;
+		} else {
+			Slim::Display::Display::pitchDisplay($client);
+			return;
+		}
+		if (!$inc && $buttonarg =~ /up|down/) {
+			return;
+		}
+		Slim::Control::Command::execute($client, ["mixer", "pitch", $pitchcmd]);
+		Slim::Display::Display::pitchDisplay($client);
+	},
+	'bass' => sub {
+		my $client = shift;
+		my $button = shift;
+		my $buttonarg = shift;
+		my $inc = 1;
+		my $basscmd;
+		my $rate = 50; #Hz maximum
+		my $accel = 15; #Hz/s
+		
+		if (Slim::Hardware::IR::holdTime($client) > 0) {
+			$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
+		} else {
+			$inc = 2.5;
+		}
+		if ($buttonarg  eq 'up') {
+			$basscmd = "+$inc";
+		} elsif ($buttonarg eq 'down') {
+			$basscmd = "-$inc";
+		} elsif ($buttonarg =~ /(\d+)/) {
+			$basscmd = $1;
+		} else {
+			Slim::Display::Display::bassDisplay($client);
+			return;
+		}
+		if (!$inc && $buttonarg =~ /up|down/) {
+			return;
+		}
+		Slim::Control::Command::execute($client, ["mixer", "bass", $basscmd]);
+		Slim::Display::Display::bassDisplay($client);
+	},
+	'treble' => sub {
+		my $client = shift;
+		my $button = shift;
+		my $buttonarg = shift;
+		my $inc = 1;
+		my $treblecmd;
+		my $rate = 50; #Hz maximum
+		my $accel = 15; #Hz/s
+		
+		if (Slim::Hardware::IR::holdTime($client) > 0) {
+			$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
+		} else {
+			$inc = 2.5;
+		}
+		if ($buttonarg  eq 'up') {
+			$treblecmd = "+$inc";
+		} elsif ($buttonarg eq 'down') {
+			$treblecmd = "-$inc";
+		} elsif ($buttonarg =~ /(\d+)/) {
+			$treblecmd = $1;
+		} else {
+			Slim::Display::Display::trebleDisplay($client);
+			return;
+		}
+		if (!$inc && $buttonarg =~ /up|down/) {
+			return;
+		}
+		Slim::Control::Command::execute($client, ["mixer", "treble", $treblecmd]);
+		Slim::Display::Display::trebleDisplay($client);
 	},
 	'muting' => sub  {
 		my $client = shift;

@@ -1,6 +1,6 @@
 package Plugins::Snow;
 
-# $Id: Snow.pm,v 1.12 2004/08/05 17:42:30 dean Exp $
+# $Id: Snow.pm,v 1.13 2004/08/28 04:58:23 dean Exp $
 # by Phil Barrett, December 2003
 # screensaver conversion by Kevin Deane-Freeman Dec 2003
 
@@ -23,7 +23,7 @@ use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.12 $,10);
+$VERSION = substr(q$Revision: 1.13 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_SNOW');}
 
@@ -147,6 +147,9 @@ PLUGIN_SCREENSAVER_SNOW_WORD_3
 
 PLUGIN_SCREENSAVER_SNOW_WORD_4
 	EN	NEW YEAR !
+
+PLUGIN_SCREENSAVER_SNOW_SORRY
+	EN	Sorry, Snow doesn\'t work with this player.
 '};
 
 ##################################################
@@ -337,21 +340,26 @@ sub screensaverSnowlines {
 	my $simple = 0;
 	my $words = 0;
 	my $style = $snowStyle{$client};
-	
+	if( $client && $client->isa( "Slim::Player::SqueezeboxG")) {
+    	$line1 = string('PLUGIN_SCREENSAVER_SNOW');
+	    $line2 = string('PLUGIN_SCREENSAVER_SNOW_SORRY');
+	    return ($line1, $line2);
+	} 	 
+
 	if($style == 5) {
-	    # automatic
-	    if (Slim::Player::Source::playmode($client) eq "pause") {
+		# automatic
+		if (Slim::Player::Source::playmode($client) eq "pause") {
 		$style = 4; # Just snow when paused
-	    } elsif (Slim::Player::Source::playmode($client) eq "stop") {
+		} elsif (Slim::Player::Source::playmode($client) eq "stop") {
 		$style = 4; # Just snow when stopped
-	    } else {
+		} else {
 		$style = 1; # Now Playing when playing
-	    }
+		}
 	}
 
 	if($style == 6) {
-	    $style = 4; # Just snow
-	    $words = 2; # With words
+		$style = 4; # Just snow
+		$words = 2; # With words
 	}
 
 	if($style == 1 || $style == 2) {

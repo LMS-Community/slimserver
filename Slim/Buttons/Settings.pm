@@ -39,7 +39,7 @@ my %menuParams = (
 	}
 	,catdir('settings','VOLUME') => {
 		'useMode' => 'INPUT.Bar'
-		,'header' => \&volheader
+		,'header' => \&volumeHeader
 		,'onChange' => sub { 
 				my ($subref,$subarg) = Slim::Buttons::Common::getFunction($_[0],'volume_'.$_[1],'Common');
 				&$subref($_[0],'volume',$subarg);}
@@ -48,7 +48,7 @@ my %menuParams = (
 	}
 	,catdir('settings','BASS') => {
 		'useMode' => 'INPUT.Bar'
-		,'header' => sub {return string('BASS').' ('.(int($_[1]/100*40 + 0.5) - 20).')';}
+		,'header' => \&bassHeader
 		,'mid' => 50
 		,'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'bass',$_[1]);}
 		,'onChangeArgs' => 'CV'
@@ -56,7 +56,7 @@ my %menuParams = (
 	}
 	,catdir('settings','PITCH') => {
 		'useMode' => 'INPUT.Bar'
-		,'header' => sub {return string('PITCH').' ('.(int($_[1])).'%)';}
+		,'header' => \&pitchHeader
 		,'min' => 80
 		,'max' => 120
 		,'mid' => 100
@@ -67,7 +67,7 @@ my %menuParams = (
 	}
 	,catdir('settings','TREBLE') => {
 		'useMode' => 'INPUT.Bar'
-		,'header' => sub {return string('TREBLE').' ('.(int($_[1]/100*40 + 0.5) - 20).')';}
+		,'header' => \&trebleHeader
 		,'mid' => 50
 		,'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'treble',$_[1]);}
 		,'onChangeArgs' => 'CV'
@@ -252,18 +252,57 @@ sub setMode {
 	$client->update();
 }
 
-sub volheader {
+sub volumeHeader {
 	my ($client,$arg) = @_;
 	return string('VOLUME').' ('.($arg <= 0 ? string('MUTED') : int($arg/100*40+0.5)).')';
+}
+
+sub bassHeader {
+	my ($client,$arg) = @_;
+	return string('BASS').' ('.(int($arg/100*40 + 0.5) - 20).')';
+}
+
+sub trebleHeader {
+	my ($client,$arg) = @_;
+	return string('TREBLE').' ('.(int($arg/100*40 + 0.5) - 20).')';
+}
+
+sub pitchHeader {
+	my ($client,$arg) = @_;
+	return string('PITCH').' ('.(int($arg)).'%)';
 }
 
 sub volumeLines {
 	my $client = shift;
 
-	my $vol = $client->volume();
-	my $volstring = volheader($client,$vol);
-	return Slim::Buttons::Input::Bar::lines($client,$vol,$volstring);
+	my $volume = $client->volume();
+	my $volumestring = volumeHeader($client,$volume);
+	return Slim::Buttons::Input::Bar::lines($client,$volume,$volumestring);
 }
+
+sub pitchLines {
+	my $client = shift;
+	my $pitch = $client->pitch();
+	my $pitchstring = pitchHeader($client,$pitch);
+	return Slim::Buttons::Input::Bar::lines($client,$pitch,$pitchstring, $client->minPitch(), ($client->maxPitch() + $client->minPitch() ) / 2, $client->maxPitch());
+}
+
+sub bassLines {
+	my $client = shift;
+
+	my $bass = $client->bass();
+	my $bassstring = bassHeader($client,$bass);
+	return Slim::Buttons::Input::Bar::lines($client,$bass,$bassstring, $client->minBass(), ($client->maxBass() + $client->minBass() ) / 2, $client->maxBass());
+}
+
+sub trebleLines {
+	my $client = shift;
+
+	my $treble = $client->treble();
+	my $treblestring = trebleHeader($client,$treble);
+	return Slim::Buttons::Input::Bar::lines($client,$treble,$treblestring, $client->minTreble(), ($client->maxTreble() + $client->minTreble() ) / 2, $client->maxTreble());
+}
+
 
 1;
 

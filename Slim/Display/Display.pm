@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.17 2004/08/03 17:29:13 vidur Exp $
+# $Id: Display.pm,v 1.18 2004/08/28 04:58:24 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -125,6 +125,18 @@ sub curLines {
 sub volumeDisplay {
 	my $client = shift;
 	$client->showBriefly(Slim::Buttons::Settings::volumeLines($client));
+}
+sub pitchDisplay {
+	my $client = shift;
+	$client->showBriefly(Slim::Buttons::Settings::pitchLines($client));
+}
+sub bassDisplay {
+	my $client = shift;
+	$client->showBriefly(Slim::Buttons::Settings::bassLines($client));
+}
+sub trebleDisplay {
+	my $client = shift;
+	$client->showBriefly(Slim::Buttons::Settings::trebleLines($client));
 }
 
 sub center {

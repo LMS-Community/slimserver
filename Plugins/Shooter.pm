@@ -13,16 +13,14 @@ use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.4 $,10);
+$VERSION = substr(q$Revision: 1.5 $,10);
 
-my @topchars = ("placeholder!", " ", " ",    "\x1F", "\x1C");
-my @btmchars = ("placeholder!", "_", "\x1F", "\xFF", " ");
+my @topchars = ("placeholder!", " ", " ",    "^", "v");
+my @btmchars = ("placeholder!", "_", "^", "*", " ");
 my $player = "<";
 
 my $framerate = .1; # 10 FPS
 my $maxobs = 8;
-
-my $lastrun;
 
 sub getDisplayName { 'Shooter' }
 
@@ -42,8 +40,6 @@ my %functions = (
 				$client->otype($mostrec, 2);
 				$client->update();
 			}
-		} else {
-			$client->gplay(1);
 		}
 	},
 	'stop' => sub  {
@@ -62,7 +58,11 @@ my %functions = (
 	},
 	'left' => sub  {
 	        my $client = shift;
-		Slim::Buttons::Common::popMode($client);
+		    Slim::Buttons::Common::popMode($client);
+	},
+	'right' => sub {
+			my $client = shift;
+			$client->gplay(1);
 	}
 );
 
@@ -88,8 +88,8 @@ sub lines {
         $line1 .= ($client->cpos == 1) ? $player : " ";
         $line2 .= ($client->cpos == 2) ? $player : " ";
     } else {
-        $line1 = "Press 'play' to begin.";
-        $line2 = "";
+        $line1 = "Welcome to Shooter!";
+        $line2 = "Press RIGHT to begin, PLAY to shoot.";
     }
     return ($line1, $line2);
 }
@@ -98,8 +98,8 @@ sub setMode {
     my $client = shift;
     $client->lines(\&lines);
     $client->cpos(1);
-    @{$client->otype} = (2, 4, 3,  4,  3,  2);
-    @{$client->opos} =  (1, 7, 13, 20, 26, 33);
+    @{$client->otype} = (2, 4, 3,  4,  3);
+    @{$client->opos} =  (1, 7, 13, 20, 26);
     $client->gplay(0);
     Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $framerate, \&g_advance, ($client, Time::HiRes::time()));
 }

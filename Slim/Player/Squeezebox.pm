@@ -182,7 +182,7 @@ sub needsUpgrade {
 
 	close($versionFile);
 
-	unless (defined $to) {
+	if (!defined $to) {
 		$::d_firmware && msg ("No upgrades found for squeezebox v. $from\n");
 		return 0;
 	}
@@ -215,6 +215,8 @@ sub upgradeFirmware_SDK5 {
 
 	Slim::Utils::Prefs::clientSet($client, "powerOnBrightness", 4);
 	Slim::Utils::Prefs::clientSet($client, "powerOffBrightness", 1);
+	
+	$client->textSize(0);
 
 #	Slim::Utils::Misc::blocking($client->tcpsock, 1);
 

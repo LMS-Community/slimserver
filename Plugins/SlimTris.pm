@@ -12,7 +12,7 @@ use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.5 $,10);
+$VERSION = substr(q$Revision: 1.6 $,10);
 
 # constants
 my $height = 4;
@@ -307,6 +307,13 @@ sub setMode {
 
 my $lastdrop = Time::HiRes::time();
 
+my @bitmaps = (
+	"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+	"\xe0\x00\xe0\x00\xe0\x00\xe0\x00\xe0\x00\x00\x00\x00",
+	"\x0e\x00\x0e\x00\x0e\x00\x0e\x00\x0e\x00\x00\x00\x00",
+	"\xee\x00\xee\x00\xee\x00\xee\x00\xee\x00\x00\x00\x00",
+);
+
 #
 # figure out the lines to be put up to display the directory
 #
@@ -315,12 +322,12 @@ sub lines {
 	my ($line1, $line2);
 
 	if ($gamemode eq 'attract') {
-		$line1 = "    - S - L - I - M - T - R - I - S -   ";
-		$line2 = "             1 coin 1 play              ";
+		$line1 = Slim::Display::Display::center("- S - L - I - M - T - R - I - S -");
+		$line2 = Slim::Display::Display::center("1 coin 1 play");
 		return ($line1, $line2);
 	} elsif ($gamemode eq 'gameover') {
-		$line1 = "      Game over man, game over!         ";
-		$line2 = "           Score: $score                ";
+		$line1 = Slim::Display::Display::center("Game over man, game over!");
+		$line2 = Slim::Display::Display::center("Score: $score");
 		return ($line1, $line2);
 	}
 
@@ -343,13 +350,25 @@ sub lines {
 		$dispgrid[$x][$y] = 1;
 	}
 
-	for (my $x = 1; $x < $width+2; $x++)
-	{
-		$line1 .= grid2char($dispgrid[$x][1] * 2 + $dispgrid[$x][2]);
-		$line2 .= grid2char($dispgrid[$x][3] * 2 + $dispgrid[$x][4]);
+	if ($client->isa( "Slim::Player::SqueezeboxG")) {
+		$line1 = Slim::Display::Display::symbol('framebuf');
+		for (my $x = 1; $x < $width+2; $x++)
+			{	
+				my $column = ($bitmaps[$dispgrid[$x][1]] | $bitmaps[$dispgrid[$x][2]*2]) . "\x00";
+				
+				$column |= "\x00" . ($bitmaps[$dispgrid[$x][3]] | $bitmaps[$dispgrid[$x][4]*2]);
+				
+				$line1 .= $column;
+			}
+		$line1 .=  Slim::Display::Display::symbol('/framebuf');
+	} else {
+		for (my $x = 1; $x < $width+2; $x++)
+			{
+				$line1 .= grid2char($dispgrid[$x][1] * 2 + $dispgrid[$x][2]);
+				$line2 .= grid2char($dispgrid[$x][3] * 2 + $dispgrid[$x][4]);
+			}
+		return ($line1, $line2);
 	}
-
-	return ($line1, $line2);
 }	
 
 #

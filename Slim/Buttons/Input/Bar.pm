@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Bar;
 
-# $Id: Bar.pm,v 1.4 2004/08/27 04:51:30 kdf Exp $
+# $Id: Bar.pm,v 1.5 2004/08/28 04:58:24 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -104,19 +104,24 @@ sub lines {
 	my $client = shift;
 	my $value = shift;
 	my $header = shift;
+
+	my $min = shift;
+	my $mid = shift;
+	my $max = shift;
+
 	my ($line1, $line2);
 
-	
 	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 	$valueRef = \$value if defined $value;
 	$line1 = defined $header ? $header : Slim::Buttons::Input::List::getExtVal($client,$$valueRef,undef,'header');
 
-	my $max = Slim::Buttons::Common::param($client,'max') || 100;
-	my $mid = Slim::Buttons::Common::param($client,'mid') || 0;
-	my $min = Slim::Buttons::Common::param($client,'min') || 0;
+	$min = $min || Slim::Buttons::Common::param($client,'min') || 0;
+	$mid = $mid || Slim::Buttons::Common::param($client,'mid') || 100;
+	$max = $max || Slim::Buttons::Common::param($client,'max') || 100;
 
-	my $val = int(($$valueRef - $min)*100/($max-$min));
-	$line2 = $client->sliderBar($client->displayWidth(), $val,($mid-$min)/($max-$min)*100,1);
+	my $val = $max == $min ? 0 : int(($$valueRef - $min)*100/($max-$min));
+	
+	$line2 = $client->sliderBar($client->displayWidth(), $val,$max == $min ? 0 :($mid-$min)/($max-$min)*100,1);
 
 	if ($client->linesPerScreen() == 1) {
 		if (Slim::Buttons::Common::param($client,'barOnDouble')) {

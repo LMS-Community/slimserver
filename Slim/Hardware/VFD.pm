@@ -1,6 +1,6 @@
 package Slim::Hardware::VFD;
 
-# $Id: VFD.pm,v 1.15 2004/08/03 17:29:15 vidur Exp $
+# $Id: VFD.pm,v 1.16 2004/08/28 04:58:25 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -285,7 +285,7 @@ sub vfdUpdate {
 	# define required custom characters
 	while((my $custc,my $ncustom) = each %customUsed) {
 			my $bitmapref = $vfdcustomchars{$ncustom};
-				my $bitmap = pack ('C8', @$bitmapref);
+			my $bitmap = pack ('C8', @$bitmapref);
 			$bitmap =~ s/(.)/$vfdCodeChar$1/gos;
 			$vfddata .= $vfdCodeCmd . pack('C',0b01000000 + (ord($custc) * 8)) . $bitmap;
 	}	
