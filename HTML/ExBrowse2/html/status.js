@@ -67,6 +67,8 @@ function handlekey(e) {
 	else return true;
 	kc = String.fromCharCode(kcval);
 
+	if (e.ctrlKey || e.altKey) return true;
+
 	if (kc == 'c') doPlay();
 	else if (kc == 'b') doNext();
 	else if (kc == 'z') doPrev();

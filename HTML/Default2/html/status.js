@@ -57,6 +57,8 @@ function handlekey(e) {
 	else return true;
 	kc = String.fromCharCode(kcval);
 
+        if (e.ctrlKey || e.altKey) return true;
+
 	if (kc == 'c') doPause();
 	else if (kc == 'x') doPlay();
 	else if (kc == 'b') doNext();
