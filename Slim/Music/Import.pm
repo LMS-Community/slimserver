@@ -71,6 +71,10 @@ sub countImporters {
 	my $count = 0;
 
 	for my $import (keys %Importers) {
+		
+		# Don't count Folder Scan for this since we use this as a test to see if any other importers are in use
+		next if $import eq "FOLDER";
+		
 		$count++ if $Importers{$import}->{'use'};
 	}
 

@@ -165,7 +165,6 @@ sub addSubMenu {
 sub delSubMenu {
 	my ($menu,$submenuname) = @_;
 	unless (exists $home{$menu}{'submenus'}) {
-		warn "submenu of $menu does not exist\n";
 		return;
 	}
 	unless (defined $submenuname) {
@@ -481,7 +480,10 @@ sub updateMenu {
 	
 	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
-
+	
+	# Refresh browse menu items in case of any changes.
+	Slim::Buttons::Browse::menuInit();
+	
 	for my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
 		next if (exists $disabledplugins{$menuItem});
 		next if (!exists $home{$menuItem} && !exists $pluginsRef->{$menuItem});

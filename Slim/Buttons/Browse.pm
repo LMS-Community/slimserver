@@ -24,39 +24,7 @@ sub init {
 
 	Slim::Buttons::Block::init();
 
-	my %browse = (
-		'BROWSE_MUSIC_FOLDER' => {
-
-			'useMode' => sub {
-				my $client = shift;
-				my @oldlines = Slim::Display::Display::curLines($client);
-				Slim::Buttons::Common::pushMode($client, 'browse');
-				Slim::Buttons::Browse::loadDir($client, '', 'right', \@oldlines);
-			}
-		},
-
-		'SAVED_PLAYLISTS' => {
-			'useMode' => sub {
-				my $client = shift;
-				my @oldlines = Slim::Display::Display::curLines($client);
-				Slim::Buttons::Common::pushMode($client, 'browse');
-				Slim::Buttons::Browse::loadDir($client, '__playlists', 'right', \@oldlines);
-			}
-		}
-	);
-	
-	for my $name (sort keys %browse) {
-		if ($name eq 'BROWSE_MUSIC_FOLDER' && !Slim::Utils::Prefs::get('audiodir')) {
-			next;
-		}
-		if ($name eq 'SAVED_PLAYLISTS' && 
-			!Slim::Utils::Prefs::get('playlistdir') && 
-			!Slim::Music::Import::countImporters() ) {
-			next;
-		}
-		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC',$name,$browse{$name});
-		Slim::Buttons::Home::addMenuOption($name,$browse{$name});
-	};
+	menuInit();
 
 	# Each button on the remote has a function:
 	%functions = (
@@ -251,6 +219,44 @@ sub init {
 	);
 
 	Slim::Buttons::Common::addMode('browse', Slim::Buttons::Browse::getFunctions(), \&Slim::Buttons::Browse::setMode);
+}
+
+sub menuInit {
+	my %browse = (
+		'BROWSE_MUSIC_FOLDER' => {
+
+			'useMode' => sub {
+				my $client = shift;
+				my @oldlines = Slim::Display::Display::curLines($client);
+				Slim::Buttons::Common::pushMode($client, 'browse');
+				Slim::Buttons::Browse::loadDir($client, '', 'right', \@oldlines);
+			}
+		},
+
+		'SAVED_PLAYLISTS' => {
+			'useMode' => sub {
+				my $client = shift;
+				my @oldlines = Slim::Display::Display::curLines($client);
+				Slim::Buttons::Common::pushMode($client, 'browse');
+				Slim::Buttons::Browse::loadDir($client, '__playlists', 'right', \@oldlines);
+			}
+		}
+	);
+	
+	for my $name (sort keys %browse) {
+		if ($name eq 'BROWSE_MUSIC_FOLDER' && !Slim::Utils::Prefs::get('audiodir')) {
+			Slim::Buttons::Home::delSubMenu('BROWSE_MUSIC',$name);
+			next;
+		}
+		if ($name eq 'SAVED_PLAYLISTS' && 
+			!Slim::Utils::Prefs::get('playlistdir') && 
+			!Slim::Music::Import::countImporters() ) {
+			Slim::Buttons::Home::delSubMenu('BROWSE_MUSIC',$name);
+			next;
+		}
+		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC',$name,$browse{$name});
+		Slim::Buttons::Home::addMenuOption($name,$browse{$name});
+	};
 }
 
 sub playDone {
