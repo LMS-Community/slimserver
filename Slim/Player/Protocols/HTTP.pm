@@ -13,9 +13,7 @@ use File::Spec::Functions qw(:ALL);
 use FileHandle;
 use IO::Socket qw(:DEFAULT :crlf);
 
-use vars qw(@ISA);
-
-@ISA = qw(IO::Socket::INET);
+use base qw(IO::Socket::INET);
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -28,6 +26,7 @@ BEGIN {
 }
 
 use Slim::Display::Display;
+use Slim::Music::Info;
 use Slim::Utils::Misc;
 
 sub new {
@@ -198,28 +197,39 @@ sub request {
 		$self->close();
 
 		$::d_remotestream && msg("Redirect to: $redir\n");
-		
-		my $oldtitle = Slim::Music::Info::title($infoUrl);
+
+		my $ds       = Slim::Music::Info::getCurrentDataStore();
+		my $oldTrack = $ds->objectForUrl($infoUrl);
+		my $oldTitle = $oldTrack->title();
 		
 		$self = $class->open($redir, $redir);
 		
 		# if we've opened the redirect, re-use the old title and new content type.
 		
 		if (defined($self)) {
-			if (defined($oldtitle)) { 
-				my $newtitle = Slim::Music::Info::title($redir);
-				if (Slim::Music::Info::plainTitle($redir) eq $newtitle) {
-					$::d_remotestream && msg("Saving old title: $oldtitle for $redir\n");
-					Slim::Music::Info::setTitle($redir, $oldtitle);
+
+			if (defined($oldTitle)) { 
+
+				my $newTrack = $ds->objectForUrl($redir);
+				my $newTitle = $newTrack->title();
+
+				if (Slim::Music::Info::plainTitle($redir) eq $newTitle) {
+
+					$::d_remotestream && msg("Saving old title: $oldTitle for $redir\n");
+
+					Slim::Music::Info::setTitle($redir, $oldTitle);
+
 				} elsif (Slim::Music::Info::plainTitle($infoUrl) eq Slim::Music::Info::title($infoUrl)) {
-					$::d_remotestream && msg("Saving using redirected title for original URL: $oldtitle for $redir\n");
-					Slim::Music::Info::setTitle($infoUrl, $newtitle);
+
+					$::d_remotestream && msg("Saving using redirected title for original URL: $oldTitle for $redir\n");
+					Slim::Music::Info::setTitle($infoUrl, $newTitle);
 				}
 			}
 
-			my $redirectedcontenttype = Slim::Music::Info::contentType($redir);
-			$::d_remotestream && msg("Content type ($redirectedcontenttype) of $infoUrl is being set to the content type of the redir: $redir\n");
-			Slim::Music::Info::setContentType($infoUrl,$redirectedcontenttype);
+			my $redirectedContentType = Slim::Music::Info::contentType($redir);
+
+			$::d_remotestream && msg("Content type ($redirectedContentType) of $infoUrl is being set to the content type of the redir: $redir\n");
+			Slim::Music::Info::setContentType($infoUrl,$redirectedContentType);
 		}
 		
 		return $self;
@@ -311,7 +321,11 @@ sub readMetaData {
 		if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
 
 			my $url      = ${*$self}{'infoUrl'};
-			my $oldtitle = Slim::Music::Info::title($url);
+
+			my $ds       = Slim::Music::Info::getCurrentDataStore();
+			my $track    = $ds->objectForUrl($url);
+
+			my $oldTitle = $track->title();
 			my $title    = $1;
 
 			if ($title && $] > 5.007) {
@@ -330,10 +344,13 @@ sub readMetaData {
 					/\U$1/xg;
 			}
 			
-			if (defined($title) && $title ne '' && $oldtitle ne $title) {
-				Slim::Music::Info::setTitle($url, $title);
+			if (defined($title) && $title ne '' && $oldTitle ne $title) {
+
+				Slim::Music::Info::setTitle($track, $title);
+
 				${*$self}{'title'} = $title;
-				foreach my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
+
+				for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
 					$everybuddy->update();
 				}
 			}

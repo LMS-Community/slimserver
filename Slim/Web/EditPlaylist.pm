@@ -6,6 +6,8 @@ package Slim::Web::EditPlaylist;
 # version 2.
 
 use strict;
+
+use Slim::Music::Info;
 use Slim::Utils::Misc;
 
 # -------------------------------------------------------------
@@ -17,15 +19,16 @@ sub editplaylist {
 	my ($client, $params) = @_;
 
 	my $dir = defined( $params->{'dir'}) ? $params->{'dir'} : "Radio Station.pls";
+	my $ds  = Slim::Music::Info::getCurrentDataStore();
 
-	my $fulldir = Slim::Utils::Misc::virtualToAbsolute( $dir);
+	my $fulldir = Slim::Utils::Misc::virtualToAbsolute($dir);
+	my $dirObj  = $ds->objectForUrl($fulldir);
 
 	my $filehandle = FileHandle->new(Slim::Utils::Misc::pathFromFileURL($fulldir), "r");
 
 	my $count = 0;
 	my $playlist;
 	my $changed = 1;
-	
 
 	$params->{'dir'} = $dir;
 
@@ -40,9 +43,10 @@ sub editplaylist {
 	if (defined($params->{'edit'})) {
 
 		my $value = $params->{'edit'};
+		my $track = $ds->objectForUrl($items[$value]);
 		
 		$params->{'form_url'}   = $items[$value];
-		$params->{'form_title'} = Slim::Music::Info::title($items[$value]);
+		$params->{'form_title'} = $track->title();
 
 	} elsif (defined($params->{'delete'})) {
 
@@ -63,7 +67,7 @@ sub editplaylist {
 		if (($title ne "") && ($newitem ne "")) {
 
 			Slim::Music::Info::setTitle( $newitem, $title);
-			foreach my $item (@items) {
+			for my $item (@items) {
 
 				if ($item eq $newitem) {
 					$found = 1;
@@ -113,9 +117,10 @@ sub editplaylist {
 	
 	my %list_form = %$params;
 
-	foreach my $item (@items) {
+	for my $item (@items) {
 
-		my $title = Slim::Music::Info::title( $item);
+		my $track = $ds->objectForUrl($item);
+		my $title = $ds->title();
 
 		$list_form{'num'}   = $count++;
 		$list_form{'odd'}   = $count % 2;
@@ -123,18 +128,19 @@ sub editplaylist {
 		$list_form{'title'} = $title;
 		$list_form{'itempath'} = $item;
 
-		$playlist .= ${Slim::Web::HTTP::filltemplatefile( "edit_playlist_list.html", \%list_form)};
+		$playlist .= ${Slim::Web::HTTP::filltemplatefile("edit_playlist_list.html", \%list_form)};
 
 		::idleStreams();
 	}
 
-	$params->{'playlist'} = $playlist;
-	$params->{'playlistname'} = Slim::Music::Info::title($fulldir);
+	$params->{'playlist'}     = $playlist;
+	$params->{'playlistname'} = $dirObj->title();
 
 	return Slim::Web::HTTP::filltemplatefile( "edit_playlist.html", $params);
 }
 
 1;
+
 __END__
 
 # Local Variables:

@@ -202,7 +202,7 @@ sub parseCUE {
 	my $currtrack;
 	my %tracks;
 
-	foreach (@$lines) {
+	for (@$lines) {
 
 		# strip whitespace from end
 		s/\s*$//; 
@@ -245,7 +245,7 @@ sub parseCUE {
 	# calc song ending times from start of next song from end to beginning.
 	my $lastpos = (defined $tracks{$currtrack}->{'END'}) ? $tracks{$currtrack}->{'END'} : $trackObj->secs();
 
-	foreach my $key (sort {$b <=> $a} keys %tracks) {
+	for my $key (sort {$b <=> $a} keys %tracks) {
 
 		my $track = $tracks{$key};
 
@@ -256,7 +256,7 @@ sub parseCUE {
 		$lastpos = $track->{'START'};
 	}
 
-	foreach my $key (sort {$a <=> $b} keys %tracks) {
+	for my $key (sort {$a <=> $b} keys %tracks) {
 
 		my $track = $tracks{$key};
 		if (!defined $track->{'START'} || !defined $filename ) { next; }
@@ -371,21 +371,26 @@ sub writePLS {
 	}
 
 	print $output "[playlist]\nPlaylistName=$playlistname\n";
-	my $itemnum = 0;
 
-	foreach my $item (@{$listref}) {
+	my $itemnum = 0;
+	my $ds      = Slim::Music::Info::getCurrentDataStore();
+
+	for my $item (@{$listref}) {
 
 		$itemnum++;
-		my $path = Slim::Music::Info::isFileURL($item) ? Slim::Utils::Misc::pathFromFileURL($item) : $item;
+
+		my $path  = Slim::Music::Info::isFileURL($item) ? Slim::Utils::Misc::pathFromFileURL($item) : $item;
+		my $track = $ds->objectForUrl($item);
+
 		print $output "File$itemnum=$path\n";
 
-		my $title = Slim::Music::Info::title($item);
+		my $title = $track->title();
 
 		if ($title) {
 			print $output "Title$itemnum=$title\n";
 		}
 
-		my $dur = Slim::Music::Info::duration($item) || -1;
+		my $dur = $track->duration() || -1;
 		print $output "Length$itemnum=$dur\n";
 	}
 
@@ -423,16 +428,20 @@ sub writeM3U {
 	print $output "#CURTRACK $resumetrack\n" if defined($resumetrack);
 	print $output "#EXTM3U\n" if $addTitles;
 
-	foreach my $item (@{$listref}) {
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
+	for my $item (@{$listref}) {
 
 		if ($addTitles && Slim::Music::Info::isURL($item)) {
 
-			my $title = Slim::Music::Info::title($item);
+			my $track = $ds->objectForUrl($item);
+			my $title = $track->title();
 
 			if ($title) {
 				print $output "#EXTINF:-1,$title\n";
 			}
 		}
+
 		my $path = Slim::Music::Info::isFileURL($item) ? Slim::Utils::Misc::pathFromFileURL($item) : $item;
 		print $output "$path\n";
 	}
@@ -462,7 +471,7 @@ sub readWPL {
 
 	if (exists($wpl_playlist->{body}->{seq}->{media})) {
 
-		foreach my $entry_info (@{$wpl_playlist->{body}->{seq}->{media}}) {
+		for my $entry_info (@{$wpl_playlist->{body}->{seq}->{media}}) {
 
 			my $entry=$entry_info->{src};
 
@@ -523,7 +532,7 @@ sub writeWPL {
 		};
 	}
 
-	foreach my $item (@{$listref}) {
+	for my $item (@{$listref}) {
 
 		if (Slim::Music::Info::isURL($item)) {
 			my $url=uri_unescape($item);
@@ -589,7 +598,7 @@ sub readASX {
 
 		if (defined($entries)) {
 
-			foreach my $entry (@$entries) {
+			for my $entry (@$entries) {
 				
 				my $title = $entry->{title} || $entry->{Title} || $entry->{TITLE};
 

@@ -157,16 +157,17 @@ sub artwork {
 
 sub artScan {
 	my @albums = keys %artwork;
-	my $album  = $albums[0];
+	my $album  = $albums[0] || return 0;
+
 	my $url    = $artwork{$album};
-
-	return 0 unless $album;
-
 	my $ds     = Slim::Music::Info::getCurrentDataStore();
 	my $track  = $ds->objectForUrl($url);
-	my $thumb  = $track->coverArt('thumb');
+	my $thumb;
 
-	if (defined $thumb && $thumb) {
+	if (defined $track && $track->thumb()) {
+
+		my $thumb = $track->thumb();
+
 		$::d_artwork && Slim::Utils::Misc::msg("Caching $thumb for $album\n");
 		Slim::Music::Info::updateArtworkCache($url, {'ALBUM' => $album, 'THUMB' => $thumb})
 	}
