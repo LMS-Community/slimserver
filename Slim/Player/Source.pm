@@ -576,12 +576,7 @@ sub openSong {
 				$client->mp3filehandleIsSocket(1);
 				$client->remoteStreamStartTime(time());
 
-				if( $^O =~ /Win32/ ) {
-					my $temp = 1;
-					ioctl($sock, 0x8004667e, \$temp);
-				} else {
-					defined($sock->blocking(0))  || die "Cannot set remote stream to nonblocking";
-				}
+				defined(Slim::Utils::Misc::blocking($sock,0)) || die "Cannot set remote stream nonblocking";
 
 			# if it's one of our playlists, parse it...
 			} elsif (Slim::Music::Info::isList($fullpath)) {
