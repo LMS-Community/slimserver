@@ -241,37 +241,43 @@ sub addToList_run {
 			# code to do the right thing.
 			elsif (!$jobState->recursive) { 
 
-				# If we're going to sort, we do so in the
-				# next iteration of the task, so don't pop.
-				if (!$jobState->sorted) {
+				my @list = ();
 
-					$jobState->numstack($jobState->numstack - 1);
-				}
-
-				my $ref;
-
-				if ($jobState->numstack) {
-				    $ref = $itemsToAddref;
-				}
-				else {
-				    $ref = $listref;
-				}
-
+				# Iterate through the list looking for
+				# items with known types.
 				for $item (@$contentsref) {
 					next if ($item =~ /^\s+$/);
 					$itempath = Slim::Utils::Misc::fixPath($item, $curdirState->path);
 					if (Slim::Music::Info::isList($itempath) ||
 					    Slim::Music::Info::isSong($itempath)) {
-						push @$ref, $itempath;
+						push @list, $itempath;
 						$jobState->numitems($jobState->numitems+1);
 					}
+				}
+
+				# If we're going to sort using
+				# metadata , we do so in the next
+				# iteration of the task, so don't pop.
+				# A filesort, though is cheap enough
+				# to do here.
+				if (!$jobState->sorted ||
+				    Slim::Utils::Prefs::get('filesort')) {
+
+					$jobState->numstack($jobState->numstack - 1);
+				}
+
+				if ($jobState->sorted &&
+				    Slim::Utils::Prefs::get('filesort')) {
+					@list = (Slim::Music::Info::sortFilename(@list));
 				}
 
 				$curdirState->index($numcontents);
 
 				if ($jobState->numstack) {
+					push @$itemsToAddref, @list;
 					return 1;
 				} else {
+					push @$listref, @list;
 					addToList_done($listref);
 					return 0;
 				}

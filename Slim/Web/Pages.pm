@@ -734,11 +734,10 @@ sub browser {
 	}
 
 	my $fixedpath = Slim::Utils::Misc::fixPath($fulldir);
-	my $sorted = !Slim::Music::Info::isPlaylist($fixedpath) && !Slim::Utils::Prefs::get('filesort');
 
 	# Scan the directories - don't recurse
 	Slim::Utils::Scan::addToList(
-		$items, $fulldir, 0, $sorted,  
+		$items, $fulldir, 0, undef,  
 		\&browser_addtolist_done, $current_player, $callback, 
 		$httpClient, $params, $items, $response
 	);
