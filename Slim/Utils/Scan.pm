@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.14 2004/09/10 03:07:40 vidur Exp $
+# $Id: Scan.pm,v 1.15 2004/09/22 19:00:52 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -404,13 +404,12 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			$::d_scan && msg("Treating directory like a playlist\n");
 			my @dircontents;
 			$numitems = 0;
-			@dircontents = Slim::Utils::Misc::readDirectory(Slim::Utils::Misc::pathFromFileURL($playlistpath));
+			my $playlistpathpath = Slim::Utils::Misc::pathFromFileURL($playlistpath);
+			@dircontents = Slim::Utils::Misc::readDirectory($playlistpathpath);
 
 			foreach my $dir ( @dircontents ) {
 
-				my $itempath = Slim::Utils::Misc::fileURLFromPath(catfile(Slim::Utils::Misc::pathFromFileURL($playlistpath), $dir));
-
-				$::d_scan && msg(" directory entry: $itempath\n");
+				$::d_scan && msg(" directory entry:" . Slim::Utils::Misc::fileURLFromPath(catfile($playlistpathpath, $dir)) . "\n");
 
 				push @$listref, $dir;
 				$numitems++;
@@ -418,7 +417,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			# add the loaded dir to the cache...
 			if ($numitems) {
 				my @cachelist = @$listref[ (0 - $numitems) .. -1];
-				Slim::Music::Info::cachePlaylist($playlistpath, \@cachelist, (stat(Slim::Utils::Misc::pathFromFileURL($playlistpath)))[9]);	
+				Slim::Music::Info::cachePlaylist($playlistpath, \@cachelist, (stat($playlistpathpath))[9]);	
 				$::d_scan && msg("adding $numitems to playlist cache: $playlistpath\n"); 
 			}
 		} else {

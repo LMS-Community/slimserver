@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.112 2004/09/22 02:51:29 kdf Exp $
+# $Id: Source.pm,v 1.113 2004/09/22 19:00:51 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -39,9 +39,15 @@ my $TRICKSEGMENTDURATION = 1.0;
 my $FADEVOLUME         = 0.3125;
 
 my %commandTable = ();
-my %protocolHandlers = ( 
+
+# the protocolHandlers hash contains the modules that handle specific URLs, indexed by the URL protocol.
+# built-in protocols are exist in the hash, but have a zero value
+%Slim::Player::Source::protocolHandlers = ( 
 	http => qw(Slim::Player::Protocols::HTTP),
 	icy => qw(Slim::Player::Protocols::HTTP),
+	itunesplaylist => '0',
+	moodlogicplaylist => '0',
+	file => '0'
 );
 
 sub systell {
@@ -1428,11 +1434,7 @@ sub registerProtocolHandler {
 	my $protocol = shift;
 	my $class = shift;
 	
-	$protocolHandlers{$protocol} = $class;
-}
-
-sub protocols {
-	return keys %protocolHandlers;
+	$Slim::Player::Source::protocolHandlers{$protocol} = $class;
 }
 
 sub openRemoteStream {
@@ -1444,7 +1446,7 @@ sub openRemoteStream {
 		my $proto = $1;
 
 		$::d_source && msg("Looking for handler for protocol $proto\n");
-		if (my $protoClass = $protocolHandlers{lc $proto}) {
+		if (my $protoClass = $Slim::Player::Source::protocolHandlers{lc $proto}) {
 			$::d_source && msg("Found handler for protocol $proto\n");
 			return $protoClass->new($url, $client);
 		}

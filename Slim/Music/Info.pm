@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.144 2004/09/22 02:51:28 kdf Exp $
+# $Id: Info.pm,v 1.145 2004/09/22 19:00:51 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -689,7 +689,7 @@ sub cacheItem {
 	my $url = shift;
 	my $item = shift;
 	my $cacheEntryArray;
-	
+
 	if (!defined($url)) {
 		Slim::Utils::Misc::msg("Null cache item!\n"); 
 		Slim::Utils::Misc::bt();
@@ -1863,15 +1863,15 @@ sub sortByTitlesAlg ($$) {
 #Sets up an array entry for performing complex sorts
 sub getInfoForSort {
 	my $item = shift;
-
+	my $list = isList($item);
 	return [
 		$item,
-		isList($item),
-		artistSort($item),
-		albumSort($item),
-		trackNumber($item),
+		$list,
+		$list ? undef : artistSort($item),
+		$list ? undef : albumSort($item),
+		$list ? undef : trackNumber($item),
 		titleSort($item),
-		disc($item)
+		$list ? undef : disc($item)
 	];
 }	
 
@@ -2683,19 +2683,11 @@ sub isHTTPURL {
 }
 
 sub isRemoteURL {
-	my $url = shift;
-	my @protocols = Slim::Player::Source::protocols();
-
-	return (defined($url) && scalar(grep { $url =~ /^$_:\/\//i } @protocols));
+	return ((shift =~ /^([a-zA-Z\-]+):/) && $Slim::Player::Source::protocolHandlers{$1});
 }
 
 sub isURL {
-	my $url = shift;
-	my @protocols = Slim::Player::Source::protocols();
-
-	push @protocols, ("itunesplaylist", "moodlogicplaylist", "file");
-
-	return (defined($url) && scalar(grep { $url =~ /^$_:(\/\/)?/i } @protocols));
+	return ((shift =~ /^([a-zA-Z\-]+):/) && exists($Slim::Player::Source::protocolHandlers{$1}));
 }
 
 sub isType {
