@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.121 2004/09/17 18:25:13 grotus Exp $
+# $Id: HTTP.pm,v 1.122 2004/09/21 22:53:53 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -651,7 +651,12 @@ sub generateHTTPResponse {
 	}
 
 	if ($contentType =~ /text/) {
+		$params->{'params'} = {};
 		filltemplatefile('include.html', $params);
+		while (my ($key,$value) = each %{$params->{'params'}}) {
+			$params->{$key} = $value;
+		}
+		delete $params->{'params'};
 	}
 
 	if (ref($pageFunctions{$path}) eq 'CODE') {
