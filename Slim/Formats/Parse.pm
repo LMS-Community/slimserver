@@ -27,6 +27,14 @@ our %playlistInfo = (
 	'wax' => [\&readASX, undef, '.wax'],
 );
 
+sub registerParser {
+	my ($type, $readfunc, $writefunc, $suffix) = @_;
+
+	$::d_parse && Slim::Utils::Misc::msg("Resistering external parser for type $type\n");
+
+	$playlistInfo{$type} = [$readfunc, $writefunc, $suffix];
+}
+
 sub parseList {
 	my $list = shift;
 	my $file = shift;
