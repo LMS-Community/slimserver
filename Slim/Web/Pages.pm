@@ -897,10 +897,11 @@ sub browser_addtolist_done {
 				$list_form{'title'}         = Slim::Music::Info::standardTitle(undef, $item);
 			}
 			
-			$list_form{'item'}		  = $obj->id();
-			$list_form{'itempath'}            = Slim::Utils::Misc::virtualToAbsolute($item);
-			$list_form{'odd'}	  	  = ($itemnumber + $offset) % 2;
-			$list_form{'player'}	          = $current_player;
+			$list_form{'item'}		= $obj->id();
+			$list_form{'itempath'}	= Slim::Utils::Misc::virtualToAbsolute($item);
+			$list_form{'itemobj'}	= $obj;
+			$list_form{'odd'}		= ($itemnumber + $offset) % 2;
+			$list_form{'player'}	= $current_player;
 
 			my $anchor = anchor(Slim::Utils::Text::getSortName($list_form{'title'}),1);
 
@@ -1268,6 +1269,7 @@ sub buildPlaylist {
 
 		$list_form{'itempath'} = $song;
 		$list_form{'item'}     = $track->id();
+		$list_form{'track'}    = $track;
 
 		$list_form{'artists'}  = $listBuild->{'includeArtist'} ? $track->contributors() : undef;
 		$list_form{'album'}    = $listBuild->{'includeAlbum'}  ? $track->album() : undef;
@@ -1488,6 +1490,7 @@ sub advancedSearch {
 
 	# Do the actual search
 	my $results = $ds->find('track', \%query, 'title');
+	$client->param('searchResults',$results) if defined $client;
 
 	_fillInSearchResults($params, $results, undef, \@qstring, $ds);
 
@@ -1608,32 +1611,31 @@ sub _fillInSearchResults {
 			my $title     = $item->can('title') ? $item->title() : $item->name();
 			my %list_form = %$params;
 
-			$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
-			$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
+			$list_form{'includeArtist'}	= ($webFormat !~ /ARTIST/);
+			$list_form{'includeAlbum'}	= ($webFormat !~ /ALBUM/) ;
 
 			if ($type eq 'song') {
 
-				$list_form{'title'}	= Slim::Music::Info::standardTitle(undef, $item);
+				$list_form{'title'}		= Slim::Music::Info::standardTitle(undef, $item);
 				$list_form{'artist'}	= $item->artist();
-				$list_form{'album'}	= $item->album();
-				$list_form{'item'}	= $item->id();
+				$list_form{'album'}		= $item->album();
+				$list_form{'item'}		= $item->id();
 				$list_form{'itempath'}	= $item->url();
 
 			} else {
 
-				$list_form{'title'} = $item->can('title') ? $item->title() : $item->name();
+				$list_form{'title'}		= $title;
 			}
 
-			$list_form{'attributes'}   = '&' . join('=', $type, $item->id());
-			$list_form{'hierarchy'}    = $hierarchy{$type};
-			$list_form{'level'}        = 0;
-			$list_form{'text'}         = $title;
-			$list_form{'descend'}      = $descend;
-
-			$list_form{'descend'}      = $descend;
-			$list_form{'player'}       = $player;
-			$list_form{'odd'}	   = ($itemnumber + 1) % 2;
-			$list_form{'skinOverride'} = $params->{'skinOverride'};
+			$list_form{'itemobj'}		= $item;
+			$list_form{'attributes'}	= '&' . join('=', $type, $item->id());
+			$list_form{'hierarchy'}		= $hierarchy{$type};
+			$list_form{'level'}			= 0;
+			$list_form{'text'}			= $title;
+			$list_form{'descend'}		= $descend;
+			$list_form{'player'}		= $player;
+			$list_form{'odd'}			= ($itemnumber + 1) % 2;
+			$list_form{'skinOverride'}	= $params->{'skinOverride'};
 
 			$itemnumber++;
 
@@ -1990,13 +1992,14 @@ sub browsedb {
 				$attrName . '=' . Slim::Web::HTTP::escape($itemid);
 
 			$list_form{'levelName'}	    = $attrName;
-			$list_form{'text'}	    = $itemname;
+			$list_form{'text'}	    	= $itemname;
 			$list_form{'descend'}	    = $descend;
 			$list_form{'player'}	    = $player;
-			$list_form{'odd'}	    = ($itemnumber + 1) % 2;
+			$list_form{'odd'}	    	= ($itemnumber + 1) % 2;
 			$list_form{$levels[$level]} = $itemid;
 			$list_form{'skinOverride'}  = $params->{'skinOverride'};
 			$list_form{'itemnumber'}    = $itemnumber;
+			$list_form{'itemobj'}		= $item;
 
 			# This is calling into the %fieldInfo hash
 			&{$levelInfo->{'listItem'}}($ds, \%list_form, $item, $itemname, $descend);
