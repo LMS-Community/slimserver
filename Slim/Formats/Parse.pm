@@ -433,7 +433,7 @@ sub writePLS {
 	my $filename = shift;
 
 	my $string = '';
-	my $output = _filehandleFromNameOrString($filename, $string);
+	my $output = _filehandleFromNameOrString($filename, $string) || return;
 
 	print $output "[playlist]\nPlaylistName=$playlistname\n";
 
@@ -471,7 +471,7 @@ sub writeM3U {
 	my $resumetrack = shift;
 
 	my $string = '';
-	my $output = _filehandleFromNameOrString($filename, $string);
+	my $output = _filehandleFromNameOrString($filename, $string) || return;
 
 	print $output "#CURTRACK $resumetrack\n" if defined($resumetrack);
 	print $output "#EXTM3U\n" if $addTitles;
@@ -595,7 +595,7 @@ sub writeWPL {
 
 	my $string;
 
-	my $output = _filehandleFromNameOrString($filename, $string);
+	my $output = _filehandleFromNameOrString($filename, $string) || return;
 	print $output $wplfile;
 	close $output;
 
@@ -716,7 +716,7 @@ sub _filehandleFromNameOrString {
 
 		$output = FileHandle->new($filename, "w") || do {
 			Slim::Utils::Misc::msg("Could not open $filename for writing.\n");
-			return;
+			return undef;
 		};
 
 		if ($] > 5.007) {
