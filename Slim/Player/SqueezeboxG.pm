@@ -609,7 +609,7 @@ sub scrollUpdate {
 
 	# implement drawFrameBuf in here to avoid string copies
 	my $framebuf = $client->render($parts, $parts->{scrollHeader} );
-	if ($client->tcpsock && $client->tcpsock->connected && length($$framebuf) == $parts->{scrollFrameSize}) {
+	if (length($$framebuf) == $parts->{scrollFrameSize}) {
 		Slim::Networking::Select::writeNoBlock($client->tcpsock, $framebuf);
 	}
 

@@ -349,7 +349,7 @@ sub upgradeFirmware {
 
 	if (!$to_version) {
 		$to_version = $client->revision;
-		msg ("upgrading to same rev: $to_version\n");
+		$::d_firmware && msg ("upgrading to same rev: $to_version\n");
 	}
 
 	my $filename = catdir($Bin, "Firmware", $client->model . "_$to_version.bin");

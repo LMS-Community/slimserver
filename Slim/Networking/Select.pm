@@ -144,6 +144,8 @@ sub writeNoBlock {
 
 	assert($socket);
 	
+	return unless ($socket->opened());
+	
 	if (defined $chunkRef) {	
 		push @{$writeQueue{"$socket"}}, {
 			'data'   => $chunkRef,
