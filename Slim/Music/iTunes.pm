@@ -328,7 +328,7 @@ sub artScan {
 	my $album = $albums[0];
 	my $thumb = Slim::Music::Info::haveThumbArt($artwork{$album});
 
-	if (defined $thumb) {
+	if (defined $thumb && $thumb) {
 		$::d_itunes && Slim::Utils::Misc::msg("Caching thumbnail for $album\n");
 		Slim::Music::Info::updateArtworkCache($artwork{$album}, {'ALBUM' => $album, 'THUMB' => $thumb})
 	}
