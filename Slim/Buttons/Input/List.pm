@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::List;
 
-# $Id: List.pm,v 1.4 2003/11/25 04:14:15 grotus Exp $
+# $Id: List.pm,v 1.5 2003/11/25 07:02:35 grotus Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -11,6 +11,7 @@ use strict;
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 use Slim::Hardware::VFD;
+use Slim::Utils::Strings qw (string);
 
 ###########################
 #Button mode specific junk#
@@ -101,7 +102,15 @@ sub lines {
 	my $listRef = Slim::Buttons::Common::param($client,'listRef');
 	if (!defined($listRef)) { return ('','');}
 	$line1 = getExtVal($client,$listRef->[$listIndex],$listIndex,'header');
+	if (Slim::Buttons::Common::param($client,'stringHeader') 
+			&& Slim::Utils::Strings::stringExists($line1)) {
+		$line1 = string($line1);
+	}
 	$line2 = getExtVal($client,$listRef->[$listIndex],$listIndex,'externRef');
+	if (Slim::Buttons::Common::param($client,'stringExternRef')
+			&& Slim::Utils::Strings::stringExists($line2)) {
+		$line2 = string($line2);
+	}
 	my @overlay = getExtVal($client,$listRef->[$listIndex],$listIndex,'overlayRef');
 	return ($line1,$line2,@overlay);
 }
@@ -151,12 +160,15 @@ sub setMode {
 # header = 'Select item:' # message displayed on top line, can be a scalar, a code ref
 	# , or an array ref to a list of scalars or code refs
 # headerArgs = CV
+# stringHeader = undef # if true, put the value of header through the string function
+	# before displaying it.
 # valueRef =  # reference to value to be selected
 # callback = undef # function to call to exit mode
 # listIndex = 0 or position of valueRef in listRef
 # noWrap = undef # whether or not the list wraps at the ends
 # externRef = undef
 # externRefArgs = CV
+# stringExternRef = undef # same as with stringHeader, but for the value of externRef
 # overlayRef = undef
 # overlayRefArgs = CV
 # onChange = undef
@@ -169,7 +181,9 @@ sub setMode {
 sub init {
 	my $client = shift;
 	if (!defined(Slim::Buttons::Common::param($client,'parentMode'))) {
-		Slim::Buttons::Common::param($client,'parentMode',$client->modeStack->[-2]);
+		my $i = -2;
+		while ($client->modeStack->[$i] =~ /^INPUT./) { $i--; }
+		Slim::Buttons::Common::param($client,'parentMode',$client->modeStack->[$i]);
 	}
 	if (!defined(Slim::Buttons::Common::param($client,'header'))) {
 		Slim::Buttons::Common::param($client,'header','Select item:');

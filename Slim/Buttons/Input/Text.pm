@@ -1,4 +1,4 @@
-# $Id: Text.pm,v 1.9 2003/11/19 07:04:23 grotus Exp $
+# $Id: Text.pm,v 1.10 2003/11/25 07:02:35 grotus Exp $
 package Slim::Buttons::Input::Text;
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
@@ -300,6 +300,8 @@ my @BothChars = (
 sub init {
 	my $client = shift;
 	if (!defined(Slim::Buttons::Common::param($client,'parentMode'))) {
+		my $i = -2;
+		while ($client->modeStack->[$i] =~ /^INPUT./) { $i--; }
 		Slim::Buttons::Common::param($client,'parentMode',$client->modeStack->[-2]);
 	}
 	if (!defined(Slim::Buttons::Common::param($client,'header'))) {
