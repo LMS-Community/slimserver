@@ -1,6 +1,6 @@
 package Slim::Formats::Movie;
 
-# $Id: Movie.pm,v 1.12 2004/05/18 16:06:48 dean Exp $
+# $Id: Movie.pm,v 1.13 2004/06/07 23:11:59 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ my %binaryTags = (
 	'trkn'	=> 'TRACKNUM',
 	'disk'	=> 'DISC',
 	'cpil'	=> 'COMPILATION',
-	'covr'	=> 'COVER'
+	'covr'	=> 'PIC'
 );
 
 # Given a file, return a hash of name value pairs,

@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.128 2004/06/07 19:40:36 dean Exp $
+# $Id: Info.pm,v 1.129 2004/06/07 23:11:59 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2359,7 +2359,9 @@ sub readCoverArt {
 sub readCoverArtTags {
 	use bytes;
 	my $fullpath = shift;
-	my $image = shift || 'cover';
+	
+#   this parameter isn't used...
+#	my $image = shift || 'cover';
 
 	if (! Slim::Utils::Prefs::get('lookForArtwork')) { return undef};
 
