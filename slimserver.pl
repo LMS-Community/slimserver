@@ -80,7 +80,14 @@ use FileHandle;
 use POSIX qw(:signal_h :errno_h :sys_wait_h setsid);
 use Socket qw(:DEFAULT :crlf);
 
-use lib (@INC, $Bin, catdir($Bin,'CPAN'), catdir($Bin,'CPAN','arch',$Config::Config{archname}));
+use lib (
+	$Bin, 
+	catdir($Bin,'CPAN'), 
+	catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{archname}), 
+	catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{archname}), 
+	catdir($Bin,'CPAN','arch',$Config::Config{archname}), 
+	@INC);
+
 use Time::HiRes;
 
 use Slim::Utils::Misc;
@@ -250,8 +257,6 @@ sub init {
 		unshift @INC, $ENV{'HOME'} . "/Library/SlimDevices";
 		unshift @INC, "/Library/SlimDevices/";
 	}
-
-	unshift @INC, catdir($Bin,'CPAN','arch',$Config::Config{archname});
 
 	$::d_server && msg("SlimServer settings init...\n");
 	initSettings();

@@ -329,6 +329,7 @@ sub doneScanning {
 sub artScan {
 	my @albums = keys %artwork;
 	my $album = $albums[0];
+	return unless $album;
 	my $thumb = Slim::Music::Info::haveThumbArt($artwork{$album});
 
 	if (defined $thumb && $thumb) {
