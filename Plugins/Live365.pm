@@ -541,6 +541,7 @@ use strict;
 use Slim::Utils::Misc qw( msg );
 use Slim::Utils::Timers;
 use Slim::Player::Playlist;
+use Slim::Player::Source;
 use base qw( Slim::Player::Protocols::HTTP );
 use IO::Socket;
 use XML::Simple;
@@ -592,6 +593,11 @@ sub new {
 
 sub getPlaylist {
 	my ( $client, $self, $handle, $url, $isVIP ) = @_;
+
+	my $currentSong = Slim::Player::Playlist::playList($client)->[0];
+	my $currentMode = Slim::Player::Source::playmode($client);
+	 
+	return undef if ($currentSong !~ /^live365:/ || $currentMode ne 'play');
 
 	# store the original title as a fallback, once.
 	#${*$self}{live365_original_title} ||= Slim::Music::Info::title();
