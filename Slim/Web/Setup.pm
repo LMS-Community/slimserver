@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.57 2004/04/17 14:57:40 dean Exp $
+# $Id: Setup.pm,v 1.58 2004/04/19 18:39:10 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -688,12 +688,13 @@ sub initSetupConfig {
 					$i++;
 				}
 				$pageref->{'Prefs'}{'pluginlist'}{'arrayMax'} = $i - 1;
+                Slim::Utils::Prefs::delete('disabledplugins');
+                Slim::Buttons::Plugins::addSetupGroups();
 			}
 		,'postChange' => sub {
 				my ($client,$paramref,$pageref) = @_;
 				my $i = 0;
 				my %plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
-				Slim::Utils::Prefs::delete('disabledplugins');
 				my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
 				foreach my $plugin (sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}}(keys %{$pluginlistref})) {
 					if (!exists $paramref->{"pluginlist$i"}) {
@@ -707,7 +708,6 @@ sub initSetupConfig {
 				foreach my $group (Slim::Utils::Prefs::getArray('disabledplugins')) {
 					delGroup('plugins',$group,1);
 				}
-				Slim::Buttons::Plugins::addSetupGroups();
 			}
 		,'GroupOrder' => ['Default']
 		# if more than one ir map exists the undef will be replaced by 'Default'
