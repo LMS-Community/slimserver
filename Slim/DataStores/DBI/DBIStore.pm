@@ -1101,8 +1101,15 @@ sub _hasChanged {
 		return 0 if  $fsdef && $fscheck && $agedef && $agecheck;
 		return 0 if  $fsdef && $fscheck && !$agedef;
 		return 0 if !$fsdef && $agedef  && $agecheck;
+
+		$::d_info && Slim::Utils::Misc::msg("re-reading tags from $url as it has changed\n");
+		my $attributeHash = $self->readTags($url);
+		$self->updateOrCreate({
+			 'url' => $track,
+			 'attributes' => $attributeHash
+		});
 		
-		$::d_info && Slim::Utils::Misc::msg("deleting $url from cache as it has changed\n");
+		return 0;
 
 	} else {
 		$::d_info && Slim::Utils::Misc::msg("deleting $url from cache as it no longer exists\n");
