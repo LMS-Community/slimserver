@@ -1,6 +1,6 @@
 DELETE FROM metainformation;
 
-INSERT INTO metainformation VALUES (3, 0, 0);
+INSERT INTO metainformation VALUES (4, 0, 0);
 
 DELETE FROM tracks;
 
