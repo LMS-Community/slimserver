@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.34 2004/04/28 13:10:54 kdf Exp $
+# $Id: Misc.pm,v 1.35 2004/04/28 22:13:24 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -18,6 +18,7 @@ use Net::hostent;              # for OO version of gethostbyaddr
 use Sys::Hostname;
 use Socket;
 use Symbol qw(qualify_to_ref);
+use URI::file;
 
 if ($] > 5.007) {
 	require Encode;
@@ -95,6 +96,7 @@ sub findbin {
 
 sub pathFromWinShortcut {
 	my $fullpath = shift;
+	$fullpath = pathFromFileURL($fullpath);
 	my $path = "";
 	if (Slim::Utils::OSDetect::OS() eq "win") {
 		require Win32::Shortcut;
@@ -157,13 +159,8 @@ sub pathFromFileURL {
 
 sub fileURLFromPath {
 	my $path = shift;
-	if (Slim::Utils::OSDetect::OS() eq "win") {
-		$path=~ s/\\/\//;
-	}
-	$path=Slim::Web::HTTP::escape($path);
-	$path=~ s/\%2F/\//g; 	# Allow forward slashes
-	$path=~ s/\%3A/:/g; 	# Allow colons (for Win32)
-	return "file://".$path;
+	my $uri = URI::file->new($path);
+	return $uri->as_string;
 }
 
 sub anchorFromURL {
@@ -242,14 +239,17 @@ sub fixPath {
 			   
 	if (!defined($file) || $file eq "") { return; }   
 	
-	if (Slim::Music::Info::isFileURL($file)) { $file=Slim::Utils::Misc::pathFromFileURL($file); } 
+	if (Slim::Music::Info::isFileURL($file)) { 
+		return $file;
+	} 
+
 	if (Slim::Music::Info::isFileURL($base)) { $base=Slim::Utils::Misc::pathFromFileURL($base); } 
 		 
 	# the only kind of absolute file we like is one in 
 	# the music directory or the playlist directory...
 	my $audiodir = Slim::Utils::Prefs::get("audiodir");
 	my $savedplaylistdir = Slim::Utils::Prefs::get("playlistdir");
-	
+
 	if ($audiodir && $file =~ /^\Q$audiodir\E/) {
 			$fixed = $file;
 	} elsif ($savedplaylistdir && $file =~ /^\Q$savedplaylistdir\E/) {
