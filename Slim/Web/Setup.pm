@@ -1194,8 +1194,7 @@ sub initSetupConfig {
 
 				foreach my $plugin (sort {string($pluginlistref->{$a}) cmp string($pluginlistref->{$b})}(keys %{$pluginlistref})) {	
 					
-					if ((exists $paramref->{"pluginlist$i"} && $paramref->{"pluginlist$i"} == (exists $plugins{$plugin} ? 0 : 1))
-					) {
+					if ((exists $paramref->{"pluginlist$i"} && $paramref->{"pluginlist$i"} == (exists $plugins{$plugin} ? 0 : 1))) {
 						delete $paramref->{"pluginlist$i"};
 					}
 

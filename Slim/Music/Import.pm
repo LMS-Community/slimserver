@@ -64,11 +64,13 @@ sub addImporter {
 	my $scanFuncRef = shift;
 	my $mixerFuncRef = shift;
 	my $setupFuncRef = shift;
+	my $mixerLinkRef = shift;
 
 	$Importers{$import} = {
 		'mixer' => $mixerFuncRef,
 		'scan'  => $scanFuncRef,
 		'setup' => $setupFuncRef,
+		'mixerlink' => $mixerLinkRef,
 	};
 
 	$::d_info && msgf("Adding %s Scan\n", string($import));

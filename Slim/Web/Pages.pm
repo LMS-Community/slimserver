@@ -88,19 +88,12 @@ sub init {
 				$form->{'item'}	               = $item->id;
 				$form->{'itempath'}	       = $item->url;
 
-				if ($item->moodlogic_mixable()) {
-					# set up a moodlogic link
-					addLinks("mixer", {'MOODLOGIC' => "plugins/MoodLogic/mixerlink.html"},1);
-					$form->{'mixable_not_descend'} = 1;
-				} else {
-					addLinks("mixer", {'MOODLOGIC' => undef});
-				}
-				if ($item->musicmagic_mixable() && Plugins::MusicMagic::Plugin::canUseMusicMagic()) {
-					#set up a musicmagic link
-					addLinks("mixer", {'MUSICMAGIC' => "plugins/MusicMagic/mixerlink.html"},1);
-					$form->{'mmmixable_not_descend'} = 1;
-				} else {
-					addLinks("mixer", {'MUSICMAGIC' => undef});
+				my $Imports = Slim::Music::Import::importers();
+				for my $mixer (keys %{$Imports}) {
+				
+					if (defined $Imports->{$mixer}->{'mixerlink'}) {
+						&{$Imports->{$mixer}->{'mixerlink'}}($item,$form,0);
+					}
 				}
 				$form->{'mixerlinks'} = $additionalLinks{'mixer'};
 
@@ -155,19 +148,12 @@ sub init {
 				my $itemname = shift;
 				my $descend = shift;
 
-				if ($item->moodlogic_mixable() && ($descend eq "true")) {
-					# set up a moodlogic link
-					addLinks("mixer", {'MOODLOGIC' => "plugins/MoodLogic/mixerlink.html"},1);
-					$form->{'mixable_descend'} = 1;
-				} else {
-					addLinks("mixer", {'MOODLOGIC' => undef});
-				}
-				if ($item->musicmagic_mixable() && Plugins::MusicMagic::Plugin::canUseMusicMagic() && ($descend eq "true")) {
-					#set up a musicmagic link
-					addLinks("mixer", {'MUSICMAGIC' => "plugins/MusicMagic/mixerlink.html"},1);
-					$form->{'mmmixable_descend'} = 1;
-				} else {
-					addLinks("mixer", {'MUSICMAGIC' => undef});
+				my $Imports = Slim::Music::Import::importers();
+				for my $mixer (keys %{$Imports}) {
+				
+					if (defined $Imports->{$mixer}->{'mixerlink'}) {
+						&{$Imports->{$mixer}->{'mixerlink'}}($item,$form,$descend);
+					}
 				}
 				$form->{'mixerlinks'} = $additionalLinks{'mixer'};
 			},
@@ -227,12 +213,12 @@ sub init {
 					}
 				}
 				
-				if ($item->musicmagic_mixable() && Plugins::MusicMagic::Plugin::canUseMusicMagic() && ($descend eq "true")) {
-					#set up a musicmagic link
-					addLinks("mixer", {'MUSICMAGIC' => "plugins/MusicMagic/mixerlink.html"},1);
-					$form->{'mmmixable_descend'} = 1;
-				} else {
-					addLinks("mixer", {'MUSICMAGIC' => undef});
+				my $Imports = Slim::Music::Import::importers();
+				for my $mixer (keys %{$Imports}) {
+				
+					if (defined $Imports->{$mixer}->{'mixerlink'}) {
+						&{$Imports->{$mixer}->{'mixerlink'}}($item,$form,$descend);
+					}
 				}
 				$form->{'mixerlinks'} = $additionalLinks{'mixer'};
 			},
@@ -353,19 +339,12 @@ sub init {
 				my $itemname = shift;
 				my $descend = shift;
 
-				if ($item->moodlogic_mixable() && ($descend eq "true")) {
-					# set up a moodlogic link
-					addLinks("mixer", {'MOODLOGIC' => "plugins/MoodLogic/mixerlink.html"},1);
-					$form->{'mixable_descend'} = 1;
-				} else {
-					addLinks("mixer", {'MOODLOGIC' => undef});
-				}
-				if ($item->musicmagic_mixable() && Plugins::MusicMagic::Plugin::canUseMusicMagic() && ($descend eq "true")) {
-					#set up a musicmagic link
-					addLinks("mixer", {'MUSICMAGIC' => "plugins/MusicMagic/mixerlink.html"},1);
-					$form->{'mmmixable_descend'} = 1;
-				} else {
-					addLinks("mixer", {'MUSICMAGIC' => undef});
+				my $Imports = Slim::Music::Import::importers();
+				for my $mixer (keys %{$Imports}) {
+				
+					if (defined $Imports->{$mixer}->{'mixerlink'}) {
+						&{$Imports->{$mixer}->{'mixerlink'}}($item, $form, $descend);
+					}
 				}
 				$form->{'mixerlinks'} = $additionalLinks{'mixer'};
 			},

@@ -163,7 +163,7 @@ sub initPlugin {
 
 	#Slim::Utils::Strings::addStrings($strings);
 	Slim::Player::Source::registerProtocolHandler("moodlogicplaylist", "0");
-	Slim::Music::Import::addImporter('MOODLOGIC',\&startScan,\&mixerFunction,'MOODLOGIC_INSTANT_)MIX',\&addGroups);
+	Slim::Music::Import::addImporter('MOODLOGIC', \&startScan, \&mixerFunction, \&addGroups, \&mixerlink);
 	Slim::Music::Import::useImporter('MOODLOGIC',Slim::Utils::Prefs::get('moodlogic'));
 	addGroups();
 
@@ -528,6 +528,27 @@ sub mixerFunction {
 	} else {
 			$client->bumpRight();
 	}
+}
+
+sub mixerlink {
+	my $item = shift;
+	my $form = shift;
+	my $descend = shift;
+	
+	if ($descend) {
+		$form->{'mixable_descend'} = 1;
+	} else {
+		$form->{'mixable_not_descend'} = 1;
+	}
+	
+	if ($item->moodlogic_mixable() && canUseMoodLogic() && Slim::Utils::Prefs::get('moodlogic')) {
+		#set up a musicmagic link
+		Slim::Web::Pages::addLinks("mixer", {'MOODLOGIC' => "plugins/MoodLogic/mixerlink.html"},1);
+	} else {
+		Slim::Web::Pages::addLinks("mixer", {'MOODLOGIC' => undef});
+	}
+	
+	return $form;
 }
 
 sub getMix {

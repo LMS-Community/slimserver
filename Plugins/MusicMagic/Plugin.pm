@@ -127,7 +127,7 @@ sub initPlugin {
 
 		checker();
 
-		Slim::Music::Import::addImporter('MUSICMAGIC', \&startScan, \&mixerFunction, \&addGroups);
+		Slim::Music::Import::addImporter('MUSICMAGIC', \&startScan, \&mixerFunction, \&addGroups, \&mixerlink);
 		Slim::Music::Import::useImporter('MUSICMAGIC', Slim::Utils::Prefs::get('musicmagic'));
 
 		Slim::Player::Source::registerProtocolHandler("musicmagicplaylist", "0");
@@ -710,6 +710,27 @@ sub mixerFunction {
 		# don't do anything if nothing is mixable
 		$client->bumpRight();
 	}
+}
+
+sub mixerlink {
+	my $item = shift;
+	my $form = shift;
+	my $descend = shift;
+	
+	if ($descend) {
+		$form->{'mmmixable_descend'} = 1;
+	} else {
+		$form->{'mmmixable_not_descend'} = 1;
+	}
+	
+	if ($item->musicmagic_mixable() && canUseMusicMagic() && Slim::Utils::Prefs::get('musicmagic')) {
+		#set up a musicmagic link
+		Slim::Web::Pages::addLinks("mixer", {'MUSICMAGIC' => "plugins/MusicMagic/mixerlink.html"},1);
+	} else {
+		Slim::Web::Pages::addLinks("mixer", {'MUSICMAGIC' => undef});
+	}
+	
+	return $form;
 }
 
 sub mixExitHandler {
