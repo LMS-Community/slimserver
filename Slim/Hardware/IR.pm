@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.8 2003/08/10 20:27:45 sadams Exp $
+# $Id: IR.pm,v 1.9 2003/09/04 05:12:25 grotus Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -333,7 +333,7 @@ sub processIR {
 	$client->lastirtime($irTime);
 
 	if ($::d_ir) {
-		msg("$irCodeBytes\t$irTime\t",Time::HiRes::time(),"\n");
+		msg("$irCodeBytes\t$irTime\t".Time::HiRes::time()."\n");
 	}
 	if ($irCodeBytes eq "00000000") {
 		$::d_ir && msg("Ignoring spurious null repeat code.\n");
