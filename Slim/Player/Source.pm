@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.81 2004/04/24 18:13:25 daniel Exp $
+# $Id: Source.pm,v 1.82 2004/04/24 18:27:12 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1139,13 +1139,14 @@ sub tokenizeConvertCommand {
 		}
 	}
 
+	$command =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
+
 	$command =~ s/\$FILE\$/"$filepath"/g;
 	$command =~ s/\$URL\$/"$fullpath"/g;
 	$command =~ s/\$RATE\$/$samplerate/g;
 	$command =~ s/\$BITRATE\$/$maxRate/g;
 	$command =~ s/\$-x\$/$swap/g;
 
-	$command =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 	$command =~ s/\$([^\$]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
 	$command .= (Slim::Utils::OSDetect::OS() eq 'win') ? '' : ' &';
