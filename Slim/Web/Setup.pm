@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.101 2004/09/12 04:40:47 dean Exp $
+# $Id: Setup.pm,v 1.102 2004/09/13 15:26:28 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -138,6 +138,9 @@ sub initSetupConfig {
 				}
 		,'postChange' => sub {
 					my ($client,$paramref,$pageref) = @_;
+					
+					return if (!defined($client));
+					
 					if ($paramref->{'playername'}) {
 						$pageref->{'title'} = string('PLAYER_SETTINGS') . ' ' . string('FOR') . ' ' . $paramref->{'playername'};
 					}
@@ -264,6 +267,7 @@ sub initSetupConfig {
 		,'GroupOrder' => [undef,undef,undef,'ScrollPause','ScrollRate']
 		,'preEval' => sub {
 					my ($client,$paramref,$pageref) = @_;
+					return if (!defined($client));
 					playerChildren($client, $pageref);
 
 					if ($client->isPlayer()) {
@@ -424,6 +428,7 @@ sub initSetupConfig {
 							,'currentValue' => sub { shift->textSize();}
 							,'onChange' => sub { 
 												my ($client,$changeref,$paramref,$pageref) = @_;
+												return if (!defined($client));
 												$client->textSize($changeref->{'textsize'}{'new'});
 									}
 						}
@@ -524,6 +529,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['MenuItems','NonMenuItems','Plugins']
 		,'preEval' => sub {
 					my ($client,$paramref,$pageref) = @_;
+					return if (!defined($client));
 					playerChildren($client, $pageref);
 					$pageref->{'Prefs'}{'menuItemAction'}{'arrayMax'} = Slim::Utils::Prefs::getArrayMax('menuItem');
 					my $i = 0;
@@ -544,6 +550,7 @@ sub initSetupConfig {
 		,'postChange' => sub {
 					my ($client,$paramref,$pageref) = @_;
 					my $i = 0;
+					return if (!defined($client));
 					#refresh paramref for menuItem array
 					foreach my $menuitem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
 						$paramref->{'menuItem' . $i++} = $menuitem;
@@ -679,6 +686,7 @@ sub initSetupConfig {
 						,'noWarning' => 1
 						,'onChange' => sub {
 									my ($client,$changeref,$paramref,$pageref) = @_;
+									return if (!defined($client));
 									#Handle all changed items whenever the first one is encountered
 									#then set 'Processed' so that the changes aren't repeated
 									if (exists($changeref->{'menuItemAction'}{'Processed'})) {
@@ -711,6 +719,7 @@ sub initSetupConfig {
 						,'noWarning' => 1
 						,'onChange' => sub {
 									my ($client,$changeref,$paramref,$pageref) = @_;
+									return if (!defined($client));
 									#Handle all changed items whenever the first one is encountered
 									#then set 'Processed' so that the changes aren't repeated
 									if (exists($changeref->{'menuItemAction'}{'Processed'})) {
@@ -736,7 +745,8 @@ sub initSetupConfig {
 		,'isClient' => 1
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
-					playerChildren($client, $pageref);
+				return if (!defined($client));
+				playerChildren($client, $pageref);
 				my $playlistRef = playlists();
 				$pageref->{'Prefs'}{'alarmplaylist'}{'options'} = $playlistRef;
 				$pageref->{'Prefs'}{'alarmplaylist'}{'validateArgs'} = [$playlistRef];
@@ -768,6 +778,7 @@ sub initSetupConfig {
 				,'rejectIntro' => string('ALARM_SET')
 				,'currentValue' => sub {
 						my $client = shift;
+						return if (!defined($client));
 						my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
 						my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Common::timeDigits($client,$time);
 						my $timestring = ((defined($p) && $h0 == 0) ? ' ' : $h0) . $h1 . ":" . $m0 . $m1 . " " . (defined($p) ? $p : '');
@@ -775,6 +786,7 @@ sub initSetupConfig {
 					}
 				,'onChange' => sub {
 						my ($client,$changeref,$paramref,$pageref) = @_;
+						return if (!defined($client));
 						my $time = $changeref->{'alarmtime'}{'new'};
 						my $newtime = 0;
 						$time =~ s{
@@ -818,6 +830,7 @@ sub initSetupConfig {
 		,'isClient' => 1
 		,'preEval' => sub {
 					my ($client,$paramref,$pageref) = @_;
+					return if (!defined($client));
 					playerChildren($client, $pageref);
 					$pageref->{'GroupOrder'}[1] = 'Display';
 					if ($client && $client->hasDigitalOut()) {
@@ -846,6 +859,7 @@ sub initSetupConfig {
 		}
 		,'postChange' => sub {
 					my ($client,$paramref,$pageref) = @_;
+					return if (!defined($client));
 					if (Slim::Player::Client::clientCount() > 1 ) {
 						$pageref->{'Prefs'}{'synchronize'}{'options'} = syncGroups($client);
 						if (!exists($paramref->{'synchronize'})) {
@@ -909,6 +923,7 @@ sub initSetupConfig {
 							,'validateArgs' => [] #filled by initSetup
 							,'currentValue' => sub {
 									my ($client,$key,$ind) = @_;
+									return if (!defined($client));
 									if (Slim::Player::Sync::isSynced($client)) {
 										return $client->id();
 									} else {
@@ -917,6 +932,7 @@ sub initSetupConfig {
 								}
 							,'onChange' => sub {
 									my ($client,$changeref,$paramref,$pageref) = @_;
+									return if (!defined($client));
 									if ($changeref->{'synchronize'}{'new'} eq -1) {
 										Slim::Player::Sync::unsync($client);
 									} else {
@@ -939,6 +955,7 @@ sub initSetupConfig {
 								}
 							,'onChange' => sub {
 								my ($client,$changeref,$paramref,$pageref) = @_;
+								return if (!defined($client));
 								my $value = $changeref->{'syncPower'}{'new'};
 								my @buddies = Slim::Player::Sync::syncedWith($client);
 								if (scalar(@buddies) > 0) {
@@ -971,7 +988,8 @@ sub initSetupConfig {
 		,'isClient' => 1
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
-					playerChildren($client, $pageref);
+				return if (!defined($client));
+				playerChildren($client, $pageref);
 				if (scalar(keys %{Slim::Hardware::IR::mapfiles()}) > 1) {  
 					$pageref->{'GroupOrder'}[1] = 'IRMap';  
 					$pageref->{'Prefs'}{'irmap'}{'options'} = Slim::Hardware::IR::mapfiles();  
@@ -993,6 +1011,7 @@ sub initSetupConfig {
 			}
 		,'postChange' => sub {
 				my ($client,$paramref,$pageref) = @_;
+				return if (!defined($client));
 				my $i = 0;
 				my %irsets = map {$_ => 1} Slim::Utils::Prefs::clientGetArray($client,'disabledirsets');
 				Slim::Utils::Prefs::clientDelete($client,'disabledirsets');
@@ -1041,6 +1060,7 @@ sub initSetupConfig {
 				,'changeMsg' => string('SETUP_IRSETLIST_CHANGE')
 				,'externalValue' => sub {
 							my ($client,$value,$key) = @_;
+							return if (!defined($client));
 							if ($key =~ /\D+(\d+)$/) {
 								return Slim::Hardware::IR::irfileName((sort(keys %{Slim::Hardware::IR::irfiles()}))[$1]);
 							} else {
@@ -1056,7 +1076,8 @@ sub initSetupConfig {
 		,'isClient' => 1
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
-					playerChildren($client, $pageref);
+				return if (!defined($client));
+				playerChildren($client, $pageref);
 				Slim::Buttons::Plugins::addSetupGroups();
 			}
 	} # end of setup{'ADDITIONAL_PLAYER'} hash
@@ -1599,7 +1620,7 @@ sub initSetupConfig {
 										return;
 									}
 									processArrayChange($client,'titleFormat',$paramref,$pageref);
-									fillTitleFormatOptions();
+									fillFormatOptions();
 									$changeref->{'titleFormat'}{'Processed'} = 1;
 								}
 							}
@@ -1626,7 +1647,7 @@ sub initSetupConfig {
 										return;
 									}
 									processArrayChange($client,'guessFileFormats',$paramref,$pageref);
-									fillGuessTagOptions();
+									$setup{'formatting'}{'Prefs'}{'guessFileFormats'}{'options'} = {hash_of_prefs('guessFileFormats')};
 									$changeref->{'guessFileFormats'}{'Processed'} = 1;
 								}
 					}
@@ -2109,7 +2130,7 @@ sub initSetup {
 sub fillFormatOptions {
 	$setup{'formatting'}{'Prefs'}{'guessFileFormats'}{'options'} = {hash_of_prefs('guessFileFormats')};
 	$setup{'formatting'}{'Prefs'}{'titleFormatWeb'}{'options'} = {hash_of_prefs('titleFormat')};
-	$setup{'formatting'}{'Prefs'}{'titleFormatWeb'}{'validateArgs'} = [$setup{'player'}{'Prefs'}{'titleFormatWeb'}{'options'}];
+	$setup{'formatting'}{'Prefs'}{'titleFormatWeb'}{'validateArgs'} = [$setup{'formatting'}{'Prefs'}{'titleFormatWeb'}{'options'}];
 }
 
 sub fillSetupOptions {
@@ -2193,7 +2214,7 @@ sub setup_HTTP {
 	my ($client, $paramref, $callback, $httpclientsock, $response) = @_;
 	my $changed;
 	my $rejected;
-
+	
 	if ($::nosetup || ($::noserver && $paramref->{'page'} eq 'server')) {
 		$response->code(RC_FORBIDDEN);
 		return Slim::Web::HTTP::filltemplatefile('html/errors/403.html',$paramref);
@@ -2214,9 +2235,6 @@ sub setup_HTTP {
 	}
 
 	if (defined $pagesetup{'preEval'}) {
-		if (exists $pagesetup{'isClient'}) {
-			$client = Slim::Player::Client::getClient($paramref->{'playerid'});
-		}
 		&{$pagesetup{'preEval'}}($client,$paramref,\%pagesetup);
 	}
 
@@ -2229,9 +2247,6 @@ sub setup_HTTP {
 	processChanges($client,$changed,$paramref,\%pagesetup);
 
 	if (defined $pagesetup{'postChange'}) {
-		if (exists $pagesetup{'isClient'}) {
-			$client = Slim::Player::Client::getClient($paramref->{'playerid'});
-		}
 		if ($client) {
 			&{$pagesetup{'postChange'}}($client,$paramref,\%pagesetup);
 		}
@@ -3065,7 +3080,6 @@ sub validateInHash {
 	my $val = shift;
 	my $ref = shift;
 	my $codereturnsref = shift; #should be set to 1 if $ref is to code that returns a hash reference
-
 	my %hash = ();
 	if (ref($ref)) {
 		if (ref($ref) eq 'HASH') {

@@ -29,12 +29,12 @@
 				<td width="4" height="100%"></td>
 				
   <td valign="top" height="100%">
+    [% IF siblings %]<p><br>[% siblings %]<hr>[% END %]
+    [% IF children %]<p><br>[% children %]<hr>[% END %] 
     [% IF warning %]
     <p><b>[% warning %]</b></p>
     <hr>
     [% END %]
-    [% IF siblings %]<p><br>[% siblings %]<hr>[% END %]
-    [% IF children %]<p><br>[% children %]<hr>[% END %] 
     <form method="get" action="setup.html">
       <input type=hidden value="[% player %]" name="player">
       <input type=hidden value="[% playerid %]" name="playerid">
