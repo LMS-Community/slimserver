@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.114 2004/08/03 17:29:19 vidur Exp $
+# $Id: HTTP.pm,v 1.115 2004/08/12 16:17:41 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -148,6 +148,7 @@ sub openport {
 		LocalAddr => $listeneraddr,
 		Listen    => SOMAXCONN,
 		ReuseAddr => 1,
+		Reuse => 1,
 		Timeout   => 0.001,
 
 	) or die "can't setup the listening port $listenerport for the HTTP server: $!";
