@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.10 2003/09/28 15:47:50 kdf Exp $
+# $Id: Common.pm,v 1.11 2003/10/10 13:58:41 caleb Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -220,6 +220,9 @@ my %functions = (
 			$jump = 'BROWSE_BY_ARTIST';
 		} elsif ($button eq 'menu_browse_album') {
 			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist'=>'*'});
+		} elsif ($button eq 'menu_browse_song') {
+			SliMP3::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist'=>'*', 'album'=>'*'});
+			$jump = 'BROWSE_BY_SONG';
 			$jump = 'BROWSE_BY_ALBUM';
 		} elsif ($button eq 'menu_browse_music') {
 			Slim::Buttons::Common::pushMode($client, 'browse');
@@ -528,8 +531,212 @@ sub pushButton {
 	&$subref($client,$sub,$subarg);
 }
 
-# scroll with acceleration based on list length and stop at the end if we're accelerating...
 sub scroll {
+	scroll_dynamic(@_);
+}
+
+# Minimum Velocity for scrolling, in items/second
+my $minimumVelocity = 2;
+
+# Time that you must hold the scroll button before the automatic
+# scrolling and acceleration starts. 
+# in seconds.
+my $holdTimeBeforeScroll = 0.300;  
+
+my $scrollClientHash = {};
+
+sub scroll_dynamic {
+	my $client = shift;
+	my $direction = shift;
+	my $listlength = shift;
+	my $currentPosition = shift;
+	my $newposition;
+	my $holdTime = Slim::Hardware::IR::holdTime($client);
+	# Set up initial conditions
+	if (!defined $scrollClientHash->{$client}) {
+		#$client->{scroll_params} =
+		$scrollClientHash->{$client}{scrollParams} = 
+			scroll_getInitialScrollParams(
+										  $minimumVelocity, 
+										  $listlength, 
+										  $direction
+										  );
+	}
+	my $scrollParams = $scrollClientHash->{$client}{scrollParams};
+
+	my $result = undef;
+	if ($holdTime == 0) {
+		# define behavior for button press, before any acceleration
+		# kicks in.
+		
+		# if at the end of the list, and down is pushed, go to the beginning.
+		if ($currentPosition == $listlength-1  && $direction > 0) {
+			# if at the end of the list, and down is pushed, go to the beginning.
+			$currentPosition = -1; # Will be added to later...
+			$scrollParams->{estimateStart} = 0;
+			$scrollParams->{estimateEnd}   = $listlength - 1;
+		} elsif ($currentPosition == 0 && $direction < 0) {
+			# if at the beginning of the list, and up is pushed, go to the end.
+			$currentPosition = $listlength;  # Will be subtracted from later.
+			$scrollParams->{estimateStart} = 0;
+			$scrollParams->{estimateEnd}   = $listlength - 1;
+		}
+		# Do the standard operation...
+		$scrollParams->{lastHoldTime} = 0;
+		$scrollParams->{V} = $scrollParams->{minimumVelocity} *
+			$direction;
+		$scrollParams->{A} = 0;
+		$result = $currentPosition + $direction;
+		if ($direction > 0) {
+			$scrollParams->{estimateStart} = $result;
+			if ($scrollParams->{estimateEnd} <
+				$scrollParams->{estimateStart}) {
+				$scrollParams->{estimateEnd} =
+					$scrollParams->{estimateStart} + 1; 
+			}
+		} else {
+			$scrollParams->{estimateEnd} = $result;
+			if ($scrollParams->{estimateStart} >
+				$scrollParams->{estimateEnd}) {
+				$scrollParams->{estimateStart} =
+					$scrollParams->{estimateEnd} - 1;
+			}
+		}
+		scroll_resetScrollRange($result, $scrollParams, $listlength);
+		$scrollParams->{lastPosition} = $result;
+	} elsif ($holdTime < $holdTimeBeforeScroll) {
+		# Waiting until holdTimeBeforeScroll is exceeded
+		$result = $currentPosition;
+	} else {
+		# define behavior for scrolling, i.e. after the initial
+		# timeout.
+		$scrollParams->{A} = scroll_calculateAcceleration
+			(
+			 $direction, 
+			 $scrollParams->{estimateStart},
+			 $scrollParams->{estimateEnd},
+			 $scrollParams->{Tc}
+			 );
+		my $accel = $scrollParams->{A};
+		my $time = $holdTime - $scrollParams->{lastHoldTime};
+		my $velocity = $scrollParams->{A} * $time + $scrollParams->{V};
+		my $pos = ($scrollParams->{lastPositionReturned} == $currentPosition) ? 
+			$scrollParams->{lastPosition} : 
+			$currentPosition;
+		my $X = 
+			(0.5 * $scrollParams->{A} * $time * $time) +
+			($scrollParams->{V} * $time) + 
+			$pos;
+		$scrollParams->{lastPosition} = $X; # Retain the last floating
+		                                    # point value of $X
+		                                    # because it's needed to
+   		                                    # maintain the proper
+		                                    # acceleration when
+		                                    # $minimumVelocity is
+		                                    # small and not much
+		                                    # motion happens between
+		                                    # successive calls.
+		$result = int(0.5 + $X);
+		scroll_resetScrollRange($result, $scrollParams, $listlength);
+		$scrollParams->{V} = $velocity;
+		$scrollParams->{lastHoldTime} = $holdTime;
+	}
+	if ($result >= $listlength) {
+		$result = $listlength - 1;
+	}
+	if ($result < 0) {
+		$result = 0;
+	}
+	$scrollParams->{lastPositionReturned} = $result;
+	$scrollParams->{lastDirection}        = $direction;
+	return $result;
+}
+
+sub scroll_resetScrollRange
+{
+	my $currentPosition = shift;
+	my $scrollParams    = shift;
+	my $listlength      = shift;
+
+	my $delta = ($scrollParams->{estimateEnd} - $scrollParams->{estimateStart})+1;
+	if ($currentPosition > $scrollParams->{estimateEnd}) {
+	    $scrollParams->{estimateEnd} = $scrollParams->{estimateEnd} + $delta;
+	    if ($scrollParams->{estimateEnd} >= $listlength) {
+			$scrollParams->{estimateEnd} = $listlength-1;
+	    }
+	} elsif ($currentPosition < $scrollParams->{estimateStart}) {
+	    $scrollParams->{estimateStart} = $scrollParams->{estimateStart} - $delta;
+	    if ($scrollParams->{estimateStart} < 0) {
+			$scrollParams->{estimateStart} = 0;
+		}
+	}
+}
+
+sub scroll_calculateAcceleration 
+{
+	my ($direction, $estimatedStart, $estimatedEnd, $Tc)  = @_;
+	my $deltaX = $estimatedEnd - $estimatedStart;
+	my $acceleration = 
+		2.0 * $deltaX / ($Tc * $Tc) * $direction;
+	return $acceleration;
+}
+sub scroll_getInitialScrollParams {
+	my $minimumVelocity = shift; 
+	my $listLength      = shift;
+	my $direction       = shift;
+
+	my $result = {};
+	$result = {
+			#
+			# Constants.
+			#
+
+            # Items/second.  Don't go any slower than this under any circumstances. 
+			minimumVelocity => $minimumVelocity,  
+			                        
+			# seconds.  Finishs a list in this many seconds. 
+			Tc              => 5,   
+			                        
+			# 
+			# Variables
+			#
+
+			# Starting estimate of target space.
+			estimateStart   => 0,   
+
+			
+			# Ending estimate of target space
+			estimateEnd     => $listLength, 
+			                        
+			
+			# The current velocity.  account for direction
+			V               => $minimumVelocity * $direction,
+			
+			# The current acceleration.
+			A               => 0,
+
+			# The 'hold Time' value the last time we were called.
+			# a negative number means it hasn't been called before, or
+			# the button has been released.
+			lastHoldTime    => -1,
+
+			# To make the 
+			lastPosition    => 0,      # Last calculated position (floating point)
+			lastPositionReturned => 0, # Last returned position   (integer), used to detect when $currentPosition has been modified outside the scroll routines.
+			
+			# Maintain the last direction, so that we can implement a
+			# slowdown when the user hits  the same direciton twice.
+			# i.e. he's almost to where he wants to go, but not quite
+			# there yet.  Slow velocity by half, and don't wait for
+			# pause. 
+#			lastDirection   => 0,      
+
+		};
+	return $result;
+}
+
+# scroll with acceleration based on list length and stop at the end if we're accelerating...
+sub scroll_original {
 	my $client = shift;
 	my $direction = shift;
 	my $listlength = shift;
@@ -695,27 +902,46 @@ sub numberScroll {
 
 		my $letter = numberLetter($client, $digit);
 		# binary search	through the diritems, assuming that they are sorted...
-		my $high = $listsize;
-		my $low = -1;
+		$i = firstIndexOf($letter, $lookupsubref, $listsize);
 
-		for ( $low = -1; $high - $low > 1; ) {
-			$i = int(($high + $low) / 2);
-			my $j = uc(substr($lookupsubref->($i), 0, 1));
-			if ($letter eq $j) {
-				last;
-			} elsif ($letter lt $j) {
-				$high = $i;
-			} else {
-				$low = $i;
-			}
-		}
 
-		# skip back to the first matching item.
-		while ($i > 0 && $letter eq uc(substr($lookupsubref->($i-1), 0, 1))) {
-			$i--;
-		}
+		# reset the scroll parameters so that the estimated start and end are at the previous letter and next letter respectively.
+		$scrollClientHash->{$client}{scrollParams}{estimateStart} =
+			firstIndexOf(chr(ord($letter)-1), $lookupsubref, $listsize);
+		$scrollClientHash->{$client}{scrollParams}{estimateEnd} = 
+			firstIndexOf(chr(ord($letter)+1), $lookupsubref, $listsize);
 	}
 	return $i;
+}
+# 
+# utility function for numberScroll.  Does binary search for $letter,
+# using $lookupsubref to lookup where we are.
+# 
+sub firstIndexOf
+{
+	my ($letter, $lookupsubref, $listsize)  = @_;
+
+	my $high = $listsize;
+	my $low = -1;
+	my $i = -1;
+	for ( $low = -1; $high - $low > 1; ) {
+		$i = int(($high + $low) / 2);
+		my $j = uc(substr($lookupsubref->($i), 0, 1));
+		if ($letter eq $j) {
+			last;
+		} elsif ($letter lt $j) {
+			$high = $i;
+		} else {
+			$low = $i;
+		}
+	}
+	
+	# skip back to the first matching item.
+	while ($i > 0 && $letter eq uc(substr($lookupsubref->($i-1), 0, 1))) {
+		$i--;
+	}
+	return $i;
+
 }
 
 sub mode {
@@ -745,14 +971,17 @@ sub pushMode {
 	my $paramHashRef = shift;
 	$::d_files && msg("pushing button mode: $setmode\n");
 	my $oldmode =mode($client);
-	
 	if ($oldmode) {
 		my $exitFun = $leaveMode{$oldmode};
 		if ($exitFun) {
 			&$exitFun($client, 'push');
 		}
 	}
-	 
+	# reset the scroll parameters
+	push (@{$scrollClientHash->{$client}{scrollParamsStack}}, 
+		  $scrollClientHash->{$client}{scrollParams});
+	
+	$scrollClientHash->{$client}{scrollParams} = scroll_getInitialScrollParams($minimumVelocity, 1, 1);
 	push @{$client->modeStack}, $setmode;
 
 	if (!defined($paramHashRef)) {
@@ -769,7 +998,7 @@ sub popMode {
 	if (scalar(@{$client->modeStack}) < 1) {
 		return undef;
 	}
-	
+
 	my $oldMode = mode($client);
 	if ($oldMode) {
 		my $exitFun = $leaveMode{$oldMode};
@@ -780,6 +1009,7 @@ sub popMode {
 	
 	pop @{$client->modeStack};
 	pop @{$client->modeParameterStack};
+	$scrollClientHash->{$client}{scrollParams} = pop @{$scrollClientHash->{$client}{scrollParamsStack}};
 	
 	my $newmode = mode($client);
 	if ($newmode) {

@@ -52,9 +52,10 @@ my %functions = (
 			#The address of the %functions hash changes from compile time to run time
 			#so it is necessary to get a reference to it from a function outside of the hash
 			(getFunctions())->{'right'}($client);
-		}  elsif (($homeChoices[$client->homeSelection] eq 'BROWSE_BY_GENRE') ||
+		}  elsif (($homeChoices[$client->homeSelection] eq 'BROWSE_BY_GENRE')  ||
 				  ($homeChoices[$client->homeSelection] eq 'BROWSE_BY_ARTIST') ||
-				  ($homeChoices[$client->homeSelection] eq 'BROWSE_BY_ALBUM')) {
+				  ($homeChoices[$client->homeSelection] eq 'BROWSE_BY_ALBUM')  ||
+				  ($homeChoices[$client->homeSelection] eq 'BROWSE_BY_SONG')) {
 			if (Slim::Player::Playlist::shuffle($client)) {
 				Slim::Buttons::Block::block($client, string('PLAYING_RANDOMLY'), string('EVERYTHING'));
 			} else {
@@ -95,6 +96,8 @@ my %functions = (
 			Slim::Buttons::Common::pushModeLeft($client, 'browseid3',{'genre'=>'*'});
 		} elsif ($homeChoices[$client->homeSelection] eq 'BROWSE_BY_ALBUM') {
 			Slim::Buttons::Common::pushModeLeft($client, 'browseid3', {'genre'=>'*', 'artist'=>'*'});
+		} elsif ($homeChoices[$client->homeSelection] eq 'BROWSE_BY_SONG') {
+			SliMP3::Buttons::Common::pushModeLeft($client, 'browseid3', {'genre'=>'*', 'artist'=>'*', 'album'=>'*'});
 		} elsif ($homeChoices[$client->homeSelection] eq 'SETTINGS') {
 			Slim::Buttons::Common::pushModeLeft($client, 'settings');
 		} elsif ($homeChoices[$client->homeSelection] eq 'PLUGINS') {
@@ -147,6 +150,7 @@ sub setMode {
  					'BROWSE_BY_GENRE',
  					'BROWSE_BY_ARTIST',
  					'BROWSE_BY_ALBUM',
+					'BROWSE_BY_SONG',
  					'BROWSE_MUSIC_FOLDER',
  					'SEARCH_FOR_ARTISTS',
  					'SEARCH_FOR_ALBUMS',
