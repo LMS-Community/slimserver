@@ -1,6 +1,6 @@
 package Slim::Networking::Select;
 
-# $Id: Select.pm,v 1.4 2003/11/20 18:59:23 dean Exp $
+# $Id: Select.pm,v 1.5 2003/12/11 17:04:40 dean Exp $
 
 # SlimServer Copyright (c) 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ my $writeSelects = IO::Select->new();
 sub addRead {
 	my $r = shift;
 	my $callback = shift;
-	if (!defined($callback)) {
+	if (!$callback) {
 		delete $readSockets{"$r"};
 		delete $readCallbacks{"$r"};
 		$::d_select && msg("removing select write $r\n");
@@ -40,7 +40,7 @@ sub addWrite {
 	my $callback = shift;
 	
 	$::d_select && msg("before: " . scalar(keys %writeSockets) . "/" . $writeSelects->count . "\n");
-	if (!defined($callback)) {
+	if (!$callback) {
 		delete $writeSockets{"$w"};
 		delete $writeCallbacks{"$w"};	
 		$::d_select && msg("removing select write $w\n");

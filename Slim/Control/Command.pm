@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.18 2003/12/02 05:21:04 grotus Exp $
+# $Id: Command.pm,v 1.19 2003/12/11 17:04:39 dean Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -158,6 +158,19 @@ sub execute {
 		$p2 = Slim::Utils::Prefs::get($p1);
 	} elsif ($p0 eq "rescan") {
 		Slim::Music::MusicFolderScan::startScan();
+	} elsif ($p0 eq "info") {
+		if (!defined($p1)) {
+		} elsif ($p1 eq "total") {
+			if ($p2 eq "genres") {
+			   $p3 = Slim::Music::Info::genreCount([],[],[],[]);
+			} elsif ($p2 eq "artists") {
+			   $p3 = Slim::Music::Info::artistCount([],[],[],[]);
+			} elsif ($p2 eq "albums") {
+			   $p3 = Slim::Music::Info::albumCount([],[],[],[]);
+			} elsif ($p2 eq "songs") {
+			   $p3 = Slim::Music::Info::songCount([],[],[],[]);
+			}
+		}
 	} elsif ($p0 eq "debug") {
 		if ($p1 =~ /^d_/) {
 			my $debugsymbol = "::" . $p1;
