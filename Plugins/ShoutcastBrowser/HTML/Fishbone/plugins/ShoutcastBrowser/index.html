@@ -1,0 +1,122 @@
+<html>
+	<head>
+		<title>[% pagetitle %]</title>
+		<link rel="stylesheet" href="[% webroot %]slimserver.css">
+	</head>
+	<body bgcolor="#FFFFFF">
+	    <p>
+
+		<h3>[% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %]</h3><p>
+		
+		<p>/ [% IF streams || streaminfo %]<a href="index.html?player=[% player | uri %]">[% END %][% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %][% IF streams || streaminfo %]</a> / [% END %]
+			[% IF streams || streaminfo %][% IF streaminfo %]<a href="index.html?p0=[% genre | uri %]&player=[% player | uri %]">[% END %][% genre %][% IF streaminfo %]</a> /[% END %][% END %]
+			[% IF streaminfo %][% streaminfo.2 %][% END %]
+		</p>
+		
+		<hr/>
+		
+		<!-- start plugins output -->
+		<table border="0" cellspacing="0" cellpadding="0" width="100%">
+			[% IF streaminfo %]
+				<tr>
+					<td width="30%">[% 'PLUGIN_SHOUTCASTBROWSER_STREAM_NAME' | string %][% "COLON" | string %]</td>
+					<td width="70%"><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% streaminfo.0 | uri %]&player=[% player | uri %]" target="status">[% streaminfo.2 %]</a></td>
+				</tr>
+				<tr>
+					<td width="30%">[% 'BITRATE' | string %][% "COLON" | string %]</td>
+					<td width="70%">[% streaminfo.4 %][% 'PLUGIN_SHOUTCASTBROWSER_KBPS' | string %]</td>
+				</tr>
+				<tr>
+					<td width="30%">[% 'SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS' | string %][% "COLON" | string %]</td>
+					<td width="70%">[% streaminfo.3 %]</td>
+				</tr>
+				<tr>
+					<td width="30%">[% 'GENRE' | string %][% "COLON" | string %]</td>
+					<td width="70%">[% streaminfo.6 %]</td>
+				</tr>
+				<tr>
+					<td width="30%">[% 'PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING' | string %][% "COLON" | string %]</td>
+					<td width="70%">[% streaminfo.5 %]</td>
+				</tr>
+				<tr>
+					<td width="30%">[% 'URL' | string %][% "COLON" | string %]</td>
+					<td width="70%"><a href="[% streaminfo.0 %]" target="_blank">[% streaminfo.0 %]</a></td>
+				</tr>
+			[% END %]
+			
+			[% IF genres %]
+				[% FOREACH genre = genres %]
+					<tr>
+						<td class="listing"><a href="index.html?p0=[% genre | uri %]&player=[% player | uri %]">[% genre %]</a></td>
+						<td align="right" class="listing"><a href="index.html?p0=[% genre | uri %]&player=[% player | uri %]"><img src="[% webroot %]html/next.gif" width="9" height="11" alt="[% "NEXT" | string %]"></a>
+					</tr>
+				[% END %]
+			[% END %]
+
+			[% IF streams %]
+				[% IF top %]
+					[% FOREACH topStream = top %]
+						[% FOREACH bitrate = streams.$topStream %]
+							<tr>
+								<td class="listing">
+									<a href="index.html?p0=[% topStream | uri %]&p1=[% genre | uri %]&p2=[% bitrate.key | uri %]&player=[% player | uri %]">[% topStream %]</a> ([% bitrate.key %][% "PLUGIN_SHOUTCASTBROWSER_KBPS" | string %])
+								</td>
+
+								<td class="listing" width="11" align="center">
+									<a href="[% webroot %]status_header.html?p0=playlist&p1=insert&p2=[% bitrate.value.0 | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/queue.gif" border=0 align="center" width="6" height="9"  alt='Play' title='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]';return true"></a>
+								</td>
+								<td class="listing" width="3" align="center">&nbsp;</td>
+								
+								<td class="listing" width="11" align="center">
+									<a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% bitrate.value.0 | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/play.this.gif" border=0 align="center" width="5" height="9"  alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a>
+								</td>
+								<td class="listing" width="3" align="center">&nbsp;</td>
+								
+								<td class="listing" width="11" align="center">
+									<a href="[% webroot %]status_header.html?p0=playlist&p1=add&p2=[% bitrate.value.0 | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/add.gif" border=0 align="center" width="8" height="8"  alt='Play' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a>
+								</td>
+<!--								<td class="listing" width="3" align="center">&nbsp;</td>
+								
+								<td class="listing" width="11" align="center">
+									<a href="[% webroot %]status_header.html?p0=playlist&p1=deleteitem&p2=[% bitrate.value.0 | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/subtract.gif" border=0 align="center" width="8" height="8"  alt='Play' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a>
+								</td> -->
+							</tr>
+						[% END %]
+					[% END %]
+				[% ELSE %] 
+					[% FOREACH stream = streams %]
+						[% FOREACH bitrate = stream.value %]
+							<tr>
+								<td class="listing">
+									<a href="index.html?p0=[% stream.key | uri %]&p1=[% genre | uri %]&p2=[% bitrate.key | uri %]&player=[% player | uri %]">[% stream.key %]</a> ([% bitrate.key %][% "PLUGIN_SHOUTCASTBROWSER_KBPS" | string %])
+								</td>
+
+								<td class="listing" width="11" align="center">
+									<a href="[% webroot %]status_header.html?p0=playlist&p1=insert&p2=[% bitrate.value | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/queue.gif" border=0 align="center" width="6" height="9"  alt='Play' title='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]';return true"></a>
+								</td>
+								<td class="listing" width="3" align="center">&nbsp;</td>
+								
+								<td class="listing" width="11" align="center">
+									<a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% bitrate.value | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/play.this.gif" border=0 align="center" width="5" height="9"  alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a>
+								</td>
+								<td class="listing" width="3" align="center">&nbsp;</td>
+								
+								<td class="listing" width="11" align="center">
+									<a href="[% webroot %]status_header.html?p0=playlist&p1=add&p2=[% bitrate.value | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/add.gif" border=0 align="center" width="8" height="8"  alt='Play' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a>
+								</td>
+<!--								<td class="listing" width="3" align="center">&nbsp;</td>
+								
+								<td class="listing" width="11" align="center">
+									<a href="[% webroot %]status_header.html?p0=playlist&p1=deleteitem&p2=[% bitrate.value | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/subtract.gif" border=0 align="center" width="8" height="8"  alt='Play' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a>
+								</td> -->
+							</tr>
+						[% END %]
+					[% END %]
+				[% END %]
+			[% END %]
+		</table>
+		<!-- end plugins output -->
+		
+	</body>
+</html>
+
