@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.84 2004/04/18 18:13:42 dean Exp $
+# $Id: strings.txt,v 1.85 2004/04/19 06:15:40 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -6260,7 +6260,7 @@ EDIT
 	DE	Editieren
 	EN	Edit
 	FR	Modifier
-	Se	redigera
+	SE	redigera
 
 URL
 	DE	URL
