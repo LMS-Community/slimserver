@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.13 2003/09/29 22:50:15 dean Exp $
+# $Id: Prefs.pm,v 1.14 2003/09/29 22:57:07 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -506,14 +506,7 @@ sub preferencesPath {
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		$prefsPath = catdir($ENV{'HOME'}, 'Library', 'SlimDevices');
 	} elsif (Slim::Utils::OSDetect::OS() eq 'win')  {
-		# We used to save prefs in C:\WINDOWS or C:\WINNT
-		# this should work for all versions of windows
-		$prefsPath = $ENV{'windir'};
-		
-		# just in case something very whacky is going on
-		if (not -d $ENV{'windir'}) {
-			$prefsPath = '';
-		}
+		$prefsPath = $Bin;
 	} else {
 	 	$prefsPath = $ENV{'HOME'};
 	}
@@ -569,6 +562,12 @@ sub load {
 		$readFile = catdir(preferencesPath(), 'SLIMP3.PRF');
 	}
 	
+	if (!-r $readFile) {
+		if (exists($ENV{'windir'})) {
+			$readFile = catdir($ENV{'windir'}, 'SLIMP3.PRF');
+		}
+	}
+		
 	if (!-r $readFile) {
 		$readFile = catdir(preferencesPath(), '.slimp3.pref');
 	}
