@@ -10,7 +10,7 @@
 				<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
 			[% END %]
 		[% ELSE %]
-			[% "BY" | string %]
+			[% IF includeArtist %][% "BY" | string %][% END %]
 			[% WHILE (artist = artists.next) %]
 				[% NEXT IF artist.name == noArtist %]
 				<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
