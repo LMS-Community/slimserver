@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.19 2004/04/18 06:53:35 kdf Exp $
+# $Id: Plugins.pm,v 1.20 2004/04/19 19:32:26 grotus Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
@@ -201,7 +201,7 @@ sub addDefaultMaps {
 
 sub addSetupGroups {
 	no strict 'refs';
-	foreach my $plugin (enabledPlugins()) {
+	foreach my $plugin (keys %{installedPlugins()}) {
 		my ($groupRef,$prefRef);
 		if (UNIVERSAL::can("Plugins::${plugin}","setupGroup")) {
 			eval {($groupRef,$prefRef) = &{"Plugins::${plugin}::setupGroup"}()};
