@@ -76,8 +76,16 @@ sub lines {
 	my $pos = int(Time::HiRes::time() / $ticklength) % (@tickchars);
 
 	my $parsed = $client->blocklines();
-
-	$parsed->{overlay1} = $tickchars[$pos];
+	
+	#XXX - This is a non-ideal solution, which needs something more generic
+	undef $parsed->{overlay1bits};
+	undef $parsed->{overlay2bits};
+	
+	if ($client->linesPerScreen == 1) {
+		$parsed->{overlay2} = $tickchars[$pos];
+	} else {
+		$parsed->{overlay1} = $tickchars[$pos];
+	}
 	
 	return($parsed);
 }
