@@ -26,7 +26,7 @@ my %tagMapping = (
 	'TRACKNUMBER'	=> 'TRACKNUM',
 	'DATE'		=> 'YEAR',
 	'DISCNUMBER'	=> 'SET',
-	'URL'			=> 'URLTAG',
+	'URL'		=> 'URLTAG',
 );
 
 my @tagNames = qw(ALBUM ARTIST BAND COMPOSER CONDUCTOR DISCNUMBER TITLE TRACKNUMBER DATE);
@@ -45,7 +45,11 @@ sub getTag {
 	my $file   = shift || "";
 	my $anchor = shift || "";
 
-	my $flac   = Audio::FLAC->new($file);
+	my $flac   = Audio::FLAC->new($file) || do {
+		warn "Couldn't open file: [$file] for reading: $!\n";
+		return {};
+	};
+
 	my $cuesheet = $flac->cuesheet();
 
 	# if there's no embedded cuesheet, then we're either a single song
