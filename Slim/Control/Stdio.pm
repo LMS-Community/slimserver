@@ -8,6 +8,7 @@ package Slim::Control::Stdio;
 use strict;
 use FindBin qw($Bin);
 use File::Spec::Functions qw(:ALL);
+use Text::ParseWords qw(shellwords);
 
 use Slim::Networking::Select;
 use Slim::Utils::Strings qw(string);
@@ -224,9 +225,7 @@ sub executeCmd {
 	my $command = shift;
 
 	my $output  = undef;
-
-	# todo - allow for escaping and/or quoting
-	my @params = split(" ", $command);
+	my @params  = shellwords($command);
 
 	foreach my $param (@params) {
 		$param = Slim::Web::HTTP::unescape($param);
