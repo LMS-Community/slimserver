@@ -19,48 +19,141 @@ use Slim::Buttons::Information;
 # button functions for browse directory
 my @defaultSettingsChoices = ('ALARM','VOLUME', 'BASS','TREBLE','REPEAT','SHUFFLE','TITLEFORMAT','TEXTSIZE','OFFDISPLAYSIZE','INFORMATION');
 my @settingsChoices;
-my %functions = (
-	'up' => sub  {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#settingsChoices + 1), $client->settingsSelection);
-		$client->settingsSelection($newposition);
-		$client->update();
-	},
-	'down' => sub  {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#settingsChoices + 1), $client->settingsSelection);
-		$client->settingsSelection($newposition);
-		$client->update();
-	},
-	'left' => sub   {
-		my $client = shift;
+
+my %current;
+my %menuParams = (
+	'settings' => {
+		'listRef' => \@defaultSettingsChoices
+		,'stringExternRef' => 1
+		,'header' => \&settingsHeader
+		,'headerArgs' => 'C'
+		,'callback' => \&settingsExitHandler
+		,'overlayRef' => sub {return (undef,Slim::Hardware::VFD::symbol('rightarrow'));}
+		,'overlayRefArgs' => ''
+	}
+	,catdir('settings','ALARM') => {
+		'useMode' => 'alarm'
+	}
+	,catdir('settings','VOLUME') => {
+		'useMode' => 'volume' # replace with INPUT.Bar when available
+	}
+	,catdir('settings','BASS') => {
+		'useMode' => 'bass' # replace with INPUT.Bar when available
+	}
+	,catdir('settings','TREBLE') => {
+		'useMode' => 'treble' # replace with INPUT.Bar when available
+	}
+	,catdir('settings','REPEAT') => {
+		'useMode' => 'INPUT.List'
+		,'listRef' => [0,1,2]
+		,'externRef' => ['REPEAT_OFF', 'REPEAT_ONE', 'REPEAT_ALL']
+		,'stringExternRef' => 1
+		,'header' => 'REPEAT'
+		,'stringHeader' => 1
+		,'onChange' => sub { Slim::Control::Command::execute($_[0], ["playlist", "repeat", $_[1]]); }
+		,'onChangeArgs' => 'CV'
+		,'initialValue' => \&Slim::Player::Playlist::repeat
+	}
+	,catdir('settings','SHUFFLE') => {
+		'useMode' => 'INPUT.List'
+		,'listRef' => [0,1,2]
+		,'externRef' => [ 'SHUFFLE_OFF','SHUFFLE_ON_SONGS','SHUFFLE_ON_ALBUMS']
+		,'stringExternRef' => 1
+		,'header' => 'SHUFFLE'
+		,'stringHeader' => 1
+		,'onChange' => sub { Slim::Control::Command::execute($_[0], ["playlist", "shuffle", $_[1]]); }
+		,'onChangeArgs' => 'CV'
+		,'initialValue' => \&Slim::Player::Playlist::shuffle
+	}
+	,catdir('settings','TITLEFORMAT') => {
+		'useMode' => 'titleformat' # replace with INPUT.List eventually
+	}
+	,catdir('settings','TEXTSIZE') => {
+		'useMode' => 'INPUT.List'
+		,'listRef' => [0,1]
+		,'externRef' => [ 'SMALL','LARGE']
+		,'stringExternRef' => 1
+		,'header' => 'TEXTSIZE'
+		,'stringHeader' => 1
+		,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0], "doublesize", $_[1]); }
+		,'onChangeArgs' => 'CV'
+		,'initialValue' => 'doublesize'
+	}
+	,catdir('settings','OFFDISPLAYSIZE') => {
+		'useMode' => 'INPUT.List'
+		,'listRef' => [0,1]
+		,'externRef' => [ 'SMALL','LARGE']
+		,'stringExternRef' => 1
+		,'header' => 'OFFDISPLAYSIZE'
+		,'stringHeader' => 1
+		,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0], "offDisplaySize", $_[1]); }
+		,'onChangeArgs' => 'CV'
+		,'initialValue' => 'offDisplaySize'
+	}
+	,catdir('settings','INFORMATION') => {
+		'useMode' => 'information'
+	}
+	,catdir('settings','SYNCHRONIZE') => {
+		'useMode' => 'synchronize'
+	}
+	#,catdir('settings','PLAYER_NAME') => {
+	#	'useMode' => 'INPUT.Text'
+		#add more params here after the rest is working
+	#}
+
+);
+
+sub settingsHeader {
+	my $client = shift;
+	return string('SETTINGS') 
+		. ' (' 
+		. (Slim::Buttons::Common::param($client,'listIndex') + 1)
+		. ' ' . string('OF') . ' '
+		. scalar(@{Slim::Buttons::Common::param($client,'listRef')})
+		. ')';
+}
+
+sub settingsExitHandler {
+	my ($client,$exittype) = @_;
+	$exittype = uc($exittype);
+	if ($exittype eq 'LEFT') {
 		Slim::Buttons::Common::popModeRight($client);
-	},
+	} elsif ($exittype eq 'RIGHT') {
+		my $nextmenu = catdir('settings',$current{$client});
+		if (exists($menuParams{$nextmenu})) {
+			my %nextParams = %{$menuParams{$nextmenu}};
+			if ($nextParams{'useMode'} eq 'INPUT.List') {
+				#set up valueRef for current pref
+				my $value;
+				if (ref($nextParams{'initialValue'}) eq 'CODE') {
+					$value = $nextParams{'initialValue'}->($client);
+				} else {
+					$value = Slim::Utils::Prefs::clientGet($client,$nextParams{'initialValue'});
+				}
+				$nextParams{'valueRef'} = \$value;
+			}
+			Slim::Buttons::Common::pushModeLeft(
+				$client
+				,$nextParams{'useMode'}
+				,\%nextParams
+			);
+		} else {
+			Slim::Display::Animation::bumpRight($client);
+		}
+	} else {
+		return;
+	}
+}
+
+my %functions = (
 	'right' => sub  {
-		my $client = shift;
-		if ($settingsChoices[$client->settingsSelection] eq 'SYNCHRONIZE') {
-			# reset to the top level of the music
-			Slim::Buttons::Common::pushModeLeft($client, 'synchronize');
-		} elsif ($settingsChoices[$client->settingsSelection] eq 'REPEAT') {
-			Slim::Buttons::Common::pushModeLeft($client, 'repeat');
-		} elsif ($settingsChoices[$client->settingsSelection] eq 'TEXTSIZE') {
-			Slim::Buttons::Common::pushModeLeft($client, 'textsize');
-		} elsif ($settingsChoices[$client->settingsSelection] eq 'OFFDISPLAYSIZE') {
-			Slim::Buttons::Common::pushModeLeft($client, 'offdisplaysize');
-		} elsif ($settingsChoices[$client->settingsSelection] eq 'TITLEFORMAT') {
-			Slim::Buttons::Common::pushModeLeft($client, 'titleformat');
-		} elsif ($settingsChoices[$client->settingsSelection] eq 'SHUFFLE') {
-			Slim::Buttons::Common::pushModeLeft($client, 'shuffle');
-		} elsif ($settingsChoices[$client->settingsSelection] eq 'TREBLE') {
-			Slim::Buttons::Common::pushModeLeft($client, 'treble');
-		} elsif ($settingsChoices[$client->settingsSelection] eq 'BASS') {
-			Slim::Buttons::Common::pushModeLeft($client, 'bass');
-		} elsif ($settingsChoices[$client->settingsSelection] eq 'VOLUME') {
-			Slim::Buttons::Common::pushModeLeft($client, 'volume');
-		} elsif ($settingsChoices[$client->settingsSelection] eq 'ALARM') {
-			Slim::Buttons::Common::pushModeLeft($client, 'alarm');
-		} elsif ($settingsChoices[$client->settingsSelection] eq 'INFORMATION') {
-			Slim::Buttons::Common::pushModeLeft($client, 'information');
+		my ($client,$funct,$functarg) = @_;
+		if (defined(Slim::Buttons::Common::param($client,'useMode'))) {
+			#in a submenu of settings, which is passing back a button press
+			Slim::Display::Animation::bumpRight($client);
+		} else {
+			#handle passback of button presses
+			settingsExitHandler($client,'RIGHT');
 		}
 	}
 );
@@ -71,201 +164,26 @@ sub getFunctions {
 
 sub setMode {
 	my $client = shift;
-	updateMenu($client);
-	if (!defined($client->settingsSelection)) { $client->settingsSelection(0); };
-	$client->lines(\&lines);
-}
-
-sub updateMenu {
-	my $client = shift;
-	@settingsChoices = @defaultSettingsChoices;
- 	if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0)) {
-		push @settingsChoices, 'SYNCHRONIZE';
+	my $method = shift;
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popModeRight($client);
+		return;
 	}
-}
 
-#
-# figure out the lines to be put up to display the directory
-#
-sub lines {
-	my $client = shift;
-	my ($line1, $line2);
-	$line1 = string('SETTINGS') . 	    
-		' (' .
-	    ($client->settingsSelection + 1) .
-	    ' ' .
-	    string('OF') .
-	    ' ' .
-	    ($#settingsChoices + 1) .
-	    ')'
-;
-	$line2 = string($settingsChoices[$client->settingsSelection]);
-	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
+	$current{$client} = $defaultSettingsChoices[0] unless exists($current{$client});
+	my %params = %{$menuParams{'settings'}};
+	$params{'valueRef'} = \$current{$client};
+	if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0)) {
+		my @settingsChoices = @defaultSettingsChoices;
+		push @settingsChoices, 'SYNCHRONIZE';
+		$params{'listRef'} = \@settingsChoices;
+	}
+	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
+	$client->update();
 }
-
 
 ######################################################################
-# settings submodes for: textSize, repeat, titleformat, treble, bass and shuffle
-
-my @repeatSettingsChoices;
-
-my %repeatSettingsFunctions = (
-	'up' => sub {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#repeatSettingsChoices + 1), Slim::Player::Playlist::repeat($client) );
-		Slim::Control::Command::execute($client, ["playlist", "repeat", $newposition]);
-		$client->update();
-	},
-	'down' => sub {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#repeatSettingsChoices + 1), Slim::Player::Playlist::repeat($client) );
-		Slim::Control::Command::execute($client, ["playlist", "repeat", $newposition]);
-		$client->update();
-	},
-	'left' => $functions{'left'},
-	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'play' => sub { Slim::Display::Animation::bumpRight(shift); },
-);
-
-sub getRepeatFunctions {
-	return \%repeatSettingsFunctions;
-}
-
-sub setRepeatMode {
-	my $client = shift;
-	$client->lines(\&repeatSettingsLines);
-	@repeatSettingsChoices = (string('REPEAT_OFF'),string('REPEAT_ONE'),string('REPEAT_ALL'))
-}
-
-sub repeatSettingsLines {
-	my $client = shift;
-	my ($line1, $line2);
-	$line1 = string('REPEAT');
-	$line2 = $repeatSettingsChoices[Slim::Player::Playlist::repeat($client)];
-	return ($line1, $line2);
-}
-
-
-my @shuffleSettingsChoices;
-
-my %shuffleSettingsFunctions = (
-	'up' => sub {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#shuffleSettingsChoices + 1), Slim::Player::Playlist::shuffle($client));
-		Slim::Control::Command::execute($client, ["playlist", "shuffle", $newposition]);
-		$client->update();
-	},
-	'down' => sub {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#shuffleSettingsChoices + 1), Slim::Player::Playlist::shuffle($client));
-		Slim::Control::Command::execute($client, ["playlist", "shuffle", $newposition]);
-		$client->update();
-	},
-	'left' => $functions{'left'},
-	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'play' => sub { Slim::Display::Animation::bumpRight(shift); },
-);
-
-sub getShuffleFunctions {
-	return \%shuffleSettingsFunctions;
-}
-
-sub setShuffleMode {
-	my $client = shift;
-	@shuffleSettingsChoices = (string('SHUFFLE_OFF'), string('SHUFFLE_ON_SONGS'), , string('SHUFFLE_ON_ALBUMS'));
-	$client->lines(\&shuffleSettingsLines);
-}
-
- sub shuffleSettingsLines {
-	my $client = shift;
-	my ($line1, $line2);
-	$line1 = string('SHUFFLE');
-	$line2 = $shuffleSettingsChoices[Slim::Player::Playlist::shuffle($client)];
-	return ($line1, $line2);
-}
-
-#################################################################################
-my @textSizeSettingsChoices;
-
-my %textSizeSettingsFunctions = (
-	'up' => sub {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#textSizeSettingsChoices + 1), (Slim::Utils::Prefs::clientGet($client, "doublesize")) ? 1 : 0 );
-		Slim::Utils::Prefs::clientSet($client, "doublesize", $newposition);
-		$client->update();
-	},
-	'down' => sub {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#textSizeSettingsChoices + 1), (Slim::Utils::Prefs::clientGet($client, "doublesize")) ? 1 : 0 );
-		Slim::Utils::Prefs::clientSet($client, "doublesize", $newposition);
-		$client->update();
-	},
-	'left' => $functions{'left'},
-	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'play' => sub { Slim::Display::Animation::bumpRight(shift); },
-);
-
-sub getTextSizeFunctions {
-	return \%textSizeSettingsFunctions;
-}
-
-sub setTextSizeMode {
-	my $client = shift;
-	@textSizeSettingsChoices = (string('SMALL'),string('LARGE'));
-	$client->lines(\&textSizeSettingsLines);
-}
-
-sub textSizeSettingsLines {
-	my $client = shift;
-	my ($line1, $line2);
-	$line1 = string('TEXTSIZE');
-	$line2 = $textSizeSettingsChoices[(Slim::Utils::Prefs::clientGet($client, "doublesize")) ? 1 : 0];
-	return ($line1, $line2);
-}
-
-#################################################################################
-my @offDisplaySettingsChoices;
-
-my %offDisplaySettingsFunctions = (
-	'up' => sub {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#offDisplaySettingsChoices + 1), (Slim::Utils::Prefs::clientGet($client, "offDisplaySize")) ? 1 : 0 );
-		Slim::Utils::Prefs::clientSet($client, "offDisplaySize", $newposition);
-		$client->update();
-	},
-	'down' => sub {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#offDisplaySettingsChoices + 1), (Slim::Utils::Prefs::clientGet($client, "offDisplaySize")) ? 1 : 0 );
-		Slim::Utils::Prefs::clientSet($client, "offDisplaySize", $newposition);
-		$client->update();
-	},
-	'left' => $functions{'left'},
-	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'play' => sub { Slim::Display::Animation::bumpRight(shift); },
-);
-
-sub getOffDisplaySettingsFunctions {
-	return \%offDisplaySettingsFunctions;
-}
-
-sub setOffDisplaySettingsMode {
-	my $client = shift;
-	@offDisplaySettingsChoices = (string('SMALL'),string('LARGE'));
-	$client->lines(\&offDisplaySettingsLines);
-}
-
-sub offDisplaySettingsLines {
-	my $client = shift;
-	my ($line1, $line2);
-	$line1 = string('OFFDISPLAYSIZE');
-	$line2 = $offDisplaySettingsChoices[(Slim::Utils::Prefs::clientGet($client, "offDisplaySize")) ? 1 : 0];
-	return ($line1, $line2);
-}
-
+# settings submodes for: titleformat, treble, bass, and volume
 #################################################################################
 my @titleFormatSettingsChoices;
 
@@ -282,7 +200,10 @@ my %titleFormatSettingsFunctions = (
 		Slim::Utils::Prefs::clientSet($client, "titleFormatCurr", $newposition);
 		$client->update();
 	},
-	'left' => $functions{'left'},
+	'left' => sub   {
+		my $client = shift;
+		Slim::Buttons::Common::popModeRight($client);
+	},
 	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
 );
 
@@ -317,7 +238,10 @@ my %trebleSettingsFunctions = (
 		my $client = shift;
 		Slim::Buttons::Common::mixer($client,'treble','down');
 	},
-	'left' => $functions{'left'},
+	'left' => sub   {
+		my $client = shift;
+		Slim::Buttons::Common::popModeRight($client);
+	},
 	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
 	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
 	'play' => sub { Slim::Display::Animation::bumpRight(shift); },
@@ -354,7 +278,10 @@ my %bassSettingsFunctions = (
 		my $client = shift;
 		Slim::Buttons::Common::mixer($client,'bass','down');
 	},
-	'left' => $functions{'left'},
+	'left' => sub   {
+		my $client = shift;
+		Slim::Buttons::Common::popModeRight($client);
+	},
 	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
 	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
 	'play' => sub { Slim::Display::Animation::bumpRight(shift); },
@@ -383,7 +310,10 @@ sub setBassMode {
 
 #################################################################################
 my %volumeSettingsFunctions = (
-	'left' => $functions{'left'},
+	'left' => sub   {
+		my $client = shift;
+		Slim::Buttons::Common::popModeRight($client);
+	},
 	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
 	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
 	'play' => sub { Slim::Display::Animation::bumpRight(shift); },

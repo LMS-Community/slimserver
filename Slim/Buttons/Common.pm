@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.20 2003/11/19 02:53:21 grotus Exp $
+# $Id: Common.pm,v 1.21 2003/11/25 07:10:40 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -43,19 +43,19 @@ my %modes = (
 	'moodlogic_instant_mix' =>	\&Slim::Buttons::InstantMix::setMode,
 	'moodlogic_mood_wheel' =>	\&Slim::Buttons::MoodWheel::setMode,
 	'off' => 					\&Slim::Buttons::Power::setMode,
-	'offdisplaysize' =>			\&Slim::Buttons::Settings::setOffDisplaySettingsMode,
+	#'offdisplaysize' =>			\&Slim::Buttons::Settings::setOffDisplaySettingsMode,
 	'playlist' => 				\&Slim::Buttons::Playlist::setMode,
 	'plugins' => 				\&Slim::Buttons::Plugins::setMode,
-	'repeat' =>					\&Slim::Buttons::Settings::setRepeatMode,
+	#'repeat' =>					\&Slim::Buttons::Settings::setRepeatMode,
 	'screensaver' =>			\&Slim::Buttons::ScreenSaver::setMode,
 	'search' => 				\&Slim::Buttons::Search::setMode,
 	'searchfor' =>  			\&Slim::Buttons::SearchFor::setMode,
 	'settings' =>				\&Slim::Buttons::Settings::setMode,
 	'shooter' =>  				\&Slim::Buttons::Shooter::setMode,
-	'shuffle' =>				\&Slim::Buttons::Settings::setShuffleMode,
+	#'shuffle' =>				\&Slim::Buttons::Settings::setShuffleMode,
 	'slimtris' =>  				\&Slim::Buttons::SlimTris::setMode,
 	'synchronize' =>			\&Slim::Buttons::Synchronize::setMode,
-	'textsize' =>				\&Slim::Buttons::Settings::setTextSizeMode,
+	#'textsize' =>				\&Slim::Buttons::Settings::setTextSizeMode,
 	'titleformat' =>			\&Slim::Buttons::Settings::setTitleFormatMode,
 	'trackinfo' => 				\&Slim::Buttons::TrackInfo::setMode,
 	'treble' =>					\&Slim::Buttons::Settings::setTrebleMode,
@@ -80,10 +80,10 @@ sub init {
 	$modeFunctions{'settings'} = Slim::Buttons::Settings::getFunctions();
 	$modeFunctions{'synchronize'} = Slim::Buttons::Synchronize::getFunctions();
 	$modeFunctions{'trackinfo'} = Slim::Buttons::TrackInfo::getFunctions();
-	$modeFunctions{'repeat'} = Slim::Buttons::Settings::getRepeatFunctions();
-	$modeFunctions{'shuffle'} = Slim::Buttons::Settings::getShuffleFunctions();
-	$modeFunctions{'textsize'} = Slim::Buttons::Settings::getTextSizeFunctions();
-	$modeFunctions{'offdisplaysize'} = Slim::Buttons::Settings::getOffDisplaySettingsFunctions();
+	#$modeFunctions{'repeat'} = Slim::Buttons::Settings::getRepeatFunctions();
+	#$modeFunctions{'shuffle'} = Slim::Buttons::Settings::getShuffleFunctions();
+	#$modeFunctions{'textsize'} = Slim::Buttons::Settings::getTextSizeFunctions();
+	#$modeFunctions{'offdisplaysize'} = Slim::Buttons::Settings::getOffDisplaySettingsFunctions();
 	$modeFunctions{'titleformat'} = Slim::Buttons::Settings::getTitleFormatFunctions();
 	$modeFunctions{'bass'} = Slim::Buttons::Settings::getBassFunctions();
 	$modeFunctions{'treble'} = Slim::Buttons::Settings::getTrebleFunctions();
