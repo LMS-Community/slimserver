@@ -7949,7 +7949,7 @@ FOUND
 	SE	hittad
 
 ARTISTMATCHING
-	DE	Passende Interpreten
+	DE	Passender Interpret
 	DK	Matchende kunstnere
 	EN	Artist matching
 	ES	Artista encontrado
@@ -7975,7 +7975,7 @@ ARTISTSMATCHING
 	SE	Artister som matchar
 
 ALBUMMATCHING
-	DE	Passende Alben
+	DE	Passendes Album
 	DK	Matchende albums
 	EN	Album matching
 	ES	Disco encontrado
@@ -8001,7 +8001,7 @@ ALBUMSMATCHING
 	SE	Album som matchar
 
 TRACKMATCHING
-	DE	Passende Titel
+	DE	Passender Titel
 	DK	Matchende sangtitler
 	EN	Song title matching
 	ES	Canción encontrada
