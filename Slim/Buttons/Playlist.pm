@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.8 2003/09/19 20:05:12 dean Exp $
+# $Id: Playlist.pm,v 1.9 2003/10/04 20:16:34 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -135,13 +135,14 @@ my %functions = (
  		# Append the zapped song to the zapped playlist
  		# This isn't as nice as it should be, but less work than loading and rewriting the whole list
  		my $zapref = new FileHandle $zapped, "a";
- 		if (!$zapref) {
+ 		if ($zapref) {
+	 		my @zaplist = ($currsong);
+ 			my $zapitem = Slim::Formats::Parse::writeM3U(\@zaplist);
+ 			print $zapref $zapitem;
+ 			close $zapref;
+ 		} else {
  			msg("Could not open $zapped for writing.\n");
- 		}
- 		my @zaplist = ($currsong);
- 		my $zapitem = Slim::Formats::Parse::writeM3U(\@zaplist);
- 		print $zapref $zapitem;
- 		close $zapref;
+		}
  	},
 
 	'play' => sub  {
