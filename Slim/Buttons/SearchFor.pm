@@ -171,7 +171,8 @@ my %functions = (
 		my $digit = shift;
 		Slim::Utils::Timers::killTimers($client, \&nextChar);
 		# if it's a different number, then skip ahead
-		if (Slim::Buttons::Common::testSkipNextNumberLetter($client, $digit)) {
+		if (Slim::Buttons::Common::testSkipNextNumberLetter($client, $digit) && 
+			($client->searchTerm($client->searchCursor) ne Slim::Hardware::VFD::symbol('rightarrow'))) {
 			$client->searchCursor($client->searchCursor+1);
 			$client->update();
 		}
@@ -222,6 +223,8 @@ sub startSearch {
 
 sub nextChar {
 	my $client = shift;
+	return if ($client->searchTerm($client->searchCursor) eq Slim::Hardware::VFD::symbol('rightarrow'));
+	$client->lastLetterDigit('');
 	$client->searchCursor($client->searchCursor+1);
 	$client->searchTerm($client->searchCursor, Slim::Hardware::VFD::symbol('rightarrow'));
 	$client->update();

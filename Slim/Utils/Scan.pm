@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.10 2004/05/13 17:57:36 dean Exp $
+# $Id: Scan.pm,v 1.11 2004/06/18 16:25:26 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -432,8 +432,19 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 	}
 	
 	if ($playlist_filehandle) {
-		$::d_scan && msg("Scan::readList loading $playlisturl\n");
-		$numitems = (push @$listref, Slim::Formats::Parse::parseList($playlisturl,$playlist_filehandle, (splitpath(Slim::Utils::Misc::pathFromFileURL($playlisturl)))[0] . (splitpath(Slim::Utils::Misc::pathFromFileURL($playlisturl)))[1])) - $startingsize;
+		my $playlist_base = undef;
+
+		if (Slim::Music::Info::isFileURL($playlisturl)) {
+			my $path = Slim::Utils::Misc::pathFromFileURL($playlisturl);
+			my @parts = splitdir($path);
+			pop(@parts);			
+			$playlist_base = Slim::Utils::Misc::fileURLFromPath(catdir(@parts));
+			$::d_scan && msg("gonna scan $playlisturl, with path $path, for base: $playlist_base\n");
+		}
+
+		$::d_scan && msg("Scan::readList loading $playlisturl with base $playlist_base\n");
+		$numitems = (push @$listref, Slim::Formats::Parse::parseList($playlisturl, $playlist_filehandle, $playlist_base)) - $startingsize;
+					
 		$::d_scan && msg("Scan::readList loaded playlist with $numitems items\n");
 	}
 	

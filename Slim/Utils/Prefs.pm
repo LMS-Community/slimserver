@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.70 2004/06/10 23:39:06 vidur Exp $
+# $Id: Prefs.pm,v 1.71 2004/06/18 16:25:26 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -94,7 +94,7 @@ my %DEFAULT = (
 	,"skin"					=> "Default"
 	,"language"				=> "EN"
 	,"refreshRate"			=> 30
-	,"displaytexttimeout" 	=> 2.0
+	,"displaytexttimeout" 	=> 1.0
 	,"filesort"				=> 0
 	,"screensaverjump" 		=> 1
 	,"playtrackalbum" 		=> 1
