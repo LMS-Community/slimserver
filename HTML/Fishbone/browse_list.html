@@ -10,19 +10,19 @@
 		[% END %]
 	</td>
 	<td class="listing" width="11" align="center">
-		<nobr><a href="status_header.html?p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/queue.gif" border=0 align="center" width="6" height="9" alt='Queue' title='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]';return true"></a></nobr>
+		<nobr><a href="status_header.html?p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% player | uri %]" target="status"><img src="html/queue.gif" border=0 align="center" width="6" height="9" alt='Queue' title='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]';return true"></a></nobr>
 	</td>
 	<td class="listing" width="3" align="center">&nbsp;</td>
 	<td class="listing" width="11" align="center">
-		<nobr><a href="status_header.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/play.this.gif" border=0 align="center" width="5" height="9" alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a></nobr>
+		<nobr><a href="status_header.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="status"><img src="html/play.this.gif" border=0 align="center" width="5" height="9" alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a></nobr>
 	</td>
 	<td class="listing" width="3" align="center">&nbsp;</td>
 	<td class="listing" width="11" align="center">
-		<nobr><a href="status_header.html?p0=playlist&p1=add&p2=[% itempath | uri %]&player=[% player | uri %]"    target="statusframe"><img src="html/add.gif" border=0 align="center" width="8" height="8" alt='Add' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a></nobr>
+		<nobr><a href="status_header.html?p0=playlist&p1=add&p2=[% itempath | uri %]&player=[% player | uri %]"    target="status"><img src="html/add.gif" border=0 align="center" width="8" height="8" alt='Add' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a></nobr>
 	</td>
 	<td class="listing" width="3" align="center">&nbsp;</td>
 	<td class="listing" width="11" align="center">
-		<nobr><a href="status_header.html?p0=playlist&p1=deleteitem&p2=[% itempath | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/subtract.gif" border=0 align="center" width="8" height="8" alt='Delete' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a></nobr>
+		<nobr><a href="status_header.html?p0=playlist&p1=deleteitem&p2=[% itempath | uri %]&player=[% player | uri %]" target="status"><img src="html/subtract.gif" border=0 align="center" width="8" height="8" alt='Delete' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a></nobr>
 	</td>
 	[% IF mixable_not_descend %]<td  class="listing" width="3" align="center">&nbsp;</td>
 		<td class="listing" align="center" width="11">

@@ -11,8 +11,8 @@
 
 <H3>[% "SONG_INFO" | string %] [% "FOR" | string %] <i>[% title %]</i></H3>
 <p>
-<p><a href="status_header.html?p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="statusframe">[% "PLAY_THIS_SONG" | string %]</a></p>
-<p><a href="status_header.html?p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="statusframe">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a></p>
+<p><a href="status_header.html?p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="status">[% "PLAY_THIS_SONG" | string %]</a></p>
+<p><a href="status_header.html?p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a></p>
 [% IF mixable %]<p><a href="instant_mix.html?song=[% itempath | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% "MOODLOGIC_INSTANT_MIX" | string %]</a></p>[% END %]
 </p>
 <table width="100%" border="0">

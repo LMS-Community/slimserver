@@ -31,9 +31,9 @@
 		[% IF browselist_pagebar %]<p>[% "PAGES" | string %]:[% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %]</p>[% END %]
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			[% IF playlistname %]<tr><td class="listing">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
-				<td class="listing" width="11" align="center"><nobr><a href="status_header.html?p0=playlist&p1=load&p2=[% dir | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/play.this.gif" border=0 align="center" hspace="1"></a></nobr></td>
+				<td class="listing" width="11" align="center"><nobr><a href="status_header.html?p0=playlist&p1=load&p2=[% dir | uri %]&player=[% player | uri %]" target="status"><img src="html/play.this.gif" border=0 align="center" hspace="1"></a></nobr></td>
 				<td class="listing" width="3" align="center">&nbsp;</td>
-				<td class="listing" width="11" align="center"><nobr><a href="status_header.html?p0=playlist&p1=add&p2=[% dir | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/add.gif" border=0 align="center" hspace="1"></a></nobr></td>
+				<td class="listing" width="11" align="center"><nobr><a href="status_header.html?p0=playlist&p1=add&p2=[% dir | uri %]&player=[% player | uri %]" target="status"><img src="html/add.gif" border=0 align="center" hspace="1"></a></nobr></td>
 				<td class="listing" width="3" align="center">&nbsp;</td></tr>
 			[% END %]
 			[% browse_list %]

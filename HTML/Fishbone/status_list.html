@@ -1,30 +1,30 @@
 <tr>
 	<td [% IF currentsong %]class="listing2" ><a name="currentsong"></a>[% END %][% IF not currentsong %]class="listing"><a name=[% num %]>[% END %]
-		<a style="font-size: 10px;color:white" href="status_header.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="statusframe">&nbsp;[% num + 1 %].&nbsp;</a>
-		<b><a href="status_header.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="statusframe">[% title | html %]</a></b>
+		<a style="font-size: 10px;color:white" href="status_header.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">&nbsp;[% num + 1 %].&nbsp;</a>
+		<b><a href="status_header.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">[% title | html %]</a></b>
 	<nobr>[% IF artist %] [% "BY" | string %] <a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist | html %]</a> [% END %]
 	</nobr><nobr>[% IF album %] [% "FROM" | string %] <i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album %]</a></i>[% END %]
 	</nobr></td>
 	<td [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] width="11" align="center">
-		<a href="status_header.html?p0=playlist&p1=move&p2=[% num %]&p3=%2D1&player=[% player | uri %]&start=[% start %]" target="statusframe">
+		<a href="status_header.html?p0=playlist&p1=move&p2=[% num %]&p3=%2D1&player=[% player | uri %]&start=[% start %]" target="status">
 		<img src="html/move.up.gif" border="0" width="11" height="9" align="center"
 			title='[% "MOVEUP" | string %]' onMouseOver="self.status='[% "MOVEUP" | string %]';return true">
 		</a></td>
 	<td [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] width="3" align="center">&nbsp;</td>
 	<td [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] width="11" align="center">
-		<a href="status_header.html?p0=playlist&p1=move&p2=[% num %]&p3=%2B1&player=[% player | uri %]&start=[% start %]" target="statusframe">
+		<a href="status_header.html?p0=playlist&p1=move&p2=[% num %]&p3=%2B1&player=[% player | uri %]&start=[% start %]" target="status">
 		<img src="html/move.down.gif" border="0" width="11" height="9" align="center"
 			title='[% "MOVEDOWN" | string %]' onMouseOver="self.status='[% "MOVEDOWN" | string %]';return true">
 		</a></td>
 	<td [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] width="3" align="center">&nbsp;</td>
 	<td [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] width="11" align="center">
-		<a href="status_header.html?p0=playlist&p1=move&p2=[% num %]&p3=[% nextsongind %]&player=[% player | uri %]&start=[% start %]" target="statusframe">
+		<a href="status_header.html?p0=playlist&p1=move&p2=[% num %]&p3=[% nextsongind %]&player=[% player | uri %]&start=[% start %]" target="status">
 		<img src="html/queue.gif" border="0" width="6" height="9" align="center"
 			title='[% "PLAY" | string %] [% "NEXT" | string %]' onMouseOver="self.status='[% "PLAY" | string %] [% "NEXT" | string %]';return true">
 		</a></td>
 	<td [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] width="3" align="center">&nbsp;</td>
 	<td [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] width="11" align="center">
-		<a href="status_header.html?p0=playlist&p1=delete&p2=[% num %]&player=[% player | uri %]&start=[% start %]" target="statusframe">
+		<a href="status_header.html?p0=playlist&p1=delete&p2=[% num %]&player=[% player | uri %]&start=[% start %]" target="status">
 		<img src="html/remove.gif" border="0" width="9" height="9" align="center"
 			title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true">
 		</a></td>
