@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.72 2004/04/03 02:41:10 kdf Exp $
+# $Id: strings.txt,v 1.73 2004/04/03 02:46:15 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -4540,6 +4540,9 @@ ALL_ALBUMS
 	NO	Alle album
 	PT	Todos os Álbuns
 	SE	Alla album
+
+ALL_SUBFOLDERS
+	EN	All Subfolders
 
 OF
 	DE	von

@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.60 2004/04/03 02:41:10 kdf Exp $
+# $Id: Pages.pm,v 1.61 2004/04/03 02:46:15 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -329,6 +329,23 @@ sub browser_addtolist_done {
 			$thumb = 1;
 			$cover = 1;
 		}
+		
+		
+			if (scalar(@{$itemsref}) > 1) {
+
+				my %list_form = %$params;
+
+				$list_form{'title'}        = string('ALL_SUBFOLDERS');
+				$list_form{'itempath'}     = Slim::Utils::Misc::virtualToAbsolute($params->{'dir'});
+				$list_form{'player'}       = $current_player;
+				$list_form{'descend'}      = 1;
+				$list_form{'odd'}	   = 0;
+				$list_form{'skinOverride'} = $params->{'skinOverride'};
+
+				$itemnumber++;
+				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browse_list.html", \%list_form)};
+			}
+		
 		
 		foreach my $item (@{$itemsref}[$start..$end]) {
 			
