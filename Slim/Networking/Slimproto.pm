@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.20 2003/08/23 20:27:49 sadams Exp $
+# $Id: Slimproto.pm,v 1.21 2003/08/31 04:55:59 fm Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -288,7 +288,7 @@ sub process_slimproto_frame {
 				$revision,	# rev
 				$s		# tcp sock
 			);
-	
+			$client->macaddress($mac);
 			$client->init();
 		} else {
 			$::d_slimproto && msg("hello from existing client: $id on ipport: $ipport{$s}\n");
