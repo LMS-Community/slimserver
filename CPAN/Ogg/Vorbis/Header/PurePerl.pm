@@ -361,6 +361,7 @@ sub _loadComments
     $byteCount += 4;
 
     # finally, read the comments
+    $data->{'COMMENT_KEYS'} = [];
     for (my $i = 0; $i < $user_comment_count; $i++)
     {
 	# first read the length
