@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.35 2004/04/28 22:13:24 dean Exp $
+# $Id: Misc.pm,v 1.36 2004/04/29 15:23:23 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -18,6 +18,7 @@ use Net::hostent;              # for OO version of gethostbyaddr
 use Sys::Hostname;
 use Socket;
 use Symbol qw(qualify_to_ref);
+use URI;
 use URI::file;
 
 if ($] > 5.007) {
@@ -128,39 +129,42 @@ sub pathFromWinShortcut {
 }
 	
 sub pathFromFileURL {
-	my($url) = shift;
+	my $url = shift;
 	my $file;
-	my $path;
 	
+	my $uri = URI->new($url);
+
 	# TODO - FIXME - this isn't mac or dos friendly with the path...
+	# Use File::Spec::rel2abs ? or something along those lines?
+	#
 	# file URLs must start with file:/// or file://localhost/ or file://\\uncpath
-	if ($url =~ /^file:\/\/(\/|localhost\/)(.*)/i || 
-	    $url =~ /^file:(\/\/|\/\/\/)([a-zA-Z]:.*)/i ||
-	    $url =~ /^file:(\/\/)(\\\\.*)/i)  {
-		$path = $2;
-		if ($path !~ /^([a-zA-Z]:)|(\\\\)/ ) { $path = '/' . $path; };
-		$path =~ s/^\/\/\//\\\\/;
-		$path =~ s/(.*)#.*$/$1/;
-		my $audiodir = Slim::Utils::Prefs::get("audiodir");
+	if ($uri->scheme() && $uri->scheme() eq 'file') {
+
+		my $path = $uri->path();
+
 		$::d_files && msg("Got $path from file url $url\n");
+
 		# only allow absolute file URLs and don't allow .. in files...
 		# make sure they are in the audiodir or are already in the library...		
 		if (($path !~ /\.\.[\/\\]/) || Slim::Music::Info::isCached($url)) {
 			$file = Slim::Web::HTTP::unescape($path);
 		} 
 	}
+
 	if (!defined($file))  {
 		$::d_files && msg("bad file: url $url\n");
 	} else {
 		$::d_files && msg("extracted: $file from $url\n");
 	}
+
 	return $file;
 }
 
 sub fileURLFromPath {
 	my $path = shift;
-	my $uri = URI::file->new($path);
-	return $uri->as_string;
+	my $uri  = URI->new($path);
+
+	return sprintf('file://%s', $uri->path());
 }
 
 sub anchorFromURL {
