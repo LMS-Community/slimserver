@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.12 2003/09/29 22:40:35 dean Exp $
+# $Id: Prefs.pm,v 1.13 2003/09/29 22:50:15 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -542,7 +542,7 @@ sub prefsFile {
 		if (-r '/etc/slimd.conf') {
 			$prefsFile = '/etc/slimd.conf';
 		} else {
-			$prefsFile = catdir($pref_path, '.slimp3.pref');
+			$prefsFile = catdir($pref_path, '.slimd.pref');
 		}
 	}
 	
