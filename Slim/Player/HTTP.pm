@@ -53,4 +53,10 @@ sub volume {
 sub fade_volume {
 	return 1;
 }
+sub bufferFullness {
+	return 0;
+}
+sub bytesReceived {
+	return shift->songpos;
+}
 1;

@@ -85,10 +85,7 @@ sub songRealPos {
 
 	$client = Slim::Player::Sync::masterOrSelf($client);
 
-	my $realpos = 0;
-	if (defined($client->songpos) && defined(Slim::Networking::Stream::fullness($client))) {
-		$realpos = $client->songpos - Slim::Networking::Stream::fullness($client);
-	}
+	my $realpos = $client->bytesReceived() - $client->bufferFullness();
 
 	if ($realpos<0) {
 #		warn("came up with a negative position in the stream: ".
@@ -153,7 +150,7 @@ sub playmode {
 				
 			} elsif ($newmode eq "playout") {
 				$everyclient->playmode("stop");
-				
+				currentSongIndex($everyclient, "0");
 			} else {
 				$everyclient->playmode($newmode);
 			}
@@ -193,7 +190,7 @@ sub playmode {
 				
 			} elsif ($newmode eq "playout") {
 				$everyclient->playout();
-				
+
 			} else {
 				$::d_playlist && msg(" Unknown play mode: " . $everyclient->playmode . "\n");
 				return $everyclient->playmode();
@@ -494,6 +491,9 @@ sub openSong {
 	$client->songtotalbytes(0);
 	$client->songduration(0);
 	$client->songpos(0);
+	
+	$client->bytesReceived(0);
+
 
 	# reset shoutcast variables
 	$client->shoutMetaInterval(0);
@@ -798,6 +798,22 @@ sub pauseSynced {
 		$everyclient->pause();
 		rate($everyclient, 0);
 	}
+}
+
+sub decoder {
+	my $format = shift;
+	my $clienttype = shift;
+	my $application;
+	my $options;
+	return ($application, $options);
+}
+
+sub encoder {
+	my $format = shift;
+	my $clienttype = shift;
+	my $application;
+	my $options;
+	return ($application, $options);
 }
 
 1;

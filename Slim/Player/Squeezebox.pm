@@ -106,5 +106,17 @@ sub playout {
 	return 1;
 }
 
+sub bufferFullness {
+	my $client = shift;
+	return Slim::Networking::Slimproto::fullness($client);
+}
+
+sub buffersize {
+	return 131072;
+}
+
+sub bytesReceived {
+	return Slim::Networking::Slimproto::bytesReceived(@_);
+}
 
 1;

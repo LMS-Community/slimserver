@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.17 2003/08/21 21:51:31 dean Exp $
+# $Id: Slimproto.pm,v 1.18 2003/08/22 21:05:48 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -38,6 +38,7 @@ my %parser_state; 	# 'LENGTH', 'OP', or 'DATA'
 my %parser_framelength; # total number of bytes for data frame
 my %parser_frametype;   # frame type eg "HELO", "IR  ", etc.
 my %sock2client;	# reference to client for each sonnected sock
+my %status;
 
 sub init {
 	my ($listenerport, $listeneraddr) = ($SLIMPROTO_PORT, $SLIMPROTO_ADDR);
@@ -89,8 +90,9 @@ sub slimproto_accept {
 
 	return unless $clientsock;
 
-        defined($clientsock->blocking(0))  || die "Cannot set port nonblocking";
+    defined($clientsock->blocking(0))  || die "Cannot set port nonblocking";
 #	setsockopt($clientsock, SOL_SOCKET, &TCP_NODELAY, 1);  # no nagle
+
 	$clientsock->setsockopt(6, TCP_NODELAY, 1);
 
 	my $peer = $clientsock->peeraddr;
@@ -344,31 +346,69 @@ sub process_slimproto_frame {
 				'u', 'UNDERRUN',
 				);
 
-		my (	$status_event_code,
-			$status_num_crlf,
-			$status_mas_initialized,
-			$status_mas_mode,
-			$status_rptr,
-			$status_wptr,
-			$status_bytes_received_H,
-			$status_bytes_received_L
+		(	$status{$client}->{'event_code'},
+			$status{$client}->{'num_crlf'},
+			$status{$client}->{'mas_initialized'},
+			$status{$client}->{'mas_mode'},
+			$status{$client}->{'rptr'},
+			$status{$client}->{'wptr'},
+			$status{$client}->{'bytes_received_H'},
+			$status{$client}->{'bytes_received_L'}
 		) = unpack ('aCCCNNNN', $data);
 
-		if (defined($EVENT_CODES{$status_event_code})) {
-			$status_event_code = $EVENT_CODES{$status_event_code};
+		if (defined($EVENT_CODES{$status{$client}->{'event_code'}})) {
+			$status{$client}->{'event_code'} = $EVENT_CODES{$status{$client}->{'event_code'}};
 		}
-
+		
+		my $firststatus;
+		if (!defined($status{$client}->{'bytes_received'}) && defined($status{$client}->{'byteoffset'})) {
+			$firststatus = 1;
+		}
+		
+		$status{$client}->{'bytes_received'} = $status{$client}->{'bytes_received_H'} * 2^32 + $status{$client}->{'bytes_received_L'}; 
+		
+		if ($firststatus) {
+			$status{$client}->{'byteoffset'} += $status{$client}->{'bytes_received'};
+		}
+		
+		my $fullness = 2*$status{$client}->{'wptr'} - 2*$status{$client}->{'rptr'};
+		if ($fullness < 0) {
+			$fullness = $client->buffersize() + $fullness;
+		};
+		$status{$client}->{'fullness'} = $fullness;
+		
 		$::d_slimproto && msg("Squeezebox stream status:\n".
-		"	event_code:      $status_event_code\n".
-		"	num_crlf:        $status_num_crlf\n".
-		"	mas_initiliazed: $status_mas_initialized\n".
-		"	mas_mode:        $status_mas_mode\n".
-		"	rptr:            $status_rptr\n".
-		"	wptr:            $status_wptr\n".
-		"	bytes_rec_H      $status_bytes_received_H\n".
-		"	bytes_red_L      $status_bytes_received_L\n");
+		"	event_code:      $status{$client}->{'event_code'}\n".
+		"	num_crlf:        $status{$client}->{'num_crlf'}\n".
+		"	mas_initiliazed: $status{$client}->{'mas_initialized'}\n".
+		"	mas_mode:        $status{$client}->{'mas_mode'}\n".
+		"	rptr:            $status{$client}->{'rptr'}\n".
+		"	wptr:            $status{$client}->{'wptr'}\n".
+		"	bytes_rec_H      $status{$client}->{'bytes_received_H'}\n".
+		"	bytes_rec_L      $status{$client}->{'bytes_received_L'}\n".
+		"	fullness:        $status{$client}->{'fullness'}\n".
+		"	byteoffset:      $status{$client}->{'byteoffset'}\n".
+		"	bytes_recieved   $status{$client}->{'bytes_received'}\n".
+		"");
 	}
 }
 
+sub fullness {
+	my $client = shift;
+	return $status{$client}->{'fullness'};
+}
+
+# returns how many bytes have been received by the player.  Can be reset to an arbitrary value.
+sub bytesReceived {
+	my $client = shift;
+	my $preset = shift;
+	
+	if (defined($preset)) {
+		msg("presetting streamed bytes to: $preset\n");
+		$status{$client}->{'byteoffset'} = $status{$client}->{'bytes_received'} + $preset;
+	}
+	return $status{$client}->{'bytes_received'} - $status{$client}->{'byteoffset'};
+}
 1;
+
 

@@ -36,6 +36,7 @@ my %seq;				# the next sequence number to send
 my %packetInFlight;		# hash of references of  the packet in flight to this client
 my %fullness;			# number of bytes in the buffer as of the last packet
 my %lastAck;			# timeout in the case that the player disappears completely.
+my %lastByte;			# if we get an odd number of bytes from the upper level, hold on to the last one.
 
 #
 # things we remember about packets in flight
@@ -377,6 +378,8 @@ sub sendNextChunk {
 		$requestedChunkSize = $remainingSpace;
 	}
 
+	if (defined($lastByte{$client})) { $requestedChunkSize--; }
+
 	my $chunkRef = Slim::Player::Source::nextChunk($client, $requestedChunkSize);
 	
 	if (!defined($chunkRef)) {
@@ -385,14 +388,19 @@ sub sendNextChunk {
 		return 0;
 	}
 	
-	my $newChunkRef = $chunkRef;
-	$len = length($$newChunkRef);
-
+	if (defined($lastByte{$client})) {
+		$$chunkRef = $lastByte{$client} . $$chunkRef;
+		delete($lastByte{$client});	
+	}
+	
+	$len = length($$chunkRef);
+	
 	# We must send an even number of bytes.
 	if (($len % 2) != 0) {
-		my $chunk = $$newChunkRef . ' ';
-		$newChunkRef = \$chunk;
-		$len++;
+		use bytes;
+		$lastByte{$client} = substr($$chunkRef, -1, 1);
+		$$chunkRef = substr($$chunkRef, 0, -1);
+		$len--;
 	} 
 
 	if (($fullness > $UNPAUSE_THRESHOLD) && ($streamState eq 'buffering')) {
@@ -408,7 +416,7 @@ sub sendNextChunk {
 	
 	$pkt->{'wptr'} = $curWptr;
 	$pkt->{'len'} = $len;
-	$pkt->{'chunkref'} = $newChunkRef;
+	$pkt->{'chunkref'} = $chunkRef;
 	
 	$curWptr = $curWptr + $len/2;
 	if ($curWptr >= 65536) { $curWptr -= 65536; };

@@ -116,6 +116,13 @@ sub playout {
 	return 1;
 }
 
+sub bufferFullness {
+	my $client = shift;
+	return Slim::Networking::Stream::fullness($client);
+}
 
+sub bytesReceived {
+	return shift->songpos;
+}
 1;
 

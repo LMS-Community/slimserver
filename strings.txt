@@ -40,6 +40,7 @@ BASE_SKIN
 	NL	Light
 	NO	Lys
 	PT	Leve
+	SE	Lätt-utseende
 
 DEFAULT_SKIN
 	EN	Standard
@@ -110,6 +111,7 @@ ABOUT_SLIMDEVICES
 	EN	About Slim Devices
 	FR	A propos de Slim Devices
 	NO	Om Slim Devices
+	SE	Om Slim Devices
 
 #
 # Player user interface, sent by the server
@@ -146,6 +148,7 @@ LIBRARY_CONTAINS
 	NL	Inhoud van de bibliotheek
 	NO	Musikk biblioteket inneholder
 	PT	O arquivo de música contém
+	SE	Musikbiblioteket innehåller
 
 BROWSEMENU
 	DE	Musik nachschlagen
@@ -275,11 +278,13 @@ NOW_SCANNING
 	EN	Now Scanning
 	FR	Recherche
 	NO	Søker
+	SE	Scannar
 
 NOW_REWINDING
 	EN	Now Rewinding
 	FR	Retour rapide
 	NO	Spoler tilbake
+	SE	Spelar tillbaka
 
 EVERYTHING
 	DE	Alles
@@ -388,6 +393,7 @@ ZAPPING_FROM_PLAYLIST
 	NL	Verplaatsen naar de lijst van gezapte stukken:
 	NO	Flytter til Zappede Sangers spilleliste:
 	PT	Mover para a playlist rápida de músicas
+	SE	Flyttar till spellistan för Zappade låtar.
 
 ZAPPED_SONGS
 	DE	Zapped Songs
@@ -396,6 +402,7 @@ ZAPPED_SONGS
 	NL	Gezapte Liedjes
 	NO	Zappede Sanger
 	PT	Playlist Rápida de Músicas
+	SE	Zappade låtar
 
 ADDING_TO_PLAYLIST
 	DE	Am Ende der Playlist hinzufügen:
@@ -417,6 +424,7 @@ INSERT_TO_PLAYLIST
 	NL	Toevoegen aan playlist:
 	NO	Legger til som neste:
 	PT	Adicionar e tocar a seguir
+	SE	Lägger till som nästa låt:
 
 STOPPING
 	DE	Stopp
@@ -591,6 +599,7 @@ ALARM
 	NL	Wekker
 	NO	Alarm
 	PT	Alarme
+	SE	Väckarklocka
 
 ALARM_SET
 	DE	Stellen der Weckzeit
@@ -599,6 +608,7 @@ ALARM_SET
 	NL	Wektijd instellen
 	NO	Sett Alarm Tid
 	PT	Acertar Alarme
+	SE	Ställ väckningstid
 
 ALARM_ON
 	DE	An (Drücken Sie RIGHT um auszuschalten)
@@ -607,6 +617,7 @@ ALARM_ON
 	NL	Aan (Druk RIGHT om uit te schakelen)
 	NO	På (Trykk HØYRE for å slå av)
 	PT	Ligado (Prima DIREITA para desligar)
+	SE	På (Tryck HÖGER för att avaktivera)
 
 ALARM_OFF
 	DE	Aus (Drücken Sie RIGHT um anzuschalten)
@@ -615,6 +626,7 @@ ALARM_OFF
 	NL	UIT (Druk RIGHT om in te schakelen)
 	NO	Av (Trykk HØYRE for å slå på)
 	PT	Desligado (Prima DIREITA para ligar)
+	SE	Av (Tryck HÖGER för att aktivera)
 
 ALARM_SELECT_PLAYLIST
 	DE	Wählen Sie eine Playlist für den Wecker
@@ -623,6 +635,7 @@ ALARM_SELECT_PLAYLIST
 	NL	Kies een playlist voor de wekker
 	NO	Velg Spilleliste for Alarm
 	PT	Escolha a Playlist para o Alarme
+	SE	Välj spellista för väckning
 
 ALARM_SET_VOLUME
 	DE	Stellen Sie die Lautstärke für den Wecker
@@ -631,6 +644,7 @@ ALARM_SET_VOLUME
 	NL	Kies het wekvolume
 	NO	Sett Alarm volum
 	PT	Mudar Volume do Alarme
+	SE	Välj volym för väckning
 
 ALARM_SET_VOLUME_SHORT
 	DE	Wecker Lautstärke
@@ -639,6 +653,7 @@ ALARM_SET_VOLUME_SHORT
 	NL	Wekvolume
 	NO	Alarm volum
 	PT	Volume do Alarme
+	SE	Väckningsvolym
 
 ALARM_SET_ENTRY
 	DE	Stellen der Weckzeit
@@ -647,6 +662,7 @@ ALARM_SET_ENTRY
 	NL	Kies wektijd
 	NO	Sett Alarm tid
 	PT	Hora do Alarme
+	SE	Ställ väckningstid
 
 ALARM_PLAYLIST_ENTRY
 	DE	Wählen Sie die Playlist für den Wecker
@@ -655,6 +671,7 @@ ALARM_PLAYLIST_ENTRY
 	NL	Kies Playlist Wekker 
 	NO	Velg Alarm Spilleliste
 	PT	Escolha a Playlist do Alarme
+	SE	Välj väckningsspellista
 
 ALARM_TURNING_ON
 	DE	Einschalten des Weckers...
@@ -663,6 +680,7 @@ ALARM_TURNING_ON
 	NL	Wekker wordt geactiveerd...
 	NO	Slår på alarm...
 	PT	A ligar o alarme...
+	SE	Aktiverar Väckarklocka...
 
 ALARM_TURNING_OFF
 	DE	Ausschalten des Weckers...
@@ -671,6 +689,7 @@ ALARM_TURNING_OFF
 	NL	Wekker wordt uitgeschakeld...
 	NO	Slår av alarm...
 	PT	A desligar o alarme...
+	SE	Avaktiverar Väckarklocka...
 
 ALARM_NOW_PLAYING
 	DE	Der Wecker spielt jetz
@@ -679,14 +698,13 @@ ALARM_NOW_PLAYING
 	NL	De Wekker Speelt Nu
 	NO	Alarm spiller nå
 	PT	A Tocar o Alarme
+	SE	Väckarklockan spelar nu
 
 SLIMP3
 	EN	SLIMP3
-	NO	SLIMP3
 
 SQUEEZEBOX
 	EN	Squeezebox
-	NO	Squeezebox
 
 WELCOME_TO_SLIMP3
 	DE	Willkommen bei SLIMP3
@@ -719,6 +737,7 @@ FREE_YOUR_MUSIC
 	FR	Libérez votre musique
 	NO	Sett musikken din fri
 	PT	Liberte a sua música
+	SE	Frige din musik
 
 CONNECTING_FOR
 	DE	Verbindet zum Abspielen:
@@ -998,6 +1017,7 @@ SETUP_AUTOBRIGHTNESS
 	NL	Automatische helderheidsregeling van het scherm
 	NO	Vis lysstyrke automatisk
 	PT	Brilho Automático
+	SE	Automatisk ljusstyrka
 
 SETUP_AUTOBRIGHTNESS_DESC
 	DE	Die Helligkeit Anzeige kann sich automatisch anpassen, wenn Sie einen Knopf drücken, einen Titel abspielen oder eine zeitlang nichts tun. Sie können dieses automatische Verhalten abschalten.
@@ -1006,6 +1026,7 @@ SETUP_AUTOBRIGHTNESS_DESC
 	NL	De helderheid van het scherm van kan automatisch aangepast worden bij knopdrukken, het begin van een liedje of na een periode van inactiviteit. Deze functie kan ook uitgeschakeld worden.
 	NO	Lyststyrken i SLIMP3 displayet kan justeres automatisk når du trykker på en knapp, begynner å spille en sang, eller lar den være for en stund. Du kan velge å slå av denne automatikken.
 	PT	O brilho do ecrã do pode ser ajustado automaticamente quando usar um botão, começa uma música, ou fica inactivo ao fim de algum tempo. Pode desligar este comportamento automático se desejar.
+	SE	Ljusstyrkan på spelaren kan ändras automatiskt när du trycker på en knapp, börjar spela en låt eller lämnar den för en stund. Du kan välja att avaktivera automatiken.
 
 SETUP_AUTOBRIGHTNESS_OFF
 	DE	Helligkeit von hand anpassen
@@ -1014,6 +1035,7 @@ SETUP_AUTOBRIGHTNESS_OFF
 	NL	Manuele Helderheidsregeling
 	NO	Juster lysstyrke manuelt
 	PT	Ajustar o Brilho Manualmente
+	SE	Ändra ljusstyrka manuellt
 
 SETUP_AUTOBRIGHTNESS_ON
 	DE	Helligkeit automatisch anpassen
@@ -1022,6 +1044,7 @@ SETUP_AUTOBRIGHTNESS_ON
 	NL	Automatische Helderheidsregeling
 	NO	Juster lysstyrke automatisk
 	PT	Ajustar o Brilho Automaticamente
+	SE	Ändra ljusstyrka automatiskt
 
 SETUP_PLAYINGDISPLAYMODE
 	DE	Abspielen im Anzeigemodus
@@ -1086,6 +1109,7 @@ SETUP_NO_SYNCHRONIZATION
 	NL	Geen Synchronisatie
 	NO	Ingen Synkronisering
 	PT	Não Sincronizado
+	SE	Ingen synkronisering
 
 SETUP_SYNCHRONIZE_OK
 	DE	Hinzufügen zur Synchronisations-Gruppe:
@@ -1100,21 +1124,25 @@ SETUP_SYNCVOLUME_ON
 	EN	Sync player's volume
 	FR	Synchroniser le volume du lecteur
 	NO	Synkroniser spillerens volum
+	SE	Synkronisera spelarens volym
 
 SETUP_SYNCVOLUME_OFF
 	EN	Don't sync player's volume
 	FR	Ne pas synchroniser le volume du lecteur
 	NO	Ikke synkroniser spillerens volum
+	SE	Synkronisera Inte spelarens volym
 
 SETUP_SYNCVOLUME
 	EN	Synchronize Volume
 	FR	Synchroniser le volume
 	NO	Synkroniser volum
+	SE	Synkronisera volym
 
 SETUP_SYNCVOLUME_DESC
 	EN	You can choose to have the volume levels for the synced players track each other or be independent.  Make a selection below and click Change.
 	FR	Vous pouvez faire en sorte que le réglage du volume sur un lecteur modifie le volume sur les lecteurs synchronisés. Faites un choix et cliquez sur Modifier.
 	NO	Du kan velge å synkronisere lyd nivåene for de synkroniserte spiller eller la dem være uavhengige. Velg nedenfor og trykk Endre.
+	SE	Du kan få dina synkroniserade spelare använda samma volym eller vara oberoende. Gör ditt val och klicka på Ändra.
 
 SETUP_TITLEFORMATCURR
 	DE	Aktuelles Titel Format
@@ -1205,6 +1233,7 @@ SETUP_PASSWORD_CHANGED
 	FR	Le mot de passe a été modifié.
 	NL	Het paswoord werd aangepast.
 	PT	A palavra chave foi alterada.
+	SE	Lösenordet har ändrats.
 
 # Server Settings
 SETUP_LANGUAGE
@@ -1551,6 +1580,7 @@ SETUP_COVERART
 	FR	Pochette
 	NL	Hoesjes
 	PT	Capa Álbum
+	SE	Albumomslag
 
 SETUP_COVERART_DESC
 	DE	Bilder der Plattenhülle werden, falls vorhanden, beim Anschauen der Album- oder Titelinformationen angezeigt. Sie befinden sich in den ID3 tags für einen einzelnen Titel, oder im selben Verzeichnis, wie die Titel Dateien.  Per Voreinstellung werden Dateien mit den folgenden Namen benutzt:"cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", "thumb.jpg".  Sie können einen zusätzlichen Dateinamen für die Plattenhülle festlegen und unterschiedliche Namen für kleine und grosse Bilder verwenden.
@@ -1565,6 +1595,7 @@ SETUP_COVERART_OK
 	FR	Nom de fichier pour les images de pochette :
 	NL	Naam van de afbeelding van de hoes ingesteld op
 	PT	Nome do ficheiro para a Capa do Álbum é
+	SE	Filnamn för albumomslag är satt till:
 
 SETUP_COVERTHUMB
 	DE	Dateiname der Plattenhülle (klein)
@@ -1572,12 +1603,15 @@ SETUP_COVERTHUMB
 	FR	Vignettes
 	NL	Verkleinde afbeelding van de hoes
 	PT	Miniatura da Capa do Álbum
+	SE	Miniatyr av albumomslag
 
 SETUP_COVERTHUMB_DESC
+	DE	Dateiname der Plattenhülle
 	EN	Cover art thumbnail image file name
 	FR	Nom de fichier pour les vignettes
 	NL	Bestandsnaam voor verkleinde afbeelding van de hoes
 	PT	Nome do ficheiro da miniatura da Capa do Álbum
+	SE	Filnamn för Miniatyrer av albumomslag
 
 SETUP_COVERTHUMB_OK
 	DE	Dateiname der Plattenhülle (klein):
@@ -1585,6 +1619,7 @@ SETUP_COVERTHUMB_OK
 	FR	Nom de fichier pour les vignettes des images de pochette :
 	NL	Bestandsnaam voor verkleinde afbeelding van de hoes ingesteld op
 	PT	O nome do ficheiro para a miniatura da Capa do Álbum é
+	SE	Filnamn för Miniatyrer av albumomslag satt till:
 
 SETUP_PLUGINS_OK
 	DE	Ihr Plugins-Menü enthält:
@@ -1663,6 +1698,7 @@ SETUP_TRANSCODE-OGG
 	FR	Conversion des fichiers Ogg Vorbis
 	NL	Converteer Ogg Vorbis bestanden
 	PT	Converter Ficheiros Ogg Vorbis
+	SE	Konvertera Ogg Vorbis-filer
 
 SETUP_TRANSCODE-OGG_DESC
 	DE	Wenn Sie die LAME und OGG Vorbis Dateien installiert haben (ogginfo und ogg123), dann kann der Slim Server Ihre OGG Vorbis Dateien automatisch zum Abspielen auf dem Slim Player konvertieren.
@@ -1670,6 +1706,7 @@ SETUP_TRANSCODE-OGG_DESC
 	FR	Si vous disposez de LAME et des outils Ogg Vorbis (ogginfo et ogg123), le serveur Slim peut convertir en temps réel vos morceaux au format Ogg pour qu'ils soient lus sur le Slim. La conversion est effectuée sur le serveur pendant la lecture et n'est pas stockée sur le disque.
 	NL	Indien U LAME en de Ogg Vorbis hulpprogramma's (ogginfo en ogg123) geinstalleerd hebt kan U de Slim server instellen om Ogg bestanden real-time om te zetten zodat deze op Uw Slim speler afgespeeld kunnen worden.
 	PT	Se tiver instalado no sistema o LAME (utilitários de MP3) ou os utilitários do Ogg Vorbis (ogginfo e ogg123), pode configurar o servidor Slim para converter automaticamente os ficheiros para MP3, de forma a serem usados no cliente Slim.
+	SE	Om du har LAME och Ogg Vorbis-verktyg installerade (ogginfo & ogg123) kan du få din server att automatiskt konvertera dina Ogg-musikfiler för uppspelning på din SLIMP3-spelare.
 
 SETUP_TRANSCODE-OGG_OK
 	DE	Ogg Vorbis Dateien
@@ -1678,6 +1715,7 @@ SETUP_TRANSCODE-OGG_OK
 	NL	Ogg Vorbis bestanden
 	NO	Ogg Vorbis filer
 	PT	Ficheiros Ogg Vorbis
+	SE	Ogg Vorbis-filer
 
 SETUP_TRANSCODE-OGG_1
 	DE	Automatisch konvertieren
@@ -1686,6 +1724,7 @@ SETUP_TRANSCODE-OGG_1
 	NL	Automatisch omzetten
 	NO	Konverter automatisk
 	PT	Converter automaticamente
+	SE	Konvertera automatiskt
 
 SETUP_TRANSCODE-OGG_0
 	DE	Nicht automatisch konvertieren
@@ -1694,6 +1733,7 @@ SETUP_TRANSCODE-OGG_0
 	NL	Niet omzetten
 	NO	Ikke konverter automatisk
 	PT	Não converter automaticamente
+	SE	Konvertera INTE automatiskt
 
 SETUP_TRANSCODE-WAV
 	DE	WAV und AIFF Dateien konvertieren
@@ -1702,6 +1742,7 @@ SETUP_TRANSCODE-WAV
 	NL	Converteer WAV en AIFF bestanden
 	NO	Konverter WAV og AIFF filer
 	PT	Converter ficheiros WAV e AIFF
+	SE	Konvertera WAV och AIFF filer
 
 SETUP_TRANSCODE-WAV_DESC
 	DE	Wenn Sie LAME installiert haben, kann der Slim Server Ihre WAV und AIFF Dateien automatisch zum Abspielen auf dem Slim Player konvertieren. 
@@ -1709,6 +1750,7 @@ SETUP_TRANSCODE-WAV_DESC
 	FR	Si vous disposez de LAME, le serveur Slim peut convertir en temps réel vos morceaux non-compressés au format WAV et/ou AIFF pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant sur le serveur pendant la lecture et n'est pas stockée sur le disque.
 	NL	Indien U LAME geinstalleerd hebt kan U de Slim instellen om niet gecomrimeerde WAV en AIFF bestanden om te zetten zodat deze kunnen afgespeeld worden op de Slim speler.
 	PT	Se tiver instalado no sistema o LAME (utilitários de MP3), pode configurar o servidor Slim para converter automaticamente os ficheiros WAV e AIFF para MP3, de forma a serem usados no cliente Slim.
+	SE	Om du har LAME installerat kan du få din Slim Server att automatiskt konvertera dina okomprimerade WAV- och AIFF-filer för uppspelning på din SLIMP3-spelare.
 
 SETUP_TRANSCODE-WAV_OK
 	DE	WAV und AIFF Dateien
@@ -1717,6 +1759,7 @@ SETUP_TRANSCODE-WAV_OK
 	NL	WAV en AIFF bestanden
 	NO	WAV og AIFF filer
 	PT	Ficheiros WAV e AIFF
+	SE	WAV- och AIFF-filer
 
 SETUP_TRANSCODE-WAV_1
 	DE	Automatisch konvertieren
@@ -1725,6 +1768,7 @@ SETUP_TRANSCODE-WAV_1
 	NL	Automatisch omzetten
 	NO	Konverter automatisk
 	PT	Converter automaticamente
+	SE	Konvertera Automatiskt
 
 SETUP_TRANSCODE-WAV_0
 	DE	Nicht automatisch konvertieren
@@ -1733,6 +1777,7 @@ SETUP_TRANSCODE-WAV_0
 	NL	Niet omzetten
 	NO	Ikke konverter automatisk
 	PT	Não converter automaticamente
+	SE	Konvertera INTE automatiskt
 
 SETUP_TRANSCODE-MOV
 	DE	QuickTime & AAC Dateien konvertieren
@@ -1741,6 +1786,7 @@ SETUP_TRANSCODE-MOV
 	NL	Omzetten van QuickTime en AAC bestanden
 	NO	Konverter QuickTime og AAC filer
 	PT	Converter ficheiros QuickTime e AAC
+	SE	Konvertera QuickTime- och ACC-filer
 
 SETUP_TRANSCODE-MOV_DESC
 	DE	Nur Macintosh OS X: Wenn Sie LAME installiert haben, kann Ihr Slim Server QuickTime Filme und AAC Musik Dateien in Echtzeit für das Abspielen auf Ihrem Slim Player konvertieren.
@@ -1748,6 +1794,7 @@ SETUP_TRANSCODE-MOV_DESC
 	FR	Uniquement pour Macintosh OS X : Si vous disposez de LAME, le serveur Slim peut convertir en temps réel vos morceaux au format Quicktime movie et AAC pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant la lecture sur le serveur et n'est pas stockée sur le disque.
 	NL	Enkel voor Macintosh OS X: Indien U LAME geinstalleerd hebt kan U de Slim server instellen om QuickTime films (alleen het geluid) en AAC muziekbestanden real-time om te zetten voor weergave op de Slim speler.
 	PT	Apenas Apple OS X
+	SE	Endast Macintosh OS X: Om du har LAME installerade kan du få din Slim Server att automatiskt konvertera QuickTime- och AAC-filer för uppspelning på din SLIMP3-spelare.
 
 SETUP_TRANSCODE-MOV_OK
 	EN	QuickTime and AAC
@@ -1755,6 +1802,7 @@ SETUP_TRANSCODE-MOV_OK
 	NL	QuickTime en AAC
 	NO	QuickTime og AAC
 	PT	QuickTime e AAC
+	SE	QuickTime- och AAC-filer
 
 SETUP_TRANSCODE-MOV_1
 	DE	Automatisch konvertieren
@@ -1763,6 +1811,7 @@ SETUP_TRANSCODE-MOV_1
 	NL	Automatisch omzetten
 	NO	Konverter automatisk
 	PT	Converter automaticamente
+	SE	Konvertera automatiskt
 
 SETUP_TRANSCODE-MOV_0
 	DE	Nicht automatisch konvertieren
@@ -1771,6 +1820,7 @@ SETUP_TRANSCODE-MOV_0
 	NL	Niet omzetten
 	NO	Ikke konverter automatisk
 	PT	Não converter automaticamente
+	SE	Konvertera INTE automatiskt
 
 SETUP_SAVEHISTORY
 	DE	Speicherung des Verlaufs
@@ -1779,6 +1829,7 @@ SETUP_SAVEHISTORY
 	NL	Geschiedenis Opslaan
 	NO	Lagre historikk
 	PT	Gravar Historial
+	SE	Spara historia
 
 SETUP_SAVEHISTORY_DESC
 	DE	Der Server kann den Verlauf der Titel zwischen den Server-Neustarts erhalten.
@@ -1786,6 +1837,7 @@ SETUP_SAVEHISTORY_DESC
 	FR	Le serveur peut conserver l'historique des morceaux d'un redémarrage à l'autre.
 	NL	De server kan de gespeelde liedjes (Geschiedenis) bewaren over herstarten heen.
 	PT	O servidor pode preservar o historial de músicas quando for reiniciado.
+	SE	Servern kan spara låthistoria mellan omstarter.
 
 SETUP_SAVEHISTORY_1
 	DE	Speicherung des Verlaufs
@@ -1794,6 +1846,7 @@ SETUP_SAVEHISTORY_1
 	NL	Geschiedenis opslaan
 	NO	Lagre historikk
 	PT	Gravar historial
+	SE	Spara historia
 
 SETUP_SAVEHISTORY_0
 	DE	Keine Speicherung des Verlaufs
@@ -1802,6 +1855,7 @@ SETUP_SAVEHISTORY_0
 	NL	Geschiedenis niet opslaan
 	NO	Ikke lagre historikk
 	PT	Não gravar historial
+	SE	Spara INTE historia
 
 SETUP_CHECKVERSION
 	DE	Software Aktualisierungen
@@ -1809,12 +1863,14 @@ SETUP_CHECKVERSION
 	FR	Mise à jour du logiciel
 	NO	Software oppdateringer
 	PT	Actualizações
+	SE	Mjukvaruupgraderingar
 
 SETUP_CHECKVERSION_DESC
 	DE	Der Server kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Software Version vorhanden ist. Falls ja, erscheint eine Meldung im Slim Server Web Interface.
 	EN	The server can automatically connect to www.slimdevices.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in the Slim Server web interface.
 	FR	Le serveur Slim peut se connecter tous les jours à www.slimdevices.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Un message dans l'interface web signale cette disponibilité le cas échéant.
 	PT	O servidor poderá ligar-se automaticamente a www.slimdevices.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
+	SE	Servern kan automatiskt koppla upp sig mot www.slimdevices.com varje dag för att kontrollera om en nyare version av mjukvaran finns tillgänglig. Om nyare version finns, kommer ett meddelande visas i webb-gränssnittet.
 
 SETUP_CHECKVERSION_1
 	DE	Automatisch nach aktueller Software suchen
@@ -1822,6 +1878,7 @@ SETUP_CHECKVERSION_1
 	FR	Vérifier automatiquement
 	NO	Automatisk sjekk for software oppdateringer
 	PT	Verificar Versões Novas
+	SE	Kontrollera automatiskt
 
 SETUP_CHECKVERSION_0
 	DE	Nicht automatisch nach aktueller Software suchen
@@ -1829,6 +1886,7 @@ SETUP_CHECKVERSION_0
 	FR	Ne pas vérifier
 	NO	Ikke sjekk for software oppdateringer
 	PT	Não Verificar
+	SE	Kontrollera INTE automatiskt
 
 SETUP_HISTORYLENGTH
 	DE	Länge des Verlaufs
@@ -1837,6 +1895,7 @@ SETUP_HISTORYLENGTH
 	NL	Lengte van de geschiedenis
 	NO	Historikk lengde
 	PT	Tamanho do Historial
+	SE	Historielängd
 
 SETUP_HISTORYLENGTH_DESC
 	DE	Der Server kann eine Liste der kürzlich gespielten Lieder speichern. Wählen Sie die Anzahl der Lieder, die berücksichtigt werden sollen.
@@ -1844,6 +1903,7 @@ SETUP_HISTORYLENGTH_DESC
 	FR	Le serveur peut tenir à jour une liste des morceaux joués les plus récemment. Choisissez le nombre de morceaux à conserver.
 	NL	De server kan een lijst bijhouden van de laatst gespeelde liedjes. Stel het aantal liedjes dat bijgehouden moet worden in.
 	PT	O servidor pode preservar a lista das músicas mais tocadas. Escolha o número máximo de músicas a reter.
+	SE	Servern kan spara en lista på de senaste spelade låtarna. Välj antalet låtar att spara.
 
 SETUP_SCREENSAVERTIMEOUT
 	DE	Bildschirmschoner Zeiteinstellung
@@ -2027,24 +2087,28 @@ SETUP_COMPOSERINARTISTS
 	EN	Composer, Band and Orchestra in Artists
 	FR	Compositeur, Groupe et Orchestre
 	PT	Compositor, Banda e Orquestra em Artistas
+	SE	Kompositör, grupp och orkester i Artister
 
 SETUP_COMPOSERINARTISTS_1
 	DE	Komponist, Gruppe und Orchester in Interpreten einschliessen
 	EN	Include composer, band and orchestra in artists
 	FR	Inclure les compositeurs, groupes et orchestres dans les artistes
 	PT	Incluir compositor, banda e orquestra nos artistas
+	SE	Inkludera kompositör, grupp och orkester i Artister
 
 SETUP_COMPOSERINARTISTS_0
 	DE	Komponist, Gruppe und Orchester nicht in Interpreten einschliessen
 	EN	Don't include composer, band and orchestra in artists
 	FR	Ne pas inclure compositeurs, groupes et orchestres dans les artistes
 	PT	Não incluir compositor, banda e orquestra nos artistas
+	SE	Inkludera INTE kompositör, grupp och orkester i Artister
 
 SETUP_COMPOSERINARTISTS_DESC
 	DE	Titelinformationen über Komponist, Gruppe und Orchester kann in der Interpretenliste beim Stöbern und Suchen eingeschlossen werden.
 	EN	Song information about composers, bands and orchestras can be included in the artists list for browsing and search.
 	FR	Les informations relatives aux compositeurs, groupes et orchestres contenues dans les morceaux peuvent être ajoutées à la liste d'artistes pour parcourir ou rechercher.
 	PT	A informação relativa ao compositor, banda e orquestra poderá ser incluida na listas ou na procura.
+	SE	Låtinformation om kompositör, grupp och orkester kan inkluderas i artist-listan vid bläddring eller sökning.
 
 SETUP_PERSISTPLAYLISTS
 	DE	Merken der letzten Playlist
@@ -2898,6 +2962,7 @@ REMOVE_THIS_SONG_FROM_PLAYLIST
 	EN	Remove this song from playlist
 	FR	Supprimer ce morceau de la playlist
 	PT	Remover esta Música da Playlist
+	SE	Ta bort denna låt från spellistan
 
 ADD_THIS_SONG_TO_PLAYLIST
 	DE	Füge diesen Titel zur Playlist hinzu
@@ -3058,6 +3123,7 @@ SHUFFLE_ON_SONGS
 	NL	Willekeurige volgorde volgens nummer
 	NO	Vilkårlig på Sang
 	PT	Misturar Playlist por Música
+	SE	Blanda låtar
 
 SHUFFLE_ON_ALBUMS
 	EN	Shuffle by Album
@@ -3065,6 +3131,7 @@ SHUFFLE_ON_ALBUMS
 	NL	Willekeurige volgorde volgens album
 	NO	Vilkårlig på Album
 	PT	Misturar Playlist por Álbum
+	SE	Blanda Album
 
 SHUFFLE_ON
 	DE	Zufällige Playlist
@@ -3449,6 +3516,7 @@ BAND
 	NL	Band/Orkest
 	NO	Band/Orkester
 	PT	Banda/Orquestra
+	SE	Grupp/Orkester
 
 ALBUM
 	EN	Album
@@ -3488,6 +3556,7 @@ TYPE
 	NL	Bestandsformaat
 	NO	Filformat
 	PT	Formato do Ficheiro
+	SE	Filformat
 
 MP3
 	EN	MP3
@@ -3495,6 +3564,7 @@ MP3
 	NL	MP3
 	NO	MP3
 	PT	MP3
+	SE	MP3
 
 MP2
 	EN	MP2
@@ -3502,6 +3572,7 @@ MP2
 	NL	MP2
 	NO	MP2
 	PT	MP2
+	SE	MP2
 
 MOV
 	EN	QuickTime AAC or Movie File
@@ -3509,6 +3580,7 @@ MOV
 	NL	QuickTime AAC of film
 	NO	QuickTime AAC eller film
 	PT	QuickTime AAC of Ficheiro Movie
+	SE	Quicktime AAC eller film
 
 AIF
 	EN	AIFF
@@ -3516,6 +3588,7 @@ AIF
 	NL	AIFF
 	NO	AIFF
 	PT	AIFF
+	SE	AIFF
 
 UNK
 	EN	Unknown
@@ -3523,6 +3596,7 @@ UNK
 	NL	Onbekend
 	NO	Ukjent
 	PT	Desconhecido
+	SE	Okänd
 
 WAV
 	EN	WAV
@@ -3530,6 +3604,7 @@ WAV
 	NL	WAV
 	NO	WAV
 	PT	WAV
+	SE	WAV
 
 OGG
 	EN	Ogg Vorbis
@@ -3537,6 +3612,7 @@ OGG
 	NL	Ogg Vorbis
 	NO	Ogg Vorbis
 	PT	Ogg Vorbis
+	SE	Ogg Vorbis
 
 MODTIME
 	DE	Datum geändert
@@ -3545,6 +3621,7 @@ MODTIME
 	NL	Wijzigingsdatum
 	NO	Dato endret
 	PT	Última Alteração
+	SE	Modifierat datum
 
 COVERART
 	DE	Plattencover
@@ -3553,6 +3630,7 @@ COVERART
 	NL	Hoesjes
 	NO	Platecover
 	PT	Capa do Álbum
+	SE	Albumomslag
 
 FILELENGTH
 	DE	Dateilänge
@@ -3572,6 +3650,7 @@ NO_ARTIST
 	NL	Geen Artiest
 	NO	Ingen artist
 	PT	Sem Artista
+	SE	Ingen artist
 
 NO_ALBUM
 	EN	No Album
@@ -3579,6 +3658,7 @@ NO_ALBUM
 	NL	Geen Album
 	NO	Ingen album
 	PT	Sem Álbum
+	SE	Inget album
 
 NO_GENRE
 	EN	No Genre
@@ -3586,6 +3666,7 @@ NO_GENRE
 	NL	Geen Genre
 	NO	Ingen genre
 	PT	Sem Género
+	SE	Ingen genre
 
 NO_TITLE
 	EN	No Title
@@ -3593,6 +3674,7 @@ NO_TITLE
 	NL	Geen Titel
 	NO	Ingen tittel
 	PT	Sem Título
+	SE	Ingen titel
 
 THOUSANDS_SEP
 	DE	.
@@ -3602,6 +3684,7 @@ THOUSANDS_SEP
 	NL	.
 	NO	.
 	PT	. 
+	SE	.
 
 BYTES
 	DE	Bytes
@@ -3936,7 +4019,7 @@ SYNCHRONIZE
 SYNCHRONIZED_WITH
 	EN	Synced with
 	FR	Synchronisé avec
-	NO	Synkroniser med
+	SE	Synkroniserad med
 
 SLIMTRIS
 	DE	SlimTris
@@ -4221,6 +4304,7 @@ FORMATS_SETTINGS
 	NL	Bestandsformaten
 	NO	Filtyper
 	PT	Tipos de ficheiros
+	SE	Filtyper
 
 SECURITY_SETTINGS
 	DE	Sicherheit
@@ -4262,6 +4346,7 @@ SETUP_GROUP_DEBUG_DESC
 	EN	The Slim Server has a number of debugging settings that can be used to record detailed information about the server's operation.  Check off the items that you'd like logged for display and click Change to start logging that information.  You can view the most recent log entries <a href="/log.txt" target="log">here</a>.
 	FR	Le serveur Slim dispose de réglages de mise au point qui permettent d'enregistrer des informations détaillées sur son fonctionnement. Sélectionnez ci-dessous les éléments que vous voulez enregistrer. Les enregistrements les plus récents sont disponibles <a href="/log.txt" target="log">ici</a>.
 	PT	O servidor Slim tem várias opções de depuração que poderão ser usadas para gravar informação detalhada acerca das operações do servidor. Active as opções que deseja que sejam guardadas e selecione "Mudar" para começar a guardar a informação. Poderá ver as entradas mais recentes <a href="/log.txt" target="log">aqui</a>.
+	SE	Slim Servern har ett antal felsökningsinställningar som kan användas för att spara detaljerad information om serverns funktion. Fyll i de punkter som du skulle vilja logga för visning och klicka Ändra för att starta loggningen av de valda punkterna. Du kan visa de senast sparade loggningarna <a href="/log.txt" target="log">här</a>.
 
 DEBUGGING_SETTINGS
 	DE	Fehlerbeseitigung
@@ -5081,6 +5166,7 @@ REMOTE_STREAMING
 	FR	Streaming à distance
 	NO	Spiller instillinger
 	PT	Streaming à distância
+	SE	Fjärrströmning
 
 PLAYER_SETUP
 	DE	Player Konfiguration
@@ -5090,6 +5176,7 @@ PLAYER_SETUP
 	FI	Soittimen asennus
 	FR	Réglage du lecteur
 	NL	Instellingen van de Speler
+	NO	Spiller instillinger
 	PT	Configurações dos Clientes
 	SE	Installation av spelare
 
@@ -5112,4 +5199,4 @@ STATISTICS
 	NL	Statistieken
 	NO	Statistikk
 	PT	Estatísticas
-
+	SE	Statistik
