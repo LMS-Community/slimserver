@@ -23,8 +23,8 @@ use vars qw(
 	all	=> [@EXPORT, @EXPORT_OK]
 );
 
-# $Id: Info.pm,v 1.9 2004/02/14 01:06:21 dean Exp $
-($REVISION) = ' $Revision: 1.9 $ ' =~ /\$Revision:\s+([^\s]+)/;
+# $Id: Info.pm,v 1.10 2004/11/15 18:58:39 dean Exp $
+($REVISION) = ' $Revision: 1.10 $ ' =~ /\$Revision:\s+([^\s]+)/;
 $VERSION = '1.01';
 
 =pod
@@ -691,7 +691,7 @@ This data cannot be changed.  Returned data:
 
 sub get_mp3info {
 	my($file) = @_;
-	my($off, $myseek, $byte, $eof, $h, $tot, $fh);
+	my($off, $byte, $eof, $h, $tot, $fh);
 
 	carp('No file specified'), return undef unless defined $file && $file ne '';
 	return undef unless -s $file;
@@ -705,30 +705,31 @@ sub get_mp3info {
 	$off = 0;
 	$tot = 8192;
 
-	$myseek = sub {
-		seek $fh, $off, 0;
-		read $fh, $byte, 4;
-	};
-
 	binmode $fh;
-	&$myseek;
+	seek $fh, $off, 0;
+	read $fh, $byte, 4;
 
 	if ($off == 0) {
 		if (my $id3v2 = _get_v2head($fh)) {
 			$tot += $off += $id3v2->{tag_size};
-			&$myseek;
+			seek $fh, $off, 0;
+			read $fh, $byte, 4;
 		}
 	}
 
 	$h = _get_head($byte);
-	until (_is_mp3($h)) {
+	my $is_mp3 = _is_mp3($h); 
+	until ($is_mp3) {
 		$off++;
-		&$myseek;
-		$h = _get_head($byte);
+		seek $fh, $off, 0;
+		read $fh, $byte, 4;
 		if ($off > $tot && !$try_harder) {
 			_close($file, $fh);
 			return undef;
 		}
+		next if (ord($byte) != 0xff);
+		$h = _get_head($byte);
+		$is_mp3 = _is_mp3($h);
 	}
 
 	my $vbr = _get_vbr($fh, $h, \$off);

@@ -1,6 +1,6 @@
 package Slim::Formats::MP3;
 
-# $Id: MP3.pm,v 1.11 2004/08/03 17:29:14 vidur Exp $
+# $Id: MP3.pm,v 1.12 2004/11/15 18:58:39 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -83,7 +83,7 @@ sub seekNextFrame {
 	defined($direction) || die;
 
 	my $foundsync=0;
-	my ($seekto, $buf, $len, $h, $pos, $start, $end,$calculatedlength, $numgarbagebytes);
+	my ($seekto, $buf, $len, $h, $pos, $start, $end,$calculatedlength, $numgarbagebytes, $head);
 	my ($found_at_offset);
 
 	my $filelen = -s $fh;
@@ -110,11 +110,13 @@ sub seekNextFrame {
 	}
 
 	$::d_mp3 && Slim::Utils::Misc::msg("scanning: len = $len, start = $start, end = $end\n");
-
 	for ($pos = $start; $pos!=$end; $pos+=$direction) {
 		#$::d_mp3 && Slim::Utils::Misc::msg("looking at $pos\n");
-		my $head = substr($buf, $pos, 4);
-		my $h = MP3::Info::_get_head($head);
+
+		$head = substr($buf, $pos, 4);
+		next if (ord($head) != 0xff);
+
+		$h = MP3::Info::_get_head($head);
 		
 		next if !MP3::Info::_is_mp3($h);
 		
@@ -134,17 +136,17 @@ sub seekNextFrame {
 			# TODO - we may get false positives at the end of some files.	
 		}
 		
-		if ($::d_mp3) {
-			Slim::Utils::Misc::msg(printf "sync at offset %d (%x %x %x %x)\n", $found_at_offset, (unpack 'CCCC', $head));
-			
-			foreach my $k (sort keys %$h) {
-				Slim::Utils::Misc::msg(  $k . ":\t" . $h->{$k} . "\n");
-			}
-			Slim::Utils::Misc::msg( "Calculated length including header: $calculatedlength\n");
-		}
+#		if ($::d_mp3) {
+#			Slim::Utils::Misc::msg(printf "sync at offset %d (%x %x %x %x)\n", $found_at_offset, (unpack 'CCCC', $head));
+#			
+#			foreach my $k (sort keys %$h) {
+#				Slim::Utils::Misc::msg(  $k . ":\t" . $h->{$k} . "\n");
+#			}
+#			Slim::Utils::Misc::msg( "Calculated length including header: $calculatedlength\n");
+#		}
 				
 		my $frame_end =  $found_at_offset + $calculatedlength - 1;
-		$::d_mp3 && Slim::Utils::Misc::msg("Frame found at offset: $found_at_offset (started looking at $startoffset) frame end: $frame_end\n");
+#		$::d_mp3 && Slim::Utils::Misc::msg("Frame found at offset: $found_at_offset (started looking at $startoffset) frame end: $frame_end\n");
 
 		return($found_at_offset, $frame_end);
 	}
