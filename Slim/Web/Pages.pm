@@ -544,7 +544,13 @@ sub addLibraryStats {
 	$params->{'song_count'}   = _lcPlural($ds->count('track', $find), 'SONG', 'SONGS');
 	$params->{'artist_count'} = _lcPlural($ds->count('contributor', $find), 'ARTIST', 'ARTISTS');
 	$params->{'album_count'}  = _lcPlural($ds->count('album', $find), 'ALBUM', 'ALBUMS');
-	$params->{'genre_count'}  = _lcPlural($ds->count('genre', $find), 'GENRE', 'GENRES');
+
+	# Right now hitlist.html is the only page that uses genre_count -
+	# which can be expensive. Only generate it if we need to.
+	if ($params->{'path'} =~ /hitlist/) {
+
+		$params->{'genre_count'}  = _lcPlural($ds->count('genre', $find), 'GENRE', 'GENRES');
+	}
 }
 
 sub browser {
