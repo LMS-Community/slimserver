@@ -1,23 +1,12 @@
-[% pagetitle = "HELP" | string %] [% pageicon = 'MUSIC' %] [% help = '1' %] [% PROCESS [% webroot %]pageheader.html %]
-
-	<ul>
-    <li>
-    	<a href="quickstart.html" target="_top">[% "GETTING_STARTED" | string %]</a>
-    </li>
-   <li>
-    	<a href="ipconfig.html" target="_top">[% "PLAYER_SETUP" | string %]</a>
-  </li>
-    <li>
-    	<a href="interface.html" target="_top">[% "USING_REMOTE" | string %]</a>
-    </li>
-     <li>
- 		<a href="../help_remote.html?player=[% player | uri %]" target="_top">[% "HELP_REMOTE" | string %]</a>
- 	</li>
-     <li> <a href="radio.html?player=[% player | uri %]" target="_top">[% "RADIO" | string %]</a>	   </li>
-     <li><a href="faq.html?player=[% player | uri %]" target="_top">[% "FAQ" | string %]</a> </li>
-     <li>
- 		<a href="index.html">[% "TECHNICAL_INFORMATION" | string %]</a>
- 	</li>
-	</ul>
-</body
+[% pagetitle = "HELP" | string %] [% pageicon = 'MUSIC' %] [% help = '1' %] [% PROCESS pageheader.html %]
+		<ul>
+			<li><a href="quickstart.html" target="_top">[% "GETTING_STARTED" | string %]</a></li>
+			<li><a href="ipconfig.html" target="_top">[% "PLAYER_SETUP" | string %]</a></li>
+			<li><a href="interface.html" target="_top">[% "USING_REMOTE" | string %]</a></li>
+			<li><a href="../help_remote.html?player=[% player | uri %]" target="_top">[% "HELP_REMOTE" | string %]</a></li>
+			<li><a href="radio.html?player=[% player | uri %]" target="_top">[% "RADIO" | string %]</a>	   </li>
+			<li><a href="faq.html?player=[% player | uri %]" target="_top">[% "FAQ" | string %]</a> </li>
+			<li><a href="index.html">[% "TECHNICAL_INFORMATION" | string %]</a></li>
+		</ul>
+	</body>
 </html>
