@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.114 2004/06/16 14:31:04 dean Exp $
+# $Id: strings.txt,v 1.115 2004/06/16 14:54:53 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -5363,16 +5363,6 @@ PLUGINS
 	PT	Extras
 	SE	Tillägg
 
-NO_PLUGINS
-	DE	Keine Plugins vorhanden.
-	DK	Ingen moduler til rådighed.
-	EN	No Plugins available.
-	FR	Aucun module d'extension disponible.
-	NL	Geen Plugins beschikbaar.
-	NO	Ingen Plugins tilgjengelig.
-	PT	Sem Extras
-	SE	Inga tillägg tillgängliga.
-
 NEXT
 	DE	Nächste
 	DK	Næste
@@ -6052,14 +6042,14 @@ SHOW_PLUGINS
 	SE	Visa tillägg
 
 NO_PLUGINS
-	DE	Keine Plugins anzeigen
-	DK	Ingen moduler
-	EN	No Plugins
-	FR	Ne pas afficher le menu Module d'extensions
-	NL	Geen Plugins
-	NO	Ingen Plugins
+	DE	Keine Plugins vorhanden.
+	DK	Ingen moduler til rådighed.
+	EN	No Plugins available.
+	FR	Aucun module d'extension disponible.
+	NL	Geen Plugins beschikbaar.
+	NO	Ingen Plugins tilgjengelig.
 	PT	Sem Extras
-	SE	Visa inte tillägg
+	SE	Inga tillägg tillgängliga.
 
 SLIMP3_MUSIC_PLAYER
 	DE	SLIMP3 Musik Player
