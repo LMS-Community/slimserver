@@ -14,6 +14,7 @@ use strict;
 use Slim::Player::Player;
 use Slim::Utils::Misc;
 use Slim::Hardware::mas3507d;
+use Slim::Networking::Stream;
 
 our @ISA = ("Slim::Player::Player");
 
