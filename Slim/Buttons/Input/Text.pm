@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Text;
 
-# $Id: Text.pm,v 1.12 2003/11/25 07:16:02 grotus Exp $
+# $Id: Text.pm,v 1.13 2003/12/10 07:04:57 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -342,7 +342,8 @@ sub init {
 		$$valueRef = '';
 		Slim::Buttons::Common::param($client,'valueRef',$valueRef);
 	} elsif (!ref($valueRef)) {
-		$$valueRef = $valueRef;
+		my $value = $valueRef;
+		$valueRef = \$value;
 		Slim::Buttons::Common::param($client,'valueRef',$valueRef);
 	}
 	$$valueRef = cleanString($$valueRef,$charsRef);
