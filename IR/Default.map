@@ -33,6 +33,7 @@ muting					= muting
 pause.single			= pause
 pause.hold				= stop
 play.single				= play
+play.hold				= play
 power					= power_toggle
 power_off				= power_off
 power_on				= power_on

@@ -132,7 +132,7 @@ sub removeTrack {
 	@{$client->shufflelist} = @reshuffled;
 
 	if ($stopped && ($oldmode eq "play")) {
-		jumpto($client, $tracknum);
+		Slim::Player::Source::jumpto($client, $tracknum);
 	}
 	
 	refreshPlaylist($client);
@@ -204,7 +204,7 @@ sub removeMultipleTracks {
 	@{$client->shufflelist} = @reshuffled;
 
 	if ($stopped && ($oldmode eq "play")) {
-		jumpto($client,$newtrack);
+		Slim::Player::Source::jumpto($client,$newtrack);
 	} else {
 		Slim::Player::Source::currentSongIndex($client,$newtrack);
 	}
