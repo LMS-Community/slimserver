@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.1 2003/07/18 19:42:13 dean Exp $
+#	$Id: Information.pm,v 1.2 2003/08/03 22:35:39 kdf Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -47,7 +47,7 @@ use Slim::Utils::Strings qw(string);
 use strict;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.1 $,10);
+$VERSION = substr(q$Revision: 1.2 $,10);
 
 my @main_list = qw(
     library
@@ -66,6 +66,7 @@ my @library_list = (
 
 my @player_list = (
     [ 'PLAYER_NAME',  'string',  1,  sub { Slim::Utils::Prefs::clientGet(shift,'playername') } ],
+    [ 'PLAYER_MODEL', 'string',  1,  sub { shift->model() } ],
     [ 'FIRMWARE',     'string',  1,  sub { shift->revision } ],
     [ 'PLAYER_IP',    'string',  1,  sub { (split(':',Slim::Player::Client::ipaddress(shift)))[0] } ],
     [ 'PLAYER_PORT',  'string',  1,  sub { (split(':',Slim::Player::Client::ipaddress(shift)))[1] } ],
@@ -407,6 +408,10 @@ PLUGIN_INFORMATION_MENU_MODULE
 PLUGIN_INFORMATION_PLAYER_NAME
 	EN	Player Name
 	FR	Nom lecteur
+
+PLUGIN_INFORMATION_PLAYER_MODEL
+	EN	Player Model
+	FR	Modele lecteur
 
 PLUGIN_INFORMATION_FIRMWARE
 	EN	Player Firmware Version
