@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.140 2004/10/06 15:55:41 vidur Exp $
+# $Id: strings.txt,v 1.141 2004/10/07 14:50:56 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -45,6 +45,7 @@ BASE_SKIN
 	SE	Lätt-utseende
 
 DEFAULT_SKIN
+	DE	Standard
 	EN	Default
 
 DEFAULT_MAP
@@ -237,12 +238,14 @@ ONLY_ONE
 	SE	Det finns bara en fil här!
 
 SCREENSAVERS
+	DE	Bildschirmschoner
 	EN	Screensavers
 
 RADIO
 	EN	Internet Radio
 
 GAMES
+	DE	Spiele
 	EN	Games
 
 PLAYLIST
@@ -729,6 +732,7 @@ ALARM_NOW_PLAYING
 	SE	Väckarklockan spelar nu
 
 SLIMP3
+	DE	SLIMP3
 	EN	SLIMP3
 
 SQUEEZEBOX
@@ -996,15 +1000,18 @@ SETUP_GROUP_XPL_DESC
 	SE	Detta är inställningar för xPL-protokollet
 
 SETUP_FONTLIST
+	DE	Schriftartenliste
 	EN	Font List
 
 SETUP_ACTIVEFONT
+	DE	Schriftart
 	EN	Font
 
 SETUP_ACTIVEFONT_DESC
 	EN	You can use the SIZE button on the remote or the radio buttons below to switch between fonts on the player display. You may choose the order that they appear using the menus below.  
 
 SETUP_IDLEFONT
+	DE	Standby Schriftart
 	EN	Standby Font
 
 SETUP_IDLEFONT_DESC
@@ -1023,6 +1030,7 @@ SETUP_DOUBLESIZE
 	SE	Textstorlek
 
 SETUP_DOUBLESIZE_DESC
+	DE	Schriftgrösse wählen
 	EN	Choose the size of text for player display
 
 SETUP_OFFDISPLAYSIZE
@@ -1041,6 +1049,7 @@ SETUP_SCROLLPAUSE
 	SE	Paus under scrollning
 
 SETUP_SCROLLPAUSEDOUBLE
+	DE	Pause für Scrollen bei grosser Schriftart
 	EN	Large Text Scroll Pause
 
 SETUP_SCROLLPAUSE_DESC
@@ -1058,6 +1067,7 @@ SETUP_SCROLLRATE
 	SE	Scroll-frekvens
 
 SETUP_SCROLLRATEDOUBLE
+	DE	Tempo für Scrollen bei grosser Schriftart
 	EN	Large Text Scroll Rate
 
 SETUP_SCROLLRATE_DESC
@@ -1221,6 +1231,7 @@ COMMAND
 	SE	Kommando
 
 DECODER
+	DE	Decoder
 	EN	Decoder
 	FR	Décodeur
 	SE	Avkodare
@@ -1333,9 +1344,11 @@ SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	SE	Ljusstyrka i avslaget läge:
 
 SETUP_IDLEBRIGHTNESS
+	DE	Helligkeit falls im Standby Modus
 	EN	Brightness when idle
 
 SETUP_IDLEBRIGHTNESS_CHOOSE
+	DE	Helligkeit falls im Standby Modus:
 	EN	Brightness when idle:
 
 SETUP_AUTOBRIGHTNESS_CHOOSE
@@ -1399,6 +1412,7 @@ SETUP_ALARMPLAYLIST
 	SE	Låtlista för alarm-funktion
 
 SETUP_PLAYINGDISPLAYMODE
+	DE	Aktuelle Wiedergabeinformationen
 	EN	Now Playing Information
 
 SETUP_PLAYINGDISPLAYMODE_OK
@@ -1679,6 +1693,7 @@ SETUP_MOODLOGICPLAYLISTSUFFIX_CHOOSE
 	SE	Suffix:
 
 SETUP_ITUNESPLAYLISTPREFIX_CHOOSE
+	DE	Prefix:
 	EN	Prefix:
 	FR	Préfixe :
 	NO	Prefix:
@@ -1692,18 +1707,23 @@ SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE
 	SE	Suffix:
 
 SETUP_MOODLOGICPLAYLISTPREFIX
+	DE	Der Prefix für MoodLogic Wiedergabelisten wurde geändert auf:
 	EN	MoodLogic playlist prefix changed to:
 
 SETUP_MOODLOGICPLAYLISTSUFFIX
+	DE	Der Suffix für MoodLogic Wiedergabelisten wurde geändert auf:
 	EN	MoodLogic playlist suffix changed to:
 
 SETUP_ITUNESPLAYLISTPREFIX
+	DE	Der Prefix für iTunes Wiedergabelisten wurde geändert auf:
 	EN	iTunes playlist prefix changed to:
 
 SETUP_ITUNESPLAYLISTSUFFIX
+	DE	Der Suffix für iTunes Wiedergabelisten wurde geändert auf:
 	EN	iTunes playlist suffix changed to:
 
 SETUP_SHOWYEAR
+	DE	Jahr für Alben anzeigen
 	EN	Show Year with Albums
 	FR	Montrez L'an avec L'albums
 
@@ -1859,7 +1879,7 @@ SETUP_AUDIODIR_OK
 SETUP_PLAYLISTDIR
 	DE	Playlisten-Ordner:
 	DK	Gemte playlister
-	EN	Saved Playlists Folder
+	EN	Playlists Folder
 	ES	Carpeta de listas guardadas
 	FI	Tallenettujen soittolistojen hakemisto
 	FR	Dossier contenant les listes de lecture enregistrées
@@ -1917,7 +1937,7 @@ SETUP_OK_USING
 SETUP_PLAYLISTDIR_OK
 	DE	Der Server wird nun Playlisten in diesem Verzeichnis abspeichern:
 	DK	Serveren vil nu bruge følgende mappe til gemte playlister:
-	EN	The server will now use this directory for saved playlists:
+	EN	The server will now use this directory for saving playlists:
 	ES	El servidor usará esta carpeta para guardar listas discográficas:
 	FI	Palvelin käyttää seuraavaa polkua soittolistoja varten:
 	FR	Le serveur utilisera maintenant le dossier suivant pour conserver vos listes de lecture :
@@ -2825,6 +2845,7 @@ SETUP_SCREENSAVER_DESC
 	EN	You can your current screensaver and the duration to wait before enabling the screensaver. Set this duration to zero to never show the current screensaver.
 
 SETUP_SCREENSAVERTIMEOUT
+	DE	Bildschirmschoner Verzögerung:
 	EN	Screensaver Delay
 
 SETUP_SCREENSAVERTIMEOUT_CHOOSE
@@ -3523,6 +3544,7 @@ SETUP_SHOWBUFFERFULLNESS
 	SE	Visa bufferminnets fyllnadsgrad
 
 SETUP_SHOWBUFFERFULLNESS_CHOOSE
+	DE	Buffer Füllstand zur Liste der Anzeigemodi hinzufügen:
 	EN	Include buffer fullness in Playing Display Mode list:
 	FR	Inclure l'état de la mémoire tampon dans la liste Mode d'affichage durant la lecture :
 
@@ -4513,10 +4535,12 @@ SMALL
 	SE	Liten
 
 MEDIUM
+	DE	Mittel
 	EN	Medium
 	FR	Moyenne
 
 HUGE
+	DE	Gross
 	EN	Huge
 
 TITLEFORMAT
@@ -4600,7 +4624,7 @@ RENAME
 SAVED_PLAYLISTS
 	DE	Gespeicherte Playlists
 	DK	Gemte playlister
-	EN	Saved Playlists
+	EN	Playlists
 	ES	Listas guardadas
 	FI	Tallennetut soittolistat
 	FR	Listes de lecture enregistrées
@@ -4610,7 +4634,7 @@ SAVED_PLAYLISTS
 	SE	Sparade låtlistor
 
 SAVED_PLAYLISTS_DBL
-	DE	Playlists
+	DE	Wiedergabelisten
 	FR	Listes de lecture
 	SE	Låtlistor
 
@@ -4720,6 +4744,7 @@ ADD_TO_PLAYLIST
 	SE	Lägg till i låtlistan
 
 CONFIRM_OVERWRITE
+	DE	Überschreiben bestätigen
 	EN	Confirm Overwrite
 	FR	Confirmer remplacement
 
@@ -4863,11 +4888,13 @@ MOV
 	SE	Apple AAC eller film
 
 M3U
+	DE	M3U Wiedergabeliste
 	EN	M3U Playlist
 	FR	Liste M3U
 	SE	M3U-låtlista
 
 PLS
+	DE	PLS Wiedergabeliste
 	EN	PLS Playlist
 	FR	Liste PLS
 	SE	PLS-låtlista
@@ -4911,6 +4938,7 @@ OGG
 	EN	Ogg Vorbis
 
 MODIFIED
+	DE	Verändert
 	EN	Modified
 
 MODTIME
@@ -5019,10 +5047,12 @@ BITRATE
 	SE	Bithastighet
 
 BPM
+	DE	Beats pro Minute
 	EN	Beats Per Minute
 	FR	Bats par Minute
 
 DRM
+	DE	Die Datei ist durch einen Kopierschutz geschützt
 	EN	This file is locked by Digital Rights Management
 
 YEAR
@@ -5601,6 +5631,7 @@ MENU_SETTINGS
 	EN	Menus
 
 DISPLAY_SETTINGS
+	DE	Anzeige
 	EN	Display
 
 AUDIO_SETTINGS
@@ -6158,7 +6189,7 @@ NO_PLAYER_FOUND
 NO_PLAYER_DETAILS
 	DE	Stellen Sie sicher, dass ihr Player angeschlossen ist und die Netzwerkeinstellungen korrekt sind. Drücken Sie auf "Aktualisierung" im Menü ihres Browser zum erneuten Verbindungsversuch zu ihrem Player.
 	DK	Kontroller at din afspiller er sluttet til og at dens netværksindstillinger er korrekte. Tryk F5 (Refresh/Genindlæs) i din web-browser for at prøve at forbinde til afspilleren igen.
-	EN	Make sure that your player is plugged in and its networking settings are correct. Press the Refresh button to try to connect to your player again.
+	EN	<b>If you own a Squeezebox:</b><ul><li>Make sure that your player is plugged in and its networking settings are correct. Click the Refresh button once your player is connected.</ul><p><b>If you do not own a Squeezebox:</b><ul><li>You can use MP3 player software (such as WinAmp or iTunes) to listen to your music library with SlimServer by connecting to this URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a><li>You can listen to your music library using <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a> the Squeezebox software emulator.</ul>
 	FR	Assurez-vous que votre platine est branchée et que ses réglages de réseau sont valides. Cliquez sur le bouton "Actualiser" de votre navigateur pour vérifier de nouveau la présence de la platine.
 	NL	Zorg ervoor dat Uw speler aan het netwerk is aangesloten en dat de netwerk instellingen goed zijn. Druk de Refresh knop om opnieuw contact te maken met de speler.
 	NO	Sørg for spilleren din er på, koblet til og har riktige nettverksinnstillinger. Trykk på F5 (oppdater/refresh) i din webbrowser for å prøve å koble opp mot spilleren igjen.
@@ -6982,6 +7013,7 @@ INFORMATION_TIME
 	SE	Total låttid
 
 INFORMATION_VERSION
+	DE	Version
 	EN	Version
 	FR	Version
 	NO	Versjon
