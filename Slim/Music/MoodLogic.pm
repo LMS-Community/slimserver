@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.17 2004/05/18 16:06:50 dean Exp $
+#$Id: MoodLogic.pm,v 1.18 2004/05/19 07:28:55 kdf Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -204,6 +204,7 @@ sub doneScanning {
 sub artScan {
 	my @albums = keys %artwork;
 	my $album = $albums[0];
+	return unless $album;
 	my $thumb = Slim::Music::Info::haveThumbArt($artwork{$album});
 	
 	if (defined $thumb && $thumb) {
