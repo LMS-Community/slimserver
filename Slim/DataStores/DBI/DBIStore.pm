@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DBIStore;
 
-# $Id: DBIStore.pm,v 1.4 2004/12/17 20:33:03 dsully Exp $
+# $Id: DBIStore.pm,v 1.5 2005/01/02 21:46:17 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -24,6 +24,7 @@ use Slim::Formats::Movie;
 use Slim::Formats::AIFF;
 use Slim::Formats::FLAC;
 use Slim::Formats::MP3;
+use Slim::Formats::APE;
 use Slim::Formats::Ogg;
 use Slim::Formats::Wav;
 use Slim::Formats::WMA;
@@ -57,6 +58,7 @@ my %tagFunctions = (
 	'mov' => \&Slim::Formats::Movie::getTag,
 	'shn' => \&Slim::Formats::Shorten::getTag,
 	'mpc' => \&Slim::Formats::Musepack::getTag,
+	'ape' => \&Slim::Formats::APE::getTag,
 );
 
 # Only look these up once.
