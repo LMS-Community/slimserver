@@ -16,7 +16,7 @@ sub extract_path
 {
     my($class, $path) = @_;
     $path =~ s,\\,/,g;
-    $path =~ s,//+,/,g;
+    $path =~ s,$[^\\]+//+,/,g;
     $path =~ s,(/\.)+/,/,g;
     $path;
 }
