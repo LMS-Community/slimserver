@@ -10,6 +10,7 @@ use strict;
 # version 2.
 
 our %caseArticlesMemoize = ();
+our %sortCache = ();
 
 sub ignorePunct {
 	my $s = shift || return undef;
@@ -30,10 +31,10 @@ sub matchCase {
 	my $s = shift || return undef;
 
 	# Upper case and fold latin1 diacritical characters into their plain versions, surprisingly useful.
-	$s =~ tr{abcdefghijklmnopqrstuvwxyz√Ä√Å√Ç√É√Ñ√á√à√â√ä√ã√å√ç√é√è√ë√í√ì√î√ï√ñ√ô√ö√õ√ú√†√°√¢√£√§√•√ß√®√©√™√´√¨√≠√Æ√Ø√±√≤√≥√¥√µ√∂√π√∫√ª√º√ø√Ω√∞√ê}
-		{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAACEEEEIIIINOOOOOUUUUAAAAAACEEEEIIIINOOOOOUUUUYYDD};
+	$s =~ tr{abcdefghijklmnopqrstuvwxyz¿¡¬√ƒ≈ﬂﬁ«¢–»… ÀÃÕŒœ—“”‘’÷ÿŸ⁄€‹◊›‡·‚„‰Â˛ÁËÈÍÎÏÌÓÔÒÚÛÙıˆ¯˘˙˚¸ˇ˝°}
+		{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAAABBCCDEEEEIIIINOOOOOOUUUUXYAAAAAABCEEEEIIIINOOOOOOUUUUYYD!};
 
-	# Turn √Ü & √¶ into AE
+	# Turn ∆ & Ê into AE
 	$s =~ s/[\x{00C6}\x{00E6}]/AE/go;
 
 	return $s;
@@ -49,7 +50,7 @@ sub ignoreArticles {
 		$Slim::Music::Info::articles =~ s/\s+/|/g;
 	}
 	
-	#set up array for sorting items without leading articles
+	# set up array for sorting items without leading articles
 	$item =~ s/^($Slim::Music::Info::articles)\s+//i;
 
 	return $item;
@@ -70,9 +71,10 @@ sub clearCaseArticleCache {
 }
 
 sub sortIgnoringCase {
-	#set up an array without case for sorting
-	my @nocase = map {ignoreCaseArticles($_)} @_;
-	#return the original array sliced by the sorted caseless array
+	# set up an array without case for sorting
+	my @nocase = map { ignoreCaseArticles($_) } @_;
+
+	# return the original array sliced by the sorted caseless array
 	return @_[sort {$nocase[$a] cmp $nocase[$b]} 0..$#_];
 }
 
@@ -80,7 +82,7 @@ sub sortuniq {
 	my %seen = ();
 	my @uniq = ();
 
-	foreach my $item (@_) {
+	for my $item (@_) {
 		if (defined($item) && ($item ne '') && !$seen{ignoreCaseArticles($item)}++) {
 			push(@uniq, $item);
 		}
@@ -94,10 +96,11 @@ sub sortuniq_ignore_articles {
 	my %seen = ();
 	my @uniq = ();
 	my $articles =  Slim::Utils::Prefs::get("ignoredarticles");
+
 	# allow a space seperated list in preferences (easier for humans to deal with)
 	$articles =~ s/\s+/|/g;
 
-	foreach my $item (@_) {
+	for my $item (@_) {
 		if (defined($item) && ($item ne '') && !$seen{ignoreCaseArticles($item)}++) {
 			push(@uniq, $item);
 		}
@@ -106,7 +109,7 @@ sub sortuniq_ignore_articles {
 	# set up array for sorting items without leading articles
 	my @noarts = map {
 		my $item = $_; 
-		exists($Slim::Music::Info::sortCache{$item}) ? $item = $Slim::Music::Info::sortCache{$item} : $item =~ s/^($articles)\s+//i; 
+		exists($sortCache{$item}) ? $item = $sortCache{$item} : $item =~ s/^($articles)\s+//i; 
 		$item; 
 	} @uniq;
 		
@@ -114,16 +117,14 @@ sub sortuniq_ignore_articles {
 	return @uniq[sort {$noarts[$a] cmp $noarts[$b]} 0..$#uniq];
 }
 
-# XXX - %Slim::Music::Info::sortCache is implictly created in
-# sortuniq_ignore_articles() above. It is not explictly created anywhere in
-# Slim::Music::Info
 sub getSortName {
 	my $item = shift;
 
-	return exists($Slim::Music::Info::sortCache{ignoreCaseArticles($item)}) ? $Slim::Music::Info::sortCache{ignoreCaseArticles($item)} : $item;
+	return exists($sortCache{ignoreCaseArticles($item)}) ? $sortCache{ignoreCaseArticles($item)} : $item;
 }
 
 1;
+
 __END__
 
 # Local Variables:
