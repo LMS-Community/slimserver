@@ -39,6 +39,7 @@ package Plugins::iTunes;
 
 use strict;
 
+use Date::Parse qw(str2time);
 use Fcntl ':flock'; # import LOCK_* constants
 use File::Spec::Functions qw(:ALL);
 use File::Basename;
@@ -51,6 +52,9 @@ use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
 my $lastMusicLibraryFinishTime = undef;
+my $lastITunesMusicLibraryDate = 0;
+my $iTunesScanStartTime = 0;
+
 my $isScanning = 0;
 my $opened = 0;
 my $locked = 0;
@@ -101,18 +105,20 @@ sub useiTunesLibrary {
 	my $newValue = shift;
 	
 	if (defined($newValue)) {
-			Slim::Utils::Prefs::set('itunes', $newValue);
-		}
+		Slim::Utils::Prefs::set('itunes', $newValue);
+	}
 	
 	my $use = Slim::Utils::Prefs::get('itunes');
 	
 	my $can = canUseiTunesLibrary();
 	
 	if (!defined($use) && $can) { 
-			Slim::Utils::Prefs::set('itunes', 1);
+
+		Slim::Utils::Prefs::set('itunes', 1);
 
 	} elsif (!defined($use) && !$can) {
-			Slim::Utils::Prefs::set('itunes', 0);
+
+		Slim::Utils::Prefs::set('itunes', 0);
 	}
 	
 	$use = Slim::Utils::Prefs::get('itunes');
@@ -149,41 +155,47 @@ sub getFunctions {
 
 sub initPlugin {
 	return 1 if $initialized;
-	
+
 	addGroups();
 	return unless canUseiTunesLibrary();
-	
+
 	Slim::Music::Import::addImporter('ITUNES',\&startScan,undef,\&addGroups);
 	Slim::Music::Import::useImporter('ITUNES',Slim::Utils::Prefs::get('itunes'));
 	Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
-	
+
 	$initialized = 1;
-	
-	checker();
+
+	# Pass checker a value, to let it know that we're just seeing if we're
+	# available, not to actually start the scan. Slim::Music::Import will do that.
+	# Otherwise, doneScanning() will be called when Slim::Music::Import
+	# kicks off, and it will reset the lastiTunesCheck time, which isn't
+	# what we want. That needs to be set when we're really done scanning.
+	checker($initialized);
+
+	return 1;
 }
 
 sub disablePlugin {
 	# turn off checker
 	Slim::Utils::Timers::killTimers(0, \&checker);
-	
+
 	# remove playlists
-	
+
 	# disable protocol handler
 	#Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
-	
+
 	# reset last scan time
 	$lastMusicLibraryFinishTime = undef;
 	$initialized = 0;
-	
+
 	# delGroups, categories and prefs
 	Slim::Web::Setup::delCategory('itunes');
 	Slim::Web::Setup::delGroup('server','itunes',1);
-	
+
 	# set importer to not use
 	Slim::Utils::Prefs::set('itunes', 0);
 	Slim::Music::Import::useImporter('ITUNES',0);
 }
-
 
 sub addGroups {
 	Slim::Web::Setup::addChildren('server','itunes',3);
@@ -322,7 +334,6 @@ sub findMusicLibraryFile {
 	return undef;
 }
 
-
 sub findMusicLibrary {
 	my $autolocate = Slim::Utils::Prefs::get('itunes_library_autolocate');
 	my $path = undef;
@@ -364,12 +375,15 @@ sub playlists {
 sub isMusicLibraryFileChanged {
 	my $file = $ituneslibraryfile || findMusicLibraryFile();
 	my $fileMTime = (stat $file)[9];
+
+	# Set this so others can use it without going through Prefs in a tight loop.
+	$lastITunesMusicLibraryDate = Slim::Utils::Prefs::get('lastITunesMusicLibraryDate');
 	
 	# Only say "yes" if it has been more than one minute since we last finished scanning
 	# and the file mod time has changed since we last scanned. Note that if we are
 	# just starting, lastITunesMusicLibraryDate is undef, so both $fileMTime
 	# will be greater than 0 and time()-0 will be greater than 180 :-)
-	if ($file && $fileMTime > Slim::Utils::Prefs::get('lastITunesMusicLibraryDate')) {
+	if ($file && $fileMTime > $lastITunesMusicLibraryDate) {
 
 		my $itunesscaninterval = Slim::Utils::Prefs::get('itunesscaninterval');
 
@@ -377,10 +391,12 @@ sub isMusicLibraryFileChanged {
 
 		return 1 if (!$lastMusicLibraryFinishTime);
 		
-		if (time()-$lastMusicLibraryFinishTime > $itunesscaninterval) {
+		if (time() - $lastMusicLibraryFinishTime > $itunesscaninterval) {
+
 			return 1;
 
 		} else {
+
 			$::d_itunes && msg("iTunes: waiting for $itunesscaninterval seconds to pass before rescanning\n");
 		}
 	}
@@ -389,17 +405,19 @@ sub isMusicLibraryFileChanged {
 }
 
 sub checker {
+	my $firstTime = shift || 0;
+
 	return unless (Slim::Utils::Prefs::get('itunes'));
 	
-	if (!stillScanning() && isMusicLibraryFileChanged()) {
+	if (!$firstTime && !stillScanning() && isMusicLibraryFileChanged()) {
 		startScan();
 	}
 
 	# make sure we aren't doing this more than once...
 	Slim::Utils::Timers::killTimers(0, \&checker);
 
-	# Call ourselves again after 5 seconds
-	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 5.0), \&checker);
+	# Call ourselves again after 10 seconds
+	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 10.0), \&checker);
 }
 
 sub startScan {
@@ -416,10 +434,11 @@ sub startScan {
 		warn "Trying to scan an iTunes file that doesn't exist.";
 		return;
 	}
-	
+
 	stopScan();
 
 	$isScanning = 1;
+	$iTunesScanStartTime = time();
 
 	# start the checker
 	checker();
@@ -432,7 +451,6 @@ sub stopScan {
 
 		Slim::Utils::Scheduler::remove_task(\&scanFunction);
 		doneScanning();
-
 	}
 }
 
@@ -452,6 +470,18 @@ sub doneScanning {
 	$lastMusicLibraryFinishTime = time();
 
 	$isScanning = 0;
+
+	# Set the last change time for the next go-round.
+	my $file  = $ituneslibraryfile || findMusicLibraryFile();
+	my $mtime = (stat($file))[9];
+
+	$lastITunesMusicLibraryDate = $mtime;
+
+	if ($::d_itunes) {
+		msgf("iTunes: scan completed in %d seconds.\n", (time() - $iTunesScanStartTime));
+	}
+
+	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $lastITunesMusicLibraryDate);
 	
 	Slim::Music::Info::generatePlaylists();
 	
@@ -466,7 +496,7 @@ sub doneScanning {
     # Abandon all hope ye who enter here...
 ###########################################################################################
 sub scanFunction {
-	my $file = $ituneslibraryfile || findMusicLibraryFile();;
+	my $file = $ituneslibraryfile || findMusicLibraryFile();
 	
 	# this assumes that iTunes uses file locking when writing the xml file out.
 	if (!$opened) {
@@ -479,8 +509,6 @@ sub scanFunction {
 		$opened = 1;
 
 		resetScanState();
-
-		Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', (stat $file)[9]);
 	}
 	
 	if ($opened && !$locked) {
@@ -547,26 +575,56 @@ sub scanFunction {
 				} else {
 					$type = $filetypes{$filetype};
 				}
-
 			}
 			
-			$::d_itunes && msg("iTunes: got a track named " . $curTrack{'Name'} . " location: $location\n");
-
 			if ($location =~ /^((\d+\.\d+\.\d+\.\d+)|([-\w]+(\.[-\w]+)*)):\d+$/) {
 				$location = "http://$location"; # fix missing prefix in old invalid entries
 			}
 
 			my $url = normalize_location($location);
 
+			# Use this for playlist verification.
+			$tracks{$id} = $url;
+
 			if (Slim::Music::Info::isFileURL($url)) {
-				my $file = Slim::Utils::Misc::pathFromFileURL($url, 1);
+
+				my $file  = Slim::Utils::Misc::pathFromFileURL($url, 1);
+
+				# dsully - Sun Mar 20 22:50:41 PST 2005
+				# iTunes has a last 'Date Modified' field, but
+				# it isn't updated even if you edit the track
+				# properties directly in iTunes (dumb) - the
+				# actual mtime of the file is updated however.
+
+				my $mtime = (stat($file))[9];
+				my $ctime = str2time($curTrack{'Date Added'});
 				
-				if (!$file || !-r $file) { 
+				# If the file hasn't changed since the last
+				# time we checked, then don't bother going to
+				# the database. A file could be new to iTunes
+				# though, but it's mtime can be anything.
+				if ($lastITunesMusicLibraryDate &&
+				    ($ctime && $ctime < $lastITunesMusicLibraryDate) &&
+				    ($mtime && $mtime < $lastITunesMusicLibraryDate)) {
+
+					$::d_itunes && msg("iTunes: not updated, skipping: $file\n");
+
+					return 1;
+				}
+
+				# Reuse the stat from above.
+				if (!$file || !-r _) { 
 					$::d_itunes && msg("iTunes: file not found: $file\n");
-					$url = undef;
-				} 
+
+					# Tell the database to cleanup.
+					$ds->markEntryAsInvalid($url);
+
+					return 1;
+				}
 			}
 			
+			$::d_itunes && msg("iTunes: got a track named " . $curTrack{'Name'} . " location: $location\n");
+
 			if ($url && !defined($type)) {
 				$type = Slim::Music::Info::typeFromPath($url);
 			}
@@ -625,15 +683,14 @@ sub scanFunction {
 					}
 				}
 
-				$tracks{$id} = $url;
-
 				%curTrack = ();
 				%cacheEntry = ();
 
 			} else {
 
-				$::d_itunes && warn "iTunes: unknown file type " . $curTrack{'Kind'} . " $url";
-
+				$::d_itunes && Slim::Utils::Misc::msg(
+					"iTunes: unknown file type %s " . ($url || ''), $curTrack{'Kind'}
+				);
 			} 
 
 		}

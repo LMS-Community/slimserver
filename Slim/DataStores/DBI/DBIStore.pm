@@ -454,7 +454,7 @@ sub updateOrCreate {
 	}
 
 	if (defined($track)) {
-		delete $self->{'zombieList'}->{$track->id};
+		delete $self->{'zombieList'}->{$url};
 	} else {
 		$track = $self->_retrieveTrack($url);
 	}
@@ -505,6 +505,10 @@ sub delete {
 	my $commit = shift;
 
 	my $track = ref $urlOrObj ? $urlOrObj : undef;
+	if (ref($track) eq 'Class::DBI::Iterator') {
+		Slim::Utils::Misc::msg("Somehow got a Class::DBI::Iterator instead of a track?! urlOrObj: [$urlOrObj]\n");
+		Slim::Utils::Misc::bt();
+	}
 	my $url   = ref $urlOrObj ? $track->url : $urlOrObj;
 
 	if (!defined($track)) {
@@ -561,11 +565,37 @@ sub markEntryAsValid {
 	my $url = shift;
 
 	$validityCache{$url} = time();
+	delete $self->{'zombieList'}->{$url};
+}
+
+# Mark a track entry as invalid.
+# Does the reverse of above.
+sub markEntryAsInvalid {
+	my $self = shift;
+	my $url  = shift || return undef;
+
+	if (exists $validityCache{$url}) {
+		delete $validityCache{$url};
+	}
+
+	$self->{'zombieList'}->{$url} = 1;
 }
 
 # Clear all stale track entries.
 sub clearStaleEntries {
 	my $self = shift;
+
+	# Sun Mar 20 22:29:03 PST 2005
+	# XXX - dsully - a lot of this is commented out, as myself
+	# and Vidur decided that lazy track cleanup was best for now. This
+	# means that if a user selects (via browsedb) a list of tracks which
+	# is now longer there, it will be run through _checkValidity, and
+	# marked as invalid. We still want to do Artist/Album/Genre cleanup
+	# however.
+	#
+	# At Some Point in the Future(tm), Class::DBI should be modified, so
+	# that retrieve_all() is lazy, and only fetches a $sth->row when
+	# $obj->next is called.
 
 	unless ($cleanupIterator) {
 
@@ -600,36 +630,7 @@ sub clearStaleEntries {
 
 		# Setup a little state machine so that the db cleanup can be
 		# scheduled appropriately - ie: one record per run.
-		Slim::Utils::Scheduler::add_task(sub { 
-
-			$staleCounter++;
-			return 1 if $staleCounter % 20;
-
-			if ($cleanupStage eq 'contributors') {
-
-				unless (Slim::DataStores::DBI::Contributor->removeStaleDBEntries('contributorTracks')) {
-					$cleanupStage = 'albums';
-				}
-
-				return 1;
-			}
-
-			if ($cleanupStage eq 'albums') {
-
-				unless (Slim::DataStores::DBI::Album->removeStaleDBEntries('tracks')) {
-					$cleanupStage = 'genres';
-				}
-
-				return 1;
-			}
-
-			if ($cleanupStage eq 'genres') {
-				return Slim::DataStores::DBI::Genre->removeStaleDBEntries('genreTracks');
-			}
-
-			$staleCounter = 0;
-			return 0;
-		});
+		Slim::Utils::Scheduler::add_task(\&_clearDanglingEntries);
 
 		$cleanupIterator = undef;
 
@@ -654,6 +655,45 @@ sub clearStaleEntries {
 	$track = undef;
 
 	return 1;
+}
+
+# Walk the Album, Contributor and Genre tables to see if we have any dangling
+# entries, pointing to non-existant tracks.
+sub _clearDanglingEntries {
+	my $self = shift;
+
+	$staleCounter++;
+	return 1 if $staleCounter % 20;
+
+	if ($cleanupStage eq 'contributors') {
+
+		unless (Slim::DataStores::DBI::Contributor->removeStaleDBEntries('contributorTracks')) {
+			$cleanupStage = 'albums';
+		}
+
+		return 1;
+	}
+
+	if ($cleanupStage eq 'albums') {
+
+		unless (Slim::DataStores::DBI::Album->removeStaleDBEntries('tracks')) {
+			$cleanupStage = 'genres';
+		}
+
+		return 1;
+	}
+
+	if ($cleanupStage eq 'genres') {
+		return Slim::DataStores::DBI::Genre->removeStaleDBEntries('genreTracks');
+	}
+
+	# We're done.
+	$self->{'dbh'}->commit();
+
+	%lastFind = ();
+
+	$staleCounter = 0;
+	return 0;
 }
 
 # Wipe all data in the database
@@ -695,15 +735,16 @@ sub forceCommit {
 	# Update the track count
 	Slim::DataStores::DBI::DataModel->setMetaInformation($self->{'trackCount'}, $self->{'totalTime'});
 
-	for my $id (keys %{$self->{'zombieList'}}) {
+	for my $zombie (keys %{$self->{'zombieList'}}) {
 
-		next unless $self->{'zombieList'}->{$id};
+		my ($track) = Slim::DataStores::DBI::Track->search('url' => $zombie);
 
-		my $track = Slim::DataStores::DBI::Track->retrieve($id);
+		if ($track) {
 
-		delete $self->{'zombieList'}->{$id};
+			delete $self->{'zombieList'}->{$zombie};
 
-		$self->delete($track, 0) if $track;
+			$self->delete($track, 0) if $track;
+		}
 	}
 
 	$self->{'zombieList'} = {};
@@ -752,6 +793,8 @@ sub clearExternalPlaylists {
 sub generateExternalPlaylists {
 	my $self = shift;
 
+	# dsully - Mon Mar 21 22:10:48 PST 2005
+	# XXX - this can probably use LightWeightTrack - test after 6.0 is out.
 	$self->{'externalPlaylists'} = [ Slim::Utils::Text::sortIgnoringCase(
 		map { $_->url() } Slim::DataStores::DBI::Track->externalPlaylists
 	) ];
@@ -928,7 +971,9 @@ sub _retrieveTrack {
 		$track = $self->{'lastTrack'}->{$dirname};
 
 	} elsif ($lightweight) {
+
 		($track) = Slim::DataStores::DBI::LightWeightTrack->search('url' => $url);
+
 	} else {
 
 		# XXX - keep a url => id cache. so we can use the
@@ -965,7 +1010,7 @@ sub _checkValidity {
 	my $id  = $track->get('id');
 	my $url = $track->get('url');
 
-	return undef if $self->{'zombieList'}->{$id};
+	return undef if $self->{'zombieList'}->{$url};
 
 	my $ttl = $validityCache{$url} || 0;
 
@@ -1053,7 +1098,7 @@ sub _hasChanged {
 	# Tell the DB to sync - if we're deleting something.
 	$Slim::DataStores::DBI::DataModel::dirtyCount++;
 
-	return $self->{'zombieList'}->{$id} = 1;
+	return $self->{'zombieList'}->{$url} = 1;
 }
 
 sub _includeInTrackCount {
@@ -1061,8 +1106,8 @@ sub _includeInTrackCount {
 	my $track = shift;
 	my $url   = $track->get('url');
 
-	return 1 if (Slim::Music::Info::isSong($url, $track->get('ct')) && 
-				 !Slim::Music::Info::isRemoteURL($url));
+	return 0 if Slim::Music::Info::isRemoteURL($url);
+	return 1 if Slim::Music::Info::isSong($track, $track->get('ct'));
 
 	return 0;
 }
@@ -1120,10 +1165,14 @@ sub _postCheckAttributes {
 		return;
 	}
 
+	# We don't want to add "No ..." entries for remote URLs, or meta
+	# tracks like iTunes playlists.
+	my $isLocal = Slim::Music::Info::isSong($track) && !Slim::Music::Info::isRemoteURL($track);
+
 	# Genre addition. If there's no genre for this track, and no 'No Genre' object, create one.
 	my $genre = $attributes->{'GENRE'};
 
-	if ($create && !$genre && !$_unknownGenre) {
+	if ($create && $isLocal && !$genre && !$_unknownGenre) {
 
 		$_unknownGenre = Slim::DataStores::DBI::Genre->find_or_create({
 			'name'     => string('NO_GENRE'),
@@ -1132,11 +1181,11 @@ sub _postCheckAttributes {
 
 		Slim::DataStores::DBI::GenreTrack->add($_unknownGenre, $track);
 
-	} elsif ($create && !$genre) {
+	} elsif ($create && $isLocal && !$genre) {
 
 		Slim::DataStores::DBI::GenreTrack->add($_unknownGenre, $track);
 
-	} elsif ($create && $genre) {
+	} elsif ($create && $isLocal && $genre) {
 
 		Slim::DataStores::DBI::GenreTrack->add($genre, $track);
 	}
@@ -1164,7 +1213,7 @@ sub _postCheckAttributes {
 	}
 
 	# Create a singleton for "No Artist"
-	if ($create && !$foundContributor && !$_unknownArtist) {
+	if ($create && $isLocal && !$foundContributor && !$_unknownArtist) {
 
 		$_unknownArtist = Slim::DataStores::DBI::Contributor->find_or_create({
 			'name'     => string('NO_ARTIST'),
@@ -1179,7 +1228,7 @@ sub _postCheckAttributes {
 
 		push @contributors, $_unknownArtist;
 
-	} elsif ($create && !$foundContributor) {
+	} elsif ($create && $isLocal && !$foundContributor) {
 
 		# Otherwise - reuse the singleton object, since this is the
 		# second time through.
@@ -1200,7 +1249,7 @@ sub _postCheckAttributes {
 
 	# Create a singleton for "No Album"
 	# Album should probably have an add() method
-	if ($create && !$album && !$_unknownAlbum) {
+	if ($create && $isLocal && !$album && !$_unknownAlbum) {
 
 		$_unknownAlbum = Slim::DataStores::DBI::Album->find_or_create({
 			'title'     => string('NO_ALBUM'),
@@ -1210,12 +1259,12 @@ sub _postCheckAttributes {
 		$track->album($_unknownAlbum);
 		$albumObj = $_unknownAlbum;
 
-	} elsif ($create && !$album) {
+	} elsif ($create && $isLocal && !$album) {
 
 		$track->album($_unknownAlbum);
 		$albumObj = $_unknownAlbum;
 
-	} elsif ($create && $album) {
+	} elsif ($create && $isLocal && $album) {
 
 		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
@@ -1300,15 +1349,19 @@ sub _postCheckAttributes {
 	# multiple albums. Rather than requiring a multi-way join to get
 	# all the individual sort keys from different tables, this is an
 	# optimization that only requires the tracks table.
-	$albumObj ||= $track->album;
+	$albumObj ||= $track->album();
+
 	my $albumName = defined($albumObj) ? $albumObj->titlesort : '';
 	my $primary_contributor = defined($contributors[0]) ? $contributors[0]->namesort :  defined($albumObj) ? $albumObj->contributors : '';
-	my @keys;
+
+	my @keys = ();
+
 	push @keys, $primary_contributor || '';
 	push @keys, $albumName || '';
 	push @keys, $disc if defined($disc);
 	push @keys, sprintf("%03d", $track->tracknum) if defined($track->tracknum);
 	push @keys, $track->titlesort() || '';
+
 	$track->multialbumsortkey(join ' ', @keys);
 	$track->update();
 
