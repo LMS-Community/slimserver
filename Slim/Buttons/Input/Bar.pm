@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Bar;
 
-# $Id: Bar.pm,v 1.5 2004/08/28 04:58:24 dean Exp $
+# $Id: Bar.pm,v 1.6 2004/08/28 17:54:01 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -113,10 +113,11 @@ sub lines {
 
 	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 	$valueRef = \$value if defined $value;
+	
 	$line1 = defined $header ? $header : Slim::Buttons::Input::List::getExtVal($client,$$valueRef,undef,'header');
 
 	$min = $min || Slim::Buttons::Common::param($client,'min') || 0;
-	$mid = $mid || Slim::Buttons::Common::param($client,'mid') || 100;
+	$mid = $mid || Slim::Buttons::Common::param($client,'mid') || 0;
 	$max = $max || Slim::Buttons::Common::param($client,'max') || 100;
 
 	my $val = $max == $min ? 0 : int(($$valueRef - $min)*100/($max-$min));
@@ -129,10 +130,8 @@ sub lines {
 			$line2 = '';
 		} else {
 			$line2 = $line1;
-			#$line1 = '';
 		}
 	}
-
 	return ($line1,$line2);
 }
 
