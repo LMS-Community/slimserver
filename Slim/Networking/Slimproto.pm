@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.2 2003/07/30 23:01:57 sadams Exp $
+# $Id: Slimproto.pm,v 1.3 2003/07/31 00:17:04 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -187,7 +187,7 @@ GETMORE:
 	$::d_protocol && msg("attempting to read $bytes_remaining bytes\n");
 
 	my $indata;
-	my $bytes_read = $s->read($indata, $bytes_remaining);
+	my $bytes_read = $s->sysread($indata, $bytes_remaining);
 	$inputbuffer{$s}.=$indata;
 
 	if ($bytes_read == 0) {
