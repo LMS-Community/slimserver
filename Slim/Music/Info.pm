@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.69 2004/02/02 23:52:15 dean Exp $
+# $Id: Info.pm,v 1.70 2004/02/03 16:44:09 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -229,6 +229,7 @@ sub init {
 	# also get the album, performer and title sort information
 	$MP3::Info::v2_to_v1_names{'TSOA'} = 'ALBUMSORT';
 	$MP3::Info::v2_to_v1_names{'TSOP'} = 'ARTISTSORT';
+	$MP3::Info::v2_to_v1_names{'XSOP'} = 'ARTISTSORT';
 	$MP3::Info::v2_to_v1_names{'TSOT'} = 'TITLESORT';
 
 	# get composers
@@ -2768,6 +2769,12 @@ sub sortuniq_ignore_articles {
 		
 	#return the uniq array sliced by the sorted articleless array
 	return @uniq[sort {$noarts[$a] cmp $noarts[$b]} 0..$#uniq];
+}
+
+sub getSortName {
+	my $item = shift;
+	return exists($sortCache{matchCase($item)}) ? $sortCache{matchCase($item)} : $item;
+
 }
 
 1;
