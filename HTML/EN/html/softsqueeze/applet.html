@@ -1,0 +1,53 @@
+<HTML>
+<HEAD>
+<TITLE>SoftSqueeze Applet</TITLE>
+</HEAD>
+
+<BODY>
+<h1>SoftSqueeze</h1>
+
+This page is for testing the SoftSqueeze applet.
+<br/>
+<br/>
+
+<applet code="com.slim.softsqueeze.SoftSqueezeApplet"
+        archive="SoftSqueeze.jar"
+        width="259" height="65">
+    <param name="slimserver" value="[% host.match('([^:]*)').0 %]" />
+    <param name="serverversion" value="5.2" />
+    <param name="skin" value="excession" />
+    <param name="sshtunnel" value="false" />
+    <param name="sshusername" value="false" />
+    <param name="sshpassword" value="false" />
+</applet>
+
+<!-- this should work with both IE and Netscape -->
+<!-- but is does not !!
+<OBJECT classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
+    width="200" height="200" align="baseline"
+    codebase="http://java.sun.com/products/plugin/1.4/jinstall-14-win32.cab#Version=1,4,0,mn">
+    <PARAM NAME="archive" VALUE="SoftSqueeze.jar">
+    <PARAM NAME="code" VALUE="com.slim.softsqueeze.SoftSqueezeApplet">
+    <PARAM NAME="type" VALUE="application/x-java-applet;jpi-version=1.4">
+    <PARAM NAME="scriptable" VALUE="true">
+
+    <PARAM NAME="slimserver" VALUE="[% host.match('([^:]*)').0 %]" />
+    <PARAM NAME="firmware" VALUE="0" />
+    <PARAM NAME="sshtunnel" VALUE="false" />
+
+    <COMMENT>
+        <EMBED type="application/x-java-applet;jpi-version=1.4" width="200"
+           height="200" align="baseline" code="XYZApp.class" 
+           codebase="html/" model="models/HyaluronicAcid.xyz"
+           pluginspage="http://java.sun.com/j2se/1.4/download.html">
+            <NOEMBED>
+                No Java 2 SDK, Standard Edition v 1.4 support for APPLET!!
+            </NOEMBED>
+        </EMBED>
+    </COMMENT>
+</OBJECT>
+-->
+
+</BODY>
+
+</HTML>
