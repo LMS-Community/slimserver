@@ -1121,6 +1121,7 @@ sub openNext {
 			#stop at the end of the list
 			if (currentSongIndex($client) == (count($client) - 1)) {
 				playmode($client, $result ? 'playout' : 'stop');
+				currentSongIndex($client, 0);
 				return 0;
 			} else {
 				skipsong($client);

@@ -222,7 +222,8 @@ my %functions = (
 		# if we've picked an artist to append or play, then do so.
 		} elsif (picked($genre)) {
 			my $whichartist = picked($artist) ? $artist : (($currentItem eq string('ALL_ALBUMS')) ? '*' : $currentItem);
-			Slim::Control::Command::execute($client, ["playlist", $command, $genre, $whichartist, '*',undef, $sortbytitle]);		
+			my $whichalbum = $all_albums ? $currentItem : '*';
+			Slim::Control::Command::execute($client, ["playlist", $command, $genre, $whichartist, $whichalbum,undef, $sortbytitle]);		
 		# if we've picked a genre to play or append, then do so
 		} else {
 			Slim::Control::Command::execute($client, ["playlist", $command, $currentItem, "*", "*"]);
