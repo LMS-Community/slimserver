@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.89 2004/04/05 19:17:42 dean Exp $
+# $Id: Info.pm,v 1.90 2004/04/05 23:11:49 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2795,7 +2795,7 @@ sub typeFromPath {
 sub ignorePunct {
        my $s = shift;
        return undef unless defined($s);
-       $s =~ s/[^\w\s-*]//g;
+       $s =~ s/[^\w\s\-*]//g;
        return $s;
 }
 
