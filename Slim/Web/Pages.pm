@@ -1490,7 +1490,7 @@ sub search {
 
 	my $player = $params->{'player'};
 	my $query  = $params->{'query'};
-	my $type   = $params->{'type'};
+	my $type   = $params->{'type'} || 'song';
 	my $results;
 	my $descend = 'true';
 
