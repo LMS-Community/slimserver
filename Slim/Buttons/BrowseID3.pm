@@ -1,5 +1,5 @@
 package Slim::Buttons::BrowseID3;
-# $Id: BrowseID3.pm,v 1.11 2004/03/11 20:16:10 dean Exp $
+# $Id: BrowseID3.pm,v 1.12 2004/03/21 19:11:38 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -232,7 +232,7 @@ my %functions = (
 		# if we've picked an artist to append or play, then do so.
 		} elsif (picked($genre)) {
 			my $whichartist = picked($artist) ? $artist : (($currentItem eq string('ALL_ALBUMS')) ? '*' : $currentItem);
-			my $whichalbum = ($album eq string('ALL_SONGS')) ? '*' : $currentItem;
+			my $whichalbum = ($artist eq string('ALL_ALBUMS')) ? $currentItem : '*';
 			my $whichgenre = ($genre eq string('ALL_ALBUMS')) ? '*' : $genre;
 			Slim::Control::Command::execute($client, ["playlist", $command, $whichgenre, $whichartist, $whichalbum,undef, $sortbytitle]);		
 		# if we've picked a genre to play or append, then do so
