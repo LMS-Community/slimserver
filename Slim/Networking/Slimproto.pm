@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.8 2003/08/04 19:18:15 sadams Exp $
+# $Id: Slimproto.pm,v 1.9 2003/08/05 15:41:31 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -314,6 +314,9 @@ sub process_slimproto_frame {
 
 		my ($irTime, $irCode) =unpack 'NxxH8', $data;
 		Slim::Hardware::IR::enqueue($client, $irCode, $irTime);
+	} elsif ($op eq 'RESP') {
+		# HTTP stream headers
+		print "Squeezebox got HTTP response:\n$data";
 	}
 }
 
