@@ -989,6 +989,18 @@ sub _checkValidity {
 		}
 	}
 
+	# If the track was deleted out from under us - say by the db garbage collection, don't return it.
+	# This is mostly defensive, I've seen it, but I'm not sure how to
+	# reproduce it. It's happened when testing with a customer's db, which
+	# I don't have the tracks to, so _checkValidity may be bogus.
+	if (defined $track && ref($track) && $track->isa('Class::DBI::Object::Has::Been::Deleted')) {
+
+		Slim::Utils::Misc::msg("Track: [$id] - [$track] was deleted out from under us!\n");
+		Slim::Utils::Misc::bt();
+
+		$track = undef;
+	}
+
 	return $track;
 }
 
