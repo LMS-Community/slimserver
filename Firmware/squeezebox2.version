@@ -3,10 +3,11 @@
 # from        to
 # from1..from2 to
 
-1  4
-2  4
-3  4
-4  4
+1  5
+2  5
+3  5
+4  5
+5  5
 
 # future versions may be downgraded to this one
-*			  4
+*			  5
