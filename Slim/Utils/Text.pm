@@ -2,7 +2,7 @@ package Slim::Utils::Text;
 
 use strict;
 
-# $Id: Text.pm,v 1.3 2004/08/05 22:59:52 dean Exp $
+# $Id: Text.pm,v 1.4 2004/12/02 02:23:43 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -12,30 +12,32 @@ use strict;
 my %caseArticlesMemoize = ();
 
 sub ignorePunct {
-	my $s = shift;
+	my $s = shift || return undef;
+
 	my $orig = $s;
-	return undef unless defined($s);
-	$s =~ s/[!?,=+<>#%&()\"\'\$\.\\]+/ /g;
-	$s =~ s/  +/ /g; # compact multiple spaces, "L.A. Mix" -> "L A Mix", not "L A  Mix"
-	$s =~ s/^ +//; # zap leading/trailing spaces.
-    $s =~ s/ +$//;
-	$s = $orig if ($s eq '');
+
+	$s =~ s/[!?,=+<>#%&()\"\'\$\.\\]+/ /go;
+	$s =~ s/  +/ /go; # compact multiple spaces, "L.A. Mix" -> "L A Mix", not "L A  Mix"
+	$s =~ s/^ +//o; # zap leading/trailing spaces.
+	$s =~ s/ +$//o;
+
+	$s = $orig if $s eq '';
+
 	return $s;
 }
 
 sub matchCase {
-	my $s = shift;
-	return undef unless defined($s);
+	my $s = shift || return undef;
+
 	# Upper case and fold latin1 diacritical characters into their plain versions, surprisingly useful.
 	$s =~ tr{abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜàáâãäåçèéêëìíîïñòóôõöùúûüÿığĞ}
-			{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAACEEEEIIIINOOOOOUUUUAAAAAACEEEEIIIINOOOOOUUUUYYDD};
+		{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAACEEEEIIIINOOOOOUUUUAAAAAACEEEEIIIINOOOOOUUUUYYDD};
+
 	return $s;
 }
 
 sub ignoreArticles {
-	my $item = shift;
-
-	return $item unless $item;
+	my $item = shift || return;
 
 	if (!defined($Slim::Music::Info::articles)) {
 
@@ -51,8 +53,8 @@ sub ignoreArticles {
 }
 
 sub ignoreCaseArticles {
-	my $s = shift;
-	return undef unless defined($s);
+	my $s = shift || return undef;
+
 	if (defined $caseArticlesMemoize{$s}) {
 		return $caseArticlesMemoize{$s};
 	}
