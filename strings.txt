@@ -1906,7 +1906,6 @@ SETUP_SAVESHUFFLED_DESC
 SETUP_SAVESHUFFLED_1
 	EN	Save playlists in shuffled order
 
-
 SETUP_SAVESHUFFLED_0
 	EN	Save playlists in order songs were added
 	
@@ -5511,4 +5510,16 @@ EDIT
 URL
 	DE	URL
 	EN	URL
+
+SAVE_PLAYLIST
+	EN	Save Playlist
+
+PLAYLIST_SAVE
+	EN	Press RIGHT again to save playlist as:
+
+PLAYLIST_AS
+	EN	Save current playlist as:
+
+PLAYLIST_SAVING
+	EN	Saving current playlist as:
 

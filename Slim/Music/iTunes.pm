@@ -376,6 +376,16 @@ sub scanFunction {
 					$type = $filetypes{$filetype};
 				}
 			}
+			
+			if ($location && ($location =~ /automount/)) {
+					#Strip out automounter 'private' paths.
+					#OSX wants us to use file://Network/ or timeouts occur
+					#There may be more combinations
+					$location =~ s/private\/var\/automount\///;
+					$location =~ s/private\/automount\///;
+					$location =~ s/automount\/static\///;
+			}
+
 			if ($location && !defined($type)) {
 				$type = Slim::Music::Info::typeFromPath($location, 'mp3');
 			}
@@ -419,7 +429,7 @@ sub scanFunction {
 				$cacheEntry{'COMMENT'} = $curTrack{'Comments'};
 				# cacheEntry{'???'} = $curTrack{'Track Count'};
 				# cacheEntry{'???'} = $curTrack{'Sample Rate'};
-				my $url = $curTrack{'Location'};
+				my $url = $location;
 				if (Slim::Music::Info::isFileURL($url)) {
 					if (Slim::Utils::OSDetect::OS() eq 'unix') {
 						my $base = Slim::Utils::Prefs::get('mp3dir');
@@ -445,7 +455,7 @@ sub scanFunction {
 					$::d_itunes && warn "iTunes: missing Location " . %cacheEntry;
 				}
 			} else {
-				$::d_itunes && warn "iTunes: unknown file type " . $curTrack{'Kind'} . " " . $curTrack{'Location'};
+				$::d_itunes && warn "iTunes: unknown file type " . $curTrack{'Kind'} . " $location";
 			} 
 
 		}

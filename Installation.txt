@@ -1,6 +1,6 @@
-                                Welcome to SLIMP3 
+                                Welcome to Slim Server 
 
-This document describes the steps for installing the SLIMP3 server on Unix-like 
+This document describes the steps for installing the Slim Server on Unix-like 
 platforms.
 
 Version 5.6 or higher of Perl is required.
@@ -12,18 +12,18 @@ Linux Notes:
 If you've installed the RPM on a RedHat or Mandrake Linux system, you can start 
 the server with this command:
 
-	/etc/rc.d/init.d/slimp3 start
+	/etc/rc.d/init.d/slimd start
 
 and stop it with this:
 
-	/etc/rc.d/init.d/slimp3 stop
+	/etc/rc.d/init.d/slimd stop
 
 --------------------------------------------------------------------------------
 
 FreeBSD Notes:
 
 In a normal installation of FreeBSD the version of Perl is 5.00 and not 
-sufficient for use with the SLIMP3 server software, which requires 5.6 or greater.
+sufficient for use with the Slim Server software, which requires 5.6 or greater.
 
 To upgrade Perl to 5.8:
 
@@ -39,18 +39,18 @@ First become the superuser, then issue the following commands
 If you aren't installing the RPM, you can start the server from a command line 
 with the following command:
 
-   ./slimp3.pl --daemon
+   ./slimserver.pl --daemon
    
 This will start up the server and run itself in the background.
 
 Visit the URL that's printed out with your web browser to configure your 
-SLIMP3 server and see the complete documentation.
+Slim Server and see the complete documentation.
 
 --------------------------------------------------------------------------------
 
 Command Line Usage Information
 
-Usage: ./slimp3.pl [--mp3dir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
+Usage: ./slimserver.pl [--mp3dir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
           [--user <username>]
           [--group <groupname>]
           [--httpport <portnumber> [--httpaddr <listenip>]]
@@ -83,7 +83,7 @@ Usage: ./slimp3.pl [--mp3dir <dir>] [--daemon] [--stdio] [--logfile <logfilepath
     --pidfile        => Specify where a process ID file should be stored
     --quiet          => Minimize the amount of text output
     --playeraddr     => Specify the _server's_ IP address to use to connect 
-                        to SLIMP3 players
+                        to players
     --streamaddr     => Specify the _server's_ IP address to use to connect
                         to streaming audio sources
     --nosetup        => Disable setup via http.
@@ -95,7 +95,7 @@ to the console via stderr:
                         command line interface interface
     --d_command      => Display internal command execution
     --d_control      => Low level player control information
-    --d_display      => Show what (should be) on the slimp3's display 
+    --d_display      => Show what (should be) on the player's display 
     --d_files        => Files, paths, opening and closing
     --d_http         => HTTP activity
     --d_info         => MP3/ID3 track information
@@ -120,7 +120,7 @@ to the console via stderr:
     --d_sync         => Information about multi player synchronization
     --d_time         => Internal timer information
     --d_ui           => Player user interface information
-    --d_usage        => Display buffer usage codes on the SLIMP3 display
+    --d_usage        => Display buffer usage codes on the player's display
     
 Commands may be sent to the server through standard in and will be echoed via
 standard out.  See complete documentation for details on the command syntax.

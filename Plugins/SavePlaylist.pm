@@ -1,4 +1,4 @@
-# $Id: SavePlaylist.pm,v 1.2 2003/10/27 06:52:09 kdf Exp $
+# $Id: SavePlaylist.pm,v 1.3 2003/10/28 22:39:03 dean Exp $
 # This code is derived from code with the following copyright message:
 #
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
@@ -17,7 +17,7 @@ use POSIX qw(strftime);
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.2 $,10);
+$VERSION = substr(q$Revision: 1.3 $,10);
 
 my %context;
 
@@ -44,23 +44,7 @@ my @legalMixed = ([' ','0'], # 0
 					 ['w','x','y','z','W','X','Y','Z','9']); 			# 9
 
 
-sub getDisplayName { return string('PLUGIN_SAVE_PLAYLIST'); }
-
-#Set common text strings.  can be placed in strings.txt for language templates.
-sub strings { return '
-PLUGIN_SAVE_PLAYLIST
-	EN	Save Playlist
-
-PLUGIN_PLAYLIST_SAVE
-	EN	Press RIGHT again to save playlist as:
-
-PLUGIN_PLAYLIST_AS
-	EN	Save current playlist as:
-
-PLUGIN_PLAYLIST_SAVING
-	EN	Saving current playlist as:
-'
-};
+sub getDisplayName { return string('SAVE_PLAYLIST'); }
 
 # the routines
 sub setMode {
@@ -76,7 +60,7 @@ sub setMode {
 						,'valueRef' => \$context{$client}
 						,'charsRef' => \@LegalChars
 						,'numberLetterRef' => \@legalMixed
-						,'header' => string('PLUGIN_PLAYLIST_AS')
+						,'header' => string('PLAYLIST_AS')
 						,'cursorPos' => 0
 						});
 	}
@@ -102,7 +86,7 @@ my %functions = (
 sub lines {
 	my $client = shift;
 
-	my $line1 = string('PLUGIN_PLAYLIST_SAVE');
+	my $line1 = string('PLAYLIST_SAVE');
 	my $line2 = $context{$client};
 	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
 }
@@ -114,7 +98,7 @@ sub savePlaylist {
 	my $playlistdir = Slim::Utils::Prefs::get('playlistdir');
 	$playlistfile = catfile($playlistdir,$playlistfile . ".m3u");
 	Slim::Formats::Parse::writeM3U($playlistref,$playlistfile);
-	Slim::Display::Animation::showBriefly($client,string('PLUGIN_PLAYLIST_SAVING'),$playlistfile);
+	Slim::Display::Animation::showBriefly($client,string('PLAYLIST_SAVING'),$playlistfile);
 }
 
 sub getFunctions {
