@@ -461,4 +461,14 @@ sub requestStatus {
 	shift->sendFrame('stat');
 }
 
+sub stop {
+	my $client = shift;
+	$client->SUPER::stop(@_);
+	# Preemptively set the following state variables
+	# to 0, since we rely on them for time display and may
+	# have to wait to get a status message with the correct
+	# values.
+	$client->songElapsedSeconds(0);
+}
+
 1;

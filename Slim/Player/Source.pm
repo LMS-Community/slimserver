@@ -192,6 +192,10 @@ sub progress {
 
 	my $client = Slim::Player::Sync::masterOrSelf(shift);
 	
+	if (Slim::Player::Source::playmode($client) eq "stop") {
+		return 0;
+	}
+
 	my $song     = playingSong($client);
 	my $songduration = $song->{duration};
 
@@ -205,7 +209,9 @@ sub songTime {
 
 	my $rate	  	= $client->rate();
 	my $songtime = $client->songElapsedSeconds();
-	return $songtime if $rate == 1 && defined($songtime);
+	my $startStream	  	= $client->songStartStreamTime();
+
+	return $songtime+$startStream if $rate == 1 && defined($songtime);
 
 	# this used to check against == 1, however, we can't properly
 	# calculate duration for non-native formats (pcm, mp3) unless we treat
@@ -229,8 +235,15 @@ sub songTime {
 
 	my $bytesReceived 	= ($client->bytesReceived() || 0) - $client->bytesReceivedOffset();
 	my $fullness	  	= $client->bufferFullness() || 0;
-	my $realpos	  	= $bytesReceived - $fullness;
-	my $startStream	  	= $client->songStartStreamTime();
+	my $realpos = 0;
+	if (playingSongIndex($client) == streamingSongIndex($client)) {
+		$realpos = $bytesReceived - $fullness;
+	}
+	else {
+		$realpos = $songLengthInBytes;
+		$rate = 1;
+		$startStream = 0;
+	}
 
 	#
 	if ($realpos < 0) {
@@ -285,6 +298,7 @@ sub textSongTime {
 	} else {
 		$time = sprintf("%s%02d:%02d", $sign, $min, $sec);
 	}
+
 	return $time;
 }
 
@@ -641,6 +655,8 @@ sub gototime {
 
 	$client->songBytes($newoffset);
 	$client->songStartStreamTime($newtime);
+	$client->bytesReceivedOffset(0);
+	$client->trickSegmentRemaining(0);
 
 	$client->audioFilehandle()->sysseek($newoffset + $dataoffset, 0);
 
@@ -653,6 +669,8 @@ sub gototime {
 		$everybuddy->readytosync(0);
 
 		$everybuddy->play(Slim::Player::Sync::isSynced($client), $client->streamformat());
+
+		$everybuddy->playmode("play");
 	}
 }
 
@@ -830,7 +848,7 @@ sub streamingSongIndex {
 		}
 		
 		unshift(@{$queue}, { index => $index, 
-							 status => STATUS_STREAMING });
+							 status => STATUS_STREAMING});
 		$::d_source && msg("Song queue is now " . join(',', map { $_->{index} } @$queue) . "\n");
 	}
 
@@ -1388,7 +1406,7 @@ sub getConvertCommand {
 	my $clientid;
 	my $command  = undef;
 	my $format   = undef;
-	my $lame = Slim::Utils::Misc::findbin('lame');
+	my $lame = Slim::Utils::Misc::findbin('lame') || '';
 
 	my @supportedformats = ();
 	my %formatcounter    = ();
