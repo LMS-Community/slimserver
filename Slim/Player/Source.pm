@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.71 2004/03/17 18:42:02 dean Exp $
+# $Id: Source.pm,v 1.72 2004/03/18 00:36:32 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -39,6 +39,10 @@ my %commandTable = ();
 
 sub systell {
 	sysseek($_[0], 0, SEEK_CUR)
+}
+
+sub Conversions {
+	return \%commandTable;
 }
 
 sub loadConversionTables {
@@ -805,6 +809,7 @@ sub openSong {
 				if ((!defined $maxRate) || !$maxRate) {$maxRate = Slim::Utils::Prefs::get('maxBitrate');}				
 				$fullCommand =~ s/\$BITRATE\$/$maxRate/g;
 				
+				$fullCommand =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 				$fullCommand =~ s/\$([^\$]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
 				$fullCommand .= (Slim::Utils::OSDetect::OS() eq 'win') ? "" : " &";
@@ -864,6 +869,29 @@ sub openSong {
 	return 1;
 }
 
+sub enabledFormat {
+	my $profile = shift;
+	
+	$::d_source && msg("Checking to see if $profile is enabled\n");
+	
+	my $count = Slim::Utils::Prefs::getArrayMax('disabledformats');
+	
+	$::d_source && msg("There are $count disabled formats...\n");
+	
+	return 1 if (!defined($count) || $count < 0);
+	
+	for (my $i = $count; $i >= 0; $i--) {
+		my $disabled = Slim::Utils::Prefs::getInd('disabledformats', $i);
+		$::d_source && msg("Testing $disabled vs $profile\n");
+		if ($disabled eq $profile) {
+			$::d_source && msg("!! $profile Disabled!!\n");
+			return 0;
+		}
+	}
+	
+	return 1;
+}
+
 sub getCommand {
 	my $client = shift;
 	my $fullpath = shift;
@@ -904,31 +932,44 @@ sub getCommand {
 
 	foreach my $checkformat (@supportedformats) {
 
-		$::d_source && msg("checking formats for: $type-$checkformat-$player-$clientid\n");
+		my @profiles = (
+			"$type-$checkformat-$player-$clientid",
+			"$type-$checkformat-*-$clientid",
+			"$type-$checkformat-$player-*",
+			"$type-$checkformat-*-*",
+		);
+		
+		foreach my $profile (@profiles) {
+			
+			$::d_source && msg("checking formats for: $profile\n");
+			
+			# if the user's disabled the profile, then skip it...
+			next if (!enabledFormat($profile));
+			
+			$::d_source && msg("   enabled\n");
+			
+			# get the command for this profile
+			$command = $commandTable{$profile};
+			$::d_source && $command && msg("  Found command: $command\n");
 
-		# TODO: match partial wildcards in IP addresses.
-		# todo: pre-check to see if the necessary  binaries are installed.
-		# use Data::Dumper; print Dumper(\%commandTable);
-		$command = $commandTable{"$type-$checkformat-$player-$clientid"};
-		if (defined($command)) {
-			$::d_source && msg("Matched $type-$checkformat-$player-$clientid\n");
-		} else {
-			$command = $commandTable{"$type-$checkformat-*-$clientid"};
-		}
-		if (defined $command) {
-			$::d_source && msg("Matched $type-$checkformat-$player-*\n");
-		} else {
-			$command = $commandTable{"$type-$checkformat-$player-*"};
-		}
-		if (defined($command)) {
-			$::d_source && msg("Matched $type-$checkformat-$player-*\n");
-		} else {
-			$command = $commandTable{"$type-$checkformat-*-*"};
+			next if !$command;
+			
+			# if we don't have one or more of the requisite binaries, then move on.
+			while ($command =~ /\[([^]])\]/g) {
+				if (!Slim::Utils::Misc::findbin($1)) {
+					$command = undef;
+					$::d_source && msg("   drat, missing binary $1\n");
+				}
+			}
+			
+			last if $command;
 		}
 
 		$format = $checkformat;
 		#special case for mp3 to mp3.
-		if (defined $command && $command eq "-" && !$undermax && $type eq "mp3") {
+		my $downsample = "$type-$checkformat-downsample-*";
+		
+		if (defined $command && $command eq "-" && !$undermax && $type eq "mp3" && enabledFormat($downsample)) {
 				$command = $commandTable{"$type-$checkformat-downsample-*"};;
 				$undermax = 1;
 		}
@@ -939,7 +980,7 @@ sub getCommand {
 	if (!defined $command) {
 		$::d_source && msg("******* Error:  Didn't find any command matches for type: $type format: $format ******\n");
 	} else {
-		$::d_source && msg("Format: $format Type: $type Command: $command \n");
+		$::d_source && msg("Matched Format: $format Type: $type Command: $command \n");
 	}
 
 	return ($command, $type, $format);

@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.47 2004/03/17 16:46:02 dean Exp $
+# $Id: Setup.pm,v 1.48 2004/03/18 00:36:32 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -487,7 +487,7 @@ sub initSetupConfig {
 
 	,'server' => {
 		'children' => ['interface','behavior',
-#		'formats',
+		'formats',
 		'formatting','security','performance','network','debug']
 		,'title' => string('SERVER_SETTINGS')
 		,'singleChildLinkText' => string('ADDITIONAL_SERVER_SETTINGS')
@@ -928,39 +928,96 @@ sub initSetupConfig {
 					}
 			}
 		}# end of setup{'interface'} hash
+
 	,'formats' => {
 		'title' => string('FORMATS_SETTINGS')
 		,'parent' => 'server'
+		,'preEval' => sub {
+				my ($client,$paramref,$pageref) = @_;
+				my $i = 0;
+				my %formats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
+				my $formatslistref = Slim::Player::Source::Conversions();
+				foreach my $formats (sort {$formatslistref->{$a} cmp $formatslistref->{$b}}(keys %{$formatslistref})) {
+					if (exists $paramref->{"formatslist$i"} && $paramref->{"formatslist$i"} == (exists $formats{$formats} ? 0 : 1)) {
+						delete $paramref->{"formatslist$i"};
+					}
+					$i++;
+				}
+				$pageref->{'Prefs'}{'formatslist'}{'arrayMax'} = $i - 1;
+			}
+		,'postChange' => sub {
+				my ($client,$paramref,$pageref) = @_;
+				my $i = 0;
+				my %formats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
+				Slim::Utils::Prefs::delete('disabledformats');
+				my $formatslistref = Slim::Player::Source::Conversions();
+				foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
+					if (!exists $paramref->{"formatslist$i"}) {
+						$paramref->{"formatslist$i"} = exists $formats{$formats} ? 0 : 1;
+					}
+					unless ($paramref->{"formatslist$i"}) {
+						Slim::Utils::Prefs::push('disabledformats',$formats);
+					}
+					$i++;
+				}
+				foreach my $group (Slim::Utils::Prefs::getArray('disabledformats')) {
+					delGroup('formats',$group,1);
+				}
+			}
 		,'GroupOrder' => ['Default']
+		# if more than one ir map exists the undef will be replaced by 'Default'
 		,'Groups' => {
-			'Default' => {
-					'PrefOrder' => [ 'transcode-mov', 'transcode-wav', 'transcode-ogg']
+				'Default' => {
+					'PrefOrder' => ['formatslist']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupHead' => string('SETUP_GROUP_FORMATS')
+					,'GroupDesc' => string('SETUP_GROUP_FORMATS_DESC')
+					,'GroupLine' => 1
+					,'GroupSub' => 1
+					,'GroupPrefHead' => '<tr><th>' .  
+									    '</th><th>' . string('FILE_FORMAT') .
+									    '</th><th>' . string('STREAM_FORMAT') .
+									    '</th><th>' . string('PLAYER_TYPE') .
+									    '</th><th>' . string('PLAYER_ID') .
+									    '</th><th>' . string('COMMAND') .
+									    '</th></tr>'
 				}
 			}
 		,'Prefs' => {
-			'transcode-ogg' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_TRANSCODE-OGG_1')
-								,'0' => string('SETUP_TRANSCODE-OGG_0')
+				'formatslist' => {
+				'isArray' => 1
+				,'dontSet' => 1
+				,'validate' => \&validateTrueFalse
+				,'inputTemplate' => 'setup_input_array_chk.html'
+				,'arrayMax' => undef #set in preEval
+				,'changeMsg' => string('SETUP_FORMATSLIST_CHANGE')
+				,'externalValue' => sub {
+							my ($client,$value,$key) = @_;
+								
+							if ($key =~ /\D+(\d+)$/) {
+								my $formatslistref = Slim::Player::Source::Conversions();
+								my $profile = (sort {$a cmp $b} (keys %{$formatslistref}))[$1];
+								my @profileitems = split('-', $profile);
+								$profileitems[0] = string($profileitems[0]);
+								$profileitems[1] = string($profileitems[1]);
+								
+								$profileitems[3] = '' if ($profileitems[3] eq '*');
+								$profileitems[4] = $formatslistref->{$profile};
+								
+								return join('</td><td>', @profileitems);
+							} else {
+								return $value;
 							}
-					}
-			,'transcode-wav' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_TRANSCODE-WAV_1')
-								,'0' => string('SETUP_TRANSCODE-WAV_0')
-							}
-					}
-			,'transcode-mov' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_TRANSCODE-MOV_1')
-								,'0' => string('SETUP_TRANSCODE-MOV_0')
-							}
-					}
+						}
+				}
 			}
-		} #end of setup{'behavior'} hash
+		} #end of setup{'formats'}
+
+
 	,'behavior' => {
 		'title' => string('BEHAVIOR_SETTINGS')
 		,'parent' => 'server'

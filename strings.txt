@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.67 2004/03/17 16:45:56 dean Exp $
+# $Id: strings.txt,v 1.68 2004/03/18 00:36:31 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -971,6 +971,40 @@ SETUP_GROUP_PLUGINS_DESC
 	NO	SlimServer inneholder en del tilleggsfunksjoner, Plugins, som du kan benytte deg av med fjernkontrollen. Disse kan aktiveres eller deaktiveres individuelt. For å aktivere en Plugin, merk den. For å deaktivere en Plugin, fjern merket. For å lagre endringene, velg "Endre".
 	PT	O cliente SlimServer inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
 	SE	SlimServer inkluderar tilläggs-funktioner du kan använda med din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras individuellt. För att aktivera ett tillägg, kryssa i rutan bredvid tillägget nedan. För att avaktivera ett tillägg, ta bort krysset. För att spara dina ändringar, klicka på "Ändra".
+
+SETUP_GROUP_FORMATS
+	EN	File Format Conversion Setup
+
+SETUP_GROUP_FORMATS_DESC
+	EN	SlimServer can convert audio file formats on-the-fly for playback on your player.  You can disable specific formats below by unchecking them.  Click Change to save your changes.
+	
+SETUP_FORMATSLIST_CHANGE
+	DE	Einstellungen wurden gespeichert.
+	DK	Indstillingen blev ændret.
+	EN	Setting was changed.
+	FR	Le réglage  a été modifié.
+	NL	Instelling is aangepast.
+	PT	A opção mudou.
+	SE	Inställning är ändrad.
+
+SETUP_FORMATSLIST
+	EN	File Format Conversions
+
+
+FILE_FORMAT
+	EN	File Format
+
+STREAM_FORMAT
+	EN	Stream Format
+	
+PLAYER_TYPE
+	EN	Player Type
+	
+PLAYER_ID
+	EN	Player ID
+	
+COMMAND
+	EN	Command
 
 #
 # Setup preference strings
@@ -4165,14 +4199,14 @@ MP2
 	SE	MP2
 
 MOV
-	DE	QuickTime AAC- oder Film-Datei
-	DK	QuickTime AAC eller film
-	EN	QuickTime AAC or Movie File
-	FR	QuickTime AAC ou film
-	NL	QuickTime AAC of film
-	NO	QuickTime AAC eller film
-	PT	QuickTime AAC of Ficheiro Movie
-	SE	Quicktime AAC eller film
+	DE	AAC- oder Film-Datei
+	DK	AAC eller film
+	EN	AAC or Movie File
+	FR	AAC ou film
+	NL	AAC of film
+	NO	AAC eller film
+	PT	AAC of Ficheiro Movie
+	SE	AAC eller film
 
 FLC
 	EN	FLAC
