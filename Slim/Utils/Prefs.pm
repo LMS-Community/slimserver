@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.81 2004/08/12 16:45:58 dean Exp $
+# $Id: Prefs.pm,v 1.82 2004/08/24 17:57:10 grotus Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -239,7 +239,7 @@ my %prefChange = (
 		,'irmap' => sub {
 			my ($client,$newvalue) = @_;
 			Slim::Hardware::IR::loadMapFile($newvalue);
-			if ($newvalue eq Slim::Hardware::IR::defaultMap()) {
+			if ($newvalue eq Slim::Hardware::IR::defaultMapFile()) {
 				Slim::Buttons::Plugins::addDefaultMaps();
 			}
 		}
