@@ -1,5 +1,5 @@
 <!-- Page status_header.html -->
-	[% title = "PLAYING" | string %]
+	[% pagetitle = "NOW_PLAYING" | string %]
 	[% PROCESS pageheader.html %]
 	
 	<table width=100% border="0" cellspacing="0" cellpadding="0">
@@ -18,11 +18,14 @@
 
 		<tr>
 			<td colspan="2">
-				[% IF modeplay %][% "PLAYING" | string %][% END %]
-				[% IF modepause %][% "PAUSED_ON" | string %][% END %]
-				[% IF modestop %][% "STOPPED_ON" | string %][% END %]
 				[% IF currentsong %]
+					[% IF modeplay %][% "PLAYING" | string %][% END %]
+					[% IF modepause %][% "PAUSED_ON" | string %][% END %]
+					[% IF modestop %][% "STOPPED_ON" | string %][% END %]
 					<b>[% currentsong %]</b> [% "OUT_OF" | string %]<b>&nbsp;[% songcount %]</b>&nbsp;
+					(<a href="status_header.html?p0=playlist&amp;p1=delete&amp;p2=[% thissongnum %]&amp;player=[% player | uri %]&amp;start=[% start %]">[% "REMOVE_FROM_PLAYLIST" | string %]</a>)
+				[% ELSE %]
+					<p><br>[% 'PLAYLIST_EMPTY' | string %]</p>
 				[% END %]
 			</td>
 		</tr>
@@ -58,10 +61,10 @@
 			</tr>
 		[% END %]
 
-		[% IF track.coverArt('cover', 1) %]
+		[% IF track.coverArt('thumb', 1) %]
 			<tr>
 				<td></td>
-				<td><a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]"><img src="/music/[% track.id %]/cover.jpg" border="0"></a></td>
+				<td><a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]"><img src="/music/[% track.id %]/thumb.jpg" border="0"></a></td>
 			</tr>
 		[% END %]
 	</table>
