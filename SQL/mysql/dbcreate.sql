@@ -23,7 +23,7 @@ INSERT INTO metainformation VALUES (3, 0, 0);
 --
 CREATE TABLE tracks (
   id int(10) unsigned NOT NULL auto_increment,
-  url varchar(255) NOT NULL,
+  url text NOT NULL,
   title varchar(255),
   titlesort varchar(255),
   album  int(10) unsigned,
@@ -64,8 +64,9 @@ CREATE TABLE tracks (
   INDEX trackTitleIndex (title),
   INDEX trackAlbumIndex (album),
   INDEX trackSortIndex (titlesort),
+  INDEX urlIndex (url(255)),
   PRIMARY KEY (id),
-  UNIQUE KEY (url),
+--  UNIQUE KEY (url),
   FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE NO ACTION
 ) TYPE=InnoDB;
 
@@ -172,7 +173,7 @@ CREATE TABLE genre_track (
 CREATE TABLE comments (
   id int(10) unsigned NOT NULL auto_increment,
   track  int(10) unsigned,
-  value varchar(255),
+  value text,
   PRIMARY KEY (id),
   INDEX trackIndex (track),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION
