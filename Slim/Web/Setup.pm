@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.16 2003/11/14 21:21:32 grotus Exp $
+# $Id: Setup.pm,v 1.17 2003/11/22 18:51:54 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2143,9 +2143,8 @@ sub validateIsDir {
 sub validateIsMP3Dir {
 	my $val = shift;
 	my $allowEmpty = shift;
-	if (Slim::Music::iTunes::useiTunesLibrary()) {
-		return $val;
-	} elsif (-d $val) {
+	
+	if (-d $val) {
 		$val =~ s|[/\\]$||;
 		return $val;
 	} elsif ($allowEmpty && defined($val) && $val eq '') {
@@ -2160,7 +2159,7 @@ sub validateITunes {
 	
 	if ($val == 1) {
 	} elsif ($val == 0) {
-		Slim::Utils::Prefs::set('mp3dir', '');
+#		Slim::Utils::Prefs::set('mp3dir', '');
 	} else {
 		$val = undef;
 	}

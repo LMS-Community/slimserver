@@ -707,7 +707,8 @@ sub openSong {
 						if (!seek ($client->mp3filehandle, $offset, 0) ) {
 							msg("couldn't seek to $offset for $filepath");
 						};
-					}				
+					}
+					$client->mp3filehandleIsSocket(0);
 				} else { 
 					$client->mp3filehandle(undef);
 				}

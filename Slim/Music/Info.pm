@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.20 2003/11/21 16:02:35 dean Exp $
+# $Id: Info.pm,v 1.21 2003/11/22 18:51:53 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1718,6 +1718,7 @@ sub getImageContent {
 }
 
 sub readCoverArt {
+	use bytes;
 	my $fullpath = shift;
 	my $filepath;
 	my $image = shift || 'cover';
@@ -1756,9 +1757,8 @@ sub readCoverArt {
 						my ($data) = unpack "x$len A*", $pic;
 						
 						$::d_info && SliMP3::Misc::msg( "PIC format: $format length: " . length($pic) . "\n");
-	
-						# iTunes sometimes puts PNG images in and says they are jpeg
-						if ($format eq 'PNG' || $data =~ /^\x89PNG\x0d\x0a\x1a\x0a/) {
+
+						if ($format eq 'PNG') {
 								$contenttype = 'image/png';
 								$body = $data;
 						} elsif ($format eq 'JPG') {
@@ -1782,21 +1782,29 @@ sub readCoverArt {
 						if ($encoding) { $len++; } # skip extra terminating null if unicode
 						
 						my ($data) = unpack"x$len A*", $pic;
-
-						# iTunes sometimes puts PNG images in and says they are jpeg
-						if ($data =~ /^\x89PNG\x0d\x0a\x1a\x0a/) {
-							$contenttype = 'image/png';
-						} else {
-							$contenttype = $format;
-						}
+						
 						$::d_info && Slim::Utils::Misc::msg( "APIC format: $format length: " . length($data) . "\n");
+
+						$contenttype = $format;
 						$body = $data;
 					}
 				}
 			}
-		}						
-									
-		if (!defined($body)) {
+		}	
+		
+		if ($body) {
+				
+			# iTunes sometimes puts PNG images in and says they are jpeg
+			if ($body =~ /^\x89PNG\x0d\x0a\x1a\x0a/) {
+				$contenttype = 'image/png';
+			}
+			
+			# jpeg images must start with ff d8 ff e0 or they ain't jpeg, sometimes there is junk before.
+			if ($contenttype && $contenttype eq 'image/jpeg')	{
+				$body =~ s/^.*?\xff\xd8\xff\xe0/\xff\xd8\xff\xe0/;
+			}
+			
+		} else {
 			my @components = splitdir($file);
 			pop @components;
 			$::d_info && Slim::Utils::Misc::msg("Looking for image files\n");

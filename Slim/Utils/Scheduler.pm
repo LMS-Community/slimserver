@@ -74,12 +74,11 @@ sub run_tasks {
 	my $to;
 	my $now = Time::HiRes::time();
 	
-	#run tasks at least once a second.
-	if (($now - $lastpass) < 1.0) {
+	#run tasks at least once half second.
+	if (($now - $lastpass) < 0.5) {
 		foreach my $client (Slim::Player::Client::clients()) {
 			if (Slim::Player::Source::playmode($client) eq 'play' && 
 			    $client->isPlayer() && 
-			    $client->model eq 'slimp3' && 
 			    $client->usage() < 0.5) {
 				$busy = 1;
 				$::d_perf && msg($client->id() . " Usage low, not running tasks.\n");
@@ -101,17 +100,16 @@ sub run_tasks {
 			$curtask++;
 		}
 		$::d_perf && watchDog($to, "run task: $subptr");
+		$lastpass = $now;
+
+		# loop around when we get to the end of the list
+		if ($curtask >= (@background_tasks)) {
+			$curtask = 0;
+		}
+					
+		$::d_perf && msg("Ran tasks..\n");
 	}
-	
-	# loop around when we get to the end of the list
-	if ($curtask >= (@background_tasks)) {
-		$curtask = 0;
-	}
-				
-	$::d_perf && msg("Ran tasks..\n");
-	
-	$lastpass = $now;
-	
+		
 	return scalar(@background_tasks);
 }
 
