@@ -1,5 +1,5 @@
 package Slim::Buttons::BrowseID3;
-# $Id: BrowseID3.pm,v 1.14 2004/04/22 05:47:10 kdf Exp $
+# $Id: BrowseID3.pm,v 1.15 2004/06/15 05:45:03 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -73,11 +73,11 @@ my %functions = (
 				# forget we knew the album
 				setSelection($client,'curalbum', selection($client,'album'));
 				loadDir($client);
-				# skip album, if there is only one
-				if (scalar @{browseID3dir($client)} == 1) {
-					setSelection($client,'curartist', selection($client,'artist'));
-					loadDir($client);
-				}
+				# disabled: skip album, if there is only one
+				#if (scalar @{browseID3dir($client)} == 1) {
+				#	setSelection($client,'curartist', selection($client,'artist'));
+				#	loadDir($client);
+				#}
 			} elsif (specified($artist)) {
 				# we're at the album level
 				# forget we knew the artist

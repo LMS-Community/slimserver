@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.107 2004/06/11 18:42:58 dean Exp $
+# $Id: HTTP.pm,v 1.108 2004/06/15 05:45:04 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -233,7 +233,7 @@ sub acceptHTTP {
 
 			$peeraddr{$httpClient} = $peer;
 			Slim::Networking::Select::addRead($httpClient, \&processHTTP);
-                      	Slim::Networking::Select::addError($httpClient, \&closeStreamingSocket);
+			Slim::Networking::Select::addError($httpClient, \&closeStreamingSocket);
 			$connected++;
 			$::d_http && msg("Accepted connection $connected from ". $peeraddr{$httpClient} . "\n");
 
@@ -730,8 +730,8 @@ sub generateHTTPResponse {
 
 		if ($path =~ /status/) {
 			my ($line1, $line2) = Slim::Display::Display::curLines($client);
-                      $line1 = '' if (!defined($line1));
-                      $line2 = '' if (!defined($line2));
+			$line1 = '' if (!defined($line1));
+			$line2 = '' if (!defined($line2));
 			$$body = $line1 . $CRLF . $line2 . $CRLF;
 		} else {
 			$$body = $Slim::Utils::Misc::log;
@@ -1521,7 +1521,7 @@ sub closeHTTPSocket {
 	
 	Slim::Networking::Select::addRead($httpClient, undef);
 	Slim::Networking::Select::addWrite($httpClient, undef);
-      	Slim::Networking::Select::addError($httpClient, undef);
+	Slim::Networking::Select::addError($httpClient, undef);
 
 	# clean up the various caches
 	delete($outbuf{$httpClient});

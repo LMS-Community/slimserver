@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.129 2004/06/07 23:11:59 dean Exp $
+# $Id: Info.pm,v 1.130 2004/06/15 05:45:04 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -768,7 +768,7 @@ sub updateCacheEntry {
 	}
 	
 	if ( isFileURL($url)) {
-		$cacheEntryHash->{'TTL'}=(time()+$dbCacheLifeTime);
+		$cacheEntryHash->{'TTL'}=(time()+$dbCacheLifeTime + int(rand($dbCacheLifeTime)));
 	} else {
 		$cacheEntryHash->{'TTL'}='0';
 	}

@@ -419,9 +419,7 @@ sub setAlarmPlaylistMode {
 	@{$client->dirItems}=();	
 	
 	Slim::Utils::Scan::addToList($client->dirItems, Slim::Utils::Prefs::get('playlistdir'), 0);
-	if (Slim::Music::iTunes::useiTunesLibrary()) {
-		push @{$client->dirItems}, @{Slim::Music::iTunes::playlists()};
-	} 
+	push @{$client->dirItems}, @{Slim::Music::Info::playlists()};
 
 	$client->numberOfDirItems(scalar @{$client->dirItems});
 	$client->currentDirItem(0);

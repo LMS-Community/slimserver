@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.101 2004/06/11 16:43:40 vidur Exp $
+# $Id: Source.pm,v 1.102 2004/06/15 05:45:04 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1344,7 +1344,7 @@ sub readNextChunk {
 				$::d_source_v && msg("Read $readlen bytes from source\n");
 			}
 			
-			if ($client->shoutMetaInterval()) {
+			if ($client->shoutMetaInterval() && $readlen) {
 				$client->shoutMetaPointer($client->shoutMetaPointer() + $readlen);
 				# handle instream metadata for shoutcast/icecast
 				if ($client->shoutMetaPointer() == $client->shoutMetaInterval()) {
