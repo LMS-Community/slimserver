@@ -125,6 +125,7 @@ sub editplaylist {
 		$list_form{'odd'}   = $count % 2;
 		$list_form{'dir'}   = $dir;
 		$list_form{'title'} = $title;
+		$list_form{'itempath'} = $item;
 
 		$playlist .= ${Slim::Web::HTTP::filltemplatefile( "edit_playlist_list.html", \%list_form)};
 

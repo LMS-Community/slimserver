@@ -1,0 +1,8 @@
+[% PROCESS header.html pwd="yes" %]
+
+<p id="pwd">
+ <a href="[% webroot %]home.html?page=help&player=[% player | uri %]" target="browser">Help</a> /
+ [% IF techinfo %]<a href="[% webroot %]html/docs/index.html?player=[% player | uri %]" target="browser">Technical Information</a> /[% END %]
+ <a href="#">[% pagetitle %]</a> / 
+</p>
+

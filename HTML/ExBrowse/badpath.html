@@ -1,0 +1,19 @@
+[% PROCESS header.html pwd="yes" %]
+<p id="pwd">
+[% IF playlist %]<a href="browse.html?dir=__playlists&player=[% player | uri %]" target="browser">[% "SAVED_PLAYLISTS" | string %]</a> /
+ [% ELSE %]<a href="browse.html?player=[% player | uri %]" target="browser">[% "MUSIC" | string %]</a> /[% END %]
+</p>
+
+<p class="listing">
+ [% IF playlist %][% "NEED_PLAYLIST_PATH" | string %][% ELSE %]
+ [% "NEED_PATH" | string %][% END %]
+</p>
+
+<p class="listing">
+ <a href="setup.html?page=server&player=[% player | uri %]">[% "CLICK_HERE" | string %]</a>
+ [% "TO_GO_TO_SERVER_SETTINGS" | string %]
+</p>
+ 
+</body>
+</html>
+

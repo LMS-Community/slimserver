@@ -1,0 +1,268 @@
+/*******************\
+ * Common elements *
+\*******************/
+
+p, td, ol, ul, h3, h4, body, .formfield, .button {
+	font-size: 10px;
+	font-family: verdana,tahoma,arial,helvetica,geneva,sans-serif;
+	color: #ccc;
+}
+
+body {
+	background: black;
+	margin: 0px;
+}
+
+b {
+	font-weight: bold;
+	color: white;
+}
+
+h2, h3 {
+	font-weight: bold;
+	font-size: 15pt;
+	color: white;
+	margin-bottom: 5px;
+	padding-bottom: 10px;
+}
+
+h4, h5 {
+	font-weight: bold;
+	font-size: 12pt;
+	color: white;
+	margin-bottom: 0px;
+	margin-left: 10px;
+}
+
+ul {
+	list-style-image: url(html/images/play.this.gif);
+	margin: 0px;
+	background: black;
+	font-weight: bold;
+	list-style-position: outside;
+}
+
+li {
+	margin: 4px;
+}
+
+hr {
+	color: #999999;
+	height: 1px
+}	
+
+a {
+	text-decoration:none;
+	color: #ccc;
+}
+
+a:hover {
+	text-decoration: underline
+}
+
+.formfield {
+	background: #ddd;
+	color: #444;
+}
+
+/************\
+ * Frameset *
+\************/
+
+
+
+/********************\
+ * For page headers *
+\********************/
+
+#topmenu {
+	font-size: 10px;
+	background: #61676c;
+	padding: 35px 5px 5px 5px;
+	height: 12px;
+	margin: 0px;
+	border-right: 2px solid white;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.topmenu2 {
+	background: #999;
+	font-size: 10px;
+	height: 18px;
+	margin: 0px;
+	padding: 5px;
+	border-right: 2px solid white;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+#topmenu a.activemode {
+	font-weight: bold;
+	color: white;
+}
+
+#toppwd {
+	padding: 5px;
+	margin: 0px;
+	background: #61676c;
+}
+
+#pwd {
+	padding: 5px;
+	margin: 0px;
+	background: #61676c;
+	display: none;
+} 
+
+#toppwd a, #pwd a {
+	font-weight: bold;
+}
+
+/**************************\
+ * For status_header.html *
+\**************************/
+
+.logo {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	margin: 5px;
+}
+
+.chooserlist {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	margin: 4px;
+	color: white;
+}
+
+.nowplaying {
+	border-top: 2px solid white;
+	position: absolute;
+	top: 28px;
+	left: 0px;
+	height: 135px;
+	width: 380px;
+	margin: 0px;
+	padding: 10px;
+	background: #61676c;
+	color: white;
+}
+
+.label {
+	font-size: 9px;
+	color: #bbb;
+	border-bottom: 1px solid #777;
+	margin: 3px 0px 3px 0px;
+}
+
+.songtitle {
+	margin: 0px;
+	font-size: 14px;
+	font-weight: bold;
+	color: white;
+}	
+
+.artistname {
+	margin: 0px;
+	font-size: 11px;
+	font-weight: normal;
+	color: white;
+}
+
+.track {
+	font-size: 9px;
+	color: silver;
+	font-weight: normal;
+}
+
+#progressBar {
+	position: absolute;
+	left: 10px;
+	top: 120px;
+	overflow: visible;
+	white-space: nowrap;
+}
+
+.controls {
+	position: absolute;
+	left: 0px;
+	top: 173px;
+	width: 400px;
+	height: 73px;
+	margin: 0px;
+	padding: 0px;
+	background: #999;
+}
+
+.buttons {
+	font-size: 9px;
+	margin: 6px;
+	height: 42px;
+}
+
+.repshuf {
+	padding-left: 5px;
+}
+
+.sel {
+	font-weight: bold;
+	color: #00ff00;
+}
+
+.volume {
+	position: absolute;
+	left: 200px;
+	top: 0px;
+	margin: 6px 0px;
+	padding: 9px 30px;
+	height: 24px;
+	border-left: 1px solid silver;
+	font-size: 10px;
+}
+
+/*************************************\
+ * For lists (playlist, browse, etc) *
+\*************************************/
+
+.plsheader {
+	position: absolute;
+	left: 0px;
+	top: 246px;
+	width: 390px;
+	margin: 0px;
+	padding: 5px;
+	background: #61676c;
+}
+
+table {
+	margin: 0px;
+}
+
+.listbuttons {
+	white-space: nowrap;
+	width: auto;
+}
+
+.listindex {
+	width: 20px;
+	text-align: right;
+	padding-left: 5px;
+	color: white;
+}
+
+.listing {
+	margin: 0px;
+	color: #ccc;
+	
+}
+
+.listing a {
+	font-weight: bold;
+}
+
+#currentsong, #currentsong td, #currentsong td a {
+	color: white;
+}

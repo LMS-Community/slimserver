@@ -1,0 +1,24 @@
+<tr>
+ <td class="listbuttons">
+  <a href="status_header.html?p0=playlist&amp;p1=add&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]"
+  target="status"><img alt="Add" src="html/images/add.gif" width="8" height="8" border="0" hspace="0" /></a><a
+  href="status_header.html?p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]"
+  target="status"><img alt="Play" src="html/images/play.this.gif" width="5" height="9" border="0" hspace="8" /></a>
+ </td>
+ <td class="listing">
+  [% IF anchor %]<a name="[% anchor %]"></a>[% END %]
+  [% IF descend %]
+   <a href="browse.html?dir=[% descend | uri %]&amp;player=[% player | uri %]">[% title | html %]</a>
+  [% ELSE %]
+   <a href="songinfo.html?itempath=[% itempath | uri %]&amp;player=[% player | uri %]">[% title | html %]</a>
+   [% IF album %][% "FROM" | string %][% END %] 
+   <i><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% player | uri %]"
+   target="browser">[% album | html %]</a></i> 
+   [% IF artist %][% "BY" | string %] [% END %] 
+   <a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser"
+   >[% artist | html %]</a>
+  [% END %]
+ </td>
+</tr>
+
+

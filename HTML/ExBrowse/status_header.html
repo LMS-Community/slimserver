@@ -1,0 +1,124 @@
+[%
+ bodyprops = BLOCK %]onload="statusheader_load(0[% IF modeplay %]1[% END %], [% songtime %]0, [% durationseconds %]0)"[% END;
+ PROCESS header.html refreshpage = "status_header.html"
+%]
+
+<div class="logo">
+ <img src="html/images/[% playermodel %]_logo.small.gif" alt="[% playermodel %]" width="98" height="17" border="0" />
+</div>
+
+[% IF player_chooser_list %]
+<form method="get" action="index.html" target="_top">
+ <div class="chooserlist">
+  <select class="formfield" name="player" size="1" onchange="document.forms[0].submit()">[% player_chooser_list %]</select>
+ </div>
+</form>
+[% END %]
+
+<div class="nowplaying">
+ [% IF coverthumb %]
+ <img src ="/music/[% itempath | uri %]/thumb.jpg" alt="[% "COVERART" | string %]" border="0" height="100" style="coverart" />
+ [% END %]
+
+ <p class="label">
+  [% IF modeplay %][% "PLAYING" | string %][% END %]  [% IF modepause %][% "PAUSED_ON" | string %][% END %]  [% IF modestop %][% "STOPPED_ON" | string %][% END %]
+  [% IF currentsong %]<span class="track"><b>[% currentsong %]</b> [% "OF" | string %] <b>[% songcount %]</b></span>[% END %]
+  [% IF bitrate %]([% bitrate %])[% END %]
+ </p>
+ <p class="songtitle">[% songtitle %]</p>
+ <p class="label">[% "ARTIST" | string %]</p>
+ <p class="artistname">[% artist | html %]</p>
+ <p class="label">[% "ALBUM" | string %]</p>
+ <p class="artistname">[% album | html %][% IF year %] ([% year %])[% END %]</p>
+ <p class="label" style="border: 0px none; " id="progressBar"></p>
+</div>
+
+<div class="controls">
+ <div class="buttons">
+  <a href="status_header.html?p0=[% IF modestop %]play[% ELSE %]pause[% END %]&amp;player=[% player | uri %]" target="_self"
+   ><img src="html/images/play[% IF modeplay %]_s[% END %].gif" alt="[% IF modestop; "PLAY" | string; ELSE; "PAUSE" | string; END %]"
+   border="0" width="43" height="42" /></a><a href="status_header.html?p0=stop&amp;player=[% player | uri %]" target="_self"
+   ><img width="23" height="32" border="0" src="html/images/stop[% IF modestop %]_s[% END %].gif" alt="[% "STOP" | string %]" /></a>
+  <a href="status_header.html?p0=playlist&amp;p1=jump&amp;p2=-1&amp;player=[% player | uri %]" target="_self"><img
+   height="19" width="30" src="html/images/prev.gif" border="0" alt="[% "PREVIOUS" | string %]" /></a><a target="_self"
+   href="status_header.html?p0=playlist&amp;p1=jump&amp;p2=%2b1&amp;player=[% player | uri %]"><img height="19"
+   width="30" src="html/images/next.gif" border="0" alt="[% "NEXT" | string %]" /></a><a target="_self"
+   href="status_header.html?p0=button&amp;p1=muting&amp;player=[% player | uri %]"><img height="19"
+   width="30" src="html/images/mute[% IF volume < '0' %]_s[% END %].gif" border="0" alt="[% "MUTE" | string %]" /></a>
+  <br />
+ </div>
+ 
+ <div class="repshuf">
+  [% "REPEAT" | string; "COLON" | string; %] [
+  <a href="status_header.html?p0=playlist&amp;p1=repeat&amp;p2=1&amp;player=[% player | uri %]&amp;start=[% start %]"
+   [% IF repeatone %]class="sel"[% END %]>[% "ONE" | string %]</a> |
+  <a href="status_header.html?p0=playlist&amp;p1=repeat&amp;p2=2&amp;player=[% player | uri %]&amp;start=[% start %]"
+   [% IF repeatall %]class="sel"[% END %]>[% "ALL" | string %]</a> |
+  <a href="status_header.html?p0=playlist&amp;p1=repeat&amp;p2=0&amp;player=[% player | uri %]&amp;start=[% start %]"
+   [% IF repeatoff %]class="sel"[% END %]>[% "OFF" | string %]</a> ]
+ 
+  &nbsp;&nbsp;
+  [% "SHUFFLE" | string; "COLON" | string; %] [
+  <a href="status_header.html?p0=playlist&amp;p1=shuffle&amp;p2=1&amp;player=[% player | uri %]"
+   [% IF shuffleon %]class="sel"[% END %]>[% "LCSONGS" | string %]</a> |
+  <a href="status_header.html?p0=playlist&amp;p1=shuffle&amp;p2=2&amp;player=[% player | uri %]"
+   [% IF shufflealbum %]class="sel"[% END %]>[% "LCALBUMS" | string %]</a> |
+  <a href="status_header.html?p0=playlist&amp;p1=shuffle&amp;p2=0&amp;player=[% player | uri %]"
+   [% IF shuffleoff %]class="sel"[% END %]>[% "OFF" | string %]</a> ]
+
+  &nbsp;&nbsp;
+  [% IF isplayer %]
+  [% "POWER" | string ; "COLON" | string %] [
+  <a href="status_header.html?p0=power&amp;p1=1&amp;player=[% player | uri %]" 
+  [% IF mode != 'off' %]class="sel"[% END %]>[% "ON" | string %]</a> |
+  <a href="status_header.html?p0=power&amp;p1=0&amp;player=[% player | uri %]" 
+  [% IF mode == 'off' %]class="sel"[% END %]>[% "OFF" | string %]</a> ]
+  [% END %]
+ </div>
+ 
+ <div class="volume">
+  [% "VOLUME" | string %]
+  <a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=0&amp;player=[% player | uri %]&amp;start=[% start %]"><img
+   hspace="0" width="4" height="4" src="html/images/pixel[% IF volume >= '0' %]_s[% END %].png" border="0" alt="0" /></a>
+  <a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=10&amp;player=[% player | uri %]&amp;start=[% start %]"><img
+   hspace="0" width="4" height="6" src="html/images/pixel[% IF volume >= '10' %]_s[% END %].png" border="0" alt="10" /></a>
+  <a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=20&amp;player=[% player | uri %]&amp;start=[% start %]"><img
+   hspace="0" width="4" height="8" src="html/images/pixel[% IF volume >= '20' %]_s[% END %].png" border="0" alt="20" /></a>
+  <a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=30&amp;player=[% player | uri %]&amp;start=[% start %]"><img
+   hspace="0" width="4" height="10" src="html/images/pixel[% IF volume >= '30' %]_s[% END %].png" border="0" alt="30" /></a>
+  <a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=40&amp;player=[% player | uri %]&amp;start=[% start %]"><img
+   hspace="0" width="4" height="12" src="html/images/pixel[% IF volume >= '40' %]_s[% END %].png" border="0" alt="40" /></a>
+  <a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=50&amp;player=[% player | uri %]&amp;start=[% start %]"><img
+   hspace="0" width="4" height="14" src="html/images/pixel[% IF volume >= '50' %]_s[% END %].png" border="0" alt="50" /></a>
+  <a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=60&amp;player=[% player | uri %]&amp;start=[% start %]"><img
+   hspace="0" width="4" height="16" src="html/images/pixel[% IF volume >= '60' %]_s[% END %].png" border="0" alt="60" /></a>
+  <a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=70&amp;player=[% player | uri %]&amp;start=[% start %]"><img
+   hspace="0" width="4" height="18" src="html/images/pixel[% IF volume >= '70' %]_s[% END %].png" border="0" alt="70" /></a>
+  <a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=80&amp;player=[% player | uri %]&amp;start=[% start %]"><img
+   hspace="0" width="4" height="20" src="html/images/pixel[% IF volume >= '80' %]_s[% END %].png" border="0" alt="80" /></a>
+  <a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=90&amp;player=[% player | uri %]&amp;start=[% start %]"><img
+   hspace="0" width="4" height="22" src="html/images/pixel[% IF volume >= '90' %]_s[% END %].png" border="0" alt="90" /></a>
+  <a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=100&amp;player=[% player | uri %]&amp;start=[% start %]"><img
+   hspace="0" width="4" height="24" src="html/images/pixel[% IF volume >= '100' %]_s[% END %].png" border="0" alt="100"/></a>
+ </div>
+</div> 
+
+[% IF player %]
+<div class="plsheader">
+    [% "CURRENT_PLAYLIST" | string; "COLON" | string %]
+    [% IF current_playlist; current_playlist_name %]
+    ([% IF myClientState; myClientState.playlist.size; END %] [% "SONGS" | string %])
+    [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END; END %]
+    [ [% IF cansave %]<a target="browser" href="browse.html?player=[% player | uri 
+    %]&amp;dir=__playlists%2f__current.m3u[% IF current_playlist_modified
+    %]&amp;current=[% current_playlist_name | uri; END %]">[% "SAVE" | string %]</a> |[%
+    END %]
+    
+    <a href="playlist.m3u?player=[% player | uri %]">[% "DOWNLOAD" | string %]</a> |
+    <a href="status_header.html?p0=playlist&amp;p1=clear&amp;player=[% player | uri
+    %]" target="status">[% "CLEAR" | string %]</a> ]
+</div>
+[% END %]
+
+</body>
+</html>

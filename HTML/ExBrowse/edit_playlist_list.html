@@ -1,0 +1,19 @@
+<tr>
+ <td class="listbuttons">
+  <a href="edit_playlist.html?player=[% player | uri %]&amp;delete=[% num %]&amp;dir=[% dir | uri %]"><img
+  height="10" width="9" alt="Remove" hspace="1" src="html/images/remove.gif"
+  border="0" /></a><a href="edit_playlist.html?player=[% player | uri %]&amp;up=[% num %]&amp;dir=[% dir | uri %]"
+  ><img height="10" width="11" alt="[% "MOVEUP" | string %]" hspace="1"
+  src="html/images/move_up.gif" border="0" /></a><a
+  href="edit_playlist.html?player=[% player | uri %]&amp;down=[% num %]&amp;dir=[% dir | uri %]"><img
+  height="10" width="11" alt="[% "MOVEDOWN" | string %]" src="html/images/move_down.gif"
+  hspace="1" border="0" /></a>
+ </td>
+ <td class="listindex">
+  [% num + 1 %]
+ </td>
+ <td class="listing">
+  <a href="songinfo.html?itempath=[% itempath | uri %]">[% title | html %]</a>
+ </td>
+</tr>
+

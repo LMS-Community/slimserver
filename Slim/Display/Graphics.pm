@@ -182,7 +182,7 @@ sub parseBMP {
 	if ($biBitCount ne 1) { msg(" Font files must be one bpp, not $biBitCount in $fontfile\n"); return undef; }
 	if ($biCompression ne 0) { msg(" Font files must be uncompressed in $fontfile\n"); return undef; }
 	
-	# skip over the BMP header and the 
+	# skip over the BMP header and the color table
 	$fontstring = substr($fontstring, $offset);
 	
 	my $bitsPerLine = $biWidth - ($biWidth % 32);

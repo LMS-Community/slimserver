@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.97 2004/08/06 04:16:50 kdf Exp $
+# $Id: Pages.pm,v 1.98 2004/08/06 22:32:00 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -634,6 +634,14 @@ sub status {
 			return undef;
 		} else {
 			$params->{'playlist'} = ${$params->{'playlist'}};
+		}
+	} else {
+		# Special case, we need the playlist info even if we don't want
+		# the playlist itself
+		if ($client && $client->currentPlaylist()) {
+			$params->{'current_playlist'} = $client->currentPlaylist();
+			$params->{'current_playlist_modified'} = $client->currentPlaylistModified();
+			$params->{'current_playlist_name'} = Slim::Music::Info::standardTitle($client,$client->currentPlaylist());
 		}
 	}
 

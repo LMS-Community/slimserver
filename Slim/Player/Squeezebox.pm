@@ -467,6 +467,8 @@ sub sendFrame {
 	my $dataRef = shift;
 	my $empty = '';
 	
+	return if (!defined($client->tcpsock));  # don't try to send if the player has disconnected.
+	
 	if (!defined($dataRef)) { $dataRef = \$empty; }
 	
 	my $len = length($$dataRef);

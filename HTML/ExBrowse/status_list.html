@@ -1,0 +1,21 @@
+<tr[% IF currentsong %] id="currentsong"[% END %]>
+ <td class="listbuttons">
+  <a href="status_header.html?p0=playlist&amp;p1=delete&amp;p2=[% num %]&amp;player=[% player | uri %]&amp;start=[% start %]"
+   target="status"><img height="10" width="9" alt="Remove" hspace="1" src="html/images/remove.gif" border="0" /></a><a
+   href="status_header.html?p0=playlist&amp;p1=move&amp;p2=[%num%]&amp;p3=%2D1&amp;player=[%player|uri%]&amp;start=[%start%]"
+   target="status"><img height="10" width="11" alt="[% "MOVEUP" | string %]" hspace="1" src="html/images/move_up.gif" border="0" /></a><a
+   href="status_header.html?p0=playlist&amp;p1=move&amp;p2=[%num%]&amp;p3=%2B1&amp;player=[%player|uri%]&amp;start=[%start%]"
+   target="status"><img height="10" width="11" alt="[% "MOVEDOWN" | string %]" hspace="1" src="html/images/move_down.gif" border="0" /></a>
+ </td>
+ <td class="listindex">
+  [% num + 1 %]
+ </td>
+ <td class="listing">
+  [% IF currentsong %]<a name="currentsong" />[% END %]
+  <a href="status_header.html?p0=playlist&amp;p1=jump&amp;p2=[% num %]&amp;player=[% player | uri %]" target="status"
+  >[% title | html %]</a>
+  [% IF artist %] [% "BY" | string %] [% END %]
+  <a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser">
+  [% artist | html %]</a> 
+ </td>
+</tr>
