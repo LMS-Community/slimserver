@@ -135,8 +135,20 @@ sub canUseiTunesLibrary {
 	
 	checkDefaults();
 
+	my $oldMusicPath = Slim::Utils::Prefs::get('itunes_library_music_path');
+
 	$ituneslibraryfile = defined $ituneslibraryfile ? $ituneslibraryfile : findMusicLibraryFile();
 	$ituneslibrarypath = defined $ituneslibrarypath ? $ituneslibrarypath : findMusicLibrary();
+
+	# The user may have moved their music folder location. We need to nuke the db.
+	if ($ituneslibrarypath && $oldMusicPath && $oldMusicPath ne $ituneslibrarypath) {
+
+		$::d_itunes && Slim::Utils::Misc::msg("iTunes: Music Folder has changed from previous - wiping db\n");
+
+		Slim::Music::Info::wipeDBCache();
+
+		$lastITunesMusicLibraryDate = -1;
+	}
 
 	return defined $ituneslibraryfile && defined $ituneslibrarypath;
 }
@@ -160,13 +172,24 @@ sub initPlugin {
 
 	return unless canUseiTunesLibrary();
 
+	$::d_itunes && Slim::Utils::Misc::msg("iTunes: Can use iTunes Music Folder - adding importer.\n");
+
+	# Auto-turn on iTunes importer if we can use it.
+	# But check to see if they've explictly turned it off.
+	my $useiTunes = Slim::Utils::Prefs::get('itunes');
+
+	if (!defined $useiTunes) {
+
+		Slim::Utils::Prefs::set('itunes', 1);
+	}
+
 	Slim::Music::Import::addImporter('ITUNES', {
 		'scan'  => \&startScan, 
 		'setup' => \&addGroups,
 		'reset' => \&resetState,
 	});
 
-	Slim::Music::Import::useImporter('ITUNES',Slim::Utils::Prefs::get('itunes'));
+	Slim::Music::Import::useImporter('ITUNES', Slim::Utils::Prefs::get('itunes'));
 	Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
 
 	$initialized = 1;
@@ -218,7 +241,7 @@ sub addGroups {
 	Slim::Web::Setup::addChildren('server','itunes',3);
 	Slim::Web::Setup::addCategory('itunes',&setupCategory);
 
-	my ($groupRef,$prefRef) = &setupUse();
+	my ($groupRef,$prefRef) = setupUse();
 
 	Slim::Web::Setup::addGroup('server','itunes',$groupRef,2,$prefRef);
 }
@@ -353,18 +376,45 @@ sub findMusicLibraryFile {
 
 sub findMusicLibrary {
 	my $autolocate = Slim::Utils::Prefs::get('itunes_library_autolocate');
-	my $path = undef;
-	my $file = $ituneslibraryfile || findMusicLibraryFile();
+	my $path       = undef;
+	my $file       = $ituneslibraryfile || findMusicLibraryFile();
 
 	if (defined($file) && $autolocate) {
-		$::d_itunes && msg("iTunes: attempting to locate iTunes library relative to $file.\n");
 
-		my $itunesdir = dirname($file);
-		$path = catdir($itunesdir, 'iTunes Music');
+		$::d_itunes && msg("iTunes: attempting to locate iTunes library from $file.\n");
+
+		# This is kind of lame - and needs to be refactored. If the
+		# user moves the location of the iTunes Music Folder, we need
+		# to grab that out of the XML file.
+		open (ITUNESLIBRARY, $file) || do {
+			$::d_itunes && msg("iTunes: Couldn't open XML file: [$file]\n");
+			return;
+		};
+
+		my $len = read ITUNESLIBRARY, $ituneslibrary, -s $file;
+
+		close ITUNESLIBRARY;
+
+		$ituneslibrary =~ s/></>\n</g;
+
+		while (my $curLine = getLine()) {
+
+			next unless $curLine eq "<key>Music Folder</key>";
+		
+			$path = Slim::Utils::Misc::pathFromFileURL(strip_automounter(getValue()));
+		
+			$::d_itunes && msg("iTunes: found the music folder: $path\n");
+
+			last;
+		}
+
+		# Reset this for later use.
+		$ituneslibrary = undef;
 
 		if ($path && -d $path) {
-			$::d_itunes && msg("iTunes: set iTunes library relative to $file: $path\n");
-			Slim::Utils::Prefs::set('itunes_library_music_path',$path);
+
+			$::d_itunes && msg("iTunes: set iTunes library to $file: $path\n");
+			Slim::Utils::Prefs::set('itunes_library_music_path', $path);
 			return $path;
 		}
 	}
@@ -839,7 +889,6 @@ sub normalize_location {
 
 	return $url;
 }
-			
 
 sub getValue {
 	my $curLine = getLine();
@@ -875,11 +924,10 @@ sub getValue {
 			}
 	
 	}
-	
+
 	$data =~ s/&#(\d*);/chr($1)/ge;
-	
+
 	return $data;
-	#return Slim::Utils::Misc::utf8toLatin1($data);
 }
 
 sub getPlaylistTrackArray {
@@ -1021,6 +1069,7 @@ sub strip_automounter {
 
 sub setupUse {
 	my $client = shift;
+
 	my %setupGroup = (
 		'PrefOrder' => ['itunes']
 		,'PrefsInTable' => 1
@@ -1038,19 +1087,19 @@ sub setupUse {
 			'validate' => \&Slim::Web::Setup::validateTrueFalse
 			,'changeIntro' => ""
 			,'options' => {
-					'1' => string('USE_ITUNES')
-					,'0' => string('DONT_USE_ITUNES')
-				}
+				'1' => string('USE_ITUNES'),
+				'0' => string('DONT_USE_ITUNES')
+			}
 			,'onChange' => 	sub {
-					my ($client,$changeref,$paramref,$pageref) = @_;
+				my ($client,$changeref,$paramref,$pageref) = @_;
 
-					foreach my $client (Slim::Player::Client::clients()) {
-						Slim::Buttons::Home::updateMenu($client);
-					}
-					Slim::Music::Import::useImporter('ITUNES',$changeref->{'itunes'}{'new'});
-					Slim::Music::Info::clearPlaylists('itunesplaylist:');
-					Slim::Music::Import::startScan('ITUNES');
+				foreach my $client (Slim::Player::Client::clients()) {
+					Slim::Buttons::Home::updateMenu($client);
 				}
+				Slim::Music::Import::useImporter('ITUNES',$changeref->{'itunes'}{'new'});
+				Slim::Music::Info::clearPlaylists('itunesplaylist:');
+				Slim::Music::Import::startScan('ITUNES');
+			}
 			,'optionSort' => 'KR'
 			,'inputTemplate' => 'setup_input_radio.html'
 		}
