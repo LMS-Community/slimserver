@@ -1,6 +1,6 @@
 package Plugins::Snow;
 
-# $Id: Snow.pm,v 1.9 2003/12/29 22:12:52 dean Exp $
+# $Id: Snow.pm,v 1.10 2004/04/23 16:24:57 dean Exp $
 # by Phil Barrett, December 2003
 # screensaver conversion by Kevin Deane-Freeman Dec 2003
 
@@ -23,102 +23,126 @@ use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.9 $,10);
+$VERSION = substr(q$Revision: 1.10 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_SNOW');}
 
 sub strings() { return '
 PLUGIN_SCREENSAVER_SNOW
+	DE	Schnee Bildschirmschoner
 	EN	Snow Screensaver
 	FR	Ecran de veille Neige
 
 PLUGIN_SCREENSAVER_SNOW_SETTINGS
+	DE	Schnee Einstellungen
 	EN	Snow Screensaver settings
 	FR	Réglages Ecran de veille Neige
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATE
+	DE	Diesen Bildschirmschoner aktivieren
 	EN	Select Current Screensaver
 	FR	Choisir écran de veille courant
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATE_TITLE
+	DE	Aktueller Bildschirmschoner
 	EN	Current Screensaver
 	FR	Ecran de veille courant
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATED
+	DE	Schnee Bildschirmschoner aktivieren
 	EN	Use Snow as current screensaver
 	FR	Utiliser Neige comme écran de veille
 
 PLUGIN_SCREENSAVER_SNOW_DEFAULT
+	DE	Standard-Bildschirmschoner aktivieren
 	EN	Use default screensaver (not Snow)
 	FR	Utiliser écran de veille par défaut (hors Neige)
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY
+	DE	Schneemenge
 	EN	Quantity of snow
 	FR	Intensité neige
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
+	DE	Schnee Bildschirmschoner: Schneemenge
 	EN	Snow Screensaver: Quantity of snow
 	FR	Ecran de veille neige: Intensité
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
+	DE	Ein paar Schneeflocken
 	EN	Light flurries
 	FR	Quelques flocons
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
+	DE	Weihnächtlich weiss
 	EN	Christmassy
 	FR	C\'est Noël !
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
+	DE	Heftiges Schneegestöber
 	EN	Blizzard
 	FR	Tempête
 
 PLUGIN_SCREENSAVER_SNOW_STYLE
+	DE	Schneetyp
 	EN	Style of snow
 	FR	Type neige
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
+	DE	Schnee Bildschirmschoner: Schneetyp
 	EN	Snow Screensaver: Style of snow
 	FR	Ecran de veille Neige: Type
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_1
+	DE	Es läuft gerade... mit Schnee im Hintergrund
 	EN	Now Playing, snow falling behind
 	FR	Lecture + neige en arrière-plan
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_2
+	DE	Es läuft gerade... mit Schnee im Vordergrund
 	EN	Now Playing, snow falling in front
 	FR	Lecture +  neige en avant-plan
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_3
+	DE	Datum/Zeit
 	EN	Date/Time
 	FR	Date/Heure
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_4
+	DE	Nur Schnee
 	EN	Just snow
 	FR	Neige seule
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_5
+	DE	Automatisch
 	EN	Automatic
 	FR	Automatique
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_6
+	DE	Frohe Feiertage!
 	EN	Season\'s Greetings
 
 PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS
+	DE	4
 	EN	5
 	FR	2
 
 PLUGIN_SCREENSAVER_SNOW_WORD_0
+	DE	FROHE
 	EN	MERRY
 	FR	JOYEUX
 
 PLUGIN_SCREENSAVER_SNOW_WORD_1
+	DE	WEIHNACHTEN
 	EN	CHRISTMAS
 	FR	NOEL
 
 PLUGIN_SCREENSAVER_SNOW_WORD_2
+	DE	UND EIN GUTES
 	EN	AND A VERY
 
 PLUGIN_SCREENSAVER_SNOW_WORD_3
+	DE	NEUES JAHR!
 	EN	HAPPY
 
 PLUGIN_SCREENSAVER_SNOW_WORD_4

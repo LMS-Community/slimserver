@@ -18,28 +18,33 @@ use Slim::Control::Command;
 use Slim::Utils::Strings qw (string);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.2 $,10);
+$VERSION = substr(q$Revision: 1.3 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_DATETIME');}
 
 sub strings() { return '
 PLUGIN_SCREENSAVER_DATETIME
+	DE	Datum/Zeit Bildschirmschoner
 	EN	Datetime Screensaver
 	FR	Ecran de veille Date/Heure
 	
 PLUGIN_SCREENSAVER_DATETIME_ENABLE
+	DE	PLAY drücken zum Aktivieren des Bildschirmschoners
 	EN	Press PLAY to enable this screensaver
 	FR	Appuyer sur PLAY pour activer
 
 PLUGIN_SCREENSAVER_DATETIME_DISABLE
+	DE	PLAY drücken zum Deaktivieren dieses Bildschirmschoners 
 	EN	Press PLAY to disable this screensaver
 	FR	Appuyer sur PLAY pour désactiver
 	
 PLUGIN_SCREENSAVER_DATETIME_ENABLING
+	DE	Datum/Zeit Bildschirmschoner aktivieren
 	EN	Enabling DateTime as current screensaver
 	FR	Activation écran de veille Date/Heure
 
 PLUGIN_SCREENSAVER_DATETIME_DISABLING
+	DE	Standard-Bildschirmschoner aktivieren
 	EN	Resetting to default screensaver
 	FR	Retour à écran de veille par défaut
 '};

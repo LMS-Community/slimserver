@@ -474,8 +474,33 @@ The SlimServer software can automatically handle many formats, including Ogg Vor
 <div class="faq">
 <h5><a id="networking-firewall"></a>How do I set up my firewall to allow Squeezebox to communicate with the server?</h5>
 
-<p>Make sure that UDP port 3483 and TCP port 9000 are open for communication between Squeezebox and the SlimServer computer. Make sure that TCP port 9000 is open for access to the SlimServer web interface.</p>
+<p><b>Macintosh:</b>
+You will have to create a new  exception in the built-in firewall to allow the Squeezebox to connect to Slim Server.  To do this:
+<ol>
+<li>Open System Preferences -> Sharing, and click 'Firewall'
+<li>Click 'New...' to create a new rule
+<li>For 'Port Name:' specify 'Other'
+<li>For 'Port Number, Range or Series:' specify '3483, 9000'
+<li>For 'Description:', specify 'Slim Server'
+<li>Click [OK], and ensure that your new exception is checked on.
+</ol>
 
+<p><b>Windows:</b>  Windows XP Service Pack 2 turns on a built-in firewall by default.  You will need to configure the firewall to allow access to Slim Server.  To do this:
+<ol>
+	<li>Go to Control Panel
+	<li>Click Security Center
+	<li>Click Windows Firewall under 'Manage security settings for:'
+	<li>Click the Exceptions tab
+</ol
+
+<p>You will then need to add exceptions for these applications:
+<ul>
+	<li>Program Files\SlimServer\SlimServer.exe
+	<li>Program Files\SlimServer\server\slim.exe
+</ul>
+
+<p><b>Third-party Firewalls:</b> You will need to configure your firewall software or hardware to allow connections to ports 3483, 9000 and 9090 for both UDP and TCP connections.  Refer to the instructions that came with your firewall for details.</p>
+</p>
 </div>
 
 
@@ -795,7 +820,6 @@ Version=2</pre></p>
 	<li>Program Files\SlimServer\server\slim.exe
 </ul>
 
-Alternately, you can add an exception for Slim Server program files.  This is done by clicking 'Add Program', and adding the exception for SlimServer.exe and slim.exe.
 </div>
 
 <div class="faq">

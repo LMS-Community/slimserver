@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.88 2004/04/22 22:58:45 dean Exp $
+# $Id: strings.txt,v 1.89 2004/04/23 16:24:56 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1867,7 +1867,7 @@ SETUP_VARIETYCOMBO
 	EN	Moodlogic Variety
 
 SETUP_VARIETYCOMBO_DESC
-	DE	Mit diesem Wert steuern Sie die Variety Einstellung für den Moodlogic Instant Mix. Kleinere Werte bedeuten eine grössere Variation an Musik, grössere Werte eine engere Auswahl. Gültige Werte sind 0-100.
+	De	Mit diesem Wert steuern Sie die Variety Einstellung für den Moodlogic Instant Mix. Kleinere Werte bedeuten eine grössere Variation an Musik, grössere Werte eine engere Auswahl. Gültige Werte sind 0-100.
 	EN	This is the value to control the variety setting for Moodlogic Instant Mixes.  Lower numbers mean a wider variety of music, higher numbers mean less variety.  Valid numbers are 0-100.
 
 # advanced server settings

@@ -1,6 +1,6 @@
 # ShoutcastBrowser.pm Copyright (C) 2003 Peter Heslin
 # version 3.0, 5 Apr, 2004
-#$Id: ShoutcastBrowser.pm,v 1.6 2004/04/22 00:00:49 dean Exp $
+#$Id: ShoutcastBrowser.pm,v 1.7 2004/04/23 16:24:57 dean Exp $
 #
 # A Slim plugin for browsing the Shoutcast directory of mp3
 # streams.  Inspired by streamtuner.
@@ -215,7 +215,9 @@ for my $g (@legit_genres)
     $legit_genres{$g}++;
 }
 
-use Storable qw(store_fd retrieve_fd);
+eval {
+   use Storable qw(store_fd retrieve_fd);
+};
 use Fcntl qw(:DEFAULT :flock);
 use File::Spec::Functions qw(:ALL);
 use Slim::Control::Command;
@@ -1240,6 +1242,7 @@ sub get_recent_streams
 
 sub add_recent_stream
 {
+if ($have_storable) {
     my ($client, $new, $bitrate, $data_ref) = @_;
 
     # Another client may have changed it since our last access
@@ -1272,6 +1275,7 @@ sub add_recent_stream
     my $rv = store([ $stream_data{$recent_name}, \@recent ], $recent_filename);
     warn "ShoutcastBrowser: Storing recent streams failed.\n" unless $rv;
     $fh->close;
+}
 }
 
 
