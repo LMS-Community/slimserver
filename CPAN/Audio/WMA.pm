@@ -11,7 +11,7 @@ if ($] > 5.007) {
 	require Encode;
 }
 
-$VERSION = '0.6';
+$VERSION = '0.7';
 
 my %guidMapping   = _knownGUIDs();
 my %reversedGUIDs = reverse %guidMapping;
@@ -505,6 +505,9 @@ sub _parseASFHeaderExtensionObject {
 		my $nextObjectGUID = _byteStringToGUID($self->_readAndIncrementInlineOffset(16)) || last;
 		my $nextObjectName = $reversedGUIDs{$nextObjectGUID} || 'ASF_Unknown_Object';
 		my $nextObjectSize = unpack('v', $self->_readAndIncrementInlineOffset(8));
+
+		# some sanity checks
+		last if $nextObjectSize == 0 || $nextObjectSize > $ext{'extension_data_size'};
 
 		if ($DEBUG) {
 			print "\tnextObjectGUID: [$nextObjectGUID]\n";
