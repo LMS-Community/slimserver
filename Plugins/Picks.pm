@@ -1,4 +1,4 @@
-# $Id: Picks.pm,v 1.1 2004/10/14 00:36:46 vidur Exp $
+# $Id: Picks.pm,v 1.2 2004/10/14 05:29:06 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -204,13 +204,7 @@ sub addMenu {
 }
 
 sub strings {
-	local $/ = undef;
-	<DATA>;
-}
-
-1;
-
-__DATA__
+	return "
 PLUGIN_PICKS_MODULE_NAME
 	EN	Slim Devices Picks
 
@@ -219,6 +213,9 @@ PLUGIN_PICKS_LOADING_PICKS
 
 PLUGIN_PICKS_STATION
 	EN	Station
+";}
+
+1;
 
 
 # Local Variables:
