@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::VFD::Animation;
 
-# $Id: Animation.pm,v 1.1 2004/08/03 17:29:13 vidur Exp $
+# $Id: Animation.pm,v 1.2 2004/08/04 06:18:40 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -325,6 +325,8 @@ sub scrollBottom {
 
 	my $linefunc  = $client->lines();
 	my @lines = &$linefunc($client);
+
+	return if Slim::Buttons::Common::param($client,'noScroll');
 	
 	my $line1 = $lines[0] || '';
 	my $line2 = $lines[1] || '';
