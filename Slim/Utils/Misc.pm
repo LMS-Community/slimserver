@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.62 2005/01/04 08:53:38 dsully Exp $
+# $Id: Misc.pm,v 1.63 2005/01/08 07:00:35 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -714,15 +714,9 @@ sub msg {
 }
 
 sub msgf {
-	my $entry = strftime "%Y-%m-%d %H:%M:%S ", localtime;
-	$entry .= sprintf @_;
-	
-	print STDERR $entry;
-	
-	if (Slim::Utils::Prefs::get('livelog')) {
-		$Slim::Utils::Misc::log .= $entry;
-	 	$Slim::Utils::Misc::log = substr($Slim::Utils::Misc::log, -Slim::Utils::Prefs::get('livelog'));
-	}
+	my $format = shift;
+
+	msg(sprintf($format, @_));
 }
 
 sub delimitThousands {
