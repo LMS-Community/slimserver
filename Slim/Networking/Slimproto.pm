@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.55 2004/06/11 18:42:58 dean Exp $
+# $Id: Slimproto.pm,v 1.56 2004/06/12 22:14:52 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -116,6 +116,7 @@ sub slimproto_close {
 
 	# stop selecting
 	Slim::Networking::Select::addRead($clientsock, undef);
+	Slim::Networking::Select::addError($clientsock, undef);
 	Slim::Networking::Select::addWrite($clientsock, undef);
 
 	# close socket
