@@ -1,6 +1,6 @@
 package Slim::Formats::WMA;
 
-# $Id: WMA.pm,v 1.7 2004/10/02 03:13:16 daniel Exp $
+# $Id: WMA.pm,v 1.8 2004/10/22 17:38:01 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -48,12 +48,15 @@ sub getTag {
 	$tags->{'RATE'}	    = $wma->info('sample_rate');
 
 	# WMA bitrate is reported in kbps
-	$tags->{'BITRATE'}  = $wma->info('bitrate')*1000;
+	$tags->{'BITRATE'}  = $wma->info('bitrate');
+	$tags->{'BITRATE'}  = $tags->{'BITRATE'} * 1000 if $tags->{'BITRATE'};
+	
 	$tags->{'DRM'}      = $wma->info('drm');
 
-	$tags->{'STEREO'}   = $wma->info('channels') == 2 ? 1 : 0;
 	$tags->{'CHANNELS'} = $wma->info('channels');
 
+	$tags->{'STEREO'} = ($tags->{'CHANNELS'} && $tags->{'CHANNELS'} == 2) ? 1 : 0;
+	
 	return $tags;
 }
 
