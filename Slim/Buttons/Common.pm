@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.25 2003/12/13 08:29:16 kdf Exp $
+# $Id: Common.pm,v 1.26 2003/12/20 01:52:04 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -955,6 +955,7 @@ sub param {
 	my $client = shift;
 	my $paramname = shift;
 	my $paramvalue = shift;
+	if (!defined($client->modeParameterStack(-1))) {return undef};
 	if (defined $paramvalue) {
 		${$client->modeParameterStack(-1)}{$paramname} = $paramvalue;
 	} else {

@@ -8,6 +8,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
+# $Id: Player.pm,v 1.15 2003/12/20 01:52:04 kdf Exp $
+#
 package Slim::Player::Player;
 
 use Slim::Player::Client;
@@ -48,8 +50,12 @@ sub usage {
 
 sub update {
 	my $client = shift;
-	Slim::Display::Animation::killAnimation($client);
-	Slim::Hardware::VFD::vfdUpdate($client, Slim::Display::Display::curLines($client));
+	if (Slim::Buttons::Common::param($client,'noUpdate')) {
+		#mode has blocked client updates temporarily
+	}	else	{ 
+		Slim::Display::Animation::killAnimation($client);
+		Slim::Hardware::VFD::vfdUpdate($client, Slim::Display::Display::curLines($client));
+	}
 }	
 
 sub isPlayer {
