@@ -470,21 +470,21 @@ sub descendVirtual {
 		$component = (splitdir($item))[-1];
 	}
 
+	# Always turn the utf8 flag back on - pathFromFileURL 
+	# (via virtualToAbsolute) will strip it.
+	if ($component && $] > 5.007) {
+		Encode::_utf8_on($component);
+	}
+
 	# On MacOS, catdir works a little differently. Since absolute paths *don't* start
 	# with the path separator, catdir('','foo') will return something unexpected like
 	# 'Macintosh HD:foo'.	I guess this is a bug in catdir...
 	my $ret;
 
 	if (!defined($curVP) || $curVP eq '') {
-		$ret=$component;
+		$ret = $component;
 	} else {
-		$ret=catdir($curVP,$component);
-	}
-
-	# Always turn the utf8 flag back on - pathFromFileURL 
-	# (via virtualToAbsolute) will strip it.
-	if ($ret && $] > 5.007) {
-		Encode::_utf8_on($ret);
+		$ret = catdir($curVP,$component);
 	}
 
 	$::d_paths && msg("descendVirtual returning catdir($curVP, $component) == $ret\n");
