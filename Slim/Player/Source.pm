@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.76 2004/03/29 22:18:59 dean Exp $
+# $Id: Source.pm,v 1.77 2004/04/15 01:37:36 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -796,6 +796,8 @@ sub openSong {
 				
 				my $fullCommand = $command;
 	
+				$fullCommand =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
+				
 				$fullCommand =~ s/\$FILE\$/"$filepath"/g;
 				$fullCommand =~ s/\$URL\$/"$fullpath"/g;
 				$fullCommand =~ s/\$RATE\$/$samplerate/g;
@@ -817,7 +819,6 @@ sub openSong {
 				if ((!defined $maxRate) || !$maxRate) {$maxRate = Slim::Utils::Prefs::get('maxBitrate');}				
 				$fullCommand =~ s/\$BITRATE\$/$maxRate/g;
 				
-				$fullCommand =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 				$fullCommand =~ s/\$([^\$]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
 				$fullCommand .= (Slim::Utils::OSDetect::OS() eq 'win') ? "" : " &";
