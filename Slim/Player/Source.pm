@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.57 2004/01/20 21:58:20 daniel Exp $
+# $Id: Source.pm,v 1.58 2004/01/23 05:59:43 kdf Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -509,8 +509,8 @@ sub openNext {
 		} elsif (Slim::Player::Playlist::repeat($client) == 1 && $result) {
 			#play the same song again
 		} else {
-			#stop at the end of the list
-			if (currentSongIndex($client) == (Slim::Player::Playlist::count($client) - 1)) {
+			#stop at the end of the list or when there is no list
+			if (currentSongIndex($client) == (Slim::Player::Playlist::count($client) - 1) || !Slim::Player::Playlist::count($client)) {
 				$nextsong = 0;
 				currentSongIndex($client, $nextsong);
 				playmode($client, $result ? 'playout-stop' : 'stop');
