@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.148 2004/11/25 03:51:01 kdf Exp $
+# $Id: strings.txt,v 1.149 2004/11/27 15:36:19 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -13,7 +13,7 @@
 CREDITS
 	DE	Melkon Torosyan, Thorsten Faltings, Michael Herger
 	DK	Ulrik Mehr, Morten Fischer-Madsen
-	ES	Andy Spiers
+	ES	Andy Spiers, Néstor Spedalieri
 	FI	Tomi Tuominen
 	FR	Serge Froment, Cédric Blancher, Terry Adams, Nicolas Guillemain
 	IT	Marco Barbieri
@@ -38,6 +38,7 @@ CHOOSE_A_LANGUAGE
 BASE_SKIN
 	DE	Light
 	EN	Light
+	ES	Liviana
 	FR	Light
 	NL	Light
 	NO	Lys
@@ -107,6 +108,7 @@ PLAYER_VERSION
 ABOUT_SLIMDEVICES
 	DE	Über Slim Devices
 	EN	About Slim Devices
+	ES	Acerca de Slim Devices
 	FR	A propos de Slim Devices
 	NO	Om Slim Devices
 	PT	Acerca de Slim Devices
@@ -156,6 +158,7 @@ LIBRARY_CONTAINS
 	DE	Die Musikbibliothek enthält
 	DK	Musiksamlingen indeholder
 	EN	Your music library contains
+	ES	La colección musical contiene
 	FR	La collection contient
 	NL	Inhoud van de bibliotheek
 	NO	Musikk biblioteket inneholder
@@ -249,6 +252,7 @@ RADIO
 GAMES
 	DE	Spiele
 	EN	Games
+	ES	Juegos
 	FR	Jeux
 
 PLAYLIST
@@ -322,6 +326,7 @@ EVERYTHING
 	DE	Alles
 	DK	Alt
 	EN	Everything
+	ES	Todo
 	FR	Tout
 	NL	Alles
 	NO	Alt
@@ -800,6 +805,7 @@ FREE_YOUR_MUSIC
 	DE	Befreie deine Musik!
 	DK	Lyt til din musik!
 	EN	Free your music
+	ES	Libera tu música
 	FR	Libérez votre musique
 	NO	Sett musikken din fri
 	PT	Liberte a sua música
@@ -808,6 +814,7 @@ FREE_YOUR_MUSIC
 UPDATING_FIRMWARE
 	DE	Firmware wird aktualisiert.
 	EN	Updating Squeezebox firmware.
+	ES	Actualizando firmaware de Squeezebox
 	FR	Mise à jour du micrologiciel Squeezebox
 	NO	Oppdaterer spillerens programvare ('firmware')
 	PT	Atualizando firmware ...
@@ -889,6 +896,7 @@ SERVER
 ABOUT_SHORT
 	DE	Über...
 	EN	About
+	ES	Acerca de
 	FR	A propos
 	PT	Sobre ...
 
@@ -919,6 +927,7 @@ SETUP_GROUP_TCP_PARAMS
 	DE	TCP Parameter
 	DK	TCP parametre
 	EN	TCP parameters
+	ES	Parámetros TCP
 	FI	TCP parametrit
 	FR	Paramètres TCP
 	NL	TCP instellingen
@@ -2816,6 +2825,7 @@ SETUP_SAVEHISTORY_1
 	DE	Speichern des Verlaufs
 	DK	Gem historik
 	EN	Save history
+	ES	Guardar historia
 	FR	Conserver l'historique
 	NL	Geschiedenis opslaan
 	NO	Lagre historikk
