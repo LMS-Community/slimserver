@@ -142,11 +142,6 @@ my %filetypes = (
 # should we use the itunes library?
 
 # LKS 05-May-2004
-#
-# I've removed the code the would set or reset the iTunes
-# preference if it wasn't explicitly defined.  This seems like
-# questionable behavior.
-#
 # I have also removed the conditional code surrounding the handling
 # of $newValue, since set or not we still called canUseiTunesLibrary().
 # All the extra code wasn't really gaining us anything.
@@ -160,25 +155,31 @@ sub useiTunesLibrary {
 		}
 	
 	my $use = Slim::Utils::Prefs::get('itunes');
-	return 0 unless $use;
 	
 	my $can = canUseiTunesLibrary();
-	return 0 unless $can;
-
-	$::d_itunes && msg("using itunes library.\n");
 	
-	return 1;
+   if (!defined($use) && $can) { 
+			Slim::Utils::Prefs::set('itunes', 1);
+	} elsif (!defined($use) && !$can) {
+			Slim::Utils::Prefs::set('itunes', 0);
+	}
+	
+	$use = Slim::Utils::Prefs::get('itunes');
+
+	$::d_itunes && msg("using itunes library: $use\n");
+	
+	return $use && $can;
 }
 
 sub canUseiTunesLibrary {
-	$::d_itunes_verbose && msg("canUseiTunesLibrary().\n");
+	$::d_itunes && msg("canUseiTunesLibrary().\n");
 	$ituneslibraryfile = defined $ituneslibraryfile ? $ituneslibraryfile : findMusicLibraryFile();
 	$ituneslibrarypath = defined $ituneslibrarypath ? $ituneslibrarypath : findMusicLibrary();
 	return defined $ituneslibraryfile && $ituneslibrarypath;
 }
 
 sub findLibraryFromPlist {
-	$::d_itunes_verbose && msg("findLibraryFromPlist().\n");
+	$::d_itunes && msg("findLibraryFromPlist().\n");
 
 	my $path = undef;
 	my $base = shift @_;
@@ -199,7 +200,7 @@ sub findLibraryFromPlist {
 }
 	
 sub findLibraryFromRegistry {
-	$::d_itunes_verbose && msg("findLibraryFromRegistry().\n");
+	$::d_itunes && msg("findLibraryFromRegistry().\n");
 
 	my $path = undef;
 
@@ -225,7 +226,7 @@ sub findLibraryFromRegistry {
 }
 
 sub findMusicLibraryFile {
-	$::d_itunes_verbose && msg("findMusicLibraryFile().\n");
+	$::d_itunes && msg("findMusicLibraryFile().\n");
 
 	my $path = undef;
 
