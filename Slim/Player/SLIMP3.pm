@@ -167,6 +167,7 @@ sub formats {
 }
 
 sub vfd {
+	use bytes;
 	my $client = shift;
 	my $data = shift;
 
