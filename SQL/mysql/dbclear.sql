@@ -1,6 +1,6 @@
-DELETE track_count FROM metainformation;
+UPDATE metainformation set track_count = 0;
 
-DELETE total_time FROM metainformation;
+UPDATE metainformation set total_time = 0;
 
 DELETE FROM tracks;
 
