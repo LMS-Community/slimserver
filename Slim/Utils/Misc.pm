@@ -956,7 +956,7 @@ sub addrToHost {
 
 	return $addr unless defined $aton;
 
-	my $host = (gethostbyaddr($aton, Socket::AF_INET))[0];
+	my $host = (gethostbyaddr($aton, Socket::AF_INET()))[0];
 
 	return $host if defined $host;
 	return $addr;

@@ -145,6 +145,9 @@ sub addStrings {
 	my $language = '';
 	my $stringname = '';
 	my $ln = 0;
+
+	my $currentLanguage  = getLanguage();
+	my $failSafeLanguage = failsafeLanguage();
 	
 	LINE: for my $line (split('\n', $$strings)) {
 
@@ -165,7 +168,9 @@ sub addStrings {
 			my $one = $1;
 			
 			# only read strings in our preferred and the failback language - plus the language names for the setup page
-			if (($one ne failsafeLanguage()) && ($one ne getLanguage()) && ($stringname ne 'LANGUAGE_CHOICES')) { next LINE; }
+			if ($one ne $failSafeLanguage && $one ne $currentLanguage && $stringname ne 'LANGUAGE_CHOICES') {
+				next LINE;
+			}
 			
 			$string = $2;
 

@@ -892,6 +892,9 @@ sub status_memory_usage {
 	for (sort { $total{$b}->{size} <=> $total{$a}->{size} } keys %total) {
 
 		next if /Slim::Utils::MemoryUsage/;
+		next if /^B::/;
+		next if /^Devel::/;
+		next if /^Data::\w*?Dumper/;
 
 		my $link = qq(<a href="$script?item=$_&command=noh_b_package_size">);
 
