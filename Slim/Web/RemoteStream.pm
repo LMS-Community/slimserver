@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.18 2004/02/11 19:20:27 dean Exp $
+# $Id: RemoteStream.pm,v 1.19 2004/02/13 18:45:52 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -180,6 +180,7 @@ sub readMetaData {
 		$byteRead = $handle->sysread($metadataSize, 1);
 		if ($!) {
 			 $::d_remotestream && msg("Metadata byte not read! $!\n");  
+			 Slim::Utils::Misc::blocking($handle, $was_blocking);
 			 return;
 		}
 		$byteRead = defined $byteRead ? $byteRead : 0;
@@ -194,10 +195,12 @@ sub readMetaData {
 		
 		do {
 			$byteRead = $handle->sysread($metadatapart, $metadataSize);
-			if (!defined($byteRead)) {
-				$::d_remotestream && msg("undef returned by sysread on metadata\n");
+			if ($!) {
+				$::d_remotestream && msg("undef returned by sysread on metadata: $!\n");
+				Slim::Utils::Misc::blocking($handle, $was_blocking);
 				return;
-			}	
+			}
+			$byteRead = 0 if (!defined($byteRead));
 			$metadataSize -= $byteRead;	
 			$metadata .= $metadatapart;	
 		} while ($metadataSize > 0);			
