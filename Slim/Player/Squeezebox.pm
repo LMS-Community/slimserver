@@ -430,7 +430,9 @@ sub upgradeFirmware {
 
 	if ((!ref $client) || ($client->revision <= 10)) {
 		$::d_firmware && msg("using old update mechanism\n");
-		$err = $client->upgradeFirmware_SDK4($filename);
+		# not calling as a client method, because it might just be an IP address, if triggered 
+		# from the web page.
+		$err = upgradeFirmware_SDK4($client, $filename);
 	} else {
 		$::d_firmware && msg("using new update mechanism\n");
 		$err = $client->upgradeFirmware_SDK5($filename);
