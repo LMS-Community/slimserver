@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.20 2003/11/20 16:58:03 dean Exp $
+# $Id: Pages.pm,v 1.21 2003/12/02 05:16:22 grotus Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -478,13 +478,6 @@ sub status {
 			  
 	$output .= &Slim::Web::HTTP::filltemplatefile($omit_playlist ? "status_header.html" : "status.html" , $main_form_ref);
 
-	if (($$main_form_ref{'Content-Type'} eq 'text/html') && 
-	    (!$$main_form_ref{'refresh'} || !$client->htmlstatusvalid() || !Slim::Utils::Prefs::get('templatecache'))) {
-		$::d_http && msg("Generating new status\n");
-		$client->htmlstatus($output);
-		$client->htmlstatusvalid(1);
-	}
-	
 	return $output;
 }
 
