@@ -16,9 +16,6 @@ use Slim::Utils::Misc;
 
 use vars qw($stdin);
 
-
-
-
 #$::d_stdio = 1;
 
 # This module provides a command-line interface to the server via standard in and out.
@@ -46,8 +43,8 @@ use vars qw($stdin);
 #   <playerid> pause 		(0|1|)
 #   <playerid> stop
 #   <playerid> mode			<play|pause|stop|?>
-#   <playerid> sleep 		<0..n|?>															
-#	<playerid> power 	    (0|1|?)
+#   <playerid> sleep 		<0..n|?>
+#   <playerid> power 		(0|1|?)
 #   <playerid> time			(0..n sec)|(-n..+n sec)|?
 #   <playerid> genre		?
 #   <playerid> artist		?
@@ -75,9 +72,9 @@ use vars qw($stdin);
 #   <playerid> playlist		tracks		?
 #   <playerid> mixer		volume		(0 .. 100)|(-100 .. +100)
 #   <playerid> mixer		volume		?
-#   <playerid> mixer		balance		(-100 .. 100)|(-200 .. +200)							(not implemented!)
-#   <playerid> mixer		base		(0 .. 100)|(-100 .. +100)								(not implemented!)
-#   <playerid> mixer		treble		(0 .. 100)|(-100 .. +100)								(not implemented!)
+#   <playerid> mixer		balance		(-100 .. 100)|(-200 .. +200)		(not implemented!)
+#   <playerid> mixer		base		(0 .. 100)|(-100 .. +100)		(not implemented!)
+#   <playerid> mixer		treble		(0 .. 100)|(-100 .. +100)		(not implemented!)
 #   <playerid> display   	<line1> 	<line2>                     (duration)
 #   <playerid> display   	? 			?
 #   <playerid> button   	buttoncode
@@ -113,7 +110,9 @@ use vars qw($stdin);
 #		Request:  "01:02:03:04:05:06 playlist index ?<cr>"
 #		Response: "01:02:03:04:05:06 playlist index 2<cr>"
 #
-# genre, artist, album, title, duration - will return the requested information for a the current song  or a given song in the current playlist
+# genre, artist, album, title, duration - will return the requested information for a the current song 
+# or a given song in the current playlist
+#
 # Examples: 
 #		Request:  "01:02:03:04:05:06 genre ?<cr>"
 #		Response: "01:02:03:04:05:06 genre Rock<cr>"
@@ -182,15 +181,15 @@ use vars qw($stdin);
 #		Request:  "01:02:03:04:05:06 pref audiodir ?<cr>"
 #		Response: "01:02:03:04:05:06 pref audiodir %2fUsers%2fdean%2fDesktop%2ftest%20music<cr>"
 
-
 my $stdout;
 my $curline = "";
 
 # initialize the stdio interface
 sub init {
-	if (Slim::Utils::OSDetect::OS() eq 'win') { return; }
 	$stdin = shift;
 	$stdout = shift;
+
+	return if Slim::Utils::OSDetect::OS() eq 'win';
 
 	Slim::Networking::Select::addRead($stdin, \&processRequest);
 
@@ -202,22 +201,19 @@ sub init {
 #  Handle an Stdio request
 #
 sub processRequest {
-	my $clientsock = shift;
-	my $firstline;
+	my $clientsock = shift || return;
 
-	if ($clientsock) {
-		$firstline = <$clientsock>;
-		if (defined($firstline)) {
-			#process the commands
-			$::d_stdio && msg("Got line: $firstline\n");
-			chomp $firstline; 
-			my $message = executeCmd($firstline);
-	
-			$::d_stdio && msg("response is: $message\n");
-			if ($message) {
-				$stdout->print($message . "\n");
-			}
-		}
+	my $firstline = <$clientsock>;
+
+	if (defined($firstline)) {
+
+		#process the commands
+		$::d_stdio && msg("Got line: $firstline\n");
+		chomp $firstline; 
+		my $message = executeCmd($firstline);
+
+		$::d_stdio && msg("response is: $message\n");
+		$stdout->print($message . "\n") if $message;
 	}
 }
 
@@ -225,21 +221,21 @@ sub processRequest {
 #
 #
 sub executeCmd {
-	my($command) = @_;
-	my $output = undef;
-	my @params;
-	my($client) = undef;
-	my $prefix = "";
+	my $command = shift;
+
+	my $output  = undef;
 
 	# todo - allow for escaping and/or quoting
-	@params = split(" ",$command);
+	my @params = split(" ", $command);
 
 	foreach my $param (@params) {
 		$param = Slim::Web::HTTP::unescape($param);
 	}
 
 	if (defined $params[0]) {
-		$client = Slim::Player::Client::getClient($params[0]);
+
+		my $client = Slim::Player::Client::getClient($params[0]);
+		my $prefix = "";
 		
 		if (defined($client)) {
 			$prefix = Slim::Web::HTTP::escape($params[0]) . " ";
@@ -259,13 +255,16 @@ sub executeCmd {
 		}
 
 		$output = $prefix . join(" ", @outputParams);
+
 	} else {
 		$::d_stdio && msg("No params parsed from stdio!\n");
 	}
+
 	return $output;
 }
 
 1;
+
 __END__
 
 # Local Variables:

@@ -25,16 +25,20 @@ my $xpl_ir;
 my $xpl_socket;
 my $xpl_port;
 
-sub init() {
 # Called from slimserver.pl if the xplsupport preference has been enabled.
-	my $computername = hostname;
+sub init {
+	my $computername = Sys::Hostname::hostname();
+
 	$localip = inet_ntoa((gethostbyname($computername))[4]);
+
 	$xpl_interval =	Slim::Utils::Prefs::get("xplinterval");
+
 	if (!defined($xpl_interval)) {
 		$xpl_interval = 5;
 		Slim::Utils::Prefs::set("xplinterval",$xpl_interval);
 	}
-	$xpl_ir =	Slim::Utils::Prefs::get("xplir");
+
+	$xpl_ir = Slim::Utils::Prefs::get("xplir");
 	if (!defined($xpl_ir)) {
 		$xpl_ir = 'none'; 
 		Slim::Utils::Prefs::set("xplir",$xpl_ir);
@@ -48,21 +52,23 @@ sub init() {
 			LocalPort => $xpl_port,
 			LocalAddr => $main::localClientNetAddr
 		);	
+
 		if (!$xpl_socket) {
 			$xpl_port = $xpl_port + 1;
 		}
 	}
+
 	defined(Slim::Utils::Misc::blocking($xpl_socket,0)) || die "Cannot set port nonblocking";
 	die "Could not create socket: $!\n" unless $xpl_socket;
 	Slim::Networking::Select::addRead($xpl_socket, \&readxpl);
 	sendxplhbeat();
 }
 
-
-sub validInstance {
 # This routine ensures an xPL instance is valid
 # by removing any invalid characters and trimming to
 # 16 characters.
+sub validInstance {
+
 	my $instance = $_[0];
 	$instance =~ s/(-|\.|!|;)//g;
 	if (length($instance) > 16) {
@@ -71,9 +77,9 @@ sub validInstance {
 	return $instance;
 }
 
-sub checkInstances {
 # This routine accepts an xPL instance and determines if it matches one of our player names
 # If it does, it returns the ID of the player.
+sub checkInstances {
 	my @clients = Slim::Player::Client::clients();
 	my $clientName;
 	my $instance;
@@ -86,23 +92,25 @@ sub checkInstances {
 	return undef;
 }
 
-sub readxpl {
 # Processes an incoming xPL message
-	my $schema;
+sub readxpl {
 	my $sock = shift;
+
+	my $schema;
 	my $msgtarget;
 	my $msg = '';
 	my $clientid;
 
 	recv($sock,$msg,1500,0);
+
 	# If message is not for us, ignore it
 	$msgtarget = lc(gethdrparam($msg,"target"));
+
 	if ($msgtarget ne "*") {
 		$clientid = checkInstances($msgtarget);
-		if (!defined($clientid)) {
-			return;
-		}
+		return unless defined $clientid;
 	}
+
 	# We're only interested in command messages
 	if (getmsgtype($msg) eq "xpl-cmnd") {
 		$schema = getmsgschema($msg);
@@ -131,27 +139,30 @@ sub readxpl {
 }
 
 sub xplExecuteCmd {
-  my @clients = Slim::Player::Client::clients();
-  my $clientid;
-  # If client ID is undefined, send to all players
-  if (!defined($_[1])) {
-    foreach my $client (@clients) {
-      $clientid = $client->id();
-      Slim::Control::Stdio::executeCmd("$clientid $_[0]");
-    }
-  }
-  else {
-    Slim::Control::Stdio::executeCmd("$_[1] $_[0]");
-  }
+	my @clients = Slim::Player::Client::clients();
+	my $clientid;
+
+	# If client ID is undefined, send to all players
+	if (!defined($_[1])) {
+
+		foreach my $client (@clients) {
+			$clientid = $client->id();
+			Slim::Control::Stdio::executeCmd("$clientid $_[0]");
+		}
+
+	} else {
+		Slim::Control::Stdio::executeCmd("$_[1] $_[0]");
+	}
 }
 
-sub handleAudioMessage {
 # This routine handles audio.basic and audio.slimserv messages
+sub handleAudioMessage {
 	my $msg = shift;
 	my $clientid = shift;
 
 	# If client is undefined, send to all clients
 	if (!defined($clientid)) {
+
 		my @clients = Slim::Player::Client::clients();
 		foreach my $client (@clients) {
 			$clientid = $client->id;
@@ -159,8 +170,8 @@ sub handleAudioMessage {
 				handleAudioMessage($msg,$clientid);
 			}
 		}
-	}
-	else {
+
+	} else {
 		# Handle standard audio.basic commands
 		my $xplcmd = lc getparam($msg,"command");
 		my @params = split " ", $xplcmd;
@@ -227,8 +238,8 @@ sub handleAudioMessage {
 	}
 }
 
-sub sendXplHBeatMsg {
 # Sends either a hbeat.app or audio.basic status message from a particular client
+sub sendXplHBeatMsg {
 	my $msg;
 	my $client = $_[0];
 	my $clientName = validInstance($client->name);
@@ -236,15 +247,15 @@ sub sendXplHBeatMsg {
 	my $song = $client->currentplayingsong();
 	my $prevline1 = $client->prevline1();
 	my $prevline2 = $client->prevline2();
+
 	if ($playmode eq 'play') {
 		$playmode = "playing";
-	}
-	elsif ($playmode eq 'stop') {
+	} elsif ($playmode eq 'stop') {
 		$playmode = "stopped";
-	}
-	elsif ($playmode eq 'pause') {
+	} elsif ($playmode eq 'pause') {
 		$playmode = "paused";
 	}
+
 	if (defined($_[1])) {
 		$msg = "status=$playmode";
 		$msg = "$msg\nsong=$song\nline1=$prevline1\nline2=$prevline2";
@@ -252,8 +263,7 @@ sub sendXplHBeatMsg {
 			"*","audio.slimserv",
 			$msg,
 			$clientName);
-	}
-	else {
+	} else {
 		$msg = "interval=$xpl_interval\nport=$xpl_port\nremote-ip=$localip\nschema=audio.slimserv\nstatus=$playmode";
 		$msg = "$msg\nsong=$song\nline1=$prevline1\nline2=$prevline2";		
 		sendxplmsg("xpl-stat",
@@ -263,35 +273,38 @@ sub sendXplHBeatMsg {
 	}
 }
 
-sub sendxplhbeat {
 # Sends an xPL heartbeat from all clients that are currently connected
+sub sendxplhbeat {
 	my @clients = Slim::Player::Client::clients();
 
 	foreach my $client (@clients) {
 		sendXplHBeatMsg($client);
 	}
+
 	Slim::Utils::Timers::setTimer("", Time::HiRes::time() + ($xpl_interval*60), \&sendxplhbeat);
 }
 
-sub sendxplmsg {
 # Generic routine for sending an xPL message.
-  my $msg;
-  $msg = "$_[0]\n{\nhop=1\nsource=$xpl_source.$_[4]\ntarget=$_[1]\n}\n$_[2]\n{\n$_[3]\n}\n";
-    my $ipaddr   = inet_aton('255.255.255.255');
-    my $portaddr = sockaddr_in(3865, $ipaddr);
-    my $sockUDP = IO::Socket::INET->new(PeerPort => 3865,
-                                   Proto => 'udp'
-      );
-  
-    $sockUDP->autoflush(1);
-    $sockUDP->sockopt(SO_BROADCAST,1);
-    $sockUDP->send($msg,0,$portaddr);
-  
-    close $sockUDP;
+sub sendxplmsg {
+	my $msg = "$_[0]\n{\nhop=1\nsource=$xpl_source.$_[4]\ntarget=$_[1]\n}\n$_[2]\n{\n$_[3]\n}\n";
+
+	my $ipaddr   = inet_aton('255.255.255.255');
+	my $portaddr = sockaddr_in(3865, $ipaddr);
+
+	my $sockUDP = IO::Socket::INET->new(
+		PeerPort => 3865,
+		Proto => 'udp'
+	);
+
+	$sockUDP->autoflush(1);
+	$sockUDP->sockopt(SO_BROADCAST,1);
+	$sockUDP->send($msg,0,$portaddr);
+
+	close $sockUDP;
 }
 
-sub getparam {
 # Retrieves a parameter from the body of an xPL message
+sub getparam {
 	my $buff = $_[0];  
         $buff =~ s/$_[1]/$_[1]/gi;
 	$buff = substr($buff,index($buff,"}"),length($buff)-index($buff,"}"));
@@ -301,8 +314,8 @@ sub getparam {
 	return $params{$_[1]};
 }
 
-sub gethdrparam {
 # Retrieves a parameter from the header of an xPL message
+sub gethdrparam {
 	my $buff = $_[0];  
         $buff =~ s/$_[1]/$_[1]/gi;
 	$buff = substr($buff,index($buff,"{")+2,length($buff)-index($buff,"{")-2);
@@ -311,25 +324,26 @@ sub gethdrparam {
 	return $params{$_[1]};
 }
 
-sub getmsgtype {
 # Returns the type of an xPL message, e.g. xpl-stat, xpl-trig or xpl-cmnd
+sub getmsgtype {
 	return lc substr($_[0],0,8);
 }
 
-sub getmsgschema {
 # This routine accepts an xPL message and returns the message schema, in lowercase characters
+sub getmsgschema {
 	my $buff = $_[0];
 	$buff = substr($buff,index($buff,"}")+2,length($buff)-index($buff,"}")-2);
 	$buff = substr($buff,0,index($buff,"\n"));
 	return lc $buff;
 }
 
-sub handleOsdMessage {
 # Routine to handle display of text using osd.basic messages
+sub handleOsdMessage {
 
 	# If client is undefined, send to all clients
 	my $clientid = $_[1];
 	if (!defined($clientid)) {
+
 		my @clients = Slim::Player::Client::clients();
 		foreach my $client (@clients) {
 			$clientid = $client->id;
@@ -337,17 +351,19 @@ sub handleOsdMessage {
 				handleOsdMessage($_[0],$clientid);
 			}
 		}
-	}
-	else {
+
+	} else {
 		my $osdcmd = lc getparam($_[0],"command");
 		my $osdmsg = getparam($_[0],"text");
 		my $osddelay = getparam($_[0],"delay");
 	
 		# Extract text
 		my ($text1, $text2) = split /\\n/, $osdmsg;
+
 		if ($text1 eq '') {
 			$text1 = ' ';
 		}
+
 		if (!defined($text2)) {
 			$text2 = ' ';
 		}	
@@ -359,8 +375,7 @@ sub handleOsdMessage {
 		# If delay is unspecified, set to default of 5 seconds
 		if (!defined($osddelay)) {
 			$osddelay = 5;
-		}
-		elsif ($osddelay eq '') {
+		} elsif ($osddelay eq '') {
 			$osddelay = 5;
 		}
 
@@ -374,30 +389,30 @@ sub handleOsdMessage {
 	}
 }
 
-sub handleRemoteMessage {
 # Routine to process incoming remote.basic messages
+sub handleRemoteMessage {
 	my @keys = split ",", getparam($_[0],"keys");
 	foreach my $remotekey (@keys) {
 		xplExecuteCmd("button $remotekey",$_[1]);
 	}
 }
 
-sub handleConfigCurrent {
 # Returns the current xPL configuration of a client
+sub handleConfigCurrent {
 	my $clientname = validInstance(Slim::Player::Client::getClient($_[1])->name);	
 	sendxplmsg("xpl-stat","*","config.current","newconf=$clientname\ninterval=$xpl_interval\ninfrared=$xpl_ir",$clientname);
 }
 
-sub handleConfigList {
 # This sub-routine sends an xPL message in response to a config.list request.
 # The config.list message contains information about how this device may be
 # configured.
+sub handleConfigList {
 	my $clientname = validInstance(Slim::Player::Client::getClient($_[1])->name);	
 	sendxplmsg("xpl-stat","*","config.list","reconf=newconf\noption=interval\noption=infrared",$clientname);
 }
 
-sub handleConfigResponse {
 # This sub-routine processes the configuration data in a config.response message
+sub handleConfigResponse {
 	my $new_instance = getparam($_[0],"newconf");
 	my $new_interval = getparam($_[0],"interval");
 	my $new_ir = lc getparam($_[0],"infrared");
@@ -406,13 +421,13 @@ sub handleConfigResponse {
 	if ($new_instance ne '') {
 		$client->name($new_instance);
 	}
+
 	if ($new_interval ne '') {
 		$xpl_interval = $new_interval;
 	}
-	if (defined($new_ir)) {
-		if ($new_ir =~ "^(none)|(buttons)|(raw)|(both)") {
-			$xpl_ir = $new_ir;
-		}
+
+	if (defined($new_ir) && $new_ir =~ "^(none)|(buttons)|(raw)|(both)") {
+		$xpl_ir = $new_ir;
 	}
 
 	Slim::Utils::Prefs::set("xplinterval",$xpl_interval);
@@ -420,28 +435,30 @@ sub handleConfigResponse {
 	sendXplHBeatMsg($client);
 }
 
-sub processircode {
 # This routine is called when a button is pressed on the remote control.
 # It sends out a remote.basic xPL message.
 # If xPL support is not enabled, the routine returns immediately.
-	if (!defined($xpl_port)) { return; }
+sub processircode {
+	return unless defined $xpl_port;
 
 	my $clientname = validInstance($_[0]->name);
 	my $power = ($_[0]->power()==0 ? 'off' : 'on');
+
 	if ($xpl_ir eq 'raw' || $xpl_ir eq 'both') {
 		sendxplmsg("xpl-trig","*","remote.basic","zone=slimserver\ndevice=$clientname\nkeys=$_[2]\npower=$power",$clientname);
 	}
+
 	if (defined($_[1]) && ($xpl_ir eq 'buttons' || $xpl_ir eq 'both')) {
 		sendxplmsg("xpl-trig","*","remote.basic","zone=slimserver\ndevice=$clientname\nkeys=$_[1]\npower=$power",$clientname);
 	}
 }
 
-sub newClient {
 # This routine sends out a heartbeat when a new client is connected.
 # It returns immediately if xPL support is not enabled.
-	if (!defined($xpl_port)) { return; }
+sub newClient {
+	return unless defined $xpl_port;
+
 	sendXplHBeatMsg($_[0]);        
 }
-
 
 1;

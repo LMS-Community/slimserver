@@ -11,6 +11,7 @@ use IO::Socket;
 use Net::hostent;              # for OO version of gethostbyaddr
 use File::Spec::Functions qw(:ALL);
 use POSIX;
+use Socket qw(:crlf);
 use Sys::Hostname;
 
 use Slim::Networking::mDNS;
@@ -22,10 +23,6 @@ use Slim::Utils::OSDetect;
 
 # This module provides a command-line interface to the server via a TCP/IP port.
 # see the documentation in Stdio.pm for details on the command syntax
-#
-#constants
-#
-my $NEWLINE = "\012";
 
 my $openedport = 0;
 my $server_socket;
@@ -46,22 +43,22 @@ sub openport {
 	#start our listener
 
 	$server_socket = IO::Socket::INET->new(  
-											Proto     => 'tcp',
-											LocalPort => $listenerport,
-											LocalAddr => $listeneraddr,
-											Listen    => SOMAXCONN,
-											ReuseAddr => 1,
-											Reuse     => 1,
-											Timeout   => 0.001
-										  );
-
-	die "can't setup the listening port $listenerport for the command line interface server: $!" unless $server_socket;
+		Proto     => 'tcp',
+		LocalPort => $listenerport,
+		LocalAddr => $listeneraddr,
+		Listen    => SOMAXCONN,
+		ReuseAddr => 1,
+		Reuse     => 1,
+		Timeout   => 0.001
+	) or die "can't setup the listening port $listenerport for the command line interface server: $!";
 
 	$openedport = $listenerport;
 
 	Slim::Networking::Select::addRead($server_socket, \&acceptSocket);
 
-	$mdnsID = Slim::Networking::mDNS::advertise(Slim::Utils::Prefs::get('mDNSname'), '_slimdevices_slimserver_cli._tcp', $listenerport);
+	$mdnsID = Slim::Networking::mDNS::advertise(
+		Slim::Utils::Prefs::get('mDNSname'), 'slimdevices_slimserver_cli._tcp', $listenerport
+	);
 
 	Slim::Control::Command::setExecuteCallback(\&Slim::Control::CLI::commandCallback);
 	
@@ -74,7 +71,7 @@ sub idle {
 
 		# if we've already opened a socket, let's close it
 		if ($openedport) {
-			if ($mdnsID) { Slim::Networking::mDNS::stopAdvertise($mdnsID); };
+			Slim::Networking::mDNS::stopAdvertise($mdnsID) if $mdnsID;
 
 			$::d_cli && msg("closing command line interface server socket\n");
 			Slim::Networking::Select::addRead($server_socket, undef);
@@ -93,16 +90,22 @@ sub idle {
 sub commandCallback {
 	my $client = shift;
 	my $paramsRef = shift;
+
+	# XXX - this should really be passed and not global.
 	foreach my $sock (keys %listen) {
+
 		$sock = $listen{$sock};
-		if ($sock) {
-			my $output = $client->id();
-			foreach my $param (@$paramsRef) {
-				$output .= ' ' . Slim::Web::HTTP::escape($param);
-			}
-			addresponse($sock, $output . $NEWLINE);
-			sendresponse($sock);
+
+		next unless $sock;
+
+		my $output = $client->id();
+
+		foreach my $param (@$paramsRef) {
+			$output .= ' ' . Slim::Web::HTTP::escape($param);
 		}
+
+		addresponse($sock, $output . $LF);
+		sendresponse($sock);
 	}
 }
 
@@ -114,13 +117,13 @@ sub acceptSocket {
 	return if connectedSocket() > Slim::Utils::Prefs::get("tcpConnectMaximum");
 
 	my $clientsock = $server_socket->accept();
+
 	if ($clientsock && $clientsock->connected && $clientsock->peeraddr) {
+
 		my $tmpaddr = inet_ntoa($clientsock->peeraddr);
-		if (
-		    !(Slim::Utils::Prefs::get('filterHosts')) || 
-		    (Slim::Utils::Misc::isAllowedHost($tmpaddr))
-		   )
-		{
+
+		if (!(Slim::Utils::Prefs::get('filterHosts')) || (Slim::Utils::Misc::isAllowedHost($tmpaddr))) {
+
 			Slim::Networking::Select::addRead($clientsock, \&processRequest);
 			$connected++;
 			$listen{$clientsock} = 0;
@@ -129,6 +132,7 @@ sub acceptSocket {
 			$::d_cli && msg("Did not accept CLI connection from ". $tmpaddr . ", unauthorized source\n");
 			$clientsock->close();
 		}
+
 	} else {
 		$::d_cli && msg("Did not accept connection\n");
 	}
@@ -139,38 +143,36 @@ sub readable {
 	
 }
 
-#
-#  Handle an command line interface request
-#
+# Handle an command line interface request
 sub processRequest {
 	my $clientsock = shift;
 	my $firstline;
 
-	if ($clientsock) {
+	return unless $clientsock;
 
-		$clientsock->autoflush(1);
+	$clientsock->autoflush(1);
 
-		$firstline = <$clientsock>;
-	  	  	
-		if (!defined($firstline)) { #socket half-closed from client
-			$::d_cli && msg("Client at " . inet_ntoa($clientsock->peeraddr) . " disconnected\n");
-			closer($clientsock);
-		} else { 
-			#process the commands
-			chomp $firstline; 
-			executeCmd($clientsock, $firstline);
-		}
-	$::d_cli && msg("Ready to accept a new command line interface connection.\n");
+	$firstline = <$clientsock>;
+		
+	if (!defined($firstline)) {
+		# socket half-closed from client
+		$::d_cli && msg("Client at " . inet_ntoa($clientsock->peeraddr) . " disconnected\n");
+		closer($clientsock);
+	} else { 
+		# process the commands
+		chomp $firstline; 
+		executeCmd($clientsock, $firstline);
 	}
+
+	$::d_cli && msg("Ready to accept a new command line interface connection.\n");
 }
 
 # executeCmd - handles the execution of the command line interface request
-#
-#
 sub executeCmd {
 	my($clientsock, $command) = @_;
+
 	my $output = "";
-	my($client) = undef;
+	my $client = undef;
 
 	$::d_cli && msg("Clients: ". join " " ,Slim::Player::Client::clientIPs(), "\n");
 	$::d_cli && msg("Processing command: $command\n");
@@ -189,12 +191,11 @@ sub executeCmd {
 	
 	# if the callback isn't goint to print the response...
 	if (!$listen{$clientsock}) {
-		if (!defined($output)) {
-			$output = "";
-		};
+
+		$output = "" unless defined $output;
 		
 		$::d_cli && msg("command line interface response: " . $output);
-		addresponse($clientsock, $output . $NEWLINE);
+		addresponse($clientsock, $output . $LF);
 	}
 	
 	if ($command =~ /^exit/) { 
@@ -206,34 +207,47 @@ sub executeCmd {
 sub addresponse {
 	my $clientsock = shift;
 	my $message = shift;
+
 	push @{$outbuf{$clientsock}}, $message;
 	Slim::Networking::Select::addWrite($clientsock, \&sendresponse);
 }
 
 sub sendresponse {
 	my $clientsock = shift;
+
 	my $message = shift(@{$outbuf{$clientsock}});
 	my $sentbytes;
-	if ($message) {
-		$::d_cli && msg("Sending response\n");
-		
-		$sentbytes = send $clientsock, $message,0;
-		if (defined($sentbytes)) {
-			if ($sentbytes < length($message)) { #sent incomplete message
-				unshift @{$outbuf{$clientsock}},substr($message,$sentbytes);
-			} else { #sent full message
-				if (@{$outbuf{$clientsock}} == 0) { #no more messages to send
-					$::d_cli && msg("No more messages to send to " . inet_ntoa($clientsock->peeraddr) . "\n");
-					Slim::Networking::Select::addWrite($clientsock, undef);
-				} else {
-					$::d_cli && msg("More to send to " . inet_ntoa($clientsock->peeraddr) . "\n");
-				}
-			}
+
+	return unless $message;
+
+	$::d_cli && msg("Sending response\n");
+	
+	$sentbytes = send($clientsock, $message, 0);
+
+	if (defined($sentbytes)) {
+
+		if ($sentbytes < length($message)) {
+
+			# sent incomplete message
+			unshift @{$outbuf{$clientsock}},substr($message,$sentbytes);
+
 		} else {
-			# Treat $clientsock with suspicion
-			$::d_cli && msg("Send to " . inet_ntoa($clientsock->peeraddr)  . " had error\n");
-			closer($clientsock);
+
+			# sent full message
+			if (@{$outbuf{$clientsock}} == 0) {
+
+				# no more messages to send
+				$::d_cli && msg("No more messages to send to " . inet_ntoa($clientsock->peeraddr) . "\n");
+				Slim::Networking::Select::addWrite($clientsock, undef);
+			} else {
+				$::d_cli && msg("More to send to " . inet_ntoa($clientsock->peeraddr) . "\n");
+			}
 		}
+
+	} else {
+		# Treat $clientsock with suspicion
+		$::d_cli && msg("Send to " . inet_ntoa($clientsock->peeraddr)  . " had error\n");
+		closer($clientsock);
 	}
 }
 
@@ -244,12 +258,15 @@ sub closer {
 	Slim::Networking::Select::addRead($clientsock, undef);
 	
 	close $clientsock;
-	delete($outbuf{$clientsock}); #clean up the hash
+
+	# clean up the hash
+	delete($outbuf{$clientsock});
 	delete($listen{$clientsock});
 	$connected--;
 }
 
 1;
+
 __END__
 
 # Local Variables:
