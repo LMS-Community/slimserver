@@ -1200,7 +1200,7 @@ sub underMax {
 		my $ds    = Slim::Music::Info::getCurrentDataStore();
 		my $track = $ds->objectForUrl($fullpath);
 
-		my $rate = ($track->bitrate(1) || 0)/1000;
+		my $rate = defined $track ? ($track->bitrate(1) || 0)/1000 : 0;
 
 		return ($maxRate >= $rate);
 	}

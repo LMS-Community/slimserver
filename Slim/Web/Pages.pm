@@ -1674,7 +1674,8 @@ sub _addSongInfo {
 
 		$params->{'filelength'} = Slim::Utils::Misc::delimitThousands($track->filesize());
 		$params->{'songtitle'}  = Slim::Music::Info::standardTitle(undef, $track);
-
+		$params->{'bitrate'} = $track->bitrate();
+		
 		# make urls in comments into links
 		for my $comment ($track->comment()) {
 
