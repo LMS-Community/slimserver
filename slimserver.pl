@@ -908,17 +908,6 @@ sub daemonize {
 	my $log;
 	my $logfilename;
 	
-	if ($logfile) { $log = $logfile } else { $log = '/dev/null' };
-	
-	if (!open STDIN, '/dev/null') { die "Can't read /dev/null: $!";}
-
-	# check for log file being pipe, e.g. multilog
-	$logfilename = $log;
-	if (substr($log, 0, 1) ne "|") {
-		$logfilename = ">>" . $log;
-	}
-
-	if (!open STDOUT, $logfilename) { die "Can't write to $logfilename: $!";}
 	if (!defined($pid = fork)) { die "Can't fork: $!"; }
 	
 	if ($pid) {
@@ -972,8 +961,21 @@ sub daemonize {
 		}
 	}
 
+	$log = $logfile ? $logfile : '/dev/null';
+
+	open(STDIN, '/dev/null') || die "Can't read /dev/null: $!";
+
+	# check for log file being pipe, e.g. multilog
+	$logfilename = $log;
+
+	if (substr($log, 0, 1) ne "|") {
+		$logfilename = ">>" . $log;
+	}
+
+	open(STDOUT, ">>$log") || die "Can't write to $log: $!";
+
 	$0 = "slimserver";
-	
+
 	if (!setsid) { die "Can't start a new session: $!"; }
 	if (!open STDERR, '>&STDOUT') { die "Can't dup stdout: $!"; }
 }
