@@ -346,7 +346,7 @@ sub loadDir {
 		Slim::Buttons::Block::block($client,@$oldlinesref);
 
 		my $fixedpath = Slim::Utils::Misc::fixPath($abspwd);
-		my $sorted = !Slim::Music::Info::isPlaylist($fixedpath) || Slim::Utils::Prefs::get('filesort');
+		my $sorted = !Slim::Music::Info::isPlaylist($fixedpath) && !Slim::Utils::Prefs::get('filesort');
 
 		Slim::Utils::Scan::addToList($client->dirItems, $abspwd, 0, $sorted, \&opendir_done, $client, $pwd, $direction, $oldlinesref);
 		# addToList will call &opendir_done when it finishes.

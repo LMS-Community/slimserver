@@ -734,7 +734,7 @@ sub browser {
 	}
 
 	my $fixedpath = Slim::Utils::Misc::fixPath($fulldir);
-	my $sorted = !Slim::Music::Info::isPlaylist($fixedpath) || Slim::Utils::Prefs::get('filesort');
+	my $sorted = !Slim::Music::Info::isPlaylist($fixedpath) && !Slim::Utils::Prefs::get('filesort');
 
 	# Scan the directories - don't recurse
 	Slim::Utils::Scan::addToList(
@@ -861,22 +861,12 @@ sub browser_addtolist_done {
 			if (Slim::Music::Info::isList($obj)) {
 
 				$list_form{'descend'} = $shortitem;
-				if (!$filesort && Slim::Music::Info::isPlaylist($obj)) {
-					$list_form{'title'}         = Slim::Music::Info::standardTitle(undef, $obj);
-				}
-				else {
-					$list_form{'title'}  = Slim::Music::Info::fileName($item);
-				}
 
 			} elsif (Slim::Music::Info::isSong($obj)) {
 
 				$list_form{'descend'} = 0;
 			
-				if ($filesort) {
-
-					$list_form{'title'}  = Slim::Music::Info::fileName($item);
-					
-				} else {				
+				if (!$filesort) {
 
 					my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
 					$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
@@ -886,7 +876,6 @@ sub browser_addtolist_done {
 					$list_form{'artist'} = $list_form{'includeArtist'} && ($obj->contributors)[0] ne $noArtist ? ($obj->contributors)[0] : undef;
 					$list_form{'album'}	= $list_form{'includeAlbum'} && $obj->album() ne $noAlbum ? $obj->album() : undef;
 
-					$list_form{'title'}         = Slim::Music::Info::standardTitle(undef, $obj);
 				}
 
 				if (!defined $cover) {
@@ -904,6 +893,13 @@ sub browser_addtolist_done {
 						$thumb = 1;
 					}
 				}
+			}
+
+			if ($filesort || Slim::Music::Info::isDir($obj)) {
+				$list_form{'title'}  = Slim::Music::Info::fileName($item);
+			}
+			else {
+				$list_form{'title'}         = Slim::Music::Info::standardTitle(undef, $obj);
 			}
 
 			$list_form{'item'}	= $obj->id();
