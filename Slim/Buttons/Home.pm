@@ -179,10 +179,10 @@ sub menuOptions {
 		$menuChoices{$menuOption} = string($menuOption);
 	}
 	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
-	my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
-	foreach my $item (keys %{$pluginlistref}) {
-		next if (exists $disabledplugins{$item});
-		$menuChoices{$item} = $item;
+	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
+	foreach my $menuOption (keys %{$pluginsRef}) {
+		next if (exists $disabledplugins{$menuOption});
+		$menuChoices{$menuOption} = $pluginsRef->{$menuOption};
 	}
 	return %menuChoices;
 }

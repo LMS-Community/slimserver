@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.68 2004/05/06 08:13:58 kdf Exp $
+# $Id: Setup.pm,v 1.69 2004/05/07 06:50:55 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -850,8 +850,11 @@ sub initSetupConfig {
 						,'validateArgs' => [\&Slim::Buttons::Home::menuOptions]
 						,'externalValue' => sub {
 										my ($client,$value) = @_;
+										my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
 										if (Slim::Utils::Strings::stringExists($value)) {
 											return string($value);
+										} elsif (exists $pluginsRef->{$value}) {
+											return $pluginsRef->{$value};
 										} else {
 											return $value;
 										}
@@ -913,8 +916,11 @@ sub initSetupConfig {
 						,'inputTemplate' => 'setup_input_array_add.html'
 						,'externalValue' => sub {
 										my ($client,$value) = @_;
+										my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
 										if (Slim::Utils::Strings::stringExists($value)) {
 											return string($value);
+										} elsif (exists $pluginsRef->{$value}) {
+											return $pluginsRef->{$value};
 										} else {
 											return $value;
 										}
