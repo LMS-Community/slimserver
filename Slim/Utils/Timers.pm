@@ -1,6 +1,6 @@
 package Slim::Utils::Timers;
 
-# $Id: Timers.pm,v 1.1 2003/07/18 19:42:15 dean Exp $
+# $Id: Timers.pm,v 1.2 2003/07/23 19:35:22 dean Exp $
 
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -100,8 +100,7 @@ sub listTimers {
 
 #
 #  Schedule a timer for $client to fire after $when, calling $subptr with
-#  arguments @args. Returns an opaque reference to the timer, which can be
-#  used later to kill it.
+#  arguments @args.  Returns a referen to the timer so that it can be killed specifically later.
 #
 sub setTimer {
 	my ($client, $when, $subptr, @args) = @_;
@@ -131,6 +130,7 @@ sub setTimer {
 	$newtimer->{'args'} = \@args;
 
 	splice(@timers, $i, 0, $newtimer);
+	return $newtimer;
 }
 
 # throw out any pending timers that match the client and the subroutine

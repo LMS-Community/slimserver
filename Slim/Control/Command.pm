@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.1 2003/07/18 19:42:14 dean Exp $
+# $Id: Command.pm,v 1.2 2003/07/23 19:35:22 dean Exp $
 
 # SliMP3 Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -408,7 +408,7 @@ sub execute {
 					$p2 = Slim::Player::Playlist::currentSongIndex($client);
 				} else {
 				#	if (Slim::Player::Playlist::playmode($client) eq 'play') {
-				#		Slim::Player::Control::fade_volume($client, -8, \&jumpto, [$client, $p2]);
+				#		Slim::Player::Control::fade_volume($client, -0.3125, \&jumpto, [$client, $p2]);
 				#	} else {
 						Slim::Player::Playlist::jumpto($client, $p2);
 				#	}
@@ -459,11 +459,11 @@ sub execute {
 				if($vol < 0) {
 					# need to un-mute volume
 					Slim::Utils::Prefs::clientSet($client, "mute",0);
-					$fade = 8;
+					$fade = 0.3125;
 				} else {
 					# need to mute volume
 					Slim::Utils::Prefs::clientSet($client, "mute",1);
-					$fade = -8;
+					$fade = -0.3125;
 				}
 				Slim::Player::Control::fade_volume($client, $fade, \&Slim::Player::Control::mute, [$client]);
 				if (Slim::Player::Playlist::isSynced($client)) {syncFunction($client, $fade, "mute",undef);};
@@ -644,7 +644,7 @@ sub singletonRef {
 sub gotosleep {
 	my $client = shift;
 	if (Slim::Player::Client::isSliMP3($client)) {
-		Slim::Player::Control::fade_volume($client,-0.025,\&turnitoff,[$client]);
+		Slim::Player::Control::fade_volume($client,-60,\&turnitoff,[$client]);
 	}
 	$client->sleepTime(0);
 	$client->currentSleepTime(0);
@@ -655,8 +655,8 @@ sub turnitoff {
 	my $client = shift;
 	
 	# Turn off quietly
-	Slim::Player::Playlist::playmode($client,'stop');
-	Slim::Buttons::Common::setMode($client,'off');
+	execute($client, ['stop', 0]);
+	execute($client, ['power', 0]);
 }
   
 1;

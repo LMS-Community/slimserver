@@ -227,9 +227,9 @@ sub playmode {
 			} elsif ($newmode eq "pause") {
 				# since we can't count on the accuracy of the fade timers, we unfade them all, but the master calls back to unpause everybody
 				if ($everyclient eq $client) {
-					Slim::Player::Control::fade_volume($everyclient, -8, \&pauseSynced, [$client]);
+					Slim::Player::Control::fade_volume($everyclient, -0.3125, \&pauseSynced, [$client]);
 				} else {
-					Slim::Player::Control::fade_volume($everyclient, -8);
+					Slim::Player::Control::fade_volume($everyclient, -0.3125);
 				}				
 				
 			} elsif ($newmode eq "pausenow") {
@@ -243,7 +243,7 @@ sub playmode {
 				# set volume to 0 to make sure fade works properly
 				Slim::Player::Control::volume($everyclient,0);
 				Slim::Player::Control::resume($everyclient);
-				Slim::Player::Control::fade_volume($everyclient, 8);
+				Slim::Player::Control::fade_volume($everyclient, .3125);
 				
 			} elsif ($newmode eq "playout") {
 				Slim::Player::Control::playout($everyclient);

@@ -96,13 +96,15 @@ sub bass {
 
 
 # fade the volume up or down
-# $fade = amount to fade (positive to fade up, negative to fade down)
+# $fade = number of seconds to fade 100% (positive to fade up, negative to fade down) 
 # $callback is function reference to be called when the fade is complete
 # FYI 8 to 10 seems to be a good fade value
 my %fvolume;  # keep temporary fade volume for each client
 sub fade_volume {
 	my($client, $fade, $callback, $callbackargs) = @_;
 
+	my $faderate = 10;  # how often do we send updated fade volume commands per second
+	
 	if (!Slim::Player::Client::isSliMP3($client)) {
 		return 1;
 	}
@@ -130,7 +132,7 @@ sub fade_volume {
 		$fvolume{$client} = $vol;
 	}
 
-	$fvolume{$client} += $fade; # fade volume
+	$fvolume{$client} += $Slim::Player::Control::maxVolume * (1/$faderate) / $fade; # fade volume
 
 	if($fvolume{$client} <= 0 || $fvolume{$client} >= $vol) {
 		# done fading
@@ -140,7 +142,7 @@ sub fade_volume {
 	} else {
 		$::d_ui && msg("fade_volume - setting volume to $fvolume{$client}\n");
 		&volume($client, $fvolume{$client}); # set volume
-		Slim::Utils::Timers::setTimer($client, Time::HiRes::time()+0.025, \&fade_volume, ($fade, $callback, $callbackargs));
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time()+ (1/$faderate), \&fade_volume, ($fade, $callback, $callbackargs));
 	}
 }
 

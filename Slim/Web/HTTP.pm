@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.1 2003/07/18 19:42:15 dean Exp $
+# $Id: HTTP.pm,v 1.2 2003/07/23 19:35:22 dean Exp $
 
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -885,10 +885,10 @@ sub clearCaches {
 
 sub HTMLTemplateDirs {
 	my @dirs;
-	push @dirs, catdir($Bin,'html');
+	push @dirs, catdir($Bin,'HTML');
 	if ($^O eq 'darwin') {
-		push @dirs, $ENV{'HOME'} . "/Library/SlimDevices/html/";
-		push @dirs, "/Library/SlimDevices/html/";
+		push @dirs, $ENV{'HOME'} . "/Library/SlimDevices/HTML/";
+		push @dirs, "/Library/SlimDevices/HTML/";
 	}
 	return @dirs;
 }
