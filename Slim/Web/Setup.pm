@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.48 2004/03/18 00:36:32 dean Exp $
+# $Id: Setup.pm,v 1.49 2004/03/18 00:42:43 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -937,7 +937,7 @@ sub initSetupConfig {
 				my $i = 0;
 				my %formats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
 				my $formatslistref = Slim::Player::Source::Conversions();
-				foreach my $formats (sort {$formatslistref->{$a} cmp $formatslistref->{$b}}(keys %{$formatslistref})) {
+				foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
 					if (exists $paramref->{"formatslist$i"} && $paramref->{"formatslist$i"} == (exists $formats{$formats} ? 0 : 1)) {
 						delete $paramref->{"formatslist$i"};
 					}
