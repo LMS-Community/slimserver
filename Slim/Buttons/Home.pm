@@ -221,11 +221,13 @@ sub setMode {
 	if (!defined($client->curSelection($client->curDepth()))) {
 		$client->curSelection($client->curDepth(),'NOW_PLAYING');
 	}
+
 	my %params = %defaultParams;
 	$params{'header'} = \&homeheader;
 	$params{'listRef'} = \@{$homeChoices{$client}};
 	$params{'valueRef'} = \$client->curSelection($client->curDepth());
 	$params{'curMenu'} = $client->curDepth();
+
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
 	$client->update();
 }
@@ -474,6 +476,9 @@ sub updateMenu {
 	foreach my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
 		next if (exists $disabledplugins{$menuItem});
 		next if (!exists $home{$menuItem} && !exists $pluginsRef->{$menuItem});
+		if (exists $pluginsRef->{$menuItem}) {
+			$menuItem = $pluginsRef->{$menuItem};
+		}
 		push @home, $menuItem;
 	}
 	if (!scalar @home) {

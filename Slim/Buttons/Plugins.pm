@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.34 2004/12/18 04:56:44 kdf Exp $
+# $Id: Plugins.pm,v 1.35 2004/12/21 03:53:26 kdf Exp $
 #
 package Slim::Buttons::Plugins;
 
@@ -146,6 +146,9 @@ sub read_plugins {
 			);
 
 			Slim::Buttons::Home::addSubMenu("PLUGINS", $plugins{$plugin}->{'name'}, \%params);
+			
+			#add toplevel info for the option of having a plugin at the top level.
+			Slim::Buttons::Home::addMenuOption($plugins{$plugin}->{'name'},\%params);
 
 		} else {
 			$::d_plugins && msg("Can't load $fullname for Plugins menu: " . $@);
