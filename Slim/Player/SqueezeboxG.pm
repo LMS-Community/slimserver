@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.7 2004/08/24 04:28:47 kdf Exp $
+# $Id: SqueezeboxG.pm,v 1.8 2004/08/27 16:49:35 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -78,8 +78,10 @@ sub brightness {
 	
 	my $brightness = $client->SUPER::brightness($delta, 1);
 	if (!defined($brightness)) { $brightness = $client->maxBrightness(); }	
-	my $brightnesscode = pack('n', $brightnessMap[$brightness]);
-	$client->sendFrame('grfb', \$brightnesscode); 
+	if (defined($delta)) {
+		my $brightnesscode = pack('n', $brightnessMap[$brightness]);
+		$client->sendFrame('grfb', \$brightnesscode); 
+	}
 	return $brightness;
 }
 
@@ -424,8 +426,6 @@ sub drawFrameBuf {
 		}
 
 		$client->sendFrame('grfd', \$framebuf);
-		# hack: client doesn't send status on graphics updates.
-		$client->sendFrame('i2cc');
 	}
 }	
 
