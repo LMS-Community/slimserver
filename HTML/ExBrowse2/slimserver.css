@@ -175,13 +175,13 @@ a:hover {
 }
 
 #browseframe {
+	position: absolute;
 	width: 100%;
 	height: 100%;
 	border: 0;
 	padding: 0;
 	margin: 0;
 	background: black;
-	display: none;
 }
 
 /********\
@@ -333,12 +333,12 @@ a:hover {
 	left: 0;
 	width: 42px;
 	height: 43px;
-	background: url(html/images/play.png);
+	background: url(html/images/play.gif);
 	cursor: pointer;
 }
 
 #playbutton.active {
-	background: url(html/images/play.png) 0 -43px no-repeat;
+	background: url(html/images/play.gif) 0 -43px no-repeat;
 	cursor: pointer;
 }
 
@@ -347,12 +347,12 @@ a:hover {
 	left: 42px;
 	width: 23px;
 	height: 32px;
-	background: url(html/images/stop.png);
+	background: url(html/images/stop.gif);
 	cursor: pointer;
 }
 
 #stopbutton.active {
-	background: url(html/images/stop.png) 0 -32px no-repeat;
+	background: url(html/images/stop.gif) 0 -32px no-repeat;
 	cursor: pointer;
 }
 
@@ -377,12 +377,12 @@ a:hover {
 	left: 128px;
 	width: 30px;
 	height: 19px;
-	background: url(html/images/mute.png);
+	background: url(html/images/mute.gif);
 	cursor: pointer;
 }
 
 #mutebutton.active {
-	background: url(html/images/mute.png) 0 -19px no-repeat;
+	background: url(html/images/mute.gif) 0 -19px no-repeat;
 	cursor: pointer;
 }	
 
@@ -390,7 +390,7 @@ a:hover {
 	position: relative;
 	width: 400px;
 	height: 10px;
-	background: url(html/images/modebutton-bkg.png) 0 0 no-repeat;
+	background: url(html/images/modebutton-bkg.gif) 0 0 no-repeat;
 	overflow: hidden;
 }
 
@@ -402,63 +402,63 @@ a:hover {
 }
 
 #repeatone {
-	background: url(html/images/modebutton.png) 0 0 no-repeat;
+	background: url(html/images/modebutton.gif) 0 0 no-repeat;
 	left: 45px;
 	width: 26px;
 }
 
-#repeatone.active	{ background: url(html/images/modebutton.png) 0 -10px no-repeat;	}
-#repeatone:hover	{ background: url(html/images/modebutton.png) 0 -20px no-repeat;	}
-#repeatone.active:hover	{ background: url(html/images/modebutton.png) 0 -30px no-repeat;	}
+#repeatone.active	{ background: url(html/images/modebutton.gif) 0 -10px no-repeat;	}
+#repeatone:hover	{ background: url(html/images/modebutton.gif) 0 -20px no-repeat;	}
+#repeatone.active:hover	{ background: url(html/images/modebutton.gif) 0 -30px no-repeat;	}
 
 #repeatall {
 	left: 72px;
 	width: 21px;
-	background: url(html/images/modebutton.png) -27px 0px no-repeat;
+	background: url(html/images/modebutton.gif) -27px 0px no-repeat;
 }
 
-#repeatall.active	{ background: url(html/images/modebutton.png) -27px -10px no-repeat;	}
-#repeatall:hover	{ background: url(html/images/modebutton.png) -27px -20px no-repeat;	}
-#repeatall.active:hover	{ background: url(html/images/modebutton.png) -27px -30px no-repeat;	}
+#repeatall.active	{ background: url(html/images/modebutton.gif) -27px -10px no-repeat;	}
+#repeatall:hover	{ background: url(html/images/modebutton.gif) -27px -20px no-repeat;	}
+#repeatall.active:hover	{ background: url(html/images/modebutton.gif) -27px -30px no-repeat;	}
 
 #repeatoff {
 	left: 94px;
 	width: 22px;
-	background: url(html/images/modebutton.png) -49px 0px no-repeat;
+	background: url(html/images/modebutton.gif) -49px 0px no-repeat;
 }
 
-#repeatoff.active	{ background: url(html/images/modebutton.png) -49px -10px no-repeat;	}
-#repeatoff:hover	{ background: url(html/images/modebutton.png) -49px -20px no-repeat;	}
-#repeatoff.active:hover	{ background: url(html/images/modebutton.png) -49px -30px no-repeat;	}
+#repeatoff.active	{ background: url(html/images/modebutton.gif) -49px -10px no-repeat;	}
+#repeatoff:hover	{ background: url(html/images/modebutton.gif) -49px -20px no-repeat;	}
+#repeatoff.active:hover	{ background: url(html/images/modebutton.gif) -49px -30px no-repeat;	}
 
 #shufsongs {
 	left: 173px;
 	width: 36px;
-	background: url(html/images/modebutton.png) -72px 0px no-repeat;
+	background: url(html/images/modebutton.gif) -72px 0px no-repeat;
 }
 
-#shufsongs.active	{ background: url(html/images/modebutton.png) -72px -10px no-repeat;	}
-#shufsongs:hover	{ background: url(html/images/modebutton.png) -72px -20px no-repeat;	}
-#shufsongs.active:hover	{ background: url(html/images/modebutton.png) -72px -30px no-repeat;	}
+#shufsongs.active	{ background: url(html/images/modebutton.gif) -72px -10px no-repeat;	}
+#shufsongs:hover	{ background: url(html/images/modebutton.gif) -72px -20px no-repeat;	}
+#shufsongs.active:hover	{ background: url(html/images/modebutton.gif) -72px -30px no-repeat;	}
 
 #shufalbums {
 	left: 210px;
 	width: 44px;
-	background: url(html/images/modebutton.png) -109px 0px no-repeat;
+	background: url(html/images/modebutton.gif) -109px 0px no-repeat;
 }
 
-#shufalbums.active	{ background: url(html/images/modebutton.png) -109px -10px no-repeat;	}
-#shufalbums:hover	{ background: url(html/images/modebutton.png) -109px -20px no-repeat;	}
-#shufalbums.active:hover{ background: url(html/images/modebutton.png) -109px -30px no-repeat;	}
+#shufalbums.active	{ background: url(html/images/modebutton.gif) -109px -10px no-repeat;	}
+#shufalbums:hover	{ background: url(html/images/modebutton.gif) -109px -20px no-repeat;	}
+#shufalbums.active:hover{ background: url(html/images/modebutton.gif) -109px -30px no-repeat;	}
 
 #shufnone {
 	left: 255px;
 	width: 22px;
-	background: url(html/images/modebutton.png) -49px 0px no-repeat;
+	background: url(html/images/modebutton.gif) -49px 0px no-repeat;
 }
-#shufnone.active	{ background: url(html/images/modebutton.png) -49px -10px no-repeat; }
-#shufnone:hover		{ background: url(html/images/modebutton.png) -49px -20px no-repeat; }
-#shufnone.active:hover	{ background: url(html/images/modebutton.png) -49px -30px no-repeat; }
+#shufnone.active	{ background: url(html/images/modebutton.gif) -49px -10px no-repeat; }
+#shufnone:hover		{ background: url(html/images/modebutton.gif) -49px -20px no-repeat; }
+#shufnone.active:hover	{ background: url(html/images/modebutton.gif) -49px -30px no-repeat; }
 
 
 .sel {

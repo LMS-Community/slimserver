@@ -17,6 +17,8 @@ var songCount;
 
 var controlLockout;
 
+var lastCoverArt;
+
 function initStatus() {
         progbar = document.getElementById("progressBar");
 
@@ -38,7 +40,7 @@ function initStatus() {
                 theImg = document.createElement('IMG');
                 theImg.style.height = (i*2 + 4) + "px";
                 theImg.style.width = "7px";
-                theImg.src = 'html/images/volpixel.png';
+                theImg.src = 'html/images/volpixel.gif';
                 theImg.hspace = 0;
                 theImg.volval = i*10;
                 theImg.onclick = doVolume;
@@ -237,16 +239,19 @@ function displayShuffle(mode) {
 
 function displayVolume(volume) {
         for (i = 0; i*10 <= volume; i++) {
-                document.getElementById("volume").childNodes[i].src = 'html/images/volpixel_s.png';
+                document.getElementById("volume").childNodes[i].src = 'html/images/volpixel_s.gif';
         }
         for (; i < 11; i++) {
-                document.getElementById("volume").childNodes[i].src = 'html/images/volpixel.png';
+                document.getElementById("volume").childNodes[i].src = 'html/images/volpixel.gif';
         }
 }
 
 function displayCoverArt(url) {
 	if (url != "") {
-		document.getElementById("coverart").src = "/music/" + url + "/thumb.jpg";
+		if (url != lastCoverArt) {
+			document.getElementById("coverart").src = "/music/" + url + "/thumb.jpg";
+			lastCoverArt = url;
+		}
 		document.getElementById("coverart").style.position = "";
 		document.getElementById("coverart").style.visibility = "visible";
 	} else {
@@ -343,6 +348,7 @@ function songCounterUpdate() {
 			}
         		progbar.lastChild.nodeValue = ' ' + timetostr(0) + ' / ' + totalTime;
 			clearedLastTime = 1;
+			lastCounterPos = 0;
 		}
 	} else {
 		clearedLastTime = 0;

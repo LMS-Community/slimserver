@@ -79,10 +79,11 @@ function updatePlaylist_handler(req, url) {
 
 	if (playlistNames.length < newPlaylistNames.length) {
 		for (i = baselength; i < newPlaylistNames.length; i++) {
-			theTR = listbox.insertRow(i);
+			theTR = listbox.insertRow(-1);
 			theTR.url = newPlaylistURLs[i];
 			if (i == csIndex) {
 				theTR.className = "currentsong";
+
 			} else {
 				theTR.className = "";
 			}
@@ -266,12 +267,16 @@ function doSelect(e) {
 	et = (e.target || e.srcElement);
 	if (!et) return;
 	if (et && et.parentNode && et.parentNode.parentNode) {
-		selIndex = et.parentNode.parentNode.rowIndex;
+		etpp = et.parentNode.parentNode;
+		if (etpp.rowIndex) {
+			selIndex = etpp.rowIndex;
+		} else {
+			selIndex = etpp.parentNode.rowIndex;
+		}
 	} else {
 		return;
 	}
 	if (selIndex < 0 || selIndex >= songCount) return;
-
 	displayPlayMode("play");
 	currentSong = selIndex + 1;
 	displayCurrentSong(playlistNames[selIndex], playlistArtists[selIndex], playlistAlbums[selIndex]);
@@ -287,7 +292,7 @@ function doArtist(e) {
 	et = (e.target || e.srcElement);
 	if (!et) return;
 
-	// XXX FIXME this is disabled until the artist id is provided in status_list.html
+	// XXX FIXME this is disabled for now
 }
 
 function doSave() {

@@ -1,3 +1,4 @@
-- KDF's display weirdness (status data not appearing under OSX Firefox / Safari)
 - Artist count in home gets cut off at 800x600
-- Power
+- Power on/off
+- Cover art rendering in Safari
+- Artist links in playlist

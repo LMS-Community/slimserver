@@ -8,20 +8,18 @@ function goplayersettings() {
 	browseurl("setup.html?page=player&playerid=" + currentPlayer);
 }
 
-function browseurl(url) {
-	document.getElementById("browseframe").src = "/ExBrowse2/" + url + "&player=" + currentPlayer;
+function goadvancedsearch() {
+	browseurl('advanced_search.html?');
+	resetLinks(document.getElementById('library'));
 }
 
-function doSearchSubmit() {
-	try {
-		searchbox = document.getElementById('searchmode');
-		searchtext = document.getElementById('searchquery').value;
-		resetLinks(document.getElementById('library'));
-		browseurl(unescape(searchbox.options[searchbox.selectedIndex].value) + 'query=' + searchtext);
-		document.getElementById('searchquery').value = '';
-	} catch (err) {
-	}
-	return false;
+function gosearch() {
+	browseurl('livesearch.html?');
+	resetLinks(document.getElementById('library'));
+}
+
+function browseurl(url) {
+	document.getElementById("browseframe").src = "/ExBrowse2/" + url + "&player=" + currentPlayer;
 }
 
 function loadHome() {
@@ -123,8 +121,7 @@ function loadCookie() {
 }
 
 function gobrowse() {
-	gobrowseindex(document.getElementById("browsemode").selectedIndex,
-		document.getElementById("searchmode").selectedIndex);
+	gobrowseindex(document.getElementById("browsemode").selectedIndex, 0);
 }
 
 function resetcookie() {

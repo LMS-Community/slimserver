@@ -31,8 +31,6 @@ function maybeDoneLoading() {
 function hideLoadingScreen() {
 	document.getElementById("loading").style.display = "none";
 	document.getElementById("browsemode").style.display = "inline";
-	document.getElementById("searchmode").style.display = "inline";
-	document.getElementById("searchquery").style.display = "inline";
 	document.getElementById("playersel").style.display = "inline";
 	document.getElementById("browseframe").style.display = "block";
 }
@@ -46,7 +44,8 @@ function scrollfix(divname, scrollbase) {
 	if (scrollcurrent != divname && divname != "browsescroll") {	
 		var div = document.getElementById(divname);
 		var s = div.scrollTop;
-		document.getElementById(scrollbase).focus();
+		try { document.getElementById(scrollbase).focus();
+		} catch(e) {}
 		div.scrollTop = s;
 	}
 	scrollcurrent = divname;

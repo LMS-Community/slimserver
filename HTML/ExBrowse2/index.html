@@ -74,7 +74,7 @@
   [% "CURRENT_PLAYLIST" | string; "COLON" | string %]
   <span id="playlistinfo"></span>
   [
-  <span id="savebutton"><a id="savelink"     class="fakelink" onclick="doSave()">[% "SAVE" | string %]</a> | </span>
+  <span id="savebutton"><a id="savelink" class="fakelink" onclick="doSave()">[% "SAVE" | string %]</a> | </span>
   <a id="downloadlink" class="fakelink" onclick="doDownload()">[% "DOWNLOAD" | string %]</a> |
   <a id="clearlink"    class="fakelink" onclick="doClear()">[% "CLEAR" | string %]</a> ]
  </div>
@@ -87,7 +87,7 @@
 </div>
 
 <div id="homebar" onmouseover="scrollfix()">
- <form onsubmit="return(doSearchSubmit());" action="">
+ <form onsubmit="return false;" action="">
   <p id="topmenu">
    <a class="fakelink activemode" onclick="dobold(event);gobrowse()" id="library">Music Library</a> |
    <a class="fakelink" onclick="dobold(event);browseurl('setup.html?page=server')">Server Settings</a> |
@@ -108,14 +108,8 @@
     <option value="browsedb.html?hierarchy=artist,album,track&amp;level=0">[% "BROWSE_BY_ARTIST" | string %]</option>
     <option value="browsedb.html?hierarchy=album,track&amp;level=0">[% "BROWSE_BY_ALBUM" | string %]</option> -->
    </select>
-   /
-   <select class="formfield" name="searchmode" id="searchmode" size="1" onchange="resetcookie()">
-  [% IF additionalLinks.search ; FOREACH link = additionalLinks.search %]
-    <option value="[% link.value | uri %]">[% link.key | string %]</option>
-  [% END; END %]
-   </select>
-   for
-   <input class="formfield" size="20" name="searchquery" id="searchquery" type="text"/>
+   / <a class="fakelink" style="font-weight: bold;" onclick="gosearch()">[% "SEARCH" | string %]</a>
+   / <a class="fakelink" style="font-weight: bold;" onclick="goadvancedsearch()">[% "ADVANCEDSEARCH" | string %]</a>
   </p>
   <p id="toppwd"></p>
  </form>
@@ -132,7 +126,7 @@
 </div>
 
 <div id="outerbrowse">
- <iframe id="browseframe" src="html/blank.html" frameborder="0" scrolling="yes"> </iframe>
+ <iframe id="browseframe" name="browseframe" src="html/blank.html" frameborder="0" scrolling="yes"></iframe>
 </div>
 
 <div>

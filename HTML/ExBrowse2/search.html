@@ -1,24 +1,35 @@
-[% PROCESS header.html pwd="yes" %]
+[% PROCESS header.html scripts="yes" %]
 
 <div id="pwd">
  [% IF searchlist_pagebar %]
  <span class="pagebar">[% searchlist_pagebar %]</span>
- [% END %]
- <a>[%
- SWITCH type; 
-  CASE "artist"; "SEARCHFOR_ARTIST" | string;
-  CASE 'album'; "SEARCHFOR_ALBUM" | string;
-  CASE 'song'; "SEARCHFOR_SONGTITLE" | string; END %]</a> /
- [% IF numresults != '-1' %]
-  [% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %]
-  [% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %]
-  [% IF type == 'song' %][% "SONGSMATCHING" | string %][% END %]
-  "[% query %]"[% "COLON" | string %] [% numresults %]
- [% END %]
+ [% END %]<a onclick="parent.browseurl('livesearch.html?');">[% "SEARCH" | string %]</a> /
 </div>
 
+<p>
+ <form id="searchForm" name="searchForm" method="get" action="livesearch.html">
+ [% IF liveSearch %]
+  <input type="text" id="searchquery" name="query" size="40" autocomplete="off" onkeydown="searchkey()" />
+ [% ELSE %]
+  <input type="text" id="searchquery" name="query" size="40" value="[% query %]"/>
+ [% END %]
+  <input name="submit" type=submit class="stdclick" value=[% "SEARCH" | string %]/>
+  <input type="hidden" value="1" name="manualSearch"/>
+  <input type="hidden" value="[% player %]" name="player"/>
+ </form>
+ <br/>
+ <div id="activesearch"><div id="activesearchdiv"></div></div>
+ [% IF searchError %]
+  [% searchError %]
+ [% END %]
+</p>
+
+[% IF searchlist_header %]
+<p>[% searchlist_header %][% "COLON" | string %]</p>
+[% END %] 
+
 <table>
- [% browse_list %]
+ [% browse_list %] 
 </table>
 
 </body>
