@@ -1539,14 +1539,16 @@ sub _generateContentFromFile {
 		my $output = '';
 
 		# Always set the locale
-		if ($Slim::Utils::Misc::locale && $Slim::Utils::Misc::locale =~ /utf\d+/) {
+		# The web display will always be UTF-8 for perl 5.8 systems,
+		# while it will be in the current locale (likely an
+		# iso-8859-*) for perl 5.6 systems.
+		if ($] > 5.007) {
 
-			$params->{'LOCALE'} = $Slim::Utils::Misc::locale;
-			$params->{'LOCALE'} =~ s/utf(\d+)/utf-$1/;
+			$params->{'LOCALE'} = 'utf-8';
 
 		} else {
 
-			$params->{'LOCALE'} = $Slim::Utils::Misc::locale || 'utf-8';
+			$params->{'LOCALE'} = $Slim::Utils::Misc::locale || 'iso-8859-1';
 		}
 
 		unless ($template->process($path,$params,\$output)) {
