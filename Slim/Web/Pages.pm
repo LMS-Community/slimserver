@@ -1176,10 +1176,6 @@ sub playlist {
 		$listBuild{'currsongind'}   = Slim::Player::Source::currentSongIndex($client);
 		$listBuild{'item'}          = $listBuild{'start'};
 
-		# So we only do this once per page request.
-		$listBuild{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
-		$listBuild{'noAlbum'}       = Slim::Utils::Strings::string('NO_ALBUM');
-
 		if (buildPlaylist($client, $params, $callback, $httpClient, $response, \%listBuild)) {
 
 			Slim::Utils::Scheduler::add_task(
@@ -1233,6 +1229,9 @@ sub buildPlaylist {
 
 	my $ds           = Slim::Music::Info::getCurrentDataStore();
 
+	my $noArtist     = Slim::Utils::Strings::string('NO_ARTIST');
+	my $noAlbum      = Slim::Utils::Strings::string('NO_ALBUM');
+
 	while ($listBuild->{'item'} < ($listBuild->{'end'} + 1) && $itemCount < $itemsPerPass) {
 
 		my %list_form = %$params;
@@ -1240,6 +1239,10 @@ sub buildPlaylist {
 		$list_form{'myClientState'} = $client;
 		$list_form{'num'}           = $listBuild->{'item'};
 		$list_form{'odd'}           = ($listBuild->{'item'} + $listBuild->{'offset'}) % 2;
+
+		#
+		$list_form{'noArtist'}      = $noArtist;
+		$list_form{'noAlbum'}       = $noAlbum;
 
 		if ($listBuild->{'item'} == $listBuild->{'currsongind'}) {
 			$list_form{'currentsong'} = "current";

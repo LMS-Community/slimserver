@@ -27,10 +27,29 @@
 			<a href="browsedb.html?hierarchy=track&level=0&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a>
 		[% END %]
 
-		[% IF artists; "BY" | string; END %]
-		[% WHILE (artist = artists.next) %]
-			<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
+		<!-- Don't display "by No Artist" if it's a single artist / remote stream -->
+		[% IF artists.count == 1 %]
+
+			[% artist = artists.next %]
+
+			[% IF artist && artist != noArtist %]
+
+				[% "BY" | string %]
+
+				<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
+			[% END %]
+
+		[% ELSE %]
+
+			[% WHILE (artist = artists.next) %]
+
+				[% NEXT IF artist.name == noArtist %]
+
+				<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
+			[% END %]
+
 		[% END %]
+
 		</span>
 	</td>
 	<td valign="center" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %] width="13">
