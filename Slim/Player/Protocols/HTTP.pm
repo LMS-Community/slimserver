@@ -151,8 +151,16 @@ sub request {
 
 		$::d_remotestream && msg("header: " . $header);
 		if ($header =~ /^ic[ey]-name:\s*(.+)$CRLF$/i) {
-			Slim::Music::Info::setTitle($infoUrl, $1);
-			${*$self}{'title'} = $1;
+
+			my $title = $1;
+
+			if ($title && $] > 5.007) {
+				$title = Encode::decode('iso-8859-1', $title);
+			}
+
+			Slim::Music::Info::setTitle($infoUrl, $title);
+
+			${*$self}{'title'} = $title;
 		}
 
 		if ($header =~ /^icy-br:\s*(.+)\015\012$/i) {
@@ -301,9 +309,14 @@ sub readMetaData {
 		$::d_remotestream && msg("metadata: $metadata\n");
 		
 		if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
-			my $url = ${*$self}{'infoUrl'};
+
+			my $url      = ${*$self}{'infoUrl'};
 			my $oldtitle = Slim::Music::Info::title($url);
-			my $title = $1;
+			my $title    = $1;
+
+			if ($title && $] > 5.007) {
+				$title = Encode::decode('iso-8859-1', $title);
+			}
 			
 			# capitalize titles that are all lowercase
 			if (lc($title) eq $title) {
