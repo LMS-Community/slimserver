@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.1 2003/07/18 19:42:14 dean Exp $
+# $Id: Info.pm,v 1.2 2003/07/24 22:08:49 dean Exp $
 
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,7 +11,6 @@ use strict;
 
 
 use File::Spec::Functions qw(:ALL);
-use MLDBM qw(GDBM_File Storable);
 use Fcntl;
 
 use MP3::Info;

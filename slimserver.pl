@@ -59,6 +59,9 @@ use Socket qw(:DEFAULT :crlf);
 
 use lib ($Bin, catdir($Bin,'CPAN'));
 
+# this goes first to make sure we load up Time::HiRes properly
+use Slim::Utils::Misc;
+
 use Slim::Display::Animation;
 use Slim::Buttons::Browse;
 use Slim::Buttons::BrowseMenu;
@@ -78,7 +81,6 @@ use Slim::Hardware::IR;
 use Slim::Music::Info;
 use Slim::Music::iTunes;
 use Slim::Music::MusicFolderScan;
-use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Player::Playlist;
 use Slim::Utils::Prefs;
