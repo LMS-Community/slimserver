@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.77 2004/05/14 15:04:20 dean Exp $
+# $Id: Setup.pm,v 1.78 2004/05/14 15:07:50 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2715,8 +2715,8 @@ sub validateIsDir {
 sub validateIsAudioDir {
 	my $val = shift;
 	
-    my $allowEmpty = shift;
- 
+	my $allowEmpty = shift;
+	
 	if (-d $val) {
 		$val =~ s|[/\\]$||;
 		return $val;
