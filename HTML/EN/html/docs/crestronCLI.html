@@ -248,6 +248,22 @@ with the player used in the query.  Multiple ID's are separated by a space. To u
   <p>Request: &quot;04:20:00:12:23:45 playlist clear&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist clear&lt;CR&gt;&quot;</p>
 </blockquote>
 <hr>
+<p><strong>playlist name ?</strong><br>
+<p>The &quot;playlist name&quot; command allows for querying the name of the playlist last loaded into the Now Playing playlist. 
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist name ?&lt;CR&gt;&quot;<br>
+     Response: &quot;04:20:00:12:23:45 playlist name Jazz%20Favorites&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>playlist url ?</strong><br>
+<p>The &quot;url&quot; command allows for querying the URL of the playlist last loaded into the Now Playing playlist. 
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist url ?&lt;CR&gt;&quot;<br>
+     Response: &quot;04:20:00:12:23:45 playlist url file%3A%2F%2F%2FUsers%2Fdean%2FMusic%2Ftestmusic%2FZapped%2520Songs.m3u&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
 <p><strong>playlist index &lt;<em>index</em>|?&gt;</strong></p>
 <p>The &quot;playlist index&quot; command sets or queries the song that is currently 
   playing by index. When setting, a zero-based value may be used to indicate which 

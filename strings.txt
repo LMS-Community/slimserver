@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.153 2004/12/08 06:40:49 kdf Exp $
+# $Id: strings.txt,v 1.154 2004/12/11 17:36:27 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -7653,7 +7653,7 @@ INFORMATION_NO_VERSION
 INFORMATION_DATE_FORMAT
 	DE	${shortdateFormat} um ${timeFormat}
 	EN	${shortdateFormat} at ${timeFormat}
-	ES	${Formatofechacorta} en ${Formatotiempo}
+	ES	${shortdateFormat} en ${timeFormat}
 	FR	${shortdateFormat} à ${timeFormat}
 	NO	${shortdateFormat} kl ${timeFormat}
 

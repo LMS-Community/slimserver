@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.50 2004/11/25 03:51:03 kdf Exp $
+# $Id: Command.pm,v 1.51 2004/12/11 17:36:28 dean Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -101,6 +101,9 @@ sub execute {
 	# playlist		duration		<index>		?
 	# playlist		tracks		?
 	# playlist		zap			<index>
+	# playlist		name ?
+	# playlist		url ?
+	
 	# mixer			volume		(0 .. 100)|(-100 .. +100)
 	# mixer			volume		?
 	# mixer			balance		(-100 .. 100)|(-200 .. +200)			(not implemented!)
@@ -543,7 +546,10 @@ sub execute {
 				} else {
 						Slim::Player::Source::jumpto($client, $p2);
 				}
-			
+			} elsif ($p1 eq "name") {
+				$p2 = Slim::Music::Info::standardTitle($client,$client->currentPlaylist());
+			} elsif ($p1 eq "url") {
+				$p2 = $client->currentPlaylist();
 			} elsif ($p1 eq "tracks") {
 				$p2 = Slim::Player::Playlist::count($client);
 			} elsif ($p1 eq "duration") {
