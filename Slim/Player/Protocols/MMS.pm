@@ -1,6 +1,6 @@
 package Slim::Player::Protocols::MMS;
 		  
-# $Id: MMS.pm,v 1.5 2004/12/04 17:55:32 vidur Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -37,19 +37,15 @@ sub new {
 
 	my $maxRate = defined($client) ? Slim::Utils::Prefs::maxRate($client) : 0;
 	my $quality = Slim::Utils::Prefs::clientGet($client,'lameQuality');
-	$command = Slim::Player::Source::tokenizeConvertCommand($command,
-															$type, 
-															$url, $url,
-															0, $maxRate, 1, 
-															$quality);
+	$command = Slim::Player::Source::tokenizeConvertCommand($command, $type, $url, $url, 0, $maxRate, 1, $quality);
 
 	my $self = $class->SUPER::new(undef, $command);
 
 	return $self;
 }
 
-
 1;
+
 __END__
 
 # Local Variables:

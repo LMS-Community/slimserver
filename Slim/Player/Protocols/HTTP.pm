@@ -1,6 +1,6 @@
 package Slim::Player::Protocols::HTTP;
 		  
-# $Id: HTTP.pm,v 1.4 2004/11/03 18:19:40 vidur Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -347,15 +347,12 @@ sub skipBack {
 	return 0;
 }
 
-
 1;
+
 __END__
+
 
 # Local Variables:
 # tab-width:4
 # indent-tabs-mode:t
 # End:
-
-
-
-
