@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.66 2004/02/04 23:32:53 dean Exp $
+# $Id: HTTP.pm,v 1.67 2004/02/11 19:20:27 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1028,7 +1028,8 @@ sub generateresponse {
 	if (defined($contentType)) {
 		if ($contentType =~ /image/) {
 			# images should expire from cache one year from now
-			my $imageExpireHeader = strftime "%a %b %d %H:%M:%S %Y", gmtime(time + 31536000);
+			# get the format right: Thu, 01 Dec 1994 16:00:00 GMT
+			my $imageExpireHeader = strftime "%a, %d %b %Y %H:%M:%S GMT", gmtime(time + 31536000);
 			$headers{"Expires"} = "$imageExpireHeader";
 		} else {
 			$headers{"Expires"} = "0";
