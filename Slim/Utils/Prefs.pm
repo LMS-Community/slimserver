@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.96 2004/12/17 10:09:37 kdf Exp $
+# $Id: Prefs.pm,v 1.97 2005/01/04 03:38:53 dsully Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -233,7 +233,7 @@ my %prefChange = (
 			mkdir $newvalue || ($::d_files && msg("Could not create $newvalue\n"));
 		}
 		Slim::Buttons::Browse::init();
-		foreach my $client (Slim::Player::Client::clients()) {
+		for my $client (Slim::Player::Client::clients()) {
 			Slim::Buttons::Home::updateMenu($client);
 		}
 	}
@@ -246,7 +246,7 @@ my %prefChange = (
 		my $newvalue = shift;
 		if ($newvalue) {
 			Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
-			foreach my $client (Slim::Player::Client::clients()) {
+			for my $client (Slim::Player::Client::clients()) {
 				next if Slim::Player::Sync::isSlave($client);
 				Slim::Player::Playlist::modifyPlaylistCallback($client,['playlist','load_done']);
 			}
@@ -304,7 +304,7 @@ sub onChange {
 # This makes sure all the server preferences defined in %DEFAULT are in the pref file.
 # If they aren't there already they are set to the value in %DEFAULT
 sub checkServerPrefs {
-	foreach my $key (keys %DEFAULT) {
+	for my $key (keys %DEFAULT) {
 		if (!defined($prefs{$key})) {
 			if (ref($DEFAULT{$key} eq 'ARRAY')) {
 				my @temp = @{$DEFAULT{$key}};
@@ -320,7 +320,7 @@ sub checkServerPrefs {
 sub initClientPrefs {
 	my $client = shift;
 	my $defaultPrefs = shift;
-	foreach my $key (keys %{$defaultPrefs}) {
+	for my $key (keys %{$defaultPrefs}) {
 		my $clientkey = $client->id() . '-' . $key;
 		if (!defined($prefs{$clientkey})) {
 			if (ref($defaultPrefs->{$key}) eq 'ARRAY') {
@@ -388,8 +388,7 @@ sub clientGetArray {
 	return getArray($client->id() . "-" . $arrayPref);
 }
 # get($pref)
-sub get 
-{ 
+sub get { 
 	return $prefs{$_[0]} 
 };
 
@@ -398,6 +397,8 @@ sub getInd {
 	return $prefs{(shift)}[(shift)];
 }
 
+# Ugh - this should be a method on $client.
+#
 # clientGet($client, $pref [,$ind])
 sub clientGet {
 	my $client = shift;
@@ -450,6 +451,8 @@ sub set {
 	onChange($key, $value, $ind);
 	#must mark $ind as defined or indexed prefs cause an error in this msg
 	$::d_prefs && msg("Setting prefs $key".defined($ind)." equal to " . ((defined $prefs{$key}) ? $prefs{$key} : "undefined") . "\n");
+
+	# We aggressively write out prefs - we probably shouldn't do this.
 	writePrefs();
 }
 
@@ -481,7 +484,7 @@ sub maxRate {
 	# if we're the master, make sure we return the lowest common denominator bitrate.
 	my @playergroup = ($client, Slim::Player::Sync::syncedWith($client));
 	
-	foreach my $everyclient (@playergroup) {
+	for my $everyclient (@playergroup) {
 		next if Slim::Utils::Prefs::clientGet($everyclient,'silent');
 		my $otherRate = maxRate($everyclient, 1);
 		
@@ -540,32 +543,39 @@ sub clientIsDefined {
 }
 
 sub writePrefs {
-	if ($canWrite) {
-		my $writeFile = prefsFile();
+
+	return unless $canWrite;
+
+	my $writeFile = prefsFile();
 		
-		$::d_prefs && msg("Writing out prefs in $writeFile\n");
-		
-		if (open(NUPREFS, ">$writeFile")) {
-			foreach my $k (sort keys (%prefs)) {
-				if (defined $prefs{$k}) {
-					if (ref($prefs{$k}) eq 'ARRAY') {
-						print NUPREFS ($k . '# = ' . getArrayMax($k) . "\n");
-						my $i;
-						foreach my $val (@{$prefs{$k}}) {
-							print NUPREFS ($k . $i++ . " = " . $val . "\n");
-						}
-					} else {
-						print NUPREFS ($k . " = " . $prefs{$k} . "\n");
-					}
-				}
+	$::d_prefs && msg("Writing out prefs in $writeFile\n");
+	
+	open(NUPREFS, ">$writeFile") or do {
+		msg("Couldn't write preferences file out $writeFile\n");
+		return;
+	};
+
+	for my $k (sort keys (%prefs)) {
+
+		next unless defined $prefs{$k};
+
+		if (ref($prefs{$k}) eq 'ARRAY') {
+
+			print NUPREFS ($k . '# = ' . getArrayMax($k) . "\n");
+
+			my $i;
+
+			for my $val (@{$prefs{$k}}) {
+				print NUPREFS ($k . $i++ . " = " . $val . "\n");
 			}
-			close NUPREFS;
+
 		} else {
-			msg("Couldn't write preferences file out $writeFile\n");
+			print NUPREFS ($k . " = " . $prefs{$k} . "\n");
 		}
 	}
-}
 
+	close NUPREFS;
+}
 
 sub preferencesPath {
 
@@ -583,13 +593,15 @@ sub preferencesPath {
 	
 	$::d_prefs && msg("The default prefs directory is $prefsPath\n");
 
-	return  $prefsPath;
+	return $prefsPath;
 }
 
 sub prefsFile {
 	my $setFile = shift;
 	
-	if (defined $setFile) { $prefsFile = $setFile; }
+	if (defined $setFile) { 
+		$prefsFile = $setFile;
+	}
 	
 	if (defined($prefsFile)) {
 		return $prefsFile;

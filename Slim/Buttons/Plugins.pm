@@ -1,4 +1,5 @@
-#
+package Slim::Buttons::Plugins;
+
 # Plugins.pm by Andrew Hedges (andrew@hedges.me.uk) October 2002
 # Re-written by Kevin Walsh (kevin@cursor.biz) January 2003
 #
@@ -9,9 +10,8 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.36 2004/12/22 01:12:00 kdf Exp $
+# $Id: Plugins.pm,v 1.37 2005/01/04 03:38:52 dsully Exp $
 #
-package Slim::Buttons::Plugins;
 
 use strict;
 
@@ -39,11 +39,31 @@ use lib (pluginDirs());
 
 # set to 1 to pick up modules on the fly rather than
 # on the first visit to the plug-ins section
-my $read_onfly = Slim::Utils::Prefs::get('plugins-onthefly');
+my $read_onfly;
 my %plugins = ();
 my %curr_plugin = ();
 my $plugins_read;
 my %playerplugins = ();
+
+sub init {
+	no strict 'refs';
+
+	# Do this at runtime, not compile time.
+	$read_onfly = Slim::Utils::Prefs::get('plugins-onthefly');
+
+	for my $plugindir (pluginDirs()) {
+		unshift @INC,  $plugindir;
+	}
+
+	for my $plugin (enabledPlugins()) {
+		# We use initPlugin() instead of the more succinct
+		# init() because it's less likely to cause backward
+		# compatibility problems.
+		if (exists &{"Plugins::${plugin}::initPlugin"}) {
+			&{"Plugins::${plugin}::initPlugin"}();
+		}
+	}
+}
 
 sub enabledPlugins {
 	my $client = shift;
@@ -331,23 +351,6 @@ sub addSetupGroups {
 		}
 	}
 	$addGroups = 1;
-}
-
-sub init {
-	no strict 'refs';
-
-	for my $plugindir (pluginDirs()) {
-		unshift @INC,  $plugindir;
-	}
-
-	for my $plugin (enabledPlugins()) {
-		# We use initPlugin() instead of the more succinct
-		# init() because it's less likely to cause backward
-		# compatibility problems.
-		if (exists &{"Plugins::${plugin}::initPlugin"}) {
-			&{"Plugins::${plugin}::initPlugin"}();
-		}
-	}
 }
 
 sub shutdownPlugins {

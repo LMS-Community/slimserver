@@ -1,6 +1,6 @@
 package Slim::Buttons::Search;
 
-# $Id: Search.pm,v 1.14 2004/12/14 19:18:22 grotus Exp $
+# $Id: Search.pm,v 1.15 2005/01/04 03:38:52 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -17,68 +17,97 @@ use Slim::Display::Display;
 my @defaultSearchChoices = qw(ARTISTS ALBUMS SONGS);
 my $rightarrow = Slim::Display::Display::symbol('rightarrow');
 
-my %current;
-my %context;
+my %current    = ();
+my %context    = ();
+my %menuParams = ();
 
-my %menuParams = (
-	'SEARCH' => {
-		'listRef' => \@defaultSearchChoices
-		,'stringExternRef' => 1
-		,'header' => 'SEARCH'
-		,'stringHeader' => 1
-		,'headerAddCount' => 1
-		,'callback' => \&searchExitHandler
-		,'overlayRef' => sub {return (undef,Slim::Display::Display::symbol('rightarrow'));}
-		,'overlayRefArgs' => ''
-		,'submenus' => {
-				'ARTISTS' => {
-					'useMode' => 'INPUT.Text'
-					,'header' => 'SEARCHFOR_ARTISTS'
-					,'stringHeader' => 1
-					,'cursorPos' => 0
-					,'charsRef' => 'UPPER'
-					,'numberLetterRef' => 'UPPER'
-					,'callback' => \&searchHandler
-				}
-				,'ALBUMS' => {
-					'useMode' => 'INPUT.Text'
-					,'header' => 'SEARCHFOR_ALBUMS'
-					,'stringHeader' => 1
-					,'cursorPos' => 0
-					,'charsRef' => 'UPPER'
-					,'numberLetterRef' => 'UPPER'
-					,'callback' => \&searchHandler
-				}
-				,'SONGS' => {
-					'useMode' => 'INPUT.Text'
-					,'header' => 'SEARCHFOR_SONGS'
-					,'stringHeader' => 1
-					,'cursorPos' => 0
-					,'charsRef' => 'UPPER'
-					,'numberLetterRef' => 'UPPER'
-					,'callback' => \&searchHandler
-				}
+sub init {
+	my %subs = (
+
+		'SEARCH_FOR_ARTISTS' => sub {
+			return Slim::Buttons::Search::searchFor(shift, 'ARTISTS');
+		},
+
+		'SEARCH_FOR_ALBUMS' => sub {
+			return Slim::Buttons::Search::searchFor(shift, 'ALBUMS');
+		},
+
+		'SEARCH_FOR_SONGS' => sub {
+			return Slim::Buttons::Search::searchFor(shift, 'SONGS');
 		}
-	}
+	);
 
-);
+	#
+	%menuParams = (
+		'SEARCH' => {
+			'listRef' => \@defaultSearchChoices,
+			'stringExternRef' => 1,
+			'header' => 'SEARCH',
+			'stringHeader' => 1,
+			'headerAddCount' => 1,
+			'callback' => \&searchExitHandler,
+			'overlayRef' => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+			'overlayRefArgs' => '',
+			'submenus' => {
+
+				'ARTISTS' => {
+					'useMode' => 'INPUT.Text',
+					'header' => 'SEARCHFOR_ARTISTS',
+					'stringHeader' => 1,
+					'cursorPos' => 0,
+					'charsRef' => 'UPPER',
+					'numberLetterRef' => 'UPPER',
+					'callback' => \&searchHandler,
+				},
+
+				'ALBUMS' => {
+					'useMode' => 'INPUT.Text',
+					'header' => 'SEARCHFOR_ALBUMS',
+					'stringHeader' => 1,
+					'cursorPos' => 0,
+					'charsRef' => 'UPPER',
+					'numberLetterRef' => 'UPPER',
+					'callback' => \&searchHandler,
+				},
+
+				'SONGS' => {
+					'useMode' => 'INPUT.Text',
+					'header' => 'SEARCHFOR_SONGS',
+					'stringHeader' => 1,
+					'cursorPos' => 0,
+					'charsRef' => 'UPPER',
+					'numberLetterRef' => 'UPPER',
+					'callback' => \&searchHandler,
+				}
+			}
+		}
+	);
+
+	for my $name (sort keys %menuParams) {
+		Slim::Buttons::Home::addMenuOption($name,$menuParams{$name});
+	}	
+
+	for my $name (sort keys %subs) {
+		Slim::Buttons::Home::addMenuOption($name,$subs{$name});
+	}
+}
 
 sub searchExitHandler {
 	my ($client,$exittype) = @_;
 	
 	$exittype = uc($exittype);
+
 	if ($exittype eq 'LEFT') {
+
 		Slim::Buttons::Common::popModeRight($client);
+
 	} elsif ($exittype eq 'RIGHT') {
+
 		my $current = Slim::Buttons::Common::param($client,'valueRef');
-		my %nextParams = searchFor($client,$$current);
-		Slim::Buttons::Common::pushModeLeft(
-			$client
-			,$nextParams{'useMode'}
-			,\%nextParams
-		);
-	} else {
-		return;
+
+		my %nextParams = searchFor($client,$$current) ;
+
+		Slim::Buttons::Common::pushModeLeft($client, $nextParams{'useMode'}, \%nextParams);
 	}
 }
 
@@ -87,15 +116,21 @@ sub searchFor {
 	my $search = shift;
 	
 	$context{$client} = ('A');
+
 	my %nextParams = %{$menuParams{'SEARCH'}{'submenus'}{$search}};
+
 	$nextParams{'valueRef'} = \$context{$client};
+
 	$client->searchFor($search);
+
 	return %nextParams;
 }
 
 sub searchHandler {
 	my ($client,$exittype) = @_;
+
 	$exittype = uc($exittype);
+
 	if ($exittype eq 'BACKSPACE') {
 		Slim::Buttons::Common::popModeRight($client);
 	} else {
@@ -103,7 +138,6 @@ sub searchHandler {
 		startSearch($client);
 	}
 }
-
 
 sub startSearch {
 	my $client = shift;
@@ -114,12 +148,33 @@ sub startSearch {
 	$client->showBriefly($client->string('SEARCHING'));
 
 	if ($client->searchFor eq 'ARTISTS') {
-		Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist' => $term } );
+
+		Slim::Buttons::Common::pushMode($client, 'browseid3', {
+			'search' => 1,
+			'genre'  => '*',
+			'artist' => $term,
+		});
+
 	} elsif ($client->searchFor eq 'ALBUMS') {
-		Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist' => '*', 'album' =>$term });
+
+		Slim::Buttons::Common::pushMode($client, 'browseid3', {
+			'search' => 1,
+			'genre'  => '*',
+			'artist' => '*',
+			'album'  => $term
+		});
+
 	} else {
-		Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist' => '*', 'album' => '*', 'song' => $term } );
+
+		Slim::Buttons::Common::pushMode($client, 'browseid3', {
+			'search' => 1,
+			'genre'  => '*',
+			'artist' => '*',
+			'album'  => '*',
+			'song'   => $term
+		});
 	}
+
 	$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 }
 
@@ -128,35 +183,18 @@ sub searchTerm {
 
 	# do the search!
 	@{$client->searchTerm} = split(//,$context{$client});
-	my $term = "*";
-	foreach my $a (@{$client->searchTerm}) {
+
+	my $term = '*';
+
+	for my $a (@{$client->searchTerm}) {
+
 		if (defined($a) && ($a ne $rightarrow)) {
 			$term .= $a;
 		}
 	}
-	$term .= "*";
+
+	$term .= '*';
 	return $term;
-}
-
-sub init {
-	my %subs = (
-		'SEARCH_FOR_ARTISTS' => sub {
-			return Slim::Buttons::Search::searchFor(shift, 'ARTISTS');
-		}
-		,'SEARCH_FOR_ALBUMS' => sub {
-			return Slim::Buttons::Search::searchFor(shift, 'ALBUMS');
-		}
-		,'SEARCH_FOR_SONGS' => sub {
-			return Slim::Buttons::Search::searchFor(shift, 'SONGS');
-		}
-	);
-	foreach my $name (sort keys %menuParams) {
-		Slim::Buttons::Home::addMenuOption($name,$menuParams{$name});
-	}	
-	foreach my $name (sort keys %subs) {
-		Slim::Buttons::Home::addMenuOption($name,$subs{$name});
-	}
-
 }
 
 1;

@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::Contributor;
 
-# $Id: Contributor.pm,v 1.1 2004/12/17 20:33:03 dsully Exp $
+# $Id: Contributor.pm,v 1.2 2005/01/04 03:38:52 dsully Exp $
 
 use strict;
 use base 'Slim::DataStores::DBI::DataModel';
@@ -27,11 +27,12 @@ sub searchName {
 
 	s/\*/%/g for @$pattern;
 
-	my %where = ( name => $pattern, );
+	my %where   = ( name => $pattern, );
+	my $findKey = join(':', @$pattern);
 
-	$_cache{$pattern} ||= [ $class->searchPattern('contributors', \%where, ['namesort']) ];
+	$_cache{$findKey} ||= [ $class->searchPattern('contributors', \%where, ['namesort']) ];
 
-	return wantarray ? @{$_cache{$pattern}} : $_cache{$pattern}->[0];
+	return wantarray ? @{$_cache{$findKey}} : $_cache{$findKey}->[0];
 }
 
 1;

@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::Album;
 
-# $Id: Album.pm,v 1.1 2004/12/17 20:33:02 dsully Exp $
+# $Id: Album.pm,v 1.2 2005/01/04 03:38:52 dsully Exp $
 
 use strict;
 use base 'Slim::DataStores::DBI::DataModel';
@@ -20,16 +20,17 @@ use base 'Slim::DataStores::DBI::DataModel';
 tie my %_cache, 'Tie::Cache::LRU', 5000;
 
 sub searchTitle {
-	my $class = shift;
+	my $class   = shift;
 	my $pattern = shift;
 
 	s/\*/%/g for @$pattern;
 
-	my %where = ( title => $pattern, );
+	my %where   = ( title => $pattern, );
+	my $findKey = join(':', @$pattern);
 
-	$_cache{$pattern} ||= [ $class->searchPattern('albums', \%where, ['titlesort']) ];
+	$_cache{$findKey} ||= [ $class->searchPattern('albums', \%where, ['titlesort']) ];
 
-	return wantarray ? @{$_cache{$pattern}} : $_cache{$pattern}->[0];
+	return wantarray ? @{$_cache{$findKey}} : $_cache{$findKey}->[0];
 }
 
 1;

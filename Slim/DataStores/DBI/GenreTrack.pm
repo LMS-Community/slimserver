@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::GenreTrack;
 
-# $Id: GenreTrack.pm,v 1.1 2004/12/17 20:33:03 dsully Exp $
+# $Id: GenreTrack.pm,v 1.2 2005/01/04 03:38:52 dsully Exp $
 #
 # Genre to track mapping class
 
@@ -33,15 +33,15 @@ sub add {
 		$genreSub =~ s/^\s*//o;
 		$genreSub =~ s/\s*$//o;
 
-		my $genreObj = $_cache{$genreSub} ||= Slim::DataStores::DBI::Genre->find_or_create({ 
+		$_cache{$genreSub} ||= Slim::DataStores::DBI::Genre->find_or_create({ 
 			name => $genreSub,
 		});
 
-		push @genres, $genreObj;
+		push @genres, $_cache{$genreSub};
 		
 		Slim::DataStores::DBI::GenreTrack->create({
 			track => $track,
-			genre => $genreObj,
+			genre => $_cache{$genreSub},
 		});
 	}
 

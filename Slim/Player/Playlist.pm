@@ -35,6 +35,7 @@ sub song {
 	if (!defined($index)) {
 		$index = Slim::Player::Source::currentSongIndex($client);
 	}
+
 	if (defined ${shuffleList($client)}[$index]) {
 		return ${playList($client)}[${shuffleList($client)}[$index]];
 	} else {
@@ -126,7 +127,6 @@ sub removeTrack {
 			push @reshuffled, $i;
 		} elsif ($i > $playlistIndex) {
 			push @reshuffled, ($i - 1);
-		} else {
 		}
 	}
 	
@@ -139,7 +139,6 @@ sub removeTrack {
 	}
 	
 	refreshPlaylist($client,Slim::Buttons::Playlist::browseplaylistindex($client));
-
 }
 
 sub removeMultipleTracks {
@@ -148,8 +147,9 @@ sub removeMultipleTracks {
 
 	my %songlistentries;
 	if (defined($songlist) && ref($songlist) eq 'ARRAY') {
+
 		foreach my $item (@$songlist) {
-			$songlistentries{$item}=1;
+			$songlistentries{$item} = 1;
 		}
 	}
 
@@ -158,12 +158,13 @@ sub removeMultipleTracks {
 	
 	my $curtrack = ${shuffleList($client)}[Slim::Player::Source::currentSongIndex($client)];
 
-	my $i=0;
-	my $oldcount=0;
+	my $i = 0;
+	my $oldcount = 0;
 	# going to need to renumber the entries in the shuffled list
 	# will need to map the old position numbers to where the track ends
 	# up after all the deletes occur
-	my %oldToNew;
+	my %oldToNew = () ;
+ 
 	while ($i <= $#{playList($client)}) {
 		#check if this file meets all criteria specified
 		my $thistrack=${playList($client)}[$i];
@@ -182,7 +183,7 @@ sub removeMultipleTracks {
 	
 	my @reshuffled;
 	my $newtrack;
-	my $getnext=0;
+	my $getnext = 0;
 	# renumber all of the entries in the shuffle list with their 
 	# new positions, also get an update for the current track, if the 
 	# currently playing track was deleted, try to play the next track 
@@ -244,10 +245,14 @@ sub moveSong {
 	my $size = shift;
 	my $listref;
 	
-	if (!defined($size)) { $size = 1;};
+	if (!defined($size)) {
+		$size = 1;
+	}
+
 	if (defined $dest && $dest =~ /^[\+-]/) {
 		$dest = $src + $dest;
 	}
+
 	if (defined $src && defined $dest && $src < Slim::Player::Playlist::count($client) && $dest < Slim::Player::Playlist::count($client) && $src >= 0 && $dest >=0) {
 		if (Slim::Player::Playlist::shuffle($client)) {
 			$listref = Slim::Player::Playlist::shuffleList($client);
@@ -275,17 +280,18 @@ sub clear {
 }
 
 sub fischer_yates_shuffle {
-	my ($listRef)=@_;
+	my ($listRef) = @_;
+
 	if ($#$listRef == -1 || $#$listRef == 0) {
 		return;
 	}
+
 	for (my $i = ($#$listRef + 1); --$i;) {
 		# swap each item with a random item;
 		my $a = int(rand($i + 1));
 		@$listRef[$i,$a] = @$listRef[$a,$i];
 	}
 }
-
 
 #reshuffle - every time the playlist is modified, the shufflelist should be updated
 #		We also invalidate the htmlplaylist at this point

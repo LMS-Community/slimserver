@@ -1,6 +1,6 @@
 package Slim::Buttons::Synchronize;
 
-# $Id: Synchronize.pm,v 1.11 2004/12/07 20:19:49 dsully Exp $
+# $Id: Synchronize.pm,v 1.12 2005/01/04 03:38:52 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -12,39 +12,48 @@ use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use Slim::Display::Display;
 
-Slim::Buttons::Common::addMode('synchronize',getFunctions(),\&setMode);
+my %functions = ();
 
-# Each button on the remote has a function:
-my %functions = (
-	'up' => sub  {
+sub init {
+
+	Slim::Buttons::Common::addMode('synchronize', getFunctions(), \&setMode);
+
+	# Each button on the remote has a function:
+	%functions = (
+		'up' => sub  {
 			my $client = shift;
 			$client->syncSelection(Slim::Buttons::Common::scroll($client,-1,scalar(@{$client->syncSelections}),$client->syncSelection));
 			$client->update();
-	},
-	'down' => sub {
-		my $client = shift;
-		$client->syncSelection(Slim::Buttons::Common::scroll($client,1,scalar(@{$client->syncSelections}),$client->syncSelection));
-		$client->update();
-	},
-	'left' => sub {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	'right' => sub  {
-		my $client = shift;
+		},
+
+		'down' => sub {
+			my $client = shift;
+			$client->syncSelection(Slim::Buttons::Common::scroll($client,1,scalar(@{$client->syncSelections}),$client->syncSelection));
+			$client->update();
+		},
+
+		'left' => sub {
+			my $client = shift;
+			Slim::Buttons::Common::popModeRight($client);
+		},
+
+		'right' => sub  {
+			my $client = shift;
+			
+			my $selectedClient = $client->syncSelections($client->syncSelection);
 		
-		my $selectedClient = $client->syncSelections($client->syncSelection);
-	
-		my @oldlines = Slim::Display::Display::curLines($client);
-	
-		if (Slim::Player::Sync::isSyncedWith($client, $selectedClient) || ($client eq $selectedClient)) {
-			Slim::Player::Sync::unsync($client);
-		} else {
-			Slim::Player::Sync::sync($client, $selectedClient);
-		}
-		$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
-	},
-);
+			my @oldlines = Slim::Display::Display::curLines($client);
+		
+			if (Slim::Player::Sync::isSyncedWith($client, $selectedClient) || ($client eq $selectedClient)) {
+				Slim::Player::Sync::unsync($client);
+			} else {
+				Slim::Player::Sync::sync($client, $selectedClient);
+			}
+
+			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+		},
+	);
+}
 
 sub getFunctions {
 	return \%functions;
@@ -96,6 +105,7 @@ sub lines {
 sub buddies {
 	my $client = shift;
 	my $selectedClient = shift;
+
 	my @buddies = ();
 	my $list = '';
 	
@@ -118,6 +128,7 @@ sub buddies {
 		my $buddy = pop @buddies;
 		$list .= $buddy->name() . " " . $client->string('AND') . " ";		
 	}
+
 	my $buddy = pop @buddies;
 	$list .= $buddy->name();
 	

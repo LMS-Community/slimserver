@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.21 2004/12/16 22:05:39 dsully Exp $
+# $Id: Scan.pm,v 1.22 2005/01/04 03:38:53 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -51,11 +51,9 @@ package Slim::Utils::Scan;
 use strict;
 use File::Spec::Functions qw(:ALL);
 use FileHandle;
-use IO::Socket qw(:DEFAULT :crlf);
 use Class::Struct;        
-
+use Time::HiRes;
         
-use Slim::Display::Display;
 use Slim::Utils::Misc;
 use Slim::Formats::Parse;
 
@@ -180,7 +178,7 @@ sub addToList_run {
 		&addToList_done($listref);
 		return 0;
 	}
-########## index==-1 means we need to read the directory
+	########## index==-1 means we need to read the directory
 
 	$::d_scan && msg("index: ".$curdirState->index."\n");
 	if ($curdirState->index == -1) {
@@ -208,7 +206,7 @@ sub addToList_run {
 		}
 	}
 	
-########## OK, the directory has been opened, and index points to the entry we should look at
+	########## OK, the directory has been opened, and index points to the entry we should look at
 
 	my $item = '';
 
@@ -262,7 +260,7 @@ sub addToList_run {
 		}
 	}
 
-######## Go to the next item:
+	######## Go to the next item:
 
 	$item = $curdirState->contents($curdirState->index);
 	$curdirState->index($curdirState->index + 1);
@@ -277,7 +275,7 @@ sub addToList_run {
 	$::d_scan && msg("itempath: $item and " .  $curdirState->path . " made $itempath\n");
 
 
-######### If it's a directory or playlist and we're recursing, push it onto the stack, othwerwise add it to the list
+	######### If it's a directory or playlist and we're recursing, push it onto the stack, othwerwise add it to the list
 
 	$::d_scan && msg("isList(".$itempath.") == ".Slim::Music::Info::isList($itempath)."\n");
 
@@ -304,7 +302,7 @@ sub addToList_run {
 		}
 	}
 
-######### Else if it's a single item - look up the sort key (takes a while)
+	######### Else if it's a single item - look up the sort key (takes a while)
 	$::d_scan && msg("not a list: $itempath\n");
 	if (Slim::Music::Info::isSong($itempath)) {
 		$::d_scan && msg("adding single item: $itempath, type " . Slim::Music::Info::contentType($itempath) . "\n");
@@ -312,15 +310,18 @@ sub addToList_run {
 		push @$arrayref, $itempath;
 		$jobState->numitems($jobState->numitems+1);
 		
-#	force the loading of ID3 data
-		Slim::Music::Info::title($itempath);
-		Slim::Music::Info::markAsScanned ($itempath);
+		# force the loading of ID3 data
+		#Slim::Music::Info::title($itempath);
+		Slim::Music::Info::markAsScanned($itempath);
 		return 1;
 	}
 
-######## Else we don't know what it is
-
+	######## Else we don't know what it is
 	$::d_scan && msg("Skipping unknown type: $itempath\n");
+
+	# Try not to kill the CPU - leave a little time for streaming
+	Time::HiRes::sleep(0.25);
+
 	return 1;
 }
 
@@ -332,11 +333,10 @@ sub addToList_done {
 	my $callbackargs = $jobState->callbackargs;
 	
 	if ($::d_scan) {
-		msg("addToList_done. returning ".$jobState->numitems." items\n");
-		my @list = @$listref;
-		my $item;
 
-		foreach $item (@list) {
+		msg("addToList_done. returning ".$jobState->numitems." items\n");
+
+		for my $item (@$listref) {
 			msg("  $item\n");
 		}
 	}

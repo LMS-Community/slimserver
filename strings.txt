@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.160 2004/12/30 06:44:20 dean Exp $
+# $Id: strings.txt,v 1.161 2005/01/04 03:38:51 dsully Exp $
 #
 # This tab-delimited file contains all the text strings used in SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -6540,6 +6540,9 @@ BROWSE_BY_SONG
 
 BROWSE_BY_SONG_DBL
 	FR	Parcours morceaux
+
+BROWSE_BY_YEAR
+	EN	Browse Years
 
 BROWSE_MUSIC_FOLDER
 	DE	Musikverzeichnis nachschlagen

@@ -1,6 +1,6 @@
 # Rescan.pm by Andrew Hedges (andrew@hedges.me.uk) October 2002
 # Timer functions added by Kevin Deane-Freeman (kevindf@shaw.ca) June 2004
-# $Id: Rescan.pm,v 1.10 2004/12/23 07:28:57 dsully Exp $
+# $Id: Rescan.pm,v 1.11 2005/01/04 03:38:52 dsully Exp $
 
 # This code is derived from code with the following copyright message:
 #
@@ -20,7 +20,7 @@ use Slim::Control::Command;
 use Time::HiRes;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.10 $,10);
+$VERSION = substr(q$Revision: 1.11 $,10);
 
 my $interval = 1; # check every x seconds
 my @browseMenuChoices;
@@ -146,7 +146,7 @@ sub getFunctions() {
 }
 
 sub setTimer {
-#timer to check alarms on an interval
+	# timer to check alarms on an interval
 	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&checkScanTimer);
 }
 
@@ -159,19 +159,28 @@ sub checkScanTimer
 	if ($sec == 0) { # once we've reached the beginning of a minute, only check every 60s
 		$interval = 60;
 	}
+
 	if ($sec >= 50) { # if we end up falling behind, go back to checking each second
 		$interval = 1;
 	}
 
-		if (Slim::Utils::Prefs::get("rescan-scheduled")) {
-			my $scantime =  Slim::Utils::Prefs::get("rescan-time");
-			if ($scantime) {
-			   if ($time == $scantime +60 ) {$interval=1;}; #alarm is done, so reset to find the beginning of a minute
-				if ($time == $scantime && !Slim::Music::Import::stillScanning()) {
-					Slim::Music::Import::startScan();
-				}
+	if (Slim::Utils::Prefs::get("rescan-scheduled")) {
+
+		my $scantime =  Slim::Utils::Prefs::get("rescan-time");
+
+		if ($scantime) {
+
+			# alarm is done, so reset to find the beginning of a minute
+			if ($time == $scantime + 60) {
+				$interval = 1;
+			}
+
+			if ($time == $scantime && !Slim::Music::Import::stillScanning()) {
+				Slim::Music::Import::startScan();
 			}
 		}
+	}
+
 	setTimer();
 }
 

@@ -10,152 +10,179 @@ use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Utils::Misc;
 
+my %functions = ();
+
 # button functions for track info screens
+sub init {
 
-Slim::Buttons::Common::addMode('trackinfo',Slim::Buttons::TrackInfo::getFunctions(),\&Slim::Buttons::TrackInfo::setMode);
+	Slim::Buttons::Common::addMode('trackinfo', getFunctions(), \&setMode);
 
-my %functions = (
+	%functions = (
 
-	'play' => sub  {
+		'play' => sub  {
 			my $client = shift;
-			my $curitem = $client->trackInfoContent->[currentLine($client)];
-			my ($line1, $line2);
-			
+
+			my $curItem = $client->trackInfoContent->[currentLine($client)];
+
+			unless ($curItem) {
+				Slim::Buttons::Common::popModeRight($client);
+				Slim::Control::Command::execute($client, ["button", "play", undef]);
+				return;
+			}
+
+			my $line1 = '';
+
 			if (Slim::Player::Playlist::shuffle($client)) {
 				$line1 = $client->string('PLAYING_RANDOMLY_FROM');
 			} else {
 				$line1 = $client->string('NOW_PLAYING_FROM')
 			}
 			
-			if ($curitem && $curitem eq 'GENRE') {
-				$line2 = Slim::Music::Info::genre(track($client));
-				$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
-				Slim::Control::Command::execute($client, ["playlist", "loadalbum", Slim::Music::Info::genre(track($client)), "*", "*"]);
-				Slim::Control::Command::execute($client, ["playlist", "jump", "0"]);
-			} elsif ($curitem && ($curitem eq 'ARTIST')) {
-				$line2 = Slim::Music::Info::artist(track($client));
-				$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
-				Slim::Control::Command::execute($client, ["playlist", "loadalbum", Slim::Music::Info::genre(track($client)), Slim::Music::Info::artist(track($client)), "*"]);			
-				Slim::Control::Command::execute($client, ["playlist", "jump", "0"]);
-			} elsif ($curitem && ($curitem eq 'COMPOSER')) {
-				$line2 = Slim::Music::Info::composer(track($client));
-				$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
-				Slim::Control::Command::execute($client, ["playlist", "loadalbum", Slim::Music::Info::genre(track($client)), Slim::Music::Info::composer(track($client)), "*"]);			
-				Slim::Control::Command::execute($client, ["playlist", "jump", "0"]);
-			} elsif ($curitem && ($curitem eq 'CONDUCTOR')) {
-				$line2 = Slim::Music::Info::conductor(track($client));
-				$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
-				Slim::Control::Command::execute($client, ["playlist", "loadalbum", Slim::Music::Info::genre(track($client)), Slim::Music::Info::conductor(track($client)), "*"]);			
-				Slim::Control::Command::execute($client, ["playlist", "jump", "0"]);
-			} elsif ($curitem && ($curitem eq 'BAND')) {
-				$line2 = Slim::Music::Info::band(track($client));
-				$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
-				Slim::Control::Command::execute($client, ["playlist", "loadalbum", Slim::Music::Info::genre(track($client)), Slim::Music::Info::band(track($client)), "*"]);			
-				Slim::Control::Command::execute($client, ["playlist", "jump", "0"]);
-			} elsif ($curitem && $curitem eq 'ALBUM') {
-				$line2 = Slim::Music::Info::album(track($client));
-				$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
-				Slim::Control::Command::execute($client, ["playlist", "loadalbum", Slim::Music::Info::genre(track($client)), Slim::Music::Info::artist(track($client)), Slim::Music::Info::album(track($client))]);			
-				Slim::Control::Command::execute($client, ["playlist", "jump", "0"]);
-			} else {
-				Slim::Buttons::Common::popModeRight($client);
-				Slim::Control::Command::execute($client, ["button", "play", undef]);
-			}
-	},
-	
-	'add' => sub  {
+			my ($line2, @search) = _trackDataForCurrentItem($client, $curItem);
+
+			$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
+
+			Slim::Control::Command::execute($client, ['playlist', 'loadalbum', @search]);
+			Slim::Control::Command::execute($client, ['playlist', 'jump', 0]);
+		},
+		
+		'add' => sub  {
 			my $client = shift;
-			my $curitem = $client->trackInfoContent->[currentLine($client)];
-			my ($line1, $line2);
-			
-			$line1 = $client->string('ADDING_TO_PLAYLIST');
-			
-			if ($curitem && $curitem eq 'GENRE') {
-				$line2 = Slim::Music::Info::genre(track($client));
-				$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
-				Slim::Control::Command::execute($client, ["playlist", "addalbum", Slim::Music::Info::genre(track($client)), "*", "*"]);
-			} elsif ($curitem && $curitem eq 'ARTIST') {
-				$line2 = Slim::Music::Info::artist(track($client));
-				$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
-				Slim::Control::Command::execute($client, ["playlist", "addalbum", Slim::Music::Info::genre(track($client)), Slim::Music::Info::artist(track($client)), "*"]);			
-			} elsif ($curitem && $curitem eq 'COMPOSER') {
-				$line2 = Slim::Music::Info::composer(track($client));
-				$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
-				Slim::Control::Command::execute($client, ["playlist", "addalbum", Slim::Music::Info::genre(track($client)), Slim::Music::Info::composer(track($client)), "*"]);			
-			} elsif ($curitem && $curitem eq 'CONDUCTOR') {
-				$line2 = Slim::Music::Info::conductor(track($client));
-				$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
-				Slim::Control::Command::execute($client, ["playlist", "addalbum", Slim::Music::Info::genre(track($client)), Slim::Music::Info::conductor(track($client)), "*"]);			
-			} elsif ($curitem && $curitem eq 'BAND') {
-				$line2 = Slim::Music::Info::band(track($client));
-				$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
-				Slim::Control::Command::execute($client, ["playlist", "addalbum", Slim::Music::Info::genre(track($client)), Slim::Music::Info::band(track($client)), "*"]);			
-			} elsif ($curitem && $curitem eq 'ALBUM') {
-				$line2 = Slim::Music::Info::album(track($client));
-				$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
-				Slim::Control::Command::execute($client, ["playlist", "addalbum", Slim::Music::Info::genre(track($client)), Slim::Music::Info::artist(track($client)), Slim::Music::Info::album(track($client))]);			
-			} else {
+
+			my $curItem = $client->trackInfoContent->[currentLine($client)];
+
+			unless ($curItem) {
 				Slim::Buttons::Common::popModeRight($client);
 				Slim::Control::Command::execute($client, ["button", "add", undef]);
+				return;
 			}
-	},
+
+			my $line1  = $client->string('ADDING_TO_PLAYLIST');
+			my ($line2, @search) = _trackDataForCurrentItem($client, $curItem);
+
+			$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
+
+			Slim::Control::Command::execute($client, ["playlist", "addalbum", @search]);
+		},
+		
+		'up' => sub  {
+			my $client = shift;
+
+			currentLine($client, Slim::Buttons::Common::scroll($client, -1, $#{$client->trackInfoLines} + 1, currentLine($client)));
+			$client->update();
+		},
+
+		'down' => sub  {
+			my $client = shift;
+
+			currentLine($client, Slim::Buttons::Common::scroll($client, +1, $#{$client->trackInfoLines} + 1, currentLine($client)));
+			$client->update();
+		},
+
+		'left' => sub  {
+			my $client = shift;
+			Slim::Buttons::Common::popModeRight($client);
+		},
+
+		'right' => sub  {
+			my $client = shift;
+
+			my $push     = 1;
+			my $curitem  = $client->trackInfoContent->[currentLine($client)];
+			my @oldlines = Slim::Display::Display::curLines($client);
+
+			if (!defined($curitem)) {
+				$curitem = "";
+			}
+
+			# Pull directly from the datasource
+			my $ds      = Slim::Music::Info::getCurrentDataStore();
+			my $track   = $ds->objectForUrl(track($client));
+
+			if ($curitem eq 'ALBUM') {
+
+				my $album = $track->album()->title();
+
+				Slim::Buttons::BrowseID3::setSelection($client, '*', '*', $album, undef);
+
+				Slim::Buttons::Common::pushMode($client, 'browseid3', {
+					'genre'  => '*',
+					'artist' => '*',
+					'album'  => $album
+				});
+
+			} elsif ($curitem =~ /^(?:ARTIST|COMPOSER|CONDUCTOR|BAND)$/) {
+
+				my $lcItem = lc($curitem);
+
+				Slim::Buttons::Common::pushMode($client, 'browseid3', {
+					'genre'  => '*',
+					'artist' => $track->$lcItem(),
+				});
+
+			} elsif ($curitem eq 'GENRE') {
+
+				Slim::Buttons::Common::pushMode($client, 'browseid3', {
+					'genre' => $track->genre(),
+				});
+
+			} else {
+
+				$push = 0;
+				$client->bumpRight();
+			}
+
+			if ($push) {
+				$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+			}
+		},
+
+		'numberScroll' => sub  {
+			my ($client, $button, $digit) = @_;
+
+			currentLine($client, Slim::Buttons::Common::numberScroll($client, $digit, $client->trackInfoLines, 0));
+			$client->update();
+		}
+	);
+}
+
+sub _trackDataForCurrentItem {
+	my $client = shift;
+	my $item   = shift || return;
+
+	# Pull directly from the datasource
+	my $ds      = Slim::Music::Info::getCurrentDataStore();
+	my $track   = $ds->objectForUrl(track($client));
+
+	# genre is used by everything		
+	my $genre   = $track->genre();
+
+	my @search  = ();
+	my $line2;
 	
-	'up' => sub  {
-		my $client = shift;
-		currentLine($client, Slim::Buttons::Common::scroll($client, -1, $#{$client->trackInfoLines} + 1, currentLine($client)));
-		$client->update();
-	},
-	'down' => sub  {
-		my $client = shift;
-		currentLine($client, Slim::Buttons::Common::scroll($client, +1, $#{$client->trackInfoLines} + 1, currentLine($client)));
-		$client->update();
-	},
-	'left' => sub  {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	'right' => sub  {
-		my $client = shift;
-		my $push = 0;
-		my $curitem = $client->trackInfoContent->[currentLine($client)];
-		my @oldlines = Slim::Display::Display::curLines($client);
-		if (!defined($curitem)) {
-			$curitem = "";
-		}
-		if ($curitem eq 'ALBUM') {
-			Slim::Buttons::BrowseID3::setSelection($client, '*', '*', Slim::Music::Info::album(track($client)), undef);
-			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist'=>'*', 'album' => Slim::Music::Info::album(track($client)) });
-			$push = 1;
-		} elsif ($curitem eq 'ARTIST') {
-			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist' => Slim::Music::Info::artist(track($client)) });
-			$push = 1;
-		} elsif ($curitem eq 'COMPOSER') {
-			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist' => Slim::Music::Info::composer(track($client)) });
-			$push = 1;
-		} elsif ($curitem eq 'CONDUCTOR') {
-			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist' => Slim::Music::Info::conductor(track($client)) });
-			$push = 1;
-		} elsif ($curitem eq 'BAND') {
-			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist' => Slim::Music::Info::band(track($client)) });
-			$push = 1;
-		} elsif ($curitem eq 'GENRE') {
-			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>Slim::Music::Info::genre(track($client))});
-			$push = 1;
-		} else {
-			$client->bumpRight();
-		}
-		if ($push) {
-			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
-		}
-	},
-	'numberScroll' => sub  {
-		my $client = shift;
-		my $button = shift;
-		my $digit = shift;
-		currentLine($client, Slim::Buttons::Common::numberScroll($client, $digit, $client->trackInfoLines, 0));
-		$client->update();
+	if ($item eq 'GENRE') {
+
+		$line2 = $genre;
+
+		push @search, $genre, '*', '*';
+
+	} elsif ($item =~ /^(?:ARTIST|COMPOSER|CONDUCTOR|BAND)$/) {
+
+		my $lcItem = lc($item);
+
+		$line2 = $track->$lcItem();
+
+		push @search, $genre, $line2, '*';
+
+	} elsif ($item eq 'ALBUM') {
+
+		$line2 = $track->album()->title();
+
+		push @search, $genre, $track->artist(), $line2;
 	}
-);
+
+	return ($line2, @search);
+}
 
 sub getFunctions {
 	return \%functions;
@@ -177,8 +204,9 @@ sub track {
 # get (and optionally set) the track info scroll position
 sub currentLine {
 	my $client = shift;
-	my $line = Slim::Buttons::Common::param($client, 'line', shift);
-	if (!defined($line)) {  $line = 0; }
+
+	my $line = Slim::Buttons::Common::param($client, 'line', shift) || 0;
+
 	return $line
 }
 
@@ -189,84 +217,96 @@ sub preloadLines {
 	@{$client->trackInfoLines} = ();
 	@{$client->trackInfoContent} = ();
 
-	if (Slim::Music::Info::title($url)) {
-		push (@{$client->trackInfoLines}, $client->string('TITLE').": ".Slim::Music::Info::title($url));
+	my $ds    = Slim::Music::Info::getCurrentDataStore();
+	my $track = $ds->objectForUrl($url);
+
+	if (my $title = $track->title()) {
+		push (@{$client->trackInfoLines}, $client->string('TITLE') . ": $title");
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (Slim::Music::Info::artist($url)) {
-		push (@{$client->trackInfoLines}, $client->string('ARTIST').": ".Slim::Music::Info::artist($url));
+	if (my $artist = $track->artist()) {
+		push (@{$client->trackInfoLines}, $client->string('ARTIST') . ": $artist");
 		push (@{$client->trackInfoContent}, 'ARTIST');
 	}
 
-	if (Slim::Music::Info::band($url)) {
-		push (@{$client->trackInfoLines}, $client->string('BAND').": ".Slim::Music::Info::band($url));
-		push (@{$client->trackInfoContent}, 'BAND');
+	# These all return undef right now.
+	if (0) {
+		if (my $band = $track->band()) {
+			push (@{$client->trackInfoLines}, $client->string('BAND') . ": $track");
+			push (@{$client->trackInfoContent}, 'BAND');
+		}
+
+		if (my $composer = $track->composer()) {
+			push (@{$client->trackInfoLines}, $client->string('COMPOSER') . ": $composer");
+			push (@{$client->trackInfoContent}, 'COMPOSER');
+		}
+
+		if (my $conductor = $track->conductor()) {
+			push (@{$client->trackInfoLines}, $client->string('CONDUCTOR') . ": $conductor");
+			push (@{$client->trackInfoContent}, 'CONDUCTOR');
+		}
 	}
 
-	if (Slim::Music::Info::composer($url)) {
-		push (@{$client->trackInfoLines}, $client->string('COMPOSER').": ".Slim::Music::Info::composer($url));
-		push (@{$client->trackInfoContent}, 'COMPOSER');
-	}
-
- 	if (Slim::Music::Info::conductor($url)) {
- 		push (@{$client->trackInfoLines}, $client->string('CONDUCTOR').": ".Slim::Music::Info::conductor($url));
- 		push (@{$client->trackInfoContent}, 'CONDUCTOR');
- 	}
-
-	if (Slim::Music::Info::album($url)) {
-		push (@{$client->trackInfoLines}, $client->string('ALBUM').": ".Slim::Music::Info::album($url));
+	if (my $album = $track->album()->title()) {
+		push (@{$client->trackInfoLines}, $client->string('ALBUM') . ": $album");
 		push (@{$client->trackInfoContent}, 'ALBUM');
 	}
 
-	if (Slim::Music::Info::trackNumber($url)) {
-		push (@{$client->trackInfoLines}, $client->string('TRACK').": ".Slim::Music::Info::trackNumber($url));
+	if (my $tracknum = $track->tracknum()) {
+		push (@{$client->trackInfoLines}, $client->string('TRACK') . ": $tracknum");
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (Slim::Music::Info::year($url)) {
-		push (@{$client->trackInfoLines}, $client->string('YEAR').": ".Slim::Music::Info::year($url));
+	if (my $year = $track->year()) {
+		push (@{$client->trackInfoLines}, $client->string('YEAR') . ": $year");
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (Slim::Music::Info::genre($url)) {
-		push (@{$client->trackInfoLines}, $client->string('GENRE').": ".Slim::Music::Info::genre($url));
+	if (my $genre = $track->genre()) {
+		push (@{$client->trackInfoLines}, $client->string('GENRE') . ": $genre");
 		push (@{$client->trackInfoContent}, 'GENRE');
 	}
 
-	if (Slim::Music::Info::contentType($url)) {
-		push (@{$client->trackInfoLines}, $client->string('TYPE').": ". $client->string(uc(Slim::Music::Info::contentType($url))));
+	if (my $ct = $ds->contentType($track, 1)) {
+		push (@{$client->trackInfoLines}, $client->string('TYPE') . ": " . $client->string(uc($ct)));
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (Slim::Music::Info::comment($url)) {
-		push (@{$client->trackInfoLines}, $client->string('COMMENT').": ".Slim::Music::Info::comment($url));
+	# These have methods in Slim::Music::Info which need to be
+	# moved/copied to Track.pm
+	if (my $comment = Slim::Music::Info::comment($url)) {
+		push (@{$client->trackInfoLines}, $client->string('COMMENT') . ": $comment");
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (Slim::Music::Info::duration($url)) {
-		push (@{$client->trackInfoLines}, $client->string('LENGTH').": ". Slim::Music::Info::duration($url));
+	if (my $duration = Slim::Music::Info::duration($url)) {
+		push (@{$client->trackInfoLines}, $client->string('LENGTH') . ": $duration");
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (Slim::Music::Info::bitrate($url)) {
+	if (my $bitrate = Slim::Music::Info::bitrate($url)) {
+
 		my $undermax = Slim::Player::Source::underMax($client,$url);
-		my $rate = (defined $undermax && $undermax) ? Slim::Music::Info::bitrate($url) 
+
+		my $rate = (defined $undermax && $undermax) ? $bitrate
 				: Slim::Utils::Prefs::maxRate($client).$client->string('KBPS')." CBR";
+
 		push (@{$client->trackInfoLines}, 
-			$client->string('BITRATE').": ".Slim::Music::Info::bitrate($url).' '
-				.((Slim::Buttons::Common::param($client, 'current') && (defined $undermax && !$undermax)) 
+			$client->string('BITRATE').": $bitrate " .
+				((Slim::Buttons::Common::param($client, 'current') && (defined $undermax && !$undermax)) 
 					? '('.$client->string('CONVERTED_TO').' '.$rate.')' : ''));
+
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (Slim::Music::Info::fileLength($url)) {
-		push (@{$client->trackInfoLines}, $client->string('FILELENGTH').": ".Slim::Utils::Misc::delimitThousands(Slim::Music::Info::fileLength($url)));
+	if (my $len = $track->filesize()) {
+		push (@{$client->trackInfoLines}, $client->string('FILELENGTH') . ": " . Slim::Utils::Misc::delimitThousands($len));
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (Slim::Music::Info::age($url)) {
-		push (@{$client->trackInfoLines}, $client->string('MODTIME').": ".Slim::Utils::Misc::shortDateF(Slim::Music::Info::age($url)) . ", " . Slim::Utils::Misc::timeF(Slim::Music::Info::age($url)));
+	if (my $age = $track->timestamp()) {
+		push (@{$client->trackInfoLines}, $client->string('MODTIME').": ".Slim::Utils::Misc::shortDateF($age).", ".Slim::Utils::Misc::timeF($age));
 		push (@{$client->trackInfoContent}, undef);
 	}
 
@@ -275,16 +315,15 @@ sub preloadLines {
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (Slim::Music::Info::tagVersion($url)) {
-		push (@{$client->trackInfoLines}, $client->string('TAGVERSION').": ".Slim::Music::Info::tagVersion($url));
+	if (my $tag = $track->tagversion()) {
+		push (@{$client->trackInfoLines}, $client->string('TAGVERSION') . ": $tag");
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (Slim::Music::Info::digitalrights($url)) {
+	if ($track->drm()) {
 		push (@{$client->trackInfoLines}, $client->string('DRM'));
 		push (@{$client->trackInfoContent}, undef);
 	}
-
 }
 
 #
@@ -292,13 +331,14 @@ sub preloadLines {
 #
 sub lines {
 	my $client = shift;
-	my ($line1, $line2);
 
 	# Show the title of the song with a note symbol
-	$line1 = Slim::Music::Info::standardTitle($client, track($client));
-	$line2 = $client->trackInfoLines->[currentLine($client)];
+	my $line1 = Slim::Music::Info::standardTitle($client, track($client));
+	my $line2 = $client->trackInfoLines->[currentLine($client)];
+
 	my $overlay1 = Slim::Display::Display::symbol('notesymbol');
 	my $overlay2 = defined($client->trackInfoContent->[currentLine($client)]) ? Slim::Display::Display::symbol('rightarrow') : undef;
+
 	return ($line1, $line2, $overlay1, $overlay2);
 }
 

@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::Track;
 
-# $Id: Track.pm,v 1.1 2004/12/17 20:33:04 dsully Exp $
+# $Id: Track.pm,v 1.2 2005/01/04 03:38:52 dsully Exp $
 
 use strict;
 use base 'Slim::DataStores::DBI::DataModel';
@@ -146,17 +146,20 @@ sub getCached {
 	return $self->SUPER::get($attr);
 }
 
+# For easy access in Web::Pages
+sub track {
+	my $self = shift;
+
+	return $self->SUPER::get('tracknum');
+}
+
 # String version of contributors list
 sub artist {
 	my $self = shift;
 
 	# FIXME Possible premature optimization - cache the artist string.
 	# XXX - we may be able to replace this with the LRU cache
-	return $self->{'cachedArtist'} if $self->{'cachedArtist'};
-
-	$self->{'cachedArtist'} = join(", ", map { $_->name } $self->contributors());
-
-	return $self->{'cachedArtist'};
+	return $self->{'cachedArtist'} ||= join(", ", map { $_->name } $self->contributors());
 }
 
 sub artistsort {
@@ -164,11 +167,7 @@ sub artistsort {
 
 	# FIXME Possible premature optimization - cache the artistsort string.
 	# XXX - we may be able to replace this with the LRU cache
-	return $self->{'cachedArtistSort'} if $self->{'cachedArtistSort'};
-
-	$self->{'cachedArtistSort'} = join(", ", map { $_->namesort } $self->contributors());
-
-	return $self->{'cachedArtistSort'};
+	return $self->{'cachedArtistSort'} ||= join(", ", map { $_->namesort } $self->contributors());
 }
 
 sub albumsort {
@@ -184,15 +183,12 @@ sub genre {
 
 	# FIXME Possible premature optimization - cache the genre string.
 	# XXX - we may be able to replace this with the LRU cache
-	return $self->{'cachedGenre'} if $self->{'cachedGenre'};
-
-	$self->{'cachedGenre'} = join(", ", map { $_->name } $self->genres());
-
-	return $self->{'cachedGenre'};
+	return $self->{'cachedGenre'} ||= join(", ", map { $_->name } $self->genres());
 }
 
 sub setTracks {
-	my $self = shift;
+	my $self   = shift;
+	my @tracks = @_;
 
 	for my $track (Slim::DataStores::DBI::PlaylistTrack->tracksOf($self)) {
 		$track->delete();
@@ -200,7 +196,7 @@ sub setTracks {
 
 	my $i = 0;
 
-	for my $track (@_) {
+	for my $track (@tracks) {
 
 		Slim::DataStores::DBI::PlaylistTrack->create({
 			playlist => $self,
@@ -233,7 +229,7 @@ sub contributorsOfType {
 	my $self = shift;
 	my $type = shift;
 
-	my $contributorKeys = Slim::DataStores::DBI::Contributors->contributorFields();
+	my $contributorKeys = Slim::DataStores::DBI::Contributor->contributorFields();
 
 	return () unless grep { $type eq $_ } @$contributorKeys;
 
@@ -256,11 +252,12 @@ sub searchColumn {
 
 	s/\*/%/g for @$pattern;
 
-	my %where  = ( $column => $pattern, );
+	my %where   = ( $column => $pattern, );
+	my $findKey = join(':', $column, @$pattern);
 
-	$_cache{$pattern} = [ $class->searchPattern('tracks', \%where, ['titlesort']) ];
+	$_cache{$findKey} = [ $class->searchPattern('tracks', \%where, ['titlesort']) ];
 
-	return wantarray ? @{$_cache{$pattern}} : $_cache{$pattern}->[0];
+	return wantarray ? @{$_cache{$findKey}} : $_cache{$findKey}->[0];
 }
 
 1;

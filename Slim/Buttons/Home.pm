@@ -13,54 +13,50 @@ use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 
 my %home = ();
+my %defaultParams = ();
+my %homeChoices;
 
-Slim::Buttons::Common::addMode('home',getFunctions(),\&setMode);
+sub init {
+	Slim::Buttons::Common::addMode('home',getFunctions(),\&setMode);
 
-# More documentation needed for all this magic.
-my %defaultParams = (
-	'listRef' => undef,
+	# More documentation needed for all this magic.
+	%defaultParams = (
+		'listRef' => undef,
 
-	'externRef' => sub {
-		my $client = shift;
-		my $string = shift;
+		'externRef' => sub {
+			my $client = shift;
+			my $string = shift;
 
-		if (defined $client && $client->linesPerScreen() == 1) {
-			return $client->doubleString($string);
-		}
+			if (defined $client && $client->linesPerScreen() == 1) {
+				return $client->doubleString($string);
+			}
 
-		return $client->string($string);
-	},
+			return $client->string($string);
+		},
 
-	'onChange' => sub {
-		my ($client, $value) = @_;
-		my $curMenu = Slim::Buttons::Common::param($client,'curMenu');
-		$client->curSelection($curMenu,$value);
-	},
+		'onChange' => sub {
+			my ($client, $value) = @_;
+			my $curMenu = Slim::Buttons::Common::param($client,'curMenu');
+			$client->curSelection($curMenu,$value);
+		},
 
-	'onChangeArgs' => 'CV',
-	'externRefArgs' => 'CV',
-	'stringExternRef' => 1,
-	'header' => undef,
-	'headerAddCount' => 1,
-	'callback' => \&homeExitHandler,
+		'onChangeArgs' => 'CV',
+		'externRefArgs' => 'CV',
+		'stringExternRef' => 1,
+		'header' => undef,
+		'headerAddCount' => 1,
+		'callback' => \&homeExitHandler,
 
-	'overlayRef' => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+		'overlayRef' => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
 
-	'overlayRefArgs' => '',
-	'valueRef' => undef,
-);
-	
-########################################################################
-#
-# Home Menu Hash
-#
-# Home menu defaults are presented here, with default categories and menus.
-# Plugins may use the above manipulation functions to create hooks anywhere in the
-# home menu tree. Top level menu items can be chosen per player from the hash below,
-# plus any installed and active plugins
-###########################################################################
-sub initHomeConfig {
+		'overlayRefArgs' => '',
+		'valueRef' => undef,
+	);
 
+	# Home menu defaults are presented here, with default categories and menus.
+	# Plugins may use the above manipulation functions to create hooks anywhere in the
+	# home menu tree. Top level menu items can be chosen per player from the hash below,
+	# plus any installed and active plugins
 	%home = (
 
 		'NOW_PLAYING' => {
@@ -72,8 +68,6 @@ sub initHomeConfig {
 		}
 	)
 }
-
-initHomeConfig();
 
 ######################################################################
 # Home Hash Manipulation Functions
@@ -145,8 +139,6 @@ sub delMenuOption {
 
 	delete $home{$option};
 }
-
-my %homeChoices;
 
 # TODO: some of this is obvious cruft.  'MUSIC' doesn't seem to exist an a menu option any more.
 # This is also a big source of the inconsistency in "play" and "add" functions.
@@ -221,13 +213,11 @@ sub setMode {
 	if (!defined($client->curSelection($client->curDepth()))) {
 		$client->curSelection($client->curDepth(),'NOW_PLAYING');
 	}
-
 	my %params = %defaultParams;
 	$params{'header'} = \&homeheader;
 	$params{'listRef'} = \@{$homeChoices{$client}};
 	$params{'valueRef'} = \$client->curSelection($client->curDepth());
 	$params{'curMenu'} = $client->curDepth();
-
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
 	$client->update();
 }
@@ -438,7 +428,6 @@ sub menuOptions {
 	my $client = shift;
 	my %menuChoices = ();
 	$menuChoices{""} = "";
-	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
 	
 	for my $menuOption (sort keys %home) {
 		if ($menuOption eq 'BROWSE_MUSIC_FOLDER' && !Slim::Utils::Prefs::get('audiodir')) {
@@ -457,13 +446,10 @@ sub unusedMenuOptions {
 	my %menuChoices = menuOptions($client);
 	delete $menuChoices{""};
 	
-	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
-	for my $plugin (values %{$pluginsRef}) {
-		delete $menuChoices{$plugin};
-	}
 	for my $usedOption (@{$homeChoices{$client}}) {
 		delete $menuChoices{$usedOption};
 	}
+
 	return sort { $menuChoices{$a} cmp $menuChoices{$b} } keys %menuChoices;
 }
 
@@ -478,22 +464,22 @@ sub updateMenu {
 	
 	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
+
 	for my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
 		next if (exists $disabledplugins{$menuItem});
 		next if (!exists $home{$menuItem} && !exists $pluginsRef->{$menuItem});
-		if (exists $pluginsRef->{$menuItem}) {
-			$menuItem = $pluginsRef->{$menuItem};
-		}
 		push @home, $menuItem;
 	}
+
 	if (!scalar @home) {
 		push @home, 'NOW_PLAYING';
 	}
+
 	$homeChoices{$client} = \@home;
+
 	Slim::Buttons::Common::param($client,'listRef',\@home);
 }
  
-
 1;
 
 __END__

@@ -244,6 +244,8 @@ use vars qw(
 	$quiet
 	$nosetup
 	$noserver
+	$scanOnly
+	$noScan
 	$stdio
 	$stop
 );
@@ -292,17 +294,20 @@ sub init {
 	$::d_server && msg("SlimServer settings init...\n");
 	initSettings();
 
-	$::d_server && msg("SlimServer setting language...\n");
-	Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
+	unless ($scanOnly) {
 
-	$::d_server && msg("SlimServer IR init...\n");
-	Slim::Hardware::IR::init();
-	
-	$::d_server && msg("SlimServer Buttons init...\n");
-	Slim::Buttons::Common::init();
+		$::d_server && msg("SlimServer setting language...\n");
+		Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
 
-	$::d_server && msg("SlimServer Graphics init...\n");
-	Slim::Display::Graphics::init();
+		$::d_server && msg("SlimServer IR init...\n");
+		Slim::Hardware::IR::init();
+		
+		$::d_server && msg("SlimServer Buttons init...\n");
+		Slim::Buttons::Common::init();
+
+		$::d_server && msg("SlimServer Graphics init...\n");
+		Slim::Display::Graphics::init();
+	}
 
 	if ($priority) {
 		$::d_server && msg("SlimServer - changing process priority to $priority\n");
@@ -339,7 +344,24 @@ sub start {
 			}
 		}
 	};
+
+	# If we're only scanning, just do that. 
+	if ($scanOnly) {
+		msg("Will only scan music library, then exit!\n");
 	
+		Slim::Music::Info::init();
+		Slim::Music::Import::startup();
+
+		# Run the scanner - but don't kill the CPU.
+		while (Slim::Music::Import::stillScanning()) {
+
+			Slim::Utils::Scheduler::run_tasks();
+			Time::HiRes::sleep(0.05);
+		}
+
+		exit;
+	}
+
 	if ($stdio) {
 		$::d_server && msg("SlimServer Stdio init...\n");
 		Slim::Control::Stdio::init(\*STDIN, \*STDOUT);
@@ -362,6 +384,7 @@ sub start {
 
 	$::d_server && msg("Source conversion init..\n");
 	Slim::Player::Source::init();
+
 	$::d_server && msg("SlimServer Plugins init...\n");
 	Slim::Buttons::Plugins::init();
 	
@@ -379,7 +402,7 @@ sub start {
 	Slim::Web::History::load();
 
 	# start background scanning based on a timer...
-	Slim::Music::Import::startup();
+	Slim::Music::Import::startup() unless $noScan;
 	
 	$lastlooptime = Time::HiRes::time();
 	$loopcount = 0;
@@ -514,6 +537,8 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
                         no effect on non-Unix platforms
     --streamaddr     => Specify the _server's_ IP address to use to connect
                         to streaming audio sources
+    --scanonly       => Only run the library scanner, then exit.
+    --noscan         => Don't scan the music library.
     --nosetup        => Disable setup via http.
     --noserver       => Disable web access server settings, but leave player settings accessible. Settings changes arenot preserved.
 
@@ -597,6 +622,8 @@ sub initOptions {
 		'streamaddr=s'		=> \$localStreamAddr,
 		'prefsfile=s' 		=> \$prefsfile,
 		'quiet'   			=> \$quiet,
+		'scanonly'   			=> \$scanOnly,
+		'noscan'   			=> \$noScan,
 		'nosetup'			=> \$nosetup,
 		'noserver'			=> \$noserver,
 		'd_artwork'			=> \$d_artwork,
@@ -811,7 +838,7 @@ sub checkVersion {
 	}
 			
 	$::d_time && msg("checking version now.\n");
-	my $url  = "http://www.slimdevices.com/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
+	my $url  = "http://update.slimdevices.com/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
 
 	# XXX - dsully - this really shouldn't be overloaded like this.
 	my $sock = Slim::Player::Source::openRemoteStream($url);

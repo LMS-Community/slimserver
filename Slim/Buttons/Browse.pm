@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.24 2004/12/17 10:09:29 kdf Exp $
+# $Id: Browse.pm,v 1.25 2005/01/04 03:38:52 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -18,19 +18,24 @@ use Slim::Utils::Misc;
 use Slim::Buttons::Home;
 use Slim::Utils::Scan;
 
-Slim::Buttons::Common::addMode('browse',Slim::Buttons::Browse::getFunctions(),\&Slim::Buttons::Browse::setMode);
+my %functions = ();
 
 sub init {
+
+	Slim::Buttons::Block::init();
+
 	my %browse = (
 		'BROWSE_MUSIC_FOLDER' => {
+
 			'useMode' => sub {
 				my $client = shift;
 				my @oldlines = Slim::Display::Display::curLines($client);
 				Slim::Buttons::Common::pushMode($client, 'browse');
 				Slim::Buttons::Browse::loadDir($client, '', 'right', \@oldlines);
 			}
-		}
-		,'SAVED_PLAYLISTS' => {
+		},
+
+		'SAVED_PLAYLISTS' => {
 			'useMode' => sub {
 				my $client = shift;
 				my @oldlines = Slim::Display::Display::curLines($client);
@@ -40,7 +45,7 @@ sub init {
 		}
 	);
 	
-	foreach my $name (sort keys %browse) {
+	for my $name (sort keys %browse) {
 		if ($name eq 'BROWSE_MUSIC_FOLDER' && !Slim::Utils::Prefs::get('audiodir')) {
 			next;
 		}
@@ -52,180 +57,190 @@ sub init {
 		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC',$name,$browse{$name});
 		Slim::Buttons::Home::addMenuOption($name,$browse{$name});
 	};
-}
 
-# Each button on the remote has a function:
-
-my %functions = (
-	'up' => sub  {
-		my $client = shift;
-		my $button = shift;
-		my $inc = shift || 1;
-		my $count = $client->numberOfDirItems();
-		if ($count < 2) {
-			$client->bumpUp();
-		} else {
-			$inc = ($inc =~ /\D/) ? -1 : -$inc;
-			my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, $client->currentDirItem());
-			$client->currentDirItem($newposition);
-			$client->update();
-		}
-	},
-	'down' => sub  {
-		my $client = shift;
-		my $button = shift;
-		my $inc = shift || 1;
-		my $count = $client->numberOfDirItems();
-		if ($count < 2) {
-			$client->bumpDown();
-		} else {
-			if ($inc =~ /\D/) {$inc = 1}
-			my $newposition = Slim::Buttons::Common::scroll($client, $inc, $client->numberOfDirItems(), $client->currentDirItem());
-			$client->currentDirItem($newposition);
-			$client->update();
-		}
-	},
-	'left' => sub  {
-		my $client = shift;
-		if ($client->pwd() =~ m|^[/\\]?$| || $client->pwd() eq "__playlists") {
-			# go to the home directory
-			Slim::Buttons::Common::popModeRight($client);
-			$client->lastSelection('', $client->currentDirItem());
-		} else {
-			# move up one level
-			my @oldlines = Slim::Display::Display::curLines($client);
-			loadDir($client, updir(), "left", \@oldlines);
-		}
-	},
-	'right' => sub  {
-		my $client = shift;
-		if (!$client->numberOfDirItems()) {
-			# don't do anything if the list is empty
-			$client->bumpRight();
-		} else {
-			my $currentItem = $client->dirItems($client->currentDirItem());
-			$::d_files && msg("currentItem == $currentItem\n");
-			my @oldlines = Slim::Display::Display::curLines($client);
-			if (Slim::Music::Info::isList($currentItem)) {
-				# load the current item if it's a list (i.e. directory or playlist)
-				# treat playlist files as directories.
-				# ie - list the contents
-				loadDir($client, $currentItem, "right", \@oldlines);
-			} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isRemoteURL($currentItem)) {
-				# enter the trackinfo mode for the track in $currentitem
-				Slim::Buttons::Common::pushMode($client, 'trackinfo', {'track' => $currentItem});
-				$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+	# Each button on the remote has a function:
+	%functions = (
+		'up' => sub  {
+			my $client = shift;
+			my $button = shift;
+			my $inc = shift || 1;
+			my $count = $client->numberOfDirItems();
+			if ($count < 2) {
+				$client->bumpUp();
 			} else {
-				$::d_files && msg("Error attempting to descend directory or open file: $currentItem\n");
+				$inc = ($inc =~ /\D/) ? -1 : -$inc;
+				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, $client->currentDirItem());
+				$client->currentDirItem($newposition);
+				$client->update();
 			}
-		}
-	},
-	'numberScroll' => sub  {
-		my $client = shift;
-		my $button = shift;
-		my $digit = shift;
-		
-		my $i = Slim::Buttons::Common::numberScroll($client, $digit, $client->dirItems, Slim::Music::Info::isDir(Slim::Utils::Misc::virtualToAbsolute($client->pwd())),
-			sub {
-				my $j = $client->dirItems(shift);
-				if (Slim::Utils::Prefs::get('filesort')) {
- 					return Slim::Music::Info::plainTitle($j);
-				} elsif (Slim::Music::Info::trackNumber($j)) {
-					return Slim::Music::Info::trackNumber($j);
+		},
+		'down' => sub  {
+			my $client = shift;
+			my $button = shift;
+			my $inc = shift || 1;
+			my $count = $client->numberOfDirItems();
+			if ($count < 2) {
+				$client->bumpDown();
+			} else {
+				if ($inc =~ /\D/) {$inc = 1}
+				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $client->numberOfDirItems(), $client->currentDirItem());
+				$client->currentDirItem($newposition);
+				$client->update();
+			}
+		},
+		'left' => sub  {
+			my $client = shift;
+			if ($client->pwd() =~ m|^[/\\]?$| || $client->pwd() eq "__playlists") {
+				# go to the home directory
+				Slim::Buttons::Common::popModeRight($client);
+				$client->lastSelection('', $client->currentDirItem());
+			} else {
+				# move up one level
+				my @oldlines = Slim::Display::Display::curLines($client);
+				loadDir($client, updir(), "left", \@oldlines);
+			}
+		},
+		'right' => sub  {
+			my $client = shift;
+			if (!$client->numberOfDirItems()) {
+				# don't do anything if the list is empty
+				$client->bumpRight();
+			} else {
+				my $currentItem = $client->dirItems($client->currentDirItem());
+				$::d_files && msg("currentItem == $currentItem\n");
+				my @oldlines = Slim::Display::Display::curLines($client);
+				if (Slim::Music::Info::isList($currentItem)) {
+					# load the current item if it's a list (i.e. directory or playlist)
+					# treat playlist files as directories.
+					# ie - list the contents
+					loadDir($client, $currentItem, "right", \@oldlines);
+				} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isRemoteURL($currentItem)) {
+					# enter the trackinfo mode for the track in $currentitem
+					Slim::Buttons::Common::pushMode($client, 'trackinfo', {'track' => $currentItem});
+					$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 				} else {
-					return Slim::Music::Info::title($j);
+					$::d_files && msg("Error attempting to descend directory or open file: $currentItem\n");
 				}
 			}
-			);
-
-		$client->currentDirItem($i);
-		$client->update();
-	},
-	'add' => sub  {
-		my $client = shift;
-		my $currentItem = $client->dirItems($client->currentDirItem());
-		my $line1 = $client->string('ADDING_TO_PLAYLIST');
-		my $line2 = Slim::Music::Info::standardTitle($client, $currentItem);
-		$::d_files && msg("currentItem == $currentItem\n");
-		if (Slim::Music::Info::isList($currentItem)) {
-			# we are looking at an playlist file or directory
-			Slim::Buttons::Block::block($client, $line1, $line2);
-			Slim::Control::Command::execute($client, ["playlist", "add", $currentItem], \&playDone, [$client]);
-		} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isRemoteURL($currentItem)) {
-			$client->showBriefly($line1, $line2, undef, 1);
-			# we are looking at a song file, play it and all the other songs in the directory after
-			Slim::Control::Command::execute($client, ["playlist", "append", $currentItem]);
-		} else {
-			$::d_files && msg("Error attempting to add directory or file to playlist.\n");
-			return;
-		}
-	},
-	'insert' => sub  {
-		my $client = shift;
-		my $currentItem = $client->dirItems($client->currentDirItem());
-		my $line1 = $client->string('INSERT_TO_PLAYLIST');
-		my $line2 = Slim::Music::Info::standardTitle($client, $currentItem);
-		$::d_files && msg("currentItem == $currentItem\n");
-		if (Slim::Music::Info::isList($currentItem)) {
-			# we are looking at an playlist file or directory
-			Slim::Buttons::Block::block($client, $line1, $line2);
-			Slim::Control::Command::execute($client, ["playlist", "insertlist", $currentItem], \&playDone, [$client]);
-		} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isRemoteURL($currentItem)) {
-			$client->showBriefly($line1, $line2, undef, 1);
-			# we are looking at a song file, play it and all the other songs in the directory after
-			Slim::Control::Command::execute($client, ["playlist", "insert", $currentItem]);
-		} else {
-			$::d_files && msg("Error attempting to add directory or file to playlist.\n");
-			return;
-		}
-	},
-	'play' => sub  {
-		my $client = shift;
-		my $currentItem = $client->dirItems($client->currentDirItem());
-		my $line1;
-		my $line2 = Slim::Music::Info::standardTitle($client, $currentItem);
-		my $shuffled = 0;
-		if (Slim::Player::Playlist::shuffle($client)) {
-			$line1 = $client->string('PLAYING_RANDOMLY_FROM');
-			$shuffled = 1;
-		} else {
-			$line1 = $client->string('NOW_PLAYING_FROM');
-		
-		}
-		if (Slim::Music::Info::isList($currentItem)) {
-			# we are looking at an playlist file or directory
-			Slim::Buttons::Block::block($client,$line1, $line2);
-			Slim::Control::Command::execute($client, ["playlist", "load", $currentItem], \&playDone, [$client]);
-		} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isRemoteURL($currentItem)) {
-			# put all the songs at this level on the playlist and start playing the selected one.
-			$client->showBriefly($line1, $line2, undef, 1);
-			if (Slim::Utils::Prefs::get('playtrackalbum') && !Slim::Music::Info::isRemoteURL($currentItem)) {
-				Slim::Control::Command::execute($client, ["playlist", "clear"]);
-				Slim::Control::Command::execute($client, ["playlist", "shuffle" , 0]);
-				my $startindex = 0;
-				my $startindexcounter = 0;
-				my $dirref = $client->dirItems;
-				if (Slim::Music::Info::isPlaylist(Slim::Utils::Misc::virtualToAbsolute($client->pwd()))) {
-					$startindex = $client->currentDirItem();
-					Slim::Control::Command::execute($client, ["playlist", "load", $client->pwd()], \&playDone, [$client, $startindex, $shuffled]);
-				} else {
-					foreach my $song (@$dirref) {
-						if (Slim::Music::Info::isSong($song)) {
-							if ($song eq $currentItem) { $startindex = $startindexcounter; }
-							Slim::Control::Command::execute($client, ["playlist", "append", $song]);
-							$startindexcounter++;
-						}
+		},
+		'numberScroll' => sub  {
+			my $client = shift;
+			my $button = shift;
+			my $digit = shift;
+			
+			my $i = Slim::Buttons::Common::numberScroll(
+				$client,
+				$digit,
+				$client->dirItems,
+				Slim::Music::Info::isDir(Slim::Utils::Misc::virtualToAbsolute($client->pwd())),
+				sub {
+					my $j = $client->dirItems(shift);
+					if (Slim::Utils::Prefs::get('filesort')) {
+						return Slim::Music::Info::plainTitle($j);
+					} elsif (Slim::Music::Info::trackNumber($j)) {
+						return Slim::Music::Info::trackNumber($j);
+					} else {
+						return Slim::Music::Info::title($j);
 					}
-					playDone($client, $startindex, $shuffled);
 				}
+				);
+
+			$client->currentDirItem($i);
+			$client->update();
+		},
+		'add' => sub  {
+			my $client = shift;
+			my $currentItem = $client->dirItems($client->currentDirItem());
+			my $line1 = $client->string('ADDING_TO_PLAYLIST');
+			my $line2 = Slim::Music::Info::standardTitle($client, $currentItem);
+			$::d_files && msg("currentItem == $currentItem\n");
+			if (Slim::Music::Info::isList($currentItem)) {
+				# we are looking at an playlist file or directory
+				Slim::Buttons::Block::block($client, $line1, $line2);
+				Slim::Control::Command::execute($client, ["playlist", "add", $currentItem], \&playDone, [$client]);
+			} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isRemoteURL($currentItem)) {
+				$client->showBriefly($line1, $line2, undef, 1);
+				# we are looking at a song file, play it and all the other songs in the directory after
+				Slim::Control::Command::execute($client, ["playlist", "append", $currentItem]);
 			} else {
-				Slim::Control::Command::execute($client, ["playlist", "play", $currentItem]);
+				$::d_files && msg("Error attempting to add directory or file to playlist.\n");
+				return;
 			}
-		} else {
-			$::d_files && msg("Error attempting to play directory or open file.\n");
+		},
+		'insert' => sub  {
+			my $client = shift;
+			my $currentItem = $client->dirItems($client->currentDirItem());
+			my $line1 = $client->string('INSERT_TO_PLAYLIST');
+			my $line2 = Slim::Music::Info::standardTitle($client, $currentItem);
+			$::d_files && msg("currentItem == $currentItem\n");
+			if (Slim::Music::Info::isList($currentItem)) {
+				# we are looking at an playlist file or directory
+				Slim::Buttons::Block::block($client, $line1, $line2);
+				Slim::Control::Command::execute($client, ["playlist", "insertlist", $currentItem], \&playDone, [$client]);
+			} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isRemoteURL($currentItem)) {
+				$client->showBriefly($line1, $line2, undef, 1);
+				# we are looking at a song file, play it and all the other songs in the directory after
+				Slim::Control::Command::execute($client, ["playlist", "insert", $currentItem]);
+			} else {
+				$::d_files && msg("Error attempting to add directory or file to playlist.\n");
+				return;
+			}
+		},
+		'play' => sub  {
+			my $client = shift;
+			my $currentItem = $client->dirItems($client->currentDirItem());
+			my $line1;
+			my $line2 = Slim::Music::Info::standardTitle($client, $currentItem);
+			my $shuffled = 0;
+			if (Slim::Player::Playlist::shuffle($client)) {
+				$line1 = $client->string('PLAYING_RANDOMLY_FROM');
+				$shuffled = 1;
+			} else {
+				$line1 = $client->string('NOW_PLAYING_FROM');
+			
+			}
+			if (Slim::Music::Info::isList($currentItem)) {
+				# we are looking at an playlist file or directory
+				Slim::Buttons::Block::block($client,$line1, $line2);
+				Slim::Control::Command::execute($client, ["playlist", "load", $currentItem], \&playDone, [$client]);
+			} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isRemoteURL($currentItem)) {
+				# put all the songs at this level on the playlist and start playing the selected one.
+				$client->showBriefly($line1, $line2, undef, 1);
+				if (Slim::Utils::Prefs::get('playtrackalbum') && !Slim::Music::Info::isRemoteURL($currentItem)) {
+					Slim::Control::Command::execute($client, ["playlist", "clear"]);
+					Slim::Control::Command::execute($client, ["playlist", "shuffle" , 0]);
+					my $startindex = 0;
+					my $startindexcounter = 0;
+					my $dirref = $client->dirItems;
+
+					if (Slim::Music::Info::isPlaylist(Slim::Utils::Misc::virtualToAbsolute($client->pwd()))) {
+						$startindex = $client->currentDirItem();
+						Slim::Control::Command::execute(
+							$client, ["playlist", "load", $client->pwd()], \&playDone, [$client, $startindex, $shuffled]
+						);
+
+					} else {
+						for my $song (@$dirref) {
+							if (Slim::Music::Info::isSong($song)) {
+								if ($song eq $currentItem) { $startindex = $startindexcounter; }
+								Slim::Control::Command::execute($client, ["playlist", "append", $song]);
+								$startindexcounter++;
+							}
+						}
+						playDone($client, $startindex, $shuffled);
+					}
+				} else {
+					Slim::Control::Command::execute($client, ["playlist", "play", $currentItem]);
+				}
+
+			} else {
+				$::d_files && msg("Error attempting to play directory or open file.\n");
+			}
 		}
-	}
-);
+	);
+
+	Slim::Buttons::Common::addMode('browse', Slim::Buttons::Browse::getFunctions(), \&Slim::Buttons::Browse::setMode);
+}
 
 sub playDone {
 	my $client = shift;
@@ -236,9 +251,8 @@ sub playDone {
 	
 	#The following commented out to allow showBriefly to finish
 	#$client->update();
-	if (defined($startindex)) { Slim::Control::Command::execute($client, ["playlist", "jump", $startindex]); }
-	if (defined($shuffled)) { Slim::Control::Command::execute($client, ["playlist", "shuffle" , $shuffled]); }
-
+	Slim::Control::Command::execute($client, ["playlist", "jump", $startindex])   if defined $startindex;
+	Slim::Control::Command::execute($client, ["playlist", "shuffle" , $shuffled]) if defined $shuffled;
 }
 
 sub getFunctions {
@@ -289,7 +303,9 @@ sub loadDir {
 			,$client->dirItems($client->currentDirItem()),$client->currentDirItem());
 	}
 
-	@{$client->dirItems}=();
+	# XXX - this shouldn't operate on a object directly as an array. There
+	# should be a method to do this.
+	@{$client->dirItems} = ();
 
 	$abspwd = Slim::Utils::Misc::virtualToAbsolute($pwd);
 	$::d_files && msg("virtual directory: $pwd\nabsolute directory: $abspwd\n");
@@ -396,7 +412,7 @@ sub line1 {
 		if ($components[0] eq "__playlists") { shift @components; };
 		my $shortpwd;
 
-		foreach my $path (@components) {
+		for my $path (@components) {
 			if (Slim::Music::Info::isURL($path)) { $path = Slim::Music::Info::standardTitle($client, $path); }
 		}
 

@@ -15,137 +15,172 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
 
-Slim::Buttons::Common::addMode('settings',Slim::Buttons::Settings::getFunctions(),\&Slim::Buttons::Settings::setMode);
-
 # button functions for browse directory
 my @defaultSettingsChoices = qw(ALARM VOLUME BASS TREBLE REPEAT SHUFFLE TITLEFORMAT TEXTSIZE OFFDISPLAYSIZE INFORMATION SETUP_SCREENSAVER);
-my @settingsChoices;
 
-my %current;
-my %menuParams = (
-	'settings' => {
-		'listRef' => \@defaultSettingsChoices
-		,'stringExternRef' => 1
-		,'header' => 'SETTINGS'
-		,'stringHeader' => 1
-		,'headerAddCount' => 1
-		,'callback' => \&settingsExitHandler
-		,'overlayRef' => sub {return (undef,Slim::Display::Display::symbol('rightarrow'));}
-		,'overlayRefArgs' => ''
-	}
-	,'settings/ALARM' => {
-		'useMode' => 'alarm'
-	}
-	,'settings/VOLUME' => {
-		'useMode' => 'INPUT.Bar'
-		,'header' => \&volumeHeader
-		,'onChange' => sub { 
+my @settingsChoices = ();
+my %current = ();
+my %menuParams = ();
+my %functions = ();
+
+sub init {
+	Slim::Buttons::Common::addMode('settings',Slim::Buttons::Settings::getFunctions(),\&Slim::Buttons::Settings::setMode);
+
+	%functions = (
+		'right' => sub  {
+			my ($client,$funct,$functarg) = @_;
+			if (defined(Slim::Buttons::Common::param($client,'useMode'))) {
+				#in a submenu of settings, which is passing back a button press
+				$client->bumpRight();
+			} else {
+				#handle passback of button presses
+				settingsExitHandler($client,'RIGHT');
+			}
+		}
+	);
+
+	%menuParams = (
+
+		'settings' => {
+			'listRef' => \@defaultSettingsChoices,
+			'stringExternRef' => 1,
+			'header' => 'SETTINGS',
+			'stringHeader' => 1,
+			'headerAddCount' => 1,
+			'callback' => \&settingsExitHandler,
+			'overlayRef' => sub { return (undef,Slim::Display::Display::symbol('rightarrow')) },
+			'overlayRefArgs' => '',
+		},
+
+		'settings/ALARM' => {
+			'useMode' => 'alarm'
+		},
+
+		'settings/VOLUME' => {
+			'useMode' => 'INPUT.Bar',
+			'header' => \&volumeHeader,
+
+			'onChange' => sub { 
 				my ($subref,$subarg) = Slim::Buttons::Common::getFunction($_[0],'volume_'.$_[1],'Common');
-				&$subref($_[0],'volume',$subarg);}
-		,'onChangeArgs' => 'CV'
-		,'initialValue' => sub { return $_[0]->volume();}
-	}
-	,'settings/BASS' => {
-		'useMode' => 'INPUT.Bar'
-		,'header' => \&bassHeader
-		,'mid' => 50
-		,'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'bass',$_[1]);}
-		,'onChangeArgs' => 'CV'
-		,'initialValue' => sub { return $_[0]->bass();}
-	}
-	,'settings/PITCH' => {
-		'useMode' => 'INPUT.Bar'
-		,'header' => \&pitchHeader
-		,'min' => 80
-		,'max' => 120
-		,'mid' => 100
-		,'increment' => 1
-		,'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'pitch',$_[1]);}
-		,'onChangeArgs' => 'CV'
-		,'initialValue' => sub { return $_[0]->pitch();}
-	}
-	,'settings/TREBLE' => {
-		'useMode' => 'INPUT.Bar'
-		,'header' => \&trebleHeader
-		,'mid' => 50
-		,'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'treble',$_[1]);}
-		,'onChangeArgs' => 'CV'
-		,'initialValue' => sub { return $_[0]->treble();}
-	}
-	,'settings/REPEAT' => {
-		'useMode' => 'INPUT.List'
-		,'listRef' => [0,1,2]
-		,'externRef' => ['REPEAT_OFF', 'REPEAT_ONE', 'REPEAT_ALL']
-		,'stringExternRef' => 1
-		,'header' => 'REPEAT'
-		,'stringHeader' => 1
-		,'onChange' => sub { Slim::Control::Command::execute($_[0], ["playlist", "repeat", $_[1]]); }
-		,'onChangeArgs' => 'CV'
-		,'initialValue' => \&Slim::Player::Playlist::repeat
-	}
-	,'settings/SHUFFLE' => {
-		'useMode' => 'INPUT.List'
-		,'listRef' => [0,1,2]
-		,'externRef' => [ 'SHUFFLE_OFF','SHUFFLE_ON_SONGS','SHUFFLE_ON_ALBUMS']
-		,'stringExternRef' => 1
-		,'header' => 'SHUFFLE'
-		,'stringHeader' => 1
-		,'onChange' => sub { Slim::Control::Command::execute($_[0], ["playlist", "shuffle", $_[1]]); }
-		,'onChangeArgs' => 'CV'
-		,'initialValue' => \&Slim::Player::Playlist::shuffle
-	}
-	,'settings/TITLEFORMAT' => {
-		'useMode' => 'INPUT.List'
-		,'listRef' => undef # filled before changing modes
-		,'listIndex' => undef #filled before changing modes
-		,'externRef' => undef #filled before changing modes
-		,'header' => 'TITLEFORMAT'
-		,'stringHeader' => 1
-		,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0],"titleFormatCurr",Slim::Buttons::Common::param($_[0],'listIndex')); }
-		,'onChangeArgs' => 'C'
-	}
-	,'settings/TEXTSIZE' => {
-		'useMode' => 'INPUT.List',
-		'listRef' => undef, #filled before changing modes
-		'externRef' => \&_fontExists,
-		'header' => 'TEXTSIZE',
-		'stringHeader' => 1,
-		'onChange' => sub { $_[0]->textSize($_[1]) },
-		'onChangeArgs' => 'CV',
-		'initialValue' => sub { $_[0]->textSize() },
-	}
+				&$subref($_[0],'volume',$subarg);
+			},
 
-	,'settings/OFFDISPLAYSIZE' => {
-		'useMode' => 'INPUT.List',
-		'listRef' => undef, #filled before changing modes
-		'externRef' => \&_fontExists,
-		'header' => 'OFFDISPLAYSIZE',
-		'stringHeader' => 1,
-		'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0], "offDisplaySize", $_[1]) },
-		'onChangeArgs' => 'CV',
-		'initialValue' => 'offDisplaySize',
-	}
-	,'settings/INFORMATION' => {
-		'useMode' => 'information'
-	}
-	,'settings/SYNCHRONIZE' => {
-		'useMode' => 'synchronize'
-	}
-	#,'settings/PLAYER_NAME' => {
-	#	'useMode' => 'INPUT.Text'
-		#add more params here after the rest is working
-	#}
-	,'settings/SETUP_SCREENSAVER' => {
-		'useMode' => 'INPUT.List'
-		,'listRef' => undef
-		,'externRef' => undef
-		,'stringExternRef' => 1
-		,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0], "screensaver", $_[1]); }
-		,'header' => 'SETUP_SCREENSAVER'
-		,'stringHeader' => 1
-		,'initialValue' => 'screensaver'
-	}
-);
+			'onChangeArgs' => 'CV',
+			'initialValue' => sub { return $_[0]->volume() },
+		},
+
+		'settings/BASS' => {
+			'useMode' => 'INPUT.Bar',
+			'header' => \&bassHeader,
+			'mid' => 50,
+			'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'bass',$_[1]) },
+			'onChangeArgs' => 'CV',
+			'initialValue' => sub { return $_[0]->bass() },
+		},
+
+		'settings/PITCH' => {
+			'useMode' => 'INPUT.Bar',
+			'header' => \&pitchHeader,
+			'min' => 80,
+			'max' => 120,
+			'mid' => 100,
+			'increment' => 1,
+			'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'pitch',$_[1]) },
+			'onChangeArgs' => 'CV',
+			'initialValue' => sub { return $_[0]->pitch() },
+		},
+
+		'settings/TREBLE' => {
+			'useMode' => 'INPUT.Bar',
+			'header' => \&trebleHeader,
+			'mid' => 50,
+			'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'treble',$_[1]) },
+			'onChangeArgs' => 'CV',
+			'initialValue' => sub { return $_[0]->treble() },
+		},
+
+		'settings/REPEAT' => {
+			'useMode' => 'INPUT.List',
+			'listRef' => [0,1,2],
+			'externRef' => [qw(REPEAT_OFF REPEAT_ONE REPEAT_ALL)],
+			'stringExternRef' => 1,
+			'header' => 'REPEAT',
+			'stringHeader' => 1,
+			'onChange' => sub { Slim::Control::Command::execute($_[0], ["playlist", "repeat", $_[1]]) },
+			'onChangeArgs' => 'CV',
+			'initialValue' => \&Slim::Player::Playlist::repeat,
+		},
+
+		'settings/SHUFFLE' => {
+			'useMode' => 'INPUT.List',
+			'listRef' => [0,1,2],
+			'externRef' => [qw(SHUFFLE_OFF SHUFFLE_ON_SONGS SHUFFLE_ON_ALBUMS)],
+			'stringExternRef' => 1,
+			'header' => 'SHUFFLE',
+			'stringHeader' => 1,
+			'onChange' => sub { Slim::Control::Command::execute($_[0], ["playlist", "shuffle", $_[1]]) },
+			'onChangeArgs' => 'CV',
+			'initialValue' => \&Slim::Player::Playlist::shuffle,
+		},
+
+		'settings/TITLEFORMAT' => {
+			'useMode' => 'INPUT.List',
+			'listRef' => undef, # filled before changing modes
+			'listIndex' => undef, #filled before changing modes
+			'externRef' => undef, #filled before changing modes
+			'header' => 'TITLEFORMAT',
+			'stringHeader' => 1,
+			'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0],"titleFormatCurr",Slim::Buttons::Common::param($_[0],'listIndex')) },
+			'onChangeArgs' => 'C',
+		},
+
+		'settings/TEXTSIZE' => {
+			'useMode' => 'INPUT.List',
+			'listRef' => undef, #filled before changing modes
+			'externRef' => \&_fontExists,
+			'header' => 'TEXTSIZE',
+			'stringHeader' => 1,
+			'onChange' => sub { $_[0]->textSize($_[1]) },
+			'onChangeArgs' => 'CV',
+			'initialValue' => sub { $_[0]->textSize() },
+		},
+
+		'settings/OFFDISPLAYSIZE' => {
+			'useMode' => 'INPUT.List',
+			'listRef' => undef, #filled before changing modes
+			'externRef' => \&_fontExists,
+			'header' => 'OFFDISPLAYSIZE',
+			'stringHeader' => 1,
+			'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0], "offDisplaySize", $_[1]) },
+			'onChangeArgs' => 'CV',
+			'initialValue' => 'offDisplaySize',
+		},
+
+		'settings/INFORMATION' => {
+			'useMode' => 'information'
+		},
+
+		'settings/SYNCHRONIZE' => {
+			'useMode' => 'synchronize'
+		},
+
+		#,'settings/PLAYER_NAME' => {
+		#	'useMode' => 'INPUT.Text'
+			#add more params here after the rest is working
+		#}
+
+		'settings/SETUP_SCREENSAVER' => {
+			'useMode' => 'INPUT.List',
+			'listRef' => undef,
+			'externRef' => undef,
+			'stringExternRef' => 1,
+			'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0], "screensaver", $_[1]) },
+			'header' => 'SETUP_SCREENSAVER',
+			'stringHeader' => 1,
+			'initialValue' => 'screensaver',
+		}
+	);
+}
 
 sub _fontExists {
 	my $fontname = (@{$_[0]->fonts})[1];
@@ -203,19 +238,6 @@ sub settingsExitHandler {
 		return;
 	}
 }
-
-my %functions = (
-	'right' => sub  {
-		my ($client,$funct,$functarg) = @_;
-		if (defined(Slim::Buttons::Common::param($client,'useMode'))) {
-			#in a submenu of settings, which is passing back a button press
-			$client->bumpRight();
-		} else {
-			#handle passback of button presses
-			settingsExitHandler($client,'RIGHT');
-		}
-	}
-);
 
 sub getFunctions {
 	return \%functions;

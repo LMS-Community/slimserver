@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.26 2004/12/07 05:31:54 dave Exp $
+# $Id: IR.pm,v 1.27 2005/01/04 03:38:52 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,23 +10,44 @@ package Slim::Hardware::IR;
 use strict;
 use File::Spec::Functions qw(catdir);
 use FindBin qw($Bin);
+use Time::HiRes qw(gettimeofday);
 
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 
-my %irCodes	  = ();
-my %irMap = ();
+my %irCodes = ();
+my %irMap   = ();
 
 my @queuedBytes = ();
 my @queuedTime = ();
 my @queuedClient = ();
 
+my @buttonPressStyles = ( '','.single','.double','.repeat','.hold','.hold_release');
+my $defaultMapFile;
+
+my $eggseq = 'up,down,up,down,left,right,left,right';
+
+# If time between IR commands is greater than this, then the code is considered a new button press
+$Slim::Hardware::IR::IRMINTIME  = 0.140;
+
+# 512 ms
+$Slim::Hardware::IR::IRHOLDTIME  = 0.512;
+
+# 256 ms
+$Slim::Hardware::IR::IRSINGLETIME = 0.256;
+
+# and more things for diagnostics.  Define d_irtm to turn diagnostics on.
+my ($serverStartSeconds, $serverStartMicros);
+
 # queued variables used for diagnostics.
 my @queuedClientTime = ();
 my @queuedServerTime = ();
-# and more things for diagnostics.  Define d_irtm to turn diagnostics on.
-use Time::HiRes qw(gettimeofday);
-my ($serverStartSeconds, $serverStartMicros) = gettimeofday();
+
+{
+	if ($::d_irtm) {
+		($serverStartSeconds, $serverStartMicros) = gettimeofday();
+	}
+}
 
 sub enqueue {
 	my $client = shift;
@@ -61,6 +82,7 @@ sub enqueue {
 
 sub idle {
 	if (scalar(@queuedBytes)) {
+
 		my $client = shift @queuedClient;		
 		Slim::Control::Command::execute($client, ['ir', (shift @queuedBytes), (shift @queuedTime)]);
 		
@@ -84,51 +106,50 @@ sub idle {
 	}
 }
 
-#$::d_ir = 1;
-my $eggseq = 'up,down,up,down,left,right,left,right';
-
-$Slim::Hardware::IR::IRMINTIME  = 0.140;    # If time between IR commands is greater than this, then the code is considered a new button press
-$Slim::Hardware::IR::IRHOLDTIME  = 0.512;    # 512 ms
-$Slim::Hardware::IR::IRSINGLETIME = 0.256;   # 256 ms
-
 sub init {
 
 	%irCodes = ();
 	%irMap = ();
 	
-	foreach my $irfile (keys %{irfiles()}) {
+	for my $irfile (keys %{irfiles()}) {
 		loadIRFile($irfile);
 	}
-	foreach my $mapfile (keys %{mapfiles()}) {
+
+	for my $mapfile (keys %{mapfiles()}) {
 		loadMapFile($mapfile);
 	}
 }
 
 sub IRFileDirs {
-	my @dirs;
-	
-	push @dirs, catdir($Bin,"IR");
+	my @dirs = catdir($Bin,"IR");
+
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @dirs, $ENV{'HOME'} . "/Library/SlimDevices/IR/";
 		push @dirs, "/Library/SlimDevices/IR/";
 	}
+
 	return @dirs;
 }
 
 #returns a reference to a hash of filenames/external names
 sub irfiles {
 	my %irfilelist = ();
-	foreach my $irfiledir (IRFileDirs()) {
-		if (opendir(DIR, $irfiledir)) {
-			foreach my $irfile ( sort(readdir(DIR)) ) {
-				if ($irfile =~ /(.+)\.ir$/) {
-					$::d_ir && msg(" irfile entry: $irfile\n");
-					$irfilelist{catdir($irfiledir, $irfile)} = $1;
-				}
-			}
-			closedir(DIR);
+
+	for my $irfiledir (IRFileDirs()) {
+
+		opendir(DIR, $irfiledir) or next;
+
+		for my $irfile ( sort(readdir(DIR)) ) {
+
+			next unless $irfile =~ /(.+)\.ir$/;
+
+			$::d_ir && msg(" irfile entry: $irfile\n");
+			$irfilelist{catdir($irfiledir, $irfile)} = $1;
 		}
+
+		closedir(DIR);
 	}
+
 	return \%irfilelist;
 }
 
@@ -142,8 +163,6 @@ sub defaultMap {
 	return "Default";
 }
 
-my $defaultMapFile;
-
 sub defaultMapFile {
 	unless (defined($defaultMapFile)) {
 		$defaultMapFile = catdir((IRFileDirs())[0],defaultMap() . '.map');
@@ -151,41 +170,47 @@ sub defaultMapFile {
 	return $defaultMapFile;
 }
 
-#returns a reference to a hash of filenames/external names
+# returns a reference to a hash of filenames/external names
 sub mapfiles {
 	my %maplist = ();
-	foreach my $irfiledir (IRFileDirs()) {
-		if (opendir(DIR, $irfiledir)) {
-			foreach my $mapfile ( sort(readdir(DIR)) ) {
-				if ($mapfile =~ /(.+)\.map$/) {
-					$::d_ir && msg(" key mapping file entry: $mapfile\n");
-					my $path = catdir($irfiledir,$mapfile);
-					if ($1 eq defaultMap()) {
-						$maplist{$path} = Slim::Utils::Strings::string('DEFAULT_MAP');
-						$defaultMapFile = $path
-					} else {
-						$maplist{$path} = $1;
-					}
-				}
+
+	for my $irfiledir (IRFileDirs()) {
+
+		opendir(DIR, $irfiledir) or next;
+
+		for my $mapfile ( sort(readdir(DIR)) ) {
+
+			next unless $mapfile =~ /(.+)\.map$/;
+
+			$::d_ir && msg(" key mapping file entry: $mapfile\n");
+			my $path = catdir($irfiledir,$mapfile);
+
+			if ($1 eq defaultMap()) {
+				$maplist{$path} = Slim::Utils::Strings::string('DEFAULT_MAP');
+				$defaultMapFile = $path
+			} else {
+				$maplist{$path} = $1;
 			}
-		closedir DIR;
 		}
+
+		closedir DIR;
 	}
+
 	return \%maplist;
 }
 
 sub addModeDefaultMapping {
 	my ($mode,$mapref) = @_;
+
 	if (exists $irMap{$defaultMapFile}{$mode}) {
 		#don't overwrite existing mappings
 		return;
 	}
+
 	if (ref $mapref eq 'HASH') {
 		$irMap{$defaultMapFile}{$mode} = $mapref;
 	}
 }
-
-my @buttonPressStyles = ( '','.single','.double','.repeat','.hold','.hold_release');
 
 sub loadMapFile {
 	my $mapfile = shift;
@@ -210,7 +235,7 @@ sub loadMapFile {
 			unless ($buttonName =~ /(.+)\.\*/) {
 				$irMap{$mapfile}{$mode}{$buttonName} = $function;
 			} else {
-				foreach my $style (@buttonPressStyles) {
+				for my $style (@buttonPressStyles) {
 					$irMap{$mapfile}{$mode}{$1 . $style} = $function unless exists($irMap{$mapfile}{$mode}{$1 . $style}) ;
 				}
 			}
@@ -259,9 +284,9 @@ sub lookup {
 	if (defined $code) {
 	
 		my %enabled = %{irfiles()};
-		foreach (Slim::Utils::Prefs::clientGetArray($client,'disabledirsets')) {delete $enabled{$_}};
+		for (Slim::Utils::Prefs::clientGetArray($client,'disabledirsets')) {delete $enabled{$_}};
 		
-		foreach my $irset (keys %enabled) {
+		for my $irset (keys %enabled) {
 			if (defined $irCodes{$irset}{$code}) {
 				$::d_ir && msg("found button $irCodes{$irset}{$code} for $code\n");
 				$code = $irCodes{$irset}{$code};

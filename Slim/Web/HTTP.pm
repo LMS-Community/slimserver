@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.133 2004/12/20 05:13:16 dsully Exp $
+# $Id: HTTP.pm,v 1.134 2005/01/04 03:38:53 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -122,6 +122,10 @@ my %pageFunctions = ();
 
 # initialize the http server
 sub init {
+
+	# this initializes the %fieldInfo structure
+	Slim::Web::Pages::init();
+
 	idle();
 }
 

@@ -1,6 +1,6 @@
 package Slim::Buttons::ScreenSaver;
 
-# $Id: ScreenSaver.pm,v 1.24 2004/11/27 05:17:32 kdf Exp $
+# $Id: ScreenSaver.pm,v 1.25 2005/01/04 03:38:52 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -17,23 +17,26 @@ use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
 
-# Each button on the remote has a function:
-my %functions = (
-	'done' => sub  {
-		my ($client
-		   ,$funct
-		   ,$functarg) = @_;
-		Slim::Buttons::Common::popMode($client);
-		$client->update();
-		#pass along ir code to new mode if requested
-		if (defined $functarg && $functarg eq 'passback') {
-			Slim::Hardware::IR::resendButton($client);
-		}
-	}
-);
+my %functions = ();
 
 sub init {
-	Slim::Buttons::Common::addSaver('screensaver',getFunctions(),\&setMode,undef,string('SCREENSAVER_JUMP_BACK_NAME'));
+
+	Slim::Buttons::Common::addSaver('screensaver', getFunctions(), \&setMode, undef, string('SCREENSAVER_JUMP_BACK_NAME'));
+
+	# Each button on the remote has a function:
+	%functions = (
+		'done' => sub  {
+			my ($client ,$funct ,$functarg) = @_;
+
+			Slim::Buttons::Common::popMode($client);
+			$client->update();
+
+			# pass along ir code to new mode if requested
+			if (defined $functarg && $functarg eq 'passback') {
+				Slim::Hardware::IR::resendButton($client);
+			}
+		}
+	);
 }
 
 sub getFunctions {
@@ -44,8 +47,15 @@ sub screenSaver {
 	my $client = shift;
 	
 	my $now = Time::HiRes::time();
-	$::d_time && msg("screenSaver idle display " . ($now - Slim::Hardware::IR::lastIRTime($client) - Slim::Utils::Prefs::clientGet($client,"screensavertimeout")) . "(mode:" . Slim::Buttons::Common::mode($client) . ")\n");
+
+	$::d_time && msg("screenSaver idle display " . (
+		$now - Slim::Hardware::IR::lastIRTime($client) - 
+			Slim::Utils::Prefs::clientGet($client,"screensavertimeout")) . 
+		"(mode:" . Slim::Buttons::Common::mode($client) . ")\n"
+	);
+
 	my $mode = Slim::Buttons::Common::mode($client);
+
 	assert($mode);
 	
 	# some variables, so save us calling the same functions multiple times.

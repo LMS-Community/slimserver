@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.169 2004/12/17 22:33:00 dsully Exp $
+# $Id: Info.pm,v 1.170 2005/01/04 03:38:53 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -62,13 +62,15 @@ my %lastFile;
 
 my ($currentDB, $localDB);
 
+my %display_cache;
+
 sub init {
 
 	loadTypesConfig();
 
 	$currentDB = $localDB = Slim::DataStores::DBI::DBIStore->new();
 
-	if ($currentDB->count('track', {}) == 0) {
+	if (!$::noScan && $currentDB->count('track', {}) == 0) {
 		Slim::Music::Import::startScan();
 	}
 	
@@ -168,10 +170,10 @@ sub loadTypesConfig {
 
 sub clearCache {
 	my $item = shift;
+
 	if ($item) {
 		$currentDB->delete($item);
-	}
-	else {
+	} else {
 		$currentDB->markAllEntriesStale();
 		$::d_info && Slim::Utils::Misc::msg("clearing validity for rescan\n");
 	}
@@ -202,6 +204,7 @@ sub clearStaleCacheEntries {
 # Mark an item as having been rescanned
 sub markAsScanned {
 	my $item = shift;
+
 	$currentDB->markEntryAsValid($item);
 }
 
@@ -218,7 +221,8 @@ sub playlists {
 }
 
 sub addPlaylist {
-	my $url=shift;
+	my $url = shift;
+
 	$currentDB->addExternalPlaylist($url);
 }
 
@@ -433,7 +437,6 @@ sub updateAlbumMMMixCache {
 	}
 }
 
-
 ##################################################################################
 # this routine accepts both our three letter content types as well as mime types.
 # if neither match, we guess from the URL.
@@ -454,12 +457,9 @@ sub setContentType {
 		}
 	}
 
-	my $cacheEntry;
-	$cacheEntry->{'CT'} = $type;
-	$currentDB->updateOrCreate($url, $cacheEntry);
+	$currentDB->updateOrCreate($url, { 'CT' => $type });
 	$::d_info && Slim::Utils::Misc::msg("Content type for $url is cached as $type\n");
 }
-
 
 sub setTitle {
 	my $url = shift;
@@ -467,19 +467,14 @@ sub setTitle {
 
 	$::d_info && Slim::Utils::Misc::msg("Adding title $title for $url\n");
 
-	my $cacheEntry;
-	$cacheEntry->{'TITLE'} = $title;
-	$currentDB->updateOrCreate($url, $cacheEntry);
+	$currentDB->updateOrCreate($url, { 'TITLE' => $title });
 }
 
 sub setBitrate {
 	my $url = shift;
 	my $bitrate = shift;
 
-		
-	my $cacheEntry;
-	$cacheEntry->{'BITRATE'} = $bitrate;
-	$currentDB->updateOrCreate($url, $cacheEntry);
+	$currentDB->updateOrCreate($url, { 'BITRATE' => $bitrate });
 }
 
 my $ncElemstring = "VOLUME|PATH|FILE|EXT|DURATION|LONGDATE|SHORTDATE|CURRTIME|FROM|BY"; #non-cached elements
@@ -497,19 +492,16 @@ my $elems = qr/$elemstring/;
 #my $sdElems = qr/$sdElemstring/;
 
 sub elemLookup {
-	my $element = shift;
-	#my $file = shift;
+	my $element     = shift;
 	my $infoHashref = shift;
-	my $value;
 
 	# don't return disc number if known to be single disc set
 	if ($element eq "DISC") {
 		my $discCount = $infoHashref->{"DISCC"};
 		return undef if defined $discCount and $discCount == 1;
 	}
-	$value = $infoHashref->{$element};
 
-	return $value;
+	return $infoHashref->{$element};
 }
 
 # used by infoFormat to add items not in infoCache to hash of info
@@ -544,7 +536,7 @@ sub addToinfoHash {
 	$infoHashref->{'BY'} = string('BY'); 
 }
 
-#formats information about a file using a provided format string
+# formats information about a file using a provided format string
 sub infoFormat {
 	no warnings; # this is to allow using null values with string concatenation, it only effects this procedure
 	my $fileOrObj = shift; # item whose information will be formatted
@@ -552,16 +544,13 @@ sub infoFormat {
 	my $safestr = shift; # format string to use in the event that after filling the first string, there is nothing left
 	my $pos = 0; # keeps track of position within the format string
 	
-	my $track = ref $fileOrObj ? $fileOrObj : 
-		$currentDB->objectForUrl($fileOrObj, 1);
-	my $file = ref $fileOrObj ? $track->url : $fileOrObj;
+	my $track = ref $fileOrObj ? $fileOrObj  : $currentDB->objectForUrl($fileOrObj, 1);
+	my $file  = ref $fileOrObj ? $track->url : $fileOrObj;
 
 	return '' unless defined $file && $track;
 	
-	my $infoRef = infoHash($track, $file);
+	my $infoRef = infoHash($track, $file) || return '';
 	
-	return '' unless defined $infoRef;
-
 	my %infoHash = %{$infoRef}; # hash of data elements not cached in the main repository
 
 	$str = 'TITLE' unless defined $str; #use a safe format string if none specified
@@ -648,29 +637,36 @@ sub infoFormat {
 		# since we aren't using s///g we need to reset the string position after each pass
 		pos($str) = $pos;
 	}
+
 	# reset the string position which the failed match set to 0
 	pos($str) = $pos;
-	#same regex as above, but the last element is the end of the string
+
+	# same regex as above, but the last element is the end of the string
 	$str =~ s{\G(.*?)?(?:=>(.*?)=>)?(?:=>(.*?)=>)?($elems)(?:<=(.*?)<=)?(.*?)?(?:<#(.*?)#>)?$}
 				{
 					my $out = '';
-					my $value = elemLookup($4,\%infoHash);
+					my $value = elemLookup($4, \%infoHash);
 					if (defined($value)) {
 						#fill with all the separators
 						#no need to do the <##> conversion since this is the end of the string
 						$out = $1 . $2 . $3 . $value . $5 . $6 . $7;
-					} else {#value not defined
-						#only use the bare separators if there were framed ones as well
+
+					} else {
+						# value not defined
+						# only use the bare separators if there were framed ones as well
 						$out  = (defined($2) || defined($3)) ? $1 : "";
 						$out .= (defined($5) || defined($7)) ? $6 : "";
 					}
 					$out;
 				}e;
+
 	if ($str eq "" && defined($safestr)) {
+
 		# if there isn't anything left of the format string after the replacements, use the safe string, if supplied
 		return infoFormat($track,$safestr);
+
 	} else {
-		$str=~ s/%([0-9a-fA-F][0-9a-fA-F])%/chr(hex($1))/eg;
+		$str =~ s/%([0-9a-fA-F][0-9a-fA-F])%/chr(hex($1))/eg;
 	}
 
 	return $str;
@@ -723,32 +719,54 @@ sub plainTitle {
 
 # get a potentially client specifically formatted title.
 sub standardTitle {
-	my $client = shift;
+	my $client    = shift;
 	my $pathOrObj = shift; # item whose information will be formatted
-	my $track = ref $pathOrObj ? $pathOrObj : 
-		$currentDB->objectForUrl($pathOrObj, 1);
-	my $fullpath = ref $pathOrObj ? $track->url : $pathOrObj;
-	my $title;
+	my $track     = ref $pathOrObj ? $pathOrObj : $currentDB->objectForUrl($pathOrObj, 1);
+	my $fullpath  = ref $pathOrObj ? $track->url : $pathOrObj;
 	my $format;
 
 	if (isPlaylistURL($fullpath) || isList($fullpath)) {
+
 		$format = 'TITLE';
+
 	} elsif (defined($client)) {
-		#in array syntax this would be $titleFormat[$clientTitleFormat[$clientTitleFormatCurr]]
-		#get the title format
-		$format = Slim::Utils::Prefs::getInd("titleFormat"
-				#at the array index of the client titleformat array
-				,Slim::Utils::Prefs::clientGet($client, "titleFormat"
-					#which is currently selected
-					,Slim::Utils::Prefs::clientGet($client,'titleFormatCurr')));
+
+		# in array syntax this would be
+		# $titleFormat[$clientTitleFormat[$clientTitleFormatCurr]] get
+		# the title format
+
+		$format = Slim::Utils::Prefs::getInd("titleFormat",
+			# at the array index of the client titleformat array
+			Slim::Utils::Prefs::clientGet($client, "titleFormat",
+				# which is currently selected
+				Slim::Utils::Prefs::clientGet($client,'titleFormatCurr')
+			)
+		);
+
 	} else {
-		#in array syntax this would be $titleFormat[$titleFormatWeb]
-		$format = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
+
+		# in array syntax this would be $titleFormat[$titleFormatWeb]
+		$format = Slim::Utils::Prefs::getInd("titleFormat", Slim::Utils::Prefs::get("titleFormatWeb"));
 	}
 	
-	$title = infoFormat($fullpath, $format, "TITLE");
+	# Client may not be defined, but we still want to use the cache.
+	$client ||= 'NOCLIENT';
 
-	return $title;
+	my $ref = $display_cache{$client} ||= {
+		'fullpath' => '',
+		'format'   => '',
+	};
+
+	if (!isFile($fullpath) || $fullpath ne $ref->{'fullpath'} || $format ne $ref->{'format'}) {
+
+		$ref = $display_cache{$client} = {
+			'fullpath' => $fullpath,
+			'format'   => $format,
+			'display'  => infoFormat($fullpath, $format, 'TITLE'),
+		};
+	}
+
+	return $ref->{'display'};
 }
 
 #
@@ -826,7 +844,7 @@ sub guessTags {
 #
 sub infoHash {
 	my $track = shift;
-	my $file = shift;
+	my $file  = shift;
 
 	if (!defined($file) || $file eq "") { 
 		$::d_info && Slim::Utils::Misc::msg("trying to get infoHash on an empty file name\n");
@@ -839,44 +857,46 @@ sub infoHash {
 		$::d_info && Slim::Utils::Misc::bt();
 		return; 
 	};
-
 	
 	if (!isURL($file)) { 
 		Slim::Utils::Misc::msg("Non-URL passed to InfoHash::info ($file)\n");
 		Slim::Utils::Misc::bt();
-		$file=Slim::Utils::Misc::fileURLFromPath($file); 
+		$file = Slim::Utils::Misc::fileURLFromPath($file); 
 	}
 	
 	my $cacheEntryHash = {};
-	my @all_attributes  = keys %{Slim::DataStores::DBI::Track->attributes};
-	foreach my $attribute (@all_attributes) {
+
+	foreach my $attribute (keys %{Slim::DataStores::DBI::Track->attributes}) {
+
 		if ($attribute eq "album") {
-			my $item1 = $track->album;
-			if ($item1) {
-				$cacheEntryHash->{"ALBUM"} = $item1->title if ($item1);
-				$cacheEntryHash->{"ALBUMSORT"} = $item1->titlesort;
-				$cacheEntryHash->{"DISC"} = $item1->disc;
-				$cacheEntryHash->{"DISCC"} = $item1->discc;
-			}
+
+			my $album = $track->album() || next;
+
+			$cacheEntryHash->{"ALBUM"}     = $album->title;
+			$cacheEntryHash->{"ALBUMSORT"} = $album->titlesort;
+			$cacheEntryHash->{"DISC"}      = $album->disc;
+			$cacheEntryHash->{"DISCC"}     = $album->discc;
+
+			next;
 		}
-		else {
-			my $item = $track->get($attribute);
-			$cacheEntryHash->{uc $attribute} = $item if $item;
+
+		if (my $item = $track->get($attribute)) {
+			$cacheEntryHash->{uc $attribute} = $item;
 		}
 	}
 
-	$cacheEntryHash->{"ARTIST"} = $track->artist;
+	$cacheEntryHash->{"ARTIST"}     = $track->artist;
 	$cacheEntryHash->{"ARTISTSORT"} = $track->artistsort;
-	$cacheEntryHash->{"GENRE"} = $track->genre;
+	$cacheEntryHash->{"GENRE"}      = $track->genre;
 
 	return $cacheEntryHash;
 }
 
 sub info {
-	my $file = shift;
+	my $file    = shift;
 	my $tagname = shift;
 
-	if (!defined($file) || $file eq "" || !defined($tagname)) { 
+	if (!defined $file || $file eq '' || !defined $tagname || $tagname eq '') { 
 		$::d_info && Slim::Utils::Misc::msg("trying to get info on an empty file name\n");
 		$::d_info && Slim::Utils::Misc::bt();
 		return; 
@@ -887,60 +907,37 @@ sub info {
 	if (!isURL($file)) { 
 		$::d_info && Slim::Utils::Misc::msg("Non-URL passed to Info::info ($file)\n");
 		$::d_info && Slim::Utils::Misc::bt();
-		$file=Slim::Utils::Misc::fileURLFromPath($file); 
-	}
-	
-	my $track = $currentDB->objectForUrl($file, 0);
-	if ($track) {
-		if ($tagname eq "ALBUM") {
-			my $item1 = $track->album;
-			return $item1->title if ($item1);
-			return undef;
-		}
-		if ($tagname eq "ALBUMSORT") {
-			my $item1 = $track->album;
-			return $item1->titlesort if ($item1);
-			return undef;
-		}
-		if ($tagname eq "DISC") {
-			my $item1 = $track->album;
-			return $item1->disc if ($item1);
-			return undef;
-		}
-		if ($tagname eq "DISCC") {
-			my $item1 = $track->album;
-			return $item1->discc if ($item1);
-			return undef;
-		}
-		if ($tagname eq "GENRE") {
-			return $track->genre;
-		}
-		if ($tagname eq "ARTIST") {
-			return $track->artist;
-		}
-		if ($tagname eq "ARTISTSORT") {
-			return $track->artistsort;
-		}
-		#FIXME
-		if ($tagname eq "COMPOSER") {
-			return undef;
-		}
-		if ($tagname eq "BAND") {
-			return undef;
-		}
-		if ($tagname eq "CONDUCTOR") {
-			return undef;
-		}
-		if ($tagname eq "COMMENT") {
-			return undef;
-		}
 
-		return $track->get(lc $tagname);
+		$file = Slim::Utils::Misc::fileURLFromPath($file); 
 	}
 	
-	return undef;
+	my $track = $currentDB->objectForUrl($file, 0) || return;
+
+	if ($tagname =~ /^(?:ALBUM|ALBUMSORT|DISC|DISCC)$/o) {
+
+		my $album = $track->album() || return;
+
+		return $album->title()     if $tagname eq 'ALBUM';
+		return $album->titlesort() if $tagname eq 'ALBUMSORT';
+		return $album->disc()      if $tagname eq 'DISC';
+		return $album->disccc()    if $tagname eq 'DISCCC';
+	}
+
+	#FIXME
+	if ($tagname =~ /^(?:COMPOSER|BAND|CONDUCTOR|COMMENT)$/o) {
+		return undef;
+	}
+	
+	# Fall through
+	my $lcTag = lc($tagname);
+
+	# These need to go through their overridden methods.
+	if ($tagname =~ /^(?:GENRE|ARTIST|ARTISTSORT)$/o) {
+		return $track->$lcTag();
+	}
+
+	return $track->get($lcTag);
 }
-
 
 sub trackNumber { return info(shift,'TRACKNUM'); }
 
@@ -948,7 +945,7 @@ sub cleanTrackNumber {
 	my $tracknumber = shift;
 
 	if (defined($tracknumber)) {
-		#extracts the first digits only sequence then converts it to int
+		# extracts the first digits only sequence then converts it to int
 		$tracknumber =~ /(\d*)/;
 		$tracknumber = $1 ? int($1) : undef;
 	}
@@ -964,29 +961,20 @@ sub artist { return info(shift,'ARTIST'); }
 
 sub artistSort {
 	my $file = shift;
-	my $artistSort = info($file,'ARTISTSORT');
-	if (!defined($artistSort)) {
-		$artistSort = Slim::Utils::Text::ignoreCaseArticles(artist($file));
-	}
-	return $artistSort;
+
+	return info($file,'ARTISTSORT') || Slim::Utils::Text::ignoreCaseArticles(artist($file));
 }
 
 sub albumSort {
 	my $file = shift;
-	my $albumSort = info($file,'ALBUMSORT');
-	if (!defined($albumSort)) {
-		$albumSort = Slim::Utils::Text::ignoreCaseArticles(album($file));
-	}
-	return $albumSort;
+
+	return info($file,'ALBUMSORT') || Slim::Utils::Text::ignoreCaseArticles(album($file));
 }
 
 sub titleSort {
 	my $file = shift;
-	my $titleSort = info($file,'TITLESORT');
-	if (!defined($titleSort)) {
-		$titleSort = Slim::Utils::Text::ignoreCaseArticles(title($file));
-	}
-	return $titleSort;
+
+	return info($file,'TITLESORT') || Slim::Utils::Text::ignoreCaseArticles(title($file));
 }
 
 sub composer { return info(shift,'COMPOSER'); }
@@ -1043,11 +1031,7 @@ sub duration {
 	my $file = shift;
 	my $secs = info($file,'SECS');
 
-	if (defined $secs) {
-		return sprintf('%s:%02s',int($secs / 60),$secs % 60);
-	} else {
-		return;
-	}
+	return sprintf('%s:%02s',int($secs / 60),$secs % 60) if defined $secs;
 }
 
 sub durationSeconds { return info(shift,'SECS'); }
@@ -1059,10 +1043,11 @@ sub size { return info(shift,'SIZE'); }
 sub bitrate {
 	my $file = shift;
 	my $mode = (defined info($file,'VBR_SCALE')) ? 'VBR' : 'CBR';
-	if (info($file,'BITRATE')) {
-		return int (info($file,'BITRATE')/1000).Slim::Utils::Strings::string('KBPS').' '.$mode;
-	} else {
-		return;
+
+	my $bitrate = info($file,'BITRATE');
+
+	if ($bitrate) {
+		return int ($bitrate/1000).Slim::Utils::Strings::string('KBPS').' '.$mode;
 	}
 }
 
@@ -1118,22 +1103,21 @@ sub coverArt {
 	return ($body, $contenttype, $mtime);
 }
 
-sub age { return info(shift, 'AGE'); }
+sub age { return info(shift, 'AGE') || 0; }
 sub tagVersion { return info(shift,'TAGVERSION'); }
 
 sub cachedPlaylist {
 	my $url = shift;
 
-	my $song = $currentDB->objectForUrl($url, 0);
-	if ($song) {
-		my @urls = map $_->url, $song->tracks;
-		if (!scalar(@urls)) {
-			@urls = $song->diritems;
-		}
-		return \@urls if scalar(@urls);
+	my $song = $currentDB->objectForUrl($url, 0) || return undef;
+
+	my @urls = map { $_->url } $song->tracks();
+
+	if (!scalar @urls) {
+		@urls = $song->diritems();
 	}
 
-	return undef;
+	return \@urls if scalar(@urls);
 }
 
 sub cachePlaylist {
@@ -1142,15 +1126,16 @@ sub cachePlaylist {
 	my $age = shift;
 
 	my $song = $currentDB->objectForUrl($url, 1);
+
 	if (scalar(@$list) && isURL($list->[0])) {
 		my @tracks = map { $currentDB->objectForUrl($_, 1); } @$list;
 		$song->setTracks(@tracks);
-	}
-	else {
+	} else {
 		$song->setDirItems(@$list);
 	}
 
-	if (!defined($age)) { $age = Time::HiRes::time(); };
+	$age = Time::HiRes::time() unless defined $age;
+
 	$song->timestamp($age);
 	$currentDB->updateTrack($song);
 	
@@ -1169,10 +1154,12 @@ sub genres {
 	
 	$::d_info && Slim::Utils::Misc::msg("genres: $genre\n");
 
+	Slim::Utils::Misc::bt();
+	warn "Slim::Music::Info::genres() is deprecated - use the DataSource API instead.\n";
+
 	my $findCriteria = {};
 
-	if (defined($genre) && scalar(@$genre) && $genre->[0]
-		&& $genre->[0] ne '*') { 
+	if (defined($genre) && scalar(@$genre) && $genre->[0] && $genre->[0] ne '*') { 
 		my $genres = $currentDB->search('genre', $genre);
 		return () if !scalar(@$genres);
 		$findCriteria->{genre} = $genres;
@@ -1190,24 +1177,26 @@ sub artists {
 	my $limit  = shift || '';
 	my $offset = shift || '';
 
+	Slim::Utils::Misc::bt();
+	warn "Slim::Music::Info::artists() is deprecated - use the DataSource API instead.\n";
+
 	$::d_info && Slim::Utils::Misc::msg("artists: $genre - $artist - $album - $limit - $offset\n");
 
 	my $findCriteria = {};
 
-	if (defined($genre) && scalar(@$genre) && $genre->[0]
-		&& $genre->[0] ne '*') { 
+	if (defined($genre) && scalar(@$genre) && $genre->[0] && $genre->[0] ne '*') { 
 		my $genres = $currentDB->search('genre', $genre);
 		return () if !scalar(@$genres);
 		$findCriteria->{genre} = $genres;
 	}
-	if (defined($artist) && scalar(@$artist) && $artist->[0] 
-		&& $artist->[0] ne '*') { 
+
+	if (defined($artist) && scalar(@$artist) && $artist->[0] && $artist->[0] ne '*') { 
 		my $artists = $currentDB->search('artist', $artist);
 		return () if !scalar(@$artists);
 		$findCriteria->{contributor} = $artists;
 	}
-	if (defined($album) && scalar(@$album) && $album->[0] && 
-		$album->[0] ne '*') { 
+
+	if (defined($album) && scalar(@$album) && $album->[0] && $album->[0] ne '*') { 
 		my $albums = $currentDB->search('album', $album);
 		return () if !scalar(@$albums);
 		$findCriteria->{album} = $albums;
@@ -1232,22 +1221,24 @@ sub albums {
 
 	$::d_info && Slim::Utils::Misc::msg("albums: $genre - $artist - $album\n");
 
+	Slim::Utils::Misc::bt();
+	warn "Slim::Music::Info::albums() is deprecated - use the DataSource API instead.\n";
+
 	my $findCriteria = {};
 
-	if (defined($genre) && scalar(@$genre) && $genre->[0]
-		&& $genre->[0] ne '*') { 
+	if (defined($genre) && scalar(@$genre) && $genre->[0] && $genre->[0] ne '*') { 
 		my $genres = $currentDB->search('genre', $genre);
 		return () if !scalar(@$genres);
 		$findCriteria->{genre} = $genres;
 	}
-	if (defined($artist) && scalar(@$artist) && $artist->[0]
-		&& $artist->[0] ne '*') { 
+
+	if (defined($artist) && scalar(@$artist) && $artist->[0] && $artist->[0] ne '*') { 
 		my $artists = $currentDB->search('artist', $artist);
 		return () if !scalar(@$artists);
 		$findCriteria->{contributor} = $artists;
 	}
-	if (defined($album) && scalar(@$album) && $album->[0]
-		&& $album->[0] ne '*') { 
+
+	if (defined($album) && scalar(@$album) && $album->[0] && $album->[0] ne '*') { 
 		my $albums = $currentDB->search('album', $album);
 		return () if !scalar(@$albums);
 		$findCriteria->{album} = $albums;
@@ -1260,15 +1251,12 @@ sub albums {
 # Return cached path for a given album name
 sub pathFromAlbum {
 	my $album = shift;
-	my $albums = $currentDB->search('album', [$album]);
-	my $findCriteria = { album => $albums };
-	my $objs = $currentDB->find('album', $findCriteria, 'album');
 
-	if (scalar(@$objs)) {
-		return $objs->[0]->artwork_path;
-	}
+	my ($albums) = $currentDB->search('album', [$album]);
 
-	return undef;
+	my ($obj) = $currentDB->find('album', { album => $albums }, 'album') || return undef;
+
+	return $obj->artwork_path();
 }
 
 # return all songs for a given genre, artist, and album
@@ -1281,28 +1269,31 @@ sub songs {
 
 	$::d_info && Slim::Utils::Misc::msg("songs: $genre - $artist - $album - $track\n");
 
+	Slim::Utils::Misc::bt();
+	warn "Slim::Music::Info::songs() is deprecated - use the DataSource API instead.\n";
+
 	my $findCriteria = {};
 
-	if (defined($genre) && scalar(@$genre) && $genre->[0]
-		&& $genre->[0] ne '*') { 
+	if (defined($genre) && scalar(@$genre) && $genre->[0] && $genre->[0] ne '*') { 
 		my $genres = $currentDB->search('genre', $genre);
 		return () if !scalar(@$genres);
 		$findCriteria->{genre} = $genres;
 	}
-	if (defined($artist) && scalar(@$artist) && $artist->[0]
-		&& $artist->[0] ne '*') { 
+
+	if (defined($artist) && scalar(@$artist) && $artist->[0] && $artist->[0] ne '*') { 
+
 		my $artists = $currentDB->search('artist', $artist);
 		return () if !scalar(@$artists);
 		$findCriteria->{contributor} = $artists;
 	}
-	if (defined($album) && scalar(@$album) && $album->[0]
-		&& $album->[0] ne '*') { 
+
+	if (defined($album) && scalar(@$album) && $album->[0] && $album->[0] ne '*') { 
 		my $albums = $currentDB->search('album', $album);
 		return () if !scalar(@$albums);
 		$findCriteria->{album} = $albums;
 	}
-	if (defined($track) && scalar(@$track) && $track->[0]
-		&& $track->[0] ne '*') { 
+
+	if (defined($track) && scalar(@$track) && $track->[0] && $track->[0] ne '*') { 
 		my $tracks = $currentDB->search('track', $track);
 		return () if !scalar(@$tracks);
 		$findCriteria->{track} = $tracks;
@@ -1312,30 +1303,16 @@ sub songs {
 	
 	my $sortBy;
 	if ($sortbytitle) {
-		$sortBy="title";
+		$sortBy = "title";
+	} elsif ($multalbums) {
+		$sortBy = "track";
+	} else {
+		$sortBy = "tracknum";
 	}
-	elsif ($multalbums) {
-		$sortBy="track";
-	}
-	else {
-		$sortBy="tracknum";
-	}
+
 	my $songs = $currentDB->find('track', $findCriteria, $sortBy);
+
 	return map { $_->url } @$songs;
-}
-
-sub songPath {
-	my $genre = shift;
-	my $artist = shift;
-	my $album = shift;
-	my $track = shift;
-
-	my @songs = songs($genre, $artist, $album, $track, 1);
-	if (scalar(@songs)) {
-		return $songs[0]->url;
-	}
-	
-	return undef;
 }
 
 # XXX - sigh, globals
@@ -1346,7 +1323,7 @@ sub sortByTrack {
 	$articles = undef;
 
 	#get info for items and ignoreCaseArticles it
-	my @sortinfo =  map {getInfoForSort($_)} @_;
+	my @sortinfo =  map { getInfoForSort($_) } @_;
 
 	#return the first element of each entry in the sorted array
 	return map {$_->[0]} sort sortByTrackAlg @sortinfo;
@@ -1357,7 +1334,7 @@ sub sortByAlbum {
 	$articles = undef;
 
 	#get info for items and ignoreCaseArticles it
-	my @sortinfo =  map {getInfoForSort($_)} @_;
+	my @sortinfo =  map { getInfoForSort($_) } @_;
 
 	#return an array of first elements of the entries in the sorted array
 	return map {$_->[0]} sort sortByAlbumAlg @sortinfo;
@@ -1368,7 +1345,7 @@ sub sortByTitles {
 	$articles = undef;
 
 	#get info for items and ignoreCaseArticles it
-	my @sortinfo =  map {getInfoForSort($_)} @_;
+	my @sortinfo =  map { getInfoForSort($_) } @_;
 
 	#return an array of first elements of the entries in the sorted array
 	return map {$_->[0]} sort sortByTitlesAlg @sortinfo;
@@ -1527,7 +1504,7 @@ sub fileName {
 
 sub sortFilename {
 	#build the sort index
-	my @nocase = map {Slim::Utils::Text::ignoreCaseArticles(fileName($_))} @_;
+	my @nocase = map { Slim::Utils::Text::ignoreCaseArticles(fileName($_)) } @_;
 	#return the input array sliced by the sorted array
 	return @_[sort {$nocase[$a] cmp $nocase[$b]} 0..$#_];
 }
@@ -1536,12 +1513,12 @@ sub sortFilename {
 sub isFragment {
 	my $fullpath = shift;
 	
-	my $is = 0;
-	if (isURL($fullpath)) {
-		my $anchor = Slim::Utils::Misc::anchorFromURL($fullpath);
-		if ($anchor && $anchor =~ /([\d\.]+)-([\d\.]+)/) {
-			return ($1, $2);
-		}
+	return unless isURL($fullpath);
+
+	my $anchor = Slim::Utils::Misc::anchorFromURL($fullpath);
+
+	if ($anchor && $anchor =~ /([\d\.]+)-([\d\.]+)/) {
+		return ($1, $2);
 	}
 }
 
@@ -1557,20 +1534,26 @@ sub addDiscNumberToAlbumTitle
 	# If it seems like there is only one disc in the set, 
 	# avoid adding "disc 1 of 1"
 	return if Slim::Utils::Prefs::get('groupdiscs');
+
 	my $discNum = $entry->{'DISC'};
+
 	return unless defined $discNum and $discNum > 0;
+
 	my $discCount = $entry->{'DISCC'};
+
 	if (defined $discCount) {
 		return if $discCount == 1;
 		undef $discCount if $discCount < 1; # errornous count
 	}
+
 	my $discWord = string('DISC');
+
 	return if $entry->{'ALBUM'} =~ /\b(${discWord})|(Disc)\s+\d+/i;
+
 	if (defined $discCount) {
 		# add spaces to discNum to help plain text sorting
 		my $discCountLen = length($discCount);
-		$entry->{'ALBUM'} .= sprintf(" (%s %${discCountLen}d %s %d)",
-				$discWord, $discNum, string('OF'), $discCount);
+		$entry->{'ALBUM'} .= sprintf(" (%s %${discCountLen}d %s %d)", $discWord, $discNum, string('OF'), $discCount);
 	} else {
 		$entry->{'ALBUM'} .= " ($discWord $discNum)";
 	}
@@ -1611,7 +1594,7 @@ sub readCoverArtTags {
 	my $fullpath = shift;
 	my $tags = shift;
 
-	if (! Slim::Utils::Prefs::get('lookForArtwork')) { return undef};
+	return undef unless Slim::Utils::Prefs::get('lookForArtwork');
 
 	my $body;	
 	my $contenttype;
@@ -1885,9 +1868,10 @@ sub isURL {
 
 sub isType {
 	my $pathOrObj = shift;
-	my $testtype = shift;
-	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
-		$currentDB->contentType($pathOrObj, 1);
+	my $testtype  = shift;
+
+	my $type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj, 1);
+
 	if ($type && ($type eq $testtype)) {
 		return 1;
 	} else {
@@ -1897,52 +1881,45 @@ sub isType {
 
 sub isWinShortcut {
 	my $pathOrObj = shift;
-	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
-		$currentDB->contentType($pathOrObj, 1);
-	return ($type && ($type eq 'lnk'));
+
+	return isType($pathOrObj, 'lnk');
 }
 
 sub isMP3 {
 	my $pathOrObj = shift;
-	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
-		$currentDB->contentType($pathOrObj, 1);
-	return ($type && (($type eq 'mp3') || ($type eq 'mp2')));
+
+	return isType($pathOrObj, 'mp[23]');
 }
 
 sub isOgg {
 	my $pathOrObj = shift;
-	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
-		$currentDB->contentType($pathOrObj, 1);
-	return ($type && ($type eq 'ogg'));
+
+	return isType($pathOrObj, 'ogg');
 }
 
 sub isWav {
 	my $pathOrObj = shift;
-	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
-		$currentDB->contentType($pathOrObj, 1);
-	return( $type && ( $type eq 'wav'));
+
+	return isType($pathOrObj, 'wav');
 }
 
 sub isMOV {
 	my $pathOrObj = shift;
-	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
-		$currentDB->contentType($pathOrObj, 1);
-	return( $type && ( $type eq 'mov'));
+
+	return isType($pathOrObj, 'mov');
 }
 
 sub isAIFF {
 	my $pathOrObj = shift;
-	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
-		$currentDB->contentType($pathOrObj, 1);
-	return( $type && ( $type eq 'aif'));
+
+	return isType($pathOrObj, 'aif');
 }
 
 sub isSong {
 	my $pathOrObj = shift;
 	my $type = shift;
 
-	$type = ref $pathOrObj ? $pathOrObj->content_type : 
-		$currentDB->contentType($pathOrObj, 1) unless defined $type;
+	$type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj, 1) unless defined $type;
 
 	if ($type && $Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} eq 'audio') {
 		return $type;
@@ -1951,46 +1928,39 @@ sub isSong {
 
 sub isDir {
 	my $pathOrObj = shift;
-	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
-		$currentDB->contentType($pathOrObj, 1);
-	return ($type && ($type eq 'dir'));
+
+	return isType($pathOrObj, 'dir');
 }
 
 sub isM3U {
 	my $pathOrObj = shift;
-	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
-		$currentDB->contentType($pathOrObj, 1);
-	return ($type && ($type eq 'm3u'));
+
+	return isType($pathOrObj, 'm3u');
 }
 
 sub isPLS {
 	my $pathOrObj = shift;
-	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
-		$currentDB->contentType($pathOrObj, 1);
-	return ($type && ($type eq 'pls'));
+
+	return isType($pathOrObj, 'pls');
 }
 
 sub isCUE {
 	my $pathOrObj = shift;
-	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
-		$currentDB->contentType($pathOrObj, 1);
-	return ($type && ($type eq 'cue'));
+
+	return isType($pathOrObj, 'cue');
 }
 
 sub isKnownType {
 	my $pathOrObj = shift;
-	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
-		$currentDB->contentType($pathOrObj, 1);
-	return !(!$type || ($type eq 'unk'));
-}
 
+	return isType($pathOrObj, 'unk');
+}
 
 sub isList {
 	my $pathOrObj = shift;
 	my $type = shift;
 
-	$type = ref $pathOrObj ? $pathOrObj->content_type : 
-		$currentDB->contentType($pathOrObj, 1) unless defined $type;
+	$type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj, 1) unless defined $type;
 
 	if ($type && $Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} =~ /list/) {
 		return $type;
@@ -2001,8 +1971,7 @@ sub isPlaylist {
 	my $pathOrObj = shift;
 	my $type = shift;
 
-	$type = ref $pathOrObj ? $pathOrObj->content_type : 
-		$currentDB->contentType($pathOrObj, 1) unless defined $type;
+	$type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj, 1) unless defined $type;
 
 	if ($type && $Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} eq 'playlist') {
 		return $type;
@@ -2011,13 +1980,14 @@ sub isPlaylist {
 
 sub isSongMixable {
 	my $song = shift;
+
 	return info($song,'MOODLOGIC_SONG_MIXABLE'); 
 }
 
 sub isSongMMMixable {
 	my $song = shift;
-	my $result = defined info($song,'MUSICMAGIC_SONG_MIXABLE') ? 1 : 0; 
-	return $result;
+
+	return defined info($song,'MUSICMAGIC_SONG_MIXABLE') ? 1 : 0; 
 }
 
 sub isAlbumMMMixable {
@@ -2061,7 +2031,9 @@ sub moodLogicGenreId {
 
 sub mimeType {
 	my $file = shift;
+
 	my $contentType = contentType($file);
+
 	foreach my $mt (keys %Slim::Music::Info::mimeTypes) {
 		if ($contentType eq $Slim::Music::Info::mimeTypes{ $mt }) {
 			return $mt;
@@ -2078,16 +2050,11 @@ sub typeFromSuffix {
 	my $path = shift;
 	my $defaultType = shift || 'unk';
 	
-	my $type;
-	
-	if (defined($path)) {
-		if ($path =~ /\.([^.]+)$/) {
-			my $suffix = lc($1);
-			$type = $Slim::Music::Info::suffixes{$suffix};
-		}
+	if (defined $path && $path =~ /\.([^.]+)$/) {
+		return $Slim::Music::Info::suffixes{lc($1)};
 	}
-	if (!defined($type)) { $type = $defaultType; }
-	return $type;
+
+	return $defaultType;
 }
 
 sub typeFromPath {
@@ -2139,9 +2106,10 @@ sub typeFromPath {
 	return $type;
 }
 
-
 1;
+
 __END__
+
 
 # Local Variables:
 # tab-width:4

@@ -21,7 +21,7 @@ my %menuSelection;
 my %searchCursor;
 
 # some initialization code, adding modes for this module
-{
+sub init {
 	Slim::Buttons::Common::addMode('alarm', getFunctions(), \&Slim::Buttons::AlarmClock::setMode);
 	Slim::Buttons::Common::addMode('alarmvolume', getAlarmVolumeFunctions(), \&Slim::Buttons::AlarmClock::setAlarmVolumeMode);
 	setTimer();

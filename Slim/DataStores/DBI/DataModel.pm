@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DataModel;
 
-# $Id: DataModel.pm,v 1.8 2004/12/18 18:57:13 dsully Exp $
+# $Id: DataModel.pm,v 1.9 2005/01/04 03:38:52 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -19,7 +19,8 @@ use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 use Slim::Utils::Misc;
 
-my $dbh;
+our $dbh;
+
 tie my %lru, 'Tie::Cache::LRU', 5000;
 
 sub executeSQLFile {
@@ -76,7 +77,7 @@ sub executeSQLFile {
 }
 
 sub db_Main {
-	my $class = shift;
+	my $class  = shift;
 
 	return $dbh if defined $dbh;
 
@@ -327,6 +328,17 @@ my %joinMap = (
 	'contributors' => 'contributor_track.contributor = contributors.id',
 );
 
+# This is a weight table which allows us to do some basic table reordering,
+# resulting in a more optimized query. EXPLAIN should tell you more.
+my %tableSort = (
+	'albums' => 0.6,
+	'contributors' => 0.7,
+	'contributor_track' => 0.9,
+	'genres' => 0.1,
+	'genre_track' => 1.0,
+	'tracks' => 0.8,
+);
+
 sub find {
 	my $class = shift;
 	my $field = shift;
@@ -334,6 +346,7 @@ sub find {
 	my $sortby = shift;
 	my $limit = shift;
 	my $offset = shift;
+	my $count = shift;
 	my $c;
 
 	# Build up a SQL query
@@ -352,18 +365,18 @@ sub find {
 		# For now, include only the main table from which we're retrieving 
 		# columns. If there is a WHERE clause, we may include a secondary
 		# (has-many) table.
-		$tables{$table} = 1 for @$c;
+		$tables{$table} = $tableSort{$table} for @$c;
 
 	} elsif (defined($searchFieldMap{$field})) {
 
 		$columns .= $searchFieldMap{$field};
-		$tables{'tracks'} = 1;
+		$tables{'tracks'} = $tableSort{'tracks'};
 
 	} else {
-		$::d_info && msg("Request for unknown field in query\n");
+		$::d_info && Slim::Utils::Misc::msg("Request for unknown field in query\n");
 		return undef;
 	}
-	
+
 	# Then the WHERE clause
 	my %whereHash = ();
 
@@ -379,16 +392,16 @@ sub find {
 
 			# Include FROM tables of all columns use in the WHERE
 			if ($c = $fieldHasClass{$key}) {
-				$tables{ $_->table() } = 1 for @$c;
+				$tables{ $_->table() } = $tableSort{ $_->table() } for @$c;
 			}
 		}
 		
 		# And all tables (including possibly a has-many table) from the main field.
 		if ($c = $fieldHasClass{$field}) {
-			$tables{ $_->table } = 1 for @$c;
+			$tables{ $_->table() } = $tableSort{ $_->table() } for @$c;
 		}
 
-		$tables{'tracks'} = 1;
+		$tables{'tracks'} = $tableSort{'tracks'};
 	}
 
 	# Now deal with the ORDER BY component
@@ -400,7 +413,7 @@ sub find {
 
 	for my $sfield (@$sortFields) {
 		my ($table) = ($sfield =~ /^(\w+)\./);
-		$tables{$table} = 1;
+		$tables{$table} = $tableSort{$table};
 	}
 
 	my $abstract;
@@ -415,10 +428,11 @@ sub find {
 	my ($where, @bind) = $abstract->where(\%whereHash, $sortFields, $limit, $offset);
 
 	my $sql = "SELECT $columns ";
-	   $sql .= "FROM " . join(", ", keys %tables) . " ";
+	   $sql .= "FROM " . join(", ", sort { $tables{$b} <=> $tables{$a} } keys %tables) . " ";
 
 	if (scalar(keys %tables) > 1) {
 
+		# Why do we explictly delete tracks?
 		delete $tables{'tracks'};
 
 		$sql .= "WHERE " . join(" AND ", map { $joinMap{$_} } keys %tables ) . " ";
@@ -438,13 +452,32 @@ sub find {
 	my $sth = $dbh->prepare_cached($sql);
 	   $sth->execute(@bind);
 
-	if ($c = $fieldHasClass{$field}) {
-		return [ $c->[0]->sth_to_objects($sth) ];
+	# Don't instansiate any objects if we're just counting.
+	if ($count) {
+		$count = scalar @{$sth->fetchall_arrayref()};
+
+		$sth->finish();
+
+		return $count;
 	}
 
-	my $ref = $sth->fetchall_arrayref;
+	# Always remember to finish() the statement handle, otherwise DBI will complain.
+	if ($c = $fieldHasClass{$field}) {
 
-	return [ grep((defined($_) && $_ ne ''), (map $_->[0], @$ref)) ];
+		my $objects = [ $c->[0]->sth_to_objects($sth) ];
+
+		$sth->finish();
+	
+		return $objects;
+	}
+
+	my $ref = $sth->fetchall_arrayref();
+
+	my $objects = [ grep((defined($_) && $_ ne ''), (map $_->[0], @$ref)) ];
+
+	$sth->finish();
+
+	return $objects;
 }
 
 1;

@@ -1,5 +1,6 @@
 package Slim::Buttons::BrowseID3;
-# $Id: BrowseID3.pm,v 1.24 2004/12/17 10:09:29 kdf Exp $
+
+# $Id: BrowseID3.pm,v 1.25 2005/01/04 03:38:52 dsully Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -13,39 +14,42 @@ use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
 use Slim::Buttons::VarietyCombo;
+use Slim::Music::Info;
 use Slim::Utils::Misc;
 
-# Code to browse music folder by ID3 information.
-Slim::Buttons::Common::addMode('browseid3',Slim::Buttons::BrowseID3::getFunctions(),\&Slim::Buttons::BrowseID3::setMode);
+my %functions = ();
 
+# Code to browse music folder by ID3 information.
 sub init {
+
+	Slim::Buttons::Common::addMode('browseid3',Slim::Buttons::BrowseID3::getFunctions(),\&Slim::Buttons::BrowseID3::setMode);
 
 	my %browse = (
 
-		'BROWSE_BY_GENRE' => {
-			'useMode' => 'browseid3',
+		'BROWSE_BY_GENRE'  => {
+			'useMode'  => 'browseid3',
 		},
 
 		'BROWSE_BY_ARTIST' => {
-			'useMode' => 'browseid3',
-			'genre'=>'*',
+			'useMode'  => 'browseid3',
+			'genre'    => '*',
 		},
 
-		'BROWSE_BY_ALBUM' => {
-			'useMode' => 'browseid3',
-			'genre'=>'*',
-			'artist'=>'*',
+		'BROWSE_BY_ALBUM'  => {
+			'useMode'  => 'browseid3',
+			'genre'    => '*',
+			'artist'   => '*',
 		},
 
-		'BROWSE_BY_SONG' => {
-			'useMode' => 'browseid3',
-			'genre'=>'*',
-			'artist'=>'*',
-			'album'=>'*',
+		'BROWSE_BY_SONG'   => {
+			'useMode'  => 'browseid3',
+			'genre'    => '*',
+			'artist'   => '*',
+			'album'    => '*',
 		},
 	);
 	
-	foreach my $name (sort keys %browse) {
+	for my $name (sort keys %browse) {
 
 		if ($name ne 'BROWSE_BY_SONG') {
 			Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $name, $browse{$name});
@@ -53,258 +57,295 @@ sub init {
 
 		Slim::Buttons::Home::addMenuOption($name, $browse{$name});
 	};
-}
 
-# Each button on the remote has a function:
+	%functions = (
 
-my %functions = (
-
-	'up' => sub  {
-		my $client = shift;
-		my $button = shift;
-		my $inc = shift || 1;
-		my $count = scalar @{browseID3dir($client)};
-		if ($count < 2) {
-			$client->bumpUp();
-		} else {
-			$inc = ($inc =~ /\D/) ? -1 : -$inc;
-			my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, browseID3dirIndex($client));
-			browseID3dirIndex($client,$newposition);
-			updateLastSelection($client);
-			$client->update();
-		}
-	},
-	'down' => sub  {
-		my $client = shift;
-		my $button = shift;
-		my $inc = shift || 1;
-		my $count = scalar @{browseID3dir($client)};
-		if ($count < 2) {
-			$client->bumpDown();
-		} else {
-			if ($inc =~ /\D/) {$inc = 1}
-			my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, browseID3dirIndex($client));
-			browseID3dirIndex($client,$newposition);
-			updateLastSelection($client);
-			$client->update();
-		}
-	},
-	'left' => sub  {
-		my $client = shift;
-		my @oldlines = Slim::Display::Display::curLines($client);
-		my $genre = selection($client,'curgenre');
-		my $artist = selection($client,'curartist');
-		my $album = selection($client,'curalbum');
-		my $song = selection($client,'cursong');
-		my $startgenre = selection($client, 'genre');
-		my $startartist = selection($client, 'artist');
-		my $startalbum = selection($client, 'album');
-		my $startsong = selection($client, 'song');
-		updateLastSelection($client);
-		if (equal($genre, $startgenre) && equal($artist, $startartist) && equal($album, $startalbum) && equal($song, $startsong)) {
-			# we don't know anything, go back to where we came from
-			Slim::Buttons::Common::popMode($client);
-		} else {
-			# go up one level
-			if (specified($album)) {
-				# we're at the song level
-				# forget we knew the album
-				setSelection($client,'curalbum', selection($client,'album'));
-				loadDir($client);
-				# disabled: skip album, if there is only one
-				#if (scalar @{browseID3dir($client)} == 1) {
-				#	setSelection($client,'curartist', selection($client,'artist'));
-				#	loadDir($client);
-				#}
-			} elsif (specified($artist)) {
-				# we're at the album level
-				# forget we knew the artist
-				setSelection($client,'curartist', selection($client,'artist'));
-				loadDir($client);
-			} elsif (specified($genre)) {
-				# we're at the artist level
-				# forget we knew the genre
-				setSelection($client,'curgenre', selection($client,'genre'));
-				loadDir($client);
+		'up' => sub  {
+			my $client = shift;
+			my $button = shift;
+			my $inc = shift || 1;
+			my $count = scalar @{browseID3dir($client)};
+			if ($count < 2) {
+				$client->bumpUp();
+			} else {
+				$inc = ($inc =~ /\D/) ? -1 : -$inc;
+				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, browseID3dirIndex($client));
+				browseID3dirIndex($client,$newposition);
+				updateLastSelection($client);
+				$client->update();
 			}
-			loadDir($client);
-		}
-		$client->pushRight( \@oldlines, [Slim::Display::Display::curLines($client)]);
-	},
-	'right' => sub  {
-		my $client = shift;
-		if (scalar @{browseID3dir($client)} == 0) {
-			# don't do anything if the list is empty, which shouldn't happen anyways...
-			$client->bumpRight();
-		} else {
-			my $currentItem = browseID3dir($client,browseID3dirIndex($client));
-			$::d_files && msg("currentItem == $currentItem\n");
+		},
+
+		'down' => sub  {
+			my $client = shift;
+			my $button = shift;
+			my $inc = shift || 1;
+			my $count = scalar @{browseID3dir($client)};
+			if ($count < 2) {
+				$client->bumpDown();
+			} else {
+				if ($inc =~ /\D/) {$inc = 1}
+				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, browseID3dirIndex($client));
+				browseID3dirIndex($client,$newposition);
+				updateLastSelection($client);
+				$client->update();
+			}
+		},
+
+		'left' => sub  {
+			my $client = shift;
 			my @oldlines = Slim::Display::Display::curLines($client);
-			updateLastSelection($client);
 			my $genre = selection($client,'curgenre');
 			my $artist = selection($client,'curartist');
 			my $album = selection($client,'curalbum');
 			my $song = selection($client,'cursong');
-			if (picked($genre) && picked($artist) && picked($album)) {
-				# we know the genre, artist, album and song.  show the song info for the track in $currentitem
-				Slim::Buttons::Common::pushMode($client, 'trackinfo', {'track' => $currentItem});
-			} elsif (picked($genre) && picked($artist)) {
-				# we know the genre, artist and album.  show the songs.
-				setSelection($client,'curalbum', $currentItem);
-				loadDir($client);
-			} elsif (picked($genre)) {
-				# we know the genre and artist.  show the album.
-				setSelection($client,'curartist', $currentItem);
-				loadDir($client);
-				# Disabled: skip album, if there is only one
-				#if (scalar @{browseID3dir($client)} == 1) {
-				#	setSelection($client,'curalbum', browseID3dir($client, 0));
-				#	loadDir($client);
-				#}
+			my $startgenre = selection($client, 'genre');
+			my $startartist = selection($client, 'artist');
+			my $startalbum = selection($client, 'album');
+			my $startsong = selection($client, 'song');
+			updateLastSelection($client);
+			if (equal($genre, $startgenre) && equal($artist, $startartist) && equal($album, $startalbum) && equal($song, $startsong)) {
+				# we don't know anything, go back to where we came from
+				Slim::Buttons::Common::popMode($client);
 			} else {
-				# we just chose the genre, show it...
-				setSelection($client,'curgenre', $currentItem);
+				# go up one level
+				if (specified($album)) {
+					# we're at the song level
+					# forget we knew the album
+					setSelection($client,'curalbum', selection($client,'album'));
+					loadDir($client);
+					# disabled: skip album, if there is only one
+					#if (scalar @{browseID3dir($client)} == 1) {
+					#	setSelection($client,'curartist', selection($client,'artist'));
+					#	loadDir($client);
+					#}
+				} elsif (specified($artist)) {
+					# we're at the album level
+					# forget we knew the artist
+					setSelection($client,'curartist', selection($client,'artist'));
+					loadDir($client);
+				} elsif (specified($genre)) {
+					# we're at the artist level
+					# forget we knew the genre
+					setSelection($client,'curgenre', selection($client,'genre'));
+					loadDir($client);
+				}
 				loadDir($client);
 			}
-			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
-		}
-	},
-	'numberScroll' => sub  {
-		my $client = shift;
-		my $button = shift;
-		my $digit = shift;
-		my $newposition;
-		my $genre = selection($client,'curgenre');
-		my $artist = selection($client,'curartist');
-		my $album = selection($client,'curalbum');
-		# if it's just songs, then
-		if (defined($genre) && defined($artist) && defined($album)) {
-			# do an unsorted jump
-			$newposition = Slim::Buttons::Common::numberScroll($client, $digit, browseID3dir($client), 0);
-		} else {
-			# otherwise, scroll to the appropriate letter
-			$newposition = Slim::Buttons::Common::numberScroll($client, $digit, browseID3dir($client), 1,
-			sub {
-				my $ignored = browseID3dir($client)->[shift];
-				my $articles =  Slim::Utils::Prefs::get("ignoredarticles");
-				$articles =~ s/\s+/|/g;
-				$ignored =~ s/^($articles)\s+//i;
-				return $ignored;
+			$client->pushRight( \@oldlines, [Slim::Display::Display::curLines($client)]);
+		},
+
+		'right' => sub  {
+			my $client = shift;
+			if (scalar @{browseID3dir($client)} == 0) {
+				# don't do anything if the list is empty, which shouldn't happen anyways...
+				$client->bumpRight();
+			} else {
+				my $currentItem = browseID3dir($client,browseID3dirIndex($client));
+				$::d_files && msg("currentItem == $currentItem\n");
+				my @oldlines = Slim::Display::Display::curLines($client);
+				updateLastSelection($client);
+				my $genre = selection($client,'curgenre');
+				my $artist = selection($client,'curartist');
+				my $album = selection($client,'curalbum');
+				my $song = selection($client,'cursong');
+				if (picked($genre) && picked($artist) && picked($album)) {
+					# we know the genre, artist, album and song.  show the song info for the track in $currentitem
+					Slim::Buttons::Common::pushMode($client, 'trackinfo', {'track' => $currentItem});
+				} elsif (picked($genre) && picked($artist)) {
+					# we know the genre, artist and album.  show the songs.
+					setSelection($client,'curalbum', $currentItem);
+					loadDir($client);
+				} elsif (picked($genre)) {
+					# we know the genre and artist.  show the album.
+					setSelection($client,'curartist', $currentItem);
+					loadDir($client);
+					# Disabled: skip album, if there is only one
+					#if (scalar @{browseID3dir($client)} == 1) {
+					#	setSelection($client,'curalbum', browseID3dir($client, 0));
+					#	loadDir($client);
+					#}
+				} else {
+					# we just chose the genre, show it...
+					setSelection($client,'curgenre', $currentItem);
+					loadDir($client);
+				}
+				$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 			}
+		},
+
+		'numberScroll' => sub  {
+			my $client = shift;
+			my $button = shift;
+			my $digit = shift;
+			my $newposition;
+			my $genre = selection($client,'curgenre');
+			my $artist = selection($client,'curartist');
+			my $album = selection($client,'curalbum');
+			# if it's just songs, then
+			if (defined($genre) && defined($artist) && defined($album)) {
+				# do an unsorted jump
+				$newposition = Slim::Buttons::Common::numberScroll($client, $digit, browseID3dir($client), 0);
+			} else {
+				# otherwise, scroll to the appropriate letter
+				$newposition = Slim::Buttons::Common::numberScroll($client, $digit, browseID3dir($client), 1,
+					sub {
+						my $ignored = browseID3dir($client)->[shift];
+						my $articles =  Slim::Utils::Prefs::get("ignoredarticles");
+						$articles =~ s/\s+/|/g;
+						$ignored =~ s/^($articles)\s+//i;
+						return $ignored;
+					}
+				);
+			}
+			browseID3dirIndex($client,$newposition);
+			updateLastSelection($client);
+			$client->update();
+		},
+
+		# this routine handles play, add and insert ($addorinsert would be undef, 1 or 2 respectively)
+		'play' => sub  {
+			my $client = shift;
+			my $button = shift;
+			my $addorinsert = shift || 0;
+
+			my $genre  = selection($client,'curgenre');
+			my $artist = selection($client,'curartist');
+			my $album  = selection($client,'curalbum');
+
+			my $all_albums;
+			my $sortbytitle;
+
+			if (defined($album) && ($album eq $client->string('ALL_SONGS'))) {
+				$album = '*';
+				$sortbytitle = 1;
+			}
+
+			if (defined($artist) && ($artist eq $client->string('ALL_ALBUMS'))) {
+				$artist = '*';
+				$sortbytitle = 1;
+			}
+
+			if (defined($genre) && ($genre eq $client->string('ALL_ARTISTS'))) {
+				$genre = '*';
+			}
+			
+			my $currentItem = browseID3dir($client, browseID3dirIndex($client));
+
+			my ($line1, $line2) = lines($client);
+			
+			my $command;
+			my $songcommand;
+			
+			if ($addorinsert == 1) {
+
+				$line1 = $client->string('ADDING_TO_PLAYLIST');
+				$command = "addalbum";	
+
+			} elsif ($addorinsert == 2) {
+
+				$line1 = $client->string('INSERT_TO_PLAYLIST');
+				$command = "insertalbum";
+
+			} else {
+
+				$command = "loadalbum";			
+
+				if (Slim::Player::Playlist::shuffle($client)) {
+					$line1 = $client->string('PLAYING_RANDOMLY_FROM');
+				} else {
+					$line1 = $client->string('NOW_PLAYING_FROM');
+				}
+			}
+			
+			$client->showBriefly(
+				$client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')),
+				undef,
+				1
 			);
-		}
-		browseID3dirIndex($client,$newposition);
-		updateLastSelection($client);
-		$client->update();
-	},
+			
+			# if we've chosen a particular song to append, then append it
+			if (picked($genre) && picked($artist) && picked($album)) {
 
-	# this routine handles play, add and insert ($addorinsert would be undef, 1 or 2 respectively)
-	'play' => sub  {
-		my $client = shift;
-		my $button = shift;
-		my $addorinsert = shift || 0;
-		my $genre = selection($client,'curgenre');
-		my $artist = selection($client,'curartist');
-		my $album = selection($client,'curalbum');
-		my $all_albums;
-		my $sortbytitle;
+				if ($addorinsert || $album eq '*' || !Slim::Utils::Prefs::get('playtrackalbum')) {
 
-		if (defined($album) && ($album eq $client->string('ALL_SONGS'))) {
-			$album = '*';
-			$sortbytitle = 1;
-		}
+					$command = 'play';
+					if ($addorinsert == 1) { $command = 'append'; }
+					if ($addorinsert == 2) { $command = 'insert'; }
+					Slim::Control::Command::execute($client, ["playlist", $command, $currentItem]);
 
-		if (defined($artist) && ($artist eq $client->string('ALL_ALBUMS'))) {
-			$artist = '*';
-			$sortbytitle = 1;
-		}
+				} else {
 
-		if (defined($genre) && ($genre eq $client->string('ALL_ARTISTS'))) {
-			$genre = '*';
-		}
-		
-		my $currentItem = browseID3dir($client, browseID3dirIndex($client));
+					my $wasShuffled = Slim::Player::Playlist::shuffle($client);
 
-		my ($line1, $line2) = lines($client);
-		
-		my $command;
-		my $songcommand;
-		
-		if ($addorinsert == 1) {
-			$line1 = $client->string('ADDING_TO_PLAYLIST');
-			$command = "addalbum";	
-		} elsif ($addorinsert == 2) {
-			$line1 = $client->string('INSERT_TO_PLAYLIST');
-			$command = "insertalbum";
-		} else {
-			$command = "loadalbum";			
-			if (Slim::Player::Playlist::shuffle($client)) {
-				$line1 = $client->string('PLAYING_RANDOMLY_FROM');
+					Slim::Player::Playlist::shuffle($client, 0);
+
+					Slim::Control::Command::execute($client, 
+						["playlist", "loadalbum", $genre, $artist, picked($album) ? $album : $currentItem]
+					);
+
+					Slim::Control::Command::execute($client, ["playlist", "jump", picked($album) ? browseID3dirIndex($client) : "0"]);
+
+					if ($wasShuffled) {
+						Slim::Control::Command::execute($client, ["playlist", "shuffle", 1]);
+					}
+				}
+
+			# if we've picked an album or song to play then play the album 
+			# if we've picked an album to append, then append the album
+			} elsif (picked($genre) && picked($artist)) {
+
+				$::d_files && msg("song  or album $currentItem\n"); 
+				my $whichalbum = picked($album) ?  $album : (($currentItem eq $client->string('ALL_SONGS')) ? '*' : $currentItem);
+
+				Slim::Control::Command::execute($client, 
+					["playlist", $command, $genre, $artist, $whichalbum, undef, $currentItem eq $client->string('ALL_SONGS')
+				]);
+
+			# if we've picked an artist to append or play, then do so.
+			} elsif (picked($genre)) {
+
+				$::d_files && msg("artist $currentItem\n");
+				my $whichartist = picked($artist) ? $artist : (($currentItem eq $client->string('ALL_ALBUMS')) ? '*' : $currentItem);
+
+				#TODO this sometime causes a warning
+				my $whichalbum = (defined $album && $album ne $client->string('ALL_ALBUMS')) ? $currentItem : '*';
+				my $whichgenre = ($genre eq $client->string('ALL_ARTISTS')) ? '*' : $genre;
+
+				Slim::Control::Command::execute($client, 
+					["playlist", $command, $whichgenre, $whichartist, $whichalbum, undef, $sortbytitle]
+				);
+
+			# if we've picked a genre to play or append, then do so
 			} else {
-				$line1 = $client->string('NOW_PLAYING_FROM');
+
+				$::d_files && msg("genre: $currentItem\n");
+
+				$currentItem = ($currentItem eq $client->string('ALL_ALBUMS')) ? '*' : $currentItem;
+
+				Slim::Control::Command::execute($client, ["playlist", $command,$currentItem, "*", "*"]);
 			}
-		}
-		
-		$client->showBriefly(
-			$client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')),
-			undef,
-			1
-		);
-		
-		# if we've chosen a particular song to append, then append it
-		if (picked($genre) && picked($artist) && picked($album)) {
-			if ($addorinsert || $album eq '*' || !Slim::Utils::Prefs::get('playtrackalbum')) {
-				$command = 'play';
-				if ($addorinsert == 1) { $command = 'append'; }
-				if ($addorinsert == 2) { $command = 'insert'; }
-				Slim::Control::Command::execute($client, ["playlist", $command, $currentItem]);
+
+			$::d_files && msg("currentItem == $currentItem\n");
+		},
+
+		'create_mix' => sub  {
+			my $client = shift;
+
+			my $Imports = Slim::Music::Import::importers();
+			if (exists $Imports->{'moodlogic'}->{'mixer'}) {
+				&{$Imports->{'moodlogic'}->{'mixer'}}($client);
+			} elsif (exists $Imports->{'musicmagic'}->{'mixer'}) {
+				&{$Imports->{'musicmagic'}->{'mixer'}}($client);
 			} else {
-				my $wasShuffled = Slim::Player::Playlist::shuffle($client);
-				Slim::Player::Playlist::shuffle($client, 0);
-				Slim::Control::Command::execute($client, ["playlist", "loadalbum", $genre, $artist, picked($album) ? $album : $currentItem]);
-				Slim::Control::Command::execute($client, ["playlist", "jump", picked($album) ? browseID3dirIndex($client) : "0"]);
-				if ($wasShuffled) { Slim::Control::Command::execute($client, ["playlist", "shuffle", 1]); }
-			}	
-					
-		# if we've picked an album or song to play then play the album 
-		# if we've picked an album to append, then append the album
-		} elsif (picked($genre) && picked($artist)) {
-			$::d_files && msg("song  or album $currentItem\n"); 
-			my $whichalbum = picked($album) ?  $album : (($currentItem eq $client->string('ALL_SONGS')) ? '*' : $currentItem);
-			Slim::Control::Command::execute($client, ["playlist", $command, $genre, $artist, $whichalbum,undef,  $currentItem eq $client->string('ALL_SONGS')]);	
-		# if we've picked an artist to append or play, then do so.
-		} elsif (picked($genre)) {
-			$::d_files && msg("artist $currentItem\n");
-			my $whichartist = picked($artist) ? $artist : (($currentItem eq $client->string('ALL_ALBUMS')) ? '*' : $currentItem);
-			#TODO this sometime causes a warning
-			my $whichalbum = (defined $album && $album ne $client->string('ALL_ALBUMS')) ? $currentItem : '*';
-			my $whichgenre = ($genre eq $client->string('ALL_ARTISTS')) ? '*' : $genre;
-			Slim::Control::Command::execute($client, ["playlist", $command, $whichgenre, $whichartist, $whichalbum,undef, $sortbytitle]);		
-		# if we've picked a genre to play or append, then do so
-		} else {
-			$::d_files && msg("genre: $currentItem\n");
-			$currentItem = ($currentItem eq $client->string('ALL_ALBUMS')) ? '*' : $currentItem;
-			Slim::Control::Command::execute($client, ["playlist", $command,$currentItem, "*", "*"]);
-		}
-		$::d_files && msg("currentItem == $currentItem\n");
-	},
+				# if we don't have mix generation, then just play
+				(getFunctions())->{'play'}($client);
+			}
+			
+		},
 
-	'create_mix' => sub  {
-		my $client = shift;
-
-		my $Imports = Slim::Music::Import::importers();
-		if (exists $Imports->{'moodlogic'}->{'mixer'}) {
-			&{$Imports->{'moodlogic'}->{'mixer'}}($client);
-		} elsif (exists $Imports->{'musicmagic'}->{'mixer'}) {
-			&{$Imports->{'musicmagic'}->{'mixer'}}($client);
-		} else {
-			# if we don't have mix generation, then just play
-			(getFunctions())->{'play'}($client);
-		}
-		
-	},
-
-);
+	);
+}
 
 sub getFunctions {
 	return \%functions;
@@ -319,6 +360,7 @@ sub setMode {
 		setSelection($client,'curartist', selection($client,'artist'));
 		setSelection($client,'curalbum', selection($client,'album'));
 		setSelection($client,'cursong', selection($client,'song'));
+		setSelection($client,'search', selection($client,'search'));
 	}
 	
 	$client->lines(\&lines);
@@ -337,8 +379,8 @@ sub updateLastSelection {
 	my $album = safe(selection($client,'curalbum'));
 	my $song = safe(selection($client,'cursong'));
 	my $genre = safe(selection($client,'curgenre'));
-	lastSelection($client, $genre . "-" . $artist . "-" . $album . "-" . $song, browseID3dirIndex($client));
-	$client->lastID3Selection($genre . "-" . $artist . "-" . $album . "-" . $song, browseID3dirIndex($client));
+	lastSelection($client, join('-', $genre, $artist, $album, $song), browseID3dirIndex($client));
+	$client->lastID3Selection(join('-', $genre, $artist, $album, $song), browseID3dirIndex($client));
 }
 
 sub getLastSelection {
@@ -347,69 +389,71 @@ sub getLastSelection {
 	my $album = safe(selection($client,'curalbum'));
 	my $song = safe(selection($client,'cursong'));
 	my $genre = safe(selection($client,'curgenre'));
-	my $last = lastSelection($client, $genre . "-" . $artist . "-" . $album . "-" . $song);
+	my $last = lastSelection($client, join('-', $genre, $artist, $album, $song));
+
 	if (!defined($last)) {
-		$last = $client->lastID3Selection($genre . "-" . $artist . "-" . $album . "-" . $song);
+		$last = $client->lastID3Selection(join('-', $genre, $artist, $album, $song));
 	}
-	if (!defined($last)) {
-		$last = 0;
-	}
-	return $last;
+
+	return $last || 0;
 }
 
 # create a directory listing, and append it to dirItems
 sub loadDir {
 	my ($client) = @_;
 
-	my $genre  = selection($client,'curgenre');
-	my $artist = selection($client,'curartist');
-	my $album  = selection($client,'curalbum');
-	my $song   = selection($client,'cursong');
+	my $genre  = selection($client, 'curgenre');
+	my $artist = selection($client, 'curartist');
+	my $album  = selection($client, 'curalbum');
+	my $song   = selection($client, 'cursong');
+	my $search = selection($client, 'search');
 
-	my $sortbytitle;
+	my $sortByTitle;
 
+	# This whole * or not * thing is very wonky to me. Maybe it can be
+	# cleaned up with the new DataStores API.
 	if (defined($album) && $album eq $client->string('ALL_SONGS')) {
 		$album = '*';
-		$sortbytitle = 1;
-	};
+		$sortByTitle = 1;
+	}
 
 	if (defined($artist) && ($artist eq $client->string('ALL_ALBUMS'))) {
 		$artist = '*';
-		$sortbytitle = picked($album) ? 0 : 1;
-	};
+		$sortByTitle = picked($album) ? 0 : 1;
+	}
 
 	if (defined($genre) && ($genre eq $client->string('ALL_ARTISTS'))) {
 		$genre = '*';
-		$sortbytitle = picked($album) ? 0 : 1;
-	};
+		$sortByTitle = picked($album) ? 0 : 1;
+	}
 
-	if ($genre  && $genre  eq '*' &&
-		$artist && $artist eq '*' &&
-		$album  && $album  eq '*' && !specified($song)) {
+	if ($genre && $genre eq '*' && $artist && $artist eq '*' && $album && $album eq '*' && !specified($song)) {
 
-		$sortbytitle = 1;
-	};
+		$sortByTitle = 1;
+	}
 
 	$::d_files && msg("loading dir for $genre - $artist - $album - $song\n");
 
+	# Build up a query hash
+	my $ds   = Slim::Music::Info::getCurrentDataStore();
+	my $find = {};
+
+	$find->{'genre'}       = singletonRef($genre)  if specified($genre);
+	$find->{'contributor'} = singletonRef($artist) if specified($artist);
+	$find->{'album'}       = singletonRef($album)  if specified($album);
+	$find->{'track'}       = singletonRef($song)   if specified($song);
+
+	# These really shouldn't be unrolling the (potentially large) array
+	# But there's some wackiness when I try to make it use the ref directly.
 	if (picked($genre) && picked($artist) && picked($album)) {
 
-		@{browseID3dir($client)} = Slim::Music::Info::songs(
-			singletonRef($genre),
-			singletonRef($artist),
-			singletonRef($album),
-			singletonRef($song),
-			$sortbytitle
-		);
+		my $sortBy  = $sortByTitle ? 'title' : 'tracknum';
+
+		@{browseID3dir($client)} = @{ $ds->find('track', $find, $sortBy) };
 
 	} elsif (picked($genre) && picked($artist)) {
 
-		@{browseID3dir($client)} = Slim::Music::Info::albums(
-			singletonRef($genre),
-			singletonRef($artist),
-			singletonRef($album),
-			singletonRef($song)
-		);
+		@{browseID3dir($client)} = @{ $ds->find('album', $find, 'album') };
 
 		if (scalar @{browseID3dir($client)} > 1) {
 
@@ -418,27 +462,19 @@ sub loadDir {
 
 	} elsif (picked($genre)) {
 
-		@{browseID3dir($client)} = Slim::Music::Info::artists(
-			singletonRef($genre),
-			singletonRef($artist),
-			singletonRef($album),
-			singletonRef($song)
-		);
+		@{browseID3dir($client)} = @{ $ds->find('artist', $find, 'artist') };
 
 		if (scalar @{browseID3dir($client)} > 1) {
 			push @{browseID3dir($client)}, $client->string('ALL_ALBUMS');
 		}
 
 	} else {
-		@{browseID3dir($client)} = Slim::Music::Info::genres(
-			singletonRef($genre),
-			singletonRef($artist),
-			singletonRef($album),
-			singletonRef($song)
-		);
-		
+
+		@{browseID3dir($client)} = @{ $ds->find('genre', $find, 'genre') };
+
 		if (scalar @{browseID3dir($client)} > 1) { 
-			push @{browseID3dir($client)}, $client->string('ALL_ARTISTS'); }
+			push @{browseID3dir($client)}, $client->string('ALL_ARTISTS');
+		}
 	}
 
 	return browseID3dirIndex($client, getLastSelection($client));
@@ -453,11 +489,13 @@ sub lines {
 
 	my $songlist = 0;
 	
-	my $genre = selection($client,'curgenre');
+	my $genre  = selection($client,'curgenre');
 	my $artist = selection($client,'curartist');
-	my $album = selection($client,'curalbum');
-	my $song = selection($client,'cursong');
-	my $plural = scalar @{browseID3dir($client)} > 1 ? 'S' : '';
+	my $album  = selection($client,'curalbum');
+	my $song   = selection($client,'cursong');
+
+	my $list   = browseID3dir($client);
+	my $plural = scalar @$list > 1 ? 'S' : '';
 
 	if (!defined($genre)) {
 		$line1 = $client->string('GENRES');
@@ -494,27 +532,50 @@ sub lines {
 		die "can't calculate string for $genre $artist $album $song";
 	}
 
-	if (scalar @{browseID3dir($client)} == 0) {
+	if (scalar @$list == 0) {
 
-			$line2 = $client->string('EMPTY');
+		$line2 = $client->string('EMPTY');
+
 	} else {
 
-		$line1 .= sprintf(" (%d %s %s)", browseID3dirIndex($client) + 1, $client->string('OUT_OF'), scalar @{browseID3dir($client)});
+		$line1 .= sprintf(" (%d %s %s)", browseID3dirIndex($client) + 1, $client->string('OUT_OF'), scalar @$list);
 
 		if ($songlist) {
 
-			$line2 = Slim::Music::Info::standardTitle($client, browseID3dir($client,browseID3dirIndex($client)));
+			my $line = browseID3dir($client, browseID3dirIndex($client));
 
-			$overlay1 = Slim::Display::Display::symbol('mixable') if ( Slim::Music::Info::isSongMixable(browseID3dir($client,browseID3dirIndex($client))) || Slim::Music::Info::isSongMMMixable(browseID3dir($client,browseID3dirIndex($client))));
+			$line2 = Slim::Music::Info::standardTitle($client, $line);
+
+			if (Slim::Music::Info::isSongMixable($line) || Slim::Music::Info::isSongMMMixable($line)) {
+
+				$overlay1 = Slim::Display::Display::symbol('mixable');
+			}
+
 			$overlay2 = Slim::Display::Display::symbol('notesymbol');
 
 		} else {
 
-			$line2 = browseID3dir($client,browseID3dirIndex($client));
+			$line2 = browseID3dir($client, browseID3dirIndex($client));
 
-			$overlay1 = Slim::Display::Display::symbol('mixable') if (! defined($genre) && ! defined($artist) && ! defined($album) && (Slim::Music::Info::isGenreMixable($line2) || Slim::Music::Info::isGenreMMMixable($line2)));
-			$overlay1 = Slim::Display::Display::symbol('mixable') if (defined($genre) && ! defined($artist) && ! defined($album) && (Slim::Music::Info::isArtistMixable($line2) || Slim::Music::Info::isArtistMMMixable($line2)));
-			$overlay1 = Slim::Display::Display::symbol('mixable') if (defined($genre) && defined($artist) && ! defined($album) && Slim::Music::Info::isAlbumMMMixable($artist, $line2));
+			if (!defined($genre) && !defined($artist) && !defined($album) && 
+				(Slim::Music::Info::isGenreMixable($line2) || 
+				 Slim::Music::Info::isGenreMMMixable($line2))) {
+
+				$overlay1 = Slim::Display::Display::symbol('mixable')
+			}
+
+			if (defined($genre) && !defined($artist) && !defined($album) && 
+				(Slim::Music::Info::isArtistMixable($line2) || 
+				 Slim::Music::Info::isArtistMMMixable($line2))) {
+
+				$overlay1 = Slim::Display::Display::symbol('mixable');
+			}
+
+			if (defined($genre) && defined($artist) && ! defined($album) && 
+				Slim::Music::Info::isAlbumMMMixable($artist, $line2)) {
+
+				$overlay1 = Slim::Display::Display::symbol('mixable');
+			}
 
 			$overlay2 = Slim::Display::Display::symbol('rightarrow');
 		}
@@ -533,12 +594,14 @@ sub browseID3dir {
 
 	# if it doesn't exist, make a new one (anonymously)
 	if (!defined $arrayref) {
+
 		$arrayref = [];
+
 		Slim::Buttons::Common::param($client, 'browseID3dir', $arrayref);
 	}
 
 	# if the value is set, then save it in the array
-	if (defined $value) {
+	if (defined $value && $index) {
 		$arrayref->[$index] = $value;
 	}
 
@@ -562,13 +625,13 @@ sub selection {
 	}
 
 	return $value;
-	}
+}
 
 #	set the current selection parameter from the parameter stack (artist, album, genre, etc...)
 sub setSelection {
 	my $client = shift;
-	my $index = shift;
-	my $value = shift;
+	my $index  = shift;
+	my $value  = shift;
 
 	if (!defined $value) {
 		$value = '__undefined';
@@ -604,11 +667,9 @@ sub lastSelection {
 # get (and optionally set) the directory index
 sub browseID3dirIndex {
 	my $client = shift;
-	my $line = Slim::Buttons::Common::param($client, 'browseID3dirIndex', shift);
-	if (!defined($line)) {  $line = 0; }
-	return $line
-}
 
+	return Slim::Buttons::Common::param($client, 'browseID3dirIndex', shift) || 0;
+}
 
 # undefined or contains a *
 sub any {
@@ -628,14 +689,16 @@ sub equal {
 # defined, but does not contain a *
 sub specified {
 	my $i = shift;
-	if (!defined $i) { return 0};
+
+	return 0 unless defined $i;
 	return $i !~ /\*/;
 }
 
 # defined and does not contain a star or equals star
 sub picked {
 	my $i = shift;
-	if (!defined $i) { return 0};
+
+	return 0 unless defined $i;
 	return (specified($i) || $i eq "*");
 }
 
@@ -659,7 +722,7 @@ sub singletonRef {
 	} elsif (my ($g1) = ($arg =~ /^\*(.*)\*$/)) {
 
 		my @sa = ();
-		foreach my $ss (split(' ',$g1)) {
+		for my $ss (split(' ',$g1)) {
 			push @sa, "*" . $ss . "*";
 		}
 

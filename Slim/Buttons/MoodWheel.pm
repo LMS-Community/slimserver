@@ -1,6 +1,6 @@
 package Slim::Buttons::MoodWheel;
 
-#$Id: MoodWheel.pm,v 1.7 2004/12/07 20:19:48 dsully Exp $
+#$Id: MoodWheel.pm,v 1.8 2005/01/04 03:38:52 dsully Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,53 +11,69 @@ use strict;
 use Slim::Buttons::Common;
 use Slim::Music::MoodLogic;
 
-Slim::Buttons::Common::addMode('moodlogic_mood_wheel',getFunctions(),\&setMode);
-
 # 
 my @browseMoodChoices = ();
 
-my %functions = (
-	
-	'up' => sub  {
-		my $client = shift;
-		my $count = scalar @browseMoodChoices;
-		
-		if ($count < 2) {
-			$client->bumpUp();
-		} else {
-			my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index'));
-			setSelection($client, 'mood_wheel_index', $newposition);
-			$client->update();
-		}
-	},
-	
-	'down' => sub  {
-		my $client = shift;
-		my $count = scalar @browseMoodChoices;
+my %functions = ();
 
-		if ($count < 2) {
-			$client->bumpDown();
-		} else {
-			my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index'));
-			setSelection($client, 'mood_wheel_index', $newposition);
-			$client->update();
-		}
-	},
-	
-	'left' => sub  {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	
-	'right' => sub  {
-		my $client = shift;
-	
-		my @oldlines = Slim::Display::Display::curLines($client);
-		Slim::Buttons::Common::pushMode($client, 'moodlogic_variety_combo', {'genre' => Slim::Buttons::Common::param($client, 'genre'), 'artist' => Slim::Buttons::Common::param($client, 'artist'), 'mood' => $browseMoodChoices[selection($client, 'mood_wheel_index')]});
+sub init {
+
+	Slim::Buttons::Common::addMode('moodlogic_mood_wheel', getFunctions(), \&setMode);
+
+	%functions = (
 		
-		$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
-	}
-);
+		'up' => sub  {
+			my $client = shift;
+			my $count = scalar @browseMoodChoices;
+			
+			if ($count < 2) {
+				$client->bumpUp();
+			} else {
+				my $newposition = Slim::Buttons::Common::scroll(
+					$client, -1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index')
+				);
+
+				setSelection($client, 'mood_wheel_index', $newposition);
+				$client->update();
+			}
+		},
+		
+		'down' => sub  {
+			my $client = shift;
+			my $count = scalar @browseMoodChoices;
+
+			if ($count < 2) {
+				$client->bumpDown();
+			} else {
+				my $newposition = Slim::Buttons::Common::scroll(
+					$client, +1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index')
+				);
+				setSelection($client, 'mood_wheel_index', $newposition);
+				$client->update();
+			}
+		},
+		
+		'left' => sub  {
+			my $client = shift;
+			Slim::Buttons::Common::popModeRight($client);
+		},
+		
+		'right' => sub  {
+			my $client = shift;
+		
+			my @oldlines = Slim::Display::Display::curLines($client);
+
+			Slim::Buttons::Common::pushMode($client, 'moodlogic_variety_combo', {
+
+				'genre'  => Slim::Buttons::Common::param($client, 'genre'),
+				'artist' => Slim::Buttons::Common::param($client, 'artist'),
+				'mood'   => $browseMoodChoices[selection($client, 'mood_wheel_index')]
+			});
+			
+			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+		}
+	);
+}
 
 sub getFunctions {
 	return \%functions;
@@ -68,9 +84,16 @@ sub setMode {
 	my $push = shift;
 
 	if (defined Slim::Buttons::Common::param($client, 'genre')) {
-		@browseMoodChoices = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicGenreId(Slim::Buttons::Common::param($client, 'genre')), 'genre');
+		@browseMoodChoices = Slim::Music::MoodLogic::getMoodWheel(
+			Slim::Music::Info::moodLogicGenreId(Slim::Buttons::Common::param($client, 'genre')), 'genre'
+		);
+
 	} elsif (defined Slim::Buttons::Common::param($client, 'artist')) {
-		@browseMoodChoices = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicArtistId(Slim::Buttons::Common::param($client, 'artist')), 'artist');
+
+		@browseMoodChoices = Slim::Music::MoodLogic::getMoodWheel(
+			Slim::Music::Info::moodLogicArtistId(Slim::Buttons::Common::param($client, 'artist')), 'artist'
+		);
+
 	} else {
 		die 'no/unknown type specified for mood wheel';
 	}

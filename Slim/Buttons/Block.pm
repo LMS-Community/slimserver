@@ -13,15 +13,16 @@ use Slim::Utils::Misc;
 use Slim::Buttons::Common;
 
 my $ticklength = .25;            # length of each tick, seconds
-my $tickdelay = .5;              # wait half a second before starting the display update
-my @tickchars=('|','/','-','\\');
+my $tickdelay  = .5;              # wait half a second before starting the display update
+my @tickchars  = ('|','/','-','\\');
+my %functions  = ();
 
-Slim::Buttons::Common::addMode('block',getFunctions(),\&setMode);
+# Don't do this at compile time - not at run time
+sub init {
+	Slim::Buttons::Common::addMode('block',getFunctions(),\&setMode);
+}
 
 # Each button on the remote has a function:
-
-my %functions = ();
-
 sub getFunctions {
 	return \%functions;
 }
@@ -53,9 +54,7 @@ sub block {
 }
 
 sub updateBlockedStatus {
-	my $client=shift;
-
-	die unless ($client);
+	my $client = shift || die;
 
 	$client->update();
 

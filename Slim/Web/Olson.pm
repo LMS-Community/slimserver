@@ -79,7 +79,7 @@ sub olsonmain {
 
 		if (scalar(@items)) {
 
-			my ($start,$end) = Slim::Web::Pages::alphapagebar(
+			my ($start,$end) = Slim::Web::Pages::alphaPageBar(
 				\@items,
 				$params->{'path'},
 				$otherparams,
@@ -124,7 +124,7 @@ sub olsonmain {
 
 		if (scalar(@items)) {
 
-			my ($start,$end) = Slim::Web::Pages::alphapagebar(
+			my ($start,$end) = Slim::Web::Pages::alphaPageBar(
 				\@items,
 				$params->{'path'},
 				$otherparams,
@@ -169,7 +169,7 @@ sub olsonmain {
 
 		if (scalar(@items)) {
 
-			my ($start,$end) = Slim::Web::Pages::alphapagebar(
+			my ($start,$end) = Slim::Web::Pages::alphaPageBar(
 				\@items,
 				$params->{'path'},
 				$otherparams,
@@ -278,7 +278,7 @@ sub olsondetail {
 
 		if (scalar(@items)) {
 
-			my ($start,$end) = Slim::Web::Pages::alphapagebar(
+			my ($start,$end) = Slim::Web::Pages::alphaPageBar(
 				\@items,
 				$params->{'path'},
 				$otherparams,
@@ -323,7 +323,7 @@ sub olsondetail {
 
 		if (scalar(@items)) {
 
-			my ($start,$end) = Slim::Web::Pages::pagebar(
+			my ($start,$end) = Slim::Web::Pages::pageBar(
 				scalar(@items),
 				$params->{'path'},
 				0,

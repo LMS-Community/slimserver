@@ -1,6 +1,6 @@
 package Slim::Buttons::VarietyCombo;
 
-#$Id: VarietyCombo.pm,v 1.9 2004/12/17 10:09:30 kdf Exp $
+#$Id: VarietyCombo.pm,v 1.10 2005/01/04 03:38:52 dsully Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -13,86 +13,107 @@ use Slim::Music::MoodLogic;
 use Slim::Utils::Timers;
 use Slim::Display::Display;
 
-Slim::Buttons::Common::addMode('moodlogic_variety_combo',getFunctions(),\&setMode);
+my %functions = ();
 
-#### Variety Combo Selection UI
-my %functions = (
-	
-	'up' => sub {
-		my $client = shift;
-		my $variety = Slim::Utils::Prefs::get('varietyCombo');
-		my $inc = 1;
-		my $rate = 50; #Hz maximum
-		my $accel = 15; #Hz/s
+sub init {
+	Slim::Buttons::Common::addMode('moodlogic_variety_combo', getFunctions(), \&setMode);
 
-		if (Slim::Hardware::IR::holdTime($client) > 0) {
-			$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
-		} else {
-			$inc = 2;
-		}
-
-		$variety += $inc;
-		if ($variety > 100) { $variety = 100; };
-		Slim::Utils::Prefs::set('varietyCombo', $variety);
-		$client->update();
-	},
-	'down' => sub  {
-		my $client = shift;
-		my $variety = Slim::Utils::Prefs::get('varietyCombo');
-		my $inc = 1;
-		my $rate = 50; #Hz maximum
-		my $accel = 15; #Hz/s
-
-		if (Slim::Hardware::IR::holdTime($client) > 0) {
-			$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
-		} else {
-			$inc = 2;
-		}
-
-		$variety -= $inc;
-		if ($variety < 0) { $variety = 0; };
-		Slim::Utils::Prefs::set('varietyCombo', $variety);
-		$client->update();
-	},
-	
-	'left' => sub  {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	
-	'right' => sub  {
-		my $client = shift;
-		my @instantMix;
+	# Variety Combo Selection UI
+	%functions = (
 		
-		if (defined Slim::Buttons::Common::param($client, 'song')) {
-			@instantMix = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicSongId(Slim::Buttons::Common::param($client, 'song')), undef, 'song');
-		} elsif (defined Slim::Buttons::Common::param($client,'mood') && defined Slim::Buttons::Common::param($client,'artist')) {
-			my @instantMix = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicArtistId(Slim::Buttons::Common::param($client, 'artist')), Slim::Buttons::Common::param($client, 'mood'), 'artist');
-		} elsif (defined Slim::Buttons::Common::param($client,'mood') &&defined Slim::Buttons::Common::param($client,'genre')) {
-			my @instantMix = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicGenreId(Slim::Buttons::Common::param($client, 'genre')), Slim::Buttons::Common::param($client, 'mood'), 'genre');
-		}
+		'up' => sub {
+			my $client = shift;
+			my $variety = Slim::Utils::Prefs::get('varietyCombo');
+			my $inc = 1;
+			my $rate = 50; #Hz maximum
+			my $accel = 15; #Hz/s
+
+			if (Slim::Hardware::IR::holdTime($client) > 0) {
+				$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
+			} else {
+				$inc = 2;
+			}
+
+			$variety += $inc;
+			if ($variety > 100) { $variety = 100; };
+			Slim::Utils::Prefs::set('varietyCombo', $variety);
+			$client->update();
+		},
+
+		'down' => sub  {
+			my $client = shift;
+			my $variety = Slim::Utils::Prefs::get('varietyCombo');
+			my $inc = 1;
+			my $rate = 50; #Hz maximum
+			my $accel = 15; #Hz/s
+
+			if (Slim::Hardware::IR::holdTime($client) > 0) {
+				$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
+			} else {
+				$inc = 2;
+			}
+
+			$variety -= $inc;
+			if ($variety < 0) { $variety = 0; };
+			Slim::Utils::Prefs::set('varietyCombo', $variety);
+			$client->update();
+		},
 		
-		if (scalar @instantMix) {
-			my @oldlines = Slim::Display::Display::curLines($client);
-			Slim::Buttons::Common::pushMode($client, 'instant_mix', {'mix' => \@instantMix});
-			specialPushLeft($client, 0, @oldlines);
-		} else {
-			$client->bumpRight()
-		}
-	},
-	'play' => sub  {
-		my $client = shift;
-		my $currentItem;
-		if (defined Slim::Buttons::Common::param($client, 'song')) {
-			my @oldlines = Slim::Display::Display::curLines($client);
-			$currentItem = Slim::Buttons::Common::param($client, 'song');
-			Slim::Buttons::Common::pushMode($client, 'instant_mix', {'song' => Slim::Buttons::Common::param($client, 'song')});
-			specialPushLeft($client, 0, @oldlines);
-		} else {
-			$client->bumpRight()
-		}
-	},
-);
+		'left' => sub  {
+			my $client = shift;
+			Slim::Buttons::Common::popModeRight($client);
+		},
+		
+		'right' => sub  {
+			my $client = shift;
+			my @instantMix;
+			
+			if (defined Slim::Buttons::Common::param($client, 'song')) {
+
+				@instantMix = Slim::Music::MoodLogic::getMix(
+					Slim::Music::Info::moodLogicSongId(Slim::Buttons::Common::param($client, 'song')), undef, 'song'
+				);
+
+			} elsif (defined Slim::Buttons::Common::param($client,'mood') && defined Slim::Buttons::Common::param($client,'artist')) {
+
+				my @instantMix = Slim::Music::MoodLogic::getMix(
+					Slim::Music::Info::moodLogicArtistId(Slim::Buttons::Common::param($client, 'artist')),
+					Slim::Buttons::Common::param($client, 'mood'),
+					'artist'
+				);
+
+			} elsif (defined Slim::Buttons::Common::param($client,'mood') &&defined Slim::Buttons::Common::param($client,'genre')) {
+
+				my @instantMix = Slim::Music::MoodLogic::getMix(
+					Slim::Music::Info::moodLogicGenreId(Slim::Buttons::Common::param($client, 'genre')),
+					Slim::Buttons::Common::param($client, 'mood'),
+					'genre'
+				);
+			}
+			
+			if (scalar @instantMix) {
+				my @oldlines = Slim::Display::Display::curLines($client);
+				Slim::Buttons::Common::pushMode($client, 'instant_mix', { 'mix' => \@instantMix });
+				specialPushLeft($client, 0, @oldlines);
+			} else {
+				$client->bumpRight()
+			}
+		},
+
+		'play' => sub  {
+			my $client = shift;
+			my $currentItem;
+			if (defined Slim::Buttons::Common::param($client, 'song')) {
+				my @oldlines = Slim::Display::Display::curLines($client);
+				$currentItem = Slim::Buttons::Common::param($client, 'song');
+				Slim::Buttons::Common::pushMode($client, 'instant_mix', {'song' => Slim::Buttons::Common::param($client, 'song')});
+				specialPushLeft($client, 0, @oldlines);
+			} else {
+				$client->bumpRight()
+			}
+		},
+	);
+}
 
 sub getFunctions {
 	return \%functions;
@@ -104,7 +125,6 @@ sub setMode {
 	$client->lines(\&lines);
 	$client->update();
 }
-
 
 #
 # figure out the lines to be put up to display

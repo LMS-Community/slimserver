@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.43 2004/12/07 20:19:47 dsully Exp $
+# $Id: Common.pm,v 1.44 2005/01/04 03:38:52 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -33,16 +33,54 @@ my %savers = (
 	'playlist'	=> 'Now Playing',
 );
 
-#
+# Map the numbers on the remote to their corresponding letter sequences.
+my @numberLetters = (
+	[' ','0'], # 0
+	['.',',',"'",'?','!','@','-','1'], # 1
+	['A','B','C','2'], 	# 2
+	['D','E','F','3'], 	# 3
+	['G','H','I','4'], 	# 4
+	['J','K','L','5'], 	# 5
+	['M','N','O','6'], 	# 6
+	['P','Q','R','S','7'], 	# 7
+	['T','U','V','8'], 	# 8
+	['W','X','Y','Z','9']   # 9
+);
+
+# Minimum Velocity for scrolling, in items/second
+my $minimumVelocity = 2;
+
+# Time that you must hold the scroll button before the automatic
+# scrolling and acceleration starts. 
+# in seconds.
+my $holdTimeBeforeScroll = 0.300;  
+
+my $scrollClientHash = {};
+
 # The address of the function hash is set at run time rather than compile time
 # so initialize the modeFunctions hash here
 sub init {
+
+	# Home must come first!
+	Slim::Buttons::Home::init();
+
 	Slim::Buttons::Plugins::getPluginModes(\%modes);
 	Slim::Buttons::Plugins::getPluginFunctions(\%modeFunctions);
-	Slim::Buttons::ScreenSaver::init();
+
+	Slim::Buttons::AlarmClock::init();
 	Slim::Buttons::Browse::init();
 	Slim::Buttons::BrowseID3::init();
+	Slim::Buttons::Information::init();
+	Slim::Buttons::InstantMix::init();
+	Slim::Buttons::MoodWheel::init();
+	Slim::Buttons::Playlist::init();
+	Slim::Buttons::Power::init();
+	Slim::Buttons::ScreenSaver::init();
 	Slim::Buttons::Search::init();
+	Slim::Buttons::Settings::init();
+	Slim::Buttons::Synchronize::init();
+	Slim::Buttons::TrackInfo::init();
+	Slim::Buttons::VarietyCombo::init();
 }
 
 sub addSaver {
@@ -51,9 +89,12 @@ sub addSaver {
  	my $setModeFunction = shift;
  	my $leaveModeFunction = shift;
  	my $displayName = shift;
+
    	$savers{$name} = $displayName;
- 	$::d_plugins && msg("Registering screensaver ".$displayName."\n");
- 	addMode($name,$buttonFunctions,$setModeFunction,$leaveModeFunction);
+
+ 	$::d_plugins && msg("Registering screensaver $displayName\n");
+
+ 	addMode($name, $buttonFunctions, $setModeFunction, $leaveModeFunction);
 }
 
 sub hash_of_savers {
@@ -591,7 +632,7 @@ my %functions = (
 
 );
 
- sub getFunction {
+sub getFunction {
  	my $client = shift;
  	my $function = shift;
  	my $clientMode = shift;
@@ -629,16 +670,6 @@ sub scroll {
 	scroll_dynamic(@_);
 }
 
-# Minimum Velocity for scrolling, in items/second
-my $minimumVelocity = 2;
-
-# Time that you must hold the scroll button before the automatic
-# scrolling and acceleration starts. 
-# in seconds.
-my $holdTimeBeforeScroll = 0.300;  
-
-my $scrollClientHash = {};
-
 sub scroll_dynamic {
 	my $client = shift;
 	my $direction = shift;
@@ -649,13 +680,9 @@ sub scroll_dynamic {
 	# Set up initial conditions
 	if (!defined $scrollClientHash->{$client}) {
 		#$client->{scroll_params} =
-		$scrollClientHash->{$client}{scrollParams} = 
-			scroll_getInitialScrollParams(
-										  $minimumVelocity, 
-										  $listlength, 
-										  $direction
-										  );
+		$scrollClientHash->{$client}{scrollParams} = scroll_getInitialScrollParams($minimumVelocity, $listlength, $direction);
 	}
+
 	my $scrollParams = $scrollClientHash->{$client}{scrollParams};
 
 	my $result = undef;
@@ -766,66 +793,57 @@ sub scroll_resetScrollRange
 	}
 }
 
-sub scroll_calculateAcceleration 
-{
+sub scroll_calculateAcceleration {
 	my ($direction, $estimatedStart, $estimatedEnd, $Tc)  = @_;
 	my $deltaX = $estimatedEnd - $estimatedStart;
-	my $acceleration = 
-		2.0 * $deltaX / ($Tc * $Tc) * $direction;
-	return $acceleration;
+
+	return 2.0 * $deltaX / ($Tc * $Tc) * $direction;
 }
+
 sub scroll_getInitialScrollParams {
 	my $minimumVelocity = shift; 
 	my $listLength      = shift;
 	my $direction       = shift;
 
-	my $result = {};
-	$result = {
-			#
-			# Constants.
-			#
+	my $result = {
+		# Constants.
+		# Items/second.  Don't go any slower than this under any circumstances. 
+		minimumVelocity => $minimumVelocity,  
+					
+		# seconds.  Finishs a list in this many seconds. 
+		Tc              => 5,   
 
-            # Items/second.  Don't go any slower than this under any circumstances. 
-			minimumVelocity => $minimumVelocity,  
-			                        
-			# seconds.  Finishs a list in this many seconds. 
-			Tc              => 5,   
-			                        
-			# 
-			# Variables
-			#
+		# Variables
+		# Starting estimate of target space.
+		estimateStart   => 0,   
+		
+		# Ending estimate of target space
+		estimateEnd     => $listLength, 
+					
+		# The current velocity.  account for direction
+		V               => $minimumVelocity * $direction,
+		
+		# The current acceleration.
+		A               => 0,
 
-			# Starting estimate of target space.
-			estimateStart   => 0,   
+		# The 'hold Time' value the last time we were called.
+		# a negative number means it hasn't been called before, or
+		# the button has been released.
+		lastHoldTime    => -1,
 
-			
-			# Ending estimate of target space
-			estimateEnd     => $listLength, 
-			                        
-			
-			# The current velocity.  account for direction
-			V               => $minimumVelocity * $direction,
-			
-			# The current acceleration.
-			A               => 0,
+		# To make the 
+		lastPosition    => 0,      # Last calculated position (floating point)
+		lastPositionReturned => 0, # Last returned position   (integer), used to detect when $currentPosition 
+					   # has been modified outside the scroll routines.
+		
+		# Maintain the last direction, so that we can implement a
+		# slowdown when the user hits  the same direciton twice.
+		# i.e. he's almost to where he wants to go, but not quite
+		# there yet.  Slow velocity by half, and don't wait for
+		# pause. 
+		#lastDirection   => 0,      
+	};
 
-			# The 'hold Time' value the last time we were called.
-			# a negative number means it hasn't been called before, or
-			# the button has been released.
-			lastHoldTime    => -1,
-
-			# To make the 
-			lastPosition    => 0,      # Last calculated position (floating point)
-			lastPositionReturned => 0, # Last returned position   (integer), used to detect when $currentPosition has been modified outside the scroll routines.
-			
-			# Maintain the last direction, so that we can implement a
-			# slowdown when the user hits  the same direciton twice.
-			# i.e. he's almost to where he wants to go, but not quite
-			# there yet.  Slow velocity by half, and don't wait for
-			# pause. 
-#			lastDirection   => 0,      
-
-		};
 	return $result;
 }
 
@@ -936,17 +954,6 @@ sub mixer {
 	$client->update();
 }
 
-my @numberLetters = ([' ','0'], # 0
-					 ['.',',',"'",'?','!','@','-','1'], # 1
-					 ['A','B','C','2'], 				# 2
-					 ['D','E','F','3'], 				# 3
-					 ['G','H','I','4'], 				# 4
-					 ['J','K','L','5'], 				# 5
-					 ['M','N','O','6'], 				# 6
-					 ['P','Q','R','S','7'], 	# 7
-					 ['T','U','V','8'], 				# 8
-					 ['W','X','Y','Z','9']); 			# 9
-
 sub numberLetter {
 	my $client = shift;
 	my $digit = shift;
@@ -964,11 +971,11 @@ sub numberLetter {
 		$index = $index % (scalar(@{$table->[$digit]}));
 	}
 
-	$letter = $table->[$digit][$index];
 	$client->lastLetterDigit($digit);
 	$client->lastLetterIndex($index);
 	$client->lastLetterTime($now);
-	return $letter;
+
+	return $table->[$digit][$index];
 }
 
 sub testSkipNextNumberLetter {
@@ -1054,39 +1061,46 @@ sub firstIndexOf
 
 sub mode {
 	my $client = shift;
+
 	Slim::Utils::Misc::assert($client);
+
 	return $client->modeStack(-1);
 }
 
 sub validMode {
 	my $mode = shift;
-	if (exists ($modes{$mode})) {
-		return 1;
-	} else {
-		return 0
-	}
+
+	return exists $modes{$mode} ? 1 : 0;
 }
 
 sub param {
 	my $client = shift;
-	my $paramname = shift;
-	my $paramvalue = shift;
-	if (!defined($client->modeParameterStack(-1))) {return undef};
-	if (defined $paramvalue) {
-		${$client->modeParameterStack(-1)}{$paramname} = $paramvalue;
+	my $name   = shift;
+	my $value  = shift;
+
+	my $mode   = $client->modeParameterStack(-1) || return undef;
+
+	if (defined $value) {
+
+		$mode->{$name} = $value;
+
 	} else {
-		return ${$client->modeParameterStack(-1)}{$paramname};
+
+		return $mode->{$name};
 	}
 }
 
 sub paramOrPref {
 	my $client = shift;
-	my $paramname = shift;
-	if (defined($client->modeParameterStack(-1)) && defined ${$client->modeParameterStack(-1)}{$paramname}) {
-		return ${$client->modeParameterStack(-1)}{$paramname};
-	} else {
-		return Slim::Utils::Prefs::clientGet($client,$paramname);
+	my $name   = shift;
+
+	my $mode   = $client->modeParameterStack(-1) || return undef;
+
+	if (defined $mode && defined $mode->{$name}) {
+		return $mode->{$name};
 	}
+
+	return Slim::Utils::Prefs::clientGet($client, $name);
 }
 
 # pushMode takes the following parameters:
@@ -1106,7 +1120,7 @@ sub pushMode {
 
 		my $exitFun = $leaveMode{$oldmode};
 
-		if ($exitFun) {
+		if ($exitFun && ref($exitFun) eq 'CODE') {
 			&$exitFun($client, 'push');
 		}
 	}
@@ -1137,9 +1151,12 @@ sub popMode {
 	}
 
 	my $oldMode = mode($client);
+
 	if ($oldMode) {
+
 		my $exitFun = $leaveMode{$oldMode};
-		if ($exitFun) {
+
+		if ($exitFun && ref($exitFun) eq 'CODE') {
 			&$exitFun($client, 'pop');
 		}
 	}
@@ -1153,6 +1170,7 @@ sub popMode {
 		my $fun = $modes{$newmode};
 		&$fun($client,'pop');
 	}
+
 	$::d_files && msg("popped to button mode: " . mode($client) . "\n");
 	
 	return $oldMode
@@ -1161,7 +1179,9 @@ sub popMode {
 sub setMode {
 	my $client = shift;
 	my $setmode = shift;
+
 	while (popMode($client)) {};
+
 	pushMode($client, $setmode);
 }
 
@@ -1171,29 +1191,39 @@ sub pushModeLeft {
 	my $paramHashRef = shift;
 
 	my @oldlines = Slim::Display::Display::curLines($client);
+
 	pushMode($client, $setmode, $paramHashRef);
+
 	$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 }
 
 sub popModeRight {
 	my $client = shift;
+
 	my @oldlines = Slim::Display::Display::curLines($client);
+
 	Slim::Buttons::Common::popMode($client);
+
 	$client->pushRight(\@oldlines, [Slim::Display::Display::curLines($client)]);
 }
 
 sub dateTime {
 	my $client = shift;
+
 	my @line = (Slim::Utils::Misc::longDateF(), Slim::Utils::Misc::timeF());
+
 	for my $i (0..$#line) {
 		# center the strings on the display by space padding them
 		$line[$i] = Slim::Display::Display::center($line[$i]);
 	}
+
 	return @line;
 }
 
 1;
+
 __END__
+
 
 # Local Variables:
 # tab-width:4

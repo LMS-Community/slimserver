@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Text;
 
-# $Id: Text.pm,v 1.24 2004/12/14 19:15:20 grotus Exp $
+# $Id: Text.pm,v 1.25 2005/01/04 03:38:52 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -16,16 +16,18 @@ use Slim::Hardware::VFD;
 our $DOUBLEWIDTH = 10;
 my $rightarrow = Slim::Display::Display::symbol('rightarrow');
 
-my @numberLettersMixed = ([' ','0'], # 0
-					 ['.',',',"'",'?','!','@','-','1'], # 1
-					 ['a','b','c','A','B','C','2'], 				# 2
-					 ['d','e','f','D','E','F','3'], 				# 3
-					 ['g','h','i','G','H','I','4'], 				# 4
-					 ['j','k','l','J','K','L','5'], 				# 5
-					 ['m','n','o','M','N','O','6'], 				# 6
-					 ['p','q','r','s','P','Q','R','S','7'], 	# 7
-					 ['t','u','v','T','U','V','8'], 				# 8
-					 ['w','x','y','z','W','X','Y','Z','9']); 			# 9
+my @numberLettersMixed = (
+	[' ','0'], # 0
+	['.',',',"'",'?','!','@','-','1'], # 1
+	['a','b','c','A','B','C','2'], 	   # 2
+	['d','e','f','D','E','F','3'], 	   # 3
+	['g','h','i','G','H','I','4'], 	   # 4
+	['j','k','l','J','K','L','5'], 	   # 5
+	['m','n','o','M','N','O','6'], 	   # 6
+	['p','q','r','s','P','Q','R','S','7'], 	# 7
+	['t','u','v','T','U','V','8'], 		# 8
+	['w','x','y','z','W','X','Y','Z','9']   # 9
+);
 
 my @numberLettersUpper = (
 	[' ','0'],				# 0
@@ -38,6 +40,30 @@ my @numberLettersUpper = (
 	['P','Q','R','S','7'], 			# 7
 	['T','U','V','8'], 			# 8
 	['W','X','Y','Z','9'],			# 9
+);
+
+my @UpperChars = (
+	Slim::Display::Display::symbol('rightarrow'),
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+	'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+	' ',
+	'.', ',', "'", '?', '!', '@', '-', '_', '#', '$', '%', '^', '&',
+	'(', ')', '{', '}', '[', ']', '\\','|', ';', ':', '"', '<', '>',
+	'*', '=', '+', '`', '/', 'ß', 
+	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+);
+
+my @BothChars = (
+	Slim::Display::Display::symbol('rightarrow'),
+	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+	'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+	'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+ 	' ',
+	'.', ',', "'", '?', '!', '@', '-', '_', '#', '$', '%', '^', '&',
+	'(', ')', '{', '}', '[', ']', '\\','|', ';', ':', '"', '<', '>',
+	'*', '=', '+', '`', '/', 'ß', 
+	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
 );
 
 Slim::Buttons::Common::addMode('INPUT.Text',getFunctions(),\&setMode);
@@ -284,29 +310,6 @@ sub setMode {
 	init($client);
 	$client->lines(\&lines);
 }
-
-my @UpperChars = (
-	Slim::Display::Display::symbol('rightarrow'),
-	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-	'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-	' ',
-	'.', ',', "'", '?', '!', '@', '-', '_', '#', '$', '%', '^', '&',
-	'(', ')', '{', '}', '[', ']', '\\','|', ';', ':', '"', '<', '>',
-	'*', '=', '+', '`', '/', 'ß', 
-	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
-);
-my @BothChars = (
-	Slim::Display::Display::symbol('rightarrow'),
-	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-	'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-	'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
- 	' ',
-	'.', ',', "'", '?', '!', '@', '-', '_', '#', '$', '%', '^', '&',
-	'(', ')', '{', '}', '[', ']', '\\','|', ';', ':', '"', '<', '>',
-	'*', '=', '+', '`', '/', 'ß', 
-	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
-);
 
 # set unsupplied parameters to the defaults
 # header = 'Enter Text:' # message displayed on top line

@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Time;
 
-# $Id: Time.pm,v 1.6 2004/12/07 20:19:50 dsully Exp $
+# $Id: Time.pm,v 1.7 2005/01/04 03:38:52 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -302,6 +302,6 @@ sub scrollTime {
 	return $time;
 }
 
-
 1;
 
+__END__

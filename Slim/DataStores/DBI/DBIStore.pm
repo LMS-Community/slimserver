@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DBIStore;
 
-# $Id: DBIStore.pm,v 1.5 2005/01/02 21:46:17 kdf Exp $
+# $Id: DBIStore.pm,v 1.6 2005/01/04 03:38:52 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -64,6 +64,9 @@ my %tagFunctions = (
 # Only look these up once.
 my ($_unknownArtistID, $_unknownGenreID);
 
+# Keep the last 5 find results set in memory
+tie my %lastFind, 'Tie::Cache::LRU', 5;
+
 #
 # Readable DataStore interface methods:
 #
@@ -117,7 +120,7 @@ sub contentType {
 	my $url = shift;
 	my $create = shift;
 
-	my $ct = $self->{contentTypeCache}->{$url};
+	my $ct = $self->{'contentTypeCache'}->{$url};
 
 	if (defined($ct)) {
 		return wantarray ? ($ct, $self->_retrieveTrack($url)) : $ct;
@@ -131,14 +134,14 @@ sub contentType {
 		$ct = Slim::Music::Info::typeFromPath($url);
 	}
 
-	$self->{contentTypeCache}->{$url} = $ct;
+	$self->{'contentTypeCache'}->{$url} = $ct;
 
 	return wantarray ? ($ct, $track) : $ct;
 }
 
 sub objectForUrl {
-	my $self = shift;
-	my $url = shift;
+	my $self   = shift;
+	my $url    = shift;
 	my $create = shift;
 
 	if (!defined($url)) {
@@ -148,19 +151,21 @@ sub objectForUrl {
 	}
 	
 	my $track = $self->_retrieveTrack($url);
-	if (defined($track) && !$create) {
+
+	if (defined $track && !$create) {
 		$track = $self->_checkValidity($track);
 	}
 
-	if ($create && !defined($track)) {
+	if (!defined $track && $create) {
+
 		# get the type without updating the cache
 		my $type = Slim::Music::Info::typeFromPath($url);
 
 		if (Slim::Music::Info::isSong($url, $type) ||
 		    Slim::Music::Info::isList($url, $type) ||
 		    Slim::Music::Info::isPlaylist($url, $type)) {
-			my $attrs = { url => $url };
-			$track = $self->newTrack($url, $attrs);
+
+			$track = $self->newTrack($url, { 'url' => $url });
 		}
 	}
 
@@ -168,30 +173,70 @@ sub objectForUrl {
 }
 
 sub objectForId {
-	my $self = shift;
-	my $id = shift;
+	my $self  = shift;
+	my $field = shift;
+	my $id    = shift;
 
-	my $track = Slim::DataStores::DBI::Track->retrieve($id);
+	if ($field eq 'track') {
 
-	if (defined($track)) {
-		$track = $self->_checkValidity($track);
+		my $track = Slim::DataStores::DBI::Track->retrieve($id) || return;
+
+		return $self->_checkValidity($track);
+
+	} elsif ($field eq 'genre') {
+
+		return Slim::DataStores::DBI::Genre->retrieve($id);
+
+	} elsif ($field eq 'album') {
+
+		return Slim::DataStores::DBI::Album->retrieve($id);
+
+	} elsif ($field eq 'contributor') {
+
+		return Slim::DataStores::DBI::Contributor->retrieve($id);
 	}
-
-	return $track;
 }
 
 sub find {
-	my $self = shift;
-	my $field = shift;
+	my $self   = shift;
+	my $field  = shift;
 	my $findCriteria = shift;
-	my $sortby = shift;
-	my $limit = shift;
+	my $sortBy = shift;
+	my $limit  = shift;
 	my $offset = shift;
+	my $count  = shift;
 
-	my $items = Slim::DataStores::DBI::DataModel->find($field, $findCriteria, $sortby, $limit, $offset);
-	#my $items = Slim::DataStores::DBI::DataModel->find($field, $findCriteria, $sortby);
+	# Try and keep the last result set in memory - so if the user is
+	# paging through, we don't keep hitting the database.
+	#
+	# Can't easily use $limit/offset for the page bars, because they
+	# require knowing the entire result set.
+	my $findKey = join(':', 
+		$field,
+		(keys %$findCriteria),
+		(map { join(':', (ref($_) eq 'ARRAY' ? @{$_} : $_)) } values %$findCriteria),
+		($sortBy || ''),
+		($limit  || ''),
+		($offset || ''),
+		($count  || '')
+	);
 
-	if (defined($items) && $field eq 'track') {
+	$::d_sql && Slim::Utils::Misc::msg("Generated findKey: [$findKey]\n");
+
+	# We could add in another key that's the access time, and have these
+	# expire.. not sure if we need that yet. Or use Tie::Cache::LRU::Expires
+	if (!defined $lastFind{$findKey}) {
+
+		$lastFind{$findKey} = Slim::DataStores::DBI::DataModel->find($field, $findCriteria, $sortBy, $limit, $offset, $count);
+
+	} else {
+
+		$::d_sql && Slim::Utils::Misc::msg("Used previous results for findKey: [$findKey]\n");
+	}
+
+	my $items = $lastFind{$findKey};
+
+	if (!$count && defined($items) && $field eq 'track') {
 		return [ grep $self->_includeInTrackCount($_), @$items ];
 	}
 
@@ -224,17 +269,16 @@ sub count {
 		}
 	}
 
-	# XXX Brute force implementation. For now, instantiate the objects to get the counts 
-	my $items = $self->find($field, $findCriteria);
-
-	return defined $items ? scalar @$items : 0;
+	# XXX Brute force implementation. For now, retrieve from the database.
+	# Last option to find() is $count - don't instansiate objects
+	return $self->find($field, $findCriteria, undef, undef, undef, 1);
 }
 
 sub search {
-	my $self = shift;
-	my $field = shift;
+	my $self    = shift;
+	my $field   = shift;
 	my $pattern = shift;
-	my $sortby = shift;
+	my $sortby  = shift;
 
 	my $contributorFields = Slim::DataStores::DBI::Contributor->contributorFields();
 
@@ -260,6 +304,36 @@ sub search {
 	}
 
 	return Slim::DataStores::DBI::Track->searchColumn($pattern, $field);
+}
+
+# XXX - dsully - this isn't quite used yet, and may not be the right thing to
+# do. I think it's semi-redundant with some code in Buttons/BrowseID3 - which
+# should probaably be moved to here anyways.
+sub searchWithCriteria {
+	my $class	 = shift;
+	my $findCriteria = shift;
+	my $sortByTitle  = shift;
+
+	# First turn Artist 'ACDC' => id 10, etc.
+	while (my ($key, $value) = each %$findCriteria) {
+
+		if (defined $value && scalar @$value && defined $value->[0] && $value->[0] ne '*') {
+
+			my $results = $class->search($key, $value);
+
+			return () unless scalar @$results;
+
+			$findCriteria->{$key} = $results;
+		}
+	}
+
+	my $sortBy = $sortByTitle ? 'title' : 'tracknum';
+
+	# Then search using the above id's. I wonder if it'd be possible to do
+	# a big join, and just have 1 query.
+	my $songs  = $class->find('track', $findCriteria, $sortBy);
+
+	return map { $_->url } @$songs;
 }
 
 sub albumsWithArtwork {
