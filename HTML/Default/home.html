@@ -181,7 +181,7 @@
 							<td valign="top">
 								<table cellspacing="0" width="100%">
 	[% FOREACH key = additionalLinks.plugins.keys %]
-									<tr><td height="15" valign="center">&#149; <a href="[% additionalLinks.plugins.$key %]player=[% player | uri %]">[% key %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="[% additionalLinks.plugins.$key %]player=[% player | uri %]">[% key | string %]</a></td></tr>
 	[% END %]
 								</table>
 							</td>

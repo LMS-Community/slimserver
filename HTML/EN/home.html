@@ -48,7 +48,7 @@
 [% IF additionalLinks.plugins %]    <h4>[% "PLUGINS" | string %]</h4>
     <ul>
     [% FOREACH key = additionalLinks.plugins.keys %]
-    <li> <a href="[% additionalLinks.plugins.$key %]player=[% player | uri %]">[% key %]</a>
+    <li> <a href="[% additionalLinks.plugins.$key %]player=[% player | uri %]">[% key | string %]</a>
     </li>
     [% END %]
     </ul>
