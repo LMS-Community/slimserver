@@ -578,7 +578,9 @@ sub loadDir {
 	}
 
 	# Limit ourselves to artists only by default.
-	if (($find->{'contributor'} || $find->{'contributor.name'}) && !Slim::Utils::Prefs::get('composerInArtists')) {
+	if (($find->{'contributor'} || 
+	     $find->{'contributor.name'} || 
+	     $client->curSelection($client->curDepth()) eq 'BROWSE_BY_ARTIST') && !Slim::Utils::Prefs::get('composerInArtists')) {
 
 		$find->{'contributor.role'} = $Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'};
 	}
