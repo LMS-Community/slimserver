@@ -35,6 +35,7 @@ my %menuParams = (
 				,'stringHeader' => 1
 				,'cursorPos' => 0
 				,'charsRef' => 'UPPER'
+				,'numberLetterRef' => 'UPPER'
 				,'callback' => \&searchHandler
 				}
 				,'ALBUMS' => {
@@ -43,6 +44,7 @@ my %menuParams = (
 					,'stringHeader' => 1
 					,'cursorPos' => 0
 					,'charsRef' => 'UPPER'
+					,'numberLetterRef' => 'UPPER'
 					,'callback' => \&searchHandler
 				}
 				,'SONGS' => {
@@ -51,6 +53,7 @@ my %menuParams = (
 					,'stringHeader' => 1
 					,'cursorPos' => 0
 					,'charsRef' => 'UPPER'
+					,'numberLetterRef' => 'UPPER'
 					,'callback' => \&searchHandler
 				}
 		}

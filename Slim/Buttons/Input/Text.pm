@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Text;
 
-# $Id: Text.pm,v 1.23 2004/12/07 20:19:50 dsully Exp $
+# $Id: Text.pm,v 1.24 2004/12/14 19:15:20 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -26,6 +26,19 @@ my @numberLettersMixed = ([' ','0'], # 0
 					 ['p','q','r','s','P','Q','R','S','7'], 	# 7
 					 ['t','u','v','T','U','V','8'], 				# 8
 					 ['w','x','y','z','W','X','Y','Z','9']); 			# 9
+
+my @numberLettersUpper = (
+	[' ','0'],				# 0
+	['.',',',"'",'?','!','@','-','1'],	# 1
+	['A','B','C','2'], 			# 2
+	['D','E','F','3'], 			# 3
+	['G','H','I','4'], 			# 4
+	['J','K','L','5'], 			# 5
+	['M','N','O','6'], 			# 6
+	['P','Q','R','S','7'], 			# 7
+	['T','U','V','8'], 			# 8
+	['W','X','Y','Z','9'],			# 9
+);
 
 Slim::Buttons::Common::addMode('INPUT.Text',getFunctions(),\&setMode);
 
@@ -350,7 +363,11 @@ sub init {
 	if (!defined($numberLetterRef)) {
 		Slim::Buttons::Common::param($client,'numberLetterRef',\@numberLettersMixed);
 	} elsif (ref($numberLetterRef) ne 'ARRAY') {
-		Slim::Buttons::Common::param($client,'numberLetterRef',\@numberLettersMixed);
+		if (uc($numberLetterRef) eq 'UPPER') {
+			Slim::Buttons::Common::param($client,'numberLetterRef',\@numberLettersUpper);
+		} else {
+			Slim::Buttons::Common::param($client,'numberLetterRef',\@numberLettersMixed);
+		}
 	}
 	# cannot directly clean multidimensional array, this may need to be done in future
 	#cleanArray($numberLetterRef);
