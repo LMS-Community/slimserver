@@ -353,24 +353,6 @@ sub init {
 			'alphaPageBar' => 1
 		},
 
-		'year' => {
-			'title' => 'BROWSE_BY_YEAR',
-			'allTitle' => 'ALL_YEARS',
-
-			'listItem' => sub {
-				my $ds = shift;
-				my $list_form = shift;
-				my $item = shift;
-				my $itemname = shift;
-				my $descend = shift;
-
-				$list_form->{'showYear'} = 0;
-			},
-
-			'ignoreArticles' => 1,
-			'alphaPageBar' => 0
-		},
-
 		'default' => {
 			'title' => 'BROWSE',
 			'allTitle' => 'ALL',
@@ -414,6 +396,27 @@ sub init {
 		'nameTransform' => 'album',
 		'ignoreArticles' => 1,
 		'alphaPageBar' => 0,
+	};
+
+	$fieldInfo{'year'} = {
+		'title' => 'BROWSE_BY_YEAR',
+		'allTitle' => 'ALL_YEARS',
+
+		'idToName'           => $fieldInfo{'default'}->{'idToName'},
+		'resultToId'         => $fieldInfo{'default'}->{'resultToId'},
+		'resultToName'       => $fieldInfo{'default'}->{'resultToName'},
+		'resultToSortedName' => $fieldInfo{'default'}->{'resultToSortedName'},
+		'find'               => $fieldInfo{'default'}->{'find'},
+
+		'listItem' => sub {
+			my $ds = shift;
+			my $list_form = shift;
+
+			$list_form->{'showYear'} = 0;
+		},
+
+		'ignoreArticles' => 1,
+		'alphaPageBar' => 0
 	};
 }
 
@@ -2102,7 +2105,7 @@ sub anchor {
 	my $suppressArticles = shift;
 	
 	if ($suppressArticles) {
-		$item = Slim::Utils::Text::ignoreCaseArticles($item);
+		$item = Slim::Utils::Text::ignoreCaseArticles($item) || return '';
 	}
 
 	return Slim::Utils::Text::matchCase(substr($item, 0, 1));

@@ -118,7 +118,7 @@ sub sortuniq_ignore_articles {
 }
 
 sub getSortName {
-	my $item = shift;
+	my $item = shift || return;
 
 	return exists($sortCache{ignoreCaseArticles($item)}) ? $sortCache{ignoreCaseArticles($item)} : $item;
 }
