@@ -144,7 +144,15 @@ sub init {
 				sub { shift->ip },
 				sub { shift->port },
 				sub { uc(shift->macaddress) },
-				sub { return (shift->signalStrength() . '%') },
+				sub {
+					my $client = shift;
+					
+					# send blank i2cc frame to ensure we get a recent STAT update from the client
+					# and thus a real time signal_strength update
+					
+					$client->sendFrame('i2cc');
+					return ($client->signalStrength() . '%') 
+				},
 			],
 
 			'menuName' => 'player'
