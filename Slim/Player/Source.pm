@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.93 2004/05/18 16:06:51 dean Exp $
+# $Id: Source.pm,v 1.94 2004/05/21 01:21:51 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -743,6 +743,15 @@ sub resetSong {
 	$client->shoutMetaPointer(0);
 }
 
+sub errorOpening {
+	my $client = shift;
+	my $line1 = string('PROBLEM_OPENING');
+	my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
+	
+	Slim::Display::Animation::showBriefly($client, $line1, $line2, 1,1);
+	Slim::Buttons::Common::param($client,'noUpdate',1);
+}
+
 sub openSong {
 	my $client = shift;
 	
@@ -864,13 +873,7 @@ sub openSong {
 			if (!$size || !$duration) {
 
 				$::d_source && msg("openSong: not bothering opening file with zero size or duration\n");
-
-				my $line1 = string('PROBLEM_OPENING');
-				my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
-
-				Slim::Display::Animation::showBriefly($client, $line1, $line2, 1,1);
-				Slim::Buttons::Common::param($client,'noUpdate',1);
-
+				errorOpening($client);
 				return undef;
 			}
 		}
@@ -896,6 +899,7 @@ sub openSong {
 			$::d_source && msg(
 				"Couldn't create command line for $type playback for $fullpath\n"
 			);
+			errorOpening($client);
 
 			return undef;
 		}
@@ -960,7 +964,7 @@ sub openSong {
 			Slim::Music::Info::contentType($fullpath) .
 			"! Stopping! $fullpath\n"
 		);
-
+		errorOpening($client);
 		return undef;
 	}
 
@@ -1066,6 +1070,7 @@ sub getConvertCommand {
 	my $clientid = $client->id();	
 	my $command  = undef;
 	my $format   = undef;
+	my $lame = Slim::Utils::Misc::findbin('lame');
 
 	my @supportedformats = ();
 	my @playergroup      = ($client, Slim::Player::Sync::syncedWith($client));
@@ -1095,9 +1100,9 @@ sub getConvertCommand {
 
 	foreach my $checkformat (@supportedformats) {
 		
-		# if there is a limiting bitrate, don't even check WAV or AIFF
+		# if there is a limiting bitrate and we have lame, don't even check WAV or AIFF
 		my $maxRate = Slim::Utils::Prefs::setMaxRate($client);
-		next if ($maxRate != 0 && $checkformat ne 'mp3');
+		next if ($maxRate != 0 && $checkformat ne 'mp3' && $lame);
 
 		my @profiles = (
 			"$type-$checkformat-$player-$clientid",
@@ -1116,7 +1121,7 @@ sub getConvertCommand {
 		$format = $checkformat;
 
 		# special case for mp3 to mp3 when input is higher than specified max bitrate.
-		if (defined $command && $command eq "-" && !$undermax && $type eq "mp3") {
+		if (defined $command && $command eq "-" && !$undermax && $type eq "mp3" && $lame) {
 				$command = $commandTable{"$type-lame-*-*"};
 				$undermax = 1;
 		}
