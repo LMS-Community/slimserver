@@ -450,8 +450,14 @@ sub playmode {
 		} elsif ($newmode eq "play") {
 
 			$everyclient->readytosync(0);
-			$client->fade_volume($FADEVOLUME) unless $client->volume();
-			$everyclient->volume($client->volume(),1);
+			if (Slim::Utils::Prefs::clientGet($everyclient,'syncVolume')) {
+				$everyclient->volume($client->volume(),1);
+				$everyclient->fade_volume($FADEVOLUME) unless $client->volume();
+			}
+			else {
+				$everyclient->volume($everyclient->volume(),1);
+				$everyclient->fade_volume($FADEVOLUME) unless $everyclient->volume();
+			}
 			$everyclient->streamBytes(0);
 			
 			# if this is a remote stream, then let's start after 5 seconds even if we haven't filled the buffer yet.
@@ -476,7 +482,12 @@ sub playmode {
 
 		} elsif ($newmode eq "resumenow") {
 
-			$everyclient->volume($everyclient->volume(),1);
+			if (Slim::Utils::Prefs::clientGet($everyclient,'syncVolume')) {
+				$everyclient->volume($client->volume(),1);
+			}
+			else {
+				$everyclient->volume($everyclient->volume(),1);
+			}
 			$everyclient->resume();
 			
 		} elsif ($newmode eq "resume") {
