@@ -1945,7 +1945,7 @@ sub browseid3 {
 
 		} elsif ($find->{$category}) {
 
-			$find->{$category} = (@{$ds->search($category, [$find->{$category}])})[0];
+			$find->{$category} = (@{$ds->search($category, [$find->{$category}])})[0]->id();
 		}
 	}
 
