@@ -565,6 +565,7 @@ sub scrollBottom {
 
 		my $interspaceBits = Slim::Display::Graphics::string($fonts->[1], $interspace) || '';
 
+		$parts->{origline2} = $parts->{line2} || '';
 		$parts->{line2} .= $interspace . $parts->{line2};
 		$parts->{endscroll2} = length($line2bits) + length($interspaceBits);
 		$parts->{scroll2} = $client->bytesPerColumn() * $pixels;
@@ -629,6 +630,13 @@ sub scrollUpdate {
 			$parts->{overlay1} = $newoverlay;
 			$parts->{overlay1bits} = undef;
 		}
+
+		if (defined($parts1->{line2}) && $parts->{origline2} ne $parts1->{line2}) {
+			# line 2 changed - stop scrolling
+			$client->animating(0);		    
+			return;
+		}
+
 	}
 
 	if ($timenow < $parts->{pauseUntil}) {
