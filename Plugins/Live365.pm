@@ -526,7 +526,10 @@ sub new {
 			PeerPort        => 80,
 			Proto           => 'tcp',
 			Type            => SOCK_STREAM
-		) or return undef;
+		) or do {
+			$::d_plugins && msg( "Live365.protocolHandler failed to connect to live365.com: $!\n" );
+			return undef;
+		};
 
 		my $getRequest = "GET $url HTTP/1.0\n\n";
 
@@ -540,9 +543,16 @@ sub new {
 
 		close $socket;
 
-		$response =~ /^HTTP\/1.1 302 Found/ or return undef;
+		$response =~ /^HTTP\/1.1 302 Found/ or do {
+			$::d_plugins && msg( "Live365.protocolHandler got an unexpected response: $response.\n" );
+			return undef;
+		};
 
-		my ($redir) = $response =~ /Location: (.+)/ or return undef;
+		my ($redir) = $response =~ /Location: (.+)/ or do {
+			$::d_plugins && msg( "Live365.protocolHandler can't determine real station URL.\n" );
+			return undef;
+		};
+
 		$::d_plugins && msg( "Live365 station really at: '$redir'\n" );
 
 		$self = $class->SUPER::new( $redir, $client, $url );
