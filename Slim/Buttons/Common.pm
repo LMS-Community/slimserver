@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.21 2003/11/25 07:10:40 grotus Exp $
+# $Id: Common.pm,v 1.22 2003/11/26 02:58:10 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -56,7 +56,7 @@ my %modes = (
 	'slimtris' =>  				\&Slim::Buttons::SlimTris::setMode,
 	'synchronize' =>			\&Slim::Buttons::Synchronize::setMode,
 	#'textsize' =>				\&Slim::Buttons::Settings::setTextSizeMode,
-	'titleformat' =>			\&Slim::Buttons::Settings::setTitleFormatMode,
+	#'titleformat' =>			\&Slim::Buttons::Settings::setTitleFormatMode,
 	'trackinfo' => 				\&Slim::Buttons::TrackInfo::setMode,
 	'treble' =>					\&Slim::Buttons::Settings::setTrebleMode,
 	'volume' =>					\&Slim::Buttons::Settings::setVolumeMode,
@@ -84,7 +84,7 @@ sub init {
 	#$modeFunctions{'shuffle'} = Slim::Buttons::Settings::getShuffleFunctions();
 	#$modeFunctions{'textsize'} = Slim::Buttons::Settings::getTextSizeFunctions();
 	#$modeFunctions{'offdisplaysize'} = Slim::Buttons::Settings::getOffDisplaySettingsFunctions();
-	$modeFunctions{'titleformat'} = Slim::Buttons::Settings::getTitleFormatFunctions();
+	#$modeFunctions{'titleformat'} = Slim::Buttons::Settings::getTitleFormatFunctions();
 	$modeFunctions{'bass'} = Slim::Buttons::Settings::getBassFunctions();
 	$modeFunctions{'treble'} = Slim::Buttons::Settings::getTrebleFunctions();
 	$modeFunctions{'volume'} = Slim::Buttons::Settings::getVolumeFunctions();

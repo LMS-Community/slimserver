@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.3 2003/11/25 04:03:50 grotus Exp $
+#	$Id: Information.pm,v 1.4 2003/11/26 02:58:10 grotus Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -48,7 +48,7 @@ use Slim::Utils::Strings qw(string);
 use strict;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.3 $,10);
+$VERSION = substr(q$Revision: 1.4 $,10);
 
 my $modules;
 my %enabled;
@@ -82,8 +82,9 @@ my @player_list = ('PLAYER_NAME','PLAYER_MODEL','FIRMWARE','PLAYER_IP','PLAYER_P
 # stored in the mode stack.
 my %menuParams = (
 	'main' => {
-		'header' => \&mainHeader
-		,'headerArgs' => 'C'
+		'header' => 'INFORMATION'
+		,'stringHeader' => 1
+		,'headerAddCount' => 1
 		,'externRef' => sub {return string('INFORMATION_MENU_' . uc($_[0]));}
 		,'externRefArgs' => 'V'
 		,'listRef' => ['library','player','server','module']
@@ -92,8 +93,9 @@ my %menuParams = (
 		,'callback' => \&mainExitHandler
 	}
 	,catdir('main','library') => {
-		'header' => \&infoHeader
-		,'headerArgs' => 'C'
+		'header' => 'INFORMATION_MENU_LIBRARY'
+		,'stringHeader' => 1
+		,'headerAddCount' => 1
 		,'listRef' => ['TIME','ALBUMS','TRACKS','ARTISTS','GENRES']
 		,'externRef' => \&infoDisplay
 		,'externRefArgs' => 'CV'
@@ -112,8 +114,9 @@ my %menuParams = (
 		,'menuName' => 'library'
 		}
 	,catdir('main','player') => {
-		'header' => \&infoHeader
-		,'headerArgs' => 'C'
+		'header' => 'INFORMATION_MENU_PLAYER'
+		,'stringHeader' => 1
+		,'headerAddCount' => 1
 		,'listRef' => \@player_list
 		,'externRef' => \&infoDisplay
 		,'externRefArgs' => 'CV'
@@ -127,8 +130,9 @@ my %menuParams = (
 		,'menuName' => 'player'
 		}
 	,catdir('main','server') => {
-		'header' => \&infoHeader
-		,'headerArgs' => 'C'
+		'header' => 'INFORMATION_MENU_SERVER'
+		,'stringHeader' => 1
+		,'headerAddCount' => 1
 		,'listRef' => ['VERSION','SERVER_PORT','SERVER_HTTP','CLIENTS']
 		,'externRef' => \&infoDisplay
 		,'externRefArgs' => 'CV'
@@ -139,9 +143,10 @@ my %menuParams = (
 					, \&Slim::Player::Client::clientCount ]
 		,'menuName' => 'server'
 	}
-		,catdir('main','module') => {
-		'header' => \&infoHeader
-		,'headerArgs' => 'C'
+	,catdir('main','module') => {
+		'header' => 'INFORMATION_MENU_MODULE'
+		,'stringHeader' => 1
+		,'headerAddCount' => 1
 		,'listRef' => undef #filled in setMode
 		,'externRef' => \&moduleDisplay
 		,'externRefArgs' => 'V'
@@ -196,28 +201,6 @@ sub moduleDisplay {
 	return join(' ' . Slim::Hardware::VFD::symbol('rightarrow') . ' ',@info);
 
 }	
-
-# function providing the top line of the display for all submenus
-sub infoHeader {
-	my $client = shift;
-	return string('INFORMATION_MENU_' . uc(Slim::Buttons::Common::param($client,'menuName')))
-		. ' ('
-		. (Slim::Buttons::Common::param($client,'listIndex') + 1)
-		. ' ' . string('OF') . ' '
-		. scalar(@{Slim::Buttons::Common::param($client,'listRef')})
-		. ')'
-}
-
-# function providing the top line of the display for the main menu
-sub mainHeader {
-	my $client = shift;
-	return string('INFORMATION') 
-		. ' (' 
-		. (Slim::Buttons::Common::param($client,'listIndex') + 1)
-		. ' ' . string('OF') . ' '
-		. scalar(@{Slim::Buttons::Common::param($client,'listRef')})
-		. ')';
-}
 
 # callback function for the main menu, handles descending into the submenus
 sub mainExitHandler {

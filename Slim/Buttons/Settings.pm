@@ -25,8 +25,9 @@ my %menuParams = (
 	'settings' => {
 		'listRef' => \@defaultSettingsChoices
 		,'stringExternRef' => 1
-		,'header' => \&settingsHeader
-		,'headerArgs' => 'C'
+		,'header' => 'SETTINGS'
+		,'stringHeader' => 1
+		,'headerAddCount' => 1
 		,'callback' => \&settingsExitHandler
 		,'overlayRef' => sub {return (undef,Slim::Hardware::VFD::symbol('rightarrow'));}
 		,'overlayRefArgs' => ''
@@ -66,7 +67,14 @@ my %menuParams = (
 		,'initialValue' => \&Slim::Player::Playlist::shuffle
 	}
 	,catdir('settings','TITLEFORMAT') => {
-		'useMode' => 'titleformat' # replace with INPUT.List eventually
+		'useMode' => 'INPUT.List'
+		,'listRef' => undef # filled before changing modes
+		,'listIndex' => undef #filled before changing modes
+		,'externRef' => undef #filled before changing modes
+		,'header' => 'TITLEFORMAT'
+		,'stringHeader' => 1
+		,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0],"titleFormatCurr",Slim::Buttons::Common::param($_[0],'listIndex')); }
+		,'onChangeArgs' => 'C'
 	}
 	,catdir('settings','TEXTSIZE') => {
 		'useMode' => 'INPUT.List'
@@ -103,16 +111,6 @@ my %menuParams = (
 
 );
 
-sub settingsHeader {
-	my $client = shift;
-	return string('SETTINGS') 
-		. ' (' 
-		. (Slim::Buttons::Common::param($client,'listIndex') + 1)
-		. ' ' . string('OF') . ' '
-		. scalar(@{Slim::Buttons::Common::param($client,'listRef')})
-		. ')';
-}
-
 sub settingsExitHandler {
 	my ($client,$exittype) = @_;
 	$exittype = uc($exittype);
@@ -122,7 +120,7 @@ sub settingsExitHandler {
 		my $nextmenu = catdir('settings',$current{$client});
 		if (exists($menuParams{$nextmenu})) {
 			my %nextParams = %{$menuParams{$nextmenu}};
-			if ($nextParams{'useMode'} eq 'INPUT.List') {
+			if ($nextParams{'useMode'} eq 'INPUT.List' && exists($nextParams{'initialValue'})) {
 				#set up valueRef for current pref
 				my $value;
 				if (ref($nextParams{'initialValue'}) eq 'CODE') {
@@ -131,6 +129,14 @@ sub settingsExitHandler {
 					$value = Slim::Utils::Prefs::clientGet($client,$nextParams{'initialValue'});
 				}
 				$nextParams{'valueRef'} = \$value;
+			}
+			if ($nextmenu eq catdir('settings','TITLEFORMAT')) {
+				my @titleFormat = Slim::Utils::Prefs::clientGetArray($client,'titleFormat');
+				$nextParams{'listRef'} = \@titleFormat;
+				my @externTF = map {Slim::Utils::Prefs::getInd('titleFormat',$_)} @titleFormat;
+				$nextParams{'externRef'} = \@externTF;
+				$nextParams{'listIndex'} = Slim::Utils::Prefs::clientGet($client,'titleFormatCurr');
+				
 			}
 			Slim::Buttons::Common::pushModeLeft(
 				$client
@@ -183,51 +189,7 @@ sub setMode {
 }
 
 ######################################################################
-# settings submodes for: titleformat, treble, bass, and volume
-#################################################################################
-my @titleFormatSettingsChoices;
-
-my %titleFormatSettingsFunctions = (
-	'up' => sub {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#titleFormatSettingsChoices + 1), Slim::Utils::Prefs::clientGet($client, "titleFormatCurr"));
-		Slim::Utils::Prefs::clientSet($client, "titleFormatCurr", $newposition);
-		$client->update();
-	},
-	'down' => sub {
-		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#titleFormatSettingsChoices + 1), Slim::Utils::Prefs::clientGet($client, "titleFormatCurr"));
-		Slim::Utils::Prefs::clientSet($client, "titleFormatCurr", $newposition);
-		$client->update();
-	},
-	'left' => sub   {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
-);
-
-sub getTitleFormatFunctions {
-	return \%titleFormatSettingsFunctions;
-}
-
-sub setTitleFormatMode {
-	my $client = shift;
-	@titleFormatSettingsChoices = ();
-	foreach my $tf (Slim::Utils::Prefs::clientGetArray($client,'titleFormat')) {
-		push @titleFormatSettingsChoices , Slim::Utils::Prefs::getInd('titleFormat',$tf);
-	}
-	$client->lines(\&titleFormatSettingsLines);
-}
-
-sub titleFormatSettingsLines {
-	my $client = shift;
-	my ($line1, $line2);
-	$line1 = string('TITLEFORMAT');
-	$line2 = $titleFormatSettingsChoices[Slim::Utils::Prefs::clientGet($client, "titleFormatCurr")];
-	return ($line1, $line2);
-}
-
+# settings submodes for: treble, bass, and volume
 #################################################################################
 my %trebleSettingsFunctions = (
 	'up' => sub {
