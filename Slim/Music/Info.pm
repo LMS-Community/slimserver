@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.66 2004/01/30 06:19:40 kdf Exp $
+# $Id: Info.pm,v 1.67 2004/01/30 08:37:45 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2068,7 +2068,7 @@ sub readTags {
 			# Check for Cover Artwork, only if not already present.
 			if (exists $tempCacheEntry->{'COVER'} || exists $tempCacheEntry->{'THUMB'}) {
 				$::d_info && Slim::Utils::Misc::msg("already checked artwork for $file\n");
-			} elsif (! Slim::Utils::Prefs::get('lookForArtwork')) {
+			} elsif (Slim::Utils::Prefs::get('lookForArtwork')) {
 				my $album = $tempCacheEntry->{'ALBUM'};
 				if (defined $tempCacheEntry->{'APIC'} || defined $tempCacheEntry->{'PIC'}) {
 					$tempCacheEntry->{'COVER'} = $filepath;
