@@ -36,6 +36,12 @@ function updatePlaylist_handler(req, url) {
 
 	for (i = 0; i < playlistnodes.length; i++) {
 		newitem = new Object();
+
+		for (j = 0; j < playlistnodes[i].attributes.length; j++) {
+			plni = playlistnodes[i].attributes[j];
+			newitem[plni.name] = plni.value;
+		}
+
 		iv = playlistnodes[i].getElementsByTagName("title")[0];
 		if (iv && iv.firstChild) newitem.title = iv.firstChild.data; else newitem.title = "";
 		iv = playlistnodes[i].getElementsByTagName("artist")[0];

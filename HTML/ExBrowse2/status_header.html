@@ -14,7 +14,7 @@
  <playmode>[% IF modeplay %]play[% ELSIF modepause %]pause[% ELSE %]stop[% END %]</playmode>
  <songtime>[% songtime | html %]</songtime>
  <songlength>[% durationseconds | html %]</songlength>
- <coverart>[% IF coverThumb; itempath | uri; END %]</coverart>
+ <coverart>[% coverThumb %]</coverart>
  [% IF isplayer %]
   <volume>[% volume | html %]</volume>
  [% END %]
