@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.71 2004/02/03 22:07:58 dean Exp $
+# $Id: Info.pm,v 1.72 2004/02/04 06:43:01 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1976,15 +1976,14 @@ sub readTags {
 			} elsif ($type eq "wav") {
 				$tempCacheEntry = Slim::Formats::Wav::getTag($filepath);
 			} elsif ($type eq "aif") {
-				$tempCacheEntry = Slim::Formats::AIFF::getTag($filepath);		
+				$tempCacheEntry = Slim::Formats::AIFF::getTag($filepath);
 			} elsif ($type eq "wma") {
 				$tempCacheEntry = Slim::Formats::WMA::getTag($filepath);
 			} elsif ($type eq "mov") {
-				$tempCacheEntry = Slim::Formats::Movie::getTag($filepath);		
+				$tempCacheEntry = Slim::Formats::Movie::getTag($filepath);
 			} elsif ($type eq "shn") {
-				$tempCacheEntry = Slim::Formats::Shorten::getTag ($filepath);
+				$tempCacheEntry = Slim::Formats::Shorten::getTag($filepath);
 			}
-			
 			$::d_info && !defined($tempCacheEntry) && Slim::Utils::Misc::msg("Info: no tags found for $filepath\n");
 
 			if (defined($tempCacheEntry->{'TRACKNUM'})) {
@@ -2083,7 +2082,7 @@ sub readTags {
 					$tempCacheEntry->{'COVER'} = $path;
 					$tempCacheEntry->{'THUMB'} = $path;
 					if ($album && !exists $artworkCache{$album}) {
-						$::d_info && Slim::Utils::Misc::msg("Artwork cache entry for $album: $filepath\n");
+						$::d_info && Slim::Utils::Misc::msg("ID3 Artwork cache entry for $album: $filepath\n");
 						$artworkCache{$album} = $filepath;
 					}
 				} else {
@@ -2103,7 +2102,7 @@ sub readTags {
 					}
 				}
 			}
-		}
+		} 
 	} else {
 		if (!defined(cacheItem($file, 'TITLE'))) {
 			my $title = plainTitle($file, $type);
@@ -2221,12 +2220,14 @@ sub readCoverArtTags {
 						
 						$::d_info && Slim::Utils::Misc::msg( "PIC format: $format length: " . length($pic) . "\n");
 
-						if ($format eq 'PNG') {
-								$contenttype = 'image/png';
-								$body = $data;
-						} elsif ($format eq 'JPG') {
-								$contenttype = 'image/jpeg';
-								$body = $data;
+						if (length($pic)) {
+							if ($format eq 'PNG') {
+									$contenttype = 'image/png';
+									$body = $data;
+							} elsif ($format eq 'JPG') {
+									$contenttype = 'image/jpeg';
+									$body = $data;
+							}
 						}
 					}
 				} else {
@@ -2248,8 +2249,10 @@ sub readCoverArtTags {
 						
 						$::d_info && Slim::Utils::Misc::msg( "APIC format: $format length: " . length($data) . "\n");
 
-						$contenttype = $format;
-						$body = $data;
+						if (length($data)) {
+							$contenttype = $format;
+							$body = $data;
+						}
 					}
 				}
 			}
