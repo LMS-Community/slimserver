@@ -64,7 +64,7 @@ CREATE TABLE tracks (
   INDEX trackSortIndex (titlesort),
   INDEX trackRatingIndex (rating),
   INDEX trackPlayCountIndex (playCount),
-  INDEX trackSortKeyIndex (multialbumsortkey),
+  INDEX trackSortKeyIndex (multialbumsortkey(255)),
   INDEX urlIndex (url(255)),
   PRIMARY KEY (id),
 --  UNIQUE KEY (url),
