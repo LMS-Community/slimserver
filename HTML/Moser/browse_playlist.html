@@ -8,48 +8,70 @@
   <body>
     <h3>[% "SAVED_PLAYLISTS" | string %]</h3>
     <div class="linktree"><ul><li><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a></li><li> / <a href="browse.html?player=[% player | uri %]&amp;dir=__playlists">[% "SAVED_PLAYLISTS" | string %]</a></li>[% pwd_list %]</ul></div>
-[% IF warn %]    <div id="warning"><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] </div>[% END %]
-[% IF RENAME_WARNING %]<div class="warning"><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]</div>[% END %]
-	[% IF playlistname %]<form method="get" action="browse.html">[% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %] <input name="newname" value="[% playlistname %]" size=40>
-			<input type=submit value="[% savebuttonname %]"><input type=hidden value="[% player %]" name="player">
-			<input type=hidden name="dir" value="[% dir %]"></form>
-	[% END %]
-	
-	[% IF titled %]<p><a href="browse.html?player=[% player | uri %]&dir=[% dir | uri %]&delete=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></p>[% END %]
-	
-	[% IF playlistname %]<p><hr><p>[% END %]
-[% IF browselist_header %]    <div id="browselist_header">[% browselist_header %]<div>[% END %]
-[% IF browselist_pagebar %]    <div id="topbrowselistpagebar" class="pagebar">
+   [%- IF warn %]
+    <div id="warning">
+      <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %]
+    </div>
+   [%- END %]
+   [%- IF RENAME_WARNING %]
+    <div class="warning">
+      <b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]
+    </div>
+   [%- END %]
+   [%- IF playlistname %]
+    <form method="get" action="browse.html">
+      [% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %]
+      <input name="newname" value="[% playlistname %]" size=40>
+      <input type=submit value="[% savebuttonname %]">
+      <input type=hidden value="[% player %]" name="player">
+      <input type=hidden name="dir" value="[% dir %]">
+    </form>
+   [%- END %]
+   [%- IF titled %]
+    <p><a href="browse.html?player=[% player | uri %]&dir=[% dir | uri %]&delete=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></p>
+   [%- END %]
+   [%- IF playlistname %]
+    <hr />
+   [%- END %]
+   [%- IF browselist_header %]
+    <div id="browselist_header">[% browselist_header %]<div>
+   [%- END %]
+   [%- IF browselist_pagebar %]
+    <div id="topbrowselistpagebar" class="pagebar">
       <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
       <div class="controls">
         <ul>
-          [% browselist_pagebar %]
+[% browselist_pagebar -%]
         </ul>
       </div>
-    </div>[% END %]
+    </div>
+   [%- END %]
     <div id="browselist">
       <ul>
-[% IF playlistname %]      <li class="even">
-        <div class="controls">
-          <ul class="songctl">
-            <li><a href="status.html?p0=playlist&amp;p1=play&amp;p2=[% dir | uri %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %]"><span>&gt;</span></a></li>
-            <li><a href="status.html?p0=playlist&amp;p1=insert&amp;p2=[% dir | uri %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %] [% "NEXT" | string %]"><span>&gt;|</span></a></li>
-            <li><a href="status.html?p0=playlist&amp;p1=add&amp;p2=[% dir | uri %]&amp;player=[% player | uri %]"  target="status" title="[% "ADD_TO_PLAYLIST" | string %]"><span>+</span></a></li>
-          </ul>
-        </div>
-        <div class="browseline">[% "THIS_ENTIRE_PLAYLIST" | string %]</div>
-      </li>
-[% END %]
-[% browse_list %]
+      [%- IF playlistname %]
+        <li class="even">
+          <div class="controls">
+            <ul class="songctl">
+              <li><a href="status.html?p0=playlist&amp;p1=play&amp;p2=[% dir | uri %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %]"><span>&gt;</span></a></li>
+              <li><a href="status.html?p0=playlist&amp;p1=insert&amp;p2=[% dir | uri %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %] [% "NEXT" | string %]"><span>&gt;|</span></a></li>
+              <li><a href="status.html?p0=playlist&amp;p1=add&amp;p2=[% dir | uri %]&amp;player=[% player | uri %]"  target="status" title="[% "ADD_TO_PLAYLIST" | string %]"><span>+</span></a></li>
+            </ul>
+          </div>
+          <div class="browseline">[% "THIS_ENTIRE_PLAYLIST" | string %]</div>
+        </li>
+      [%- END %]
+[% browse_list -%]
       </ul>
     </div>
-[% IF browselist_pagebar %]    <div id="bottombrowselistpagebar" class="pagebar">
+   [%- IF browselist_pagebar %]
+    <div id="bottombrowselistpagebar" class="pagebar">
       <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
       <div class="controls">
         <ul>
-          [% browselist_pagebar %]
+[% browselist_pagebar -%]
         </ul>
       </div>
-    </div>[% END %]
+    </div>
+   [%- END %]
   </body>
 </html>

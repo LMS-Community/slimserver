@@ -8,26 +8,49 @@
   <body>
     <h3>[% browseby | string %]</h3>
     <div class="linktree"><ul><li><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a></li>[% pwd_list %]</ul>
-[% IF song_count %]    <div id="counts">[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %]</div>[% END %]
+   [%- IF song_count %]
+    <div id="counts">[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %]</div>
+   [%- END %]
     </div>
-[% IF warn %]    <div id="warning"><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF not itunes %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]</div>[% END %]
-[% IF browselist_header %]    <div id="browselist_header">[% browselist_header %]</div>[% END %]
-[% IF browselist_pagebar %]    <div id="topbrowselistpagebar" class="pagebar">
+   [%- IF warn %]
+    <div id="warning">
+      <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] 
+      [%- IF not itunes %]
+       [%- "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.
+      [%- END %]
+    </div>
+   [%- END %]
+   [%- IF browselist_header %]
+    <div id="browselist_header">[% browselist_header %]</div>
+   [%- END %]
+   [%- IF browselist_pagebar %]
+    <div id="topbrowselistpagebar" class="pagebar">
       <div class="controls">
         <ul[% IF browseby != 'BROWSE_BY_ARTWORK' %] class="alpha"[% END %]>
-          [% browselist_pagebar %]
+[% browselist_pagebar -%]
         </ul>
       </div>
-    </div>[% END %]
-[% IF coverart %]    <div class="coverart">
+    </div>
+   [%- END %]
+   [%- IF coverart %]
+    <div class="coverart">
       <a href="/music/[% coverartpath | uri %]/cover.jpg" target="cover">
       <img src="/music/[% coverartpath | uri %]/cover.jpg" /></a>
-    </div>[% END %]
+    </div>
+   [%- END %]
     <div id="browselist">
       <ul[% IF browseby == 'BROWSE_BY_ARTWORK' %] class="gallery"[% END %]>
-[% browse_list %]
+[% browse_list -%]
       </ul>
     </div>
-[% IF browselist_pagebar %]    <div id="bottombrowselistpagebar" class="pagebar"><div class="controls"><ul[% IF browseby != 'BROWSE_BY_ARTWORK' %] class="alpha"[% END %]>[% browselist_pagebar %]</ul></div></div>[% END %]
+   [%- IF browselist_pagebar %]
+    <div id="bottombrowselistpagebar" class="pagebar">
+      <div class="controls">
+        <ul[% IF browseby != 'BROWSE_BY_ARTWORK' %] class="alpha"[% END %]>
+[% browselist_pagebar -%]
+        </ul>
+      </div>
+    </div>
+   [%- END %]
   </body>
 </html>

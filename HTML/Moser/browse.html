@@ -2,38 +2,45 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
   <head>
-    <title>Music Folder</title>
+    <title>[% "MUSIC" | string %]</title>
     <link rel="stylesheet" href="slimserver.css" />
   </head>
   <body>
     <h3>[% "MUSIC" | string %]</h3>
     <div class="linktree"><ul><li><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a></li><li> / <a href="browse.html?player=[% player | uri %]">[% "MUSIC" | string %]</a></li>[% pwd_list %]</ul></div>
+   [%- IF browselist_header %]
     <div id="browselist_header">[% browselist_header %]</div>
-[% IF browselist_pagebar %]    <div id="topbrowselistpagebar" class="pagebar">
+   [%- END %]
+   [%- IF browselist_pagebar %]
+    <div id="topbrowselistpagebar" class="pagebar">
       <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
       <div class="controls">
         <ul>
-          [% browselist_pagebar %]
+[% browselist_pagebar -%]
         </ul>
       </div>
-    </div>[% END %]
-[% IF coverart %]  <div class="coverart">
-    <a href="/music/[% coverartpath | uri %]/cover.jpg" target="cover">
-    <img src="/music/[% coverartpath | uri %]/cover.jpg" /></a>
-  </div>[% END %]
-  <div id="browselist">
-    <ul>
-[% browse_list %]
-    </ul>
-  </div>
-
-[% IF browselist_pagebar %]  <div id="bottombrowselistpagebar" class="pagebar">
-    <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
-    <div class="controls">
+    </div>
+   [%- END %]
+   [%- IF coverart %]
+    <div class="coverart">
+      <a href="/music/[% coverartpath | uri %]/cover.jpg" target="cover">
+      <img src="/music/[% coverartpath | uri %]/cover.jpg" /></a>
+    </div>
+   [%- END %]
+    <div id="browselist">
       <ul>
-        [% browselist_pagebar %]
+[% browse_list -%]
       </ul>
     </div>
-  </div>[% END %]
+[% IF browselist_pagebar -%]
+    <div id="bottombrowselistpagebar" class="pagebar">
+      <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
+      <div class="controls">
+        <ul>
+[% browselist_pagebar -%]
+        </ul>
+      </div>
+    </div>
+[% END -%]
   </body>
 </html>
