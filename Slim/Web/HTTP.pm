@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.84 2004/03/10 07:19:53 grotus Exp $
+# $Id: HTTP.pm,v 1.85 2004/03/10 22:02:56 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1300,7 +1300,9 @@ sub _getFileContent {
 
 	my $skinpath = fixHttpPath($skin, $path);
 
-	if (!defined($skinpath) || !open($template, $skinpath)) {
+	if (!defined($skinpath) || 
+		(!open($template, $skinpath . '.' . lc(Slim::Utils::Prefs::get('language'))) && !open($template, $skinpath))
+	   ) {
 
 		my $baseSkin = baseSkin();
 
@@ -1310,26 +1312,25 @@ sub _getFileContent {
 
 		if (defined($defaultpath)) {
 			$::d_http && msg("reading template: $defaultpath\n");
-			open $template, $defaultpath;
 
-			$mtime = (stat($defaultpath))[9];
+			# try to open language specific files, and if not, the specified one.
+			open($template, $defaultpath . '.' . lc(Slim::Utils::Prefs::get('language'))) || open($template, $defaultpath);
+
+			$mtime = (stat($template))[9];
 		} 
 
 	} else {
-
-		$mtime = (stat($skinpath))[9];
+		$mtime = (stat($template))[9];
 	}
 	
 	if ($template) {
-
 		binmode($template) if $binary;
 		$content = join('', <$template>);
 		close $template;
 		$::d_http && (length($content) || msg("File empty: $path"));
 
 	} else {
-
-		msg("Couldn't open: $path\n");
+		$::d_http && msg("Couldn't open: $path\n");
 	}
 	
 	# add this template to the cache if we are using it
