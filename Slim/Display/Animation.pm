@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::Animation;
 
-# $Id: Animation.pm,v 1.16 2004/05/10 20:01:07 dean Exp $
+# $Id: Animation.pm,v 1.17 2004/07/17 01:33:41 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -24,9 +24,6 @@ my $scrollSingleLine1FrameRate = 0.9;	# How often to refresh line1 in 1x
                                         # being shown.  Perhaps this could be
                                         # slower?  But at this rate the time
                                         # looks smooth.
-
-my $scrollDoubleFrameRate = 0.1;	# How quickly to scroll in 2x display
-                                        # mode..
 
 my $scrollSeparator = "      ";
 ################### WARNING WARNING WARNING WARNING ###################
@@ -119,13 +116,15 @@ sub showBriefly {
 
 		my @newqueue = ();
 		my ($t1, $t2);
-		
-		my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');
+		my $rate;
 	
 		# double them
 		if ($double) {
+			$rate = Slim::Buttons::Common::paramOrPref($client,'scrollRateDouble');
 			($line1, $line2) = Slim::Display::Display::doubleSize($client,$line1,$line2);
-		}	
+		} else {
+			$rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');
+		}
 		
 		# add some blank space to the end of each line
 		if (Slim::Hardware::VFD::lineLength($line1) > 40) {
@@ -343,13 +342,18 @@ sub scrollBottom {
 	my $line2 = shift;
 	my $overlay1 = shift;
 	my $overlay2 = shift;
-	my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');
+	my $rate;
+	my $double;
 	
+	if ($double = Slim::Utils::Prefs::clientGet($client,'doublesize')) {
+		$rate = Slim::Buttons::Common::paramOrPref($client,'scrollRateDouble');
+	} else {
+		$rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');
+	}
 	if (!defined($line1)) { $line1 = ""; };
 	if (!defined($overlay1)) { $overlay1 = ""; };
 	if (!defined($line2)) { $line2 = ""; };
 	if (!defined($overlay2)) { $overlay2 = ""; };
-	my $double;
 	my $len;
 
 	if (Slim::Utils::Prefs::get('animationLevel') < 3) {
@@ -361,8 +365,8 @@ sub scrollBottom {
 	# now uses a client param, undef or zero for static top line, non-zero for a dynamic top line.
 	if (defined(Slim::Buttons::Common::param($client,'animateTop')) 
 				&& Slim::Buttons::Common::param($client,'animateTop')) {
-		if (Slim::Utils::Prefs::clientGet($client,'doublesize')) {
-			scrollDouble($client,$line2,$overlay2);
+		if ($double) {
+			scrollDouble($client,$line2,$overlay2,$rate);
 		}
 		else {
 			scrollSingle($client,$line2,$overlay2);
@@ -371,15 +375,12 @@ sub scrollBottom {
 	}
 	
 	# calculate the displayed length
-	if ($double = Slim::Utils::Prefs::clientGet($client,'doublesize')) {
-		my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');#*2/3;
-		$double = 1;
+	if ($double) {
 		$overlay2 = "";
 		$overlay1 = "";
 		my ($double1, $double2) = Slim::Display::Display::doubleSize($client,$line1,$line2);
 		$len = Slim::Hardware::VFD::lineLength($double1);
 	} else {
-		$double = 0;
 		$len = Slim::Hardware::VFD::lineLength($line2);
 	}
 
@@ -397,8 +398,8 @@ sub scrollBottom {
 
 		# double them
 		if ($double) {
-			($measure1, $measure2) = Slim::Display::Display::doubleSize($client,$line1,$measure2);
-			($line1, $line2) = Slim::Display::Display::doubleSize($client,$line1,$line2);
+			scrollDouble($client,$line2,$overlay2,$rate);
+			return;
 		}
 	
 		$len = Slim::Hardware::VFD::lineLength($measure2);
@@ -411,8 +412,6 @@ sub scrollBottom {
 				,[0,0] #start at the begining
 				,[$double,1] #scroll the top if doublesize
 				,$rate,$double);
-		
-		
 	} else {
 		$client->update();
 	}
@@ -449,7 +448,7 @@ sub scrollDouble {
 	my $rate = shift;
 	
 	if (!defined($rate) || $rate < 0) {
-		my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');#*2/3;
+		my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRateDouble');
 	}
 
 	my ($text1,$text2) = Slim::Display::Display::doubleSize($client,$line2);
@@ -741,7 +740,7 @@ sub animateScrollDouble {
 	my $ind = shift;
 	my $len = shift;
 	my $hold = Slim::Buttons::Common::paramOrPref($client,'scrollPause');
-	my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');#*2/3;
+	my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRateDouble');
 	if ($overdue > $rate) {
 		$ind += int($overdue/$rate);
 	}

@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.118 2004/07/07 03:38:17 kdf Exp $
+# $Id: strings.txt,v 1.119 2004/07/17 01:33:40 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -984,6 +984,12 @@ SETUP_SCROLLRATE_DESC
 	FR	Vous pouvez ajuster le temps de pause avant que la platine active le défilement du caractère suivant sur l'afficheur. Entrez le temps d'attente avant défilement en secondes. Plus le nombre est bas, plus le défilement sera rapide. La valeur par défaut est de 0.15 seconde.
 	NO	Du kan justere tiden spilleren venter før den scroller til neste bokstav i teksten på displayet. Skriv inn verdien i sekunder. Lavt nummer scroller fortere. 0.15 sekunder er standard.
 	SE	Tid mellan rullande scroll-bilder. O.15 är standardvärdet. Värden mellan 0 och 1 kan sättas för att öka eller minska scroll-tempot 
+
+SETUP_SCROLLRATEDOUBLE
+	EN	Double-Size Scroll Rate
+
+SETUP_SCROLLRATEDOUBLE_DESC
+	EN	You can adjust the amount of time that the player waits before scrolling another letter of text on the display when using Double Size text. Enter a value, in seconds, for the amount of time to wait.  Lower numbers make it scroll faster.  0.1 seconds is the default.
 
 SETUP_GROUP_ALARM
 	DE	Wecker

@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.87 2004/07/07 03:38:18 kdf Exp $
+# $Id: Setup.pm,v 1.88 2004/07/17 01:33:42 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -447,7 +447,7 @@ sub initSetupConfig {
 		# if more than one ir map exists the undef will be replaced by 'Default'
 		,'Groups' => {
 			'Default' => {
-				'PrefOrder' => ['autobrightness','screensavertimeout','scrollPause','scrollRate']
+				'PrefOrder' => ['autobrightness','screensavertimeout','scrollPause','scrollRate','scrollRateDouble']
 			}
 			,'AlarmClock' => {
 				'PrefOrder' => ['alarm','alarmtime','alarmvolume','alarmplaylist']
@@ -504,6 +504,10 @@ sub initSetupConfig {
 				,'validateArgs' => [0,undef,1]
 			},
 			'scrollRate' => {
+				'validate' => \&validateNumber
+				,'validateArgs' => [0,undef,1]
+			},
+			'scrollRateDouble' => {
 				'validate' => \&validateNumber
 				,'validateArgs' => [0,undef,1]
 			},
