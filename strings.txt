@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.55 2004/01/28 04:32:02 dean Exp $
+# $Id: strings.txt,v 1.56 2004/01/30 06:21:10 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -2613,6 +2613,15 @@ SETUP_ANIMATIONLEVEL_DESC
 	NL	Deze optie bepaald de mate van toegestane animatie. Animaties zijn onder andere: het tonen van korte boodschappen, het verschuiven van de tekst gedurende navigatie en scrollende lange titles.
 	PT	Esta opção determina a quantidade de animação permitida. As animações são compostas por breves mensagens, animação de ecrãs e deslizamento de títulos compridos.
 	SE	Detta val avgör mängden tillåten animation. Animationer är kortvariga meddelanden, skärmåkningar vid navigering samt rullande långa titlar.
+
+SETUP_LOOKFORARTWORK
+	EN	Look For Artwork
+
+SETUP_LOOKFORARTWORK_DESC
+	EN	When SlimServer scans your music library it can automatically look for album artwork.  You can choose to not have it look for album artwork, which may speed up the scan process but may make the artwork not appear in the web interface.
+
+SETUP_NO_ARTWORK
+	EN	Do not Look For Artwork
 
 SETUP_BUILDITEMSPERPASS
 	EN	Build Items Per Pass
