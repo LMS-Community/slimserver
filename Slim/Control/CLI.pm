@@ -168,7 +168,7 @@ sub processRequest {
 		closer($clientsock);
 	} else { 
 	
-	  	s/$CR?$LF/\n/;
+	  	$firstline =~ s/$CR?$LF/\n/;
 	
 		# process the commands
 		chomp $firstline; 
