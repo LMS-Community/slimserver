@@ -260,15 +260,25 @@ add						= exit_add
 
 [INPUT.Text]
 0						= numberLetter_0
+0.hold						= letter_0
 1						= numberLetter_1
+1.hold						= letter_1
 2						= numberLetter_2
+2.hold						= letter_2
 3						= numberLetter_3
+3.hold						= letter_3
 4						= numberLetter_4
+4.hold						= letter_4
 5						= numberLetter_5
+5.hold						= letter_5
 6						= numberLetter_6
+6.hold						= letter_6
 7						= numberLetter_7
+7.hold						= letter_7
 8						= numberLetter_8
+8.hold						= letter_8
 9						= numberLetter_9
+9.hold						= letter_9
 arrow_left					= backspace
 arrow_right					= nextChar
 search						= exit_search
