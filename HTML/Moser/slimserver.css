@@ -49,12 +49,14 @@ TH {
 
 .odd {
     background : rgb(214,231,255);
-    clear: left;
+    float: left;
+    width: 100%;
 }
 
 .even {
     background : rgb(255,255,255);
-    clear: left;
+    float: left;
+    width: 100%;
 }
 
 .nowrap {
@@ -148,7 +150,6 @@ div.controls {
 }
 
 .stdclick {
-/*   font : 8pt Arial; */
    font-weight: bold;
    color: rgb(255,255,255);
    background-color : rgb(0,51,204);  
@@ -156,7 +157,6 @@ div.controls {
 }
 
 .stdclick:active {
-/*   font : 8pt Arial; */
    font-weight: bold;
    color: rgb(64,255,64);
    background-color : rgb(0,51,204);  
@@ -164,7 +164,6 @@ div.controls {
 }
 
 .stdedit {
-/*   font : 8pt Tahoma, Verdana; */
    background-color : rgb(255,255,255); 
    padding : 1px; 
    border-width : 1px; 
@@ -327,7 +326,6 @@ body > div {
 	position: absolute;
 	top: 100%;
 	left: 0;
-
 	font-weight: normal;
 	background-color: rgb(214,231,255);
 	padding: 0.5em 0 1em 0;
