@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.68 2004/03/13 05:42:46 kdf Exp $
+# $Id: Source.pm,v 1.69 2004/03/13 22:12:54 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -739,7 +739,7 @@ sub openSong {
 				my $line1 = string('PROBLEM_OPENING');
 				my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));		
 				Slim::Display::Animation::showBriefly($client, $line1, $line2, 1,1);
-				#select(undef, undef, undef, 0.25);
+				Slim::Buttons::Common::param($client,'noUpdate',1);
 				return undef;
 			}
 		}
