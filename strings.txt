@@ -248,6 +248,12 @@ NOW_PLAYING
 	SE	Nu spelas
 
 EVERYTHING
+NOW_SCANNING
+	EN	Now Scanning
+
+NOW_REWINDING
+	EN	Now Rewinding
+
 	DE	Alles
 	EN	Everything
 	FR	Tout

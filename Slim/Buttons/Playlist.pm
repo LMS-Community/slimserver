@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.2 2003/07/24 23:14:03 dean Exp $
+# $Id: Playlist.pm,v 1.3 2003/07/30 18:02:49 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -146,11 +146,16 @@ my %functions = (
 
 	'play' => sub  {
 		my $client = shift;
-		if (Slim::Player::Playlist::playmode($client) eq 'pause' && showingNowPlaying($client)) {
-			Slim::Control::Command::execute($client, ["pause"]);
-		} else {	
+		if (showingNowPlaying($client)) {
+			if (Slim::Player::Playlist::playmode($client) eq 'pause') {
+				Slim::Control::Command::execute($client, ["pause"]);
+			} elsif (Slim::Player::Playlist::rate($client) != 1) {
+				Slim::Control::Command::execute($client, ["rate", 1]);
+			}	
+		} else {
 			Slim::Control::Command::execute($client, ["playlist", "jump", browseplaylistindex($client)]);
 		}
+		Slim::Display::Display::update($client);
 	}
 );
 
@@ -223,14 +228,16 @@ sub currentSongLines {
 
 		} elsif (Slim::Player::Playlist::playmode($client) eq "stop") {
 			$line1 = sprintf string('STOPPED')." (%d %s %d) ", Slim::Player::Playlist::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen;
-		} elsif (Slim::Player::Playlist::shuffle($client)) {
-			$line1 = string('PLAYING_RANDOMLY');
-			if (Slim::Utils::Prefs::clientGet($client, "volume") < 0) {
-				$line1 .= " ".string('LCMUTED')
-			}
-			$line1 = $line1 . sprintf " (%d %s %d) ", Slim::Player::Playlist::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen;
 		} else {
-			$line1 = string('PLAYING');
+			if (Slim::Player::Playlist::rate($client) != 1) {
+				$line1 = string('NOW_SCANNING') . ' ' . Slim::Player::Playlist::rate($client) . 'x';	
+		#		$line1 = Slim::Player::Playlist::rate($client) > 0 ? string('NOW_SCANNING') : string('NOW_REWINDING');
+			} elsif (Slim::Player::Playlist::shuffle($client)) {
+				$line1 = string('PLAYING_RANDOMLY');
+			} else {
+				$line1 = string('PLAYING');
+			}
+				
 			if (Slim::Utils::Prefs::clientGet($client, "volume") < 0) {
 				$line1 .= " ".string('LCMUTED')
 			}

@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.2 2003/07/24 23:14:03 dean Exp $
+# $Id: Common.pm,v 1.3 2003/07/30 18:02:49 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -18,8 +18,7 @@ use Slim::Buttons::Plugins;
 use Slim::Buttons::Input::Text;
 use Slim::Display::Display;
 
-my $SCAN_RATE_FWD = 10;
-my $SCAN_RATE_REW = -2;
+my $SCAN_RATE_MULTIPLIER = 2;
 
 # hash of references to functions to call when we enter a mode
 my %modes = (		
@@ -62,9 +61,11 @@ my %functions = (
 	'dead' => sub  {},
 	'fwd' => sub  {
 		my $client = shift;
-		# ignore if we aren't playing anything
+		# ignore if we aren't playing anything or if we're scanning
 		my $playlistlen = Slim::Player::Playlist::count($client);
-		if ($playlistlen == 0) {
+		my $rate = Slim::Player::Playlist::rate($client);
+		
+		if ($playlistlen == 0 || ($rate != 0 && $rate != 1)) {
 			return;
 		}
 		Slim::Control::Command::execute($client, ["playlist", "jump", "+1"]);
@@ -72,11 +73,14 @@ my %functions = (
 	},
 	'rew' => sub  {
 		my $client = shift;
-		# ignore if we aren't playing anything
+		# ignore if we aren't playing anything or if we're scanning
 		my $playlistlen = Slim::Player::Playlist::count($client);
-		if ($playlistlen == 0) {
+		my $rate = Slim::Player::Playlist::rate($client);
+		
+		if ($playlistlen == 0 || ($rate != 0 && $rate != 1)) {
 			return;
 		}
+		
 		if (Time::HiRes::time() - Slim::Hardware::IR::lastIRTime($client) < 1.0) {  #  less than second, jump back to the previous song
 			Slim::Control::Command::execute($client, ["playlist", "jump", "-1"]);
 		} else {
@@ -87,16 +91,33 @@ my %functions = (
 		Slim::Control::Command::execute($client, ["play"]);
 		Slim::Display::Animation::showBriefly($client, (Slim::Buttons::Playlist::currentSongLines($client))[0..1]);
 	},
+	
 	'jump' => sub  {
 		my $client = shift;
 		my $funct = shift;
 		my $functarg = shift;
-		# ignore if we aren't playing anything
+		# ignore if we aren't playing anything or if we're scanning
 		my $playlistlen = Slim::Player::Playlist::count($client);
+		my $rate = Slim::Player::Playlist::rate($client);
+		
+		if (!defined $functarg) { $functarg = ''; }
+
 		if ($playlistlen == 0) {
 			return;
 		}
-		if (!defined $functarg) { $functarg = ''; }
+		# ignore if we're scanning that way already			
+		if ($rate > 1 && $functarg eq 'fwd') {
+			return;
+		}
+		if ($rate < 0 && $functarg eq 'rew') {
+			return;
+		}
+		# if we aren't scanning that way, then use it to stop scanning  and just play.
+		if ($rate != 0 && $rate != 1) {
+			Slim::Control::Command::execute($client, ["play"]);
+			return;	
+		}
+		
 
 		if ($functarg eq 'rew') { 
 			my $now = Time::HiRes::time();
@@ -140,15 +161,17 @@ my %functions = (
 		my $rate = Slim::Player::Playlist::rate($client);
 		if (!defined $functarg) {
 			return;
-		} elsif ($functarg eq 'fwd' && $rate != $SCAN_RATE_FWD) {
-			Slim::Control::Command::execute($client, ['rate', $SCAN_RATE_FWD]);
-			Slim::Display::Animation::showBriefly($client, Slim::Buttons::Playlist::currentSongLines($client));
-		} elsif ($functarg eq 'rew' && $rate != $SCAN_RATE_REW) {
-			Slim::Control::Command::execute($client, ['rate', $SCAN_RATE_REW]);
-			Slim::Display::Animation::showBriefly($client, Slim::Buttons::Playlist::currentSongLines($client));
-		} elsif ($functarg eq 'end') {
-			Slim::Control::Command::execute($client, ['rate', 1]);
+		} elsif ($functarg eq 'fwd') {
+			Slim::Buttons::Common::pushMode($client, 'playlist');
+			if ($rate < 0) { $rate = 1; }
+			Slim::Control::Command::execute($client, ['rate', $rate * $SCAN_RATE_MULTIPLIER]);
+		} elsif ($functarg eq 'rew') {
+			Slim::Buttons::Common::pushMode($client, 'playlist');
+			if ($rate > 0) { $rate = 1; }
+			Slim::Control::Command::execute($client, ['rate', -abs($rate * $SCAN_RATE_MULTIPLIER)]);
 		}
+		Slim::Display::Display::update($client);
+
 	},
 	'pause' => sub  {
 		my $client = shift;
