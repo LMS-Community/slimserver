@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.6 2003/09/05 20:40:49 dean Exp $
+# $Id: Info.pm,v 1.7 2003/09/15 18:50:19 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1213,6 +1213,7 @@ sub albums {
 			else {
 				push @albums, filter($album_pats,"",keys %{$genreCache{$g}{$art}});
 			}
+		::idleStreams();
 		}
 	}
 	if ($count) {
@@ -1255,6 +1256,7 @@ sub songs {
 					push @alltracks, filterHashByValue($track_pats,\%songs);
 				}
 			}
+		::idleStreams();
 		}
 	}
 
@@ -1932,7 +1934,7 @@ sub isFileURL {
 sub isITunesPlaylistURL { 
 	my $url = shift;
 
-	return (defined($url) && ($url =~ /^iTunesPlaylist:/i));
+	return (defined($url) && ($url =~ /^itunesplaylist:/i));
 }
 
 sub isHTTPURL {
@@ -1944,7 +1946,7 @@ sub isHTTPURL {
 sub isURL {
 	my $url = shift;
 
-	return (defined($url) && (($url =~ /^file:\/\//i) || ($url =~ /^iTunesPlaylist:/i)  || ($url =~ /^http:\/\//i)));
+	return (defined($url) && ($url =~ /^[a-z]+:/) );
 }
 
 sub isType {
@@ -2150,8 +2152,8 @@ sub typeFromPath {
 	if (defined($fullpath) && $fullpath ne "" && $fullpath !~ /\x00/) {
 		if (isHTTPURL($fullpath)) {
 			$type = typeFromSuffix($fullpath, $defaultType);
-		} elsif (isITunesPlaylistURL($fullpath)) {
-			$type = 'itu';
+		} elsif ( $fullpath =~ /^([a-z]+:)/ && defined($Slim::Music::Info::suffixes{$1})) {
+			$type = $Slim::Music::Info::suffixes{$1};
 		} else {
 			my $filepath;
 

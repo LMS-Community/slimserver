@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.8 2003/09/03 20:08:09 dean Exp $
+# $Id: Pages.pm,v 1.9 2003/09/15 18:50:21 dean Exp $
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -299,7 +299,7 @@ sub browser_addtolist_done {
 		foreach $item ( @{$itemsref}[$start..$end] ) {
 			
 			# make sure the players get some time...
-			Slim::Networking::Protocol::idle();
+			::idleStreams();
 			
 			# don't display and old unsaved playlist
 			if ($item =~ /__current.m3u$/) { next; }
@@ -544,7 +544,7 @@ sub playlist {
 			$list_form{'start'}		= $$main_form_ref{'start'};
 			$list_form{'skinOverride'}		= $$main_form_ref{'skinOverride'};
 			$playlist_items .= &Slim::Web::HTTP::filltemplatefile("status_list.html", \%list_form);
-			Slim::Networking::Protocol::idle();
+			::idleStreams();
 		}
 	}
 	$$main_form_ref{'playlist_items'} = $playlist_items;
@@ -1005,7 +1005,7 @@ sub browseid3 {
 				$itemnumber++;
 				$$paramsref{'browse_list'} .= &Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form);
 				
-				Slim::Networking::Protocol::idle();
+				::idleStreams();
 			}
 		}
 	} elsif (!$artist) {
@@ -1075,7 +1075,7 @@ sub browseid3 {
 				}
 				$itemnumber++;
 				$$paramsref{'browse_list'} .= &Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form);
-				Slim::Networking::Protocol::idle();
+				::idleStreams();
 			}
 		}
 	} elsif (!$album) {
@@ -1142,7 +1142,7 @@ sub browseid3 {
 				}
 				$itemnumber++;
 				$$paramsref{'browse_list'} .= &Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form);
-				Slim::Networking::Protocol::idle();
+				::idleStreams();
 			}
 		}
 	} else {
@@ -1202,7 +1202,7 @@ sub browseid3 {
 				$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
 				$itemnumber++;
 				$$paramsref{'browse_list'} .= &Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form);
-				Slim::Networking::Protocol::idle();
+				::idleStreams();
 			}
 			my ($body, $type) =  Slim::Music::Info::coverArt($items[$start]);
 			if (defined($body)) { $$paramsref{'coverart'} = 1; $$paramsref{'coverartpath'} = $items[$start];}

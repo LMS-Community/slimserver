@@ -56,7 +56,7 @@ DEFAULT_MAP
 	EN	Standard
 	ES	Estandar
 	FI	Normaali ulkoasu
-	FR	normalisé
+	FR	Par défaut
 	NL	Standaard
 	NO	Standard
 	PT	Padrão
@@ -353,7 +353,7 @@ SLIM_SERVER
 	EN	Slim Server
 	ES	Slim Servidor
 	FI	Slim Salvelin
-	FR	Slim Serveur
+	FR	Serveur Slim
 	IT	Slim Server
 	NL	Slim Server
 	NO	Slim Server
@@ -366,7 +366,7 @@ ABOUT
 	EN	Slim server V.%s, written by:
 	ES	Slim servidor V.%s, escrito por:
 	FI	Slim palvelin V.%s, tekijä:
-	FR	Slim serveur V.%s, écrit par:
+	FR	Slim serveur V.%s, écrit par :
 	IT	Slim server V.%s, scritto da:
 	NL	Slim Server V.%s, geschreven door:
 	NO	Slim server V.%s, skrevet av:
@@ -509,7 +509,7 @@ NOW_PLAYING_FROM
 	EN	Now playing from:
 	ES	Ahora poniendo de:
 	FI	Soitetaan:
-	FR	Lecture depuis :
+	FR	Lecture de :
 	IT	Riproduzione in corso da:
 	NL	Speelt nu af van:
 	NO	Spiller fra:
@@ -585,12 +585,15 @@ POWERING_OFF
 	EN	Powering Off
 	ES	Apagando
 	FI	Järjestelmää sammutetaan
-	FR	Mise hors-tension
+	FR	Mise hors tension
 	IT	Spegnimento
 	NL	Bezig met uitschakelen
 	NO	Skrur av
 	PT	A Desligar
 	SE	Stänger av
+	
+POWER
+	EN	Power
 
 ALARM
 	DE	Wecker
@@ -613,7 +616,7 @@ ALARM_SET
 ALARM_ON
 	DE	An (Drücken Sie RIGHT um auszuschalten)
 	EN	On (Press RIGHT to turn off)
-	FR	Activé (Presser RIGHT pour désactiver)
+	FR	Activé (Appuyer sur DROITE pour désactiver)
 	NL	Aan (Druk RIGHT om uit te schakelen)
 	NO	På (Trykk HØYRE for å slå av)
 	PT	Ligado (Prima DIREITA para desligar)
@@ -622,7 +625,7 @@ ALARM_ON
 ALARM_OFF
 	DE	Aus (Drücken Sie RIGHT um anzuschalten)
 	EN	Off (Press RIGHT to turn on)
-	FR	Désactivé (Presser RIGHT pour activer)
+	FR	Désactivé (Appuyer sur DROITE pour activer)
 	NL	UIT (Druk RIGHT om in te schakelen)
 	NO	Av (Trykk HØYRE for å slå på)
 	PT	Desligado (Prima DIREITA para ligar)
@@ -744,7 +747,7 @@ CONNECTING_FOR
 	DK	Forbinder for afspilning:
 	EN	Connecting to play:
 	ES	Conectando a:
-	FR	Connexion pour jouer :
+	FR	Connexion à :
 	NL	Verbinden voor afspelen van:
 	NO	Kobler til for å spille:
 	PT	Ligando a
@@ -841,7 +844,7 @@ SETUP_GROUP_MENUITEMS
 	DE	Anpassungen des Player-Hauptmenüs
 	DK	Tilpas hovedmenuen
 	EN	Home Menu Customization
-	FR	Personnalisation du menu principal
+	FR	Personnalisation du Menu principal
 	NL	Hoofdmenu aanpassen
 	NO	Tilpass hovedmenyen
 	PT	Personalização do Menu Inicial
@@ -851,7 +854,7 @@ SETUP_GROUP_MENUITEMS_DESC
 	DE	Sie können die verfügbaren Einträge im Hauptmenü anpassen. Klicken Sie zum Hoch- und Runterschieben oder Löschen der Einträge. Klicken zu auf "Hinzufügen" um einen gelöschten Eintrag wieder hinzuzufügen.
 	DK	Du kan tilpasse hovedmenuen på din. Klik for at flytte menupunkter op og ned eller for at fjerne dem. Klik "Tilføj" for at tilføje et fjernet menupunkt til menuen.
 	EN	You can customize the choices that are available on the top-level Home menu. Click to move items up and down or to remove menu items. Click on "Add" to add a removed item back to the menu.
-	FR	Vous pouvez personnaliser les choix disponibles dans le menu principal. Cliquez pour supprimer un choix ou pour le déplacer verticalement. Cliquer sur "Ajouter" pour restaurer un choix supprimé.
+	FR	Vous pouvez personnaliser les choix disponibles dans le Menu principal. Cliquez pour supprimer un choix ou pour le déplacer verticalement. Cliquer sur "Ajouter" pour restaurer un choix supprimé.
 	NL	U kunt instellen welke keuzes aanwezig zijn in het Hoofdmenu. Klik om de items naar boven of naar beneden te verplaatsen of ze te verwijderen. Klik op "Toevoegen" om een verwijderd item terug te plaatsen in het menu.
 	NO	Du kan tilpasse hovedmenyen på din SLIMP3. Trykk for å flytte elementer oppover og nedover eller for å fjerne dem. Trykk "Legg til" for å legge til et fjernet element.
 	PT	Pode personalizar as opções disponíveis no menu inicial. Escolha as opções para mover para cima, para baixo, ou para apagar. Escolha "Adicionar" para adicionar um item ao menu.
@@ -944,7 +947,7 @@ SETUP_PLAYERNAME_DESC
 	EN	You can give this player a name that will be used to identify the player on these web pages.
 	ES	Puede usted asignar un nombre para identificar este reproductor en el interfaz web.
 	FI	Voit antaa nimen, jonka avulla soitin voidaan yhdistää näillä WWW-sivuilla.
-	FR	Vous pouvez donner au lecteur un nom qui sera utilisé pour identifier le lecteur sur l'interface web.
+	FR	Vous pouvez donner au lecteur un nom qui sera utilisé pour l'identifier sur l'interface web.
 	NL	U kunt deze speler een naam geven die zal worden gebruikt om de speler te identificeren op de web pagina's.
 	NO	Du kan gi denne spilleren et navn som vil brukes til å identifisere spilleren på disse web-sidene.
 	PT	Pode escolher um nome para identificar este cliente nas páginas web do servidor.
@@ -1174,7 +1177,7 @@ SETUP_TITLEFORMAT_DESC
 	EN	When you press the GUIDE button on the remote, you can switch between different ways of displaying a song title on the display. You can customize this display by choosing the formats you'd like to see from the menus below. Click on a button in the "Current" column to change the current format. When you are done, press the "Change" button to save your choices.
 	ES	Con pulsar el botón GUIDE en el mando es posible cambiar el formato del título de la canción que se muestre. Se puede customizar este formato eligiendo varios del menú abajo. Haga clic en la columna "Actual" para cambiar el formato actual. Una vez que se ha elegido, haga clic en el botón "Cambiar" para guardar su elección.
 	FI	Painaessasi GUIDE -näppäintä kaukosäätimessä, voit valita mitä tietoa soitin näyttää ruudulla. Voit vaikuttaa esitettävään tietoon valitsemalla alla olevista valikoista haluamasi tiedot. Valitse "Current" sarake vaihtaaksesi valintaa. Ollessasi valmis valitse "Change" talletaaksesi valintasi.
-	FR	Lorsque vous pressez le bouton GUIDE de la télécommande, vous pouvez choisir différentes façons d'afficher le titre du morceau qui joue. Vous pouvez personnaliser les formats disponibles en choisissant des formats dans les menus ci-dessous. Cliquez sur un bouton de la colonne inititulée "Courante" pour changer le format courant. Lorsque vous avez terminé, cliquez sur le bouton "Changer" pour enregistrer vos choix.
+	FR	Lorsque vous appuyez sur la touche GUIDE de la télécommande, vous pouvez choisir différentes façons d'afficher le titre du morceau qui joue. Vous pouvez personnaliser les formats disponibles en choisissant des formats dans les menus ci-dessous. Cliquez sur un bouton de la colonne inititulée "Courante" pour changer le format courant. Lorsque vous avez terminé, cliquez sur le bouton "Changer" pour enregistrer vos choix.
 	NL	Als U de GUIDE toets op de afstandsbediening indrukt, kunt U kiezen tussen verschillende manieren om de titel van het nummer te tonen. U kan het display aanpassen door de gewenste formaten te selecteren in het onderstaande menu. Klik op een knop in de "Huidig" kolom om het huidige formaat te selecteren. Als U klaar bent, druk op de "Wijzig" knop om de selecties te bewaren.
 	PT	Ao usar o botão "GUIDE" no controlo remoto, pode mudar entre várias formas de mostrar o título da música no ecrã. Pode personalizar o ecrã escolhendo os formatos que deseja, a partir dos menus abaixo. Escolha o botão na coluna "Actual" para mudar o formato actual. Quando terminar, escolha o botão "Mudar" para gravar as suas preferências.
 	SE	När du trycker på GUIDE-knappen på fjärrkontrollen kan du växla mellan olika sätt att visa den aktuella låtens titel. Du kan själv konfigurera displayen genom att välja mellan de olika format som finns tillgängliga i menyerna nedan. Klicka på en knapp i "Vald"-kolumnen för att ändra aktuellt format. När du är klar, klicka på "Ändra" för att spara dina val.
@@ -1182,7 +1185,7 @@ SETUP_TITLEFORMAT_DESC
 SETUP_IRMAP
 	DE	Funktionen der Fernbedienungstasten
 	EN	Remote Button Functions
-	FR	Fonctions des boutons de la télécommande
+	FR	Fonctions des touches de la télécommande
 	NL	Functies Knoppen Afstandsbediening
 	PT	Funções do Controlo Remoto
 	SE	Knappfunktioner på fjärrkontroll
@@ -1190,7 +1193,7 @@ SETUP_IRMAP
 SETUP_IRMAP_DESC
 	DE	Sie können zwischen den Tastenfunktion Sets auswählen. Diese Sets bilden genau die Funktionen auf der Fernbedienung ab. Das "Default" Set ist in der Dokumentation beschrieben.
 	EN	You can choose between button function sets. These sets map particular buttons on the infrared remote to particular functions. The "Default" set is the one that is described in the documentation.
-	FR	Vous pouvez choisir entre plusieurs jeux de boutons de fonctions. Ces jeux de configuration permettent d'associer les boutons de la télécommande aux fonctions disponibles. Le jeu intitulé "Défaut" est celui documenté dans le manuel.
+	FR	Vous pouvez choisir entre plusieurs jeux de touches de fonction. Ces jeux de configuration permettent d'associer les boutons de la télécommande aux fonctions disponibles. Le jeu intitulé "Défaut" est celui documenté dans le manuel.
 	NL	U kan kiezen uit verschillende Knop Functie sets. Deze sets koppelen bepaalde knoppen op de infrarood afstansbediening aan bepaalde functies. The "Standaard" set is degene die beschreven staat in de documentatie.
 	PT	Pode escolher entre vários mapas de botões do seu controlo remoto. Estes mapas associam botões do controlo remoto a determinadas funções. O mapa "Padrão" é o que está descrito na documentação.
 	SE	Du kan välja mellan olika funktionsgrupper. Dessa grupper anger vad en speciell knapp på fjärrkontroller har för speciell funktion. "Standard"-gruppen är den som beskrivs i manualen.
@@ -1321,7 +1324,7 @@ SETUP_BAD_DIRECTORY
 	EN	Oops - "%s" doesn't seem to be a valid directory. Try again.
 	ES	Ay! La carpeta "%s" no es válido. Intente de nuevo.
 	FI	Hups! - "%s" ei ole hakemisto. Yritä uudelleen.
-	FR	Zut! Répertoire non valide. Essayez encore une fois.
+	FR	Le répertoire "%s" n'est pas valide. Ré-essayez.
 	IT	Oops - "%s" non sembra essere un percorso valido. Riprova.
 	NL	Oeps! "%s" is geen geldige folder. Probeer opnieuw.
 	NO	Huffda, "%s" er ikke en gyldig katalog. Forsøk igjen.
@@ -1570,7 +1573,7 @@ SETUP_PLUGINS
 SETUP_PLUGINS_DESC
 	DE	Slim Server enthält ein paar Plugins - inklusive einiger Spiele, die Sie mit Ihrer Fernbedienung bedienen können. Verwenden Sie die unten stehende Auswahl, um die Plugins dem Menü Ihres Slim Players hinzuzufügen oder zu entfernen.
 	EN	Slim Server includes some extra features, including some games, you can use with your remote. Use the menu below to add or remove the Plugins menu from your Home.
-	FR	Le Slim comprend des fonctionnalités supplémentaires ou "plugins", dont des jeux, que vous pouvez utiliser avec votre télécommande. Utilisez le menu ci-dessous pour ajouter ou retirer le menu Plugins de votre menu principal.
+	FR	Le Slim comprend des fonctionnalités supplémentaires ou "plugins", dont des jeux, que vous pouvez utiliser avec votre télécommande. Utilisez le menu ci-dessous pour ajouter ou retirer le menu Plugins de votre Menu principal.
 	NL	Slim biedt de mogelijkheid om extra functionaliteiten, waaronder spelletjes, toe te voegen. Deze kunnen bestuurd worden via de afstandsbediening. Gebruik onderstaande keuze om het Plugins menu aan Uw Home toe te voegen of om het eruit te verwijderen.
 	PT	O Slim Server inclui algumas funcionalidades extras, tais como alguns jogos, que podem ser usados com o controlo remoto. Use o menu abaixo para adicionar ou remover os menus extra do cliente. 
 	SE	Slim Server inkluderar några tillägg, t.ex några spel, som du kan använda med din fjärrkontroll. Använd menyn nedan för att lägga till eller ta bort Tilläggs-menyn from din Huvudmeny.
@@ -1839,6 +1842,7 @@ SETUP_SAVESHUFFLED_DESC
 
 SETUP_SAVESHUFFLED_1
 	EN	Save playlists in shuffled order
+
 
 SETUP_SAVESHUFFLED_0
 	EN	Save playlists in order songs were added
@@ -2222,7 +2226,7 @@ SETUP_PLAYTRACKALBUM_0
 SETUP_PLAYTRACKALBUM_DESC
 	DE	Wenn Sie einen Titel auswählen und PLAY auf der Fernbedienung drücken, dann können Sie entscheiden, ob Sie nur dieses eine Lied hören wollen, oder alle Titel aus diesem Album oder Verzeichnis.
 	EN	When you select a single song and press PLAY on the remote, you can choose to play just that song or all the songs in that album or directory, starting with that song.
-	FR	Lorsque vous choisissez un morceau et que vous pressez le bouton PLAY de la télécommande, le lecteur peut jouer uniquement ce morceau ou tous les morceaux de l'album ou du dossier en commençant par le morceau choisi.
+	FR	Lorsque vous choisissez un morceau et que vous appuyez sur la touche PLAY de la télécommande, le lecteur peut jouer uniquement ce morceau ou tous les morceaux de l'album ou du dossier en commençant par le morceau choisi.
 	NL	Als U een liedje selecteert en op de PLAY toets van de afstandsbediening drukt kan U alleen dit liedje laten spelen of alle liedjes uit het album of de folder afspelen, te beginnen met het geselecteerde liedje.
 	PT	Ao escolher uma música em particular e usar o PLAY no controlo remoto, pode escolher aqui se quer tocar apenas essa música ou todas as músicas desse álbum ou directoria, começando pela música escolhida.
 	SE	När du väljer en låt och trycker på PLAY på fjärrkontrollen, kan du välj att bara spela den valda sången, eller spela alla låtar i albumet/mappen, med vald låt som första låt.
@@ -3059,6 +3063,18 @@ ONE
 	PT	uma
 	SE	låt
 
+MCONE
+	DE	Eins
+	DK	Denne
+	EN	One
+	ES	Uno
+	FI	Yksi
+	FR	Un
+	NL	Een
+	NO	En
+	PT	Uma
+	SE	Låt
+
 ALL
 	DE	Alle
 	DK	alle
@@ -3070,6 +3086,18 @@ ALL
 	NO	alle
 	PT	todas
 	SE	alla
+
+MCALL
+	DE	Alle
+	DK	Alle
+	EN	All
+	ES	Todos
+	FI	kaikki
+	FR	Tous
+	NL	Alle
+	NO	Alle
+	PT	Todas
+	SE	Alla
 
 OFF
 	DE	Aus
@@ -3094,6 +3122,30 @@ ON
 	NO	på
 	PT	sim
 	SE	på
+
+MCON
+	DE	An
+	DK	Til
+	EN	On
+	ES	Encendido
+	FI	Päälle
+	FR	Allumé
+	NL	Aan
+	NO	På
+	PT	Sim
+	SE	På
+
+MCOFF
+	DE	Aus
+	DK	Fra
+	EN	Off
+	ES	Apagado
+	FI	Pois päälltä
+	FR	Éteint
+	NL	Uit
+	NO	Av
+	PT	Não
+	SE	Av
 
 MOVEUP
 	DE	Eins rauf
@@ -4885,6 +4937,9 @@ MUTED
 	PT	Silencioso
 	SE	Tyst
 
+MUTE
+	EN	Mute
+
 LCMUTED
 	DE	Stumm geschaltet
 	DK	stille
@@ -5022,7 +5077,7 @@ SYNC_WITH
 	DK	Tryk HØJRE for at synkronisere med:
 	EN	Press RIGHT again to sync with:
 	FI	Paina RIGHT uudelleen saattaaksesi ajan tasalle:
-	FR	Presser RIGHT pour se synchroniser avec :
+	FR	Appuyer sur RIGHT pour se synchroniser avec :
 	NL	Druk RIGHT om te synchroniseren met:
 	PT	Prima DIREITA outra vez para sincronizar com
 	SE	Tryck HÖGER igen för att synkronisera med:
@@ -5032,7 +5087,7 @@ UNSYNC_WITH
 	DK	Tryk HØJRE igen for at afslutte synkronisering med:
 	EN	Press RIGHT again to unsync with:
 	FI	Paina RIGHT uudelleen poistaaksesi tasaustiedon:
-	FR	Presser RIGHT pour se désynchroniser d'avec :
+	FR	Appuyer sur RIGHT pour se désynchroniser d'avec :
 	NL	Druk nogmaals RIGHT om te desynchroniseren van:
 	PT	Prima DIREITA outra vez para dessincronizar com
 	SE	Tryck HÖGER igen för att inte synkronisera med:

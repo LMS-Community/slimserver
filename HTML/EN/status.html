@@ -30,9 +30,13 @@
                 href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}">[IF repeatoff]<b>[/IF][S OFF][IF repeatoff]</b>[/IF]</a>
 
     [S SHUFFLE]: 
-                <a href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">[IF shuffleoff]<b>[/IF][S OFF][IF shuffleoff]</b>[/IF]</a>/<a
-                href="status.html?p0=playlist&p1=shuffle&p2=2&player={%player}">[IF shufflealbum]<b>[/IF][S LCALBUMS][IF shufflealbum]</b>[/IF]</a>/<a
-                href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF shuffleon]<b>[/IF][S LCSONGS][IF shuffleon]</b>[/IF]</a>
+                <a 
+                href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">[IF shuffleoff]<b>[/IF][S OFF][IF shuffleoff]</b>[/IF]</a
+                >/<a
+                href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF shuffleon]<b>[/IF][S LCSONGS][IF shuffleon]</b>[/IF]</a
+                >/<a
+                href="status.html?p0=playlist&p1=shuffle&p2=2&player={%player}">[IF shufflealbum]<b>[/IF][S LCALBUMS][IF shufflealbum]</b>[/IF]</a
+                >
 
 [IF isplayer]
 		<br><br>[S VOLUME]: <a href="status.html?p0=mixer&p1=volume&p2=-10&player={%player}&start={start}">[S VOLUME_SOFTER]</a>

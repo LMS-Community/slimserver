@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.6 2003/08/12 00:52:42 dean Exp $
+# $Id: Common.pm,v 1.7 2003/09/15 18:50:18 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -663,14 +663,15 @@ sub numberScroll {
 	my $listref = shift;
 	my $sorted = shift; # is the list sorted?
 
+	# optional reference to subroutine that takes a single parameter
+	# of an index and returns the value for the item in the array we're searching.
+	my $lookupsubref = shift;
+
 	my $listsize = scalar @{$listref};
 
 	if ($listsize <= 1) {
 		return 0;
 	}
-	# optional reference to subroutine that takes a single parameter
-	# of an index and returns the value for the item in the array we're searching.
-	my $lookupsubref = shift;
 	my $i;
 	if (!$sorted) {
 		if ($digit == 0) { $digit = 10; }

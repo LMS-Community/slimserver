@@ -427,6 +427,11 @@ sub idle {
 	return $::stop;
 }
 
+sub idleStreams {
+	Slim::Networking::Protocol::idle();
+	Slim::Web::HTTP::idleStreams();
+}
+
 sub showUsage {
 	print <<EOF;
 Usage: $0 [--mp3dir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]

@@ -76,7 +76,7 @@ sub editplaylist
 					$found = 1;
 					last;
 				}
-				Slim::Networking::Protocol::idle();
+				::idleStreams();
 			}
 			if( $found == 0)
 			{
@@ -142,7 +142,7 @@ sub editplaylist
 
 		$playlist .= &Slim::Web::HTTP::filltemplatefile( "edit_playlist_list.html", \%list_form);
 
-		Slim::Networking::Protocol::idle();
+		::idleStreams();
 	}
 
 	$$main_form_ref{'playlist'} = $playlist;

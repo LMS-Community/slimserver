@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.6 2003/08/14 20:15:34 dean Exp $
+# $Id: Misc.pm,v 1.7 2003/09/15 18:50:19 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -42,11 +42,13 @@ sub findbin {
 	if ($^O eq 'darwin') {
 		push @paths, $ENV{'HOME'} . "/Library/SlimDevices/bin/";
 		push @paths, "/Library/SlimDevices/bin/";
+		push @paths, $ENV{'HOME'} . "/Library/iTunes/Scripts/iTunes-LAME.app/Contents/Resources/";
 	}
 
 	foreach my $path (@paths) {
 		$path = catdir($path, $executable);
 		if (-x $path) {
+			$::d_paths && msg("Found binary $path for $executable\n");
 			return $path;
 		}
 	}
@@ -57,6 +59,8 @@ sub findbin {
 		$path = undef;
 	}
 	
+	$::d_paths && msg("Found binary $path for $executable\n");
+
 	return $path;	
 }
 
@@ -188,47 +192,47 @@ if (0) {
 # URLs are left alone
         
 sub fixPath {
-        my $file = shift;
-        my $base = shift;
+	my $file = shift;
+	my $base = shift;
 
-        my $fixed;
-                   
-        if (!defined($file) || $file eq "") { return; }        
-             
-        # the only kind of absolute file we like is one in 
-        # the music directory or the playlist directory...
-        my $mp3dir = Slim::Utils::Prefs::get("mp3dir");
-        my $savedplaylistdir = Slim::Utils::Prefs::get("playlistdir");
-        
-        if ($mp3dir && $file =~ /^\Q$mp3dir\E/) {
-                $fixed = $file;
-        } elsif ($savedplaylistdir && $file =~ /^\Q$savedplaylistdir\E/) {
-                $fixed = $file;
-        } elsif (Slim::Music::Info::isURL($file)) {
-                $fixed = $file;
-        } elsif ($base) {
-			if (file_name_is_absolute($file)) {
-				if (Slim::Utils::OSDetect::OS() eq "win") {
-					my ($volume) = splitpath($file);
-					if (!$volume) {
-						($volume) = splitpath($base);
-						$file = $volume . $file;
-					}
+	my $fixed;
+			   
+	if (!defined($file) || $file eq "") { return; }        
+		 
+	# the only kind of absolute file we like is one in 
+	# the music directory or the playlist directory...
+	my $mp3dir = Slim::Utils::Prefs::get("mp3dir");
+	my $savedplaylistdir = Slim::Utils::Prefs::get("playlistdir");
+	
+	if ($mp3dir && $file =~ /^\Q$mp3dir\E/) {
+			$fixed = $file;
+	} elsif ($savedplaylistdir && $file =~ /^\Q$savedplaylistdir\E/) {
+			$fixed = $file;
+	} elsif (Slim::Music::Info::isURL($file)) {
+			$fixed = $file;
+	} elsif ($base) {
+		if (file_name_is_absolute($file)) {
+			if (Slim::Utils::OSDetect::OS() eq "win") {
+				my ($volume) = splitpath($file);
+				if (!$volume) {
+					($volume) = splitpath($base);
+					$file = $volume . $file;
 				}
-				$fixed = fixPath($file);
-            } else {
-				$fixed = fixPath(catfile($base, $file));
-            }
-        } elsif (file_name_is_absolute($file)) {
-                $fixed = $file;
-        } else {
-                $file =~ s/\Q$mp3dir\E//;
-                $fixed = catfile($mp3dir, $file);
-        }
-		
-        $::d_paths && ($file ne $fixed) && msg("*****fixed: " . $file . " to " . $fixed . "\n");
-        $::d_paths && ($base) && msg("*****base: " . $base . "\n");
-        return $fixed;  
+			}
+			$fixed = fixPath($file);
+		} else {
+			$fixed = fixPath(catfile($base, $file));
+		}
+	} elsif (file_name_is_absolute($file)) {
+			$fixed = $file;
+	} else {
+			$file =~ s/\Q$mp3dir\E//;
+			$fixed = catfile($mp3dir, $file);
+	}
+	
+	$::d_paths && ($file ne $fixed) && msg("*****fixed: " . $file . " to " . $fixed . "\n");
+	$::d_paths && ($file ne $fixed) && ($base) && msg("*****base: " . $base . "\n");
+	return $fixed;  
 }
 
 sub ascendVirtual {
@@ -492,22 +496,21 @@ sub assert {
 }
 
 sub bt {
-        my $frame = 1;
+	my $frame = 1;
 
-        my $msg = "Backtrace:\n\n";
+    my $msg = "Backtrace:\n\n";
 
 	my $assertfile = '';
 	my $assertline = 0;
 
-        while( my ($package, $filename, $line, $subroutine, $hasargs, 
-		$wantarray, $evaltext, $is_require) = caller($frame++) ) {
-                
-                $msg.=sprintf("   frame %d: $subroutine ($filename line $line)\n", $frame - 2);
+	while( my ($package, $filename, $line, $subroutine, $hasargs, 
+			$wantarray, $evaltext, $is_require) = caller($frame++) ) {
+		$msg.=sprintf("   frame %d: $subroutine ($filename line $line)\n", $frame - 2);
 		if ($subroutine=~/assert$/) {
 			$assertfile = $filename;
 			$assertline = $line;			
 		}
-        }
+    }
         
 	if ($assertfile) {
 		open SRC, $assertfile;
@@ -521,6 +524,7 @@ sub bt {
 			}
 		}
 	}
+	
 	$msg.="\n";
 
 	&msg($msg);

@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.26 2003/09/05 20:40:50 dean Exp $
+# $Id: HTTP.pm,v 1.27 2003/09/15 18:50:21 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -166,7 +166,6 @@ sub idle {
 
 	my $httpSelCanRead;
 	my $httpSelCanWrite;
-	my $streamingSelCanWrite;
 
 	# check to see if the HTTP settings have changed
 	Slim::Web::HTTP::checkHTTP();
@@ -203,7 +202,11 @@ sub idle {
 			Slim::Web::HTTP::sendresponse($sockHand);
 		}
 	}
-	
+	idleStreams();
+}
+
+sub idleStreams {
+	my $streamingSelCanWrite;
 	#send data to streaming clients
 	my $count = 0; 
 	

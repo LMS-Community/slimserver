@@ -41,7 +41,7 @@
 <h5><a id="about-dhcp"></a>Does the Squeezebox support DHCP?</h5>
 <p>Yes, the Squeezebox supports both DHCP and static IP addresses. It also has a feature called &quot;Slim Discovery Protocol&quot;, which automatically locates the Slim Server on your network. For LANs which already have a DHCP server, Squeezebox is ready to run out-of-the-box, without having to do any configuration. If you don't have DHCP, you can enter the IP addresses manually.</p>
 <h5><a id="about-cable"></a>What kind of network cable do I need?</h5>
-<p>Since the Squeezebox network interface is 10 megabit ethernet, you can use either a CAT3 or CAT5 ethernet cable. If you are connecting directly to a computer you will need a crossover cable, otherwise a regular straight cable will work just fine.</p>
+<p>Since the Squeezebox network interface is 10 megabit ethernet, you can use either a CAT3 or CAT5 ethernet cable. If you are connecting directly to a computer you will need a crossover cable, otherwise a regular straight cable will work just fine.  (Note: <a href="http://docs.info.apple.com/article.html?artnum=42717">Some Macintosh computers</a> will work with either a regular or crossover cable.)</p>
 <h5><a id="about-networkspeed"></a>How fast does my network need to be to use the Squeezebox?</h5>
 <p>An inexpensive 10Mbps hub has about 25 times the capacity needed to stream MP3 audio at the highest quality (320Kbps). Typically, MP3s are encoded at 128Kbps to 192Kbps. You do not need 10/100 Ethernet - Squeezebox is compatible with fast Ethernet LANS, as long as your hub/switch also supports 10Mbps (most do).</p>
 <h5><a id="about-os"></a>Which operating systems are supported?</h5>
@@ -212,7 +212,8 @@
 <h5><a id="formats-wmareal"></a>Does the Squeezebox support Windows Media or Real Player formats?</h5>
 <p>The Squeezebox player's hardware decoder only supports MP3 format for decoding. Unfortunately, the licensing issues surrounding these formats make it impossible for us to convert these formats to MP3 on the fly.</p>
 <h5><a id="formats-aac"/>Does the Squeezebox support AAC?</h5>
-<p>The Squeezebox player's hardware decoder only supports MP3 format for decoding. Under Mac OS X, Squeezebox software can convert iTunes AAC files to MP3 for playback on the Squeezebox on-the-fly. To enable this feature, you'll need to install the free (and high quality) LAME MP3 encoder. For more information about LAME in general, <a href="http://lame.sourceforge.net/">click here</a> . LAME is free, but in some countries you may need to pay a license fee in order to legally encode MP3 files. There are several ways to install LAME, including <a href="http://www.culater.net/osd/packages.html">this package</a> provided by Mike Solomon, or using <a href="http://fink.sourceforge.net/">Fink.</a></p>
+<p>The Squeezebox player's hardware decoder only supports MP3 format for decoding. Under Mac OS X, Squeezebox software can convert iTunes AAC files to MP3 for playback on the Squeezebox on-the-fly. To enable this feature, you'll need to install the free (and high quality) LAME MP3 encoder. For more information about LAME in general, <a href="http://lame.sourceforge.net/">click here</a> . LAME is free, but in some countries you may need to pay a license fee in order to legally encode MP3 files. 
+<p>There are several ways to install LAME, including the excellent <a href="http://www.blacktree.com/apps/index.html?iTunes-LAME/index.html">iTunes-LAME Encoder</a>, <a href="http://www.culater.net/osd/packages.html">an Installer package provided by Mike Solomon</a>, and the <a href="http://fink.sourceforge.net/">Fink package system.</a></p>
 <p>Once you have LAME installed, you should be able to playback iTunes-ripped AAC files (.m4a) as well as the audio from any QuickTime movie (.mov). Music purchased from the Apple Music Store (.m4p files) is protected and cannot be played back with Squeezebox until Apple provides the necessary hooks to enable this. In the mean time, it is possible to burn your Apple Music Store songs to CD and re-rip them.</p>
 <p>Note that LAME-based encoding to MP3 for playback can use a substantial amount of CPU power.  We continue to recommend high-bitrate MP3 encoded files for best performance, highest audio quality, and best compatibililty.</p>
 <h5><a id="formats-ogg"/>Does the Squeezebox support Ogg Vorbis?</h5>
@@ -400,6 +401,7 @@ Version=2</pre></p>
 <hr>
 <h4><a href="#troubleshooting">Troubleshooting</a></h4>
 <ul>
+	<li><a href="#troubleshooting-sleep">After several minutes my player turns off and stops responding.  What's going on?</a>
 	<li><a href="#troubleshooting-remote">The IR remote is not responding, or is functioning erratically.</a>
 	<li><a href="#troubleshooting-newremote">I just received my new Squeezebox custom remote, but it doesn't work. My original Sony remote works fine.</a>
 	<li><a href="#troubleshooting-dhcp">The player doesn't get past &quot;Looking for DHCP server...&quot;.</a>
@@ -422,6 +424,8 @@ Version=2</pre></p>
 	<li><a href="#troubleshooting-upgrading">I'm having trouble upgrading the firmware on my SLIMP3 Player. Do you have any hints?</a>
 </ul>
 <h4><a id="troubleshooting"></a>Troubleshooting</h4>
+<h5><a href="#troubleshooting-sleep"></a>After several minutes my player turns off and stops responding.  What's going on?</h5>
+<p>Make sure that your energy saver settings on your computer are set so that your computer doesn't go to sleep.  If it does, your player will go to sleep as well.   If that's not the problem, make sure that the IP address on your computer isn't changing.  To do this, adjust  your TCP/IP settings to use a static IP address.</a>
 <h5><a id="troubleshooting-remote"></a>The IR remote is not responding, or is functioning erratically.</h5>
 <p>If you have a Squeezebox custom remote, make sure your batteries are fresh and installed properly and that you have installed the latest Slim Server software and firmware.</p>
 <p>If you have one of the Sony universal remotes try the following steps.</p></div>

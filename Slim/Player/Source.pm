@@ -582,6 +582,14 @@ sub openSong {
 				$client->mp3filehandle($sock);
 				$client->mp3filehandleIsSocket(1);
 				$client->remoteStreamStartTime(time());
+
+				if( $^O =~ /Win32/ ) {
+					my $temp = 1;
+					ioctl($sock, 0x8004667e, \$temp);
+				} else {
+					defined($sock->blocking(0))  || die "Cannot set remote stream to nonblocking";
+				}
+
 			# if it's one of our playlists, parse it...
 			} elsif (Slim::Music::Info::isList($fullpath)) {
 				$::d_source && msg("openSong on a remote list!\n");
@@ -686,6 +694,7 @@ sub openSong {
 				my $fullCommand = $command;
 	
 				$fullCommand =~ s/\$FILE\$/"$filepath"/g;
+				$fullCommand =~ s/\$URL\$/"$fullpath"/g;
 				$fullCommand =~ s/\$RATE\$/$rate/g;
 				$fullCommand =~ s/\$([^\$]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
