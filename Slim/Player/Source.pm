@@ -694,6 +694,8 @@ sub jumpto {
 		streamingSongIndex($client, 0, 1);
 	}
 
+	$client->currentPlaylistChangeTime(time());
+	
 	playmode($client,"play");
 }
 

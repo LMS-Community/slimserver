@@ -1741,7 +1741,6 @@ sub initSetupConfig {
 						,'options' => undef #filled by initSetup using hash_of_prefs('titleFormatWeb')
 						,'onChange' => sub {
 								for my $client (Slim::Player::Client::clients()) {
-									$client->currentPlaylistModified(1);
 									$client->currentPlaylistChangeTime(time());
 								}
 							}
