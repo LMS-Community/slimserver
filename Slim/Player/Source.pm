@@ -46,18 +46,17 @@ sub loadConversionTables {
 				$line =~ s/^\s//;
 				$line =~ s/\s$//;
 	
-				if ($line =~ /^(\S+)\s+(\S+)\s+(\S+)/) {
+				if ($line =~ /^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)/) {
 					my $inputtype = $1;
 					my $outputtype = $2;
 					my $clienttype = $3;
+					my $clientid = lc($4);
 					$command = <$convertFile>;
 					$command =~ s/^\s//;
 					$command =~ s/\s$//;
-
-					$::d_source && msg( "input: '$inputtype' output: '$outputtype' clienttype: '$clienttype': '$command'\n");					
-
+					$::d_source && msg( "input: '$inputtype' output: '$outputtype' clienttype: '$clienttype': clientid: '$clientid': '$command'\n");					
 					if (defined($command)) {
-						$commandTable{"$inputtype-$outputtype-$clienttype"} = $command;
+						$commandTable{"$inputtype-$outputtype-$clienttype-$clientid"} = $command;
 					}
 				}
 			}
@@ -696,7 +695,7 @@ sub openSong {
 		
 				$::d_source && msg("openSong: opening file $filepath\n");
 				if ($client->mp3filehandle->open($filepath)) {
-					
+
 					$::d_source && msg(" seeking in $offset into $filepath\n");
 					if ($offset) {
 						if (!seek ($client->mp3filehandle, $offset, 0) ) {
@@ -781,16 +780,32 @@ sub getCommand {
 	
 	my $type = Slim::Music::Info::contentType($fullpath);
 	my $player = $client->model();
-	
+	my $clientid = $client->id();
 	my $command = undef;
 	my $format = undef;
 	
 	foreach my $checkformat ($client->formats()) {
-		$::d_source && msg("checking formats for: $type-$checkformat-$player\n");
-		
-		$command = $commandTable{"$type-$checkformat-$player"};
-		if (!defined($command)) {
-			$command = $commandTable{"$type-$checkformat-*"};
+		$::d_source && msg("checking formats for: $type-$checkformat-$player-$clientid\n");
+		# TODO: match partial wildcards in IP addresses.
+		# use Data::Dumper; print Dumper(\%commandTable);
+		$command = $commandTable{"$type-$checkformat-$player-$clientid"};
+		if (defined($command)) {
+			$::d_source && msg("Matched $type-checkformat-$player-$clientid\n");
+		} else {
+			$command = $commandTable{"$type-$checkformat-*-$clientid"};
+		}
+		if (defined $command) {
+			$::d_source && msg("Matched $type-checkformat-$player-*\n");
+		} else {
+			$command = $commandTable{"$type-$checkformat-$player-*"};
+		}
+		if (defined($command)) {
+			$::d_source && msg("Matched $type-checkformat-$player-*\n");
+		} else {
+			$command = $commandTable{"$type-$checkformat-*-*"};
+		}
+		if (!defined $command) {
+			$::d_source && msg("******* Error:  Didn't find any command matches ******\n");
 		}
 		$format = $checkformat;
 		last if ($command);
