@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.48 2003/12/01 23:02:47 dean Exp $
+# $Id: HTTP.pm,v 1.49 2003/12/06 00:37:19 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -44,7 +44,7 @@ BEGIN {
 	}
 }
 
-my($EOL) = "\015\012";
+our ($EOL) = "\015\012";
 my($BLANK) = $EOL x 2;
 my($NEWLINE) = "\012";
 my($defaultskin)="Default";
@@ -80,6 +80,7 @@ tie %pageFunctions, 'Tie::RegexpHash';
 $pageFunctions{qr/^$/} = \&Slim::Web::Pages::home;
 $pageFunctions{qr/^index\.(?:htm|xml)/} = \&Slim::Web::Pages::home;
 $pageFunctions{qr/browseid3\.(?:htm|xml)/} = \&Slim::Web::Pages::browseid3;
+$pageFunctions{qr/browse\.(?:htm|xml)/} = \&Slim::Web::Pages::browser;
 $pageFunctions{qr/edit_playlist\.(?:htm|xml)/} = \&Slim::Web::EditPlaylist::editplaylist;  # Needs to be before playlist
 $pageFunctions{qr/^firmware\.(?:html|xml)/} = \&Slim::Web::Pages::firmware;
 $pageFunctions{qr/hitlist\.(?:htm|xml)/} = \&Slim::Web::History::hitlist;
@@ -94,6 +95,7 @@ $pageFunctions{qr/songinfo\.(?:htm|xml)/} = \&Slim::Web::Pages::songinfo;
 $pageFunctions{qr/status_header\.(?:htm|xml)/} = \&Slim::Web::Pages::status_header;
 $pageFunctions{qr/status\.(?:htm|xml)/} = \&Slim::Web::Pages::status;
 $pageFunctions{qr/^update_firmware\.(?:htm|xml)/} = \&Slim::Web::Pages::update_firmware;
+$pageFunctions{qr/setup\.(?:htm|xml)/} = \&Slim::Web::Setup::setup_HTTP;
 
 # initialize the http server
 sub init {
@@ -255,7 +257,7 @@ sub processHTTP {
 					"Content-type: text/html$BLANK" . 
 					"<HTML><HEAD><TITLE>401 Authorization Required</TITLE></HEAD>" . 
 					"<BODY>401 Authorization is Required to access this SlimServer</BODY></HTML>$EOL";
-				addresponse($httpclientsock,$message);
+				addresponse($httpclientsock,\$message);
 				return undef;
 			}
 				
@@ -314,7 +316,7 @@ sub processHTTP {
 
 			my $message = "HTTP/1.0 400 Bad Request" . $EOL . 
 					"Content-type: text/html$BLANK<HTML><HEAD><TITLE>400 Bad Request</TITLE></HEAD><BODY>400 Bad Request: $firstline</BODY></HTML>$EOL";
-			addresponse($httpclientsock,$message);
+			addresponse($httpclientsock,\$message);
 		}
 
 	$::d_http && msg("Ready to accept a new HTTP connection.\n\n");
@@ -421,11 +423,11 @@ sub executeurl {
 
 sub addresponse {
 	my $httpclientsock = shift;
-	my $message = shift;
+	my $messageref = shift;
 	my %segment = ( 
-		'data' => \$message,
+		'data' => $messageref,
 		'offset' => 0,
-		'length' => length($message)
+		'length' => length($$messageref)
 	);
 	push @{$outbuf{$httpclientsock}}, \%segment;
 	Slim::Networking::Select::addWrite($httpclientsock, \&sendresponse);
@@ -808,7 +810,7 @@ sub filltemplate {
 	$template=~s/\[GT\s+([^\[\]]+)\s+(.+?)\](.*?)\[\/GT\]/(defined($$hashref{$1}) && $$hashref{$1} > $2) ? $3 :  ''/esg;
 	$template=~s/\[LT\s+([^\[\]]+)\s+(.+?)\](.*?)\[\/LT\]/(defined($$hashref{$1}) && $$hashref{$1} < $2) ? $3 :  ''/esg;
 
-	$template=~s{\[INCLUDE\s+([^\[\]]+)\]}{filltemplatefile($1, $hashref)}esg;
+	$template=~s|\[INCLUDE\s+([^\[\]]+)\]|${filltemplatefile($1, $hashref)}|esg;
 	$template=~s{\[STATIC\s+([^\[\]]+)\]}{getStaticContent($1, $hashref)}esg;
 
 	# make strings with spaces in them non-breaking by replacing the spaces with &nbsp;
@@ -821,7 +823,7 @@ sub filltemplate {
     $template=~s/&rsqb;/\]/g;
 	$template=~s/&lbrc;/{/g;
     $template=~s/&rbrc;/}/g;
-	return $template;
+	return \$template;
 }
 
 sub nonBreaking {
@@ -967,7 +969,7 @@ sub generateresponse {
 	my %headers;
 	my $item;
 	my $i;
-	my $body = ""; 
+	my $body; 
 	my $result = "";
 	
 	my %paramheaders;
@@ -1014,22 +1016,7 @@ sub generateresponse {
 	    
 	    my $coderef = $pageFunctions{$path};
 	    if (ref($coderef) eq 'CODE') {
-	    		$body = &$coderef($client, $paramsref);
-	    } elsif ($path =~ /browse\.(htm|xml)/) {
-
-			##
-			## Special case - browser() goes into the background in addToList, because it can
-			##                take a long time. When addtoList finishes, we go to browse_addtolist_done, 
-			##		  which takes care of sending the output to the client
-			##
-			my $browser_ret;
-			my $output = $result . $EOL . printheaders((%headers, %paramheaders));
-			if ($browser_ret = Slim::Web::Pages::browser($client, $httpclientsock, $output, $paramsref)) {
-				$body = $browser_ret;
-			} else {
-				return(0); 
-			}
-
+	    		$body = &$coderef($client, $paramsref, \&generateResponse_Done, $httpclientsock, \$result, \%headers, \%paramheaders);
 	    } elsif ($path =~ /(?:stream\.mp3|stream)$/) {
 			%headers = statusHeaders($client);
 			$headers{"x-audiocast-name"} = string('SLIMSERVER');
@@ -1053,9 +1040,10 @@ sub generateresponse {
  			($body, $contenttype) = Slim::Music::Info::coverArt($song,$image);
  			 			
  			if (defined($body)) {
+ 				$$body = $body; #$body should be a ref
 				%headers = statusHeaders($client);
  			} else {
-				$body = getStaticContent("html/images/spacer.gif");
+				$body = getStaticContentRef("html/images/spacer.gif");
 				$contentType = "image/gif";
 			}
  			$headers{"Content-Type"} = $contentType;
@@ -1077,18 +1065,11 @@ sub generateresponse {
 			}
 			# we failed to open the specified file
 			$result = "HTTP/1.0 404 Not Found";
-			$body = "<HTML><HEAD><TITLE>404 Not Found</TITLE></HEAD><BODY>404 Not Found: $path</BODY></HTML>$EOL";
+			$body = \"<HTML><HEAD><TITLE>404 Not Found</TITLE></HEAD><BODY>404 Not Found: $path</BODY></HTML>$EOL";
 	    } elsif ($path =~ /favicon\.ico/) {
-			$body = getStaticContent("html/mypage.ico", $paramsref); 
-	    } elsif ($path =~ /setup\.(?:htm|xml)/) {
-			if ($::nosetup) {
-				$result = "HTTP/1.0 403 Forbidden";
-				$body = "<HTML><HEAD><TITLE>403 Forbidden</TITLE></HEAD><BODY>403 Forbidden: $path</BODY></HTML>$EOL";
-			} else {
-				$body = Slim::Web::Setup::setup_HTTP($client, $paramsref);
-			}
+			$body = getStaticContentRef("html/mypage.ico", $paramsref); 
 	    } elsif ($path =~ /slimserver\.css/) {
-	    	$body = getStaticContent($path, $paramsref);
+	    	$body = getStaticContentRef($path, $paramsref);
 		} elsif ($path =~ /status\.txt/) {
 			# if the HTTP client has asked for a text file, then always return the text on the display
 			%headers = statusHeaders($client);
@@ -1097,8 +1078,7 @@ sub generateresponse {
 			$headers{"Refresh"} = "30; url=$path";
 			my ($line1, $line2) = Slim::Display::Display::curLines($client);
 	
-			$body = $line1 . $EOL;
-			$body .= $line2 . $EOL; 
+			$$body = $line1 . $EOL . $line2 . $EOL;
 	
 		} elsif ($path =~ /log\.txt/) {
 			# if the HTTP client has asked for a text file, then always return the text on the display
@@ -1106,7 +1086,7 @@ sub generateresponse {
 			$headers{"Expires"} = "0";
 			$headers{"Content-Type"} = "text/plain";
 			$headers{"Refresh"} = "30; url=$path";
-			$body = $Slim::Utils::Misc::log;
+			$$body = $Slim::Utils::Misc::log;
 
 		} elsif ($path =~ /status\.m3u/) {
 		# if the HTTP client has asked for a .m3u file, then always return the current playlist as an M3U
@@ -1115,7 +1095,7 @@ sub generateresponse {
 			if (defined($client)) {
 				my $count = Slim::Player::Playlist::count($client);
 				if ($count) {
-					$body .= Slim::Formats::Parse::writeM3U(\@{Slim::Player::Playlist::playList($client)});
+					$$body = Slim::Formats::Parse::writeM3U(\@{Slim::Player::Playlist::playList($client)});
 				}
 			}
 		} elsif ($path =~ /html\//) {
@@ -1124,31 +1104,46 @@ sub generateresponse {
 			# if it's HTML then use the template mechanism
 			if ($contentType eq 'text/html' || $contentType eq 'text/xml') {
 				# if the path ends with a slash, then server up the index.html file
-				if ($path =~ /\/$/) {
+				if ($path =~ m|/$|) {
 					$path .= 'index.html';
 				}
-				$body = &filltemplatefile($path, $paramsref);
+				$body = filltemplatefile($path, $paramsref);
 			} else {
 				# otherwise just send back the binary file
-				$body = getStaticContent($path, $paramsref);
+				$body = getStaticContentRef($path, $paramsref);
 			}
 	    }  else {
 			$result = "HTTP/1.0 404 Not Found";
-			$body = "<HTML><HEAD><TITLE>404 Not Found</TITLE></HEAD><BODY>404 Not Found: $path</BODY></HTML>$EOL";
+			$body = \"<HTML><HEAD><TITLE>404 Not Found</TITLE></HEAD><BODY>404 Not Found: $path</BODY></HTML>$EOL";
 		}
 	} else {	
 		if ($path !~ /status/i) {
 			$result = "HTTP/1.0 404 Not Found";
-			$body = "<HTML><HEAD><TITLE>404 Not Found</TITLE></HEAD><BODY>404 Not Found: $path</BODY></HTML>$EOL";
+			$body = \"<HTML><HEAD><TITLE>404 Not Found</TITLE></HEAD><BODY>404 Not Found: $path</BODY></HTML>$EOL";
 		} else {
 			$result = "HTTP/1.0 200 OK";
 		}
 	}
-	$headers{'Content-Length'} = length($body);
-	$headers{'Connection'} = 'close';
-	addresponse($httpclientsock, $result . $EOL . printheaders(%headers, %paramheaders) . $body);
+	if ($body) {
+		return generateResponse_Done($client, $paramsref, $body, $httpclientsock, \$result, \%headers, \%paramheaders);
+	} else {
+		return 0;
+	}
+	#$headers{'Content-Length'} = length($body);
+	#$headers{'Connection'} = 'close';
+	#addresponse($httpclientsock, $result . $EOL . printheaders(%headers, %paramheaders) . $body);
+	#return 0;
+}
+
+sub generateResponse_Done {
+	my ($client, $paramsref, $bodyref, $httpclientsock, $resultref, $headersref, $paramheadersref) = @_;
+	$$headersref{'Content-Length'} = length($$bodyref);
+	$$headersref{'Connection'} = 'close';
+	my $message = $$resultref . $EOL . printheaders(%$headersref, %$paramheadersref) . $$bodyref;
+	addresponse($httpclientsock, \$message);
 	return 0;
 }
+	
 
 sub statusHeaders {
 	my $client = shift;

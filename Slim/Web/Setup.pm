@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.20 2003/12/03 20:19:28 dean Exp $
+# $Id: Setup.pm,v 1.21 2003/12/06 00:37:20 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1124,7 +1124,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['usetagdatabase','templatecache','useplaylistcache','animationLevel']
+					'PrefOrder' => ['usetagdatabase','templatecache','useplaylistcache','animationLevel','buildItemsPerPass']
 				}
 			}
 		,'Prefs' => {
@@ -1159,6 +1159,9 @@ sub initSetupConfig {
 								,'3' => string('SETUP_FULL_ANIMATION')
 								}
 					}
+			,'buildItemsPerPass' => {
+						'validate' => \&validateInt
+						}
 			}
 		} #end of setup{'performance'} hash
 	,'network' => {
@@ -1359,12 +1362,16 @@ sub syncGroups {
 }
 
 sub setup_HTTP {
-	my($client, $paramref) = @_;
-	my $output = "";
+	my($client, $paramref, $callback, $httpclientsock, $resultref, $headersref, $paramheadersref) = @_;
 	my $changed;
 	my $rejected;
+	if ($::nosetup) {
+		$$resultref = "HTTP/1.0 403 Forbidden";
+		return \"<HTML><HEAD><TITLE>403 Forbidden</TITLE></HEAD><BODY>403 Forbidden: $paramref->{'path'}</BODY></HTML>$Slim::HTTP::EOL";
+	}
 	if (!defined($paramref->{'page'})) {
-		return '';
+		$$resultref = "HTTP/1.0 404 Not Found";
+		return \"<HTML><HEAD><TITLE>404 Not Found</TITLE></HEAD><BODY>404 Not Found: $paramref->{'path'} <br />Try adding page=server.</BODY></HTML>$Slim::HTTP::EOL";
 	}
 
 	my %pagesetup = %{$setup{$paramref->{'page'}}};
@@ -1390,8 +1397,7 @@ sub setup_HTTP {
 	options_HTTP($client,$paramref,$pagesetup{'Prefs'});
 	buildHTTP($client,$paramref,\%pagesetup);
 	
-	$output .= &Slim::Web::HTTP::filltemplatefile('setup.html', $paramref);
-	return $output;
+	return Slim::Web::HTTP::filltemplatefile('setup.html', $paramref);
 }
 
 sub buildLinkList {
@@ -1414,7 +1420,7 @@ sub buildLinkList {
 		$linkinfo{'linkpage'} = 'setup.html';
 		$linkinfo{'separator'} = $separator;
 		$linkinfo{'skinOverride'} = $$paramref{'skinOverride'};
-		$output .= Slim::Web::HTTP::filltemplatefile('linklist.html',\%linkinfo);
+		$output .= ${Slim::Web::HTTP::filltemplatefile('linklist.html',\%linkinfo)};
 	}
 	return $output;
 }
@@ -1498,15 +1504,15 @@ sub buildHTTP {
 				} else {
 					$prefparams{'PrefSelected'} = $paramref->{$pref2} ? 'checked' : undef;
 				}
-				$prefparams{'PrefInput'} = Slim::Web::HTTP::filltemplatefile($prefparams{'inputTemplate'},\%prefparams);
-				$groupparams{'PrefList'} .= Slim::Web::HTTP::filltemplatefile('setup_pref.html',\%prefparams);
+				$prefparams{'PrefInput'} = ${Slim::Web::HTTP::filltemplatefile($prefparams{'inputTemplate'},\%prefparams)};
+				$groupparams{'PrefList'} .= ${Slim::Web::HTTP::filltemplatefile('setup_pref.html',\%prefparams)};
 			}
 		}
 		if (!exists $groupparams{'ChangeButton'}) {
 			$groupparams{'ChangeButton'} = string('CHANGE');
 		}
 
-		$paramref->{'GroupList'} .= Slim::Web::HTTP::filltemplatefile('setup_group.html',\%groupparams);
+		$paramref->{'GroupList'} .= ${Slim::Web::HTTP::filltemplatefile('setup_group.html',\%groupparams)};
 	}
 	#set up pagetitle
 	$paramref->{'pagetitle'} = $pageref->{'title'};
@@ -1540,7 +1546,7 @@ sub buildHTTP {
 		} else {
 			$linkinfo{'linktitle'} = $setup{$pageref->{'children'}[0]}{'title'};
 		}
-		$paramref->{'singleChildLink'} = Slim::Web::HTTP::filltemplatefile('linklist.html',\%linkinfo);
+		$paramref->{'singleChildLink'} = ${Slim::Web::HTTP::filltemplatefile('linklist.html',\%linkinfo)};
 		
 	}
 
@@ -1787,7 +1793,7 @@ sub setup_changes_HTTP {
 		}
 		#force eval on the filltemplate call
 		if (defined($changedval) && $changemsg) {
-			$paramref->{'warning'} .= sprintf(Slim::Web::HTTP::filltemplate($changemsg,undef,1),$changedval);
+			$paramref->{'warning'} .= sprintf(${Slim::Web::HTTP::filltemplate($changemsg,undef,1)},$changedval);
 		}
 	}
 }
@@ -1819,7 +1825,7 @@ sub setup_rejects_HTTP {
 			$rejectmsg .= $settingsref->{$keyA}{'rejectAddlText'};
 		}
 		#force eval on the filltemplate call
-		$paramref->{'warning'} .= sprintf(Slim::Web::HTTP::filltemplate($rejectmsg,undef,1),$rejectref->{$key});
+		$paramref->{'warning'} .= sprintf(${Slim::Web::HTTP::filltemplate($rejectmsg,undef,1)},$rejectref->{$key});
 	}
 }
 
@@ -2172,19 +2178,6 @@ sub validateIsMP3Dir {
 		return (undef, "SETUP_BAD_DIRECTORY") ;
 	}
 }
-
-#sub validateITunes {
-#	my $val = shift;
-#	
-#	if ($val == 1) {
-#	} elsif ($val == 0) {
-#		Slim::Utils::Prefs::set('mp3dir', '');
-#	} else {
-#		$val = undef;
-#	}
-#	
-#	return $val;
-#}
 
 sub validateHasText {
 	my $val = shift; # value to validate

@@ -111,7 +111,6 @@ sub adjustHistoryLength {
 # Histlist fills variables for populating an html file. 
 sub hitlist {
 	my($client, $paramref) = @_;
-	my $output = "";
 	my @items = ();
 	my %list_form;
 	my $i;
@@ -137,7 +136,7 @@ sub hitlist {
 
 			$list_form{'skinOverride'} = $$paramref{'skinOverride'};
 			$list_form{'song_count'} = $items[$i][1];
-			$$paramref{'browse_list'} .= &Slim::Web::HTTP::filltemplatefile("hitlist_list.html", \%list_form);
+			$$paramref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("hitlist_list.html", \%list_form)};
 		}
 	}
 
@@ -146,7 +145,7 @@ sub hitlist {
 	$$paramref{'artist_count'} = Slim::Music::Info::artistCount([],[],[],[]);
 	$$paramref{'album_count'} = Slim::Music::Info::albumCount([],[],[],[]);
 
-	$output .= &Slim::Web::HTTP::filltemplatefile("hitlist.html", $paramref);
+	return Slim::Web::HTTP::filltemplatefile("hitlist.html", $paramref);
 }
 
 sub hitlist_bar {
@@ -156,25 +155,25 @@ sub hitlist_bar {
     my $returnval="";
     
     $paramRef->{'cell_full'} = (($curr*100)/$max) > 9;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $returnval .= ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef)};
     $paramRef->{'cell_full'} = (($curr*100)/$max) > 19;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $returnval .= ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef)};
     $paramRef->{'cell_full'} = (($curr*100)/$max) > 29;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $returnval .= ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef)};
     $paramRef->{'cell_full'} = (($curr*100)/$max) > 39;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $returnval .= ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef)};
     $paramRef->{'cell_full'} = (($curr*100)/$max) > 49;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $returnval .= ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef)};
     $paramRef->{'cell_full'} = (($curr*100)/$max) > 59;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $returnval .= ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef)};
     $paramRef->{'cell_full'} = (($curr*100)/$max) > 69;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $returnval .= ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef)};
     $paramRef->{'cell_full'} = (($curr*100)/$max) > 79;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $returnval .= ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef)};
     $paramRef->{'cell_full'} = (($curr*100)/$max) > 89;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $returnval .= ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef)};
     $paramRef->{'cell_full'} = ($curr == $max);
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $returnval .= ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef)};
     
     return $returnval;
 }

@@ -140,15 +140,13 @@ sub editplaylist
 		$list_form{'dir'} = $dir;
 		$list_form{'title'} = $title;
 
-		$playlist .= &Slim::Web::HTTP::filltemplatefile( "edit_playlist_list.html", \%list_form);
+		$playlist .= ${Slim::Web::HTTP::filltemplatefile( "edit_playlist_list.html", \%list_form)};
 
 		::idleStreams();
 	}
 
 	$$main_form_ref{'playlist'} = $playlist;
-	$output .= &Slim::Web::HTTP::filltemplatefile( "edit_playlist.html", $main_form_ref);
-
-	return $output;
+	return Slim::Web::HTTP::filltemplatefile( "edit_playlist.html", $main_form_ref);
 }
 
 1;

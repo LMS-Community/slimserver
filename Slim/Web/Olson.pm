@@ -16,7 +16,6 @@ my($NEWLINE) = "\012";
 
 sub olsonmain {
 	my($client, $paramsref) = @_;
-	my $output = "";
 	my @items = ();
 	my @songlist = ();
 
@@ -57,7 +56,7 @@ sub olsonmain {
 		$list_form{'genre'} = '';
 		$list_form{'player'} = $player;
 	        $list_form{'pwditem'} = string('BROWSE_BY_GENRE');
-		$$paramsref{'pwd_list'} .= &Slim::Web::HTTP::filltemplatefile("olsonmain_pwdlist.html", \%list_form);
+		$$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("olsonmain_pwdlist.html", \%list_form)};
 	      $$paramsref{'browseby'} = $genre;
 	};
 
@@ -90,7 +89,7 @@ sub olsonmain {
 					$lastAnchor = $anchor;
 				}
 				$itemnumber++;
-				$$paramsref{'browse_list'} .= &Slim::Web::HTTP::filltemplatefile("olson_tomain.html", \%list_form);
+				$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("olson_tomain.html", \%list_form)};
 			}
 		}
 	} elsif (!$artist) {
@@ -117,7 +116,7 @@ sub olsonmain {
 					$lastAnchor = $anchor;
 				}
 				$itemnumber++;
-				$$paramsref{'browse_list'} .= &Slim::Web::HTTP::filltemplatefile("olson_todetail.html", \%list_form);
+				$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("olson_todetail.html", \%list_form)};
 			}
 		}
 	} elsif (!$album) {
@@ -144,19 +143,18 @@ sub olsonmain {
 					$lastAnchor = $anchor;
 				}
 				$itemnumber++;
-				$$paramsref{'browse_list'} .= &Slim::Web::HTTP::filltemplatefile("olson_todetail.html", \%list_form);
+				$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("olson_todetail.html", \%list_form)};
 			}
 		}
 	}
 	$$paramsref{'descend'} = $descend;
 
-	$output .= &Slim::Web::HTTP::filltemplatefile("olsonmain.html", $paramsref);
+	return Slim::Web::HTTP::filltemplatefile("olsonmain.html", $paramsref);
 }
 
 
 sub olsondetail {
 	my($client, $paramsref) = @_;
-	my $output = "";
 	my @items = ();
 	my @songlist = ();
 
@@ -190,7 +188,7 @@ sub olsondetail {
 		$list_form{'genre'} = $genre;
 		$list_form{'player'} = $player;
   	        $list_form{'pwditem'} = "Back to " . $artist;
-		$$paramsref{'pwd_list'} .= &Slim::Web::HTTP::filltemplatefile("olsondetail_pwdlist.html", \%list_form);
+		$$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("olsondetail_pwdlist.html", \%list_form)};
 		$$paramsref{'browseby'} = $artist . ' / ' . $album;
 	} elsif (defined($artist) && $artist ne '' && $artist ne '*') {
 		$$paramsref{'browseby'} = $artist;
@@ -227,7 +225,7 @@ sub olsondetail {
 					$lastAnchor = $anchor;
 				}
 				$itemnumber++;
-				$$paramsref{'browse_list'} .= &Slim::Web::HTTP::filltemplatefile("olson_todetail.html", \%list_form);
+				$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("olson_todetail.html", \%list_form)};
 			}
 		}
 	} else {
@@ -247,13 +245,13 @@ sub olsondetail {
 				$list_form{'player'} = $player;
 				$list_form{'odd'}	  = ($itemnumber + 1) % 2;
 				$itemnumber++;
-				$$paramsref{'browse_list'} .= &Slim::Web::HTTP::filltemplatefile("olson_todetail.html", \%list_form);
+				$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("olson_todetail.html", \%list_form)};
 			}
 		}
 	}
 	$$paramsref{'descend'} = $descend;
 
-	$output .= &Slim::Web::HTTP::filltemplatefile("olsondetail.html", $paramsref);
+	return Slim::Web::HTTP::filltemplatefile("olsondetail.html", $paramsref);
 }
 
 sub addsongsuffix {
