@@ -4,6 +4,8 @@ use strict;
 use Carp;
 use Symbol;
 
+use IO::String;
+
 use vars qw(
 	@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION $REVISION
 	@mp3_genres %mp3_genres @winamp_genres %winamp_genres $try_harder
@@ -23,8 +25,8 @@ use vars qw(
 	all	=> [@EXPORT, @EXPORT_OK]
 );
 
-# $Id: Info.pm,v 1.1 2003/07/18 19:42:07 dean Exp $
-($REVISION) = ' $Revision: 1.1 $ ' =~ /\$Revision:\s+([^\s]+)/;
+# $Id: Info.pm,v 1.2 2003/08/12 20:50:35 dean Exp $
+($REVISION) = ' $Revision: 1.2 $ ' =~ /\$Revision:\s+([^\s]+)/;
 $VERSION = '1.01';
 
 =pod
@@ -566,7 +568,20 @@ sub _get_v2tag {
 		$hlen = 10;
 		$num = 4;
 	}
+	
+	$off = $v2->{ext_header_size} + 10;
+	my $end = $off + $v2->{tag_size};
 
+	seek $fh, 0, 0;
+	
+	read $fh, (my $wholetag), $end;
+	
+	if ($v2->{unsync}) {
+		my $hits = ($wholetag =~ s/\xFF\x00/\xFF/gs);
+	}
+	    
+	$fh = IO::String->new( $wholetag );
+	
 	$myseek = sub {
 		seek $fh, $off, 0;
 		read $fh, my($bytes), $hlen;
@@ -580,14 +595,13 @@ sub _get_v2tag {
 		return($id, $size);
 	};
 
-	$off = $v2->{ext_header_size} + 10;
-	my $end = $off + $v2->{tag_size};
 	while ($off < $end) {
 		my($id, $size) = &$myseek or last;
 		seek $fh, $off + $hlen, 0;
 		# djb - sanity check on size of tag.
 		last if ($size > $v2->{tag_size});
 		read $fh, my($bytes), $size - $hlen;
+
 		if (exists $h->{$id}) {
 			if (ref $h->{$id} eq 'ARRAY') {
 				push @{$h->{$id}}, $bytes;
@@ -642,7 +656,6 @@ sub get_mp3info {
 	my($off, $myseek, $byte, $eof, $h, $tot, $fh);
 
 	carp('No file specified'), return undef unless defined $file && $file ne '';
-
 	return undef unless -s $file;
 	if (ref $file) { # filehandle passed
 		$fh = $file;
@@ -872,14 +885,17 @@ sub _get_v2head {
 
 	# get flags
 	read $fh, $bytes, 1;
+	my @bits = split //, (unpack 'b8', $bytes);
 	if ($h->{major_version} == 2) {
-		@$h{qw[unsync compression]} =
-			(unpack 'b8', $bytes)[7, 6];
+		$h->{unsync} = $bits[7];
+		$h->{compression} = $bits[6];
 		$h->{ext_header} = 0;
 		$h->{experimental} = 0;
 	} else {
-		@$h{qw[unsync ext_header experimental]} =
-			(unpack 'b8', $bytes)[7, 6, 5];
+		@bits = split //, (unpack 'b8', $bytes);
+		$h->{unsync} = $bits[7];
+		$h->{header} = $bits[6];
+		$h->{experimental} = $bits[5];
 	}
 
 	# get ID3v2 tag length from bytes 7-10
