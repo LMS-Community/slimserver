@@ -1,6 +1,6 @@
 package Slim::Buttons::Search;
 
-# $Id: Search.pm,v 1.16 2005/01/09 05:59:53 dsully Exp $
+# $Id: Search.pm,v 1.17 2005/01/10 08:43:24 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -188,7 +188,6 @@ sub searchTerm {
 
 	# Bug #738
 	# Which should be the default? Old - which is substring always?
-	# XXX - need to actually implement the pref in the web UI.
 	if (Slim::Utils::Prefs::get('searchSubString')) {
 		$term = '*';
 	}

@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.162 2005/01/08 03:42:52 kdf Exp $
+# $Id: strings.txt,v 1.163 2005/01/10 08:43:23 dsully Exp $
 #
 # This tab-delimited file contains all the text strings used in SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -3728,6 +3728,18 @@ SETUP_ARTISTINALBUMSEARCH_DESC
 	NO	Kontrollerer om artistnavn skal tas med i album søk. Med dette valget aktivt, vil et søk på "bach" gi treff på "Bradenberg Concertos" av J.S Bach, selv om "bach" ikke finnes i albumnavnet.
 	PT	Esta opção controla se o nome do artista é usado numa procura por álbuns. Com esta opção ligada, uma procura, por exemplo, por "bach" irá encontrar "Brandenberg Concertos by J.S. Bach", mesmo "bach" não sendo parte do título.
 	SE	Kontrollerar om sökningar på album också skall inkludera artistnamn. Med detta aktiverat kommer albumsökningar på "bach" generera träffar även för "Bradenberg Concertos" av J.S Bach, även om "bach" inte finns med i albumnamnet.
+
+SETUP_SEARCHSUBSTRING
+	EN	Searching Behavior
+
+SETUP_SEARCHSUBSTRING_0
+	EN	Search term begins with..
+
+SETUP_SEARCHSUBSTRING_1
+	EN	Search term contains..
+
+SETUP_SEARCHSUBSTRING_DESC
+	EN	Controls whether a search will match beginnings of words, or match anywhere in the word.
 
 SETUP_COMPOSERINARTISTS
 	DE	Komponist, Gruppe und Orchester in Interpreten

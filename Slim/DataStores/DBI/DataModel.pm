@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DataModel;
 
-# $Id: DataModel.pm,v 1.13 2005/01/09 05:59:53 dsully Exp $
+# $Id: DataModel.pm,v 1.14 2005/01/10 08:43:24 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -241,7 +241,12 @@ sub getWhereValues {
 
 		for my $item (@$term) {
 
-			if (ref $item) {
+			if (ref $item eq 'ARRAY') {
+
+				# recurse if needed
+				push @values, getWhereValues($item);
+
+			} elsif (ref $item) {
 
 				push @values, $item->id();
 

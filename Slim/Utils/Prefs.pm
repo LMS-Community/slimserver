@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.100 2005/01/08 06:04:37 kdf Exp $
+# $Id: Prefs.pm,v 1.101 2005/01/10 08:43:24 dsully Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -196,6 +196,7 @@ my %DEFAULT = (
 	,'persistPlaylists'		=> 1
 	,'reshuffleOnRepeat'	=> 0
 	,'saveShuffled'			=> 0
+	,'searchSubString'		=> 0
 	,'maxBitrate'			=> 320	# Maximum bitrate for maximum quality.  MPEG-1 layer III bitrates (kbps): 32 40 48 56 64 80 96 112 128 160 192 224 256 320
 	,'savehistory'			=> 1
 	,'historylength'		=> 1000

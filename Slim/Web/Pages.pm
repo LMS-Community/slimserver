@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.119 2005/01/09 05:59:53 dsully Exp $
+# $Id: Pages.pm,v 1.120 2005/01/10 08:43:24 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1225,17 +1225,31 @@ sub search {
 			  '&type=' . ($params->{'type'} ? $params->{'type'} : ''). 
 			  '&query=' . Slim::Web::HTTP::escape($params->{'query'}) . '&';
 
-	# artist and album are similar enough - move them to their own function
-	if ($params->{'type'} eq 'artist' || $params->{'type'} eq 'album') {
+	my $searchStrings = searchStringSplit($query);
 
-		my $results = $ds->search($params->{'type'}, searchStringSplit($query));
+	# artist and album are similar enough - move them to their own function
+	if ($params->{'type'} eq 'artist') {
+
+		my $results = $ds->find('contributor', { "contributor.name" => $searchStrings }, 'name');
+
+		_searchArtistOrAlbum($player, $params, $results, $otherparams);
+
+	} elsif ($params->{'type'} eq 'album') {
+
+		my $results = $ds->find('album', { "album.title" => $searchStrings }, 'title');
 
 		_searchArtistOrAlbum($player, $params, $results, $otherparams);
 
 	} elsif ($params->{'type'} eq 'song') {
 
 		my $sortBy  = 'title';
-		my $results = $ds->search('track', searchStringSplit($query), $sortBy);
+		my %find    = ();
+
+		for my $string (@{$searchStrings}) {
+			push @{$find{'track.title'}}, [ $string ];
+		}
+
+		my $results = $ds->find('track', \%find, $sortBy);
 
 		$params->{'numresults'} = scalar @$results;
 
@@ -2684,7 +2698,19 @@ sub instant_mix {
 sub searchStringSplit {
 	my $search  = shift;
 
-	my @strings = map { "\%$_\%" } split(/\s+/, $search);
+	my @strings = ();
+
+	for my $string (split(/\s+/, $search)) {
+
+		if (Slim::Utils::Prefs::get('searchSubString')) {
+
+			push @strings, "\*$string\*";
+
+		} else {
+
+			push @strings, [ "$string\*", "\* $string\*" ];
+		}
+	}
 
 	return \@strings;
 }
