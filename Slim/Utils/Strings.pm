@@ -1,6 +1,6 @@
 package Slim::Utils::Strings;
 
-# $Id: Strings.pm,v 1.3 2003/07/31 19:10:57 dean Exp $
+# $Id: Strings.pm,v 1.4 2003/08/01 17:43:21 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -152,7 +152,7 @@ sub string {
 	my ($stringname) = @_;
 	
 	my $language = Slim::Utils::Prefs::get('language');
-
+	$stringname = uc($stringname);
 	if ($strings{$language.'_'.$stringname}) {
 		return $strings{$language.'_'.$stringname};
 	} else {
@@ -172,6 +172,7 @@ sub string {
 sub stringExists {
 	my $stringname = shift;
 	if (!defined $stringname) {return 0;}
+	$stringname = uc($stringname);
 	my $language = Slim::Utils::Prefs::get('language');
 	return ($strings{$language.'_'.$stringname} || $strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname}) ? 1 : 0;
 }
