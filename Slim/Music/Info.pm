@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.101 2004/04/20 17:41:58 daniel Exp $
+# $Id: Info.pm,v 1.102 2004/04/21 22:21:54 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -127,7 +127,7 @@ my %caseArticlesMemoize = ();
 my %infoCacheItemsIndex;
 
 my $dbname;
-my $DBVERSION = 4;
+my $DBVERSION = 6;
 
 my %artworkCache = ();
 my $artworkDir;
@@ -145,10 +145,12 @@ if (defined @Storable::EXPORT) {
 				my $cacheToStore = {
 					'infoCache'           => \%infoCache,
 					'genreCache'          => \%genreCache,
+					'artworkCache'        => \%artworkCache,
 					'caseCache'           => \%caseCache,
 					'sortCache'           => \%sortCache,
 					'songCountMemoize'    => \%songCountMemoize,
 					'artistCountMemoize'  => \%artistCountMemoize,
+					'artworkCache'        => \%artworkCache,
 					'albumCountMemoize'   => \%albumCountMemoize,
 					'genreCountMemoize'   => \%genreCountMemoize,
 					'caseArticlesMemoize' => \%caseArticlesMemoize,
@@ -204,8 +206,10 @@ if (defined @Storable::EXPORT) {
 
 				%infoCache           = %{$cacheToRead->{'infoCache'}};
 				%genreCache          = %{$cacheToRead->{'genreCache'}};
+				%artworkCache        = %{$cacheToRead->{'artworkCache'}};
 				%caseCache           = %{$cacheToRead->{'caseCache'}};
-				%sortCache           = %{$cacheToRead->{'sortCache'}}; 
+				%sortCache           = %{$cacheToRead->{'sortCache'}};
+				%artworkCache        = %{$cacheToRead->{'artworkCache'}};
 				%songCountMemoize    = %{$cacheToRead->{'songCountMemoize'}};
 				%artistCountMemoize  = %{$cacheToRead->{'artistCountMemoize'}};
 				%albumCountMemoize   = %{$cacheToRead->{'albumCountMemoize'}};
@@ -456,7 +460,7 @@ sub clearCache {
 		$::d_info && Slim::Utils::Misc::msg("cleared $item from cache\n");
 	} else {
 		$::d_info && Slim::Utils::Misc::msg("clearing whole cache\n");
-		if (!Slim::Utils::Prefs::get('usetagdatabase')) {
+		if (Slim::Music::iTunes::useiTunesLibrary() || !Slim::Utils::Prefs::get('usetagdatabase')) {
 			%infoCache = ();
 		}
 		# a hierarchical cache of genre->artist->album->song based on ID3 information
@@ -681,7 +685,7 @@ sub updateCacheEntry {
 	return unless defined $url;
 	return unless defined $cacheEntryHash;
 
-	if (Slim::Utils::Prefs::get('useinfocache')) {
+	if (Slim::Utils::Prefs::get('useinfocache') || Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic()) {
 		if (exists($infoCache{$url})) {
 			#my %merged = (%{cacheEntry($url)}, %{$cacheEntryHash});
 			#$cacheEntryHash = \%merged;
@@ -708,7 +712,7 @@ sub updateCacheEntry {
 		$dbCacheDirty=1;
 				
 		my $type = typeFromSuffix($url);
-		if ($newsong && isSong($url,$type) && !isHTTPURL($url)  && -e $url) { 
+		if ($newsong && isSong($url,$type) && !isHTTPURL($url) && (-e $url || Slim::Music::iTunes::useiTunesLibrary())) { 
 		
 			$cacheEntryHash=cacheEntry($url);
 			updateGenreCache($url, $cacheEntryHash);
