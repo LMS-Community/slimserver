@@ -8679,4 +8679,5 @@ ANY_TYPE
 	EN	Any File Format
 
 WMA_NO_CONVERT_CMD
+	DE	Fehler beim WMA Konvertieren - bitte Dateityp überprüfen
 	EN	WMA convert error - check file types
