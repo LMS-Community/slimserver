@@ -108,7 +108,8 @@ sub disablePlugin {
 }
 
 sub initPlugin {
-	return 1 if $initialized;
+	return 1 if $initialized; 
+	return 0 if Slim::Utils::OSDetect::OS() ne 'win';
 	
 	checkDefaults();
 	
