@@ -1,5 +1,5 @@
 # RssNews Ticker v1.0
-# $Id: RssNews.pm,v 1.8 2004/11/23 18:15:36 dave Exp $
+# $Id: RssNews.pm,v 1.9 2004/11/23 22:26:16 dave Exp $
 # Copyright (c) 2004 Slim Devices, Inc. (www.slimdevices.com)
 
 # Based on BBCTicker 1.3 which had this copyright...
@@ -85,7 +85,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Prefs;
 
-$VERSION = substr(q$Revision: 1.8 $,10);
+$VERSION = substr(q$Revision: 1.9 $,10);
 my %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
@@ -330,7 +330,7 @@ sub unescape {
 sub trim {
 	my $data = shift;
 	return '' unless(defined($data));
-	use utf8; # required for 5.6
+	use utf8; # important for regexps that follow
 
 	$data =~ s/\s+/ /g; # condense multiple spaces
 	$data =~ s/^\s//g; # remove leading space
@@ -344,19 +344,22 @@ sub trim {
 sub unescapeAndTrim {
 	my $data = shift;
 	return '' unless(defined($data));
-	use utf8; # required for 5.6
+	use utf8; # important for regexps that follow
 	my $olddata = $data;
-
+	
 	$data = unescape($data);
 
 	$data = trim($data);
-
+	
 	# strip all markup tags
 	$data =~ s/<[a-zA-Z\/][^>]*>//gi;
-	
-	utf8::decode($data);
-	#$::d_plugins && msg("old text: \"$olddata\"\n\n");
-	#$::d_plugins && msg("new text: \"$data\"\n\n\n");
+
+	# apparently utf8::decode is not available in perl 5.6.
+	# (Some characters may not appear correctly in perl < 5.8 !)
+	if ($] >= 5.008) {
+		utf8::decode($data);
+	  }
+
 	return $data;
 }
 
@@ -810,7 +813,7 @@ sub mainModeCallback {
 		
 		if ($thenews{$feedname} &&
 			$thenews{$feedname}->{title} &&
-			@{$thenews{$feedname}->{item}}) {
+			$thenews{$feedname}->{item}) {
             Slim::Buttons::Common::pushModeLeft($client, 
                                                 'PLUGIN.RssNews.headlines',
                                                 { feed => unescapeAndTrim($thenews{$feedname}->{title}),
