@@ -1,6 +1,6 @@
 package Slim::Formats::Movie;
 
-# $Id: Movie.pm,v 1.10 2004/04/22 05:47:11 kdf Exp $
+# $Id: Movie.pm,v 1.11 2004/05/03 19:23:59 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -51,8 +51,10 @@ sub getTag {
 	}
 
 	$tags->{'SIZE'} = -s $file;
-	$tags->{'SECS'}   = ($tags->{'SIZE'}) * 8 / 128000;  # todo: fix this!
-	$tags->{'BITRATE'} = 128000;
+	if ($tags->{'TIMESCALE'}) {
+		$tags->{'SECS'} = $tags->{'DURATION'} / $tags->{'TIMESCALE'};
+		$tags->{'BITRATE'} = $tags->{'SIZE'} * 8 / $tags->{'SECS'};
+	}
 	$tags->{'OFFSET'} = 0;
 	
 	# clean up binary tags

@@ -1,6 +1,6 @@
 package QuickTime::Movie;
 
-# $Id: Movie.pm,v 1.3 2004/03/24 18:42:40 dean Exp $
+# $Id: Movie.pm,v 1.4 2004/05/03 19:23:59 dean Exp $
 
 use strict;
 use base qw(Exporter);
@@ -49,87 +49,121 @@ sub readUserData {
 				if (DEBUG) {
 					print "    moov atom: $tag [ends: $moovends]\n";
 				}
-		
-					# parse the data here if we like the tag
-					if ($tag eq 'udta') {
-						while(1) {
-							my ($tag, $udtaends) = atom($moviefile);
-								
-							last if !defined($tag);
-							last if $udtaends > $length;
-							
-							if (DEBUG) {
-								print "        udta atom: $tag [ends: $udtaends]\n";
-							}
-
-							# parse the data here if we like the tag
-							if ($tag eq 'meta') {
-								seek $moviefile, 4, 1;
-								while(1) {
-									my ($tag, $metaends) = atom($moviefile);
-										
-									last if !defined($tag);
-									last if $metaends > $length;
-									
-									if (DEBUG) {
-										print "            meta atom: $tag [ends: $metaends]\n";
-									}
-									# parse the data here if we like the tag
-									if ($tag eq 'ilst') {
-										while(1) {
-											my ($tag, $ilstends) = atom($moviefile);
-												
-											last if !defined($tag);
-											last if $ilstends > $length;
-											
-											my ($payload, $dataends) = atom($moviefile);
-											
-											if ($payload eq 'data') {
-												my $data;
-												my $len =  $dataends - tell($moviefile);
-												read $moviefile, $data, $len;
-											
-												my ($long1, $long2, $string) = unpack('NNa*', $data);
-
-												if (DEBUG) {
-													print "                payload atom: $tag [length: " . length($string) . " calculated: $len]: $long1 $long2\n";
-													print " $string\n" if (length($string) < 1000)
-												}
-
-												$movieInfo->{$tag} = $string;
-											} else {
-												if (DEBUG) {
-													print "                skipping atom: $tag\n";
-												}
-											}
-											
-											# move on to the next atom
-											seek $moviefile, $ilstends, 0;
-											
-											last if tell $moviefile >= $metaends;
-										}		
-									}
-							
-									# move on to the next atom
-									seek $moviefile, $metaends, 0;
-									
-									last if tell $moviefile >= $udtaends;
-								}		
-							}
-
-
+				if ($tag eq 'mvhd') {
+					my $mvhd;
+					my $data;
+					my $len =  $moovends - tell($moviefile);
+					read $moviefile, $mvhd, $len;
 					
-							# move on to the next atom
-							seek $moviefile, $udtaends, 0;
-							
-							last if tell $moviefile >= $moovends;
-						}		
+					my ($version, $flags, $creationtime, $modtime, $timescale, 
+					$duration, $rate, $reserved, $matrix, $previewtime, $previewduration, $postertime,
+					$selectiontime, $selectionduration, $currenttime, $nexttrackid) = 
+						unpack('c a3 N N N N N n c10 c36 N N N N N N N', $mvhd);
+
+					$movieInfo->{'VERSION'} = $version;
+					$movieInfo->{'FLAGS'} = $flags;
+					$movieInfo->{'CREATIONTIME'} = $creationtime;
+					$movieInfo->{'MODTIME'} = $modtime;
+					$movieInfo->{'TIMESCALE'} = $timescale;
+					$movieInfo->{'DURATION'} = $duration;
+					$movieInfo->{'RATE'} = $rate;
+					$movieInfo->{'RESERVED'} = $reserved;
+					$movieInfo->{'MATRIX'} = $matrix;
+					$movieInfo->{'PREVIEWTIME'} = $previewtime;
+					$movieInfo->{'PREVIEWDURATION'} = $previewduration;
+					$movieInfo->{'POSTERTIME'} = $postertime;
+					$movieInfo->{'SELECTIONTIME'} = $selectiontime;
+					$movieInfo->{'SELECTIONDURATION'} = $selectionduration;
+					$movieInfo->{'CURRENTTIME'} = $currenttime;
+					$movieInfo->{'NEXTTRAKID'} = $nexttrackid;
+					if (DEBUG) {
+						foreach (keys %$movieInfo) {
+							print "$_ " . $movieInfo->{$_} . "\n";	
+						}
 					}
-		
-				# move on to the next atom
-				seek $moviefile, $moovends, 0;
+					
+				}
 				
-				last if tell $moviefile >= $ends;
+				# parse the data here if we like the tag
+				if ($tag eq 'udta') {
+					while(1) {
+						my ($tag, $udtaends) = atom($moviefile);
+							
+						last if !defined($tag);
+						last if $udtaends > $length;
+						
+						if (DEBUG) {
+							print "        udta atom: $tag [ends: $udtaends]\n";
+						}
+
+						# parse the data here if we like the tag
+						if ($tag eq 'meta') {
+							seek $moviefile, 4, 1;
+							while(1) {
+								my ($tag, $metaends) = atom($moviefile);
+									
+								last if !defined($tag);
+								last if $metaends > $length;
+								
+								if (DEBUG) {
+									print "            meta atom: $tag [ends: $metaends]\n";
+								}
+								# parse the data here if we like the tag
+								if ($tag eq 'ilst') {
+									while(1) {
+										my ($tag, $ilstends) = atom($moviefile);
+											
+										last if !defined($tag);
+										last if $ilstends > $length;
+										
+										my ($payload, $dataends) = atom($moviefile);
+										
+										if ($payload eq 'data') {
+											my $data;
+											my $len =  $dataends - tell($moviefile);
+											read $moviefile, $data, $len;
+										
+											my ($long1, $long2, $string) = unpack('NNa*', $data);
+
+											if (DEBUG) {
+												print "                payload atom: $tag [length: " . length($string) . " calculated: $len]: $long1 $long2\n";
+												print " $string\n" if (length($string) < 1000)
+											}
+
+											$movieInfo->{$tag} = $string;
+										} else {
+											if (DEBUG) {
+												print "                skipping atom: $tag\n";
+											}
+										}
+										
+										# move on to the next atom
+										seek $moviefile, $ilstends, 0;
+										
+										last if tell $moviefile >= $metaends;
+									}		
+								}
+						
+								# move on to the next atom
+								seek $moviefile, $metaends, 0;
+								
+								last if tell $moviefile >= $udtaends;
+							}		
+						}
+
+
+				
+						# move on to the next atom
+						seek $moviefile, $udtaends, 0;
+						
+						last if tell $moviefile >= $moovends;
+					}		
+				}
+	
+			# move on to the next atom
+			seek $moviefile, $moovends, 0;
+			
+			last if tell $moviefile >= $ends;
 			}		
 		}
 		
