@@ -60,8 +60,6 @@ sub volume {
 	# optimal, but this is better.
 	my $level = sprintf('%X', 0xFFFFF - 0x7FFFF * $volume * $volume);
 
-	print $client->decoder."\n";
-
 	if ($client->decoder eq 'mas3507d') {
 		
 		Slim::Networking::Sendclient::i2c($client,

@@ -29,7 +29,7 @@ sub vfd {
 	} else {
 		assert($client->model eq 'squeezebox');
 		assert($client->tcpsock);
-		$frame = 'l                 '.$data;
+		$frame = 'l   '.$data;
 		my $len = pack('n',length($frame));
 		$::d_protocol && msg ("sending squeezebox frame, length ".length($frame)."\n");
 		$frame = $len.$frame;
@@ -63,7 +63,10 @@ sub i2c {
 		send($client->udpsock, '2                 '.$data, 0, $client->paddr);
 	} else {
 		assert($client->model eq 'squeezebox');
-		#TODO
+		my $frame='2   '.$data;
+		my $len = pack('n', length($frame));
+		$frame=$len.$frame;
+		$client->tcpsock->syswrite($frame, length($frame));
 	}
 }
 

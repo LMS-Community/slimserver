@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.6 2003/08/03 04:54:58 sadams Exp $
+# $Id: Slimproto.pm,v 1.7 2003/08/03 18:49:13 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -261,7 +261,7 @@ sub process_slimproto_frame {
 
 	my $len = length($data);
 
-	print "Got Slimptoto frame, op $op, length $len, data $data\n";
+	$::d_protocol && msg("Got Slimptoto frame, op $op, length $len\n");
 
 	if ($op eq 'HELO') {
 		if ($len != 8) {
