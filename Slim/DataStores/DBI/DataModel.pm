@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DataModel;
 
-# $Id: DataModel.pm,v 1.6 2004/12/17 20:33:03 dsully Exp $
+# $Id: DataModel.pm,v 1.7 2004/12/18 18:24:02 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -38,23 +38,40 @@ sub executeSQLFile {
 		return;
 	};
 
-	my $statement = '';
+	my $statement   = '';
+	my $inStatement = 0;
 
 	for my $line (<$fh>) {
-		if ($line =~ /^\s$/ && $statement) {
-			$dbh->do($statement) or Slim::Utils::Misc::msg("Couldn't execute SQL statement: $statement\n");
-			$statement = '';
-		} else {
-			$statement .= $line;
-		}
-	}
+		chomp $line;
 
-	if ($statement) {
-		$dbh->do($statement) or Slim::Utils::Misc::msg("Couldn't execute SQL statement: $statement\n");
+		# skip and strip comments & empty lines
+		$line =~ s/\s*--.*?$//o;
+		$line =~ s/^\s*//o;
+
+		next if $line =~ /^--/;
+		next if $line =~ /^\s*$/;
+
+		if ($line =~ /^(?:CREATE|SET|INSERT|UPDATE|DROP|SELECT)/oi) {
+			$inStatement = 1;
+		}
+
+		if ($line =~ /;/ && $inStatement) {
+
+			$statement .= $line;
+
+			$::d_sql && Slim::Utils::Misc::msg("Executing SQL statement: [$statement]\n");
+
+			$dbh->do($statement) or Slim::Utils::Misc::msg("Couldn't execute SQL statement: [$statement]\n");
+
+			$statement   = '';
+			$inStatement = 0;
+			next;
+		}
+
+		$statement .= $line if $inStatement;
 	}
 
 	$dbh->commit();
-
 	close $fh;
 }
 
@@ -199,6 +216,11 @@ sub searchPattern {
 	my $sql  = SQL::Abstract->new(cmp => 'like');
 
 	my ($stmt, @bind) = $sql->select($table, 'id', $where, $order);
+
+	if ($::d_sql) {
+		Slim::Utils::Misc::msg("Running SQL query: [$stmt]\n");
+		Slim::Utils::Misc::msg(sprintf("Bind arguments: [%s]\n\n", join(', ', @bind))) if scalar @bind;
+	}
 
  	my $sth = db_Main()->prepare_cached($stmt);
 
@@ -409,7 +431,7 @@ sub find {
 	if ($::d_sql) {
 		Slim::Utils::Misc::bt();
 		Slim::Utils::Misc::msg("Running SQL query: [$sql]\n");
-		Slim::Utils::Misc::msg(sprintf("Bind arguments: [%s]\n\n", join(', ', @bind)));
+		Slim::Utils::Misc::msg(sprintf("Bind arguments: [%s]\n\n", join(', ', @bind))) if scalar @bind;
 	}
 
 	# XXX - wrap in eval?
