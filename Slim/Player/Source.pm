@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.62 2004/02/18 18:36:59 dean Exp $
+# $Id: Source.pm,v 1.63 2004/02/25 00:39:41 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -179,7 +179,9 @@ sub songTime {
 	if ($realpos < 0) {
 		$::d_source && msg("Negative position calculated, we are still playing out the previous song.\n");	
 		$::d_source && msg("realpos $realpos calcuated from bytes received: " . 
-			$client->bytesReceived() . " minus buffer fullness: " . $client->bufferFullness() . "\n");
+			$client->bytesReceived() . 
+			" minus bytes offset: " . $client->bytesReceivedOffset() . 
+			" minus buffer fullness: " . $client->bufferFullness() . "\n");
 
 		$realpos = 0;
 	}
