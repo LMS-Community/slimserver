@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.14 2004/05/13 19:11:52 dean Exp $
+# $Id: Parse.pm,v 1.15 2004/05/14 15:04:19 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -83,7 +83,6 @@ sub M3U {
 		$entry =~ s|$LF||g;
 		
 		$entry = Slim::Utils::Misc::fixPath($entry, $m3udir);
-		$entry = Slim::Utils::Misc::fileURLFromPath($entry);
 		
 		$::d_parse && msg("    entry: $entry\n");
 
