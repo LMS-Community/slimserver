@@ -490,7 +490,12 @@ sub find {
 
 						for my $value (@values) {
 
-							push @{$whereHash{$searchFieldMap{$key}}}, { 'like', $value };
+							# Don't bother with a like if there's no wildcard.
+							if ($value =~ /%/) {
+								push @{$whereHash{$searchFieldMap{$key}}}, { 'like', $value };
+							} else {
+								push @{$whereHash{$searchFieldMap{$key}}}, { '=', $value };
+							}
 						}
 
 					} else {
@@ -504,7 +509,12 @@ sub find {
 					# check to see if a LIKE compare is needed.
 					if ($cmpFields{$key}) {
 
-						$whereHash{$searchFieldMap{$key}} = { 'like', $values[0] };
+						# Don't bother with a like if there's no wildcard.
+						if ($values[0] =~ /%/) {
+							$whereHash{$searchFieldMap{$key}} = { 'like', $values[0] };
+						} else {
+							$whereHash{$searchFieldMap{$key}} = $values[0];
+						}
 
 					} else {
 

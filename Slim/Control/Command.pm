@@ -739,7 +739,11 @@ sub execute {
 			# Query for the passed params
 			if ($p1 =~ /^(play|load|add|insert|delete)album$/) {
 
-				if (Slim::Buttons::BrowseID3::specified($p2)) {
+				# XXX - FIXME - searching for genre.name with
+				# anything else kills the database. As a
+				# stop-gap, don't add the search for
+				# genre.name if we have a more specific query.
+				if (Slim::Buttons::BrowseID3::specified($p2) && !Slim::Buttons::BrowseID3::specified($p3)) {
 					$find->{'genre.name'} = singletonRef($p2);
 				}
 
