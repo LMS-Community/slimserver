@@ -749,7 +749,7 @@ sub gotoNext {
 		# here's where we decide whether to start the next song in a new stream after playing out
 		# the current song or to just continue streaming
 		if (($client->playmode() eq 'play') && 
-			(($oldstreamformat ne $newstreamformat) || Slim::Player::Sync::isSynced($client) || $client->maxTransitionDuration()) ||
+			(($oldstreamformat ne $newstreamformat) || Slim::Player::Sync::isSynced($client) || $client->isa("Slim::Player::Squeezebox2")) ||
 			$client->rate() != 1) {
 
 			$::d_source && msg(
