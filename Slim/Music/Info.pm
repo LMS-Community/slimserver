@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.141 2004/08/17 22:46:30 dean Exp $
+# $Id: Info.pm,v 1.142 2004/08/21 00:54:11 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2128,9 +2128,6 @@ sub readTags {
 				$::d_info && Slim::Utils::Misc::msg("readTags: calculating header $header, startbytes $startbytes and endbytes $endbytes\n");
 			}
 
-			# cache the content type
-			$tempCacheEntry->{'CT'} = $type;
-
 			if (! Slim::Music::iTunes::useiTunesLibrary()) {
 				# Check for Cover Artwork, only if not already present.
 				if (exists $tempCacheEntry->{'COVER'} || exists $tempCacheEntry->{'THUMB'}) {
@@ -2140,7 +2137,7 @@ sub readTags {
 					$tempCacheEntry->{'TAG'} = 1;
 					$tempCacheEntry->{'VALID'} = 1;
 					# cache the content type
-					$tempCacheEntry->{'CT'} = $type;
+					$tempCacheEntry->{'CT'} = $type unless defined $tempCacheEntry->{'CT'};
 					#update the cache so we can use readCoverArt without recursion.
 					updateCacheEntry($file, $tempCacheEntry);
 					# Look for Cover Art and cache location
@@ -2181,9 +2178,7 @@ sub readTags {
 		}
 	}
 	
-	if (!defined($tempCacheEntry->{'CT'})) {
-		$tempCacheEntry->{'CT'} = $type;
-	}
+	$tempCacheEntry->{'CT'} = $type unless defined $tempCacheEntry->{'CT'};
 	
 			
 	# note that we've read in the tags.
@@ -2426,7 +2421,7 @@ sub readCoverArtFiles {
 	}
 	if (defined($artwork) && $artwork =~ /^%(.*?)(\..*?){0,1}$/) {
 		my $suffix = $2 ? $2 : ".jpg";
-		$artwork = infoFormat(Slim::Utils::Misc::fileURLFromPath($file), $1)."$suffix";
+		$artwork = infoFormat(Slim::Utils::Misc::fileURLFromPath($fullpath), $1)."$suffix";
 		my $artworktype = $image eq 'thumb' ? "Thumbnail" : "Cover";
 		$::d_artwork && Slim::Utils::Misc::msg("Variable $artworktype: $artwork from $1\n");
 		my $artpath = catdir(@components, $artwork);
