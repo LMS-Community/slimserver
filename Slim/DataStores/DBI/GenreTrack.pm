@@ -61,7 +61,8 @@ sub add {
 
 			unless ($_cache{$genreSub}) {
 
-				$genreObj = Slim::DataStores::DBI::Genre->create({ 
+				# Do find_or_create - as the cache might have expired.
+				$genreObj = Slim::DataStores::DBI::Genre->find_or_create({ 
 					name     => ucfirst($genreSub),
 					namesort => $namesort,
 				});
