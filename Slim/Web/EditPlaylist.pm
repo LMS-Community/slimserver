@@ -131,10 +131,10 @@ sub editplaylist
 	@items = Slim::Formats::Parse::PLS( $filehandle);
 	close $filehandle;
 
+	%list_form = %$main_form_ref;
 	foreach $item (@items)
 	{
 		my $title = Slim::Music::Info::title( $item);
-		%list_form = ();
 		$list_form{'num'} = $count++;
 		$list_form{'odd'} = $count % 2;
 		$list_form{'dir'} = $dir;

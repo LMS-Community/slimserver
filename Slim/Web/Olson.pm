@@ -49,7 +49,7 @@ sub olsonmain {
 
 	if (defined($genre) && $genre ne '*' && 
 	    defined($artist) && $artist ne '*') {
-		%list_form=();
+		%list_form=%$paramsref;
 		$list_form{'song'} = '';
 		$list_form{'artist'} = '';
 		$list_form{'album'} = '';
@@ -71,7 +71,7 @@ sub olsonmain {
 			my ($start,$end) = Slim::Web::Pages::alphapagebar(\@items,$$paramsref{'path'},$otherparams,\$$paramsref{'start'},\$$paramsref{'browselist_pagebar'},0);
 			$descend = 'true';
 			foreach my $item ( @items[$start..$end] ) {
-				%list_form=();
+				%list_form=%$paramsref;
 				$list_form{'genre'}	  = $item;
 				$list_form{'artist'}  = $artist;
 				$list_form{'album'}	  = $album;
@@ -98,7 +98,7 @@ sub olsonmain {
 			my ($start,$end) = Slim::Web::Pages::alphapagebar(\@items,$$paramsref{'path'},$otherparams,\$$paramsref{'start'},\$$paramsref{'browselist_pagebar'},1);
 			$descend = 'true';
 			foreach my $item ( @items[$start..$end] ) {
-				%list_form=();
+				%list_form=%$paramsref;
 				$list_form{'genre'}	  = $genre;
 				$list_form{'artist'}  = $item;
 				$list_form{'album'}	  = $album;
@@ -125,7 +125,7 @@ sub olsonmain {
 			my ($start,$end) = Slim::Web::Pages::alphapagebar(\@items,$$paramsref{'path'},$otherparams,\$$paramsref{'start'},\$$paramsref{'browselist_pagebar'},1);
 			$descend = 'true';
 			foreach my $item ( @items[$start..$end] ) {
-				%list_form=();
+				%list_form=%$paramsref;
 				$list_form{'genre'}	  = $genre;
 				$list_form{'artist'}  = $artist;
 				$list_form{'album'}	  = $item;
@@ -181,13 +181,13 @@ sub olsondetail {
 
 	if (defined($artist) && $artist ne '' &&
 	    $artist ne '*' && defined($album) && $album ne '') {
-		%list_form=();
+		%list_form=%$paramsref;
 		$list_form{'song'} = '';
 		$list_form{'artist'} = $artist;
 		$list_form{'album'} = '';
 		$list_form{'genre'} = $genre;
 		$list_form{'player'} = $player;
-  	        $list_form{'pwditem'} = "Back to " . $artist;
+  	    $list_form{'pwditem'} = "Back to " . $artist;
 		$$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("olsondetail_pwdlist.html", \%list_form)};
 		$$paramsref{'browseby'} = $artist . ' / ' . $album;
 	} elsif (defined($artist) && $artist ne '' && $artist ne '*') {
@@ -207,7 +207,7 @@ sub olsondetail {
 			my ($start,$end) = Slim::Web::Pages::alphapagebar(\@items,$$paramsref{'path'},$otherparams,\$$paramsref{'start'},\$$paramsref{'browselist_pagebar'},1);
 			$descend = 'true';
 			foreach my $item ( @items[$start..$end] ) {
-				%list_form=();
+				%list_form=%$paramsref;
 				$list_form{'genre'}	  = $genre;
 				$list_form{'artist'}  = $artist;
 				$list_form{'album'}	  = $item;
@@ -234,7 +234,7 @@ sub olsondetail {
 			my ($start,$end) = Slim::Web::Pages::pagebar(scalar(@items),$$paramsref{'path'},0,$otherparams,\$$paramsref{'start'},\$$paramsref{'browselist_header'},\$$paramsref{'browselist_pagebar'},0);
 			$descend = undef;
 			foreach my $item ( @items[$start..$end] ) {
-				%list_form=();
+				%list_form=%$paramsref;
 				my $title = Slim::Music::Info::standardTitle(undef, $item);
 				$list_form{'genre'}	  = Slim::Music::Info::genre($item);
 				$list_form{'artist'}  = Slim::Music::Info::artist($item);

@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.42 2004/02/11 09:46:56 kdf Exp $
+# $Id: Pages.pm,v 1.43 2004/02/12 03:19:51 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -17,7 +17,7 @@ my($NEWLINE) = "\012";
 
 sub home {
 	my($client, $paramsref) = @_;
-	my %listform;
+	my %listform = %$paramsref;
 
 	if (defined($$paramsref{'forget'})) {
 		Slim::Player::Client::forgetClient($$paramsref{'forget'});
@@ -178,7 +178,8 @@ sub browser {
 	#
 	# Make separate links for each component of the pwd
 	#
-	%list_form=();
+	%list_form= %$paramsref;
+	
 	$list_form{'player'} = $current_player;
 	$list_form{'myClientState'} = $client;
 	$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
@@ -304,7 +305,7 @@ sub browser_addtolist_done {
 			
 			# don't display and old unsaved playlist
 			if ($item =~ /__current.m3u$/) { next; }
-			%list_form=();
+			%list_form=%$paramsref;
 			#
 			# There are different templates for directories and playlist items:
 			#
@@ -339,7 +340,7 @@ sub browser_addtolist_done {
 			$list_form{'mixable_not_descend'} = Slim::Music::Info::isSongMixable($item);
 			addStats($paramsref, [],[],[],[]);
  						
-			my $anchor = anchor($list_form{'title'},1);
+			my $anchor = anchor(Slim::Music::Info::getSortName($list_form{'title'}),1);
 			if ($lastAnchor ne $anchor) {
 				$list_form{'anchor'}  = $anchor;
 				$lastAnchor = $anchor;
@@ -563,7 +564,7 @@ sub buildPlaylist {
 	my $buildItemsPerPass = Slim::Utils::Prefs::get('buildItemsPerPass');
 	my $starttime = Time::HiRes::time();
 	while ($$listBuild{'item'} < ($$listBuild{'end'} + 1) && $itemCount < $buildItemsPerPass) {
-		%list_form = ();
+		%list_form = %$main_form_ref;
 		$list_form{'myClientState'} = $client;
 		$list_form{'num'}=$$listBuild{'item'};
 		$list_form{'odd'} = ($$listBuild{'item'} + $$listBuild{'offset'}) % 2;
@@ -645,7 +646,7 @@ sub search {
 								,$$paramsref{'itemsPerPage'});
 				}
 				foreach my $item ( @searchresults[$start..$end] ) {
-					my %list_form=();
+					my %list_form=%$paramsref;
 					$list_form{'genre'}	  = '*';
 					$list_form{'artist'}  = $item;
 					$list_form{'album'}	  = '';
@@ -655,7 +656,7 @@ sub search {
 					$list_form{'player'} = $player;
 					$list_form{'odd'}	  = ($itemnumber + 1) % 2;
 					$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
-					my $anchor = anchor($item, 1);
+					my $anchor = anchor(Slim::Music::Info::getSortName($item), 1);
 					if ($lastAnchor ne $anchor) {
 						$list_form{'anchor'}  = $anchor;
 						$lastAnchor = $anchor;
@@ -690,7 +691,7 @@ sub search {
 								,$$paramsref{'itemsPerPage'});
 				}
 				foreach my $item ( @searchresults[$start..$end] ) {
-					my %list_form=();
+					my %list_form=%$paramsref;
 					$list_form{'genre'}	  = '*';
 					$list_form{'artist'}  = '*';
 					$list_form{'album'}	  = $item;
@@ -700,7 +701,7 @@ sub search {
 					$list_form{'player'} = $player;
 					$list_form{'odd'}	  = ($itemnumber + 1) % 2;
 					$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
-					my $anchor = anchor($item,1);
+					my $anchor = anchor(Slim::Music::Info::getSortName($item),1);
 					if ($lastAnchor ne $anchor) {
 						$list_form{'anchor'}  = $anchor;
 						$lastAnchor = $anchor;
@@ -735,7 +736,7 @@ sub search {
 								,$$paramsref{'itemsPerPage'});
 				}
 				foreach my $item ( @searchresults[$start..$end] ) {
-					my %list_form=();
+					my %list_form=%$paramsref;
 					$list_form{'genre'}	  = Slim::Music::Info::genre($item);
 					$list_form{'artist'}  = Slim::Music::Info::artist($item);
 					$list_form{'album'}	  = Slim::Music::Info::album($item);
@@ -1063,7 +1064,7 @@ sub browseid3 {
 			$descend = 'true';
 			
 			if (scalar(@items) > 1) {
-				%list_form=();
+				%list_form=%$paramsref;
 				if ($$paramsref{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
 					$list_form{'album_count'}	= Slim::Music::Info::albumCount(['*'],[],[],[]);
 					$list_form{'song_count'}	= Slim::Music::Info::songCount(['*'],[],[],[]);
@@ -1082,7 +1083,7 @@ sub browseid3 {
 			}
 			
 			foreach my $item ( @items[$start..$end] ) {
-				%list_form=();
+				%list_form=%$paramsref;
 				$list_form{'genre'}	  = $item;
 				if ($$paramsref{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
 					$list_form{'artist_count'}	= Slim::Music::Info::artistCount([$item],[],[],[]);
@@ -1098,7 +1099,7 @@ sub browseid3 {
 				$list_form{'odd'}	  = ($itemnumber + 1) % 2;
 				$list_form{'mixable_descend'} = Slim::Music::Info::isGenreMixable($item) && ($descend eq "true");
 				$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
-				my $anchor = anchor($item);
+				my $anchor = anchor(Slim::Music::Info::getSortName($item));
 				if ($lastAnchor ne $anchor) {
 					$list_form{'anchor'}  = $anchor;
 					$lastAnchor = $anchor;
@@ -1135,7 +1136,7 @@ sub browseid3 {
 			$descend = 'true';
 
 			if (scalar(@items) > 1) {
-				%list_form=();
+				%list_form=%$paramsref;
 				if ($$paramsref{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
 					$list_form{'album_count'}	= Slim::Music::Info::albumCount([$genre],['*'],[],[]);
 					$list_form{'song_count'}	= Slim::Music::Info::songCount([$genre],['*'],[],[]);
@@ -1154,7 +1155,7 @@ sub browseid3 {
 			}
 			
 			foreach my $item ( @items[$start..$end] ) {
-				%list_form=();
+				%list_form=%$paramsref;
 				if ($$paramsref{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
 					$list_form{'album_count'}	= Slim::Music::Info::albumCount([$genre],[$item],[],[]);
 					$list_form{'song_count'}	= Slim::Music::Info::songCount([$genre],[$item],[],[]);
@@ -1169,7 +1170,7 @@ sub browseid3 {
 				$list_form{'odd'}	  = ($itemnumber + 1) % 2;
 				$list_form{'mixable_descend'} = Slim::Music::Info::isArtistMixable($item) && ($descend eq "true");
 				$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
-				my $anchor = anchor($item, 1);
+				my $anchor = anchor(Slim::Music::Info::getSortName($item), 1);
 				if ($lastAnchor ne $anchor) {
 					$list_form{'anchor'}  = $anchor;
 					$lastAnchor = $anchor;
@@ -1225,7 +1226,7 @@ sub browseid3 {
 			$descend = 'true';
 			if (!$$paramsref{'artwork'}) {
 				if (scalar(@items) > 1) {
-					%list_form=();
+					%list_form=%$paramsref;
 					if ($$paramsref{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
 						$list_form{'song_count'}	= Slim::Music::Info::songCount([$genre],[$artist],['*'],[]);
 					}
@@ -1243,7 +1244,7 @@ sub browseid3 {
 				}
 			}
 			foreach my $item ( @items[$start..$end]) {
-				%list_form=();
+				%list_form=%$paramsref;
 				if ($$paramsref{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
 					$list_form{'song_count'}	= Slim::Music::Info::songCount([$genre],[$artist],[$item],[]);
 				}
@@ -1256,7 +1257,7 @@ sub browseid3 {
 				$list_form{'player'} = $player;
 				$list_form{'odd'}	  = ($itemnumber + 1) % 2;
 				$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
-				my $anchor = anchor($item,1);
+				my $anchor = anchor(Slim::Music::Info::getSortName($item),1);
 				if ($lastAnchor ne $anchor) {
 					$list_form{'anchor'}  = $anchor;
 					$lastAnchor = $anchor;
@@ -1308,7 +1309,7 @@ sub browseid3 {
 			$descend = undef;
 			
 			if (scalar(@items) > 1) {
-				%list_form=();
+				%list_form=%$paramsref;
 				$list_form{'genre'}	  = $genre;
 				$list_form{'artist'}  = $artist;
 				$list_form{'album'}	  = $album;
@@ -1323,7 +1324,7 @@ sub browseid3 {
 			}
 
 			foreach my $item ( @items[$start..$end] ) {
-				%list_form=();
+				%list_form=%$paramsref;
 				my $title = Slim::Music::Info::standardTitle(undef, $item);
 				$list_form{'genre'}	  = Slim::Music::Info::genre($item);
 				$list_form{'artist'}  = Slim::Music::Info::artist($item);
@@ -1375,7 +1376,7 @@ sub mood_wheel {
 	$$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("mood_wheel_pwdlist.html", $paramsref)};
 
 	foreach my $item ( @items ) {
-		my %list_form=();
+		my %list_form=%$paramsref;
 		$list_form{'mood'} = $item;
 		$list_form{'genre'} = $genre;
 		$list_form{'artist'}  = $artist;
@@ -1430,7 +1431,7 @@ sub instant_mix {
 	}
 
 	foreach my $item ( @items ) {
-		my %list_form=();
+		my %list_form=%$paramsref;
 		$list_form{'artist'} = $artist;
 		$list_form{'album'} = $album;
 		$list_form{'genre'} = $genre;

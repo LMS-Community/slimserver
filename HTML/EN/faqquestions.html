@@ -151,6 +151,12 @@ If you are connecting directly to a computer you will need a crossover cable, ot
 	<li><a href="#setup-noserver">Can I listen to streaming stations without the SlimServer software running on my computer?</a>
 	<li><a href="#setup-reenter">Do I have to re-enter the IP address configuration when Squeezebox is power-cycled?</a>
 	<li><a href="#setup-service">How do I stop the SlimServer service that's running in the background on my Windows NT/2000/XP system?</a>
+	<li><a href="#setup-preferencefile">Where is my Preferences File?</a>
+	<li><a href="#setup-whattagdatabase"></a>What is the MP3 Tag Database?</a>	
+	<li><a href="#setup-tagwherestore"></a>Where does the MP3 Tag Database store it's data?</a>
+	<li><a href="#setup-tagfileformat"></a>What file format does the MP3 Tag Database use?</a>
+	<li><a href="#setup-rescanvswipecache"></a>What is the difference between the "Rescan" and "Wipe Cache" buttons?</a>		
+
 </ul>
 <h4><a id="setup">Setup</a></h4>
 
@@ -191,6 +197,63 @@ If you are connecting directly to a computer you will need a crossover cable, ot
 
 <p>From the Administrative Tools folder, choose Services.  You should see an entry in your service list for SlimServer.  Right-click on it and choose STOP to stop the service.  Right-click on it again to choose to start it.</p>
 
+<h5><a id="setup-preferencefile"></a>Where is my Preferences File?</h5>	
+
+<p>The location varies depending on the operating system you are using. The file which is 
+found first will be the one that is used and changes will be written back 
+out to this file.</p>
+
+<p><b>Windows:</b></p>
+
+<blockquote>
+<p>The file will be c:\Program Files\SlimServer\server\slimserver.pref</p>
+</blockquote>
+
+<p><b>Mac OS:</b></p>
+
+<blockquote>
+<p>The file is called slimserver.pref and located in $HOME/Library/SlimDevices</p>
+</blockquote>
+
+<p><b>Linux:</b></p>
+
+<blockquote>
+<p>The server will use whichever file you specify on the command line using the --prefsfile option. If you use the supplied init.d script, this forces the file to be /etc/slimserver.conf .</p>
+
+<p>If no options are specified and the file /etc/slimserver.conf exists, it will be used, otherwise the file will be called .slimserver.pref and located in the home directory of the user running the Slim Server.</p>
+</blockquote>
+
+<h5><a id="setup-whattagdatabase"></a>What is the MP3 Tag Database?</h5>	
+
+<p>Instead of reading tags out of files every time the server is restarted, the
+tag database saves the data to a file and uses this when loading to speed up
+server start-up. This data is also used to speed up rescans.</p>
+
+
+<h5><a id="setup-tagwherestore"></a>Where does the MP3 Tag Database store it's data?</h5>	
+
+<p>The data is stored in the same folder as the preferences file. Under
+Windows/Mac it will be called slimserver.db. Under unix it will be called
+.slimserver.db and stored in the home directory of the user running the Slim
+Server.</p>
+
+
+<h5><a id="setup-tagfileformat"></a>What file format does the MP3 Tag Database use?</h5>	
+
+<p>The data is saved Perl's Storable module and is in that binary format.
+If you want external access to this data, we plan to export it as an XML
+file similar in format to the iTunes file but this has not been implemented
+yet.</p>
+
+
+<h5><a id="setup-rescanvswipecache"></a>What is the difference between the "Rescan" and "Wipe Cache" buttons?</h5>
+
+<p>The Rescan button should find any changes made to you music library. When
+the MP3 Tag Database is being used, it is possible that data in the cache
+can be corrupt. If that is the case, the "Wipe Cache" button can be used to
+make the server rebuild everything from scratch.</p>
+
+
 <hr>
 <h4><a href="#formats">Supported Formats</a></h4>
 <ul>
@@ -205,6 +268,9 @@ If you are connecting directly to a computer you will need a crossover cable, ot
 	<li><a href="#formats-shout">Does Squeezebox support streaming protocols such as Shoutcast or Live365?</a>
 	<li><a href="#formats-playlists">Does Squeezebox support playlists?</a>
 	<li><a href="#formats-cue">Does Squeezebox support CUE files?</a>
+	<li><a href="#formats-transcode">How do I get other file formats (transcoding) to work?</a>
+	<li><a href="#formats-binarywhere">Where do I put the lame, oggtools or other transcoding programs?</a>
+	<li><a href="#formats-tcodeversions">Which versions of the transcoding programs should I use?</a>
 </ul>
 <h4><a id="formats">Supported Formats</a></h4>
 
@@ -297,6 +363,34 @@ The SlimServer software can automatically handle many formats, including Ogg Vor
 <h5><a id="remote-removesong"></a>How do I remove a song from my &quot;Now Playing&quot; playlist with the remote control? How do I clear the whole playlist?</h5>
 
 <p>To remove a song from the &quot;Now Playing&quot; playlist, navigate to the &quot;Now Playing&quot; menu, scroll to that song in the playlist, then press the ADD button. If you press and hold the ADD button, the displayed song will be removed from the playlist and added to a special Saved Playlist called &quot;Zapped Songs&quot; for you to review later. To clear the whole playlist, navigate to the &quot;Squeezebox Home&quot; menu and scroll down until it says &quot;Now Playing&quot; on the second line. Press the ADD button and your playlist will be emptied.</p>
+
+
+<h5><a id="formats-transcode"></a>How do I get other file formats (transcoding) to work?</h5>
+
+<p>You need to download the programs needed to convert between the file
+formats. You then install these as detailed in the next question so the Slim
+Server can find them.</p>
+
+
+<h5><a id="formats-binarywhere"></a>Where do I put the lame, oggtools or other transcoding programs?</h5>
+
+<p>Under Windows, they should be placed in the C:\Program
+Files\SlimServer\server\Bin or the C:\Windows folder.</p>
+
+<p>On the Mac, you can place executable programs in your Library/SlimDevices/bin folder, or in the system path.</p>
+<p>Under linux they should be placed in the system path. That probably means /usr/local/bin. Most rpm packages will take care of that for you.</p>
+
+
+
+<h5><a id="formats-tcodeversions"></a>Which versions of the transcoding programs should I use?</h5>
+
+<p>As these programs evolve, the options that can be passed to them change. 
+Generally you should always try to use the most recent version of a program 
+you can find. Specific cases known about are listed below:</p>
+
+<ul>
+<li>ffmpeg: at least version 0.4.7 as prior versions do not have support for required options.</li>
+</ul>
 
 <hr>
 <h4><a href="#advanced">Advanced Features</a></h4>
@@ -508,6 +602,7 @@ Version=2</pre></p>
 	<li><a href="#troubleshooting-upgrading">I'm having trouble upgrading the firmware on my SLIMP3 Player. Do you have any hints?</a>
 	<li><a href="#troubleshooting-autoupdate">The SlimServer software seems to be connecting to a website on its own every time I run the software.  What's going on?</a>
 	<li><a href="#troubleshooting-annoyingclick">When the SlimServer software pages reload I hear an annoying click.  How do I get rid of it?</a>
+	<li><a href="#troubleshooting-logfile">Where does the system write it's logfile and how do I control this?</a>
 </ul>
 <h4>Troubleshooting</h4>
 
@@ -727,6 +822,17 @@ Now your iTunes playlists should show up under Saved Playlists on the player and
 <h5><a id="troubleshooting-annoyingclick"></a>When the SlimServer software pages reload I hear an annoying click.  How do I get rid of it?</h5>
 
 <p>This is a "feature" of Internet Explorer on Windows. To turn off the annoying "click" when exploring/ clicking on hyperlinks, navigate to <i>Start Menu / Settings / Sounds and Multimedia / Sounds</i>.  Look for the sound settings: <i>Windows Explorer / Start Navigation</i> and change the selected sound to "none".</p>
+
+
+<h5><a id="#troubleshooting-logfile"></a>Where does the system write it's logfile and how do I control this?</h5>
+
+<p>On all systems, the lastest log entries can be seen on <a href="/log.txt">http://serverip:9000/log.txt</a>.</p>
+
+<p>Log entries can also be written to a file which can specified using the --logfile command line option.</p> 
+
+<p>Under Linux if using the standard init.d script the default path for log files is /tmp/slimserver.log . The path is controlled by the "SLIMSERVER_LOG" entry in the /etc/sysconfig/slimserver file. </p>
+
+
 
 <hr>
 <h4><a href="#more">More Information</a></h4>

@@ -123,7 +123,7 @@ sub hitlist {
 				$maxplayed = $items[$i][1];
 			}
 
-			my %list_form = ();
+			my %list_form = %$params;
 			my $song = $items[$i][0];
 
 			$list_form{'title'} 	= Slim::Music::Info::standardTitle(undef,$song);
