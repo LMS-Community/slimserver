@@ -655,14 +655,14 @@ sub setupGroup {
 
 	my %Prefs = (
 		plugin_live365_username => {
-			validate => \&Slim::Web::Setup::validateHasText
 		},
 		plugin_live365_password => { 
-			validate => \&Slim::Web::Setup::validateHasText,
-			onChange => sub {
+			'onChange' => sub {
 				my $encoded = pack( 'u', $_[1]->{plugin_live365_password}->{new} );
 				Slim::Utils::Prefs::set( 'plugin_live365_password', $encoded );
 			}
+			,'inputTemplate' => 'setup_input_pwd.html'
+			,'changeMsg' => string('SETUP_PLUGIN_LIVE365_PASSWORD_CHANGED')
 		},
 		plugin_live365_sort_order => {
 			options => \%sort_options
@@ -1617,6 +1617,9 @@ SETUP_PLUGIN_LIVE365_PASSWORD
 
 SETUP_PLUGIN_LIVE365_PASSWORD_DESC
 	EN	Your Live365 password
+
+SETUP_PLUGIN_LIVE365_PASSWORD_CHANGED
+	EN	Your Live365 password has been changed
 
 SETUP_PLUGIN_LIVE365_SORT_ORDER
 	EN	Sort columns
