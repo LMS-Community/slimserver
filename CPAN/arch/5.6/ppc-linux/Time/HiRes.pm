@@ -11,7 +11,8 @@ require DynaLoader;
 @EXPORT = qw( );
 @EXPORT_OK = qw (usleep sleep ualarm alarm gettimeofday time tv_interval);
 
-$VERSION = do{my@r=q$Revision: 1.1 $=~/\d+/g;sprintf '%02d.'.'%02d'x$#r,@r};
+#$VERSION = do{my@r=q$Revision: 1.2 $=~/\d+/g;sprintf '%02d.'.'%02d'x$#r,@r};
+$VERSION = "01.20";
 
 bootstrap Time::HiRes $VERSION;
 
@@ -200,9 +201,12 @@ G. Aas <gisle@aas.no>
 
 =head1 REVISION
 
-$Id: HiRes.pm,v 1.1 2004/05/01 04:28:20 dean Exp $
+$Id: HiRes.pm,v 1.2 2004/05/04 19:47:02 dean Exp $
 
 $Log: HiRes.pm,v $
+Revision 1.2  2004/05/04 19:47:02  dean
+Fixing Time::HiRes version numbers.
+
 Revision 1.1  2004/05/01 04:28:20  dean
 Restructuring the CPAN binary modules to switch based on perl version (major or minor) as well as architecture.
 
