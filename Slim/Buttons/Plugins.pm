@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.21 2004/04/23 18:58:23 vidur Exp $
+# $Id: Plugins.pm,v 1.22 2004/05/01 05:16:45 kdf Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
@@ -276,6 +276,9 @@ sub addSetupGroups {
 
 sub init {
     no strict 'refs';
+    foreach my $plugindir (pluginDirs()) {
+		unshift @INC,  $plugindir;
+	}
     foreach my $plugin (enabledPlugins()) {
 		# We use initPlugin() instead of the more succinct
 		# init() because it's less likely to cause backward
