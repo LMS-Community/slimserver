@@ -364,13 +364,9 @@ sub scanFunction {
 		return $artScan;
 	}
 
-	my $musicLibraryFile = findMusicLibraryFile();
-	my $defaultAudioDir = $musicLibraryFile;
-	$defaultAudioDir =~ s/\sLibrary\.xml//;
-
 	# this assumes that iTunes uses file locking when writing the xml file out.
 	if (!$opened) {
-		my $file = $musicLibraryFile;
+		my $file = findMusicLibraryFile();
 		if (!open(ITUNESLIBRARY, "<$file")) {
 			$::d_itunes && warn "Couldn't open iTunes Library: $file";
 			return 0;	
@@ -386,7 +382,7 @@ sub scanFunction {
 		if ($locked) {
 			$::d_itunes && msg("Got file lock on iTunes Library\n");
 			$locked = 1;
-			my $len = read ITUNESLIBRARY, $ituneslibrary, -s $musicLibraryFile;
+			my $len = read ITUNESLIBRARY, $ituneslibrary, -s findMusicLibraryFile();
 			die "couldn't read itunes library!" if (!defined($len));
 			flock(ITUNESLIBRARY, LOCK_UN) unless ($^O eq 'MSWin32');
 			close ITUNESLIBRARY;
@@ -535,7 +531,6 @@ sub scanFunction {
 			#$iBase = Slim::Utils::Misc::pathFromFileURL($iBase);
 			$iBase = strip_automounter($iBase);
 			$::d_itunes && msg("iTunes: found the music folder: $iBase\n");
-			Slim::Utils::Prefs::set("audiodir", $defaultAudioDir);
 		} elsif ($curLine eq "<key>Tracks</key>") {
 			$inTracks = 1;
 			$inPlaylists = 0;

@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.92 2004/04/06 13:06:46 grotus Exp $
+# $Id: HTTP.pm,v 1.93 2004/04/06 15:56:37 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -116,7 +116,7 @@ my %pageFunctions = ();
 # initialize the http server
 sub init {
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		$CacheDir = '~/Library/Caches/SlimServer';
+		$CacheDir = catdir($ENV{'HOME'}, '/Library/Caches/SlimServer');
 	}
 	my @CacheDirs = splitdir($CacheDir);
 	pop @CacheDirs;
