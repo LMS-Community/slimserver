@@ -625,7 +625,7 @@ sub find {
 	};
 
 	if ($@) {
-		Slim::Utils::Misc::msg("Whoops! prepare_cached() or execute() failed: $@\n");
+		Slim::Utils::Misc::msg("Whoops! prepare_cached() or execute() failed on sql: [$sql] - [$@]\n");
 		Slim::Utils::Misc::bt();
 
 		# Try to return a graceful value.
