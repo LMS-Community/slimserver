@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.33 2004/12/17 10:28:50 kdf Exp $
+# $Id: Plugins.pm,v 1.34 2004/12/18 04:56:44 kdf Exp $
 #
 package Slim::Buttons::Plugins;
 
@@ -145,7 +145,7 @@ sub read_plugins {
 				'header'  => $plugins{$plugin}->{'name'},
 			);
 
-			Slim::Buttons::Home::addSubMenu("PLUGINS", $plugin, \%params);
+			Slim::Buttons::Home::addSubMenu("PLUGINS", $plugins{$plugin}->{'name'}, \%params);
 
 		} else {
 			$::d_plugins && msg("Can't load $fullname for Plugins menu: " . $@);
@@ -155,8 +155,8 @@ sub read_plugins {
 	}
 
 	addWebPages();
-	addScreensavers();
 	addMenus();
+	addScreensavers();
 	$plugins_read = 1 unless $read_onfly;
 }
 
@@ -178,10 +178,10 @@ sub addMenus {
 
 			$::d_plugins && msg("Adding $plugin to menu: $menu\n");
 
-			Slim::Buttons::Home::addSubMenu($menu, $plugin, \%params);
+			Slim::Buttons::Home::addSubMenu($menu, $plugins{$plugin}->{'name'}, \%params);
 
 			if ($menu ne "PLUGINS") {
-				Slim::Buttons::Home::delSubMenu("PLUGINS", $plugin);
+				Slim::Buttons::Home::delSubMenu("PLUGINS", $plugins{$plugin}->{'name'});
 				Slim::Buttons::Home::addSubMenu("PLUGINS", $menu, &Slim::Buttons::Home::getMenu("-".$menu));
 			}
 		}
@@ -209,8 +209,8 @@ sub addScreensavers {
 				'header'  => $plugins{$plugin}->{'name'}
 			);
 
-			Slim::Buttons::Home::addSubMenu("SCREENSAVERS", $plugin, \%params);
-			Slim::Buttons::Home::delSubMenu("PLUGINS", $plugin);
+			Slim::Buttons::Home::addSubMenu("SCREENSAVERS", $plugins{$plugin}->{'name'}, \%params);
+			Slim::Buttons::Home::delSubMenu("PLUGINS", $plugins{$plugin}->{'name'});
 			Slim::Buttons::Home::addSubMenu("PLUGINS", "SCREENSAVERS", &Slim::Buttons::Home::getMenu("-SCREENSAVERS"));
 		}
 	}

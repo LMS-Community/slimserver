@@ -1,5 +1,5 @@
 # RssNews Ticker v1.0
-# $Id: RssNews.pm,v 1.15 2004/12/07 20:19:44 dsully Exp $
+# $Id: RssNews.pm,v 1.16 2004/12/18 04:56:43 kdf Exp $
 # Copyright (c) 2004 Slim Devices, Inc. (www.slimdevices.com)
 
 # Based on BBCTicker 1.3 which had this copyright...
@@ -91,7 +91,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Prefs;
 
-$VERSION = substr(q$Revision: 1.15 $,10);
+$VERSION = substr(q$Revision: 1.16 $,10);
 my %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
@@ -1055,7 +1055,7 @@ sub addMenu {
 	# add a mode to the screensaver submenu...
 	my %params = ('useMode' => "PLUGIN.RssNews.screensaversettings",
 				  'header' => "PLUGIN_RSSNEWS_SCREENSAVER");
-	Slim::Buttons::Home::addSubMenu("SCREENSAVERS",'RssNews', \%params);	  
+	Slim::Buttons::Home::addSubMenu("SCREENSAVERS","PLUGIN_RSSNEWS_SCREENSAVER", \%params);	  
 
 	# also add ourselves to the plugins menu
 	return "PLUGINS";
