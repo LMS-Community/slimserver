@@ -109,14 +109,20 @@ sub blocking {
 
 sub findbin {
 	my $executable = shift;
-	
-	my @paths;
+
+	# Reduce all the x86 architectures down to i386, so we only need one
+	# directory per *nix OS.
+	my $arch = $Config::Config{'archname'};
+
+	   $arch =~ s/^(i[3456]86)/i386/;
+
 	my $path;
-	
-	push @paths, catdir( $Bin, 'Bin', $Config::Config{archname});
-	push @paths, catdir( $Bin, 'Bin', $^O);
-	push @paths, catdir( $Bin, 'Bin');
-		
+	my @paths = (
+		catdir($Bin, 'Bin', $arch),
+		catdir($Bin, 'Bin', $^O),
+		catdir($Bin, 'Bin'),
+	);
+
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @paths, $ENV{'HOME'} . "/Library/SlimDevices/bin/";
 		push @paths, "/Library/SlimDevices/bin/";
@@ -128,21 +134,24 @@ sub findbin {
 	} else {
 		$executable .= '.exe';
 	}
-	
+
 	foreach my $path (@paths) {
 		$path = catdir($path, $executable);
+
+		$::d_paths && msg("Checking for $executable in $path\n");
+
 		if (-x $path) {
 			$::d_paths && msg("Found binary $path for $executable\n");
 			return $path;
 		}
 	}
-		
+
 	if (Slim::Utils::OSDetect::OS() eq "win") {
 		$path =  File::Which::which($executable);
 	} else {
 		$path = undef;
 	}
-	
+
 	$::d_paths && msgf("Found binary %s for %s\n", defined $path ? $path : 'undef', $executable);
 
 	return $path;	
