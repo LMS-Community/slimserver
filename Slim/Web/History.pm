@@ -8,6 +8,7 @@ package Slim::Web::History;
 use strict;
 use File::Spec::Functions qw(:ALL);
 
+use Slim::Formats::Parse;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -65,7 +66,7 @@ sub load {
 	my $filename = catfile(Slim::Utils::Prefs::get('playlistdir'),'__history.m3u');
 
 	open (FILE,$filename) or return undef;
-	@history = Slim::Formats::Parse::M3U(\*FILE, Slim::Utils::Prefs::get('audiodir'));
+	@history = Slim::Formats::Parse::readM3U(\*FILE, Slim::Utils::Prefs::get('audiodir'));
 	close FILE;
 
 	return undef;

@@ -568,11 +568,13 @@ sub virtualToAbsolute {
 	$::d_paths && msg("became: $curdir\n");
 	
 	if (!$recursion && $virtual =~ /\.(.+)$/ && 
-		exists $Slim::Player::Source::playlistInfo{$1} &&  
+		exists $Slim::Formats::Parse::playlistInfo{$1} &&  
 		$virtual !~ /^__playlists/ && !-e pathFromFileURL($curdir)) {
-		#Not a real file, could be a naked saved playlist
+
+		# Not a real file, could be a naked saved playlist
 		return virtualToAbsolute(catdir('__playlists',$virtual),1);
 	}
+
 	if (Slim::Music::Info::isFileURL($curdir)) {
 		return $curdir;
 	} else {
@@ -640,7 +642,7 @@ sub readDirectory {
 		# Ignore our special named files and directories
 		next if $dir =~ /^__/;  
 		
-		if $ignore ne '') {
+		if ($ignore ne '') {
 			next if $dir =~ /$ignore/;
 		}
 

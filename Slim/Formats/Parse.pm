@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.31 2005/01/08 07:53:52 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -18,26 +18,26 @@ use URI::Escape;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
 
-%Slim::Player::Source::playlistInfo = ( 
-	'm3u' => [\&M3U, \&writeM3U, '.m3u'],
-	'pls' => [\&PLS, \&writePLS, '.pls'],
-	'cue' => [\&CUE, undef, undef],
-	'wpl' => [\&WPL, \&writeWPL, '.wpl'],
-	'asx' => [\&ASX, undef, '.asx'],
-	'wax' => [\&ASX, undef, '.wax'],
+our %playlistInfo = ( 
+	'm3u' => [\&readM3U, \&writeM3U, '.m3u'],
+	'pls' => [\&readPLS, \&writePLS, '.pls'],
+	'cue' => [\&readCUE, undef, undef],
+	'wpl' => [\&readWPL, \&writeWPL, '.wpl'],
+	'asx' => [\&readASX, undef, '.asx'],
+	'wax' => [\&readASX, undef, '.wax'],
 );
 
 sub parseList {
 	my $list = shift;
 	my $file = shift;
 	my $base = shift;
-	my @items;
 	
 	my $type = Slim::Music::Info::contentType($list);
 	my $parser;
-	if (exists $Slim::Player::Source::playlistInfo{$type} &&
-	    ($parser = $Slim::Player::Source::playlistInfo{$type}->[0])) {
-	    return &$parser($file, $base, $list);
+	my @items = ();
+
+	if (exists $playlistInfo{$type} && ($parser = $playlistInfo{$type}->[0])) {
+		return &$parser($file, $base, $list);
 	}
 }
 
@@ -48,10 +48,9 @@ sub writeList {
     
 	my $type = Slim::Music::Info::typeFromSuffix($fulldir);
 	my $writer;
-	if (exists $Slim::Player::Source::playlistInfo{$type} &&
-	    ($writer = $Slim::Player::Source::playlistInfo{$type}->[1])) {
-	    return &$writer($listref, $playlistname, 
-						Slim::Utils::Misc::pathFromFileURL($fulldir));
+
+	if (exists $playlistInfo{$type} && ($writer = $playlistInfo{$type}->[1])) {
+		return &$writer($listref, $playlistname, Slim::Utils::Misc::pathFromFileURL($fulldir));
 	}
 }
 
@@ -59,8 +58,9 @@ sub getPlaylistSuffix {
 	my $filepath = shift;
 
 	my $type = Slim::Music::Info::contentType($filepath);
-	if (exists $Slim::Player::Source::playlistInfo{$type}) {
-		return $Slim::Player::Source::playlistInfo{$type}->[2];
+
+	if (exists $playlistInfo{$type}) {
+		return $playlistInfo{$type}->[2];
 	}
 
 	return undef;
@@ -88,14 +88,15 @@ sub _updateMetaData {
 	}
 }
 
-sub M3U {
+sub readM3U {
 	my $m3u    = shift;
 	my $m3udir = shift;
 
 	my @items  = ();
+	my $title;
 	
 	$::d_parse && Slim::Utils::Misc::msg("parsing M3U: $m3u\n");
-	my $title;
+
 	while (my $entry = <$m3u>) {
 
 		chomp($entry);
@@ -107,8 +108,6 @@ sub M3U {
 		$entry =~ s/\s*$//; 
 
 		$::d_parse && Slim::Utils::Misc::msg("  entry from file: $entry\n");
-
-		
 
 		if ($entry =~ /^#EXTINF:.*?,(.*)$/) {
 			$title = $1;	
@@ -133,7 +132,7 @@ sub M3U {
 	return @items;
 }
 
-sub PLS {
+sub readPLS {
 	my $pls = shift;
 
 	my @urls   = ();
@@ -326,7 +325,7 @@ sub parseCUE {
 	return @items;
 }
 
-sub CUE {
+sub readCUE {
 	my $cuefile = shift;
 	my $cuedir  = shift;
 
@@ -438,21 +437,23 @@ sub writeM3U {
 	return $outstring;
 }
 
-sub WPL {
+sub readWPL {
 	my $wplfile = shift;
 	my $wpldir  = shift;
 
 	my @items  = ();
 
 	# Handles version 1.0 WPL Windows Medial Playlist files...
-	my $wpl_playlist={};
+	my $wpl_playlist = {};
+
 	eval {
-		$wpl_playlist=XMLin($wplfile);
+		$wpl_playlist = XMLin($wplfile);
 	};
 
 	$::d_parse && Slim::Utils::Misc::msg("parsing WPL: $wplfile\n");
 
-	if(exists($wpl_playlist->{body}->{seq}->{media})) {
+	if (exists($wpl_playlist->{body}->{seq}->{media})) {
+
 		foreach my $entry_info (@{$wpl_playlist->{body}->{seq}->{media}}) {
 
 			my $entry=$entry_info->{src};
@@ -481,14 +482,16 @@ sub writeWPL {
 	# Handles version 1.0 WPL Windows Medial Playlist files...
 
 	# Load the original if it exists (so we don't lose all of the extra crazy info in the playlist...
-	my $wpl_playlist={};
+	my $wpl_playlist = {};
+
 	eval {
-		$wpl_playlist=XMLin($filename, KeepRoot => 1, ForceArray => 1);
+		$wpl_playlist = XMLin($filename, KeepRoot => 1, ForceArray => 1);
 	};
 
 	if($wpl_playlist) {
 		# Clear out the current playlist entries...
-		$wpl_playlist->{smil}->[0]->{body}->[0]->{seq}->[0]->{media}=[];
+		$wpl_playlist->{smil}->[0]->{body}->[0]->{seq}->[0]->{media} = [];
+
 	} else {
 		# Create a skeleton of the structure we'll need to output a compatible WPL file...
 		$wpl_playlist={
@@ -528,13 +531,15 @@ sub writeWPL {
 	# (the ForceArray option when we do "XMLin" makes the hash messy,
 	# but ensures that we get the same style of XML layout back on
 	# "XMLout")
-	my $wplfile=XMLout($wpl_playlist, XMLDecl => '<?wpl version="1.0"?>', RootName => undef);
+	my $wplfile = XMLout($wpl_playlist, XMLDecl => '<?wpl version="1.0"?>', RootName => undef);
+
 	if ($filename) {
 
 		my $output = FileHandle->new($filename, "w") || do {
 			Slim::Utils::Misc::msg("Could not open $filename for writing.\n");
 			return;
 		};
+
 		print $output "$wplfile";
 		close $output;
 		return;
@@ -543,14 +548,12 @@ sub writeWPL {
 
 		my $outstring;
 		my $output = IO::String->new($outstring);
-		print $output "$wplfile";
+		print $output $wplfile;
 		return($outstring);
-
 	}
-
 }
 
-sub ASX {
+sub readASX {
 	my $asxfile = shift;
 	my $asxdir  = shift;
 
@@ -567,34 +570,40 @@ sub ASX {
 		# Deal with the common parsing problem of unescaped ampersands
 		# found in many ASX files on the web.
 		$asxstr =~ s/&(?!(#|amp;|quot;|lt;|gt;|apos;))/&amp;/g;
+
 		eval {
-			$asx_playlist=XMLin($asxstr, ForceArray => ['entry', 'Entry', 'ENTRY', 'ref', 'Ref', 'REF']);
+			$asx_playlist = XMLin($asxstr, ForceArray => ['entry', 'Entry', 'ENTRY', 'ref', 'Ref', 'REF']);
 		};
 		
 		$::d_parse && Slim::Utils::Misc::msg("parsing ASX: $asxfile\n");
 		
-		my $entries = $asx_playlist->{entry} || 
-			$asx_playlist->{Entry} || $asx_playlist->{ENTRY};
+		my $entries = $asx_playlist->{entry} || $asx_playlist->{Entry} || $asx_playlist->{ENTRY};
+
 		if (defined($entries)) {
+
 			foreach my $entry (@$entries) {
 				
 				my $title = $entry->{title} || $entry->{Title} || $entry->{TITLE};
-				$::d_parse && 
-				  Slim::Utils::Misc::msg("Found an entry title: $title\n");
+
+				$::d_parse && Slim::Utils::Misc::msg("Found an entry title: $title\n");
+
 				my $path;
 				my $refs = $entry->{ref} || $entry->{Ref} || $entry->{REF};
+
 				if (defined($refs)) {
+
 					for my $ref (@$refs) {
-						my $href = $ref->{href} || $ref->{Href} || 
-							$ref->{HREF};
+
+						my $href = $ref->{href} || $ref->{Href} || $ref->{HREF};
 						my $url = URI->new($href);
-						$::d_parse && 
-						  Slim::Utils::Misc::msg("Checking if we can handle the url: $url\n");
+
+						$::d_parse && Slim::Utils::Misc::msg("Checking if we can handle the url: $url\n");
 						
 						my $scheme = $url->scheme();
+
 						if (exists $Slim::Player::Source::protocolHandlers{lc $scheme}) {
-							$::d_parse && 
-							  Slim::Utils::Misc::msg("Found a handler for: $url\n");
+
+							$::d_parse && Slim::Utils::Misc::msg("Found a handler for: $url\n");
 							$path = $href;
 							last;
 						}
@@ -610,6 +619,7 @@ sub ASX {
 			}
 		}
 	}
+
 	# Next is version 2.0 ASX
 	elsif ($asxstr =~ /[Reference]/) {
 		while ($asxstr =~ /^Ref(\d+)=(.*)$/gm) {
@@ -623,6 +633,7 @@ sub ASX {
 			push @items, $url->as_string;
 		}
 	}
+
 	# And finally version 1.0 ASX
 	else {
 		while ($asxstr =~ /^(.*)$/gm) {
@@ -636,6 +647,7 @@ sub ASX {
 }
 
 1;
+
 __END__
 
 # Local Variables:
