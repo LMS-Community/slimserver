@@ -16,9 +16,9 @@
        	<b>
   			<a href="status_header.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target='status'>"[% title %]"</a></b>
 			<!--[% IF album %][% "FROM" | string %][% END %]
-			<i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album %]</a></i>
+			<i><a href="browsedb.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album %]</a></i>
 			-->[% IF artist %][% "BY" | string %] [% END %]
-        <a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist %]</a>
+	<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
    </td>
   <td class="listing" align="right" height="15">
     ([% song_count %])
