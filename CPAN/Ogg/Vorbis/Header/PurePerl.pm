@@ -383,7 +383,7 @@ sub _loadComments
     read($fh, $buffer, 1);
     $byteCount += 1;
 
-    $data->{'startMainData'} = $byteCount;
+    $data->{'INFO'}{'offset'} = $byteCount;
 
     $data->{'COMMENTS'} = \%comments;
 }

@@ -1,6 +1,6 @@
 package Slim::Formats::Ogg;
 
-# $Id: Ogg.pm,v 1.8 2003/12/27 23:48:06 daniel Exp $
+# $Id: Ogg.pm,v 1.9 2003/12/29 06:35:08 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -89,7 +89,7 @@ sub getTag {
 	$tags->{'RATE'}	    = $ogg->info('rate') / 1000;
 
 	# temporary for now - Ogg:: doesn't expose this yet.
-	$tags->{'OFFSET'}   = 0;
+	$tags->{'OFFSET'}   = $ogg->info('offset') || 0;
 
 	return $tags;
 }
