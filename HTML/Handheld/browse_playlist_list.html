@@ -3,7 +3,7 @@
   <td >
       [% IF anchor %]<a name="[% anchor %]"></a>[% END %]
       [% IF descend %]<a href="browse.html?dir=[% descend | uri %]&player=[% player | uri %]">[% title | html %]</a> [% END %]
-      [% IF not descend %]<a href="songinfo.html?songurl=[% itempath | uri %]&player=[% player | uri %]">[% title | html %]</a> [% END %]
+      [% IF not descend %]<a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% title | html %]</a> [% END %]
   </td>
   <td width="11" align="center">
       <nobr><a href="status.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a></nobr>

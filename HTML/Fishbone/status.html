@@ -32,7 +32,7 @@
 						[% IF modepause %][% "PAUSED_ON" | string %][% END %]
 						[% IF modestop %][% "STOPPED_ON" | string %][% END %]
 						[% IF currentsong %]<b>[% currentsong %]</b> [% "OUT_OF" | string %] <b>&nbsp;[% songcount %]</b>&nbsp;<a class="label" href="status.html?p0=button&amp;p1=modefunction_playlist->zap&amp;player=[% player | uri %]&amp;start=[% start %]" title='Move to Zapped playlist'>[zap]</a>[% END %][% "COLON" | string %]</p>
-						<p><img src="html/images/spacer.gif" border="0" width="5"><a class="songtitle" href="songinfo.html?songurl=[% itempath | uri %]&player=[% player | uri %]" target="browser">[% title %]</a>
+						<p><img src="html/images/spacer.gif" border="0" width="5"><a class="songtitle" href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]" target="browser">[% title %]</a>
 						[% IF duration %]&nbsp;([% duration | html %])[% END %][% IF bitrate %]&nbsp;([% bitrate %])[% END %]</p>
 						[% IF not coverthumb %]
 						<table border="0" cellpadding="0" cellspacing="0" width="100%">

@@ -9,7 +9,7 @@
         </div>
         <div class="browseline">
           [% IF descend %][% IF not nobrowse %]<a href="browse.html?dir=[% descend | uri %]&amp;player=[% player | uri %]">[% END %][% title | html %][% IF not nobrowse %]</a>[% END %]
-[% END %][% IF not descend %]<span class="songtitle"><a href="songinfo.html?songurl=[% itempath | uri %]&amp;player=[% player | uri %]">[% title | html %]</a></span>
+[% END %][% IF not descend %]<span class="songtitle"><a href="songinfo.html?itempath=[% itempath | uri %]&amp;player=[% player | uri %]">[% title | html %]</a></span>
           [% IF album %][% "FROM" | string %][% END %]
           <span class="album"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album | html %]</a></span>
           [% IF artist %][% "BY" | string %] [% END %]

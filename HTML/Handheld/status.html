@@ -25,7 +25,7 @@
 </font>
 </td><tr>
    [% IF songtitle %]<tr><td>[% "TITLE" | string %][% "COLON" | string %]</td>
-          <td><a href="songinfo.html?songurl=[% itempath | uri %]&player=[% player | uri %]">[% songtitle %]</a></td>
+          <td><a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% songtitle %]</a></td>
       </tr>
    [% END %]
    [% IF artist %]<tr><td>[% "ARTIST" | string %][% "COLON" | string %]</td>

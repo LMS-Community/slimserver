@@ -2,7 +2,7 @@
 <tr [% IF not odd %]bgcolor="#dfdfdf"[% END %]>
    <td ><a name=[% num %]>
       <a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]">&nbsp;[% num + 1 %].&nbsp;</a>
-      <a href="songinfo.html?songurl=[% songurl | uri %]&player=[% player | uri %]">[% title %]</a>
+      <a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% title %]</a>
    </td>
    <td width="13" align="center">
            <a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]">

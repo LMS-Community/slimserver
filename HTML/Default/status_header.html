@@ -72,7 +72,7 @@ function switchPlayer(player_List){
 				<table cellspacing="0" width="100%"><tr>
 					<td><img src="html/images/spacer.gif" width="4" alt=""></td>
 					<td><span
-						class="exboldnowplaying">[% IF player_needs_upgrade %][% "PLAYER_NEEDS_UPGRADE" | string %][% END %][% IF not player_needs_upgrade %][% IF playercount == '0' %][% "NO_PLAYER_FOUND" | string %][% END %][% IF playercount != '0' %][% IF songcount == '0' %][% "NOTHING" | string %][% END %][% END %][% END %]<a href="songinfo.html?songurl=[% itempath | uri %]&amp;player=[% player | uri %]" target="browser">[% songtitle %]</a></span> 
+						class="exboldnowplaying">[% IF player_needs_upgrade %][% "PLAYER_NEEDS_UPGRADE" | string %][% END %][% IF not player_needs_upgrade %][% IF playercount == '0' %][% "NO_PLAYER_FOUND" | string %][% END %][% IF playercount != '0' %][% IF songcount == '0' %][% "NOTHING" | string %][% END %][% END %][% END %]<a href="songinfo.html?itempath=[% itempath | uri %]&amp;player=[% player | uri %]" target="browser">[% songtitle %]</a></span> 
 						[% IF album %]<span class="exnotactivenowplaying">
 						[% "FROM" | string %]
 						</span><span class="exnowplaying"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album | html %]</a>

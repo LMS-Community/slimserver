@@ -134,7 +134,7 @@
 			URL[% "COLON" | string %]
 		</td>
 		<td>
-			[% url %] 
+			[% itempath | unuri | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a>
 		</td>
 	</tr>
 	[% END %] 

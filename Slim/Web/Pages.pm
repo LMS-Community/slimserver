@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.75 2004/05/10 14:57:45 dean Exp $
+# $Id: Pages.pm,v 1.76 2004/05/10 17:50:49 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -602,9 +602,6 @@ sub status {
 		$params->{'currentsong'} = Slim::Player::Source::currentSongIndex($client) + 1;
 		$params->{'thissongnum'} = Slim::Player::Source::currentSongIndex($client);
 		$params->{'songcount'}   = $songcount;
-		$params->{'songtitle'}   = Slim::Music::Info::standardTitle(undef,$song);
-		$params->{'artist'} 	 = Slim::Music::Info::artist($song);
-		$params->{'album'} 	 = Slim::Music::Info::album($song);
 
 		_addSongInfo($client, $song, $params);
 
@@ -755,7 +752,7 @@ sub buildPlaylist {
 
 		$list_form{'player'} = $params->{'player'};
 		$list_form{'title'}  = Slim::Music::Info::standardTitle(undef,$song);
-		$list_form{'songurl'}= $song;
+		$list_form{'itempath'}= $song;
 
 		if ($listBuild->{'includeArtist'}) {
 			$list_form{'artist'} = Slim::Music::Info::artist($song);
@@ -992,8 +989,6 @@ sub _addSongInfo {
 		$params->{'filelength'} = Slim::Utils::Misc::delimitThousands(Slim::Music::Info::fileLength($song));
 	}
 
-	# XXX - all this should be moved into a Slim::Music::Info method
-	# called fillInfo() or something.
 	$params->{'genre'}      = Slim::Music::Info::genre($song);
 	$params->{'artist'}     = Slim::Music::Info::artist($song);
 	$params->{'composer'}   = Slim::Music::Info::composer($song);
@@ -1001,6 +996,7 @@ sub _addSongInfo {
 	$params->{'conductor'}  = Slim::Music::Info::conductor($song);
 	$params->{'album'}      = Slim::Music::Info::album($song);
 	$params->{'title'}      = Slim::Music::Info::title($song);
+	$params->{'songtitle'}  = Slim::Music::Info::standardTitle(undef,$song);
 	$params->{'duration'}   = Slim::Music::Info::duration($song);
 	$params->{'disc'}       = Slim::Music::Info::disc($song);
 	$params->{'track'}      = Slim::Music::Info::trackNumber($song);
@@ -1009,7 +1005,7 @@ sub _addSongInfo {
 	$params->{'tagversion'} = Slim::Music::Info::tagVersion($song);
 	$params->{'mixable'}    = Slim::Music::Info::isSongMixable($song);
 	$params->{'bitrate'}    = Slim::Music::Info::bitrate($song);
-
+	
 	# handle artwork bits
 	my ($body, $type, $mtime) =  Slim::Music::Info::coverArt($song,'cover');
 	if (defined($body)) {
@@ -1035,11 +1031,11 @@ sub _addSongInfo {
 		$params->{'comment'} = $comment;
 	}
 
-	my ($url, $songpath);
+	my $downloadurl;
 
 	if (Slim::Music::Info::isHTTPURL($song)) {
 
-		$url = $songpath = $song;
+		$downloadurl = $song;
 
 	} else {
 
@@ -1049,35 +1045,32 @@ sub _addSongInfo {
 			$loc = Slim::Utils::Misc::pathFromFileURL($loc);
 		}
 
-		$songpath = $loc;
-
 		my $curdir = Slim::Utils::Prefs::get('audiodir');
 
 		if ($loc =~ /^\Q$curdir\E(.*)/i) {
 
-			$url = '/music';
+			$downloadurl = '/music';
 
 			foreach my $item (splitdir($1)) {
-				$url .= '/' . Slim::Web::HTTP::escape($item);
+				$downloadurl .= '/' . Slim::Web::HTTP::escape($item);
 			}
 
-			$url =~ s/\/\//\//;
+			$downloadurl =~ s/\/\//\//;
 
 		} else {
 
-			$url = $loc;
+			$downloadurl = $loc;
 		}
 	}
 
-	$params->{'url'}      = $url;
-	$params->{'songpath'} = $songpath;
 	$params->{'itempath'} = $song;
+	$params->{'download'} = $downloadurl;
 }
 
 sub songInfo {
 	my ($client, $params) = @_;
 
-	_addSongInfo($client, $params->{'songurl'}, $params);
+	_addSongInfo($client, $params->{'itempath'}, $params);
 
 	return Slim::Web::HTTP::filltemplatefile("songinfo.html", $params);
 }

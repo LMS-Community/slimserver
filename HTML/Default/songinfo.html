@@ -121,10 +121,10 @@
         <td class="nowrap"> [% "TAGVERSION" | string %][% "COLON" | string %]</td>
         <td> [% tagversion | html %] </td>
       </tr>
-      [% END %] [% IF url %] 
+      [% END %] [% IF itempath %] 
       <tr> 
         <td class="nowrap"> [% "LOCATION" | string %][% "COLON" | string %]</td>
-        <td> <a href="[% url %]">[% url | unuri | html %]</a> </td>
+        <td>[% itempath | unuri | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a> </td>
       </tr>
       [% END %] [% IF modtime %] 
       <tr> 
