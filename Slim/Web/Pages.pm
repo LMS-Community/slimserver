@@ -18,6 +18,12 @@ our %additionalLinks = ();
 
 our %fieldInfo = ();
 
+our %hierarchy = (
+	'artist' => 'album,track',
+	'album'  => 'track',
+	'song '  => '',
+);
+
 sub init {
 
 	%fieldInfo = (
@@ -1279,7 +1285,6 @@ sub memory_usage {
 	}
 }
 
-# XXX - this should really be broken up into smaller functions.
 sub search {
 	my ($client, $params) = @_;
 
@@ -1288,6 +1293,9 @@ sub search {
 
 	my $player = $params->{'player'};
 	my $query  = $params->{'query'};
+	my $type   = $params->{'type'};
+	my $results;
+	my $descend = 'true';
 
 	# short circuit
 	unless ($query) {
@@ -1297,113 +1305,45 @@ sub search {
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
 	my $otherparams = 'player=' . Slim::Web::HTTP::escape($player) . 
-			  '&type=' . ($params->{'type'} ? $params->{'type'} : ''). 
+			  '&type=' . ($type ? $type : ''). 
 			  '&query=' . Slim::Web::HTTP::escape($params->{'query'}) . '&';
 
-	my $searchStrings = searchStringSplit($query,$params->{'searchSubString'});
+	my $searchStrings = searchStringSplit($query, $params->{'searchSubString'});
 
-	# artist and album are similar enough - move them to their own function
-	if ($params->{'type'} eq 'artist') {
+	# Search for each type of data we have
+	if ($type eq 'artist') {
 
-		my $results = $ds->find('contributor', { "contributor.name" => $searchStrings }, 'contributor');
+		$results = $ds->find('contributor', { "contributor.name" => $searchStrings }, 'contributor');
 
-		_searchArtistOrAlbum($player, $params, $results, $otherparams);
+	} elsif ($type eq 'album') {
 
-	} elsif ($params->{'type'} eq 'album') {
+		$results = $ds->find('album', { "album.title" => $searchStrings }, 'album');
 
-		my $results = $ds->find('album', { "album.title" => $searchStrings }, 'album');
+	} elsif ($type eq 'song') {
 
-		_searchArtistOrAlbum($player, $params, $results, $otherparams);
-
-	} elsif ($params->{'type'} eq 'song') {
-
-		my $sortBy  = 'title';
-		my %find    = ();
+		my $sortBy = 'title';
+		my %find   = ();
 
 		for my $string (@{$searchStrings}) {
 			push @{$find{'track.title'}}, [ $string ];
 		}
 
-		my $results = $ds->find('track', \%find, $sortBy);
+		$results = $ds->find('track', \%find, $sortBy);
 
-		$params->{'numresults'} = scalar @$results;
-
-		my $itemnumber = 0;
-		my $lastAnchor = '';
-
-		if ($params->{'numresults'}) {
-
-			my ($start, $end);
-
-			if (defined $params->{'nopagebar'}){
-
-				($start, $end) = simpleHeader(
-					$params->{'numresults'},
-					\$params->{'start'},
-					\$params->{'browselist_header'},
-					$params->{'skinOverride'},
-					$params->{'itemsPerPage'},
-					0
-				);
-
-			} else {
-
-				($start, $end) = pageBar(
-					$params->{'numresults'},
-					$params->{'path'},
-					0,
-					$otherparams,
-					\$params->{'start'},
-					\$params->{'searchlist_header'},
-					\$params->{'searchlist_pagebar'},
-					$params->{'skinOverride'},
-					$params->{'itemsPerPage'},
-				);
-			}
-			
-			my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
-
-			for my $item (@$results[$start..$end]) {
-
-				my %list_form = %$params;
-
-				$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
-				$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
-
-				$list_form{'genre'}	   = $item->genre();
-				$list_form{'artist'}       = $item->artist();
-				$list_form{'album'}	   = $item->album();
-				$list_form{'itempath'}     = $item->url();
-				$list_form{'title'}        = Slim::Music::Info::standardTitle(undef, $item);
-				$list_form{'descend'}      = undef;
-				$list_form{'player'}       = $player;
-				$list_form{'odd'}	   = ($itemnumber + 1) % 2;
-				$list_form{'skinOverride'} = $params->{'skinOverride'};
-
-				$itemnumber++;
-
-				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
-			}
-		}
+		$descend = undef;
 	}
 
-	return Slim::Web::HTTP::filltemplatefile("search.html", $params);
-}
+	# Make sure that we have something to show.
+	if (defined $results && ref($results) eq 'ARRAY') {
 
-sub _searchArtistOrAlbum {
-	my ($player, $params, $searchresults, $otherparams) = @_;
-
-	$params->{'numresults'} = scalar @$searchresults;
-
-	my $descend    = 'true';
-	my $itemnumber = 0;
-	my $lastAnchor = '';
+		$params->{'numresults'} = scalar @$results;
+	}
 
 	if ($params->{'numresults'}) {
-	
+
 		my ($start, $end);
 
-		if (defined $params->{'nopagebar'}) {
+		if (defined $params->{'nopagebar'}){
 
 			($start, $end) = simpleHeader(
 				$params->{'numresults'},
@@ -1417,7 +1357,7 @@ sub _searchArtistOrAlbum {
 		} else {
 
 			($start, $end) = alphaPageBar(
-				$searchresults,
+				$results,
 				$params->{'path'},
 				$otherparams,
 				\$params->{'start'},
@@ -1427,23 +1367,42 @@ sub _searchArtistOrAlbum {
 				$params->{'itemsPerPage'},
 			);
 		}
+		
+		my $webFormat  = Slim::Utils::Prefs::getInd("titleFormat", Slim::Utils::Prefs::get("titleFormatWeb"));
+		my $itemnumber = 0;
+		my $lastAnchor = '';
 
-		# 
-		for my $item (@$searchresults[$start..$end]) {
+		for my $item (@$results[$start..$end]) {
 
-			# Contributor/Artist uses name, Album uses title.
+			# Contributor/Artist uses name, Album & Track uses title.
 			my $title     = $item->can('title') ? $item->title() : $item->name();
 			my %list_form = %$params;
 
-			$list_form{'genre'}	   = '*';
-			$list_form{'artist'}       = $params->{'type'} eq 'artist' ? $title : '*';
-			$list_form{'album'}        = $params->{'type'} eq 'album'  ? $title : '';
-			$list_form{'song'}	   = '';
-			$list_form{'title'}        = $title;
+			$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
+			$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
+
+			if ($type eq 'song') {
+
+				$list_form{'title'} = Slim::Music::Info::standardTitle(undef, $item);
+				$list_form{'itempath'} = $item->url();
+
+			} else {
+
+				$list_form{'title'} = $item->can('title') ? $item->title() : $item->name();
+			}
+
+			$list_form{'attributes'}   = '&' . join('=', $type, $item->id());
+			$list_form{'hierarchy'}    = $hierarchy{$type};
+			$list_form{'level'}        = 0;
+			$list_form{'text'}         = $title;
+			$list_form{'descend'}      = $descend;
+
 			$list_form{'descend'}      = $descend;
 			$list_form{'player'}       = $player;
 			$list_form{'odd'}	   = ($itemnumber + 1) % 2;
 			$list_form{'skinOverride'} = $params->{'skinOverride'};
+
+			$itemnumber++;
 
 			my $anchor = anchor(Slim::Utils::Text::getSortName($title), 1);
 
@@ -1451,11 +1410,11 @@ sub _searchArtistOrAlbum {
 				$list_form{'anchor'} = $lastAnchor = $anchor;
 			}
 
-			$itemnumber++;
-
-			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
+			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
 		}
 	}
+
+	return Slim::Web::HTTP::filltemplatefile("search.html", $params);
 }
 
 sub _addSongInfo {
