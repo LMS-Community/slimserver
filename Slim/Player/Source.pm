@@ -722,7 +722,7 @@ sub openSong {
 				
 				$fullCommand =~ s/\$([^\$]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
-				$fullCommand .= Slim::Utils::OSDetect::OS() eq 'win' ? "" : " &";
+				$fullCommand .= (Slim::Utils::OSDetect::OS() eq 'win') ? "" : " &";
 
 				$fullCommand .= ' |';
 				
@@ -732,6 +732,7 @@ sub openSong {
 		
 				$client->mp3filehandle->open($fullCommand);
 				$client->mp3filehandleIsSocket(1);
+				
 				$client->remoteStreamStartTime(time());
 				
 				$size = $duration * $bitrate / 8;
@@ -828,22 +829,6 @@ sub readNextChunk {
 	if ($client->mp3filehandle()) {
 	
 		if ($client->mp3filehandleIsSocket) {
-			# If the MP3 file handle is a remote stream and it's not readable,
-			# just return instead of blocking here. The client will repeat the
-			# request.
-			#
-			my $selRead = IO::Select->new();
-			
-			$selRead->add($client->mp3filehandle());
-			
-			my ($selCanRead,$selCanWrite)=IO::Select->select($selRead,undef,undef,0);
-			if (!$selCanRead) {
-				#$::d_source && msg("remote stream not readable\n");
-				return undef;
-			} else {
-				#$::d_source && msg("remote stream readable.\n");
-			}
-
 			# adjust chunksize to lie on metadata boundary (for shoutcast/icecast)
 			if ($client->shoutMetaInterval() &&
 				($client->shoutMetaPointer() + $chunksize) > $client->shoutMetaInterval()) {
