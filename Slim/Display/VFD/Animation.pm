@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::VFD::Animation;
 
-# $Id: Animation.pm,v 1.3 2004/09/01 00:14:31 dean Exp $
+# $Id: Animation.pm,v 1.4 2004/09/01 20:57:20 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -113,7 +113,7 @@ sub showBriefly {
 	my $double = ($client->linesPerScreen() == 1);
 	
 	if ($double) {
-		($measure1, $measure2) = Slim::Hardware::VFD::doubleSize($client,$parsed->{line1},$parsed->{line2});
+		($measure1, $measure2) = Slim::Hardware::VFD::doubleSize($client,$parsed);
 	} else {
 		($measure1, $measure2) = ($parsed->{line1}, $parsed->{line2});
 	}
@@ -128,7 +128,7 @@ sub showBriefly {
 		# double them
 		if ($double) {
 			$rate = Slim::Buttons::Common::paramOrPref($client,'scrollRateDouble');
-			($parsed->{line1}, $parsed->{line2}) = Slim::Hardware::VFD::doubleSize($client,$parsed->{line1},$parsed->{line2});
+			($parsed->{line1}, $parsed->{line2}) = Slim::Hardware::VFD::doubleSize($client,$parsed);
 		} else {
 			$rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');
 		}
@@ -357,7 +357,7 @@ sub scrollBottom {
 		my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');#*2/3;
 		$overlay2 = "";
 		$overlay1 = "";
-		my ($double1, $double2) = Slim::Hardware::VFD::doubleSize($client,$line1,$line2);
+		my ($double1, $double2) = Slim::Hardware::VFD::doubleSize($client,{ line1=> $line1, line2 =>$line2} );
 		$len = Slim::Display::Display::lineLength($double1);
 	} else {
 		$len = Slim::Display::Display::lineLength($line2);
@@ -430,7 +430,7 @@ sub scrollDouble {
 		my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRateDouble');
 	}
 
-	my ($text1,$text2) = Slim::Hardware::VFD::doubleSize($client,$line2);
+	my ($text1,$text2) = Slim::Hardware::VFD::doubleSize($client,{line2 => $line2});
 	if (Slim::Display::Display::lineLength($text2) < 41) {
 		$client->update();
 	}

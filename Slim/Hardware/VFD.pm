@@ -1,6 +1,6 @@
 package Slim::Hardware::VFD;
 
-# $Id: VFD.pm,v 1.17 2004/09/01 00:14:31 dean Exp $
+# $Id: VFD.pm,v 1.18 2004/09/01 20:57:20 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -120,7 +120,7 @@ sub render {
 	
 	if (!$noDoubleSize && $client->linesPerScreen() == 1)
 	{
-		($line1, $line2) = doubleSize($client,$lines->{line1}, $lines->{line2});
+		($line1, $line2) = doubleSize($client,$lines);
 		$double = 1;
 	} else {
 		$line1 = $lines->{line1} if defined($lines->{line1});
@@ -819,10 +819,22 @@ my $kernR = qr/^(?:$toplinechar|$leftvbar|$Zbottom|_|$backslash|$slash)/o;
 #
 sub doubleSize {
 	my $client = shift;
-	my ($line1, $line2) = (shift,shift);
+	my $lines = shift;
 	my ($newline1, $newline2) = ("", "");
+	my $line1;
+	my $line2;
+	
+	$line1 = $lines->{line1};
+	$line2 = $lines->{line2};
 	
 	if (!defined($line2) || $line2 eq "") { $line2 = $line1; };
+
+	my $center2 = $lines->{center2};
+	
+	if (defined($center2)) {
+		$line2 = $center2;
+	}
+
 	$line2 =~ s/$cursorpos//g;
 	$line2 =~ s/^(\s*)(.*)/$2/;
 	
@@ -836,14 +848,7 @@ sub doubleSize {
 	my $lastch2 = "";
    
 	my $lastchar = "";
-	my $center2;
 	
-	($line2, $center2) = split("\x1ecenter\x1e", $line2) if $line2;
-
-	if (defined($center2)) {
-		$line2 = $center2;
-	}
-
 	my $split = Slim::Display::Display::splitString($line2);
 	
 	foreach my $char (@$split) {
