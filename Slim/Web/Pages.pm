@@ -2084,7 +2084,7 @@ sub browsedb {
 
 			my $anchor = substr($itemsort, 0, 1);
 
-			if ($lastAnchor && $lastAnchor ne $anchor) {
+			if ($lastAnchor ne $anchor) {
 				$list_form{'anchor'} = $lastAnchor = $anchor;
 			}
 
