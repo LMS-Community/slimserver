@@ -1,3 +1,86 @@
+<h2><a name="v6.0a2" id="v6.0a2"></a>Version 6.0a2 - 2005-3-01</h2>
+<ul>
+	<li>Usability & Features:<p>
+		<ul>
+			<li>Fixed composerInArtists preference setting.
+			<li>Handle group discs properly.
+			<li>Browsing tracks in Music Folder was broken in Default skin, now fixed.
+			<li>Added links to Default skin to add/play all songs from Advanced Search.
+			<li>Patch from Adrian to optimise SBG scrolling animations.  
+		</ul>
+	<br>
+
+	<li>Internet Radio:<p>
+		<ul>
+			<li>radioIO new channels: 70's Pop, 80's Pop, Country.
+		</ul>
+	<br>
+
+	<li>Performance & Memory usage:<p>
+		<ul>
+			<li>Try to use the faster Template::Stash::XS module for template parsing.
+			<li>Use weaken() if available to make sure we don't have any circular references in the caches.
+		</ul>
+	<br>
+
+	<li>Platform Support:<p>
+		<ul>
+			<li>Add NetBSD XS modules from Jason Holtzapple.
+			<li>Win32: Changes to socketwrapper from Adrian.
+			<li>Removed sparc-linux, solaris, solaris64 Time::HiRes modules.
+			<li>Update Time::HiRes to v1.66
+		</ul>
+	<br>
+
+	<li>Backend Database:<p>
+		<ul>
+			<li>Update to DBD::SQLite 1.08 / SQLite 3.13 - performance improvements.
+		</ul>
+	<br>
+
+	<li>Skins:<p>
+		<ul>
+			<li>Handheld update from Michael Herger
+			<li>Removed ExBrowse skin, in favor of ExBrowse2
+		</ul>
+	<br>
+
+	<li>Known Issues:<p>
+		<ul>
+			<li>Artists or Albums with '*' in the string cause the Player UI to behave strangely.
+			<li>MusicMagic connection settings need to be exposed when plugin is enabled, even though connection cannot be established. 
+			<li>Not all skins have been updated to use browsedb. (xmlTelCanto may be broken.)
+			<li>Ending time missing for files referenced by external cuesheet.
+			<li>Artwork may not be shown for paths with accented characters.
+		</ul>
+	<br>
+
+	<li>Bugs fixed:<p>
+		<ul>
+			<li># 44 - Browse new music - available in the Player & Web UI.
+			<li>#376 - Music folder path should be fixed per platform.
+			<li>#583 - Music Folder setting is case sensitive.
+			<li>#717 - Using external cuesheets results in duplicate entries in the db.
+			<li>#803 - Ogg tracks cause the server to die with an SQL error.
+			<li>#848 - Duplicate genres where capitalisation differs.
+			<li>#849 - Double artist and composer shown.
+			<li>#851 - Can't use parameters containing spaces in CLI.
+			<li>#853 - Advanced search switches chosen player to default player.
+			<li>#854 - Fishbone skin defaults to livesearch.
+			<li>#856 - 99% CPU - Update the genre & artist objects at the same time as the song for MusicMagic.
+			<li>#857 - Slimserver dies under Debian stable.
+			<li>#863 - Can't call method "id" on an undefined value.
+			<li>#868 - Browse by album crashes slimserver / MoodLogic & MusicMagic import.
+			<li>#870 - iTunes db problem crashes windows service.
+			<li>#871 - Pressing add while displaying an album in song info causes the server to lock up and hog CPU.
+			<li>#876 - SlimServer crashes when changing groupdiscs option, which does not work.
+			<li>#880 - Update to DBD::SQLite-1.08 / SQLite 3.1.3
+			<li>#881 - Alphabetic inconsistencies.
+			<li>#883 - Now Playing playlist not always saved correctly.
+			<li>#887 - Changing language on latest 6.0 nightly causes server to crash.
+		</ul>
+</ul>
+
 <h2><a name="v6.0a1" id="v6.0a1"></a>Version 6.0a1 - 2005-2-23</h2>
 <ul>
 	<li>Usability & Features:<p>
@@ -177,8 +260,6 @@
 			<li>#800 - Playlist commands broken.
 			<li>#822 - Moodlogic features and playlists missing on restart.
 		</ul>
-	</ul>
-
 </ul>
 <h2><a name="v5.4.0" id="v5.4.0"></a>Version 5.4.0 - 2004-11-9</h2>
 <ul>
