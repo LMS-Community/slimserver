@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.81 2004/05/18 19:17:39 dean Exp $
+# $Id: Pages.pm,v 1.82 2004/05/20 05:46:09 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -614,7 +614,10 @@ sub status {
 		$params->{'songcount'}   = $songcount;
 
 		_addSongInfo($client, $song, $params);
-
+		# for current song, display the playback bitrate instead.
+		if (!Slim::Player::Source::underMax($client,$song)) {
+			$params->{'bitrate'} = string('CONVERTED_TO')." ".Slim::Utils::Prefs::setMaxRate($client).Slim::Utils::Strings::string('KBPS').' CBR';
+		}
 		if (Slim::Utils::Prefs::get("playlistdir")) {
 			$params->{'cansave'} = 1;
 		}
@@ -1014,7 +1017,7 @@ sub _addSongInfo {
 	$params->{'type'}       = string(uc(Slim::Music::Info::contentType($song)));
 	$params->{'tagversion'} = Slim::Music::Info::tagVersion($song);
 	$params->{'mixable'}    = Slim::Music::Info::isSongMixable($song);
-	$params->{'bitrate'}    = Slim::Player::Source::underMax($client,$song) ? Slim::Music::Info::bitrate($song) : Slim::Utils::Prefs::clientGet($client,'maxBitrate').Slim::Utils::Strings::string('KBPS').' CBR';
+	$params->{'bitrate'}    = Slim::Music::Info::bitrate($song);
 	
 	# handle artwork bits
 	my ($body, $type, $mtime) =  Slim::Music::Info::coverArt($song,'cover');
