@@ -264,7 +264,8 @@ our %prefChange = (
 	}
 	,'audiodir' => sub {
 		my $newvalue = shift;
-		Slim::Buttons::Browse::init();
+		Slim::Buttons::Browse::menuInit();
+		Slim::Music::Import::useImporter('FOLDER', (defined(Slim::Utils::Prefs::get('audiodir')) && -d Slim::Utils::Prefs::get("audiodir"))?1:0);
 		Slim::Music::Import::startScan('FOLDER');
 	}
 	,'lookForArtwork' => sub {

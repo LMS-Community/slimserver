@@ -18,9 +18,8 @@ my $stillScanning = 0;
 sub init {
 	Slim::Music::Import::addImporter('FOLDER',\&startScan);
 
-	# could probably base this on the existance/nonexistance of audiodir rather
-	# than relying on startScan to abort a scan of a non-existant audiodir
-	Slim::Music::Import::useImporter('FOLDER',1)
+	# Enable Folder scan only if audiodir is set and is a valid directory
+	Slim::Music::Import::useImporter('FOLDER',defined(Slim::Utils::Prefs::get('audiodir')) && -d Slim::Utils::Prefs::get("audiodir"));
 }
 
 sub startScan {
