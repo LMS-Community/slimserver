@@ -57,7 +57,6 @@ sub delImport {
 	if (exists $importsRunning{$import}) { 
 		$::d_info && msg("Completing $import Scan in ".(Time::HiRes::time() - $importsRunning{$import})." seconds\n");
 		delete $importsRunning{$import};
-		$importCount--;
 	}
 
 	if (scalar keys %importsRunning == 0) {
