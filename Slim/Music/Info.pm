@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.159 2004/12/04 19:04:33 vidur Exp $
+# $Id: Info.pm,v 1.160 2004/12/09 08:47:42 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2313,6 +2313,7 @@ sub getImageContent {
 	my $contentref;
 
 	if (open (TEMPLATE, $path)) { 
+		local $/ = undef;
 		binmode(TEMPLATE);
 		$$contentref=join('',<TEMPLATE>);
 		close TEMPLATE;
@@ -2654,7 +2655,7 @@ sub updateGenreCache {
 sub includeSplitTag {
 	my ($genreCase,$albumCase,$trackCase,$file,$tag) = @_;
 
-	if (defined $tag) {
+	if (defined $tag && $tag ne '') {
 		foreach my $tag (splitTag($tag)) {
 			$tag=~s/^\s*//;$tag=~s/\s*$//;
 			my $tagCase = Slim::Utils::Text::ignoreCaseArticles($tag);
