@@ -130,10 +130,6 @@ sub readUDP {
 				if (!defined($client)) {
 					return;
 				}
-				if ($::d_protocol_verbose) {
-					my ($clientport, $clientip) = sockaddr_in($clientpaddr);
-					msg("Client: ".inet_ntoa($clientip).":$clientport\n");
-				}
 	
 				if ($SIMULATE_RX_DELAY) {
 					# simulate rx delay

@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.66 2004/03/10 21:29:38 dean Exp $
+# $Id: Source.pm,v 1.67 2004/03/13 04:06:31 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -736,6 +736,10 @@ sub openSong {
 			$::d_source && msg("openSong: getting duration  $duration, size $size, and offset $offset for $fullpath\n");
 			if (!$size || !$duration) {
 				$::d_source && msg("openSong: not bothering opening file with zero size or duration\n");
+				my $line1 = string('PROBLEM_OPENING');
+				my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));		
+				Slim::Display::Animation::showBriefly($client, $line1, $line2, 1,1);
+				select(undef, undef, undef, 0.25);
 				return undef;
 			}
 		}

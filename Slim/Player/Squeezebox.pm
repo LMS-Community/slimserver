@@ -280,7 +280,7 @@ sub vfd {
 	if ($client->opened()) {
 		$frame = 'vfdc'.$data;
 		my $len = pack('n',length($frame));
-		$::d_protocol_verbose && msg ("sending squeezebox frame, length ".length($frame)."\n");
+		$::d_slimproto_v && msg ("sending squeezebox frame, length ".length($frame)."\n");
 		$frame = $len.$frame;
 		$client->tcpsock->syswrite($frame,length($frame));
 	} 

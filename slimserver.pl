@@ -478,7 +478,7 @@ Usage: $0 [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
 The following are debugging flags which will print various information 
 to the console via stderr:
 
-	--d_artwork			=> Display information on artwork display
+    --d_artwork      => Display information on artwork display
     --d_cli          => Display debugging information for the 
                         command line interface interface
     --d_command      => Display internal command execution
