@@ -967,6 +967,7 @@ sub trackStartEvent {
 	}
 
 	Slim::Player::Playlist::refreshPlaylist($client);
+	Slim::Control::Command::executeCallback($client, ["newsong"]);
 
 	$::d_source && msg("Song queue is now " . join(',', map { $_->{index} } @$queue) . "\n");
 }
@@ -1369,6 +1370,7 @@ sub openSong {
 
 	if (!$client->reportsTrackStart()) {
 		Slim::Player::Playlist::refreshPlaylist($client);
+		Slim::Control::Command::executeCallback($client, ["newsong"])
 	}
 	
 	Slim::Control::Command::executeCallback($client,  ['open', $fullpath]);

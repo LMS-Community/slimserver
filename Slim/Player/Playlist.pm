@@ -272,7 +272,6 @@ sub refreshPlaylist {
 
 	# make sure we're displaying the new current song in the playlist view.
 	for my $everybuddy ($client, Slim::Player::Sync::syncedWith($client)) {
-
 		if ($everybuddy->isPlayer()) {
 			Slim::Buttons::Playlist::jump($everybuddy,$index);
 		}

@@ -168,7 +168,13 @@ sub render {
 
 	my $bits = '';
 	my $otherbits = undef;
-	my $fonts = $client->fonts();
+	my $fonts;	
+	if ($parts->{fonts}) {
+		$fonts = $parts->{fonts};
+	} else {
+		$fonts = $client->fonts();
+	}
+	
 	my $screensize = $client->screenBytes();
 	my $line1same = 1;
 	

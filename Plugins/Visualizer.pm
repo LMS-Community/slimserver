@@ -23,6 +23,10 @@ my $VISUALIZER_VUMETER = 1;
 my $VISUALIZER_SPECTRUM_ANALYZER = 2;
 my $VISUALIZER_WAVEFORM = 3;
 
+my $textontime = 5;
+my $textofftime = 30;
+my $initialtextofftime = 5;
+
 my %client_context = ();
 my @visualizer_screensavers = ( 'SCREENSAVER.visualizer_spectrum', 
 								'SCREENSAVER.visualizer_digital_vumeter', 
@@ -31,14 +35,17 @@ my %screensaver_info = (
 	'SCREENSAVER.visualizer_spectrum' => {
 		name => 'PLUGIN_SCREENSAVER_VISUALIZER_SPECTRUM_ANALYZER',
 		params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 3, 160, 160, 1, 4, 1, 1, 1, 3],
+		showtext => 1,
 	},
 	'SCREENSAVER.visualizer_analog_vumeter' => {
 		name => 'PLUGIN_SCREENSAVER_VISUALIZER_ANALOG_VUMETER',
 		params => [$VISUALIZER_VUMETER, 0, 1, 0, 160, 160, 160],
+		showtext => 0,
 	},
 	'SCREENSAVER.visualizer_digital_vumeter' => {
 		name => 'PLUGIN_SCREENSAVER_VISUALIZER_DIGITAL_VUMETER',
 		params => [$VISUALIZER_VUMETER, 0, 0, 20, 130, 170, 130],
+		showtext => 1,
 	},
 	'screensaver' => {
 		name => 'PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT',
@@ -88,6 +95,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	DE	Standard Bildschirmschoner
 	EN	Default screenaver
 	ES	Salvapantallas por defecto
+
 '};
 
 ##################################################
@@ -193,14 +201,11 @@ our %screensaverFunctions = (
 sub screensaverLines {
 	my $client = shift;
 	if( $client->isa( "Slim::Player::Squeezebox2")) {
-		$line1 = $line2 = '';
 	}
 	else {
-		$line1 = $client->string('PLUGIN_SCREENSAVER_VISUALIZER');
-		$line2 = $client->string('PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2');
+		return( $client->string('PLUGIN_SCREENSAVER_VISUALIZER'),
+				$client->string('PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2'));
 	}
-
-	return( $line1, $line2);
 }
 
 sub screenSaver {
@@ -229,8 +234,8 @@ sub screenSaver {
 
 sub leaveVisualizerMode() {
 	my $client = shift;
-
-	$client->visualizer($client_context{$client}->{last_pdm});
+	Slim::Utils::Timers::killTimers($client, \&_pushoff);
+	Slim::Utils::Timers::killTimers($client, \&_pushon);
 }
 
 sub setVisualizerMode() {
@@ -244,13 +249,68 @@ sub setVisualizerMode() {
 		return;
 	}
 
-	$client_context{$client}->{last_pdm} = Slim::Utils::Prefs::clientGet(
-														$client, 
-														"playingDisplayMode");
-	
 	my $mode = Slim::Buttons::Common::mode($client);
 	$client->modeParam('visu', $screensaver_info{$mode}->{params});
+
 	$client->lines(\&screensaverLines);
+
+	# do it again at the next period
+	if ($screensaver_info{$mode}->{showtext}) {
+		Slim::Control::Command::setExecuteCallback(\&_showsongtransition);
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $initialtextofftime,
+									  \&_pushon,
+									  $client);
+	}
+}
+
+sub _showsongtransition {
+	my $client = shift;
+	my $paramsRef = shift;
+	
+	return if ($paramsRef->[0] ne 'newsong');
+	
+	my $mode = Slim::Buttons::Common::mode($client);
+	return if (!$mode || $mode !~ /^SCREENSAVER.visualizer_/);
+	return if (!$screensaver_info{$mode}->{showtext});
+	
+	_pushon($client);
+}
+
+sub _pushon {
+	my $client = shift;
+
+	Slim::Utils::Timers::killTimers($client, \&_pushoff);
+	Slim::Utils::Timers::killTimers($client, \&_pushon);
+
+	my $screen = {
+			'fonts' => ['standard.1','high.2'],
+			'line1' => '',
+			'line2' => $client->string('NOW_PLAYING') . ': ' .
+						Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::song($client)),
+		};
+	
+	$client->pushLeft(undef, $screen);
+	# do it again at the next period
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $textontime,
+								  \&_pushoff,
+								  $client);	
+}
+
+sub _pushoff {
+	my $client = shift;
+
+	Slim::Utils::Timers::killTimers($client, \&_pushoff);
+	Slim::Utils::Timers::killTimers($client, \&_pushon);
+
+	my $screen = {
+			'line1' => '',
+			'line2' => '' 
+		};
+	$client->pushRight(undef,$screen);
+	# do it again at the next period
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $textofftime,
+								  \&_pushon,
+								  $client);	
 }
 
 1;
