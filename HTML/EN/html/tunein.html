@@ -6,8 +6,8 @@
   <body bgcolor="#FFFFFF">
     <p></p>
     <h3>[% "TUNE_IN" | string %]</h3>
-    <a href="/home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / 
-    <a href="[% webroot | uri %]tunein.html?player=[% player | uri %]">[% "TUNE_IN" | string %]</a>
+    <a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / 
+    <a href="[% webroot %]html/tunein.html?player=[% player | uri %]">[% "TUNE_IN" | string %]</a>
     <p></p>
     <hr>
     [% IF p2 %]
@@ -18,7 +18,7 @@
     <p>
       [% "TUNE_IN_DESC" | string %]
     </p>
-      <form name="tune" method="get" action="[% webroot | uri %]tunein.html">
+      <form name="tune" method="get" action="[% webroot %]html/tunein.html">
           <input type="hidden" name="p0" value="playlist">
           <input type="hidden" name="p1" value="play">
           <input type="hidden" name="player" value="[% player %]">
