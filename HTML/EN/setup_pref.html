@@ -1,5 +1,7 @@
 	[% IF not Suppress_PrefHead %]<h3>[% PrefHead %]</h3>[% END %]
 		[% IF not Suppress_PrefDesc %]<p>[% PrefDesc %]</p>[% END %]
+		[% IF PrefInTable %]<table border="0" cellspacing="0">[% END %]
 		[% PrefInput %]
+		[% IF PrefInTable %]</table>[% END %]
 	[% IF not Suppress_PrefHead %]</p>[% END %]
 [% IF not Suppress_PrefLine %]<hr>[% END %]

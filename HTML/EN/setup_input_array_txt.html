@@ -3,6 +3,10 @@
 [% IF PrefsInTable %]</td><td>[% END %]
 [% IF PrefChoose %]<label for="[% PrefName %]" class="stdlabel">[% PrefChoose %]</label>[% END %]
 [% IF PrefsInTable %]</td><td>[% END %]
+[% IF showTextExtValue %]
+<label for="[% PrefName %]" class="stdlabel">[% PrefExtValue %]</label>
+[% IF PrefsInTable %]</td><td>[% END %]
+[% END %] 
 <input type=text class="stdedit" name="[% PrefName %]" id="[% PrefName %]" value="[% PrefValue %]" 
 		size=[% IF not PrefSize %]10[% END %][% IF PrefSize == 'small' %]10[% END %][% IF PrefSize == 'medium' %]20[% END %][% IF PrefSize == 'large' %]40[% END %]>
 [% IF PrefsInTable %]</td><td>[% END %]

@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.109 2004/10/27 23:36:16 vidur Exp $
+# $Id: Setup.pm,v 1.110 2004/11/03 22:28:10 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -96,6 +96,8 @@ my %setup = ();
 	#for array prefs the default is 'string('SETUP_NEW_VALUE') string('SETUP_prefname') %s string('SETUP_REJECTED'):' sprintf'd with array index
 # 'rejectMsg' => template for rejected value message (defaults to 'string('SETUP_BAD_VALUE')%s'), this will be sprintf'd to stick in the value
 # 'rejectAddlText => template for any additional text to display after a rejection (default '')
+# 'showTextExtValue' => indicates whether to display the external value as a label for an array of text input prefs
+# 'PrefInTable' => set if only this pref should appear in a table. not compatible with group parameter 'PrefsInTable'
 
 # the default values are used for keys which do not exist() for a particular preference
 # for most preferences the only values to set will be 'validate', 'validateArgs', and 'options'
@@ -2325,7 +2327,8 @@ sub buildHTTP {
 			$prefparams{'Suppress_PrefDesc'} = $groupparams{'Suppress_PrefDesc'};
 			$prefparams{'Suppress_PrefSub'} = $groupparams{'Suppress_PrefSub'};
 			$prefparams{'Suppress_PrefLine'} = $groupparams{'Suppress_PrefLine'};
-			$prefparams{'PrefsInTable'} = $groupparams{'PrefsInTable'};
+			$prefparams{'PrefsInTable'} = $groupparams{'PrefsInTable'} ||
+				$prefparams{'PrefInTable'};
 			$prefparams{'skinOverride'} = $groupparams{'skinOverride'};
 			
 			if (!exists $prefparams{'PrefHead'}) {
@@ -2366,6 +2369,7 @@ sub buildHTTP {
 					$arrayMax += $pageref->{'Prefs'}{$pref}{'arrayAddExtra'};
 				}
 			}
+			$prefparams{'PrefInput'} = '';
 			for (my $i=0; $i <= $arrayMax; $i++) {
 				my $pref2 = $pref . (exists($pageref->{'Prefs'}{$pref}{'isArray'}) ? $i : '');
 				$prefparams{'PrefName'} = $pref2;
@@ -2394,10 +2398,10 @@ sub buildHTTP {
 					$prefparams{'PrefSelected'} = $paramref->{$pref2} ? 'checked' : undef;
 				}
 				if (defined $prefparams{'inputTemplate'}) {
-					$prefparams{'PrefInput'} = ${Slim::Web::HTTP::filltemplatefile($prefparams{'inputTemplate'},\%prefparams)};
+					$prefparams{'PrefInput'} .= ${Slim::Web::HTTP::filltemplatefile($prefparams{'inputTemplate'},\%prefparams)};
 				}
-				$groupparams{'PrefList'} .= ${Slim::Web::HTTP::filltemplatefile('setup_pref.html',\%prefparams)};
 			}
+			$groupparams{'PrefList'} .= ${Slim::Web::HTTP::filltemplatefile('setup_pref.html',\%prefparams)};
 		}
 		if (!exists $groupparams{'ChangeButton'}) {
 			$groupparams{'ChangeButton'} = string('CHANGE');
