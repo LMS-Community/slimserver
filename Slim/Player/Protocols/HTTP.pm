@@ -361,7 +361,7 @@ sub sysread {
 	}
 
 	unless (${*$self}{'_sel'}->can_read($timeout)) {
-		Slim::Utils::Misc::bt("Couldn't read - hit timeout: $timeout!\n");
+		$::d_remotestream && msg("Couldn't sysread - hit timeout: $timeout!\n");
 		return;
 	}
 
