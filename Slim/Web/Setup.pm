@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.15 2003/11/10 23:15:04 dean Exp $
+# $Id: Setup.pm,v 1.16 2003/11/14 21:21:32 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -73,6 +73,7 @@ my %setup = ();
 # 'validate' => reference to validation function (will be passed value to validate) (default validateAcceptAll)
 # 'validateArgs' => array of arguments to be passed to validation function (in addition to value) (no default)
 # 'options' => hash of value => text pairs to be used in building a list (no default)
+# 'optionSort' => controls sort order of the options, one of K (key), KR (key reversed), V (value) VR (value reversed) - (default K)
 # 'dontSet' => flag to suppress actually changing the preference
 # 'currentValue' => sub ref taking $client,$key,$ind as parameters, returns current value of preference.  Only needed for preferences which don't use Slim::Utils::Prefs
 # 'noWarning' => flag to suppress change information
@@ -456,7 +457,8 @@ sub initSetupConfig {
 							,'options' => {
 									'1' => string('USE_ITUNES')
 									,'0' => string('DONT_USE_ITUNES')
-									}
+								}
+							,'optionSort' => 'KR'
 							,'inputTemplate' => 'setup_input_radio.html'
 							,'changeoptions' => {
 									'1' => string('USING_ITUNES')
@@ -483,7 +485,8 @@ sub initSetupConfig {
                                                             ,'options' => {
                                                                        '1' => string('USE_MOODLOGIC')
                                                                        ,'0' => string('DONT_USE_MOODLOGIC')
-                                                                       }
+                                                                }
+                                                            ,'optionSort' => 'KR'
                                                        ,'inputTemplate' => 'setup_input_radio.html'
                                                        ,'PrefSize' => 'large'
                                                     }
@@ -1817,9 +1820,9 @@ sub options_HTTP {
 			my $key2 = $key . (exists($settingsref->{$key}{'isArray'}) ? $i : '');
 			if (exists $settingsref->{$key}{'options'}) {
 				if ($settingsref->{$key}{'inputTemplate'} && $settingsref->{$key}{'inputTemplate'} eq 'setup_input_radio.html') {
-					$paramref->{$key2 . '_options'} = fillRadioOptions($paramref->{$key2},$settingsref->{$key}{'options'},$key);
+					$paramref->{$key2 . '_options'} = fillRadioOptions($paramref->{$key2},$settingsref->{$key}{'options'},$key,$settingsref->{$key}{'optionSort'});
 				} else {
-					$paramref->{$key2 . '_options'} = fillOptions($paramref->{$key2},$settingsref->{$key}{'options'});
+					$paramref->{$key2 . '_options'} = fillOptions($paramref->{$key2},$settingsref->{$key}{'options'},$settingsref->{$key}{'optionSort'});
 				}
 			}
 		}
@@ -1830,9 +1833,18 @@ sub fillOptions {
 	#pass in the selected value and a hash of value => text pairs to get the option list filled
 	#with the correct option selected.  Since the text portion can be a template (for stringification)
 	#perform a filltemplate on the completed list
-	my ($selected,$optionref) = @_;
+	my ($selected,$optionref,$optionsort) = @_;
 	my $optionlist = '';
-	foreach my $curroption (sort keys %{$optionref}) {
+	my @optionarray = keys %$optionref;
+	if (!defined $optionsort || $optionsort =~ /K/i) {
+		@optionarray = sort @optionarray;
+	} else {
+		@optionarray = sort {$optionref->{$a} cmp $optionref->{$b}} @optionarray;
+	}
+	if (defined $optionsort && $optionsort =~ /R/i) {
+		@optionarray = reverse @optionarray;
+	}
+	foreach my $curroption (@optionarray) {
 		$optionlist .= "<option " . ((defined($selected) && ($curroption eq $selected)) ? "selected " : ""). qq(value="${curroption}">$optionref->{$curroption}</option>)
 	}
 	return $optionlist;
@@ -1842,9 +1854,18 @@ sub fillRadioOptions {
 	#pass in the selected value and a hash of value => text pairs to get the option list filled
 	#with the correct option selected.  Since the text portion can be a template (for stringification)
 	#perform a filltemplate on the completed list
-	my ($selected,$optionref,$option) = @_;
+	my ($selected,$optionref,$option,$optionsort) = @_;
 	my $optionlist = '';
-	foreach my $curroption (sort {${$optionref}{$a} cmp ${$optionref}{$b}} keys %{$optionref}) {
+	my @optionarray = keys %$optionref;
+	if (!defined $optionsort || $optionsort =~ /K/i) {
+		@optionarray = sort @optionarray;
+	} else {
+		@optionarray = sort {$optionref->{$a} cmp $optionref->{$b}} @optionarray;
+	}
+	if (defined $optionsort && $optionsort =~ /R/i) {
+		@optionarray = reverse @optionarray;
+	}
+	foreach my $curroption (@optionarray) {
 		$optionlist .= "<p><input type=\"radio\" " . 
 						((defined($selected) && ($curroption eq $selected)) ? "checked " : ""). 
 						qq(value="${curroption}" name="$option">$optionref->{$curroption}</p>)
