@@ -6521,6 +6521,9 @@ PAGES
 	PT	Páginas
 	SE	Sidor
 
+ITEMS
+	EN	Items
+
 SONGS
 	DE	Titel
 	DK	Sange
