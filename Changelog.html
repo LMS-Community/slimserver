@@ -1,3 +1,86 @@
+<h2><a name="v6.0.1" id="v6.0.1"></a>Version 6.0.1 - 2005-04-05</h2>
+<ul>
+	<li>Squeezebox2 Firmware:<p>
+		<ul>
+			<li>Added support for WEP open system authentication (previously, we only did shared key).
+			<li>Fixes for BEFW11S4 v4 and Netgear MR814 v2 access points.
+			<li>Fixes for WEP on BEF11S4v2
+			<li>Support Ad-hoc wireless.
+			<li>Turned off global debugging. Leaving it on (an oversight) could cause performance problems, 
+			    including the "crunchy" audio when there was a large amount of network activity while playing FLAC.
+			<li>Fix: blank screen after server disconnect.
+			<li>Fix: client-side animations weren't using the correct screen size when we had side visualizers.
+		</ul>
+	<br>
+
+	<li>Usability:<p>
+		<ul>
+			<li>Don't include composers during searches unless you've changed the settings to.
+			<li>Don't try to shuffle remote streams - as they won't have a distinct Album.
+			<li>We weren't adding COMPOSER, CONDUCTOR, etc to the title format, which we used to do in 5.4
+		</ul>
+	<br>
+
+	<li>iTunes:<p>
+		<ul>
+			<li>If iTunes is available, turn it on by default.
+			<li>If a user moved their iTunes Music Folder, we still had stale information in the database. Rescan, and pull the correct Music Folder path from the .XML file.
+		</ul>
+	<br>
+
+	<li>Formats:<p>
+		<ul>
+			<li>Updated 'sox' on OSX to be statically linked for Ogg usage.
+			<li>Monkey's Audio: Use mac.exe v3.99 that properly supports stdout.
+		</ul>
+	<br>
+
+	<li>SoftSqueeze:<p>
+		<ul>
+			<li>Fix for Java 1.4 users (OSX mostly) - that prevented SoftSqueeze from being usable.
+		</ul>
+	<br>
+
+	<li>Skins:<p>
+		<ul>
+			<li>Fixes for Fishbone & ExBrowse2
+		</ul>
+	<br>
+
+	<li>Known Issues:<p>
+		<ul>
+			<li>Large playlists can't be saved: bug #1266
+			<li>On some systems (Windows mostly), files with accented characters are not scanned: bug #1226
+		</ul>
+	<br>
+
+	<li>Bugs fixed:<p>
+		<ul>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=896">#896</a> - Browse by artwork halts on accented characters.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=936">#936</a> - bottom line scrolling animation doesn't use new technique
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1044">#1044</a> - Client-side animations should only use the server-specified width
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1108">#1108</a> - .slimserversql.db (and conffile) always owned by group root
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1220">#1220</a> - Now Playing list in web interface doesn't always update correctly
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1225">#1225</a> - Crash on 'player settings' for remote client
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1226">#1226</a> - Parts or full albums missing.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1232">#1232</a> - SoftSqueeze stops responding.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1239">#1239</a> - &quot;Browse Music Folder&quot; from player fails on non-ASCII directory names
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1245">#1245</a> - display duration does not work as documented
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1246">#1246</a> - Fishbone cosmetics
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1249">#1249</a> - Pause changes volume level
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1255">#1255</a> - Problem saving 'now playing' information for player
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1259">#1259</a> - filetypes settings now showing transcoding
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1263">#1263</a> - ExBrowse2 + Browse Music Folder: no Page 1..n links
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1278">#1278</a> - itunes playlists coming up empty or not at all
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1295">#1295</a> - keyboard shortcut to copy causes ExBrowse2 to play
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1298">#1298</a> - Album year not shown with fishbone skin
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1301">#1301</a> - Selected Browse Option still inconsistent with browse results panel
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1308">#1308</a> - Can't set effective group at startup
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1312">#1312</a> - clicking download link on some songs in web interface crashes server
+		</ul>
+	<br>
+</ul>
+
 <h2><a name="v6.0" id="v6.0"></a>Version 6.0 - 2005-03-27</h2>
 <ul>
 	<h3>Summary:</h3>
