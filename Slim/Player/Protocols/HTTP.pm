@@ -94,7 +94,7 @@ sub open {
 		$::d_remotestream && msg("Couldn't set non-blocking on socket!\n");
 	};
 
-        $sock->connect(pack_sockaddr_in($port, inet_aton($server))) || do {
+		$sock->connect(pack_sockaddr_in($port, inet_aton($server))) || do {
 
 		my $errnum = 0 + $!;
 
@@ -188,9 +188,9 @@ sub request {
 	}
 	
 	my $redir = '';
-	#my $ct = Slim::Music::Info::typeFromPath($infoUrl, 'mp3');
+	my $ct = Slim::Music::Info::typeFromPath($infoUrl, 'mp3');
 
-	#Slim::Music::Info::setContentType($infoUrl, $ct);
+	${*$self}{'contentType'} = $ct;
 
 	while(my $header = Slim::Utils::Misc::sysreadline($self, $timeout)) {
 
@@ -281,7 +281,7 @@ sub request {
 			my $redirectedContentType = Slim::Music::Info::contentType($redir);
 
 			$::d_remotestream && msg("Content type ($redirectedContentType) of $infoUrl is being set to the content type of the redir: $redir\n");
-			#Slim::Music::Info::setContentType($infoUrl,$redirectedContentType);
+			${*$self}{'contentType'} = $redirectedContentType;
 		}
 		
 		return $self;

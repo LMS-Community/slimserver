@@ -195,7 +195,7 @@ sub total_time {
 }
 
 sub clearPlaylists {
-	$currentDB->clearExternalPlaylists(shift) if defined($currentDB);
+	return $currentDB->clearExternalPlaylists(shift) if defined($currentDB);
 }
 
 sub playlists {
