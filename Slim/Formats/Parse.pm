@@ -272,6 +272,19 @@ sub parseCUE {
 	# calc song ending times from start of next song from end to beginning.
 	my $lastpos = (defined $tracks{$currtrack}->{'END'}) ? $tracks{$currtrack}->{'END'} : $secs;
 
+	# If we can't get $lastpos from the cuesheet, try and read it from the original file.
+	if (!$lastpos) {
+
+		my $track = $ds->updateOrCreate({
+			'url'        => $filename,
+			'readTags'   => 1,
+		});
+
+		$lastpos = $secs = $track->secs();
+
+		$::d_parse && Slim::Utils::Misc::msg("Couldn't get duration of $filename\n") unless $lastpos;
+	}
+
 	for my $key (sort {$b <=> $a} keys %tracks) {
 
 		my $track = $tracks{$key};
