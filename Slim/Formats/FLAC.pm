@@ -1,6 +1,6 @@
 package Slim::Formats::FLAC;
 
-# $Id: FLAC.pm,v 1.5 2003/12/15 17:57:50 daniel Exp $
+# $tagsd: FLAC.pm,v 1.5 2003/12/15 17:57:50 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -63,12 +63,19 @@ sub getTag {
 		# these are not tags, but calculated values from the streaminfo
 		$tags->{'SIZE'}    = $flac->{'fileSize'};
 		$tags->{'SECS'}    = $flac->{'trackTotalLengthSeconds'};
+		$tags->{'OFFSET'}  = $flac->{'startAudioData'};
 		$tags->{'BITRATE'} = $flac->{'bitRate'}/1000.0;
 
 		# Add the stuff that's stored in the Streaminfo Block
 		my $flacInfo = $flac->info();
 		$tags->{'RATE'}     = $flacInfo->{'SAMPLERATE'};
 		$tags->{'CHANNELS'} = $flacInfo->{'NUMCHANNELS'};
+
+		# stolen from MP3::Info
+		$tags->{'MM'}	    = int $tags->{'SECS'} / 60;
+		$tags->{'SS'}	    = int $tags->{'SECS'} % 60;
+		$tags->{'MS'}	    = (($tags->{'SECS'} - ($tags->{'MM'} * 60) - $tags->{'SS'}) * 1000);
+		$tags->{'TIME'}	    = sprintf "%.2d:%.2d", @{$tags}{'MM', 'SS'};
 
 		return $tags;
 

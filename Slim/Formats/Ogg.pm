@@ -1,6 +1,6 @@
 package Slim::Formats::Ogg;
 
-# $Id: Ogg.pm,v 1.7 2003/12/24 04:27:18 daniel Exp $
+# $Id: Ogg.pm,v 1.8 2003/12/27 23:48:06 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -87,6 +87,9 @@ sub getTag {
 	$tags->{'STEREO'}   = $ogg->info('channels') == 2 ? 1 : 0;
 	$tags->{'CHANNELS'} = $ogg->info('channels');
 	$tags->{'RATE'}	    = $ogg->info('rate') / 1000;
+
+	# temporary for now - Ogg:: doesn't expose this yet.
+	$tags->{'OFFSET'}   = 0;
 
 	return $tags;
 }

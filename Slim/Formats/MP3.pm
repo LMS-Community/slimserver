@@ -1,6 +1,6 @@
 package Slim::Formats::MP3;
 
-# $Id: MP3.pm,v 1.2 2003/12/05 16:56:43 daniel Exp $
+# $Id: MP3.pm,v 1.3 2003/12/27 23:48:05 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -21,6 +21,9 @@ sub getTag {
 	if ($tags && $info) {
 		%$info = (%$info, %$tags);
 	}
+
+	# sometimes we don't get this back.
+	$info->{'OFFSET'} += 0;
 
 	return $info;
 }
