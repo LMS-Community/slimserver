@@ -52,7 +52,7 @@ BEGIN {
 
 use constant defaultSkin => 'Default';
 use constant baseSkin	 => 'EN';
-use constant ONEYEAR	 => 60 * 60 * 24 * 365;
+use constant HALFYEAR	 => 60 * 60 * 24 * 180;
 
 use constant METADATAINTERVAL => 32768;
 use constant MAXCHUNKSIZE     => 32768;
@@ -732,8 +732,8 @@ sub generateHTTPResponse {
 	if ($contentType =~ /image/) {
 
 		# images should expire from cache one year from now
-		$response->expires(time() + ONEYEAR);
-		$response->header('Cache-Control' => 'public');
+		$response->expires(time() + HALFYEAR);
+		$response->header('Cache-Control' => sprintf('public; max-age=%d', HALFYEAR));
 	}
 
 	if ($contentType =~ /text/) {
