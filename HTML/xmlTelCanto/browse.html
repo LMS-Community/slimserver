@@ -1,12 +1,1 @@
-<?xml version="1.0" encoding="[% LOCALE %]" standalone="no"?>
-
-<!DOCTYPE browse SYSTEM "html/slimserver_xml.dtd">
-
-<browse xmlns="http://www.slimdevices.com/slimserver/xml">
-	[% IF itunes %]<itunes/>[% END %]
-	[% IF warn %]<still_scanning/>[% END %]
-	[% IF pwd_list %]<location>[% pwd_list %]</location>[% END %]
-	[% IF browselist_header %][% browselist_header %][% END %]
-	[% IF coverart %]<coverart><![CDATA[/music/[% coverartpath | uri %]/cover.jpg]]></coverart>[% END %]
-	[% browse_list %]
-</browse>
+[% PROCESS browsedb.html %]

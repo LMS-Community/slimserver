@@ -4,6 +4,4 @@
 
 <songinfo xmlns="http://www.slimdevices.com/slimserver/xml">
 	[% PROCESS _xml_song_full.html %]
-	<replace_url><![CDATA[xml/status.xml?p0=playlist&p1=play&p2=[% itempath | uri %]]]></replace_url>
- 	<append_url><![CDATA[xml/status.xml?p0=playlist&p1=append&p2=[% itempath | uri %]]]></append_url>
 </songinfo>

@@ -51,9 +51,9 @@
 			<seconds_elapsed>[% songtime | html %]</seconds_elapsed>
 			<seconds_total>[% duration | html %]</seconds_total>
 		[% END %]
-			[% IF title %]<song>[% END %]
+			<song>
 			[% PROCESS _xml_song_full.html %]
-			[% IF title %]</song>[% END %]
+			</song>
 		[% IF currentsong %]
 		</current_song>
 		[% END %]
