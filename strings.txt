@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.82 2004/04/17 14:57:35 dean Exp $
+# $Id: strings.txt,v 1.83 2004/04/18 06:53:34 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -977,6 +977,9 @@ SETUP_GROUP_PLUGINS_DESC
 	NO	SlimServer inneholder en del tilleggsfunksjoner, Plugins, som du kan benytte deg av med fjernkontrollen. Disse kan aktiveres eller deaktiveres individuelt. For å aktivere en Plugin, merk den. For å deaktivere en Plugin, fjern merket. For å lagre endringene, velg "Endre".
 	PT	O cliente SlimServer inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
 	SE	SlimServer inkluderar tilläggs-funktioner som du kan konfigurera och/eller använda via din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras var för sig. Kryssa i rutan bredvid tillägget nedan för att aktivera ett tillägg. Ta bort krysset när du vill avaktivera ett tillägg. Spara dina ändringar genom att klicka på "Ändra".
+
+SETUP_PLUGINS-ONTHEFLY
+	EN	Load Plugins On-The-Fly
 
 SETUP_PLUGINS-ONTHEFLY_0
 	EN	Load Plugins at startup Only

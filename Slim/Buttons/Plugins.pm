@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.18 2004/02/22 05:26:29 dean Exp $
+# $Id: Plugins.pm,v 1.19 2004/04/18 06:53:35 kdf Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
@@ -33,7 +33,7 @@ sub pluginDirs {
 
 use lib (pluginDirs());
 
-my $read_onfly = 0;	# set to 1 to pick up modules on the fly rather than
+my $read_onfly = Slim::Utils::Prefs::get('plugins-onthefly');	# set to 1 to pick up modules on the fly rather than
 			# on the first visit to the plug-ins section
 my %plugins = ();
 my %curr_plugin = ();
@@ -267,6 +267,7 @@ sub pluginCount {
 
 sub setMode {
 	my $client = shift;
+	read_plugins() unless $plugins_read;
 	if (!defined $curr_plugin{$client} || $curr_plugin{$client} >= scalar(enabledPlugins($client))) {
 		$curr_plugin{$client} = 0;
 	}
