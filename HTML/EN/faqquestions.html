@@ -772,6 +772,8 @@ Version=2</pre></p>
 
 <h4><a id="troubleshooting">Troubleshooting</a></h4>
 <ul>
+	<li><a href="#troubleshooting-wireless">My Squeezebox seems to lose its wireless connection quite often.  
+What can I do to make the wireless connection more stable?</a>
 	<li><a href="#troubleshooting-sp2">I installed Windows XP Service Pack 2, and my SliMP3 or Squeezebox no longer find Slim Server.</a>
 	<li><a href="#troubleshooting-sleep">After several minutes my player turns off and stops responding.  What's going on?</a>
 	<li><a href="#troubleshooting-wep">I'm having trouble connecting my Squeezebox to a wireless network with WEP enabled.</a>
@@ -802,6 +804,44 @@ Version=2</pre></p>
 	<li><a href="#troubleshooting-logfile">Where does the system write it's logfile and how do I control this?</a>
 </ul>
 <h4>Troubleshooting</h4>
+
+
+<div class="faq">
+<h5><a id="troubleshooting-sp2"></a>My Squeezebox seems to lose its wireless connection quite often.  
+What can I do to make the wireless connection more stable?</h5
+
+<p>
+A: There are several things you can do.  Please note that if you are hearing audio dropouts, these settings may not affect this performance.  This FAQ just contains some tips on how to optimize your network.  If you are hearing audio dropouts with AAC audio, <a href="#troubleshooting-aacwireless">please see this FAQ entry.</a>  First off, here are some basic things that anyone can do:
+</p>
+<p>
+<ul>
+	<li>Ensure that you have the latest firmware for your wireless access point.  Vendors often make fixes to improve their wireless capabilities after a product has first shipped, so it's good to keep it up-to-date.
+	
+	<li>Try reorienting the antenna of the Squeezebox.  The most effective way to do this is to restart your Squeezebox by holding down the power button for 5 seconds.  When it says "Welcome to Squeezebox" press the right button on the remote.  Instead of going into "Setup networking", press up to go to "View Current Settings"--then press right and find the Wireless signal strength.  With this on the display, you can move the antenna around to see what orientation gives you the best signal strength at the player's location.
+	
+	<li>Try to keep both your Squeezebox and your access point somewhat free of obstacles.  If you have the Squeezebox inside a wood and glass entertainment center, try placing it on top of the unit.  If your access point is under a desk, try putting it on top of the desk.  Either of these can make a large improvement.
+	
+	<li>Try a more directional antenna, and point it directly towards your access point.  There are several available at stores like Fry's, Best Buy, or other similar stores.  The Squeezebox has a reverse-polarity SMA connector, so many off-the-shelf antennas will work.  Some of our users have reported success with D-Link and Hawking Technologies antennas.
+</ul>
+</p>
+
+<p>Now for some more advanced troubleshooting:</p>
+
+<p>
+<ul>
+	<li>On Windows you can use a program called <a href="http://www.netstumbler.com">Netstumbler</a> to find out more about nearby networks.  On MacOS, you can use a program called <a href="http://www.macstumbler.com>MacStumbler</a>.  Both of these excellent tools will give you knowledge to do the following steps...
+	
+	<li>Ensure that your access point does not overlap with any nearby stations on any channels.  For more information on channel overlap see this <a href="http://www.unixwiz.net/techtips/wireless-guide.html">informative guide</a>.
+	
+	<li>If you are an area with a lot of wireless networks and can not avoid a channel overlap, try to put your access point on a station with very low signal strength as reported by one of the above tools.
+	
+	<li>If your Squeezebox is in close proximity to the access point but you are seeing low signal strength, you may want to try lowering the transmit rate (sometimes called Multicast Rate) on the access point.  Some access points default to a high rate (up to 11Mbps), but you get a stronger signal from higher distances if this value is lower (1-2 Mbps)...
+	
+	<li>You can also try enabling interference robustness on your access point if supported.  This may decrease range, but should improve your signal.
+</ul>
+
+</p>
+</div>
 
 <div class="faq">
 <h5><a id="troubleshooting-sp2"></a>I installed Windows XP Service Pack 2, and my SliMP3 or Squeezebox no longer find Slim Server.</h5>

@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.42 2004/05/06 03:14:28 dean Exp $
+# $Id: Misc.pm,v 1.43 2004/05/10 14:57:45 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -534,21 +534,21 @@ sub readDirectory {
 # where a | is specified in the format
 
 sub longDateF {
-	my $time = shift || Time::HiRes::time();
+	my $time = shift || time();
 	my $date = localeStrftime(Slim::Utils::Prefs::get('longdateFormat'), $time);
 	$date =~ s/\|0*//;
 	return $date;
 }
 
 sub shortDateF {
-	my $time = shift || Time::HiRes::time();
+	my $time = shift || time();
 	my $date = localeStrftime(Slim::Utils::Prefs::get('shortdateFormat'),  $time);
 	$date =~ s/\|0*//;
 	return $date;
 }
 
 sub timeF {
-	my $ltime = shift || Time::HiRes::time();
+	my $ltime = shift || time();
 	my $time = localeStrftime(Slim::Utils::Prefs::get('timeFormat'),  $ltime);
 	# remove leading zero if another digit follows
 	$time =~ s/\|0?(\d+)/$1/;

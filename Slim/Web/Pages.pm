@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.74 2004/05/06 01:32:06 kdf Exp $
+# $Id: Pages.pm,v 1.75 2004/05/10 14:57:45 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -103,7 +103,7 @@ sub browser {
 		$playlist = 1;
 		$params->{'playlist'} = 1;
 
-		if (!defined(Slim::Utils::Prefs::get("playlistdir") && !(Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic()))) {
+		if (!Slim::Utils::Prefs::get("playlistdir") && !(Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic())) {
 			$::d_http && msg("no valid playlists directory!!\n");
 			return Slim::Web::HTTP::filltemplatefile("badpath.html", $params);
 		}
