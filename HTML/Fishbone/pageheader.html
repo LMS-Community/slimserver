@@ -72,7 +72,7 @@
 	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" [% IF setup || help %]onload="top.document.getElementById('home').rows = ' 0 , *';"[% END %]>
 	<div class="menu1" width="100%">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13">
-				<td width="33%" height="13" align="center"><nobr><a class="menu1" href="[% IF setup || help %]javascript:parent.browser.location='/'+getHomeCookie('SlimServer-Browserpage') +'&player=[% player | uri %]'[% END %]" onclick="parent.browser.location='/'+getHomeCookie('SlimServer-Browserpage')  + '&page=[% page %]'+'&player=[% player | uri %]';">[% IF home %]<b>[% END %][% playermodel _ "_HOME" | string %][% IF home %]</b>[% END %]</nobr></td>
+				<td width="33%" height="13" align="center"><nobr><a class="menu1" href="index.html" target="_top">[% IF home %]<b>[% END %][% playermodel _ "_HOME" | string %][% IF home %]</b>[% END %]</nobr></td>
 				<td>
 					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
 				</td>

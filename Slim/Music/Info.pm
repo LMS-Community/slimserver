@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.123 2004/05/20 04:14:00 kdf Exp $
+# $Id: Info.pm,v 1.124 2004/05/25 00:14:44 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -604,12 +604,19 @@ sub sortPlaylists {
 }
 
 sub generatePlaylists {
+
  	clearPlaylists();
+
  
+
 	foreach my $url (keys %infoCache) {
+
  		if (isITunesPlaylistURL($url) || isMoodLogicPlaylistURL($url)) {
+
 			push @playlists, $url;
+
 		}
+
 	}
 	
 	sortPlaylists();
@@ -817,6 +824,7 @@ sub reBuildCaches {
 	completeClearCache();
 	foreach my $url (keys %infoCache) {
 		updateCaches($url);
+
 	}
 	generatePlaylists();
 }
@@ -1404,14 +1412,13 @@ sub comment {
 
 			next unless $c;
 
-			# ignore SoundJam CDDB comments
+			# ignore SoundJam and iTunes CDDB comments
 			if ($c =~ /SoundJam_CDDB_/ ||
 			    $c =~ /iTunes_CDDB_/ ||
-			    $c =~ /^\s*[0-9A-Fa-f]{8}(\+|\s)/) {
-
+			    $c =~ /^\s*[0-9A-Fa-f]{8}(\+|\s)/ ||
+			    $c =~ /^\s*[0-9A-Fa-f]{2}\+[0-9A-Fa-f]{32}/) {
 				next;
-			}
-
+			} 
 			# put a slash between multiple comments.
 			$comment .= ' / ' if $comment;
 			$c =~ s/^eng(.*)/$1/;

@@ -13,7 +13,7 @@
 <font face="arial,helvetica">
 <table width=100%>
 <tr><td colspan="2"><font size="-2">
-[% IF player_chooser_list %]<form method="get" action="[% webroot %]index.html" target="_top">[% "CURRENT_PLAYER" | string %] <select name="player">[% player_chooser_list %]</select><input class="stdclick" type="submit" value="Change"></form>[% END %]
+[% IF player_chooser_list %]<form method="get" action="[% webroot %]index.html">[% "CURRENT_PLAYER" | string %] <select name="player">[% player_chooser_list %]</select><input class="stdclick" type="submit" value="Change"></form>[% END %]
 [% IF not player_chooser_list %][% IF player_name %][% player_name %][% END %] [% IF sync %][% "SYNCHRONIZED_WITH" | string %] [% sync %][% END %][% END %]
 </font>
 </td></tr>

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.68 2004/05/21 05:21:08 kdf Exp $
+# $Id: Prefs.pm,v 1.69 2004/05/25 00:14:45 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -534,7 +534,16 @@ sub setMaxRate {
 		clientSet($client,'maxBitrate',$maxRate);
 	}
 	# return the maxrate, or override with ?bitrate= query if it exists.
-	my $rate = clientGet($client,'transcodeBitrate') || $maxRate;
+	my $rate = 0;
+	my @playergroup = ($client, Slim::Player::Sync::syncedWith($client));
+	
+	foreach my $everyclient (@playergroup) {
+		next if Slim::Utils::Prefs::clientGet($everyclient,'silent');
+		my $otherRate = clientGet($everyclient,'transcodeBitrate') || clientGet($everyclient,'maxBitrate');
+		#find the lowest bitrate limit of the sync group. Zero refers to no limit.
+		$rate = ($otherRate && (($rate && $otherRate < $rate) || !$rate))? $otherRate : $rate;
+	}
+	#return lowest bitrate limit.
 	return $rate;
 }
 

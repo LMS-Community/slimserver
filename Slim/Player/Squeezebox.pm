@@ -373,7 +373,7 @@ sub opened {
 #	u8_t pcm_sample_rate;	// [1]	'0' = 11kHz, '1' = 22, '2' = 32, '3' = 44.1, '4' = 48
 #	u8_t pcm_channels;	// [1]	'1' = mono, '2' = stereo
 #	u8_t pcm_endianness;	// [1]	'0' = big, '1' = little
-#	u8_t prebuffer_silence;	// [1]	number of mpeg frames
+#	u8_t reserved;	// [1]	reserved
 #	u8_t spdif_enable;	// [1]  '0' = auto, '1' = on, '2' = off
 #	u8_t reserved;		// [1]	reserved
 #	u16_t server_port;	// [2]	server's port
@@ -432,7 +432,7 @@ sub stream {
 			$pcmsamplerate,
 			$pcmchannels,
 			$pcmendian,
-			5,		# mpeg pre-buffer 5 frames of silence
+			0,		# reserved
 			0,		# s/pdif auto
 			0,		# reserved
 			Slim::Utils::Prefs::get('httpport'),		# port

@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.47 2004/05/18 19:17:39 dean Exp $
+# $Id: Misc.pm,v 1.48 2004/05/25 00:14:45 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -64,18 +64,18 @@ sub findbin {
 	push @paths, catdir( $Bin, 'Bin', $^O);
 	push @paths, catdir( $Bin, 'Bin');
 		
-	if (Slim::Utils::OSDetect::OS() ne "win") {
-		push @paths, (split(/:/, $ENV{'PATH'}),'/usr/bin','/usr/local/bin','/sw/bin');
-	} else {
-		$executable .= '.exe';
-	}
-	
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @paths, $ENV{'HOME'} . "/Library/SlimDevices/bin/";
 		push @paths, "/Library/SlimDevices/bin/";
 		push @paths, $ENV{'HOME'} . "/Library/iTunes/Scripts/iTunes-LAME.app/Contents/Resources/";
 	}
 
+	if (Slim::Utils::OSDetect::OS() ne "win") {
+		push @paths, (split(/:/, $ENV{'PATH'}),'/usr/bin','/usr/local/bin','/sw/bin');
+	} else {
+		$executable .= '.exe';
+	}
+	
 	foreach my $path (@paths) {
 		$path = catdir($path, $executable);
 		if (-x $path) {

@@ -2,10 +2,6 @@
 	<head>
 		<title>[% pagetitle %]</title>
 		<link rel="stylesheet" href="[% webroot %]slimserver.css">
-		<script language="JavaScript">
-		<!--Hide
-		parent.header.browse.[% page %].selected=true;
-		--></script>
 	</head>
 	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="top.document.getElementById('home').rows = '87, *';">
 	<center><p>[% IF song_count %][% "LIBRARY_CONTAINS" | string %] <B>[% song_count %]</B> [% "BY" | string %] <B>[% artist_count %]</B>[% END %]</p></center>
