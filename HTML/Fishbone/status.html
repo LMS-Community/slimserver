@@ -21,6 +21,47 @@
 				</tr>
 			</table>
 		</div>
+		
+		<script language="JavaScript">
+		<!--
+		var _progressEnd = [% IF durationseconds %][% durationseconds %][% END %][% IF not durationseconds %][% refresh %][% END %];
+		var _progressAt = [% IF songtime %][% songtime %][% END %][% IF not songtime %]0[% END %];
+		var p = 1;
+		
+		// Update the progress dialog with the current state
+		function ProgressUpdate() 
+		{
+			[% IF modeplay %]_progressAt++;[% END %]
+			if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
+			if (document.all) //if IE 4+
+			{
+				p = (document.body.clientWidth / _progressEnd) * _progressAt;
+				//document.all.progressBar.innerWidth = p+" ";
+				eval("document.progressBar.width=p");
+			}
+			else if (document.getElementById) //else if NS6+
+			{
+				p = (document.width / _progressEnd) * _progressAt;
+				document.getElementById("progressBar").width=p+" ";
+				//eval("document.progressBar.width=p");
+			}
+			setTimeout("ProgressUpdate()", 1000);
+		}
+		
+		function Click() 
+		{
+			if (document.all||document.getElementById)
+			document.write('<table border="0" cellspacing="0" cellpadding="0"><td height="5"><img id="progressBar" name="progressBar" src="html/pixel.green[% IF not modeplay %]_s[% END %].gif" width="1" height="5"></td></table>');
+			ProgressUpdate()
+		}
+		
+		if (document.all||document.getElementById)
+			Click()
+		else
+			window.onload=Click
+		-->
+		</script>
+		
 		<div class="nowplaying">
 			<table border="0" cellspacing="0" cellpadding="0" width="100%">
 				<tr>

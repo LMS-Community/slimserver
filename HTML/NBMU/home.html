@@ -28,13 +28,8 @@
     <td>
 <h4><font color="#999999">[% "BROWSE_MUSIC" | string %]</font></h4>
       <ul>
-        <li><a href="browseid3.html?player=[% player | uri %]">[% "BROWSE_BY_GENRE" | string %]</a> 
-        </li>
-        <li> <a href="browseid3.html?genre=*&player=[% player | uri %]">[% "BROWSE_BY_ARTIST" | string %]</a> 
-        </li>
-        <li> <a href="browseid3.html?genre=*&artist=*&player=[% player | uri %]">[% "BROWSE_BY_ALBUM" | string %]</a> 
 [% IF additionalLinks.browse %]
-    [% FOREACH value = additionalLinks.browse %]
+    [% FOREACH link = additionalLinks.browse %]
     <li>
  		<a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a>
  	</li>
@@ -43,9 +38,6 @@
       </ul>
       <h4><font color="#999999">[% "SEARCH" | string %]</font></h4>
       <ul>
-        <li> <a href="search.html?type=artist&player=[% player | uri %]">[% "SEARCHFOR_ARTIST" | string %]</a> </li>
-        <li> <a href="search.html?type=album&player=[% player | uri %]">[% "SEARCHFOR_ALBUM" | string %]</a> </li>
-        <li> <a href="search.html?type=song&player=[% player | uri %]">[% "SEARCHFOR_SONGTITLE" | string %]</a> </li>
 [% IF additionalLinks.search %]
     [% FOREACH key = additionalLinks.search.keys %]
     <li>
@@ -78,23 +70,10 @@
       <p>[% END %] </p>
       <h4><font color="#999999">[% "HELP" | string %]</font></h4>
       <ul>
-        <li> <a href="html/docs/quickstart.html" target="_top">[% "GETTING_STARTED" | string %]</a> 
-        </li>
-        <li> <a href="html/docs/ipconfig.html" target="_top">[% "PLAYER_SETUP" | string %]</a> 
-        </li>
-        <li> <a href="html/docs/interface.html" target="_top">[% "USING_REMOTE" | string %]</a> 
-        </li>
-        <li> <a href="html/help_remote.html?player=[% player | uri %]" target="_top">[% "HELP_REMOTE" | string %]</a> </li>
-        <li> <a href="html/docs/radio.html?player=[% player | uri %]" target="_top">[% "RADIO" | string %]</a>	
-        </li>
-        <li><a href="html/docs/faq.html?player=[% player | uri %]" target="_top">[% "FAQ" | string %]</a> 
-        </li>
-        <li> <a href="html/docs/index.html" target="_top">[% "TECHNICAL_INFORMATION" | string %]</a> 
-        </li>
 [% IF additionalLinks.help %]
-    [% FOREACH key = additionalLinks.help.keys %]
+    [% FOREACH link = additionalLinks.help %]
     <li>
- 		<a href="[% additionalLinks.help.$key %]player=[% player | uri %]">[% key | string %]</a>
+ 		<a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a>
  	</li>
     [% END %]
 [% END %]

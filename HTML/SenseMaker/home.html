@@ -43,56 +43,22 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
         <TD width="3%" class=listinghead>&nbsp;</TD>
         <TD width="6%" class=listinghead>&nbsp;</TD>
       </TR>
+
+[% IF additionalLinks.browse %]
+    [% FOREACH link = additionalLinks.browse %]
       <TR> 
         <TD class=listing width=5%>&nbsp;</TD>
         <TD class=listing align=right width=4%>&nbsp;</TD>
         <TD colspan="2" class=listing><B><IMG height=9 alt=Play hspace=3 
-      src="html/play.this.gif" width=5 border=0></A><a href="browseid3.html?player=%7Bplayer%7D"> 
-          </a><a href="browseid3.html?player=[% player | uri %]">Browse by Genre</a></B></TD>
+      src="html/play.this.gif" width=5 border=0></A><a href="[% link.value %]player=[% player | uri %]">
+      [% link.key | string %]</a></B></TD>
         <TD class=listing>&nbsp;</TD>
         <TD class=listing>&nbsp;</TD>
         <TD class=listing>&nbsp;</TD>
       </TR>
-      <TR> 
-        <TD class=listing width=5%>&nbsp;</TD>
-        <TD class=listing align=right width=4%>&nbsp;</TD>
-        <TD colspan="2" class=listing><B><IMG height=9 alt=Play hspace=3 
-      src="html/play.this.gif" width=5 border=0> B</A><a href="browseid3.html?genre=*&player=[% player | uri %]">rowse 
-          by Artist</a></B></TD>
-        <TD class=listing>&nbsp;</TD>
-        <TD class=listing>&nbsp;</TD>
-        <TD class=listing>&nbsp;</TD>
-      </TR>
-      <TR> 
-        <TD class=listing>&nbsp;</TD>
-        <TD class=listing align=right>&nbsp;</TD>
-        <TD colspan="2" class=listing><b><IMG height=9 alt=Play hspace=3 
-      src="html/play.this.gif" width=5 border=0> </A><a href="browseid3.html?genre=*&artist=*&player=[% player | uri %]">Browse 
-          by Album</a></b></TD>
-        <TD class=listing>&nbsp;</TD>
-        <TD class=listing>&nbsp;</TD>
-        <TD class=listing>&nbsp;</TD>
-      </TR>
-      <TR> 
-        <TD class=listing>&nbsp;</TD>
-        <TD class=listing align=right>&nbsp;</TD>
-        <TD colspan="2" class=listing><b><IMG height=9 alt=Play hspace=3 
-      src="html/play.this.gif" width=5 border=0></A></b> </A><strong><a href="browse.html?player=[% player | uri %]">Browse 
-          Music Container</a></strong></TD>
-        <TD class=listing>&nbsp;</TD>
-        <TD class=listing>&nbsp;</TD>
-        <TD class=listing>&nbsp;</TD>
-      </TR>
-      <TR> 
-        <TD class=listing width=5%>&nbsp;</TD>
-        <TD class=listing align=right width=4%>&nbsp;</TD>
-        <TD colspan="2" class=listing><b><IMG height=9 alt=Play hspace=3 
-      src="html/play.this.gif" width=5 border=0></A> <a href="browse.html?player=[% player | uri %]&dir=__playlists">Browse 
-          Saved Playlists</a></b></TD>
-        <TD class=listing>&nbsp;</TD>
-        <TD class=listing>&nbsp;</TD>
-        <TD class=listing>&nbsp;</TD>
-      </TR>
+    [% END %]
+[% END %]
+
       <TR> 
         <TD class=listinghead>&nbsp;</TD>
         <TD class=listinghead align=right>&nbsp;</TD>
@@ -102,36 +68,22 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
         <TD class=listinghead>&nbsp;</TD>
         <TD class=listinghead>&nbsp;</TD>
       </TR>
+
+[% IF additionalLinks.search %]
+    [% FOREACH key = additionalLinks.search.keys %]
       <TR> 
         <TD class=listing width=5%>&nbsp;</TD>
         <TD class=listing align=right width=4%>&nbsp;</TD>
         <TD colspan="2" class=listing><b><IMG height=9 alt=Play hspace=3 
-      src="html/play.this.gif" width=5 border=0></A> <a href="search.html?type=artist&player=[% player | uri %]">Search 
-          for Artists</a></b></TD>
+      src="html/play.this.gif" width=5 border=0></A> <a href="[% additionalLinks.search.$key %]player=[% player | uri %]">
+      [% key | string %]</a></b></TD>
         <TD class=listing>&nbsp;</TD>
         <TD class=listing>&nbsp;</TD>
         <TD class=listing>&nbsp;</TD>
       </TR>
-      <TR> 
-        <TD class=listing width=5%>&nbsp;</TD>
-        <TD class=listing align=right width=4%>&nbsp;</TD>
-        <TD colspan="2" class=listing><B><IMG height=9 alt=Play hspace=3 
-      src="html/play.this.gif" width=5 border=0></A> <a href="search.html?type=album&player=[% player | uri %]">Search 
-          for Album</a></B></TD>
-        <TD class=listing>&nbsp;</TD>
-        <TD class=listing>&nbsp;</TD>
-        <TD class=listing>&nbsp;</TD>
-      </TR>
-      <TR> 
-        <TD class=listing width=5%>&nbsp;</TD>
-        <TD class=listing align=right width=4%>&nbsp;</TD>
-        <TD colspan="2" class=listing><B><IMG height=9 alt=Play hspace=3 
-      src="html/play.this.gif" width=5 border=0></A> <a href="search.html?type=song&player=[% player | uri %]">Search 
-          for Song Title</a></B></TD>
-        <TD class=listing>&nbsp;</TD>
-        <TD class=listing>&nbsp;</TD>
-        <TD class=listing>&nbsp;</TD>
-      </TR>
+    [% END %]
+[% END %]
+
       <TR> 
         <TD class=listinghead>&nbsp;</TD>
         <TD class=listinghead align=right>&nbsp;</TD>
@@ -148,7 +100,20 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
       src="html/play.this.gif" width=5 border=0> </a></b><a href="setup.html?page=server&player=[% player | uri %]"><strong>Server 
           Settings</strong></a> [% player_list %]</TD>
       </TR>
+
+[% IF additionalLinks.settings %]
+    [% FOREACH key = additionalLinks.settings.keys %]
       <TR> 
+        <TD class=listing>&nbsp;</TD>
+        <TD class=listing align=right>&nbsp;</TD>
+        <TD colspan="5" class=listing><b><img height=9 alt=Play hspace=3 
+      src="html/play.this.gif" width=5 border=0> </a></b>
+ 		<a href="[% additionalLinks.settings.$key %]player=[% player | uri %]">[% key | string %]</a>
+ 	</TD></TR>
+    [% END %]
+[% END %]
+
+       <TR> 
         <TD class=listinghead>&nbsp;</TD>
         <TD class=listinghead align=right>&nbsp;</TD>
         <TD class=listinghead>Help</TD>

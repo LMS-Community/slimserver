@@ -38,18 +38,6 @@
 			var url;
 			switch(option)
 			{
-				case 'genre':
-					url="browseid3.html?";
-					suffix ="&page=genre";
-				break
-				case 'artist':
-					url="browseid3.html?genre=*";
-					suffix ="&page=artist";
-				break
-				case 'album':
-					url="browseid3.html?genre=*&artist=*"
-					suffix ="&page=album";
-				break
 				case 'song':
 					url="browseid3.html?genre=*&artist=*&album=*";
 					suffix ="&page=song";
@@ -84,7 +72,7 @@
 					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
 				</td>
 				<td width="33%" height="13" align="center">
-					<a class="menu1" href="[% webroot %]html/docs/help.html[% IF nofolder %]?&nofolder=1[% END %]" target="browser">[% IF help %]<b>[% END %][% "HELP" | string %][% IF help %]</b>[% END %]</a>
+					<a class="menu1" href="[% webroot %]home.html?page=help[% IF nofolder %]&nofolder=1[% END %]" target="browser">[% IF help %]<b>[% END %][% "HELP" | string %][% IF help %]</b>[% END %]</a>
 				</td>
 			</table>
 		</div>
@@ -93,13 +81,9 @@
 				<td>
 				<FORM name="browse" method="Get" target="browser" action="[% webroot %]search.html"><td width="35%"><center><nobr>
 					<SELECT NAME="type" class="stdedit" onchange="chooseBrowser(selectedIndex,options[selectedIndex].label)"  width="65">
-						<OPTION [% IF page == 'genre' %]selected[% END %] label="genre" value="song">[% "BROWSE_BY_GENRE" | string %]</OPTION>
-						<OPTION [% IF page == 'artist' %]selected[% END %][% IF browseby == 'BROWSE_BY_ARTIST' %]selected[% END %] label="artist" value="artist">[% "BROWSE_BY_ARTIST" | string %]</OPTION>
-						<OPTION [% IF page == 'album' %]selected[% END %][% IF browseby == 'BROWSE_BY_ALBUM' %]selected[% END %] label="album" value="album">[% "BROWSE_BY_ALBUM" | string %]</OPTION>
-						<OPTION [% IF page == 'song' %]selected[% END %][% IF browseby == 'BROWSE_BY_SONG' %]selected[% END %] label="song" value="song">[% "BROWSE_BY_SONG" | string %]</OPTION>
 					[% IF additionalLinks.browse %]
 						[% FOREACH link = additionalLinks.browse %]
-						<OPTION [% IF page == link.key %]selected[% END %] value="song" label="[% link.key %]">[% link.key | string %]</OPTION>
+						<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key %]">[% link.key | string %]</OPTION>
 						[% END %]
 					[% END %]
 					</SELECT> [% "FOR" | string %]

@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.88 2004/06/18 15:40:46 vidur Exp $
+# $Id: Pages.pm,v 1.89 2004/06/27 21:58:10 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -26,6 +26,22 @@ sub home {
 	$params->{'nosetup'} = 1   if $::nosetup;
 	$params->{'newVersion'} = $::newVersion if $::newVersion;
 
+	addLinks("browse",{'BROWSE_BY_ARTIST' => "browseid3.html?genre=*&player=[% player | uri %]"});
+	addLinks("browse",{'BROWSE_BY_GENRE' => "browseid3.html?player=[% player | uri %]"});
+	addLinks("browse",{'BROWSE_BY_ALBUM' => "browseid3.html?genre=*&artist=*&player=[% player | uri %]"});
+	addLinks("search",{'SEARCHFOR_ARTIST' => "search.html?type=artist&amp;player=[% player | uri %]"});
+	addLinks("search",{'SEARCHFOR_ALBUM' => "search.html?type=album&amp;player=[% player | uri %]"});
+	addLinks("search",{'SEARCHFOR_SONGTITLE' => "search.html?type=song&amp;player=[% player | uri %]"});
+	addLinks("help",{'GETTING_STARTED' => "html/docs/quickstart.html"});
+	addLinks("help",{'PLAYER_SETUP' => "html/docs/ipconfig.html"});
+	addLinks("help",{'USING_REMOTE' => "html/docs/interface.html"});
+	addLinks("help",{'HELP_REMOTE' => "html/help_remote.html?player=[% player | uri %]"});
+	addLinks("help",{'RADIO' => "html/docs/radio.html?player=[% player | uri %]"});
+	addLinks("help",{'REMOTE_STREAMING' => "html/docs/remotestream.html?player=[% player | uri %]"});
+	addLinks("help",{'FAQ' => "html/docs/faq.html?player=[% player | uri %]"});
+	addLinks("help",{'TECHNICAL_INFORMATION' => "html/docs/index.html"});
+
+
 	if (Slim::Utils::Prefs::get('lookForArtwork')) {
 		addLinks("browse",{'BROWSE_BY_ARTWORK' => "browseid3.html?genre=*&artist=*&artwork=1"});
 	} else {
@@ -45,6 +61,7 @@ sub home {
 	} else {
 		addLinks("browse",{'SAVED_PLAYLISTS' => undef});
 	}
+	
 	
 	# fill out the client setup choices
 	foreach my $player (sort { $a->name() cmp $b->name() } Slim::Player::Client::clients()) {

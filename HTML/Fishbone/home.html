@@ -1,16 +1,7 @@
-	[% pagetitle = "MUSIC" | string %] [% pageicon = 'MUSIC' %] [% search = '0' %][% browse = '1' %] [% music = '0' %][% home = '1' %][% playlist = '0' %][% PROCESS pageheader.html %]
-
+[% IF page != 'help' %]	[% pagetitle = "MUSIC" | string %] [% pageicon = 'MUSIC' %] [% search = '0' %][% browse = '1' %][% music = '0' %][% home = '1' %][% playlist = '0' %][% PROCESS pageheader.html %]
+[% END %]
 <!--    <h4>[% "BROWSE_MUSIC" | string %]</h4>
     <ul>
-    <li>
- 		<a href="browseid3.html?player=[% player | uri %]">[% "BROWSE_BY_GENRE" | string %]</a>
- 	</li>
-    <li>
- 		<a href="browseid3.html?genre=*&player=[% player | uri %]">[% "BROWSE_BY_ARTIST" | string %]</a>
- 	</li>
-    <li>
- 		<a href="browseid3.html?genre=*&artist=*&player=[% player | uri %]">[% "BROWSE_BY_ALBUM" | string %]</a>
- 	</li>
 [% IF additionalLinks.browse %]
     [% FOREACH link = additionalLinks.browse %]
     <li>
@@ -90,5 +81,22 @@
 [% END %]
 	</ul>
 	[% IF newVersion %][% newVersion %][% END %]-->
+[% IF page == 'help' %]
+<html>
+	<head>
+		<title>[% pagetitle %]</title>
+		<link rel="stylesheet" href="[% webroot %]slimserver.css">
+	</head>
+	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="top.document.getElementById('home').rows = '87, *';">
+	<ul>
+	[% IF additionalLinks.help %]
+		[% FOREACH link = additionalLinks.help %]
+		<li>
+			<a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a>
+		</li>
+		[% END %]
+	[% END %]
+	</ul>
+[% END %]
   </body>
 </html>

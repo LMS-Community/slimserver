@@ -3,61 +3,61 @@
 <head>
 	<link REL="shortcut icon" HREF="[% webroot %]favicon.ico" TYPE="image/x-icon">
 	<link rel="icon" href="[% webroot %]favicon.ico" type="image/x-icon" > 
-	<title>[% "WELCOME_TO_SLIMSERVER" | string %] - [% playermodel | string %]</title>
+	<title>[% "WELCOME_TO_SLIMSERVER" | string %]</title>
 </head>
 <script language="JavaScript" TYPE="text/javascript">
 //<!--Hide
-function getPlayer(Player) 
-{
-	var search = Player + "=";
-	if (document.cookie.length > 0) {
-		offset = document.cookie.indexOf(search);
-		if (offset != -1) {
-			offset += search.length;
-			end = document.cookie.indexOf(";", offset);
-			if (end == -1)
-				end = document.cookie.length;
-			return unescape(document.cookie.substring(offset, end));
+	function getPlayer(Player) 
+	{
+		var search = Player + "=";
+		if (document.cookie.length > 0) {
+			offset = document.cookie.indexOf(search);
+			if (offset != -1) {
+				offset += search.length;
+				end = document.cookie.indexOf(";", offset);
+				if (end == -1)
+					end = document.cookie.length;
+				return unescape(document.cookie.substring(offset, end));
+			}
 		}
-	}
-	return "";
+		return "";
 }
 
-		function getHomeCookie(Name) 
-		{
-			var search = Name + "=";
-			if (document.cookie.length > 0) {
-				offset = document.cookie.indexOf(search);
-				if (offset != -1) {
-					offset += search.length;
-					end = document.cookie.indexOf(";", offset);
-					if (end == -1)
-						end = document.cookie.length;
-					url = unescape(document.cookie.substring(offset, end));
-					if (url == 'undefined') [% IF not nofolder %]return "browse.html?"[% END %]
-											[% IF nofolder and noartwork %]return "browseid3.html?noartwork=1"[% END %]
-											[% IF nofolder and not noartwork %]return "browseid3.html?nofolder=1"[% END %]
-					return url [% IF nosetup %]+"&nosetup=1"[% END %];
-				}
+	function getHomeCookie(Name) 
+	{
+		var search = Name + "=";
+		if (document.cookie.length > 0) {
+			offset = document.cookie.indexOf(search);
+			if (offset != -1) {
+				offset += search.length;
+				end = document.cookie.indexOf(";", offset);
+				if (end == -1)
+					end = document.cookie.length;
+				url = unescape(document.cookie.substring(offset, end));
+				if (url == 'undefined') [% IF not nofolder %]return "browse.html?"[% END %]
+										[% IF nofolder and noartwork %]return "browseid3.html?noartwork=1"[% END %]
+										[% IF nofolder and not noartwork %]return "browseid3.html?nofolder=1"[% END %]
+				return url [% IF nosetup %]+"&nosetup=1"[% END %];
 			}
-			[% IF not nofolder %]return "browse.html?"[% END %]
-			[% IF nofolder %]return "browseid3.html?"[% END %]
-			
 		}
+		[% IF not nofolder %]return "browse.html?"[% END %]
+		[% IF nofolder %]return "browseid3.html?"[% END %]
 		
-function getArgs() {
-	var args = new Object();
-	var query = location.search.substring(1);
-	var pairs = query.split("&");
-	for(var i = 0; i < pairs.length; i++) {
-		var pos = pairs[i].indexOf('=');
-		if (pos == -1) continue;
-		var argname = pairs[i].substring(0,pos);
-		var value = pairs[i].substring(pos+1);
-		args[argname] = unescape(value);
 	}
-	return args;
-}
+	
+	function getArgs() {
+		var args = new Object();
+		var query = location.search.substring(1);
+		var pairs = query.split("&");
+		for(var i = 0; i < pairs.length; i++) {
+			var pos = pairs[i].indexOf('=');
+			if (pos == -1) continue;
+			var argname = pairs[i].substring(0,pos);
+			var value = pairs[i].substring(pos+1);
+			args[argname] = unescape(value);
+		}
+		return args;
+	}
 
 var args = getArgs();
 if (args.player) {
@@ -77,8 +77,8 @@ document.write('<frame name="statusframe"  scrolling="no" src="status_header.htm
 document.write('<frame name="playlist" src="playlist.html?player='+cPlayer+'">');
 document.write('</frameset>');
 document.write('</frameset>');
-//-->
-		parent.browser.location=getHomeCookie('SlimServer-Browserpage') +'&player='+getPlayer('SlimServer-player');
 
+parent.browser.location=getHomeCookie('SlimServer-Browserpage') +'&player='+cPlayer;
+//-->
 </script>
 </html>

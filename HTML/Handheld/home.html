@@ -9,15 +9,6 @@
 
 <table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "BROWSE_MUSIC" | string %]</h4></td></tr></table>
 <ul>
-    <li>
-        <a href="browseid3.html?player=[% player | uri %]">[% "BROWSE_BY_GENRE" | string %]</a>
-    </li>
-    <li>
-         <a href="browseid3.html?genre=*&player=[% player | uri %]">[% "BROWSE_BY_ARTIST" | string %]</a>
-    </li>
-    <li>
-         <a href="browseid3.html?genre=*&artist=*&player=[% player | uri %]">[% "BROWSE_BY_ALBUM" | string %]</a>
-    </li>
 [% IF additionalLinks.browse %]
     [% FOREACH link = additionalLinks.browse %]
     <li>
@@ -29,15 +20,6 @@
 
 <table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "SEARCH" | string %]</h4></td></tr></table>
 <ul>
-    <li>
-         <a href="search.html?type=artist&player=[% player | uri %]">[% "SEARCHFOR_ARTIST" | string %]</a>
-    </li>
-    <li>
-         <a href="search.html?type=album&player=[% player | uri %]">[% "SEARCHFOR_ALBUM" | string %]</a>
-    </li>
-    <li>
-         <a href="search.html?type=song&player=[% player | uri %]">[% "SEARCHFOR_SONGTITLE" | string %]</a>
-    </li>
 [% IF additionalLinks.search %]
     [% FOREACH key = additionalLinks.search.keys %]
     <li>
