@@ -11,6 +11,7 @@ use strict;
 
 use Digest::MD5;
 use FileHandle;
+use File::Basename qw(basename);
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 use HTTP::Daemon;
@@ -804,23 +805,26 @@ sub generateHTTPResponse {
 			$contentType = "image/png";
 		}
 
-	} elsif ($path =~ /music\/(.+)$/) {
+	} elsif ($path =~ /music\/(\d+)\/download$/) {
 
-		my $file = Slim::Utils::Misc::virtualToAbsolute($1);
+		my $ds  = Slim::Music::Info::getCurrentDataStore();
+		my $obj = $ds->objectForId('track', $1);
 
-		if (Slim::Music::Info::isSong($file) && Slim::Music::Info::isFile($file)) {
+		if ($obj && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj)) {
 
-			$::d_http && msg("Opening $file to stream...\n");
+			$::d_http && msg("Opening $obj to stream...\n");
 
-			my $songHandle =  FileHandle->new(Slim::Utils::Misc::pathFromFileURL($file));
+			my $songHandle =  FileHandle->new(Slim::Utils::Misc::pathFromFileURL($obj->url()));
 
 			if ($songHandle) {
 
-				my $ds  = Slim::Music::Info::getCurrentDataStore();
-				my $obj = $ds->objectForUrl($file);
-
-				$response->content_type(Slim::Music::Info::mimeType($file));
+				# Send the file down - and hint to the browser
+				# the correct filename to save it as.
+				$response->content_type( $Slim::Music::Info::types{$obj->content_type()} );
 				$response->content_length($obj->filesize());
+				$response->header('Content-Disposition', 
+					sprintf('attachment; filename=%s', unescape(basename($obj->url())))
+				);
 
 				my $headers = _stringifyHeaders($response) . $CRLF;
 

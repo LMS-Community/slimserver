@@ -1794,17 +1794,17 @@ sub _addSongInfo {
 	if ($track) {
 
 		# let the template access the object directly.
-		$params->{'track'}     = $track;
+		$params->{'track'}      = $track;
 
 		$params->{'filelength'} = Slim::Utils::Misc::delimitThousands($track->filesize());
+		$params->{'bitrate'}    = $track->bitrate();
+
 		if ($getCurrentTitle) {
-			$params->{'songtitle'}  = Slim::Music::Info::getCurrentTitle(undef, $track);
+			$params->{'songtitle'} = Slim::Music::Info::getCurrentTitle(undef, $track);
+		} else {
+			$params->{'songtitle'} = Slim::Music::Info::standardTitle(undef, $track);
 		}
-		else {
-			$params->{'songtitle'}  = Slim::Music::Info::standardTitle(undef, $track);
-		}
-		$params->{'bitrate'} = $track->bitrate();
-		
+
 		# make urls in comments into links
 		for my $comment ($track->comment()) {
 
@@ -1823,52 +1823,18 @@ sub _addSongInfo {
 		if ($track->coverArt('thumb')) {
 			$params->{'coverThumb'} = $track->id;
 		}
-	}
-	
-	my $downloadurl;
 
-	if (Slim::Music::Info::isHTTPURL($song)) {
+		if (Slim::Music::Info::isRemoteURL($track->url)) {
 
-		$downloadurl = $song;
-
-	} else {
-
-		my $loc  = $song;
-
-		if (Slim::Music::Info::isFileURL($song)) {
-			$loc = Slim::Utils::Misc::pathFromFileURL($loc);
-		}
-
-		# We need to turn the utf8 flag back on, after it's been
-		# stripped, so the url encoding will be correct.
-		if ($Slim::Utils::Misc::locale eq 'utf8') {
-			$loc = Slim::Utils::Misc::utf8decode($loc);
-		}
-
-		my $curdir = Slim::Utils::Prefs::get('audiodir');
-
-		if (!$curdir) {
-
-			$downloadurl = undef;
-
-		} elsif ($loc =~ /^\Q$curdir\E(.*)/i) {
-
-			$downloadurl = '/music';
-
-			for my $item (splitdir($1)) {
-				$downloadurl .= '/' . Slim::Web::HTTP::escape($item);
-			}
-
-			$downloadurl =~ s/\/\//\//;
+			$params->{'download'} = $track->url();
 
 		} else {
 
-			$downloadurl = $loc;
+			$params->{'download'} = sprintf('/music/%d/download', $track->id());
 		}
 	}
-
+	
 	$params->{'itempath'} = $song;
-	$params->{'download'} = $downloadurl;
 }
 
 sub songInfo {
