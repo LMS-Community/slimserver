@@ -765,7 +765,7 @@ sub generateHTTPResponse {
 		my $song  = Slim::Utils::Misc::virtualToAbsolute($1);
 		my $image = $2;
 		my $ds    = Slim::Music::Info::getCurrentDataStore();
-		my $obj   = $ds->objectForUrl($song);
+		my $obj   = $ds->objectForUrl(Slim::Utils::Misc::fileURLFromPath($song));
 
 		my $imageData;
 
