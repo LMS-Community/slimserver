@@ -1,58 +1,21 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-	<link rel="stylesheet" href="slimserver.css">
-    <script language="JavaScript">
-<!--Hide
-function setCookie(name, value)
-&lbrc;
-	var expires = new Date();
-	expires.setTime(expires.getTime() + 1000*60*60);
-	document.cookie =
-		name + "=" + escape(value) +
-		((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
-&rbrc;
-
-function getCookie(Name) 
-&lbrc;
-	var search = Name + "=";
-	if (document.cookie.length > 0) &lbrc;
-		offset = document.cookie.indexOf(search);
-		if (offset != -1) &lbrc;
-			offset += search.length;
-			end = document.cookie.indexOf(";", offset);
-			if (end == -1)
-				end = document.cookie.length;
-			return unescape(document.cookie.substring(offset, end));
-		&rbrc;
-	&rbrc;
-	return null;
-&rbrc;
-
-function openRemote()
-&lbrc;
-	window.open('status_header.html?player={%player}&start={start}&refresh=1', 'access', 'width=500,height=240');
-&rbrc;
-//-->
-</script>
+	 <meta http-equiv="refresh" content="30; url=status.html?player={%player}&amp;start={start}&amp;refresh=1">
+    <link rel="stylesheet" href="slimserver.css">
   </head>
-  <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload='javascript:parent.playlist.location="playlist.html?player={%player}&start={start}&refresh=1";'>
+  <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
 	  <div class="masthead">
 	  <table border="0" cellpadding="2" cellspacing="0" width="100%"  bordercolor="#111111">
 	   <tr>
-	   	<table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111">
-	      <td width="34%"><img border="0" src="html/slimp3.small.gif" width="98" height="17"></td>
-  	         [IF player_chooser_list]
-  	            <form method="get" action="/index.html" target="_top"><td colspan="3">
-					<select name="player" onchange="this.form.submit()" class="stdedit">{player_chooser_list}</select>
-					</td></form>[/IF]
-		</table>
-		<tr>
-			<table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111">
-				<td><nobr><span class="songtitle">[IF player_name]{player_name}[/IF]</span></nobr></td>
-				<td valign="bottom" width="22%"><nobr><a href="setup.html?page=player&player={%player}&playerid={%player}" target="browser">Player Settings</a></nobr></td>
-  	         <td valign="bottom" width="22%"><nobr><a href="javascript:openRemote()">Undock</a></nobr></td>
-  	         <td valign="bottom" width="22%"><nobr><a href="hitlist.html?player={%player}" target="playlist">Stats</a></nobr></td>
+	      <table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111"><td width="35%"><img border="0" src="html/slimp3.small.gif" width="98" height="17"></td>
+	      <td colspan="3">&nbsp;[IF sync][S SYNCHRONIZED_WITH] {sync}[/IF]</td></table>
+	   <tr>
+	      <table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111">
+	      <td><nobr><span class="songtitle">[IF player_name]{player_name}[/IF]</span></nobr></h3></td>
+  	         <td valign="bottom" width="30%">
+  	         <nobr><a href="setup.html?page=player&player={%player}&playerid={%player}" target="browser">Player Settings</a></nobr></td>
+  	         <td valign="bottom"><nobr><a href="hitlist.html?player={%player}" target="playlist">Stats</a></nobr></td>
   	      </table>
   	   </tr>
   	   </table></div>
@@ -60,7 +23,7 @@ function openRemote()
 	   <table border="0" cellspacing="0" cellpadding="0" width="100%">
        <tr>
           [IF coverart]<td valign="top">
-		  <script language="JavaScript">top.document.getElementById('player_frame').rows = '235, *';</script><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="/music/{%itempath}/cover.jpg" border="0" height="100">
+		   <a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="/music/{%itempath}/cover.jpg" border="0" height="100">
 	      </td>[/IF]
 	      <td><img src="html/spacer.gif" border="0" width="5"></td>
 	      <td valign="top" width="100%"><nobr>
@@ -68,16 +31,16 @@ function openRemote()
                 <img src="html/spacer.gif" border="0" width="5">[IF modeplay][S PLAYING][/IF]
                 [IF modepause][S PAUSED_ON][/IF]
                 [IF modestop][S STOPPED_ON][/IF]
-                [IF currentsong]<b>{currentsong}</b> [S OUT_OF] <b>&nbsp;{songcount}</b>&nbsp;<a class="label" href="status.html?p0=button&p1=modefunction_playlist->zap&player={%player}&start={start}">[zap]</a>[/IF]:</p>
+                [IF currentsong]<b>{currentsong}</b> [S OUT_OF] <b>&nbsp;{songcount}</b>&nbsp;<a class="label" href="status.html?p0=button&amp;p1=modefunction_playlist->zap&amp;player={%player}&amp;start={start}">[zap]</a>[/IF]:</p>
                 <p><img src="html/spacer.gif" border="0" width="5"><a class="songtitle" href="songinfo.html?songurl={%itempath}&player={%player}" target="browser">{title}</a>
                 [IF duration]&nbsp;({&duration})[/IF][IF bitrate]&nbsp;({bitrate})[/IF]</p>
-                [IFN coverart]<script language="JavaScript">top.document.getElementById('player_frame').rows = '210, *';</script>
+                [IFN coverart]
                 <table border="0" cellpadding="0" cellspacing="0" width="100%"><td width="50%"><nobr>[/IFN]
-                   <p class="label"><img src="html/spacer.gif" border="0" width="5" height="10">[IF artist][S ARTIST]&nbsp;<a class="label" href="status.html?p0=playlist&p1=deletealbum&p2=&p3={%artist}&player={%player}&astart={start}">[x]</a>[/IF]</p>
-                   <p class="artistname"><a class="artistname" href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser"><img src="html/spacer.gif" border="0" width="5" height="10">{artist}</a></p>
+                   <p class="label"><img src="html/spacer.gif" border="0" width="5">[IF artist][S ARTIST]&nbsp;<a class="label" href="status.html?p0=playlist&amp;p1=deletealbum&amp;p2=&amp;p3={%artist}&amp;player={%player}&amp;start={start}">[x]</a>[/IF]</p>
+                   <p><a class="artistname" href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser"><img src="html/spacer.gif" border="0" width="5">{artist}</a></p>
                    [IFN coverart]</nobr></td><td><nobr>[/IFN]
-                   <p class="label"><img src="html/spacer.gif" border="0" width="5" height="10">[IF album][S ALBUM]&nbsp;<a class="label" href="status.html?p0=playlist&p1=deletealbum&p2=&p3=&p4={%album}&player={%player}&start={start}">[x]</a>[/IF]</p>
-                   <p class="artistname"><a class="artistname" href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="html/spacer.gif" border="0" width="5" height="10">{album}</a>
+                   <p class="label"><img src="html/spacer.gif" border="0" width="5">[IF album][S ALBUM]&nbsp;<a class="label" href="status.html?p0=playlist&amp;p1=deletealbum&amp;p2=&amp;p3=&amp;p4={%album}&amp;player={%player}&amp;start={start}">[x]</a>[/IF]</p>
+                   <p class="artistname"><a class="artistname" href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="html/spacer.gif" border="0" width="5">{album}</a>
                    [IF year]&nbsp;({year})[/IF]</p>[IFN coverart]</td>
                 </table>[/IFN]
           </nobr></td>
@@ -86,14 +49,22 @@ function openRemote()
 
     <div class="menu2">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-     <td bgcolor="#999999"><center><nobr>
-        <a href="status.html?p0=play&player={%player}"><img src="html/play[IF modeplay]_s[/IF].gif" border=0 width=42 height=43></a><a
-        <a href="status.html?p0=stop&player={%player}"><img src="html/stop[IF modestop]_s[/IF].gif" border=0 width=23 height=32></a><a
-        <a href="status.html?p0=playlist&p1=jump&p2=-1&player={%player}"><img src="html/back.gif" border=0 width=30 height=19></a><a
-        <a href="status.html?p0=playlist&p1=jump&p2=%2b1&player={%player}"><img src="html/forward.gif" border=0 width=30 height=19></a><a
-        <a href="status.html?p0=pause&player={%player}"><img src="html/pause[IF modepause]_s[/IF].gif" border=0 width=30 height=19></a><a
-        <a href="status.html?p0=button&p1=muting&player={%player}&start={start}"><img src="html/mute[LT volume 0]_s[/LT].gif" border=0 width=30 height=19></a>
-     </nobr></center></td>
+     	  <td><center>
+	     	  <table border="0" cellspacing="0" cellpadding="0"><tr valign="bottom">
+	        <td><a href="status_header.html?p0=play&player={%player}"><img src="html/play[IF modeplay][EQ rate norm]_s[/EQ][/IF].gif" border=0 width=42 height=43></a></td>
+	        <td><a href="status_header.html?p0=stop&player={%player}"><img src="html/stop[IF modestop]_s[/IF].gif" border=0 width=23 height=32></a></td>
+	        <td><table border="0" cellspacing="0" cellpadding="0">
+		        <tr>
+		        		<td><a href="status_header.html?p0=rate&p1=-2&player={%player}&start={start}"><img src="html/rew[EQ rate rew]_s[/EQ].gif" border="0" width="30" height="19"></td>
+		        		<td><a href="status_header.html?p0=rate&p1=8&player={%player}&start={start}"><img src="html/ffwd[EQ rate ffwd]_s[/EQ].gif" border="0" width="30" height="19"></a></td>
+		        [IF slimp3]</tr><tr>[/IF]
+			        <td><a href="status_header.html?p0=playlist&p1=jump&p2=-1&player={%player}"><img src="html/back.gif" border=0 width=30 height=19></a></td>
+			        <td><a href="status_header.html?p0=playlist&p1=jump&p2=%2b1&player={%player}"><img src="html/forward.gif" border=0 width=30 height=19></a></td>
+			        <td><a href="status_header.html?p0=pause&player={%player}"><img src="html/pause[IF modepause]_s[/IF].gif" border=0 width=30 height=19></a></td>
+			        <td><a href="status_header.html?p0=button&p1=muting&player={%player}&start={start}"><img src="html/mute[LT volume 0]_s[/LT].gif" border=0 width=30 height=19></a>
+		        </tr></td></table>
+	        </tr></table>
+        </center></td>
      [IF slimp3]<td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
      <td align="center" class="label2">
         <table border="0" cellspacing="0" cellpadding="0">
@@ -177,6 +148,5 @@ function openRemote()
 	         <a target="_top" class="[NE mode off]dark[/NE]button" href="index.html?player={%player}&p0=power&p1=0"><b>OFF</b></a>
 </nobr></td>
 </table></div>
-
   </body>
 </html>
