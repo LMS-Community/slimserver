@@ -15,8 +15,5 @@
     </table>
     <p>[IF playlist_pagebar][S PAGES]:{playlist_pagebar}[/IF]
 	[IF playlist_header]&nbsp;|&nbsp;{playlist_header}[/IF]</p>
-	<script language="JavaScript">
-	[EVAL]defined($client) ? Slim::Utils::Prefs::clientSet($client, "playlistItem",(Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Source::currentSongIndex($client)]) : '';[/EVAL]
-   </script>
   </body>
 </html>
