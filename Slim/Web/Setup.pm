@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.107 2004/10/06 15:56:16 vidur Exp $
+# $Id: Setup.pm,v 1.108 2004/10/14 05:19:47 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1181,7 +1181,8 @@ sub initSetupConfig {
 				,'rescan' => {
 							'validate' => \&validateAcceptAll
 							,'onChange' => sub {
-											Slim::Music::Import::startScan();
+											my $client = shift;
+											Slim::Control::Command::execute($client, ["rescan"], undef, undef);
 										}
 							,'inputTemplate' => 'setup_input_submit.html'
 							,'changeIntro' => string('RESCANNING')

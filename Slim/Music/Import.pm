@@ -13,29 +13,27 @@ use Slim::Utils::Misc;
 my %importsRunning;
 my $scantime;
 
-# TODO make this into a hash of import functions.
+# Force a rescan of all the importers (TODO: Make importers pluggable)
 sub startScan {
 		
 	$::d_info && msg("Clearing ID3 cache\n");
 	Slim::Music::Info::clearCache();
+	$scantime = Time::HiRes::time();
 	
-	$::d_info && msg("Starting background folder scanning.\n");
+	$::d_info && msg("Starting background folder, itunes and moodlogic scanning.\n");
 	Slim::Music::MusicFolderScan::startScan();
+	Slim::Music::iTunes::startScan();
+	Slim::Music::MoodLogic::startScan();
 }
 
 sub startup {
-	$::d_info && msg("Starting itunes and/or moodlogic background scanning.\n");
-	$scantime = Time::HiRes::time();
-	if (Slim::Music::iTunes::useiTunesLibrary()) { 
-		Slim::Music::iTunes::checker();
-	}
+	$::d_info && msg("Starting itunes and/or moodlogic background scanners.\n");
 
-	if (Slim::Music::MoodLogic::useMoodLogic()) { 
-		Slim::Music::MoodLogic::checker();
-	}
-
-
+	Slim::Music::iTunes::checker();
+	Slim::Music::MoodLogic::checker();
 }
+
+
 sub addImport {
 	my $import = shift;
 	$::d_info && msg("Adding $import Scan\n");
@@ -48,6 +46,7 @@ sub delImport {
 		$::d_info && msg("Completing $import Scan in ".(Time::HiRes::time() - $importsRunning{$import})." seconds\n");
 		delete $importsRunning{$import};
 	}
+
 	if (scalar keys %importsRunning == 0) {
 		Slim::Music::Info::clearStaleCacheEntries();
 		Slim::Music::Info::reBuildCaches();

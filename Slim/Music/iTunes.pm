@@ -346,8 +346,12 @@ sub isMusicLibraryFileChanged {
 	# just starting, lastITunesMusicLibraryDate is undef, so both $fileMTime
 	# will be greater than 0 and time()-0 will be greater than 180 :-)
 	if ($file && $fileMTime > Slim::Utils::Prefs::get('lastITunesMusicLibraryDate')) {
+
 		my $itunesscaninterval = Slim::Utils::Prefs::get('itunesscaninterval');
+
 		$::d_itunes && msg("music library has changed!\n");
+		return if (!$lastMusicLibraryFinishTime);
+		
 		if (time()-$lastMusicLibraryFinishTime > $itunesscaninterval) {
 			return 1;
 		} else {
@@ -360,7 +364,10 @@ sub isMusicLibraryFileChanged {
 
 sub checker {
 	$::d_itunes_verbose && msg("checker().\n");
-	if (useiTunesLibrary() && !stillScanning() && isMusicLibraryFileChanged()) {
+
+	return unless (useiTunesLibrary());
+	
+	if (!stillScanning() && isMusicLibraryFileChanged()) {
 		startScan();
 	}
 

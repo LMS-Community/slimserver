@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.24 2004/10/13 00:51:39 dean Exp $
+#$Id: MoodLogic.pm,v 1.25 2004/10/14 05:19:46 dean Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -141,7 +141,9 @@ sub isMusicLibraryFileChanged {
 }
 
 sub checker {
-	if (useMoodLogic() && !stillScanning() && isMusicLibraryFileChanged()) {
+	return unless (useMoodLogic());
+	
+	if (!stillScanning() && isMusicLibraryFileChanged()) {
 		startScan();
 	}
 

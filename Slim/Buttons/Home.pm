@@ -401,7 +401,7 @@ sub homeheader {
 	return $line1;
 }
 
-#######3
+#######
 #	Routines for generating settings options.
 #######
 sub menuOptions {

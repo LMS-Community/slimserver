@@ -374,7 +374,7 @@ sub start {
 	# start background scanning based on a timer...
 	Slim::Music::Import::startup();
 	
-	# start folder scanning if we're not persisting the database
+	# start scanning if we're not persisting the database
 	if (!Slim::Utils::Prefs::get('usetagdatabase')) {
 		$::d_server && msg("SlimServer Inital Scan init...\n");
 		Slim::Music::Import::startScan();

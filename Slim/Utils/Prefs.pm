@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.89 2004/10/13 19:29:12 dean Exp $
+# $Id: Prefs.pm,v 1.90 2004/10/14 05:19:47 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -238,7 +238,7 @@ my %prefChange = (
 	}
 	,'audiodir' => sub {
 		my $newvalue = shift;
-		Slim::Music::Import::startScan();
+		Slim::Music::MusicFolderScan::startScan();
 	}
 	,'lookForArtwork' => sub {
 		my $newvalue = shift;

@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.33 2004/10/08 05:16:46 kdf Exp $
+# $Id: Player.pm,v 1.34 2004/10/14 05:19:47 dean Exp $
 #
 package Slim::Player::Player;
 use strict;
@@ -573,6 +573,7 @@ sub showBriefly {
 }
 
 sub pushLeft {
+	bt();
 	Slim::Display::VFD::Animation::pushLeft(@_);
 }
 
