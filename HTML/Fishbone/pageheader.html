@@ -70,6 +70,14 @@
 				break
 				[% END %]
 			[% END %]
+			[% IF additionalLinks.radio %]
+				[% FOREACH link = additionalLinks.radio %]
+				case "[% link.key %]":
+					url = "[% link.value %]"
+					suffix = "&page=[% link.key %]"
+				break
+				[% END %]
+			[% END %]
 			}
 			setCookie("SlimServer-Browserpage",url + suffix);
 			parent.browser.location = url + suffix + '&player=[% player | uri %]';
@@ -131,6 +139,11 @@
 					[% IF additionalLinks.browse %]
 						[% FOREACH link = additionalLinks.browse %]
 						<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
+						[% END %]
+					[% END %]
+					[% IF additionalLinks.radio %]
+						[% FOREACH link = additionalLinks.radio %]
+							<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
 						[% END %]
 					[% END %]
 				</SELECT><nobr></center></td>

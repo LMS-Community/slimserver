@@ -11,6 +11,15 @@
 	[% END %]
 	</ul>
 
+	[% IF additionalLinks.radio %]
+	<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "RADIO" | string %]</h4></td></tr></table>
+	<ul>
+		[% FOREACH key = additionalLinks.radio.keys %]
+			<li><a href="[% additionalLinks.radio.$key %]player=[% player | uri %]">[% key | string %]</a></li>
+	    [% END %]
+	</ul>
+	[% END %]
+	
 	<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "SEARCH" | string %]</h4></td></tr></table>
 	<ul>
 	[% IF additionalLinks.search %]
