@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.70 2004/04/28 13:10:54 kdf Exp $
+# $Id: Pages.pm,v 1.71 2004/04/28 18:54:20 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -372,6 +372,7 @@ sub browser_addtolist_done {
 				my %list_form = %$params;
 
 				$list_form{'title'}        = string('ALL_SUBFOLDERS');
+				$list_form{'nobrowse'}     = 1;
 				$list_form{'itempath'}     = Slim::Utils::Misc::virtualToAbsolute($params->{'dir'});
 				$list_form{'player'}       = $current_player;
 				$list_form{'descend'}      = 1;

@@ -160,6 +160,9 @@ sub parseCUE {
 		} elsif (defined $currtrack and
 			 /^\s+INDEX\s+01\s+(\d+):(\d+):(\d+)/i) {
 			$tracks{$currtrack}->{'START'} = ($1 * 60) + $2 + ($3 / 75);
+		} elsif (defined $currtrack and
+			 /^\s+END\s+01\s+(\d+):(\d+):(\d+)/i) {
+			$tracks{$currtrack}->{'END'} = ($1 * 60) + $2 + ($3 / 75);
 		}
 	}
 
@@ -167,7 +170,7 @@ sub parseCUE {
 	my $lastpos = Slim::Music::Info::durationSeconds($filename);
 	foreach my $key (sort {$b <=> $a} keys %tracks) {
 		my $track = $tracks{$key};
-		$track->{'END'} = $lastpos;
+		if (!defined $track->{'END'}) {$track->{'END'} = $lastpos};
 		$lastpos = $track->{'START'};
 	}
 	

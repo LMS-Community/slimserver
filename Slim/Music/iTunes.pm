@@ -95,7 +95,7 @@ sub iTunesPlaylist {
 my %filetypes = (
 	1095321158 => 'aif', # AIFF
 	1295270176 => 'mov', # M4A 
-	1295274016 => 'mov', # M4P
+#	1295274016 => 'mov', # M4P
 	1297101600 => 'mp3', # MP3 	
 	1297101601 => 'mp3', # MP3! 
 	1297106247 => 'mp3', # MPEG

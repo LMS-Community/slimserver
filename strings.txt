@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.91 2004/04/25 01:23:17 kdf Exp $
+# $Id: strings.txt,v 1.92 2004/04/28 18:54:12 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -4375,14 +4375,14 @@ MP2
 	SE	MP2
 
 MOV
-	DE	AAC- oder Film-Datei
-	DK	AAC eller film
-	EN	AAC or Movie File
-	FR	AAC ou film
-	NL	AAC of film
-	NO	AAC eller film
-	PT	AAC of Ficheiro Movie
-	SE	AAC eller film
+	DE	Apple AAC- oder Film-Datei
+	DK	Apple AAC eller film
+	EN	Apple AAC, Lossless or Movie File
+	FR	Apple AAC ou film
+	NL	Apple AAC of film
+	NO	Apple AAC eller film
+	PT	Apple AAC of Ficheiro Movie
+	SE	Apple AAC eller film
 
 FLC
 	EN	FLAC
