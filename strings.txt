@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.92 2004/04/28 18:54:12 dean Exp $
+# $Id: strings.txt,v 1.93 2004/04/29 16:14:24 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -765,6 +765,7 @@ FREE_YOUR_MUSIC
 UPDATING_FIRMWARE
 	DE	Firmware wird aktualisiert.
 	EN	Updating Squeezebox firmware.
+	NO	Oppdaterer spillerens programvare ('firmware')
 	SE	Uppdaterar spelarens mjukvara ('firmware')
 
 CONNECTING_FOR
@@ -899,18 +900,21 @@ SETUP_GROUP_XPL
 	DE	xPL Einstellungen
 	EN	xPL Settings
 	FR	Paramètres xPL
+	NO	xPL-innstillinger
 	SE	xPL-inställningar
 
 SETUP_GROUP_XPL_DESC
 	DE	Diese Einstellungen steuern das Verhalten des xPL Protokolls
 	EN	These settings control the behavior of the xPL protocol
 	FR	Ces réglages permettent de paramétrer le protocole xPL.
+	NO	Dette er innstillinger for xPL-protokollen
 	SE	Detta är inställningar för xPL-protokollet
 
 SETUP_SCROLLPAUSE
 	DE	Pause vor dem Scrollen
 	EN	Scroll Pause
 	FR	Pause avant défilement
+	NO	Pause ved scrolling
 	SE	Paus under scrollning
 
 SETUP_SCROLLPAUSE_DESC
@@ -921,11 +925,13 @@ SETUP_SCROLLPAUSE_DESC
 SETUP_SCROLLRATE
 	DE	Scrollrate
 	EN	Scroll Rate
+	NO	Scroll-frekvens
 	SE	Scroll-frekvens
 
 SETUP_SCROLLRATE_DESC
 	DE	Sie können die Zeit definieren, die der Player zwischen dem Scrollen einzelner Buchstaben auf dem Display wartet. Geben Sie die Wartezeit in Sekunden ein. Kleinere Werte beschleunigen den Scrollvorgang. Standardwert ist 0.15 Sekunden.
 	EN	You can adjust the amount of time that the player waits before scrolling another letter of text on the display. Enter a value, in seconds, for the amount of time to wait.  Lower numbers make it scroll faster.  0.15 seconds is the default.
+	NO	Du kan justere tiden spilleren venter før den scroller til neste bokstav i teksten på displayet. Skriv inn verdien i sekunder. Lavt nummer scroller fortere. 0.15 sekunder er standard.
 	SE	Tid mellan rullande scroll-bilder. O.15 är standardvärdet. Värden mellan 0 och 1 kan sättas för att öka eller minska scroll-tempot 
 
 SETUP_GROUP_ALARM
@@ -941,6 +947,7 @@ SETUP_GROUP_ALARM
 SETUP_GROUP_ALARM_DESC
 	DE	Einstellungen für den Wecker. Jeder Player kann einen eigenen Wecker haben. Nach Aktivierung wird der Wecker alle 24h wiederholt.
 	EN	Settings for alarm clock. Each player can have an alarm set.  If active, it will repeat every 24 hours.
+	NO	Innstillinger for vekkerklokka. Hver spiller kan ha en vekkersklokke. Når aktivert går alarmen hvert døgn.
 	SE	Inställningar för väckarklockan. Varje spelare kan ha en separat väckarklocka. I aktiverat läge repeteras larmet varje dygn.
 
 SETUP_GROUP_IRSETS
@@ -998,11 +1005,13 @@ SETUP_PLUGINS-ONTHEFLY_1
 SETUP_GROUP_FORMATS
 	DE	Dateikonvertierungseinstellungen
 	EN	File Format Conversion Setup
+	NO	Innstillinger for konvertering mellom filformater
 	SE	Inställningar för konvertering mellan filformat
 
 SETUP_GROUP_FORMATS_DESC
 	DE	SlimServer kann Audio-Dateien während der Laufzeit für die Wiedergabe konvertieren. Sie können hier einzelne Formate deaktivieren.
 	EN	SlimServer can convert audio file formats on-the-fly for playback on your player.  You can disable specific formats below by unchecking them.  Click Change to save your changes.
+	NO	SlimServer kan konvertere mellom ulike lyd-formater for avspilling i spilleren. Her kan du deaktivere forskjellige formater.
 	SE	Slimserver kan konvertera mellan olika ljud-format för uppspelning i spelaren. 
 
 SETUP_FORMATSLIST_CHANGE
@@ -1011,37 +1020,44 @@ SETUP_FORMATSLIST_CHANGE
 	EN	Setting was changed.
 	FR	Le réglage  a été modifié.
 	NL	Instelling is aangepast.
+	NO	Innstillingen er endret.
 	PT	A opção mudou.
 	SE	Inställning är ändrad.
 
 SETUP_FORMATSLIST
 	DE	Dateikonvertierung
 	EN	File Format Conversions
+	NO	Filformat, konverteringer
 	SE	Filformat, konverteringar
 
 
 FILE_FORMAT
 	DE	Dateiformat
 	EN	File Format
+	NO	Filformat
 	SE	Filformat
 
 STREAM_FORMAT
 	DE	Streamingformat
 	EN	Stream Format
+	NO	Streamingformat
 	SE	Format för strömmande ljud
 
 PLAYER_TYPE
 	DE	Wiedergabegerät
 	EN	Player Type
+	NO	Spillertype
 	SE	Spelartyp
 
 PLAYER_ID
 	EN	Player ID
+	NO	Spiller ID
 	SE	SpelarID
 
 COMMAND
 	DE	Befehl
 	EN	Command
+	NO	Kommando
 	SE	Kommando
 
 #
@@ -1063,7 +1079,7 @@ SETUP_PLAYERNAME
 	FI	Player Nimi
 	FR	Nom de la platine
 	NL	Player Naam
-	NO	Player Navn
+	NO	Spillernavn
 	PT	Nome do Cliente
 	SE	Spelarnamn
 
@@ -1099,7 +1115,7 @@ SETUP_PLAYERNAME_CHOOSE
 	FI	Soittimen nimi:
 	FR	Nom de la platine :
 	NL	Naam voor deze speler:
-	NO	Spiller navn:
+	NO	Spillernavn:
 	PT	Escolha um nome para este cliente
 	SE	Spelarens namn:
 
@@ -1207,6 +1223,7 @@ SETUP_SCREENSAVER_DESC
 	DE	Wählen Sie einen Bildschirmschoner
 	EN	Choose your custom screensaver
 	FR	Choisissez un écran de veille
+	NO	Velg din skjermsparer
 	SE	Välj din anpassade skärmsläckare
 
 SETUP_ALARM
@@ -1356,53 +1373,63 @@ SETUP_SYNCVOLUME_DESC
 SETUP_SYNCPOWER_ON
 	DE	Ein-/Ausschalten mit Gruppe
 	EN	Power off/on with group
+	NO	Strøm av/på med gruppe
 
 SETUP_SYNCPOWER_OFF
 	DE	Getrennt ein-/ausschalten
 	EN	Power off/on separately
+	NO	Strøm av/på alene
 
 SETUP_SYNCPOWER
 	DE	Ein-/Ausschalten synchronisieren
 	EN	Synchronize Power
+	NO	Synkroniser strøm på/av
 	SE	Synkronisera på/av
 
 SETUP_SYNCPOWER_DESC
 	DE	Sie können diesen Player einzeln oder aber zusammen mit den anderen synchronisierten Playern ein-/ausschalten.
 	EN	You can choose to have this player turn off on its own, or turn off as a group with all other players in the group. Make a selection below and click Change.
+	NO	Du kan velge å la denne spilleren slå seg av alene, eller samkjørt i gruppen med de andre spillerene. Velg nedenfor og trykk Endre.
 	SE	Du kan välja att låta dena spelare stänga av oberoende andra spelare, eller tillsammans med andra spelare i en grupp. Välj nedan och klicka Ändra.
 
 SETUP_DIGITALVOLUMECONTROL_ON
 	DE	Lautstärkekontrolle der digitalen Ausgabe
 	EN	Volume controls adjust digital outputs
 	FR	Niveau sortie numérique contrôlé par boutons de volume
+	NO	Volumkontrollen påvirker digital utgangen
 	SE	Volymkontrollen påverkar den digitala utsignalen
 
 SETUP_DIGITALVOLUMECONTROL_OFF
 	DE	Lautstärke der digitalen Ausgabe ist fixiert
 	EN	Digital output level is fixed (Best analog quality)
 	FR	Niveau sortie numérique fixe (qualité analogique optimale)
+	NO	Digital utgangsnivå er fast (gir best analog kvalitet)
 	SE	Den digitala utnivån är fixerad (ger bäst analog kvalitet)
 
 SETUP_DIGITALVOLUMECONTROL
 	DE	Lautstärkekontrolle des digitalen Ausgangs
 	EN	Digital Volume Control
 	FR	Niveau sortie numérique
+	NO	Digital volumkontroll
 	SE	Digital volymkontroll
 
 SETUP_DIGITALVOLUMECONTROL_DESC
 	DE	Sie können wählen, ob sie die Lautstärke der digitalen Ausgabe auf dem maximalen Level fixieren oder über die Fernsteuerung kontrollieren wollen. Falls Sie die Fixierung wählen, so hat die analoge Ausgabe die höchste Qualität. Mit beiden Einstellungen lässt sich die analoge Ausgabe über die Fernsteuerung regeln.
 	EN	You can choose to have the digital audio output on your player be fixed at maximum level or be controlled by the volume buttons.  If you choose to have a fixed digital audio volume level, the analog outputs will have the highest quality possible.  With either setting, the analog output levels are adjusted by the volume buttons.
 	FR	Le niveau de la sortie audio numérique de votre platine peut être soit fixé à son maximum, soit contrôlé par les boutons de volume. Si le niveau de la sortie audio numérique est fixe, la qualité de la sortie analogique sera optimale. Dans tous les cas, le niveau de la sortie analogique est contrôlé par les boutons de volume.
+	NO	Du kan velge mellom å la digitalt volum være fast på maks nivå eller la den styres av volumkontrollen. Når du velger fast digitalt utgangsnivå, får det analoge signalet maksimal kvalitet. Uansett innstilling påvirkes analogt volum av volumknappene.
 	SE	Du kan välja mellan att låta ditital volym vara fix på max nivå, eller låta den styras av volymkontroller. När du väljer fix digital signalvolym, får den analoga signalen maximal kvalitet. Oavsett inställning, så påverkar påverkas analog volym av volymknapparna.
 
 SETUP_MAXBITRATE
 	DE	Maximale Transkodierungs-Bitrate
 	EN	Maximum Transcoding Bitrate
+	NO	Maksimal transkodings-bitrate
 	SE	Maximal transkodnings-bitrate
 
 SETUP_MAXBITRATE_DESC
 	DE	Die maximale Transkodierungs-Bitrate für diesen Player. Alle Musikstücke oder Streams höherer Bitrate werden auf diese Rate heruntergerechnet. Geringere Bitraten bleiben unverändert. Wird ein Stream mit definierter Bitrate aufgerufen (z.B. stream.mp3?bitrate=128), so gilt dieser Wert. Gültige Bitraten sind 0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320. Null (0) deaktiviert die Beschränkung.
 	EN	Maximum transcoding bitrate for this player.  All transcoded files or streams that are higher will be downsampled.  Lesser rates are left unchanged. Connecting to a stream with a bitrate parameter will override (eg. stream.mp3?bitrate=128). Valid bitrates are 0,32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320. Zero disables maximum Bitrate limits.
+	NO	Maksimal transkodings-bitrate for denne spilleren. Alle kodede filer eller strømmer (streams) med høyere rate vil bli samplet ned. Lavere bitrate forblir uendret. Skjer oppkoblingen mot en bitrate ned fast verdi (f.eks stream.mp3?bitrate=128) er det denne verdien som gjelder. Aksepterte verdier er 0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256 og 320. Verdien 0 slår av begrensningen.
 	SE	Maximal transkodnings-bitrate för denna spelare. Alla kodade filer eller strömmar med högre rate, kommer att samplas ned. Lägre bitrate lämnas oförändrade. Sker uppkoppling mot en bitrate med fixt värde (ex. stream.mp3?bitrate=128) är det detta värde som gäller. Godkända värden är 0,32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256 och 320. Värdet 0 stänger av maximal bitrate-begränsningen.
 
 SETUP_TITLEFORMATCURR
@@ -1437,49 +1464,59 @@ SETUP_ITUNESPLAYLISTFORMAT
 	DE	iTunes Playlisten Format
 	EN	iTunes Playlist Format
 	FR	Format des listes de lecture iTunes
+	NO	iTunes spillieliste format
 	SE	Format iTunes låtlista
 
 SETUP_ITUNESPLAYLISTFORMAT_DESC
 	DE	Diese Option definiert das Format der von iTunes importierten Playlists.
 	EN	This option determines the format used when importing iTunes playlists.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture iTunes.
+	NO	Denne innstillingen avgjør hvliket format som brukes ved import av iTunes spillelister.
 	SE	Denna inställning avgör vilket format som används vid import av iTunes-låtlistor
 
 SETUP_MOODLOGICPLAYLISTFORMAT
 	EN	MoodLogic Playlist Format
 	FR	Format des listes de lecture MoodLogic
+	NO	MoodLogic spilleliste format
 
 SETUP_MOODLOGICPLAYLISTFORMAT_DESC
 	EN	This option determines the format used when importing MoodLogic playlists.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture MoodLogic.
+	NO	Denne innstillingen avgjør hvilket format som brukes ved import av MoodLogic spillelister.
 
 SETUP_MOODLOGICPLAYLISTPREFIX_CHOOSE
 	EN	Prefix:
 	FR	Préfixe :
+	NO	Prefic:
 
 SETUP_MOODLOGICPLAYLISTSUFFIX_CHOOSE
 	EN	Suffix:
 	FR	Suffixe :
+	NO	Suffix:
 
 
 SETUP_ITUNESPLAYLISTPREFIX_CHOOSE
 	EN	Prefix:
 	FR	Préfixe :
+	NO	Prefix:
 	SE	Prefix:
 
 SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE
 	EN	Suffix:
 	FR	Suffixe :
+	NO	Suffix:
 	SE	Suffix:
 
 SETUP_GUESSFILEFORMATS
 	DE	Tag Format erraten
 	EN	Guess Tags Formats
+	NO	Gjett tag-format
 	SE	Gissa tag-format
 
 SETUP_GROUP_GUESSFILEFORMATS_DESC
 	DE	Für Dateien, welche keine sinnvollen Tags enthalten, kann der Server versuchen, die Informationen aus dem Pfad und Dateinamen zu gewinnen. Mit denselben Variablen wie für das Titelformat können Sie Dateinamenskonventionen definieren, damit der Server besser erraten kann, wo die Informationen stehen. Das erste passende der folgenden Muster wird verwendet.
 	EN	For files that do not have reasonable tags, you can have the server guess at tags using the path and filename. Using the same variables as Title Format, you can create a pattern to match your file naming conventions so that the server can make a good guess at what the tags should be.  Priority goes in the order listed below.  The first valid pattern match is used.
+	NO	For filer som ikke har forståelig metadata tagger kan serveren gjette ved å bruke fil- og folderinformasjon. Ved å bruke samme variabler som for låt-format kan du skape et mønster som passer måten filene dine er navngitt. Listen er i prioritert rekkefølge. Det første mønster som passer blir brukt.
 	SE	För filer som inte har rimliga metadata (taggar), kan servern gissa genom att använda fil- och mappinformation. Genom att använda samma variabler som för Låt-format kan du skapa mönster som passar det sätt dina filer är namngivna. Prioritet enligt listan nedan; första mönster-matchning används. 
 
 SETUP_IRMAP
@@ -1488,6 +1525,7 @@ SETUP_IRMAP
 	EN	Remote Button Functions
 	FR	Fonctions des touches de la télécommande
 	NL	Functies Knoppen Afstandsbediening
+	NO	Knappefunksjoner på fjernkontroll
 	PT	Funções do Controlo Remoto
 	SE	Knappfunktioner på fjärrkontroll
 
@@ -1497,6 +1535,7 @@ SETUP_IRMAP_DESC
 	EN	You can choose between button function sets. These sets map particular buttons on the infrared remote to particular functions. The "Default" set is the one that is described in the documentation.
 	FR	Vous pouvez choisir entre plusieurs jeux de touches de fonction. Ces jeux de configuration permettent d'associer les boutons de la télécommande aux fonctions disponibles. Le jeu intitulé "Défaut" est celui documenté dans le manuel.
 	NL	U kan kiezen uit verschillende Knop Functie sets. Deze sets koppelen bepaalde knoppen op de infrarood afstansbediening aan bepaalde functies. The "Standaard" set is degene die beschreven staat in de documentatie.
+	NO	Du kan velge mellom ulike funksjonsgrupper. Disse gruppene angir hva en spesiell knapp på fjernkontrollen har for funksjon. "Standard" grupper en den som er beskrevet i dokumentasjonen.
 	PT	Pode escolher entre vários mapas de botões do seu controlo remoto. Estes mapas associam botões do controlo remoto a determinadas funções. O mapa "Padrão" é o que está descrito na documentação.
 	SE	Du kan välja mellan olika funktionsgrupper. Dessa grupper anger vad en speciell knapp på fjärrkontroller har för speciell funktion. "Standard"-gruppen är den som beskrivs i manualen.
 
@@ -1506,6 +1545,7 @@ SETUP_IRSETLIST_OK
 	EN	Remote Controls:
 	FR	Télécommandes :
 	NL	Afstandsbedieningen:
+	NO	Fjernkontroller:
 	PT	Controlos Remotos
 	SE	Fjärrkontroller:
 
@@ -1515,6 +1555,7 @@ SETUP_IRSETLIST_CHANGE
 	EN	Setting for %s was changed.
 	FR	Le réglage pour %s a été modifié.
 	NL	Instelling voor %s is aangepast.
+	NO	Innstillingen for %s er endret.
 	PT	A opção para %s mudou.
 	SE	Inställningen för %s är ändrad.
 
@@ -1524,6 +1565,7 @@ SETUP_PLUGINLIST_OK
 	EN	Plugins:
 	FR	Modules d'extension :
 	NL	Plugins:
+	NO	Plugins:
 	PT	Extras
 	SE	Tillägg:
 
@@ -1533,6 +1575,7 @@ SETUP_PLUGINLIST_CHANGE
 	EN	Setting for %s was changed.
 	FR	Le réglage pour %s a été modifié.
 	NL	Instelling voor %s is aangepast.
+	NO	Innstilling for %s er endret.
 	PT	A opção para %s mudou.
 	SE	Inställning for %s är ändrad.
 
@@ -1542,6 +1585,7 @@ SETUP_PASSWORD_CHANGED
 	EN	The password has been changed.
 	FR	Le mot de passe a été modifié.
 	NL	Het paswoord werd aangepast.
+	NO	Passordet har blitt endret.
 	PT	A palavra chave foi alterada.
 	SE	Lösenordet har ändrats.
 
@@ -1554,6 +1598,7 @@ SETUP_LANGUAGE
 	FI	Kieli
 	FR	Langue
 	NL	Taal
+	NO	Språk
 	PT	Idioma
 	SE	Språk
 
@@ -1565,6 +1610,7 @@ SETUP_LANGUAGE_DESC
 	FI	Voit vaihtaa Slim soittimesi kieltä halutessasi.
 	FR	Vous pouvez modifier la langue utilisée par le système Slim.
 	NL	U kan de taal die het Slim systeem gebruikt instellen.
+	NO	Du kan velge hvilket språk Slim-systemet skal benytte.
 	PT	Escolha o idioma a usar pelo sistema Slim.
 	SE	Du kan ange vilket språk du vill att Slim-systemet skall använda sig av.
 
@@ -1576,6 +1622,7 @@ SETUP_LANGUAGE_OK
 	FI	Kielivalintasi on:
 	FR	La langue choisie est :
 	NL	Uw taal is nu:
+	NO	Valgt språk er:
 	PT	O idioma escolhido é
 	SE	Valt språk är:
 
@@ -1587,6 +1634,7 @@ SETUP_AUDIODIR
 	FI	Musiikkikansiosi
 	FR	Votre dossier de musique
 	NL	Uw Muziek Folder
+	NO	Din musikkfolder
 	PT	Directoria com Músicas
 	SE	Din musikmapp
 
@@ -1598,6 +1646,7 @@ SETUP_AUDIODIR_DESC
 	FI	Hakemisto kovalevyllä minne MP3 -tiedostosi on tallenettu:
 	FR	Le dossier qui contient les fichiers MP3 sur votre disque dur :
 	NL	De folder waar Uw MP3 bestanden op Uw hard disk staan:
+	NO	Adresse til folderen hvor dine MP3-filer er lagret:
 	PT	A directoria onde estão guardados os ficheiros áudio
 	SE	Sökväg till mapp på hårddisken där dina MP3-filer är lagrade:
 
@@ -1622,16 +1671,19 @@ SETUP_PLAYLISTDIR
 	FI	Tallenettujen soittolistojen hakemisto
 	FR	Dossier contenant les listes de lecture enregistrées
 	NL	Folder voor Bewaarde Playlists
+	NO	Folder for lagrede spillelister
 	PT	Directoria com Playlists
 	SE	Mapp för sparade spellistor:
 
 SETUP_ARTFOLDER
 	DE	Ordner für Plattencover
 	EN	Artwork Folder
+	NO	Folder for platecover
 
 SETUP_ARTFOLDER_DESC
 	DE	Sie können einen Ordner definieren, in welchem alle Plattencovers abgelegt werden sollen. Definieren Sie hier diesen Ordner. Unabhängig von dieser Einstellung wird der Server stets auch in den Verzeichnissen der Musikdateien nach Bilddateien für die Plattencovers schauen, falls in diesem Ordner nichts passendes gefunden wird.
 	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, the server will still look for artwork in the same path as each audio file if no matching artwork in found in the Artwork Folder.
+	NO	Du kan velge å lagre alle platecover i en folder, ved å benytte innstillingen over. Skriv inn adressen til Grafikk folderen her. Serveren vil fremdeles lete etter platecover i samme folder som lydfilen ligger i om ikke det finnes et treff i Grafikk folderen.
 
 SETUP_BAD_DIRECTORY
 	DE	Oops - "%s" ist kein gültiges Verzeichnis. Bitte versuchen Sie es noch einmal.
@@ -1667,6 +1719,7 @@ SETUP_PLAYLISTDIR_OK
 	FI	Palvelin käyttää seuraavaa polkua soittolistoja varten:
 	FR	Le serveur utilisera maintenant le dossier suivant pour conserver vos listes de lecture :
 	NL	De server zal deze folder gebruiken om playlists te bewaren:
+	NO	Bruker nå følgende folder for lagrede spillelister:
 	PT	O servidor irã usar a seguinte directoria para os ficheiros de playlist
 	SE	Använder nu följande mapp för sparade spellistor:
 
@@ -1678,6 +1731,7 @@ SETUP_PLAYLISTDIR_DESC
 	FI	Voit syöttää polun hakemistoon, minne soittolistasi on tallennettu. (Tämän kohdan voi jättää täyttämättä, mikäli et halua tallentaa soittolistojasi.)
 	FR	Vous pouvez saisir le chemin d'accès du dossier où vos listes de lecture seront stockées. Vous pouvez laisser cette zone vide si vous ne voulez pas enregistrer de listes de lecture.
 	NL	U kan de folder opgeven waar Uw bewaarde Playlist bestanden worden opgeslagen. (Als U hier niets opgeeft, geeft U aan dat U geen playlists wil bewaren).
+	NO	Adresse til folderen hvor dine lagrede spillelister legges. (Du kan la feltet stå tomt om du ikke vil lagre spillelister)
 	PT	A directoria onde serão guardadas as playlists. (Pode deixar vazio se não quiser guardar playlists)
 	SE	Sökväg till mappen där dina sparade spellistor lagras.<br>(Du kan lämna detta fält tomt om du inte vill spara spellistor.)
 
@@ -1689,6 +1743,7 @@ SETUP_RESCAN
 	FI	Lue uudelleen
 	FR	Répertorier de nouveau
 	NL	Opnieuw inlezen
+	NO	Les på nytt
 	PT	Ler Directoria com Lista de Músicas
 	SE	Läs om
 
@@ -1700,6 +1755,7 @@ SETUP_RESCAN_BUTTON
 	FI	Lue uudelleen
 	FR	Répertorier
 	NL	Opnieuw inlezen
+	NO	Scan musikkfolderen på nytt
 	PT	Ler Directoria
 	SE	Scanna musikmappen på nytt
 
@@ -1710,6 +1766,7 @@ SETUP_RESCAN_DESC
 	FI	Varmistaaksesi, että SlimServer soittimesi tietokanta on ajan tasalla voit lukea musiikkikansiosi uudelleen.
 	FR	Si vous modifiez le contenu de votre dossier de musique, vous pouvez forcer le système de gestion du SlimServer à répertorier de nouveau son contenu pour garantir que sa base de données est à jour.
 	NL	Als U muziek heeft toegevoegd, verwijderd of veranderd, kunt U de SlimServer software opdracht geven de muziekfolder opnieuw in te lezen.
+	NO	Om du legger til, fjerner eller endrer musikk i musikkfolderen din, kan du be SlimServer om å søke gjennom musikken for å oppdatere databasen.
 	PT	Se adicionar, apagar ou mudar o nome a alguma música na sua directoria de músicas, deverá forçar a re-leitura da directoria de músicas.
 	SE	Om du lägger till, tar bort eller ändrar musik in din Musikmapp kan du tvinga SlimServer att läsa av all din musik på nytt för att säkerställa att databasen är korrekt.
 
@@ -1717,12 +1774,14 @@ SETUP_WIPECACHE
 	DE	Cache initialisieren
 	EN	Wipe Cache
 	FR	Ré-initialiser le cache
+	NO	Tøm cache-minnet
 	SE	Töm cache-minnet
 
 SETUP_WIPECACHE_BUTTON
 	DE	Cache initialisieren
 	EN	Wipe Cache
 	FR	Ré-initialiser
+	NO	Tøm cache-minnet
 	SE	Töm cache-minnet
 
 SETUP_WIPECACHE_DESC
@@ -6082,6 +6141,7 @@ MOODLOGIC_SELECT_MOOD_SHORT
 	EN	Select a Mood
 	FR	Choisissez une ambiance
 	NL	Kies een sfeer
+	NO	Velg stemning (MoodLogic)
 	PT	Seleccione um Ambiente
 	SE	Välj stämning (MoodLogic)
 
@@ -6100,6 +6160,7 @@ MOODLOGIC_MIXING
 	EN	MoodLogic Mixing
 	FR	MoodLogic Mix
 	NL	MoodLogix Mix
+	NO	MoodLogic Mix
 	PT	Mistura de Ambiente
 
 MOODLOGIC_INSTANT_MIX
@@ -6108,6 +6169,7 @@ MOODLOGIC_INSTANT_MIX
 	EN	MoodLogic Instant Mix
 	FR	ModdLogic Mix instantané
 	NL	MoodLogic Instant Mix
+	NO	MoodLogic Hurtig Mix
 	PT	Mistura instatânea de Ambiente "MoodLogic"
 
 MOODLOGIC_MOOD_0
@@ -6122,6 +6184,7 @@ MOODLOGIC_MOOD_0
 
 MOODLOGIC_MOOD_1
 	EN	Upbeat
+	NO	Tempo
 
 MOODLOGIC_MOOD_2
 	DE	Easy
@@ -6134,6 +6197,7 @@ MOODLOGIC_MOOD_2
 
 MOODLOGIC_MOOD_3
 	EN	Mild
+	NO	Mild
 
 MOODLOGIC_MOOD_4
 	DE	Trist
@@ -6150,10 +6214,12 @@ MOODLOGIC_MOOD_5
 	EN	Hang
 	FR	Suspendu
 	NL	Losjes
+	NO	Løst
 	PT	Saída
 
 MOODLOGIC_MOOD_6
 	EN	Wild
+	NO	Vill
 
 HELP
 	DE	Hilfe (Englisch)
@@ -6269,219 +6335,257 @@ STATISTICS
 EDIT_PLAYLIST
 	DE	Playliste bearbeiten
 	EN	Edit Playlist
+	NO	Endre spilleliste
 	SE	Redigera låtlista
 
 DONE_EDITING
 	DE	Bearbeitung abgeschlossen
 	EN	Done Editing
+	NO	Endring utført
 	SE	redigering klar
 
 UP
 	DE	Rauf
 	EN	Up
 	FR	Haut
+	NO	Opp
 	SE	Upp
 
 DOWN
 	DE	Runter
 	EN	Down
 	FR	Bas
+	NO	Ned
 	SE	Ned
 
 EDIT
 	DE	Editieren
 	EN	Edit
 	FR	Modifier
+	NO	Endre
 	SE	redigera
 
 URL
 	DE	URL
 	EN	URL
 	FR	URL
+	NO	URL
 	SE	URL
 
 SAVE_PLAYLIST
 	DE	Playlist speichern
 	EN	Save Playlist
 	FR	Enregistrer la liste de lecture
+	NO	Lagre spilleliste
 	SE	Lagra låtlista
 
 PLAYLIST_SAVE
 	DE	Zum Speichern der Playlist RIGHT drücken:
 	EN	Press RIGHT again to save playlist as:
 	FR	Appuyez à nouveau sur DROITE pour sauver la liste de lecture sous :
+	NO	Trykk HØYRE pil igjen for å lagre spillelisten som:
 	SE	Klicka Högerpil igen för att lagra låtlistan som:
 
 PLAYLIST_AS
 	DE	Playliste unter folgendem Namen speichern:
 	EN	Save current playlist as:
 	FR	Enregistrer la liste de lecture sous :
+	NO	Lagre spillelisten som:
 	SE	Lagra aktuell låtlista som:
 
 PLAYLIST_SAVING
 	DE	Speichere Playlist als:
 	EN	Saving current playlist as:
 	FR	Enregistre la liste de lecture sous :
+	NO	Lagrer spillelisten som:
 	SE	Lagrar aktuell låtlista som:
 
 INFORMATION
 	DE	Informationen
 	EN	Information
 	FR	Infos
+	NO	Informasjon
 	SE	Information
 
 INFORMATION_MENU_PLAYER
 	DE	Player Informationen
 	EN	Player Information
 	FR	Infos platine
+	NO	Spiller informasjon
 	SE	Spelar-information
 
 INFORMATION_MENU_SERVER
 	DE	Server Informationen
 	EN	Server Information
 	FR	Infos serveur
+	NO	Server informasjon
 	SE	Server-information
 
 INFORMATION_MENU_LIBRARY
 	DE	Musikbibliotheks Statistiken
 	EN	Library statistics
 	FR	Statistiques
+	NO	Statistikk
 	SE	Statistik om musikmapp
 
 INFORMATION_MENU_MODULE
 	DE	Plugin Module
 	EN	Plugin Modules
 	FR	Modules d'entension
+	NO	Plugin moduler
 	SE	Tillägg
 
 INFORMATION_PLAYER_NAME
 	EN	Player Name
 	FR	Nom platine
+	NO	Spiller navn
 	SE	Spelarens namn
 
 INFORMATION_PLAYER_MODEL
 	DE	Player Modell
 	EN	Player Model
 	FR	Modèle platine
+	NO	Spillermodell
 	SE	Modell, spelare
 
 INFORMATION_FIRMWARE
 	EN	Player Firmware Version
 	FR	Version micrologiciel platine
+	NO	Spillerens programvare versjon ('firmware')
 	SE	Mjukvaruversion ('firmware'), spelare
 
 INFORMATION_PLAYER_IP
 	DE	Player IP Adresse
 	EN	Player IP Address
 	FR	Adresse IP platine
+	NO	Spilleren IP adresse
 	SE	Spelarens IP-adress
 
 INFORMATION_PLAYER_PORT
 	DE	Player UDP Portnummer
 	EN	Player UDP Port Number
 	FR	Port UDP platine
+	NO	Spillerens UDP port
 	SE	Spelarens UDP-port
 
 INFORMATION_PLAYER_MAC
 	DE	Player MAC Adresse
 	EN	Player MAC Address
 	FR	Adresse MAC platine
+	NO	Spillerens MAC adresse
 	SE	Spelarens MAC-adress
 
 INFORMATION_PLAYER_SIGNAL_STRENGTH
 	DE	Wireless Signalstärke
 	EN	Wireless Signal Strength
 	FR	Puissance signal sans fil
+	NO	Trådløs signalstyrke
 	SE	Trådlös signalstyrka
 
 INFORMATION_VERSION
 	EN	Server Version
 	FR	Version serveur
+	NO	Server versjon
 	SE	Mjukvaruversion, serverprogramvaran
 
 INFORMATION_CLIENTS
 	DE	Anzahl erkannte Player
 	EN	Total Players Recognised
 	FR	Platine(s) identifiée(s)
+	NO	Totalt antall tilkoblede spillere
 	SE	Totalt antal anslutna spelare
 
 INFORMATION_SERVER_IP
 	DE	Server IP Adresse
 	EN	Server IP Address
 	FR	Adresse IP serveur
+	NO	Serveren IP adresse
 	SE	Serverns IP-adress
 
 INFORMATION_SERVER_PORT
 	DE	Server UDP Portnummer
 	EN	Server UDP Port Number
 	FR	Port UDP serveur
+	NO	Serveren UDP port
 	SE	Serverns UDP-port
 
 INFORMATION_SERVER_HTTP
 	DE	Server HTTP Portnummer
 	EN	Server HTTP Port Number
 	FR	Port HTTP serveur
+	NO	Serveren HTTP port
 	SE	Serverns HTTP-port
 
 INFORMATION_ALBUMS
 	DE	Anzahl Alben
 	EN	Total Albums
 	FR	Albums
+	NO	Totalt antall album
 	SE	Totalt antal album
 
 INFORMATION_ARTISTS
 	DE	Anzahl Interpreten
 	EN	Total Artists
 	FR	Artistes
+	NO	Totalt antall artister
 	SE	Totalt antal artister
 
 INFORMATION_GENRES
 	DE	Anzahl Stilrichtungen
 	EN	Total Genres
 	FR	Genres
+	NO	Totalt antall genre
 	SE	Totalt antal genrer
 
 INFORMATION_TRACKS
 	DE	Anzahl Titel
 	EN	Total Tracks
 	FR	Morceaux
+	NO	Totalt antall låter
 	SE	Totalt antal låtar
 
 INFORMATION_TIME
 	DE	Gesamte Spieldauer
 	EN	Total Playing Time
 	FR	Durée totale
+	NO	Total musikktid
 	SE	Total låttid
 
 INFORMATION_VERSION
 	EN	Version
 	FR	Version
+	NO	Versjon
 	SE	Version
 
 INFORMATION_INSTALLED
 	DE	Installiert
 	EN	Installed
 	FR	Installé
+	NO	Installert
 	SE	Installerad
 
 INFORMATION_DISABLED
 	DE	DEAKTIVIERT
 	EN	DISABLED
 	FR	DÉSACTIVÉ
+	NO	Deaktivert
 	SE	Avaktiverad
 
 INFORMATION_NO_VERSION
 	DE	Keine Versionsnummer
 	EN	No version number
 	FR	Pas de version
+	NO	Ingen versjonsnummer
 	SE	Inget versionsnummer
 
 INFORMATION_DATE_FORMAT
 	DE	${shortdateFormat} um ${timeFormat}
 	EN	${shortdateFormat} at ${timeFormat}
 	FR	${shortdateFormat} à ${timeFormat}
+	NO	${shortdateFormat} kl ${timeFormat}
 
 COLON
 	EN	: 
 	FR	 : 
+	NO	:
 	SE	: 
