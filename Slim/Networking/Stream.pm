@@ -325,12 +325,26 @@ sub gotAck {
 		Slim::Utils::Timers::killOneTimer($client, \&timeout);
 		$lastAck{$client} = Time::HiRes::time();
 	}
+
+	if ($fullness <= 512) { 
+		$::d_stream && msg("***Stream underrun: $fullness\n");
+		Slim::Player::Source::underrun($client);
+		if ($streamState{$client} eq 'eof') { 
+			$streamState{$client} = 'stop'; 
+		};
+	}
+
 	my $state = $streamState{$client};
-	if ($state eq 'eof' || $state eq 'stop') {
-	
+
+	if ($state eq 'eof') {
+		# we're going to poll after BUFFER_FULL_DELAY with an empty chunk so we can know when the player runs out.
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $BUFFER_FULL_DELAY, \&sendEmptyChunk);
+	} elsif ($state eq 'stop') {
+		# don't bother sending anything.
 	} else {
 		sendNextChunk($client);
 	}
+
 }
 
 

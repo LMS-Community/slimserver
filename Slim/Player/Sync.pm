@@ -196,14 +196,14 @@ sub syncedWith {
 		foreach $otherclient (@{$client->master()->slaves}) {
 			next if ($client == $otherclient);	# skip ourself
 			push @buddies, $otherclient;
-			$::d_sync && msg($client->id() .": is synced with other slave " . $otherclient->id() . "\n");
+			$::d_sync_v && msg($client->id() .": is synced with other slave " . $otherclient->id() . "\n");
 		}
 	}
 	
 	# get our slaves
 	foreach $otherclient (@{$client->slaves()}) {
 		push @buddies, $otherclient;
-#		$::d_sync && msg($client->id() . " : is synced with its slave " . $otherclient->id() . "\n");
+		$::d_sync_v && msg($client->id() . " : is synced with its slave " . $otherclient->id() . "\n");
 	}
 	
 	return @buddies;
@@ -215,11 +215,11 @@ sub isSyncedWith {
 	
 	foreach my $i (syncedWith($client)) {
 		if ($buddy == $i) {
-			$::d_sync && msg($client->id() . " : is synced with " . $buddy->id() . "\n");
+			$::d_sync_v && msg($client->id() . " : is synced with " . $buddy->id() . "\n");
 			return 1;
 		}
 	}
-	$::d_sync && msg($client->id() . " : is synced NOT with " . $buddy->id() . "\n");
+	$::d_sync_v && msg($client->id() . " : is synced NOT with " . $buddy->id() . "\n");
 	return 0;
 }
 
@@ -261,6 +261,8 @@ sub checkSync {
 		return;
 	}
 	
+	my @group = ($client, syncedWith($client));
+	
 	# if we're synced and waiting for the group's buffers to fill,
 	# check if our buffer has passed the 95% level. If so, indicate
 	# that we're ready to be unpaused.  If everyone else is now ready,
@@ -268,7 +270,7 @@ sub checkSync {
 	if ($client->readytosync == 0) {
 
 		my $usage = $client->usage();
-		$::d_sync && msg("checking buffer usage: $usage on client $client\n");
+		$::d_sync && msg($client->id()." checking buffer usage: $usage\n");
 
 		if 	(defined($usage) && $usage > 0.90) {
 			$client->readytosync(1);
@@ -276,7 +278,7 @@ sub checkSync {
 			$::d_sync && msg($client->id()." is ready to sync ".Time::HiRes::time()."\n");
 			my $allReady=1;
 			my $everyclient;
-			foreach $everyclient ($client, syncedWith($client)) {
+			foreach $everyclient (@group) {
 				if (!($everyclient->readytosync)) {
 					$allReady=0;
 				}
@@ -285,35 +287,28 @@ sub checkSync {
 			if ($allReady) {
 				$::d_sync && msg("all clients ready to sync now. unpausing them.\n");
 
-				foreach $everyclient ($client, syncedWith($client)) {
+				foreach $everyclient (@group) {
 					$everyclient->resume();
 				}
 			}
 		}
-	}
-	
-	my $everyclient;
-	my @group = ($client, syncedWith($client));
-	
-	# if we are ready to resync, then check to see if we've run out of packets.
-	# when we have, stop and restart the clients on the current song, which 
-	# has already been opened.
-	
-	if (master($client)->resync) {
-		my $readyToContinue = 0;
-		# we restart the song as soon as the first player has run out of chunks.
+	# now check to see if every player has run out of data...
+	} elsif ($client->readytosync == -1) {
+		$::d_sync && msg($client->id() . " has run out of data, checking to see if we can push on...\n");
+
+		my $allReady=1;
+		my $everyclient;
 		foreach $everyclient (@group) {
-			$::d_sync && msg("Resync: Player " . $everyclient->id() . " has " . scalar(@{$everyclient->chunks}) . " chunks \n");
-			if (scalar(@{$everyclient->chunks}) == 0) { 
-				$readyToContinue = 1; 
-				last; 
+			if ($everyclient->readytosync != -1) {
+				$allReady=0;
 			}
 		}
-
-		if ($readyToContinue) {
-			master($client)->resync(0);
-			Slim::Control::Command::execute($client, ["playlist", "jump", "+0"]);
-			$::d_sync && msg("Resync restarting players on current song\n");
+		if ($allReady) {
+			$::d_sync && msg("everybody's run out of data.  Let's start them up...\n");
+			foreach $everyclient (@group) {
+				$everyclient->readytosync(0);
+			}
+			Slim::Player::Source::skipahead($client);
 		}
 	}
 	

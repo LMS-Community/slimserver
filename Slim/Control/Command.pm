@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.21 2003/12/20 05:42:45 kdf Exp $
+# $Id: Command.pm,v 1.22 2003/12/24 21:13:15 dean Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -289,54 +289,55 @@ sub execute {
 			
 				my $jumptoindex = undef;
 				my $path = $p2;
-				if (!-e $path) {
-					my $easypath = catfile(Slim::Utils::Prefs::get('playlistdir'), basename ($p2) . ".m3u");
-					if (-e $easypath) {
-						$path = $easypath;
-					} else {
-						$easypath = catfile(Slim::Utils::Prefs::get('playlistdir'), basename ($p2) . ".pls");
+				if ($path) {
+					if (!-e $path) {
+						my $easypath = catfile(Slim::Utils::Prefs::get('playlistdir'), basename ($p2) . ".m3u");
 						if (-e $easypath) {
 							$path = $easypath;
-						}
-					}
-				}
-				
-				if ($p1 =~ /^(play|load|resume)$/) {
-					Slim::Player::Source::playmode($client, "stop");
-					Slim::Player::Playlist::clear($client);
-				}				
-				
-				$path = Slim::Utils::Misc::virtualToAbsolute($path);
-				
-				if ($p1 =~ /^(play|load)$/) { 
-					$jumptoindex = 0;
-				} elsif ($p1 eq "resume" && Slim::Music::Info::isM3U($path)) {
-					# do nothing to the index if we can't open the list
-					my $playlist = new FileHandle($path, "r");
-					if ($playlist) {
-						# retrieve comment with track number in it
-						$jumptoindex = $playlist->getline;
-						if ($jumptoindex =~ /^#CURTRACK (\d+)$/) {
-							$jumptoindex = $1;
 						} else {
-							$jumptoindex = 0;
+							$easypath = catfile(Slim::Utils::Prefs::get('playlistdir'), basename ($p2) . ".pls");
+							if (-e $easypath) {
+								$path = $easypath;
+							}
 						}
-						close $playlist;
 					}
-             	}   
-             	
-				if ($p1 =~ /^(insert|insertlist)$/) {
-					my $playListSize = Slim::Player::Playlist::count($client);
-					my @dirItems;
-					Slim::Utils::Scan::addToList(\@dirItems, $path, 1, undef);
-					Slim::Utils::Scan::addToList(Slim::Player::Playlist::playList($client), $path, 1, undef, \&insert_done, $client, $playListSize, scalar(@dirItems),$callbackf, $callbackargs);			
-				} else {
-					Slim::Utils::Scan::addToList(Slim::Player::Playlist::playList($client), $path, 1, undef, \&load_done, $client, $jumptoindex, $callbackf, $callbackargs);				
+					
+					if ($p1 =~ /^(play|load|resume)$/) {
+						Slim::Player::Source::playmode($client, "stop");
+						Slim::Player::Playlist::clear($client);
+					}				
+					
+					$path = Slim::Utils::Misc::virtualToAbsolute($path);
+					
+					if ($p1 =~ /^(play|load)$/) { 
+						$jumptoindex = 0;
+					} elsif ($p1 eq "resume" && Slim::Music::Info::isM3U($path)) {
+						# do nothing to the index if we can't open the list
+						my $playlist = new FileHandle($path, "r");
+						if ($playlist) {
+							# retrieve comment with track number in it
+							$jumptoindex = $playlist->getline;
+							if ($jumptoindex =~ /^#CURTRACK (\d+)$/) {
+								$jumptoindex = $1;
+							} else {
+								$jumptoindex = 0;
+							}
+							close $playlist;
+						}
+					}   
+					
+					if ($p1 =~ /^(insert|insertlist)$/) {
+						my $playListSize = Slim::Player::Playlist::count($client);
+						my @dirItems;
+						Slim::Utils::Scan::addToList(\@dirItems, $path, 1, undef);
+						Slim::Utils::Scan::addToList(Slim::Player::Playlist::playList($client), $path, 1, undef, \&insert_done, $client, $playListSize, scalar(@dirItems),$callbackf, $callbackargs);			
+					} else {
+						Slim::Utils::Scan::addToList(Slim::Player::Playlist::playList($client), $path, 1, undef, \&load_done, $client, $jumptoindex, $callbackf, $callbackargs);				
+					}
+					
+					$callcallback = 0;
+					$p2 = $path;
 				}
-				
-				$callcallback = 0;
-				$p2 = $path;
-				
 			} elsif ($p1 eq "loadalbum" | $p1 eq "playalbum") {
 				Slim::Player::Source::playmode($client, "stop");
 				Slim::Player::Playlist::clear($client);

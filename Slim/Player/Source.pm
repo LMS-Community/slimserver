@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.38 2003/12/23 08:48:09 kdf Exp $
+# $Id: Source.pm,v 1.39 2003/12/24 21:13:15 dean Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -132,6 +132,8 @@ sub time2offset {
 sub progress {
 	my $client = shift;
 	
+	$client = Slim::Player::Sync::masterOrSelf($client);
+
 	return 0 if (!$client->songduration);
 	return songTime($client) / $client->songduration;
 }
@@ -164,7 +166,7 @@ sub songTime {
 	my $fullness = $client->bufferFullness() || 0;
 	my $realpos =  $bytesReceived - $fullness;
 	
-	$::d_source && msg("realpos $realpos calcuated from bytes received: " . $client->bytesReceived() . " minus buffer fullness: " . $client->bufferFullness() . "\n");
+	$::d_source_v && msg("realpos $realpos calcuated from bytes received: " . $client->bytesReceived() . " minus buffer fullness: " . $client->bufferFullness() . "\n");
 	
 	if ($realpos<0) {
 		$::d_source && msg("Negative position calculated, we are still playing out the previous song.\n");	
@@ -181,7 +183,7 @@ sub songTime {
 		$songtime = ($realpos / $size * $duration * $rate) + $startStream;
 	}
 
-	$::d_source && msg( "songTime: $songtime = ($realpos(realpos) / $size(size) * $duration(duration) * $rate(rate)) + $startStream(time offset of started stream)\n");
+	$::d_source_v && msg( "songTime: $songtime = ($realpos(realpos) / $size(size) * $duration(duration) * $rate(rate)) + $startStream(time offset of started stream)\n");
 
 	return($songtime);
 }	
@@ -241,10 +243,7 @@ sub playmode {
 				$everyclient->playmode("pause");
 				
 			} elsif ($newmode =~ /^playout/) {
-				$everyclient->playmode("stop");
 				closeSong($everyclient);
-				resetSong($everyclient);
-				
 			} else {
 				$everyclient->playmode($newmode);
 			}
@@ -253,6 +252,7 @@ sub playmode {
 				$everyclient->currentplayingsong("");
 				$::d_source && msg("Stopping and clearing out old chunks for client " . $everyclient->id() . "\n");
 				@{$everyclient->chunks} = ();
+
 				$everyclient->stop();
 				closeSong($everyclient);
 				resetSong($everyclient);
@@ -297,12 +297,27 @@ sub playmode {
 
 sub underrun {
 	my $client = shift;
+	
+	$client->readytosync(-1);
+	
+	$::d_source && msg($client->id() . ": Underrun while this mode: " . $client->playmode() . "\n");
+
 	# the only way we'll get an underrun event while stopped is if we were playing out.  so we need to open the next item and play it!
-	if ($client && $client->playmode eq 'playout-play') {
-		openNext($client);
-		playmode($client, 'play');
+	# if we're synced, then we let resync handle this
+	if ($client && ($client->playmode eq 'playout-play' || $client->playmode eq 'stop') && !Slim::Player::Sync::isSynced($client)) {
+		skipahead($client);
 	}
 }
+
+sub skipahead {
+	my $client = shift;
+	$::d_source && msg("**underrun: stopping\n");
+	playmode($client, 'stop');
+	$::d_source && msg("**underrun: opening next song\n");
+	openNext($client);
+	$::d_source && msg("**underrun: restarting after underrun\n");
+	playmode($client, 'play');
+} 
 
 sub nextChunk {
 	use bytes;
@@ -490,8 +505,8 @@ sub openNext {
 
 		my ($command, $type, $newstreamformat) = getCommand($client, Slim::Player::Playlist::song($client, $nextsong));
 		
-		if ($oldstreamformat ne $newstreamformat && playmode($client) eq 'play') {
-			$::d_source && msg("switching formats from $oldstreamformat to ". $newstreamformat. "--playing out \n");
+		if ((playmode($client) eq 'play') && (($oldstreamformat ne $newstreamformat) || Slim::Player::Sync::isSynced($client))) {
+			$::d_source && msg("playing out before starting next song. (old format: $oldstreamformat, new: $newstreamformat)\n");
 			playmode($client, 'playout-play');
 			return 0;
 		} else {
@@ -499,25 +514,7 @@ sub openNext {
 			$result = openSong($client);
 		}
 
-		# if we're playing backwards, we need to start at the end of the file.
-		if ($client->rate() < 0) {
-			gototime($client, $client->songduration() - $TRICKSEGMENTLENGTH);
-		}
-		
 	} while (!$result);
-	
-	# this is
-	if ($result && Slim::Player::Sync::isSynced($client)) {
-		my $silence = Slim::Web::HTTP::getStaticContent("html/silentpacket.mp3");
-		my $count = int($client->buffersize() / length($silence)) + 1;
-		my @fullbufferofsilence =  (\$silence) x $count;
-		$::d_source && msg("stuffing " . scalar(@fullbufferofsilence) . " of silence into the buffers to sync.\n"); 
-		# stuff silent packets to fill the buffers for each player
-		foreach my $buddy ($client, Slim::Player::Sync::syncedWith($client)) {
-			push @{$buddy->chunks}, (@fullbufferofsilence);
-		}
-		$client->resync(1); 
-	}
 	
 	return $result;
 }
@@ -946,7 +943,6 @@ sub readNextChunk {
 		}
 	} else {
 		$::d_source && msg($client->id() . ": No filehandle to read from, returning no chunk.\n");
-		$::d_source && bt();
 		return undef;
 	}
 
@@ -963,8 +959,8 @@ sub readNextChunk {
 		return undef;
 	}
 	
-	$::d_source && msg("read a chunk of " . length($chunk) . " length\n");
-	$::d_source && msg( "metadata now: " . $client->shoutMetaPointer . "\n");
+	$::d_source_v && msg("read a chunk of " . length($chunk) . " length\n");
+	$::d_source_v && msg( "metadata now: " . $client->shoutMetaPointer . "\n");
 	$client->songBytes($client->songBytes + length($chunk));
 	
 	return \$chunk;
