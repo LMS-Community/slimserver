@@ -1,12 +1,12 @@
 package Audio::FLAC;
 
-# $Id: FLAC.pm,v 1.6 2004/01/29 07:28:44 daniel Exp $
+# $Id: FLAC.pm,v 1.7 2004/01/29 16:45:07 daniel Exp $
 
 use strict;
 use vars qw($VERSION);
 use File::Basename;
 
-$VERSION = '0.6';
+$VERSION = '0.7';
 
 # First four bytes of stream are always fLaC
 use constant FLACHEADERFLAG => 'fLaC';
@@ -505,7 +505,7 @@ sub _parseCueSheet {
 	}
 
 	# Parse individual tracks now
-	my %seenTracknumber = {};
+	my %seenTracknumber = ();
 	my $leadout = 0;
 	my $leadouttracknum = 0;
 
@@ -615,7 +615,7 @@ sub _parseCueSheet {
 
 			my $timeoffset = _samplesToTime(($trackOffset + $indexOffset), $self->{'info'}->{'SAMPLERATE'});
 
-			return -1 if $timeoffset == -1;
+			return -1 unless defined ($timeoffset);
 
 			my $indexline = sprintf ("    INDEX %02d %s\n", $indexnum, $timeoffset);
 
@@ -642,7 +642,7 @@ sub _samplesToTime {
 
 	if ($samplerate == 0) {
 	        warn "Couldn't find SAMPLERATE for time calculation!\n";
-		return -1;
+		return;
 	}
 
 	my $totalSeconds = $samples / $samplerate;
@@ -672,14 +672,14 @@ sub _bin2dec {
 sub _grabInt32 {
 	# Pulls a little-endian unsigned int from a string and returns the remainder
 	my $data  = shift;
-	my $value = unpack('L',substr($$data,0,4));
+	my $value = unpack('V',substr($$data,0,4));
 	$$data    = substr($$data,4);
 	return $value;
 }
 
 sub _packInt32 {
 	# Packs an integer into a little-endian 32-bit unsigned int
-	return pack('L',shift)
+	return pack('V',shift)
 }
 
 sub _findMetadataIndex {
