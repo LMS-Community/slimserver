@@ -73,7 +73,7 @@
 			[% "GENRE" | string %][% "COLON" | string %] 
 		</td>
 		<td>
-			<a href="browseid3.html?genre=[% genre | uri %]&amp;player=[% player | uri %]" target="browser">[% genre | html %] 
+			<a href="browseid3.html?genre=[% genre | uri %]&amp;player=[% player | uri %]" target="browser">[% genre | html %]</a> 
 		</td>
 	</tr>
 	[% END %] [% IF track %] 
@@ -109,7 +109,7 @@
 			[% "COMMENT" | string %][% "COLON" | string %]
 		</td>
 		<td>
-			[% comment | html %] 
+			[% comment %] 
 		</td>
 	</tr>
 	[% END %] [% IF filelength %] 
