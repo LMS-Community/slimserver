@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.69 2004/05/07 06:50:55 kdf Exp $
+# $Id: Setup.pm,v 1.70 2004/05/08 05:23:15 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -548,14 +548,11 @@ sub initSetupConfig {
 				}
 
 				if (Slim::Music::iTunes::useiTunesLibrary()) {
-					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[2] = undef;
 					$pageref->{'children'}[9] = 'itunes';
 				} elsif (Slim::Music::MoodLogic::useMoodLogic()) {
 					$pageref->{'children'}[9] = 'moodlogic';
 				} else {
 					pop @{$pageref->{'children'}} if $pageref->{'children'}[9];
-					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[2] = 'rescan';
-					
 				}
 				
 				if (Slim::Music::MoodLogic::canUseMoodLogic()) {
@@ -602,7 +599,7 @@ sub initSetupConfig {
 						,'GroupSub' => 1
 					},
 				'Default' => {
-						'PrefOrder' => [undef,'playlistdir',undef,undef]
+						'PrefOrder' => [undef,'playlistdir','rescan',undef]
 						#if not able to use iTunesLibrary then undef at [0] will be replaced by 'audiodir'
 						#if not using iTunesLibrary then undef at [2] will be replaced by 'rescan'
 						#if not using iTunesLibrary then undef at [3] will be replaced by 'wipecache'
@@ -1002,6 +999,7 @@ sub initSetupConfig {
 				my $i = 0;
 				my %formats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
 				my $formatslistref = Slim::Player::Source::Conversions();
+				delete $formatslistref->{'mp3-lame-*-*'};
 				foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
 					if (exists $paramref->{"formatslist$i"} && $paramref->{"formatslist$i"} == (exists $formats{$formats} ? 0 : 1)) {
 						delete $paramref->{"formatslist$i"};
@@ -1019,6 +1017,9 @@ sub initSetupConfig {
 				foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
 					if (!exists $paramref->{"formatslist$i"}) {
 						$paramref->{"formatslist$i"} = exists $formats{$formats} ? 0 : 1;
+					} else {
+						$paramref->{"formatslist$i"} = $paramref->{"formatslist$i"} && Slim::Player::Source::checkBin($formats);
+						unless ($paramref->{"formatslist$i"}) {$paramref->{"warning"} = string('SETUP_FORMATSLIST_MISSING_BINARY')." ".$formatslistref->{$formats};}
 					}
 					unless ($paramref->{"formatslist$i"}) {
 						Slim::Utils::Prefs::push('disabledformats',$formats);
@@ -1043,42 +1044,47 @@ sub initSetupConfig {
 					,'GroupDesc' => string('SETUP_GROUP_FORMATS_DESC')
 					,'GroupLine' => 1
 					,'GroupSub' => 1
-					,'GroupPrefHead' => '<tr><th>' .  
+					,'GroupPrefHead' => '<tr><th>&nbsp;' .  
 									    '</th><th>' . string('FILE_FORMAT') .
 									    '</th><th>' . string('STREAM_FORMAT') .
-									    '</th><th>' . string('PLAYER_TYPE') .
-									    '</th><th>' . string('PLAYER_ID') .
-									    '</th><th>' . string('COMMAND') .
+									    '</th><th>' . string('DECODER') .
 									    '</th></tr>'
 				}
 			}
 		,'Prefs' => {
 				'formatslist' => {
-				'isArray' => 1
-				,'dontSet' => 1
-				,'validate' => \&validateTrueFalse
-				,'inputTemplate' => 'setup_input_array_chk.html'
-				,'arrayMax' => undef #set in preEval
-				,'changeMsg' => string('SETUP_FORMATSLIST_CHANGE')
-				,'externalValue' => sub {
-							my ($client,$value,$key) = @_;
-								
-							if ($key =~ /\D+(\d+)$/) {
-								my $formatslistref = Slim::Player::Source::Conversions();
-								my $profile = (sort {$a cmp $b} (keys %{$formatslistref}))[$1];
-								my @profileitems = split('-', $profile);
-								$profileitems[0] = string($profileitems[0]);
-								$profileitems[1] = string($profileitems[1]);
-								
-								$profileitems[3] = '' if ($profileitems[3] eq '*');
-								$profileitems[4] = $formatslistref->{$profile};
-								
-								return join('</td><td>', @profileitems);
-							} else {
-								return $value;
+					'isArray' => 1
+					,'dontSet' => 1
+					,'validate' => \&validateTrueFalse
+					,'inputTemplate' => 'setup_input_array_chk.html'
+					,'arrayMax' => undef #set in preEval
+					,'changeMsg' => string('SETUP_FORMATSLIST_CHANGE')
+					,'externalValue' => sub {
+								my ($client,$value,$key) = @_;
+									
+								if ($key =~ /\D+(\d+)$/) {
+									my $formatslistref = Slim::Player::Source::Conversions();
+									my $profile = (sort {$a cmp $b} (keys %{$formatslistref}))[$1];
+									my @profileitems = split('-', $profile);
+									pop @profileitems; # drop ID
+									$profileitems[0] = string($profileitems[0]);
+									$profileitems[1] = string($profileitems[1]);
+									$profileitems[2] = $formatslistref->{$profile}; #replace model with binary string
+									my $dec = $formatslistref->{$profile};
+									$dec =~ s{
+											^\[(.*?)\](.*?\|?\[(.*?)\].*?)?
+										}{
+											$profileitems[2] = $1;
+											if (defined $3) {$profileitems[2] .= "/".$3;}
+										}iegsx;
+									$profileitems[2] = '(built-in)' unless defined $profileitems[2] && $profileitems[2] ne '-';
+									
+									return join('</td><td>', @profileitems);
+								} else {
+									return $value;
+								}
 							}
-						}
-				}
+					}
 			}
 		} #end of setup{'formats'}
 
@@ -1176,16 +1182,15 @@ sub initSetupConfig {
 							}
 					}
 			,'groupdiscs' => {
-						  validate => \&validateTrueFalse
-						  ,onChange => sub {
-							 my $client = shift;
-							 Slim::Control::Command::execute
-								 ($client, ["rescan"], undef, undef);
-						  }
-						  ,options => {
-							      1 => string ('SETUP_GROUPDISCS_1')
-								  ,0 => string ('SETUP_GROUPDISCS_0')
-							     }
+						'validate' => \&validateTrueFalse
+						,'onChange' => sub {
+								my $client = shift;
+								Slim::Control::Command::execute($client, ["rescan"], undef, undef);
+							}
+						,'options' => {
+								'1' => string ('SETUP_GROUPDISCS_1')
+								,'0' => string ('SETUP_GROUPDISCS_0')
+							}
 					 }
 			}
 		} #end of setup{'behavior'} hash
@@ -1211,8 +1216,8 @@ sub initSetupConfig {
 					,'GroupHead' => string('SETUP_TITLEFORMAT')
 					,'GroupDesc' => string('SETUP_GROUP_TITLEFORMATS_DESC')
 					,'GroupPrefHead' => '<tr><th>' . string('SETUP_CURRENT') .
-									    '</th><th></th><th>' . string('SETUP_FORMATS') .
-									    '</th><th></th></tr>'
+										'</th><th></th><th>' . string('SETUP_FORMATS') .
+										'</th><th></th></tr>'
 					,'GroupLine' => 1
 					,'GroupSub' => 1
 				}
@@ -1226,8 +1231,8 @@ sub initSetupConfig {
 					,'GroupHead' => string('SETUP_GUESSFILEFORMATS')
 					,'GroupDesc' => string('SETUP_GROUP_GUESSFILEFORMATS_DESC')
 					,'GroupPrefHead' => '<tr><th>' .
-									    '</th><th></th><th>' . string('SETUP_FORMATS') .
-									    '</th><th></th></tr>'
+										'</th><th></th><th>' . string('SETUP_FORMATS') .
+										'</th><th></th></tr>'
 					,'GroupLine' => 1
 					,'GroupSub' => 1
 				}
@@ -1813,7 +1818,7 @@ sub setup_HTTP {
 	my $changed;
 	my $rejected;
 
-	if ($::nosetup) {
+	if ($::nosetup || ($::noserver && $paramref->{'page'} eq 'server')) {
 		$response->code(RC_FORBIDDEN);
 		return Slim::Web::HTTP::filltemplatefile('html/errors/403.html',$paramref);
 	}
@@ -2256,9 +2261,6 @@ sub setup_changes_HTTP {
 		} elsif (exists $settingsref->{$keyA}{'options'}) {
 			$changedval = $settingsref->{$keyA}{'options'}{$changeref->{$key}{'new'}};
 		} elsif (exists $settingsref->{$keyA}{'externalValue'}) {
-			#todo get the current client from the $paramref hash, not currently needed
-			#but would be if there was an 'externalValue' function that actually used
-			#the $client parameter
 			my $client;
 			if (exists $paramref->{'playerid'}) {
 				$client = Slim::Player::Client::getClient($paramref->{'playerid'});

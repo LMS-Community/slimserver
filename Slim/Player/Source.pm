@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.86 2004/05/06 08:13:58 kdf Exp $
+# $Id: Source.pm,v 1.87 2004/05/08 05:23:16 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -103,6 +103,7 @@ sub loadConversionTables {
 				next unless defined $command && $command !~ /^\s*$/;
 
 				$commandTable{"$inputtype-$outputtype-$clienttype-$clientid"} = $command;
+				checkBin("$inputtype-$outputtype-$clienttype-$clientid");
 			}
 		}
 
@@ -1010,6 +1011,36 @@ sub enabledFormat {
 	return 1;
 }
 
+sub checkBin {
+	my $profile = shift;
+	my $command;
+	
+	$::d_source && msg("checking formats for: $profile\n");
+	
+	# if the user's disabled the profile, then skip it...
+	return undef unless enabledFormat($profile);
+	
+	$::d_source && msg("   enabled\n");
+	
+	# get the command for this profile
+	$command = $commandTable{$profile};
+	$::d_source && $command && msg("  Found command: $command\n");
+
+	return undef unless $command;
+	
+	# if we don't have one or more of the requisite binaries, then move on.
+	while ($command && $command =~ /\[([^]]+)\]/g) {
+
+		if (!Slim::Utils::Misc::findbin($1)) {
+			$command = undef;
+			$::d_source && msg("   drat, missing binary $1\n");
+			Slim::Utils::Prefs::push('disabledformats',$profile);
+		}
+	}
+			
+	return $command;
+}
+
 sub getConvertCommand {
 	my $client   = shift;
 	my $fullpath = shift;
@@ -1067,27 +1098,7 @@ sub getConvertCommand {
 		
 		foreach my $profile (@profiles) {
 			
-			$::d_source && msg("checking formats for: $profile\n");
-			
-			# if the user's disabled the profile, then skip it...
-			next unless enabledFormat($profile);
-			
-			$::d_source && msg("   enabled\n");
-			
-			# get the command for this profile
-			$command = $commandTable{$profile};
-			$::d_source && $command && msg("  Found command: $command\n");
-
-			next unless $command;
-			
-			# if we don't have one or more of the requisite binaries, then move on.
-			while ($command && $command =~ /\[([^]]+)\]/g) {
-
-				if (!Slim::Utils::Misc::findbin($1)) {
-					$command = undef;
-					$::d_source && msg("   drat, missing binary $1\n");
-				}
-			}
+			$command = checkBin($profile);
 			
 			last if $command;
 		}
@@ -1100,7 +1111,7 @@ sub getConvertCommand {
 		if (defined $command && $command eq "-" && !$undermax &&
 			$type eq "mp3" && enabledFormat($downsample)) {
 
-				$command = $commandTable{"$type-$checkformat-downsample-*"};;
+				$command = $commandTable{"$type-lame-*-*"};
 				$undermax = 1;
 		}
 

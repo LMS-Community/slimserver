@@ -16,10 +16,12 @@ sub startScan {
 	my $savecache = shift;
 	
 	if (Slim::Music::iTunes::useiTunesLibrary()) { 
+		Slim::Music::iTunes::startScan();
 		return;
 	}
 
 	if (Slim::Music::MoodLogic::useMoodLogic()) { 
+		Slim::Music::Moodlogic::startScan();
 		return;
 	}
 

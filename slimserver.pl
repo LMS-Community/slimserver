@@ -213,6 +213,7 @@ use vars qw(
 	$priority
 	$quiet
 	$nosetup
+	$noserver
 	$stdio
 	$stop
 );
@@ -489,6 +490,7 @@ Usage: $0 [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
     --streamaddr     => Specify the _server's_ IP address to use to connect
                         to streaming audio sources
     --nosetup        => Disable setup via http.
+    --noserver       => Disable web access server settings, but leave player settings accessible. Settings changes arenot preserved.
 
 The following are debugging flags which will print various information 
 to the console via stderr:
@@ -563,6 +565,7 @@ sub initOptions {
 		'prefsfile=s' 		=> \$prefsfile,
 		'quiet'   			=> \$quiet,
 		'nosetup'			=> \$nosetup,
+		'noserver'			=> \$noserver,
 		'd_artwork'			=> \$d_artwork,
 		'd_cli'				=> \$d_cli,
 		'd_command'			=> \$d_command,
@@ -612,7 +615,7 @@ sub initOptions {
 }
 
 sub initSettings {	
-	Slim::Utils::Prefs::load($prefsfile, $nosetup);
+	Slim::Utils::Prefs::load($prefsfile, $nosetup || $noserver);
 	Slim::Utils::Prefs::checkServerPrefs();
 	Slim::Buttons::Home::updateMenu();
 	Slim::Web::Setup::initSetup();

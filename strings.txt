@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.101 2004/05/06 08:13:57 kdf Exp $
+# $Id: strings.txt,v 1.102 2004/05/08 05:23:14 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1044,7 +1044,7 @@ SETUP_GROUP_FORMATS
 
 SETUP_GROUP_FORMATS_DESC
 	DE	SlimServer kann Audio-Dateien während der Laufzeit für die Wiedergabe konvertieren. Sie können hier einzelne Formate deaktivieren.
-	EN	SlimServer can convert audio file formats on-the-fly for playback on your player.  You can disable specific formats below by unchecking them.  Click Change to save your changes.
+	EN	SlimServer can convert audio file formats on-the-fly for playback on your player.  You can disable specific formats below by unchecking them.  Only the name of the binary is shown here. To see/edit the entire command line, you will need to open convert.conf.  Click Change to save your changes.
 	NO	SlimServer kan konvertere mellom ulike lyd-formater for avspilling i spilleren. Her kan du deaktivere forskjellige formater.
 	SE	Slimserver kan konvertera mellan olika ljud-format för uppspelning i spelaren. 
 
@@ -1057,6 +1057,9 @@ SETUP_FORMATSLIST_CHANGE
 	NO	Innstillingen er endret.
 	PT	A opção mudou.
 	SE	Inställning är ändrad.
+
+SETUP_FORMATSLIST_MISSING_BINARY
+	EN	Required binary was not found:
 
 SETUP_FORMATSLIST
 	DE	Dateikonvertierung
@@ -4494,6 +4497,9 @@ TYPE
 	NO	Filformat
 	PT	Formato do Ficheiro
 	SE	Filformat
+
+APE
+	EN	Monkey's Audio
 
 MP3
 	DE	MP3
