@@ -4,11 +4,11 @@
 		<meta http-equiv="refresh" content="[% refresh %]; url=status_header.html?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1">
 		<link rel="stylesheet" href="slimserver.css">
 		<script type="text/javascript" src="[% webroot %]html/scripts.js" /></script>
-		<script language="JavaScript">
+		[% IF playercount == '0' %]<script language="JavaScript">
 			<!--Hide
-			[% IF playercount == '0' %]location="status.html";[% END %]
+			location="status.html";
 			-->
-		</script>
+		</script>[% END %]
 	</head>
 	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" [% IF NOT noreload %]onload="javascript:checkReload();[% END %]">
 		<div class="masthead">
@@ -26,7 +26,7 @@
 			<table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111">
 				<td><nobr><span class="songtitle">[% IF player_name %][% player_name %][% END %]</span> [% IF mode != 'off' %](<A href="status_header.html?p0=button&p1=sleep&player=[% player | uri %]">Sleep</a>[% IF sleeptime %] [% sleep %][% END %])[% END %]</nobr></td>
 				<td valign="bottom" width="22%"><nobr><a href="setup.html?page=player&player=[% player | uri %]&playerid=[% player | uri %]" target="browser">[% "PLAYER_SETTINGS" | string %]</a></nobr></td>
-				<td valign="bottom" width="22%"><nobr><a href="javascript:openRemote('[% player %]')">Undock</a></nobr></td>
+				<td valign="bottom" width="22%"><nobr><a href="javascript:openRemote('[% player | uri %]','[% player_name %]')">Undock</a></nobr></td>
 				<td valign="bottom" width="22%"><nobr><a href="hitlist.html?player=[% player | uri %]" target="playlist">[% "STATISTICS" | string %]</a></nobr></td>
 			</table>
 		</tr>

@@ -7,9 +7,9 @@ function to_currentsong() {
 	}
 }
 
-function openRemote(player)
+function openRemote(player,playername)
 {
-	window.open('status.html?player='+player+'&refresh=1', player+'-access', 'width=500,height=240');
+	window.open('status.html?player='+player+'&refresh=1', playername, 'width=500,height=240');
 }
 
 function setCookie(name, value)
