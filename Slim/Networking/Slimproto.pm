@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.65 2004/10/18 18:48:26 dean Exp $
+# $Id: Slimproto.pm,v 1.66 2004/10/18 20:24:29 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -260,7 +260,7 @@ sub process_slimproto_frame {
 
 		$bitmapped = $wlan_channellist & 0x8000;
 		$reconnect = $wlan_channellist & 0x4000;
-		$wlan_channellist = sprintf('%04x', $wlan_channellist & 0x2fff);
+		$wlan_channellist = sprintf('%04x', $wlan_channellist & 0x3fff);
 
 		my $mac = join(':', @mac);
 		$::d_slimproto && msg(	
