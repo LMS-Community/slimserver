@@ -27,6 +27,7 @@
 						end = document.cookie.length;
 					url = unescape(document.cookie.substring(offset, end));
 					if (url == 'undefined') return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
+					return url [% IF nosetup %]+"&nosetup=1"[% END %];
 				}
 			}
 			return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
