@@ -1,5 +1,5 @@
 [% IF PrefsInTable %]<tr><td>[% END %]
-<a class="linkbtn" href="setup.html?page=[% page %]&[% PrefNameRoot %]Action[% PrefIndex %]=Add">+</a>
+<a class="linkbtn" href="setup.html?page=[% page %]&playerid=[% playerid | uri %]&player=[% player | uri %]&[% PrefNameRoot %]Action[% PrefIndex %]=Add">+</a>
 [% IF PrefsInTable %]</td><td>[% END %]
 &nbsp;[% PrefExtValue %]
 [% IF PrefsInTable %]</td></tr>[% END %]

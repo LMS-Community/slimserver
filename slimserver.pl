@@ -620,7 +620,6 @@ sub initOptions {
 sub initSettings {	
 	Slim::Utils::Prefs::load($prefsfile, $nosetup || $noserver);
 	Slim::Utils::Prefs::checkServerPrefs();
-	Slim::Buttons::Home::updateMenu();
 	Slim::Web::Setup::initSetup();
 
 	# upgrade mp3dir => audiodir

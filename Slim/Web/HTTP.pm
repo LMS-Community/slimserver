@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.118 2004/09/02 20:57:53 grotus Exp $
+# $Id: HTTP.pm,v 1.119 2004/09/11 14:50:55 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1375,7 +1375,7 @@ sub _generateContentFromFile {
 	my ($type, $path, $params) = @_;
 	my ($content, $mtime);
 	my $skin = $params->{'skinOverride'} || Slim::Utils::Prefs::get('skin');
-
+	$::d_http && msg("generating from $path\n");
 	if ($type eq 'fill') {
 		my $template = $skinTemplates{$skin} || newSkinTemplate($skin);
 		my $output = '';

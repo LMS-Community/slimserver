@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.28 2004/09/11 04:27:29 dean Exp $
+# $Id: Player.pm,v 1.29 2004/09/11 14:50:55 dean Exp $
 #
 package Slim::Player::Player;
 use strict;
@@ -31,6 +31,17 @@ my $defaultPrefs = {
 		,'doublesize'			=> 0
 		,'idleBrightness'		=> 1
 		,'irmap'				=> Slim::Hardware::IR::defaultMapFile()
+		,'menuItem'				=> ['NOW_PLAYING', 
+									'BROWSE_BY_GENRE', 
+									'BROWSE_BY_ARTIST', 
+									'BROWSE_BY_ALBUM', 
+									'BROWSE_MUSIC_FOLDER', 
+									'SEARCH', 
+									'SAVED_PLAYLISTS', 
+									'ShoutcastBrowser', 
+									'PLUGINS', 
+									'SETTINGS',
+									]
 		,'mp3SilencePrelude' 	=> 0
 		,'offDisplaySize'		=> 0
 		,'pitch'				=> 100
@@ -73,6 +84,7 @@ sub new {
 
 sub init {
 	my $client = shift;
+	Slim::Buttons::Home::updateMenu($client);
 	# fire it up!
 	$client->power(Slim::Utils::Prefs::clientGet($client,'power'));
 	$client->startup();

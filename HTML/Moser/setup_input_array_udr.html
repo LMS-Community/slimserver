@@ -1,9 +1,9 @@
 [% IF PrefsInTable %]<tr><td>[% END %]
-<a class="linkbtn" href="setup.html?page=[% page %]&[% PrefNameRoot %]Action[% PrefIndex %]=Up">&uarr;</a>
+<a class="linkbtn" href="setup.html?page=[% page %]&playerid=[% playerid | uri %]&player=[% player | uri %]&[% PrefNameRoot %]Action[% PrefIndex %]=Up">&uarr;</a>
 [% IF PrefsInTable %]</td><td>[% END %]
-<a class="linkbtn" href="setup.html?page=[% page %]&[% PrefNameRoot %]Action[% PrefIndex %]=Down">&darr;</a>
+<a class="linkbtn" href="setup.html?page=[% page %]&playerid=[% playerid | uri %]&player=[% player | uri %]&[% PrefNameRoot %]Action[% PrefIndex %]=Down">&darr;</a>
 [% IF PrefsInTable %]</td><td>[% END %]
-<a class="linkbtn" href="setup.html?page=[% page %]&[% PrefNameRoot %]Action[% PrefIndex %]=Remove">&times;</a>
+<a class="linkbtn" href="setup.html?page=[% page %]&playerid=[% playerid | uri %]&player=[% player | uri %]&[% PrefNameRoot %]Action[% PrefIndex %]=Remove">&times;</a>
 [% IF PrefsInTable %]</td><td>[% END %]
 &nbsp;[% PrefExtValue %]
 [% IF PrefsInTable %]</td></tr>[% END %]

@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.133 2004/09/11 04:48:43 dean Exp $
+# $Id: strings.txt,v 1.134 2004/09/11 14:50:51 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -3239,14 +3239,14 @@ SETUP_NO_ARTWORK
 	NO	Ikke søk etter albumgrafikk
 	SE	Sök inte efter album-omslag
 
-SETUP_BUILDITEMSPERPASS
+SETUP_ITEMSPERPASS
 	DE	Anzahl Elemente pro Durchgang
 	EN	Build Items Per Pass
 	FR	Nombre d'éléments par passe
 	NO	Antall musikkfiler per søk
 	SE	Antal musikfiler per sökpass
 
-SETUP_BUILDITEMSPERPASS_DESC
+SETUP_ITEMSPERPASS_DESC
 	DE	Um eine Unterbrechung der Musik zu verhindern, bildet SlimServer lange Listen in mehreren Durchgängen. Diese Einstellung definiert, wieviele Elemente pro Durchgang verarbeitet werden.
 	EN	To avoid interrupting the music, SlimServer builds long lists in chunks. This setting determines how many items to build in a single pass.
 	FR	Pour ne pas interrompre la musique, le SlimServer génère les listes longues en plusieurs passes. Ce réglage détermine le nombre d'éléments générés à chaque passe.
@@ -5560,6 +5560,9 @@ PLAYER_SETTINGS
 
 ALARM_SETTINGS
 	EN	Alarm
+
+MENU_SETTINGS
+	EN	Menus
 
 DISPLAY_SETTINGS
 	EN	Display

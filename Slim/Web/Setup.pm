@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.98 2004/09/11 04:48:44 dean Exp $
+# $Id: Setup.pm,v 1.99 2004/09/11 14:50:56 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -517,7 +517,181 @@ sub initSetupConfig {
 			},
 		}
 	}
-
+	,'homemenu' => {
+		'title' => string('MENU_SETTINGS')
+		,'parent' => 'player'
+		,'isClient' => 1
+		,'GroupOrder' => ['MenuItems','NonMenuItems']
+		,'preEval' => sub {
+					my ($client,$paramref,$pageref) = @_;
+					playerChildren($client, $pageref);
+					$pageref->{'Prefs'}{'menuItemAction'}{'arrayMax'} = Slim::Utils::Prefs::getArrayMax('menuItem');
+					my $i = 0;
+					foreach my $nonItem (Slim::Buttons::Home::unusedMenuOptions($client)) {
+						$paramref->{'nonMenuItem' . $i++} = $nonItem;
+					}
+					$pageref->{'Prefs'}{'nonMenuItem'}{'arrayMax'} = $i - 1;
+					$pageref->{'Prefs'}{'nonMenuItemAction'}{'arrayMax'} = $i - 1;
+					removeExtraArrayEntries($client,'menuItem',$paramref,$pageref);
+				}
+		,'postChange' => sub {
+					my ($client,$paramref,$pageref) = @_;
+					my $i = 0;
+					#refresh paramref for menuItem array
+					foreach my $menuitem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
+						$paramref->{'menuItem' . $i++} = $menuitem;
+					}
+					$pageref->{'Prefs'}{'menuItemAction'}{'arrayMax'} = $i - 1;
+					while (exists $paramref->{'menuItem' . $i}) {
+						delete $paramref->{'menuItem' . $i++};
+					}
+					#refresh paramref for nonMenuItem array
+					$i = 0;
+					foreach my $nonItem (Slim::Buttons::Home::unusedMenuOptions($client)) {
+						$paramref->{'nonMenuItem' . $i++} = $nonItem;
+					}
+					$pageref->{'Prefs'}{'nonMenuItem'}{'arrayMax'} = $i - 1;
+					$pageref->{'Prefs'}{'nonMenuItemAction'}{'arrayMax'} = $i - 1;
+					while (exists $paramref->{'nonMenuItem' . $i}) {
+						delete $paramref->{'nonMenuItem' . $i++};
+					}
+				}
+		,'Groups' => {
+			'MenuItems' => {
+					'PrefOrder' => ['menuItem']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupHead' => string('SETUP_GROUP_MENUITEMS')
+					,'GroupDesc' => string('SETUP_GROUP_MENUITEMS_DESC')
+				}
+			,'NonMenuItems' => {
+					'PrefOrder' => ['nonMenuItem']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupHead' => ''
+					,'GroupDesc' => string('SETUP_GROUP_NONMENUITEMS_INTRO')
+					,'GroupLine' => 1
+				}
+		}
+		,'Prefs' => {
+			'menuItem'	=> {
+						'isArray' => 1
+						,'arrayDeleteNull' => 1
+						,'arrayDeleteValue' => ''
+						,'arrayBasicValue' => 'NOW_PLAYING'
+						,'inputTemplate' => 'setup_input_array_udr.html'
+						,'validate' => \&validateInHash
+						,'validateArgs' => [\&Slim::Buttons::Home::menuOptions]
+						,'externalValue' => sub {
+										my ($client,$value) = @_;
+										my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
+										if (Slim::Utils::Strings::stringExists($value)) {
+											return string($value);
+										} elsif (exists $pluginsRef->{$value}) {
+											return $pluginsRef->{$value};
+										} else {
+											return $value;
+										}
+									}
+						,'onChange' => sub {
+									my ($client,$changeref,$paramref,$pageref) = @_;
+									#Handle all changed items whenever the first one is encountered
+									#then set 'Processed' so that the changes aren't repeated
+									if (exists($changeref->{'menuItem'}{'Processed'})) {
+										return;
+									}
+									processArrayChange($client,'menuItem',$paramref,$pageref);
+									Slim::Buttons::Home::updateMenu();
+									$changeref->{'menuItem'}{'Processed'} = 1;
+								}
+					}
+			,'menuItemAction' => {
+						'isArray' => 1
+						,'dontSet' => 1
+						,'arrayMax' => undef #set in preEval
+						,'noWarning' => 1
+						,'onChange' => sub {
+									my ($client,$changeref,$paramref,$pageref) = @_;
+									#Handle all changed items whenever the first one is encountered
+									#then set 'Processed' so that the changes aren't repeated
+									if (exists($changeref->{'menuItemAction'}{'Processed'})) {
+										return;
+									}
+									my $i;
+									for ($i = Slim::Utils::Prefs::clientGetArrayMax($client,'menuItem'); $i >= 0; $i--) {
+										if (exists $changeref->{'menuItemAction' . $i}) {
+											my $newval = $changeref->{'menuItemAction' . $i}{'new'};
+											my $tempItem = Slim::Utils::Prefs::clientGet($client,'menuItem',$i);
+											if (defined $newval) {
+												if ($newval eq 'Remove') {
+													Slim::Utils::Prefs::clientDelete($client,'menuItem',$i);
+												} elsif ($newval eq 'Up' && $i > 0) {
+													Slim::Utils::Prefs::clientSet($client,'menuItem',Slim::Utils::Prefs::clientGet($client,'menuItem',$i - 1),$i);
+													Slim::Utils::Prefs::clientSet($client,'menuItem',$tempItem,$i - 1);
+												} elsif ($newval eq 'Down' && $i < Slim::Utils::Prefs::clientGetArrayMax($client,'menuItem')) {
+													Slim::Utils::Prefs::clientSet($client,'menuItem',Slim::Utils::Prefs::clientGet($client,'menuItem',$i + 1),$i);
+													Slim::Utils::Prefs::clientSet($client,'menuItem',$tempItem,$i + 1);
+												}
+											}
+										}
+									}
+									if (Slim::Utils::Prefs::clientGetArrayMax($client,'menuItem') < 0) {
+										Slim::Utils::Prefs::clientSet($client,'menuItem',$pageref->{'Prefs'}{'menuItem'}{'arrayBasicValue'},0);
+									}
+									Slim::Buttons::Home::updateMenu($client);
+									$changeref->{'menuItemAction'}{'Processed'} = 1;
+								}
+					}
+			,'nonMenuItem'	=> {
+						'isArray' => 1
+						,'dontSet' => 1
+						,'arrayMax' => undef #set in preEval
+						,'noWarning' => 1
+						,'inputTemplate' => 'setup_input_array_add.html'
+						,'externalValue' => sub {
+										my ($client,$value) = @_;
+										my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
+										if (Slim::Utils::Strings::stringExists($value)) {
+											return string($value);
+										} elsif (exists $pluginsRef->{$value}) {
+											return $pluginsRef->{$value};
+										} else {
+											return $value;
+										}
+									}
+					}
+			,'nonMenuItemAction' => {
+						'isArray' => 1
+						,'dontSet' => 1
+						,'arrayMax' => undef #set in preEval
+						,'noWarning' => 1
+						,'onChange' => sub {
+									my ($client,$changeref,$paramref,$pageref) = @_;
+									#Handle all changed items whenever the first one is encountered
+									#then set 'Processed' so that the changes aren't repeated
+									if (exists($changeref->{'menuItemAction'}{'Processed'})) {
+										return;
+									}
+									my $i;
+									for ($i = $pageref->{'Prefs'}{'nonMenuItemAction'}{'arrayMax'}; $i >= 0; $i--) {
+										if (exists $changeref->{'nonMenuItemAction' . $i}) {
+											if ($changeref->{'nonMenuItemAction' . $i}{'new'} eq 'Add') {
+												Slim::Utils::Prefs::clientPush($client,'menuItem',$paramref->{'nonMenuItem' . $i});
+											}
+										}
+									}
+									Slim::Buttons::Home::updateMenu($client);
+									$changeref->{'nonMenuItemAction'}{'Processed'} = 1;
+								}
+					}
+			}
+	}
 	,'alarm' => {
 		'title' => string('ALARM_SETTINGS')
 		,'parent' => 'player'
@@ -1046,176 +1220,15 @@ sub initSetupConfig {
 		,'preEval' => sub {
 					my ($client,$paramref,$pageref) = @_;
 					$pageref->{'Prefs'}{'skin'}{'options'} = {skins(1)};
-					$pageref->{'Prefs'}{'menuItemAction'}{'arrayMax'} = Slim::Utils::Prefs::getArrayMax('menuItem');
-					my $i = 0;
-					foreach my $nonItem (Slim::Buttons::Home::unusedMenuOptions()) {
-						$paramref->{'nonMenuItem' . $i++} = $nonItem;
-					}
-					$pageref->{'Prefs'}{'nonMenuItem'}{'arrayMax'} = $i - 1;
-					$pageref->{'Prefs'}{'nonMenuItemAction'}{'arrayMax'} = $i - 1;
-					removeExtraArrayEntries($client,'menuItem',$paramref,$pageref);
 				}
-		,'postChange' => sub {
-					my ($client,$paramref,$pageref) = @_;
-					my $i = 0;
-					#refresh paramref for menuItem array
-					foreach my $menuitem (Slim::Utils::Prefs::getArray('menuItem')) {
-						$paramref->{'menuItem' . $i++} = $menuitem;
-					}
-					$pageref->{'Prefs'}{'menuItemAction'}{'arrayMax'} = $i - 1;
-					while (exists $paramref->{'menuItem' . $i}) {
-						delete $paramref->{'menuItem' . $i++};
-					}
-					#refresh paramref for nonMenuItem array
-					$i = 0;
-					foreach my $nonItem (Slim::Buttons::Home::unusedMenuOptions()) {
-						$paramref->{'nonMenuItem' . $i++} = $nonItem;
-					}
-					$pageref->{'Prefs'}{'nonMenuItem'}{'arrayMax'} = $i - 1;
-					$pageref->{'Prefs'}{'nonMenuItemAction'}{'arrayMax'} = $i - 1;
-					while (exists $paramref->{'nonMenuItem' . $i}) {
-						delete $paramref->{'nonMenuItem' . $i++};
-					}
-				}
-		,'GroupOrder' => ['MenuItems','NonMenuItems','Default']
+		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['skin','itemsPerPage','refreshRate','coverArt','coverThumb','artfolder','thumbSize','includeNoArt']
 				}
-			,'MenuItems' => {
-					'PrefOrder' => ['menuItem']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_GROUP_MENUITEMS')
-					,'GroupDesc' => string('SETUP_GROUP_MENUITEMS_DESC')
-				}
-			,'NonMenuItems' => {
-					'PrefOrder' => ['nonMenuItem']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => ''
-					,'GroupDesc' => string('SETUP_GROUP_NONMENUITEMS_INTRO')
-					,'GroupLine' => 1
-				}
 			}
 		,'Prefs' => {
-			'menuItem'	=> {
-						'isArray' => 1
-						,'arrayDeleteNull' => 1
-						,'arrayDeleteValue' => ''
-						,'arrayBasicValue' => 'NOW_PLAYING'
-						,'inputTemplate' => 'setup_input_array_udr.html'
-						,'validate' => \&validateInHash
-						,'validateArgs' => [\&Slim::Buttons::Home::menuOptions]
-						,'externalValue' => sub {
-										my ($client,$value) = @_;
-										my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
-										if (Slim::Utils::Strings::stringExists($value)) {
-											return string($value);
-										} elsif (exists $pluginsRef->{$value}) {
-											return $pluginsRef->{$value};
-										} else {
-											return $value;
-										}
-									}
-						,'onChange' => sub {
-									my ($client,$changeref,$paramref,$pageref) = @_;
-									#Handle all changed items whenever the first one is encountered
-									#then set 'Processed' so that the changes aren't repeated
-									if (exists($changeref->{'menuItem'}{'Processed'})) {
-										return;
-									}
-									processArrayChange($client,'menuItem',$paramref,$pageref);
-									Slim::Buttons::Home::updateMenu();
-									$changeref->{'menuItem'}{'Processed'} = 1;
-								}
-					}
-			,'menuItemAction' => {
-						'isArray' => 1
-						,'dontSet' => 1
-						,'arrayMax' => undef #set in preEval
-						,'noWarning' => 1
-						,'onChange' => sub {
-									my ($client,$changeref,$paramref,$pageref) = @_;
-									#Handle all changed items whenever the first one is encountered
-									#then set 'Processed' so that the changes aren't repeated
-									if (exists($changeref->{'menuItemAction'}{'Processed'})) {
-										return;
-									}
-									my $i;
-									for ($i = Slim::Utils::Prefs::getArrayMax('menuItem'); $i >= 0; $i--) {
-										if (exists $changeref->{'menuItemAction' . $i}) {
-											my $newval = $changeref->{'menuItemAction' . $i}{'new'};
-											my $tempItem = Slim::Utils::Prefs::getInd('menuItem',$i);
-											if (defined $newval) {
-												if ($newval eq 'Remove') {
-													Slim::Utils::Prefs::delete('menuItem',$i);
-												} elsif ($newval eq 'Up' && $i > 0) {
-													Slim::Utils::Prefs::set('menuItem',Slim::Utils::Prefs::getInd('menuItem',$i - 1),$i);
-													Slim::Utils::Prefs::set('menuItem',$tempItem,$i - 1);
-												} elsif ($newval eq 'Down' && $i < Slim::Utils::Prefs::getArrayMax('menuItem')) {
-													Slim::Utils::Prefs::set('menuItem',Slim::Utils::Prefs::getInd('menuItem',$i + 1),$i);
-													Slim::Utils::Prefs::set('menuItem',$tempItem,$i + 1);
-												}
-											}
-										}
-									}
-									if (Slim::Utils::Prefs::getArrayMax('menuItem') < 0) {
-										Slim::Utils::Prefs::set('menuItem',$pageref->{'Prefs'}{'menuItem'}{'arrayBasicValue'},0);
-									}
-									Slim::Buttons::Home::updateMenu();
-									$changeref->{'menuItemAction'}{'Processed'} = 1;
-								}
-					}
-			,'nonMenuItem'	=> {
-						'isArray' => 1
-						,'dontSet' => 1
-						,'arrayMax' => undef #set in preEval
-						,'noWarning' => 1
-						,'inputTemplate' => 'setup_input_array_add.html'
-						,'externalValue' => sub {
-										my ($client,$value) = @_;
-										my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
-										if (Slim::Utils::Strings::stringExists($value)) {
-											return string($value);
-										} elsif (exists $pluginsRef->{$value}) {
-											return $pluginsRef->{$value};
-										} else {
-											return $value;
-										}
-									}
-					}
-			,'nonMenuItemAction' => {
-						'isArray' => 1
-						,'dontSet' => 1
-						,'arrayMax' => undef #set in preEval
-						,'noWarning' => 1
-						,'onChange' => sub {
-									my ($client,$changeref,$paramref,$pageref) = @_;
-									#Handle all changed items whenever the first one is encountered
-									#then set 'Processed' so that the changes aren't repeated
-									if (exists($changeref->{'menuItemAction'}{'Processed'})) {
-										return;
-									}
-									my $i;
-									for ($i = $pageref->{'Prefs'}{'nonMenuItemAction'}{'arrayMax'}; $i >= 0; $i--) {
-										if (exists $changeref->{'nonMenuItemAction' . $i}) {
-											if ($changeref->{'nonMenuItemAction' . $i}{'new'} eq 'Add') {
-												Slim::Utils::Prefs::push('menuItem',$paramref->{'nonMenuItem' . $i});
-											}
-										}
-									}
-									Slim::Buttons::Home::updateMenu();
-									$changeref->{'nonMenuItemAction'}{'Processed'} = 1;
-								}
-					}
-			,'skin'		=> {
+			'skin'		=> {
 						'validate' => \&validateInHash
 						,'validateArgs' => [\&skins]
 						,'options' => undef #filled by initSetup using skins()
@@ -2081,7 +2094,7 @@ sub playerChildren {
 	my $pageref = shift;
 	
 	if ($client->isPlayer()) {
-		$pageref->{'children'} = ['player','display','alarm','audio','remote'];
+		$pageref->{'children'} = ['player','homemenu','display','alarm','audio','remote'];
 		if (scalar(keys %{Slim::Buttons::Plugins::playerPlugins()})) {
 			push @{$pageref->{'children'}}, 'player_plugins';
 		}
@@ -2128,7 +2141,6 @@ sub syncGroups {
 
 sub setup_HTTP {
 	my ($client, $paramref, $callback, $httpclientsock, $response) = @_;
-
 	my $changed;
 	my $rejected;
 
@@ -2216,7 +2228,7 @@ sub buildHTTP {
 		$groupparams{'skinOverride'} = $$paramref{'skinOverride'};
 		foreach my $pref (@{$pageref->{'Groups'}{$group}{'PrefOrder'}}) {
 			if (!defined($pref) || !defined($pageref->{'Prefs'}{$pref})) { next; }
-			my %prefparams = %{$pageref->{'Prefs'}{$pref}};
+			my %prefparams = (%{$paramref}, %{$pageref->{'Prefs'}{$pref}});
 			$prefparams{'Suppress_PrefHead'} = $groupparams{'Suppress_PrefHead'};
 			$prefparams{'Suppress_PrefDesc'} = $groupparams{'Suppress_PrefDesc'};
 			$prefparams{'Suppress_PrefSub'} = $groupparams{'Suppress_PrefSub'};
@@ -2271,7 +2283,7 @@ sub buildHTTP {
 					if (!exists($pageref->{'Prefs'}{$pref}{'isArray'})) {
 						$paramref->{$pref2} = ($client) ? Slim::Utils::Prefs::clientGet($client,$pref2) : Slim::Utils::Prefs::get($pref2);
 					} else {
-						$paramref->{$pref2} = ($client) ? Slim::Utils::Prefs::clientGetInd($client,$pref,$i) : Slim::Utils::Prefs::getInd($pref,$i);
+						$paramref->{$pref2} = ($client) ? Slim::Utils::Prefs::clientGet($client,$pref,$i) : Slim::Utils::Prefs::get($pref,$i);
 					}
 				}
 				$prefparams{'PrefValue'} = $paramref->{$pref2};
@@ -2362,7 +2374,7 @@ sub processArrayChange {
 		}
 		my $adval = defined($pageref->{'Prefs'}{$array}{'arrayDeleteValue'}) ? $pageref->{'Prefs'}{$array}{'arrayDeleteValue'} : '';
 		for (my $i = $arrayMax;$i >= 0;$i--) {
-			my $aval = ($client) ? Slim::Utils::Prefs::clientGet($client,$array,$i) : Slim::Utils::Prefs::getInd($array,$i);
+			my $aval = ($client) ? Slim::Utils::Prefs::clientGet($client,$array,$i) : Slim::Utils::Prefs::get($array,$i);
 			if (!defined $aval || $aval eq '' || $aval eq $adval) {
 				if ($client) {
 					Slim::Utils::Prefs::clientDelete($client,$array,$i);
@@ -2400,7 +2412,7 @@ sub processArrayChange {
 		}
 		#update the params hash, since the array entries may have shifted around some
 		for (my $i = 0;$i <= $arrayMax;$i++) {
-			$paramref->{$array . $i} = ($client) ? Slim::Utils::Prefs::clientGet($client,$array,$i) : Slim::Utils::Prefs::getInd($array,$i);
+			$paramref->{$array . $i} = ($client) ? Slim::Utils::Prefs::clientGet($client,$array,$i) : Slim::Utils::Prefs::get($array,$i);
 		}
 		#further update params hash to clear shifted values
 		my $i = $arrayMax + 1;
@@ -2501,7 +2513,7 @@ sub setup_evaluation {
 					if (exists($settingsref->{$key}{'currentValue'})) {
 						$currVal = &{$settingsref->{$key}{'currentValue'}}($client,$key,$i);
 					} else {
-						$currVal = ($client) ? Slim::Utils::Prefs::clientGet($client,$key,$i) : Slim::Utils::Prefs::getInd($key,$i);
+						$currVal = ($client) ? Slim::Utils::Prefs::clientGet($client,$key,$i) : Slim::Utils::Prefs::get($key,$i);
 					}
 				} else {
 					$key2 = $key;

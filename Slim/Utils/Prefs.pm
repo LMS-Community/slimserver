@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.86 2004/09/11 04:27:31 dean Exp $
+# $Id: Prefs.pm,v 1.87 2004/09/11 14:50:55 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -163,17 +163,6 @@ my %DEFAULT = (
 								'/ARTIST/ALBUM/TRACKNUM - TITLE', 
 								'/ARTIST/ALBUM/TRACKNUM TITLE', 
 								'/ARTIST/ALBUM/TRACKNUM. TITLE' 
-								]
-	,'menuItem'				=> ['NOW_PLAYING', 
-								'BROWSE_BY_GENRE', 
-								'BROWSE_BY_ARTIST', 
-								'BROWSE_BY_ALBUM', 
-								'BROWSE_MUSIC_FOLDER', 
-								'SEARCH', 
-								'SAVED_PLAYLISTS', 
-								'ShoutcastBrowser', 
-								'PLUGINS', 
-								'SETTINGS',
 								]
 	,'disabledplugins'		=> []
 	,'enabledfonts'			=> ['small', 'medium', 'large', 'huge']
@@ -419,6 +408,7 @@ sub getArray {
 sub clientGetArray {
 	my $client = shift;
 	my $arrayPref = shift;
+	assert($client);
 	return getArray($client->id() . "-" . $arrayPref);
 }
 # get($pref)
