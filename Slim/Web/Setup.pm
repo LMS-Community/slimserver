@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.21 2003/12/06 00:37:20 grotus Exp $
+# $Id: Setup.pm,v 1.22 2003/12/07 19:16:10 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1367,11 +1367,12 @@ sub setup_HTTP {
 	my $rejected;
 	if ($::nosetup) {
 		$$resultref = "HTTP/1.0 403 Forbidden";
-		return \"<HTML><HEAD><TITLE>403 Forbidden</TITLE></HEAD><BODY>403 Forbidden: $paramref->{'path'}</BODY></HTML>$Slim::HTTP::EOL";
+		return Slim::Web::HTTP::filltemplatefile('html/errors/403.html',$paramref);
 	}
 	if (!defined($paramref->{'page'})) {
 		$$resultref = "HTTP/1.0 404 Not Found";
-		return \"<HTML><HEAD><TITLE>404 Not Found</TITLE></HEAD><BODY>404 Not Found: $paramref->{'path'} <br />Try adding page=server.</BODY></HTML>$Slim::HTTP::EOL";
+		$paramref->{'suggestion'} = "Try adding page=server.";
+		return Slim::Web::HTTP::filltemplatefile('html/errors/404.html',$paramref);
 	}
 
 	my %pagesetup = %{$setup{$paramref->{'page'}}};

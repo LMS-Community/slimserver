@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.49 2003/12/06 00:37:19 grotus Exp $
+# $Id: HTTP.pm,v 1.50 2003/12/07 19:16:10 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -210,7 +210,7 @@ sub processHTTP {
 	if ($httpclientsock) {
 
 		%params = ();
-
+		my %headers = ();
 		$httpclientsock->autoflush(1);
 
 		$::d_http && msg("reading request...\n");
@@ -252,12 +252,12 @@ sub processHTTP {
 
 			if (!$authorized) { # no Valid authorization supplied!
 				my $name = string('SLIMSERVER');
-				my $message = "HTTP/1.0 401 Authorization Required" . $EOL . 
-					"WWW-Authenticate: basic realm=\"$name\"" . $EOL .
-					"Content-type: text/html$BLANK" . 
-					"<HTML><HEAD><TITLE>401 Authorization Required</TITLE></HEAD>" . 
-					"<BODY>401 Authorization is Required to access this SlimServer</BODY></HTML>$EOL";
-				addresponse($httpclientsock,\$message);
+				my $result = "HTTP/1.0 401 Authorization Required";
+				$headers{'WWW-Authenticate'} = qq(basic realm="$name");
+				$headers{'Content-type'} = 'text/html';
+				generateResponse_Done(undef,\%params
+							,filltemplatefile('html/errors/401.html',\%params)
+							,$httpclientsock,\$result,\%headers,{});
 				return undef;
 			}
 				
@@ -313,10 +313,12 @@ sub processHTTP {
 
 		} else {	 
 			$::d_http && msg("Bad Request: [". $firstline . "]\n");
-
-			my $message = "HTTP/1.0 400 Bad Request" . $EOL . 
-					"Content-type: text/html$BLANK<HTML><HEAD><TITLE>400 Bad Request</TITLE></HEAD><BODY>400 Bad Request: $firstline</BODY></HTML>$EOL";
-			addresponse($httpclientsock,\$message);
+			my $result = "HTTP/1.0 400 Bad Request";
+			$headers{'Content-type'} = 'text/html';
+			$params{'request'} = $firstline;
+			generateResponse_Done(undef,\%params
+						,filltemplatefile('html/errors/400.html',\%params)
+						,$httpclientsock,\$result,\%headers,{});
 		}
 
 	$::d_http && msg("Ready to accept a new HTTP connection.\n\n");
@@ -1065,7 +1067,7 @@ sub generateresponse {
 			}
 			# we failed to open the specified file
 			$result = "HTTP/1.0 404 Not Found";
-			$body = \"<HTML><HEAD><TITLE>404 Not Found</TITLE></HEAD><BODY>404 Not Found: $path</BODY></HTML>$EOL";
+			$body = filltemplatefile('html/errors/404.html',$paramsref);
 	    } elsif ($path =~ /favicon\.ico/) {
 			$body = getStaticContentRef("html/mypage.ico", $paramsref); 
 	    } elsif ($path =~ /slimserver\.css/) {
@@ -1114,12 +1116,12 @@ sub generateresponse {
 			}
 	    }  else {
 			$result = "HTTP/1.0 404 Not Found";
-			$body = \"<HTML><HEAD><TITLE>404 Not Found</TITLE></HEAD><BODY>404 Not Found: $path</BODY></HTML>$EOL";
+			$body = filltemplatefile('html/errors/404.html',$paramsref);
 		}
 	} else {	
 		if ($path !~ /status/i) {
 			$result = "HTTP/1.0 404 Not Found";
-			$body = \"<HTML><HEAD><TITLE>404 Not Found</TITLE></HEAD><BODY>404 Not Found: $path</BODY></HTML>$EOL";
+			$body = filltemplatefile('html/errors/404.html',$paramsref);
 		} else {
 			$result = "HTTP/1.0 200 OK";
 		}
@@ -1129,10 +1131,6 @@ sub generateresponse {
 	} else {
 		return 0;
 	}
-	#$headers{'Content-Length'} = length($body);
-	#$headers{'Connection'} = 'close';
-	#addresponse($httpclientsock, $result . $EOL . printheaders(%headers, %paramheaders) . $body);
-	#return 0;
 }
 
 sub generateResponse_Done {
