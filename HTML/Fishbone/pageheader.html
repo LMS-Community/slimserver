@@ -37,7 +37,6 @@
 		function doSearch(value,option)
 		{
 			var url;
-			
 			switch(option)
 			{
 			[% IF additionalLinks.browse %]
@@ -111,7 +110,7 @@
 					<input type=hidden value="[% page %]" name="page">
 					<input type=hidden value="[% searchchoice %]" name="searchchoice">
 				</FORM>
-				<FORM name=searcher method="Get" action="/home.html" onSubmit="doSearch(query.value,'SEARCHFOR_ARTIST');"><td><nobr>
+				<FORM name=searcher method="Get" action="/home.html" onSubmit="doSearch(query.value,search.value);"><td><nobr>
 					<SELECT NAME="search" class="stdedit" onChange="setCookie('SlimServer-search',options[selectedIndex].value)">
 					[% IF additionalLinks.search %]
 						[% FOREACH link = additionalLinks.search %]
