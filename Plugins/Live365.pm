@@ -174,6 +174,19 @@ sub getSessionID {
 
 	return $self->{sessionid};
 }
+sub isLoggedIn {
+	my $self = shift;
+
+	return defined( $self->{loggedin} ) && $self->{loggedin} == 1;
+}
+
+sub setLoggedIn {
+	my $self = shift;
+	my $val  = shift;
+
+	return $self->{loggedin} = $val;
+}
+
 
 sub setSessionID {
 	my $self = shift;
@@ -601,7 +614,7 @@ sub getPlaylist {
 		Slim::Music::Info::setTitle( $url, $newTitle );
 	}
 
-	$client->[900] = Slim::Utils::Timers::setTimer(
+	Slim::Utils::Timers::setTimer(
 		$client,
 		Time::HiRes::time() + $nextRefresh,
 		\&getPlaylist,
@@ -717,13 +730,13 @@ sub playOrAddCurrentStation {
 MAINMODE: {
 my $mainModeIdx = 0;
 my @mainModeItems = (
-	[ 'genreMode', 'PLUGIN_LIVE365_BROWSEGENRES' ],
-	[ 'Live365Channels', 'PLUGIN_LIVE365_BROWSEPICKS' ],
-	[ 'Live365Channels', 'PLUGIN_LIVE365_BROWSEPROS' ],
-	[ 'Live365Channels', 'PLUGIN_LIVE365_BROWSEALL' ],
-	[ 'searchMode', 'PLUGIN_LIVE365_SEARCH' ],
-	[ 'Live365Channels', 'PLUGIN_LIVE365_PRESETS' ],
-	[ 'loginMode', 'PLUGIN_LIVE365_LOGIN_MODE' ]
+	[ 'genreMode',			'PLUGIN_LIVE365_BROWSEGENRES' ],
+	[ 'Live365Channels',	'PLUGIN_LIVE365_BROWSEPICKS' ],
+	[ 'Live365Channels',	'PLUGIN_LIVE365_BROWSEPROS' ],
+	[ 'Live365Channels',	'PLUGIN_LIVE365_BROWSEALL' ],
+	[ 'searchMode',			'PLUGIN_LIVE365_SEARCH' ],
+	[ 'Live365Channels',	'PLUGIN_LIVE365_PRESETS' ],
+	[ 'loginMode',			'PLUGIN_LIVE365_LOGIN' ]
 );
 
 sub setMode {
@@ -732,31 +745,19 @@ sub setMode {
 
 	$client->lines( \&mainModeLines );
 
-	unless (defined($live365->{$client})) {
+	unless( defined $live365->{$client} ) {
 		$live365->{$client} = new Plugins::Live365::Live365API();
 	}
 
+	my ( $loginModePtr ) = ( grep { $_->[0] eq 'loginMode' } @mainModeItems )[0];
 	if( $entryType eq 'push' ) {
-		if( my $sessionid = Slim::Utils::Prefs::get( 'plugin_live365_sessionid' ) ) {
-			$::d_plugins && msg( "Live365.MainMode using stored session ID: $sessionid\n" );
-			$live365->{$client}->setSessionID( $sessionid );
-		} else {
-			my $userID   = Slim::Utils::Prefs::get( 'plugin_live365_username' );
-			my $password = Slim::Utils::Prefs::get( 'plugin_live365_password' );
-	
-			if( !( $userID and $password ) ) {
-				$::d_plugins && msg( "Live365.login: no credentials set\n" );
-			} else {
-				my $loginStatus = $live365->{$client}->login( $userID, unpack( 'u', $password ) );
+		Slim::Buttons::Common::pushMode( $client, 'loginMode', { silent => 1 } ) unless( $live365->{$client}->isLoggedIn() );
+	}
 
-				if( $loginStatus == 0 ) {
-					$::d_plugins && msg( "Live365 logged in: " . $live365->{$client}->getSessionID() . "\n" );
-					Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $live365->{$client}->getSessionID() );
-				} else {
-					$::d_plugins && msg( "Live365 login error: $loginStatus\n" );
-				}
-			}
-		}
+	if( $live365->{$client}->isLoggedIn() ) {
+		$loginModePtr->[1] = 'PLUGIN_LIVE365_LOGOUT';
+	} else {
+		$loginModePtr->[1] = 'PLUGIN_LIVE365_LOGIN';
 	}
 
 	$client->update();
@@ -843,7 +844,12 @@ my %mainModeFunctions = (
 		$client->update();
 
 		if( $success ) {
-			Slim::Buttons::Common::pushModeLeft( $client, $mainModeItems[$mainModeIdx][0], { source => $mainModeItems[$mainModeIdx][1] } );
+			if ($mainModeItems[$mainModeIdx][0] eq 'loginMode') {
+				Slim::Buttons::Common::pushMode( $client, $mainModeItems[$mainModeIdx][0] );
+			}
+			else {
+				Slim::Buttons::Common::pushModeLeft( $client, $mainModeItems[$mainModeIdx][0], { source => $mainModeItems[$mainModeIdx][1] } );
+			}
 		}
 	}
 );
@@ -881,147 +887,77 @@ sub getFunctions {
 # Login mode {{{
 #
 LOGINMODE: {
-my $loginModeOk = 0;
-my $loginModeIdx = 0;
-my @loginModeItems = (
-	'PLUGIN_LIVE365_LOGIN', 
-	'PLUGIN_LIVE365_LOGOUT'
-);
-
 my $setLoginMode = sub {
 	my $client = shift;
-	$client->lines( \&loginModeLines );
+	my $silent = Slim::Buttons::Common::param($client, 'silent');
+
+	my @statusText = qw(
+		PLUGIN_LIVE365_LOGIN_SUCCESS
+		PLUGIN_LIVE365_LOGIN_ERROR_NAME
+		PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
+		PLUGIN_LIVE365_LOGIN_ERROR_ACTION
+		PLUGIN_LIVE365_LOGIN_ERROR_ORGANIZATION
+		PLUGIN_LIVE365_LOGIN_ERROR_SESSION
+		PLUGIN_LIVE365_LOGIN_ERROR_HTTP
+	);
 
 	my $userID   = Slim::Utils::Prefs::get( 'plugin_live365_username' );
-	my $password = Slim::Utils::Prefs::get( 'plugin_live365_password' );
+	my $password = unpack( 'u', Slim::Utils::Prefs::get( 'plugin_live365_password' ) );
+	my $loggedIn = $live365->{$client}->isLoggedIn();
 
-	if( !( $userID and $password ) ) {
-		$::d_plugins && msg( "Live365.login: no credentials set\n" );
-		$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_NO_CREDENTIALS' );
+	if( $loggedIn ) {
+		$::d_plugins && msg( "Logging out $userID\n" );
+		my $logoutStatus = $live365->{$client}->logout();
+
+		if( $logoutStatus == 0 ) {
+			Slim::Display::Animation::showBriefly( $client, string( $statusText[ $logoutStatus ] ) );
+			$::d_plugins && msg( "Live365 logged out.\n" );
+		} else {
+			Slim::Display::Animation::showBriefly( $client, string( $statusText[ $logoutStatus ] ) );
+			$::d_plugins && msg( "Live365 logout error: $statusText[ $logoutStatus ]\n" );
+		}
+
+		$live365->{$client}->setLoggedIn( 0 );
+		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', '' );
 	} else {
-		$::d_plugins && msg( "Live365.login: ok\n" );
-		$loginModeOk = 1;
-		$live365->{$client}->clearBlockingStatus();
+		if( $userID and $password ) {
+			$::d_plugins && msg( "Logging in $userID\n" );
+			my $loginStatus = $live365->{$client}->login( $userID, $password );
+
+			if( $loginStatus == 0 ) {
+				Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $live365->{$client}->getSessionID() );
+				Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', $live365->{$client}->getMemberStatus() );
+				unless ($silent) {
+					Slim::Display::Animation::showBriefly( $client, string( 'PLUGIN_LIVE365_LOGIN_SUCCESS' ) );
+				}
+				$live365->{$client}->setLoggedIn( 1 );
+				$::d_plugins && msg( "Live365 logged in: " . $live365->{$client}->getSessionID() . "\n" );
+			} else {
+				Slim::Utils::Prefs::set( 'plugin_live365_sessionid', undef );
+				Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', undef );
+				Slim::Display::Animation::showBriefly( $client, string( $statusText[ $loginStatus ] ) );
+				$live365->{$client}->setLoggedIn( 0 );
+				$::d_plugins && msg( "Live365 login failure: " . $statusText[ $loginStatus ] . "\n" );
+			}
+		} else {
+			$::d_plugins && msg( "Live365.login: no credentials set\n" );
+			unless ($silent) {
+				Slim::Display::Animation::showBriefly( $client, string( 'PLUGIN_LIVE365_NO_CREDENTIALS' ) );
+			}
+		}
 	}
 
-	$loginModeIdx = 0;
+	unless ($silent) {
+		sleep 1;
+	}
+	Slim::Buttons::Common::popMode( $client );
 };
 
 my $noLoginMode = sub {
 	my $client = shift;
 };
 
-my %loginModeFunctions = (
-	'up' => sub {
-		my $client = shift;
-		$loginModeIdx = Slim::Buttons::Common::scroll(
-			$client,
-			-1,
-			scalar @loginModeItems,
-			$loginModeIdx
-		);
-		$client->update();
-	},
-
-	'down' => sub {
-		my $client = shift;
-		$loginModeIdx = Slim::Buttons::Common::scroll(
-			$client,
-			1,
-			scalar @loginModeItems,
-			$loginModeIdx
-		);
-		$client->update();
-	},
-
-	'left' => sub {
-		Slim::Buttons::Common::popModeRight( shift );
-	},
-
-	'right' => sub {
-		my $client = shift;
-
-		return unless $loginModeOk;
-
-		my @statusText = qw(
-			PLUGIN_LIVE365_LOGIN_SUCCESS
-			PLUGIN_LIVE365_LOGIN_ERROR_NAME
-			PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
-			PLUGIN_LIVE365_LOGIN_ERROR_ACTION
-			PLUGIN_LIVE365_LOGIN_ERROR_ORGANIZATION
-			PLUGIN_LIVE365_LOGIN_ERROR_SESSION
-			PLUGIN_LIVE365_LOGIN_ERROR_HTTP
-		);
-
-		$loginModeItems[ $loginModeIdx ] eq 'PLUGIN_LIVE365_LOGIN'  && do {
-			$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOGGING_IN' );
-			$client->update();
-
-			my $loginStatus = $live365->{$client}->login(
-				Slim::Utils::Prefs::get( 'plugin_live365_username' ),
- 				unpack( 'u', Slim::Utils::Prefs::get( 'plugin_live365_password' ) )
-			);
-
-			if( $loginStatus == 0 ) {
-				$::d_plugins && msg( "Live365 logged in: " . $live365->{$client}->getSessionID() . "\n" );
-				Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $live365->{$client}->getSessionID() );
-				Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', $live365->{$client}->getMemberStatus() );
-				Slim::Display::Animation::showBriefly( $client, string( $statusText[ $loginStatus ] ) );
-			} else {
-				$::d_plugins && msg( "Live365 login error: $loginStatus\n" );
-				Slim::Display::Animation::showBriefly( $client, string( $statusText[ $loginStatus ] ) );
-			}
-		};
-
-		$loginModeItems[ $loginModeIdx ] eq 'PLUGIN_LIVE365_LOGOUT' && do {
-			$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOGGING_OUT' );
-			$client->update();
-
-			my $logoutStatus = $live365->{$client}->logout();
-			if( $logoutStatus == 0 ) {
-				$::d_plugins && msg( "Live365 logged out\n" );
-				Slim::Utils::Prefs::set( 'plugin_live365_sessionid', '' );
-				Slim::Display::Animation::showBriefly( $client, string( $statusText[ $logoutStatus ] ) );
-			} else {
-				$::d_plugins && msg( "Live365 logout error: $logoutStatus\n" );
-				Slim::Display::Animation::showBriefly( $client, string( $statusText[ $logoutStatus ] ) );
-			}
-		};
-
-		sleep 1;
-
-		$live365->{$client}->clearBlockingStatus();
-		$client->update();
-	}
-);
-
-sub loginModeLines {
-	my $client = shift;
-	my @lines;
-
-	if( my $APImessage = $live365->{$client}->status() ) {
-		$lines[0] = string( $APImessage );
-		return @lines;
-	}
-
-	my $sessionID = Slim::Utils::Prefs::get( 'plugin_live365_sessionid' );
-	if( $sessionID ) {
-		$lines[0] = sprintf(
-			string( 'PLUGIN_LIVE365_LOGIN_HEADER' ), 
-			( split( /:/, $sessionID ) )[0]
-		);
-	} else {
-		$lines[0] = string( 'PLUGIN_LIVE365_NOT_LOGGED_IN' );
-	}
-
-	$lines[1] = string( $loginModeItems[ $loginModeIdx ] );
-
-	$lines[3] = Slim::Hardware::VFD::symbol('rightarrow');
-
-	return @lines;
-}
-
-Slim::Buttons::Common::addMode( 'loginMode', \%loginModeFunctions, $setLoginMode, $noLoginMode );
+Slim::Buttons::Common::addMode( 'loginMode', {}, $setLoginMode, $noLoginMode );
 
 } # end login mode
 
@@ -1530,32 +1466,20 @@ __DATA__
 PLUGIN_LIVE365_MODULE_NAME
 	EN	Live365 Internet Radio
 
-PLUGIN_LIVE365_LOGIN_MODE
-	EN	Manage your session
+PLUGIN_LIVE365_LOGOUT
+	EN	Log out
 
 PLUGIN_LIVE365_LOGIN
 	EN	Log in
 
-PLUGIN_LIVE365_LOGOUT
-	EN	Log out
-
-PLUGIN_LIVE365_LOGIN_HEADER
-	EN	Logged on to Live365 as %s
-
 PLUGIN_LIVE365_NOT_LOGGED_IN
 	EN	Not logged in to Live365
-
-PLUGIN_LIVE365_LOGGING_IN
-	EN	Logging in to Live365...
-
-PLUGIN_LIVE365_LOGGING_OUT
-	EN	Logging out from Live365...
 
 PLUGIN_LIVE365_NO_CREDENTIALS
 	EN	No Live365 account information
 
 PLUGIN_LIVE365_LOGIN_SUCCESS
-	EN	Login successful
+	EN	Successful
 
 PLUGIN_LIVE365_LOGIN_ERROR_NAME
 	EN	Member name problem
