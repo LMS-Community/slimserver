@@ -1,5 +1,7 @@
 package Slim::Formats::Wav;
 
+# $Id: Wav.pm,v 1.5 2003/11/29 01:03:26 daniel Exp $
+
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -19,63 +21,46 @@ use strict;
 
 use Audio::Wav;
 use MP3::Info;  # because WAV files sometimes have ID3 tags in them!
-use Slim::Utils::Misc;
-
-# Global vars
-use vars qw(
-	@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION $REVISION $AUTOLOAD
-);
-
-@ISA = 'Exporter';
-@EXPORT = qw(
-	get_wavtag
-);
-
-# Things that can be exported explicitly
-@EXPORT_OK = qw(get_wavtag);
-
-%EXPORT_TAGS = (
-	all	=> [@EXPORT, @EXPORT_OK]
-);
+use Slim::Utils::Misc; # this will give a sub redefined error because we ues Slim::Music::Info;
 
 my $bail;  # nasty global to know when we had a fatal error on a file.
 
 # Given a file, return a hash of name value pairs,
 # where each name is a tag name.
-sub get_wavtag
-{
-	# Get the pathname to the file
+sub get_wavtag {
+
 	my $file = shift || "";
+
 	$::d_wav && Slim::Utils::Misc::msg( "Reading WAV information for $file\n");
 
 	# This hash will map the keys in the tag to their values.
-	my $tag = MP3::Info::get_mp3tag($file);
+	my $tags = MP3::Info::get_mp3tag($file);
 
 	# bogus files are considered empty
-	if (!defined($tag->{'SIZE'})) { $tag->{'SIZE'} = 0; }
-	if (!defined($tag->{'SECS'})) { $tag->{'SECS'} = 0; }
-	# Make sure the file exists.
-#	return undef unless -s $file;
+	$tags->{'SIZE'} ||= 0;
+	$tags->{'SECS'} ||= 0;
 
 	$bail = undef;
 	
-	my $wav = new Audio::Wav;
+	my $wav = Audio::Wav->new();
 	
 	$wav->set_error_handler( \&myErrorHandler );
 	
 	my $read = $wav->read($file);
-	if (!$bail) {
-		$tag->{'OFFSET'} = $read->position();
-		$tag->{'SIZE'} = $read->length();
-		$tag->{'SECS'} = $read->length_seconds();
-	} else {
-	
+
+	unless ($bail) {
+
+		$tags->{'OFFSET'} = $read->position();
+		$tags->{'SIZE'}   = $read->length();
+		$tags->{'SECS'}   = $read->length_seconds();
 	}
-	return $tag;
+
+	return $tags;
 }
 
 sub myErrorHandler {
-	my( %parameters ) = @_;
+	my %parameters = @_;
+
 	if ( $parameters{'warning'} ) {
 		# This is a non-critical warning
 		$::d_wav && Slim::Utils::Misc::msg( "Warning: $parameters{'filename'}: $parameters{'message'}\n");
@@ -85,6 +70,5 @@ sub myErrorHandler {
 		$::d_wav && Slim::Utils::Misc::msg( "ERROR: $parameters{'filename'}: $parameters{'message'}\n");
 	}
 }
-
 
 1;

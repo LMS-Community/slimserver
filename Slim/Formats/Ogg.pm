@@ -1,6 +1,6 @@
 package Slim::Formats::Ogg;
 
-# $Id: Ogg.pm,v 1.3 2003/11/10 23:14:57 dean Exp $
+# $Id: Ogg.pm,v 1.4 2003/11/29 01:03:26 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -13,123 +13,66 @@ package Slim::Formats::Ogg;
 # DESCRIPTION:
 #   Extract Ogg tag information and store in a hash for easy retrieval.
 #
-# NOTES:
-#   This code has only been tested on Linux.  I would like to change this
-#   to make calls directly to the vorbis libraries.
 ###############################################################################
+
 use strict;
 
-# Global vars
-use vars qw(
-	@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION $REVISION $AUTOLOAD
-);
+# try and use the C based version of the Vorbis::Header if it exists
+# the ::PurePerl version is checked into Slim CVS, so it will always be available.
+my $oggHeaderClass;
 
-@ISA = 'Exporter';
-@EXPORT = qw(
-	get_oggtag get_ogginfo
-);
+{
+        eval 'use Ogg::Vorbis::Header';
 
-# Things that can be exported explicitly
-@EXPORT_OK = qw(get_oggtag get_ogginfo);
+        if ($@ !~ /Can't locate/) {
+                $oggHeaderClass = 'Ogg::Vorbis::Header';
+        } else {
+                $@ = '';
+        	eval 'use Ogg::Vorbis::Header::PurePerl';
+                $oggHeaderClass = 'Ogg::Vorbis::Header::PurePerl';
+        }
+}
 
-%EXPORT_TAGS = (
-	all	=> [@EXPORT, @EXPORT_OK]
+my %tagMapping = (
+	'TRACKNUMBER'	=> 'TRACKNUM',
+	'DATE'		=> 'YEAR',
 );
 
 # Given a file, return a hash of name value pairs,
 # where each name is a tag name.
 sub get_oggtag {
-	# Get the pathname to the file
+
 	my $file = shift || "";
 
 	# This hash will map the keys in the tag to their values.
-	my $tag = {};
+	my $tags = {};
 
-	# Make sure the file exists.
-	# return undef unless -s $file;
+	my $ogg  = $oggHeaderClass->new($file);
 
-	# Path to the ogginfo command.
-	my $ogginfo_cmd = Slim::Utils::Misc::findbin("ogginfo");
-	if ($ogginfo_cmd) {
-		# Run the 'ogginfo' command on the file to extract the tag.
-		my @output = `$ogginfo_cmd \"$file\"`;
-		
-		# If the command returns non-zero, ogginfo failed.
-		# This is actually not true.  Need to verify what the ogginfo return
-		# codes are.
-		#   if ($? != 0)
-		#   {
-		#      return undef;
-		#   }
-		
-		# Foreach line of output, try to match a tag, and extract
-		# the name and value.
-		foreach (@output) {
-			if (/^\s+([^=]+)=(.+)/) {
-				# Make sure the key is uppercase.
-				$tag->{uc($1)} = $2;
-			} elsif (/Playback length: (\d+)m\:(\d+)s/) {
-				# Get the length of the song in seconds.
-				my $min = $1;
-				my $sec = $2;
-				$sec += $min * 60;
-				$tag->{'SECS'} = $sec;
-			} elsif (/^Rate: (\d+)/i) {
-				$tag->{'RATE'} = $1;
-			} elsif (/^Channels: (\d+)/i) {
-				$tag->{'CHANNELS'} = $1;
-			}
-		}
-		# Correct ogginfo tags
-		if (exists $tag->{'DATE'}) {
-			$tag->{'YEAR'} = $tag->{'DATE'};
-			delete $tag->{'DATE'};
-		}
-		if (exists $tag->{'TRACKNUMBER'}) {
-			$tag->{'TRACKNUM'} = $tag->{'TRACKNUMBER'};
-			delete $tag->{'TRACKNUMBER'}
+	# why this is an array, I don't know.
+	foreach my $key ($ogg->comment_tags()) {
+		$tags->{$key} = ($ogg->comment($key))[0];
+	}
+
+	# Correct ogginfo tags
+	while (my ($old,$new) = each %tagMapping) {
+
+		if (exists $tags->{$old}) {
+			$tags->{$new} = $tags->{$old};
+			delete $tags->{$old};
 		}
 	}
-	# Add additional tag needed
-	$tag->{'SIZE'} = -s $file;
 
-	return $tag;
-}
+	# Add additional info
+	$tags->{'SIZE'}	    = -s $file;
 
+	$tags->{'SECS'}	    = $ogg->info('length');
+	$tags->{'BITRATE'}  = int($ogg->info('bitrate_nominal') / 1000);
+	$tags->{'STEREO'}   = $ogg->info('channels') == 2 ? 1 : 0;
+	$tags->{'CHANNELS'} = $ogg->info('channels');
+	$tags->{'RATE'}	    = $ogg->info('rate') / 1000;
 
-sub get_ogginfo
-{
-# Return relavant info for Ogg
-
-#
-#Returns hash reference containing file information for MP3 file.
-#This data cannot be changed.  Returned data:
-#
-#        VERSION         MPEG audio version (1, 2, 2.5)
-#        LAYER           MPEG layer description (1, 2, 3)
-#        STEREO          boolean for audio is in stereo
-#
-#        VBR             boolean for variable bitrate
-#        BITRATE         bitrate in kbps (average for VBR files)
-#        FREQUENCY       frequency in kHz
-#        SIZE            bytes in audio stream
-#
-#        SECS            total seconds
-#        MM              minutes
-#        SS              leftover seconds
-#        MS              leftover milliseconds
-#        TIME            time in MM:SS
-#
-#        COPYRIGHT       boolean for audio is copyrighted
-#        PADDING         boolean for MP3 frames are padded
-#        MODE            channel mode (0 = stereo, 1 = joint stereo,
-#                        2 = dual channel, 3 = single channel)
-#        FRAMES          approximate number of frames
-#        FRAME_LENGTH    approximate length of a frame
-#        VBR_SCALE       VBR scale from VBR header
-
-
-   return undef;
+	return $tags;
 }
 
 1;

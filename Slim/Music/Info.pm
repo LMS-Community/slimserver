@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.22 2003/11/26 21:24:37 dean Exp $
+# $Id: Info.pm,v 1.23 2003/11/29 01:03:27 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -17,7 +17,7 @@ use MP3::Info;
 
 use Slim::Formats::Movie;
 use Slim::Formats::AIFF;
-use Slim::Formats::Flac;
+use Slim::Formats::FLAC;
 use Slim::Formats::Wav;
 use Slim::Formats::Ogg;
 use Slim::Utils::Misc;
@@ -356,7 +356,8 @@ sub cacheItem {
 		if (exists $cacheEntryArray->[$index]) {
 			return $cacheEntryArray->[$index];
 		} else {
-		}	return undef;
+			return undef;
+		}
 	}
 
 	# cache miss from memory, check the disk
@@ -1566,7 +1567,7 @@ sub readTags {
 				$tempCacheEntry = Slim::Formats::Ogg::get_oggtag($filepath);
 			} elsif ($type eq "flc") {
 				# get the FLAC comments
-				$tempCacheEntry = Slim::Formats::Flac::get_flactag($filepath);
+				$tempCacheEntry = Slim::Formats::FLAC::get_flactag($filepath);
 			} elsif ($type eq "wav") {
 				# get the Wav comments
 				$tempCacheEntry = Slim::Formats::Wav::get_wavtag($filepath);

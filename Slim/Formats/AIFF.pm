@@ -6,30 +6,11 @@ package Slim::Formats::AIFF;
 # version 2.
 
 use strict;
-use Fcntl;
-
-# Global vars
-use vars qw(
-	@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION $REVISION $AUTOLOAD
-);
-
-@ISA = 'Exporter';
-@EXPORT = qw(
-	get_aifftag
-);
-
-# Things that can be exported explicitly
-@EXPORT_OK = qw(get_aifftag);
-
-%EXPORT_TAGS = (
-	all	=> [@EXPORT, @EXPORT_OK]
-);
 
 # Given a file, return a hash of name value pairs,
 # where each name is a tag name.
-sub get_aifftag
-{
-	# Get the pathname to the file
+sub get_aifftag {
+
 	my $file = shift || "";
 
 	my $filesize = -s $file;
@@ -52,7 +33,7 @@ sub get_aifftag
 
 	my $chunkpos = tell($f);
 
-	my %readchunks;
+	my %readchunks = ();
 
 	do {		
 		return undef if read($f, $chunkheader, 8) < 8;
