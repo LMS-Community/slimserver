@@ -1,6 +1,6 @@
 package Slim::Formats::Movie;
 
-# $Id: Movie.pm,v 1.11 2004/05/03 19:23:59 dean Exp $
+# $Id: Movie.pm,v 1.12 2004/05/18 16:06:48 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -23,9 +23,12 @@ my %tagMapping = (
 	'©ART'	=> 'ARTIST',
 	'©alb'	=> 'ALBUM',
 	'©gen'	=> 'GENRE',
+	'©day'	=> 'YEAR',
+);
+
+my %binaryTags = (
 	'trkn'	=> 'TRACKNUM',
 	'disk'	=> 'DISC',
-	'©day'	=> 'YEAR',
 	'cpil'	=> 'COMPILATION',
 	'covr'	=> 'COVER'
 );
@@ -42,8 +45,14 @@ sub getTag {
 	if (ref $tags eq "HASH") {
 	   while (my ($old,$new) = each %tagMapping) {
 	      if (exists $tags->{$old}) {
-		 $tags->{$new} = $tags->{$old};
-		 delete $tags->{$old};
+			 $tags->{$new} = Slim::Utils::Misc::utf8toLatin1($tags->{$old});
+			 delete $tags->{$old};
+	      }
+	   }
+	   while (my ($old,$new) = each %binaryTags) {
+	      if (exists $tags->{$old}) {
+			 $tags->{$new} = $tags->{$old};
+			 delete $tags->{$old};
 	      }
 	   }
 	} else {
@@ -59,10 +68,8 @@ sub getTag {
 	
 	# clean up binary tags
 	$tags->{'COVER'} = 1 if ($tags->{'COVER'});
-	
 	$tags->{'TRACKNUM'} = unpack('N', $tags->{'TRACKNUM'}) if $tags->{'TRACKNUM'};
-	($tags->{'DISC'}, $tags->{'DISCC'}) = unpack('Nn', $tags->{'DISC'}) if $tags->{'DISC'};
-	
+	($tags->{'DISC'}, $tags->{'DISCC'}) = unpack('Nn', $tags->{'DISC'}) if $tags->{'DISC'};	
 	$tags->{'COMPILATION'} = unpack('N', $tags->{'COMPILATION'}) if $tags->{'COMPILATION'};	
 
 	return $tags;

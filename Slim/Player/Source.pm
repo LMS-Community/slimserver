@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.92 2004/05/17 19:46:39 kdf Exp $
+# $Id: Source.pm,v 1.93 2004/05/18 16:06:51 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1073,6 +1073,7 @@ sub getConvertCommand {
 	my $audibleplayers   = 0;
 
 	my $undermax = underMax($client,$fullpath);
+
 	# make sure we only test formats that are supported.
 	foreach my $everyclient (@playergroup) {
 

@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.15 2004/05/13 17:57:34 dean Exp $
+# $Id: Browse.pm,v 1.16 2004/05/18 16:06:47 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -282,8 +282,10 @@ sub opendir_done {
 	my ($client, $pwd, $direction, $oldlinesref, $itemCount) = @_;
 	$::d_files && msg("opendir_done($client, $pwd, $itemCount)\n");
 
-	$::d_files && msg("adding imported playlists\n");
-	push @{$client->dirItems}, @{Slim::Music::Info::playlists()};
+	if ($pwd eq '__playlists') {
+		$::d_files && msg("adding imported playlists\n");
+		push @{$client->dirItems}, @{Slim::Music::Info::playlists()};
+	}
 	
 	# in case we were blocked...
 	Slim::Buttons::Block::unblock($client);

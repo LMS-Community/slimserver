@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.37 2004/05/13 17:57:35 dean Exp $
+# $Id: Command.pm,v 1.38 2004/05/18 16:06:48 dean Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -70,6 +70,7 @@ sub execute {
 	# album			?
 	# title			?
 	# duration		?
+	# signalstrength 	?
 			
 	# playlist		play 			<item>		(item can be a song, playlist or directory. synonym: load)
 	# playlist		insert		<item>		(item can be a song, playlist or directory. synonym: insertlist)
@@ -112,7 +113,7 @@ sub execute {
 	# player			id				<playerindex|playerid>				?
 	# player			name			<playerindex|playerid>				?
 	# player			ip				<playerindex|playerid>				?
-	# player			address		<playerindex|playerid>				?	(deprecated)
+	# player			address			<playerindex|playerid>				?	(deprecated)
 	# player			model			<playerindex|playerid>				?
 	# pref			<prefname>	<prefvalue>
 	# pref			<prefname>	?
@@ -297,6 +298,9 @@ sub execute {
 
 		} elsif ($p0 eq "connected") {
 			$p1 = $client->connected() || 0;
+
+		} elsif ($p0 eq "signalstrength") {
+			$p1 = $client->signalStrength() || 0;
 
 		} elsif ($p0 eq "power") {
 			if (!defined $p1) {

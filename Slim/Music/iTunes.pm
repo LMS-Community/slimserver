@@ -383,6 +383,7 @@ sub startScan {
 
 	Slim::Utils::Scheduler::add_task(\&scanFunction);
 	Slim::Music::Import::addImport();
+
 	$isScanning = 1;
 
 	# start the checker
@@ -418,6 +419,8 @@ sub doneScanning {
 	$lastMusicLibraryFinishTime = time();
 
 	$isScanning = 0;
+	
+	Slim::Music::Info::generatePlaylists();
 	
 	Slim::Music::Info::sortPlaylists();
 	
@@ -561,7 +564,7 @@ sub scanFunction {
 				# cacheEntry{'???'} = $curTrack{'Track Count'};
 				# cacheEntry{'???'} = $curTrack{'Sample Rate'};
 				$cacheEntry{'VALID'} = '1';
-				my $url = $location;
+				my $url = Slim::Utils::Misc::fixPath($location);
 				if (Slim::Music::Info::isFileURL($url)) {
 					if (Slim::Utils::OSDetect::OS() eq 'unix') {
 						my $base = Slim::Utils::Misc::fileURLFromPath($path);
@@ -616,7 +619,6 @@ sub scanFunction {
 			$cacheEntry{'TAG'} = 1;
 			$cacheEntry{'VALID'} = '1';
 			Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
-			Slim::Music::Info::addPlaylist($url);
 			$::d_itunes && msg("playlists now has " . scalar @{Slim::Music::Info::playlists()} . " items...\n");
 		}
 	} else {
@@ -641,6 +643,7 @@ sub scanFunction {
 		} elsif ($curLine eq "<key>Playlists</key>") {
 			$inPlaylists = 1;
 			$inTracks = 0;
+			# todo, clear out the old moodlogic playlists from the info database.
 			$::d_itunes && msg("iTunes: starting playlist parsing\n");
 		}
 	}
@@ -673,10 +676,8 @@ sub getValue {
 			}
 	}
 	$data =~ s/&#(\d*);/chr($1)/ge;
-# 	$data  = pack("C*", unpack("U*", $data));	
-	$data =~ s/([\xC0-\xDF])([\x80-\xBF])/chr(ord($1)<<6&0xC0|ord($2)&0x3F)/eg; 
-	$data =~ s/[\xE2][\x80][\x99]/'/g;
-	return $data;
+	
+	return Slim::Utils::Misc::utf8toLatin1($data);
 }
 
 sub getPlaylistTrackArray {

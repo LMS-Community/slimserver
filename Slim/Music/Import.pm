@@ -16,7 +16,6 @@ sub startScan {
 		
 	$::d_info && msg("Clearing ID3 cache\n");
 	Slim::Music::Info::clearCache();
-	Slim::Music::Info::clearPlaylists();
 	
 	$::d_info && msg("Starting background scanning.\n");
 	
@@ -40,6 +39,7 @@ sub delImport {
 	$totalImportsRunning--;
 	if ($totalImportsRunning==0) {
 		Slim::Music::Info::clearStaleCacheEntries();
+		Slim::Music::Info::reBuildCaches();
 		$::d_info && msg("Finished background scanning.\n");
 		Slim::Music::Info::saveDBCache();
 	}

@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.44 2004/05/13 17:57:36 dean Exp $
+# $Id: Misc.pm,v 1.45 2004/05/18 16:06:51 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -252,8 +252,13 @@ sub fixPath {
 	if (!defined($file) || $file eq "") { return; }   
 	
 	if (Slim::Music::Info::isURL($file)) { 
-		return $file;
-	} 
+
+		my $uri = URI->new($file);
+		if ($uri->scheme() && $uri->scheme() eq 'file') {
+			$uri->host('');
+		}
+		return $uri->as_string;
+	}
 
 	if (Slim::Music::Info::isFileURL($base)) { $base=Slim::Utils::Misc::pathFromFileURL($base); } 
 		 
@@ -760,6 +765,12 @@ sub stillScanning {
 	return Slim::Music::Import::stillScanning();
 }
 
+sub utf8toLatin1 {
+	my $data = shift;
+	$data =~ s/([\xC0-\xDF])([\x80-\xBF])/chr(ord($1)<<6&0xC0|ord($2)&0x3F)/eg; 
+	$data =~ s/[\xE2][\x80][\x99]/'/g;
+	return $data;
+}
 
 # this function based on a posting by Tom Christiansen: http://www.mail-archive.com/perl5-porters@perl.org/msg71350.html
 sub at_eol($) { $_[0] =~ /\n\z/ }

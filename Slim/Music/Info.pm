@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.120 2004/05/15 18:23:24 daniel Exp $
+# $Id: Info.pm,v 1.121 2004/05/18 16:06:50 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -452,11 +452,13 @@ sub hasChanged {
 		return 0 if  $fsdef && $fscheck && $agedef && $agecheck;
 		return 0 if  $fsdef && $fscheck && !$agedef;
 		return 0 if !$fsdef && $agedef  && $agecheck;
+		
+		$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as it has changed\n");
 	}
-	
+	else {
+		$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as it no longer exists\n");
+	}
 	$dbCacheDirty = 1;
-
-	$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as it has changed or it no longer exists\n");
 
 	delete $infoCache{$file};
 
@@ -480,6 +482,7 @@ sub clearCache {
 		if (Slim::Utils::Prefs::get('usetagdatabase')) {
 			scanDBCache();
 		} else {
+			%infoCache = ();
 			completeClearCache();
 		}
 
@@ -489,7 +492,6 @@ sub clearCache {
 }
 
 sub completeClearCache {
-	%infoCache = ();
 	$songCount = 0;
 	$total_time = 0;
 	@playlists = ();
@@ -509,6 +511,7 @@ sub completeClearCache {
 
 # Wipe the memory cache
 sub clearDBCache {
+	%infoCache = ();
 	completeClearCache();
 	$dbCacheDirty=1;
 	$::d_info && Slim::Utils::Misc::msg("clearDBCache: Cleared infoCache\n");
@@ -586,6 +589,9 @@ sub playlists {
 
 sub addPlaylist {
 	my $url=shift;
+	foreach my $existing (@playlists) {
+		return if ($existing eq $url);
+	}
 	push @playlists, $url;
 }
 
@@ -595,6 +601,16 @@ sub clearPlaylists {
 
 sub sortPlaylists {
 	@playlists = Slim::Music::Info::sortIgnoringCase(@playlists);
+}
+
+sub generatePlaylists {
+ 	clearPlaylists();
+ 
+	foreach my $url (keys %infoCache) {
+ 		if (isITunesPlaylistURL($url) || isMoodLogicPlaylistURL($url)) {
+			push @playlists, $url;
+		}
+	}	
 }
 
 # called:
@@ -772,9 +788,17 @@ sub updateCacheEntry {
 	$dbCacheDirty=1;
 			
 	my $type = typeFromSuffix($url);
-	if ($newsong && isSong($url,$type) && !isHTTPURL($url) && (-e (Slim::Utils::Misc::pathFromFileURL($url)) )) { 
 	
-		$cacheEntryHash=cacheEntry($url);
+	if ($newsong) {
+		updateCaches($url);
+	}
+}
+
+sub updateCaches {
+	my $url=shift;
+	my $type = typeFromSuffix($url);
+	if (isSong($url,$type) && !isHTTPURL($url) && (-e (Slim::Utils::Misc::pathFromFileURL($url)) )) { 
+		my $cacheEntryHash=cacheEntry($url);
 		updateGenreCache($url, $cacheEntryHash);
 		updateArtworkCache($url, $cacheEntryHash);
 		updateSortCache($url, $cacheEntryHash);
@@ -785,6 +809,14 @@ sub updateCacheEntry {
 		}
 		$songCount++;
 	}
+}
+
+sub reBuildCaches {
+	completeClearCache();
+	foreach my $url (keys %infoCache) {
+		updateCaches($url);
+	}
+	generatePlaylists();
 }
 
 sub updateGenreMixCache {

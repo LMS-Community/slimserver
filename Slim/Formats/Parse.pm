@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.15 2004/05/14 15:04:19 dean Exp $
+# $Id: Parse.pm,v 1.16 2004/05/18 16:06:50 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -134,7 +134,6 @@ sub PLS {
 		my $entry = $urls[$i];
 
 		$entry = Slim::Utils::Misc::fixPath($entry);
-		$entry = Slim::Utils::Misc::fileURLFromPath($entry);
 		
 		my $title = $titles[$i];
 

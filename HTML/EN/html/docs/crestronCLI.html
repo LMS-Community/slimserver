@@ -136,6 +136,13 @@ where: </p>
   <p>Request: &quot;04:20:00:12:23:45 power ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 power 1&lt;CR&gt;&quot;</p>
 </blockquote>
 <hr>
+<p><strong>signalstrength &lt;?&gt;</strong></p>
+<p> Returns the wireless signal strength for the player, range is 1 to 100.  Returns 0 if not connected wirelessly.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 signalstrength ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 signalstrength 76&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
 <p><strong>connected &lt;?&gt;</strong></p>
 <p> Return the connected state of the player.  HTTP and Squeezebox players will indicate 1 or 0 depending on if the TCP connection to the player is active.
     SLIMP3 players, since they use UDP always return 1. </p>

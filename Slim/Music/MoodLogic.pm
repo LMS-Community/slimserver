@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.16 2004/05/18 01:45:40 kdf Exp $
+#$Id: MoodLogic.pm,v 1.17 2004/05/18 16:06:50 dean Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -193,9 +193,12 @@ sub doneScanning {
 	$lastMusicLibraryFinishTime = time();
 	$lastMusicLibraryDate = (stat $mixer->{JetFilePublic})[9];
 	
+	Slim::Music::Info::generatePlaylists();
+	
 	Slim::Music::Info::sortPlaylists();
-
+	
 	Slim::Music::Import::delImport();
+
 }
 
 sub artScan {
@@ -295,7 +298,6 @@ sub exportFunction {
 			my %cacheEntry = ();
 			my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
 			if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
-				Slim::Music::Info::addPlaylist($url);
 				$::d_moodlogic && msg("Found MoodLogic Playlist: $url\n");
 			}
 			# add this playlist to our playlist library
@@ -315,7 +317,6 @@ sub exportFunction {
 				my %cacheEntry = ();
 				my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
 				if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
-					Slim::Music::Info::addPlaylist($url);
 					$::d_moodlogic && msg("Found MoodLogic Auto Playlist: $url\n");
 				}
 				# add this playlist to our playlist library

@@ -66,11 +66,11 @@ sub init {
 
 # This routine ensures an xPL instance is valid
 # by removing any invalid characters and trimming to
-# 16 characters.
+# a maximum of 16 characters.
 sub validInstance {
 
 	my $instance = $_[0];
-	$instance =~ s/(-|\.|!|;)//g;
+	$instance =~ s/(-|\.|!|;| )//g;
 	if (length($instance) > 16) {
 		$instance = substr($instance,0,16);
 	}
