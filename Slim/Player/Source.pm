@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.53 2004/01/13 08:12:55 kdf Exp $
+# $Id: Source.pm,v 1.54 2004/01/14 19:03:35 kdf Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -225,7 +225,7 @@ sub playmode {
 				# if we couldn't open the song, then stop...
 				if (!$opened) {
 					$::d_source && msg("Couldn't open song.  Stopping.\n");
-					$newmode = "stop";
+					if (!openNext($client)) {$newmode = "stop";}
 				}
 			}
 			
@@ -531,7 +531,6 @@ sub openNext {
 		}
 
 	} while (!$result);
-	
 	return $result;
 }
 
@@ -809,7 +808,7 @@ sub openSong {
 		binmode($client->audioFilehandle());
 		Slim::Web::History::record(Slim::Player::Playlist::song($client));
 	} else {
-		$::d_source && msg("Can't open [$fullpath] : $!");
+		$::d_source && msg("Can't open [$fullpath] : $!\n");
 
 		my $line1 = string('PROBLEM_OPENING');
 		my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));		
