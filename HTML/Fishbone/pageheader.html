@@ -92,7 +92,7 @@
 					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
 				</td>
 				<td width="33%" height="13" align="center">
-					<a class="menu1" href="[% webroot %]home.html?page=help[% IF nofolder %]&nofolder=1[% END %]" target="browser">[% IF help %]<b>[% END %][% "HELP" | string %][% IF help %]</b>[% END %]</a>
+					<a class="menu1" href="[% webroot %]home.html?page=help&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser">[% IF help %]<b>[% END %][% "HELP" | string %][% IF help %]</b>[% END %]</a>
 				</td>
 			</table>
 		</div>
