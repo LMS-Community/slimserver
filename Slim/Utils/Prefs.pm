@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.94 2004/11/30 04:05:14 kdf Exp $
+# $Id: Prefs.pm,v 1.95 2004/12/11 23:51:34 vidur Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -9,6 +9,7 @@ package Slim::Utils::Prefs;
 use strict;
 
 use File::Spec::Functions qw(:ALL);
+use File::Path;
 use FindBin qw($Bin);
 
 use Slim::Utils::Misc;
@@ -80,6 +81,7 @@ sub defaultCacheDir {
 	if ((!-e $CacheDir && !-w $CacheParent) || (-e $CacheDir && !-w $CacheDir)) {
 		$CacheDir = undef;
 	}
+	mkpath $CacheDir if (!-e $CacheDir);
 	return $CacheDir;
 }
 
@@ -116,7 +118,6 @@ my %DEFAULT = (
 	,"streamWriteMaximum"	=> 30
 	,'webproxy'				=> ''
 	,"udpChunkSize"			=> 1400
-	,"usetagdatabase"		=> 1				# use 0 for false, 1 for true
 	,"templatecache"		=> 1				# use 0 for false, 1 for true
 	,'animationLevel'		=> 3 				#DEPRECATED
 	,'itemsPerPage'			=> 100
@@ -184,6 +185,9 @@ my %DEFAULT = (
 	,'xplir'				=> 'both'
 	,'xplinterval'			=> 5
 	,'xplsupport'			=> 0
+ 	,'dbsource'				=> 'dbi:SQLite:dbname=%s'
+ 	,'dbusername'			=> ''
+ 	,'dbpassword'			=> ''
 );
 
 # The following hash contains functions that are executed when the pref corresponding to
@@ -261,15 +265,6 @@ my %prefChange = (
 		Slim::Buttons::Browse::init();
 		foreach my $client (Slim::Player::Client::clients()) {
 			Slim::Buttons::Home::updateMenu($client);
-		}
-	}
-	,'usetagdatabase' => sub {
-		my $newvalue = shift;
-		if ($newvalue) { #was false, now true
-			Slim::Music::Info::loadDBCache();
-		} else { #was true, now false
-			Slim::Music::Info::saveDBCache();
-			Slim::Music::Info::clearDBCache();
 		}
 	}
 	,'templatecache' => sub {

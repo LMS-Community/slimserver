@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.107 2004/12/02 02:24:08 dsully Exp $
+# $Id: Pages.pm,v 1.108 2004/12/11 23:51:35 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -58,7 +58,7 @@ sub home {
 		$params->{'nofolder'}=1;
 	}
 	
-	if (Slim::Utils::Prefs::get('playlistdir') || Slim::Music::Import::countImports()) {
+	if (Slim::Utils::Prefs::get('playlistdir') || Slim::Music::Import::countImporters()) {
 		addLinks("browse",{'SAVED_PLAYLISTS' => "browse.html?dir=__playlists"});
 	} else {
 		addLinks("browse",{'SAVED_PLAYLISTS' => undef});
@@ -143,7 +143,7 @@ sub browser {
 		$playlist = 1;
 		$params->{'playlist'} = 1;
 
-		if (!Slim::Utils::Prefs::get("playlistdir") && !Slim::Music::Import::countImports()) {
+		if (!Slim::Utils::Prefs::get("playlistdir") && !Slim::Music::Import::countImporters()) {
 			$::d_http && msg("no valid playlists directory!!\n");
 			return Slim::Web::HTTP::filltemplatefile("badpath.html", $params);
 		}
@@ -173,7 +173,7 @@ sub browser {
 	if (!$fulldir || !Slim::Music::Info::isList($fulldir)) {
 
 		# check if we're just showing itunes playlists
-		if (Slim::Music::Import::countImports()) {
+		if (Slim::Music::Import::countImporters()) {
 			browser_addtolist_done($current_player, $callback, $httpClient, $params, [], $response);
 			return undef;
 		} else {
@@ -309,7 +309,7 @@ sub browser {
 sub browser_addtolist_done {
 	my ($current_player, $callback, $httpClient, $params, $itemsref, $response) = @_;
 
-	if (defined $params->{'dir'} && $params->{'dir'} eq '__playlists' && (Slim::Music::Import::countImports())) {
+	if (defined $params->{'dir'} && $params->{'dir'} eq '__playlists' && (Slim::Music::Import::countImporters())) {
 
 		$::d_http && msg("just showing imported playlists\n");
 

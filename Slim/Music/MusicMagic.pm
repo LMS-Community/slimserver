@@ -102,6 +102,8 @@ sub isMusicLibraryFileChanged {
 sub checker {
 	return unless (useMusicMagic());
 	
+	Slim::Music::Import::addImporter('musicmagic');
+
 	if (!stillScanning() && isMusicLibraryFileChanged()) {
 		startScan();
 	}
@@ -128,7 +130,7 @@ sub startScan {
 	# start the checker
 	checker();
 	
-	Slim::Music::Import::addImport('musicmagic');
+	Slim::Music::Import::startImport('musicmagic');
 	
 } 
 
@@ -162,7 +164,7 @@ sub doneScanning {
 	
 	Slim::Music::Info::generatePlaylists();
 	
-	Slim::Music::Import::delImport('musicmagic');
+	Slim::Music::Import::endImport('musicmagic');
 
 }
 

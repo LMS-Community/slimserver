@@ -1,11 +1,11 @@
-# $Id: SQLite.pm,v 1.1 2004/08/13 20:18:37 vidur Exp $
+# $Id: SQLite.pm,v 1.2 2004/12/11 23:51:03 vidur Exp $
 
 package DBD::SQLite;
 use strict;
 
 use DBI;
 use vars qw($err $errstr $state $drh $VERSION @ISA);
-$VERSION = '0.31';
+$VERSION = '1.07';
 
 use DynaLoader();
 @ISA = ('DynaLoader');
@@ -75,6 +75,23 @@ sub prepare {
     return $sth;
 }
 
+sub _get_version {
+    my ($dbh) = @_;
+    return (DBD::SQLite::db::FETCH($dbh, 'sqlite_version'));
+}
+
+my %info = (
+    17 => 'SQLite',         # SQL_DBMS_NAME
+    18 => \&_get_version,   # SQL_DBMS_VER
+    29 => '"',              # SQL_IDENTIFIER_QUOTE_CHAR
+);
+	
+sub get_info {
+    my($dbh, $info_type) = @_;
+    my $v = $info{int($info_type)};
+    $v = $v->($dbh) if ref $v eq 'CODE';
+    return $v;
+}
 
 sub table_info {
     my ($dbh, $CatVal, $SchVal, $TblVal, $TypVal) = @_;
@@ -191,7 +208,7 @@ sub primary_key_info {
 	my @pk = split /\s*,\s*/, $2 || '';
 	unless (@pk) {
 	    my $prefix = $1;
-	    $prefix =~ s/.*create\s+table\s+.*?\(//i;
+	    $prefix =~ s/.*create\s+table\s+.*?\(\s*//i;
 	    $prefix = (split /\s*,\s*/, $prefix)[-1];
 	    @pk = (split /\s+/, $prefix)[0]; # take first word as name
 	}
@@ -333,21 +350,6 @@ limited by the typeless nature of the SQLite database.
 
 Returns the version of the SQLite library which DBD::SQLite is using, e.g., "2.8.0".
 
-=item sqlite_encoding
-
-Returns either "UTF-8" or "iso8859" to indicate how the SQLite library was compiled.
-
-=item sqlite_handle_binary_nulls
-
-Set this attribute to 1 to transparently handle binary nulls in quoted
-and returned data.
-
-B<NOTE:> This will cause all backslash characters (C<\>) to be doubled
-up in all columns regardless of whether or not they contain binary
-data or not. This may break your database if you use it from another
-application. This does not use the built in sqlite_encode_binary
-and sqlite_decode_binary functions, which may be considered a bug.
-
 =back
 
 =head1 DRIVER PRIVATE METHODS
@@ -357,6 +359,17 @@ and sqlite_decode_binary functions, which may be considered a bug.
 This method returns the last inserted rowid. If you specify an INTEGER PRIMARY
 KEY as the first column in your table, that is the column that is returned.
 Otherwise, it is the hidden ROWID column. See the sqlite docs for details.
+
+Note: You can now use $dbh->last_insert_id() if you have a recent version of
+DBI.
+
+=head2 $dbh->func( 'busy_timeout' )
+
+Retrieve the current busy timeout.
+
+=head2 $dbh->finc( $ms, 'busy_timeout' )
+
+Set the current busy timeout. The timeout is in milliseconds.
 
 =head2 $dbh->func( $name, $argc, $func_ref, "create_function" )
 

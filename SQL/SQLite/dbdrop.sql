@@ -1,14 +1,23 @@
+DROP TABLE metainformation;
 
-DROP TABLE version;
+DROP TABLE tracks;
 
-DROP TABLE songs;
+DROP INDEX trackURLIndex;
 
-DROP INDEX songURLIndex;
+DROP INDEX trackTitleIndex;
 
-DROP TABLE genres;
+DROP INDEX trackAlbumIndex;
+
+DROP TABLE playlist_track;
 
 DROP TABLE albums;
 
-DROP TABLE artists;
+DROP TABLE contributors;
 
-DROP TABLE playlists;
+DROP TABLE contributor_track;
+
+DROP TABLE genres;
+
+DROP TABLE genre_track;
+
+DROP TABLE comments;

@@ -1,86 +1,136 @@
--- Increment $DBVERSION in Info.pm when you change the schema
+-- Increment the version below when you change the schema.
+-- You also need to add an Upgrade script to the Upgrades 
+-- directory and alter sql.version
 CREATE TABLE metainformation (
   version integer,        -- version of this schema
-  song_count integer,     -- total song count
+  track_count integer,     -- total track count
   total_time integer      -- cumulative play time
 );
 
-CREATE TABLE songs (
-  URL varchar UNIQUE PRIMARY KEY NOT NULL,
-  TITLE varchar,           -- title
-  TITLESORT varchar,       -- version of title used for sorting
-  GENRE varchar,           -- genre
-  GENRE_ID integer,        -- genre object
-  ALBUM varchar,           -- album
-  ALBUM_ID varchar,        -- album object
-  ALBUMSORT varchar,       -- version of album used for sorting
-  ARTIST varchar,          -- artist
-  ARTIST_ID integer,       -- artist
-  ARTISTSORT varchar,      -- version of artist used for sorting
-  COMPOSER varchar,        -- composer 
-  BAND varchar,            -- band
-  CONDUCTOR varchar,       -- conductor
-  CT varchar,              -- content type of song
-  TRACKNUM integer,        -- track number in album
-  AGE integer,             -- timestamp for listing
-  FS integer,              -- file size in bytes
-  SIZE integer,            -- audio size in bytes
-  OFFSET integer,          -- offset to start of song
-  COMMENT varchar,         -- ID3 comment
-  YEAR integer,            -- year
-  SECS integer,            -- total seconds
-  VBR_SCALE varchar,       -- vbr/cbr
-  BITRATE integer,         -- bitrate
-  TAGVERSION varchar,      -- ID3 tag version
-  TAGSIZE integer,         -- tagsize
-  DISC integer,            -- album number in set
-  DISCC integer,           -- number of albums in set
-  MOODLOGIC_SONG_ID integer, -- moodlogic fields
-  MOODLOGIC_ARTIST_ID integer,
-  MOODLOGIC_GENRE_ID integer,
-  MOODLOGIC_SONG_MIXABLE integer,
-  MOODLOGIC_ARTIST_MIXABLE integer,
-  MOODLOGIC_GENRE_MIXABLE integer,
-  COVER varchar,           -- cover art
-  COVERTYPE varchar,       -- cover art content type
-  THUMB varchar,           -- thumbnail cover art
-  THUMBTYPE varchar,       -- thumbnail content type
-  TAG integer,             -- have we read the tags yet
-  RATE integer,            -- sample rate
-  SAMPLESIZE integer,      -- sample size
-  CHANNELS integer,        -- number of channels
-  BLOCKALIGN integer,      -- block alignment
-  ENDIAN integer,          -- 0 - little endian, 1 - big endian
-  BPM integer              -- beats per minute
+INSERT INTO metainformation VALUES (3, 0, 0);
+
+CREATE TABLE tracks (
+  id integer UNIQUE PRIMARY KEY NOT NULL,
+  url varchar UNIQUE NOT NULL,
+  title varchar,           -- title
+  titlesort varchar,       -- version of title used for sorting
+  album integer,           -- album object
+  tracknum integer,        -- track number in album
+  ct varchar,              -- content type of track
+  tag integer,             -- have we read the tags yet
+  age integer,             -- timestamp for listing
+  fs integer,              -- file size in bytes
+  size integer,            -- audio size in bytes
+  offset integer,          -- offset to start of track
+  year integer,            -- year
+  secs integer,            -- total seconds
+  cover varchar,           -- cover art
+  covertype varchar,       -- cover art content type
+  thumb varchar,           -- thumbnail cover art
+  thumbtype varchar,       -- thumbnail content type
+  vbr_scale varchar,       -- vbr/cbr
+  bitrate integer,         -- bitrate
+  rate integer,            -- sample rate
+  samplesize integer,      -- sample size
+  channels integer,        -- number of channels
+  blockalign integer,      -- block alignment
+  endian integer,          -- 0 - little endian, 1 - big endian
+  bpm integer,             -- beats per minute
+  tagversion varchar,      -- ID3 tag version
+  tagsize integer,         -- tagsize
+  drm integer,             -- DRM enabled
+  moodlogic_song_id integer, -- moodlogic fields
+  moodlogic_artist_id integer,
+  moodlogic_genre_id integer,
+  moodlogic_song_mixable integer,
+  moodlogic_artist_mixable integer,
+  moodlogic_genre_mixable integer,
+  musicmagic_genre_mixable integer, -- musicmagic fields
+  musicmagic_artist_mixable integer,
+  musicmagic_album_mixable integer,
+  musicmagic_song_mixable integer
 );
 
-CREATE INDEX songURLIndex ON songs (URL);
+CREATE INDEX trackURLIndex ON tracks (url);
 
-CREATE INDEX songSearchIndex ON songs (GENRE, ALBUM, ARTIST);
+CREATE INDEX trackTitleIndex ON tracks (title);
 
-CREATE TABLE genres (
-  id integer UNIQUE PRIMARY KEY,
-  name varchar
+CREATE INDEX trackAlbumIndex ON tracks (album);
+
+CREATE TABLE playlist_track (
+  id integer UNIQUE PRIMARY KEY NOT NULL,
+  position integer,     -- order of track in the playlist
+  playlist integer,     -- playlist object
+  track integer         -- track object
+);
+
+CREATE TABLE dirlist_track (
+  id integer UNIQUE PRIMARY KEY NOT NULL,
+  position integer,     -- order of item in the dirlist
+  dirlist integer,      -- dirlist object
+  item varchar          -- dirlist item
 );
 
 CREATE TABLE albums (
-  id integer UNIQUE PRIMARY KEY,
-  title varchar,
-  sortable_title varchar,
+  id integer UNIQUE PRIMARY KEY NOT NULL,
+  title varchar,           -- title
+  titlesort varchar,       -- version of title used for sorting
   artwork_path varchar,    -- path to cover art
   disc integer,            -- album number in set
   discc integer            -- number of albums in set
 );
 
-CREATE TABLE artists (
-  id integer UNIQUE PRIMARY KEY,
-  name varchar,
-  sortable_name varchar
+CREATE INDEX albumsTitleIndex ON albums (title);
+CREATE INDEX albumsSortIndex ON albums (titlesort);
+
+CREATE TABLE contributors (
+  id integer UNIQUE PRIMARY KEY NOT NULL,
+  name varchar,           -- name of contributor
+  namesort varchar        -- version of name used for sorting 
 );
 
-CREATE TABLE playlist_track ( 
-  id integer UNIQUE PRIMARY KEY,
-  position integer,     -- ordering in the playlist
-  playlist url,         -- url of playlist
-  track url             -- url of contained track
+CREATE INDEX contributorsNameIndex ON contributors (name);
+CREATE INDEX contributorsSortIndex ON contributors (namesort);
+
+CREATE TABLE contributor_track (
+  id integer UNIQUE PRIMARY KEY NOT NULL,
+  role integer,           -- role - enumerated type
+  contributor integer,    -- contributor object
+  track integer,          -- track object
+  album integer,          -- album object
+  namesort varchar        -- convenience for sorting
+);
+
+CREATE INDEX contributor_trackContribIndex ON contributor_track (contributor);
+CREATE INDEX contributor_trackTrackIndex ON contributor_track (track);
+CREATE INDEX contributor_trackSortIndex ON contributor_track (namesort);
+
+CREATE TABLE genres (
+  id integer UNIQUE PRIMARY KEY NOT NULL,
+  name varchar,           -- genre name
+  namesort varchar        -- version of name used for sorting 
+);
+
+CREATE INDEX genreNameIndex ON genres (name);
+CREATE INDEX genreSortIndex ON genres (namesort);
+
+CREATE TABLE genre_track (
+  id integer UNIQUE PRIMARY KEY NOT NULL,
+  genre integer,          -- genre object
+  track integer           -- track object
+);
+
+CREATE INDEX genre_trackGenreIndex ON genre_track (genre);
+CREATE INDEX genre_trackTraclIndex ON genre_track (track);
+
+CREATE TABLE comments (
+  id integer UNIQUE PRIMARY KEY NOT NULL,
+  track integer,          -- track object
+  value varchar           -- text of comment
+);
+
+CREATE TABLE pluginversion (
+  id integer UNIQUE PRIMARY KEY NOT NULL,
+  name varchar,		    -- plugin name
+  version integer      -- plugin version
 );

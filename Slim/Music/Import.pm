@@ -16,16 +16,17 @@ use Slim::Music::MusicFolderScan;
 
 # Total of how many file scanners are running
 my %importsRunning;
-my $importCount=0;
+my %importers;
 
 # Force a rescan of all the importers (TODO: Make importers pluggable)
 sub startScan {
+	# Only start if the database has been initialized
+	return if (!defined(Slim::Music::Info::getCurrentDataStore()));
 		
 	$::d_info && msg("Clearing ID3 cache\n");
 	Slim::Music::Info::clearCache();
 	
 	$::d_info && msg("Starting background folder, itunes, moodlogic and musicmagic scanning.\n");
-	$importCount=0;
 	Slim::Music::MusicFolderScan::startScan();
 	Slim::Music::iTunes::startScan();
 	Slim::Music::MoodLogic::startScan();
@@ -35,24 +36,28 @@ sub startScan {
 sub startup {
 	$::d_info && msg("Starting itunes/moodlogic/musicmagic background scanners.\n");
 
-	$importCount=0;
 	Slim::Music::iTunes::checker();
 	Slim::Music::MoodLogic::checker();
 	Slim::Music::MusicMagic::checker();
 }
 
-sub addImport {
+sub startImport {
 	my $import = shift;
-	$importCount ++;
 	$::d_info && msg("Adding $import Scan\n");
 	$importsRunning{$import} = Time::HiRes::time();
 }
 
-sub countImports {
-	return $importCount;
+sub addImporter {
+	my $import = shift;
+
+	$importers{$import} = 1;
 }
 
-sub delImport {
+sub countImporters {
+	return scalar keys %importers;
+}
+
+sub endImport {
 	my $import = shift;
 	if (exists $importsRunning{$import}) { 
 		$::d_info && msg("Completing $import Scan in ".(Time::HiRes::time() - $importsRunning{$import})." seconds\n");

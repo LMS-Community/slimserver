@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.161 2004/12/09 17:19:38 dsully Exp $
+# $Id: Info.pm,v 1.162 2004/12/11 23:51:32 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -15,6 +15,8 @@ use FindBin qw($Bin);
 
 use MP3::Info;
 
+use Slim::DataStores::DBI::DBIStore;
+
 use Slim::Formats::Movie;
 use Slim::Formats::AIFF;
 use Slim::Formats::FLAC;
@@ -28,73 +30,6 @@ use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
-
-eval "use Storable";
-
-# Constants:
-
-# the items in the infocache that we actually use
-# NOTE: THE ORDER MATTERS HERE FOR THE PERSISTANT DB
-# IF YOU ADD SOMETHING, PUT IT AT THE END
-# AND CHANGE $DBVERSION
-my @infoCacheItems = (
-	'CT',	 # content type
-	'TITLE', # title
-	'LIST',	 # list items (array)
-	'AGE',   # list age
-	'GENRE', # genre
-	'TRACKNUM', # tracknumber as an int
-	'FS',	 # file size
-	'SIZE',	 # audio data size in bytes
-	'OFFSET', # offset to start of song
-	'ARTIST', # artist
-	'ALBUM',  # album name
-	'COMMENT',	# ID3 comment
-	'YEAR',		# year
-	'SECS', 	# total seconds
-	'VBR_SCALE', # vbr/cbr
-	'BITRATE', # bitrate
-	'TAGVERSION', # ID3 tag version
-	'COMPOSER', # composer
-	'TAGSIZE', # tagsize
-	'DISC', # album number in a set 
-	'DISCC', # number of albums in a set
-	'MOODLOGIC_SONG_ID', # MoodLogic fields
-	'MOODLOGIC_ARTIST_ID', #
-	'MOODLOGIC_GENRE_ID', #
-	'MOODLOGIC_SONG_MIXABLE', #
-	'MOODLOGIC_ARTIST_MIXABLE', #
-	'MOODLOGIC_GENRE_MIXABLE', #
-	'MUSICMAGIC_GENRE_MIXABLE', #
-	'MUSICMAGIC_ARTIST_MIXABLE', #
-	'MUSICMAGIC_ALBUM_MIXABLE', #
-	'MUSICMAGIC_SONG_MIXABLE', #
-	'COVER', # cover art
-	'COVERTYPE', # cover art content type
-	'THUMB', # thumbnail cover art
-	'THUMBTYPE', #thumnail content type
-	'TAG', # have we read the tags yet?
-	'ALBUMSORT',
-	'ARTISTSORT',
-	'TITLESORT',
-	'RATE', # Sample rate
-	'SAMPLESIZE', # Sample size
-	'CHANNELS', # number of channels
-	'BAND',
-	'CONDUCTOR', # conductor
-	'BLOCKALIGN', # block alignment
-	'ENDIAN', # 0 - little endian, 1 - big endian
-	'VALID', # 0 - entry not checked, 1 - entry checked and valid. Used to find stale entries in the cache
-	'TTL', # Time to Live for Cache Entry
-	'BPM', # Beats per minute
-	'DRM', # Digital Rights Management
-);
-
-# Save the persistant DB cache every hour
-my $dbSaveInterval = 3600;
-# Entries in cache are assumed to be valid for 5 minutes before we check date/time stamps again
-my $dbCacheLifeTime = 5 * 60;
-my $dbCacheDirty = 0;		# Set to 0 if cache is clean, 1 if dirty
 
 # three hashes containing the types we know about, populated by the loadTypesConfig routine below
 # hash of default mime type index by three letter content type e.g. 'mp3' => audio/mpeg
@@ -111,17 +46,6 @@ my $dbCacheDirty = 0;		# Set to 0 if cache is clean, 1 if dirty
 
 # Global caches:
 
-# a hierarchical cache of genre->artist->album->tracknum based on ID3 information
-my %genreCache = ();
-
-# a cache of the titles used for uniquely identifing and sorting items 
-my %caseCache = ();
-
-my %sortCache = ();
-
-# the main cache of ID3 and other metadata
-my %infoCache = ();
-
 # moodlogic cache for genre and artist mix indicator; empty if moodlogic isn't used
 my %genreMixCache = ();
 my %artistMixCache = ();
@@ -131,223 +55,20 @@ my %genreMMMixCache = ();
 my %artistMMMixCache = ();
 my %albumMMMixCache = ();
 
-my $songCount = 0;
-my $total_time = 0;
-
-my %songCountMemoize = ();
-my %artistCountMemoize = ();
-my %albumCountMemoize = ();
-my %genreCountMemoize = ();
-
-my %infoCacheItemsIndex;
-
-my $dbname;
-my $DBVERSION = 16;
-
-my %artworkCache = ();
 my $artworkDir;
 my %lastFile;
 
-my @playlists=();
+my ($currentDB, $localDB);
 
-# Hash for tag function per format
-my %tagFunctions = (
-			'mp3' => \&Slim::Formats::MP3::getTag
-			,'mp2' => \&Slim::Formats::MP3::getTag
-			,'ogg' => \&Slim::Formats::Ogg::getTag
-			,'flc' => \&Slim::Formats::FLAC::getTag
-			,'wav' => \&Slim::Formats::Wav::getTag
-			,'aif' => \&Slim::Formats::AIFF::getTag
-			,'wma' => \&Slim::Formats::WMA::getTag
-			,'mov' => \&Slim::Formats::Movie::getTag
-			,'shn' => \&Slim::Formats::Shorten::getTag
-			,'mpc' => \&Slim::Formats::Musepack::getTag
-		);
-
-# if we don't have storable, then stub out the cache routines
-
-if (defined @Storable::EXPORT) {
-
-	eval q{
-		sub saveDBCache {
-
-			if (Slim::Utils::Prefs::get('usetagdatabase') && $dbCacheDirty) {
-		
-				my $cacheToStore = {
-					'albumCountMemoize'   => \%albumCountMemoize,
-					'albumMMMixCache'     => \%albumMMMixCache,
-					'artistCountMemoize'  => \%artistCountMemoize,
-					'artistMixCache'      => \%artistMixCache,
-					'artistMMMixCache'    => \%artistMMMixCache,
-					'artworkCache'        => \%artworkCache,
-					'caseCache'           => \%caseCache,
-					'genreCache'          => \%genreCache,
-					'genreCountMemoize'   => \%genreCountMemoize,
-					'genreMixCache'       => \%genreMixCache,
-					'genreMMMixCache'     => \%genreMMMixCache,
-					'infoCache'           => \%infoCache,
-					'songCount'           => \$songCount,
-					'songCountMemoize'    => \%songCountMemoize,
-					'sortCache'           => \%sortCache,
-					'total_time'          => \$total_time,
-					'playlists'           => \@playlists,
-					'ver'                 => $DBVERSION,
-				};
-			
-				# "store" "die"s on fatal errors, so catch that with an "eval"
-				eval {
-						$::d_info && Slim::Utils::Misc::msg("saving DB cache: $dbname\n");
-
-						store($cacheToStore, $dbname);
-
-						$::d_info && Slim::Utils::Misc::msg("DB cache saved\n");
-
-						$dbCacheDirty = 0;
-				};
-
-				if ($@ ne "") {
-						$::d_info && Slim::Utils::Misc::msg("could not save DB cache ($@)\n");
-				}
-
-				$dbCacheDirty = 0;
-			}
-		}
-		
-		sub loadDBCache {
-
-			return unless Slim::Utils::Prefs::get('usetagdatabase');
-			
-			$::d_info && Slim::Utils::Misc::msg("ID3 tag database support is ON, saving into: $dbname\n");
-
-			clearDBCache();
-
-			if (! -f $dbname || -z $dbname) {
-
-				$::d_info && Slim::Utils::Misc::msg("Tag database $dbname does not exist or has zero size\n");
-
-				%infoCache = ();
-
-				Slim::Music::Import::startScan();
-
-				$dbCacheDirty = 1;
-
-				return;
-			}
-
-			# Pull in the flushed data from Storable.
-			my $cacheToRead = retrieve($dbname);
-			my $version     = $cacheToRead->{'ver'};
-
-			if (!defined($version) || $version ne $DBVERSION) {
-
-				$::d_info && Slim::Utils::Misc::msg(
-					"Deleting Tag database. DB is version ". $version ." and SlimServer is $DBVERSION\n"
-				);
-
-				%infoCache = ();
-
-				Slim::Music::Import::startScan();
-
-				$dbCacheDirty = 1;
-
-			} else {
-
-				%albumCountMemoize   = %{$cacheToRead->{'albumCountMemoize'}};
-				%albumMMMixCache     = %{$cacheToRead->{'albumMMMixCache'}};
-				%artistCountMemoize  = %{$cacheToRead->{'artistCountMemoize'}};
-				%artistMixCache      = %{$cacheToRead->{'artistMixCache'}};
-				%artistMMMixCache    = %{$cacheToRead->{'artistMMMixCache'}};
-				%artworkCache        = %{$cacheToRead->{'artworkCache'}};
-				%caseCache           = %{$cacheToRead->{'caseCache'}};
-				%genreCache          = %{$cacheToRead->{'genreCache'}};
-				%genreCountMemoize   = %{$cacheToRead->{'genreCountMemoize'}};
-				%genreMixCache       = %{$cacheToRead->{'genreMixCache'}};
-				%genreMMMixCache     = %{$cacheToRead->{'genreMMMixCache'}};
-				%infoCache           = %{$cacheToRead->{'infoCache'}};
-				%songCountMemoize    = %{$cacheToRead->{'songCountMemoize'}};
-				%sortCache           = %{$cacheToRead->{'sortCache'}};
-				$songCount           = ${$cacheToRead->{'songCount'}};
-				@playlists           = @{$cacheToRead->{'playlists'}};
-				$total_time          = ${$cacheToRead->{'total_time'}};
-				$dbCacheDirty        = 0;
-			}
-		}
-		
-		sub scanDBCache {
-
-			return unless Slim::Utils::Prefs::get('usetagdatabase');
-
-			$::d_info && Slim::Utils::Misc::msg("starting cache scan\n");
-		
-			my $validindex = $infoCacheItemsIndex{"VALID"};
-			my $thumbindex = $infoCacheItemsIndex{"THUMB"};
-			my $coverindex = $infoCacheItemsIndex{"COVER"};
-			
-			foreach my $file (keys %infoCache) {
-			
-				my $cacheEntryArray = $infoCache{$file};
-				
-				# delete imported playlist since we'll reconstruct them anyway
-				if (isPlaylistURL($file)) {
-					delete $infoCache{$file};
-				}
-				
-				# Mark all data as invalid for now
-				$cacheEntryArray->[$validindex] = '0';
-
-				# Remove any entry for uncached coverart - we scan for it again once upon a rescan
-				if (defined $cacheEntryArray->[$thumbindex] && $cacheEntryArray->[$thumbindex] eq "0") { 
-
-					$cacheEntryArray->[$thumbindex] = undef;
-				}
-
-				if (defined $cacheEntryArray->[$coverindex] && $cacheEntryArray->[$coverindex] eq "0") { 
-
-					$cacheEntryArray->[$coverindex] = undef;
-				}
-			
-			}
-
-			$::d_info && Slim::Utils::Misc::msg("finished cache scan\n");
-		}
-	};
-
-} else {
-	eval q{
-		sub saveDBCache { };
-		sub loadDBCache { };
-		sub scanDBCache { };
-	}
-}
-
-##################################################################################
-# these routines deal with the caches directly
-##################################################################################
 sub init {
 
 	loadTypesConfig();
-	
-	my $i = 0;
-	foreach my $tag (@infoCacheItems) {
-		$infoCacheItemsIndex{$tag} = $i;
-		$i++;
+
+	$currentDB = $localDB = Slim::DataStores::DBI::DBIStore->new();
+
+	if ($currentDB->count('track', {}) == 0) {
+	  Slim::Music::Import::startScan();
 	}
-
-	# Setup $dbname regardless of if we're caching as cache could be turned on later
-
-	if (Slim::Utils::OSDetect::OS() eq 'unix') {
-		$dbname = '.slimserver.db';
-	} else {
-		$dbname ='slimserver.db';
-	}
-
-	$dbname = catdir(Slim::Utils::Prefs::get('cachedir'), $dbname);
-	
-	if (Slim::Utils::Prefs::get('usetagdatabase')) {
-		loadDBCache();
-	}
-
-	saveDBCacheTimer(); # Start the timer to save the DB every $dbSaveInterval
 	
 	# use all the genres we know about...
 	MP3::Info::use_winamp_genres();
@@ -381,6 +102,10 @@ sub init {
 #	if (!MP3::Info::use_mp3_utf8(1)) {	
 #		$::d_info && Slim::Utils::Misc::msg("Couldn't turn on unicode support.\n");
 #	};
+}
+
+sub getCurrentDataStore {
+	return $currentDB;
 }
 
 sub loadTypesConfig {
@@ -438,249 +163,90 @@ sub loadTypesConfig {
 	}
 }
 
-sub hasChanged {
-	my $file = shift;
-	
-	# We return 0 if the file hasn't changed
-	#    return 1 if the file has (cached entry is deleted by us)
-	# As this is an internal cache function we don't sanity check our arguments...	
-
-	my $filepath = Slim::Utils::Misc::pathFromFileURL($file);
-		
-	# Return if it's a directory - they expire themselves 
-	# Todo - move directory expire code here?
-	return 0 if -d $filepath;
-	
-	# See if the file exists
-	#
-	# Reuse _, as we only need to stat() once.
-	if (-e _) {
-
-		# Check FS and AGE (TIMESTAMP) to decide if we use the cached data.		
-		my $cacheEntryArray = $infoCache{$file};
-
-		my $index   = $infoCacheItemsIndex{"FS"};
-		my $fsdef   = (defined $cacheEntryArray->[$index]);
-		my $fscheck = 0;
-
-		if ($fsdef) {
-			$fscheck = (-s _ == $cacheEntryArray->[$index]);
-		}
-
-		# Now the AGE
-		$index       = $infoCacheItemsIndex{"AGE"};
-		my $agedef   = (defined $cacheEntryArray->[$index]);
-		my $agecheck = 0;
-
-		if ($agedef) {
-			$agecheck = ((stat(_))[9] == $cacheEntryArray->[$index]);
-		}
-			
-		return 0 if  $fsdef && $fscheck && $agedef && $agecheck;
-		return 0 if  $fsdef && $fscheck && !$agedef;
-		return 0 if !$fsdef && $agedef  && $agecheck;
-		
-		$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as it has changed\n");
-	}
-	else {
-		$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as it no longer exists\n");
-	}
-	$dbCacheDirty = 1;
-
-	delete $infoCache{$file};
-
-	return 1;
-}
-
-
-# This gets called to save the infoDBCache every $dbSaveInterval seconds
-sub saveDBCacheTimer {
-	saveDBCache();
-	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $dbSaveInterval, \&saveDBCacheTimer);
-}
 
 sub clearCache {
 	my $item = shift;
 	if ($item) {
-		delete $infoCache{$item};
-		$::d_info && Slim::Utils::Misc::msg("cleared $item from cache\n");
-	} else {
-		$::d_info && Slim::Utils::Misc::msg("clearing cache for rescan\n");
-		if (Slim::Utils::Prefs::get('usetagdatabase')) {
-			scanDBCache();
-		} else {
-			%infoCache = ();
-			completeClearCache();
-		}
-
-		# moodlogic caches
-		%genreMixCache = ();
-		%artistMixCache = ();
-		
-		# musicmagic caches
-		%genreMMMixCache = ();
-		%artistMMMixCache = ();
-		%albumMMMixCache = ();
+		$currentDB->delete($item);
 	}
-}
-
-sub completeClearCache {
-	$songCount = 0;
-	$total_time = 0;
-	@playlists = ();
-			
-	# a hierarchical cache of genre->artist->album->song based on ID3 information
-	%genreCache = ();
-	%caseCache = ();
-	%sortCache = ();
-	%artworkCache = ();
-		
-	%songCountMemoize=();
-	%artistCountMemoize=();
-	%albumCountMemoize=();
-	%genreCountMemoize=();
-}
-
-sub fixCase {
-	my @fixed = ();
-	foreach my $item (@_) {
-		push @fixed, $caseCache{$item};
+	else {
+		$currentDB->markAllEntriesStale();
+		$::d_info && Slim::Utils::Misc::msg("clearing validity for rescan\n");
 	}
-	return @fixed;
+
+	# moodlogic caches
+	%genreMixCache = ();
+	%artistMixCache = ();
+	
+	# musicmagic caches
+	%genreMMMixCache = ();
+	%artistMMMixCache = ();
+	%albumMMMixCache = ();
 }
 
 
-# Wipe the memory cache
-sub clearDBCache {
-	%infoCache = ();
-	completeClearCache();
-	$dbCacheDirty=1;
-	$::d_info && Slim::Utils::Misc::msg("clearDBCache: Cleared infoCache\n");
+sub saveDBCache {
+	$currentDB->forceCommit();
 }
 
-# Wipe the disk cache as well as memory
 sub wipeDBCache {
-	clearDBCache();
-	saveDBCache();
-	$::d_info && Slim::Utils::Misc::msg("wipeDBCache: Wiped infoCache\n");
+	$currentDB->wipeAllData();
 }
 
 sub clearStaleCacheEntries {
-
-	$::d_info && Slim::Utils::Misc::msg("starting cache scan for expired items\n");
-		
-	my $validindex = $infoCacheItemsIndex{"VALID"};
-			
-	foreach my $file (keys %infoCache) {
-			
-		my $cacheEntryArray = $infoCache{$file};
-
-		# Remove any data marked as invalid
-		if ($cacheEntryArray->[$validindex] eq '0') 
-		{
-			$::d_info && Slim::Utils::Misc::msg("Removing item $file from cache as it has expired\n");
-			delete $infoCache{$file};
-		}
-	}
-	
-	$::d_info && Slim::Utils::Misc::msg("finished cache scan for expired items\n");
+	$currentDB->clearStaleEntries();
 }
 
 # Mark an item as having been rescanned
 sub markAsScanned {
 	my $item = shift;
-	my $cacheEntryHash;
-	$cacheEntryHash->{'VALID'}='1';
-	updateCacheEntry($item,$cacheEntryHash);
+	$currentDB->markEntryAsValid($item);
 }
 
 sub total_time {
-	return $total_time;
+	return $currentDB->totalTime();
 }
 
-sub memoizedCount {
-	my ($memoized,$function,$genre,$artist,$album,$track)=@_;
-
-	if (!defined($genre))  { $genre  = [] }
-	if (!defined($artist)) { $artist = [] }
-	if (!defined($album))  { $album  = [] }
-	if (!defined($track))  { $track  = [] }
-
-	my $key=join("\1",@$genre) . "\0" .
-		    join("\1",@$artist). "\0" .
-			join("\1",@$album) . "\0" .
-			join("\1",@$track);
-
-	if (defined($memoized->{$key})) {
-		return $memoized->{$key};
-	}
-
-	my $count = &$function($genre,$artist,$album,$track);
-
-	if (!Slim::Utils::Misc::stillScanning()) {
-		return ($memoized->{$key} = $count);
-	}
-
-	return $count;
+sub clearPlaylists {
+	return $currentDB->clearExternalPlaylists();
 }
 
 sub playlists {
-	return \@playlists;
+	return $currentDB->getExternalPlaylists();
 }
 
 sub addPlaylist {
 	my $url=shift;
-	foreach my $existing (@playlists) {
-		return if ($existing eq $url);
-	}
-	push @playlists, $url;
-}
-
-sub clearPlaylists {
-	@playlists = ();
-}
-
-sub sortPlaylists {
-	@playlists = Slim::Utils::Text::sortIgnoringCase(@playlists);
+	$currentDB->addExternalPlaylist($url);
 }
 
 sub generatePlaylists {
-
- 	clearPlaylists();
-
- 
-
-	foreach my $url (keys %infoCache) {
-
- 		if (isPlaylistURL($url)) {
-
-			push @playlists, $url;
-
-		}
-
-	}
-	
-	sortPlaylists();
+	$currentDB->generateExternalPlaylists();
 }
 
 # called:
 #   undef,undef,undef,undef
 sub songCount {
-	my ($genre,$artist,$album,$track)=@_;
-	if (!defined($genre)) { $genre = [] }
-	if (!defined($artist)) { $artist = [] }
-	if (!defined($album)) { $album = [] }
-	if (!defined($track)) { $track = [] }
-	
-	if ((scalar @$genre == 0 || $$genre[0] eq '*') &&
-		(scalar @$artist == 0 || $$artist[0] eq '*') &&
-		(scalar @$album == 0 || $$album[0] eq '*') &&
-		(scalar @$track == 0 || $$track[0] eq '*')
-	) {
-		return $songCount;	
+	my ($genre,$artist,$album)=@_;
+	my $findCriteria = {};
+
+	if (defined($genre) && scalar(@$genre) && $genre->[0] ne '*') { 
+		my $genres = $currentDB->search('genre', $genre);
+		return 0 if !scalar(@$genres);
+		$findCriteria->{genre} = $genres;
 	}
-	
-	return memoizedCount(\%songCountMemoize,\&songs,($genre,$artist,$album,$track,'count'));
+	if (defined($artist) && scalar(@$artist) && $artist->[0] ne '*') { 
+		my $artists = $currentDB->search('artist', $artist);
+		return 0 if !scalar(@$artists);
+		$findCriteria->{contributor} = $artists;
+	}
+	if (defined($album) && scalar(@$album) && $album->[0] ne '*') { 
+		my $albums = $currentDB->search('album', $album);
+		return 0 if !scalar(@$albums);
+		$findCriteria->{album} = $albums;
+	}
+
+	return $currentDB->count('track', $findCriteria);
 }
 
 # called:
@@ -688,8 +254,28 @@ sub songCount {
 #	[$item],[],[],[]
 #	$genreref,$artistref,$albumref,$songref
 sub artistCount {
-	return memoizedCount(\%artistCountMemoize,\&artists,@_, 1);
+	my ($genre,$artist,$album)=@_;
+	my $findCriteria = {};
+
+	if (defined($genre) && scalar(@$genre) && $genre->[0] ne '*') { 
+		my $genres = $currentDB->search('genre', $genre);
+		return 0 if !scalar(@$genres);
+		$findCriteria->{genre} = $genres;
+	}
+	if (defined($artist) && scalar(@$artist) && $artist->[0] ne '*') { 
+		my $artists = $currentDB->search('artist', $artist);
+		return 0 if !scalar(@$artists);
+		$findCriteria->{contributor} = $artists;
+	}
+	if (defined($album) && scalar(@$album) && $album->[0] ne '*') { 
+		my $albums = $currentDB->search('album', $album);
+		return 0 if !scalar(@$albums);
+		$findCriteria->{album} = $albums;
+	}
+
+	return $currentDB->count('contributor', $findCriteria);
 }
+
 
 # called:
 #   undef,undef,undef,undef
@@ -698,192 +284,138 @@ sub artistCount {
 #   [$genre],[$item],[],[]
 #	$genreref,$artistref,$albumref,$songref
 sub albumCount { 
-	return memoizedCount(\%albumCountMemoize,\&albums,@_, 1);
+	my ($genre,$artist,$album)=@_;
+	my $findCriteria = {};
+
+	if (defined($genre) && scalar(@$genre) && $genre->[0] ne '*') { 
+		my $genres = $currentDB->search('genre', $genre);
+		return 0 if !scalar(@$genres);
+		$findCriteria->{genre} = $genres;
+	}
+	if (defined($artist) && scalar(@$artist) && $artist->[0] ne '*') { 
+		my $artists = $currentDB->search('artist', $artist);
+		return 0 if !scalar(@$artists);
+		$findCriteria->{contributor} = $artists;
+	}
+	if (defined($album) && scalar(@$album) && $album->[0] ne '*') { 
+		my $albums = $currentDB->search('album', $album);
+		return 0 if !scalar(@$albums);
+		$findCriteria->{album} = $albums;
+	}
+
+	return $currentDB->count('album', $findCriteria);
 }
 
 # called:
 #   undef,undef,undef,undef
 sub genreCount { 
-	return memoizedCount(\%genreCountMemoize,\&genres,@_, 1);
+	my ($genre,$artist,$album)=@_;
+	my $findCriteria = {};
+
+	if (defined($genre) && scalar(@$genre) && $genre->[0] ne '*') { 
+		my $genres = $currentDB->search('genre', $genre);
+		return 0 if !scalar(@$genres);
+		$findCriteria->{genre} = $genres;
+	}
+	if (defined($artist) && scalar(@$artist) && $artist->[0] ne '*') { 
+		my $artists = $currentDB->search('artist', $artist);
+		return 0 if !scalar(@$artists);
+		$findCriteria->{contributor} = $artists;
+	}
+	if (defined($album) && scalar(@$album) && $album->[0] ne '*') { 
+		my $albums = $currentDB->search('album', $album);
+		return 0 if !scalar(@$albums);
+		$findCriteria->{album} = $albums;
+	}
+
+	return $currentDB->count('genre', $findCriteria);
 }
 
 sub isCached {
 	my $url = shift;
-	return (exists $infoCache{$url});
+	return defined($currentDB->objectForUrl($url, 0));
 }
 
 sub cacheItem {
 	my $url = shift;
 	my $item = shift;
-	my $cacheEntryArray;
 
-	if (!defined($url)) {
-		Slim::Utils::Misc::msg("Null cache item!\n"); 
-		Slim::Utils::Misc::bt();
-		return undef;
-	}
-	
 	$::d_info_v && Slim::Utils::Misc::msg("CacheItem called for item $item in $url\n");
-	
-	if (exists $infoCache{$url}) {
-		$cacheEntryArray = $infoCache{$url};
-		my $index = $infoCacheItemsIndex{$item};
-		if (defined($index) && exists $cacheEntryArray->[$index]) {
-		
-			my $ttlindex = $infoCacheItemsIndex{'TTL'};
-			if ( isFileURL($url) && (($cacheEntryArray->[$ttlindex]) < (time()))) {
-				$::d_info && Slim::Utils::Misc::msg("CacheItem: Checking status of $url (TTL: ".$cacheEntryArray->[$ttlindex].")\n");
-				if (hasChanged($url)) {
-					return undef;
-				} 
-				else {
-					updateCacheEntry($url); # Update TTL
-					$cacheEntryArray = $infoCache{$url};
-				}
-			}
-
-			return $cacheEntryArray->[$index];
-		} else {
-			return undef;
+	my $song = $currentDB->objectForUrl($url, 0);
+	if (defined($song)) {
+		if ($item eq "ALBUM") {
+			my $item1 = $song->album;
+			return $item1->title if ($item1);
+		}
+		elsif ($item eq "ALBUMSORT") {
+			return $song->albumsort;
+		}
+		elsif ($item eq "ARTIST") {
+			return $song->artist;
+		}
+		elsif ($item eq "ARTISTSORT") {
+			return $song->artistsort;
+		}
+		elsif ($item eq "GENRE") {
+			return $song->genre;
+		}
+		else {
+			return $song->get($item);
 		}
 	}
+
 	return undef;
 }
 
-sub cacheEntry {
-	my $url = shift;
-	my $cacheEntryHash = {};
-	my $cacheEntryArray;
-	my $cacheupdate = 0;
-
-	if ($::d_info && !defined($url)) {die;}
-
-	$::d_info_v && Slim::Utils::Misc::msg("CacheEntry called for $url\n");
-
-	if ( exists $infoCache{$url}) {
-		$cacheEntryArray = $infoCache{$url};
-		my $ttlindex = $infoCacheItemsIndex{'TTL'};
-		
-		if ( isFileURL($url) && (($cacheEntryArray->[$ttlindex]) < (time()))) {
-			$::d_info && Slim::Utils::Misc::msg("CacheEntry: Checking status of $url (TTL: ".$cacheEntryArray->[$ttlindex].")\n");
-			if (hasChanged($url)) {
-				$cacheEntryArray =undef;
-			} 
-			else {
-				updateCacheEntry($url); # Update TTL
-				$cacheEntryArray = $infoCache{$url};
-			}
-		}
-	}
-
-	my $i = 0;
-	foreach my $key (@infoCacheItems) {
-		if (defined $cacheEntryArray->[$i]) {
-			$cacheEntryHash->{$key} = $cacheEntryArray->[$i];
-		}
-		$i++;
-	}
-
-	return $cacheEntryHash;
-}
 
 sub updateCacheEntry {
 	my $url = shift;
 	my $cacheEntryHash = shift;
-	my $newsong = shift;
-	my $cacheEntryArray;
-	
-	if (!defined $newsong) { $newsong=0; }
-	
+
 	if (!defined($url)) {
 		Slim::Utils::Misc::msg("No URL specified for updateCacheEntry\n");
 		Slim::Utils::Misc::msg(%{$cacheEntryHash});
 		Slim::Utils::Misc::bt();
 		return;
 	}
-	
+
 	if (!isURL($url)) { 
 		Slim::Utils::Misc::msg("Non-URL passed to updateCacheEntry::info ($url)\n");
 		Slim::Utils::Misc::bt();
 		$url=Slim::Utils::Misc::fileURLFromPath($url); 
 	}
-	
-	if ( isFileURL($url)) {
-		$cacheEntryHash->{'TTL'}=(time()+$dbCacheLifeTime + int(rand($dbCacheLifeTime)));
-	} else {
-		$cacheEntryHash->{'TTL'}='0';
+
+	my $list;
+	if ($cacheEntryHash->{'LIST'}) {
+		$list = $cacheEntryHash->{'LIST'};
 	}
 
-	if (!exists($infoCache{$url})) {
-		$newsong = 1;
-		$::d_info && Slim::Utils::Misc::msg("Newsong: $newsong for $url\n");
-	} else {
-		$::d_info && Slim::Utils::Misc::msg("merging $url\n");
-	}
-	
-	$cacheEntryArray=$infoCache{$url};
-	
-	my $i = 0;
-	foreach my $key (@infoCacheItems) {
-		my $val = $cacheEntryHash->{$key};
-		if (defined $val) {
-			$cacheEntryArray->[$i] = $val;
-			$::d_info && Slim::Utils::Misc::msg("updating $url with " . $val . " for $key\n");
-		}
-		$i++;
-	}
-
-	$infoCache{$url} = $cacheEntryArray;
-	
-	$dbCacheDirty=1;
-			
-	if ($newsong) {
-		updateCaches($url);
-	}
-}
-
-sub updateCaches {
-	my $url=shift;
-
-	if (isSong($url) && !isRemoteURL($url) && (-e (Slim::Utils::Misc::pathFromFileURL($url)) )) { 
-		my $cacheEntryHash=cacheEntry($url);
-		updateGenreCache($url, $cacheEntryHash);
-		updateArtworkCache($url, $cacheEntryHash);
-		updateSortCache($url, $cacheEntryHash);
-		$::d_info && Slim::Utils::Misc::msg("Inc SongCount $url\n");
-		my $time = $cacheEntryHash->{SECS};
-		if ($time) {
-			$total_time += $time;
-		}
-		$songCount++;
+	my $song = $currentDB->updateOrCreate($url, $cacheEntryHash);
+	if ($list) {
+		my @tracks = map { $currentDB->objectForUrl($_, 1); } @$list;
+		$song->setTracks(@tracks);
 	}
 }
 
 sub reBuildCaches {
-	completeClearCache();
-	foreach my $url (keys %infoCache) {
-		updateCaches($url);
-
-	}
-	generatePlaylists();
 }
 
 sub updateGenreMixCache {
-        my $cacheEntry = shift;
-
-        if (defined $cacheEntry->{MOODLOGIC_GENRE_MIXABLE} &&
-                $cacheEntry->{MOODLOGIC_GENRE_MIXABLE} == 1) {
-                $genreMixCache{$cacheEntry->{'GENRE'}} = $cacheEntry->{'MOODLOGIC_GENRE_ID'};
-        }
+	my $cacheEntry = shift;
+	
+	if (defined $cacheEntry->{MOODLOGIC_GENRE_MIXABLE} &&
+		$cacheEntry->{MOODLOGIC_GENRE_MIXABLE} == 1) {
+		$genreMixCache{$cacheEntry->{'GENRE'}} = $cacheEntry->{'MOODLOGIC_GENRE_ID'};
+	}
 }
 
 sub updateArtistMixCache {
-        my $cacheEntry = shift;
-
-        if (defined $cacheEntry->{MOODLOGIC_ARTIST_MIXABLE} &&
-            $cacheEntry->{MOODLOGIC_ARTIST_MIXABLE} == 1) {
-            $artistMixCache{$cacheEntry->{'ARTIST'}} = $cacheEntry->{'MOODLOGIC_ARTIST_ID'};
-        }
+	my $cacheEntry = shift;
+	
+	if (defined $cacheEntry->{MOODLOGIC_ARTIST_MIXABLE} &&
+		$cacheEntry->{MOODLOGIC_ARTIST_MIXABLE} == 1) {
+		$artistMixCache{$cacheEntry->{'ARTIST'}} = $cacheEntry->{'MOODLOGIC_ARTIST_ID'};
+	}
 }
 
 sub updateGenreMMMixCache {
@@ -916,8 +448,6 @@ sub setContentType {
 	my $url = shift;
 	my $type = shift;
 	
-	my $cacheEntry;
-
 	$type = lc($type);
 	
 	if ($Slim::Music::Info::types{$type}) {
@@ -930,42 +460,39 @@ sub setContentType {
 			$type = $guessedtype;
 		}
 	}
-	
-	$cacheEntry->{'CT'} = $type;
-	$cacheEntry->{'VALID'} = '1';
 
-	updateCacheEntry($url, $cacheEntry);
+	my $cacheEntry;
+	$cacheEntry->{'CT'} = $type;
+	$currentDB->updateOrCreate($url, $cacheEntry);
 	$::d_info && Slim::Utils::Misc::msg("Content type for $url is cached as $type\n");
 }
+
 
 sub setTitle {
 	my $url = shift;
 	my $title = shift;
 
 	$::d_info && Slim::Utils::Misc::msg("Adding title $title for $url\n");
-		
+
 	my $cacheEntry;
 	$cacheEntry->{'TITLE'} = $title;
-	$cacheEntry->{'VALID'} = '1';
-
-	updateCacheEntry($url, $cacheEntry);
+	$currentDB->updateOrCreate($url, $cacheEntry);
 }
 
 sub setBitrate {
 	my $url = shift;
 	my $bitrate = shift;
 
+		
 	my $cacheEntry;
 	$cacheEntry->{'BITRATE'} = $bitrate;
-	$cacheEntry->{'VALID'} = '1';
-					
-	updateCacheEntry($url, $cacheEntry);
+	$currentDB->updateOrCreate($url, $cacheEntry);
 }
 
 my $ncElemstring = "VOLUME|PATH|FILE|EXT|DURATION|LONGDATE|SHORTDATE|CURRTIME|FROM|BY"; #non-cached elements
 my $ncElems = qr/$ncElemstring/;
 
-my $elemstring = (join '|',@infoCacheItems,$ncElemstring);
+my $elemstring = (join '|', map { uc $_ } keys %{Slim::DataStores::DBI::Track->attributes()}, $ncElemstring, "ARTIST|ALBUM|GENRE|ALBUMSORT|ARTISTSORT|DISC|DISCC");
 #		. "|VOLUME|PATH|FILE|EXT" #file data (not in infoCache)
 #		. "|DURATION" # SECS expressed as mm:ss (not in infoCache)
 #		. "|LONGDATE|SHORTDATE|CURRTIME" #current date/time (not in infoCache)
@@ -1027,14 +554,18 @@ sub addToinfoHash {
 #formats information about a file using a provided format string
 sub infoFormat {
 	no warnings; # this is to allow using null values with string concatenation, it only effects this procedure
-	my $file = shift; # item whose information will be formatted
+	my $fileOrObj = shift; # item whose information will be formatted
 	my $str = shift; # format string to use
 	my $safestr = shift; # format string to use in the event that after filling the first string, there is nothing left
 	my $pos = 0; # keeps track of position within the format string
 	
-	return '' unless defined $file;
+	my $track = ref $fileOrObj ? $fileOrObj : 
+		$currentDB->objectForUrl($fileOrObj, 1);
+	my $file = ref $fileOrObj ? $track->url : $fileOrObj;
+
+	return '' unless defined $file && $track;
 	
-	my $infoRef = infoHash($file);
+	my $infoRef = infoHash($track, $file);
 	
 	return '' unless defined $infoRef;
 
@@ -1144,7 +675,7 @@ sub infoFormat {
 				}e;
 	if ($str eq "" && defined($safestr)) {
 		# if there isn't anything left of the format string after the replacements, use the safe string, if supplied
-		return infoFormat($file,$safestr);
+		return infoFormat($track,$safestr);
 	} else {
 		$str=~ s/%([0-9a-fA-F][0-9a-fA-F])%/chr(hex($1))/eg;
 	}
@@ -1200,7 +731,10 @@ sub plainTitle {
 # get a potentially client specifically formatted title.
 sub standardTitle {
 	my $client = shift;
-	my $fullpath = shift;
+	my $pathOrObj = shift; # item whose information will be formatted
+	my $track = ref $pathOrObj ? $pathOrObj : 
+		$currentDB->objectForUrl($pathOrObj, 1);
+	my $fullpath = ref $pathOrObj ? $track->url : $pathOrObj;
 	my $title;
 	my $format;
 
@@ -1298,6 +832,7 @@ sub guessTags {
 # Return a structure containing the ID3 tag attributes of the given MP3 file.
 #
 sub infoHash {
+	my $track = shift;
 	my $file = shift;
 
 	if (!defined($file) || $file eq "") { 
@@ -1305,6 +840,13 @@ sub infoHash {
 		$::d_info && Slim::Utils::Misc::bt();
 		return; 
 	};
+
+	if (!defined($track)) { 
+		$::d_info && Slim::Utils::Misc::msg("trying to get infoHash on an empty track\n");
+		$::d_info && Slim::Utils::Misc::bt();
+		return; 
+	};
+
 	
 	if (!isURL($file)) { 
 		Slim::Utils::Misc::msg("Non-URL passed to InfoHash::info ($file)\n");
@@ -1312,22 +854,34 @@ sub infoHash {
 		$file=Slim::Utils::Misc::fileURLFromPath($file); 
 	}
 	
-	my $item = cacheEntry($file);
-	
-	# we'll update the cache if we don't have a valid title in the cache
-	if (!defined($item) || !exists($item->{'TAG'})) {
-		#$::d_info && Slim::Utils::Misc::msg("cache miss for $file\n");
-		#$::d_info && Slim::Utils::Misc::bt();
-		$item = readTags($file)
+	my $cacheEntryHash = {};
+	my @all_attributes  = keys %{Slim::DataStores::DBI::Track->attributes};
+	foreach my $attribute (@all_attributes) {
+		if ($attribute eq "album") {
+			my $item1 = $track->album;
+			if ($item1) {
+				$cacheEntryHash->{"ALBUM"} = $item1->title if ($item1);
+				$cacheEntryHash->{"ALBUMSORT"} = $item1->titlesort;
+				$cacheEntryHash->{"DISC"} = $item1->disc;
+				$cacheEntryHash->{"DISCC"} = $item1->discc;
+			}
+		}
+		else {
+			my $item = $track->get($attribute);
+			$cacheEntryHash->{uc $attribute} = $item if $item;
+		}
 	}
-	
-	return $item;
+
+	$cacheEntryHash->{"ARTIST"} = $track->artist;
+	$cacheEntryHash->{"ARTISTSORT"} = $track->artistsort;
+	$cacheEntryHash->{"GENRE"} = $track->genre;
+
+	return $cacheEntryHash;
 }
 
 sub info {
 	my $file = shift;
 	my $tagname = shift;
-	my $update = shift;
 
 	if (!defined($file) || $file eq "" || !defined($tagname)) { 
 		$::d_info && Slim::Utils::Misc::msg("trying to get info on an empty file name\n");
@@ -1343,26 +897,55 @@ sub info {
 		$file=Slim::Utils::Misc::fileURLFromPath($file); 
 	}
 	
-	my $item = cacheItem($file, $tagname);
+	my $track = $currentDB->objectForUrl($file, 0);
+	if ($track) {
+		if ($tagname eq "ALBUM") {
+			my $item1 = $track->album;
+			return $item1->title if ($item1);
+			return undef;
+		}
+		if ($tagname eq "ALBUMSORT") {
+			my $item1 = $track->album;
+			return $item1->titlesort if ($item1);
+			return undef;
+		}
+		if ($tagname eq "DISC") {
+			my $item1 = $track->album;
+			return $item1->disc if ($item1);
+			return undef;
+		}
+		if ($tagname eq "DISCC") {
+			my $item1 = $track->album;
+			return $item1->discc if ($item1);
+			return undef;
+		}
+		if ($tagname eq "GENRE") {
+			return $track->genre;
+		}
+		if ($tagname eq "ARTIST") {
+			return $track->artist;
+		}
+		if ($tagname eq "ARTISTSORT") {
+			return $track->artistsort;
+		}
+		#FIXME
+		if ($tagname eq "COMPOSER") {
+			return undef;
+		}
+		if ($tagname eq "BAND") {
+			return undef;
+		}
+		if ($tagname eq "CONDUCTOR") {
+			return undef;
+		}
+		if ($tagname eq "COMMENT") {
+			return undef;
+		}
 
-	# update the cache if the tag is not defined in the cache
-	if (!defined($item)) {
-		# defer cover information until needed
-		if ($tagname =~ /^(COVER|COVERTYPE)$/) {
-			updateCoverArt($file, 'cover');
-			$item = cacheItem($file, $tagname);
-		# defer thumb information until needed
-		} elsif ($tagname =~ /^(THUMB|THUMBTYPE)$/) {
-			updateCoverArt($file,'thumb');
-			$item = cacheItem($file, $tagname);
-		# load up item information if we've never seen it or we haven't loaded the tags
-		} elsif (!isCached($file) || !cacheItem($file, 'TAG')) {
-			#$::d_info && Slim::Utils::Misc::bt();
-			$::d_info && Slim::Utils::Misc::msg("cache miss for $file\n");
-			$item = readTags($file)->{$tagname};
-		}	
+		return $track->get(lc $tagname);
 	}
-	return $item;
+	
+	return undef;
 }
 
 
@@ -1556,98 +1139,41 @@ sub coverArt {
 
 sub age { return info(shift, 'AGE'); }
 sub tagVersion { return info(shift,'TAGVERSION'); }
-sub cachedPlaylist { return info(shift, 'LIST'); }
+
+sub cachedPlaylist {
+	my $url = shift;
+
+	my $song = $currentDB->objectForUrl($url, 0);
+	if ($song) {
+		my @urls = map $_->url, $song->tracks;
+		if (!scalar(@urls)) {
+			@urls = $song->diritems;
+		}
+		return \@urls if scalar(@urls);
+	}
+
+	return undef;
+}
 
 sub cachePlaylist {
-	my $path = shift;
-	my $inforef;
-	$inforef->{'LIST'} = shift;
+	my $url = shift;
+	my $list = shift;
 	my $age = shift;
 
+	my $song = $currentDB->objectForUrl($url, 1);
+	if (scalar(@$list) && isURL($list->[0])) {
+		my @tracks = map { $currentDB->objectForUrl($_, 1); } @$list;
+		$song->setTracks(@tracks);
+	}
+	else {
+		$song->setDirItems(@$list);
+	}
+
 	if (!defined($age)) { $age = Time::HiRes::time(); };
-	$inforef->{'AGE'} = $age;
-
-	updateCacheEntry($path, $inforef);
+	$song->timestamp($age);
+	$currentDB->updateTrack($song);
 	
-	$::d_info && Slim::Utils::Misc::msg("cached an " . (scalar @{$inforef->{'LIST'}}) . " item playlist for $path\n");
-}
-
-
-sub filterPrep {
-	my $pattern = shift;
-	#the following transformations assume that the pattern provided uses * to indicate
-	#matching any character 0 or more times, and that . ^ and $ are not escaped
-	$pattern =~ s/\\([^\*]|$)/($1 eq "\\")? "\\\\" : $1/eg; #remove single backslashes except those before a *
-	$pattern =~ s/([\.\^\$\(\)\[\]\{\}\|\+\?])/\\$1/g; #escape metachars (other than * or \) in $pattern {}[]()^$.|+?
-	$pattern =~ s/^(.*)$/\^$1\$/; #add beginning and end of string requirements
-	$pattern =~ s/(?<=[^\\])\*/\.\*/g; #replace * (unescaped) with .*
-	return qr/$pattern/i;
-}
-
-sub filterPats {
-	my ($inpats) = @_;
-	my @outpats = ();
-	foreach my $pat (@$inpats) {
-		push @outpats, filterPrep(Slim::Utils::Text::ignoreCaseArticles($pat));
-	}
-	return \@outpats;
-}
-
-sub filter {
-	my ($patterns, $const, @items) = @_;
-	if (!defined($patterns) || ! @{$patterns}) {
-		return @items;
-	}
-
-	my @filtereditems;
-	# Gross, but this seems to be a relevant optimization.
-	if ($const eq '') {
-		ITEM: foreach my $item (@items) {
-			foreach my $regexpattern (@{$patterns}) {
-				if ($item !~ $regexpattern) {
-					next ITEM;
-				}
-			}
-			push @filtereditems, $item;
-		}
-	  } else {
-		ITEM: foreach my $item (@items) {
-			my $item_const = $item . ' ' . $const;
-			foreach my $regexpattern (@{$patterns}) {
-				if ($item_const !~ $regexpattern) {
-					next ITEM;
-				}
-			}
-			push @filtereditems, $item;
-		}
-	}
-
-	return @filtereditems;
-}
-
-sub filterHashByValue {
-	my ($patterns, $hashref) = @_;
-
-	if (!defined($hashref)) {
-		return;
-	}
-
-	if (!defined($patterns) || ! @{$patterns}) {
-		return keys %{$hashref};
-	}
-
-	my @filtereditems;
-	my ($k,$v);
-	ENTRY: while (($k,$v) = each %{$hashref}) {
-		foreach my $pat (@{$patterns}) {
-			if ($v !~ $pat) {
-				next ENTRY;
-			}
-		}
-		push @filtereditems, $k;
-	}
-
-	return @filtereditems;
+	$::d_info && Slim::Utils::Misc::msg("cached an " . (scalar @$list) . " item playlist for $url\n");
 }
 
 # genres|artists|albums|songs(genre,artist,album,song)
@@ -1659,122 +1185,103 @@ sub filterHashByValue {
 
 sub genres {
 	my $genre  = shift;
-	my $artist = shift;
-	my $album  = shift;
-	my $song   = shift;
-	my $count  = shift;
-
-	$::d_info && Slim::Utils::Misc::msg("genres: $genre - $artist - $album - $song\n");
-
-	my $genre_pats = filterPats($genre);
-	my @genres     = filter($genre_pats, "", keys %genreCache);
 	
-	if ($count) {
-		return scalar @genres;
-	} else {
-		return fixCase(Slim::Utils::Text::sortuniq(@genres));
+	$::d_info && Slim::Utils::Misc::msg("genres: $genre\n");
+
+	my $findCriteria = {};
+
+	if (defined($genre) && scalar(@$genre) && $genre->[0]
+		&& $genre->[0] ne '*') { 
+		my $genres = $currentDB->search('genre', $genre);
+		return () if !scalar(@$genres);
+		$findCriteria->{genre} = $genres;
 	}
+
+	my $genres = $currentDB->find('genre', $findCriteria, 'genre');
+	return map { $_->name } @$genres;
 }
 
-# XXX - seems all these foreach loops could be eliminated with a
-# better?/different data structure.
 sub artists {
 	my $genre  = shift;
 	my $artist = shift;
 	my $album  = shift;
-	my $song   = shift;
-	my $count  = shift;
 
-	my @artists = ();
+	$::d_info && Slim::Utils::Misc::msg("artists: $genre - $artist - $album\n");
 
-	$::d_info && Slim::Utils::Misc::msg("artists: $genre - $artist - $album - $song\n");
+	my $findCriteria = {};
 
-	my $genre_pats  = filterPats($genre);
-	my $artist_pats = filterPats($artist);
-
-	if (defined($album) && scalar(@$album) && $$album[0]) {
-
-		my $album_pats = filterPats($album);
-
-		foreach my $g (filter($genre_pats, "", keys %genreCache)) {
-
-			foreach my $art (filter($artist_pats, "", keys %{$genreCache{$g}})) {
-
-				foreach my $alb (filter($album_pats, "", keys %{$genreCache{$g}{$art}})) {
-					push @artists, $art;
-				}
-			}
-		}
-
-	} else {
-
-		foreach my $g (filter($genre_pats,"",keys %genreCache)) {
-			push @artists, filter($artist_pats,"",keys %{$genreCache{$g}});
-		}
+	if (defined($genre) && scalar(@$genre) && $genre->[0]
+		&& $genre->[0] ne '*') { 
+		my $genres = $currentDB->search('genre', $genre);
+		return () if !scalar(@$genres);
+		$findCriteria->{genre} = $genres;
+	}
+	if (defined($artist) && scalar(@$artist) && $artist->[0] 
+		&& $artist->[0] ne '*') { 
+		my $artists = $currentDB->search('artist', $artist);
+		return () if !scalar(@$artists);
+		$findCriteria->{contributor} = $artists;
+	}
+	if (defined($album) && scalar(@$album) && $album->[0] && 
+		$album->[0] ne '*') { 
+		my $albums = $currentDB->search('album', $album);
+		return () if !scalar(@$albums);
+		$findCriteria->{album} = $albums;
 	}
 
-	if ($count) {
-		return scalar @artists;
-	} else {
-		return fixCase(Slim::Utils::Text::sortuniq_ignore_articles(@artists));
-	}
+	my $artists = $currentDB->find('artist', $findCriteria, 'artist');
+	return map { $_->name } @$artists;
 }
 
 sub artwork {
-	my @covers;
+	my @albums = $currentDB->albumsWithArtwork();
 
-	foreach my $key (keys %artworkCache) {
-		if (exists $artworkCache{$key}) { # if its been lost since scan..
-			push @covers, Slim::Utils::Text::ignoreCaseArticles(uc($key));
-		}
-	}
-	return fixCase(Slim::Utils::Text::sortuniq_ignore_articles(@covers));
+	return Slim::Utils::Text::sortuniq_ignore_articles(map {$_->title} @albums);
 }
 
 sub albums {
 	my $genre  = shift;
 	my $artist = shift;
 	my $album  = shift;
-	my $song   = shift;
-	my $count  = shift;
 
-	my @albums = ();
+	$::d_info && Slim::Utils::Misc::msg("albums: $genre - $artist - $album\n");
 
-	$::d_info && Slim::Utils::Misc::msg("albums: $genre - $artist - $album - $song\n");
+	my $findCriteria = {};
 
-	my $genre_pats  = filterPats($genre);
-	my $artist_pats = filterPats($artist);
-	my $album_pats  = filterPats($album);
-
-	foreach my $g (filter($genre_pats, "", keys %genreCache)) {
-
-		foreach my $art (filter($artist_pats, "", keys %{$genreCache{$g}})) {
-
-			if (Slim::Utils::Prefs::get("artistinalbumsearch")) {
-				push @albums, filter($album_pats, $art, keys %{$genreCache{$g}{$art}});
-			} else {
-				push @albums, filter($album_pats, "",   keys %{$genreCache{$g}{$art}});
-			}
-
-			# XXX?
-			::idleStreams();
-		}
+	if (defined($genre) && scalar(@$genre) && $genre->[0]
+		&& $genre->[0] ne '*') { 
+		my $genres = $currentDB->search('genre', $genre);
+		return () if !scalar(@$genres);
+		$findCriteria->{genre} = $genres;
+	}
+	if (defined($artist) && scalar(@$artist) && $artist->[0]
+		&& $artist->[0] ne '*') { 
+		my $artists = $currentDB->search('artist', $artist);
+		return () if !scalar(@$artists);
+		$findCriteria->{contributor} = $artists;
+	}
+	if (defined($album) && scalar(@$album) && $album->[0]
+		&& $album->[0] ne '*') { 
+		my $albums = $currentDB->search('album', $album);
+		return () if !scalar(@$albums);
+		$findCriteria->{album} = $albums;
 	}
 
-	if ($count) {
-		return scalar(@albums);
-	} else {
- 		return fixCase(Slim::Utils::Text::sortuniq_ignore_articles(@albums));
- 	}
+	my $albums = $currentDB->find('album', $findCriteria, 'album');
+	return map { $_->title } @$albums;
 }
 
 # Return cached path for a given album name
 sub pathFromAlbum {
-
 	my $album = shift;
-	if (exists $artworkCache{$album}) {
-		return $artworkCache{$album};
+	my $albums = $currentDB->search('album', [$album]);
+	my $findCriteria = { album => $albums };
+	my $objs = $currentDB->find('album', $findCriteria, 'album');
+
+	if (scalar(@$objs)) {
+		return $objs->[0]->artwork_path;
 	}
+
 	return undef;
 }
 
@@ -1785,89 +1292,64 @@ sub songs {
 	my $album	= shift;
 	my $track	= shift;
 	my $sortbytitle = shift;
-	
-	my $multalbums  = (scalar(@$album) == 1 && $album->[0] !~ /\*/  && (!defined($artist->[0]) || $artist->[0] eq '*'));
-	my $tracksort   = !$multalbums && !$sortbytitle;
-	
-	my $genre_pats  = filterPats($genre);
-	my $artist_pats = filterPats($artist);
-	my $album_pats  = filterPats($album);
-	my $track_pats  = filterPats($track);
-
-	my @alltracks	= ();
 
 	$::d_info && Slim::Utils::Misc::msg("songs: $genre - $artist - $album - $track\n");
 
-	foreach my $g (Slim::Utils::Text::sortIgnoringCase(filter($genre_pats, '', keys %genreCache))) {
+	my $findCriteria = {};
 
-		foreach my $art (Slim::Utils::Text::sortIgnoringCase(filter($artist_pats, '', keys %{$genreCache{$g}}))) {
-
-			foreach my $alb (Slim::Utils::Text::sortIgnoringCase(filter($album_pats, '', keys %{$genreCache{$g}{$art}}))) {
-
-				my %songs = ();
-
-				foreach my $trk (values %{$genreCache{$g}{$art}{$alb}}) {
-
-					$songs{$trk} = Slim::Utils::Text::ignoreCaseArticles(title($trk));
-				}
-
-				if ($tracksort) {
-					push @alltracks, sortByTrack(filterHashByValue($track_pats,\%songs));
-				} else {
-					push @alltracks, filterHashByValue($track_pats,\%songs);
-				}
-			}
-
-			::idleStreams();
-		}
+	if (defined($genre) && scalar(@$genre) && $genre->[0]
+		&& $genre->[0] ne '*') { 
+		my $genres = $currentDB->search('genre', $genre);
+		return () if !scalar(@$genres);
+		$findCriteria->{genre} = $genres;
+	}
+	if (defined($artist) && scalar(@$artist) && $artist->[0]
+		&& $artist->[0] ne '*') { 
+		my $artists = $currentDB->search('artist', $artist);
+		return () if !scalar(@$artists);
+		$findCriteria->{contributor} = $artists;
+	}
+	if (defined($album) && scalar(@$album) && $album->[0]
+		&& $album->[0] ne '*') { 
+		my $albums = $currentDB->search('album', $album);
+		return () if !scalar(@$albums);
+		$findCriteria->{album} = $albums;
+	}
+	if (defined($track) && scalar(@$track) && $track->[0]
+		&& $track->[0] ne '*') { 
+		my $tracks = $currentDB->search('track', $track);
+		return () if !scalar(@$tracks);
+		$findCriteria->{track} = $tracks;
 	}
 
-	# remove duplicate tracks
-	my %seen = ();
-	my @uniq = ();
+	my $multalbums  = ((scalar(@$album) > 1) || (scalar(@$album) == 1 && $album->[0] =~ /\*/));
 	
-	foreach my $item (@alltracks) {
-
-		unless (!defined($item) || ($item eq '') || $seen{Slim::Utils::Text::ignoreCaseArticles($item)}++) {
-			push(@uniq, $item);
-		}
+	my $sortBy;
+	if ($sortbytitle) {
+		$sortBy="title";
 	}
-		
-	if ($sortbytitle && $sortbytitle ne 'count') {
-
-		@uniq = sortByTitles(@uniq);
-
-	# if we are getting a specific album with an unspecific artist, re-sort the tracks
-	} elsif ($multalbums) {
-
-		# if there are duplicate track numbers, then sort as multiple albums
-		my $duptracknum = 0;
-		my @seen = ();
-
-		foreach my $item (@uniq) {
-
-			my $trnum = trackNumber($item) || next;
-
-			if ($seen[$trnum]) {
-				$duptracknum = 1;
-				last;
-			}
-
-			$seen[$trnum]++;
-		}
-
-		if ($duptracknum) {
-			@uniq =  sortByTrack(@uniq);
-		} else {
-			@uniq =  sortByAlbum(@uniq);
-		}
+	elsif ($multalbums) {
+		$sortBy="track";
 	}
-
-	if ($sortbytitle && $sortbytitle eq 'count') {
-		return scalar @uniq;
-	} else {
-	 	return @uniq;
+	else {
+		$sortBy="tracknum";
 	}
+	my $songs = $currentDB->find('track', $findCriteria, $sortBy);
+	return map { $_->url } @$songs;
+}
+
+sub songPath {
+	my $genre = shift;
+	my $artist = shift;
+	my $album = shift;
+	my $track = shift;
+
+	my @songs = songs($genre, $artist, $album, $track, 1);
+	if (scalar(@songs)) {
+		return $songs[0]->url;
+	}
+	
+	return undef;
 }
 
 # XXX - sigh, globals
@@ -2065,15 +1547,6 @@ sub sortFilename {
 }
 
 
-sub songPath {
-	my $genre = shift;
-	my $artist = shift;
-	my $album = shift;
-	my $track = shift;
-
-	return $genreCache{Slim::Utils::Text::ignoreCaseArticles($genre)}{Slim::Utils::Text::ignoreCaseArticles($artist)}{Slim::Utils::Text::ignoreCaseArticles($album)}{Slim::Utils::Text::ignoreCaseArticles($track)};
-}
-
 sub isFragment {
 	my $fullpath = shift;
 	
@@ -2084,197 +1557,6 @@ sub isFragment {
 			return ($1, $2);
 		}
 	}
-}
-
-sub readTags {
-	my $file = shift;
-	my $cacheEntry = shift;
-	my ($track, $song, $artistName,$albumName);
-	my $filepath;
-	my $type;
-	my $tempCacheEntry;
-
-	if (!defined($file) || $file eq "") { return; };
-
-	# get the type without updating the cache
-	$type = typeFromPath($file);
-	if (	$type eq 'unk' && 
-			exists($infoCache{$file}) && 
-			exists(cacheEntry($file)->{'CT'})
-		) {
-		$type = cacheEntry($file)->{'CT'};
-	}
-
-
-	$::d_info && Slim::Utils::Misc::msg("Updating cache for: " . $file . "\n");
-
-	if (isSong($file, $type) ) {
-		if (isRemoteURL($file)) {
-			# if it's an HTTP URL, guess the title from the the last part of the URL,
-			# and don't bother with the other parts
-			if (!defined(cacheItem($file, 'TITLE'))) {
-				$::d_info && Slim::Utils::Misc::msg("Info: no title found, calculating title from url for $file\n");
-				$tempCacheEntry->{'TITLE'} = plainTitle($file, $type);
-			}
-		} else {
-			my $anchor;
-			if (isFileURL($file)) {
-				$filepath = Slim::Utils::Misc::pathFromFileURL($file);
-				$anchor = Slim::Utils::Misc::anchorFromURL($file);
-			} else {
-				$filepath = $file;
-			}
-
-			# Extract tag and audio info per format
-			if (exists $tagFunctions{$type}) {
-				$tempCacheEntry = &{$tagFunctions{$type}}($filepath, $anchor);
-			}
-			$::d_info && !defined($tempCacheEntry) && Slim::Utils::Misc::msg("Info: no tags found for $filepath\n");
-			@{$tempCacheEntry}{keys %{$cacheEntry}} = values %{$cacheEntry} if defined $cacheEntry;
-			
-			if (defined($tempCacheEntry->{'TRACKNUM'})) {
-				$tempCacheEntry->{'TRACKNUM'} = cleanTrackNumber($tempCacheEntry->{'TRACKNUM'});
-			}
-			
-			# Turn the tag SET into DISC and DISCC if it looks like # or #/#
-			if ($tempCacheEntry->{'SET'} and $tempCacheEntry->{'SET'} =~ /(\d+)(?:\/(\d+))?/) {
-				$tempCacheEntry->{'DISC'} = $1;
-				$tempCacheEntry->{'DISCC'} = $2 if defined $2;
- 			}
-
-			addDiscNumberToAlbumTitle($tempCacheEntry);
-			
-			if (!$tempCacheEntry->{'TITLE'} && !defined(cacheItem($file, 'TITLE'))) {
-				$::d_info && Slim::Utils::Misc::msg("Info: no title found, using plain title for $file\n");
-				#$tempCacheEntry->{'TITLE'} = plainTitle($file, $type);					
-				guessTags( $file, $type, $tempCacheEntry );
-			}
-
-			# fix the genre
-			if (defined($tempCacheEntry->{'GENRE'}) && $tempCacheEntry->{'GENRE'} =~ /^\((\d+)\)$/) {
-				# some programs (SoundJam) put their genres in as text digits surrounded by parens.
-				# in this case, look it up in the table and use the real value...
-				if (defined($MP3::Info::mp3_genres[$1])) {
-					$tempCacheEntry->{'GENRE'} = $MP3::Info::mp3_genres[$1];
-				}
-			}
-
-			# cache the file size & date
-			$tempCacheEntry->{'FS'} = -s $filepath;					
-			$tempCacheEntry->{'AGE'} = (stat($filepath))[9];
-			
-			# rewrite the size, offset and duration if it's just a fragment
-			if ($anchor && $anchor =~ /([\d\.]+)-([\d\.]+)/ && $tempCacheEntry->{'SECS'}) {
-				my $start = $1;
-				my $end = $2;
-				
-				my $duration = $end - $start;
-				my $byterate = $tempCacheEntry->{'SIZE'} / $tempCacheEntry->{'SECS'};
-				my $header = $tempCacheEntry->{'OFFSET'};
-				my $startbytes = int($byterate * $start);
-				my $endbytes = int($byterate * $end);
-				
-				$startbytes -= $startbytes % $tempCacheEntry->{'BLOCKALIGN'} if $tempCacheEntry->{'BLOCKALIGN'};
-				$endbytes -= $endbytes % $tempCacheEntry->{'BLOCKALIGN'} if $tempCacheEntry->{'BLOCKALIGN'};
-				
-				$tempCacheEntry->{'OFFSET'} = $header + $startbytes;
-				$tempCacheEntry->{'SIZE'} = $endbytes - $startbytes;
-				$tempCacheEntry->{'SECS'} = $duration;
-				
-				$::d_info && Slim::Utils::Misc::msg("readTags: calculating duration for anchor: $duration\n");
-				$::d_info && Slim::Utils::Misc::msg("readTags: calculating header $header, startbytes $startbytes and endbytes $endbytes\n");
-			}
-
-			if (! Slim::Music::iTunes::useiTunesLibrary()) {
-				# Check for Cover Artwork, only if not already present.
-				if (exists $tempCacheEntry->{'COVER'} || exists $tempCacheEntry->{'THUMB'}) {
-					$::d_artwork && Slim::Utils::Misc::msg("already checked artwork for $file\n");
-				} elsif (Slim::Utils::Prefs::get('lookForArtwork')) {
-					my $album = $tempCacheEntry->{'ALBUM'};
-					$tempCacheEntry->{'TAG'} = 1;
-					$tempCacheEntry->{'VALID'} = 1;
-					# cache the content type
-					$tempCacheEntry->{'CT'} = $type unless defined $tempCacheEntry->{'CT'};
-					#update the cache so we can use readCoverArt without recursion.
-					updateCacheEntry($file, $tempCacheEntry);
-					# Look for Cover Art and cache location
-					my ($body,$contenttype,$path);
-					if (defined $tempCacheEntry->{'PIC'} || defined $tempCacheEntry->{'APIC'}) {
-						($body,$contenttype,$path) = readCoverArtTags($file,$tempCacheEntry);
-					}
-					if (defined $body) {
-						$tempCacheEntry->{'COVER'} = 1;
-						$tempCacheEntry->{'THUMB'} = 1;
-						if ($album && !exists $artworkCache{$album}) {
-							$::d_artwork && Slim::Utils::Misc::msg("ID3 Artwork cache entry for $album: $filepath\n");
-							$artworkCache{$album} = $filepath;
-						}
-					} else {
-						($body,$contenttype,$path) = readCoverArtFiles($file,'cover');
-						if (defined $body) {
-							$tempCacheEntry->{'COVER'} = $path;
-						}
-						# look for Thumbnail Art and cache location
-						($body,$contenttype,$path) = readCoverArtFiles($file,'thumb');
-						if (defined $body) {
-							$tempCacheEntry->{'THUMB'} = $path;
-							# add song entry to %artworkcache if we have valid artwork
-							if ($album && !exists $artworkCache{$album}) {
-								$::d_artwork && Slim::Utils::Misc::msg("Artwork cache entry for $album: $filepath\n");
-								$artworkCache{$album} = $filepath;
-							}
-						}
-					}
-				}
-			}
-		} 
-	} else {
-		if (!defined(cacheItem($file, 'TITLE'))) {
-			my $title = plainTitle($file, $type);
-			$tempCacheEntry->{'TITLE'} = $title;
-		}
-	}
-	
-	$tempCacheEntry->{'CT'} = $type unless defined $tempCacheEntry->{'CT'};
-	
-			
-	# note that we've read in the tags.
-	$tempCacheEntry->{'TAG'} = 1;
-	$tempCacheEntry->{'VALID'} = 1;
-	
-	updateCacheEntry($file, $tempCacheEntry);
-
-	return $tempCacheEntry;
-}
-
-
-sub updateSortCache {
-	my $file = shift;
-	my $tempCacheEntry = shift;
-	
-	if (exists($tempCacheEntry->{'ARTISTSORT'})) {
-		$tempCacheEntry->{'ARTISTSORT'} = Slim::Utils::Text::ignoreCaseArticles($tempCacheEntry->{'ARTISTSORT'});
-		
-		if (exists($tempCacheEntry->{'ARTIST'})) { 
-			$sortCache{Slim::Utils::Text::ignoreCaseArticles($tempCacheEntry->{'ARTIST'})} = $tempCacheEntry->{'ARTISTSORT'};
-		};
-	};
-			
-	if (exists($tempCacheEntry->{'ALBUMSORT'})) {
-		$tempCacheEntry->{'ALBUMSORT'} = Slim::Utils::Text::ignoreCaseArticles($tempCacheEntry->{'ALBUMSORT'});
-				
-		if (exists($tempCacheEntry->{'ALBUM'})) { 
-			$sortCache{Slim::Utils::Text::ignoreCaseArticles($tempCacheEntry->{'ALBUM'})} = $tempCacheEntry->{'ALBUMSORT'};
-		};
-	};
-			
-	if (exists($tempCacheEntry->{'TITLESORT'})) {
-		$tempCacheEntry->{'TITLESORT'} = Slim::Utils::Text::ignoreCaseArticles($tempCacheEntry->{'TITLESORT'});
-
-		if (exists($tempCacheEntry->{'TITLE'})) { 
-			$sortCache{Slim::Utils::Text::ignoreCaseArticles($tempCacheEntry->{'TITLE'})} = $tempCacheEntry->{'TITLESORT'};
-		};
-	};
 }
 
 sub addDiscNumberToAlbumTitle
@@ -2526,143 +1808,17 @@ sub readCoverArtFiles {
 	return ($body, $contenttype, $artwork);
 }
 
-sub updateCoverArt {
-	my $fullpath = shift;
-	my $type = shift || 'cover';
-	my $body;	
-	my $contenttype;
-	my $path;
-	
-	($body, $contenttype, $path) = readCoverArt($fullpath, $type);
-
- 	my $info;
- 	
- 	if (defined($body)) {
- 		if ($type eq 'cover') {
- 			$info->{'COVER'} = $path;
- 		} elsif ($type eq 'thumb') {
- 			$info->{'THUMB'} = $path;
- 		}
- 		$::d_artwork && Slim::Utils::Misc::msg("$type caching $path for $fullpath\n");
- 	} else {
-		if ($type eq 'cover') {
- 			$info->{'COVER'} = '0';
- 		} elsif ($type eq 'thumb') {
- 			$info->{'THUMB'} = '0';
- 		}
- 	}
- 	
- 	#if we're caching, might as well cache the actual type
- 	if (defined($contenttype)) {
- 		if ($type eq 'cover') {
- 			$info->{'COVERTYPE'} = $contenttype;
- 		} elsif ($type eq 'thumb') {
- 			$info->{'THUMBTYPE'} = $contenttype;
- 		}
- 	} else {
-		if ($type eq 'cover') {
- 			$info->{'COVERTYPE'} = '0';
- 		} elsif ($type eq 'thumb') {
- 			$info->{'THUMBTYPE'} = '0';
- 		}
- 	}
- 	updateCacheEntry($fullpath, $info);
-}
 
 sub updateArtworkCache {
 	my $file = shift;
 	my $cacheEntry = shift;
-	
+
 	if (! Slim::Utils::Prefs::get('lookForArtwork')) { return undef};
-	
-	# Check for Artwork and update %artworkCache
+
 	my $artworksmall = $cacheEntry->{'THUMB'};
 	my $album = $cacheEntry->{'ALBUM'};
-	if (defined $artworksmall && defined $album && $artworksmall) {
-		if (!exists $artworkCache{$album}) { # only cache albums once each
-			my $filepath = $file;
-			if (isFileURL($file)) {
-				$filepath = Slim::Utils::Misc::pathFromFileURL($file);
-			}
-			$::d_artwork && Slim::Utils::Misc::msg("Updating $album artwork cache: $filepath\n");
-			$artworkCache{$album} = $filepath;
-		}
-	}
-}
 
-sub updateGenreCache {
-	my $file = shift;
-	my $cacheEntry = shift;
-
-	# cache songs  uniquely
-	my $genre = $cacheEntry->{'GENRE'};
-	if (!defined ($genre) || !$genre) {
-		$genre = string('NO_GENRE');
-	}
-
-	my $artist = $cacheEntry->{'ARTIST'};
-	if (!defined ($artist) || !$artist) {
-		$artist = string('NO_ARTIST');
-	}
-
-	my $album = $cacheEntry->{'ALBUM'};
-	if (!defined ($album) || !$album) {
-		$album = string('NO_ALBUM');
-	}
-	
-	my $track = cleanTrackNumber($cacheEntry->{'TRACKNUM'});
-
-	if (!$track) {
-		# we always have a title
-		$track = $cacheEntry->{'TITLE'};
-		if (!defined ($track) || !$track) {
-			$track = string('NO_TITLE');
-		}
-	}
-
-	foreach my $genre (splitTag($genre)) {
-		$genre=~s/^\s*//;$genre=~s/\s*$//;
-		my $genreCase = Slim::Utils::Text::ignoreCaseArticles($genre);
-		foreach my $artist (splitTag($artist)) {
-			$artist=~s/^\s*//;$artist=~s/\s*$//;
-			my $artistCase = Slim::Utils::Text::ignoreCaseArticles($artist);
-			my $albumCase = Slim::Utils::Text::ignoreCaseArticles($album);
-			my $trackCase = Slim::Utils::Text::ignoreCaseArticles($track);
-	
-			my $discNum = $cacheEntry->{'DISC'};
-			my $discCount = $cacheEntry->{'DISCC'};
-			if (defined($discNum) && (!defined($discCount) || $discCount > 1)) {
-				my $discCountLen = defined($discCount) ? length($discCount) : 1;
-				$trackCase = sprintf("%0${discCountLen}d-%s", $discNum, $trackCase);
-			}
-
-			$genreCache{$genreCase}{$artistCase}{$albumCase}{$trackCase} = $file;
-
-			$caseCache{$genreCase} = $genre;
-			$caseCache{$artistCase} = $artist;
-			$caseCache{$albumCase} = $album;
-			$caseCache{$trackCase} = $track;
-			
-			if (Slim::Utils::Prefs::get('composerInArtists')) {
-				includeSplitTag($genreCase,$albumCase,$trackCase,$file,$cacheEntry->{'COMPOSER'});
-				includeSplitTag($genreCase,$albumCase,$trackCase,$file,$cacheEntry->{'BAND'});
-			}
-			$::d_info && Slim::Utils::Misc::msg("updating genre cache with: $genre - $artist - $album - $track\n--- for:$file\n");
-		}
-	}
-}
-
-sub includeSplitTag {
-	my ($genreCase,$albumCase,$trackCase,$file,$tag) = @_;
-
-	if (defined $tag && $tag ne '') {
-		foreach my $tag (splitTag($tag)) {
-			$tag=~s/^\s*//;$tag=~s/\s*$//;
-			my $tagCase = Slim::Utils::Text::ignoreCaseArticles($tag);
-			$genreCache{$genreCase}{$tagCase}{$albumCase}{$trackCase} = $file;
-			$caseCache{$tagCase} = $tag; 
-		}
-	}
+	$currentDB->setAlbumArtwork($album, $artworksmall);
 }
 
 sub splitTag {
@@ -2741,9 +1897,10 @@ sub isURL {
 }
 
 sub isType {
-	my $fullpath = shift;
+	my $pathOrObj = shift;
 	my $testtype = shift;
-	my $type = contentType($fullpath);
+	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
+		$currentDB->contentType($pathOrObj, 1);
 	if ($type && ($type eq $testtype)) {
 		return 1;
 	} else {
@@ -2752,46 +1909,53 @@ sub isType {
 }
 
 sub isWinShortcut {
-	my $fullpath = shift;
-	my $type = contentType($fullpath);
+	my $pathOrObj = shift;
+	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
+		$currentDB->contentType($pathOrObj, 1);
 	return ($type && ($type eq 'lnk'));
 }
 
 sub isMP3 {
-	my $fullpath = shift;
-	my $type = contentType($fullpath);
+	my $pathOrObj = shift;
+	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
+		$currentDB->contentType($pathOrObj, 1);
 	return ($type && (($type eq 'mp3') || ($type eq 'mp2')));
 }
 
 sub isOgg {
-	my $fullpath = shift;
-	my $type = contentType($fullpath);
+	my $pathOrObj = shift;
+	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
+		$currentDB->contentType($pathOrObj, 1);
 	return ($type && ($type eq 'ogg'));
 }
 
 sub isWav {
-	my $fullpath = shift;
-	my $type = contentType( $fullpath);
+	my $pathOrObj = shift;
+	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
+		$currentDB->contentType($pathOrObj, 1);
 	return( $type && ( $type eq 'wav'));
 }
 
 sub isMOV {
-	my $fullpath = shift;
-	my $type = contentType( $fullpath);
+	my $pathOrObj = shift;
+	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
+		$currentDB->contentType($pathOrObj, 1);
 	return( $type && ( $type eq 'mov'));
 }
 
 sub isAIFF {
-	my $fullpath = shift;
-	my $type = contentType( $fullpath);
+	my $pathOrObj = shift;
+	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
+		$currentDB->contentType($pathOrObj, 1);
 	return( $type && ( $type eq 'aif'));
 }
 
 sub isSong {
-	my $fullpath = shift;
+	my $pathOrObj = shift;
 	my $type = shift;
 
-	$type = contentType($fullpath) unless defined $type;
+	$type = ref $pathOrObj ? $pathOrObj->content_type : 
+		$currentDB->contentType($pathOrObj, 1) unless defined $type;
 
 	if ($type && $Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} eq 'audio') {
 		return $type;
@@ -2799,39 +1963,47 @@ sub isSong {
 }
 
 sub isDir {
-	my $fullpath = shift;
-	my $type = contentType($fullpath);
+	my $pathOrObj = shift;
+	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
+		$currentDB->contentType($pathOrObj, 1);
 	return ($type && ($type eq 'dir'));
 }
 
 sub isM3U {
-	my $fullpath = shift;
-	my $type = contentType($fullpath);
+	my $pathOrObj = shift;
+	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
+		$currentDB->contentType($pathOrObj, 1);
 	return ($type && ($type eq 'm3u'));
 }
 
 sub isPLS {
-	my $fullpath = shift;
-	my $type = contentType($fullpath);
+	my $pathOrObj = shift;
+	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
+		$currentDB->contentType($pathOrObj, 1);
 	return ($type && ($type eq 'pls'));
 }
 
 sub isCUE {
-	my $fullpath = shift;
-	my $type = contentType($fullpath);
+	my $pathOrObj = shift;
+	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
+		$currentDB->contentType($pathOrObj, 1);
 	return ($type && ($type eq 'cue'));
 }
 
 sub isKnownType {
-	my $fullpath = shift;
-	my $type = contentType($fullpath);
+	my $pathOrObj = shift;
+	my $type = ref $pathOrObj ? $pathOrObj->content_type : 
+		$currentDB->contentType($pathOrObj, 1);
 	return !(!$type || ($type eq 'unk'));
 }
 
-sub isList {
-	my $fullpath = shift;
 
-	my $type = contentType($fullpath);
+sub isList {
+	my $pathOrObj = shift;
+	my $type = shift;
+
+	$type = ref $pathOrObj ? $pathOrObj->content_type : 
+		$currentDB->contentType($pathOrObj, 1) unless defined $type;
 
 	if ($type && $Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} =~ /list/) {
 		return $type;
@@ -2839,9 +2011,11 @@ sub isList {
 }
 
 sub isPlaylist {
-	my $fullpath = shift;
+	my $pathOrObj = shift;
+	my $type = shift;
 
-	my $type = contentType($fullpath);
+	$type = ref $pathOrObj ? $pathOrObj->content_type : 
+		$currentDB->contentType($pathOrObj, 1) unless defined $type;
 
 	if ($type && $Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} eq 'playlist') {
 		return $type;
@@ -2909,7 +2083,9 @@ sub mimeType {
 	return undef;
 };
 
-sub contentType { return info(shift,'CT'); }
+sub contentType { 
+	return $currentDB->contentType(shift, 1); 
+}
 
 sub typeFromSuffix {
 	my $path = shift;

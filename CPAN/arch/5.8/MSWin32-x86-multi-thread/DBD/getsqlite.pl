@@ -17,7 +17,7 @@ rm_rf('sqlite');
 xsystem("tar zxvf sqlite.tar.gz");
 chdir("sqlite");
 xsystem("sh configure --enable-utf8");
-xsystem("make parse.c sqlite.h opcodes.h opcodes.c");
+xsystem("make parse.c sqlite3.h opcodes.h opcodes.c");
 
 my %skip = map { $_ => 1 } map { chomp; $_ } <DATA>;
 warn("Skip: $_\n") for keys %skip;
@@ -45,8 +45,10 @@ src/threadtest.c
 src/test1.c
 src/test2.c
 src/test3.c
+src/test4.c
+src/test5.c
 src/tclsqlite.c
 src/shell.c
 src/lemon.c
 src/md5.c
-
+src/encode.c

@@ -367,6 +367,8 @@ sub checker {
 
 	return unless (useiTunesLibrary());
 	
+	Slim::Music::Import::addImporter('itunes');
+
 	if (!stillScanning() && isMusicLibraryFileChanged()) {
 		startScan();
 	}
@@ -396,7 +398,7 @@ sub startScan {
 	stopScan();
 
 	Slim::Utils::Scheduler::add_task(\&scanFunction);
-	Slim::Music::Import::addImport('itunes');
+	Slim::Music::Import::startImport('itunes');
 
 	$isScanning = 1;
 
@@ -436,7 +438,7 @@ sub doneScanning {
 	
 	Slim::Music::Info::generatePlaylists();
 	
-	Slim::Music::Import::delImport('itunes');
+	Slim::Music::Import::endImport('itunes');
 }
 
 sub artScan {
