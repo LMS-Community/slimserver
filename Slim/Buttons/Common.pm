@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.18 2003/11/10 23:14:54 dean Exp $
+# $Id: Common.pm,v 1.19 2003/11/17 06:12:06 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -16,6 +16,7 @@ use Slim::Utils::Strings qw (string);
 use Slim::Utils::Misc;
 use Slim::Buttons::Plugins;
 use Slim::Buttons::Input::Text;
+use Slim::Buttons::Input::List;
 use Slim::Display::Display;
 
 # hash of references to functions to call when we leave a mode
@@ -38,6 +39,7 @@ my %modes = (
 	'browsemenu' => 			\&Slim::Buttons::BrowseMenu::setMode,
 	'home' => 					\&Slim::Buttons::Home::setMode,
 	'INPUT.Text' =>				\&Slim::Buttons::Input::Text::setMode,
+	'INPUT.List' =>				\&Slim::Buttons::Input::List::setMode,
 	'moodlogic_instant_mix' =>	\&Slim::Buttons::InstantMix::setMode,
 	'moodlogic_mood_wheel' =>	\&Slim::Buttons::MoodWheel::setMode,
 	'off' => 					\&Slim::Buttons::Power::setMode,
@@ -89,6 +91,7 @@ sub init {
 	$modeFunctions{'moodlogic_mood_wheel'} = Slim::Buttons::MoodWheel::getFunctions();
 	$modeFunctions{'moodlogic_instant_mix'} = Slim::Buttons::InstantMix::getFunctions();
 	$modeFunctions{'INPUT.Text'} = Slim::Buttons::Input::Text::getFunctions();
+	$modeFunctions{'INPUT.List'} = Slim::Buttons::Input::List::getFunctions();
 	Slim::Buttons::Plugins::getPluginModes(\%modes);
 	Slim::Buttons::Plugins::getPluginFunctions(\%modeFunctions);
 }
