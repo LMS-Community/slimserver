@@ -61,7 +61,7 @@ sub useMusicMagic {
 	$use = Slim::Utils::Prefs::get('musicmagic') && $can;
 	Slim::Music::Import::useImporter('MUSICMAGIC',$use);
 
-	$::d_import && $::d_import =~ m/musicmagic/ && msg("using musicmagic: $use\n");
+	$::d_musicmagic && msg("using musicmagic: $use\n");
 	
 	return $use;
 }
@@ -116,7 +116,7 @@ sub initPlugin {
 	} else {
 
 		my $content = $http->content();
-		$::d_import && $::d_import =~ m/musicmagic/ && msg("$content\n");
+		$::d_musicmagic && msg("$content\n");
 		$http->close();
 
 		# Note: Check version restrictions if any
@@ -201,7 +201,7 @@ sub isMusicLibraryFileChanged {
 
 		my $musicmagicscaninterval = Slim::Utils::Prefs::get('musicmagicscaninterval') || 1;
 
-		$::d_import && $::d_import =~ m/musicmagic/ && msg("music library has changed!\n");
+		$::d_musicmagic && msg("music library has changed!\n");
 
 		$lastMusicLibraryFinishTime = 0 unless $lastMusicLibraryFinishTime;
 
@@ -210,7 +210,7 @@ sub isMusicLibraryFileChanged {
 			return 1;
 		}
 
-		$::d_import && $::d_import =~ m/musicmagic/ && msg("waiting for $musicmagicscaninterval seconds to pass before rescanning\n");
+		$::d_musicmagic && msg("waiting for $musicmagicscaninterval seconds to pass before rescanning\n");
 	}
 	
 	return 0;
@@ -235,7 +235,7 @@ sub startScan {
 		return;
 	}
 		
-	$::d_import && $::d_import =~ m/musicmagic/ && msg("MusicMagic: start export\n");
+	$::d_musicmagic && msg("MusicMagic: start export\n");
 	stopScan();
 	Slim::Music::Info::clearPlaylists();
 
@@ -258,7 +258,7 @@ sub stillScanning {
 }
 
 sub doneScanning {
-	$::d_import && $::d_import =~ m/musicmagic/ && msg("MusicMagic: done Scanning\n");
+	$::d_musicmagic && msg("MusicMagic: done Scanning\n");
 
 	$isScanning = 0;
 	$scan = 0;
@@ -299,7 +299,7 @@ sub convertPath {
 
 			# convert any windozes paths to unix style
 			$remoteRoot =~ tr/\\/\//;
-			$::d_import && $::d_import =~ m/musicmagic/ &&  msg("$remoteRoot :: $nativeRoot \n");
+			$::d_musicmagic &&  msg("$remoteRoot :: $nativeRoot \n");
 
 			# convert windozes paths to unix style
 			$mmsPath =~ tr/\\/\//;
@@ -317,7 +317,7 @@ sub convertPath {
 			# convert windows native to unix first
 			# cuz matching dont work unless we do
 			$nativeRoot =~ tr/\\/\//;
-			$::d_import && $::d_import =~ m/musicmagic/ &&  msg("$remoteRoot :: $nativeRoot \n");
+			$::d_musicmagic &&  msg("$remoteRoot :: $nativeRoot \n");
 
 			# convert unix root to windows root
 			$mmsPath =~ s/$remoteRoot/$nativeRoot/;
@@ -326,7 +326,7 @@ sub convertPath {
 		}
 	}
 
-	$::d_import && $::d_import =~ m/musicmagic/ && msg("$original is now $mmsPath\n");
+	$::d_musicmagic && msg("$original is now $mmsPath\n");
 
 	return $mmsPath
 }
@@ -360,7 +360,7 @@ sub exportFunction {
 
 		$count += 0;
 		
-		$::d_import && $::d_import =~ m/musicmagic/ && msg("Got $count song(s).\n");
+		$::d_musicmagic && msg("Got $count song(s).\n");
 		
 		$scan = 0;
 		$export = 'songs';
@@ -410,7 +410,7 @@ sub exportFunction {
 				$cacheEntry{'MUSICMAGIC_MIXABLE'} = 1;
 			}
 
-			$::d_import && $::d_import =~ m/musicmagic/ && msg("Exporting song $scan: $songInfo{'file'}\n");
+			$::d_musicmagic && msg("Exporting song $scan: $songInfo{'file'}\n");
 
 			# fileURLFromPath will turn this into UTF-8 - so we
 			# need to make sure we're in the current locale first.
@@ -463,7 +463,7 @@ sub exportFunction {
 
 		@lines = split(/\n/, $http->content());
 		$count = scalar @lines;
-		$::d_import && $::d_import =~ m/musicmagic/ && msg("Got $count active genre(s).\n");
+		$::d_musicmagic && msg("Got $count active genre(s).\n");
 
 		$http->close();
 	
@@ -488,7 +488,7 @@ sub exportFunction {
 
 		@lines = split(/\n/, $http->content());
 		$count = scalar @lines;
-		$::d_import && $::d_import =~ m/musicmagic/ && msg("Got $count active artist(s).\n");
+		$::d_musicmagic && msg("Got $count active artist(s).\n");
 
 		$http->close();
 
@@ -535,7 +535,7 @@ sub exportFunction {
 				my $url = 'musicmagicplaylist:' . Slim::Web::HTTP::escape($name);
 
 				if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
-					$::d_import && $::d_import =~ m/musicmagic/ && msg("Found MusicMagic Playlist: $url\n");
+					$::d_musicmagic && msg("Found MusicMagic Playlist: $url\n");
 				}
 
 				# add this playlist to our playlist library
@@ -559,7 +559,7 @@ sub exportFunction {
 
 	doneScanning();
 
-	$::d_import && $::d_import =~ m/musicmagic/ && msgf("exportFunction: finished export ($count records, %d playlists)\n", scalar @{Slim::Music::Info::playlists()});
+	$::d_musicmagic && msgf("exportFunction: finished export ($count records, %d playlists)\n", scalar @{Slim::Music::Info::playlists()});
 	$export = '';
 	$ds->forceCommit();
 
@@ -757,7 +757,7 @@ sub getMix {
 	} elsif ($for eq "genre") {
 		$mixArgs = "genre=$id";
 	} else {
-		$::d_import && $::d_import =~ m/musicmagic/ && msg("no valid type specified for instant mix");
+		$::d_musicmagic && msg("no valid type specified for instant mix");
 		return undef;
 	}
 
@@ -765,13 +765,13 @@ sub getMix {
 	$mixArgs   = Slim::Web::HTTP::escape($mixArgs);
 	$argString = Slim::Web::HTTP::escape($argString);
 	
-	$::d_import && $::d_import =~ m/musicmagic/ && msg("Musicmagic request: http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString\n");
+	$::d_musicmagic && msg("Musicmagic request: http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString\n");
 
 	my $http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString");
 
 	unless ($http) {
 		# NYI
-		$::d_import && $::d_import =~ m/musicmagic/ && msg("Musicmagic Error - Couldn't get mix: $mixArgs\&$argString");
+		$::d_musicmagic && msg("Musicmagic Error - Couldn't get mix: $mixArgs\&$argString");
 		return @instant_mix;
 	}
 
@@ -783,7 +783,7 @@ sub getMix {
 	for (my $j = 0; $j < $count; $j++) {
 		my $newPath = convertPath($songs[$j]);
 
-		$::d_import && $::d_import =~ m/musicmagic/ && msg("Original $songs[$j] : New $newPath\n");
+		$::d_musicmagic && msg("Original $songs[$j] : New $newPath\n");
 
 		push @instant_mix, Slim::Utils::Misc::fileURLFromPath($newPath);
 	}
@@ -875,7 +875,7 @@ sub musicmagic_mix {
 	
 	} else {
 
-		$::d_import && $::d_import =~ m/musicmagic/ && msg('no/unknown type specified for mix');
+		$::d_musicmagic && msg('no/unknown type specified for mix');
 		return 1;
 	}
 
