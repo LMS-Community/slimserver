@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.17 2003/11/27 21:46:52 grotus Exp $
+# $Id: IR.pm,v 1.18 2003/11/29 03:01:17 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -103,6 +103,9 @@ sub defaultMap {
 my $defaultMapFile;
 
 sub defaultMapFile {
+	unless (defined($defaultMapFile)) {
+		$defaultMapFile = catdir((IRFileDirs())[0],defaultMap() . '.map');
+	}
 	return $defaultMapFile;
 }
 
