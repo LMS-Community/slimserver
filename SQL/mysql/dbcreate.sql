@@ -109,6 +109,8 @@ CREATE TABLE albums (
   PRIMARY KEY (id)
 ) TYPE=InnoDB;
 
+
+-- Testing
 --
 -- Table: contributors
 --
