@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.43 2004/02/12 03:19:51 dean Exp $
+# $Id: Pages.pm,v 1.44 2004/02/13 15:56:37 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -446,6 +446,8 @@ sub status {
 		} else {
 			$$main_form_ref{'rate'} = 'norm';
 		}
+		
+		$$main_form_ref{'rateval'} = Slim::Player::Source::rate($client);
 		
 		$$main_form_ref{'sync'} = Slim::Player::Sync::syncwith($client);
 		
