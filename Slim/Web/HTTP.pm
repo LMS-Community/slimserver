@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.132 2004/12/16 22:05:39 dsully Exp $
+# $Id: HTTP.pm,v 1.133 2004/12/20 05:13:16 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -131,7 +131,7 @@ sub init {
 # don't use the external one because it doesn't know about the difference between a param and not...
 #*unescape = \&URI::Escape::unescape;
 sub unescape {
-	my $in      = shift || return '';
+	my $in      = shift;
 	my $isParam = shift;
 
 	$in =~ s/\+/ /g if $isParam;
