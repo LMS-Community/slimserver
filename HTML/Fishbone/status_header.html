@@ -50,7 +50,7 @@ function checkReload()
 	      <td width="34%"><img border="0" src="html/images/{playermodel}_logo.small.gif" width="98" height="17"></td>
   	         [IF player_chooser_list]
   	            <form method="get" action="/index.html" target="_top"><td colspan="3">
-					<select name="player" onchange="setCookie('SlimClient',this.form.player.value);this.form.submit(); " class="stdedit">{player_chooser_list}</select>
+					<select name="player" onchange="setCookie('SlimServer-player',this.form.player.value);this.form.submit(); " class="stdedit">{player_chooser_list}</select>
 					</td></form>[/IF]
 					
 			</table>
