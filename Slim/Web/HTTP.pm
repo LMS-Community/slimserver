@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.99 2004/04/26 21:54:53 daniel Exp $
+# $Id: HTTP.pm,v 1.100 2004/04/26 22:23:52 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -83,8 +83,6 @@ my %keepAlives     = ();
 my $mdnsIDslimserver;
 my $mdnsIDhttp;
 
-my $CacheDir = catdir($Bin,'Cache');
-
 my @templateDirs;
 {
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
@@ -124,16 +122,6 @@ my %pageFunctions = ();
 
 # initialize the http server
 sub init {
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		$CacheDir = catdir($ENV{'HOME'}, '/Library/Caches/SlimServer');
-	}
-	my @CacheDirs = splitdir($CacheDir);
-	pop @CacheDirs;
-	my $CacheParent = catdir(@CacheDirs);
-	if ((!-e $CacheDir && !-w $CacheParent) || (-e $CacheDir && !-w $CacheDir)) {
-		$CacheDir = undef;
-	}
-
 	idle();
 }
 
@@ -1303,7 +1291,7 @@ sub newSkinTemplate {
 	}
 	$skinTemplates{$skin} = Template->new({
 		INCLUDE_PATH => \@include_path
-		,COMPILE_DIR => $CacheDir
+		,COMPILE_DIR => Slim::Utils::Prefs::get('cachedir')
 		,FILTERS => {
 			'string' => \&Slim::Utils::Strings::string
 			,'nbsp' => \&nonBreaking

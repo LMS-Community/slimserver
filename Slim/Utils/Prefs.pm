@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.52 2004/04/25 01:23:19 kdf Exp $
+# $Id: Prefs.pm,v 1.53 2004/04/26 22:23:52 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -66,6 +66,20 @@ sub defaultPlaylistDir {
 	return $path;
 }
 
+sub defaultCacheDir {
+	my $CacheDir = catdir($Bin,'Cache');
+	if (Slim::Utils::OSDetect::OS() eq 'mac') {
+		$CacheDir = catdir($ENV{'HOME'}, '/Library/Caches/SlimServer');
+	}
+	my @CacheDirs = splitdir($CacheDir);
+	pop @CacheDirs;
+	my $CacheParent = catdir(@CacheDirs);
+	if ((!-e $CacheDir && !-w $CacheParent) || (-e $CacheDir && !-w $CacheDir)) {
+		$CacheDir = undef;
+	}
+	return $CacheDir;
+}
+
 # When adding new server and client preference options, put a default value for the option
 # into the DEFAULT hash.  For client options put the key => value pair in the client hash
 # in the client key of the main hash.
@@ -76,6 +90,7 @@ my %DEFAULT = (
 	,"cliport"				=> 9090
 	,"music"				=> defaultAudioDir()
 	,"playlistdir"			=> defaultPlaylistDir()
+	,"cachedir"				=> defaultCacheDir()
 	,"skin"					=> "Default"
 	,"language"				=> "EN"
 	,"refreshRate"			=> 30

@@ -97,18 +97,18 @@ SlimServer and see the complete documentation.
 
 --------------------------------------------------------------------------------
 
-Command Line Usage Information
-
-Usage: ./slimserver.pl [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
+Usage: $0 [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
           [--user <username>]
           [--group <groupname>]
           [--httpport <portnumber> [--httpaddr <listenip>]]
           [--cliport <portnumber> [--cliaddr <listenip>]]
+          [--priority <priority>]
           [--prefsfile <prefsfilepath> [--pidfile <pidfilepath>]]
           [--d_various]
 
     --help           => Show this usage information.
-    --audiodir         => The path to a directory of your MP3 files.
+    --audiodir       => The path to a directory of your MP3 files.
+    --cachedir       => Directory for SlimServer to save cached music and web data
     --logfile        => Specify a file for error logging.
     --daemon         => Run the server in the background.
                         This may only work on Unix-like systems.
@@ -128,11 +128,13 @@ Usage: ./slimserver.pl [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfi
                         command line interface server.
     --cliaddr        => Activate the command line interface TCP/IP 
                         interface on the specified IP address.
-    --prefsfile      => Specify the path to the preferences file
+    --prefsfile      => Specify the path of the the preferences file
     --pidfile        => Specify where a process ID file should be stored
     --quiet          => Minimize the amount of text output
     --playeraddr     => Specify the _server's_ IP address to use to connect 
-                        to players
+                        to Slim players
+    --priority       => set process priority from -20 (high) to 20 (low)
+                        no effect on non-Unix platforms
     --streamaddr     => Specify the _server's_ IP address to use to connect
                         to streaming audio sources
     --nosetup        => Disable setup via http.
@@ -140,16 +142,23 @@ Usage: ./slimserver.pl [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfi
 The following are debugging flags which will print various information 
 to the console via stderr:
 
+    --d_artwork      => Display information on artwork display
     --d_cli          => Display debugging information for the 
                         command line interface interface
     --d_command      => Display internal command execution
     --d_control      => Low level player control information
     --d_display      => Show what (should be) on the player's display 
+    --d_factorytest  => Information used during factory testing
     --d_files        => Files, paths, opening and closing
+    --d_filehandle   => Information about the custom FileHandle object
+    --d_firmware     => Information during Squeezebox firmware updates 
+    --d_formats      => Information about importing data from various file formats
     --d_http         => HTTP activity
+    --d_http_verbose => Even more HTTP activity 
     --d_info         => MP3/ID3 track information
     --d_ir           => Infrared activity
     --d_itunes       => iTunes synchronization information
+    --d_itunes_verbose => verbose iTunes Synchronization information
     --d_moodlogic    => MoodLogic synchronization information
     --d_mdns         => Multicast DNS aka Zeroconf aka Rendezvous information
     --d_os           => Operating system detection information
@@ -157,16 +166,22 @@ to the console via stderr:
     --d_perf         => Performance information
     --d_parse        => Playlist parsing information
     --d_playlist     => High level playlist and control information
+    --d_plugins      => Show information about plugins
     --d_protocol     => Client protocol information
     --d_prefs        => Preferences file information
     --d_remotestream => Information about remote HTTP streams and playlists
     --d_scan         => Information about scanning directories and filelists
+    --d_select       => Information about the select process
     --d_server       => Basic server functionality
     --d_scheduler    => Internal scheduler information
+    --d_slimproto    => Slimproto debugging information
+    --d_slimproto_v  => Slimproto verbose debugging information
+    --d_source       => Information about source audio files and conversion
     --d_stdio        => Standard I/O command debugging
     --d_stream       => Information about player streaming protocol 
     --d_stream_v     => Verbose information about player streaming protocol 
     --d_sync         => Information about multi player synchronization
+    --d_sync_v       => Verbose information about multi player synchronization
     --d_time         => Internal timer information
     --d_ui           => Player user interface information
     --d_usage        => Display buffer usage codes on the player's display

@@ -187,6 +187,7 @@ use vars qw(
 	$d_usage
 	$d_filehandle
 
+	$cachedir
 	$user
 	$group
 	$cliaddr
@@ -452,7 +453,8 @@ Usage: $0 [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
           [--d_various]
 
     --help           => Show this usage information.
-    --audiodir         => The path to a directory of your MP3 files.
+    --audiodir       => The path to a directory of your MP3 files.
+    --cachedir       => Directory for SlimServer to save cached music and web data
     --logfile        => Specify a file for error logging.
     --daemon         => Run the server in the background.
                         This may only work on Unix-like systems.
@@ -547,6 +549,7 @@ sub initOptions {
 		'httpport=s'   		=> \$httpport,
 		'logfile=s'   		=> \$logfile,
 		'audiodir=s' 		=> \$audiodir,
+		'cachedir=s' 		=> \$cachedir,
 		'pidfile=s' 		=> \$pidfile,
 		'playeraddr=s'		=> \$localClientNetAddr,
 		'priority=i'        => \$priority,
@@ -620,6 +623,11 @@ sub initSettings {
 		Slim::Utils::Prefs::set("audiodir", $audiodir);
 	}
 	
+	if (defined($cachedir)) {
+		Slim::Utils::Prefs::set("cachedir", $cachedir);
+	}
+	
+
 	if (defined($httpport)) {
 		Slim::Utils::Prefs::set("httpport", $httpport);
 	}

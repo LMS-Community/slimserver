@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.109 2004/04/26 19:16:56 dean Exp $
+# $Id: Info.pm,v 1.110 2004/04/26 22:23:51 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -160,7 +160,7 @@ if (defined @Storable::EXPORT) {
 			
 				# "store" "die"s on fatal errors, so catch that with an "eval"
 				eval {
-						$::d_info && Slim::Utils::Misc::msg("saving DB cache\n");
+						$::d_info && Slim::Utils::Misc::msg("saving DB cache: $dbname\n");
 
 						store($cacheToStore, $dbname);
 
@@ -291,14 +291,7 @@ sub init {
 		$dbname ='slimserver.db';
 	}
 
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		#store with the rest of the caches
-		$dbname = catdir($ENV{'HOME'},'Library','Caches','SlimServer',$dbname);
-	} else {
-		# put it in the same folder as the preferences.
-		$dbname = catdir(Slim::Utils::Prefs::preferencesPath(), $dbname);
-	}
-
+	$dbname = catdir(Slim::Utils::Prefs::get('cachedir'), $dbname);
 	
 	if (Slim::Utils::Prefs::get('usetagdatabase')) {
 		loadDBCache();
