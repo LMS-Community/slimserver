@@ -138,8 +138,12 @@ sub init {
 	if ($::d_memory) {
 
 		eval "use Slim::Utils::MemoryUsage";
-	
-		$pageFunctions{qr/^memoryusage\.html.*/} = \&Slim::Web::Pages::memory_usage;
+
+		if ($@) {
+			print "Couldn't load Slim::Utils::MemoryUsage - error: [$@]\n";
+		} else {
+			$pageFunctions{qr/^memoryusage\.html.*/} = \&Slim::Web::Pages::memory_usage;
+		}
 	}
 
 	# this initializes the %fieldInfo structure
