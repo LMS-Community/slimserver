@@ -34,7 +34,7 @@ sub query {
 
 	for my $type (keys %queries) {
 
-		push @data, [ $type, $ds->find($queries{$type}->[0], { $queries{$type}->[1] => $search }, undef, $limit, 0) ];
+		push @data, [ $type, [$ds->find($queries{$type}->[0], { $queries{$type}->[1] => $search }, undef, $limit, 0)] ];
 	}
 
 	return \@data;
