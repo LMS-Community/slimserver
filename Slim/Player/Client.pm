@@ -654,7 +654,7 @@ sub new {
 	$client->[18] = undef; # audioFilehandle
 	$client->[19] = 0; # audioFilehandleIsSocket
 	$client->[20] = []; # chunks
-	$client->[21] = undef; # songStartStreamTime
+	$client->[21] = 0;  # songStartStreamTime
 	$client->[22] = 0; # remoteStreamStartTime
 	$client->[23] = undef; # shoutMetaPointer
 	$client->[24] = undef; # shoutMetaInterval
