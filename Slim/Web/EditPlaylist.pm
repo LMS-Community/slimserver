@@ -7,22 +7,28 @@ package Slim::Web::EditPlaylist;
 
 use strict;
 
+use Slim::Formats::Parse;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
+use Slim::Web::HTTP;
 
 # -------------------------------------------------------------
 # The default playlist name is: Radio Station.pls
 # Can be overwritten by adding ?dir=<playlistname.pls> to the calling URL
 # -------------------------------------------------------------
 sub editplaylist {
-
 	my ($client, $params) = @_;
 
 	my $dir = defined( $params->{'dir'}) ? $params->{'dir'} : "Radio Station.pls";
 	my $ds  = Slim::Music::Info::getCurrentDataStore();
 
 	my $fulldir = Slim::Utils::Misc::virtualToAbsolute($dir);
-	my $dirObj  = $ds->objectForUrl($fulldir);
+	my $dirObj  = $ds->objectForUrl($fulldir) || do {
+
+		$::d_playlist && Slim::Utils::Misc::msg("Couldn't find a directory entry for: [$fulldir]\n");
+
+		return Slim::Web::HTTP::filltemplatefile("edit_playlist.html", $params);
+	};
 
 	my $filehandle = FileHandle->new(Slim::Utils::Misc::pathFromFileURL($fulldir), "r");
 
@@ -64,9 +70,9 @@ sub editplaylist {
 		my $title = $params->{'form_title'};
 		my $newitem = $params->{'form_url'};
 
-		if (($title ne "") && ($newitem ne "")) {
+		if ($title && $newitem) {
 
-			Slim::Music::Info::setTitle( $newitem, $title);
+			Slim::Music::Info::setTitle($newitem, $title);
 			for my $item (@items) {
 
 				if ($item eq $newitem) {
@@ -119,8 +125,10 @@ sub editplaylist {
 
 	for my $item (@items) {
 
-		my $track = $ds->objectForUrl($item);
-		my $title = $ds->title();
+		$::d_playlist && Slim::Utils::Misc::msg("Adding item: [$item] to playlist edit.\n");
+
+		my $track = $ds->objectForUrl($item) || next;
+		my $title = $track->title();
 
 		$list_form{'num'}   = $count++;
 		$list_form{'odd'}   = $count % 2;
@@ -136,7 +144,7 @@ sub editplaylist {
 	$params->{'playlist'}     = $playlist;
 	$params->{'playlistname'} = $dirObj->title();
 
-	return Slim::Web::HTTP::filltemplatefile( "edit_playlist.html", $params);
+	return Slim::Web::HTTP::filltemplatefile("edit_playlist.html", $params);
 }
 
 1;

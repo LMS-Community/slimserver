@@ -165,6 +165,8 @@ sub clearCache {
 		$currentDB->markAllEntriesStale();
 		$::d_info && Slim::Utils::Misc::msg("clearing validity for rescan\n");
 	}
+
+	saveDBCache();
 }
 
 sub saveDBCache {
