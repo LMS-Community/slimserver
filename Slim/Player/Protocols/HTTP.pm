@@ -68,6 +68,12 @@ sub open {
 
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
 
+	if (!$server || !$port) {
+
+		$::d_remotestream && msg("Couldn't find server or port in url: [$url]\n");
+		return;
+	}
+
 	my $timeout = $args->{'timeout'} || Slim::Utils::Prefs::get('remotestreamtimeout');
 	my $proxy   = Slim::Utils::Prefs::get('webproxy');
 
