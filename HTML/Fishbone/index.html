@@ -36,7 +36,9 @@ function getPlayer(Player)
 		offset = document.cookie.indexOf(search);
 		if (offset != -1) &lbrc;
 			offset += search.length;
-			end = document.cookie.length;
+			end = document.cookie.indexOf(";", offset);
+			if (end == -1)
+				end = document.cookie.length;
 			return unescape(document.cookie.substring(offset, end));
 		&rbrc;
 	&rbrc;
