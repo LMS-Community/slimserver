@@ -469,10 +469,10 @@ sub exportFunction {
 
 			if ($songInfo{'active'} eq 'yes' && defined $track) {
 
-				my $album = $track->album();
-
-				$album->musicmagic_mixable(1);
-				$album->update(1);
+				my $albumObj = $track->album();
+			
+				$albumObj->musicmagic_mixable(1);
+				$albumObj->update(1);
 			}
 		}
 
@@ -606,7 +606,7 @@ sub exportFunction {
 		my %cacheEntry = ();
 		my @songs = ();
 		$::d_musicmagic && msg("MusicMagic: Checking for duplicates.\n");
-
+		
 		$http = Slim::Player::Protocols::HTTP->new({
 			'url'    => "http://$MMSHost:$MMSport/api/duplicates",
 			'create' => 0,
@@ -1044,6 +1044,30 @@ sub setupUse {
 
 	return (\%setupGroup,\%setupPrefs);
 }
+
+
+sub setupGroup {
+
+	my $client = shift;
+
+	my %setupGroup = (
+			'PrefOrder' => [qw(MMSHost MMSport)]
+		);
+
+	my %setupPrefs = (
+		'MMSport' => {
+			'validate' => \&Slim::Web::Setup::validateInt,
+			'validateArgs' => [1025,65535,undef,1],
+		},
+
+		'MMSHost' => {
+			'validate' => \&Slim::Web::Setup::validateAcceptAll,
+			'PrefSize' => 'large'
+		},
+	);
+
+	return (\%setupGroup,\%setupPrefs);
+};
 
 sub setupCategory {
 
