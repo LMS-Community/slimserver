@@ -70,7 +70,7 @@ sub subString {
 	my $newstring = '';
 	my $oldstring = '';
 
-	if ($start > 32765 || ($length||0) > 32765) {
+	if ($start && $length && ($start > 32765 || ($length || 0) > 32765)) {
 			msg("substr on string with start or length greater than 32k, returning empty string.\n");
 			bt();
 			return '';
