@@ -14,10 +14,10 @@
 						<input type=submit value="[% savebuttonname %]" class="stdclick">
 						<input type=hidden value="[% player %]" name="player">
 						<input type=hidden name="dir" value="[% dir %]"></td></form></tr>
-				[% END %]
-			[% IF titled %]</table>
-			<table border="0" cellspacing="0" cellpadding="0" class="nowplaying"
-				<td><a href="browse.html?player=[% player | uri %]&dir=[% dir | uri %]&delete=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></td>
+				</table>[% END %]
+			[% IF titled %]
+			<table border="0" cellspacing="0" cellpadding="0" class="nowplaying">
+				<tr><td><a href="browse.html?player=[% player | uri %]&dir=[% dir | uri %]&delete=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></td>
 				<td>&nbsp;&nbsp;<img src="html/pixel.grey.gif" width="1" height="100%" border="0">&nbsp;&nbsp;</td>
 				<td><a href="edit_playlist.html?dir=[% dir | uri %]&player=[% player | uri %]">[% "EDIT_PLAYLIST" | string %]</a></td></tr>
 			</table>
