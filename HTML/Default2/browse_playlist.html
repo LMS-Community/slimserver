@@ -2,7 +2,7 @@
 
 <p id="pagetitle">
  <a onclick="parent.browseurl('home.html?')">[% "HOME" | string %]</a> /
- <a class="fakelink" onclick="browseurl('browse.html?dir=__playlists')">[% "SAVED_PLAYLISTS" | string %]</a>
+ <a class="fakelink" onclick="parent.browseurl('browse.html?dir=__playlists')">[% "SAVED_PLAYLISTS" | string %]</a>
  [% pwd_list %]
 </p>
  
@@ -54,7 +54,7 @@
    <td class="listing">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
    <td class="browselistbuttons">
     <img width="13" height="13" onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=play&amp;p2=[% dir | uri
-    %]&quot;)" src="html/images/b/b_play.gif alt="Play"/><img width="13" height="13" src="html/images/b/b_add.gif"
+    %]&quot;)" src="html/images/b/b_play.gif" alt="Play"/><img width="13" height="13" src="html/images/b/b_add.gif"
     onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=add&amp;p2=[% dir | uri %]&quot;)" alt="Add"/>
    </td>
   </tr>

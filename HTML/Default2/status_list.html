@@ -1,7 +1,7 @@
-<playlistitem[% IF currentsong %] currentsong="currentsong"[% END ; IF album == noAlbum %] noalbum="1"[% END ; IF artists.count == 1 and artists == noArtist %] noartist="1"[% END %]>
+<playlistitem[% IF currentsong %] currentsong="currentsong"[% END ; IF album == noAlbum %] noalbum="1"[% END %] albumid="[% album.id %]">
  <title>[% title | html %]</title>
  <artists>
-  [% WHILE (artist = artists.next) %]<artist id="[% artist.id %]">[% artist.name | html %]</artist>[% END %]
+  [% WHILE (artist = artists.next) %]<artist id="[% artist.id %]"[% IF artist == noArtist %] no="1"[% END %]>[% artist.name | html %]</artist>[% END %]
  </artists>
  <album>[% album.title | html %][% IF year %] ([% year | html %])[% END %]</album>
  <url>[% itempath | html %]</url>

@@ -10,6 +10,7 @@ var cansave = 0;
 var playlistinfo = "";
 
 var BY = ' by ';
+var FROM = ' from ';
 
 //////////////////////////////////////
 //                                  //
@@ -300,6 +301,25 @@ function doArtist(e) {
 	if (selIndex < 0 || selIndex >= songCount) return;
 
 	browseurl("browsedb.html?hierarchy=artist,album,track&level=1&artist=" + playlist[selIndex].artistid);
+}
+
+function doAlbum(e) {
+	if (!e) var e = window.event;
+	et = (e.target || e.srcElement);
+	if (!et) return;
+	if (et && et.parentNode && et.parentNode.parentNode) {
+		etpp = et.parentNode.parentNode;
+		if (etpp.parentNode.rowIndex) {
+			selIndex = etpp.parentNode.rowIndex;
+		} else {
+			selIndex = etpp.rowIndex;
+		}
+	} else {
+		return;
+	}
+	if (selIndex < 0 || selIndex >= songCount) return;
+
+	browseurl("browsedb.html?hierarchy=album,track&level=1&album=" + playlist[selIndex].albumid);
 }
 
 function doSave() {

@@ -48,6 +48,7 @@ function updatePlaylist_handler(req, url) {
 		iv = playlistnodes[i].getElementsByTagName("artist")[0];
 		if (iv && iv.firstChild) newitem.artist = iv.firstChild.data; else newitem.artist = "";
 		if (iv) newitem.artistid = iv.getAttribute("id");
+		if (iv) newitem.noartist = iv.getAttribute("no");
 		iv = playlistnodes[i].getElementsByTagName("album")[0];
 		if (iv && iv.firstChild) newitem.album = iv.firstChild.data; else newitem.album = "";
 		iv = playlistnodes[i].getElementsByTagName("url")[0];
@@ -290,6 +291,25 @@ function doArtist(e) {
 	if (selIndex < 0 || selIndex >= songCount) return;
 
 	browseurl("browsedb.html?hierarchy=artist,album,track&level=1&artist=" + playlist[selIndex].artistid);
+}
+
+function doAlbum(e) {
+	if (!e) var e = window.event;
+	et = (e.target || e.srcElement);
+	if (!et) return;
+	if (et && et.parentNode && et.parentNode.parentNode) {
+		etpp = et.parentNode.parentNode;
+		if (etpp.parentNode.rowIndex) {
+			selIndex = etpp.parentNode.rowIndex;
+		} else {
+			selIndex = etpp.rowIndex;
+		}
+	} else {
+		return;
+	}
+	if (selIndex < 0 || selIndex >= songCount) return;
+
+	browseurl("browsedb.html?hierarchy=album,track&level=1&album=" + playlist[selIndex].albumid);
 }
 
 function doSave() {
