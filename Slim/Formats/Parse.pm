@@ -341,14 +341,12 @@ sub parseCUE {
 
 		$::d_parse && Slim::Utils::Misc::msg("    TRACKNUM: $key\n");
 
-		if (exists $track->{'TITLE'}) {
-			$cacheEntry->{'TITLE'} = $track->{'TITLE'};
-			$::d_parse && Slim::Utils::Misc::msg("    TITLE: " . $cacheEntry->{'TITLE'} . "\n");
-		}
+		for my $attribute (qw(TITLE ARTIST ALBUM CONDUCTOR COMPOSER BAND)) {
 
-		if (exists $track->{'ARTIST'}) {
-			$cacheEntry->{'ARTIST'} = $track->{'ARTIST'};
-			$::d_parse && Slim::Utils::Misc::msg("    ARTIST: " . $cacheEntry->{'ARTIST'} . "\n");
+			if (exists $track->{$attribute}) {
+				$cacheEntry->{$attribute} = $track->{$attribute};
+				$::d_parse && Slim::Utils::Misc::msg("    $attribute: " . $cacheEntry->{$attribute} . "\n");
+			}
 		}
 
 		if (exists $track->{'YEAR'}) {
