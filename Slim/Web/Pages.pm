@@ -1536,7 +1536,7 @@ sub advancedSearch {
 		# 
 		# Turn the track_title into track.title for the query.
 		# We need the _'s in the form, because . means hash key.
-		if ($newKey =~ s/_(title|name)$/\.$1/) {
+		if ($newKey =~ s/_(titlesort|namesort)$/\.$1/) {
 
 			$params->{$key} = searchStringSplit($params->{$key});
 		}
