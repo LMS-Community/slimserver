@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.51 2004/03/11 04:27:05 kdf Exp $
+# $Id: Pages.pm,v 1.52 2004/03/16 01:45:28 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -957,11 +957,12 @@ sub _addSongInfo {
 	$params->{'bitrate'}    = Slim::Music::Info::bitrate($song);
 
 	# handle artwork bits
-	if (defined Slim::Music::Info::coverArt($song, 'cover')) {
+	my ($body, $type, $mtime) =  Slim::Music::Info::coverArt($song,'cover');
+	if (defined($body)) {
 		$params->{'coverart'} = 1;
 	}
-
-	if (defined Slim::Music::Info::coverArt($song, 'thumb')) {
+	($body, $type, $mtime) =  Slim::Music::Info::coverArt($song,'thumb');
+	if (defined $body) {
 		$params->{'coverthumb'} = 1;
 	}
 	
