@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.152 2004/10/14 04:02:14 kdf Exp $
+# $Id: Info.pm,v 1.153 2004/10/19 20:04:47 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1232,7 +1232,7 @@ sub guessTags {
 			my $i = 0;
 			foreach my $match (@matches) {
 				$::d_info && Slim::Utils::Misc::msg("$tags[$i] => $match\n");
-				$match = tr/_/ / if (defined $match);
+				$match =~ tr/_/ / if (defined $match);
 				$match = int($match) if $tags[$i] =~ /TRACKNUM|DISC{1,2}/;
 				$taghash->{$tags[$i++]} = $match;
 			}
