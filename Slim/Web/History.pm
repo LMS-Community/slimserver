@@ -40,6 +40,7 @@ sub hitlist {
 		$form{'artist'}       = $track->artist();
 		$form{'album'} 	      = $track->album();
 		$form{'itempath'}     = $track->url();
+		$form{'itemobj'}      = $track;
 		$form{'odd'}	      = ($itemNumber + 1) % 2;
 		$form{'song_bar'}     = hitlist_bar($params, $playCount, $maxPlayed);
 		$form{'player'}	      = $params->{'player'};
