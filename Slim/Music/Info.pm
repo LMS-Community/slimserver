@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.112 2004/04/29 21:11:09 dean Exp $
+# $Id: Info.pm,v 1.113 2004/04/30 20:44:23 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -127,7 +127,7 @@ my %caseArticlesMemoize = ();
 my %infoCacheItemsIndex;
 
 my $dbname;
-my $DBVERSION = 6;
+my $DBVERSION = 7;
 
 my %artworkCache = ();
 my $artworkDir;
@@ -2744,7 +2744,7 @@ sub isSong {
 
 	$type = contentType($fullpath) unless defined $type;
 
-	if ($Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} eq 'audio') {
+	if ($type && $Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} eq 'audio') {
 		return $type;
 	}
 }
@@ -2784,7 +2784,7 @@ sub isList {
 
 	my $type = contentType($fullpath);
 
-	if ($Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} =~ /list/) {
+	if ($type && $Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} =~ /list/) {
 		return $type;
 	}
 }

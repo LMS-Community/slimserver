@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.38 2004/04/29 21:11:09 dean Exp $
+# $Id: Misc.pm,v 1.39 2004/04/30 20:44:24 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -95,7 +95,7 @@ sub findbin {
 	return $path;	
 }
 
-sub pathFromWinShortcut {
+sub urlFromWinShortcut {
 	my $fullpath = shift;
 	$fullpath = pathFromFileURL($fullpath);
 	my $path = "";
@@ -109,11 +109,11 @@ sub pathFromWinShortcut {
 			# to avoid simple loops, loops involving more than one shortcut are still
 			# possible and should be dealt with somewhere, just not here.
 			if (defined($path) && !$path eq "" && $fullpath !~ /^\Q$path\E/i) {
+				$path = fileURLFromPath($path);
 				#collapse shortcuts to shortcuts into a single hop
 				if (Slim::Music::Info::isWinShortcut($path)) {
-					$path = pathFromWinShortcut($path);
+					$path = urlFromWinShortcut($path);
 				}
-				return $path;
 			} else {
 				$::d_files && msg("Bad path in $fullpath\n");
 				$::d_files && defined($path) && msg("Path was $path\n");
@@ -124,8 +124,8 @@ sub pathFromWinShortcut {
 	} else {
 		$::d_files && msg("Windows shortcuts not supported on non-windows platforms\n");
 	}
-	
-	return "";
+	$::d_files && msg("urlFromWinShortuct: path $path from shortcut $fullpath\n");	
+	return $path;
 }
 	
 sub pathFromFileURL {
@@ -148,7 +148,7 @@ sub pathFromFileURL {
 		# only allow absolute file URLs and don't allow .. in files...
 		# make sure they are in the audiodir or are already in the library...		
 		if (($path !~ /\.\.[\/\\]/) || Slim::Music::Info::isCached($url)) {
-			$file = Slim::Web::HTTP::unescape($path);
+			$file = $uri->file() ;
 		} 
 	} else {
 		msg("pathFromFileURL: $url isn't a file URL...\n");
@@ -167,7 +167,7 @@ sub fileURLFromPath {
 	my $path = shift;
 	my $uri  = URI::file->new($path);
 	$uri->host('');
-	
+	$::d_files && msg("convert path: $path to file URL: $uri\n");	
 	return $uri->as_string;
 }
 
@@ -438,7 +438,7 @@ sub virtualToAbsolute {
 			if (defined($Slim::Utils::Scan::playlistCache{Slim::Utils::Misc::fileURLFromPath($curdir)})) {
 				$curdir = $Slim::Utils::Scan::playlistCache{Slim::Utils::Misc::fileURLFromPath($curdir)}
 			} else {
-				$curdir = pathFromWinShortcut(Slim::Utils::Misc::fileURLFromPath($curdir));
+				$curdir = pathFromFileURL(urlFromWinShortcut(Slim::Utils::Misc::fileURLFromPath($curdir)));
 			}
 		}
 		#continue traversing if curdir is a list

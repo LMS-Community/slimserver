@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.8 2004/04/28 13:10:54 kdf Exp $
+# $Id: Scan.pm,v 1.9 2004/04/30 20:44:24 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -112,7 +112,7 @@ sub addToList {
 	}
 	 	
 	if (Slim::Music::Info::isWinShortcut($playlisturl)) {
-		$playlisturl = Slim::Utils::Misc::pathFromWinShortcut($playlisturl);
+		$playlisturl = Slim::Utils::Misc::urlFromWinShortcut($playlisturl);
 	}
 	
 	# special case, if we try to add a song, then just add it
@@ -360,18 +360,16 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 	} else {
 
 		# it's pointing to a local file...
-
 		if (Slim::Music::Info::isWinShortcut($playlisturl)) {
 			if (defined Slim::Music::Info::cachedPlaylist($playlisturl)) {
 				$playlistpath = ${Slim::Music::Info::cachedPlaylist($playlisturl)}[0];
 			} else {
-				$playlistpath = Slim::Utils::Misc::pathFromWinShortcut($playlisturl);
+				$playlistpath = Slim::Utils::Misc::urlFromWinShortcut($playlisturl);
 				Slim::Music::Info::cachePlaylist($playlisturl, [$playlistpath]);
 			}
 			if ($playlistpath eq "") {
 				return 0;
 			}
-			$playlistpath=Slim::Utils::Misc::fileURLFromPath($playlistpath);
 			if (Slim::Music::Info::isSong($playlistpath) || Slim::Music::Info::isWinShortcut($playlistpath)) {
 				push @$listref , $playlistpath;
 				return 1;
@@ -379,7 +377,6 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		} else {
 			$playlistpath = $playlisturl;
 		}
-		
 		$playlistpath = Slim::Utils::Misc::fixPath($playlistpath);
 		
 		$::d_scan && msg("Gonna try to open playlist $playlistpath\n");

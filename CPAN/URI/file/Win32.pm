@@ -8,16 +8,7 @@ use URI::Escape qw(uri_unescape);
 
 sub extract_authority
 {
-    my $class = shift;
-    return $1 if $_[0] =~ s,^\\\\([^\\]+),,;  # UNC
-    return $1 if $_[0] =~ s,^//([^/]+),,;     # UNC too?
-
-    if ($_[0] =~ s,^([a-zA-Z]:),,) {
-	my $auth = $1;
-	$auth .= "relative" if $_[0] !~ m,^[\\/],;
-	return $auth;
-    }
-    return;
+    return '';
 }
 
 sub extract_path
