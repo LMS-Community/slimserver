@@ -1,4 +1,4 @@
-# $Id: Text.pm,v 1.6 2003/10/27 06:52:09 kdf Exp $
+# $Id: Text.pm,v 1.7 2003/10/27 07:02:53 grotus Exp $
 package Slim::Buttons::Input::Text;
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
@@ -311,13 +311,13 @@ sub init {
 	cleanArray($charsRef);
 	# check for numberLetterRef and set defaults if needed
 	my $numberLetterRef = Slim::Buttons::Common::param($client,'numberLetterRef');
-	if (!defined($charsRef)) {
+	if (!defined($numberLetterRef)) {
 		Slim::Buttons::Common::param($client,'numberLetterRef',\@numberLettersMixed);
-	} elsif (ref($charsRef) ne 'ARRAY') {
-		Slim::Buttons::Common::param($client,'charsRef',\@numberLettersMixed);
+	} elsif (ref($numberLetterRef) ne 'ARRAY') {
+		Slim::Buttons::Common::param($client,'numberLetterRef',\@numberLettersMixed);
 	}
 	# cannot directly clean multidimensional array, this may need to be done in future
-	#cleanArray($charsRef);
+	#cleanArray($numberLetterRef);
 	my $rightIndex = charIndex($charsRef,$rightarrow);
 	Slim::Buttons::Common::param($client,'rightIndex',$rightIndex);
 	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
