@@ -153,7 +153,18 @@ sub read_plugins {
 		if (!$@ && $strings) {
 
 			# flag strings as UTF8
-			$strings = pack "U0C*", unpack "C*", $strings;
+			if ($] > 5.007) {
+
+				$strings = pack "U0C*", unpack "C*", $strings;
+
+			} else {
+
+				# for the 5.6 laggers.
+				if ($Slim::Utils::Misc::locale =~ /^iso-8859/) {
+
+					$strings = Slim::Utils::Misc::utf8toLatin1($strings);
+				}
+			}
 
 			Slim::Utils::Strings::addStrings(\$strings);
 		}
