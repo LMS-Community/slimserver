@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.24 2003/09/03 20:08:09 dean Exp $
+# $Id: HTTP.pm,v 1.25 2003/09/03 20:31:16 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -532,16 +532,16 @@ sub addstreamingresponse {
 	my $address = $peeraddr{$httpclientsock};
 
 	# Use squeezebox's client id if specified, otherwise just the IP
-	my $id = defined($paramref->{'id'}) ? $paramref->{'id'} : $address;
+	my $playerid = defined($paramref->{'player'}) ? $paramref->{'player'} : $address;
 
-	$::d_http && msg("addstreamingresponse: id=$id, address=$address\n");
+	$::d_http && msg("addstreamingresponse: player=$playerid, address=$address\n");
 
-	my $client = Slim::Player::Client::getClient($id);
+	my $client = Slim::Player::Client::getClient($playerid);
 	
 	if (!defined($client)) {
 		$::d_http && msg ("new http client\n");
 		$client = Slim::Player::HTTP->new(
-			$id,
+			$playerid,
 			getpeername($httpclientsock), 
 			$httpclientsock);
 			
