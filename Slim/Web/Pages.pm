@@ -1073,7 +1073,7 @@ sub status {
 
 			$params->{'sleeptime'} = $client->currentSleepTime();
 			$params->{'isplayer'}  = 1;
-			$params->{'volume'}    = int($client->volume() + 0.5);
+			$params->{'volume'}    = int(Slim::Utils::Prefs::clientGet($client, "volume") + 0.5);
 			$params->{'bass'}      = int($client->bass() + 0.5);
 			$params->{'treble'}    = int($client->treble() + 0.5);
 			$params->{'pitch'}     = int($client->pitch() + 0.5);
