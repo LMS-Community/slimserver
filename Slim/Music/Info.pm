@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.21 2003/11/22 18:51:53 dean Exp $
+# $Id: Info.pm,v 1.22 2003/11/26 21:24:37 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1944,7 +1944,7 @@ sub fileLength {
 sub isFile {
 	my $fullpath = shift;
 
-	$fullpath !~ /\.(?:mp2|mp3|m3u|pls|ogg|cue|wav|aiff|aif|m4a|mov)$/i && return 0;
+	$fullpath !~ /\.(?:mp2|mp3|m3u|pls|ogg|cue|wav|aiff|aif|m4a|mov|flac)$/i && return 0;
 
 	my $stat = (-f $fullpath && -r $fullpath ? 1 : 0);
 

@@ -23,8 +23,8 @@ use vars qw(
 	all	=> [@EXPORT, @EXPORT_OK]
 );
 
-# $Id: Info.pm,v 1.4 2003/11/20 16:58:00 dean Exp $
-($REVISION) = ' $Revision: 1.4 $ ' =~ /\$Revision:\s+([^\s]+)/;
+# $Id: Info.pm,v 1.5 2003/11/26 21:24:37 dean Exp $
+($REVISION) = ' $Revision: 1.5 $ ' =~ /\$Revision:\s+([^\s]+)/;
 $VERSION = '1.01';
 
 =pod
@@ -661,7 +661,7 @@ sub get_mp3info {
 	}
 
 	$off = 0;
-	$tot = 4096;
+	$tot = 8192;
 
 	$myseek = sub {
 		seek $fh, $off, 0;
