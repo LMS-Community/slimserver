@@ -259,9 +259,11 @@ add.*						= dead
 add						= exit_add
 
 [INPUT.List]
-arrow_left = exit_left
-arrow_right = exit_right
-play.*						= dead
-play						= exit_play
-add.*						= dead
-add						= exit_add
+arrow_left					= exit_left
+arrow_right					= exit_right
+play.*						= passback
+add.*						= passback
+search.*					= passback
+stop.*						= passback
+pause.*						= passback
+
