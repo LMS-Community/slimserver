@@ -248,7 +248,7 @@
 		<p>[% searchlist_header %][% "COLON" | string %]</p>
 	[% END %]
 	
-	<table cellpadding="0" cellspacing="0" border="0" width="100%">
+	[% IF numresults != '-1' %]<table cellpadding="0" cellspacing="0" border="0" width="100%">
 		<tr>
 			<td class="listing">&nbsp;
 				[% "THIS_ENTIRE_PLAYLIST" | string %]
@@ -268,6 +268,7 @@
 		</tr>
 		[% browse_list %]
 	</table>
+	[% END %]
 
 	[% IF searchlist_pagebar %]
 		<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
