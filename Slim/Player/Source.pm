@@ -1086,6 +1086,12 @@ sub openSong {
 
 		if ($sock) {
 
+			# Refetch the track if we didn't have an object for it the
+			# first time - opening the stream might have created one.
+			if (!defined($track)) {
+				$track    = $ds->objectForUrl($fullpath);
+			}
+
 			# if it's an mp3 stream, then let's stream it.
 			if (Slim::Music::Info::isSong($track)) {
 
