@@ -794,7 +794,9 @@ sub generateHTTPResponse {
 
 		$::d_http && msg("Cover Art asking for: $image\n");
 
-		($imageData, $contentType, $mtime) = $obj->coverArt($image);
+		if ($obj) {
+			($imageData, $contentType, $mtime) = $obj->coverArt($image);
+		}
 
 		if (defined($imageData)) {
 
