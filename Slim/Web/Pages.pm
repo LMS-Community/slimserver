@@ -1359,6 +1359,7 @@ sub livesearch {
 		# Tell the template not to do a livesearch request anymore.
 		$params->{'liveSearch'} = 0;
 		my @results;
+		my $descend = 1;
 		
 		for my $item (@$data) {
 
@@ -1366,7 +1367,11 @@ sub livesearch {
 			$params->{'path'} = 'search.html';
 			push @results, $item->[1];
 
-			_fillInSearchResults($params, $item->[1], undef, []);
+			if ($params->{'type'} eq 'track') {
+				$descend = undef;
+			}
+
+			_fillInSearchResults($params, $item->[1], $descend, []);
 		}
 		
 		$client->param('searchResults',\@results) if defined $client;
