@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.64 2004/02/03 22:07:58 dean Exp $
+# $Id: HTTP.pm,v 1.65 2004/02/04 21:16:52 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -553,7 +553,7 @@ sub closeHTTPSocket {
 	delete($sendMetaData{$httpclientsock});
 	delete($metaDataBytes{$httpclientsock});
 	delete($peeraddr{$httpclientsock});
-	close($httpclientsock);
+	$httpclientsock->close();
 	$connected--;
 }
 
@@ -590,6 +590,12 @@ sub sendstreamingresponse {
 	my $silence = 0;
 	
 	$::d_http && msg("sendstreaming response begun...\n");
+
+	if (($client->model eq 'squeezebox') && ($httpclientsock != $client->streamingsocket())) {
+		$::d_http && msg($client->id() . " We're done streaming this socket to client\n");
+		closeStreamingSocket($httpclientsock);
+		return;
+	}
 	
 	if (!$httpclientsock->connected) {
 		closeStreamingSocket($httpclientsock);

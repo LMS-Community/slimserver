@@ -100,6 +100,8 @@ sub stop {
 	my $client = shift;
 	$client->stream('q');
 	Slim::Networking::Slimproto::stop($client);
+	# disassociate the streaming socket to the client from the client.  HTTP.pm will close the socket on the next select.
+	$client->streamingsocket(undef);
 }
 
 #

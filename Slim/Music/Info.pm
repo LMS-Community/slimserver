@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.72 2004/02/04 06:43:01 kdf Exp $
+# $Id: Info.pm,v 1.73 2004/02/04 21:16:52 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2166,7 +2166,7 @@ sub getImageContent {
 		$::d_info && Slim::Utils::Misc::msg("Couldn't open image $path\n");
 	}
 	
-	defined($$contentref) && length($$contentref) || $::d_http && Slim::Utils::Misc::msg("Image File empty or couldn't read: $path\n");
+	defined($$contentref) && length($$contentref) || $::d_info && Slim::Utils::Misc::msg("Image File empty or couldn't read: $path\n");
 	return $$contentref;
 }
 
