@@ -233,6 +233,26 @@ PLUGIN_NAME
 </pre></blockquote>
 <p><b>One special note, the format of the strings list is very strict. The whitespace must be a tab, not spaces, which is why the tabs are shown above.</b></p>
 <hr>
+<h4>ScreenSavers</h4>
+You can turn any plugin into a custom screensaver by registering your plugin as a screensaver.  The plugin should 
+be used to give the user any settings options or to set the screensaver as active or reset to default.  You can register the screensaver using the following subroutine:
+<pre>
+sub screenSaver() &lbrc;
+	Slim::Buttons::Common::addSaver('SCREENSAVER.saverModeName',
+		getScreensaverFunctions(),
+		\&setScreensaverMode,
+		\&leaveScreensaverMode,
+		string('PLUGIN_SCREENSAVER_NAME'));
+&rbrc;
+</pre>
+<dl>
+<dt>SCREENSAVER.saverModeName</dt><dd>Change this to provide a unique name for your screensaver.  Using the prefix "SCREENSAVER" will indicate to the server that your mode is of the screensaver class, and match the IR mappings from the [screensaver] section of Default.map</dd>
+<dt>getScreensaverFunctions()</dt><dd>This subroutine, just like getFunctions points to the function has for the screensaver mode.</dd>
+<dt>setScreensaverMode</dt><dd>subroutine just like setMode to initialize anything you need for the screensaver mode.</dd>
+<dt>leaveScreensaverMode</dt><dd>subroutine to execute before the mode exits</dd>
+<dt>string('SCREENSAVER_NAME')</dt><dd>SCREENSAVER_NAME should be change to a unique identifier for your plugin name.  This can be the same as your plugin, or something different.  This allows for future nationalisation for the other languages supported by SlimServer.</dd>
+</dl>
+<hr>
 <h4>Summary</h4>
 <p>Using the existing plugins as examples (one appears below) and this document as an explanation of what each section of the plugin can do, you should now be able to start working on a plugin of your own. Remember that this is only a framework to allow you to hook into the SlimServer. There are always many other ways to implement the features of a plugin. As long as your provide the lines from the examples above, the server will try to work with your Plugin. The rest can be just about anything you want, including using any of functions and subroutines within the SlimServer.  Remember, there's more than one way to do it.</p>
 <p>Happy Coding!

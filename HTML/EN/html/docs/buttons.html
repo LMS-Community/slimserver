@@ -98,7 +98,10 @@ B# = 0000f7c6        #BAD! # also not allowed in button names
     The map file is divided up into a number of sections corresponding to the
     various modes of operation, plus a <strong>&#91;common&#93;</strong> section whose
     mappings apply to all modes. Sections start with the name of the section
-    enclosed in square brackets (<strong>&#91;&#93;</strong>).
+    enclosed in square brackets (<strong>&#91;&#93;</strong>). Mode classes, 
+    prefixed by all caps (eg, INPUT.list) will first match to a section headed 
+    by <strong>&#91;INPUT.list&#93;</strong> then, if no matches found will take 
+    functions from an <strong>&#91;input&#93;</strong> section.  
   <p>
     Multiple button names can map to the same function. On the other hand, if
     a particular button name (including pressing style) is repeated within the
@@ -159,6 +162,11 @@ arrow_down = dead #in a different section now, so ok to redefine button names
     button.single or button.double mappings. From that point forward, the mapping
     triggered will be button.hold_release when it is finally determinied that the
     button is no longer being held.
+  </p>
+  <p>
+    Multiple button pressing styles can be included in the mapping with the use of the
+    '*' wildcard. Thus button.* will match all styles.  Specific sytles will override the 
+    for that style.
   </p>
   <hr>
   <p>
