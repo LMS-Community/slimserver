@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.134 2004/07/16 12:55:18 dean Exp $
+# $Id: Info.pm,v 1.135 2004/07/17 16:30:26 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -131,7 +131,7 @@ my %genreCountMemoize = ();
 my %infoCacheItemsIndex;
 
 my $dbname;
-my $DBVERSION = 11;
+my $DBVERSION = 12;
 
 my %artworkCache = ();
 my $artworkDir;
@@ -165,10 +165,12 @@ if (defined @Storable::EXPORT) {
 				my $cacheToStore = {
 					'albumCountMemoize'   => \%albumCountMemoize,
 					'artistCountMemoize'  => \%artistCountMemoize,
+					'artistMixCache'      => \%artistMixCache,
 					'artworkCache'        => \%artworkCache,
 					'caseCache'           => \%caseCache,
 					'genreCache'          => \%genreCache,
 					'genreCountMemoize'   => \%genreCountMemoize,
+					'genreMixCache'       => \%genreMixCache,
 					'infoCache'           => \%infoCache,
 					'songCount'           => \$songCount,
 					'songCountMemoize'    => \%songCountMemoize,
@@ -238,10 +240,12 @@ if (defined @Storable::EXPORT) {
 
 				%albumCountMemoize   = %{$cacheToRead->{'albumCountMemoize'}};
 				%artistCountMemoize  = %{$cacheToRead->{'artistCountMemoize'}};
+				%artistMixCache      = %{$cacheToRead->{'artistMixCache'}};
 				%artworkCache        = %{$cacheToRead->{'artworkCache'}};
 				%caseCache           = %{$cacheToRead->{'caseCache'}};
 				%genreCache          = %{$cacheToRead->{'genreCache'}};
 				%genreCountMemoize   = %{$cacheToRead->{'genreCountMemoize'}};
+				%genreMixCache       = %{$cacheToRead->{'genreMixCache'}};
 				%infoCache           = %{$cacheToRead->{'infoCache'}};
 				%songCountMemoize    = %{$cacheToRead->{'songCountMemoize'}};
 				%sortCache           = %{$cacheToRead->{'sortCache'}};
