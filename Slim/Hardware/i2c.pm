@@ -1,6 +1,6 @@
 package Slim::Hardware::i2c;
 
-# $Id: i2c.pm,v 1.2 2003/07/24 23:14:04 dean Exp $
+# $Id: i2c.pm,v 1.3 2003/07/28 22:28:17 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -25,37 +25,7 @@ my %txqueue;
 sub send {
 	my ($client, $data) = @_;
 
-	$::d_i2c && msg("i2c: enqueueing ".length($data)." bytes\n");
-
-	$txqueue{$client}.=$data;
-
-	# start transmission unless it's already in progress
-	if ( (!defined($outstanding_data{$client})) || !length($outstanding_data{$client})) {
-		$::d_i2c && msg("i2c: beginning transmission\n");
-		sendnextchunk($client);
-	} else {
-		$::d_i2c && msg("i2c: already transmitting; ".
-			"oustanding: ".length($outstanding_data{$client}).", ".
-			"txqueue: ".length($txqueue{$client})."\n");
-	}
-}
-
-sub sendnextchunk {
-	my $client=shift;
-	my $chunk;
-
-	if (!length($txqueue{$client})) {
-		$outstanding_data{$client}='';
-		return;	# done transmitting
-
-	} elsif (length($txqueue{$client}) <= $CHUNKSIZE) {
-		$chunk = $txqueue{$client};
-		$txqueue{$client}='';
-
-	} else {
-		$chunk = substr($txqueue{$client}, 0, $CHUNKSIZE);
-		$txqueue{$client} = substr($txqueue{$client}, $CHUNKSIZE);
-	}
+	$::d_i2c && msg("i2c: sending ".length($data)." bytes\n");
 
 	if (!defined($outstanding_seq{$client})) {
 		$outstanding_seq{$client}=0;
@@ -66,41 +36,10 @@ sub sendnextchunk {
 		}
 	}
 
-	$outstanding_data{$client}=$chunk;
-
-	&retransmit($client);
-}
-
-sub gotAck {
-	my ($client, $seq) = @_;
-
-	$::d_i2c && msg("i2c: got ack $seq\n");
-
-	if ($seq == $outstanding_seq{$client}) {
-		# successful ack, send more
-		Slim::Utils::Timers::killTimers($client, \&retransmit);
-		sendnextchunk($client);
-	} else {
-		# wrong ack, ignore
-		return;
-	}
-}
-
-sub retransmit {
-	my ($client) = @_;
-
 	my $seqpacked = pack("C", $outstanding_seq{$client});
-	my $chunk = $outstanding_data{$client};
-
-	$::d_i2c && msg("i2c: transmitting seq ".$outstanding_seq{$client}.", ".
-		length($chunk)." bytes\n");
-
 	Slim::Networking::Protocol::sendClient($client, '2'.$seqpacked.'                '.
-				$chunk);
+				$data);
 
-	Slim::Utils::Timers::killTimers($client, \&retransmit);
-	Slim::Utils::Timers::setTimer($client, time()+0.250, \&retransmit, ());	
 }
-1;
 
-__END__
+1;

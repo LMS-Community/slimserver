@@ -24,79 +24,13 @@ my $SIMULATE_RX_LOSS  = 0.00;  # packet loss, 0..1
 my $SIMULATE_RX_DELAY = 000;  # delay, milliseconds
 
 #-------- You probably don't want to change this -----------------#
-my $OLDSERVERPORT = 1069;   # Port that 1.2 and earlier clients use
 my $SERVERPORT = 3483;		# IANA-assigned port for the Slim protocol, used in firmware 1.3+
 #-----------------------------------------------------------------#
 
 # Select objects and select array ref returns
 use vars qw(
 	    $selUDPRead
-	    $oldudpsock
 	    $udpsock);
-
-# This is all there is to it - it's like tftp, except that the client requests each
-# chunk, as opposed to acknowlegding the data as we send it. Client handles timeouts.
-sub gotAudioRequest {
-
-# FIXME - it would be nice to have per-client and server-wide statistics on bytes sent,
-# packets dropped, average data rate, etc.
-
-	my ($client, $msg) = @_;
-	
-	my ($wptr) = unpack 'xxn', $msg;
-
-	$::d_protocol_verbose && msgf("Request wptr = $wptr - %04x\n", $wptr);
-
-	if  ($client->waitforstart()) {	# if we're waiting for the client to request the first chunk
-					# of a new stream:
-
-		if ($wptr != 0 ) {
-			# if $wptr!=0 then this is probably a stray packet from the last stream we were playing
-			# just log it and do nothing (it's normal).
-
-			$::d_protocol && msg("Ignoring request from previous stream\n");
-			return;
-
-		} else {
-			$client->waitforstart(0);
-		}
-	}
-
-	# if we're not currently playing anything, just ignore the client.
-	# FIXME - shouldn't we send the stop command?
-	if (Slim::Player::Playlist::playmode($client) ne "play") {
-		$::d_protocol && msg("got a request, but we're not playing anything.\n");
-	}
-
-	my $chunkRef = undef;
-	
-	# packet was dropped, and the client requested a resend.
-	if ($client->prevwptr() == $wptr) {
-		$::d_protocol && msg("Duplicate request: wptr = $wptr\n");
-		$chunkRef = Slim::Player::Playlist::lastChunk($client);
-	} else {
-		$chunkRef = Slim::Player::Playlist::nextChunk($client, Slim::Utils::Prefs::get('udpChunkSize'));
-	}
-
-	if (!defined($chunkRef)) {
-		return;
-	};
-	# pad to a len of 18: 0123456789012345678
-	my $header = pack    'axn xxxxxxxxxxxxxxx', ('m', $wptr);
-
-	my $append = '';
-	
-	# We must send an even number of bytes.
-	if ((length($$chunkRef) % 2) != 0) {
-		$append = '.';
-	}
-
-	sendClient($client, $header . $$chunkRef . $append);
-
-	$::d_protocol_verbose && msg(Slim::Player::Client::id($client) . " " . Time::HiRes::time() . " Sending ".length($$chunkRef . $append)." bytes. wptr = $wptr\n");
-
-	$client->prevwptr($wptr);
-}
 
 sub sendClient {
 	my $client = shift;
@@ -132,17 +66,11 @@ sub processMessage {
 		
 		Slim::Hardware::IR::enqueue($client, $irCodeBytes, $irTime);
 
-	} elsif ($type eq 'r') {
-
-		gotAudioRequest($client, $msg);
-
-		Slim::Player::Playlist::checkSync($client);
-
 	} elsif ($type eq 'h') {
 
 	} elsif ($type eq '2') {
 
-		Slim::Hardware::i2c::gotAck($client, unpack('xC',$msg));
+		# ignore SLIMP3's i2c acks
 
 	} elsif ($type eq 'a') {
 
@@ -178,19 +106,6 @@ sub init {
 	$selUDPRead->add($udpsock); #to allow full processing of all pending UDP requests
 	$::selRead->add($udpsock);
 
-	$oldudpsock = IO::Socket::INET->new(
-		Proto     => 'udp',
-		LocalPort => $OLDSERVERPORT,
-		LocalAddr => $main::localClientNetAddr
-	);
-
-	if (!$oldudpsock) {
-		warn "Unable to open UDP socket on port $OLDSERVERPORT.  Make sure all clients are upgraded to version 1.3 or above.";
-	} else {
-		$selUDPRead->add($oldudpsock); #to allow full processing of all pending UDP requests
-		$::selRead->add($oldudpsock);
-	}
-	
 # say hello to the old clients that we might remember...
 	my $clients = Slim::Utils::Prefs::get("clients");
 	if (defined($clients)) {
@@ -213,7 +128,7 @@ sub idle {
 	
 	my $start = Time::HiRes::time();
 	# handle UDP activity...
-	while ($sock=pending()) { #process all pending UDP messages on both old and new UDP ports
+	while ($sock=pending()) { 			#process all pending UDP messages
 		my $now = Time::HiRes::time();
 		if (($now - $start) > 0.5) {
 			$::d_perf && msg("stayed in idle too long...\n");

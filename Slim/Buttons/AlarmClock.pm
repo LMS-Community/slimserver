@@ -13,6 +13,7 @@ package Slim::Buttons::AlarmClock;
 
 use Slim::Player::Playlist;
 use Slim::Utils::Strings qw (string);
+use Time::HiRes;
 
 my $interval = 1; # check every x seconds
 my @browseMenuChoices;

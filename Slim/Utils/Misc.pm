@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.2 2003/07/24 23:14:04 dean Exp $
+# $Id: Misc.pm,v 1.3 2003/07/28 22:28:18 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ BEGIN {
 
 	if ($@ =~ /Can't locate/) {
 
-		unshift @INC, catdir($Bin,'lib','CPAN','arch',$Config::Config{archname});
+		unshift @INC, catdir($Bin,'CPAN','arch',$Config::Config{archname});
 
 		eval "use Time::HiRes";
 
