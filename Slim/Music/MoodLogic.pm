@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.27 2004/12/17 10:09:33 kdf Exp $
+#$Id: MoodLogic.pm,v 1.28 2005/01/04 02:38:26 kdf Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -154,8 +154,6 @@ sub isMusicLibraryFileChanged {
 sub checker {
 	return unless (useMoodLogic());
 	
-	Slim::Music::Import::addImporter('moodlogic');
-
 	if (!stillScanning() && isMusicLibraryFileChanged()) {
 		startScan();
 	}
@@ -344,6 +342,7 @@ sub exportFunction {
 		$cacheEntry{'MOODLOGIC_ARTIST_MIXABLE'} = $mixer->Seed_AID_Mixable();
 		$cacheEntry{'MOODLOGIC_GENRE_MIXABLE'} = $genre_hash{$browser->FLT_Song_MGID($i)}[1] if (defined $genre_hash{$browser->FLT_Song_MGID($i)});
 		$::d_moodlogic && msg("Exporting song $song_id: $filename\n");
+
 		Slim::Music::Info::updateCacheEntry($filename, \%cacheEntry);
 
 		if (Slim::Utils::Prefs::get('lookForArtwork')) {

@@ -19,6 +19,7 @@ sub startScan {
 
 	if (!defined(Slim::Utils::Prefs::get('audiodir')) or not -d Slim::Utils::Prefs::get("audiodir")) {
 		$::d_info && msg("Skipping music folder scan - audiodir is undefined.\n");
+		doneScanning();
 		return;
 	}
 
