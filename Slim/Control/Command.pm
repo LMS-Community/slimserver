@@ -665,7 +665,7 @@ sub execute {
 
 			if ($p0 eq 'title') {
 
-				$p1 = Slim::Music::Info::getCurrentTitle($track->url());
+				$p1 = Slim::Music::Info::getCurrentTitle($client, $track->url());
 
 			} else {
 
