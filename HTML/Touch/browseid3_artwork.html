@@ -1,11 +1,11 @@
 <div align="center" width="100%" style="float:left">
 <font size="+3"><center>
 
-<table class="even" cellpadding="12" cellspacing="0" border="0" align="left"><tr><td width="{size}">
+<table class="even" cellpadding="5" cellspacing="0" border="0" align="left"><tr><td width="{size}">
 
 [IF coverthumb]
 <center><table border="0" cellspacing="0" cellpadding="0"><td width="{size}">
-<a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}&artwork={artwork}" target="screen">
+<a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}&artwork={artwork}">
 <center><img src="/music/{%thumbartpath}/thumb.jpg" border="0" height="{size}" width="{size}" alt="{&album}" STYLE="border: dashed #DDDDDD 10px"/></a></tr></td></table>[/IF]
 
 [IFN coverthumb]
@@ -25,29 +25,35 @@
 <nobr><a href="instant_mix.html?song={%item}&genre={%genre}&artist={%artist}&album={%album}&player={%player}">
 <img src="html/images/b_mix.gif" width=13 height=13 alt="[S MOODLOGIC_MIX]"></a></nobr>[/IF]
 
-</td><td align="right" width="13" class="even">
-			
+</td></tr><center><table cellspacing="0" cellpadding="0"><tr><td align="center">			
+
+[IF descend]
+
+<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=loadalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}">
+<font class="actiontext">[S PLAY]</a>[/IF]
+
+[IFN descend]
+<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=play&p2={%itempath}&player={%player}">
+<font class="actiontext">[S PLAY]</a>[/IFN]
+<font class="actiontext">|
+
+<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=insertalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}">
+<font class="actiontext">[S NEXT]</a>
+
+</td></tr><tr><td align="center">
 
 
 [IF descend]
-<nobr>
-<a href="status.html?p0=playlist&p1=loadalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="screen">
-<font size="-1">[S PLAY]</a></nobr>[/IF]
+<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}">
+<font class="actiontext">[S ADD]</a>[/IF]
 
-[IFN descend]<nobr>
-<a href="status.html?p0=playlist&p1=play&p2={%itempath}&player={%player}" target="screen">
-<font size="-1">[S PLAY]</a></nobr>[/IFN]</td>
-<td><font size="-1">&nbsp;|&nbsp;</td>
-<td  align="right" width="13" class="even">
+[IFN descend]
+<a href="{webroot}{path}?{queryparams}p0=playlist&p1=append&p2={%itempath}&player={%player}">
+<font class="actiontext">[S ADD]</a>[/IFN]
 
-[IF descend]
-<nobr>
-<a href="status.html?p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="screen">
-<font size="-1">[S ADD]</a></nobr>[/IF]
 
-[IFN descend]<nobr>
-<a href="status_header.html?p0=playlist&p1=append&p2={%itempath}&player={%player}" target="screen">
-<font size="-1">[S ADD]</a></nobr>[/IFN]
+|
 
+<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=deletealbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}"><font class="actiontext">[S DELETE]</a>
 
 </td></table></td></tr></table></div>

@@ -5,9 +5,9 @@
 <tr [IFN odd]bgcolor="#EEEEEE"[/IFN]>
   <td>
       [IF anchor]<a name="{anchor}"></a>[/IF]
-      [IF  descend]<a href="browseid3.html?song={%song}&artist={%artist}&album={%album}&genre={%genre}&player={%player}">
+      [IF  descend]&nbsp;<a href="browseid3.html?song={%song}&artist={%artist}&album={%album}&genre={%genre}&player={%player}">
 <font class="itemtext">{title}</a>[/IF]
-      [IFN descend]<a href="songinfo.html?songurl={%itempath}&player={%player}"><font class="itemtext">:{title}</a>[/IFN]
+      [IFN descend]&nbsp;<a href="songinfo.html?songurl={%itempath}&player={%player}"><font class="itemtext">:{title}</a>[/IFN]
   </td>
 <td align="right" style="padding-right:15px;">
       
@@ -17,17 +17,35 @@
 
 
 [IFN descend]<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=play&p2={%itempath}&player={%player}"><font class="actiontext">[S PLAY]</a>[/IFN]
+
+|&nbsp;
+
+[IF  descend]
+<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=insertalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}">
+<font class="actiontext">[S NEXT]</a>[/IF]
  
 
-[IFN descend]|&nbsp;<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=insert&p2={%itempath}&player={%player}"><font class="actiontext">[S NEXT]</a>[/IFN]
+[IFN descend]
+<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=insert&p2={%itempath}&player={%player}"><font class="actiontext">[S NEXT]</a>[/IFN]
 
+|&nbsp;
 
-[IF descend]|<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}">
+[IF descend]
+<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}">
 <font class="actiontext">[S ADD]</a>[/IF]
       
 
-[IFN descend]|&nbsp;<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=append&p2={%itempath}&player={%player}"><font class="actiontext">[S ADD]</a>[/IFN]
+[IFN descend]
+<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=append&p2={%itempath}&player={%player}"><font class="actiontext">[S ADD]</a>[/IFN]
 </nobr>
+
+|&nbsp;
+
+<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=deletealbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}"><font class="actiontext">[S DELETE]</a>
+
+
+
+
 </td>
 
 </tr>

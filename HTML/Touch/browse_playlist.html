@@ -8,24 +8,32 @@
 [IF RENAME_WARNING]<p><b>[S NOTE]</b> [S RENAME_WARNING]</p>[/IF]
 
 
-<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
+<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
     <tr><td><a href="browse.html?player={%player}&dir=__playlists"><font class="pagebartext">&nbsp;&nbsp;[S SAVED_PLAYLISTS]</a>
         {pwd_list}</td></tr>
 </table>
 
 [IF browselist_pagebar]<font class="pagebartext">{browselist_pagebar}[/IF][IF browselist_header]&nbsp;|&nbsp;{browselist_header}</p>[/IF]
-<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#FFFFFF">
-<tr><td height="20"></td></tr></table>
+
+<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
+<tr><td height="40" width="50" align="left"><img src="html/images/leftcorner.gif"></td><td>&nbsp;</td><td width="40" align="right"><img src="html/images/rightcorner.gif"></td></tr></table>
+
+<table border="0" width="100%" bgcolor="#FFFFFF"><tr><td height="15"></td></tr></table">
+
 
 
 
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%" >
-       [IF playlistname]<tr><td><font class="itemtext">[S THIS_ENTIRE_PLAYLIST]</td>
+       [IF playlistname]<tr><td><font class="itemtext">&nbsp;[S THIS_ENTIRE_PLAYLIST]</td>
        <td width="11" align="right" style="padding-right:15px;"><nobr><a href="status.html?p0=playlist&p1=load&p2={%dir}&player={%player}">
        <font class="actiontext">[S PLAY]</a>
-       <font class="actiontext">|&nbsp;<a href="status.html?p0=playlist&p1=add&p2={%dir}&player={%player}">
-       <font class="actiontext">[S ADD]</a></nobr></td></tr>[/IF]
+<font class="actiontext">|
+
+<a href="status.html?p0=playlist&p1=add&p2={%dir}&player={%player}">
+<font class="actiontext">[S ADD]</a></nobr>
+
+</td></tr>[/IF]
        {browse_list}
 </table>
 [IF browselist_pagebar]<font class="pagebartext">{browselist_pagebar}[/IF]

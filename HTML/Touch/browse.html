@@ -4,7 +4,7 @@
 [INCLUDE pageheader.html]
 [INCLUDE menu.html]
 
-<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
+<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
        <tr><td><a href="browse.html?dir=&player={%player}"><font class="pagebartext">&nbsp;&nbsp;[S MUSIC]</a>
        {pwd_list}</td>
        [IFN dir]<td width="11" align="right" style="padding-right:15px;"><nobr><a href="status.html?p0=playlist&p1=load&p2=&player={%player}"><font class="actiontext">[S PLAY]</a>
@@ -14,11 +14,21 @@
 <tr><td>
 
 [IF browselist_pagebar]<p><font class="pagebartext">&nbsp;{browselist_pagebar}[/IF][IF browselist_header]&nbsp;|&nbsp;<font class="pagebartext">{browselist_header}</p>[/IF]</td></tr></table>
+
+<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
+<tr><td height="40" width="50" align="left"><img src="html/images/leftcorner.gif"></td><td>&nbsp;</td><td width="40" align="right"><img src="html/images/rightcorner.gif"></td></tr></table>
+
+<table border="0" width="100%" bgcolor="#FFFFFF"><tr><td height="10"></td></tr></table>
+
+
+
+
 [EQ badpath 1]
     [IF playlist][S NEED_PLAYLIST_PATH][/IF]
     [IFN playlist][S NEED_PATH][/IFN]
     <p><a href="setup.html?page=server&player={%player}">[S CLICK_HERE]</a> [S TO_GO_TO_SERVER_SETTINGS]</p>
 [/EQ]
+
 [IF coverart]
     <p><center>
     <img src="/music/{%coverartpath}/cover.jpg" width="150" STYLE="border: dashed #666666 15px"></a>
@@ -31,8 +41,12 @@
 </center>
 
 [IF browselist_pagebar]
-<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#C5C5C5">
-<tr><td>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
+<tr><td height="20"></td></tr></table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#EEEEEE">
+<tr><td width="40" height="40" align="left"><img src="html/images/lefttopcorner.gif"></td><td>&nbsp;</td><td width="40" height="40" align="right"><img src="html/images/righttopcorner.gif"></td></tr>
+<tr>
+<td colspan="2">
 <font class="pagebartext">&nbsp;{browselist_pagebar}
 [/IF]
 

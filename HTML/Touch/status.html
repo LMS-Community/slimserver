@@ -25,19 +25,22 @@ A { text-decoration:none }
 [IF modepause][S PAUSED_ON][/IF]
 [IF modestop][S STOPPED_ON][/IF]
 [IF currentsong]<b>{currentsong}</b>&nbsp;[S OUT_OF]<b>&nbsp;{songcount}</b>&nbsp;[/IF]
-</font></td>
+</font>
+<a href="status.html?p0=playlist&p1=zap&p2={thissongnum}&player={%player}&start={start}">[zap]</a>
+<font class="actiontext">
+</td>
 
 <td rowspan="6"><td width="5"></td>
 
 <td rowspan="6" colspan="5">	   
 
 [IF coverart]
-<a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}"><p align="right"><img src="/music/{%itempath}/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a>
+<a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}"><p align="right"><img src="/music/{%itempath}/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a></p>
 [/IF]
    
 
 [IFN coverart]
-<p align="right"><img src="html/images/nocoverart.gif" height="220" STYLE="border: dashed #666666 15px">
+<p align="right"><img src="html/images/nocoverart.gif" height="220" STYLE="border: dashed #666666 15px"></p>
 [/IFN]
 
 </td>
@@ -46,273 +49,273 @@ A { text-decoration:none }
 </tr>
 
 <tr><td height="10"></td></tr>
-<tr><td height="50"></td><td><p align="left"><font class="actiontext">[S TITLE]:&nbsp;&nbsp;</td>
+<tr><td height="50"></td><td><p align="left"><font class="actiontext">[S TITLE]:&nbsp;&nbsp;</p></td>
 
 [IF songtitle]<td width="500"><a href="songinfo.html?songurl={%itempath}&player={%player}" style="text-decoration:none"><font class="itemtext">{songtitle}</a></td>[/IF]
 
-<tr><td></td><td height="55"><p align="left"><font class="actiontext">[S ARTIST]:&nbsp;&nbsp;</td>
+<tr><td></td><td height="55"><p align="left"><font class="actiontext">[S ARTIST]:&nbsp;&nbsp;</p></td>
    
 [IF artist]<td><a href="browseid3.html?genre=*&artist={%artist}&player={%player}" style="text-decoration:none"><font class="itemtext">{artist}</a></td>
 [/IF]
 </tr><tr>
           
-<td height="55"></td><td><p align="left"><font class="actiontext">[S ALBUM]:&nbsp;&nbsp;</td>
+<td height="55"></td><td><p align="left"><font class="actiontext">[S ALBUM]:&nbsp;&nbsp;</p></td>
 <td>[IF album]<a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" style="text-decoration:none"><font class="itemtext">{album}</a></td></tr>
 [/IF]
 
-<tr><td height="55"></td><td><p align="left"><font class="actiontext">[S GENRE]:&nbsp;&nbsp;</td>
-[IF genre]<td><a href="browseid3.html?genre={%genre}&player={%player}" style="text-decoration:none"><class="itemtext">{genre}</a></td>
+<tr><td height="55"></td><td><p align="left"><font class="actiontext">[S GENRE]:&nbsp;&nbsp;</p></td>
+[IF genre]<td><a href="browseid3.html?genre={%genre}&player={%player}" style="text-decoration:none"><font class="itemtext">{genre}</a></td>
 [/IF]
 
+</tr>
+<tr><td colspan="2"><p align="left"><img src="html/images/leftcorner.gif" border="0" width="40" height="40"></p></td>
+<td colspan="7"><p align="left">[IF player_chooser_list]<form method="get" action="{webroot}{path}"><select name="player"onchange="submit()">{player_chooser_list}</select></form>[/IF]
+</td>
+<td colspan="3"><p align="right"><img src="html/images/rightcorner.gif" border="0" width="40" height="40"></p></td>
 
-<tr><td colspan="2"><p align="left"><img src="html/images/leftcorner.gif" border="0" width="40" height="40"></td>
-<td colspan="7"></td>
-<td colspan="3"><p align="right"><img src="html/images/rightcorner.gif" border="0" width="40" height="40"></td>
-
-
-</tr></table>
-
-
-
-<table width=100% bgcolor="#FFFFFF" border="0">
-<tr align="center"><td>
-
-<a href="status.html?p0=play&player={%player}">
-[IF modeplay]
-[EQ rateval 1]<img src="html/images/play_active.gif" border="0" width="55" height="55">[/EQ]
-[NE rateval 1]<img src="html/images/play.gif" border="0" width="55" height="55">[/NE]
-[/IF]
+</tr>
 
 
-[IFN modeplay]<img src="html/images/play.gif" border="0">[/IFN]</a></td>
-        
-<td><a href="status.html?p0=pause&player={%player}">
-[IF modepause]<img src="html/images/pause_active.gif" border="0" width="55" height="55">[/IF]
-[IFN modepause]<img src="html/images/pause.gif" border="0" width="55" height="55">[/IFN]</a></td>
-        
-<td><a href="status.html?p0=stop&player={%player}">
-[IF modestop]<img src="html/images/stop_active.gif" border="0" width="55" height="55">[/IF]
-[IFN modestop]<img src="html/images/stop.gif" border="0" width="55" height="55">[/IFN]</a></td>   
-        
-<td><a href="status.html?p0=playlist&p1=jump&p2=-1&player={%player}" onMouseDown="document.prev.src = 'html/images/prev_active.gif';">
-<img src="html/images/prev.gif" border="0" name="prev" width="55" height="55"></a></td>
-      
-<td>
-[LT rateval 0]<a href="status.html?p0=rate&p1=1&player={%player}&start={start}">
-<img src="html/images/rew_active.gif" border="0" name="rew" width="55" height="55">[/LT]
+</table>
+<table bgcolor="#FFFFFF" cellpadding="0" cellspacing="0" border="0">
+<tr><td height="10"></td></tr></table>
 
-[GT rateval 0]<a href="status.html?p0=rate&p1=-2&player={%player}&start={start}" onMouseDown="document.rew.src = 'html/images/rew_active.gif';">
-<img src="html/images/rew.gif" border="0" name="rew" width="55" height="55">[/GT]</a></td>
-
-<td>
-[GT rateval 1]<a href="status.html?p0=rate&p1=1&player={%player}&start={start}" onMouseDown="document.ffw.src = 'html/images/ffw_active.gif';">
-<img src="html/images/ffw_active.gif" border="0" name="ffw" width="55" height="55">[/GT]
-
-[LT rateval 2]<a href="status.html?p0=rate&p1=2&player={%player}&start={start}" onMouseDown="document.ffw.src = 'html/images/ffw_active.gif';">
-<img src="html/images/ffw.gif" border="0" name="ffw" width="55" height="55">[/LT]</a></td>
-
-<td><a href="status.html?p0=playlist&p1=jump&p2=%2b1&player={%player}" onMouseDown="document.next.src = 'html/images/next_active.gif';">
-<img src="html/images/next.gif" border="0" name="next" width="55" height="55"></a></td>
-
-</tr></table>
-
-
-
-
-
-<table width="100%" bgcolor="#FFFFFF" border="0">
-<tr><td height="10"></td></tr>
-[IF isplayer]<tr>
-	<td valign="bottom"><img src="html/images/vol_symbol.gif"></td>
-	<td>
-
-<a href="status.html?p0=mixer&p1=volume&p2=5&player={%player}&start={start}" style="text-decoration:none">
-[EQ volume 5]<img src="html/images/1_active.gif" border="0" width="50" height="60">[/EQ]
-[NE volume 5]<img src="html/images/1.gif" border="0" width="50" height="60">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=volume&p2=10&player={%player}&start={start}" style="text-decoration:none">
-[EQ volume 10]<img src="html/images/2_active.gif" border="0" width="50" height="60">[/EQ]
-[NE volume 10]<img src="html/images/2.gif" border="0" width="50" height="60">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=volume&p2=15&player={%player}&start={start}" style="text-decoration:none">
-[EQ volume 15]<img src="html/images/3_active.gif" border="0" width="50" height="60">[/EQ]
-[NE volume 15]<img src="html/images/3.gif" border="0" width="50" height="60">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=volume&p2=20&player={%player}&start={start}" style="text-decoration:none">
-[EQ volume 20]<img src="html/images/4_active.gif" border="0" width="50" height="60">[/EQ]
-[NE volume 20]<img src="html/images/4.gif" border="0" width="50" height="60">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=volume&p2=30&player={%player}&start={start}" style="text-decoration:none">
-[EQ volume 30]<img src="html/images/5_active.gif" border="0" width="50" height="60">[/EQ]
-[NE volume 30]<img src="html/images/5.gif" border="0" width="50" height="60">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=volume&p2=40&player={%player}&start={start}" style="text-decoration:none">
-[EQ volume 40]<img src="html/images/6_active.gif" border="0" width="50" height="60">[/EQ]
-[NE volume 40]<img src="html/images/6.gif" border="0" width="50" height="60">[/NE]</a>
-       
-
+<script language="JavaScript">
 <!--
-This piece of code prevents you from scaring your grandmother to death in the middle of the night :)
+	var _progressEnd = [IF songduration]{songduration}+8[/IF][IFN songduration]{refresh}[/IFN];
+	var _progressAt = [IF songtime]{songtime}[/IF][IFN songtime]0[/IFN];
+	var p = 1;
+
+// Update the progress dialog with the current state
+function ProgressUpdate()&lbrc;[IF modeplay]_progressAt++;[/IF]	
+	if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
+	if (document.all)
+		&lbrc;
+			p = (document.body.clientWidth * 0.8 / _progressEnd) * _progressAt;
+			//document.all.progressBar.innerWidth = p+" ";
+			eval("document.progressBar.width=p");
+		&rbrc;
+
+	else if (document.getElementById)
+		&lbrc;
+			p = (document.width * 0.8 / _progressEnd) * _progressAt;
+			document.getElementById("progressBar").width=p+" ";
+			//eval("document.progressBar.width=p");
+		&rbrc;
+			setTimeout("ProgressUpdate()", 1000);
+		&rbrc;
+
+function Click()
+	&lbrc;
+		if (document.all||document.getElementById)
+		document.write('<center><table width="80%" border="1" cellspacing="0" cellpadding="0" style="border-color:#EEEEEE;"><td height="5"><img id="progressBar" 		name="progressBar" src="html/images/progress.gif" width="1" height="5"></td></table>');
+		ProgressUpdate()
+	&rbrc;
+
+if (document.all||document.getElementById)
+	Click()
+	else
+		window.onload=Click
+
 -->
+
+</script>
+
+<table width=100% bgcolor="#FFFFFF" border="0" cellspacing="0" cellpadding="0">
+<tr align="center">
+
+<td height="70" onclick="location.href='status.html?p0=play&player={%player}'">
+[IF modeplay]<img src="html/images/play[EQ rateval 1]_active[/EQ].gif" border="0" width="55" height="55">[/IF]
+[IFN modeplay]<img src="html/images/play.gif" border="0">[/IFN]</td>
+        
+<td onclick="location.href='status.html?p0=pause&player={%player}'">
+<img src="html/images/pause[IF modepause]_active[/IF].gif" border="0" width="55" height="55"></td>
+        
+<td onclick="location.href='status.html?p0=stop&player={%player}'">
+<img src="html/images/stop[IF modestop]_active[/IF].gif" border="0" width="55" height="55"></td>   
+        
+<td onclick="location.href='status.html?p0=playlist&p1=jump&p2=-1&player={%player}'" onMouseDown="document.prev.src = 'html/images/prev_active.gif';">
+<img src="html/images/prev.gif" border="0" name="prev" width="55" height="55"></td>
+      
+<td onclick="location.href='status.html?p0=rate&p1=-2&player={%player}&start={start}'" onMouseDown="document.rew.src = 'html/images/rew_active.gif';">
+<img src="html/images/rew[LT rateval 0]_active[/LT].gif" border="0" name="rew" width="55" height="55"></td>
+
+<td onclick="location.href='status.html?p0=rate&p1=2&player={%player}&start={start}'" onMouseDown="document.ffw.src = 'html/images/ffw_active.gif';">
+<img src="html/images/ffw[GT rateval 1]_active[/GT].gif" border="0" name="ffw" width="55" height="55"></td>
+
+<td onclick="location.href='status.html?p0=playlist&p1=jump&p2=%2b1&player={%player}'" onMouseDown="document.next.src = 'html/images/next_active.gif';">
+<img src="html/images/next.gif" border="0" name="next" width="55" height="55"></td>
+
+</tr></table>
+
+
+<table><tr><td height="10"></td></tr></table>
+<p align="left">
+[IF isplayer]
+<table bgcolor="#FFFFFF" border="0" cellspacing="0" cellpadding="3">
+<tr><td valign="bottom" height="70" width="100"><img src="html/images/vol_symbol.gif"></td>
+
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=5&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ volume 5]_active[/EQ].gif" border="0" width="50" height="6"></td>
+       
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=10&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ volume 10]_active[/EQ].gif" border="0" width="50" height="12"></td>
+
+
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=15&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ volume 15]_active[/EQ].gif" border="0" width="50" height="18"></td>
+
+
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=20&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ volume 20]_active[/EQ].gif" border="0" width="50" height="24"></td>
+
+
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=30&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ volume 30]_active[/EQ].gif" border="0" width="50" height="30"></td>
+
+
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=40&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ volume 40]_active[/EQ].gif" border="0" width="50" height="36"></td>       
+
+
 
 [GT volume 39]
 
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=50&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ volume 50]_active[/EQ].gif" border="0" width="50" height="42"></td>
 
-<a href="status.html?p0=mixer&p1=volume&p2=50&player={%player}&start={start}" style="text-decoration:none">
-[EQ volume 50]<img src="html/images/7_active.gif" border="0" width="50" height="60">[/EQ]
-[NE volume 50]<img src="html/images/7.gif" border="0" width="50" height="60">[/NE]</a>
 
-<a href="status.html?p0=mixer&p1=volume&p2=60&player={%player}&start={start}" style="text-decoration:none">
-[EQ volume 60]<img src="html/images/8_active.gif" border="0" width="50" height="60">[/EQ]
-[NE volume 60]<img src="html/images/8.gif" border="0" width="50" height="60">[/NE]</a>
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=60&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ volume 60]_active[/EQ].gif" border="0" width="50" height="48"></td>
 
-<a href="status.html?p0=mixer&p1=volume&p2=80&player={%player}&start={start}" style="text-decoration:none">
-[EQ volume 80]<img src="html/images/9_active.gif" border="0" width="50" height="60">[/EQ]
-[NE volume 80]<img src="html/images/9.gif" border="0" width="50" height="60">[/NE]</a>
 
-<a href="status.html?p0=mixer&p1=volume&p2=100&player={%player}&start={start}" style="text-decoration:none">
-[EQ volume 100]<img src="html/images/10_active.gif" border="0" width="50" height="60">[/EQ]
-[NE volume 100]<img src="html/images/10.gif" border="0" width="50" height="60">[/NE]</a>
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=80&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ volume 80]_active[/EQ].gif" border="0" width="50" height="54"></td>
 
+
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=100&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ volume 100]_active[/EQ].gif" border="0" width="50" height="60"></td>
 
 [/GT]
+</tr>
+</table>
+</p>
+[/IF]
 
 
-[LT volume 40]
-<img src="html/images/trans.gif" border="0" width="50" height="60">
-<img src="html/images/trans.gif" border="0" width="50" height="60">
-<img src="html/images/trans.gif" border="0" width="50" height="60">
-<img src="html/images/trans.gif" border="0" width="50" height="60">
-[/LT]
+<br>
+<table width="100%" border="0" cellspacing="0" cellpadding="4">
+<tr><td width="100"><img src="html/images/bass_symbol.gif"></td>
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=10&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ bass 10]_active[/EQ].gif" border="0" width="25" height="3"></td>
 
 
-</td></tr>
-</font></td></tr>[/IF]
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=20&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ bass 20]_active[/EQ].gif" border="0" width="25" height="6"></td>
 
 
-<tr><td height="45"></td></tr>
-	
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=30&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ bass 30]_active[/EQ].gif" border="0" width="25" height="9"></td>
 
-<td><img src="html/images/bass_symbol.gif"></td>
-<td>
-       
-<a href="status.html?p0=mixer&p1=bass&p2=10&player={%player}&start={start}">
-[EQ bass 10]<img src="html/images/bt1_active.gif" border="0" width="25" height="30">[/EQ]
-[NE bass 10]<img src="html/images/bt1.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=bass&p2=20&player={%player}&start={start}">
-[EQ bass 20]<img src="html/images/bt2_active.gif" border="0" width="25" height="30">[/EQ]
-[NE bass 20]<img src="html/images/bt2.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=bass&p2=30&player={%player}&start={start}">
-[EQ bass 30]<img src="html/images/bt3_active.gif" border="0" width="25" height="30">[/EQ]
-[NE bass 30]<img src="html/images/bt3.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=bass&p2=40&player={%player}&start={start}">
-[EQ bass 40]<img src="html/images/bt4_active.gif" border="0" width="25" height="30">[/EQ]
-[NE bass 40]<img src="html/images/bt4.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=bass&p2=50&player={%player}&start={start}">
-[EQ bass 50]<img src="html/images/bt5_active.gif" border="0">[/EQ]
-[NE bass 50]<img src="html/images/bt5.gif" border="0">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=bass&p2=60&player={%player}&start={start}">
-[EQ bass 60]<img src="html/images/bt6_active.gif" border="0" width="25" height="30">[/EQ]
-[NE bass 60]<img src="html/images/bt6.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=bass&p2=70&player={%player}&start={start}">
-[EQ bass 70]<img src="html/images/bt7_active.gif" border="0" width="25" height="30">[/EQ]
-[NE bass 70]<img src="html/images/bt7.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=bass&p2=80&player={%player}&start={start}">
-[EQ bass 80]<img src="html/images/bt8_active.gif" border="0" width="25" height="30">[/EQ]
-[NE bass 80]<img src="html/images/bt8.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=bass&p2=90&player={%player}&start={start}">
-[EQ bass 90]<img src="html/images/bt9_active.gif" border="0" width="25" height="30">[/EQ]
-[NE bass 90]<img src="html/images/bt9.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=bass&p2=100&player={%player}&start={start}">
-[EQ bass 100]<img src="html/images/bt10_active.gif" border="0" width="25" height="30">[/EQ]
-[NE bass 100]<img src="html/images/bt10.gif" border="0" width="25" height="30">[/NE]</a>
-</font></td></tr>
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=40&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ bass 40]_active[/EQ].gif" border="0" width="25" height="12"></td>
+
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=50&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ bass 50]_active[/EQ].gif" border="0" width="25" height="15"></td>
+
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=60&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ bass 60]_active[/EQ].gif" border="0" width="25" height="18"></td>
+
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=70&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ bass 70]_active[/EQ].gif" border="0" width="25" height="21"></td>
+
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=80&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ bass 80]_active[/EQ].gif" border="0" width="25" height="24"></td>
+
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=90&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ bass 90]_active[/EQ].gif" border="0" width="25" height="27"></td>
+
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=100&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ bass 100]_active[/EQ].gif" border="0" width="25" height="30"></td>
+<td></td>
+</tr></table>
 
 
 
-<tr><td><img src="html/images/treble_symbol.gif"></td>
-<td>
-       
-<a href="status.html?p0=mixer&p1=treble&p2=10&player={%player}&start={start}">
-[EQ treble 10]<img src="html/images/bt1_active.gif" border="0" width="25" height="30">[/EQ]
-[NE treble 10]<img src="html/images/bt1.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=treble&p2=20&player={%player}&start={start}">
-[EQ treble 20]<img src="html/images/bt2_active.gif" border="0" width="25" height="30">[/EQ]
-[NE treble 20]<img src="html/images/bt2.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=treble&p2=30&player={%player}&start={start}">
-[EQ treble 30]<img src="html/images/bt3_active.gif" border="0" width="25" height="30">[/EQ]
-[NE treble 30]<img src="html/images/bt3.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=treble&p2=40&player={%player}&start={start}">
-[EQ treble 40]<img src="html/images/bt4_active.gif" border="0" width="25" height="30">[/EQ]
-[NE treble 40]<img src="html/images/bt4.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=treble&p2=50&player={%player}&start={start}">
-[EQ treble 50]<img src="html/images/bt5_active.gif" border="0" width="25" height="30">[/EQ]
-[NE treble 50]<img src="html/images/bt5.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=treble&p2=60&player={%player}&start={start}">
-[EQ treble 60]<img src="html/images/bt6_active.gif" border="0" width="25" height="30">[/EQ]
-[NE treble 60]<img src="html/images/bt6.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=treble&p2=70&player={%player}&start={start}">
-[EQ treble 70]<img src="html/images/bt7_active.gif" border="0" width="25" height="30">[/EQ]
-[NE treble 70]<img src="html/images/bt7.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=treble&p2=80&player={%player}&start={start}">
-[EQ treble 80]<img src="html/images/bt8_active.gif" border="0" width="25" height="30">[/EQ]
-[NE treble 80]<img src="html/images/bt8.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=treble&p2=90&player={%player}&start={start}">
-[EQ treble 90]<img src="html/images/bt9_active.gif" border="0" width="25" height="30">[/EQ]
-[NE treble 90]<img src="html/images/bt9.gif" border="0" width="25" height="30">[/NE]</a>
-       
-<a href="status.html?p0=mixer&p1=treble&p2=100&player={%player}&start={start}">
-[EQ treble 100]<img src="html/images/bt10_active.gif" border="0" width="25" height="30">[/EQ]
-[NE treble 100]<img src="html/images/bt10.gif" border="0" width="25" height="30">[/NE]</a>
-</font></td></tr>
+<table width="100%" border="0" cellspacing="0" cellpadding="4">
 
 
-<tr><td height="60"></td></tr></table>
+<tr><td width="100"><img src="html/images/treble_symbol.gif"></td>
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=10&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ treble 10]_active[/EQ].gif" border="0" width="25" height="3"></td>
 
 
-<table width="100%" border="0">
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=20&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ treble 20]_active[/EQ].gif" border="0" width="25" height="6"></td>
+
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=30&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ treble 30]_active[/EQ].gif" border="0" width="25" height="9"></td>
+
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=40&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ treble 40]_active[/EQ].gif" border="0" width="25" height="12"></td>
+
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=50&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ treble 50]_active[/EQ].gif" border="0" width="25" height="15"></td>
+
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=60&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ treble 60]_active[/EQ].gif" border="0" width="25" height="18"></td>
+
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=70&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ treble 70]_active[/EQ].gif" border="0" width="25" height="21"></td>
+
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=80&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ treble 80]_active[/EQ].gif" border="0" width="25" height="24"></td>
+
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=90&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ treble 90]_active[/EQ].gif" border="0" width="25" height="27"></td>
+
+
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=100&player={%player}&start={start}';" valign="bottom">
+<img src="html/images/bar[EQ treble 100]_active[/EQ].gif" border="0" width="25" height="30"></td>
+
+<td></td>
+
+</tr></table>
+
+<table width="100%" border="0"><tr><td height="40"></td></tr></table>
+
+
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="7" align="left">
 <tr><td width="100"><img src="html/images/repeat_symbol.gif"></td>
 
-<td width="60" align="center">
-[IF repeatone]<img src="html/images/song_symbol_active.gif" border="0" width="40" height="40">[/IF]
-
-[IFN repeatone]
-<a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">
-<img src="html/images/song_symbol.gif" border="0" width="40" height="40"></a>
-[/IFN]</td>
+<td width="60" align="center" onclick="location.href='status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}'">
+<img src="html/images/song_symbol[IF repeatone]_active[/IF].gif" border="0" width="40" height="40"></a></td>
 
 
-<td width="60" align="center">
-[IF repeatall]<img src="html/images/playlist_symbol_active.gif" border="0" width="40" height="40">[/IF]
+<td width="60" align="center" onclick="location.href='status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}'">
+<img src="html/images/playlist_symbol[IF repeatall]_active[/IF].gif" border="0" width="40" height="40"></a></td>
 
-[IFN repeatall]
-<a href="status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}">
-<img src="html/images/playlist_symbol.gif" border="0" width="40" height="40"></a>
-[/IFN]</td>
+<td width="60" align="center" onclick="location.href='status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}'">
+<img src="html/images/off_symbol[IF repeatoff]_active[/IF].gif" border="0" width="40" height="40"></a></td>
 
-<td width="60" align="center">
-[IF repeatoff]<img src="html/images/off_symbol_active.gif" border="0" width="40" height="40">[/IF]
-[IFN repeatoff]
-<a href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}">
-<img src="html/images/off_symbol.gif" border="0" width="40" height="40"></a>
-[/IFN]</td>
 
 <td width="60"></td>
 <td width="60"></td>
@@ -324,34 +327,22 @@ This piece of code prevents you from scaring your grandmother to death in the mi
 
 <td><img src="html/images/shuffle_symbol.gif"></td>
 
-<td align="center">  
-[IF shuffleon]<img src="html/images/song_symbol_active.gif" border="0" width="40" height="40">[/IF]
-
-[IFN shuffleon]
-<a href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">
-<img src="html/images/song_symbol.gif" border="0" width="40" height="40"></a>
-[/IFN]</td>
+<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=1&player={%player}'">
+<img src="html/images/song_symbol[IF shuffleon]_active[/IF].gif" border="0" width="40" height="40"></a></td>
 
 
-<td align="center">
-[IF shufflealbum]<img src="html/images/album_symbol_active.gif" border="0" width="40" height="40">[/IF]
-[IFN shufflealbum]
-<a href="status.html?p0=playlist&p1=shuffle&p2=2&player={%player}">
-<img src="html/images/album_symbol.gif" border="0" width="40" height="40"></a>
-[/IFN]</td>
+<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=2&player={%player}'">
+<img src="html/images/album_symbol[IF shufflealbum]_active[/IF].gif" border="0" width="40" height="40"></a></td>
 
 
-<td align="center">
-[IF shuffleoff]<img src="html/images/off_symbol_active.gif" border="0" width="40" height="40">[/IF]
-[IFN shuffleoff]
-<a href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">
-<img src="html/images/off_symbol.gif" border="0" width="40" height="40"></a>
-[/IFN]</td>
+<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=0&player={%player}'">
+<img src="html/images/off_symbol[IF shuffleoff]_active[/IF].gif" border="0" width="40" height="40"></a></td>
+
 <td></td><td></td><td></td></tr>
 
+<!-- Sleep
+
 <tr>
-
-
 <td>
 <A href="status.html?p0=button&p1=sleep&player={%player}" style="text-decoration:none"><p align="left">
 <img src="html/images/zzz_symbol.gif" border="0"></a>
@@ -383,9 +374,9 @@ This piece of code prevents you from scaring your grandmother to death in the mi
 </td>
 </tr>
 
+-->
+
 </table>
-
-
 </font>
 
 [INCLUDE pagefooter.html]
