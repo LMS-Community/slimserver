@@ -29,9 +29,7 @@ my $SCAN_RATE_MULTIPLIER = 2;
 our %modes = ();
 
 # Hashed list for registered Screensavers. Register these using addSaver. 
-our %savers = (
-	'playlist'	=> 'Now Playing',
-);
+our %savers = ();
 
 # Map the numbers on the remote to their corresponding letter sequences.
 our @numberLetters = (
@@ -75,6 +73,8 @@ sub init {
 	Slim::Buttons::Settings::init();
 	Slim::Buttons::Synchronize::init();
 	Slim::Buttons::TrackInfo::init();
+
+	$savers{'playlist'} = Slim::Utils::Strings::string('NOW_PLAYING');
 }
 
 sub addSaver {
