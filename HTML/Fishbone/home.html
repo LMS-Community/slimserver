@@ -1,34 +1,6 @@
 [% IF page != 'help' %]	[% pagetitle = "MUSIC" | string %] [% pageicon = 'MUSIC' %] [% search = '0' %][% browse = '1' %][% music = '0' %][% home = '1' %][% playlist = '0' %][% PROCESS pageheader.html %]
 [% END %]
-<!--    <h4>[% "BROWSE_MUSIC" | string %]</h4>
-    <ul>
-[% IF additionalLinks.browse %]
-    [% FOREACH link = additionalLinks.browse %]
-    <li>
- 		<a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a>
- 	</li>
-    [% END %]
-[% END %]
- 	</ul>
-    <h4>[% "SEARCH" | string %]</h4>
-    <ul>
-    <li>
-    	<a href="search.html?type=artist&player=[% player | uri %]">[% "SEARCHFOR_ARTIST" | string %]</a>
-  	</li>
-    <li>
-  	 	<a href="search.html?type=album&player=[% player | uri %]">[% "SEARCHFOR_ALBUM" | string %]</a>
- 	</li>
-    <li>
-	   	<a href="search.html?type=song&player=[% player | uri %]">[% "SEARCHFOR_SONGTITLE" | string %]</a>
- 	</li>
-[% IF additionalLinks.search %]
-    [% FOREACH key = additionalLinks.search.keys %]
-    <li>
- 		<a href="[% additionalLinks.search.$key %]player=[% player | uri %]">[% key | string %]</a>
- 	</li>
-    [% END %]
-[% END %]
-    </ul>
+<!--
 [% IF not nosetup %]    <h4>[% "SETTINGS" | string %]</h4>
 	<ul>
     <li>
@@ -36,51 +8,16 @@
  	</li>
 [% player_list %]
 [% IF additionalLinks.settings %]
-    [% FOREACH key = additionalLinks.settings.keys %]
-    <li>
- 		<a href="[% additionalLinks.settings.$key %]player=[% player | uri %]">[% key | string %]</a>
- 	</li>
-    [% END %]
+[% FOREACH key = additionalLinks.settings.keys %]
+<li>
+		<a href="[% additionalLinks.settings.$key %]player=[% player | uri %]">[% key | string %]</a>
+	</li>
 [% END %]
-	</ul>[% END %]
+[% END %]
+</ul>[% END %]
 
-[% IF additionalLinks.plugins %]    <h4>[% "PLUGINS" | string %]</h4>
-    <ul>
-    [% FOREACH key = additionalLinks.plugins.keys %]
-    <li> <a href="[% additionalLinks.plugins.$key %]player=[% player | uri %]">[% key %]</a>
-    </li>
-    [% END %]
-    </ul>
-[% END %]
-    <h4>[% "HELP" | string %]</h4>
-	<ul>
-    <li>
-    	<a href="html/docs/quickstart.html" target="_top">[% "GETTING_STARTED" | string %]</a>
-    </li>
-   <li>
-    	<a href="html/docs/ipconfig.html" target="_top">[% "PLAYER_SETUP" | string %]</a>
-  </li>
-    <li>
-    	<a href="html/docs/interface.html" target="_top">[% "USING_REMOTE" | string %]</a>
-    </li>
-     <li>
- 		<a href="html/help_remote.html?player=[% player | uri %]" target="_top">[% "HELP_REMOTE" | string %]</a>
- 	</li>
-     <li> <a href="html/docs/radio.html?player=[% player | uri %]" target="_top">[% "RADIO" | string %]</a>	   </li>
-     <li> <a href="html/docs/remotestream.html?player=[% player | uri %]" target="_top">[% "REMOTE_STREAMING" | string %]</a>	   </li>
-     <li><a href="html/docs/faq.html?player=[% player | uri %]" target="_top">[% "FAQ" | string %]</a> </li>
-     <li>
- 		<a href="html/docs/index.html" target="_top">[% "TECHNICAL_INFORMATION" | string %]</a>
- 	</li>
-[% IF additionalLinks.help %]
-    [% FOREACH key = additionalLinks.help.keys %]
-    <li>
- 		<a href="[% additionalLinks.help.$key %]player=[% player | uri %]">[% key | string %]</a>
- 	</li>
-    [% END %]
-[% END %]
-	</ul>
-	[% IF newVersion %][% newVersion %][% END %]-->
+[% IF newVersion %][% newVersion %][% END %]
+-->
 [% IF page == 'help' %]
 <html>
 	<head>
@@ -88,7 +25,15 @@
 		<link rel="stylesheet" href="[% webroot %]slimserver.css">
 	</head>
 	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="top.document.getElementById('home').rows = '87, *';">
-	<ul>
+	[% IF additionalLinks.plugins %]    <h4>[% "PLUGINS" | string %]</h4>
+		<ul>
+			[% FOREACH key = additionalLinks.plugins.keys %]
+			<li> <a href="[% additionalLinks.plugins.$key %]player=[% player | uri %]">[% key %]</a>
+			</li>
+			[% END %]
+		</ul>
+	[% END %]
+	<h4>[% "HELP" | string %]</h4>	<ul>
 	[% IF additionalLinks.help %]
 		[% FOREACH link = additionalLinks.help %]
 		<li>
