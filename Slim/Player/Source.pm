@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.107 2004/09/08 00:27:52 dean Exp $
+# $Id: Source.pm,v 1.108 2004/09/10 01:48:47 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1018,6 +1018,11 @@ sub openSong {
 	Slim::Player::Playlist::refreshPlaylist($client);
 	
 	Slim::Control::Command::executeCallback($client,  ['open', $fullpath]);
+
+	# We are starting a new song, lets kill any animation so we see the correct new song.
+	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) { 
+		$everyclient->killAnimation();
+	}
 
 	return 1;
 }
