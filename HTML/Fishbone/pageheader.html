@@ -2,7 +2,7 @@
   <head>
     <title>{title}</title>
     <link rel="stylesheet" href="{webroot}slimserver.css">
-        
+    
 <script language="JavaScript">
 <!--Hide
 function setCookie(name, value)
@@ -20,16 +20,16 @@ function chooseBrowser(value)
 	switch(value)
 	&lbrc;
 		case 0:
-		url="{webroot}browseid3.html?player={%player}[IF nofolder]&nofolder=1[/IF]";
+		url="{webroot}browseid3.html?[IF nofolder]&nofolder=1[/IF]";
 		break
 		case 1:
-		url="{webroot}browseid3.html?genre=*&player={%player}[IF nofolder]&nofolder=1[/IF]";
+		url="{webroot}browseid3.html?genre=*[IF nofolder]&nofolder=1[/IF]";
 		break
 		case 2:
-		url="{webroot}browseid3.html?genre=*&artist=*&player={%player}[IF nofolder]&nofolder=1[/IF]";
+		url="{webroot}browseid3.html?genre=*&artist=*[IF nofolder]&nofolder=1[/IF]";
 		break
 		case 3:
-		url="{webroot}browse.html?player={%player}&dir=__playlists[IF nofolder]&nofolder=1[/IF]";
+		url="{webroot}browse.html?dir=__playlists[IF nofolder]&nofolder=1[/IF]";
 		break
 		case 4:
 		url="{webroot}search.html?type=artist[IF nofolder]&nofolder=1[/IF]";
@@ -41,15 +41,14 @@ function chooseBrowser(value)
 		url="{webroot}search.html?type=song[IF nofolder]&nofolder=1[/IF]";
 		break
 		case 7:
-		url="{webroot}browse.html?player={%player}";
+		url="{webroot}browse.html?";
 		break
 	&rbrc;
 	setCookie("Slimp3-browserPage",url);
-	parent.browser.location = url;
+	parent.browser.location = url + '&player={%player}';
 &rbrc;
 -->
 </script>
-  </head>
   <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
    <div class="menu1" width="100%">
    <table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13">

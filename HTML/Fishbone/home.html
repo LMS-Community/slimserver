@@ -1,4 +1,4 @@
-[SET title [S MUSIC]] [SET pageicon MUSIC] [SET browse 1] [SET music 1][SET playlist 0] [INCLUDE pageheader.html]
+[SET title [S MUSIC]] [SET pageicon MUSIC] [SET browse 1] [SET music 1][SET playlist 0][INCLUDE pageheader.html]
 <html>
 <head>
 <link rel="stylesheet" href="{webroot}slimserver.css">
@@ -17,15 +17,15 @@ function getCookie(Name)
 			return unescape(document.cookie.substring(offset, end));
 		&rbrc;
 	&rbrc;
-	[IFN nofolder]return "browse.html?player={%player}";[/IFN]
-	[IF nofolder]return "browseid3.html?player={%player}&nofolder=1"[/IF]
+	[IFN nofolder]return "browse.html?";[/IFN]
+	[IF nofolder]return "browseid3.html?nofolder=1"[/IF]
 &rbrc;
 --></script>
 </head>
-[IF newVersion]<br>{newVersion}<br>[/IF]
-<script language="JavaScript">
-parent.browser.location=getCookie('Slimp3-browserPage');
+	[IF newVersion]<br>{newVersion}<br>[/IF]
+	<script language="JavaScript">
+parent.browser.location=getCookie('Slimp3-browserPage') +'&player={%player}';
 parent.statusframe.location='status.html?player={%player}';
 </script>
-</body>
+	</body>
 </html>
