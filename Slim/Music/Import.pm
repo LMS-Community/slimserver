@@ -161,21 +161,24 @@ sub artScan {
 
 	my $url    = $artwork{$album};
 	my $ds     = Slim::Music::Info::getCurrentDataStore();
-	my $track  = $ds->objectForUrl($url);
-	my $thumb;
+	my $track  = $ds->objectForUrl($url); 
+	
+	my $thumb  = $track->coverArt('thumb');
+	
+	if (defined $thumb && thumb) {
 
-	if (defined $track && $track->thumb()) {
-
-		my $thumb = $track->thumb();
-
+		my $thumb = Slim::Utils::Misc::pathFromFileURL($url);
+		
 		$::d_artwork && Slim::Utils::Misc::msg("Caching $thumb for $album\n");
-		Slim::Music::Info::updateArtworkCache($url, {'ALBUM' => $album, 'THUMB' => $thumb})
+
+		$ds->setAlbumArtwork($album, $thumb)
 	}
 
 	delete $artwork{$album};
 
 	if (!%artwork) { 
 		$::d_artwork && Slim::Utils::Misc::msg("Completed Artwork Scan\n");
+		$ds->forceCommit();
 		return 0;
 	}
 
