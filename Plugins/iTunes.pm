@@ -560,9 +560,6 @@ sub scanFunction {
 				warn "Danger, the Track ID (" . $curTrack{'Track ID'} . ") and the key ($id) don't match.\n";
 			}
 			
-			# skip track if Disabled in iTunes
-			return 1 if $curTrack{'Disabled'} && Slim::Utils::Prefs::get('ignoredisableditunestracks');
-
 			my $kind = $curTrack{'Kind'};
 			my $location = $curTrack{'Location'};
 			my $filetype = $curTrack{'File Type'};
@@ -622,7 +619,17 @@ sub scanFunction {
 					return 1;
 				}
 			}
-			
+
+			# skip track if Disabled in iTunes
+			if ($curTrack{'Disabled'} && Slim::Utils::Prefs::get('ignoredisableditunestracks')) {
+
+				$::d_itunes && msg("iTunes: deleting disabled track $url\n");
+
+				$ds->markEntryAsInvalid($url);
+
+				return 1;
+			}
+
 			$::d_itunes && msg("iTunes: got a track named " . $curTrack{'Name'} . " location: $location\n");
 
 			if ($url && !defined($type)) {
