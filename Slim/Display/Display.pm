@@ -162,13 +162,18 @@ sub mixerDisplay {
 	
 	$featureHeader = $client->string(uc($feature)) . " ($headerValue)";
 
+	# hack attack: turn off visualizer when showing volume, etc.
+	my $oldvisu = $client->modeParam('visu');
+	$client->modeParam('visu', [0]);
+
 	my @lines = Slim::Buttons::Input::Bar::lines($client, $featureValue, $featureHeader,
 												 $client->mixerConstant($feature,'min'),
 												 $mid,
 												 $client->mixerConstant($feature,'max'));
-	
 	# trim off any overlay for showBriefly
 	$client->showBriefly(@lines[0,1]);
+
+	$client->modeParam('visu', $oldvisu);	
 }
 	
 		

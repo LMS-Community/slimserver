@@ -333,8 +333,8 @@ sub process_slimproto_frame {
 			);
 
 			$client->macaddress($mac);
-			$client->reconnect($paddr, $revision, $s, 0);  # don't "reconnect" if the player is new.
 			$client->init();
+			$client->reconnect($paddr, $revision, $s, 0);  # don't "reconnect" if the player is new.
 		} else {
 			$::d_slimproto && msg("hello from existing client: $id on ipport: $ipport{$s}\n");
 			$client->reconnect($paddr, $revision, $s, $reconnect, $bytes_received);

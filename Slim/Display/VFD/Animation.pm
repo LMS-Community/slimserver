@@ -159,6 +159,7 @@ sub showBriefly {
 				,[$double || (Slim::Display::Display::lineLength($parsed->{line1}) > 40),Slim::Display::Display::lineLength($parsed->{line2}) > 40] #scroll the top if doublesize
 				,$rate,$double);
 		
+		$client->animating(2);
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $duration, \&endAnimation);
 	} else {
 		$client->update($parsed);

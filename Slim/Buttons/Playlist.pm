@@ -53,7 +53,6 @@ sub init {
 			$client->param('animateTop',$pdm);
 			Slim::Utils::Prefs::clientSet($client, "playingDisplayMode", $pdm);
 			$client->update();
-			$client->visualizer();
 		},
 		'up' => sub  {
 			my $client = shift;

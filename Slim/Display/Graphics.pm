@@ -40,6 +40,11 @@ sub fontnames {
 	return \%fontnames;
 };
 
+sub fontheight {
+	my $fontname = shift;
+	return $fontheight{$fontname};
+}
+
 sub string {
 	my $fontname = shift || return '';
 	my $string   = shift || return '';
@@ -142,11 +147,11 @@ sub loadFonts {
 			$fonthash{$1}->[$2-1] = $font;
 		}
 		my ($fontgrid, $height) = parseBMP($fontfiles{$font});
-		$fontheight{$font} = $height - 1;
 		
-		my $fonttable = parseFont($fontgrid);
-		$fonts{$font} = $fonttable;
-		$::d_graphics && msg( "$font had height $height\n");
+		$fontheight{$font} = $height - 1;
+		$fonts{$font} = parseFont($fontgrid);;
+
+		$::d_graphics && msg( "$font had height $height - 1\n");
 	}
 	return;
 }

@@ -1170,6 +1170,15 @@ sub param {
 	}
 }
 
+# this is a replacement for param that allows you to pass undef to clear a parameter
+sub modeParam {
+	my $client = shift;
+	my $name   = shift;
+	my $mode   = $client->modeParameterStack(-1) || return undef;
+
+	@_ ? ($mode->{$name} = shift) : $mode->{$name};
+}
+
 sub paramOrPref {
 	my $client = shift;
 	my $name   = shift;

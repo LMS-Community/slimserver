@@ -30,18 +30,15 @@ my @visualizer_screensavers = ( 'SCREENSAVER.visualizer_spectrum',
 my %screensaver_info = ( 
 	'SCREENSAVER.visualizer_spectrum' => {
 		name => 'PLUGIN_SCREENSAVER_VISUALIZER_SPECTRUM_ANALYZER',
-		type => $VISUALIZER_SPECTRUM_ANALYZER,
-		params => [0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 3, 160, 160, 1, 4, 1, 1, 1, 3],
+		params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 3, 160, 160, 1, 4, 1, 1, 1, 3],
 	},
 	'SCREENSAVER.visualizer_analog_vumeter' => {
 		name => 'PLUGIN_SCREENSAVER_VISUALIZER_ANALOG_VUMETER',
-		type => $VISUALIZER_VUMETER,
-		params => [0, 1, 0, 160, 160, 160],
+		params => [$VISUALIZER_VUMETER, 0, 1, 0, 160, 160, 160],
 	},
 	'SCREENSAVER.visualizer_digital_vumeter' => {
 		name => 'PLUGIN_SCREENSAVER_VISUALIZER_DIGITAL_VUMETER',
-		type => $VISUALIZER_VUMETER,
-		params => [0, 0, 20, 130, 170, 130],
+		params => [$VISUALIZER_VUMETER, 0, 0, 20, 130, 170, 130],
 	},
 	'screensaver' => {
 		name => 'PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT',
@@ -252,11 +249,7 @@ sub setVisualizerMode() {
 														"playingDisplayMode");
 	
 	my $mode = Slim::Buttons::Common::mode($client);
-	my $visu = pack "CC", $screensaver_info{$mode}->{type}, scalar(@{$screensaver_info{$mode}->{params}});
-	for my $param (@{$screensaver_info{$mode}->{params}}) {
-		$visu .= pack "N", $param;
-	}
-	$client->sendFrame('visu', \$visu);
+	$client->modeParam('visu', $screensaver_info{$mode}->{params});
 	$client->lines(\&screensaverLines);
 }
 

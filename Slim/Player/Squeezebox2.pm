@@ -24,10 +24,10 @@ use MIME::Base64;
 our @ISA = ("Slim::Player::SqueezeboxG");
 
 our $defaultPrefs = {
-	'activeFont'		=> [qw(standard light full)],
-	'activeFont_curr'	=> 0,
-	'idleFont'		=> [qw(standard light full)],
-	'idleFont_curr'		=> 0,
+	'activeFont'		=> [qw(light standard full)],
+	'activeFont_curr'	=> 1,
+	'idleFont'		=> [qw(light standard full)],
+	'idleFont_curr'		=> 1,
 	'idleBrightness'	=> 2,
 	'transitionType'		=> 0,
 	'transitionDuration'		=> 0,
@@ -78,21 +78,14 @@ my @showTime =        (  0,   1,   0,   1,   1,   1,  0 );
 my @showFullness =    (  0,   0,   0,   0,   0,   0,  1 );
 my @displayWidth = 	  (  320, 320, 278, 278, 278, 320, 320  );
 
-my @visualizer =   	  (  	$VISUALIZER_NONE,
-				$VISUALIZER_NONE,
-				$VISUALIZER_VUMETER,   
-				$VISUALIZER_VUMETER,   
-				$VISUALIZER_SPECTRUM_ANALYZER,   
-				$VISUALIZER_SPECTRUM_ANALYZER,   
-				$VISUALIZER_NONE);
-
-my @visualizerParameters = ( 	[],
-				[], 
-				[0, 0, 280, 18, 302, 18], 
-				[0, 0, 280, 18, 302, 18], 
-				[1, 1, 0x10000, 280, 40, 0, 4, 1, 0, 1, 3], 
-				[0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1],
-				[],
+my @visualizerParameters = ( 	
+	[$VISUALIZER_NONE],
+	[$VISUALIZER_NONE], 
+	[$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18], 
+	[$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18], 
+	[$VISUALIZER_SPECTRUM_ANALYZER, 1, 1, 0x10000, 280, 40, 0, 4, 1, 0, 1, 3], 
+	[$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1],
+	[$VISUALIZER_NONE],
 );
 
 
@@ -141,12 +134,18 @@ sub nowPlayingModes {
 
 sub showVisualizer {
 	my $client = shift;
-	return ($client->power() && ((Slim::Player::Source::playmode($client) eq 'play') || Slim::Buttons::Playlist::showingNowPlaying($client)));
+	
+	# show the always-on visualizer while browsing or when playing.
+	return (Slim::Player::Source::playmode($client) eq 'play') || (Slim::Buttons::Playlist::showingNowPlaying($client));
 }
 
 sub displayWidth {
 	my $client = shift;
-	my $mode = $client->showVisualizer() ? Slim::Utils::Prefs::clientGet($client, "playingDisplayMode") : 0;
+	
+	# if we're showing the always-on visualizer & the current buttonmode 
+	# hasn't overridden, then use the playing display mode to index
+	# into the display width, otherwise, it's fullscreen.
+	my $mode = ($client->showVisualizer() && !defined($client->modeParam('visu'))) ? Slim::Utils::Prefs::clientGet($client, "playingDisplayMode") : 0;
 	return $displayWidth[$mode || 0];
 }
 
@@ -207,6 +206,8 @@ sub drawFrameBuf {
 	my $param = shift || pack('c', 0);
 	
 	if ($client->opened()) {
+		# for now, we'll send a visu packet with each screen update.	
+		$client->visualizer();
 
 		my $framebuf = pack('n', 0) .   # offset of zero
 						   $transition . # transition
@@ -216,12 +217,6 @@ sub drawFrameBuf {
 		$client->sendFrame('grfe', \$framebuf);
 	}
 }	
-
-sub animating {
-	my $client = shift;
-	$client->visualizer();
-	$client->SUPER::animating(@_);
-}
 
 # preformed frame header for fast scolling - contains header added by sendFrame and drawFrameBuf
 sub scrollHeader {
@@ -234,25 +229,34 @@ sub scrollHeader {
 # set the visualizer and update the player.  If blank, just update the player with the current mode setting.
 sub visualizer {
 	my $client = shift;
-	my $visu = shift;
-	if (!defined($visu)) {
-		$visu = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
-		$visu = 0 if (!$client->showVisualizer());
-	}
 	
-	if ($visu < 0) { 
-	    $visu = 0; 
-	}
-	my $nmodes = $client->nowPlayingModes();
-	if ($visu >= $nmodes) { 
-	    $visu = $nmodes - 1;
+	my $paramsref = $client->modeParam('visu');
+	
+	if (!$paramsref) {
+		my $visu = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
+		$visu = 0 if (!$client->showVisualizer());
+		
+		if ($visu < 0) { 
+			$visu = 0; 
+		}
+		my $nmodes = $client->nowPlayingModes();
+		if ($visu >= $nmodes) { 
+			$visu = $nmodes - 1;
+		}
+		$paramsref = $visualizerParameters[$visu];
 	}
 
-	my $params = pack "CC", $visualizer[$visu], scalar(@{$visualizerParameters[$visu]});
-	for my $param (@{$visualizerParameters[$visu]}) {
-		$params .= pack "N", $param;
+	my @params = @{$paramsref};
+	
+	my $which = shift @params;
+	my $count = scalar(@params);
+
+	my $parambytes = pack "CC", $which, $count;
+	for my $param (@params) {
+		$parambytes .= pack "N", $param;
 	}
-	$client->sendFrame('visu', \$params);
+
+	$client->sendFrame('visu', \$parambytes);
 }
 
 # push the old screen off the left side
@@ -427,25 +431,6 @@ sub maxTransitionDuration {
 
 sub reportsTrackStart {
 	return 1;
-}
-
-sub power {
-	my $client = shift;
-	my $on = shift;
-	
-	my $pow = $client->SUPER::power($on);
-
-	# update the visualizer if we're setting the power.
-	if (defined($on)) {
-		$client->visualizer();
-	}
-	return $pow;
-}
-
-sub update {
-	my $client = shift;
-	$client->SUPER::update(@_);
-	$client->visualizer();
 }
 
 sub requestStatus {

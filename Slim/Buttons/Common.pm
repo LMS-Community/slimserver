@@ -1145,8 +1145,10 @@ sub _periodicUpdate {
 	my $interval = $client->param('modeUpdateInterval');
 	# if interval is not set, we have left the mode that needed the update
 	return unless $interval;
-	# do the update
-	$client->update();
+	
+	# do the update if there's no animation going on.
+	if (!$client->animating()) { $client->update(); }
+	
 	# do it again at the next period
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $interval,
 								  \&_periodicUpdate,

@@ -302,6 +302,9 @@ sub upgradeFirmware_SDK5 {
 	Slim::Utils::Prefs::clientSet($client, "powerOffBrightness", 1);
 	
 	$client->textSize(0);
+	
+	# disable visualizer in this mode
+	$client->modeParam('visu',[0]);
 
 #	Slim::Utils::Misc::blocking($client->tcpsock, 1);
 

@@ -35,6 +35,9 @@ sub setMode {
 	my $client = shift;
 
 	$client->lines(\&lines);
+	
+	# disable visualizer in this mode
+	$client->modeParam('visu',[0]);
 
 	my $sync = Slim::Utils::Prefs::clientGet($client,'syncPower');
 

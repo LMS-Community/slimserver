@@ -60,6 +60,10 @@ sub bytesPerColumn {
 	return 2;
 }
 
+sub displayHeight {
+	return bytesPerColumn() * 8;
+}
+
 sub screenBytes {
 	my $client = shift;
 	return $client->bytesPerColumn() * $client->displayWidth();
@@ -108,7 +112,9 @@ sub textSize {
 
 sub linesPerScreen {
 	my $client = shift;
-	return (defined($client->fonts()->[0]) ? 2 : 1);
+	return (defined($client) &&
+			defined($client->fonts()) &&
+			defined($client->fonts()->[0])    ? 2 : 1);
 }
 
 my %fontSymbols = (
@@ -582,7 +588,7 @@ sub scrollBottom {
 		
 		$client->killAnimation();
 		$client->scrollUpdate($parts);
-		$client->animating(1);
+		$client->animating(2);
 
 	} else {
 		$client->refresh($parts);

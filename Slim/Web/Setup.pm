@@ -213,7 +213,7 @@ sub initSetupConfig {
 							,'validateArgs' => [0,6,1,1]
 							,'options' => undef
 							,'PrefChoose' => string('SETUP_PLAYINGDISPLAYMODE').string('COLON')
-							,'onChange'   => sub { shift->visualizer(); }
+							,'onChange'   => sub { shift->update(); }
 						}
 			,'showbufferfullness' => {
 						'validate' => \&validateTrueFalse
@@ -286,8 +286,8 @@ sub initSetupConfig {
 							$pageref->{'Prefs'}{'activeFont_curr'}{'validateArgs'} = [0,$activeFontMax,1,1];
 							$pageref->{'Prefs'}{'idleFont_curr'}{'validateArgs'} = [0,$idleFontMax,1,1];
 		
-							fillFontOptions('display','idleFont');
-							fillFontOptions('display','activeFont');
+							fillFontOptions($client,'display','idleFont');
+							fillFontOptions($client,'display','activeFont');
 							removeExtraArrayEntries($client,'activeFont',$paramref,$pageref);
 							removeExtraArrayEntries($client,'idleFont',$paramref,$pageref);
 						} else {
@@ -2173,11 +2173,21 @@ sub fillSetupOptions {
 
 
 sub fillFontOptions {
-	my ($set,$pref,$hash) = @_;
+	my ($client,$set,$pref,$hash) = @_;
 	my $fonts = Slim::Display::Graphics::fontnames();
-	$fonts->{'-1'} = ' ';
-	$setup{$set}{'Prefs'}{$pref}{'options'} = $fonts;
-	$setup{$set}{'Prefs'}{$pref}{'validateArgs'} = [$fonts];
+	my %allowedfonts;
+
+	my $displayHeight = $client->displayHeight();
+	foreach my $f (keys %$fonts) {
+		
+		if ($displayHeight == Slim::Display::Graphics::fontheight($f . '.2')) {
+			$allowedfonts{$f} = $f;
+		}
+	}
+	
+	$allowedfonts{'-1'} = ' ';
+	$setup{$set}{'Prefs'}{$pref}{'options'} = \%allowedfonts;
+	$setup{$set}{'Prefs'}{$pref}{'validateArgs'} = [\%allowedfonts];
 }
 
 sub playerChildren {
