@@ -411,6 +411,7 @@ sub init {
 			return $ds->find('album', $findCriteria, 'age', 100, 0);
 		},
 
+		'nameTransform' => 'album',
 		'ignoreArticles' => 1,
 		'alphaPageBar' => 0,
 	};
