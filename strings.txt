@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.126 2004/09/01 00:14:29 dean Exp $
+# $Id: strings.txt,v 1.127 2004/09/01 03:58:50 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1031,9 +1031,11 @@ SETUP_SCROLLPAUSE_DESC
 	SE	Fördröjning innan scrollning av långa texter börjar. Multipel av 0.9 fungerar bäst. 0.001 rekommenderas som lägsta värde.
 
 SETUP_SCROLLPAUSEDOUBLE
+	FR	Pause avant défilement (grande taille)
 	EN	Double-Size Scroll Pause
 
 SETUP_SCROLLPAUSEDOUBLE_DESC
+	FR	Temps de pause avant défilement en mode texte grande taille
 	EN	Scroll Pause control for double-size font.
 
 SETUP_SCROLLRATE
@@ -1051,9 +1053,11 @@ SETUP_SCROLLRATE_DESC
 	SE	Tid mellan rullande scroll-bilder. O.15 är standardvärdet. Värden mellan 0 och 1 kan sättas för att öka eller minska scroll-tempot 
 
 SETUP_SCROLLRATEDOUBLE
+	FR	Vitesse de défilement (grande taille)
 	EN	Double-Size Scroll Rate
 
 SETUP_SCROLLRATEDOUBLE_DESC
+	FR	Vous pouvez ajuster le temps de pause avant que la platine active le défilement du caractère suivant sur l'afficheur en mode texte grande taille. Plus le nombre est bas, plus le défilement sera rapide. La valeur par défaut est de 0.1 seconde.
 	EN	You can adjust the amount of time that the player waits before scrolling another letter of text on the display when using Double Size text. Enter a value, in seconds, for the amount of time to wait.  Lower numbers make it scroll faster.  0.1 seconds is the default.
 
 SETUP_GROUP_ALARM
@@ -1067,6 +1071,7 @@ SETUP_GROUP_ALARM
 	SE	Väckarklocka
 
 SETUP_GROUP_ALARM_DESC
+	FR	Réglages du mode réveil. Chaque platine peut activer son propre réveil ; en mode activé, celui-ci se déclenchera toutes les 24 heures.
 	DE	Einstellungen für den Wecker. Jeder Player kann einen eigenen Wecker haben. Nach Aktivierung wird der Wecker alle 24h wiederholt.
 	EN	Settings for alarm clock. Each player can have an alarm set.  If active, it will repeat every 24 hours.
 	NO	Innstillinger for vekkerklokka. Hver spiller kan ha en vekkersklokke. Når aktivert går alarmen hvert døgn.
@@ -3584,6 +3589,7 @@ SETUP_SHOWBUFFERFULLNESS
 	SE	Visa bufferminnets fyllnadsgrad
 
 SETUP_SHOWBUFFERFULLNESS_CHOOSE
+	FR	Inclure l'état de la mémoire tampon dans la liste Mode d'affichage durant la lecture :
 	EN	Show buffer fullness in Playing Display Mode list:
 
 SETUP_XPLSUPPORT
@@ -4774,6 +4780,7 @@ ADD_TO_PLAYLIST
 	SE	Lägg till i låtlistan
 
 CONFIRM_OVERWRITE
+	FR	Confirmer remplacement
 	EN	Confirm Overwrite
 
 TRACK
