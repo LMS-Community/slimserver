@@ -113,7 +113,7 @@ sub bufferFullness {
 }
 
 sub buffersize {
-	return 131072;
+	return 262144;	# 2**18
 }
 
 sub bytesReceived {
