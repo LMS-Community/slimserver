@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.26 2003/12/02 06:14:54 daniel Exp $
+# $Id: Info.pm,v 1.27 2003/12/02 15:38:50 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -18,6 +18,7 @@ use MP3::Info;
 use Slim::Formats::Movie;
 use Slim::Formats::AIFF;
 use Slim::Formats::FLAC;
+use Slim::Formats::MP3;
 use Slim::Formats::Wav;
 use Slim::Formats::Ogg;
 use Slim::Utils::Misc;
