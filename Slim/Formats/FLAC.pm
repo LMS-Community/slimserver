@@ -560,7 +560,7 @@ sub getCUEinVC {
 
 			$tags->{'ARTIST'} = $1;
 
-		} elsif (defined $currtrack and /^\s+(TITLE|YEAR|GENRE|COMMENT)\s+\"(.*)\"/i) {
+		} elsif (defined $currtrack and /^\s+(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND)\s+\"(.*)\"/i) {
 
 			$tags->{uc $1} = $2;
 		}
