@@ -590,8 +590,6 @@ sub openSong {
 	$client->shoutMetaInterval(0);
 	$client->shoutMetaPointer(0);
 
-	# mark htmlplaylist invalid so the current song changes
-	$client->htmlstatusvalid(0);
 	my $fullpath = '';
 
 	# We are starting a new song, lets kill any animation so we see the correct new song.

@@ -89,10 +89,6 @@ my %clientHash = ();
 	# slaves						clients		if we're a master, this is an array of slaves which are synced to us
 	# syncgroupid					uniqueid	unique identifier for this sync group
 
-# client variables for HTTP status caching
-	# htmlstatus					string		html formatted status page
-	# htmlstatusvalid				bool		current status is valid?
-
 # client variables are for IR processing
 	# lastirtime					int			time at which we last received an IR code (in client's 625KHz ticks)
 	# lastircode					string		the last IR command we received, so we can tell if a button's being held down
@@ -222,8 +218,8 @@ sub new {
 	$client->[41] = undef; # master
 	$client->[42] = []; # slaves
 	$client->[43] = undef; # syncgroupid
-	$client->[44] = undef; # htmlstatus
-	$client->[45] = undef; # htmlstatusvalid
+	$client->[44] = undef; # unused
+	$client->[45] = undef; # lastirbutton
 	$client->[46] = undef; # lastirtime
 	$client->[47] = undef; # lastircode
 	$client->[48] = undef; # lastircodebytes
@@ -262,7 +258,6 @@ sub new {
 	$client->[82] = undef; # browseMenuSelection
 	$client->[83] = undef; # settingsSelection
 	$client->[84] = undef; # songBytes
-	$client->[85] = undef; # lastirbutton
 
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -299,9 +294,6 @@ sub new {
 
 	$client->currentSleepTime(0);
 	$client->sleepTime(0);
-	
-	$client->htmlstatus("");
-	$client->htmlstatusvalid(0);
 
 	$client->RTT(.5);
 
@@ -632,11 +624,7 @@ sub syncgroupid {
 	my $r = shift;
 	@_ ? ($r->[43] = shift) : $r->[43];
 }
-sub htmlstatus {
-	my $r = shift;
-	@_ ? ($r->[44] = shift) : $r->[44];
-}
-sub htmlstatusvalid {
+sub lastirbutton {
 	my $r = shift;
 	@_ ? ($r->[45] = shift) : $r->[45];
 }
@@ -671,10 +659,6 @@ sub easteregg {
 sub epochirtime {
 	my $r = shift;
 	@_ ? ($r->[54] = shift) : $r->[54];
-}
-sub lastirbutton {
-	my $r = shift;
-	@_ ? ($r->[85] = shift) : $r->[85];
 }
 sub modeStack {
 	my $r = shift;

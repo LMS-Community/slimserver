@@ -229,7 +229,6 @@ sub refreshPlaylist {
 		if ($everybuddy->isPlayer()) {
 			Slim::Buttons::Playlist::jump($everybuddy);
 		}
-		$client->htmlstatusvalid(0); #invalidate cached htmlplaylist
 	}
 	
 }
@@ -294,8 +293,6 @@ sub reshuffle {
 	my($temp);
 	my($songcount) = count($client);
 	my $listRef = shuffleList($client);
-
-	$client->htmlstatusvalid(0); #invalidate cached htmlplaylist
 
 	if ($songcount) {
 		$realsong = ${$listRef}[Slim::Player::Source::currentSongIndex($client)];
