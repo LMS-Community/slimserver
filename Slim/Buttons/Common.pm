@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.36 2004/08/03 17:29:09 vidur Exp $
+# $Id: Common.pm,v 1.37 2004/08/21 18:13:16 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -17,6 +17,7 @@ use Slim::Buttons::Plugins;
 use Slim::Buttons::Input::Text;
 use Slim::Buttons::Input::Time;
 use Slim::Buttons::Input::List;
+use Slim::Buttons::Input::Bar;
 use Slim::Display::Display;
 
 # hash of references to functions to call when we leave a mode
@@ -35,6 +36,7 @@ my %modes = (
 	'INPUT.Text' =>			\&Slim::Buttons::Input::Text::setMode,
 	'INPUT.List' =>			\&Slim::Buttons::Input::List::setMode,
 	'INPUT.Time' =>			\&Slim::Buttons::Input::Time::setMode,
+	'INPUT.Bar' =>			\&Slim::Buttons::Input::Bar::setMode,
 );
 
 # Hashed list for registered Screensavers. Register these using addSaver. 
@@ -50,6 +52,7 @@ sub init {
 	$modeFunctions{'INPUT.Text'} = Slim::Buttons::Input::Text::getFunctions();
 	$modeFunctions{'INPUT.List'} = Slim::Buttons::Input::List::getFunctions();
 	$modeFunctions{'INPUT.Time'} = Slim::Buttons::Input::Time::getFunctions();
+	$modeFunctions{'INPUT.Bar'} = Slim::Buttons::Input::Bar::getFunctions();
 	Slim::Buttons::Plugins::getPluginModes(\%modes);
 	Slim::Buttons::Plugins::getPluginFunctions(\%modeFunctions);
 	Slim::Buttons::ScreenSaver::init();
