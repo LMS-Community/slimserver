@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.80 2004/04/19 17:07:14 dean Exp $
+# $Id: Source.pm,v 1.81 2004/04/24 18:13:25 daniel Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -30,11 +30,13 @@ BEGIN {
 use Slim::Control::Command;
 use Slim::Display::Display;
 use Slim::Utils::Misc;
+use Slim::Utils::OSDetect;
 use Slim::Utils::Scan;
 use Slim::Utils::Strings qw(string);
 
 my $TRICKSEGMENTLENGTH = 1.0;
-				
+my $FADEVOLUME         = 0.3125;
+
 my %commandTable = ();
 
 sub systell {
@@ -46,48 +48,65 @@ sub Conversions {
 }
 
 sub loadConversionTables {
-	my @convertFiles;
+
+	my @convertFiles = ();
+
 	$::d_source && msg("loading conversion config files...\n");
 	
 	push @convertFiles, catdir($Bin, 'convert.conf');
+
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @convertFiles, $ENV{'HOME'} . "/Library/SlimDevices/convert.conf";
 		push @convertFiles, "/Library/SlimDevices/convert.conf";
 		push @convertFiles, $ENV{'HOME'} . "/Library/SlimDevices/slimserver-convert.conf";
 		push @convertFiles, "/Library/SlimDevices/slimserver-convert.conf";
 	}
+
 	push @convertFiles, catdir($Bin, 'slimserver-convert.conf');
 	push @convertFiles, catdir($Bin, '.slimserver-convert.conf');
 	
 	foreach my $convertFileName (@convertFiles) {
-		if (open my $convertFile, "<$convertFileName") {
-			while (1) {
-				my $line = <$convertFile>;
-				last if (!defined($line));
-				
-				my $command = undef;
-				
-				# get rid of comments and leading and trailing white space
-				$line =~ s/#.*$//;
-				$line =~ s/^\s//;
-				$line =~ s/\s$//;
+
+		# can't read? next.
+		next unless -r $convertFileName;
+
+		open(CONVERT, $convertFileName) || next;
+
+		while (my $line = <CONVERT>) {
+
+			# skip comments and whitespace
+			next if $line =~ /^\s*#/;
+			next if $line =~ /^\s*$/;
+
+			# get rid of comments and leading and trailing white space
+			$line =~ s/#.*$//o;
+			$line =~ s/^\s*//o;
+			$line =~ s/\s*$//o;
 	
-				if ($line =~ /^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)/) {
-					my $inputtype = $1;
-					my $outputtype = $2;
-					my $clienttype = $3;
-					my $clientid = lc($4);
-					$command = <$convertFile>;
-					$command =~ s/^\s//;
-					$command =~ s/\s$//;
-					$::d_source && msg( "input: '$inputtype' output: '$outputtype' clienttype: '$clienttype': clientid: '$clientid': '$command'\n");					
-					if (defined($command)) {
-						$commandTable{"$inputtype-$outputtype-$clienttype-$clientid"} = $command;
-					}
-				}
+			if ($line =~ /^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)$/) {
+
+				my $inputtype  = $1;
+				my $outputtype = $2;
+				my $clienttype = $3;
+				my $clientid   = lc($4);
+
+				my $command = <CONVERT>;
+
+				$command =~ s/^\s*//o;
+				$command =~ s/\s*$//o;
+
+				$::d_source && msg(
+					"input: '$inputtype' output: '$outputtype' clienttype: " .
+					"'$clienttype': clientid: '$clientid': '$command'\n"
+				);
+
+				next unless defined $command && $command !~ /^\s*$/;
+
+				$commandTable{"$inputtype-$outputtype-$clienttype-$clientid"} = $command;
 			}
-			close $convertFile;
 		}
+
+		close CONVERT;
 	}
 }
 
@@ -125,18 +144,18 @@ sub rate {
 }
 
 sub time2offset {
-	my $client	= shift;
-	my $time	= shift;
+	my $client   = shift;
+	my $time     = shift;
 	
-	my $size	= $client->songtotalbytes();
-	my $duration	= $client->songduration();
-	my $align = $client->songblockalign();
+	my $size     = $client->songtotalbytes();
+	my $duration = $client->songduration();
+	my $align    = $client->songblockalign();
 	
-	my $byterate	= $duration ? ($size / $duration) : 0;
+	my $byterate = $duration ? ($size / $duration) : 0;
+
+	my $offset   = int($byterate * $time);
 	
-	my $offset	= int($byterate * $time);
-	
-	$offset -= $offset % $align;
+	$offset     -= $offset % $align;
 	
 	$::d_source && msg( "$time to $offset (align: $align size: $size duration: $duration)\n");
 	
@@ -164,7 +183,7 @@ sub songTime {
 	if ($client->audioFilehandleIsSocket()) {
 
 		my $startTime = $client->remoteStreamStartTime();
-		my $endTime = $client->pauseTime() || Time::HiRes::time();
+		my $endTime   = $client->pauseTime() || Time::HiRes::time();
 		
 		if ($startTime) {
 			return $endTime - $startTime;
@@ -195,138 +214,184 @@ sub songTime {
 
 	my $songtime = $songLengthInBytes ? (($realpos / $songLengthInBytes * $duration * $rate) + $startStream) : 0;
 
-	$::d_source && msg("songTime: [$songtime] = ($realpos(realpos) / $songLengthInBytes(size) * $duration(duration) " . 
-		"* $rate(rate)) + $startStream(time offset of started stream)\n");
+	if ($songtime && $duration) {
+		$::d_source && msg("songTime: [$songtime] = ($realpos(realpos) / $songLengthInBytes(size) * ".
+			"$duration(duration) * $rate(rate)) + $startStream(time offset of started stream)\n");
+	}
 
 	return $songtime;
-}	
+}
 
-# playmode - start playing, pause or stop
-sub playmode {
-	my($client, $newmode) = @_;
+sub _returnPlayMode {
+	my $client = shift;
 
-	assert($client);
-	my $master = Slim::Player::Sync::masterOrSelf($client);
-
-	if (defined($newmode)) {
-	
-		my $prevmode = $client->playmode;
-	
-		$::d_source && bt() && msg($client->id() . ": Switching to mode $newmode from $prevmode\n");
-	
-		if ( $newmode eq $prevmode ) # don't switch modes if it's the same 
-		    {
-			$::d_source && msg(" Already in playmode $newmode : ignoring mode change\n");
-		} else {
-			if ($newmode eq "pause" && $client->rate != 1) {
-				$newmode = "pausenow";
-			}
-			
-			# if we're playing, then open the new song the master.		
-			if ($newmode eq "play") {
-				my $opened;
-				
-				# if the player is off, we automatically power on when we start to play
-				if (!$client->power()) {
-					$client->power(1);
-				}
-				
-				$opened = openSong($master);
-	
-				# if we couldn't open the song, then stop...
-				if (!$opened) {
-					$::d_source && msg("Couldn't open song.  Stopping.\n");
-					if (!openNext($client)) {$newmode = "stop";}
-				}
-				$client->bytesReceivedOffset(0);
-			}
-			
-			# when we change modes, make sure we do it to all the synced clients.
-			foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
-				$::d_source && msg($everyclient->id() . " New play mode: " . $newmode . "\n");
-				next if (Slim::Utils::Prefs::clientGet($everyclient,'silent'));
-				# wake up the display if we've switched modes.
-				if ($everyclient->isPlayer()) { Slim::Buttons::ScreenSaver::wakeup($everyclient); };
-				
-				# when you resume, you go back to play mode
-				if (($newmode eq "resume") ||($newmode eq "resumenow")) {
-					$everyclient->playmode("play");
-					
-				} elsif ($newmode eq "pausenow") {
-					$everyclient->playmode("pause");
-					
-				} elsif ($newmode =~ /^playout/) {
-					closeSong($everyclient);
-					if ($newmode eq 'playout-play') { $everyclient->resume() };
-					$everyclient->playmode($newmode);
-				} else {
-					$everyclient->playmode($newmode);
-				}
-		
-				if ($newmode eq "stop") {
-					$everyclient->currentplayingsong("");
-					$::d_source && msg("Stopping and clearing out old chunks for client " . $everyclient->id() . "\n");
-					@{$everyclient->chunks} = ();
-	
-					$everyclient->stop();
-					closeSong($everyclient);
-					resetSong($everyclient);
-				} elsif ($newmode eq "play") {
-					$everyclient->readytosync(0);
-					$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
-					$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat());				
-				} elsif ($newmode eq "pause") {
-					# since we can't count on the accuracy of the fade timers, we unfade them all, but the master calls back to pause everybody
-					if ($everyclient eq $client) {
-						$everyclient->fade_volume(-0.3125, \&pauseSynced, [$client]);
-					} else {
-						$everyclient->fade_volume(-0.3125);
-					}				
-					
-				} elsif ($newmode eq "pausenow") {
-					$everyclient->pause();
-				} elsif ($newmode eq "resumenow") {
-					$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
-					$everyclient->resume();
-					
-				} elsif ($newmode eq "resume") {
-					# set volume to 0 to make sure fade works properly
-					$everyclient->volume(0);
-					$everyclient->resume();
-					$everyclient->fade_volume(.3125);
-					
-				} elsif ($newmode =~ /^playout/) {
-					$everyclient->playout();
-				} else {
-					$::d_source && msg(" Unknown play mode: " . $everyclient->playmode . "\n");
-					return $everyclient->playmode();
-				}
-				Slim::Player::Playlist::refreshPlaylist($everyclient);
-			}
-		}
-	$::d_source && msg($client->id() . ": Current playmode: " . $client->playmode() . "\n");
-	}
 	my $returnedmode = $client->playmode();
 	
-	$returnedmode = 'play' if ($returnedmode =~ /^play/);
+	$returnedmode = 'play' if $returnedmode =~ /^play/i;
 	
 	return $returnedmode;
 }
 
-sub underrun {
-	my $client = shift;
+# playmode - start playing, pause or stop
+sub playmode {
+	my ($client, $newmode) = @_;
+
+	assert($client);
+
+	# Short circuit.
+	return _returnPlayMode($client) unless defined $newmode;
+
+	my $master   = Slim::Player::Sync::masterOrSelf($client);
+
+	#
+	my $prevmode = $client->playmode();
+
+	$::d_source && bt() && msg($client->id() . ": Switching to mode $newmode from $prevmode\n");
+
+	# don't switch modes if it's the same 
+	if ($newmode eq $prevmode) {
+
+		$::d_source && msg(" Already in playmode $newmode : ignoring mode change\n");
+
+		return _returnPlayMode($client);
+	}
+
+	# This function is likely doing too much.
+	if ($newmode eq "pause" && $client->rate != 1) {
+		$newmode = "pausenow";
+	}
 	
-	return unless $client;
+	# if we're playing, then open the new song the master.		
+	if ($newmode eq "play") {
+
+		# if the player is off, we automatically power on when we start to play
+		if (!$client->power()) {
+			$client->power(1);
+		}
+		
+		# if we couldn't open the song, then stop...
+		my $opened = openSong($master) || do {
+
+			$::d_source && msg("Couldn't open song.  Stopping.\n");
+
+			$newmode = 'stop' unless openNext($client);
+		};
+
+		$client->bytesReceivedOffset(0);
+	}
+	
+	# when we change modes, make sure we do it to all the synced clients.
+	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
+
+		$::d_source && msg($everyclient->id() . " New play mode: " . $newmode . "\n");
+
+		next if Slim::Utils::Prefs::clientGet($everyclient,'silent');
+
+		# wake up the display if we've switched modes.
+		if ($everyclient->isPlayer()) {
+			Slim::Buttons::ScreenSaver::wakeup($everyclient);
+		}
+		
+		# when you resume, you go back to play mode
+		if (($newmode eq "resume") ||($newmode eq "resumenow")) {
+
+			$everyclient->playmode("play");
+			
+		} elsif ($newmode eq "pausenow") {
+
+			$everyclient->playmode("pause");
+			
+		} elsif ($newmode =~ /^playout/) {
+
+			closeSong($everyclient);
+			$everyclient->resume() if $newmode eq 'playout-play';
+			$everyclient->playmode($newmode);
+
+		} else {
+			$everyclient->playmode($newmode);
+		}
+
+		if ($newmode eq "stop") {
+
+			$everyclient->currentplayingsong("");
+
+			$::d_source && msg("Stopping and clearing out old chunks for client " . $everyclient->id() . "\n");
+
+			@{$everyclient->chunks} = ();
+
+			$everyclient->stop();
+			closeSong($everyclient);
+			resetSong($everyclient);
+
+		} elsif ($newmode eq "play") {
+
+			$everyclient->readytosync(0);
+			$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
+			$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat());
+
+		} elsif ($newmode eq "pause") {
+
+			# since we can't count on the accuracy of the fade
+			# timers, we unfade them all, but the master calls
+			# back to pause everybody
+			if ($everyclient eq $client) {
+				$everyclient->fade_volume(-$FADEVOLUME, \&pauseSynced, [$client]);
+			} else {
+				$everyclient->fade_volume(-$FADEVOLUME);
+			}				
+			
+		} elsif ($newmode eq "pausenow") {
+
+			$everyclient->pause();
+
+		} elsif ($newmode eq "resumenow") {
+
+			$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
+			$everyclient->resume();
+			
+		} elsif ($newmode eq "resume") {
+
+			# set volume to 0 to make sure fade works properly
+			$everyclient->volume(0);
+			$everyclient->resume();
+			$everyclient->fade_volume($FADEVOLUME);
+			
+		} elsif ($newmode =~ /^playout/) {
+
+			$everyclient->playout();
+
+		} else {
+
+			$::d_source && msg(" Unknown play mode: " . $everyclient->playmode . "\n");
+			return $everyclient->playmode();
+		}
+
+		Slim::Player::Playlist::refreshPlaylist($everyclient);
+	}
+
+	$::d_source && msg($client->id() . ": Current playmode: $newmode\n");
+
+	return _returnPlayMode($client);
+}
+
+sub underrun {
+	my $client = shift || return;
 	
 	$client->readytosync(-1);
 	
 	$::d_source && msg($client->id() . ": Underrun while this mode: " . $client->playmode() . "\n");
 
-	# the only way we'll get an underrun event while stopped is if we were playing out.  so we need to open the next item and play it!
+	# the only way we'll get an underrun event while stopped is if we were
+	# playing out.  so we need to open the next item and play it!
+	#
 	# if we're synced, then we let resync handle this
+
 	if (($client->playmode eq 'playout-play' || $client->playmode eq 'stop') && !Slim::Player::Sync::isSynced($client)) {
+
 		skipahead($client);
+
 	} elsif (($client->playmode eq 'playout-stop') && !Slim::Player::Sync::isSynced($client)) {
+
 		playmode($client, 'stop');
 		$client->update();
 	}
@@ -334,54 +399,60 @@ sub underrun {
 
 sub skipahead {
 	my $client = shift;
+
 	$::d_source && msg("**skipahead: stopping\n");
 	playmode($client, 'stop');
+
 	$::d_source && msg("**skipahead: opening next song\n");
 	openNext($client);
+
 	$::d_source && msg("**skipahead: restarting after underrun\n");
 	playmode($client, 'play');
 } 
 
 sub nextChunk {
-	my $client = shift;
+	my $client       = shift;
 	my $maxChunkSize = shift;
-	my $chunkRef;
+
+	my $chunk;
 
 	# if there's a chunk in the queue, then use it.
 	if (scalar(@{$client->chunks})) {
-		$chunkRef = shift @{$client->chunks};
+
+		$chunk = shift @{$client->chunks};
 
 	} else {
 		#otherwise, read a new chunk
 		my $readfrom = Slim::Player::Sync::masterOrSelf($client);
 			
-		$chunkRef = readNextChunk($readfrom, $maxChunkSize);
+		$chunk = readNextChunk($readfrom, $maxChunkSize);
 			
-		if (defined($chunkRef)) {	
+		if (defined($chunk)) {
+
 			# let everybody I'm synced with use this chunk
 			foreach my $buddy (Slim::Player::Sync::syncedWith($client)) {
-				push @{$buddy->chunks}, $chunkRef;
+				push @{$buddy->chunks}, $chunk;
 			}
 		}
 	}
 	
-	if (defined($chunkRef)) {
+	if (defined($chunk)) {
 
-		my $len = length($$chunkRef);
+		my $len = length($$chunk);
 
 		if ($len > $maxChunkSize) {
 			$::d_source && msg("chunk too big, pushing the excess for later.\n");
 			
-			my $queued = substr($$chunkRef, $maxChunkSize - $len, $len - $maxChunkSize);
+			my $queued = substr($$chunk, $maxChunkSize - $len, $len - $maxChunkSize);
 
 			unshift @{$client->chunks}, \$queued;
 			
-			my $returned = substr($$chunkRef, 0, $maxChunkSize);
-			$chunkRef = \$returned;
+			my $returned = substr($$chunk, 0, $maxChunkSize);
+			$chunk = \$returned;
 		}
 	}
 	
-	return $chunkRef;
+	return $chunk;
 }
 
 #
@@ -391,7 +462,6 @@ sub nextChunk {
 #   buffer gets around to it
 #
 sub gototime {
-
 	my $client  = Slim::Player::Sync::masterOrSelf(shift);
 	my $newtime = shift;
 	
@@ -401,8 +471,8 @@ sub gototime {
 		return unless openSong($client);
 	}
 
-	my $songLengthInBytes   = $client->songtotalbytes();
-	my $duration		= $client->songduration();
+	my $songLengthInBytes = $client->songtotalbytes();
+	my $duration	      = $client->songduration();
 
 	return if (!$songLengthInBytes || !$duration);
 
@@ -449,16 +519,22 @@ sub gototime {
 		@{$everybuddy->chunks} = ();
 	}
 
-	my $dataoffset =  $client->songoffset;
+	my $dataoffset = $client->songoffset();
+
 	$client->songBytes($newoffset);
 	$client->lastskip($newoffset);
-	$client->audioFilehandle->sysseek($newoffset+$dataoffset, 0);
 	$client->songStartStreamTime($newtime);
 
+	$client->audioFilehandle()->sysseek($newoffset + $dataoffset, 0);
+
 	foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
-		$::d_source && msg("gototime: restarting playback\n");
+
 		next if (Slim::Utils::Prefs::clientGet($everybuddy,'silent'));
+
+		$::d_source && msg("gototime: restarting playback\n");
+
 		$everybuddy->readytosync(0);
+
 		$everybuddy->play(Slim::Player::Sync::isSynced($client), $client->streamformat());
 	}
 }
@@ -514,8 +590,9 @@ sub openNext {
 	my $client = shift;
 	my $result = 1;
 	
-	my $oldstreamformat = $client->streamformat;
+	my $oldstreamformat = $client->streamformat();
 	my $nextsong;
+
 	closeSong($client);
 
 	# we're at the end of a song, let's figure out which song to open up.
@@ -523,35 +600,63 @@ sub openNext {
 	do {
 	
 		if (Slim::Player::Playlist::repeat($client) == 2  && $result) {
+
 			$nextsong = nextsong($client);
+
 		} elsif (Slim::Player::Playlist::repeat($client) == 1 && $result) {
-			#play the same song again
+
+			# play the same song again
+
 		} else {
-			#stop at the end of the list or when list is empty
-			if (currentSongIndex($client) == (Slim::Player::Playlist::count($client) - 1) || !Slim::Player::Playlist::count($client)) {
+
+			# stop at the end of the list or when list is empty
+			if (currentSongIndex($client) == (Slim::Player::Playlist::count($client) - 1) ||
+				!Slim::Player::Playlist::count($client)) {
+
 				$nextsong = 0;
+
 				currentSongIndex($client, $nextsong);
 				playmode($client, $result ? 'playout-stop' : 'stop');
+
 				$client->update();
+
 				return 0;
+
 			} else {
+
 				$nextsong = nextsong($client);
 			}
 		}
 
-		my ($command, $type, $newstreamformat) = getCommand($client, Slim::Player::Playlist::song($client, $nextsong));
+		my ($command, $type, $newstreamformat) = getConvertCommand(
+			$client, Slim::Player::Playlist::song($client, $nextsong)
+		);
 		
-		if ((playmode($client) eq 'play') && (($oldstreamformat ne $newstreamformat) || Slim::Player::Sync::isSynced($client)) || $client->rate() != 1) {
-			$::d_source && msg("playing out before starting next song. (old format: $oldstreamformat, new: $newstreamformat)\n");
+		if ((playmode($client) eq 'play') && 
+			(($oldstreamformat ne $newstreamformat) || Slim::Player::Sync::isSynced($client)) ||
+			$client->rate() != 1) {
+
+			$::d_source && msg(
+				"playing out before starting next song. (old format: " .
+				"$oldstreamformat, new: $newstreamformat)\n"
+			);
+
 			playmode($client, 'playout-play');
 			return 0;
+
 		} else {
-			$::d_source && msg("opening next song (old format: $oldstreamformat, new: $newstreamformat) current playmode: " . playmode($client) . "\n");
+
+			$::d_source && msg(
+				"opening next song (old format: $oldstreamformat, " .
+				"new: $newstreamformat) current playmode: " . playmode($client) . "\n"
+			);
+
 			currentSongIndex($client, $nextsong);
 			$result = openSong($client);
 		}
 
 	} while (!$result);
+
 	return $result;
 }
 
@@ -613,7 +718,7 @@ sub closeSong {
 		$client->audioFilehandle->close();
 		$client->audioFilehandle(undef);
 		$client->audioFilehandleIsSocket(0);
-	}	
+	}
 }
 
 sub resetSong {
@@ -637,8 +742,6 @@ sub openSong {
 	
 	resetSong($client);
 	
-	my $fullpath = '';
-
 	# We are starting a new song, lets kill any animation so we see the correct new song.
 	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) { 
 		Slim::Display::Animation::killAnimation($everyclient);
@@ -646,16 +749,12 @@ sub openSong {
 	
 	closeSong($client);
 	
-	$fullpath = Slim::Player::Playlist::song($client);
-
-	unless ($fullpath) {
-		return undef;
-	}
+	my $fullpath = Slim::Player::Playlist::song($client) || return undef;
 
 	$::d_source && msg("openSong on: $fullpath\n");
+
 	####################
 	# parse the filetype
-
 	if (Slim::Music::Info::isHTTPURL($fullpath)) {
 
 		my $line1 = string('CONNECTING_FOR');
@@ -688,8 +787,8 @@ sub openSong {
 				my @items = Slim::Formats::Parse::parseList($fullpath, $sock);
 				
 				# hack to preserve the title of a song redirected through a playlist
-				if ( scalar(@items) == 1 && defined(Slim::Music::Info::title($fullpath))) {
-				    Slim::Music::Info::setTitle($items[0], Slim::Music::Info::title($fullpath));
+				if (scalar(@items) == 1 && defined(Slim::Music::Info::title($fullpath))) {
+					Slim::Music::Info::setTitle($items[0], Slim::Music::Info::title($fullpath));
 				} 
 				
 				# close the socket
@@ -716,12 +815,15 @@ sub openSong {
 		} 
 		
 		if (!$sock) {
+
 			$::d_source && msg("Remote stream failed to open, showing message.\n");
 			$client->audioFilehandle(undef);
 			
 			my $line1 = string('PROBLEM_CONNECTING');
-			my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));			
+			my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
+
 			Slim::Display::Animation::showBriefly($client, $line1, $line2, 5, 1);
+
 			return undef;
 		}
 
@@ -740,135 +842,139 @@ sub openSong {
 		# don't try and read this if we're a pipe
 		unless (-p $fullpath) {
 
+			# XXX - endian can be undef here - set to ''.
 			$size       = Slim::Music::Info::size($fullpath);
 			$duration   = Slim::Music::Info::durationSeconds($fullpath);
 			$offset     = Slim::Music::Info::offset($fullpath);
 			$samplerate = Slim::Music::Info::samplerate($fullpath);
 			$blockalign = Slim::Music::Info::blockalign($fullpath);
-			$endian     = Slim::Music::Info::endian($fullpath);
-			$::d_source && msg("openSong: getting duration  $duration, size $size, endian $endian and offset $offset for $fullpath\n");
+			$endian     = Slim::Music::Info::endian($fullpath) || '';
+
+			$::d_source && msg(
+				"openSong: getting duration  $duration, size $size, endian " .
+				"$endian and offset $offset for $fullpath\n"
+			);
+
 			if (!$size || !$duration) {
+
 				$::d_source && msg("openSong: not bothering opening file with zero size or duration\n");
+
 				my $line1 = string('PROBLEM_OPENING');
-				my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));		
+				my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
+
 				Slim::Display::Animation::showBriefly($client, $line1, $line2, 1,1);
 				Slim::Buttons::Common::param($client,'noUpdate',1);
+
 				return undef;
 			}
 		}
+
 		# smart bitrate calculations
-		my $rate = (Slim::Music::Info::bitratenum($fullpath) || 0) / 1000;
+		my $rate    = (Slim::Music::Info::bitratenum($fullpath) || 0) / 1000;
+
 		my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate') 
 				|| Slim::Utils::Prefs::clientGet($client,'maxBitrate');
-		if (!defined $maxRate) {$maxRate = 0;}
-		my ($command, $type, $format) = getCommand($client, $fullpath);
+
+		# if player setting is 0 or we have no birate defined, use the server fallback of 320
+		if ((!defined $maxRate) || !$maxRate) {
+			$maxRate = Slim::Utils::Prefs::get('maxBitrate') || 0;
+		}
+
+		my ($command, $type, $format) = getConvertCommand($client, $fullpath);
 		
 		$::d_source && msg("openSong: this is an $type file: $fullpath\n");
 		$::d_source && msg("  file type: $type format: $format inrate: $rate maxRate: $maxRate\n");
 		$::d_source && msg("  command: $command\n");
-		if (defined($command)) {
-			# this case is when we play the file through as-is
-			if ($command eq '-') {
-				$format = "wav" if $format eq "aif" && defined($endian) && !$endian; # hack for little-endian aiff.
-				$client->audioFilehandle( FileHandle->new() );		
-				$::d_source && msg("openSong: opening file $filepath\n");
-				if ($client->audioFilehandle->open($filepath)) {
 
-					$::d_source && msg(" seeking in $offset into $filepath\n");
+		unless (defined($command)) {
 
-					if ($offset) {
-						if (!defined(sysseek($client->audioFilehandle, $offset, 0))) {
-							msg("couldn't seek to $offset for $filepath");
-						};
-					}
+			$::d_source && msg(
+				"Couldn't create command line for $type playback for $fullpath\n"
+			);
 
-					# pipe is a socket
-					if (-p $fullpath) {
-						$client->audioFilehandleIsSocket(1);
-					} else {
-						$client->audioFilehandleIsSocket(0);
-					}
-
-				} else { 
-					$client->audioFilehandle(undef);
-				}
-							
-			} else {
-				
-				my $fullCommand = $command;
-	
-				$fullCommand =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
-				
-				$fullCommand =~ s/\$FILE\$/"$filepath"/g;
-				$fullCommand =~ s/\$URL\$/"$fullpath"/g;
-				$fullCommand =~ s/\$RATE\$/$samplerate/g;
-				if ($type eq 'flc') {
-					if ($fullpath =~ /#([^-]+)-([^-]+)$/) {
-						my ($start, $end) = ($1, $2);
-						$fullCommand =~ s/\$START\$/Slim::Utils::Misc::fracSecToMinSec($start)/eg;
-						$fullCommand =~ s/\$END\$/Slim::Utils::Misc::fracSecToMinSec($end)/eg;
-					} else {
-						$fullCommand =~ s/\$START\$/0/g;
-						$fullCommand =~ s/\$END\$/-0/g;
-					}
-				}
-				
-				my $swap = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
-				$fullCommand =~ s/\$-x\$/$swap/g;
-				
-				#if player setting is 0 or we have no birate defined, use the server fallback of 320
-				if ((!defined $maxRate) || !$maxRate) {$maxRate = Slim::Utils::Prefs::get('maxBitrate');}				
-				$fullCommand =~ s/\$BITRATE\$/$maxRate/g;
-				
-				$fullCommand =~ s/\$([^\$]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
-
-				$fullCommand .= (Slim::Utils::OSDetect::OS() eq 'win') ? "" : " &";
-
-				$fullCommand .= ' |';
-				
-				$::d_source && msg("Using command for conversion: $fullCommand\n");
-
-				$client->audioFilehandle( FileHandle->new() );
-				$client->audioFilehandle->open($fullCommand);
-				$client->audioFilehandleIsSocket(2);
-				
-				$client->remoteStreamStartTime(Time::HiRes::time());
-				$client->pauseTime(0);
-				
-				$size   = $duration * ($maxRate * 1000) / 8;
-				$offset = 0;
-			}
-		
-			$client->songtotalbytes($size);
-			$client->songduration($duration);
-			$client->songoffset($offset);
-			$client->streamformat($format);
-			$client->songblockalign($blockalign);
-			$::d_source && msg("Streaming with format: $format\n");
-		
-		} else {
-
-			$::d_source && msg("Couldn't create command line for $type playback (command: $command) for $fullpath\n");
 			return undef;
 		}
 
+		# this case is when we play the file through as-is
+		if ($command eq '-') {
+
+			# hack for little-endian aiff.
+			$format = "wav" if $format eq "aif" && defined($endian) && !$endian;
+
+			$client->audioFilehandle( FileHandle->new() );		
+
+			$::d_source && msg("openSong: opening file $filepath\n");
+
+			if ($client->audioFilehandle->open($filepath)) {
+
+				$::d_source && msg(" seeking in $offset into $filepath\n");
+
+				if ($offset) {
+					if (!defined(sysseek($client->audioFilehandle, $offset, 0))) {
+						msg("couldn't seek to $offset for $filepath");
+					};
+				}
+
+				# pipe is a socket
+				if (-p $fullpath) {
+					$client->audioFilehandleIsSocket(1);
+				} else {
+					$client->audioFilehandleIsSocket(0);
+				}
+
+			} else { 
+				$client->audioFilehandle(undef);
+			}
+						
+		} else {
+
+			$command = tokenizeConvertCommand($command, $type, $filepath, $fullpath, $samplerate, $maxRate);
+
+			$client->audioFilehandle( FileHandle->new() );
+			$client->audioFilehandle->open($command);
+			$client->audioFilehandleIsSocket(2);
+			
+			$client->remoteStreamStartTime(Time::HiRes::time());
+			$client->pauseTime(0);
+			
+			$size   = $duration * ($maxRate * 1000) / 8;
+			$offset = 0;
+		}
+	
+		$client->songtotalbytes($size);
+		$client->songduration($duration);
+		$client->songoffset($offset);
+		$client->streamformat($format);
+		$client->songblockalign($blockalign);
+		$::d_source && msg("Streaming with format: $format\n");
+		
 	} else {
 
-		$::d_source && msg("Song is of unrecognized type " . Slim::Music::Info::contentType($fullpath) . "! Stopping! $fullpath\n");
+		$::d_source && msg(
+			"Song is of unrecognized type " .
+			Slim::Music::Info::contentType($fullpath) .
+			"! Stopping! $fullpath\n"
+		);
+
 		return undef;
 	}
 
 	######################
 	# make sure the filehandle was actually set
 	if ($client->audioFilehandle()) {
+
 		binmode($client->audioFilehandle());
 		Slim::Web::History::record(Slim::Player::Playlist::song($client));
+
 	} else {
+
 		$::d_source && msg("Can't open [$fullpath] : $!\n");
 
 		my $line1 = string('PROBLEM_OPENING');
 		my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));		
+
 		Slim::Display::Animation::showBriefly($client, $line1, $line2, 5,1);
+
 		return undef;
 	}
 
@@ -886,13 +992,16 @@ sub enabledFormat {
 	
 	my $count = Slim::Utils::Prefs::getArrayMax('disabledformats');
 	
+	return 1 if !defined($count) || $count < 0;
+
 	$::d_source && msg("There are $count disabled formats...\n");
 	
-	return 1 if (!defined($count) || $count < 0);
-	
 	for (my $i = $count; $i >= 0; $i--) {
+
 		my $disabled = Slim::Utils::Prefs::getInd('disabledformats', $i);
+
 		$::d_source && msg("Testing $disabled vs $profile\n");
+
 		if ($disabled eq $profile) {
 			$::d_source && msg("!! $profile Disabled!!\n");
 			return 0;
@@ -902,39 +1011,44 @@ sub enabledFormat {
 	return 1;
 }
 
-sub getCommand {
-	my $client = shift;
+sub getConvertCommand {
+	my $client   = shift;
 	my $fullpath = shift;
 	
-	my $type = Slim::Music::Info::contentType($fullpath);
-	my $player = $client->model();
+	my $type     = Slim::Music::Info::contentType($fullpath);
+	my $player   = $client->model();
 	my $clientid = $client->id();	
-	my $command = undef;
-	my $format = undef;
-	my @supportedformats;
-	my @playergroup = ($client, Slim::Player::Sync::syncedWith($client));
-	my %formatcounter;
-	my $audibleplayers = 0;
+	my $command  = undef;
+	my $format   = undef;
+
+	my @supportedformats = ();
+	my @playergroup      = ($client, Slim::Player::Sync::syncedWith($client));
+	my %formatcounter    = ();
+	my $audibleplayers   = 0;
 
 	my $rate = (Slim::Music::Info::bitratenum($fullpath) || 0)/1000;
 
-	my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate')  || Slim::Utils::Prefs::clientGet($client,'maxBitrate');
+	my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate') ||
+		Slim::Utils::Prefs::clientGet($client,'maxBitrate');
 
-	if (!defined $maxRate) {$maxRate = 0;}
+	$maxRate = 0 if !defined $maxRate;
 
 	my $undermax = ($maxRate > $rate) || ($maxRate == 0);
-
 	
 	# make sure we only test formats that are supported.
 	foreach my $everyclient (@playergroup) {
-		next if (Slim::Utils::Prefs::clientGet($everyclient,'silent'));
+
+		next if Slim::Utils::Prefs::clientGet($everyclient,'silent');
+
 		$audibleplayers++;
+
 		foreach my $supported ($everyclient->formats()) {
 			$formatcounter{$supported}++;
 		}
 	}
 	
 	foreach my $testformat ($client->formats()) {
+
 		if ($formatcounter{$testformat} == $audibleplayers) {
 			push @supportedformats, $testformat;
 		}
@@ -954,7 +1068,7 @@ sub getCommand {
 			$::d_source && msg("checking formats for: $profile\n");
 			
 			# if the user's disabled the profile, then skip it...
-			next if (!enabledFormat($profile));
+			next unless enabledFormat($profile);
 			
 			$::d_source && msg("   enabled\n");
 			
@@ -962,10 +1076,11 @@ sub getCommand {
 			$command = $commandTable{$profile};
 			$::d_source && $command && msg("  Found command: $command\n");
 
-			next if !$command;
+			next unless $command;
 			
 			# if we don't have one or more of the requisite binaries, then move on.
 			while ($command && $command =~ /\[([^]]+)\]/g) {
+
 				if (!Slim::Utils::Misc::findbin($1)) {
 					$command = undef;
 					$::d_source && msg("   drat, missing binary $1\n");
@@ -976,15 +1091,20 @@ sub getCommand {
 		}
 
 		$format = $checkformat;
-		#special case for mp3 to mp3.
+
+		# special case for mp3 to mp3.
 		my $downsample = "$type-$checkformat-downsample-*";
 		
-		if (defined $command && $command eq "-" && !$undermax && $type eq "mp3" && enabledFormat($downsample)) {
+		if (defined $command && $command eq "-" && !$undermax &&
+			$type eq "mp3" && enabledFormat($downsample)) {
+
 				$command = $commandTable{"$type-$checkformat-downsample-*"};;
 				$undermax = 1;
 		}
-		#only finish if the rate isn't over the limit, or the file is set to transcode to mp3 (which gets set to maxRate)
-		last if ($command && ($undermax || ($format eq "mp3")))
+
+		# only finish if the rate isn't over the limit, or the file is
+		# set to transcode to mp3 (which gets set to maxRate)
+		last if ($command && ($undermax || ($format eq "mp3")));
 	}
 
 	if (!defined $command) {
@@ -994,6 +1114,46 @@ sub getCommand {
 	}
 
 	return ($command, $type, $format);
+}
+
+sub tokenizeConvertCommand {
+	my ($command, $type, $filepath, $fullpath, $samplerate, $maxRate) = @_;
+
+	# XXX what is this?
+	my $swap = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
+
+	# XXX - what is this actually doing? CUE sheet stuff? Ick.
+	if ($type eq 'flc') {
+
+		if ($fullpath =~ /#([^-]+)-([^-]+)$/) {
+
+			my ($start, $end) = ($1, $2);
+
+			$command =~ s/\$START\$/Slim::Utils::Misc::fracSecToMinSec($start)/eg;
+			$command =~ s/\$END\$/Slim::Utils::Misc::fracSecToMinSec($end)/eg;
+
+		} else {
+
+			$command =~ s/\$START\$/0/g;
+			$command =~ s/\$END\$/-0/g;
+		}
+	}
+
+	$command =~ s/\$FILE\$/"$filepath"/g;
+	$command =~ s/\$URL\$/"$fullpath"/g;
+	$command =~ s/\$RATE\$/$samplerate/g;
+	$command =~ s/\$BITRATE\$/$maxRate/g;
+	$command =~ s/\$-x\$/$swap/g;
+
+	$command =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
+	$command =~ s/\$([^\$]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
+
+	$command .= (Slim::Utils::OSDetect::OS() eq 'win') ? '' : ' &';
+	$command .= ' |';
+
+	$::d_source && msg("Using command for conversion: $command\n");
+
+	return $command;
 }
 
 sub readNextChunk {
@@ -1041,8 +1201,13 @@ sub readNextChunk {
 				$tricksegmentbytes -= $tricksegmentbytes % $client->songblockalign();
 				
 				# check to see if we've played tricksgementlength seconds worth of audio
-				$::d_source && msg("trick mode rate: $rate:  songbytes: $now lastskip: $lastskip byterate: $byterate tricksegmentbytes: $tricksegmentbytes\n");
+				$::d_source && msg(
+					"trick mode rate: $rate: songbytes: $now lastskip: $lastskip " .
+					"byterate: $byterate tricksegmentbytes: $tricksegmentbytes\n"
+				);
+
 				if (($now - $lastskip) >= $tricksegmentbytes) { 
+
 					# if so, seek to the appropriate place.  (
 					# TODO: make this align on frame and sample boundaries as appropriate)
 					# TODO: Make the seek go into the next song, as appropriate.
@@ -1072,7 +1237,9 @@ sub readNextChunk {
 			if ($pos + $chunksize > $songLengthInBytes) {
 
 				$chunksize = $songLengthInBytes - $pos;
-				$::d_source && msg( "Reduced chunksize to $chunksize at end of file ($songLengthInBytes - $pos)\n");
+				$::d_source && msg(
+					"Reduced chunksize to $chunksize at end of file ($songLengthInBytes - $pos)\n"
+				);
 
 				if ($chunksize <= 0) {
 					$endofsong = 1;
@@ -1101,10 +1268,13 @@ sub readNextChunk {
 				}	
 
 			} elsif ($readlen == 0) { 
+
 				$::d_source && msg("Read to end of file or pipe\n");  
+
 				$endofsong = 1;
+
 			} else {
-				$::d_source && msg("Read $readlen bytes from source\n");
+				$::d_source_v && msg("Read $readlen bytes from source\n");
 			}
 			
 			if ($client->shoutMetaInterval()) {
@@ -1139,10 +1309,15 @@ sub readNextChunk {
 		# we'll have to be called again to get a chunk from the next song.
 		return undef;
 	}
-	
-	$::d_source_v && msg("read a chunk of " . length($chunk) . " length\n");
-	$::d_source_v && msg( "metadata now: " . $client->shoutMetaPointer . "\n");
-	$client->songBytes($client->songBytes + length($chunk));
+
+	my $chunkLength = length($chunk);
+
+	if ($chunkLength > 0) {
+
+		$::d_source_v && msg("read a chunk of $chunkLength length\n");
+		$::d_source_v && msg("metadata now: " . $client->shoutMetaPointer() . "\n");
+		$client->songBytes($client->songBytes() + $chunkLength);
+	}
 	
 	return \$chunk;
 }
