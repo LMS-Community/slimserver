@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.53 2003/12/10 23:02:05 dean Exp $
+# $Id: HTTP.pm,v 1.54 2003/12/14 20:00:13 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -297,7 +297,7 @@ sub processHTTP {
 					$::d_http && msg("Alternate skin $desiredskin requested\n");
 					my %skins = Slim::Web::Setup::skins();
 					foreach my $skin (keys %skins) {
-						 if ($skin =~ /$desiredskin$/) {
+						 if ($skin =~ /$desiredskin$/i) {
 							$params{'skinOverride'} = $desiredskin;
 							$params{'webroot'} = $params{'webroot'} . "$desiredskin/";
 							$path =~ s{^/.+?/}{/};
@@ -942,11 +942,11 @@ sub clearCaches {
 
 sub HTMLTemplateDirs {
 	my @dirs;
-	push @dirs, catdir($Bin,'HTML');
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @dirs, $ENV{'HOME'} . "/Library/SlimDevices/html/";
 		push @dirs, "/Library/SlimDevices/html/";
 	}
+	push @dirs, catdir($Bin,'HTML');
 	return @dirs;
 }
 
