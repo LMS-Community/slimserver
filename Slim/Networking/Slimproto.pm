@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.56 2004/06/12 22:14:52 vidur Exp $
+# $Id: Slimproto.pm,v 1.57 2004/07/23 06:25:25 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -446,6 +446,7 @@ sub process_slimproto_frame {
 	} elsif ($op eq 'UREQ') {
 		# THIS IS ONLY FOR SDK5.X-BASED FIRMWARE OR LATER
 		$::d_slimproto && msg("Client requests firmware update");
+		Slim::Buttons::Block::unblock($client);
 		$client->upgradeFirmware();		
 
 
