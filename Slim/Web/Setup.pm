@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.50 2004/03/18 02:57:14 kdf Exp $
+# $Id: Setup.pm,v 1.51 2004/03/23 04:26:40 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -435,7 +435,7 @@ sub initSetupConfig {
 			},
 			'scrollPause' => {
 				'validate' => \&validateNumber
-				,'validateArgs' => [0.001,5,1,1]
+				,'validateArgs' => [0,undef,1]
 			},
 			'scrollRate' => {
 				'validate' => \&validateNumber
