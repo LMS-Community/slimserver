@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.113 2004/11/27 06:51:53 kdf Exp $
+# $Id: Setup.pm,v 1.114 2004/11/30 04:05:15 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1117,7 +1117,6 @@ sub initSetupConfig {
 				my ($client,$paramref,$pageref) = @_;
 				return if (!defined($client));
 				playerChildren($client, $pageref);
-				Slim::Buttons::Plugins::addSetupGroups();
 			}
 	} # end of setup{'ADDITIONAL_PLAYER'} hash
 
@@ -1129,6 +1128,7 @@ sub initSetupConfig {
 		,'singleChildLinkText' => string('ADDITIONAL_SERVER_SETTINGS')
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
+				Slim::Buttons::Plugins::addSetupGroups();
 				if (Slim::Music::iTunes::canUseiTunesLibrary()) {
 					$pageref->{'GroupOrder'}[1] = 'itunes';
 				} else {
@@ -1273,7 +1273,6 @@ sub initSetupConfig {
 					$i++;
 				}
 				$pageref->{'Prefs'}{'pluginlist'}{'arrayMax'} = $i - 1;
-				Slim::Buttons::Plugins::addSetupGroups();
 			}
 		,'postChange' => sub {
 				my ($client,$paramref,$pageref) = @_;
@@ -2243,11 +2242,11 @@ sub initSetupConfig {
 		$setup{'debug'}{'Prefs'}{$key}{'changeIntro'} = $key;
 	}
 	if (scalar(keys %{Slim::Buttons::Plugins::installedPlugins()})) {
-		push @{$setup{'server'}{'children'}},'plugins';
+		$setup{'server'}{'children'}[10]='plugins';
 		# XXX This should be added conditionally based on whether there
 		# are any radio plugins. We need to find a place to make that
 		# check *after* plugins have been correctly initialized.
-		push @{$setup{'server'}{'children'}},'radio';
+		$setup{'server'}{'children'}[11]='radio';
 	}
 }
 
@@ -2260,7 +2259,6 @@ sub initSetup {
 	$setup{'formatting'}{'Prefs'}{'timeFormat'}{'validateArgs'} = [$setup{'formatting'}{'Prefs'}{'timeFormat'}{'options'}];
 	fillFormatOptions();
 	fillSetupOptions('player','titleFormat','titleFormat');
-	Slim::Buttons::Plugins::addSetupGroups();
 }
 
 

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.93 2004/11/25 03:51:05 kdf Exp $
+# $Id: Prefs.pm,v 1.94 2004/11/30 04:05:14 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -246,6 +246,7 @@ my %prefChange = (
 	}
 	,'audiodir' => sub {
 		my $newvalue = shift;
+		Slim::Buttons::Browse::init();
 		Slim::Music::MusicFolderScan::startScan();
 	}
 	,'lookForArtwork' => sub {
@@ -257,6 +258,7 @@ my %prefChange = (
 		if (defined($newvalue) && $newvalue ne '' && !-d $newvalue) {
 			mkdir $newvalue || ($::d_files && msg("Could not create $newvalue\n"));
 		}
+		Slim::Buttons::Browse::init();
 		foreach my $client (Slim::Player::Client::clients()) {
 			Slim::Buttons::Home::updateMenu($client);
 		}

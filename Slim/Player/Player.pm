@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.38 2004/11/27 06:30:35 kdf Exp $
+# $Id: Player.pm,v 1.39 2004/11/30 04:05:14 kdf Exp $
 #
 package Slim::Player::Player;
 use strict;
@@ -49,7 +49,7 @@ my $defaultPrefs = {
 		,'powerOnBrightness'	=> 4
 		,'screensaver'			=> 'playlist'
 		,'idlesaver'			=> 'playlist'
-		,'offsaver'				=> 'off'
+		,'offsaver'				=> 'datetime'
 		,'screensavertimeout'	=> 30
 		,'scrollPause'			=> 3.6
 		,'scrollPauseDouble'	=> 3.6
