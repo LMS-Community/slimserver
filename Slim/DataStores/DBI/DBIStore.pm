@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DBIStore;
 
-# $Id: DBIStore.pm,v 1.10 2005/01/10 10:05:42 dsully Exp $
+# $Id: DBIStore.pm,v 1.11 2005/01/11 23:51:48 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -691,7 +691,7 @@ sub readTags {
 
 			# cache the file size & date
 			$attributesHash->{'FS'} = -s $filepath;					
-			$attributesHash->{'AGE'} = (stat(_))[9];
+			$attributesHash->{'AGE'} = (stat($filepath))[9];
 			
 			# rewrite the size, offset and duration if it's just a fragment
 			if ($anchor && $anchor =~ /([\d\.]+)-([\d\.]+)/ && $attributesHash->{'SECS'}) {
