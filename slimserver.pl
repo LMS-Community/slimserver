@@ -65,7 +65,8 @@ sub Remove {
 	# add your additional remove messages or functions here
 }
 
-sub Help {
+sub Help {	
+	main::showUsage();
 	# add your additional help messages or functions here
 	$Config{DisplayName};
 }
@@ -749,6 +750,7 @@ sub checkVersion {
 		$::newVersion = undef;
 		return;
 	}
+print "checking version...\n";
 
 	my $lastTime = Slim::Utils::Prefs::get('checkVersionLastTime');
 
