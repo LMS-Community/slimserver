@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.24 2003/12/04 06:19:16 grotus Exp $
+# $Id: Prefs.pm,v 1.25 2003/12/06 00:30:13 grotus Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -82,6 +82,7 @@ my %DEFAULT = (
 	,"useinfocache"			=> 1				# Perhaps should be 0 for unix?
 	,'animationLevel'		=> 3
 	,'itemsPerPage'			=> 100
+	,'buildItemsPerPass'		=> 100
 	,'longdateFormat'		=> q(%A, %B |%d, %Y)
 	,'shortdateFormat'		=> q(%m/%d/%Y)
 	,'timeFormat'			=> q(|%I:%M:%S %p)
