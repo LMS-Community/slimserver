@@ -654,7 +654,7 @@ sub standardTitle {
 		'format'   => '',
 	};
 
-	if (!isFile($fullpath) || $fullpath ne $ref->{'fullpath'} || $format ne $ref->{'format'}) {
+	if ($fullpath ne $ref->{'fullpath'} || $format ne $ref->{'format'}) {
 
 		$ref = $display_cache{$client} = {
 			'fullpath' => $fullpath,
