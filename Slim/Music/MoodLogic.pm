@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.18 2004/05/19 07:28:55 kdf Exp $
+#$Id: MoodLogic.pm,v 1.19 2004/05/20 04:14:00 kdf Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -168,7 +168,7 @@ sub startScan {
 	# start the checker
 	checker();
 	
-	Slim::Music::Import::addImport();
+	Slim::Music::Import::addImport('moodlogic');
 	
 } 
 
@@ -195,9 +195,7 @@ sub doneScanning {
 	
 	Slim::Music::Info::generatePlaylists();
 	
-	Slim::Music::Info::sortPlaylists();
-	
-	Slim::Music::Import::delImport();
+	Slim::Music::Import::delImport('moodlogic');
 
 }
 

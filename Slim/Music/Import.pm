@@ -10,8 +10,9 @@ use Slim::Utils::Misc;
 # background scanning and cache prefilling of music information to speed up UI...
 
 # Total of how many file scanners are running
-my $totalImportsRunning=0;
+my %importsRunning;
 
+# TODO make this into a hash of import functions.
 sub startScan {
 		
 	$::d_info && msg("Clearing ID3 cache\n");
@@ -32,12 +33,18 @@ sub startScan {
 
 
 sub addImport {
-	$totalImportsRunning++;
+	my $import = shift;
+	$::d_info && msg("Adding $import Scan\n");
+	$importsRunning{$import} = 1;
 }
 
 sub delImport {
-	$totalImportsRunning--;
-	if ($totalImportsRunning==0) {
+	my $import = shift;
+	if (exists $importsRunning{$import}) { 
+		delete $importsRunning{$import};
+		$::d_info && msg("Completing $import Scan\n");
+	}
+	if (scalar keys %importsRunning == 0) {
 		Slim::Music::Info::clearStaleCacheEntries();
 		Slim::Music::Info::reBuildCaches();
 		$::d_info && msg("Finished background scanning.\n");
@@ -46,11 +53,7 @@ sub delImport {
 }
 
 sub stillScanning {
-	if ($totalImportsRunning==0) { 
-		return 0 
-	} else { 
-		return 1; 
-	}
+	return scalar keys %importsRunning;
 }
 
 

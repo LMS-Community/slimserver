@@ -20,12 +20,11 @@ sub startScan {
 		if ($stillScanning) {
 			$::d_info && msg("Scan already in progress. Aborting\n");
 			Slim::Utils::Scan::stopAddToList(\@dummylist);
-			Slim::Music::Import::delImport();
 		}
 		$stillScanning=1;
 		$::d_info && msg("Starting music folder scan\n");
 		Slim::Utils::Scan::addToList(\@dummylist, Slim::Utils::Prefs::get('audiodir'), 1, 0, \&doneScanning, 0);
-		Slim::Music::Import::addImport();
+		Slim::Music::Import::addImport('folder');
 	}
 }
 
@@ -33,7 +32,7 @@ sub doneScanning {
 	$::d_info && msg("finished background scan of music folder.\n");
 	$stillScanning=0;
 	@dummylist = ();
-	Slim::Music::Import::delImport();
+	Slim::Music::Import::delImport('folder');
 }
 
 sub stillScanning {

@@ -382,7 +382,7 @@ sub startScan {
 	stopScan();
 
 	Slim::Utils::Scheduler::add_task(\&scanFunction);
-	Slim::Music::Import::addImport();
+	Slim::Music::Import::addImport('itunes');
 
 	$isScanning = 1;
 
@@ -422,9 +422,7 @@ sub doneScanning {
 	
 	Slim::Music::Info::generatePlaylists();
 	
-	Slim::Music::Info::sortPlaylists();
-	
-	Slim::Music::Import::delImport();
+	Slim::Music::Import::delImport('itunes');
 }
 
 sub artScan {
@@ -434,7 +432,7 @@ sub artScan {
 	my $thumb = Slim::Music::Info::haveThumbArt($artwork{$album});
 
 	if (defined $thumb && $thumb) {
-		$::d_artwork && Slim::Utils::Misc::msg("Caching thumbnail for $album\n");
+		$::d_artwork && Slim::Utils::Misc::msg("Caching $thumb for $album\n");
 		Slim::Music::Info::updateArtworkCache($artwork{$album}, {'ALBUM' => $album, 'THUMB' => $thumb})
 	}
 

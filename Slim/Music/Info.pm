@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.122 2004/05/18 19:17:39 dean Exp $
+# $Id: Info.pm,v 1.123 2004/05/20 04:14:00 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -610,7 +610,9 @@ sub generatePlaylists {
  		if (isITunesPlaylistURL($url) || isMoodLogicPlaylistURL($url)) {
 			push @playlists, $url;
 		}
-	}	
+	}
+	
+	sortPlaylists();
 }
 
 # called:
