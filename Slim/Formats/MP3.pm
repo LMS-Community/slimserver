@@ -1,6 +1,6 @@
 package Slim::Formats::MP3;
 
-# $Id: MP3.pm,v 1.9 2004/06/07 19:40:35 dean Exp $
+# $Id: MP3.pm,v 1.10 2004/06/27 14:43:20 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -85,6 +85,9 @@ sub seekNextFrame {
 	my $foundsync=0;
 	my ($seekto, $buf, $len, $h, $pos, $start, $end,$calculatedlength, $numgarbagebytes);
 	my ($found_at_offset);
+
+	my $filelen = -s $fh;
+	$startoffset = $filelen if ($startoffset > $filelen); 
 
 	$seekto = ($direction == 1) ? $startoffset : $startoffset-$MAXDISTANCE;
 	$::d_mp3 && Slim::Utils::Misc::msg("reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction) \n");
