@@ -42,13 +42,13 @@
     <p>
       [% "TUNE_IN_DESC" | string %]
     </p>
-      <form method="get" action="[% webroot | uri %]tunein.html">
+      <form name="tune" method="get" action="[% webroot | uri %]tunein.html">
           <input type="hidden" name="p0" value="playlist">
           <input type="hidden" name="p1" value="play">
           <input type="hidden" name="player" value="[% player %]">
           [% "RADIO_URL" | string %][% "COLON" | string %]
           <input type="text" class="stdedit" name="p2" size="50">
-          <input type="submit" class="stdclick" value="[% "TUNE_IN" | string %]">
+          <input type="submit" class="stdclick" value="[% "TUNE_IN" | string %]" onclick="document.forms.tune.submit(); parent.status.location.reload(true);">
       </form>
 	</td>
 	<td width="4" height="100%"></td>
