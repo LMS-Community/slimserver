@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.48 2004/10/08 05:16:46 kdf Exp $
+# $Id: Command.pm,v 1.49 2004/10/08 06:04:27 vidur Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -458,6 +458,7 @@ sub execute {
 					}
 					Slim::Formats::Parse::writeM3U( 
 						$annotatedlistRef 
+						,undef,
 						,catfile(Slim::Utils::Prefs::get('playlistdir') 
 						,$savename . ".m3u") 
 						,1 

@@ -85,7 +85,7 @@ sub record {
 	}
 
 	if (Slim::Utils::Prefs::get('savehistory') && Slim::Utils::Prefs::get('playlistdir')) {
-		Slim::Formats::Parse::writeM3U( \@history, catfile(Slim::Utils::Prefs::get('playlistdir'),'__history.m3u'));
+		Slim::Formats::Parse::writeM3U( \@history, undef, catfile(Slim::Utils::Prefs::get('playlistdir'),'__history.m3u'));
 	}
 }
 
@@ -100,7 +100,7 @@ sub adjustHistoryLength {
 		splice @history, $newlen;
 
 		if (Slim::Utils::Prefs::get('savehistory') && Slim::Utils::Prefs::get('playlistdir')) {
-			Slim::Formats::Parse::writeM3U(\@history,catfile(Slim::Utils::Prefs::get('playlistdir'),'__history.m3u'));
+			Slim::Formats::Parse::writeM3U(\@history,undef,catfile(Slim::Utils::Prefs::get('playlistdir'),'__history.m3u'));
 		}
 	}
 }

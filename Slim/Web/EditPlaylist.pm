@@ -108,11 +108,7 @@ sub editplaylist {
 	}
 
 	if ($changed) {
-		if (Slim::Music::Info::typeFromSuffix($fulldir) eq 'm3u') {
-			Slim::Formats::Parse::writeM3U(\@items, Slim::Utils::Misc::pathFromFileURL($fulldir));
-		} elsif (Slim::Music::Info::typeFromSuffix($fulldir) eq 'pls') {
-			Slim::Formats::Parse::writePLS(\@items, undef, Slim::Utils::Misc::pathFromFileURL($fulldir));
-		}
+		Slim::Formats::Parse::writeList(\@items, undef, $fulldir);
 	}
 	
 	my %list_form = %$params;
@@ -139,3 +135,9 @@ sub editplaylist {
 }
 
 1;
+__END__
+
+# Local Variables:
+# tab-width:4
+# indent-tabs-mode:t
+# End:

@@ -432,7 +432,7 @@ sub modifyPlaylistCallback {
 				my $playlistname = "__" . $eachclient->id() . ".m3u";
 				$playlistname =~ s/\:/_/g;
 				$playlistname = catfile(Slim::Utils::Prefs::get('playlistdir'),$playlistname);
-				Slim::Formats::Parse::writeM3U($playlistref,$playlistname);
+				Slim::Formats::Parse::writeM3U($playlistref,$playlistname,$playlistname);
 			}
 			if ($savecurrsong) {
 				Slim::Utils::Prefs::clientSet($eachclient,'currentSong',$currsong);

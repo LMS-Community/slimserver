@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.102 2004/10/06 15:56:14 vidur Exp $
+# $Id: Pages.pm,v 1.103 2004/10/08 06:04:29 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -182,6 +182,8 @@ sub browser {
 		}
 	}
 
+	my $suffix = Slim::Formats::Parse::getPlaylistSuffix($fulldir);
+
 	# if they are renaming the playlist, let 'em.
 	if ($playlist && $params->{'newname'}) {
 
@@ -190,8 +192,7 @@ sub browser {
 		# don't allow periods, colons, control characters, slashes, backslashes, just to be safe.
 		$newname =~ tr|.:\x00-\x1f\/\\| |s;
 
-		if (Slim::Music::Info::isM3U($fulldir)) { $newname .= ".m3u"; };
-		if (Slim::Music::Info::isPLS($fulldir)) { $newname .= ".pls"; };
+		if (defined($suffix)) { $newname .= $suffix; };
 		
 		if ($newname) {
 
@@ -275,7 +276,7 @@ sub browser {
 		$lastpath = $c if $c;
 	}
 
-	if (Slim::Music::Info::isM3U($fulldir)) {
+	if (defined($suffix)) {
 
 		$::d_http && msg("lastpath equals $lastpath\n");
 
@@ -284,18 +285,12 @@ sub browser {
 			$params->{'savebuttonname'} = string("SAVE");
 		} else {
 
-			$lastpath =~ s/(.*)\.m3u$/$1/;
+			$lastpath =~ s/(.*)\.(.*)$/$1/;
 			$params->{'playlistname'}   = $lastpath;
 			$params->{'savebuttonname'} = string("RENAME");
 			$params->{'titled'} = 1;
 		}
 
-	} elsif (Slim::Music::Info::isPLS($fulldir)) {
-
-			$lastpath =~ s/(.*)\.pls$/$1/;
-			$params->{'playlistname'}   = $lastpath;
-			$params->{'savebuttonname'} = string("RENAME");
-			$params->{'titled'} = 1;
 	}
 
 	Slim::Utils::Scan::addToList(
