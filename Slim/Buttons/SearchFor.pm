@@ -172,7 +172,8 @@ my %functions = (
 		Slim::Utils::Timers::killTimers($client, \&nextChar);
 		# if it's a different number, then skip ahead
 		if (Slim::Buttons::Common::testSkipNextNumberLetter($client, $digit)) {
-			nextChar($client);
+			$client->searchCursor($client->searchCursor+1);
+			$client->update();
 		}
 		# update the search term
 		$client->searchTerm($client->searchCursor,

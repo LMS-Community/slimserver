@@ -1,13 +1,17 @@
 [% pageicon = 'help' %]
-[% title = 'The Slim TCP Protocol' %]
+[% title = 'The SlimProto TCP Protocol:' %]
 [% techinfo = '1' %]
 [% PROCESS helpheader.html %]
 
-<h4>Slim TCP Protocol</h4>
+<h4>SlimProto  Protocol</h4>
 
-<p>The TCP protocol is the new protocol developed for the squeezebox and replaces the SLIMP3 UDP one. It is designed to allow the players to communicate effectively over WANs as well as LANs.</p>
+<p>The SlimProto  protocol is the new protocol developed for the squeezebox and replaces the SLIMP3 one. 
+It is designed to allow the players to communicate effectively over WANs as well as LANs.</p>
 
-<p>The server listens on port 3483 for connections by players. To register a player with the server, they exchange "helo"s and than any of the commands below are valid.</p>
+<p>This document describes the SlimProto for Squeezebox firmware versions 20 and above.
+
+<p>The server listens on TCP port 3483 for connections by players. To register a player with the server, they exchange "helo"s and than any of the commands below are valid.</p>
+<p>The client also listens on UDP port 3483 for SlimProto commands from the server it has already established a TCP connection with.</p>
 
 <p>The byte order is critical for several of the fields. The best way to check this out is to look at the server source code.</p>
 
@@ -91,8 +95,8 @@ are no commands as a sort of keep-alive. They inform the server of the status of
 <tr><td>u8</td><td>Number of consecutive CRLF recieved while parsing headers</td></tr>
 <tr><td>u8</td><td>MAS Initalized - 'm' or 'p'</td></tr>
 <tr><td>u8</td><td>MAS Mode - serdes mode?</td></tr>
-<tr><td>u32</td><td>rptr - Position of read pointer in players buffer?</td></tr>
-<tr><td>u32</td><td>wptr - Position of write pointer in players buffer?</td></tr>
+<tr><td>u32</td><td>buffer size - size, in bytes, of the player's buffer memory</td></tr>
+<tr><td>u32</td><td>fullness - number of bytes of audio data in the player's buffer memory</td></tr>
 <tr><td>u64</td><td>Bytes Recieved</td></tr>
 <tr><td>u16</td><td>Wireless Signal Strength (0-100 - Larger values mean hardwired)</td></tr>
 <tr><td>u32</td><td>jiffies - a timestamp from the player (@1Khz)</td></tr>
