@@ -231,7 +231,7 @@ sub request {
 			my $title = $1;
 
 			if ($title && $] > 5.007) {
-				$title = Encode::decode('iso-8859-1', $title, Encode::FB_QUIET);
+				$title = Encode::decode('iso-8859-1', $title, Encode::FB_QUIET());
 			}
 
 			Slim::Music::Info::setTitle($infoUrl, $title) if $create;
@@ -474,7 +474,7 @@ sub readMetaData {
 			my $title    = $1;
 
 			if ($title && $] > 5.007) {
-				$title = Encode::decode('iso-8859-1', $title, Encode::FB_QUIET);
+				$title = Encode::decode('iso-8859-1', $title, Encode::FB_QUIET());
 			}
 			
 			# capitalize titles that are all lowercase

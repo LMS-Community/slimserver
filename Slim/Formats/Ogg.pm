@@ -74,7 +74,7 @@ sub getTag {
 	foreach my $key ($ogg->comment_tags()) {
 
 		if ($] > 5.007) {
-			$tags->{uc($key)} = eval { Encode::decode("utf8", ($ogg->comment($key))[0], Encode::FB_QUIET) };
+			$tags->{uc($key)} = eval { Encode::decode("utf8", ($ogg->comment($key))[0], Encode::FB_QUIET()) };
 		} else {
 			$tags->{uc($key)} = Slim::Utils::Misc::utf8toLatin1(($ogg->comment($key))[0]);
 		}

@@ -439,7 +439,7 @@ sub exportFunction {
 			# fileURLFromPath will turn this into UTF-8 - so we
 			# need to make sure we're in the current locale first.
 			if ($] > 5.007) {
-				$songInfo{'file'} = Encode::encode($Slim::Utils::Misc::locale, $songInfo{'file'}, Encode::FB_QUIET);
+				$songInfo{'file'} = Encode::encode($Slim::Utils::Misc::locale, $songInfo{'file'}, Encode::FB_QUIET());
 			}
 		
 			my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});

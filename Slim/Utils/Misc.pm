@@ -251,7 +251,7 @@ sub utf8decode {
 	my $string = shift;
 
 	if ($string && $] > 5.007) {
-		return Encode::decode('utf8', $string, Encode::FB_QUIET);
+		return Encode::decode('utf8', $string, Encode::FB_QUIET());
 	}
 
 	return $string;
@@ -261,7 +261,7 @@ sub utf8encode {
 	my $string = shift;
 
 	if ($string && $] > 5.007) {
-		return Encode::encode('utf8', $string, Encode::FB_QUIET);
+		return Encode::encode('utf8', $string, Encode::FB_QUIET());
 	}
 
 	return $string;
@@ -918,7 +918,7 @@ sub utf8toLatin1 {
 
 	if ($] > 5.007) {
 
-		$data = eval { Encode::encode('iso-8859-1', $data, Encode::FB_QUIET) } || $data;
+		$data = eval { Encode::encode('iso-8859-1', $data, Encode::FB_QUIET()) } || $data;
 
 	} else {
 

@@ -233,7 +233,7 @@ sub parseCUE {
 		unless ($noUTF8) {
 
 			if ($] > 5.007) {
-				$_ = eval { Encode::decode("utf8", $_, Encode::FB_QUIET) };
+				$_ = eval { Encode::decode("utf8", $_, Encode::FB_QUIET()) };
 			} else {
 				$_ = Slim::Utils::Misc::utf8toLatin1($_);
 			}
