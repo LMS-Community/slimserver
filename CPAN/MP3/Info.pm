@@ -697,9 +697,14 @@ sub _get_v2tag {
 
 		my @bytes = reverse unpack "C$num", substr($bytes, $num, $num);
 
-		# use syncsafe bytes if using version 2.4
-		my $bytesize = ($v2->{major_version} > 3) ? 128 : 256;
+#		# use syncsafe bytes if using version 2.4
+#		my $bytesize = ($v2->{major_version} > 3) ? 128 : 256;
 
+		# alas, that's what the spec says, but iTunes and others don't syncsafe
+		# the length, which breaks MP3 files with v2.4 tags longer than 128 bytes,
+		# like every image file.
+		my $bytesize = 256;
+		
 		for my $i (0 .. ($num - 1)) {
 			$size += $bytes[$i] * $bytesize ** $i;
 		}

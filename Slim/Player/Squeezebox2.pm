@@ -141,7 +141,7 @@ sub nowPlayingModes {
 
 sub showVisualizer {
 	my $client = shift;
-	return ($client->power() && (Slim::Player::Source::playmode($client) eq 'play'));
+	return ($client->power() && ((Slim::Player::Source::playmode($client) eq 'play') || Slim::Buttons::Playlist::showingNowPlaying($client)));
 }
 
 sub displayWidth {
@@ -216,15 +216,21 @@ sub drawFrameBuf {
 	my $param = shift || pack('c', 0);
 	
 	if ($client->opened()) {
-	
-	my $framebuf = pack('n', 0) .   # offset of zero
-		               $transition . # transition
-		               $param . # transition parameter
-		               substr($$framebufref, 0, $client->displayWidth() * $client->bytesPerColumn()); # truncate if necessary
 
-	$client->sendFrame('grfe', \$framebuf);
+		my $framebuf = pack('n', 0) .   # offset of zero
+						   $transition . # transition
+						   $param . # transition parameter
+						   substr($$framebufref, 0, $client->displayWidth() * $client->bytesPerColumn()); # truncate if necessary
+	
+		$client->sendFrame('grfe', \$framebuf);
 	}
 }	
+
+sub animating {
+	my $client = shift;
+	$client->visualizer();
+	$client->SUPER::animating(@_);
+}
 
 # preformed frame header for fast scolling - contains header added by sendFrame and drawFrameBuf
 sub scrollHeader {
@@ -445,34 +451,9 @@ sub power {
 	return $pow;
 }
 
-sub play {
+sub update {
 	my $client = shift;
-	$client->visualizer();
-	$client->SUPER::play(@_);
-}
-
-sub resume {
-	my $client = shift;
-	$client->SUPER::resume(@_);
-	$client->visualizer();
-}
-
-sub pause {
-	my $client = shift;
-	$client->SUPER::pause(@_);
-	$client->visualizer();
-}
-
-sub stop {
-	my $client = shift;
-	$client->SUPER::stop(@_);
-	$client->visualizer();
-}
-
-
-sub reconnect {
-	my $client = shift;
-	$client->SUPER::reconnect(@_);
+	$client->SUPER::update(@_);
 	$client->visualizer();
 }
 
