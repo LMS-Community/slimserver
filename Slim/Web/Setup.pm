@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.43 2004/03/10 06:48:35 kdf Exp $
+# $Id: Setup.pm,v 1.44 2004/03/10 06:58:29 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1603,7 +1603,7 @@ sub setup_HTTP {
 		return Slim::Web::HTTP::filltemplatefile('html/errors/403.html',$paramref);
 	}
 
-	if (!defined($paramref->{'page'})) {
+	if (!defined($paramref->{'page'}) || !exists($setup{$paramref->{'page'}})) {
 		$response->code(RC_NOT_FOUND);
 		$paramref->{'suggestion'} = "Try adding page=server.";
 		return Slim::Web::HTTP::filltemplatefile('html/errors/404.html',$paramref);
