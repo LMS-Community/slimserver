@@ -66,17 +66,17 @@ sub init {
 		
 		'right' => sub  {
 			my $client = shift;
-			my @instantMix;
+			my $instantMix;
 			
 			if (defined Slim::Buttons::Common::param($client, 'song')) {
 
-				@instantMix = Slim::Music::MoodLogic::getMix(
+				$instantMix = Slim::Music::MoodLogic::getMix(
 					Slim::Music::Info::moodLogicSongId(Slim::Buttons::Common::param($client, 'song')), undef, 'song'
 				);
 
 			} elsif (defined Slim::Buttons::Common::param($client,'mood') && defined Slim::Buttons::Common::param($client,'artist')) {
 
-				my @instantMix = Slim::Music::MoodLogic::getMix(
+				$instantMix = Slim::Music::MoodLogic::getMix(
 					Slim::Music::Info::moodLogicArtistId(Slim::Buttons::Common::param($client, 'artist')),
 					Slim::Buttons::Common::param($client, 'mood'),
 					'artist'
@@ -84,16 +84,16 @@ sub init {
 
 			} elsif (defined Slim::Buttons::Common::param($client,'mood') &&defined Slim::Buttons::Common::param($client,'genre')) {
 
-				my @instantMix = Slim::Music::MoodLogic::getMix(
+				$instantMix = Slim::Music::MoodLogic::getMix(
 					Slim::Music::Info::moodLogicGenreId(Slim::Buttons::Common::param($client, 'genre')),
 					Slim::Buttons::Common::param($client, 'mood'),
 					'genre'
 				);
 			}
 			
-			if (scalar @instantMix) {
+			if (scalar @$instantMix) {
 				my @oldlines = Slim::Display::Display::curLines($client);
-				Slim::Buttons::Common::pushMode($client, 'instant_mix', { 'mix' => \@instantMix });
+				Slim::Buttons::Common::pushMode($client, 'instant_mix', { 'mix' => $instantMix });
 				specialPushLeft($client, 0, @oldlines);
 			} else {
 				$client->bumpRight()

@@ -2159,15 +2159,17 @@ sub mood_wheel {
 	my $genre  = $params->{'genre'};
 	my $player = $params->{'player'};
 
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
 	my $itemnumber = 0;
 	
 	if (defined $artist && $artist ne "") {
 
-		@items = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicArtistId($artist), 'artist');
+		@items = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicArtistId(&{$fieldInfo{'artist'}->{'idToName'}}($ds,$artist)), 'artist');
 
 	} elsif (defined $genre && $genre ne "" && $genre ne "*") {
 
-		@items = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicGenreId($genre), 'genre');
+		@items = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicGenreId(&{$fieldInfo{'genre'}->{'idToName'}}($ds,$genre)), 'genre');
 
 	} else {
 
@@ -2203,7 +2205,7 @@ sub instant_mix {
 	my ($client, $params) = @_;
 
 	my $output = "";
-	my @items  = ();
+	my $items  = "";
 
 	my $song   = $params->{'song'};
 	my $artist = $params->{'artist'};
@@ -2213,6 +2215,8 @@ sub instant_mix {
 	my $mood   = $params->{'mood'};
 	my $p0     = $params->{'p0'};
 
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+	
 	my $itemnumber = 0;
 
 	$params->{'pwd_list'} = generate_pwd_list($genre, $artist, $album, $player);
@@ -2231,15 +2235,15 @@ sub instant_mix {
 
 	if (defined $song && $song ne "") {
 
-		@items = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicSongId($song), undef, 'song');
+		$items = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicSongId($song), undef, 'song');
 
 	} elsif (defined $artist && $artist ne "" && $artist ne "*" && $mood ne "") {
 
-		@items = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicArtistId($artist), $mood, 'artist');
+		$items = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicArtistId($artist),$mood, 'artist');
 
 	} elsif (defined $genre && $genre ne "" && $genre ne "*" && $mood ne "") {
 
-		@items = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicGenreId($genre), $mood, 'genre');
+		$items = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicGenreId($genre), $mood, 'genre');
 
 	} else {
 
@@ -2247,7 +2251,7 @@ sub instant_mix {
 		return undef;
 	}
 
-	for my $item (@items) {
+	for my $item (@$items) {
 
 		my %list_form = %$params;
 
@@ -2267,10 +2271,10 @@ sub instant_mix {
 
 	if (defined $p0 && defined $client) {
 
-		Slim::Control::Command::execute($client, ["playlist", $p0 eq "append" ? "append" : "play", $items[0]]);
+		Slim::Control::Command::execute($client, ["playlist", $p0 eq "append" ? "append" : "play", $items->[0]]);
 		
-		for (my $i = 1; $i <= $#items; $i++) {
-			Slim::Control::Command::execute($client, ["playlist", "append", $items[$i]]);
+		for (my $i = 1; $i <= $#$items; $i++) {
+			Slim::Control::Command::execute($client, ["playlist", "append", $items->[$i]]);
 		}
 	}
 

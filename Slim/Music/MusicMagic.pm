@@ -78,6 +78,7 @@ sub init {
 		Slim::Music::Import::addImporter('musicmagic',\&startScan,\&mixerFunction,\&addGroups);
 		Slim::Player::Source::registerProtocolHandler("musicmagicplaylist", "0");
 		addGroups();
+		startScan();
 	}
 	
 	return $initialized;

@@ -13,7 +13,6 @@ use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
-use Slim::Buttons::VarietyCombo;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
 

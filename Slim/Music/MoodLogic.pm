@@ -122,6 +122,7 @@ sub init {
 	addGroups();
 
 	$initialized = 1;
+	startScan();
 	return $initialized;
 }
 
@@ -423,7 +424,7 @@ sub getMix {
 	my $id = shift @_;
 	my $mood = shift @_;
 	my $for = shift @_;
-	my @instant_mix = ();
+	my $instant_mix = ();
 	
 	$mixer->{VarietyCombo} = 0; # resets mixer
 	if (defined $mood) {$::d_moodlogic && msg("Create $mood mix for $for $id\n")};
@@ -462,10 +463,10 @@ sub getMix {
 	$count = $mixer->Mix_PlaylistSongCount();
 
 	for (my $i=1; $i<=$count; $i++) {
-		push @instant_mix, Slim::Utils::Misc::fileURLFromPath($mixer->Mix_SongFile($i));
+		push @$instant_mix, Slim::Utils::Misc::fileURLFromPath($mixer->Mix_SongFile($i));
 	}
 
-	return @instant_mix;
+	return $instant_mix;
 }
 
 sub event_hook {
