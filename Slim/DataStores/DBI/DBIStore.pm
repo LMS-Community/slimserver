@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DBIStore;
 
-# $Id: DBIStore.pm,v 1.11 2005/01/11 23:51:48 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1001,7 +1001,7 @@ sub _preCheckAttributes {
 	delete $attributes->{'DISCC'};
 
 	if ($attributes->{'TITLE'} && !$attributes->{'TITLESORT'}) {
-		$attributes->{'TITLESORT'} = $attributes->{'TITLE'};
+		$attributes->{'TITLESORT'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'TITLE'});
 	}
 	
 	return ($attributes, $deferredAttributes);
