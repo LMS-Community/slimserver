@@ -92,8 +92,8 @@
 						<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key %]">[% link.key | string %]</OPTION>
 						[% END %]
 					[% END %]
-					</SELECT><nobr></center></td></FORM>
-					<FORM name=searcher onSubmit="parent.browser.location=document.searcher.search.options[document.searcher.search.selectedIndex].value + '&query=' + document.searcher.query.value"><td><nobr>
+				</SELECT><nobr></center></td></FORM>
+				<FORM name=searcher onSubmit="parent.browser.location=document.searcher.search.options[document.searcher.search.selectedIndex].value + 'query=' + document.searcher.query.value + '&player=[% player %]'"><td><nobr>
 					<SELECT NAME="search" class="stdedit">
 					[% IF additionalLinks.search %]
 						[% FOREACH link = additionalLinks.search %]

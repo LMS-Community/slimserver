@@ -3,44 +3,10 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 		<meta http-equiv="refresh" content="[% refresh %]; url=status_header.html?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1">
 		<link rel="stylesheet" href="slimserver.css">
+		<script type="text/javascript" src="[% webroot %]html/scripts.js" /></script>
 		<script language="JavaScript">
 			<!--Hide
 			[% IF playercount == '0' %]location="status.html";[% END %]
-			
-			function openRemote()
-			{
-				window.open('status.html?player=[% player | uri %]&start=[% start %]&refresh=1', 'access', 'width=500,height=240');
-			}
-			
-			function setCookie(name, value)
-			{
-				var expires = new Date();
-				expires.setTime(expires.getTime() + 1000*60*60*24*365);
-				document.cookie =
-					name + "=" + escape(value) +
-					((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
-			}
-			
-			function checkReload()
-			{
-				if (top.document.getElementById('player_frame'))
-				{
-					var myloc = parent.playlist.location;
-					var regex = /^playlist/g;
-					if (!regex.test(myloc))
-					{
-						parent.playlist.location = 'playlist.html?player=[% player | uri %]';
-					}
-					else 
-					{
-						if (parent.playlist.location != '') parent.playlist.location.reload(true);
-					}
-				}
-				else
-				{
-					top.document.location.reload(true);
-				}
-			}
 			-->
 		</script>
 	</head>
@@ -68,41 +34,10 @@
 
 		<script language="JavaScript">
 		<!--
-		var _progressEnd = [% IF durationseconds %][% durationseconds %][% END %][% IF not durationseconds %][% refresh %][% END %];
-		var _progressAt = [% IF songtime %][% songtime %][% END %][% IF not songtime %]0[% END %];
-		var p = 1;
-		
-		// Update the progress dialog with the current state
-		function ProgressUpdate() 
-		{
-			[% IF modeplay %]_progressAt++;[% END %]
-			if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
-			if (document.all) //if IE 4+
-			{
-				p = (document.body.clientWidth / _progressEnd) * _progressAt;
-				//document.all.progressBar.innerWidth = p+" ";
-				eval("document.progressBar.width=p");
-			}
-			else if (document.getElementById) //else if NS6+
-			{
-				p = (document.width / _progressEnd) * _progressAt;
-				document.getElementById("progressBar").width=p+" ";
-				//eval("document.progressBar.width=p");
-			}
-			setTimeout("ProgressUpdate()", 1000);
-		}
-		
-		function Click() 
-		{
-			if (document.all||document.getElementById)
-			document.write('<table border="0" cellspacing="0" cellpadding="0"><td height="5"><img id="progressBar" name="progressBar" src="html/pixel.green[% IF not modeplay %]_s[% END %].gif" width="1" height="5"></td></table>');
-			ProgressUpdate()
-		}
-		
 		if (document.all||document.getElementById)
-			Click()
+			Click([% IF modeplay %]1[% ELSE %]0[% END %],[% IF durationseconds %][% durationseconds %][% ELSE %][% refresh %][% END %],[% IF songtime %][% songtime %][% ELSE %]0[% END %]);
 		else
-			window.onload=Click
+			window.onload=Click([% IF modeplay %]1[% ELSE %]0[% END %],[% IF durationseconds %][% durationseconds %][% ELSE %][% refresh %][% END %],[% IF songtime %][% songtime %][% ELSE %]0[% END %]);
 		-->
 		</script>
 		<div class="nowplaying">
