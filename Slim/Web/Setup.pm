@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.61 2004/04/23 18:58:24 vidur Exp $
+# $Id: Setup.pm,v 1.62 2004/04/25 01:23:18 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1063,7 +1063,7 @@ sub initSetupConfig {
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['displaytexttimeout',
-							,'composerInArtists','playtrackalbum','artistinalbumsearch', 'ignoredarticles','filesort'
+							,'composerInArtists','playtrackalbum','artistinalbumsearch', 'ignoredarticles','splitchars','filesort'
 							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
 							,'savehistory','historylength','checkVersion','ignoredisableditunestracks']
 				}
@@ -1083,6 +1083,10 @@ sub initSetupConfig {
 			,'ignoredarticles' => {
 						'validate' => \&validateAcceptAll
 						,'PrefSize' => 'large'
+					}
+			,'splitchars' => {
+						'validate' => \&validateAcceptAll
+						,'PrefSize' => 'small'
 					}
 			,'playtrackalbum' => {
 						'validate' => \&validateTrueFalse

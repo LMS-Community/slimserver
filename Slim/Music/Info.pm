@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.105 2004/04/22 20:41:06 dean Exp $
+# $Id: Info.pm,v 1.106 2004/04/25 01:23:18 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2103,9 +2103,6 @@ sub readTags {
 			# cache the content type
 			$tempCacheEntry->{'CT'} = $type;
 			
-			updateGenreCache($file,$tempCacheEntry);
-			updateSortCache($file,$tempCacheEntry);
-			
 			if (! Slim::Music::iTunes::useiTunesLibrary()) {
 				# Check for Cover Artwork, only if not already present.
 				if (exists $tempCacheEntry->{'COVER'} || exists $tempCacheEntry->{'THUMB'}) {
@@ -2542,10 +2539,10 @@ sub updateGenreCache {
 		}
 	}
 
-	foreach my $genre (split(/[;\/\0]/,$genre)) {
+	foreach my $genre (splitTag($genre)) {
 		$genre=~s/^\s*//;$genre=~s/\s*$//;
 		my $genreCase = ignoreCaseArticles($genre);
-		foreach my $artist (split(/[;\/\0]/,$artist)) {
+		foreach my $artist (splitTag($artist)) {
 			$artist=~s/^\s*//;$artist=~s/\s*$//;
 			my $artistCase = ignoreCaseArticles($artist);
 			my $albumCase = ignoreCaseArticles($album);
@@ -2575,14 +2572,43 @@ sub updateGenreCache {
 }
 
 sub includeSplitTag {
-	my ($genreCase,$albumCase,$trackCase,$file,$tag) = @_;	
+	my ($genreCase,$albumCase,$trackCase,$file,$tag) = @_;
+
 	if (defined $tag) {
-		foreach my $tag (split(/[;\/\0]/,$tag)) {
+		foreach my $tag (splitTag($tag)) {
 			$tag=~s/^\s*//;$tag=~s/\s*$//;
 			my $tagCase = ignoreCaseArticles($tag);
 			$genreCache{$genreCase}{$tagCase}{$albumCase}{$trackCase} = $file;
 			$caseCache{$tagCase} = $tag; 
 		}
+	}
+}
+
+sub splitTag {
+	my $tag = shift;
+	my @splittags=();
+	
+	my $splitpref = Slim::Utils::Prefs::get('splitchars');
+	#only bother if there are some characters in the pref
+	if ($splitpref) {
+		# get rid of white space
+		$splitpref =~ s/\s//g;
+		
+		foreach my $char (split('',$splitpref),'\x00') {
+			my @temp=();
+			foreach my $item (split($char,$tag)) {
+				push (@temp,$item);
+				!$::d_info && Slim::Utils::Misc::msg("Splitting $tag by $char = @temp\n") unless scalar @temp <= 1;
+			}
+			#store this for return only if there has been a successfil split
+			if (scalar @temp > 1) { push @splittags,@temp}
+		}
+	}
+	#return the split array, or just return the whole tag is we know there hasn't been any splitting.
+	if (scalar @splittags > 1) {
+		return @splittags;
+	} else {
+		return $tag;
 	}
 }
 
@@ -2857,10 +2883,10 @@ sub typeFromPath {
 }
 
 sub ignorePunct {
-       my $s = shift;
-       return undef unless defined($s);
-       $s =~ s/[^\w\s\-*]//g;
-       return $s;
+	my $s = shift;
+	return undef unless defined($s);
+	$s =~ s/[^\w\s\-*]//g;
+	return $s;
 }
 
 sub matchCase {

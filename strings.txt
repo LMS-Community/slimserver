@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.90 2004/04/24 00:16:08 kdf Exp $
+# $Id: strings.txt,v 1.91 2004/04/25 01:23:17 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -2748,6 +2748,12 @@ SETUP_IGNOREDARTICLES_DESC
 	NL	Een lijst van voorzetsels ("de" "the" "les" "los" etc..) die moeten worden genegeerd bij het sorteren op Artiest. 
 	PT	A lista de artigos ("o", "os", "as", etc). a ignorar no iníco do nome do artista ou do álbum, ao ordenar. Separe multiplos artigos por espaços ou deixe a lista vazia para desactivar esta funcionalidade.
 	SE	En lista med artiklar ("the" "les" "los"...) innan artistnamn som skall ignoreras vid sortering. Separera flera artiklar med mellanslag eller lämna detta fält tomt för att avaktivera.
+
+SETUP_SPLITCHARS
+	EN	Multiple Items In Tags
+
+SETUP_SPLITCHARS_DESC
+	EN	SlimServer can extract multiple artist, album titles and genres from the tags inside your music files.  If SlimServer finds any of the characters below in your tags, it will create individual listings for each item.  For example, if you put a semicolon in the list below, a song with an artist tag of "J. S. Bach;Michael Tilson Thomas" will appear in the artists area for both "J. S. Bach" and "Michael Tilson Thomas".
 
 SETUP_FILESORT
 	DE	Sortieren nach Dateinamen

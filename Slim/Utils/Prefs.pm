@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.51 2004/04/22 21:04:45 dean Exp $
+# $Id: Prefs.pm,v 1.52 2004/04/25 01:23:19 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -85,6 +85,7 @@ my %DEFAULT = (
 	,"playtrackalbum" 		=> 1
 	,"artistinalbumsearch" 	=> 0
 	,"ignoredarticles"		=> "The El La Los Las Le Les"
+	,"splitchars"			=> ''
 	,"authorize"			=> 0				# No authorization by default
 	,"username"				=> ''
 	,"password"				=> ''
@@ -94,7 +95,7 @@ my %DEFAULT = (
 	,"tcpWriteMaximum"		=> 20
 	,"tcpConnectMaximum"	=> 30
 	,"streamWriteMaximum"	=> 30
-    ,'webproxy'				=> ''
+	,'webproxy'				=> ''
 	,"udpChunkSize"			=> 1400
 	,"usetagdatabase"		=> 0				# use 0 for false, 1 for true
 	,"templatecache"		=> 1				# use 0 for false, 1 for true
@@ -116,10 +117,10 @@ my %DEFAULT = (
  	,'ignoredisableditunestracks' => 0
  	,'instantMixMax'		=> 12
  	,'varietyCombo'			=> 50
-    ,'ignoreDirRE'          => ''
-    ,'checkVersion'			=> 1
-    ,'mDNSname'				=> 'SlimServer'
-    ,'showbufferfullness'   => 0
+	,'ignoreDirRE'          => ''
+	,'checkVersion'			=> 1
+	,'mDNSname'				=> 'SlimServer'
+	,'showbufferfullness'   => 0
 	,'titleFormat'			=> ['TITLE',
 		'DISC-TRACKNUM. TITLE',
 		'TRACKNUM. TITLE',
