@@ -837,6 +837,7 @@ SQUEEZEBOX
 
 SOFTSQUEEZE
 	EN	SoftSqueeze
+	ES	SoftSqueeze
 
 WELCOME_TO_SLIMP3
 	DE	Willkommen bei SLIMP3
@@ -1222,7 +1223,7 @@ SETUP_SCROLLPAUSE
 SETUP_SCROLLPAUSEDOUBLE
 	DE	Pause für Scrollen bei grosser Schriftart
 	EN	Large Text Scroll Pause
-	ES	Pause de Desplazamiento en Texto Grande
+	ES	Pausa de Desplazamiento en Texto Grande
 	SE	Paus vid skollning med stor text
 
 SETUP_SCROLLPAUSE_DESC
@@ -1237,7 +1238,7 @@ SETUP_SCROLLPAUSE_DESC
 SETUP_SCROLLRATE
 	DE	Scrollrate
 	EN	Scroll Rate
-	ES	Velocidad de desplazamiento
+	ES	Tasa de desplazamiento
 	FR	Vitesse de défilement
 	JP	スクロール速度
 	NO	Scroll-frekvens
@@ -1246,7 +1247,7 @@ SETUP_SCROLLRATE
 SETUP_SCROLLRATEDOUBLE
 	DE	Tempo für Scrollen bei grosser Schriftart
 	EN	Large Text Scroll Rate
-	ES	Velocidad de desplazamiento en Texto Grande
+	ES	Tasa de desplazamiento en Texto Grande
 	SE	Tempo för skrollning av stor text
 
 SETUP_SCROLLRATE_DESC
@@ -3827,9 +3828,11 @@ SETUP_PERSISTPLAYLISTS_0
 
 SETUP_COMMONALBUMTITLES
 	EN	Common Album Titles
+	ES	Títulos Comunes de Discos
 
 SETUP_COMMONALBUMTITLES_DESC
 	EN	In most cases, SlimServer groups songs from the same album together even if the songs are in different folders. For very common album titles, such as "Greatest Hits", it additionally requires a match on artist name to correctly group tracks from the same album. The list below represents the album titles for which SlimServer requires an artist match for album grouping.
+	ES	En la mayoría de los casos, SlimServer agrupa las canciones del mismo disco, incluso si las canciones estan en carpetas diferentes. Para títulos muy comunes de discos, como "Grandes Exitos", se requiere además que concuerde al nombre del artista, para que la agrupación sea correcta con las canciones del mismo disco. La lista debajo representa los títulos de discos para los cuales SlimServer requerirá que coincida el artista para agrupar el disco.
 
 SETUP_RESHUFFLEONREPEAT
 	DE	Erneutes Mischen bei Wiederholung
@@ -8594,7 +8597,9 @@ SETUP_GROUP_RADIO_DESC
 
 SETUP_SCROLLPIXELS
 	EN	Scroll Pixels
+	ES	Desplazamiento de pixels
 
 SETUP_SCROLLPIXELS_DESC
 	EN	On a player with a graphical display you can adjust the number of pixels (dots) that the player scrolls in each interval defined above.  Adjust this in conjunction with the Scroll Rate to adjust scrolling speed and quality.  Note that small values with low Scroll Rates look good, but require a higher performance server and uncongested network.  If in doubt leave as the default of 7 pixels.  (Min 1, Max 20).
+	ES	En un reproductor con pantalla gráfica, se puede ajustar el número de pixels (puntos) que el reproductor desplazará en cada intervalo definido arriba.  Para ajustar la velocidad y calidad de desplazamiento, ajustar este valor junto a la tasa de desplazamiento. Notar que valores muy pequeños, con una tasa de desplazamiento muy lenta se pueden ver muy bien, pero requieren un servidor con mayor perfomance y una red no congestionada. Si hay dudas, dejar el valor por defecto: 7 pixels. (Min 1, Max 20).
 

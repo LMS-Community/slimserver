@@ -51,6 +51,7 @@ PLUGIN_SCREENSAVER_LINEX
 PLUGIN_SCREENSAVER_LINEX_SETTINGS
 	DE	LineX Bildschirmschoner Einstellungen
 	EN	LineX Screensaver settings
+	ES	Configuración de Salvapantallas LineX
 
 PLUGIN_SCREENSAVER_LINEX_ACTIVATE
 	DE	Diesen Bildschirmschoner wählen
