@@ -31,6 +31,7 @@ sub new {
 sub init {
 	my $client = shift;
 	$client->SUPER::init();
+	push @{$client->modeParameterStack}, {};
 	$client->startup();
 }
 
