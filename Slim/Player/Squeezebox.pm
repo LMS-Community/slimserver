@@ -228,7 +228,7 @@ sub upgradeFirmware_SDK5 {
 		
 		my $fraction = $totalbytesread/$size;
 		
-		if (($fraction - $lastFraction) > (1/200)) {
+		if (($fraction - $lastFraction) > (1/20)) {
 			Slim::Display::Animation::showBriefly(
 				$client,
 				string('UPDATING_FIRMWARE'),
