@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.114 2004/05/02 06:00:03 dean Exp $
+# $Id: Info.pm,v 1.115 2004/05/05 22:01:12 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2998,7 +2998,7 @@ sub sortuniq_ignore_articles {
 
 sub getSortName {
 	my $item = shift;
-	return exists($sortCache{matchCase($item)}) ? $sortCache{matchCase($item)} : $item;
+	return exists($sortCache{ignoreCaseArticles($item)}) ? $sortCache{ignoreCaseArticles($item)} : $item;
 
 }
 
