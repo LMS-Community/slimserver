@@ -1773,7 +1773,9 @@ sub typeFromPath {
 		# Return quickly if we have it in the cache.
 		if (defined $urlToTypeCache{$fullpath}) {
 
-			return $urlToTypeCache{$fullpath};
+			$type = $urlToTypeCache{$fullpath};
+			
+			return $type if $type ne 'unk';
 
 		} elsif (isRemoteURL($fullpath)) {
 
@@ -1820,7 +1822,7 @@ sub typeFromPath {
 		}
 	}
 	
-	if (!defined($type)) {
+	if (!defined($type) || $type eq 'unk') {
 		$type = $defaultType;
 	}
 
