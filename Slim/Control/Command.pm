@@ -22,6 +22,35 @@ use Slim::Utils::Strings qw(string);
 
 our %executeCallbacks;
 
+# This maps the extended CLI commands to methods on Track.
+our %cliTrackMap = (
+	'g' => 'genre',
+	'a' => 'artist',
+	'c' => 'composer',
+	'b' => 'band',
+	'u' => 'conductor',
+	'l' => 'album',
+	'd' => 'duration',
+	't' => 'tracknum',
+	'y' => 'year',
+	'm' => 'bpm',
+	'k' => 'comment',
+	'v' => 'tagversion',
+	'r' => 'bitrate',
+	'z' => 'drm',
+	'n' => 'modificationTime',
+	'p' => 'url',
+	'f' => 'filesize',
+);
+
+our %searchMap = (
+
+	'artist' => 'contributor.name',
+	'genre'  => 'genre.name',
+	'album'  => 'album.title',
+	'track'  => 'track.title',
+);
+
 #############################################################################
 # execute - does all the hard work.  Use it.
 # takes:
@@ -34,7 +63,6 @@ our %executeCallbacks;
 
 sub execute {
 	my($client, $parrayref, $callbackf, $callbackargs) = @_;
-	my $callcallback = 1;
 
 	my $p0 = $parrayref->[0];
 	my $p1 = $parrayref->[1];
@@ -43,6 +71,11 @@ sub execute {
 	my $p4 = $parrayref->[4];
 	my $p5 = $parrayref->[5];
 	my $p6 = $parrayref->[6];
+	my $p7 = $parrayref->[7];
+
+	my $callcallback = 1;
+	my @returnArray = ();
+	my $pushParams = 1;
 
 	$::d_command && msg(" Executing command " . ($client ? $client->id() : "no client") . ": $p0 (" .
 			(defined $p1 ? $p1 : "") . ") (" .
@@ -50,126 +83,143 @@ sub execute {
 			(defined $p3 ? $p3 : "") . ") (" .
 			(defined $p4 ? $p4 : "") . ") (" .
 			(defined $p5 ? $p5 : "") . ") (" .
-			(defined $p6 ? $p6 : "") . ")\n");
+			(defined $p6 ? $p6 : "") . ") (" .
+			(defined $p7 ? $p7 : "") . ")\n");
 
-	# The first parameter is the client identifier to execute the command.
-	# If a parameter is "?" it is replaced by the current value in the array
-	# returned by the function
-	# Below are a list of the commands:
-	#
-	# P0			P1				P2			P3			P4			P5			P6
-	# play		
-	# pause			(0|1|)	
-	# stop
-	# mode			<play|pause|stop>	
-	# mode			?
-	# sleep 		(0..n)
-	# sleep 		?
-	# gototime		(0..n sec)|(-n..+n sec)?
-	# power 		(0|1|?)
-	# genre			?
-	# artist		?
-	# album			?
-	# title			?
-	# duration		?
-	# signalstrength 	?
-	# sync			<playerindex|playerid|-|?>
+# The first parameter is the client identifier to execute the command. Column C in the
+# table below indicates if a client is required (Y) or not (N) for the command.
+#
+# If a parameter is "?" it is replaced by the current value in the array
+# returned by the function
+#
+# COMMAND LIST #
+  
+# C     P0             P1                          P2                            P3            P4         P5        P6
+    
+# GENERAL
+# N    debug           <debugflag>                 <0|1|?|>
+# N    listen          <0|1|?|>
+# N    pref            <prefname>                  <prefvalue|?>
+# N    exit
 
-			
-	# playlist		play 			<item>		[title] (item can be a song, playlist or directory. synonym: load)
-	# playlist		insert			<item>		(item can be a song, playlist or directory. synonym: insertlist)
-	# playlist		add 			<item>		(item can be a song, playlist or directory. synonym: append)
+# PLAYERS
+# N    player          count                       ?
+# N    player          <id|address>                <playerindex|playerid>        ? (address form deprecated)
+# N    player          ip                          <playerindex|playerid>        ?
+# N    player          model                       <playerindex|playerid>        ?
+# N    player          name                        <playerindex|playerid>        ?
+# N    player          displaytype                 <playerindex|playerid>        ?
+# Y    sleep           <0..n|?>
+# Y    sync            <playerindex|playerid|-|?>
+# Y    power           <0|1|?|>
+# Y    signalstrength  ?
+# Y    connected       ?
+# Y    mixer           volume                      <0..100|-100..+100|?>
+# Y    mixer           balance                     (not implemented)
+# Y    mixer           bass                        <0..100|-100..+100|?>
+# Y    mixer           treble                      <0..100|-100..+100|?>
+# Y    mixer           pitch                       <80..120|-100..+100|?>
+# Y    mixer           muting
+# Y    display         <line1>                     <line2>                       <duration>
+# Y    display         ?                           ?
+# Y    displaynow      ?                           ?
+# Y    playerpref      <prefname>                  <prefvalue|?>
+# Y    button          <buttoncode>
+# Y    ir              <ircode>                    <time>
+# Y    rate            <rate|?>
 
-	# playlist		playalbum		<genre>		<artist>	<album>	<songtitle>	(synonym: loadalbum)
-	# playlist		insertalbum		<genre>		<artist>	<album>	<songtitle>
-	# playlist		addalbum		<genre>		<artist>	<album>	<songtitle>
-	
-	# playlist		playtracks		<searchterms>
-	# playlist		loadtracks		<searchterms>
-	# playlist		addtracks		<searchterms>
-	# playlist		inserttracks	<searchterms>
-	# playlist		deletetracks	<searchterms>
-	
-	# playlist		deletealbum		<genre>		<artist>	<album>	<songtitle>
-	# playlist		deleteitem		<filename/playlist>	
-		
-	# playlist		resume			<playlist>	
-	# playlist		save			<playlist>	
-		
-	# playlist		clear	
-	# playlist		move			<fromoffset> <tooffset>	
-	# playlist		delete			<songoffset>
-			
-	# playlist		jump 			<index>	
-	# playlist		index			<index>		?
-	# playlist		genre			<index>		?
-	# playlist		artist			<index>		?
-	# playlist		album			<index>		?
-	# playlist		title			<index>		?
-	# playlist		duration		<index>		?
-	# playlist		tracks			?
-	# playlist		zap				<index>
-	# playlist		name ?
-	# playlist		url ?
-	
-	# mixer			volume			(0 .. 100)|(-100 .. +100)
-	# mixer			volume			?
-	# mixer			balance			(-100 .. 100)|(-200 .. +200)			(not implemented!)
-	# mixer			bass			(0 .. 100)|(-100 .. +100)
-	# mixer			treble			(0 .. 100)|(-100 .. +100)
-	# mixer			pitch			(0 .. 100 .. 1000)|(-100 .. +100)
-	# display		<line1>			<line2>	<duration>
-	# display		?				?
-	# displaynow	?				?
-	# button		<buttoncode>
-	# player		count			?
-	# player		id				<playerindex|playerid>				?
-	# player		name			<playerindex|playerid>				?
-	# player		ip				<playerindex|playerid>				?
-	# player		address			<playerindex|playerid>				?	(deprecated)
-	# player		model			<playerindex|playerid>				?
-	# pref			<prefname>		<prefvalue>
-	# pref			<prefname>		?
-	# playerpref	<prefname>		<prefvalue>
-	# playerpref	<prefname>		?
-	
-	# rescan	
-	# wipecache
+#DATABASE    
+# N    rescan    
+# N    wipecache
+# N    info            total                       genres                        ?
+# N    info            total                       artists                       ?
+# N    info            total                       albums                        ?
+# N    info            total                       songs                         ?
+
+#PLAYLISTS
+# Y    mode            <play|pause|stop|?>    
+# Y    play        
+# Y    pause           <0|1|>    
+# Y    stop
+# Y    time|gototime   <0..n|-n|+n|?>
+# Y    genre           ?
+# Y    artist          ?
+# Y    album           ?
+# Y    title           ?
+# Y    duration        ?
+# Y    path            ?
+ 
+# Y    playlist        playtracks                  <searchterms>    
+# Y    playlist        loadtracks                  <searchterms>    
+# Y    playlist        addtracks                   <searchterms>    
+# Y    playlist        inserttracks                <searchterms>    
+# Y    playlist        deletetracks                <searchterms>    
+
+# Y    playlist        play|load                   <item>                       [<title>] (item can be a song, playlist or directory)
+# Y    playlist        add|append                  <item> (item can be a song, playlist or directory)
+# Y    playlist        insert|insertlist           <item> (item can be a song, playlist or directory)
+# Y    playlist        deleteitem                  <item> (item can be a song, playlist or directory)
+# Y    playlist        move                        <fromindex>                 <toindex>    
+# Y    playlist        delete                      <index>
+# Y    playlist        resume                      <playlist>    
+# Y    playlist        save                        <playlist>    
+# Y    playlist        loadalbum|playalbum         <genre>                     <artist>         <album>        <songtitle>
+# Y    playlist        addalbum                    <genre>                     <artist>         <album>        <songtitle>
+# Y    playlist        insertalbum                 <genre>                     <artist>         <album>        <songtitle>
+# Y    playlist        deletealbum                 <genre>                     <artist>         <album>        <songtitle>
+# Y    playlist        clear    
+# Y    playlist        zap                         <index>
+# Y    playlist        name                        ?
+# Y    playlist        url                         ?
+# Y    playlist        modified                    ?
+# Y    playlist        index|jump                  <index|?>    
+# Y    playlist        genre                       <index>                     ?
+# Y    playlist        artist                      <index>                     ?
+# Y    playlist        album                       <index>                     ?
+# Y    playlist        title                       <index>                     ?
+# Y    playlist        duration                    <index>                     ?
+# Y    playlist        tracks                      ?
+# Y    playlist        shuffle                     <0|1|2|?|>
+# Y    playlist        repeat                      <0|1|2|?|>
 
 	my $ds   = Slim::Music::Info::getCurrentDataStore();
 	my $find = {};
 
-	$find->{'genre'}       = singletonRef($p2);
-	$find->{'contributor'} = singletonRef($p3);
-	$find->{'album'}       = singletonRef($p4);
-	$find->{'track'}       = singletonRef($p5);
-
 	if (!defined($p0)) {
+
 		# ignore empty commands
-		# these commands don't require a valid client
 
 	} elsif ($p0 eq "player") {
+
 		if (!defined($p1)) {
+
+			# do nothing
 		
 		} elsif ($p1 eq "count") {
+
 			$p2 = Slim::Player::Client::clientCount();
-		} elsif ($p1 eq "name" || $p1 eq "address" || $p1 eq "ip" || $p1 eq "id" || $p1 eq "model") {
+
+		} elsif ($p1 =~ /^(?:name|address|ip|id|model|displaytype)$/) {
 		
 			my $p2client;
 			
 			# were we passed an ID?
 			if (defined $p2 && Slim::Player::Client::getClient($p2)) {
+
 				$p2client = Slim::Player::Client::getClient($p2);
+
 			} else {
 			
 				# otherwise, try for an index
 				my @clients = Slim::Player::Client::clients();
+
 				if (defined $p2 && defined $clients[$p2]) {
 					$p2client = $clients[$p2];
 				}
 			}
 			
 			if (defined $p2client) {
+
 				if ($p1 eq "name") {
 					$p3 = $p2client->name();
 				} elsif ($p1 eq "address" || $p1 eq "id") {
@@ -178,63 +228,343 @@ sub execute {
 					$p3 = $p2client->ipport();
 				} elsif ($p1 eq "model") {
 					$p3 = $p2client->model();
+				} elsif ($p1 eq "displaytype") {
+					$p3 = $p2client->vfdmodel();
 				}
 			}
 		}
 
+		$client = undef;
+
 	} elsif ($p0 eq "pref") {
+
 		if (defined($p2) && $p2 ne '?' && !$::nosetup) {
 			Slim::Utils::Prefs::set($p1, $p2);
 		}
+
 		$p2 = Slim::Utils::Prefs::get($p1);
+
+		$client = undef;
 
 	} elsif ($p0 eq "rescan") {
 
 		Slim::Music::Import::startScan();
+
+		$client = undef;
 
 	} elsif ($p0 eq "wipecache") {
 
 		Slim::Music::Info::wipeDBCache();
 		Slim::Music::Import::startScan();
 
+		$client = undef;
+
 	} elsif ($p0 eq "info") {
 
-		if (defined $p1 && $p1 eq "total") {
+		if (defined $p1 && $p1 eq "total" && $p2 =~ /^(genre|artist|album|song)s$/) {
 
-			if ($p2 eq "genres") {
+			my $field = $1;
 
-				$p3 = $ds->count('genre', {});
+			$field = 'track'       if $field eq 'song';
+			$field = 'contributor' if $field eq 'artist';
 
-			} elsif ($p2 eq "artists") {
-
-				$p3 = $ds->count('contributor', {});
-
-			} elsif ($p2 eq "albums") {
-
-				$p3 = $ds->count('album', {});
-
-			} elsif ($p2 eq "songs") {
-
-				$p3 = $ds->count('track', {});
-			}
+			$p3 = $ds->count($field, {});
 		}
 
+		$client = undef;
+
 	} elsif ($p0 eq "debug") {
+
 		if ($p1 =~ /^d_/) {
+
 			my $debugsymbol = "::" . $p1;
 			no strict 'refs';
+
 			if (!defined($p2)) {
+
 				$$debugsymbol = ! $$debugsymbol;
 				$p2 = $$debugsymbol;
 
 			} elsif ($p2 eq "?")  {
+
 				$p2 = $$debugsymbol;
+
 			} else {
+
 				$$debugsymbol = $p2;
 			}	
-			use strict 'refs';
-			if (!$p2) { $p2 = 0; }
+
+			$p2 ||= 0;
 		}
+
+ 		$client = undef;
+ 		
+ 	} elsif ($p0 eq "players") {
+ 
+ 		$pushParams = 0;
+ 	
+ 		push @returnArray, $p0;
+ 		push @returnArray, $p1 if defined $p1;
+ 		push @returnArray, $p2 if defined $p2;
+ 		
+ 		my $count = Slim::Player::Client::clientCount();
+
+ 		push @returnArray, "count:" . $count;
+ 		
+ 		my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), $count);
+ 	
+ 		if ($valid) {
+ 			my $idx = $start;
+ 			my @players = Slim::Player::Client::clients();
+ 	
+ 			if (scalar(@players) > 0) {
+
+ 				for my $eachclient (@players[$start..$end]) {
+ 					push @returnArray, "playerindex:" . $idx;
+ 					push @returnArray, "playerid:" . $eachclient->id();
+ 					push @returnArray, "ip:" . $eachclient->ipport();
+ 					push @returnArray, "name:" . $eachclient->name();
+ 					push @returnArray, "model:" . $eachclient->model(); #squeezebox, softsqueeze, slimp3
+ 					push @returnArray, "displaytype:" . $eachclient->vfdmodel(); 
+ 					push @returnArray, "connected:" . ($eachclient->connected() || 0);
+ 					$idx++;
+ 				}	
+ 			}
+ 		}
+
+ 		$client = undef;
+ 		
+ 	} elsif ($p0 =~ /^(artist|album|genre)s$/) {
+
+ 		$pushParams = 0;
+
+		my $label = $1;
+ 		my %params = parseParams($parrayref, \@returnArray);
+
+		if (defined $searchMap{$label} && Slim::Buttons::BrowseID3::specified($params{'search'})) {
+
+			$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit(
+				Slim::Utils::Text::ignoreCaseArticles($params{'search'})
+			);
+		}
+
+ 		if (Slim::Utils::Misc::stillScanning()) {
+ 			push @returnArray, "rescan:1";
+ 		}
+ 
+		my $results = $ds->find($label, $find, $label);
+		my $count   = scalar @$results;
+
+ 		push @returnArray, "count:$count";
+ 
+ 		my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), $count);
+ 
+ 		if ($valid) {
+
+ 			for my $eachitem (@$results[$start..$end]) {
+ 				push @returnArray, $label . $eachitem;
+ 			}
+ 		}
+
+ 		$client = undef;
+ 		
+ 	} elsif ($p0 =~ /^(title|song)s$/) {
+
+ 		$pushParams = 0;
+ 	
+		my $label = 'track';
+ 		my $sort  = 'title';
+ 		my $tags  = 'galdp';
+ 		
+ 		my %params = parseParams($parrayref, \@returnArray);
+
+		if (defined $params{$label} && !Slim::Buttons::BrowseID3::specified($params{$label})) {
+
+			$find->{ $searchMap{$label} } = singletonRef(Slim::Web::Pages::searchStringSplit($params{$label}));
+		}
+ 		
+ 		$sort = $params{'sort'} if defined($params{'sort'});
+ 		$tags = $params{'tags'} if defined($params{'tags'});
+ 		
+ 		if ($sort eq "tracks") {
+ 			$tags = $tags . "t";
+ 		}
+ 		
+ 		if (Slim::Utils::Misc::stillScanning()) {
+ 			push @returnArray, "rescan:1";
+ 		}
+
+		my $results = $ds->find($label, $find, $sort);
+		my $count   = scalar @$results;
+
+ 		push @returnArray, "count:$count";
+
+ 		my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), $count);
+
+ 		my $cur = $start;
+ 
+ 		if ($valid) {
+
+ 			for my $item (@$results[$start..$end]) {
+
+ 				push @returnArray, "index:" . $cur++;
+ 				push @returnArray, pushSong($item, $tags);
+
+ 				::idleStreams();
+ 			}
+ 		}
+
+ 		$client = undef;
+ 		
+ 	} elsif ($p0 eq "playlists") {
+
+ 		$pushParams = 0;
+ #		${$pcmdIsQuery} = 1;
+ 	
+ 		my $tags = "galdp";
+ 		my $dir = "__playlists";
+ 		my $search = "*";
+ 		
+ 		my %params = parseParams($parrayref, \@returnArray);
+ 		
+ 		$search = $params{'search'} if defined($params{'search'});
+ 		$tags = $params{'tags'} if defined($params{'tags'});
+ 		$dir = $params{'dir'} if defined($params{'dir'});
+ 		
+ 		my $fulldir = Slim::Utils::Misc::virtualToAbsolute($dir);
+ 		my $badconfig = 0;
+ 		my $dirscan = 1;
+ 		
+ 		if (!Slim::Utils::Prefs::get("playlistdir") && !(Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic())) {
+ #			$::d_http && msg("no valid playlists directory!!\n");
+ 			$badconfig = 1;
+ 		}
+ 		
+ 		if (!$fulldir || !Slim::Music::Info::isList($fulldir)) {	
+ 			# check if we're just showing itunes playlists
+ 			if (Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic()) {
+ 				$dirscan = 0;
+ 			} else {
+ #				$::d_http && msg("the selected playlist $fulldir isn't good!!.\n");
+ 				$badconfig = 1;
+ 			}
+ 		}
+ 		
+ 		if ($badconfig) {
+
+ 			push @returnArray, "bad_config:1";
+
+ 		} else {
+
+ 			if (Slim::Utils::Misc::stillScanning()) {
+ 				push @returnArray, "rescan:1";
+ 			}
+ 
+ 			# Get all playlist items
+ 			my  $items = [];
+ 					
+ 			if ($dirscan) {
+ 				Slim::Utils::Scan::addToList($items, $fulldir, 0, undef, undef);
+ 			}
+ 
+ 			if ($dir eq '__playlists' && (Slim::Music::MoodLogic::useMoodLogic() || Slim::Music::iTunes::useiTunesLibrary())) {
+ 				push @$items, @{Slim::Music::Info::playlists()};
+ 			}
+ 			
+ 			# Perform search if necessary
+ 			if (scalar @{$items} && $search ne "*") {
+
+ 				my $search_pats = Slim::Music::Info::filterPats(Slim::Web::Pages::searchStringSplit($search));
+ 				
+ 				my @found = ();
+ 				ITEM: for my $eachitem (@{$items}) {
+
+ 					my $text = Slim::Music::Info::standardTitle(undef, $eachitem);
+
+ 					for my $pat (@{$search_pats}) {
+
+ 						if ($text !~ $pat) {
+ 							::idleStreams();
+ 							next ITEM;
+ 						}
+ 					}
+
+ 					push @found, $eachitem;
+ 				}
+ 				
+ 				my $foundqty = scalar(@found);
+ 				@$items = @found;
+ 			}
+ 			
+ 			my $numitems = scalar @{$items};
+ 			push @returnArray, "count:" . $numitems;
+ 			
+ 			my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), $numitems);
+ 			my $cur = $start ;
+ 
+ 			if ($valid) {
+
+ 				for my $eachitem (@{$items}[$start..$end]) {
+ 					::idleStreams();
+ 					
+ 					next if $eachitem =~ /__current.m3u$/;
+ 					
+ 					push @returnArray, "index:" . ($cur);
+ 					
+ 					
+ 					if (Slim::Music::Info::isList($eachitem)) {
+
+ 						push @returnArray, "item:" . Slim::Music::Info::standardTitle(undef, $eachitem);
+ 						push @returnArray, "dir:"  . Slim::Utils::Misc::descendVirtual($dir, $eachitem, $cur);
+
+ 					} elsif (Slim::Music::Info::isSong($eachitem)) {
+
+ 						push @returnArray, pushSong($eachitem, $tags);
+ 					}
+ 	
+ 					$cur++;
+ 				}
+ 			}
+ 		}
+
+ 		$client = undef;
+ 
+ 	} elsif ($p0 eq "songinfo") {
+
+ 		$pushParams = 0;
+ 	
+ 		my $path;
+ 		my $tags = "abcdefghijklmnoqrstuvwxyz"; # all letter EXCEPT p
+ 		
+ 		my %params = parseParams($parrayref, \@returnArray);
+ 		
+ 		$path = $params{'path'} if defined($params{'path'});
+ 		$tags = $params{'tags'} if defined($params{'tags'});
+ 				
+ 		if (Slim::Utils::Misc::stillScanning()) {
+ 			push @returnArray, "rescan:1";
+ 		}
+ 		
+ 		if (Slim::Music::Info::isSong($path)) {
+ 
+ 			my @items = pushSong($path, $tags);
+ 			
+ 			push @returnArray, "count:" . scalar(@items);
+ 	
+ 			my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), scalar(@items));
+ 	
+ 			if ($valid) {
+ 				for my $eachitem (@items[$start..$end]) {
+ 					push @returnArray, $eachitem;
+ 				}
+ 			}
+
+ 		} else {
+
+ 			push @returnArray, "count:0";
+ 		}
+
+ 		$client = undef;
 
 	} elsif ($client) {
 
@@ -251,6 +581,7 @@ sub execute {
 
 			Slim::Player::Source::playmode($client, "play");
 			Slim::Player::Source::rate($client,1);
+			$client->update();
 
 		} elsif ($p0 eq "pause") {
 
@@ -271,6 +602,7 @@ sub execute {
 					Slim::Player::Source::playmode($client, "play");
 				}
 			}
+			$client->update();
 
 		} elsif ($p0 eq "rate") {
 
@@ -285,6 +617,7 @@ sub execute {
 		} elsif ($p0 eq "stop") {
 
 			Slim::Player::Source::playmode($client, "stop");
+			$client->update();
 
 		} elsif ($p0 eq "mode") {
 
@@ -296,6 +629,7 @@ sub execute {
 				} else {
 					Slim::Player::Source::playmode($client, $p1);
 				}
+				$client->update();
 			}
 
 		} elsif ($p0 eq "sleep") {
@@ -305,10 +639,10 @@ sub execute {
 					$p1 = 0;
 				}
 			} else {
-				Slim::Utils::Timers::killTimers($client, \&gotosleep);
+				Slim::Utils::Timers::killTimers($client, \&gotoSleep);
 				
 				if ($p1 != 0) {
-					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $p1, \&gotosleep);
+					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $p1, \&gotoSleep);
 					$client->sleepTime(Time::HiRes::time() + $p1);
 					$client->currentSleepTime($p1 / 60);
 				} else {
@@ -324,25 +658,12 @@ sub execute {
 				Slim::Player::Source::gototime($client, $p1);
 			}
 
-		} elsif ($p0 eq "duration") {
+		} elsif ($p0 =~ /^(duration|artist|album|title|genre)$/) {
 
-			$p1 = Slim::Music::Info::durationSeconds(Slim::Player::Playlist::song($client)) || 0;
+			my $method = $1;
+			my $track  = $ds->objectForUrl(Slim::Player::Playlist::song($client));
 
-		} elsif ($p0 eq "artist") {
-
-			$p1 = Slim::Music::Info::artist(Slim::Player::Playlist::song($client)) || 0;
-
-		} elsif ($p0 eq "album") {
-
-			$p1 = Slim::Music::Info::album(Slim::Player::Playlist::song($client)) || 0;
-
-		} elsif ($p0 eq "title") {
-
-			$p1 = Slim::Music::Info::title(Slim::Player::Playlist::song($client)) || 0;
-
-		} elsif ($p0 eq "genre") {
-
-			$p1 = Slim::Music::Info::genre(Slim::Player::Playlist::song($client)) || 0;
+			$p1 = $track->$method() || 0;
 
 		} elsif ($p0 eq "path") {
 
@@ -377,14 +698,23 @@ sub execute {
 			if (!defined $p1) {
 
 			} elsif ($p1 eq "?") {
+
 				$p1 = Slim::Player::Sync::syncIDs($client)
+
 			} elsif ($p1 eq "-") {
+
 				Slim::Player::Sync::unsync($client);
+
 			} else {
+
 				my $buddy;
+
 				if (Slim::Player::Client::getClient($p1)) {
+
 					$buddy = Slim::Player::Client::getClient($p1);
+
 				} else {
+
 					my @clients = Slim::Player::Client::clients();
 					if (defined $clients[$p1]) {
 						$buddy = $clients[$p1];
@@ -395,18 +725,54 @@ sub execute {
 
 		} elsif ($p0 eq "playlist") {
 
+			my ($obj, $results);
+
+			if (my $url = Slim::Player::Playlist::song($client, $p2)) {
+				$obj = $ds->objectForUrl($url);
+			}
+
+			# Query for the passed params
+			if ($p1 =~ /^(play|load|add|insert|delete)album$/) {
+
+				if (Slim::Buttons::BrowseID3::specified($p2)) {
+					$find->{'genre.name'} = singletonRef($p2);
+				}
+
+				if (Slim::Buttons::BrowseID3::specified($p3)) {
+					$find->{'contributor.name'} = singletonRef($p3);
+				}
+
+				if (Slim::Buttons::BrowseID3::specified($p4)) {
+					$find->{'album.title'} = singletonRef($p4);
+				}
+
+				if (Slim::Buttons::BrowseID3::specified($p5)) {
+					$find->{'track.title'} = singletonRef($p5);
+				}
+
+				$results = $ds->find('track', $find, 'tracknum');
+			}
+
 			# here are all the commands that add/insert/replace songs/directories/playlists on the current playlist
 			if ($p1 =~ /^(play|load|append|add|resume|insert|insertlist)$/) {
 			
 				my $jumptoindex = undef;
 				my $path = $p2;
+
 				if ($path) {
+
 					if (!-e $path && !(Slim::Music::Info::isPlaylistURL($path))) {
+
 						my $easypath = catfile(Slim::Utils::Prefs::get('playlistdir'), basename ($p2) . ".m3u");
+
 						if (-e $easypath) {
+
 							$path = $easypath;
+
 						} else {
+
 							$easypath = catfile(Slim::Utils::Prefs::get('playlistdir'), basename ($p2) . ".pls");
+
 							if (-e $easypath) {
 								$path = $easypath;
 							}
@@ -414,38 +780,54 @@ sub execute {
 					}
 					
 					if ($p1 =~ /^(play|load|resume)$/) {
+
 						Slim::Player::Source::playmode($client, "stop");
 						Slim::Player::Playlist::clear($client);
+
 						my $fixpath = Slim::Utils::Misc::fixPath($path);
+
 						$client->currentPlaylist($fixpath);
+
 						Slim::Music::Info::setTitle($fixpath, $p3) if defined $p3;
+
 						$client->currentPlaylistModified(0);
+
 					} else {
+
 						$client->currentPlaylistModified(1);
 					}
 					
 					$path = Slim::Utils::Misc::virtualToAbsolute($path);
 					
 					if ($p1 =~ /^(play|load)$/) { 
+
 						$jumptoindex = 0;
+
 					} elsif ($p1 eq "resume" && Slim::Music::Info::isM3U($path)) {
+
 						# do nothing to the index if we can't open the list
-						my $playlist = new FileHandle($path, "r");
+						my $playlist = FileHandle->new($path, "r");
+
 						if ($playlist) {
+
 							# retrieve comment with track number in it
 							$jumptoindex = $playlist->getline;
+
 							if ($jumptoindex =~ /^#CURTRACK (\d+)$/) {
 								$jumptoindex = $1;
 							} else {
 								$jumptoindex = 0;
 							}
+
 							close $playlist;
 						}
 					}
 					
 					if ($p1 =~ /^(insert|insertlist)$/) {
+
 						my $playListSize = Slim::Player::Playlist::count($client);
-						my @dirItems;
+						my @dirItems     = ();
+
 						Slim::Utils::Scan::addToList(\@dirItems, $path, 1, undef);
 						Slim::Utils::Scan::addToList(
 							Slim::Player::Playlist::playList($client),
@@ -461,6 +843,7 @@ sub execute {
 						);
 
 					} else {
+
 						Slim::Utils::Scan::addToList(
 							Slim::Player::Playlist::playList($client),
 							$path,
@@ -483,14 +866,7 @@ sub execute {
 				Slim::Player::Source::playmode($client, "stop");
 				Slim::Player::Playlist::clear($client);
 
-				my $results = $ds->searchWithCriteria($find, $p6);
-
-				#push(@{Slim::Player::Playlist::playList($client)}, @$results);
-				push(@{Slim::Player::Playlist::playList($client)}, 
-					Slim::Music::Info::songs(
-						singletonRef($p2), singletonRef($p3), singletonRef($p4), singletonRef($p5), $p6
-					)
-				);
+				push(@{Slim::Player::Playlist::playList($client)}, map { $_->url } @$results);
 
 				Slim::Player::Playlist::reshuffle($client);
 				Slim::Player::Source::jumpto($client, 0);
@@ -498,26 +874,17 @@ sub execute {
 			
 			} elsif ($p1 eq "addalbum") {
 
-				push(@{Slim::Player::Playlist::playList($client)}, 
-					Slim::Music::Info::songs(
-						singletonRef($p2), singletonRef($p3), singletonRef($p4), singletonRef($p5), $p6
-					)
-
-					);
+				push(@{Slim::Player::Playlist::playList($client)}, map { $_->url } @$results);
 
 				Slim::Player::Playlist::reshuffle($client);
 				$client->currentPlaylistModified(1);
 			
 			} elsif ($p1 eq "insertalbum") {
-					
-				my @songs = Slim::Music::Info::songs(
-					singletonRef($p2), singletonRef($p3), singletonRef($p4), singletonRef($p5), $p6
-				);
-					
+
 				my $playListSize = Slim::Player::Playlist::count($client);
-				my $size = scalar(@songs);
-					
-				push(@{Slim::Player::Playlist::playList($client)}, @songs);
+				my $size = scalar(@$results);
+
+				push(@{Slim::Player::Playlist::playList($client)}, map { $_->url } @$results);
 					
 				insert_done($client, $playListSize, $size);
 				#Slim::Player::Playlist::reshuffle($client);
@@ -532,21 +899,25 @@ sub execute {
 					
 				Slim::Player::Playlist::reshuffle($client);
 				Slim::Player::Source::jumpto($client, 0);
+
 				$client->currentPlaylist(undef);
 			
 			} elsif ($p1 eq "addtracks") {
 					
 				push(@{Slim::Player::Playlist::playList($client)}, parseSearchTerms($p2));
+
 				Slim::Player::Playlist::reshuffle($client);
 				$client->currentPlaylistModified(1);
 			
 			} elsif ($p1 eq "inserttracks") {
 					
 				my @songs = parseSearchTerms($p2);
+				my $size  = scalar(@songs);
+
 				my $playListSize = Slim::Player::Playlist::count($client);
-				my $size = scalar(@songs);
 					
 				push(@{Slim::Player::Playlist::playList($client)}, @songs);
+
 				insert_done($client, $playListSize, $size);
 				#Slim::Player::Playlist::reshuffle($client);
 				$client->currentPlaylistModified(1);
@@ -561,14 +932,15 @@ sub execute {
 			} elsif ($p1 eq "save") {
 					
 				if (Slim::Utils::Prefs::get('playlistdir')) {
+
 					# just use the filename to avoid nasties
-					my $savename = basename ($p2);
+					my $savename = basename($p2);
 					# save the current playlist position as a comment at the head of the list
 					my $annotatedlistRef;
 					
 					if (Slim::Utils::Prefs::get('saveShuffled')) {
 					
-						foreach my $shuffleitem (@{Slim::Player::Playlist::shuffleList($client)}) {
+						for my $shuffleitem (@{Slim::Player::Playlist::shuffleList($client)}) {
 							push (@$annotatedlistRef,@{Slim::Player::Playlist::playList($client)}[$shuffleitem]);
 						}
 					
@@ -588,11 +960,7 @@ sub execute {
 			
 			} elsif ($p1 eq "deletealbum") {
 
-				my @listToRemove = Slim::Music::Info::songs(
-					singletonRef($p2),singletonRef($p3),singletonRef($p4),singletonRef($p5),$p6
-				);
- 
-				Slim::Player::Playlist::removeMultipleTracks($client, \@listToRemove);
+				Slim::Player::Playlist::removeMultipleTracks($client, $results);
 				$client->currentPlaylistModified(1);
 			
 			} elsif ($p1 eq "deleteitem") {
@@ -604,22 +972,34 @@ sub execute {
 					my $contents;
 
 					if (!Slim::Music::Info::isList($p2)) {
+
 						Slim::Player::Playlist::removeMultipleTracks($client,[$p2]);
+
 					} elsif (Slim::Music::Info::isDir($p2)) {
+
 						Slim::Utils::Scan::addToList(\@{$contents}, $p2, 1);
+
 						Slim::Player::Playlist::removeMultipleTracks($client,\@{$contents});
+
 					} else {
 
 						$contents = Slim::Music::Info::cachedPlaylist($p2);
 
 						if (defined($contents)) {
+
 							$contents = [Slim::Music::Info::cachedPlaylist($p2)];
+
 						} else {
+
 							my $playlist_filehandle;
-							if (!open($playlist_filehandle, $p2)) {
-								$::d_files && msg("Couldn't open playlist file $p2 : $!");
+
+							if (!open($playlist_filehandle, Slim::Utils::Misc::pathFromFileURL($p2))) {
+
+								($::d_files || $::d_command) && msg("Couldn't open playlist file $p2 : $!\n");
 								$playlist_filehandle = undef;
+
 							} else {
+
 								$contents = [Slim::Formats::Parse::parseList($p2,$playlist_filehandle,dirname($p2))];
 							}
 						}
@@ -636,22 +1016,32 @@ sub execute {
 
 				# change between repeat values 0 (don't repeat), 1 (repeat the current song), 2 (repeat all)
 				if (!defined($p2)) {
+
 					Slim::Player::Playlist::repeat($client, (Slim::Player::Playlist::repeat($client) + 1) % 3);
+
 				} elsif ($p2 eq "?") {
+
 					$p2 = Slim::Player::Playlist::repeat($client);
+
 				} else {
+
 					Slim::Player::Playlist::repeat($client, $p2);
 				}
 			
 			} elsif ($p1 eq "shuffle") {
 
 				if (!defined($p2)) {
-					my $nextmode=(1,2,0)[Slim::Player::Playlist::shuffle($client)];
+
+					my $nextmode = (1,2,0)[Slim::Player::Playlist::shuffle($client)];
 					Slim::Player::Playlist::shuffle($client, $nextmode);
 					Slim::Player::Playlist::reshuffle($client);
+
 				} elsif ($p2 eq "?") {
+
 					$p2 = Slim::Player::Playlist::shuffle($client);
+
 				} else {
+
 					Slim::Player::Playlist::shuffle($client, $p2);
 					Slim::Player::Playlist::reshuffle($client);
 				}
@@ -695,25 +1085,10 @@ sub execute {
 
 				$p2 = Slim::Player::Playlist::count($client);
 
-			} elsif ($p1 eq "duration") {
+			} elsif (defined $obj && $p1 =~ /(?:duration|artist|album|title|genre)/) {
 
-				$p3 = Slim::Music::Info::durationSeconds(Slim::Player::Playlist::song($client,$p2)) || 0;
-
-			} elsif ($p1 eq "artist") {
-
-				$p3 = Slim::Music::Info::artist(Slim::Player::Playlist::song($client,$p2)) || 0;
-
-			} elsif ($p1 eq "album") {
-
-				$p3 = Slim::Music::Info::album(Slim::Player::Playlist::song($client,$p2)) || 0;
-
-			} elsif ($p1 eq "title") {
-
-				$p3 = Slim::Music::Info::title(Slim::Player::Playlist::song($client,$p2)) || 0;
-
-			} elsif ($p1 eq "genre") {
-
-				$p3 = Slim::Music::Info::genre(Slim::Player::Playlist::song($client,$p2)) || 0;
+				# Just call the method on Track
+				$p3 = $obj->$p1();
 
 			} elsif ($p1 eq "path") {
 
@@ -727,7 +1102,9 @@ sub execute {
  
 				#  Remove from current playlist
 				if (Slim::Player::Playlist::count($client) > 0) {
-					Slim::Control::Command::execute($client, ["playlist", "delete", $zapindex]);
+
+					# Callo ourselves.
+					execute($client, ["playlist", "delete", $zapindex]);
 				}
   
 				# Append the zapped song to the zapped playlist
@@ -782,18 +1159,22 @@ sub execute {
 				
 				if ($vol < 0) {
 					# need to un-mute volume
-					Slim::Utils::Prefs::clientSet($client, "mute",0);
+					$::d_command && msg("Unmuting, volume is $vol.\n");
+					Slim::Utils::Prefs::clientSet($client, "mute", 0);
 					$fade = 0.3125;
 				} else {
 					# need to mute volume
-					Slim::Utils::Prefs::clientSet($client, "mute",1);
+					$::d_command && msg("Muting, volume is $vol.\n");
+					Slim::Utils::Prefs::clientSet($client, "mute", 1);
 					$fade = -0.3125;
 				}
  
+				# work around to bug 743, use mute() instead of fade_volume.
+				# see also syncFunction...
 				$client->fade_volume($fade, \&mute, [$client]);
  
 				if (Slim::Player::Sync::isSynced($client)) {
-					syncFunction($client, $fade, "mute",undef);
+					syncFunction($client, $fade, "mute", undef);
 				}
 
 			} elsif ($p1 eq "balance") {
@@ -873,7 +1254,11 @@ sub execute {
 			if ($p1 eq "?" && $p2 eq "?") {
 				$p1 = $client->prevline1();
 				$p2 = $client->prevline2();
-			} 		
+			} 
+
+		} elsif ($p0 eq "linesperscreen") {
+
+			$p2 = $client->linesPerScreen();
 
 		} elsif ($p0 eq "display") {
 
@@ -895,19 +1280,163 @@ sub execute {
 
 			# all ir signals go through execute()
 			Slim::Hardware::IR::processIR($client, $p1, $p2);
-		}
-	}
 	
-	my @returnArray = ();
-	
-	if (defined($p0)) { push @returnArray, $p0 };
-	if (defined($p1)) { push @returnArray, $p1 };
-	if (defined($p2)) { push @returnArray, $p2 };
-	if (defined($p3)) { push @returnArray, $p3 };
-	if (defined($p4)) { push @returnArray, $p4 };
-	if (defined($p5)) { push @returnArray, $p5 };
-	if (defined($p6)) { push @returnArray, $p6 };
-	
+ 		# Extended CLI API STATUS		
+ 		} elsif ($p0 eq "status") {
+
+ 			$pushParams = 0;
+ 
+ 			my $tags = "galdp";
+ 			
+ 			my %params = parseParams($parrayref, \@returnArray);
+ 			
+ 			$tags = $params{'tags'} if defined($params{'tags'});
+ 			
+ 			my $connected = $client->connected() || 0;
+ 			my $power     = $client->power();
+ 			my $repeat    = Slim::Player::Playlist::repeat($client);
+ 			my $shuffle   = Slim::Player::Playlist::shuffle($client);
+			my $songCount = Slim::Player::Playlist::count($client);
+			my $idx = 0;
+ 		    	
+ 			if (Slim::Utils::Misc::stillScanning()) {
+ 				push @returnArray, "rescan:1";
+ 			}
+ 			
+ 			push @returnArray, "player_name:" . $client->name();
+ 			push @returnArray, "player_connected:" . $connected;
+ 			push @returnArray, "power:".$power;
+ 			
+ 			if ($client->model() eq "squeezebox") {
+ 				push @returnArray, "signalstrength:".($client->signalStrength() || 0);
+ 			}
+ 			
+ 			if ($power) {
+ 			
+ 				#push @returnArray, "player_mode:".Slim::Buttons::Common::mode($client);
+ 		    		push @returnArray, "mode:". $client->playmode;
+
+ 				if (Slim::Player::Playlist::song($client)) { 
+ 					my $dur = Slim::Music::Info::durationSeconds(Slim::Player::Playlist::song($client));
+ 					if ($dur) {
+ 				    	push @returnArray, "rate:".Slim::Player::Source::rate($client); #(>1 ffwd, <0 rew else norm)
+ 		    			push @returnArray, "time:".Slim::Player::Source::songTime($client);
+ 		    			push @returnArray, "duration:".$dur;
+ 					}
+ 				}
+ 				
+ 				if ($client->currentSleepTime()) {
+
+ 					my $sleep = $client->sleepTime() - Time::HiRes::time();
+					push @returnArray, "sleep:".$client->currentSleepTime();
+					push @returnArray, "will_sleep_in:".($sleep < 0 ? 0 : int($sleep/60));
+ 				}
+ 				
+ 				if (Slim::Player::Sync::isSynced($client)) {
+
+ 					my $master = Slim::Player::Sync::masterOrSelf($client);
+
+ 					push @returnArray, "sync_master:" . $master->id();
+
+ 					my @slaves = Slim::Player::Sync::slaves($master);
+ 					my @sync_slaves = map { $_->id } @slaves;
+
+ 					push @returnArray, "sync_slaves:" . join(" ", @sync_slaves);
+ 				}
+ 			
+				push @returnArray, "mixer volume:".$client->volume();
+				push @returnArray, "mixer treble:".$client->treble();
+				push @returnArray, "mixer bass:".$client->bass();
+
+				if ($client->model() ne "slimp3") {
+					push @returnArray, "mixer pitch:".$client->pitch();
+				}
+
+				#push @returnArray, "mixer balance:";
+				push @returnArray, "playlist repeat:".$repeat; #(0 no, 1 title, 2 all)
+				push @returnArray, "playlist shuffle:".$shuffle; #(0 no, 1 title, 2 albums)
+ 		    
+ 				if ($songCount > 0) {
+ 					$idx = Slim::Player::Source::currentSongIndex($client);
+ 					push @returnArray, "playlist_cur_index:".($idx);
+ 				}
+
+ 		    		push @returnArray, "playlist_tracks:".$songCount;
+ 			}
+ 			
+ 			if ($songCount > 0 && $power) {
+ 			
+ 				# we can return playlist data.
+ 				# which mode are we in?
+ 				my $modecurrent = 0;
+
+ 				if (defined($p1) && ($p1 eq "-")) {
+ 					$modecurrent = 1;
+ 				}
+ 				
+ 				# if repeat is 1 (song) and modecurrent, then show the current song
+ 				if ($modecurrent && ($repeat == 1)) {
+
+ 					push @returnArray, "playlist index:".($idx);
+ 					push @returnArray, pushSong(Slim::Player::Playlist::song($client, $idx), $tags);	
+
+ 				} else {
+
+ 					my ($valid, $start, $end);
+ 					
+ 					if ($modecurrent) {
+ 						($valid, $start, $end) = normalize(($idx), scalar($p2), $songCount);
+ 					} else {
+ 						($valid, $start, $end) = normalize(scalar($p1), scalar($p2), $songCount);
+ 					}
+ 		
+ 					if ($valid) {
+ 						my $count = 0;
+ 	
+ 						for ($idx = $start; $idx <= $end; $idx++){
+ 							$count++;
+ 							push @returnArray, "playlist index:".($idx);
+ 							push @returnArray, pushSong(Slim::Player::Playlist::song($client, $idx), $tags);
+ 							::idleStreams() ;
+ 						}
+ 						
+ 						if (($repeat == 2) && ($shuffle == 0) && ($count < scalar($p2))) {
+
+ 							# wrap around the playlist...
+ 							($valid, $start, $end) = normalize(1, (scalar($p2) - $count), $songCount);		
+
+ 							if ($valid) {
+
+ 								for ($idx = $start; $idx <= $end; $idx++){
+ 									push @returnArray, "playlist index:".($idx);
+ 									push @returnArray, pushSong(Slim::Player::Playlist::song($client, $idx), $tags);
+ 									::idleStreams() ;
+ 								}
+ 							}						
+ 						}
+ 					}
+ 				}
+ 			}
+
+ 		} else {
+
+ 			#treat anything we don't know as a query so that we don't bcast it!
+ 			# ${$pcmdIsQuery} = 1;
+  		}
+ 	}				
+ 		
+ 	# extended CLI API calls do push their return values directly
+ 	if ($pushParams) {
+ 		if (defined($p0)) { push @returnArray, $p0 };
+ 		if (defined($p1)) { push @returnArray, $p1 };
+ 		if (defined($p2)) { push @returnArray, $p2 };
+ 		if (defined($p3)) { push @returnArray, $p3 };
+ 		if (defined($p4)) { push @returnArray, $p4 };
+ 		if (defined($p5)) { push @returnArray, $p5 };
+ 		if (defined($p6)) { push @returnArray, $p6 };
+ 		if (defined($p7)) { push @returnArray, $p7 };
+  	}
+
 	$callcallback && $callbackf && (&$callbackf(@$callbackargs, \@returnArray));
 
 	executeCallback($client, \@returnArray);
@@ -918,7 +1447,8 @@ sub execute {
 			(defined $p3 ? $p3 : "") . ") (" .
 			(defined $p4 ? $p4 : "") . ") (" .
 			(defined $p5 ? $p5 : "") . ") (" .
-			(defined $p6 ? $p6 : "") . ")\n");
+			(defined $p6 ? $p6 : "") . ") (" .
+			(defined $p7 ? $p7 : "") . ")\n");
 	
 	return @returnArray;
 }
@@ -930,20 +1460,30 @@ sub syncFunction {
 	my $controlRef = shift;
 	
 	my @buddies = Slim::Player::Sync::syncedWith($client);
+
 	if (scalar(@buddies) > 0) {
-		foreach my $eachclient (@buddies) {
+
+		for my $eachclient (@buddies) {
+
 			if (Slim::Utils::Prefs::clientGet($eachclient,'syncVolume')) {
+
 				if ($setting eq "mute") {
-					$eachclient->fade_volume($newval, \&mute, [$eachclient]);
+					# work around to bug 743, use mute() instead of fade_volume
+					# see also above 'mixer muting'
+#					$eachclient->fade_volume($newval, \&mute, [$eachclient]);
+					$eachclient->mute();
 				} else {
 					Slim::Utils::Prefs::clientSet($eachclient, $setting, $newval);
 					&$controlRef($eachclient, $newval) if ($controlRef);
 				}
+
 				if ($setting eq "volume") {
 					Slim::Display::Display::volumeDisplay($eachclient);
 				}
 			}
+
 			if (Slim::Utils::Prefs::clientGet($client,'syncPower')) {
+
 				if ($setting eq "power") {
 					$eachclient->power($newval);
 				}
@@ -992,36 +1532,45 @@ sub executeCallback {
 
 	no strict 'refs';
 		
-	foreach my $executecallback (keys %executeCallbacks) {
+	for my $executecallback (keys %executeCallbacks) {
 		$executecallback = $executeCallbacks{$executecallback};
 		&$executecallback($client, $paramsRef);
 	}
 }
 
 sub load_done {
-	my ($client, $index, $callbackf, $callbackargs)=@_;
+	my ($client, $index, $callbackf, $callbackargs) = @_;
+
 	# dont' keep current song on loading a playlist
-	Slim::Player::Playlist::reshuffle($client,($client->playmode eq "play" || ($client->power && $client->playmode eq "pause"))?0:1);
+	Slim::Player::Playlist::reshuffle($client,
+		($client->playmode eq "play" || ($client->power && $client->playmode eq "pause")) ? 0 : 1
+	);
+
 	if (defined($index)) {
 		Slim::Player::Source::jumpto($client, $index);
 	}
+
 	$callbackf && (&$callbackf(@$callbackargs));
+
 	Slim::Control::Command::executeCallback($client, ['playlist','load_done']);
 }
 
 sub insert_done {
-	my ($client, $listsize, $size,$callbackf, $callbackargs)=@_;
-	my $i;
+	my ($client, $listsize, $size, $callbackf, $callbackargs) = @_;
+
 	my $playlistIndex = Slim::Player::Source::currentSongIndex($client)+1;
 	my @reshuffled;
 
 	if (Slim::Player::Playlist::shuffle($client)) {
-		for ($i = 0; $i < $size; $i++) {
+
+		for (my $i = 0; $i < $size; $i++) {
 			push @reshuffled,$listsize+$i;
 		};
+
 		$client = Slim::Player::Sync::masterOrSelf($client);
 		
-		splice @{$client->shufflelist},$playlistIndex, 0, @reshuffled;
+		splice @{$client->shufflelist}, $playlistIndex, 0, @reshuffled;
+
 	} else {
 		Slim::Player::Playlist::moveSong($client, $listsize, $playlistIndex,$size);
 		Slim::Player::Playlist::reshuffle($client);
@@ -1040,17 +1589,20 @@ sub singletonRef {
 	} elsif ($arg eq '*') {
 		return [];
 	} elsif ($arg) {
-		return [$arg];
+		# force stringification of a possible object.
+		return [ Slim::Utils::Text::ignoreCaseArticles("$arg") ];
 	} else {
 		return [];
 	}
 }
 
-sub gotosleep {
+sub gotoSleep {
 	my $client = shift;
+
 	if ($client->isPlayer()) {
-		$client->fade_volume(-60,\&turnitoff,[$client]);
+		$client->fade_volume(-60, \&turnItOff, [$client]);
 	}
+
 	$client->sleepTime(0);
 	$client->currentSleepTime(0);
 }
@@ -1060,7 +1612,7 @@ sub mute {
 	$client->mute();
 }
 
-sub turnitoff {
+sub turnItOff {
 	my $client = shift;
 	
 	# Turn off quietly
@@ -1071,22 +1623,136 @@ sub turnitoff {
 sub parseSearchTerms {
 	my $terms = shift;
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-	my %findCriteria = ();
-	my @queryFields = Slim::Web::Pages::queryFields();
+	my $ds     = Slim::Music::Info::getCurrentDataStore();
+	my %find   = ();
+	my @fields = Slim::Web::Pages::queryFields();
 
 	for my $term (split '&', $terms) {
-		if ($term =~ /(.*)=(.*)/ && grep $_ eq $1, @queryFields) {
-			$findCriteria{URI::Escape::uri_unescape($1)} = Slim::Utils::Text::ignoreCaseArticles( URI::Escape::uri_unescape($2) );
+
+		if ($term =~ /(.*)=(.*)/ && grep $_ eq $1, @fields) {
+			$find{URI::Escape::uri_unescape($1)} = Slim::Utils::Text::ignoreCaseArticles( URI::Escape::uri_unescape($2) );
 		}
 	}
 
-	my $tracks = $ds->find('track', \%findCriteria, exists $findCriteria{'album'} ? 'tracknum' : 'title');
-	return @$tracks;
+	return @{ $ds->find('track', \%find, exists $find{'album'} ? 'tracknum' : 'title') };
+}
+
+# Extended CLI API helper subs
+sub pushSong {
+	my $pathOrObj = shift;
+	my $tags      = shift;
+
+	my $ds        = Slim::Music::Info::getCurrentDataStore();
+	my $track     = ref $pathOrObj ? $pathOrObj : $ds->objectForUrl($pathOrObj);
+
+	my @returnArray = sprintf('title:%s', $track->title());
+	
+	# a b c d E f g h i j k l m n o p q r S t u v X y z
+	for my $tag (split //, $tags) {
+
+		if (my $method = $cliTrackMap{$tag}) {
+
+			my $value = $track->$method();
+
+			if (defined $value && $value !~ /^\s*$/) {
+
+				push @returnArray, sprintf('%s:%s', $method, $value);
+			}
+
+			next;
+		}
+
+		# Cover art!
+		if ($tag eq 'j') {
+
+			if ($track->coverArt()) {
+
+				push @returnArray, "coverart:1";
+
+			} elsif ($track->coverArt('thumb')) {
+
+				push @returnArray, "coverthumb:1";
+			}
+
+			next;
+		}
+
+		# Handle album specifics
+		my $album = $track->album();
+
+		if ($tag eq 'i' && defined(my $disc = $album->disc())) {
+			push @returnArray, "disc:$disc";
+		}
+
+		if ($tag eq 'q' && defined(my $discc = $album->discc())) {
+			push @returnArray, "disccount:$discc";
+		}
+
+		if ($tag eq 'o' && defined(my $ct = $track->content_type())) {
+			push @returnArray, sprintf('type:%s', string(uc($ct)));
+		}
+	}
+
+	return @returnArray;
+}
+
+sub normalize {
+	my $from = shift;
+	my $numofitems = shift;
+	my $count = shift;
+	
+	my $start = 0;
+	my $end   = 0;
+	my $valid = 0;
+	
+	if ($numofitems && $count) {
+
+		my $lastidx = $count - 1;
+
+		if ($from > $lastidx) {
+			return ($valid, $start, $end);
+		}
+
+		if ($from < 0) {
+			$from = 0;
+		}
+	
+		$start = $from;
+		$end = $start + $numofitems - 1;
+	
+		if ($end > $lastidx) {
+			$end = $lastidx;
+		}
+
+		$valid = 1;
+	}
+
+	return ($valid, $start, $end);
+}
+
+sub parseParams {
+	my $parrayref = shift;
+	my $preturnarrayref = shift;
+	
+	my %params = ();
+	
+	for my $p (@$parrayref) {
+
+		if (defined $p && $p =~ /([^:]+):(.*)/) {
+
+			$params{$1} = $2;
+		}
+
+		push @$preturnarrayref, $p;
+	}
+	
+	return %params;
 }
 
 1;
+
 __END__
+
 
 # Local Variables:
 # tab-width:4

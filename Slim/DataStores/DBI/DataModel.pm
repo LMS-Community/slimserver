@@ -333,7 +333,7 @@ our %cmpFields = (
 
 our %sortFieldMap = (
 	'title' => ['tracks.titlesort'],
-	'genre' => ['genres.name'],
+	'genre' => ['genres.namesort'],
 	'album' => ['albums.titlesort','albums.disc'],
 	'contributor' => ['contributors.namesort'],
 	'artist' => ['contributors.namesort'],
@@ -369,7 +369,7 @@ our %joinGraph = (
 		'tracks' => 'genre_track.track = tracks.id',
 	},
 	'contributors' => {
-		'contributor_track' => 'contributors.id = contributor_track.track',
+		'contributor_track' => 'contributors.id = contributor_track.contributor',
 	},
 	'contributor_track' => {
 		'contributors' => 'contributors.id = contributor_track.contributor',
@@ -399,11 +399,11 @@ our %queryPath = (
 	'genre:album' => ['genre_track', 'tracks', 'albums'],
 	'genre:genre' => ['genre_track', 'genres'],
 	'genre:contributor' => ['genre_track', 'contributor_track', 'contributors'],
-	'genre:default' => ['genre_track', 'tracks'],
+	'genre:default' => ['genres', 'genre_track', 'tracks'],
 	'contributor:album' => ['contributor_track', 'tracks', 'albums'],
 	'contributor:genre' => ['contributor_track', 'genre_track', 'genres'],
 	'contributor:contributor' => ['contributor_track', 'contributors'],
-	'contributor:default' => ['contributor_track', 'tracks'],
+	'contributor:default' => ['contributors', 'contributor_track', 'tracks'],
 	'album:album' => ['albums', 'tracks'],
 	'album:genre' => ['albums', 'tracks', 'genre_track', 'genres'],
 	'album:contributor' => ['albums', 'tracks', 'contributor_track', 'contributors'],

@@ -123,31 +123,41 @@ sub init {
 				}
 			}
 		},
+
 		'numberScroll' => sub  {
 			my $client = shift;
 			my $button = shift;
-			my $digit = shift;
+			my $digit  = shift;
 			
 			my $i = Slim::Buttons::Common::numberScroll(
 				$client,
 				$digit,
 				$client->dirItems,
 				Slim::Music::Info::isDir(Slim::Utils::Misc::virtualToAbsolute($client->pwd())),
+
 				sub {
-					my $j = $client->dirItems(shift);
+					my $j   = $client->dirItems(shift);
+					my $ds  = Slim::Music::Info::getCurrentDataStore();
+					my $obj = $ds->objectForUrl($j, 0);
+
 					if (Slim::Utils::Prefs::get('filesort')) {
+
 						return Slim::Music::Info::plainTitle($j);
-					} elsif (Slim::Music::Info::trackNumber($j)) {
-						return Slim::Music::Info::trackNumber($j);
+
+					} elsif ($obj->tracknum()) {
+
+						return $obj->tracknum();
+
 					} else {
-						return Slim::Music::Info::title($j);
+						return $obj->title();
 					}
 				}
-				);
+			);
 
 			$client->currentDirItem($i);
 			$client->update();
 		},
+
 		'add' => sub  {
 			my $client = shift;
 			my $currentItem = $client->dirItems($client->currentDirItem());

@@ -1,14 +1,15 @@
 <tr>
   <td width="100%" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
       [% IF descend %] <a href="browse.html?dir=[% descend | uri %]&player=[% player | uri %]">[% title | html %]</a>  [% END %]
-      [% IF not descend %]<a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% title | html %]</a>
+      [% IF not descend %]<a href="songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&player=[% player | uri %]">[% title | html %]</a>
          [% IF album %] [% "FROM" | string %] [% END %] 
-         <i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i> 
+         <i><a href="browsedb.html?hierarchy=track&level=0&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a></i> 
          [% IF artist %] [% "BY" | string %] [% END %] 
-         <a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist | html %]</a>
+         <a href="browsedb.html?hierarchy=album,track&level=0&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
       [% END %]
   </td>
   <td align="right" width="13" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
+	<!-- XXXXX - fix status_header to work with items - not itempaths -->
       <nobr><a href="status_header.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="status"><img src="html/images/b_play.gif" width=13 height=13  alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a></nobr>
   </td>
   <td align="right" width="13" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>

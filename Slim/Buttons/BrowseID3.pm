@@ -280,7 +280,7 @@ sub init {
 
 			} else {
 
-				$command = "loadalbum";			
+				$command = "loadalbum";
 
 				if (Slim::Player::Playlist::shuffle($client)) {
 					$line1 = $client->string('PLAYING_RANDOMLY_FROM');
@@ -301,8 +301,9 @@ sub init {
 				if ($addorinsert || $album eq '*' || !Slim::Utils::Prefs::get('playtrackalbum')) {
 
 					$command = 'play';
-					if ($addorinsert == 1) { $command = 'append'; }
-					if ($addorinsert == 2) { $command = 'insert'; }
+					$command = 'append' if $addorinsert == 1;
+					$command = 'insert' if $addorinsert == 2;
+
 					Slim::Control::Command::execute($client, ["playlist", $command, $currentItem]);
 
 				} else {
@@ -328,7 +329,8 @@ sub init {
 			} elsif (picked($genre) && picked($artist)) {
 
 				$::d_files && msg("song  or album $currentItem\n"); 
-				my $whichalbum = picked($album) ?  $album : (($currentItem eq $client->string('ALL_SONGS')) ? '*' : $currentItem);
+
+				my $whichalbum = picked($album) ? $album : (($currentItem eq $client->string('ALL_SONGS')) ? '*' : $currentItem);
 
 				Slim::Control::Command::execute($client, 
 					["playlist", $command, $genre, $artist, $whichalbum, undef, $currentItem eq $client->string('ALL_SONGS')

@@ -7,6 +7,7 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 use Slim::Utils::Misc;
 
+# Map the database column to the accessor name. Not quite sure why we did it this way..
 our %primaryColumns = (
 	'id' => 'id',
 );
@@ -156,11 +157,139 @@ sub getCached {
 	return $self->SUPER::get($attr);
 }
 
-# For easy access in Web::Pages
-sub track {
+sub composer {
 	my $self = shift;
 
-	return $self->SUPER::get('tracknum');
+	return $self->contributorsOfType('composer');
+}
+
+sub conductor {
+	my $self = shift;
+
+	return $self->contributorsOfType('conductor');
+}
+
+sub band {
+	my $self = shift;
+
+	return $self->contributorsOfType('band');
+}
+
+sub comment {
+	my $self = shift;
+
+	my $comment;
+
+	# extract multiple comments and concatenate them
+	while (my $c = $self->comments()->next()) {
+
+		next unless $c;
+
+		# ignore SoundJam and iTunes CDDB comments
+		if ($c =~ /SoundJam_CDDB_/ ||
+		    $c =~ /iTunes_CDDB_/ ||
+		    $c =~ /^\s*[0-9A-Fa-f]{8}(\+|\s)/ ||
+		    $c =~ /^\s*[0-9A-Fa-f]{2}\+[0-9A-Fa-f]{32}/) {
+			next;
+		} 
+
+		# put a slash between multiple comments.
+		$comment .= ' / ' if $comment;
+		$c =~ s/^eng(.*)/$1/;
+		$comment .= $c;
+	}
+
+	return $comment;
+}
+
+sub duration {
+	my $self = shift;
+
+	my $secs = $self->secs();
+
+	return sprintf('%s:%02s', int($secs / 60), $secs % 60) if defined $secs;
+}
+
+sub durationSeconds {
+	my $self = shift;
+
+	return $self->secs();
+}
+
+sub modificationTime {
+	my $self = shift;
+
+	my $time = $self->timestamp();
+
+	return join(', ', Slim::Utils::Misc::longDateF($time), Slim::Utils::Misc::timeF($time));
+}
+
+sub bitrate {
+	my $self = shift;
+	my $only = shift;
+
+	my $bitrate = $self->get('bitrate');
+
+	# Source only wants the raw bitrate
+	if ($only) {
+		return $bitrate || 0;
+	}
+
+	my $mode = (defined $self->vbr_scale()) ? 'VBR' : 'CBR';
+
+	if ($bitrate) {
+		return int ($bitrate/1000) . Slim::Utils::Strings::string('KBPS') . ' ' . $mode;
+	}
+
+	return 0;
+}
+
+# we cache whether we had success reading the cover art.
+sub coverArt {
+	my $self = shift;
+	my $art  = shift || 'cover';
+
+	my $image;
+
+	# return with nothing if this isn't a file.  We dont need to search on streams, for example.
+	if (!Slim::Utils::Prefs::get('lookForArtwork') || !Slim::Music::Info::isSong($self)) {
+		return undef;
+	}
+	
+	$::d_artwork && Slim::Utils::Misc::msgf("Retrieving artwork ($art) for: %s\n", $self->url());
+	
+	my ($body, $contenttype, $mtime, $path);
+
+	my $artwork = $art eq 'cover' ? $self->cover() : $self->thumb();
+	
+	if ($artwork && ($artwork ne '1')) {
+
+		$body = Slim::Music::Info::getImageContent($artwork);
+
+		if ($body) {
+			$::d_artwork && Slim::Utils::Misc::msg("Found cached $art file: $artwork\n");
+			$contenttype = Slim::Music::Info::mimeType(Slim::Utils::Misc::fileURLFromPath($artwork));
+			$path = $artwork;
+
+		} else {
+
+			($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($self->url, $art);
+		}
+
+	} else {
+		($body, $contenttype,$path) = Slim::Music::Info::readCoverArt($self->url, $art);
+	}
+
+	# kick this back up to the webserver so we can set last-modified
+	if ($path && -r $path) {
+		$mtime = (stat(_))[9];
+	}
+
+	if (wantarray()) {
+		return ($body, $contenttype, $mtime);
+	} else {
+		return $body;
+	}
 }
 
 # String version of contributors list
@@ -251,7 +380,13 @@ sub contributorsOfType {
 
 	$type .= 'sFor';
 
-	return map { $_->contributor } Slim::DataStores::DBI::ContributorTrack->$type($self);
+	return map { $_->contributor } Slim::DataStores::DBI::ContributorTrack->$type($self->id);
+}
+
+sub contributorRoles {
+	my $self = shift;
+
+	return grep { ! /contributor/ } @{ Slim::DataStores::DBI::Contributor->contributorFields() };
 }
 
 sub searchTitle {

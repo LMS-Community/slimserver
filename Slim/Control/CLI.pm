@@ -157,6 +157,8 @@ sub processRequest {
 	return unless $clientsock;
 
 	$clientsock->autoflush(1);
+	
+	local ($/) = LF; 
 
 	$firstline = <$clientsock>;
 		
@@ -165,8 +167,12 @@ sub processRequest {
 		$::d_cli && msg("Client at disconnected\n");
 		closer($clientsock);
 	} else { 
+	
+	  	s/$CR?$LF/\n/;
+	
 		# process the commands
 		chomp $firstline; 
+
 		executeCmd($clientsock, $firstline);
 	}
 
@@ -200,7 +206,7 @@ sub executeCmd {
 
 		$output = "" unless defined $output;
 		
-		$::d_cli && msg("command line interface response: " . $output);
+		$::d_cli && msg("Command line interface response: " . $output . "\n");
 		addresponse($clientsock, $output . $LF);
 	}
 	

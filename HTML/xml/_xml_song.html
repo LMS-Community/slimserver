@@ -1,35 +1,41 @@
 
-	[% IF title %]<title>[% title | html %]</title>[% END %]
-	[% IF genre %]
-		<genre>[% genre | html %]</genre> 
-		<genre_browse_url><![CDATA[xml/browseid3.xml?genre=[% genre | uri %]]]></genre_browse_url>
+	[% IF track.title %]<title>[% track.title | html %]</title>[% END %]
+
+	[% genres = track.genres %]
+	[% IF genres %]
+		<genre>[% genre.name | html %]</genre> 
+		<genre_browse_url><![CDATA[xml/browsedb.xml?hierarchy=artist,album,track&level=0&genre=[% genre.id %]]]></genre_browse_url>
 	[% END %] 
-	[% IF artist %]
-		<artist>[% artist | html %]</artist>
-		<artist_browse_url><![CDATA[xml/browseid3.xml?genre=*&artist=[% artist | uri %]]]></artist_browse_url>
+
+	[% FOREACH role = track.contributorRoles.sort %]
+
+		[% contributors = track.contributorsOfType(role) %]
+		[% IF contributors %]
+
+			[% FOREACH contributor = contributors %]
+				<[% role %]>[% contributor.name | html %]</[% role %]>
+				<[% role %]_browse_url><![CDATA[xml/browsedb.xml?hierarchy=album,track&level=0&artist=[% contributor.id %]]]></[% role %]_browse_url>
+			[% END %]
+
+		[% END %]
+
 	[% END %]
-	[% IF album %] 
-		<album>[% album | html %]</album>
-		<album_browse_url><![CDATA[xml/browseid3.xml?genre=*&artist=*&album=[% album | uri %]]]></album_browse_url>
+
+	[% IF track.album %] 
+		<album>[% track.album.title | html %]</album>
+		<album_browse_url><![CDATA[xml/browsedb.xml?hierarchy=track&level=0&album=[% track.album.id %]]]></album_browse_url>
 	[% END %]
-	[% IF composer %] 
-		<composer>[% composer | html %]</composer>
-		<composer_browse_url><![CDATA[xml/browseid3.xml?genre=*&artist=[% composer | uri %]]]></composer_browse_url>
-	[% END %]
-	[% IF conductor %] 
-		<conductor>[% conductor | html %]</conductor>
-		<conductor_browse_url><![CDATA[xml/browseid3.xml?genre=*&artist=[% conductor | uri %]]]></conductor_browse_url>
-	[% END %]
-	[% IF track %]<track>[% track | html %]</track>[% END %]
-	[% IF type %]<type>[% type | html %]</type>[% END %]
-	[% IF duration %]<duration>[% duration | html %]</duration>[% END %]
-	[% IF year %]<year>[% year | html %]</year>[% END %]
+
+	[% IF track.tracknum %]<track>[% track.tracknum | html %]</track>[% END %]
+	[% IF track.content_type %]<type>[% track.content_type | string | html %]</type>[% END %]
+	[% IF track.duration %]<duration>[% track.duration | html %]</duration>[% END %]
+	[% IF track.year %]<year>[% track.year | html %]</year>[% END %]
 	[% IF comment %]<comment>[% comment | html %]</comment>[% END %]
 	[% IF filelength %]<filelength>[% filelength | html %]</filelength>[% END %]
-	[% IF bitrate %]<bitrate>[% bitrate | html %]</bitrate>[% END %]
-	[% IF tagversion %]<tagversion>[% tagversion | html %]</tagversion>[% END %]
-	[% IF modtime %]<modtime>[% modtime | html %]</modtime>[% END %]
+	[% IF track.bitrate %]<bitrate>[% track.bitrate | html %]</bitrate>[% END %]
+	[% IF track.tagversion %]<tagversion>[% track.tagversion | html %]</tagversion>[% END %]
+	[% IF track.modificationTime %]<modtime>[% track.modificationTime | html %]</modtime>[% END %]
  	<song_url><![CDATA[[% itempath %]]]></song_url>
 	<download_url><![CDATA[[% download %]]]></download_url>
-  	[% IF coverart %]<coverart><![CDATA[/music/[% itempath | uri %]/cover.jpg]]></coverart>[% END %]
+  	[% IF track.coverArt %]<coverart><![CDATA[/music/[% itempath | uri %]/cover.jpg]]></coverart>[% END %]
  	[% IF mixable %]<mixable>[% mixable | html %]</mixable>[% END %]

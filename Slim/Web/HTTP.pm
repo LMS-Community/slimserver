@@ -25,6 +25,7 @@ use URI::Escape;
 use Slim::Networking::mDNS;
 use Slim::Networking::Select;
 use Slim::Player::HTTP;
+use Slim::Music::Info;
 
 use Slim::Web::EditPlaylist;
 use Slim::Web::History;
@@ -766,13 +767,16 @@ sub generateHTTPResponse {
 
 		my $song  = Slim::Utils::Misc::virtualToAbsolute($1);
 		my $image = $2;
+		my $ds    = Slim::Music::Info::getCurrentDataStore();
+		my $obj   = $ds->objectFromUrl($song);
+
 		my $imageData;
 
 		$::d_http && msg("Cover Art asking for: $image\n");
 
 		$song = Slim::Utils::Misc::fixPath($song);
 
-		($imageData, $contentType, $mtime) = Slim::Music::Info::coverArt($song, $image);
+		($imageData, $contentType, $mtime) = $obj->coverArt($image);
 
 		if (defined($imageData)) {
 
@@ -796,8 +800,11 @@ sub generateHTTPResponse {
 
 			if ($songHandle) {
 
+				my $ds  = Slim::Music::Info::getCurrentDataStore();
+				my $obj = $ds->objectFromUrl($file);
+
 				$response->content_type(Slim::Music::Info::mimeType($file));
-				$response->content_length(Slim::Music::Info::fileLength($file));
+				$response->content_length($obj->filesize());
 
 				my $headers = _stringifyHeaders($response) . $CRLF;
 

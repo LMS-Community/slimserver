@@ -1,0 +1,61 @@
+[% pagetitle = browseby | string %] [% pageicon = browseby %] [% PROCESS pageheader.html %] 
+<tr height="44">
+	<td width="4" height="44">
+		<img src="html/images/spacer.gif" width="8" height="39" alt="">
+	</td>
+	<td valign="top" class="medgrey" height="44">
+		<table cellspacing="0" width=100%>
+			<tr height="22">
+				<td width="8"><img src="html/images/spacer.gif" width="8" alt=""></td>
+				<td valign="middle"><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> [% pwd_list %]</td>
+				<td width="4"></td>
+			</tr>
+			<tr height="2"><td colspan=3><img src="html/images/spacer.gif" height="2" alt=""></td></tr>
+			<tr height="20">
+				<td width="8"><img src="html/images/spacer.gif" width="8" alt=""></td>
+				<td valign="middle">[% IF song_count %][% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].[% END %]</td>
+				<td width="4"></td>
+			</tr>
+		</table>
+	</td>
+	<td width="4" height="44">
+		<p>
+			<img src="html/images/spacer.gif" width="4" height="19" alt="">
+		</p>
+	</td>
+</tr>
+
+<tr height="100%">
+	<td width="4" height="100%">
+	</td>
+	<td height="100%">
+		[% IF browseby != 'BROWSE_BY_ARTWORK' %]
+			[% IF browselist_header %][% browselist_header %][% END %]
+		[% END %]
+		[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %] [% END %]
+	
+		<table cellspacing="0" width=100% >
+			<tr valign=middle height="27">
+				<td class="exlisting" valign=middle>[% IF browselist_pagebar %]<p>[% browselist_pagebar %][% END %]</td>
+			</tr>
+			<tr>
+				<td>
+					[% IF coverart %]
+						<p><a href="/music/[% coverartpath | uri %]/cover.jpg" target="cover"><img src="/music/[% coverartpath | uri %]/cover.jpg"></a></p>
+					[% END %]
+				
+					[% IF browseby != 'BROWSE_BY_ARTWORK' %]<table cellspacing="0" cellpadding="4" width="100%">[% END %]
+						[% browse_list %] 
+					[% IF browseby != 'BROWSE_BY_ARTWORK' %]</table>[% END %]
+				</td>
+			</tr>
+			<tr valign=middle height="27" >
+				<td class="exlisting" valign=middle>[% IF browselist_pagebar %]<p>[% browselist_pagebar %][% END %]</td>
+			</tr>
+			
+		</table>
+	</td>
+	<td width="4" height="100%">
+	</td>
+</tr>
+[% PROCESS pagefooter.html %]

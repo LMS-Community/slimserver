@@ -175,6 +175,7 @@ sub addToList_run {
 
 	my $jobState = $addToList_jobs{$listref};
 	my $stackRef = $jobState->stack;
+	my $ds       = Slim::Music::Info::getCurrentDataStore();
 
 	# The directory we're currently in is stack[numstack-1]
 	my $curdirState = @$stackRef[$jobState->numstack-1];
@@ -255,7 +256,10 @@ sub addToList_run {
 				my $duptracknum = 0;
 				my @seen = ();
 				for my $item (@{$itemstoaddref}) {
-					my $trnum = Slim::Music::Info::trackNumber($item);
+
+					my $track = $ds->objectForUrl($item, 0) || next;
+					my $trnum = $track->tracknum();
+
 					if ($trnum) { 
 						if ($seen[$trnum]) {
 							$duptracknum = 1;
@@ -402,6 +406,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 	
 	$numitems = 0;
 	my $startingsize = scalar @$listref;
+	my $ds = Slim::Music::Info::getCurrentDataStore();
 
 	my $playlistpath = $playlisturl;
 	
@@ -476,11 +481,13 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		}
 
 		# 315529200 is a bogus windows time value
+		my $obj = $ds->objectForUrl($playlistpath, 0);
+
 		if (Slim::Music::Info::isPlaylistURL($playlistpath) ||
 			(
 				defined Slim::Music::Info::cachedPlaylist($playlistpath) && 
 			  	(Slim::Music::Info::isDir($playlistpath) && 
-			  	($playlistpathAge == Slim::Music::Info::age($playlistpath))) &&
+			  	($playlistpathAge == $obj->timestamp())) &&
 			  	($playlistpathAge != 315529200)
 			  )
 			) {

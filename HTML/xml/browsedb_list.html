@@ -2,22 +2,20 @@
 	[% IF descend == 'true' %]
 	<dir>
 		<dir_name>[% title | html %]</dir_name>
-		<dir_browse_url><![CDATA[xml/browseid3.xml?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]]]></dir_browse_url>
-   		[% IF genre %][% IF genre != '*' %]<genre>[% genre | html %]</genre>[% END %][% END %] 
-   		[% IF artist %][% IF artist != '*' %]<artist>[% artist | html %]</artist>[% END %][% END %] 
-   		[% IF album %][% IF album != '*' %]<album>[% album | html %]</album>[% END %][% END %]
+		<dir_browse_url><![CDATA[xml/browsedb.xml?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]]]></dir_browse_url>
+		<[% levelName %]>[% text | html %]</[% levelName %]>
 	</dir>
 	[% END %]
 
 	[% IF not descend %]
 		[% PROCESS _xml_song.html %]
 	[% END %]
-	
 
 	[% IF descend %]
 	<replace_url><![CDATA[xml/status.xml?p0=playlist&p1=loadalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]]]></replace_url>
 	<append_url><![CDATA[xml/status.xml?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]]]></append_url>
 	[% END %]
+
 	[% IF not descend %]
 	<replace_url><![CDATA[xml/status.xml?p0=playlist&p1=play&p2=[% itempath | uri %]]]></replace_url>
 	<append_url><![CDATA[xml/status.xml?p0=playlist&p1=append&p2=[% itempath | uri %]]]></append_url>

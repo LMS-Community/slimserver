@@ -31,7 +31,8 @@ sub add {
 	for my $genreSub (Slim::Music::Info::splitTag($genre)) {
 
 		$_cache{$genreSub} ||= Slim::DataStores::DBI::Genre->find_or_create({ 
-			name => $genreSub,
+			name     => $genreSub,
+			namesort => Slim::Utils::Text::ignoreCaseArticles($genreSub),
 		});
 
 		push @genres, $_cache{$genreSub};

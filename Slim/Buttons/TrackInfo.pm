@@ -230,22 +230,19 @@ sub preloadLines {
 		push (@{$client->trackInfoContent}, 'ARTIST');
 	}
 
-	# These all return undef right now.
-	if (0) {
-		if (my $band = $track->band()) {
-			push (@{$client->trackInfoLines}, $client->string('BAND') . ": $track");
-			push (@{$client->trackInfoContent}, 'BAND');
-		}
+	if (my $band = $track->band()) {
+		push (@{$client->trackInfoLines}, $client->string('BAND') . ": $track");
+		push (@{$client->trackInfoContent}, 'BAND');
+	}
 
-		if (my $composer = $track->composer()) {
-			push (@{$client->trackInfoLines}, $client->string('COMPOSER') . ": $composer");
-			push (@{$client->trackInfoContent}, 'COMPOSER');
-		}
+	if (my $composer = $track->composer()) {
+		push (@{$client->trackInfoLines}, $client->string('COMPOSER') . ": $composer");
+		push (@{$client->trackInfoContent}, 'COMPOSER');
+	}
 
-		if (my $conductor = $track->conductor()) {
-			push (@{$client->trackInfoLines}, $client->string('CONDUCTOR') . ": $conductor");
-			push (@{$client->trackInfoContent}, 'CONDUCTOR');
-		}
+	if (my $conductor = $track->conductor()) {
+		push (@{$client->trackInfoLines}, $client->string('CONDUCTOR') . ": $conductor");
+		push (@{$client->trackInfoContent}, 'CONDUCTOR');
 	}
 
 	if (my $album = $track->album()->title()) {
@@ -273,24 +270,21 @@ sub preloadLines {
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	# These have methods in Slim::Music::Info which need to be
-	# moved/copied to Track.pm
-	if (my $comment = Slim::Music::Info::comment($url)) {
+	if (my $comment = $track->comment()) {
 		push (@{$client->trackInfoLines}, $client->string('COMMENT') . ": $comment");
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (my $duration = Slim::Music::Info::duration($url)) {
+	if (my $duration = $track->duration()) {
 		push (@{$client->trackInfoLines}, $client->string('LENGTH') . ": $duration");
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (my $bitrate = Slim::Music::Info::bitrate($url)) {
+	if (my $bitrate = $track->bitrate()) {
 
-		my $undermax = Slim::Player::Source::underMax($client,$url);
+		my $undermax = Slim::Player::Source::underMax($client, $url);
 
-		my $rate = (defined $undermax && $undermax) ? $bitrate
-				: Slim::Utils::Prefs::maxRate($client).$client->string('KBPS')." CBR";
+		my $rate = (defined $undermax && $undermax) ? $bitrate : Slim::Utils::Prefs::maxRate($client).$client->string('KBPS')." CBR";
 
 		push (@{$client->trackInfoLines}, 
 			$client->string('BITRATE').": $bitrate " .
@@ -305,8 +299,8 @@ sub preloadLines {
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (my $age = $track->timestamp()) {
-		push (@{$client->trackInfoLines}, $client->string('MODTIME').": ".Slim::Utils::Misc::shortDateF($age).", ".Slim::Utils::Misc::timeF($age));
+	if (my $age = $track->modificationTime()) {
+		push (@{$client->trackInfoLines}, $client->string('MODTIME').": $age");
 		push (@{$client->trackInfoContent}, undef);
 	}
 

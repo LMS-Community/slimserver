@@ -89,9 +89,7 @@ sub init {
 				$form->{'itempath'}	       = $item->url;
 				$form->{'mixable_not_descend'} = Slim::Music::Info::isSongMixable($item->url);
 
-				my ($body, $type, $mtime) =  Slim::Music::Info::coverArt($item->url);
-
-				if (defined($body)) {
+				if ($item->coverArt()) {
 					$form->{'coverart'} = 1;
 					$form->{'coverartpath'} = $item->url();
 				}
@@ -191,7 +189,9 @@ sub init {
 				my $itemname = shift;
 				my $descend = shift;
 
-				if (Slim::Utils::Prefs::get('showYear')) {
+				if (my $showYear = Slim::Utils::Prefs::get('showYear')) {
+
+					$form->{'showYear'} = $showYear;
 
 					if (my ($track) = $item->tracks()) {
 						$form->{'year'} = $track->year();
@@ -362,7 +362,7 @@ sub init {
 				my $itemname = shift;
 				my $descend = shift;
 
-				$list_form->{'mixable_descend'} = Slim::Music::Info::isGenreMixable($itemname) && ($descend eq "true");
+				$list_form->{'showYear'} = 0;
 			},
 
 			'ignoreArticles' => 1,
@@ -737,6 +737,7 @@ sub browser_addtolist_done {
 	}
 	
 	my $numitems = scalar @{$itemsref};
+	my $ds = Slim::Music::Info::getCurrentDataStore();
 	
 	$::d_http && msg("browser_addtolist_done with $numitems items (". scalar @{ $itemsref } . " " . $params->{'dir'} . ")\n");
 
@@ -819,17 +820,19 @@ sub browser_addtolist_done {
 			# There are different templates for directories and playlist items:
 			my $shortitem = Slim::Utils::Misc::descendVirtual($params->{'dir'}, $item, $itemnumber);
 
-			if (Slim::Music::Info::isList($item)) {
+			my $obj       = $ds->objectForUrl($item, 0);
+
+			if (Slim::Music::Info::isList($obj)) {
 
 				$list_form{'descend'} = $shortitem;
 
-			} elsif (Slim::Music::Info::isSong($item)) {
+			} elsif (Slim::Music::Info::isSong($obj)) {
 
 				$list_form{'descend'} = 0;
 
 				if (!defined $cover) {
 
-					if (my $body = (Slim::Music::Info::coverArt($item, 'cover'))[0]) {
+					if ($obj->coverArt()) {
 						$params->{'coverart'} = 1;
 						$params->{'coverartpath'} = $shortitem;
 					}
@@ -839,7 +842,7 @@ sub browser_addtolist_done {
 
 				if (!defined $thumb) {
 
-					if (my $body = (Slim::Music::Info::coverArt($item, 'thumb'))[0]) {
+					if ($obj->coverArt('thumb')) {
 						$params->{'coverthumb'} = 1;
 						$params->{'thumbpath'} = $shortitem;
 					}
@@ -859,10 +862,9 @@ sub browser_addtolist_done {
 				$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
 				$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
 				$list_form{'title'}         = Slim::Music::Info::standardTitle(undef, $item);
-				$list_form{'artist'}        = Slim::Music::Info::artist($item);
-				$list_form{'album'}         = Slim::Music::Info::album($item);
 			}
 			
+			$list_form{'item'}		  = $obj;
 			$list_form{'itempath'}            = Slim::Utils::Misc::virtualToAbsolute($item);
 			$list_form{'odd'}	  	  = ($itemnumber + $offset) % 2;
 			$list_form{'player'}	          = $current_player;
@@ -1014,8 +1016,10 @@ sub status {
 	
 	if ($songcount > 0) {
 		my $song = Slim::Player::Playlist::song($client);
+
 		$params->{'currentsong'} = Slim::Player::Source::currentSongIndex($client) + 1;
 		$params->{'thissongnum'} = Slim::Player::Source::currentSongIndex($client);
+
 		$params->{'songcount'}   = $songcount;
 		$params->{'itempath'}    = $song;
 
@@ -1216,9 +1220,6 @@ sub buildPlaylist {
 		$list_form{'player'}   = $params->{'player'};
 		$list_form{'title'}    = Slim::Music::Info::standardTitle(undef,$song);
 
-		# XXX - convert to use item/ds
-		$list_form{'itempath'} = $song;
-
 		my $track = $ds->objectForUrl($song) || do {
 			$::d_info && Slim::Utils::Misc::msg("Couldn't retrieve objectForUrl: [$song] - skipping!\n");
 			$listBuild->{'item'}++;
@@ -1226,8 +1227,11 @@ sub buildPlaylist {
 			next;
 		};
 
-		$list_form{'artist'} = $listBuild->{'includeArtist'} ? $track->artist() : undef;
-		$list_form{'album'}  = $listBuild->{'includeAlbum'}  ? $track->album()->title() : undef;
+		$list_form{'itempath'} = $song;
+		$list_form{'item'}     = $track->id();
+
+		$list_form{'artists'}  = $listBuild->{'includeArtist'} ? $track->contributors() : undef;
+		$list_form{'album'}    = $listBuild->{'includeAlbum'}  ? $track->album() : undef;
 
 		$list_form{'start'}	   = $params->{'start'};
 		$list_form{'skinOverride'} = $params->{'skinOverride'};
@@ -1620,39 +1624,17 @@ sub _addSongInfo {
 
 	if ($track) {
 
-		# These are all lists
-		$params->{'genre'}     = join(', ', map { $_->name() } $track->genres());
-		$params->{'artist'}    = join(', ', map { $_->name() } $track->contributors());
-		$params->{'composer'}  = join(', ', map { $_->name() } $track->contributorsOfType('composer'));
-		$params->{'band'}      = join(', ', map { $_->name() } $track->contributorsOfType('band'));
-		$params->{'conductor'} = join(', ', map { $_->name() } $track->contributorsOfType('conductor'));
-
-		# Do we have an album associated with this track?
-		if (my $album = $track->album()) {
-
-			$params->{'album'}   = $album->title();
-			$params->{'albumid'} = $album->id();
-			$params->{'disc'}    = $album->disc();
-		}
-
-		# Generic items
-		for my $item (qw(title track bpm year tagversion bitrate drm)) {
-
-			$params->{$item} = $track->$item();
-		}
+		# let the template access the object directly.
+		$params->{'track'}     = $track;
 
 		$params->{'filelength'} = Slim::Utils::Misc::delimitThousands($track->filesize());
 		$params->{'songtitle'}  = Slim::Music::Info::standardTitle(undef, $track);
-		$params->{'duration'}   = Slim::Music::Info::duration($song);
-		$params->{'bitrate'}    = Slim::Music::Info::bitrate($song);
-		$params->{'type'}       = string(uc($track->content_type()));
 		$params->{'mixable'}    = Slim::Music::Info::isSongMixable($song);
 
-		$params->{'modtime'}    = Slim::Utils::Misc::longDateF($track->timestamp()) . ", " .
-					  Slim::Utils::Misc::timeF($track->timestamp());
-
 		# make urls in comments into links
-		for my $comment ($track->comments()) {
+		for my $comment ($track->comment()) {
+
+			next unless defined $comment && $comment !~ /^\s*$/;
 
 			if (!($comment =~ s!\b(http://[\-~A-Za-z0-9_/\.]+)!<a href=\"$1\" target=\"_blank\">$1</a>!igo)) {
 
@@ -1662,17 +1644,11 @@ sub _addSongInfo {
 
 			$params->{'comment'} .= $comment;
 		}
-	}
 	
-	# handle artwork bits
-	# XXX - this should be a method on $track
-	if (my $body = (Slim::Music::Info::coverArt($song,'cover'))[0]) {
-		$params->{'coverart'} = 1;
-	}
-
-	# XXX - this should be a method on $track
-	if (my $body = (Slim::Music::Info::coverArt($song,'thumb'))[0]) {
-		$params->{'coverthumb'} = 1;
+		# handle artwork bits
+		if ($track->coverArt('thumb')) {
+			$params->{'coverthumb'} = 1;
+		}
 	}
 	
 	my $downloadurl;
@@ -1725,98 +1701,6 @@ sub songInfo {
 	_addSongInfo($client, $params);
 
 	return Slim::Web::HTTP::filltemplatefile("songinfo.html", $params);
-}
-
-sub generate_pwd_list {
-	my ($genre, $artist, $album, $player) = @_;
-
-	my $pwd_list = "";
-
-	if (defined($genre) && $genre eq '*' && defined($artist) && $artist eq '*') {
-
-		my %list_form = (
-			'song'    => '',
-			'album'   => '',
-			'artist'  => '*',
-			'genre'   => '*',
-			'player'  => $player,
-			'pwditem' => string('BROWSE_BY_ALBUM'),
-		);
-
-		$pwd_list .= ${Slim::Web::HTTP::filltemplatefile("browseid3_pwdlist.html", \%list_form)};
-
-	} elsif (defined($genre) && $genre eq '*') {
-
-		my %list_form = (
-			'song'    => '',
-			'artist'  => '',
-			'album'   => '',
-			'genre'   => '*',
-			'player'  => $player,
-			'pwditem' => string('BROWSE_BY_ARTIST'),
-		);
-
-		$pwd_list .= ${Slim::Web::HTTP::filltemplatefile("browseid3_pwdlist.html", \%list_form)};
-
-	} else {
-
-		my %list_form = (
-			'song'    => '',
-			'artist'  => '',
-			'album'   => '',
-			'genre'   => '',
-			'player'  => $player,
-			'pwditem' => string('BROWSE_BY_GENRE'),
-		);
-
-		$pwd_list .= ${Slim::Web::HTTP::filltemplatefile("browseid3_pwdlist.html", \%list_form)};
-	}
-
-	#
-	if ($genre && $genre ne '*') {
-
-		my %list_form = (
-			'song'    => '',
-			'artist'  => '',
-			'album'   => '',
-			'genre'   => $genre,
-			'player'  => $player,
-			'pwditem' => $genre,
-		);
-
-		$pwd_list .= ${Slim::Web::HTTP::filltemplatefile("browseid3_pwdlist.html", \%list_form)};
-	}
-
-	#
-	if ($artist && $artist ne '*') {
-
-		my %list_form = (
-			'song'    => '',
-			'album'   => '',
-			'artist'  => $artist,
-			'genre'   => $genre,
-			'pwditem' => $artist,
-			'player'  => $player,
-		);
-
-		$pwd_list .= ${Slim::Web::HTTP::filltemplatefile("browseid3_pwdlist.html", \%list_form)};
-	}
-
-	if ($album && $album ne '*') {
-
-		my %list_form = (
-			'song'    => '',
-			'album'   => $album,
-			'artist'  => $artist,
-			'genre'   => $genre,
-			'pwditem' => $album,
-			'player'  => $player,
-		);
-
-		$pwd_list .= ${Slim::Web::HTTP::filltemplatefile("browseid3_pwdlist.html", \%list_form)};
-	}
-	
-	return $pwd_list;
 }
 
 # XXX FIXME The fieldInfo type structure, at some level, is going to
@@ -2054,6 +1938,7 @@ sub browsedb {
 			$list_form{'attributes'}    = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '') . '&' .
 				$attrName . '=' . Slim::Web::HTTP::escape($itemid);
 
+			$list_form{'levelName'}	    = $attrName;
 			$list_form{'text'}	    = $itemname;
 			$list_form{'descend'}	    = $descend;
 			$list_form{'player'}	    = $player;
@@ -2084,8 +1969,7 @@ sub browsedb {
 
 		if ($level == $maxLevel && $levels[$level] eq 'track') {
 
-			# XXX - this should be a method on $track
-			if (my $body = (Slim::Music::Info::coverArt($items->[$start]->url))[0]) {
+			if ($items->[$start]->coverArt()) {
 				$params->{'coverart'} = 1;
 				$params->{'coverartpath'} = $items->[$start]->url;
 			}
@@ -2094,7 +1978,7 @@ sub browsedb {
 
 	$params->{'descend'} = $descend;
 	
-	return Slim::Web::HTTP::filltemplatefile("browseid3.html", $params);
+	return Slim::Web::HTTP::filltemplatefile("browsedb.html", $params);
 }
 
 # Implement browseid3 in terms of browsedb.
@@ -2178,7 +2062,7 @@ sub mood_wheel {
 		return undef;
 	}
 
-	$params->{'pwd_list'} = generate_pwd_list($genre, $artist, $album, $player);
+	#$params->{'pwd_list'} = generate_pwd_list($genre, $artist, $album, $player);
 	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("mood_wheel_pwdlist.html", $params)};
 
 	for my $item (@items) {
@@ -2220,7 +2104,7 @@ sub instant_mix {
 	
 	my $itemnumber = 0;
 
-	$params->{'pwd_list'} = generate_pwd_list($genre, $artist, $album, $player);
+	#$params->{'pwd_list'} = generate_pwd_list($genre, $artist, $album, $player);
 
 	if (defined $mood && $mood ne "") {
 		$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("mood_wheel_pwdlist.html", $params)};

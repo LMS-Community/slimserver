@@ -13,10 +13,10 @@
 </table>
 
 <br>
-<p>[% "SONG_INFO" | string %] [% "FOR" | string %] <b>[% title %]</b></p>
+<p>[% "SONG_INFO" | string %] [% "FOR" | string %] <b>[% track.title %]</b></p>
 
-[% IF coverart %]
-    <center><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]"><img src="/music/[% itempath | uri %]/cover.jpg" border="0" width="200"></a></center>
+[% IF track.coverArt %]
+    <center><a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]"><img src="/music/[% itempath | uri %]/cover.jpg" border="0" width="200"></a></center>
 [% END %]
 
 <table width=100%>
@@ -27,79 +27,74 @@
                         </nobr>
                 </td>
                 <td>
-                        [% title %]
+                        [% track.title %]
                 </td>
         </tr>
-        [% IF artist %]
-        <tr>
-                <td>
-                        [% "ARTIST" | string %][% "COLON" | string %]
-                </td>
-                <td>
-                        <a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]">[% artist %]</a>
-                </td>
-        </tr>
-        [% END %] [% IF composer %]
-        <tr>
-                <td>
-                        [% "COMPOSER" | string %][% "COLON" | string %]
-                </td>
-                <td>
-                        <a href="browseid3.html?genre=*&amp;artist=[% composer | uri %]&amp;player=[% player | uri %]">[% composer %]</a>
-                </td>
-        </tr>
-       [% END %] [% IF conductor %]
-        <tr>
-                <td>
-                        [% "CONDUCTOR" | string %][% "COLON" | string %]
-                </td>
-                <td>
-                        <a href="browseid3.html?genre=*&amp;artist=[% conductor | uri %]&amp;player=[% player | uri %]">[% conductor %]</a>
-                </td>
-        </tr>
-        [% END %] [% IF album %]
+	[% FOREACH role = track.contributorRoles.sort %]
+
+		[% contributors = track.contributorsOfType(role) %]
+		[% IF contributors %]
+		<tr>
+			<td>
+				[% role | upper | string %][% "COLON" | string %]
+			</td>
+			<td>
+			[% FOREACH contributor = contributors.sort %]
+                                <a href="browsedb.html?hierarchy=album,track&level=0&artist=[% contributor.id %]&amp;player=[% player | uri %]">[% contributor.name %]</a>
+			[% END %]
+			</td>
+		</tr>
+		[% END %]
+        [% END %]
+
+        [% IF track.album %]
         <tr>
                 <td>
                         [% "ALBUM" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        <a href="browseid3.html?genre=*&amp;artist=*&amp;album=[% album | uri %]&amp;player=[% player | uri %]">[% album %]</a>
+                        <a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]">[% track.album.title %]</a>
                 </td>
         </tr>
-        [% END %] [% IF genre %]
+        [% END %]
+
+	[% genres = track.genres %]
+	[% IF genres %]
         <tr>
                 <td>
                         [% "GENRE" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        <a href="browseid3.html?genre=[% genre | uri %]&amp;player=[% player | uri %]" >[% genre %]
+			[% FOREACH genre = genres %]
+                        	<a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% genre.id %]&amp;player=[% player | uri %]" >[% genre.name %]</a>
+			[% END %]
                 </td>
         </tr>
-        [% END %] [% IF track %]
+        [% END %] [% IF track.tracknum %]
         <tr>
                 <td>
                         [% "TRACK" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        [% track %]
+                        [% track.tracknum %]
                 </td>
         </tr>
-        [% END %] [% IF duration %]
+        [% END %] [% IF track.duration %]
         <tr>
                 <td>
                         [% "LENGTH" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        [% duration %]
+                        [% track.duration %]
                 </td>
         </tr>
-        [% END %] [% IF year %]
+        [% END %] [% IF track.year %]
         <tr>
                 <td>
                         [% "YEAR" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        [% year %]
+                        [% track.year %]
                 </td>
         </tr>
         [% END %] [% IF comment %]
@@ -120,22 +115,22 @@
                         [% filelength %] [% "BYTES" | string %]
                 </td>
         </tr>
-        [% END %] [% IF bitrate %]
+        [% END %] [% IF track.bitrate %]
         <tr>
                 <td>
                         [% "BITRATE" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        [% bitrate %]
+                        [% track.bitrate %]
                 </td>
         </tr>
-        [% END %] [% IF tagversion %]
+        [% END %] [% IF track.tagversion %]
         <tr>
                 <td>
                         [% "TAGVERSION" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        [% tagversion %]
+                        [% track.tagversion %]
                 </td>
         </tr>
         [% END %]

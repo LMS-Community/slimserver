@@ -831,6 +831,8 @@ sub openSong {
 	closeSong($client);
 	
 	my $fullpath = Slim::Player::Playlist::song($client) || return undef;
+	my $ds       = Slim::Music::Info::getCurrentDataStore();
+	my $track    = $ds->objectForUrl($fullpath);
 
 	$::d_source && msg("openSong on: $fullpath\n");
 
@@ -850,7 +852,7 @@ sub openSong {
 		if ($sock) {
 
 			# if it's an mp3 stream, then let's stream it.
-			if (Slim::Music::Info::isSong($fullpath)) {
+			if (Slim::Music::Info::isSong($track)) {
 
 				$::d_source && msg("remoteURL is a song : $fullpath\n");
 
@@ -861,12 +863,9 @@ sub openSong {
 					return undef;
 				}
 
-				my ($command, $type, $format) = getConvertCommand($client, 
-																  $fullpath);
+				my ($command, $type, $format) = getConvertCommand($client, $fullpath);
 				$::d_source && msg("remoteURL command $command type $type format $format\n");
-				$::d_source && msg("remoteURL stream format : " . 
-								   Slim::Music::Info::contentType($fullpath) . 
-								   "\n");				
+				$::d_source && msgf("remoteURL stream format : %s\n", Slim::Music::Info::contentType($fullpath));
 				$client->streamformat($format);
 
 				unless (defined($command)) {
@@ -876,7 +875,8 @@ sub openSong {
 					return undef;
 				}
 
-				my $duration  = Slim::Music::Info::durationSeconds($fullpath);
+				my $duration  = $track->durationSeconds();
+
 				if (defined($duration)) {
 					$client->songduration($duration);
 				}
@@ -890,12 +890,9 @@ sub openSong {
 					my $maxRate = Slim::Utils::Prefs::maxRate($client);
 					my $quality = Slim::Utils::Prefs::clientGet($client,'lameQuality');
 					
-					$command = tokenizeConvertCommand($command, $type, '-', 
-													  $fullpath, 0 , $maxRate,
-													  1, $quality);
+					$command = tokenizeConvertCommand($command, $type, '-', $fullpath, 0 , $maxRate, 1, $quality);
 					$::d_source && msg("tokenized command $command\n");
-					my $pipeline = Slim::Player::Pipeline->new($sock, 
-															   $command);
+					my $pipeline = Slim::Player::Pipeline->new($sock, $command);
 					if (!defined($pipeline)) {
 						$::d_source && msg("Error creating conversion pipeline\n");
 						errorOpening($client);
@@ -909,7 +906,7 @@ sub openSong {
 				$client->pauseTime(0);
 
 			# if it's one of our playlists, parse it...
-			} elsif (Slim::Music::Info::isList($fullpath)) {
+			} elsif (Slim::Music::Info::isList($track)) {
 
 				$::d_source && msg("openSong on a remote list!\n");
 				# handle the case that we've actually got a playlist in the list,
@@ -919,8 +916,8 @@ sub openSong {
 				my @items = Slim::Formats::Parse::parseList($fullpath, $sock);
 				
 				# hack to preserve the title of a song redirected through a playlist
-				if (scalar(@items) == 1 && defined(Slim::Music::Info::title($fullpath))) {
-					Slim::Music::Info::setTitle($items[0], Slim::Music::Info::title($fullpath));
+				if (scalar(@items) == 1 && defined($track->title())) {
+					Slim::Music::Info::setTitle($items[0], $track->title());
 				} 
 				
 				# close the socket
@@ -959,11 +956,11 @@ sub openSong {
 			return undef;
 		}
 
-	} elsif (Slim::Music::Info::isSong($fullpath)) {
+	} elsif (Slim::Music::Info::isSong($track)) {
 	
 		my $filepath;
 
-		if (Slim::Music::Info::isFileURL($fullpath)) {
+		if (Slim::Music::Info::isFileURL($track)) {
 			$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
 		} else {
 			$filepath = $fullpath;
@@ -975,13 +972,13 @@ sub openSong {
 		unless (-p $filepath) {
 
 			# XXX - endian can be undef here - set to ''.
-			$size       = Slim::Music::Info::size($fullpath);
-			$duration   = Slim::Music::Info::durationSeconds($fullpath);
-			$offset     = Slim::Music::Info::offset($fullpath);
-			$samplerate = Slim::Music::Info::samplerate($fullpath);
-			$blockalign = Slim::Music::Info::blockalign($fullpath);
-			$endian     = Slim::Music::Info::endian($fullpath) || '';
-			$drm = Slim::Music::Info::digitalrights($fullpath);
+			$size       = $track->audio_size();
+			$duration   = $track->durationSeconds();
+			$offset     = $track->audio_offset();
+			$samplerate = $track->samplerate();
+			$blockalign = $track->block_alignment();
+			$endian     = $track->endian() || '';
+			$drm        = $track->drm();
 
 			$::d_source && msg(
 				"openSong: getting duration  $duration, size $size, endian " .
@@ -1004,7 +1001,7 @@ sub openSong {
 		}
 
 		# smart bitrate calculations
-		my $rate    = (Slim::Music::Info::bitratenum($fullpath) || 0) / 1000;
+		my $rate    = ($track->bitrate(1) || 0) / 1000;
 
 		# if http client has used the query param, use transcodeBitrate. otherwise we can use maxBitrate.
 		my $maxRate = Slim::Utils::Prefs::maxRate($client);
@@ -1180,11 +1177,9 @@ sub checkBin {
 
 
 sub underMax {
-	my $client = shift;
+	my $client   = shift;
 	my $fullpath = shift;
-	my $type = shift;
-
-	$type = Slim::Music::Info::contentType($fullpath) unless defined $type;
+	my $type     = shift || Slim::Music::Info::contentType($fullpath);
 
 	my $maxRate = Slim::Utils::Prefs::maxRate($client);
 	# If we're not rate limited, we're under the maximum.
@@ -1195,7 +1190,12 @@ sub underMax {
 	# If the input type is mp3, we determine whether the 
 	# input bitrate is under the maximum.
 	if (defined($type) && $type eq 'mp3') {
-		my $rate = (Slim::Music::Info::bitratenum($fullpath) || 0)/1000;
+
+		my $ds    = Slim::Music::Info::getCurrentDataStore();
+		my $track = $ds->objectForUrl($fullpath);
+
+		my $rate = ($track->bitrate(1) || 0)/1000;
+
 		return ($maxRate >= $rate);
 	}
 	
@@ -1398,9 +1398,11 @@ sub readNextChunk {
 				} else {
 					# starting a new trick segment, calculate the chunk offset and length
 					
-					my $now = $client->songBytes();
-					
-					my $byterate = Slim::Music::Info::bitratenum(Slim::Player::Playlist::song($client)) / 8;
+					my $now   = $client->songBytes();
+					my $ds    = Slim::Music::Info::getCurrentDataStore();
+					my $track = $ds->objectForUrl( Slim::Player::Playlist::song($client) );
+
+					my $byterate = $track->bitrate(1) / 8;
 				
 					my $howfar = ($rate -  $TRICKSEGMENTDURATION) * $byterate;					
 					$howfar -= $howfar % $client->songblockalign();

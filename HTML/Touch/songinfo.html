@@ -8,7 +8,7 @@
 
 <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#EEEEEE">
 <tr><td width="40" align="left"><img src="html/images/leftcorner.gif"></td>
-<td><p align="center"><font class="pagebartext">[% "SONG_INFO" | string %] [% "FOR" | string %] <b>[% title %]</b></p></td>
+<td><p align="center"><font class="pagebartext">[% "SONG_INFO" | string %] [% "FOR" | string %] <b>[% track.title %]</b></p></td>
 <td width="40" align="right"><img src="html/images/rightcorner.gif"></td>
 </tr>
 </table>
@@ -17,8 +17,8 @@
 
 
 
-[% IF coverart %]
-<a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]"><p align="center"><img src="/music/[% itempath | uri %]/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a>
+[% IF track.coverArt %]
+<a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]"><p align="center"><img src="/music/[% itempath | uri %]/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a>
 [% END %]
 
 <br><br>
@@ -53,7 +53,7 @@
                         </nobr>
                 </td>
                 <td>
-                        <font size="+2">[% title %]
+                        <font size="+2">[% track.title %]
                 </td>
         </tr>
         [% IF artist %]
@@ -83,13 +83,13 @@
                         <font size="+2"><a href="browseid3.html?genre=*&amp;artist=[% conductor | uri %]&amp;player=[% player | uri %]"style="text-decoration:none">[% conductor %]</a>
                 </td>
         </tr>
-        [% END %] [% IF album %]
+        [% END %] [% IF track.album %]
         <tr>
                 <td><font size="+1">
                         [% "ALBUM" | string %]:
                 </td>
                 <td>
-                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist=*&amp;album=[% album | uri %]&amp;player=[% player | uri %]"style="text-decoration:none">[% album %]</a>
+			<font size="+2"><a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]" style="text-decoration:none">[% track.album.title %]</a>
                 </td>
         </tr>
         [% END %] [% IF genre %]
@@ -98,34 +98,34 @@
                         [% "GENRE" | string %]:
                 </td>
                 <td>
-                        <font size="+2"><a href="browseid3.html?genre=[% genre | uri %]&amp;player=[% player | uri %]"style="text-decoration:none">[% genre %]
+                        <font size="+2"><a href="browseid3.html?genre=[% genre | uri %]&amp;player=[% player | uri %]"style="text-decoration:none">[% genre %]</a>
                 </td>
         </tr><tr><td height="30"></td><td>
-        [% END %] [% IF track %]
+        [% END %] [% IF track.tracknum %]
         <tr>
                 <td><font size="+1">
                         [% "TRACK" | string %]:
                 </td>
                 <td>
-                        <font size="+1">[% track %]
+                        <font size="+1">[% track.tracknum %]
                 </td>
         </tr>
-        [% END %] [% IF duration %]
+        [% END %] [% IF track.duration %]
         <tr>
                 <td><font size="+1">
                         [% "LENGTH" | string %]:
                 </td>
                 <td>
-                        <font size="+1">[% duration %]
+                        <font size="+1">[% track.duration %]
                 </td>
         </tr>
-        [% END %] [% IF year %]
+        [% END %] [% IF track.year %]
         <tr>
                 <td><font size="+1">
                         [% "YEAR" | string %]:
                 </td>
                 <td>
-                        <font size="+1">[% year %]
+                        <font size="+1">[% track.year %]
                 </td>
         </tr>
         [% END %] [% IF comment %]
@@ -146,22 +146,22 @@
                         <font size="+1">[% filelength %] [% "BYTES" | string %]
                 </td>
         </tr>
-        [% END %] [% IF bitrate %]
+        [% END %] [% IF track.bitrate %]
         <tr>
                 <td><font size="+1">
                         [% "BITRATE" | string %]:
                 </td>
                 <td>
-                        <font size="+1">[% bitrate %]
+                        <font size="+1">[% track.bitrate %]
                 </td>
         </tr>
-        [% END %] [% IF tagversion %]
+        [% END %] [% IF track.tagversion %]
         <tr>
                 <td><font size="+1">
                         [% "TAGVERSION" | string %]:
                 </td>
                 <td>
-                        <font size="+1">[% tagversion %]
+                        <font size="+1">[% track.tagversion %]
                 </td>
         </tr>
         [% END %]

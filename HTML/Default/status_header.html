@@ -84,14 +84,14 @@ function switchPlayer(player_List){
 				<table cellspacing="0" width="100%"><tr>
 					<td><img src="html/images/spacer.gif" width="4" alt=""></td>
 					<td><span
-						class="exboldnowplaying">[% IF player_needs_upgrade %][% "PLAYER_NEEDS_UPGRADE" | string %][% END %][% IF not player_needs_upgrade %][% IF playercount == '0' %][% "NO_PLAYER_FOUND" | string %][% END %][% IF playercount != '0' %][% IF songcount == '0' %][% "NOTHING" | string %][% END %][% END %][% END %]<a href="songinfo.html?itempath=[% itempath | uri %]&amp;player=[% player | uri %]" target="browser">[% songtitle %]</a></span> 
+						class="exboldnowplaying">[% IF player_needs_upgrade %][% "PLAYER_NEEDS_UPGRADE" | string %][% END %][% IF not player_needs_upgrade %][% IF playercount == '0' %][% "NO_PLAYER_FOUND" | string %][% END %][% IF playercount != '0' %][% IF songcount == '0' %][% "NOTHING" | string %][% END %][% END %][% END %]<a href="songinfo.html?item=[% track.id %]&amp;player=[% player | uri %]" target="browser">[% songtitle %]</a></span> 
 						[% IF album %]<span class="exnotactivenowplaying">
 						[% "FROM" | string %]
-						</span><span class="exnowplaying"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album | html %]</a>
+						</span><span class="exnowplaying"><a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&amp;player=[% player | uri %]" target="browser">[% track.album.title | html %]</a>
 						</span>[% END %]
 						[% IF artist %]<span class="exnotactivenowplaying">
 						[% "BY" | string %]
-						</span><span class="exnowplaying"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser">[% artist | html %]</a></span>[% END %]
+						</span><span class="exnowplaying"><a href="browsedb.html?hierarchy=track&level=0&artist=[% track.contributors.id %]&amp;player=[% player | uri %]" target="browser">[% track.contributors.name | html %]</a></span>[% END %]
 					</td>
 			<td width="21" valign="center" class="medgrey" align="right" nowrap>[% IF songcount %]<a href="status_header.html?p0=playlist&amp;p1=delete&amp;p2=[% thissongnum %]&amp;player=[% player | uri %]&amp;start=[% start %]"><img src="html/images/b_delete_white.gif" width="13" height="13"  alt="[% "REMOVE_FROM_PLAYLIST" | string %]" title="[% "REMOVE_FROM_PLAYLIST" | string %]"></a>[% END %]<img src="html/images/spacer.gif" width="8" height="13" alt=""></td>
 				</tr></table>
