@@ -675,11 +675,21 @@ sub readDirectory {
 
 		# Ignore items starting with a period on non-windows machines
 		next if $dir =~ /^\./ && (Slim::Utils::OSDetect::OS() ne 'win');
-		next if (exists $_ignoredItems{$dir} && -d catdir($dirname, $dir));
+
+		my $fullpath = catdir($dirname, $dir);
+
+		next if (exists $_ignoredItems{$dir} && -d $fullpath);
 		
 		# Ignore our special named files and directories
 		next if $dir =~ /^__/;  
-		
+
+		# We only want files, directories and symlinks Bug #441
+		# Otherwise we'll try and read them, and bad things will happen.
+		# symlink must come first so an lstat() is done.
+		unless (-l $fullpath || -d _ || -f _) {
+			next;
+		}
+
 		if ($ignore ne '') {
 			next if $dir =~ /$ignore/;
 		}
