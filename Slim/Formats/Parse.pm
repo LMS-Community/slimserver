@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.29 2005/01/03 06:12:38 dsully Exp $
+# $Id: Parse.pm,v 1.30 2005/01/03 20:41:34 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -15,6 +15,7 @@ use IO::String;
 use XML::Simple;
 use URI::Escape;
 
+use Slim::Music::Info;
 use Slim::Utils::Misc;
 
 %Slim::Player::Source::playlistInfo = ( 
@@ -193,7 +194,7 @@ sub parseCUE {
 	my $filename;
 	my $currtrack;
 	my %tracks;
-	
+
 	foreach (@$lines) {
 
 		# strip whitespace from end
@@ -226,13 +227,25 @@ sub parseCUE {
 		}
 	}
 
+	# This is needed for readTags
+	my $ds       = Slim::Music::Info::getCurrentDataStore();
+	my $trackObj = $ds->objectForUrl($filename, 0) || do {
+
+		$::d_parse && Slim::Utils::Misc::msg("Warning - couldn't get object for file: $filename !\n");
+		return;
+	};
+
 	# calc song ending times from start of next song from end to beginning.
-	my $lastpos = (defined $tracks{$currtrack}->{'END'}) 
-		? $tracks{$currtrack}->{'END'} 
-		: Slim::Music::Info::durationSeconds($filename);
+	my $lastpos = (defined $tracks{$currtrack}->{'END'}) ? $tracks{$currtrack}->{'END'} : $trackObj->secs();
+
 	foreach my $key (sort {$b <=> $a} keys %tracks) {
+
 		my $track = $tracks{$key};
-		if (!defined $track->{'END'}) {$track->{'END'} = $lastpos};
+
+		if (!defined $track->{'END'}) {
+			$track->{'END'} = $lastpos;
+		}
+
 		$lastpos = $track->{'START'};
 	}
 
@@ -242,8 +255,10 @@ sub parseCUE {
 		if (!defined $track->{'START'} || !defined $filename ) { next; }
 
 		if (!defined $track->{'END'}) {
-		  Slim::Music::Info::readTags($filename);
-		  $track->{'END'} = Slim::Music::Info::durationSeconds($filename);
+
+			$ds->readTags($trackObj);
+
+			$track->{'END'} = $trackObj->secs();
 		}
 
 		my $url = "$filename#".$track->{'START'}."-".$track->{'END'};
@@ -304,8 +319,7 @@ sub parseCUE {
 			$::d_parse && Slim::Utils::Misc::msg("    album: " . $cacheEntry->{'ALBUM'} . "\n");
 		}
 
-		my $currentDatastore = Slim::Music::Info::getCurrentDataStore();
-		$currentDatastore->updateOrCreate($url, $cacheEntry);
+		$ds->updateOrCreate($trackObj, $cacheEntry);
 	}
 
 	$::d_parse && Slim::Utils::Misc::msg("    returning: " . scalar(@items) . " items\n");	
