@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.108 2004/05/18 01:45:39 kdf Exp $
+# $Id: strings.txt,v 1.109 2004/05/18 21:19:21 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1473,6 +1473,7 @@ SETUP_MP3BITRATE_DESC
 	EN	SlimServer can automatically convert your music files to MP3 on-the-fly to play back other formats than MP3.  SlimServer can also recompress your MP3 files to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to SlimServer across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that SlimServer will stream to your player.  MP3 songs encoded at a bitrate lower than below won't be converted.
 
 CONVERTED_TO
+	DE	Konvertiert nach
 	EN	Converted to
 
 SETUP_LAME_NOT_FOUND
@@ -1480,6 +1481,7 @@ SETUP_LAME_NOT_FOUND
 	DE	(<b>Achtung</b>: damit SlimServer MP3 kodieren kann, muss der LAME MP3 Kodierer auf ihrem System installiert sein. Mehr über LAME erfahren Sie <a href="http://lame.sourceforge.net/">hier</a>.)
 
 SETUP_LAME_FOUND
+	DE	LAME scheint korrekt auf ihrem System installiert zu sein.
 	EN	The LAME encoder appears to be installed correctly on your system.
 
 SETUP_MP3SILENCEPRELUDE
@@ -1689,9 +1691,11 @@ SETUP_LANGUAGE_OK
 	SE	Valt språk är:
 
 SETUP_AUDIODIR
+	DE	Musikverzeichnis
 	EN	Music Folder
 
 SETUP_AUDIODIR_DESC
+	DE	Sie können ein Verzeichnis definieren, dessen Musikdateien vom SlimServer durchsucht und zur Musiksammlung hinzugefügt werden sollen. Definieren Sie den Pfad zum Ordner im folgenden Feld. Sie können den Eintrag leer lassen, falls Sie die Musiksammlung von iTunes oder MoodLogic verwenden.
 	EN	You can specify a folder containing music files that SlimServer will scan and add to your music library.  Enter the path to the folder below.  You can leave this field blank if you are importing your music library information from iTunes or MoodLogic.
 
 SETUP_AUDIODIR_OK
@@ -1854,9 +1858,11 @@ RESCANNING
 	SE	Servern läser nu om din musikbibliotek.
 
 USING_ITUNES
+	DE	Der Server wird die Informationen aus iTunes importieren.
 	EN	The server will import iTunes information.
 
 NOT_USING_ITUNES
+	DE	Der Server wird keine Informationen aus iTunes mehr importieren.
 	EN	The server will no longer import iTunes information.
 
 USE_ITUNES
@@ -1871,6 +1877,7 @@ USE_ITUNES
 	SE	Använd iTunes
 
 DONT_USE_ITUNES
+	DE	iTunes nicht verwenden
 	EN	Do Not Use iTunes
 
 SETUP_ITUNES
@@ -1884,9 +1891,11 @@ SETUP_ITUNES
 	SE	iTunes
 
 SETUP_ITUNES_OK
+	DE	Der Server wird die Informationen aus iTunes importieren.
 	EN	The server will import iTunes information.
   
 SETUP_ITUNES_DESC
+	DE	Der SlimServer kann ihre iTunes-Musiksammlung und -Playlists verwenden. Alle Änderungen, die Sie in iTunes vornehmen, spiegeln sich auf dem Player wieder. Aktivieren Sie die folgende Checkbox, falls Sie die Informationen aus iTunes verwenden wollen.
 	EN	The SlimServer can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. Check the box below if you want to import your iTunes Music Library information.
 
 USE_MOODLOGIC
@@ -1919,6 +1928,7 @@ SETUP_MOODLOGIC
 	SE	MoodLogic
 
 SETUP_MOODLOGIC_DESC
+	DE	Der SlimServer kann MoodLogic als Quelle für Titel- und Musikstil-Informationen verwenden. Zusätzlich können Sie "Instant Mixes" auf Grund von Musikstil, Interpret und Lied-Intensität erstellen. Aktivieren Sie die folgende Checkbox, falls Sie die Informationen aus MoodLogic verwenden wollen.
 	EN	The SlimServer can use your MoodLogic program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level. Check the box below to import your MoodLogic Library information.
 
 SETUP_INSTANTMIXMAX
