@@ -540,9 +540,9 @@ sub new {
 
 		close $socket;
 
-		$response =~ /^HTTP\/1.1 302 Found/ or last;
+		$response =~ /^HTTP\/1.1 302 Found/ or return undef;
 
-		my ($redir) = $response =~ /Location: (.+)/ or last;
+		my ($redir) = $response =~ /Location: (.+)/ or return undef;
 		$::d_plugins && msg( "Live365 station really at: '$redir'\n" );
 
 		$self = $class->SUPER::new( $redir, $client, $url );
@@ -553,10 +553,9 @@ sub new {
 				$client,
 				Time::HiRes::time() + 5,
 				\&getPlaylist,
-				( $client, $handle, $url, $isVIP )
+				( $self, $handle, $url, $isVIP )
 			);
 		}
-
 	} else {
 		$::d_plugins && msg( "Not a Live365 station URL: $url\n" );
 	}
@@ -565,13 +564,16 @@ sub new {
 }
 
 sub getPlaylist {
-	my ( $class, $client, $handle, $url, $isVIP ) = @_;
+	my ( $client, $self, $handle, $url, $isVIP ) = @_;
+
+	# store the original title as a fallback, once.
+	${*$self}{live365_original_title} ||= Slim::Music::Info::title();
 
 	my $getPlaylist = sprintf( "GET /pls/front?handler=playlist&cmd=view&handle=%s%s&viewType=xml\n\n",
 			$isVIP ? 'afl:' : '',
 			$handle );
 
-	$::d_plugins && msg( "(" . ref( $class ) . ") Get playlist: $getPlaylist\n" );
+	$::d_plugins && msg( "(" . ref( $client ) . ") Get playlist: $getPlaylist\n" );
 
 	my $socket = new IO::Socket::INET(
 		PeerAddr	=> 'www.live365.com',
@@ -591,21 +593,30 @@ sub getPlaylist {
 
 	$::d_plugins && msg( "Got playlist response: " . $response . " bytes\n" );
 
+	my $newTitle = '';
 	my $nowPlaying = XMLin( $response, ForceContent => 1 );
-	my $nextRefresh = $nowPlaying->{Refresh}->{content};
+	my $nextRefresh;
 
-	my @titleComponents = ();
-	if ($nowPlaying->{PlaylistEntry}->[0]->{Title}->{content}) {
-	    push @titleComponents, $nowPlaying->{PlaylistEntry}->[0]->{Title}->{content};
-	}
-	if ($nowPlaying->{PlaylistEntry}->[0]->{Artist}->{content}) {
-	    push @titleComponents, $nowPlaying->{PlaylistEntry}->[0]->{Artist}->{content};
-	}
-	if ($nowPlaying->{PlaylistEntry}->[0]->{Album}->{content}) {
-	    push @titleComponents, $nowPlaying->{PlaylistEntry}->[0]->{Album}->{content};
-	}
+	if( defined $nowPlaying && defined $nowPlaying->{PlaylistEntry} && defined $nowPlaying->{Refresh} ) {
 
-	my $newTitle = join(" - ", @titleComponents);
+		$nextRefresh = $nowPlaying->{Refresh}->{content} || 60;
+		my @titleComponents = ();
+		if ($nowPlaying->{PlaylistEntry}->[0]->{Title}->{content}) {
+			push @titleComponents, $nowPlaying->{PlaylistEntry}->[0]->{Title}->{content};
+		}
+		if ($nowPlaying->{PlaylistEntry}->[0]->{Artist}->{content}) {
+			push @titleComponents, $nowPlaying->{PlaylistEntry}->[0]->{Artist}->{content};
+		}
+		if ($nowPlaying->{PlaylistEntry}->[0]->{Album}->{content}) {
+			push @titleComponents, $nowPlaying->{PlaylistEntry}->[0]->{Album}->{content};
+		}
+
+		$newTitle = join(" - ", @titleComponents);
+	}
+	else {
+        	$::d_plugins && msg( "Playlist handler returned an invalid response, falling back to the station title" );
+	        $newTitle = ${*$self}{live365_original_title};
+	}
 
 	if ($newTitle) {
 		$::d_plugins && msg( "Live365 Now Playing: $newTitle\n" );
@@ -614,12 +625,14 @@ sub getPlaylist {
 		Slim::Music::Info::setTitle( $url, $newTitle );
 	}
 
-	Slim::Utils::Timers::setTimer(
-		$client,
-		Time::HiRes::time() + $nextRefresh,
-		\&getPlaylist,
-		( $client, $handle, $url, $isVIP )
-	);
+	if ($nextRefresh) {
+		Slim::Utils::Timers::setTimer(
+			$client,
+			Time::HiRes::time() + $nextRefresh,
+			\&getPlaylist,
+			( $self, $handle, $url, $isVIP )
+		);
+	}
 }
 
 sub DESTROY {
