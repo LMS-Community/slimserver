@@ -36,5 +36,5 @@
     <property name="slimserver" value="[% host.match('([^:]*)').0 %]"/>    
     <property name="serverversion" value="5.2"/>    
   </resources>
-  <application-desc main-class="com.slim.softsqueeze.Loader"/>
+  <application-desc main-class="com.slim.softsqueeze.Application"/>
 </jnlp> 
