@@ -888,6 +888,12 @@ SETUP_GROUP_NONMENUITEMS_INTRO
 	PT	Items disponíveis
 	SE	Inaktiva meny-val:
 
+SETUP_GROUP_XPL
+	EN	xPL Support
+
+SETUP_GROUP_XPL_DESC
+	EN	These settings control whether xPL support is enabled.
+
 SETUP_SCROLLPAUSE
 	EN	Scroll Pause
 	FR	Pause avant défilement
@@ -2747,6 +2753,18 @@ SETUP_UDPCHUNKSIZE_CHOOSE
 	NL	Maximaal aantal bytes audio data dat in een UDP packet naar de speler wordt gestuurd
 	PT	Máximo de bytes de dados áudio a enviar ao cliente por pacote UDP
 	SE	Maximalt antal bytes ljud-data att skicka till spelaren i ett UDP-paket
+
+SETUP_XPLSUPPORT
+	EN	xPL support
+
+SETUP_XPLSUPPORT_DESC
+	EN	Controls whether SlimServer will support the xPL automation protocol.
+
+SETUP_XPLSUPPORT_ENABLED
+	EN	Enabled
+
+SETUP_XPLSUPPORT_DISABLED
+	EN	Disabled
 
 SETUP_TITLEFORMATWEB
 	DE	Aktuelles Web-Format

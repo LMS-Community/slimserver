@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.26 2003/12/14 20:00:13 grotus Exp $
+# $Id: Setup.pm,v 1.27 2003/12/19 01:32:03 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1175,7 +1175,7 @@ sub initSetupConfig {
 	,'network' => {
 		'title' => string('NETWORK_SETTINGS')
 		,'parent' => 'server'
-		,'GroupOrder' => ['Default','TCP_Params']
+		,'GroupOrder' => ['Default','TCP_Params','xPL_Params']
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['httpport','cliport','mDNSname','remotestreamtimeout']
@@ -1191,6 +1191,9 @@ sub initSetupConfig {
 					,'GroupDesc' => string('SETUP_GROUP_TCP_PARAMS_DESC')
 					,'GroupLine' => 1
 					,'GroupSub' => 1
+				}
+			,'xPL_Params' => {
+					'PrefOrder' => ['xplsupport']
 				}
 			}
 		,'Prefs' => {
@@ -1232,6 +1235,13 @@ sub initSetupConfig {
 						'validate' => \&validateInt
 						,'validateArgs' => [1,4096,1,1] #limit to 4096
 					}
+			,'xplsupport' => {
+						'validate' => \&validateTrueFalse
+						,'options' => {
+								'0' => string('SETUP_XPLSUPPORT_DISABLED')
+								,'1' => string('SETUP_XPLSUPPORT_ENABLED')
+								}
+				}
 			}
 		} #end of setup{'network'} hash
 	,'advanced' => {
