@@ -657,6 +657,7 @@ sub normalize_location {
 
 		$url = $stripped;		
 		$url =~ s,$iBase,$base,isg;
+		$url =~ s,(\w)\/\/(\w),$1\/$2,isg;
 	} else {
 		$url = Slim::Utils::Misc::fixPath($stripped);
 	}
