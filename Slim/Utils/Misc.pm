@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.63 2005/01/08 07:00:35 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -722,6 +722,7 @@ sub msgf {
 sub delimitThousands {
 	my $len = shift; 
 	my $sep = Slim::Utils::Strings::string('THOUSANDS_SEP');
+	return 0 unless $len;
 	0 while $len =~ s/^(-?\d+)(\d{3})/$1$sep$2/;
 	return $len;
 }

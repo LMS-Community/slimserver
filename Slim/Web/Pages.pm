@@ -1458,6 +1458,7 @@ sub _addSongInfo {
 		$params->{'filelength'} = Slim::Utils::Misc::delimitThousands($track->filesize());
 		$params->{'songtitle'}  = Slim::Music::Info::standardTitle(undef, $track);
 		$params->{'duration'}   = Slim::Music::Info::duration($song);
+		$params->{'bitrate'}    = Slim::Music::Info::bitrate($song);
 		$params->{'type'}       = string(uc($track->content_type()));
 		$params->{'mixable'}    = Slim::Music::Info::isSongMixable($song);
 
