@@ -536,11 +536,30 @@ sub scanFunction {
 			
 			$location = strip_automounter($location);
 
-			if ($location && !defined($type)) {
-				$type = Slim::Music::Info::typeFromPath($location, 'mp3');
+			my $url = Slim::Utils::Misc::fixPath($location);
+			if (Slim::Music::Info::isFileURL($url)) {
+				if (Slim::Utils::OSDetect::OS() eq 'unix') {
+					my $base = Slim::Utils::Misc::fileURLFromPath($path);
+					$url =~ s,$iBase,$base,isg;
+					$::d_itunes && msg("Correcting for Linux: $location to $url\n");
+				};
+				$url =~ s/\/$//;
+				$url =~ s/file:\/\/localhost\//file:\/\/\//;
 			}
 			
-			if (Slim::Music::Info::isSong($location, $type) || Slim::Music::Info::isHTTPURL($location)) {
+			if (Slim::Music::Info::isFileURL($url)) {
+				my $file = Slim::Utils::Misc::pathFromFileURL($url, 1);
+				if (!$file || !-r $file) { 
+					$::d_itunes && msg("iTunes: file not found: $file\n");
+					$url = undef;
+				 } 
+			}
+
+			if ($url && !defined($type)) {
+				$type = Slim::Music::Info::typeFromPath($url, 'mp3');
+			}
+
+			if ($url && (Slim::Music::Info::isSong($url, $type) || Slim::Music::Info::isHTTPURL($url))) {
 				$cacheEntry{'CT'} = $type;
 				$cacheEntry{'TITLE'} = $curTrack{'Name'};
 				$cacheEntry{'ARTIST'} = $curTrack{'Artist'};
@@ -564,40 +583,14 @@ sub scanFunction {
 				# cacheEntry{'???'} = $curTrack{'Track Count'};
 				# cacheEntry{'???'} = $curTrack{'Sample Rate'};
 				$cacheEntry{'VALID'} = '1';
-				my $url = Slim::Utils::Misc::fixPath($location);
-				if (Slim::Music::Info::isFileURL($url)) {
-					if (Slim::Utils::OSDetect::OS() eq 'unix') {
-						my $base = Slim::Utils::Misc::fileURLFromPath($path);
-						$url =~ s,$iBase,$base,isg;
-						$::d_itunes && msg("Correcting for Linux: $location to $url\n");
-					};
-					$url =~ s/\/$//;
-					$url =~ s/file:\/\/localhost\//file:\/\/\//;
+
+				Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
+				if ($cacheEntry{'ALBUM'} && !exists $artwork{$cacheEntry{'ALBUM'}} && !defined Slim::Music::Info::cacheItem($url,'THUMB')) {
+					$artwork{$cacheEntry{'ALBUM'}} = $url;
 				}
-				if ($url) {
-					if (Slim::Music::Info::isFileURL($url)) {
-						my $file = Slim::Utils::Misc::pathFromFileURL($url);
-						if ($] > 5.007 && Slim::Utils::OSDetect::OS() eq "win") {
-							Encode::from_to($file,"utf8","iso-8859-1");
-						}
-						if (!$file || !-r $file) { 
-							$::d_itunes && msg("iTunes: file not found: $file\n");
-							$url = undef;
-						 } 
-					}
-					
-					if ($url) {
-						Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
-						if ($cacheEntry{'ALBUM'} && !exists $artwork{$cacheEntry{'ALBUM'}} && !defined Slim::Music::Info::cacheItem($url,'THUMB')) {
-							$artwork{$cacheEntry{'ALBUM'}} = $url;
-						}
-						$tracks{$id} = $url;
-					}
-				} else {
-					$::d_itunes && warn "iTunes: missing Location " . %cacheEntry;
-				}
+				$tracks{$id} = $url;
 			} else {
-				$::d_itunes && warn "iTunes: unknown file type " . $curTrack{'Kind'} . " $location";
+				$::d_itunes && warn "iTunes: unknown file type " . $curTrack{'Kind'} . " $url";
 			} 
 
 		}
