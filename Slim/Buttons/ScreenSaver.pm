@@ -1,6 +1,6 @@
 package Slim::Buttons::ScreenSaver;
 
-# $Id: ScreenSaver.pm,v 1.17 2004/03/31 02:21:08 kdf Exp $
+# $Id: ScreenSaver.pm,v 1.18 2004/04/18 22:18:36 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -52,13 +52,13 @@ sub screenSaver {
 		
 	# dim the screen if we're not playing...  will restore brightness on next IR input.
 	if (Slim::Utils::Prefs::clientGet($client,"screensavertimeout") && 
-			 Slim::Utils::Prefs::clientGet($client, 'autobrightness') &&
-			 Slim::Hardware::IR::lastIRTime($client) &&
-			 Slim::Hardware::IR::lastIRTime($client) < $now - Slim::Utils::Prefs::clientGet($client,"screensavertimeout") && 
-			 $mode ne 'block' &&
-			 $mode ne $saver &&
-			 $mode ne 'off' &&
-			 Slim::Hardware::VFD::vfdBrightness($client)) {
+			Slim::Utils::Prefs::clientGet($client, 'autobrightness') &&
+			Slim::Hardware::IR::lastIRTime($client) &&
+			Slim::Hardware::IR::lastIRTime($client) < $now - Slim::Utils::Prefs::clientGet($client,"screensavertimeout") && 
+			$mode ne 'block' &&
+			$mode ne $saver &&
+			$mode ne 'off' &&
+			Slim::Hardware::VFD::vfdBrightness($client)) {
 		Slim::Hardware::VFD::vfdBrightness($client,1);
 	}
 
@@ -67,11 +67,11 @@ sub screenSaver {
 	} elsif ($mode eq 'block') {
 		# blocked mode handles its own updating of the screen.
 	} elsif (Slim::Utils::Prefs::clientGet($client,"screensavertimeout") && 
-			 Slim::Hardware::IR::lastIRTime($client) < $now - Slim::Utils::Prefs::clientGet($client,"screensavertimeout") && 
-			 $mode ne Slim::Utils::Prefs::clientGet($client,'screensaver') &&
-			 $mode ne 'screensaver' && # just in case it falls into default
-			 $mode ne 'block' &&
-			 $mode ne 'off') {
+			Slim::Hardware::IR::lastIRTime($client) < $now - Slim::Utils::Prefs::clientGet($client,"screensavertimeout") && 
+			$mode ne Slim::Utils::Prefs::clientGet($client,'screensaver') &&
+			$mode ne 'screensaver' && # just in case it falls into default
+			$mode ne 'block' &&
+			$mode ne 'off') {
 		
 		# we only go into screensaver mode if we've timed out 
 		# and we're not off or blocked
