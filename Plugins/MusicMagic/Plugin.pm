@@ -420,8 +420,7 @@ sub exportFunction {
 			$cacheEntry{'SIZE'} = $songInfo{'bytes'};
 
 			# cache the file size & date
-			$cacheEntry{'FS'}  = -s $songInfo{'file'};
-			$cacheEntry{'AGE'} = (stat($songInfo{'file'}))[9];
+			($cacheEntry{'FS'}, $cacheEntry{'AGE'}) = (stat($songInfo{'file'}))[7,9];
 		
 			$cacheEntry{'CT'} = Slim::Music::Info::typeFromPath($songInfo{'file'},'mp3');
 			$cacheEntry{'TAG'} = 1;
@@ -447,12 +446,13 @@ sub exportFunction {
 		
 			my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});
 
-			$ds->updateOrCreate({
+			my $track = $ds->updateOrCreate({
 				'url'        => $fileurl,
 				'attributes' => \%cacheEntry,
 			});
 			
 			# NYI: MMM has more ways to access artwork...
+			# XXX - bogus, doesn't work with Greatest Hits
 			if (Slim::Utils::Prefs::get('lookForArtwork')) {
 
 				if ($cacheEntry{'ALBUM'} && 
@@ -462,10 +462,6 @@ sub exportFunction {
 					Slim::Music::Import::artwork($cacheEntry{'ALBUM'},$fileurl);
 				}
 			}
-
-			# the above object was just created - fetch it back
-			# into something we can use
-			my $track = $ds->objectForUrl($fileurl);
 
 			if ($songInfo{'active'} eq 'yes' && defined $track) {
 
