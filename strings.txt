@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.102 2004/05/08 05:23:14 kdf Exp $
+# $Id: strings.txt,v 1.103 2004/05/11 06:30:29 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -335,17 +335,16 @@ PLAYING
 	SE	Spelar
 
 PLAYING_RANDOMLY
-	DE	Zufällige Reihenfolge
-	DK	Afspiller vilkårligt
-	EN	Now playing shuffled
-	ES	Seleccionando al azar
-	FI	Satunnaissoitto
-	FR	Lecture aléatoire
-	IT	Riproduzione in ordine casuale
-	NL	Speelt willekeurig
-	NO	Vilkårlig rekkefølge
-	PT	A tocar aleatoriamente
-	SE	Spelar blandat
+	DE	Es läuft gerade...
+	DK	Aktiv playliste
+	EN	Now Playing
+	ES	Ahora Puesto
+	FI	Soittaa kappaletta
+	FR	Lecture
+	NL	Speelt Nu
+	NO	Nå spilles
+	PT	A tocar...
+	SE	Nu spelas
 
 OUT_OF
 	DE	aus
@@ -2053,6 +2052,15 @@ SETUP_REFRESHRATE_OK
 	EN	Refresh time set to
 	FR	Délai d'attente entre recharge réglé à 
 	SE	Uppdateringsintervall satt till:
+
+SETUP_MOODLOGICSCANINTERVAL
+	EN	Moodlogic Reload Interval
+
+SETUP_MOODLOGICSCANINTERVAL_DESC
+	EN	When your Moodlogic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your Moodlogic Database again.  
+
+SETUP_MOODLOGICSCANINTERVAL_OK
+	EN	Minimum Moodlogic Database reload time:
 
 SETUP_ITUNESSCANINTERVAL
 	DE	iTunes Reload Intervall

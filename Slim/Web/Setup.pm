@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.70 2004/05/08 05:23:15 kdf Exp $
+# $Id: Setup.pm,v 1.71 2004/05/11 06:30:30 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -487,7 +487,8 @@ sub initSetupConfig {
 				,'changeIntro' => string('ALARM_SET')
 				,'currentValue' => sub {
 						my $client = shift;
-						my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::AlarmClock::timeDigits($client);
+						my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
+						my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Common::timeDigits($client,$time);
 						my $timestring = ((defined($p) && $h0 == 0) ? ' ' : $h0) . $h1 . ":" . $m0 . $m1 . " " . (defined($p) ? $p : '');
 						return $timestring;
 					}
@@ -1690,7 +1691,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default','MoodLogicPlaylistFormat']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['instantMixMax','varietyCombo']
+					'PrefOrder' => ['instantMixMax','varietyCombo','moodlogicscaninterval']
 				}
 			,'MoodLogicPlaylistFormat' => {
 					'PrefOrder' => ['MoodLogicplaylistprefix','MoodLogicplaylistsuffix']
@@ -1714,6 +1715,10 @@ sub initSetupConfig {
 						'validate' => \&validateAcceptAll
 						,'PrefSize' => 'large'
 					}
+			,'moodlogicscaninterval' => {
+						'validate' => \&validateNumber
+						,'validateArgs' => [0,undef,1000]
+				}
 			,'instantMixMax'	=> {
 						'validate' => \&validateInt
 						,'validateArgs' => [1,undef,1]

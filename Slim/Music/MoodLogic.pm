@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.12 2004/05/05 02:06:35 kdf Exp $
+#$Id: MoodLogic.pm,v 1.13 2004/05/11 06:30:30 kdf Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -21,6 +21,9 @@ my @playlists=();
 my %artwork;
 my $last_error = 0;
 my $isauto = 1;
+
+my $lastMusicLibraryDate = undef;
+my $lastMusicLibraryFinishTime = undef;
 
 sub useMoodLogic {
 	my $newValue = shift;
@@ -120,10 +123,38 @@ sub init {
 	return $initialized;
 }
 
+sub isMusicLibraryFileChanged {
+	my $file = $mixer->{JetFilePublic};
+
+	my $fileMTime = (stat $file)[9];
+	
+	# Only say "yes" if it has been more than one minute since we last finished scanning
+	# and the file mod time has changed since we last scanned. Note that if we are
+	# just starting, $lastMusicLibraryDate is undef, so both $fileMTime
+	# will be greater than 0 and time()-0 will be greater than 180 :-)
+	if ($file && $fileMTime > $lastMusicLibraryDate) {
+		my $moodlogicscaninterval = Slim::Utils::Prefs::get('moodlogicscaninterval');
+		$::d_moodlogic && msg("music library has changed!\n");
+		if (time()-$lastMusicLibraryFinishTime > $moodlogicscaninterval) {
+			return 1;
+		} else {
+			$::d_moodlogic && msg("waiting for $moodlogicscaninterval seconds to pass before rescanning\n");
+		}
+	}
+	
+	return 0;
+}
+
 sub checker {
-	if (useMoodLogic() && !stillScanning()) {
+	if (useMoodLogic() && !stillScanning() && isMusicLibraryFileChanged()) {
 		startScan();
 	}
+
+	# make sure we aren't doing this more than once...
+	Slim::Utils::Timers::killTimers(0, \&checker);
+
+	# Call ourselves again after 5 seconds
+	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 5.0), \&checker);
 }
 
 sub startScan {
@@ -164,7 +195,9 @@ sub doneScanning {
 	$isScanning = 0;
 	
 	if (Slim::Utils::Prefs::get('lookForArtwork')) {Slim::Utils::Scheduler::add_task(\&artScan);}
-	
+
+	$lastMusicLibraryFinishTime = time();
+	$lastMusicLibraryDate = (stat $mixer->{JetFilePublic})[9];	
 	@playlists = Slim::Music::Info::sortIgnoringCase(@playlists);
 }
 

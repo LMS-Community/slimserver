@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.59 2004/05/06 08:13:58 kdf Exp $
+# $Id: Prefs.pm,v 1.60 2004/05/11 06:30:30 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -129,6 +129,7 @@ my %DEFAULT = (
 	,'MoodLogicplaylistprefix'	=> 'MoodLogic: '
  	,'MoodLogicplaylistsuffix'	=> ''
  	,'itunesscaninterval'	=> 60
+ 	,'moodlogicscaninterval'	=> 60
  	,'itunes_library_autolocate' => 1
  	,'ignoredisableditunestracks' => 0
  	,'instantMixMax'		=> 12
