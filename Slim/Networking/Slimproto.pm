@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.25 2003/09/30 23:18:12 dean Exp $
+# $Id: Slimproto.pm,v 1.26 2003/10/03 21:49:45 grotus Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -53,7 +53,7 @@ sub init {
 		Timeout   => 0.001
 	) || die "Can't listen on port $listenerport for Slim protocol: $!";
 
-    defined($slimproto_socket->blocking(0))  || die "Cannot set port nonblocking";
+	defined(Slim::Utils::Misc::blocking($slimproto_socket,0)) || die "Cannot set port nonblocking";
 
 	$slimSelRead->add($slimproto_socket);
 	$main::selRead->add($slimproto_socket);
@@ -90,7 +90,7 @@ sub slimproto_accept {
 
 	return unless $clientsock;
 
-    defined($clientsock->blocking(0))  || die "Cannot set port nonblocking";
+	defined(Slim::Utils::Misc::blocking($clientsock,0)) || die "Cannot set port nonblocking";
 #	setsockopt($clientsock, SOL_SOCKET, &TCP_NODELAY, 1);  # no nagle
 
 	$clientsock->setsockopt(6, TCP_NODELAY, 1);
@@ -424,7 +424,7 @@ sub fullness {
 	
 	if (defined($set)) { $status{$client}->{'fullness'} = $set; }
 	
-	return $status{$client}->{'fullness'};
+	return $status{$client}->{'fullness'} || 0;
 }
 
 # returns how many bytes have been received by the player.  Can be reset to an arbitrary value.
