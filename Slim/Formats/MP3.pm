@@ -1,6 +1,6 @@
 package Slim::Formats::MP3;
 
-# $Id: MP3.pm,v 1.8 2004/06/03 15:41:34 dean Exp $
+# $Id: MP3.pm,v 1.9 2004/06/07 19:40:35 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -19,7 +19,7 @@ sub getTag {
 
 	my $file = shift || "";
 
-	open my $fh, "< $file\0";
+	open my $fh, "< $file\0" or return undef;
 	
 	return undef if (!$fh);
 
@@ -34,6 +34,8 @@ sub getTag {
 
 	# sometimes we don't get this back correctly
 	$info->{'OFFSET'} += 0;
+	
+	return undef if (!$info->{'SIZE'});
 	
 	my ($start, $end);
 

@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.127 2004/06/01 22:47:51 dean Exp $
+# $Id: Info.pm,v 1.128 2004/06/07 19:40:36 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2378,7 +2378,7 @@ sub readCoverArtTags {
 			$file = $fullpath;
 		}
 			
-		if (isMP3($fullpath) || isWav($fullpath)) {
+		if (isMP3($fullpath) || isWav($fullpath) || isAIFF($fullpath)) {
 	
 			$::d_artwork && Slim::Utils::Misc::msg("Looking for image in ID3 tag in file $file\n");
 

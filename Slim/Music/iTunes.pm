@@ -537,13 +537,15 @@ sub scanFunction {
 
 			my $url = normalize_location($location);
 
-			my $file = Slim::Utils::Misc::pathFromFileURL($url, 1);
+			if (Slim::Music::Info::isFileURL($url)) {
+				my $file = Slim::Utils::Misc::pathFromFileURL($url, 1);
+				
+				if (!$file || !-r $file) { 
+					$::d_itunes && msg("iTunes: file not found: $file\n");
+					$url = undef;
+				} 
+			}
 			
-			if (!$file || !-r $file) { 
-				$::d_itunes && msg("iTunes: file not found: $file\n");
-				$url = undef;
-			} 
-
 			if ($url && !defined($type)) {
 				$type = Slim::Music::Info::typeFromPath($url, 'mp3');
 			}
