@@ -1,6 +1,6 @@
 package Slim::Formats::Movie;
 
-# $Id: Movie.pm,v 1.18 2004/12/02 02:42:40 dsully Exp $
+# $Id: Movie.pm,v 1.19 2004/12/17 23:11:49 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -69,7 +69,7 @@ sub getTag {
 
 	my $file = shift || "";
 
-	my $tags = QuickTime::Movie::readUserData($file) || {};
+	my $tags = QuickTime::Movie::readUserData($file);
 
 	# lazy? no. efficient. =)
 	if (ref $tags eq "HASH") {
@@ -90,6 +90,8 @@ sub getTag {
 				delete $tags->{$old};
 			}
 		}
+	} else {
+		$tags = {};
 	}
 
 	$tags->{'SIZE'} = -s $file;
