@@ -517,7 +517,8 @@ sub currentSongLines {
 			);
 		} 
 
-		$parts->{line2} = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
+		$parts->{line2} = Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::song($client));
+
 		$parts->{overlay2} = $client->symbols(Slim::Display::Display::symbol('notesymbol'));
 
 		# add in the progress bar and time...

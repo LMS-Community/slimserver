@@ -1043,7 +1043,7 @@ sub status {
 		$params->{'songcount'}   = $songcount;
 		$params->{'itempath'}    = $song;
 
-		_addSongInfo($client, $params);
+		_addSongInfo($client, $params, 1);
 
 		# for current song, display the playback bitrate instead.
 		my $undermax = Slim::Player::Source::underMax($client,$song);
@@ -1234,18 +1234,19 @@ sub buildPlaylist {
 		$list_form{'noArtist'}      = $noArtist;
 		$list_form{'noAlbum'}       = $noAlbum;
 
+		my $song = Slim::Player::Playlist::song($client, $listBuild->{'item'});
+
 		if ($listBuild->{'item'} == $listBuild->{'currsongind'}) {
 			$list_form{'currentsong'} = "current";
+			$list_form{'title'}    = Slim::Music::Info::getCurrentTitle(undef,$song);
 		} else {
 			$list_form{'currentsong'} = undef;
+			$list_form{'title'}    = Slim::Music::Info::standardTitle(undef,$song);
 		}
 
 		$list_form{'nextsongind'} = $listBuild->{'currsongind'} + (($listBuild->{'item'} > $listBuild->{'currsongind'}) ? 1 : 0);
 
-		my $song = Slim::Player::Playlist::song($client, $listBuild->{'item'});
-
 		$list_form{'player'}   = $params->{'player'};
-		$list_form{'title'}    = Slim::Music::Info::standardTitle(undef,$song);
 
 		my $track = $ds->objectForUrl($song) || do {
 			$::d_info && Slim::Utils::Misc::msg("Couldn't retrieve objectForUrl: [$song] - skipping!\n");
@@ -1644,7 +1645,7 @@ sub _fillInSearchResults {
 }
 
 sub _addSongInfo {
-	my ($client, $params) = @_;
+	my ($client, $params, $getCurrentTitle) = @_;
 
 	# 
 	my $song = $params->{'itempath'};
@@ -1672,7 +1673,12 @@ sub _addSongInfo {
 		$params->{'track'}     = $track;
 
 		$params->{'filelength'} = Slim::Utils::Misc::delimitThousands($track->filesize());
-		$params->{'songtitle'}  = Slim::Music::Info::standardTitle(undef, $track);
+		if ($getCurrentTitle) {
+			$params->{'songtitle'}  = Slim::Music::Info::getCurrentTitle(undef, $track);
+		}
+		else {
+			$params->{'songtitle'}  = Slim::Music::Info::standardTitle(undef, $track);
+		}
 		$params->{'bitrate'} = $track->bitrate();
 		
 		# make urls in comments into links
@@ -1744,7 +1750,7 @@ sub _addSongInfo {
 sub songInfo {
 	my ($client, $params) = @_;
 
-	_addSongInfo($client, $params);
+	_addSongInfo($client, $params, 0);
 
 	return Slim::Web::HTTP::filltemplatefile("songinfo.html", $params);
 }

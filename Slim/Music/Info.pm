@@ -54,6 +54,9 @@ our $articles = undef;
 my %lastFile      = ();
 my %display_cache = ();
 
+tie our %currentTitles, 'Tie::Cache::LRU', 64;
+our %currentTitleCallbacks = ();
+
 my ($currentDB, $localDB, $ncElemstring, $ncElems, $elemstring, $elems);
 
 # Save our stats.
@@ -341,6 +344,38 @@ sub setBitrate {
 		'attributes' => { 'BITRATE' => $bitrate },
 		'readTags'   => 1,
 	});
+}
+
+sub setCurrentTitleChangeCallback {
+	my $callbackRef = shift;
+	$currentTitleCallbacks{$callbackRef} = $callbackRef;
+}
+
+sub clearCurrentTitleChangeCallback {
+	my $callbackRef = shift;
+	$currentTitleCallbacks{$callbackRef} = undef;
+}
+
+sub setCurrentTitle {
+	my $url = shift;
+	my $title = shift;
+
+	if (($currentTitles{$url} || '') ne ($title || '')) {
+		no strict 'refs';
+		
+		for my $changecallback (keys %currentTitleCallbacks) {
+			&$changecallback($url, $title);
+		}
+	}
+
+	$currentTitles{$url} = $title;
+}
+
+sub getCurrentTitle {
+	my $client = shift;
+	my $url = shift;
+
+	return $currentTitles{$url} || standardTitle($client, $url);
 }
 
 sub elemLookup {

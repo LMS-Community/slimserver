@@ -242,7 +242,7 @@ sub request {
 				$title = Encode::decode('iso-8859-1', $title, Encode::FB_QUIET());
 			}
 
-			Slim::Music::Info::setTitle($infoUrl, $title) if $create;
+			Slim::Music::Info::setCurrentTitle($infoUrl, $title) if $create;
 
 			${*$self}{'title'} = $title;
 		}
@@ -499,7 +499,7 @@ sub readMetaData {
 			
 			if (defined($title) && $title ne '' && $oldTitle ne $title) {
 
-				Slim::Music::Info::setTitle($track, $title);
+				Slim::Music::Info::setCurrentTitle($track, $title);
 
 				${*$self}{'title'} = $title;
 
