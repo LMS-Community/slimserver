@@ -6,7 +6,7 @@
 # Copyright (c) 2002-2004 Gordon Johnston (gordonj@newswall.org.uk)
 # http://newswall.org.uk/~slimp3/news_ticker.html
 
-# Also based on Vidur Appoaro's Yahoo News plugin.
+# Also based on Vidur Apparao's Yahoo News plugin.
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -40,13 +40,14 @@ my $screensaver_sec_per_letter_double = (1/4); # When extra large fonts shown
 my $screensaver_item_format = "%2\$s -- %3\$s                         ";
 
 # defaults only if file not found...
+use constant FEEDS_VERSION => 1.0;
 my %default_feeds = (
 					 'BBC News World Edition' => 'http://news.bbc.co.uk/rss/newsonline_world_edition/front_page/rss091.xml',
 					 'CNET News.com' => 'http://news.com.com/2547-1_3-0-5.xml',
-					 'WSJ.com: Markets' => 'http://online.wsj.com/xml/rss/0,,3_7031,00.xml',
+					 'New York Times Home Page' => 'http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml',
 					 'RollingStone.com Music News' => 'http://www.rollingstone.com/rssxml/music_news.xml',
 					 'Slashdot' => 'http://slashdot.org/index.rss',
-					 'Yahoo! News: Top Stories' => 'http://rss.news.yahoo.com/rss/topstories',
+					 'Yahoo! News: Business' => 'http://rss.news.yahoo.com/rss/business',
 );
 
 #my @default_names = (
@@ -84,7 +85,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Prefs;
 
-$VERSION = substr(q$Revision: 1.1 $,10);
+$VERSION = substr(q$Revision: 1.2 $,10);
 my %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
@@ -152,10 +153,22 @@ SETUP_GROUP_PLUGIN_RSSNEWS_DESC
 	EN	The RSS News Ticker plugin can be used to browse and display items from RSS Feeds. The preferences below can be used to determine which RSS Feeds to use and control how they are displayed. Click on the Change button when you are done.
 
 SETUP_PLUGIN_RSSNEWS_FEEDS
-	EN	RSS Feeds
+	EN	Modify RSS feeds
 
 SETUP_PLUGIN_RSSNEWS_FEEDS_DESC
-	EN	The list of RSS Feeds to display. To add a new one, just type its URL into the empty line. To remove one, simply delete the URL from the corresponding line. To change the URL of an existing feed, edit its text value. Click on the Change button when you are done.
+	EN	This is the list of RSS Feeds to display. To add a new one, just type its URL into the empty line. To remove one, simply delete the URL from the corresponding line. To change the URL of an existing feed, edit its text value. Click on the Change button when you are done.
+
+SETUP_PLUGIN_RSSNEWS_RESET
+	EN	Reset default RSS feeds
+
+SETUP_PLUGIN_RSSNEWS_RESET_DESC
+	EN	Click the Reset button to revert to the default set of RSS Feeds.
+
+PLUGIN_RSSNEWS_RESETTING
+	EN	Resetting to default RSS Feeds.
+
+SETUP_PLUGIN_RSSNEWS_RESET_BUTTON
+	EN	Reset
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED
 	EN	Items displayed per channel
@@ -211,14 +224,19 @@ sub nextTopic {
 sub initPlugin {
 	my @feedURLPrefs = Slim::Utils::Prefs::getArray("plugin_RssNews_feeds");
 	my @feedNamePrefs = Slim::Utils::Prefs::getArray("plugin_RssNews_names");
+	my $feedsModified = Slim::Utils::Prefs::get("plugin_RssNews_feeds_modified");
+	my $version = Slim::Utils::Prefs::get("plugin_RssNews_feeds_version");
 
-	# No prefs set, so we'll use the defaults
-	if (scalar(@feedURLPrefs) == 0) {
+	# No prefs set or we've had a version change and they weren't modified, 
+	# so we'll use the defaults
+	if (scalar(@feedURLPrefs) == 0 || 
+		(!$feedsModified && (!$version  || $version != FEEDS_VERSION))) {
 		my @default_names = sort(keys (%default_feeds));
 		@feedURLPrefs = map $default_feeds{$_}, @default_names;
 	    Slim::Utils::Prefs::set("plugin_RssNews_feeds", \@feedURLPrefs);
 		@feedNamePrefs = @default_names;
 	    Slim::Utils::Prefs::set("plugin_RssNews_names", \@feedNamePrefs);
+	    Slim::Utils::Prefs::set("plugin_RssNews_feeds_version", FEEDS_VERSION);
 	}
 
 	@feed_urls{@feedNamePrefs} = @feedURLPrefs;
@@ -270,6 +288,9 @@ sub updateFeedNames {
 	    Slim::Utils::Prefs::set("plugin_RssNews_feeds", \@feedURLPrefs);
 	    Slim::Utils::Prefs::set("plugin_RssNews_names", \@default_names);
 		@names = @default_names;
+	}
+	elsif (join('', sort @feedURLPrefs) ne join('', sort values %default_feeds)) {
+		Slim::Utils::Prefs::set("plugin_RssNews_feeds_modified", 1);
 	}
 
 	Slim::Utils::Prefs::set("plugin_RssNews_names", \@names);
@@ -393,7 +414,7 @@ sub retrieveNews {
 sub setupGroup {
 	my %Group = (
 		PrefOrder => [
-			'plugin_RssNews_items_per_feed', 'plugin_RssNews_feeds', 
+			'plugin_RssNews_items_per_feed', 'plugin_RssNews_reset', 'plugin_RssNews_feeds', 
 		],
 		GroupHead => string( 'SETUP_GROUP_PLUGIN_RSSNEWS' ),
 		GroupDesc => string( 'SETUP_GROUP_PLUGIN_RSSNEWS_DESC' ),
@@ -412,6 +433,19 @@ sub setupGroup {
 				Slim::Utils::Prefs::set('plugin_RssNews_items_per_feed', 
 										$screensaver_items_per_feed);
 			}
+		},
+		plugin_RssNews_reset => {
+			'validate' => \&Slim::Web::Setup::validateAcceptAll
+			,'onChange' => sub {
+				Slim::Utils::Prefs::set("plugin_RssNews_feeds_modified", undef);
+				Slim::Utils::Prefs::set("plugin_RssNews_feeds_version", undef);
+				initPlugin();
+			}
+			,'inputTemplate' => 'setup_input_submit.html'
+			,'changeIntro' => string('PLUGIN_RSSNEWS_RESETTING')
+			,'ChangeButton' => string('SETUP_PLUGIN_RSSNEWS_RESET_BUTTON')
+			,'dontSet' => 1
+			,'changeMsg' => ''
 		},
 		plugin_RssNews_feeds => { 
 			'isArray' => 1
