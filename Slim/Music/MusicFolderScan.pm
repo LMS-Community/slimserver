@@ -45,6 +45,7 @@ sub startScan {
 
 sub doneScanning {
 	$::d_info && msg("finished background scan of music folder.\n");
+	Slim::Music::Info::saveDBCache();
 	$stillScanning=0;
 	@dummylist = ();
 }

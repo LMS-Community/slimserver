@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.19 2003/12/01 23:59:07 dean Exp $
+# $Id: Setup.pm,v 1.20 2003/12/03 20:19:28 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1124,11 +1124,18 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['templatecache','useplaylistcache','animationLevel']
+					'PrefOrder' => ['usetagdatabase','templatecache','useplaylistcache','animationLevel']
 				}
 			}
 		,'Prefs' => {
-			'templatecache' => {
+			'usetagdatabase' => {
+						'validate' => \&validateTrueFalse
+						,'options' => {
+								'0' => string('SETUP_DONT_CACHE')
+								,'1' => string('SETUP_CACHE')
+								}
+					}
+			,'templatecache' => {
 						'validate' => \&validateTrueFalse
 						,'options' => {
 								'0' => string('SETUP_DONT_CACHE')

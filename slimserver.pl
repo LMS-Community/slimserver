@@ -732,9 +732,6 @@ sub cleanup {
 
 	$::d_server && msg("SlimServer cleaning up.\n");
 
-	if (Slim::Utils::Prefs::get('usetagdatabase')) {
-		Slim::Music::Info::stopCache();
-	}
 	remove_pid_file();
 	Slim::Networking::mDNS::stopAdvertise();
 }

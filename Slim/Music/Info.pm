@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.27 2003/12/02 15:38:50 daniel Exp $
+# $Id: Info.pm,v 1.28 2003/12/03 20:19:26 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -24,6 +24,8 @@ use Slim::Formats::Ogg;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
+
+#eval "use Storable";
 
 #
 # constants
@@ -54,6 +56,7 @@ my @infoCacheItems = (
 	'TAGSIZE', # tagsize
 	'DISC', # album number in a set 
 	'DISCC', # number of albums in a set
+	'TIMESTAMP', # last modified time stamp of the file
 	'MOODLOGIC_SONG_ID', # MoodLogic fields
 	'MOODLOGIC_ARTIST_ID', #
 	'MOODLOGIC_GENRE_ID', #
@@ -117,6 +120,48 @@ my %genreCountMemoize = ();
 my %caseArticlesMemoize = ();
 
 my %infoCacheItemsIndex;
+my $dbname;
+
+# if we don't have storable, then stub out the cache routines
+
+if (defined @Storable::EXPORT) {
+	eval q{
+		sub saveDBCache {
+			if (Slim::Utils::Prefs::get('usetagdatabase')) {
+				$::d_info && Slim::Utils::Misc::msg("saving DB cache\n");
+				store \%infoCacheDB, $dbname;
+			}
+		}
+		
+		sub loadDBCache {
+			if (Slim::Utils::Prefs::get('usetagdatabase')) {
+				if (-f $dbname)	{
+					my $hashref= retrieve($dbname);
+					%infoCacheDB=%$hashref;
+					scanDBCache();
+				} else {
+					$::d_info && warn "Tag database $dbname does not exist";
+				}	
+			}
+		}    
+		
+		sub scanDBCache {
+			if (Slim::Utils::Prefs::get('usetagdatabase')) {
+			$::d_info && Slim::Utils::Misc::msg("starting DB cache scan\n");
+			foreach my $file (keys %infoCacheDB) {
+				checkForChanges($file);
+			}
+				$::d_info && Slim::Utils::Misc::msg("done DB cache scan\n");
+			}
+		}
+	};
+} else {
+	eval q{
+		sub saveDBCache { };
+		sub loadDBCache { };
+		sub scanDBCache { };
+	}
+}
 
 ##################################################################################
 # these routines deal with the caches directly
@@ -125,8 +170,6 @@ sub init {
 
 	loadTypesConfig();
 	
-	my $dbname;
-
 	my $i = 0;
 	foreach my $tag (@infoCacheItems) {
 		$infoCacheItemsIndex{$tag} = $i;
@@ -149,27 +192,7 @@ sub init {
 
 		$::d_info && Slim::Utils::Misc::msg("ID3 tag database support is ON, saving into: $dbname\n");
 
-		tie (%infoCacheDB, 'MLDBM', $dbname, O_CREAT|O_RDWR, 0666)
-			or warn "Error opening tag database $dbname: $!";
-
-		foreach my $file (keys %infoCacheDB) {
-			if (isSong($file)) {
-				my $cacheEntryArray =  $infoCacheDB{$file};
-				my $cacheEntryHash;
-
-				my $i = 0;
-				foreach my $key (@infoCacheItems) {
-					$cacheEntryHash->{$key} = $cacheEntryArray->[$i];
-					$i++;
-				}
-
-				updateGenreCache($file, $cacheEntryHash);
-
-				$total_time += $cacheEntryHash->{SECS};
-				$songCount++;
-			}
-		}
-		$::d_info && Slim::Utils::Misc::msg("done loading genre cache from DB\n");
+		loadDBCache();
 	}
 	
 	# use all the genres we know about...
@@ -242,9 +265,68 @@ sub loadTypesConfig {
 		}
 	}
 }
-sub stopCache {
-	untie (%infoCacheDB);
+
+sub checkForChanges {
+    my $file = shift;
+    my $filepath;
+    
+    # We return 0 if the file hasn't changed
+    #    return 1 if the file has (cached entry is deleted by us)
+
+    # *******************************************************
+    # Note: Can't use isMP3 or other isxxx routines from here 
+    # as we don't want to trigger other cache routines when 
+    # doing scanDBCache (isFileURL is safe)
+    # *******************************************************
+
+    if (defined($file) && (exists $infoCacheDB{$file})) {
+	
+	# FIXME Maybe we should check if the directory is out of date
+	#       for now we delete the cached entry!
+
+	if (-d $file) { 
+	    delete($infoCacheDB{$file});
+	    return 1; 
+	}
+	
+	# FIXME We need some way of telling if directory entries are out of date
+	#       for now we delete the cached entry!
+	# FIXME We don't delete deleted directory cache entries
+	
+	if (isFileURL($file)) {
+	    $filepath = Slim::Utils::Misc::pathFromFileURL($file);
+	} else {
+	    $filepath = $file;
+	}
+	
+	# if it's not a directory, it must be a file...
+	# URL data (both http: and file:) is going to get dropped here.
+
+	if (! -e $filepath) {
+	    delete($infoCacheDB{$file});
+	    $::d_info && Slim::Utils::Misc::msg("deleting $file from cache as non-existant\n");		    
+	    return 1;
+	} 
+
+	# We should have file data on all files. Check FS and 
+    	# TIMESTAMP to decide if we use the cached data.		
+
+	my $cacheEntryArray = $infoCacheDB{$file};
+	my $index = $infoCacheItemsIndex{"FS"};
+	if ((defined $cacheEntryArray->[$index]) && ( -s $filepath == $cacheEntryArray->[$index])) { return 0 }		
+	$index = $infoCacheItemsIndex{"TIMESTAMP"};
+	if ((defined $cacheEntryArray->[$index]) && ( (stat($filepath))[9] == $cacheEntryArray->[$index])) { return 0 }		
+
+	# have a default delete policy
+
+	delete($infoCacheDB{$file});
+	$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as couldn't confirm validity\n");		    
+	return 1;
+    }
+    $::d_info && Slim::Utils::Misc::msg("$file not in infoCacheDB! or undefined file...\n");		    
 }
+
+
 
 sub clearCache {
 	my $item = shift;
@@ -257,8 +339,9 @@ sub clearCache {
 		%genreCache = ();
 		%caseCache = ();
 		%sortCache = ();
-        %genreMixCache = ();
-        %artistMixCache = ();
+        	%genreMixCache = ();
+        	%artistMixCache = ();
+        	scanDBCache();
         
 		$songCount = 0;
 		$total_time = 0;
@@ -342,7 +425,7 @@ sub genreCount {
 
 sub isCached {
 	my $url = shift;
-	return exists $infoCache{$url};
+	return (exists $infoCache{$url} || exists $infoCacheDB{$url});
 }
 
 sub cacheItem {
@@ -370,8 +453,25 @@ sub cacheItem {
 	if (Slim::Utils::Prefs::get('usetagdatabase') &&
 			!defined $cacheEntryArray &&
 			exists $infoCacheDB{$url}) {
+
+		if (checkForChanges($url)) { return undef; }
+				
 		$cacheEntryArray = $infoCacheDB{$url};
+	
+	        my $cacheEntryHash;
+	
+		my $i = 0;
+		foreach my $key (@infoCacheItems) {
+		    $cacheEntryHash->{$key} = $cacheEntryArray->[$i];
+		    $i++;
+		}
+
+
 		$infoCache{$url} = $cacheEntryArray;
+
+		my $type = typeFromSuffix($url);
+		if ($type && $type=~/^mp[23]$/) { updateGenreCache($url, $cacheEntryHash); }
+
 		my $index = $infoCacheItemsIndex{$item};
 		if (defined $cacheEntryArray && exists $cacheEntryArray->[$index]) {
 			return $cacheEntryArray->[$index];
@@ -385,6 +485,7 @@ sub cacheEntry {
 	my $url = shift;
 	my $cacheEntryHash = {};
 	my $cacheEntryArray;
+	my $cachemiss = 0;
 
 	if ($::d_info && !defined($url)) {die;}
 	
@@ -396,8 +497,12 @@ sub cacheEntry {
 	if (Slim::Utils::Prefs::get('usetagdatabase') &&
 			!defined $cacheEntryArray &&
 			exists $infoCacheDB{$url}) {
-		$cacheEntryArray = $infoCacheDB{$url};
-		$infoCache{$url} = $cacheEntryArray;
+			
+		if (!checkForChanges($url)) {
+		    $cacheEntryArray = $infoCacheDB{$url};
+		    $infoCache{$url} = $cacheEntryArray;
+		    $cachemiss=1;
+		}
 	}
 	
 	my $i = 0;
@@ -406,6 +511,11 @@ sub cacheEntry {
 			$cacheEntryHash->{$key} = $cacheEntryArray->[$i];
 		}
 		$i++;
+	}
+
+	if ($cachemiss) {
+		my $type = typeFromSuffix($url);
+		if ($type && $type=~/^mp[23]$/) { updateGenreCache($url, $cacheEntryHash); }
 	}
 
 	return $cacheEntryHash;
@@ -795,8 +905,8 @@ sub infoHash {
 	
 	# we'll update the cache if we don't have a valid title in the cache
 	if (!defined($item) || !exists($item->{'TAG'})) {
-		$::d_info && Slim::Utils::Misc::msg("cache miss for $file\n");
-		$::d_info && Slim::Utils::Misc::bt();
+		#$::d_info && Slim::Utils::Misc::msg("cache miss for $file\n");
+		#$::d_info && Slim::Utils::Misc::bt();
 		$item = readTags($file)
 	}
 	
@@ -831,7 +941,7 @@ sub info {
 			$item = cacheItem($file, $tagname);
 		# load up item information if we've never seen it or we haven't loaded the tags
 		} elsif (!exists($infoCache{$file}) || !cacheItem($file, 'TAG')) {
-			$::d_info && Slim::Utils::Misc::bt();
+			#$::d_info && Slim::Utils::Misc::bt();
 			$::d_info && Slim::Utils::Misc::msg("cache miss for $file\n");
 			$item = readTags($file)->{$tagname};
 		}	
@@ -1628,6 +1738,7 @@ sub readTags {
 			# cache the file size & date
 			$tempCacheEntry->{'FS'} = -s $filepath;					
 			$tempCacheEntry->{'AGE'} = (stat($filepath))[9];
+			$tempCacheEntry->{'TIMESTAMP'} = (stat($filepath))[9];
 			
 			# rewrite the size, offset and duration if it's just a fragment
 			if ($anchor && $anchor =~ /([\d\.]+)-([\d\.]+)/ && $tempCacheEntry->{'SECS'}) {
@@ -1752,7 +1863,7 @@ sub readCoverArt {
 					if ($len < length($pic)) {		
 						my ($data) = unpack "x$len A*", $pic;
 						
-						$::d_info && SliMP3::Misc::msg( "PIC format: $format length: " . length($pic) . "\n");
+						$::d_info && Slim::Utils::Misc::msg( "PIC format: $format length: " . length($pic) . "\n");
 
 						if ($format eq 'PNG') {
 								$contenttype = 'image/png';
