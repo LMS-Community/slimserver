@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.10 2003/10/09 18:52:02 dean Exp $
+#	$Id: Information.pm,v 1.11 2003/10/10 12:54:55 grotus Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -47,7 +47,7 @@ use Slim::Utils::Strings qw(string);
 use strict;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.10 $,10);
+$VERSION = substr(q$Revision: 1.11 $,10);
 
 my @main_list = qw(
     library
@@ -84,10 +84,6 @@ my %menu = (
     library => {
 	lines => \&info_lines,
 	list => \@library_list,
-    },
-    player => {
-	lines => \&info_lines,
-	list => \@player_list,
     },
     player => {
 	lines => \&info_lines,
