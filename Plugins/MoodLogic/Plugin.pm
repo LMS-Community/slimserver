@@ -171,7 +171,14 @@ sub initPlugin {
 
 	#Slim::Utils::Strings::addStrings($strings);
 	Slim::Player::Source::registerProtocolHandler("moodlogicplaylist", "0");
-	Slim::Music::Import::addImporter('MOODLOGIC', \&startScan, \&mixerFunction, \&addGroups, \&mixerlink);
+
+	Slim::Music::Import::addImporter('MOODLOGIC', {
+		'scan'      => \&startScan,
+		'mixer'     => \&mixerFunction,
+		'setup'     => \&addGroups,
+		'mixerlink' => \&mixerlink,
+	});
+
 	Slim::Music::Import::useImporter('MOODLOGIC',Slim::Utils::Prefs::get('moodlogic'));
 	addGroups();
 

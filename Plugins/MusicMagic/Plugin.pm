@@ -143,7 +143,13 @@ sub initPlugin {
 
 		checker($initialized);
 
-		Slim::Music::Import::addImporter('MUSICMAGIC', \&startScan, \&mixerFunction, \&addGroups, \&mixerlink);
+		Slim::Music::Import::addImporter('MUSICMAGIC', {
+			'scan'      => \&startScan,
+			'mixer'     => \&mixerFunction,
+			'setup'     => \&addGroups,
+			'mixerlink' => \&mixerlink,
+		});
+
 		Slim::Music::Import::useImporter('MUSICMAGIC', Slim::Utils::Prefs::get('musicmagic'));
 
 		Slim::Player::Source::registerProtocolHandler("musicmagicplaylist", "0");

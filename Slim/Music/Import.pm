@@ -62,19 +62,12 @@ sub deleteImporter {
 	delete $Importers{$import};
 }
 
+# addImporter takes hash ref of named function refs.
 sub addImporter {
 	my $import = shift;
-	my $scanFuncRef = shift;
-	my $mixerFuncRef = shift;
-	my $setupFuncRef = shift;
-	my $mixerLinkRef = shift;
+	my $params = shift;
 
-	$Importers{$import} = {
-		'scan'  => $scanFuncRef,
-		'mixer' => $mixerFuncRef,
-		'setup' => $setupFuncRef,
-		'mixerlink' => $mixerLinkRef,
-	};
+	$Importers{$import} = $params;
 
 	$::d_info && msgf("Adding %s Scan\n", string($import));
 }
@@ -95,10 +88,21 @@ sub countImporters {
 
 sub resetSetupGroups {
 
+	walkImporterListForFunction('setup');
+}
+
+sub resetImporters {
+
+	walkImporterListForFunction('reset');
+}
+
+sub walkImporterListForFunction {
+	my $function = shift;
+
 	for my $importer (keys %Importers) {
 
-		if (defined $Importers{$importer}->{'setup'}) {
-			&{$Importers{$importer}->{'setup'}};
+		if (defined $Importers{$importer}->{$function}) {
+			&{$Importers{$importer}->{$function}};
 		}
 	}
 }

@@ -235,6 +235,7 @@ sub execute {
 	} elsif ($p0 eq "wipecache") {
 
 		Slim::Music::Info::wipeDBCache();
+		Slim::Music::Import::resetImporters();
 		Slim::Music::Import::startScan();
 
 		$client = undef;

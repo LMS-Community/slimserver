@@ -146,7 +146,7 @@ sub getDisplayName {
 }
 
 sub enabled {
-	return ($::VERSION !~/^5/) && initPlugin();
+	return ($::VERSION !~ /^5/) && initPlugin();
 }
 
 sub getFunctions {
@@ -157,9 +157,15 @@ sub initPlugin {
 	return 1 if $initialized;
 
 	addGroups();
+
 	return unless canUseiTunesLibrary();
 
-	Slim::Music::Import::addImporter('ITUNES',\&startScan,undef,\&addGroups);
+	Slim::Music::Import::addImporter('ITUNES', {
+		'scan'  => \&startScan, 
+		'setup' => \&addGroups,
+		'reset' => \&resetState,
+	});
+
 	Slim::Music::Import::useImporter('ITUNES',Slim::Utils::Prefs::get('itunes'));
 	Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
 
@@ -173,6 +179,17 @@ sub initPlugin {
 	checker($initialized);
 
 	return 1;
+}
+
+# This will be called when wipeDB is run - we always want to rescan at that point.
+sub resetState {
+
+	$::d_itunes && Slim::Utils::Misc::msg("iTunes: wipedb called - resetting lastITunesMusicLibraryDate\n");
+
+	$lastITunesMusicLibraryDate = -1;
+
+	# set to -1 to force all the tracks to be updated.
+	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $lastITunesMusicLibraryDate);
 }
 
 sub disablePlugin {
@@ -387,7 +404,7 @@ sub isMusicLibraryFileChanged {
 
 		my $itunesscaninterval = Slim::Utils::Prefs::get('itunesscaninterval');
 
-		$::d_itunes && msg("iTunes: music library has changed!\n");
+		$::d_itunes && msgf("iTunes: music library has changed: %s\n", scalar localtime($lastITunesMusicLibraryDate));
 
 		return 1 if (!$lastMusicLibraryFinishTime);
 		
@@ -600,7 +617,11 @@ sub scanFunction {
 				# time we checked, then don't bother going to
 				# the database. A file could be new to iTunes
 				# though, but it's mtime can be anything.
+				#
+				# A value of -1 for lastITunesMusicLibraryDate
+				# means the user has pressed 'wipe db'.
 				if ($lastITunesMusicLibraryDate &&
+				    $lastITunesMusicLibraryDate != -1 &&
 				    ($ctime && $ctime < $lastITunesMusicLibraryDate) &&
 				    ($mtime && $mtime < $lastITunesMusicLibraryDate)) {
 
