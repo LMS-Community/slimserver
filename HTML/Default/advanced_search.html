@@ -47,40 +47,42 @@
 		</td>
 		<td width="4" height="44"><p><img src="html/images/spacer.gif" width=4 height=19 alt=""></p></td>
 	</tr>
-</table>
 
-	<br>
 
-	<div align="center">
+	<tr height="44"> 
+		<td width="4" height="44"><img src="html/images/spacer.gif" width=4 height=39 alt=""></td>
+		<td valign="top" height="44">
+			<form action="advanced_search.html" method="GET" name="searchForm"><br>
+			<input type="hidden" value="[% player %]" name="player">
+
 		<table class="border" border="0" cellpadding="3" cellspacing="1" width="100%">
-		<form action="advanced_search.html" method="GET" name="searchForm">
-		<input type="hidden" value="[% player %]" name="player">
         	<tbody>
 
 			<tr>
-				<td class="content" align="right" valign="middle" width="30%">[% "TRACK" | string %]&nbsp;</td>
-				<td class="content" align="left" valign="middle" width="70%">
+				<td rowspan=20><img src="html/images/spacer.gif" width=8 height=39 alt=""></td>
+				<td  class="content" align="right" valign="middle" width="25%">[% "TRACK" | string %]&nbsp;</td>
+				<td class="content" align="left" valign="middle" width="75%">
 					<input name="search.track_title" value="[% search.track_title.value %]" size="35" maxlength="100" type="text">
 				</td>
 			</tr>
 
 			<tr>
-				<td class="content" align="right" valign="middle" width="30%">[% "ARTIST" | string %]&nbsp;</td>
-				<td class="content" align="left" valign="middle" width="70%">
+				<td class="content" align="right" valign="middle" width="25%">[% "ARTIST" | string %]&nbsp;</td>
+				<td class="content" align="left" valign="middle" width="75%">
 				  <input name="search.contributor_name" value="[% search.contributor_name.value %]" size="35" maxlength="100" type="text">
 				</td>
 			</tr>
 
 			<tr>
-				<td class="content" align="right" valign="middle" width="30%">[% "ALBUM" | string %]&nbsp;</td>
-				<td class="content" align="left" valign="middle" width="70%">
+				<td class="content" align="right" valign="middle" width="25%">[% "ALBUM" | string %]&nbsp;</td>
+				<td class="content" align="left" valign="middle" width="75%">
 				  <input name="search.album_title" value="[% search.album_title.value %]" size="35" maxlength="100" type="text">
 				</td>
 			</tr>
 
 			<tr>
-				<td class="content" align="right" valign="middle" width="30%">[% "GENRE" | string %]&nbsp;</td>
-				<td class="content" align="left" valign="middle" width="70%">
+				<td class="content" align="right" valign="middle" width="25%">[% "GENRE" | string %]&nbsp;</td>
+				<td class="content" align="left" valign="middle" width="75%">
 
 					<select name="search.genre">
 						<option value="">[% "ANY_GENRE" | string %]</option>
@@ -97,8 +99,8 @@
 			</tr>
 
 			<tr>
-				<td class="content" align="right" nowrap="nowrap" valign="middle" width="30%">[% "LENGTH" | string %]&nbsp;</td>
-				<td class="content" align="left" valign="middle" width="70%">
+				<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">[% "LENGTH" | string %]&nbsp;</td>
+				<td class="content" align="left" valign="middle" width="75%">
 
 					[% logicalSelectionBlock(name='search.secs.op') %]
 
@@ -108,8 +110,8 @@
 			</tr>
 
 			<tr>
-				<td class="content" align="right" nowrap="nowrap" valign="middle" width="30%">[% "TRACK" | string %]&nbsp;</td>
-				<td class="content" align="left" valign="middle" width="70%">
+				<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">[% "TRACK" | string %]&nbsp;</td>
+				<td class="content" align="left" valign="middle" width="75%">
 
 					[% logicalSelectionBlock(name='search.tracknum.op') %]
 
@@ -118,8 +120,8 @@
 			</tr>
 
 			<tr>
-				<td class="content" align="right" nowrap="nowrap" valign="middle" width="30%">[% "YEAR" | string %]&nbsp;</td>
-				<td class="content" align="left" valign="middle" width="70%">
+				<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">[% "YEAR" | string %]&nbsp;</td>
+				<td class="content" align="left" valign="middle" width="75%">
 
 					[% timeSelectionBlock(name='search.year.op') %]
 
@@ -128,8 +130,8 @@
 			</tr>
 
 			<tr>
-				<td class="content" align="right" nowrap="nowrap" valign="middle" width="30%">[% "MODTIME" | string %]&nbsp;</td>
-				<td class="content" align="left" valign="middle" width="70%">
+				<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">[% "MODTIME" | string %]&nbsp;</td>
+				<td class="content" align="left" valign="middle" width="75%">
 
 					[% timeSelectionBlock(name='search.age.op') %]
 
@@ -139,8 +141,8 @@
 			</tr>
 
 			<tr>
-				<td class="content" align="right" nowrap="nowrap" valign="middle" width="30%">[% "BITRATE" | string %]&nbsp;</td>
-				<td class="content" align="left" valign="middle" width="70%">
+				<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">[% "BITRATE" | string %]&nbsp;</td>
+				<td class="content" align="left" valign="middle" width="75%">
 
 					[% logicalSelectionBlock(name='search.bitrate.op') %]
 
@@ -157,8 +159,8 @@
 
 <!--
 			<tr>
-				<td class="content" align="right" nowrap="nowrap" valign="middle" width="30%">Sample Rate&nbsp;</td>
-				<td class="content" align="left" valign="middle" width="70%">
+				<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">Sample Rate&nbsp;</td>
+				<td class="content" align="left" valign="middle" width="75%">
 
 					[% logicalSelectionBlock(name='search.samplerate.op') %]
 
@@ -174,8 +176,8 @@
 -->
 
 			<tr>
-				<td class="content" align="right" nowrap="nowrap" valign="middle" width="30%">[% "TYPE" | string %]&nbsp;</td>
-				<td class="content" align="left" valign="middle" width="70%">
+				<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">[% "TYPE" | string %]&nbsp;</td>
+				<td class="content" align="left" valign="middle" width="75%">
 
 					<select name="search.ct">
 						<option value="">[% "ANY_TYPE" | string %]</option>
@@ -188,8 +190,8 @@
 			</tr>
 
 			<tr>
-				<td class="content" align="right" nowrap="nowrap" valign="middle" width="30%">[% "FILELENGTH" | string %]&nbsp;</td>
-				<td class="content" align="left" valign="middle" width="70%">
+				<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">[% "FILELENGTH" | string %]&nbsp;</td>
+				<td class="content" align="left" valign="middle" width="75%">
 
 					[% logicalSelectionBlock(name='search.size.op') %]
 
@@ -201,15 +203,15 @@
 	Not yet.
 
 			<tr>
-				<td class="content" align="right" nowrap="nowrap" valign="middle" width="30%">[% "COMMENT" | string %]&nbsp;</td>
-				<td class="content" align="left" valign="middle" width="70%">
+				<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">[% "COMMENT" | string %]&nbsp;</td>
+				<td class="content" align="left" valign="middle" width="75%">
 					<input name="search.comments" value="" size="35" maxlength="1000" type="text">
 				</td>
 			</tr>
 
 			<tr>
-				<td class="content" align="right" nowrap="nowrap" valign="middle" width="30%">Lyrics</td>
-				<td class="content" align="left" valign="middle" width="70%">
+				<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">Lyrics</td>
+				<td class="content" align="left" valign="middle" width="75%">
 				  <input name="search.lyrics" value="" size="35" maxlength="1000" type="text">
 				</td>
 			</tr>
@@ -224,7 +226,6 @@
 			</tr>
 		
 		</tbody></table>
-	<div>
 
 	<p>
 	[% IF numresults != '-1' %]
@@ -254,6 +255,10 @@
 		</p>
 	[% END %]
 
-	<p>&nbsp;</p></td>
+	<p>&nbsp;</p>
 
+	</td>
+		<td width="4" height="44"><p><img src="html/images/spacer.gif" width=4 height=19 alt=""></p></td>
+	</tr>
+	
 [% PROCESS pagefooter.html %]
