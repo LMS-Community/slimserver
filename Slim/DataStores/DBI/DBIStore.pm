@@ -1226,7 +1226,7 @@ sub _postCheckAttributes {
 			$contributor, 
 			$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{$tag},
 			$track,
-			$attributes->{'ARTISTSORT'}
+			$tag eq 'ARTIST' ? $attributes->{'ARTISTSORT'} : undef,
 		);
 
 		$foundContributor = 1;
