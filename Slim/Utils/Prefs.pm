@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.80 2004/08/06 04:16:50 kdf Exp $
+# $Id: Prefs.pm,v 1.81 2004/08/12 16:45:58 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -68,8 +68,11 @@ sub defaultPlaylistDir {
 
 sub defaultCacheDir {
 	my $CacheDir = catdir($Bin,'Cache');
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
+	my $os = Slim::Utils::OSDetect::OS();
+	if ($os eq 'mac') {
 		$CacheDir = catdir($ENV{'HOME'}, '/Library/Caches/SlimServer');
+	} elsif ($os eq 'unix') {
+		$CacheDir = $ENV{'HOME'};
 	}
 	my @CacheDirs = splitdir($CacheDir);
 	pop @CacheDirs;
