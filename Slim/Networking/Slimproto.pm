@@ -458,6 +458,9 @@ sub process_slimproto_frame {
 			$status{$client}->{'fullness'} = $fullnessB;
 		}
 		$client->songElapsedSeconds($status{$client}->{'elapsed_seconds'});
+		if (defined($status{$client}->{'output_buffer_fullness'})) {
+			$client->outputBufferFullness($status{$client}->{'output_buffer_fullness'});
+		}
 		
 		$::d_factorytest && msg("FACTORYTEST\tevent=stat\tmac=".$client->id."\tsignalstrength=$status{$client}->{'signal_strength'}\n");
 

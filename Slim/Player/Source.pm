@@ -236,16 +236,37 @@ sub songTime {
 	my $bytesReceived 	= ($client->bytesReceived() || 0) - $client->bytesReceivedOffset();
 	my $fullness	  	= $client->bufferFullness() || 0;
 	my $realpos = 0;
+	my $outputBufferSeconds = 0;
+
 	if (playingSongIndex($client) == streamingSongIndex($client)) {
 		$realpos = $bytesReceived - $fullness;
+
+		# XXX We use outputBufferFullness to compute the number of
+		# seconds of the current track left in the output
+		# buffer. However, we can only trust this value if we haven't
+		# yet started streaming the next track. This is bad, since the
+		# songtime we display will be pegged to the duration of the
+		# track from the time we start streaming the next song till we
+		# play out the current song. This can be fixed by adjusting
+		# the protocol to give us the remaining seconds for the
+		# currently playing track.
+
+		my $outputBufferFullness = $client->outputBufferFullness();
+		if (defined($outputBufferFullness)) {
+			# Assume 44.1KHz output sample rate. This will be slightly
+			# off for anything that's 48Khz, but it's a guesstimate anyway.
+			$outputBufferSeconds = (($outputBufferFullness / (44100 * 8)) * $rate);
+		}
 	}
-	else {
+	# If we're moving forward and have started streaming the next
+	# track, the fullness metric can no longer be used to determine
+	# how far into the track we are. So say that we're done with it.
+	elsif ($rate >= 1) {
 		$realpos = $songLengthInBytes;
 		$rate = 1;
 		$startStream = 0;
 	}
 
-	#
 	if ($realpos < 0) {
 		$::d_source && msg("Negative position calculated, we are still playing out the previous song.\n");	
 		$::d_source && msg("realpos $realpos calcuated from bytes received: " . 
@@ -255,7 +276,7 @@ sub songTime {
 		$realpos = 0;
 	}
 
-	$songtime = $songLengthInBytes ? (($realpos / $songLengthInBytes * $duration * $rate) + $startStream) : 0;
+	$songtime = $songLengthInBytes ? (($realpos / $songLengthInBytes * $duration * $rate) + $startStream - $outputBufferSeconds) : 0;
 
 	if ($songtime && $duration) {
 		0 && $::d_source && msg("songTime: [$songtime] = ($realpos(realpos) / $songLengthInBytes(size) * ".
@@ -410,8 +431,6 @@ sub playmode {
 			@{$everyclient->chunks} = ();
 
 			$everyclient->stop();
-			# Next time we start, start at normal playback rate
-			$everyclient->rate(1);
 			closeSong($everyclient);
 			resetSong($everyclient);
 			resetSongQueue($everyclient);
@@ -1602,7 +1621,7 @@ sub readNextChunk {
 				} else {
 					# starting a new trick segment, calculate the chunk offset and length
 					
-					my $now   = $client->songBytes();
+					my $now   = $client->songBytes() + $song->{offset};
 					my $ds    = Slim::Music::Info::getCurrentDataStore();
 					my $track = $ds->objectForUrl( Slim::Player::Playlist::song($client, streamingSongIndex($client)) );
 

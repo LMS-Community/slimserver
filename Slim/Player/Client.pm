@@ -668,6 +668,7 @@ sub new {
 	$client->[32] = undef; # rate
 	$client->[33] = 0; # bufferThreshold
 	$client->[34] = 0; # visualizer
+	$client->[35] = 0; # outputBufferFullness
 
 	$client->[37] = 0; # bytesReceived
 	$client->[38] = undef; # currentplayingsong
@@ -1341,6 +1342,11 @@ sub bufferThreshold {
 sub visualizer {
 	my $r = shift;
 	@_ ? ($r->[34] = shift) : $r->[34];
+}
+
+sub outputBufferFullness {
+	my $r = shift;
+	@_ ? ($r->[35] = shift) : $r->[35];
 }
 
 sub bytesReceived {

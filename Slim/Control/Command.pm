@@ -621,6 +621,8 @@ sub execute {
 		} elsif ($p0 eq "stop") {
 
 			Slim::Player::Source::playmode($client, "stop");
+			# Next time we start, start at normal playback rate
+			$client->rate(1);
 			$client->update();
 
 		} elsif ($p0 eq "mode") {

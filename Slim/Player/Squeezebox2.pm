@@ -460,6 +460,20 @@ sub stop {
 	# have to wait to get a status message with the correct
 	# values.
 	$client->songElapsedSeconds(0);
+	$client->outputBufferFullness(0);
+}
+
+sub songElapsedSeconds {
+	my $client = shift;
+
+	# Ignore values sent by the client if we're in the stopped
+	# state, since they may be out of sync.
+	if (defined($_[0]) && 
+	    Slim::Player::Source::playmode($client) eq 'stop') {
+		$client->SUPER::songElapsedSeconds(0);
+	}
+
+	return $client->SUPER::songElapsedSeconds(@_);
 }
 
 1;
