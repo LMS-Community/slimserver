@@ -1,9 +1,22 @@
-[% IF pagesstart %]<li><a href="[% path %]?[% otherparams | html %]start=0"><span>|&lt;&lt;</span></a></li>
-[% END %][% IF pagesprev %]<li><a href="[% path %]?[% otherparams | html %]start=[% pagesprev %]"><span>&lt;&lt;</span></a></li>
-[% END %][% IF pagesprev == '0' %]<li><a href="[% path %]?[% otherparams | html %]start=[% pagesprev %]"><span>&lt;&lt;</span></a></li>
-[% END %][% IF pageprev %]<li><a href="[% path %]?[% otherparams | html %]start=[% pageprev %]"><span>&lt;</span></a></li>
-[% END %][% IF pageprev == '0' %]<li><a href="[% path %]?[% otherparams | html %]start=[% pageprev %]"><span>&lt;</span></a></li>
-[% END %][% pageslist %]
-[% IF pagenext %]<li><a href="[% path %]?[% otherparams | html %]start=[% pagenext %]"><span>&gt;</span></a></li>[% END %]
-[% IF pagesnext %]<li><a href="[% path %]?[% otherparams | html %]start=[% pagesnext %]"><span>&gt;&gt;</span></a></li>[% END %]
-[% IF pagesend %]<li><a href="[% path %]?[% otherparams | html %]start=[% pagesend %]"><span>&gt;&gt;|</span></a></li>[% END %]
+[%- IF pagesstart -%]
+        <li><a href="[% path %]?[% otherparams | html %]start=0"><span>|&lt;&lt;</span></a></li>
+[% END -%]
+[%- IF pagesprev || pagesprev == '0' -%]
+        <li><a href="[% path %]?[% otherparams | html %]start=[% pagesprev %]"><span>&lt;&lt;</span></a></li>
+[% END -%]
+[%- IF pageprev -%]
+        <li><a href="[% path %]?[% otherparams | html %]start=[% pageprev %]"><span>&lt;</span></a></li>
+[% END -%]
+[%- IF pageprev == '0' -%]
+        <li><a href="[% path %]?[% otherparams | html %]start=[% pageprev %]"><span>&lt;</span></a></li>
+[% END -%]
+[% pageslist -%]
+[%- IF pagenext -%]
+        <li><a href="[% path %]?[% otherparams | html %]start=[% pagenext %]"><span>&gt;</span></a></li>
+[% END -%]
+[%- IF pagesnext -%]
+        <li><a href="[% path %]?[% otherparams | html %]start=[% pagesnext %]"><span>&gt;&gt;</span></a></li>
+[% END -%]
+[%- IF pagesend -%]
+        <li><a href="[% path %]?[% otherparams | html %]start=[% pagesend %]"><span>&gt;&gt;|</span></a></li>
+[% END -%]

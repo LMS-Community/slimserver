@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta http-equiv="refresh" content="[% refresh %]; url=status.html?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1" />
-    <title>[% playermodel _ "_MUSIC_PLAYER" | string %] [% IF player_name %][% player_name %][% END %] </title>
+    <title>[% playermodel _ "_MUSIC_PLAYER" | string %][% IF player_name %] [% player_name %][% END %]</title>
     <link rel="stylesheet" href="slimserver.css" />
     <script type="text/javascript"><!--//--><![CDATA[//><!--
 
@@ -26,24 +26,31 @@ startList = function() {
 window.onload=startList;
 
 //--><!]]></script>
-
-
-  </head>
+</head>
 <body id="status">
 <div id="statusheader">
   <ul id="playerchooser">
     <li>
       <div>[% IF player_name %][% player_name %][% END %]</div>
-      [% IF player_chooser_list %]<ul>[% player_chooser_list %]</ul>[% END %]
+      [%- IF player_chooser_list %]
+        <ul>[% player_chooser_list %]</ul>
+      [%- END %]
     </li>
   </ul>
   <div id="nowplaying">
     <span class="label">[% IF modeplay %][% "PLAYING" | string %][% END %][% IF modepause %][% "PAUSED_ON" | string %][% END %][% IF modestop %][% "STOPPED_ON" | string %][% END %] [% IF currentsong %][% currentsong %] [% "OUT_OF" | string %] [% songcount %][% END %][% "COLON" | string %]</span>
     <span class="songtitle"><a href="status.html?player=[% player | uri %]#currentsong">[% songtitle %]</a></span>
-    [% IF album %][% "FROM" | string %][% END %] <span class="album"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album %]</a></span>
-    [% IF artist %][% "BY" | string %] [% END %] <span class="artist"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser">[% artist %]</a></span>
-    [% IF songcount %]<span class="controls"><a href="status.html?p0=playlist&amp;p1=delete&amp;p2=[% thissongnum %]&amp;player=[% player | uri %]&amp;start=[% start %]"><span>&times;</span></a></span>[% END %]
-    [% IF not songcount %] [% "NOTHING" | string %] [% END %]
+   [%- IF album %]
+    [% "FROM" | string %] <span class="album"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album %]</a></span>
+   [%- END %]
+   [%- IF artist %]
+    [% "BY" | string %] <span class="artist"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser">[% artist %]</a></span>
+   [%- END %]
+   [%- IF songcount %]
+    <span class="controls"><a href="status.html?p0=playlist&amp;p1=delete&amp;p2=[% thissongnum %]&amp;player=[% player | uri %]&amp;start=[% start %]"><span>&times;</span></a></span>
+   [%- ELSE %]
+    [% "NOTHING" | string %]
+   [%- END %]
   </div>
   <div id="controlsection">
     <span class="hide"><a href="#playlist">Skip to playlist</a></span>
@@ -51,7 +58,7 @@ window.onload=startList;
       <ul>
         <li[% IF rate == 'rew' %] class="currctl"[% END %]><a href="status.html?p0=rate&amp;p1=%2D2&amp;player=[% player | uri %]"><img src="html/rew[% IF rate == 'rew' %]_on[% END %].png" alt="[% "REW" | string %]" title="[% "REW" | string %]" /></a></li>
         <li><a href="status.html?p0=playlist&amp;p1=jump&amp;p2=%2D1&amp;player=[% player | uri %]"><img src="html/prev.png" alt="[% "PREVIOUS" | string %]" title="[% "PREVIOUS" | string %]" /></a></li>
-        <li[% IF modeplay %][% IF rate == 'norm' %] class="currctl"[% END %][% END %]><a href="status.html?p0=play&amp;player=[% player | uri %]"><img src="html/play[% IF modeplay %][% IF rate == 'norm' %]_on[% END %][% END %].png" alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]" /></a></li>
+        <li[% IF modeplay && rate == 'norm' %] class="currctl"[% END %]><a href="status.html?p0=play&amp;player=[% player | uri %]"><img src="html/play[% IF modeplay && rate == 'norm' %]_on[% END %].png" alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]" /></a></li>
         <li[% IF modepause %] class="currctl"[% END %]><a href="status.html?p0=pause&amp;player=[% player | uri %]"><img src="html/pause[% IF modepause %]_on[% END %].png" alt="[% "PAUSE" | string %]" title="[% "PAUSE" | string %]" /></a></li>
         <li[% IF modestop %] class="currctl"[% END %]><a href="status.html?p0=stop&amp;player=[% player | uri %]"><img src="html/stop[% IF modestop %]_on[% END %].png" alt="[% "STOP" | string %]" title="[% "STOP" | string %]" /></a></li>
         <li><a href="status.html?p0=playlist&amp;p1=jump&amp;p2=%2B1&amp;player=[% player | uri %]"><img src="html/skip.png" alt="[% "NEXT" | string %]" title="[% "NEXT" | string %]" /></a></li>
@@ -78,26 +85,23 @@ window.onload=startList;
         </ul>
       </div>
     </div>
-    [% IF isplayer %]<div id="volumectl">
+   [%- IF isplayer %]
+    <div id="volumectl">
       <span class="label">[% "VOLUME" | string %][% "COLON" | string %]</span>
       <div class="controls">
         <ul>
           <li><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=-10&amp;player=[% player | uri %]&amp;start=[% start %]"><span>[% "VOLUME_SOFTER" | string %]</span></a></li>
-          <li[% IF volume == '0' %] class="currctl"[% END %]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=0&amp;player=[% player | uri %]&amp;start=[% start %]"><span>1</span></a></li>
-          <li[% IF volume == '10' %] class="currctl"[% END %]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=10&amp;player=[% player | uri %]&amp;start=[% start %]"><span>2</span></a></li>
-          <li[% IF volume == '20' %] class="currctl"[% END %]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=20&amp;player=[% player | uri %]&amp;start=[% start %]"><span>3</span></a></li>
-          <li[% IF volume == '30' %] class="currctl"[% END %]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=30&amp;player=[% player | uri %]&amp;start=[% start %]"><span>4</span></a></li>
-          <li[% IF volume == '40' %] class="currctl"[% END %]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=40&amp;player=[% player | uri %]&amp;start=[% start %]"><span>5</span></a></li>
-          <li[% IF volume == '50' %] class="currctl"[% END %]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=50&amp;player=[% player | uri %]&amp;start=[% start %]"><span>6</span></a></li>
-          <li[% IF volume == '60' %] class="currctl"[% END %]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=60&amp;player=[% player | uri %]&amp;start=[% start %]"><span>7</span></a></li>
-          <li[% IF volume == '70' %] class="currctl"[% END %]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=70&amp;player=[% player | uri %]&amp;start=[% start %]"><span>8</span></a></li>
-          <li[% IF volume == '80' %] class="currctl"[% END %]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=80&amp;player=[% player | uri %]&amp;start=[% start %]"><span>9</span></a></li>
-          <li[% IF volume == '90' %] class="currctl"[% END %]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=90&amp;player=[% player | uri %]&amp;start=[% start %]"><span>10</span></a></li>
-          <li[% IF volume == '100' %] class="currctl"[% END %]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=100&amp;player=[% player | uri %]&amp;start=[% start %]"><span>11</span></a></li>
+         [%- FOREACH volsetting = [0,10,20,30,40,50,60,70,80,90,100] %]
+          <li
+            [%- IF (loop.first && volume == volsetting) || volume > loop.prev && volume <= volsetting %] class="currctl"
+            [%- END %]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=[% volsetting %]&amp;player=
+            [%- player | uri %]&amp;start=[% start %]"><span>[% loop.count %]</span></a></li>
+         [%- END %]
           <li><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=%2b10&amp;player=[% player | uri %]&amp;start=[% start %]"><span>[% "VOLUME_LOUDER" | string %]</span></a></li>
         </ul>
       </div>
-    </div>[% END %]
+    </div>
+   [%- END %]
   </div>
 </div>
 [% playlist %]

@@ -3,30 +3,44 @@
     <span class="label">[% "CURRENT_PLAYLIST" | string %]</span>
     <div class="controls">
       <ul>
-        [% IF cansave %]<li><a target="browser" href="browse.html?player=[% player | uri %]&amp;dir=__playlists%2f__current.m3u"><span>[% "SAVE" | string %]</span></a></li>[% END %]
+       [%- IF cansave %]
+        <li><a target="browser" href="browse.html?player=[% player | uri %]&amp;dir=__playlists%2f__current.m3u"><span>[% "SAVE" | string %]</span></a></li>
+       [%- END %]
         <li><a href="status.m3u?player=[% player | uri %]"><span>[% "DOWNLOAD" | string %]</span></a></li>
         <li><a href="status.html?p0=playlist&amp;p1=clear&amp;player=[% player | uri %]"><span>[% "CLEAR" | string %]</span></a></li>
       </ul>
     </div>
   </div>
-  [% IF playlist_pagebar %]<div id="topplaylistpagebar" class="pagebar">
+ [%- IF playlist_pagebar %]
+  <div id="topplaylistpagebar" class="pagebar">
     <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
     <div class="controls">
       <ul>
-        [% playlist_pagebar %]
+[% playlist_pagebar -%]
       </ul>
     </div>
-  </div>[% END %]
-  [% IF playlist_header %]<div id="playlist_header">[% playlist_header %][% "COLON" | string %]</div>[% END %]
-  <div id="playlist">
-        [% IF not playlist_items %][% "EMPTY" | string %][% END %]<ul>[% playlist_items %]</ul>
   </div>
-  [% IF playlist_pagebar %]<div id="bottomplaylistpagebar" class="pagebar">
+ [%- END %]
+ [%- IF playlist_header %]
+  <div id="playlist_header">[% playlist_header %][% "COLON" | string %]</div>
+ [%- END %]
+  <div id="playlist">
+  [%- IF playlist_items %]
+    <ul>
+[% playlist_items -%]
+    </ul>
+  [%- ELSE %]
+    <p>[% "EMPTY" | string %]<p>
+  [%- END %]
+  </div>
+ [%- IF playlist_pagebar %]
+  <div id="bottomplaylistpagebar" class="pagebar">
     <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
     <div class="controls">
       <ul>
-        [% playlist_pagebar %]
+[% playlist_pagebar -%]
       </ul>
     </div>
-  </div>[% END %]
+  </div>
+ [%- END %]
 </div>

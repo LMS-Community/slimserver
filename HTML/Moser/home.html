@@ -1,61 +1,62 @@
- <html>
+[%- players = myClientState.clients.sort("name") -%]
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
   <head>
     <title>[% "HOME" | string %]</title>
     <link rel="stylesheet" href="slimserver.css" />
   </head>
-  <body bgcolor="#FFFFFF">
-  <h3>[% "HOME" | string %]</h3><p>
-<hr>
+  <body>
+  <h3>[% "HOME" | string %]</h3>
+<hr />
+ [%- IF additionalLinks.browse %]
   <h4>[% "BROWSE_MUSIC" | string %]</h4>
   <ul>
-[% IF additionalLinks.browse %]
-    [% FOREACH link = additionalLinks.browse %]
-    <li>
- 		<a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a>
- 	</li>
-    [% END %]
-[% END %]
+    [%- FOREACH link = additionalLinks.browse %]
+    <li><a href="[% link.value | html %]player=[% player | uri %]">[% link.key | string %]</a></li>
+    [%- END %]
   </ul>
+ [%- END %]
+ [%- IF additionalLinks.search %]
   <h4>[% "SEARCH" | string %]</h4>
   <ul>
-[% IF additionalLinks.search %]
-    [% FOREACH key = additionalLinks.search.keys %]
-    <li>
- 		<a href="[% additionalLinks.search.$key %]player=[% player | uri %]">[% key | string %]</a>
- 	</li>
-    [% END %]
-[% END %]
+    [%- FOREACH key = additionalLinks.search.keys %]
+    <li><a href="[% additionalLinks.search.$key | html %]player=[% player | uri %]">[% key | string %]</a></li>
+    [%- END %]
   </ul>
-[% IF not nosetup %]  <h4>[% "SETTINGS" | string %]</h4>
+ [%- END %]
+ [%- UNLESS nosetup %]
+  <h4>[% "SETTINGS" | string %]</h4>
   <ul>
-    <li><a href="setup.html?page=server&player=[% player | uri %]">[% "SERVER_SETTINGS" | string %]</a></li>
-[% player_list %]
-[% IF additionalLinks.settings %]
-    [% FOREACH key = additionalLinks.settings.keys %]
-    <li>
- 		<a href="[% additionalLinks.settings.$key %]player=[% player | uri %]">[% key | string %]</a>
- 	</li>
-    [% END %]
-[% END %]
+    <li><a href="setup.html?page=server&amp;player=[% player | uri %]">[% "SERVER_SETTINGS" | string %]</a></li>
+  [%- FOREACH client = players %]
+    <li><a href="setup.html?page=player&amp;player=[% player | uri %]&amp;playerid=[% client.id | uri %]">
+      [%- "PLAYER_SETTINGS" | string %][% IF client.name %] [% "FOR" | string %] [% client.name %][% END %]</a></li>
+  [%- END %]
+  [%- IF additionalLinks.settings -%]
+   [%- FOREACH key = additionalLinks.settings.keys %]
+    <li><a href="[% additionalLinks.settings.$key %]player=[% player | uri %]">[% key | string %]</a></li>
+   [%- END -%]
+  [%- END %]
+  </ul>
+ [%- END %]
+ [%- IF additionalLinks.plugins %]
+  <h4>[% "PLUGINS" | string %]</h4>
+  <ul>
+   [%- FOREACH key = additionalLinks.plugins.keys %]
+    <li><a href="[% additionalLinks.plugins.$key | html %]player=[% player | uri %]">[% key %]</a></li>
+   [%- END %]
   </ul>[% END %]
-[% IF additionalLinks.plugins %]    <h4>[% "PLUGINS" | string %]</h4>
-    <ul>
-    [% FOREACH key = additionalLinks.plugins.keys %]
-    <li> <a href="[% additionalLinks.plugins.$key %]player=[% player | uri %]">[% key %]</a>
-    </li>
-    [% END %]
-    </ul>
-[% END %]
+ [%- IF additionalLinks.help %]
   <h4>[% "HELP" | string %]</h4>
   <ul>
-[% IF additionalLinks.help %]
-    [% FOREACH link = additionalLinks.help %]
-    <li>
- 		<a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a>
- 	</li>
-    [% END %]
-[% END %]
+   [%- FOREACH link = additionalLinks.help %]
+    <li><a href="[% link.value | html %]player=[% player | uri %]">[% link.key | string %]</a></li>
+   [%- END %]
   </ul>
-[% IF newVersion %]  [% newVersion %][% END %]
+ [%- END %]
+ [%- IF newVersion %]
+  <p>[% newVersion %]</p>
+ [%- END %]
   </body>
 </html>
