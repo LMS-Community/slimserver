@@ -19,6 +19,20 @@ use base 'Slim::DataStores::DBI::DataModel';
 	$class->has_many(tracks => 'Slim::DataStores::DBI::Track', { order_by => 'tracknum'});
 }
 
+# Update the title dynamically if we're part of a set.
+sub title {
+	my $self = shift;
+
+	if (Slim::Utils::Prefs::get('groupdiscs')) {
+
+		return $self->get('title');
+	}
+
+	return Slim::Music::Info::addDiscNumberToAlbumTitle(
+		$self->get('title'), $self->get('disc'), $self->get('discc')
+	);
+}
+
 1;
 
 __END__

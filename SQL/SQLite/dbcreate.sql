@@ -11,7 +11,7 @@ CREATE TABLE metainformation (
   total_time integer      -- cumulative play time
 );
 
-INSERT INTO metainformation VALUES (3, 0, 0);
+INSERT INTO metainformation VALUES (4, 0, 0);
 
 CREATE TABLE tracks (
   id integer UNIQUE PRIMARY KEY NOT NULL,
@@ -44,6 +44,7 @@ CREATE TABLE tracks (
   tagsize integer,         -- tagsize
   drm integer,             -- DRM enabled
   rating integer,          -- track rating - placeholder
+  disc integer,            -- album number in set
   moodlogic_id integer,    -- moodlogic fields - will eventually be created by the plugin
   playCount integer,       -- number of times the track has been played - placeholder
   lastPlayed integer,      -- timestamp of the last play - placeholder

@@ -21,6 +21,12 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 tie our %_cache, 'Tie::Cache::LRU::Expires', EXPIRES => 1200, ENTRIES => 25;
 
+sub clearCache {
+	my $class = shift;
+
+	%_cache = ();
+}
+
 sub add {
 	my $class = shift;
 	my $genre = shift;

@@ -16,7 +16,7 @@ CREATE TABLE metainformation (
   total_time  int(10) unsigned
 ) TYPE=InnoDB;
 
-INSERT INTO metainformation VALUES (3, 0, 0);
+INSERT INTO metainformation VALUES (4, 0, 0);
 
 --
 -- Table: tracks
@@ -52,6 +52,7 @@ CREATE TABLE tracks (
   tagsize  int(10) unsigned,
   drm  int(10) unsigned,
   rating int(10) unsigned,
+  disc int(10) unsigned,
   playCount int(10) unsigned,
   lastPlayed int(10) unsigned,
   moodlogic_id  int(10) unsigned,

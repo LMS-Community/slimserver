@@ -319,12 +319,12 @@ our %sortFieldMap = (
 	'album' => ['albums.titlesort','albums.disc'],
 	'contributor' => ['contributors.namesort'],
 	'artist' => ['contributors.namesort'],
-	'track' => ['contributor_track.namesort','albums.titlesort','albums.disc','tracks.tracknum','tracks.titlesort'],
-	'tracknum' => ['tracks.tracknum','tracks.titlesort'],
+	'track' => ['contributor_track.namesort','albums.titlesort','tracks.disc','tracks.tracknum','tracks.titlesort'],
+	'tracknum' => ['tracks.disc','tracks.tracknum','tracks.titlesort'],
 	'year' => ['tracks.year'],
 	'lastPlayed' => ['tracks.lastPlayed'],
 	'playCount' => ['tracks.playCount'],
-	'age' => ['tracks.age desc', 'tracks.tracknum','tracks.titlesort'],
+	'age' => ['tracks.age desc', 'tracks.disc', 'tracks.tracknum', 'tracks.titlesort'],
 );
 
 # This is a weight table which allows us to do some basic table reordering,

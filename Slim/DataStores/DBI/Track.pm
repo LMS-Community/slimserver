@@ -22,6 +22,7 @@ our %essentialColumns = (
 	'age' => 'timestamp',
 	'fs' => 'filesize',
 	'tag' => 'tag',
+	'disc' => 'disc',
 	'thumb' => 'thumb',
 );
 

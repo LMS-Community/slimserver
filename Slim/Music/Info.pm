@@ -1068,8 +1068,8 @@ sub isFragment {
 }
 
 sub addDiscNumberToAlbumTitle {
+	my ($title, $discNum, $discCount) = @_;
 
-	my $entry = shift;
 	# Unless the groupdiscs preference is selected:
 	# Handle multi-disc sets with the same title
 	# by appending a disc count to the track's album name.
@@ -1078,30 +1078,26 @@ sub addDiscNumberToAlbumTitle {
 	# add the suffix.
 	# If it seems like there is only one disc in the set, 
 	# avoid adding "disc 1 of 1"
-	return if Slim::Utils::Prefs::get('groupdiscs');
-
-	my $discNum = $entry->{'DISC'};
-
-	return unless defined $discNum and $discNum > 0;
-
-	my $discCount = $entry->{'DISCC'};
+	return $title unless defined $discNum and $discNum > 0;
 
 	if (defined $discCount) {
-		return if $discCount == 1;
+		return $title if $discCount == 1;
 		undef $discCount if $discCount < 1; # errornous count
 	}
 
 	my $discWord = string('DISC');
 
-	return if $entry->{'ALBUM'} =~ /\b(${discWord})|(Disc)\s+\d+/i;
+	return $title if $title =~ /\b(${discWord})|(Disc)\s+\d+/i;
 
 	if (defined $discCount) {
 		# add spaces to discNum to help plain text sorting
 		my $discCountLen = length($discCount);
-		$entry->{'ALBUM'} .= sprintf(" (%s %${discCountLen}d %s %d)", $discWord, $discNum, string('OF'), $discCount);
+		$title .= sprintf(" (%s %${discCountLen}d %s %d)", $discWord, $discNum, string('OF'), $discCount);
 	} else {
-		$entry->{'ALBUM'} .= " ($discWord $discNum)";
+		$title .= " ($discWord $discNum)";
 	}
+
+	return $title;
 }
 
 sub getImageContent {

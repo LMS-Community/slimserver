@@ -1591,7 +1591,7 @@ sub initSetupConfig {
 						'validate' => \&validateTrueFalse
 						,'onChange' => sub {
 								my $client = shift;
-								Slim::Control::Command::execute($client, ["rescan"], undef, undef);
+								Slim::Control::Command::execute($client, ["wipecache"], undef, undef);
 							}
 						,'options' => {
 								'1' => string ('SETUP_GROUPDISCS_1')

@@ -264,7 +264,7 @@ sub find {
 
 		# refcnt-- if we can, to prevent leaks.
 		if ($Class::DBI::Weaken_Is_Available && !$count) {
-		 
+
 			Scalar::Util::weaken($lastFind{$findKey} = Slim::DataStores::DBI::DataModel->find(
 				$field, $findCriteria, $sortBy, $limit, $offset, $count
 			));
@@ -625,6 +625,12 @@ sub wipeAllData {
 
 	$self->forceCommit();
 
+	Slim::DataStores::DBI::ContributorTrack->clearCache();
+	Slim::DataStores::DBI::GenreTrack->clearCache();
+
+	# Not sure why we're clearing the play lists when 
+	# deleting everything from the database a minute later.
+	#$self->clearExternalPlaylists();
 	Slim::DataStores::DBI::DataModel->wipeDB();
 
 	$self->{'validityCache'}    = {};
@@ -636,8 +642,6 @@ sub wipeAllData {
 	$self->{'contentTypeCache'} = {};
 	$self->{'lastTrackURL'}     = '';
 	$self->{'lastTrack'}        = {};
-
-	$self->clearExternalPlaylists();
 	$self->{'zombieList'}       = {};
 
 	$::d_info && Slim::Utils::Misc::msg("wipeAllData: Wiped info database\n");
@@ -763,8 +767,6 @@ sub readTags {
 			$attributesHash->{'DISCC'} = $2 if defined $2;
 		}
 
-		Slim::Music::Info::addDiscNumberToAlbumTitle($attributesHash);
-		
 		if (!$attributesHash->{'TITLE'}) {
 
 			$::d_info && Slim::Utils::Misc::msg("Info: no title found, using plain title for $file\n");
@@ -1011,6 +1013,11 @@ sub _preCheckAttributes {
 	$deferredAttributes->{'COVER'}   = $attributes->{'COVER'};
 	$deferredAttributes->{'THUMB'}   = $attributes->{'THUMB'};
 
+	# Only pass this along if we're creating > 1 albums
+	unless (Slim::Utils::Prefs::get('groupdiscs')) {
+		$deferredAttributes->{'DISC'} = $attributes->{'DISC'};
+	}
+
 	if ($attributes->{'TITLE'} && !$attributes->{'TITLESORT'}) {
 		$attributes->{'TITLESORT'} = $attributes->{'TITLE'};
 	}
@@ -1023,7 +1030,7 @@ sub _preCheckAttributes {
 	# Normalize ARTISTSORT in ContributorTrack->add() the tag may need to be split. See bug #295
 	#
 	# Push these back until we have a Track object.
-	for my $tag (qw(COMMENT BAND COMPOSER CONDUCTOR GENRE ARTIST ARTISTSORT PIC APIC ALBUM ALBUMSORT DISC DISCC)) {
+	for my $tag (qw(COMMENT BAND COMPOSER CONDUCTOR GENRE ARTIST ARTISTSORT PIC APIC ALBUM ALBUMSORT DISCC)) {
 
 		next unless defined $attributes->{$tag};
 
@@ -1038,6 +1045,12 @@ sub _postCheckAttributes {
 	my $track = shift;
 	my $attributes = shift;
 	my $create = shift;
+
+	# Don't bother with directories / lnks. This makes sure "No Artist",
+	# etc don't show up if you don't have any.
+	if (Slim::Music::Info::isDir($track) || Slim::Music::Info::isWinShortcut($track)) {
+		return;
+	}
 
 	# Genre addition. If there's no genre for this track, and no 'No Genre' object, create one.
 	my $genre = $attributes->{'GENRE'};
@@ -1138,7 +1151,7 @@ sub _postCheckAttributes {
 		# already exists. Because we keep contributors now, but an
 		# album can have many contributors, check the last path and
 		# album name, to see if we're actually the same.
-		if ($self->{'lastTrack'}->{$basename} && 
+		if (!$disc && $self->{'lastTrack'}->{$basename} && 
 			$self->{'lastTrack'}->{$basename}->album() && 
 			$self->{'lastTrack'}->{$basename}->album() eq $album
 			) {
@@ -1147,18 +1160,24 @@ sub _postCheckAttributes {
 
 		} else {
 
+			my $search = {
+				'titlesort' => $sortable_title,
+			};
+
+			# Add disc to the search criteria, so we get
+			# the right object for multi-disc sets with
+			# the same album name.
+			$search->{'disc'} = $disc if $disc;
+
 			if ((grep $album =~ m/^$_$/i, @$common_albums) && $contributors[0]) {
 
-				($albumObj) = Slim::DataStores::DBI::Album->search({ 
-					titlesort => $sortable_title,
-					contributors => $contributors[0]->id,
-				});			
+				$search->{'contributors'} = $contributors[0]->id;
+
+				($albumObj) = Slim::DataStores::DBI::Album->search($search);			
 
 			} else {
 
-				($albumObj) = Slim::DataStores::DBI::Album->search({ 
-					titlesort => $sortable_title,
-				});
+				($albumObj) = Slim::DataStores::DBI::Album->search($search);
 			}
 
 			# Didn't match anything? It's a new album - create it.
