@@ -450,7 +450,6 @@ sub exportFunction {
 
 				'url'        => $fileurl,
 				'attributes' => \%cacheEntry,
-				'readTags'   => 1,
 
 			}) || do {
 

@@ -367,7 +367,8 @@ sub exportFunction {
 		
 		# cache the file date
 		($cacheEntry{'FS'}, $cacheEntry{'AGE'}) = (stat($mixer->Mix_SongFile(-1)))[7,9];
-		
+		$cacheEntry{'SIZE'} ||= $cacheEntry{'FS'};
+
 		$cacheEntry{'TITLE'}      = $mixer->Mix_SongName(-1);
 		$cacheEntry{'ARTIST'}     = $mixer->Mix_ArtistName(-1);
 		$cacheEntry{'GENRE'}      = $genre_hash{$browser->FLT_Song_MGID($isScanning)}[0] if (defined $genre_hash{$browser->FLT_Song_MGID($isScanning)});
@@ -385,7 +386,6 @@ sub exportFunction {
 
 			'url' => $url,
 			'attributes' => \%cacheEntry,
-			'readTags'   => 1,
 
 		}) || do {
 

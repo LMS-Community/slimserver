@@ -150,6 +150,7 @@ sub initPlugin {
 	return unless canUseiTunesLibrary();
 	
 	Slim::Music::Import::addImporter('ITUNES',\&startScan,undef,\&addGroups);
+	Slim::Music::Import::useImporter('ITUNES',Slim::Utils::Prefs::get('itunes'));
 	Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
 	
 	$initialized = 1;
@@ -591,7 +592,7 @@ sub scanFunction {
 				Slim::Music::Info::addDiscNumberToAlbumTitle(\%cacheEntry);
 				
 				$cacheEntry{'GENRE'} = $curTrack{'Genre'};
-				$cacheEntry{'FS'} = $curTrack{'Size'};
+				$cacheEntry{'FS'} = $cacheEntry{'SIZE'} = $curTrack{'Size'};
 
 				if ($curTrack{'Total Time'}) { $cacheEntry{'SECS'} = $curTrack{'Total Time'} / 1000; };
 
@@ -608,7 +609,6 @@ sub scanFunction {
 
 					'url'        => $url,
 					'attributes' => \%cacheEntry,
-					'readTags'   => 1,
 
 				}) || do {
 
