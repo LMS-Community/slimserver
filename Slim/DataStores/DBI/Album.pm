@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::Album;
 
-# $Id: Album.pm,v 1.2 2005/01/04 03:38:52 dsully Exp $
+# $Id$
 
 use strict;
 use base 'Slim::DataStores::DBI::DataModel';
@@ -25,7 +25,7 @@ sub searchTitle {
 
 	s/\*/%/g for @$pattern;
 
-	my %where   = ( title => $pattern, );
+	my %where   = ( titlesort => $pattern, );
 	my $findKey = join(':', @$pattern);
 
 	$_cache{$findKey} ||= [ $class->searchPattern('albums', \%where, ['titlesort']) ];

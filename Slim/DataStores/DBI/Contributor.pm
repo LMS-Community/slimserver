@@ -27,7 +27,7 @@ sub searchName {
 
 	s/\*/%/g for @$pattern;
 
-	my %where   = ( name => $pattern, );
+	my %where   = ( namesort => $pattern, );
 	my $findKey = join(':', @$pattern);
 
 	$_cache{$findKey} ||= [ $class->searchPattern('contributors', \%where, ['namesort']) ];

@@ -1256,13 +1256,13 @@ sub search {
 	# artist and album are similar enough - move them to their own function
 	if ($params->{'type'} eq 'artist') {
 
-		my $results = $ds->find('contributor', { "contributor.name" => $searchStrings }, 'name');
+		my $results = $ds->find('contributor', { "contributor.name" => $searchStrings }, 'contributor');
 
 		_searchArtistOrAlbum($player, $params, $results, $otherparams);
 
 	} elsif ($params->{'type'} eq 'album') {
 
-		my $results = $ds->find('album', { "album.title" => $searchStrings }, 'title');
+		my $results = $ds->find('album', { "album.title" => $searchStrings }, 'album');
 
 		_searchArtistOrAlbum($player, $params, $results, $otherparams);
 
@@ -1945,7 +1945,12 @@ sub browseid3 {
 
 		} elsif ($find->{$category}) {
 
-			$find->{$category} = (@{$ds->search($category, [$find->{$category}])})[0]->id();
+			# Search for each real name - normalize the query,
+			# then turn it into the ID suitable for browsedb()
+			$find->{$category} = (@{$ds->search(
+				$category,
+				[ Slim::Utils::Text::ignoreCaseArticles($find->{$category}) ]
+			)})[0]->id();
 		}
 	}
 
@@ -2727,6 +2732,9 @@ sub searchStringSplit {
 	my $searchSubString = shift;
 	
 	$searchSubString = defined $searchSubString ? $searchSubString : Slim::Utils::Prefs::get('searchSubString');
+
+	# normalize the string
+	$search = Slim::Utils::Text::ignoreCaseArticles($search);
 	
 	my @strings = ();
 

@@ -182,7 +182,7 @@ sub searchTerm {
 	my $client = shift;
 
 	# do the search!
-	@{$client->searchTerm} = split(//,$context{$client});
+	@{$client->searchTerm} = split(//, Slim::Utils::Text::ignoreCaseArticles($context{$client}));
 
 	my $term = '';
 

@@ -1064,7 +1064,7 @@ sub parseSearchTerms {
 
 	for my $term (split '&', $terms) {
 		if ($term =~ /(.*)=(.*)/ && grep $_ eq $1, @queryFields) {
-			$findCriteria{URI::Escape::uri_unescape($1)} = URI::Escape::uri_unescape($2);
+			$findCriteria{URI::Escape::uri_unescape($1)} = Slim::Utils::Text::ignoreCaseArticles( URI::Escape::uri_unescape($2) );
 		}
 	}
 

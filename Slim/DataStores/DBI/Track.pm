@@ -242,7 +242,7 @@ sub searchTitle {
 	my $class   = shift;
 	my $pattern = shift;
 
-	return $class->searchColumn($pattern, 'title');
+	return $class->searchColumn($pattern, 'titlesort');
 }
 
 sub searchColumn {

@@ -317,7 +317,7 @@ sub searchWithCriteria {
 
 		if (defined $value && scalar @$value && defined $value->[0] && $value->[0] ne '*') {
 
-			my $results = $class->search($key, $value);
+			my $results = $class->search($key, Slim::Utils::Text::ignoreCaseArticles($value));
 
 			return () unless scalar @$results;
 

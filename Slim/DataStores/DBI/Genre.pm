@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::Genre;
 
-# $Id: Genre.pm,v 1.2 2005/01/04 03:38:52 dsully Exp $
+# $Id$
 
 use strict;
 use base 'Slim::DataStores::DBI::DataModel';
@@ -21,7 +21,7 @@ sub searchName {
 
 	s/\*/%/g for @$pattern;
 
-	my %where   = ( name => $pattern, );
+	my %where   = ( namesort => $pattern, );
 	my $findKey = join(':', @$pattern);
 
 	$_cache{$findKey} = [ $class->searchPattern('genres', \%where, ['name']) ];
