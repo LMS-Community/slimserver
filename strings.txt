@@ -2522,6 +2522,12 @@ SETUP_ANIMATIONLEVEL_DESC
 	PT	Esta opção determina a quantidade de animação permitida. As animações são compostas por breves mensagens, animação de ecrãs e deslizamento de títulos compridos.
 	SE	Detta val avgör mängden tillåten animation. Animationer är kortvariga meddelanden, skärmåkningar vid navigering samt rullande långa titlar.
 
+SETUP_BUILDITEMSPERPASS
+	EN	Build Items Per Pass
+
+SETUP_BUILDITEMSPERPASS_DESC
+	EN	To avoid interrupting the music, SlimServer builds long lists in chunks. This setting determines how many items to build in a single pass.
+
 SETUP_LONGDATEFORMAT
 	DE	Format des langen Datums
 	DK	Langt dato-format
