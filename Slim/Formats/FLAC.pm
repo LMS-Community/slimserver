@@ -33,56 +33,52 @@ sub getTag {
 
 	my $flac = Audio::FLAC->new($file);
 
-	my $tags = {};
+	my $tags = $flac->tags() || {};
 
 	# Check for the presence of the info block here
-	if (defined $flac->{'bitRate'}) {
+	unless (defined $flac->{'bitRate'}) {
+		return undef;
+	}
 
-		my $tags = $flac->tags();
+	# There should be a TITLE tag if the VORBIS tags are to be trusted
+	if (defined $tags->{'TITLE'}) {
 
-		# There should be a TITLE tag if the VORBIS tags are to be trusted
-		if (defined $tags->{'TITLE'}) {
-
-			# map the existing tag names to the expected tag names
-			while (my ($old,$new) = each %tagMapping) {
-				if (exists $tags->{$old}) {
-					$tags->{$new} = $tags->{$old};
-					delete $tags->{$old};
-				}
-			}
-
-		} else {
-
-			if (exists $flac->{'ID3V2Tag'}) {
-				# Get the ID3V2 tag on there, sucka
-				$tags = MP3::Info::get_mp3tag($file,2);
+		# map the existing tag names to the expected tag names
+		while (my ($old,$new) = each %tagMapping) {
+			if (exists $tags->{$old}) {
+				$tags->{$new} = $tags->{$old};
+				delete $tags->{$old};
 			}
 		}
 
-		# add more information to these tags
-		# these are not tags, but calculated values from the streaminfo
-		$tags->{'SIZE'}    = $flac->{'fileSize'};
-		$tags->{'SECS'}    = $flac->{'trackTotalLengthSeconds'};
-		$tags->{'OFFSET'}  = $flac->{'startAudioData'};
-		$tags->{'BITRATE'} = $flac->{'bitRate'}/1000.0;
-
-		# Add the stuff that's stored in the Streaminfo Block
-		my $flacInfo = $flac->info();
-		$tags->{'RATE'}     = $flacInfo->{'SAMPLERATE'};
-		$tags->{'CHANNELS'} = $flacInfo->{'NUMCHANNELS'};
-
-		# stolen from MP3::Info
-		$tags->{'MM'}	    = int $tags->{'SECS'} / 60;
-		$tags->{'SS'}	    = int $tags->{'SECS'} % 60;
-		$tags->{'MS'}	    = (($tags->{'SECS'} - ($tags->{'MM'} * 60) - $tags->{'SS'}) * 1000);
-		$tags->{'TIME'}	    = sprintf "%.2d:%.2d", @{$tags}{'MM', 'SS'};
-
-		return $tags;
-
 	} else {
 
-		return undef;
+		if (exists $flac->{'ID3V2Tag'}) {
+			# Get the ID3V2 tag on there, sucka
+			$tags = MP3::Info::get_mp3tag($file,2);
+		}
 	}
+
+	# add more information to these tags
+	# these are not tags, but calculated values from the streaminfo
+	$tags->{'SIZE'}    = $flac->{'fileSize'};
+	$tags->{'SECS'}    = $flac->{'trackTotalLengthSeconds'};
+	$tags->{'OFFSET'}  = $flac->{'startAudioData'};
+	$tags->{'BITRATE'} = $flac->{'bitRate'}/1000.0;
+	$tags->{'FRAMES'}   = $flac->{'trackLengthFrames'};
+
+	# Add the stuff that's stored in the Streaminfo Block
+	my $flacInfo = $flac->info();
+	$tags->{'RATE'}     = $flacInfo->{'SAMPLERATE'};
+	$tags->{'CHANNELS'} = $flacInfo->{'NUMCHANNELS'};
+
+	# stolen from MP3::Info
+	$tags->{'MM'}	    = int $tags->{'SECS'} / 60;
+	$tags->{'SS'}	    = int $tags->{'SECS'} % 60;
+	$tags->{'MS'}	    = (($tags->{'SECS'} - ($tags->{'MM'} * 60) - $tags->{'SS'}) * 1000);
+	$tags->{'TIME'}	    = sprintf "%.2d:%.2d", @{$tags}{'MM', 'SS'};
+
+	return $tags;
 }
 
 1;

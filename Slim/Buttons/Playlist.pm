@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.24 2004/01/05 04:45:55 dean Exp $
+# $Id: Playlist.pm,v 1.25 2004/01/06 08:25:21 daniel Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -340,7 +340,8 @@ sub songTime {
 	my $client = shift;
 	my $playingDisplayMode = shift;
 
-	my ($time, $delta);	
+	my $delta = 0;
+	my $sign  = '';
 
 	if (Slim::Player::Source::playmode($client) eq "stop") {
 		$delta = 0;
@@ -352,11 +353,13 @@ sub songTime {
 	if ($playingDisplayMode % 3 == 2) {
 		my $duration = Slim::Music::Info::durationSeconds(Slim::Player::Playlist::song($client)) || 0;
 		$delta = $duration - $delta;
+
+		$sign = '-';
 	}
 
-	$time = sprintf("%s%02d:%02d", ($playingDisplayMode % 3 == 2 ? '-' : ''), $delta / 60, $delta % 60);
+	my $time = sprintf("%s%02d:%02d", $sign, $delta / 60, $delta % 60);
 
-	return $time;	
+	return $time;
 }
 
 sub browseplaylistindex {
