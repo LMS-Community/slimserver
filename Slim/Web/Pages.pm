@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.34 2004/01/17 03:50:16 kdf Exp $
+# $Id: Pages.pm,v 1.35 2004/01/17 08:58:27 kdf Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -792,7 +792,7 @@ sub addsonginfo {
 		}
 		$$paramsref{'comment'} = $comment;
 
-		$$paramsref{'bitrate'} = Slim::Music::Info::bitrate($song);
+		$$paramsref{'bitrate'} = int(Slim::Music::Info::bitrate($song));
 
 		my $url;
 		my $songpath;
