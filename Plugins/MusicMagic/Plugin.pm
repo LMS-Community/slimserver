@@ -419,7 +419,7 @@ sub exportFunction {
 		
 			$cacheEntry{'ALBUM'} = $songInfo{'album'};
 			$cacheEntry{'TRACKNUM'} = $songInfo{'track'};
-			$cacheEntry{'BITRATE'} = $songInfo{'bitrate'} * 1000;
+			$cacheEntry{'BITRATE'} = ($songInfo{'bitrate'} || 1) * 1000;
 			$cacheEntry{'YEAR'} = $songInfo{'year'};
 		
 			$cacheEntry{'CT'} = Slim::Music::Info::typeFromPath($songInfo{'file'},'mp3');
