@@ -8,13 +8,13 @@
 		function to_currentsong() {
 			if (window.location.hash == '') {
 				window.location.hash = 'currentsong';
-			}
+				}
 		}
 	-->
 	</script>
 
   </head>
-  <body bgcolor="#000000" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" ><!--onload="javascript:to_currentsong()"-->
+  <body bgcolor="#000000" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:to_currentsong()">
 	  <center>[% "CURRENT_PLAYLIST" | string %]
     [% IF cansave %] ([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])&nbsp;&nbsp;<a target="browser" href="browse.html?player=[% player | uri %]&dir=__playlists%2f__current.m3u">[% "SAVE" | string %]</a> | [% END %]
         <a href="status.m3u?player=[% player | uri %]" target="playlist">[% "DOWNLOAD" | string %]</a> |
@@ -22,7 +22,7 @@
    <p>[% IF playlist_pagebar %][% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %][% END %]
 	[% IF playlist_header %]&nbsp;|&nbsp;[% playlist_header %][% END %]</p>
     <table cellspacing="0" border="0" cellpadding="0" width="100%">
-      [% IF not playlist_items %][% "EMPTY" | string %][% END %][% playlist_items %]
+      [% IF not playlist_items %]<a name="currentsong"></a></p>[% "EMPTY" | string %][% END %][% playlist_items %]
     </table>
     <p>[% IF playlist_pagebar %][% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %][% END %]
 	[% IF playlist_header %]&nbsp;|&nbsp;[% playlist_header %][% END %]</p>

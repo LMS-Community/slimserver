@@ -9,7 +9,7 @@
 			<li><a href="http://www.slimdevices.com/" target="website">[% "ABOUT_SLIMDEVICES" | string %]</a></li>
 			  [% IF additionalLinks.help %]
 					  [% FOREACH key = additionalLinks.help.keys %]
-							  <li><a href="[% additionalLinks.help.$key %]player=[% player | uri %]">[% key %]</a></li>
+							  <li><a href="[% additionalLinks.help.$key %]player=[% player | uri %]">[% key | string %]</a></li>
 					  [% END %]
 			  [% END %]
 		</ul>

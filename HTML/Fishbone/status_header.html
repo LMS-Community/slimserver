@@ -33,12 +33,12 @@
 					}
 					else 
 					{
-						parent.playlist.location.reload(true);
+						if (parent.playlist.location != '') parent.playlist.location.reload(true);
 					}
 				}
 				else
 				{
-					top.document.location.reload(true);
+					if (parent.playlist.location != '') top.document.location.reload(true);
 				}
 			}
 			-->

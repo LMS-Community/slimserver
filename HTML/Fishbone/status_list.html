@@ -1,5 +1,5 @@
 <tr>
-	<td [% IF currentsong %]class="listing2" ><a name="currentsong">[% END %][% IF not currentsong %]class="listing"><a name=[% num %]>[% END %]
+	<td [% IF currentsong %]class="listing2" ><a name="currentsong"></a>[% END %][% IF not currentsong %]class="listing"><a name=[% num %]>[% END %]
 		<a style="font-size: 10px;color:white" href="status_header.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="statusframe">&nbsp;[% num + 1 %].&nbsp;</a>
 		<b><a href="status_header.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="statusframe">"[% title | html %]"</a></b>
 	<nobr>[% IF artist %] [% "BY" | string %] <a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist | html %]</a> [% END %]

@@ -99,7 +99,7 @@
 						<OPTION [% IF page == 'song' %]selected[% END %][% IF browseby == 'BROWSE_BY_SONG' %]selected[% END %] label="song" value="song">[% "BROWSE_BY_SONG" | string %]</OPTION>
 					[% IF additionalLinks.browse %]
 						[% FOREACH link = additionalLinks.browse %]
-						<OPTION [% IF page == link.key %]selected[% END %] value="song" label="[% link.key %]">[% link.key %]</OPTION>
+						<OPTION [% IF page == link.key %]selected[% END %] value="song" label="[% link.key %]">[% link.key | string %]</OPTION>
 						[% END %]
 					[% END %]
 					</SELECT> [% "FOR" | string %]

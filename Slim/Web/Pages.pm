@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.86 2004/06/10 23:39:07 vidur Exp $
+# $Id: Pages.pm,v 1.87 2004/06/18 01:58:54 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -27,23 +27,23 @@ sub home {
 	$params->{'newVersion'} = $::newVersion if $::newVersion;
 
 	if (Slim::Utils::Prefs::get('lookForArtwork')) {
-		addLinks("browse",{string('BROWSE_BY_ARTWORK') => "browseid3.html?genre=*&artist=*&artwork=1"});
+		addLinks("browse",{'BROWSE_BY_ARTWORK' => "browseid3.html?genre=*&artist=*&artwork=1"});
 	} else {
-		addLinks("browse",{string('BROWSE_BY_ARTWORK') => undef});
+		addLinks("browse",{'BROWSE_BY_ARTWORK' => undef});
 		$params->{'noartwork'} = 1;
 	}
 	
 	if (Slim::Utils::Prefs::get('audiodir')) {
-		addLinks("browse",{string('BROWSE_MUSIC_FOLDER') => "browse.html?dir="});
+		addLinks("browse",{'BROWSE_MUSIC_FOLDER' => "browse.html?dir="});
 	} else {
-		addLinks("browse",{string('BROWSE_MUSIC_FOLDER') => undef});
+		addLinks("browse",{'BROWSE_MUSIC_FOLDER' => undef});
 		$params->{'nofolder'}=1;
 	}
 	
 	if (Slim::Utils::Prefs::get('playlistdir') || Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic()) {
-		addLinks("browse",{string('SAVED_PLAYLISTS') => "browse.html?dir=__playlists"});
+		addLinks("browse",{'SAVED_PLAYLISTS' => "browse.html?dir=__playlists"});
 	} else {
-		addLinks("browse",{string('SAVED_PLAYLISTS') => undef});
+		addLinks("browse",{'SAVED_PLAYLISTS' => undef});
 	}
 	
 	# fill out the client setup choices

@@ -62,7 +62,7 @@
 									<tr><td height="15" valign="center">&#149; <a href="browseid3.html?genre=*&amp;artist=*&amp;player=[% player | uri %]">[% "BROWSE_BY_ALBUM" | string %]</a></td></tr>
 [% IF additionalLinks.browse %]
     [% FOREACH link = additionalLinks.browse %]
-									<tr><td height="15" valign="center">&#149; <a href="[% link.value %]player=[% player | uri %]">[% link.key %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a></td></tr>
     [% END %]
 [% END %]
 								</table>
@@ -105,7 +105,7 @@
 									<tr><td height="15" valign="center">&#149; <a href="search.html?type=song&amp;player=[% player | uri %]">[% "SEARCHFOR_SONGTITLE" | string %]</a></td></tr>
 [% IF additionalLinks.search %]
     [% FOREACH key = additionalLinks.search.keys %]
-									<tr><td height="15" valign="center">&#149; <a href="[% additionalLinks.search.$key %]player=[% player | uri %]">[% key %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="[% additionalLinks.search.$key %]player=[% player | uri %]">[% key | string %]</a></td></tr>
     [% END %]
 [% END %]
 								</table>
@@ -147,7 +147,7 @@
 								[% player_list %]
 [% IF additionalLinks.settings %]
     [% FOREACH key = additionalLinks.settings.keys %]
-									<tr><td height="15" valign="center">&#149; <a href="[% additionalLinks.settings.$key %]player=[% player | uri %]">[% key %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="[% additionalLinks.settings.$key %]player=[% player | uri %]">[% key | string %]</a></td></tr>
     [% END %]
 [% END %]
 								</table>
@@ -235,7 +235,7 @@
 									<tr><td height="15" valign="center">&#149; <a href="http://www.slimdevices.com/" target="website">[% "ABOUT_SLIMDEVICES" | string %]</a></td></tr>
 [% IF additionalLinks.help %]
     [% FOREACH key = additionalLinks.help.keys %]
-									<tr><td height="15" valign="center">&#149; <a href="[% additionalLinks.help.$key %]player=[% player | uri %]">[% key %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="[% additionalLinks.help.$key %]player=[% player | uri %]">[% key | string %]</a></td></tr>
     [% END %]
 [% END %]
 								</table>

@@ -34,9 +34,9 @@
         </li>
         <li> <a href="browseid3.html?genre=*&artist=*&player=[% player | uri %]">[% "BROWSE_BY_ALBUM" | string %]</a> 
 [% IF additionalLinks.browse %]
-    [% FOREACH key = additionalLinks.browse.keys %]
+    [% FOREACH value = additionalLinks.browse %]
     <li>
- 		<a href="[% additionalLinks.browse.$key %]player=[% player | uri %]">[% key %]</a>
+ 		<a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a>
  	</li>
     [% END %]
 [% END %]
@@ -49,7 +49,7 @@
 [% IF additionalLinks.search %]
     [% FOREACH key = additionalLinks.search.keys %]
     <li>
- 		<a href="[% additionalLinks.search.$key %]player=[% player | uri %]">[% key %]</a>
+ 		<a href="[% additionalLinks.search.$key %]player=[% player | uri %]">[% key | string %]</a>
  	</li>
     [% END %]
 [% END %]
@@ -62,7 +62,7 @@
 [% IF additionalLinks.settings %]
     [% FOREACH key = additionalLinks.settings.keys %]
     <li>
- 		<a href="[% additionalLinks.settings.$key %]player=[% player | uri %]">[% key %]</a>
+ 		<a href="[% additionalLinks.settings.$key %]player=[% player | uri %]">[% key | string %]</a>
  	</li>
     [% END %]
 [% END %]
@@ -94,7 +94,7 @@
 [% IF additionalLinks.help %]
     [% FOREACH key = additionalLinks.help.keys %]
     <li>
- 		<a href="[% additionalLinks.help.$key %]player=[% player | uri %]">[% key %]</a>
+ 		<a href="[% additionalLinks.help.$key %]player=[% player | uri %]">[% key | string %]</a>
  	</li>
     [% END %]
 [% END %]
