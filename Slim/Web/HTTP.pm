@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.39 2003/11/03 18:07:16 dean Exp $
+# $Id: HTTP.pm,v 1.40 2003/11/03 19:19:21 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -216,11 +216,8 @@ sub processHTTP {
 	  	
 		if (!defined($firstline)) { #socket half-closed from client
 			$::d_http && msg("Client at " . $peeraddr{$httpclientsock} . " disconnected\n");
-			Slim::Networking::Select::addRead($httpclientsock, undef);
 
-#			if (!($httpSelWrite->exists($httpclientsock)) && !($streamingSelWrite->exists($httpclientsock))) {
-				close $httpclientsock;
-				$connected--;
+			closeHTTPSocket($httpclientsock);
 #			}
 		} elsif ($firstline =~ /^GET ([\w\$\-\.\+\*\(\)\?\/,;:@&=!\'%]*) HTTP\/1.[01][\015\012]+$/i)  {
 			my @paramarray;
@@ -534,12 +531,11 @@ sub closeHTTPSocket {
 
 	Slim::Networking::Select::addRead($httpclientsock, undef);
 	Slim::Networking::Select::addWrite($httpclientsock, undef);
-	close $httpclientsock;
 	delete($outbuf{$httpclientsock}); #clean up the hashes
 	delete($sendMetaData{$httpclientsock});
 	delete($metaDataBytes{$httpclientsock});
 	delete($peeraddr{$httpclientsock});
-
+	close($httpclientsock);
 	$connected--;
 }
 
