@@ -121,12 +121,16 @@ sub initPlugin {
 	my $http = Slim::Player::Protocols::HTTP->new({
 		'url'    => "http://$MMSHost:$MMSport/api/version",
 		'create' => 0,
+		'timeout' => 5,
 	});
 
 	unless ($http) {
 
 		$initialized = 0;
 		$::d_musicmagic && msg("MusicMagic: Cannot Connect\n");
+		
+		my ($groupRef,$prefRef) = &setupGroup();
+		Slim::Web::Setup::addGroup('plugins', 'musicmagic_connect', $groupRef, undef, $prefRef);
 
 	} else {
 
@@ -582,7 +586,7 @@ sub exportFunction {
 				}
 
 				$cacheEntry{'LIST'} = \@list;
-				$cacheEntry{'CT'} = 'mlp';
+				$cacheEntry{'CT'} = 'mmp';
 				$cacheEntry{'TAG'} = 1;
 				$cacheEntry{'VALID'} = '1';
 
@@ -1047,7 +1051,7 @@ sub setupGroup {
 	my $client = shift;
 
 	my %setupGroup = (
-			'PrefOrder' => [qw(MMSHost MMSport)]
+			'PrefOrder' => [qw(MMSport)]
 		);
 
 	my %setupPrefs = (
