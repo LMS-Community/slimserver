@@ -105,11 +105,16 @@
 	<li>Add some nice text explaining to folks what they can do if the
 	  server doesn't find their player. (HTTP streaming, SoftSqueeze,
 	  fix their player)
-	<li>Moved scanning of ID3 tags within files into the same step
-            as getting metadata from iTunes. This makes the scan
-            process more sluggish, but subsequent operations are much
-            faster, since we don't have to read tags from the files
-            on-the-fly. This only applies to the iTunes case.
+	<li>Improved scanning performance:
+		<ul>
+				<li>Optimized reading of ID3 tags in Perl.
+				<li>Moved scanning of ID3 tags within
+            files into the same step as getting metadata from
+            iTunes. This makes the scan take a bit longer,
+            but subsequent operations are much faster, since we don't
+            have to read tags from the files on-the-fly. This only
+            applies to the iTunes case.
+		</ul>
 	<li>Nicolas Guillemain updated the french translations. German updates from Pascal Berger...
 	<li>Various bug fixes:
 		<ul>
