@@ -1591,7 +1591,7 @@ sub _fillInSearchResults {
 
 			($start, $end) = pageBar(
 				$params->{'numresults'},
-				$params->{'path'},
+				'search.html',
 				0,
 				$otherParams,
 				\$params->{'start'},
