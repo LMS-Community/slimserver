@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DataModel;
 
-# $Id: DataModel.pm,v 1.10 2005/01/06 03:44:02 dsully Exp $
+# $Id: DataModel.pm,v 1.11 2005/01/06 08:29:15 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -275,14 +275,14 @@ sub findTermsToWhereClause {
 }
 
 my %fieldHasClass = (
-	'track' => ['Slim::DataStores::DBI::Track'],
-	'genre' => ['Slim::DataStores::DBI::Genre', 'Slim::DataStores::DBI::GenreTrack'],
-	'album' => ['Slim::DataStores::DBI::Album'],
-	'artist' => ['Slim::DataStores::DBI::Contributor', 'Slim::DataStores::DBI::ContributorTrack'],
-	'contributor' => ['Slim::DataStores::DBI::Contributor', 'Slim::DataStores::DBI::ContributorTrack'],
-	'conductor' => ['Slim::DataStores::DBI::Contributor', 'Slim::DataStores::DBI::ContributorTrack'],
-	'composer' => ['Slim::DataStores::DBI::Contributor', 'Slim::DataStores::DBI::ContributorTrack'],
-	'band' => ['Slim::DataStores::DBI::Contributor', 'Slim::DataStores::DBI::ContributorTrack'],
+	'track' => 'Slim::DataStores::DBI::Track',
+	'genre' => 'Slim::DataStores::DBI::Genre',
+	'album' => 'Slim::DataStores::DBI::Album',
+	'artist' => 'Slim::DataStores::DBI::Contributor',
+	'contributor' => 'Slim::DataStores::DBI::Contributor',
+	'conductor' => 'Slim::DataStores::DBI::Contributor',
+	'composer' => 'Slim::DataStores::DBI::Contributor',
+	'band' => 'Slim::DataStores::DBI::Contributor',
 );
 
 my %searchFieldMap = (
@@ -320,14 +320,6 @@ my %sortFieldMap = (
 	'tracknum' => ['tracks.tracknum','tracks.titlesort'],
 );
 
-my %joinMap = (
-	'albums' => 'tracks.album = albums.id',
-	'genre_track' => 'genre_track.track = tracks.id',
-	'genres' => 'genre_track.genre = genres.id',
-	'contributor_track' => 'contributor_track.track = tracks.id',
-	'contributors' => 'contributor_track.contributor = contributors.id',
-);
-
 # This is a weight table which allows us to do some basic table reordering,
 # resulting in a more optimized query. EXPLAIN should tell you more.
 my %tableSort = (
@@ -337,6 +329,77 @@ my %tableSort = (
 	'genres' => 0.1,
 	'genre_track' => 1.0,
 	'tracks' => 0.8,
+);
+
+# The joinGraph represents a bi-directional graph where tables are
+# nodes and columns that can be used to join tables are named
+# arcs between the corresponding table nodes. This graph is similar
+# to the entity-relationship graph, but not exactly the same.
+# In the hash table below, the keys are tables and the values are
+# the arcs describing the relationship.
+my %joinGraph = (
+	'genres' => {
+		'genre_track' => 'genres.id = genre_tracks.genre',
+	},		 
+	'genre_track' => {
+		'genres' => 'genres.id = genre_tracks.genre',
+		'contributor_track' => 'genre_track.track = contributor_track.track',
+		'tracks' => 'genre_track.track = tracks.id',
+	},
+	'contributors' => {
+		'contributor_track' => 'contributors.id = contributor_track.track',
+	},
+	'contributor_track' => {
+		'contributors' => 'contributors.id = contributor_track.contributor',
+		'genre_track' => 'genre_track.track = contributor_track.track',
+		'tracks' => 'contributor_track.track = tracks.id',
+	},
+	'tracks' => {
+		'contributor_track' => 'contributor_track.track = tracks.id',
+		'genre_track' => 'genre_track.track = tracks.id',
+		'albums' => 'albums.id = tracks.album',
+	},
+	'albums' => {
+		'tracks' => 'albums.id = tracks.album',
+	},
+);
+
+# The hash below represents the shortest paths between nodes in the
+# joinGraph above. The keys of this hash are tuples representing the
+# start node (the field used in the findCriteria) and the end node
+# (the field that we are querying for). The shortest path in the 
+# joinGraph represents the smallest number of joins we need to do
+# to be able to formulate our query.
+# Note that while the paths below are hardcoded, for a larger graph we
+# could compute the shortest path algorithmically, using Dijkstra's
+# (or other) shortest path algorithm.
+my %queryPath = (
+	'genre:album' => ['genre_track', 'tracks', 'albums'],
+	'genre:genre' => ['genre_track', 'genres'],
+	'genre:contributor' => ['genre_track', 'contributor_track', 'contributors'],
+	'genre:default' => ['genre_track', 'tracks'],
+	'contributor:album' => ['contributor_track', 'tracks', 'albums'],
+	'contributor:genre' => ['contributor_track', 'genre_track', 'genres'],
+	'contributor:contributor' => ['contributor_track', 'contributors'],
+	'contributor:default' => ['contributor_track', 'tracks'],
+	'album:album' => ['albums', 'tracks'],
+	'album:genre' => ['albums', 'tracks', 'genre_track', 'genre'],
+	'album:contributor' => ['albums', 'tracks', 'contributor_track', 'contributors'],
+	'album:default' => ['albums', 'tracks'],
+	'default:album' => ['tracks', 'albums'],
+	'default:genre' => ['tracks', 'genre_track', 'genres'],
+	'album:contributor' => ['tracks', 'contributor_track', 'contributors'],
+	'default:default' => ['tracks'],
+);
+
+my %fieldToNodeMap = (
+	'album' => 'album',
+	'genre' => 'genre',
+	'contributor' => 'contributor',
+	'artist' => 'contributor',
+	'conductor' => 'contributor',
+	'composer' => 'contributor',
+	'band' => 'contributor',
 );
 
 sub find {
@@ -354,31 +417,38 @@ sub find {
 
 	# The FROM tables involved in the query
 	my %tables  = ();
+
+	# The joins for the query
+	my %joins = ();
 	
+	my $fieldTable;
+
 	# First the columns to SELECT
 	if ($c = $fieldHasClass{$field}) {
 
-		my $table = $c->[0]->table();
+		$fieldTable = $c->table();
 
-		$columns .= join(",", map {$table . '.' . $_ . " AS " . $_} $c->[0]->columns('Essential'));
-
-		# For now, include only the main table from which we're retrieving 
-		# columns. If there is a WHERE clause, we may include a secondary
-		# (has-many) table.
-		$tables{$table} = $tableSort{$table} for @$c;
+		$columns .= join(",", map {$fieldTable . '.' . $_ . " AS " . $_} $c->columns('Essential'));
 
 	} elsif (defined($searchFieldMap{$field})) {
 
+		$fieldTable = 'tracks';
+
 		$columns .= $searchFieldMap{$field};
-		$tables{'tracks'} = $tableSort{'tracks'};
 
 	} else {
 		$::d_info && Slim::Utils::Misc::msg("Request for unknown field in query\n");
 		return undef;
 	}
 
+	# Include the table containing the data we're selecting
+	$tables{$fieldTable} = $tableSort{$fieldTable};
+
+
 	# Then the WHERE clause
 	my %whereHash = ();
+
+	my $endNode = $fieldToNodeMap{$field} || 'default';
 
 	while (my ($key, $val) = each %$findCriteria) {
 
@@ -390,18 +460,22 @@ sub find {
 				$whereHash{$searchFieldMap{$key}} = scalar(@values) > 1 ? \@values : $values[0];
 			}
 
-			# Include FROM tables of all columns use in the WHERE
-			if ($c = $fieldHasClass{$key}) {
-				$tables{ $_->table() } = $tableSort{ $_->table() } for @$c;
+			my $startNode = $fieldToNodeMap{$key} || 'default';
+
+			# Find the query path that gives us the tables
+			# we need to join across to fulfill the query.
+			my $path = $queryPath{"$startNode:$endNode"};
+			for my $i (0..$#{$path}) {
+				my $table = $path->[$i];
+				$tables{$table} = $tableSort{$table};
+				
+				if ($i < $#{$path}) {
+					my $nextTable = $path->[$i + 1];
+					my $join = $joinGraph{$table}{$nextTable};
+					$joins{$join} = 1;
+				}
 			}
 		}
-		
-		# And all tables (including possibly a has-many table) from the main field.
-		if ($c = $fieldHasClass{$field}) {
-			$tables{ $_->table() } = $tableSort{ $_->table() } for @$c;
-		}
-
-		$tables{'tracks'} = $tableSort{'tracks'};
 	}
 
 	# Now deal with the ORDER BY component
@@ -414,6 +488,14 @@ sub find {
 	for my $sfield (@$sortFields) {
 		my ($table) = ($sfield =~ /^(\w+)\./);
 		$tables{$table} = $tableSort{$table};
+
+		# See if we need to do a join to allow the sortfield
+		if ($table ne $fieldTable) {
+			my $join = $joinGraph{$table}{$fieldTable};
+			if (defined($join)) {
+				$joins{$join} = 1;
+			}
+		}
 	}
 
 	my $abstract;
@@ -430,12 +512,9 @@ sub find {
 	my $sql = "SELECT $columns ";
 	   $sql .= "FROM " . join(", ", sort { $tables{$b} <=> $tables{$a} } keys %tables) . " ";
 
-	if (scalar(keys %tables) > 1) {
+	if (scalar(keys %joins)) {
 
-		# Why do we explictly delete tracks?
-		delete $tables{'tracks'};
-
-		$sql .= "WHERE " . join(" AND ", map { $joinMap{$_} } keys %tables ) . " ";
+		$sql .= "WHERE " . join(" AND ", keys %joins ) . " ";
 
 		$where =~ s/WHERE/AND/;
 	}
@@ -464,7 +543,7 @@ sub find {
 	# Always remember to finish() the statement handle, otherwise DBI will complain.
 	if ($c = $fieldHasClass{$field}) {
 
-		my $objects = [ $c->[0]->sth_to_objects($sth) ];
+		my $objects = [ $c->sth_to_objects($sth) ];
 
 		$sth->finish();
 	
