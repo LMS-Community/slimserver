@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DBIStore;
 
-# $Id: DBIStore.pm,v 1.9 2005/01/09 05:59:53 dsully Exp $
+# $Id: DBIStore.pm,v 1.10 2005/01/10 10:05:42 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -9,8 +9,9 @@ package Slim::DataStores::DBI::DBIStore;
 
 use strict;
 
-use MP3::Info;
 use DBI;
+use MP3::Info;
+use Tie::Cache::LRU::Expires;
 
 use Slim::DataStores::DBI::DataModel;
 
@@ -64,8 +65,8 @@ my %tagFunctions = (
 # Only look these up once.
 my ($_unknownArtistID, $_unknownGenreID);
 
-# Keep the last 5 find results set in memory
-tie my %lastFind, 'Tie::Cache::LRU', 5;
+# Keep the last 5 find results set in memory and expire them after 60 seconds
+tie my %lastFind, 'Tie::Cache::LRU::Expires', EXPIRES => 60, ENTRIES => 5;
 
 #
 # Readable DataStore interface methods:
@@ -223,8 +224,6 @@ sub find {
 
 	$::d_sql && Slim::Utils::Misc::msg("Generated findKey: [$findKey]\n");
 
-	# We could add in another key that's the access time, and have these
-	# expire.. not sure if we need that yet. Or use Tie::Cache::LRU::Expires
 	if (!defined $lastFind{$findKey}) {
 
 		$lastFind{$findKey} = Slim::DataStores::DBI::DataModel->find($field, $findCriteria, $sortBy, $limit, $offset, $count);

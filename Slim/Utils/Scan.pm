@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.25 2005/01/06 03:44:02 dsully Exp $
+# $Id: Scan.pm,v 1.26 2005/01/10 10:05:43 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -360,7 +360,9 @@ sub addToList_run {
 		$ds->markEntryAsValid($itempath);
 
 		# Try not to kill the CPU - leave a little time for streaming
-		Time::HiRes::sleep(0.25);
+		# This slows down the scan a bit too much - it'd be better to
+		# sleep every X items, or every X seconds. Disable for now.
+		# Time::HiRes::sleep(0.25);
 
 		return 1;
 	}
