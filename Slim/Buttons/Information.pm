@@ -295,6 +295,7 @@ sub setMode {
 	my $method = shift;
 
 	if ($method eq 'pop') {
+		Slim::Utils::Timers::killTimers($client, \&updateSignalStrength);
 		Slim::Buttons::Common::popModeRight($client);
 		return;
 	}
@@ -314,9 +315,13 @@ sub setMode {
 sub updateSignalStrength {
 	my $client = shift;				
 
-	$client->requestStatus();
+	if (Slim::Buttons::Common::mode($client) eq 'INPUT.List' &&
+	    Slim::Buttons::Common::param($client, 'parentMode') eq 'information' &&
+	    ${Slim::Buttons::Common::param($client, 'valueRef')} eq 'PLAYER_SIGNAL_STRENGTH') {
+		$client->requestStatus();
 	
-	$client->update();
+		$client->update();
+	}
 	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&updateSignalStrength);
 }
 
