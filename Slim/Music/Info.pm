@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.65 2004/01/29 17:54:41 kdf Exp $
+# $Id: Info.pm,v 1.66 2004/01/30 06:19:40 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1327,6 +1327,8 @@ sub coverArt {
 	my $art = shift || 'cover';
 	my $image;
 
+	if (! Slim::Utils::Prefs::get('lookForArtwork')) { return undef};
+
 	$::d_info && Slim::Utils::Misc::msg("Cover Art ($art) for: $file\n");
 	
 	my ($body, $contenttype);
@@ -2066,7 +2068,7 @@ sub readTags {
 			# Check for Cover Artwork, only if not already present.
 			if (exists $tempCacheEntry->{'COVER'} || exists $tempCacheEntry->{'THUMB'}) {
 				$::d_info && Slim::Utils::Misc::msg("already checked artwork for $file\n");
-			} else {
+			} elsif (! Slim::Utils::Prefs::get('lookForArtwork')) {
 				my $album = $tempCacheEntry->{'ALBUM'};
 				if (defined $tempCacheEntry->{'APIC'} || defined $tempCacheEntry->{'PIC'}) {
 					$tempCacheEntry->{'COVER'} = $filepath;
@@ -2161,6 +2163,8 @@ sub readCoverArt {
 	my $filepath;
 	my $image = shift || 'cover';
 	my $cover;
+
+	if (! Slim::Utils::Prefs::get('lookForArtwork')) { return undef};
 
 	my $body;	
 	my $contenttype;
@@ -2347,6 +2351,8 @@ sub updateCoverArt {
 sub updateArtworkCache {
 	my $file = shift;
 	my $cacheEntry = shift;
+	
+	if (! Slim::Utils::Prefs::get('lookForArtwork')) { return undef};
 	
 	# Check for Artwork and update %artworkCache
 	my $thumb = $cacheEntry->{'THUMB'};

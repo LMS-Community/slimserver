@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.39 2004/01/27 16:59:17 kdf Exp $
+# $Id: Pages.pm,v 1.40 2004/01/30 06:19:41 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -42,6 +42,9 @@ sub home {
 
 	if (Slim::Music::iTunes::useiTunesLibrary()) {
 		$$paramsref{'nofolder'} = 1;
+	}
+	if (!Slim::Utils::Prefs::get('lookForArtwork')) {
+		$$paramsref{'noartwork'} = 1;
 	}
 	
 	addStats($paramsref, [],[],[],[]);

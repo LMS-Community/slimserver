@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.36 2004/01/20 20:31:00 dean Exp $
+# $Id: Prefs.pm,v 1.37 2004/01/30 06:19:40 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -101,6 +101,7 @@ my %DEFAULT = (
 	,"useinfocache"			=> 1				# Perhaps should be 0 for unix?
 	,'animationLevel'		=> 3
 	,'itemsPerPage'			=> 100
+	,'lookForArtwork'			=> 1
 	,'thumbSize'			=> 100
 	,'buildItemsPerPass'		=> 100
 	,'longdateFormat'		=> q(%A, %B |%d, %Y)
@@ -215,6 +216,10 @@ my %prefChange = (
 	,'audiodir' => sub {
 		my $newvalue = shift;
 		Slim::Music::MusicFolderScan::startScan();
+	}
+	,'lookForArtwork' => sub {
+		my $newvalue = shift;
+		if ($newvalue) {Slim::Music::MusicFolderScan::startScan();}
 	}
 	,'playlistdir' => sub {
 		my $newvalue = shift;

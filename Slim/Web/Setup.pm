@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.36 2004/01/28 04:36:56 dean Exp $
+# $Id: Setup.pm,v 1.37 2004/01/30 06:19:41 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1231,7 +1231,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['usetagdatabase','templatecache','useplaylistcache','animationLevel','buildItemsPerPass','showbufferfullness']
+					'PrefOrder' => ['usetagdatabase','templatecache','useplaylistcache','animationLevel','lookForArtwork','buildItemsPerPass','showbufferfullness']
 				}
 			}
 		,'Prefs' => {
@@ -1264,6 +1264,13 @@ sub initSetupConfig {
 								,'1' => string('SETUP_BRIEF_MESSAGES')
 								,'2' => string('SETUP_SCREEN_WIPES')
 								,'3' => string('SETUP_FULL_ANIMATION')
+								}
+					}
+			,'lookForArtwork' => {
+						'validate' => \&validateTrueFalse
+						,'options' => {
+								'0' => string('SETUP_NO_ARTWORK')
+								,'1' => string('SETUP_LOOKFORARTWORK')
 								}
 					}
 			,'buildItemsPerPass' => {
