@@ -1,6 +1,6 @@
 package Slim::Buttons::BrowseID3;
 
-# $Id: BrowseID3.pm,v 1.26 2005/01/09 05:59:52 dsully Exp $
+# $Id: BrowseID3.pm,v 1.27 2005/01/10 23:35:22 titmuss Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -312,8 +312,9 @@ sub init {
 
 					Slim::Player::Playlist::shuffle($client, 0);
 
+					Slim::Control::Command::execute($client, ["playlist", "clear"]);
 					Slim::Control::Command::execute($client, 
-						["playlist", "loadalbum", $genre, $artist, picked($album) ? $album : $currentItem]
+						["playlist", "addalbum", $genre, $artist, picked($album) ? $album : $currentItem]
 					);
 
 					Slim::Control::Command::execute($client, ["playlist", "jump", picked($album) ? browseID3dirIndex($client) : "0"]);
