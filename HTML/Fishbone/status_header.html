@@ -3,75 +3,19 @@
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 	 <meta http-equiv="refresh" content="{refresh}; url=status_header.html?player={%player}&amp;start={start}">
 	<link rel="stylesheet" href="slimserver.css">
-    <script language="JavaScript"><!--Hide
+    <script language="JavaScript">
+<!--Hide
+[EQ playercount 0]location="status.html";[/EQ]
+var waitTime={refresh};
 
-		[EQ playercount 0]location="status.html";[/EQ]
-		var waitTime={refresh};
-		
-		function openRemote()
-		&lbrc;
-			window.open('status_header.html?player={%player}&start={start}&refresh=1', 'access', 'width=500,height=240');
-		&rbrc;
-		
-		//Modified from Progress Bar script- by Todd King (tking@igpp.ucla.edu)
-		//Visit JavaScript Kit (http://javascriptkit.com) for full script
-		
-		var duration=[IF songduration]{songduration}[/IF][IFN songduration]0[/IFN];
-		// Specify duration of progress bar in seconds
-		
-		var _progressEnd = [IF songduration]{songduration}[/IF][IFN songduration]1[/IFN];
-		var _progressAt = [IF songtime]{songtime}[/IF][IFN songtime]0[/IFN];
-		
-		// Increment the progress dialog one step
-		function ProgressStepIt() &lbrc;
-			_progressAt++;
-			if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
-			ProgressUpdate();
-		&rbrc;
-		
-		// Update the progress dialog with the current state
-		function ProgressUpdate() &lbrc;
-			if (document.progress) &lbrc;
-				if (document.all) &lbrc;
-					//alert (document.body.clientWidth+"/"+_progressEnd+"*"+_progressAt+"="+p);
-					var p = (document.body.clientWidth / _progressEnd) * _progressAt;
-					eval("document.progress.width=p");
-				&rbrc;
-				else &lbrc;
-					var p = (document.width / _progressEnd) * _progressAt;
-					eval("document.progress.width=p");
-				&rbrc;
-			&rbrc;
-		&rbrc;
-		
-		//configure refresh interval (in seconds)
-		var countDownInterval={songduration}-{songtime};
-		
-		var counter;
-		
-		var countDownTime=countDownInterval+1;
-		
-		function countDown() &lbrc;
-			countDownTime--;
-			if (countDownTime <=0)&lbrc;
-				countDownTime=countDownInterval;
-				clearTimeout(counter)
-				return
-			&rbrc;
-		
-			[IF modeplay]ProgressStepIt();[/IF]
-			counter=setTimeout("countDown()", 1000);
-		&rbrc;
-		
-		if (document.all||document.getElementById)
-			countDown()
-		else
-			window.onload=startit
-
-	-->
-	</script>
-  </head>
-  <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload='javascript:parent.playlist.location="playlist.html?player={%player}&start={start}&refresh=1"'>
+function openRemote()
+&lbrc;
+	window.open('status_header.html?player={%player}&start={start}&refresh=1', 'access', 'width=500,height=240');
+&rbrc;
+-->
+</script>
+</head>
+  <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload='javascript:parent.playlist.location="playlist.html?player={%player}&start={start}&refresh=1";'>
 	  <div class="masthead">
 	  <table border="0" cellpadding="2" cellspacing="0" width="100%"  bordercolor="#111111">
 	   <tr>
@@ -92,7 +36,46 @@
   	      </table>
   	   </tr>
   	   </table></div>
-  	   <table border="0" cellspacing="0" cellpadding="0"><td><img name="progress" src="html/pixel.green[IFN modeplay]_s[/IFN].gif" width="1" height="5"></td></table>
+
+<script language="JavaScript">
+<!--
+var _progressEnd = [IF songduration]{songduration}[/IF][IFN songduration]1[/IFN];
+var _progressAt = [IF songtime]{songtime}[/IF][IFN songtime]0[/IFN];
+var p = 1;
+
+// Update the progress dialog with the current state
+function ProgressUpdate() 
+&lbrc;
+	[IF modeplay]_progressAt++;[/IF]
+	if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
+	if (document.all) //if IE 4+
+	&lbrc;
+		p = (document.body.clientWidth / _progressEnd) * _progressAt;
+		//document.all.progressBar.innerWidth = p+" ";
+		eval("document.progressBar.width=p");
+	&rbrc;
+	else if (document.getElementById) //else if NS6+
+	&lbrc;
+		p = (document.width / _progressEnd) * _progressAt;
+		document.getElementById("progressBar").width=p+" ";
+		//eval("document.progressBar.width=p");
+	&rbrc;
+	setTimeout("ProgressUpdate()", 1000);
+&rbrc;
+
+function Click() 
+&lbrc;
+	if (document.all||document.getElementById)
+	document.write('<table border="0" cellspacing="0" cellpadding="0"><td height="5"><img id="progressBar" name="progressBar" src="html/pixel.green[IFN modeplay]_s[/IFN].gif" width="1" height="5"></td></table>');
+	ProgressUpdate()
+&rbrc;
+
+if (document.all||document.getElementById)
+	Click()
+else
+	window.onload=Click
+-->
+</script>
       <div class="nowplaying">
 	   <table border="0" cellspacing="0" cellpadding="0" width="100%">
        <tr>
@@ -104,8 +87,7 @@
 				<p class="label"><img src="html/images/spacer.gif" border="0" width="2" height="14">[IF modeplay][S PLAYING][/IF]
                 [IF modepause][S PAUSED_ON][/IF]
                 [IF modestop][S STOPPED_ON][/IF]
-                [IF currentsong]<b>{currentsong}</b> [S OUT_OF] <b>&nbsp;{songcount}</b>&nbsp;<a class="label" href="status_header.html?p0=button&p1=modefunction_playlist->zap&player={%player}&start={start}">[zap]</a>[/IF]
-		</p>
+                [IF currentsong]<b>{currentsong}</b> [S OUT_OF] <b>&nbsp;{songcount}</b>&nbsp;<a class="label" href="status_header.html?p0=button&p1=modefunction_playlist->zap&player={%player}&start={start}">[zap]</a>[/IF]:</p>
                 <p><img src="html/images/spacer.gif" border="0" width="5"><a class="songtitle" href="songinfo.html?songurl={%itempath}&player={%player}" target="browser">{title}</a>
                 [IF duration]&nbsp;({&duration})[/IF][IF bitrate]&nbsp;({bitrate})[/IF]</p>
                 [IFN coverart]<script language="JavaScript">top.document.getElementById('player_frame').rows = '215, *';</script>
