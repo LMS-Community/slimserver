@@ -129,7 +129,7 @@
       [% END %] [% IF itempath %] 
       <tr> 
         <td class="nowrap"> [% "LOCATION" | string %][% "COLON" | string %]</td>
-        <td>[% itempath | unuri | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a> </td>
+        <td>[% itempath | unuri | utf8decode | html %] <a href="[% download | uri %]">([% "DOWNLOAD" | string %])</a> </td>
       </tr>
       [% END %] [% IF modtime %] 
       <tr> 

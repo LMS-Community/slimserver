@@ -1503,6 +1503,12 @@ sub _addSongInfo {
 			$loc = Slim::Utils::Misc::pathFromFileURL($loc);
 		}
 
+		# We need to turn the utf8 flag back on, after it's been
+		# stripped, so the url encoding will be correct.
+		if ($Slim::Utils::Misc::locale eq 'utf8') {
+			$loc = Slim::Utils::Misc::utf8decode($loc);
+		}
+
 		my $curdir = Slim::Utils::Prefs::get('audiodir');
 
 		if (!$curdir) {

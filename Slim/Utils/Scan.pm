@@ -485,8 +485,24 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			my $cacheentryref = Slim::Music::Info::cachedPlaylist( $playlistpath );
 
 			if ($cacheentryref) {
-				$numitems = (push @$listref, @{$cacheentryref}) - $startingsize;
+
+				for my $entry (@$cacheentryref) {
+
+					# pathFromFileURL above will turn utf8
+					# into the local code page. If that
+					# happens to be utf8, make sure the
+					# octet sequence is correct.
+					if ($Slim::Utils::Misc::locale eq 'utf8') {
+						$entry = Slim::Utils::Misc::utf8encode($entry);
+					}
+
+					push @$listref, $entry;
+				}
+
+				$numitems = (scalar @$listref) - $startingsize;
+
 			} else {
+
 				$numitems = 0;
 			}
 			

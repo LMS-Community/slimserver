@@ -28,11 +28,6 @@ BEGIN {
 		import Scalar::Util qw(weaken);
 		1;
 	};
-
-	# XXX - dsully for decoding utf8 from the database
-	if ($] > 5.007) {
-		require Encode;
-	}
 }
 
 use overload
@@ -1185,16 +1180,6 @@ sub sth_to_objects {
 		$sth->bind_columns(\(@data{ @{ $sth->{NAME_lc} } }));
 		push @rows, {%data} while $sth->fetch;
 	};
-
-	# XXX - dsully - This is sub-optimal. DBI doesn't handle UTF-8 coming from the
-	# database very well yet. Hopefully it will be fixed before we ship.
-	if ($] > 5.007) {
-		for my $row (@rows) {
-			for my $key (keys %{$row}) {
-				Encode::_utf8_on($row->{$key});
-			}
-		}
-	}
 
 	return $class->_croak("$class can't $sth->{Statement}: $@", err => $@)
 		if $@;

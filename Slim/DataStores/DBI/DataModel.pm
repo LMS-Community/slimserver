@@ -656,6 +656,23 @@ sub print {
 	}
 }
 
+# overload Class::DBI's get, because DBI doesn't support auto-flagging of utf8
+# data retrieved from the db, we need to do it ourselves.
+sub get {
+	my $self = shift;
+	my $attr = shift;
+
+	my $data = $self->SUPER::get($attr, @_);
+
+	# I don't like the hardcoded list - but we don't want to flag
+	# everything. url's will get munged otherwise. - dsully
+	if ($] > 5.007 && $attr =~ /^(?:(?:name|title)(?:sort)?|item|value|text)$/o) {
+		Encode::_utf8_on($data);
+	}
+
+	return $data;
+}
+
 1;
 
 __END__

@@ -30,8 +30,11 @@ sub matchCase {
 	my $s = shift || return undef;
 
 	# Upper case and fold latin1 diacritical characters into their plain versions, surprisingly useful.
-	$s =~ tr{abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜàáâãäåçèéêëìíîïñòóôõöùúûüÿığĞ}
+	$s =~ tr{abcdefghijklmnopqrstuvwxyzÃ€ÃÃ‚ÃƒÃ„Ã‡ÃˆÃ‰ÃŠÃ‹ÃŒÃÃÃÃ‘Ã’Ã“Ã”Ã•Ã–Ã™ÃšÃ›ÃœÃ Ã¡Ã¢Ã£Ã¤Ã¥Ã§Ã¨Ã©ÃªÃ«Ã¬Ã­Ã®Ã¯Ã±Ã²Ã³Ã´ÃµÃ¶Ã¹ÃºÃ»Ã¼Ã¿Ã½Ã°Ã}
 		{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAACEEEEIIIINOOOOOUUUUAAAAAACEEEEIIIINOOOOOUUUUYYDD};
+
+	# Turn Ã† & Ã¦ into AE
+	$s =~ s/[\x{00C6}\x{00E6}]/AE/go;
 
 	return $s;
 }

@@ -26,13 +26,10 @@ if ($] > 5.007) {
 	require Encode;
 }
 
-use vars qw(@EXPORT @EXPORT_OK);
 use base qw(Exporter);
 
-@EXPORT    = qw(assert bt msg msgf watchDog);
-@EXPORT_OK = qw(assert bt msg msgf watchDog);
-
-$Slim::Utils::Misc::log = "";
+our @EXPORT = qw(assert bt msg msgf watchDog);
+our $log    = "";
 
 BEGIN {
         if ($^O =~ /Win32/) {
@@ -40,11 +37,48 @@ BEGIN {
                 *EINPROGRESS = sub () { 10036 };
 
 		require Win32::Shortcut;
+		require Win32::OLE::NLS;
 
         } else {
                 require Errno;
                 import Errno qw(EWOULDBLOCK EINPROGRESS);
         }
+}
+
+# Find out what code page we're in, so we can properly translate file/directory encodings.
+our $locale = '';
+
+{
+        if ($^O =~ /Win32/) {
+
+		my $langid = Win32::OLE::NLS::GetUserDefaultLangID();
+		my $lcid   = Win32::OLE::NLS::MAKELCID($langid);
+		my $linfo  = Win32::OLE::NLS::GetLocaleInfo($lcid, Win32::OLE::NLS::LOCALE_IDEFAULTANSICODEPAGE());
+
+		$locale = "cp$linfo";
+
+	} elsif ($^O =~ /darwin/) {
+
+		# I believe this is correct from reading:
+		# http://developer.apple.com/documentation/MacOSX/Conceptual/SystemOverview/FileSystem/chapter_8_section_6.html
+		$locale = 'utf8';
+
+	} else {
+
+		my $lc = POSIX::setlocale(0) || 'C';
+
+		# If the locale is C or POSIX, that's ASCII - we'll set to iso-8859-1
+		# Otherwise, normalize the codeset part of the locale.
+		if ($lc eq 'C' || $lc eq 'POSIX') {
+			$lc = 'iso-8859-1';
+		} else {
+			$lc = lc((split(/\./, $lc))[1]);
+		}
+
+		$lc =~ s/utf-8/utf8/gi;
+
+		$locale = $lc;
+	}
 }
 
 sub blocking {   
@@ -94,7 +128,7 @@ sub findbin {
 		$path = undef;
 	}
 	
-	$::d_paths && msg("Found binary $path for $executable\n");
+	$::d_paths && msgf("Found binary %s for %s\n", defined $path ? $path : 'undef', $executable);
 
 	return $path;	
 }
@@ -139,7 +173,7 @@ sub pathFromWinShortcut {
 
 	return $path;
 }
-	
+
 sub pathFromFileURL {
 	my $url = shift;
 	my $file;
@@ -168,11 +202,10 @@ sub pathFromFileURL {
 		msg("pathFromFileURL: $url isn't a file URL...\n");
 		bt();
 	}
-	
-	if ($file && $] > 5.007 && Slim::Utils::OSDetect::OS() eq "win") {
-		eval { Encode::from_to($file, 'utf8', 'iso-8859-1') };
-	}
-	
+
+	# convert from the utf8 back to the local codeset.
+	eval { Encode::from_to($file, 'utf8', $locale) };
+
 	if (!defined($file))  {
 		$::d_files && msg("bad file: url $url\n");
 	} else {
@@ -187,13 +220,32 @@ sub fileURLFromPath {
 	
 	return $path if (Slim::Music::Info::isURL($path));
 
-	if ($path && $] > 5.007 && Slim::Utils::OSDetect::OS() eq "win") {
-		eval { Encode::from_to($path, 'iso-8859-1', 'utf8') };
-	}
-	
+	# convert from the the local codeset to utf8
+	eval { Encode::from_to($path, $locale, 'utf8') };
+
 	my $uri  = URI::file->new($path);
 	$uri->host('');
 	return $uri->as_string;
+}
+
+sub utf8decode {
+	my $string = shift;
+
+	if ($string && $] > 5.007) {
+		return Encode::decode('utf8', $string);
+	}
+
+	return $string;
+}
+
+sub utf8encode {
+	my $string = shift;
+
+	if ($string && $] > 5.007) {
+		return Encode::encode('utf8', $string);
+	}
+
+	return $string;
 }
 
 sub anchorFromURL {
@@ -323,7 +375,7 @@ sub fixPath {
 		$file =~ s/\Q$audiodir\E//;
 		$fixed = catfile($audiodir, $file);
 	}
-	
+
 	$::d_paths && ($file ne $fixed) && msg("*****fixed: " . $file . " to " . $fixed . "\n");
 	$::d_paths && ($file ne $fixed) && ($base) && msg("*****base: " . $base . "\n");
 
@@ -376,12 +428,21 @@ sub descendVirtual {
 	# with the path separator, catdir('','foo') will return something unexpected like
 	# 'Macintosh HD:foo'.	I guess this is a bug in catdir...
 	my $ret;
+
 	if (!defined($curVP) || $curVP eq '') {
 		$ret=$component;
 	} else {
 		$ret=catdir($curVP,$component);
 	}
+
+	# Always turn the utf8 flag back on - pathFromFileURL 
+	# (via virtualToAbsolute) will strip it.
+	if ($ret && $] > 5.007) {
+		Encode::_utf8_on($ret);
+	}
+
 	$::d_paths && msg("descendVirtual returning catdir($curVP, $component) == $ret\n");
+
 	return $ret;
 }
 
@@ -422,6 +483,14 @@ sub virtualToAbsolute {
 		$curdir = Slim::Utils::Prefs::get('audiodir');
 	}
 
+	# Always unescape ourselves
+	$virtual = Slim::Web::HTTP::unescape($virtual);
+
+	# The incoming may be utf8 - flag it.
+	if ($locale eq 'utf8') {
+		Encode::_utf8_on($virtual);
+	}
+
 	return undef if (!$curdir);
 	$curdir = fileURLFromPath($curdir);	
 	my @levels = ();
@@ -439,17 +508,18 @@ sub virtualToAbsolute {
 
 	my @items;
 	foreach	$level (@levels) {
-		next if $level eq "";
-# this was breaking songinfo and other pages when using windows .lnk files.
-#		last if $level eq "..";
 
-# optimization for pre-cached imported playlists.
+		next if $level eq "";
+
+		# this was breaking songinfo and other pages when using windows .lnk files.
+		#last if $level eq "..";
+
+		# optimization for pre-cached imported playlists.
 		if (Slim::Music::Info::isPlaylistURL($curdir)) {
 			my $listref = Slim::Music::Info::cachedPlaylist(Slim::Utils::Misc::fileURLFromPath($curdir));
 			if ($listref) {
 				return @{$listref}[$level];
 			}
-			
 		} 
 		
 		if (Slim::Music::Info::isPlaylist(Slim::Utils::Misc::fileURLFromPath($curdir))) {

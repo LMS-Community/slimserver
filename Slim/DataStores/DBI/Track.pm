@@ -207,7 +207,8 @@ sub setTracks {
 }
 
 sub setDirItems {
-	my $self = shift;
+	my $self  = shift;
+	my @items = @_;
 	
 	for my $item (Slim::DataStores::DBI::DirlistTrack->tracksOf($self->id)) {
 		$item->delete();
@@ -215,7 +216,12 @@ sub setDirItems {
 
 	my $i = 0;
 
-	for my $item (@_) {
+	for my $item (@items) {
+
+		# Store paths properly encoded as utf8 in the db.
+		if ($Slim::Utils::Misc::locale ne 'utf8') {
+			$item = Slim::Utils::Misc::utf8encode($item);
+		}
 
 		Slim::DataStores::DBI::DirlistTrack->create({
 			dirlist  => $self,

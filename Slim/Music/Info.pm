@@ -101,11 +101,6 @@ sub init {
 	
 	$MP3::Info::v2_to_v1_names{'TBP'} = 'BPM';
 	$MP3::Info::v2_to_v1_names{'TBPM'} = 'BPM';
-
-	#turn on unicode support
-#	if (!MP3::Info::use_mp3_utf8(1)) {	
-#		$::d_info && Slim::Utils::Misc::msg("Couldn't turn on unicode support.\n");
-#	};
 }
 
 sub getCurrentDataStore {
@@ -696,7 +691,13 @@ sub plainTitle {
 	} else {
 		if (isFileURL($file)) {
 			$file = Slim::Utils::Misc::pathFromFileURL($file);
+
+			# pathFromFileURL turns the file url from utf8 into
+			# the local code page - but we need to store utf8 in
+			# the database for the TITLE, so flip it back.
+			Encode::from_to($file, $Slim::Utils::Misc::locale, 'utf8');
 		}
+
 		if ($file) {
 			$title = (splitdir($file))[-1];
 		}

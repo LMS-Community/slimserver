@@ -1464,6 +1464,8 @@ sub newSkinTemplate {
 			'nbsp' => \&nonBreaking,
 			'uri' => \&URI::Escape::uri_escape_utf8,
 			'unuri' => \&URI::Escape::uri_unescape,
+			'utf8decode' => \&Slim::Utils::Misc::utf8decode,
+			'utf8encode' => \&Slim::Utils::Misc::utf8encode,
 		},
 
 		EVAL_PERL => 1,
