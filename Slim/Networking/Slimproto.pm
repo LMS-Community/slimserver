@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.7 2003/08/03 18:49:13 sadams Exp $
+# $Id: Slimproto.pm,v 1.8 2003/08/04 19:18:15 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -169,6 +169,8 @@ sub client_readable {
 
 	$::d_protocol && msg("Slimproto client readable: ".$ipport{$s}."\n");
 
+	my $total_bytes_read=0;
+
 GETMORE:
 	if (!($s->connected)) {
 		$::d_protocol && msg("Slimproto connection closed by peer.\n");
@@ -200,11 +202,16 @@ GETMORE:
 
 	my $indata;
 	my $bytes_read = $s->sysread($indata, $bytes_remaining);
+	if (defined($bytes_read)) {
+		$total_bytes_read += $bytes_read;
+	}
 
 	if (!defined($bytes_read) || ($bytes_read == 0)) {
-#		$::d_protocol && msg("Slimproto half-close from client: ".$ipport{$s}."\n");
-#		slimproto_close($s);
-#		return;
+		if ($total_bytes_read == 0) {
+			$::d_protocol && msg("Slimproto half-close from client: ".$ipport{$s}."\n");
+			slimproto_close($s);
+			return;
+		}
 
 		$::d_protocol && msg("no more to read.\n");
 		return;
