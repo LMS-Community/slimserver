@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.65 2004/04/19 17:07:14 dean Exp $
+# $Id: Pages.pm,v 1.66 2004/04/20 20:40:57 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -1889,9 +1889,7 @@ sub anchor {
 	my $suppressArticles = shift;
 	
 	if ($suppressArticles) {
-		my $articles =  Slim::Utils::Prefs::get("ignoredarticles");
-		$articles =~ s/\s+/|/g;
-		$item =~ s/^($articles)\s+//i;
+		$item = Slim::Music::Info::ignoreCaseArticles($item);
 	}
 
 	return Slim::Music::Info::matchCase(substr($item, 0, 1));
