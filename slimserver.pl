@@ -154,6 +154,7 @@ use vars qw(
 	$d_info
 	$d_ir
 	$d_itunes
+	$d_itunes_verbose
 	$d_moodlogic
 	$d_mdns
 	$d_os
@@ -496,6 +497,7 @@ to the console via stderr:
     --d_info         => MP3/ID3 track information
     --d_ir           => Infrared activity
     --d_itunes       => iTunes synchronization information
+    --d_itunes_verbose => verbose iTunes Synchronization information
     --d_moodlogic    => MoodLogic synchronization information
     --d_mdns         => Multicast DNS aka Zeroconf aka Rendezvous information
     --d_os           => Operating system detection information
@@ -562,6 +564,7 @@ sub initOptions {
 		'd_info'			=> \$d_info,
 		'd_ir'				=> \$d_ir,
 		'd_itunes'			=> \$d_itunes,
+		'd_itunes_verbose'	=> \$d_itunes_verbose,
 		'd_moodlogic'		=> \$d_moodlogic,
 		'd_mdns'			=> \$d_mdns,
 		'd_os'				=> \$d_os,
