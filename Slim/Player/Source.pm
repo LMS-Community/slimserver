@@ -401,6 +401,7 @@ sub playmode {
 		} elsif ($newmode eq "play") {
 
 			$everyclient->readytosync(0);
+			$client->fade_volume($FADEVOLUME) unless $client->volume();
 			$everyclient->volume($client->volume(),1);
 			$everyclient->streamBytes(0);
 			
