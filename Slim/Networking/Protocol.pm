@@ -78,30 +78,36 @@ sub init {
 		Proto     => 'udp',
 		LocalPort => $SERVERPORT,
 		LocalAddr => $main::localClientNetAddr
-	);
-	if (!$udpsock) {
+
+	) or do {
 		msg("Problem: There is already another copy of the SlimServer running on this machine.\n");
+		# XXX - exiting in a deep sub is kinda bad. should propagate
+		# up. Too bad perl doesn't have real exceptions.
 		exit 1;
-	}
+	};
 	
 	defined(Slim::Utils::Misc::blocking($udpsock,0)) || die "Cannot set port nonblocking";
 
 	Slim::Networking::Select::addRead($udpsock, \&readUDP);
 	
-# say hello to the old slimp3 clients that we might remember...
+	# say hello to the old slimp3 clients that we might remember...
 	my $clients = Slim::Utils::Prefs::get("clients");
 
 	$::d_protocol && msg("Going to say hello to everybody we remember: $clients\n");
 	
 	if (defined($clients)) {
+
 		foreach my $addr (split( /,/, $clients)) {
-			#make sure any new preferences get set to default values
+
+			# make sure any new preferences get set to default values
 			assert($addr);
-			next unless ($addr=~/\d+\.\d+\.\d+\.\d+:\d+/); # skip client addrs that aren't dotted-4 with a port
+
+			# skip client addrs that aren't dotted-4 with a port
+			next unless ($addr=~/\d+\.\d+\.\d+\.\d+:\d+/);
 
 			Slim::Network::Discovery::sayHello($udpsock, ipaddress2paddr($addr));
 			
-			#throttle the broadcasts
+			# throttle the broadcasts
 			select(undef,undef,undef,0.05);
 		}
 	}
@@ -116,6 +122,7 @@ sub readUDP {
 		$clientpaddr = recv($sock,$msg,1500,0);
 		
 		if ($clientpaddr) {
+
 			# check that it's a message type we know: starts with i r 2 d a or h (but not h followed by 0x00 0x00)
 			if ($msg =~ /^(?:[ir2a]|h(?!\x00\x00))/) {
 				my $client = getUdpClient($clientpaddr, $sock, $msg);
@@ -154,13 +161,16 @@ sub readUDP {
 				my $clientipport = shift(@ecArgs);
 				my $client = Slim::Player::Client::getClient($clientipport);
 				Slim::Control::Command::execute($client, \@ecArgs);
+
 			} else {
+
 				if ($::d_protocol) {
 					my ($clientport, $clientip) = sockaddr_in($clientpaddr);
 					msg("ignoring Client: ".inet_ntoa($clientip).":$clientport that sent bogus message $msg\n");
 				}
 			}
 		}
+
 	} while $clientpaddr;
 }
 
@@ -177,7 +187,6 @@ sub ipaddress2paddr {
 	return $paddr;
 }
 
-
 ###################
 # return the client based on IP address and socket.  will create a new one if
 # necessary 
@@ -187,7 +196,7 @@ sub getUdpClient {
 	my ($msgtype, $deviceid, $revision, @mac) = unpack 'aCCxxxxxxxxxH2H2H2H2H2H2', $msg;
 	
 	my $mac = join(':', @mac);
-	my $id = $mac;
+	my $id  = $mac;
 
 	my $client = Slim::Player::Client::getClient($id);
 
@@ -199,6 +208,7 @@ sub getUdpClient {
 #	}
 
 	if (!defined($client)) {
+
 		if ($msgtype eq 'h') {
 
 			$revision = int($revision / 16) + ($revision % 16)/10.0;
@@ -207,17 +217,16 @@ sub getUdpClient {
 			
 			if ($deviceid != 0x01) { return undef;}
 
-			$::d_protocol && msg("$id ($msgtype) deviceid: $deviceid revision: $revision address: " .  paddr2ipaddress($clientpaddr) . "\n");
-			$client = Slim::Player::SLIMP3->new(
-					$id, 
-					$clientpaddr,
-					$revision,
-					$sock,
-				);			
+			$::d_protocol && msg("$id ($msgtype) deviceid: $deviceid revision: $revision address: " .
+				paddr2ipaddress($clientpaddr) . "\n");
+
+			$client = Slim::Player::SLIMP3->new($id, $clientpaddr, $revision, $sock);			
+
 			$client->macaddress($mac);
 			$client->init();
 
 		} else {
+
 			Slim::Network::Discovery::sayHello($sock, $clientpaddr);
 			return undef;
 		} 
@@ -227,3 +236,5 @@ sub getUdpClient {
 	
 	return $client
 }
+
+1;
