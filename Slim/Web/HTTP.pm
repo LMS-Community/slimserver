@@ -847,9 +847,9 @@ sub generateHTTPResponse {
 
 		if ($path =~ /status/) {
 
-			my ($line1, $line2) = Slim::Display::Display::curLines($client);
-			$line1 = '' if (!defined($line1));
-			$line2 = '' if (!defined($line2));
+			my $parsed = $client->parseLines(Slim::Display::Display::curLines($client));
+			my $line1 = $parsed->{line1} || '';
+			my $line2 = $parsed->{line2} || '';
 			$$body = $line1 . $CRLF . $line2 . $CRLF;
 
 		} else {
