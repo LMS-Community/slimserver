@@ -29,18 +29,12 @@ function chooseBrowser(value)
 		url="{webroot}browseid3.html?genre=*&artist=*[IF nofolder]&nofolder=1[/IF]";
 		break
 		case 3:
-		url="{webroot}browse.html?dir=__playlists[IF nofolder]&nofolder=1[/IF]";
+		url="{webroot}browseid3.html?genre=*&artist=*&album=*[IF nofolder]&nofolder=1[/IF]";
 		break
 		case 4:
-		url="{webroot}search.html?type=artist[IF nofolder]&nofolder=1[/IF]";
+		url="{webroot}browse.html?dir=__playlists[IF nofolder]&nofolder=1[/IF]";
 		break
 		case 5:
-		url="{webroot}search.html?type=album[IF nofolder]&nofolder=1[/IF]";
-		break
-		case 6:
-		url="{webroot}search.html?type=song[IF nofolder]&nofolder=1[/IF]";
-		break
-		case 7:
 		url="{webroot}browse.html?";
 		break
 	&rbrc;
@@ -62,16 +56,14 @@ function chooseBrowser(value)
    <table border="0" cellpadding="0" cellspacing="0" width="100%">
 	<FORM name="browse" method="Get" action="{webroot}search.html"><td width="35%"><center><nobr>
 	<SELECT NAME="type" class="stdedit" onchange="chooseBrowser(selectedIndex)"  width="65">
-	<OPTION [EQ browseby BROWSE_BY_GENRE]selected[/EQ] value="song">[S BROWSE_BY_GENRE]</OPTION>
-	<OPTION [EQ browseby BROWSE_BY_ARTIST]selected[/EQ] value="artist">[S BROWSE_BY_ARTIST]</OPTION>
-	<OPTION [EQ browseby BROWSE_BY_ALBUM]selected[/EQ] value="album">[S BROWSE_BY_ALBUM]</OPTION>
+	<OPTION [EQ browseby BROWSE_BY_GENRE]selected[/EQ] value="">[S BROWSE_BY_GENRE]</OPTION>
+	<OPTION [EQ type artist]selected[/EQ][EQ browseby BROWSE_BY_ARTIST]selected[/EQ] value="artist">[S BROWSE_BY_ARTIST]</OPTION>
+	<OPTION [EQ type album]selected[/EQ][EQ browseby BROWSE_BY_ALBUM]selected[/EQ] value="album">[S BROWSE_BY_ALBUM]</OPTION>
+	<OPTION [EQ type song]selected[/EQ][EQ browseby BROWSE_BY_SONG]selected[/EQ] value="song">[S BROWSE_BY_SONG]</OPTION>
 	<OPTION [IF playlist]selected[/IF]>[S SAVED_PLAYLISTS]</OPTION>
-	<option [EQ type artist]selected[/EQ] value="artist">[S SEARCH_FOR_ARTISTS]</option>
-	<option [EQ type album]selected[/EQ] value="album">[S SEARCH_FOR_ALBUMS]</option>
-	<option [EQ type song]selected[/EQ] value="song">[S SEARCH_FOR_SONGS]</option>
 	[IFN nofolder]<OPTION [IF browse]selected[/IF] value="song">[S BROWSE_MUSIC_FOLDER]</OPTION>[/IFN]
-	</SELECT> [S FOR]
-	<input type=text class="stdedit" name="query" value="{query}" size="20">
+	</SELECT>[NE browseby BROWSE_BY_GENRE] [S FOR]
+	<input type=text class="stdedit" name="query" value="{query}" size="20">[/NE]
 	<input type=hidden value="{player}" name="player">
 	[IF nofolder]<input type=hidden value="1" name="nofolder">[/IF]</p><nobr></center></td></FORM>
 	</table></div>

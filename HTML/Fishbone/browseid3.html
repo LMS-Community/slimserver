@@ -5,10 +5,10 @@
    <table border="0" cellspacing="0" cellpadding="0" width="100%">
 	<tr><td>{pwd_list}</td></tr></table>
 	[IF browselist_pagebar]<p>{browselist_pagebar}[/IF][IF browselist_header]&nbsp;|&nbsp;{browselist_header}</p>[/IF]
-    [IF coverart]
+    [NE browseby BROWSE_BY_SONG][IF coverart]
 		<a href="status_header.html?p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="statusframe">
 		<img src="/music/{%coverartpath}/cover.jpg" border="0"></a>
-	[/IF]
+	[/IF][/NE]
     <table cellspacing="0" border="0" cellpadding="0" width="100%">
       {browse_list}
     </table>
