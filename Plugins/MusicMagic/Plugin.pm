@@ -372,6 +372,8 @@ sub exportFunction {
 	$MMSport = Slim::Utils::Prefs::get('MMSport') unless $MMSport;
 	$MMSHost = Slim::Utils::Prefs::get('MMSHost') unless $MMSHost;
 
+	$::d_musicmagic && msg("MusicMagic: export mode is: $export\n");
+
 	if ($export eq 'start') {
 
 		$http = Slim::Player::Protocols::HTTP->new({
@@ -616,8 +618,10 @@ sub exportFunction {
 		}
 		
 		# skipping to done here.  Duplicates currently crash the linux version of MusicMagic.
-		$export = 'duplicates' if ($initialized !~ m/1\.1\.3$/);
-		return 1;
+		if ($initialized !~ m/1\.1\.3$/) {
+			$export = 'duplicates';
+			return 1;
+		}
 	}
 	
 	if ($export eq 'duplicates') {
