@@ -44,7 +44,7 @@
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			<tr>
 				[% IF coverThumb %]<td valign="top">
-					<script language="JavaScript">top.document.getElementById('player_frame').rows = '270, *';</script><a href="browsedb.html?level=0&hierarchy=album,track&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser"><img src="/music/[% coverThumb %]/thumb.jpg" border="0" height="100">
+					<script language="JavaScript">top.document.getElementById('player_frame').rows = '270, *';</script><a href="browsedb.html?level=0&hierarchy=track&album=[% track.album.id | uri %]&player=[% player | uri %]" target="browser"><img src="/music/[% coverThumb %]/thumb.jpg" border="0" height="100">
 				</td>[% END %]
 				<td><img src="html/images/spacer.gif" border="0" width="5"></td>
 				<td valign="top" width="100%"><nobr>
@@ -211,9 +211,9 @@
 			[% END %]
 		</table></div>
 		
-		<center>[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %]
-		[% IF current_playlist %]<nobr>[% current_playlist_name %]</nobr>
-		([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])[% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
+		<nobr><center>[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %]
+		[% IF current_playlist %][% current_playlist_name %]
+		([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])[% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]</nobr>
 		</p>
 		[% IF cansave %]&nbsp;<a target="browser" href="browse.html?player=[% player | uri %]&dir=__playlists%2f__current.m3u[% IF current_playlist_modified %]&current=[% current_playlist_name %][% END %]">[% "SAVE" | string %]</a> | [% END %]
 		<a href="status.m3u?player=[% player | uri %]" target="playlist">[% "DOWNLOAD" | string %]</a> |

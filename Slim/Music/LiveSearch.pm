@@ -74,8 +74,7 @@ sub outputAsXHTML {
 				push @results, renderItem(
 					$rowType,
 					$type,
-					$item->id(),
-					($item->can('title') ? $item->title() : $item->name()),
+					$item,
 					$player
 				);
 			}
@@ -104,10 +103,21 @@ sub outputAsXHTML {
 }
 
 sub renderItem {
-	my ($rowType, $type, $id, $name, $player) = @_;
+	my ($rowType, $type, $item, $player) = @_;
 
 	my $hierarchy = $Slim::Web::Pages::hierarchy{$type} || '';
-
+	my $id = $item->id(),
+	
+	my $name;
+	
+	if ($item->can('url')) {
+		$name = Slim::Music::Info::standardTitle(undef,$item);
+	} elsif ($item->can('title')) {
+		$name = $item->title();
+	} else {
+		$name = $item->name();
+	}
+	
 	return <<EOF;
 	<tr>
 	<td width="100%" class="$rowType">
@@ -117,13 +127,13 @@ sub renderItem {
 	<td align="right" class="$rowType"></td>
 	<td align="right" width="13" class="$rowType">
 
-	      <nobr><a href="status_header.html?command=playlist&amp;sub=loadtracks\&amp;$type=$id\&amp;player=$player" target="status">
-			<img src="html/images/b_play.gif" width="13" height="13" alt="Play" title="Play"/></a></nobr> 
+		<nobr><a href="status_header.html?command=playlist&amp;sub=loadtracks\&amp;$type=$id\&amp;player=$player" target="status">
+		<img src="html/images/b_play.gif" width="13" height="13" alt="Play" title="Play"/></a></nobr> 
 
 	</td>
 	<td  align="right" width="13" class="$rowType">
-	      <nobr><a href="status_header.html?command=playlist&amp;sub=addtracks\&amp;$type=$id\&amp;player=$player" target="status">
-			<img src="html/images/b_add.gif" width="13" height="13" alt="Add to playlist" title="Add to playlist"/></a></nobr> 
+		<nobr><a href="status_header.html?command=playlist&amp;sub=addtracks\&amp;$type=$id\&amp;player=$player" target="status">
+		<img src="html/images/b_add.gif" width="13" height="13" alt="Add to playlist" title="Add to playlist"/></a></nobr> 
 	</td>
 	</tr>
 EOF

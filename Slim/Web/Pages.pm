@@ -1350,13 +1350,17 @@ sub livesearch {
 
 		# Tell the template not to do a livesearch request anymore.
 		$params->{'liveSearch'} = 0;
-
+		my @results;
+		
 		for my $item (@$data) {
 
 			$params->{'type'} = $item->[0];
+			push @results, $item->[1];
 
 			_fillInSearchResults($params, $item->[1], undef, []);
 		}
+		
+		$client->param('searchResults',\@results) if defined $client;
 
 		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
 	}
@@ -1531,6 +1535,7 @@ sub search {
 		$descend = undef;
 	}
 
+	$client->param('searchResults',$results) if defined $client;
 	_fillInSearchResults($params, $results, $descend, [], $ds);
 
 	return Slim::Web::HTTP::filltemplatefile("search.html", $params);

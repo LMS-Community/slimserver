@@ -2,10 +2,10 @@
   <td  width="100%" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
 	  [% IF anchor %]<a name="[% anchor %]"></a>[% END %]
       [% IF descend %] [% IF not nobrowse %]<a href="[% IF descend != 1 %]browse.html?dir=[% descend | uri %]&player=[% player | uri %][% END %]">[% END %][% title | html %][% IF not nobrowse %]</a>[% END %]  [% END %]
-      [% IF not descend %]<a href="songinfo.html?item=[% item %]&player=[% player | uri %]">[% title | html %]</a>
-         [% IF includeAlbum && album; "FROM" | string; %] 
+      [% IF not descend %]<a href="songinfo.html?item=[% item %]&player=[% player | uri %]">[% title | html %]</a>HI
+         [% IF includeAlbum && album %][% "FROM" | string %]
          <i><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>[% END %]
-         [% IF includeArtist && artist; "BY" | string; %]
+         [% IF includeArtist && artist %][% "BY" | string %]
          <a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.contributorsOfType('artist').first.id %]&player=[% player | uri %]" target="browser">[% artist | html %]</a></i>[% END %]
       [% END %]
   </td>

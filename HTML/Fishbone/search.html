@@ -1,14 +1,55 @@
+[% pagetitle = "SEARCH" | string %]
+[% pageicon = 'Search' %]
+[% IF liveSearch %][% bodyscript = 'onload="document.searchForm.query.focus();"' %][% END %]
 <html>
 	<head>
 		<title>[% pagetitle %]</title>
 		<link rel="stylesheet" href="[% webroot %]slimserver.css">
-	</head>
+		<script type="text/javascript" src="/html/livesearch.js"></script>
+	<script type="text/javascript"> liveSearchInit(); </script>
 	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="top.document.getElementById('home').rows = '87, *';">
-	[% pagetitle = "SEARCH" | string %]
-[% pageicon = 'MUSIC' %]
+	
 [% IF numresults != '-1' %]
 	[% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %][% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %][% IF type == 'song' %][% "SONGSMATCHING" | string %][% END %] "[% query %]"[% "COLON" | string %][% numresults %]<p>
 [% END %]
+
+	[% IF liveSearch %]
+	<h1>Live Search</H1>
+	<center><form id="searchForm" name="searchForm" method="GET" action="livesearch.html">
+		<input type="text" id="livesearch" name="query" size="40" autocomplete="off" onkeypress="liveSearchStart()" />
+		<input name="submit" type=submit class="stdclick" value="[% "SEARCH" | string %]"><p>
+		<input type="hidden" value="1" name="manualSearch">
+		<input type="hidden" value="[% player %]" name="player">
+		<!-- <div id="LSResult" style="display: none;"><ul id="LSShadow"><li>&#160;</li></ul></div> -->
+	</form></center>
+	[% END %]
+	<br>
+	[% IF numresults != '-1' %]<table cellpadding="0" cellspacing="0" border="0" width="100%">
+	<tr>
+		<td class="listing">&nbsp;
+			[% "THIS_ENTIRE_PLAYLIST" | string %]
+		</td>
+		<td class="listing" width="11" align="center">&nbsp;</td>
+		<td  class="listing" width="3" align="center">&nbsp;</td>
+		<td class="listing" width="11" align="center">
+			<nobr><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&sub=playtracks&listref=searchResults"  target="status"><img src="html/play.this.gif" border=0 align="center" width="5" height="9" alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a></nobr>
+		</td>
+		<td class="listing" width="3" align="center">&nbsp;</td>
+		<td class="listing" width="11" align="center">
+			<nobr><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&sub=playtracks&listref=searchResults"  target="status"><img src="html/add.gif" border=0 align="center" width="8" height="8" alt='Add' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a></nobr>
+		</td>
+		<td class="listing" width="3" align="center">&nbsp;</td>
+		<td class="listing" width="11" align="center">&nbsp;</td>
+		<td  class="listing" width="3" align="center">&nbsp;</td>
+	</tr>
+	</table>
+	[% END %]
+	<div id="LSResult" style="display: none;"></div>
+
+		[% IF searchError %]
+			[% searchError %]
+		[% END %]
+		
     [% IF searchlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>[% END %]
      [% IF searchlist_header %]<p>[% searchlist_header %][% "COLON" | string %]</p>[% END %]
    <table border="0" cellspacing="0" cellpadding="0" width="100%">

@@ -172,7 +172,7 @@ A.linkbtn:hover {
 	line-height: 100%;
 }
 
-.listing, .listing2
+.listing, .listing2, .even, .odd
 {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	background:black;
@@ -180,6 +180,10 @@ A.linkbtn:hover {
 	margin-top:1px;
 	margin-bottom:1px;
 	border-top:solid 1px #333;
+}
+
+img {
+	border-style: none;
 }
 
 TD.listing A, TD.listing2 A

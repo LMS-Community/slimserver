@@ -1,35 +1,83 @@
-<html>
-  <head>
-    <title>[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</title>
-    <link rel="stylesheet" href="slimserver.css">
-  </head>
-  <body bgcolor="#FFFFFF">
+[% pagetitle = 'Search' %]
+[% pageicon = 'Search' %]
+[% bodyscript = 'onload="document.searchForm.query.focus();"' %]
+[% PROCESS pageheader.html %]
+<script type="text/javascript" src="/html/livesearch.js"></script>
+<script type="text/javascript"> liveSearchInit(); </script>
+<TR height="44"> 
+  <TD width="4" height="44"><IMG SRC="html/images/spacer.gif" WIDTH=8 HEIGHT=39 ALT=""></TD>
+				<td valign="top" class="medgrey" height="44">
+					<table cellspacing="0" width=100% >
+						<tr height="5">
+							<td width="8" height="5"><img src="html/images/spacer.gif" width=8 height=5 alt=""></td>
+							<td height="5"><img src="html/images/spacer.gif" width=305 height=5 alt=""></td>
+							<td width="4" height="5"><img src="html/images/spacer.gif" width=4 height=5 alt=""></td>
+						</tr>
+						<tr>
+							<td width="8"><img src="html/images/spacer.gif" width=8 height=8 alt=""></td>
+							
+		<td class="exlisting" valign=top><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / <a href="search.html?player=[% player | uri %]">[% "SEARCH" | string %]</a></td>
+							<td width="4"></td>
+						</tr>
+						<tr height="5">
+							<td width="8" height="5"><img src="html/images/spacer.gif" width=8 height=5 alt=""></td>
+							<td height="5"><img src="html/images/spacer.gif" width=305 height=5 alt=""></td>
+							<td width="4" height="5"></td>
+						</tr>
+					</table>
+				</td>
+				<TD width="4" height="44">
+			<p><IMG SRC="html/images/spacer.gif" WIDTH=4 HEIGHT=19 ALT=""></p></TD>
+			</TR>
+<tr height="100%">
+				<td width="4" height="100%"></td>
+				
+	<td valign="top" height="100%"> 
+	<p>&nbsp;</p>
+	[% IF liveSearch %]
 
-    <p>
+	<form id="searchForm" name="searchForm" method="GET" action="livesearch.html">
+		<input type="text" id="livesearch" name="query" size="40" autocomplete="off" onkeypress="liveSearchStart()" />
 
-    <h3>[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</h3>
-    <p>
-    <a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> /
-    <a href="search.html?player=[% player | uri %]&type=[% type %]">[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</a>
-        <p><hr><p>
+	[% ELSE %]
 
-	<form method="get" action="search.html">
-	[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %][% "COLON" | string %]
-	<input type=text class="stdedit" name="query" value="[% query %]" size=40>
-	<input type=submit class="stdclick" value=[% "SEARCH" | string %]>
-	<input type=hidden value="[% type %]" name="type">
-	<input type=hidden value="[% player %]" name="player">
+	<form id="searchForm" name="searchForm" method="GET" action="livesearch.html">
+		<input type="text" id="livesearch" name="query" size="40" value="[% query %]"/>
+
+	[% END %]
+
+		<input name="submit" type=submit class="stdclick" value="[% "SEARCH" | string %]"><p>
+		<input type="hidden" value="1" name="manualSearch">
+		<input type="hidden" value="[% player %]" name="player">
+		<!-- <div id="LSResult" style="display: none;"><ul id="LSShadow"><li>&#160;</li></ul></div> -->
 	</form>
+	<br>
+		<div id="LSResult" style="display: none;"></div>
 
-    <p><hr>
-    <p>[% IF numresults != '-1' %][% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %][% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %][% IF type == 'song' %][% "SONGSMATCHING" | string %][% END %] "[% query %]"[% "COLON" | string %][% numresults %]</p><p>[% END %]</p>
+		[% IF searchError %]
+			[% searchError %]
+		[% END %]
 
-    [% IF searchlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>[% END %]
-    [% IF searchlist_header %]<p>[% searchlist_header %][% "COLON" | string %]</p>[% END %]
-   <table border="0" cellspacing="0" cellpadding="4">
-       [% browse_list %]
-    </table>
-    [% IF searchlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>[% END %]
-  </body>
-</html>
+	<p></p>
+	[% IF searchlist_pagebar %]
+		<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
+	[% END %][% IF searchlist_header %]
+		<p>[% searchlist_header %][% "COLON" | string %]</p>
+	[% END %] 
+	<table cellspacing="0" cellpadding="4">
+		[% browse_list %] 
+	</table>
+	[% IF numresults != '-1' %]
+		<center><p>[% "ALL_SONGS" | string %]</p>
+			<p><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&sub=playtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a>, 
+			<a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&sub=addtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a>
+		</p></center>
+	[% END %]
+	[% IF searchlist_pagebar %]
+		<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
+	[% END %] 
+	<p>&nbsp;</p></td>
+	<td width="4" height="100%"></td>
+</tr>
+[% PROCESS pagefooter.html %]
 

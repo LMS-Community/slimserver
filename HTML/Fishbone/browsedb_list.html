@@ -2,13 +2,11 @@
 	<td  class="listing">&nbsp;
 		[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
 		[% IF descend %]<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% text | html %]</a>[% END %]
-		[% IF not descend %]<b><a href="songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&player=[% player | uri %]">[% text | html %]</a></b>
-			[% IF includeArtist && artist %][% "BY" | string %]
-				<a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist %]</a>
-			[% END %]
+		[% IF not descend %]<b><a href="songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&player=[% player | uri %]">[% text | html %][% IF year %] ([% year %])[% END %]</a></b>
+			[% IF includeArtist && artist %][% "BY" | string %] 
+			<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.contributorsOfType('artist').first.id %]&player=[% player | uri %]" target="browser">[% artist | html %]</a>[% END %]
 			[% IF includeAlbum && album %][% "FROM" | string %]
-				<i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album %]</a></i>
-			[% END %]
+			<i><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>[% END %]
 		[% END %]
 	</td>
 	<td class="listing" width="11" align="center">
@@ -31,7 +29,7 @@
 		[% IF not descend %]<nobr><a href="status_header.html?p0=playlist&p1=deleteitem&p2=[% itempath | uri %]&player=[% player | uri %]" target="status"><img src="html/subtract.gif" border=0 align="center" width="8" height="8" alt='Delete' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a></nobr>[% END %]
 	</td>
 	[% FOREACH mixer = mixerlinks.values.sort %]
-	[% PROCESS $mixer %]
+		[% PROCESS $mixer %]
 	[% END %]
 	<td class="listing" width="3" align="center">
 		&nbsp;

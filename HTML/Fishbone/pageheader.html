@@ -15,13 +15,6 @@
 				((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
 		}
 		
-		function goAdvanced(value)
-		{
-			if (value == "ADVANCEDSEARCH") {
-				doSearch("","ADVANCEDSEARCH");
-			}
-		}
-		
 		function getHomeCookie(Name) 
 		{
 			var search = Name + "=";
@@ -42,11 +35,15 @@
 		}
 		
 		
-		function doSearch(value,option)
+		function doSearch(value,option,submit)
 		{
 			var url;
 			switch(option)
 			{
+				case "MANSEARCH":
+					url = "search.html?"
+					suffix = "searchchoice=SEARCH&manualsearch=1"
+				break
 			[% IF additionalLinks.browse %]
 				[% FOREACH link = additionalLinks.search %]
 				case "[% link.key %]":
@@ -56,7 +53,8 @@
 				[% END %]
 			[% END %]
 			}
-			parent.browser.location=url + suffix + '&query=' + value + '&player=[% player %]'
+			if (submit) {suffix = suffix + "&manualSearch=1"}
+			parent.browser.location=url + suffix + '&query=' + value + '&player=[% player %]';
 		}
 		
 		function chooseBrowser(value,option)
@@ -93,7 +91,7 @@
 	[% END %]>
 	<div class="menu1" width="100%">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13">
-				<td width="33%" height="13" align="center"><nobr><a class="menu1" href="[% webroot %]home.html" target="header">[% IF home %]<b>[% END %][% "HOME" | string %][% IF home %]</b>[% END %]</nobr></td>
+				<td width="33%" height="13" align="center"><nobr><a class="menu1" href="[% webroot %]home.html?player=[% player | uri %]" target="header">[% IF home %]<b>[% END %][% "HOME" | string %][% IF home %]</b>[% END %]</nobr></td>
 				<td>
 					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
 				</td>
@@ -115,7 +113,7 @@
 		<div class="menu2" width="100%" [% IF setup || help %]style='position:absolute;top:-100;'[% END %]>
 			<table border="0" cellpadding="0" cellspacing="0" width="100%">
 				<td>
-				<FORM name="browser" method="Get" action="/home.html" target="header"><td><center><nobr>
+				<FORM name="browser" method="Get" action="[% webroot %]home.html" target="header"><td><center><nobr>
 					<SELECT NAME="browse" class="stdedit" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
 					[% IF additionalLinks.browse %]
 						[% FOREACH link = additionalLinks.browse %]
@@ -125,8 +123,9 @@
 				</SELECT><nobr></center></td>
 					<input type=hidden value="[% page %]" name="page">
 			</FORM>
-				<FORM name=searcher method="Get" action="/home.html" onSubmit="doSearch(query.value,search.value);"><td><nobr>
-					<SELECT NAME="search" class="stdedit" onChange="goAdvanced(options[selectedIndex].value)">
+				<FORM name=searcher method="Get" action="[% webroot %]home.html" onSubmit="doSearch(query.value,search.value,1);"><td><nobr>
+					<SELECT NAME="search" class="stdedit" onChange="doSearch(query.value,search.value)">
+						<OPTION SELECTED value="MANSEARCH" label="[% SEARCHFOR_SONGS %]">[% "SEARCHFOR_SONGS" | string %]</OPTION>
 					[% IF additionalLinks.search %]
 						[% FOREACH link = additionalLinks.search.keys %]
 						<OPTION value="[% link %]" label="[% link | string %]">[% link | string %]</OPTION>

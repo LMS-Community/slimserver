@@ -2,11 +2,11 @@
   <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
 	  [% IF anchor %]<a name="[% anchor %]"></a>[% END %]
       [% IF descend %][% IF not nobrowse %]<a href="browse.html?dir=[% descend | uri %]&player=[% player | uri %]">[% END %][% title | html %][% IF not nobrowse %]</a>[% END %][% END %]
-      [% IF not descend %]<a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% title | html %]</a>
-         [% IF album %][% "FROM" | string %][% END %] 
-         <i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i> 
-         [% IF artist %][% "BY" | string %] [% END %] 
-         <a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist | html %]</a>
+      [% IF not descend %]HI<a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% title | html %]</a>
+         [% IF includeAlbum && album %][% "FROM" | string %]
+         <i><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>[% END %]
+         [% IF includeArtist && artist %][% "BY" | string %]
+         <a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.contributorsOfType('artist').first.id %]&player=[% player | uri %]" target="browser">[% artist | html %]</a></i>[% END %]
       [% END %]
   </td>
   <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>

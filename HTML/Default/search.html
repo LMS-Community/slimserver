@@ -46,7 +46,7 @@
 
 	[% END %]
 
-		<input name="submit" type=submit class="stdclick" value=[% "SEARCH" | string %]><p>
+		<input name="submit" type=submit class="stdclick" value="[% "SEARCH" | string %]"><p>
 		<input type="hidden" value="1" name="manualSearch">
 		<input type="hidden" value="[% player %]" name="player">
 		<!-- <div id="LSResult" style="display: none;"><ul id="LSShadow"><li>&#160;</li></ul></div> -->
@@ -67,6 +67,12 @@
     <table cellspacing="0" cellpadding="4">
       [% browse_list %] 
     </table>
+    [% IF numresults != '-1' %]
+		<center><p>[% "ALL_SONGS" | string %]</p>
+		<p><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&sub=playtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a>, 
+			<a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&sub=addtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a>
+		</p></center>
+	[% END %]
     [% IF searchlist_pagebar %]
     <p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
     [% END %] 
