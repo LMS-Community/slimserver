@@ -1,6 +1,6 @@
 package Slim::Formats::Wav;
 
-# $Id: Wav.pm,v 1.5 2003/11/29 01:03:26 daniel Exp $
+# $Id: Wav.pm,v 1.6 2003/12/05 16:56:43 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ my $bail;  # nasty global to know when we had a fatal error on a file.
 
 # Given a file, return a hash of name value pairs,
 # where each name is a tag name.
-sub get_wavtag {
+sub getTag {
 
 	my $file = shift || "";
 

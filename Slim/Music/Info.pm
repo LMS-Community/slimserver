@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.33 2003/12/05 00:23:30 dean Exp $
+# $Id: Info.pm,v 1.34 2003/12/05 16:56:44 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -19,8 +19,9 @@ use Slim::Formats::Movie;
 use Slim::Formats::AIFF;
 use Slim::Formats::FLAC;
 use Slim::Formats::MP3;
-use Slim::Formats::Wav;
 use Slim::Formats::Ogg;
+use Slim::Formats::Wav;
+use Slim::Formats::WMA;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
@@ -87,6 +88,9 @@ my @infoCacheItems = (
 
 # hash of three letter content types, indexed by file suffixes (past the dot)  'aiff' => 'aif'
 %Slim::Music::Info::suffixes = ();
+
+# hash of types that the slim server recoginzes internally e.g. aif => audio
+%Slim::Music::Info::slimTypes = ();
 
 #
 # global caches
@@ -222,25 +226,26 @@ sub loadTypesConfig {
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @typesFiles, $ENV{'HOME'} . "/Library/SlimDevices/types.conf";
 		push @typesFiles, "/Library/SlimDevices/types.conf";
-		push @typesFiles, $ENV{'HOME'} . "/Library/SlimDevices/slimserver-types.conf";
-		push @typesFiles, "/Library/SlimDevices/slimserver-types.conf";
+		push @typesFiles, $ENV{'HOME'} . "/Library/SlimDevices/custom-types.conf";
+		push @typesFiles, "/Library/SlimDevices/custom-types.conf";
 	}
-	push @typesFiles, catdir($Bin, 'slimserver-types.conf');
-	push @typesFiles, catdir($Bin, '.slimserver-types.conf');
+	push @typesFiles, catdir($Bin, 'custom-types.conf');
+	push @typesFiles, catdir($Bin, '.custom-types.conf');
 	
 	
 	foreach my $typeFileName (@typesFiles) {
-		if (open my $typesFile, "<$typeFileName") {
+		if (open my $typesFile, $typeFileName) {
 			for my $line (<$typesFile>) {
 				# get rid of comments and leading and trailing white space
 				$line =~ s/#.*$//;
 				$line =~ s/^\s//;
 				$line =~ s/\s$//;
 	
-				if ($line =~ /^(\S+)\s+(\S+)\s+(\S+)/) {
+				if ($line =~ /^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)/) {
 					my $type = $1;
 					my @suffixes = split ',', $2;
 					my @mimeTypes = split ',', $3;
+					my @slimTypes = split ',', $4;
 					
 					foreach my $suffix (@suffixes) {
 						next if ($suffix eq '-');
@@ -249,7 +254,12 @@ sub loadTypesConfig {
 					
 					foreach my $mimeType (@mimeTypes) {
 						next if ($mimeType eq '-');
-						$Slim::Music::Info::mimeTypes{$mimeType} = $type
+						$Slim::Music::Info::mimeTypes{$mimeType} = $type;
+					}
+
+					foreach my $slimType (@slimTypes) {
+						next if ($slimType eq '-');
+						$Slim::Music::Info::slimTypes{$type} = $slimType;
 					}
 					
 					# the first one is the default
@@ -1685,17 +1695,19 @@ sub readTags {
 
 			# Extract tag and audio info per format
 			if ($type =~ /^mp[23]$/) {
-				$tempCacheEntry = Slim::Formats::MP3::get_mp3tag($filepath);
+				$tempCacheEntry = Slim::Formats::MP3::getTag($filepath);
 			} elsif ($type eq "ogg") {
-				$tempCacheEntry = Slim::Formats::Ogg::get_oggtag($filepath);
+				$tempCacheEntry = Slim::Formats::Ogg::getTag($filepath);
 			} elsif ($type eq "flc") {
-				$tempCacheEntry = Slim::Formats::FLAC::get_flactag($filepath);
+				$tempCacheEntry = Slim::Formats::FLAC::getTag($filepath);
 			} elsif ($type eq "wav") {
-				$tempCacheEntry = Slim::Formats::Wav::get_wavtag($filepath);
+				$tempCacheEntry = Slim::Formats::Wav::getTag($filepath);
 			} elsif ($type eq "aif") {
-				$tempCacheEntry = Slim::Formats::AIFF::get_aifftag($filepath);		
+				$tempCacheEntry = Slim::Formats::AIFF::getTag($filepath);		
+			} elsif ($type eq "wma") {
+				$tempCacheEntry = Slim::Formats::WMA::getTag($filepath);
 			} elsif ($type eq "mov") {
-				$tempCacheEntry = Slim::Formats::Movie::get_movietag($filepath);		
+				$tempCacheEntry = Slim::Formats::Movie::getTag($filepath);		
 			}
 
 			$::d_info && !defined($tempCacheEntry) && Slim::Utils::Misc::msg("Info: no tags found for $filepath\n");
@@ -2068,7 +2080,8 @@ sub fileLength {
 sub isFile {
 	my $fullpath = shift;
 
-	$fullpath !~ /\.(?:mp2|mp3|m3u|pls|ogg|cue|wav|aiff|aif|m4a|mov|flac)$/i && return 0;
+	# check against types.conf
+	return 0 if $Slim::Music::Info::suffixes{ (split /\./, $fullpath)[-1] };
 
 	my $stat = (-f $fullpath && -r $fullpath ? 1 : 0);
 
@@ -2151,16 +2164,12 @@ sub isAIFF {
 sub isSong {
 	my $fullpath = shift;
 	my $type = shift;
-	if (!defined($type)) {
-		$type = contentType($fullpath);
+
+	$type = contentType($fullpath) unless defined $type;
+
+	if ($Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} eq 'audio') {
+		return $type;
 	}
-	return ($type && (($type eq 'mp3') || 
-					  ($type eq 'mp2') || 
-					  ($type eq 'mov') || 
-					  ($type eq 'flc') || 
-					  ($type eq 'ogg') || 
-					  ($type eq 'wav') || 
-					  ($type eq 'aif')));
 }
 
 sub isDir {
@@ -2195,43 +2204,22 @@ sub isKnownType {
 
 sub isList {
 	my $fullpath = shift;
-	my $is = 0;
 
 	my $type = contentType($fullpath);
-	return ($type && ( $type eq 'dir' || $type eq 'm3u' || $type eq 'pls' || $type eq 'cue' || $type eq 'lnk' || $type eq 'itu'));
 
-# -- inlined!
-#	if (isPlaylist($fullpath) ||
-#		isDir($fullpath) ||
-#		isWinShortcut($fullpath)
-#	) {
-#		$is = 1;
-#	}
-#
-#	$::d_info && Slim::Utils::Misc::msgf("isList(%s) == %d\n", $fullpath, $is );
-#
-#	return $is;
+	if ($Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} =~ /list/) {
+		return $type;
+	}
 }
 
 sub isPlaylist {
 	my $fullpath = shift;
 
 	my $type = contentType($fullpath);
-	return ($type && ( $type eq 'm3u' || $type eq 'pls' || $type eq 'cue' || $type eq 'itu'));
 
-# -- inlined!
-#	my $is = 0;
-#	
-#	if (isM3U($fullpath) ||
-#		isPLS($fullpath) ||
-#		isCUE($fullpath) ||
-#		isITunesPlaylistURL($fullpath)) {
-#		$is = 1;
-#	}
-#
-#	$::d_info && Slim::Utils::Misc::msgf("isPlaylist(%s) == %d\n", $fullpath, $is );
-#
-#	return $is;
+	if ($Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} eq 'playlist') {
+		return $type;
+	}
 }
 
 sub isSongMixable {

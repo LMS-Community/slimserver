@@ -1,6 +1,6 @@
 package Slim::Formats::MP3;
 
-# $Id: MP3.pm,v 1.1 2003/12/02 06:14:54 daniel Exp $
+# $Id: MP3.pm,v 1.2 2003/12/05 16:56:43 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,7 +10,7 @@ package Slim::Formats::MP3;
 use strict;
 use MP3::Info ();
 
-sub get_mp3tag {
+sub getTag {
 
 	my $file = shift || "";
 

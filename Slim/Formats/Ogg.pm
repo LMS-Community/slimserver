@@ -1,6 +1,6 @@
 package Slim::Formats::Ogg;
 
-# $Id: Ogg.pm,v 1.4 2003/11/29 01:03:26 daniel Exp $
+# $Id: Ogg.pm,v 1.5 2003/12/05 16:56:43 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -40,7 +40,7 @@ my %tagMapping = (
 
 # Given a file, return a hash of name value pairs,
 # where each name is a tag name.
-sub get_oggtag {
+sub getTag {
 
 	my $file = shift || "";
 

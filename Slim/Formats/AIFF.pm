@@ -9,7 +9,7 @@ use strict;
 
 # Given a file, return a hash of name value pairs,
 # where each name is a tag name.
-sub get_aifftag {
+sub getTag {
 
 	my $file = shift || "";
 
