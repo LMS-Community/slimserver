@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.41 2004/02/03 16:44:10 dean Exp $
+# $Id: Pages.pm,v 1.42 2004/02/11 09:46:56 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -387,6 +387,7 @@ sub status {
 	$$main_form_ref{'refresh'} = Slim::Utils::Prefs::get("refreshRate");
 	
 	if (!defined($client)) {
+		$$main_form_ref{'refresh'} = 10; #fixed faster rate for noclients
 		return Slim::Web::HTTP::filltemplatefile("status_noclients.html", $main_form_ref);
 	} elsif ($client->needsUpgrade()) {
 		$$main_form_ref{'player_needs_upgrade'} = '1';
@@ -1268,7 +1269,6 @@ sub browseid3 {
 					} else {
 						$list_form{'coverthumb'} = 0;
 					}
-					$list_form{'itempath'} = $item;
 					$list_form{'itemnumber'} = $itemnumber;
 					$list_form{'artwork'} = 1;
 					$list_form{'size'} = Slim::Utils::Prefs::get('thumbSize');
