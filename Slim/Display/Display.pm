@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.7 2003/11/10 23:14:56 dean Exp $
+# $Id: Display.pm,v 1.8 2003/12/19 19:18:48 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -189,16 +189,6 @@ Slim::Hardware::VFD::setCustomChar('middleprogress4',
 				   0b00011111, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('middleprogress5',
-				 ( 0b00011111, 
-				   0b00011111, 
-				   0b00011111, 
-				   0b00011111, 
-				   0b00011111, 
-				   0b00011111, 
-				   0b00011111, 
-				   0b00000000 ));
-
 Slim::Hardware::VFD::setCustomChar('rightprogress0',
 				 ( 0b00011100, 
 				   0b00000010, 
@@ -292,7 +282,7 @@ sub progressBar {
 		} elsif ($dots < $charwidth) {
 			$chart .= Slim::Hardware::VFD::symbol('middleprogress'.$dots);						
 		} else {
-			$chart .= Slim::Hardware::VFD::symbol('middleprogress5');								
+			$chart .= Slim::Hardware::VFD::symbol('solidblock');								
 		}
 		$dots -= $charwidth;
 	}
@@ -371,7 +361,7 @@ sub balanceBar {
 			if ($i < $edgepos) {
 				$chart .= Slim::Hardware::VFD::symbol('middleprogress0');
 			} else {
-				$chart .= Slim::Hardware::VFD::symbol('middleprogress5');
+				$chart .= Slim::Hardware::VFD::symbol('solidblock');
 			}			
 		}
 	}
@@ -386,7 +376,7 @@ sub balanceBar {
 			}
 		} else {
 			if ($i < $edgepos) {
-				$chart .= Slim::Hardware::VFD::symbol('middleprogress5');
+				$chart .= Slim::Hardware::VFD::symbol('solidblock');
 			} else {
 				$chart .= Slim::Hardware::VFD::symbol('middleprogress0');
 			}			
