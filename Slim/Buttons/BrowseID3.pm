@@ -577,6 +577,12 @@ sub loadDir {
 		$find->{'track'}       = singletonRef($song)   if specified($song);
 	}
 
+	# Limit ourselves to artists only by default.
+	if (($find->{'contributor'} || $find->{'contributor.name'}) && !Slim::Utils::Prefs::get('composerInArtists')) {
+
+		$find->{'contributor.role'} = $Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'};
+	}
+
 	# These really shouldn't be unrolling the (potentially large) array
 	# But there's some wackiness when I try to make it use the ref directly.
 	# The wackiness is due to caching of result sets in Slim::Datastores::DBI::DBIStore

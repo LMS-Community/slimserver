@@ -294,6 +294,12 @@ sub count {
 	my $field = shift;
 	my $findCriteria = shift || {};
 
+	# The user may not want to include all the composers / conductors
+	if ($field eq 'contributor' && !Slim::Utils::Prefs::get('composerInArtists')) {
+
+		$findCriteria->{'contributor.role'} = $Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'};
+	}
+
 	# Optimize the all case
 	if (scalar(keys %$findCriteria) == 0) {
 
