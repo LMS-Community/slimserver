@@ -68,7 +68,10 @@ sub open {
 	my $proxy   = Slim::Utils::Prefs::get('webproxy');
 
 	my $peeraddr = "$server:$port";
-	if ($proxy) {
+
+	# Don't proxy for localhost requests.
+	if ($proxy && $server ne 'localhost' && $server ne '127.0.0.1') {
+
 		$peeraddr = $proxy;
 		($server, $port) = split /:/, $proxy;
 		$::d_remotestream && msg("Opening connection using proxy $proxy\n");
