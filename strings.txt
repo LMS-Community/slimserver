@@ -8561,11 +8561,12 @@ NOT
 	JP	ない
 	SE	inte
 
+# The space before the French : is there on purpose.
 COLON
 	DE	:
 	EN	: 
 	ES	:
-	FR	: 
+	FR	 : 
 	JP	:
 	NO	:
 	SE	: 
