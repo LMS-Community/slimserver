@@ -14,7 +14,8 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->columns(Stringify => qw/title/);
 
-	$class->add_constructor('hasArtwork' => 'artwork_path IS NOT NULL');
+	# This has the same sort order as %DataModel::sortFieldMap{'album'}
+	$class->add_constructor('hasArtwork' => 'artwork_path IS NOT NULL ORDER BY titlesort, disc');
 
 	$class->has_many(tracks => 'Slim::DataStores::DBI::Track', { order_by => 'tracknum'});
 }
