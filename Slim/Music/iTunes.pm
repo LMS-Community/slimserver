@@ -21,7 +21,7 @@ my $lastMusicLibraryFinishTime = undef;
 my $isScanning = 0;
 my $opened = 0;
 my $locked = 0;
-
+my $iBase = '';
 my $ITUNESSCANINTERVAL = 60;
 
 #$::d_itunes = 1;
@@ -319,7 +319,6 @@ sub doneScanning {
     # Abandon all hope ye who enter here...
 ###########################################################################################
 sub scanFunction {
-
 	# this assumes that iTunes uses file locking when writing the xml file out.
 	if (!$opened) {
 		my $file = findMusicLibraryFile();
@@ -425,6 +424,12 @@ sub scanFunction {
 				# cacheEntry{'???'} = $curTrack{'Sample Rate'};
 				my $url = $curTrack{'Location'};
 				if (Slim::Music::Info::isFileURL($url)) {
+					if (Slim::Utils::OSDetect::OS() eq 'unix') {
+						my $base = Slim::Utils::Prefs::get('mp3dir');
+						$::d_itunes && msg("Correcting for Linux: $iBase to $base\n");
+						$url =~ s/$iBase/$base/isg;
+						$url = Slim::Web::HTTP::unescape($url);
+					};
 					$url =~ s/\/$//;
 				}
 				if ($url) {
@@ -477,10 +482,10 @@ sub scanFunction {
 		} elsif ($curLine eq "<key>Application Version</key>") {
 			$applicationVersion = getValue();
 			$::d_itunes && msg("iTunes application version: $applicationVersion\n");
-#		} elsif ($curLine eq "<key>Music Folder</key>") {
-#			my $musicPath = getValue();
-#			$musicPath = Slim::Utils::Misc::pathFromFileURL($musicPath);
-#			$::d_itunes && msg("iTunes: found the music folder: $musicPath\n");
+		} elsif ($curLine eq "<key>Music Folder</key>") {
+			$iBase = getValue();
+			#$iBase = Slim::Utils::Misc::pathFromFileURL($iBase);
+			$::d_itunes && msg("iTunes: found the music folder: $iBase\n");
 #			Slim::Utils::Prefs::set("mp3dir", $musicPath);
 		} elsif ($curLine eq "<key>Tracks</key>") {
 			$inTracks = 1;
