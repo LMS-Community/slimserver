@@ -379,7 +379,7 @@ sub init {
 			
 			for my $import (keys %{$Imports}) {
 			
-				if (defined $Imports->{$import}->{'mixer'}) {
+				if (defined $Imports->{$import}->{'mixer'} && $Imports->{$import}->{'use'}) {
 					push @mixers, $import;
 				}
 			}
