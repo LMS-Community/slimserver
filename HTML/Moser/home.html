@@ -1,4 +1,4 @@
-[%- players = myClientState.clients.sort("name") -%]
+[%- players = myClientState.clients -%]
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
@@ -44,7 +44,7 @@
   <h4>[% "PLUGINS" | string %]</h4>
   <ul>
    [%- FOREACH key = additionalLinks.plugins.keys %]
-    <li><a href="[% additionalLinks.plugins.$key | html %]player=[% player | uri %]">[% key %]</a></li>
+    <li><a href="[% additionalLinks.plugins.$key | html %]player=[% player | uri %]">[% key | string %]</a></li>
    [%- END %]
   </ul>[% END %]
  [%- IF additionalLinks.help %]

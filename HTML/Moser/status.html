@@ -93,7 +93,7 @@ window.onload=startList;
           <li><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=-10&amp;player=[% player | uri %]&amp;start=[% start %]"><span>[% "VOLUME_SOFTER" | string %]</span></a></li>
          [%- FOREACH volsetting = [0,10,20,30,40,50,60,70,80,90,100] %]
           <li
-            [%- IF (loop.first && volume == volsetting) || volume > loop.prev && volume <= volsetting %] class="currctl"
+            [%- IF (loop.first && volume == volsetting) || (!loop.first && volume > loop.prev && volume <= volsetting) %] class="currctl"
             [%- END %]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=[% volsetting %]&amp;player=
             [%- player | uri %]&amp;start=[% start %]"><span>[% loop.count %]</span></a></li>
          [%- END %]
