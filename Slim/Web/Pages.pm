@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.54 2004/03/17 16:46:02 dean Exp $
+# $Id: Pages.pm,v 1.55 2004/03/21 21:54:32 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -489,7 +489,7 @@ sub status {
 		if (Slim::Player::Playlist::song($client)) { 
 			my $dur = Slim::Music::Info::durationSeconds(Slim::Player::Playlist::song($client));
 			if ($dur) { $dur = int($dur); }
-			$params->{'duration'} = $dur; 
+			$params->{'durationseconds'} = $dur; 
 		}
 
 		#
@@ -506,9 +506,9 @@ sub status {
 
 			$params->{'modeplay'} = "Play";
 
-			if (defined($params->{'duration'}) && defined($params->{'songtime'})) {
+			if (defined($params->{'durationseconds'}) && defined($params->{'songtime'})) {
 
-				my $remaining = $params->{'duration'} - $params->{'songtime'};
+				my $remaining = $params->{'durationseconds'} - $params->{'songtime'};
 
 				if ($remaining < $params->{'refresh'}) {	
 					$params->{'refresh'} = ($remaining < 2) ? 2 : $remaining;
