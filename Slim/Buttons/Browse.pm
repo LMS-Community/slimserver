@@ -144,11 +144,12 @@ sub init {
 
 						return Slim::Music::Info::plainTitle($j);
 
-					} elsif ($obj->tracknum()) {
+					} elsif (defined $obj && $obj->tracknum()) {
 
 						return $obj->tracknum();
 
-					} else {
+					} elsif (defined $obj) {
+
 						return $obj->title();
 					}
 				}
