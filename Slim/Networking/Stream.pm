@@ -368,7 +368,7 @@ sub sendNextChunk {
 
 	my $streamState = $streamState{$client};
 	
-	if (($streamState eq 'stop') || ($streamState eq 'eof')) { 
+	if (($streamState eq 'stop')) { 
 		sendEmptyChunk($client);
 		# there is no more data to send
 		return 0;
