@@ -16,7 +16,7 @@
 	[% IF liveSearch %]
 	<h1>Live Search</H1>
 	<center><form id="searchForm" name="searchForm" method="GET" action="livesearch.html">
-		<input type="text" id="livesearch" name="query" size="40" autocomplete="off" onkeypress="liveSearchStart()" />
+		<input type="text" id="livesearch" name="query" size="40" autocomplete="off" onkeydown="liveSearchStart()" />
 		<input name="submit" type=submit class="stdclick" value="[% "SEARCHFOR_SONGS" | string %]"><p>
 		<input type="hidden" value="1" name="manualSearch">
 		<input type="hidden" value="[% player %]" name="player">

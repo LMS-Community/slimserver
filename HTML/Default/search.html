@@ -37,7 +37,7 @@
 	[% IF liveSearch %]
 
 	<form id="searchForm" name="searchForm" method="GET" action="livesearch.html">
-		<input type="text" id="livesearch" name="query" size="40" autocomplete="off" onkeypress="liveSearchStart()" />
+		<input type="text" id="livesearch" name="query" size="40" autocomplete="off" onkeydown="liveSearchStart()" />
 
 	[% ELSE %]
 
