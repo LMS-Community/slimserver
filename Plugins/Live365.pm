@@ -543,7 +543,7 @@ sub new {
 
 		close $socket;
 
-		$response =~ /^HTTP\/1.1 302 Found/ or do {
+		$response =~ /^HTTP\/1\.\d 302/ or do {
 			$::d_plugins && msg( "Live365.protocolHandler got an unexpected response: $response.\n" );
 			return undef;
 		};
