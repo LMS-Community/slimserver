@@ -1,5 +1,5 @@
 # RssNews Ticker v1.0
-
+# $Id: RssNews.pm,v 1.3 2004/11/05 02:32:29 dave Exp $
 # Copyright (c) 2004 Slim Devices, Inc. (www.slimdevices.com)
 
 # Based on BBCTicker 1.3 which had this copyright...
@@ -85,7 +85,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Prefs;
 
-$VERSION = substr(q$Revision: 1.2 $,10);
+$VERSION = substr(q$Revision: 1.3 $,10);
 my %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
@@ -126,13 +126,13 @@ PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE
 	EN	Select Current Screensaver
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE_TITLE
-	EN	Current Screensaver (not RSS News)
+	EN	Current Screensaver
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATED
 	EN	Use RSS News as current screensaver
 
 PLUGIN_RSSNEWS_SCREENSAVER_DEFAULT
-	EN	Use default screensaver
+	EN	Use default screensaver (not RSS News)
 
 PLUGIN_RSSNEWS_SCREENSAVER_ENABLE
 	EN	Activating ticker as current screensaver
@@ -508,7 +508,12 @@ sub autoScrollTimer {
         $wait_time = $screensaver_sec_per_channel;
     } else {
         my ($line1, $line2) = lines($client);
-		assert($line2, 'Line2 not defined.\n');
+		$::d_plugins && assert($line2, 'Line2 not defined.\n');
+		# when is line2 not defined?  Occasionally, but I'm not sure why.
+		# its not really a problem because the screensaver will simply go the next topic, but this code prevents any message from appearing.
+		if (!$line2) {
+			$line2 = '';
+		}
 		if ($client->linesPerScreen() != 1) {
 			$wait_time = length($line2) * $screensaver_sec_per_letter;
 		} else {
