@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.14 2004/04/29 22:21:52 daniel Exp $
+# $Id: Display.pm,v 1.15 2004/05/14 18:10:01 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -626,7 +626,7 @@ my %doublechars = (
 	,'Z' => [$toplinechar . $Ztop , $Zbottom . '_']
 	,'Æ' => [$hardspace . $slash . $backslash . $doublelinechar , $rightvbar . $toplinechar . $toplinechar . 'L']
 	,'Ø' => [$slash . $toplinechar . 'X', $backslash . $Zbottom . $slash]
-	,'ð' => [$rightvbar . $doublelinechar . $backslash , $rightvbar . '_' . $slash]
+	,'Ð' => [$rightvbar . $doublelinechar . $backslash , $rightvbar . '_'  . $slash]
 );
 
 sub addDoubleChar {
@@ -692,9 +692,9 @@ sub doubleSize {
 	$::d_ui && msg("undoubled line1: $line1\n");
 	$::d_ui && msg("undoubled line2: $line2\n");
 	
-	$line2 =~ tr/æ/Æ/;
-	$line2 =~ tr/ø/Ø/;
-	$line2 =~ tr/ð/Ð/;
+	$line2 =~ tr/æøð/ÆØÐ/;
+	$line2 =~ s/[åÅ]/AA/g;
+
 	
 	my $lastch1 = "";
 	my $lastch2 = "";
