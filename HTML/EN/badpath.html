@@ -1,0 +1,24 @@
+<html>
+  <head>
+	[IF playlist]<title>[S SAVED_PLAYLISTS]</title>[/IF]
+	[IFN playlist]<title>[S MUSIC]</title>[/IFN]
+    <link rel="stylesheet" href="slimp3.css">
+  </head>
+  <body bgcolor="#FFFFFF">
+
+    <p>
+
+    <h3>SLIMP3 [S MUSIC]</h3><p>
+
+    <a href="home.html?player={%player}">[S HOME]</a> / 
+	[IF playlist]<a href="browse.html?dir=__playlists&player={%player}">[S SAVED_PLAYLISTS]</a>[/IF]
+	[IFN playlist]<a href="browse.html?player={%player}">[S MUSIC]</a>[/IFN]
+
+    <p><hr><p>
+	[IF playlist][S NEED_PLAYLIST_PATH][/IF]
+	[IFN playlist][S NEED_PATH][/IFN]
+	</p>
+	<p><a href="setup.html?page=server&player={%player}">[S CLICK_HERE]</a> [S TO_GO_TO_SERVER_SETTINGS]
+  </body>
+</html>
+

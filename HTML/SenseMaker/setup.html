@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0040)http://www.ibamba.net/slimp3/library.htm -->
+<HTML><HEAD><TITLE>New Page 2</TITLE>
+<META http-equiv=Content-Language content=en-us>
+<META content="MSHTML 6.00.2800.1141" name=GENERATOR>
+<META content=FrontPage.Editor.Document name=ProgId>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252"><LINK 
+href="html/s-styles.css" type=text/css rel=stylesheet></HEAD>
+
+
+<BODY 
+style="BORDER-RIGHT: 0px; BORDER-TOP: 0px; BORDER-LEFT: 0px; BORDER-BOTTOM: 0px" 
+leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
+<DIV class=masthead>
+  <TABLE style="BORDER-COLLAPSE: collapse" borderColor=#111111 cellSpacing=0 
+cellPadding=0 width=90% border=0>
+    <TBODY>
+      <TR> 
+        <TD width="100%" valign="middle"> <b> <img src="html/spacer.gif" width="1" height="17">SLIMP3 
+          Music Network</b></TD>
+      </TR>
+    </TBODY>
+  </TABLE>
+</DIV>
+
+
+
+<P class=menu1><B><a href="home.html?player={%player}"><font color="#FFFFFF">[S 
+  HOME]</font></a> <font color="#CCCCCC">[IF linktree] / {linktree}[/IF] </font></B></P>
+<P class=menu2>&nbsp;</P>
+
+
+
+
+
+<BODY style="BORDER-RIGHT: white 2px solid; BORDER-TOP: 0px; BACKGROUND: black" 
+leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
+<DIV class=scrollvertical>
+  <TABLE width="100%" height="100%" border=0 cellPadding=2 cellSpacing=0>
+    <TBODY>
+      <TR> 
+        <TD colspan="6" class=listingheadsp> <font color="#999999">[IF warning]<font color="#999999">{warning}[/IF] 
+          [IF children]<font color="#999999">{children}[/IF] [IF siblings]<font color="#999999">{siblings}[/IF] </font></TD>
+        <TD width="16%" class=listingheadsp>&nbsp;</TD>
+      </TR>
+      <TR> 
+        <TD colspan="7" class=listing>[IF warning]
+          <p><b>{warning}</b></p>
+          <hr>
+          [/IF] 
+          <form method="get" action="setup.html">
+            <input type=hidden value="{player}" name="player">
+            <input type=hidden value="{playerid}" name="playerid">
+            <input type=hidden value="{page}" name="page">
+            {GroupList} 
+          </form>
+          [EQ page player] 
+          <h3>[S FORGET_PLAYER]</h3>
+          <p>[S FORGET_PLAYER_DESC]</p>
+          <p><a href="{webroot}home.html?player={%player}&forget={%playerid}">[S 
+            FORGET_PLAYER_LINK]</a></p>
+          <hr>
+          [/EQ] [IF singleChildLink]{singleChildLink}
+          <hr>
+          [/IF] [IF versionInfo]{versionInfo}
+          <hr>
+          [/IF] </TD>
+      </TR>
+      <TR> 
+        <TD width="20%" height="400" class=listing>&nbsp;</TD>
+        <TD width="64%" height="600" align=right class=listing>&nbsp;</TD>
+        <TD width="0%" height="400" class=listing>&nbsp;</TD>
+        <TD width="32%" height="400" class=listing>&nbsp;</TD>
+        <TD width="13%" height="400" class=listing>&nbsp;</TD>
+        <TD width="13%" height="400" class=listing>&nbsp;</TD>
+        <TD width="16%" height="400" class=listing>&nbsp;</TD>
+      </TR>
+    </TBODY>
+  </TABLE>
+</DIV></BODY></HTML>
+

@@ -1,0 +1,12 @@
+<tr>
+  <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN]width="50%">
+      {title} [IF album]from {album}[/IF] by {artist}
+  </td>
+  <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN] align="right" width="10%">  
+    ({song_count})  
+  </td>
+  <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN] align="right" width="10%">      
+    <img src="html/bar_small_first.gif">{song_bar}
+  </td>
+</tr>
+

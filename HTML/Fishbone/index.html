@@ -1,0 +1,15 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+	<link REL="shortcut icon" HREF="{webroot}/favicon.ico" TYPE="image/x-icon">
+<html>
+<title>[S WELCOME_TO_SLIMP3]</title>
+  <frameset cols="45%,*" border="2" framespacing="2">
+    <frameset name="browser_frame" ID="browser_frame" border="0" frameborder="no" framespacing="0" rows="*,0%">
+        <frame src="home.html?player={%player}" name="browser">
+        <frame  src="html/docs/dummy.html?player={%player}" name="dummy" scrolling="no" >
+    </frameset>
+    <frameset name="player_frame" ID="player_frame" border="0" frameborder="no" framespacing="0" rows="228,*">
+	 	<frame name="statusframe" scrolling="no" src="status.html?player={%player}">
+	 	<frame name="playlist" src="playlist.html?player={%player}">
+	</frameset>
+  </frameset>
+</html>

@@ -1,0 +1,88 @@
+<html>
+  <head>
+
+    <meta http-equiv="refresh" content="30; url=status.html?player={%player}&start={start}&refresh=1">
+    <title>[S SLIMP3_MUSIC_PLAYER] [IF player_name]{player_name}[/IF] </title>
+    <link rel="stylesheet" href="slimp3.css">
+  </head>
+  
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#333333">
+  <tr> 
+    <td width="40%" align="left" valign="top"> <p><img src="html/slim_devices_logo2.png" width="243" height="54"> 
+      </p></td>
+    <td width="41%" align="left" valign="top">&nbsp;</td>
+  </tr>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#999999">
+  <tr> 
+    <td width="30" valign="middle" bgcolor="#333333"> <h3> <img src="html/spacer.gif" width="30" height="1"></h3></td>
+    <td valign="middle" bgcolor="#999999"> <h3>[S SLIMP3_MUSIC_PLAYER] [IF player_name]{&player_name}[/IF]<img src="html/spacer.gif" width="8" height="8"></h3></td>
+    <td valign="middle" bgcolor="#999999"><div align="right"><a href="hitlist.html">&gt;&gt;&gt; 
+        SLIMP3 Statistics</a> </div></td>
+  </tr>
+</table>
+<p><img src="html/spacer.gif" width="30" height="8"> </p>
+<p>&nbsp;</p>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="30">&nbsp;</td>
+    <td><p>[IF player_chooser_list] </p>
+      <form method="get" action="{webroot}index.html" target="_top">[S CURRENT_PLAYER] <select name="player">{player_chooser_list}</select><input class="stdclick" type="submit" value="Change"></form>
+      [/IF] [IF modeplay][S PLAYING][/IF] [IF modepause][S PAUSED_ON][/IF] [IF 
+      modestop][S STOPPED_ON][/IF] [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF]: 
+      <b><a href="status.html?player={%player}#currentsong">{songtitle}</a></b> 
+      [IF album]from[/IF] <i><a href="olsonmain.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{&album}</a></i> 
+      [IF artist][S BY] [/IF] <a href="olsonmain.html?genre=*&artist={%artist}&player={%player}" target="browser">{&artist}</a> 
+      [IF songcount] (<a href="status.html?p0=playlist&p1=delete&p2={thissongnum}&player={%player}&start={start}">[S 
+      DELETE]</a>)[/IF] [IFN songcount] [S NOTHING] [/IFN] 
+      <hr>
+      <a href="status.html?p0=playlist&p1=jump&p2=-1&player={%player}">[S PREV]</a> 
+      <a href="status.html?p0=playlist&p1=jump&p2=%2b1&player={%player}">[S SKIP]</a> 
+      <a href="status.html?p0=play&player={%player}">[IF modeplay]<b><font color="#FF0000">[/IF][S 
+      PLAY][IF modeplay]</font></b>[/IF]</a> <a href="status.html?p0=pause&player={%player}">[IF 
+      modepause]<b><font color="#FF0000">[/IF][S PAUSE][IF modepause]</font></b>[/IF]</a> 
+      <a href="status.html?p0=stop&player={%player}">[IF modestop]<b><font color="#FF0000">[/IF][S 
+      STOP][IF modestop]</font></b>[/IF]</a> [S REPEAT]: <a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">[IF 
+      repeatone]<b><font color="#FF0000">[/IF][S ONE][IF repeatone]</font></b>[/IF]</a>/<a 
+                href="status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}">[IF 
+      repeatall]<b><font color="#FF0000">[/IF][S ALL][IF repeatall]</font></b>[/IF]</a>/<a 
+                href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}">[IF 
+      repeatoff]<b><font color="#FF0000">[/IF][S OFF][IF repeatoff]</font></b>[/IF]</a> 
+      [S SHUFFLE]: <a href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF 
+      shuffleon]<b><font color="#FF0000">[/IF][S ON][IF shuffleon]</font></b>[/IF]</a>/<a
+                href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">[IF 
+      shuffleoff]<b><font color="#FF0000">[/IF][S OFF][IF shuffleoff]</font></b>[/IF]</a> 
+      <br>
+      <br>
+      [S VOLUME]: <a href="status.html?p0=mixer&p1=volume&p2=-10&player={%player}&start={start}">[S 
+      VOLUME_SOFTER]</a> <a href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}">[EQ 
+      volume 0]<b><font color="#FF0000">[/EQ]1[EQ volume 0]</font></b>[/EQ]</a> 
+      <a href="status.html?p0=mixer&p1=volume&p2=10&player={%player}&start={start}">[EQ 
+      volume 10]<b><font color="#FF0000">[/EQ]2[EQ volume 10]</font></b>[/EQ]</a> 
+      <a href="status.html?p0=mixer&p1=volume&p2=20&player={%player}&start={start}">[EQ 
+      volume 20]<b><font color="#FF0000">[/EQ]3[EQ volume 20]</font></b>[/EQ]</a> 
+      <a href="status.html?p0=mixer&p1=volume&p2=30&player={%player}&start={start}">[EQ 
+      volume 30]<b><font color="#FF0000">[/EQ]4[EQ volume 30]</font></b>[/EQ]</a> 
+      <a href="status.html?p0=mixer&p1=volume&p2=40&player={%player}&start={start}">[EQ 
+      volume 40]<b><font color="#FF0000">[/EQ]5[EQ volume 40]</font></b>[/EQ]</a> 
+      <a href="status.html?p0=mixer&p1=volume&p2=50&player={%player}&start={start}">[EQ 
+      volume 50]<b><font color="#FF0000">[/EQ]6[EQ volume 50]</font></b>[/EQ]</a> 
+      <a href="status.html?p0=mixer&p1=volume&p2=60&player={%player}&start={start}">[EQ 
+      volume 60]<b><font color="#FF0000">[/EQ]7[EQ volume 60]</font></b>[/EQ]</a> 
+      <a href="status.html?p0=mixer&p1=volume&p2=70&player={%player}&start={start}">[EQ 
+      volume 70]<font color="#FF0000"><b>[/EQ]8[EQ volume 70]</b></font>[/EQ]</a> 
+      <a href="status.html?p0=mixer&p1=volume&p2=80&player={%player}&start={start}">[EQ 
+      volume 80]<b><font color="#FF0000">[/EQ]9[EQ volume 80]</font></b>[/EQ]</a> 
+      <a href="status.html?p0=mixer&p1=volume&p2=90&player={%player}&start={start}">[EQ 
+      volume 90]<b><font color="#FF0000">[/EQ]10[EQ volume 90]</font></b>[/EQ]</a> 
+      <a href="status.html?p0=mixer&p1=volume&p2=100&player={%player}&start={start}">[EQ 
+      volume 100]<b><font color="#FF0000">[/EQ]11[EQ volume 100]</font></b>[/EQ]</a> 
+      <a href="status.html?p0=mixer&p1=volume&p2=%2b10&player={%player}&start={start}">[S 
+      VOLUME_LOUDER]</a> {playlist} </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <title>{pagetitle}</title>
+    <link rel="stylesheet" href="slimp3.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></head>
+  
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#333333">
+  <tr> 
+    <td width="40%" align="left" valign="top"> <p><img src="html/slim_devices_logo.gif" width="243" height="54"> 
+      </p></td>
+    <td width="41%" align="left" valign="top">&nbsp;</td>
+  </tr>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#999999">
+  <tr> 
+    <td width="30" valign="middle" bgcolor="#333333"> <h3> <img src="html/spacer.gif" width="30" height="8"></h3></td>
+    <td valign="middle" bgcolor="#999999"> <h3>{pagetitle}<img src="html/spacer.gif" width="30" height="8"></h3>
+      </td>
+  </tr>
+</table>
+<p><img src="html/spacer.gif" width="30" height="8"><a href="home.html?player={%player}">[S 
+  HOME]</a>[IF linktree] / {linktree}[/IF] 
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr> 
+    <td width="30">&nbsp;</td>
+    <td><p> 
+      <hr>
+      [IF warning]
+      <p><b>{warning}</b></p>
+      <hr>
+      [/IF] [IF siblings]{siblings}
+      <hr>
+      [/IF] 
+      <form method="get" action="setup.html">
+        <input type=hidden value="{player}" name="player">
+        <input type=hidden value="{playerid}" name="playerid">
+        <input type=hidden value="{page}" name="page">
+        {GroupList} 
+      </form>
+      [EQ page player] 
+      <h3>[S FORGET_PLAYER]</h3>
+      <p>[S FORGET_PLAYER_DESC]</p>
+      <p><a href="{webroot}home.html?player={%player}&forget={%playerid}">[S FORGET_PLAYER_LINK]</a></p>
+      <hr>
+      [/EQ] 
+          [IF singleChildLink]{singleChildLink}<hr>[/IF]
+[IF versionInfo]{versionInfo}
+      <hr> <p>[/IF] </p>
+      <p>&nbsp;</p>
+      </td>
+  </tr>
+</table>
+<p>&nbsp; </p>
+</body>
+</html>
+

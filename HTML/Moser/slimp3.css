@@ -1,0 +1,127 @@
+BODY {
+    font-size : 8pt;
+    background : rgb(255,255,255);
+    font-family : Tahoma, Verdana, Arial;
+    color : rgb(0,0,0);
+}
+
+H3 {
+	font-size : 14pt;
+	font-weight : bold;	
+	text-align : left;
+	margin:0in; 
+	margin-bottom:6pt;	
+}
+
+TD, P, DIV, A {
+	font-size : 8pt;
+	margin:0in; 
+	margin-bottom:1pt;
+	line-height: 150%;
+}
+
+A {
+	text-decoration: none;
+}
+
+TH {
+    background : rgb(255,0,0);
+    font-size : 8pt;
+    text-align : center;
+    font-weight : bold;	
+}
+
+#currentsong {
+    font-weight : bold;
+}
+
+.odd {
+    background : rgb(214,231,255);
+}
+
+.even {
+    background : rgb(255,255,255);
+}
+
+.nowrap {
+    white-space : nowrap;
+}
+
+A:visited {
+   color : rgb(71,104,149); 
+   text-decoration : none; 
+}
+
+A:link {
+   color : rgb(71,104,149); 
+   text-decoration : none; 
+}
+
+A:hover {
+   color : rgb(71,104,149); 
+   text-decoration : underline; 
+}
+
+A:active {
+   color : rgb(71,104,149); 
+   text-decoration : none; 
+}
+
+.linkbtn2, .linkbtn2:visited, .linkbtn2:link, .linkbtn2:active, .linkbtn2:hover {
+   font : 8pt Arial;
+   font-weight: bold;
+   color: rgb(64,255,64);
+   background-color : rgb(0,51,204);
+   border-width : medium;
+   border-style : inset;
+   padding : 0em 0.3em 0em 0.5em;
+   text-decoration : none; 
+}
+
+.linkbtn, .linkbtn:visited, .linkbtn:link, .linkbtn:active, .linkbtn:hover  {
+   font : 8pt Arial;
+   font-weight: bold;
+   color: rgb(255,255,255);
+   background-color : rgb(0,51,204);
+   border-width : medium;
+   border-style : outset;
+   padding : 0em 0.3em 0em 0.5em;
+   text-decoration : none; 
+}
+
+.ctrlbtn, .ctrlbtn:visited, .ctrlbtn:link, .ctrlbtn:active, .ctrlbtn:hover  {
+   color: rgb(255,255,255);
+   background-color : rgb(0,51,204);
+   border-width : medium;
+   border-style : outset;
+   vertical-align : middle;
+}
+
+.ctrlbtn2, .ctrlbtn2:visited, .ctrlbtn2:link, .ctrlbtn2:active, .ctrlbtn2:hover {
+   color: rgb(64,255,64);
+   background-color : rgb(0,51,204);
+   border-width : medium;
+   border-style : inset;
+   vertical-align : middle;
+}
+
+.spaceafter {
+	margin-bottom: 10px;
+}
+
+.stdclick {
+   font : 8pt Arial; 
+   font-weight: bold;
+   color: rgb(255,255,255);
+   background-color : rgb(0,51,204);  
+}
+
+.stdedit {
+   font : 8pt Tahoma, Verdana; 
+   background-color : rgb(255,255,255); 
+   padding : 1px; 
+   border-width : 1px; 
+   border-style : solid; 
+   border-color : black; 
+   height : 18px; 
+}

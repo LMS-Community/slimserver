@@ -1,0 +1,107 @@
+<HTML>
+<HEAD>
+<TITLE>Browse</TITLE>
+		<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+	<style type="text/css"> <!--
+		[STATIC slimp3.css]
+	--> </style>
+	</HEAD>
+<BODY BGCOLOR=#FFFFFF LEFTMARGIN=0 TOPMARGIN=0 MARGINWIDTH=0 MARGINHEIGHT=0>
+<table width=100% border=0 cellpadding=0 cellspacing=0>
+	<tr height="23">
+		<td width="4" height="23"></td>
+		<td width="8" height="23"></td>
+		<td class="exlisting" valign=middle height="23"><img src="html/images/nav_currentplaylist.gif" alt="" width="118" height="13" border="0">[IF cansave]<a target="browser" href="browse.html?player={%player}&dir=__playlists%2f__current.m3u"><img src="html/images/nav_save.gif" alt="Save" width="37" height="13" border="0"></a><img src="html/images/nav_spacer_dark.gif" alt="" width="1" height="13" border="0">[/IF]<a href="status.m3u?player={%player}"><img src="html/images/nav_download.gif" alt="Download" width="67" height="13" border="0"></a><img src="html/images/nav_spacer_dark.gif" alt="" width="1" height="13" border="0"><a href="status_header.html?p0=playlist&p1=clear&player={%player}" target="status"><img src="html/images/nav_clear.gif" alt="Clear" width="40" height="13" border="0"></a></td>
+		<td valign=top width="13" height="23"></td>
+		<td valign=top width="7" height="23"></td>
+		<td valign=top width="13" height="23"></td>
+		<td width="7" height="23"></td>
+		<td valign=top width="13" height="23"></td>
+		<td width="8" height="23"></td>
+		<td width="8" height="23"></td>
+	</tr>
+	<tr>
+		<td width="4"></td>
+		<td bgcolor=#F8F8F8 width="8"></td>
+		<td class="exlisting" valign=top bgcolor=#F8F8F8><img src="html/images/spacer.gif" alt="" width="1" height="1" border="0"></td>
+		<td valign=top bgcolor="#f8f8f8" width="13"></td>
+		<td valign=top bgcolor="#f8f8f8" width="7"></td>
+		<td valign=top bgcolor="#f8f8f8" width="13"></td>
+		<td bgcolor=#F8F8F8 width="7"></td>
+		<td valign=top bgcolor=#F8F8F8 width="13"></td>
+		<td bgcolor=#F8F8F8 width="8"></td>
+		<td width="8"></td>
+	</tr>
+	[IF playlist_pagebar]<tr height="23">
+		
+    <td width="4" height="21"></td>
+		
+    <td width="8" height="21"></td>
+		
+    <td class="exlisting" valign=middle height="21"><img src="html/images/nav_pages.gif" alt="" width="38" height="13" align="top" border="0"><img src="html/images/spacer.gif" alt="" width="4" height="9" align="top" border="0">{playlist_pagebar}<img src="html/images/spacer.gif" alt="" width="8" height="9" align="top" border="0"><img src="html/images/spacer.gif" alt="" width="6" height="10" align="top" border="0"></td>
+		
+    <td valign=top width="13" height="21"></td>
+		
+    <td valign=top width="7" height="21"></td>
+		
+    <td valign=top width="13" height="21"></td>
+		
+    <td width="7" height="21"></td>
+		
+    <td valign=top width="13" height="21"></td>
+		
+    <td width="8" height="21"></td>
+		
+    <td width="8" height="21"></td>
+	</tr>[/IF]
+	<tr height="5">
+		
+    <td width="4" height="0"></td>
+		
+    <td class="exlisting" valign=top bgcolor=#F8F8F8 height="0"></td>
+		
+    <td valign=top bgcolor="#f8f8f8" width="13" height="0"></td>
+		
+    <td valign=top bgcolor="#f8f8f8" width="7" height="0"></td>
+		
+    <td valign=top bgcolor="#f8f8f8" width="13" height="0"></td>
+		
+    <td bgcolor=#F8F8F8 width="7" height="0"></td>
+		
+    <td valign=top bgcolor=#F8F8F8 width="13" height="0"></td>
+		
+    <td bgcolor=#F8F8F8 width="8" height="0"></td>
+		
+    <td width="8" height="0"></td>
+	</tr>
+	[IFN playlist_items]<tr><td width="4"></td><td bgcolor=#F8F8F8 width="8"></td><td colspan=8><p>[S EMPTY]</p></td></tr>[/IFN]
+	{playlist_items}
+	<tr>
+		<td width="4"></td>
+		<td bgcolor=#F8F8F8 width="8"></td>
+		<td class="exlisting" valign=top bgcolor=#F8F8F8><img src="html/images/spacer.gif" alt="" width="1" height="1" border="0"></td>
+		<td valign=top bgcolor="#f8f8f8" width="13"></td>
+		<td valign=top bgcolor="#f8f8f8" width="7"></td>
+		<td valign=top bgcolor="#f8f8f8" width="13"></td>
+		<td bgcolor=#F8F8F8 width="7"></td>
+		<td valign=top bgcolor=#F8F8F8 width="13"></td>
+		<td bgcolor=#F8F8F8 width="8"></td>
+		<td width="8"></td>
+	</tr>
+	[IF playlist_pagebar]<tr height="23">
+		<td width="4" height="23"></td>
+		<td width="8" height="23"></td>
+		
+    <td class="exlisting" valign=middle height="23"><img src="html/images/nav_pages.gif" alt="" width="38" height="13" align="top" border="0"><img src="html/images/spacer.gif" alt="" width="4" height="9" align="top" border="0">{playlist_pagebar}<img src="html/images/spacer.gif" alt="" width="8" height="9" align="top" border="0"><img src="html/images/spacer.gif" alt="" width="6" height="10" align="top" border="0"></td>
+		<td valign=top width="13" height="23"></td>
+		<td valign=top width="7" height="23"></td>
+		<td valign=top width="13" height="23"></td>
+		<td width="7" height="23"></td>
+		<td valign=top width="13" height="23"></td>
+		<td width="8" height="23"></td>
+		<td width="8" height="23"></td>
+	</tr>[/IF]
+
+</table>
+	</BODY>
+</HTML>

@@ -1,0 +1,80 @@
+<html>
+  <head>
+    <title>SLIMP3 Home</title>
+    <link rel="stylesheet" href="slimp3.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></head>
+  
+<body bgcolor="#333333" leftmargin="0" topmargin="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#333333">
+  <tr> 
+    <td width="40%" align="left" valign="top"> <p><img src="html/slim_devices_logo.gif" width="243" height="54"> 
+      </p> </td>
+    <td width="41%" align="left" valign="top">&nbsp;</td>
+  </tr>
+</table>
+<table width="100%" height="25" border="0" cellpadding="0" cellspacing="0" bgcolor="#999999">
+  <tr> 
+    <td width="30" valign="middle" bgcolor="#333333"> 
+      <h3>&nbsp; </h3></td>
+    <td width="149" valign="middle" bgcolor="#999999"><h3><font color="#FFFFFF">[S 
+        HOME] <img src="html/spacer.gif" width="30" height="1"></font></h3></td>
+    <td valign="middle" bgcolor="#999999"> 
+      <p><font color="#FFFFFF">[IF song_count]The music collection contain <B>{song_count}</B> by <B>{artist_count}</B>[/IF]</font></p></td>
+  </tr>
+</table>
+<h3>&nbsp;</h3>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="30" valign="middle">&nbsp;</td>
+    <td>
+<h4><font color="#999999">[S BROWSE_MUSIC]</font></h4>
+      <ul>
+        <li><a href="browseid3.html?player={%player}">[S BROWSE_BY_GENRE]</a> 
+        </li>
+        <li> <a href="browseid3.html?genre=*&player={%player}">[S BROWSE_BY_ARTIST]</a> 
+        </li>
+        <li> <a href="browseid3.html?genre=*&artist=*&player={%player}">[S BROWSE_BY_ALBUM]</a> 
+          [IFN nofolder] </li>
+        <li><a href="browse.html?player={%player}">[S BROWSE_MUSIC_FOLDER]</a> 
+          [/IFN] </li>
+        <li><a href="browse.html?player={%player}&dir=__playlists">[S SAVED_PLAYLISTS]</a> 
+        </li>
+      </ul>
+      <h4><font color="#999999">[S SEARCH]</font></h4>
+      <ul>
+        <li> <a href="search.html?type=artist&player={%player}">[S SEARCHFOR] [S 
+          ARTIST]</a> </li>
+        <li> <a href="search.html?type=album&player={%player}">[S SEARCHFOR] [S 
+          ALBUM]</a> </li>
+        <li> <a href="search.html?type=song&player={%player}">[S SEARCHFOR] [S 
+          SONGTITLE]</a> </li>
+      </ul>
+      <p>[IFN nosetup] </p>
+      <h4><font color="#999999">[S SETTINGS]</font></h4>
+      <ul>
+        <li> <a href="setup.html?page=server&player={%player}">[S SERVER_SETTINGS]</a> 
+          {player_list} </li>
+      </ul>
+      <p>[/IFN] </p>
+      <h4><font color="#999999">[S HELP]</font></h4>
+      <ul>
+        <li> <a href="html/docs/quickstart.html" target="_top">[S GETTING_STARTED]</a> 
+        </li>
+        <li> <a href="html/docs/ipconfig.html" target="_top">[S PLAYER_SETUP]</a> 
+        </li>
+        <li> <a href="html/docs/interface.html" target="_top">[S USING_REMOTE]</a> 
+        </li>
+        <li> <a href="html/help_remote.html?player={%player}" target="_top">[S 
+          HELP_REMOTE]</a> </li>
+        <li> <a href="html/docs/radio.html?player={%player}" target="_top">[S RADIO]</a>	
+        </li>
+        <li><a href="html/docs/faq.html?player={%player}" target="_top">[S FAQ]</a> 
+        </li>
+        <li> <a href="html/docs/index.html" target="_top">[S TECHNICAL_INFORMATION]</a> 
+        </li>
+      </ul>
+  </td>
+  </tr>
+</table>
+</body>
+</html>

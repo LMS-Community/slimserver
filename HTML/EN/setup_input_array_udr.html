@@ -1,0 +1,10 @@
+[IF PrefsInTable]<tr><td>&nbsp;</td><td>[/IF]
+<b>{PrefExtValue}</b>
+[IF PrefsInTable]&nbsp;</td><td>[/IF]
+<a href="setup.html?page={page}&{PrefNameRoot}Action{PrefIndex}=Up">[S MOVEUP]</a>
+[IF PrefsInTable]&nbsp;</td><td>[/IF]
+<a href="setup.html?page={page}&{PrefNameRoot}Action{PrefIndex}=Down">[S MOVEDOWN]</a>
+[IF PrefsInTable]&nbsp;</td><td>[/IF]
+<a href="setup.html?page={page}&{PrefNameRoot}Action{PrefIndex}=Remove">[S DELETE]</a>
+[IF PrefsInTable]&nbsp;</td></tr>[/IF]
+[IFN PrefsInTable]<br>[/IFN]

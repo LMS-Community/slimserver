@@ -1,0 +1,10 @@
+[IF PrefsInTable]<tr><td>[/IF]
+[IF PrefChoose]<label for="{PrefName}" class="stdlabel">{PrefChoose}</label>[/IF]
+[IF PrefsInTable]</td><td>[/IF]
+<select class="stdedit" name="{PrefName}" id="{PrefName}">
+	{PrefOptions}
+</select>
+[IF PrefsInTable]</td><td>[/IF]
+[IFN Suppress_PrefSub]<input type=submit value={ChangeButton} class="stdclick">[/IFN]
+[IF PrefsInTable]</td></tr>[/IF]
+[IFN PrefsInTable]<br>[/IFN]

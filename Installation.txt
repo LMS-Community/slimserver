@@ -1,0 +1,126 @@
+                                Welcome to SLIMP3 
+
+This document describes the steps for installing the SLIMP3 server on Unix-like 
+platforms.
+
+Version 5.6 or higher of Perl is required.
+
+--------------------------------------------------------------------------------
+
+Linux Notes:
+
+If you've installed the RPM on a RedHat or Mandrake Linux system, you can start 
+the server with this command:
+
+	/etc/rc.d/init.d/slimp3 start
+
+and stop it with this:
+
+	/etc/rc.d/init.d/slimp3 stop
+
+--------------------------------------------------------------------------------
+
+FreeBSD Notes:
+
+In a normal installation of FreeBSD the version of Perl is 5.00 and not 
+sufficient for use with the SLIMP3 server software, which requires 5.6 or greater.
+
+To upgrade Perl to 5.8:
+
+First become the superuser, then issue the following commands
+
+# cd /usr/ports/lang/perl5.8
+# make install clean
+# rehash
+# use.perl port
+
+--------------------------------------------------------------------------------
+
+If you aren't installing the RPM, you can start the server from a command line 
+with the following command:
+
+   ./slimp3.pl --daemon
+   
+This will start up the server and run itself in the background.
+
+Visit the URL that's printed out with your web browser to configure your 
+SLIMP3 server and see the complete documentation.
+
+--------------------------------------------------------------------------------
+
+Command Line Usage Information
+
+Usage: ./slimp3.pl [--mp3dir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
+          [--user <username>]
+          [--group <groupname>]
+          [--httpport <portnumber> [--httpaddr <listenip>]]
+          [--cliport <portnumber> [--cliaddr <listenip>]]
+          [--prefsfile <prefsfilepath> [--pidfile <pidfilepath>]]
+          [--d_various]
+
+    --help           => Show this usage information.
+    --mp3dir         => The path to a directory of your MP3 files.
+    --logfile        => Specify a file for error logging.
+    --daemon         => Run the server in the background.
+                        This may only work on Unix-like systems.
+    --stdio          => Use standard in and out as a command line interface 
+                        to the server
+    --user           => Specify the user that server should run as.
+                        Only usable if server is started as root.
+                        This may only work on Unix-like systems.
+    --group          => Specify the group that server should run as.
+                        Only usable if server is started as root.
+                        This may only work on Unix-like systems.
+    --httpport       => Activate the web interface on the specified port.
+                        Set to 0 in order disable the web server.
+    --httpaddr       => Activate the web interface on the specified IP address.
+    --cliport        => Activate the command line interface TCP/IP interface
+                        on the specified port. Set to 0 in order disable the 
+                        command line interface server.
+    --cliaddr        => Activate the command line interface TCP/IP 
+                        interface on the specified IP address.
+    --prefsfile      => Specify where the preferences file should be stored
+    --pidfile        => Specify where a process ID file should be stored
+    --quiet          => Minimize the amount of text output
+    --playeraddr     => Specify the _server's_ IP address to use to connect 
+                        to SLIMP3 players
+    --streamaddr     => Specify the _server's_ IP address to use to connect
+                        to streaming audio sources
+    --nosetup        => Disable setup via http.
+
+The following are debugging flags which will print various information 
+to the console via stderr:
+
+    --d_cli          => Display debugging information for the 
+                        command line interface interface
+    --d_command      => Display internal command execution
+    --d_control      => Low level player control information
+    --d_display      => Show what (should be) on the slimp3's display 
+    --d_files        => Files, paths, opening and closing
+    --d_http         => HTTP activity
+    --d_info         => MP3/ID3 track information
+    --d_ir           => Infrared activity
+    --d_itunes       => iTunes synchronization information
+    --d_moodlogic    => MoodLogic synchronization information
+    --d_mdns         => Multicast DNS aka Zeroconf aka Rendezvous information
+    --d_os           => Operating system detection information
+    --d_paths        => File path processing information
+    --d_perf         => Performance information
+    --d_parse        => Playlist parsing information
+    --d_playlist     => High level playlist and control information
+    --d_protocol     => Client protocol information
+    --d_prefs        => Preferences file information
+    --d_remotestream => Information about remote HTTP streams and playlists
+    --d_scan         => Information about scanning directories and filelists
+    --d_server       => Basic server functionality
+    --d_scheduler    => Internal scheduler information
+    --d_stdio        => Standard I/O command debugging
+    --d_stream       => Information about player streaming protocol 
+    --d_stream_v     => Verbose information about player streaming protocol 
+    --d_sync         => Information about multi player synchronization
+    --d_time         => Internal timer information
+    --d_ui           => Player user interface information
+    --d_usage        => Display buffer usage codes on the SLIMP3 display
+    
+Commands may be sent to the server through standard in and will be echoed via
+standard out.  See complete documentation for details on the command syntax.

@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <meta http-equiv="refresh" content="30; url=status.html?player={%player}&start={start}&refresh=1">
+    <title>SLIMP3 player status</title>
+  </head>
+  <body bgcolor="#FFFFFF" link="#0000FF" vlink="#0000FF">
+	<h3>SLIMP3 Music Player</h3>
+  	[IF player_chooser_list]<form method="get" action="{webroot}index.html" target="_top">Current player: <select name="player">{player_chooser_list}</select><input type="submit" value="Change"></form>[/IF]
+
+
+
+    Now
+    [IF modeplay]playing[/IF]
+    [IF modepause]paused on[/IF]
+    [IF modestop]stopped on[/IF]
+    [IF currentsong]{currentsong} of {songcount}[/IF]:
+    <b><a href="status.html?player={%player}#currentsong">{songtitle}</a></b> [IF album]from[/IF] <i>{&album}</i> [IF artist]by {&artist}[/IF]
+    [IFN songcount] Nothing! [/IFN]
+
+    <p><hr>
+
+    <a href="status.html?p0=playlist&p1=jump&p2=%2b1&player={%player}">Skip</a>
+    <a href="status.html?p0=play&player={%player}">[IF modeplay]<b>[/IF]Play[IF modeplay]</b>[/IF]</a>
+    <a href="status.html?p0=pause&player={%player}">[IF modepause]<b>[/IF]Pause[IF modepause]</b>[/IF]</a>
+    <a href="status.html?p0=stop&player={%player}">[IF modestop]<b>[/IF]Stop[IF modestop]</b>[/IF]</a>
+
+    Repeat:
+             <a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">[IF repeatone]<b>[/IF]one[IF repeatone]</b>[/IF]</a>/<a
+                href="status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}">[IF repeatall]<b>[/IF]all[IF repeatall]</b>[/IF]</a>/<a
+                href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}">[IF repeatoff]<b>[/IF]off[IF repeatoff]</b>[/IF]</a>
+
+    Shuffle:
+             <a href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF shuffleon]<b>[/IF]on[IF shuffleon]</b>[/IF]</a>/<a
+                href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">[IF shuffleoff]<b>[/IF]off[IF shuffleoff]</b>[/IF]</a>
+    
+
+    <p>
+
+	<applet code="Volume.class" width="300" height="25">
+	<param name="title" VALUE="Volume: ">
+	<param name="value" VALUE="{volume}">
+	<param name="barwidth" VALUE="5">
+	<param name="min" VALUE="0">
+	<param name="max" VALUE="100">
+	<param name="code" VALUE="Volume.class">
+	<param name="width" VALUE="300">
+	<param name="height" VALUE="25">
+	<param name="codeBase" VALUE="{webroot}html/Volume">
+	<param name="player" value="{player}">
+
+	gotta have java		
+	</applet> 
+
+ {playlist}
+  </body>
+</html>

@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <title>Hit List</title>
+    <link rel="stylesheet" href="slimp3.css">
+  </head>
+  <body bgcolor="#FFFFFF">
+
+	<a href="status.html?player={%player}">[S SLIMP3_MUSIC_PLAYER]</a> | SLIMP3 Statistics
+	<p><hr><p>
+    <h3>SLIMP3 Statistics</h3>
+    <p><hr><p>
+    <table cellspacing="0" border="0" cellpadding="4" width="100%">
+	<tr>
+	  <td align="center">	
+		<B>{total_song_count} songs</B>
+	  </td>
+	  <td align="center">
+		<B>{album_count} albums</B>
+	  </td>
+	</tr>
+	<tr align="center">
+	  <td>
+		<B>{artist_count} artists</B>
+	  </td>
+	  <td align="center">
+		<B>{genre_count} genres</B>
+	  </td>
+	</table>
+    <p><hr><p>
+    <h4>Most requested songs</h4>
+    <table cellspacing="0" border="0" cellpadding="4" width="100%">
+      {browse_list}
+    </table>
+
+
+  </body>
+</html>

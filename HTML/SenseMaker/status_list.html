@@ -1,0 +1,10 @@
+<tr> <td [IF currentsong]class="super"[/IF] [IFN currentsong]class="listing"[/IFN] width="60"><nobr><a class="linkbtn" href="playlist.html?p0=playlist&p1=move&p2={num}&p3=%2D1&player={%player}&start={start}"><IMG height=10 alt="Move up" hspace=0 
+      src="html/moveup.gif" 
+      border=0></a><a class="linkbtn" href="playlist.html?p0=playlist&p1=move&p2={num}&p3=%2B1&player={%player}&start={start}"><IMG height=10 alt="Move down" hspace=0 
+      src="html/movedown.gif" 
+      border=0></a><a class="linkbtn" href="playlist.html?p0=playlist&p1=delete&p2={num}&player={%player}&start={start}"><IMG height=10 alt="Remove" hspace=0 
+      src="html/remove.gif" 
+      border=0></a></nobr></td> <td 	[IF currentsong]class="super"[/IF][IFN currentsong]class="listing"[/IFN] > 
+  [IF currentsong]<a name="currentsong"></a><b>[/IF] <a href="playlist.html?p0=playlist&p1=jump&p2={num}&player={%player}" [IF currentsong]id="currentsong"[/IF]>{&title}</a> 
+  [IF currentsong]</b>[/IF] [IF artist] [S BY] [/IF] <a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser">{&artist}</a> </td> 
+</tr>

@@ -1,0 +1,11 @@
+     <hr>
+     <p class="spaceafter">[S CURRENT_PLAYLIST]
+    [IF cansave]<a class="linkbtn" target="browser" href="browse.html?player={%player}&dir=__playlists%2f__current.m3u">[S SAVE]</a>[/IF]
+          <a class="linkbtn" href="status.m3u?player={%player}">[S DOWNLOAD]</a>
+          <a class="linkbtn" href="status.html?p0=playlist&p1=clear&player={%player}">[S CLEAR]</a></p>
+    [IF playlist_pagebar]<p class="spaceafter">[S PAGES]:{playlist_pagebar}</p>[/IF]
+	[IF playlist_header]{playlist_header}:[/IF]
+    <table class="spaceafter" cellspacing="0" border="0" cellpadding="4" width="100%">
+      [IFN playlist_items][S EMPTY][/IFN]{playlist_items}
+    </table>
+   [IF playlist_pagebar]<p>[S PAGES]:{playlist_pagebar}</p>[/IF]

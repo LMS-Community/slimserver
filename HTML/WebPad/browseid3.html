@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <title>[S {browseby}]</title>
+    <link rel="stylesheet" href="slimp3.css">
+  </head>
+  <body bgcolor="#FFFFFF">
+
+    <p>
+
+    <h3>[S {browseby}]</h3><p>
+
+    <a href="home.html?player={%player}">[S HOME]</a>
+	{pwd_list}
+
+	[IF song_count]<p>{album_count} [S WITH] {song_count} [S BY] {artist_count}</p>[/IF]
+    <p><hr><p>
+	[IF warn]<b>[S NOTE]</b> [S SCAN_WARNING] [IFN itunes][S SCAN_CLICK] <a href="browse.html?player={%player}">[S HERE]</a>.[/IFN]<p><hr><p>[/IF]
+	[IF browselist_header]{browselist_header}[/IF]
+    [IF browselist_pagebar]<p>{browselist_pagebar}</p>[/IF]
+		[IF coverart]
+			<p><a href="/music/{%coverartpath}/cover.jpg" target="cover">
+			<img src="/music/{%coverartpath}/cover.jpg"></a></p>
+        [/IF]
+    <table cellspacing="0" border="0" cellpadding="4" width="100%">
+[EVAL]
+if (!$$hashref{'genre'}) { $out.='artists '; }
+if (!$$hashref{'artist'}) { $out.='albums '; }
+if (!$$hashref{'album'}) { $out.='songs '; }
+chop($out);
+$out=~s- -</th><th>-g;
+if (length($out) gt 0) { $out='<tr><th></th><th>'.$out.'</th></tr>'; }
+if (!$$hashref{'song_count'}) { $out=''; }
+[/EVAL]
+      {browse_list}
+    </table>
+   [IF browselist_pagebar]<p>{browselist_pagebar}</p>[/IF]
+
+
+  </body>
+</html>

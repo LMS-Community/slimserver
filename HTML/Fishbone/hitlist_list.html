@@ -1,0 +1,16 @@
+<tr height="15">
+   <td class="listing" height="15">
+       	&nbsp;&nbsp;<b>
+  			 <a href="status.html?p0=playlist&p1=append&p2={%itempath}&player={%player}" target='status'>"{title}"</a></b>
+		<!--[IF album][S FROM][/IF]
+        <i><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{album}</a></i>
+        -->[IF artist][S BY] [/IF]
+        <a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser">{artist}</a>
+   </td>
+  <td class="listing" align="right" height="15">
+    ({song_count})
+  </td>
+  <td class="listing" align="right" height="15">
+    <img src="html/bar_small_first.gif" border="0" width="11" height="15">{song_bar}
+  </td><td>&nbsp;</td>
+</tr>

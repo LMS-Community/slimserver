@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <title>[S {browseby}]</title>
+    <link rel="stylesheet" href="slimp3.css">
+  </head>
+  <body bgcolor="#FFFFFF">
+
+    <p>
+
+    <h3>[S {browseby}]</h3><p>
+
+    <a href="home.html?player={%player}">[S HOME]</a>
+	{pwd_list}
+
+    <p><hr><p>
+	[IF warn]<b>[S NOTE]</b> [S SCAN_WARNING] [IFN itunes][S SCAN_CLICK] <a href="browse.html?player={%player}">[S HERE]</a>.[/IFN]<p><hr><p>[/IF]
+	[IF browselist_header]{browselist_header}[/IF]
+    [IF browselist_pagebar]<p>{browselist_pagebar}</p>[/IF]
+    <table cellspacing="0" border="0" cellpadding="4" width="100%">
+      {browse_list}
+    </table>
+    [IF browselist_pagebar]<p>{browselist_pagebar}</p>[/IF]
+
+
+  </body>
+</html>

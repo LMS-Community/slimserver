@@ -1,0 +1,9 @@
+[IF pagesstart]<a class="linkbtn" href={path}?{otherparams}&start=0>|&lt;&lt;</a>[/IF]
+[IF pagesprev]<a class="linkbtn" href={path}?{otherparams}&start={pagesprev}>&lt;&lt;</a>[/IF]
+[EQ pagesprev 0]<a class="linkbtn" href={path}?{otherparams}&start={pagesprev}>&lt;&lt;</a>[/EQ]
+[IF pageprev]<a class="linkbtn" href={path}?{otherparams}&start={pageprev}>&lt;</a>[/IF]
+[EQ pageprev 0]<a class="linkbtn" href={path}?{otherparams}&start={pageprev}>&lt;</a>[/EQ]
+{pageslist}
+[IF pagenext]<a class="linkbtn" href={path}?{otherparams}&start={pagenext}>&gt;</a>[/IF]
+[IF pagesnext]<a class="linkbtn" href={path}?{otherparams}&start={pagesnext}>&gt;&gt;</a>[/IF]
+[IF pagesend]<a class="linkbtn" href={path}?{otherparams}&start={pagesend}>&gt;&gt;|</a>[/IF]

@@ -1,0 +1,373 @@
+[SET pageicon help]
+[SET title SLIMP3 Command Line Interface]
+[SET techinfo 1]
+[INCLUDE helpheader.html]
+
+<h4>Introduction</h4>
+<p>The SLIMP3 server provides a command-line interface to the SLIMP3 players via standard in and out and
+  a TCP/IP port.  After starting the server, commands may be sent by connecting to a specific TCP/IP 
+  port or directly from the command line.  Each command is terminated by a carriage return. The server will 
+  reply echoing the request. If the request included a &quot;?&quot; in a parameter 
+  to request a value from the server, the &quot;?&quot; will be replaced by the 
+  requested value in the reply.  By default, the SLIMP3 server will listen for 
+  connections on TCP/IP port 9090. This format is designed for ease of integration 
+  into Crestron and other automation systems.</p>
+<p>The format of the commands is as follows:</p>
+<blockquote> 
+  <p><strong>[&lt;<em>playerid</em>&gt;] &lt;<em>p0</em>&gt; &lt;<em>p1</em>&gt; 
+    &lt;<em>p2</em>&gt; &lt;<em>p3</em>&gt; &lt;<em>p4</em>&gt; &lt;<em>CR</em>&gt;</strong></p>
+</blockquote>
+where: </p> 
+<blockquote> 
+  <p> <strong>&lt;<em>playerid</em>&gt;</strong> is the unique identifier for the player, usually (but not guaranteed to be) the IP address or MAC address of the player. The <strong>&lt;<em>playerid</em>&gt;</strong> 
+    may be omitted if there is only one player in the system or when using the 
+    &quot;player&quot; commands.</p>
+  <p> <strong>&lt;<em>playerid</em>&gt;</strong> may be obtained by using the 
+    &quot;player address&quot; command.</p>
+  <p> <strong>&lt;<em>p0</em>&gt;</strong> through <strong>&lt;<em>p4</em>&gt;</strong> 
+    are command parameters. Pass a &quot;?&quot; to obtain a value for that parameter
+     in the response. Each parameter  needs to be encoded
+    using percent-style escaping the same method as is used in URLs. (For example,
+    &quot;The Clash?&quot; would be encoded as &quot;The%20Clash%3F&quot;.)</p>
+			<p><b>Note: </b>Commands that use paths to songs or playlists can use relative paths from the root of the Music Library folder to specify songs.  For example, if the Music Library is specified as &quot;D:\mymusic&quot; and you'd like to refer to a song in that folder named &quot;foo.mp3&quot;  you can specify just &quot;foo.mp3&quot; in the command parameter.  Likewise, to refer to items in the Saved Playlist folder, you can use a prefix of  &quot;__playlists/&quot; before the path.  For example, to refer to the saved playlist &quot;bar.m3u&quot; in the Saved Playlists folder, you can specify a path of &quot;__playlists/bar.m3u&quot;.</p>
+		</blockquote>
+<hr>
+<h4>Supported Commands</h4>
+<p>The following commands are supported:</p>
+<p><strong>player count ?<br>
+  </strong><strong>player name &lt;<em>playerindex</em>&gt; ?<br>
+  </strong><strong>player address &lt;<em>playerindex</em>&gt; ?</strong></p>
+<p>To obtain information about the players in the system, use the &quot;player 
+  count&quot;, &quot;player name&quot; and &quot;player address&quot; commands. 
+  The &quot;player count&quot; command returns the number of players in the system. 
+  The &quot;player name&quot; command returns the human-readable name for the 
+  specified player. The &quot;player address&quot; command returns the player's 
+  IP address and port. This value is used when specifying a player in subsequent 
+  commands. </p>
+<blockquote> 
+  <p> Request: &quot;player count ?&lt;CR&gt;&quot;<br>
+    Response: &quot;player count 2&lt;CR&gt;&quot;</p>
+  <p> Request: &quot;player name 0 ?&lt;CR&gt;&quot;<br>
+    Response: &quot;player name 0 Living Room&lt;CR&gt;&quot;</p>
+  <p> Request: &quot;player address 0 ?&lt;CR&gt;&quot;<br>Response: &quot;player address 0 04:20:00:12:23:45&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>play<br>
+  </strong><strong>pause &lt;0|1|&gt;<br>
+  </strong><strong>stop<br>
+  </strong><strong>mode &lt;play|pause|stop|off|?&gt;</strong></p>
+<p> Commands to control playback include &quot;stop&quot;, &quot;pause&quot;, 
+  &quot;play&quot;. You may use &quot;pause 1&quot; to force the player to pause, &quot;pause 0&quot; to force
+  the player to unpause and &quot;pause&quot; to toggle the pause state.  The &quot;mode&quot; command allows you set the mode for the 
+  player directly.</p>
+<p> Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 pause&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 pause&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 stop&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 stop&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mode ?&lt;CR&gt;&quot;<strong><br>
+    </strong>Response: &quot;04:20:00:12:23:45 mode stop&lt;CR&gt;&quot;<strong> </strong></p>
+</blockquote>
+<hr>
+<p><strong>time (<em>number</em>|-<em>number</em>|+<em>number</em>|?&gt;</strong></p>
+<p>The &quot;time&quot; command allows you to query the current number of seconds 
+  that the current song has been playing by passing in a &quot;?&quot;. You may 
+  jump to a particular position in a song by specifying a number of seconds to 
+  seek to . You may also jump to a relative position within a song by putting 
+  an explicit &quot;-&quot; or &quot;+&quot; character before a number of second 
+  you would like to seek.</p>
+<p>Examples: </p>
+<blockquote> 
+  <blockquote> 
+    <p>Request: &quot;04:20:00:12:23:45 time ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 time 12.55&lt;CR&gt;&quot;</p>
+  </blockquote>
+  <blockquote> 
+    <p>Request: &quot;04:20:00:12:23:45 time 5&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 time 5&lt;CR&gt;&quot;</p>
+    <p>Request: &quot;04:20:00:12:23:45 time -5&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 time -5&lt;CR&gt;&quot;</p>
+  </blockquote>
+</blockquote>
+<hr>
+<p><strong>genre ?<br>
+  </strong><strong>artist ?<br>
+  </strong><strong>album ?<br>
+  </strong><strong>title ?<br>
+  </strong><strong>duration ?<br>
+  </strong><strong>path ?</strong></p>
+<p>The &quot;genre&quot;, &quot;artist&quot;, &quot;album&quot;, &quot;title&quot; 
+  &quot;duration&quot; and &quot;path&quot; commands allow for querying information 
+  about the song currently playing.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 genre ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 genre Rock&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 artist ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 artist Abba&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 album ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 album Greatest%20Hits&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 title ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 title Voulez%20vous&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 duration ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 duration 103.2&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 path ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 path pathtofile&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>sleep &lt;<em>number</em>|?&gt;</strong></p>
+<p>The &quot;sleep&quot; command specifies a number of seconds to continue playing 
+  before powering off the player. You may query the amount of time until the player 
+  sleeps by passing in a &quot;?&quot; parameter.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 sleep ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sleep 105.3&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 sleep 300&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sleep 300&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>power &lt;0|1|?&gt;</strong></p>
+<p> The &quot;power&quot; command turns the player on or off.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 power 1&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 power 1&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 power ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 power 1&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>playlist play &lt;<em>item</em>&gt;</strong></p>
+<p>The &quot;playlist play&quot; command puts the specified song URL, playlist or directory contents into the current playlist and plays starting at the first item. Any songs previously in the playlist are discarded.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist play /music/abba/01_Voulez_Vous.mp3&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist play /music/abba/01_Voulez_Vous.mp3&lt;CR&gt;&quot;</p>
+  
+</blockquote>
+<hr>
+<p><strong>playlist add &lt;<em>item</em>&gt;</strong></p>
+<p>The &quot;playlist add&quot; command adds the specified song URL, playlist or directory contents to the end of the current playlist. Any songs currently playing or already on the playlist are not affected.</p>
+<p>Examples:</p>
+<blockquote>
+	<p>Request: &quot;04:20:00:12:23:45 playlist add /music/abba/01_Voulez_Vous.mp3&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist add /music/abba/01_Voulez_Vous.mp3&lt;CR&gt;&quot;</p>
+	<p>Request: &quot;04:20:00:12:23:45 playlist add /playlists/abba.m3u&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist add /playlists/abba.m3u&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>playlist insert &lt;<em>item</em>&gt;</strong></p>
+<p>The &quot;playlist insert&quot; command inserts the specified song URL, playlist or directory contents to be played immediately after the current song in the current playlist. Any songs currently playing or already on the playlist are not affected.</p>
+<p>Examples:</p>
+<blockquote>
+	<p>Request: &quot;04:20:00:12:23:45 playlist add /music/abba/01_Voulez_Vous.mp3&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist add /music/abba/01_Voulez_Vous.mp3&lt;CR&gt;&quot;</p>
+	<p>Request: &quot;04:20:00:12:23:45 playlist add /playlists/abba.m3u&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist add /playlists/abba.m3u&lt;CR&gt;&quot;</p>
+</blockquote>
+<p>
+	<hr>
+</p>
+<p><strong>playlist move &lt;<em>fromindex</em>&gt; &lt;<em>toindex</em>&gt;</strong></p>
+<p>The &quot;playlist move&quot; command moves the song at the specified index 
+  to a new index in the playlist. An offset of zero is the first song in the playlist. 
+</p>
+<p> Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist move 0 5&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist move 0 5&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>playlist delete &lt;<em>songindex</em>&gt;</strong></p>
+<p>The playlist delete&quot; command deletes the song at the specified index from 
+  the current playlist.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist delete 5&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist delete 5&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>playlist </strong><b>resume</b><strong> &lt;<em>playlist</em>&gt;</strong></p>
+	<p>Replace the current playlist with the playlist specified by p2, starting at the song that was playing when the file was saved. (Resuming works only with M3U files saved with the playlist save command below.) Shortcut: use a bare playlist name (without leading directories or trailing .m3u suffix to load a playlist in the saved playlists folder.</p>
+	<p>Examples:</p>
+<blockquote>
+		<p>Request: &quot;04:20:00:12:23:45 playlist resume abba&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist resume abba&lt;CR&gt;&quot;</p>
+	</blockquote>
+<hr>
+<p><strong>playlist save &lt;<em>playlist</em>&gt; </strong></p>
+<p>Save a playlist file in the saved playlists directory. Accepts a playlist filename (without .m3u suffix) and saves in the top level of the playlists directory. Shortcut: use a bare playlist name (without leading directories or trailing .m3u suffix to load a playlist in the saved playlists folder.</p>
+<p>Examples:</p>
+<blockquote>
+	<p>Request: &quot;04:20:00:12:23:45 playlist save abba&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist save abba&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>playlist loadalbum &lt;<em>genre</em>&gt; &lt;<em>artist</em>&gt; &lt;<em>album</em>&gt;</strong></p>
+<p>The &quot;playlist loadalbum&quot; command puts songs matching the specified 
+  genre artist and album criteria on the playlist. Any songs previously in the 
+  playlist are discarded.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist loadalbum Rock Abba *&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist loadalbum Rock Abba *&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>playlist addalbum &lt;<em>genre</em>&gt; &lt;<em>artist</em>&gt; 
+  &lt;<em>album</em>&gt;</strong></p>
+<p> The &quot;playlist addalbum&quot; command appends all songs matching the 
+  specified criteria onto the end of the playlist. Any songs currently playing 
+  or already on the playlist are not affected.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>playlist clear</strong></p>
+<p>The &quot;playlist clear&quot; command removes any song that is on the playlist. 
+  If a song is currently playing, it is stopped.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist clear&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist clear&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>playlist index &lt;<em>index</em>|?&gt;</strong></p>
+<p>The &quot;playlist index&quot; command sets or queries the song that is currently 
+  playing by index. When setting, a zero-based value may be used to indicate which 
+  song to play. An explicitly positive or negative number may be used to jump 
+  to a song relative to the currently playing song. The value of the current song 
+  index may be obtained by passing in &quot;?&quot; as a parameter.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist index +1&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist index +1&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist index 5&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist index 5&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist index ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist index 5&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>playlist genre ?</strong> <strong><br>
+  playlist artist ?</strong> <strong><br>
+  </strong><strong>playlist album ?<br>
+  </strong><strong>playlist title ?</strong> <strong></strong><strong><br>
+  playlist duration ?</strong><br>
+  playlist path ?</p>
+<p>The &quot;playlist genre&quot;, &quot;playlist artist&quot;, &quot;playlist 
+  album&quot;, &quot;playlist title&quot;, &quot;playlist path&quot; and &quot;playlist 
+  duration&quot; commands will return the requested information for a given song 
+  at an index position in the current playlist. The path may be a path to the 
+  file or a URL.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist genre 3 ?&lt;CR&gt;&quot;<br>Request: &quot;04:20:00:12:23:45 playlist genre 3 Rock&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist artist 3 ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist artist 3 Abba&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist album 3 ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist album 3 Greatest Hits&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist title 3 ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist title 3 Voulez Vous&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist path 3 ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist path 3 &lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist duration 3 ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist duration 3 103.2&lt;CR&gt;&quot;</p>
+  </blockquote>
+<hr>
+<p><strong>playlist tracks ?</strong></p>
+<p>The &quot;playlist tracks&quot; command is used to obtain the the total number 
+  of tracks in the current playlist</p>
+<p> Example: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist tracks ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist tracks 7&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>playlist shuffle &lt;0|1|?&gt;</strong></p>
+<p>The &quot;playlist shuffle&quot; command is used to shuffle, unshuffle or query 
+  the shuffle state for the current playlist. A value of &quot;0&quot; indicates 
+  that the playlist is not shuffled, &quot;1&quot; indicates that the playlist 
+  is shuffled.</p>
+<p> Example: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist shuffle ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist shuffle 1&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist shuffle 0&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist shuffle 0&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>playlist repeat &lt;0|1|2|?&gt;</strong></p>
+<p>The &quot;playlist repeat&quot; command is used to indicate or query if the 
+  player will stop playing at the end of the playlist, repeat the current song 
+  indefinitely, or repeat the current playlist indefinitely. A value of &quot;0&quot; 
+  indicates that the player will stop at the end of the playlist, &quot;1&quot; 
+  indicates that the player will repeat the current song indefinitely and a value 
+  of &quot;2&quot; indicates that the player will repeat the entire playlist indefinitely</p>
+<p> Example: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist repeat ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist repeat 2&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist repeat 0&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist repeat 0&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>mixer volume &lt;0 .. 100|-100 .. +100|?&gt;</strong></p>
+<p>The &quot;mixer volume - will return the current volume setting for the player 
+  &lt;0-99)</p>
+<p> Example: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 mixer volume ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer volume 98&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer volume 25&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer volume 25&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer volume +10&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer volume +10&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>mixer balance &lt;-100 .. 100|+200 .. +200|?&gt;<br>
+  </strong><strong>mixer base &lt;0 .. 100|-100 .. +100|?&gt;<br>
+  </strong><strong>mixer treble &lt;0 .. 100|-100 .. +100|?&gt;</strong></p>
+<p>Reserved for future implementation.</p>
+<hr>
+<p><strong>display &lt;line1&gt; &lt;line2&gt; &lt;duration&gt;<br>
+  </strong><strong>display ? ?</strong></p>
+<p>The &quot;display&quot; command specifies some text to be displayed on the 
+  SLIMP3 screen for a specified amount of time, or may be used to obtain the text 
+  that is currently displayed on the screen. A duration &lt;in seconds&gt; may be specified 
+  to indicate how long the text should remain on the screen.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 display Hello World 5&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 display Hello World 5&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 display ? ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 display Hello World&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>pref &lt;prefname&gt; &lt;prefvalue&gt;<br>
+  </strong><strong>pref &lt;prefname&gt; ?</strong></p>
+<p>The &quot;pref&quot; command allows the caller to set and query the SLIMP3 
+  server's internal preferences values. Preference values are escaped with HTTP-style 
+  (percent) escaping..</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;pref mp3dir ?&quot;<br>
+    Response: &quot;pref mp3dir %2fUsers%2fdean%2fDesktop%2ftest%20music&quot;</p>
+  <p>Request: &quot;pref playlistdir %2fUsers%2fdean%2fplaylists&quot;<br>
+    Response: &quot;pref playlistdir %2fUsers%2fdean%2fplaylists&quot; </p>
+</blockquote>
+<hr>
+<p><strong>playerpref &lt;prefname&gt; &lt;prefvalue&gt;<br>
+  </strong><strong>pref &lt;prefname&gt; ?</strong></p>
+<p>The &quot;pref&quot; command allows the caller to set and query the SLIMP3 
+  server's internal player-specific preferences values. Preference values are escaped with HTTP-style 
+  (percent) escaping..</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playerpref doublesize ?&quot;<br>Response: &quot;04:20:00:12:23:45 playerpref doublesize 1&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playerpref doublesize 0&quot;<br>Response: &quot;04:20:00:12:23:45 playerpref doublesize 0&quot;</p>
+</blockquote>
+<hr>
+<p><strong>debug &lt;d_debugflag&gt; ?</strong><strong><br>
+  debug &lt;d_debugflag&gt; 0<br>
+  debug &lt;d_debugflag&gt; 1<br>
+  debug &lt;d_debugflag&gt;</strong></p>
+<p>The &quot;debug&quot; command allows the caller to query, clear, set or toggle 
+  the SLIMP3 server's internal debug flags. Use 0 to clear, 1 to set, ? to query 
+  and no parameter to toggle the debug flag value.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;debug d_files ?&quot;<br>
+    Response: &quot;debug d_files 0&quot;</p>
+  <p> Request: &quot;debug d_itunes 0&quot;<br>
+    Response: &quot;debug d_itunes 0&quot;</p>
+  <p>Request: &quot;debug d_stream 1&quot;<br>
+    Response: &quot;debug d_stream 1&quot;</p>
+  <p> Request: &quot;debug d_stream&quot;<br>
+    Response: &quot;debug d_stream 0&quot;<br>
+  </p>
+</blockquote>
+<hr>
+<p><strong>rescan</strong></p>
+<p>The &quot;rescan&quot; command allows the caller to have the SLIMP3 server 
+  rescan its music library, reloading the music file information.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;rescan&quot;<br>
+    Response: &quot;rescan&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 rescan&quot;<br>Response: &quot;04:20:00:12:23:45 rescan&quot;</p>
+</blockquote>
+<hr>
+
+<p><strong>button &lt;<em>buttoncode</em>&gt;</strong></p>
+<p>The &quot;button&quot; command simulates a button press from a SLIMP3 infrared remote, and has the same effect on the player as receiving that IR command. Valid button codes correspond to the functions defined in the Default.map file: add&quot;, &quot;brightness_down&quot;, &quot;brightness_toggle&quot;, &quot;brightness_up&quot;, &quot;done&quot;, &quot;down&quot;, &quot;fire&quot;, &quot;jump_fwd&quot;, &quot;jump_rew&quot;, &quot;left&quot;, &quot;left_repeat&quot;, &quot;menu_browse_album&quot;, &quot;menu_browse_artist&quot;, &quot;menu_browse_genre&quot;, &quot;menu_browse_music&quot;, &quot;menu_browse_playlists&quot;, &quot;menu_plugins&quot;, &quot;menu_home&quot;, &quot;menu_now_playing&quot;, &quot;menu_playlist&quot;, &quot;menu_pop&quot;, &quot;menu_search_album&quot;, &quot;menu_search_artist&quot;, &quot;menu_search_song&quot;, &quot;menu_settings&quot;, &quot;muting&quot;, &quot;numberScroll_0&quot;, &quot;numberScroll_1&quot;, &quot;numberScroll_2&quot;, &quot;numberScroll_3&quot;, &quot;numberScroll_4&quot;, &quot;numberScroll_5&quot;, &quot;numberScroll_6&quot;, &quot;numberScroll_7&quot;, &quot;numberScroll_8&quot;, &quot;numberScroll_9&quot;, &quot;pause&quot;, &quot;play&quot;, &quot;play_0&quot;, &quot;play_1&quot;, &quot;playdisp_0&quot;, &quot;playdisp_1&quot;, &quot;playdisp_2&quot;, &quot;playdisp_3&quot;, &quot;playdisp_4&quot;, &quot;playdisp_5&quot;, &quot;playdisp_toggle&quot;, &quot;power_off&quot;, &quot;power_on&quot;, &quot;power_toggle&quot;, &quot;repeat_0&quot;, &quot;repeat_1&quot;, &quot;repeat_2&quot;, &quot;repeat_toggle&quot;, &quot;right&quot;, &quot;right&quot;, &quot;scan_end&quot;, &quot;scan_fwd&quot;, &quot;scan_rew&quot;, &quot;search&quot;, &quot;shuffle_off&quot;, &quot;shuffle_on&quot;, &quot;shuffle_toggle&quot;, &quot;sleep&quot;, &quot;slimtrisButtonHandler_add&quot;, &quot;slimtrisButtonHandler_down&quot;, &quot;slimtrisButtonHandler_left&quot;, &quot;slimtrisButtonHandler_play&quot;, &quot;slimtrisButtonHandler_right&quot;, &quot;slimtrisButtonHandler_up&quot;, &quot;stop&quot;, &quot;textsize_large&quot;, &quot;textsize_small&quot;, &quot;textsize_toggle&quot;, &quot;titleFormat&quot;, &quot;up&quot;, &quot;volume_down&quot;, &amp; &quot;volume_up&quot;.<p>Example:
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 button stop&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 button stop&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
+<p><strong>exit</strong></p>
+<p>The &quot;exit&quot; command closes the TCP connection with the server.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;exit&quot;<br>
+    Response: &quot;exit&quot;<br>
+    (Connection terminated)</p>
+</blockquote>
+
+[INCLUDE helpfooter.html]

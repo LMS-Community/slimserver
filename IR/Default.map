@@ -1,0 +1,270 @@
+##################################################################################
+# Button names to function mappings
+##################################################################################
+# The format here is buttonname = function, grouped by [modename]
+
+[common]
+# Button functions that are common to all modes (unless overridden)
+0						= numberScroll_0
+1						= numberScroll_1
+2						= numberScroll_2
+3						= numberScroll_3
+4						= numberScroll_4
+5						= numberScroll_5
+6						= numberScroll_6
+7						= numberScroll_7
+8						= numberScroll_8
+9						= numberScroll_9
+arrow_down				= down
+arrow_down.repeat		= down
+arrow_left				= left
+arrow_right				= right
+arrow_up				= up
+arrow_up.repeat			= up
+rew.single				= jump_rew
+rew.hold				= scan_rew
+rew.hold_release		= scan_end
+brightness_down			= brightness_down
+brightness_up			= brightness_up
+brightness				= brightness_toggle
+fwd.single				= jump_fwd
+fwd.hold				= scan_fwd
+fwd.hold_release		= scan_end
+format					= titleFormat
+muting					= muting
+pause.single			= pause
+pause.hold				= stop
+play.single				= play
+power					= power_toggle
+power_off				= power_off
+power_on				= power_on
+add.single				= add
+add.hold				= zap
+sleep					= sleep
+stop					= stop
+voldown					= volume_down
+voldown.repeat			= volume_down
+volup					= volume_up
+volup.repeat			= volume_up
+
+# playing display modes
+now_playing				= playdisp_toggle
+playdisp_none			= playdisp_0
+playdisp_et				= playdisp_1
+playdisp_rt				= playdisp_2
+playdisp_pb				= playdisp_3
+playdisp_pbet			= playdisp_4
+playdisp_pbrt			= playdisp_5
+
+# textsize modes
+size					= textsize_toggle
+textsize_small			= textsize_small
+textsize_large			= textsize_large
+
+# shuffle modes
+shuffle					= shuffle_toggle
+shuffle_off				= shuffle_off
+shuffle_on				= shuffle_on
+
+# repeat modes
+repeat					= repeat_toggle
+repeat_off				= repeat_0
+repeat_one				= repeat_1
+repeat_all				= repeat_2
+
+# search button
+search					= search
+
+# menu shortcuts
+menu_playlist			= menu_playlist
+menu_browse_genre		= menu_browse_genre
+menu_browse_artist		= menu_browse_artist
+menu_browse_album		= menu_browse_album
+menu_browse_music		= menu_browse_music
+menu_search_artist		= menu_search_artist
+menu_search_album		= menu_search_album
+menu_search_song		= menu_search_song
+menu_browse_playlists	= menu_browse_playlists
+menu_plugins			= menu_plugins
+menu_home				= menu_home
+menu_settings			= menu_settings
+menu_pop				= menu_pop
+menu_now_playing		= menu_now_playing
+
+[off]
+# When the player is powered off, most buttons are dead
+arrow_down				= dead
+arrow_down.repeat		= dead
+arrow_left				= dead
+arrow_right				= dead
+arrow_up				= dead
+arrow_up.repeat			= dead
+rew						= dead
+fwd						= dead
+format					= dead
+menu_browse_album		= dead
+menu_browse_artist		= dead
+menu_browse_genre		= dead
+menu_browse_music		= dead
+menu_browse_playlists	= dead
+menu_plugins			= dead
+menu_home				= dead
+menu_playlist			= dead
+menu_pop				= dead
+menu_search_album		= dead
+menu_search_artist		= dead
+menu_search_song		= dead
+menu_settings			= dead
+muting					= dead
+shuffle					= dead
+pause					= dead
+pause.single			= dead
+pause.hold				= dead
+now_playing				= dead
+playdisp_et				= dead
+playdisp_none			= dead
+playdisp_pb				= dead
+playdisp_pbet			= dead
+playdisp_pbrt			= dead
+playdisp_rt				= dead
+add.single				= dead
+add.hold				= dead
+repeat					= dead
+repeat_all				= dead
+repeat_off				= dead
+repeat_one				= dead
+shuffle_off				= dead
+shuffle_on				= dead
+sleep					= dead
+stop					= dead
+voldown					= dead
+volup					= dead
+volup.repeat			= dead
+voldown.repeat			= dead
+
+[block]
+# When the player is blocked during a long operations, most buttons are dead
+# those not listed are safe for use in blocked mode
+arrow_down				= dead
+arrow_left				= dead
+arrow_right				= dead
+arrow_up				= dead
+rew						= dead
+fwd						= dead
+format					= dead
+menu_browse_album		= dead
+menu_browse_artist		= dead
+menu_browse_genre		= dead
+menu_browse_music		= dead
+menu_browse_playlists	= dead
+menu_plugins			= dead
+menu_home				= dead
+menu_playlist			= dead
+menu_pop				= dead
+menu_search_album		= dead
+menu_search_artist		= dead
+menu_search_song		= dead
+menu_settings			= dead
+shuffle					= dead
+now_playing				= dead
+power					= dead
+power_off				= dead
+power_on				= dead
+add.single				= dead
+add.hold				= dead
+shuffle_off				= dead
+shuffle_on				= dead
+sleep					= dead
+stop					= dead
+
+[browseid3]
+play.single				= play_0
+play.hold				= moodlogic_mix
+add.single				= play_1
+add.hold				= play_2
+
+[browse]
+add.hold				= insert
+
+[moodlogic_instant_mix]
+play.single				= play_0
+add.single				= play_1
+
+[browsemenu]
+play					= right
+add						= right
+
+[plugins]
+play					= right
+add						= right
+
+[settings]
+play					= right
+add						= right
+
+[repeat]
+play					= right
+add						= right
+
+[shuffle]
+play					= right
+add						= right
+
+[textsize]
+play					= right
+add						= right
+
+[titleformat]
+play					= right
+add						= right
+
+[volume]
+arrow_up				= volume_up
+arrow_down				= volume_down
+arrow_up.repeat			= volume_up
+arrow_down.repeat		= volume_down
+
+[screensaver]
+0						= done
+1						= done
+2						= done
+3						= done
+4						= done
+5						= done
+6						= done
+7						= done
+8						= done
+9						= done
+arrow_down				= done
+arrow_left				= done
+arrow_right				= done
+arrow_up				= done
+fwd						= done_passback
+rew						= done_passback
+pause					= done_passback
+pause.single			= done_passback
+pause.hold				= done_passback
+play					= done
+add						= done
+stop					= done_passback
+
+[INPUT.Text]
+0						= numberLetter_0
+1						= numberLetter_1
+2						= numberLetter_2
+3						= numberLetter_3
+4						= numberLetter_4
+5						= numberLetter_5
+6						= numberLetter_6
+7						= numberLetter_7
+8						= numberLetter_8
+9						= numberLetter_9
+arrow_left					= backspace
+arrow_right					= nextChar
+search						= exit_search
+play						= exit_play
+add						= exit_add
+#kill off some extra pressing styles
+play.single					= dead
+add.single					= dead
+add.hold					= dead

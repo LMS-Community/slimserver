@@ -1,0 +1,38 @@
+# This mapping is for the custom SLIMP3 remote
+
+# Additionally, some new codes may be defined for use with programmable
+# remotes
+
+##################################################################################
+# Button names to IR code mappings
+##################################################################################
+0						= 76899867
+1						= 7689f00f
+2						= 768908f7
+3						= 76898877
+4						= 768948b7
+5						= 7689c837
+6						= 768928d7
+7						= 7689a857
+8						= 76896897
+9						= 7689e817
+arrow_down				= 7689b04f
+arrow_left				= 7689906f
+arrow_right				= 7689d02f
+arrow_up				= 7689e01f
+voldown					= 768900ff
+volup					= 7689807f
+power					= 768940bf
+rew						= 7689c03f
+pause					= 768920df
+fwd						= 7689a05f
+add						= 7689609f
+play					= 768910ef
+search					= 768958a7
+shuffle					= 7689d827
+repeat					= 768938c7
+sleep					= 7689b847
+now_playing				= 76897887
+size					= 7689f807
+brightness				= 768904fb
+

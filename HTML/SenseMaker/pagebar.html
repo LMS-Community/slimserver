@@ -1,0 +1,11 @@
+<table><tr>
+[IF pagesstart]<td><a class="linkbtn" href="{path}?{otherparams}&start=0">|&lt&lt</a></td>[/IF]
+[IF pagesprev]<td><a class="linkbtn" href="{path}?{otherparams}&start={pagesprev}">&lt&lt</a></td>[/IF]
+[EQ pagesprev 0]<td><a class="linkbtn" href="{path}?{otherparams}&start={pagesprev}">&lt&lt</a></td>[/EQ]
+[IF pageprev]<td><a class="linkbtn" href="{path}?{otherparams}&start={pageprev}">&lt</a></td>[/IF]
+[EQ pageprev 0]<td><a class="linkbtn" href="{path}?{otherparams}&start={pageprev}">&lt</a></td>[/EQ]
+<td>{pageslist}</td>
+[IF pagenext]<td><a class="linkbtn" href="{path}?{otherparams}&start={pagenext}">&gt</a></td>[/IF]
+[IF pagesnext]<td><a class="linkbtn" href="{path}?{otherparams}&start={pagesnext"}>&gt&gt</a></td>[/IF]
+[IF pagesend]<td><a class="linkbtn" href="{path}?{otherparams}&start={pagesend}">&gt&gt|</a></td>[/IF]
+</tr></table>

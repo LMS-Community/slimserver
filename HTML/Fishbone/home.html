@@ -1,0 +1,13 @@
+[SET title [S MUSIC]] [SET pageicon MUSIC] [SET browse 1] [SET music 1][SET playlist 0] [INCLUDE pageheader.html]
+<html>
+<head>
+<link rel="stylesheet" href="{webroot}slimp3.css">
+</head>
+	[IF newVersion]<br>{newVersion}<br>[/IF]
+	<script language="JavaScript">
+[IFN nofolder]parent.browser.location='browse.html?player={%player}';[/IFN]
+[IF nofolder]parent.browser.location='browseid3.html?player={%player}&nofolder=1';[/IF]
+parent.statusframe.location='status.html?player={%player}';
+</script>
+	</body>
+</html>

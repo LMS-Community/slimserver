@@ -1,0 +1,22 @@
+[SET title {pagetitle}] [SET pageicon MUSIC] [SET setup 1] [INCLUDE pageheader.html]
+   <div class="menu2" style="min-height:20">
+   	[IF children]<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13"><tr>{children}</tr></table>[/IF]
+   	[IF siblings]<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13"><tr>{siblings}</tr></table>[/IF]
+	</div>
+	[IF warning]<div class="nowplaying"><b>{warning}</b>[/IF]</div>
+	<form method="get" action="setup.html">
+	<input type=hidden value="{player}" name="player">
+	<input type=hidden value="{playerid}" name="playerid">
+	<input type=hidden value="{page}" name="page">
+	{GroupList}
+	</form>
+[EQ page player]
+		<h3>[S FORGET_PLAYER]</h3>
+		<p>[S FORGET_PLAYER_DESC]</p>
+		<p><a href="{webroot}home.html?player={%player}&forget={%playerid}">[S FORGET_PLAYER_LINK]</a></p>
+   <hr>
+[/EQ]
+
+    [IF versionInfo]{versionInfo}<hr>[/IF]
+  </body>
+</html>

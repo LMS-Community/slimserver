@@ -1,0 +1,7 @@
+<status_entry>
+	<offset>{&num}</offset>
+	[IF currentsong]<playing_now/>[/IF]
+	<remove_url><![CDATA[xml/status.xml?p0=playlist&p1=delete&p2={num}]]></remove_url>
+		
+	[INCLUDE _xml_song.html]
+</status_entry>

@@ -1,0 +1,9 @@
+[IF PrefsInTable]<tr><td>[/IF]
+<input type=hidden name="{PrefName}" value="0" />
+<input type=checkbox [IF PrefValue]checked [/IF] class="stdedit" name="{PrefName}" id="{PrefName}" value="1" />
+[IF PrefsInTable]</td><td>[/IF]
+[IF PrefExtValue]<label for="{PrefName}" class="stdlabel">{PrefExtValue}</label>[/IF]
+[IF PrefsInTable]</td><td>[/IF]
+[IFN Suppress_PrefSub]<input type=submit value={ChangeButton} class="stdclick">[/IFN]
+[IF PrefsInTable]</td></tr>[/IF]
+[IFN PrefsInTable]<br>[/IFN]

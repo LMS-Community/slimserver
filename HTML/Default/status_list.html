@@ -1,0 +1,31 @@
+<tr>
+	<td width="4" height=21>
+		&nbsp;
+	</td>
+	<td [IF odd]class="odd" bgcolor="#ececec" [/IF] [IFN odd]class="even" bgcolor="#FFFFFF" [/IFN] width="8">
+		&nbsp;
+	</td>
+	<td class="exlisting" valign="center" [IF odd]class="odd" bgcolor="#ececec" [/IF] [IFN odd]class="even" bgcolor="#FFFFFF" [/IFN]>
+		[IF currentsong]<a name="currentsong"></a><span class="exboldlisting">[/IF][IFN currentsong]<span class="exlisting">[/IFN]<a href="status_header.html?p0=playlist&amp;p1=jump&amp;p2={num}&amp;player={%player}" target="status">{&title}</a></span> <span class="exboldnowplaying"></span> <span class="exlisting">[IF album][S FROM][/IF] <a href="browseid3.html?genre=*&amp;artist={%artist}&amp;album={%album}&amp;player={%player}" target="browser">{&album}</a> [IF artist] [S BY] [/IF] <a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{&artist}</a></span>
+	</td>
+	<td valign="center" [IF odd]class="odd" bgcolor="#ececec" [/IF] [IFN odd]class="even" bgcolor="#FFFFFF" [/IFN] width="13">
+		<a href="status_header.html?p0=playlist&amp;p1=move&amp;p2={num}&amp;p3=%2B1&amp;player={%player}&amp;start={start}" target="status"><img src="html/images/b_down.gif" width="13" height="13" border="0"></a>
+	</td>
+	<td valign="center" [IF odd]class="odd" bgcolor="#ececec" [/IF] [IFN odd]class="even" bgcolor="#FFFFFF" [/IFN] width="7">
+		&nbsp;
+	</td>
+	<td valign="center" [IF odd]class="odd" bgcolor="#ececec" [/IF] [IFN odd]class="even" bgcolor="#FFFFFF" [/IFN] width="13">
+		<a href="status_header.html?p0=playlist&amp;p1=move&amp;p2={num}&amp;p3=%2D1&amp;player={%player}&amp;start={start}" target="status"><img src="html/images/b_up.gif" width="13" height="13" border="0"></a>
+	</td>
+	<td [IF odd]class="odd" bgcolor="#ececec" [/IF] [IFN odd]class="even" bgcolor="#FFFFFF" [/IFN] width="7">
+		&nbsp;
+	</td>
+	<td valign="center" [IF odd]class="odd" bgcolor="#ececec" [/IF] [IFN odd]class="even" bgcolor="#FFFFFF" [/IFN] width="13">
+		<a href="status_header.html?p0=playlist&amp;p1=delete&amp;p2={num}&amp;player={%player}&amp;start={start}"  target="status"><img src="html/images/b_delete.gif" width="13" height="13" border="0"></a>
+	</td>
+	<td [IF odd]class="odd" bgcolor="#ececec" [/IF] [IFN odd]class="even" bgcolor="#FFFFFF" [/IFN] width="8">
+		&nbsp;
+	</td>
+	<td width="8">
+	</td>
+</tr>

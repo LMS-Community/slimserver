@@ -1,0 +1,9 @@
+[IF PrefsInTable]<tr><td>[/IF]
+[IF PrefChoose]<label for="{PrefName}" class="stdlabel">{PrefChoose}</label>[/IF]
+[IF PrefsInTable]</td><td>[/IF]
+<input type=password class="stdedit" name="{PrefName}" id="{PrefName}" value="{PrefValue}" 
+		size=[IFN PrefSize]10[/IFN][EQ PrefSize small]10[/EQ][EQ PrefSize medium]20[/EQ][EQ PrefSize large]40[/EQ]>
+[IF PrefsInTable]</td><td>[/IF]
+[IFN Suppress_PrefSub]<input type=submit value={ChangeButton} class="stdclick">[/IFN]
+[IF PrefsInTable]</td></tr>[/IF]
+[IFN PrefsInTable]<br>[/IFN]

@@ -1,0 +1,257 @@
+[SET pageicon help]
+[SET title SLIMP3 Plugins]
+[SET techinfo 1]
+[INCLUDE helpheader.html]
+
+ <h4>Introduction</h4>
+<p>This document illustrates the basic framework upon which to build a Plugin or module compatible with the SLIMP3 server software. The SLIMP3 server provides a method to load custom modules at startup which are then made available to the user via remote control menus. Each plugin serves as an area within SLIMP3 remote menu system, available from within the Plugins menu. Plugin files are stored in the &quot;Plugins&quot; folder which is in the same folder as the SLIMP3 server software. The Plugin interface can provide a very powerful control and has complete access to the functionality of the SLIMP3 server. As with the rest of the SLIMP3 server, plugin modules are created using the Perl language.</p>
+
+<h4>Perl Module Basics</h4>
+		<p>Here are a couple of basic calls that should be made at the beginning of the Plugin code:</p>
+		<pre>use strict;</pre>
+		<p>This tells perl to do some useful error checking to help avoid the use of undeclared variables, or ambiguous references to functions. All references must be fully qualified (ie SLIMP3::Animation::showBriefly() instead of showBriefly()).</p>
+		<p><pre>package Plugins::pluginname;</pre></p>
+		<p>Where <code>pluginname</code> is the name of the module (which should be the same as the filename, without the .pm extension.) This defines the 'namespace' for the module. It essentially sets up the module as an entity of its own, within the server environment. This allows you to then refer to the functions and variables within this plugin by the full reference Plugins::pluginname::function.</p>
+		<hr>
+		<h4>SLIMP3 Plugin Hooks</h4>
+<p>Each level in the SLIMP3 menu hierarchy is considered a &quot;mode&quot; by the SLIMP3 server. Each time the server is started, it reads the Plugins directory for modules. Each is added, by name, into a list. Each plugin is given a mode, and a set of functions that are defined within that module. The plugins can each be enabled or disabled at will from the web interface. The plugin module itself must define a mode and fuctions in a form that the server is expecting. This comes from two functions: sub setMode() and sub getFunctions(). A third subroutine, sub getDisplayName() is required to provide the name that the server should display for the plugin. Simple examples of these three functions are below. We will now build a template based on these main functions.</p>
+<blockquote>
+<p><em>Example 1</em></p>
+<pre>
+  sub setMode() &#123;
+     my $client = shift;
+     $client->lines(\&lines);
+  &#125;
+
+  sub getFunctions() &#123;
+     return \%functions;
+  &#125;
+
+  sub getDisplayName() &#123; return "My Plugin Name")&#125;
+
+			</pre></blockquote>
+<hr>
+
+<h4>Modes</h4>
+<p>The remote buttons are context sensitive, meaning that they can serve different roles when the SLIMP3 is in different modes.  The setMode()
+subroutine defines this mode.  Within this subroutine, there must be a definition for $client->lines, which is the text to be displayed on the
+SLIMP3 while in this plugin mode.  Typically, this is labelled just as above, though it can be any name you wish. The lines subroutine, or other name
+if you have chosen one, returns two strings. One for each line of the display.  They can be updated at any time from any point in the plugin module by using the
+line:</p>
+<blockquote>
+			<pre>
+SLIMP3::Display::update($client);
+</pre></blockquote>
+<p>Also included in the setModes subroutine are any commands or functions that must be run each time the plugin is called.  This may be loading an array for a menu system,
+default settings, or running any number of other subroutines that are needed for the operation of the plugin.
+</p><p>
+You may also want to add extra modes under your plugin.  There is a function call that tells the server
+to add your new mode with its setMode and getFunctions references.  </p>
+<blockquote>
+			<pre>SLIMP3::Buttons::Common::addMode('newmodename', getNewModeFunctions(), \&amp;::PluginName::setNewMode);</pre></blockquote>
+<p>and then you can include the following in your plugin to hook-in to your new mode:</p>
+<blockquote><pre>
+sub setNewMode() &#123;
+   my $client = shift;
+   $client->lines(\&newModeLines);
+&#125;
+
+sub getNewModeFunctions() &#123;
+   return \%newModeFunctions;
+&#125;</pre>
+</blockquote>
+<hr>
+<h4>Functions</h4>
+<p>The SLIMP3 server handles all commands from the remote control for each mode by creating a hash table of functions, each button having a subroutine associated with it.  The subroutine getFunctions() returns a reference to this hash, and can be any label you wish, although typically %functions is used. The call to point to this list is shown above in example 1. The function list, should look something like this example taken from rescan.pm, which is included with the SLIMP3 server:</p>
+<blockquote>
+<p><em>Example 2</em></p>
+<pre>
+   my %functions = (
+     'up' => sub  &#123;
+        my $client = shift;
+        SLIMP3::Animation::bumpUp($client);
+     &#125;,
+     'down' => sub  &#123;
+        my $client = shift;
+        SLIMP3::Animation::bumpDown($client);
+     &#125;,
+     'left' => sub  &#123;
+        my $client = shift;
+        SLIMP3::Buttons::Common::popModeRight($client);
+     &#125;,
+     'right' => sub  &#123;
+        my $client = shift;
+        SLIMP3::Animation::bumpRight($client);
+     &#125;,
+     'play' => sub &#123;
+        my $client = shift;
+        my @pargs=('rescan');
+        my ($line1, $line2) = (string('PLUGIN_RESCAN_MUSIC_LIBRARY'), string('PLUGIN_RESCAN_RESCANNING'));
+        SliMP3::Command::execute($client, \@pargs, undef, undef);
+        SLIMP3::Animation::showBriefly($client, $line1, $line2);
+     &#125;
+  );
+</pre></blockquote>
+
+<p>Each remote button (eg. 'play') points to a subroutine to be performed each time that button is pressed.  In the case above, pressing play
+sets up local variables, starts a rescan of the entire library, then shows two lines on the display for a short time to tell the user that the
+rescan has been started.  The line "my $client = shift;" is very important here to keep track of the player status, and to pass on in server
+function calls such as: </p>
+<blockquote>
+			<pre>SLIMP3::Animation::showBriefly($client, $line1, $line2);</pre></blockquote>
+		<p>Examples of remote control fucntions include: 'up','down','play,'add' (REC button),'left','right','numberScroll' and 'stop' The full button to function map is found in the Default.map file, which is in the IR directory under the SLIMP3 server directory.</p>
+		<hr>
+		<h4>Lines</h4>
+<p>The lines subroutine returns the text that the SLIMP3 will display while using your plugin. The setMode() function creates the reference for the lines subroutine, and your lines subroutine name must match that. Each mode may have its own set of lines, and each is named after the reference created in each setMode. The input for this function is the current client information, and the return is two strings for main display and optionally a pair of strings which may need to be overlayed on top of the first pair, right justified. The lines are sent to the display at any time using the command:</p>
+<blockquote>
+			<pre>
+SLIMP3::Display::update($client);
+</pre></blockquote>
+<p>The simple line subroutine, below, is taken from Rescan.pm.</p>
+<blockquote>
+<p><em>Example 3</em></p>
+<pre>sub lines &#123;
+   my ($line1, $line2);
+   $line1 = string('PLUGIN_RESCAN_MUSIC_LIBRARY');
+   $line2 = string('PLUGIN_RESCAN_PRESS_PLAY');
+   return ($line1, $line2);
+&#125;;
+</pre></blockquote>
+<hr>
+<h4>Strings</h4>
+<p>The plugin API also allows you to add in your own localisation. The format of the strings list follows the same format as the strings.txt file used by the SLIMP3 server for localization. The function strings() can be used used within the plugin to extract a strings for the user's specified language. Defining the strings is done as follows:</p>
+<blockquote>
+<p><em>Example 4</em></p>
+<pre>sub strings() &#123; return '
+PLUGIN_STRING_ONE
+&lt;tab&gt; EN &lt;tab&gt; English version of line one
+&lt;tab&gt; FR &lt;tab&gt; Version française de la ligne une
+'&#125;;
+</pre></blockquote>and to use your strings in your module, you make the call to strings in any place where you would use a text string.   For example, referring to the getDisplayName() call from Example 1:
+<blockquote>
+			<pre>sub getDisplayName() &#123; return "My Plugin Name" &#125;</pre></blockquote>
+
+can be changed to
+
+<blockquote>
+			<pre>sub getDisplayName() &#123; return strings('PLUGIN_NAME') &#125;</pre></blockquote>
+
+where your strings function contains:
+
+<blockquote><pre>
+sub strings() &#123; return '
+PLUGIN_NAME
+<i>&lt;tab&gt;</i> EN <i>&lt;tab&gt;</i> My Plugin Name
+'&#125;;
+</pre></blockquote>
+		<p><b>One special note, the format of the strings list is very strict. The whitespace must be a tab, not spaces, which is why the tabs are shown above.</b></p>
+		<hr>
+		<h4>Summary</h4>
+		<p>Using the existing plugins as examples (one appears below) and this document as an explanation of what each section of the plugin can do, you should now be able to start working on a plugin of your own. Remember that this is only a framework to allow you to hook into the SLIMP3 server. There are always many other ways to implement the features of a plugin. As long as your provide the lines from the examples above, the server will try to work with your Plugin. The rest can be just about anything you want, including using any of functions and subroutines within the SLIMP3 server.  Remember, there's more than one way to do it.</p>
+		<p>Happy Coding!
+		<hr>
+		<h4>Appendix: Sample Plugin</h4>
+		
+<pre># Rescan.pm by Andrew Hedges (andrew@hedges.me.uk) October 2002
+#
+# This code is derived from code with the following copyright message:
+#
+# SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+use strict;
+
+###########################################
+### Section 1. Change these as required ###
+###########################################
+
+package Plugins::Rescan;
+
+use SliMP3::Playlist;
+use SliMP3::Strings qw (string);
+
+sub getDisplayName() {return string('PLUGIN_RESCAN_MUSIC_LIBRARY')}
+
+sub strings() { return '
+PLUGIN_RESCAN_MUSIC_LIBRARY
+	EN	Rescan Music Library
+	
+PLUGIN_RESCAN_RESCANNING
+	EN	Server now rescanning...
+
+PLUGIN_RESCAN_PRESS_PLAY
+	EN	Press PLAY to rescan your music folder
+'};
+
+##################################################
+### Section 2. Your variables and code go here ###
+##################################################
+
+
+sub setMode() {
+	my $client = shift;
+	$client-&gt;lines(\&amp;lines);
+}
+
+sub enabled {
+	my $client = shift;
+	return !SliMP3::iTunes::useiTunesLibrary();
+}
+
+my %functions = (
+	'up' =&gt; sub  {
+		my $client = shift;
+		SliMP3::Animation::bumpUp($client);
+	},
+	'down' =&gt; sub  {
+	    my $client = shift;
+		SliMP3::Animation::bumpDown($client);
+	},
+	'left' =&gt; sub  {
+		my $client = shift;
+		SliMP3::Buttons::Common::popModeRight($client);
+	},
+	'right' =&gt; sub  {
+		my $client = shift;
+		SliMP3::Animation::bumpRight($client);
+	},
+	'play' =&gt; sub {
+		my $client = shift;
+		my @pargs=('rescan');
+		my ($line1, $line2) = (string('PLUGIN_RESCAN_MUSIC_LIBRARY'), string('PLUGIN_RESCAN_RESCANNING'));
+		SliMP3::Command::execute($client, \@pargs, undef, undef);
+		SliMP3::Animation::showBriefly($client, $line1, $line2);
+	}
+);
+
+sub lines {
+	my ($line1, $line2);
+	$line1 = string('PLUGIN_RESCAN_MUSIC_LIBRARY');
+	$line2 = string('PLUGIN_RESCAN_PRESS_PLAY');
+	return ($line1, $line2);
+}
+	
+################################################
+### End of Section 2.                        ###
+################################################
+
+sub getFunctions() {
+	return \%functions;
+}
+
+1;
+</pre>
+	
+[INCLUDE helpfooter.html]
+	
+	
+		
+	
+	
+		
+	
+	
+	
+	
+	

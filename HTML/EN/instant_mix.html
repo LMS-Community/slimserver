@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>[S MOODLOGIC_INSTANT_MIX]</title>
+    <link rel="stylesheet" href="slimp3.css">
+  </head>
+  <body bgcolor="#FFFFFF">
+
+    <p>
+
+    <h3>[S MOODLOGIC_INSTANT_MIX]</h3><p>
+
+    <a href="home.html?player={%player}">[S HOME]</a>
+	{pwd_list}
+
+    <p><hr><p>
+	[IF browselist_header]{browselist_header}[/IF]
+    [IF browselist_pagebar]<p>{browselist_pagebar}</p>[/IF]
+    <table cellspacing="0" border="0" cellpadding="4" width="100%">
+      {instant_mix_list}
+    </table>
+   [IF browselist_pagebar]<p>{browselist_pagebar}</p>[/IF]
+   <p><hr><p>
+   <p><a href="instant_mix.html?song={%song}&genre={%genre}&artist={%artist}&album={%album}&player={%player}&mood={mood}&p0=play">[NB][S PLAY][/NB]</a>, 
+      <a href="instant_mix.html?song={%song}&genre={%genre}&artist={%artist}&album={%album}&player={%player}&mood={mood}&p0=append">[NB][S ADD_TO_PLAYLIST][/NB]</a>
+   </p>
+
+  </body>
+</html>

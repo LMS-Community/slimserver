@@ -1,0 +1,35 @@
+BODY {	FONT-SIZE: 10px; COLOR: white; FONT-FAMILY: verdana,tahoma,arial,helvetica,geneva,sans-serif;
+    PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; BACKGROUND: black; }
+
+HR {	COLOR: #999966; HEIGHT: 1px; noshade: noshade; }
+A {	COLOR: #ccc; TEXT-DECORATION: none }
+A:hover {	TEXT-DECORATION: underline }
+P {	FONT-SIZE: 10px; COLOR: white; FONT-FAMILY: verdana,tahoma,arial,helvetica,geneva,sans-serif; }
+TD {	FONT-SIZE: 10px; COLOR: white; FONT-FAMILY: verdana,tahoma,arial,helvetica,geneva,sans-serif; }
+OL {	FONT-SIZE: 10px; COLOR: white; FONT-FAMILY: verdana,tahoma,arial,helvetica,geneva,sans-serif; }
+
+UL {	FONT-SIZE: 10px; COLOR: white; FONT-FAMILY: verdana,tahoma,arial,helvetica,geneva,sans-serif; }
+H1 {	FONT-SIZE: 10px; COLOR: white; FONT-FAMILY: verdana,tahoma,arial,helvetica,geneva,sans-serif; }
+H2 {	FONT-SIZE: 10px; COLOR: white; FONT-FAMILY: verdana,tahoma,arial,helvetica,geneva,sans-serif; }
+H3 {	FONT-SIZE: 10px; COLOR: white; FONT-FAMILY: verdana,tahoma,arial,helvetica,geneva,sans-serif; }
+H4 {	FONT-SIZE: 10px; COLOR: white; FONT-FAMILY: verdana,tahoma,arial,helvetica,geneva,sans-serif; }
+
+.formfield {	BACKGROUND: #ddd; COLOR: #444; FONT-SIZE: 10px; LINE-HEIGHT: 14px; FONT-FAMILY: verdana,tahoma,arial,helvetica,geneva,sans-serif; }
+.button {	FONT-SIZE: 10px; COLOR: white; LINE-HEIGHT: 14px; FONT-FAMILY: verdana,tahoma,arial,helvetica,geneva,sans-serif; }
+.menu1 {	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; BACKGROUND: #61676c; PADDING-BOTTOM: 5px; MARGIN: 0px; COLOR: white; PADDING-TOP: 35px }
+.menu2 {	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; BACKGROUND: #999; PADDING-BOTTOM: 5px; MARGIN: 0px; COLOR: white; PADDING-TOP: 5px }
+.masthead {	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; BACKGROUND: #333; PADDING-BOTTOM: 5px; MARGIN: 0px; COLOR: white; PADDING-TOP: 5px; BORDER-BOTTOM: white 2px solid }
+.statusmasthead {	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; BACKGROUND: #333; MARGIN: 0px; COLOR: white;  BORDER-BOTTOM: white 2px solid }
+.nowplaying {	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; BACKGROUND: #61676c; PADDING-BOTTOM: 5px; MARGIN: 0px; COLOR: white; PADDING-TOP: 5px }
+.label {	FONT-SIZE: 9px; MARGIN: 3px 0px; COLOR: #bbb; BORDER-BOTTOM: #777 1px solid }
+.popup {	BACKGROUND: #ddd; COLOR: #444; FONT-SIZE: 9px; PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; FONT-FAMILY: verdana,tahoma,arial,helvetica,geneva,sans-serif;}
+.songtitle {	FONT-WEIGHT: bold; FONT-SIZE: 14px; MARGIN: 0px }
+.artistname {	FONT-WEIGHT: normal; FONT-SIZE: 11px; MARGIN: 0px; COLOR: white }
+.track {	FONT-WEIGHT: normal; FONT-SIZE: 9px; COLOR: silver }
+.controls {	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; BACKGROUND: #999; PADDING-BOTTOM: 5px; MARGIN: 0px; COLOR: white; PADDING-TOP: 5px }
+.listing {	BORDER-TOP: #333 1px solid; BACKGROUND: black; MARGIN: 0px; COLOR: #ccc }
+.listing2 {	BORDER-TOP: #333 1px solid; BACKGROUND: black; MARGIN: 0px; COLOR: #ccc }
+.listinghead {	FONT-WEIGHT: bold; BACKGROUND: #333; COLOR: #999; BORDER-BOTTOM: #555 1px  }
+.listingheadsp {	FONT-WEIGHT: bold; BACKGROUND: #333; COLOR: #999; BORDER-BOTTOM: #555 1px  }
+.listingheadsp2 {	FONT-WEIGHT: bold; BACKGROUND: #333; COLOR: #999; BORDER-BOTTOM: #555 1px; HEIGHT: 15px }
+.scrollvertical {	 }

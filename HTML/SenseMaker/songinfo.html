@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- CREATED BY NICK BALESTRA - THE SENSEMAKER-->
+<HTML><HEAD><TITLE>New Page 2</TITLE>
+<META http-equiv=Content-Language content=en-us>
+<META content="MSHTML 6.00.2800.1141" name=GENERATOR>
+<META content=FrontPage.Editor.Document name=ProgId>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252"><LINK 
+href="html/styles.css" type=text/css rel=stylesheet></HEAD>
+
+
+<BODY 
+style="BORDER-RIGHT: 0px; BORDER-TOP: 0px; BORDER-LEFT: 0px; BORDER-BOTTOM: 0px" 
+leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
+<DIV class=masthead>
+  <TABLE style="BORDER-COLLAPSE: collapse" borderColor=#111111 cellSpacing=0 
+cellPadding=0 width=90% border=0>
+    <TBODY>
+      <TR> 
+        <TD width="100%" valign="middle"> <b> <img src="html/spacer.gif" width="1" height="17">SLIMP3 
+          Music Network </b></TD>
+      </TR>
+    </TBODY>
+  </TABLE>
+</DIV>
+
+
+<BODY 
+style="BORDER-RIGHT: white 2px solid; BACKGROUND: #333; BORDER-BOTTOM: 0px" 
+leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
+<P class=menu1><B><a href="home.html?player={%player}"><font color="#FFFFFF">[S 
+  HOME]</font></a><a href="home.html?player=%7Bplayer%7D"></a> / <a href="browse.html?player={%player}"><font color="#CCCCCC">Music 
+  Database</font></a><font color="#CCCCCC"> {pwd_list}</font></B></P>
+<P class=menu2>&nbsp;</P>
+
+
+
+
+
+<BODY style="BORDER-RIGHT: white 2px solid; BORDER-TOP: 0px; BACKGROUND: black" 
+leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
+<DIV class=scrollvertical>
+  <TABLE cellSpacing=0 cellPadding=2 width="100%" border=0>
+    <TBODY>
+      <TR> 
+        <TD colspan="6" class=listinghead> [S SONG_INFO] [S FOR] <em>{title}</em></TD>
+        <TD width="16%" class=listinghead>&nbsp;</TD>
+      </TR>
+      <TR> 
+        <TD colspan="7" class=listing><table width="100%">
+            <tr> 
+              <td class=listing> <nobr> [S TITLE]: </nobr> </td>
+              <td class=listing> {title} </td>
+            </tr>
+            [IF artist] 
+            <tr> 
+              <td class=listing> [S ARTIST]: </td>
+              <td class=listing> <a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{artist}</a> 
+              </td>
+            </tr>
+            [/IF] [IF composer] 
+            <tr> 
+              <td class=listing> [S COMPOSER]: </td>
+              <td class=listing> <a href="browseid3.html?genre=*&amp;artist={%composer}&amp;player={%player}" target="browser">{composer}</a> 
+              </td>
+            </tr>
+            [/IF] [IF album] 
+            <tr> 
+              <td class=listing> [S ALBUM]: </td>
+              <td class=listing> <a href="browseid3.html?genre=*&amp;artist=*&amp;album={%album}&amp;player={%player}" target="browser">{album}</a> 
+              </td>
+            </tr>
+            [/IF] [IF genre] 
+            <tr> 
+              <td class=listing> [S GENRE]: </td>
+              <td class=listing> <a href="browseid3.html?genre={%genre}&amp;player={%player}" target="browser">{genre}</a> 
+              </td>
+            </tr>
+            [/IF] [IF track] 
+            <tr> 
+              <td class=listing> [S TRACK]: </td>
+              <td class=listing> {track} </td>
+            </tr>
+            [/IF] [IF duration] 
+            <tr> 
+              <td class=listing> [S LENGTH]: </td>
+              <td class=listing> {duration} </td>
+            </tr>
+            [/IF] [IF year] 
+            <tr> 
+              <td class=listing> [S YEAR]: </td>
+              <td class=listing> {year} </td>
+            </tr>
+            [/IF] [IF comment] 
+            <tr> 
+              <td class=listing> [S COMMENT]: </td>
+              <td class=listing> {comment} </td>
+            </tr>
+            [/IF] [IF filelength] 
+            <tr> 
+              <td class=listing> [S FILELENGTH]: </td>
+              <td class=listing> {filelength} [S BYTES] </td>
+            </tr>
+            [/IF] [IF bitrate] 
+            <tr> 
+              <td class=listing > [S BITRATE]: </td>
+              <td class=listing> {bitrate} </td>
+            </tr>
+            [/IF] [IF tagversion] 
+            <tr> 
+              <td class=listing> [S TAGVERSION]: </td>
+              <td class=listing> {tagversion} </td>
+            </tr>
+            [/IF] [IF url] 
+            <tr> 
+              <td class=listing>URL: </td>
+              <td class=listing>{url} </td>
+            </tr>
+            <tr> 
+              <td class=listing>&nbsp;</td>
+              <td class=listing>&nbsp;</td>
+            </tr>
+            <tr> 
+              <td colspan="2" class=listing> <a href="playlist.html?p0=playlist&amp;p1=play&amp;p2={%itempath}&amp;player={%player}" target="playlist"><IMG 
+      height=10 alt="Add to playlist" src="html/play.this.gif" width=9 border=0> 
+                [S PLAY_THIS_SONG]</a> | <a href="playlist.html?p0=playlist&amp;p1=append&amp;p2={%itempath}&amp;player={%player}" target="playlist"> 
+                <IMG 
+      height=10 alt="Add to playlist" src="html/add.gif" width=9 border=0> [NB][S 
+                ADD_THIS_SONG_TO_PLAYLIST][/NB]</a> </td>
+            </tr>
+            <tr> 
+              <td class=listing>&nbsp; </td>
+              <td class=listing>&nbsp; </td>
+            </tr>
+            [/IF] </table>
+          
+        </TD>
+      </TR>
+      <TR> 
+        <TD width="20%" height="400" class=listing>&nbsp;</TD>
+        <TD width="64%" height="600" align=right class=listing>&nbsp;</TD>
+        <TD width="0%" height="400" class=listing>&nbsp;</TD>
+        <TD width="32%" height="400" class=listing>&nbsp;</TD>
+        <TD width="13%" height="400" class=listing>&nbsp;</TD>
+        <TD width="13%" height="400" class=listing>&nbsp;</TD>
+        <TD width="16%" height="400" class=listing>&nbsp;</TD>
+      </TR>
+    </TBODY>
+  </TABLE>
+</DIV></BODY></HTML>
+

@@ -1,0 +1,20 @@
+<tr>
+  <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN] width="50%">
+	  [IF anchor]<a name="{anchor}"></a>[/IF]
+      [IF  descend] <a href="olsonmain.html?song={%song}&artist={%artist}&album={%album}&genre={%genre}&player={%player}">{title}</a>  [/IF]
+      [IFN descend]<a href="songinfo.html?songurl={%itempath}&player={%player}">{title}</a>
+      [/IFN]
+  </td>
+  <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN]>  
+    [IF descend] {song_count} [/IF]
+  </td>
+  <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN]>
+      [IF descend]  <nobr><a href="status.html?p0=playlist&p1=loadalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="status">[S PLAY]</a></nobr> [/IF]
+      [IFN descend] <nobr><a href="status.html?p0=playlist&p1=play&p2={%itempath}&player={%player}" target="status">[S PLAY]</a></nobr> [/IFN]
+  </td>
+  <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN]>
+      [IF descend]   <nobr><a href="status.html?p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="status">[NB][S ADD_TO_PLAYLIST][/NB]</a></nobr> [/IF]
+      [IFN descend]  <nobr><a href="status.html?p0=playlist&p1=append&p2={%itempath}&player={%player}" target="status">[NB][S ADD_TO_PLAYLIST][/NB]</a></nobr> [/IFN]
+  </td>
+</tr>
+

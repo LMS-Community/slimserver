@@ -1,0 +1,572 @@
+[SET pageicon help]
+[SET title SLIMP3 Web Interface]
+[SET techinfo 1]
+[INCLUDE helpheader.html]
+
+<h4>Overview</h4>
+<p>This document describes the interface to the HTTP server that's built into 
+  the SLIMP3 server. </p>
+<p>The SLIMP3 server provides an HTTP server that can be used to:</p>
+<ol>
+  <li> Browse the SLIMP3 music library. </li>
+  <li> View the status and playlist of the player.</li>
+  <li> Control the player.</li>
+  <li>Configure the server.</li>
+</ol>
+<p>When the SLIMP3 server is started, it starts listening for HTTP connections 
+  on the default port of 9000. </p>
+<p>The HTTP server may be accessed by the user with a traditional web browser 
+  to navigate around the music library and control the player. The HTTP server 
+  may also be used in conjunction with another software application (<i>wget</i> 
+  or <i>curl</i>, for example) as a way to access and control the player via HTTP.
+  The server can return XML instead of HTML for such "automation" uses (see 
+  <a href="xml_skin.html">The XML Skin</a> documentation.)</p>
+<p> In the examples in this document the SLIMP3 server is running on a computer 
+  with the IP address of 10.0.1.201.</p>
+<h4>HTTP Access</h4>
+<p>To access the main page to control the SLIMP3 via a web browser use this URL: 
+</p>
+<pre>http://10.0.1.201:9000/</pre>
+<p>This provides a frameset containing two pages, one for browsing the music library:
+</p>
+<pre>http://10.0.1.201:9000/browse.html</pre>
+<p>Navigation through the browser to subdirectories in the music library uses 
+  a URL parameter called &quot;dir&quot; to specify a subdirectory, for example:
+</p>
+<pre>http://10.0.1.204:9000/browse.html?dir=%2fAl%20Green%2fGreatest%20Hits </pre>
+<p>provides access to browse the subdirectory &quot;Greatest Hits&quot; directory 
+  within the &quot;Al Green&quot; subdirectory under the main music directory. 
+  There are additional web pages and URLs used to browse the music library by 
+  genre, artist and album as well as configuration and user preference settings 
+  and online help.</p>
+<p>The other frame within the main frameset is at this URL:</p>
+<pre>http://10.0.1.201:9000/status.html </pre>
+<p>Which displays the status of the player, including the current song and playlist.
+</p>
+<p>Control of the player uses another set of URLs, all of which may return some 
+  status information. They are in the format: </p>
+<pre>http://10.0.1.201:9000/status.suffix?p0=param&amp;p1=param1&amp;p2=param2&amp;p3=param3 </pre>
+<p>where &quot;status&quot; indicates that player status will be returned, and 
+  p0,p1, p2, p3, and p4 are parameters used that command. </p>
+<p>If the &quot;suffix&quot; is .html then the response will be the current player's 
+  status in HTML. If the &quot;suffix&quot; is .m3u then the response will be 
+  the player's current playlist as an .m3u file. If the suffix is &quot;.txt&quot; 
+  then the response will consist of two lines of text corresponding to the text 
+  on the SLIMP3 display. If the suffix is omitted, then the response will be the 
+  empty.</p>
+		<p><b>Note: </b>Commands that use paths to songs or playlists can use relative paths from the root of the Music Library folder to specify songs.  For example, if the Music Library is specified as &quot;D:\mymusic&quot; and you'd like to refer to a song in that folder named &quot;foo.mp3&quot;  you can specify just &quot;foo.mp3&quot; in the command parameter.  Likewise, to refer to items in the Saved Playlist folder, you can use a prefix of  &quot;__playlists/&quot; before the path.  For example, to refer to the saved playlist &quot;bar.m3u&quot; in the Saved Playlists folder, you can specify a path of &quot;__playlists/bar.m3u&quot;.</p>
+		<h4>Commands</h4>
+<p>The following is a summary of the supported commands. Additional information
+  about the command set is available in the <a href="crestronCLI.html">SLIMP3
+  Command Line Interface </a>documentation.</p>
+<table border="1" cellspacing=0 cellpadding=3>
+  <tr> 
+    <td width="37"><b> p0</b></td>
+    <td width="49"><b> p1</b></td>
+    <td width="96"><b>p2</b></td>
+    <td width="69"><b>p3</b></td>
+    <td width="13"><b>p4</b></td>
+    <td width="672"><b>Description</b></td>
+  </tr>
+  <tr> 
+    <td width="37"> play</td>
+    <td width="49">&nbsp;</td>
+    <td width="96">&nbsp;</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Start the player playing</td>
+  </tr>
+  <tr> 
+    <td width="37"> pause</td>
+    <td width="49"> (0|1|)</td>
+    <td width="96">&nbsp;</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Pause/unpause player. p1=1 to pause, p1=0 to unpause, omit 
+      p1 to toggle</td>
+  </tr>
+  <tr> 
+    <td width="37"> stop</td>
+    <td width="49">&nbsp;</td>
+    <td width="96">&nbsp;</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Stop the player</td>
+  </tr>
+  <tr> 
+    <td width="37"> sleep</td>
+    <td width="49"> (0..n)</td>
+    <td width="96">&nbsp;</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">(<i>not implemented) </i>Play for p1 seconds and then sleep</td>
+  </tr>
+  <tr> 
+    <td width="37"> playlist</td>
+    <td width="49"> play</td>
+    <td width="96">&lt;item&gt;</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Replace the current playlist with the song, playlist or directory specified by p2</td>
+  </tr>
+  <tr> 
+    <td width="37">playlist</td>
+    <td width="49">add</td>
+    <td width="96">&lt;item&gt;</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Append the song, playlist or directory specified by p2 to the end of the current playlist</td>
+  </tr>
+  <tr> 
+    <td width="37"> playlist </td>
+    <td width="49">insert</td>
+    <td width="96">&lt;item&gt;</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Insert the song, playlist or directory specified by p2 to be played immediately after the current song.</td>
+  </tr>
+	<tr>
+		<td width="37">playlist</td>
+		<td width="49">resume</td>
+		<td width="96">&lt;playlist&gt;</td>
+		<td width="69"></td>
+		<td width="13"></td>
+		<td width="672">Replace the current playlist with the playlist specified by p2, starting at the song that was playing when the file was saved. (Resuming works only with M3U files saved with the playlist save command below.) Shortcut: use a bare playlist name (without leading directories or trailing .m3u suffix to load a playlist in the saved playlists folder.</td>
+	</tr>
+	<tr> 
+    <td width="37">playlist</td>
+    <td width="49">loadalbum</td>
+    <td width="96">&lt;genre&gt;</td>
+    <td width="69">&lt;artist&gt;</td>
+    <td width="13">&lt;album&gt;</td>
+    <td width="672">Replace the current playlist with all songs for a given genre, 
+      artist, and album. Use a value of &quot;*&quot; for p2, p3, or p4 as a wildcard. 
+      Note: the server's cache must contain the items for this to work.</td>
+  </tr>
+	<tr>
+		<td width="37">playlist</td>
+		<td width="49">save</td>
+		<td width="96">&lt;playlist&gt;</td>
+		<td width="69"></td>
+		<td width="13"></td>
+		<td width="672">Save a playlist file in the saved playlists directory.  Accepts a playlist filename (without .m3u suffix) and saves in the top level of the playlists directory.</td>
+	</tr>
+	<tr> 
+    <td width="37">playlist</td>
+    <td width="49">addalbum</td>
+    <td width="96">&lt;genre&gt;</td>
+    <td width="69">&lt;artist&gt;</td>
+    <td width="13">&lt;album&gt;</td>
+    <td width="672">Add all songs for a given genre, artist, and album. Use a 
+      value of &quot;*&quot; for p2, p3, or p4 as a wildcard. Note: the server's 
+      cache must contain the items for this to work.</td>
+  </tr>
+  <tr> 
+    <td width="37"> playlist </td>
+    <td width="49">clear</td>
+    <td width="96">&nbsp;</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Clear the current playlist</td>
+  </tr>
+  <tr> 
+    <td width="37">playlist</td>
+    <td width="49">repeat</td>
+    <td width="96">(0|1|2|)</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Change the repeat mode. p1=0 no repeat, stop at the end of 
+      the playlist, p1=1 repeat the current song, p1=2 repeat the entire playlist. 
+      Omit p1 to cycle through values.</td>
+  </tr>
+  <tr> 
+    <td width="37">playlist</td>
+    <td width="49">shuffle</td>
+    <td width="96">(0|1|2|)</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Shuffle the playlist. p1=0 no shuffle, p1=1 shuffle songs 
+      in the playlist, p1=2 shuffle albums in the playlist. Omit p1 to toggle shuffle mode.</td>
+  </tr>
+  <tr> 
+    <td width="37"> playlist</td>
+    <td width="49">move</td>
+    <td width="96">&lt;fromoffset&gt;</td>
+    <td width="69"> &lt;tooffset&gt;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Move the song in the offset specified by p2 to the offset 
+      specified by p3 in the playlist.</td>
+  </tr>
+  <tr> 
+    <td width="37"> playlist </td>
+    <td width="49">delete</td>
+    <td width="96">&lt;songoffset&gt;</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Delete the song in the playlist at the offset specified by p2</td>
+  </tr>
+  <tr> 
+    <td width="37"> playlist</td>
+    <td width="49">jump</td>
+    <td width="96"> &lt;index&gt;</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Make the song at the offset specified by p2 in the playlist 
+      the currently playing song</td>
+  </tr>
+  <tr> 
+    <td width="37"> mixer</td>
+    <td width="49">volume</td>
+    <td width="96"> (0 .. 100)|(-100 .. +100)</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Adjust the volume as specified by p2 within the range 0 to 
+      100. Prefix the number with a + or - to make the change relative.</td>
+  </tr>
+  <tr> 
+    <td width="37"> mixer </td>
+    <td width="49">balance</td>
+    <td width="96"> (0 .. 100)|(-100 .. +100)</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672"><i>(not implemented)</i> Adjust the volume as specified by 
+      p2 within the range 0 (most left) to 100 (most right). Prefix the number 
+      with a + or - to make the change relative. A value 50 means no balance adjustment.</td>
+  </tr>
+  <tr> 
+    <td width="37"> mixer</td>
+    <td width="49">base</td>
+    <td width="96"> (0 .. 100)|(-100 .. +100)</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672"><i>(not implemented)</i> Adjust the base boost/cut as specified 
+      by p2 within the range 0 to 100. Prefix the number with a + or - to make 
+      the change relative. A value of 50 means no boost or cut.</td>
+  </tr>
+  <tr> 
+    <td width="37"> mixer</td>
+    <td width="49"> treble</td>
+    <td width="96"> (0 .. 100)|(-100 .. +100)</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672"><i>(not implemented)</i> Adjust the treble boost/cut as specified 
+      by p2 within the range 0 to 100. Prefix the number with a + or - to make 
+      the change relative. A value of 50 means no boost or cut.</td>
+  </tr>
+  <tr> 
+    <td width="37"> status</td>
+    <td width="49">&nbsp;</td>
+    <td width="96">&nbsp;</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Return the current status of the player without any change.</td>
+  </tr>
+  <tr> 
+    <td width="37"> display </td>
+    <td width="49">&lt;line1&gt;</td>
+    <td width="96">&lt;line2&gt;</td>
+    <td width="69">&lt;duration&gt;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Put text on the SLIMP3 display. line 1 is specified by p1, 
+      line 2 is specified by p2. The text is displayed for a number of seconds 
+      as specified by p3. If p3 is omitted, then a default time is used of approximately 
+      1.5 seconds.</td>
+  </tr>
+  <tr> 
+    <td width="37">button</td>
+    <td width="49">&lt;code&gt;</td>
+    <td width="96">&nbsp;</td>
+    <td width="69">&nbsp;</td>
+    <td width="13">&nbsp;</td>
+    <td width="672">Simulate a button press from the infrared remote, where &lt;code&gt;
+      is a function name per the Default.map file.</td>
+  </tr>
+  <tr>
+    <td>rescan</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>Start a rescan of the music library</td>
+  </tr>
+  <tr>
+    <td>pref</td>
+    <td>&lt;name&gt;</td>
+    <td>&lt;value&gt;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>Set the value of a preference. Use a value of &quot;?&quot; to get the
+    value in the returned p2 header</td>
+  </tr>
+  <tr>
+    <td>pref</td>
+    <td>&lt;name&gt;</td>
+    <td>?</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>Get the value of a preference. The
+    value is returned in the returned p2 header</td>
+  </tr>
+  <tr>
+    <td>playerpref</td>
+    <td>&lt;name&gt;</td>
+    <td>&lt;value&gt;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>Set the value of a player specific preference. Use a value of &quot;?&quot; to get the
+    value in the returned p2 header</td>
+  </tr>
+  <tr>
+    <td>playerpref</td>
+    <td>&lt;name&gt;</td>
+    <td>?</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>Get the value of a player-specific preference. The
+    value is returned in the returned p2 header</td>
+  </tr>
+  <tr>
+    <td>debug</td>
+    <td>&lt;flag&gt;</td>
+    <td>&lt;value&gt;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>Set the value of a debugging variable, for example, set &quot;d_ir&quot; to &quot;1&quot;
+      to have infrared debugging output.</td>
+  </tr>
+</table>
+<h4>Multiple Players</h4>
+<p>Finally, if more than one player is connected to the system, you can specify that player with a player parameter consisting of the IP address and port or the MAC address of the SLIMP3 device being controlled.</p>
+<p>For example, the following pauses the player and then returns the status as an HTML page for the player at IP address 10.0.1.202:</p>
+<pre>http://10.0.1.201:9000/status.html?p0=pause&amp;p1=1&amp;player=10.0.1.202:69</pre>
+<p>For example, the following pauses the player and then returns the status as an HTML page for the player at MAC address: 04:00:20:12:45:AB</p>
+<pre>http://10.0.1.201:9000/status.html?p0=pause&amp;p1=1&amp;player=04:00:20:12:45:AB</pre>
+<p>Examples</p>
+<p>The following plays the song &quot;10,000 Maniacs/Blind Man's Zoo/01. Eat for 
+  Two.mp3&quot; in the library and returns the status as an HTML page:</p>
+<pre>http://10.0.1.204:9000/status.html?p0=playlist&amp;p1=play&amp;p2=%2f10,000%20Maniacs%2fBlind%20Man's%20Zoo%2f01.%20Eat%20for%20Two.mp3</pre>
+<p>The following adds every song in the directory &quot;10,000 Maniacs/Blind Man's 
+  Zoo/&quot; to the end of the playlist and returns the current player's playlist 
+  as an M3U file:</p>
+<pre>http://10.0.1.204:9000/status.m3u?p0=playlist&amp;p1=add&amp;p2=%2f10,000%20Maniacs%2fBlind%20Man's%20Zoo
+</pre>
+<p>The following displays &quot;Danger Will Robinson&quot; on line 1 and &quot;Hi 
+  Mom&quot; on the second line for five seconds, and sends an empty response:</p>
+<pre>http://10.0.1.204:9000/status?p0=display&amp;p1=Danger%20Will%20Robinson&amp;p2=Hi%20Mom&amp;p3=5
+</pre>
+<p>The following simulates a press of the MENU button on the infrared remote and 
+  sends a response of a two line text document containing the text shown on the 
+  display:</p>
+<pre>http://10.0.1.204:9000/status.txt?p0=button&amp;p1=menu</pre>
+<p>Valid button codes correspond to the functions defined in the Default.map file: add&quot;, &quot;brightness_down&quot;, &quot;brightness_toggle&quot;, &quot;brightness_up&quot;, &quot;done&quot;, &quot;down&quot;, &quot;fire&quot;, &quot;jump_fwd&quot;, &quot;jump_rew&quot;, &quot;left&quot;, &quot;left_repeat&quot;, &quot;menu_browse_album&quot;, &quot;menu_browse_artist&quot;, &quot;menu_browse_genre&quot;, &quot;menu_browse_music&quot;, &quot;menu_browse_playlists&quot;, &quot;menu_plugins&quot;, &quot;menu_home&quot;, &quot;menu_now_playing&quot;, &quot;menu_playlist&quot;, &quot;menu_pop&quot;, &quot;menu_search_album&quot;, &quot;menu_search_artist&quot;, &quot;menu_search_song&quot;, &quot;menu_settings&quot;, &quot;muting&quot;, &quot;numberScroll_0&quot;, &quot;numberScroll_1&quot;, &quot;numberScroll_2&quot;, &quot;numberScroll_3&quot;, &quot;numberScroll_4&quot;, &quot;numberScroll_5&quot;, &quot;numberScroll_6&quot;, &quot;numberScroll_7&quot;, &quot;numberScroll_8&quot;, &quot;numberScroll_9&quot;, &quot;pause&quot;, &quot;play&quot;, &quot;play_0&quot;, &quot;play_1&quot;, &quot;playdisp_0&quot;, &quot;playdisp_1&quot;, &quot;playdisp_2&quot;, &quot;playdisp_3&quot;, &quot;playdisp_4&quot;, &quot;playdisp_5&quot;, &quot;playdisp_toggle&quot;, &quot;power_off&quot;, &quot;power_on&quot;, &quot;power_toggle&quot;, &quot;repeat_0&quot;, &quot;repeat_1&quot;, &quot;repeat_2&quot;, &quot;repeat_toggle&quot;, &quot;right&quot;, &quot;right&quot;, &quot;scan_end&quot;, &quot;scan_fwd&quot;, &quot;scan_rew&quot;, &quot;search&quot;, &quot;shuffle_off&quot;, &quot;shuffle_on&quot;, &quot;shuffle_toggle&quot;, &quot;sleep&quot;, &quot;slimtrisButtonHandler_add&quot;, &quot;slimtrisButtonHandler_down&quot;, &quot;slimtrisButtonHandler_left&quot;, &quot;slimtrisButtonHandler_play&quot;, &quot;slimtrisButtonHandler_right&quot;, &quot;slimtrisButtonHandler_up&quot;, &quot;stop&quot;, &quot;textsize_large&quot;, &quot;textsize_small&quot;, &quot;textsize_toggle&quot;, &quot;titleFormat&quot;, &quot;up&quot;, &quot;volume_down&quot;, &amp; &quot;volume_up&quot;.</p>
+<p>Finally, static content may be served by the player by placing the content 
+  in the 'html' subdirectory within the root content directory for the HTTP server. 
+  For example:</p>
+<pre>http://10.0.1.201:9000/html/test.html</pre>
+<p>This will return the file test.html within the 'html' subdirectory in the root 
+  content directory for the http server. Currently this resides in:</p>
+<pre>slimp3/server/html/EN/html/test.html</pre>
+<h4>
+  Player Status
+</h4>
+<p>When you use the HTTP interface to control the SLIMP3 server (and player) to 
+  obtain status the server returns a response that contains:</p>
+<ul>
+  <li>A header indicating a content type</li>
+  <li>Several headers indicating the status of the player</li>
+  <li>A response body </li>
+</ul>
+<p>You can use one of five basic URL formats: </p>
+<table border="1">
+  <tr> 
+    <td><b>URL Format</b></td>
+    <td><b>Content Returned</b></td>
+    <td><b>&quot;content-type:&quot; Header Value</b></td>
+  </tr>
+  <tr> 
+    <td> 
+      <p>http://host:port/status</p>
+    </td>
+    <td>No content</td>
+    <td>(none)</td>
+  </tr>
+  <tr> 
+    <td>http://host:port/status.html</td>
+    <td>Human readable HTML page indicating the status of the player</td>
+    <td>text/html</td>
+  </tr>
+  <tr> 
+    <td> 
+      <p>http://host:port/xml/status.xml</p>
+      <p></p>
+    </td>
+    <td>XML data indicating the status of the player (see 
+  <a href="xml_skin.html">The XML Skin</a> documentation)</td>
+    <td>text/xml</td>
+  </tr>
+  <tr> 
+    <td>http://host:port/status.m3u</td>
+    <td>M3U playlist file</td>
+    <td>audio/x-mpegurl</td>
+  </tr>
+  <tr> 
+    <td> 
+      <p>http://host:port/status.txt</p>
+      <p></p>
+    </td>
+    <td>Plain text of SLIMP3 display contents</td>
+    <td>text/plain</td>
+  </tr>
+</table>
+<p>For each of these formats additional headers are returned:</p>
+<table  border="1">
+  <tr>
+    <td>x-playerindex:</td>
+    <td>&lt;currentitem&gt;</td>
+    <td>Index of the currently played item. 1 is the first item</td>
+  </tr>
+  <tr> 
+    <td>x-playervolume:</td>
+    <td>&lt;currentvolume&gt;</td>
+    <td>The current volume of the player, range 0-99</td>
+  </tr>
+  <tr> 
+    <td>x-playertracks:</td>
+    <td>&lt;trackcount&gt;</td>
+    <td>Total number of tracks in the playlist</td>
+  </tr>
+  <tr> 
+    <td>x-playershuffle:</td>
+    <td>&lt;0|1&gt;</td>
+    <td>Playlist shuffle state: 0=no, 1=yes</td>
+  </tr>
+  <tr> 
+    <td>x-playerrepeat:</td>
+    <td>&lt;0|1|2&gt;</td>
+    <td>Playlist repeat state: 0=stop at end, 1=repeat current song, 2=repeat 
+      all songs</td>
+  </tr>
+  <tr> 
+    <td>x-playermode:</td>
+    <td>&lt;play|pause|stop|off&gt;</td>
+    <td>Current player state: play, pause, stop, powered off</td>
+  </tr>
+  <tr> 
+    <td>x-playertime:</td>
+    <td>&lt;seconds&gt;</td>
+    <td>Number of seconds of the song that have been played. Floating point value.</td>
+  </tr>
+  <tr> 
+    <td>x-playerduration:</td>
+    <td>&lt;seconds</td>
+    <td>Duration of current song in seconds. Floating point value.</td>
+  </tr>
+  <tr> 
+    <td>x-playerartist:</td>
+    <td>&lt;artistname&gt;</td>
+    <td>Name of the artist associated with the currently playing song.</td>
+  </tr>
+  <tr> 
+    <td>x-playeralbum:</td>
+    <td>&lt;albumname&gt;</td>
+    <td>Name of the album associated with the currently playing song.</td>
+  </tr>
+  <tr> 
+    <td>x-playertitle:</td>
+    <td>&lt;songtitle&gt;</td>
+    <td>Title of the song currently playing.</td>
+  </tr>
+  <tr>
+    <td>x-playertrack:</td>
+    <td>&lt;tracknumber&gt;</td>
+    <td>Track number associated with the song currently playing.</td>
+  </tr>
+  <tr> 
+    <td>x-playergenre:</td>
+    <td>&lt;genrename&gt;</td>
+    <td><p>Genre associated with the currently playing song.</p>
+    </td>
+  </tr>
+  <tr>
+    <td>x-player</td>
+    <td>&lt;playerid&gt;</td>
+    <td>The identifier (IP address &amp; port) for the given player</td>
+  </tr>
+  <tr>
+    <td>x-playername</td>
+    <td>&lt;playername&gt;</td>
+    <td>The human readable name assigned to the player</td>
+  </tr>
+  <tr>
+    <td>x-p0</td>
+    <td>&lt;p0&gt;</td>
+    <td>The value of p0 after the command has been executed</td>
+  </tr>
+  <tr>
+    <td>x-p1</td>
+    <td>&lt;p1&gt;</td>
+    <td>The value of p0 after the command has been executed</td>
+  </tr>
+  <tr>
+    <td>x-p2</td>
+    <td>&lt;p2&gt;</td>
+    <td>The value of p0 after the command has been executed</td>
+  </tr>
+  <tr>
+    <td>x-p3</td>
+    <td>&lt;p3&gt;</td>
+    <td>The value of p0 after the command has been executed</td>
+  </tr>
+  <tr>
+    <td>x-p4</td>
+    <td>&lt;p4&gt;</td>
+    <td><p>The value of p0 after the command has been executed</p>
+    </td>
+  </tr>
+</table>
+
+<p>The following is an example of an HTTP status transactions.  
+The text in blue is sent from the client to the SLIMP3 HTTP server.  
+Text in red is returned by the SLIMP3 HTTP server.
+</p>
+<pre><font color="#0000FF">
+GET /status.html?p0=pause&amp;p1=1 HTTP/1.0
+</font>
+<font color="#FF0000">
+
+HTTP/1.0 200 OK
+Content-Type: audio/x-mpegurl
+x-playerindex: 11
+x-playervolume: 71.5
+x-playertracks: 14
+x-playershuffle: 0
+x-playerrepeat: 2
+x-playermode: play
+x-playertime: 23.245
+x-playerduration: 234.33
+x-playerartist: A Tribe Called Quest
+x-playeralbum: The Low End Theory
+x-playertitle: Jazz (We've Got)
+x-playertrack: 11
+x-playergenre: HipHop
+x-player: 10.0.1.204:69
+x-playername: Living room
+x-p0: pause
+x-p1: 1
+
+/Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/01. Excursions.mp3
+/Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/02. Buggin' Out.mp3
+/Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/03. Rap Promoter.mp3
+/Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/04. Butter.mp3
+/Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/05. Verses From The Abstrac.mp3
+/Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/06. Show Business.mp3
+/Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/07. Vibes And Stuff.mp3
+/Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/08. The Infamous Date Rape.mp3
+/Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/09. Check The Rhime.mp3
+/Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/10. Everything Is Fair.mp3
+/Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/11. Jazz (We've Got).mp3
+/Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/12. Skypager.mp3
+/Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/13. What?.mp3
+/Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/14. Scenario.mp3</font>
+</pre>
+[INCLUDE helpfooter.html]

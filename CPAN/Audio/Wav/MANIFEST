@@ -1,0 +1,11 @@
+Changes
+MANIFEST
+README
+Makefile.PL
+Wav.pm
+test.pl
+test_tone.wav
+Wav/Read.pm
+Wav/Write.pm
+Wav/Tools.pm
+Wav/Write/Header.pm

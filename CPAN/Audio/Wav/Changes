@@ -1,0 +1,16 @@
+Revision history for Perl extension Audio::Wav.
+
+0.01  Fri Dec 11 05:54:22 1998
+  - original version; created by h2xs 1.18
+
+0.02  Sat Sep 01 15:15:00 2001
+  - works on big endian machines!
+  - no need for Audio::Tools anymore
+  - added support for info & sampler blocks.
+  - now honours padding bytes
+  - read & read_raw no longer return non-audio data.
+  - added error handler.
+  - slight speed improvement for read & write methods
+  - some other fixes.
+
+

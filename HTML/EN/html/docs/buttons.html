@@ -1,0 +1,167 @@
+[SET pageicon help]
+[SET title Button Mapping]
+[SET techinfo 1]
+[INCLUDE helpheader.html]
+
+  <h4>Overview</h4>
+  <p>
+    The Player IR interface to the SLIMP3 server associates human actions 
+    (pressing a button on the remote) with functions on the server (jumping to
+    the next song). There are a number of translations, or mappings between the
+    human action and the server function.
+  </p>
+  <p>
+    The remote translates the particular button pressed into a series of pulses
+    of infrared light. The player recieves these pulses, and translates them
+    into a four byte code, which is sent to the server. The server looks up
+    this code in a table and tranlates it into a button name. The button name
+    is then looked up in another table to produce the function which should be
+    called.
+  </p>
+  <p>
+    The button to IR pulse mapping depends on the remote used, and is not generally
+    customizable, although programmable remotes can be used. The IR pulse to code
+    mapping is controlled in the firmware of the player, and cannot be modified
+    without updating that firmware. The code to button name mapping is controlled
+    through <em>.ir</em> files, typically one for each type of remote used to control
+    the player. The final button name to function mapping is controlled through
+    <em>.map</em> files, consisting of a default mapping file, and any custom maps
+    which may have been created.
+  </p>
+  <p>
+    The mapping files, both <em>.ir</em> and <em>.map</em>, are stored in the 
+    <strong>IR</strong> subfolder of the folder where the SLIMP3 software was
+    installed. Included with the software are two <em>.ir</em> files:
+    <em>jvc_dvd.ir</em> and <em>SLIMP3_Remote.ir</em> which handle the codesets
+    sent by the JVC DVD player (which is the codeset most commonly used by the
+    SLIMP3 player prior to the production of the SLIMP3 specific remotes) and the
+    SLIMP3 specific remote respectively. One <em>.map</em> file(<em>Default.map</em>),
+    representing the default mapping is included.
+  </p>
+  <hr>
+  <h4>Mappings</h4>
+  <h5>Code to Button Name</h5>
+  <p>
+    The code to button name mapping is contained within <em>.ir</em> files located
+    in the <strong>IR</strong> subfolder of the SLIMP3 server folder. The files
+    consist of lines with the button name followed by an equals sign (<strong>=</strong>)
+    followed by the IR code in hex (no 0x necessary). Everything after a <strong>#</strong>
+    is considered a comment. Leading and trailing whitespace is ignored, as is whitespace
+    around the <strong>=</strong> and preceding the <strong>#</strong>. The
+    <strong>=</strong> and <strong>#</strong> characters are not allowed within the
+    button name, but embedded whitespace (except newlines) is allowed. Due to the
+    implementation of button pressing styles (explained below), the period
+    (<strong>.</strong>) is not recommended for use within a button name.
+  </p>
+  <p>
+    Multiple codes can map to the same button name. On the other hand, if
+    a particular code is repeated within the same file, only the last mapping
+    will actually be used.
+  </p>
+  <p>
+    The server will load all <em>.ir</em> files within the <strong>IR</strong>
+    subfolder. Individual mappings can be disabled for a particular player by
+    using the <em>disabledirsets</em> client array preference. This is
+    configurable from the web interface by following the
+    &quot;[S PLAYERIR_SETTINGS]&quot; or &quot;[S ADDITIONAL_PLAYER_SETTINGS]&quot;
+    links from the &quot;[S PLAYER_SETTINGS]&quot; page. This can be useful if
+    you have JVC equipment co-located with the SLIMP3 player and want to prevent
+    it from reacting to remote signals intended for the other equipment.
+  </p>
+  <p>
+    Examples:<br />
+    <pre>
+play = 0000f732
+play = 0000f7d6 #alternate code for play, with a comment
+    pause     =      0000f7b2   # extra spacing ignored
+play=this = 0000f123 #BAD! = not allowed in button names
+B# = 0000f7c6        #BAD! # also not allowed in button names
+</pre>
+  </p>
+  <h5>Button Name to Function</h5>
+  <p>
+    The button name to function mapping is contained within <em>.map</em> files
+    located in the <strong>IR</strong> subfolder of the SLIMP3 server folder.
+    The files consist of lines with the button name followed by an equals sign
+    (<strong>=</strong>) followed by the function. Everything after a
+    <strong>#</strong> is considered a comment. Leading and trailing whitespace
+    is ignored, as is whitespace around the <strong>=</strong> and preceding the
+    <strong>#</strong>. The <strong>=</strong> and <strong>#</strong> characters
+    are not allowed within either the button name or the function, but embedded
+    whitespace (except newlines) is allowed. Due to the implementation of button
+    pressing styles (explained below), the period (<strong>.</strong>) is not
+    recommended for use within a button name, but would be fine for inclusion
+    in a function. Similarly, use of the underscore (<strong>_</strong>) is not
+    recommended in naming functions, but is fine for button names.
+  </p>
+  <p>
+    The map file is divided up into a number of sections corresponding to the
+    various modes of operation, plus a <strong>&#91;common&#93;</strong> section whose
+    mappings apply to all modes. Sections start with the name of the section
+    enclosed in square brackets (<strong>&#91;&#93;</strong>).
+  <p>
+    Multiple button names can map to the same function. On the other hand, if
+    a particular button name (including pressing style) is repeated within the
+    same section, only the last mapping in that section will actually be used.
+  </p>
+  <p>
+    Button pressing styles are indicated by appending a period (<strong>.</strong>)
+    to the end of the button name, followed by the desired style.
+  </p>
+  <p>
+    Functions can be passed a single parameter by appending an underscore
+    (<strong>_</strong>) to the end of the function name, followed by the parameter 
+  </p>
+  <p>
+    Examples:
+    <pre>
+&#91;common&#93;
+arrow_down = down
+arrow_down.repeat = down #alternate pressing style for same function
+    rew.single     =     jump_rew     #this function uses a parameter, spacing unimportant
+fwd.single = jump_fwd #same function, different parameter
+&#91;off&#93;
+arrow_down = dead #in a different section now, so ok to redefine button names
+</pre>
+  <hr />
+  <h4>Timing</h4>
+  <p>
+    When a code is first received by the server, the plain button mapping is
+    triggered. Also, a timer is set to go off in IRSINGLETIME seconds (currently
+    0.256).
+  </p>
+  <p>
+    If the button on the remote is held down, the server will receive additional
+    codes identical to the initial one. If the repeated codes are each received
+    within IRMINTIME seconds (currently 0.128) of each other, the button.repeat
+    mapping is triggered for each repeated code. If one of those repeated codes
+    happens between IRHOLDTIME (currently 0.512) and IRHOLDTIME + IRMINTIME seconds,
+    the button.hold mapping is triggered.
+  </p>
+  <p>
+    When either IRSINGLETIME seconds pass or a code comes in more than IRMINTIME
+    seconds from the previous code, the pending timer is fired. If the code is
+    different from the code which initiated the timer, the mapping for button.single
+    (for the first code) is triggered. If the new code is the same as the old one,
+    the mapping for button.double is triggered.
+  </p>
+  <p>
+    If the timer fired as a result of the time elapsing, then it must be determined
+    if the button is still being held. This is the case if the last code received
+    was received within the last IRMINTIME seconds. If the button is no longer being
+    held, the mapping for button.single is triggered. Otherwise the timer is
+    rescheduled for another IRSINGLETIME seconds, or for however long it takes to
+    make the total time be IRHOLDTIME seconds. The same checks apply for the next
+    time the timer is fired.
+  </p>
+  <p>
+    After IRHOLDTIME seconds have passed, the timer will no longer trigger the
+    button.single or button.double mappings. From that point forward, the mapping
+    triggered will be button.hold_release when it is finally determinied that the
+    button is no longer being held.
+  </p>
+  <hr>
+  <p>
+    More to come...
+  </p>
+[INCLUDE helpfooter.html]

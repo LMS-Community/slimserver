@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0040)http://www.ibamba.net/slimp3/library.htm -->
+<HTML><HEAD><TITLE>New Page 2</TITLE>
+<META http-equiv=Content-Language content=en-us>
+<META content="MSHTML 6.00.2800.1141" name=GENERATOR>
+<META content=FrontPage.Editor.Document name=ProgId>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252"><LINK 
+href="html/styles.css" type=text/css rel=stylesheet></HEAD>
+
+
+<BODY 
+style="BORDER-RIGHT: 0px; BORDER-TOP: 0px; BORDER-LEFT: 0px; BORDER-BOTTOM: 0px" 
+leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
+<DIV class=masthead>
+  <TABLE style="BORDER-COLLAPSE: collapse" borderColor=#111111 cellSpacing=0 
+cellPadding=0 width=90% border=0>
+    <TBODY>
+      <TR> 
+        <TD width="100%" valign="middle"> <b> <img src="html/spacer.gif" width="1" height="17">SLIMP3 
+          Music Network</b></TD>
+      </TR>
+    </TBODY>
+  </TABLE>
+</DIV>
+
+
+<BODY 
+style="BORDER-RIGHT: white 2px solid; BACKGROUND: #333; BORDER-BOTTOM: 0px" 
+leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
+<P class=menu1><B><a href="home.html?player={%player}"><font color="#FFFFFF">[S 
+  HOME]</font></a><a href="home.html"></a> / <a href="search.html?player={%player}&type={type}"> 
+  [EQ type artist][S SEARCHFOR] [S ARTIST][/EQ] [EQ type album][S SEARCHFOR] [S 
+  ALBUM][/EQ] [EQ type song][S SEARCHFOR] [S SONGTITLE][/EQ] </a></B></P>
+<P class=menu2>&nbsp;</P>
+
+
+
+
+
+<BODY style="BORDER-RIGHT: white 2px solid; BORDER-TOP: 0px; BACKGROUND: black" 
+leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
+<DIV class=scrollvertical>
+<TABLE width="100%"  border=0 cellPadding=2 cellSpacing=0>
+    <TBODY>
+      <TR> 
+        <TD height="20" colspan="1" class=listingheadsp2 width="360">[EQ type artist][S SEARCHFOR] [S ARTIST][/EQ] [EQ type album][S SEARCHFOR] [S ALBUM][/EQ] [EQ type song][S SEARCHFOR] [S SONGTITLE][/EQ] : </TD>
+        <TD height="20" colspan="5" class=listingheadsp2>
+
+          <form method="get" action="search.html">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" align="left">
+            <tr>
+              <td valign="middle"><input type=text class="formfield" name="query" value="{query}" size=26><input name="" type="image" onClick="submit" src="html/ok2.gif">
+                
+                <input type=hidden value="{type}" name="type"> <input type=hidden value="{player}" name="player"><font color="#999999"><b>[NE numresults -1]Found: {numresults} [/NE]</b></font>
+              </td>
+            </tr>
+          </table></TD>
+        <TD height="20" class=listingheadsp2 ></TD>
+      </TR>
+      
+    <TR> 
+      <TD colspan="7" class=listing width="100%"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><font color="#999999">[IF searchlist_pagebar]Pages: [/IF]</font></td>
+    <td align="left">[IF searchlist_pagebar]{searchlist_pagebar}[/IF][IF searchlist_header] {searchlist_header}:[/IF]</td>
+  </tr>
+</table>
+
+          <table border="0" cellspacing="0" cellpadding="4" width="100%">
+            {browse_list} 
+          </table>
+</TD>
+      </TR>
+      <TR> 
+        <TD width="87" height="400" class=listing>&nbsp;</TD>
+        <TD width="404" height="600" align=right class=listing>&nbsp;</TD>
+        <TD width="44" height="400" class=listing>&nbsp;</TD>
+        <TD width="160" height="400" class=listing>&nbsp;</TD>
+        <TD width="42" height="400" class=listing>&nbsp;</TD>
+        <TD width="1" height="400" class=listing>&nbsp;</TD>
+        <TD width="645" height="400" class=listing>&nbsp;</TD>
+      </TR>
+    </TBODY>
+  </TABLE>
+</DIV></BODY></HTML>

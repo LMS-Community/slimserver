@@ -1,0 +1,38 @@
+<tr>
+   <td [IF currentsong]class="listing2"[/IF][IFN currentsong]class="listing"[/IFN]><a name={num}>
+      <a style="font-size: 10px;color:white" href="status.html?p0=playlist&p1=jump&p2={num}&player={%player}" target="statusframe">&nbsp;[EVAL]$hashref->{'num'} +1[/EVAL].&nbsp;</a>
+      <b><a href="status.html?p0=playlist&p1=jump&p2={num}&player={%player}" target="statusframe">"{&title}"</a></b>
+   <nobr>[IF artist] [S BY] <a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser">{&artist}</a> [/IF]
+   </nobr><nobr>[IF album] [S FROM] <i><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{album}</a></i>[/IF]
+   </nobr></td>
+   <td [IF currentsong]class="listing2"[/IF][IFN currentsong]class="listing"[/IFN] width="11" align="center">
+   	<a href="status.html?p0=playlist&p1=move&p2={num}&p3=%2D1&player={%player}&start={start}" target="statusframe">
+   	<img src="html/move.up.gif" border="0" width="11" height="9" align="center"
+   	onMouseOver="self.status='Move Track Up One';return true">
+   	</a></td>
+   <td [IF currentsong]class="listing2"[/IF][IFN currentsong]class="listing"[/IFN] width="3" align="center">&nbsp;</td>
+   <td [IF currentsong]class="listing2"[/IF][IFN currentsong]class="listing"[/IFN] width="11" align="center">
+   	<a href="status.html?p0=playlist&p1=move&p2={num}&p3=%2B1&player={%player}&start={start}" target="statusframe">
+   	<img src="html/move.down.gif" border="0" width="11" height="9" align="center"
+   	onMouseOver="self.status='Move Track Down One';return true">
+   	</a></td>
+   <td [IF currentsong]class="listing2"[/IF][IFN currentsong]class="listing"[/IFN] width="3" align="center">&nbsp;</td>
+   <td [IF currentsong]class="listing2"[/IF][IFN currentsong]class="listing"[/IFN] width="11" align="center">
+   	<a href="status.html?p0=playlist&p1=move&p2={num}&p3={nextsongind}&player={%player}&start={start}" target="statusframe" onMouseOver="self.status='Play This Next';return true">
+   	<img src="html/queue.gif" border="0" width="6" height="9" align="center"
+   		onMouseOver="self.status='Queue After Current Song';return true">
+   	</a></td>
+   <td [IF currentsong]class="listing2"[/IF][IFN currentsong]class="listing"[/IFN] width="3" align="center">&nbsp;</td>
+   <td [IF currentsong]class="listing2"[/IF][IFN currentsong]class="listing"[/IFN] width="11" align="center">
+   	<a href="status.html?p0=playlist&p1=delete&p2={num}&player={%player}&start={start}" target="statusframe">
+   	<img src="html/remove.gif" border="0" width="9" height="9" align="center"
+       	onMouseOver="self.status='Delete From Playlist';return true">
+   	</a></td>
+   <td [IF currentsong]class="listing2"[/IF][IFN currentsong]class="listing"[/IFN] width="3" align="center">&nbsp;</td>
+   <td [IF currentsong]class="listing2"[/IF][IFN currentsong]class="listing"[/IFN] width="11" align="center">
+   	<a href="songinfo.html?songurl=[EVAL]Slim::Web::HTTP::escape(Slim::Player::Playlist::song($client, $hashref->{'num'}));[/EVAL]&player={%player}" target="browser" onMouseOver="self.status='Song Info';return true">
+   	<img src="html/info.gif" border="0" width="9" height="9" align="center"
+       	onMouseOver="self.status='Song Info';return true">
+   	</a></td>
+   <td [IF currentsong]class="listing2"[/IF][IFN currentsong]class="listing"[/IFN] width="3" align="center">&nbsp;</td>
+</tr>

@@ -1,0 +1,14 @@
+<tr>
+  <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN]>
+<a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser">{title}</a>
+[IF album][S FROM][/IF] 
+<i><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{&album}</a></i> 
+  </td>
+  <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN] align="right">  
+    ({song_count})  
+  </td>
+</tr>
+
+
+
+

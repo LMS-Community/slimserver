@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- CREATED BY NICK BALESTRA - THE SENSEMAKER-->
+<HTML><HEAD><TITLE>New Page 2</TITLE>
+<META http-equiv=Content-Language content=en-us>
+<META content="MSHTML 6.00.2800.1141" name=GENERATOR>
+<META content=FrontPage.Editor.Document name=ProgId>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252"><LINK 
+href="html/styles.css" type=text/css rel=stylesheet></HEAD>
+
+
+<BODY 
+style="BORDER-RIGHT: 0px; BORDER-TOP: 0px; BORDER-LEFT: 0px; BORDER-BOTTOM: 0px" 
+leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
+<DIV class=masthead>
+  <TABLE style="BORDER-COLLAPSE: collapse" borderColor=#111111 cellSpacing=0 
+cellPadding=0 width=90% border=0>
+    <TBODY>
+      <TR> 
+        <TD width="100%" valign="middle"> <b><img src="html/spacer.gif" width="1" height="17">SLIMP3 Music Network</b></TD>
+      </TR>
+    </TBODY>
+  </TABLE>
+</DIV>
+
+
+<BODY 
+style="BORDER-RIGHT: white 2px solid; BACKGROUND: #333; BORDER-BOTTOM: 0px" 
+leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
+<P class=menu1><B><a href="home.html?player={%player}"><font color="#FFFFFF">[S 
+  HOME]</font></a><a href="home.html"></a> / <a href="http://172.16.30.103:9000/browse.html?player=%7Bplayer%7D&dir=__playlists"><font color="#CCCCCC">Saved 
+  Playlists </font></a><font color="#CCCCCC"> {pwd_list}</font></B></P>
+<P class=menu2>&nbsp;</P>
+
+
+
+
+
+<BODY style="BORDER-RIGHT: white 2px solid; BORDER-TOP: 0px; BACKGROUND: black" 
+leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
+<DIV class=scrollvertical>
+  <TABLE width="100%" height="100%" border=0 cellPadding=2 cellSpacing=0>
+    <TBODY>
+      <TR> 
+        <TD colspan="6" class=listinghead> Saved Playlists:</TD>
+        <TD width="16%" class=listinghead>&nbsp;</TD>
+      </TR>
+      <TR> 
+        <TD colspan="7" class=listing><p>[IF warn]<b>[S NOTE]</b> [S SCAN_WARNING] 
+            [IFN itunes][S SCAN_CLICK] <a href="browse.html?player={%player}">[S 
+            HERE]</a>.[/IFN][/IF]
+          <p> [IF RENAME_WARNING] 
+          <p><b>[S NOTE]</b> [S RENAME_WARNIN
+          <hr>
+          [/IF] [IF playlistname] 
+          <form method="get" action="browse.html">
+            {savebuttonname} [S THIS_PLAYLIST_AS] 
+            <input name="newname" value="{playlistname}" size=40>
+            <input name="submit" type=submit value="{savebuttonname}">
+            <input type=hidden value="{player}" name="player">
+            <input type=hidden name="dir" value="{dir}">
+          </form>
+          [/IF] [IF titled] 
+          <p><a href="browse.html?player={%player}&dir={%dir}&delete=1">[S DELETE_THIS_PLAYLIST]</a></p>
+          [/IF] [IF playlistname]
+<hr>
+          [/IF] [IF browselist_header]{browselist_header} 
+          <p>[/IF] {browselist_pagebar} 
+          <table border="0" cellspacing="0" cellpadding="4">
+            [IF playlistname] 
+            <tr> 
+              <td class="odd" bgcolor="#FFFFFF">[S THIS_ENTIRE_PLAYLIST]</td>
+              [/IF] [IF playlistname] 
+              <td class="odd" bgcolor="#FFFFFF"><nobr><a href="status.html?p0=playlist&p1=load&p2={%dir}&player={%player}" target="status">[S 
+                PLAY]</a></nobr></td>
+              [/IF] [IF playlistname] 
+              <td class="odd" bgcolor="#FFFFFF"><nobr><a href="status.html?p0=playlist&p1=add&p2={%dir}&player={%player}" target="status">[NB][S 
+                ADD_TO_PLAYLIST][/NB]</a></nobr></td>
+            </tr>
+            [/IF] {browse_list} 
+          </table>
+          
+        </TD>
+      </TR>
+      <TR> 
+        <TD width="20%" height="400" class=listing>&nbsp;</TD>
+        <TD width="64%" height="600" align=right class=listing>&nbsp;</TD>
+        <TD width="0%" height="400" class=listing>&nbsp;</TD>
+        <TD width="32%" height="400" class=listing>&nbsp;</TD>
+        <TD width="13%" height="400" class=listing>&nbsp;</TD>
+        <TD width="13%" height="400" class=listing>&nbsp;</TD>
+        <TD width="16%" height="400" class=listing>&nbsp;</TD>
+      </TR>
+    </TBODY>
+  </TABLE>
+</DIV></BODY></HTML>
+

@@ -1,0 +1,43 @@
+<html>
+	<head>
+		<title>Dummy File for playlist updates</title>
+		<link rel="stylesheet" href="{webroot}slimp3.css">
+		<meta http-equiv="refresh" content="10; url=dummy.html?player={%player}">
+		<script language="JavaScript">
+			<!--hide
+			if ("{%player}") var player = "{%player}";
+			if (!player) parent.statusframe.location="{webroot}status.html?player={%player}";
+			else {
+				var playing = [EVAL]defined($client)&&defined(SliMP3::Prefs::clientGet($client,"playlistItem")) ? SliMP3::Prefs::clientGet($client,"playlistItem") : 0;[/EVAL];
+				var current = [EVAL]defined($client)&&defined(SliMP3::Prefs::clientGet($client,"currentSong")) ? SliMP3::Prefs::clientGet($client,"currentSong") : 0;[/EVAL];
+				if ((current != playing)&&(parent.statusframe.location.href != "about:blank")) parent.statusframe.location="{webroot}status.html?player={%player}";
+			};
+			//-->
+		</script>
+	</head>
+	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" style="background:#000">
+	<table border="0" cellspacing="0" cellpadding="0" width="100%" align="center">
+		<td align="center" width="33%">
+			<script language="JavaScript">
+				<!--hide
+				if ("current") document.write("Current Item: " +current);
+				//-->
+			</script></td>
+		<td width="1"><img src="{webroot}html/pixel.grey.gif" width="1" height="100%" border="0"></td>
+		<td align="center" width="33%"><a href="{webroot}status.html?player={%player}" target="statusframe">
+			<script language="JavaScript">
+				<!--hide
+				if ("player") document.write("{%player}");
+				else document.write("No Client");
+				//-->
+			</script></a></td>
+		<td width="1"><img src="{webroot}html/pixel.grey.gif" width="1" height="100%" border="0"></td>
+		<td align="center" width="33%">
+			<script language="JavaScript">
+				<!--hide
+				if ("playing") document.write("Playlist Item: " +playing);
+				//-->
+			</script></td>
+	</table>
+	</body>
+  </html>

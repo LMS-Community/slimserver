@@ -1,0 +1,6 @@
+[IF pagesstart]  <a href="{path}?start=0&{otherparams}">[S FIRST]</a> [/IF]
+[IF pageprev] <a href="{path}?start={pageprev}&{otherparams}">[S PREVIOUS]</a> [/IF]
+[EQ pageprev 0] <a href="{path}?start={pageprev}&{otherparams}">[S PREVIOUS]</a> [/EQ]
+{pageslist}
+[IF pagenext] <a href="{path}?start={pagenext}&{otherparams}">[S NEXT]</a> [/IF]
+[IF pagesend] <a href="{path}?start={pagesend}&{otherparams}">[S LAST]</a> [/IF]

@@ -1,0 +1,90 @@
+<html>
+<head>
+	<title>[S SLIMP3_MUSIC_PLAYER] [IF player_name]{&player_name}[/IF]</title> 
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="refresh" content="30; url=status_header.html?player={%player}&amp;start={start}&amp;refresh=1">
+<style type="text/css"> <!--
+		[STATIC slimp3.css]
+	--> </style> <script language="JavaScript">
+<!-- Start Hiding the Script
+
+function switchPlayer(player_List){
+   var player = player_List.options[player_List.selectedIndex].value;
+   parent.location.href = "{webroot}index.html?player=" + player;
+}
+
+// Stop Hiding script --->
+</script> 
+</head>
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="javascript:parent.playlist.location.reload(true);">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr height="32">
+		<td colspan="2" align="right" bgcolor="#333333" height="37"><a href="http://www.slimdevices.com/" target="slimdevices"><img src="html/images/slimdevices_logo.gif" alt="Slim Devices" width="116" height="19" border="0"></a></td>
+		<td bgcolor="#333333" width="8" height="37"><img src="html/images/spacer.gif" width="4" height="37"></td>
+	</tr>
+	<tr height="32">
+		<td bgcolor="#333333" width="4"><img src="html/images/spacer.gif" width="4" height="32" alt=""></td>
+		<td bgcolor="#737373"><table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr height="32">
+					<td><img src="html/images/musicplayer.gif" width="121" height="25" alt="Music Player"></td>
+					<td align="right" valign="center">[IF player_chooser_list]
+						<form method="get" action="{webroot}index.html" target="_top">
+							<select name="player" onchange="switchPlayer(this);" class="exnowplaying">{player_chooser_list}</select>
+						</form>
+						[/IF]</td>
+				</tr>
+			</table></td>
+		<td bgcolor="#333333" width="8"><img src="html/images/spacer.gif" width="8" height="25" alt=""></td>
+	</tr>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr height="19">
+		<td width="4" height="19"><img src="html/images/spacer.gif" width="4" height="19" alt=""></td>
+		<td bgcolor="#737373" height="19"><a href="status_header.html?p0=playlist&amp;p1=jump&amp;p2=%2b1&amp;player={%player}"><img src="html/images/nav_skip.gif" alt="" width="35" height="13" border="0"></a><img src="html/images/nav_spacer.gif" alt="" width="1" height="13" border="0"><a href="status_header.html?p0=play&amp;player={%player}"><img src="html/images/nav_play[IF modeplay]_sel[/IF].gif" alt="" width="35" height="13" border="0"></a><img src="html/images/nav_spacer.gif" alt="" width="1" height="13" border="0"><a href="status_header.html?p0=pause&amp;player={%player}"><img src="html/images/nav_pause[IF modepause]_sel[/IF].gif" alt="" width="43" height="13" border="0"></a><img src="html/images/nav_spacer.gif" alt="" width="1" height="13" border="0"><a href="status_header.html?p0=stop&amp;player={%player}"><img src="html/images/nav_stop[IF modestop]_sel[/IF].gif" alt="" width="36" height="13" border="0"></a><img src="html/images/spacer.gif" alt="" width="29" height="1" border="0">[IF slimp3]<img src="html/images/nav_volume.gif" alt="" width="61" height="13" border="0"><a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=0&amp;player={%player}&amp;start={start}"><img src="html/images/nav_1[EQ volume 0]_sel[/EQ].gif" alt="1" width="13" height="13" border="0"></a><a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=10&amp;player={%player}&amp;start={start}"><img src="html/images/nav_2[EQ volume 10]_sel[/EQ].gif" alt="2" width="13" height="13" border="0"></a><a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=20&amp;player={%player}&amp;start={start}"><img src="html/images/nav_3[EQ volume 20]_sel[/EQ].gif" alt="3" width="13" height="13" border="0"></a><a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=30&amp;player={%player}&amp;start={start}"><img src="html/images/nav_4[EQ volume 30]_sel[/EQ].gif" alt="4" width="13" height="13" border="0"></a><a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=40&amp;player={%player}&amp;start={start}"><img src="html/images/nav_5[EQ volume 40]_sel[/EQ].gif" alt="5" width="13" height="13" border="0"></a><a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=50&amp;player={%player}&amp;start={start}"><img src="html/images/nav_6[EQ volume 50]_sel[/EQ].gif" alt="6" width="13" height="13" border="0"></a><a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=60&amp;player={%player}&amp;start={start}"><img src="html/images/nav_7[EQ volume 60]_sel[/EQ].gif" alt="7" width="13" height="13" border="0"></a><a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=70&amp;player={%player}&amp;start={start}"><img src="html/images/nav_8[EQ volume 70]_sel[/EQ].gif" alt="8" width="13" height="13" border="0"></a><a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=80&amp;player={%player}&amp;start={start}"><img src="html/images/nav_9[EQ volume 80]_sel[/EQ].gif" alt="9" width="13" height="13" border="0"></a><a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=90&amp;player={%player}&amp;start={start}"><img src="html/images/nav_10[EQ volume 90]_sel[/EQ].gif" alt="10" width="17" height="13" border="0"></a><a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=190&amp;player={%player}&amp;start={start}"><img src="html/images/nav_11[EQ volume 100]_sel[/EQ].gif" alt="11" width="17" height="13" border="0"></a>[/IF]</td>
+		<td width="8" height="19"><img src="html/images/spacer.gif" width="8" height="19" alt=""></td>
+	</tr>
+	<tr height="1">
+		<td width="4" height="1"><img src="html/images/spacer.gif" width="4" height="1" alt=""></td>
+		<td bgcolor="#9D9D9D" height="1"><img src="html/images/spacer.gif" width="429" height="1" alt=""></td>
+		<td width="8" height="1"><img src="html/images/spacer.gif" width="8" height="1" alt=""></td>
+	</tr>
+	<tr height="19">
+		<td width="4" height="19"><img src="html/images/spacer.gif" width="4" height="19" alt=""></td>
+		<td bgcolor="#737373" height="19"><img src="html/images/nav_repeat.gif" width="50" height="13" alt=""><a href="status_header.html?p0=playlist&amp;p1=repeat&amp;p2=1&amp;player={%player}&amp;start={start}"><img src="html/images/nav_one[IF repeatone]_sel[/IF].gif" alt="" height="13" border="0"></a><img src="html/images/nav_spacer.gif" alt="" width="1" height="13" border="0"><a href="status_header.html?p0=playlist&amp;p1=repeat&amp;p2=2&amp;player={player}&amp;start={start}"><img src="html/images/nav_all[IF repeatall]_sel[/IF].gif" alt="" width="28" height="13" border="0"></a><img src="html/images/nav_spacer.gif" alt="" width="1" height="13" border="0"><a href="status_header.html?p0=playlist&amp;p1=repeat&amp;p2=0&amp;player={player}&amp;start={start}"><img src="html/images/nav_off[IF repeatoff]_sel[/IF].gif" alt="" width="28" height="13" border="0"></a><img src="html/images/spacer.gif" alt="" width="43" height="1" border="0"><img src="html/images/nav_shuffle.gif" alt="" width="63" height="13" border="0"><a href="status_header.html?p0=playlist&amp;p1=shuffle&amp;p2=0&amp;player={player}&amp;start={start}"><img src="html/images/nav_off[IF shuffleoff]_sel[/IF].gif" alt="" width="28" height="13" border="0"></a><img src="html/images/nav_spacer.gif" alt="" width="1" height="13" border="0"><a href="status_header.html?p0=playlist&amp;p1=shuffle&amp;p2=2&amp;player={player}&amp;start={start}"><img src="html/images/nav_albums[IF shufflealbum]_sel[/IF].gif" alt="" width="51" height="13" border="0"></a><img src="html/images/nav_spacer.gif" alt="" width="1" height="13" border="0"><a href="status_header.html?p0=playlist&amp;p1=shuffle&amp;p2=1&amp;player={player}&amp;start={start}"><img src="html/images/nav_songs[IF shuffleon]_sel[/IF].gif" alt="" width="51" height="13" border="0"></a></td>
+		<td width="8" height="19"><img src="html/images/spacer.gif" width="8" height="19" alt=""></td>
+	</tr>
+	<tr height="20">
+		<td width="4" height="20"><img src="html/images/spacer.gif" width="4" height="19" alt=""></td>
+		<td bgcolor="#C5C5C5" height="20"><img src="html/images/nav_nowplaying.gif" alt="" width="87" height="20" border="0"></td>
+		<td width="8" height="20"><img src="html/images/spacer.gif" width="8" height="19" alt=""></td>
+	</tr>
+	<tr height="1">
+		<td width="4" height="1"><img src="html/images/spacer.gif" width="4" height="1" alt=""></td>
+		<td bgcolor="#c5c5c5" height="1"><img src="html/images/spacer.gif" width="429" height="1" alt=""></td>
+		<td width="8" height="1"><img src="html/images/spacer.gif" width="8" height="1" alt=""></td>
+	</tr>
+	<tr>
+		<td width="4" height="24"><img src="html/images/spacer.gif" width="4" height="24" alt=""></td>
+		<td bgcolor="#c5c5c5" height="24"><table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td width="8"><img src="html/images/spacer.gif" width="8" height="18" alt=""></td>
+		<td valign="center"><span class="exboldnowplaying">[EQ playercount 0][S NO_SLIMP3_FOUND][/EQ][NE playercount 0][IFN songcount] [S NOTHING] [/IFN][/NE]
+			<a href="songinfo.html?songurl={%itempath}&player={%player}" target="browser">{songtitle}</a></span> 
+			[IF album]</i> <span class="exnotactivenowplaying">[S FROM]</span><span class="exboldnowplaying">
+			</span><span class="exnowplaying"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;album={%album}&amp;player={%player}" target="browser">{&album}</a></span>[/IF]
+			[IF artist]<span class="exnotactivenowplaying">[S BY]
+			</span><span class="exnowplaying"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{&artist}</a></span>[/IF]</td>
+		<td width="13"><img src="html/images/spacer.gif" width="13" height="18" alt=""></td>
+		<td width="7"><img src="html/images/spacer.gif" width="7" height="18" alt=""></td>
+		<td valign="center" width="13">[IF songcount]<a href="status_header.html?p0=playlist&amp;p1=delete&amp;p2={thissongnum}&amp;player={%player}&amp;start={start}"><img src="html/images/b_delete_white.gif" width="13" height="13" alt="" border="0"></a>[/IF]</td>
+		<td width="8"><img src="html/images/spacer.gif" width="8" height="18" alt=""></td></tr></table></td>
+		<td width="8" height="24"><img src="html/images/spacer.gif" width="8" height="23" alt=""></td>
+	</tr>
+	<tr height="2">
+		<td width="4" height="1"><img src="html/images/spacer.gif" width="4" height="1" alt=""></td>
+		<td bgcolor="#c5c5c5" height="1"><img src="html/images/spacer.gif" width="429" height="1" alt=""></td>
+		<td width="8" height="1"><img src="html/images/spacer.gif" width="8" height="1" alt=""></td>
+	</tr>
+</table>
+</body>
+</html>

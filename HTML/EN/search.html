@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <title>[S SEARCHFOR]
+    	[EQ type artist][S ARTIST][/EQ]
+    	[EQ type album][S ALBUM][/EQ]
+    	[EQ type song][S SONGTITLE][/EQ]</title>
+    <link rel="stylesheet" href="slimp3.css">
+  </head>
+  <body bgcolor="#FFFFFF">
+
+    <p>
+
+    <h3>[EQ type artist][S SEARCHFOR] [S ARTIST][/EQ]
+        [EQ type album][S SEARCHFOR] [S ALBUM][/EQ]
+        [EQ type song][S SEARCHFOR] [S SONGTITLE][/EQ]
+	</h3><p>
+    <a href="home.html?player={%player}">[S HOME]</a> /
+    <a href="search.html?player={%player}&type={type}">
+        [EQ type artist][S SEARCHFOR] [S ARTIST][/EQ]
+        [EQ type album][S SEARCHFOR] [S ALBUM][/EQ]
+        [EQ type song][S SEARCHFOR] [S SONGTITLE][/EQ]
+    </a>
+        <p><hr><p>
+
+<form method="get" action="search.html">
+    	[EQ type artist][S SEARCHFOR] [S ARTIST][/EQ]
+    	[EQ type album][S SEARCHFOR] [S ALBUM][/EQ]
+    	[EQ type song][S SEARCHFOR] [S SONGTITLE][/EQ]:
+<input type=text class="stdedit" name="query" value="{query}" size=40>
+<input type=submit class="stdclick" value=[S SEARCH]>
+<input type=hidden value="{type}" name="type">
+<input type=hidden value="{player}" name="player">
+</form>
+
+    <p><hr><p>
+[NE numresults -1]
+		[EQ type artist][S ARTISTSMATCHING][/EQ]
+    	[EQ type album][S ALBUMSMATCHING][/EQ]
+    	[EQ type song][S SONGSMATCHING][/EQ] "{query}": {numresults}<p>
+[/NE]
+
+    [IF searchlist_pagebar]<p>[S PAGES]: {searchlist_pagebar}</p>[/IF]
+     [IF searchlist_header]<p>{searchlist_header}:</p>[/IF]
+   <table border="0" cellspacing="0" cellpadding="4">
+       {browse_list}
+    </table>
+    [IF searchlist_pagebar]<p>[S PAGES]: {searchlist_pagebar}</p>[/IF]
+  </body>
+</html>
+

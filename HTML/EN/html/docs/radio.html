@@ -1,0 +1,48 @@
+[SET pageicon help]
+[SET title Internet Radio and Playlist Files]
+[INCLUDE helpheader.html]
+
+      <p>The SLIMP3  supports  MP3 streaming protocols, including Shoutcast,
+      Icecast, Live365, and HTTP. Other streaming formats which do not use MP3
+encoding (Real and WMA for example) are not currently supported.</p>
+      <p>To play
+          an Internet Radio station, simply save an .m3u or .pls playlist file
+          containing the URL of the station in your Saved Playlists folder.
+        You can download these files by right-clicking on the links at most streaming
+        radio
+        web sites.</p>
+      <p>iTunes users can drag stations from the Radio section of iTunes to their
+      Library or to a playlist. It will then be available in the SLIMP3 Saved
+        Playlists area in the corresponding iTunes section.</p>
+      <p>You
+          can
+          also
+          create playlists for Internet radio stations yourself using a text
+        editor. They're just small text files containing the URLs of one or more
+        stations.
+	      
+Here's an example .pls file from www.live365.com for a station called Monkeyfunk:</p>
+      <pre>
+[playlist]
+numberofentries=1
+File1=http://62.49.59.50:8000
+Title1=Monkeyfunk
+Length1=-1
+Version=2
+</pre>
+
+ <p> SLIMP3 can
+   also create and use M3U playlist files. M3U playlist files simply contain
+   a list of one or more URLs or
+   path
+   names,
+   each on
+   its
+   own line
+   in
+   the file.</p>
+ <p>One note: Internet radio stations often change their URL or go offline. If
+   you are having problems with a station that worked at one time, visit their
+   website again and see if you need to update your playlist file for that station.</p>
+
+[INCLUDE helpfooter.html]

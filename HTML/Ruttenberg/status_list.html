@@ -1,0 +1,18 @@
+
+<tr bgcolor = [IF odd]"#f7f7f7"[/IF] [IFN odd]"#FFFFFF"[/IFN]>
+   <td nowrap=true bgcolor="#FFFFFF">
+   	[IF currentsong] <img src="html/arrow-0065.gif">[/IF]
+   </td>
+   <td nowrap=true>
+       	[IF currentsong]<a name="currentsong"></a><b>[/IF]
+  			 <a href="status.html?p0=playlist&p1=jump&p2={num}&player={%player}">{&title}</a>
+ 		[IF currentsong]</b>[/IF]
+    </td>
+    [IF album] <td nowrap=true>
+        <i><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{&album}</a></i></td>[/IF]
+    [IF artist] <td nowrap=true>
+        <a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser">{&artist}</a></td>[/IF]
+   <td nowrap=true>
+      (<a href="status.html?p0=playlist&p1=delete&p2={num}&player={%player}&start={start}">Delete</a>)
+   </td>
+</tr>

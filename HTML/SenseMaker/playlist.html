@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- CREATED BY NICK BALESTRA - THE SENSEMAKER-->
+<HTML><HEAD><TITLE>Controls</TITLE>
+<META http-equiv=Content-Language content=en-us>
+<META content="MSHTML 6.00.2800.1141" name=GENERATOR>
+<META content=FrontPage.Editor.Document name=ProgId>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252"><LINK 
+href="slimp3.css" type=text/css rel=stylesheet></HEAD>
+ <meta http-equiv="refresh" content="30; url=playlist.html?player={%player}&start={start}&refresh=1">
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr> 
+    <td width="100%" valign="top" bgcolor="#666666">&nbsp;<table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr> 
+          <td height="11" valign="top"><strong><font color="#FFFFFF"><img src="html/spacer.gif" width="8" height="8"><b>Current 
+            Playlist</b> </font></strong> <font color="#FFFFFF"><img src="html/spacer.gif" width="27" height="8">[IF 
+            cansave]<a target="browser" href="browse.html?player={%player}&dir=__playlists%2f__current.m3u">[S 
+            SAVE] |</a> [/IF]<a href="playlist.m3u?player={%player}">[S DOWNLOAD]</a> 
+            | <a href="playlist.html?p0=playlist&p1=clear&player={%player}">[S 
+            CLEAR]</a></font></td>
+        <tr align="left"> 
+          <td height="11" colspan="2"><img src="html/spacer.gif" width="8" height="8"></td>
+        </tr>
+      </table></td>
+  </tr>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr> 
+    <td width="100%" valign="top" bgcolor="#000000"> 
+     
+      
+      <table cellspacing="0" border="0" cellpadding="4" width="100%" height="100%" class="listingend">
+        [IFN playlist_items]<BR><img src="html/spacer.gif" width="8" height="8">[S EMPTY]<BR>[/IFN]{playlist_items} 
+      </table>
+      [IF playlist_pagebar]<font color="#FFFFFF"> [S PAGES]:{playlist_pagebar}</font> 
+      [/IF] </td>
+  </tr>
+</table>

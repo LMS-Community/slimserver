@@ -1,0 +1,29 @@
+<browse_entry>
+	[EQ descend true]
+	<dir>
+		<dir_name>{&title}</dir_name>
+		<dir_browse_url><![CDATA[xml/browseid3.xml?song={%song}&artist={%artist}&album={%album}&genre={%genre}]]></dir_browse_url>
+   		[IF genre][NE genre *]<genre>{&genre}</genre>[/NE][/IF] 
+   		[IF artist][NE artist *]<artist>{&artist}</artist>[/NE][/IF] 
+   		[IF album][NE album *]<album>{&album}</album>[/NE][/IF]
+	</dir>
+	[/EQ]
+
+	[IFN descend]
+		[INCLUDE _xml_song.html]
+	[/IFN]
+	
+
+	[IF descend]
+	<replace_url><![CDATA[xml/status.xml?p0=playlist&p1=loadalbum&p2={%genre}&p3={%artist}&p4={%album}]]></replace_url>
+	<append_url><![CDATA[xml/status.xml?p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}]]></append_url>
+	[/IF]
+	[IFN descend]
+	<replace_url><![CDATA[xml/status.xml?p0=playlist&p1=play&p2={%itempath}]]></replace_url>
+	<append_url><![CDATA[xml/status.xml?p0=playlist&p1=append&p2={%itempath}]]></append_url>
+	[/IFN]
+
+	[IF song_count]<song_count>{song_count}</song_count>[/IF]
+	[IF artist_count]<artist_count>{artist_count}</artist_count>[/IF]
+	[IF album_count]<album_count>{album_count}</album_count>[/IF]
+</browse_entry>

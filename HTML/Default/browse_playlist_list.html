@@ -1,0 +1,20 @@
+<tr>
+  <td [IF odd]class="odd" bgcolor="#ececec" width="100%"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF" width="100%"[/IFN]>
+      [IF  descend] <a href="browse.html?dir={%descend}&player={%player}">{&title}</a>  [/IF]
+      [IFN descend]<a href="songinfo.html?songurl={%itempath}&player={%player}">{&title}</a>
+         [IF album] [S FROM] [/IF] 
+         <i><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{&album}</a></i> 
+         [IF artist] [S BY] [/IF] 
+         <a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser">{&artist}</a>
+      [/IFN]
+  </td>
+  <td [IF odd]class="odd" bgcolor="#ececec" align="right" width="13"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF" align="right" width="13"[/IFN]>
+      [IF descend]  <nobr><a href="status_header.html?p0=playlist&p1=load&p2={%itempath}&player={%player}" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt="" border="0"></a></nobr> [/IF]
+      [IFN descend] <nobr><a href="status_header.html?p0=playlist&p1=play&p2={%itempath}&player={%player}" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt="" border="0"></a></nobr> [/IFN]
+  </td>
+  <td [IF odd]class="odd" bgcolor="#ececec" align="right" width="13"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF" align="right" width="13"[/IFN]>
+      [IF descend]   <nobr><a href="status_header.html?p0=playlist&p1=add&p2={%itempath}&player={%player}"    target="status"><img src="html/images/b_add.gif" width=13 height=13 alt="" border="0"></a></nobr> [/IF]
+      [IFN descend]  <nobr><a href="status_header.html?p0=playlist&p1=append&p2={%itempath}&player={%player}" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt="" border="0"></a></nobr> [/IFN]
+  </td>
+</tr>
+

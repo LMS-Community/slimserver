@@ -1,0 +1,12 @@
+[IF usePrefix]
+[EQ separator tree] / [/EQ]
+[EQ separator tab][NE linktitle [S PERFORMANCE_SETTINGS]] <td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>[/NE][/EQ]
+[EQ separator list][NE linktitle [S PERFORMANCE_SETTINGS]] <td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>[/NE][/EQ]
+[/IF]<td width="20%" align="center" height="13">
+[IFN currpage]<a href="{linkpage}{paramlist}{fragment}">[NB]{linktitle}[/NB]</a>[/IFN]
+[IF currpage]<strong style="color:#cccccc">[NB]{linktitle}[/NB]</strong>[/IF]
+[IF useSuffix]
+[EQ separator tree] [/EQ]
+[EQ separator tab] [/EQ]
+[EQ separator list] [/EQ]
+[/IF]</td>[EQ linktitle [S SECURITY_SETTINGS]]</tr><tr>[/EQ]

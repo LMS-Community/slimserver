@@ -1,0 +1,19 @@
+
+	[IF title]<song><title>{&title}</title>[/IF]
+	[IF itempath]
+		<info_url><![CDATA[xml/songinfo.xml?songurl={%itempath}]]></info_url>
+		<path>{&itempath}</path>
+	[/IF]
+	[IF genre]
+		<genre>{&genre}</genre>
+		<genre_browse_url><![CDATA[xml/browseid3.xml?genre={%genre}]]></genre_browse_url>
+	[/IF]
+	[IF artist]
+		<artist>{&artist}</artist>
+		<artist_browse_url><![CDATA[xml/browseid3.xml?genre=*&artist={%artist}]]></artist_browse_url>
+	[/IF]
+	[IF album]
+		<album>{&album}</album>
+		<album_browse_url><![CDATA[xml/browseid3.xml?genre=*&artist=*&album={%album}]]></album_browse_url>
+	[/IF]
+	[IF title]</song>[/IF]

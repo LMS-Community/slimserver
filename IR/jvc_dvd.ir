@@ -1,0 +1,81 @@
+# The default mapping is that of the JVC DVD remote for the Sony
+# universal remote supplied with the SLIMP3
+
+# Additionally, some new codes are defined for use with programmable
+# remotes
+
+##################################################################################
+# Button names to IR code mappings
+##################################################################################
+# The following codes are from a JVC DVD remote
+0						= 0000f776
+1						= 0000f786
+2						= 0000f746
+3						= 0000f7c6
+4						= 0000f726
+5						= 0000f7a6
+6						= 0000f766
+7						= 0000f7e6
+8						= 0000f716
+9						= 0000f796
+arrow_down				= 0000f78b
+arrow_left				= 0000f74b
+arrow_right				= 0000f7cb
+arrow_up				= 0000f70b
+rew						= 0000f70e
+fwd						= 0000f76e
+brightness_down			= 0000f78d # this is CH- on this remote
+brightness_up			= 0000f70d # this is CH+ on this remote
+size					= 0000f703 # this is the DISP button this remote
+format					= 0000f7b6 # this is the GUIDE button on this remote
+menu_home				= 0000f783
+muting					= 0000c038
+muting					= 0000c538
+shuffle					= 0000f72b
+pause					= 0000f7b2
+now_playing				= 0000f7f6 # this is the PIP button on this remote
+play					= 0000f732
+play					= 0000f7d6
+power					= 0000f702
+add						= 0000f743  # this is the REC button on this remote
+repeat					= 0000f7ab  # this is the RECALL button on this remote
+sleep					= 0000f7b3
+stop					= 0000f7c2
+voldown					= 0000c0f8
+voldown					= 0000c5f8
+voldown					= 0000f7f8
+volup					= 0000c078
+volup					= 0000c578
+volup					= 0000f778
+#ent					= 0000f7XX	# ent does not send anything in JVC DVD mode
+#tvvideo				= 0000f7XX	# tv/video does not send anything in JVC DVD mode
+
+# The following are extended IR commands for programmable remotes
+menu_playlist			= 0000f779
+menu_browse_genre		= 0000f77a
+menu_browse_artist		= 0000f77b
+menu_browse_album		= 0000f77c
+menu_browse_music		= 0000f77d
+menu_search_artist		= 0000f77e
+menu_search_album		= 0000f77f
+menu_search_song		= 0000f780
+menu_browse_playlists	= 0000f781
+menu_plugins			= 0000f782
+menu_settings			= 0000f784
+menu_pop				= 0000f785
+textsize_small			= 0000f704
+textsize_large			= 0000f705
+shuffle_off				= 0000f72c
+shuffle_on				= 0000f72d
+repeat_off				= 0000f7ac
+repeat_one				= 0000f7ad
+repeat_all				= 0000f7ae
+power_off				= 0000f700
+power_on				= 0000f701
+playdisp_none			= 0000f7f9	# no track time info
+playdisp_et				= 0000f7fa	# elapsed time
+playdisp_rt				= 0000f7fb	# remaining time
+playdisp_pb				= 0000f7fc	# progress bar
+playdisp_pbet			= 0000f7fd	# progress bar + elapsed time
+playdisp_pbrt			= 0000f7fe	# progress bar + remaining time
+

@@ -1,0 +1,12 @@
+<tr class="[IF odd]odd[/IF][IFN odd]even[/IFN]" cellpadding="0">
+<td class="nowrap" width="90px"><a class="linkbtn" href="status.html?p0=playlist&p1=move&p2={num}&p3=%2D1&player={%player}&start={start}">&uarr;</a>
+<a class="linkbtn" href="status.html?p0=playlist&p1=move&p2={num}&p3=%2B1&player={%player}&start={start}">&darr;</a>
+<a class="linkbtn" href="status.html?p0=playlist&p1=delete&p2={num}&player={%player}&start={start}">&times;</a></td>
+<td>&nbsp;</td>
+<td><a href="status.html?p0=playlist&p1=jump&p2={num}&player={%player}" [IF currentsong]id="currentsong"[/IF]>{&title}</a>
+	[IF album][S FROM][/IF]
+	<em><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{&album}</a></em> 
+	[IF artist] [S BY] [/IF] 
+	<a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser">{&artist}</a>
+</td>
+</tr>

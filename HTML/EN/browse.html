@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>SLIMP3 Music Folder</title>
+    <link rel="stylesheet" href="slimp3.css">
+  </head>
+  <body bgcolor="#FFFFFF">
+
+    <p>
+
+    <h3>[S MUSIC]</h3><p>
+
+    <a href="home.html?player={%player}">[S HOME]</a> / 
+    <a href="browse.html?player={%player}">[S MUSIC]</a>
+	{pwd_list}
+
+    <p><hr><p>
+ 	{browselist_header}</p>
+    [IF browselist_pagebar]<p>[S PAGES]:{browselist_pagebar}</p>[/IF]
+	[IF coverart]
+		<a href="/music/{%coverartpath}/cover.jpg" target="cover">
+		<img src="/music/{%coverartpath}/cover.jpg"></a>
+	[/IF]
+    <table border="0" cellspacing="0" cellpadding="4" width="100%">
+       {browse_list}
+    </table>
+   [IF browselist_pagebar]<p>[S PAGES]:{browselist_pagebar}</p>[/IF]
+  </body>
+</html>

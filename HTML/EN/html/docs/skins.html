@@ -1,0 +1,964 @@
+[SET pageicon help]
+[SET title Skin Creation]
+[SET techinfo 1]
+[INCLUDE helpheader.html]
+
+  <h4>Overview</h4>
+  <p>
+    The web interface to the SLIMP3 server makes use of customizable html
+    templates collected together into a skin.  These skins reside in the
+    <strong>html</strong> subfolder of the folder where the SLIMP3 software was
+    installed.  The skin subfolders are presented for selection in the
+    additional server settings setup page based on the name of the skin
+    subfolder.  The default skin is in the <strong>EN</strong> subfolder.  Each
+    skin can have a subfolder named <strong>html</strong> which can contain
+    static content such as this documentation, or images for use with the
+    dynamic content of the skin.
+  </p>
+  <p>
+    When a page not in the <strong>html</strong> subfolder of either your skin
+    or the default skin is requested, the SLIMP3 server builds the page
+    dynamically based on the templates within the skin subfolder.  This building
+    is accomplished by replacing items either contained in square brackets
+    &#91; &#93; or framed with bracketed directives with the appropriate text.
+  </p>
+  <hr />
+  <h4>Directory Structure</h4>
+    
+<em>SLIMP3 server</em> 
+<ul>
+  <li>html</li>
+  <ul>
+    <li>EN</li>
+    <ul>
+      <li>html...</li>
+    </ul>
+    <li>Bagpuss</li>
+    <ul>
+      <li>html...</li>
+    </ul>
+    <li><em>YourSkin</em> 
+      <ul>
+        <li>html...</li>
+      </ul>
+  </ul>
+  <li>slimp3.exe (or slimp3.pl)</li>
+  <li><em>other items...</em></li>
+</ul>
+<hr />
+  <h4>Template Syntax</h4>
+  <p>
+    The template files in the skin directory are primarily html, with some
+    server-side processing directives contained in square brackets added.  In
+    some cases they are complete pages, in others fragments which are meant to
+    be included into a surrounding page.  The interrelationships of the files
+    are discussed below in the <strong>Template Dependencies</strong> section of
+    this document.  The directives are discussed below in the <strong>Template
+    Directives</strong> section.
+  </p>
+  
+<p> When a dynamic page is requested, the server builds a parameter hash which 
+  is used along with the template to create the final html which is returned to 
+  the requestor. The server-side directives contain references to the keys of 
+  this parameter hash. For practical purposes this means that each template has 
+  a list of parameters available to it which it uses with the directives to produce 
+  the desired final text. The list of parameters available to each template is 
+  discussed below in the <strong>Template Parameters</strong> section.</p>
+  <hr />
+  <h4>Template Directives</h4>
+  <p>
+    Template directive outline conditions for text replacement.  The directives
+    are evaluated in the order below, one at a time, starting at the beginning of
+    the template and proceeding to the end, starting over for the next directive
+    type at the beginning.  The mechanism used is regular expression search and
+    replace, so certain restrictions apply.
+  </p>
+  <p>
+<ul>
+  <li>A directive cannot contain itself (even with a different parameter).</li>
+  <li>Different directives can be contained within each other.</li>
+  <li>Overlapping directives are also not allowed.</li>
+  <li>Line endings within the text portion of directives are allowed, so a directive 
+    may span multiple lines.</li>
+</ul>
+  <dl>
+    <dt><strong>&#91;EVAL&#93; <var>text</var> &#91;/EVAL&#93;</strong></dt>
+    <dd>
+      The <strong>EVAL</strong> directive executes the perl code which it frames
+      (the <var>text</var>).  The code should set a variable named $out to a
+      string which will replace the directive.  It is acceptable to not set $out
+      to anything, in which case the directive will be replaced by an empty
+      string. If the code should fail, the directive will be replaced with the
+      word &quot;ERROR&quot;.
+    </dd>
+    <dt><strong>&#123;%<var>param</var>&#125;</strong></dt>
+    <dd>
+      The <strong>%</strong> directive is replaced with the URL escaped value
+      of <var>param</var> (for example, spaces become %20, / becomes %2f, etc.).
+      If <var>param</var> is undefined, the directive is replaced with the empty
+      string.
+    </dd>
+    <dt><strong>&#123;&amp;<var>param</var>&#125;</strong></dt>
+    <dd>
+      The <strong>&amp;</strong> directive is replaced with the HTML encoded value
+      of <var>param</var> (for example, &lt; becomes &amp;lt;, &gt; becomes &amp;gt;,
+      etc.). If <var>param</var> is undefined, the directive is replaced with the
+      empty string.
+    </dd>
+    <dt><strong>&#123;<var>param</var>&#125;</strong></dt>
+    <dd>
+      This directive is replaced with the value of <var>param</var>.  If
+      <var>param</var> is undefined, the directive is replaced with the empty
+      string.
+    </dd>
+    <dt><strong>&#91;S <var>string</var>&#93;</strong></dt>
+    <dd>
+      The <strong>S</strong> directive is replaced by the language specific
+      string defined for <var>string</var> in strings.txt.  If <var>string</var>
+      is not defined for the current language, the default language definition
+      is used.  If <var>string</var> is also not defined for the default language
+      the directive is replaced by the empty string.
+    </dd>
+    <dt><strong>&#91;SET <var>name</var> <var>value</var>&#93;</strong></dt>
+    <dd>
+      Using the <strong>SET</strong> directive will set the parameter with the
+      given <var>name</var> to the given <var>value</var>. This is useful with
+      the <strong>INCLUDE</strong> directive for setting values in subsequently
+      included files, as well with IF and other conditional directives for
+      changing the HTML dynamically.
+    <dt><strong>&#91;IF <var>param</var>&#93; <var>text</var> &#91;/IF&#93;</strong></dt>
+    <dd>
+      The <strong>IF</strong> directive evaluates <var>param</var> according to
+      standard perl rules.  If <var>param</var> evaluates to true, then
+      <var>text</var> is included in the final output, otherwise the directive is
+      replaced by an empty string.  Under the standard perl rules,
+      <var>param</var> is false if it has a value of 0 (or &quot;0&quot;), is
+      undefined (does not exist), or is the empty string (&quot;&quot;).
+    </dd>
+    <dt><strong>&#91;IFN <var>param</var>&#93; <var>text</var> &#91;/IFN&#93;</strong></dt>
+    <dd>
+      The <strong>IFN</strong> directive works the same as the
+      <strong>IF</strong> directive, except that <var>text</var> is included if
+      <var>param</var> evaluates to false instead of true.
+    </dd>
+    <dt><strong>&#91;EQ <var>param</var> <var>value</var>&#93; <var>text</var> &#91;/EQ&#93;</strong></dt>
+    <dd>
+      The <strong>EQ</strong> directive evaluates <var>param</var> to see if its
+      value is equal to <var>value</var>.  If so, <var>text</var> is included in the
+      final output, otherwise the empty string replaces the directive.  If
+      <var>param</var> is undefined, it is considered to be not equal to
+      <var>value</var>.
+    </dd>
+    <dt><strong>&#91;NE <var>param</var> <var>value</var>&#93; <var>text</var> &#91;/NE&#93;</strong></dt>
+    <dd>
+      The <strong>NE</strong> directive works the same as the
+      <strong>EQ</strong> directive, except that <var>text</var> is included if
+      the value of <var>param</var> is not equal to <var>value</var>.  Once again,
+      if <var>param</var> is undefined, it is considered to be not equal to
+      <var>value</var>, so <var>text</var> would be included in that case.
+    </dd>
+    <dt><strong>&#91;INCLUDE <i>html/path/here.html</i>&#93;</strong></dt>
+    <dd>
+      Using the <strong>INCLUDE</strong> directive will include the parsed
+      contents of the file in html/path/here.html in the output. Useful for
+      sharing content across several html template files.
+    </dd>
+    <dt><strong>&#91;STATIC <i>html/path/here.html</i>&#93;</strong></dt>
+    <dd>
+      Using the <strong>STATIC</strong> directive will include the parsed
+      contents of the file in html/path/here.html in the output, but will not parse the file for 
+      template directives.
+    </dd>
+    <dt><strong>&#91;NB&#93;<var>text</var>&#91;/NB&#93;</strong></dt>
+    <dd>
+      The <strong>NB</strong> directive replaces spaces in <var>text</var> with
+      &amp;nbsp; in order to prevent line wrapping in the middle of <var>text</var>.
+    </dd>
+    <dt><strong>&#91;E&#93;<var>text</var>&#91;/E&#93;</strong></dt>
+    <dd>
+      The <strong>E</strong> directive replaces <var>text</var> with its URL
+      escaped equivalent.
+    </dd>
+    <dt><strong>&amp;lsqb;</strong></dt>
+    <dt><strong>&amp;rsqb;</strong></dt>
+    <dt><strong>&amp;lbrc;</strong></dt>
+    <dt><strong>&amp;rbrc;</strong></dt>
+    <dd>
+      Not really directives, but also not standard html.  These strings are
+      replaced by &#91; (for <strong>&amp;lsqb;</strong>), &#93;
+      (for <strong>&amp;rsqb;</strong>), &#123; (for <strong>&amp;lbrc;</strong>),
+      and &#125; (for <strong>&amp;rbrc;</strong>).  They are used to avoid having normal
+      text interpreted as a directive.  The use of <strong>&amp;#91;</strong>
+      for &#91;, <strong>&amp;#93;</strong> for &#93;, <strong>&amp;#123;</strong> for
+      &#123;, and <strong>&amp;#125;</strong> for &#125; would also work, and
+      would be standard html.
+    </dd>
+  </dl>
+  </p>
+  <hr />
+  <h4>Template Dependencies</h4>
+  <p>
+    Only a subset of the templates used are directly requestable from the web
+    interface.  The others are used to fill in parameters for the requestable
+    ones.  The requestable templates and the templates subordinate to them are
+    listed below.  All templates can be requested as either <strong>*.htm</strong>
+    or <strong>*.html</strong>.
+  </p>
+  <dl>
+    <dt><strong>index.html</strong></dt>
+    <dt><strong>home.html</strong></dt>
+      <dd>
+        <ul>
+          <li>homeplayer_list.html</li>
+        </ul>
+      </dd>
+    <dt><strong>status.html</strong></dt>
+      <dd>
+        <ul>
+          <li>pagebarheader.html</li>
+          <li>pagebar.html</li>
+            <ul>
+              <li>pagebarlist.html</li>
+            </ul>
+          <li>status_list.html</li>
+        </ul>
+      </dd>
+    <dt><strong>browse.html</strong></dt>
+      <dd>
+        <ul>
+          <li>badpath.html</li>
+          <li>browse_pwdlist.html</li>
+          <li>pagebarheader.html</li>
+          <li>pagebar.html</li>
+            <ul>
+              <li>pagebarlist.html</li>
+            </ul>
+          <li>browse_list.html</li>
+          <li>browse_playlist.html</li>
+            <ul>
+              <li>browse_playlist_list.html</li>
+            </ul>
+        </ul>
+      </dd>
+    <dt><strong>browseid3.html</strong></dt>
+      <dd>
+        <ul>
+          <li>pagebarheader.html</li>
+          <li>pagebar.html</li>
+            <ul>
+              <li>pagebarlist.html</li>
+              <li>alphapagebarlist.html</li>
+            </ul>
+          <li>browseid3_pwdlist.html</li>
+          <li>browseid3_list.html</li>
+        </ul>
+      </dd>
+    <dt><strong>songinfo.html</strong></dt>
+    <dt><strong>search.html</strong></dt>
+      <dd>
+        <ul>
+          <li>pagebarheader.html</li>
+          <li>pagebar.html</li>
+            <ul>
+              <li>pagebarlist.html</li>
+              <li>alphapagebarlist.html</li>
+            </ul>
+          <li>browseid3_list.html</li>
+        </ul>
+      </dd>
+    <dt><strong>setup.html</strong></dt>
+    <dt><strong>*.html under <em>html</em> directory</strong></dt>
+  </dl>
+  <!-- scratch area
+  <p>index.html - none - templated</p>
+  <p>browse.html - Pages::browser - templated</p>
+  <p>stream.mp3 - addstreamingresponse - not templated</p>
+  <p>home.html - Pages::home - templated</p>
+  <p>browseid3.html - Pages::browseid3 - templated</p>
+  <p>artists.html - Pages::artists - templated</p>
+  <p>albums.html - Pages::albums - templated</p>
+  <p>songinfo.html - Pages::songinfo - templated</p>
+  <p>songs.html - Pages::songs - templated</p>
+  <p>search.html - Pages::search - templated</p>
+  <p>setup.html - Setup::setup_HTTP - templated</p>
+  <p>slimp3.css - none - templated</p>
+  <p>status.txt - Display::curLines - not templated</p>
+  <p>status.html - Pages::status - templated</p>
+  <p>html files under <strong>html</strong> subdirectory - none - templated</p>
+  <p>non-html files under <strong>html</strong> subdirectory - none - not templated</p>
+  end scratch area -->
+<hr />  <h4>Non-Template Requestable Items</h4>
+  <p>
+    Certain requests made to the SLIMP3 HTTP server are fulfilled outside
+    of the template mechanism.  Some items are generated dynamically,
+    while others are served up as the file exists on the server.  The
+    static item requests are satisfied by following the mechanism of
+    checking for the requested file first in the selected skin directory,
+    then in the default skin directory (<strong>EN</strong>).
+  </p>
+  <h4>Dynamic Items</h4>
+  <dl>
+    <dt><strong>status.txt</strong></dt>
+      <dd>Returns the text displayed on the currently selected player.</dd>
+    <dt><strong>status.m3u</strong></dt>
+      <dd>
+        Returns the current playlist of the currently selected player in
+        m3u format.
+      </dd>
+    <dt><strong>stream.mp3</strong></dt>
+      <dd>Returns an Icecast/Shoutcast style stream.</dd>
+  </dl>
+  <h4>Static Items</h4>
+  <dl>
+    <dt><strong>slimp3.css</strong></dt>
+      <dd>
+        Arguably the most important file to modify to make a skin your own.
+      </dd>
+    <dt><strong>favicon.ico</strong></dt>
+      <dd>Serves up <em>skin</em>/html/mypage.ico</dd>
+    <dt><strong>non-html content in the <em>html</em> directory</strong></dt>
+    <dd>
+      Currently supported types (suffixes):
+      <ul>
+        <li>application/pdf (.pdf)</li>
+        <li>application/x-java-applet (.class)</li>
+        <li>audio/mpeg (.mp3, .mp2)</li>
+        <li>audio/x-cue (.cue)</li>
+        <li>audio/x-mpegurl (.m3u)</li>
+        <li>audio/x-ogg (.ogg)</li>
+        <li>audio/x-scpls (.pls)</li>
+        <li>image/gif (.gif)</li>
+        <li>image/jpeg (.jpg, .jpeg)</li>
+        <li>image/png (.png)</li>
+        <li>image/x-icon (.ico)</li>
+        <li>text/css (.css)</li>
+        <li>text/plain (.txt)</li>
+      </ul>
+    </dd>
+  </dl>
+  <hr />
+  <h4>Template Functions</h4>
+  <dl>
+    <dt><strong>Pages::browser</strong></dt>
+    <dd>
+      <dl>
+        <dt>Call tree</dt>
+        <dd>
+          <ul>
+            <li>Pages::browser_addtolist_done</li>
+            <ul>
+              <li>Pages::pagebar</li>
+            </ul>
+          </ul>
+        </dd>
+        <dt>Templates used</dt>
+        <dd>
+          <ul>
+            <li>badpath.html</li>
+            <li>browse_pwdlist.html</li>
+          </ul>
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>Pages::browser_addtolist_done</strong></dt>
+    <dd>
+      <dl>
+        <dt>Call tree</dt>
+        <dd>
+          <ul>
+            <li>Pages::pagebar</li>
+          </ul>
+        </dd>
+        <dt>Templates used</dt>
+        <dd>
+          <ul>
+            <li>browse_playlist_list.html</li>
+            <li>browse_list.html</li>
+            <li>browse_playlist.html</li>
+            <li>browse.html</li>
+          </ul>
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>Pages::pagebar</strong></dt>
+    <dd>
+      <dl>
+        <dt>Call tree</dt>
+        <dd>no subroutines called</dd>
+        <dt>Templates used</dt>
+        <dd>
+          <ul>
+            <li>pagebarheader.html</li>
+            <li>pagebar.html</li>
+            <li>pagebarlist.html</li>
+          </ul>
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>Pages::alphapagebar</strong></dt>
+    <dd>
+      <dl>
+        <dt>Call tree</dt>
+        <dd>no subroutines called</dd>
+        <dt>Templates used</dt>
+        <dd>
+          <ul>
+            <li>pagebar.html</li>
+            <li>alphapagebarlist.html</li>
+          </ul>
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>Pages::status</strong></dt>
+    <dd>
+      <dl>
+        <dt>Call tree</dt>
+        <dd>
+          <ul>
+            <li>Pages::pagebar</li>
+          </ul>
+        </dd>
+        <dt>Templates used</dt>
+        <dd>
+          <ul>
+            <li>status.html</li>
+            <li>status_list.html</li>
+          </ul>
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>Pages::home</strong></dt>
+    <dd>
+      <dl>
+        <dt>Call tree</dt>
+        <dd>no subroutines called</dd>
+        <dt>Templates used</dt>
+        <dd>
+          <ul>
+            <li>home.html</li>
+            <li>homeplayer_list.html</li>
+          </ul>
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>Pages::search</strong></dt>
+    <dd>
+      <dl>
+        <dt>Call tree</dt>
+        <dd>
+          <ul>
+            <li>Pages::pagebar</li>
+            <li>Pages::alphapagebar</li>
+          </ul>
+        </dd>
+        <dt>Templates used</dt>
+        <dd>
+          <ul>
+            <li>search.html</li>
+            <li>browseid3_list.html</li>
+          </ul>
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>Pages::songinfo</strong></dt>
+    <dd>
+      <dl>
+        <dt>Call tree</dt>
+        <dd>no subroutines called</dd>
+        <dt>Templates used</dt>
+        <dd>
+          <ul>
+            <li>songinfo.html</li>
+          </ul>
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>Pages::browseid3</strong></dt>
+    <dd>
+      <dl>
+        <dt>Call tree</dt>
+        <dd>
+          <ul>
+            <li>Pages::pagebar</li>
+            <li>Pages::alphapagebar</li>
+          </ul>
+        </dd>
+        <dt>Templates used</dt>
+        <dd>
+          <ul>
+            <li>browseid3.html</li>
+            <li>browseid3_list.html</li>
+            <li>browseid3_pwdlist.html</li>
+          </ul>
+        </dd>
+      </dl>
+    </dd>
+  </dl>
+  <hr />
+  <h4>Template Parameters</h4>
+  <dl>
+    <dt><strong>index.html</strong></dt>
+    <dd>
+      <dl>
+        <dt><em>Server provided parameters</em></dt>
+        <dd>
+          <dl>
+            <dt>path</dt>
+            <dt>player</dt>
+            <dt>myClientState</dt>
+            <dt>webroot</dt>
+          </dl>
+        </dd>
+        <dt><em>Expected user provided parameters</em></dt>
+        <dd>
+          none
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>browse.html</strong></dt>
+    <dd>
+      <dl>
+        <dt>Server provided parameters</dt>
+        <dd>
+          <dl>
+            <dt>path</dt>
+            <dt>player</dt>
+            <dt>myClientState</dt>
+            <dt>webroot</dt>
+            <dt>playlist</dt>
+            <dt>pwd_list</dt>
+            <dt>playlistname</dt>
+            <dt>savebuttonname</dt>
+            <dt>titled</dt>
+            <dt>browse_list</dt>
+            <dt>browselist_header</dt>
+            <dt>browselist_pagebar</dt>
+          </dl>
+        </dd>
+        <dt>Expected user provided parameters</dt>
+        <dd>
+          <dl>
+            <dt>dir</dt>
+            <dt>newname</dt>
+            <dt>delete</dt>
+            <dt>start</dt>
+          </dl>
+        </dd>   
+      </dl>
+    <dt><strong>browse_playlist.html</strong></dt>
+    <dd>
+      <dl>
+        <dt>Server provided parameters</dt>
+        <dd>
+          <dl>
+            <dt>path</dt>
+            <dt>player</dt>
+            <dt>myClientState</dt>
+            <dt>webroot</dt>
+            <dt>playlist</dt>
+            <dt>pwd_list</dt>
+            <dt>playlistname</dt>
+            <dt>savebuttonname</dt>
+            <dt>titled</dt>
+            <dt>browse_list</dt>
+            <dt>browselist_header</dt>
+            <dt>browselist_pagebar</dt>
+            <dt>RENAME_WARNING</dt>
+            <dt>warn</dt>
+          </dl>
+        </dd>
+        <dt>Expected user provided parameters</dt>
+        <dd>
+          <dl>
+            <dt>dir</dt>
+            <dt>newname</dt>
+            <dt>delete</dt>
+            <dt>start</dt>
+          </dl>
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>browse_pwdlist.html</strong></dt>
+    <dd>
+      <dl>
+        <dt>Server provided parameters</dt>
+        <dd>
+          <dl>
+            <dt>player</dt>
+            <dt>myClientState</dt>
+            <dt>dir</dt>
+            <dt>shortdir</dt>
+          </dl>
+        </dd>
+        <dt>Expected user provided parameters</dt>
+        <dd>
+          none
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>browse_playlist_list.html</strong></dt>
+    <dd>
+      <dl>
+        <dt>Server provided parameters</dt>
+        <dd>
+          <dl>
+            <dt>descend</dt>
+            <dt>title</dt>
+            <dt>artist</dt>
+            <dt>album</dt>
+            <dt>itempath</dt>
+            <dt>odd</dt>
+            <dt>player</dt>
+            <dt>anchor</dt>
+          </dl>
+        </dd>
+        <dt>Expected user provided parameters</dt>
+        <dd>
+          none
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>browse_list.html</strong></dt>
+    <dd>
+      <dl>
+        <dt>Server provided parameters</dt>
+        <dd>
+          <dl>
+            <dt>descend</dt>
+            <dt>title</dt>
+            <dt>artist</dt>
+            <dt>album</dt>
+            <dt>itempath</dt>
+            <dt>odd</dt>
+            <dt>player</dt>
+            <dt>anchor</dt>
+          </dl>
+        <dt>Expected user provided parameters</dt>
+        <dd>
+          none
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>pagebarheader.html</strong></dt>
+    <dd>
+      <dl>
+        <dt>Server provided parameters</dt>
+        <dd>
+          <dl>
+            <dt>start</dt>
+            <dt>end</dt>
+            <dt>itemcount</dt>
+          </dl>
+        </dd>
+        <dt>Expected user provided parameters</dt>
+        <dd>
+          none
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>pagebar.html</strong></dt>
+    <dd>
+      <dl>
+        <dt>Server provided parameters</dt>
+        <dd>
+          <dl>
+            <dt>pagesstart</dt>
+            <dt>pagesprev</dt>
+            <dt>pagesend</dt>
+            <dt>pagesnext</dt>
+            <dt>pageprev</dt>
+            <dt>pagenext</dt>
+            <dt>otherparams</dt>
+            <dt>pageslist</dt>
+          </dl>
+        </dd>
+        <dt>Expected user provided parameters</dt>
+        <dd>
+          none
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>pagebarlist.html</strong></dt>
+    <dd>
+      <dl>
+        <dt>Server provided parameters</dt>
+        <dd>
+          <dl>
+            <dt>currpage</dt>
+            <dt>itemnum0</dt>
+            <dt>itemnum1</dt>
+            <dt>pagenum</dt>
+            <dt>otherparams</dt>
+          </dl>
+        </dd>
+        <dt>Expected user provided parameters</dt>
+        <dd>
+          none
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>alphapagebarlist.html</strong></dt>
+    <dd>
+      <dl>
+        <dt>Server provided parameters</dt>
+        <dd>
+          <dl>
+            <dt>currpage</dt>
+            <dt>itemnum0</dt>
+            <dt>itemnum1</dt>
+            <dt>pagenum</dt>
+            <dt>otherparams</dt>
+            <dt>fragment</dt>
+          </dl>
+        </dd>
+        <dt>Expected user provided parameters</dt>
+        <dd>
+          none
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>status.html</strong></dt>
+    <dd>
+      <dl>
+        <dt><em>Server provided parameters</em></dt>
+        <dd>
+          <dl>
+            <dt>path</dt>
+            <dt>myClientState</dt>
+            <dt>webroot</dt>
+            <dt>currentsong</dt>
+            <dt>thissongnum</dt>
+            <dt>songcount</dt>
+            <dt>songtitle</dt>
+            <dt>artist</dt>
+            <dt>album</dt>
+            <dt>player_name</dt>
+            <dt>cansave</dt>
+            <dt>player_chooser_list</dt>
+            <dt>playlist</dt>
+            <dt>start</dt>
+            <dt>playlist_header</dt>
+            <dt>playlist_pagebar</dt>
+            <dt>shuffleon</dt>
+            <dt>shuffleoff</dt>
+            <dt>repeatoff</dt>
+            <dt>repeatone</dt>
+            <dt>repeatall</dt>
+            <dt>modeplay</dt>
+            <dt>modepause</dt>
+            <dt>modestop</dt>
+            <dt>volume</dt>
+          </dl>
+        </dd>
+        <dt><em>Expected user provided parameters</em></dt>
+        <dd>
+          <dl>
+            <dt>player</dt>
+            <dt>refresh</dt>
+            <dt>p0</dt>
+            <dt>p1</dt>
+            <dt>p2</dt>
+            <dt>p3</dt>
+            <dt>p4</dt>
+          </dl>
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>status_list.html</strong></dt>
+    <dd>
+      <dl>
+        <dt><em>Server provided parameters</em></dt>
+        <dd>
+          <dl>
+            <dt>player</dt>
+            <dt>myClientState</dt>
+            <dt>num</dt>
+            <dt>odd</dt>
+            <dt>currentsong</dt>
+            <dt>title</dt>
+            <dt>artist</dt>
+            <dt>album</dt>
+            <dt>start</dt>
+          </dl>
+        </dd>
+        <dt><em>Expected user provided parameters</em></dt>
+        <dd>
+          none
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>home.html</strong></dt>
+    <dd>
+      <dl>
+        <dt><em>Server provided parameters</em></dt>
+        <dd>
+          <dl>
+            <dt>path</dt>
+            <dt>player</dt>
+            <dt>myClientState</dt>
+            <dt>player_list</dt>
+            <dt>nofolder</dt>
+          </dl>
+        </dd>
+        <dt><em>Expected user provided parameters</em></dt>
+        <dd>
+          <dl>
+            <dt>forget</dt>
+          </dl>
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>homeplayer_list.html</strong></dt>
+    <dd>
+      <dl>
+        <dt><em>Server provided parameters</em></dt>
+        <dd>
+          <dl>
+            <dt>playername</dt>
+            <dt>playerid</dt>
+            <dt>player</dt>
+          </dl>
+        </dd>
+        <dt><em>Expected user provided parameters</em></dt>
+        <dd>
+          none
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>search.html</strong></dt>
+    <dd>
+      <dl>
+        <dt><em>Server provided parameters</em></dt>
+        <dd>
+          <dl>
+            <dt>path</dt>
+            <dt>player</dt>
+            <dt>myClientState</dt>
+            <dt>webroot</dt>
+            <dt>browse_list</dt>
+            <dt>numresults</dt>
+            <dt>searchlist_header</dt>
+            <dt>searchlist_pagebar</dt>
+          </dl>
+        </dd>
+        <dt><em>Expected user provided parameters</em></dt>
+        <dd>
+          <dl>
+            <dt>query</dt>
+            <dt>type</dt>
+            <dt>start</dt>
+          </dl>
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>browseid3_list.html</strong></dt>
+    <dd>
+      <dl>
+        <dt><em>Server provided parameters</em></dt>
+        <dd>
+          <dl>
+            <dt>player</dt>
+            <dt>genre</dt>
+            <dt>artist</dt>
+            <dt>album</dt>
+            <dt>song</dt>
+            <dt>itempath</dt>
+            <dt>title</dt>
+            <dt>descend</dt>
+            <dt>odd</dt>
+            <dt>anchor</dt>
+          </dl>
+        </dd>
+        <dt><em>Expected user provided parameters</em></dt>
+        <dd>
+          none
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>songinfo.html</strong></dt>
+    <dd>
+      <dl>
+        <dt><em>Server provided parameters</em></dt>
+        <dd>
+          <dl>
+            <dt>path</dt>
+            <dt>player</dt>
+            <dt>myClientState</dt>
+            <dt>webroot</dt>
+            <dt>composer</dt>
+            <dt>title</dt>
+            <dt>filelength</dt>
+            <dt>duration</dt>
+            <dt>year</dt>
+            <dt>tagversion</dt>
+            <dt>comment</dt>
+            <dt>bitrate</dt>
+            <dt>url</dt>
+            <dt>itempath</dt>
+          </dl>
+        </dd>
+        <dt><em>Expected user provided parameters</em></dt>
+        <dd>
+          <dl>
+            <dt>songurl</dt>
+            <dt>genre</dt>
+            <dt>artist</dt>
+            <dt>album</dt>
+            <dt>track</dt>
+          </dl>
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>browseid3.html</strong></dt>
+    <dd>
+      <dl>
+        <dt><em>Server provided parameters</em></dt>
+        <dd>
+          <dl>
+            <dt>path</dt>
+            <dt>player</dt>
+            <dt>myClientState</dt>
+            <dt>webroot</dt>
+            <dt>warn</dt>
+            <dt>itunes</dt>
+            <dt>pwd_list</dt>
+            <dt>browseby</dt>
+            <dt>browselist_pagebar</dt>
+            <dt>browse_list</dt>
+            <dt>descend</dt>
+          </dl>
+        </dd>
+        <dt><em>Expected user provided parameters</em></dt>
+        <dd>
+          <dl>
+            <dt>song</dt>
+            <dt>genre</dt>
+            <dt>artist</dt>
+            <dt>album</dt>
+            <dt>start</dt>
+          </dl>
+        </dd>
+      </dl>
+    </dd>
+    <dt><strong>browseid3_pwdlist.html</strong></dt>
+    <dd>
+      <dl>
+        <dt><em>Server provided parameters</em></dt>
+        <dd>
+          <dl>
+            <dt>player</dt>
+            <dt>song</dt>
+            <dt>artist</dt>
+            <dt>album</dt>
+            <dt>genre</dt>
+            <dt>pwditem</dt>
+          </dl>
+        </dd>
+        <dt><em>Expected user provided parameters</em></dt>
+        <dd>
+          none
+        </dd>
+      </dl>
+    </dd>
+  </dl>
+[INCLUDE helpfooter.html]

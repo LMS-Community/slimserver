@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <title>{pagetitle}</title>
+    <link rel="stylesheet" href="{HomeURL}{webroot}slimp3.css">
+  </head>
+  <body bgcolor="#FFFFFF">
+
+    <p>
+
+    <h3>{pagetitle}</h3><p>
+    <a href="home.html?player={%player}">[S HOME]</a>[IF linktree] / {linktree}[/IF]
+    <hr>
+    [IF warning]<p><b>{warning}</b></p><hr>[/IF]
+    [IF siblings]{siblings}<hr>[/IF]
+	<form method="get" action="setup.html">
+	<input type=hidden value="{player}" name="player">
+	<input type=hidden value="{playerid}" name="playerid">
+	<input type=hidden value="{page}" name="page">
+	{GroupList}
+	</form>
+[EQ page player]
+		<h3>[S FORGET_PLAYER]</h3>
+		<p>[S FORGET_PLAYER_DESC]</p>
+		<p><a href="{webroot}home.html?player={%player}&forget={%playerid}">[S FORGET_PLAYER_LINK]</a></p>
+   <hr>
+[/EQ]
+    [IF singleChildLink]{singleChildLink}<hr>[/IF]
+    [IF versionInfo]{versionInfo}[/IF]
+    [IF newVersion]</p>{newVersion}</p>[/IF]
+  </body>
+</html>
+

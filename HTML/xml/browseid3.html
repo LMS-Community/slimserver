@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+
+<!DOCTYPE browse SYSTEM "html/slimp3_xml.dtd">
+
+<browse xmlns="http://www.slimdevices.com/slimp3/xml">
+	[IF itunes]<itunes/>[/IF]
+	[IF warn]<still_scanning/>[/IF]
+	[IF song_count]<song_count>{song_count}</song_count>[/IF]
+	[IF artist_count]<artist_count>{artist_count}</artist_count>[/IF]
+	[IF album_count]<album_count>{album_count}</album_count>[/IF]
+	[IF browseby]<browseby>{browseby}</browseby>[/IF]
+	[IF pwd_list]<location>{pwd_list}</location>[/IF]
+	[IF browselist_header]{browselist_header}[/IF]
+	[IF coverart]<coverart><![CDATA[/music/{%coverartpath}/cover.jpg]]></coverart>[/IF]
+	{browse_list}
+</browse>
