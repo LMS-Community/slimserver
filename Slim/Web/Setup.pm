@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.38 2004/02/02 23:52:15 dean Exp $
+# $Id: Setup.pm,v 1.39 2004/02/19 16:53:45 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -575,10 +575,10 @@ sub initSetupConfig {
 	
 									if ($changeref->{'moodlogic'}{'new'} eq "1" &&
 										$changeref->{'moodlogic'}{'old'} eq "0") {
-										slim::Music::MoodLogic::startScan();
+										Slim::Music::MoodLogic::startScan();
 									} elsif ($changeref->{'moodlogic'}{'new'} eq "0" &&
 										$changeref->{'moodlogic'}{'old'} eq "1") {
-										slim::Music::MusicFolderScan::startScan();
+										Slim::Music::MusicFolderScan::startScan();
 									}
 								}
 							}
