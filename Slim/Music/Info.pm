@@ -299,6 +299,9 @@ sub setContentType {
 		}
 	}
 
+	# Update the cache set by typeFrompath as well.
+	$urlToTypeCache{$url} = $type;
+
 	# Commit, since we might use it again right away.
 	$currentDB->updateOrCreate({
 		'url'        => $url,
