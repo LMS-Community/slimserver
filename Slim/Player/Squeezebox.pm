@@ -654,7 +654,7 @@ sub pitch {
 	my $client = shift;
 	my $newpitch = shift;
 	
-	my $pitch = $client->SUPER::pitch($newpitch, @_);
+	my $pitch = $client->SUPER::pitch($newpitch, @_) || $newpitch;
 
 	if (defined($newpitch)) {
 		$client->sendPitch($pitch);
