@@ -45,6 +45,7 @@ sub stop { return 1; }
 sub play { return 1; }
 sub pause { return 1; }
 sub playout { return 1; }
+sub resume { return 1;}
 
 sub volume {
 	return 1;

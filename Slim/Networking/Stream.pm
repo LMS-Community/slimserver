@@ -238,7 +238,7 @@ sub sendStreamPkt {
 
 	my $measuredlen = length(${$pkt->{'chunkref'}});
 	if ($len == $measuredlen && $len < 4097 ) {
-		Slim::Networking::Sendclient::udpstream($client, $control, $wptr, $seq, ${$pkt->{'chunkref'}});
+		$client->udpstream($control, $wptr, $seq, ${$pkt->{'chunkref'}});
 	
 		if ($::d_stream && $packetInFlight{$client}) {
 			msg("Sending packet when we have one in queue!!!!!!\n"); 

@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.27 2003/09/15 18:50:21 dean Exp $
+# $Id: HTTP.pm,v 1.28 2003/09/15 20:57:06 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -647,6 +647,12 @@ sub sendstreamingresponse {
 	my $sentbytes = 0;
 	my $fullsend = 0;
 	
+	my $client = $peerclient{$httpclientsock};
+	assert($client);
+	my $segmentref = shift(@{$outbuf{$httpclientsock}});
+	my $streamingFile = $streamingFiles{$httpclientsock};
+	my $silence = 0;
+	
 	$::d_http && msg("sendstreaming response begun...\n");
 	
 	if (!$httpclientsock->connected) {
@@ -655,16 +661,18 @@ sub sendstreamingresponse {
 		return $fullsend;
 	}
 	
-	my $client = $peerclient{$httpclientsock};
-	assert($client);
-	my $segmentref = shift(@{$outbuf{$httpclientsock}});
-	my $streamingFile = $streamingFiles{$httpclientsock};
-	my $silence = 0;
-	
-	if (!defined($streamingFile) && ((Slim::Player::Source::playmode($client) ne 'play') || (Slim::Player::Playlist::count($client) == 0))) {
-		$silence = 1;
+	if ( $client && ($client->model eq 'squeezebox') && (Slim::Player::Source::playmode($client) eq 'stop')) {
+		closeStreamingSocket($httpclientsock);
+		$::d_http && msg("Streaming client closed connection...\n");
+		return $fullsend;
 	}
 	
+	if (	!defined($streamingFile) && 
+			$client && ($client->model eq 'http') && 
+			((Slim::Player::Source::playmode($client) ne 'play') || (Slim::Player::Playlist::count($client) == 0))) {
+		$silence = 1;
+	} 
+
 	# if we don't have anything in our queue, then get something
 	if (!defined($segmentref)) {
 		# if we aren't playing something, then queue up some silence
@@ -682,10 +690,18 @@ sub sendstreamingresponse {
 			if (defined($streamingFile)) {
 				my $chunk;
 				$streamingFile->sysread($chunk, 32768);
-				$chunkRef = \$chunk;
+				if (defined($chunk) && length($chunk)) {
+					$chunkRef = \$chunk;
+				} else {
+					# we're done streaming this stored file, closing connection.
+					closeStreamingSocket($httpclientsock);
+					$::d_http && msg("we're done streaming this stored file, closing connection....\n");
+					return $fullsend;
+				}
 			} else {
 				$chunkRef = Slim::Player::Source::nextChunk($client, 32768);
 			}
+			
 			# otherwise, queue up the next chunk of sound
 			if ($chunkRef) {
 				$::d_http && msg("(audio: " . length($$chunkRef) . "bytes)\n" );

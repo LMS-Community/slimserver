@@ -1,6 +1,6 @@
 package Slim::Hardware::VFD;
 
-# $Id: VFD.pm,v 1.4 2003/08/03 04:02:33 sadams Exp $
+# $Id: VFD.pm,v 1.5 2003/09/15 20:57:05 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -331,7 +331,7 @@ sub vfdUpdate {
 		$vfddata .= $vfdCodeCmd. $vfdCommand{'CUR'};
 	}
 
-	Slim::Networking::Sendclient::vfd($client, $vfddata);
+	$client->vfd($vfddata);
 	
 	my $len = length($vfddata);
 	die "Odd vfddata: $vfddata" if ($len % 2);

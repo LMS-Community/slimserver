@@ -121,7 +121,6 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 use Slim::Music::MoodLogic;
 use Slim::Networking::Slimproto;
-use Slim::Networking::Sendclient;
 
 use vars qw($VERSION
 		@AUTHORS);

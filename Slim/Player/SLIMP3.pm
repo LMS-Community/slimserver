@@ -125,5 +125,39 @@ sub formats {
 	return ('mp3');
 }
 
+sub vfd {
+	my $client = shift;
+	my $data = shift;
+
+	my $frame;
+	assert($client->udpsock);
+	$frame = 'l                 '.$data;
+	send($client->udpsock, $frame, 0, $client->paddr()); 
+}
+
+sub udpstream {
+	my ($client, $controlcode, $wptr, $seq, $chunk) = @_;
+		        
+	my $frame = pack 'aCxxxxn xxn xxxxxx', (
+		'm',                            # 'm' == mp3 data
+		$controlcode,                   # control code   
+		$wptr,                          # wptr
+		$seq);
+
+        
+	$frame .= $chunk;
+        
+	send($client->udpsock, $frame, 0, $client->paddr());
+}
+
+sub i2c {
+	my ($client, $data) = @_;
+
+	$::d_i2c && msg("i2c: sending ".length($data)." bytes\n");
+
+	send($client->udpsock, '2                 '.$data, 0, $client->paddr);
+}
+
+
 1;
 
