@@ -11,7 +11,7 @@ if ($] > 5.007) {
 	require Encode;
 }
 
-$VERSION = '0.5';
+$VERSION = '0.6';
 
 my %guidMapping   = _knownGUIDs();
 my %reversedGUIDs = reverse %guidMapping;
@@ -92,6 +92,34 @@ sub _readAndIncrementOffset {
 	$self->{'offset'} += $size;
 
 	return $value;
+}
+
+sub _readAndIncrementInlineOffset {
+	my $self  = shift;
+	my $size  = shift;
+
+	my $value = substr($self->{'inlineData'}, $self->{'inlineOffset'}, $size);
+
+	$self->{'inlineOffset'} += $size;
+
+	return $value;
+}
+
+sub _UTF16ToUTF8 {
+	my $data = shift;
+
+	if ($utf8) {
+
+		# This also turns on the utf8 flag - perldoc Encode
+		$data = Encode::decode('UTF-16LE', $data);
+
+	} elsif ($] > 5.007) {
+
+		# otherwise try and turn it into ISO-8859-1 if we have Encode
+		$data = Encode::encode('latin1', $data);
+	}
+
+	return _denull($data);
 }
 
 sub _denull {
@@ -178,6 +206,12 @@ sub _parseWMAHeader {
 				$self->_parseASFStreamPropertiesObject();
 				next;
 			}
+
+			if ($nextObjectGUIDName eq 'ASF_Header_Extension_Object') {
+
+				$self->_parseASFHeaderExtensionObject();
+				next;
+			}
 		}
 
 		# set our next object size
@@ -199,14 +233,25 @@ sub _parseWMAHeader {
 	}
 
 	# pull these out and make them more normalized
-	while (my ($k,$v) = each %{$self->{'EXT'}->{'content'}}) {
+	for my $ext (@{$self->{'EXT'}}) {
 
-		my $name = $v->{'name'};
+		while (my ($k,$v) = each %{$ext->{'content'}}) {
 
-		# this gets both WM/Title and isVBR
-		next unless $name =~ s#^(?:WM/|is)##i;
+			# this gets both WM/Title and isVBR
+			next unless $v->{'name'} =~ s#^(?:WM/|is)##i || $v->{'name'} =~ /^Author/;
 
-		$self->{'TAGS'}->{uc $name} = $v->{'value'} || 0;
+			my $name = uc($v->{'name'});
+
+			# Append onto an existing item, semicolon separated.
+			if (exists $self->{'TAGS'}->{$name}) {
+
+				$self->{'TAGS'}->{$name} .= sprintf('; %s', ($v->{'value'} || 0));
+
+			} else {
+
+				$self->{'TAGS'}->{$name} = $v->{'value'} || 0;
+			}
+		}
 	}
 
 	delete $self->{'EXT'};
@@ -267,22 +312,8 @@ sub _parseASFContentDescriptionObject {
 	# now pull the data based on length
 	for my $key (@keys) {
 
-		my $lengthKey = "_${key}length";
-		my $value     = $self->_readAndIncrementOffset($desc{$lengthKey});
-
-		if ($utf8) {
-
-			# This also turns on the utf8 flag - perldoc Encode
-			$value = Encode::decode('UTF-16LE', $value);
-
-		} elsif ($] > 5.007) {
-
-			# otherwise try and turn it into ISO-8859-1 if we have Encode
-			$value = Encode::encode('latin1', $value);
-		}
-
-		# Always remove nulls.
-		$desc{$key} = _denull($value);
+		my $lengthKey  = "_${key}length";
+		$desc{$key} = _UTF16ToUTF8($self->_readAndIncrementOffset($desc{$lengthKey}));
 
 		delete $desc{$lengthKey};
 	}
@@ -345,7 +376,7 @@ sub _parseASFExtendedContentDescriptionObject {
 		}
 	}
 
-	$self->{'EXT'} = \%ext;
+	push @{$self->{'EXT'}}, \%ext;
 }
 
 sub _parseASFStreamPropertiesObject {
@@ -448,6 +479,108 @@ sub _parseWavFormat {
 	$wav{'bits_per_sample'} = unpack('v', substr($data, 14, 2));
 
 	return \%wav;
+}
+
+sub _parseASFHeaderExtensionObject {
+	my $self = shift;
+
+	my %ext = ();
+
+	$ext{'reserved_1'}          = _byteStringToGUID($self->_readAndIncrementOffset(16));
+	$ext{'reserved_2'}	    = unpack('v', $self->_readAndIncrementOffset(2));
+
+	$ext{'extension_data_size'} = unpack('V', $self->_readAndIncrementOffset(4));
+	$ext{'extension_data'}      = $self->_readAndIncrementOffset($ext{'extension_data_size'});
+
+	# Set these so we can use a convience method.
+	$self->{'inlineData'}       = $ext{'extension_data'};
+	$self->{'inlineOffset'}     = 0;
+
+	if ($DEBUG) {
+		print "Working on an ASF_Header_Extension_Object:\n\n";
+	}
+
+	while ($self->{'inlineOffset'} < $ext{'extension_data_size'}) {
+
+		my $nextObjectGUID = _byteStringToGUID($self->_readAndIncrementInlineOffset(16)) || last;
+		my $nextObjectName = $reversedGUIDs{$nextObjectGUID} || 'ASF_Unknown_Object';
+		my $nextObjectSize = unpack('v', $self->_readAndIncrementInlineOffset(8));
+
+		if ($DEBUG) {
+			print "\tnextObjectGUID: [$nextObjectGUID]\n";
+			print "\tnextObjectName: [$nextObjectName]\n";
+			print "\tnextObjectSize: [$nextObjectSize]\n";
+			print "\n";
+		}
+        
+		# We only handle this object type for now.
+        	if (defined $nextObjectName && $nextObjectName eq 'ASF_Metadata_Library_Object') {
+
+			my $content_count = unpack('v', $self->_readAndIncrementInlineOffset(2));
+
+			# Language List Index	WORD    16
+			# Stream Number   	WORD    16
+			# Name Length     	WORD    16
+			# Data Type       	WORD    16
+			# Data Length     	DWORD   32
+			# Name    		WCHAR   varies
+			# Data    		See below       varies
+			for (my $id = 0; $id < $content_count; $id++) {
+
+				my $language_list = unpack('v', $self->_readAndIncrementInlineOffset(2));
+				my $stream_number = unpack('v', $self->_readAndIncrementInlineOffset(2));
+				my $name_length   = unpack('v', $self->_readAndIncrementInlineOffset(2));
+				my $data_type     = unpack('v', $self->_readAndIncrementInlineOffset(2));
+				my $data_length   = unpack('V', $self->_readAndIncrementInlineOffset(4));
+				my $name          = _denull($self->_readAndIncrementInlineOffset($name_length));
+
+                                # 0x0000 Unicode string. The data consists of a sequence of Unicode characters.
+                                #
+                                # 0x0001 BYTE array. The type of the data is implementation-specific.
+                                #
+                                # 0x0002 BOOL. The data is 2 bytes long and should be interpreted as a
+                                #        16-bit unsigned integer. Only 0x0000 or 0x0001 are permitted values.
+                                #
+                                # 0x0003 DWORD. The data is 4 bytes long - 32-bit unsigned integer.
+                                #
+                                # 0x0004 QWORD. The data is 8 bytes long - 64-bit unsigned integer.
+                                #
+                                # 0x0005 WORD. The data is 2 bytes long - 16-bit unsigned integer.
+                                #
+                                # 0x0006 GUID. The data is 16 bytes long - 128-bit GUID.
+				my $value;
+
+				if ($data_type == 6) {
+
+					$value = _byteStringToGUID($self->_readAndIncrementInlineOffset($data_length));
+
+				} elsif ($data_type == 0) {
+
+					$value = _UTF16ToUTF8($self->_readAndIncrementInlineOffset($data_length));
+				}
+
+				$ext{'content'}->{$id}->{'name'}  = $name;
+				$ext{'content'}->{$id}->{'value'} = $value;
+
+				if ($DEBUG) {
+					print "\tASF_Metadata_Library_Object: $id\n";
+					print "\t\tname  = $name\n";
+					print "\t\tvalue = $value\n";
+					print "\t\ttype  = $data_type\n";
+					print "\t\tdata_length = $data_length\n";
+					print "\n";
+				}
+			}
+		}
+
+		$self->{'inlineOffset'} += ($nextObjectSize - 16 - 8);
+	}
+
+	delete $ext{'extension_data'};
+	delete $self->{'inlineData'};
+	delete $self->{'inlineOffset'};
+
+	push @{$self->{'EXT'}}, \%ext;
 }
 
 sub _parse64BitString {
