@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.171 2005/01/06 05:19:37 vidur Exp $
+# $Id: Info.pm,v 1.172 2005/01/06 21:03:25 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1118,6 +1118,8 @@ sub cachedPlaylist {
 	}
 
 	return \@urls if scalar(@urls);
+
+	return undef;
 }
 
 sub cachePlaylist {
@@ -1953,7 +1955,7 @@ sub isCUE {
 sub isKnownType {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'unk');
+	return !isType($pathOrObj, 'unk');
 }
 
 sub isList {
