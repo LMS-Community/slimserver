@@ -81,10 +81,10 @@ sub add {
 		} else {
 
 			$artistObj = Slim::DataStores::DBI::Contributor->find_or_create({ 
-				name => $name,
+				namesort => $sort,
 			});
 
-			$artistObj->namesort($sort);
+			$artistObj->name($name);
 			$artistObj->update();
 
 			# Try to prevent leaks and circular references.
