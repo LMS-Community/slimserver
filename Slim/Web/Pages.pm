@@ -329,6 +329,12 @@ sub init {
 				my $level = shift;
 				my $findCriteria = shift;
 
+				# The user may not want to include all the composers / conductors
+				unless (Slim::Utils::Prefs::get('composerInArtists')) {
+
+					$findCriteria->{'contributor.role'} = $Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'};
+				}
+
 				return $ds->find('artist', $findCriteria, 'artist');
 			},
 

@@ -199,6 +199,7 @@ our %DEFAULT = (
 	,'saveShuffled'			=> 0
 	,'searchSubString'		=> 0
 	,'maxBitrate'			=> 320	# Maximum bitrate for maximum quality.  MPEG-1 layer III bitrates (kbps): 32 40 48 56 64 80 96 112 128 160 192 224 256 320
+	,'composerInArtists'		=> 0 
 	,'groupdiscs' 			=> 0
 	,'livelog'				=> 102400 # keep around an in-memory log of 100kbytes, available from the web interfaces
 	,'remotestreamtimeout'	=> 5 # seconds to try to connect for a remote stream

@@ -1508,7 +1508,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['displaytexttimeout',
+					'PrefOrder' => ['displaytexttimeout', 'composerInArtists'
 							,'playtrackalbum','searchSubString', 'ignoredarticles','splitList','filesort','browseagelimit'
 							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
 							,'checkVersion']
@@ -1544,6 +1544,13 @@ sub initSetupConfig {
 								'1' => string('SETUP_PLAYTRACKALBUM_1')
 								,'0' => string('SETUP_PLAYTRACKALBUM_0')
 								}
+					}
+			,'composerInArtists' => { 	 
+						'validate' => \&validateTrueFalse 	 
+						,'options' => { 	 
+							'1' => string('SETUP_COMPOSERINARTISTS_1') 	 
+							,'0' => string('SETUP_COMPOSERINARTISTS_0') 	 
+						} 	 
 					}
 			,'searchSubString' => {
 						'validate' => \&validateTrueFalse

@@ -301,6 +301,7 @@ our %searchFieldMap = (
 	'band' => 'contributor_track.contributor', 
 	'band.name' => 'contributors.namesort', 
 	'comment' => 'comments.value', 
+	'contributor.role' => 'contributor_track.role',
 );
 
 our %cmpFields = (
