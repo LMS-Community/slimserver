@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.81 2004/03/10 22:52:12 dean Exp $
+# $Id: Info.pm,v 1.82 2004/03/14 04:36:32 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -129,6 +129,8 @@ my $dbname;
 my $DBVERSION = 2;
 
 my %artworkCache = ();
+my $artworkDir;
+my %lastFile;
 
 # if we don't have storable, then stub out the cache routines
 
@@ -171,7 +173,7 @@ if (defined @Storable::EXPORT) {
 					$dbCacheDirty=0;
 				}	
 			}
-		}    
+		}
 		
 		sub scanDBCache {
 			if (Slim::Utils::Prefs::get('usetagdatabase')) {
@@ -181,7 +183,7 @@ if (defined @Storable::EXPORT) {
 			}
 				$::d_info && Slim::Utils::Misc::msg("done DB cache scan\n");
 			}
-    		}
+			}
 	};
 
 } else {
@@ -403,7 +405,7 @@ sub clearCache {
 		%genreMixCache = ();
 		%artistMixCache = ();
 		scanDBCache();
-        
+
 		$songCount = 0;
 		$total_time = 0;
 		
@@ -1329,8 +1331,9 @@ sub coverArt {
 	my $art = shift || 'cover';
 	my $image;
 
-	if (! Slim::Utils::Prefs::get('lookForArtwork')) { return undef};
-
+	# return with nothing if this isn't a file.  We dont need to search on streams, for example.
+	if (! Slim::Utils::Prefs::get('lookForArtwork') || ! Slim::Music::Info::isSong($file)) { return undef};
+	
 	$::d_artwork && Slim::Utils::Misc::msg("Retrieving artwork ($art) for: $file\n");
 	
 	my ($body, $contenttype, $mtime, $path);
@@ -2171,8 +2174,6 @@ sub getImageContent {
 		binmode(TEMPLATE);
 		$$contentref=join('',<TEMPLATE>);
 		close TEMPLATE;
-	} else {
-		$::d_artwork && Slim::Utils::Misc::msg("Couldn't open image $path\n");
 	}
 	
 	defined($$contentref) && length($$contentref) || $::d_artwork && Slim::Utils::Misc::msg("Image File empty or couldn't read: $path\n");
@@ -2234,7 +2235,7 @@ sub readCoverArtTags {
 					if ($len < length($pic)) {		
 						my ($data) = unpack "x$len A*", $pic;
 						
-						$::d_info && Slim::Utils::Misc::msg( "PIC format: $format length: " . length($pic) . "\n");
+						$::d_artwork && Slim::Utils::Misc::msg( "PIC format: $format length: " . length($pic) . "\n");
 
 						if (length($pic)) {
 							if ($format eq 'PNG') {
@@ -2263,7 +2264,7 @@ sub readCoverArtTags {
 						
 						my ($data) = unpack"x$len A*", $pic;
 						
-						$::d_info && Slim::Utils::Misc::msg( "APIC format: $format length: " . length($data) . "\n");
+						$::d_artwork && Slim::Utils::Misc::msg( "APIC format: $format length: " . length($data) . "\n");
 
 						if (length($data)) {
 							$contenttype = $format;
@@ -2307,7 +2308,7 @@ sub readCoverArtFiles {
 	my @components = splitdir($file);
 	pop @components;
 	$::d_artwork && Slim::Utils::Misc::msg("Looking for image files in ".catdir(@components)."\n");
-
+	
 	my @filestotry = ();
 	my @names = qw(cover thumb album albumartsmall folder);
 	my @ext = qw(jpg gif);
@@ -2318,7 +2319,6 @@ sub readCoverArtFiles {
 			$cover = Slim::Utils::Prefs::get('coverThumb');
 		}
 		@filestotry = map { @{$nameslist{$_}} } qw(thumb albumartsmall cover folder album);
-
 	} else {
 		if (Slim::Utils::Prefs::get('coverArt')) {
 			$cover = Slim::Utils::Prefs::get('coverArt');
@@ -2330,23 +2330,43 @@ sub readCoverArtFiles {
 		$cover = infoFormat($file, $1)."$suffix";
 		my $cover_type = $image eq 'thumb' ? "Thumbnail" : "Cover";
 		$::d_artwork && Slim::Utils::Misc::msg("Variable $cover_type: $cover from $1\n");
+		my $cover = catdir(@components, $cover);
+		$body = getImageContent($cover);
+		if ($body) {
+			$::d_artwork && Slim::Utils::Misc::msg("Found $image file: $cover\n\n");
+			$contenttype = mimeType($cover);
+			$lastFile{$image} = $cover;
+			return ($body, $contenttype, $cover);
+		}
 	}
 
-	if (defined $cover) {unshift  @filestotry, $cover;}
-							
+	if (defined $artworkDir && $artworkDir eq catdir(@components)) {
+		if (exists $lastFile{$image}  && $lastFile{$image} ne '1') {
+			$::d_artwork && Slim::Utils::Misc::msg("Using existing $image: $lastFile{$image}\n");
+			$body = getImageContent($lastFile{$image});
+			$contenttype = mimeType($lastFile{$image});
+			$cover = $lastFile{$image};
+			return ($body, $contenttype, $cover);
+		} elsif (exists $lastFile{$image}) {
+			$::d_artwork && Slim::Utils::Misc::msg("No $image in $artworkDir\n");
+			return undef;
+		}
+	} else {
+		$artworkDir = catdir(@components);
+		%lastFile = ();
+	}
 
 	foreach my $file (@filestotry) {
 		$file = catdir(@components, $file);
 		$body = getImageContent($file);
-		$::d_artwork && Slim::Utils::Misc::msg("checking for $file found: ".(($body) ? "yes" : "no") . "\n");
 		if ($body) {
-			$::d_artwork && Slim::Utils::Misc::msg("Found image file: $file\n");
+			$::d_artwork && Slim::Utils::Misc::msg("Found $image file: $file\n\n");
 			$contenttype = mimeType($file);
 			$cover = $file;
+			$lastFile{$image} = $file;
 			last;
-		}
+		} else {$lastFile{$image} = '1'};
 	}
-
 	return ($body, $contenttype, $cover);
 }
 
@@ -2468,22 +2488,22 @@ sub updateGenreCache {
 			$caseCache{$trackCase} = $track;
 			
 			if (Slim::Utils::Prefs::get('composerInArtists')) {
-				my $composer = $cacheEntry->{'COMPOSER'};	
-				if ($composer) { 
-					my $composerCase = ignoreCaseArticles($composer);
-					$genreCache{$genreCase}{$composerCase}{$albumCase}{$trackCase} = $file;
-					$caseCache{$composerCase} = $composer; 
-				}
-		
-				my $band = $cacheEntry->{'BAND'};	
-				if ($band) { 
-					my $bandCase = ignoreCaseArticles($band);
-					$genreCache{$genreCase}{$bandCase}{$albumCase}{$trackCase} = $file;
-					$caseCache{$bandCase} = $band; 
-				}
+				includeSplitTag($genreCase,$albumCase,$trackCase,$file,$cacheEntry->{'COMPOSER'});
+				includeSplitTag($genreCase,$albumCase,$trackCase,$file,$cacheEntry->{'BAND'});
 			}
-		
 			$::d_info && Slim::Utils::Misc::msg("updating genre cache with: $genre - $artist - $album - $track\n--- for:$file\n");
+		}
+	}
+}
+
+sub includeSplitTag {
+	my ($genreCase,$albumCase,$trackCase,$file,$tag) = @_;	
+	if (defined $tag) {
+		foreach my $tag (split(/[;\0]/,$tag)) {
+			$tag=~s/^\s*//;$tag=~s/\s*$//;
+			my $tagCase = ignoreCaseArticles($tag);
+			$genreCache{$genreCase}{$tagCase}{$albumCase}{$trackCase} = $file;
+			$caseCache{$tagCase} = $tag; 
 		}
 	}
 }
@@ -2643,33 +2663,33 @@ sub isPlaylist {
 }
 
 sub isSongMixable {
-        my $file = shift;
-        return info($file,'MOODLOGIC_SONG_MIXABLE');
+	my $file = shift;
+	return info($file,'MOODLOGIC_SONG_MIXABLE');
 }
 
 sub isArtistMixable {
-        my $artist = shift;
-        return defined $artistMixCache{$artist} ? 1 : 0;
+	my $artist = shift;
+	return defined $artistMixCache{$artist} ? 1 : 0;
 }
 
 sub isGenreMixable {
-        my $genre = shift;
-        return defined $genreMixCache{$genre} ? 1 : 0;
+	my $genre = shift;
+	return defined $genreMixCache{$genre} ? 1 : 0;
 }
 
 sub moodLogicSongId {
-        my $file = shift;
-        return info($file,'MOODLOGIC_SONG_ID');
+	my $file = shift;
+	return info($file,'MOODLOGIC_SONG_ID');
 }
 
 sub moodLogicArtistId {
-        my $artist = shift;
-        return $artistMixCache{$artist};
+	my $artist = shift;
+	return $artistMixCache{$artist};
 }
 
 sub moodLogicGenreId {
-        my $genre = shift;
-        return $genreMixCache{$genre};
+	my $genre = shift;
+	return $genreMixCache{$genre};
 }
 
 sub mimeType {
