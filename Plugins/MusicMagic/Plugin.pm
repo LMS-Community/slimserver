@@ -441,7 +441,7 @@ sub exportFunction {
 			# fileURLFromPath will turn this into UTF-8 - so we
 			# need to make sure we're in the current locale first.
 			if ($] > 5.007) {
-				$songInfo{'file'} = Encode::encode($Slim::Utils::Misc::locale, $songInfo{'file'});
+				$songInfo{'file'} = Encode::encode($Slim::Utils::Misc::locale, $songInfo{'file'}, Encode::FB_QUIET);
 			}
 		
 			my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});
@@ -978,14 +978,16 @@ sub musicmagic_mix {
 
 		my %list_form = %$params;
 		my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
+
+		my $trackObj  = $ds->objectForUrl($item);
 		
 		$list_form{'artist'}        = $track ? $track->artist() : $artist;
 		$list_form{'album'}         = $track ? $track->album() : $album;
 		$list_form{'genre'}         = $genre;
 		$list_form{'player'}        = $player;
 		$list_form{'itempath'}      = $item; 
-		$list_form{'item'}          = $item; 
-		$list_form{'title'}         = Slim::Music::Info::infoFormat($item, $webFormat, 'TITLE');
+		$list_form{'item'}          = $trackObj->id; 
+		$list_form{'title'}         = Slim::Music::Info::infoFormat($trackObj, $webFormat, 'TITLE');
 		$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
 		$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
 		$list_form{'odd'}           = ($itemnumber + 1) % 2;
