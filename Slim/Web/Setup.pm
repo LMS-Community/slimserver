@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.65 2004/04/30 16:42:12 dean Exp $
+# $Id: Setup.pm,v 1.66 2004/05/05 08:39:14 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -327,6 +327,7 @@ sub initSetupConfig {
 						}
 			}
 		} #end of setup{'player'} hash
+
 	,'additional_player' => {
 		'title' => string('ADDITIONAL_PLAYER_SETTINGS')
 		,'parent' => 'player'
@@ -530,7 +531,11 @@ sub initSetupConfig {
 
 				if (Slim::Music::iTunes::useiTunesLibrary()) {
 					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[2] = undef;
+					$pageref->{'children'}[9] = 'itunes';
+				} elsif (Slim::Music::MoodLogic::useMoodLogic()) {
+					$pageref->{'children'}[9] = 'moodlogic';
 				} else {
+					pop @{$pageref->{'children'}} if $pageref->{'children'}[9];
 					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[2] = 'rescan';
 					
 				}
@@ -602,7 +607,7 @@ sub initSetupConfig {
 							,'inputTemplate' => 'setup_input_radio.html'
 							,'changeoptions' => {
 									'1' => string('USING_ITUNES')
-									,'0' => 0
+									,'0' => string('SETUP_ITUNES_NOT')
 									}
 							,'PrefSize' => 'large'
 						}
@@ -1057,16 +1062,13 @@ sub initSetupConfig {
 	,'behavior' => {
 		'title' => string('BEHAVIOR_SETTINGS')
 		,'parent' => 'server'
-		,'GroupOrder' => ['Default','Moodlogic']
+		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['displaytexttimeout',
 							,'composerInArtists','playtrackalbum','artistinalbumsearch', 'ignoredarticles','splitchars','filesort'
 							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
-							,'savehistory','historylength','checkVersion','ignoredisableditunestracks']
-				}
-			,'Moodlogic' => {
-					'PrefOrder' => ['instantMixMax','varietyCombo']
+							,'savehistory','historylength','checkVersion']
 				}
 			}
 		,'Prefs' => {
@@ -1088,14 +1090,6 @@ sub initSetupConfig {
 			,'splitchars' => {
 						'validate' => \&validateAcceptAll
 						,'PrefSize' => 'small'
-					}
-			,'instantMixMax'	=> {
-						'validate' => \&validateInt
-						,'validateArgs' => [1,undef,1]
-					}
-			,'varietyCombo'	=> {
-						'validate' => \&validateInt
-						,'validateArgs' => [1,100,1,1]
 					}
 			,'playtrackalbum' => {
 						'validate' => \&validateTrueFalse
@@ -1157,13 +1151,6 @@ sub initSetupConfig {
 								,'0' => string('SETUP_CHECKVERSION_0')
 							}
 					}
-			,'ignoredisableditunestracks' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_1')
-								,'0' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_0')
-							}
-					}
 			,'groupdiscs' => {
 						  validate => \&validateTrueFalse
 						  ,onChange => sub {
@@ -1185,7 +1172,7 @@ sub initSetupConfig {
 					my ($client,$paramref,$pageref) = @_;
 					removeExtraArrayEntries($client,'titleFormat',$paramref,$pageref);
 				}
-		,'GroupOrder' => ['Default','TitleFormats','GuessFileFormats','iTunesPlaylistFormat','MoodLogicPlaylistFormat']
+		,'GroupOrder' => ['Default','TitleFormats','GuessFileFormats']
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['longdateFormat','shortdateFormat','timeFormat']
@@ -1217,30 +1204,6 @@ sub initSetupConfig {
 					,'GroupPrefHead' => '<tr><th>' .
 									    '</th><th></th><th>' . string('SETUP_FORMATS') .
 									    '</th><th></th></tr>'
-					,'GroupLine' => 1
-					,'GroupSub' => 1
-				}
-			,'iTunesPlaylistFormat' => {
-					'PrefOrder' => ['iTunesplaylistprefix','iTunesplaylistsuffix']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_ITUNESPLAYLISTFORMAT')
-					,'GroupDesc' => string('SETUP_ITUNESPLAYLISTFORMAT_DESC')
-					,'GroupLine' => 1
-					,'GroupSub' => 1
-				}
-			,'MoodLogicPlaylistFormat' => {
-					'PrefOrder' => ['MoodLogicplaylistprefix','MoodLogicplaylistsuffix']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_MOODLOGICPLAYLISTFORMAT')
-					,'GroupDesc' => string('SETUP_MOODLOGICPLAYLISTFORMAT_DESC')
 					,'GroupLine' => 1
 					,'GroupSub' => 1
 				}
@@ -1370,22 +1333,6 @@ sub initSetupConfig {
 								,q(|%Hh%M)		=> "h'h'mm (24h 03h00 15h00)"
 								}
 					}
-			,'iTunesplaylistprefix' => {
-						'validate' => \&validateAcceptAll
-						,'PrefSize' => 'large'
-					}
-			,'iTunesplaylistsuffix' => {
-						'validate' => \&validateAcceptAll
-						,'PrefSize' => 'large'
-					}
-			,'MoodLogicplaylistprefix' => {
-						'validate' => \&validateAcceptAll
-						,'PrefSize' => 'large'
-					}
-			,'MoodLogicplaylistsuffix' => {
-						'validate' => \&validateAcceptAll
-						,'PrefSize' => 'large'
-					}
 			}
 		} #end of setup{'formatting'} hash
 	,'security' => {
@@ -1447,17 +1394,13 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['itunesscaninterval','usetagdatabase','templatecache','useplaylistcache',
+					'PrefOrder' => ['usetagdatabase','templatecache','useplaylistcache',
 									# 'animationLevel',
 									'lookForArtwork','buildItemsPerPass','showbufferfullness']
 				}
 			}
 		,'Prefs' => {
-			'itunesscaninterval' => {
-						'validate' => \&validateNumber
-						,'validateArgs' => [0,undef,1000]
-				}
-			,'usetagdatabase' => {
+			'usetagdatabase' => {
 						'validate' => \&validateTrueFalse
 						,'options' => {
 								'0' => string('SETUP_DONT_CACHE')
@@ -1648,6 +1591,111 @@ sub initSetupConfig {
 				}
 			}
 		} #end of setup{'debug'} hash
+		
+	,'itunes' => {
+		'title' => string('SETUP_ITUNES')
+		,'parent' => 'server'
+		,'GroupOrder' => ['Default','iTunesPlaylistFormat']
+		,'Groups' => {
+			'Default' => {
+					'PrefOrder' => ['itunesscaninterval','ignoredisableditunestracks','itunes_library_autolocate','itunes_library_xml_path','itunes_library_music_path']
+				}
+			,'iTunesPlaylistFormat' => {
+					'PrefOrder' => ['iTunesplaylistprefix','iTunesplaylistsuffix']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupHead' => string('SETUP_ITUNESPLAYLISTFORMAT')
+					,'GroupDesc' => string('SETUP_ITUNESPLAYLISTFORMAT_DESC')
+					,'GroupLine' => 1
+					,'GroupSub' => 1
+				}
+
+			}
+		,'Prefs' => {
+			'itunesscaninterval' => {
+						'validate' => \&validateNumber
+						,'validateArgs' => [0,undef,1000]
+				}
+			,'iTunesplaylistprefix' => {
+						'validate' => \&validateAcceptAll
+						,'PrefSize' => 'large'
+					}
+			,'iTunesplaylistsuffix' => {
+						'validate' => \&validateAcceptAll
+						,'PrefSize' => 'large'
+					}
+			,'ignoredisableditunestracks' => {
+						'validate' => \&validateTrueFalse
+						,'options' => {
+								'1' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_1')
+								,'0' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_0')
+							}
+					}
+			,'itunes_library_xml_path' => {
+						'validate' => \&validateIsFile
+						,'changeIntro' => string('SETUP_OK_USING')
+						,'rejectMsg' => string('SETUP_BAD_FILE')
+						,'PrefSize' => 'large'
+					}
+			,'itunes_library_music_path' => {
+						'validate' => \&validateIsDir
+						,'changeIntro' => string('SETUP_OK_USING')
+						,'rejectMsg' => string('SETUP_BAD_DIRECTORY')
+						,'PrefSize' => 'large'
+					}
+			,'itunes_library_autolocate' => {
+						'validate' => \&validateTrueFalse
+						,'options' => {
+								'1' => string('SETUP_ITUNES_LIBRARY_AUTOLOCATE_1')
+								,'0' => string('SETUP_ITUNES_LIBRARY_AUTOLOCATE_0')
+							}
+					}
+			}
+		}
+	,'moodlogic' => {
+		'title' => string('SETUP_MOODLOGIC')
+		,'parent' => 'server'
+		,'GroupOrder' => ['Default','MoodLogicPlaylistFormat']
+		,'Groups' => {
+			'Default' => {
+					'PrefOrder' => ['instantMixMax','varietyCombo']
+				}
+			,'MoodLogicPlaylistFormat' => {
+					'PrefOrder' => ['MoodLogicplaylistprefix','MoodLogicplaylistsuffix']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupHead' => string('SETUP_MOODLOGICPLAYLISTFORMAT')
+					,'GroupDesc' => string('SETUP_MOODLOGICPLAYLISTFORMAT_DESC')
+					,'GroupLine' => 1
+					,'GroupSub' => 1
+				}
+			}
+		,'Prefs' => {
+			'MoodLogicplaylistprefix' => {
+						'validate' => \&validateAcceptAll
+						,'PrefSize' => 'large'
+					}
+			,'MoodLogicplaylistsuffix' => {
+						'validate' => \&validateAcceptAll
+						,'PrefSize' => 'large'
+					}
+			,'instantMixMax'	=> {
+						'validate' => \&validateInt
+						,'validateArgs' => [1,undef,1]
+					}
+			,'varietyCombo'	=> {
+						'validate' => \&validateInt
+						,'validateArgs' => [1,100,1,1]
+					}
+			}
+		}
+		
 	); #end of setup hash
 	foreach my $key (sort keys %main:: ) {
 		next unless $key =~ /^d_/;
@@ -1761,6 +1809,9 @@ sub setup_HTTP {
 	}
 
 	if (defined $pagesetup{'preEval'}) {
+		if (exists $pagesetup{'isClient'}) {
+			$client = Slim::Player::Client::getClient($paramref->{'playerid'});
+		}
 		&{$pagesetup{'preEval'}}($client,$paramref,\%pagesetup);
 	}
 
@@ -1773,6 +1824,9 @@ sub setup_HTTP {
 	processChanges($client,$changed,$paramref,\%pagesetup);
 
 	if (defined $pagesetup{'postChange'}) {
+		if (exists $pagesetup{'isClient'}) {
+			$client = Slim::Player::Client::getClient($paramref->{'playerid'});
+		}
 		&{$pagesetup{'postChange'}}($client,$paramref,\%pagesetup);
 	}
 
@@ -1879,6 +1933,9 @@ sub buildHTTP {
 				}
 				$prefparams{'PrefValue'} = $paramref->{$pref2};
 				if (exists $pageref->{'Prefs'}{$pref}{'externalValue'}) {
+					if (exists $pageref->{'Prefs'}{$pref}{'isClient'}) {
+						$client = Slim::Player::Client::getClient($paramref->{'playerid'});
+					}
 					$prefparams{'PrefExtValue'} = &{$pageref->{'Prefs'}{$pref}{'externalValue'}}($client,$paramref->{$pref2},$pref2);
 				} else {
 					$prefparams{'PrefExtValue'} = $paramref->{$pref2};
@@ -2178,7 +2235,11 @@ sub setup_changes_HTTP {
 			#todo get the current client from the $paramref hash, not currently needed
 			#but would be if there was an 'externalValue' function that actually used
 			#the $client parameter
-			$changedval = &{$settingsref->{$keyA}{'externalValue'}}(undef,$changeref->{$key},$key);
+			my $client;
+			if (exists $paramref->{'playerid'}) {
+				$client = Slim::Player::Client::getClient($paramref->{'playerid'});
+			}
+			$changedval = &{$settingsref->{$keyA}{'externalValue'}}($client,$changeref->{$key},$key);
 		} else {
 			$changedval = $changeref->{$key}{'new'};
 		}
@@ -2599,6 +2660,19 @@ sub validateInHash {
 		return $val;
 	} else {
 		return undef;
+	}
+}
+
+sub validateIsFile {
+	my $val = shift;
+	my $allowEmpty = shift;
+	if (-r $val) {
+		$val =~ s|[/\\]$||;
+		return $val;
+	} elsif ($allowEmpty && defined($val) && $val eq '') {
+		return $val;
+	} else  {
+		return (undef, "SETUP_BAD_DIRECTORY") ;
 	}
 }
 
