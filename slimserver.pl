@@ -742,6 +742,8 @@ sub checkVersion {
 
 	if ($sock) {
 
+		$::newVersion = '';
+
 		while (my $line = Slim::Utils::Misc::sysreadline($sock,5)) {
 			$::newVersion .= $line;
 		}
