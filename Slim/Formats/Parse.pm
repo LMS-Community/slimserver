@@ -378,7 +378,9 @@ sub readCUE {
 	my @lines = ();
 
 	# The cuesheet will/may be encoded.
-	binmode($cuefile, ":encoding($Slim::Utils::Misc::locale)");
+	if ($] > 5.007) {
+		binmode($cuefile, ":encoding($Slim::Utils::Misc::locale)");
+	}
 
 	while (my $line = <$cuefile>) {
 		chomp($line);
