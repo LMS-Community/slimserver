@@ -1,6 +1,6 @@
 package Slim::Hardware::VFD;
 
-# $Id: VFD.pm,v 1.18 2004/09/01 20:57:20 dean Exp $
+# $Id: VFD.pm,v 1.19 2004/09/02 20:54:45 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -49,6 +49,8 @@ my $noritakeBrightPrelude =
 my $vfdReset = $vfdCodeCmd . $vfdCommand{"INCSC"} . $vfdCodeCmd . $vfdCommand{"HOME"};
 
 $Slim::Hardware::VFD::MAXBRIGHTNESS = 4;
+
+my $spaces = ' ' x 40;
 
 my %symbolmap = (
 	'katakana' => {
@@ -127,13 +129,13 @@ sub render {
 		$line2 = $lines->{line2} if defined($lines->{line2});
 		if (defined($lines->{overlay1})) {
 			my $overlayLength =  Slim::Display::Display::lineLength($lines->{overlay1});
-			$line1 .= ' ' x 40;
+			$line1 .= $spaces;
 			$line1 = Slim::Display::Display::subString($line1, 0, 40 - $overlayLength) . $lines->{overlay1};
 		} 
 		
 		if (defined($lines->{overlay2})) {
 			my $overlayLength =  Slim::Display::Display::lineLength($lines->{overlay2});
-			$line2 .= ' ' x 40;
+			$line2 .= $spaces;
 			$line2 = Slim::Display::Display::subString($line2, 0, 40 - $overlayLength) . $lines->{overlay2};
 		}
 	
@@ -156,8 +158,8 @@ sub render {
 		}
 	}
 
-	$line1 = subString($line1 . (' ' x 40), 0, 40);
-	$line2 = subString($line2 . (' ' x 40), 0, 40);
+	$line1 = subString($line1 . ($spaces), 0, 40);
+	$line2 = subString($line2 . ($spaces), 0, 40);
 
 	return ($line1, $line2);
 }
@@ -175,7 +177,7 @@ sub vfdUpdate {
 	my ($line1, $line2);
 
 	($line1, $line2) = render($client, $lines, $noDoubleSize);
-	
+
 	# convert to the VFD char set
 	my $lang = $client->vfdmodel;
 	if (!$lang) { 
@@ -188,15 +190,15 @@ sub vfdUpdate {
 	
 	my $brightness = $client->brightness();
 
-	if (!defined($line1)) { $line1 = '' };
-	if (!defined($line2)) { $line2 = '' };
+	if (!defined($line1)) { $line1 = $spaces };
+	if (!defined($line2)) { $line2 = $spaces };
 
 	$client->prevline1($line1);
 	$client->prevline2($line2);
 	
 	if (defined($brightness) && ($brightness == 0)) {
-		$line1 = '';
-		$line2 = '';
+		$line1 = $spaces;
+		$line2 = $spaces;
 	} 
 	
 	my $line;
@@ -204,7 +206,7 @@ sub vfdUpdate {
 	my $cursorchar = Slim::Display::Display::symbol('cursorpos');
 
 	my $i = 0;
-	
+
 	foreach my $curline ($line1, $line2) {
 		my $linepos = 0;
 			
@@ -216,7 +218,7 @@ sub vfdUpdate {
 
 			# get the next character
 			my $scan = substr($curline, $linepos);
-			
+
 			# if this is a cursor position token, remember the location and go on
 			if ($scan =~ /^$cursorchar/) {
 				$cur = $i;
@@ -249,7 +251,6 @@ sub vfdUpdate {
 			}	
 		}
 	}
-	
 	# Find out which custom chars we need to add, and which we can discard
 	my $usedCustom = scalar keys(%customUsed);
 	my $nextChr = chr(0);
@@ -827,14 +828,15 @@ sub doubleSize {
 	$line1 = $lines->{line1};
 	$line2 = $lines->{line2};
 	
-	if (!defined($line2) || $line2 eq "") { $line2 = $line1; };
+	if ((!defined($line2) || $line2 eq "") && defined($line1)) { $line2 = $line1; };
 
 	my $center2 = $lines->{center2};
 	
 	if (defined($center2)) {
 		$line2 = $center2;
 	}
-
+	return ('','') if (!defined($line2) || $line2 eq '');
+	
 	$line2 =~ s/$cursorpos//g;
 	$line2 =~ s/^(\s*)(.*)/$2/;
 	
