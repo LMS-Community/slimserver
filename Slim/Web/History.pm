@@ -7,9 +7,8 @@ package Slim::Web::History;
 
 use strict;
 use File::Spec::Functions qw(:ALL);
-use POSIX;
-use Slim::Utils::Misc;
 
+use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
 # a cache of songs played

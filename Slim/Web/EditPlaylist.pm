@@ -12,132 +12,125 @@ use Slim::Utils::Misc;
 # The default playlist name is: Radio Station.pls
 # Can be overwritten by adding ?dir=<playlistname.pls> to the calling URL
 # -------------------------------------------------------------
-sub editplaylist
-{
-	my( $client, $main_form_ref) = @_;
+sub editplaylist {
 
-	my $dir = defined( $$main_form_ref{'dir'}) ? $$main_form_ref{'dir'} : "Radio Station.pls";
+	my ($client, $params) = @_;
+
+	my $dir = defined( $params->{'dir'}) ? $params->{'dir'} : "Radio Station.pls";
+
 	my $fulldir = Slim::Utils::Misc::virtualToAbsolute( $dir);
-	my $filehandle;
-	my $count = 0;
-	my $item;
-	my @items;
-	my %list_form;
-	my $playlist;
-	my $output = "";
 
-	$$main_form_ref{'dir'} = $dir;
+	my $filehandle = FileHandle->new($fulldir, "r");
+
+	my $count = 0;
+	my $playlist;
+
+	$params->{'dir'} = $dir;
 
 	$::d_http && msg( "browse virtual path: " . $dir . "\n");
 	$::d_http && msg( "with absolute path: " . $fulldir . "\n");
 
 	# Edit function - fill the to fields in the form
-	if( defined( $$main_form_ref{'edit'}))
-	{
-		my $value = $$main_form_ref{'edit'};
+	if (defined($params->{'edit'})) {
 
-		$filehandle = new FileHandle( $fulldir, "r");
-		@items = Slim::Formats::Parse::PLS( $filehandle);
-		close $filehandle;
+		my $value = $params->{'edit'};
+		my @items = Slim::Formats::Parse::PLS($filehandle);
 
-		$$main_form_ref{'form_url'} = $items[$value];
-		$$main_form_ref{'form_title'} = Slim::Music::Info::title( $items[$value]);
-	}
-	# Delete function - Remove entry from list
-	elsif( defined( $$main_form_ref{'delete'}))
-	{
-		my $value = $$main_form_ref{'delete'};
+		$params->{'form_url'}   = $items[$value];
+		$params->{'form_title'} = Slim::Music::Info::title($items[$value]);
 
-		$filehandle = new FileHandle( $fulldir, "r");
-		@items = Slim::Formats::Parse::PLS( $filehandle);
-		close $filehandle;
+	} elsif (defined($params->{'delete'})) {
 
-		splice( @items, $value, 1);
-		Slim::Formats::Parse::writePLS( \@items, undef, $fulldir);
-	}
-	# Add function - Add entry it not already in list
-	elsif( defined( $$main_form_ref{'form_title'}))
-	{
+		# Delete function - Remove entry from list
+		my $value = $params->{'delete'};
+		my @items = Slim::Formats::Parse::PLS( $filehandle);
+
+		splice(@items, $value, 1);
+
+		Slim::Formats::Parse::writePLS(\@items, undef, $fulldir);
+
+	} elsif (defined($params->{'form_title'})) {
+
+		# Add function - Add entry it not already in list
 		my $found = 0;
-		my $title = $$main_form_ref{'form_title'};
-		my $newitem = $$main_form_ref{'form_url'};
+		my $title = $params->{'form_title'};
+		my $newitem = $params->{'form_url'};
 
-		if( ( $title ne "") && ( $newitem ne ""))
-		{
-			$filehandle = new FileHandle( $fulldir, "r");
-			@items = Slim::Formats::Parse::PLS( $filehandle);
-			close $filehandle;
+		if (($title ne "") && ($newitem ne "")) {
+
+			my @items = Slim::Formats::Parse::PLS( $filehandle);
 
 			Slim::Music::Info::setTitle( $newitem, $title);
-			foreach $item (@items)
-			{
-				if( $item eq $newitem)
-				{
+			foreach my $item (@items) {
+
+				if ($item eq $newitem) {
 					$found = 1;
 					last;
 				}
 				::idleStreams();
 			}
-			if( $found == 0)
-			{
+
+			if ($found == 0) {
 				push( @items, $newitem);
 			}
-			Slim::Formats::Parse::writePLS( \@items, undef, $fulldir);
+
+			Slim::Formats::Parse::writePLS(\@items, undef, $fulldir);
 		}
-	}
-	# Up function - Move entry up in list
-	elsif( defined( $$main_form_ref{'up'}))
-	{
-		my $value = $$main_form_ref{'up'};
 
-		if( $value != 0)
-		{
-			$filehandle = new FileHandle( $fulldir, "r");
-			@items = Slim::Formats::Parse::PLS( $filehandle);
-			close $filehandle;
+	} elsif (defined($params->{'up'})) {
 
-			$item = $items[$value];
+		# Up function - Move entry up in list
+		my $value = $params->{'up'};
+
+		if ($value != 0) {
+
+			my @items = Slim::Formats::Parse::PLS($filehandle);
+
+			my $item = $items[$value];
 			$items[$value] = $items[$value - 1];
 			$items[$value - 1] = $item;
 
-			Slim::Formats::Parse::writePLS( \@items, undef, $fulldir);
+			Slim::Formats::Parse::writePLS(\@items, undef, $fulldir);
 		}
-	}
-	# Down function - Move entry down in list
-	elsif( defined( $$main_form_ref{'down'}))
-	{
-		my $value = $$main_form_ref{'down'};
 
-		$filehandle = new FileHandle( $fulldir, "r");
-		@items = Slim::Formats::Parse::PLS( $filehandle);
-		close $filehandle;
+	} elsif (defined($params->{'down'})) {
 
-		if( $value != scalar( @items) - 1)
-		{
-			$item = $items[$value];
+		# Down function - Move entry down in list
+		my $value = $params->{'down'};
+		my @items = Slim::Formats::Parse::PLS($filehandle);
+
+		if ($value != scalar(@items) - 1) {
+
+			my $item = $items[$value];
 			$items[$value] = $items[$value + 1];
 			$items[$value + 1] = $item;
 
-			Slim::Formats::Parse::writePLS( \@items, undef, $fulldir);
+			Slim::Formats::Parse::writePLS(\@items, undef, $fulldir);
 		}
 	}
 
-	$filehandle = new FileHandle( $fulldir, "r");
-	# Create new file if it cannot be opened
-	if( !defined( $filehandle))
-	{
-		$filehandle = new FileHandle( $fulldir, "w+");
-	}
-	@items = Slim::Formats::Parse::PLS( $filehandle);
-	close $filehandle;
+	# close and reopen.
+	$filehandle->close;
 
-	%list_form = %$main_form_ref;
-	foreach $item (@items)
-	{
+	$filehandle = FileHandle->new($fulldir, "r") || do {
+
+		# Create new file if it cannot be opened
+		$filehandle = FileHandle->new($fulldir, "w+");
+	};
+
+	my @items = Slim::Formats::Parse::PLS($filehandle);
+
+	$filehandle->close();
+
+	my %list_form = %$params;
+
+	foreach my $item (@items) {
+
 		my $title = Slim::Music::Info::title( $item);
-		$list_form{'num'} = $count++;
-		$list_form{'odd'} = $count % 2;
-		$list_form{'dir'} = $dir;
+
+		$list_form{'num'}   = $count++;
+		$list_form{'odd'}   = $count % 2;
+		$list_form{'dir'}   = $dir;
 		$list_form{'title'} = $title;
 
 		$playlist .= ${Slim::Web::HTTP::filltemplatefile( "edit_playlist_list.html", \%list_form)};
@@ -145,9 +138,9 @@ sub editplaylist
 		::idleStreams();
 	}
 
-	$$main_form_ref{'playlist'} = $playlist;
-	return Slim::Web::HTTP::filltemplatefile( "edit_playlist.html", $main_form_ref);
+	$params->{'playlist'} = $playlist;
+
+	return Slim::Web::HTTP::filltemplatefile( "edit_playlist.html", $params);
 }
 
 1;
-	
