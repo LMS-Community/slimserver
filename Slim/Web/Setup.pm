@@ -1247,7 +1247,15 @@ sub initSetupConfig {
 				my %plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 				my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
 
-				foreach my $plugin (sort {string($pluginlistref->{$a}) cmp string($pluginlistref->{$b})}(keys %{$pluginlistref})) {	
+				for my $plugin (keys %{$pluginlistref}) {
+					if (Slim::Utils::Strings::stringExists($pluginlistref->{$plugin})) {
+						$pluginlistref->{$plugin} = string($pluginlistref->{$plugin});
+					} else {
+						delete $pluginlistref->{$plugin};
+					}
+				}
+
+				for my $plugin (sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref})) {	
 					
 					if ((exists $paramref->{"pluginlist$i"} && $paramref->{"pluginlist$i"} == (exists $plugins{$plugin} ? 0 : 1))) {
 						delete $paramref->{"pluginlist$i"};
@@ -1272,8 +1280,16 @@ sub initSetupConfig {
 
 				my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
 
+				for my $plugin (keys %{$pluginlistref}) {
+					if (Slim::Utils::Strings::stringExists($pluginlistref->{$plugin})) {
+						$pluginlistref->{$plugin} = string($pluginlistref->{$plugin});
+					} else {
+						delete $pluginlistref->{$plugin};
+					}
+				}
+
 				no strict 'refs';
-				foreach my $plugin (sort {string($pluginlistref->{$a}) cmp string($pluginlistref->{$b})}(keys %{$pluginlistref})) {
+				for my $plugin (sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref})) {	
 
 					if ($paramref->{"pluginlist$i"} && UNIVERSAL::can("Plugins::$plugin","initPlugin")) {
 						&{"Plugins::" . $plugin . "::initPlugin"};
@@ -1298,7 +1314,7 @@ sub initSetupConfig {
 					$i++;
 				}
 				
-				foreach my $group (Slim::Utils::Prefs::getArray('disabledplugins')) {
+				for my $group (Slim::Utils::Prefs::getArray('disabledplugins')) {
 					
 					delGroup('plugins',$group,1);
 					
@@ -1345,7 +1361,11 @@ sub initSetupConfig {
 					# fallback to the plugin package name, so we at least have 
 					# something, instead of a blank space.
 					for my $plugin (keys %{$pluginlistref}) {
-						$pluginlistref->{$plugin} = string($pluginlistref->{$plugin}) || $plugin;
+						if (Slim::Utils::Strings::stringExists($pluginlistref->{$plugin})) {
+							$pluginlistref->{$plugin} = string($pluginlistref->{$plugin});
+						} else {
+							delete $pluginlistref->{$plugin};
+						}
 					}
 
 					return $pluginlistref->{(sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref}))[$1]};
