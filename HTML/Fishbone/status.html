@@ -152,23 +152,23 @@
    </div>
 <div class="nowplaying">
 <table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13">
-<td width="33%" class="label2" align="center"><nobr>
+<td [IF isplayer]width="33%"[/IF] class="label2" align="center"><nobr>
     <b>REPEAT:&nbsp;&nbsp;</b>
              <a class="[IFN repeatone]dark[/IFN]button" href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}"><b>ONE</b>&nbsp;&nbsp;</a>
              <a class="[IFN repeatall]dark[/IFN]button" href="status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}"><b>ALL</b>&nbsp;&nbsp;</a>
              <a class="[IFN repeatoff]dark[/IFN]button" href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}"><b>OFF</b></a>
 </nobr></td><td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
-<td width="40%" height="13" class="label2" align="center"><nobr>
+<td [IF isplayer]width="40%"[/IF] height="13" class="label2" align="center"><nobr>
     <b>SHUFFLE:&nbsp;&nbsp;</b>
              <a class="[IFN shuffleoff]dark[/IFN]button" href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}"><b>OFF</b>&nbsp;&nbsp;</a>
              <a class="[IFN shuffleon]dark[/IFN]button" href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}"><b>SONG</b>&nbsp;&nbsp;</a>
              <a class="[IFN shufflealbum]dark[/IFN]button" href="status.html?p0=playlist&p1=shuffle&p2=2&player={%player}"><b>ALBUM</b></a>
-</nobr></td><td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
+</nobr></td>[IF isplayer]<td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
 <td height="13" class="label2" align="center"><nobr>
 	<b>PLAYER:&nbsp;&nbsp;</b>
 	         <a target="_top" class="[EQ mode off]dark[/EQ]button" href="index.html?player={%player}&p0=power&p1=1"><b>ON</b>&nbsp;&nbsp;</a>
 	         <a target="_top" class="[NE mode off]dark[/NE]button" href="index.html?player={%player}&p0=power&p1=0"><b>OFF</b></a>
-</nobr></td>
+</nobr></td>[/IF]
 </table></div>
   </body>
 </html>
