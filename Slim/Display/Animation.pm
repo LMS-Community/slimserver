@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::Animation;
 
-# $Id: Animation.pm,v 1.15 2004/04/26 06:45:10 kdf Exp $
+# $Id: Animation.pm,v 1.16 2004/05/10 20:01:07 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -107,24 +107,25 @@ sub showBriefly {
 		$duration = 1;
 	}
 	
-	if (($duration >  $pause) && (Slim::Hardware::VFD::lineLength($line2) > 40) || (Slim::Hardware::VFD::lineLength($line1) > 40)) {
+	my ($measure1, $measure2);
+	my $double = Slim::Utils::Prefs::clientGet($client,'doublesize');
+	if ($double) {
+		($measure1, $measure2) = Slim::Display::Display::doubleSize($client,$line1,$line2);
+	} else {
+		($measure1, $measure2) = ($line1, $line2);
+	}
+	
+	if (($duration >  $pause) && (Slim::Hardware::VFD::lineLength($measure2) > 40) || (Slim::Hardware::VFD::lineLength($measure1) > 40)) {
 
-		my $double;
 		my @newqueue = ();
-		my ($measure1, $measure2);
 		my ($t1, $t2);
 		
 		my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');
 	
 		# double them
-		$double = Slim::Utils::Prefs::clientGet($client,'doublesize');
 		if ($double) {
-			($measure1, $measure2) = Slim::Display::Display::doubleSize($client,$line1,$measure2);
 			($line1, $line2) = Slim::Display::Display::doubleSize($client,$line1,$line2);
-		}
-	
-		$measure1 = $line1;
-		$measure2 = $line2;
+		}	
 		
 		# add some blank space to the end of each line
 		if (Slim::Hardware::VFD::lineLength($line1) > 40) {
