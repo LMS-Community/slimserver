@@ -1,12 +1,16 @@
-<tr class="[IF odd]odd[/IF][IFN odd]even[/IFN]" cellpadding="0">
-<td class="nowrap" width="90px"><a class="linkbtn" href="status.html?p0=playlist&p1=move&p2={num}&p3=%2D1&player={%player}&start={start}">&uarr;</a>
-<a class="linkbtn" href="status.html?p0=playlist&p1=move&p2={num}&p3=%2B1&player={%player}&start={start}">&darr;</a>
-<a class="linkbtn" href="status.html?p0=playlist&p1=delete&p2={num}&player={%player}&start={start}">&times;</a></td>
-<td>&nbsp;</td>
-<td><a href="status.html?p0=playlist&p1=jump&p2={num}&player={%player}" [IF currentsong]id="currentsong"[/IF]>{&title}</a>
-	[IF album][S FROM][/IF]
-	<em><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{&album}</a></em> 
-	[IF artist] [S BY] [/IF] 
-	<a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser">{&artist}</a>
-</td>
-</tr>
+<li class="[IF odd]odd[/IF][IFN odd]even[/IFN]">
+  <div class="controls">
+    <ul class="songctl">
+      <li><a href="status.html?p0=playlist&amp;p1=move&amp;p2={num}&amp;p3=%2D1&amp;player={%player}&amp;start={start}"><span>&uarr;</span></a></li>
+      <li><a href="status.html?p0=playlist&amp;p1=move&amp;p2={num}&amp;p3=%2B1&amp;player={%player}&amp;start={start}"><span>&darr;</span></a></li>
+      <li><a href="status.html?p0=playlist&amp;p1=delete&amp;p2={num}&amp;player={%player}&amp;start={start}"><span>&times;</span></a></li>
+    </ul>
+  </div>
+  <div class="songline">
+    <span class="songtitle"><a href="status.html?p0=playlist&amp;p1=jump&amp;p2={num}&amp;player={%player}" [IF currentsong]id="currentsong"[/IF]>{&title}</a></span>
+    [IF album][S FROM][/IF]
+    <span class="album"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;album={%album}&amp;player={%player}" target="browser">{&album}</a></span>
+    [IF artist] [S BY] [/IF] 
+    <span class="artist"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{&artist}</a></span>
+  </div>
+</li>

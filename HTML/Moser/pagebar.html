@@ -1,9 +1,9 @@
-[IF pagesstart]<a class="linkbtn" href={path}?{otherparams}&start=0>|&lt;&lt;</a>[/IF]
-[IF pagesprev]<a class="linkbtn" href={path}?{otherparams}&start={pagesprev}>&lt;&lt;</a>[/IF]
-[EQ pagesprev 0]<a class="linkbtn" href={path}?{otherparams}&start={pagesprev}>&lt;&lt;</a>[/EQ]
-[IF pageprev]<a class="linkbtn" href={path}?{otherparams}&start={pageprev}>&lt;</a>[/IF]
-[EQ pageprev 0]<a class="linkbtn" href={path}?{otherparams}&start={pageprev}>&lt;</a>[/EQ]
-{pageslist}
-[IF pagenext]<a class="linkbtn" href={path}?{otherparams}&start={pagenext}>&gt;</a>[/IF]
-[IF pagesnext]<a class="linkbtn" href={path}?{otherparams}&start={pagesnext}>&gt;&gt;</a>[/IF]
-[IF pagesend]<a class="linkbtn" href={path}?{otherparams}&start={pagesend}>&gt;&gt;|</a>[/IF]
+[IF pagesstart]<li><a href="{path}?{&otherparams}start=0"><span>|&lt;&lt;</span></a></li>
+[/IF][IF pagesprev]<li><a href="{path}?{&otherparams}start={pagesprev}"><span>&lt;&lt;</span></a></li>
+[/IF][EQ pagesprev 0]<li><a href="{path}?{&otherparams}start={pagesprev}"><span>&lt;&lt;</span></a></li>
+[/EQ][IF pageprev]<li><a href="{path}?{&otherparams}start={pageprev}"><span>&lt;</span></a></li>
+[/IF][EQ pageprev 0]<li><a href="{path}?{&otherparams}start={pageprev}"><span>&lt;</span></a></li>
+[/EQ]{pageslist}
+[IF pagenext]<li><a href="{path}?{&otherparams}start={pagenext}"><span>&gt;</span></a></li>[/IF]
+[IF pagesnext]<li><a href="{path}?{&otherparams}start={pagesnext}"><span>&gt;&gt;</span></a></li>[/IF]
+[IF pagesend]<li><a href="{path}?{&otherparams}start={pagesend}"><span>&gt;&gt;|</span></a></li>[/IF]

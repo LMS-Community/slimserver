@@ -1,50 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
   <head>
-    <meta http-equiv="refresh" content="{refresh}; url=status.html?player={%player}&start={start}&refresh=1">
+    <meta http-equiv="refresh" content="{refresh}; url=status.html?player={%player}&amp;start={start}&amp;refresh=1" />
     <title>[S {playermodel}_MUSIC_PLAYER] [IF player_name]{player_name}[/IF] </title>
-    <link rel="stylesheet" href="slimserver.css">
+    <link rel="stylesheet" href="slimserver.css" />
+    <script type="text/javascript"><!--//--><!&lsqb;CDATA&lsqb;//><!--
+
+startList = function() &lbrc;
+	if (document.all&&document.getElementById) &lbrc;
+		navRoot = document.getElementById("playerchooser");
+		for (i=0; i<navRoot.childNodes.length; i++) &lbrc;
+			node = navRoot.childNodes&lsqb;i&rsqb;;
+			if (node.nodeName=="LI") &lbrc;
+				node.onmouseover=function() &lbrc;
+					this.className+=" over";
+				&rbrc;
+				node.onmouseout=function() &lbrc;
+					this.className=this.className.replace(" over", "");
+				&rbrc;
+			&rbrc;
+		&rbrc;
+	&rbrc;
+&rbrc;
+window.onload=startList;
+
+//--><!&rsqb;&rsqb;></script>
+
+
   </head>
-  <body bgcolor="#FFFFFF">
-	<h3>[S {playermodel}_MUSIC_PLAYER] [IF player_name]{player_name}[/IF]</h3>
-  	[IF player_chooser_list]<form method="get" action="{webroot}index.html" target="_top">[S CURRENT_PLAYER] <select name="player">{player_chooser_list}</select><input class="stdclick" type="submit" value="Change"></form>[/IF]
-     
-    [IF modeplay][S PLAYING][/IF]
-    [IF modepause][S PAUSED_ON][/IF]
-    [IF modestop][S STOPPED_ON][/IF]
-    [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF]:
-<b><a href="status.html?player={%player}#currentsong">{songtitle}</a></b> [IF album]from[/IF] 
-<i><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{album}</a></i> 
-[IF artist][S BY] [/IF] 
-<a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser">{artist}</a>
-[IF songcount]<a class="linkbtn" href="status.html?p0=playlist&p1=delete&p2={thissongnum}&player={%player}&start={start}">&times;</a>[/IF]
-[IFN songcount] [S NOTHING] [/IFN]
-<hr><p class="spaceafter">
-    <a href="status.html?p0=rate&p1=%2D2&player={%player}"><img class="ctrlbtn[EQ rate rew]2[/EQ]" src="html/rew[EQ rate rew]_on[/EQ].png" alt="[S REW]" title="[S REW]"></a>
-    <a href="status.html?p0=playlist&p1=jump&p2=%2D1&player={%player}"><img class="ctrlbtn" src="html/prev.png" alt="[S PREVIOUS]" title="[S PREVIOUS]"></a>
-    <a href="status.html?p0=play&player={%player}"><img class="ctrlbtn[IF modeplay][EQ rate norm]2[/EQ][/IF]" src="html/play[IF modeplay][EQ rate norm]_on[/EQ][/IF].png" alt="[S PLAY]" title="[S PLAY]"></a>
-    <a href="status.html?p0=pause&player={%player}"><img class="ctrlbtn[IF modepause]2[/IF]" src="html/pause[IF modepause]_on[/IF].png" alt="[S PAUSE]" title="[S PAUSE]"></a>
-    <a href="status.html?p0=stop&player={%player}"><img class="ctrlbtn[IF modestop]2[/IF]" src="html/stop[IF modestop]_on[/IF].png" alt="[S STOP]" title="[S STOP]"></a>
-    <a href="status.html?p0=playlist&p1=jump&p2=%2B1&player={%player}"><img class="ctrlbtn" src="html/skip.png" alt="[S NEXT]" title="[S NEXT]"></a>
-    <a href="status.html?p0=rate&p1=10&player={%player}"><img class="ctrlbtn[EQ rate ffwd]2[/EQ]" src="html/ffwd[EQ rate ffwd]_on[/EQ].png" alt="[S FFWD]" title="[S FFWD]"></a>
-    [S REPEAT]: 
-             <a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}"><img class="ctrlbtn[IF repeatone]2[/IF]" src="html/repeat_one[IF repeatone]_on[/IF].png" alt="[S ONE]" title="[S ONE]"></a>
-             <a href="status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}"><img class="ctrlbtn[IF repeatall]2[/IF]" src="html/repeat_all[IF repeatall]_on[/IF].png" alt="[S ALL]" title="[S ALL]"></a>
-             <a href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}"><img class="ctrlbtn[IF repeatoff]2[/IF]" src="html/repeat_off[IF repeatoff]_on[/IF].png" alt="[S OFF]" title="[S OFF]"></a>
-&nbsp;
-             <a class="linkbtn[IF shuffleon]2[/IF]"  href="status.html?p0=playlist&p1=shuffle&p2=[IF shuffleon]0[/IF][IF shuffleoff]1[/IF]&player={%player}">[S SHUFFLE]</a></p>
-    [S VOLUME]: <a class="linkbtn" href="status.html?p0=mixer&p1=volume&p2=-10&player={%player}&start={start}">[S VOLUME_SOFTER]</a>
-       <a class="linkbtn[EQ volume 0]2[/EQ]" href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}">1</a>
-       <a class="linkbtn[EQ volume 10]2[/EQ]" href="status.html?p0=mixer&p1=volume&p2=10&player={%player}&start={start}">2</a>
-       <a class="linkbtn[EQ volume 20]2[/EQ]" href="status.html?p0=mixer&p1=volume&p2=20&player={%player}&start={start}">3</a>
-       <a class="linkbtn[EQ volume 30]2[/EQ]" href="status.html?p0=mixer&p1=volume&p2=30&player={%player}&start={start}">4</a>
-       <a class="linkbtn[EQ volume 40]2[/EQ]" href="status.html?p0=mixer&p1=volume&p2=40&player={%player}&start={start}">5</a>
-       <a class="linkbtn[EQ volume 50]2[/EQ]" href="status.html?p0=mixer&p1=volume&p2=50&player={%player}&start={start}">6</a>
-       <a class="linkbtn[EQ volume 60]2[/EQ]" href="status.html?p0=mixer&p1=volume&p2=60&player={%player}&start={start}">7</a>
-       <a class="linkbtn[EQ volume 70]2[/EQ]" href="status.html?p0=mixer&p1=volume&p2=70&player={%player}&start={start}">8</a>
-       <a class="linkbtn[EQ volume 80]2[/EQ]" href="status.html?p0=mixer&p1=volume&p2=80&player={%player}&start={start}">9</a>
-       <a class="linkbtn[EQ volume 90]2[/EQ]" href="status.html?p0=mixer&p1=volume&p2=90&player={%player}&start={start}">10</a>
-       <a class="linkbtn[EQ volume 100]2[/EQ]" href="status.html?p0=mixer&p1=volume&p2=100&player={%player}&start={start}">11</a>
-       <a class="linkbtn" href="status.html?p0=mixer&p1=volume&p2=%2b10&player={%player}&start={start}">[S VOLUME_LOUDER]</a>
+<body id="status">
+<div id="statusheader">
+  <ul id="playerchooser">
+    <li>
+      <div>[IF player_name]{player_name}[/IF]</div>
+      [IF player_chooser_list]<ul>{player_chooser_list}</ul>[/IF]
+    </li>
+  </ul>
+  <div id="nowplaying">
+    <span class="label">[IF modeplay][S PLAYING][/IF][IF modepause][S PAUSED_ON][/IF][IF modestop][S STOPPED_ON][/IF] [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF]:</span>
+    <span class="songtitle"><a href="status.html?player={%player}#currentsong">{songtitle}</a></span>
+    [IF album][S FROM][/IF] <span class="album"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;album={%album}&amp;player={%player}" target="browser">{album}</a></span>
+    [IF artist][S BY] [/IF] <span class="artist"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{artist}</a></span>
+    [IF songcount]<span class="controls"><a href="status.html?p0=playlist&amp;p1=delete&amp;p2={thissongnum}&amp;player={%player}&amp;start={start}"><span>&times;</span></a></span>[/IF]
+    [IFN songcount] [S NOTHING] [/IFN]
+  </div>
+  <div id="controlsection">
+    <span class="hide"><a href="#playlist">Skip to playlist</a></span>
+    <div id="playerctl" class="controls">
+      <ul>
+        <li[EQ rate rew] class="currctl"[/EQ]><a href="status.html?p0=rate&amp;p1=%2D2&amp;player={%player}"><img src="html/rew[EQ rate rew]_on[/EQ].png" alt="[S REW]" title="[S REW]" /></a></li>
+        <li><a href="status.html?p0=playlist&amp;p1=jump&amp;p2=%2D1&amp;player={%player}"><img src="html/prev.png" alt="[S PREVIOUS]" title="[S PREVIOUS]" /></a></li>
+        <li[IF modeplay][EQ rate norm] class="currctl"[/EQ][/IF]><a href="status.html?p0=play&amp;player={%player}"><img src="html/play[IF modeplay][EQ rate norm]_on[/EQ][/IF].png" alt="[S PLAY]" title="[S PLAY]" /></a></li>
+        <li[IF modepause] class="currctl"[/IF]><a href="status.html?p0=pause&amp;player={%player}"><img src="html/pause[IF modepause]_on[/IF].png" alt="[S PAUSE]" title="[S PAUSE]" /></a></li>
+        <li[IF modestop] class="currctl"[/IF]><a href="status.html?p0=stop&amp;player={%player}"><img src="html/stop[IF modestop]_on[/IF].png" alt="[S STOP]" title="[S STOP]" /></a></li>
+        <li><a href="status.html?p0=playlist&amp;p1=jump&amp;p2=%2B1&amp;player={%player}"><img src="html/skip.png" alt="[S NEXT]" title="[S NEXT]" /></a></li>
+        <li[EQ rate ffwd] class="currctl"[/EQ]><a href="status.html?p0=rate&amp;p1=10&amp;player={%player}"><img src="html/ffwd[EQ rate ffwd]_on[/EQ].png" alt="[S FFWD]" title="[S FFWD]" /></a></li>
+      </ul>
+    </div>
+    <div id="repeatctl">
+      <span class="label">[S REPEAT]:</span>
+      <div class="controls">
+        <ul>
+          <li[IF repeatone] class="currctl"[/IF]><a href="status.html?p0=playlist&amp;p1=repeat&amp;p2=1&amp;player={%player}&amp;start={start}"><img src="html/repeat_one[IF repeatone]_on[/IF].png" alt="[S ONE]" title="[S ONE]" /></a></li>
+          <li[IF repeatall] class="currctl"[/IF]><a href="status.html?p0=playlist&amp;p1=repeat&amp;p2=2&amp;player={%player}&amp;start={start}"><img src="html/repeat_all[IF repeatall]_on[/IF].png" alt="[S ALL]" title="[S ALL]" /></a></li>
+          <li[IF repeatoff] class="currctl"[/IF]><a href="status.html?p0=playlist&amp;p1=repeat&amp;p2=0&amp;player={%player}&amp;start={start}"><img src="html/repeat_off[IF repeatoff]_on[/IF].png" alt="[S OFF]" title="[S OFF]" /></a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="shufflectl">
+      <span class="label">[S SHUFFLE]:</span>
+      <div class="controls">
+        <ul>
+          <li[IF shuffleoff] class="currctl"[/IF]><a href="status.html?p0=playlist&amp;p1=shuffle&amp;p2=0&amp;player={%player}"><span>[S OFF]</span></a></li>
+          <li[IF shuffleon] class="currctl"[/IF]><a href="status.html?p0=playlist&amp;p1=shuffle&amp;p2=1&amp;player={%player}"><span>[S LCSONGS]</span></a></li>
+          <li[IF shufflealbum] class="currctl"[/IF]><a href="status.html?p0=playlist&amp;p1=shuffle&amp;p2=2&amp;player={%player}"><span>[S LCALBUMS]</span></a></li>
+        </ul>
+      </div>
+    </div>
+    [IF isplayer]<div id="volumectl">
+      <span class="label">[S VOLUME]: </span>
+      <div class="controls">
+        <ul>
+          <li><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=-10&amp;player={%player}&amp;start={start}"><span>[S VOLUME_SOFTER]</span></a></li>
+          <li[EQ volume 0] class="currctl"[/EQ]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=0&amp;player={%player}&amp;start={start}"><span>1</span></a></li>
+          <li[EQ volume 10] class="currctl"[/EQ]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=10&amp;player={%player}&amp;start={start}"><span>2</span></a></li>
+          <li[EQ volume 20] class="currctl"[/EQ]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=20&amp;player={%player}&amp;start={start}"><span>3</span></a></li>
+          <li[EQ volume 30] class="currctl"[/EQ]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=30&amp;player={%player}&amp;start={start}"><span>4</span></a></li>
+          <li[EQ volume 40] class="currctl"[/EQ]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=40&amp;player={%player}&amp;start={start}"><span>5</span></a></li>
+          <li[EQ volume 50] class="currctl"[/EQ]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=50&amp;player={%player}&amp;start={start}"><span>6</span></a></li>
+          <li[EQ volume 60] class="currctl"[/EQ]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=60&amp;player={%player}&amp;start={start}"><span>7</span></a></li>
+          <li[EQ volume 70] class="currctl"[/EQ]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=70&amp;player={%player}&amp;start={start}"><span>8</span></a></li>
+          <li[EQ volume 80] class="currctl"[/EQ]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=80&amp;player={%player}&amp;start={start}"><span>9</span></a></li>
+          <li[EQ volume 90] class="currctl"[/EQ]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=90&amp;player={%player}&amp;start={start}"><span>10</span></a></li>
+          <li[EQ volume 100] class="currctl"[/EQ]><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=100&amp;player={%player}&amp;start={start}"><span>11</span></a></li>
+          <li><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=%2b10&amp;player={%player}&amp;start={start}"><span>[S VOLUME_LOUDER]</span></a></li>
+        </ul>
+      </div>
+    </div>[/IF]
+  </div>
+</div>
 {playlist}
-  </body>
+</body>
 </html>

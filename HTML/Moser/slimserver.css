@@ -1,23 +1,32 @@
 BODY {
-    font-size : 8pt;
-    background : rgb(255,255,255);
-    font-family : Tahoma, Verdana, Arial;
-    color : rgb(0,0,0);
+  font-size : xx-small;
+  background : rgb(255,255,255);
+  font-family : Tahoma, Verdana, Arial, sans-serif;
+  color : rgb(0,0,0);
+  voice-family: "\"}\""; 
+  voice-family:inherit;
+  font-size: small;
 }
 
 H3 {
-	font-size : 14pt;
-	font-weight : bold;	
-	text-align : left;
-	margin:0in; 
-	margin-bottom:6pt;	
+  font-size : medium;
+  font-weight : bold;
+  text-align : left;
+  margin:0in; 
+  margin-bottom:0.5em;
+  voice-family: "\"}\""; 
+  voice-family:inherit;
+  font-size : large;
 }
 
 TD, P, DIV, A {
-	font-size : 8pt;
-	margin:0in; 
-	margin-bottom:1pt;
-	line-height: 150%;
+  font-size : xx-small;
+  margin:0in; 
+  margin-bottom:1pt;
+  line-height: 150%;
+  voice-family: "\"}\""; 
+  voice-family:inherit;
+  font-size: small;
 }
 
 A {
@@ -26,9 +35,12 @@ A {
 
 TH {
     background : rgb(255,0,0);
-    font-size : 8pt;
+    font-size : x-small;
     text-align : center;
     font-weight : bold;	
+  voice-family: "\"}\""; 
+  voice-family:inherit;
+  font-size: small;
 }
 
 #currentsong {
@@ -37,10 +49,12 @@ TH {
 
 .odd {
     background : rgb(214,231,255);
+    clear: left;
 }
 
 .even {
     background : rgb(255,255,255);
+    clear: left;
 }
 
 .nowrap {
@@ -67,42 +81,42 @@ A:active {
    text-decoration : none; 
 }
 
-.linkbtn2, .linkbtn2:visited, .linkbtn2:link, .linkbtn2:active, .linkbtn2:hover {
-   font : 8pt Arial;
-   font-weight: bold;
+.label {
+    float: left;
+    padding-right: 0.5em;
+}
+div.controls {
+  clear: none;
+}
+
+.controls ul {
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+.controls li {
+  float:left;
+}
+
+.controls img, .controls span {
+  color: rgb(255,255,255);
+  background-color : rgb(0,51,204);
+  border-width : 2px;
+  border-style : outset;
+  border-color : rgb(0,51,204);
+  vertical-align : middle;
+  text-align: center;
+  font-weight: bold;
+}
+.controls span {
+   padding: 0 0.5em;
+}
+
+.controls .currctl img, .controls .currctl span, .controls a:active, .controls img:active, .controls span:active {
    color: rgb(64,255,64);
-   background-color : rgb(0,51,204);
-   border-width : medium;
    border-style : inset;
-   padding : 0em 0.3em 0em 0.5em;
-   text-decoration : none; 
-}
-
-.linkbtn, .linkbtn:visited, .linkbtn:link, .linkbtn:active, .linkbtn:hover  {
-   font : 8pt Arial;
-   font-weight: bold;
-   color: rgb(255,255,255);
-   background-color : rgb(0,51,204);
-   border-width : medium;
-   border-style : outset;
-   padding : 0em 0.3em 0em 0.5em;
-   text-decoration : none; 
-}
-
-.ctrlbtn, .ctrlbtn:visited, .ctrlbtn:link, .ctrlbtn:active, .ctrlbtn:hover  {
-   color: rgb(255,255,255);
-   background-color : rgb(0,51,204);
-   border-width : medium;
-   border-style : outset;
-   vertical-align : middle;
-}
-
-.ctrlbtn2, .ctrlbtn2:visited, .ctrlbtn2:link, .ctrlbtn2:active, .ctrlbtn2:hover {
-   color: rgb(64,255,64);
-   background-color : rgb(0,51,204);
-   border-width : medium;
-   border-style : inset;
-   vertical-align : middle;
+   border-color : rgb(64,255,64);
 }
 
 .spaceafter {
@@ -110,14 +124,23 @@ A:active {
 }
 
 .stdclick {
-   font : 8pt Arial; 
+/*   font : 8pt Arial; */
    font-weight: bold;
    color: rgb(255,255,255);
    background-color : rgb(0,51,204);  
+   border-color : rgb(0,51,204);
+}
+
+.stdclick:active {
+/*   font : 8pt Arial; */
+   font-weight: bold;
+   color: rgb(64,255,64);
+   background-color : rgb(0,51,204);  
+   border-color : rgb(0,51,204);
 }
 
 .stdedit {
-   font : 8pt Tahoma, Verdana; 
+/*   font : 8pt Tahoma, Verdana; */
    background-color : rgb(255,255,255); 
    padding : 1px; 
    border-width : 1px; 
@@ -125,3 +148,199 @@ A:active {
    border-color : black; 
    height : 18px; 
 }
+
+.hlist ul li {
+   display: inline;
+   padding-left: 0.5em;
+   margin-left: 0.5em;
+   padding-right: 0em;
+   margin-right: 0em;
+   border-left: thin solid black;
+}
+
+.hlist ul li:first-child {
+   padding-left: 0px;
+   margin-left: 0px;
+   border-left: 0px;
+}
+
+.hlist ul {
+   margin-left: 0px;
+   padding-left: 0px;
+}
+
+  #warning {
+    background-color: rgb(214,231,255);
+    font-weight: bold;
+  }
+
+#setuptabs {
+    float:left;
+    width:98%;
+    margin-right: -5px;
+    background-color: rgb(71,104,149);
+    padding: 5px 5px;
+}
+  #setuptabs ul {
+    margin:0;
+    padding:0;
+    list-style:none;
+    }
+
+  #setuptabs li {
+    float:left;
+    background-color: rgb(0,51,204);
+    text-align: center;
+    border: 2px solid black;
+    }
+
+  #setuptabs a, #setuptabs a:hover {
+    display:block;
+    color: white;
+    text-decoration: none;
+    padding: 0px 3px;
+    }
+
+
+  #setuptabs #currtab a {
+    background-color: white;
+    font-weight: bold;
+    color: rgb(0,51,204);
+  }
+
+.tabbed ul li, .tabbed ul li:link, .tabbed ul li:visited {
+   display: inline;
+   background-color: rgb(0,51,204);
+   color: white;
+   padding-left: 0.5em;
+   padding-right: 0.5em;
+   border: 2px solid black;
+}
+
+.tabbed ul li a {
+   color: white;
+}
+
+.tabbed ul li#currtab {
+   border-bottom: 0px;
+   background-color: white;
+   color: rgb(0,51,204);
+}
+
+.tabbed ul {
+   margin-left: 0px;
+   padding-left: 0px;
+}
+
+.linktree {
+   border-bottom: 2px solid rgb(71,104,149);
+}
+
+.linktree ul {
+   margin-left: 0px;
+   padding-left: 0px;
+}
+
+.linktree ul li {
+   display: inline;
+}
+
+hr {
+    background-color: rgb(71,104,149);
+}
+
+body > div {
+  clear: left;
+  display: block;
+}
+
+#statusheader > div {
+  clear: left;
+}
+
+#playerchooser {
+	list-style: none;
+	margin-left: 0;
+	padding-left: 0;
+}
+
+#playerchooser div {
+  font-size: medium;
+  voice-family: "\"}\""; 
+  voice-family:inherit;
+  font-size: large;
+}
+
+#playerchooser li li a {
+	display: block;
+	font-weight: normal;
+	padding: 0.2em 10px;
+}
+
+#playerchooser li li a:hover {
+	padding: 0.2em 5px;
+	border: 5px solid rgb(0,51,204);
+	border-width: 0 5px;
+}
+
+#playerchooser li {
+	float: left;
+	position: relative;
+	width: 10em;
+	text-align: center;
+	cursor: default;
+	background-color: white;
+	border: 1px solid rgb(0,51,204);
+	border-width: 1px 0;
+}
+
+#playerchooser li ul {
+	display: none;
+	position: absolute;
+	top: 100%;
+	left: 0;
+
+	font-weight: normal;
+	background-color: rgb(214,231,255);
+	padding: 0.5em 0 1em 0;
+	border: solid 1px rgb(0,51,204);
+	border-width: 0 1px 1px 0;
+}
+
+#playerchooser li>ul {
+	top: auto;
+	left: auto;
+}
+
+#playerchooser li li {
+	display: block;
+	float: none;
+	background-color: transparent;
+	border: 0;
+}
+
+#playerchooser li:hover ul, #playerchooser li.over ul {
+	display: block;
+}
+
+#playlist ul {
+	list-style: none;
+	margin-left: 0;
+	padding-left: 0;
+}
+
+.songline {
+  padding-left: 7em;
+}
+
+.hide {
+	height: 0;
+	width: 0;
+	overflow: hidden;
+	position: absolute;  /* for the benefit of IE5 Mac */
+	}
+
+#topplaylistpagebar, #playlist_header, #volumectl, #playlist_section, #nowplaying {
+	clear: left;
+}
+

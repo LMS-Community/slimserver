@@ -1,3 +1,5 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
   <head>
     <title>{pagetitle}</title>
@@ -7,11 +9,10 @@
 
     <p>
 
-    <h3>{pagetitle}</h3><p>
-    <a href="home.html?player={%player}">[S {playermodel}_HOME]</a>[IF linktree] / {linktree}[/IF]
-    <hr>
-    [IF warning]<p><b>{warning}</b></p><hr>[/IF]
-    [IF siblings]{siblings}<hr>[/IF]
+    <h3>{pagetitle}</h3>
+    <div class="linktree"><ul><li><a href="home.html?player={%player}">[S {playermodel}_HOME]</a></li>[IF linktree]{linktree}[/IF]</ul></div>
+    [IF warning]<div id="warning">{warning}</div>[/IF]
+    [IF siblings]<div id="setuptabs"><ul>{siblings}</ul></div>[/IF]
 	<form method="get" action="setup.html">
 	<input type=hidden value="{player}" name="player">
 	<input type=hidden value="{playerid}" name="playerid">
@@ -24,7 +25,7 @@
 		<p><a href="{webroot}home.html?player={%player}&forget={%playerid}">[S FORGET_PLAYER_LINK]</a></p>
    <hr>
 [/EQ]
-    [IF singleChildLink]{singleChildLink}<hr>[/IF]
+    [IF children]<div class="hlist"><ul>{children}</ul></div><hr>[/IF]
     [IF versionInfo]{versionInfo}<hr>[/IF]
   </body>
 </html>
