@@ -42,7 +42,7 @@
 	var expires = new Date();
 	expires.setTime(expires.getTime() + 1000*60*60);
 	document.cookie = 
-		"Slimp3-CurrentSong" + "=" + escape([EVAL]defined($client) ? (Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Source::currentSongIndex($client)] : '';[/EVAL]) +
+		"Slimd-CurrentSong" + "=" + escape([EVAL]defined($client) ? (Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Source::currentSongIndex($client)] : '';[/EVAL]) +
 		((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
 -->
 </script>[/IF]
