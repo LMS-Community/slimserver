@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.25 2003/09/03 20:31:16 dean Exp $
+# $Id: HTTP.pm,v 1.26 2003/09/05 20:40:50 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -174,9 +174,9 @@ sub idle {
 	# check for HTTP
 	($httpSelCanRead,$httpSelCanWrite)=IO::Select->select($httpSelRead,$httpSelWrite,undef, 0);
 
-	#$::d_http && msg("Select returned\n");
-	#$::d_http && defined($httpSelCanRead) && msg( "\tRead: ".join(',',@$httpSelCanRead)."\n");
-	#$::d_http && defined($httpSelCanWrite) && msg("\tWrite:".join(',',@$httpSelCanWrite)."\n");
+	$::d_http && msg("Select returned\n");
+	$::d_http && defined($httpSelCanRead) && msg( "\tRead: ".join(',',@$httpSelCanRead)."\n");
+	$::d_http && defined($httpSelCanWrite) && msg("\tWrite:".join(',',@$httpSelCanWrite)."\n");
 
 	# check to see if there's HTTP activity...
 	my $tcpReads = 0;
@@ -242,11 +242,11 @@ sub connectedSocket {
 sub acceptHTTP {
 	my $httpclientsock = $http_server_socket->accept();
 
- 	if( $^O !~ /Win32/ ) {
- 		defined($httpclientsock->blocking(0))  || die "Cannot set port nonblocking";
- 	}
-
 	if ($httpclientsock) {
+		if( $^O !~ /Win32/ ) {
+			defined($httpclientsock->blocking(0))  || die "Cannot set port nonblocking";
+		}
+
 		my $peer = $httpclientsock->peeraddr;
 		if ($httpclientsock->connected && $peer) {
 			my $tmpaddr = inet_ntoa($peer);
@@ -410,7 +410,9 @@ sub executeurl {
 	my @p;
 	my($client) = undef;
 
-	$$paramsref{"path"} =~ /(?:\/|)([^.]*)(|\.[^.]+)$/;
+	my $path = $$paramsref{"path"};
+	
+	$path =~ /(?:\/|)([^.]*)(|\.[^.]+)$/;
 	
 	# Commands are extracted from the parameters p0 through pN
 	#   For example:
@@ -434,11 +436,33 @@ sub executeurl {
 		$p[$i] = $$paramsref{"p$i"};
 		$i++;
 	}
-
+	
 	$::d_http && msg("ExecuteURL Clients $command: ", join " ", Slim::Player::Client::clientIPs(), "\n");
 
+	# explicitly specified player (for web browsers or squeezeboxen)
+	
 	if (defined($$paramsref{"player"})) {
 		$client = Slim::Player::Client::getClient($$paramsref{"player"});
+	}
+
+	# is this an HTTP stream?
+	if (!defined($client) && ($path =~ /(?:stream\.mp3|stream)$/)) {
+	
+		my $address = $peeraddr{$httpclientsock};
+	
+		$::d_http && msg("executeurl found HTTP client at address=$address\n");
+	
+		$client = Slim::Player::Client::getClient($address);
+		
+		if (!defined($client)) {
+			$::d_http && msg ("new http client at $address\n");
+			$client = Slim::Player::HTTP->new(
+				$address,
+				getpeername($httpclientsock), 
+				$httpclientsock);
+				
+			$client->init();
+		}
 	}
 
 	#if we don't have a player specified, just pick one if there is one...
@@ -446,7 +470,9 @@ sub executeurl {
 		my @allclients = Slim::Player::Client::clients();
 		$client = $allclients[0];
 	}
-	
+
+	$peerclient{$httpclientsock} = $client;
+
 	if ($client && $client->isPlayer() && $client->model() eq 'slimp3') {
 		$$paramsref{"playermodel"} = 'slimp3';
 	} else {
@@ -454,7 +480,7 @@ sub executeurl {
 	}
 
 	my @callbackargs = ($client, $httpclientsock, $paramsref);
-	
+
 	# only execute a command on the client if there is one and if we have a command.
 	if (defined($client) && defined($p[0]) && $command ne 'stream') {
 		if (defined($$paramsref{"player"}) && $$paramsref{"player"} eq "*") {
@@ -523,37 +549,12 @@ sub addstreamingresponse {
 	my $httpclientsock = shift;
 	my $message = shift;
 	my $paramref = shift;
+	
 	my %segment = ( 
 		'data' => \$message,
 		'offset' => 0,
 		'length' => length($message)
 	);
-
-	my $address = $peeraddr{$httpclientsock};
-
-	# Use squeezebox's client id if specified, otherwise just the IP
-	my $playerid = defined($paramref->{'player'}) ? $paramref->{'player'} : $address;
-
-	$::d_http && msg("addstreamingresponse: player=$playerid, address=$address\n");
-
-	my $client = Slim::Player::Client::getClient($playerid);
-	
-	if (!defined($client)) {
-		$::d_http && msg ("new http client\n");
-		$client = Slim::Player::HTTP->new(
-			$playerid,
-			getpeername($httpclientsock), 
-			$httpclientsock);
-			
-		$client->init();
-	} else {
-		$::d_http && msg("squeezebox or http client re-connecting\n");
-		# in the case that this is a reconnect, make sure we have up-to-date networking info
-		$client->streamingsocket($httpclientsock);
-		$client->paddr(getpeername($httpclientsock));
-	}
-	
-	$peerclient{$httpclientsock} = $client;
 
 	push @{$outbuf{$httpclientsock}}, \%segment;
 	$streamingSelWrite->add($httpclientsock);
@@ -563,6 +564,10 @@ sub addstreamingresponse {
 	$httpSelRead->remove($httpclientsock);
 	$main::selRead->remove($httpclientsock);
 		
+	my $client = $peerclient{$httpclientsock};
+	$client->streamingsocket($httpclientsock);
+	$client->paddr(getpeername($httpclientsock));
+
 	if (defined $paramref->{'p0'} && $paramref->{'p0'} eq 'playlist') {
 		Slim::Control::Command::execute($client, [$paramref->{'p0'},$paramref->{'p1'},$paramref->{'p2'}]);
 	}
@@ -639,6 +644,8 @@ sub sendstreamingresponse {
 	my $sentbytes = 0;
 	my $fullsend = 0;
 	
+	$::d_http && msg("sendstreaming response begun...\n");
+	
 	if (!$httpclientsock->connected) {
 		closeStreamingSocket($httpclientsock);
 		$::d_http && msg("Streaming client closed connection...\n");
@@ -660,7 +667,6 @@ sub sendstreamingresponse {
 		# if we aren't playing something, then queue up some silence
 		if ($silence) {
 			$::d_http && msg("(silence)");
-			$silence = 1;
 			my $silencedataref = getStaticContentRef("html/silence.mp3");
 			my %segment = ( 
 				'data' => $silencedataref,
@@ -679,7 +685,7 @@ sub sendstreamingresponse {
 			}
 			# otherwise, queue up the next chunk of sound
 			if ($chunkRef) {
-				$::d_http && msg("(audio)");
+				$::d_http && msg("(audio: " . length($$chunkRef) . "bytes)\n" );
 				my %segment = ( 
 					'data' => $chunkRef,
 					'offset' => 0,
@@ -758,13 +764,13 @@ sub sendstreamingresponse {
 				$fullsend = 1;
 			}
 		} else {
+			$::d_http && msg("sendstreamingsocket syswrite returned undef\n");
 			closeStreamingSocket($httpclientsock);
 			return $fullsend;
 		}
 	} else {
-		$::d_http && msg("Got nothing for message to " . $peeraddr{$httpclientsock} . ", closing socket\n");
-		closeStreamingSocket($httpclientsock);
-		return $fullsend;
+		$::d_http && msg("Got nothing for streaming data to " . $peeraddr{$httpclientsock} . "\n");
+		return 1;
 	}
 
 	$::d_http && $sentbytes && msg("Streamed $sentbytes to " . $peeraddr{$httpclientsock} . "\n");

@@ -119,7 +119,7 @@ sub buffersize {
 	return 131072;
 }
 
-sub songpos {
+sub bytesReceived {
 	return Slim::Networking::Slimproto::bytesReceived(@_);
 }
 
@@ -183,4 +183,8 @@ sub upgradeFirmware {
 	
 	return undef; 
 }
+sub formats {
+	return ('mp3');
+}
+
 1;

@@ -50,10 +50,24 @@ sub volume {
 	return 1;
 }
 
+sub model {
+	return 'http';
+}
+
 sub fade_volume {
 	return 1;
 }
+
 sub bufferFullness {
 	return 0;
+}
+
+sub bytesReceived {
+	my $client = shift;
+	return $client->songBytes(shift);
+}
+
+sub formats {
+	return ('mp3');
 }
 1;

@@ -319,7 +319,7 @@ sub gotAck {
 	} elsif ($packetInFlight{$client}->{'seq'} != $seq) { 
 		$::d_stream && msg("***Unexpected packet acked: $seq, was expecting " . $packetInFlight{$client}->{'seq'} . "\n");
 	} else {
-		$client->songpos($client->songpos + $packetInFlight{$client}->{'len'});
+		$client->bytesReceived($client->bytesReceived + $packetInFlight{$client}->{'len'});
 		$packetInFlight{$client} = undef;
 		Slim::Utils::Timers::killOneTimer($client, \&timeout);
 		$lastAck{$client} = Time::HiRes::time();

@@ -121,5 +121,9 @@ sub bufferFullness {
 	return Slim::Networking::Stream::fullness($client);
 }
 
+sub formats {
+	return ('mp3');
+}
+
 1;
 

@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.5 2003/09/03 20:08:07 dean Exp $
+# $Id: Info.pm,v 1.6 2003/09/05 20:40:49 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -9,11 +9,12 @@ package Slim::Music::Info;
 
 use strict;
 
-
-use File::Spec::Functions qw(:ALL);
 use Fcntl;
+use File::Spec::Functions qw(:ALL);
+use FindBin qw($Bin);
 
 use MP3::Info;
+
 use Slim::Formats::Movie;
 use Slim::Formats::AIFF;
 use Slim::Formats::Wav;
@@ -70,86 +71,17 @@ my @infoCacheItems = (
 	'BAND'
 );
 
-# the types we know about.
-%Slim::Music::Info::types = ( 
-	'mov' => 'audio/x-quicktime-movie',
- 	'aif' => 'audio/x-aiff',
-	'app' => 'application/x-java-applet',
-	'css' => 'text/css',
- 	'cue' => 'audio/x-cue',
- 	'dir' => 'application/directory',
-	'gif' => 'image/gif',
- 	'htm' => 'text/html',
-	'ico' => 'image/x-icon',
- 	'itu' => 'audio/itunesplaylist',
-	'jpg' => 'image/jpeg',
- 	'lnk' => 'application/windowsshortcut',
- 	'm3u' => 'audio/mpegurl',
-	'mp2' => 'audio/mpeg',
-	'mp3' => 'audio/mpeg',
- 	'ogg' => 'audio/x-ogg',
-	'pdf' => 'application/pdf',
- 	'pls' => 'audio/scpls',
-	'png' => 'image/png',
-	'txt' => 'text/plain',
- 	'wav' => 'audio/x-wav',
- 	'xml' => 'text/xml',
- );
 
-# please add mime types to this list as you encounter them in the wild.
-%Slim::Music::Info::mimeTypes = (
-	'application/directory'			=> 'dir',
-	'application/pdf'				=> 'pdf',
-	'application/windowsshortcut'	=> 'lnk',
-	'application/x-java-applet'		=> 'app',
-	'audio/itunesplaylist'			=> 'itu',
-	'audio/mpeg'					=> 'mp3',
-	'audio/mpegurl'					=> 'm3u',
-	'audio/scpls'					=> 'pls',
-	'audio/x-quicktime-movie'		=> 'mov',
-	'audio/x-aiff'					=> 'aif',
-	'audio/x-cue'					=> 'cue',
-	'audio/x-mpegurl'				=> 'm3u',
-	'audio/x-ogg'					=> 'ogg',
-	'audio/x-scpls' 				=> 'pls',
-	'audio/x-wav'					=> 'wav',
-	'image/gif'						=> 'gif',
-	'image/jpeg'					=> 'jpg',
-	'image/png'						=> 'png',
-	'image/x-icon'					=> 'ico',
-	'text/css'						=> 'css',
-	'text/html'						=> 'htm',
-	'text/plain'					=> 'txt',
-	'text/xml'						=> 'xml',
-);
 
-# file name suffixes for all the types we know about
-%Slim::Music::Info::suffixes = (
-	'aiff'  => 'aif',
-	'aif'	=> 'aif',
-	'class' => 'app',
-	'css'   => 'css',
-	'cue'   => 'cue',
-	'gif'   => 'gif',
-	'htm'   => 'htm',
-	'html'  => 'htm',
-	'ico'	=> 'ico',
-	'jpeg'  => 'jpg',
-	'jpg'   => 'jpg',
-	'm3u'   => 'm3u',
-	'mov'	=> 'mov',
-	'm4a'	=> 'mov',
-	'm4p'	=> 'm4p',
-	'mp2'   => 'mp3',
-	'mp3'   => 'mp3',
-	'ogg'   => 'ogg',
-	'pdf'   => 'pdf',
-	'pls'   => 'pls',
-	'png'   => 'png',
-	'txt'   => 'txt',
-	'wav'	=> 'wav',
-	'xml'   => 'xml',
-);
+# three hashes containing the types we know about, populated b tye loadTypesConfig routine below
+# hash of default mime type index by three letter content type e.g. 'mp3' => audio/mpeg
+%Slim::Music::Info::types = ();
+
+# hash of three letter content type, indexed by mime type e.g. 'text/plain' => 'txt'
+%Slim::Music::Info::mimeTypes = ();
+
+# hash of three letter content types, indexed by file suffixes (past the dot)  'aiff' => 'aif'
+%Slim::Music::Info::suffixes = ();
 
 #
 # global caches
@@ -188,6 +120,8 @@ my %infoCacheItemsIndex;
 ##################################################################################
 sub init {
 
+	loadTypesConfig();
+	
 	my $dbname;
 
 	my $i = 0;
@@ -256,6 +190,49 @@ sub init {
 #	};
 }
 
+sub loadTypesConfig {
+	my @typesFiles;
+	$::d_info && msg("loading types config file...\n");
+	
+	push @typesFiles, catdir($Bin, 'types.conf');
+	if ($^O eq 'darwin') {
+		push @typesFiles, $ENV{'HOME'} . "/Library/SlimDevices/types.conf";
+		push @typesFiles, "/Library/SlimDevices/types.conf";
+	}
+	
+	foreach my $typeFileName (@typesFiles) {
+		if (open my $typesFile, "<$typeFileName") {
+			for my $line (<$typesFile>) {
+				# get rid of comments and leading and trailing white space
+				$line =~ s/#.*$//;
+				$line =~ s/^\s//;
+				$line =~ s/\s$//;
+	
+				if ($line =~ /^(\S+)\s+(\S+)\s+(\S+)/) {
+					my $type = $1;
+					my @suffixes = split ',', $2;
+					my @mimeTypes = split ',', $3;
+					
+					foreach my $suffix (@suffixes) {
+						next if ($suffix eq '-');
+						$Slim::Music::Info::suffixes{$suffix} = $type;
+					}
+					
+					foreach my $mimeType (@mimeTypes) {
+						next if ($mimeType eq '-');
+						$Slim::Music::Info::mimeTypes{$mimeType} = $type
+					}
+					
+					# the first one is the default
+					if ($mimeTypes[0] ne '-') {
+						$Slim::Music::Info::types{$type} = $mimeTypes[0];
+					}				
+				}
+			}
+			close $typesFile;
+		}
+	}
+}
 sub stopCache {
 	untie (%infoCacheDB);
 }

@@ -302,7 +302,8 @@ sub start {
 	Slim::Control::CLI::init();
 	$::d_server && msg("Slim Server History load...\n");
 	Slim::Web::History::load();
-
+	$::d_server && msg("Source conversion init..\n");
+	Slim::Player::Source::init();
 	
 	$::d_server && msg("Slim Server persist playlists...\n");
 	if (Slim::Utils::Prefs::get('persistPlaylists')) {

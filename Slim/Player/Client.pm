@@ -78,7 +78,8 @@ my %clientHash = ();
 	# songtotalbytes				float		length of this song in bytes
 	# songduration					float		song length in seconds
 	# songoffset					int			offset in bytes to beginning of song in file
-	# songpos						int			position in current song (not incl. buffer)
+	# bytesReceived					int			number of bytes in the current song that the player has received
+	# songBytes						int			number of bytes read from the current song
 	# currentplayingsong			string		current song that's playing out from player.  May not be the same as in the playlist as the client's buffer plays out.
 
 # client variables for sleep
@@ -216,7 +217,7 @@ sub new {
 	$client->[34] = undef; # songtotalbytes
 	$client->[35] = undef; # songduration
 	$client->[36] = undef; # songoffset
-	$client->[37] = undef; # songpos
+	$client->[37] = undef; # bytesReceived
 	$client->[38] = undef; # currentplayingsong
 	$client->[39] = undef; # currentSleepTime
 	$client->[40] = undef; # sleepTime
@@ -262,6 +263,7 @@ sub new {
 	$client->[81] = []; # syncSelections
 	$client->[82] = undef; # browseMenuSelection
 	$client->[83] = undef; # settingsSelection
+	$client->[84] = undef; # songBytes
 
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -290,7 +292,8 @@ sub new {
 	$client->lastskip(0);
 
 	$client->currentsong(0);
-	$client->songpos(0);
+	$client->bytesReceived(0);
+	$client->songBytes(0);
 	$client->songtotalbytes(0);
 	$client->currentplayingsong("");
 
@@ -608,7 +611,7 @@ sub songoffset {
 	my $r = shift;
 	@_ ? ($r->[36] = shift) : $r->[36];
 }
-sub songpos {
+sub bytesReceived {
 	my $r = shift;
 	@_ ? ($r->[37] = shift) : $r->[37];
 }
@@ -818,4 +821,9 @@ sub settingsSelection {
 	my $r = shift;
 	@_ ? ($r->[83] = shift) : $r->[83];
 }
+sub songBytes {
+	my $r = shift;
+	@_ ? ($r->[84] = shift) : $r->[84];
+}
+
 1;

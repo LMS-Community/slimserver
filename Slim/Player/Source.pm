@@ -1,4 +1,3 @@
-
 package Slim::Player::Source;
 
 # Slim Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
@@ -10,8 +9,10 @@ use strict;
 
 use File::Spec::Functions qw(:ALL);
 use FileHandle;
+use FindBin qw($Bin);
 use IO::Socket qw(:DEFAULT :crlf);
 use Time::HiRes;
+
 use Slim::Control::Command;
 use Slim::Display::Display;
 use Slim::Utils::Misc;
@@ -20,6 +21,54 @@ use Slim::Utils::Strings qw(string);
 
 my $CLIENTBUFFERLEN = (128 * 1024);
 
+my %commandTable = ();
+
+sub loadConversionTables {
+	my @convertFiles;
+	$::d_source && msg("loading conversion config files...\n");
+	
+	push @convertFiles, catdir($Bin, 'convert.conf');
+	if ($^O eq 'darwin') {
+		push @convertFiles, $ENV{'HOME'} . "/Library/SlimDevices/convert.conf";
+		push @convertFiles, "/Library/SlimDevices/convert.conf";
+	}
+	
+	foreach my $convertFileName (@convertFiles) {
+		if (open my $convertFile, "<$convertFileName") {
+			while (1) {
+				my $line = <$convertFile>;
+				last if (!defined($line));
+				
+				my $command = undef;
+				
+				# get rid of comments and leading and trailing white space
+				$line =~ s/#.*$//;
+				$line =~ s/^\s//;
+				$line =~ s/\s$//;
+	
+				if ($line =~ /^(\S+)\s+(\S+)\s+(\S+)/) {
+					my $inputtype = $1;
+					my $outputtype = $2;
+					my $clienttype = $3;
+					$command = <$convertFile>;
+					$command =~ s/^\s//;
+					$command =~ s/\s$//;
+
+					$::d_source && msg( "input: '$inputtype' output: '$outputtype' clienttype: '$clienttype': '$command'\n");					
+
+					if (defined($command)) {
+						$commandTable{"$inputtype-$outputtype-$clienttype"} = $command;
+					}
+				}
+			}
+			close $convertFile;
+		}
+	}
+}
+
+sub init {
+	loadConversionTables();
+}
 
 # rate can be negative for rew, zero for pause, 1 for playback and greater than one for ffwd
 sub rate {
@@ -70,7 +119,7 @@ sub songTime {
 		$songtime = (songRealPos($client) / $size * $duration);
 	}
 
-	$::d_source && msg( "byterate = $byterate, size = $size, songpos = ".songRealPos($client)." songtime = $songtime\n");
+	$::d_source && msg( "byterate = $byterate, size = $size, songrealpos = ".songRealPos($client)." songtime = $songtime\n");
 
 	return($songtime);
 
@@ -85,14 +134,14 @@ sub songRealPos {
 
 	$client = Slim::Player::Sync::masterOrSelf($client);
 
-	my $realpos = $client->songpos() - $client->bufferFullness();
+	my $realpos = $client->bytesReceived() - $client->bufferFullness();
 
 	if ($realpos<0) {
-#		warn("came up with a negative position in the stream: ".
-#		     "songpos = ".$client->songpos.", fullness = ".Slim::Networking::Stream::fullness($client)."\n");
+		warn("came up with a negative position in the stream: ".
+		     "bytesReceived = ".$client->bytesReceived.", fullness = ".$client->bufferFullness()."\n");
 		$realpos = 0;
 	}
-	$::d_source && msg("songRealPos songPos: ". $client->songpos . " realpos: $realpos\n");
+	$::d_source && msg("songRealPos bytesReceived: ". $client->bytesReceived . " realpos: $realpos\n");
 	return $realpos;	
 }
 
@@ -160,7 +209,6 @@ sub playmode {
 	
 			if ($newmode eq "stop") {
 				$everyclient->currentplayingsong("");
-			#	$everyclient->songpos(0);
 				$::d_source && msg("Stopping and clearing out old chunks for client " . $everyclient->id() . "\n");
 				@{$everyclient->chunks} = ();
 
@@ -292,7 +340,6 @@ sub gototime {
 	my $size = $client->songtotalbytes;
 	my $duration = $client->songduration;
 
-#	$oldoffset = $client->songpos;
 	$oldoffset = songRealPos($client);
 	
 	if ($oldoffset > $size) {
@@ -344,7 +391,7 @@ sub gototime {
 		}
 	}
 	my $dataoffset =  $client->songoffset;
-	$client->songpos($newoffset);
+	$client->songBytes($newoffset);
 	$client->mp3filehandle->seek($newoffset+$dataoffset, 0);
 
 	if ($doitnow) {
@@ -493,7 +540,8 @@ sub openSong {
 	# at the end of a song, reset the song time
 	$client->songtotalbytes(0);
 	$client->songduration(0);
-	$client->songpos(0);
+	$client->bytesReceived(0);
+	$client->songBytes(0);
 	
 	# reset shoutcast variables
 	$client->shoutMetaInterval(0);
@@ -555,7 +603,7 @@ sub openSong {
 				$client->mp3filehandle(undef);
 
 				# insert the list onto the playlist
-				splice @{playList($client)}, currentSongIndex($client), 1, @items;
+				splice @{Slim::Player::Playlist::playList($client)}, currentSongIndex($client), 1, @items;
 
 				# update the shuffle list
 				Slim::Player::Playlist::reshuffle($client);
@@ -591,6 +639,7 @@ sub openSong {
 		my $size = Slim::Music::Info::size($fullpath);
 		my $duration = Slim::Music::Info::durationSeconds($fullpath);
 		my $offset = Slim::Music::Info::offset($fullpath);
+		my $rate = Slim::Music::Info::samplerate($fullpath);
 		$::d_source && msg("openSong: getting duration  $duration, size $size, and offset $offset for $fullpath\n");
 
 		if (!$size || !$duration)  {
@@ -598,87 +647,72 @@ sub openSong {
 			return undef;
 		}
 
-		if (Slim::Music::Info::isMP3($fullpath)) {
-			$::d_source && msg("openSong: this is an MP3 file: $fullpath\n");
-			
-			
-			$client->mp3filehandle( FileHandle->new() );
-	
-			$::d_source && msg("openSong: opening file $filepath\n");
-			if ($client->mp3filehandle->open($filepath)) {
-				
-				$::d_source && msg(" seeking in $offset into $filepath\n");
-				if ($offset) {
-					if (!seek ($client->mp3filehandle, $offset, 0) ) {
-						msg("couldn't seek to $offset for $filepath");
-					};
+		my $type = Slim::Music::Info::contentType($fullpath);
+		my $player = $client->model();
+		my @supportedFormats = $client->formats();
+		
+		my $command = undef;
+		foreach my $format ($client->formats()) {
+			$command = $commandTable{"$type-$format-$player"};
+			if (!defined($command)) {
+				$command = $commandTable{"$type-$format-*"};
+			}
+			last if ($command);
+		}
+
+		$::d_source && msg("openSong: this is an $type file: $fullpath\n");
+		$::d_source && msg("  command: $command\n");
+		if (defined($command)) {
+
+			# this case is when we play the file through as-is
+			if ($command eq '-') {
+				$client->mp3filehandle( FileHandle->new() );
+		
+				$::d_source && msg("openSong: opening file $filepath\n");
+				if ($client->mp3filehandle->open($filepath)) {
+					
+					$::d_source && msg(" seeking in $offset into $filepath\n");
+					if ($offset) {
+						if (!seek ($client->mp3filehandle, $offset, 0) ) {
+							msg("couldn't seek to $offset for $filepath");
+						};
+					}				
+				} else { 
+					$client->mp3filehandle(undef);
 				}
 							
-			} else { 
-				$client->mp3filehandle(undef);
-			}
-		} elsif(Slim::Music::Info::isMOV($fullpath)) {
-			$::d_source && msg("openSong: this is an MOV file: $fullpath\n");
-			my $transcodeBitrate = Slim::Utils::Prefs::get("transcodeBitrate");
-			my $movbin = Slim::Utils::Misc::findbin('mov123');
-			my $lamebin = Slim::Utils::Misc::findbin('lame');
-			if (!$movbin || !$lamebin) { return undef; }
-
-			my $mov_cmd = "\"$movbin\" \"$filepath\"";
-
-			my $lame_cmd = "\"$lamebin\" --silent -b $transcodeBitrate -r - - &";
-	
-			$client->mp3filehandle( FileHandle->new() );
-	
-			$client->mp3filehandle->open("$mov_cmd | $lame_cmd |");
-			$client->mp3filehandleIsSocket(1);
-			$client->remoteStreamStartTime(time());
-		} elsif (Slim::Music::Info::isOgg($fullpath) && Slim::Utils::Prefs::get("transcode-ogg")) {
-			# Note we have to put the path in double quotes so that
-			# spaces in file names are handled properly.
-			my $oggbin = Slim::Utils::Misc::findbin('ogg123');
-			my $lamebin = Slim::Utils::Misc::findbin('lame');
-			if (!$oggbin || !$lamebin) { return undef; }
-
-			my $rate = Slim::Music::Info::samplerate($fullpath);
-			if ($rate) {
-				$rate = "-s $rate";
 			} else {
-				$rate = '';
+				
+				my $fullCommand = $command;
+	
+				$fullCommand =~ s/\$FILE\$/"$filepath"/g;
+				$fullCommand =~ s/\$RATE\$/$rate/g;
+				$fullCommand =~ s/\$([^\$]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
+
+				$fullCommand .= Slim::Utils::OSDetect::OS() eq 'win' ? "" : " &";
+
+				$fullCommand .= ' |';
+				
+				$::d_source && msg("Using command for conversion: $fullCommand\n");
+
+				$client->mp3filehandle( FileHandle->new() );
+		
+				$client->mp3filehandle->open($fullCommand);
+				$client->mp3filehandleIsSocket(1);
+				$client->remoteStreamStartTime(time());
+				
 			}
-
-			my $transcodeBitrate = Slim::Utils::Prefs::get("transcodeBitrate");
-			
-			my $ogg_cmd = "\"$oggbin\" -q -p 5 -d raw -f - \"$filepath\"";
-			# Added -x option to fix ogg output problem reported by users
-			my $lame_cmd = "\"$lamebin\" -r $rate -b $transcodeBitrate -x --silent - - &";
-			$client->mp3filehandle( FileHandle->new() );
-	
-			$client->mp3filehandle->open("$ogg_cmd | $lame_cmd |");
-			$client->mp3filehandleIsSocket(1);
-			$client->remoteStreamStartTime(time());
-		} elsif((Slim::Music::Info::isWav($fullpath) || Slim::Music::Info::isAIFF($fullpath)) && Slim::Utils::Prefs::get("transcode-wav")) {
-			$::d_source && msg("openSong: this is an WAV or AIFF file: $fullpath\n");
-			my $transcodeBitrate = Slim::Utils::Prefs::get("transcodeBitrate");
-			my $lamebin = Slim::Utils::Misc::findbin('lame');
-			if (!$lamebin) { return undef; }
-
-			my $lame_cmd = qq("$lamebin" --silent -h -b $transcodeBitrate "$filepath" -) . (Slim::Utils::OSDetect::OS() eq 'win' ? "" : " &");
-	
-			$client->mp3filehandle( FileHandle->new() );
-			$client->mp3filehandle->open( "$lame_cmd |");
-			$client->mp3filehandleIsSocket(1);
-			$client->remoteStreamStartTime(time());
+		
+			$client->songtotalbytes($size);
+			$client->songduration($duration);
+			$client->songoffset($offset);
+		
 		} else {
-			$::d_source && msg("Song is of unrecognized type " . Slim::Music::Info::contentType($fullpath) . "! Stopping! $fullpath\n");
+			$::d_source && msg("Couldn't create command line for $type playback on $player (command: $command) for $fullpath\n");
 			return undef;
 		}
-		$client->songtotalbytes($size);
-		$client->songduration($duration);
-		$client->songoffset($offset);
-
 	} else {
-		$::d_source && msg("Next item is of unrecognized type! Stopping! $fullpath\n");
+		$::d_source && msg("Song is of unrecognized type " . Slim::Music::Info::contentType($fullpath) . "! Stopping! $fullpath\n");
 		return undef;
 	}
 
@@ -717,9 +751,7 @@ sub readNextChunk {
 
 	if ($client->mp3filehandle()) {
 	
-		my $isRemoteStream = $client->mp3filehandleIsSocket && Slim::Music::Info::isHTTPURL(Slim::Player::Playlist::song($client));
-		
-		if ($isRemoteStream) {
+		if ($client->mp3filehandleIsSocket) {
 			# If the MP3 file handle is a remote stream and it's not readable,
 			# just return instead of blocking here. The client will repeat the
 			# request.
@@ -743,18 +775,17 @@ sub readNextChunk {
 		} else {
 			# don't send extraneous ID3 data at the end of the file
 			my $size = $client->songtotalbytes();
-			my $pos = $client->songpos();
+			my $pos = $client->songBytes();
 			
 			if ($pos + $chunksize > $size) {
 				$chunksize = $size - $pos;
-				$chunksize = 0 if( $chunksize < 0);
-				$::d_source && msg( "Reduced chunksize to $chunksize at end of file\n");
+				$::d_source && msg( "Reduced chunksize to $chunksize at end of file ($size - $pos)\n");
 			}
 		}
 
 		$client->mp3filehandle()->read($chunk, $chunksize);
 		
-		if ($isRemoteStream) {
+		if ($client->shoutMetaInterval()) {
 			$client->shoutMetaPointer($client->shoutMetaPointer() + length($chunk));
 	
 			# handle instream metadata for shoutcast/icecast
@@ -773,9 +804,9 @@ sub readNextChunk {
 	# if nothing was read from the filehandle, then we're done with it,
 	# so open the next filehandle.
 	if (length($chunk) == 0 ||
-		(!$client->mp3filehandleIsSocket && $client->songtotalbytes() != 0 && ($client->songpos()) > $client->songtotalbytes())) {
+		(!$client->mp3filehandleIsSocket && $client->songtotalbytes() != 0 && ($client->songBytes()) > $client->songtotalbytes())) {
 		$::d_source && msg("opening next song: chunk length" . length($chunk) . ", song pos: " .
-				$client->songpos() . "(tell says: . " . tell($client->mp3filehandle()). "), totalbytes: " . $client->songtotalbytes() . "\n");
+				$client->songBytes() . "(tell says: . " . tell($client->mp3filehandle()). "), totalbytes: " . $client->songtotalbytes() . "\n");
 		if (!openNext($client)) {
 			$::d_source && msg("Can't opennext, returning no chunk.");
 			return undef;
@@ -789,6 +820,7 @@ sub readNextChunk {
 	}
 	
 	$::d_source_verbose && msg("read a chunk of " . length($chunk) . " length\n");
+	$client->songBytes($client->songBytes + length($chunk));
 	
 	return \$chunk;
 }
@@ -799,22 +831,6 @@ sub pauseSynced {
 		$everyclient->pause();
 		rate($everyclient, 0);
 	}
-}
-
-sub decoder {
-	my $format = shift;
-	my $clienttype = shift;
-	my $application;
-	my $options;
-	return ($application, $options);
-}
-
-sub encoder {
-	my $format = shift;
-	my $clienttype = shift;
-	my $application;
-	my $options;
-	return ($application, $options);
 }
 
 1;

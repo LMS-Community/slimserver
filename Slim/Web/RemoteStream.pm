@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.3 2003/08/12 00:52:46 dean Exp $
+# $Id: RemoteStream.pm,v 1.4 2003/09/05 20:40:50 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -195,7 +195,7 @@ sub readMetaData {
 		}
 
 		# new song, so reset counters
-		$client->songpos(0);
+		$client->songBytes(0);
 		$client->htmlstatusvalid(0);
 		
 	}
