@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.12 2004/08/03 17:29:18 vidur Exp $
+# $Id: Scan.pm,v 1.13 2004/08/20 21:33:41 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -343,11 +343,13 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 	$::d_scan && msg("Scan::readList gonna read $playlisturl\n");
 
-	my ($playlist_filehandle, $playlistpath, $numitems);
+	my ($playlist_filehandle, $numitems);
 	
 	$numitems = 0;
 	my $startingsize = scalar @$listref;
 
+	my $playlistpath = $playlisturl;
+	
 	if (Slim::Music::Info::isHTTPURL($playlisturl)) {
 		$::d_scan && msg("Scan::readList opening remote stream $playlisturl\n");
 		$playlist_filehandle = Slim::Web::RemoteStream::openRemoteStream($playlisturl);
@@ -356,7 +358,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			warn "cannot connect to http daemon to get playlist";
 			return 0;
 		}
-	  
+
 	} else {
 
 		# it's pointing to a local file...
@@ -374,9 +376,8 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 				push @$listref , $playlistpath;
 				return 1;
 			}
-		} else {
-			$playlistpath = $playlisturl;
 		}
+
 		$playlistpath = Slim::Utils::Misc::fixPath($playlistpath);
 		
 		$::d_scan && msg("Gonna try to open playlist $playlistpath\n");
