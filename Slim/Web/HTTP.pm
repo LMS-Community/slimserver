@@ -1,8 +1,8 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.42 2003/11/10 06:14:12 dean Exp $
+# $Id: HTTP.pm,v 1.43 2003/11/10 23:15:03 dean Exp $
 
-# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -249,12 +249,12 @@ sub processHTTP {
 			}
 
 			if (!$authorized) { # no Valid authorization supplied!
-				my $name = string('SLIM_SERVER');
+				my $name = string('SLIMSERVER');
 				my $message = "HTTP/1.0 401 Authorization Required" . $EOL . 
 					"WWW-Authenticate: basic realm=\"$name\"" . $EOL .
 					"Content-type: text/html$BLANK" . 
 					"<HTML><HEAD><TITLE>401 Authorization Required</TITLE></HEAD>" . 
-					"<BODY>401 Authorization is Required to access this Slim Server</BODY></HTML>$EOL";
+					"<BODY>401 Authorization is Required to access this SlimServer</BODY></HTML>$EOL";
 				addresponse($httpclientsock,$message);
 				return undef;
 			}
@@ -644,7 +644,7 @@ sub sendstreamingresponse {
 		if ($metaDataBytes{$httpclientsock} == $METADATAINTERVAL) {
 			unshift @{$outbuf{$httpclientsock}},$segmentref;
 			my $song = Slim::Player::Playlist::song($client);
-			my $title = $song ? Slim::Music::Info::standardTitle($client, $song) : string('WELCOME_TO_SLIM_SERVER');
+			my $title = $song ? Slim::Music::Info::standardTitle($client, $song) : string('WELCOME_TO_SLIMSERVER');
 			$title =~ tr/'/ /;
 			my $metastring = "StreamTitle='" . $title . "';";
 			my $length = length($metastring);
@@ -1021,10 +1021,10 @@ sub generateresponse {
 
 	    } elsif ($path =~ /(?:stream\.mp3|stream)$/) {
 			%headers = statusHeaders($client);
-			$headers{"x-audiocast-name"} = string('SLIM_SERVER');
+			$headers{"x-audiocast-name"} = string('SLIMSERVER');
 			if ($sendMetaData{$httpclientsock}) {
 				$headers{"icy-metaint"} = $METADATAINTERVAL;
-				$headers{"icy-name"} = string('WELCOME_TO_SLIM_SERVER');
+				$headers{"icy-name"} = string('WELCOME_TO_SLIMSERVER');
 			}
 			my $output = $result . $EOL . printheaders(%headers, %paramheaders);
 			$metaDataBytes{$httpclientsock} = - length($output);

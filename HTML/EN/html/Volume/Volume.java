@@ -31,7 +31,7 @@ public class Volume extends java.applet.Applet {
         add (new Scrollbar (Scrollbar.HORIZONTAL, value, width, min, max));
 
 	try {
-		server=getDocumentBase().getHost();		// the IP of the slim server
+		server=getDocumentBase().getHost();		// the IP of the SlimServer
 		Socket sd = new Socket(server, 1069,false);	// false == UDP
 		outstream = sd.getOutputStream();
 	} catch (IOException e) {

@@ -1,8 +1,8 @@
 package Slim::Buttons::Synchronize;
 
-# $Id: Synchronize.pm,v 1.6 2003/11/06 18:37:05 dean Exp $
+# $Id: Synchronize.pm,v 1.7 2003/11/10 23:14:55 dean Exp $
 
-# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.

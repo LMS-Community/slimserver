@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Slim Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (C) 2001 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -22,7 +22,7 @@ use strict;  # _NOPERL2EXE_
 package PerlSvc;
 
 our $Name = 'slimsvc';
-our $DisplayName = 'Slim Server';
+our $DisplayName = 'SlimServer';
 
 sub Startup {
 
@@ -214,14 +214,14 @@ sub init {
 	autoflush STDERR;
 	autoflush STDOUT;
 
-	$::d_server && msg("Slim Server OSDetect init...\n");
+	$::d_server && msg("SlimServer OSDetect init...\n");
 	Slim::Utils::OSDetect::init();
 
-	$::d_server && msg("Slim Server Strings init...\n");
+	$::d_server && msg("SlimServer Strings init...\n");
 	Slim::Utils::Strings::init(catdir($Bin,'strings.txt'), "EN");
 
 
-	$::d_server && msg("Slim Server OS Specific init...\n");
+	$::d_server && msg("SlimServer OS Specific init...\n");
 	$SIG{CHLD} = 'IGNORE';
 	$SIG{PIPE} = 'IGNORE';
 	if (Slim::Utils::OSDetect::OS() ne 'win') {
@@ -245,20 +245,20 @@ sub init {
 	
 	unshift @INC, catdir($Bin,'CPAN','arch',$Config::Config{archname});
 	
-	$::d_server && msg("Slim Server settings init...\n");
+	$::d_server && msg("SlimServer settings init...\n");
 	initSettings();
 
-	$::d_server && msg("Slim Server setting language...\n");
+	$::d_server && msg("SlimServer setting language...\n");
 	Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
 
-	$::d_server && msg("Slim Server IR init...\n");
+	$::d_server && msg("SlimServer IR init...\n");
 	Slim::Hardware::IR::init();
 	
-	$::d_server && msg("Slim Server Buttons init...\n");
+	$::d_server && msg("SlimServer Buttons init...\n");
 	Slim::Buttons::Common::init();
 
 	if ($priority) {
-		$::d_server && msg("Slim Server - changing process priority to $priority\n");
+		$::d_server && msg("SlimServer - changing process priority to $priority\n");
 		eval { setpriority (0, 0, $priority); };
 		msg("setpriority failed error: $@\n") if $@;
 	}
@@ -266,9 +266,9 @@ sub init {
 
 sub start {
 
-	$::d_server && msg("Slim Server starting up...\n");
+	$::d_server && msg("SlimServer starting up...\n");
 
-	$::d_server && msg("Slim Server daemonizing...\n");
+	$::d_server && msg("SlimServer daemonizing...\n");
 	# background if requested
 	if (Slim::Utils::OSDetect::OS() ne 'win' && $daemon) {
 		daemonize();
@@ -285,7 +285,7 @@ sub start {
 		}
 	};
 	
-	$::d_server && msg("Slim Server Stdio init...\n");
+	$::d_server && msg("SlimServer Stdio init...\n");
 	if ($stdio) {
 		Slim::Control::Stdio::init(\*STDIN, \*STDOUT);
 	}
@@ -294,23 +294,23 @@ sub start {
 	Slim::Networking::Protocol::init();
 	$::d_server && msg("Slimproto Init...\n");
 	Slim::Networking::Slimproto::init();
-	$::d_server && msg("Slim Server Info init...\n");
+	$::d_server && msg("SlimServer Info init...\n");
 	Slim::Music::Info::init();
-	$::d_server && msg("Slim Server HTTP init...\n");
+	$::d_server && msg("SlimServer HTTP init...\n");
 	Slim::Web::HTTP::init();
-	$::d_server && msg("Slim Server CLI init...\n");
+	$::d_server && msg("SlimServer CLI init...\n");
 	Slim::Control::CLI::init();
-	$::d_server && msg("Slim Server History load...\n");
+	$::d_server && msg("SlimServer History load...\n");
 	Slim::Web::History::load();
 	$::d_server && msg("Source conversion init..\n");
 	Slim::Player::Source::init();
 	
-	$::d_server && msg("Slim Server persist playlists...\n");
+	$::d_server && msg("SlimServer persist playlists...\n");
 	if (Slim::Utils::Prefs::get('persistPlaylists')) {
 		Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
 	}
 	
-	$::d_server && msg("Slim Server iTunes init...\n");
+	$::d_server && msg("SlimServer iTunes init...\n");
 
 # start scanning based on a timer...
 # Currently, it's set to one item (directory or song) scanned per second.
@@ -328,7 +328,7 @@ sub start {
 	
 	checkVersion();
 	
-	$::d_server && msg("Slim Server done start...\n");
+	$::d_server && msg("SlimServer done start...\n");
 }
 
 sub main {
@@ -696,7 +696,7 @@ sub checkVersion {
 # Clean up resources and exit.
 #
 sub stopServer {
-	$::d_server && msg("Slim Server shutting down.\n");
+	$::d_server && msg("SlimServer shutting down.\n");
 	cleanup();
 	exit();
 }
@@ -708,7 +708,7 @@ sub sigint {
 
 sub cleanup {
 
-	$::d_server && msg("Slim Server cleaning up.\n");
+	$::d_server && msg("SlimServer cleaning up.\n");
 
 	if (Slim::Utils::Prefs::get('usetagdatabase')) {
 		Slim::Music::Info::stopCache();
@@ -721,7 +721,7 @@ sub save_pid_file {
 	 my $process_id = shift || $$;
 
 
-	$::d_server && msg("Slim Server saving pid file.\n");
+	$::d_server && msg("SlimServer saving pid file.\n");
 	 if (defined $pidfile && -e $pidfile) {
 	 	die "Process ID file: $pidfile already exists";
 	 }

@@ -1,8 +1,8 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.35 2003/11/03 23:22:33 dean Exp $
+# $Id: Slimproto.pm,v 1.36 2003/11/10 23:14:59 dean Exp $
 
-# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

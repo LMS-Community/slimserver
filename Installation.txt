@@ -1,6 +1,6 @@
-                                Welcome to Slim Server 
+                                Welcome to SlimServer 
    
-This document describes the steps for installing the Slim Server on Unix-like 
+This document describes the steps for installing the SlimServer on Unix-like 
 platforms.
 
 Version 5.6 or higher of Perl is required.
@@ -32,7 +32,7 @@ rpm -i http://www.slimdevices.com/downloads/misc/perl-Time-HiRes-1.38-3.i386.rpm
 FreeBSD Notes:
 
 In a normal installation of FreeBSD the version of Perl is 5.00 and not 
-sufficient for use with the Slim Server software, which requires 5.6 or greater.
+sufficient for use with the SlimServer software, which requires 5.6 or greater.
 
 To upgrade Perl to 5.8:
 
@@ -53,7 +53,7 @@ with the following command:
 This will start up the server and run itself in the background.
 
 Visit the URL that's printed out with your web browser to configure your 
-Slim Server and see the complete documentation.
+SlimServer and see the complete documentation.
 
 --------------------------------------------------------------------------------
 

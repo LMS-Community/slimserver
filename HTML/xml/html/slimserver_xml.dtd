@@ -1,10 +1,10 @@
 <!-- ....................................................................... -->
 <!-- slimserver_xml.dtd .................................................... -->
-<!-- Slim Server Copyright (C) 2003 Slim Devices Inc.  ......................-->
+<!-- SlimServer Copyright (C) 2003 Slim Devices Inc.  .......................-->
 <!-- ....................................................................... -->
 
 <!--
-This DTD describes the data returned by the Slim Server XML skin.
+This DTD describes the data returned by the SlimServer XML skin.
 
 NOTES: 
 - URLs returned are already URL escaped. You must escape any element you add,

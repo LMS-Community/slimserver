@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.17 2003/11/07 18:41:28 dean Exp $
+# $Id: Prefs.pm,v 1.18 2003/11/10 23:15:02 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -88,7 +88,7 @@ my %DEFAULT = (
 	,'titleFormatWeb'		=> 1
     ,'ignoreDirRE'          => ''
     ,'checkVersion'			=> 1
-    ,'mDNSname'				=> 'Slim Server'
+    ,'mDNSname'				=> 'SlimServer'
 	,'titleFormat'			=> ['TITLE', 'TRACKNUM. TITLE', 'TRACKNUM. ARTIST - TITLE', 'TRACKNUM. TITLE (ARTIST)'
 						, 'TRACKNUM. TITLE - ARTIST - ALBUM', 'FILE.EXT', 'TRACKNUM. TITLE from ALBUM by ARTIST'
 						, 'TITLE (ARTIST)', 'ARTIST - TITLE']

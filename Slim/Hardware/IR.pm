@@ -1,8 +1,8 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.14 2003/11/02 19:50:37 grotus Exp $
+# $Id: IR.pm,v 1.15 2003/11/10 23:14:57 dean Exp $
 
-# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.

@@ -1,7 +1,7 @@
-# $Id: Text.pm,v 1.7 2003/10/27 07:02:53 grotus Exp $
+# $Id: Text.pm,v 1.8 2003/11/10 23:14:55 dean Exp $
 package Slim::Buttons::Input::Text;
 
-# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

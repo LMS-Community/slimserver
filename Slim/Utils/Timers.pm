@@ -1,8 +1,8 @@
 package Slim::Utils::Timers;
 
-# $Id: Timers.pm,v 1.6 2003/10/31 22:09:04 dean Exp $
+# $Id: Timers.pm,v 1.7 2003/11/10 23:15:02 dean Exp $
 
-# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.

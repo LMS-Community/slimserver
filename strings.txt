@@ -1,5 +1,5 @@
 #
-# This tab-delimited file contains all the text strings used in the Slim Server
+# This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
 # translation of an existing string, please email your changes to
 # <translate (at) slimdevices (dot) com>
@@ -88,14 +88,14 @@ LANGUAGE_CHOICES
 	SE	Svenska
 
 SERVER_VERSION
-	DE	Slim Server Version
-	EN	Slim Server Version
-	ES	Versión del servidor Slim
-	FR	Version du serveur Slim
-	NL	Slim Server Versie
-	NO	Slim Server versjon
-	PT	Versão do servidor Slim
-	SE	Slim Server-version
+	DE	SlimServer Version
+	EN	SlimServer Version
+	ES	Versión del SlimServer
+	FR	Version du SlimServer
+	NL	SlimServer Versie
+	NO	SlimServer versjon
+	PT	Versão do SlimServer
+	SE	SlimServer-version
 
 PLAYER_VERSION
 	DE	Player Firmware Version
@@ -354,31 +354,21 @@ PAUSED
 	PT	Pausado
 	SE	Pausad
 
-SLIM_SERVER
-	DE	Slim Server
-	DK	Slim Server
-	EN	Slim Server
-	ES	Slim Servidor
-	FI	Slim Salvelin
-	FR	Serveur Slim
-	IT	Slim Server
-	NL	Slim Server
-	NO	Slim Server
-	PT	Servidor Slim
-	SE	Slim-Server
+SLIMSERVER
+	EN	SlimServer
 
 ABOUT
-	DE	Slim Server V.%s, entwickelt von:
-	DK	Slim server V.%s, skrevet af:
-	EN	Slim server V.%s, written by:
-	ES	Slim servidor V.%s, escrito por:
-	FI	Slim palvelin V.%s, tekijä:
-	FR	Slim serveur V.%s, écrit par :
-	IT	Slim server V.%s, scritto da:
-	NL	Slim Server V.%s, geschreven door:
-	NO	Slim server V.%s, skrevet av:
-	PT	Servidor Slim v.%s, escrito por
-	SE	Slim-Server v.%s, skriven av:
+	DE	SlimServer V.%s, entwickelt von:
+	DK	SlimServer V.%s, skrevet af:
+	EN	SlimServer V.%s, written by:
+	ES	SlimServer V.%s, escrito por:
+	FI	SlimServer V.%s, tekijä:
+	FR	SlimServer V.%s, écrit par :
+	IT	SlimServer V.%s, scritto da:
+	NL	SlimServer V.%s, geschreven door:
+	NO	SlimServer V.%s, skrevet av:
+	PT	SlimServer v.%s, escrito por
+	SE	SlimServer v.%s, skriven av:
 
 REMOVING_FROM_PLAYLIST
 	DE	Aus der Playlist löschen:
@@ -747,19 +737,6 @@ WELCOME_TO_SQUEEZEBOX
 	PT	Bem-vindo ao Squeezebox
 	SE	Välkommen till Squeezebox
 
-WELCOME_TO_SLIM_SERVER
-	DE	Willkommen bei Slim Server
-	DK	Velkommen til Slim Server
-	EN	Welcome to Slim Server
-	ES	Bienvenido al Slim Server
-	FI	Slim Server Tervetuloa!
-	FR	Bienvenue sur le Slim Server
-	IT	Benvenuto a Slim Server
-	NL	Welkom bij Slim Server
-	NO	Velkommen til Slim Server
-	PT	Bem-vindo ao Slim Server
-	SE	Välkommen till Slim Server
-
 FREE_YOUR_MUSIC
 	DK	Lyt til din musik!
 	EN	Free your music
@@ -927,14 +904,14 @@ SETUP_GROUP_PLUGINS
 	SE	Tillägg
 
 SETUP_GROUP_PLUGINS_DESC
-	DE	Slim Server beinhaltet ein paar Plugins, die Sie zum Menü hinzufügen können. Sie können die Plugins in dem Plugin-Verzeichnis hinzufügen oder löschen. Um ein Extra zu aktivieren, klicken Sie auf die Auswahlbox. Zum deaktivieren demakieren Sie die Box. Klicken Sie auf "Ändern" zum speichern der Einstellung.
-	DK	Slim Server inkluderer nogle ekstra funktioner, grupperet i moduler, som du kan anvende via din fjernbetjening. Modulerne ligger i Plugins-mappen og kan aktiveres eller deaktiveres individuelt. Aktiver moduler ved at afkrydse dem nedenfor, deaktiver moduler ved at fjerne afkrydsningen. Tryk Gem for at gemme dine ændringer.
-	EN	Slim Server includes some extra features, called Plugins, that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. To save your changes, click Change.
+	DE	SlimServer beinhaltet ein paar Plugins, die Sie zum Menü hinzufügen können. Sie können die Plugins in dem Plugin-Verzeichnis hinzufügen oder löschen. Um ein Extra zu aktivieren, klicken Sie auf die Auswahlbox. Zum deaktivieren demakieren Sie die Box. Klicken Sie auf "Ändern" zum speichern der Einstellung.
+	DK	SlimServer inkluderer nogle ekstra funktioner, grupperet i moduler, som du kan anvende via din fjernbetjening. Modulerne ligger i Plugins-mappen og kan aktiveres eller deaktiveres individuelt. Aktiver moduler ved at afkrydse dem nedenfor, deaktiver moduler ved at fjerne afkrydsningen. Tryk Gem for at gemme dine ændringer.
+	EN	SlimServer includes some extra features, called Plugins, that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. To save your changes, click Change.
 	FR	Vous pouvez sélectionner des fonctionnalités supplémentaires du lecteur, appelées Plugins, disponibles à l'aide de la télécommande. Ces fonctionnalités sont situées dans le dossier Plugins. Pour activer un plugin, cocher la case correspondante. Pour le désactiver, décochez la case.
-	NL	Slim Server laat toe om extra functies te koppelen aan de afstandsbediening. Deze functies vindt U terug in de Plugins folder. Om een funtie te activeren klikt U het vinkje naast de functie aan. Om de funtie uit te schakelen verwijdert U het vinkje. Om de wijzigingen op te slaan klikt U op 'Aanpassen'.
-	NO	Slim Server inneholder en del tilleggsfunksjoner, Plugins, som du kan benytte deg av med fjernkontrollen. Disse kan aktiveres eller deaktiveres individuelt. For å aktivere en Plugin, merk den. For å deaktivere en Plugin, fjern merket. For å lagre endringene, velg "Endre".
-	PT	O cliente Slim Server inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
-	SE	Slim Server inkluderar tilläggs-funktioner du kan använda med din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras individuellt. För att aktivera ett tillägg, kryssa i rutan bredvid tillägget nedan. För att avaktivera ett tillägg, ta bort krysset. För att spara dina ändringar, klicka på "Ändra".
+	NL	SlimServer laat toe om extra functies te koppelen aan de afstandsbediening. Deze functies vindt U terug in de Plugins folder. Om een funtie te activeren klikt U het vinkje naast de functie aan. Om de funtie uit te schakelen verwijdert U het vinkje. Om de wijzigingen op te slaan klikt U op 'Aanpassen'.
+	NO	SlimServer inneholder en del tilleggsfunksjoner, Plugins, som du kan benytte deg av med fjernkontrollen. Disse kan aktiveres eller deaktiveres individuelt. For å aktivere en Plugin, merk den. For å deaktivere en Plugin, fjern merket. For å lagre endringene, velg "Endre".
+	PT	O cliente SlimServer inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
+	SE	SlimServer inkluderar tilläggs-funktioner du kan använda med din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras individuellt. För att aktivera ett tillägg, kryssa i rutan bredvid tillägget nedan. För att avaktivera ett tillägg, ta bort krysset. För att spara dina ändringar, klicka på "Ändra".
 
 #
 # Setup preference strings
@@ -1441,14 +1418,14 @@ SETUP_RESCAN_BUTTON
 	SE	Läs om
 
 SETUP_RESCAN_DESC
-	DE	Wenn sie Musik hinzufügen, löschen oder Änderungen in Ihrem Musik Verzeichnis vornehmen, dann können sie die Slim Server Software mit einem erneuten Durchsuchen dazu veranlassen, Ihre Datenbank zu aktualisieren.
-	DK	Hvis du tilføjer, fjerner eller ændrer musik i din musiksamling kan du få Slim Server-softwaren til at genindlæse informationerne omkring din musiksamling så du er sikker på Slim Server database er up-to-date.
-	EN	If you add, remove or change music in your music folder, you can have the Slim Server rescan your music to make sure that its database is up to date.
-	FI	Varmistaaksesi, että Slim Server soittimesi tietokanta on ajan tasalla voit lukea musiikkikansiosi uudelleen.
-	FR	Si vous modifiez le contenu de votre dossier de musique, vous pouvez forcer le système de gestion du Slim Server à répertorier de nouveau son contenu pour garantir que sa base de données est à jour.
-	NL	Als U muziek heeft toegevoegd, verwijderd of veranderd, kunt U de Slim Server software opdracht geven de muziekfolder opnieuw in te lezen.
+	DE	Wenn sie Musik hinzufügen, löschen oder Änderungen in Ihrem Musik Verzeichnis vornehmen, dann können sie die SlimServer Software mit einem erneuten Durchsuchen dazu veranlassen, Ihre Datenbank zu aktualisieren.
+	DK	Hvis du tilføjer, fjerner eller ændrer musik i din musiksamling kan du få SlimServer-softwaren til at genindlæse informationerne omkring din musiksamling så du er sikker på SlimServer database er up-to-date.
+	EN	If you add, remove or change music in your music folder, you can have the SlimServer rescan your music to make sure that its database is up to date.
+	FI	Varmistaaksesi, että SlimServer soittimesi tietokanta on ajan tasalla voit lukea musiikkikansiosi uudelleen.
+	FR	Si vous modifiez le contenu de votre dossier de musique, vous pouvez forcer le système de gestion du SlimServer à répertorier de nouveau son contenu pour garantir que sa base de données est à jour.
+	NL	Als U muziek heeft toegevoegd, verwijderd of veranderd, kunt U de SlimServer software opdracht geven de muziekfolder opnieuw in te lezen.
 	PT	Se adicionar, apagar ou mudar o nome a alguma música na sua directoria de músicas, deverá forçar a re-leitura da directoria de músicas.
-	SE	Om du lägger till, tar bort eller ändrar musik in din Musikmapp kan du tvinga Slim-Servern att läsa om all din musik för att säkerställa att databasen är korrekt.
+	SE	Om du lägger till, tar bort eller ändrar musik in din Musikmapp kan du tvinga SlimServer att läsa om all din musik för att säkerställa att databasen är korrekt.
 
 RESCANNING
 	DE	Der Server durchsucht nun das Musik-Verzeichnis erneut.
@@ -1531,14 +1508,14 @@ SETUP_ITUNES_NOT
 	SE	Servern kommer nu använda mappen som källa för ditt musikbibliotek.
 
 SETUP_ITUNES_DESC
-	DE	Der Slim Server kann Ihre iTunes 3 & 4 Musik Sammlung und Playlists verwenden. Jegliche Änderungen, die sie in iTunes vornehmen werden auf Ihrem player abgebildet. Wenn sie die iTunes Musiksammlung nicht verwenden wollen, dann geben sie das Verzeichnis der Musiksammlung auf Ihrem Computer an.
-	DK	Slim-serveren kan anvende din iTunes 3 & 4 musiksamling og playlister. Ændringer foretaget i iTunes vil kunne ses på din player. Hvis du ikke ønsker at bruge din iTunes musiksamling kan du indtaste stien på den mappe hvor dine musikfiler ligger på din harddisk.
-	EN	The Slim Server can use your iTunes 3 & 4 music library and playlists. Any changes that you make in iTunes will be reflected on your player. If you don't want to use your iTunes music library, you can enter the name of the directory where your music files are stored on your computer.
+	DE	Der SlimServer kann Ihre iTunes 3 & 4 Musik Sammlung und Playlists verwenden. Jegliche Änderungen, die sie in iTunes vornehmen werden auf Ihrem player abgebildet. Wenn sie die iTunes Musiksammlung nicht verwenden wollen, dann geben sie das Verzeichnis der Musiksammlung auf Ihrem Computer an.
+	DK	SlimServer kan anvende din iTunes 3 & 4 musiksamling og playlister. Ændringer foretaget i iTunes vil kunne ses på din player. Hvis du ikke ønsker at bruge din iTunes musiksamling kan du indtaste stien på den mappe hvor dine musikfiler ligger på din harddisk.
+	EN	The SlimServer can use your iTunes 3 & 4 music library and playlists. Any changes that you make in iTunes will be reflected on your player. If you don't want to use your iTunes music library, you can enter the name of the directory where your music files are stored on your computer.
 	ES	El servidor puede usar su librería de música y listas discográficas de iTunes 3 & 4. Cualquiera cambio que haga en iTunes se reflejerá en el player. Si no quiere usar su librería de música de iTunes puede introducir el camino a la carpeta donde están guardados sus ficheros de música.
-	FR	Le serveur Slim peut utiliser iTunes 3 & 4 pour accéder à votre musique et à vos playlists. Tous les changements effectués dans iTunes seront pris en considération par votre player. Si vous ne voulez pas utiliser votre bibliothèque iTunes, vous pouvez saisir le nom du dossier où se trouvent vos fichiers MP3.
-	NL	De Slim server kan Uw iTunes 3 & 4 muziek bibliotheek en playlists gebruiken. Alle wijzigingen die U maakt aan Uw iTunes zullen ook voor de player zichtbaar zijn. Als U Uw iTunes bibliotheek niet wilt gebruiken, kunt U de naam van een folder opgeven waarin Uw muziek bestanden zijn opgeslagen.
-	PT	O servidor Slim pode usar a biblioteca de música e as playlists do iTunes 3 e 4. As alterações efectuadas no iTunes serão reflectidas no player. Se não quiser usar a biblioteca do iTunes, introduza a directoria que contém os ficheiros de áudio no seu computador.
-	SE	Slim-Servern kan använda iTunes 3 & 4 musikbibliotek och spellistor. Alla ändringar som du gör i iTunes kommer märkas på din player. Om du inte vill använda iTunes som musikbibliotek, kan du skriva in namnet på den mapp där din musikfiler är lagrade.
+	FR	Le SlimServer peut utiliser iTunes 3 & 4 pour accéder à votre musique et à vos playlists. Tous les changements effectués dans iTunes seront pris en considération par votre player. Si vous ne voulez pas utiliser votre bibliothèque iTunes, vous pouvez saisir le nom du dossier où se trouvent vos fichiers MP3.
+	NL	De SlimServer kan Uw iTunes 3 & 4 muziek bibliotheek en playlists gebruiken. Alle wijzigingen die U maakt aan Uw iTunes zullen ook voor de player zichtbaar zijn. Als U Uw iTunes bibliotheek niet wilt gebruiken, kunt U de naam van een folder opgeven waarin Uw muziek bestanden zijn opgeslagen.
+	PT	O SlimServer pode usar a biblioteca de música e as playlists do iTunes 3 e 4. As alterações efectuadas no iTunes serão reflectidas no player. Se não quiser usar a biblioteca do iTunes, introduza a directoria que contém os ficheiros de áudio no seu computador.
+	SE	SlimServer kan använda iTunes 3 & 4 musikbibliotek och spellistor. Alla ändringar som du gör i iTunes kommer märkas på din player. Om du inte vill använda iTunes som musikbibliotek, kan du skriva in namnet på den mapp där din musikfiler är lagrade.
 
 USE_MOODLOGIC
 	DE	MoodLogic verwenden
@@ -1567,12 +1544,12 @@ SETUP_MOODLOGIC
 	SE	MoodLogic
 
 SETUP_MOODLOGIC_DESC
-	DE	Der Slim Server kann Ihr MoodLogic Programm als Quelle für die Titel und Musikrichtung verwenden. Zusätzlich können Sie ein ad-hoc Mix mit Hilfe der Musikrichtung, des Interpreten und der Titel erstellen.
-	EN	The Slim server can use your MoodLogic program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level.
-	FR	Le serveur Slim peut utiliser votre logiciel MoodLogic comme source pour les titres et les genres. MoodLogic permet par ailleurs de créer des mixes instantanés à partir du genre, de l'artiste ou des caractéristiques du morceau.
-	NL	De Slim server kan Uw MoodLogic programma gebruiken als basis voor titel en genre informatie. Bijkomend kan U mixen samenstellen op basis van genre, artiest of muziekstuk.
-	PT	O servidor Slim pode usar o módulo de Ambiência (MoodLogic) como fonte de títulos e informação do género de música. Adicionalmente, pode gerar misturas instantâneas a partir do género, artista ou nível de som.
-	SE	Slim-Servern kan använda din MoodLogic-applikation som källa för titel- och genre-information. Utöver det kan du skapa direktmixar på genre, artist och låt nivå.
+	DE	Der SlimServer kann Ihr MoodLogic Programm als Quelle für die Titel und Musikrichtung verwenden. Zusätzlich können Sie ein ad-hoc Mix mit Hilfe der Musikrichtung, des Interpreten und der Titel erstellen.
+	EN	The SlimServer can use your MoodLogic program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level.
+	FR	Le SlimServer peut utiliser votre logiciel MoodLogic comme source pour les titres et les genres. MoodLogic permet par ailleurs de créer des mixes instantanés à partir du genre, de l'artiste ou des caractéristiques du morceau.
+	NL	De SlimServer kan Uw MoodLogic programma gebruiken als basis voor titel en genre informatie. Bijkomend kan U mixen samenstellen op basis van genre, artiest of muziekstuk.
+	PT	O SlimServer pode usar o módulo de Ambiência (MoodLogic) como fonte de títulos e informação do género de música. Adicionalmente, pode gerar misturas instantâneas a partir do género, artista ou nível de som.
+	SE	SlimServer kan använda din MoodLogic-applikation som källa för titel- och genre-information. Utöver det kan du skapa direktmixar på genre, artist och låt nivå.
 
 # advanced server settings
 SETUP_MENUITEM
@@ -1627,13 +1604,13 @@ SETUP_PLUGINS
 	SE	Tillägg
 
 SETUP_PLUGINS_DESC
-	DE	Slim Server enthält ein paar Plugins - inklusive einiger Spiele, die Sie mit Ihrer Fernbedienung bedienen können. Verwenden Sie die unten stehende Auswahl, um die Plugins dem Menü Ihres Slim Players hinzuzufügen oder zu entfernen.
-	DK	Slim Server inkluderer nogle ekstra funktioner (Moduler), såsom spil, som du kan anvende med din fjernbetjening. Marker nedenfor om du ønsker adgang til Modul-menuen fra Slim-hovedmenuen.
-	EN	Slim Server includes some extra features, including some games, you can use with your remote. Use the menu below to add or remove the Plugins menu from your Home.
+	DE	SlimServer enthält ein paar Plugins - inklusive einiger Spiele, die Sie mit Ihrer Fernbedienung bedienen können. Verwenden Sie die unten stehende Auswahl, um die Plugins dem Menü Ihres Slim Players hinzuzufügen oder zu entfernen.
+	DK	SlimServer inkluderer nogle ekstra funktioner (Moduler), såsom spil, som du kan anvende med din fjernbetjening. Marker nedenfor om du ønsker adgang til Modul-menuen fra Slim-hovedmenuen.
+	EN	SlimServer includes some extra features, including some games, you can use with your remote. Use the menu below to add or remove the Plugins menu from your Home.
 	FR	Le Slim comprend des fonctionnalités supplémentaires ou "plugins", dont des jeux, que vous pouvez utiliser avec votre télécommande. Utilisez le menu ci-dessous pour ajouter ou retirer le menu Plugins de votre Menu principal.
 	NL	Slim biedt de mogelijkheid om extra functionaliteiten, waaronder spelletjes, toe te voegen. Deze kunnen bestuurd worden via de afstandsbediening. Gebruik onderstaande keuze om het Plugins menu aan Uw Home toe te voegen of om het eruit te verwijderen.
-	PT	O Slim Server inclui algumas funcionalidades extras, tais como alguns jogos, que podem ser usados com o controlo remoto. Use o menu abaixo para adicionar ou remover os menus extra do cliente. 
-	SE	Slim Server inkluderar några tillägg, t.ex några spel, som du kan använda med din fjärrkontroll. Använd menyn nedan för att lägga till eller ta bort Tilläggs-menyn from din Huvudmeny.
+	PT	O SlimServer inclui algumas funcionalidades extras, tais como alguns jogos, que podem ser usados com o controlo remoto. Use o menu abaixo para adicionar ou remover os menus extra do cliente. 
+	SE	SlimServer inkluderar några tillägg, t.ex några spel, som du kan använda med din fjärrkontroll. Använd menyn nedan för att lägga till eller ta bort Tilläggs-menyn from din Huvudmeny.
 
 SETUP_REFRESHRATE
 	EN	Browser Refresh Timing
@@ -1748,7 +1725,7 @@ SETUP_HTTPPORT
 
 SETUP_HTTPPORT_DESC
 	DE	Sie können die Port-Nummer wechseln, die Sie für den Web-Server Zugriff verwenden wollen. (Der Standartwert ist 9000.)
-	DK	Du kan ændre hvilket port-nummer der anvendes til at tilgå Slim-serveren via en web-browser. (Standard er 9000).
+	DK	Du kan ændre hvilket port-nummer der anvendes til at tilgå SlimServer via en web-browser. (Standard er 9000).
 	EN	You can change the port number that is used to access the server from a web browser. (The default is 9000.)
 	ES	Se puede cambiar el número de puerto para controlar el servidor con navegador (9000 por defecto)
 	FI	Voit vaihtaa WWW-palvelimen käyttämää porttinumeroa. (Oletusasetus on 9000.)
@@ -1778,11 +1755,11 @@ SETUP_TRANSCODE-OGG
 	SE	Konvertera Ogg Vorbis-filer
 
 SETUP_TRANSCODE-OGG_DESC
-	DE	Wenn Sie die LAME und OGG Vorbis Dateien installiert haben (ogginfo und ogg123), dann kann der Slim Server Ihre OGG Vorbis Dateien automatisch zum Abspielen auf dem Slim Player konvertieren.
-	EN	If you have LAME and the Ogg Vorbis tools installed (ogginfo and ogg123), you can have your Slim Server convert your Ogg music files on-the-fly for playback on your Slim player.
-	FR	Si vous disposez de LAME et des outils Ogg Vorbis (ogginfo et ogg123), le serveur Slim peut convertir en temps réel vos morceaux au format Ogg pour qu'ils soient lus sur le Slim. La conversion est effectuée sur le serveur pendant la lecture et n'est pas stockée sur le disque.
-	NL	Indien U LAME en de Ogg Vorbis hulpprogramma's (ogginfo en ogg123) geinstalleerd hebt kan U de Slim server instellen om Ogg bestanden real-time om te zetten zodat deze op Uw Slim speler afgespeeld kunnen worden.
-	PT	Se tiver instalado no sistema o LAME (utilitários de MP3) ou os utilitários do Ogg Vorbis (ogginfo e ogg123), pode configurar o servidor Slim para converter automaticamente os ficheiros para MP3, de forma a serem usados no cliente Slim.
+	DE	Wenn Sie die LAME und OGG Vorbis Dateien installiert haben (ogginfo und ogg123), dann kann der SlimServer Ihre OGG Vorbis Dateien automatisch zum Abspielen auf dem Slim Player konvertieren.
+	EN	If you have LAME and the Ogg Vorbis tools installed (ogginfo and ogg123), you can have your SlimServer convert your Ogg music files on-the-fly for playback on your Slim player.
+	FR	Si vous disposez de LAME et des outils Ogg Vorbis (ogginfo et ogg123), le SlimServer peut convertir en temps réel vos morceaux au format Ogg pour qu'ils soient lus sur le Slim. La conversion est effectuée sur le serveur pendant la lecture et n'est pas stockée sur le disque.
+	NL	Indien U LAME en de Ogg Vorbis hulpprogramma's (ogginfo en ogg123) geinstalleerd hebt kan U de SlimServer instellen om Ogg bestanden real-time om te zetten zodat deze op Uw SlimServer afgespeeld kunnen worden.
+	PT	Se tiver instalado no sistema o LAME (utilitários de MP3) ou os utilitários do Ogg Vorbis (ogginfo e ogg123), pode configurar o SlimServer para converter automaticamente os ficheiros para MP3, de forma a serem usados no cliente Slim.
 	SE	Om du har LAME och Ogg Vorbis-verktyg installerade (ogginfo & ogg123) kan du få din server att automatiskt konvertera dina Ogg-musikfiler för uppspelning på din Slim-spelare.
 
 SETUP_TRANSCODE-OGG_OK
@@ -1826,12 +1803,12 @@ SETUP_TRANSCODE-WAV
 	SE	Konvertera WAV och AIFF filer
 
 SETUP_TRANSCODE-WAV_DESC
-	DE	Wenn Sie LAME installiert haben, kann der Slim Server Ihre WAV und AIFF Dateien automatisch zum Abspielen auf dem Slim Player konvertieren. 
-	EN	If you have LAME installed, you can have your Slim Server convert your uncompressed WAV and AIFF music files on-the-fly for playback on your Slim player.
-	FR	Si vous disposez de LAME, le serveur Slim peut convertir en temps réel vos morceaux non-compressés au format WAV et/ou AIFF pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant sur le serveur pendant la lecture et n'est pas stockée sur le disque.
-	NL	Indien U LAME geinstalleerd hebt kan U de Slim instellen om niet gecomrimeerde WAV en AIFF bestanden om te zetten zodat deze kunnen afgespeeld worden op de Slim speler.
-	PT	Se tiver instalado no sistema o LAME (utilitários de MP3), pode configurar o servidor Slim para converter automaticamente os ficheiros WAV e AIFF para MP3, de forma a serem usados no cliente Slim.
-	SE	Om du har LAME installerat kan du få din Slim Server att automatiskt konvertera dina okomprimerade WAV- och AIFF-filer för uppspelning på din Slim-spelare.
+	DE	Wenn Sie LAME installiert haben, kann der SlimServer Ihre WAV und AIFF Dateien automatisch zum Abspielen auf dem Slim Player konvertieren. 
+	EN	If you have LAME installed, you can have your SlimServer convert your uncompressed WAV and AIFF music files on-the-fly for playback on your Slim player.
+	FR	Si vous disposez de LAME, le SlimServer peut convertir en temps réel vos morceaux non-compressés au format WAV et/ou AIFF pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant sur le serveur pendant la lecture et n'est pas stockée sur le disque.
+	NL	Indien U LAME geinstalleerd hebt kan U de Slim instellen om niet gecomrimeerde WAV en AIFF bestanden om te zetten zodat deze kunnen afgespeeld worden op de SlimServer.
+	PT	Se tiver instalado no sistema o LAME (utilitários de MP3), pode configurar o SlimServer para converter automaticamente os ficheiros WAV e AIFF para MP3, de forma a serem usados no cliente Slim.
+	SE	Om du har LAME installerat kan du få din SlimServer att automatiskt konvertera dina okomprimerade WAV- och AIFF-filer för uppspelning på din Slim-spelare.
 
 SETUP_TRANSCODE-WAV_OK
 	DE	WAV und AIFF Dateien
@@ -1874,12 +1851,12 @@ SETUP_TRANSCODE-MOV
 	SE	Konvertera QuickTime- och ACC-filer
 
 SETUP_TRANSCODE-MOV_DESC
-	DE	Nur Macintosh OS X: Wenn Sie LAME installiert haben, kann Ihr Slim Server QuickTime Filme und AAC Musik Dateien in Echtzeit für das Abspielen auf Ihrem Slim Player konvertieren.
-	EN	Macintosh OS X only: If you have LAME installed, you can have your Slim Server convert your QuickTime movies and AAC music files on-the-fly for playback on your Slim player.
-	FR	Uniquement pour Macintosh OS X : Si vous disposez de LAME, le serveur Slim peut convertir en temps réel vos morceaux au format Quicktime movie et AAC pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant la lecture sur le serveur et n'est pas stockée sur le disque.
-	NL	Enkel voor Macintosh OS X: Indien U LAME geinstalleerd hebt kan U de Slim server instellen om QuickTime films (alleen het geluid) en AAC muziekbestanden real-time om te zetten voor weergave op de Slim speler.
+	DE	Nur Macintosh OS X: Wenn Sie LAME installiert haben, kann Ihr SlimServer QuickTime Filme und AAC Musik Dateien in Echtzeit für das Abspielen auf Ihrem Slim Player konvertieren.
+	EN	Macintosh OS X only: If you have LAME installed, you can have your SlimServer convert your QuickTime movies and AAC music files on-the-fly for playback on your Slim player.
+	FR	Uniquement pour Macintosh OS X : Si vous disposez de LAME, le SlimServer peut convertir en temps réel vos morceaux au format Quicktime movie et AAC pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant la lecture sur le serveur et n'est pas stockée sur le disque.
+	NL	Enkel voor Macintosh OS X: Indien U LAME geinstalleerd hebt kan U de SlimServer instellen om QuickTime films (alleen het geluid) en AAC muziekbestanden real-time om te zetten voor weergave op de SlimServer.
 	PT	Apenas Apple OS X
-	SE	Endast Macintosh OS X: Om du har LAME installerade kan du få din Slim Server att automatiskt konvertera QuickTime- och AAC-filer för uppspelning på din Slim-spelare.
+	SE	Endast Macintosh OS X: Om du har LAME installerade kan du få din SlimServer att automatiskt konvertera QuickTime- och AAC-filer för uppspelning på din Slim-spelare.
 
 SETUP_TRANSCODE-MOV_OK
 	DK	QuickTime og AAC
@@ -1971,10 +1948,10 @@ SETUP_CHECKVERSION
 	SE	Mjukvaruupgraderingar
 
 SETUP_CHECKVERSION_DESC
-	DE	Der Server kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Software Version vorhanden ist. Falls ja, erscheint eine Meldung im Slim Server Web Interface.
+	DE	Der Server kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Software Version vorhanden ist. Falls ja, erscheint eine Meldung im SlimServer Web Interface.
 	DK	Serveren kan automatisk forbinde til www.slimdevices.com hver dag for at checke om der er kommet en opdateret version af softwaren. Hvis der er, vises en besked i Slim-webinterfacet.
-	EN	The server can automatically connect to www.slimdevices.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in the Slim Server web interface.
-	FR	Le serveur Slim peut se connecter tous les jours à www.slimdevices.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Un message dans l'interface web signale cette disponibilité le cas échéant.
+	EN	The server can automatically connect to www.slimdevices.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in the SlimServer web interface.
+	FR	Le SlimServer peut se connecter tous les jours à www.slimdevices.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Un message dans l'interface web signale cette disponibilité le cas échéant.
 	PT	O servidor poderá ligar-se automaticamente a www.slimdevices.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
 	SE	Servern kan automatiskt koppla upp sig mot www.slimdevices.com varje dag för att kontrollera om en nyare version av mjukvaran finns tillgänglig. Om nyare version finns, kommer ett meddelande visas i webb-gränssnittet.
 
@@ -2029,7 +2006,7 @@ SETUP_SCREENSAVERTIMEOUT
 
 SETUP_SCREENSAVERTIMEOUT_DESC
 	DE	Hier können Sie die Wartezeit einstellen. Bei Einstellung der Wartezeit auf Null wird der aktuelle Titel nie angezeigt.
-	DK	Du kan angive hvor længe der skal gå før Slim-afspilleren skifter til pauseskærm. Sæt tiden til 0 (nul) for aldrig automatisk at skifte til visning af den aktuelle sang.
+	DK	Du kan angive hvor længe der skal gå før SlimServer skifter til pauseskærm. Sæt tiden til 0 (nul) for aldrig automatisk at skifte til visning af den aktuelle sang.
 	EN	You can change the duration of this wait below. Set this duration to zero to never automatically show the current song.
 	ES	Se puede cambiar el tiempo de espera haste que se activará la salvapantalla del Slim. Pongalo a zero para desactivarlo.
 	FI	Voit säätää alla näytönsäästäjän ajastinta.
@@ -2063,7 +2040,7 @@ SETUP_SCREENSAVERJUMP
 
 SETUP_SCREENSAVERJUMP_DESC
 	DE	Der Player wird automatisch den aktuellen Titel anzeigen, nachdem Sie die Fernbedienung für einige Zeit nicht mehr verwendet haben.
-	DK	Slim-afspilleren vil automatisk vise hvilken sang der afspilles hvis fjernbetjeningen ikke anvendes i en periode.
+	DK	SlimServer vil automatisk vise hvilken sang der afspilles hvis fjernbetjeningen ikke anvendes i en periode.
 	EN	The player will automatically show the currently playing song after you stop using the remote for some amount of time. You can change what happens if you use the remote after this happens.
 	ES	El reproductor mostrará automaticamenta la canción actual si no usa el mando durante un tiempo determinado. Se puede cambiar este comportamiento.
 	FI	Kun kaukosäätimen viimeisestä napin painalluksesta on kulunut hieman aikaa, palaa soittimen näyttöön soimassa olevan kappaleen nimi. Voit vaikuttaa tähän toimintoon.
@@ -2114,7 +2091,7 @@ SETUP_DISPLAYTEXTTIMEOUT
 
 SETUP_DISPLAYTEXTTIMEOUT_DESC
 	DE	Wenn Sie einen Suchtext eingeben, dann wird der Player nach einer gewissen Zeit zum nächsten Buchstaben wechseln. Ändern Sie hier die Wartezeit.
-	DK	Når du indtaster tekst til en søgning vil Slim-afspilleren gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
+	DK	Når du indtaster tekst til en søgning vil SlimServer gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
 	EN	When you are entering text for a search, the player will move on to the next letter after some amount of time. You can change the duration of this wait below.
 	FI	Syöttäessäsi tekstiä hakua varten, kursori siirtyy automaattisesti eteenpäin jonkin ajan kuluttua. Voit alla olevasta valinnasta säätää odottamiseen käytettyä aikaa.
 	FR	Le lecteur passera automatiquement à la lettre suivante après un certain délai lors de la saisie de texte. Vous pouvez choisir ce délai ci-dessous.
@@ -2488,7 +2465,7 @@ SETUP_ANIMATIONLEVEL
 
 SETUP_ANIMATIONLEVEL_DESC
 	DE	Diese Option legt die Menge der verwendeten Animationen fest. Animationen bestehen aus kurzen Mitteilungen, das Lšschen der Anzeige wŠhrend der Navigation und das Scrollen langer Titel.
-	DK	Denne indstilling angiver hvor meget animation der skal være på Slim-afspilleren. Animationer inkluderer visning af små beskeder, menu-navigation og rulletekster ved lange tekster.
+	DK	Denne indstilling angiver hvor meget animation der skal være på SlimServer. Animationer inkluderer visning af små beskeder, menu-navigation og rulletekster ved lange tekster.
 	EN	This option determines the amount of animation allowed. Animations include showing brief messages, screen wipes during navigation, and scrolling long titles.
 	ES	Esta opción determina el nivel de animación permitido.
 	FI	Tämä valinta säätelee animaation määrää. (mm. valikoiden piirto)
@@ -2761,12 +2738,12 @@ SETUP_ALLOWEDHOSTS
 	SE	IP-adresser tillåtna att skapa inkommande anslutningar
 
 SETUP_FILTERRULE_DESC
-	DE	Wenn Sie das Blockieren aktiviert haben, dann können Sie IP-Adressen angeben, denen Sie die Verbindung zu Ihrem Slim Server dennocch genehmigen möchten.<br><br>Dieses Feld akzeptiert eine Liste spezifischer IP-Adressen. Verwenden Sie * als Wildcard und trennen Sie unterschiedliche IP-Adressen durch Komma. Zum Beispiel:<BR><BR><B>10.1.2.2</B> gestattet nur 10.1.2.2 eine Verbindung.<BR><BR><B>10.1.2.*</B> gestattet allen IP-Adressen die mit 10.1.2. beginnen den Zugriff.<BR><BR><B>10.1.2.2-50</B> erlaubt 10.1.2.2 - 10.1.2.50 die Verbindung.<BR><BR>Zusätzlich können mehrere Einträge durch Kommas kombiniert werden. Z.B.:<B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>Die spezielle IP-Adresse 127.0.0.1 gestattet einem Webbrowser die Verbindung mit dem Slim Server auf dem gleichen Computer.
-	EN	If you have turned on blocking you can enter the addresses that you'd like to allow to connect to the Slim Server.<br><br>This field accepts a list of specific IP addresses, * style wildcards, and IP address ranges in a comma separated list. For example:<BR><BR><B>10.1.2.2</B> will allow only 10.1.2.2 to connect<BR><BR><B>10.1.2.*</B> will allow anything with an IP address that be the 10.1.2.x addresses.<BR><BR><B>10.1.2.2-50</B> will allow IP addresses in the range 10.1.2.2 - 10.1.2.50 to connect.<BR><BR>Finally, multiple entries can be combined with commas, like this <B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>The special IP address 127.0.0.1 allows a web browser to connect to the Slim server running on that same computer.
-	FR	Si vous avez activé le bloquage, vous pouvez saisir l'adresse IP des utilisateurs qui peuvent accéder au serveur Slim.<br><br>Cette zone de saisie reçoit des adresses IP spécifiques, le caractère joker * et des intervalles d'adresses IP, le tout séparé par des virgules.<br>Exemples :<br><br>10.1.2.2 permet uniquement cette adresse<br>10.1.2.* permet toutes les adresses dont les trois premières composantes sont 10, 1 et 2<br>10.1.2.2-50 permet toutes les adresses comprises dans l'intervalle 10.1.2.2 à 10.1.2.50 inclusivement<br>10.1.2.2,10.1.3.*,10.1.4.2-50 permet l'adresse 10.1.2.2, toutes les adreses commençant par 10.1.3 ainsi que les adresses dans l'intervalle 10.1.4.2 à 10.1.4.50.
-	NL	Indien U 'blokkeren' heb ingesteld kan U de adressen ingeven die U toegang wil geven tot de Slim server.<br><br>Dit veld accepteert een lijst van specifieke IP adressen, * type wildcards en IP adres bereiken in een door komma's gescheiden lijst. Bijvoorbeeld:<br><br><b>10.1.2.2</b> zal enkel verbindingen toestaan vanaf adres 10.1.2.2<br><br><b>10.1.2.*</b> laat elk adres toe dat begint met 10.1.2.<br><br><b>10.1.2.2-50</b> verleent alle adressen tussen 10.1.2.2 en 10.1.2.50 toegang.<br><br>Tenslotte kunnen meerdere adressen gecombineerd worden in een door komma's gescheiden lijst, zoals in <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Het speciale adres 127.0.0.1 geeft toegang aan browsers die op de servermachine zelf draaien.
-	PT	Se activar o bloqueio por IP de origem, introduza aqui os endereços com permissões para ligar ao servidor Slim.<br><br>Este campo aceita uma lista de endereços IP, redes (usando o caractér "*"), e segmentos de rede (usando "endereço-endereço"), separados por vírgulas. Por exemplo
-	SE	Om du har aktiverat blockering kan du skriva in de IP-adresser du vill tillåta för anslutning till Slim-Servern.<br><br>Detta fält accepterar en komma-separerad lista med urval enligt följande exempel:<br><br><b>10.1.2.2</b> tillåter endast 10.1.2.2 att ansluta<br><br><b>10.1.2.*</b> tillåter alla med en IP-adress som börjar med 10.1.2 att ansluta.<br><br><b>10.1.2.2-50</b> tillåter alla IP-adresser mellan 10.1.2.2 och 10.1.2.50 att ansluta.<br><br>Flera olika typer kan kombineras, som t.ex <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Den speciella IP-adressen 127.0.0.1 (localhost) tillåter alltid en webläsare på samma dator som Slim-Servern att ansluta.
+	DE	Wenn Sie das Blockieren aktiviert haben, dann können Sie IP-Adressen angeben, denen Sie die Verbindung zu Ihrem SlimServer dennocch genehmigen möchten.<br><br>Dieses Feld akzeptiert eine Liste spezifischer IP-Adressen. Verwenden Sie * als Wildcard und trennen Sie unterschiedliche IP-Adressen durch Komma. Zum Beispiel:<BR><BR><B>10.1.2.2</B> gestattet nur 10.1.2.2 eine Verbindung.<BR><BR><B>10.1.2.*</B> gestattet allen IP-Adressen die mit 10.1.2. beginnen den Zugriff.<BR><BR><B>10.1.2.2-50</B> erlaubt 10.1.2.2 - 10.1.2.50 die Verbindung.<BR><BR>Zusätzlich können mehrere Einträge durch Kommas kombiniert werden. Z.B.:<B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>Die spezielle IP-Adresse 127.0.0.1 gestattet einem Webbrowser die Verbindung mit dem SlimServer auf dem gleichen Computer.
+	EN	If you have turned on blocking you can enter the addresses that you'd like to allow to connect to the SlimServer.<br><br>This field accepts a list of specific IP addresses, * style wildcards, and IP address ranges in a comma separated list. For example:<BR><BR><B>10.1.2.2</B> will allow only 10.1.2.2 to connect<BR><BR><B>10.1.2.*</B> will allow anything with an IP address that be the 10.1.2.x addresses.<BR><BR><B>10.1.2.2-50</B> will allow IP addresses in the range 10.1.2.2 - 10.1.2.50 to connect.<BR><BR>Finally, multiple entries can be combined with commas, like this <B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>The special IP address 127.0.0.1 allows a web browser to connect to the SlimServer running on that same computer.
+	FR	Si vous avez activé le bloquage, vous pouvez saisir l'adresse IP des utilisateurs qui peuvent accéder au SlimServer.<br><br>Cette zone de saisie reçoit des adresses IP spécifiques, le caractère joker * et des intervalles d'adresses IP, le tout séparé par des virgules.<br>Exemples :<br><br>10.1.2.2 permet uniquement cette adresse<br>10.1.2.* permet toutes les adresses dont les trois premières composantes sont 10, 1 et 2<br>10.1.2.2-50 permet toutes les adresses comprises dans l'intervalle 10.1.2.2 à 10.1.2.50 inclusivement<br>10.1.2.2,10.1.3.*,10.1.4.2-50 permet l'adresse 10.1.2.2, toutes les adreses commençant par 10.1.3 ainsi que les adresses dans l'intervalle 10.1.4.2 à 10.1.4.50.
+	NL	Indien U 'blokkeren' heb ingesteld kan U de adressen ingeven die U toegang wil geven tot de SlimServer.<br><br>Dit veld accepteert een lijst van specifieke IP adressen, * type wildcards en IP adres bereiken in een door komma's gescheiden lijst. Bijvoorbeeld:<br><br><b>10.1.2.2</b> zal enkel verbindingen toestaan vanaf adres 10.1.2.2<br><br><b>10.1.2.*</b> laat elk adres toe dat begint met 10.1.2.<br><br><b>10.1.2.2-50</b> verleent alle adressen tussen 10.1.2.2 en 10.1.2.50 toegang.<br><br>Tenslotte kunnen meerdere adressen gecombineerd worden in een door komma's gescheiden lijst, zoals in <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Het speciale adres 127.0.0.1 geeft toegang aan browsers die op de servermachine zelf draaien.
+	PT	Se activar o bloqueio por IP de origem, introduza aqui os endereços com permissões para ligar ao SlimServer.<br><br>Este campo aceita uma lista de endereços IP, redes (usando o caractér "*"), e segmentos de rede (usando "endereço-endereço"), separados por vírgulas. Por exemplo
+	SE	Om du har aktiverat blockering kan du skriva in de IP-adresser du vill tillåta för anslutning till SlimServer.<br><br>Detta fält accepterar en komma-separerad lista med urval enligt följande exempel:<br><br><b>10.1.2.2</b> tillåter endast 10.1.2.2 att ansluta<br><br><b>10.1.2.*</b> tillåter alla med en IP-adress som börjar med 10.1.2 att ansluta.<br><br><b>10.1.2.2-50</b> tillåter alla IP-adresser mellan 10.1.2.2 och 10.1.2.50 att ansluta.<br><br>Flera olika typer kan kombineras, som t.ex <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Den speciella IP-adressen 127.0.0.1 (localhost) tillåter alltid en webläsare på samma dator som SlimServer att ansluta.
 
 #miscellaneous setup strings
 SETUP_NEW_VALUE
@@ -2859,12 +2836,12 @@ SETUP_AUTHORIZE
 	SE	Lösenordsskydd
 
 SETUP_AUTHORIZE_DESC
-	DE	Sie können das Slim Server Web-Interface mit einem Passwort schützen. Wählen Sie "Passwortschutz" und geben Sie einen Benutzernamen und ein Passwort ein. Klicken Sie dann auf "Ändern". Von nun an müssen Sie beim Aufruf des Slim Server Web-Interface den Benutzername und das Passwort eingeben.
-	EN	You can choose to password protect the Slim Server web interface. Choose "Password protection" below and enter a username and password, then click Change. From that point on when you use the Slim Server web interface, you'll need to enter this username and password in your web browser.
-	FR	Vous pouvez protéger l'interface web de votre Slim Server par un mot de passe. Sélectionnez "Mot de passe" ci-dessous et saisissez un mot de passe, puis cliquez sur le bouton "Modifier". À ce moment vous devrez saisir le mot de passe pour pouvoir accéder à l'interface web de votre Slim Server.
-	NL	U kan een paswoord instellen voor de Slim Server webpagina. Kies 'Paswoordbeveiliging' en vul een gebruikersnaam en paswoord in. Klik vervolgens op 'Aanpassen'. Vanaf dan is deze gebruikersnaam en het paswoord vereist om toegang te krijgen tot de Slim Server webpagina.
+	DE	Sie können das SlimServer Web-Interface mit einem Passwort schützen. Wählen Sie "Passwortschutz" und geben Sie einen Benutzernamen und ein Passwort ein. Klicken Sie dann auf "Ändern". Von nun an müssen Sie beim Aufruf des SlimServer Web-Interface den Benutzername und das Passwort eingeben.
+	EN	You can choose to password protect the SlimServer web interface. Choose "Password protection" below and enter a username and password, then click Change. From that point on when you use the SlimServer web interface, you'll need to enter this username and password in your web browser.
+	FR	Vous pouvez protéger l'interface web de votre SlimServer par un mot de passe. Sélectionnez "Mot de passe" ci-dessous et saisissez un mot de passe, puis cliquez sur le bouton "Modifier". À ce moment vous devrez saisir le mot de passe pour pouvoir accéder à l'interface web de votre SlimServer.
+	NL	U kan een paswoord instellen voor de SlimServer webpagina. Kies 'Paswoordbeveiliging' en vul een gebruikersnaam en paswoord in. Klik vervolgens op 'Aanpassen'. Vanaf dan is deze gebruikersnaam en het paswoord vereist om toegang te krijgen tot de SlimServer webpagina.
 	PT	Pode activar uma palavra chave para proteger a interface web. Escolha "Proteção por Palavra Chave" abaixo, escolha um nome de utilizador e uma palavra chave, e seleccione "Mudar". A partir desse momento necessitará de introduzir o utilizador e chave para entrar na interface web com o seu browser.
-	SE	Du kan välja att skydda Slim Server webbgränssnittet med ett lösenord. Välj "Lösenordsskydd" nedan och ange ett användarnamn samt lösenord, klicka sen på "Ändra". Efter detta måste alltid användarnamn och lösenord anges i webbläsaren för att kunna använda webbgränssnittet.
+	SE	Du kan välja att skydda SlimServer webbgränssnittet med ett lösenord. Välj "Lösenordsskydd" nedan och ange ett användarnamn samt lösenord, klicka sen på "Ändra". Efter detta måste alltid användarnamn och lösenord anges i webbläsaren för att kunna använda webbgränssnittet.
 
 SETUP_USERNAME
 	DE	Benutzername
@@ -2979,8 +2956,8 @@ SETUP_MDNSNAME_OK
 
 SETUP_MDNSNAME_DESC
 	DE	Sie können einen Namen für diesen Server zur Verwendung mit Rendezvous auswählen:
-	DK	Du kan vælge at angive et Rendezvouz-navn for denne server. Lad feltet være tomt for at slå Rendezvouz-understøttelse fra. Slim-serveren skal genstartes før denne indstilling har effekt.
-	EN	You can choose a name for this server to be used with Rendezvous.  Leave this field blank to disable Rendezvous advertising of the Slim Server.  You will need to restart the server to see the effect of these changes.
+	DK	Du kan vælge at angive et Rendezvouz-navn for denne server. Lad feltet være tomt for at slå Rendezvouz-understøttelse fra. SlimServer skal genstartes før denne indstilling har effekt.
+	EN	You can choose a name for this server to be used with Rendezvous.  Leave this field blank to disable Rendezvous advertising of the SlimServer.  You will need to restart the server to see the effect of these changes.
 	FR	Vous pouvez choisir un nom de serveur reconnu par Rendezvous.
 	NL	U kan een naam voor deze server kiezen die gebruikt zal worden met Rendezvous.
 	PT	Pode escolher um nome Rendezvous para este servidor
@@ -3003,7 +2980,7 @@ SETUP_REMOTESTREAMTIMEOUT_OK
 	EN	Radio station timeout:
 
 SETUP_REMOTESTREAMTIMEOUT_DESC
-	EN	You can set the length of time that the Slim Server will try to connect to an internet radio station or other source before giving up. Enter the amount of time, in seconds, below.
+	EN	You can set the length of time that the SlimServer will try to connect to an internet radio station or other source before giving up. Enter the amount of time, in seconds, below.
 
 SETUP_REMOTESTREAMTIMEOUT_CHOOSE
 	EN	Radio Station Timeout (seconds):
@@ -3033,17 +3010,17 @@ LANGUAGE
 	SE	Språk
 
 SETUP_URL_WILL_BE
-	DE	Die Zugriffs URL zum Slim Server lautet wie folgt:
-	DK	URL-adessen, der giver adgang til Slim-afspilleren, vil se således ud:
-	EN	The URL to access the Slim Server is now:
-	ES	La dirección para acceder al Slim Server será:
-	FI	Osoite, josta voit ohjata Slim soitintasi on:
+	DE	Die Zugriffs URL zum SlimServer lautet wie folgt:
+	DK	URL-adessen, der giver adgang til SlimServer, vil se således ud:
+	EN	The URL to access the SlimServer is now:
+	ES	La dirección para acceder al SlimServer será:
+	FI	Osoite, josta voit ohjata SlimServer on:
 	FR	L'URL pour accéder au Slim sera :
-	IT	L'URL per poter accedere allo Slim sarà qualcosa come:
-	NL	De URL voor toegang tot de Slim speler is:
-	NO	URL-adressen for å styre Slim-spilleren vil se omtrent slik ut:
-	PT	O URL para aceder ao Slim Server é
-	SE	URLen för att komma åt Slim spelaren är:
+	IT	L'URL per poter accedere allo SlimServer sarà qualcosa come:
+	NL	De URL voor toegang tot de SlimServer is:
+	NO	URL-adressen for å styre SlimServer vil se omtrent slik ut:
+	PT	O URL para aceder ao SlimServer é
+	SE	URLen för att komma åt SlimServer är:
 
 #
 # Web interface
@@ -4421,15 +4398,15 @@ RENAME_WARNING
 	SE	Namnet du valde används redan. Välj ett annat namn för din spellista.
 
 SCAN_WARNING
-	DE	Der Slim Server durchsucht immer noch Ihr Musikverzeichnis. Deshalb werden einige Lieder in diesem Bereich noch nicht angezeigt.
-	DK	Slim-serveren gennemlæser stadig din musiksamling. Dette kan betyde at nogle sangtitler endnu ikke vises under dette område.
-	EN	The Slim server is still scanning your music library, so some items may not appear in this area yet.
-	ES	El servidor Slim está todavía escaneando su librería de música.
-	FI	Slim palvelin lukee yhä musiikkikansiotasi. On mahdollista, että kaikkien kappaleiden tiedot eivät ole vielä päivittyneet.
-	FR	Le serveur Slim n'a pas terminé de répertorier votre dossier de musique. Certains éléments peuvent ne pas apparaître dans la liste pour l'instant.
-	NL	De Slim Server is bezig Uw Muziek Folder aan het doorzoeken, daarom zullen niet alle items worden getoond.
-	PT	O servidor Slim ainda está a analisar o arquivo musical, portanto é possível que não apareçam ainda alguns items nesta àrea.
-	SE	Slim-Servern läser fortfarande in ditt musikbibliotek, så vissa poster kanske inte visas i det här fältet ännu.
+	DE	Der SlimServer durchsucht immer noch Ihr Musikverzeichnis. Deshalb werden einige Lieder in diesem Bereich noch nicht angezeigt.
+	DK	SlimServer gennemlæser stadig din musiksamling. Dette kan betyde at nogle sangtitler endnu ikke vises under dette område.
+	EN	The SlimServer is still scanning your music library, so some items may not appear in this area yet.
+	ES	El SlimServer está todavía escaneando su librería de música.
+	FI	SlimServer lukee yhä musiikkikansiotasi. On mahdollista, että kaikkien kappaleiden tiedot eivät ole vielä päivittyneet.
+	FR	Le SlimServer n'a pas terminé de répertorier votre dossier de musique. Certains éléments peuvent ne pas apparaître dans la liste pour l'instant.
+	NL	De SlimServer is bezig Uw Muziek Folder aan het doorzoeken, daarom zullen niet alle items worden getoond.
+	PT	O SlimServer ainda está a analisar o arquivo musical, portanto é possível que não apareçam ainda alguns items nesta àrea.
+	SE	SlimServer läser fortfarande in ditt musikbibliotek, så vissa poster kanske inte visas i det här fältet ännu.
 
 SCAN_CLICK
 	DE	Klicken Sie, um Ihre Musikverzeichnis direkt zu durchsuchen
@@ -4512,17 +4489,17 @@ SERVER_SETTINGS
 	PT	Configurações do Servidor
 	SE	Serverinställningar
 
-SLIM_SERVER_SETTINGS
-	DE	Slim Server Einstellungen
-	DK	Slim-server indstillinger
-	EN	Slim Server Settings
-	ES	Configuración del servidor Slim
-	FI	Slim palvelimen asetukset
-	FR	Réglages du serveur Slim
-	NL	Slim Server instellingen
-	NO	Slim Server instillinger
-	PT	Configurações do Servidor Slim
-	SE	Inställningar för Slim-Server
+SLIMSERVER_SETTINGS
+	DE	SlimServer Einstellungen
+	DK	SlimServer indstillinger
+	EN	SlimServer Settings
+	ES	Configuración del SlimServer
+	FI	SlimServer palvelimen asetukset
+	FR	Réglages du SlimServer
+	NL	SlimServer instellingen
+	NO	SlimServer instillinger
+	PT	Configurações do SlimServer
+	SE	Inställningar för SlimServer
 
 ADDITIONAL_SERVER_SETTINGS
 	DE	Erweiterte Server Einstellungen
@@ -4606,11 +4583,11 @@ NETWORK_SETTINGS
 	SE	Nätverk
 
 SETUP_GROUP_DEBUG_DESC
-	DK	Slim-serveren har et antal fejlsøgnings-indstillinger der kan benyttes til at logge detaljerede informationer omkring serverens arbejde. Afkryds de elementer du ønsker at logge og klik Gem for at begynde logning. Du kan se de nyeste log-informationer <a href="/log.txt" target="log">her</a>.
-	EN	The Slim Server has a number of debugging settings that can be used to record detailed information about the server's operation.  Check off the items that you'd like logged for display and click Change to start logging that information.  You can view the most recent log entries <a href="/log.txt" target="log">here</a>.
-	FR	Le serveur Slim dispose de réglages de mise au point qui permettent d'enregistrer des informations détaillées sur son fonctionnement. Sélectionnez ci-dessous les éléments que vous voulez enregistrer. Les enregistrements les plus récents sont disponibles <a href="/log.txt" target="log">ici</a>.
-	PT	O servidor Slim tem várias opções de depuração que poderão ser usadas para gravar informação detalhada acerca das operações do servidor. Active as opções que deseja que sejam guardadas e selecione "Mudar" para começar a guardar a informação. Poderá ver as entradas mais recentes <a href="/log.txt" target="log">aqui</a>.
-	SE	Slim Servern har ett antal felsökningsinställningar som kan användas för att spara detaljerad information om serverns funktion. Fyll i de punkter som du skulle vilja logga för visning och klicka Ändra för att starta loggningen av de valda punkterna. Du kan visa de senast sparade loggningarna <a href="/log.txt" target="log">här</a>.
+	DK	SlimServer har et antal fejlsøgnings-indstillinger der kan benyttes til at logge detaljerede informationer omkring serverens arbejde. Afkryds de elementer du ønsker at logge og klik Gem for at begynde logning. Du kan se de nyeste log-informationer <a href="/log.txt" target="log">her</a>.
+	EN	The SlimServer has a number of debugging settings that can be used to record detailed information about the server's operation.  Check off the items that you'd like logged for display and click Change to start logging that information.  You can view the most recent log entries <a href="/log.txt" target="log">here</a>.
+	FR	Le SlimServer dispose de réglages de mise au point qui permettent d'enregistrer des informations détaillées sur son fonctionnement. Sélectionnez ci-dessous les éléments que vous voulez enregistrer. Les enregistrements les plus récents sont disponibles <a href="/log.txt" target="log">ici</a>.
+	PT	O SlimServer tem várias opções de depuração que poderão ser usadas para gravar informação detalhada acerca das operações do servidor. Active as opções que deseja que sejam guardadas e selecione "Mudar" para começar a guardar a informação. Poderá ver as entradas mais recentes <a href="/log.txt" target="log">aqui</a>.
+	SE	SlimServer har ett antal felsökningsinställningar som kan användas för att spara detaljerad information om serverns funktion. Fyll i de punkter som du skulle vilja logga för visning och klicka Ändra för att starta loggningen av de valda punkterna. Du kan visa de senast sparade loggningarna <a href="/log.txt" target="log">här</a>.
 
 DEBUGGING_SETTINGS
 	DE	Fehlerbeseitigung
@@ -4889,7 +4866,7 @@ MP3DIR_IS_NOW
 
 PORT_NUMBER
 	DE	Sie können die Port-Nummer ändern, die für den Server-Zugriff mit Hilfe eines Web-Browsers verwendet wird (Standard ist 9000).
-	DK	Du kan ændre hvilket port-nummer der anvendes til at tilgå Slim-serveren via en web-browser. (Standard er 9000).
+	DK	Du kan ændre hvilket port-nummer der anvendes til at tilgå SlimServer via en web-browser. (Standard er 9000).
 	EN	You can change the port number that is used to access the server from a web browser. (The default is 9000.)
 	ES	El número de puerto para acceder al servidor con navegador (9000 por defecto)
 	FI	Voit vaihtaa WWW-palvelimen käyttämää porttinumeroa. (Oletusasetus on 9000.)
@@ -4900,7 +4877,7 @@ PORT_NUMBER
 
 SCREENSAVER_TIMEOUT
 	DE	Der Player wird automatisch das aktuelle Lied anzeigen, nachdem Sie die Fernbedienung nicht mehr verwenden. Sie können die Wartezeit einstellen oder eine Null verwenden, um nie das aktuelle Lied anzuzeigen.
-	DK	Slim-afspilleren vil automatisk vise hvilken sang der afspilles hvis fjernbetjeningen ikke anvendes i en periode.
+	DK	SlimServer vil automatisk vise hvilken sang der afspilles hvis fjernbetjeningen ikke anvendes i en periode.
 	EN	The player will automatically show the currently playing song after you stop using the remote for some amount of time. You can change the duration of this wait below. Set this duration to zero to never automatically show the current song.
 	ES	El reproductor mostrará automaticamenta la canción actual si no usa el mando durante un tiempo determinado. Se puede cambiar este comportamiento e incluso desactivarlo introduciendo zero.
 	FI	Kun kaukosäätimen viimeisestä napin painalluksesta on kulunut hieman aikaa, palaa soittimen näyttöön soimassa olevan kappaleen nimi. Voit vaikuttaa tähän toimintoon.
@@ -4911,7 +4888,7 @@ SCREENSAVER_TIMEOUT
 
 DISPLAYTEXT_TIMEOUT
 	DE	Wenn Sie Text fŸr eine Suche eingeben, wird der Player nach einer gewissen Zeit zum nächsten Buchstaben springen. Bestimmen Sie hier die Wartezeit.
-	DK	Når du indtaster tekst til en søgning vil Slim-afspilleren gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
+	DK	Når du indtaster tekst til en søgning vil SlimServer gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
 	EN	When you are entering text for a search, the player will move on to the next letter after some amount of time. You can change the duration of this wait below.
 	FI	Syöttäessäsi tekstiä hakua varten, kursori siirtyy automaattisesti eteenpäin jonkin ajan kuluttua. Voit alla olevasta valinnasta säätää odottamiseen käytettyä aikaa.
 	FR	Le lecteur passera à la lettre suivante après un certain délai lors de la saisie de texte. Vous pouvez choisir ce délai ci-dessous.
@@ -4957,10 +4934,10 @@ CURRENT_WEB_SKIN
 
 DISPLAY_PLUGINS
 	DE	Anzeigen des Plugins Menü auf dem Slim Player:
-	DK	Viser Modul-menuen på Slim-afspilleren:
+	DK	Viser Modul-menuen på SlimServer:
 	EN	Display the Plugins menu on the Slim player:
 	FR	Afficher le menu Plugins sur le lecteur Slim :
-	NL	Toon het Plugins menu op de Slim speler:
+	NL	Toon het Plugins menu op de SlimServer:
 	PT	Mostrar menu de Extras no cliente Slim
 	SE	Visa tilläggs-menyn på Slim-spelaren:
 

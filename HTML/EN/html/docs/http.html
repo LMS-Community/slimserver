@@ -1,19 +1,19 @@
 [SET pageicon help]
-[SET title Slim Server Web Interface]
+[SET title SlimServer Web Interface]
 [SET techinfo 1]
 [INCLUDE helpheader.html]
 
 <h4>Overview</h4>
 <p>This document describes the interface to the HTTP server that's built into 
-  the Slim Server. </p>
-<p>The Slim Server provides an HTTP server that can be used to:</p>
+  the SlimServer. </p>
+<p>The SlimServer provides an HTTP server that can be used to:</p>
 <ol>
   <li> Browse the music library. </li>
   <li> View the status and playlist of the player.</li>
   <li> Control the player.</li>
   <li>Configure the server.</li>
 </ol>
-<p>When the Slim Server is started, it starts listening for HTTP connections 
+<p>When the SlimServer is started, it starts listening for HTTP connections 
   on the default port of 9000. </p>
 <p>The HTTP server may be accessed by the user with a traditional web browser 
   to navigate around the music library and control the player. The HTTP server 
@@ -21,7 +21,7 @@
   or <i>curl</i>, for example) as a way to access and control the player via HTTP.
   The server can return XML instead of HTML for such "automation" uses (see 
   <a href="xml_skin.html">The XML Skin</a> documentation.)</p>
-<p> In the examples in this document the Slim Server is running on a computer 
+<p> In the examples in this document the SlimServer is running on a computer 
   with the IP address of 10.0.1.201.</p>
 <h4>HTTP Access</h4>
 <p>To access the main page to control the player via a web browser use this URL: 
@@ -57,7 +57,7 @@
 		<p><b>Note: </b>Commands that use paths to songs or playlists can use relative paths from the root of the Music Library folder to specify songs.  For example, if the Music Library is specified as &quot;D:\mymusic&quot; and you'd like to refer to a song in that folder named &quot;foo.mp3&quot;  you can specify just &quot;foo.mp3&quot; in the command parameter.  Likewise, to refer to items in the Saved Playlist folder, you can use a prefix of  &quot;__playlists/&quot; before the path.  For example, to refer to the saved playlist &quot;bar.m3u&quot; in the Saved Playlists folder, you can specify a path of &quot;__playlists/bar.m3u&quot;.</p>
 		<h4>Commands</h4>
 <p>The following is a summary of the supported commands. Additional information
-  about the command set is available in the <a href="crestronCLI.html">Slim Server
+  about the command set is available in the <a href="crestronCLI.html">SlimServer
   Command Line Interface </a>documentation.</p>
 <table border="1" cellspacing=0 cellpadding=3>
   <tr> 
@@ -369,7 +369,7 @@
 <h4>
   Player Status
 </h4>
-<p>When you use the HTTP interface to control the Slim Server (and player) to 
+<p>When you use the HTTP interface to control the SlimServer (and player) to 
   obtain status the server returns a response that contains:</p>
 <ul>
   <li>A header indicating a content type</li>
@@ -526,8 +526,8 @@
 </table>
 
 <p>The following is an example of an HTTP status transactions.  
-The text in blue is sent from the client to the Slim Server HTTP server.  
-Text in red is returned by the Slim Server HTTP server.
+The text in blue is sent from the client to the SlimServer HTTP server.  
+Text in red is returned by the SlimServer HTTP server.
 </p>
 <pre><font color="#0000FF">
 GET /status.html?p0=pause&amp;p1=1 HTTP/1.0

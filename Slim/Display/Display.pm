@@ -1,8 +1,8 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.6 2003/08/09 06:43:26 dean Exp $
+# $Id: Display.pm,v 1.7 2003/11/10 23:14:56 dean Exp $
 
-# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.

@@ -4,12 +4,12 @@
 [INCLUDE helpheader.html]
 
 <h4>Introduction</h4>
-<p>The Slim Server provides a command-line interface to the Slim Devices players via standard in and out and
+<p>The SlimServer provides a command-line interface to the Slim Devices players via standard in and out and
   a TCP/IP port.  After starting the server, commands may be sent by connecting to a specific TCP/IP 
   port or directly from the command line.  Each command is terminated by a carriage return. The server will 
   reply echoing the request. If the request included a &quot;?&quot; in a parameter 
   to request a value from the server, the &quot;?&quot; will be replaced by the 
-  requested value in the reply.  By default, the Slim Server will listen for 
+  requested value in the reply.  By default, the SlimServer will listen for 
   connections on TCP/IP port 9090. This format is designed for ease of integration 
   into Crestron and other automation systems.</p><p>To use the command line interface interactively, use the telnet command from
   your system's command prompt:  <em>telnet localhost 9090</em> and when it connects, you can start typing commands.</p>
@@ -334,7 +334,7 @@ where: </p>
   debug &lt;d_debugflag&gt; 1<br>
   debug &lt;d_debugflag&gt;</strong></p>
 <p>The &quot;debug&quot; command allows the caller to query, clear, set or toggle 
-  the Slim Server's internal debug flags. Use 0 to clear, 1 to set, ? to query 
+  the SlimServer's internal debug flags. Use 0 to clear, 1 to set, ? to query 
   and no parameter to toggle the debug flag value.</p>
 <p>Examples:</p>
 <blockquote> 
@@ -350,7 +350,7 @@ where: </p>
 </blockquote>
 <hr>
 <p><strong>rescan</strong></p>
-<p>The &quot;rescan&quot; command allows the caller to have the Slim Server 
+<p>The &quot;rescan&quot; command allows the caller to have the SlimServer 
   rescan its music library, reloading the music file information.</p>
 <p>Examples:</p>
 <blockquote> 

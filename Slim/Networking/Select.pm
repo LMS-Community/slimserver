@@ -1,8 +1,8 @@
 package Slim::Networking::Select;
 
-# $Id: Select.pm,v 1.2 2003/10/31 23:22:42 dean Exp $
+# $Id: Select.pm,v 1.3 2003/11/10 23:14:59 dean Exp $
 
-# Slim Server Copyright (c) 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.

@@ -1,8 +1,8 @@
 package Slim::Utils::Strings;
 
-# $Id: Strings.pm,v 1.5 2003/09/29 22:40:35 dean Exp $
+# $Id: Strings.pm,v 1.6 2003/11/10 23:15:02 dean Exp $
 
-# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.

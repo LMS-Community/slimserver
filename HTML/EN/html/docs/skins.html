@@ -5,9 +5,9 @@
 
   <h4>Overview</h4>
   <p>
-    The web interface to the Slim Server makes use of customizable html
+    The web interface to the SlimServer makes use of customizable html
     templates collected together into a skin.  These skins reside in the
-    <strong>html</strong> subfolder of the folder where the Slim Server software was
+    <strong>html</strong> subfolder of the folder where the SlimServer software was
     installed.  The skin subfolders are presented for selection in the
     additional server settings setup page based on the name of the skin
     subfolder.  The default skin is in the <strong>EN</strong> subfolder.  Each
@@ -17,7 +17,7 @@
   </p>
   <p>
     When a page not in the <strong>html</strong> subfolder of either your skin
-    or the default skin is requested, the Slim Server builds the page
+    or the default skin is requested, the SlimServer builds the page
     dynamically based on the templates within the skin subfolder.  This building
     is accomplished by replacing items either contained in square brackets
     &#91; &#93; or framed with bracketed directives with the appropriate text.
@@ -25,7 +25,7 @@
   <hr />
   <h4>Directory Structure</h4>
     
-<em>Slim Server</em> 
+<em>SlimServer</em> 
 <ul>
   <li>html</li>
   <ul>
@@ -289,7 +289,7 @@
   end scratch area -->
 <hr />  <h4>Non-Template Requestable Items</h4>
   <p>
-    Certain requests made to the Slim Server HTTP server are fulfilled outside
+    Certain requests made to the SlimServer HTTP server are fulfilled outside
     of the template mechanism.  Some items are generated dynamically,
     while others are served up as the file exists on the server.  The
     static item requests are satisfied by following the mechanism of

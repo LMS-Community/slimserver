@@ -1,8 +1,8 @@
 package Slim::Hardware::mas3507d;
 
-# $Id: mas3507d.pm,v 1.3 2003/08/20 21:13:11 dean Exp $
+# $Id: mas3507d.pm,v 1.4 2003/11/10 23:14:58 dean Exp $
 
-# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.

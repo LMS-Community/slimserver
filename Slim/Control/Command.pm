@@ -1,8 +1,8 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.14 2003/10/06 06:40:56 kdf Exp $
+# $Id: Command.pm,v 1.15 2003/11/10 23:14:56 dean Exp $
 
-# Slim Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -449,13 +449,21 @@ sub execute {
 				# Append the zapped song to the zapped playlist
 				# This isn't as nice as it should be, but less work than loading and rewriting the whole list
 				my $zapref = new FileHandle $zapped, "a";
+
 				if ($zapref) {
+
 					my @zaplist = ($zapsong);
+
 					my $zapitem = Slim::Formats::Parse::writeM3U(\@zaplist);
+
 					print $zapref $zapitem;
+
 					close $zapref;
+
 				} else {
+
 					msg("Could not open $zapped for writing.\n");
+
 				}
 			}
 		} elsif ($p0 eq "mixer") {
