@@ -1,6 +1,6 @@
 package Slim::Formats::Ogg;
 
-# $Id: Ogg.pm,v 1.6 2003/12/20 07:10:36 dean Exp $
+# $Id: Ogg.pm,v 1.7 2003/12/24 04:27:18 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -16,6 +16,7 @@ package Slim::Formats::Ogg;
 ###############################################################################
 
 use strict;
+use Slim::Utils::Misc;
 
 # try and use the C based version of the Vorbis::Header if it exists
 # the ::PurePerl version is checked into Slim CVS, so it will always be available.
@@ -46,12 +47,22 @@ sub getTag {
 
 	# This hash will map the keys in the tag to their values.
 	my $tags = {};
+	my $ogg  = undef;
 
-	my $ogg  = $oggHeaderClass->new($file);
+	# some ogg files can blow up - especially if they are invalid.
+	eval {
+		local $^W = 0;
+		$ogg = $oggHeaderClass->new($file);
+	};
 
-	if (!$ogg) {
-			$::d_formats && msg("Can't open ogg handle for $file\n");
-			return $tags;
+	if (!$ogg or $@) {
+		$::d_formats && Slim::Utils::Misc::msg("Can't open ogg handle for $file\n");
+		return $tags;
+	}
+
+	if ($ogg->info('length') == 0) {
+		$::d_formats && Slim::Utils::Misc::msg("Length for Ogg file: $file is 0 - skipping.\n");
+		return $tags;
 	}
 
 	# why this is an array, I don't know.
