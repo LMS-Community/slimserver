@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.95 2004/05/27 07:10:23 kdf Exp $
+# $Id: Source.pm,v 1.96 2004/05/28 12:47:03 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1055,10 +1055,11 @@ sub underMax {
 	my $client = shift;
 	my $fullpath = shift;
 	
-	my $rate = (Slim::Music::Info::bitratenum($fullpath) || 0)/1000;
 	my $maxRate = Slim::Utils::Prefs::setMaxRate($client);
+	return 1 if $maxRate == 0;
 	return undef if !Slim::Utils::Misc::findbin('lame');
-	return ($maxRate >= $rate) || ($maxRate == 0);
+	my $rate = (Slim::Music::Info::bitratenum($fullpath) || 0)/1000;
+	return ($maxRate >= $rate);
 }
 
 sub getConvertCommand {
@@ -1078,7 +1079,8 @@ sub getConvertCommand {
 	my $audibleplayers   = 0;
 
 	my $undermax = underMax($client,$fullpath);
-
+	$::d_source && msg("undermax = $undermax, type = $type, $player = $clientid, lame = $lame\n");
+	
 	# make sure we only test formats that are supported.
 	foreach my $everyclient (@playergroup) {
 
