@@ -2,6 +2,7 @@
 [% pagetitle = 'Skin Creation' %]
 [% techinfo = '1' %]
 [% PROCESS helpheader.html %]
+[% TAGS star %]
 
   <h4>Overview</h4>
   <p>
@@ -19,8 +20,8 @@
     When a page not in the <strong>html</strong> subfolder of either your skin
     or the default skin is requested, the SlimServer builds the page
     dynamically based on the templates within the skin subfolder.  This building
-    is accomplished by replacing items either contained in square brackets
-    &#91; &#93; or framed with bracketed directives with the appropriate text.
+    is accomplished by gathering information relevant to the requested page in a
+    perl subroutine, then using that information to complete the template.
   </p>
   <hr />
   <h4>Directory Structure</h4>
@@ -46,173 +47,141 @@
   <li><em>other items...</em></li>
 </ul>
 <hr />
-  <h4>Template Syntax</h4>
-  <p>
+  <h4><a id="template-syntax" />Template Syntax</h4>
+    <p>
     The template files in the skin directory are primarily html, with some
-    server-side processing directives contained in square brackets added.  In
-    some cases they are complete pages, in others fragments which are meant to
-    be included into a surrounding page.  The interrelationships of the files
-    are discussed below in the <strong>Template Dependencies</strong> section of
-    this document.  The directives are discussed below in the <strong>Template
-    Directives</strong> section.
-  </p>
-  
-<p> When a dynamic page is requested, the server builds a parameter hash which 
-  is used along with the template to create the final html which is returned to 
-  the requestor. The server-side directives contain references to the keys of 
-  this parameter hash. For practical purposes this means that each template has 
-  a list of parameters available to it which it uses with the directives to produce 
-  the desired final text. The list of parameters available to each template is 
-  discussed below in the <strong>Template Parameters</strong> section.</p>
-  <hr />
-  <h4>Template Directives</h4>
-  <p>
-    Template directive outline conditions for text replacement.  The directives
-    are evaluated in the order below, one at a time, starting at the beginning of
-    the template and proceeding to the end, starting over for the next directive
-    type at the beginning.  The mechanism used is regular expression search and
-    replace, so certain restrictions apply.
+    server-side processing directives added.  In some cases they are complete
+    pages, in others fragments which are meant to be included into a surrounding
+    page.  The interrelationships of the files are discussed below in the 
+    <a href="#template-depend">Template Dependencies</a> section of this document.
   </p>
   <p>
-<ul>
-  <li>A directive cannot contain itself (even with a different parameter).</li>
-  <li>Different directives can be contained within each other.</li>
-  <li>Overlapping directives are also not allowed.</li>
-  <li>Line endings within the text portion of directives are allowed, so a directive 
-    may span multiple lines.</li>
-</ul>
+    SlimServer uses the freely available 
+    <a href="http://www.template-toolkit.org/">Template Toolkit</a> version 2.13
+    for its templates.  Full <a href="http://www.template-toolkit.org/docs/plain/index.html">
+    documentation is available at the linked web site.  Some of the simpler
+    directives are detailed in the <a href="#template-direct">Template
+    Directives</a> section.
+  </p>
+  <p>
+    When a dynamic page is requested, the server builds a parameter hash which 
+    is used along with the template to create the final html which is returned to 
+    the requestor. The server-side directives contain references to the keys of 
+    this parameter hash. For practical purposes this means that each template has 
+    a list of parameters available to it which it uses with the directives to produce 
+    the desired final text. The list of parameters available to each template is 
+    discussed below in the <a href="#template-param">Template Parameters</a> section.
+  </p>
+<hr />
+  <h4><a id="template-direct">Template Directives</h4>
+  <p>
+    The following are some of the simpler directives made available through the
+    Template Toolkit.  Note that directives may be nested as needed.  For more
+    advanced uses, please read the documentation at the Template Toolkit website.
+  </p>
+  <p>
+    All directives under Template Toolkit are bracketed by <strong>[%</strong>
+    and <strong>%]</strong>.
+  </p>
   <dl>
-    <dt><strong>&#91;EVAL&#93; <var>text</var> &#91;/EVAL&#93;</strong></dt>
+    <dt><strong>[% GET <var>param</var> %]</strong></dt>
+    <dt><strong>[% <var>param</var> %]</strong></dt>
     <dd>
-      The <strong>EVAL</strong> directive executes the perl code which it frames
-      (the <var>text</var>).  The code should set a variable named $out to a
-      string which will replace the directive.  It is acceptable to not set $out
-      to anything, in which case the directive will be replaced by an empty
-      string. If the code should fail, the directive will be replaced with the
-      word &quot;ERROR&quot;.
+      This directive is replaced by the value of <var>param</var>
     </dd>
-    <dt><strong>&#123;%<var>param</var>&#125;</strong></dt>
+    <dt><strong>[% SET <var>param</var> = <var>value</var> %]</strong></dt>
+    <dt><strong>[% <var>param</var> = <var>value</var> %]</strong></dt>
     <dd>
-      The <strong>%</strong> directive is replaced with the URL escaped value
-      of <var>param</var> (for example, spaces become %20, / becomes %2f, etc.).
-      If <var>param</var> is undefined, the directive is replaced with the empty
-      string.
+      This directive sets <var>param</var> to <var>value</var>.
     </dd>
-    <dt><strong>&#123;&amp;<var>param</var>&#125;</strong></dt>
+    <dt><strong>[% IF <var>expression</var> %]<var>text</var>[% END %]</strong></dt>
+    <dt><strong>[% UNLESS <var>expression</var> %]<var>text</var>[% END %]</strong></dt>
+    <dt><strong>[% IF <var>expression</var> %]<var>text1</var>[% ELSE %]<var>text2</var>[% END %]</strong></dt>
+    <dt><strong>[% IF <var>expression1</var> %]<var>text1</var>[% ELSIF <var>expression2</var> %]<var>text2</var>[% ELSE %]<var>text3</var>[% END %]</strong></dt>
     <dd>
-      The <strong>&amp;</strong> directive is replaced with the HTML encoded value
-      of <var>param</var> (for example, &lt; becomes &amp;lt;, &gt; becomes &amp;gt;,
-      etc.). If <var>param</var> is undefined, the directive is replaced with the
-      empty string.
+      The <strong>IF</strong> directive evaluates <var>expression</var> according
+      to standard perl rules.  If <var>expression</var> evaluates true, the directive
+      is replaced by the contents of <var>text</var>, which may itself contain
+      directives.  If <var>expression</var> evaluates false, the directive is
+      replaced by the empty string.  <var>expression</var> can be almost any valid
+      perl expression, for example it could take the form of <var>param</var>
+      <var>comparator</var> <var>value</var>, where <var>comparator</var> is one of
+      &lt;, &lt;=, ==, !=, =&gt;, &gt;, lt, le, eq, ne, ge, gt.
     </dd>
-    <dt><strong>&#123;<var>param</var>&#125;</strong></dt>
     <dd>
-      This directive is replaced with the value of <var>param</var>.  If
-      <var>param</var> is undefined, the directive is replaced with the empty
-      string.
+      The <strong>UNLESS</strong> is the opposite, replacing with the empty string
+      if <var>expression</var> is true, and with <var>text</var> if <var>expression</var>
+      is false.
     </dd>
-    <dt><strong>&#91;S <var>string</var>&#93;</strong></dt>
     <dd>
-      The <strong>S</strong> directive is replaced by the language specific
-      string defined for <var>string</var> in strings.txt.  If <var>string</var>
-      is not defined for the current language, the default language definition
-      is used.  If <var>string</var> is also not defined for the default language
-      the directive is replaced by the empty string.
+      If an <strong>ELSE</strong> directive is present the <var>text2</var> replaces
+      the entire <strong>IF</strong>/<strong>UNLESS</strong> block instead of the empty
+      string.  The <strong>ELSIF</strong> directive provides a means of chaining together
+      multiple <var>expressions</var> to control the replacement text.
     </dd>
-    <dt><strong>&#91;SET <var>name</var> <var>value</var>&#93;</strong></dt>
+    <dt><strong>[% FILTER <var>filtername</var> %] <var>filtertext</var> [% END %]</strong></dt>
+    <dt><strong>[% <var>filtertext</var> | <var>filtername</var> %]</strong></dt>
     <dd>
-      Using the <strong>SET</strong> directive will set the parameter with the
-      given <var>name</var> to the given <var>value</var>. This is useful with
-      the <strong>INCLUDE</strong> directive for setting values in subsequently
-      included files, as well with IF and other conditional directives for
-      changing the HTML dynamically.
-    <dt><strong>&#91;IF <var>param</var>&#93; <var>text</var> &#91;/IF&#93;</strong></dt>
-    <dd>
-      The <strong>IF</strong> directive evaluates <var>param</var> according to
-      standard perl rules.  If <var>param</var> evaluates to true, then
-      <var>text</var> is included in the final output, otherwise the directive is
-      replaced by an empty string.  Under the standard perl rules,
-      <var>param</var> is false if it has a value of 0 (or &quot;0&quot;), is
-      undefined (does not exist), or is the empty string (&quot;&quot;).
+      The <strong>FILTER</strong> directive takes <var>filtertext</var> and processes
+      it using the filter <var>filtername</var>.  For more info see the
+      <a href="#template-filter">Template Filters</a> section.
     </dd>
-    <dt><strong>&#91;IFN <var>param</var>&#93; <var>text</var> &#91;/IFN&#93;</strong></dt>
+    <dt><strong>[% INSERT <var>file</var> %]</strong></dt>
+    <dt><strong>[% INCLUDE <var>file</var> %]</strong></dt>
+    <dt><strong>[% PROCESS <var>file</var> %]</strong></dt>
     <dd>
-      The <strong>IFN</strong> directive works the same as the
-      <strong>IF</strong> directive, except that <var>text</var> is included if
-      <var>param</var> evaluates to false instead of true.
-    </dd>
-    <dt><strong>&#91;EQ <var>param</var> <var>value</var>&#93; <var>text</var> &#91;/EQ&#93;</strong></dt>
-    <dd>
-      The <strong>EQ</strong> directive evaluates <var>param</var> to see if its
-      value is equal to <var>value</var>.  If so, <var>text</var> is included in the
-      final output, otherwise the empty string replaces the directive.  If
-      <var>param</var> is undefined, it is considered to be not equal to
-      <var>value</var>.
-    </dd>
-    <dt><strong>&#91;NE <var>param</var> <var>value</var>&#93; <var>text</var> &#91;/NE&#93;</strong></dt>
-    <dd>
-      The <strong>NE</strong> directive works the same as the
-      <strong>EQ</strong> directive, except that <var>text</var> is included if
-      the value of <var>param</var> is not equal to <var>value</var>.  Once again,
-      if <var>param</var> is undefined, it is considered to be not equal to
-      <var>value</var>, so <var>text</var> would be included in that case.
-    </dd>
-    <dt><strong>&#91;GT <var>param</var> <var>value</var>&#93; <var>text</var> &#91;/GT&#93;</strong></dt>
-    <dd>
-      The <strong>GT</strong> directive evaluates <var>param</var> to see if its
-      value is greater than <var>value</var>.  If so, <var>text</var> is included in the
-      final output, otherwise the empty string replaces the directive.  If
-      <var>param</var> is undefined, it is considered to be not greater than
-      <var>value</var>.
-    </dd>
-    <dt><strong>&#91;LT <var>param</var> <var>value</var>&#93; <var>text</var> &#91;/LT&#93;</strong></dt>
-    <dd>
-      The <strong>LT</strong> directive evaluates <var>param</var> to see if its
-      value is less than <var>value</var>. If so, <var>text</var> is included in the
-      final output, otherwise the empty string replaces the directive. If
-      <var>param</var> is undefined, it is considered to be not less than
-      <var>value</var>.
-    </dd>
-    <dt><strong>&#91;INCLUDE <i>html/path/here.html</i>&#93;</strong></dt>
-    <dd>
-      Using the <strong>INCLUDE</strong> directive will include the parsed
-      contents of the file in html/path/here.html in the output. Useful for
-      sharing content across several html template files.
-    </dd>
-    <dt><strong>&#91;STATIC <i>html/path/here.html</i>&#93;</strong></dt>
-    <dd>
-      Using the <strong>STATIC</strong> directive will include the parsed
-      contents of the file in html/path/here.html in the output, but will not parse the file for 
-      template directives.
-    </dd>
-    <dt><strong>&#91;NB&#93;<var>text</var>&#91;/NB&#93;</strong></dt>
-    <dd>
-      The <strong>NB</strong> directive replaces spaces in <var>text</var> with
-      &amp;nbsp; in order to prevent line wrapping in the middle of <var>text</var>.
-    </dd>
-    <dt><strong>&#91;E&#93;<var>text</var>&#91;/E&#93;</strong></dt>
-    <dd>
-      The <strong>E</strong> directive replaces <var>text</var> with its URL
-      escaped equivalent.
-    </dd>
-    <dt><strong>&amp;lsqb;</strong></dt>
-    <dt><strong>&amp;rsqb;</strong></dt>
-    <dt><strong>&amp;lbrc;</strong></dt>
-    <dt><strong>&amp;rbrc;</strong></dt>
-    <dd>
-      Not really directives, but also not standard html.  These strings are
-      replaced by &#91; (for <strong>&amp;lsqb;</strong>), &#93;
-      (for <strong>&amp;rsqb;</strong>), &#123; (for <strong>&amp;lbrc;</strong>),
-      and &#125; (for <strong>&amp;rbrc;</strong>).  They are used to avoid having normal
-      text interpreted as a directive.  The use of <strong>&amp;#91;</strong>
-      for &#91;, <strong>&amp;#93;</strong> for &#93;, <strong>&amp;#123;</strong> for
-      &#123;, and <strong>&amp;#125;</strong> for &#125; would also work, and
-      would be standard html.
+      These directives allow you to build the output using multiple files.  The
+      <strong>INSERT</strong> directive adds the contents of <var>file</var> to
+      the output without any additional processing.  The <strong>INCLUDE</strong>
+      directive makes a copy of the parameter hash and uses this copy in processing
+      <var>file</var> with Template Toolkit.  The <strong>PROCESS</strong> directive
+      is the same as <strong>INCLUDE</strong>, except that the parameter hash is not
+      copied first.  This means that if the template is processed using a
+      <strong>PROCESS</strong> directive, any <strong>SET</strong> directives in
+      that template will be able to change parameters in the current template, whereas
+      if the <strong>INCLUDE</strong> directive were used the current parameters
+      would not be able to be changed by the processed template.
     </dd>
   </dl>
+<hr />
+  <h4><a id="template-plugin" />Template Plugins</h4>
+  <p>
+    Template Toolkit supports the use of plugins to add functionality.  These
+    are different from SlimServer plugins.  There are currently no SlimServer
+    specific plugins implemented.  The standard Template Toolkit plugins are
+    available, except for those that require the use of other CPAN modules
+    that have not already been included with SlimServer.
   </p>
-  <hr />
-  <h4>Template Dependencies</h4>
+<hr />
+  <h4><a id="template-filter" />Template Filters</h4>
+  <p>
+    Template Toolkit makes use of perl functions called filters to perform processing
+    of text.  SlimServer includes all the standard Template Toolkit filters, plus
+    some additional ones described here.
+  </p>
+  <dl>
+    <dt><strong>nbsp</strong></dt>
+    <dd>
+      This filter converts all spaces in the filter text to &amp;nbsp; to prevent the
+      filtered text from wrapping.
+    </dd>
+    <dt><strong>string</strong></dt>
+    <dd>
+      This filter uses Slim::Utils::Strings::string to localize the filter text.
+    </dd>
+    <dt><strong>uri</strong></dt>
+    <dd>
+      This filter replaces the standard Template Toolkit <strong>uri</strong> filter
+      with URI::Escape::uri_escape.
+    </dd>
+    <dt><strong>unuri</strong></dt>
+    <dd>
+      This filter uses URI::Escape::uri_unescape to change from uri escaped text
+      to normal text.
+    </dd>
+  </dl>
+<hr />
+  <h4><a id="template-depend" />Template Dependencies</h4>
   <p>
     Only a subset of the templates used are directly requestable from the web
     interface.  The others are used to fill in parameters for the requestable
@@ -978,4 +947,236 @@
       </dl>
     </dd>
   </dl>
+<hr />
+  <h4><a id="oldtemplate-syntax" />Old Template Syntax</h4>
+  <p>
+    The template files in the skin directory are primarily html, with some
+    server-side processing directives contained in square brackets added.  In
+    some cases they are complete pages, in others fragments which are meant to
+    be included into a surrounding page.  The interrelationships of the files
+    are discussed below in the <strong>Template Dependencies</strong> section of
+    this document.  The directives are discussed below in the <strong>Template
+    Directives</strong> section.
+  </p>
+  
+<p> When a dynamic page is requested, the server builds a parameter hash which 
+  is used along with the template to create the final html which is returned to 
+  the requestor. The server-side directives contain references to the keys of 
+  this parameter hash. For practical purposes this means that each template has 
+  a list of parameters available to it which it uses with the directives to produce 
+  the desired final text. The list of parameters available to each template is 
+  discussed below in the <strong>Template Parameters</strong> section.</p>
+  <hr />
+  <h4><a id="oldtemplate-direct">Old Template Directives</h4>
+  <p>
+    Template directive outline conditions for text replacement.  The directives
+    are evaluated in the order below, one at a time, starting at the beginning of
+    the template and proceeding to the end, starting over for the next directive
+    type at the beginning.  The mechanism used is regular expression search and
+    replace, so certain restrictions apply.
+  </p>
+  <p>
+<ul>
+  <li>A directive cannot contain itself (even with a different parameter).</li>
+  <li>Different directives can be contained within each other.</li>
+  <li>Overlapping directives are also not allowed.</li>
+  <li>Line endings within the text portion of directives are allowed, so a directive 
+    may span multiple lines.</li>
+</ul>
+  <dl>
+    <dt><strong>[EVAL] <var>text</var> [/EVAL]</strong></dt>
+    <dd>
+      The <strong>EVAL</strong> directive executes the perl code which it frames
+      (the <var>text</var>).  The code should set a variable named $out to a
+      string which will replace the directive.  It is acceptable to not set $out
+      to anything, in which case the directive will be replaced by an empty
+      string. If the code should fail, the directive will be replaced with the
+      word &quot;ERROR&quot;.
+    </dd>
+    <dd>
+      Replaced by <strong>[% PERL %] <var>text</var> [% END %]</strong>
+      under Template Toolkit.  Using this definitely will require reading the
+      Template Toolkit documentation thoroughly.
+    </dd>
+    <dt><strong>{%<var>param</var>}</strong></dt>
+    <dd>
+      The <strong>%</strong> directive is replaced with the URL escaped value
+      of <var>param</var> (for example, spaces become %20, / becomes %2f, etc.).
+      If <var>param</var> is undefined, the directive is replaced with the empty
+      string.
+    </dd>
+    <dd>
+      Replaced by <strong>[% <var>param</var> | uri %]</strong> under Template Toolkit.
+    </dd>
+    <dt><strong>{&amp;<var>param</var>}</strong></dt>
+    <dd>
+      The <strong>&amp;</strong> directive is replaced with the HTML encoded value
+      of <var>param</var> (for example, &lt; becomes &amp;lt;, &gt; becomes &amp;gt;,
+      etc.). If <var>param</var> is undefined, the directive is replaced with the
+      empty string.
+    </dd>
+    <dd>
+      Replaced by <strong>[% <var>param</var> | html %]</strong> under Template Toolkit.
+    </dd>
+    <dt><strong>{<var>param</var>}</strong></dt>
+    <dd>
+      This directive is replaced with the value of <var>param</var>.  If
+      <var>param</var> is undefined, the directive is replaced with the empty
+      string.
+    </dd>
+    <dd>Replaced by <strong>[% <var>param</var> %]</strong> under Template Toolkit.</dd>
+    <dt><strong>[S <var>string</var>]</strong></dt>
+    <dd>
+      The <strong>S</strong> directive is replaced by the language specific
+      string defined for <var>string</var> in strings.txt.  If <var>string</var>
+      is not defined for the current language, the default language definition
+      is used.  If <var>string</var> is also not defined for the default language
+      the directive is replaced by the empty string.
+    </dd>
+    <dd>Replaced by <strong>[% <var>string</var> | string %]</strong> under Template Toolkit.</dd>
+    <dt><strong>[SET <var>name</var> <var>value</var>]</strong></dt>
+    <dd>
+      Using the <strong>SET</strong> directive will set the parameter with the
+      given <var>name</var> to the given <var>value</var>. This is useful with
+      the <strong>INCLUDE</strong> directive for setting values in subsequently
+      included files, as well with IF and other conditional directives for
+      changing the HTML dynamically.
+    </dd>
+    <dd>
+      Replaced by <strong>[% <var>param</var> = <var>value</var> %]</strong> under Template Toolkit.
+    </dd>
+    <dt><strong>[IF <var>param</var>] <var>text</var> [/IF]</strong></dt>
+    <dd>
+      The <strong>IF</strong> directive evaluates <var>param</var> according to
+      standard perl rules.  If <var>param</var> evaluates to true, then
+      <var>text</var> is included in the final output, otherwise the directive is
+      replaced by an empty string.  Under the standard perl rules,
+      <var>param</var> is false if it has a value of 0 (or &quot;0&quot;), is
+      undefined (does not exist), or is the empty string (&quot;&quot;).
+    </dd>
+    <dd>
+      Replaced by <strong>[% IF <var>param</var> %] <var>text</var> [% END %]</strong>
+      under Template Toolkit.
+    </dd>
+    <dt><strong>[IFN <var>param</var>] <var>text</var> [/IFN]</strong></dt>
+    <dd>
+      The <strong>IFN</strong> directive works the same as the
+      <strong>IF</strong> directive, except that <var>text</var> is included if
+      <var>param</var> evaluates to false instead of true.
+    </dd>
+    <dd>
+      Replaced by <strong>[% IF not <var>param</var> %] <var>text</var> [% END %]</strong>
+      under Template Toolkit.
+    </dd>
+    <dt><strong>[EQ <var>param</var> <var>value</var>] <var>text</var> [/EQ]</strong></dt>
+    <dd>
+      The <strong>EQ</strong> directive evaluates <var>param</var> to see if its
+      value is equal to <var>value</var>.  If so, <var>text</var> is included in the
+      final output, otherwise the empty string replaces the directive.  If
+      <var>param</var> is undefined, it is considered to be not equal to
+      <var>value</var>.
+    </dd>
+    <dd>
+      Replaced by <strong>[% IF <var>param</var> == <var>value</var> %]
+      <var>text</var> [% END %]</strong> or <strong>[% IF <var>param</var> eq
+      <var>value</var> %] <var>text</var> [% END %]</strong> (depending on
+      whether you are comparing numbers or strings) under Template Toolkit.
+    </dd>
+    <dt><strong>[NE <var>param</var> <var>value</var>] <var>text</var> [/NE]</strong></dt>
+    <dd>
+      The <strong>NE</strong> directive works the same as the
+      <strong>EQ</strong> directive, except that <var>text</var> is included if
+      the value of <var>param</var> is not equal to <var>value</var>.  Once again,
+      if <var>param</var> is undefined, it is considered to be not equal to
+      <var>value</var>, so <var>text</var> would be included in that case.
+    </dd>
+    <dd>
+      Replaced by <strong>[% IF <var>param</var> != <var>value</var> %]
+      <var>text</var> [% END %]</strong> or <strong>[% IF <var>param</var> ne
+      <var>value</var> %] <var>text</var> [% END %]</strong> (depending on
+      whether you are comparing numbers or strings) under Template Toolkit.
+    </dd>
+    <dt><strong>[GT <var>param</var> <var>value</var>] <var>text</var> [/GT]</strong></dt>
+    <dd>
+      The <strong>GT</strong> directive evaluates <var>param</var> to see if its
+      value is greater than <var>value</var>.  If so, <var>text</var> is included in the
+      final output, otherwise the empty string replaces the directive.  If
+      <var>param</var> is undefined, it is considered to be not greater than
+      <var>value</var>.
+    </dd>
+    <dd>
+      Replaced by <strong>[% IF <var>param</var> &gt; <var>value</var> %]
+      <var>text</var> [% END %]</strong> or <strong>[% IF <var>param</var> gt
+      <var>value</var> %] <var>text</var> [% END %]</strong> (depending on
+      whether you are comparing numbers or strings) under Template Toolkit.
+    </dd>
+    <dt><strong>[LT <var>param</var> <var>value</var>] <var>text</var> [/LT]</strong></dt>
+    <dd>
+      The <strong>LT</strong> directive evaluates <var>param</var> to see if its
+      value is less than <var>value</var>. If so, <var>text</var> is included in the
+      final output, otherwise the empty string replaces the directive. If
+      <var>param</var> is undefined, it is considered to be not less than
+      <var>value</var>.
+    </dd>
+    <dd>
+      Replaced by <strong>[% IF <var>param</var> &lt; <var>value</var> %]
+      <var>text</var> [% END %]</strong> or <strong>[% IF <var>param</var> lt
+      <var>value</var> %] <var>text</var> [% END %]</strong> (depending on
+      whether you are comparing numbers or strings) under Template Toolkit.
+    </dd>
+    <dt><strong>[INCLUDE <i>html/path/here.html</i>]</strong></dt>
+    <dd>
+      Using the <strong>INCLUDE</strong> directive will include the parsed
+      contents of the file in html/path/here.html in the output. Useful for
+      sharing content across several html template files.
+    </dd>
+    <dd>
+      Replaced by <strong>[% PROCESS <i>html/path/here.html</i> %]</strong> under Template Toolkit.
+    </dd>
+    <dt><strong>[STATIC <i>html/path/here.html</i>]</strong></dt>
+    <dd>
+      Using the <strong>STATIC</strong> directive will include the parsed
+      contents of the file in html/path/here.html in the output, but will not parse the file for 
+      template directives.
+    </dd>
+    <dd>
+      Replaced by <strong>[% INSERT <i>html/path/here.html</i> %]</strong> under Template Toolkit.
+    </dd>
+    <dt><strong>[NB]<var>text</var>[/NB]</strong></dt>
+    <dd>
+      The <strong>NB</strong> directive replaces spaces in <var>text</var> with
+      &amp;nbsp; in order to prevent line wrapping in the middle of <var>text</var>.
+    </dd>
+    <dd>
+      Replaced by <strong>[% FILTER nbsp %]<var>text</var> [% END %]</strong> under Template Toolkit.
+    </dd>
+    <dt><strong>[E]<var>text</var>[/E]</strong></dt>
+    <dd>
+      The <strong>E</strong> directive replaces <var>text</var> with its URL
+      escaped equivalent.
+    </dd>
+    <dd>
+      Replaced by <strong>[% FILTER uri %]<var>text</var> [% END %]</strong> under Template Toolkit.
+    </dd>
+    <dt><strong>&amp;lsqb;</strong></dt>
+    <dt><strong>&amp;rsqb;</strong></dt>
+    <dt><strong>&amp;lbrc;</strong></dt>
+    <dt><strong>&amp;rbrc;</strong></dt>
+    <dd>
+      Not really directives, but also not standard html.  These strings are
+      replaced by [ (for <strong>&amp;lsqb;</strong>), ]
+      (for <strong>&amp;rsqb;</strong>), { (for <strong>&amp;lbrc;</strong>),
+      and } (for <strong>&amp;rbrc;</strong>).  They are used to avoid having normal
+      text interpreted as a directive.  The use of <strong>&amp;#91;</strong>
+      for [, <strong>&amp;#93;</strong> for ], <strong>&amp;#123;</strong> for
+      {, and <strong>&amp;#125;</strong> for } would also work, and
+      would be standard html.
+    </dd>
+    <dd>
+      Not needed under Template Toolkit.
+    </dd>
+  </dl>
+  </p>
+  <hr />
+[* TAGS template *]
 [% PROCESS helpfooter.html %]
