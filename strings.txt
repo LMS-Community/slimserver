@@ -382,6 +382,7 @@ ZAPPED_SONGS
 
 ADDING_TO_PLAYLIST
 	DE	Am Ende der Playlist hinzufügen:
+	DE	Hinzufügen und als nächstes spielen:
 	DK	Tilføjer til slutning af playlisten:
 	EN	Adding to end of playlist:
 	ES	Añadiendo a la lista:
@@ -1079,7 +1080,7 @@ SETUP_IRMAP
 	SE	Knappfunktioner på fjärrkontroll
 
 SETUP_IRMAP_DESC
-	DE	Sie können zwischen den Tastenfunktion Sets auswählen. Diese Sets bilden genau die Funktionen auf der Fernbedienung ab. Das "Standart" Set ist in der Dokumentation beschrieben.
+ 	DE	Sie können zwischen den Tastenfunktion Sets auswählen. Diese Sets bilden genau die Funktionen auf der Fernbedienung ab. Das "Default" Set ist in der Dokumentation beschrieben.
 	EN	You can choose between button function sets. These sets map particular buttons on the infrared remote to particular functions. The "Default" set is the one that is described in the documentation.
 	FR	Vous pouvez choisir entre plusieurs jeux de boutons de fonctions. Ces jeux de configuration permettent d'associer les boutons de la télécommande aux fonctions disponibles. Le jeu intitulé "Défaut" est celui documenté dans le manuel.
 	NL	U kan kiezen uit verschillende Knop Functie sets. Deze sets koppelen bepaalde knoppen op de infrarood afstansbediening aan bepaalde functies. The "Standaard" set is degene die beschreven staat in de documentatie.
@@ -1098,24 +1099,28 @@ SETUP_IRSETLIST_CHANGE
 	DE	Einstellungen für %s sind gespeichert.
 	EN	Setting for %s was changed.
 	FR	Le réglage pour %s a été modifié.
+	DE	Automatische Anzeigehelligkeit
 	NL	Instelling voor %s is aangepast.
 	PT	A opção para %s mudou.
 	SE	Inställningen för %s är ändrad.
 
 SETUP_PLUGINLIST_OK
 	DE	Plugins:
+	DE	Die Helligkeit der SLIMP3 Anzeige kann sich automatisch anpassen, wenn Sie einen Knopf drücken, einen Titel abspielen oder eine zeitlang nichts tun. Sie können dieses automatische Verhalten abschalten.
 	EN	Plugins:
 	FR	Plugins :
 	NL	Plugins:
 	PT	Extras
 	SE	Tillägg:
 
+	DE	Helligkeit von hand anpassen
 SETUP_PLUGINLIST_CHANGE
 	DE	Einstellungen für %s sind gespeichert.
 	EN	Setting for %s was changed.
 	FR	Le réglage pour %s a été modifié.
 	NL	Instelling voor %s is aangepast.
 	PT	A opção para %s mudou.
+	DE	Helligkeit automatisch anpassen
 	SE	Inställning for %s är ändrad.
 
 SETUP_PASSWORD_CHANGED
@@ -1530,7 +1535,7 @@ SETUP_CLIPORT_DESC
 	SE	Du kan ändra portnumret som används för att via ett terminalgränssnitt kontrollera din player. (Sätt värdet till 0 (noll) för att avaktivera terminalgränssnittet.)
 
 SETUP_CLIPORT_OK
-	DE	Der folgende Port für die Kommandozeilen-Schnittstelle wird verwendet:
+	DE	Der folgende Port wird für die Kommandozeilen-Schnittstelle verwendet:
 	DK	Anvender nu følgende port til Command Line Interfacet:
 	EN	Now using the following port for the command line interface:
 	ES	Utilizando puerto:
@@ -1618,30 +1623,35 @@ SETUP_TRANSCODE-WAV_DESC
 	DE	Wenn Sie LAME installiert haben, kann der Slim Server Ihre WAV und AIFF Dateien automatisch zum Abspielen auf dem Slim Player konvertieren. 
 	EN	If you have LAME installed, you can have your Slim Server convert your uncompressed WAV and AIFF music files on-the-fly for playback on your Slim player.
 	FR	Si vous disposez de LAME, le serveur Slim peut convertir en temps réel vos morceaux non-compressés au format WAV et/ou AIFF pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant sur le serveur pendant la lecture et n'est pas stockée sur le disque.
+	DE	Bilder der Plattenhülle werden, falls vorhanden, beim Anschauen der Album- oder Titelinformationen angezeigt. Sie befinden sich in den ID3 tags für einen einzelnen Titel, oder im selben Verzeichnis, wie die Titel Dateien.  Per Voreinstellung werden Dateien mit den folgenden Namen benutzt:"cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", "thumb.jpg".  Sie können einen zusätzlichen Dateinamen für die Plattenhülle festlegen und unterschiedliche Namen für kleine und grosse Bilder verwenden.
 	NL	Indien U LAME geinstalleerd hebt kan U de Slim instellen om niet gecomrimeerde WAV en AIFF bestanden om te zetten zodat deze kunnen afgespeeld worden op de Slim speler.
 	PT	Se tiver instalado no sistema o LAME (utilitários de MP3), pode configurar o servidor Slim para converter automaticamente os ficheiros WAV e AIFF para MP3, de forma a serem usados no cliente Slim.
 
 SETUP_TRANSCODE-WAV_OK
 	DE	WAV und AIFF Dateien
 	EN	WAV and AIFF Files
+	DE	Dateiname der Plattenhülle:
 	FR	Fichiers WAV et AIFF
 	NL	WAV en AIFF bestanden
 	PT	Ficheiros WAV e AIFF
 
 SETUP_TRANSCODE-WAV_1
 	DE	Automatisch konvertieren
+	DE	Dateiname der Plattenhülle (klein)
 	EN	Convert automatically
 	FR	Convertir automatiquement
 	NL	Automatisch omzetten
 	PT	Converter automaticamente
 
 SETUP_TRANSCODE-WAV_0
+	DE	Dateiname der Plattenhülle
 	DE	Nicht automatisch konvertieren
 	EN	Don't convert automatically
 	FR	Ne pas convertir
 	NL	Niet omzetten
 	PT	Não converter automaticamente
 
+	DE	Dateiname der Plattenhülle (klein):
 SETUP_TRANSCODE-MOV
 	EN	Convert QuickTime & AAC Files
 	FR	Conversion des fichiers QuickTime et AAC
@@ -1789,12 +1799,14 @@ SETUP_SCREENSAVERJUMP_DESC
 	PT	O cliente mostra automaticamente a música actualmente a tocar depois depois de algum tempo sem usar o controlo remoto. Pode mudar o comportamento do cliente depois de voltar a usar o controlo remoto.
 	SE	Spelaren kommer efter en fördröjning automatiskt hoppa till "Spelas nu" när du inte använder fjärrkontrollen.<br>Här kan du välja vad som skall hända om du använder fjärrkontrollen igen.
 
+	DE	QuickTime & AAC Dateien konvertieren
 SETUP_SCREENSAVERJUMP_CHOOSE
 	DE	Wenn sie die Fernbedienung verwenden, nachdem der Bildschirmschoner eingeschaltet ist:
 	DK	Når du anvender fjernbetjeningen når pauseskærmen bliver vist.
 	EN	When you use the remote after the screensaver starts:
 	FI	Käyttäessäsi kaukosäädintä näytönsäästäjän ollessa päällä:
 	FR	Lorsque vous utilisez votre télécommande après l'activation de l'économiseur d'écran :
+	DE	Nur Macintosh OS X: Wenn Sie LAME installiert haben, kann Ihr SLIMP3 Server QuickTime Filme und AAC Musik Dateien in Echtzeit für das Abspielen auf Ihrem SLIMP3 Player konvertieren.
 	NL	Als U de afstandsbediening gebruikt na het starten van de screensaver:
 	PT	Quando usa o controlo remoto depois de começar a protecção de ecrã
 	SE	Om du använder fjärrkontrollen efter att skärmsläckaren startats:
@@ -1807,12 +1819,14 @@ SCREENSAVERJUMP_BACK
 	FR	Retourner au dernier endroit visité
 	NL	Ga terug naar de laatste locatie die U bezocht met de afstandsbediening.
 	PT	Voltar ao ultimo menu selecionado com o controlo remoto.
+	DE	Automatisch konvertieren
 	SE	Återgå till där du var innan.
 
 SCREENSAVERJUMP_STAY
 	DE	Im aktuellen Abspiel-Bereich bleiben.
 	DK	Forbliv i Afspiller nu området.
 	EN	Stay in the Now Playing area.
+	DE	Nicht automatisch konvertieren
 	FI	Pysy siinä missä olet.
 	FR	Rester dans la section Lecture
 	NL	Blijf in 'Speelt nu'.
@@ -1847,21 +1861,25 @@ SETUP_DISPLAYTEXTTIMEOUT_CHOOSE
 	FR	Délai en secondes :
 	NL	Wachttijd in seconden:
 	PT	Tempo de espera, em segundos
+	DE	Software Aktualisierungen
 	SE	Fördröjning i sekunder:
 
 SETUP_THROTTLESCAN
 	DE	Musik Durchsuchungsgeschwindigkeit:
 	DK	Hastighed for gennemlæsning af musik
+	DE	Der Server kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Software Version vorhanden ist. Falls ja, erscheint eine Meldung im SLIMP3 Web Interface.
 	EN	Music scan speed
 	ES	Velocidad del escaneo de la música:
 	FI	Musiikin lukunopeus
 	FR	Vitesse de mise à jour du dossier de musique :
 	NL	Snelheid voor muziek doorzoeken:
+	DE	Automatisch nach aktueller Software suchen
 	PT	Velocidade de pesquisa da música
 	SE	Hastighet på inläsning av musikfiler:
 
 SETUP_THROTTLESCAN_DESC
 	DE	Wenn der Server damit beginnt, in Ihrem Musikverzeichnis in den ID-Tags der MP3 Dateien nach Informationen zu suchen, kann das bei langsamen Systemen und PCs mit einem FAT oder FAT32 Datensystem zu einer inakzeptablen Verlangsamung Ihres Computers kommen. Sie können mit folgender Einstellung diesen Prozess verlangsamen und Ihrem Rechner mehr Ressourcen überlassen.
+	DE	Nicht automatisch nach aktueller Software suchen
 	DK	Når serveren starter, gennemlæser den din musiksamling for at indlæse kunstner, album og anden information fra de tags der er tilknyttet dine musikfiler. På ældre systemer og Windows-PCere der anvender FAT eller FAT32 filsystemerne kan dette betyde at computeren belastes i en uacceptabel grad. Du kan ændre denne indstilling så gennemlæsningen af musiksamlingen ikke benytter så mange ressourcer.
 	EN	When the server starts it scans your music folder to load the artist, album and other information from the tags in the MP3 files. On some slower systems and Windows PCs using FAT and FAT32 filesystems this may unacceptably slow down your computer. You can change this setting to slow down scanning and use less computer resources.
 	ES	Cuando arranca el servidor, hace un escaneo total de su carpeta de música para determinar todos los artistas, discos y canciones. Si este proceso ralentiza demasiado su ordenador puede cambiar esta opción para hacer que el escaneo se hace más despacio.
@@ -1962,7 +1980,7 @@ SETUP_PERSISTPLAYLISTS_0
 	SE	Behåll inte spellistor
 
 SETUP_RESHUFFLEONREPEAT
-	DE	Erneuter Zufall (Shuffle) bei einer Wiederholung 
+	DE	Erneutes Mischen bei Wiederholung
 	EN	Reshuffle on Repeat
 	FR	Répétition aléatoire
 	NL	Volgorde veranderen bij herhaling
@@ -2056,21 +2074,25 @@ SETUP_FILESORT_DESC
 	EN	When you are browsing the Music Folder, you can choose to have the songs sorted by file name or by ID3 tag information (Artist, Album, Track Number).
 	FR	Lorsque vous parcourez votre dossier de musique, vous pouvez choisir un tri par nom de fichier ou à partir des tags ID3 (artiste, album, numéro de piste).
 	NL	Als U de Muziek Folder doorloopt, kunt U nummers laten sorteren op bestandsnaam of op ID3 tag informatie (Artiest, Album, Tracknummer).
+	DE	Komponist, Gruppe und Orchester in Interpreten
 	PT	Ao percorrer a pasta de músicas, pode escolher se deseja ordenar por nome de ficheiro ou pela informação das tags ID3 (artista, álbum, número de pista).
 	SE	När du bläddrar i Musikmappen kan du välja att få sångerna sorterade efter filnamn eller efter ID3-information (Artist, Album, Spårnummer).
 
 SORTID3
 	DE	Sortieren nach den ID3-Tags
+	DE	Komponist, Gruppe und Orchester in Interpreten einschliessen
 	DK	Sorter efter sangtitelinformation
 	EN	Sort by song information
 	FR	Trier à partir des tags ID3
 	NL	Sorteer op ID3 informatie
 	PT	Ordenar pela informação da música (ID3)
+	DE	Komponist, Gruppe und Orchester nicht in Interpreten einschliessen
 	SE	Sortera efter ID3-information
 
 SORTBYFILENAME
 	DE	Sortieren nach dem Dateinamen
 	DK	Sorter efter filnavn
+	DE	Titelinformationen über Komponist, Gruppe und Orchester kann in der Interpretenliste beim Stöbern und Suchen eingeschlossen werden.
 	EN	Sort by file name
 	FR	Trier par nom de fichier
 	NL	Sorteer op bestandsnaam
@@ -2111,7 +2133,7 @@ SETUP_USEPLAYLISTCACHE
 	SE	Spara spellistor och mappar i minnet
 
 SETUP_USEPLAYLISTCACHE_DESC
-	DE	Der Server kann die Playlist und das Verzeichnis im Cache ablegen um die Navigation zu beschleunigen. €nderungen, wie z. B. hinzugefügte und gelöschte Titel sollten automatisch berücksichtigt werden. Deaktivieren Sie das Ablegen im Cachen nur wenn Änderungen unberücksichtigt bleiben.
+	DE	Der Server kann die Playlist und das Verzeichnis im Cache ablegen um die Navigation zu beschleunigen. Änderungen, wie z. B. hinzugefügte und gelöschte Titel sollten automatisch berücksichtigt werden. Deaktivieren Sie das Ablegen im Cachen nur wenn Änderungen unberücksichtigt bleiben.
 	DK	Serveren kan cache playlister og mapper for at øge hastigheden for navigation. Ændringer, såsom nye eller slettede filer, bør automatisk bliv medtaget. Slå caching fra hvis du opdager at ændringer ikke medtages af serveren.
 	EN	The server can cache playlists and directories to speed up navigation. Changes, such as newly added or deleted files, should be automatically detected. Turn caching off only if you notice that changes are being ignored.
 	ES	El servidor puede cachear listas y carpetas para accelerar navegación. Cambios, por ejemplo ficheros que se han añadido o borrado, deberían detecarse automaticamente. Debe quitar esta opción solamente si vea que cambios no aparezcan.
@@ -2387,7 +2409,7 @@ SETUP_UDPCHUNKSIZE
 	SE	Maximal storlek på UDP-data
 
 SETUP_UDPCHUNKSIZE_CHOOSE
-	DE	Maximale Anzahl der Audiodaten Bytes, die zum Player in UDP-Pakete geschickt werden
+	DE	Maximale Anzahl der Audiodaten Bytes, die zum Player in UDP-Paketen geschickt werden
 	EN	Maximum number of bytes of audio data to send to player in a UDP packet
 	FR	Nombre maximum d'octets de données audio à envoyer au lecteur par paquet UDP :
 	NL	Maximaal aantal bytes audio data dat in een UDP packet naar de speler wordt gestuurd
@@ -2694,7 +2716,7 @@ LANGUAGE
 	SE	Språk
 
 SETUP_URL_WILL_BE
-	DE	Die Zugriffs URL zum Slim Server ist wie folgt:
+	DE	Die Zugriffs URL zum Slim Server lautet wie folgt:
 	DK	URL-adessen, der giver adgang til Slim-afspilleren, vil se således ud:
 	EN	The URL to access the Slim Server is now:
 	ES	La dirección para acceder al Slim Server será:
@@ -4137,6 +4159,7 @@ BRIGHTNESS_OFF
 	EN	Brightness when off:
 	ES	Luminosidad mientras apagado:
 	FI	Näytön kirkkaus soittimen ollessa pois päältä:
+	DE	Dateiarten
 	FR	Luminosité lorsqu'éteint :
 	NL	Helderheid indien uitgeschakeld:
 	PT	O brilho quando está desligado

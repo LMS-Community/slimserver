@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.8 2003/08/04 23:53:47 sadams Exp $
+# $Id: HTTP.pm,v 1.9 2003/08/05 20:49:17 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -835,7 +835,10 @@ sub getFileContent {
 	if (!defined($skinpath) || !open($template, $skinpath)) {
 		$::d_http && msg("couldn't find $skin $path trying for $baseskin\n");
 		my $defaultpath = fixHttpPath($baseskin, $path);
-		open $template, $defaultpath || $::d_http && msg("couldn't find $skinpath, reading template: $defaultpath\n");
+		if (defined($defaultpath)) {
+			$::d_http && msg("couldn't find $skinpath, reading template: $defaultpath\n");
+			open $template, $defaultpath;
+		} 
 	}
 	
 	if ($template) {
@@ -848,10 +851,10 @@ sub getFileContent {
 		close $template;
 		$::d_http && (length($$contentref) || msg("File empty: $path"));
 	} else {
-		$::d_http && msg("Couldn't open: $path\n");
+		msg("Couldn't open: $path\n");
 	}
 	
-	if (Slim::Utils::Prefs::get('templatecache')) {
+	if (Slim::Utils::Prefs::get('templatecache') && defined($contentref)) {
 		$templatefiles{$skinkey} = $contentref;
 	}
 	

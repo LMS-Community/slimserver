@@ -1,6 +1,6 @@
 package Slim::Buttons::BrowseID3;
 
-# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SliMP3 Server Copyright (C) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -358,6 +358,8 @@ sub lines {
 	my $client = shift;
 	my ($line1, $line2, $overlay1, $overlay2);
 
+	my $songlist = 0;
+	
 	my $genre = selection($client,'curgenre');
 	my $artist = selection($client,'curartist');
 	my $album = selection($client,'curalbum');
@@ -371,12 +373,15 @@ sub lines {
 		$line1 = string('ALBUMS');
 	} elsif ($genre eq '*' && $artist eq '*' && $album eq '*' && !defined($song)) {
 		$line1 = string('SONGS');
+		$songlist = 1;
 	} elsif ($genre eq '*' && $artist eq '*' && $album eq '*' && !specified($song)) {
 		$line1 = string('SONGSMATCHING') . " \"" . searchTerm($song) . "\"";
+		$songlist = 1;
 	} elsif ($genre eq '*' && $artist eq '*' && !specified($album)) {
 		$line1 = string('ALBUMSMATCHING') . " \"" . searchTerm($album) . "\"";
 	} elsif ($genre eq '*' && $artist eq '*' && specified($album) && !defined($song)) {
 		$line1 = $album;
+		$songlist = 1;
 	} elsif ($genre eq '*' && !specified($artist)) {
 		$line1 = string('ARTISTSMATCHING') . " \"" . searchTerm($artist) . "\"";
 	} elsif (specified($genre) && !defined($artist)) {
@@ -387,8 +392,10 @@ sub lines {
 		$line1 = $genre.'/'.$artist;
 	} elsif (specified($genre) && specified($artist) && specified($album) && !defined($song)) {
 		$line1 = $artist.'/'.$album;
+		$songlist = 1;
 	} elsif ($genre eq '*' && specified($artist) && specified($album) && !defined($song)) {
 		$line1 = $artist.'/'.$album;
+		$songlist = 1;
 	} else {
 		die "can't calculate string for $genre $artist $album $song";
 	}
@@ -398,14 +405,14 @@ sub lines {
 	} else {
 		$line1 .= sprintf(" (%d ".string('OUT_OF')." %s)", browseID3dirIndex($client) + 1, scalar @{browseID3dir($client)});
 
-		if (defined($genre) && defined($artist) && defined($album)) {
+		if ($songlist) {
 			$line2 = Slim::Music::Info::standardTitle($client, browseID3dir($client,browseID3dirIndex($client)));
-                        $overlay1 = Slim::Hardware::VFD::symbol('moodlogic') if (Slim::Music::Info::isSongMixable(browseID3dir($client,browseID3dirIndex($client))));
+            $overlay1 = Slim::Hardware::VFD::symbol('moodlogic') if (Slim::Music::Info::isSongMixable(browseID3dir($client,browseID3dirIndex($client))));
 			$overlay2 = Slim::Hardware::VFD::symbol('notesymbol');
 		} else {
 			$line2 = browseID3dir($client,browseID3dirIndex($client));
-                        $overlay1 = Slim::Hardware::VFD::symbol('moodlogic') if (! defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isGenreMixable($line2));
-                        $overlay1 = Slim::Hardware::VFD::symbol('moodlogic') if (defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isArtistMixable($line2));
+            $overlay1 = Slim::Hardware::VFD::symbol('moodlogic') if (! defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isGenreMixable($line2));
+            $overlay1 = Slim::Hardware::VFD::symbol('moodlogic') if (defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isArtistMixable($line2));
 			$overlay2 = Slim::Hardware::VFD::symbol('rightarrow');
 		}
 	}
