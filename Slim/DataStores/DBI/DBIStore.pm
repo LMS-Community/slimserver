@@ -35,10 +35,6 @@ use constant DB_SAVE_INTERVAL => 30;
 # minutes before we check date/time stamps again
 use constant DB_CACHE_LIFETIME => 5 * 60;
 
-# Validity cache entries are arrays with:
-use constant VALID_INDEX => 0;
-use constant TTL_INDEX => 1;
-
 # Hash for tag function per format
 # Load these on demand, as a memory savings. This variable should move to
 # Slim::Music::Info
@@ -123,6 +119,15 @@ our ($_unknownArtist, $_unknownGenre, $_unknownAlbum);
 # Keep the last 5 find results set in memory and expire them after 60 seconds
 tie our %lastFind, 'Tie::Cache::LRU::Expires', EXPIRES => 60, ENTRIES => 5;
 
+# Optimization to cache content type for track entries rather than look them up everytime.
+tie our %contentTypeCache, 'Tie::Cache::LRU::Expires', EXPIRES => 300, ENTRIES => 128;
+
+# Non-persistent hash to maintain the VALID and TTL values for track entries.
+tie our %validityCache, 'Tie::Cache::LRU::Expires', EXPIRES => 300, ENTRIES => 128;
+
+# Don't spike the CPU on cleanup.
+our $staleCounter = 0;
+
 #
 # Readable DataStore interface methods:
 #
@@ -135,18 +140,12 @@ sub new {
 		# Values persisted in metainformation table
 		trackCount => 0,
 		totalTime => 0,
-		# Non-persistent hash to maintain the VALID and TTL values for
-		# track entries.
-		validityCache => {},
 		# Non-persistent cache to make sure we don't set album artwork
 		# too many times.
 		artworkCache => {},
 		# Non-persistent caches to store cover and thumb properties
 		coverCache => {},
 		thumbCache => {},
-		# Optimization to cache content type for track entries rather than
-		# look them up everytime.
-		contentTypeCache => {},
 		# Optimization to cache last track accessed rather than retrieve it again. 
 		lastTrackURL => '',
 		lastTrack => {},
@@ -177,16 +176,15 @@ sub contentType {
 	my $self = shift;
 	my $url  = shift;
 
-	my $ct;
+	my $ct = 'unk';
 
 	# Can't get a content type on a undef url
 	unless (defined $url) {
 
-		$ct = 'unk';
 		return wantarray ? ($ct) : $ct;
 	}
 
-	$ct = $self->{'contentTypeCache'}->{$url};
+	$ct = $contentTypeCache{$url};
 
 	if (defined($ct)) {
 		return wantarray ? ($ct, $self->_retrieveTrack($url)) : $ct;
@@ -200,7 +198,7 @@ sub contentType {
 		$ct = Slim::Music::Info::typeFromPath($url);
 	}
 
-	$self->{'contentTypeCache'}->{$url} = $ct;
+	$contentTypeCache{$url} = $ct;
 
 	return wantarray ? ($ct, $track) : $ct;
 }
@@ -556,7 +554,7 @@ sub updateOrCreate {
 	}
 
 	if ($attributeHash->{'CT'}) {
-		$self->{'contentTypeCache'}->{$url} = $attributeHash->{'CT'};
+		$contentTypeCache{$url} = $attributeHash->{'CT'};
 	}
 
 	return $track;
@@ -577,7 +575,7 @@ sub delete {
 
 	if (defined($track)) {
 
-		delete $self->{'validityCache'}->{$url};
+		delete $validityCache{$url};
 
 		if ($self->_includeInTrackCount($track)) {
 
@@ -612,9 +610,11 @@ sub delete {
 sub markAllEntriesStale {
 	my $self = shift;
 
-	$self->{'validityCache'} = {};
+	%validityCache    = ();
+	%lastFind         = ();
+	%contentTypeCache = ();
 
-	%lastFind = ();
+	$self->{'artworkCache'} = {};
 }
 
 # Mark a track entry as valid.
@@ -622,7 +622,7 @@ sub markEntryAsValid {
 	my $self = shift;
 	my $url = shift;
 
-	$self->{'validityCache'}->{$url}->[VALID_INDEX] = 1;
+	$validityCache{$url} = time();
 }
 
 # Clear all stale track entries.
@@ -630,20 +630,6 @@ sub clearStaleEntries {
 	my $self = shift;
 
 	unless ($cleanupIterator) {
-
-		$::d_info && Slim::Utils::Misc::msg("starting scan for expired items\n");
-
-		my $validityCache = $self->{'validityCache'};
-
-		for my $url (keys %$validityCache) {
-
-			if (!$validityCache->{$url}->[VALID_INDEX]) {
-
-				$::d_info && Slim::Utils::Misc::msg("Item: $url is invalid. Removing.\n");
-
-				$self->delete($url, 0);
-			}
-		}
 
 		# Cleanup any stale entries in the database.
 		# 
@@ -660,6 +646,10 @@ sub clearStaleEntries {
 		$cleanupIterator = Slim::DataStores::DBI::LightWeightTrack->retrieve_all();
 	}
 
+	# Only cleanup every 20th time through the scheduler.
+	$staleCounter++;
+	return 1 if $staleCounter % 20;
+
 	# return 0 when we're done, and there are no more rows.
 	my $track = $cleanupIterator->next() || do {
 
@@ -668,10 +658,14 @@ sub clearStaleEntries {
 		);
 
 		$cleanupStage = 'contributors';
+		$staleCounter = 0;
 
 		# Setup a little state machine so that the db cleanup can be
 		# scheduled appropriately - ie: one record per run.
 		Slim::Utils::Scheduler::add_task(sub { 
+
+			$staleCounter++;
+			return 1 if $staleCounter % 20;
 
 			if ($cleanupStage eq 'contributors') {
 
@@ -695,6 +689,7 @@ sub clearStaleEntries {
 				return Slim::DataStores::DBI::Genre->removeStaleDBEntries('genreTracks');
 			}
 
+			$staleCounter = 0;
 			return 0;
 		});
 
@@ -718,6 +713,8 @@ sub clearStaleEntries {
 		$self->delete($track, 0);
 	}
 
+	$track = undef;
+
 	return 1;
 }
 
@@ -735,16 +732,18 @@ sub wipeAllData {
 	#$self->clearExternalPlaylists();
 	Slim::DataStores::DBI::DataModel->wipeDB();
 
-	$self->{'validityCache'}    = {};
-	$self->{'totalTime'}        = 0;
-	$self->{'trackCount'}       = 0;
-	$self->{'artworkCache'}     = {};
-	$self->{'coverCache'}       = {};
-	$self->{'thumbCache'}       = {};	
-	$self->{'contentTypeCache'} = {};
-	$self->{'lastTrackURL'}     = '';
-	$self->{'lastTrack'}        = {};
-	$self->{'zombieList'}       = {};
+	$self->{'totalTime'}    = 0;
+	$self->{'trackCount'}   = 0;
+	$self->{'artworkCache'} = {};
+	$self->{'coverCache'}   = {};
+	$self->{'thumbCache'}   = {};	
+	$self->{'lastTrackURL'} = '';
+	$self->{'lastTrack'}    = {};
+	$self->{'zombieList'}   = {};
+
+	%contentTypeCache = ();
+	%validityCache    = ();
+	%lastFind         = ();
 
 	$::d_info && Slim::Utils::Misc::msg("wipeAllData: Wiped info database\n");
 
@@ -1041,7 +1040,7 @@ sub _checkValidity {
 
 	return undef if $self->{'zombieList'}->{$id};
 
-	my $ttl = $self->{'validityCache'}->{$url}->[TTL_INDEX] || 0;
+	my $ttl = $validityCache{$url} || 0;
 
 	if (Slim::Music::Info::isFileURL($url) && ($ttl < (time()))) {
 
@@ -1053,7 +1052,7 @@ sub _checkValidity {
 
 		} else {	
 
-			$self->{'validityCache'}->{$url}->[TTL_INDEX] = (time()+ DB_CACHE_LIFETIME + int(rand(DB_CACHE_LIFETIME)));
+			$validityCache{$url} = (time()+ DB_CACHE_LIFETIME + int(rand(DB_CACHE_LIFETIME)));
 		}
 	}
 
@@ -1468,15 +1467,13 @@ sub _updateTrackValidity {
 
 	my $url   = $track->get('url');
 
-	$self->{'validityCache'}->{$url}->[0] = 1;
-
 	if (Slim::Music::Info::isFileURL($url)) {
 
-		$self->{'validityCache'}->{$url}->[TTL_INDEX] = (time() + DB_CACHE_LIFETIME + int(rand(DB_CACHE_LIFETIME)));
+		$validityCache{$url} = (time() + DB_CACHE_LIFETIME + int(rand(DB_CACHE_LIFETIME)));
 
 	} else {
 
-		$self->{'validityCache'}->{$url}->[TTL_INDEX] = 0;
+		$validityCache{$url} = 0;
 	}
 }
 
@@ -1531,6 +1528,8 @@ sub updateCoverArt {
  	}
 }
 
+# This is a callback that is run when the user changes the common album titles
+# preference in settings.
 sub commonAlbumTitlesChanged {
 	my ($value, $key, $index) = @_;
 
