@@ -35,77 +35,6 @@ use constant DB_SAVE_INTERVAL => 30;
 # minutes before we check date/time stamps again
 use constant DB_CACHE_LIFETIME => 5 * 60;
 
-# Hash for tag function per format
-# Load these on demand, as a memory savings. This variable should move to
-# Slim::Music::Info
-our %tagFunctions = (
-	'mp3' => {
-		'module' => 'Slim::Formats::MP3',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::MP3::getTag,
-	},
-
-	'mp2' => {
-		'module' => 'Slim::Formats::MP3',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::MP3::getTag,
-	},
-
-	'ogg' => {
-		'module' => 'Slim::Formats::Ogg',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::Ogg::getTag,
-	},
-
-	'flc' => {
-		'module' => 'Slim::Formats::FLAC',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::FLAC::getTag,
-	},
-
-	'wav' => {
-		'module' => 'Slim::Formats::Wav',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::Wav::getTag,
-	},
-
-	'aif' => {
-		'module' => 'Slim::Formats::AIFF',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::AIFF::getTag,
-	},
-
-	'wma' => {
-		'module' => 'Slim::Formats::WMA',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::WMA::getTag,
-	},
-
-	'mov' => {
-		'module' => 'Slim::Formats::Movie',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::Movie::getTag,
-	},
-
-	'shn' => {
-		'module' => 'Slim::Formats::Shorten',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::Shorten::getTag,
-	},
-
-	'mpc' => {
-		'module' => 'Slim::Formats::Musepack',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::Musepack::getTag,
-	},
-
-	'ape' => {
-		'module' => 'Slim::Formats::APE',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::APE::getTag,
-	},
-);
-
 # cached value of commonAlbumTitles pref
 our $common_albums;
 
@@ -852,29 +781,15 @@ sub readTags {
 		}
 
 		# Extract tag and audio info per format
-		if (exists $tagFunctions{$type}) {
+		if (exists $Slim::Music::Info::tagFunctions{$type}) {
 
 			# Dynamically load the module in.
-			if (!$tagFunctions{$type}->{'loaded'}) {
-
-				$::d_info && Slim::Utils::Misc::msg("Trying to load $tagFunctions{$type}->{'module'}\n");
-
-				eval "require $tagFunctions{$type}->{'module'}";
-
-				if ($@) {
-					Slim::Utils::Misc::msg("Couldn't load module: $tagFunctions{$type}->{'module'} : [$@]\n");
-					Slim::Utils::Misc::bt();
-
-				} else {
-
-					$tagFunctions{$type}->{'loaded'} = 1;
-				}
-
-				# And reset for the eval below.
-				$@ = '';
+			if (!$Slim::Music::Info::tagFunctions{$type}->{'loaded'}) {
+			
+				Slim::Music::Info::loadTagFormatForType($type);
 			}
 
-			$attributesHash = eval { &{$tagFunctions{$type}->{'getTag'}}($filepath, $anchor) };
+			$attributesHash = eval { &{$Slim::Music::Info::tagFunctions{$type}->{'getTag'}}($filepath, $anchor) };
 		}
 
 		if ($@) {

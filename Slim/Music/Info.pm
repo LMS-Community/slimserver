@@ -42,6 +42,7 @@ my $artworkDir   = '';
 # do we ignore articles?
 our $articles = undef;
 
+#
 my %lastFile      = ();
 my %display_cache = ();
 
@@ -55,6 +56,75 @@ tie our %isFile, 'Tie::Cache::LRU', 16;
 
 # No need to do this over and over again either.
 tie our %urlToTypeCache, 'Tie::Cache::LRU', 16;
+
+# Map our tag functions - so they can be dynamically loaded.
+our %tagFunctions = (
+	'mp3' => {
+		'module' => 'Slim::Formats::MP3',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::MP3::getTag,
+	},
+
+	'mp2' => {
+		'module' => 'Slim::Formats::MP3',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::MP3::getTag,
+	},
+
+	'ogg' => {
+		'module' => 'Slim::Formats::Ogg',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::Ogg::getTag,
+	},
+
+	'flc' => {
+		'module' => 'Slim::Formats::FLAC',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::FLAC::getTag,
+	},
+
+	'wav' => {
+		'module' => 'Slim::Formats::Wav',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::Wav::getTag,
+	},
+
+	'aif' => {
+		'module' => 'Slim::Formats::AIFF',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::AIFF::getTag,
+	},
+
+	'wma' => {
+		'module' => 'Slim::Formats::WMA',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::WMA::getTag,
+	},
+
+	'mov' => {
+		'module' => 'Slim::Formats::Movie',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::Movie::getTag,
+	},
+
+	'shn' => {
+		'module' => 'Slim::Formats::Shorten',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::Shorten::getTag,
+	},
+
+	'mpc' => {
+		'module' => 'Slim::Formats::Musepack',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::Musepack::getTag,
+	},
+
+	'ape' => {
+		'module' => 'Slim::Formats::APE',
+		'loaded' => 0,
+		'getTag' => \&Slim::Formats::APE::getTag,
+	},
+);
 
 sub init {
 
@@ -1258,9 +1328,17 @@ sub readCoverArtTags {
 					}
 				}
 			}
+
 		} elsif (isMOV($fullpath)) {
+
 			$::d_artwork && Slim::Utils::Misc::msg("Looking for image in Movie metadata in file $file\n");
+
+			if (!$tagFunctions{'mov'}->{'loaded'}) {
+				loadTagFormatForType('mov');
+			}
+
 			$body = Slim::Formats::Movie::getCoverArt($file);
+
 			$::d_artwork && $body && Slim::Utils::Misc::msg("found image in $file of length " . length($body) . " bytes \n");
 		}
 		
@@ -1721,6 +1799,25 @@ sub typeFromPath {
 	$::d_info && Slim::Utils::Misc::msg("$type file type for $fullpath\n");
 
 	return $type;
+}
+
+# Dynamically load the formats modules.
+sub loadTagFormatForType {
+	my $type = shift;
+
+	$::d_info && Slim::Utils::Misc::msg("Trying to load $tagFunctions{$type}->{'module'}\n");
+
+	eval "require $tagFunctions{$type}->{'module'}";
+
+	if ($@) {
+
+		Slim::Utils::Misc::msg("Couldn't load module: $tagFunctions{$type}->{'module'} : [$@]\n");
+		Slim::Utils::Misc::bt();
+
+	} else {
+
+		$tagFunctions{$type}->{'loaded'} = 1;
+	}
 }
 
 1;
