@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.29 2003/12/22 23:53:23 dean Exp $
+# $Id: Setup.pm,v 1.30 2003/12/23 00:36:46 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -913,7 +913,7 @@ sub initSetupConfig {
 			'Default' => {
 					'PrefOrder' => ['displaytexttimeout'
 							,'composerInArtists','playtrackalbum','artistinalbumsearch', 'ignoredarticles','filesort'
-							,'persistPlaylists','reshuffleOnRepeat','saveShuffled',
+							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
 							,'savehistory','historylength','checkVersion']
 				}
 			}
@@ -993,6 +993,18 @@ sub initSetupConfig {
 								,'0' => string('SETUP_CHECKVERSION_0')
 							}
 					}
+			,'groupdiscs' => {
+						  validate => \&validateTrueFalse
+						  ,onChange => sub {
+							 my $client = shift;
+							 Slim::Control::Command::execute
+								 ($client, ["rescan"], undef, undef);
+						  }
+						  ,options => {
+							      1 => string ('SETUP_GROUPDISCS_1')
+								  ,0 => string ('SETUP_GROUPDISCS_0')
+							     }
+					 }
 			}
 		} #end of setup{'behavior'} hash
 	,'formatting' => {

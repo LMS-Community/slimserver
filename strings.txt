@@ -3179,6 +3179,18 @@ SETUP_URL_WILL_BE
 	PT	O URL para aceder ao SlimServer é
 	SE	URLen för att komma åt SlimServer är:
 
+SETUP_GROUPDISCS
+	EN	Group Discs
+
+SETUP_GROUPDISCS_DESC
+	EN	You can specify if multiple disc sets are treated as a single album (with a single name) or as multiple albums, each with a unique name per disc, for example "Album Title (Disc 2 of 3)".  Changing this setting will start a rescan of your music library.
+
+SETUP_GROUPDISCS_0
+	EN	Treat multi-disc sets as multiple albums
+
+SETUP_GROUPDISCS_1
+	EN	Treat multi-disc sets as a single album
+
 #
 # Web interface
 #

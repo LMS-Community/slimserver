@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.28 2003/12/18 02:36:25 dean Exp $
+# $Id: Pages.pm,v 1.29 2003/12/23 00:36:45 dean Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -770,6 +770,7 @@ sub addsonginfo {
 		$$paramsref{'title'} = Slim::Music::Info::title($song);
 		if (Slim::Music::Info::fileLength($song)) { $$paramsref{'filelength'} = Slim::Utils::Misc::delimitThousands(Slim::Music::Info::fileLength($song)); }
 		$$paramsref{'duration'} = Slim::Music::Info::duration($song);
+		$$paramsref{'disc'} = Slim::Music::Info::disc($song);
 		$$paramsref{'track'} = Slim::Music::Info::trackNumber($song);
 		$$paramsref{'year'} = Slim::Music::Info::year($song);
 		$$paramsref{'type'} = string(uc(Slim::Music::Info::contentType($song)));

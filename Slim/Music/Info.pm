@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.40 2003/12/21 11:50:42 kdf Exp $
+# $Id: Info.pm,v 1.41 2003/12/23 00:36:45 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1510,7 +1510,8 @@ sub getInfoForSort {
 		,artistSort($item)
 		,albumSort($item)
 		,trackNumber($item)
-		,titleSort($item)];
+		,titleSort($item)
+		,disc($item)];
 }	
 
 #algorithm for sorting by Artist, Album, Track
@@ -1553,6 +1554,12 @@ sub sortByTrackAlg ($$) {
 		return 1;
 	}
 	
+	# compare discs
+	if (defined $j->[6] && defined $k->[6]) {
+	   $result = $j->[6] <=> $k->[6];
+	   return $result if $result;
+	}
+
 	#compare track numbers
 	if ($j->[4] && $k->[4]) {
 		$result = $j->[4] <=> $k->[4];
@@ -1597,6 +1604,12 @@ sub sortByAlbumAlg ($$) {
 		return 1;
 	}
 	
+	# compare discs
+	if (defined $j->[6] && defined $k->[6]) {
+	   $result = $j->[6] <=> $k->[6];
+	   return $result if $result;
+	}
+
 	#compare track numbers
 	if ($j->[4] && $k->[4]) {
 		$result = $j->[4] <=> $k->[4];
@@ -1714,37 +1727,40 @@ sub readTags {
 			        $tempCacheEntry = Slim::Formats::Shorten::getTag ($filepath);
 			}
 				
-
 			$::d_info && !defined($tempCacheEntry) && Slim::Utils::Misc::msg("Info: no tags found for $filepath\n");
 
 			if (defined($tempCacheEntry->{'TRACKNUM'})) {
 				$tempCacheEntry->{'TRACKNUM'} = cleanTrackNumber($tempCacheEntry->{'TRACKNUM'});
 			}
 			
-			if ($tempCacheEntry->{'SET'}) {
-				my $discNum = $tempCacheEntry->{'SET'};
-				my $discCount;
+			# Turn the tag SET into DISC and DISCC if it looks like # or #/#
+			if ($tempCacheEntry->{'SET'} and 
+				$tempCacheEntry->{'SET'} =~ /(\d+)(?:\/(\d+))?/) {
+			   $tempCacheEntry->{'DISC'} = $1;
+			   $tempCacheEntry->{'DISCC'} = $2 if defined $2;
+ 			}
+
+			# Modify the ALBUM tag to look like " (Disc X)" or perhaps
+			# " (Disc X of Y)" if we have DISC/DISCC info.  Skipped if
+			# the 'groupdiscs' pref is enabled
+			if (not Slim::Utils::Prefs::get ('groupdiscs')
+				and exists $tempCacheEntry->{'DISC'}) {
+			   my $discNum = $tempCacheEntry->{'DISC'};
 				
-				$discNum =~ /(\d+)\/(\d+)/;
-				
-				if ($1) {
-					$discNum = $1;
-				}
-				
-				$tempCacheEntry->{'DISC'} = $discNum;
-				
-				if ($2) {
-					$discCount = $2;
-					$tempCacheEntry->{'DISCC'} = $discCount;
-				}
+			   my $discCount = exists $tempCacheEntry->{'DISCC'} ?
+				 $tempCacheEntry->{'DISCC'} : 0;
 				
 				my $discWord = string('DISC');
 				
-				if ($discNum && $tempCacheEntry->{'ALBUM'} && ($tempCacheEntry->{'ALBUM'} !~ /(${discWord})|(Disc)\s+[0-9]+/i)) {
+			   if ($discNum && $tempCacheEntry->{'ALBUM'} &&
+				   $tempCacheEntry->{'ALBUM'} !~ /($discWord|disc)\s+\d+/i) {
 					# disc 1 of 1 isn't interesting
-					if (!($discCount && $discNum && $discCount == 1 && $discNum == 1)) {
-						# Add space to handle > 10 album sets and sorting. Is suppressed in the HTML.
-						if ($discCount && $discCount > 9 && $discNum < 10) { $discNum = ' ' . $discNum; };
+				  if (!($discCount == 1 && $discNum == 1)) {
+					 # Add space to handle > 10 album sets and
+					 # sorting. Is suppressed in the HTML.
+					 if ($discCount && $discCount > 9 && $discNum < 10) {
+						$discNum = ' ' . $discNum;
+					 }
 							
 						$tempCacheEntry->{'ALBUM'} = $tempCacheEntry->{'ALBUM'} . " ($discWord $discNum";
 						if ($discCount) {
