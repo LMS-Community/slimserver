@@ -1,6 +1,6 @@
 package Slim::Player::Sync;
 
-# $Id: Sync.pm,v 1.14 2004/07/22 02:03:47 kdf Exp $
+# $Id: Sync.pm,v 1.15 2004/11/29 19:26:49 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -338,8 +338,9 @@ sub checkSync {
 			foreach $everyclient (@group) {
 				$everyclient->readytosync(0);
 			}
-			if ($client->playmode ne 'playout-stop') {Slim::Player::Source::skipahead($client);}
-			else {
+			if ($client->playmode ne 'playout-stop') {
+				Slim::Player::Source::skipahead($client);
+			} else {
 				$::d_sync && msg("End of playlist, and players have played out. Going to playmode stop.\n");
 				Slim::Player::Source::playmode($client,'stop');
 				$client->update();

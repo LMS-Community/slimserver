@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.123 2004/11/25 03:51:04 kdf Exp $
+# $Id: Source.pm,v 1.124 2004/11/29 19:26:49 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -237,7 +237,7 @@ sub songTime {
 	my $songtime = $songLengthInBytes ? (($realpos / $songLengthInBytes * $duration * $rate) + $startStream) : 0;
 
 	if ($songtime && $duration) {
-		$::d_source && msg("songTime: [$songtime] = ($realpos(realpos) / $songLengthInBytes(size) * ".
+		0 && $::d_source && msg("songTime: [$songtime] = ($realpos(realpos) / $songLengthInBytes(size) * ".
 			"$duration(duration) * $rate(rate)) + $startStream(time offset of started stream)\n");
 	}
 
@@ -458,13 +458,17 @@ sub underrun {
 	# the only way we'll get an underrun event while stopped is if we were
 	# playing out.  so we need to open the next item and play it!
 	#
-	# if we're synced, then we let resync handle this
+	# if we're synced, then we tell the player to stop and then let resync restart us.
 
-	if (($client->playmode eq 'playout-play' || $client->playmode eq 'stop') && !Slim::Player::Sync::isSynced($client)) {
+	if (Slim::Player::Sync::isSynced($client)) {
+		if ($client->playmode =~ /playout/) {
+			$client->stop();
+		}
+	} elsif (($client->playmode eq 'playout-play' || $client->playmode eq 'stop')) {
 
 		skipahead($client);
 
-	} elsif (($client->playmode eq 'playout-stop') && !Slim::Player::Sync::isSynced($client)) {
+	} elsif (($client->playmode eq 'playout-stop')) {
 
 		playmode($client, 'stop');
 		$client->update();
@@ -515,7 +519,7 @@ sub nextChunk {
 		my $len = length($$chunk);
 
 		if ($len > $maxChunkSize) {
-			$::d_source && msg("chunk too big, pushing the excess for later.\n");
+			0 && $::d_source && msg("chunk too big, pushing the excess for later.\n");
 			
 			my $queued = substr($$chunk, $maxChunkSize - $len, $len - $maxChunkSize);
 
