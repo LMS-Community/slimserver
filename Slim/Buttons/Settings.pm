@@ -19,7 +19,7 @@ use Slim::Buttons::Information;
 Slim::Buttons::Common::addMode('settings',Slim::Buttons::Settings::getFunctions(),\&Slim::Buttons::Settings::setMode);
 
 # button functions for browse directory
-my @defaultSettingsChoices = ('ALARM','VOLUME', 'BASS','TREBLE','PITCH','REPEAT','SHUFFLE','TITLEFORMAT','TEXTSIZE','OFFDISPLAYSIZE','INFORMATION','SETUP_SCREENSAVER');
+my @defaultSettingsChoices = ('ALARM','VOLUME', 'BASS','TREBLE','REPEAT','SHUFFLE','TITLEFORMAT','TEXTSIZE','OFFDISPLAYSIZE','INFORMATION','SETUP_SCREENSAVER');
 my @settingsChoices;
 
 my %current;
@@ -44,7 +44,7 @@ my %menuParams = (
 				my ($subref,$subarg) = Slim::Buttons::Common::getFunction($_[0],'volume_'.$_[1],'Common');
 				&$subref($_[0],'volume',$subarg);}
 		,'onChangeArgs' => 'CV'
-		,'initialValue' => sub { return Slim::Utils::Prefs::clientGet($_[0], "volume");}
+		,'initialValue' => sub { return $_[0]->volume();}
 	}
 	,catdir('settings','BASS') => {
 		'useMode' => 'INPUT.Bar'
@@ -52,7 +52,7 @@ my %menuParams = (
 		,'mid' => 50
 		,'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'bass',$_[1]);}
 		,'onChangeArgs' => 'CV'
-		,'initialValue' => sub { return Slim::Utils::Prefs::clientGet($_[0], "bass");}
+		,'initialValue' => sub { return $_[0]->bass();}
 	}
 	,catdir('settings','PITCH') => {
 		'useMode' => 'INPUT.Bar'
@@ -63,7 +63,7 @@ my %menuParams = (
 		,'increment' => 1
 		,'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'pitch',$_[1]);}
 		,'onChangeArgs' => 'CV'
-		,'initialValue' => sub { return Slim::Utils::Prefs::clientGet($_[0], "pitch");}
+		,'initialValue' => sub { return $_[0]->pitch();}
 	}
 	,catdir('settings','TREBLE') => {
 		'useMode' => 'INPUT.Bar'
@@ -71,7 +71,7 @@ my %menuParams = (
 		,'mid' => 50
 		,'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'treble',$_[1]);}
 		,'onChangeArgs' => 'CV'
-		,'initialValue' => sub { return Slim::Utils::Prefs::clientGet($_[0], "treble");}
+		,'initialValue' => sub { return $_[0]->treble();}
 	}
 	,catdir('settings','REPEAT') => {
 		'useMode' => 'INPUT.List'
@@ -235,24 +235,32 @@ sub setMode {
 	$current{$client} = $defaultSettingsChoices[0] unless exists($current{$client});
 	my %params = %{$menuParams{'settings'}};
 	$params{'valueRef'} = \$current{$client};
-	if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0)) {
-		my @settingsChoices = @defaultSettingsChoices;
-		push @settingsChoices, 'SYNCHRONIZE';
-		$params{'listRef'} = \@settingsChoices;
+	
+	my @settingsChoices = @defaultSettingsChoices;
+	
+	if ($client->maxPitch() - $client->minPitch()) {
+		push @settingsChoices, 'PITCH';
 	}
+	
+	if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0)) {
+		push @settingsChoices, 'SYNCHRONIZE';
+	}
+	
+	$params{'listRef'} = \@settingsChoices;
+	
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
 	$client->update();
 }
 
 sub volheader {
 	my ($client,$arg) = @_;
-	return string('VOLUME').' ('.($arg <= 0 ? string('MUTED') : int($arg/100*40+0.5).'/40').')';
+	return string('VOLUME').' ('.($arg <= 0 ? string('MUTED') : int($arg/100*40+0.5)).')';
 }
 
 sub volumeLines {
 	my $client = shift;
 
-	my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
+	my $vol = $client->volume();
 	my $volstring = volheader($client,$vol);
 	return Slim::Buttons::Input::Bar::lines($client,$vol,$volstring);
 }

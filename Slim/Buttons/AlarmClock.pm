@@ -237,9 +237,9 @@ my %alarmVolumeSettingsFunctions = (
 			$inc = 2.5;
 		}
 
-		if (!defined($volume)) { $volume = Slim::Utils::Prefs::clientGet($client, "volume"); }
+		if (!defined($volume)) { $volume = $client->volume(); }
 		$volume += $inc;
-		if ($volume > $Slim::Player::Client::maxVolume) { $volume = $Slim::Player::Client::maxVolume; };
+		if ($volume > $client->maxVolume()) { $volume = $client->maxVolume(); };
 		Slim::Utils::Prefs::clientSet($client, "alarmvolume", $volume);
 		$client->update();
 	},
@@ -257,7 +257,7 @@ my %alarmVolumeSettingsFunctions = (
 			$inc = 2.5;
 		}
 
-		if (!defined($volume)) { $volume = Slim::Utils::Prefs::clientGet($client, "volume"); }
+		if (!defined($volume)) { $volume = $client->volume(); }
 		$volume -= $inc;
 		if ($volume < 0) { $volume = 0; };
 		Slim::Utils::Prefs::clientSet($client, "alarmvolume", $volume);
@@ -283,9 +283,9 @@ sub alarmVolumeLines {
 	my $client = shift;
 	my $volume = Slim::Utils::Prefs::clientGet($client, "alarmvolume");
 
-	if (!defined($volume)) { $volume = Slim::Utils::Prefs::clientGet($client, "volume"); }
+	if (!defined($volume)) { $volume = $client->volume(); }
 
-	my $level = int($volume / $Slim::Player::Client::maxVolume * 40);
+	my $level = int($volume / $client->maxVolume() * 40);
 
 	my $line1 = ($client->linesPerScreen() == 1) ? string('ALARM_SET_VOLUME_SHORT') : string('ALARM_SET_VOLUME');
 	my $line2;

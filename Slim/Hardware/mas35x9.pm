@@ -1,6 +1,6 @@
 package Slim::Hardware::mas35x9;
 
-# $Id: mas35x9.pm,v 1.5 2004/01/26 05:44:18 dean Exp $
+# $Id: mas35x9.pm,v 1.6 2004/08/25 23:24:44 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -175,7 +175,7 @@ my @tonetable = (
 sub getToneCode {
 	my $toneSetting = shift;
 	#my $toneType = shift; #not needed here
-	my $index = int($toneSetting / $Slim::Player::Client::maxTreble * (scalar(@tonetable)-1) + 0.5);
+	my $index = int($toneSetting / Slim::Player::Client::maxTreble() * (scalar(@tonetable)-1) + 0.5);
 	return $tonetable[$index];
 }
 

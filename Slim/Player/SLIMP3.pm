@@ -10,10 +10,12 @@
 #
 package Slim::Player::SLIMP3;
 
+use strict;
 use Slim::Player::Player;
 use Slim::Utils::Misc;
+use Slim::Hardware::mas3507d;
 
-@ISA = ("Slim::Player::Player");
+our @ISA = ("Slim::Player::Player");
 
 sub new {
 	my (
@@ -93,8 +95,21 @@ sub play {
 	my $client = shift;
 	my $paused = shift;
 	
-	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
-	Slim::Hardware::Decoder::reset($client);
+	$client->volume($client->volume());
+
+	$client->i2c(
+		 Slim::Hardware::mas3507d::masWrite('config','00002')
+		.Slim::Hardware::mas3507d::masWrite('loadconfig')
+		.Slim::Hardware::mas3507d::masWrite('plloffset48','5d9e9')
+		.Slim::Hardware::mas3507d::masWrite('plloffset44','cecf5')
+		.Slim::Hardware::mas3507d::masWrite('setpll')
+	);
+
+	# sleep for .05 seconds
+	# this little kludge is to prevent overflowing cs8900's RX buf because the client
+	# is still processing the i2c commands we just sent.
+	select(undef,undef,undef,.05);
+
 	Slim::Networking::Stream::newStream($client, $paused);
 	return 1;
 }
@@ -104,7 +119,7 @@ sub play {
 #
 sub resume {
 	my $client = shift;
-	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
+	$client->volume($client->volume());
 	Slim::Networking::Stream::unpause($client);
 	$client->SUPER::resume();
 	return 1;
@@ -183,6 +198,45 @@ sub i2c {
 	send($client->udpsock, '2                 '.$data, 0, $client->paddr);
 }
 
+sub volume {
+	my $client = shift;
+	my $newvolume = shift;
 
+	my $volume = $client->SUPER::volume($newvolume, @_);
+
+	if (defined($newvolume)) {
+		# volume squared seems to correlate better with the linear scale.  
+		# I'm sure there's something optimal, but this is better.
+	
+		my $level = sprintf('%05X', 0x80000 * (($volume / $client->maxVolume) ** 2));
+	
+		$client->i2c(
+			 Slim::Hardware::mas3507d::masWrite('ll', $level)
+			.Slim::Hardware::mas3507d::masWrite('rr', $level)
+		);
+	}
+
+	return $volume;
+}
+
+sub bass {
+	my $client = shift;
+	my $newbass = shift;
+	my $bass = $client->SUPER::bass($newbass);
+
+	$client->i2c( Slim::Hardware::mas3507d::masWrite('bass', Slim::Hardware::mas3507d::getToneCode($bass,'bass'))) if (defined($newbass));
+
+	return $bass;
+}
+
+sub treble {
+	my $client = shift;
+	my $newtreble = shift;
+	my $treble = $client->SUPER::treble($newtreble);
+
+	$client->i2c( Slim::Hardware::mas3507d::masWrite('treble', Slim::Hardware::mas3507d::getToneCode($treble,'treble'))) if (defined($newtreble));
+
+	return $treble;
+}
 1;
 

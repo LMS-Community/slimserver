@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.32 2004/08/03 17:29:10 vidur Exp $
+# $Id: Playlist.pm,v 1.33 2004/08/25 23:24:42 dean Exp $
 
 # Slim Server Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -123,13 +123,11 @@ my %functions = (
  	'zap' => sub {
  		my $client = shift;
  		my $zapped=catfile(Slim::Utils::Prefs::get('playlistdir'), string('ZAPPED_SONGS') . '.m3u');
-		my $currsong = Slim::Player::Playlist::song($client);
-		my $currindex = Slim::Player::Source::currentSongIndex($client);
 		if (Slim::Player::Playlist::count($client) > 0) {
 			$client->showBriefly(
 					string('ZAPPING_FROM_PLAYLIST'),
-					Slim::Music::Info::standardTitle($client, $currsong), undef, 1);
-			Slim::Control::Command::execute($client, ["playlist", "zap", $currindex]);
+					Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, browseplaylistindex($client))), undef, 1);
+			Slim::Control::Command::execute($client, ["playlist", "zap", browseplaylistindex($client)]);
 		}
 	},
 

@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.104 2004/08/03 17:29:17 vidur Exp $
+# $Id: Source.pm,v 1.105 2004/08/25 23:24:45 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -359,7 +359,7 @@ sub playmode {
 		} elsif ($newmode eq "play") {
 
 			$everyclient->readytosync(0);
-			$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
+			$everyclient->volume($client->volume(),1);
 			$everyclient->streamBytes(0);
 			$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat());
 
@@ -380,13 +380,13 @@ sub playmode {
 
 		} elsif ($newmode eq "resumenow") {
 
-			$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
+			$everyclient->volume($everyclient->volume(),1);
 			$everyclient->resume();
 			
 		} elsif ($newmode eq "resume") {
 
 			# set volume to 0 to make sure fade works properly
-			$everyclient->volume(0);
+			$everyclient->volume(0,1);
 			$everyclient->resume();
 			$everyclient->fade_volume($FADEVOLUME);
 			

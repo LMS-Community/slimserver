@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.42 2004/08/05 17:42:31 dean Exp $
+# $Id: Command.pm,v 1.43 2004/08/25 23:24:43 dean Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -579,7 +579,7 @@ sub execute {
 		} elsif ($p0 eq "mixer") {
 			if ($p1 eq "volume") {
 				my $newvol;
-				my $oldvol = Slim::Utils::Prefs::clientGet($client, "volume");
+				my $oldvol = $client->volume();
 				if ($p2 eq "?") {
 					$p2 = $oldvol;
 				} else {
@@ -594,14 +594,12 @@ sub execute {
 						$newvol = $p2;
 					}
 					
-					if ($newvol> 100) { $newvol = $Slim::Player::Client::maxVolume; }
-					if ($newvol < 0) { $newvol = 0; }
-					Slim::Utils::Prefs::clientSet($client, "volume", $newvol);
-					$client->volume($newvol);
+					$newvol = $client->volume($newvol);
+					
 					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newvol, "volume",\&setVolume);};
 				}
 			} elsif ($p1 eq "muting") {
-				my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
+				my $vol = $client->volume();
 				my $fade;
 				
 				if($vol < 0) {
@@ -619,7 +617,7 @@ sub execute {
 				# unsupported yet
 			} elsif ($p1 eq "treble") {
 				my $newtreb;
-				my $oldtreb = Slim::Utils::Prefs::clientGet($client, "treble");
+				my $oldtreb = $client->treble();
 				if ($p2 eq "?") {
 					$p2 = $oldtreb;
 				} else {
@@ -629,15 +627,12 @@ sub execute {
 					} else {
 						$newtreb = $p2;
 					}
-					if ($newtreb > $Slim::Player::Client::maxTreble) { $newtreb = $Slim::Player::Client::maxTreble; }
-					if ($newtreb < $Slim::Player::Client::minTreble) { $newtreb = $Slim::Player::Client::minTreble; }
-					Slim::Utils::Prefs::clientSet($client, "treble", $newtreb);
-					$client->treble($newtreb);
+					$newtreb = $client->treble($newtreb);
 					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newtreb, "treble",\&setTreble);};
 				}
 			} elsif ($p1 eq "bass") {
 				my $newbass;
-				my $oldbass = Slim::Utils::Prefs::clientGet($client, "bass");
+				my $oldbass = $client->bass();
 				if ($p2 eq "?") {
 					$p2 = $oldbass;
 				} else {
@@ -647,28 +642,21 @@ sub execute {
 					} else {
 						$newbass = $p2;
 					}
-					if ($newbass > $Slim::Player::Client::maxBass) { $newbass = $Slim::Player::Client::maxBass; }
-					if ($newbass < $Slim::Player::Client::minBass) { $newbass = $Slim::Player::Client::minBass; }
-					Slim::Utils::Prefs::clientSet($client, "bass", $newbass);
-					$client->bass($newbass);
+					$newbass = $client->bass($newbass);
 					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newbass, "bass",\&setBass);};
 				}
 			} elsif ($p1 eq "pitch") {
 				my $newpitch;
-				my $oldpitch = Slim::Utils::Prefs::clientGet($client, "pitch");
+				my $oldpitch = $client->pitch();
 				if ($p2 eq "?") {
 					$p2 = $oldpitch;
 				} else {
-				
 					if ($p2 =~ /^[\+\-]/) {
 						$newpitch = $oldpitch + $p2;
 					} else {
 						$newpitch = $p2;
 					}
-					if ($newpitch > $Slim::Player::Client::maxPitch) { $newpitch = $Slim::Player::Client::maxPitch; }
-					if ($newpitch < $Slim::Player::Client::minPitch) { $newpitch = $Slim::Player::Client::minPitch; }
-					Slim::Utils::Prefs::clientSet($client, "pitch", $newpitch);
-					$client->pitch($newpitch);
+					$newpitch = $client->pitch($newpitch);
 					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newpitch, "pitch",\&setPitch);};
 				}
 			}

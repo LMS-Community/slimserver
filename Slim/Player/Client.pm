@@ -1,5 +1,4 @@
-
-# $Id: Client.pm,v 1.55 2004/08/05 22:59:51 dean Exp $
+# $Id: Client.pm,v 1.56 2004/08/25 23:24:44 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -17,13 +16,8 @@ use strict;
 use Slim::Utils::Misc;
 use File::Spec::Functions qw(:ALL);
 
+# depricated, use $client->maxVolume
 $Slim::Player::Client::maxVolume = 100;
-$Slim::Player::Client::maxTreble = 100;
-$Slim::Player::Client::minTreble = 0;
-$Slim::Player::Client::maxBass = 100;
-$Slim::Player::Client::minBass = 0;
-$Slim::Player::Client::minPitch = 80;
-$Slim::Player::Client::maxPitch = 120;
 
 # This is a hash of clientState structs, indexed by the IP:PORT of the client
 # Use the access functions.
@@ -945,6 +939,59 @@ sub signalStrength {
 
 sub maxBrightness() { return undef; }
 
+sub maxVolume { return 100; }
+sub minVolume {	return 100; }
+
+sub maxPitch {	return 100; }
+sub minPitch {	return 100; }
+
+sub maxTreble {	return 50; }
+sub minTreble {	return 50; }
+
+sub maxBass {	return 50; }
+sub minBass {	return 50; }
+
+sub volume {
+	my ($client, $volume, $temp) = @_;
+
+	if (defined($volume)) {
+		if ($volume > $client->maxVolume()) { $volume = $client->maxVolume(); }
+		if ($volume < $client->minVolume()) { $volume = $client->minVolume(); }
+		Slim::Utils::Prefs::clientSet($client, "volume", $volume) if (!$temp);
+	}
+	return Slim::Utils::Prefs::clientGet($client, "volume");
+}
+
+sub treble {
+	my ($client, $treble) = @_;
+	if (defined($treble)) {
+		if ($treble > $client->maxTreble()) { $treble = $client->maxTreble(); }
+		if ($treble < $client->minTreble()) { $treble = $client->minTreble(); }
+		Slim::Utils::Prefs::clientSet($client, "treble", $treble);
+	}
+	return Slim::Utils::Prefs::clientGet($client, "treble");
+}
+
+sub bass {
+	my ($client, $bass) = @_;
+	if (defined($bass)) {	
+		if ($bass > $client->maxBass()) { $bass = $client->maxBass(); }
+		if ($bass < $client->minBass()) { $bass = $client->minBass(); }
+		Slim::Utils::Prefs::clientSet($client, "bass", $bass);
+	}
+	return Slim::Utils::Prefs::clientGet($client, "bass");
+}
+
+sub pitch {
+	my ($client, $pitch) = @_;
+	if (defined($pitch)) {	
+		if ($pitch > $client->maxPitch()) { $pitch = $client->maxPitch(); }
+		if ($pitch < $client->minPitch()) { $pitch = $client->minPitch(); }
+		Slim::Utils::Prefs::clientSet($client, "pitch", $pitch);
+	}
+	return Slim::Utils::Prefs::clientGet($client, "pitch");
+}
+
 # stub out display functions, some players may not have them.
 sub update {}
 sub animating {}
@@ -974,7 +1021,7 @@ sub resume {
 	}
 	$client->pauseTime(undef);
 }
-	
+
 # data accessors
 
 sub id {

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.82 2004/08/24 17:57:10 grotus Exp $
+# $Id: Prefs.pm,v 1.83 2004/08/25 23:24:45 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -525,7 +525,7 @@ sub clientSet {
 	my $key = shift;
 	my $value = shift;
 	my $ind = shift;
-	
+
 	set($client->id() . "-" . $key, $value,$ind);
 	onChange($key, $value, $ind, $client);
 }

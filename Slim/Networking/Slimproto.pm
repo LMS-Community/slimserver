@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.60 2004/08/20 20:58:17 dean Exp $
+# $Id: Slimproto.pm,v 1.61 2004/08/25 23:24:44 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -337,7 +337,7 @@ sub process_slimproto_frame {
 			while (Slim::Buttons::Common::mode($client) eq 'block') {
 				Slim::Buttons::Block::unblock($client);
 			}
-		 	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
+		 	$client->volume($client->volume());
 		}
 		return;
 	} 

@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.26 2004/08/03 17:29:22 vidur Exp $
+# $Id: RemoteStream.pm,v 1.27 2004/08/25 23:24:47 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -163,10 +163,15 @@ sub openRemoteStream {
 		# if we've opened the redirect, re-use the old title and new content type.
 		
 		if (defined($sock)) {
-			
-			if (defined($oldtitle) && (Slim::Music::Info::plainTitle($redir) eq Slim::Music::Info::title($redir))) {
-				$::d_remotestream && msg("Saving old title: $oldtitle for $redir\n");
-				Slim::Music::Info::setTitle($redir, $oldtitle);
+			if (defined($oldtitle)) { 
+				my $newtitle = Slim::Music::Info::title($redir);
+				if (Slim::Music::Info::plainTitle($redir) eq $newtitle) {
+					$::d_remotestream && msg("Saving old title: $oldtitle for $redir\n");
+					Slim::Music::Info::setTitle($redir, $oldtitle);
+				} elsif (Slim::Music::Info::plainTitle($url) eq Slim::Music::Info::title($url)) {
+					$::d_remotestream && msg("Saving using redirected title for original URL: $oldtitle for $redir\n");
+					Slim::Music::Info::setTitle($url, $newtitle);
+				}
 			}
 
 			my $redirectedcontenttype = Slim::Music::Info::contentType($redir);

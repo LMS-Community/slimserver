@@ -8,21 +8,19 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.22 2004/08/24 04:28:47 kdf Exp $
+# $Id: Player.pm,v 1.23 2004/08/25 23:24:45 dean Exp $
 #
 package Slim::Player::Player;
-
+use strict;
 use Slim::Player::Client;
-use Slim::Hardware::Decoder;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw (string);
 use Slim::Display::VFD::Animation;
 
-@ISA = ("Slim::Player::Client");
+our @ISA = ("Slim::Player::Client");
 
 my @fonttable = ( ['small', 'small'],
 		   		  [ undef, 'large']);
-		   
 
 sub new {
 	my $class = shift;
@@ -105,17 +103,13 @@ sub power {
 				#check if there is a sync group to restore
 				Slim::Player::Sync::restoreSync($client);
 				# restore volume (un-mute if necessary)
-				my $vol = Slim::Utils::Prefs::clientGet($client,"volume");
+				my $vol = $client->volume();
 				if($vol < 0) { 
 					# un-mute volume
 					$vol *= -1;
-					Slim::Utils::Prefs::clientSet($client, "volume", $vol);
+					$client->volume($vol);
 				}
 				Slim::Control::Command::execute($client, ["mixer", "volume", $vol]);
-
-				my $pitch = Slim::Utils::Prefs::clientGet($client,"pitch");
-				Slim::Control::Command::execute($client, ["mixer", "pitch", $pitch]);
-			
 			} else {
 				Slim::Buttons::Common::setMode($client, 'off');
 			}
@@ -125,48 +119,14 @@ sub power {
 	}
 }			
 
-sub volume {
-	my ($client, $volume) = @_;
+sub maxVolume { return 100; }
+sub minVolume {	return 0; }
 
-	if (!$client->isPlayer()) {
-		return 1;
-	}
+sub maxTreble {	return 100; }
+sub minTreble {	return 0; }
 
-	if ($volume > $Slim::Player::Client::maxVolume) { $volume = $Slim::Player::Client::maxVolume; }
-	if ($volume < 0) { $volume = 0; }
-	
-	# normalize
-	$volume = $volume / $Slim::Player::Client::maxVolume;
-
-	$::d_control && msg("volume: $volume\n");
- 	
-	Slim::Hardware::Decoder::volume($client, $volume);
-}
-
-sub treble {
-	my ($client, $treble) = @_;
-	if ($treble > $Slim::Player::Client::maxTreble) { $treble = $Slim::Player::Client::maxTreble; }
-	if ($treble < $Slim::Player::Client::minTreble) { $treble = $Slim::Player::Client::minTreble; }
-
-	Slim::Hardware::Decoder::treble($client, $treble);
-}
-
-
-sub bass {
-	my ($client, $bass) = @_;
-	if ($bass > $Slim::Player::Client::maxBass) { $bass = $Slim::Player::Client::maxBass; }
-	if ($bass < $Slim::Player::Client::minBass) { $bass = $Slim::Player::Client::minBass; }
-
-	Slim::Hardware::Decoder::bass($client, $bass);
-}
-
-sub pitch {
-	my ($client, $pitch) = @_;
-	if ($pitch > $Slim::Player::Client::maxPitch) { $pitch = $Slim::Player::Client::maxPitch; }
-	if ($pitch < $Slim::Player::Client::minPitch) { $pitch = $Slim::Player::Client::minPitch; }
-
-	Slim::Hardware::Decoder::pitch($client, $pitch);
-}
+sub maxBass {	return 100; }
+sub minBass {	return 0; }
 
 sub fonts {
 	my $client = shift;
@@ -178,11 +138,11 @@ sub fonts {
 # fade the volume up or down
 # $fade = number of seconds to fade 100% (positive to fade up, negative to fade down) 
 # $callback is function reference to be called when the fade is complete
-# FYI 8 to 10 seems to be a good fade value
 my %fvolume;  # keep temporary fade volume for each client
 sub fade_volume {
 	my($client, $fade, $callback, $callbackargs) = @_;
-
+	$::d_ui && msg("entering fade_volume:  fade: $fade to $fvolume{$client}\n");
+	
 	my $faderate = 20;  # how often do we send updated fade volume commands per second
 	
 	Slim::Utils::Timers::killTimers($client, \&fade_volume);
@@ -209,16 +169,16 @@ sub fade_volume {
 		$fvolume{$client} = $vol;
 	}
 
-	$fvolume{$client} += $Slim::Player::Client::maxVolume * (1/$faderate) / $fade; # fade volume
+	$fvolume{$client} += $client->maxVolume() * (1/$faderate) / $fade; # fade volume
 
 	if ($fvolume{$client} < 0) { $fvolume{$client} = 0; };
 	if ($fvolume{$client} > $vol) { $fvolume{$client} = $vol; };
 
-	&volume($client, $fvolume{$client}); # set volume
+	$client->volume($fvolume{$client},1); # set volume
 
 	if ($fvolume{$client} == 0 || $fvolume{$client} == $vol) {	
 		# done fading
-		$::d_ui && msg("fade_volume done.\n");
+		$::d_ui && msg("fade_volume done.  fade: $fade to $fvolume{$client} (vol: $vol)\n");
 		$fvolume{$client} = 0; # reset temporary fade volume 
 		$callback && (&$callback(@$callbackargs));
 	} else {
@@ -287,7 +247,7 @@ sub textSize {
 	
 	my $mode = Slim::Buttons::Common::mode($client);
 	
-	$prefname = ($mode && $mode eq 'off') ? "offDisplaySize" : "doublesize";
+	my $prefname = ($mode && $mode eq 'off') ? "offDisplaySize" : "doublesize";
 	
 	if (defined($newsize)) {
 		return	Slim::Utils::Prefs::clientSet($client, $prefname, $newsize);
@@ -357,7 +317,7 @@ sub currentSongLines {
 				$line1 = string('PLAYING');
 			}
 			
-			if (Slim::Utils::Prefs::clientGet($client, "volume") < 0) {
+			if ($client->volume() < 0) {
 				$line1 .= " ".string('LCMUTED')
 			}
 
@@ -613,6 +573,8 @@ sub progressBar {
 sub balanceBar {
 	return sliderBar(shift,shift,shift,50);
 }
+
+
 
 
 

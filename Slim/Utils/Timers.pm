@@ -1,6 +1,6 @@
 package Slim::Utils::Timers;
 
-# $Id: Timers.pm,v 1.9 2004/01/26 05:44:23 dean Exp $
+# $Id: Timers.pm,v 1.10 2004/08/25 23:24:46 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -139,15 +139,18 @@ sub setTimer {
 sub killTimers {
 	my ($client, $subptr) = @_;
 	my $i = 0;
+	my $killed = 0;
 	my $timer;
 	
 	while ($timer = $timers[$i]) {
 		if (($timer->{'client'} eq $client) && ($timer->{'subptr'} eq $subptr)) {
 			splice( @timers, $i, 1);
+			$killed++;
 		} else {
 			$i++;
 		}
 	}
+	return $killed;
 }
 
 # optimize if we know there's only one outstanding timer that matches

@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.98 2004/08/06 22:32:00 dean Exp $
+# $Id: Pages.pm,v 1.99 2004/08/25 23:24:46 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -593,10 +593,10 @@ sub status {
 
 			$params->{'sleeptime'} = $client->currentSleepTime();
 			$params->{'isplayer'}  = 1;
-			$params->{'volume'}    = int(Slim::Utils::Prefs::clientGet($client, "volume") + 0.5);
-			$params->{'bass'}      = int(Slim::Utils::Prefs::clientGet($client, "bass") + 0.5);
-			$params->{'treble'}    = int(Slim::Utils::Prefs::clientGet($client, "treble") + 0.5);
-			$params->{'pitch'}    = int(Slim::Utils::Prefs::clientGet($client, "pitch") + 0.5);
+			$params->{'volume'}    = int($client->volume() + 0.5);
+			$params->{'bass'}      = int($client->bass() + 0.5);
+			$params->{'treble'}    = int($client->treble() + 0.5);
+			$params->{'pitch'}    = int($client->pitch() + 0.5);
 
 			my $sleep = $client->sleepTime() - Time::HiRes::time();
 			$params->{'sleep'} = $sleep < 0 ? 0 : int($sleep/60);

@@ -10,6 +10,7 @@ package Slim::Player::Squeezebox;
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
+use strict;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 use IO::Socket;
@@ -18,7 +19,9 @@ use Slim::Utils::Misc;
 use Slim::Utils::Strings qw (string);
 use MIME::Base64;
 
-@ISA = ("Slim::Player::Player");
+use Slim::Hardware::mas35x9;
+
+our @ISA = ("Slim::Player::Player");
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -89,9 +92,8 @@ sub play {
 	my $paused = shift;
 	my $format = shift;
 
-	Slim::Hardware::Decoder::reset($client, $format);
 	$client->stream('s', $paused, $format);
-	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
+	$client->volume($client->volume());
 	return 1;
 }
 #
@@ -479,6 +481,10 @@ sub stream {
 		$frame .= $request_string;
 
 		$client->sendFrame('strm',\$frame);
+		
+		if ($client->pitch() != 100 && $command eq 's') {
+			$client->sendPitch($client->pitch());
+		}
 	}
 }
 
@@ -525,6 +531,133 @@ sub i2c {
 		$::d_i2c && msg("i2c: sending ".length($data)." bytes\n");
 		$client->sendFrame('i2cc', \$data);
 	}
+}
+
+#
+# set the mas35x9 pitch rate as a percentage of the normal rate, where 100% is 100.
+#
+sub pitch {
+	my $client = shift;
+	my $newpitch = shift;
+	
+	my $pitch = $client->SUPER::pitch($newpitch, @_);
+
+	if (defined($newpitch)) {
+		$client->sendPitch($pitch, 1);
+	}
+	return $pitch;
+}
+
+sub sendPitch {
+	my $client = shift;
+	my $pitch = shift;
+	my $pause = shift;
+	
+	my $freq = int(18432 / ($pitch / 100));
+	my $freqHex = sprintf('%05X', $freq);
+	$::d_control && msg("Pitch frequency set to $freq ($freqHex), pause: $pause\n");
+
+	if ($client->streamformat()) {
+		if ($client->streamformat() eq 'mp3') {
+			$client->i2c(
+				Slim::Hardware::mas35x9::masWrite('OfreqControl', $freqHex).
+					Slim::Hardware::mas35x9::masWrite('OutClkConfig', '00001').
+					Slim::Hardware::mas35x9::masWrite('IOControlMain', '00015')     # MP3
+			);
+		} else {
+			if ($pause && ($client->playmode() =~ /^play/)) {
+				if (Slim::Utils::Timers::killTimers($client, \&resume) == 0) {
+					$client->pause();
+				}	
+			}
+			
+			$client->i2c(
+				Slim::Hardware::mas35x9::masWrite('OfreqControl', $freqHex).
+					Slim::Hardware::mas35x9::masWrite('OutClkConfig', '00001').
+					Slim::Hardware::mas35x9::masWrite('IOControlMain', '00101')     # PCM
+			);
+
+			if ($pause && ($client->playmode()  =~ /^play/)) {
+				Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 0.5,\&resume,$client);
+			}
+		}	
+	}
+}
+	
+sub maxPitch {
+	return 120;
+}
+
+sub minPitch {
+	return 80;
+}
+
+sub volume {
+	my $client = shift;
+	my $newvolume = shift;
+
+	my $volume = $client->SUPER::volume($newvolume, @_);
+
+	if (defined($newvolume)) {
+		# really the only way to make everyone happy will be use a combination of digital and analog volume controls as the 
+		# default, but then have knobs so you can tune it for max headphone power, lowest noise at low volume, 
+		# fixed/variable s/pdif, etc.
+	
+		if (Slim::Utils::Prefs::clientGet($client, 'digitalVolumeControl')) {
+			# here's one way to do it: adjust digital gains, leave fixed 3db boost on the main volume control
+			# this does achieve good analog output voltage (important for headphone power) but is not optimal
+			# for low volume levels. If only the analog outputs are being used, and digital gain is not required, then 
+			# use the other method.
+			#
+			# When the main volume control is set to +3db (0x7600), there is no clipping at the analog outputs 
+			# at max volume, for the loudest 1KHz sine wave I could record.
+			#
+			# At +12db, the clipping level is around 23/40 (on our thermometer bar).
+			#
+			# The higher the analog gain is set, the closer it can "match" (3v pk-pk) the max S/PDIF level. 
+			# However, at any more than +3db it starts to get noisy, so +3db is the max we should use without 
+			# some clever tricks to combine the two gain controls.
+			#
+	
+			my $level = sprintf('%05X', 0x80000 * (($volume / $client->maxVolume)**2));
+			$client->i2c(
+				Slim::Hardware::mas35x9::masWrite('out_LL', $level)
+				.Slim::Hardware::mas35x9::masWrite('out_RR', $level)
+				.Slim::Hardware::mas35x9::masWrite('VOLUME', '7600')
+			);
+	
+		} else {
+			# or: leave the digital controls always at 0db and vary the main volume:
+			# much better for the analog outputs, but this does force the S/PDIF level to be fixed.
+	
+			my $level = sprintf('%02X00', 0x73 * ($volume / $client->maxVolume)**0.1);
+	
+			$client->i2c(
+				Slim::Hardware::mas35x9::masWrite('out_LL',  '80000')
+				.Slim::Hardware::mas35x9::masWrite('out_RR', '80000')
+				.Slim::Hardware::mas35x9::masWrite('VOLUME', $level)
+			);
+		}
+	}
+	return $volume;
+}
+
+sub bass {
+	my $client = shift;
+	my $newbass = shift;
+	my $bass = $client->SUPER::bass($newbass);
+	$client->i2c( Slim::Hardware::mas35x9::masWrite('BASS', Slim::Hardware::mas35x9::getToneCode($bass,'bass'))) if (defined($newbass));	
+
+	return $bass;
+}
+
+sub treble {
+	my $client = shift;
+	my $newtreble = shift;
+	my $treble = $client->SUPER::treble($newtreble);
+	$client->i2c( Slim::Hardware::mas35x9::masWrite('TREBLE', Slim::Hardware::mas35x9::getToneCode($treble,'treble'))) if (defined($newtreble));	
+
+	return $treble;
 }
 
 1;
