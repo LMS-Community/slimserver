@@ -225,7 +225,10 @@ sub executeCmd {
 	my $command = shift;
 
 	my $output  = undef;
-	my @params  = shellwords($command);
+	# This was reverted by Fred, because spaces weren't working. Still
+	# need to come up with a spaces in quotes work around.
+#	my @params  = shellwords($command);
+	my @params = split(" ", $command);
 
 	foreach my $param (@params) {
 		$param = Slim::Web::HTTP::unescape($param);

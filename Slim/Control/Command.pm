@@ -22,33 +22,6 @@ use Slim::Utils::Strings qw(string);
 
 our %executeCallbacks;
 
-# This maps the extended CLI commands to methods on Track.
-# Allocation map: capital letters are still free:
-#  a b c d E f g h i j k l m n o P q r S t u v X y z
-
-our %cliTrackMap = (
-	'g' => 'genre',
-	'a' => 'artist',
-	'c' => 'composer',
-	'b' => 'band',
-	'h' => 'conductor',
-	'l' => 'album',
-	'd' => 'duration',
-	't' => 'tracknum',
-	'y' => 'year',
-	'm' => 'bpm',
-	'k' => 'comment',
-	'v' => 'tagversion',
-	'r' => 'bitrate',
-	'z' => 'drm',
-	'n' => 'modificationTime',
-	'u' => 'url',
-	'f' => 'filesize',
-);
-# j Cover art
-# i disc
-# q disc count
-# o type
 
 
 our %searchMap = (
@@ -555,6 +528,8 @@ sub execute {
  		
  		$path = $params{'url'} if defined($params{'url'});
  		$tags = $params{'tags'} if defined($params{'tags'});
+ 		
+# 		msg("path:$path\n");
  				
  		if (Slim::Utils::Misc::stillScanning()) {
  			push @returnArray, "rescan:1";
@@ -562,6 +537,7 @@ sub execute {
  		
  		if (Slim::Music::Info::isSong($path)) {
  
+# 			msg("isSong\n");
  			my @items = pushSong($path, $tags);
  			
  			push @returnArray, "count:" . scalar(@items);
@@ -576,8 +552,11 @@ sub execute {
 
  		} else {
 
+#			msg("isNotSong\n");
+
  			push @returnArray, "count:0";
  		}
+# 		msg("Done\n");
 
  		$client = undef;
 
@@ -682,6 +661,10 @@ sub execute {
 
 				$p1 = Slim::Music::Info::getCurrentTitle($client, $track->url());
 
+			} elsif ($p0 eq 'duration') {
+			
+				$p1 = $track->secs() || 0;
+				
 			} else {
 
 				$p1 = $track->$method() || 0;
@@ -1148,7 +1131,12 @@ sub execute {
 				my $obj = $ds->objectForUrl($url);
 
 				# Just call the method on Track
-				$p3 = $obj->$p1();
+				if ($p1 eq 'duration') {
+					$p3 = $obj->secs();
+				}
+				else {
+					$p3 = $obj->$p1();
+				}
 
 			} elsif ($p1 eq "path") {
 
@@ -1231,8 +1219,6 @@ sub execute {
 					$fade = -0.3125;
 				}
  
-				# work around to bug 743, use mute() instead of fade_volume.
-				# see also syncFunction...
 				$client->fade_volume($fade, \&mute, [$client]);
  
 				if (Slim::Player::Sync::isSynced($client)) {
@@ -1540,10 +1526,7 @@ sub syncFunction {
 			if (Slim::Utils::Prefs::clientGet($eachclient,'syncVolume')) {
 
 				if ($setting eq "mute") {
-					# work around to bug 743, use mute() instead of fade_volume
-					# see also above 'mixer muting'
-#					$eachclient->fade_volume($newval, \&mute, [$eachclient]);
-					$eachclient->mute();
+					$eachclient->fade_volume($newval, \&mute, [$eachclient]);
 				} else {
 					Slim::Utils::Prefs::clientSet($eachclient, $setting, $newval);
 					&$controlRef($eachclient, $newval) if ($controlRef);
@@ -1732,6 +1715,38 @@ sub parseListRef {
 }
 
 # Extended CLI API helper subs
+# ----------------------------
+
+# This maps the extended CLI commands to methods on Track.
+# Allocation map: capital letters are still free:
+#  a b c d E f g h i j k l m n o P q r S t u v X y z
+
+our %cliTrackMap = (
+	'g' => 'genre',
+	'a' => 'artist',
+	'c' => 'composer',
+	'b' => 'band',
+	'h' => 'conductor',
+	'l' => 'album',
+#	'd' => 'duration',
+	't' => 'tracknum',
+	'y' => 'year',
+	'm' => 'bpm',
+	'k' => 'comment',
+	'v' => 'tagversion',
+	'r' => 'bitrate',
+	'z' => 'drm',
+	'n' => 'modificationTime',
+	'u' => 'url',
+	'f' => 'filesize',
+);
+# Special cased:
+# d duration
+# i disc
+# j Cover art
+# o type
+# q disc count
+
 sub pushSong {
 	my $pathOrObj = shift;
 	my $tags      = shift;
@@ -1747,12 +1762,17 @@ sub pushSong {
 
 			my $value = $track->$method();
 
-			if (defined $value && $value !~ /^\s*$/) {
+			if (defined $value && $value !~ /^\s*$/ && !(($tag eq 'c' || $tag eq 'b' || $tag eq 'h') && $value == 0)) {
 
 				push @returnArray, sprintf('%s:%s', $method, $value);
 			}
 
 			next;
+		}
+
+		if ($tag eq 'd' && defined(my $duration = $track->secs())) {
+			push @returnArray, "duration:$duration";
+			
 		}
 
 		# Cover art!
