@@ -125,7 +125,7 @@ sub _parseWMAHeader {
 			print "nextObjectSize: [" . $nextObjectSize . "]\n";
 		}
         
-        	if (defined($nextObjectGUIDName)) {
+        if (defined($nextObjectGUIDName)) {
 
 			# start the different header types parsing              
 			if ($nextObjectGUIDName eq 'GETID3_ASF_File_Properties_Object') {
@@ -241,9 +241,39 @@ sub _parseASFExtendedContentDescriptionObject {
 		$ext{'content'}->{$id}->{'value_type'}   = unpack('v', $self->_readAndIncrementOffset(2));
 		$ext{'content'}->{$id}->{'value_length'} = unpack('v', $self->_readAndIncrementOffset(2));
 
-		$ext{'content'}->{$id}->{'value'}        = _denull( $self->_readAndIncrementOffset(
-			$ext{'content'}->{$id}->{'value_length'}
-		) );
+		# Value types from ASF spec:
+		# 0 = unicode string
+		# 1 = BYTE array
+		# 2 = BOOL (32 bit)
+		# 3 = DWORD (32 bit)
+		# 4 = QWORD (64 bit)
+		# 5 = WORD (16 bit)
+		my $value = $self->_readAndIncrementOffset( $ext{'content'}->{$id}->{'value_length'} );
+		if( $ext{'content'}->{$id}->{'value_type'} <= 1 )
+		{
+			$ext{'content'}->{$id}->{'value'} = _denull( $value );
+		}
+		elsif( $ext{'content'}->{$id}->{'value_type'} == 4 )
+		{
+			# Looks like "Q" isn't supported w/ unpack on win32
+			$ext{'content'}->{$id}->{'value'} = _parse64BitString( $value );
+		}
+		else
+		{
+			# Value types 0, 1, 3 handled separately
+			my @ValTypeTemplates = ( "", "", "V", "V", "", "v" );
+			$ext{'content'}->{$id}->{'value'} = unpack( $ValTypeTemplates[ $ext{'content'}->{$id}->{'value_type'} ], $value );
+		}
+
+		if($DEBUG)
+		{
+			print "Ext Cont Desc: $id";
+			print " name = " . $ext{'content'}->{$id}->{'name'};
+			print " value = " . $ext{'content'}->{$id}->{'value'};
+			print " type = " . $ext{'content'}->{$id}->{'value_type'};
+			print " value_length = " . $ext{'content'}->{$id}->{'value_length'};
+			print "\n";
+		}
 	}
 
 	$self->{'EXT'} = \%ext;

@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.79 2004/03/06 05:56:45 kdf Exp $
+# $Id: HTTP.pm,v 1.80 2004/03/06 17:08:04 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -114,7 +114,20 @@ my %pageFunctions = ();
 
 # other people call us externally.
 *escape   = \&URI::Escape::uri_escape;
-*unescape = \&URI::Escape::uri_unescape;
+
+# don't use the external one because it doesn't know about the difference between a param and not...
+#*unescape = \&URI::Escape::unescape;
+sub unescape {
+	my $in = shift;
+	my $isparam = shift;
+	if (defined $in) {
+		if ($isparam) {$in =~ s/\+/ /g;}
+		$in =~ s/%([\da-fA-F][\da-fA-F])/chr(hex($1))/eg;
+		return $in;
+	} else {
+		return '';
+	}
+}
 
 sub openport {
 	my ($listenerport, $listeneraddr) = @_;
@@ -296,8 +309,8 @@ sub processHTTP {
 
 				if ($param =~ /([^=]+)=(.*)/) {
 
-					my $name  = uri_unescape($1, 1);
-					my $value = uri_unescape($2, 1);
+					my $name  = unescape($1, 1);
+					my $value = unescape($2, 1);
 
 					$params->{$name} = $value;
 
@@ -305,7 +318,7 @@ sub processHTTP {
 
 				} else {
 
-					my $name = uri_unescape($param, 1);
+					my $name = unescape($param, 1);
 
 					$params->{$name} = 1;
 
@@ -344,7 +357,7 @@ sub processHTTP {
 			}
 
 			$path =~ s|^/+||;
-			$params->{"path"} = uri_unescape($path);
+			$params->{"path"} = unescape($path);
 		}
 
 		# HTTP/1.1 Persistent connections or HTTP 1.0 Keep-Alives
@@ -454,19 +467,6 @@ sub processURL {
 				$client = Slim::Player::HTTP->new($address, $paddr, $httpClient);
 				$client->init();
 			}
-		}
-		if (defined($params->{'bitrate'})) {
-			# must validate 32 40 48 56 64 80 96 112 128 160 192 224 256 320 CBR
-			#set to the closest lower value of its not a match
-			my $temprate = $params->{'bitrate'};
-			foreach my $i (320, 256, 244, 192, 160, 128, 112, 96, 80, 64, 56, 48, 40, 32) {
-				$temprate = $i;
-				last if ($i <= $params->{'bitrate'});
-			}
-			Slim::Utils::Prefs::clientSet($client,'transcodeBitrate',$temprate);
-			$::d_http && msg("Setting transcode bitrate to $temprate\n");
-		} else {
-			Slim::Utils::Prefs::clientSet($client,'transcodeBitrate',undef);
 		}
 	}
 
