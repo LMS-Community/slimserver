@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DBIStore;
 
-# $Id: DBIStore.pm,v 1.2 2004/12/16 01:13:55 vidur Exp $
+# $Id: DBIStore.pm,v 1.3 2004/12/16 04:45:34 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -172,12 +172,13 @@ sub find {
 	my $field = shift;
 	my $findCriteria = shift;
 	my $sortby = shift;
+	my $start = shift;
+	my $end = shift;
 
-	my $items = Slim::DataStores::DBI::DataModel->find($field, $findCriteria, 
-												 $sortby);
+	my $items = Slim::DataStores::DBI::DataModel->find($field, $findCriteria, $sortby, $start, $end);
+
 	if (defined($items) && $field eq 'track') {
-		my @tracks = grep $self->_includeInTrackCount($_), @$items;
-		return \@tracks;
+		return [ grep $self->_includeInTrackCount($_), @$items ];
 	}
 
 	return $items;
