@@ -21,7 +21,7 @@ sub startScan {
 	}
 
 	if (Slim::Music::MoodLogic::useMoodLogic()) { 
-		Slim::Music::Moodlogic::startScan();
+		Slim::Music::MoodLogic::startScan();
 		return;
 	}
 
