@@ -1,6 +1,6 @@
 package Slim::Formats::Movie;
 
-# $Id: Movie.pm,v 1.14 2004/07/27 23:40:23 dean Exp $
+# $Id: Movie.pm,v 1.15 2004/07/29 00:42:14 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -18,17 +18,47 @@ package Slim::Formats::Movie;
 use strict;
 use QuickTime::Movie;
 
+my @genre = (
+   "N/A", "Blues", "Classic Rock", "Country", "Dance", "Disco", "Funk",
+   "Grunge", "Hip-Hop", "Jazz", "Metal", "New Age", "Oldies",
+   "Other", "Pop", "R&B", "Rap", "Reggae", "Rock",
+   "Techno", "Industrial", "Alternative", "Ska", "Death Metal", "Pranks",
+   "Soundtrack", "Euro-Techno", "Ambient", "Trip-Hop", "Vocal", "Jazz+Funk",
+   "Fusion", "Trance", "Classical", "Instrumental", "Acid", "House",
+   "Game", "Sound Clip", "Gospel", "Noise", "AlternRock", "Bass",
+   "Soul", "Punk", "Space", "Meditative", "Instrumental Pop", "Instrumental Rock",
+   "Ethnic", "Gothic", "Darkwave", "Techno-Industrial", "Electronic", "Pop-Folk",
+   "Eurodance", "Dream", "Southern Rock", "Comedy", "Cult", "Gangsta",
+   "Top 40", "Christian Rap", "Pop/Funk", "Jungle", "Native American", "Cabaret",
+   "New Wave", "Psychadelic", "Rave", "Showtunes", "Trailer", "Lo-Fi",
+   "Tribal", "Acid Punk", "Acid Jazz", "Polka", "Retro", "Musical",
+   "Rock & Roll", "Hard Rock", "Folk", "Folk/Rock", "National Folk", "Swing",
+   "Fast-Fusion", "Bebob", "Latin", "Revival", "Celtic", "Bluegrass", "Avantgarde",
+   "Gothic Rock", "Progressive Rock", "Psychedelic Rock", "Symphonic Rock", "Slow Rock", "Big Band",
+   "Chorus", "Easy Listening", "Acoustic", "Humour", "Speech", "Chanson",
+   "Opera", "Chamber Music", "Sonata", "Symphony", "Booty Bass", "Primus",
+   "Porn Groove", "Satire", "Slow Jam", "Club", "Tango", "Samba",
+   "Folklore", "Ballad", "Power Ballad", "Rhythmic Soul", "Freestyle", "Duet",
+   "Punk Rock", "Drum Solo", "A capella", "Euro-House", "Dance Hall",
+   "Goa", "Drum & Bass", "Club House", "Hardcore", "Terror",
+   "Indie", "BritPop", "NegerPunk", "Polsk Punk", "Beat",
+   "Christian Gangsta", "Heavy Metal", "Black Metal", "Crossover", "Contemporary C",
+   "Christian Rock", "Merengue", "Salsa", "Thrash Metal", "Anime", "JPop",
+   "SynthPop"
+);
+
 my %tagMapping = (
 	'©nam'	=> 'TITLE',
 	'©ART'	=> 'ARTIST',
 	'©alb'	=> 'ALBUM',
-	'©gen'	=> 'GENRE',
+	'©wrt'	=> 'COMPOSER',
 	'©day'	=> 'YEAR',
 );
 
 my %binaryTags = (
 	'trkn'	=> 'TRACKNUM',
 	'disk'	=> 'DISC',
+	'gnre'	=> 'GENRE',
 	'cpil'	=> 'COMPILATION',
 	'covr'	=> 'PIC'
 );
@@ -69,6 +99,7 @@ sub getTag {
 	# clean up binary tags
 	$tags->{'COVER'} = 1 if ($tags->{'COVER'});
 	$tags->{'TRACKNUM'} = unpack('N', $tags->{'TRACKNUM'}) if $tags->{'TRACKNUM'};
+	$tags->{'GENRE'} = $genre[unpack('n', $tags->{'GENRE'})] if $tags->{'GENRE'};
 	($tags->{'DISC'}, $tags->{'DISCC'}) = unpack('Nn', $tags->{'DISC'}) if $tags->{'DISC'};	
 	$tags->{'COMPILATION'} = unpack('N', $tags->{'COMPILATION'}) if $tags->{'COMPILATION'};	
 
