@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.51 2003/12/08 19:26:51 dean Exp $
+# $Id: HTTP.pm,v 1.52 2003/12/10 06:55:59 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1046,11 +1046,11 @@ sub generateresponse {
  			my $image = $2;
  			$::d_http && msg("Cover Art asking for: $image\n");
 			$song = Slim::Utils::Misc::fixPath($song);
-
- 			($body, $contenttype) = Slim::Music::Info::coverArt($song,$image);
+			my $imagedata;
+ 			($imagedata, $contenttype) = Slim::Music::Info::coverArt($song,$image);
  			 			
- 			if (defined($body)) {
- 				$$body = $body; #$body should be a ref
+ 			if (defined($imagedata)) {
+ 				$body = \$imagedata; #$body should be a ref
 				%headers = statusHeaders($client);
  			} else {
 				$body = getStaticContentRef("html/images/spacer.gif");
