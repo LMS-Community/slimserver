@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::List;
 
-# $Id: List.pm,v 1.12 2004/10/07 21:35:15 grotus Exp $
+# $Id: List.pm,v 1.13 2004/11/09 20:30:45 dave Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -218,7 +218,7 @@ sub init {
 	}
 	my $listIndex = Slim::Buttons::Common::param($client,'listIndex');
 	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
-	if (!defined($listIndex)) {
+	if (!defined($listIndex) || (scalar(@$listRef) == 0)) {
 		$listIndex = 0;
 	} elsif ($listIndex > $#$listRef) {
 		$listIndex = $#$listRef;
