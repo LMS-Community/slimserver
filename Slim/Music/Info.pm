@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.151 2004/10/13 19:29:11 dean Exp $
+# $Id: Info.pm,v 1.152 2004/10/14 04:02:14 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1232,7 +1232,7 @@ sub guessTags {
 			my $i = 0;
 			foreach my $match (@matches) {
 				$::d_info && Slim::Utils::Misc::msg("$tags[$i] => $match\n");
-				$match = tr/_/ / if ($match);
+				$match = tr/_/ / if (defined $match);
 				$match = int($match) if $tags[$i] =~ /TRACKNUM|DISC{1,2}/;
 				$taghash->{$tags[$i++]} = $match;
 			}
@@ -2148,8 +2148,8 @@ sub readTags {
 					updateCacheEntry($file, $tempCacheEntry);
 					# Look for Cover Art and cache location
 					my ($body,$contenttype,$path);
-					if (defined $tempCacheEntry->{'PIC'}) {
-						($body,$contenttype,$path) = readCoverArtTags($file,'cover');
+					if (defined $tempCacheEntry->{'PIC'} || defined $tempCacheEntry->{'APIC'}) {
+						($body,$contenttype,$path) = readCoverArtTags($file,$tempCacheEntry);
 					}
 					if (defined $body) {
 						$tempCacheEntry->{'COVER'} = 1;
@@ -2275,7 +2275,7 @@ sub readCoverArt {
 	my $fullpath = shift;
 	my $image    = shift || 'cover';
 
-	my ($body,$contenttype,$path) = readCoverArtTags($fullpath,$image);
+	my ($body,$contenttype,$path) = readCoverArtTags($fullpath);
 
 	if (!defined $body) {
 		($body,$contenttype,$path) = readCoverArtFiles($fullpath,$image);
@@ -2287,9 +2287,7 @@ sub readCoverArt {
 sub readCoverArtTags {
 	use bytes;
 	my $fullpath = shift;
-	
-#   this parameter isn't used...
-#	my $image = shift || 'cover';
+	my $tags = shift;
 
 	if (! Slim::Utils::Prefs::get('lookForArtwork')) { return undef};
 
@@ -2312,7 +2310,7 @@ sub readCoverArtTags {
 	
 			$::d_artwork && Slim::Utils::Misc::msg("Looking for image in ID3 tag in file $file\n");
 
-			my $tags = MP3::Info::get_mp3tag($file, 2, 1);
+			$tags = MP3::Info::get_mp3tag($file, 2, 1) unless defined $tags;
 			if ($tags) {
 				# look for ID3 v2.2 picture
 				my $pic = $tags->{'PIC'};
