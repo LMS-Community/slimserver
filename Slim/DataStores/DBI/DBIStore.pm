@@ -48,6 +48,7 @@ use constant VALID_INDEX => 0;
 use constant TTL_INDEX => 1;
 
 # Hash for tag function per format
+# XXX These should be in Formats, and register themselves
 our %tagFunctions = (
 	'mp3' => \&Slim::Formats::MP3::getTag,
 	'mp2' => \&Slim::Formats::MP3::getTag,
@@ -1052,6 +1053,13 @@ sub _preCheckAttributes {
 		# Always normalize the sort, as TITLESORT could come from a TSOT tag.
 		$attributes->{'TITLESORT'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'TITLESORT'});
 	}
+
+	# Push these back until we have a Track object.
+	for my $tag (qw(COMMENT BAND COMPOSER CONDUCTOR)) {
+
+		$deferredAttributes->{$tag} = $attributes->{$tag};
+		delete $attributes->{$tag};
+	}
 	
 	return ($attributes, $deferredAttributes);
 }
@@ -1060,11 +1068,23 @@ sub _postCheckAttributes {
 	my $track = shift;
 	my $attributes = shift;
 	my $create = shift;
-	
+
+	# Add comments if we have them:
+	if (my $comment = $attributes->{'COMMENT'}) {
+
+		Slim::DataStores::DBI::Comment->find_or_create({
+			'track' => $track->id,
+			'value' => $comment,
+		});
+	}
+
+	# Genre addition. If there's no genre for this track, and no 
+	# 'No Genre' object, create one.
 	if (my $genre = $attributes->{'GENRE'}) {
 
 		my @genres = Slim::DataStores::DBI::GenreTrack->add($genre, $track);
 
+		# I don't quite understand what this is doing..
 		if (!$create && defined $_unknownGenreID) {
 
 			foreach my $gen (@genres) {
@@ -1077,29 +1097,36 @@ sub _postCheckAttributes {
 		($_unknownGenreID) = Slim::DataStores::DBI::GenreTrack->add(string('NO_GENRE'), $track);
 	}
 
-	if (my $artist = $attributes->{'ARTIST'}) {
+	# Do a similar thing for artist, conductor, etc
+	for my $tag (qw(ARTIST BAND COMPOSER CONDUCTOR)) {
 
-		my @contributors = Slim::DataStores::DBI::ContributorTrack->add(
-			$artist, 
-			Slim::DataStores::DBI::ContributorTrack::ROLE_ARTIST, 
-			$track,
-			$attributes->{'ARTISTSORT'}
-		);
+		if (my $contributor = $attributes->{$tag}) {
 
-		if (!$create && defined $_unknownArtistID) {
-			
-			foreach my $contrib (@contributors) {
-				$contrib->delete() if ($contrib->id() eq $_unknownArtistID);
-			} 
+			# Is ARTISTSORT/TSOP always right for non-artist
+			# contributors? I think so. ID3 doesn't have
+			# "BANDSORT" or similar at any rate.
+			my @contributors = Slim::DataStores::DBI::ContributorTrack->add(
+				$contributor, 
+				$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{$tag},
+				$track,
+				$attributes->{'ARTISTSORT'}
+			);
+
+			if (!$create && defined $_unknownArtistID) {
+				
+				foreach my $contrib (@contributors) {
+					$contrib->delete() if ($contrib->id() eq $_unknownArtistID);
+				} 
+			}
+
+		} elsif ($create && !defined $_unknownArtistID) {
+
+			($_unknownArtistID) = Slim::DataStores::DBI::ContributorTrack->add(
+				string('NO_ARTIST'),
+				$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'},
+				$track
+			);
 		}
-
-	} elsif ($create && !defined $_unknownArtistID) {
-
-		($_unknownArtistID) = Slim::DataStores::DBI::ContributorTrack->add(
-			string('NO_ARTIST'),
-			Slim::DataStores::DBI::ContributorTrack::ROLE_ARTIST, 
-			$track
-		);
 	}
 }
 

@@ -183,7 +183,7 @@ sub comment {
 	my $comment;
 
 	# extract multiple comments and concatenate them
-	while (my $c = $self->comments()->next()) {
+	for my $c ($self->comments()) {
 
 		next unless $c;
 

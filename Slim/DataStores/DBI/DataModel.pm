@@ -288,6 +288,7 @@ our %fieldHasClass = (
 	'conductor' => 'Slim::DataStores::DBI::Contributor',
 	'composer' => 'Slim::DataStores::DBI::Contributor',
 	'band' => 'Slim::DataStores::DBI::Contributor',
+	'comment' => 'Slim::DataStores::DBI::Comment',
 );
 
 our %searchFieldMap = (
@@ -324,6 +325,7 @@ our %searchFieldMap = (
 	'composer.name' => 'contributors.namesort', 
 	'band' => 'contributor_track.contributor', 
 	'band.name' => 'contributors.namesort', 
+	'comment' => 'comments.value', 
 );
 
 our %cmpFields = (
@@ -331,6 +333,8 @@ our %cmpFields = (
 	'genre.name' => 1,
 	'album.title' => 1,
 	'track.title' => 1,
+	'comment' => 1,
+	'comment.value' => 1,
 );
 
 our %sortFieldMap = (
@@ -366,28 +370,38 @@ our %tableSort = (
 our %joinGraph = (
 	'genres' => {
 		'genre_track' => 'genres.id = genre_track.genre',
-	},		 
+	},
+
 	'genre_track' => {
 		'genres' => 'genres.id = genre_track.genre',
 		'contributor_track' => 'genre_track.track = contributor_track.track',
 		'tracks' => 'genre_track.track = tracks.id',
 	},
+
 	'contributors' => {
 		'contributor_track' => 'contributors.id = contributor_track.contributor',
 	},
+
 	'contributor_track' => {
 		'contributors' => 'contributors.id = contributor_track.contributor',
 		'genre_track' => 'genre_track.track = contributor_track.track',
 		'tracks' => 'contributor_track.track = tracks.id',
 	},
+
 	'tracks' => {
 		'contributor_track' => 'contributor_track.track = tracks.id',
 		'genre_track' => 'genre_track.track = tracks.id',
 		'albums' => 'albums.id = tracks.album',
 	},
+
 	'albums' => {
 		'tracks' => 'albums.id = tracks.album',
 	},
+
+	'comments' => {
+		'tracks' => 'comments.track = tracks.id',
+	},
+
 );
 
 # The hash below represents the shortest paths between nodes in the
@@ -415,6 +429,7 @@ our %queryPath = (
 	'default:album' => ['tracks', 'albums'],
 	'default:genre' => ['tracks', 'genre_track', 'genres'],
 	'album:contributor' => ['tracks', 'contributor_track', 'contributors'],
+	'comment:default' => ['comments', 'tracks'],
 	'default:default' => ['tracks'],
 );
 
@@ -426,6 +441,7 @@ our %fieldToNodeMap = (
 	'conductor' => 'contributor',
 	'composer' => 'contributor',
 	'band' => 'contributor',
+	'comment' => 'comment',
 );
 
 sub find {

@@ -7,10 +7,12 @@ package Slim::DataStores::DBI::ContributorTrack;
 use strict;
 use base 'Slim::DataStores::DBI::DataModel';
 
-use constant ROLE_ARTIST => 1;
-use constant ROLE_COMPOSER => 2;
-use constant ROLE_CONDUCTOR => 3;
-use constant ROLE_BAND => 4;
+our %contributorToRoleMap = (
+	'ARTIST'    => 1,
+	'COMPOSER'  => 2,
+	'CONDUCTOR' => 3,
+	'BAND'      => 4,
+);
 
 {
 	my $class = __PACKAGE__;
@@ -24,11 +26,11 @@ use constant ROLE_BAND => 4;
 	# xxx - removed album => $track->album(), creates database coherency problem
 	#$class->has_a(album => 'Slim::DataStores::DBI::Album');
 
-	$class->add_constructor('contributorsFor' => 'track=?');
-	$class->add_constructor('artistsFor' => "track=? AND role=".ROLE_ARTIST);
-	$class->add_constructor('composersFor' => "track=? AND role=".ROLE_COMPOSER);
-	$class->add_constructor('conductorsFor' => "track=? AND role=".ROLE_CONDUCTOR);
-	$class->add_constructor('bandsFor' => "track=? AND role=".ROLE_BAND);
+	$class->add_constructor('contributorsFor' => 'track = ?');
+	$class->add_constructor('artistsFor'      => "track = ? AND role = $contributorToRoleMap{'ARTIST'}");
+	$class->add_constructor('composersFor'    => "track = ? AND role = $contributorToRoleMap{'COMPOSER'}");
+	$class->add_constructor('conductorsFor'   => "track = ? AND role = $contributorToRoleMap{'CONDUCTOR'}");
+	$class->add_constructor('bandsFor'        => "track = ? AND role = $contributorToRoleMap{'BAND'}");
 }
 
 tie my %_cache, 'Tie::Cache::LRU', 5000;

@@ -1413,6 +1413,12 @@ sub advancedSearch {
 			$params->{$key} = searchStringSplit($params->{$key});
 		}
 
+		# Wildcard comment searches
+		if ($newKey =~ /comment/) {
+
+			$params->{$key} = "\*$params->{$key}\*";
+		}
+
 		$query{$newKey} = $params->{$key};
 	}
 
@@ -2178,7 +2184,7 @@ sub searchStringSplit {
 	my @strings = ();
 
 	# Don't split - causes an explict AND, which is what we want.. I think.
-	#for my $string (split(/\s+/, $search)) {
+	# for my $string (split(/\s+/, $search)) {
 	my $string = $search;
 
 		if ($searchSubString) {
