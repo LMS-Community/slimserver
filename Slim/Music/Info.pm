@@ -492,21 +492,37 @@ sub infoFormat {
 	my $str = shift; # format string to use
 	my $safestr = shift; # format string to use in the event that after filling the first string, there is nothing left
 	my $pos = 0; # keeps track of position within the format string
-	
+
 	my $track = ref $fileOrObj ? $fileOrObj  : $currentDB->objectForUrl($fileOrObj, 1);
 	my $file  = ref $fileOrObj ? $track->url : $fileOrObj;
 
 	return '' unless defined $file && $track;
 	
 	my $infoRef = infoHash($track, $file) || return '';
-	
+
 	my %infoHash = %{$infoRef}; # hash of data elements not cached in the main repository
 
-	$str = 'TITLE' unless defined $str; #use a safe format string if none specified
+	# use a safe format string if none specified
+	# Users can input strings in any locale - we need to convert that to
+	# UTF-8 first, otherwise perl will segfault in the nasty regex below.
+	if ($str && $] > 5.007) {
+
+		eval {
+			Encode::from_to($str, $Slim::Utils::Misc::locale, 'utf8');
+			Encode::_utf8_on($str);
+		};
+
+	} elsif (!defined $str) {
+
+		$str = 'TITLE';
+	}
 
 	if ($str =~ $ncElems) {
 		addToinfoHash(\%infoHash,$file,$str);
 	}
+
+	# So formats with high-bit chars will work.
+	use bytes;
 
 	#here is a breakdown of the following regex:
 	#\G -> start at the current pos() for the string
