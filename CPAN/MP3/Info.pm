@@ -23,8 +23,8 @@ use vars qw(
 	all	=> [@EXPORT, @EXPORT_OK]
 );
 
-# $Id: Info.pm,v 1.7 2004/01/15 00:33:15 dean Exp $
-($REVISION) = ' $Revision: 1.7 $ ' =~ /\$Revision:\s+([^\s]+)/;
+# $Id: Info.pm,v 1.8 2004/02/03 00:27:06 dean Exp $
+($REVISION) = ' $Revision: 1.8 $ ' =~ /\$Revision:\s+([^\s]+)/;
 $VERSION = '1.01';
 
 =pod
@@ -556,7 +556,7 @@ sub get_mp3tag {
 
 sub _get_v2tag {
 	my($fh) = @_;
-	my($off, $myseek, $myseek_22, $myseek_23, $v2, $h, $hlen, $num);
+	my($off, $myseek, $v2, $h, $hlen, $num);
 
 	$v2 = _get_v2head($fh) or return;
 	if ($v2->{major_version} < 2) {
@@ -575,7 +575,7 @@ sub _get_v2tag {
 	}
 	
 	$off = $v2->{ext_header_size} + 10;
-	my $end = $off + $v2->{tag_size};
+	my $end = 10 + $v2->{tag_size}; # should we read in the footer too?
 
 	seek $fh, 0, 0;
 	
@@ -589,21 +589,53 @@ sub _get_v2tag {
 	
 	$myseek = sub {
 		my $bytes = substr($wholetag, $off, $hlen);
+
 		# djb - iTunes uses a space in one of the tag names.  not to spec, but safe nonetheless
 		return unless $bytes =~ /^([A-Z0-9 ]{$num})/;
+
 		my($id, $size) = ($1, $hlen);
 		my @bytes = reverse unpack "C$num", substr($bytes, $num, $num);
+		# use syncsafe bytes if using version 2.4
+		my $bytesize = ($v2->{major_version} > 3) ? 128 : 256;
 		for my $i (0 .. ($num - 1)) {
-			$size += $bytes[$i] * 256 ** $i;
+			$size += $bytes[$i] * $bytesize ** $i;
 		}
-		return($id, $size);
+		my $flags = {};
+		
+		if ($v2->{major_version} >= 3) {
+			my @bits = split //, (unpack 'B16', substr($bytes, 8, 2)); 
+			$flags->{frameUnsync} = (($v2->{major_version} > 3) && $bits[14]);
+			$flags->{dataLenIndicator} = (($v2->{major_version} > 3) && $bits[15]);
+		}
+		return($id, $size, $flags);
 	};
-
+	
 	while ($off < $end) {
-		my($id, $size) = &$myseek or last;
+		my($id, $size, $flags) = &$myseek or last;
 		# djb - sanity check on size of tag.
 		last if ($size > $v2->{tag_size});
 		my $bytes = substr($wholetag, $off+$hlen, $size-$hlen);
+
+		# capture and strip Data Length if it exists.
+		my $dataLen = -1;
+		if ($flags->{dataLenIndicator}) {
+			$dataLen = 0;
+			my @dataLenBytes = reverse unpack "C4", substr($bytes,0,4);
+			$bytes = substr($bytes,4);
+		        for my $i (0..3) {
+			  $dataLen += $dataLenBytes[$i] * 128 ** $i;
+		        }
+		}
+		
+		# perform frame-level unsync if needed
+		if ($flags->{frameUnsync}) {
+		        my $hits = ($bytes =~ s/\xFF\x00/\xFF/gs);
+		}
+
+		# if we know the Data Length, sanity check it now.
+		if ($flags->{dataLenIndicator} && ($dataLen >= 0)) {
+		        carp "Size mismatch on $id\n" unless ($dataLen = length($bytes));
+		}
 
 		if (exists $h->{$id}) {
 			if (ref $h->{$id} eq 'ARRAY') {
@@ -614,6 +646,7 @@ sub _get_v2tag {
 		} else {
 			$h->{$id} = $bytes;
 		}
+		
 		$off += $size;
 	}
 	
@@ -880,6 +913,8 @@ sub _get_v2head {
 		};
 	}
 	return unless $bytes eq 'ID3';
+	# TODO: add support for tags at the end of the file
+
 	# get version
 	read $fh, $bytes, 2;
 	$h->{version} = sprintf "ID3v2.%d.%d",
@@ -895,14 +930,15 @@ sub _get_v2head {
 		$h->{ext_header} = 0;
 		$h->{experimental} = 0;
 	} else {
-		@bits = split //, (unpack 'b8', $bytes);
 		$h->{unsync} = $bits[7];
-		$h->{header} = $bits[6];
+		$h->{ext_header} = $bits[6];
 		$h->{experimental} = $bits[5];
+		$h->{footer} = $bits[4] if ($h->{major_version} == 4);
 	}
 
 	# get ID3v2 tag length from bytes 7-10
 	$h->{tag_size} = 10;	# include ID3v2 header size
+	$h->{tag_size} += 10 if ($h->{footer});
 	read $fh, $bytes, 4;
 	@bytes = reverse unpack 'C4', $bytes;
 	foreach my $i (0 .. 3) {
@@ -913,11 +949,21 @@ sub _get_v2head {
 	# get extended header size
 	$h->{ext_header_size} = $offset;
 	if ($h->{ext_header}) {
-		$h->{ext_header_size} += 10;
+
+	        # this next line inexplicably adds 10 bytes to the size of
+	        # the extended header. perhaps this was meant to include 
+	        # the actual (non-extended) header as well, but it's not
+	        # treated that way elsewhere. I've commented it out for now.
+		#$h->{ext_header_size} += 10; 
+
 		read $fh, $bytes, 4;
 		@bytes = reverse unpack 'C4', $bytes;
+
+		# 2.4.0 uses syscsafe bytes for the size of the ext header
+		# 2.3.0 doesn't, but also only has a value of either 6 or 10
+		# so this should work just as well either way.
 		for my $i (0..3) {
-			$h->{ext_header_size} += $bytes[$i] * 256 ** $i;
+			$h->{ext_header_size} += $bytes[$i] * 128 ** $i;
 		}
 	}
 	return $h;
