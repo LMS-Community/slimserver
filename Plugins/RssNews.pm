@@ -1,5 +1,5 @@
 # RssNews Ticker v1.0
-# $Id: RssNews.pm,v 1.9 2004/11/23 22:26:16 dave Exp $
+# $Id: RssNews.pm,v 1.10 2004/11/23 23:38:29 dave Exp $
 # Copyright (c) 2004 Slim Devices, Inc. (www.slimdevices.com)
 
 # Based on BBCTicker 1.3 which had this copyright...
@@ -85,7 +85,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Prefs;
 
-$VERSION = substr(q$Revision: 1.9 $,10);
+$VERSION = substr(q$Revision: 1.10 $,10);
 my %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
@@ -112,6 +112,9 @@ PLUGIN_RSSNEWS_ERROR
 
 PLUGIN_RSSNEWS_NO_DESCRIPTION
 	EN	Description not available
+
+PLUGIN_RSSNEWS_NO_TITLE
+	EN	Title not available
 
 PLUGIN_RSSNEWS_SCREENSAVER
 	EN	RSS News Ticker
@@ -812,8 +815,7 @@ sub mainModeCallback {
         retrieveNews($client, $feedname);
 		
 		if ($thenews{$feedname} &&
-			$thenews{$feedname}->{title} &&
-			$thenews{$feedname}->{item}) {
+			$thenews{$feedname}) {
             Slim::Buttons::Common::pushModeLeft($client, 
                                                 'PLUGIN.RssNews.headlines',
                                                 { feed => unescapeAndTrim($thenews{$feedname}->{title}),
@@ -880,10 +882,18 @@ sub headlinesModeCallback {
 		if (!$item->{description} ||
 			ref($item->{description})) {
 			$description = string('PLUGIN_RSSNEWS_NO_DESCRIPTION');
+			# we could show them an error message about no description found, but instead just bump.
+			$client->bumpRight();
+			return;
 		} else {
 			$description = $item->{description};
 		}
-        my $title = $item->{title};
+        my $title;
+		if ($item->{title}) {
+			$title = $item->{title};
+		} else {
+			$title = string('PLUGIN_RSSNEWS_NO_TITLE');
+		}
         my $feed = Slim::Buttons::Common::param($client, 'feed');
         
         Slim::Buttons::Common::pushModeLeft($client, 
@@ -917,7 +927,8 @@ sub headlinesSetMode {
                   callback => \&headlinesModeCallback,
                   valueRef => \$context{$client}->{headlinesModeIndex},
                   headerAddCount => 1,
-                  overlayRef => sub {return (undef,Slim::Display::Display::symbol('rightarrow'));},
+				  # show right arrow only if list not empty
+                  overlayRef => scalar(@lines) ? sub {return (undef,Slim::Display::Display::symbol('rightarrow'));} : undef,
                   parentMode => Slim::Buttons::Common::mode($client),		  
                   feed => $feed,		  
                   feedItems => $items,
