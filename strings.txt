@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.52 2004/01/24 18:50:24 dean Exp $
+# $Id: strings.txt,v 1.53 2004/01/24 18:52:45 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -895,7 +895,7 @@ SETUP_GROUP_XPL
 
 SETUP_GROUP_XPL_DESC
 	EN	These settings control the behavior of the xPL protocol
-	FR	Ces réglages permettent de paramètrer le protocole xPL.
+	FR	Ces réglages permettent de paramétrer le protocole xPL.
 
 SETUP_SCROLLPAUSE
 	EN	Scroll Pause
@@ -1023,7 +1023,7 @@ SETUP_POWERONBRIGHTNESS
 	EN	Brightness when on
 	ES	Luminosidad mientras encendido
 	FI	Näytön kirkkaus soittimen ollessa päällä
-	FR	Luminosité lorsqu'allumé
+	FR	Luminosité lorsqu'allumée
 	NL	Helderheid bij ingeschakelde toestand
 	NO	Lysstyrke når på
 	PT	Brilho quando Ligado
@@ -1035,7 +1035,7 @@ SETUP_POWERONBRIGHTNESS_CHOOSE
 	EN	Brightness when on:
 	ES	Luminosidad mientras encendido:
 	FI	Näytön kirkkaus soittimen ollessa päällä:
-	FR	Luminosité lorsqu'allumé :
+	FR	Luminosité lorsqu'allumée :
 	NL	Helderheid bij ingeschakelde toestand:
 	NO	Lysstyrke når på:
 	PT	Brilho quando Ligado
@@ -1047,7 +1047,7 @@ SETUP_POWEROFFBRIGHTNESS
 	EN	Brightness when off
 	ES	Luminosidad mientras apagado
 	FI	Näytön kirkkaus soittimen ollessa pois päältä
-	FR	Luminosité lorsqu'éteint
+	FR	Luminosité en veille
 	NL	Helderheid bij uitgeschakelde toestand
 	NO	Lysstyrke når av
 	PT	Brilho quando Desligado
@@ -1059,7 +1059,7 @@ SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	EN	Brightness when off:
 	ES	Luminosidad mientras apagado:
 	FI	Näytön kirkkaus soittimen ollessa pois päältä:
-	FR	Luminosité lorsqu'éteint :
+	FR	Luminosité en veille :
 	NL	Helderheid bij uitgeschakelde toestand:
 	NO	Lysstyrke når av:
 	PT	Brilho quando Desligado
@@ -1251,7 +1251,7 @@ SETUP_DIGITALVOLUMECONTROL_ON
 
 SETUP_DIGITALVOLUMECONTROL_OFF
 	EN	Digital output level is fixed (Best analog quality)
-	FR	Niveau sortie numérique fixe (qualité analogique optimum)
+	FR	Niveau sortie numérique fixe (qualité analogique optimale)
 
 SETUP_DIGITALVOLUMECONTROL
 	EN	Digital Volume Control
@@ -1259,7 +1259,7 @@ SETUP_DIGITALVOLUMECONTROL
 
 SETUP_DIGITALVOLUMECONTROL_DESC
 	EN	You can choose to have the digital audio output on your player be fixed at maximum level or be controlled by the volume buttons.  If you choose to have a fixed digital audio volume level, the analog outputs will have the highest quality possible.  With either setting, the analog output levels are adjusted by the volume buttons.
-	FR	Le niveau de la sortie audio numérique de votre platine peut être soit fixé à son maximum, soit contrôlé par les boutons de volume. Si le niveau de la sortie audio numérique est fixe, la qualité de la sortie analogique sera optimum. Dans tous les cas, le niveau de la sortie analogique est contrôlé par les boutons de volume.
+	FR	Le niveau de la sortie audio numérique de votre platine peut être soit fixé à son maximum, soit contrôlé par les boutons de volume. Si le niveau de la sortie audio numérique est fixe, la qualité de la sortie analogique sera optimale. Dans tous les cas, le niveau de la sortie analogique est contrôlé par les boutons de volume.
 
 SETUP_TITLEFORMATCURR
 	DE	Aktuelles Titelformat
@@ -1604,7 +1604,7 @@ SETUP_ITUNES_DESC
 	DK	SlimServer kan anvende din iTunes musiksamling og playlister. Ændringer foretaget i iTunes vil kunne ses på din player. Hvis du ikke ønsker at bruge din iTunes musiksamling kan du indtaste stien på den mappe hvor dine musikfiler ligger på din harddisk.
 	EN	The SlimServer can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. If you don't want to use your iTunes music library, you can enter the name of the directory where your music files are stored on your computer.
 	ES	El servidor puede usar su librería de música y listas discográficas de iTunes. Cualquiera cambio que haga en iTunes se reflejerá en el player. Si no quiere usar su librería de música de iTunes puede introducir el camino a la carpeta donde están guardados sus ficheros de música.
-	FR	Le SlimServer peut utiliser iTunes pour accéder à votre musique et à vos listes de lecture. Tous les changements effectués dans iTunes seront pris en considération par votre player. Si vous ne voulez pas utiliser votre bibliothèque iTunes, vous pouvez saisir le nom du dossier où se trouvent vos fichiers MP3.
+	FR	Le SlimServer peut utiliser iTunes pour accéder à votre musique et à vos listes de lecture. Tous les changements effectués dans iTunes seront pris en considération par votre platine. Si vous ne voulez pas utiliser votre bibliothèque iTunes, vous pouvez saisir le nom du dossier où se trouvent vos fichiers MP3.
 	NL	De SlimServer kan Uw iTunes muziek bibliotheek en playlists gebruiken. Alle wijzigingen die U maakt aan Uw iTunes zullen ook voor de player zichtbaar zijn. Als U Uw iTunes bibliotheek niet wilt gebruiken, kunt U de naam van een folder opgeven waarin Uw muziek bestanden zijn opgeslagen.
 	PT	O SlimServer pode usar a biblioteca de música e as playlists do iTunes 3 e 4. As alterações efectuadas no iTunes serão reflectidas no player. Se não quiser usar a biblioteca do iTunes, introduza a directoria que contém os ficheiros de áudio no seu computador.
 	SE	SlimServer kan använda iTunes musikbibliotek och spellistor. Alla ändringar som du gör i iTunes kommer märkas på din player. Om du inte vill använda iTunes som musikbibliotek, kan du skriva in namnet på den mapp där din musikfiler är lagrade.
@@ -1804,7 +1804,7 @@ SETUP_CLIPORT_DESC
 	DK	Du kan ændre hvilket port-nummer der anvendes til at styre player-afspilleren via Command Line Interfacet. (Angiv port nummer 0 (nul) for at slå command line interfacet fra).
 	EN	You can change the port number that is used to by a command line interface to control the player. (Set this to zero to disable the command line interface.)
 	ES	Puede cambiar el número de puerto que se usa para controlar el player con la linea de comandos. Pongalo como zero para desactivar esta facilidad.
-	FR	Vous pouvez changer le port utilisé par l'interface en ligne de commande pour contrôler le player. La valeur zéro désactive cette fonctionnalité.
+	FR	Vous pouvez changer le port utilisé par l'interface en ligne de commande pour contrôler la platine. La valeur zéro désactive cette fonctionnalité.
 	NL	U kan het poortnummer dat gebruikt wordt om de player via een command line interface te bedienen aanpassen. Zet dit poortnummer op 0 (nul) als U de command line interface wilt uitschakelen.
 	PT	Pode mudar o número da porta para ligação da interface de linha de comando do player. (Escolha o valor 0 para desabilitar a opção)
 	SE	Du kan ändra portnumret som används för att via ett terminalgränssnitt kontrollera din player. (Sätt värdet till 0 (noll) för att avaktivera terminalgränssnittet.)
@@ -2617,7 +2617,7 @@ SETUP_LONGDATEFORMAT_DESC
 	DK	Denne indstilling angiver formatet for lange datoer (vises fx. når afspilleren er slukket). Følgende syntax anvendes nedenfor:<br>WWWW er det fulde navn for ugedagen (lørdag, søndag, etc.)<br>WWW er det forkortede navn for ugedagen (lør, søn, etc.)<br>DD er dagen på måneden (indledende nul fjernes)<br>MM er måneden på året<br>YY er det to-cifrede årstal<br>YYYY er det fire-cifrede årstal
 	EN	This option determines the format used for long dates (such as displayed when the player is off). The following conventions are used in the choices presented below:<br>WWWW is the full day of the week (Saturday, Sunday, etc)<br>WWW is the abbreviated day of the week (Sat, Sun, etc)<br>DD is the day of the month (leading zero removed)<br>MM is the month of the year<br>YY is the two digit year<br>YYYY is the four digit year
 	FI	Tämä asetus säätelee päiväyksen pitkää esitystapaa. Seuraavat esitystavat ovat mahdollisia: <br>WWWW viikonpäivä pitkä (Lauantai, Sunnuntai jne.)<br>WWW viikonpäivä lyhyt (La, Su jne.)<br>DD päivä<br>MM kuukausi<br>YY vuosi 2 numeroa<br>YYYY vuosi 4 numeroa
-	FR	Ce réglage détermine le format long pour les dates (affiché lorsque la platine est éteinte). Les codes suivants peuvent être utilisés :<br>WWWW : le jour de la semaine complet (dimanche, lundi, mardi, etc.)<br>WWW : le jour de la semaine en abrégé (dim, lun, mar, etc.)<br>DD : le jour du mois sans zéro non significatif<br>MM : le mois de l'année<br>YY : l'année à deux chiffres<br>YYYY : l'année à quatre chiffres
+	FR	Ce réglage détermine le format long pour les dates (affiché lorsque la platine est en veille). Les codes suivants peuvent être utilisés :<br>WWWW : le jour de la semaine complet (dimanche, lundi, mardi, etc.)<br>WWW : le jour de la semaine en abrégé (dim, lun, mar, etc.)<br>DD : le jour du mois sans zéro non significatif<br>MM : le mois de l'année<br>YY : l'année à deux chiffres<br>YYYY : l'année à quatre chiffres
 	NL	Deze optie bepaalt het lange datum formaat, zoals deze wordt getoond als de speler is uitgeschakeld. De volgende afspraken worden gebruikt in de onderstaande opties:<br> WWWW is de dag van de week voluit geschreven (Zondag, Maandag, etc.)<br> WWW is de afkorting van de dag van de week (Zon, Maa, etc)<br>DD is de dag van de maand (zonder voorloopnul)<br>MM is de maand van het jaar<br>YYYY is het viercijferige jaartal.
 	PT	Esta opção determina o formato longo a usar para datas (tais como a que é mostrada quando o cliente está desligado). São usadas as seguintes convenções para as opções abaixo
 	SE	Detta val avgör formatet för långt datum (som t.ex visas när spelaren är avstängd). Följande konventioner används för valen nedan:<br>WWWW är veckodagen (Lördag, Söndag, osv)<br>WWW är veckodagen förkortad (Lör, Sön, Mån, osv)<br>DD är dagen i månaden (inledande nolla borttagen)<br>MM är månaden<BR>YY är tvåsiffrigt årtal<BR>YYYY är fyrsiffrigt årtal
@@ -2793,11 +2793,11 @@ SETUP_UDPCHUNKSIZE_CHOOSE
 
 SETUP_SHOWBUFFERFULLNESS
 	EN	Show Buffer Fullness
-	FR	Affichage tampon
+	FR	Affichage état mémoire tampon
 
 SETUP_SHOWBUFFERFULLNESS_CHOOSE
 	EN	Show buffer fullness in place of progress indicator:
-	FR	Afficher l'état du tampon en lieu et place du graphique de progression :
+	FR	Afficher l'état de la mémoire tampon à la place du graphique de progression :
 
 SETUP_SHOWBUFFERFULLNESS_ENABLED
 	EN	Enabled
@@ -2829,15 +2829,15 @@ SETUP_XPLINTERVAL
 
 SETUP_XPLINTERVAL_CHOOSE
 	EN	Heartbeat Interval:
-	FR	Intervale :
+	FR	Intervalle :
 
 SETUP_XPLIR
 	EN	Infra-red Processing
-	FR	Traitement infra-rouge
+	FR	Traitement infrarouge
 
 SETUP_XPLIR_CHOOSE
 	EN	Infra-red Processing:
-	FR	Traitement infra-rouge :
+	FR	Traitement infrarouge :
 
 SETUP_XPLIR_NONE
 	EN	None
@@ -3177,7 +3177,7 @@ SETUP_REMOTESTREAMTIMEOUT_OK
 SETUP_REMOTESTREAMTIMEOUT_DESC
 	DE	Sie können die Dauer definieren, während der SlimServer versuchen wird, Internet Radio Stationen oder andere Quelle zu erreichen. Geben Sie die Wartezeit in Sekunden an.
 	EN	You can set the length of time that the SlimServer will try to connect to an internet radio station or other source before giving up. Enter the amount of time, in seconds, below.
-	FR	Vous pouvez régler la durée maximum pendant laquelle le SlimServer tentera de se connecter à une radio internet ou à une autre source distante.  Entrez une valeur en secondes ci-dessous.
+	FR	Vous pouvez régler la durée maximale pendant laquelle le SlimServer tentera de se connecter à une radio internet ou à une autre source distante.  Entrez une valeur en secondes ci-dessous.
 
 SETUP_REMOTESTREAMTIMEOUT_CHOOSE
 	DE	Internet Radio Timeout (Sekunden):
@@ -4729,7 +4729,7 @@ PLAYERIR_SETTINGS
 	DE	IR Einstellungen
 	DK	IR-indstillinger
 	EN	IR Settings
-	FR	Réglages infra-rouge
+	FR	Réglages infrarouge
 	NL	IR instellingen
 	NO	IR instillinger
 	PT	Configurações de Infravermelhos
@@ -4943,7 +4943,7 @@ BRIGHTNESS_OFF
 	EN	Brightness in standby:
 	ES	Luminosidad mientras apagado:
 	FI	Näytön kirkkaus soittimen ollessa pois päältä:
-	FR	Luminosité lorsqu'éteint :
+	FR	Luminosité en veille :
 	NL	Helderheid indien uitgeschakeld:
 	PT	O brilho quando está desligado
 	SE	Ljusstyrka avslagen:
@@ -5002,7 +5002,7 @@ BRIGHTNESS_BRIGHTEST
 	EN	Brightest
 	ES	Lo más luminoso
 	FI	Kirkkain
-	FR	Luminosité maximum
+	FR	Luminosité maximale
 	NL	Helderst
 	NO	Lysest
 	PT	Muito Brilhante
@@ -5831,12 +5831,12 @@ INFORMATION_MENU_MODULE
 
 INFORMATION_PLAYER_NAME
 	EN	Player Name
-	FR	Nom lecteur
+	FR	Nom platine
 
 INFORMATION_PLAYER_MODEL
 	DE	Player Modell
 	EN	Player Model
-	FR	Modele lecteur
+	FR	Modèle platine
 
 INFORMATION_FIRMWARE
 	EN	Player Firmware Version
