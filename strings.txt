@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.49 2004/01/15 00:23:38 dean Exp $
+# $Id: strings.txt,v 1.50 2004/01/19 17:04:20 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -891,9 +891,11 @@ SETUP_GROUP_NONMENUITEMS_INTRO
 
 SETUP_GROUP_XPL
 	EN	xPL Settings
+	FR	Paramètres xPL
 
 SETUP_GROUP_XPL_DESC
 	EN	These settings control the behavior of the xPL protocol
+	FR	Ces réglages permettent de paramètrer le protocole xPL.
 
 SETUP_SCROLLPAUSE
 	EN	Scroll Pause
@@ -1721,7 +1723,7 @@ SETUP_COVERART
 	DE	Plattencover
 	DK	Cover-billeder
 	EN	Cover Art
-	FR	Pochette
+	FR	Pochettes
 	NL	Hoesjes
 	PT	Capa Álbum
 	SE	Albumomslag
@@ -1772,9 +1774,11 @@ SETUP_COVERTHUMB_OK
 
 SETUP_THUMBSIZE
 	EN	Thumbnail Size
+	FR	Taille des vignettes
 
 SETUP_THUMBSIZE_DESC
 	EN	Choose the size in pixels (25-250) for the default thumbnail image when browsing by cover art. Default is 100.
+	FR	Choisissez une taille en pixels (entre 25 et 250) pour l'affichage par défaut de la vignette en mode "Parcourir les pochettes". La valeur par défaut est 100.
 
 SETUP_PLUGINS_OK
 	DE	Ihr Plugin-Menü enthält:
@@ -2786,51 +2790,67 @@ SETUP_UDPCHUNKSIZE_CHOOSE
 
 SETUP_SHOWBUFFERFULLNESS
 	EN	Show Buffer Fullness
+	FR	Affichage tampon
 
 SETUP_SHOWBUFFERFULLNESS_CHOOSE
 	EN	Show buffer fullness in place of progress indicator:
+	FR	Afficher l'état du tampon en lieu et place du graphique de progression :
 
 SETUP_SHOWBUFFERFULLNESS_ENABLED
 	EN	Enabled
+	FR	Activé
 
 SETUP_SHOWBUFFERFULLNESS_DISABLED
 	EN	Disabled
+	FR	Désactivé
 
 SETUP_XPLSUPPORT
 	EN	xPL support
+	FR	Support du xPL
 
 SETUP_XPLSUPPORT_CHOOSE
 	EN	xPL support:
+	FR	Support du xPL :
 
 SETUP_XPLSUPPORT_ENABLED
 	EN	Enabled
+	FR	Activé
 
 SETUP_XPLSUPPORT_DISABLED
 	EN	Disabled
+	FR	Désactivé
 
 SETUP_XPLINTERVAL
 	EN	Heartbeat Interval
+	FR	Intervale
 
 SETUP_XPLINTERVAL_CHOOSE
 	EN	Heartbeat Interval:
+	FR	Intervale :
 
 SETUP_XPLIR
 	EN	Infra-red Processing
+	FR	Traitement infra-rouge
 
 SETUP_XPLIR_CHOOSE
 	EN	Infra-red Processing:
+	FR	Traitement infra-rouge :
 
 SETUP_XPLIR_NONE
 	EN	None
+	FR	Aucun
 
 SETUP_XPLIR_BUTTONS
 	EN	Buttons
+	FR	Touches
 
 SETUP_XPLIR_RAW
 	EN	Raw
+	FR	Brut
 
 SETUP_XPLIR_BOTH
 	EN	Both
+	FR	Les deux
 
 SETUP_TITLEFORMATWEB
 	DE	Aktuelles Web-Format
@@ -3200,15 +3220,19 @@ SETUP_URL_WILL_BE
 
 SETUP_GROUPDISCS
 	EN	Group Discs
+	FR	Disques multiples
 
 SETUP_GROUPDISCS_DESC
 	EN	You can specify if multiple disc sets are treated as a single album (with a single name) or as multiple albums, each with a unique name per disc, for example "Album Title (Disc 2 of 3)".  Changing this setting will start a rescan of your music library.
+	FR	Vous pouvez spécifier si les coffrets de plusieurs disques seront considérés comme un seul album (avec un nom unique) ou comme plusieurs albums avec un nom un nom unique pour chaque disque, par exemple "Titre (Disque 2 sur 3)". Si vous modifiez ce réglage, votre dossier de musique sera répertorié à nouveau.
 
 SETUP_GROUPDISCS_0
 	EN	Treat multi-disc sets as multiple albums
+	FR	Disques multiples en tant qu'albums multiples
 
 SETUP_GROUPDISCS_1
 	EN	Treat multi-disc sets as a single album
+	FR	Disques multiples en tant qu'album unique
 
 #
 # Web interface
@@ -4431,6 +4455,7 @@ BROWSE_BY_ALBUM
 
 BROWSE_BY_ARTWORK
 	EN	Browse Artwork
+	FR	Parcourir les pochettes
 
 BROWSE_BY_SONG
 	DE	Titel nachschlagen
