@@ -2,12 +2,6 @@ DROP TABLE metainformation;
 
 DROP TABLE tracks;
 
-DROP INDEX trackURLIndex;
-
-DROP INDEX trackTitleIndex;
-
-DROP INDEX trackAlbumIndex;
-
 DROP TABLE playlist_track;
 
 DROP TABLE albums;
