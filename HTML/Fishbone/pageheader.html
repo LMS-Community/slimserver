@@ -5,13 +5,8 @@
 		
 		<script language="JavaScript">
 		<!--Hide
-		function setCookie(name, value)
+		function goAdvanced(value)
 		{
-			var expires = new Date();
-			expires.setTime(expires.getTime() + 1000*60*60*24*365);
-			document.cookie =
-				name + "=" + escape(value) +
-				((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
 			if (value == "ADVANCEDSEARCH") {
 				doSearch("","ADVANCEDSEARCH");
 			}
@@ -114,20 +109,18 @@
 					[% END %]
 				</SELECT><nobr></center></td>
 					<input type=hidden value="[% page %]" name="page">
-					<input type=hidden value="[% searchchoice %]" name="searchchoice">
-				</FORM>
+			</FORM>
 				<FORM name=searcher method="Get" action="/home.html" onSubmit="doSearch(query.value,search.value);"><td><nobr>
-					<SELECT NAME="search" class="stdedit" onChange="setCookie('SlimServer-search',options[selectedIndex].value)">
+					<SELECT NAME="search" class="stdedit" onChange="goAdvanced(options[selectedIndex].value)">
 					[% IF additionalLinks.search %]
-						[% FOREACH link = additionalLinks.search %]
-						<OPTION [% IF searchchoice == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
+						[% FOREACH link = additionalLinks.search.keys %]
+						<OPTION value="[% link %]" label="[% link | string %]">[% link | string %]</OPTION>
 						[% END %]
 					[% END %]
 					</SELECT> [% "FOR" | string %]
 					<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
 					<input type=hidden value="[% player %]" name="player">
 					<input type=hidden value="[% page %]" name="page">
-					<input type=hidden value="[% searchchoice %]" name="searchchoice">
 					[% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
 					[% IF noartwork %]<input type=hidden value="1" name="noartwork">[% END %]</p><nobr></td>
 				</FORM></td>
