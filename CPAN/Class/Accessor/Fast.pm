@@ -1,13 +1,7 @@
 package Class::Accessor::Fast;
-
+use base 'Class::Accessor';
 use strict;
-use vars qw($VERSION @ISA);
-$VERSION = '0.02';
-require Class::Accessor;
-@ISA = qw(Class::Accessor);
-
-
-=pod
+$Class::Accessor::Fast::VERSION = '0.19';
 
 =head1 NAME
 
@@ -41,10 +35,8 @@ sub make_accessor {
 
     return sub {
         my $self = shift;
-        if(@_) {
-            $self->{$field} = (@_ == 1 ? $_[0] : [@_]);
-        }
-        return $self->{$field};
+        return $self->{$field} unless @_;
+        $self->{$field} = (@_ == 1 ? $_[0] : [@_]);
     };
 }
 
@@ -53,17 +45,11 @@ sub make_ro_accessor {
     my($class, $field) = @_;
 
     return sub {
-        my $self = shift;
-
-        if(@_) {
-            my $caller = caller;
-            require Carp;
-            Carp::croak("'$caller' cannot alter the value of '$field' on ".
-                        "objects of class '$class'");
-        }
-        else {
-            return $self->{$field};
-        }
+        return $_[0]->{$field} unless @_ > 1;
+        my $caller = caller;
+        require Carp;
+        Carp::croak("'$caller' cannot alter the value of '$field' on ".
+                    "objects of class '$class'");
     };
 }
 
@@ -72,7 +58,7 @@ sub make_wo_accessor {
     my($class, $field) = @_;
 
     return sub {
-        my($self) = shift;
+        my $self = shift;
 
         unless (@_) {
             my $caller = caller;
@@ -87,23 +73,22 @@ sub make_wo_accessor {
 }
 
 
-=pod
-
 =head1 EFFICIENCY
 
 L<Class::Accessor/EFFICIENCY> for an efficiency comparison.
 
+=head1 CURRENT AUTHOR
 
-=head1 AUTHOR
+Marty Pauley <marty+perl@kasei.com>
+
+=head1 ORIGINAL AUTHOR
 
 Michael G Schwern <schwern@pobox.com>
-
 
 =head1 SEE ALSO
 
 L<Class::Accessor>
 
 =cut
-
 
 1;
