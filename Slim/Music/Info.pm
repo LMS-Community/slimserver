@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.108 2004/04/26 17:23:24 dean Exp $
+# $Id: Info.pm,v 1.109 2004/04/26 19:16:56 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -158,11 +158,20 @@ if (defined @Storable::EXPORT) {
 					'ver'                 => $DBVERSION,
 				};
 			
-				$::d_info && Slim::Utils::Misc::msg("saving DB cache\n");
+				# "store" "die"s on fatal errors, so catch that with an "eval"
+				eval {
+						$::d_info && Slim::Utils::Misc::msg("saving DB cache\n");
 
-				store($cacheToStore, $dbname);
+						store($cacheToStore, $dbname);
 
-				$::d_info && Slim::Utils::Misc::msg("DB cache saved\n");
+						$::d_info && Slim::Utils::Misc::msg("DB cache saved\n");
+
+						$dbCacheDirty = 0;
+				};
+
+				if ($@ ne "") {
+						$::d_info && Slim::Utils::Misc::msg("could not save DB cache ($@)\n");
+				}
 
 				$dbCacheDirty = 0;
 			}
@@ -2598,6 +2607,7 @@ sub splitTag {
 	if ($splitpref) {
 		# get rid of white space
 		$splitpref =~ s/\s//g;
+
 		
 		foreach my $char (split('',$splitpref),'\x00') {
 			my @temp=();
