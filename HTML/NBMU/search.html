@@ -1,9 +1,6 @@
 <html>
   <head>
-    <title>[S SEARCHFOR]
-    	[EQ type artist][S ARTIST][/EQ]
-    	[EQ type album][S ALBUM][/EQ]
-    	[EQ type song][S SONGTITLE][/EQ]</title>
+    <title>[EQ type artist][S SEARCHFOR_ARTIST][/EQ][EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type song][S SEARCHFOR_SONGTITLE][/EQ]</title>
     <link rel="stylesheet" href="slimserver.css">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></head>
   
@@ -23,24 +20,22 @@
       <p> 
       <p> 
       <p> 
-      <h3>[EQ type artist][S SEARCHFOR] [S ARTIST][/EQ] [EQ type album][S SEARCHFOR] 
-        [S ALBUM][/EQ] [EQ type song][S SEARCHFOR] [S SONGTITLE][/EQ]<img src="html/images/spacer.gif" width="30" height="8"></h3>
+      <h3>[EQ type artist][S SEARCHFOR_ARTIST][/EQ][EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type song][S SEARCHFOR_SONGTITLE][/EQ]<img src="html/images/spacer.gif" width="30" height="8"></h3>
       </td>
   </tr>
 </table>
 <p>
 <p><img src="html/images/spacer.gif" width="30" height="8"><a href="home.html?player={%player}">[S 
-  {playermodel}_HOME]</a> / <a href="search.html?player={%player}&type={type}"> [EQ type artist][S 
-  SEARCHFOR] [S ARTIST][/EQ] [EQ type album][S SEARCHFOR] [S ALBUM][/EQ] [EQ type 
-  song][S SEARCHFOR] [S SONGTITLE][/EQ] </a> 
+  {playermodel}_HOME]</a> / <a href="search.html?player={%player}&type={type}">[EQ type artist][S 
+  SEARCHFOR_ARTIST][/EQ] [EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type 
+  song][S SEARCHFOR_SONGTITLE][/EQ]</a> 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="30">&nbsp;</td>
     <td><hr>
       <p> 
       <form method="get" action="search.html">
-        [EQ type artist][S SEARCHFOR] [S ARTIST][/EQ] [EQ type album][S SEARCHFOR] 
-        [S ALBUM][/EQ] [EQ type song][S SEARCHFOR] [S SONGTITLE][/EQ]: 
+        [EQ type artist][S SEARCHFOR_ARTIST][/EQ][EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type song][S SEARCHFOR_SONGTITLE][/EQ][S COLON] 
         <input type=text class="stdedit" name="query" value="{query}" size=40>
         <input name="submit" type=submit class="stdclick" value=[S SEARCH]>
         <input type=hidden value="{type}" name="type">
@@ -48,20 +43,20 @@
       </form>
       <p>
       <hr>
-      <p> [NE numresults -1] [EQ type artist][S ARTISTSMATCHING][/EQ] [EQ type 
-        album][S ALBUMSMATCHING][/EQ] [EQ type song][S SONGSMATCHING][/EQ] "{query}": 
-        {numresults}
-      <p> [/NE] [IF searchlist_pagebar]
-      <p>[S PAGES]: {searchlist_pagebar}</p>
+      <p>[NE numresults -1][EQ type artist][S ARTISTSMATCHING][/EQ][EQ type 
+        album][S ALBUMSMATCHING][/EQ][EQ type song][S SONGSMATCHING][/EQ] "{query}"[S COLON]{numresults}</p>
+      <p>[/NE]</p>
+      [IF searchlist_pagebar]
+      <p>[S PAGES][S COLON]{searchlist_pagebar}</p>
       [/IF] [IF searchlist_header]
-      <p>{searchlist_header}:</p>
+      <p>{searchlist_header}[S COLON]</p>
       [/IF] 
       <table border="0" cellspacing="0" cellpadding="4">
         {browse_list} 
       </table>
       [IF searchlist_pagebar]
-      <p>[S PAGES]: {searchlist_pagebar}</p>
-      [/IF] </td>
+      <p>[S PAGES][S COLON]{searchlist_pagebar}</p>
+      [/IF]</td>
   </tr>
 </table>
 <p> 

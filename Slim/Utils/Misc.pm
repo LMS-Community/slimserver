@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.25 2004/02/19 17:38:57 dean Exp $
+# $Id: Misc.pm,v 1.26 2004/03/11 20:16:11 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -18,6 +18,10 @@ use Net::hostent;              # for OO version of gethostbyaddr
 use Sys::Hostname;
 use Socket;
 use Symbol qw(qualify_to_ref);
+use Encode;
+if ($] > 5.007) {
+	require Encode;
+}
 
 use FindBin qw($Bin);
 
@@ -526,6 +530,9 @@ sub localeStrftime {
 
       my $saved_locale = setlocale(LC_TIME, $serverlocale);
       my $time = strftime $format, localtime($ltime);
+      if ($] > 5.007) {
+            Encode::_utf8_on($time);
+      }
       setlocale(LC_TIME, "");
       return $time;
 }

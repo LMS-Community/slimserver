@@ -38,13 +38,13 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
         <TD width="100%" height="130" vAlign=top> <P class=label>[IF modeplay][S 
             PLAYING][/IF] [IF modepause][S PAUSED_ON][/IF] [IF modestop][S STOPPED_ON][/IF] 
             [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF][IF bitrate]&nbsp; 
-            | Duration: {duration} | Bitrate: {bitrate}[/IF]</P>
+            | Duration[S COLON]{duration} | Bitrate[S COLON]{bitrate}[/IF]</P>
           <P class=songtitle><b><font color="#FFFFFF">{songtitle}</font></a></b></P>
           <P class=label>Artist</P>
           <P class=artistname><a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser"><font color="#FFFFFF">{&artist}</font></a></P>
           <P class=label>Album</P>
           <P class=artistname><i><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><font color="#FFFFFF">{&album}</font></a>[IF 
-            year]&nbsp;| Year: {year}[/IF]</i></P>
+            year]&nbsp;| Year[S COLON]{year}[/IF]</i></P>
           </TD>
         <DIV></DIV>
       </TR>
@@ -69,13 +69,13 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
       border=0>[IF modestop]</font></b>[/IF]</a> </TD>
               </TR>
               <TR> 
-                <TD vAlign=bottom> [S REPEAT]: <a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">[IF 
+                <TD vAlign=bottom> [S REPEAT][S COLON]<a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">[IF 
                   repeatone]<b><font color="#00FF00">[/IF][S ONE][IF repeatone]</font></b>[/IF]</a>/<a 
                 href="status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}">[IF 
                   repeatall]<b><font color="#00FF00">[/IF][S ALL][IF repeatall]</font></b>[/IF]</a>/<a 
                 href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}">[IF 
                   repeatoff]<b><font color="#00FF00">[/IF][S OFF][IF repeatoff]</font></b>[/IF]</a> 
-                  <img src="html/images/spacer.gif" width="10" height="1">Random: <a href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF 
+                  <img src="html/images/spacer.gif" width="10" height="1">Random[S COLON]<a href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF 
                   shuffleon]<b><font color="#00FF00">[/IF][S ON][IF shuffleon]</font></b>[/IF]</a>/<a
                 href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">[IF 
                   shuffleoff]<b><font color="#00FF00">[/IF][S OFF][IF shuffleoff]</font></b>[/IF]</a> 
@@ -89,7 +89,7 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
           <TABLE cellSpacing=5 border=0>
             <TBODY>
               <TR> 
-                <TD width="532" vAlign=bottom>[S VOLUME]: <a href="status.html?p0=mixer&p1=volume&p2=-10&player={%player}&start={start}"></a></TD>
+                <TD width="532" vAlign=bottom>[S VOLUME][S COLON]<a href="status.html?p0=mixer&p1=volume&p2=-10&player={%player}&start={start}"></a></TD>
               </TR>
               <TR> 
                 <TD vAlign=bottom><a href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}">[EQ 

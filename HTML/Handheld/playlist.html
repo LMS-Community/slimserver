@@ -9,14 +9,14 @@
        [S CURRENT_PLAYLIST] [IF playlistname]<b>{playlistname}</b>[/IF] ([EVAL]defined($client) ? Slim::Player::Playlist::count($client) : '';[/EVAL] [S SONGS])
 </td></tr></table>
 
-[IF playlist_pagebar]<font size="-1"><br>[S PAGES]:{playlist_pagebar}</font>[/IF]
+[IF playlist_pagebar]<font size="-1"><br>[S PAGES][S COLON]{playlist_pagebar}</font>[/IF]
 [IF playlist_header]<font size="-1">&nbsp;|&nbsp;{playlist_header}</font><br>[/IF]
 
 <table cellspacing="0" border="0" cellpadding="0" width="100%">
        [IFN playlist_items][S EMPTY][/IFN]{playlist_items}
 </table>
 
-[IF playlist_pagebar][S PAGES]:{playlist_pagebar}[/IF]
+[IF playlist_pagebar][S PAGES][S COLON]{playlist_pagebar}[/IF]
 [IF playlist_header]&nbsp;|&nbsp;{playlist_header}<br>[/IF]
 
 <script language="JavaScript">

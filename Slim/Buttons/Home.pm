@@ -234,7 +234,8 @@ sub lines {
 	} else {
 		$line1 = string('SQUEEZEBOX_HOME');
 	}
-	$line2 = string($homeChoices[$client->homeSelection]);
+	my $menuChoice = $homeChoices[$client->homeSelection];
+	$line2 = Slim::Utils::Prefs::clientGet($client, 'doublesize') ? Slim::Utils::Strings::doubleString($menuChoice) : string($menuChoice);
 
 	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
 }

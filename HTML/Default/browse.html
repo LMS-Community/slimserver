@@ -34,8 +34,8 @@
     <p>&nbsp; </p>
     <p> {browselist_header}</p>
     [IF browselist_pagebar]
-    <p>[S PAGES]:{browselist_pagebar}</p>
-    [/IF] 
+	<p>[S PAGES][S COLON]{browselist_pagebar}</p>
+[/IF] 
 [EQ badpath 1]
 	[IF playlist][S NEED_PLAYLIST_PATH][/IF]
 	[IFN playlist][S NEED_PATH][/IFN]
@@ -49,7 +49,7 @@
       {browse_list} 
     </table>
     [IF browselist_pagebar]
-    <p>[S PAGES]:{browselist_pagebar}</p>
+    <p>[S PAGES][S COLON]{browselist_pagebar}</p>
     [/IF] 
     <p>&nbsp;</p></td>
 				<td width="4" height="100%"></td>

@@ -38,7 +38,7 @@ window.onload=startList;
     </li>
   </ul>
   <div id="nowplaying">
-    <span class="label">[IF modeplay][S PLAYING][/IF][IF modepause][S PAUSED_ON][/IF][IF modestop][S STOPPED_ON][/IF] [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF]:</span>
+    <span class="label">[IF modeplay][S PLAYING][/IF][IF modepause][S PAUSED_ON][/IF][IF modestop][S STOPPED_ON][/IF] [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF][S COLON]</span>
     <span class="songtitle"><a href="status.html?player={%player}#currentsong">{songtitle}</a></span>
     [IF album][S FROM][/IF] <span class="album"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;album={%album}&amp;player={%player}" target="browser">{album}</a></span>
     [IF artist][S BY] [/IF] <span class="artist"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{artist}</a></span>
@@ -59,7 +59,7 @@ window.onload=startList;
       </ul>
     </div>
     <div id="repeatctl">
-      <span class="label">[S REPEAT]:</span>
+      <span class="label">[S REPEAT][S COLON]</span>
       <div class="controls">
         <ul>
           <li[IF repeatone] class="currctl"[/IF]><a href="status.html?p0=playlist&amp;p1=repeat&amp;p2=1&amp;player={%player}&amp;start={start}"><img src="html/repeat_one[IF repeatone]_on[/IF].png" alt="[S ONE]" title="[S ONE]" /></a></li>
@@ -69,7 +69,7 @@ window.onload=startList;
       </div>
     </div>
     <div id="shufflectl">
-      <span class="label">[S SHUFFLE]:</span>
+      <span class="label">[S SHUFFLE][S COLON]</span>
       <div class="controls">
         <ul>
           <li[IF shuffleoff] class="currctl"[/IF]><a href="status.html?p0=playlist&amp;p1=shuffle&amp;p2=0&amp;player={%player}"><span>[S OFF]</span></a></li>
@@ -79,7 +79,7 @@ window.onload=startList;
       </div>
     </div>
     [IF isplayer]<div id="volumectl">
-      <span class="label">[S VOLUME]: </span>
+      <span class="label">[S VOLUME][S COLON]</span>
       <div class="controls">
         <ul>
           <li><a href="status.html?p0=mixer&amp;p1=volume&amp;p2=-10&amp;player={%player}&amp;start={start}"><span>[S VOLUME_SOFTER]</span></a></li>

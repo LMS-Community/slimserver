@@ -30,7 +30,7 @@
     <td><p>[IF player_chooser_list] </p>
       <form method="get" action="{webroot}index.html" target="_top">[S CURRENT_PLAYER] <select name="player">{player_chooser_list}</select><input class="stdclick" type="submit" value="Change"></form>
       [/IF] [IF modeplay][S PLAYING][/IF] [IF modepause][S PAUSED_ON][/IF] [IF 
-      modestop][S STOPPED_ON][/IF] [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF]: 
+      modestop][S STOPPED_ON][/IF] [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF][S COLON] 
       <b><a href="status.html?player={%player}#currentsong">{songtitle}</a></b> 
       [IF album]from[/IF] <i><a href="olsonmain.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{&album}</a></i> 
       [IF artist][S BY] [/IF] <a href="olsonmain.html?genre=*&artist={%artist}&player={%player}" target="browser">{&artist}</a> 
@@ -43,20 +43,20 @@
       PLAY][IF modeplay]</font></b>[/IF]</a> <a href="status.html?p0=pause&player={%player}">[IF 
       modepause]<b><font color="#FF0000">[/IF][S PAUSE][IF modepause]</font></b>[/IF]</a> 
       <a href="status.html?p0=stop&player={%player}">[IF modestop]<b><font color="#FF0000">[/IF][S 
-      STOP][IF modestop]</font></b>[/IF]</a> [S REPEAT]: <a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">[IF 
+      STOP][IF modestop]</font></b>[/IF]</a> [S REPEAT][S COLON]<a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">[IF 
       repeatone]<b><font color="#FF0000">[/IF][S ONE][IF repeatone]</font></b>[/IF]</a>/<a 
                 href="status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}">[IF 
       repeatall]<b><font color="#FF0000">[/IF][S ALL][IF repeatall]</font></b>[/IF]</a>/<a 
                 href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}">[IF 
       repeatoff]<b><font color="#FF0000">[/IF][S OFF][IF repeatoff]</font></b>[/IF]</a> 
-      [S SHUFFLE]: <a href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF 
+      [S SHUFFLE][S COLON]<a href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF 
       shuffleon]<b><font color="#FF0000">[/IF][S ON][IF shuffleon]</font></b>[/IF]</a>/<a
                 href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">[IF 
       shuffleoff]<b><font color="#FF0000">[/IF][S OFF][IF shuffleoff]</font></b>[/IF]</a> 
       <br>
       [IF coverthumb]<a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="/music/{%itempath}/thumb.jpg" border="0" height="100"><br>[/IF]
       <br>
-      [S VOLUME]: <a href="status.html?p0=mixer&p1=volume&p2=-10&player={%player}&start={start}">[S 
+      [S VOLUME][S COLON]<a href="status.html?p0=mixer&p1=volume&p2=-10&player={%player}&start={start}">[S 
       VOLUME_SOFTER]</a> <a href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}">[EQ 
       volume 0]<b><font color="#FF0000">[/EQ]1[EQ volume 0]</font></b>[/EQ]</a> 
       <a href="status.html?p0=mixer&p1=volume&p2=10&player={%player}&start={start}">[EQ 

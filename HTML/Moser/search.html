@@ -2,30 +2,28 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
   <head>
-    <title>[S SEARCHFOR] [EQ type artist][S ARTIST][/EQ][EQ type album][S ALBUM][/EQ][EQ type song][S SONGTITLE][/EQ]</title>
+    <title>[EQ type artist][S SEARCHFOR_ARTIST][/EQ][EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type song][S SEARCHFOR_SONGTITLE][/EQ]</title>
     <link rel="stylesheet" href="slimserver.css" />
   </head>
   <body>
-    <h3>[S SEARCHFOR] [EQ type artist][S ARTIST][/EQ][EQ type album][S ALBUM][/EQ][EQ type song][S SONGTITLE][/EQ]</h3>
+    <h3>[EQ type artist][S SEARCHFOR_ARTIST][/EQ][EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type song][S SEARCHFOR_SONGTITLE][/EQ]</h3>
     <div class="linktree">
     <ul>
       <li><a href="home.html?player={%player}">[S {playermodel}_HOME]</a></li>
-      <li> / <a href="search.html?player={%player}&amp;type={type}">[S SEARCHFOR] [EQ type artist][S ARTIST][/EQ][EQ type album][S ALBUM][/EQ][EQ type song][S SONGTITLE][/EQ]</a></li>
+      <li> / <a href="search.html?player={%player}&amp;type={type}">[EQ type artist][S SEARCHFOR_ARTIST][/EQ][EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type song][S SEARCHFOR_SONGTITLE][/EQ]</a></li>
     </ul>
     </div>
 
 <div class="searchinput">
 <form method="get" action="search.html">
-[S SEARCHFOR] [EQ type artist][S ARTIST][/EQ][EQ type album][S ALBUM][/EQ][EQ type song][S SONGTITLE][/EQ]:
+[EQ type artist][S SEARCHFOR_ARTIST][/EQ][EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type song][S SEARCHFOR_SONGTITLE][/EQ][S COLON]
 <input type="text" class="stdedit" name="query" value="{query}" size="40" />
 <input type="submit" class="stdclick" value="[S SEARCH]" />
 <input type="hidden" value="{type}" name="type" />
 <input type="hidden" value="{player}" name="player" />
 </form>
 [NE numresults -1]
-[EQ type artist][S ARTISTSMATCHING][/EQ]
-[EQ type album][S ALBUMSMATCHING][/EQ]
-[EQ type song][S SONGSMATCHING][/EQ] "{query}": {numresults}
+[EQ type artist][S ARTISTSMATCHING][/EQ][EQ type album][S ALBUMSMATCHING][/EQ][EQ type song][S SONGSMATCHING][/EQ] "{query}"[S COLON]{numresults}
 [/NE]
 </div>
 [IF searchlist_pagebar]    <div id="topbrowselistpagebar" class="pagebar">
@@ -35,7 +33,7 @@
         </ul>
       </div>
     </div>[/IF]
-     [IF searchlist_header]<div id="searchlist_header">{searchlist_header}:</div>[/IF]
+     [IF searchlist_header]<div id="searchlist_header">{searchlist_header}[S COLON]</div>[/IF]
     <div id="browselist">
       <ul>
 {browse_list}

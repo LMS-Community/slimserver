@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.41 2004/03/10 22:02:56 dean Exp $
+# $Id: Prefs.pm,v 1.42 2004/03/11 20:16:12 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -108,6 +108,8 @@ my %DEFAULT = (
 	,'shortdateFormat'		=> q(%m/%d/%Y)
 	,'timeFormat'			=> q(|%I:%M:%S %p)
 	,'titleFormatWeb'		=> 1
+	,'iTunesplaylistprefix'	=> 'iTunes: '
+ 	,'iTunesplaylistsuffix'	=> ''
     ,'ignoreDirRE'          => ''
     ,'checkVersion'			=> 1
     ,'mDNSname'				=> 'SlimServer'
@@ -652,9 +654,8 @@ sub load {
 		while (<NUPREFS>) {
 			chomp; 			# no newline
 			s/^\s+//;		# no leading white
-			s/\s+$//;		# no trailing white
 			next unless length;	#anything left?
-			my ($var, $value) = split(/\s*=\s*/, $_, 2);
+			my ($var, $value) = split(/\s=\s/, $_, 2);
 			if ($var =~ /(.+?)(\d+|#)$/) {
 				#part of array
 				unless ($2 eq '#') {

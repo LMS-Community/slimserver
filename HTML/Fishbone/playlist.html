@@ -8,12 +8,12 @@
     [IF cansave] ([EVAL]defined($client) ? Slim::Player::Playlist::count($client) : '';[/EVAL] [S SONGS])&nbsp;&nbsp;<a target="browser" href="browse.html?player={%player}&dir=__playlists%2f__current.m3u">[S SAVE]</a> | [/IF]
         <a href="status.m3u?player={%player}" target="playlist">[S DOWNLOAD]</a> |
    	  <a href="status_header.html?p0=playlist&p1=clear&player={%player}" target="statusframe">[S CLEAR]</a></p></center>
-   <p>[IF playlist_pagebar][S PAGES]:{playlist_pagebar}[/IF]
+   <p>[IF playlist_pagebar][S PAGES][S COLON]{playlist_pagebar}[/IF]
 	[IF playlist_header]&nbsp;|&nbsp;{playlist_header}[/IF]</p>
     <table cellspacing="0" border="0" cellpadding="0" width="100%">
       [IFN playlist_items][S EMPTY][/IFN]{playlist_items}
     </table>
-    <p>[IF playlist_pagebar][S PAGES]:{playlist_pagebar}[/IF]
+    <p>[IF playlist_pagebar][S PAGES][S COLON]{playlist_pagebar}[/IF]
 	[IF playlist_header]&nbsp;|&nbsp;{playlist_header}[/IF]</p>
   </body>
 </html>

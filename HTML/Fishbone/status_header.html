@@ -114,7 +114,7 @@ else
 				<p class="label"><img src="html/images/spacer.gif" border="0" width="2" height="14">[IF modeplay][S PLAYING][/IF]
                 [IF modepause][S PAUSED_ON][/IF]
                 [IF modestop][S STOPPED_ON][/IF]
-                [IF currentsong]<b>{currentsong}</b> [S OUT_OF] <b>&nbsp;{songcount}</b>&nbsp;<a class="label" href="status_header.html?p0=playlist&p1=zap&p2={thissongnum}&player={%player}&start={start}">[zap]</a>[/IF]:</p>
+                [IF currentsong]<b>{currentsong}</b> [S OUT_OF] <b>&nbsp;{songcount}</b>&nbsp;<a class="label" href="status_header.html?p0=playlist&p1=zap&p2={thissongnum}&player={%player}&start={start}">[zap]</a>[/IF][S COLON]</p>
                 <p><img src="html/images/spacer.gif" border="0" width="5"><a class="songtitle" href="songinfo.html?songurl={%itempath}&player={%player}" target="browser">{title}</a>
                 [IF duration]&nbsp;({&duration})[/IF][IF bitrate]&nbsp;({bitrate})[/IF]</p>
                 [IFN coverthumb]<script language="JavaScript">top.document.getElementById('player_frame').rows = '215, *';</script>
@@ -151,7 +151,7 @@ else
      [IF isplayer]<td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
      <td align="center" class="label2">
         <table border="0" cellspacing="0" cellpadding="0">
-        <td align="right"  valign="bottom" class="label2"><nobr><B>VOLUME:</B><p>
+        <td align="right"  valign="bottom" class="label2"><nobr><B>VOLUME[S COLON]</B><p>
         </td><td>
         <table border="0" width="100%" cellspacing="0" cellpadding="0"><tr>
 	        <td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="2" hspace="0" vspace="0"></a><p>
@@ -193,7 +193,7 @@ else
 	     	  </nobr></td>
 	     	  </tr></table></td>
            <td width="3%" >&nbsp;</td>
-           <td width="20" align="right" class="label2"><nobr><b>B:</b>
+           <td width="20" align="right" class="label2"><nobr><b>B[S COLON]</b>
               <img src="html/images/spacer.gif" border="0" width="1" height="36"></a><p>
            </nobr></td>
            <td width="6" align="left" class="label2" valign="center"><nobr>
@@ -211,7 +211,7 @@ else
                  <!--<tr><td align="center" class="label2" valign="center"><B>BASS</B></td></tr>-->
               </table>
            </nobr></td>
-           <td width="20" align="right" class="label2"><nobr><b>T:</b>
+           <td width="20" align="right" class="label2"><nobr><b>T[S COLON]</b>
               <img src="html/images/spacer.gif" border="0" width="1" height="36"></a><p>
            </nobr></td>
            <td width="6" align="left" class="label2" valign="center"><nobr>
@@ -235,19 +235,19 @@ else
 <div class="nowplaying">
 <table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13">
 <td [IF isplayer]width="33%"[/IF] class="label2" align="center"><nobr>
-    <b>REPEAT:&nbsp;&nbsp;</b>
+    <b>REPEAT[S COLON]&nbsp;&nbsp;</b>
              <a class="[IFN repeatone]dark[/IFN]button" href="status_header.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}"><b>ONE</b>&nbsp;&nbsp;</a>
              <a class="[IFN repeatall]dark[/IFN]button" href="status_header.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}"><b>ALL</b>&nbsp;&nbsp;</a>
              <a class="[IFN repeatoff]dark[/IFN]button" href="status_header.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}"><b>OFF</b></a>
 </nobr></td><td [IFN isplayer]width="1"[/IFN]><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
 <td [IF isplayer]width="40%"[/IF] height="13" class="label2" align="center"><nobr>
-    <b>SHUFFLE:&nbsp;&nbsp;</b>
+    <b>SHUFFLE[S COLON]&nbsp;&nbsp;</b>
              <a class="[IFN shuffleoff]dark[/IFN]button" href="status_header.html?p0=playlist&p1=shuffle&p2=0&player={%player}"><b>OFF</b>&nbsp;&nbsp;</a>
              <a class="[IFN shuffleon]dark[/IFN]button" href="status_header.html?p0=playlist&p1=shuffle&p2=1&player={%player}"><b>SONG</b>&nbsp;&nbsp;</a>
              <a class="[IFN shufflealbum]dark[/IFN]button" href="status_header.html?p0=playlist&p1=shuffle&p2=2&player={%player}"><b>ALBUM</b></a>
 </nobr></td>[IF isplayer]<td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
 <td height="13" class="label2" align="center"><nobr>
-	<b>PLAYER:&nbsp;&nbsp;</b>
+	<b>PLAYER[S COLON]&nbsp;&nbsp;</b>
 	         <a target="_top" class="[EQ mode off]dark[/EQ]button" href="index.html?player={%player}&p0=power&p1=1"><b>ON</b>&nbsp;&nbsp;</a>
 	         <a target="_top" class="[NE mode off]dark[/NE]button" href="index.html?player={%player}&p0=power&p1=0"><b>OFF</b></a>
 </nobr></td>[/IF]

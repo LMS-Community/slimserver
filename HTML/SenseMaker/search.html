@@ -28,9 +28,8 @@ cellPadding=0 width=90% border=0>
 style="BORDER-RIGHT: white 2px solid; BACKGROUND: #333; BORDER-BOTTOM: 0px" 
 leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
 <P class=menu1><B><a href="home.html?player={%player}"><font color="#FFFFFF">[S 
-  {playermodel}_HOME]</font></a><a href="home.html"></a> / <a href="search.html?player={%player}&type={type}"> 
-  [EQ type artist][S SEARCHFOR] [S ARTIST][/EQ] [EQ type album][S SEARCHFOR] [S 
-  ALBUM][/EQ] [EQ type song][S SEARCHFOR] [S SONGTITLE][/EQ] </a></B></P>
+  {playermodel}_HOME]</font></a><a href="home.html"></a> / <a href="search.html?player={%player}&type={type}">[EQ type artist][S
+  SEARCHFOR_ARTIST][/EQ] [EQ type album][S SEARCHFOR_ALBUM][/EQ] [EQ type song][S SEARCHFOR_SONGTITLE][/EQ]</a></B></P>
 <P class=menu2>&nbsp;</P>
 
 
@@ -43,7 +42,7 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
 <TABLE width="100%"  border=0 cellPadding=2 cellSpacing=0>
     <TBODY>
       <TR> 
-        <TD height="20" colspan="1" class=listingheadsp2 width="360">[EQ type artist][S SEARCHFOR] [S ARTIST][/EQ] [EQ type album][S SEARCHFOR] [S ALBUM][/EQ] [EQ type song][S SEARCHFOR] [S SONGTITLE][/EQ] : </TD>
+        <TD height="20" colspan="1" class=listingheadsp2 width="360">[EQ type artist][S SEARCHFOR_ARTIST][/EQ] [EQ type album][S SEARCHFOR_ALBUM][/EQ] [EQ type song][S SEARCHFOR_SONGTITLE][/EQ][S COLON]</TD>
         <TD height="20" colspan="5" class=listingheadsp2>
 
           <form method="get" action="search.html">
@@ -51,7 +50,7 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
             <tr>
               <td valign="middle"><input type=text class="formfield" name="query" value="{query}" size=26><input name="" type="image" onClick="submit" src="html/ok2.gif">
                 
-                <input type=hidden value="{type}" name="type"> <input type=hidden value="{player}" name="player"><font color="#999999"><b>[NE numresults -1]Found: {numresults} [/NE]</b></font>
+                <input type=hidden value="{type}" name="type"> <input type=hidden value="{player}" name="player"><font color="#999999"><b>[NE numresults -1]Found[S COLON] {numresults} [/NE]</b></font>
               </td>
             </tr>
           </table></TD>
@@ -61,8 +60,8 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
     <TR> 
       <TD colspan="7" class=listing width="100%"><table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td><font color="#999999">[IF searchlist_pagebar]Pages: [/IF]</font></td>
-    <td align="left">[IF searchlist_pagebar]{searchlist_pagebar}[/IF][IF searchlist_header] {searchlist_header}:[/IF]</td>
+    <td><font color="#999999">[IF searchlist_pagebar]Pages[S COLON][/IF]</font></td>
+    <td align="left">[IF searchlist_pagebar]{searchlist_pagebar}[/IF][IF searchlist_header] {searchlist_header}[S COLON][/IF]</td>
   </tr>
 </table>
 

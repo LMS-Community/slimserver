@@ -2,7 +2,7 @@
 <tr>
    <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN]>
        	[IF currentsong]<a name="currentsong"></a><b>[/IF]
-  			 <a href="status.html?p0=playlist&p1=jump&p2={num}&player={%player}">{&title}</a>
+  			 [IFN currentsong]<a href="status.html?p0=playlist&p1=jump&p2={num}&player={%player}">[/IFN]{&title}[IFN currentsong]</a>[/IFN]
  		[IF currentsong]</b>[/IF]
  		
 		[IF album][S FROM][/IF] 

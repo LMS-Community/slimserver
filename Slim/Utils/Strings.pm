@@ -1,6 +1,6 @@
 package Slim::Utils::Strings;
 
-# $Id: Strings.pm,v 1.10 2004/01/26 05:44:23 dean Exp $
+# $Id: Strings.pm,v 1.11 2004/03/11 20:16:12 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -167,6 +167,29 @@ sub string {
 			warn "Undefined string: $stringname\nrequested language: $language\nfailsafe language: $Slim::Utils::Strings::failsafe_language\n";
 			return '';
 		}
+	}
+}
+
+#
+# Returns a string for doublesize mode in the requested language
+#
+
+sub doubleString {
+	my ($stringname) = @_;
+	
+	my $language = Slim::Utils::Prefs::get('language');
+	$stringname = uc($stringname);
+	if ($strings{$language.'_'.$stringname.'_DBL'}) {
+		return $strings{$language.'_'.$stringname.'_DBL'};
+	} elsif ($strings{$language.'_'.$stringname}) {
+		return $strings{$language.'_'.$stringname};
+	} elsif ($strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname.'_DBL'}) {
+		return $strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname.'_DBL'};
+	} elsif ($strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname}) {
+		return $strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname};
+	} else {
+		warn "Undefined string: $stringname\nrequested language: $language\nfailsafe language: $Slim::Utils::Strings::failsafe_language\n";
+		return '';
 	}
 }
 

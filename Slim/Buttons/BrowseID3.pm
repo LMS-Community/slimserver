@@ -1,5 +1,5 @@
 package Slim::Buttons::BrowseID3;
-# $Id: BrowseID3.pm,v 1.10 2004/03/06 05:56:44 kdf Exp $
+# $Id: BrowseID3.pm,v 1.11 2004/03/11 20:16:10 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -434,6 +434,7 @@ sub lines {
 	my $artist = selection($client,'curartist');
 	my $album = selection($client,'curalbum');
 	my $song = selection($client,'cursong');
+	my $plural = scalar @{browseID3dir($client)} > 1 ? 'S' : '';
 
 	if (!defined($genre)) {
 		$line1 = string('GENRES');
@@ -445,15 +446,15 @@ sub lines {
 		$line1 = string('SONGS');
 		$songlist = 1;
 	} elsif ($genre eq '*' && $artist eq '*' && $album eq '*' && !specified($song)) {
-		$line1 = string('SONGSMATCHING') . " \"" . searchTerm($song) . "\"";
+		$line1 = string('SONG'.$plural.'MATCHING') . " \"" . searchTerm($song) . "\"";
 		$songlist = 1;
 	} elsif ($genre eq '*' && $artist eq '*' && !specified($album)) {
-		$line1 = string('ALBUMSMATCHING') . " \"" . searchTerm($album) . "\"";
+		$line1 = string('ALBUM'.$plural.'MATCHING') . " \"" . searchTerm($album) . "\"";
 	} elsif ($genre eq '*' && $artist eq '*' && specified($album) && !defined($song)) {
 		$line1 = $album;
 		$songlist = 1;
 	} elsif ($genre eq '*' && !specified($artist)) {
-		$line1 = string('ARTISTSMATCHING') . " \"" . searchTerm($artist) . "\"";
+		$line1 = string('ARTIST'.$plural.'MATCHING') . " \"" . searchTerm($artist) . "\"";
 	} elsif (specified($genre) && !defined($artist)) {
 		$line1 = $genre;
 	} elsif ($genre eq '*' && specified($artist) && !defined($album)) {

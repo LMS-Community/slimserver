@@ -12,6 +12,10 @@ use strict;
 
 use Fcntl ':flock'; # import LOCK_* constants
 use File::Spec::Functions qw(:ALL);
+use Encode;
+if ($] > 5.007) {
+	require Encode;
+}
 
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
@@ -472,6 +476,9 @@ sub scanFunction {
 				if ($url) {
 					if (Slim::Music::Info::isFileURL($url)) {
 						my $file = Slim::Utils::Misc::pathFromFileURL($url);
+						if ($] > 5.007 && Slim::Utils::OSDetect::OS() eq "win") {
+							Encode::from_to($file,"utf8","iso-8859-1");
+						}
 						if (!$file || !-r $file) { 
 							$::d_itunes && msg("iTunes: file not found: $file\n");
 							$url = undef;
@@ -506,7 +513,7 @@ sub scanFunction {
 			# add this playlist to our playlist library
 #	'LIST',	 # list items (array)
 #	'AGE',   # list age
-			$cacheEntry{'TITLE'} = "iTunes: " . $name;
+			$cacheEntry{'TITLE'} = Slim::Utils::Prefs::get('iTunesplaylistprefix') . $name . Slim::Utils::Prefs::get('iTunesplaylistsuffix');
 			$cacheEntry{'LIST'} = $curPlaylist{'Playlist Items'};
 			$cacheEntry{'CT'} = 'itu';
 			$cacheEntry{'TAG'} = 1;

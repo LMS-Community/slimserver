@@ -1,44 +1,49 @@
 <html>
   <head>
-    <title>[S SLIM_PLAYLIST_EDITOR] - {dir}</title>
+    <title>[S EDIT_PLAYLIST] - {dir}</title>
     <link rel="stylesheet" href="slimserver.css">
   </head>
-  <body>
-    <h3>[S SLIM_PLAYLIST_EDITOR]</h3>
+  <body bgcolor="#FFFFFF">
+    <p></p>
+    <h3>[S EDIT_PLAYLIST]</h3>
     <p>({dir})</p>
-
+    <a href="home.html?player={%player}">[S {playermodel}_HOME]</a> / 
+    <a href="edit_playlist.html?player={%player}">[S EDIT_PLAYLIST]</a> /
+    <a href="browse.html?player={%player}&dir={%dir}">{playlistname}</a>
+    <p></p>
+    <hr>
     <p>
       <form method="get" action="edit_playlist.html">
       <table>
         <tr>
           <td>
-            [S TITLE]:
+            [S TITLE][S COLON]
           </td>
           <td>
-            <input type=text class="stdedit" name="form_title" value="{form_title}" size=30>
+            <input type="text" class="stdedit" name="form_title" value="{form_title}" size=30>
           </td>
           <td>
-            <input type=submit class="stdclick" value=[S ADD]>
+            <input type="submit" class="stdclick" value=[S ADD]>
           </td>
         </tr>
         <tr>
           <td>
-            [S URL]:
+            [S URL][S COLON]
           </td>
           <td colspan="2">
             <input type=text class="stdedit" name="form_url" value="{form_url}" size=40>
           </td>
         </tr>
       </table>
-      <input type=hidden name="dir" value="{dir}">
+      <input type="hidden" name="dir" value="{dir}">
+      <input type="hidden" name="player" value="{player}">
       </form>
     </p>
-
     <p>
       <table border="0" cellspacing="0" cellpadding="4" width="100%">
         {playlist}
       </table>
     </p>
-
   </body>
 </html>
+

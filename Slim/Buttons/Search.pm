@@ -61,7 +61,8 @@ sub lines {
 	my $client = shift;
 	my ($line1, $line2);
 	$line1 = string('SEARCH');
-	$line2 = string('SEARCHFOR') . ' ' . string($searchChoices[$client->searchSelection]);
+	my $menuChoice = 'SEARCHFOR_'.$searchChoices[$client->searchSelection];
+	$line2 = Slim::Utils::Prefs::clientGet($client, 'doublesize') ? Slim::Utils::Strings::doubleString($menuChoice) : string($menuChoice);
 	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
 }
 

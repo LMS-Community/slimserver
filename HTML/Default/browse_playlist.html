@@ -50,7 +50,10 @@
       <input type=hidden name="dir" value="{dir}">
     </form>
     [/IF] [IF titled]
-    <p><a href="browse.html?player={%player}&dir={%dir}&delete=1">[S DELETE_THIS_PLAYLIST]</a></p>
+    <p>
+       <a href="browse.html?player={%player}&dir={%dir}&delete=1">[S DELETE_THIS_PLAYLIST]</a><p>
+       <a href="edit_playlist.html?player={%player}&dir={%dir}">[S EDIT_PLAYLIST]
+    </p>
     [/IF] [IF playlistname]
     <p>
     <hr>

@@ -5,7 +5,7 @@
   </head>
   <body bgcolor="#FFFFFF" link="#0000FF" vlink="#0000FF">
 	<h3>[S {playermodel}] Music Player</h3>
-  	[IF player_chooser_list]<form method="get" action="{webroot}index.html" target="_top">Current player: <select name="player">{player_chooser_list}</select><input type="submit" value="Change"></form>[/IF]
+  	[IF player_chooser_list]<form method="get" action="{webroot}index.html" target="_top">Current player[S COLON]<select name="player">{player_chooser_list}</select><input type="submit" value="Change"></form>[/IF]
 
 
 
@@ -13,7 +13,7 @@
     [IF modeplay]playing[/IF]
     [IF modepause]paused on[/IF]
     [IF modestop]stopped on[/IF]
-    [IF currentsong]{currentsong} of {songcount}[/IF]:
+    [IF currentsong]{currentsong} of {songcount}[/IF][S COLON]
     <b><a href="status.html?player={%player}#currentsong">{songtitle}</a></b> [IF album]from[/IF] <i>{&album}</i> [IF artist]by {&artist}[/IF]
     [IFN songcount] Nothing! [/IFN]
 
@@ -24,12 +24,12 @@
     <a href="status.html?p0=pause&player={%player}">[IF modepause]<b>[/IF]Pause[IF modepause]</b>[/IF]</a>
     <a href="status.html?p0=stop&player={%player}">[IF modestop]<b>[/IF]Stop[IF modestop]</b>[/IF]</a>
 
-    Repeat:
+    Repeat[S COLON]
              <a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">[IF repeatone]<b>[/IF]one[IF repeatone]</b>[/IF]</a>/<a
                 href="status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}">[IF repeatall]<b>[/IF]all[IF repeatall]</b>[/IF]</a>/<a
                 href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}">[IF repeatoff]<b>[/IF]off[IF repeatoff]</b>[/IF]</a>
 
-    Shuffle:
+    Shuffle[S COLON]
              <a href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF shuffleon]<b>[/IF]on[IF shuffleon]</b>[/IF]</a>/<a
                 href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">[IF shuffleoff]<b>[/IF]off[IF shuffleoff]</b>[/IF]</a>
     

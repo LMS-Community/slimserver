@@ -36,59 +36,59 @@
       ADD_THIS_SONG_TO_PLAYLIST][/NB]</a> </p>
 <table cellspacing="5">
       <tr> 
-        <td class="nowrap">[S TITLE]:</td>
+        <td class="nowrap">[S TITLE][S COLON]</td>
         <td> {&title} </td>
       </tr>
       [IF artist] 
       <tr> 
-        <td class="nowrap"> [S ARTIST]: </td>
+        <td class="nowrap"> [S ARTIST][S COLON]</td>
         <td> <a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{&artist}</a> 
         </td>
       </tr>
       [/IF] [IF composer] 
       <tr> 
-        <td class="nowrap"> [S COMPOSER]: </td>
+        <td class="nowrap"> [S COMPOSER][S COLON]</td>
         <td> <a href="browseid3.html?genre=*&amp;artist={%composer}&amp;player={%player}" target="browser">{&composer}</a> 
         </td>
       </tr>
       [/IF] [IF conductor] 
       <tr> 
-        <td class="nowrap"> [S CONDUCTOR]: </td>
+        <td class="nowrap"> [S CONDUCTOR][S COLON]</td>
         <td> <a href="browseid3.html?genre=*&amp;artist={%conductor}&amp;player={%player}" target="browser">{&conductor}</a> 
         </td>
       </tr>
       [/IF] [IF band] 
       <tr> 
-        <td class="nowrap"> [S BAND]: </td>
+        <td class="nowrap"> [S BAND][S COLON]</td>
         <td> <a href="browseid3.html?genre=*&amp;artist={%band}&amp;player={%player}" target="browser">{&band}</a> 
         </td>
       </tr>
       [/IF] [IF album] 
       <tr> 
-        <td class="nowrap"> [S ALBUM]: </td>
+        <td class="nowrap"> [S ALBUM][S COLON]</td>
         <td> <a href="browseid3.html?genre=*&amp;artist=*&amp;album={%album}&amp;player={%player}" target="browser">{&album}</a> 
         </td>
       </tr>
       [/IF] [IF genre] 
       <tr> 
-        <td class="nowrap"> [S GENRE]: </td>
+        <td class="nowrap"> [S GENRE][S COLON]</td>
         <td> <a href="browseid3.html?genre={%genre}&amp;player={%player}" target="browser">{&genre} 
           </a></td>
       </tr>
 	  [/IF] [IF disc] 
 	  <tr> 
-	    <td class="nowrap"> [S DISC]: </td>
+	    <td class="nowrap"> [S DISC][S COLON]</td>
 	    <td> {&disc} </td>
 	  </tr>
       [/IF] [IF track] 
       <tr> 
-        <td class="nowrap"> [S TRACK]: </td>
+        <td class="nowrap"> [S TRACK][S COLON]</td>
         <td> {&track} </td>
       </tr>
       [/IF] [IF type] 
 	<tr>
 		<td class="nowrap">
-			[S TYPE]: 
+			[S TYPE][S COLON] 
 		</td>
 		<td>
 			{type}
@@ -96,47 +96,47 @@
 	</tr>
 	[/IF] [IF duration] 
       <tr> 
-        <td class="nowrap"> [S LENGTH]: </td>
+        <td class="nowrap"> [S LENGTH][S COLON]</td>
         <td> {&duration} </td>
       </tr>
       [/IF] [IF year] 
       <tr> 
-        <td class="nowrap"> [S YEAR]: </td>
+        <td class="nowrap"> [S YEAR][S COLON]</td>
         <td> {&year} </td>
       </tr>
       [/IF] [IF comment] 
       <tr> 
-        <td class="nowrap"> [S COMMENT]: </td>
+        <td class="nowrap"> [S COMMENT][S COLON]</td>
         <td> {&comment} </td>
       </tr>
       [/IF] [IF filelength] 
       <tr> 
-        <td class="nowrap"> [S FILELENGTH]: </td>
+        <td class="nowrap"> [S FILELENGTH][S COLON]</td>
         <td> {&filelength} [S BYTES] </td>
       </tr>
       [/IF] [IF bitrate] 
       <tr> 
-        <td class="nowrap"> [S BITRATE]: </td>
+        <td class="nowrap"> [S BITRATE][S COLON]</td>
         <td> {&bitrate} </td>
       </tr>
       [/IF] [IF tagversion] 
       <tr> 
-        <td class="nowrap"> [S TAGVERSION]: </td>
+        <td class="nowrap"> [S TAGVERSION][S COLON]</td>
         <td> {&tagversion} </td>
       </tr>
       [/IF] [IF url] 
       <tr> 
-        <td class="nowrap"> [S LOCATION]: </td>
+        <td class="nowrap"> [S LOCATION][S COLON]</td>
         <td> <a href="{url}">{&url}</a> </td>
       </tr>
       [/IF] [IF modtime] 
       <tr> 
-        <td class="nowrap"> [S MODTIME]: </td>
+        <td class="nowrap"> [S MODTIME][S COLON]</td>
         <td> {&modtime} </td>
       </tr>
       [/IF] [IF coverart] 
       <tr>
-      	<td valign="top">[S COVERART]:</td>
+      	<td valign="top">[S COVERART][S COLON]</td>
       	<td><a href="/music/{%itempath}/cover.jpg" target="cover"><img src="/music/{%itempath}/cover.jpg"></a></td>
       </tr>
       [/IF]

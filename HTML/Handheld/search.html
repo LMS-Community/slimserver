@@ -8,18 +8,16 @@
 
 <font face="arial,helvetica">
 [NE numresults -1]
-    [EQ type artist][S ARTISTSMATCHING][/EQ]
-    [EQ type album][S ALBUMSMATCHING][/EQ]
-    [EQ type song][S SONGSMATCHING][/EQ] "{query}": {numresults}<p>
+    [EQ type artist][S ARTISTSMATCHING][/EQ][EQ type album][S ALBUMSMATCHING][/EQ][EQ type song][S SONGSMATCHING][/EQ] "{query}"[S COLON]{numresults}<p>
 [/NE]
-[IF searchlist_pagebar]<p>[S PAGES]: {searchlist_pagebar}</p>[/IF]
-[IF searchlist_header]<p>{searchlist_header}:</p>[/IF]
+[IF searchlist_pagebar]<p>[S PAGES][S COLON]{searchlist_pagebar}</p>[/IF]
+[IF searchlist_header]<p>{searchlist_header}[S COLON]</p>[/IF]
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
     {browse_list}
 </table>
 
-[IF searchlist_pagebar]<p>[S PAGES]: {searchlist_pagebar}</p>[/IF]
+[IF searchlist_pagebar]<p>[S PAGES][S COLON]{searchlist_pagebar}</p>[/IF]
 </font>
 [INCLUDE pagefooter.html]
 <!-- /Page search.html -->

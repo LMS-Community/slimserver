@@ -10,19 +10,19 @@
     </div>
   </div>
   [IF playlist_pagebar]<div id="topplaylistpagebar" class="pagebar">
-    <span class="label">[S PAGES]:</span>
+    <span class="label">[S PAGES][S COLON]</span>
     <div class="controls">
       <ul>
         {playlist_pagebar}
       </ul>
     </div>
   </div>[/IF]
-  [IF playlist_header]<div id="playlist_header">{playlist_header}:</div>[/IF]
+  [IF playlist_header]<div id="playlist_header">{playlist_header}[S COLON]</div>[/IF]
   <div id="playlist">
         [IFN playlist_items][S EMPTY][/IFN]<ul>{playlist_items}</ul>
   </div>
   [IF playlist_pagebar]<div id="bottomplaylistpagebar" class="pagebar">
-    <span class="label">[S PAGES]:</span>
+    <span class="label">[S PAGES][S COLON]</span>
     <div class="controls">
       <ul>
         {playlist_pagebar}

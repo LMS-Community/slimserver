@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.45 2004/03/10 21:29:41 dean Exp $
+# $Id: Setup.pm,v 1.46 2004/03/11 20:16:13 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -145,7 +145,7 @@ sub initSetupConfig {
 						$pageref->{'title'} = string('PLAYER_SETTINGS') . ' ' . string('FOR') . ' ' . $paramref->{'playername'};
 					}
 					if (defined($client->revision)) {
-						$paramref->{'versionInfo'} = string("PLAYER_VERSION") . ': ' . $client->revision;
+						$paramref->{'versionInfo'} = string("PLAYER_VERSION") . string("COLON") . $client->revision;
 					}
 					$paramref->{'ipaddress'} = $client->ipport();
 					$paramref->{'macaddress'} = $client->macaddress;
@@ -333,7 +333,7 @@ sub initSetupConfig {
 				if ($paramref->{'playername'}) {
 					$pageref->{'title'} = string('ADDITIONAL_PLAYER_SETTINGS') . ' ' . string('FOR') . ' ' . $paramref->{'playername'};
 				}
-				$paramref->{'versionInfo'} = string('PLAYER_VERSION') . ': ' . $client->revision;
+				$paramref->{'versionInfo'} = string('PLAYER_VERSION') . string("COLON") . $client->revision;
 			}
 		,'postChange' => sub {
 				my ($client,$paramref,$pageref) = @_;
@@ -519,7 +519,7 @@ sub initSetupConfig {
 					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = undef;
 				}
 				
-				$paramref->{'versionInfo'} = string('SERVER_VERSION') . ': ' . $::VERSION;
+				$paramref->{'versionInfo'} = string('SERVER_VERSION') . string("COLON") . $::VERSION;
 				$paramref->{'newVersion'} = $::newVersion;
 			}
 		,'GroupOrder' => ['language', undef, undef, 'Default']
@@ -1067,7 +1067,7 @@ sub initSetupConfig {
 					my ($client,$paramref,$pageref) = @_;
 					removeExtraArrayEntries($client,'titleFormat',$paramref,$pageref);
 				}
-		,'GroupOrder' => ['Default','TitleFormats','GuessFileFormats']
+		,'GroupOrder' => ['Default','TitleFormats','GuessFileFormats','iTunesPlaylistFormat']
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['longdateFormat','shortdateFormat','timeFormat']
@@ -1102,6 +1102,18 @@ sub initSetupConfig {
 					,'GroupLine' => 1
 					,'GroupSub' => 1
 				}
+ 			,'iTunesPlaylistFormat' => {
+ 					'PrefOrder' => ['iTunesplaylistprefix','iTunesplaylistsuffix']
+ 					,'PrefsInTable' => 1
+ 					,'Suppress_PrefHead' => 1
+ 					,'Suppress_PrefDesc' => 1
+ 					,'Suppress_PrefLine' => 1
+ 					,'Suppress_PrefSub' => 1
+ 					,'GroupHead' => string('SETUP_ITUNESPLAYLISTFORMAT')
+ 					,'GroupDesc' => string('SETUP_ITUNESPLAYLISTFORMAT_DESC')
+ 					,'GroupLine' => 1
+ 					,'GroupSub' => 1
+ 				}
 			}
 		,'Prefs' => {
 			'titleFormatWeb' => {
@@ -1228,6 +1240,14 @@ sub initSetupConfig {
 								,q(|%Hh%M)		=> "h'h'mm (24h 03h00 15h00)"
 								}
 					}
+ 			,'iTunesplaylistprefix' => {
+ 						'validate' => \&validateAcceptAll
+ 						,'PrefSize' => 'large'
+ 					}
+ 			,'iTunesplaylistsuffix' => {
+ 						'validate' => \&validateAcceptAll
+ 						,'PrefSize' => 'large'
+ 					}
 			}
 		} #end of setup{'formatting'} hash
 	,'security' => {

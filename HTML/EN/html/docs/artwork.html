@@ -58,9 +58,9 @@ no larger than 100x100.
 For each place in the skin that references a large cover art image,
 the SlimServer software performs the following search:
 <ol>
-<li>Seach in the current music directory for 
+<li>Search in the current music directory for 
  cover.jpg, then  albumartsmall.jpg, folder.jpg, album.jpg,  thumb.jpg
-<li>If needed seach for 
+<li>If needed search for 
  cover.gif, then  albumartsmall.gif, folder.gif, album.gif,  thumb.gif
 </ol>
 <p>
@@ -69,9 +69,9 @@ For the smaller, thumbnail image, a similar search is performed, except that
 the list is reversed, searching for thumb first. 
 Specifically:
 <ol>
-<li>Seach in the current music directory for 
+<li>Search in the current music directory for 
  thumb.jpg album.jpg, folder.jpg, albumartsmall.jpg, cover.jpg, 
-<li>If needed seach for 
+<li>If needed search for 
  thumb.gif album.gif, folder.gif, albumartsmall.gif, cover.gif, 
 </ol>
 
@@ -89,7 +89,9 @@ InfoFormat, the same as title format is created.
 As an example, you could create a single directory of songs and name all your
 artwork as artist-album.jpg.  For this, enter a setting of 
 <pre>&nbsp;&nbsp;%ARTIST-ALBUM.jpg</pre> for
-Artwork or Artwork Thumbnail in the server settings section.
+Artwork or Artwork Thumbnail in the server settings section.  The extension can be specified for any slimserver supported format, .jpg is
+assumed if no extension is given.
+
 </P>
 
 

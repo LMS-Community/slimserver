@@ -15,7 +15,7 @@
 							<td width="8"><img src="html/images/spacer.gif" width=8 height=8 alt=""></td>
 							
         <td class="exlisting" valign=top><a href="home.html?player={%player}">[S 
-          {playermodel}_HOME]</a> / <a href="search.html?player={%player}&type={type}">[EQ type artist][S SEARCHFOR] [S ARTIST][/EQ] [EQ type album][S SEARCHFOR] [S ALBUM][/EQ] [EQ type song][S SEARCHFOR] [S SONGTITLE][/EQ]</a></td>
+          {playermodel}_HOME]</a> / <a href="search.html?player={%player}&type={type}">[EQ type artist][S SEARCHFOR_ARTIST][/EQ][EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type song][S SEARCHFOR_SONGTITLE][/EQ]</a></td>
 							<td width="4"></td>
 						</tr>
 						<tr height="5">
@@ -34,28 +34,27 @@
   <td valign="top" height="100%"> 
     <p>&nbsp;</p>
     <form name="searchForm" method="get" action="search.html">
-      [EQ type artist][S SEARCHFOR] [S ARTIST][/EQ] [EQ type album][S SEARCHFOR] 
-      [S ALBUM][/EQ] [EQ type song][S SEARCHFOR] [S SONGTITLE][/EQ]: 
+      [EQ type artist][S SEARCHFOR_ARTIST][/EQ][EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type song][S SEARCHFOR_SONGTITLE][/EQ][S COLON]
       <input type=text class="stdedit" name="query" value="{query}" size=40>
       <input name="submit" type=submit class="stdclick" value=[S SEARCH]>
       <input type=hidden value="{type}" name="type">
       <input type=hidden value="{player}" name="player">
     </form>
-    <p>
+    <p></p>
     <p>[NE numresults -1]</p>
     <hr>
-    <p> [EQ type artist][S ARTISTSMATCHING][/EQ] [EQ type album][S ALBUMSMATCHING][/EQ] 
-      [EQ type song][S SONGSMATCHING][/EQ] "{query}": {numresults} 
-    <p> [/NE] [IF searchlist_pagebar]
-    <p>[S PAGES]: {searchlist_pagebar}</p>
-    [/IF] [IF searchlist_header]
-    <p>{searchlist_header}:</p>
+    <p>[EQ type artist][S ARTISTSMATCHING][/EQ][EQ type album][S ALBUMSMATCHING][/EQ][EQ type song][S SONGSMATCHING][/EQ] "{query}"[S COLON]{numresults}</p>
+    <p>[/NE]</p>
+    [IF searchlist_pagebar]
+    <p>[S PAGES][S COLON]{searchlist_pagebar}</p>
+    [/IF][IF searchlist_header]
+    <p>{searchlist_header}[S COLON]</p>
     [/IF] 
     <table cellspacing="0" cellpadding="4">
       {browse_list} 
     </table>
     [IF searchlist_pagebar]
-    <p>[S PAGES]: {searchlist_pagebar}</p>
+    <p>[S PAGES][S COLON]{searchlist_pagebar}</p>
     [/IF] 
     <p>&nbsp;</p></td>
 				<td width="4" height="100%"></td>

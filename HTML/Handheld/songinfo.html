@@ -21,7 +21,7 @@
         <tr>
                 <td>
                         <nobr>
-                                [S TITLE]:
+                                [S TITLE][S COLON]
                         </nobr>
                 </td>
                 <td>
@@ -31,7 +31,7 @@
         [IF artist]
         <tr>
                 <td>
-                        [S ARTIST]:
+                        [S ARTIST][S COLON]
                 </td>
                 <td>
                         <a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}">{artist}</a>
@@ -40,7 +40,7 @@
         [/IF] [IF composer]
         <tr>
                 <td>
-                        [S COMPOSER]:
+                        [S COMPOSER][S COLON]
                 </td>
                 <td>
                         <a href="browseid3.html?genre=*&amp;artist={%composer}&amp;player={%player}">{composer}</a>
@@ -49,7 +49,7 @@
        [/IF] [IF conductor]
         <tr>
                 <td>
-                        [S CONDUCTOR]:
+                        [S CONDUCTOR][S COLON]
                 </td>
                 <td>
                         <a href="browseid3.html?genre=*&amp;artist={%conductor}&amp;player={%player}">{conductor}</a>
@@ -58,7 +58,7 @@
         [/IF] [IF album]
         <tr>
                 <td>
-                        [S ALBUM]:
+                        [S ALBUM][S COLON]
                 </td>
                 <td>
                         <a href="browseid3.html?genre=*&amp;artist=*&amp;album={%album}&amp;player={%player}">{album}</a>
@@ -67,7 +67,7 @@
         [/IF] [IF genre]
         <tr>
                 <td>
-                        [S GENRE]:
+                        [S GENRE][S COLON]
                 </td>
                 <td>
                         <a href="browseid3.html?genre={%genre}&amp;player={%player}" >{genre}
@@ -76,7 +76,7 @@
         [/IF] [IF track]
         <tr>
                 <td>
-                        [S TRACK]:
+                        [S TRACK][S COLON]
                 </td>
                 <td>
                         {track}
@@ -85,7 +85,7 @@
         [/IF] [IF duration]
         <tr>
                 <td>
-                        [S LENGTH]:
+                        [S LENGTH][S COLON]
                 </td>
                 <td>
                         {duration}
@@ -94,7 +94,7 @@
         [/IF] [IF year]
         <tr>
                 <td>
-                        [S YEAR]:
+                        [S YEAR][S COLON]
                 </td>
                 <td>
                         {year}
@@ -103,7 +103,7 @@
         [/IF] [IF comment]
         <tr>
                 <td>
-                        [S COMMENT]:
+                        [S COMMENT][S COLON]
                 </td>
                 <td>
                         {comment}
@@ -112,7 +112,7 @@
         [/IF] [IF filelength]
         <tr>
                 <td>
-                        [S FILELENGTH]:
+                        [S FILELENGTH][S COLON]
                 </td>
                 <td>
                         {filelength} [S BYTES]
@@ -121,7 +121,7 @@
         [/IF] [IF bitrate]
         <tr>
                 <td>
-                        [S BITRATE]:
+                        [S BITRATE][S COLON]
                 </td>
                 <td>
                         {bitrate}
@@ -130,7 +130,7 @@
         [/IF] [IF tagversion]
         <tr>
                 <td>
-                        [S TAGVERSION]:
+                        [S TAGVERSION][S COLON]
                 </td>
                 <td>
                         {tagversion}

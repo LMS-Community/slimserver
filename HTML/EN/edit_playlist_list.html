@@ -3,16 +3,16 @@
     {&title}
   </td>
   <td [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN]>
-    <a href="edit_playlist.html?up={num}&dir={%dir}">[S UP]</a>
+    <a href="edit_playlist.html?player={%player}&up={num}&dir={%dir}">[S UP]</a>
   </td>
   <td [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN]>
-    <a class="down" href="edit_playlist.html?down={num}&dir={%dir}">[S DOWN]</a>
+    <a class="down" href="edit_playlist.html?player={%player}&down={num}&dir={%dir}">[S DOWN]</a>
   </td>
   <td [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN]>
-    <a class="edit" href="edit_playlist.html?edit={num}&dir={%dir}">[S EDIT]</a>
+    <a class="edit" href="edit_playlist.html?player={%player}&edit={num}&dir={%dir}">[S EDIT]</a>
   </td>
   <td [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN]>
-    <a class="delete" href="edit_playlist.html?delete={num}&dir={%dir}">[S DELETE]</a>
+    <a class="delete" href="edit_playlist.html?player={%player}&delete={num}&dir={%dir}">[S DELETE]</a>
   </td>
 </tr>
 

@@ -48,77 +48,77 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
       <TR> 
         <TD colspan="7" class=listing><table width="100%">
             <tr> 
-              <td class=listing> <nobr> [S TITLE]: </nobr> </td>
+              <td class=listing> <nobr> [S TITLE][S COLON]</nobr> </td>
               <td class=listing> {title} </td>
             </tr>
             [IF artist] 
             <tr> 
-              <td class=listing> [S ARTIST]: </td>
+              <td class=listing> [S ARTIST][S COLON]</td>
               <td class=listing> <a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{artist}</a> 
               </td>
             </tr>
             [/IF] [IF composer] 
             <tr> 
-              <td class=listing> [S COMPOSER]: </td>
+              <td class=listing> [S COMPOSER][S COLON]</td>
               <td class=listing> <a href="browseid3.html?genre=*&amp;artist={%composer}&amp;player={%player}" target="browser">{composer}</a> 
               </td>
             </tr>
            [/IF] [IF conductor] 
             <tr> 
-              <td class=listing> [S CONDUCTOR]: </td>
+              <td class=listing> [S CONDUCTOR][S COLON]</td>
               <td class=listing> <a href="browseid3.html?genre=*&amp;artist={%conductor}&amp;player={%player}" target="browser">{conductor}</a> 
               </td>
             </tr>
             [/IF] [IF album] 
             <tr> 
-              <td class=listing> [S ALBUM]: </td>
+              <td class=listing> [S ALBUM][S COLON]</td>
               <td class=listing> <a href="browseid3.html?genre=*&amp;artist=*&amp;album={%album}&amp;player={%player}" target="browser">{album}</a> 
               </td>
             </tr>
             [/IF] [IF genre] 
             <tr> 
-              <td class=listing> [S GENRE]: </td>
+              <td class=listing> [S GENRE][S COLON]</td>
               <td class=listing> <a href="browseid3.html?genre={%genre}&amp;player={%player}" target="browser">{genre}</a> 
               </td>
             </tr>
             [/IF] [IF track] 
             <tr> 
-              <td class=listing> [S TRACK]: </td>
+              <td class=listing> [S TRACK][S COLON]</td>
               <td class=listing> {track} </td>
             </tr>
             [/IF] [IF duration] 
             <tr> 
-              <td class=listing> [S LENGTH]: </td>
+              <td class=listing> [S LENGTH][S COLON]</td>
               <td class=listing> {duration} </td>
             </tr>
             [/IF] [IF year] 
             <tr> 
-              <td class=listing> [S YEAR]: </td>
+              <td class=listing> [S YEAR][S COLON]</td>
               <td class=listing> {year} </td>
             </tr>
             [/IF] [IF comment] 
             <tr> 
-              <td class=listing> [S COMMENT]: </td>
+              <td class=listing> [S COMMENT][S COLON]</td>
               <td class=listing> {comment} </td>
             </tr>
             [/IF] [IF filelength] 
             <tr> 
-              <td class=listing> [S FILELENGTH]: </td>
+              <td class=listing> [S FILELENGTH][S COLON]</td>
               <td class=listing> {filelength} [S BYTES] </td>
             </tr>
             [/IF] [IF bitrate] 
             <tr> 
-              <td class=listing > [S BITRATE]: </td>
+              <td class=listing > [S BITRATE][S COLON]</td>
               <td class=listing> {bitrate} </td>
             </tr>
             [/IF] [IF tagversion] 
             <tr> 
-              <td class=listing> [S TAGVERSION]: </td>
+              <td class=listing> [S TAGVERSION][S COLON]</td>
               <td class=listing> {tagversion} </td>
             </tr>
             [/IF] [IF url] 
             <tr> 
-              <td class=listing>URL: </td>
+              <td class=listing>URL[S COLON]</td>
               <td class=listing>{url} </td>
             </tr>
             <tr> 

@@ -253,13 +253,12 @@ sub lines {
 	my $client = shift;
 	my ($line1, $line2);
 
-	$line1 = string('SEARCHFOR') . " ";
 	if ($client->searchFor eq 'ARTISTS') {
-		$line1 .= string('ARTISTS');
+		$line1 = string('SEARCHFOR_ARTISTS');
 	} elsif ($client->searchFor eq 'ALBUMS') {
-		$line1 .= string('ALBUMS');
+		$line1 = string('SEARCHFOR_ALBUMS');
 	} elsif ($client->searchFor eq 'SONGS') {
-		$line1 .= string('SONGS');
+		$line1 = string('SEARCHFOR_SONGS');
 	}
 
 	$line2 = "";

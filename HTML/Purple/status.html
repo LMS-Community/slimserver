@@ -14,7 +14,7 @@
     [IF modeplay][S PLAYING][/IF]
     [IF modepause][S PAUSED_ON][/IF]
     [IF modestop][S STOPPED_ON][/IF]
-    [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF]:
+    [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF][S COLON]
 <b><a href="status.html?player={%player}#currentsong">{songtitle}</a></b> [IF album][S FROM][/IF] 
 <i><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{&album}</a></i> 
 [IF artist][S BY] [/IF] 
@@ -27,15 +27,16 @@
     <a href="status.html?p0=pause&player={%player}">[IF modepause]<b>[/IF][S PAUSE][IF modepause]</b>[/IF]</a>
     <a href="status.html?p0=stop&player={%player}">[IF modestop]<b>[/IF][S STOP][IF modestop]</b>[/IF]</a>
 
-    [S REPEAT]: 
-             <a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">[IF repeatone]<b>[/IF][S ONE][IF repeatone]</b>[/IF]</a>/<a 
+    [S REPEAT][S COLON]<a
+             	href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">[IF repeatone]<b>[/IF][S ONE][IF repeatone]</b>[/IF]</a>/<a 
                 href="status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}">[IF repeatall]<b>[/IF][S ALL][IF repeatall]</b>[/IF]</a>/<a 
                 href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}">[IF repeatoff]<b>[/IF][S OFF][IF repeatoff]</b>[/IF]</a>
 
-    [S SHUFFLE]: 
-             <a href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF shuffleon]<b>[/IF][S ON][IF shuffleon]</b>[/IF]</a>/<a
+    [S SHUFFLE][S COLON]<a
+    		href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF shuffleon]<b>[/IF][S ON][IF shuffleon]</b>[/IF]</a>/<a
                 href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">[IF shuffleoff]<b>[/IF][S OFF][IF shuffleoff]</b>[/IF]</a>
-<br><br>[S VOLUME]: <a href="status.html?p0=mixer&p1=volume&p2=-10&player={%player}&start={start}">[S VOLUME_SOFTER]</a>
+<br><br>[S VOLUME][S COLON]<a
+	  href="status.html?p0=mixer&p1=volume&p2=-10&player={%player}&start={start}">[S VOLUME_SOFTER]</a>
        <a href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}">[EQ volume 0]<b>[/EQ]1[EQ volume 0]</b>[/EQ]</a>
        <a href="status.html?p0=mixer&p1=volume&p2=10&player={%player}&start={start}">[EQ volume 10]<b>[/EQ]2[EQ volume 10]</b>[/EQ]</a>
        <a href="status.html?p0=mixer&p1=volume&p2=20&player={%player}&start={start}">[EQ volume 20]<b>[/EQ]3[EQ volume 20]</b>[/EQ]</a>

@@ -24,18 +24,23 @@ sub editplaylist {
 
 	my $count = 0;
 	my $playlist;
+	my $changed = 1;
+	
 
 	$params->{'dir'} = $dir;
 
 	$::d_http && msg( "browse virtual path: " . $dir . "\n");
 	$::d_http && msg( "with absolute path: " . $fulldir . "\n");
 
+	my @items = Slim::Formats::Parse::parseList($dir, $filehandle);
+
+	$filehandle->close if defined($filehandle);
+	
 	# Edit function - fill the to fields in the form
 	if (defined($params->{'edit'})) {
 
 		my $value = $params->{'edit'};
-		my @items = Slim::Formats::Parse::PLS($filehandle);
-
+		
 		$params->{'form_url'}   = $items[$value];
 		$params->{'form_title'} = Slim::Music::Info::title($items[$value]);
 
@@ -43,11 +48,10 @@ sub editplaylist {
 
 		# Delete function - Remove entry from list
 		my $value = $params->{'delete'};
-		my @items = Slim::Formats::Parse::PLS( $filehandle);
 
 		splice(@items, $value, 1);
 
-		Slim::Formats::Parse::writePLS(\@items, undef, $fulldir);
+		$changed = 1;
 
 	} elsif (defined($params->{'form_title'})) {
 
@@ -57,8 +61,6 @@ sub editplaylist {
 		my $newitem = $params->{'form_url'};
 
 		if (($title ne "") && ($newitem ne "")) {
-
-			my @items = Slim::Formats::Parse::PLS( $filehandle);
 
 			Slim::Music::Info::setTitle( $newitem, $title);
 			foreach my $item (@items) {
@@ -74,7 +76,7 @@ sub editplaylist {
 				push( @items, $newitem);
 			}
 
-			Slim::Formats::Parse::writePLS(\@items, undef, $fulldir);
+			$changed = 1;
 		}
 
 	} elsif (defined($params->{'up'})) {
@@ -84,44 +86,35 @@ sub editplaylist {
 
 		if ($value != 0) {
 
-			my @items = Slim::Formats::Parse::PLS($filehandle);
-
 			my $item = $items[$value];
 			$items[$value] = $items[$value - 1];
 			$items[$value - 1] = $item;
 
-			Slim::Formats::Parse::writePLS(\@items, undef, $fulldir);
+			$changed = 1;
 		}
 
 	} elsif (defined($params->{'down'})) {
 
 		# Down function - Move entry down in list
 		my $value = $params->{'down'};
-		my @items = Slim::Formats::Parse::PLS($filehandle);
 
 		if ($value != scalar(@items) - 1) {
 
 			my $item = $items[$value];
 			$items[$value] = $items[$value + 1];
 			$items[$value + 1] = $item;
-
-			Slim::Formats::Parse::writePLS(\@items, undef, $fulldir);
+			$changed = 1;			
 		}
 	}
 
-	# close and reopen.
-	$filehandle->close if defined($filehandle);
-
-	$filehandle = FileHandle->new($fulldir, "r") || do {
-
-		# Create new file if it cannot be opened
-		$filehandle = FileHandle->new($fulldir, "w+");
-	};
-
-	my @items = Slim::Formats::Parse::PLS($filehandle);
-
-	$filehandle->close();
-
+	if ($changed) {
+		if (Slim::Music::Info::typeFromSuffix($fulldir) eq 'm3u') {
+			Slim::Formats::Parse::writeM3U(\@items, $fulldir);
+		} elsif (Slim::Music::Info::typeFromSuffix($fulldir) eq 'pls') {
+			Slim::Formats::Parse::writePLS(\@items, undef, $fulldir);
+		}
+	}
+	
 	my %list_form = %$params;
 
 	foreach my $item (@items) {
@@ -139,6 +132,7 @@ sub editplaylist {
 	}
 
 	$params->{'playlist'} = $playlist;
+	$params->{'playlistname'} = Slim::Music::Info::title($fulldir);
 
 	return Slim::Web::HTTP::filltemplatefile( "edit_playlist.html", $params);
 }

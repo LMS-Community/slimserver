@@ -11,7 +11,7 @@
     [IF modeplay][S PLAYING][/IF]
     [IF modepause][S PAUSED_ON][/IF]
     [IF modestop][S STOPPED_ON][/IF]
-    [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF]:
+    [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF][S COLON]
 <b><a href="status.html?player={%player}#currentsong">{songtitle}</a></b> [IF album]from[/IF] 
 <i><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{&album}</a></i> 
 [IF artist][S BY] [/IF]
@@ -20,37 +20,42 @@
 [IFN songcount] [S NOTHING] [/IFN]
 <hr><a href="status.html?p0=playlist&p1=jump&p2=-1&player={%player}">[S PREV]</a>
 <a href="status.html?p0=playlist&p1=jump&p2=%2b1&player={%player}">[S SKIP]</a>
-    <a href="status.html?p0=play&player={%player}">[IF modeplay]<b>[/IF][S PLAY][IF modeplay]</b>[/IF]</a>
+    [IFN modeplay]<a href="status.html?p0=play&player={%player}">[/IFN][IF modeplay]<b>[/IF][S PLAY][IF modeplay]</b>[/IF][IFN modeplay]</a>[/IFN]
     <a href="status.html?p0=pause&player={%player}">[IF modepause]<b>[/IF][S PAUSE][IF modepause]</b>[/IF]</a>
-    <a href="status.html?p0=stop&player={%player}">[IF modestop]<b>[/IF][S STOP][IF modestop]</b>[/IF]</a>
+    [IFN modestop]<a href="status.html?p0=stop&player={%player}">[/IFN][IF modestop]<b>[/IF][S STOP][IF modestop]</b>[/IF][IFN modestop]</a>[/IFN]
 
-    [S REPEAT]: 
-             <a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">[IF repeatone]<b>[/IF][S ONE][IF repeatone]</b>[/IF]</a>/<a 
-                href="status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}">[IF repeatall]<b>[/IF][S ALL][IF repeatall]</b>[/IF]</a>/<a 
-                href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}">[IF repeatoff]<b>[/IF][S OFF][IF repeatoff]</b>[/IF]</a>
+    [S REPEAT][S COLON] 
+             [IFN repeatone]<a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">[/IFN][IF repeatone]<b>[/IF][S ONE][IF repeatone]</b>[/IF][IFN repeatone]</a>[/IFN]/[IFN repeatall]<a 
+                href="status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}">[/IFN][IF repeatall]<b>[/IF][S ALL][IF repeatall]</b>[/IF][IFN repeatall]</a>[/IFN]/[IFN repeatoff]<a 
+                href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}">[/IFN][IF repeatoff]<b>[/IF][S OFF][IF repeatoff]</b>[/IF][IFN repeatoff]</a>[/IFN]
 
-    [S SHUFFLE]: 
-                <a 
-                href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">[IF shuffleoff]<b>[/IF][S OFF][IF shuffleoff]</b>[/IF]</a
-                >/<a
-                href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF shuffleon]<b>[/IF][S LCSONGS][IF shuffleon]</b>[/IF]</a
-                >/<a
-                href="status.html?p0=playlist&p1=shuffle&p2=2&player={%player}">[IF shufflealbum]<b>[/IF][S LCALBUMS][IF shufflealbum]</b>[/IF]</a
-                >
+    [S SHUFFLE][S COLON] 
+                [IFN shuffleoff]<a 
+                href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">[/IFN][IF shuffleoff]<b>[/IF][S OFF][IF shuffleoff]</b>[/IF][IFN shuffleoff]</a
+                >[/IFN]/[IFN shuffleon]<a
+                href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[/IFN][IF shuffleon]<b>[/IF][S LCSONGS][IF shuffleon]</b>[/IF][IFN shuffleon]</a
+                >[/IFN]/[IFN shufflealbum]<a
+                href="status.html?p0=playlist&p1=shuffle&p2=2&player={%player}">[/IFN][IF shufflealbum]<b>[/IF][S LCALBUMS][IF shufflealbum]</b>[/IF][IFN shufflealbum]</a
+                >[/IFN]
 
 [IF isplayer]
-		<br><br>[S VOLUME]: <a href="status.html?p0=mixer&p1=volume&p2=-10&player={%player}&start={start}">[S VOLUME_SOFTER]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}">[EQ volume 0]<b>[/EQ]1[EQ volume 0]</b>[/EQ]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=10&player={%player}&start={start}">[EQ volume 10]<b>[/EQ]2[EQ volume 10]</b>[/EQ]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=20&player={%player}&start={start}">[EQ volume 20]<b>[/EQ]3[EQ volume 20]</b>[/EQ]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=30&player={%player}&start={start}">[EQ volume 30]<b>[/EQ]4[EQ volume 30]</b>[/EQ]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=40&player={%player}&start={start}">[EQ volume 40]<b>[/EQ]5[EQ volume 40]</b>[/EQ]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=50&player={%player}&start={start}">[EQ volume 50]<b>[/EQ]6[EQ volume 50]</b>[/EQ]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=60&player={%player}&start={start}">[EQ volume 60]<b>[/EQ]7[EQ volume 60]</b>[/EQ]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=70&player={%player}&start={start}">[EQ volume 70]<b>[/EQ]8[EQ volume 70]</b>[/EQ]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=80&player={%player}&start={start}">[EQ volume 80]<b>[/EQ]9[EQ volume 80]</b>[/EQ]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=90&player={%player}&start={start}">[EQ volume 90]<b>[/EQ]10[EQ volume 90]</b>[/EQ]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=100&player={%player}&start={start}">[EQ volume 100]<b>[/EQ]11[EQ volume 100]</b>[/EQ]</a>
+
+    [S PLAYER][S COLON]
+               [EQ mode off]<a target="_top" href="index.html?player={%player}&p0=power&p1=1">[/EQ][NE mode off]<b>[/NE][S ON][NE mode off]</b>[/NE][EQ mode off]</a>[/EQ]/[NE mode off]<a
+               target="_top" href="index.html?player={%player}&p0=power&p1=0">[/NE][EQ mode off]<b>[/EQ][S OFF][EQ mode off]</b>[/EQ][NE mode off]</a>[/NE]
+
+		<br><br>[S VOLUME][S COLON] <a href="status.html?p0=mixer&p1=volume&p2=-10&player={%player}&start={start}">[S VOLUME_SOFTER]</a>
+       [NE volume 0]<a href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}">[/NE][EQ volume 0]<b>[/EQ]1[EQ volume 0]</b>[/EQ][NE volume 0]</a>[/NE]
+       [NE volume 10]<a href="status.html?p0=mixer&p1=volume&p2=10&player={%player}&start={start}">[/NE][EQ volume 10]<b>[/EQ]2[EQ volume 10]</b>[/EQ][NE volume 10]</a>[/NE]
+       [NE volume 20]<a href="status.html?p0=mixer&p1=volume&p2=20&player={%player}&start={start}">[/NE][EQ volume 20]<b>[/EQ]3[EQ volume 20]</b>[/EQ][NE volume 20]</a>[/NE]
+       [NE volume 30]<a href="status.html?p0=mixer&p1=volume&p2=30&player={%player}&start={start}">[/NE][EQ volume 30]<b>[/EQ]4[EQ volume 30]</b>[/EQ][NE volume 30]</a>[/NE]
+       [NE volume 40]<a href="status.html?p0=mixer&p1=volume&p2=40&player={%player}&start={start}">[/NE][EQ volume 40]<b>[/EQ]5[EQ volume 40]</b>[/EQ][NE volume 40]</a>[/NE]
+       [NE volume 50]<a href="status.html?p0=mixer&p1=volume&p2=50&player={%player}&start={start}">[/NE][EQ volume 50]<b>[/EQ]6[EQ volume 50]</b>[/EQ][NE volume 50]</a>[/NE]
+       [NE volume 60]<a href="status.html?p0=mixer&p1=volume&p2=60&player={%player}&start={start}">[/NE][EQ volume 60]<b>[/EQ]7[EQ volume 60]</b>[/EQ][NE volume 60]</a>[/NE]
+       [NE volume 70]<a href="status.html?p0=mixer&p1=volume&p2=70&player={%player}&start={start}">[/NE][EQ volume 70]<b>[/EQ]8[EQ volume 70]</b>[/EQ][NE volume 70]</a>[/NE]
+       [NE volume 80]<a href="status.html?p0=mixer&p1=volume&p2=80&player={%player}&start={start}">[/NE][EQ volume 80]<b>[/EQ]9[EQ volume 80]</b>[/EQ][NE volume 80]</a>[/NE]
+       [NE volume 90]<a href="status.html?p0=mixer&p1=volume&p2=90&player={%player}&start={start}">[/NE][EQ volume 90]<b>[/EQ]10[EQ volume 90]</b>[/EQ][NE volume 90]</a>[/NE]
+       [NE volume 100]<a href="status.html?p0=mixer&p1=volume&p2=100&player={%player}&start={start}">[/NE][EQ volume 100]<b>[/EQ]11[EQ volume 100]</b>[/EQ][NE volume 100]</a>[/NE]
        <a href="status.html?p0=mixer&p1=volume&p2=%2b10&player={%player}&start={start}">[S VOLUME_LOUDER]</a>
 [/IF]
 {playlist}

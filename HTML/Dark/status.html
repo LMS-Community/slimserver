@@ -11,7 +11,7 @@
     [IF modeplay][S PLAYING][/IF]
     [IF modepause][S PAUSED_ON][/IF]
     [IF modestop][S STOPPED_ON][/IF]
-    [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF]:<br>
+    [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF][S COLON]<br>
 <b><a href="status.html?player={%player}#currentsong">{songtitle}</a></b> [IF album]from[/IF] 
 <i><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{&album}</a></i> 
 [IF artist][S BY] [/IF] 
@@ -45,12 +45,12 @@
         <a href="status.html?p0=mixer&p1=volume&p2=90&player={%player}&start={start}"><img src="html/volume[EQ volume 90]_s[/EQ]_10.gif" border=0 width=14 height=32></a><a
         <a href="status.html?p0=mixer&p1=volume&p2=100&player={%player}&start={start}"><img src="html/volume[EQ volume 100]_s[/EQ]_11.gif" border=0 width=16 height=32></a><p>
 
-    [S REPEAT]: 
+    [S REPEAT][S COLON] 
              <a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">[IF repeatone]<b>[/IF][S ONE][IF repeatone]</b>[/IF]</a>/<a 
                 href="status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}">[IF repeatall]<b>[/IF][S ALL][IF repeatall]</b>[/IF]</a>/<a 
                 href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}">[IF repeatoff]<b>[/IF][S OFF][IF repeatoff]</b>[/IF]</a>
 
-    [S SHUFFLE]: 
+    [S SHUFFLE][S COLON] 
              <a href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF shuffleon]<b>[/IF][S ON][IF shuffleon]</b>[/IF]</a>/<a
                 href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">[IF shuffleoff]<b>[/IF][S OFF][IF shuffleoff]</b>[/IF]</a>
 

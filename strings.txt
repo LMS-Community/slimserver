@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.65 2004/03/11 14:32:30 sadams Exp $
+# $Id: strings.txt,v 1.66 2004/03/11 20:15:56 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -956,7 +956,7 @@ SETUP_GROUP_PLUGINS
 	DE	Plugins
 	DK	Moduler
 	EN	Plugins
-	FR	Plugins
+	FR	Modules d'extension
 	NL	Plugins
 	NO	Plugins
 	PT	Extras
@@ -966,7 +966,7 @@ SETUP_GROUP_PLUGINS_DESC
 	DE	SlimServer beinhaltet ein paar Plugins, die Sie zum Menü hinzufügen können. Sie können die Plugins im Plugin-Verzeichnis hinzufügen oder löschen. Um ein Extra zu aktivieren, klicken Sie auf die Auswahlbox. Zum Deaktivieren deaktivieren Sie die Box. Klicken Sie auf "Ändern" zum Speichern der Einstellung.
 	DK	SlimServer inkluderer nogle ekstra funktioner, grupperet i moduler, som du kan anvende via din fjernbetjening. Modulerne ligger i Plugins-mappen og kan aktiveres eller deaktiveres individuelt. Aktiver moduler ved at afkrydse dem nedenfor, deaktiver moduler ved at fjerne afkrydsningen. Tryk Gem for at gemme dine ændringer.
 	EN	SlimServer includes some extra features, called Plugins, that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. To save your changes, click Change.
-	FR	Vous pouvez sélectionner des fonctionnalités supplémentaires de la platine, appelées Plugins, disponibles à l'aide de la télécommande. Ces fonctionnalités sont situées dans le dossier Plugins. Pour activer un plugin, cocher la case correspondante. Pour le désactiver, décochez la case.
+	FR	Vous pouvez sélectionner des fonctionnalités supplémentaires de la platine, appelées Modules d'extension, disponibles à l'aide de la télécommande. Ces fonctionnalités sont situées dans le dossier Plugins. Pour activer un module d'extension, cocher la case correspondante. Pour le désactiver, décochez la case.
 	NL	SlimServer laat toe om extra functies te koppelen aan de afstandsbediening. Deze functies vindt U terug in de Plugins folder. Om een funtie te activeren klikt U het vinkje naast de functie aan. Om de funtie uit te schakelen verwijdert U het vinkje. Om de wijzigingen op te slaan klikt U op 'Aanpassen'.
 	NO	SlimServer inneholder en del tilleggsfunksjoner, Plugins, som du kan benytte deg av med fjernkontrollen. Disse kan aktiveres eller deaktiveres individuelt. For å aktivere en Plugin, merk den. For å deaktivere en Plugin, fjern merket. For å lagre endringene, velg "Endre".
 	PT	O cliente SlimServer inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
@@ -1340,6 +1340,22 @@ SETUP_TITLEFORMAT_DESC
 	PT	Ao usar o botão "GUIDE" no controlo remoto, pode mudar entre várias formas de mostrar o título da música no ecrã. Pode personalizar o ecrã escolhendo os formatos que deseja, a partir dos menus abaixo. Escolha o botão na coluna "Actual" para mudar o formato actual. Quando terminar, escolha o botão "Mudar" para gravar as suas preferências.
 	SE	När du trycker på GUIDE-knappen på fjärrkontrollen kan du växla mellan olika sätt att visa den aktuella låtens titel. Du kan själv konfigurera displayen genom att välja mellan de olika format som finns tillgängliga i menyerna nedan. Klicka på en knapp i "Vald"-kolumnen för att ändra aktuellt format. När du är klar, klicka på "Ändra" för att spara dina val.
 
+SETUP_ITUNESPLAYLISTFORMAT
+	EN	iTunes Playlist Format
+	FR	Format des listes de lecture iTunes
+
+SETUP_ITUNESPLAYLISTFORMAT_DESC
+	EN	This option determines the format used when importing iTunes playlists.
+	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture iTunes.
+
+SETUP_ITUNESPLAYLISTPREFIX
+	EN	Prefix
+	FR	Préfixe
+
+SETUP_ITUNESPLAYLISTSUFFIX
+	EN	Suffix
+	FR	Suffixe
+
 SETUP_GUESSFILEFORMATS
 	EN	Guess Tags Formats
 
@@ -1386,7 +1402,7 @@ SETUP_PLUGINLIST_OK
 	DE	Plugins:
 	DK	Moduler:
 	EN	Plugins:
-	FR	Plugins :
+	FR	Modules d'extension :
 	NL	Plugins:
 	PT	Extras
 	SE	Tillägg:
@@ -1752,7 +1768,7 @@ SETUP_PLUGINS
 	DE	Plugins
 	DK	Moduler
 	EN	Plugins
-	FR	Plugins
+	FR	Modules d'extension
 	NL	Plugins
 	PT	Extras
 	SE	Tillägg
@@ -1761,7 +1777,7 @@ SETUP_PLUGINS_DESC
 	DE	SlimServer enthält ein paar Plugins, inklusive einiger Spiele, die Sie mit ihrer Fernbedienung bedienen können. Verwenden Sie die unten stehende Auswahl, um die Plugins dem Menü ihres Slim Players hinzuzufügen oder zu entfernen.
 	DK	SlimServer inkluderer nogle ekstra funktioner (Moduler), såsom spil, som du kan anvende med din fjernbetjening. Marker nedenfor om du ønsker adgang til Modul-menuen fra Slim-hovedmenuen.
 	EN	SlimServer includes some extra features, including some games, you can use with your remote. Use the menu below to add or remove the Plugins menu from your Home.
-	FR	Le Slim comprend des fonctionnalités supplémentaires ou "plugins", dont des jeux, que vous pouvez utiliser avec votre télécommande. Utilisez le menu ci-dessous pour ajouter ou retirer le menu Plugins de votre Menu principal.
+	FR	Le SlimServer comprend des fonctionnalités supplémentaires, dont des jeux, que vous pouvez utiliser avec votre télécommande. Utilisez le menu ci-dessous pour ajouter ou retirer le menu Modules d'extension de votre Menu principal.
 	NL	Slim biedt de mogelijkheid om extra functionaliteiten, waaronder spelletjes, toe te voegen. Deze kunnen bestuurd worden via de afstandsbediening. Gebruik onderstaande keuze om het Plugins menu aan Uw Home toe te voegen of om het eruit te verwijderen.
 	PT	O SlimServer inclui algumas funcionalidades extras, tais como alguns jogos, que podem ser usados com o controlo remoto. Use o menu abaixo para adicionar ou remover os menus extra do cliente. 
 	SE	SlimServer inkluderar några tillägg, t.ex några spel, som du kan använda med din fjärrkontroll. Använd menyn nedan för att lägga till eller ta bort Tilläggs-menyn from din Huvudmeny.
@@ -1794,7 +1810,7 @@ SETUP_COVERART_DESC
 	DE	Bilder der Plattenhülle werden, falls vorhanden, beim Anschauen der Album- oder Titelinformationen angezeigt. Sie befinden sich in den ID3 Tags für einen einzelnen Titel oder im selben Verzeichnis, wie die Titel Dateien.  Per Voreinstellung werden Dateien mit den folgenden Namen benutzt: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", "thumb.jpg".  Sie können einen zusätzlichen Dateinamen für die Plattenhülle festlegen und unterschiedliche Namen für kleine und grosse Bilder verwenden.
 	DK	Billeder fra covers vises når du vælger albums eller sang information. Cover-billederne hentes fra ID3-tagget i de enkelte sange eller fra mappen hvori sangene er placeret. Som standard indlæses følgende grafikfiler, hvis der ikke er et billede i ID3-tagget: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" eller "thumb.jpg". Du kan angive yderligere filnavne der skal anvendes. Du kan endvidere angive forskellige filnavne for billeder i fuld størrelse og mindre størrelse.
 	EN	Images of album artwork, when available, are displayed when viewing an album or song information.  Artwork images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail or full size images. Prefix the option with % and you can follow it with any string made up of the same elements available for Title Formats (eq %ARTIST - ALBUM, will look for Artist - Album.jpg to fit the artist and album information found.
-	FR	Si elle existe, l'image de la pochette du disque est affichée en regard de l'information d'un album ou d'un morceau. Les images se trouvent soit dans un tag ID3 par morceau, soit dans le même répertoire que les fichiers. Le serveur recherche de lui-même les noms de fichiers suivants: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", ou "thumb.jpg". Vous pouvez spécifier d'autres noms de fichiers pour les images de pochettes, et spécifier différents noms de fichiers pour les vignettes ou les images.
+	FR	Si elle existe, l'image de la pochette du disque est affichée en regard de l'information d'un album ou d'un morceau. Les images se trouvent soit dans un repère ID3 par morceau, soit dans le même répertoire que les fichiers. Le serveur recherche de lui-même les noms de fichiers suivants: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", ou "thumb.jpg". Vous pouvez spécifier d'autres noms de fichiers pour les images de pochettes, et spécifier différents noms de fichiers pour les vignettes ou les images.
 	NL	Indien er een afbeelding beschikbaar is van de hoezen wordt deze getoond als U een album bekijkt of informatie over een liedje opvraagt. Deze beelden worden opgegeven in de ID3 tag voor liedjes of staan in dezelfde map als de muziekbestanden. Standaard worden de bestanden "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" en "thumb.jpg" gebruikt. Bijkomende bestandsnamen kunnen gedefinieerd worden. Voor de verkleinde beelden (thumbmails) en de volledige afbeeldingen kunnen afzonderlijke namen opgegeven worden.  
 	PT	As imagens da capa do álbum, quando disponíveis, são mostradas na visualização da informação do álbum ou da música. As capas dos álbuns poderão estar integradas nas "tags ID3" do próprio ficheiro, ou em ficheiros separados na pasta dos ficheiros de música. Por omissão, serão usados os nomes de ficheiros "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Pode especificar nomes de ficheiros adicionais para a imagem da capa do álbum. Pode especificar nomes diferentes para a miniatura ou para a imagem completa.
 
@@ -1868,7 +1884,7 @@ SETUP_PLUGINS_OK
 	DE	Ihr Plugin-Menü enthält:
 	DK	Din menu for moduler er nu:
 	EN	Your Plugins menu is now:
-	FR	Votre menu Plugins :
+	FR	Votre menu Modules d'extension :
 	NL	Uw Plugins menu bestaat nu uit:
 	PT	O menu de extras é
 	SE	Din Tilläggsmeny är nu:
@@ -2330,7 +2346,7 @@ SETUP_THROTTLESCAN_DESC
 	EN	When the server starts it scans your music folder to load the artist, album and other information from the tags in the MP3 files. On some slower systems and Windows PCs using FAT and FAT32 filesystems this may unacceptably slow down your computer. You can change this setting to slow down scanning and use less computer resources.
 	ES	Cuando arranca el servidor, hace un escaneo total de su carpeta de música para determinar todos los artistas, discos y canciones. Si este proceso ralentiza demasiado su ordenador puede cambiar esta opción para hacer que el escaneo se hace más despacio.
 	FI	Kun palvelin käynnistyy, se lukee musiikkikansion läpi saadakseen mm. esittäjän ja levyn tiedot. Vanhoissa tietokoneissa, jotka käyttävät FAT/FAT32 tiedostojärjestelmää, tämä voi kestää luvattoman kauan. Tätä asetusta säätämällä voit vaikuttaa siihen, kuinka paljon aikaa operaatioon käytetään.
-	FR	Lorsqu'il démarre, le serveur répertorie votre dossier de musique afin de mettre à jour sa base de données contenant l'information sur les albums, les artistes, etc. à partir des tags ID3 de vos fichiers de musique. Ceci peut taxer exagérément les ressources des ordinateurs plus lents. Vous pouvez réduire la vitesse de balayage afin d'éviter que le temps de réponse de l'ordinateur ne soit trop long.
+	FR	Lorsqu'il démarre, le serveur répertorie votre dossier de musique afin de mettre à jour sa base de données contenant l'information sur les albums, les artistes, etc. à partir des repères ID3 de vos fichiers de musique. Ceci peut taxer exagérément les ressources des ordinateurs plus lents. Vous pouvez réduire la vitesse de balayage afin d'éviter que le temps de réponse de l'ordinateur ne soit trop long.
 	NL	Als de server opstart zal deze Uw muziek folder inlezen om uit de MP3 tags de artiest, het album en andere gegevens te lezen. Op langzamere systemen en Windows PCs die FAT of FAT32 bestandsystemen gebruiken kan dit een onacceptabele vertraging van Uw PC tot gevolg hebben. U kunt met deze instelling de inleessnelheid verminderen om zodanig minder computercapaciteit te gebruiken.
 	PT	O servidor, ao iniciar, pesquisa toda a pasta de músicas, indexando o nome do artista, album e outras informações, a partir das tags ID3 dos ficheiros MP3. Em computadores mais lentos ou em sistemas operativos Windows com sistemas de ficheiros FAT ou FAT32, esta operação poderá ocupar demasiados recursos. Pode usar esta opção para adicionar um tempo de espera e abrandar a operação.
 	SE	När servern startar läser den igenom din Musikmapp för att hämta namn på artist, album, etc från dina MP3-filer. På vissa långsammare system och Windows PCs som använder FAT eller FAT32 filsystem kan detta göra datorn väldigt långsam. Du kan ändra denna inställning för att sakta ner inläsningen och använda mindre av datorns resurser.
@@ -2546,7 +2562,7 @@ SETUP_FILESORT_DESC
 	DE	Wenn Sie ihr Musikverzeichnis durchsuchen, dann können Sie wählen, ob Sie die Lieder nach den Dateinamen oder den ID3-Tags (Interpret, Album, Liednummer) sortiert haben möchten.
 	DK	Når du gennemser din musiksamling kan du vælge at dine sangtitler skal sorteres efter filnavn eller efter ID3-tag-informationen (Kunstner, Album, Track-nummer).
 	EN	When you are browsing the Music Folder, you can choose to have the songs sorted by file name or by ID3 tag information (Artist, Album, Track Number).
-	FR	Lorsque vous parcourez votre dossier de musique, vous pouvez choisir un tri par nom de fichier ou à partir des tags ID3 (artiste, album, numéro de piste).
+	FR	Lorsque vous parcourez votre dossier de musique, vous pouvez choisir un tri par nom de fichier ou à partir des repères ID3 (artiste, album, numéro de piste).
 	NL	Als U de Muziek Folder doorloopt, kunt U nummers laten sorteren op bestandsnaam of op ID3 tag informatie (Artiest, Album, Tracknummer).
 	PT	Ao percorrer a pasta de músicas, pode escolher se deseja ordenar por nome de ficheiro ou pela informação das tags ID3 (artista, álbum, número de pista).
 	SE	När du bläddrar i Musikmappen kan du välja att få sångerna sorterade efter filnamn eller efter ID3-information (Artist, Album, Spårnummer).
@@ -2555,7 +2571,7 @@ SORTID3
 	DE	Sortieren nach den ID3-Tags
 	DK	Sorter efter sangtitelinformation
 	EN	Sort by song information
-	FR	Trier à partir des tags ID3
+	FR	Trier à partir des repères ID3
 	NL	Sorteer op ID3 informatie
 	PT	Ordenar pela informação da música (ID3)
 	SE	Sortera efter ID3-information
@@ -2641,7 +2657,7 @@ SETUP_USETAGDATABASE
 	EN	MP3 Tag Database
 	ES	Usar base de datos de los "tags" de MP3
 	FI	MP3 tietokanta
-	FR	Base de données des tags MP3
+	FR	Base de données des repères MP3
 	NL	Bewaren van MP3 Tag Informatie
 	PT	Base de dados de "Tags" MP3
 	SE	Spara ID3-information:
@@ -2652,7 +2668,7 @@ SETUP_USETAGDATABASE_DESC
 	EN	The MP3 tag information from each MP3 file can be saved in a cache when the server finishes scanning and reloaded quickly when it starts again. This setting has no effect if you are using iTunes or MoodLogic.
 	ES	El "tag" de un MP3 puede guardarse cuando se para el servidor para accelerar el escaneo de la carpeta de música una vez arrancado de nuevo.
 	FI	MP3 -tiedostot sisältävät tietoa kuten esittäjän nimen. Tämä tieto voidaan tallentaa, jotta palvelimen käynnistys nopeutuu.
-	FR	Les informations contenues dans le tag ID3 de chaque fichier MP3 peuvent être sauvegardées sur disque lorsque le serveur est arrêté et relues lorsqu'il est redémarré afin d'accélérer le balayage du dossier de musique.
+	FR	Les informations contenues dans le repère ID3 de chaque fichier MP3 peuvent être sauvegardées sur disque lorsque le serveur est arrêté et relues lorsqu'il est redémarré afin d'accélérer le balayage du dossier de musique.
 	NL	De MP3 tag informatie uit elk MP3 bestand kan worden bewaard als de server stopt en zal herladen worden als de server weer opstart. Dit zal het scannen van de Muziek Folder zeer versnellen.
 	PT	A informação das tags ID3 para cada ficheiro MP3 pode ser guardada para que esteja disponível quando o servidor for reiniciado. Esta opção aumenta a velocidade de indexação dos ficheiros.
 	SE	ID3-informationen från varje MP3-fil kan sparas när servern stoppas och laddas in igen när server startas igen. Detta snabbar upp inläsningen av musikmappen.
@@ -3359,6 +3375,18 @@ SETUP_GROUPDISCS_1
 #
 # Web interface
 #
+PLAYER
+	DE	Player
+	DK	Afspiller
+	EN	Player
+	ES	Reproductor
+	FI	Soittimen
+	FR	Platine
+	NL	Speler
+	NO	Spiller
+	PT	Cliente
+	SE	Spelare
+
 CURRENT_PLAYER
 	DE	Aktueller Player:
 	DK	Valgt afspiller:
@@ -3821,6 +3849,9 @@ TITLEFORMAT
 	PT	Nome Música
 	SE	Format på låttitel
 
+TITLEFORMAT_DBL
+	FR	Format titres
+
 CURRENT_PLAYLIST
 	DE	Die aktuelle Playlist
 	DK	Aktiv playliste
@@ -3893,6 +3924,9 @@ SAVED_PLAYLISTS
 	NO	Lagrede Spillelister
 	PT	Escolher por Playlists Guardadas
 	SE	Sparade Spellistor
+
+SAVED_PLAYLISTS_DBL
+	FR	Listes de lecture
 
 PLAYLISTDIR
 	DE	Gespeichertes Verzeichnis der Playlists
@@ -4555,6 +4589,9 @@ BROWSE_BY_GENRE
 	PT	Escolher por Género
 	SE	Bläddra Genrer
 
+BROWSE_BY_GENRE_DBL
+	FR	Parcours genre
+
 BROWSE_BY_ARTIST
 	DE	Interpret nachschlagen
 	DK	Gennemse kunstnere
@@ -4566,6 +4603,9 @@ BROWSE_BY_ARTIST
 	NO	Bla i Artister
 	PT	Escolher por Artista
 	SE	Bläddra Artister
+
+BROWSE_BY_ARTIST_DBL
+	FR	Parcours artistes
 
 BROWSE_BY_ALBUM
 	DE	Album nachschlagen
@@ -4579,10 +4619,16 @@ BROWSE_BY_ALBUM
 	PT	Escolher por Álbum
 	SE	Bläddra Album
 
+BROWSE_BY_ALBUM_DBL
+	FR	Parcours albums
+
 BROWSE_BY_ARTWORK
 	DE	Plattencover nachschlagen
 	EN	Browse Artwork
 	FR	Parcourir les pochettes
+
+BROWSE_BY_ARTWORK_DBL
+	FR	Parcours pochettes
 
 BROWSE_BY_SONG
 	DE	Titel nachschlagen
@@ -4595,6 +4641,9 @@ BROWSE_BY_SONG
 	NO	Bla i Sanger
 	PT	Escolher por Música
 	SE	Bläddra Låtar
+
+BROWSE_BY_SONG_DBL
+	FR	Parcours morceaux
 
 BROWSE_MUSIC_FOLDER
 	DE	Musikverzeichnis nachschlagen
@@ -4658,7 +4707,7 @@ PLUGINS
 	DE	Plugins
 	DK	Moduler
 	EN	Plugins
-	FR	Plugins
+	FR	Modules d'extension
 	NL	Plugins
 	NO	Plugins
 	PT	Extras
@@ -4668,7 +4717,7 @@ NO_PLUGINS
 	DE	Keine Plugins vorhanden.
 	DK	Ingen moduler til rådighed.
 	EN	No Plugins available.
-	FR	Aucun plugin disponible.
+	FR	Aucun module d'extension disponible.
 	NL	Geen Plugins beschikbaar.
 	NO	Ingen Plugins tilgjengelig.
 	PT	Sem Extras
@@ -5319,7 +5368,7 @@ DISPLAY_PLUGINS
 	DE	Anzeigen des Plugins Menü auf dem Slim Player:
 	DK	Viser Modul-menuen på SlimServer:
 	EN	Display the Plugins menu on the Slim player:
-	FR	Afficher le menu Plugins sur la platine Slim :
+	FR	Afficher le menu Module d'extensions sur la platine Slim :
 	NL	Toon het Plugins menu op de SlimServer:
 	PT	Mostrar menu de Extras no cliente Slim
 	SE	Visa tilläggs-menyn på Slim-spelaren:
@@ -5328,7 +5377,7 @@ SHOW_PLUGINS
 	DE	Plugins anzeigen
 	DK	Vis moduler
 	EN	Show Plugins
-	FR	Afficher le menu Plugins
+	FR	Afficher le menu Module d'extensions
 	NL	Toon Plugins
 	NO	Vis Plugins
 	PT	Mostrar Extras
@@ -5338,7 +5387,7 @@ NO_PLUGINS
 	DE	Keine Plugins anzeigen
 	DK	Ingen moduler
 	EN	No Plugins
-	FR	Ne pas afficher le menu Plugins
+	FR	Ne pas afficher le menu Module d'extensions
 	NL	Geen Plugins
 	NO	Ingen Plugins
 	PT	Sem Extras
@@ -5550,11 +5599,93 @@ SEARCHFOR
 	EN	Search For
 	ES	Buscar para
 	FI	Hae
-	FR	Rechercher
+	FR	Rechercher_SEARCHFOR
 	NL	Zoek naar
 	NO	Søk etter
 	PT	Procurar por
 	SE	Sök efter
+
+SEARCHFOR_ARTIST
+	DE	Suchen nach Interpret
+	DK	Søg efter Kunstner
+	EN	Search For Artist
+	ES	Buscar para Artista
+	FI	Hae Esittäjä
+	FR	Rechercher des artistes
+	NL	Zoek naar Artiest
+	NO	Søk etter Artist
+	PT	Procurar por Artista
+	SE	Sök efter Artist
+	
+SEARCHFOR_ARTISTS
+	DE	Suchen nach Interpreten
+	DK	Søg efter Kunstnere
+	EN	Search For Artists
+	ES	Buscar para Artistas
+	FI	Hae Esittäjät
+	FR	Rechercher des artistes
+	NL	Zoek naar Artiesten
+	NO	Søk etter Artister
+	PT	Procurar por Artistas
+	SE	Sök efter Artister
+	
+SEARCHFOR_ARTISTS_DBL
+	FR	Cherche artistes
+
+SEARCHFOR_ALBUM
+	DE	Suchen nach Album
+	DK	Søg efter Album
+	EN	Search For Album
+	ES	Buscar para Disco
+	FI	Hae Levyn nimi
+	FR	Rechercher des albums
+	NL	Zoek naar Album
+	NO	Søk etter Album
+	PT	Procurar por Álbum
+	SE	Sök efter Album
+
+SEARCHFOR_ALBUMS
+	DE	Suchen nach Alben
+	DK	Søg efter Albums
+	EN	Search For Albums
+	ES	Buscar para Discos
+	FI	Hae Levyjen nimet
+	FR	Rechercher des albums
+	NL	Zoek naar Album
+	NO	Søk etter Album
+	PT	Procurar por Albums
+	SE	Sök efter Album
+
+SEARCHFOR_ALBUMS_DBL
+	FR	Cherche albums
+
+SEARCHFOR_SONGS
+	DE	Suchen nach Titel
+	DK	Søg efter Sange
+	EN	Search For Songs
+	ES	Buscar para Canciones
+	FI	Hae Kappaleita
+	FR	Rechercher des morceaux
+	NL	Zoek naar Liedjes
+	NO	Søk etter Sanger
+	PT	Procurar por Músicas
+	SE	Sök efter Låtar
+
+
+SEARCHFOR_SONGS_DBL
+	FR	Cherche morceaux
+	
+SEARCHFOR_SONGTITLE
+	DE	Suchen nach Liedertitel
+	DK	Søg efter Sangtitel
+	EN	Search For Song Title
+	ES	Buscar para Título de canción
+	FI	Hae Kappaleen nimi
+	FR	Rechercher des morceaux
+	NL	Zoek naar Titel van het nummer
+	NO	Søk etter Sangtittel
+	PT	Procurar por Música
+	SE	Sök efter Låt
 
 SEARCH_FOR_ARTISTS
 	DE	Nach Interpreten suchen
@@ -5562,7 +5693,7 @@ SEARCH_FOR_ARTISTS
 	EN	Search For Artists
 	ES	Buscar por artistas
 	FI	Hae esittäjiä
-	FR	Chercher des artistes
+	FR	Rechercher des artistes
 	NL	Zoek naar Artiesten
 	NO	Søk på Artist
 	PT	Procurar por Artistas
@@ -5574,7 +5705,7 @@ SEARCH_FOR_ALBUMS
 	EN	Search For Albums
 	ES	Buscar por discos
 	FI	Hae levyjä
-	FR	Chercher des albums
+	FR	Rechercher des albums
 	NL	Zoek naar Albums
 	NO	Søk på Album
 	PT	Procurar por Álbum
@@ -5586,7 +5717,7 @@ SEARCH_FOR_SONGS
 	EN	Search For Songs
 	ES	Buscar por canciones
 	FI	Hae kappaleita
-	FR	Chercher des morceaux
+	FR	Rechercher des morceaux
 	NL	Zoek naar Liedjes
 	NO	Søk på Sang
 	PT	Procurar por Música
@@ -5616,6 +5747,18 @@ FOUND
 	PT	encontrado
 	SE	hittad
 
+ARTISTMATCHING
+	DE	Passende Interpreten
+	DK	Matchende kunstnere
+	EN	Artist matching
+	ES	Artistas encontradas
+	FI	Esittäjät, jotka vastaavat hakua
+	FR	Artiste trouvé
+	NL	Artiesten die passen bij
+	NO	Artister som traff
+	PT	Artistas encontrados
+	SE	Artister som matchar
+
 ARTISTSMATCHING
 	DE	Passende Interpreten
 	DK	Matchende kunstnere
@@ -5628,6 +5771,18 @@ ARTISTSMATCHING
 	PT	Artistas encontrados
 	SE	Artister som matchar
 
+ALBUMMATCHING
+	DE	Passende Alben
+	DK	Matchende albums
+	EN	Album matching
+	ES	Discos encontrados
+	FI	Levyt, jotka vastaavat hakua
+	FR	Album trouvé
+	NL	Albums die passen bij
+	NO	Album som traff
+	PT	Albums encontrados
+	SE	Album som matchar
+
 ALBUMSMATCHING
 	DE	Passende Alben
 	DK	Matchende albums
@@ -5639,6 +5794,18 @@ ALBUMSMATCHING
 	NO	Album som traff
 	PT	Albums encontrados
 	SE	Album som matchar
+
+SONGMATCHING
+	DE	Passende Titel
+	DK	Matchende sangtitler
+	EN	Song title matching
+	ES	Canciones encontrados
+	FI	Kappaleet, jotka vastaavat hakua
+	FR	Morceau trouvé
+	NL	Liedjes die passen bij
+	NO	Sanger som traff
+	PT	Músicas encontradas
+	SE	Låtar som matchar
 
 SONGSMATCHING
 	DE	Passende Titel
@@ -5884,10 +6051,11 @@ STATISTICS
 	PT	Estatísticas
 	SE	Statistik
 
-SLIM_PLAYLIST_EDITOR
-	DE	SLIM Playlist Editor
-	EN	SLIM Playlist Editor
-	FR	Editeur de liste de lecture
+EDIT_PLAYLIST
+	EN	Edit Playlist
+
+DONE_EDITING
+	EN	Done Editing
 
 UP
 	DE	Rauf
@@ -5952,7 +6120,7 @@ INFORMATION_MENU_LIBRARY
 INFORMATION_MENU_MODULE
 	DE	Plugin Module
 	EN	Plugin Modules
-	FR	Modules plugins
+	FR	Modules d'entension
 
 INFORMATION_PLAYER_NAME
 	EN	Player Name
@@ -6048,7 +6216,7 @@ INFORMATION_INSTALLED
 INFORMATION_DISABLED
 	DE	DEAKTIVIERT
 	EN	DISABLED
-	FR	DESACTIVÉ
+	FR	DÉSACTIVÉ
 
 INFORMATION_NO_VERSION
 	DE	Keine Versionsnummer
@@ -6059,3 +6227,7 @@ INFORMATION_DATE_FORMAT
 	DE	${shortdateFormat} um ${timeFormat}
 	EN	${shortdateFormat} at ${timeFormat}
 	FR	${shortdateFormat} à ${timeFormat}
+	
+COLON
+	EN	: 
+	FR	 : 
