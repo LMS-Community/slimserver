@@ -17,7 +17,7 @@ CREDITS
 	FR	Serge Froment, Cédric Blancher, Terry Adams, Nicolas Guillemain
 	IT	Marco Barbieri
 	NL	Terry Adams, Patrick van Zweden, Carel Bast, Lieven Hollevoet
-	NO	Øyvind L. Eggen
+	NO	Øyvind L. Eggen, Georg Engstrand
 	PT	Walter Wullschleger, Bruno Rodrigues
 	SE	Andreas Olsson, Hans Nystrom, Johan Hübner
 
@@ -38,6 +38,7 @@ BASE_SKIN
 	EN	Light
 	FR	Édulcoré
 	NL	Light
+	NO	Lys
 	PT	Leve
 
 DEFAULT_SKIN
@@ -46,6 +47,7 @@ DEFAULT_SKIN
 	FI	Normaali ulkoasu
 	FR	Défaut
 	NL	Standaard
+	NO	Standard
 	PT	Padrão
 	SE	Standard-utseende
 
@@ -55,6 +57,7 @@ DEFAULT_MAP
 	FI	Normaali ulkoasu
 	FR	normalisé
 	NL	Standaard
+	NO	Standard
 	PT	Padrão
 	SE	Standard
 
@@ -66,6 +69,7 @@ HIT_RELOAD
 	FI	Lataa sivu uudelleen nähdäksesi uuden ulkoasun.
 	FR	<a href="/" target="_top">Cliquez ici</a> pour afficher la nouvelle interface.
 	NL	<a href="/" target="_top">Klik hier</a> om de nieuwe skin te tonen
+	NO	<a href="/" target="_top">Trykk her</a> or å oppdatere med nytt utseende.
 	PT	Actualize esta página para activar o novo tema.
 	SE	Ladda om denna sida för att uppdatera utseendet.
 
@@ -88,6 +92,7 @@ SERVER_VERSION
 	ES	Versión del servidor Slim
 	FR	Version du serveur Slim
 	NL	Slim Server Versie
+	NO	Slim Server versjon
 	PT	Versão do servidor Slim
 	SE	Slim Server-version
 
@@ -97,12 +102,14 @@ PLAYER_VERSION
 	ES	Versión del firmware
 	FR	Version du micrologiciel du lecteur
 	NL	Speler Firmware Versie
+	NO	Spiller versjon
 	PT	Versão do firmware do cliente
 	SE	Spelar-version
 
 ABOUT_SLIMDEVICES
 	EN	About Slim Devices
 	FR	A propos de Slim Devices
+	NO	Om Slim Devices
 
 #
 # Player user interface, sent by the server
@@ -137,6 +144,7 @@ LIBRARY_CONTAINS
 	EN	The music library contains
 	FR	La collection contient
 	NL	Inhoud van de bibliotheek
+	NO	Musikk biblioteket inneholder
 	PT	O arquivo de música contém
 
 BROWSEMENU
@@ -147,6 +155,7 @@ BROWSEMENU
 	FI	Selaa
 	FR	Parcourir la musique
 	NL	Muziek doorzoeken
+	NO	Bla i musikk
 	PT	Escolher Música
 	SE	Bläddra Musik
 
@@ -234,6 +243,7 @@ PAUSED_ON
 	FI	Tauko
 	FR	En pause à
 	NL	Gepauseerd bij
+	NO	Pause på
 	PT	Pausado na
 	SE	Nu pausad på
 
@@ -245,6 +255,7 @@ STOPPED_ON
 	FI	Pysäytetty
 	FR	En arrêt à
 	NL	Gestopt bij
+	NO	Stoppet på
 	PT	Parado na 
 	SE	Nu stoppad på
 
@@ -256,22 +267,26 @@ NOW_PLAYING
 	FI	Soittaa kappaletta
 	FR	Lecture
 	NL	Speelt Nu
+	NO	Nå spilles
 	PT	A tocar...
 	SE	Nu spelas
 
 NOW_SCANNING
 	EN	Now Scanning
 	FR	Recherche
+	NO	Søker
 
 NOW_REWINDING
 	EN	Now Rewinding
 	FR	Retour rapide
+	NO	Spoler tilbake
 
 EVERYTHING
 	DE	Alles
 	EN	Everything
 	FR	Tout
 	NL	Alles
+	NO	Alt
 	PT	Tudo
 	SE	Allt
 
@@ -284,7 +299,7 @@ PLAYING
 	FR	Lecture
 	IT	Riproduzione in corso
 	NL	Speelt nu
-	NO	Spilles nå
+	NO	Spiller
 	PT	A tocar
 	SE	Spelar
 
@@ -371,6 +386,7 @@ ZAPPING_FROM_PLAYLIST
 	EN	Moving to Zapped Songs playlist:
 	FR	Déplace dans la playlist Morceaux Zappés
 	NL	Verplaatsen naar de lijst van gezapte stukken:
+	NO	Flytter til Zappede Sangers spilleliste:
 	PT	Mover para a playlist rápida de músicas
 
 ZAPPED_SONGS
@@ -378,6 +394,7 @@ ZAPPED_SONGS
 	EN	Zapped Songs
 	FR	Morceaux Zappés
 	NL	Gezapte Liedjes
+	NO	Zappede Sanger
 	PT	Playlist Rápida de Músicas
 
 ADDING_TO_PLAYLIST
@@ -398,6 +415,7 @@ INSERT_TO_PLAYLIST
 	EN	Adding to play next:
 	FR	Ajoute après le morceau en cours :
 	NL	Toevoegen aan playlist:
+	NO	Legger til som neste:
 	PT	Adicionar e tocar a seguir
 
 STOPPING
@@ -434,6 +452,7 @@ CLEARING_PLAYLIST
 	FI	Tyhjennetään soittolistaa...
 	FR	Vidage de la playlist...
 	NL	Bezig met leegmaken Playlist...
+	NO	Nullstiller spillelisten...
 	PT	A limpar a playlist...
 	SE	Rensar spellista...
 
@@ -536,6 +555,7 @@ CANCEL_SLEEP
 	FI	Unikytkin peruutettu.
 	FR	Mise en veille annulée
 	NL	Sluimermodus uit
+	NO	Sovefunksjon avslått.
 	PT	Inactividade cancelada
 	SE	Insomning avbruten.
 
@@ -547,6 +567,7 @@ SLEEPING_IN
 	FI	Unikytkin päälle
 	FR	Mise en veille dans
 	NL	Sluimermodus aan 
+	NO	Sovner om
 	PT	Inactivo dentro de
 	SE	Insomning om
 
@@ -568,6 +589,7 @@ ALARM
 	EN	Alarm Clock
 	FR	Réveil
 	NL	Wekker
+	NO	Alarm
 	PT	Alarme
 
 ALARM_SET
@@ -575,6 +597,7 @@ ALARM_SET
 	EN	Set Alarm Time
 	FR	Heure de réveil
 	NL	Wektijd instellen
+	NO	Sett Alarm Tid
 	PT	Acertar Alarme
 
 ALARM_ON
@@ -582,6 +605,7 @@ ALARM_ON
 	EN	On (Press RIGHT to turn off)
 	FR	Activé (Presser RIGHT pour désactiver)
 	NL	Aan (Druk RIGHT om uit te schakelen)
+	NO	På (Trykk HØYRE for å slå av)
 	PT	Ligado (Prima DIREITA para desligar)
 
 ALARM_OFF
@@ -589,6 +613,7 @@ ALARM_OFF
 	EN	Off (Press RIGHT to turn on)
 	FR	Désactivé (Presser RIGHT pour activer)
 	NL	UIT (Druk RIGHT om in te schakelen)
+	NO	Av (Trykk HØYRE for å slå på)
 	PT	Desligado (Prima DIREITA para ligar)
 
 ALARM_SELECT_PLAYLIST
@@ -596,6 +621,7 @@ ALARM_SELECT_PLAYLIST
 	EN	Select Playlist for Alarm
 	FR	Sélection de la playlist pour le réveil
 	NL	Kies een playlist voor de wekker
+	NO	Velg Spilleliste for Alarm
 	PT	Escolha a Playlist para o Alarme
 
 ALARM_SET_VOLUME
@@ -603,6 +629,7 @@ ALARM_SET_VOLUME
 	EN	Set Alarm Volume
 	FR	Réglage du volume de réveil
 	NL	Kies het wekvolume
+	NO	Sett Alarm volum
 	PT	Mudar Volume do Alarme
 
 ALARM_SET_VOLUME_SHORT
@@ -610,6 +637,7 @@ ALARM_SET_VOLUME_SHORT
 	EN	Alarm Vol
 	FR	Volume réveil
 	NL	Wekvolume
+	NO	Alarm volum
 	PT	Volume do Alarme
 
 ALARM_SET_ENTRY
@@ -617,6 +645,7 @@ ALARM_SET_ENTRY
 	EN	Alarm Clock Set Time
 	FR	Heure de réveil
 	NL	Kies wektijd
+	NO	Sett Alarm tid
 	PT	Hora do Alarme
 
 ALARM_PLAYLIST_ENTRY
@@ -624,6 +653,7 @@ ALARM_PLAYLIST_ENTRY
 	EN	Select Alarm Playlist
 	FR	Playlist de réveil
 	NL	Kies Playlist Wekker 
+	NO	Velg Alarm Spilleliste
 	PT	Escolha a Playlist do Alarme
 
 ALARM_TURNING_ON
@@ -631,6 +661,7 @@ ALARM_TURNING_ON
 	EN	Turning alarm on...
 	FR	Activation du réveil...
 	NL	Wekker wordt geactiveerd...
+	NO	Slår på alarm...
 	PT	A ligar o alarme...
 
 ALARM_TURNING_OFF
@@ -638,6 +669,7 @@ ALARM_TURNING_OFF
 	EN	Turning alarm off...
 	FR	Désactivation du réveil...
 	NL	Wekker wordt uitgeschakeld...
+	NO	Slår av alarm...
 	PT	A desligar o alarme...
 
 ALARM_NOW_PLAYING
@@ -645,13 +677,16 @@ ALARM_NOW_PLAYING
 	EN	Alarm Clock Now Playing
 	FR	Le réveil est en marche
 	NL	De Wekker Speelt Nu
+	NO	Alarm spiller nå
 	PT	A Tocar o Alarme
 
 SLIMP3
 	EN	SLIMP3
+	NO	SLIMP3
 
 SQUEEZEBOX
 	EN	Squeezebox
+	NO	Squeezebox
 
 WELCOME_TO_SLIMP3
 	DE	Willkommen bei SLIMP3
@@ -682,6 +717,7 @@ WELCOME_TO_SQUEEZEBOX
 FREE_YOUR_MUSIC
 	EN	Free your music
 	FR	Libérez votre musique
+	NO	Sett musikken din fri
 	PT	Liberte a sua música
 
 CONNECTING_FOR
@@ -691,6 +727,7 @@ CONNECTING_FOR
 	ES	Conectando a:
 	FR	Connexion pour jouer :
 	NL	Verbinden voor afspelen van:
+	NO	Kobler til for å spille:
 	PT	Ligando a
 	SE	Ansluter för uppspelning:
 
@@ -701,6 +738,7 @@ PROBLEM_CONNECTING
 	ES	Error, no se puede conectar al servidor:
 	FR	Impossible de joindre le serveur :
 	NL	Fout: Contact maken met server mislukt voor:
+	NO	Problem: Kan ikke koble til server for:
 	PT	Não foi possível ligar ao servidor para
 	SE	Problem: Kan inte ansluta till server för:
 
@@ -711,6 +749,7 @@ PROBLEM_OPENING
 	ES	Error, no se puede abrir fichero:
 	FR	Impossible d'ouvrir le fichier :
 	NL	Fout: Fout bij openen bestand voor:
+	NO	Problem: Kan ikke åpne fil for:
 	PT	Não foi possível abrir o ficheiro para
 	SE	Problem: Kan inte öppna fil för:
 
@@ -728,6 +767,7 @@ SETUP_GROUP_BRIGHTNESS
 	FI	Valoisuus
 	FR	Luminosité
 	NL	Helderheid
+	NO	Lysstyrke
 	PT	Brilho
 	SE	Ljusstyrka
 
@@ -739,6 +779,7 @@ SETUP_GROUP_BRIGHTNESS_DESC
 	FI	Näytön valoisuuden voi säätää erikseen käyttöä ja lepotilaa varten.
 	FR	Il est possible de régler la luminosité de l'écran du lecteur pour les états allumé et éteint.
 	NL	De helderheid van het display kan afzonderlijk worden ingesteld voor de aan- en uitgeschakelde toestand.
+	NO	Lysstyrken på SLIMP3 displayet kan settes for når enheten er på og av.
 	PT	Pode escolher o brilho do ecrã do cliente para quando estiver ligado ou desligado.
 	SE	Ljusstyrkan på display kan varieras för påslaget och avslaget läge.
 
@@ -749,6 +790,7 @@ SETUP_GROUP_TCP_PARAMS
 	FI	TCP parametrit
 	FR	Paramètres TCP
 	NL	TCP instellingen
+	NO	TCP parametre
 	PT	Parâmetros TCP
 	SE	TCP-parametrar
 
@@ -760,6 +802,7 @@ SETUP_GROUP_TCP_PARAMS_DESC
 	FI	Seuraavat asetukset vaikuttavat palvelimen TCP/IP verkkotoimintaan.
 	FR	Ces réglages ajustent les paramètres du réseau TCP pour le serveur.
 	NL	Hier kunnen de parameters van het TCP netwerk van de server worden ingesteld.
+	NO	Disse innstillingene justerer TCP nettverket for serveren.
 	PT	Estas configurações ajustam os parâmetros de rede TCP do servidor.
 	SE	Dessa inställningar ställer in serverns värden för TCP.
 
@@ -771,6 +814,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	FI	Seuraavat kentät ovat käytössäsi sekä yllä, että soittimen asetuksissa. Poistaaksesi kentän, tyhjennä teksi laatikosta, lisätäksesi uuden kentän, syötä teksi tyhjään laatikkoon. Vaihtoehtoja ovat: CT (sisältötyyppi), TITLE, GENRE, TRACKNUM (kappaleen numero kokonaislukuna), FS (tiedoston koko), ARTIST, ALBUM, COMMENT, YEAR, SECS (sekunnit), DURATION (minuutit ja sekunnit), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (äänenvoimakkuuden säätö), PATH, FILE, EXT (tiedoston pääte), LONGDATE (päiväys, pitkä esitystapa), SHORTDATE (päiväys, lyhyt esitystapa), CURRTIME(aika). Kentät voidaan erottaa toisistaan millä tahansa erottimella. Erottimia käytetään vain mikäli tietokenttiä on valittuna.<br>Tämänhetkistä valintaa tullaan käyttämään WWW-sivuilla.
 	FR	Voici les formats disponibles. Ils peuvent être choisis ci-dessus ou dans les réglages du lecteur. Pour supprimer un format, effacer la zone de saisie. Pour ajouter un format, utiliser une zone de saisie vide. Les codes suivants peuvent être utilisés pour représenter des données: CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), ALBUM, COMMENT (commentaire), YEAR (année), SECS (durée total en secondes), DURATION (durée en minutes et secondes), VBR_SCALE (vbr/cbr), BITRATE (débit binaire), TAGSIZE (taille des repères), VOLUME (nom du disque), PATH (chemin d'accès), FILE (fichier), EXT (extension du fichier), LONGDATE (date courante en format long), SHORTDATE (date courante en format court), CURRTIME (heure courante). Ces codes peuvent être entrecoupés de textes séparateurs. Les séparateurs ne sont utilisés que si des données sont présentes.<bt>La sélection courante est le format qui sera utilisé dans les documents Web.
 	NL	Dit zijn de beschikbare formaten voor zowel hierboven als in de Speler instellingen. Om een formaat te verwijderen, leeg de textbox. Om een formaat toe te voegen, voer deze in in een lege textbox. Beschikbare data elementen zijn: CT (content type), TITLE, GENRE, TRACKNUM, FS (file grootte), ARTIST, ALBUM, COMMENT, YEAR, SECS (totaal seconden), DURATION (minuten en seconden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (album naam), PATH, FILE, EXT (file extention), LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). De elementen kunnen door alles gescheiden geworden. Scheidingstekens worden alleen gebruikt als de data elementen aanwezig zijn.<br>Het op dit moment geselecteerde formaat zal worden gebruikt op de web pagina's.
+	NO	Dette er tilgjengelige for web-interfacet og selve spilleren. For å fjerne et format, tøm boksen. For å legge til et format, skriv det i en tom boks. Tilgengelige elementer: CT (innholds type), TITLE, GENRE, TRACKNUM (spor nummer), FS (filstørrelse), ARTIST, ALBUM, COMMENT, YEAR, SECS (totalt antall sekunder), DURATION (minutter og sekunder), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volumnavn), PATH, FILE, EXT (filending), LONGDATE (dagens dato, langt), SHORTDATE (dagens dato, kort), CURRTIME (klokkeslett nå). Elementer kan skilles med ethvert tegn (eller ingen). Skilletegnet vises bare om dataelementet finnes. Det valgte formatet er det som blir brukt på websidene.
 	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no cliente. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
 	SE	Dessa är de tillgängliga formaten för webbgränssnittet och själva spelaren. För att ta bort ett format, töm textboxen. För att lägga till ett nytt format, skriv i en tom textbox. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, ALBUM, COMMENT, YEAR, SECS (totala antalet sekunder), DURATION (minuter och sekunder, VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volymnamn), PATH, FILE, EXT (filändelse), LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera dataelementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget). Skiljetecken visas endast om dataelementet existerar.Det valda formatet är det som kommer användas på webbsidorna.
 
@@ -780,6 +824,7 @@ SETUP_GROUP_MENUITEMS
 	EN	Home Menu Customization
 	FR	Personnalisation du menu principal
 	NL	Hoofdmenu aanpassen
+	NO	Tilpass hovedmenyen
 	PT	Personalização do Menu Inicial
 	SE	Konfigurering av Huvudmeny
 
@@ -789,6 +834,7 @@ SETUP_GROUP_MENUITEMS_DESC
 	EN	You can customize the choices that are available on the top-level Home menu. Click to move items up and down or to remove menu items. Click on "Add" to add a removed item back to the menu.
 	FR	Vous pouvez personnaliser les choix disponibles dans le menu principal. Cliquez pour supprimer un choix ou pour le déplacer verticalement. Cliquer sur "Ajouter" pour restaurer un choix supprimé.
 	NL	U kunt instellen welke keuzes aanwezig zijn in het Hoofdmenu. Klik om de items naar boven of naar beneden te verplaatsen of ze te verwijderen. Klik op "Toevoegen" om een verwijderd item terug te plaatsen in het menu.
+	NO	Du kan tilpasse hovedmenyen på din SLIMP3. Trykk for å flytte elementer oppover og nedover eller for å fjerne dem. Trykk "Legg til" for å legge til et fjernet element.
 	PT	Pode personalizar as opções disponíveis no menu inicial. Escolha as opções para mover para cima, para baixo, ou para apagar. Escolha "Adicionar" para adicionar um item ao menu.
 	SE	Du kan konfigurera vilka val som skall finnas tillgängliga från din Huvudmeny. Klicka för att flytta upp, ner eller ta bort menyval. Klicka på "Lägg till" för att återställa ett menyval.
 
@@ -798,6 +844,7 @@ SETUP_GROUP_NONMENUITEMS_INTRO
 	EN	Inactive menu items:
 	FR	Eléments de menu inactifs :
 	NL	Inactieve menu items:
+	NO	Inaktive meny elementer:
 	PT	Items disponíveis
 	SE	Inaktiva meny-val:
 
@@ -806,6 +853,7 @@ SETUP_GROUP_IRSETS
 	EN	Remote Controls
 	FR	Modèles de télécommande
 	NL	Afstandsbedieningen
+	NO	Fjernkontroller
 	PT	Controlo Remoto
 	SE	Fjärrkontroller
 
@@ -814,6 +862,7 @@ SETUP_GROUP_IRSETS_DESC
 	EN	You can choose to have this player respond to or ignore certain infrared remote signals. To enable a remote control code set, put a check next to the name below. To disable a remote control code set, clear the check mark.
 	FR	Vous pouvez sélectionner à quel type d'ordres infrarouge de la télécommande le lecteur répondra. Pour activer un type, cocher la case correspondante. Pour le désactiver, décochez la case.
 	NL	U kan instellen welke infraroodsignalen door de speler worden begrepen danwel genegeerd. Om een code set voor een afstandsbediening te activeren vinkt U de onderstaande naam aan. Om de code set te deactiveren verwijdert U het vinkje.
+	NO	Du kan velge om spilleren skal reagere på eller ignorere visse signaler fra fjernkontrollen. For å aktivere kodeoppsettet for en fjernkontroll, merk den nedenfor. For å deaktivere den, fjern merket.
 	PT	Pode optar por permitir ou negar alguns sinais do controlo remoto no seu cliente. Para activar um sinal, active a opção junto ao nome abaixo. Para desactivar, limpe a opção.
 	SE	Du kan välja om denna spelare skall svara på eller ignorera signaler från vissa fjärrkontroller. För att aktivera en fjärrkontrolls koduppsättning, markera rutan bredvid namnet nedan och klicka på "Ändra". För att avaktivera en koduppsättning avmarkera rutan och klick på "Ändra".
 
@@ -822,6 +871,7 @@ SETUP_GROUP_PLUGINS
 	EN	Plugins
 	FR	Plugins
 	NL	Plugins
+	NO	Plugins
 	PT	Extras
 	SE	Tillägg
 
@@ -830,6 +880,7 @@ SETUP_GROUP_PLUGINS_DESC
 	EN	Slim Server includes some extra features, called Plugins, that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. To save your changes, click Change.
 	FR	Vous pouvez sélectionner des fonctionnalités supplémentaires du lecteur, appelées Plugins, disponibles à l'aide de la télécommande. Ces fonctionnalités sont situées dans le dossier Plugins. Pour activer un plugin, cocher la case correspondante. Pour le désactiver, décochez la case.
 	NL	Slim Server laat toe om extra functies te koppelen aan de afstandsbediening. Deze functies vindt U terug in de Plugins folder. Om een funtie te activeren klikt U het vinkje naast de functie aan. Om de funtie uit te schakelen verwijdert U het vinkje. Om de wijzigingen op te slaan klikt U op 'Aanpassen'.
+	NO	SLIMP3 inneholder en del tilleggsfunksjoner, Plugins, som du kan benytte deg av med fjernkontrollen. Disse kan aktiveres eller deaktiveres individuelt. For å aktivere en Plugin, merk den. For å deaktivere en Plugin, fjern merket. For å lagre endringene, velg "Endre".
 	PT	O cliente Slim Server inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
 	SE	Slim Server inkluderar tilläggs-funktioner du kan använda med din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras individuellt. För att aktivera ett tillägg, kryssa i rutan bredvid tillägget nedan. För att avaktivera ett tillägg, ta bort krysset. För att spara dina ändringar, klicka på "Ändra".
 
@@ -852,6 +903,7 @@ SETUP_PLAYERNAME
 	FI	Player Nimi
 	FR	Nom du player
 	NL	Player Naam
+	NO	Player Navn
 	PT	Nome do Cliente
 	SE	Player Namn
 
@@ -863,6 +915,7 @@ SETUP_PLAYERNAME_OK
 	FI	Uuden soittimen nimi on:
 	FR	Le nouveau nom du lecteur est :
 	NL	De nieuwe naam voor deze speler is:
+	NO	Spillerens nye navn er:
 	PT	O novo nome para este cliente é
 	SE	Det nya namnet för denna spelare är:
 
@@ -874,6 +927,7 @@ SETUP_PLAYERNAME_DESC
 	FI	Voit antaa nimen, jonka avulla soitin voidaan yhdistää näillä WWW-sivuilla.
 	FR	Vous pouvez donner au lecteur un nom qui sera utilisé pour identifier le lecteur sur l'interface web.
 	NL	U kunt deze speler een naam geven die zal worden gebruikt om de speler te identificeren op de web pagina's.
+	NO	Du kan gi denne spilleren et navn som vil brukes til å identifisere spilleren på disse web-sidene.
 	PT	Pode escolher um nome para identificar este cliente nas páginas web do servidor.
 	SE	Du kan ange ett namn för spelaren som kommer användas för att identifiera spelaren på dessa webbsidor.
 
@@ -885,6 +939,7 @@ SETUP_PLAYERNAME_CHOOSE
 	FI	Soittimen nimi:
 	FR	Nom du lecteur :
 	NL	Naam voor deze speler:
+	NO	Spiller navn:
 	PT	Escolha um nome para este cliente
 	SE	Spelarens namn:
 
@@ -896,6 +951,7 @@ SETUP_POWERONBRIGHTNESS
 	FI	Näytön kirkkaus soittimen ollessa päällä
 	FR	Luminosité lorsqu'allumé
 	NL	Helderheid bij ingeschakelde toestand
+	NO	Lysstyrke når på
 	PT	Brilho quando Ligado
 	SE	Ljusstyrka påslagen
 
@@ -907,6 +963,7 @@ SETUP_POWERONBRIGHTNESS_CHOOSE
 	FI	Näytön kirkkaus soittimen ollessa päällä:
 	FR	Luminosité lorsqu'allumé :
 	NL	Helderheid bij ingeschakelde toestand:
+	NO	Lysstyrke når på:
 	PT	Brilho quando Ligado
 	SE	Ljusstyrka påslagen:
 
@@ -918,6 +975,7 @@ SETUP_POWEROFFBRIGHTNESS
 	FI	Näytön kirkkaus soittimen ollessa pois päältä
 	FR	Luminosité lorsqu'éteint
 	NL	Helderheid bij uitgeschakelde toestand
+	NO	Lysstyrke når av
 	PT	Brilho quando Desligado
 	SE	Ljusstyrka avslagen
 
@@ -929,6 +987,7 @@ SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	FI	Näytön kirkkaus soittimen ollessa pois päältä:
 	FR	Luminosité lorsqu'éteint :
 	NL	Helderheid bij uitgeschakelde toestand:
+	NO	Lysstyrke når av:
 	PT	Brilho quando Desligado
 	SE	Ljusstyrka avslagen:
 
@@ -937,6 +996,7 @@ SETUP_AUTOBRIGHTNESS
 	EN	Automatic Display Brightness
 	FR	Réglage automatique de la luminosité de l'affichage
 	NL	Automatische helderheidsregeling van het scherm
+	NO	Vis lysstyrke automatisk
 	PT	Brilho Automático
 
 SETUP_AUTOBRIGHTNESS_DESC
@@ -944,6 +1004,7 @@ SETUP_AUTOBRIGHTNESS_DESC
 	EN	The brightness of the display can be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
 	FR	La luminosité de l'affichage du lecteur peut être ajustée automatiquement lorsqu'un bouton est pressé, un morceau commence à jouer, ou lorsque le lecteur est inutilisé pendant un moment. Vous pouvez désactiver ce comportement automatique.
 	NL	De helderheid van het scherm van kan automatisch aangepast worden bij knopdrukken, het begin van een liedje of na een periode van inactiviteit. Deze functie kan ook uitgeschakeld worden.
+	NO	Lyststyrken i SLIMP3 displayet kan justeres automatisk når du trykker på en knapp, begynner å spille en sang, eller lar den være for en stund. Du kan velge å slå av denne automatikken.
 	PT	O brilho do ecrã do pode ser ajustado automaticamente quando usar um botão, começa uma música, ou fica inactivo ao fim de algum tempo. Pode desligar este comportamento automático se desejar.
 
 SETUP_AUTOBRIGHTNESS_OFF
@@ -951,13 +1012,15 @@ SETUP_AUTOBRIGHTNESS_OFF
 	EN	Adjust Brightness Manually
 	FR	Régler la luminosité manuellement
 	NL	Manuele Helderheidsregeling
+	NO	Juster lysstyrke manuelt
 	PT	Ajustar o Brilho Manualmente
 
 SETUP_AUTOBRIGHTNESS_ON
-	DE	Automatische Anzeigehelligkeit
+	DE	Helligkeit automatisch anpassen
 	EN	Adjust Brightness Automatically
 	FR	Régler la luminosité automatiquement
 	NL	Automatische Helderheidsregeling
+	NO	Juster lysstyrke automatisk
 	PT	Ajustar o Brilho Automaticamente
 
 SETUP_PLAYINGDISPLAYMODE
@@ -968,6 +1031,7 @@ SETUP_PLAYINGDISPLAYMODE
 	FI	Soittaa näyttötilassa
 	FR	Mode d'affichage durant la lecture
 	NL	Display modus bij afspelen
+	NO	Display modus ved avspilling
 	PT	Modo de visualização ao tocar
 	SE	Display-format vid uppspelning
 
@@ -979,6 +1043,7 @@ SETUP_PLAYINGDISPLAYMODE_OK
 	FI	Näyttö kuvaa soivan kappaleen kulumista:
 	FR	L'écran affichera le déroulement de la lecture du morceau avec :
 	NL	Het display zal nu de voortgang van de huidige song als volgt laten zien:
+	NO	Displayet viser nå status for sangen som spilles slik:
 	PT	O ecrã irá mostrar o progresso da música actual como
 	SE	Displayen visar nu statusen för den nu spelande låten som:
 
@@ -990,6 +1055,7 @@ SETUP_PLAYINGDISPLAYMODE_DESC
 	FI	Soitin voi näyttää tietoa kappaleen etenemisestä. Valitse, mitä tietoa haluat näytettävän.
 	FR	Le lecteur peut afficher la progression de la lecture du morceau en cours de différentes manières. Choisissez les informations que vous voulez voir apparaître.
 	NL	De speler kan informatie over de voortgang van een nummer op het display tonen. Selecteer de informatie die U op het display wilt zien.
+	NO	Spilleren kan vise informasjon om avspillingen når den spiller. Velg hva du velger skal vises.
 	PT	O cliente pode mostrar informação do progresso da música enquanto toca. Escolha a informação que deseja que seja mostrada.
 	SE	Spelaren kan visa information om aktuell låt. Välj vilken information du vill skall visas.
 
@@ -1001,6 +1067,7 @@ SETUP_SYNCHRONIZE
 	FI	Saata ajantasalle
 	FR	Synchroniser
 	NL	Synchronizeren
+	NO	Synkroniser
 	PT	Sincronizado
 	SE	Synkronisera
 
@@ -1009,6 +1076,7 @@ SETUP_SYNCHRONIZE_DESC
 	EN	The player can be synchronized with other players, enabling them to play the same music simultaneously. Choose the players you would like to synchronize with from the list of available synchronization groups. Choose No Synchronization to stop synchronization.
 	FR	Le lecteur peut se synchroniser avec d'autres lecteurs pour jouer la même musique que ceux-ci. Choisissez les lecteurs avec lesquels vous voulez vous synchroniser à partir de la liste des groupes de synchronisation. Choisissez le nom du lecteur courant pour annuler la synchronisation.
 	NL	De speler kan gesynchroniseerd worden met andere spelers. De spelers geven dan dezelfde muziek weer. Kies de spelers waarmee gesynchroniseerd moet worden uit de lijst van beschikbare synchonisatiegroepen. Kies 'Geen Synchronisatie' om deze functie te annuleren.
+	NO	Spilleren kan synkroniseres med andre spillere slik at de spiller samme musikken samtidig. Velg spillerene du ønsker å synkronisere med fra listen of synkroniserings grupper. Velg Ingen Synkronisering for å stoppe synkroniseringen.
 	PT	O cliente por estar sincronizado com outros clientes, permitindo que toquem todos a mesma música em simultâneo. Escolha os clientes que deseja sincronizar na lista de grupos disponíveis para sincronizar. Escolha "Não Sincronizado" para parar a sincronização.
 	SE	Spelaren kan synkroniseras med andra spelare, vilket tillåter alla spelare att spela upp samma musik samtidigt. Välj vilken spelare du vill synkronisera med från listan av tillgängliga synkroniseringsgrupper. Välj den nuvarande spelaren för att stoppa synkroniseringen.
 
@@ -1016,6 +1084,7 @@ SETUP_NO_SYNCHRONIZATION
 	EN	No Synchronization
 	FR	Non synchronisé
 	NL	Geen Synchronisatie
+	NO	Ingen Synkronisering
 	PT	Não Sincronizado
 
 SETUP_SYNCHRONIZE_OK
@@ -1023,24 +1092,29 @@ SETUP_SYNCHRONIZE_OK
 	EN	Joining synchronization group:
 	FR	Ajouter au groupe de synchronisation :
 	NL	Toevoegen aan synchronisatiegroep:
+	NO	Blir med i synkroniseringsgruppe:
 	PT	Juntar ao Grupo Sincronizado
 	SE	Går med i synkroniseringsgrupp:
 
 SETUP_SYNCVOLUME_ON
 	EN	Sync player's volume
 	FR	Synchroniser le volume du lecteur
-	
+	NO	Synkroniser spillerens volum
+
 SETUP_SYNCVOLUME_OFF
 	EN	Don't sync player's volume
 	FR	Ne pas synchroniser le volume du lecteur
+	NO	Ikke synkroniser spillerens volum
 
 SETUP_SYNCVOLUME
 	EN	Synchronize Volume
 	FR	Synchroniser le volume
+	NO	Synkroniser volum
 
 SETUP_SYNCVOLUME_DESC
 	EN	You can choose to have the volume levels for the synced players track each other or be independent.  Make a selection below and click Change.
 	FR	Vous pouvez faire en sorte que le réglage du volume sur un lecteur modifie le volume sur les lecteurs synchronisés. Faites un choix et cliquez sur Modifier.
+	NO	Du kan velge å synkronisere lyd nivåene for de synkroniserte spiller eller la dem være uavhengige. Velg nedenfor og trykk Endre.
 
 SETUP_TITLEFORMATCURR
 	DE	Aktuelles Titel Format
@@ -1050,6 +1124,7 @@ SETUP_TITLEFORMATCURR
 	FI	Tämänhetkinen otsikkomuotoilu
 	FR	Format du titre courant
 	NL	Huidig titelformaat
+	NO	Valgt sangtittelformat
 	PT	Formato do Titulo Actual
 	SE	Aktuellt titelformat
 
@@ -1061,6 +1136,7 @@ SETUP_TITLEFORMAT
 	FI	Otsikon muoto
 	FR	Format du titre
 	NL	Titelformaat
+	NO	Sangtittelformat
 	PT	Formato do Título
 	SE	Titelformat
 
@@ -1116,12 +1192,11 @@ SETUP_PLUGINLIST_OK
 	SE	Tillägg:
 
 SETUP_PLUGINLIST_CHANGE
-	DE	Einstellungen für %s sind gespeichert.
+	DE	Helligkeit automatisch anpassen
 	EN	Setting for %s was changed.
 	FR	Le réglage pour %s a été modifié.
 	NL	Instelling voor %s is aangepast.
 	PT	A opção para %s mudou.
-	DE	Helligkeit automatisch anpassen
 	SE	Inställning for %s är ändrad.
 
 SETUP_PASSWORD_CHANGED
@@ -1601,6 +1676,7 @@ SETUP_TRANSCODE-OGG_OK
 	EN	Ogg Vorbis Files
 	FR	Fichiers Ogg Vorbis
 	NL	Ogg Vorbis bestanden
+	NO	Ogg Vorbis filer
 	PT	Ficheiros Ogg Vorbis
 
 SETUP_TRANSCODE-OGG_1
@@ -1608,6 +1684,7 @@ SETUP_TRANSCODE-OGG_1
 	EN	Convert automatically
 	FR	Convertir automatiquement
 	NL	Automatisch omzetten
+	NO	Konverter automatisk
 	PT	Converter automaticamente
 
 SETUP_TRANSCODE-OGG_0
@@ -1615,6 +1692,7 @@ SETUP_TRANSCODE-OGG_0
 	EN	Don't convert automatically
 	FR	Ne pas convertir
 	NL	Niet omzetten
+	NO	Ikke konverter automatisk
 	PT	Não converter automaticamente
 
 SETUP_TRANSCODE-WAV
@@ -1622,6 +1700,7 @@ SETUP_TRANSCODE-WAV
 	EN	Convert WAV and AIFF Files
 	FR	Conversion des fichiers WAV et AIFF
 	NL	Converteer WAV en AIFF bestanden
+	NO	Konverter WAV og AIFF filer
 	PT	Converter ficheiros WAV e AIFF
 
 SETUP_TRANSCODE-WAV_DESC
@@ -1636,6 +1715,7 @@ SETUP_TRANSCODE-WAV_OK
 	EN	WAV and AIFF Files
 	FR	Fichiers WAV et AIFF
 	NL	WAV en AIFF bestanden
+	NO	WAV og AIFF filer
 	PT	Ficheiros WAV e AIFF
 
 SETUP_TRANSCODE-WAV_1
@@ -1643,6 +1723,7 @@ SETUP_TRANSCODE-WAV_1
 	EN	Convert automatically
 	FR	Convertir automatiquement
 	NL	Automatisch omzetten
+	NO	Konverter automatisk
 	PT	Converter automaticamente
 
 SETUP_TRANSCODE-WAV_0
@@ -1650,6 +1731,7 @@ SETUP_TRANSCODE-WAV_0
 	EN	Don't convert automatically
 	FR	Ne pas convertir
 	NL	Niet omzetten
+	NO	Ikke konverter automatisk
 	PT	Não converter automaticamente
 
 SETUP_TRANSCODE-MOV
@@ -1657,6 +1739,7 @@ SETUP_TRANSCODE-MOV
 	EN	Convert QuickTime & AAC Files
 	FR	Conversion des fichiers QuickTime et AAC
 	NL	Omzetten van QuickTime en AAC bestanden
+	NO	Konverter QuickTime og AAC filer
 	PT	Converter ficheiros QuickTime e AAC
 
 SETUP_TRANSCODE-MOV_DESC
@@ -1670,6 +1753,7 @@ SETUP_TRANSCODE-MOV_OK
 	EN	QuickTime and AAC
 	FR	Fichiers QuickTime et AAC
 	NL	QuickTime en AAC
+	NO	QuickTime og AAC
 	PT	QuickTime e AAC
 
 SETUP_TRANSCODE-MOV_1
@@ -1677,6 +1761,7 @@ SETUP_TRANSCODE-MOV_1
 	EN	Convert automatically
 	FR	Convertir automatiquement
 	NL	Automatisch omzetten
+	NO	Konverter automatisk
 	PT	Converter automaticamente
 
 SETUP_TRANSCODE-MOV_0
@@ -1684,6 +1769,7 @@ SETUP_TRANSCODE-MOV_0
 	EN	Don't convert automatically
 	FR	Ne pas convertir
 	NL	Niet omzetten
+	NO	Ikke konverter automatisk
 	PT	Não converter automaticamente
 
 SETUP_SAVEHISTORY
@@ -1691,6 +1777,7 @@ SETUP_SAVEHISTORY
 	EN	Save History
 	FR	Historique
 	NL	Geschiedenis Opslaan
+	NO	Lagre historikk
 	PT	Gravar Historial
 
 SETUP_SAVEHISTORY_DESC
@@ -1705,6 +1792,7 @@ SETUP_SAVEHISTORY_1
 	EN	Save history
 	FR	Conserver l'historique
 	NL	Geschiedenis opslaan
+	NO	Lagre historikk
 	PT	Gravar historial
 
 SETUP_SAVEHISTORY_0
@@ -1712,12 +1800,14 @@ SETUP_SAVEHISTORY_0
 	EN	Don't save history
 	FR	Ne pas conserver l'historique
 	NL	Geschiedenis niet opslaan
+	NO	Ikke lagre historikk
 	PT	Não gravar historial
 
 SETUP_CHECKVERSION
 	DE	Software Aktualisierungen
 	EN	Software Updates
 	FR	Mise à jour du logiciel
+	NO	Software oppdateringer
 	PT	Actualizações
 
 SETUP_CHECKVERSION_DESC
@@ -1730,12 +1820,14 @@ SETUP_CHECKVERSION_1
 	DE	Automatisch nach aktueller Software suchen
 	EN	Automatically Check For Software Updates
 	FR	Vérifier automatiquement
+	NO	Automatisk sjekk for software oppdateringer
 	PT	Verificar Versões Novas
 
 SETUP_CHECKVERSION_0
 	DE	Nicht automatisch nach aktueller Software suchen
 	EN	Don't Check For Software Updates
 	FR	Ne pas vérifier
+	NO	Ikke sjekk for software oppdateringer
 	PT	Não Verificar
 
 SETUP_HISTORYLENGTH
@@ -1743,6 +1835,7 @@ SETUP_HISTORYLENGTH
 	EN	History Length
 	FR	Longueur de l'historique
 	NL	Lengte van de geschiedenis
+	NO	Historikk lengde
 	PT	Tamanho do Historial
 
 SETUP_HISTORYLENGTH_DESC
@@ -1760,6 +1853,7 @@ SETUP_SCREENSAVERTIMEOUT
 	FI	Näytönsäästäjän ajastus
 	FR	Délai de l'économiseur d'écran
 	NL	Interval van de schermbeveiliging
+	NO	Skjermsparer tid
 	PT	Intervalo para Protecção de Ecrã
 	SE	Fördröjning av skärmsläckaren
 
@@ -1793,6 +1887,7 @@ SETUP_SCREENSAVERJUMP
 	FI	Näytönsäästäjä
 	FR	Économiseur d'écran
 	NL	Schermbeveiliging
+	NO	Skjermsparer
 	PT	Protecção de Ecrã
 	SE	Skärmsläckare
 
@@ -2477,6 +2572,7 @@ SETUP_NEW_VALUE
 	FI	Uuusi arvo
 	FR	Nouvelle valeur pour
 	NL	Nieuwe waarde voor
+	NO	Ny verdi for
 	PT	Novo valor para
 	SE	Nytt värde för
 
@@ -2488,6 +2584,7 @@ SETUP_REJECTED
 	FI	ei hyväksytty
 	FR	rejeté
 	NL	afgewezen
+	NO	avvist
 	PT	rejeitado
 	SE	Ej godkänd
 
@@ -2510,6 +2607,7 @@ SETUP_CURRENT
 	FI	Tämänhetkinen
 	FR	Courant
 	NL	Huidige
+	NO	Aktiv
 	PT	Actual
 	SE	Valt
 
@@ -2521,6 +2619,7 @@ SETUP_FORMATS
 	FI	Esitystavat
 	FR	Formats
 	NL	Formaten
+	NO	Formater
 	PT	Formatos
 	SE	Format
 
@@ -2532,6 +2631,7 @@ SETUP_NUMBER
 	FI	Numero
 	FR	Numéro
 	NL	Nummer
+	NO	Nummer
 	PT	Número
 	SE	Nummer
 
@@ -2564,6 +2664,7 @@ SETUP_USERNAME
 	EN	Username
 	FR	Nom d'utilisateur
 	NL	Gebruikersnaam
+	NO	Brukernavn
 	PT	Utilizador
 	SE	Användarnamn
 
@@ -2572,6 +2673,7 @@ SETUP_PASSWORD
 	EN	Password
 	FR	Mot de passe
 	NL	Wachtwoord
+	NO	Passord
 	PT	Palavra Chave
 	SE	Lösenord
 
@@ -2644,6 +2746,7 @@ SETUP_MDNSNAME
 	EN	Rendezvous Name
 	FR	Nom Rendezvous
 	NL	Rendezvous Naam
+	NO	Rendezvous navn
 	PT	Nome "Rendezvous"
 	SE	Rendezvous Namn
 
@@ -2668,6 +2771,7 @@ SETUP_MDNSNAME_CHOOSE
 	EN	Rendezvous name:
 	FR	Nom Rendezvous :
 	NL	Rendezvous naam:
+	NO	Rendezvous navn:
 	PT	Nome Rendezvour
 	SE	Rendezvous namn:
 
@@ -2679,6 +2783,7 @@ MP3DIR
 	FI	Musiikkikansiosi
 	FR	Votre dossier de musique
 	NL	Uw Muziek Folder
+	NO	Din musikkfolder
 	PT	Pasta de Música Pessoal
 	SE	Din Musikmapp
 
@@ -2690,6 +2795,7 @@ LANGUAGE
 	FI	Kieli
 	FR	Langue
 	NL	Taal
+	NO	Språk
 	PT	Idioma
 	SE	Språk
 
@@ -2717,6 +2823,7 @@ CURRENT_PLAYER
 	FI	Soittimen nimi:
 	FR	Lecteur courant :
 	NL	Huidige Speler:
+	NO	Aktuell spiller:
 	PT	Cliente Actual
 	SE	Aktuell spelare:
 
@@ -2751,6 +2858,7 @@ FFWD
 	EN	Fast Forward
 	FR	Avance rapide
 	NL	Vooruitspoelen
+	NO	Spol forover
 	PT	Avanço Rápido
 	SE	Snabbspola framåt
 
@@ -2759,6 +2867,7 @@ REW
 	EN	Rewind
 	FR	Retour rapide
 	NL	Terugspoelen
+	NO	Spol bakover
 	PT	Recuo Rápido
 	SE	Snabbspola bakåt
 
@@ -2860,6 +2969,7 @@ ONE
 	FI	yksi
 	FR	un
 	NL	een
+	NO	en
 	PT	uma
 	SE	låt
 
@@ -2871,6 +2981,7 @@ ALL
 	FI	kaikki
 	FR	tous
 	NL	alle
+	NO	alle
 	PT	todas
 	SE	alla
 
@@ -2882,6 +2993,7 @@ OFF
 	FI	pois päälltä
 	FR	éteint
 	NL	uit
+	NO	av
 	PT	não
 	SE	av
 
@@ -2893,6 +3005,7 @@ ON
 	FI	päälle
 	FR	allumé
 	NL	aan
+	NO	på
 	PT	sim
 	SE	på
 
@@ -2902,6 +3015,7 @@ MOVEUP
 	EN	Move Up
 	FR	Haut
 	NL	Naar Boven
+	NO	Flytt opp
 	PT	Move Up
 	SE	Flytta upp
 
@@ -2911,6 +3025,7 @@ MOVEDOWN
 	EN	Move Down
 	FR	Bas
 	NL	Naar Beneden
+	NO	Flytt ned
 	PT	Move Down
 	SE	Flytta ner
 
@@ -2920,6 +3035,7 @@ ADD
 	EN	Add
 	FR	Ajouter
 	NL	Toevoegen
+	NO	Legg til
 	PT	Adicionar
 	SE	Lägg till
 
@@ -2940,12 +3056,14 @@ SHUFFLE_ON_SONGS
 	EN	Shuffle by Song
 	FR	Mélanger par morceau
 	NL	Willekeurige volgorde volgens nummer
+	NO	Vilkårlig på Sang
 	PT	Misturar Playlist por Música
 
 SHUFFLE_ON_ALBUMS
 	EN	Shuffle by Album
 	FR	Mélanger par album
 	NL	Willekeurige volgorde volgens album
+	NO	Vilkårlig på Album
 	PT	Misturar Playlist por Álbum
 
 SHUFFLE_ON
@@ -3031,6 +3149,7 @@ TREBLE
 	EN	Treble
 	FR	Aigus
 	NL	Hoog
+	NO	Diskant
 	PT	Agudos
 	SE	Diskant
 
@@ -3039,6 +3158,7 @@ BASS
 	EN	Bass
 	FR	Graves
 	NL	Laag
+	NO	Bass
 	PT	Graves
 	SE	Bas
 
@@ -3050,6 +3170,7 @@ TEXTSIZE
 	FI	Tekstin koko
 	FR	Taille du texte
 	NL	Tekstgrootte
+	NO	Tekststørrelse
 	PT	Tamanho do Texto
 	SE	Textstorlek
 
@@ -3061,6 +3182,7 @@ LARGE
 	FI	Iso
 	FR	Grande
 	NL	Groot
+	NO	Stor
 	PT	Grande
 	SE	Stor
 
@@ -3072,6 +3194,7 @@ SMALL
 	FI	Pieni
 	FR	Petite
 	NL	Klein
+	NO	Liten
 	PT	Pequeno
 	SE	Liten
 
@@ -3083,6 +3206,7 @@ TITLEFORMAT
 	FI	Kappaleen nimen esitystapa
 	FR	Format du titre des morceaux
 	NL	Titel formaat
+	NO	Tittel format
 	PT	Nome Música
 	SE	Format på låttitel
 
@@ -3120,6 +3244,7 @@ CLEAR
 	FI	tyhjennä
 	FR	Effacer
 	NL	Wissen
+	NO	Nullstill
 	PT	Limpar
 	SE	Rensa
 
@@ -3131,6 +3256,7 @@ SAVE
 	FI	Talleta
 	FR	Enregistrer
 	NL	Bewaren
+	NO	Lagre
 	PT	Gravar
 	SE	Spara
 
@@ -3141,6 +3267,7 @@ RENAME
 	ES	Renombrar
 	FR	Renommer
 	NL	Hernoemen
+	NO	Gi nytt navn
 	PT	Mudar Nome
 	SE	Byt namn
 
@@ -3152,6 +3279,7 @@ SAVED_PLAYLISTS
 	FI	Tallennetut soittolistat
 	FR	Playlists enregistrées
 	NL	Bewaarde playlists
+	NO	Lagrede Spillelister
 	PT	Escolher por Playlists Guardadas
 	SE	Sparade Spellistor
 
@@ -3163,6 +3291,7 @@ PLAYLISTDIR
 	FI	Soittolistakansio
 	FR	Dossier des playlists
 	NL	Bewaarde Playlists Folder
+	NO	Folder med lagrede spillelister
 	PT	Escolher Pasta para Playlists
 	SE	Mapp för sparade spellistor
 
@@ -3184,6 +3313,7 @@ THIS_PLAYLIST_AS
 	ES	esta lista como:
 	FR	cette playlist sous :
 	NL	deze playlist als:
+	NO	denne spillelisten som:
 	PT	esta playlist como
 	SE	denna spellista som:
 
@@ -3195,6 +3325,7 @@ SAVE_THIS_PLAYLIST_AS
 	FI	Tallenna soittolista nimellä:
 	FR	Enregistrer cette playlist sous :
 	NL	Bewaar deze playlist als:
+	NO	Lagre denne spillelisten som:
 	PT	Gravar a Playlist Como
 	SE	Spara spellistan som:
 
@@ -3206,6 +3337,7 @@ UNTITLED
 	FI	Nimeämätön
 	FR	Sans titre
 	NL	Zonder naam
+	NO	Ingen tittel
 	PT	Sem Título
 	SE	Namnlös
 
@@ -3217,6 +3349,7 @@ DELETE_THIS_PLAYLIST
 	FI	Poista soittolista
 	FR	Supprimer cette playlist
 	NL	Verwijder deze playlist
+	NO	Slett denne spillelisten
 	PT	Remover esta Playlist
 	SE	Radera spellistan
 
@@ -3228,12 +3361,14 @@ THIS_ENTIRE_PLAYLIST
 	FI	Koko soittolista
 	FR	Cette playlist au complet
 	NL	Deze volledige playlist
+	NO	Hele spillelisten
 	PT	Esta lista inteira
 	SE	Hela spellistan
 
 REMOVE_FROM_PLAYLIST
 	EN	Remove from playlist
 	FR	Enlever de la playlist
+	NO	Slett fra spillelisten
 	PT	Remover da Playlist
 
 ADD_TO_PLAYLIST
@@ -3270,6 +3405,7 @@ SONGTITLE
 	FI	Kappaleen nimi
 	FR	Titre du morceau
 	NL	Titel van het nummer
+	NO	Sangtittel
 	PT	Música
 	SE	Låt
 
@@ -3281,6 +3417,7 @@ TITLE
 	FI	Otsikko
 	FR	Titre
 	NL	Titel
+	NO	Tittel
 	PT	Título
 	SE	Titel
 
@@ -3292,6 +3429,7 @@ ARTIST
 	FI	Esittäjä
 	FR	Artiste
 	NL	Artiest
+	NO	Artist
 	PT	Artista
 	SE	Artist
 
@@ -3301,6 +3439,7 @@ COMPOSER
 	EN	Composer
 	FR	Compositeur
 	NL	Componist
+	NO	Komponist
 	PT	Compositor
 	SE	Kompositör
 
@@ -3308,6 +3447,7 @@ BAND
 	EN	Band/Orchestra
 	FR	Groupe/Orchestre
 	NL	Band/Orkest
+	NO	Band/Orkester
 	PT	Banda/Orquestra
 
 ALBUM
@@ -3316,6 +3456,7 @@ ALBUM
 	FI	Levyn nimi
 	FR	Album
 	NL	Album
+	NO	Album
 	PT	Álbum
 	SE	Album
 
@@ -3324,6 +3465,7 @@ DISC
 	EN	Disc
 	FR	Disque
 	NL	Plaat
+	NO	Plate
 	PT	Disco
 	SE	Skiva
 
@@ -3335,6 +3477,7 @@ LENGTH
 	FI	Kesto
 	FR	Durée
 	NL	Duur
+	NO	Lengde
 	PT	Duração
 	SE	Längd
 
@@ -3343,48 +3486,56 @@ TYPE
 	EN	File Format
 	FR	Format de fichier
 	NL	Bestandsformaat
+	NO	Filformat
 	PT	Formato do Ficheiro
 
 MP3
 	EN	MP3
 	FR	MP3
 	NL	MP3
+	NO	MP3
 	PT	MP3
 
 MP2
 	EN	MP2
 	FR	MP2
 	NL	MP2
+	NO	MP2
 	PT	MP2
 
 MOV
 	EN	QuickTime AAC or Movie File
 	FR	QuickTime AAC ou film
 	NL	QuickTime AAC of film
+	NO	QuickTime AAC eller film
 	PT	QuickTime AAC of Ficheiro Movie
 
 AIF
 	EN	AIFF
 	FR	AIFF
 	NL	AIFF
+	NO	AIFF
 	PT	AIFF
 
 UNK
 	EN	Unknown
 	FR	Inconnu
 	NL	Onbekend
+	NO	Ukjent
 	PT	Desconhecido
 
 WAV
 	EN	WAV
 	FR	WAV
 	NL	WAV
+	NO	WAV
 	PT	WAV
 
 OGG
 	EN	Ogg Vorbis
 	FR	Ogg Vorbis
 	NL	Ogg Vorbis
+	NO	Ogg Vorbis
 	PT	Ogg Vorbis
 
 MODTIME
@@ -3392,6 +3543,7 @@ MODTIME
 	EN	Date Modified
 	FR	Dernière modif.
 	NL	Wijzigingsdatum
+	NO	Dato endret
 	PT	Última Alteração
 
 COVERART
@@ -3399,6 +3551,7 @@ COVERART
 	EN	Cover art
 	FR	Pochette
 	NL	Hoesjes
+	NO	Platecover
 	PT	Capa do Álbum
 
 FILELENGTH
@@ -3409,6 +3562,7 @@ FILELENGTH
 	FI	Tiedoston pituus
 	FR	Taille du fichier
 	NL	Bestandslengte
+	NO	Filstørrelse
 	PT	Tamanho Ficheiro
 	SE	Filstorlek
 
@@ -3416,24 +3570,28 @@ NO_ARTIST
 	EN	No Artist
 	FR	Pas d'artiste
 	NL	Geen Artiest
+	NO	Ingen artist
 	PT	Sem Artista
 
 NO_ALBUM
 	EN	No Album
 	FR	Pas d'album
 	NL	Geen Album
+	NO	Ingen album
 	PT	Sem Álbum
 
 NO_GENRE
 	EN	No Genre
 	FR	Pas de genre
 	NL	Geen Genre
+	NO	Ingen genre
 	PT	Sem Género
 
 NO_TITLE
 	EN	No Title
 	FR	Pas de titre
 	NL	Geen Titel
+	NO	Ingen tittel
 	PT	Sem Título
 
 THOUSANDS_SEP
@@ -3442,6 +3600,7 @@ THOUSANDS_SEP
 	ES	.
 	FR	.
 	NL	.
+	NO	.
 	PT	. 
 
 BYTES
@@ -3451,6 +3610,7 @@ BYTES
 	FI	Tavua
 	FR	Octets
 	NL	Bytes
+	NO	Bytes
 	PT	Bytes
 	SE	Bytes
 
@@ -3461,6 +3621,7 @@ BITRATE
 	FI	Taajuus
 	FR	Débit binaire
 	NL	Bitrate
+	NO	Bitrate
 	PT	Bits por seg.
 	SE	Bithastighet
 
@@ -3472,6 +3633,7 @@ YEAR
 	FI	Vuosi
 	FR	Année
 	NL	Jaar
+	NO	År
 	PT	Ano
 	SE	År
 
@@ -3482,6 +3644,7 @@ GENRE
 	FI	Laji
 	FR	Genre
 	NL	Genre
+	NO	Genre
 	PT	Género
 	SE	Genre
 
@@ -3493,6 +3656,7 @@ COMMENT
 	FI	Kommentti
 	FR	Commentaire
 	NL	Opmerking
+	NO	Kommentar
 	PT	Comentário
 	SE	Kommentar
 
@@ -3501,6 +3665,7 @@ TAGVERSION
 	EN	ID3 Tag Version
 	FR	Version du tag ID3
 	NL	ID3 Tag Versie
+	NO	ID3 Tag Versjon
 	PT	Versão da Informação ID3
 	SE	ID3-version
 
@@ -3509,6 +3674,7 @@ LOCATION
 	EN	Location
 	FR	Emplacement
 	NL	Plaats
+	NO	Sted
 	PT	Localização
 	SE	Plats
 
@@ -3519,6 +3685,7 @@ KBPS
 	FI	kbps
 	FR	Kbps
 	NL	kbps
+	NO	kbps
 	PT	kbps
 	SE	kbps
 
@@ -3530,6 +3697,7 @@ GENRES
 	FI	Lajit
 	FR	Genres
 	NL	Genres
+	NO	Genrer
 	PT	Géneros
 	SE	Genrer
 
@@ -3541,6 +3709,7 @@ ARTISTS
 	FI	Esittäjät
 	FR	Artistes
 	NL	Artiesten
+	NO	Artister
 	PT	Artistas
 	SE	Artister
 
@@ -3552,6 +3721,7 @@ LCARTISTS
 	FI	esittäjät
 	FR	artistes
 	NL	artiest
+	NO	artister
 	PT	artistas
 	SE	artister
 
@@ -3563,6 +3733,7 @@ ALBUMS
 	FI	Levyjen nimet
 	FR	Albums
 	NL	Album
+	NO	Album
 	PT	Albums
 	SE	Album
 
@@ -3574,6 +3745,7 @@ LCALBUMS
 	FI	levyjen nimet
 	FR	albums
 	NL	albums
+	NO	album
 	PT	álbums
 	SE	album
 
@@ -3582,6 +3754,7 @@ ALL_SONGS
 	EN	All Songs
 	FR	Tous les morceaux
 	NL	Alle Liedjes
+	NO	Alle sanger
 	PT	Todas as Músicas
 	SE	Alla låtar
 
@@ -3590,6 +3763,7 @@ ALL_ALBUMS
 	EN	All Albums
 	FR	Tous les albums
 	NL	Alle Albums
+	NO	Alle album
 	PT	Todos os Álbuns
 	SE	Alla album
 
@@ -3601,6 +3775,7 @@ OF
 	FI	/
 	FR	de
 	NL	van
+	NO	av
 	PT	de
 	SE	av
 
@@ -3612,6 +3787,7 @@ TO
 	FI	->
 	FR	à
 	NL	tot
+	NO	til
 	PT	a
 	SE	till
 
@@ -3622,6 +3798,7 @@ WITH
 	ES	con
 	FR	avec
 	NL	met
+	NO	med
 	PT	com
 	SE	med
 
@@ -3633,6 +3810,7 @@ PAGES
 	FI	Sivuja
 	FR	Pages
 	NL	Pagina's
+	NO	Sider
 	PT	Páginas
 	SE	Sidor
 
@@ -3644,6 +3822,7 @@ SONGS
 	FI	Kappaleita
 	FR	Morceaux
 	NL	Liedjes
+	NO	Sanger
 	PT	Músicas
 	SE	Låtar
 
@@ -3655,6 +3834,7 @@ SONG
 	FI	Kappaleita
 	FR	Morceau
 	NL	Liedje
+	NO	Sang
 	PT	Música
 
 LCSONGS
@@ -3665,6 +3845,7 @@ LCSONGS
 	FI	kappaleita
 	FR	morceaux
 	NL	liedjes
+	NO	sanger
 	PT	músicas
 	SE	låtar
 
@@ -3676,6 +3857,7 @@ BROWSE_MUSIC
 	FI	Selaa
 	FR	Parcourir la musique
 	NL	Muziek doorzoeken
+	NO	Bla i Musikk
 	PT	Escolher Música
 	SE	Bläddra Musik
 
@@ -3687,6 +3869,7 @@ BROWSE_BY_GENRE
 	FI	Selaa lajeittain
 	FR	Parcourir les genres
 	NL	Doorzoeken op Genre
+	NO	Bla i Genrer
 	PT	Escolher por Género
 	SE	Bläddra Genrer
 
@@ -3698,6 +3881,7 @@ BROWSE_BY_ARTIST
 	FI	Selaa esittäjittäin
 	FR	Parcourir les artistes
 	NL	Doorzoeken op Artiest
+	NO	Bla i Artister
 	PT	Escolher por Artista
 	SE	Bläddra Artister
 
@@ -3709,6 +3893,7 @@ BROWSE_BY_ALBUM
 	FI	Selaa levyittäin
 	FR	Parcourir les albums
 	NL	Doorzoeken op Albums
+	NO	Bla i Album
 	PT	Escolher por Álbum
 	SE	Bläddra Album
 
@@ -3720,6 +3905,7 @@ BROWSE_BY_SONG
 	FI	Selaa kappaleittain
 	FR	Parcourir les morceaux
 	NL	Doorzoeken op Liedjes
+	NO	Bla i Sanger
 	PT	Escolher por Música
 	SE	Bläddra Låtar
 
@@ -3731,6 +3917,7 @@ BROWSE_MUSIC_FOLDER
 	FI	Selaa kansiota
 	FR	Parcourir le dossier de musique
 	NL	Muziek Folder Doorzoeken
+	NO	Bla i Musikk folder
 	PT	Escolher por Directoria
 	SE	Bläddra Musikmapp
 
@@ -3742,12 +3929,14 @@ SYNCHRONIZE
 	FI	Saata ajantasalle
 	FR	Synchroniser
 	NL	Synchronizeren
+	NO	Synkroniser
 	PT	Sincroninar
 	SE	Synkronisera
 
 SYNCHRONIZED_WITH
 	EN	Synced with
 	FR	Synchronisé avec
+	NO	Synkroniser med
 
 SLIMTRIS
 	DE	SlimTris
@@ -3756,6 +3945,7 @@ SLIMTRIS
 	FI	SlimTris
 	FR	SlimTris
 	NL	SlimTris
+	NO	SlimTris
 	PT	SlimTris
 	SE	SlimTris
 
@@ -3766,6 +3956,7 @@ SHOOTER
 	FI	Avaruustaistelu
 	FR	Space Shooter
 	NL	Space Shooter
+	NO	Space Shooter
 	PT	Space Shooter
 	SE	Space Shooter
 
@@ -3774,6 +3965,7 @@ PLUGINS
 	EN	Plugins
 	FR	Plugins
 	NL	Plugins
+	NO	Plugins
 	PT	Extras
 	SE	Tillägg
 
@@ -3782,6 +3974,7 @@ NO_PLUGINS
 	EN	No Plugins available.
 	FR	Aucun plugin disponible.
 	NL	Geen Plugins beschikbaar.
+	NO	Ingen Plugins tilgjengelig.
 	PT	Sem Extras
 	SE	Inga tillägg tillgängliga.
 
@@ -3793,6 +3986,7 @@ NEXT
 	FI	Seuraava
 	FR	Suivant
 	NL	Volgende
+	NO	Neste
 	PT	Seguinte
 	SE	Nästa
 
@@ -3804,6 +3998,7 @@ PREVIOUS
 	FI	Edellinen
 	FR	Précédent
 	NL	Vorige
+	NO	Forrige
 	PT	Anterior
 	SE	Föregående
 
@@ -3815,6 +4010,7 @@ PREV
 	FI	Edellinen
 	FR	Précédent
 	NL	Vorige
+	NO	Forrige
 	PT	Anterior
 	SE	Föregående
 
@@ -3826,6 +4022,7 @@ FIRST
 	FI	Ensimmäinen
 	FR	Premier
 	NL	Eerste
+	NO	Første
 	PT	Primeira
 	SE	Första
 
@@ -3837,6 +4034,7 @@ LAST
 	FI	Viimeinen
 	FR	Dernier
 	NL	Laatste
+	NO	Siste
 	PT	Última
 	SE	Sista
 
@@ -3848,6 +4046,7 @@ MOSTPLAYED
 	FI	Eniten soitetut kappaleet
 	FR	Morceaux les plus joués
 	NL	Meeste Gespeelde Liedjes
+	NO	Mest spilte sanger
 	PT	Músicas Mais Tocadas
 	SE	Mest spelade låtar
 
@@ -3859,6 +4058,7 @@ SONG_INFO
 	FI	Kappaleen tiedot
 	FR	Infos sur le morceau
 	NL	Informatie over het Nummer
+	NO	Sanginfo
 	PT	Informação da Música
 	SE	Låtinfo
 
@@ -3870,6 +4070,7 @@ NOTE
 	FI	Muuta:
 	FR	Note :
 	NL	Let op:
+	NO	Merk:
 	PT	Nota
 	SE	Observera:
 
@@ -3912,6 +4113,7 @@ HERE
 	FI	tähän
 	FR	ici
 	NL	hier
+	NO	her
 	PT	aqui
 	SE	här
 
@@ -3923,6 +4125,7 @@ FOR
 	FI	for
 	FR	pour
 	NL	voor
+	NO	for
 	PT	em
 	SE	för
 
@@ -3934,6 +4137,7 @@ PLAYER_SETTINGS
 	FI	Soittimen asetukset
 	FR	Réglages du lecteur
 	NL	Instellingen van de Speler
+	NO	Spiller instillinger
 	PT	Configurações do Cliente
 	SE	Spelarinställningar
 
@@ -3944,6 +4148,7 @@ ADDITIONAL_PLAYER_SETTINGS
 	FI	Lisää soittimen asetuksia
 	FR	Réglages supplémentaires du lecteur
 	NL	Extra Speler instellingen
+	NO	Ekstra spiller instillinger
 	PT	Configurações Avançadas do Cliente
 	SE	Extra inställningar
 
@@ -3952,6 +4157,7 @@ PLAYERIR_SETTINGS
 	EN	IR Settings
 	FR	Réglages infra-rouge
 	NL	IR instellingen
+	NO	IR instillinger
 	PT	Configurações de Infravermelhos
 	SE	IR-inställningar
 
@@ -3963,6 +4169,7 @@ SERVER_SETTINGS
 	FI	Palvelimen asetukset
 	FR	Réglages du serveur
 	NL	Server instellingen
+	NO	Server instillinger
 	PT	Configurações do Servidor
 	SE	Serverinställningar
 
@@ -3974,6 +4181,7 @@ SLIM_SERVER_SETTINGS
 	FI	Slim palvelimen asetukset
 	FR	Réglages du serveur Slim
 	NL	Slim Server instellingen
+	NO	Slim Server instillinger
 	PT	Configurações do Servidor Slim
 	SE	Inställningar för Slim-Server
 
@@ -3984,6 +4192,7 @@ ADDITIONAL_SERVER_SETTINGS
 	FI	Lisää palvelimen asetuksia
 	FR	Réglages supplémentaires du serveur
 	NL	Extra Server instellingen
+	NO	Ekstra Server instillinger
 	PT	Configurações Avançadas do Servidor
 	SE	Extra inställningar
 
@@ -3992,6 +4201,7 @@ INTERFACE_SETTINGS
 	EN	Interface
 	FR	Interface
 	NL	Interface
+	NO	Grensesnitt
 	PT	Interface
 	SE	Gränssnitt
 
@@ -4000,6 +4210,7 @@ BEHAVIOR_SETTINGS
 	EN	Behavior
 	FR	Comportement
 	NL	Gedrag
+	NO	Oppførsel
 	PT	Comportamento
 	SE	Beteende
 
@@ -4008,6 +4219,7 @@ FORMATS_SETTINGS
 	EN	File Types
 	FR	Types de fichier
 	NL	Bestandsformaten
+	NO	Filtyper
 	PT	Tipos de ficheiros
 
 SECURITY_SETTINGS
@@ -4015,6 +4227,7 @@ SECURITY_SETTINGS
 	EN	Security
 	FR	Sécurité
 	NL	Beveiliging
+	NO	Sikkerhet
 	PT	Segurança
 	SE	Säkerhet
 
@@ -4023,6 +4236,7 @@ PERFORMANCE_SETTINGS
 	EN	Performance
 	FR	Performance
 	NL	Performantie
+	NO	Ytelse
 	PT	Performance
 	SE	Prestanda
 
@@ -4031,6 +4245,7 @@ FORMATTING_SETTINGS
 	EN	Formatting
 	FR	Format
 	NL	Formatering
+	NO	Formatering
 	PT	Formatos
 	SE	Format
 
@@ -4039,6 +4254,7 @@ NETWORK_SETTINGS
 	EN	Network
 	FR	Réseau
 	NL	Netwerk
+	NO	Nettverk
 	PT	Rede
 	SE	Nätverk
 
@@ -4052,6 +4268,7 @@ DEBUGGING_SETTINGS
 	EN	Debugging
 	FR	Mise au point
 	NL	Debuggen
+	NO	Feilsøking
 	PT	Depuramento
 	SE	Felsökning
 
@@ -4063,6 +4280,7 @@ CHANGE
 	FI	Vaihda
 	FR	Modifier
 	NL	Veranderen
+	NO	Endre
 	PT	Mudar
 	SE	Ändra
 
@@ -4107,6 +4325,7 @@ CHOOSE_A_NAME
 	FI	Soittimen nimi:
 	FR	Nom du lecteur :
 	NL	De naam van deze speler:
+	NO	Spillernavn:
 	PT	Escolha um nome para este cliente
 	SE	Namn:
 
@@ -4151,6 +4370,7 @@ BRIGHTNESS_DARK
 	FI	Himmein
 	FR	Noir
 	NL	Donker
+	NO	Mørk
 	PT	Apagado
 	SE	Mörk
 
@@ -4162,6 +4382,7 @@ BRIGHTNESS_DIM
 	FI	Himmeä
 	FR	Sombre
 	NL	Gedimd
+	NO	Svak
 	PT	Escuro
 	SE	Svag
 
@@ -4173,6 +4394,7 @@ BRIGHTNESS_BRIGHT
 	FI	Kirkas
 	FR	Brillant
 	NL	Helder
+	NO	Lys
 	PT	Ligado
 	SE	Stark
 
@@ -4184,6 +4406,7 @@ BRIGHTNESS_BRIGHTER
 	FI	Kirkkaampi
 	FR	Très brillant
 	NL	Helderder
+	NO	Lysere
 	PT	Brilhante
 	SE	Starkare
 
@@ -4195,6 +4418,7 @@ BRIGHTNESS_BRIGHTEST
 	FI	Kirkkain
 	FR	Luminosité maximum
 	NL	Helderst
+	NO	Lysest
 	PT	Muito Brilhante
 	SE	Starkast
 
@@ -4217,6 +4441,7 @@ BLANK
 	FI	ei mitään
 	FR	Rien
 	NL	Niets
+	NO	Ingen
 	PT	Nada
 	SE	Inget
 
@@ -4228,6 +4453,7 @@ ELAPSED
 	FI	Kulunut aika
 	FR	Le temps écoulé
 	NL	Verlopen tijd
+	NO	Avspilt tid
 	PT	Tempo Tocado
 	SE	Förfluten tid
 
@@ -4239,6 +4465,7 @@ PROGRESS_BAR
 	FI	Graafinen esitys
 	FR	Un graphique de progression
 	NL	Voortgangsindicator
+	NO	Tidssøyle
 	PT	Barra de Progresso
 	SE	Tidsstapel
 
@@ -4250,6 +4477,7 @@ REMAINING
 	FI	Jäljellä oleva aika
 	FR	Le temps restant
 	NL	Resterende tijd
+	NO	Gjenværende tid
 	PT	Tempo Restante
 	SE	Återstående tid
 
@@ -4261,6 +4489,7 @@ AND
 	FI	ja
 	FR	et
 	NL	en
+	NO	og
 	PT	e
 	SE	och
 
@@ -4272,6 +4501,7 @@ FORGET_PLAYER
 	FI	Unohda soitin
 	FR	Retirer le lecteur
 	NL	Vergeet Speler
+	NO	Glem spiller
 	PT	Esquecer cliente
 	SE	Glöm spelare
 
@@ -4347,6 +4577,7 @@ SECONDS
 	FI	sekunnit
 	FR	secondes
 	NL	seconden
+	NO	sekunder
 	PT	segungos
 	SE	sekunder
 
@@ -4358,6 +4589,7 @@ MINUTES
 	FI	minuutit
 	FR	minutes
 	NL	minuten
+	NO	minutter
 	PT	minutos
 	SE	minuter
 
@@ -4369,6 +4601,7 @@ CURRENT_WEB_SKIN
 	FI	WWW-ulkoasu:
 	FR	Interface web courante :
 	NL	Huidige Web Skin:
+	NO	Aktivt webutseende:
 	PT	Tema Web actual
 	SE	Aktuellt webbutseende:
 
@@ -4385,6 +4618,7 @@ SHOW_PLUGINS
 	EN	Show Plugins
 	FR	Afficher le menu Plugins
 	NL	Toon Plugins
+	NO	Vis Plugins
 	PT	Mostrar Extras
 	SE	Visa tillägg
 
@@ -4393,6 +4627,7 @@ NO_PLUGINS
 	EN	No Plugins
 	FR	Ne pas afficher le menu Plugins
 	NL	Geen Plugins
+	NO	Ingen Plugins
 	PT	Sem Extras
 	SE	Visa inte tillägg
 
@@ -4404,6 +4639,7 @@ SLIMP3_MUSIC_PLAYER
 	FI	SLIMP3 soitin
 	FR	Lecteur de musique SLIMP3
 	NL	SLIMP3 Muziek Speler
+	NO	SLIMP3 Musikk Spiller
 	PT	Leitor de Música SLIMP3
 	SE	SLIMP3 Musikspelare
 
@@ -4415,6 +4651,7 @@ SQUEEZEBOX_MUSIC_PLAYER
 	FI	Squeezebox soitin
 	FR	Lecteur de musique Squeezebox
 	NL	Squeezebox Muziek Speler
+	NO	Squeezebox Musik Player
 	PT	Leitor de Música Squeezebox
 	SE	Squeezebog Musikspelare
 
@@ -4426,6 +4663,7 @@ BY
 	FI	by
 	FR	par
 	NL	door
+	NO	av
 	PT	de
 	SE	av
 
@@ -4437,6 +4675,7 @@ FROM
 	FI	from
 	FR	de
 	NL	van
+	NO	fra
 	PT	em
 	SE	från
 
@@ -4448,6 +4687,7 @@ DELETE
 	FI	Poista
 	FR	Supprimer
 	NL	Verwijderen
+	NO	Fjern
 	PT	Remover
 	SE	Ta bort
 
@@ -4500,6 +4740,7 @@ CLICK_HERE
 	FI	Paina tästä
 	FR	Cliquer ici
 	NL	Klik hier
+	NO	Trykk her
 	PT	Clique aqui
 	SE	Klicka här
 
@@ -4522,6 +4763,7 @@ MUTED
 	FI	Hiljennetty
 	FR	Silence
 	NL	Gedempt
+	NO	Stille
 	PT	Silencioso
 	SE	Tyst
 
@@ -4533,6 +4775,7 @@ LCMUTED
 	FI	hiljennetty
 	FR	silence
 	NL	gedempt
+	NO	stille
 	PT	silencioso
 	SE	tyst
 
@@ -4544,6 +4787,7 @@ SEARCH
 	FI	Hae musiikkia
 	FR	Rechercher
 	NL	Zoek Muziek
+	NO	Søk Musikk
 	PT	Procurar Música
 	SE	Sök Musik
 
@@ -4555,6 +4799,7 @@ SEARCHFOR
 	FI	Hae
 	FR	Rechercher
 	NL	Zoek naar
+	NO	Søk etter
 	PT	Procurar por
 	SE	Sök efter
 
@@ -4566,6 +4811,7 @@ SEARCH_FOR_ARTISTS
 	FI	Hae esittäjiä
 	FR	Chercher des artistes
 	NL	Zoek naar Artiesten
+	NO	Søk på Artist
 	PT	Procurar por Artistas
 	SE	Sök Artist
 
@@ -4577,6 +4823,7 @@ SEARCH_FOR_ALBUMS
 	FI	Hae levyjä
 	FR	Chercher des albums
 	NL	Zoek naar Albums
+	NO	Søk på Album
 	PT	Procurar por Álbum
 	SE	Sök Album
 
@@ -4588,6 +4835,7 @@ SEARCH_FOR_SONGS
 	FI	Hae kappaleita
 	FR	Chercher des morceaux
 	NL	Zoek naar Liedjes
+	NO	Søk på Sang
 	PT	Procurar por Música
 	SE	Sök Låt
 
@@ -4599,6 +4847,7 @@ SEARCHING
 	FI	Hakee...
 	FR	Recherche en cours...
 	NL	Zoeken...
+	NO	Søker...
 	PT	À procura...
 	SE	Söker...
 
@@ -4610,6 +4859,7 @@ FOUND
 	FI	löytyi
 	FR	trouvé
 	NL	gevonden
+	NO	funnet
 	PT	encontrado
 	SE	hittad
 
@@ -4621,6 +4871,7 @@ ARTISTSMATCHING
 	FI	Esittäjät, jotka vastaavat hakua
 	FR	Artistes trouvés
 	NL	Artiesten die passen bij
+	NO	Artister som traff
 	PT	Artistas encontrados
 	SE	Artister som matchar
 
@@ -4632,6 +4883,7 @@ ALBUMSMATCHING
 	FI	Levyt, jotka vastaavat hakua
 	FR	Albums trouvés
 	NL	Albums die passen bij
+	NO	Album som traff
 	PT	Albums encontrados
 	SE	Album som matchar
 
@@ -4643,6 +4895,7 @@ SONGSMATCHING
 	FI	Kappaleet, jotka vastaavat hakua
 	FR	Morceaux trouvés
 	NL	Liedjes die passen bij
+	NO	Sanger som traff
 	PT	Músicas encontradas
 	SE	Låtar som matchar
 
@@ -4685,6 +4938,7 @@ MOODLOGIC_MIX
 	EN	Mix
 	FR	Mix
 	NL	Mix
+	NO	Mix
 	PT	Mixtura
 
 MOODLOGIC_MIXING
@@ -4706,6 +4960,7 @@ MOODLOGIC_MOOD_0
 	EN	Surprise
 	FR	Surprise
 	NL	Verrassing
+	NO	Overraskelse
 	PT	Surpresa
 
 MOODLOGIC_MOOD_1
@@ -4713,6 +4968,7 @@ MOODLOGIC_MOOD_1
 	EN	Get up
 	FR	Debout
 	NL	Opstaan
+	NO	Våkn opp
 	PT	Acordar
 
 MOODLOGIC_MOOD_2
@@ -4720,6 +4976,7 @@ MOODLOGIC_MOOD_2
 	EN	Easy
 	FR	Easy
 	NL	Easy
+	NO	Lett
 	PT	Fácil
 
 MOODLOGIC_MOOD_3
@@ -4727,6 +4984,7 @@ MOODLOGIC_MOOD_3
 	EN	Relax
 	FR	Relax
 	NL	Relax
+	NO	Avslappet
 	PT	Relax
 
 MOODLOGIC_MOOD_4
@@ -4734,6 +4992,7 @@ MOODLOGIC_MOOD_4
 	EN	Blue
 	FR	Blue
 	NL	Blue
+	NO	Blå
 	PT	Azul
 
 MOODLOGIC_MOOD_5
@@ -4758,6 +5017,7 @@ HELP
 	FI	Ohje
 	FR	Aide
 	NL	Hulp
+	NO	Hjelp
 	PT	Ajuda
 	SE	Hjälp
 
@@ -4769,6 +5029,7 @@ HELP_REMOTE
 	FI	Kauko-ohjaimen ohje
 	FR	Documentation de la télécommande
 	NL	Handleiding Afstandsbediening
+	NO	Hjelp for fjernkontrollen
 	PT	Referência do Controlo Remoto
 	SE	Hjälp med Fjärrkontrollen
 
@@ -4780,6 +5041,7 @@ TECHNICAL_INFORMATION
 	FI	Tekninen tieto
 	FR	Informations techniques
 	NL	Technische Informatie
+	NO	Teknisk informasjon
 	PT	Informação Técnica
 	SE	Teknisk information
 
@@ -4791,6 +5053,7 @@ GETTING_STARTED
 	FI	Alkusanat
 	FR	Guide de démarrage
 	NL	De beginselen
+	NO	Komme igang
 	PT	Ajuda Inicial
 	SE	Komma igång
 
@@ -4800,6 +5063,7 @@ FAQ
 	EN	Frequently Asked Questions
 	FR	Foire Aux Questions
 	NL	Veel Gestelde Vragen
+	NO	Ofte Stilte Spørsmål (FAQ)
 	PT	Perguntas Feitas Frequentemente (FAQ)
 	SE	FAQ / Ofta förekommande frågor
 
@@ -4808,12 +5072,14 @@ RADIO
 	EN	Internet Radio and Playlist Files
 	FR	Radios Internet et playlists
 	NL	Internet Radio en Playlist Bestanden
+	NO	Internet Radio og Spillelister
 	PT	Rádio via Internet e Ficheiros de Playlist
 	SE	Internetradio och spellistor
 
 REMOTE_STREAMING
 	EN	Remote Streaming
 	FR	Streaming à distance
+	NO	Spiller instillinger
 	PT	Streaming à distância
 
 PLAYER_SETUP
@@ -4835,6 +5101,7 @@ USING_REMOTE
 	FI	Slim Devices kaukosäätimen käyttö
 	FR	Utilisation de la télécommande
 	NL	De Slim Devices Afstandsbediening gebruiken
+	NO	Hvordan bruke Slim Devices fjernkontroll
 	PT	Como usar o Controlo Remoto
 	SE	Att använda fjärrkontrollen för Slim Devices
 
@@ -4843,5 +5110,6 @@ STATISTICS
 	EN	Statistics
 	FR	Statistiques
 	NL	Statistieken
+	NO	Statistikk
 	PT	Estatísticas
 
