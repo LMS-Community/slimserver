@@ -16,7 +16,7 @@ sub extract_path
 {
     my($class, $path) = @_;
     $path =~ s,\\,/,g;
-    $path =~ s,$[^\\]+//+,/,g;
+    $path =~ s,$[^/]+(//+),/,g;
     $path =~ s,(/\.)+/,/,g;
     $path;
 }
@@ -25,6 +25,7 @@ sub file
 {
     my $class = shift;
     my $uri = shift;
+
     my $auth = $uri->authority;
     my $rel; # is filename relative to drive specified in authority
     if (defined $auth) {
