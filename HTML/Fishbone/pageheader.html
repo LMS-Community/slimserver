@@ -111,7 +111,7 @@
 	<div class="menu1" width="100%">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13">
 				<td width="33%" height="13" align="center">
-					<nobr><a class="menu1" onload="style.fontWeight='bold'" href="[% webroot %]home.html?player=[% player | uri %]" target="header" onclick="selectLink(this)">[% "HOME" | string %]</nobr>
+					<nobr><a class="menu1" onload="style.fontWeight='bold'" href="javascript:parent.browser.location = getHomeCookie('SlimServer-Browserpage')+'&player=[% player | uri %]';" target="browser" onclick="selectLink(this);">[% "HOME" | string %]</nobr>
 				</td>
 				<td>
 					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
