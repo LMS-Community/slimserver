@@ -109,11 +109,8 @@ add.*					= add
 
 [off]
 # When the player is powered off, most buttons are dead
+play.single				= modefunction_off->play
 add.*					= dead
-arrow_down				= dead
-arrow_left				= dead
-arrow_up				= dead
-arrow_right				= dead
 arrow_right.*			= dead
 arrow_left.*			= dead
 arrow_down.*			= dead
@@ -146,7 +143,6 @@ playdisp_pbrt			= dead
 playdisp_rt				= dead
 repeat					= dead
 repeat_toggle			= dead
-repeat.*				= dead
 repeat_all				= dead
 repeat_off				= dead
 repeat_one				= dead
@@ -157,16 +153,10 @@ shuffle.*				= dead
 shuffle_off				= dead
 shuffle_on				= dead
 search					= dead
-search.*				= dead
 sleep					= dead
-sleep.*					= dead
 stop					= dead
 voldown.*				= dead
 volup.*					= dead
-voldown					= dead
-volume_up				= dead
-volume_down				= dead
-volup					= dead
 0						= dead
 1						= dead
 2						= dead
@@ -177,16 +167,12 @@ volup					= dead
 7						= dead
 8						= dead
 9						= dead
-0.*						= dead
-1.*						= dead
-2.*						= dead
-3.*						= dead
-4.*						= dead
-5.*						= dead
-6.*						= dead
-7.*						= dead
-8.*						= dead
-9.*						= dead
+pitchdown.*				= dead
+pitchup.*				= dead
+bassdown.*				= dead
+bassup.*				= dead
+trebledown.*			= dead
+trebleup.*				= dead
 
 [block]
 # When the player is blocked during a long operations, most buttons are dead

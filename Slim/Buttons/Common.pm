@@ -89,6 +89,9 @@ sub addSaver {
 	$::d_plugins && msg("Registering screensaver $displayName\n");
 
 	addMode($name, $buttonFunctions, $setModeFunction, $leaveModeFunction);
+	if ($name =~ s/^SCREENSAVER\./OFF\./) {
+		addMode($name, $buttonFunctions, $setModeFunction, $leaveModeFunction);
+	}
 }
 
 sub hash_of_savers {

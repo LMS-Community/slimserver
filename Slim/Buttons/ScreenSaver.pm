@@ -111,15 +111,20 @@ sub screenSaver {
 			}
 			$client->update();
 		}
-	} elsif (!$client->power() && $mode ne Slim::Utils::Prefs::clientGet($client,'offsaver')) {
+	} elsif (!$client->power()) {
 		$saver = Slim::Utils::Prefs::clientGet($client,'offsaver');
-		if (Slim::Buttons::Common::validMode($saver)) {
-			Slim::Buttons::Common::pushMode($client, $saver) unless $mode eq $saver;
+		$saver =~ s/^SCREENSAVER\./OFF\./;
+		if ($mode ne $saver) {
+			if (Slim::Buttons::Common::validMode($saver)) {
+				Slim::Buttons::Common::pushMode($client, $saver);
+			} else {
+				$::d_plugins && msg("Mode ".$saver." not found, using default\n");
+				Slim::Buttons::Common::setMode($client,'off') unless $mode eq 'off';
+			}
+			$client->update();
 		} else {
-			$::d_plugins && msg("Mode ".$saver." not found, using default\n");
-			Slim::Buttons::Common::setMode($client,'off') unless $mode eq 'off';
+			$client->scrollBottom();
 		}
-		$client->update();
 	} else {
 		# try to scroll the bottom, if necessary
 		$client->scrollBottom();
