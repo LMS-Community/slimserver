@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.11 2003/09/03 20:08:06 dean Exp $
+# $Id: Command.pm,v 1.12 2003/09/06 09:55:37 fm Exp $
 
 # Slim Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -476,7 +476,7 @@ sub execute {
 					Slim::Utils::Prefs::clientSet($client, "mute",1);
 					$fade = -0.3125;
 				}
-				$client->fade_volume($fade, \&$client->mute, [$client]);
+				$client->fade_volume($fade, "mute", [$client]);
 				if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $fade, "mute",undef);};
 			} elsif ($p1 eq "balance") {
 				# unsupported yet
@@ -573,7 +573,7 @@ sub syncFunction {
 		foreach my $eachclient (@buddies) {
 			if (Slim::Utils::Prefs::clientGet($eachclient,'syncVolume')) {
 				if ($setting eq "mute") {
-					$eachclient->fade_volume($newval, \&$eachclient->mute, [$eachclient]);
+					$eachclient->fade_volume($newval, "mute", [$eachclient]);
 				} else {
 					Slim::Utils::Prefs::clientSet($eachclient, $setting, $newval);
 					&$controlRef($eachclient, $newval);
