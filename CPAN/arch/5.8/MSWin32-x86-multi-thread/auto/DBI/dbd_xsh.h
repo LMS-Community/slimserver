@@ -1,4 +1,4 @@
-/* @(#)$Id: dbd_xsh.h,v 1.1 2004/08/13 20:19:36 vidur Exp $
+/* @(#)$Id: dbd_xsh.h,v 1.2 2004/12/18 00:37:36 dsully Exp $
  *
  * Copyright 2000-2002 Tim Bunce
  * Copyright 2002      Jonathan Leffler

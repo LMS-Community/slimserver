@@ -23,8 +23,15 @@ use strict;
 use Carp;
 require Symbol;
 
+require utf8;
+*utf8::is_utf8 = sub { # hack for perl 5.6
+    require bytes;
+    return unless defined $_[0];
+    return !(length($_[0]) == bytes::length($_[0]))
+} unless defined &utf8::is_utf8;
+
 $DBI::PurePerl = $ENV{DBI_PUREPERL} || 1;
-$DBI::PurePerl::VERSION = sprintf "%d.%02d", '$Revision: 1.2 $ ' =~ /(\d+)\.(\d+)/;
+$DBI::PurePerl::VERSION = sprintf "%d.%02d", '$Revision: 1.3 $ ' =~ /(\d+)\.(\d+)/;
 $DBI::neat_maxlen ||= 400;
 
 $DBI::tfh = Symbol::gensym();
@@ -521,7 +528,7 @@ sub hash {
     elsif ($type == 1) {	# Fowler/Noll/Vo hash
         # see http://www.isthe.com/chongo/tech/comp/fnv/
         require Math::BigInt;   # feel free to reimplement w/o BigInt!
-	my $version = $Math::BigInt::VERSION || 0;
+	(my $version = $Math::BigInt::VERSION || 0) =~ s/_.*//; # eg "1.70_01"
 	if ($version >= 1.56) {
 	    $hash = Math::BigInt->new(0x811c9dc5);
 	    for my $uchar (unpack ("C*", $key)) {
@@ -551,16 +558,18 @@ sub looks_like_number {
     }
     return (@_ >1) ? @new : $new[0];
 }
+
 sub neat {
     my $v = shift;
     return "undef" unless defined $v;
     return $v if (($v & ~ $v) eq "0"); # is SvNIOK
+    my $quote = utf8::is_utf8($v) ? '"' : "'";
     my $maxlen = shift || $DBI::neat_maxlen;
     if ($maxlen && $maxlen < length($v) + 2) {
 	$v = substr($v,0,$maxlen-5);
 	$v .= '...';
     }
-    return "'$v'";
+    return "$quote$v$quote";
 }
 
 package
@@ -575,6 +584,13 @@ sub FETCH {
 
 package
 	DBD::_::common;
+
+sub swap_inner_handle {
+    my ($h1, $h2) = @_;
+    # can't make this work till we can get the outer handle from the inner one
+    # probably via a WeakRef
+    return $h1->set_err(1, "swap_inner_handle not currently supported by DBI::PurePerl");
+}
 
 sub trace {	# XXX should set per-handle level, not global
     my ($h, $level, $file) = @_;
@@ -823,6 +839,7 @@ sub rows {
 1;
 __END__
 
+=pod
 
 =head1 NAME
 
@@ -925,7 +942,7 @@ is defined.  To enable total tracing you can set the DBI_TRACE
 environment variable as usual.  But to enable individual handle
 tracing using the trace() method you also need to set the DBI_TRACE
 environment variable, but set it to 0.
-
+ 
 =head2 Parameter Usage Checking
 
 The DBI does some basic parameter count checking on method calls.

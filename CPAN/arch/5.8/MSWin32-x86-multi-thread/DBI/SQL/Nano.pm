@@ -22,10 +22,9 @@ use warnings;
 require DBI; # for looks_like_number()
 use vars qw( $VERSION $versions );
 BEGIN {
-    $VERSION = '0.01';
+    $VERSION = '0.03';
     $versions->{nano_version} = $VERSION;
-    eval { require "SQL/Statement.pm" } unless $ENV{DBI_SQL_NANO};
-    if ($@ or $ENV{DBI_SQL_NANO}) {
+    if ($ENV{DBI_SQL_NANO} || !eval { require "SQL/Statement.pm" }) {
         @DBI::SQL::Nano::Statement::ISA = qw(DBI::SQL::Nano::Statement_);
         @DBI::SQL::Nano::Table::ISA     = qw(DBI::SQL::Nano::Table_);
     }
@@ -52,13 +51,14 @@ sub new {
 #####################################################################
 sub prepare {
     my($self,$sql) = @_;
+    $sql =~ s/\s+$//;
     for ($sql) {
         /^\s*CREATE\s+TABLE\s+(.*?)\s*\((.+)\)\s*$/is
             &&do{
                 $self->{command}      = 'CREATE';
                 $self->{table_name}   = $1;
                 $self->{column_names} = parse_coldef_list($2) if $2;
-                die "Can't find columns!" unless $self->{column_names};
+                die "Can't find columns\n" unless $self->{column_names};
             };
         /^\s*DROP\s+TABLE\s+(IF\s+EXISTS\s+)?(.*?)\s*$/is
             &&do{
@@ -70,7 +70,7 @@ sub prepare {
             &&do{
                 $self->{command}      = 'SELECT';
                 $self->{column_names} = parse_comma_list($1) if $1;
-                die "Can't find columns!\n" unless $self->{column_names};
+                die "Can't find columns\n" unless $self->{column_names};
                 $self->{table_name}   = $2;
                 if ( my $clauses = $4) {
 		    if ($clauses =~ /^(.*)\s+ORDER\s+BY\s+(.*)$/is) {
@@ -87,15 +87,15 @@ sub prepare {
                 $self->{table_name}   = $1;
                 $self->{column_names} = parse_comma_list($2) if $2;
                 $self->{values}       = $self->parse_values_list($4) if $4;
-                die "Can't parse values!\n" unless $self->{values};
+                die "Can't parse values\n" unless $self->{values};
             };
-        /DELETE\s+FROM\s+(\S+)((.*))?/is
+        /^\s*DELETE\s+FROM\s+(\S+)((.*))?/is
             &&do{
                 $self->{command}      = 'DELETE';
                 $self->{table_name}   = $1;
                 $self->{where_clause} = $self->parse_where_clause($3) if $3;
             };
-        /UPDATE\s+(\S+)\s+SET\s+(.+)(\s+WHERE\s+.+)/is
+        /^\s*UPDATE\s+(\S+)\s+SET\s+(.+)(\s+WHERE\s+.+)/is
             &&do{
                 $self->{command}      = 'UPDATE';
                 $self->{table_name}   = $1;
@@ -103,19 +103,19 @@ sub prepare {
                 $self->{where_clause} = $self->parse_where_clause($3) if $3;
             };
     }
-    die " Couldn't parse!\n  <$sql>\n" unless $self->{command}
-                                       and $self->{table_name};
+    die "Couldn't parse\n"
+	unless $self->{command} and $self->{table_name};
     return $self;
 }
 sub parse_order_clause {
     my($self,$str) = @_;
     my @clause = split /\s+/,$str;
     return { $clause[0] => 'ASC' } if @clause == 1;
-    die "Bad ORDER BY clause '$str'!\n" if @clause > 2;
+    die "Bad ORDER BY clause '$str'\n" if @clause > 2;
     $clause[1] ||= '';
     return { $clause[0] => uc $clause[1] } if $clause[1] =~ /^ASC$/i
                                            or $clause[1] =~ /^DESC$/i;
-    die "Bad ORDER BY clause '$clause[1]'!\n";
+    die "Bad ORDER BY clause '$clause[1]'\n";
 }
 sub parse_coldef_list  {                # check column definitions
     my @col_defs;
@@ -125,7 +125,7 @@ sub parse_coldef_list  {                # check column definitions
             $col = $1;                  # just checks if it exists
 	}
         else {
- 	    die "No column definition for '$_'!\n";
+ 	    die "No column definition for '$_'\n";
 	}
         push @col_defs,$col;
     }
@@ -146,13 +146,15 @@ sub parse_set_clause {
         push @{$self->{column_names}}, $col_name;
         push @{$self->{values}}, $self->parse_value($value);
     }
-    die "Can't parse set clause!\n"
+    die "Can't parse set clause\n"
         unless $self->{column_names}
            and $self->{values};
 }
 sub parse_value {
     my($self,$str) = @_;
     return undef unless defined $str;
+    $str =~ s/\s+$//;
+    $str =~ s/^\s+//;
     if ($str =~ /^\?$/) {
         push @{$self->{params}},'?';
         return { value=>'?'  ,type=> 'placeholder' };
@@ -165,16 +167,16 @@ sub parse_value {
 sub parse_where_clause {
     my($self,$str) = @_;
     $str =~ s/\s+$//;
-    if ($str =~ /^\s+WHERE\s+(.*)/i) {
+    if ($str =~ /^\s*WHERE\s+(.*)/i) {
         $str = $1;
     }
     else {
-        die "Couldn't parse WHERE clause!!\n";
+        die "Couldn't find WHERE clause in '$str'\n";
     }
     my($neg) = $str =~ s/^\s*(NOT)\s+//is;
     my $opexp = '=|<>|<=|>=|<|>|LIKE|CLIKE|IS';
-    my($val1,$op,$val2) = $str =~ /(\S+?)\s*($opexp)\s*(\S+)/is;
-    die "Couldn't parse WHERE clause!\n"
+    my($val1,$op,$val2) = $str =~ /^(.+?)\s*($opexp)\s*(.+)\s*$/iso;
+    die "Couldn't parse WHERE expression '$str'\n"
        unless defined $val1 and defined $op and defined $val2;
     return {
         arg1 => $self->parse_value($val1),
@@ -192,7 +194,7 @@ sub execute {
     my $num_placeholders = $self->params;
     my $num_params       = scalar @$params || 0;
     die "Number of params '$num_params' does not match "
-      . "number of placeholders '$num_placeholders'!\n"
+      . "number of placeholders '$num_placeholders'\n"
       unless $num_placeholders == $num_params;
     if (scalar @$params) {
         for my $i(0..$#{$self->{values}}) {
@@ -324,7 +326,7 @@ sub SELECT ($$$) {
                     $result = defined $d ? -1 : 0;
                 } elsif (!defined($d)) {
                     $result = 1;
-	        } elsif ( DBI::looks_like_number($c,$d) ) {
+	        } elsif ( DBI::looks_like_number($c) && DBI::looks_like_number($d) ) {
                     $result = ($c <=> $d);
                 } else {
   		    if ($self->{"case_fold"}) {
@@ -484,7 +486,7 @@ sub is_matched {
     }
     if ($op eq 'LIKE' )  { return $val1 =~ /^$val2$/s;  }
     if ($op eq 'CLIKE' ) { return $val1 =~ /^$val2$/si; }
-    if ( DBI::looks_like_number($val1,$val2) ) {
+    if ( DBI::looks_like_number($val1) && DBI::looks_like_number($val2) ) {
         if ($op eq '<'  ) { return $val1 <  $val2; }
         if ($op eq '>'  ) { return $val1 >  $val2; }
         if ($op eq '='  ) { return $val1 == $val2; }
@@ -522,7 +524,7 @@ sub open_tables {
     my $table;
     eval{$table = $self->open_table($data,$table_name,$createMode,$lockMode)};
     die $@ if $@;
-    die "Couldn't open table '$table_name'!" unless $table;
+    die "Couldn't open table '$table_name'" unless $table;
     if (!$self->{column_names} or $self->{column_names}->[0] eq '*') {
         $self->{column_names} = $table->{col_names};
     }
@@ -569,7 +571,7 @@ DBI::SQL::Nano - a very tiny SQL engine
  use Data::Dumper;
  my $stmt = DBI::SQL::Nano::Statement->new(
      "SELECT bar,baz FROM foo WHERE qux = 1"
- ) or die "Couldn't parse!";
+ ) or die "Couldn't parse";
  print Dumper $stmt;
 
 =head1 DESCRIPTION

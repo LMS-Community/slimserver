@@ -1,4 +1,4 @@
-/* $Id: DBIXS.h,v 1.1 2004/08/13 20:19:32 vidur Exp $
+/* $Id: DBIXS.h,v 1.2 2004/12/18 00:37:36 dsully Exp $
  *
  * Copyright (c) 1994-2002  Tim Bunce  Ireland
  *

@@ -1,4 +1,4 @@
-# $Id: DBI.pm,v 1.2 2004/12/13 07:31:59 vidur Exp $
+# $Id: DBI.pm,v 1.3 2004/12/18 00:37:25 dsully Exp $
 # vim: ts=8:sw=4
 #
 # Copyright (c) 1994-2004  Tim Bunce  Ireland
@@ -9,7 +9,7 @@
 require 5.006_00;
 
 BEGIN {
-$DBI::VERSION = "1.43"; # ==> ALSO update the version in the pod text below!
+$DBI::VERSION = "1.46"; # ==> ALSO update the version in the pod text below!
 }
 
 =head1 NAME
@@ -32,8 +32,8 @@ DBI - Database independent interface for Perl
   $ary_ref  = $dbh->selectall_arrayref($statement);
   $hash_ref = $dbh->selectall_hashref($statement, $key_field);
 
-  $ary_ref = $dbh->selectcol_arrayref($statement);
-  $ary_ref = $dbh->selectcol_arrayref($statement, \%attr);
+  $ary_ref  = $dbh->selectcol_arrayref($statement);
+  $ary_ref  = $dbh->selectcol_arrayref($statement, \%attr);
 
   @row_ary  = $dbh->selectrow_array($statement);
   $ary_ref  = $dbh->selectrow_arrayref($statement);
@@ -48,10 +48,7 @@ DBI - Database independent interface for Perl
 
   $rv = $sth->execute;
   $rv = $sth->execute(@bind_values);
-
-  $rc = $sth->bind_param_array($p_num, $bind_values, \%attr);
-  $rv = $sth->execute_array(\%attr);
-  $rv = $sth->execute_array(\%attr, @bind_values);
+  $rv = $sth->execute_array(\%attr, ...);
 
   $rc = $sth->bind_col($col_num, \$col_variable);
   $rc = $sth->bind_columns(@list_of_refs_to_vars_to_bind);
@@ -91,7 +88,7 @@ on subscribing and using the list by emailing I<dbi-users-help@perl.org>.
 (To help you make the best use of the dbi-users mailing list,
 and any other lists or forums you may use, I I<strongly>
 recommend that you read "How To Ask Questions The Smart Way"
-by Eric Raymond: L<http://www.catb.org/~esr/faqs/smart-questions.html>.)
+by Eric Raymond: L<http://www.catb.org/~esr/faqs/smart-questions.html>)
 
 The DBI home page at L<http://dbi.perl.org/> is always worth a visit
 and includes an FAQ and links to other resources.
@@ -101,7 +98,7 @@ archives and read the DBI FAQ. The archives are listed
 at the end of this document and on the DBI home page.
 An FAQ is installed as a L<DBI::FAQ> module so
 you can read it by executing C<perldoc DBI::FAQ>.
-However the DBI::FAQ module is currently (2003) outdated relative
+However the DBI::FAQ module is currently (2004) outdated relative
 to the online FAQ on the DBI home page.
 
 This document often uses terms like I<references>, I<objects>,
@@ -118,7 +115,7 @@ Tim he's very likely to just forward it to the mailing list.
 
 =head2 NOTES
 
-This is the DBI specification that corresponds to the DBI version 1.43.
+This is the DBI specification that corresponds to the DBI version 1.46.
 
 The DBI is evolving at a steady pace, so it's good to check that
 you have the latest copy.
@@ -138,9 +135,9 @@ text with the version number of the DBI release they first appeared in.
 
 Extensions to the DBI API often use the C<DBIx::*> namespace.
 See L</Naming Conventions and Name Space>. DBI extension modules
-can be found at L<"http://search.cpan.org/search?mode=module&query=DBIx%3A%3A">.
+can be found at L<http://search.cpan.org/search?mode=module&query=DBIx>.
 And all modules related to the DBI can be found at
-L<"http://search.cpan.org/search?query=DBI&mode=all">.
+L<http://search.cpan.org/search?query=DBI&mode=all>.
 
 =cut
 
@@ -148,8 +145,6 @@ L<"http://search.cpan.org/search?query=DBI&mode=all">.
 
 
 package DBI;
-
-my $Revision = substr(q$Revision: 1.2 $, 10);
 
 use Carp();
 use DynaLoader ();
@@ -229,7 +224,8 @@ BEGIN {
 	 SQL_CURSOR_TYPE_DEFAULT
    ) ], # for ODBC cursor types
    utils     => [ qw(
-	neat neat_list dump_results looks_like_number
+	neat neat_list $neat_maxlen dump_results looks_like_number
+	data_string_diff data_string_desc data_diff
    ) ],
    profile   => [ qw(
 	dbi_profile dbi_profile_merge dbi_time
@@ -365,6 +361,7 @@ my $keeperr = { O=>0x0004 };
 	set_err		=> { U =>[3,6,'$err, $errmsg [, $state, $method, $rv]'], O=>0x0010 },
 	trace		=> { U =>[1,3,'[$trace_level, [$filename]]'],	O=>0x0004 },
 	trace_msg	=> { U =>[2,3,'$message_text [, $min_level ]' ],	O=>0x0004, T=>8 },
+	swap_inner_handle => { U =>[2,3,'$h [, $allow_reparent ]'] },
     },
     dr => {		# Database Driver Interface
 	'connect'  =>	{ U =>[1,5,'[$db [,$user [,$passwd [,\%attr]]]]'], H=>3 },
@@ -982,6 +979,7 @@ sub data_sources {
     return @ds;
 }
 
+
 sub neat_list {
     my ($listref, $maxlen, $sep) = @_;
     $maxlen = 0 unless defined $maxlen;	# 0 == use internal default
@@ -1007,6 +1005,91 @@ sub dump_results {	# also aliased as a method in DBD::_::st
     $rows;
 }
 
+
+sub data_diff {
+    my ($a, $b, $logical) = @_;
+
+    my $diff   = data_string_diff($a, $b);
+    return "" if $logical and !$diff;
+
+    my $a_desc = data_string_desc($a);
+    my $b_desc = data_string_desc($b);
+    return "" if !$diff and $a_desc eq $b_desc;
+
+    $diff ||= "Strings contain the same sequence of characters"
+    	if length($a);
+    $diff .= "\n" if $diff;
+    return "a: $a_desc\nb: $b_desc\n$diff";
+}
+    
+
+sub data_string_diff {
+    # Compares 'logical' characters, not bytes, so a latin1 string and an
+    # an equivalent unicode string will compare as equal even though their
+    # byte encodings are different.
+    my ($a, $b) = @_;
+    unless (defined $a and defined $b) {             # one undef
+	return ""
+		if !defined $a and !defined $b;
+	return "String a is undef, string b has ".length($b)." characters"
+		if !defined $a;
+	return "String b is undef, string a has ".length($a)." characters"
+		if !defined $b;
+    }
+
+    require utf8;
+    # hack to cater for perl 5.6
+    *utf8::is_utf8 = sub { (DBI::neat(shift)=~/^"/) } unless defined &utf8::is_utf8;
+
+    my @a_chars = (utf8::is_utf8($a)) ? unpack("U*", $a) : unpack("C*", $a);
+    my @b_chars = (utf8::is_utf8($b)) ? unpack("U*", $b) : unpack("C*", $b);
+    my $i = 0;
+    while (@a_chars && @b_chars) {
+	++$i, shift(@a_chars), shift(@b_chars), next
+	    if $a_chars[0] == $b_chars[0];# compare ordinal values
+	my @desc = map {
+	    $_ > 255 ?                    # if wide character...
+	      sprintf("\\x{%04X}", $_) :  # \x{...}
+	      chr($_) =~ /[[:cntrl:]]/ ?  # else if control character ...
+	      sprintf("\\x%02X", $_) :    # \x..
+	      chr($_)                     # else as themselves
+	} ($a_chars[0], $b_chars[0]);
+	# highlight probable double-encoding?
+        foreach my $c ( @desc ) {
+	    next unless $c =~ m/\\x\{08(..)}/;
+	    $c .= "='" .chr(hex($1)) ."'"
+	}
+	return sprintf "Strings differ at index $i: a[$i]=$desc[0], b[$i]=$desc[1]";
+    }
+    return "String a truncated after $i characters" if @b_chars;
+    return "String b truncated after $i characters" if @a_chars;
+    return "";
+}
+
+
+sub data_string_desc {	# describe a data string
+    my ($a) = @_;
+    require bytes;
+    require utf8;
+
+    # hacks to cater for perl 5.6
+    *utf8::is_utf8 = sub { (DBI::neat(shift)=~/^"/) } unless defined &utf8::is_utf8;
+    *utf8::valid   = sub {                        1 } unless defined &utf8::valid;
+
+    # Give sufficient info to help diagnose at least these kinds of situations:
+    # - valid UTF8 byte sequence but UTF8 flag not set
+    #   (might be ascii so also need to check for hibit to make it worthwhile)
+    # - UTF8 flag set but invalid UTF8 byte sequence
+    # could do better here, but this'll do for now
+    my $utf8 = sprintf "UTF8 %s%s", 
+	utf8::is_utf8($a) ? "on" : "off",
+	utf8::valid($a||'') ? "" : " but INVALID encoding";
+    return "$utf8, undef" unless defined $a;
+    my $is_ascii = $a =~ m/^[\000-\177]*$/;
+    return sprintf "%s, %s, %d characters %d bytes",
+	$utf8, $is_ascii ? "ASCII" : "non-ASCII",
+	length($a), bytes::length($a);
+}
 
 
 sub connect_test_perf {
@@ -1278,6 +1361,7 @@ sub _new_sth {	# called by DBD::<drivername>::db::prepare)
 	return 0x00000100 if $name eq 'SQL';
 	return;
     }
+
 }
 
 
@@ -1298,6 +1382,9 @@ sub _new_sth {	# called by DBD::<drivername>::db::prepare)
 	my ($this) = DBI::_new_dbh($drh, {
 	    'Name' => $dsn,
 	});
+	# XXX debatable as there's no "server side" here
+	# (and now many uses would trigger warnings on DESTROY)
+	# $this->STORE(Active => 1);
 	$this;
     }
 
@@ -1316,7 +1403,12 @@ sub _new_sth {	# called by DBD::<drivername>::db::prepare)
 	my $key = join "~~", $dsn, $user||'', $auth||'',
 		$attr ? (@attr_keys,@{$attr}{@attr_keys}) : ();
 	my $dbh = $cache->{$key};
-	return $dbh if $dbh && $dbh->FETCH('Active') && eval { $dbh->ping };
+	if ($dbh && $dbh->FETCH('Active') && eval { $dbh->ping }) {
+	    # XXX warn if BegunWork?
+	    # XXX warn if $dbh->FETCH('AutoCommit') != $attr->{AutoCommit} ?
+	    # but that's just one (bad) case of a more general issue.
+	    return $dbh;
+	}
 	$dbh = $drh->connect(@_);
 	$cache->{$key} = $dbh;	# replace prev entry, even if connect failed
 	return $dbh;
@@ -1511,7 +1603,7 @@ sub _new_sth {	# called by DBD::<drivername>::db::prepare)
 	my $sth = $cache->{$key};
 	if ($sth) {
 	    return $sth unless $sth->FETCH('Active');
-	    Carp::carp("prepare_cached($statement) statement handle $sth still active")
+	    Carp::carp("prepare_cached($statement) statement handle $sth still Active")
 		unless ($if_active ||= 0);
 	    $sth->finish if $if_active <= 1;
 	    return $sth  if $if_active <= 2;
@@ -1649,24 +1741,14 @@ sub _new_sth {	# called by DBD::<drivername>::db::prepare)
 	return $sth->set_err(1, "Value for parameter $p_id must be a scalar or an arrayref, not a ".ref($value_array))
 	    if defined $value_array and ref $value_array and ref $value_array ne 'ARRAY';
 
-	return $sth->set_err(1, "Can't use named placeholders for non-driver supported bind_param_array")
+	return $sth->set_err(1, "Can't use named placeholder '$p_id' for non-driver supported bind_param_array")
 	    unless DBI::looks_like_number($p_id); # because we rely on execute(@ary) here
+
+	return $sth->set_err(1, "Placeholder '$p_id' is out of range")
+	    if $p_id <= 0; # can't easily/reliably test for too big
 
 	# get/create arrayref to hold params
 	my $hash_of_arrays = $sth->{ParamArrays} ||= { };
-
-	if (ref $value_array eq 'ARRAY') {
-	    # check that input has same length as existing
-	    # find first arrayref entry (if any)
-	    foreach (keys %$hash_of_arrays) {
-		my $v = $$hash_of_arrays{$_};
-		next unless ref $v eq 'ARRAY';
-		return $sth->set_err(1,
-			"Arrayref for parameter $p_id has ".@$value_array." elements"
-			." but parameter $_ has ".@$v)
-		    if @$value_array != @$v;
-	    }
-	}
 
 	# If the bind has attribs then we rely on the driver conforming to
 	# the DBI spec in that a single bind_param() call with those attribs
@@ -1763,17 +1845,20 @@ sub _new_sth {	# called by DBD::<drivername>::db::prepare)
 		if defined($NUM_OF_PARAMS) && $NUM_OF_PARAMS != $NUM_OF_PARAMS_given;
 
 	    # get the length of a bound array
-	    my $len = 1; # in case all are scalars
+	    my $maxlen;
 	    my %hash_of_arrays = %{$sth->{ParamArrays}};
 	    foreach (keys(%hash_of_arrays)) {
 		my $ary = $hash_of_arrays{$_};
-		$len = @$ary if ref $ary eq 'ARRAY';
+		next unless ref $ary eq 'ARRAY';
+		$maxlen = @$ary if !$maxlen || @$ary > $maxlen;
 	    }
+	    # if there are no arrays then execute scalars once
+	    $maxlen = 1 unless defined $maxlen;
 	    my @bind_ids = 1..keys(%hash_of_arrays);
 
 	    my $tuple_idx = 0;
 	    $fetch_tuple_sub = sub {
-		return if $tuple_idx >= $len;
+		return if $tuple_idx >= $maxlen;
 		my @tuple = map {
 		    my $a = $hash_of_arrays{$_};
 		    ref($a) ? $a->[$tuple_idx] : $a
@@ -1802,7 +1887,7 @@ sub _new_sth {	# called by DBD::<drivername>::db::prepare)
 		push @$tuple_status, [ $err, $errstr_cache{$err} ||= $sth->errstr, $sth->state ];
 	    }
 	}
-	return ($err_count) ? undef : scalar @$tuple_status;
+	return ($err_count) ? undef : scalar(@$tuple_status)||"0E0";
     }
 
 
@@ -2127,7 +2212,7 @@ abbreviation (e.g., "C<ora_>" for Oracle, "C<ing_>" for Ingres, etc).
 
 Most DBI drivers require applications to use a dialect of SQL
 (Structured Query Language) to interact with the database engine.
-The L</"SQL Standards Reference Information"> section provides links
+The L</"Standards Reference Information"> section provides links
 to useful information about SQL.
 
 The DBI itself does not mandate or require any particular language to
@@ -2234,7 +2319,7 @@ quotes that may be used in the SQL statement. Use the double-quote like
 C<qq{...}> operator if you want to interpolate variables into the string.
 See L<perlop/"Quote and Quote-like Operators"> for more details.
 
-See also the L</bind_column> method, which is used to associate Perl
+See also the L</bind_columns> method, which is used to associate Perl
 variables with the output columns of a C<SELECT> statement.
 
 =head1 THE DBI PACKAGE AND CLASS
@@ -2288,6 +2373,7 @@ which may be undefined.  If $attr_string is true then $attr_hash
 is a reference to a hash containing the parsed attribute names and
 values. $driver_dsn is the last part of the DBI DSN string.
 
+The parse_dsn() method was added in DBI 1.43.
 
 =item C<connect>
 
@@ -2534,15 +2620,96 @@ tracing facilities.
 
 =head2 DBI Utility Functions
 
-In addition to the methods listed in the previous section,
-the DBI package also provides these utility functions:
+In addition to the DBI methods listed in the previous section,
+the DBI package also provides several utility functions.
+
+These can be imported into your code by listing them in
+the C<use> statement. For example:
+
+  use DBI qw(neat data_diff);
+
+Alternatively, all these utility functions (except hash) can be
+imported using the C<:utils> import tag. For example:
+
+  use DBI qw(:utils);
 
 =over 4
 
+=item C<data_string_desc>
+
+  $description = data_string_desc($string);
+
+Returns an informal description of the string. For example:
+
+  UTF8 off, ASCII, 42 characters 42 bytes
+  UTF8 off, non-ASCII, 42 characters 42 bytes
+  UTF8 on, non-ASCII, 4 characters 6 bytes
+  UTF8 on but INVALID encoding, non-ASCII, 4 characters 6 bytes
+  UTF8 off, undef
+
+The initial C<UTF8> on/off refers to Perl's internal SvUTF8 flag.
+If $string has the SvUTF8 flag set but the sequence of bytes it
+contains are not a valid UTF-8 encoding then data_string_desc()
+will report C<UTF8 on but INVALID encoding>.
+
+The C<ASCII> vs C<non-ASCII> portion shows C<ASCII> if I<all> the
+characters in the string are ASCII (have code points <= 127).
+
+The data_string_desc() function was added in DBI 1.46.
+
+=item C<data_string_diff>
+
+  $diff = data_string_diff($a, $b);
+
+Returns an informal description of the first character difference
+between the strings. If both $a and $b contain the same sequence
+of characters then data_string_diff() returns an empty string.
+For example:
+
+ Params a & b     Result
+ ------------     ------
+ 'aaa', 'aaa'     ''
+ 'aaa', 'abc'     'Strings differ at index 2: a[2]=a, b[2]=b'
+ 'aaa', undef     'String b is undef, string a has 3 characters'
+ 'aaa', 'aa'      'String b truncated after 2 characters'
+
+Unicode characters are reported in C<\x{XXXX}> format. Unicode
+code points in the range U+0800 to U+08FF are unassigned and most
+likely to occur due to double-encoding. Characters in this range
+are reported as C<\x{08XX}='C'> where C<C> is the corresponding
+latin-1 character.
+
+The data_string_diff() function only considers logical I<characters>
+and not the underlying encoding. See L</data_diff> for an alternative.
+
+The data_string_diff() function was added in DBI 1.46.
+
+=item C<data_diff>
+
+  $diff = data_diff($a, $b);
+  $diff = data_diff($a, $b, $logical);
+
+Returns an informal description of the difference between two strings.
+It calls L</data_string_desc> and L</data_string_diff>
+and returns the combined results as a multi-line string.
+
+For example, C<data_diff("abc", "ab\x{263a}")> will return:
+
+  a: UTF8 off, ASCII, 3 characters 3 bytes
+  b: UTF8 on, non-ASCII, 3 characters 5 bytes
+  Strings differ at index 2: a[2]=c, b[2]=\x{263A}
+
+If $a and $b are identical in both the characters they contain I<and>
+their physical encoding then data_diff() returns an empty string.
+If $logical is true then physical encoding differences are ignored
+(but are still reported if there is a difference in the characters).
+
+The data_diff() function was added in DBI 1.46.
+
 =item C<neat>
 
-  $str = DBI::neat($value);
-  $str = DBI::neat($value, $maxlen);
+  $str = neat($value);
+  $str = neat($value, $maxlen);
 
 Return a string containing a neat (and tidy) representation of the
 supplied value.
@@ -2566,15 +2733,15 @@ typically I<not> be used for formatting values for database use.
 
 =item C<neat_list>
 
-  $str = DBI::neat_list(\@listref, $maxlen, $field_sep);
+  $str = neat_list(\@listref, $maxlen, $field_sep);
 
-Calls C<DBI::neat> on each element of the list and returns a string
+Calls C<neat> on each element of the list and returns a string
 containing the results joined with C<$field_sep>. C<$field_sep> defaults
 to C<", ">.
 
 =item C<looks_like_number>
 
-  @bool = DBI::looks_like_number(@array);
+  @bool = looks_like_number(@array);
 
 Returns true for each element that looks like a number.
 Returns false for each element that does not look like a number.
@@ -2835,6 +3002,8 @@ between 0 and 15 and/or trace flag names separated by vertical bar
 It uses the parse_trace_flag() method, described below, to process
 the individual trage flag names.
 
+The parse_trace_flags() method was added in DBI 1.42.
+
 =item C<parse_trace_flag>
 
   $bit_flag = $h->parse_trace_flag($trace_flag_name);
@@ -2843,6 +3012,28 @@ Returns the bit flag corresponding to the trace flag name in
 $trace_flag_name.  Drivers are expected to override this method and
 check if $trace_flag_name is a driver specific trace flags and, if
 not, then call the DBIs default parse_trace_flag().
+
+The parse_trace_flag() method was added in DBI 1.42.
+
+=item C<swap_inner_handle>
+
+  $rc = $h1->swap_inner_handle( $h2 );
+  $rc = $h1->swap_inner_handle( $h2, $allow_reparent );
+
+Brain transplants for handles. You don't need to know about this
+unless you want to become a handle surgeon.
+
+A DBI handle is a reference to a tied hash. A tied hash has an
+I<inner> hash that actually holds the contents.  The swap_inner_handle()
+method swaps the inner hashes between two handles. The $h1 and $h2
+handles still point to the same tied hashes, but what those hashes
+are tied to has been swapped.  In effect $h1 I<becomes> $h2 and
+vice-versa. This is powerful stuff. Use with care.
+
+As a small safety measure, the two handles, $h1 and $h2, have to
+share the same parent unless $allow_reparent is true.
+
+The swap_inner_handle() method was added in DBI 1.44.
 
 =back
 
@@ -2858,7 +3049,7 @@ in the new statement handle do not affect the parent database handle
 and changes to the database handle do not affect existing statement
 handles, only future ones.
 
-Attempting to set or get the value of an unknown attribute is fatal,
+Attempting to set or get the value of an unknown attribute generates a warning,
 except for private driver specific attributes (which all have names
 starting with a lowercase letter).
 
@@ -3191,8 +3382,7 @@ types are affected, even where field values have trailing spaces.
 
 The default is false (although it is possible that the default may change).
 Applications that need specific behaviour should set the attribute as
-needed. Emulation interfaces should set the attribute to match the
-behaviour of the interface they are emulating.
+needed.
 
 Drivers are not required to support this attribute, but any driver which
 does not support it must arrange to return C<undef> as the attribute value.
@@ -3677,8 +3867,8 @@ be used with the DBI.
 
 Like L</prepare> except that the statement handle returned will be
 stored in a hash associated with the C<$dbh>. If another call is made to
-C<prepare_cached> with the same C<$statement> and C<%attr> values, then the
-corresponding cached C<$sth> will be returned without contacting the
+C<prepare_cached> with the same C<$statement> and C<%attr> parameter values,
+then the corresponding cached C<$sth> will be returned without contacting the
 database server.
 
 The C<$if_active> parameter lets you adjust the behaviour if an
@@ -3758,7 +3948,7 @@ like:
   $sth = $dbh->prepare_cached("...", { dbi_dummy => __FILE__.__LINE__ });
 
 which will ensure that prepare_cached only returns statements cached
-by that line of code in that source file.
+by that line of code in that source file. 
 
 
 =item C<commit>
@@ -4611,7 +4801,7 @@ This section describes attributes specific to database handles.
 Changes to these database handle attributes do not affect any other
 existing or future database handles.
 
-Attempting to set or get the value of an unknown attribute is fatal,
+Attempting to set or get the value of an unknown attribute generates a warning,
 except for private driver-specific attributes (which all have names
 starting with a lowercase letter).
 
@@ -4850,11 +5040,6 @@ big to fit, then the execution should fail. If unsure what value to use,
 pick a generous length, i.e., a length larger than the longest value that would ever be
 returned.  The only cost of using a larger value than needed is wasted memory.
 
-It is expected that few drivers will support this method. The only
-driver currently known to do so is DBD::Oracle (DBD::ODBC may support
-it in a future release). Therefore it should not be used for database
-independent applications.
-
 Undefined values or C<undef> are used to indicate null values.
 See also L</"Placeholders and Bind Values"> for more information.
 
@@ -4884,10 +5069,6 @@ placeholder into a list of values for a statement like "SELECT foo
 WHERE bar IN (?)".  A placeholder can only ever represent one value
 per execution.)
 
-Each array bound to the statement must have the same number of
-elements.  Some drivers may define a method attribute to relax this
-safety check.
-
 Scalar values, including C<undef>, may also be bound by
 C<bind_param_array>. In which case the same value will be used for each
 L</execute> call. Driver-specific implementations may behave
@@ -4903,7 +5084,7 @@ match the default DBI behaviour, but always consult your driver
 documentation as there may be driver specific issues to consider.
 
 Note that the default implementation currently only supports non-data
-returning statements (insert, update, but not select). Also,
+returning statements (INSERT, UPDATE, but not SELECT). Also,
 C<bind_param_array> and L</bind_param> cannot be mixed in the same
 statement execution, and C<bind_param_array> must be used with
 L</execute_array>; using C<bind_param_array> will have no effect
@@ -4950,7 +5131,7 @@ execution.
 =item C<execute_array>
 
   $rv = $sth->execute_array(\%attr) or die $sth->errstr;
-  $rv = $sth->execute_array(\%attr, @bind_values)  or die $sth->errstr;
+  $rv = $sth->execute_array(\%attr, @bind_values) or die $sth->errstr;
 
 Execute the prepared statement once for each parameter tuple
 (group of values) provided either in the @bind_values, or by prior
@@ -4963,9 +5144,23 @@ tuples executed, even if it's zero.  See the C<ArrayTupleStatus>
 attribute below for how to determine the execution status for each
 tuple.
 
-Bind values for the tuples to be executed may be supplied by an
-C<ArrayTupleFetch> attribute, or else in the C<@bind_values> argument,
-or else by prior calls to L</bind_param_array>.
+Bind values for the tuples to be executed may be supplied row-wise
+by an C<ArrayTupleFetch> attribute, or else column-wise in the
+C<@bind_values> argument, or else column-wise by prior calls to
+L</bind_param_array>.
+
+Where column-wise binding is used (via the C<@bind_values> argument
+or calls to bind_param_array()) the maximum number of elements in
+any one of the bound value arrays determines the number of tuples
+executed. Placeholders with fewer values in their parameter arrays
+are treated as if padded with undef (NULL) values.
+
+If a scalar value is bound, instead of an array reference, it is
+treated as a I<variable> length array with all elements having the
+same value. It's does not influence the number of tuples executed,
+so if all bound arrays have zero elements then zero tuples will
+be executed. If I<all> bound values are scalars then one tuple
+will be executed, making execute_array() act just like execute().
 
 The C<ArrayTupleFetch> attribute can be used to specify a reference
 to a subroutine that will be called to provide the bind values for
@@ -5011,7 +5206,7 @@ then execute_array() returns "C<0E0>", just like execute() does,
 which Perl will treat as 0 but will regard as true.
 
 For example:
- 
+
   $sth = $dbh->prepare("INSERT INTO staff (first_name, last_name) VALUES (?, ?)");
   my $tuples = $sth->execute_array(
       { ArrayTupleStatus => \my @tuple_status },
@@ -5031,7 +5226,7 @@ For example:
       }
   }
 
-Support for data returning statements, i.e., select, is driver-specific
+Support for data returning statements such as SELECT is driver-specific
 and subject to change. At present, the default implementation
 provided by DBI only supports non-data returning statements.
 
@@ -5071,9 +5266,11 @@ The execute_for_fetch() method calls $fetch_tuple_sub, without any
 parameters, until it returns a false value. Each tuple returned is
 used to provide bind values for an $sth->execute(@$tuple) call.
 
-The number of tuples executed is returned I<only if> there were no errors.
 If there were any errors then C<undef> is returned and the @tuple_status
 array can be used to discover which tuples failed and with what errors.
+If there were no errors then execute_for_fetch() returns the number
+of tuples executed. Like execute() and execute_array() a zero is
+returned as "0E0" so execute_for_fetch() is only false on error.
 
 If \@tuple_status is passed then the execute_for_fetch method uses
 it to return status information. The tuple_status array holds one
@@ -5248,7 +5445,7 @@ all the rows in one go. Here's an example:
 
   my $rows = []; # cache for batches of rows
   while( my $row = ( shift(@$rows) || # get row from cache, or reload cache:
-                     shift(@{$rows=$sth->fetchall_arrayref(undef,10_000)||[]) )
+                     shift(@{$rows=$sth->fetchall_arrayref(undef,10_000)||[]}) )
   ) {
     ...
   }
@@ -5335,7 +5532,7 @@ database connection.  It has nothing to do with transactions. It's mostly an
 internal "housekeeping" method that is rarely needed.
 See also L</disconnect> and the L</Active> attribute.
 
-The C<finish> method should have been called C<cancel_select>.
+The C<finish> method should have been called C<discard_pending_rows>.
 
 
 =item C<rows>
@@ -5492,7 +5689,7 @@ of these attributes are read-only.
 Changes to these statement handle attributes do not affect any other
 existing or future statement handles.
 
-Attempting to set or get the value of an unknown attribute is I<fatal>,
+Attempting to set or get the value of an unknown attribute generates a warning,
 except for private driver specific attributes (which all have names
 starting with a lowercase letter).
 
@@ -6487,7 +6684,7 @@ the (very large) SQL/CLI Working Draft available from:
 
   http://www.jtc1sc32.org/sc32/jtc1sc32.nsf/Attachments/7E3B41486BD99C3488256B410064C877/$FILE/32N0744T.PDF
 
-=head2 SQL Standards Reference Information
+=head2 Standards Reference Information
 
 A hyperlinked, browsable version of the BNF syntax for SQL92 (plus
 Oracle 7 SQL and PL/SQL) is available here:
@@ -6518,7 +6715,7 @@ Learning Perl by Randal Schwartz.
 L<http://books.perl.org/book/101>
 
 Details of many other books related to perl can be found at L<http://books.perl.org>
-  
+
 =head2 Perl Modules
 
 Index of DBI related modules available from CPAN:
@@ -6537,10 +6734,6 @@ A similar page for Java toolkits can be found at:
 
  http://c2.com/cgi-bin/wiki?ObjectRelationalToolComparison
 
-=head2 Manual Pages
-
-L<perl(1)>, L<perlmod(1)>, L<perlbook(1)>
-
 =head2 Mailing List
 
 The I<dbi-users> mailing list is the primary means of communication among
@@ -6554,10 +6747,8 @@ to subscribe in order to be able to post. However you can opt for a
 
 Mailing list archives (of variable quality) are held at:
 
+ http://groups.google.com/groups?group=perl.dbi.users
  http://www.xray.mpe.mpg.de/mailing-lists/dbi/
- http://groups.yahoo.com/group/dbi-users
- http://www.bitmechanic.com/mail-archives/dbi-users/
- http://marc.theaimsgroup.com/?l=perl-dbi&r=1&w=2
  http://www.mail-archive.com/dbi-users%40perl.org/
 
 =head2 Assorted Related WWW Links
@@ -6617,11 +6808,34 @@ C<perl5-porters>.
 
 =head1 COPYRIGHT
 
-The DBI module is Copyright (c) 1994-2003 Tim Bunce. Ireland.
+The DBI module is Copyright (c) 1994-2004 Tim Bunce. Ireland.
 All rights reserved.
 
 You may distribute under the terms of either the GNU General Public
 License or the Artistic License, as specified in the Perl README file.
+
+=head1 SUPPORT / WARRANTY
+
+The DBI is free Open Source software. IT COMES WITHOUT WARRANTY OF ANY KIND.
+
+=head2 Support
+
+My consulting company, Data Plan Services, offers annual and
+multi-annual support contracts for the DBI. These provide sustained
+support for DBI development, and sustained value for you in return.
+Contact me for details.
+
+=head2 Sponsor Enhancements
+
+The DBI Roadmap is available at L<http://search.cpan.org/~timb/DBI/Roadmap.pod>
+
+If your company would benefit from a specific new DBI feature,
+please consider sponsoring its development.  Work is performed
+rapidly, and usually on a fixed-price payment-on-delivery basis.
+Contact me for details.
+
+Using such targeted financing allows you to contribute to DBI
+development, and rapidly get something specific and valuable in return.
 
 =head1 ACKNOWLEDGEMENTS
 
@@ -6654,9 +6868,13 @@ supporting this work for many years.
 As you can see above, many people have contributed to the DBI and
 drivers in many ways over many years.
 
-If you'd like the DBI to do something new or different the best way
+If you'd like to help then see L<http://dbi.perl.org/contributing>
+and L<http://search.cpan.org/~timb/DBI/Roadmap.pod>
+
+If you'd like the DBI to do something new or different then a good way
 to make that happen is to do it yourself and send me a patch to the
-source code that shows the changes.
+source code that shows the changes. (But read "Speak before you patch"
+below.)
 
 =head2 Browsing the source code repository
 
@@ -6742,20 +6960,6 @@ Some other translations:
  http://member.nifty.ne.jp/hippo2000/dbimemo.htm        - Japanese
 
 
-=head1 SUPPORT / WARRANTY
-
-The DBI is free software. IT COMES WITHOUT WARRANTY OF ANY KIND.
-
-Commercial support for Perl and the DBI, DBD::Oracle and
-Oraperl modules can be arranged via The Perl Clinic.
-For more details visit:
-
-  http://www.perlclinic.com
-
-For direct DBI and DBD::Oracle support, enhancement, and related work
-I am available for consultancy on standard commercial terms.
-
-
 =head1 TRAINING
 
 References to DBI related training resources. No recommendation implied.
@@ -6763,69 +6967,13 @@ References to DBI related training resources. No recommendation implied.
   http://www.treepax.co.uk/
   http://www.keller.com/dbweb/
 
+(If you offer professional DBI related training services,
+please send me your details so I can add them here.)
+
 =head1 FREQUENTLY ASKED QUESTIONS
 
 See the DBI FAQ for a more comprehensive list of FAQs. Use the
 C<perldoc DBI::FAQ> command to read it.
-
-=head2 How fast is the DBI?
-
-To measure the speed of the DBI and DBD::Oracle code, I modified
-DBD::Oracle so you can set an attribute that will cause the
-same row to be fetched from the row cache over and over again (without
-involving Oracle code but exercising *all* the DBI and DBD::Oracle code
-in the code path for a fetch).
-
-The results (on my lightly loaded old Sparc 10) fetching 50000 rows using:
-
-	1 while $csr->fetch;
-
-were:
-	one field:   5300 fetches per cpu second (approx)
-	ten fields:  4000 fetches per cpu second (approx)
-
-Obviously results will vary between platforms (newer faster platforms
-can reach around 50000 fetches per second), but it does give a feel for
-the maximum performance: fast.  By way of comparison, using the code:
-
-	1 while @row = $csr->fetchrow_array;
-
-(C<fetchrow_array> is roughly the same as C<ora_fetch>) gives:
-
-	one field:   3100 fetches per cpu second (approx)
-	ten fields:  1000 fetches per cpu second (approx)
-
-Notice the slowdown and the more dramatic impact of extra fields.
-(The fields were all one char long. The impact would be even bigger for
-longer strings.)
-
-Changing that slightly to represent actually doing something in Perl
-with the fetched data:
-
-    while(@row = $csr->fetchrow_array) {
-        $hash{++$i} = [ @row ];
-    }
-
-gives:	ten fields:  500 fetches per cpu second (approx)
-
-That simple addition has *halved* the performance.
-
-I therefore conclude that DBI and DBD::Oracle overheads are small
-compared with Perl language overheads (and probably database overheads).
-
-So, if you think the DBI or your driver is slow, try replacing your
-fetch loop with just:
-
-	1 while $csr->fetch;
-
-and time that. If that helps then point the finger at your own code. If
-that doesn't help much then point the finger at the database, the
-platform, the network etc. But think carefully before pointing it at
-the DBI or your driver.
-
-(Having said all that, if anyone can show me how to make the DBI or
-drivers even more efficient, I'm all ears.)
-
 
 =head2 Why doesn't my CGI script work right?
 
@@ -6843,23 +6991,6 @@ CGI related questions to the I<dbi-users> mailing list (or to me).
 For information on the Apache httpd server and the C<mod_perl> module see
 
   http://perl.apache.org/
-
-=head2 What about ODBC?
-
-A DBD::ODBC driver module for ODBC is available and works well.
-
-=head2 Does the DBI have a year 2000 problem?
-
-No. The DBI has no knowledge or understanding of dates at all.
-
-Individual drivers (DBD::*) may have some date handling code but are
-unlikely to have year 2000 related problems within their code. However,
-your application code which I<uses> the DBI and DBD drivers may have
-year 2000 related problems if it has not been designed and written well.
-
-See also the "Does Perl have a year 2000 problem?" section of the Perl FAQ:
-
-  http://www.perl.com/CPAN/doc/FAQs/FAQ/PerlFAQ.html
 
 =head1 OTHER RELATED WORK AND PERL MODULES
 
