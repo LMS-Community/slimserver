@@ -1221,6 +1221,8 @@ sub buildPlaylist {
 
 		my $track = $ds->objectForUrl($song) || do {
 			$::d_info && Slim::Utils::Misc::msg("Couldn't retrieve objectForUrl: [$song] - skipping!\n");
+			$listBuild->{'item'}++;
+			$itemCount++;
 			next;
 		};
 

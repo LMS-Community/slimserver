@@ -2511,7 +2511,9 @@ sub playlists {
 		push @list, @{Slim::Music::Info::playlists()};
 	}
 	foreach my $item ( @list) {
-		$list_hash{$item} = Slim::Music::Info::standardTitle(undef, $item);
+		if (Slim::Music::Info::isURL($item)) {
+			$list_hash{$item} = Slim::Music::Info::standardTitle(undef, $item);
+		}
 	}
 	return \%list_hash;
 }
