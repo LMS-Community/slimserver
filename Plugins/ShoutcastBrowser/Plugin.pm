@@ -1551,28 +1551,28 @@ sub handleWebIndex {
 			return $r;
 		};
 	
-		# most popular
-		if ($params->{'p0'} eq '1') {
-			my @top = sort $popular_sort keys %{ $stream_data{$all_name} };
-			splice @top, $top_limit;
-			$params->{'mystreams'} = \@top;
-
-			$params->{'streams'} = \%{ $stream_data{$all_name} };
-			$params->{'genreID'} = $params->{'p0'};
-			$params->{'genre'} = $genres[$params->{'p0'}];
-		} 
 		# show stream information
-		elsif (defined $params->{'p1'}) {
+		if (defined $params->{'p1'}) {
 			$params->{'genreID'} = $params->{'p1'};
 			$params->{'genre'} = $genres[$params->{'p1'}];
 			$params->{'streaminfo'} = $stream_data{$all_name}{$params->{'p0'}}{$params->{'p2'}} ;
 		} 
-		# show streams of our genre
+		# show streams of the wanted genre
 		else {
 			$params->{'genre'} = $genres[$params->{'p0'}];
 			$params->{'genreID'} = $params->{'p0'};
-			$params->{'mystreams'} = [ sort keys %{ $stream_data{$params->{'genre'}} } ];
-			$params->{'streams'} = \%{ $stream_data{$params->{'genre'}} };
+
+			# most popular
+			if ($params->{'p0'} == 1) {
+				my @top = sort $popular_sort keys %{ $stream_data{$all_name} };
+				splice @top, $top_limit;
+				$params->{'mystreams'} = \@top;
+				$params->{'streams'} = \%{ $stream_data{$all_name} };
+			}
+			else {
+				$params->{'mystreams'} = [ sort keys %{ $stream_data{$params->{'genre'}} } ];
+				$params->{'streams'} = \%{ $stream_data{$params->{'genre'}} };
+			}
 		}
 	}
 	else {
