@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.31 2003/12/04 05:34:45 grotus Exp $
+# $Id: Info.pm,v 1.32 2003/12/04 11:00:26 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -179,11 +179,11 @@ sub init {
 
 		# TODO: MacOS X should really store this in a visible, findable place.
 		if (Slim::Utils::OSDetect::OS() eq 'unix') {
-			$dbname = '.slimp3info.db';
+			$dbname = '.slimserver.db';
 		} elsif (Slim::Utils::OSDetect::OS() eq 'win')  {
-			$dbname = 'SLIMP3INFO.DB';
+			$dbname = 'SLIMSERVER.DB';
 		} else {
-			$dbname ='slimp3info.db';
+			$dbname ='slimserver.db';
 		}
 		
 		# put it in the same folder as the preferences.
