@@ -29,7 +29,6 @@ use Slim::Music::Info;
 
 use Slim::Web::EditPlaylist;
 use Slim::Web::History;
-use Slim::Web::Olson;
 use Slim::Web::Pages;
 
 use Slim::Utils::Misc;
@@ -122,8 +121,6 @@ sub init {
 		qr/^home\.(?:htm|xml)/		=> \&Slim::Web::Pages::home,
 		qr/^instant_mix\.(?:htm|xml)/	=> \&Slim::Web::Pages::instant_mix,
 		qr/^mood_wheel\.(?:htm|xml)/	=> \&Slim::Web::Pages::mood_wheel,
-		qr/^olsondetail\.(?:htm|xml)/	=> \&Slim::Web::Olson::olsondetail,
-		qr/^olsonmain\.(?:htm|xml)/	=> \&Slim::Web::Olson::olsonmain,
 		qr/^playlist\.(?:htm|xml)/	=> \&Slim::Web::Pages::playlist,
 		qr/^search\.(?:htm|xml)/	=> \&Slim::Web::Pages::search,
 		qr/^advanced_search\.(?:htm|xml)/ => \&Slim::Web::Pages::advancedSearch,
