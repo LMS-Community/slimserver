@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.11 2003/10/10 13:58:41 caleb Exp $
+# $Id: Common.pm,v 1.12 2003/10/10 19:03:30 caleb Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -221,7 +221,7 @@ my %functions = (
 		} elsif ($button eq 'menu_browse_album') {
 			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist'=>'*'});
 		} elsif ($button eq 'menu_browse_song') {
-			SliMP3::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist'=>'*', 'album'=>'*'});
+			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist'=>'*', 'album'=>'*'});
 			$jump = 'BROWSE_BY_SONG';
 			$jump = 'BROWSE_BY_ALBUM';
 		} elsif ($button eq 'menu_browse_music') {

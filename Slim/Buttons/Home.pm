@@ -97,7 +97,7 @@ my %functions = (
 		} elsif ($homeChoices[$client->homeSelection] eq 'BROWSE_BY_ALBUM') {
 			Slim::Buttons::Common::pushModeLeft($client, 'browseid3', {'genre'=>'*', 'artist'=>'*'});
 		} elsif ($homeChoices[$client->homeSelection] eq 'BROWSE_BY_SONG') {
-			SliMP3::Buttons::Common::pushModeLeft($client, 'browseid3', {'genre'=>'*', 'artist'=>'*', 'album'=>'*'});
+			Slim::Buttons::Common::pushModeLeft($client, 'browseid3', {'genre'=>'*', 'artist'=>'*', 'album'=>'*'});
 		} elsif ($homeChoices[$client->homeSelection] eq 'SETTINGS') {
 			Slim::Buttons::Common::pushModeLeft($client, 'settings');
 		} elsif ($homeChoices[$client->homeSelection] eq 'PLUGINS') {
