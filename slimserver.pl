@@ -559,7 +559,7 @@ sub main {
 	init();
 	start();
 	
-	eval { while (!idle()) {} };
+	while (!idle()) {}
 	
 	stopServer();
 }
