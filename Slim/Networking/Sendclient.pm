@@ -82,7 +82,7 @@ sub stream {
 
 	my $frame = 's   '.pack 'aaaaaaaCCCnL', (
 		$command,	# command
-		'3',		# autostart at 75%
+		($command eq 'p')?'0':'3', # autostart off when pausing, otherwise 75%
 		'm',		# mpeg
 		'1',		# pcm 16-bit (pcm options are ignored for mpeg)
 		'3',		# pcm 44.1
