@@ -49,26 +49,26 @@ sub Help {
 
 package main;
 
-#BEGIN {   
-#	if ($^O =~ /Win32/) {   
-#		if ($] < 5.008) {   
-#			#add numbers not supplied in Errno prior to 5.8   
-#			*Errno::EWOULDBLOCK = sub () { 10035 };   
-#			*Errno::EINPROGRESS = sub () { 10036 };   
-#			push @Errno::EXPORT_OK, qw(EWOULDBLOCK EINPROGRESS);   
-#		}   
-#		#provide non-blocking support for Windows   
-#		*IO::Socket::blocking = sub {   
-#			my ($self, $blocking) = @_;   
-#			my $nonblocking = $blocking ? "0" : "1";   
-#			my $retval = ioctl($self, 0x8004667e, \$nonblocking);   
-#			if (!defined($retval) && $] >= 5.008) {   
-#				$retval = "0 but true";   
-#			}   
-#			return $retval;   
-#		};   
-#	}   
-#} 
+BEGIN {   
+	if ($^O =~ /Win32/) {   
+		if ($] < 5.008) {   
+			#add numbers not supplied in Errno prior to 5.8   
+			*Errno::EWOULDBLOCK = sub () { 10035 };   
+			*Errno::EINPROGRESS = sub () { 10036 };   
+			push @Errno::EXPORT_OK, qw(EWOULDBLOCK EINPROGRESS);   
+		}   
+		#provide non-blocking support for Windows   
+		*IO::Socket::blocking = sub {   
+			my ($self, $blocking) = @_;   
+			my $nonblocking = $blocking ? "0" : "1";   
+			my $retval = ioctl($self, 0x8004667e, \$nonblocking);   
+			if (!defined($retval) && $] >= 5.008) {   
+				$retval = "0 but true";   
+			}   
+			return $retval;   
+		};   
+	}   
+} 
 
 
 use Config;
