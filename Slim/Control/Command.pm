@@ -136,7 +136,7 @@ sub execute {
 # Y    playlistcontrol <params>
 
 # Y    playlist        play|load                   <item>                       [<title>] (item can be a song, playlist or directory)
-# Y    playlist        add|append                  <item> (item can be a song, playlist or directory)
+# Y    playlist        add|append                  <item>                       [<title>] (item can be a song, playlist or directory)
 # Y    playlist        insert|insertlist           <item> (item can be a song, playlist or directory)
 # Y    playlist        deleteitem                  <item> (item can be a song, playlist or directory)
 # Y    playlist        move                        <fromindex>                 <toindex>    
@@ -887,6 +887,14 @@ sub execute {
 						Slim::Music::Info::setTitle($fixpath, $p3) if defined $p3;
 
 						$client->currentPlaylistModified(0);
+
+					} elsif ($p1 =~ /^(add|append)$/) {
+
+						my $fixpath = Slim::Utils::Misc::fixPath($path);
+
+						Slim::Music::Info::setTitle($fixpath, $p3) if defined $p3;
+
+						$client->currentPlaylistModified(1);
 
 					} else {
 
