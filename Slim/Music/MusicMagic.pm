@@ -1,6 +1,6 @@
 package Slim::Music::MusicMagic;
 
-# $Id: MusicMagic.pm,v 1.4 2004/12/17 10:09:34 kdf Exp $
+# $Id: MusicMagic.pm,v 1.5 2005/01/06 03:59:51 kdf Exp $
 
 use strict;
 
@@ -76,17 +76,21 @@ sub init {
 	
 		# Note: Check version restrictions if any
 		$initialized = 1;
-		Slim::Music::Import::addImporter('musicmagic',\&startScan,\&mixerFunction);
+		Slim::Music::Import::addImporter('musicmagic',\&startScan,\&mixerFunction,\&addGroups);
 		Slim::Player::Source::registerProtocolHandler("musicmagicplaylist", "0");
-		Slim::Web::Setup::addCategory('musicmagic',&setupCategory);
-		my ($groupRef,$prefRef) = &setupGroup();
-		Slim::Web::Setup::addGroup('server','musicmagic',$groupRef,2,$prefRef);
-		Slim::Web::Setup::addChildren('server','musicmagic');
+		addGroups();
 	}
 	
 	return $initialized;
 }
-	
+
+sub addGroups {
+	Slim::Web::Setup::addCategory('musicmagic',&setupCategory);
+	my ($groupRef,$prefRef) = &setupGroup();
+	Slim::Web::Setup::addGroup('server','musicmagic',$groupRef,2,$prefRef);
+	Slim::Web::Setup::addChildren('server','musicmagic');
+}
+
 sub isMusicLibraryFileChanged {
 	my $MMSport = Slim::Utils::Prefs::get('MMSport');
 	my $MMSHost = Slim::Utils::Prefs::get('MMSHost');

@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.28 2005/01/04 02:38:26 kdf Exp $
+#$Id: MoodLogic.pm,v 1.29 2005/01/06 03:59:51 kdf Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -117,16 +117,19 @@ sub init {
 	map { $mood_hash{$_} = $i++ } @mood_names;
 
 	#Slim::Utils::Strings::addStrings($strings);
-	Slim::Web::Setup::addCategory('moodlogic',&setupCategory);
 	Slim::Player::Source::registerProtocolHandler("moodlogicplaylist", "0");
-	Slim::Music::Import::addImporter('moodlogic',\&startScan,\&mixerFunction);
+	Slim::Music::Import::addImporter('moodlogic',\&startScan,\&mixerFunction,\&addGroups);
+	addGroups();
 
+	$initialized = 1;
+	return $initialized;
+}
+
+sub addGroups {
 	my ($groupRef,$prefRef) = &setupGroup();
 	Slim::Web::Setup::addGroup('server','moodlogic',$groupRef,2,$prefRef);
 	Slim::Web::Setup::addChildren('server','moodlogic');
-	
-	$initialized = 1;
-	return $initialized;
+	Slim::Web::Setup::addCategory('moodlogic',&setupCategory);
 }
 
 sub isMusicLibraryFileChanged {

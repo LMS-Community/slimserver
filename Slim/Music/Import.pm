@@ -60,8 +60,10 @@ sub addImporter {
 	my $import = shift;
 	my $scanFuncRef = shift;
 	my $mixerFuncRef = shift;
+	my $setupFuncRef = shift;
 	$Importers{$import}= {'mixer' => $mixerFuncRef
 						,'scan' => $scanFuncRef
+						,'setup' => $setupFuncRef
 					};
 	$::d_info && msg("Adding $import Scan\n");
 }
@@ -72,6 +74,14 @@ sub countImporters {
 		$count ++ if $Importers{$import}->{'use'};
 	}
 	return $count;
+}
+
+sub resetSetupGroups {
+	for my $importer (keys %Importers) {
+		if (exists $Importers{$importer}->{'setup'}) {
+			&{$Importers{$importer}->{'setup'}};
+		}
+	}
 }
 
 sub importers {

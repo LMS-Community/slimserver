@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.97 2005/01/04 03:38:53 dsully Exp $
+# $Id: Prefs.pm,v 1.98 2005/01/06 03:59:51 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -206,7 +206,9 @@ my %prefChange = (
 	}
 	,'language' => sub {
 		my $newvalue = shift;
+		Slim::Buttons::Plugins::clearGroups();
 		Slim::Web::Setup::initSetup();
+		Slim::Music::Import::resetSetupGroups();
 		Slim::Web::HTTP::clearCaches();
 	}
 	,'checkVersion' => sub {

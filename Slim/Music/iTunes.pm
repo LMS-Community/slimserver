@@ -126,7 +126,6 @@ sub useiTunesLibrary {
 sub canUseiTunesLibrary {
 	$::d_itunes && msg("canUseiTunesLibrary().\n");
 	checkDefaults() unless $initialized;
-	Slim::Web::Setup::addChildren('server','itunes',3);
 	$ituneslibraryfile = defined $ituneslibraryfile ? $ituneslibraryfile : findMusicLibraryFile();
 	$ituneslibrarypath = defined $ituneslibrarypath ? $ituneslibrarypath : findMusicLibrary();
 	if (defined $ituneslibraryfile && $ituneslibrarypath) {
@@ -138,13 +137,17 @@ sub canUseiTunesLibrary {
 sub init {
 	return if $initialized;
 	#Slim::Utils::Strings::addStrings($strings);
-	Slim::Music::Import::addImporter('itunes',\&startScan);
+	Slim::Music::Import::addImporter('itunes',\&startScan,undef,\&addGroups);
 	Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
+	addGroups();
+	$initialized = 1;
+}
+
+sub addGroups {
+	Slim::Web::Setup::addChildren('server','itunes',3);
 	Slim::Web::Setup::addCategory('itunes',&setupCategory);
 	my ($groupRef,$prefRef) = &setupGroup();
 	Slim::Web::Setup::addGroup('server','itunes',$groupRef,1,$prefRef);
-	
-	$initialized = 1;
 }
 
 sub findLibraryFromPlist {
@@ -605,11 +608,12 @@ sub normalize_location {
 		$url = $stripped;		
 		$url =~ s,$iBase,$base,isg;
 		$url =~ s,(\w)\/\/(\w),$1\/$2,isg;
+
 	} else {
 		$url = Slim::Utils::Misc::fixPath($stripped);
 	}
 
-	$url =~ s/file:\/\/localhost\//file:\/\/\//;
+	$url =~ s,file:\/\/localhost\/,file:\/\/\/,;
 	
 	$::d_itunes && msg("iTunes: normalized $location to $url\n");
 
