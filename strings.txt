@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.56 2004/01/30 06:21:10 kdf Exp $
+# $Id: strings.txt,v 1.57 2004/02/02 23:52:14 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1526,7 +1526,7 @@ SETUP_WIPECACHE_BUTTON
 	EN	Wipe Cache
 
 SETUP_WIPECACHE_DESC
-	EN	If you use the Tag Database you may want to clear the disk based Cache for some reason. This option does that and then rescans your music files (in the same way as the rescan button does).
+	EN	If you use the tag database you may want to clear the disk based cache of tag information. This option does that and then rescans your music files (in the same way as the rescan button does).
 
 RESCANNING
 	DE	Der Server durchsucht nun das Musik-Verzeichnis.

@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.37 2004/01/30 06:19:41 kdf Exp $
+# $Id: Setup.pm,v 1.38 2004/02/02 23:52:15 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -483,19 +483,28 @@ sub initSetupConfig {
 					$pageref->{'GroupOrder'}[1] = undef;
 					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[0] = 'audiodir';
 				}
+
 				if (Slim::Music::iTunes::useiTunesLibrary()) {
 					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[2] = undef;
-					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = undef;
 				} else {
 					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[2] = 'rescan';
-					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = 'wipecache';
+					
 				}
+				
 				if (Slim::Music::MoodLogic::canUseMoodLogic()) {
 					$pageref->{'GroupOrder'}[2] = 'moodlogic';
 				} else {
 					$pageref->{'GroupOrder'}[2] = undef;
 				}
 
+				if (!Slim::Music::iTunes::useiTunesLibrary() && 
+					!Slim::Music::MoodLogic::useMoodLogic() &&
+					Slim::Utils::Prefs::get('usetagdatabase')) {
+					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = 'wipecache';
+				} else {
+					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = undef;
+				}
+				
 				$paramref->{'versionInfo'} = string('SERVER_VERSION') . ': ' . $::VERSION;
 				$paramref->{'newVersion'} = $::newVersion;
 			}

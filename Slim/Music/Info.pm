@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.68 2004/02/02 06:24:22 kdf Exp $
+# $Id: Info.pm,v 1.69 2004/02/02 23:52:15 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -398,9 +398,9 @@ sub clearCache {
 		%genreCache = ();
 		%caseCache = ();
 		%sortCache = ();
-        	%genreMixCache = ();
-        	%artistMixCache = ();
-        	scanDBCache();
+		%genreMixCache = ();
+		%artistMixCache = ();
+		scanDBCache();
         
 		$songCount = 0;
 		$total_time = 0;
@@ -1551,7 +1551,7 @@ sub artwork {
 			push @covers, $key;
 		}
 	}
-	return fixCase(sortuniq_ignore_articles(@covers));
+	return sortuniq_ignore_articles(@covers);
 }
 
 sub albums {
