@@ -26,15 +26,18 @@ function chooseBrowser(value)
 		url="{webroot}browseid3.html?genre=*[IF nofolder]&nofolder=1[/IF]";
 		break
 		case 2:
-		url="{webroot}browseid3.html?genre=*&artist=*[IF nofolder]&nofolder=1[/IF]";
+		url="{webroot}browseid3.html?genre=*&artist=*&bycover=1[IF nofolder]&nofolder=1[/IF]";
 		break
 		case 3:
-		url="{webroot}browseid3.html?genre=*&artist=*&album=*[IF nofolder]&nofolder=1[/IF]";
+		url="{webroot}browseid3.html?genre=*&artist=*[IF nofolder]&nofolder=1[/IF]";
 		break
 		case 4:
-		url="{webroot}browse.html?dir=__playlists[IF nofolder]&nofolder=1[/IF]";
+		url="{webroot}browseid3.html?genre=*&artist=*&album=*[IF nofolder]&nofolder=1[/IF]";
 		break
 		case 5:
+		url="{webroot}browse.html?dir=__playlists[IF nofolder]&nofolder=1[/IF]";
+		break
+		case 6:
 		url="{webroot}browse.html?";
 		break
 	&rbrc;
@@ -58,6 +61,7 @@ function chooseBrowser(value)
 	<SELECT NAME="type" class="stdedit" onchange="chooseBrowser(selectedIndex)"  width="65">
 	<OPTION [EQ browseby BROWSE_BY_GENRE]selected[/EQ] value="song">[S BROWSE_BY_GENRE]</OPTION>
 	<OPTION [EQ type artist]selected[/EQ][EQ browseby BROWSE_BY_ARTIST]selected[/EQ] value="artist">[S BROWSE_BY_ARTIST]</OPTION>
+	<OPTION [EQ browseby BROWSE_BY_ARTWORK]selected[/EQ] value="album">[S BROWSE_BY_ARTWORK]</OPTION>
 	<OPTION [EQ type album]selected[/EQ][EQ browseby BROWSE_BY_ALBUM]selected[/EQ] value="album">[S BROWSE_BY_ALBUM]</OPTION>
 	<OPTION [EQ type song]selected[/EQ][EQ browseby BROWSE_BY_SONG]selected[/EQ] value="song">[S BROWSE_BY_SONG]</OPTION>
 	<OPTION [IF playlist]selected[/IF]>[S SAVED_PLAYLISTS]</OPTION>
