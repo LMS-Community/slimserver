@@ -1,5 +1,5 @@
 # RssNews Ticker v1.0
-# $Id: RssNews.pm,v 1.6 2004/11/06 01:40:29 dave Exp $
+# $Id: RssNews.pm,v 1.7 2004/11/15 17:59:27 dave Exp $
 # Copyright (c) 2004 Slim Devices, Inc. (www.slimdevices.com)
 
 # Based on BBCTicker 1.3 which had this copyright...
@@ -85,7 +85,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Prefs;
 
-$VERSION = substr(q$Revision: 1.6 $,10);
+$VERSION = substr(q$Revision: 1.7 $,10);
 my %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
@@ -320,7 +320,9 @@ sub unescape {
 	$data =~ s/&lt;/</sg;
 	$data =~ s/&gt;/>/sg;
 	$data =~ s/&quot;/\"/sg;
-	$data =~ s/&#(\d+);/chr($1)/gse;
+	$data =~ s/&bull;/\*/sg;
+	$data =~ s/&mdash;/-/sg;
+	$data =~ s/&\#(\d+);/chr($1)/gse;
 
 	return $data;
 }
@@ -338,6 +340,7 @@ sub trim {
 }
 
 # unescape and also remove unnecesary spaces
+# also get rid of markup tags
 sub unescapeAndTrim {
 	my $data = shift;
 	return '' unless(defined($data));
@@ -347,6 +350,10 @@ sub unescapeAndTrim {
 	$data = unescape($data);
 
 	$data = trim($data);
+
+	# strip all markup tags
+	$data =~ s/<[a-zA-Z\/][^>]*>//gi;
+	
 	utf8::decode($data);
 	#$::d_plugins && msg("old text: \"$olddata\"\n\n");
 	#$::d_plugins && msg("new text: \"$data\"\n\n\n");
@@ -622,7 +629,8 @@ sub lines {
 				$i++;
 			}
 			# remove tags
-			$line2 =~ s/<\/?[A-Za-z]+ ?\/?>/ /g; # matches, for example, "<b>" and "<br />"
+			# this is now done in unescape and trim
+			#$line2 =~ s/<\/?[A-Za-z]+ ?\/?>/ /g; # matches, for example, "<b>" and "<br />"
 			# convert newlines in line2 to spaces
 			#$line2 =~ s/\n/ /g; # no longer needed (unescape and trim)
 			$display_current_items->{$display_current}->{'next_item'} = $i;
