@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.28 2004/03/17 18:42:03 dean Exp $
+# $Id: Misc.pm,v 1.29 2004/03/27 09:13:19 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -240,7 +240,7 @@ sub fixPath {
 			$fixed = $file;
 	} elsif ($savedplaylistdir && $file =~ /^\Q$savedplaylistdir\E/) {
 			$fixed = $file;
-	} elsif (Slim::Music::Info::isURL($file)) {
+	} elsif (Slim::Music::Info::isURL($file) && ! -r catfile($audiodir, $file)) {
 			$fixed = $file;
 	} elsif ($base) {
 		if (file_name_is_absolute($file)) {
