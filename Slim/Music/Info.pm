@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.139 2004/08/06 04:16:47 kdf Exp $
+# $Id: Info.pm,v 1.140 2004/08/11 15:43:15 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -912,7 +912,7 @@ sub setBitrate {
 	updateCacheEntry($url, $cacheEntry);
 }
 
-my $ncElemstring = "VOLUME|PATH|FILE|EXT|DURATION|LONGDATE|SHORTDATE|CURRTIME"; #non-cached elements
+my $ncElemstring = "VOLUME|PATH|FILE|EXT|DURATION|LONGDATE|SHORTDATE|CURRTIME|FROM|BY"; #non-cached elements
 my $ncElems = qr/$ncElemstring/;
 
 my $elemstring = (join '|',@infoCacheItems,$ncElemstring);
