@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.49 2004/03/10 06:48:35 kdf Exp $
+# $Id: Pages.pm,v 1.50 2004/03/10 21:29:40 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -283,8 +283,10 @@ sub browser_addtolist_done {
 		my @namearray = ();
 		my ($start, $end, $cover, $thumb, $body, $type, $mtime, $lastAnchor) = '';
 
-		my $otherparams = 'player=' . Slim::Web::HTTP::escape($current_player);
-		if (defined $params->{'dir'}) {$otherparams .= '&dir=' . Slim::Web::HTTP::escape($params->{'dir'}) . '&';}
+		my $otherparams = '&';
+		
+		$otherparams .= 'dir=' . Slim::Web::HTTP::escape($params->{'dir'}) . '&' if ($params->{'dir'});
+		$otherparams .= 'player=' . Slim::Web::HTTP::escape($current_player) . '&' if ($current_player);
 							
 		foreach my $item (@{$itemsref}) {
 			$::d_http && msg("browser_addtolist_done getting name for $item\n");

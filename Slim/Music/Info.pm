@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.79 2004/03/06 05:56:45 kdf Exp $
+# $Id: Info.pm,v 1.80 2004/03/10 21:29:37 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -76,6 +76,7 @@ my @infoCacheItems = (
 	'BAND',
 	'CONDUCTOR', # conductor
 	'BLOCKALIGN', # block alignment
+	'ENDIAN', # 0 - little endian, 1 - big endian
 );
 
 # Save the persistant DB cache every hour
@@ -2442,42 +2443,49 @@ sub updateGenreCache {
 			$track = string('NO_TITLE');
 		}
 	}
-	my $genreCase = ignoreCaseArticles($genre);
-	my $artistCase = ignoreCaseArticles($artist);
-	my $albumCase = ignoreCaseArticles($album);
-	my $trackCase = ignoreCaseArticles($track);
+
+	foreach my $genre (split(/[;\0]/,$genre)) {
+		$genre=~s/^\s*//;$genre=~s/\s*$//;
+		my $genreCase = ignoreCaseArticles($genre);
+		foreach my $artist (split(/[;\0]/,$artist)) {
+			$artist=~s/^\s*//;$artist=~s/\s*$//;
+			my $artistCase = ignoreCaseArticles($artist);
+			my $albumCase = ignoreCaseArticles($album);
+			my $trackCase = ignoreCaseArticles($track);
 	
-	my $discNum = $cacheEntry->{'DISC'};
-	my $discCount = $cacheEntry->{'DISCC'};
-	if (defined($discNum) && (!defined($discCount) || $discCount > 1)) {
-		my $discCountLen = defined($discCount) ? length($discCount) : 1;
-		$trackCase = sprintf("%0${discCountLen}d-%s", $discNum, $trackCase);
-	}
+			my $discNum = $cacheEntry->{'DISC'};
+			my $discCount = $cacheEntry->{'DISCC'};
+			if (defined($discNum) && (!defined($discCount) || $discCount > 1)) {
+				my $discCountLen = defined($discCount) ? length($discCount) : 1;
+				$trackCase = sprintf("%0${discCountLen}d-%s", $discNum, $trackCase);
+			}
 
-	$genreCache{$genreCase}{$artistCase}{$albumCase}{$trackCase} = $file;
+			$genreCache{$genreCase}{$artistCase}{$albumCase}{$trackCase} = $file;
 
-	$caseCache{$genreCase} = $genre;
-	$caseCache{$artistCase} = $artist;
-	$caseCache{$albumCase} = $album;
-	$caseCache{$trackCase} = $track;
-
-	if (Slim::Utils::Prefs::get('composerInArtists')) {
-		my $composer = $cacheEntry->{'COMPOSER'};	
-		if ($composer) { 
-			my $composerCase = ignoreCaseArticles($composer);
-			$genreCache{$genreCase}{$composerCase}{$albumCase}{$trackCase} = $file;
-			$caseCache{$composerCase} = $composer; 
-		}
+			$caseCache{$genreCase} = $genre;
+			$caseCache{$artistCase} = $artist;
+			$caseCache{$albumCase} = $album;
+			$caseCache{$trackCase} = $track;
+			
+			if (Slim::Utils::Prefs::get('composerInArtists')) {
+				my $composer = $cacheEntry->{'COMPOSER'};	
+				if ($composer) { 
+					my $composerCase = ignoreCaseArticles($composer);
+					$genreCache{$genreCase}{$composerCase}{$albumCase}{$trackCase} = $file;
+					$caseCache{$composerCase} = $composer; 
+				}
 		
-		my $band = $cacheEntry->{'BAND'};	
-		if ($band) { 
-			my $bandCase = ignoreCaseArticles($band);
-			$genreCache{$genreCase}{$bandCase}{$albumCase}{$trackCase} = $file;
-			$caseCache{$bandCase} = $band; 
+				my $band = $cacheEntry->{'BAND'};	
+				if ($band) { 
+					my $bandCase = ignoreCaseArticles($band);
+					$genreCache{$genreCase}{$bandCase}{$albumCase}{$trackCase} = $file;
+					$caseCache{$bandCase} = $band; 
+				}
+			}
+		
+			$::d_info && Slim::Utils::Misc::msg("updating genre cache with: $genre - $artist - $album - $track\n--- for:$file\n");
 		}
 	}
-		
-	$::d_info && Slim::Utils::Misc::msg("updating genre cache with: $genre - $artist - $album - $track\n--- for:$file\n");
 }
 
 sub fileLength {
@@ -2749,6 +2757,8 @@ sub matchCase {
 	my $s = shift;
 	return undef unless defined($s);
 	# Upper case and fold latin1 diacritical characters into their plain versions, surprisingly useful.
+ 	$s =~ tr{abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜàáâãäåçèéêëìíîïñòóôõöøùúûüÿığĞ}
+ 			{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAAACEEEEIIIINOOOOOOUUUUAAAAAACEEEEIIIINOOOOOOUUUUYYDD};
  	$s =~ tr{abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜàáâãäåçèéêëìíîïñòóôõöøùúûüÿ}
  			{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAAACEEEEIIIINOOOOOOUUUUAAAAAACEEEEIIIINOOOOOOUUUUY};
 	return $s;

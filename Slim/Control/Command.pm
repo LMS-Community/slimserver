@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.26 2004/02/18 18:36:58 dean Exp $
+# $Id: Command.pm,v 1.27 2004/03/10 21:29:35 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -696,9 +696,8 @@ sub insert_done {
 		for ($i = 0; $i < $size; $i++) {
 			push @reshuffled,$listsize+$i;
 		};
-		if (Slim::Player::Sync::isSlave($client)) {
-			$client = $client->master;
-		}
+		$client = Slim::Player::Sync::masterOrSelf($client);
+
 		splice @{$client->shufflelist},$playlistIndex, 0, @reshuffled;
 	} else {
 		Slim::Player::Playlist::moveSong($client, $listsize, $playlistIndex,$size);

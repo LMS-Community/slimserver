@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.65 2004/03/10 19:20:24 dean Exp $
+# $Id: Source.pm,v 1.66 2004/03/10 21:29:38 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -235,7 +235,7 @@ sub playmode {
 			# when we change modes, make sure we do it to all the synced clients.
 			foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
 				$::d_source && msg($everyclient->id() . " New play mode: " . $newmode . "\n");
-				
+				next if (Slim::Utils::Prefs::clientGet($everyclient,'silent'));
 				# wake up the display if we've switched modes.
 				if ($everyclient->isPlayer()) { Slim::Buttons::ScreenSaver::wakeup($everyclient); };
 				
@@ -307,15 +307,17 @@ sub playmode {
 sub underrun {
 	my $client = shift;
 	
+	return unless $client;
+	
 	$client->readytosync(-1);
 	
 	$::d_source && msg($client->id() . ": Underrun while this mode: " . $client->playmode() . "\n");
 
 	# the only way we'll get an underrun event while stopped is if we were playing out.  so we need to open the next item and play it!
 	# if we're synced, then we let resync handle this
-	if ($client && ($client->playmode eq 'playout-play' || $client->playmode eq 'stop') && !Slim::Player::Sync::isSynced($client)) {
+	if (($client->playmode eq 'playout-play' || $client->playmode eq 'stop') && !Slim::Player::Sync::isSynced($client)) {
 		skipahead($client);
-	} elsif ($client && ($client->playmode eq 'playout-stop') && !Slim::Player::Sync::isSynced($client)) {
+	} elsif (($client->playmode eq 'playout-stop') && !Slim::Player::Sync::isSynced($client)) {
 		playmode($client, 'stop');
 		$client->update();
 	}
@@ -431,6 +433,7 @@ sub gototime {
 
 	foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
 		$::d_source && msg("gototime: stopping playback\n");
+		next if (Slim::Utils::Prefs::clientGet($everybuddy,'silent'));
 		$everybuddy->stop();
 		@{$everybuddy->chunks} = ();
 	}
@@ -443,6 +446,7 @@ sub gototime {
 
 	foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
 		$::d_source && msg("gototime: restarting playback\n");
+		next if (Slim::Utils::Prefs::clientGet($everybuddy,'silent'));
 		$everybuddy->readytosync(0);
 		$everybuddy->play(Slim::Player::Sync::isSynced($client), $client->streamformat());
 	}
@@ -858,16 +862,19 @@ sub getCommand {
 	my @supportedformats;
 	my @playergroup = ($client, Slim::Player::Sync::syncedWith($client));
 	my %formatcounter;
+	my $audibleplayers = 0;
 	
 	# make sure we only test formats that are supported.
 	foreach my $everyclient (@playergroup) {
+		next if (Slim::Utils::Prefs::clientGet($everyclient,'silent'));
+		$audibleplayers++;
 		foreach my $supported ($everyclient->formats()) {
 			$formatcounter{$supported}++;
 		}
 	}
 	
 	foreach my $testformat ($client->formats()) {
-		if ($formatcounter{$testformat} == scalar(@playergroup)) {
+		if ($formatcounter{$testformat} == $audibleplayers) {
 			push @supportedformats, $testformat;
 		}
 	}
@@ -1068,6 +1075,7 @@ sub pauseSynced {
 	my $client = shift;
 
 	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
+		next if (Slim::Utils::Prefs::clientGet($everyclient,'silent'));
 		$everyclient->pause();
 	}
 }

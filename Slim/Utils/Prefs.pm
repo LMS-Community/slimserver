@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.39 2004/03/06 05:56:45 kdf Exp $
+# $Id: Prefs.pm,v 1.40 2004/03/10 21:29:39 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -15,7 +15,7 @@ use Slim::Utils::Misc;
 use Slim::Hardware::IR;
 use Slim::Utils::Strings qw(string);
 
-my %prefs;
+my %prefs = ();
 my $prefsPath;
 my $prefsFile;
 my $canWrite;
@@ -135,7 +135,7 @@ my %DEFAULT = (
 	,'maxBitrate'		=> 320	# Maximum bitrate for maximum quality.  MPEG-1 layer III bitrates (kbps): 32 40 48 56 64 80 96 112 128 160 192 224 256 320
 	,'savehistory'			=> 1
 	,'historylength'		=> 1000
-	,'composerInArtists'	=> 1 # include composer and band information in the artists list
+	,'composerInArtists'	=> 0 # include composer and band information in the artists list
 	,'groupdiscs' 			=> 0
 	,'livelog'				=> 102400 # keep around an in-memory log of 100kbytes, available from the web interfaces
 	,'remotestreamtimeout'  => 5 # seconds to try to connect for a remote stream
@@ -156,6 +156,7 @@ my %DEFAULT = (
 			,"screensavertimeout" 	=> 30
 			,"scrollPause"		=> 3.6
 			,"scrollRate"		=> 0.15
+			,'silent'		=> 0
 			,'maxBitrate' => 0
 			,'titleFormatCurr'	=> 1
 			,'titleFormat'		=> [5, 1, 3, 6]
@@ -396,7 +397,12 @@ sub clientGetArrayMax {
 
 # getArray($arrayPref)
 sub getArray {
-	return @{$prefs{(shift)}};
+	my $arrayPref = shift;
+	if (defined($prefs{($arrayPref)})) {
+		return @{$prefs{($arrayPref)}};
+	} else {
+		return ();
+	}
 }
 
 # clientGetArray($client, $arrayPref)

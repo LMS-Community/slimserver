@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.44 2004/03/10 06:58:29 grotus Exp $
+# $Id: Setup.pm,v 1.45 2004/03/10 21:29:41 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1289,7 +1289,9 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['usetagdatabase','templatecache','useplaylistcache','animationLevel','lookForArtwork','buildItemsPerPass','showbufferfullness']
+					'PrefOrder' => ['usetagdatabase','templatecache','useplaylistcache',
+									# 'animationLevel',
+									'lookForArtwork','buildItemsPerPass','showbufferfullness']
 				}
 			}
 		,'Prefs' => {
@@ -1314,16 +1316,16 @@ sub initSetupConfig {
 								,'1' => string('SETUP_CACHE')
 								}
 					}
-			,'animationLevel' => {
-						'validate' => \&validateInt
-						,'validateArgs' => [0,3,1,1]
-						,'options' => {
-								'0' => string('SETUP_NO_ANIMATIONS')
-								,'1' => string('SETUP_BRIEF_MESSAGES')
-								,'2' => string('SETUP_SCREEN_WIPES')
-								,'3' => string('SETUP_FULL_ANIMATION')
-								}
-					}
+#			,'animationLevel' => {
+#						'validate' => \&validateInt
+#						,'validateArgs' => [0,3,1,1]
+#						,'options' => {
+#								'0' => string('SETUP_NO_ANIMATIONS')
+#								,'1' => string('SETUP_BRIEF_MESSAGES')
+#								,'2' => string('SETUP_SCREEN_WIPES')
+#								,'3' => string('SETUP_FULL_ANIMATION')
+#								}
+#					}
 			,'lookForArtwork' => {
 						'validate' => \&validateTrueFalse
 						,'options' => {

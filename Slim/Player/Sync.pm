@@ -125,9 +125,14 @@ sub sync {
 	
 	unsync($client);
 	
-	if (isSynced($buddy)) {
-		$buddy = master($buddy);
+	$buddy = masterOrSelf($buddy);
+
+	# if the buddy is silent, switch them, so we don't have any silent masters.
+	if (Slim::Utils::Prefs::clientGet($buddy,'silent')) {
+		($client, $buddy) = ($buddy, $client);
 	}
+	
+	msg($buddy->id . " is silent and we're trying to make it a master!\n") if (Slim::Utils::Prefs::clientGet($buddy,'silent'));
 	
 	$client->master($buddy);
 	
@@ -260,7 +265,7 @@ sub checkSync {
 	
 #	$::d_sync && msg("checkSync: Player " . $client->id() . " has " . scalar(@{$client->chunks}) . " chunks, and " . $client->usage() . "% full buffer \n");
 
-	if (!isSynced($client)) {
+	if (!isSynced($client) || Slim::Utils::Prefs::clientGet($client,'silent')) {
 		return;
 	}
 	

@@ -1,6 +1,6 @@
 package Slim::Formats::Wav;
 
-# $Id: Wav.pm,v 1.11 2004/02/06 19:48:29 dean Exp $
+# $Id: Wav.pm,v 1.12 2004/03/10 21:29:37 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -57,6 +57,7 @@ sub getTag {
 		$tags->{'CHANNELS'} = $details->{'channels'};
 		$tags->{'SAMPLESIZE'} = $details->{'bits_sample'};
 		$tags->{'BLOCKALIGN'} = $details->{'block_align'};
+		$tags->{'ENDIAN'} = 0;
 		
 		my $wavtags = $read->get_info();
 		

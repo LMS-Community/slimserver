@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.11 2004/02/22 05:26:29 dean Exp $
+# $Id: Display.pm,v 1.12 2004/03/10 21:29:36 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -140,103 +140,103 @@ Slim::Hardware::VFD::setCustomChar('leftprogress4',
 				   0b00000000 ));
 
 Slim::Hardware::VFD::setCustomChar('middleprogress0',
-				 ( 0b00011111, 
+				 ( 0b01111111, 
 				   0b00000000, 
 				   0b00000000, 
 				   0b00000000, 
 				   0b00000000, 
 				   0b00000000, 
-				   0b00011111, 
+				   0b01111111, 
 				   0b00000000 ));
 
 Slim::Hardware::VFD::setCustomChar('middleprogress1',
-				 ( 0b00011111, 
-				   0b00010000, 
-				   0b00010000, 
-				   0b00010000, 
-				   0b00010000, 
-				   0b00010000, 
-				   0b00011111, 
+				 ( 0b01111111, 
+				   0b01110000, 
+				   0b01110000, 
+				   0b01110000, 
+				   0b01110000, 
+				   0b01110000, 
+				   0b01111111, 
 				   0b00000000 ));
 
 Slim::Hardware::VFD::setCustomChar('middleprogress2',
-				 ( 0b00011111, 
-				   0b00011000, 
-				   0b00011000, 
-				   0b00011000, 
-				   0b00011000, 
-				   0b00011000, 
-				   0b00011111, 
+				 ( 0b01111111, 
+				   0b01111000, 
+				   0b01111000, 
+				   0b01111000, 
+				   0b01111000, 
+				   0b01111000, 
+				   0b01111111, 
 				   0b00000000 ));
 
 Slim::Hardware::VFD::setCustomChar('middleprogress3',
-				 ( 0b00011111, 
-				   0b00011100, 
-				   0b00011100, 
-				   0b00011100, 
-				   0b00011100, 
-				   0b00011100, 
-				   0b00011111, 
+				 ( 0b01111111, 
+				   0b01111100, 
+				   0b01111100, 
+				   0b01111100, 
+				   0b01111100, 
+				   0b01111100, 
+				   0b01111111, 
 				   0b00000000 ));
 
 Slim::Hardware::VFD::setCustomChar('middleprogress4',
-				 ( 0b00011111, 
-				   0b00011110, 
-				   0b00011110, 
-				   0b00011110, 
-				   0b00011110, 
-				   0b00011110, 
-				   0b00011111, 
+				 ( 0b01111111, 
+				   0b01111110, 
+				   0b01111110, 
+				   0b01111110, 
+				   0b01111110, 
+				   0b01111110, 
+				   0b01111111, 
 				   0b00000000 ));
 
 Slim::Hardware::VFD::setCustomChar('rightprogress0',
-				 ( 0b00011100, 
+				 ( 0b01111100, 
 				   0b00000010, 
 				   0b00000001, 
 				   0b00000001, 
 				   0b00000001, 
 				   0b00000010, 
-				   0b00011100, 
+				   0b01111100, 
 				   0b00000000 ));
 
 Slim::Hardware::VFD::setCustomChar('rightprogress1',
-				 ( 0b00011100, 
-				   0b00010010, 
-				   0b00010001, 
-				   0b00010001, 
-				   0b00010001, 
-				   0b00010010, 
-				   0b00011100, 
+				 ( 0b01111100, 
+				   0b01110010, 
+				   0b01110001, 
+				   0b01110001, 
+				   0b01110001, 
+				   0b01110010, 
+				   0b01111100, 
 				   0b00000000 ));
 
 Slim::Hardware::VFD::setCustomChar('rightprogress2',
-				 ( 0b00011100, 
-				   0b00011010, 
-				   0b00011001, 
-				   0b00011001, 
-				   0b00011001, 
-				   0b00011010, 
-				   0b00011100, 
+				 ( 0b01111100, 
+				   0b01111010, 
+				   0b01111001, 
+				   0b01111001, 
+				   0b01111001, 
+				   0b01111010, 
+				   0b01111100, 
 				   0b00000000 ));
 
 Slim::Hardware::VFD::setCustomChar('rightprogress3',
-				 ( 0b00011100, 
-				   0b00011110, 
-				   0b00011101, 
-				   0b00011101, 
-				   0b00011101, 
-				   0b00011110, 
-				   0b00011100, 
+				 ( 0b01111100, 
+				   0b01111110, 
+				   0b01111101, 
+				   0b01111101, 
+				   0b01111101, 
+				   0b01111110, 
+				   0b01111100, 
 				   0b00000000 ));
 
 Slim::Hardware::VFD::setCustomChar('rightprogress4',
-				 ( 0b00011100, 
-				   0b00011110, 
-				   0b00011111, 
-				   0b00011111, 
-				   0b00011111, 
-				   0b00011110, 
-				   0b00011100, 
+				 ( 0b01111100, 
+				   0b01111110, 
+				   0b01111111, 
+				   0b01111111, 
+				   0b01111111, 
+				   0b01111110, 
+				   0b01111100, 
 				   0b00000000 ));
 
 # returns progress bar text AND sets up custom characters if necessary
@@ -398,7 +398,7 @@ sub balanceBar {
 # replaces ~ in format string
 # setup the special characters
 Slim::Hardware::VFD::setCustomChar( 'toplinechar',	
-					(	0b00011111, 
+					(	0b01111111, 
 						0b00000000, 
 						0b00000000, 
 						0b00000000, 
@@ -409,25 +409,25 @@ Slim::Hardware::VFD::setCustomChar( 'toplinechar',
 
 # replaces = in format string
 Slim::Hardware::VFD::setCustomChar( 'doublelinechar', 
-					(	0b00011111, 
+					(	0b01111111, 
 						0b00000000, 
 						0b00000000, 
 						0b00000000, 
 						0b00000000, 
 						0b00000000, 
-						0b00011111, 
+						0b01111111, 
 						0b00000000	 ));
 
 # replaces ? in format string.  Used in Z, ?, 7
 Slim::Hardware::VFD::setCustomChar( 'Ztop', 		
-			(      		0b00011111,
+			(      		0b01111111,
 						0b00000001,
 						0b00000001,
 						0b00000010,
 						0b00000100,
 						0b00001000,
 						0b00010000,
-						0b00000000   ));
+						0b00100000   ));
                   
 # replaces < in format string.  Used in Z, 2, 6
 Slim::Hardware::VFD::setCustomChar( 'Zbottom', 		
@@ -625,6 +625,9 @@ my %doublechars = (
 	,'X' => [$backslash . $slash , $slash . $backslash]
 	,'Y' => [$backslash . $slash , $hardspace . $leftvbar]
 	,'Z' => [$toplinechar . $Ztop , $Zbottom . '_']
+	,'Æ' => [$hardspace . $slash . $backslash . $doublelinechar , $rightvbar . $toplinechar . $toplinechar . 'L']
+	,'Ø' => [$slash . $toplinechar . 'X', $backslash . $Zbottom . $slash]
+	,'ð' => [$rightvbar . $doublelinechar . $backslash , $rightvbar . '_' . $slash]
 );
 
 sub addDoubleChar {
@@ -689,8 +692,11 @@ sub doubleSize {
 	
 	$::d_ui && msg("undoubled line1: $line1\n");
 	$::d_ui && msg("undoubled line2: $line2\n");
-	$line2 =~ s/(?:Æ|æ)/AE/g;
-	$line2 =~ s/(?:Œ|œ)/OE/g;
+	
+	$line2 =~ tr/æ/Æ/;
+	$line2 =~ tr/ø/Ø/;
+	$line2 =~ tr/ð/Ð/;
+	
 	my $lastch1 = "";
 	my $lastch2 = "";
    

@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.63 2004/03/06 05:56:44 kdf Exp $
+# $Id: strings.txt,v 1.64 2004/03/10 21:29:31 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1329,7 +1329,7 @@ SETUP_TITLEFORMAT
 SETUP_TITLEFORMAT_DESC
 	DE	Wenn Sie die GUIDE-Taste auf der Fernbedienung drücken, können Sie zwischen verschiedenen Ansichten der Titel wechseln. Sie können das Format, das Sie sehen wollen, unten auswählen. Klicken Sie eine Auswahlbox unter "Aktuell" um den aktuellen Status zu ändern. Nach ihrer Wahl klicken Sie auf "Ändern" zum Speichern der Auswahl.
 	DK	Når du trykker på GUIDE-knappen på fjernbetjeningen, kan du skifte mellem forskellige måder hvorpå sanginformationen vises. Nedenfor kan du vælge hvilken informationsmuligheder der skal være tilgængelige på afspilleren. Klik på en knap i kolonnen "Valgt" for at ændre det format der bruges nu. Når du er færdig, tryk "Ret" for at gemme dine ændringer.
-	EN	When you press the GUIDE button on the remote, you can switch between different ways of displaying a song title on the display. You can customize this display by choosing the formats you'd like to see from the menus below. Click on a button in the "Current" column to change the current format. When you are done, press the "Change" button to save your choices.
+	EN	You can customize the song title display on your player by choosing the format you'd like to see from the menus below. These choices available below will be available in Settings -> Song Title Format on the player.  Click on a button in the "Current" column to change the current format. When you are done, press the "Change" button to save your choices.
 	ES	Con pulsar el botón GUIDE en el mando es posible cambiar el formato del título de la canción que se muestre. Se puede customizar este formato eligiendo varios del menú abajo. Haga clic en la columna "Actual" para cambiar el formato actual. Una vez que se ha elegido, haga clic en el botón "Cambiar" para guardar su elección.
 	FI	Painaessasi GUIDE -näppäintä kaukosäätimessä, voit valita mitä tietoa soitin näyttää ruudulla. Voit vaikuttaa esitettävään tietoon valitsemalla alla olevista valikoista haluamasi tiedot. Valitse "Current" sarake vaihtaaksesi valintaa. Ollessasi valmis valitse "Change" talletaaksesi valintasi.
 	FR	Lorsque vous appuyez sur la touche GUIDE de la télécommande, vous pouvez choisir différentes façons d'afficher le titre du morceau qui joue. Vous pouvez personnaliser les formats disponibles en choisissant des formats dans les menus ci-dessous. Cliquez sur un bouton de la colonne inititulée "Courante" pour changer le format courant. Lorsque vous avez terminé, cliquez sur le bouton "Changer" pour enregistrer vos choix.

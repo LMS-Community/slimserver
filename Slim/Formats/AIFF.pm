@@ -28,12 +28,14 @@ sub getTag {
 	my $chunkheader;
 	
 	open $f, "<$file" || return undef;
-	
+	# print "opened file\n";
 	return undef if read($f, $chunkheader, 12) < 12;
 
 	my ($tag, $size, $format) = unpack "a4Na4", $chunkheader;
 	
-	return undef if ($tag ne 'FORM' || $format ne 'AIFF');  # itunes rips with bogus size info...  disabling: || $size > $filesize);
+	# print "read first tag: $tag $size $format\n";
+	
+	return undef if ($tag ne 'FORM' || ($format ne 'AIFF' && $format ne 'AIFC'));  # itunes rips with bogus size info...  disabling: || $size > $filesize);
 
 	my $chunkpos = tell($f);
 
@@ -43,7 +45,7 @@ sub getTag {
 		return undef if read($f, $chunkheader, 8) < 8;
 		($tag, $size) = unpack "a4N", $chunkheader;
 		$readchunks{$tag} = 1;
-				
+		# print "read tag: $tag $size\n";
 		# look for the sound chunk
 		if ($tag eq 'SSND') {
 			my $ssndheader;
@@ -56,9 +58,12 @@ sub getTag {
 		# look for the chunk describing the format
 		} elsif ($tag eq 'COMM') {
 			my $commheader;
-			return if $size != 18;
-			return undef if read($f, $commheader, 18) < 18;
-			my ($numChannels, $numSampleFrames, $sampleSize, $sampleRateExp, $sampleRateMantissa) = unpack "nNnxCN", $commheader;
+			my $expectedsize = $format eq 'AIFF' ? 18 : 22;
+			return if ($size <= $expectedsize);
+			return undef if read($f, $commheader, $expectedsize) != $expectedsize;
+			
+			my ($numChannels, $numSampleFrames, $sampleSize, $sampleRateExp, $sampleRateMantissa, $encoding) = unpack "nNnxCNa4", $commheader;
+
 			$tags->{'CHANNELS'} = $numChannels;
 			$tags->{'SAMPLESIZE'} = $sampleSize;
 			
@@ -75,6 +80,18 @@ sub getTag {
 		   	$sampleRateMantissa++ if ($lastMantissa & 0x00000001); 			
 		   	
 		   	$tags->{'RATE'} = $sampleRateMantissa;
+		   	
+		   	if ($format eq 'AIFC') {
+		   		if ($encoding eq 'sowt') {
+		   		
+		   		} elsif ($encoding eq 'NONE') {
+		   			$tags->{'ENDIAN'} = 0;
+		   		} else {
+		   			$::d_formats && msg("Unknown AIFC encoding: $encoding\n");
+		   		}
+		   	} else {
+		   		$tags->{'ENDIAN'} = 1;
+		   	}
 		}
 		
 		# skip to the next chunk
