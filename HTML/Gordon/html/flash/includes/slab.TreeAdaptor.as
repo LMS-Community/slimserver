@@ -276,7 +276,7 @@ slab.TreeAdaptor.prototype.mFormQuery =function(song, artist, album, genre)
 	}
 	
 	lv.player =slab.k.playerID;
-	//lv.itemsPerPage =slab.k.itemsPerPage;
+	lv.itemsPerPage =slab.k.itemsPerPage;
 	
 	//
 	return lv;
