@@ -1378,7 +1378,11 @@ sub livesearch {
 	}
 
 	# do it live - and send back the div
-	return Slim::Music::LiveSearch->renderAsXML($query, $data, $player);
+	if ($params->{'xmlmode'}) {
+		return Slim::Music::LiveSearch->outputAsXML($query, $data, $player);
+	} else {
+		return Slim::Music::LiveSearch->outputAsXHTML($query, $data, $player);
+	}
 }
 
 sub advancedSearch {
