@@ -27,7 +27,7 @@ our $DisplayName = 'SlimServer';
 sub Startup {
 
 	# added to workaround a problem with 5.8 and perlsvc.
-    $SIG{BREAK} = sub {} if RunningAsService();
+	$SIG{BREAK} = sub {} if RunningAsService();
 
 	main::init();
 	
@@ -52,30 +52,6 @@ sub Help {
 }
 
 package main;
-
-BEGIN {   
-	if ($^O =~ /Win32/) {   
-		if ($] < 5.008) {   
-			#add numbers not supplied in Errno prior to 5.8   
-			*Errno::EWOULDBLOCK = sub () { 10035 };   
-			*Errno::EINPROGRESS = sub () { 10036 };   
-			push @Errno::EXPORT_OK, qw(EWOULDBLOCK EINPROGRESS);   
-		}   
-		#provide non-blocking support for Windows   
-		*IO::Socket::blocking = sub {   
-			my ($self, $blocking) = @_;   
-			my $nonblocking = $blocking ? "0" : "1";   
-			my $retval = ioctl($self, 0x8004667e, \$nonblocking);   
-			if (!defined($retval) && $] >= 5.008) {   
-				$retval = "0 but true";   
-			}   
-			return $retval;   
-		};   
-		# suppress "variable only used once" warning:
-		*IO::Socket::blocking = *IO::Socket::blocking;
-	}   
-} 
-
 
 use Config;
 use Getopt::Long;
@@ -140,7 +116,7 @@ use vars qw($VERSION
 	'Daniel Sully',
 );
 
-$VERSION = '5.0';
+$VERSION = '5.0.0';
 
 # old preferences settings, only used by the .slim.conf configuration.
 # real settings are stored in the new preferences file:  .slim.pref
@@ -198,7 +174,7 @@ use vars qw(
 	    $loopsecond
 	    $localClientNetAddr
 	    $localStreamAddr
-        $newVersion
+	    $newVersion
 	    $pidfile
 	    $prefsfile
 	    $priority
