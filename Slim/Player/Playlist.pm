@@ -464,10 +464,6 @@ sub unsync {
 			# make the slaves know about the new master
 			foreach $slave (@{$client->slaves}) {
 				$slave->master($newmaster);
-				# Save Status to Prefs file, but not if we've just powered off
-				if (Slim::Buttons::Common::mode($client) ne 'off') {
-					saveSyncPrefs($slave);
-				}
 			}		
 			
 			# copy over the slave list to the new master
@@ -498,13 +494,10 @@ sub unsync {
 		copyPlaylist($client, $master);
 	
 		$client->master(undef);
-		# Save Status to Prefs file, but not if we turn off power.
-		if (Slim::Buttons::Common::mode($client) ne 'off') {
-			saveSyncPrefs($client);
-		}
 	}
 	# when we unsync, we stop.
 	Slim::Control::Command::execute($client, ["stop"]);
+	saveSyncPrefs($client);
 }
 
 # sync a given client to another client
@@ -540,19 +533,46 @@ sub sync {
 }
 
 sub saveSyncPrefs {
+	
 	my $client = shift;
 	my $clientID = Slim::Player::Client::id($client);
 	if (isSynced($client)) {
-		my $masterID = Slim::Player::Client::id($client->master);
+	
+		if (!defined($client->master->syncgroupid)) {
+			$client->master->syncgroupid(int(rand 999999999));
+		}
+		
+		my $masterID = $client->master->syncgroupid;
 		# Save Status to Prefs file
 		$::d_sync && msg("Saving $clientID as a slave to $masterID\n");
-		Slim::Utils::Prefs::clientSet($client,'master',$masterID);
-		Slim::Utils::Prefs::clientSet($client->master,'master',$masterID);
+		Slim::Utils::Prefs::clientSet($client,'syncgroupid',$masterID);
+		Slim::Utils::Prefs::clientSet($client->master,'syncgroupid',$masterID);
+		
 	} else {
-		Slim::Utils::Prefs::clientSet($client,'master',undef);
+		Slim::Utils::Prefs::clientSet($client,'syncgroupid','');
 		$::d_sync && msg("Clearing Sync master for $clientID\n");
 	}
 }
+
+# Restore Sync Operation
+sub restoreSync {
+	my $client = shift;
+	my $masterID = (Slim::Utils::Prefs::clientGet($client,'syncgroupid'));
+	if ($masterID) {
+		my @players = Slim::Player::Client::clients();
+		foreach my $other (@players) {
+			next if ($other eq $client);
+			my $othermasterID = Slim::Utils::Prefs::clientGet($other,'syncgroupid');
+			if ($othermasterID && ($othermasterID eq $masterID)) {
+			  	$client->syncgroupid($masterID);
+			  	$other->syncgroupid($masterID);
+			   	Slim::Player::Playlist::sync($client, $other);
+			   	last;
+			}
+		}
+	}
+}
+
 
 sub syncedWith {
 	my $client = shift;

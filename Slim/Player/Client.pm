@@ -91,6 +91,7 @@ struct( clientState => [
 # client variables for synchronzation
     master                  => '$', # client    if we're synchronized, 'master' points to master client
     slaves                  => '@', # clients   if we're a master, this is an array of slaves which are synced to us
+    syncgroupid				=> '$', # uniqueid	unique identifier for this sync group
 
 # client variables for HTTP status caching
     htmlstatus              => '$', # string    html formatted status page
@@ -295,23 +296,30 @@ sub newClient {
 sub startup {
 	my $client = shift;
 
-	my $restoredPlaylist = 0;
+	my $restoredPlaylist;
+	my $currsong = 0;
 	my $id = $client->id;
 	
-	if (Slim::Utils::Prefs::get('persistPlaylists') && Slim::Utils::Prefs::get('playlistdir')) {
-		my $playlistname = "__$id.m3u";
-		$playlistname =~ s/\:/_/g;
-		$playlistname = catfile(Slim::Utils::Prefs::get('playlistdir'),$playlistname);
-		my $currsong = Slim::Utils::Prefs::clientGet($client,'currentSong');
-		if (-e $playlistname) {
-			Slim::Control::Command::execute($client,['playlist','add',$playlistname],\&initial_add_done,[$client,$currsong]);
-			$restoredPlaylist = 1;
+	Slim::Player::Playlist::restoreSync($client);
+	
+	# restore the old playlist if we aren't already synced with somebody (that has a playlist)
+	if (!Slim::Player::Playlist::isSynced($client)) {	
+		if (Slim::Utils::Prefs::get('defaultPlaylist')) {
+			$restoredPlaylist = Slim::Utils::Prefs::get('defaultPlaylist');
+		} elsif (Slim::Utils::Prefs::get('persistPlaylists') && Slim::Utils::Prefs::get('playlistdir')) {
+			my $playlistname = "__$id.m3u";
+			$playlistname =~ s/\:/_/g;
+			$playlistname = catfile(Slim::Utils::Prefs::get('playlistdir'),$playlistname);
+			$currsong = Slim::Utils::Prefs::clientGet($client,'currentSong');
+			if (-e $playlistname) {
+				$restoredPlaylist = $playlistname;
+			}
+		}
+	
+		if (defined $restoredPlaylist) {
+			Slim::Control::Command::execute($client,['playlist','add',$restoredPlaylist],\&initial_add_done,[$client,0]);
 		}
 	}
-	if (!$restoredPlaylist && Slim::Utils::Prefs::get('defaultPlaylist')) {
-		Slim::Control::Command::execute($client,['playlist','add',Slim::Utils::Prefs::get('defaultPlaylist')],\&initial_add_done,[$client,0]);
-	}
-	restoreSync($client);
 }
 
 sub initial_add_done {
@@ -352,36 +360,6 @@ sub forgetClient {
 	
 }
 
-# Restore Sync Operation
-sub restoreSync {
-	my $client = shift;
-	my $masterID = (Slim::Utils::Prefs::clientGet($client,'master'));
-	if ($masterID) {
-		# If a master is found, then we are either a slave or master
-		# must restore if possible, or leave it until the other clients come alive
-		if ($masterID eq id($client)) {
-			# It seems we're the master, so check for slaves to put in their place
-			# Tell each client to check again if its a slave to this master
-			$::d_sync && msg(id($client)." is a master\n");
-			my @players = clients();
-			foreach my $slave (@players) {
-				my $thing = id($slave);
-				next if ($client eq $slave);
-				next if (!defined(Slim::Utils::Prefs::clientGet($slave,'master')));
-				if ($masterID eq Slim::Utils::Prefs::clientGet($slave,'master')) {
-					#its a match, sync 'em up
-					$::d_sync && msg("$masterID has a slave at ".id($slave)."\n");
-					Slim::Player::Playlist::sync($slave,$client);
-				}
-			}
-		} elsif (getClient($masterID) && (!Slim::Player::Playlist::isSynced($client))) {
-			# We're a slave and not already synced, look for the good Hobbit
-			$::d_sync && msg (id($client)." is a slave to $masterID\n");
-			Slim::Player::Playlist::sync($client,getClient($masterID));
-		}
-	}
-}
-
 sub power {
 	my $client = shift;
 	my $on = shift;
@@ -414,7 +392,7 @@ sub power {
 				}
 				Slim::Utils::Prefs::clientSet($client, "powerOnBrightness", $powerOnBrightness);
 				#check if there is a sync group to restore
-				restoreSync($client);
+				Slim::Player::Playlist::restoreSync($client);
 				# restore volume (un-mute if necessary)
 				my $vol = Slim::Utils::Prefs::clientGet($client,"volume");
 				if($vol < 0) { 
