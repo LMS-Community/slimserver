@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.16 2004/02/20 20:56:53 dean Exp $
+# $Id: Plugins.pm,v 1.17 2004/02/20 20:59:02 dean Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
@@ -215,22 +215,24 @@ sub addSetupGroups {
 sub init {
     no strict 'refs';
     foreach my $plugin (enabledPlugins()) {
-	# We use initPlugin() instead of the more succinct
-	# init() because it's less likely to cause backward
-	# compatibility problems.
-	if (exists &{"Plugins::${plugin}::initPlugin"}) {
-	    &{"Plugins::${plugin}::initPlugin"}();
+		# We use initPlugin() instead of the more succinct
+		# init() because it's less likely to cause backward
+		# compatibility problems.
+		if (exists &{"Plugins::${plugin}::initPlugin"}) {
+			&{"Plugins::${plugin}::initPlugin"}();
+		}
 	}
 }
 
 sub shutdownPlugins {
     no strict 'refs';
     foreach my $plugin (enabledPlugins()) {
-	# We use shutdownPlugin() instead of the more succinct
-	# shutdown() because it's less likely to cause backward
-	# compatibility problems.
-	if (exists &{"Plugins::${plugin}::shutdownPlugin"}) {
-	    &{"Plugins::${plugin}::shutdownPlugin"}();
+		# We use shutdownPlugin() instead of the more succinct
+		# shutdown() because it's less likely to cause backward
+		# compatibility problems.
+		if (exists &{"Plugins::${plugin}::shutdownPlugin"}) {
+			&{"Plugins::${plugin}::shutdownPlugin"}();
+		}
 	}
 }
 
