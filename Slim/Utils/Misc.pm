@@ -339,6 +339,7 @@ sub fixPathCase {
 		$path = Win32::GetLongPathName($path);
 	}
 
+	return '' unless $path;
 	return canonpath($path);
 }
 		
