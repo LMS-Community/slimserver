@@ -23,7 +23,7 @@ package Plugins::Live365::Live365API;
 
 use strict;
 use vars qw( $VERSION );
-$VERSION = 1.00;
+$VERSION = 1.10;
 
 use XML::Simple;
 use IO::Socket;
@@ -105,14 +105,48 @@ sub httpRequest {
 
 	close $socket;
 
-	if( $response !~ /^HTTP\/1.. 200 OK/ ) {
-		return undef;
+	my ( $headers, $content ) = split( /\n\n/, $response, 2 );
+
+	if( $headers !~ /^HTTP\/1.. 200 OK/ ) {
+		$content = undef;
 	}
 
-	my $content = ( split( /\n\n/, $response, 2 ) )[1];
-
-	return $content; 
+	return wantarray ? ( $headers, $content ) : $content; 
 }
+
+
+#############################
+# Protocol handler functions
+#
+sub getRedirectURL {
+    my $self = shift;
+    my $url  = shift;
+
+    my( $headers, $content ) = $self->httpRequest( $url );
+
+    $headers =~ /^HTTP\/1\.\d 302/ or return undef;
+    my( $redir ) = $headers =~ /Location: (.+)/ or return undef;
+
+    return $redir;
+}
+
+sub GetLive365Playlist {
+    my $self   = shift;
+    my $isVIP  = shift;
+    my $handle = shift;
+
+    my %args = (
+        handler  => 'playlist',
+        cmd      => 'view',
+        handle   => $isVIP ? "afl:$handle" : $handle,
+        viewType => 'xml'
+    );
+
+    my( $headers, $playlist ) = $self->httpRequest( '/pls/front', \%args );
+
+    return $playlist;
+}
+
 
 #############################
 # Login functions
@@ -506,11 +540,12 @@ package Plugins::Live365::ProtocolHandler;
 use strict;
 use Slim::Utils::Misc qw( msg );
 use Slim::Utils::Timers;
+use Slim::Player::Playlist;
 use base qw( Slim::Player::Protocols::HTTP );
 use IO::Socket;
 use XML::Simple;
 use vars qw( $VERSION );
-$VERSION = 1.00;
+$VERSION = 1.10;
 
 sub new {
 	my $class = shift;
@@ -520,45 +555,20 @@ sub new {
 	my $client = $args->{'client'};
 	my $self = $args->{'self'};
 
+	my $api = new Plugins::Live365::Live365API();
+
 	if( my( $station, $handle ) = $url =~ m{^live365://(www.live365.com/play/([^/?]+).+)$} ) {
 		$::d_plugins && msg( "Live365.protocolHandler requested: $url ($handle)\n" );	
 
-		my $socket = new IO::Socket::INET(
-			PeerAddr        => 'www.live365.com',
-			PeerPort        => 80,
-			Proto           => 'tcp',
-			Type            => SOCK_STREAM
-		) or do {
-			$::d_plugins && msg( "Live365.protocolHandler failed to connect to live365.com: $!\n" );
-			return undef;
-		};
-
-		my $getRequest = "GET $url HTTP/1.0\n\n";
-
-		my $response;
-		print $socket $getRequest;
-		{
-			local $/ = undef;
-			$response = <$socket>;
-		}
-		$response =~ s/\015?\012/\n/g;
-
-		close $socket;
-
-		$response =~ /^HTTP\/1\.\d 302/ or do {
-			$::d_plugins && msg( "Live365.protocolHandler got an unexpected response: $response.\n" );
-			return undef;
-		};
-
-		my ($redir) = $response =~ /Location: (.+)/ or do {
+		my $realURL = $api->getRedirectURL( $url ) or do {
 			$::d_plugins && msg( "Live365.protocolHandler can't determine real station URL.\n" );
 			return undef;
 		};
 
-		$::d_plugins && msg( "Live365 station really at: '$redir'\n" );
+		$::d_plugins && msg( "Live365 station really at: '$realURL'\n" );
 
 		$self = $class->SUPER::new({ 
-				'url' => $redir, 
+				'url' => $realURL, 
 				'client' => $client, 
 				'infoUrl' => $url,
 				'create' => 1,
@@ -586,32 +596,14 @@ sub getPlaylist {
 	# store the original title as a fallback, once.
 	#${*$self}{live365_original_title} ||= Slim::Music::Info::title();
 
-	my $getPlaylist = sprintf( "GET /pls/front?handler=playlist&cmd=view&handle=%s%s&viewType=xml\n\n",
-			$isVIP ? 'afl:' : '',
-			$handle );
+	my $api = new Plugins::Live365::Live365API();
 
-	$::d_plugins && msg( "(" . ref( $client ) . ") Get playlist: $getPlaylist\n" );
+	my $playlist = $api->GetLive365Playlist( $isVIP, $handle );
 
-	my $socket = new IO::Socket::INET(
-		PeerAddr	=> 'www.live365.com',
-		PeerPort	=> 80,
-		Proto		=> 'tcp',
-		Type		=> SOCK_STREAM
-	) or return undef;
-
-	$::d_plugins && msg( "Connected to Live365 playlist server\n" );
-
-	my $response;
-	print $socket $getPlaylist;
-	{
-		local $/ = undef;
-		$response = <$socket>;
-	}
-
-	$::d_plugins && msg( "Got playlist response: " . $response . " bytes\n" );
+	$::d_plugins && msg( "Got playlist response: $playlist\n" );
 
 	my $newTitle = '';
-	my $nowPlaying = XMLin( $response, ForceContent => 1 );
+	my $nowPlaying = XMLin( $playlist, ForceContent => 1 );
 	my $nextRefresh;
 
 	if( defined $nowPlaying && defined $nowPlaying->{PlaylistEntry} && defined $nowPlaying->{Refresh} ) {
@@ -650,7 +642,9 @@ sub getPlaylist {
 		#$client->songduration($nextRefresh) if $nextRefresh;
 	}
 
-	if ($nextRefresh) {
+	my $currentSong = Slim::Player::Playlist::playList( $client );
+
+	if ( $nextRefresh and $currentSong->[0] =~ /^live365:/ ) {
 		Slim::Utils::Timers::setTimer(
 			$client,
 			Time::HiRes::time() + $nextRefresh,
