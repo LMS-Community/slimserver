@@ -58,44 +58,53 @@ sub init {
 
 		'settings/VOLUME' => {
 			'useMode' => 'INPUT.Bar',
-			'header' => \&volumeHeader,
-
-			'onChange' => sub { 
-				my ($subref,$subarg) = Slim::Buttons::Common::getFunction($_[0],'volume_'.$_[1],'Common');
-				&$subref($_[0],'volume',$subarg);
-			},
-
-			'onChangeArgs' => 'CV',
+			'header' => 'VOLUME',
+			'stringHeader' => 1,
+			'headerValue' => \&volumeValue,
+			'onChange' =>  \&executeCommand,
+			'command' => 'mixer',
+			'subcommand' => 'volume',
 			'initialValue' => sub { return $_[0]->volume() },
 		},
 
 		'settings/BASS' => {
 			'useMode' => 'INPUT.Bar',
-			'header' => \&bassHeader,
+			'header' => 'BASS',
+			'stringHeader' => 1,
+			'headerValue' => 'scaled',
 			'mid' => 50,
-			'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'bass',$_[1]) },
-			'onChangeArgs' => 'CV',
+			'onChange' =>  \&executeCommand,
+			'command' => 'mixer',
+			'subcommand' => 'bass',
 			'initialValue' => sub { return $_[0]->bass() },
 		},
 
 		'settings/PITCH' => {
 			'useMode' => 'INPUT.Bar',
-			'header' => \&pitchHeader,
+			'header' => 'PITCH',
+			'stringHeader' => 1,
+			'headerValue' =>'unscaled',
+			'headerValueUnit' => '%',
 			'min' => 80,
 			'max' => 120,
 			'mid' => 100,
+			'midIsZero' => 0,
 			'increment' => 1,
-			'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'pitch',$_[1]) },
-			'onChangeArgs' => 'CV',
+			'onChange' =>  \&executeCommand,
+			'command' => 'mixer',
+			'subcommand' => 'pitch',
 			'initialValue' => sub { return $_[0]->pitch() },
 		},
 
 		'settings/TREBLE' => {
 			'useMode' => 'INPUT.Bar',
-			'header' => \&trebleHeader,
+			'header' => 'TREBLE',
+			'stringHeader' => 1,
+			'headerValue' => 'scaled',
 			'mid' => 50,
-			'onChange' => sub { Slim::Buttons::Common::mixer($_[0],'treble',$_[1]) },
-			'onChangeArgs' => 'CV',
+			'onChange' =>  \&executeCommand,
+			'command' => 'mixer',
+			'subcommand' => 'treble',
 			'initialValue' => sub { return $_[0]->treble() },
 		},
 
@@ -106,8 +115,9 @@ sub init {
 			'stringExternRef' => 1,
 			'header' => 'REPEAT',
 			'stringHeader' => 1,
-			'onChange' => sub { Slim::Control::Command::execute($_[0], ["playlist", "repeat", $_[1]]) },
-			'onChangeArgs' => 'CV',
+			'onChange' =>  \&executeCommand,
+			'command' => 'playlist',
+			'subcommand' => 'repeat',
 			'initialValue' => \&Slim::Player::Playlist::repeat,
 		},
 
@@ -118,8 +128,9 @@ sub init {
 			'stringExternRef' => 1,
 			'header' => 'SHUFFLE',
 			'stringHeader' => 1,
-			'onChange' => sub { Slim::Control::Command::execute($_[0], ["playlist", "shuffle", $_[1]]) },
-			'onChangeArgs' => 'CV',
+			'onChange' => \&executeCommand,
+			'command' => 'playlist',
+			'subcommand' => 'shuffle',
 			'initialValue' => \&Slim::Player::Playlist::shuffle,
 		},
 
@@ -130,8 +141,9 @@ sub init {
 			'externRef' => undef, #filled before changing modes
 			'header' => 'TITLEFORMAT',
 			'stringHeader' => 1,
-			'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0],"titleFormatCurr",$_[0]->param('listIndex')) },
-			'onChangeArgs' => 'C',
+			'onChange' => \&setPref,
+			'pref' => "titleFormatCurr",
+			'onChangeArgs' => 'CI',
 		},
 
 		'settings/TEXTSIZE' => {
@@ -145,16 +157,19 @@ sub init {
 			'initialValue' => sub { $_[0]->textSize() },
 		},
 
-		'settings/OFFDISPLAYSIZE' => {
-			'useMode' => 'INPUT.List',
-			'listRef' => undef, #filled before changing modes
-			'externRef' => \&_fontExists,
-			'header' => 'OFFDISPLAYSIZE',
-			'stringHeader' => 1,
-			'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0], "offDisplaySize", $_[1]) },
-			'onChangeArgs' => 'CV',
-			'initialValue' => 'offDisplaySize',
-		},
+		# note, this does not work, since fonts returns names based
+		# on the active mode, which will never be off
+		# TODO make this work
+		#'settings/OFFDISPLAYSIZE' => {
+		#	'useMode' => 'INPUT.List',
+		#	'listRef' => undef, #filled before changing modes
+		#	'externRef' => \&_fontExists,
+		#	'header' => 'OFFDISPLAYSIZE',
+		#	'stringHeader' => 1,
+		#	'onChange' => \&setPref,
+		#	'pref' =>  "offDisplaySize",
+		#	'initialValue' => 'offDisplaySize',
+		#},
 
 		'settings/INFORMATION' => {
 			'useMode' => 'information'
@@ -174,7 +189,8 @@ sub init {
 			'listRef' => undef,
 			'externRef' => undef,
 			'stringExternRef' => 1,
-			'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0], "screensaver", $_[1]) },
+			'onChange' => \&setPref,
+			'pref' => "screensaver",
 			'header' => 'SETUP_SCREENSAVER',
 			'stringHeader' => 1,
 			'initialValue' => 'screensaver',
@@ -182,6 +198,25 @@ sub init {
 	);
 }
 
+sub setPref {
+	my $client = shift;
+	my $value = shift;
+	
+	my $pref = $client->param('pref');
+	
+	Slim::Utils::Prefs::clientSet($client,$pref,$value);
+}
+
+sub executeCommand {
+	my $client = shift;
+	my $value = shift;
+	
+	my $command = $client->param('command');
+	my $subcmd  = $client->param('subcommand');
+	
+	Slim::Control::Command::execute($client, [$command, $subcmd, $value]);
+}
+	
 sub _fontExists {
 	my $fontname = (@{$_[0]->fonts})[1];
 	   $fontname =~ s/(\.2)?//go;
@@ -271,55 +306,33 @@ sub setMode {
 	$client->update();
 }
 
-sub volumeHeader {
+sub volumeValue {
 	my ($client,$arg) = @_;
-	return $client->string('VOLUME').' ('.($arg <= 0 ? $client->string('MUTED') : int($arg/100*40+0.5)).')';
+	return ' ('.($arg <= 0 ? $client->string('MUTED') : int($arg/100*40+0.5)).')';
 }
 
-sub bassHeader {
-	my ($client,$arg) = @_;
-	return $client->string('BASS').' ('.(int($arg/100*40 + 0.5) - 20).')';
-}
-
-sub trebleHeader {
-	my ($client,$arg) = @_;
-	return $client->string('TREBLE').' ('.(int($arg/100*40 + 0.5) - 20).')';
-}
-
-sub pitchHeader {
-	my ($client,$arg) = @_;
-	return $client->string('PITCH').' ('.(int($arg)).'%)';
-}
-
+# this is deprecated, warn and backtrace if anyone calls
 sub volumeLines {
-	my $client = shift;
-
-	my $volume = $client->volume();
-	my $volumestring = volumeHeader($client,$volume);
-	return Slim::Buttons::Input::Bar::lines($client,$volume,$volumestring ,$client->minVolume(), $client->minVolume(), $client->maxVolume());
+	msg("Somebody called volumeLines\n");
+	bt();
 }
 
+# this is deprecated, warn and backtrace if anyone calls
 sub pitchLines {
-	my $client = shift;
-	my $pitch = $client->pitch();
-	my $pitchstring = pitchHeader($client,$pitch);
-	return Slim::Buttons::Input::Bar::lines($client,$pitch,$pitchstring, $client->minPitch(), ($client->maxPitch() + $client->minPitch() ) / 2, $client->maxPitch());
+	msg("Somebody called pitchLines\n");
+	bt();
 }
 
+# this is deprecated, warn and backtrace if anyone calls
 sub bassLines {
-	my $client = shift;
-
-	my $bass = $client->bass();
-	my $bassstring = bassHeader($client,$bass);
-	return Slim::Buttons::Input::Bar::lines($client,$bass,$bassstring, $client->minBass(), ($client->maxBass() + $client->minBass() ) / 2, $client->maxBass());
+	msg("Somebody called bassLines\n");
+	bt();
 }
 
+# this is deprecated, warn and backtrace if anyone calls
 sub trebleLines {
-	my $client = shift;
-
-	my $treble = $client->treble();
-	my $treblestring = trebleHeader($client,$treble);
-	return Slim::Buttons::Input::Bar::lines($client,$treble,$treblestring, $client->minTreble(), ($client->maxTreble() + $client->minTreble() ) / 2, $client->maxTreble());
+	msg("Somebody called trebleLines\n");
+	bt();
 }
 
 1;

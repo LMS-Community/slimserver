@@ -103,6 +103,7 @@ sub changePos {
 
 sub lines {
 	my $client = shift;
+	# These parameters are used when calling this function from Slim::Display::Display
 	my $value = shift;
 	my $header = shift;
 
@@ -115,8 +116,20 @@ sub lines {
 	my $valueRef = $client->param('valueRef');
 	$valueRef = \$value if defined $value;
 	
-	$line1 = defined $header ? $header : Slim::Buttons::Input::List::getExtVal($client,$$valueRef,undef,'header');
+	my $listIndex = $client->param('listIndex');
 
+	if (defined $header) {
+		$line1 = $header;
+	} else {
+		$line1 = Slim::Buttons::Input::List::getExtVal($client,$$valueRef,$listIndex,'header');
+		if ($client->param('stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
+			$line1 = $client->string($line1);
+		}
+		if (ref $client->param('headerValue') eq "CODE") {
+			$line1 .= Slim::Buttons::Input::List::getExtVal($client,$$valueRef,$listIndex,'headerValue');
+		}
+	}
+	
 	$min = $client->param('min') || 0 unless defined $min;
 	$mid = $client->param('mid') || 0 unless defined $mid;
 	$max = $client->param('max') || 100 unless defined $max;
@@ -134,7 +147,8 @@ sub lines {
 			$line2 = $line1;
 		}
 	}
-	return ($line1,$line2);
+	my @overlay = Slim::Buttons::Input::List::getExtVal($client,$valueRef,$listIndex,'overlayRef');
+	return ($line1,$line2,@overlay);
 }
 
 
@@ -154,16 +168,27 @@ sub setMode {
 	$client->lines(\&lines);
 }
 # set unsupplied parameters to the defaults
-# header = 'Select item:' # message displayed on top line, can be a scalar, a code ref
+# header = '' # message displayed on top line, can be a scalar, a code ref
 	# , or an array ref to a list of scalars or code refs
 # headerArgs = CV
+# stringHeader = undef # if true, put the value of header through the string function
+	# before displaying it.
+# headerValue = undef
+	# set to 'scaled' to show the current value modified by the increment in parentheses
+	# set to 'unscaled' to show the current value in parentheses
+	# set to a codeRef which returns a string to be shown after the standard header
+# headerValueArgs = CV
+# headerValueUnit = '' # Set to a units symbol to be displayed before the closing paren
 # valueRef =  # reference to value to be selected
 # callback = undef # function to call to exit mode
+# overlayRef = undef
+# overlayRefArgs = CV
 # onChange = undef
 # onChangeArgs = CV
 # min = 0 # minimum value for slider scale
 # max = 100 #maximum value for slider scale
 # mid = 0 # midpoint value for marking the division point for a balance bar.
+# midIsZero = 1 # set to 0 if you don't want the mid value to be interpreted as zero
 # increment = 2.5 # step value for each bar character or button press.
 # barOnDouble = 0 # set to 1 if the bar is preferred when using large text.
 # smoothing = 0 # set to 1 if you want the character display to use custom chars to smooth the movement of the bar.
@@ -176,13 +201,16 @@ sub init {
 		$client->param('parentMode',$client->modeStack->[$i]);
 	}
 	if (!defined($client->param('header'))) {
-		$client->param('header','Select item:');
+		$client->param('header','');
 	}
 	if (!defined($client->param('min'))) {
 		$client->param('min',0);
 	}
 	if (!defined($client->param('mid'))) {
 		$client->param('mid',0);
+	}	
+	if (!defined($client->param('midIsZero'))) {
+		$client->param('midIsZero',1);
 	}	
 	if (!defined($client->param('max'))) {
 		$client->param('max',100);
@@ -245,7 +273,57 @@ sub init {
 	if (!defined($client->param('headerArgs'))) {
 		$client->param('headerArgs','CV');
 	}
+	if (!defined($client->param('overlayRefArgs'))) {
+		$client->param('overlayRefArgs','CV');
+	}
+	my $headerValue = lc($client->param('headerValue') || '');
+	if ($headerValue eq 'scaled') {
+		$client->param('headerValue',\&scaledValue);
+	} elsif ($headerValue eq 'unscaled') {
+		$client->param('headerValue',\&unscaledValue);
+	}
+	if (!defined($client->param('headerValueArgs'))) {
+		$client->param('headerValueArgs','CV');
+	}
+	if (!defined($client->param('headerValueUnit'))) {
+		$client->param('headerValueUnit','');
+	}
 	return 1;
+}
+
+sub scaledValue {
+	my $client = shift;
+	my $value = shift;
+
+	if ($client->param('midIsZero')) {
+		$value -= $client->param('mid');
+	}
+
+	my $increment = $client->param('increment');
+	$value /= $increment if $increment;
+	
+	$value = int($value + 0.5);
+
+	my $unit = $client->param('headerValueUnit');
+	$unit = '' unless defined $unit;
+	
+	return " ($value$unit)"	
+}
+
+sub unscaledValue {
+	my $client = shift;
+	my $value = shift;
+	
+	if ($client->param('midIsZero')) {
+		$value -= $client->param('mid');
+	}
+
+	$value = int($value + 0.5);
+
+	my $unit = $client->param('headerValueUnit');
+	$unit = '' unless defined $unit;
+	
+	return " ($value$unit)"	
 }
 
 sub exitInput {

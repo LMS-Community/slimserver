@@ -135,19 +135,39 @@ sub curLines {
 #	USAGE:		volumeDisplay($client)
 sub volumeDisplay {
 	my $client = shift;
-	$client->showBriefly(Slim::Buttons::Settings::volumeLines($client));
+
+	my $volume = $client->volume();
+	my $volumestring = $client->string('VOLUME').' ('.($volume <= 0 ? $client->string('MUTED') : int($volume/100*40+0.5)).')';
+	my @lines = Slim::Buttons::Input::Bar::lines($client,$volume,$volumestring ,$client->minVolume(), $client->minVolume(), $client->maxVolume());
+
+	$client->showBriefly(@lines);
 }
 sub pitchDisplay {
 	my $client = shift;
-	$client->showBriefly(Slim::Buttons::Settings::pitchLines($client));
+
+	my $pitch = $client->pitch();
+	my $pitchstring = $client->string('PITCH').' ('.(int($pitch)).'%)';
+	my @lines = Slim::Buttons::Input::Bar::lines($client,$pitch,$pitchstring, $client->minPitch(), ($client->maxPitch() + $client->minPitch() ) / 2, $client->maxPitch());
+
+	$client->showBriefly(@lines);
 }
 sub bassDisplay {
 	my $client = shift;
-	$client->showBriefly(Slim::Buttons::Settings::bassLines($client));
+
+	my $bass = $client->bass();
+	my $bassstring = $client->string('BASS').' ('.(int($bass/100*40 + 0.5) - 20).')';
+	my @lines = Slim::Buttons::Input::Bar::lines($client,$bass,$bassstring, $client->minBass(), ($client->maxBass() + $client->minBass() ) / 2, $client->maxBass());
+
+	$client->showBriefly(@lines);
 }
 sub trebleDisplay {
 	my $client = shift;
-	$client->showBriefly(Slim::Buttons::Settings::trebleLines($client));
+
+	my $treble = $client->treble();
+	my $treblestring = $client->string('TREBLE').' ('.(int($treble/100*40 + 0.5) - 20).')';
+	my @lines = Slim::Buttons::Input::Bar::lines($client,$treble,$treblestring, $client->minTreble(), ($client->maxTreble() + $client->minTreble() ) / 2, $client->maxTreble());
+
+	$client->showBriefly(@lines);
 }
 
 sub center {

@@ -90,6 +90,7 @@ sub changePos {
 		my @args;
 		push @args, $client if $onChangeArgs =~ /c/i;
 		push @args, $$valueRef if $onChangeArgs =~ /v/i;
+		push @args, $client->param('listIndex') if $onChangeArgs =~ /i/i;
 		$onChange->(@args);
 	}
 	$client->update();
@@ -173,7 +174,7 @@ sub setMode {
 # listRef = none # reference to list of internal values, exit mode if not supplied
 # header = 'Select item:' # message displayed on top line, can be a scalar, a code ref
 	# , or an array ref to a list of scalars or code refs
-# headerArgs = CV
+# headerArgs = CV # accepts C and V
 # stringHeader = undef # if true, put the value of header through the string function
 	# before displaying it.
 # headerAddCount = undef # if true add (I of T) to end of header
@@ -183,12 +184,14 @@ sub setMode {
 # listIndex = 0 or position of valueRef in listRef
 # noWrap = undef # whether or not the list wraps at the ends
 # externRef = undef
-# externRefArgs = CV
+# externRefArgs = CV # accepts C and V
 # stringExternRef = undef # same as with stringHeader, but for the value of externRef
 # overlayRef = undef
-# overlayRefArgs = CV
+# overlayRefArgs = CV # accepts C and V
 # onChange = undef
-# onChangeArgs = CV
+# onChangeArgs = CV # accepts C, V and I
+# for the *Args parameters, the letters indicate what values to send to the code ref
+#  (C for client object, V for current value, I for list index)
 
 # other parameters used
 # isSorted = undef # whether the interal or external list is sorted 
