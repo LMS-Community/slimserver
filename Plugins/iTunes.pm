@@ -177,7 +177,7 @@ sub addGroups {
 	Slim::Web::Setup::addChildren('server','itunes',3);
 	Slim::Web::Setup::addCategory('itunes',&setupCategory);
 	my ($groupRef,$prefRef) = &setupUse();
-	Slim::Web::Setup::addGroup('server','itunes',$groupRef,1,$prefRef);
+	Slim::Web::Setup::addGroup('server','itunes',$groupRef,2,$prefRef);
 }
 
 sub findLibraryFromPlist {
