@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.8 2004/04/22 05:47:12 kdf Exp $
+#$Id: MoodLogic.pm,v 1.9 2004/04/25 03:32:13 kdf Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -162,7 +162,7 @@ sub doneScanning {
 
 	$isScanning = 0;
 	
-	Slim::Utils::Scheduler::add_task(\&artScan);
+	if (Slim::Utils::Prefs::get('lookForArtwork')) {Slim::Utils::Scheduler::add_task(\&artScan);}
 	
 	@playlists = Slim::Music::Info::sortIgnoringCase(@playlists);
 }
@@ -208,7 +208,7 @@ sub exportFunction {
 	my $auto   = Win32::OLE->new("ADODB.Recordset");
 
 	$conn->Open('PROVIDER=MSDASQL;DRIVER={Microsoft Access Driver (*.mdb)};DBQ='.$mixer->{JetFilePublic}.';UID=;PWD=F8F4E734E2CAE6B;');
-	$rs->Open('SELECT tblSongObject.songId, tblSongObject.profileReleaseYear, tblAlbum.name, tblSongObject.tocAlbumTrack, tblMediaObject.bitrate FROM tblAlbum,tblMediaObject,tblSongObject WHERE tblAlbum.albumId = tblSongObject.tocAlbumId AND tblSongObject.songId = tblMediaObject.songId ORDER BY tblSongObject.songId', $conn, 1, 1);
+	$rs->Open('SELECT tblSongObject.songId, tblSongObject.profileReleaseYear, tblAlbum.name, tblSongObject.tocAlbumTrack, tblMediaObject.bitrate, tblMediaObject.fileSize FROM tblAlbum,tblMediaObject,tblSongObject WHERE tblAlbum.albumId = tblSongObject.tocAlbumId AND tblSongObject.songId = tblMediaObject.songId ORDER BY tblSongObject.songId', $conn, 1, 1);
 	#PLAYLIST QUERY
 	$playlist->Open('Select tblPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename  From "tblPlaylist", "tblPlaylistSong", "tblMediaObject" where "tblPlaylist"."playlistId" = "tblPlaylistSong"."playlistId" AND "tblPlaylistSong"."songId" = "tblMediaObject"."songId" order by tblPlaylist.playlistId,tblPlaylistSong.playOrder', $conn, 1, 1);
 	# AUTO PLAYLIST QUERY: 
@@ -240,7 +240,14 @@ sub exportFunction {
 
 		# merge album info, from query ('cause it is not available via COM)
 		while (defined $rs && !$rs->EOF && $album_data[0] < $song_id && defined $rs->Fields('songId')) {
-			@album_data = ($rs->Fields('songId')->value, $rs->Fields('name')->value, $rs->Fields('tocAlbumTrack')->value,$rs->Fields('bitrate')->value,$rs->Fields('profileReleaseYear')->value);
+			@album_data = (
+				$rs->Fields('songId')->value,
+				$rs->Fields('name')->value,
+				$rs->Fields('tocAlbumTrack')->value,
+				$rs->Fields('bitrate')->value,
+				$rs->Fields('profileReleaseYear')->value,
+				$rs->Fields('fileSize')->value
+			);
 			$rs->MoveNext;
 		}
 
@@ -265,9 +272,7 @@ sub exportFunction {
 		
 		while (defined $auto && !$auto->EOF) {
 			my $name= $auto->Fields('name')->value;
-			#$name =~ s/\+//g;
-			#$name =~ s/[\{\[]/\(/g;
-			#$name =~ s/[\}\]]/\)/g;
+			
 			my %cacheEntry = ();
 			my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
 			if ($playlists[-1] ne $name) {
@@ -290,6 +295,7 @@ sub exportFunction {
 			$cacheEntry{'TRACKNUM'} = $album_data[2];
 			$cacheEntry{'BITRATE'} = $album_data[3];
 			$cacheEntry{'YEAR'} = $album_data[4];
+			$cacheEntry{'SIZE'} = $album_data[5];
 		}
 		$cacheEntry{'CT'} = 'mp3';
 		$cacheEntry{'TAG'} = 1;
@@ -298,8 +304,7 @@ sub exportFunction {
 		$cacheEntry{'ARTIST'} = $mixer->Mix_ArtistName(-1);
 		$cacheEntry{'GENRE'} = $genre_hash{$browser->FLT_Song_MGID($i)}[0] if (defined $genre_hash{$browser->FLT_Song_MGID($i)});
 		$cacheEntry{'SECS'} = int($mixer->Mix_SongDuration(-1) / 1000);
-		$cacheEntry{'SIZE'} = -s $filename;
-		$cacheEntry{'OFFSET'} = 0; 	 
+		$cacheEntry{'OFFSET'} = 0;
 		$cacheEntry{'BLOCKALIGN'} = 1;
 		
 		$cacheEntry{'MOODLOGIC_SONG_ID'} = $song_id;
@@ -312,10 +317,12 @@ sub exportFunction {
 		$cacheEntry{'MOODLOGIC_GENRE_MIXABLE'} = $genre_hash{$browser->FLT_Song_MGID($i)}[1] if (defined $genre_hash{$browser->FLT_Song_MGID($i)});
 			
 		Slim::Music::Info::updateCacheEntry($filename, \%cacheEntry);
-		Slim::Music::Info::updateGenreCache($filename, \%cacheEntry);
-		if ($cacheEntry{'ALBUM'} && !exists $artwork{$cacheEntry{'ALBUM'}} && !defined Slim::Music::Info::cacheItem($filename,'THUMB')) { 	 
-			$artwork{$cacheEntry{'ALBUM'}} = $filename; 	 
-			$::d_artwork && msg("$cacheEntry{'ALBUM'} refers to $filename\n"); 	 
+
+		if (Slim::Utils::Prefs::get('lookForArtwork')) {
+			if ($cacheEntry{'ALBUM'} && !exists $artwork{$cacheEntry{'ALBUM'}} && !defined Slim::Music::Info::cacheItem($filename,'THUMB')) { 	 
+				$artwork{$cacheEntry{'ALBUM'}} = $filename; 	 
+				$::d_artwork && msg("$cacheEntry{'ALBUM'} refers to $filename\n"); 	 
+			}
 		}
 		Slim::Music::Info::updateGenreMixCache(\%cacheEntry);
 		Slim::Music::Info::updateArtistMixCache(\%cacheEntry);
