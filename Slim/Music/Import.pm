@@ -6,11 +6,13 @@ package Slim::Music::Import;
 # version 2.
 
 use strict;
-use Slim::Utils::Misc;
+
+use Slim::Music::Info;
 use Slim::Music::iTunes;
 use Slim::Music::MoodLogic;
 use Slim::Music::MusicMagic;
 use Slim::Music::MusicFolderScan;
+use Slim::Utils::Misc;
 
 # background scanning and cache prefilling of music information to speed up UI...
 
@@ -156,14 +158,17 @@ sub artwork {
 sub artScan {
 	my @albums = keys %artwork;
 	my $album  = $albums[0];
+	my $url    = $artwork{$album};
 
 	return 0 unless $album;
 
-	my $thumb = Slim::Music::Info::haveThumbArt($artwork{$album});
+	my $ds     = Slim::Music::Info::getCurrentDataStore();
+	my $track  = $ds->objectForUrl($url);
+	my $thumb  = $track->coverArt('thumb');
 
 	if (defined $thumb && $thumb) {
 		$::d_artwork && Slim::Utils::Misc::msg("Caching $thumb for $album\n");
-		Slim::Music::Info::updateArtworkCache($artwork{$album}, {'ALBUM' => $album, 'THUMB' => $thumb})
+		Slim::Music::Info::updateArtworkCache($url, {'ALBUM' => $album, 'THUMB' => $thumb})
 	}
 
 	delete $artwork{$album};
@@ -172,7 +177,7 @@ sub artScan {
 		$::d_artwork && Slim::Utils::Misc::msg("Completed Artwork Scan\n");
 		return 0;
 	}
-	
+
 	return 1;
 }
 
