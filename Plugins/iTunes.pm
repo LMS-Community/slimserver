@@ -614,7 +614,10 @@ sub scanFunction {
 					}
 				}
 				
-				$ds->updateOrCreate($url, \%cacheEntry, undef, 1);
+				$ds->updateOrCreate({
+					'url'        => $url,
+					'attributes' => \%cacheEntry,
+				});
 
 				$tracks{$id} = $url;
 			} else {

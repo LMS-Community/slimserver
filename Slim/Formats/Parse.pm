@@ -81,15 +81,23 @@ sub _updateMetaData {
 	my $entry = shift;
 	my $title = shift;
 
-	if (Slim::Music::Info::isCached($entry)) {
+	my $ds    = Slim::Music::Info::getCurrentDataStore();
+	my $track = $ds->objectForUrl($entry);
 
-		if (!Slim::Music::Info::isKnownType($entry)) {
+	if ($track) {
+
+		if (!Slim::Music::Info::isKnownType($track)) {
+
 			$::d_parse && Slim::Utils::Misc::msg("    entry: $entry not known type\n"); 
-			Slim::Music::Info::setContentType($entry,'mp3');
+
+			# Track will work because we stringify to the url.
+			Slim::Music::Info::setContentType($track, 'mp3');
 		}
 
 	} else {
-		Slim::Music::Info::setContentType($entry,'mp3');
+
+		$::d_parse && Slim::Utils::Misc::msg("    entry: $entry forcing type to mp3\n"); 
+		Slim::Music::Info::setContentType($entry, 'mp3');
 	}
 
 	# Update title MetaData only if its not a local file with Title information already cached.
@@ -192,9 +200,19 @@ sub readPLS {
 	return @items;
 }
 
+# $noUTF8 comes from readCUE - which means it's an external cue sheet.
+# If that's the case, we don't want to readTags (in newTrack() either, since
+# all the data will be coming from the cuesheet.
+#
+# If we are an internal cuesheet, then readTags() needs to be called, which
+# will invoke Slim::Formats::FLAC->getTags() - with an anchor, which will
+# return before the cuesheet parsing - avoiding the infinite loop.
+
 sub parseCUE {
-	my $lines = shift;
+	my $lines  = shift;
 	my $cuedir = shift;
+	my $secs   = shift || 0;
+	my $noUTF8 = shift || 0;
 	my @items;
 
 	my $album;
@@ -204,8 +222,20 @@ sub parseCUE {
 	my $filename;
 	my $currtrack;
 	my %tracks;
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
+	$::d_parse && Slim::Utils::Misc::msg("parseCUE: cuedir: [$cuedir] secs: [$secs] noUTF8: [$noUTF8]\n");
 
 	for (@$lines) {
+
+		unless ($noUTF8) {
+
+			if ($] > 5.007) {
+				$_ = eval { Encode::decode("utf8", $_) };
+			} else {
+				$_ = Slim::Utils::Misc::utf8toLatin1($_);
+			}
+		}
 
 		# strip whitespace from end
 		s/\s*$//; 
@@ -237,16 +267,8 @@ sub parseCUE {
 		}
 	}
 
-	# This is needed for readTags
-	my $ds       = Slim::Music::Info::getCurrentDataStore();
-	my $wholeFile = $ds->objectForUrl($filename, 1, 1) || do {
-
-		$::d_parse && Slim::Utils::Misc::msg("Warning - couldn't get object for file: $filename !\n");
-		return;
-	};
-
 	# calc song ending times from start of next song from end to beginning.
-	my $lastpos = (defined $tracks{$currtrack}->{'END'}) ? $tracks{$currtrack}->{'END'} : $wholeFile->secs();
+	my $lastpos = (defined $tracks{$currtrack}->{'END'}) ? $tracks{$currtrack}->{'END'} : $secs;
 
 	for my $key (sort {$b <=> $a} keys %tracks) {
 
@@ -267,14 +289,12 @@ sub parseCUE {
 
 		if (!defined $track->{'END'}) {
 
-			$track->{'END'} = $wholeFile->secs() || '';
+			$track->{'END'} = $secs || '';
 		}
 
 		my $url = "$filename#".$track->{'START'}."-".$track->{'END'};
 
-		my $trackObj = $ds->objectForUrl($url, 1);
-
-		$::d_parse && Slim::Utils::Misc::msg("    url: $url\n");
+		$::d_parse && Slim::Utils::Misc::msg("    URL: $url\n");
 
 		push @items, $url;
 
@@ -283,61 +303,67 @@ sub parseCUE {
 		$cacheEntry->{'CT'} = Slim::Music::Info::typeFromPath($url, 'mp3');
 		
 		$cacheEntry->{'TRACKNUM'} = $key;
-		$::d_parse && Slim::Utils::Misc::msg("    tracknum: $key\n");
+		$::d_parse && Slim::Utils::Misc::msg("    TRACKNUM: $key\n");
 
 		if (exists $track->{'TITLE'}) {
 			$cacheEntry->{'TITLE'} = $track->{'TITLE'};
-			$::d_parse && Slim::Utils::Misc::msg("    title: " . $cacheEntry->{'TITLE'} . "\n");
+			$::d_parse && Slim::Utils::Misc::msg("    TITLE: " . $cacheEntry->{'TITLE'} . "\n");
 		}
 
 		if (exists $track->{'ARTIST'}) {
 			$cacheEntry->{'ARTIST'} = $track->{'ARTIST'};
-			$::d_parse && Slim::Utils::Misc::msg("    artist: " . $cacheEntry->{'ARTIST'} . "\n");
+			$::d_parse && Slim::Utils::Misc::msg("    ARTIST: " . $cacheEntry->{'ARTIST'} . "\n");
 		}
 
 		if (exists $track->{'YEAR'}) {
 
 			$cacheEntry->{'YEAR'} = $track->{'YEAR'};
-			$::d_parse && Slim::Utils::Misc::msg("    year: " . $cacheEntry->{'YEAR'} . "\n");
+			$::d_parse && Slim::Utils::Misc::msg("    YEAR: " . $cacheEntry->{'YEAR'} . "\n");
+
 		} elsif (defined $year) {
 
 			$cacheEntry->{'YEAR'} = $year;
-			$::d_parse && Slim::Utils::Misc::msg("    year: " . $year . "\n");
+			$::d_parse && Slim::Utils::Misc::msg("    YEAR: " . $year . "\n");
 		}
 
 		if (exists $track->{'GENRE'}) {
 
 			$cacheEntry->{'GENRE'} = $track->{'GENRE'};
-			$::d_parse && Slim::Utils::Misc::msg("    genre: " . $cacheEntry->{'GENRE'} . "\n");
+			$::d_parse && Slim::Utils::Misc::msg("    GENRE: " . $cacheEntry->{'GENRE'} . "\n");
+
 		} elsif (defined $genre) {
 
 			$cacheEntry->{'GENRE'} = $genre;
-			$::d_parse && Slim::Utils::Misc::msg("    genre: " . $genre . "\n");
+			$::d_parse && Slim::Utils::Misc::msg("    GENRE: " . $genre . "\n");
 		}
 
 		if (exists $track->{'COMMENT'}) {
 
 			$cacheEntry->{'COMMENT'} = $track->{'COMMENT'};
-			$::d_parse && Slim::Utils::Misc::msg("    comment: " . $cacheEntry->{'COMMENT'} . "\n");
+			$::d_parse && Slim::Utils::Misc::msg("    COMMENT: " . $cacheEntry->{'COMMENT'} . "\n");
 
 		} elsif (defined $comment) {
 
 			$cacheEntry->{'COMMENT'} = $comment;
-			$::d_parse && Slim::Utils::Misc::msg("    comment: " . $comment . "\n");
+			$::d_parse && Slim::Utils::Misc::msg("    COMMENT: " . $comment . "\n");
 		}
 
 		if (defined $album) {
 			$cacheEntry->{'ALBUM'} = $album;
-			$::d_parse && Slim::Utils::Misc::msg("    album: " . $cacheEntry->{'ALBUM'} . "\n");
+			$::d_parse && Slim::Utils::Misc::msg("    ALBUM: " . $cacheEntry->{'ALBUM'} . "\n");
 		}
 
-		$ds->updateOrCreate($trackObj, $cacheEntry);
+		# $noUTF8 will be set if this is an external cuesheet, in
+		# which case we don't want to readTags on the source FLAC file.
+		$ds->updateOrCreate({
+			'url'        => $url,
+			'attributes' => $cacheEntry,
+			'readTags'   => !$noUTF8,
+		});
 	}
 
-	# don't keep this around.
-	# $wholeFile->delete();
-
 	$::d_parse && Slim::Utils::Misc::msg("    returning: " . scalar(@items) . " items\n");	
+
 	return @items;
 }
 
@@ -349,13 +375,17 @@ sub readCUE {
 
 	my @lines = ();
 
+	# The cuesheet will/may be encoded.
+	binmode($cuefile, ":encoding($Slim::Utils::Misc::locale)");
+
 	while (my $line = <$cuefile>) {
 		chomp($line);
 		$line =~ s/\cM//g;  
 		push @lines, $line;
 	}
 
-	return (parseCUE([@lines], $cuedir));
+	# Don't redecode it.
+	return (parseCUE([@lines], $cuedir, undef, 1));
 }
 
 sub writePLS {

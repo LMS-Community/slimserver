@@ -251,9 +251,13 @@ sub updateCacheEntry {
 		$list = $cacheEntryHash->{'LIST'};
 	}
 	
-	my $song = $currentDB->updateOrCreate($url, $cacheEntryHash);
+	my $song = $currentDB->updateOrCreate({
+		'url'        => $url,
+		'attributes' => $cacheEntryHash,
+	});
+
 	if ($list) {
-		my @tracks = map { $currentDB->objectForUrl($_, 1); } @$list;
+		my @tracks = map { $currentDB->objectForUrl($_, 1, 0); } @$list;
 		$song->setTracks(@tracks);
 	}
 }
@@ -278,14 +282,21 @@ sub setContentType {
 		}
 	}
 
-	$currentDB->updateOrCreate($url, { 'CT' => $type });
+	# Commit, since we might use it again right away.
+	$currentDB->updateOrCreate({
+		'url'        => $url,
+		'attributes' => { 'CT' => $type },
+		'commit'     => 1,
+		'readTags'   => 1,
+	});
+
 	$::d_info && Slim::Utils::Misc::msg("Content type for $url is cached as $type\n");
 }
 
 sub title {
 	my $url = shift;
 
-        return info($url, 'title');
+	return info($url, 'title');
 }
 
 sub setTitle {
@@ -294,14 +305,22 @@ sub setTitle {
 
 	$::d_info && Slim::Utils::Misc::msg("Adding title $title for $url\n");
 
-	$currentDB->updateOrCreate($url, { 'TITLE' => $title });
+	$currentDB->updateOrCreate({
+		'url'        => $url,
+		'attributes' => { 'TITLE' => $title },
+		'readTags'   => 1,
+	});
 }
 
 sub setBitrate {
 	my $url = shift;
 	my $bitrate = shift;
 
-	$currentDB->updateOrCreate($url, { 'BITRATE' => $bitrate });
+	$currentDB->updateOrCreate({
+		'url'        => $url,
+		'attributes' => { 'BITRATE' => $bitrate },
+		'readTags'   => 1,
+	});
 }
 
 my $ncElemstring = "VOLUME|PATH|FILE|EXT|DURATION|LONGDATE|SHORTDATE|CURRTIME|FROM|BY"; #non-cached elements
@@ -556,7 +575,9 @@ sub plainTitle {
 sub standardTitle {
 	my $client    = shift;
 	my $pathOrObj = shift; # item whose information will be formatted
-	my $track     = ref $pathOrObj ? $pathOrObj : $currentDB->objectForUrl($pathOrObj, 1);
+
+	# Be sure to try and "readTags" - which may call into Formats::Parse for playlists.
+	my $track     = ref $pathOrObj ? $pathOrObj : $currentDB->objectForUrl($pathOrObj, 1, 1);
 	my $fullpath  = ref $pathOrObj ? $track->url : $pathOrObj;
 	my $format;
 
@@ -809,7 +830,7 @@ sub cachePlaylist {
 	my $list = shift;
 	my $age = shift;
 
-	my $song = $currentDB->objectForUrl($url, 1);
+	my $song = $currentDB->objectForUrl($url, 1, 1);
 
 	if (scalar(@$list) && isURL($list->[0])) {
 
@@ -1210,11 +1231,13 @@ sub readCoverArtTags {
 				$body =~ s/^.*?\xff\xd8\xff\xe0/\xff\xd8\xff\xe0/;
 			}
 		}
+
  	} else {
- 		$::d_info && Slim::Utils::Misc::msg("Not a song, skipping: $fullpath\n");
+
+ 		$::d_info && Slim::Utils::Misc::msg("readCoverArtTags: Not a song, skipping: $fullpath\n");
  	}
  	
-	return ($body, $contenttype,1);
+	return ($body, $contenttype, 1);
 }
 
 sub readCoverArtFiles {

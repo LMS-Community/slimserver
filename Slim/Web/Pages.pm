@@ -850,7 +850,8 @@ sub browser_addtolist_done {
 			# There are different templates for directories and playlist items:
 			my $shortitem = Slim::Utils::Misc::descendVirtual($params->{'dir'}, $item, $itemnumber);
 
-			my $obj       = $ds->objectForUrl($item, 0);
+			# Create objects, and read tags if needed.
+			my $obj       = $ds->objectForUrl($item, 1, 1);
 
 			if (Slim::Music::Info::isList($obj)) {
 
@@ -894,7 +895,7 @@ sub browser_addtolist_done {
 				$list_form{'title'}         = Slim::Music::Info::standardTitle(undef, $item);
 			}
 			
-			$list_form{'item'}		  = $obj;
+			$list_form{'item'}		  = $obj->id();
 			$list_form{'itempath'}            = Slim::Utils::Misc::virtualToAbsolute($item);
 			$list_form{'odd'}	  	  = ($itemnumber + $offset) % 2;
 			$list_form{'player'}	          = $current_player;
@@ -1653,7 +1654,7 @@ sub _addSongInfo {
 
 	if ($song) {
 
-		$track = $ds->objectForUrl($song, 0);
+		$track = $ds->objectForUrl($song, 1, 1);
 
 	} elsif ($id) {
 
@@ -1712,7 +1713,9 @@ sub _addSongInfo {
 		my $curdir = Slim::Utils::Prefs::get('audiodir');
 
 		if (!$curdir) {
+
 			$downloadurl = undef;
+
 		} elsif ($loc =~ /^\Q$curdir\E(.*)/i) {
 
 			$downloadurl = '/music';

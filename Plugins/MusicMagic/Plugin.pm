@@ -7,6 +7,7 @@ use strict;
 use File::Spec::Functions qw(catfile);
 
 use Slim::Player::Source;
+use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings;
 
@@ -117,7 +118,10 @@ sub initPlugin {
 
 	$::d_musicmagic && msg("MusicMagic: Testing for API on $MMSHost:$MMSport\n");
 
-	my $http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/version");
+	my $http = Slim::Player::Protocols::HTTP->new({
+		'url'    => "http://$MMSHost:$MMSport/api/version",
+		'create' => 0,
+	});
 
 	unless ($http) {
 
@@ -198,7 +202,10 @@ sub addGroups {
 
 sub isMusicLibraryFileChanged {
 
-	my $http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/cacheid") || return 0;
+	my $http = Slim::Player::Protocols::HTTP->new({
+		'url'    => "http://$MMSHost:$MMSport/api/cacheid",
+		'create' => 0,
+	}) || return 0;
 
 	my $fileMTime = $http->content();
 	$http->close();
@@ -276,7 +283,10 @@ sub doneScanning {
 	
 	$lastMusicLibraryFinishTime = time();
 
-	my $http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/cacheid") || return 0;
+	my $http = Slim::Player::Protocols::HTTP->new({
+		'url'    => "http://$MMSHost:$MMSport/api/cacheid",
+		'create' => 0,
+	}) || return 0;
 
 	if ($http) {
 
@@ -360,7 +370,10 @@ sub exportFunction {
 
 	if ($export eq 'start') {
 
-		$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/getSongCount");
+		$http = Slim::Player::Protocols::HTTP->new({
+			'url'    => "http://$MMSHost:$MMSport/api/getSongCount",
+			'create' => 0,
+		});
 
 		if ($http) {
 			# convert to integer
@@ -382,7 +395,10 @@ sub exportFunction {
 		my %cacheEntry = ();
 		my %songInfo = ();
 		
-		$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/getSong?index=$scan") || next;
+		$http = Slim::Player::Protocols::HTTP->new({
+			'url'    => "http://$MMSHost:$MMSport/api/getSong?index=$scan",
+			'create' => 0,
+		}) || next;
 
 		if ($http) {
 
@@ -431,7 +447,10 @@ sub exportFunction {
 		
 			my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});
 
-			$ds->updateOrCreate($fileurl, \%cacheEntry, undef, 1);
+			$ds->updateOrCreate({
+				'url'        => $fileurl,
+				'attributes' => \%cacheEntry,
+			});
 			
 			# NYI: MMM has more ways to access artwork...
 			if (Slim::Utils::Prefs::get('lookForArtwork')) {
@@ -468,7 +487,10 @@ sub exportFunction {
 
 	if ($export eq 'genres') {
 
-		$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/genres?active") || return 1;
+		$http = Slim::Player::Protocols::HTTP->new({
+			'url'    => "http://$MMSHost:$MMSport/api/genres?active",
+			'create' => 0,
+		}) || return 1;
 
 		@lines = split(/\n/, $http->content());
 		$count = scalar @lines;
@@ -493,7 +515,10 @@ sub exportFunction {
 
 	if ($export eq 'artists') {
 
-		$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/artists?active") || return 1;
+		$http = Slim::Player::Protocols::HTTP->new({
+			'url'    => "http://$MMSHost:$MMSport/api/artists?active",
+			'create' => 0,
+		}) || return 1;
 
 		@lines = split(/\n/, $http->content());
 		$count = scalar @lines;
@@ -517,7 +542,11 @@ sub exportFunction {
 	
 	if ($export eq 'playlists') {
 
-		$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/playlists");
+		$http = Slim::Player::Protocols::HTTP->new({
+			'url'    => "http://$MMSHost:$MMSport/api/playlists",
+			'create' => 0,
+		});
+
 		$count = 0;
 
 		if ($http) {
@@ -532,7 +561,10 @@ sub exportFunction {
 			my %cacheEntry = ();
 			my @songs = ();
 			
-			$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/getPlaylist?index=$i");
+			$http = Slim::Player::Protocols::HTTP->new({
+				'url'    => "http://$MMSHost:$MMSport/api/getPlaylist?index=$i",
+				'create' => 0,
+			});
 
 			if ($http) {
 
@@ -574,7 +606,11 @@ sub exportFunction {
 		my %cacheEntry = ();
 		my @songs = ();
 		$::d_musicmagic && msg("MusicMagic: Checking for duplicates.\n");
-		$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/duplicates");
+
+		$http = Slim::Player::Protocols::HTTP->new({
+			'url'    => "http://$MMSHost:$MMSport/api/duplicates",
+			'create' => 0,
+		});
 
 		if ($http) {
 
@@ -816,7 +852,10 @@ sub getMix {
 	
 	$::d_musicmagic && msg("Musicmagic request: http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString\n");
 
-	my $http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString");
+	my $http = Slim::Player::Protocols::HTTP->new({
+		'url'    => "http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString",
+		'create' => 0,
+	});
 
 	unless ($http) {
 		# NYI

@@ -175,7 +175,10 @@ sub objectForUrl {
 		    Slim::Music::Info::isList($url, $type) ||
 		    Slim::Music::Info::isPlaylist($url, $type)) {
 
-			$track = $self->newTrack($url, { 'URL' => $url }, undef, $readTag);
+			$track = $self->newTrack({
+				'url'      => $url,
+				'readTags' => $readTag,
+			});
 		}
 	}
 
@@ -371,43 +374,56 @@ sub updateTrack {
 # Create a new track with the given attributes
 sub newTrack {
 	my $self = shift;
-	my $url = shift || return;
- 	my $attributeHash = shift;
-	my $commit = shift;
-	my $readTag = shift;
+	my $args = shift;
+
+	# 
+	my $url           = $args->{'url'} || return;
+ 	my $attributeHash = $args->{'attributes'} || {};
+
 	my $deferredAttributes;
-	
+
 	$::d_info && Slim::Utils::Misc::msg("New track for $url\n");
 
-	# We're not reading tags - url is remote, etc.
-	unless ($readTag) {
-		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($attributeHash, 1);
+	# Explictly read the tag, and start populating the database.
+	if ($args->{'readTags'}) {
+
+		$::d_info && Slim::Utils::Misc::msg("readTag was set for $url\n");
+
+		$attributeHash = $self->readTags($url);
 	}
 
+	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($attributeHash, 1);
+
 	# Creating the track only wants lower case values from valid columns.
-	my $columnValueHash = { url => $url };
+	my $columnValueHash = {};
 
 	my $trackAttrs = Slim::DataStores::DBI::Track::attributes();
 
-	# Walk our list of valid attributes, and turn them into something
-	# ->create() can use.
+	# Walk our list of valid attributes, and turn them into something ->create() can use.
 	while (my ($key, $val) = each %$attributeHash) {
 
 		if (defined $val && exists $trackAttrs->{lc $key}) {
+
+			$::d_info && Slim::Utils::Misc::msg("Adding $url : $key to $val\n");
+
 			$columnValueHash->{lc $key} = $val;
 		}
 	}
 
+	# Tag and rename set URL to the Amazon image path. Smack that. We
+	# don't use it anyways.
+	$columnValueHash->{'url'} = $url;
+
 	# Create the track - or bail. We should probably spew an error.
-	my $track = Slim::DataStores::DBI::Track->create($columnValueHash) || return undef;
+	my $track = eval { Slim::DataStores::DBI::Track->create($columnValueHash) };
 
-	# Explictly read the tag, and start populating the database.
-	# If this is a new track - all $track has is a url -> $url mapping, and an id.
-	if ($readTag) {
+	if ($@) {
+		Slim::Utils::Misc::bt();
+		Slim::Utils::Misc::msg("Couldn't create track for $url\n");
 
-		$attributeHash = $self->readTags($track);
-
-		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($attributeHash, 1);
+		#require Data::Dumper;
+		#print Data::Dumper::Dumper($columnValueHash);
+		return;
 	}
 
 	# Now that we've created the track, and possibly an album object -
@@ -430,7 +446,7 @@ sub newTrack {
 
 	$self->_updateTrackValidity($track);
 
-	$self->{'dbh'}->commit() if $commit;
+	$self->{'dbh'}->commit() if $args->{'commit'};
 
 	return $track;
 }
@@ -438,10 +454,13 @@ sub newTrack {
 # Update the attributes of a track or create one if one doesn't already exist.
 sub updateOrCreate {
 	my $self = shift;
-	my $urlOrObj = shift;
-	my $attributeHash = shift;
-	my $commit = shift;
-	my $noTags = shift;
+	my $args = shift;
+
+	#
+	my $urlOrObj      = $args->{'url'};
+	my $attributeHash = $args->{'attributes'};
+	my $commit        = $args->{'commit'};
+	my $readTags      = $args->{'readTags'};
 
 	my $track = ref $urlOrObj ? $urlOrObj : undef;
 	my $url   = ref $urlOrObj ? $track->url : $urlOrObj;
@@ -470,6 +489,9 @@ sub updateOrCreate {
 
 		while (my ($key, $val) = each %$attributeHash) {
 			if (defined $val && exists $trackAttrs->{lc $key}) {
+
+				$::d_info && Slim::Utils::Misc::msg("Updating $url : $key to $val\n");
+
 				$track->set(lc $key => $val);
 			}
 		}
@@ -480,7 +502,11 @@ sub updateOrCreate {
 
 	} else {
 
-		$track = $self->newTrack($url, $attributeHash, undef, !$noTags);
+		$track = $self->newTrack({
+			'url'        => $url,
+			'attributes' => $attributeHash,
+			'readTags'   => $readTags,
+		});
 	}
 
 	if ($attributeHash->{'CT'}) {
@@ -642,7 +668,11 @@ sub forceCommit {
 
 	$self->{'zombieList'} = {};
 
+	$::d_info && Slim::Utils::Misc::msg("forceCommit: syncing to the database.\n");
+
 	$self->{'dbh'}->commit();
+
+	$Slim::DataStores::DBI::DataModel::dirtyCount = 0;
 
 	# clear our find cache
 	%lastFind = ();
@@ -690,22 +720,16 @@ sub getExternalPlaylists {
 
 sub readTags {
 	my $self  = shift;
-	my $track = shift;
-
-	my $file  = $track->getCached('url');
+	my $file  = shift;
 
 	my ($filepath, $attributesHash);
 
 	if (!defined($file) || $file eq '') {
-		return;
+		return {};
 	}
 
 	# get the type without updating the cache
 	my $type = Slim::Music::Info::typeFromPath($file);
-
-	if ($type eq 'unk' && (my $ct = $track->getCached('ct'))) {
-		$type = $ct;
-	}
 
 	$::d_info && Slim::Utils::Misc::msg("Updating cache for: " . $file . "\n");
 
@@ -715,15 +739,13 @@ sub readTags {
 
 			# if it's an HTTP URL, guess the title from the the last
 			# part of the URL, and don't bother with the other parts
-			if (!defined($track->getCached('title'))) {
-
-				$::d_info && Slim::Utils::Misc::msg("Info: no title found, calculating title from url for $file\n");
-				$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
-			}
+			$::d_info && Slim::Utils::Misc::msg("Info: no title found, calculating title from url for $file\n");
+			$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
 
 		} else {
 
 			my $anchor;
+
 			if (Slim::Music::Info::isFileURL($file)) {
 				$filepath = Slim::Utils::Misc::pathFromFileURL($file);
 				$anchor   = Slim::Utils::Misc::anchorFromURL($file);
@@ -750,8 +772,8 @@ sub readTags {
 
 			Slim::Music::Info::addDiscNumberToAlbumTitle($attributesHash);
 			
-			if (!$attributesHash->{'TITLE'} && 
-				!defined($track->getCached('title'))) {
+			if (!$attributesHash->{'TITLE'}) {
+
 				$::d_info && Slim::Utils::Misc::msg("Info: no title found, using plain title for $file\n");
 				#$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
 				Slim::Music::Info::guessTags($file, $type, $attributesHash);
@@ -767,10 +789,10 @@ sub readTags {
 			}
 
 			# cache the file size & date
-			$attributesHash->{'FS'}  = -s $filepath;
-			$attributesHash->{'AGE'} = (stat($filepath))[9];
+			($attributesHash->{'FS'}, $attributesHash->{'AGE'}) = (stat($filepath))[7,9];
 			
 			# rewrite the size, offset and duration if it's just a fragment
+			# This is mostly (always?) for cue sheets.
 			if ($anchor && $anchor =~ /([\d\.]+)-([\d\.]+)/ && $attributesHash->{'SECS'}) {
 				my $start = $1;
 				my $end = $2;
@@ -787,9 +809,11 @@ sub readTags {
 				$attributesHash->{'OFFSET'} = $header + $startbytes;
 				$attributesHash->{'SIZE'} = $endbytes - $startbytes;
 				$attributesHash->{'SECS'} = $duration;
-				
-				$::d_info && Slim::Utils::Misc::msg("readTags: calculating duration for anchor: $duration\n");
-				$::d_info && Slim::Utils::Misc::msg("readTags: calculating header $header, startbytes $startbytes and endbytes $endbytes\n");
+
+				if ($::d_info) {
+					Slim::Utils::Misc::msg("readTags: calculating duration for anchor: $duration\n");
+					Slim::Utils::Misc::msg("readTags: calculating header $header, startbytes $startbytes and endbytes $endbytes\n");
+				}
 			}
 			
 			# cache the content type
@@ -807,66 +831,71 @@ sub readTags {
 				$attributesHash->{'TAG'} = 1;
 
 				# cache the content type
-				$attributesHash->{'CT'} = $type unless defined $track->getCached('ct');
+				$attributesHash->{'CT'} = $type; # unless defined $track->getCached('ct');
 
 				# update the cache so we can use readCoverArt without recursion.
-				$self->updateOrCreate($track, $attributesHash);
+				# $self->updateOrCreate($track, $attributesHash);
 			
 				# Look for Cover Art and cache location
-				my ($body, $contenttype, $path);
+				my ($body, $contentType, $path);
 			
 				if (defined $attributesHash->{'PIC'} || defined $attributesHash->{'APIC'}) {
-					($body,$contenttype,$path) = Slim::Music::Info::readCoverArtTags($file, $attributesHash);
+
+					($body, $contentType, $path) = Slim::Music::Info::readCoverArtTags($file, $attributesHash);
 				}
 
 				# Greatest Hits problem - need to use contributor as the top key.
-				my $contributors = join(':', map { $_->id() } $track->contributors());
+				my $contributors = $attributesHash->{'ARTIST'};
 
 				if (defined $body) {
 
 					$attributesHash->{'COVER'} = 1;
 					$attributesHash->{'THUMB'} = 1;
 
-					if ($album && !exists $self->{artworkCache}->{$album}) {
+					if ($album && !exists $self->{'artworkCache'}->{$contributors}->{$album}) {
+
 						$::d_artwork && Slim::Utils::Misc::msg("ID3 Artwork cache entry for $album: $filepath\n");
-						$self->setAlbumArtwork($album, $contributors, $filepath);
+
+						$attributesHash->{'ARTWORK'} = $filepath;
 					}
 				
 				} else {
 
-					($body,$contenttype,$path) = Slim::Music::Info::readCoverArtFiles($file, 'cover');
+					($body, $contentType, $path) = Slim::Music::Info::readCoverArtFiles($file, 'cover');
 
 					if (defined $body) {
 						$attributesHash->{'COVER'} = $path;
 					}
 
 					# look for Thumbnail Art and cache location
-					($body,$contenttype,$path) = Slim::Music::Info::readCoverArtFiles($file, 'thumb');
+					($body, $contentType, $path) = Slim::Music::Info::readCoverArtFiles($file, 'thumb');
 
 					if (defined $body) {
+
 						$attributesHash->{'THUMB'} = $path;
 
 						if ($album && !exists $self->{'artworkCache'}->{$contributors}->{$album}) {
+
 							$::d_artwork && Slim::Utils::Misc::msg("Artwork cache entry for $album: $filepath\n");
-							$self->setAlbumArtwork($album, $contributors, $filepath);
+
+							$attributesHash->{'ARTWORK'} = $filepath;
 						}
 					}
 				}
 			}
 		}
-			
+
 	} else {
 
-		if (!defined($track->getCached('title'))) {
-			$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
-		}
+		$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
 	}
-	
-	$attributesHash->{'CT'} = $type unless defined $track->getCached('ct');;
-			
+
+	# Only set if we couldn't read it from the file.
+	$attributesHash->{'CT'} ||= $type;
+
 	# note that we've read in the tags.
 	$attributesHash->{'TAG'} = 1;
-	
+
 	return $attributesHash;
 }
 
@@ -941,7 +970,6 @@ sub _commitDBTimer {
 	if ($items > 0) {
 		$::d_info && Slim::Utils::Misc::msg("DBI: Periodic commit - $items dirty items\n");
 		$self->forceCommit();
-		$Slim::DataStores::DBI::DataModel::dirtyCount = 0;
 	} else {
 		$::d_info && Slim::Utils::Misc::msg("DBI: Supressing periodic commit - no dirty items\n");
 	}
@@ -1053,25 +1081,16 @@ sub _preCheckAttributes {
 	# Copy the incoming hash, so we don't modify it
 	my $attributes = { %$attributeHash };
 
-	if (my $genre = $attributes->{'GENRE'}) {
-		$deferredAttributes->{'GENRE'} = $genre;
-		delete $attributes->{'GENRE'};
-	}
+	# These need to be handled
+	$deferredAttributes->{'GENRE'}   = delete $attributes->{'GENRE'};
+	$deferredAttributes->{'ARTWORK'} = delete $attributes->{'ARTWORK'};
+	$deferredAttributes->{'ARTIST'}  = delete $attributes->{'ARTIST'};
+
+	# Normalize in ContributorTrack->add() the tag may need to be split. See bug #295
+	$deferredAttributes->{'ARTISTSORT'} = delete $attributes->{'ARTISTSORT'};
 
 	my $artist = '';
-	
-	if ($artist = $attributes->{'ARTIST'}) {
-
-		$deferredAttributes->{'ARTIST'} = $artist;
-
-		# Normalize in ContributorTrack->add() the tag may need to be split. See bug #295
-		$deferredAttributes->{'ARTISTSORT'} = $attributes->{'ARTISTSORT'};
-		delete $attributes->{'ARTIST'};
-	}
-
-	delete $attributes->{'ARTISTSORT'};
-
-	my $album = $attributes->{'ALBUM'};
+	my $album  = $attributes->{'ALBUM'};
 
 	$album = string('NO_ALBUM') if (!$album && $create);
 
@@ -1118,6 +1137,7 @@ sub _preCheckAttributes {
 		$deferredAttributes->{'ALBUM'} = $albumObj;
 
 	} else {
+
 		delete $attributes->{'ALBUM'};
 	}
 
@@ -1139,8 +1159,7 @@ sub _preCheckAttributes {
 
 		next unless defined $attributes->{$tag};
 
-		$deferredAttributes->{$tag} = $attributes->{$tag};
-		delete $attributes->{$tag};
+		$deferredAttributes->{$tag} = delete $attributes->{$tag};
 	}
 	
 	return ($attributes, $deferredAttributes);
@@ -1193,6 +1212,13 @@ sub _postCheckAttributes {
 
 			# If we have an album associated with the contributors - mark it as such. 
 			if (my $albumObj = $attributes->{'ALBUM'}) {
+
+				if (my $artworkPath = $attributes->{'ARTWORK'}) {
+
+					$self->{'artworkCache'}->{join(':', @contributors)}->{$albumObj->title} = $artworkPath;
+
+					$albumObj->artwork_path($artworkPath);
+				}
 
 				# XXX - will we ever have multiple artist albums that
 				# have duplicate album names? Seems pretty unlikely to me.
@@ -1269,7 +1295,10 @@ sub updateCoverArt {
 
  		$::d_artwork && Slim::Utils::Misc::msg("$type caching $path for $fullpath\n");
 
-		$self->updateOrCreate($fullpath, $info);
+		$self->updateOrCreate({
+			'url'        => $fullpath,
+			'attributes' => $info
+		});
 
  	} else {
 

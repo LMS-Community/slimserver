@@ -382,7 +382,10 @@ sub exportFunction {
 		$::d_moodlogic && msg("MoodLogic: Creating entry for: $url\n");
 
 		# that's all for the track
-		$ds->updateOrCreate($url, \%cacheEntry, undef, 1);
+		$ds->updateOrCreate({
+			'url' => $url,
+			'attributes' => \%cacheEntry,
+		});
 
 		# the above object was just created - fetch it back into something we can use
 		my $track = $ds->objectForUrl($url);

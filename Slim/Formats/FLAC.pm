@@ -76,7 +76,6 @@ sub getTag {
 	# no anchor, handle the base file
 	# cue parsing will return file url references with start/end anchors
 	# we can now pretend that this (bare no-anchor) file is a playlist
-
 	my $tags = {};
 	my $taginfo = getStandardTag($file, $flac);
 
@@ -86,7 +85,7 @@ sub getTag {
 		(($taginfo->{'SECS'} - int($taginfo->{'SECS'})) * 75)
 	));
 
-	$tags->{'LIST'} = Slim::Formats::Parse::parseCUE($cuesheet, dirname($file));
+	$tags->{'LIST'} = Slim::Formats::Parse::parseCUE($cuesheet, dirname($file), $taginfo->{'SECS'});
 
 	# set fields appropriate for a playlist
 	$tags->{'CT'}    = "fec";
@@ -106,24 +105,11 @@ sub getStandardTag {
 	return undef unless defined $flac->{'bitRate'};
 
 	# There should be a TITLE tag if the VORBIS tags are to be trusted
-	if (defined $tags->{'TITLE'}) {
-
-		foreach my $tag (@tagNames) {
-
-			next unless exists $tags->{$tag};
-
-			if ($] > 5.007) {
-				$tags->{$tag} = eval { Encode::decode("utf8", $tags->{$tag}) };
-			} else {
-				$tags->{$tag} = Slim::Utils::Misc::utf8toLatin1($tags->{$tag});
-			}
-		}
-
-	} else {
+	unless (defined $tags->{'TITLE'}) {
 
 		if (exists $flac->{'ID3V2Tag'}) {
 			# Get the ID3V2 tag on there, sucka
-			$tags = MP3::Info::get_mp3tag($file,2);
+			$tags = MP3::Info::get_mp3tag($file, 2);
 		}
 	}
 
@@ -150,6 +136,9 @@ sub addInfoTags {
 	my $flac = shift;
 	my $tags = shift;
 
+	# Handle all the UTF-8 decoding into perl's native format.
+	_decodeUTF8($tags);
+
 	# add more information to these tags
 	# these are not tags, but calculated values from the streaminfo
 	$tags->{'SIZE'}    = $flac->{'fileSize'};
@@ -167,7 +156,6 @@ sub addInfoTags {
 	$tags->{'SS'}	    = int $tags->{'SECS'} % 60;
 	$tags->{'MS'}	    = (($tags->{'SECS'} - ($tags->{'MM'} * 60) - $tags->{'SS'}) * 1000);
 	$tags->{'TIME'}	    = sprintf "%.2d:%.2d", @{$tags}{'MM', 'SS'};
-
 }
 
 sub getSubFileTag {
@@ -291,7 +279,7 @@ sub getXMLTag {
 			}
 		}
 	}
-	
+
 	# merge track lists in order, and find which refers to us
 	my @fileTrackList = [];
 
@@ -522,7 +510,7 @@ sub getCUEinVC {
 	return undef unless defined $tags->{'CUESHEET'};
 
 	# grab the cuesheet and figure out which track is current
-	my $track    = _trackFromAnchor($flac->cuesheet(), $anchor);
+	my $track = _trackFromAnchor($flac->cuesheet(), $anchor);
 
 	my $currtrack;
 
@@ -530,41 +518,47 @@ sub getCUEinVC {
 	# it's repeated here instead of calling Parse->parseCUE()
 	# because we don't want to tweak song definitions or create
 	# loops, just read tags.
+	for (split(/\n/, $tags->{'CUESHEET'})) {
 
-	foreach (split(/\n/ ,$tags->{'CUESHEET'})) {
+		s/\s*$//;
 
-	  s/\s*$//;
+		if (/^TITLE\s+\"(.*)\"/i) {
 
-	  if (/^TITLE\s+\"(.*)\"/i) {
-	    $tags->{'ALBUM'} = $1;
+			$tags->{'ALBUM'} = $1;
 
-	  } elsif (/^YEAR\s+\"(.*)\"/i) {
-	    $tags->{'YEAR'} = $1
+		} elsif (/^YEAR\s+\"(.*)\"/i) {
 
-	  } elsif (/^GENRE\s+\"(.*)\"/i) {
-	    $tags->{'GENRE'} = $1;
+			$tags->{'YEAR'} = $1
 
-	  } elsif (/^COMMENT\s+\"(.*)\"/i) {
-	    $tags->{'COMMENT'} = $1;
+		} elsif (/^GENRE\s+\"(.*)\"/i) {
 
-	  #} elsif (/^FILE\s+\"(.*)\"/i) {
-	  #  $filename = $1;
-	  #  $filename = Slim::Utils::Misc::fixPath($filename, $cuedir);
+			$tags->{'GENRE'} = $1;
 
-	  } elsif (/^\s+TRACK\s+(\d+)\s+AUDIO/i) {
-	    $currtrack = int ($1);
-	    next if ($currtrack < $track);
-	    last if ($currtrack > $track);
+		} elsif (/^COMMENT\s+\"(.*)\"/i) {
 
-	  } elsif (defined $currtrack and /^\s+PERFORMER\s+\"(.*)\"/i) {
-	    $tags->{'ARTIST'} = $1;
+			$tags->{'COMMENT'} = $1;
 
-	  } elsif (defined $currtrack and
-		   /^\s+(TITLE|YEAR|GENRE|COMMENT)\s+\"(.*)\"/i) {
-	    $tags->{uc $1} = $2;
-	  }
+		#} elsif (/^FILE\s+\"(.*)\"/i) {
 
+			#  $filename = $1;
+			#  $filename = Slim::Utils::Misc::fixPath($filename, $cuedir);
+
+		} elsif (/^\s+TRACK\s+(\d+)\s+AUDIO/i) {
+
+			$currtrack = int ($1);
+			next if ($currtrack < $track);
+			last if ($currtrack > $track);
+
+		} elsif (defined $currtrack and /^\s+PERFORMER\s+\"(.*)\"/i) {
+
+			$tags->{'ARTIST'} = $1;
+
+		} elsif (defined $currtrack and /^\s+(TITLE|YEAR|GENRE|COMMENT)\s+\"(.*)\"/i) {
+
+			$tags->{uc $1} = $2;
+		}
 	}
+
 	$tags->{'TRACKNUM'} = $track;
 
 	doTagMapping($tags);
@@ -670,6 +664,22 @@ sub _trackFromAnchor {
 			# fudge this a bit to account for rounding
 			my $difference = abs($time - $start);
 			return $track if $difference < 0.01;
+		}
+	}
+}
+
+sub _decodeUTF8 {
+	my $tags = shift;
+
+	# Do the UTF-8 handling here, after all the different types of tags are read.
+	for my $tag (@tagNames) {
+
+		next unless exists $tags->{$tag};
+
+		if ($] > 5.007) {
+			$tags->{$tag} = eval { Encode::decode("utf8", $tags->{$tag}) };
+		} else {
+			$tags->{$tag} = Slim::Utils::Misc::utf8toLatin1($tags->{$tag});
 		}
 	}
 }
