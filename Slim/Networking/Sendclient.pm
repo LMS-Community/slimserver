@@ -91,7 +91,7 @@ sub stream {
 		5,		# mpeg pre-buffer 5 frames of silence
 		0,		# s/pdif auto
 		0,		# reserved
-		9000,		# port
+		Slim::Utils::Prefs::get('httpport'),		# port
 		0		# server IP of 0 means use IP of control server
 	);
 
