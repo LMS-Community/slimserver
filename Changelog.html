@@ -1,4 +1,4 @@
-<h2><a name="v5.0.1" id="v5.0.1"></a>Version 5.0.1 - 2003-11-22</h2>
+<h2><a name="v5.0.1" id="v5.0.1"></a>Version 5.0.1 - 2003-11-28</h2>
 <ul>
 	<li>Fixed a couple of problems with the Windows installer where it wasn't possible to set the service to start automatically.</li>
 	<li>Fixed a couple of problems where some streaming radio stations wouldn't work.</li>
@@ -18,6 +18,18 @@
 	<li>Fixed a problem where some non-standard JPEG cover images in ID3 tags wouldn't show up.</li>
 	<li>Fixed a problem where the Music Library path might be reset to empty when iTunes was installed.</li>
 	<li>Nicolas Guillemain updated the French localization.</li>
+	<li>Michael Herger updated the German localization.</li>
+	<li>Robert Moser improved the Information plugin and added some neat new button mapping tricks.</li>
+	<li>Restored the installer to run the SlimServer Windows Service as the SYSTEM user, since that's the only account that has the appropriate permissions.</li>
+	<li>Updated the Squeezebox firmware to handle radio stations much better.</li>
+	<li>Building the Windows versions with the latest tools from ActiveState, which should fix the problem of the service stopping when the user logs out.</li>
+	<li>Fixed some problems where the server could get into a CPU hogging state.</li>
+	<li>The RedHat RPM now obsoletes SliMP3 appropriately.</li>
+	<li>Fix version number in windows installer.</li>
+	<li>All platforms should try harder when looking for valid MP3 data in MP3 files.</li>
+	<li>Fix a problem with FLAC cover art.</li>
+	<li>The server now tries harder to locate iTunes music library information on Windows.</li>
+	<li>Removed some harmless command line warnings.</li>
 </ul>
 
 <h2><a name="v5.0.0" id="v5.0.0"></a>Version 5.0.0 - 2003-11-18</h2>
