@@ -18,6 +18,11 @@ use URI::Escape;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
 
+if ($] > 5.007) {
+	require File::BOM;
+	require Encode;
+}
+
 our %playlistInfo = ( 
 	'm3u' => [\&readM3U, \&writeM3U, '.m3u'],
 	'pls' => [\&readPLS, \&writePLS, '.pls'],
@@ -106,14 +111,30 @@ sub readM3U {
 
 	my @items  = ();
 	my $title;
+	my $mode   = $Slim::Utils::Misc::locale;
 
+	# Try to find a BOM on the file - otherwise default to the current locale.
+	# XXX - should this move to Slim::Utils::Scan::readList() ?
 	if ($] > 5.007) {
-		binmode($m3u, ":encoding($Slim::Utils::Misc::locale)");
+
+		binmode($m3u, ":bytes");
+
+		my $enc = File::BOM::get_encoding_from_filehandle($m3u);
+
+		$mode = $enc if $enc;
+
+		binmode($m3u, ":encoding($mode)");
 	}
 
 	$::d_parse && Slim::Utils::Misc::msg("parsing M3U: $m3u\n");
 
 	while (my $entry = <$m3u>) {
+
+		# Turn the UTF-8 back into a sequences of octets -
+		# fileURLFromPath will turn it back into UTF-8
+		if ($] > 5.007 && $mode =~ /utf-?8/i) {
+			$entry = Encode::encode_utf8($entry) if Encode::is_utf8($entry, 1);
+		}
 
 		chomp($entry);
 		# strip carriage return from dos playlists
@@ -496,12 +517,22 @@ sub writeM3U {
 			my $track = $ds->objectForUrl($item);
 			my $title = $track->title();
 
+			if ($] > 5.007) {
+				$title = Encode::decode_utf8($title);
+			}
+
 			if ($title) {
 				print $output "#EXTINF:-1,$title\n";
 			}
 		}
 
-		printf($output "%s\n", _pathForItem($item));
+		my $path = _pathForItem($item);
+
+		if ($] > 5.007) {
+			$path = Encode::decode_utf8($path);
+		}
+
+		print $output "$path\n";
 	}
 
 	close $output;
@@ -730,8 +761,14 @@ sub _filehandleFromNameOrString {
 			return undef;
 		};
 
+		# Always write out in UTF-8 with a BOM.
 		if ($] > 5.007) {
-			binmode($output, ":encoding($Slim::Utils::Misc::locale)");
+
+			binmode($output, ":bytes");
+
+			print $output $File::BOM::enc2bom{'utf8'};
+
+			binmode($output, ":encoding(utf8)");
 		}
 
 	} else {
