@@ -1,0 +1,1367 @@
+[% pageicon = 'help' %]
+[% pagetitle = 'Command Line Interface' %]
+[% techinfo = '1' %]
+[% PROCESS helpheader.html %]
+
+<h4>Introduction</h4>
+
+<p>The SlimServer provides a command-line interface to the Slim Devices players via standard in and out and
+  a TCP/IP port.  After starting the server, commands and queries may be sent by connecting to a specific TCP/IP 
+  port or directly from the command line.  The server will 
+  reply echoing the request (for commands) or by returning the requested data (for queries). By default, the
+  SlimServer will listen for connections on TCP/IP port 9090. This format is designed for ease of integration 
+  into AMX, Crestron and other automation systems.</p>
+<p>The end of line separator is line feed (&lt;LF&gt; ASCII decimal 10, hexadecimal 0x0A). The server accepts LF or 
+  CRLF as end of line, but always terminates replies with LF.</p>
+  
+<p>To use the command line interface interactively, use the telnet command from your system's command prompt:
+  <em>telnet localhost 9090</em> and when it connects, you can start typing commands.</p>
+  
+
+<h4>General command format</h4>
+<p>The format of the commands, queries and server replies is as follows:</p>
+<blockquote> 
+  <p><strong><code>[&lt;playerid&gt;] &lt;p0&gt; &lt;p1&gt; ... &lt;pN&gt; &lt;LF&gt;</code></strong></p> 
+</blockquote>
+<p>where: </p> 
+<blockquote> 
+  <p><code>&lt;playerid&gt;</code> is the unique identifier for the player, 
+  usually (but not guaranteed to be) the MAC address of the player.
+  Some commands are global to the SlimServer and do not require a <code>&lt;playerid&gt;</code>.
+  For commands requiring it, a random player will be selected by the SlimServer if the <code>&lt;playerid&gt;<</code>
+  is omitted, and returned in the server reply. <code>&lt;playerid&gt;</code> may be obtained by using the 
+  &quot;player id&quot; or &quot;players&quot; command.</p>
+  <p><code>&lt;p0&gt;</code> through <code>&lt;pN&gt;</code> are <em>positional</em> parameters. Pass a &quot;?&quot; to obtain a value
+  for that parameter in the SlimServer response (i.e. send a query). Details of the parameters vary for each command as described below.
+</blockquote>
+<p>Each parameter needs to be encoded using percent-style escaping, the same method as is used in URLs; for example, 
+  &quot;The Clash?&quot; would be encoded as &quot;The%20Clash%3F&quot;. This also applies to <code>&lt;playerid&gt;</code>.
+  In the examples below, the escaping is not show for readability (except %20 for space).</p>
+
+<h4>Extended query format</h4>
+<p>A few extended commands are defined, to regroup multiple queries and allow browsing the SlimServer database. These
+  queries return <em>multiple</em> items. Overall however, their format is compliant with the general command format above:</p>
+<blockquote> 
+  <p><strong><code>[&lt;playerid&gt;] &lt;command&gt; &lt;start&gt; &lt;itemsPerResponse&gt; &lt;p3&gt; ... &lt;pN&gt; &lt;LF&gt;</code></strong></p> 
+</blockquote>
+<p>where: </p> 
+<blockquote>
+	<p><code>&lt;playerid&gt;</code> is the unique identifier for the player, as above.</p>
+	<p><code>&lt;command&gt;</code> is the command name, currently one of &quot;<a href="#players">players</a>&quot;, 
+	&quot;<a href="#genres">genres</a>&quot;, &quot;<a href="#artists">artists</a>&quot;,
+	&quot;<a href="#albums">albums</a>&quot;, &quot;<a href="#titles">titles</a>&quot;, 
+	&quot;<a href="#playlists">playlists</a>&quot;, &quot;<a href="#songinfo">songinfo</a>&quot; or &quot;<a href="#status">status</a>&quot;.</p>
+	<p><code>&lt;start&gt;</code> and <code>&lt;itemsPerResponse&gt;</code> are <em>positional</em> parameters that control the 
+	response chunking. <code>&lt;start&gt;</code> is a zero-based index of the first item to return, and 
+	<code>&lt;itemsPerResponse&gt;</code> is the number of items to return, if possible.</p>
+	<p><code>&lt;p3&gt;</code> through <code>&lt;pN&gt;</code> are <em>tagged</em> parameters. Tags consist of a name followed by  &quot;:&quot;.
+	For example, &quot;artist:Abba&quot;. The tag and the &quot;:&quot; are URL escaped with the field value. Tag names 
+	cannot contain &quot;:&quot; but the data can. </p>
+</blockquote>
+<p>to which the server replies: </p>
+<blockquote> 
+  <p><strong><code>[&lt;playerid&gt;] &lt;command&gt; &lt;start&gt; &lt;itemsPerResponse&gt; &lt;p3&gt; ... &lt;pN&gt; &lt;pN+1&gt; ... &lt;pM&gt; &lt;LF&gt;</code></strong></p> 
+</blockquote>
+<p>where: </p> 
+<blockquote>
+	<p>The entire query is repeated.</p>
+	<p><code>&lt;pN+1&gt;</code> through <code>&lt;pM&gt;</code> is the <em>tagged</em> returned data. A special tag value is defined in each command
+	to separate the multiple returned items. Data is only returned when applicable, that is, all possible tags are not always returned.</p>
+</blockquote>
+<p><b>Example:</b> The &quot;players&quot; command returns data on all players known by the server. It is a shortcut call compared to the 
+  general CLI API &quot;player count ?&quot; followed by a number of calls to get the players name, ID, etc. The command must be called with the chunking parameters. For example, the following returns information on the 
+  first 10 players known by the server (if so many exist), starting from the first one:
+<blockquote> 
+  <p> Request: &quot;players 0 2&lt;LF&gt;&quot;<br>
+     Response: &quot;players 0 2 count:2 playerindex:0 playerid:a5:41:d2:cd:cd:05 ip:127.0.0.1:60488 name:127.0.0.1 
+     model:softsqueeze displaytype:graphic-280x16 connected:1 playerindex:1 playerid:00:04:20:02:00:c8 ip:192.168.1.22:3483 
+     name:Movy model:slimp3 displaytype:noritake-katakana connected:1&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<h4>Notes</h4>
+<ul>
+<li>Commands that use paths to songs or playlists (<code>&lt;item&gt;</code> parameters below)  can use 
+  relative paths from the root of the Music Library folder to specify songs.  For example, if the Music Library is 
+  specified as &quot;D:\mymusic&quot; and you'd like to refer to a song in that folder named &quot;foo.mp3&quot;  you 
+  can specify just &quot;foo.mp3&quot; in the command parameter.  Likewise, to refer to items in the Saved Playlist folder, 
+  you can use a prefix of  &quot;__playlists/&quot; before the path.  For example, to refer to the saved playlist 
+  &quot;bar.m3u&quot; in the Saved Playlists folder, you can specify a path of &quot;__playlists/bar.m3u&quot;.</li>
+<li>The HTTP server can return cover art for songs using the path URL as returned by any of the CLI functions.
+  If no cover art exists for the given song, the server returns a 1x1 white gif image. If thumbs are requested and
+  none exist, the cover is returned if it exists. Use the following URLs:
+<blockquote> 
+  <p><strong><code>http://&lt;server&gt;:&lt;port&gt;/music/&lt;path&gt;/cover.jpg</code></strong><br> 
+     <strong><code>http://&lt;server&gt;:&lt;port&gt;/music/&lt;path&gt;/thumb.jpg</code></strong></p> 
+</blockquote>
+<p>where: </p> 
+<blockquote>
+	<p><code>&lt;server&gt;</code> is the ip address or name of the server.</p>
+	<p><code>&lt;port&gt;</code> is the HTTP port of the server (not the same as the CLI port).</p>
+	<p><code>&lt;path&gt;</code> is the song path as returned by the CLI functions.</p>
+</blockquote></li>
+
+<li>For commands using positional parameters, any extra parameters (after all required ones) will be returned. For commands using tagged parameters,
+parameters using unknown tags will be returned as well. This allows the client to add to commands and queries some context
+information. For example:</li>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 mixer bass ? context&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer bass 98 context&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;players 0 2 context:1&lt;LF&gt;&quot;<br>
+    Response: &quot;players 0 2 context:1 count:2 id:00:04:20:02:00:c8 ...(same as above)&quot;</p>
+</blockquote></li>
+
+</ul>
+
+<h4>Supported Commands</h4>
+<p>The supported commands are listed below, grouped by their scope:</p>
+<ul>
+  <li><strong><a href="#GC">General</a></strong>: commands for general management of the server</li>
+  <li><strong><a href="#PC">Players</a></strong>: commands to manage and get information on players</li>
+  <li><strong><a href="#DB">Database</a></strong>: commands to manage and browse the music database</li>
+  <li><strong><a href="#PL">Playlist</a></strong>: commands to get information on and manage the playlist for each player</li>
+</ul>
+
+<hr>
+<h4 id="GC">General commands</h4>
+
+<p><strong><code>debug &lt;debugflag&gt; &lt;0|1|?|&gt;</code></strong></p>
+<p>The &quot;debug&quot; command allows the caller to query, clear, set or toggle 
+  the SlimServer's internal debug flags. Use 0 to clear, 1 to set, ? to query 
+  and no parameter to toggle the debug flag value.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;debug d_files ?&lt;LF&gt;&quot;<br>
+    Response: &quot;debug d_files 0&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;debug d_itunes 0&lt;LF&gt;&quot;<br>
+    Response: &quot;debug d_itunes 0&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;debug d_stream 1&lt;LF&gt;&quot;<br>
+    Response: &quot;debug d_stream 1&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;debug d_stream&lt;LF&gt;&quot;<br>
+    Response: &quot;debug d_stream 0&lt;LF&gt;&quot;<br>
+  </p>
+</blockquote>
+
+<br><p><strong><code>listen &lt;0|1|&gt;</code></strong></p>
+<p>The &quot;listen&quot; command tells the server to send command events to the command-line client for all activity in the SlimServer, not just
+the activity triggered by the command line.  This is useful for monitoring user activity from the remote control or web interface. Use 0 to clear, 
+1 to set, and no parameter to toggle the listen state of the command-line connection.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;listen 1&lt;LF&gt;&quot;<br>Response: <br>listen 1&lt;LF&gt;
+  <br>04:20:00:12:23:45 mixer volume 25&lt;LF&gt;
+  <br>04:20:00:12:23:45 pause&lt;LF&gt;
+  <br>...</p>
+</blockquote>
+
+<br><p><strong><code>pref &lt;prefname&gt; &lt;prefvalue|?&gt;</code></strong><br></p>
+<p>The &quot;pref&quot; command allows the caller to set and query the SlimServer's internal preferences values. </p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;pref audiodir ?&lt;LF&gt;&quot;<br>
+    Response: &quot;pref audiodir %2fUsers%2fdean%2fDesktop%2ftest%20music&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;pref playlistdir %2fUsers%2fdean%2fplaylists&lt;LF&gt;&quot;<br>
+    Response: &quot;pref playlistdir %2fUsers%2fdean%2fplaylists&lt;LF&gt;&quot; </p>
+</blockquote>
+
+<br><p><strong><code>exit</code></strong><br></p>
+<p>The &quot;exit&quot; command closes the TCP connection with the server.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;exit&lt;LF&gt;&quot;<br>
+    Response: &quot;exit&lt;LF&gt;&quot;<br>
+    (Connection terminated)</p>
+</blockquote>
+
+
+<hr>
+<h4 id="PC">Players commands</h4>
+
+<p><strong><code>player count ?</code></strong></p>
+<p>The &quot;player count&quot; command returns the number of players defined in the system.</p>
+<blockquote> 
+  <p> Request: &quot;player count ?&lt;LF&gt;&quot;<br>
+     Response: &quot;player count 2&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>player id &lt;playerindex|playerid&gt; ?</code></strong></p>
+<p>The &quot;player id&quot; command returns the player's unique MAC address. 
+  This value is used when specifying a player in subsequent 
+  commands. </p>
+<blockquote> 
+  <p> Request: &quot;player id 0 ?&lt;LF&gt;&quot;<br>
+     Response: &quot;player id 0 04:20:00:12:23:45&lt;LF&gt;&quot;</p>
+</blockquote>
+  
+<br><p><strong><code>player name &lt;playerindex|playerid&gt; ?</code></strong></p>
+<p>The &quot;player name&quot; command returns the human-readable name for the 
+  specified player. If the name has not been specified by the user in the Player 
+  Settings, then a default name will be used, usually the IP address.</p>
+<blockquote> 
+  <p> Request: &quot;player name 0 ?&lt;LF&gt;&quot;<br>
+     Response: &quot;player name 0 Living Room&lt;LF&gt;&quot;</p>
+</blockquote>
+  
+<br><p><strong><code>player ip &lt;playerindex|playerid&gt; ?</code></strong></p>
+<p>The &quot;player ip&quot; command returns the IP address (along with port number) of the specified player.
+Note that the IP address and or port may change if the player reconnects or is rebooted.  Use the playerid to uniquely identify the player.</p>
+<blockquote> 
+  <p> Request: &quot;player ip 0 ?&lt;LF&gt;&quot;<br>
+     Response: &quot;player ip 0 192.168.1.22:3483&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>player model &lt;playerindex|playerid&gt; ?</code></strong></p>
+<p>The &quot;player model&quot; command returns the model of the player, currently one of 
+&quot;squeezebox&quot;, &quot;slimp3&quot; or &quot;softsqueeze&quot;.</p>
+<blockquote> 
+  <p> Request: &quot;player model 0 ?&lt;LF&gt;&quot;<br>
+     Response: &quot;player model squeezebox&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>player displaytype &lt;playerindex|playerid&gt; ?</code></strong></p>
+<p>The &quot;player displaytype&quot; command returns the display model of the player. Graphical 
+display types start with &quot;graphic-&quot;, non-graphical display type with &quot;noritake-&quot;.</p>
+<blockquote> 
+  <p> Request: &quot;player displaytype 0 ?&lt;LF&gt;&quot;<br>
+     Response: &quot;player displaytype 0 noritake-katakana&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; sleep &lt;number|?&gt;</code></strong></p>
+<p>The &quot;sleep&quot; command specifies a number of seconds to continue playing 
+  before powering off the player. You may query the amount of time until the player 
+  sleeps by passing in a &quot;?&quot; parameter.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 sleep ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sleep 105.3&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 sleep 300&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sleep 300&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; sync &lt;playerindex|playerid|-|?&gt;</code></strong></p>
+<p>The &quot;sync&quot; command specifies the player to synchronise with the given playerid. You may query which players are 
+already synced with this player by passing in a &quot;?&quot; parameter.  Multiple playerids are separated by a space. To unsync a player, use the - parameter.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 sync 1&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sync 1&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 sync ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sync 04:20:00:12:23:21&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 sync -&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sync -&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; power &lt;0|1|?|&gt;</code></strong></p>
+<p> The &quot;power&quot; command turns the player on or off. Use 0 to turn off, 
+1 to turn on, ? to query and no parameter to toggle the power state of the player.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 power 1&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 power 1&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 power ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 power 1&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; signalstrength ?</code></strong></p>
+<p> Returns the wireless signal strength for the player, range is 1 to 100.  Returns 0 if not connected wirelessly.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 signalstrength ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 signalstrength 76&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; connected ?</code></strong></p>
+<p> Return the connected state of the player.  HTTP and Squeezebox players will indicate 1 or 0 depending on if the TCP connection to the player is active.
+    SLIMP3 players, since they use UDP, always return 1. </p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 connected ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 connected 1&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; mixer volume &lt;0 .. 100|-100 .. +100|?&gt;</code></strong></p>
+<p>The &quot;mixer volume&quot; command returns or sets the current volume setting for the player.</p>
+<p> Example: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 mixer volume ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer volume 98&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer volume 25&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer volume 25&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer volume +10&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer volume +10&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; mixer muting</code></strong></p>
+<p>The &quot;mixer muting&quot; command mutes or unmutes the player.</p>
+<p> Example: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 mixer muting&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer muting&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; mixer bass &lt;0 .. 100|-100 .. +100|?&gt;</code></strong></p>
+<p>The &quot;mixer bass&quot; command returns or sets the current bass setting for the player.</p>
+<p> Example: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 mixer bass ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer bass 98&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer bass 25&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer bass 25&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer bass +10&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer bass +10&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; mixer treble &lt;0 .. 100|-100 .. +100|?&gt;</code></strong></p>
+<p>The &quot;mixer treble&quot; command returns or sets the current treble setting for the player.</p>
+<p> Example: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 mixer treble ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer treble 98&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer treble 25&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer treble 25&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer treble +10&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer treble +10&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; mixer pitch &lt;80 .. 120|-40 .. +40|?&gt;</code></strong></p>
+<p>The &quot;mixer pitch&quot; command returns or sets the current pitch setting for the player (only supported by Squeezebox players).</p>
+<p> Example: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 mixer pitch ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer pitch 98&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer pitch 80&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer pitch 80&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer pitch +10&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer pitch +10&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; rate &lt;rate|?&gt;</code></strong></p>
+<p>The &quot;rate&quot; command returns or sets the current play rate for the player.</p>
+<p> Example: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 rate ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 rate 1&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 rate -4&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 rate -4&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; display &lt;line1&gt; &lt;line2&gt; &lt;duration&gt;</code></strong></p>
+<p>The &quot;display&quot; command specifies some text to be displayed on the 
+  player screen for a specified amount of time (in seconds).</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 display Hello World 5&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 display Hello World 5&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; linesperscreen ?</code></strong></p>
+<p>The &quot;linesperscreen&quot; command returns how many lines of text can fit in the display, depending on its 
+  current setting or font.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 linesperscreen ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 linesperscreen 1&lt;LF&gt;&quot;</p>
+</blockquote>
+
+
+<br><p><strong><code>&lt;playerid&gt; display ? ?</code></strong></p>
+<p>The &quot;display ? ?&quot; command may be used to obtain the text 
+  that is currently displayed on the screen.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 display ? ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 display Hello World&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; displaynow ? ?</code></strong></p>
+<p>The &quot;displaynow&quot; command provides access to the data currently on the display.  This differs from the &quot;display ? ?&quot; command in that it returns the latest
+data sent to the display, including any animation, double-size fonts, etc...</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 displaynow ? ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 display Hello World&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playerpref &lt;prefname&gt; &lt;prefvalue|?&gt;</code></strong></p>
+<p>The &quot;playerpref&quot; command allows the caller to set and query the SlimServer's internal player-specific
+preferences values.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playerpref doublesize ?&quot;<br>Response: &quot;04:20:00:12:23:45 playerpref doublesize 1&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playerpref doublesize 0&quot;<br>Response: &quot;04:20:00:12:23:45 playerpref doublesize 0&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; button &lt;buttoncode&gt;</code></strong></p>
+<p>The &quot;button&quot; command simulates a button press. Valid button codes correspond to the functions defined in the Default.map file.
+<p>Example:</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 button stop&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 button stop&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; ir &lt;ircode&gt; &lt;time&gt;</code></strong></p>
+<p>The &quot;ir&quot; command simulates an IR code. Valid IR codes are defined in the Default.map file.
+<p>Example:</p>
+<blockquote> 
+  <p>Request: &quot;bd:a5:a9:9b:9d:df ir 768910ef 11073.575&lt;LF&gt;&quot;<br>Response: &quot;bd:a5:a9:9b:9d:df ir 768910ef 11073.575&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p id="players"><strong><code>players &lt;start&gt; &lt;itemsPerResponse&gt;</code></strong></p>
+<p>The &quot;players&quot; command returns information about all players known by the SlimServer.</p>
+<p>Returned tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>count</td>
+		<td>Number of players known by SlimServer. Equivalent to &quot;player count ?&quot;.</td>
+	</tr>
+	<tr>
+		<td><em>For each player:</em></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<b>playerindex</b></td>
+		<td>Player index. Item delimiter.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;playerid</td>
+		<td>Player unique identifier. Equivalent to &quot;player id &lt;playerindex&gt; ?&quot;.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;ip</td>
+		<td>Player IP and port. Equivalent to &quot;player ip &lt;playerindex&gt; ?&quot;.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;name</td>
+		<td>Player name. Equivalent to &quot;player name &lt;playerindex&gt; ?&quot;.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;model</td>
+		<td>Player model. Equivalent to &quot;player model &lt;playerindex&gt; ?&quot;.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;displaytype</td>
+		<td>Player display type. Equivalent to &quot;player displaytype &lt;playerindex&gt; ?&quot;.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;connected</td>
+		<td>Connected state. Equivalent to &quot;&lt;playerid&gt; connected ?&quot;.</td>
+	</tr>
+</table>
+<p>Example:</p>
+<blockquote> 
+  <p> Request: &quot;players 0 2&lt;LF&gt;&quot;<br>
+     Response: &quot;players 0 2 count:2 playerindex:0 playerid:a5:41:d2:cd:cd:05 ip:127.0.0.1:60488 name:127.0.0.1 
+     model:softsqueeze displaytype:graphic-280x16 connected:1 playerindex:1 playerid:00:04:20:02:00:c8 ip:192.168.1.22:3483 
+     name:Movy model:slimp3 displaytype:noritake-katakana connected:1&lt;LF&gt;&quot;</p>
+</blockquote>
+
+
+<hr>
+<h4 id="DB">Database commands</h4>
+
+<p><strong><code>rescan</code></strong></p>
+<p>The &quot;rescan&quot; command allows the caller to have the SlimServer 
+  rescan its music library, reloading the music file information.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;rescan&lt;LF&gt;&quot;<br>
+    Response: &quot;rescan&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>wipecache</code></strong></p>
+<p>The &quot;wipecache&quot; command allows the caller to have the SlimServer 
+  rescan its music library, reloading the music file information. This differs from the &quot;rescan&quot; command in that it first clears the tag database.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;wipecache&lt;LF&gt;&quot;<br>
+    Response: &quot;wipecache&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>info total genres ?</code></strong></p>
+<p>The &quot;info total genres ?&quot; command returns the number of unique genres in the SlimServer music database.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;info total genres ?&lt;LF&gt;&quot;<br>
+    Response: &quot;info total genres 18&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>info total artists ?</code></strong></p>
+<p>The &quot;info total artists ?&quot; command returns the number of unique artists in the SlimServer music database.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;info total artists ?&lt;LF&gt;&quot;<br>
+    Response: &quot;info total artists 18&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>info total albums ?</code></strong></p>
+<p>The &quot;info total albums ?&quot; command returns the number of unique albums in the SlimServer music database.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;info total albums ?&lt;LF&gt;&quot;<br>
+    Response: &quot;info total albums 18&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>info total songs ?</code></strong></p>
+<p>The &quot;info total songs ?&quot; command returns the number of unique songs in the SlimServer music database.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;info total songs ?&lt;LF&gt;&quot;<br>
+    Response: &quot;info total songs 18&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p id="genres"><strong><code>genres &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
+<p>The &quot;genres&quot; command returns all genres known by the SlimServer.</p>
+<p>Accepted tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>search</td>
+		<td>Search substring. The search is case insensitive.</td>
+	</tr>
+</table>
+<p>Returned tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>rescan</td>
+		<td>Returned with value 1 if the SlimServer is still scanning the database. The results may therefore be incomplete.
+		Not returned if no scan is in progress.</td>
+	</tr>
+	<tr>
+		<td>count</td>
+		<td>Number of results returned by the query. If no search string is present, this is the same value as returned by &quot;info total genres ?&quot;</td>
+	</tr>
+	<tr>
+		<td><em>For each genre:</em></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<b>genre</b></td>
+		<td>Genre name. Item delimiter.</td>
+	</tr>
+</table>
+<p>Example:</p>
+<blockquote> 
+  <p> Request: &quot;genres 0 5&lt;LF&gt;&quot;<br>
+  	 Response: &quot;genres 0 5 rescan:1 count:6 genre:Acid%20Jazz genre:Alternative%20&%20Punk genre:French genre:No%20Genre genre:Pop&lt;LF&gt;&quot;</p>
+  <p> Request: &quot;genres 0 5 search:unk&lt;LF&gt;&quot;<br>
+  	 Response: genres 0 5 search:unk count:1 genre:Alternative%20&%20Punk&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p id="artists"><strong><code>artists &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
+<p>The &quot;artists&quot; command returns all artists known by the SlimServer.</p>
+<p>Accepted tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>search</td>
+		<td>Search substring. The search is case insensitive.</td>
+	</tr>
+	<tr>
+		<td>genre</td>
+		<td>Genre name, to restrict the results to those artists with songs of that genre.</td>
+	</tr>
+	<tr>
+		<td>album</td>
+		<td>Album name, to restrict the results to those artists with songs of that album.</td>
+	</tr>
+</table>
+<p>Returned tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>rescan</td>
+		<td>Returned with value 1 if the SlimServer is still scanning the database. The results may therefore be incomplete.
+		Not returned if no scan is in progress.</td>
+	</tr>
+	<tr>
+		<td>count</td>
+		<td>Number of results returned by the query. If no search string is present, this is the same value as returned by &quot;info total artists ?&quot;</td>
+	</tr>
+	<tr>
+		<td><em>For each artist:</em></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<b>artist</b></td>
+		<td>Artist name. Item delimiter.</td>
+	</tr>
+</table>
+<p>Example:</p>
+<blockquote> 
+  <p> Request: &quot;artists 0 5&lt;LF&gt;&quot;<br>
+  	 Response: artists 0 5 count:7 artist:Anastacia artist:Calogero artist:Evanescence artist:Leftfield%20%26%20Lydon artist:Llorca&lt;LF&gt;&quot;</p>
+  <p> Request: &quot;artists 0 5 genre:Pop&lt;LF&gt;&quot;<br>
+  	 Response: artists 0 5 genre:Pop count:2 artist:Anastacia artist:Sarah%20Connor&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p id="albums"><strong><code>albums &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
+<p>The &quot;albums&quot; command returns all albums known by the SlimServer.</p>
+<p>Accepted tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>search</td>
+		<td>Search substring. The search is case insensitive.</td>
+	</tr>
+	<tr>
+		<td>genre</td>
+		<td>Genre name, to restrict the results to those albums with songs of that genre.</td>
+	</tr>
+	<tr>
+		<td>artist</td>
+		<td>Artist name, to restrict the results to those albums with songs of that artist.</td>
+	</tr>
+</table>
+<p>Returned tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>rescan</td>
+		<td>Returned with value 1 if the SlimServer is still scanning the database. The results may therefore be incomplete.
+		Not returned if no scan is in progress.</td>
+	</tr>
+	<tr>
+		<td>count</td>
+		<td>Number of results returned by the query. If no search string is present, this is the same value as returned by &quot;info total albums ?&quot;</td>
+	</tr>
+	<tr>
+		<td><em>For each album:</em></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<b>album</b></td>
+		<td>Album name. Item delimiter.</td>
+	</tr>
+</table>
+<p>Example:</p>
+<blockquote> 
+  <p> Request: &quot;albums 0 4&lt;LF&gt;&quot;<br>
+  	 Response: &quot;albums 0 4 count:14 album:Amadeus%20(Disc%201%20of%202) album:Anastacia album:Bounce%20[Single] album:Fallen&lt;LF&gt;&quot;</p>
+  <p> Request: &quot;albums 0 5 genre:Pop&lt;LF&gt;&quot;<br>
+  	 Response: &quot;albums 0 5 genre:Pop count:2 album:Anastacia album:Bounce%20[Single]&lt;LF&gt;&quot;</p>
+  <p> Request: &quot;albums 0 5 artist:Sarah%20Connor&lt;LF&gt;&quot;<br>
+  	 Response: &quot;albums 0 5 artist:Sarah%20Connor count:1 album:Bounce%20[Single]&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p id="songinfo"><strong><code>songinfo &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
+<p>The &quot;songinfo&quot; command returns all the information on a song known by the SlimServer.</p>
+<p>Accepted tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>path</td>
+		<td>Song path as returned by other CLI commands. This is a mandatory parameter.</td>
+	</tr>
+	<tr>
+		<td>tags</td>
+		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is all info except the path.</td>
+	</tr>
+</table>
+<p>Returned tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td></td>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>rescan</td>
+		<td>Returned with value 1 if the SlimServer is still scanning the database. The results may therefore be incomplete.
+		Not returned if no scan is in progress.</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>count</td>
+		<td>Number of results returned by the query, that is, total number of elements to return for this song.</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>title</td>
+		<td>Song title</td>
+	</tr>
+	<tr>
+		<td><b>g</b></td>
+		<td>genre</td>
+		<td>Genre name. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>a</b></td>
+		<td>artist</td>
+		<td>Artist name. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>c</b></td>
+		<td>composer</td>
+		<td>Composer name. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>b</b></td>
+		<td>band</td>
+		<td>Band name. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>u</b></td>		
+		<td>conductor</td>
+		<td>Conductor name. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>l</b></td>
+		<td>album</td>
+		<td>Album name. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>d</b></td>
+		<td>duration</td>
+		<td>Song duration in seconds.</td>
+	</tr>
+	<tr>
+		<td><b>i</b></td>
+		<td>disc</td>
+		<td>Disc number. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>q</b></td>
+		<td>disccount</td>
+		<td>Number of discs. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>t</b></td>
+		<td>track</td>
+		<td>Track number. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>y</b></td>
+		<td>year</td>
+		<td>Song year. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>m</b></td>
+		<td>bpm</td>
+		<td>Beats per minute. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>k</b></td>
+		<td>comment</td>
+		<td>Song comments, if any.</td>
+	</tr>
+	<tr>
+		<td><b>o</b></td>
+		<td>type</td>
+		<td>Content type. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>v</b></td>
+		<td>tagversion</td>
+		<td>Version of tag information in song file. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>r</b></td>
+		<td>bitrate</td>
+		<td>Song bitrate. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>f</b></td>
+		<td>filelength</td>
+		<td>Song file length in bytes. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>z</b></td>
+		<td>drm</td>
+		<td>Digital rights information. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>j</b></td>
+		<td>coverart</td>
+		<td>1 if coverart is available for this song. Not listed otherwise.</td>
+	</tr>
+	<tr>
+		<td><b>h</b></td>
+		<td>coverthumb</td>
+		<td>1 if cover thumbnail is available for this song. Not listed otherwise.</td>
+	</tr>
+	<tr>
+		<td><b>n</b></td>
+		<td>modtime</td>
+		<td>Date and time song file was last changed.</td>
+	</tr>
+	<tr>
+		<td>p</td>
+		<td>path</td>
+		<td>Song file path. Used as &lt;item&gt; parameter for the &quot;playlist add&quot; command, for example.</td>
+	</tr>
+</table>
+<p>Example:</p>
+<blockquote> 
+  <p> Request: &quot;songinfo 0 6 path:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%2520Outside%2520Alone.mp3&lt;LF&gt;&quot;<br>
+  	 Response: &quot;songinfo 0 6 path:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%2520Outside%2520Alone.mp3 count:17 
+  	 title:Left%20Outside%20Alone genre:Pop artist:Anastacia composer:D.%20Austin/G.%20Ballard album:Anastacia duration:257.488975&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p id="titles"><strong><code>titles|songs &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
+<p>The &quot;titles&quot; command returns all titles known by the SlimServer.</p>
+<p>Accepted tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>genre</td>
+		<td>Genre name, to restrict the results to the titles of that genre.</td>
+	</tr>
+	<tr>
+		<td>artist</td>
+		<td>Artist name, to restrict the results to the titles of that artist.</td>
+	</tr>
+	<tr>
+		<td>album</td>
+		<td>Album name, to restrict the results to the titles of that album.</td>
+	</tr>
+	<tr>
+		<td>tags</td>
+		<td>Determines which tags are returned. Each returned tag is identified by a letter (see command 
+		    &quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible fields and their identifying 
+		    letter). The default tags value for this command is &quot;galdp&quot;.</td>
+	</tr>
+	<tr>
+		<td>search</td>
+		<td>Search substring. The search is case insensitive.</td>
+	</tr>
+	<tr>
+		<td>sort</td>
+		<td>Sorting, one of &quot;titles&quot; (the default) or &quot;tracks&quot;. The track field (&quot;t&quot;) is added 
+		automatically to the response. Sorting by tracks is possible only if tracks are defined and for a single album.</td>
+	</tr>
+</table>
+<p>Returned tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>rescan</td>
+		<td>Returned with value 1 if the SlimServer is still scanning the database. The results may therefore be incomplete.
+		Not returned if no scan is in progress.</td>
+	</tr>
+	<tr>
+		<td>count</td>
+		<td>Number of results returned by the query. If no search string is present, this is the same value as returned by &quot;info total songs ?&quot;</td>
+	</tr>
+	<tr>
+		<td><em>For each title:</em></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<b>index</b></td>
+		<td>Title index, zero-based. Item delimiter.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<em>Tags</em></td>
+		<td>Same tags as defined in command &quot;<a href="#songinfo">songinfo</a>&quot;.</td>
+	</tr>
+</table>
+<p>Example:</p>
+<blockquote> 
+  <p> Request: &quot;titles 0 2&lt;LF&gt;&quot;<br>
+  	 Response: &quot;titles 0 2 count:100 index:0 title:Ancestral%20Aid genre:Soundtrack artist:Various%20Artists album:The%20Hunt%20For%20Red%20October
+  	 duration:136.93387755102 disc:1 track:5 year:1990 path:file:///Users/dean/slimp3/Music/Various%20Artists/The%20Hunt%20For%20Red%20October/Ancestral%20Aid.mp3
+  	 index:1 title:Any%20How genre:Acid%20Jazz artist:Llorca album:New%20Comer duration:340.297142857143 track:5 year:2001 path:...&lt;LF&gt;&quot;</p>
+
+  <p> Request: &quot;titles 0 12 album:Anastacia tags:p&lt;LF&gt;&quot;<br>
+  	 Response: &quot;titles 0 12 album:Anastacia tags:p count:12 index:0 title:Heavy%20On%20My%20Heart path:...
+  	 index:1 title:I%20Do path:... index:2 title:Left%20Outside%20Alone path:...&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p id="playlists"><strong><code>playlists &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
+<p>The &quot;playlists&quot; command returns all playlists known by the SlimServer.</p>
+<p>Accepted tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>dir</td>
+		<td>Virtual playlist directory, as returned below (dig down).</td>
+	</tr>
+	<tr>
+		<td>search</td>
+		<td>Search substring. The search is case insensitive and performed on the item name (song title, directory name or playlist name).</td>
+	</tr>
+	<tr>
+		<td>tags</td>
+		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is &quot;galdp&quot;.</td>
+	</tr>
+</table>
+<p>Returned tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>rescan</td>
+		<td>Returned with value 1 if the SlimServer is still scanning the database. The results may therefore be incomplete.
+		Not returned if no scan is in progress.</td>
+	</tr>
+	<tr>
+		<td>count</td>
+		<td>Number of results returned by the query.</td>
+	</tr>
+	<tr>
+		<td><em>For each item:</em></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<b>index</b></td>
+		<td>Item index, zero-based. Item delimiter.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<em>If item is path:</em></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;item</td>
+		<td>Name of the playlist or directory</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;dir</td>
+		<td>Virtual playlist directory to dig down into playlist or directory</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<em>If item is song:</em></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<em>Tags</em></td>
+		<td>Same tags as defined in command &quot;<a href="#songinfo">songinfo</a>&quot;.</td>
+	</tr>
+</table>
+<p>Example:</p>
+<blockquote> 
+  <p> Request: &quot;playlists 0 2&lt;LF&gt;&quot;<br>
+  	 Response: &quot;playlists 0 2 count:2 index:0 item:ShoutcastBrowser%20Recently%20Played 
+  	 dir:__playlists/ShoutcastBrowser_Recently_Played index:1 item:SUPER dir:__playlists/SUPER.m3u&lt;LF&gt;&quot;</p>
+  <p> Request: &quot;playlists 0 2 dir:__playlists/SUPER.m3u&lt;LF&gt;&quot;<br>
+  	 Response: &quot;playlists 0 2 dir:__playlists/SUPER.m3u count:3 index:0 
+  	 title:Left%20Outside%20Alone genre:Pop artist:Anastacia composer:D.%20Austin/G.%20Ballard 
+  	 album:Anastacia duration:257.488975 disc:1 track:2 year:2004 
+  	 path:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%20Outside%20Alone.mp3 
+  	 index:1 title:Bounce%20[Original%20Version] genre:Pop artist:Sarah%20Connor 
+  	 album:Bounce%20[Single] duration:252.630204081633 disc:1 track:3 
+  	 year:2003 path:file:///Users/dean/slimp3/Music/Sarah%20Connor/Bounce%20[Single]/Bounce%20[Original%20Version].mp3&lt;LF&gt;&quot;</p>
+</blockquote>
+
+
+
+
+
+<hr>
+<h4 id="PL">Playlist commands</h4>
+
+<p><strong><code>&lt;playerid&gt; mode &lt;play|pause|stop|off|?&gt;</code></strong></p>
+<p>The &quot;mode&quot; command allows to set the player playlist mode directly, or to query the player state. &quot;mode play&quot; is equivalent to &quot;play&quot;,
+&quot;mode stop&quot; to &quot;stop&quot;, &quot;mode pause&quot; to &quot;pause 1&quot;, and &quot;mode off&quot; to &quot;power 0&quot;</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 mode ?&lt;LF&gt;&quot;<br>
+    Response: &quot;04:20:00:12:23:45 mode stop&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; play</code></strong></p>
+<p>The &quot;play&quot; command allows to start playing the current playlist.</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 play&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 play&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; stop</code></strong></p>
+<p>The &quot;stop&quot; command allows to stop playing the current playlist.</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 stop&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 stop&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; pause &lt;0|1|&gt;</code></strong></p>
+<p>You may use &quot;pause 1&quot; to force the player to pause, &quot;pause 0&quot; to force
+  the player to unpause and &quot;pause&quot; to toggle the pause state.</p>
+ <blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 pause&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 pause&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; time &lt;number|-number|+number|?&gt;</code></strong></p>
+<p>The &quot;time&quot; command allows you to query the current number of seconds 
+  that the current song has been playing by passing in a &quot;?&quot;. You may 
+  jump to a particular position in a song by specifying a number of seconds to 
+  seek to. You may also jump to a relative position within a song by putting 
+  an explicit &quot;-&quot; or &quot;+&quot; character before a number of second 
+  you would like to seek.</p>
+<p>Examples: </p>
+<blockquote> 
+    <p>Request: &quot;04:20:00:12:23:45 time ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 time 12.55&lt;LF&gt;&quot;</p>
+    <p>Request: &quot;04:20:00:12:23:45 time 5&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 time 5&lt;LF&gt;&quot;</p>
+    <p>Request: &quot;04:20:00:12:23:45 time -5&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 time -5&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; genre ?</code></strong><br>
+  <strong><code>&lt;playerid&gt; artist ?</code></strong><br>
+  <strong><code>&lt;playerid&gt; album ?</code></strong><br>
+  <strong><code>&lt;playerid&gt; title ?</code></strong><br>
+  <strong><code>&lt;playerid&gt; duration ?</code></strong><br>
+  <strong><code>&lt;playerid&gt; path ?</code></strong></p>
+<p>The &quot;genre&quot;, &quot;artist&quot;, &quot;album&quot;, &quot;title&quot; 
+  &quot;duration&quot; and &quot;path&quot; commands allow for querying information 
+  about the song currently playing.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 genre ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 genre Rock&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 artist ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 artist Abba&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 album ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 album Greatest%20Hits&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 title ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 title Voulez%20vous&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 duration ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 duration 103.2&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 path ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 path pathtofile&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist play &lt;item&gt; [&lt;title&gt;]</code></strong></p>
+<p>The &quot;playlist play&quot; command puts the specified song URL, playlist or directory contents into the current playlist and plays starting at the first item. 
+Any songs previously in the playlist are discarded.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist play /music/abba/01_Voulez_Vous.mp3&lt;LF&gt;&quot;<br>
+    Response: &quot;04:20:00:12:23:45 playlist play /music/abba/01_Voulez_Vous.mp3&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist add &lt;item&gt;</code></strong></p>
+<p>The &quot;playlist add&quot; command adds the specified song URL, playlist or directory contents to the end of the current playlist. 
+Songs currently playing or already on the playlist are not affected.</p>
+<p>Examples:</p>
+<blockquote>
+	<p>Request: &quot;04:20:00:12:23:45 playlist add /music/abba/01_Voulez_Vous.mp3&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist add /music/abba/01_Voulez_Vous.mp3&lt;LF&gt;&quot;</p>
+	<p>Request: &quot;04:20:00:12:23:45 playlist add /playlists/abba.m3u&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist add /playlists/abba.m3u&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist insert &lt;item&gt;</code></strong></p>
+<p>The &quot;playlist insert&quot; command inserts the specified song URL, playlist or directory contents to be played immediately after the current song in the current playlist. 
+Any songs currently playing or already on the playlist are not affected.</p>
+<p>Examples:</p>
+<blockquote>
+	<p>Request: &quot;04:20:00:12:23:45 playlist insert /music/abba/01_Voulez_Vous.mp3&lt;LF&gt;&quot;
+	<br>Response: &quot;04:20:00:12:23:45 playlist insert /music/abba/01_Voulez_Vous.mp3&lt;LF&gt;&quot;</p>
+	<p>Request: &quot;04:20:00:12:23:45 playlist insert /playlists/abba.m3u&lt;LF&gt;&quot;
+	<br>Response: &quot;04:20:00:12:23:45 playlist insert /playlists/abba.m3u&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist deleteitem &lt;item&gt;</code></strong></p>
+<p>The &quot;playlist deleteitem&quot; command removes the specified song URL, playlist or directory contents from the current playlist.</p>
+<p>Examples:</p>
+<blockquote>
+	<p>Request: &quot;04:20:00:12:23:45 playlist deleteitem /music/abba/01_Voulez_Vous.mp3&lt;LF&gt;&quot;
+	<br>Response: &quot;04:20:00:12:23:45 playlist deleteitem /music/abba/01_Voulez_Vous.mp3&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist move &lt;fromindex&gt; &lt;toindex&gt;</code></strong></p>
+<p>The &quot;playlist move&quot; command moves the song at the specified index 
+  to a new index in the playlist. An offset of zero is the first song in the playlist.</p>
+<p> Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist move 0 5&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist move 0 5&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist delete &lt;songindex&gt;</code></strong></p>
+<p>The playlist delete&quot; command deletes the song at the specified index from 
+  the current playlist.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist delete 5&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist delete 5&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist resume &lt;playlist&gt;</code></strong></p>
+<p>Replace the current playlist with the playlist specified by p2, starting at the song that was playing when
+the file was saved. (Resuming works only with M3U files saved with the playlist save command below.) 
+Shortcut: use a bare playlist name (without leading directories or trailing .m3u suffix) to load a playlist 
+in the saved playlists folder.</p>
+<p>Examples:</p>
+<blockquote>
+<p>Request: &quot;04:20:00:12:23:45 playlist resume abba&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist resume abba&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist save &lt;playlist&gt;</code></strong></p>
+<p>Save a playlist file in the saved playlists directory. Accepts a playlist filename (without .m3u suffix) 
+and saves in the top level of the playlists directory.</p>
+<p>Examples:</p>
+<blockquote>
+	<p>Request: &quot;04:20:00:12:23:45 playlist save abba&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist save abba&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist loadalbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
+<p>The &quot;playlist loadalbum&quot; command puts songs matching the specified 
+  genre artist and album criteria on the playlist. Songs previously in the 
+  playlist are discarded.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist loadalbum Rock Abba *&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist loadalbum Rock Abba *&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist addalbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
+<p> The &quot;playlist addalbum&quot; command appends all songs matching the 
+  specified criteria onto the end of the playlist. Songs currently playing 
+  or already on the playlist are not affected.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist insertalbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
+<p> The &quot;playlist insertalbum&quot; command inserts all songs matching the 
+  specified criteria at the top of the playlist. Songs already on the playlist are not affected.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist deletealbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
+<p>The &quot;playlist deletealbum&quot; command removes songs matching the specified 
+  genre artist and album criteria from the playlist.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist deletealbum Rock Abba *&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist deletealbum Rock Abba *&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist clear</code></strong></p>
+<p>The &quot;playlist clear&quot; command removes any song that is on the playlist. 
+  The player is stopped.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist clear&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist clear&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist zap &lt;songindex&gt;</code></strong></p>
+<p>The &quot;playlist zap&quot; command adds the song at index songindex into the zapped song playlist.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist zap 3&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist zap 3&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist name ?</code></strong></p>
+<p>The &quot;playlist name&quot; command returns the name of the saved playlist last loaded into the Now Playing playlist, if any.
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist name ?&lt;LF&gt;&quot;<br>
+     Response: &quot;04:20:00:12:23:45 playlist name Jazz%20Favorites&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist url ?</code></strong></p>
+<p>The &quot;playlist url&quot; command returns the URL of the saved playlist last loaded into the Now Playing playlist, if any. 
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist url ?&lt;LF&gt;&quot;<br>
+     Response: &quot;04:20:00:12:23:45 playlist url file:///Users/dean/Music/testmusic/Zapped%20Songs.m3u&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist modified ?</code></strong></p>
+<p>The &quot;playlist modified&quot; returns the modification state of the saved playlist last loaded into the Now Playing playlist, if any.
+	If &quot;1&quot;, the playlist has been modified since it was loaded.
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist modified ?&lt;LF&gt;&quot;<br>
+     Response: &quot;04:20:00:12:23:45 playlist modified 0&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist index &lt;index|+index|-index?&gt;</code></strong></p>
+<p>The &quot;playlist index&quot; command sets or queries the song that is currently 
+  playing by index. When setting, a zero-based value may be used to indicate which 
+  song to play. An explicitly positive or negative number may be used to jump 
+  to a song relative to the currently playing song. The value of the current song 
+  index may be obtained by passing in &quot;?&quot; as a parameter.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist index +1&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist index +1&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist index 5&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist index 5&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist index ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist index 5&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist genre &lt;index&gt; ?<br>
+  &lt;playerid&gt; playlist artist &lt;index&gt; ?<br>
+  &lt;playerid&gt; playlist album &lt;index&gt; ?<br>
+  &lt;playerid&gt; playlist title &lt;index&gt; ?<br>
+  &lt;playerid&gt; playlist duration &lt;index&gt; ?<br>
+  &lt;playerid&gt; playlist path &lt;index&gt; ?</code></strong></p>
+<p>The &quot;playlist genre&quot;, &quot;playlist artist&quot;, &quot;playlist 
+  album&quot;, &quot;playlist title&quot;, &quot;playlist path&quot; and &quot;playlist 
+  duration&quot; commands return the requested information for a given song 
+  at an index position in the current playlist. The path may be a path to the 
+  file or a URL.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist genre 3 ?&lt;LF&gt;&quot;<br>Request: &quot;04:20:00:12:23:45 playlist genre 3 Rock&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist artist 3 ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist artist 3 Abba&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist album 3 ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist album 3 Greatest Hits&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist title 3 ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist title 3 Voulez Vous&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist path 3 ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist path 3 &lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist duration 3 ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist duration 3 103.2&lt;LF&gt;&quot;</p>
+ </blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist tracks ?</code></strong></p>
+<p>The &quot;playlist tracks&quot; command returns the the total number 
+  of tracks in the current playlist</p>
+<p> Example: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist tracks ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist tracks 7&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist shuffle &lt;0|1|2|?|&gt;</code></strong></p>
+<p>The &quot;playlist shuffle&quot; command is used to shuffle, unshuffle or query 
+    the shuffle state for the current playlist. A value of &quot;0&quot; indicates 
+    that the playlist is not shuffled, &quot;1&quot; indicates that the playlist 
+   is shuffled by song, and &quot;2&quot; indicates that the playlist is shuffled
+   by album. Used with no parameter, the command toggles the shuffling state.</p>
+<p> Example: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist shuffle ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist shuffle 1&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist shuffle 0&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist shuffle 0&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p><strong><code>&lt;playerid&gt; playlist repeat &lt;0|1|2|?|&gt;</code></strong></p>
+<p>The &quot;playlist repeat&quot; command is used to indicate or query if the 
+  player will stop playing at the end of the playlist, repeat the current song 
+  indefinitely, or repeat the current playlist indefinitely. A value of &quot;0&quot; 
+  indicates that the player will stop at the end of the playlist, &quot;1&quot; 
+  indicates that the player will repeat the current song indefinitely and a value 
+  of &quot;2&quot; indicates that the player will repeat the entire playlist indefinitely.
+  Used with no parameter, the command toggles the repeat state.</p>
+<p> Example: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist repeat ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist repeat 2&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 playlist repeat 0&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist repeat 0&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p id="status"><strong><code>&lt;playerid&gt; status &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
+<p>The &quot;status&quot; command returns the complete status about a given player, including the current playlist. Set the &lt;start&gt; parameter
+to &quot;-&quot; to have the command return the playlist data starting from the current song.</p>
+<p>Accepted tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>tags</td>
+		<td>Determines which tags are returned. Each returned tag is identified by a letter (see command 
+		    &quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible fields and their identifying 
+		    letter). The default tags value for this command is &quot;gald&quot;.</td>
+	</tr>
+</table>
+<p>Returned tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>rescan</td>
+		<td>Returned with value 1 if the SlimServer is still scanning the database. The results may therefore be incomplete.
+		Not returned if no scan is in progress.</td>
+	</tr>
+	<tr>
+		<td>player_name</td>
+		<td>Name of the player.</td>
+	</tr>
+	<tr>
+		<td>player_connected</td>
+		<td>Connected state of the player.</td>
+	</tr>
+	<tr>
+		<td>power</td>
+		<td>Power state of the player.</td>
+	</tr>
+	<tr>
+		<td>signalstrength</td>
+		<td>Signal strength (only for Squeezeboxen).</td>
+	</tr>
+	<tr>
+		<td><em>If player is on:</em></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;mode</td>
+		<td>Player mode.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;rate</td>
+		<td>Player rate. Only if there is a current song.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;time</td>
+		<td>Elapsed time into the current song. Decimal seconds. Only if current song.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;duration</td>
+		<td>Duration of the current song. Decimal seconds. Only if current song.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;sleep</td>
+		<td>If set to sleep, the amount it was set to.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;will_sleep_in</td>
+		<td>Minutes lefts until sleeping. Only if set to sleep.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;mixer volume</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;mixer treble</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;mixer bass</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;mixer pitch</td>
+		<td>Not for SliMP3 players.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;playlist repeat</td>
+		<td>0 no repeat, 1 repeat song, 2 repeat playlist.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;playlist shuffle</td>
+		<td>0 no shuffle, 1 shuffle songs, 2 shuffle albums.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;playlist_cur_index</td>
+		<td>Index (first is 0) of the current song in the playlist. Only if there is a playlist.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;playlist_tracks</td>
+		<td>Number of tracks in the current playlist. Only if there is a playlist.</td>
+	</tr>
+	<tr>
+		<td><em>If playlist information exist/requested, for each song in the playlist:</em></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<b>playlist index</b></td>
+		<td>Index (first item is 0) of the playlist entry in the player playlist. 
+		Unless &lt;start&gt; is &quot;-&quot;, the first returned instance of this field is equal 
+		to start. If &lt;start&gt; is &quot;-&quot;, the first returned instance of this field contains 
+		the index of the currently playing song in the player playlist. Item seperator.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<em>Tags</em></td>
+		<td>Same tags as defined in command &quot;<a href="#songinfo">songinfo</a>&quot;.</td>
+	</tr>
+</table>
+<p>Example:</p>
+<blockquote> 
+  <p> Request: &quot;a5:41:d2:cd:cd:05 status 0 2 tags:&lt;LF&gt;&quot;<br>
+  	 Response: &quot;a5:41:d2:cd:cd:05 status 0 2 tags: player_name:127.0.0.1 
+  	 player_connected:1 power:1 mode:play rate:1 time:13.7129358076728 duration:252.630204081633 
+  	 mixer%20volume:50 mixer%20treble:50 mixer%20bass:50 mixer%20pitch:100 playlist%20repeat:2 
+  	 playlist%20shuffle:0 playlist_cur_index:1 playlist_tracks:3 playlist%20index:0 
+  	 title:Left%20Outside%20Alone playlist%20index:1 title:Bounce%20[Original%20Version]&lt;LF&gt;&quot;</p>
+  <p> Request: &quot;a5:41:d2:cd:cd:05 status - 2 tags:&lt;LF&gt;&quot;<br>
+  	 Response: &quot;a5:41:d2:cd:cd:05 status - 2 tags: player_name:127.0.0.1 
+  	 player_connected:1 power:1 mode:play rate:1 time:18.721127818274 duration:252.630204081633 
+  	 mixer%20volume:50 mixer%20treble:50 mixer%20bass:50 mixer%20pitch:100 playlist%20repeat:2 
+  	 playlist%20shuffle:0 playlist_cur_index:1 playlist_tracks:3 playlist%20index:1 
+  	 title:Bounce%20[Original%20Version] playlist%20index:2 title:Open%20Up%20[Radio%20Edit]&lt;LF&gt;&quot;</p>
+</blockquote>
+
+[% PROCESS helpfooter.html %]
