@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.17 2004/07/10 23:10:13 daniel Exp $
+# $Id: Parse.pm,v 1.18 2004/07/14 02:34:04 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -351,7 +351,7 @@ sub writeM3U {
 	if ($filename) {
 
 		$output = FileHandle->new($filename, "w") || do {
-			msg("Could not open $filename for writing.\n");
+			Slim::Utils::Misc::msg("Could not open $filename for writing.\n");
 			return;
 		};
 
