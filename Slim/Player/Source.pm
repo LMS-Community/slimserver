@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.84 2004/04/30 16:36:28 dean Exp $
+# $Id: Source.pm,v 1.85 2004/04/30 16:42:12 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -327,6 +327,7 @@ sub playmode {
 
 			$everyclient->readytosync(0);
 			$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
+			$everyclient->streamBytes(0);
 			$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat());
 
 		} elsif ($newmode eq "pause") {
@@ -632,6 +633,8 @@ sub openNext {
 			$client, Slim::Player::Playlist::song($client, $nextsong)
 		);
 		
+		# here's where we decide whether to start the next song in a new stream after playing out
+		# the current song or to just continue streaming
 		if ((playmode($client) eq 'play') && 
 			(($oldstreamformat ne $newstreamformat) || Slim::Player::Sync::isSynced($client)) ||
 			$client->rate() != 1) {
@@ -1172,6 +1175,31 @@ sub readNextChunk {
 	my $chunk  = '';
 
 	my $endofsong = undef;
+	
+	if ($client->streamBytes() == 0 && $client->streamformat() eq 'mp3') {
+	
+		my $silence = 0;
+		# use the maximum silence prelude for the whole sync group...
+		foreach my $buddy (Slim::Player::Sync::syncedWith($client), $client) {
+			my $asilence = Slim::Utils::Prefs::clientGet($buddy,'mp3SilencePrelude');
+			$silence = $asilence if ($asilence > $silence);
+		}
+
+		$::d_source && msg("We need to send $silence seconds of silence...\n");
+		
+		while ($silence > 0) {
+			$chunk .=  ${Slim::Web::HTTP::getStaticContent("html/lbrsilence.mp3")};
+			$silence -= (1152 / 44100);
+		}
+		
+		my $len = length($chunk);
+		
+		$::d_source && msg("sending $len bytes of silence\n");
+		
+		$client->streamBytes($len);
+		
+		return \$chunk if ($len);
+	}
 
 	if ($client->audioFilehandle()) {
 	
@@ -1320,6 +1348,7 @@ sub readNextChunk {
 		$::d_source_v && msg("read a chunk of $chunkLength length\n");
 		$::d_source_v && msg("metadata now: " . $client->shoutMetaPointer() . "\n");
 		$client->songBytes($client->songBytes() + $chunkLength);
+		$client->streamBytes($client->streamBytes() + $chunkLength);
 	}
 	
 	return \$chunk;

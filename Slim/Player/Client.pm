@@ -736,6 +736,7 @@ sub new {
 	$client->[86] = 1; # songblockalign
 	$client->[87] = 0; # bytesReceivedOffset
 	$client->[88] = 0; # buffersize
+	$client->[89] = 0; # streamBytes
 
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -1331,6 +1332,11 @@ sub bytesReceivedOffset {
 sub bufferSize {
 	my $r = shift;
 	@_ ? ($r->[88] = shift) : $r->[88];
+}
+
+sub streamBytes {
+	my $r = shift;
+	@_ ? ($r->[89] = shift) : $r->[89];
 }
 
 1;

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.53 2004/04/26 22:23:52 dean Exp $
+# $Id: Prefs.pm,v 1.54 2004/04/30 16:42:12 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -164,31 +164,32 @@ my %DEFAULT = (
 	,'livelog'				=> 102400 # keep around an in-memory log of 100kbytes, available from the web interfaces
 	,'remotestreamtimeout'	=> 5 # seconds to try to connect for a remote stream
 	,"CLIENTPREFS" => {
-			'autobrightness'	=> 1
-			,'doublesize'		=> 0
-			,'powerOnBrightness'	=> 4
-			,'powerOffBrightness'	=> 1
-			,'repeat'		=> 2
-			,'volume'		=> 50
-			,'treble'		=> 50
-			,'bass'			=> 50
-			,'pitch'		=> 100
-			,'shuffle'		=> 0
-			,'offDisplaySize'	=> 0
-			,'playingDisplayMode'	=> 0
-			,'playername'		=> undef
-			,'screensaver'		=> 'playlist'
-			,"screensavertimeout" 	=> 30
-			,"scrollPause"		=> 3.6
-			,"scrollRate"		=> 0.15
-			,'silent'		=> 0
-			,'maxBitrate' => 0
-			,'titleFormatCurr'	=> 1
-			,'titleFormat'		=> [5, 1, 3, 6]
-			,'disabledirsets'	=> []
-			,'irmap'		=> Slim::Hardware::IR::defaultMapFile()
-			,'power'		=> 1
+			'autobrightness'		=> 1
+			,'bass'					=> 50
 			,'digitalVolumeControl' => 1
+			,'disabledirsets'		=> []
+			,'doublesize'			=> 0
+			,'irmap'				=> Slim::Hardware::IR::defaultMapFile()
+			,'maxBitrate' 			=> 0
+			,'mp3SilencePrelude' 	=> 0
+			,'offDisplaySize'		=> 0
+			,'pitch'				=> 100
+			,'playername'			=> undef
+			,'playingDisplayMode'	=> 0
+			,'power'				=> 1
+			,'powerOffBrightness'	=> 1
+			,'powerOnBrightness'	=> 4
+			,'repeat'				=> 2
+			,'screensaver'			=> 'playlist'
+			,'screensavertimeout' 	=> 30
+			,'scrollPause'			=> 3.6
+			,'scrollRate'			=> 0.15
+			,'shuffle'				=> 0
+			,'silent'				=> 0
+			,'titleFormat'			=> [5, 1, 3, 6]
+			,'titleFormatCurr'		=> 1
+			,'treble'				=> 50
+			,'volume'				=> 50
 			}
 	);
 

@@ -1,25 +1,24 @@
 <!-- Page about.html -->
-[% pagetitle = '[% playermodel | string %' %]:Skin Info] [% pageicon = 'MUSIC' %]
+[% pagetitle = playermodel | string %] [% pageicon = 'MUSIC' %]
 
 [% PROCESS pageheader.html %]
 [% PROCESS menu.html %]
 
-<center>
 <font face="arial,helvetica">
-<b>Slimple</b><br>
+<b>Handheld skin (aka Slimple)</b><br>
 <small>
-Simple SlimServer skin for PocketPC by Mark Erichsen, based on the Default skin. This skin does not use frames, CSS or any advanced HTML. Works well with Pocket Internet Explorer for PocketPC 2002.
+Simple SlimServer skin for PocketPC by Mark Erichsen, based on the Default skin. This skin does not use frames or any advanced HTML. Works well with Pocket Internet Explorer for PocketPC 2002 and Opera for Zaurus.
 </small>
 <br>
 
-<img src="[% webroot %]html/[% playermodel %].gif" border="0" alt="Player">
+<img src="[% webroot %]html/images/[% playermodel %].gif" border="0" alt="Player">
 
 <br>
 <small>
 Skin created August 2003, Berlin. Last Update: 21.08.03, me<br>
-2003-08-25 : updated by Dean for SlimServer release.
+2003-08-25 : updated by Dean for SlimServer release.<br>
+2004-04-29 : Michael Herger added some CSS for better display on Opera/Zaurus
 </small>
-</center>
 </font>
 
 [% PROCESS pagefooter.html %]

@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.94 2004/04/29 16:31:13 dean Exp $
+# $Id: strings.txt,v 1.95 2004/04/30 16:42:11 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1436,9 +1436,15 @@ SETUP_MAXBITRATE
 
 SETUP_MAXBITRATE_DESC
 	DE	Die maximale Transkodierungs-Bitrate für diesen Player. Alle Musikstücke oder Streams höherer Bitrate werden auf diese Rate heruntergerechnet. Geringere Bitraten bleiben unverändert. Wird ein Stream mit definierter Bitrate aufgerufen (z.B. stream.mp3?bitrate=128), so gilt dieser Wert. Gültige Bitraten sind 0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320. Null (0) deaktiviert die Beschränkung.
-	EN	Maximum transcoding bitrate for this player.  All transcoded files or streams that are higher will be downsampled.  Lesser rates are left unchanged. Connecting to a stream with a bitrate parameter will override (eg. stream.mp3?bitrate=128). Valid bitrates are 0,32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320. Zero disables maximum Bitrate limits.
+	EN	Maximum transcoding bitrate for this player.  All transcoded files or streams that are higher will be downsampled.  Lower rates are left unchanged. Connecting to a stream with a bitrate parameter will override (eg. stream.mp3?bitrate=128). Valid bitrates are 0,32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320. Zero disables maximum Bitrate limits.
 	NO	Maksimal transkodings-bitrate for denne spilleren. Alle kodede filer eller strømmer (streams) med høyere rate vil bli samplet ned. Lavere bitrate forblir uendret. Skjer oppkoblingen mot en bitrate ned fast verdi (f.eks stream.mp3?bitrate=128) er det denne verdien som gjelder. Aksepterte verdier er 0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256 og 320. Verdien 0 slår av begrensningen.
 	SE	Maximal transkodnings-bitrate för denna spelare. Alla kodade filer eller strömmar med högre rate, kommer att samplas ned. Lägre bitrate lämnas oförändrade. Sker uppkoppling mot en bitrate med fixt värde (ex. stream.mp3?bitrate=128) är det detta värde som gäller. Godkända värden är 0,32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256 och 320. Värdet 0 stänger av maximal bitrate-begränsningen.
+
+SETUP_MP3SILENCEPRELUDE
+	EN	Audio Startup Time
+
+SETUP_MP3SILENCEPRELUDE_DESC
+	EN	Some audio receivers and D/A converters need a little extra time to start decoding audio from the player when playing back MP3 audio.  You can specify how much time, in seconds, to wait after pressing play to start sending MP3 audio.  The default value is 0, a value of 0.25 seconds works for many receivers.
 
 SETUP_TITLEFORMATCURR
 	DE	Aktuelles Titelformat

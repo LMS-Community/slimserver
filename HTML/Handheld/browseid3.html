@@ -1,4 +1,5 @@
 [%# Page browseid3.html %]
+[% pagetitle = playermodel | string %] [% pageicon = 'MUSIC' %]
 [%- title = BLOCK %]
 [%- playermodel | string %] : [% browseby | string -%]
 [%- END -%]
@@ -21,7 +22,7 @@
 </table>
 
 [% IF coverart %]
-    <a href="status.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="statusframe">
+    <a href="status.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]">
     <img src="/music/[% coverartpath | uri %]/cover.jpg" border="0"></a>
 [% END %]
 

@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.64 2004/04/29 01:08:36 kdf Exp $
+# $Id: Setup.pm,v 1.65 2004/04/30 16:42:12 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -114,8 +114,10 @@ sub initSetupConfig {
 						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[1] = 'playingDisplayMode';
 						if ($client->hasDigitalOut()) {
 							$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = 'digitalVolumeControl';
+							$pageref->{'Groups'}{'Default'}{'PrefOrder'}[4] = 'mp3SilencePrelude';
 						} else {
 							$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = undef;
+							$pageref->{'Groups'}{'Default'}{'PrefOrder'}[4] = undef;
 						}
 						$pageref->{'children'} = ['additional_player'];
 						$pageref->{'GroupOrder'}[1] = 'Brightness';
@@ -166,7 +168,7 @@ sub initSetupConfig {
 		#,'template' => 'setup_player.html'
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['playername','playingDisplayMode','maxBitrate','digitalVolumeControl'] 
+					'PrefOrder' => ['playername','playingDisplayMode','maxBitrate','digitalVolumeControl','mp3SilencePrelude'] 
 				}
 			,'Brightness' => {
 					'PrefOrder' => ['powerOnBrightness','powerOffBrightness']
@@ -294,6 +296,10 @@ sub initSetupConfig {
 									'1' => string('SETUP_DIGITALVOLUMECONTROL_ON')
 									,'0' => string('SETUP_DIGITALVOLUMECONTROL_OFF')
 								}
+						}
+			,'mp3SilencePrelude' => {
+							'validate' => \&validateNumber  
+							,'validateArgs' => [0,undef,5]
 						}
 			,'maxBitrate' => {
 							'validate' => \&validateInList
@@ -2538,7 +2544,7 @@ sub validateIPPort {
 
 sub validateNumber {
 	my ($val,$low,$high,$setLow,$setHigh) = @_;
-	if ($val !~ /^-?\d+\.?\d*$/) { # this doesn't recognize scientific notation
+	if ($val !~ /^-?\.?\d+\.?\d*$/) { # this doesn't recognize scientific notation
 		return undef;
 	} elsif (defined($low) && $val < $low) { # too low, equal to $low is acceptable
 		if ($setLow) {
