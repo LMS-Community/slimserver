@@ -12,13 +12,13 @@ use strict;
 ### Section 1. Change these as required ###
 ###########################################
 
-package Plugins::DateTime;
+package Plugins::DateTime::Plugin;
 
 use Slim::Control::Command;
 use Slim::Utils::Strings qw (string);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.4 $,10);
+$VERSION = substr(q$Revision: 1.1 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_DATETIME');}
 
