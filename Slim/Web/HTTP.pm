@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.95 2004/04/19 05:16:46 dean Exp $
+# $Id: HTTP.pm,v 1.96 2004/04/22 18:45:38 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -93,22 +93,22 @@ my %pageFunctions = ();
 	%pageFunctions = (
 		qr/^$/				=> \&Slim::Web::Pages::home,
 		qr/^index\.(?:htm|xml)/		=> \&Slim::Web::Pages::home,
-		qr/browseid3\.(?:htm|xml)/	=> \&Slim::Web::Pages::browseid3,
-		qr/browse\.(?:htm|xml)/		=> \&Slim::Web::Pages::browser,
-		qr/edit_playlist\.(?:htm|xml)/	=> \&Slim::Web::EditPlaylist::editplaylist,  # Needs to be before playlist
+		qr/^browseid3\.(?:htm|xml)/	=> \&Slim::Web::Pages::browseid3,
+		qr/^browse\.(?:htm|xml)/		=> \&Slim::Web::Pages::browser,
+		qr/^edit_playlist\.(?:htm|xml)/	=> \&Slim::Web::EditPlaylist::editplaylist,  # Needs to be before playlist
 		qr/^firmware\.(?:html|xml)/	=> \&Slim::Web::Pages::firmware,
-		qr/hitlist\.(?:htm|xml)/	=> \&Slim::Web::History::hitlist,
-		qr/home\.(?:htm|xml)/		=> \&Slim::Web::Pages::home,
-		qr/instant_mix\.(?:htm|xml)/	=> \&Slim::Web::Pages::instant_mix,
-		qr/mood_wheel\.(?:htm|xml)/	=> \&Slim::Web::Pages::mood_wheel,
-		qr/olsondetail\.(?:htm|xml)/	=> \&Slim::Web::Olson::olsondetail,
-		qr/olsonmain\.(?:htm|xml)/	=> \&Slim::Web::Olson::olsonmain,
-		qr/playlist\.(?:htm|xml)/	=> \&Slim::Web::Pages::playlist,
-		qr/search\.(?:htm|xml)/		=> \&Slim::Web::Pages::search,
-		qr/songinfo\.(?:htm|xml)/	=> \&Slim::Web::Pages::songInfo,
-		qr/status_header\.(?:htm|xml)/	=> \&Slim::Web::Pages::status_header,
-		qr/status\.(?:htm|xml)/		=> \&Slim::Web::Pages::status,
-		qr/setup\.(?:htm|xml)/		=> \&Slim::Web::Setup::setup_HTTP,
+		qr/^hitlist\.(?:htm|xml)/	=> \&Slim::Web::History::hitlist,
+		qr/^home\.(?:htm|xml)/		=> \&Slim::Web::Pages::home,
+		qr/^instant_mix\.(?:htm|xml)/	=> \&Slim::Web::Pages::instant_mix,
+		qr/^mood_wheel\.(?:htm|xml)/	=> \&Slim::Web::Pages::mood_wheel,
+		qr/^olsondetail\.(?:htm|xml)/	=> \&Slim::Web::Olson::olsondetail,
+		qr/^olsonmain\.(?:htm|xml)/	=> \&Slim::Web::Olson::olsonmain,
+		qr/^playlist\.(?:htm|xml)/	=> \&Slim::Web::Pages::playlist,
+		qr/^search\.(?:htm|xml)/		=> \&Slim::Web::Pages::search,
+		qr/^songinfo\.(?:htm|xml)/	=> \&Slim::Web::Pages::songInfo,
+		qr/^status_header\.(?:htm|xml)/	=> \&Slim::Web::Pages::status_header,
+		qr/^status\.(?:htm|xml)/		=> \&Slim::Web::Pages::status,
+		qr/^setup\.(?:htm|xml)/		=> \&Slim::Web::Setup::setup_HTTP,
 		qr/^update_firmware\.(?:htm|xml)/ => \&Slim::Web::Pages::update_firmware,
 	);
 }
@@ -364,7 +364,7 @@ sub processHTTP {
 
 				my %skins = Slim::Web::Setup::skins();
 				my $skinlist = join '|',keys %skins;
-				if ($desiredskin =~ /($skinlist)/i) {
+				if ($desiredskin =~ /^($skinlist)$/i) {
 					$params->{'skinOverride'} = $1;
 					$params->{'webroot'} = $params->{'webroot'} . "$1/";
 					$path =~ s{^/.+?/}{/};
