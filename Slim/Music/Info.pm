@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.164 2004/12/15 16:33:02 grotus Exp $
+# $Id: Info.pm,v 1.165 2004/12/15 17:53:18 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -738,7 +738,7 @@ sub standardTitle {
 	my $title;
 	my $format;
 
-	if (isPlaylistURL($fullpath) || isDir($fullpath)) {
+	if (isPlaylistURL($fullpath) || isList($fullpath)) {
 		$format = 'TITLE';
 	} elsif (defined($client)) {
 		#in array syntax this would be $titleFormat[$clientTitleFormat[$clientTitleFormatCurr]]
