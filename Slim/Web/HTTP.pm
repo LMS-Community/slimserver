@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.91 2004/04/06 05:32:14 grotus Exp $
+# $Id: HTTP.pm,v 1.92 2004/04/06 13:06:46 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -21,7 +21,6 @@ use HTML::Entities;
 use Socket qw(:DEFAULT :crlf);
 use Sys::Hostname;
 use Template;
-use Template::Filters;
 use Tie::RegexpHash;
 use URI::Escape;
 
@@ -117,7 +116,7 @@ my %pageFunctions = ();
 # initialize the http server
 sub init {
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		$CacheDir = '~/Library/SlimDevices/SlimServer.Cache';
+		$CacheDir = '~/Library/Caches/SlimServer';
 	}
 	my @CacheDirs = splitdir($CacheDir);
 	pop @CacheDirs;
