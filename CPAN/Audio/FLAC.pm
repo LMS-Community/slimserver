@@ -1,6 +1,6 @@
 package Audio::FLAC;
 
-# $Id: FLAC.pm,v 1.3 2003/12/20 05:44:44 daniel Exp $
+# $Id: FLAC.pm,v 1.4 2004/01/12 23:34:41 daniel Exp $
 
 use strict;
 use vars qw($VERSION);
@@ -207,7 +207,7 @@ sub write {
 	binmode FLACFILE;
 
 	# seek to the location of the existing metadata blocks
-	seek FLACFILE, $self->{'startMetadataBlocks'}, 0;
+	seek FLACFILE, ($self->{'startMetadataBlocks'})-4, 0;
 
 	# overwrite the existing metadata blocks
 	print FLACFILE $metadataBlocks or return -1;
@@ -357,7 +357,15 @@ sub _parseStreaminfo {
 	$self->{'info'} = $info;
 
 	# Calculate the track times
-	$totalSeconds = $info->{'TOTALSAMPLES'}/$info->{'SAMPLERATE'};
+	$totalSeconds = $info->{'TOTALSAMPLES'} / $info->{'SAMPLERATE'};
+
+	if ($totalSeconds == 0) {
+		warn "totalSeconds is 0 - we couldn't find either TOTALSAMPLES or SAMPLERATE!\n" .
+		     "setting totalSeconds to 1 to avoid divide by zero error!\n";
+
+		$totalSeconds = 1;
+	}
+
 	$self->{'trackTotalLengthSeconds'} = $totalSeconds;
 
 	$self->{'trackLengthMinutes'} = int(int($totalSeconds) / 60);
