@@ -582,14 +582,17 @@ sub virtualToAbsolute {
 
 sub inPlaylistFolder {
 	my $path = shift;
+
 	$path = fixPath($path);
 	$path = virtualToAbsolute($path);
-    my $playlistdir = Slim::Utils::Prefs::get("playlistdir");
-    if ($playlistdir && $path =~ /^\Q$playlistdir\E/) {
-    	return 1;
-    } else {
-    	return 0;
-    }
+
+	my $playlistdir = Slim::Utils::Prefs::get("playlistdir");
+
+	if ($playlistdir && $path =~ /^\Q$playlistdir\E/) {
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 sub readDirectory {
@@ -602,8 +605,15 @@ sub readDirectory {
 		$::d_files && msg("no such dir: $dirname\n");
 		return @diritems;
 	}
-	opendir(DIR, $dirname) || warn "opendir failed: " . $dirname . ": $!\n";
-	foreach my $dir ( readdir(DIR) ) {
+
+	my $ignore = Slim::Utils::Prefs::get('ignoreDirRE') || '';
+
+	opendir(DIR, $dirname) || do {
+		warn "opendir failed: " . $dirname . ": $!\n";
+		return @diritems;
+	};
+
+	for my $dir (readdir(DIR)) {
 
 		# Ignore items starting with a period on non-windows machines
 		next if $dir =~ /^\./ && (Slim::Utils::OSDetect::OS() ne 'win');
@@ -630,8 +640,7 @@ sub readDirectory {
 		# Ignore our special named files and directories
 		next if $dir =~ /^__/;  
 		
-		my $ignore = Slim::Utils::Prefs::get('ignoreDirRE');
-		if (defined($ignore) && $ignore ne '') {
+		if $ignore ne '') {
 			next if $dir =~ /$ignore/;
 		}
 
@@ -795,9 +804,10 @@ sub msgf {
 }
 
 sub delimitThousands {
-	my $len = shift; 
+	my $len = shift || return 0; 
+
 	my $sep = Slim::Utils::Strings::string('THOUSANDS_SEP');
-	return 0 unless $len;
+
 	0 while $len =~ s/^(-?\d+)(\d{3})/$1$sep$2/;
 	return $len;
 }
