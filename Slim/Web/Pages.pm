@@ -1607,7 +1607,7 @@ sub _fillInSearchResults {
 			$list_form{'includeArtist'}    = ($webFormat !~ /ARTIST/);
 			$list_form{'includeAlbum'}     = ($webFormat !~ /ALBUM/) ;
 
-			if ($type eq 'song') {
+			if ($type eq 'track') {
 
 				$list_form{'title'}    = Slim::Music::Info::standardTitle(undef, $item);
 				$list_form{'artist'}   = $item->artist();
