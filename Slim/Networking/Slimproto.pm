@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.47 2004/03/24 00:42:57 sadams Exp $
+# $Id: Slimproto.pm,v 1.48 2004/03/24 23:11:04 sadams Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -329,9 +329,15 @@ sub process_slimproto_frame {
 
 		$::d_factorytest && msg("FACTORYTEST\tevent=ir\tmac=".$client->id."\tcode=$irCode\n");
 
+	} elsif ($op eq 'RAWI') {
+		$::d_slimproto && msg("Raw IR, ".(length($data)/4)."samples\n");
+		
+		#TODO: something interesting
+
 	} elsif ($op eq 'RESP') {
 		# HTTP stream headers
 		$::d_slimproto && msg("Squeezebox got HTTP response:\n$data\n");
+
 	} elsif ($op eq 'STAT') {
 
 		#struct status_struct {
