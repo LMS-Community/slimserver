@@ -264,7 +264,7 @@ sub init {
 	Slim::Buttons::Common::init();
 
 	if ($priority) {
-		$::d_server && msg("SLIMP3 Server - changing process priority to $priority\n");
+		$::d_server && msg("Slim Server - changing process priority to $priority\n");
 		eval { setpriority (0, 0, $priority); };
 		msg("setpriority failed error: $@\n") if $@;
 	}
