@@ -214,12 +214,15 @@ sub findLibraryFromRegistry {
 				if ($folder->QueryValueEx("My Music", $type, $value)) {
 					$path = $value . '\\iTunes\\iTunes Music Library.xml';
 					$::d_itunes && msg("iTunes: found My Music here: $value for $path\n");
+				}
+				if ($path && -r $path) {
+					return $path;
 				} elsif ($folder->QueryValueEx("Personal", $type, $value)) {
-					$path = $value . '\\My Music\\iTunes\\iTunes Music Library.xml';
-					$::d_itunes && msg("iTunes: found  Personal: $value for $path\n");
+						$path = $value . '\\My Music\\iTunes\\iTunes Music Library.xml';
+						$::d_itunes && msg("iTunes: found  Personal: $value for $path\n");
 				}
 			}
-		}		
+		}
 	}
 	
 	return $path;
