@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.38 2003/10/31 23:22:43 dean Exp $
+# $Id: HTTP.pm,v 1.39 2003/11/03 18:07:16 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -68,7 +68,6 @@ my %sendMetaData;
 my %metaDataBytes;
 my %streamingFiles;
 my %peeraddr;
-my %paddr;
 my %peerclient;
 
 my $mdnsIDslimserver;

@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.16 2003/10/30 00:05:25 dean Exp $
+# $Id: Info.pm,v 1.17 2003/11/03 18:07:16 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1597,12 +1597,18 @@ sub readTags {
 					$tempCacheEntry->{'DISCC'} = $discCount;
 				}
 				
-				 my $discWord = string('DISC');
-				if ($discCount && ($discCount > 1) && $tempCacheEntry->{'ALBUM'} && ($tempCacheEntry->{'ALBUM'} !~ /(${discWord})|(Disc)\s+[0-9]+/i)) {
+				my $discWord = string('DISC');
+				
+				if ($discNum && $tempCacheEntry->{'ALBUM'} && ($tempCacheEntry->{'ALBUM'} !~ /(${discWord})|(Disc)\s+[0-9]+/i)) {
 					# Add space to handle > 10 album sets and sorting. Is suppressed in the HTML.
 					if ($discCount > 9 && $discNum < 10) { $discNum = ' ' . $discNum; };
 						
-					$tempCacheEntry->{'ALBUM'} = $tempCacheEntry->{'ALBUM'} . " ($discWord $discNum " . string('OF') . " $discCount)";
+					$tempCacheEntry->{'ALBUM'} = $tempCacheEntry->{'ALBUM'} . " ($discWord $discNum";
+					if ($discCount) {
+						$tempCacheEntry->{'ALBUM'} .= " ". string('OF') . " $discCount)";
+					} else {
+						$tempCacheEntry->{'ALBUM'} .= ")";
+					}
 				}
 			}
 			

@@ -17,6 +17,15 @@ the server with this command:
 and stop it with this:
 
 	/etc/rc.d/init.d/slimd stop
+	
+	
+Note: The default installation of Perl on Red Hat 9.0 doesn't include Time::HiRes
+ as it should. There's a binary perl-Time-HiRes-1.38-3.i386.rpm RPM on disk 2 of 
+ the RedHat install that works fine and is what you need to get the SLIMP3 server 
+ running under RH9. Slim Devices also hosts a copy of the appropriate file. 
+ As root, use this command to install it from the net:
+
+rpm -i http://www.slimdevices.com/downloads/misc/perl-Time-HiRes-1.38-3.i386.rpm
 
 --------------------------------------------------------------------------------
 

@@ -63,7 +63,9 @@
 			<seconds_elapsed>{&songtime}</seconds_elapsed>
 			<seconds_total>{&songduration}</seconds_total>
 		[/IF]
+			[IF title]<song>[/IF]
 			[INCLUDE _xml_song.html]
+			[IF title]</song>[/IF]
 		[IF currentsong]
 		</current_song>
 		[/IF]

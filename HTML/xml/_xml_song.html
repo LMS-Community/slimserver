@@ -1,30 +1,31 @@
 
-	[IF title]<song><title>{&title}</title>[/IF]
-	[IF itempath]
-		<info_url><![CDATA[xml/songinfo.xml?songurl={%itempath}]]></info_url>
-		<path>{&itempath}</path>
-	[/IF]
+	[IF title]<title>{&title}</title>[/IF]
 	[IF genre]
-		<genre>{&genre}</genre>
+		<genre>{&genre}</genre> 
 		<genre_browse_url><![CDATA[xml/browseid3.xml?genre={%genre}]]></genre_browse_url>
-	[/IF]
-	[IF year]<year>{&year}</year>[/IF]
-	[IF composer]<composer>{&composer}</composer>[/IF]
-	[IF duration]<duration>{&duration}</duration>[/IF]
-	[IF type]<type>{&type}</type>[/IF]
-	[IF tagversion]<tagversion>{&tagversion}</tagversion>[/IF]
-	[IF mixable]<mixable>{&mixable}</mixable>[/IF]
-	[IF modtime]<modtime>{&modtime}</modtime>[/IF]
-	[IF comment]<comment>{&comment}</comment>[/IF]
-	[IF bitrate]<bitrate>{&bitrate}</bitrate>[/IF]
-	[IF coverart]<coverart_url><![CDATA[music/{%itempath}/cover.jpg]]></coverart_url>[/IF]
-	[IF url]<song_url><![CDATA[{url}]]></song_url>[/IF]
+	[/IF] 
 	[IF artist]
 		<artist>{&artist}</artist>
 		<artist_browse_url><![CDATA[xml/browseid3.xml?genre=*&artist={%artist}]]></artist_browse_url>
 	[/IF]
-	[IF album]
+	[IF album] 
 		<album>{&album}</album>
 		<album_browse_url><![CDATA[xml/browseid3.xml?genre=*&artist=*&album={%album}]]></album_browse_url>
 	[/IF]
-	[IF title]</song>[/IF]
+	[IF composer] 
+		<composer>{&composer}</composer>
+		<composer_browse_url><![CDATA[xml/browseid3.xml?genre=*&artist={%composer}]]></composer_browse_url>
+	[/IF]
+	[IF track]<track>{&track}</track>[/IF]
+	[IF type]<type>{&type}</type>[/IF]
+	[IF duration]<duration>{&duration}</duration>[/IF]
+	[IF year]<year>{&year}</year>[/IF]
+	[IF comment]<comment>{&comment}</comment>[/IF]
+	[IF filelength]<filelength>{&filelength}</filelength>[/IF]
+	[IF bitrate]<bitrate>{&bitrate}</bitrate>[/IF]
+	[IF tagversion]<tagversion>{&tagversion}</tagversion>[/IF]
+	[IF modtime]<modtime>{&modtime}</modtime>[/IF]
+ 	[IF url]<song_url>{url}</song_url>[/IF]
+ 	<path>{&itempath}</path>
+  	[IF coverart]<coverart><![CDATA[/music/{%itempath}/cover.jpg]]></coverart>[/IF]
+ 	[IF mixable]<mixable>{&mixable}</mixable>[/IF]

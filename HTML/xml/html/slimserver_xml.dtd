@@ -335,6 +335,7 @@ one of genre/artist/album info.
 <!-- (Skin file: songinfo.html) ............................................ -->
 
 <!ELEMENT songinfo (	title,
+
 						(genre, genre_browse_url)?,
 						(artist, artist_browse_url)?,
 						(album, album_browse_url)?,
@@ -351,15 +352,24 @@ one of genre/artist/album info.
 						song_url?, 
 						path, 
 						coverart?,
+
 						replace_url, 
 						append_url
 					)>
 
 
+<!ELEMENT title 			(#PCDATA)>	<!-- Song's title                	 -->
+<!ELEMENT info_url 			(#PCDATA)>	<!-- Link to songinfo page         	 -->
+<!ELEMENT path 				(#PCDATA)>	<!-- Path to song file (JIC)       	 -->
+<!ELEMENT genre 			(#PCDATA)>	<!-- Song's genre                 	 -->
+<!ELEMENT genre_browse_url 	(#PCDATA)>	<!-- Link to genre browsing        	 -->
+<!ELEMENT album 			(#PCDATA)>	<!-- Song's album                	 -->
+<!ELEMENT album_browse_url 	(#PCDATA)>	<!-- Link to album browsing        	 -->
+<!ELEMENT artist 			(#PCDATA)>	<!-- Song's artist                	 -->
+<!ELEMENT artist_browse_url (#PCDATA)>	<!-- Link to artist browsing     	 -->
+<!-- i.e. browse by artists with artist=composer -->
 <!ELEMENT composer (#PCDATA)>
 <!ELEMENT composer_browse_url (#PCDATA)>
-<!-- i.e. browse by artists with artist=composer
--->
 <!ELEMENT track (#PCDATA)>
 <!ELEMENT type (#PCDATA)>
 <!ELEMENT duration (#PCDATA)>				<!-- in mm:ss                    -->
@@ -370,6 +380,7 @@ one of genre/artist/album info.
 <!ELEMENT tagversion (#PCDATA)>
 <!ELEMENT modtime (#PCDATA)>
 <!ELEMENT song_url (#PCDATA)>
+<!ELEMENT mixable (#PCDATA)>
 
 <!-- ....................................................................... -->
 <!-- Song .................................................................. -->
@@ -396,21 +407,26 @@ to various related tidbits.
 
 <!ELEMENT song (	title, 
 					(info_url, path)?,
+
 					(genre, genre_browse_url)?,
 					(artist, artist_browse_url)?,
-					(album, album_browse_url)?
+					(album, album_browse_url)?,
+					(composer, composer_browse_url)?,
+					track?, 
+					type?, 
+					duration?, 
+					year?, 
+					comment?, 
+					filelength?, 
+					bitrate?, 
+					tagversion?, 
+					modtime?, 
+					song_url?, 
+					path,? 
+					coverart?,
+					mixable?
 				)>
 				
-<!ELEMENT title 			(#PCDATA)>	<!-- Song's title                	 -->
-<!ELEMENT info_url 			(#PCDATA)>	<!-- Link to songinfo page         	 -->
-<!ELEMENT path 				(#PCDATA)>	<!-- Path to song file (JIC)       	 -->
-<!ELEMENT genre 			(#PCDATA)>	<!-- Song's genre                 	 -->
-<!ELEMENT genre_browse_url 	(#PCDATA)>	<!-- Link to genre browsing        	 -->
-<!ELEMENT album 			(#PCDATA)>	<!-- Song's album                	 -->
-<!ELEMENT album_browse_url 	(#PCDATA)>	<!-- Link to album browsing        	 -->
-<!ELEMENT artist 			(#PCDATA)>	<!-- Song's artist                	 -->
-<!ELEMENT artist_browse_url (#PCDATA)>	<!-- Link to artist browsing     	 -->
-
 
 <!-- ....................................................................... -->
 <!-- Badpath................................................................ -->

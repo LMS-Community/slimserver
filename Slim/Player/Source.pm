@@ -221,7 +221,7 @@ sub playmode {
 			} elsif ($newmode eq "pausenow") {
 				$everyclient->playmode("pause");
 				
-			} elsif ($newmode eq "playout") {
+			} elsif ($newmode =~ /^playout/) {
 				$everyclient->playmode("stop");
 				closeSong($everyclient);
 			} else {
@@ -257,7 +257,7 @@ sub playmode {
 				$everyclient->resume();
 				$everyclient->fade_volume(.3125);
 				
-			} elsif ($newmode eq "playout") {
+			} elsif ($newmode =~ /^playout/) {
 				$everyclient->playout();
 
 			} else {
@@ -276,7 +276,7 @@ sub playmode {
 sub underrun {
 	my $client = shift;
 	# the only way we'll get an underrun event while stopped is if we were playing out.  so we need to open the next item and play it!
-	if ($client && $client->playmode eq 'stop') {
+	if ($client && $client->playmode eq 'playout-play') {
 		openNext($client);
 		playmode($client, 'play');
 	}
@@ -458,7 +458,7 @@ sub openNext {
 		} else {
 			#stop at the end of the list
 			if (currentSongIndex($client) == (Slim::Player::Playlist::count($client) - 1)) {
-				playmode($client, $result ? 'playout' : 'stop');
+				playmode($client, $result ? 'playout-stop' : 'stop');
 				$nextsong = 0;
 				currentSongIndex($client, $nextsong);
 				return 0;
@@ -471,7 +471,7 @@ sub openNext {
 		
 		if ($oldstreamformat ne $newstreamformat && playmode($client) eq 'play') {
 			$::d_source && msg("switching formats from $oldstreamformat to ". $newstreamformat. "--playing out \n");
-			playmode($client, 'playout');
+			playmode($client, 'playout-play');
 			return 0;
 		} else {
 			currentSongIndex($client, $nextsong);
