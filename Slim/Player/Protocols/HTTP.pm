@@ -20,14 +20,6 @@ BEGIN {
 		*EWOULDBLOCK = sub () { 10035 };
 		*EINPROGRESS = sub () { 10036 };
 
-		*IO::Socket::blocking = sub {
-			my ($self, $blocking) = @_;
-
-			my $nonblocking = $blocking ? "0" : "1";
-
-			ioctl($self, 0x8004667e, $nonblocking);
-		};
-
 	} else {
 		require Errno;
 		import Errno qw(EWOULDBLOCK EINPROGRESS);
