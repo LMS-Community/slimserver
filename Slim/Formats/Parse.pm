@@ -115,7 +115,11 @@ sub readM3U {
 
 	my @items  = ();
 	my $title;
-	
+
+	if ($] > 5.007) {
+		binmode($m3u, ":encoding($Slim::Utils::Misc::locale)");
+	}
+
 	$::d_parse && Slim::Utils::Misc::msg("parsing M3U: $m3u\n");
 
 	while (my $entry = <$m3u>) {
@@ -150,6 +154,8 @@ sub readM3U {
 
 	$::d_parse && Slim::Utils::Misc::msg("parsed " . scalar(@items) . " items in m3u playlist\n");
 
+	close $m3u;
+
 	return @items;
 }
 
@@ -161,6 +167,9 @@ sub readPLS {
 	my @items  = ();
 	
 	# parse the PLS file format
+	if ($] > 5.007) {
+		binmode($pls, ":encoding($Slim::Utils::Misc::locale)");
+	}
 
 	$::d_parse && Slim::Utils::Misc::msg("Parsing playlist: $pls \n");
 	
@@ -198,6 +207,8 @@ sub readPLS {
 
 		push @items, $entry;
 	}
+
+	close $pls;
 
 	return @items;
 }
@@ -413,6 +424,8 @@ sub readCUE {
 		push @lines, $line;
 	}
 
+	close $cuefile;
+
 	# Don't redecode it.
 	return (parseCUE([@lines], $cuedir, undef, 1));
 }
@@ -421,21 +434,9 @@ sub writePLS {
 	my $listref = shift;
 	my $playlistname = shift || "SlimServer " . Slim::Utils::Strings::string("PLAYLIST");
 	my $filename = shift;
-	my $output;
-	my $outstring = '';
-	my $writeproc;
 
-	if ($filename) {
-
-		$output = FileHandle->new($filename, "w") || do {
-			Slim::Utils::Misc::msg("Could not open $filename for writing.\n");
-			return;
-		};
-
-	} else {
-
-		$output = IO::String->new($outstring);
-	}
+	my $string = '';
+	my $output = _filehandleFromNameOrString($filename, $string);
 
 	print $output "[playlist]\nPlaylistName=$playlistname\n";
 
@@ -461,12 +462,8 @@ sub writePLS {
 
 	print $output "NumberOfItems=$itemnum\nVersion=2\n";
 
-	if ($filename) {
-		close $output;
-		return;
-	}
-
-	return $outstring;
+	close $output;
+	return $string;
 }
 
 sub writeM3U {
@@ -475,20 +472,9 @@ sub writeM3U {
 	my $filename = shift;
 	my $addTitles = shift;
 	my $resumetrack = shift;
-	my $output;
-	my $outstring = '';
-	my $writeproc;
 
-	if ($filename) {
-
-		$output = FileHandle->new($filename, "w") || do {
-			Slim::Utils::Misc::msg("Could not open $filename for writing.\n");
-			return;
-		};
-
-	} else {
-		$output = IO::String->new($outstring);
-	}
+	my $string = '';
+	my $output = _filehandleFromNameOrString($filename, $string);
 
 	print $output "#CURTRACK $resumetrack\n" if defined($resumetrack);
 	print $output "#EXTM3U\n" if $addTitles;
@@ -510,12 +496,8 @@ sub writeM3U {
 		printf($output "%s\n", _pathForItem($item));
 	}
 
-	if ($filename) {
-		close $output;
-		return;
-	}
-
-	return $outstring;
+	close $output;
+	return $string;
 }
 
 sub readWPL {
@@ -614,24 +596,13 @@ sub writeWPL {
 	# "XMLout")
 	my $wplfile = XMLout($wpl_playlist, XMLDecl => '<?wpl version="1.0"?>', RootName => undef);
 
-	if ($filename) {
+	my $string;
 
-		my $output = FileHandle->new($filename, "w") || do {
-			Slim::Utils::Misc::msg("Could not open $filename for writing.\n");
-			return;
-		};
+	my $output = _filehandleFromNameOrString($filename, $string);
+	print $output $wplfile;
+	close $output;
 
-		print $output "$wplfile";
-		close $output;
-		return;
-
-	} else {
-
-		my $outstring;
-		my $output = IO::String->new($outstring);
-		print $output $wplfile;
-		return($outstring);
-	}
+	return $string;
 }
 
 sub readASX {
@@ -645,6 +616,7 @@ sub readASX {
 	while (<$asxfile>) {
 		$asxstr .= $_;
 	}
+	close $asxfile;
 
 	# First try for version 3.0 ASX
 	if ($asxstr =~ /<ASX/i) {
@@ -735,6 +707,31 @@ sub _pathForItem {
 	}
 
 	return $item;
+}
+
+sub _filehandleFromNameOrString {
+	my $filename  = shift;
+	my $outstring = shift;
+
+	my $output;
+
+	if ($filename) {
+
+		$output = FileHandle->new($filename, "w") || do {
+			Slim::Utils::Misc::msg("Could not open $filename for writing.\n");
+			return;
+		};
+
+		if ($] > 5.007) {
+			binmode($output, ":encoding($Slim::Utils::Misc::locale)");
+		}
+
+	} else {
+
+		$output = IO::String->new($outstring);
+	}
+
+	return $output;
 }
 
 1;
