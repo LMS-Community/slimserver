@@ -1,5 +1,5 @@
 package Slim::Buttons::VarietyCombo;
-#$Id: VarietyCombo.pm,v 1.2 2004/06/30 05:00:16 kdf Exp $
+#$Id: VarietyCombo.pm,v 1.3 2004/07/12 22:50:52 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -70,7 +70,7 @@ my %functions = (
 			specialPushLeft($client, 0, @oldlines);
 		} elsif (defined Slim::Buttons::Common::param($client,'mood')) {
 			my @oldlines = Slim::Display::Display::curLines($client);
-			Slim::Buttons::Common::pushMode($client, 'moodlogic_instant_mix', {'genre' => Slim::Buttons::Common::param($client, 'mood'),
+			Slim::Buttons::Common::pushMode($client, 'moodlogic_instant_mix', {'genre' => Slim::Buttons::Common::param($client, 'genre'),
 					'artist' => Slim::Buttons::Common::param($client, 'artist'),
 					'mood' => Slim::Buttons::Common::param($client, 'mood')});
 			specialPushLeft($client, 0, @oldlines);
@@ -122,7 +122,7 @@ sub lines {
 
 	$line2 = Slim::Display::Display::progressBar($client, 40, $level / 40);
 
-	if (Slim::Utils::Prefs::clientGet($client,'doublesize')) { $line1 = string('SETUP_VARIETYCOMBO')." (".$variety.")"; $line2 = $line1; }
+	if ($client->textSize == $client->maxTextSize) { $line1 = string('SETUP_VARIETYCOMBO')." (".$variety.")"; $line2 = $line1; }
 
 	return ($line1, $line2, Slim::Hardware::VFD::symbol('rightarrow'),undef);
 }
@@ -143,7 +143,7 @@ sub specialPushLeft {
 		Slim::Buttons::Common::popMode($client);            
 		Slim::Display::Animation::pushLeft($client, string('MOODLOGIC_MIXING')."...", "", Slim::Display::Display::curLines($client));
 	} else {
-		Slim::Hardware::VFD::vfdUpdate($client, Slim::Display::Display::renderOverlay(string('MOODLOGIC_MIXING').("." x $step), undef, undef, undef));
+		$client->update( [Slim::Display::Display::renderOverlay(string('MOODLOGIC_MIXING').("." x $step))], undef);
 		Slim::Utils::Timers::setTimer($client,$when,\&specialPushLeft,$step+1);
 	}
 }
