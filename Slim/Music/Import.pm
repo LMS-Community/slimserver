@@ -17,6 +17,7 @@ use Slim::Utils::Strings qw(string);
 our %importsRunning;
 our %Importers = ();
 our %artwork   = ();
+our $dbCleanup = 0;
 
 # Force a rescan of all the importers (TODO: Make importers pluggable)
 sub startScan {
@@ -41,7 +42,18 @@ sub startScan {
 			}
 		}
 	}
+
 	Slim::Music::Info::generatePlaylists() unless stillScanning();
+}
+
+sub cleanupDatabase {
+	my $value = shift;
+
+	if (defined $value) {
+		$dbCleanup = $value;
+	}
+
+	return $dbCleanup;
 }
 
 sub deleteImporter {
@@ -121,11 +133,19 @@ sub endImporter {
 			Slim::Utils::Scheduler::add_task(\&artScan);
 		}
 
-		# schedule cleanup of the db
-		#Slim::Utils::Scheduler::add_task(\&Slim::Music::Info::clearStaleCacheEntries);
-
 		$::d_info && msg("Finished background scanning.\n");
 		Slim::Music::Info::saveDBCache();
+
+		# Only do this on rescan.
+		if (cleanupDatabase()) {
+
+			# Don't re-enter
+			cleanupDatabase(0);
+
+			my $ds = Slim::Music::Info::getCurrentDataStore();
+
+			$ds->cleanupStaleEntries();
+		}
 	}
 }
 

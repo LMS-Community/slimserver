@@ -571,8 +571,27 @@ sub markEntryAsInvalid {
 	$self->{'zombieList'}->{$url} = 1;
 }
 
+sub cleanupStaleEntries {
+	my $self = shift;
+
+	$::d_info && Slim::Utils::Misc::msg("Starting cleanupStaleTableEntries()\n");
+
+	# We're lazyily taking care of track entries right now.
+	if (0) {
+		$self->cleanupStaleTrackEntries();
+	}
+
+	# Proceed with Albums, Genres & Contributors
+	$cleanupStage = 'contributors';
+	$staleCounter = 0;
+
+	# Setup a little state machine so that the db cleanup can be
+	# scheduled appropriately - ie: one record per run.
+	Slim::Utils::Scheduler::add_task(\&cleanupStaleTableEntries, $self);
+}
+
 # Clear all stale track entries.
-sub clearStaleEntries {
+sub cleanupStaleTrackEntries {
 	my $self = shift;
 
 	# Sun Mar 20 22:29:03 PST 2005
@@ -649,7 +668,7 @@ sub clearStaleEntries {
 
 # Walk the Album, Contributor and Genre tables to see if we have any dangling
 # entries, pointing to non-existant tracks.
-sub _clearDanglingEntries {
+sub cleanupStaleTableEntries {
 	my $self = shift;
 
 	$staleCounter++;
@@ -679,6 +698,8 @@ sub _clearDanglingEntries {
 
 	# We're done.
 	$self->{'dbh'}->commit();
+
+	$::d_info && Slim::Utils::Misc::msg("Finished with cleanupStaleTableEntries()\n");
 
 	%lastFind = ();
 
