@@ -432,9 +432,10 @@ sub setCurrentTitle {
 	$currentTitles{$url} = $title;
 }
 
+# Can't do much if we don't have a url.
 sub getCurrentTitle {
 	my $client = shift;
-	my $url = shift;
+	my $url    = shift || return undef;
 
 	return $currentTitles{$url} || standardTitle($client, $url);
 }

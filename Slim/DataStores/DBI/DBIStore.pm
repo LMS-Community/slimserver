@@ -144,7 +144,7 @@ sub objectForUrl {
 		Slim::Utils::Misc::bt();
 		return undef;
 	}
-	
+
 	my $track = $self->_retrieveTrack($url, $lightweight);
 
 	if (defined $track && !$create && !$lightweight) {
@@ -153,18 +153,10 @@ sub objectForUrl {
 
 	if (!defined $track && $create) {
 
-		# get the type without updating the cache
-		my $type = Slim::Music::Info::typeFromPath($url);
-
-		if (Slim::Music::Info::isSong($url, $type) ||
-		    Slim::Music::Info::isList($url, $type) ||
-		    Slim::Music::Info::isPlaylist($url, $type)) {
-
-			$track = $self->newTrack({
-				'url'      => $url,
-				'readTags' => $readTag,
-			});
-		}
+		$track = $self->updateOrCreate({
+			'url'      => $url,
+			'readTags' => $readTag,
+		});
 	}
 
 	return $track;
@@ -453,9 +445,11 @@ sub updateOrCreate {
 		return;
 	}
 
-	if (defined($track)) {
-		delete $self->{'zombieList'}->{$url};
-	} else {
+	# Always remove from the zombie list, since we're about to update or
+	# create this item.
+	delete $self->{'zombieList'}->{$url};
+
+	if (!defined($track)) {
 		$track = $self->_retrieveTrack($url);
 	}
 
