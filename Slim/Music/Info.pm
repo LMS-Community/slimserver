@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.37 2003/12/10 23:02:04 dean Exp $
+# $Id: Info.pm,v 1.38 2003/12/15 22:46:50 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -29,9 +29,7 @@ use Slim::Utils::Strings qw(string);
 
 eval "use Storable";
 
-#
-# constants
-#
+# Constants:
 
 # the items in the infocache that we actually use
 # NOTE: THE ORDER MATTERS HERE FOR THE PERSISTANT DB
@@ -78,8 +76,6 @@ my @infoCacheItems = (
 	'BAND'
 );
 
-
-
 # three hashes containing the types we know about, populated b tye loadTypesConfig routine below
 # hash of default mime type index by three letter content type e.g. 'mp3' => audio/mpeg
 %Slim::Music::Info::types = ();
@@ -93,9 +89,7 @@ my @infoCacheItems = (
 # hash of types that the slim server recoginzes internally e.g. aif => audio
 %Slim::Music::Info::slimTypes = ();
 
-#
-# global caches
-#
+# Global caches:
 
 # a hierarchical cache of genre->artist->album->tracknum based on ID3 information
 my %genreCache = ();
@@ -109,8 +103,7 @@ my %sortCache = ();
 my %infoCache = ();
 my %infoCacheDB = (); # slow, persistent cache structure
 
-# moodlogic cache for genre and artist mix indicator; empty if moodlogic isn't
-# used
+# moodlogic cache for genre and artist mix indicator; empty if moodlogic isn't used
 my %genreMixCache = ();
 my %artistMixCache = ();
 
@@ -159,6 +152,7 @@ if (defined @Storable::EXPORT) {
 			}
 		}
 	};
+
 } else {
 	eval q{
 		sub saveDBCache { };
@@ -230,9 +224,9 @@ sub loadTypesConfig {
 		push @typesFiles, $ENV{'HOME'} . "/Library/SlimDevices/custom-types.conf";
 		push @typesFiles, "/Library/SlimDevices/custom-types.conf";
 	}
+
 	push @typesFiles, catdir($Bin, 'custom-types.conf');
 	push @typesFiles, catdir($Bin, '.custom-types.conf');
-	
 	
 	foreach my $typeFileName (@typesFiles) {
 		if (open my $typesFile, $typeFileName) {
@@ -301,9 +295,7 @@ sub checkForChanges {
 	
 	if ( -e $filepath) {
 	
-
     	    # Check FS and AGE (TIMESTAMP) to decide if we use the cached data.		
-
 	    my $cacheEntryArray = $infoCacheDB{$file};
 
     	    my $index = $infoCacheItemsIndex{"FS"};
@@ -321,7 +313,6 @@ sub checkForChanges {
 	    if (!$fsdef && $agedef && $agecheck) { return 0; }
 	
 	    # File has changed so remove the cached information
-
 	    delete $infoCacheDB{$file};
 	    $::d_info && Slim::Utils::Misc::msg("deleting $file from cache as it has changed\n");		    
 	    return 1;
@@ -332,15 +323,13 @@ sub checkForChanges {
 	# URL data (both http: and file:) is going to get dropped here.
 	# Directory data is also dropped as we can't tell if it's changed
 
-
 	delete $infoCacheDB{$file};
 	$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as couldn't confirm it's validity\n");		    
 	return 1;
     }
+
     $::d_info && Slim::Utils::Misc::msg("$file not in infoCacheDB! or undefined file. This shouldn't happen!\n");		    
 }
-
-
 
 sub clearCache {
 	my $item = shift;
@@ -480,7 +469,6 @@ sub cacheItem {
 		    $i++;
 		}
 
-
 		$infoCache{$url} = $cacheEntryArray;
 
 		my $type = typeFromSuffix($url);
@@ -555,11 +543,19 @@ sub updateCacheEntry {
 	my $cacheEntryHash = shift;
 	my $cacheEntryArray;
 	
-	if ($::d_info && !defined($url)) { Slim::Utils::Misc::msg(%{$cacheEntryHash}); Slim::Utils::Misc::bt();  die "No URL specified for updateCacheEntry"; }
-	if ($::d_info && !defined($cacheEntryHash)) {Slim::Utils::Misc::bt(); die "No cacheEntryHash for $url"; }
+	if ($::d_info && !defined($url)) {
+		Slim::Utils::Misc::msg(%{$cacheEntryHash});
+		Slim::Utils::Misc::bt();
+		die "No URL specified for updateCacheEntry";
+	}
 
-	if (!defined($url)) { return; }
-	if (!defined($cacheEntryHash)) { return; }
+	if ($::d_info && !defined($cacheEntryHash)) {
+		Slim::Utils::Misc::bt();
+		die "No cacheEntryHash for $url";
+	}
+
+	return unless defined $url;
+	return unless defined $cacheEntryHash;
 
 	#$::d_info && Slim::Utils::Misc::bt();
 	my $newsong = 0;
@@ -722,21 +718,16 @@ sub infoFormat {
 	my $safestr = shift; # format string to use in the event that after filling the first string, there is nothing left
 	my $pos = 0; # keeps track of position within the format string
 	
-	if (!defined($file)) {
-		return "";
-	}
+	return '' unless defined $file;
 	
 	my $infoRef = infoHash($file);
 	
-	if (!defined($infoRef)) {
-		return "";
-	}
+	return '' unless defined $infoRef;
 
 	my %infoHash = %{$infoRef}; # hash of data elements not cached in the main repository
 
-	if (!defined($str)) { #use a safe format string if none specified
-		$str = 'TITLE';
-	}
+	$str = 'TITLE' unless defined $str; #use a safe format string if none specified
+
 	if ($str =~ $ncElems) {
 		addToinfoHash(\%infoHash,$file,$str);
 	}
@@ -1073,28 +1064,28 @@ sub comment {
 	} else {
 		@comments = (info($file,'COMMENT'));
 	}
+
 	# extract multiple comments and concatenate them
 	if (@comments) {
 		foreach my $c (@comments) {
-			if ($c) {
-				# ignore SoundJam CDDB comments
-				if (
-					$c =~ /SoundJam_CDDB_/ ||
-					$c =~ /iTunes_CDDB_/ ||
-					$c =~ /^\s*[0-9A-Fa-f]{8}(\+|\s)/
-				) {
-					#ignore
-				} else {
-					# put a slash between multiple comments.
-					if ($comment) {
-						$comment .= ' / ';
-					}
-					$c =~ s/^eng(.*)/$1/;
-					$comment .= $c;
-				}
+
+			next unless $c;
+
+			# ignore SoundJam CDDB comments
+			if ($c =~ /SoundJam_CDDB_/ ||
+			    $c =~ /iTunes_CDDB_/ ||
+			    $c =~ /^\s*[0-9A-Fa-f]{8}(\+|\s)/) {
+
+				next;
 			}
+
+			# put a slash between multiple comments.
+			$comment .= ' / ' if $comment;
+			$c =~ s/^eng(.*)/$1/;
+			$comment .= $c;
 		}
 	}
+
 	return $comment;
 }
 
@@ -1262,6 +1253,7 @@ sub filter {
 
 sub filterHashByValue {
 	my ($patterns, $hashref) = @_;
+
 	if (!defined($hashref)) {
 		return;
 	}
@@ -1269,6 +1261,7 @@ sub filterHashByValue {
 	if (!defined($patterns) || ! @{$patterns}) {
 		return keys %{$hashref};
 	}
+
 	my @filtereditems;
 	my ($k,$v);
 	ENTRY: while (($k,$v) = each %{$hashref}) {
@@ -1498,7 +1491,6 @@ sub sortByTitlesAlg ($$) {
 	#compare titles
 	return $j->[5] cmp $k->[5];
 }
-
 
 #Sets up an array entry for performing complex sorts
 sub getInfoForSort {
@@ -2410,7 +2402,6 @@ sub sortuniq_ignore_articles {
 	#return the uniq array sliced by the sorted articleless array
 	return @uniq[sort {$noarts[$a] cmp $noarts[$b]} 0..$#uniq];
 }
-
 
 1;
 __END__
