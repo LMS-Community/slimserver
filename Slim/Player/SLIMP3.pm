@@ -13,8 +13,6 @@ package Slim::Player::SLIMP3;
 use strict;
 use Slim::Player::Player;
 use Slim::Utils::Misc;
-use Slim::Hardware::mas3507d;
-use Slim::Networking::Stream;
 
 use base qw(Slim::Player::Player);
 
@@ -54,6 +52,21 @@ sub new {
 
 	# Turn on readUDP in the select loop.
 	$SLIMP3Connected = 1;
+
+	# dsully - Mon Mar 21 20:17:44 PST 2005
+	# Load these modules on the fly to save approx 700k of memory.
+	for my $module (qw(Slim::Hardware::mas3507d Slim::Networking::Stream)) {
+
+		$::d_protocol && Slim::Utils::Misc::msg("Loading module: $module\n");
+
+		eval "use $module";
+
+		if ($@) {
+			Slim::Utils::Misc::msg("Couldn't load module: $module for SLIMP3: [$@] - THIS IS FATAL\n");
+			Slim::Utils::Misc::bt();
+			$@ = '';
+		}
+	}
 
 	return $client;
 }
