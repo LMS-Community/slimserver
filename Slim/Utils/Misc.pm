@@ -340,7 +340,7 @@ sub fixPathCase {
 		$path = Win32::GetLongPathName($path);
 	}
 
-	return $path;
+	return canonpath($path);
 }
 		
 # there's not really a better way to do this..
