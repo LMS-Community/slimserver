@@ -1259,11 +1259,13 @@ SETUP_SCROLLRATE_DESC
 	SE	Tid mellan rullande scroll-bilder. O.15 är standardvärdet. Värden mellan 0 och 1 kan sättas för att öka eller minska scroll-tempot
 
 DOUBLE-LINE
+	DE	Bla i Sanger
 	EN	Double-Size
 	ES	Tamaño Doble
 	JP	ダブルサイズ
 
 SINGLE-LINE
+	DE	Einzelne Zeile
 	EN	Single Line
 	ES	Línea única
 
@@ -2036,18 +2038,22 @@ SETUP_MUSICMAGICPLAYLISTFORMAT_DESC
 	SE	Denna inställning styr format vid import av MusicMagic-låtlistor
 
 SETUP_MMMMIXTYPE
+	DE	MusicMagic Mix Typ
 	EN	MusicMagic Mix Type
 	ES	Tipo de mezcla de MusicMagic
 
 SETUP_MMMMIXTYPE_DESC
+	DE	Die Grösse des gewünschten MusicMagic Mixes kann über drei Grössen definiert werden: Anzahl Tracks, Länge in Minuten oder Anzahl Megabytes. (Vorgabe: Länge)
 	EN	Your MusicMagic Mix size may be set by the number of three types: Tracks, Minutes, MegaBytes (default tracks)
 	ES	La tamaño de la mezcla de MusicMagic puede establecerse utilizando 3 valores: Pistas, Minutos, MegaBytes (por defecto se utiliza Pistas)
 
 SETUP_MMMSIZE
+	DE	MusicMagic Mix Grösse
 	EN	MusicMagic Mix Size
 	ES	Tamaño de mezcla de MusicMagic
 
 SETUP_MMMSIZE_DESC
+	DE	Wählen Sie die Mix-Grösse
 	EN	Choose Mix Size
 	ES	Elegir tamaño de Mezcla
 
@@ -2056,30 +2062,37 @@ SETUP_MMSHOST
 	ES	Host HTTP de MusicMagic
 
 SETUP_MMSHOST_DESC
+	DE	Wählen Sie den Rechnernamen oder die IP Adresse des MusicMagic Servers
 	EN	Choose the hostname or ip of the remote or local MusicMagic server
 	ES	Elegir el nombre de host o dirección ip del servidor  MusicMagic, local o remoto
 
 SETUP_MMSREMOTEROOT
+	DE	MusicMagic Hauptverzeichnis
 	EN	MusicMagic Remote Root
 	ES	Raíz (Root) Remota de MusicMagic
 
 SETUP_MMSREMOTEROOT_DESC
+	DE	Geben Sie das Hauptverzeichnis der Musiksammlung auf dem entfernten MusicMagic Server an. Dies wird verwendet, um die Pfade des entfernten Rechners auf die lokalen abzubilden.
 	EN	Enter the root filesystem of the music libary on the remote MusicMagic server.  This is used to convert remote paths to local paths.
 	ES	Ingresar el filesystem raiz de la colección musical en el servidor remoto de MusicMagic. Esto se utiliza para convertir paths remotos en paths locales.
 
 SETUP_MMMSTYLE
+	DE	MusicMagic Mix Stil
 	EN	MusicMagic Mix Style
 	ES	Estilo de mezcla de MusicMagic
 
 SETUP_MMMSTYLE_DESC
+	DE	Wie ähnlich muss der Stil des Artisten sein (0=nicht berücksichtigen (Vorgabe), 200=sehr ähnlich)
 	EN	How much like the artist style ( 0 = ignore (default), 200 = strict )
 	ES	Qué tan parecido al estilo del artista ( 0 = ignorar (por defecto), 200 = estricto )
 
 SETUP_MMMVARIETY
+	DE	MusicMagic Mix Vielseitigkeit
 	EN	MusicMagic Mix Variety
 	ES	Variedad de Mezcla de MusicMagic
 
 SETUP_MMMVARIETY_DESC
+	DE	Wie vielseitig soll der Mix sein (0 = weniger (Vorgabe), 9 = mehr)
 	EN	How much variety in the mix ( 0 = less (default), 9 = more )
 	ES	Cuánta variedad en la mezcla ( 0 = menos (por defecto), 9 = más )
 
@@ -2656,14 +2669,17 @@ SETUP_MUSICMAGIC_DESC
 	ES	El SlimServer puede utilizar el programa MusicMagic como fuente para obtener la información de género y título. Además se pueden generar mezclas instantáneas a nivel de género, artista y canción. Marcar la opción debajo para importar la información de la colección de MusicMagic. 
 
 MMMMIXTYPE_TRACKS
+	DE	Anzahl Tracks
 	EN	Number of Tracks
 	ES	Número de Pistas
 
 MMMMIXTYPE_MIN
+	DE	Dauer in Minuten
 	EN	Number of Minutes
 	ES	Número de Minutos
 
 MMMMIXTYPE_MBYTES
+	DE	Anzahl Megabytes
 	EN	Number of MegaBytes
 	ES	Número de MegaBytes
 
@@ -3006,6 +3022,7 @@ SETUP_COVERTHUMB
 	SE	Albumomslags-miniatyrer
 
 SETUP_COVERTHUMB_DESC
+	DE	Für das Nachschlagen von Plattencovers wird der Server nach den selben Dateien wie oben, sowie in ID3 Tags suchen. Falls Sie ein anderes Namensschema verwenden wollen, definieren Sie dieses hier.
 	EN	For Browse By Artwork thumbnails, the server will search the same default image files as above, and in ID3 Tags.  However, if you wish to use the variable filename feature, or specify your own filename, enter that here.
 	ES	Para el caso de  Examinar por Muestras de Arte de Tapa, el servidor buscará en los mismos archivos de imagen por defecto que arriba, y en los TAGs ID3. Sin embargo, si se quiere tener la posibilidad de utilizar un nombre de archivo variable en el futuro, o especificar un nombre propio de archivo, se lo puede ingresar aquí.
 
@@ -3695,18 +3712,22 @@ SETUP_THROTTLESCAN_DESC
 	SE	När servern startar läser den igenom din musikmapp för att hämta namn på artist, album, etc från dina MP3-filers ID3-taggar. På vissa långsammare system och Windows-operativ som använder FAT eller FAT32 filsystem kan detta göra datorn väldigt långsam. Du kan ändra denna inställning för att sakta ner inläsningen och använda mindre av datorns resurser.
 
 SETUP_SEARCHSUBSTRING
+	DE	Innerhalb eines Wortes suchen
 	EN	Search Within Words
 	ES	Buscar Dentro de Palabras
 
 SETUP_SEARCHSUBSTRING_0
+	DE	Am Wortanfang suchen
 	EN	Search Beginning of Words
 	ES	Buscar Comienzos de Palabras
 
 SETUP_SEARCHSUBSTRING_1
+	DE	Innerhalb eines Wortes suchen
 	EN	Search Within Words
 	ES	Buscar Dentro de Palabras
 
 SETUP_SEARCHSUBSTRING_DESC
+	DE	Beim Suchen können Sie SlimServer anweisen, den gewünschten Ausdruck nur am Wortanfang zu suchen, oder auch als beliebigen Teil eines Wortes. Beispielsweise findt die Suche nach dem Wortanfang "RAIN" im Wort "RAINBO". Bei der Suche innerhalb eines Wortes würde auch "TRAIN" gefunden.
 	EN	When you search for music, you can have SlimServer find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN".
 	ES	Cuando se busca música, se puede hacer que Slimserver encuentre coincidencias entre items que contienen palabras que comiencen con las mismas letras de la cadena de búsqueda, o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar comienzos de palabras con "RAIN", encontrará items con la palabra "RAINBOW". Buscar dentro de palabras, también encontrará la palabra "TRAIN"
 
@@ -4073,9 +4094,11 @@ SETUP_ITEMSPERPASS_DESC
 	SE	För att inte störa uppspelinng av musik bygger Slimserver sina listor i mindre delar. Denna instälning avgör hur många låtar som ska indexeras per pass
 
 SETUP_PREFSWRITEDELAY
+	DE	Schreib-Intervall für Einstellungen
 	EN	Prefs write interval
 
 SETUP_PREFSWRITEDELAY_DESC
+	DE	Diese Einstellung definiert, wie oft die Einstellungen auf die Harddisk geschrieben werden. Die Angabe "0" führt dazu, dass jede Änderung sofort geschrieben wird. Höhere Werte puffert die Änderungen und schreibt sie in einem Rutsch nach der angegeben Anzahl Sekunden.
 	EN	This setting determines how often preferences are written to disk.  Set to 0 to write every change to disk, higher values batch changes and writes the preferences after the given number of seconds pass.
 
 SETUP_LONGDATEFORMAT
@@ -4455,10 +4478,12 @@ SETUP_TITLEFORMATWEB
 	SE	Aktuellt titelformat för webgränssnittet
 
 SETUP_CSRFPROTECTIONLEVEL
+	DE	CSRF Schutzlevel
 	EN	CSRF Protection Level
 	ES	Nivel de Protección CSRF
 
 SETUP_CSRFPROTECTIONLEVEL_DESC
+	DE	Um Sie gegen "Cross Site Request Forgery" (CSRF) Sicherheitsprobleme zu schützen, prüft SlimServer HTTP Request spezielle, falls diese Änderungen an ihrem System, Playlists oder Player-Einstellungen vornehmen wollen. Sie können das Niveau der Überprüfung für ihren Server definieren. Vorgabe ist "Mittel". Mehr Informationen (Englisch) sind in der <a href="/html/docs/http.html#csrf">Hilfe</a> verfügbar.
 	EN	To protect against &quot;Cross Site Request Forgery&quot; (CSRF) security threats, SlimServer applies special scrutiny to HTTP requests for functions that can make changes to your system or manipulate playlists or players.  You may choose the level of scrutiny for the server to use.  The default is Medium. <a href="http://localhost:9000/html/docs/http.html#csrf">See Help Section</a> for more details.
 	ES	Para protegerse contra amenazas de seguridad de &quot;Cross Site Request Forgery&quot; (CSRF), SlimServer utiliza un análisis especial para requerimientos de HTTP que contengan funciones que puedan hacer cambios en tu sistema o manipular las listas de temas o reproductores. Se puede elegir el nivel de análisis a ser utilizado por el servidor. El valor por defecto es Medio. <a href="http://localhost:9000/html/docs/http.html#csrf">Ver Sección de Ayuda</a> Para ver más detalles. more details.
 
@@ -5513,10 +5538,12 @@ HUGE
 	JP	特大
 
 NONE
+	DE	Keine
 	EN	None
 	ES	Ninguno
 
 HIGH
+	DE	Hoch
 	EN	High
 	ES	Alto
 
@@ -6510,6 +6537,7 @@ BROWSE_BY_SONG_DBL
 	FR	Parcours morceaux
 
 BROWSE_BY_YEAR
+	DE	Jahrgänge nachschlagen
 	EN	Browse Years
 	ES	Examinar Años
 
@@ -6801,6 +6829,7 @@ AUDIO_SETTINGS
 	SE	Ljudinställningar
 
 REMOTE_SETTINGS
+	DE	Fernsteuerung
 	EN	Remote
 	ES	Control Remoto
 	JP	リモコン
@@ -7517,10 +7546,12 @@ NEED_PLAYLIST_PATH
 	SE	Du måste ange en sökväg till en mapp för dina sparade låtlistor.
 
 CSRF_ERROR_INFO
+	DE	Damit Sie diese URL von ihren Favoriten/Bookmarks oder mit einer anderen Art als aus dem SlimServer Web Interface aufrufen können, müssen Sie eine URL mit einem \"cauth\" Sichereheitsparameter verwenden. Falls Sie diese Fehlermeldung nach dem Klick auf einen Link im SlimServer Web Interface erhalten, vergewissern Sie sich, dass ihr Browser (sowie allfällige Proxy-Server und Spyware/Datenschutz Software) den "Referer" Header zulässt. Dies ist die korrekte URL für die von ihnen gewünschte Verbindung.
 	EN	In order to request this URL from a Bookmark/Favorite, or some means other than following a link from the SlimServer web interface, you will need to use a URL with a \"cauth\" security parameter. If you received this error when following a link from the SlimServer web interface, you will want to make sure your web browser software (including proxy servers and spyware/privacy software) is allowing \"Referer\" headers to be sent. Below is the appropriate URL for the URL you attempted.
 	ES	A fin de requerir esta URL desde un Señalador(Marcador)/Favorito, o de alguna otra forma que no sea seguir un link desde la interfaz web de SlimServer, se necesitará utilizar una URL con un parámetro de seguridad \"cauth\". Si se recibió este error al seguir un link desde la interfaz web de SlimServer, habrá que asegurarse que el software del navegador (incluyendo servidores proxy y software de spyware/privacidad) permite mandar headers \"Referer\". Debajo se muestra la URL apropiada para la URL que se intentó acceder.
 
 CSRF_ERROR_MEDIUM
+	DE	<p>Da ihr CSRF Schutzniveau auf "Medium" (Mittel) gesetzt ist, können Sie denselben \";cauth\" Wert für beliebige URLs verwenden. Dies bedeutet aber, dass Sie beim Austausch dieser URLs vorsichtig vorgehen sollten.</p>
 	EN	<p>Because your CSRF protection level is set at 'MEDIUM', you can use the same &quot;;cauth=&quot; value for any URL; this means you should be more careful who you share your URLs with.</p>
 	ES	<p>Debido a que el nivel de protección CSRF se ha establecido como 'MEDIO', se puede utuliuza rel mismo valor &quot;;cauth=&quot; para cualquier URL; esto significa que se debe ser muy cuidadoso sobre con quien compartir las URLs.</p>
 
@@ -7586,7 +7617,7 @@ LCMUTED
 	SE	tyst
 
 ADVANCEDSEARCH
-	DE	Vorgerückt Suchen
+	DE	Erweiterte Suche
 	EN	Advanced Search
 	ES	Búsqueda Avanzada
 	FR	Recherche Avançée
@@ -8431,7 +8462,7 @@ INFORMATION_DATE_FORMAT
 	NO	${shortdateFormat} kl ${timeFormat}
 
 BEFORE
-	DE	vorher
+	DE	vor
 	EN	before
 	ES	antes
 	FR	avant
@@ -8455,7 +8486,7 @@ IS
 	JP	ある
 
 EQUALS
-	DE	gleichgestellte
+	DE	gleich
 	EN	equals
 	ES	están los iguales
 	FR	les égales moins

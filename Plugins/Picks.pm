@@ -225,6 +225,7 @@ sub addMenu {
 sub strings {
 	return "
 PLUGIN_PICKS_MODULE_NAME
+	DE	Slim Devices Auswahl
 	EN	Slim Devices Picks
 
 PLUGIN_PICKS_LOADING_PICKS
