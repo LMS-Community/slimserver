@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.24 2004/10/07 21:37:10 grotus Exp $
+# $Id: IR.pm,v 1.25 2004/10/07 22:52:09 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -567,7 +567,7 @@ sub processCode {
 		$client->easteregg('');
 		$client->doEasterEgg();
 	} else {
-		Slim::Control::Command::execute($client, ['button', $irCode, $irTime, 0]);
+		Slim::Control::Command::execute($client, ['button', $irCode, $irTime, 1]);
 	}
 }
 
