@@ -18,11 +18,24 @@ package Slim::Formats::FLAC;
 use strict;
 use Audio::FLAC;
 use MP3::Info ();
+use Slim::Utils::Misc;
 
 my %tagMapping = (
 	'TRACKNUMBER'	=> 'TRACKNUM',
 	'DATE'		=> 'YEAR',
 	'DISCNUMBER'	=> 'DISC',
+);
+
+my @tagNames = (
+       'ALBUM',
+       'ARTIST',
+       'BAND',
+       'COMPOSER',
+       'CONDUCTOR',
+       'DISCNUMBER',
+       'TITLE',
+       'TRACKNUMBER',
+       'DATE',
 );
 
 # Given a file, return a hash of name value pairs,
@@ -42,6 +55,14 @@ sub getTag {
 
 	# There should be a TITLE tag if the VORBIS tags are to be trusted
 	if (defined $tags->{'TITLE'}) {
+
+                # Convert the tag values to from utf8 to latin1
+                foreach my $tag (@tagNames) {
+                        if (exists $tags->{$tag}) {
+                                my $utf8tag = $tags->{$tag};
+                                $tags->{$tag} = Slim::Utils::Misc::utf8toLatin1($utf8tag);
+                        }
+                }
 
 		# map the existing tag names to the expected tag names
 		while (my ($old,$new) = each %tagMapping) {
