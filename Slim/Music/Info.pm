@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.15 2003/10/17 19:34:51 dean Exp $
+# $Id: Info.pm,v 1.16 2003/10/30 00:05:25 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1951,7 +1951,7 @@ sub isITunesPlaylistURL {
 sub isHTTPURL {
 	my $url = shift;
 
-	return (defined($url) && ($url =~ /^http:\/\//i));
+	return (defined($url) && ($url =~ /^(http|icy):\/\//i));
 }
 
 sub isURL {

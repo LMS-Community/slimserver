@@ -78,9 +78,9 @@ sub rate {
 	}
 	my $oldrate = $client->rate();
 	
-	$::d_source && msg("switching rate from $oldrate to $newrate\n") && bt();
 	# restart playback if we've changed and we're not pausing or unpauseing
 	if ($oldrate != $newrate) {  		
+		$::d_source && msg("switching rate from $oldrate to $newrate\n") && bt();
 	 	if ($newrate != 0) {
 	 		$::d_source && msg("rate change, jumping to the current position in order to restart the stream\n");
 			gototime($client, "+0");
@@ -615,7 +615,7 @@ sub openSong {
 				$client->mp3filehandleIsSocket(1);
 				$client->remoteStreamStartTime(time());
 
-				defined(Slim::Utils::Misc::blocking($sock,0)) || die "Cannot set remote stream nonblocking";
+#				defined(Slim::Utils::Misc::blocking($sock,0)) || die "Cannot set remote stream nonblocking";
 
 			# if it's one of our playlists, parse it...
 			} elsif (Slim::Music::Info::isList($fullpath)) {
@@ -805,12 +805,14 @@ sub getCommand {
 		} else {
 			$command = $commandTable{"$type-$checkformat-*-*"};
 		}
-		if (!defined $command) {
-			$::d_source && msg("******* Error:  Didn't find any command matches ******\n");
-		}
 		$format = $checkformat;
 		last if ($command);
 	}
+
+	if (!defined $command) {
+		$::d_source && msg("******* Error:  Didn't find any command matches ******\n");
+	}
+
 	return ($command, $type, $format);
 }
 
@@ -825,6 +827,8 @@ sub readNextChunk {
 	my $chunksize = $givenChunkSize;
 	
 	my $chunk  = '';
+
+	my $endofsong = undef;
 
 	if ($client->mp3filehandle()) {
 	
@@ -887,8 +891,19 @@ sub readNextChunk {
 				$chunksize = 0;
 			}
 		}
+		
 		if ($chunksize) {
-			$client->mp3filehandle()->read($chunk, $chunksize);
+			my $readlen = $client->mp3filehandle()->read($chunk, $chunksize);
+			
+			if ($readlen == undef) { 
+				$::d_source && msg("readlen undef $!\n"); 
+				$endofsong = 1; 
+			}
+			
+			if (!$client->mp3filehandleIsSocket && $readlen == 0) { 
+				$::d_source && msg("readlen undef $!\n");  
+				$endofsong = 1;
+			}
 			
 			if ($client->shoutMetaInterval()) {
 				$client->shoutMetaPointer($client->shoutMetaPointer() + length($chunk));
@@ -909,10 +924,9 @@ sub readNextChunk {
 
 	# if nothing was read from the filehandle, then we're done with it,
 	# so open the next filehandle.
-	if (length($chunk) == 0 ||
-		(!$client->mp3filehandleIsSocket && $client->songtotalbytes() != 0 && ($client->songBytes()) > $client->songtotalbytes())) {
-		$::d_source && msg("opening next song: chunk length" . length($chunk) . ", song pos: " .
-				$client->songBytes() . "(tell says: . " . tell($client->mp3filehandle()). "), totalbytes: " . $client->songtotalbytes() . "\n");
+	if ($endofsong) {
+		$::d_source && msg("end of file or error on socket, opening next song, (song pos: " .
+				$client->songBytes() . "(tell says: . " . tell($client->mp3filehandle()). "), totalbytes: " . $client->songtotalbytes() . ")\n");
 		if (!openNext($client)) {
 			$::d_source && msg("Can't opennext, returning no chunk.");
 		}

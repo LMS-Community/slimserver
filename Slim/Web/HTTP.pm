@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.35 2003/10/13 23:57:34 dean Exp $
+# $Id: HTTP.pm,v 1.36 2003/10/30 00:05:26 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -719,11 +719,7 @@ sub sendstreamingresponse {
 				unshift @{$outbuf{$httpclientsock}},\%segment;
 				# if we were previously removed from the select list, then add us back in since we have data.
 				$main::selWrite->add($httpclientsock) if (!$main::selWrite->exists($httpclientsock));
-			} else {
-				# since we didn't get any data, we're going to remove ourselves from the main select list, this is the case when we run out of data on a streaming side.  
-				# we'll try agan when the read side has some data.
-				$main::selWrite->remove($httpclientsock);
-			}
+			} 
 		}
 		# try again...
 		$segmentref = shift(@{$outbuf{$httpclientsock}});
