@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.16 2004/01/26 05:44:21 dean Exp $
+# $Id: Player.pm,v 1.17 2004/03/29 22:18:58 dean Exp $
 #
 package Slim::Player::Player;
 
@@ -45,7 +45,7 @@ sub init {
 # usage							float		buffer fullness as a percentage
 sub usage {
 	my $client = shift;
-	return $client->bufferFullness() / $client->buffersize();
+	return $client->bufferFullness() / $client->bufferSize();
 }
 
 sub update {

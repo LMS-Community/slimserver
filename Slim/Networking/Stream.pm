@@ -391,7 +391,7 @@ sub sendNextChunk {
 
 	my $requestedChunkSize = Slim::Utils::Prefs::get('udpChunkSize');
 	
-	my $remainingSpace = $client->buffersize() - ($curWptr * 2);
+	my $remainingSpace = $client->bufferSize() - ($curWptr * 2);
 	
 	if ($remainingSpace && $requestedChunkSize > $remainingSpace) {
 		$requestedChunkSize = $remainingSpace;

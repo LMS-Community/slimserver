@@ -138,7 +138,7 @@ sub bufferFullness {
 	return Slim::Networking::Stream::fullness($client);
 }
 
-sub buffersize {
+sub bufferSize {
 	return 131072;
 }
 

@@ -733,6 +733,7 @@ sub new {
 	$client->[85] = 0; # pauseTime
 	$client->[86] = 1; # songblockalign
 	$client->[87] = 0; # bytesReceivedOffset
+	$client->[88] = 0; # buffersize
 
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -1323,6 +1324,11 @@ sub songblockalign {
 sub bytesReceivedOffset {
 	my $r = shift;
 	@_ ? ($r->[87] = shift) : $r->[87];
+}
+
+sub bufferSize {
+	my $r = shift;
+	@_ ? ($r->[88] = shift) : $r->[88];
 }
 
 1;

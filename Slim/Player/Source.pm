@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.75 2004/03/24 20:50:27 dean Exp $
+# $Id: Source.pm,v 1.76 2004/03/29 22:18:59 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -110,14 +110,18 @@ sub rate {
 	if ($oldrate != $newrate) {
 
 		$::d_source && msg("switching rate from $oldrate to $newrate\n") && bt();
-
-	 	if ($newrate != 0) {
+		my $time = songTime($client);
+		
+		$client->rate($newrate);
+		
+	 	if ($newrate == 0) {
+			Slim::Player::Source::playmode($client, "pausenow");
+		} else {
 	 		$::d_source && msg("rate change, jumping to the current position in order to restart the stream\n");
-			gototime($client, "+0");
+			gototime($client, $time);
 		}
 	}
 
-	$client->rate($newrate);
 }
 
 sub time2offset {
@@ -207,11 +211,12 @@ sub playmode {
 
 	if (defined($newmode)) {
 	
-		$::d_source && $newmode && msg($client->id() . ": Switching to mode $newmode\n");
-	
 		my $prevmode = $client->playmode;
 	
-		if ($newmode eq $prevmode) {
+		$::d_source && bt() && msg($client->id() . ": Switching to mode $newmode from $prevmode\n");
+	
+		if ( $newmode eq $prevmode ) # don't switch modes if it's the same 
+		    {
 			$::d_source && msg(" Already in playmode $newmode : ignoring mode change\n");
 		} else {
 			if ($newmode eq "pause" && $client->rate != 1) {
@@ -234,6 +239,7 @@ sub playmode {
 					$::d_source && msg("Couldn't open song.  Stopping.\n");
 					if (!openNext($client)) {$newmode = "stop";}
 				}
+				$client->bytesReceivedOffset(0);
 			}
 			
 			# when we change modes, make sure we do it to all the synced clients.
@@ -391,23 +397,25 @@ sub gototime {
 	my $newtime = shift;
 	
 	return unless Slim::Player::Playlist::song($client);
-	return unless defined $client->audioFilehandle();
+
+	if (!defined $client->audioFilehandle()) {
+		return unless openSong($client);
+	}
 
 	my $songLengthInBytes   = $client->songtotalbytes();
 	my $duration		= $client->songduration();
 
 	return if (!$songLengthInBytes || !$duration);
 
-	my $oldtime = songTime($client);
-
 	if ($newtime =~ /^[\+\-]/) {
+		my $oldtime = songTime($client);
 		$::d_source && msg("gototime: relative jump $newtime from current time $oldtime\n");
 		$newtime += $oldtime;
 	}
 	
 	my $newoffset = time2offset($client, $newtime);
 	
-	$::d_source && msg("gototime: going to time $newtime, offset $newoffset from old time: $oldtime\n");
+	$::d_source && msg("gototime: going to time $newtime\n");
 
 	# skip to the previous or next track as necessary
 	if ($newoffset > $songLengthInBytes) {
@@ -534,7 +542,7 @@ sub openNext {
 
 		my ($command, $type, $newstreamformat) = getCommand($client, Slim::Player::Playlist::song($client, $nextsong));
 		
-		if ((playmode($client) eq 'play') && (($oldstreamformat ne $newstreamformat) || Slim::Player::Sync::isSynced($client))) {
+		if ((playmode($client) eq 'play') && (($oldstreamformat ne $newstreamformat) || Slim::Player::Sync::isSynced($client)) || $client->rate() != 1) {
 			$::d_source && msg("playing out before starting next song. (old format: $oldstreamformat, new: $newstreamformat)\n");
 			playmode($client, 'playout-play');
 			return 0;

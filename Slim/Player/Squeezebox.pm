@@ -118,10 +118,6 @@ sub bufferFullness {
 	return Slim::Networking::Slimproto::fullness($client);
 }
 
-sub buffersize {
-	return 262144;	# 2**18
-}
-
 sub bytesReceived {
 	return Slim::Networking::Slimproto::bytesReceived(@_);
 }

@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.31 2004/03/19 20:18:57 dean Exp $
+# $Id: Command.pm,v 1.32 2004/03/29 22:18:57 dean Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -233,11 +233,6 @@ sub execute {
 			} elsif (!defined($p1) || $p1 eq "?") {
 				$p1 = Slim::Player::Source::rate($client);
 			} else {
-				if ($p1 == 0) {
-					Slim::Player::Source::playmode($client, "pausenow");
-				} elsif ($p1 == 1) {
-					Slim::Player::Source::playmode($client, "play");
-				}
 				Slim::Player::Source::rate($client,$p1);
 			}
 

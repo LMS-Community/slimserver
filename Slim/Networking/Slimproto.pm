@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.48 2004/03/24 23:11:04 sadams Exp $
+# $Id: Slimproto.pm,v 1.49 2004/03/29 22:18:58 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -365,41 +365,50 @@ sub process_slimproto_frame {
 		#	STMt - TIMER        
 		#	STMu - UNDERRUN     
 		
+		my ($fullnessA, $fullnessB);
+		
 		(	$status{$client}->{'event_code'},
 			$status{$client}->{'num_crlf'},
 			$status{$client}->{'mas_initialized'},
 			$status{$client}->{'mas_mode'},
-			$status{$client}->{'rptr'},
-			$status{$client}->{'wptr'},
+			$fullnessA,
+			$fullnessB,
 			$status{$client}->{'bytes_received_H'},
 			$status{$client}->{'bytes_received_L'},
 			$status{$client}->{'signal_strength'},
 			$status{$client}->{'jiffies'}
 		) = unpack ('a4CCCNNNNnN', $data);
 		
+		
 		$status{$client}->{'bytes_received'} = $status{$client}->{'bytes_received_H'} * 2**32 + $status{$client}->{'bytes_received_L'}; 
 		
-		my $fullness = $status{$client}->{'wptr'} - $status{$client}->{'rptr'};
-		if ($fullness < 0) {
-			$fullness = $client->buffersize() + $fullness;
-		};
+		if ($client->revision() < 20) {
+			$client->bufferSize(262144);
+			$status{$client}->{'rptr'} = $fullnessA;
+			$status{$client}->{'wptr'} = $fullnessB;
 
-		$status{$client}->{'fullness'} = $fullness;
-
+			my $fullness = $status{$client}->{'wptr'} - $status{$client}->{'rptr'};
+			if ($fullness < 0) {
+				$fullness = $client->bufferSize() + $fullness;
+			};
+			$status{$client}->{'fullness'} = $fullness;
+		} else {
+			$client->bufferSize($fullnessA);
+			$status{$client}->{'fullness'} = $fullnessB;
+		}
+		
 		$::d_factorytest && msg("FACTORYTEST\tevent=stat\tmac=".$client->id."\tsignalstrength=$status{$client}->{'signal_strength'}\n");
 
 # TODO make a "verbose" option for this
-		0 &&
+#		0 &&
 		$::d_slimproto && msg($client->id() . " Squeezebox stream status:\n".
 		"	event_code:      $status{$client}->{'event_code'}\n".
 		"	num_crlf:        $status{$client}->{'num_crlf'}\n".
 		"	mas_initiliazed: $status{$client}->{'mas_initialized'}\n".
 		"	mas_mode:        $status{$client}->{'mas_mode'}\n".
-		"	rptr:            $status{$client}->{'rptr'}\n".
-		"	wptr:            $status{$client}->{'wptr'}\n".
 		"	bytes_rec_H      $status{$client}->{'bytes_received_H'}\n".
 		"	bytes_rec_L      $status{$client}->{'bytes_received_L'}\n".
-		"	fullness:        $status{$client}->{'fullness'} (" . int($status{$client}->{'fullness'}/$client->buffersize()*100) . "%)\n".
+		"	fullness:        $status{$client}->{'fullness'} (" . int($status{$client}->{'fullness'}/$client->bufferSize()*100) . "%)\n".
 		"	bytes_received   $status{$client}->{'bytes_received'}\n".
 		"	signal_strength: $status{$client}->{'signal_strength'}\n".
 		"	jiffies:         $status{$client}->{'jiffies'}\n".

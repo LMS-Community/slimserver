@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.12 2004/03/10 21:29:36 dean Exp $
+# $Id: Display.pm,v 1.13 2004/03/29 22:18:58 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -558,7 +558,7 @@ my %doublechars = (
 	"@" => [ $slash . 'd',
 			 $backslash . '_' ],
 	
-	"#" => [ '##', '##' ],
+	"#" => [ '_' . $Zbottom . $Zbottom, $Ztop . $Ztop . $toplinechar ],
 	
 	'$' => [ '$$', '$$' ],
 	
