@@ -202,8 +202,27 @@ sub addToList_run {
 			@$contentsref = ();
 
 			my $numcontents = readList($curdirState->path, $contentsref, $jobState->sorted);
+
 			$curdirState->index(0);
 			$curdirState->numcontents($numcontents);
+
+			# $numcontents can be set to undef if it's a bogus windows shortcut.
+			# 0 is a valid value for an empty playlist.
+			# 
+			# So return 1 and continue scanning.
+			unless (defined $numcontents) {
+
+				$::d_scan && msgf("numcontents was 0 for path: %s - ascending.\n", $curdirState->path);
+
+				$jobState->numstack($jobState->numstack - 1);
+
+				if ($jobState->numstack) {
+					return 1;
+				} else {
+					addToList_done($listref);
+					return 0;
+				}
+			}
 
 			if (Slim::Music::Info::isWinShortcut($curdirState->path) && 
 					Slim::Music::Info::isDir(@{Slim::Music::Info::cachedPlaylist($curdirState->path)})) {
@@ -542,8 +561,9 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 			if (!open($playlist_filehandle, Slim::Utils::Misc::pathFromFileURL($playlistpath))) {
 
-				$::d_scan && msg("Couldn't open playlist file $playlistpath : $!");
+				$::d_scan && msg("Couldn't open playlist file $playlistpath : $!\n");
 				$playlist_filehandle = undef;
+				$numitems = undef;
 			}
 		}
 	}
