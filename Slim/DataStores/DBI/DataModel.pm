@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DataModel;
 
-# $Id: DataModel.pm,v 1.3 2004/12/13 19:46:01 vidur Exp $
+# $Id: DataModel.pm,v 1.4 2004/12/14 02:33:23 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -220,14 +220,14 @@ sub findTermsToWhereClause {
 }
 
 my %fieldHasClass = (
-	'track' => 'Slim::DataStores::DBI::Track',
-	'genre' => 'Slim::DataStores::DBI::Genre',
-	'album' => 'Slim::DataStores::DBI::Album',
-	'artist' => 'Slim::DataStores::DBI::Contributor',
-	'contributor' => 'Slim::DataStores::DBI::Contributor',
-	'conductor' => 'Slim::DataStores::DBI::Contributor',
-	'composer' => 'Slim::DataStores::DBI::Contributor',
-	'band' => 'Slim::DataStores::DBI::Contributor',
+	'track' => ['Slim::DataStores::DBI::Track'],
+	'genre' => ['Slim::DataStores::DBI::Genre', 'Slim::DataStores::DBI::GenreTrack'],
+	'album' => ['Slim::DataStores::DBI::Album'],
+	'artist' => ['Slim::DataStores::DBI::Contributor', 'Slim::DataStores::DBI::ContributorTrack'],
+	'contributor' => ['Slim::DataStores::DBI::Contributor', 'Slim::DataStores::DBI::ContributorTrack'],
+	'conductor' => ['Slim::DataStores::DBI::Contributor', 'Slim::DataStores::DBI::ContributorTrack'],
+	'composer' => ['Slim::DataStores::DBI::Contributor', 'Slim::DataStores::DBI::ContributorTrack'],
+	'band' => ['Slim::DataStores::DBI::Contributor', 'Slim::DataStores::DBI::ContributorTrack'],
 );
 
 my %searchFieldMap = (
@@ -258,12 +258,20 @@ my %searchFieldMap = (
 my %sortFieldMap = (
   'title' => ['tracks.titlesort'],
   'genre' => ['genres.name'],
-  'album' => ['albums.titlesort','albums.disc','tracks.tracknum','tracks.titlesort'],
+  'album' => ['albums.titlesort','albums.disc'],
   'contributor' => ['contributors.namesort'],
   'artist' => ['contributors.namesort'],
   'track' => ['contributor_track.namesort','albums.titlesort','albums.disc','tracks.tracknum','tracks.titlesort'],
   'tracknum' => ['tracks.tracknum','tracks.titlesort'],
 );  
+
+my %joinMap = (
+	'albums' => 'tracks.album = albums.id',
+	'genre_track' => 'genre_track.track = tracks.id',
+	'genres' => 'genre_track.genre = genres.id',
+	'contributor_track' => 'contributor_track.track = tracks.id',
+	'contributors' => 'contributor_track.contributor = contributors.id',
+);
 
 sub find {
 	my $class = shift;
@@ -272,19 +280,31 @@ sub find {
 	my $sortby = shift;
 	my $c;
 
+	# Build up a SQL query
 	my $columns = "DISTINCT ";
+
+	# The FROM tables involved in the query
+	my %tables;
+	
+	# First the columns to SELECT
 	if ($c = $fieldHasClass{$field}) {
-		my $table = $c->table;
-		$columns .= join(",", map {$table . '.' . $_ . " AS " . $_} $c->columns('Essential'));
+		my $table = $c->[0]->table;
+		$columns .= join(",", map {$table . '.' . $_ . " AS " . $_} $c->[0]->columns('Essential'));
+		# For now, include only the main table from which we're retrieving 
+		# columns. If there is a WHERE clause, we may include a secondary
+		# (has-many) table.
+		$tables{$table} = 1 for @$c;
 	}
 	elsif (defined($searchFieldMap{$field})) {
 		$columns .= $searchFieldMap{$field};
+		$tables{'tracks'} = 1;
 	}
 	else {
 		$::d_info && msg("Request for unknown field in query\n");
 		return undef;
 	}
 	
+	# Then the WHERE clause
 	my %whereHash =();
 	while (my ($key, $val) = each %$findCriteria) {
 		if (defined($searchFieldMap{$key})) {
@@ -293,26 +313,48 @@ sub find {
 				$whereHash{$searchFieldMap{$key}} = scalar(@values) > 1 ?
 					\@values : $values[0];
 			}
+
+			# Include FROM tables of all columns use in the WHERE
+			if ($c = $fieldHasClass{$key}) {
+				$tables{$_->table} = 1 for @$c;
+			}
 		}
+		
+		# And all tables (including possibly a has-many table) from the 
+		# main field.
+		if ($c = $fieldHasClass{$field}) {
+			$tables{$_->table} = 1 for @$c;
+		}
+		$tables{'tracks'} = 1;
 	}
 
-	my $sortFields;
+	# Now deal with the ORDER BY component
+	my $sortFields = [];
 	if (defined($sortby) && $sortFieldMap{$sortby}) {
 		$sortFields = $sortFieldMap{$sortby};
 	}
-	else {
-		$sortFields = [$searchFieldMap{$field}];
+	for my $sfield (@$sortFields) {
+		my ($table) = ($sfield =~ /^(\w+)\./);
+		$tables{$table} = 1;
 	}
 
-	my $sql  = SQL::Abstract->new;
-	my ($where, @bind) = $sql->where(\%whereHash, $sortFields);
-	$where =~ s/WHERE/AND/;
+	my $abstract  = SQL::Abstract->new;
+	my ($where, @bind) = $abstract->where(\%whereHash, $sortFields);
 
-	my $sth=$class->sql_find($columns, $where);
+	my $sql = "SELECT $columns ";
+	$sql .= "FROM " . join(", ", keys %tables) . " ";
+	if (scalar(keys %tables) > 1) {
+		delete $tables{'tracks'};
+		$sql .= "WHERE " . join(" AND ", map { $joinMap{$_} } keys %tables ) . " ";
+		$where =~ s/WHERE/AND/;
+	}
+	$sql .= $where;
+
+	my $sth = $dbh->prepare_cached($sql);
 	$sth->execute(@bind);
 
 	if ($c = $fieldHasClass{$field}) {
-		my @objs = $c->sth_to_objects($sth);
+		my @objs = $c->[0]->sth_to_objects($sth);
 		return \@objs;
 	}
 
@@ -320,22 +362,6 @@ sub find {
 	my @results = grep((defined($_) && $_ ne ''), (map $_->[0], @$ref));
 	return \@results;
 }
-
-__PACKAGE__->set_sql(find => <<"");
-SELECT %s
-FROM   __TABLE(Slim::DataStores::DBI::Track)__,
-       __TABLE(Slim::DataStores::DBI::GenreTrack)__,
-       __TABLE(Slim::DataStores::DBI::Genre)__,
-       __TABLE(Slim::DataStores::DBI::ContributorTrack)__,
-       __TABLE(Slim::DataStores::DBI::Contributor)__,
-       __TABLE(Slim::DataStores::DBI::Album)__
-WHERE  __JOIN(tracks genre_track)__ 
-AND    __JOIN(genre_track genres)__
-AND    __JOIN(tracks contributor_track)__
-AND    __JOIN(contributor_track contributors)__
-AND    __JOIN(tracks albums)__
-       %s
-
 
 ######################################################
 #
@@ -456,6 +482,16 @@ sub get {
 	return $item;
 }
 
+sub set {
+	my $self = shift;
+	
+	$self->{cachedArtist} = undef;
+	$self->{cachedArtistSort} = undef;
+	$self->{cachedGenre} = undef;
+
+	return $self->SUPER::set(@_);
+}
+
 sub getCached {
 	my $self = shift;
 	my $attr = shift;
@@ -466,16 +502,28 @@ sub getCached {
 # String version of contributors list
 sub artist {
 	my $self = shift;
+
+	# FIXME Possible premature optimization - cache the
+	# artist string.
+	return $self->{cachedArtist} if $self->{cachedArtist};
+
 	my @contributors = $self->contributors;
 
-	return join(", ", map { $_->name } @contributors);
+	$self->{cachedArtist} = join(", ", map { $_->name } @contributors);
+	return $self->{cachedArtist};
 }
 
 sub artistsort {
 	my $self = shift;
+
+	# FIXME Possible premature optimization - cache the
+	# artistsort string.
+	return $self->{cachedArtistSort} if $self->{cachedArtistSort};
+
 	my @contributors = $self->contributors;
 
-	return join(", ", map { $_->namesort } @contributors);
+	$self->{cachedArtistSort} = join(", ", map { $_->namesort } @contributors);
+	return $self->{cachedArtistSort};
 }
 
 sub albumsort {
@@ -488,9 +536,15 @@ sub albumsort {
 # String version of genre list
 sub genre {
 	my $self = shift;
+
+	# FIXME Possible premature optimization - cache the
+	# genre string.
+	return $self->{cachedGenre} if $self->{cachedGenre};
+
 	my @genres = $self->genres;
 
-	return join(", ", map { $_->name } @genres);
+	$self->{cachedGenre} = join(", ", map { $_->name } @genres);
+	return $self->{cachedGenre};
 }
 
 sub setTracks {
