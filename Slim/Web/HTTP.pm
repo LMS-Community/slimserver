@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.18 2003/08/12 00:52:45 dean Exp $
+# $Id: HTTP.pm,v 1.19 2003/08/19 04:12:17 grotus Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -20,6 +20,7 @@ use MIME::Base64;
 use POSIX qw(:fcntl_h strftime);
 use Fcntl qw(F_GETFL F_SETFL);
 
+use Tie::RegexpHash;
 use Slim::Player::HTTP;
 use Slim::Web::History;
 use Slim::Networking::mDNS;
@@ -75,6 +76,9 @@ my %peerclient;
 
 my $mdnsIDslimserver;
 my $mdnsIDhttp;
+
+my %pageFunctions;
+tie %pageFunctions, 'Tie::RegexpHash';
 
 # initialize the http server
 sub init {
@@ -982,6 +986,22 @@ sub fixHttpPath {
 #
 # generate HTTP response - TODO: commments...what exactly does this do?
 #
+
+$pageFunctions{qr/home\.(?:htm|xml)/} = \&Slim::Web::Pages::home;
+$pageFunctions{qr/^index\.(?:htm|xml)/} = \&Slim::Web::Pages::home;
+$pageFunctions{qr/^$/} = \&Slim::Web::Pages::home;
+$pageFunctions{qr/browseid3\.(?:htm|xml)/} = \&Slim::Web::Pages::browseid3;
+$pageFunctions{qr/mood_wheel\.(?:htm|xml)/} = \&Slim::Web::Pages::mood_wheel;
+$pageFunctions{qr/instant_mix\.(?:htm|xml)/} = \&Slim::Web::Pages::instant_mix;
+$pageFunctions{qr/hitlist\.(?:htm|xml)/} = \&Slim::Web::History::hitlist;
+$pageFunctions{qr/olsonmain\.(?:htm|xml)/} = \&Slim::Web::Olson::olsonmain;
+$pageFunctions{qr/olsondetail\.(?:htm|xml)/} = \&Slim::Web::Olson::olsondetail;
+$pageFunctions{qr/songinfo\.(?:htm|xml)/} = \&Slim::Web::Pages::songinfo;
+$pageFunctions{qr/search\.(?:htm|xml)/} = \&Slim::Web::Pages::search;
+$pageFunctions{qr/status_header\.(?:htm|xml)/} = \&Slim::Web::Pages::status;
+$pageFunctions{qr/playlist\.(?:htm|xml)/} = \&Slim::Web::Pages::playlist;
+
+
 sub generateresponse {
 	my($client, $httpclientsock, $paramsref, $pRef) = @_;
 	my %headers;
@@ -1031,8 +1051,9 @@ sub generateresponse {
 	    	filltemplatefile('include.html', $paramsref);
 	    }
 	    
-	    if ($path =~ /home\.(htm|xml)/ || $path =~ /^index\.(htm|xml)/ || $path eq '') {
-			$body = Slim::Web::Pages::home($client, $paramsref);
+	    my $coderef = $pageFunctions{$path};
+	    if (ref($coderef) eq 'CODE') {
+	    		$body = &$coderef($client, $paramsref);
 	    } elsif ($path =~ /browse\.(htm|xml)/) {
 
 			##
@@ -1048,7 +1069,7 @@ sub generateresponse {
 				return(0); 
 			}
 
-	    } elsif ($path =~ /(stream\.mp3|stream)$/) {
+	    } elsif ($path =~ /(?:stream\.mp3|stream)$/) {
 			%headers = statusHeaders($client);
 			$headers{"x-audiocast-name"} = string('SLIM_SERVER');
 			if ($sendMetaData{$httpclientsock}) {
@@ -1096,29 +1117,9 @@ sub generateresponse {
 			# we failed to open the specified file
 			$result = "HTTP/1.0 404 Not Found";
 			$body = "<HTML><HEAD><TITLE>404 Not Found</TITLE></HEAD><BODY>404 Not Found: $path</BODY></HTML>$EOL";
-	    } elsif ($path =~ /browseid3\.(htm|xml)/) {
-			$body = Slim::Web::Pages::browseid3($client, $paramsref);
-	    } elsif ($path =~ /mood_wheel\.(htm|xml)/) {
-			$body = Slim::Web::Pages::mood_wheel($client, $paramsref);
-	    } elsif ($path =~ /instant_mix\.(htm|xml)/) {
-			$body = Slim::Web::Pages::instant_mix($client, $paramsref);
-        } elsif ($path =~ /hitlist\.(htm|xml)/) {
-			$body = Slim::Web::History::hitlist($client, $paramsref);
-	    } elsif ($path =~ /olsonmain\.(htm|xml)/) {
-			$body = Slim::Web::Olson::olsonmain($client, $paramsref);
-	    } elsif ($path =~ /olsondetail\.(htm|xml)/) {
-			$body = Slim::Web::Olson::olsondetail($client, $paramsref);
-	    } elsif ($path =~ /songinfo\.(htm|xml)/) {
-			$body = Slim::Web::Pages::songinfo($client, $paramsref);
-	    } elsif ($path =~ /search\.(htm|xml)/) {
-			$body = Slim::Web::Pages::search($client, $paramsref);
-	    } elsif ($path =~ /status_header\.(htm|xml)/) {
-			$body = Slim::Web::Pages::status($client, $paramsref, 0);
-	    } elsif ($path =~ /playlist\.(htm|xml)/) {
-			$body = Slim::Web::Pages::playlist($client, $paramsref);
 	    } elsif ($path =~ /favicon\.ico/) {
 			$body = getStaticContent("html/mypage.ico", $paramsref); 
-	    } elsif ($path =~ /setup\.(htm|xml)/) {
+	    } elsif ($path =~ /setup\.(?:htm|xml)/) {
 			if ($::nosetup) {
 				$result = "HTTP/1.0 403 Forbidden";
 				$body = "<HTML><HEAD><TITLE>403 Forbidden</TITLE></HEAD><BODY>403 Forbidden: $path</BODY></HTML>$EOL";
@@ -1170,7 +1171,7 @@ sub generateresponse {
 				# otherwise just send back the binary file
 				$body = getStaticContent($path, $paramsref);
 			}
-	    } elsif ($path =~ /status\.(htm|xml)/) {
+	    } elsif ($path =~ /status\.(?:htm|xml)/) {
 	   		if ($contentType eq 'text/html') {
 				# status page
 				if (defined($client)) {
