@@ -99,6 +99,10 @@ sub defaultPlaylistDir {
 		$path = '';
 	}
 
+	if ($path && !-d $path) {
+		mkpath($path) or Slim::Utils::Misc::msg("Couldn't create playlist path: $path - $!\n");
+	}
+
 	return $path;
 }
 
