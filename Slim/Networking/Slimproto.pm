@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.14 2003/08/11 20:56:07 dean Exp $
+# $Id: Slimproto.pm,v 1.15 2003/08/13 00:22:15 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -318,6 +318,55 @@ sub process_slimproto_frame {
 	} elsif ($op eq 'RESP') {
 		# HTTP stream headers
 		$::d_slimproto && msg("Squeezebox got HTTP response:\n$data\n");
+	} elsif ($op eq 'STRM') {
+
+		#	struct status_struct {
+		#		u8_t event_code;
+		#		u8_t num_crlf;
+		#		u8_t mas_initialized;	// 'm' or 'p'
+		#		u8_t mas_mode;		// serdes mode
+		#		u32_t rptr;
+		#		u32_t wptr;
+		#		u64_t bytes_received;	}
+
+		#define EVENT_TIMER	't'
+		#define EVENT_AUTOSTART	'a'
+		#define EVENT_CLOSE	'f'
+		#define EVENT_ESTABLISH	'e'
+		#define EVENT_CONNECT	'c'
+
+		my %EVENT_CODES = ('t', 'TIMER',
+				'a', 'AUTOSTART',
+				'f', 'CLOSE',
+				'e', 'ESTABLISH',
+				'c', 'CONNECT',
+				'h', 'ENDOFHEADERS',
+				'u', 'UNDERRUN',
+				);
+
+		my (	$status_event_code,
+			$status_num_crlf,
+			$status_mas_initialized,
+			$status_mas_mode,
+			$status_rptr,
+			$status_wptr,
+			$status_bytes_received_H,
+			$status_bytes_received_L
+		) = unpack ('aCCCNNNN', $data);
+
+		if (defined($EVENT_CODES{$status_event_code})) {
+			$status_event_code = $EVENT_CODES{$status_event_code};
+		}
+
+		$::d_slimproto && msg("Squeezebox stream status:\n".
+		"	event_code:      $status_event_code\n".
+		"	num_crlf:        $status_num_crlf\n".
+		"	mas_initiliazed: $status_mas_initialized\n".
+		"	mas_mode:        $status_mas_mode\n".
+		"	rptr:            $status_rptr\n".
+		"	wptr:            $status_wptr\n".
+		"	bytes_rec_H      $status_bytes_received_H\n".
+		"	bytes_red_L      $status_bytes_received_L\n");
 	}
 }
 
