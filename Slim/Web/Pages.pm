@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.17 2003/11/06 18:37:07 dean Exp $
+# $Id: Pages.pm,v 1.18 2003/11/07 19:18:54 dean Exp $
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -762,7 +762,7 @@ sub addsonginfo {
 				$loc = Slim::Utils::Misc::pathFromFileURL($loc);
 			}
 			$loc = Slim::Utils::Misc::fixPath($loc);
-			$songpath = $log;
+			$songpath = $loc;
 			my $curdir = Slim::Utils::Prefs::get('mp3dir');
 			if ($loc =~ /^\Q$curdir\E(.*)/) {
 				$url = '/music';
@@ -772,7 +772,7 @@ sub addsonginfo {
 				}
 				$url =~ s/\/\//\//;
 			} else {
-				$url = $log;				
+				$url = $loc;				
 			}
 	
 		}
