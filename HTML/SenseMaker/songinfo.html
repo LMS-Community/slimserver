@@ -16,7 +16,7 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
 cellPadding=0 width=90% border=0>
     <TBODY>
       <TR> 
-        <TD width="100%" valign="middle"> <b> <img src="html/images/spacer.gif" width="1" height="17">[S {playermodel}] 
+        <TD width="100%" valign="middle"> <b> <img src="html/images/spacer.gif" width="1" height="17">[% playermodel | string %] 
           Music Network </b></TD>
       </TR>
     </TBODY>
@@ -27,9 +27,8 @@ cellPadding=0 width=90% border=0>
 <BODY 
 style="BORDER-RIGHT: white 2px solid; BACKGROUND: #333; BORDER-BOTTOM: 0px" 
 leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
-<P class=menu1><B><a href="home.html?player={%player}"><font color="#FFFFFF">[S 
-  {playermodel}_HOME]</font></a><a href="home.html?player=%7Bplayer%7D"></a> / <a href="browse.html?player={%player}"><font color="#CCCCCC">Music 
-  Database</font></a><font color="#CCCCCC"> {pwd_list}</font></B></P>
+<P class=menu1><B><a href="home.html?player=[% player | uri %]"><font color="#FFFFFF">[% playermodel _ "_HOME" | string %]</font></a><a href="home.html?player=%7Bplayer%7D"></a> / <a href="browse.html?player=[% player | uri %]"><font color="#CCCCCC">Music 
+  Database</font></a><font color="#CCCCCC"> [% pwd_list %]</font></B></P>
 <P class=menu2>&nbsp;</P>
 
 
@@ -42,102 +41,101 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
   <TABLE cellSpacing=0 cellPadding=2 width="100%" border=0>
     <TBODY>
       <TR> 
-        <TD colspan="6" class=listinghead> [S SONG_INFO] [S FOR] <em>{title}</em></TD>
+        <TD colspan="6" class=listinghead> [% "SONG_INFO" | string %] [% "FOR" | string %] <em>[% title %]</em></TD>
         <TD width="16%" class=listinghead>&nbsp;</TD>
       </TR>
       <TR> 
         <TD colspan="7" class=listing><table width="100%">
             <tr> 
-              <td class=listing> <nobr> [S TITLE][S COLON]</nobr> </td>
-              <td class=listing> {title} </td>
+              <td class=listing> <nobr> [% "TITLE" | string %][% "COLON" | string %]</nobr> </td>
+              <td class=listing> [% title %] </td>
             </tr>
-            [IF artist] 
+            [% IF artist %] 
             <tr> 
-              <td class=listing> [S ARTIST][S COLON]</td>
-              <td class=listing> <a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{artist}</a> 
+              <td class=listing> [% "ARTIST" | string %][% "COLON" | string %]</td>
+              <td class=listing> <a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser">[% artist %]</a> 
               </td>
             </tr>
-            [/IF] [IF composer] 
+            [% END %] [% IF composer %] 
             <tr> 
-              <td class=listing> [S COMPOSER][S COLON]</td>
-              <td class=listing> <a href="browseid3.html?genre=*&amp;artist={%composer}&amp;player={%player}" target="browser">{composer}</a> 
+              <td class=listing> [% "COMPOSER" | string %][% "COLON" | string %]</td>
+              <td class=listing> <a href="browseid3.html?genre=*&amp;artist=[% composer | uri %]&amp;player=[% player | uri %]" target="browser">[% composer %]</a> 
               </td>
             </tr>
-           [/IF] [IF conductor] 
+           [% END %] [% IF conductor %] 
             <tr> 
-              <td class=listing> [S CONDUCTOR][S COLON]</td>
-              <td class=listing> <a href="browseid3.html?genre=*&amp;artist={%conductor}&amp;player={%player}" target="browser">{conductor}</a> 
+              <td class=listing> [% "CONDUCTOR" | string %][% "COLON" | string %]</td>
+              <td class=listing> <a href="browseid3.html?genre=*&amp;artist=[% conductor | uri %]&amp;player=[% player | uri %]" target="browser">[% conductor %]</a> 
               </td>
             </tr>
-            [/IF] [IF album] 
+            [% END %] [% IF album %] 
             <tr> 
-              <td class=listing> [S ALBUM][S COLON]</td>
-              <td class=listing> <a href="browseid3.html?genre=*&amp;artist=*&amp;album={%album}&amp;player={%player}" target="browser">{album}</a> 
+              <td class=listing> [% "ALBUM" | string %][% "COLON" | string %]</td>
+              <td class=listing> <a href="browseid3.html?genre=*&amp;artist=*&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album %]</a> 
               </td>
             </tr>
-            [/IF] [IF genre] 
+            [% END %] [% IF genre %] 
             <tr> 
-              <td class=listing> [S GENRE][S COLON]</td>
-              <td class=listing> <a href="browseid3.html?genre={%genre}&amp;player={%player}" target="browser">{genre}</a> 
+              <td class=listing> [% "GENRE" | string %][% "COLON" | string %]</td>
+              <td class=listing> <a href="browseid3.html?genre=[% genre | uri %]&amp;player=[% player | uri %]" target="browser">[% genre %]</a> 
               </td>
             </tr>
-            [/IF] [IF track] 
+            [% END %] [% IF track %] 
             <tr> 
-              <td class=listing> [S TRACK][S COLON]</td>
-              <td class=listing> {track} </td>
+              <td class=listing> [% "TRACK" | string %][% "COLON" | string %]</td>
+              <td class=listing> [% track %] </td>
             </tr>
-            [/IF] [IF duration] 
+            [% END %] [% IF duration %] 
             <tr> 
-              <td class=listing> [S LENGTH][S COLON]</td>
-              <td class=listing> {duration} </td>
+              <td class=listing> [% "LENGTH" | string %][% "COLON" | string %]</td>
+              <td class=listing> [% duration %] </td>
             </tr>
-            [/IF] [IF year] 
+            [% END %] [% IF year %] 
             <tr> 
-              <td class=listing> [S YEAR][S COLON]</td>
-              <td class=listing> {year} </td>
+              <td class=listing> [% "YEAR" | string %][% "COLON" | string %]</td>
+              <td class=listing> [% year %] </td>
             </tr>
-            [/IF] [IF comment] 
+            [% END %] [% IF comment %] 
             <tr> 
-              <td class=listing> [S COMMENT][S COLON]</td>
-              <td class=listing> {comment} </td>
+              <td class=listing> [% "COMMENT" | string %][% "COLON" | string %]</td>
+              <td class=listing> [% comment %] </td>
             </tr>
-            [/IF] [IF filelength] 
+            [% END %] [% IF filelength %] 
             <tr> 
-              <td class=listing> [S FILELENGTH][S COLON]</td>
-              <td class=listing> {filelength} [S BYTES] </td>
+              <td class=listing> [% "FILELENGTH" | string %][% "COLON" | string %]</td>
+              <td class=listing> [% filelength %] [% "BYTES" | string %] </td>
             </tr>
-            [/IF] [IF bitrate] 
+            [% END %] [% IF bitrate %] 
             <tr> 
-              <td class=listing > [S BITRATE][S COLON]</td>
-              <td class=listing> {bitrate} </td>
+              <td class=listing > [% "BITRATE" | string %][% "COLON" | string %]</td>
+              <td class=listing> [% bitrate %] </td>
             </tr>
-            [/IF] [IF tagversion] 
+            [% END %] [% IF tagversion %] 
             <tr> 
-              <td class=listing> [S TAGVERSION][S COLON]</td>
-              <td class=listing> {tagversion} </td>
+              <td class=listing> [% "TAGVERSION" | string %][% "COLON" | string %]</td>
+              <td class=listing> [% tagversion %] </td>
             </tr>
-            [/IF] [IF url] 
+            [% END %] [% IF url %] 
             <tr> 
-              <td class=listing>URL[S COLON]</td>
-              <td class=listing>{url} </td>
+              <td class=listing>URL[% "COLON" | string %]</td>
+              <td class=listing>[% url %] </td>
             </tr>
             <tr> 
               <td class=listing>&nbsp;</td>
               <td class=listing>&nbsp;</td>
             </tr>
             <tr> 
-              <td colspan="2" class=listing> <a href="playlist.html?p0=playlist&amp;p1=play&amp;p2={%itempath}&amp;player={%player}" target="playlist"><IMG 
+              <td colspan="2" class=listing> <a href="playlist.html?p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="playlist"><IMG 
       height=10 alt="Add to playlist" src="html/play.this.gif" width=9 border=0> 
-                [S PLAY_THIS_SONG]</a> | <a href="playlist.html?p0=playlist&amp;p1=append&amp;p2={%itempath}&amp;player={%player}" target="playlist"> 
+                [% "PLAY_THIS_SONG" | string %]</a> | <a href="playlist.html?p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="playlist"> 
                 <IMG 
-      height=10 alt="Add to playlist" src="html/add.gif" width=9 border=0> [NB][S 
-                ADD_THIS_SONG_TO_PLAYLIST][/NB]</a> </td>
+      height=10 alt="Add to playlist" src="html/add.gif" width=9 border=0> [% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a> </td>
             </tr>
             <tr> 
               <td class=listing>&nbsp; </td>
               <td class=listing>&nbsp; </td>
             </tr>
-            [/IF] </table>
+            [% END %] </table>
           
         </TD>
       </TR>

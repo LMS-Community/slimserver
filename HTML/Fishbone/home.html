@@ -1,35 +1,35 @@
-[SET title [S MUSIC]] [SET pageicon MUSIC] [SET browse 1] [SET music 1][SET playlist 0][INCLUDE pageheader.html]
+[% title = "MUSIC" | string %] [% pageicon = 'MUSIC' %] [% browse = '1' %] [% music = '1' %][% playlist = '0' %][% PROCESS pageheader.html %]
 <html>
 <head>
-<link rel="stylesheet" href="{webroot}slimserver.css">
+<link rel="stylesheet" href="[% webroot %]slimserver.css">
 <script language="JavaScript">
 <!--Hide
 function getCookie(Name) 
-&lbrc;
+{
 	var search = Name + "=";
-	if (document.cookie.length > 0) &lbrc;
+	if (document.cookie.length > 0) {
 		offset = document.cookie.indexOf(search);
-		if (offset != -1) &lbrc;
+		if (offset != -1) {
 			offset += search.length;
 			end = document.cookie.indexOf(";", offset);
 			if (end == -1)
 				end = document.cookie.length;
 			url = unescape(document.cookie.substring(offset, end));
-			if (url == 'undefined') [IFN nofolder]return "browse.html?"[/IFN]
-											[IF nofolder]return "browseid3.html?nofolder=1"[/IF]
-											[IF noartwork]return "browseid3.html?noartwork=1"[/IF]
-			return url [IF noartwork]+"&noartwork=1"[/IF][IF nofolder]+"&nofolder=1"[/IF];
-		&rbrc;
-	&rbrc;
-	[IFN nofolder]return "browse.html?"[/IFN]
-	[IF nofolder]return "browseid3.html?nofolder=1"[/IF]
-	[IF noartwork]return "browseid3.html?noartwork=1"[/IF]
-&rbrc;
+			if (url == 'undefined') [% IF not nofolder %]return "browse.html?"[% END %]
+											[% IF nofolder %]return "browseid3.html?nofolder=1"[% END %]
+											[% IF noartwork %]return "browseid3.html?noartwork=1"[% END %]
+			return url [% IF noartwork %]+"&noartwork=1"[% END %][% IF nofolder %]+"&nofolder=1"[% END %];
+		}
+	}
+	[% IF not nofolder %]return "browse.html?"[% END %]
+	[% IF nofolder %]return "browseid3.html?nofolder=1"[% END %]
+	[% IF noartwork %]return "browseid3.html?noartwork=1"[% END %]
+}
 --></script>
 </head>
-	[IF newVersion]<br>{newVersion}<br>[/IF]
+	[% IF newVersion %]<br>[% newVersion %]<br>[% END %]
 	<script language="JavaScript">
-parent.browser.location=getCookie('SlimServer-Browserpage') +'&player={%player}'[IF noartwork]+"&noartwork=1"[/IF][IF nofolder]+"&nofolder=1"[/IF];
+parent.browser.location=getCookie('SlimServer-Browserpage') +'&player=[% player | uri %]'[% IF noartwork %]+"&noartwork=1"[% END %][% IF nofolder %]+"&nofolder=1"[% END %];
 </script>
 	</body>
 </html>

@@ -1,22 +1,22 @@
 <html>
 <head>
-	<title>[S {playermodel}_MUSIC_PLAYER]</title>
-	<meta http-equiv="refresh" content="{refresh}; url=status_header.html">
+	<title>[% playermodel _ "_MUSIC_PLAYER" | string %]</title>
+	<meta http-equiv="refresh" content="[% refresh %]; url=status_header.html">
 	<link rel="stylesheet" href="slimserver.css">
 <script>
 <!-- HIDE
 function checkLoad ()
-&lbrc;
+{
 	if (top.document.getElementById('player_frame'))
-	&lbrc;
+	{
 		top.document.getElementById('player_frame').rows = '100%,*';
 		parent.playlist.location='about:blank';
-	&rbrc;
+	}
 	else 
-	&lbrc;
+	{
 		top.document.location.reload(true);
-	&rbrc;
-&rbrc;
+	}
+}
 -->
 </script>
 </head>
@@ -24,15 +24,15 @@ function checkLoad ()
 	<div class="masthead">
 		<table border="0" cellpadding="2" cellspacing="0" width="100%"  bordercolor="#111111">
 			<tr>
-				<td valign="bottom" width="45%"><img border="0" src="html/images/{playermodel}_logo.small.gif" width="98" height="17">
+				<td valign="bottom" width="45%"><img border="0" src="html/images/[% playermodel %]_logo.small.gif" width="98" height="17">
 			</tr>
 		</table>
 	</div>
 	<div class="nowplaying">
 		<table border="0" cellspacing="4" cellpadding="5" width="100%">
 			<td valign="top" width="100%" class="artistname">
-				<p class="songtitle"><b>[S NO_PLAYER_FOUND]</b></p><p>&nbsp;</p>
-				<p>[S NO_PLAYER_DETAILS]</p>
+				<p class="songtitle"><b>[% "NO_PLAYER_FOUND" | string %]</b></p><p>&nbsp;</p>
+				<p>[% "NO_PLAYER_DETAILS" | string %]</p>
 			</td>
 		</table>
 	</div>

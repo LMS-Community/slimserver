@@ -1,6 +1,6 @@
-	[SET pageicon home]
-	[SET title [S {playermodel}_HOME]]
-	[INCLUDE pageheader.html]
+	[% pageicon = 'home' %]
+	[% title = playermodel _ "_HOME" | string %]
+	[% PROCESS pageheader.html %]
 	<tr height="44">
 				<td width="4" height="44"><img src="html/images/spacer.gif" width="8" height="39" alt=""></td>
 				<td valign="top" class="medgrey" height="44">
@@ -12,7 +12,7 @@
 						</tr>
 						<tr>
 							<td width="8"><img src="html/images/spacer.gif" width="8" height="8" alt=""></td>
-							<td valign="top" class="statusarea">[IF song_count][S LIBRARY_CONTAINS] {album_count} [S WITH] {song_count} [S BY] {artist_count}.[/IF][IF newVersion]<br><br>{newVersion}[/IF]</font></td>
+							<td valign="top" class="statusarea">[% IF song_count %][% "LIBRARY_CONTAINS" | string %] [% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].[% END %][% IF newVersion %]<br><br>[% newVersion %][% END %]</font></td>
 							<td width="4"></td>
 						</tr>
 						<tr height="5">
@@ -57,12 +57,12 @@
 							<td width="8"><img src="html/images/spacer.gif" width="8" height="8" alt=""></td>
 							<td valign="top">
 								<table cellspacing="0" width="100%">
-									<tr><td height="15" valign="center">&#149; <a href="browseid3.html?player={%player}">[S BROWSE_BY_GENRE]</a></td></tr>
-									<tr><td height="15" valign="center">&#149; <a href="browseid3.html?genre=*&amp;player={%player}">[S BROWSE_BY_ARTIST]</a></td></tr>
-									<tr><td height="15" valign="center">&#149; <a href="browseid3.html?genre=*&amp;artist=*&amp;player={%player}">[S BROWSE_BY_ALBUM]</a></td></tr>
-					[IFN noartwork]<tr><td height="15" valign="center">&#149; <a href="browseid3.html?genre=*&amp;artist=*&amp;player={%player}&amp;artwork=1">[S BROWSE_BY_ARTWORK]</a></td></tr>[/IFN]
-					[IFN nofolder]<tr><td height="15" valign="center">&#149; <a href="browse.html?player={%player}">[S BROWSE_MUSIC_FOLDER]</a></td></tr>[/IFN]
-									<tr><td height="15" valign="center">&#149; <a href="browse.html?player={%player}&amp;dir=__playlists">[S SAVED_PLAYLISTS]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="browseid3.html?player=[% player | uri %]">[% "BROWSE_BY_GENRE" | string %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="browseid3.html?genre=*&amp;player=[% player | uri %]">[% "BROWSE_BY_ARTIST" | string %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="browseid3.html?genre=*&amp;artist=*&amp;player=[% player | uri %]">[% "BROWSE_BY_ALBUM" | string %]</a></td></tr>
+					[% IF not noartwork %]<tr><td height="15" valign="center">&#149; <a href="browseid3.html?genre=*&amp;artist=*&amp;player=[% player | uri %]&amp;artwork=1">[% "BROWSE_BY_ARTWORK" | string %]</a></td></tr>[% END %]
+					[% IF not nofolder %]<tr><td height="15" valign="center">&#149; <a href="browse.html?player=[% player | uri %]">[% "BROWSE_MUSIC_FOLDER" | string %]</a></td></tr>[% END %]
+									<tr><td height="15" valign="center">&#149; <a href="browse.html?player=[% player | uri %]&amp;dir=__playlists">[% "SAVED_PLAYLISTS" | string %]</a></td></tr>
 								</table>
 							</td>
 							<td width="4"></td>
@@ -98,9 +98,9 @@
 							<td width="8"><img src="html/images/spacer.gif" width="8" height="8" alt=""></td>
 							<td valign="top">
 								<table cellspacing="0" width="100%">
-									<tr><td height="15" valign="center">&#149; <a href="search.html?type=artist&amp;player={%player}">[S SEARCHFOR_ARTIST]</a></td></tr>
-									<tr><td height="15" valign="center">&#149; <a href="search.html?type=album&amp;player={%player}">[S SEARCHFOR_ALBUM]</a></td></tr>
-									<tr><td height="15" valign="center">&#149; <a href="search.html?type=song&amp;player={%player}">[S SEARCHFOR_SONGTITLE]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="search.html?type=artist&amp;player=[% player | uri %]">[% "SEARCHFOR_ARTIST" | string %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="search.html?type=album&amp;player=[% player | uri %]">[% "SEARCHFOR_ALBUM" | string %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="search.html?type=song&amp;player=[% player | uri %]">[% "SEARCHFOR_SONGTITLE" | string %]</a></td></tr>
 								</table>
 							</td>
 							<td width="4"></td>
@@ -111,7 +111,7 @@
 							<td width="4"></td>
 						</tr>
 					</table>
-					[IFN nosetup]    <table cellspacing="0" width="100%">
+					[% IF not nosetup %]    <table cellspacing="0" width="100%">
 						<tr height="5">
 							<td class="lightgrey" width="8" height="5"><img src="html/images/spacer.gif" width="8" height="5" alt=""></td>
 							<td class="lightgrey" height="5"><img src="html/images/spacer.gif" width="305" height="5" alt=""></td>
@@ -136,8 +136,8 @@
 							<td width="8"><img src="html/images/spacer.gif" width="8" height="8" alt=""></td>
 							<td>
 								<table cellspacing="0" width="100%">
-								<tr><td height="15" valign="center">&#149; <a href="setup.html?page=server&amp;player={%player}">[S SERVER_SETTINGS]</a></td></tr>
-								{player_list}
+								<tr><td height="15" valign="center">&#149; <a href="setup.html?page=server&amp;player=[% player | uri %]">[% "SERVER_SETTINGS" | string %]</a></td></tr>
+								[% player_list %]
 								</table>
 							</td>
 							<td width="4"></td>
@@ -147,7 +147,7 @@
 							<td valign="top"></td>
 							<td width="4"></td>
 						</tr>
-					</table> [/IFN]
+					</table> [% END %]
 					<table cellspacing="0" width="100%">
 						<tr height="5">
 							<td class="lightgrey" width="8" height="5"><img src="html/images/spacer.gif" width="8" height="5" alt=""></td>
@@ -173,14 +173,14 @@
 							<td width="8"><img src="html/images/spacer.gif" width="8" height="8" alt=""></td>
 							<td valign="top">
 								<table cellspacing="0" width="100%">
-									<tr><td height="15" valign="center">&#149; <a href="html/docs/quickstart.html" target="_top">[S GETTING_STARTED]</a></td></tr>
-									<tr><td height="15" valign="center">&#149; <a href="html/docs/ipconfig.html" target="_top">[S PLAYER_SETUP]</a></td></tr>
-									<tr><td height="15" valign="center">&#149; <a href="html/docs/interface.html" target="_top">[S USING_REMOTE]</a></td></tr>
-									<tr><td height="15" valign="center">&#149; <a href="html/help_remote.html?player={%player}" target="_top">[S HELP_REMOTE]</a></td></tr>
-									<tr><td height="15" valign="center">&#149; <a href="html/docs/radio.html?player={%player}" target="_top">[S RADIO]</a></td></tr>
-									<tr><td height="15" valign="center">&#149; <a href="html/docs/faq.html?player={%player}" target="_top">[S FAQ]</a></td></tr>
-									<tr><td height="15" valign="center">&#149; <a href="html/docs/index.html" target="_top">[S TECHNICAL_INFORMATION]</a></td></tr>
-									<tr><td height="15" valign="center">&#149; <a href="http://www.slimdevices.com/" target="website">[S ABOUT_SLIMDEVICES]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="html/docs/quickstart.html" target="_top">[% "GETTING_STARTED" | string %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="html/docs/ipconfig.html" target="_top">[% "PLAYER_SETUP" | string %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="html/docs/interface.html" target="_top">[% "USING_REMOTE" | string %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="html/help_remote.html?player=[% player | uri %]" target="_top">[% "HELP_REMOTE" | string %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="html/docs/radio.html?player=[% player | uri %]" target="_top">[% "RADIO" | string %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="html/docs/faq.html?player=[% player | uri %]" target="_top">[% "FAQ" | string %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="html/docs/index.html" target="_top">[% "TECHNICAL_INFORMATION" | string %]</a></td></tr>
+									<tr><td height="15" valign="center">&#149; <a href="http://www.slimdevices.com/" target="website">[% "ABOUT_SLIMDEVICES" | string %]</a></td></tr>
 								</table>
 						<td width="4"></td>
 						</tr>
@@ -193,4 +193,4 @@
 				</td>
 				<td width="4" height="100%"></td>
 			</tr>
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]

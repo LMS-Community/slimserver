@@ -18,27 +18,26 @@
     <td valign="middle" bgcolor="#999999"> <p> 
       <p> 
       <p> 
-      <h3>[S MUSIC]<img src="html/images/spacer.gif" width="30" height="8"></h3>
+      <h3>[% "MUSIC" | string %]<img src="html/images/spacer.gif" width="30" height="8"></h3>
       </td>
   </tr>
 </table>
-<p><img src="html/images/spacer.gif" width="30" height="8"><a href="home.html?player={%player}">[S 
-  {playermodel}_HOME]</a> / <a href="browse.html?player={%player}">[S MUSIC]</a> {pwd_list} 
+<p><img src="html/images/spacer.gif" width="30" height="8"><a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a> / <a href="browse.html?player=[% player | uri %]">[% "MUSIC" | string %]</a> [% pwd_list %] 
 <p>
 <p>&nbsp;</p>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="30">&nbsp;</td>
-    <td><p>{browselist_header}</p>
-      [IF browselist_pagebar]
-      <p>[S PAGES][S COLON]{browselist_pagebar}</p>
-      [/IF] 
+    <td><p>[% browselist_header %]</p>
+      [% IF browselist_pagebar %]
+      <p>[% "PAGES" | string %][% "COLON" | string %][% browselist_pagebar %]</p>
+      [% END %] 
       <table border="0" cellspacing="0" cellpadding="4" width="100%">
-        {browse_list} 
+        [% browse_list %] 
       </table>
-      [IF browselist_pagebar]
-      <p>[S PAGES][S COLON]{browselist_pagebar}</p>
-      [/IF] </td>
+      [% IF browselist_pagebar %]
+      <p>[% "PAGES" | string %][% "COLON" | string %][% browselist_pagebar %]</p>
+      [% END %] </td>
   </tr>
 </table>
 <p>&nbsp;</p>

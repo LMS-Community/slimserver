@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>[S STATISTICS]</title>
+    <title>[% "STATISTICS" | string %]</title>
     <link rel="stylesheet" href="slimserver.css">
   </head>
   <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onLoad="javascript:top.document.getElementById('player_frame').rows = '0%, 100%';parent.statusframe.location='about:blank';">
@@ -8,9 +8,9 @@
 	   <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse" bordercolor="#111111">
 	   <tr>
 	      <td valign="bottom" width="33%">
-	         <img border="0" src="html/images/{playermodel}_logo.small.gif" width="98"><nobr><span class="songtitle">[S STATISTICS]</span></nobr>
+	         <img border="0" src="html/images/[% playermodel %]_logo.small.gif" width="98"><nobr><span class="songtitle">[% "STATISTICS" | string %]</span></nobr>
   	      </td><td valign="bottom" width="40%">&nbsp;
-          </td><td valign="bottom"><a href="javascript:parent.playlist.location='playlist.html?player={%player}';parent.statusframe.location='status_header.html?player={%player}'">[S PLAYLIST]</a>
+          </td><td valign="bottom"><a href="javascript:parent.playlist.location='playlist.html?player=[% player | uri %]';parent.statusframe.location='status_header.html?player=[% player | uri %]'">[% "PLAYLIST" | string %]</a>
   	      </td>
   	   </tr>
   	   </table>
@@ -19,24 +19,24 @@
     <table cellspacing="0" border="0" cellpadding="4" width="100%">
 	<tr>
 	  <td align="center">
-		<B>{total_song_count} [S SONGS]</B>
+		<B>[% total_song_count %] [% "SONGS" | string %]</B>
 	  </td>
 	  <td align="center">
-	<B>{album_count} [S ALBUMS]</B>
+	<B>[% album_count %] [% "ALBUMS" | string %]</B>
 	  </td>
 	</tr>
 	<tr align="center">
 	  <td>
-		<B>{artist_count} [S ARTISTS]</B>
+		<B>[% artist_count %] [% "ARTISTS" | string %]</B>
 	  </td>
 	  <td align="center">
-		<B>{genre_count} [S GENRES]</B>
+		<B>[% genre_count %] [% "GENRES" | string %]</B>
 	  </td>
 	</table>
 	</div>
     <h4>Most requested songs</h4>
     <table cellspacing="0" border="0" cellpadding="0" width="100%">
-      {browse_list}
+      [% browse_list %]
     </table>
   </body>
 </html>

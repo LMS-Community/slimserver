@@ -3,8 +3,7 @@
         <TD class=listing align=right width=4%>&nbsp;</TD>
         
   <TD colspan="2" class=listing><b><IMG height=9 alt=Play hspace=3 
-      src="html/play.this.gif" width=5 border=0> <a href="setup.html?page=player&player={%player}&playerid={%playerid}">[S 
-    PLAYER_SETTINGS][IF playername] [S FOR] {playername}[/IF]</a></b></TD>
+      src="html/play.this.gif" width=5 border=0> <a href="setup.html?page=player&player=[% player | uri %]&playerid=[% playerid | uri %]">[% "PLAYER_SETTINGS" | string %][% IF playername %] [% "FOR" | string %] [% playername %][% END %]</a></b></TD>
         <TD class=listing>&nbsp;</TD>
         <TD class=listing>&nbsp;</TD>
         <TD class=listing>&nbsp;</TD>

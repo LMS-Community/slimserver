@@ -2,50 +2,50 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
   <head>
-    <title>[EQ type artist][S SEARCHFOR_ARTIST][/EQ][EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type song][S SEARCHFOR_SONGTITLE][/EQ]</title>
+    <title>[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</title>
     <link rel="stylesheet" href="slimserver.css" />
   </head>
   <body>
-    <h3>[EQ type artist][S SEARCHFOR_ARTIST][/EQ][EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type song][S SEARCHFOR_SONGTITLE][/EQ]</h3>
+    <h3>[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</h3>
     <div class="linktree">
     <ul>
-      <li><a href="home.html?player={%player}">[S {playermodel}_HOME]</a></li>
-      <li> / <a href="search.html?player={%player}&amp;type={type}">[EQ type artist][S SEARCHFOR_ARTIST][/EQ][EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type song][S SEARCHFOR_SONGTITLE][/EQ]</a></li>
+      <li><a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a></li>
+      <li> / <a href="search.html?player=[% player | uri %]&amp;type=[% type %]">[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</a></li>
     </ul>
     </div>
 
 <div class="searchinput">
 <form method="get" action="search.html">
-[EQ type artist][S SEARCHFOR_ARTIST][/EQ][EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type song][S SEARCHFOR_SONGTITLE][/EQ][S COLON]
-<input type="text" class="stdedit" name="query" value="{query}" size="40" />
-<input type="submit" class="stdclick" value="[S SEARCH]" />
-<input type="hidden" value="{type}" name="type" />
-<input type="hidden" value="{player}" name="player" />
+[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %][% "COLON" | string %]
+<input type="text" class="stdedit" name="query" value="[% query %]" size="40" />
+<input type="submit" class="stdclick" value="[% "SEARCH" | string %]" />
+<input type="hidden" value="[% type %]" name="type" />
+<input type="hidden" value="[% player %]" name="player" />
 </form>
-[NE numresults -1]
-[EQ type artist][S ARTISTSMATCHING][/EQ][EQ type album][S ALBUMSMATCHING][/EQ][EQ type song][S SONGSMATCHING][/EQ] "{query}"[S COLON]{numresults}
-[/NE]
+[% IF numresults != '-1' %]
+[% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %][% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %][% IF type == 'song' %][% "SONGSMATCHING" | string %][% END %] "[% query %]"[% "COLON" | string %][% numresults %]
+[% END %]
 </div>
-[IF searchlist_pagebar]    <div id="topbrowselistpagebar" class="pagebar">
+[% IF searchlist_pagebar %]    <div id="topbrowselistpagebar" class="pagebar">
       <div class="controls">
-        <ul[NE type song] class="alpha"[/NE]>
-          {searchlist_pagebar}
+        <ul[% IF type != 'song' %] class="alpha"[% END %]>
+          [% searchlist_pagebar %]
         </ul>
       </div>
-    </div>[/IF]
-     [IF searchlist_header]<div id="searchlist_header">{searchlist_header}[S COLON]</div>[/IF]
+    </div>[% END %]
+     [% IF searchlist_header %]<div id="searchlist_header">[% searchlist_header %][% "COLON" | string %]</div>[% END %]
     <div id="browselist">
       <ul>
-{browse_list}
+[% browse_list %]
       </ul>
     </div>
-[IF searchlist_pagebar]    <div id="bottombrowselistpagebar" class="pagebar">
+[% IF searchlist_pagebar %]    <div id="bottombrowselistpagebar" class="pagebar">
       <div class="controls">
-        <ul[NE type song] class="alpha"[/NE]>
-          {searchlist_pagebar}
+        <ul[% IF type != 'song' %] class="alpha"[% END %]>
+          [% searchlist_pagebar %]
         </ul>
       </div>
-    </div>[/IF]
+    </div>[% END %]
   </body>
 </html>
 

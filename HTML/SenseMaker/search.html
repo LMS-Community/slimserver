@@ -16,7 +16,7 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
 cellPadding=0 width=90% border=0>
     <TBODY>
       <TR> 
-        <TD width="100%" valign="middle"> <b> <img src="html/images/spacer.gif" width="1" height="17">[S {playermodel}] 
+        <TD width="100%" valign="middle"> <b> <img src="html/images/spacer.gif" width="1" height="17">[% playermodel | string %] 
           Music Network</b></TD>
       </TR>
     </TBODY>
@@ -27,9 +27,7 @@ cellPadding=0 width=90% border=0>
 <BODY 
 style="BORDER-RIGHT: white 2px solid; BACKGROUND: #333; BORDER-BOTTOM: 0px" 
 leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
-<P class=menu1><B><a href="home.html?player={%player}"><font color="#FFFFFF">[S 
-  {playermodel}_HOME]</font></a><a href="home.html"></a> / <a href="search.html?player={%player}&type={type}">[EQ type artist][S
-  SEARCHFOR_ARTIST][/EQ] [EQ type album][S SEARCHFOR_ALBUM][/EQ] [EQ type song][S SEARCHFOR_SONGTITLE][/EQ]</a></B></P>
+<P class=menu1><B><a href="home.html?player=[% player | uri %]"><font color="#FFFFFF">[% playermodel _ "_HOME" | string %]</font></a><a href="home.html"></a> / <a href="search.html?player=[% player | uri %]&type=[% type %]">[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %] [% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %] [% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</a></B></P>
 <P class=menu2>&nbsp;</P>
 
 
@@ -42,15 +40,15 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
 <TABLE width="100%"  border=0 cellPadding=2 cellSpacing=0>
     <TBODY>
       <TR> 
-        <TD height="20" colspan="1" class=listingheadsp2 width="360">[EQ type artist][S SEARCHFOR_ARTIST][/EQ] [EQ type album][S SEARCHFOR_ALBUM][/EQ] [EQ type song][S SEARCHFOR_SONGTITLE][/EQ][S COLON]</TD>
+        <TD height="20" colspan="1" class=listingheadsp2 width="360">[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %] [% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %] [% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %][% "COLON" | string %]</TD>
         <TD height="20" colspan="5" class=listingheadsp2>
 
           <form method="get" action="search.html">
           <table width="100%" border="0" cellspacing="0" cellpadding="0" align="left">
             <tr>
-              <td valign="middle"><input type=text class="formfield" name="query" value="{query}" size=26><input name="" type="image" onClick="submit" src="html/ok2.gif">
+              <td valign="middle"><input type=text class="formfield" name="query" value="[% query %]" size=26><input name="" type="image" onClick="submit" src="html/ok2.gif">
                 
-                <input type=hidden value="{type}" name="type"> <input type=hidden value="{player}" name="player"><font color="#999999"><b>[NE numresults -1]Found[S COLON] {numresults} [/NE]</b></font>
+                <input type=hidden value="[% type %]" name="type"> <input type=hidden value="[% player %]" name="player"><font color="#999999"><b>[% IF numresults != '-1' %]Found[% "COLON" | string %] [% numresults %] [% END %]</b></font>
               </td>
             </tr>
           </table></TD>
@@ -60,13 +58,13 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
     <TR> 
       <TD colspan="7" class=listing width="100%"><table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td><font color="#999999">[IF searchlist_pagebar]Pages[S COLON][/IF]</font></td>
-    <td align="left">[IF searchlist_pagebar]{searchlist_pagebar}[/IF][IF searchlist_header] {searchlist_header}[S COLON][/IF]</td>
+    <td><font color="#999999">[% IF searchlist_pagebar %]Pages[% "COLON" | string %][% END %]</font></td>
+    <td align="left">[% IF searchlist_pagebar %][% searchlist_pagebar %][% END %][% IF searchlist_header %] [% searchlist_header %][% "COLON" | string %][% END %]</td>
   </tr>
 </table>
 
           <table border="0" cellspacing="0" cellpadding="4" width="100%">
-            {browse_list} 
+            [% browse_list %] 
           </table>
 </TD>
       </TR>

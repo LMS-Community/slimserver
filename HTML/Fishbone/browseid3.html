@@ -1,21 +1,21 @@
-[SET title [S {browseby}]] [SET browse 0] [SET playlist 0] [SET music 1] [SET pageicon MUSIC] [INCLUDE pageheader.html]
-	[IF warn]<div class="nowplaying"><b>[S NOTE]</b> [S SCAN_WARNING] [IFN itunes][S SCAN_CLICK] <a href="browse.html?player={%player}">[S HERE]</a>.[/IFN]
-	</div>[/IF]
-	<center><p>[IF song_count]Browsing <b>{album_count}</b> [S WITH] <B>{song_count}</B> [S BY] <B>{artist_count}</B>[/IF]</p></center>
+[% title = browseby | string %] [% browse = '0' %] [% playlist = '0' %] [% music = '1' %] [% pageicon = 'MUSIC' %] [% PROCESS pageheader.html %]
+	[% IF warn %]<div class="nowplaying"><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF not itunes %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]
+	</div>[% END %]
+	<center><p>[% IF song_count %]Browsing <b>[% album_count %]</b> [% "WITH" | string %] <B>[% song_count %]</B> [% "BY" | string %] <B>[% artist_count %]</B>[% END %]</p></center>
    <table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr><td>{pwd_list}</td></tr></table>
-	[IF browselist_pagebar]<p>{browselist_pagebar}[/IF][IF browselist_header]&nbsp;|&nbsp;{browselist_header}</p>[/IF]
-	[NE browseby BROWSE_BY_SONG][IF coverart]<center>
-		<a href="status_header.html?p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="statusframe">
-		<img src="/music/{%coverartpath}/cover.jpg" border="0" width="200"></a></center>
-	[/IF][/NE]<p>
+	<tr><td>[% pwd_list %]</td></tr></table>
+	[% IF browselist_pagebar %]<p>[% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %]</p>[% END %]
+	[% IF browseby != 'BROWSE_BY_SONG' %][% IF coverart %]<center>
+		<a href="status_header.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="statusframe">
+		<img src="/music/[% coverartpath | uri %]/cover.jpg" border="0" width="200"></a></center>
+	[% END %][% END %]<p>
 	<table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td>
-	[NE browseby BROWSE_BY_ARTWORK]<table cellpadding="0" cellspacing="0" border="0" width="100%">[/NE]
-      {browse_list}
-   [NE browseby BROWSE_BY_ARTWORK]</table>[/NE]
+	[% IF browseby != 'BROWSE_BY_ARTWORK' %]<table cellpadding="0" cellspacing="0" border="0" width="100%">[% END %]
+      [% browse_list %]
+   [% IF browseby != 'BROWSE_BY_ARTWORK' %]</table>[% END %]
 	</td></tr><tr><td>
 	
-   [IF browselist_pagebar]<p>{browselist_pagebar}</p>[/IF]
+   [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
    </td></tr></table>
   </body>
 </html>

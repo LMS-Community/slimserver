@@ -3,8 +3,8 @@
 <!DOCTYPE search SYSTEM "http://mypage.bluewin.ch/alf/slimserver_xml.dtd">
 
 <search xmlns="http://www.slimdevices.com/slimserver/xml">
-	<num_results>{&numresults}</num_results>
-	<query>{&query}</query>
-	[IF searchlist_header]{searchlist_header}[/IF]
-	{browse_list}
+	<num_results>[% numresults | html %]</num_results>
+	<query>[% query | html %]</query>
+	[% IF searchlist_header %][% searchlist_header %][% END %]
+	[% browse_list %]
 </search>

@@ -1,34 +1,34 @@
 <tr>
   <td class="listing">&nbsp;
-	  [IF anchor]<a name="{anchor}"></a>[/IF]
-      [IF  descend]<a href="browse.html?dir={%descend}&player={%player}"><font style="color:yellow">+ </font>{title}</a>  [/IF]
-      [IFN descend]<b><a href="songinfo.html?songurl={%itempath}&player={%player}">"{title}"</a></b>
-         [IF artist][S BY] [/IF]
-         <a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser">{artist}</a>
-        [IF album][S FROM][/IF]
-         <i><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{album}</a></i>
-      [/IFN]
+	  [% IF anchor %]<a name="[% anchor %]"></a>[% END %]
+      [% IF descend %]<a href="browse.html?dir=[% descend | uri %]&player=[% player | uri %]"><font style="color:yellow">+ </font>[% title %]</a>  [% END %]
+      [% IF not descend %]<b><a href="songinfo.html?songurl=[% itempath | uri %]&player=[% player | uri %]">"[% title %]"</a></b>
+         [% IF artist %][% "BY" | string %] [% END %]
+         <a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist %]</a>
+        [% IF album %][% "FROM" | string %][% END %]
+         <i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album %]</a></i>
+      [% END %]
   </td>  
   <td  class="listing" width="11" align="center">
-      <nobr><a href="status_header.html?p0=playlist&p1=insert&p2={%itempath}&player={%player}" target="statusframe"><img src="html/queue.gif" border=0 align="center" width="6" height="9" onMouseOver="self.status='Queue This List';return true"></a></nobr>
+      <nobr><a href="status_header.html?p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/queue.gif" border=0 align="center" width="6" height="9" onMouseOver="self.status='Queue This List';return true"></a></nobr>
   </td>
   <td class="listing" width="3" align="center">&nbsp;</td>
   <td  class="listing" width="11" align="center">
-      <nobr><a href="status_header.html?p0=playlist&p1=play&p2={%itempath}&player={%player}" target="statusframe"><img src="html/play.this.gif" border=0 align="center" width="5" height="9" onMouseOver="self.status='Play This Item';return true"></a></nobr>
+      <nobr><a href="status_header.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/play.this.gif" border=0 align="center" width="5" height="9" onMouseOver="self.status='Play This Item';return true"></a></nobr>
   </td>
   <td class="listing" width="3" align="center">&nbsp;</td>
   <td class="listing" width="11" align="center">
-      <nobr><a href="status_header.html?p0=playlist&p1=add&p2={%itempath}&player={%player}"    target="statusframe"><img src="html/add.gif" border=0 align="center" width="8" height="8" onMouseOver="self.status='Add This Item';return true"></a></nobr>
+      <nobr><a href="status_header.html?p0=playlist&p1=add&p2=[% itempath | uri %]&player=[% player | uri %]"    target="statusframe"><img src="html/add.gif" border=0 align="center" width="8" height="8" onMouseOver="self.status='Add This Item';return true"></a></nobr>
   </td>
   <td  class="listing" width="3" align="center">&nbsp;</td>
   <td  class="listing" width="11" align="center">
-        <nobr><a href="status_header.html?p0=playlist&p1=deleteitem&p2={%itempath}&player={%player}" target="statusframe"><img src="html/subtract.gif" border=0 align="center" width="8" height="8" onMouseOver="self.status='Delete List';return true"></a></nobr>
+        <nobr><a href="status_header.html?p0=playlist&p1=deleteitem&p2=[% itempath | uri %]&player=[% player | uri %]" target="statusframe"><img src="html/subtract.gif" border=0 align="center" width="8" height="8" onMouseOver="self.status='Delete List';return true"></a></nobr>
   </td>
-  [IF mixable_not_descend]<td  class="listing" width="3" align="center">&nbsp;</td>
+  [% IF mixable_not_descend %]<td  class="listing" width="3" align="center">&nbsp;</td>
   <td class="listing" align="center" width="11">
-         <nobr><a href="instant_mix.html?song={%itempath}&artist={%artist}&album={%album}&player={%player}"><font style="color:#EE3823"><b>M</b></font></a></nobr>
+         <nobr><a href="instant_mix.html?song=[% itempath | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]"><font style="color:#EE3823"><b>M</b></font></a></nobr>
   </td>
-  [/IF]
+  [% END %]
   <td class="listing" width="3" align="center">&nbsp;</td>
 </tr>
 

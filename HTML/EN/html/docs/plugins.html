@@ -1,7 +1,7 @@
-[SET pageicon help]
-[SET title SlimServer Plugins]
-[SET techinfo 1]
-[INCLUDE helpheader.html]
+[% pageicon = 'help' %]
+[% title = 'SlimServer Plugins' %]
+[% techinfo = '1' %]
+[% PROCESS helpheader.html %]
 
  <h4>Introduction</h4>
 <p>This document illustrates the basic framework upon which to build a Plugin or module compatible with the SlimServer software. The SlimServer provides a method to load custom modules at startup which are then made available to the user via remote control menus. Each plugin serves as an area within SlimServer remote menu system, available from within the Plugins menu. Plugin files are stored in the &quot;Plugins&quot; folder which is in the same folder as the SlimServer software. The Plugin interface can provide a very powerful control and has complete access to the functionality of the SlimServer. As with the rest of the SlimServer, plugin modules are created using the Perl language.</p>
@@ -180,7 +180,7 @@ $client->update();
 <blockquote>
 <p><em>Example 4</em></p>
 <pre>
-sub setupGroup &lbrc;
+sub setupGroup {
    my %setupGroup = (
       PrefOrder =>
       ['plugin-pluginName-pref-one','plugin-pluginName-pref-two']
@@ -192,20 +192,20 @@ sub setupGroup &lbrc;
       ,Suppress_PrefLine => 1
    );
    my %setupPrefs = (
-      'plugin-pluginName-pref-one' => &lbrc;
+      'plugin-pluginName-pref-one' => {
          'validate' => \&Slim::Web::Setup::validateInt
          ,'validateArgs' => [1,undef,1]
-      &rbrc;
-      'plugin-pluginName-pref-two' => &lbrc;
+      }
+      'plugin-pluginName-pref-two' => {
          'validate' => \&Slim::Web::Setup::validateTrueFalse  
-         ,'options' => &lbrc;
+         ,'options' => {
             '0' => string('SETUP_PLUGIN-PLUGINNAME_PREFTWO_NO)
             ,'1' => string('SETUP_PLUGIN-PLUGINNAME_PREFTWO_YES)
-         &rbrc;
-      &rbrc;,
+         }
+      },
    );	
    return (\%setupGroup,\%setupPrefs);
-&rbrc;
+}
 </pre></blockquote>
 <hr>
 <h4>Strings</h4>
@@ -237,13 +237,13 @@ PLUGIN_NAME
 You can turn any plugin into a custom screensaver by registering your plugin as a screensaver.  The plugin should 
 be used to give the user any settings options or to set the screensaver as active or reset to default.  You can register the screensaver using the following subroutine:
 <pre>
-sub screenSaver() &lbrc;
+sub screenSaver() {
 	Slim::Buttons::Common::addSaver('SCREENSAVER.saverModeName',
 		getScreensaverFunctions(),
 		\&setScreensaverMode,
 		\&leaveScreensaverMode,
 		string('PLUGIN_SCREENSAVER_NAME'));
-&rbrc;
+}
 </pre>
 <dl>
 <dt>SCREENSAVER.saverModeName</dt><dd>Change this to provide a unique name for your screensaver.  Using the prefix "SCREENSAVER" will indicate to the server that your mode is of the screensaver class, and match the IR mappings from the [screensaver] section of Default.map</dd>
@@ -284,9 +284,9 @@ package Plugins::Rescan;
 use Slim::Player::Playlist;
 use Slim::Utils::Strings qw (string);
 
-sub getDisplayName() {return string('PLUGIN_RESCAN_MUSIC_LIBRARY')}
+sub getDisplayName() [% return string('PLUGIN_RESCAN_MUSIC_LIBRARY') %]
 
-sub strings() { return '
+sub strings() [%  return '
 PLUGIN_RESCAN_MUSIC_LIBRARY
 	EN	Rescan Music Library
 	
@@ -295,65 +295,65 @@ PLUGIN_RESCAN_RESCANNING
 
 PLUGIN_RESCAN_PRESS_PLAY
 	EN	Press PLAY to rescan your music folder
-'};
+' %];
 
 ##################################################
 ### Section 2. Your variables and code go here ###
 ##################################################
 
 
-sub setMode() {
+sub setMode() [% 
 	my $client = shift;
 	$client-&gt;lines(\&amp;lines);
-}
+ %]
 
-sub enabled {
+sub enabled [% 
 	my $client = shift;
 	return !Slim::Music::iTunes::useiTunesLibrary();
-}
+ %]
 
 my %functions = (
-	'up' =&gt; sub  {
+	'up' =&gt; sub  [% 
 		my $client = shift;
 		Slim::Display::Animation::bumpUp($client);
-	},
-	'down' =&gt; sub  {
+	 %],
+	'down' =&gt; sub  [% 
 	    my $client = shift;
 		Slim::Display::Animation::bumpDown($client);
-	},
-	'left' =&gt; sub  {
+	 %],
+	'left' =&gt; sub  [% 
 		my $client = shift;
 		Slim::Buttons::Common::popModeRight($client);
-	},
-	'right' =&gt; sub  {
+	 %],
+	'right' =&gt; sub  [% 
 		my $client = shift;
 		Slim::Display::Animation::bumpRight($client);
-	},
-	'play' =&gt; sub {
+	 %],
+	'play' =&gt; sub [% 
 		my $client = shift;
 		my @pargs=('rescan');
 		my ($line1, $line2) = (string('PLUGIN_RESCAN_MUSIC_LIBRARY'), string('PLUGIN_RESCAN_RESCANNING'));
 		Slim::Control::Command::execute($client, \@pargs, undef, undef);
 		Slim::Display::Animation::showBriefly($client, $line1, $line2);
-	}
+	 %]
 );
 
-sub lines {
+sub lines [% 
 	my ($line1, $line2);
 	$line1 = string('PLUGIN_RESCAN_MUSIC_LIBRARY');
 	$line2 = string('PLUGIN_RESCAN_PRESS_PLAY');
 	return ($line1, $line2);
-}
+ %]
 	
 ################################################
 ### End of Section 2.                        ###
 ################################################
 
-sub getFunctions() {
+sub getFunctions() [% 
 	return \%functions;
-}
+ %]
 
 1;
 </pre>
 	
-[INCLUDE helpfooter.html]
+[% PROCESS helpfooter.html %]

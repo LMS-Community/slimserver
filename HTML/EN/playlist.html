@@ -1,10 +1,10 @@
      <hr>
-	[S CURRENT_PLAYLIST]
-    ([IF cansave]<a target="browser" href="browse.html?player={%player}&dir=__playlists%2f__current.m3u">[S SAVE]</a>, [/IF]<a href="status.m3u?player={%player}">[S DOWNLOAD]</a>, 
-   	  <a href="status.html?p0=playlist&p1=clear&player={%player}">[S CLEAR]</a>)</p>
-    [IF playlist_pagebar]<p>[S PAGES][S COLON]{playlist_pagebar}</p>[/IF]
-	[IF playlist_header]{playlist_header}[S COLON][/IF]
+	[% "CURRENT_PLAYLIST" | string %]
+    ([% IF cansave %]<a target="browser" href="browse.html?player=[% player | uri %]&dir=__playlists%2f__current.m3u">[% "SAVE" | string %]</a>, [% END %]<a href="status.m3u?player=[% player | uri %]">[% "DOWNLOAD" | string %]</a>, 
+   	  <a href="status.html?p0=playlist&p1=clear&player=[% player | uri %]">[% "CLEAR" | string %]</a>)</p>
+    [% IF playlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %]</p>[% END %]
+	[% IF playlist_header %][% playlist_header %][% "COLON" | string %][% END %]
     <table cellspacing="0" border="0" cellpadding="4" width="100%">
-      [IFN playlist_items][S EMPTY][/IFN]{playlist_items}
+      [% IF not playlist_items %][% "EMPTY" | string %][% END %][% playlist_items %]
     </table>
-   [IF playlist_pagebar]<p>[S PAGES][S COLON]{playlist_pagebar}</p>[/IF]
+   [% IF playlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %]</p>[% END %]

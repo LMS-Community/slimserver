@@ -4,84 +4,84 @@
 
 <status xmlns="http://www.slimdevices.com/slimserver/xml">
 	<players>
-		<playercount>{&playercount}</playercount>
+		<playercount>[% playercount | html %]</playercount>
 		<player>
 			<is_described/>
-			<player_id>{player}</player_id>
-			[IF player_name]<player_name>{&player_name}</player_name>[/IF]
+			<player_id>[% player %]</player_id>
+			[% IF player_name %]<player_name>[% player_name | html %]</player_name>[% END %]
 		</player>
-		[IF player_chooser_list]
-		{player_chooser_list}
-		[/IF]
+		[% IF player_chooser_list %]
+		[% player_chooser_list %]
+		[% END %]
 	</players>
 
 	   
 	<player_status>
 		<transport>
-			<mode>{&mode}</mode>
-			<playmode>[IF modeplay]playing[/IF][IF modepause]paused[/IF][IF modestop]stopped[/IF]</playmode>
-    		[IF modeplay]<playing/>[/IF]
-    		[IF modepause]<paused/>[/IF]
-    		[IF modestop]<stopped/>[/IF]
-    		[IF currentsong]
-    		[IFN modeplay]<play_url><![CDATA[xml/status.xml?p0=play]]></play_url>[/IFN]
-    		[IFN modepause]<pause_url><![CDATA[xml/status.xml?p0=pause]]></pause_url>[/IFN]
-    		[IFN modestop]<stop_url><![CDATA[xml/status.xml?p0=stop]]></stop_url>[/IFN]
+			<mode>[% mode | html %]</mode>
+			<playmode>[% IF modeplay %]playing[% END %][% IF modepause %]paused[% END %][% IF modestop %]stopped[% END %]</playmode>
+    		[% IF modeplay %]<playing/>[% END %]
+    		[% IF modepause %]<paused/>[% END %]
+    		[% IF modestop %]<stopped/>[% END %]
+    		[% IF currentsong %]
+    		[% IF not modeplay %]<play_url><![CDATA[xml/status.xml?p0=play]]></play_url>[% END %]
+    		[% IF not modepause %]<pause_url><![CDATA[xml/status.xml?p0=pause]]></pause_url>[% END %]
+    		[% IF not modestop %]<stop_url><![CDATA[xml/status.xml?p0=stop]]></stop_url>[% END %]
     		<play_prev_url><![CDATA[xml/status.xml?p0=playlist&p1=jump&p2=-1]]></play_prev_url>
     		<play_next_url><![CDATA[xml/status.xml?p0=playlist&p1=jump&p2=1]]></play_next_url>
-    		[/IF]
- 			[IF rate && currentsong]<rate>{&rate}</rate>[/IF]
- 			[IF rateval && currentsong]<rateval>{&rateval}</rateval>[/IF]
- 			[IF sleeptime]<sleeptime>{&sleeptime}</sleeptime>[/IF]
- 			[IF sleep]<sleep>{&sleep}</sleep>[/IF]
+    		[% END %]
+ 			[% IF rate && currentsong %]<rate>[% rate | html %]</rate>[% END %]
+ 			[% IF rateval && currentsong %]<rateval>[% rateval | html %]</rateval>[% END %]
+ 			[% IF sleeptime %]<sleeptime>[% sleeptime | html %]</sleeptime>[% END %]
+ 			[% IF sleep %]<sleep>[% sleep | html %]</sleep>[% END %]
  		</transport>
 		<shuffle>
-			[IF shuffleoff]<shuffle_off/>[/IF]
-    		[IF shuffleon]<shuffle_songs/>[/IF]
-			[IF shufflealbum]<shuffle_albums/>[/IF]
-    		[IFN shuffleoff]<shuffle_off_url><![CDATA[xml/status.xml?p0=playlist&p1=shuffle&p2=0]]></shuffle_off_url>[/IFN]
-    		[IFN shufflealbum]<shuffle_albums_url><![CDATA[xml/status.xml?p0=playlist&p1=shuffle&p2=2]]></shuffle_albums_url>[/IFN]    	
-    		[IFN shuffleon]<shuffle_songs_url><![CDATA[xml/status.xml?p0=playlist&p1=shuffle&p2=1]]></shuffle_songs_url>[/IFN]
+			[% IF shuffleoff %]<shuffle_off/>[% END %]
+    		[% IF shuffleon %]<shuffle_songs/>[% END %]
+			[% IF shufflealbum %]<shuffle_albums/>[% END %]
+    		[% IF not shuffleoff %]<shuffle_off_url><![CDATA[xml/status.xml?p0=playlist&p1=shuffle&p2=0]]></shuffle_off_url>[% END %]
+    		[% IF not shufflealbum %]<shuffle_albums_url><![CDATA[xml/status.xml?p0=playlist&p1=shuffle&p2=2]]></shuffle_albums_url>[% END %]    	
+    		[% IF not shuffleon %]<shuffle_songs_url><![CDATA[xml/status.xml?p0=playlist&p1=shuffle&p2=1]]></shuffle_songs_url>[% END %]
     	</shuffle>
 		<repeat>
-			[IF repeatone]<repeat_one/>[/IF]
-			[IF repeatall]<repeat_all/>[/IF]
-			[IF repeatoff]<repeat_off/>[/IF]
-			[IFN repeatone]<repeat_one_url><![CDATA[xml/status.xml?p0=playlist&p1=repeat&p2=1]]></repeat_one_url>[/IFN]
-			[IFN repeatall]<repeat_all_url><![CDATA[xml/status.xml?p0=playlist&p1=repeat&p2=2]]></repeat_all_url>[/IFN]
-			[IFN repeatoff]<repeat_off_url><![CDATA[xml/status.xml?p0=playlist&p1=repeat&p2=0]]></repeat_off_url>[/IFN]
+			[% IF repeatone %]<repeat_one/>[% END %]
+			[% IF repeatall %]<repeat_all/>[% END %]
+			[% IF repeatoff %]<repeat_off/>[% END %]
+			[% IF not repeatone %]<repeat_one_url><![CDATA[xml/status.xml?p0=playlist&p1=repeat&p2=1]]></repeat_one_url>[% END %]
+			[% IF not repeatall %]<repeat_all_url><![CDATA[xml/status.xml?p0=playlist&p1=repeat&p2=2]]></repeat_all_url>[% END %]
+			[% IF not repeatoff %]<repeat_off_url><![CDATA[xml/status.xml?p0=playlist&p1=repeat&p2=0]]></repeat_off_url>[% END %]
 		</repeat>
 		<audio> 		
-		    <volume>{&volume}</volume>
+		    <volume>[% volume | html %]</volume>
     		<volume_url><![CDATA[xml/status.xml?p0=mixer&p1=volume&p2=___LEVEL___]]></volume_url>
-    		<bass>{&bass}</bass>
+    		<bass>[% bass | html %]</bass>
     		<bass_url><![CDATA[xml/status.xml?p0=mixer&p1=bass&p2=___LEVEL___]]></bass_url>	
-			<treble>{&treble}</treble>
+			<treble>[% treble | html %]</treble>
 			<treble_url><![CDATA[xml/status.xml?p0=mixer&p1=treble&p2=___LEVEL___]]></treble_url>
 		</audio>
 		
-		[IF currentsong]	
+		[% IF currentsong %]	
 		<current_song>
-			<playlist_offset>{thissongnum}</playlist_offset>
-			<remove_url><![CDATA[xml/status.xml?p0=playlist&p1=delete&p2={thissongnum}]]></remove_url>
-			<seconds_elapsed>{&songtime}</seconds_elapsed>
-			<seconds_total>{&duration}</seconds_total>
-		[/IF]
-			[IF title]<song>[/IF]
-			[INCLUDE _xml_song.html]
-			[IF title]</song>[/IF]
-		[IF currentsong]
+			<playlist_offset>[% thissongnum %]</playlist_offset>
+			<remove_url><![CDATA[xml/status.xml?p0=playlist&p1=delete&p2=[% thissongnum %]]]></remove_url>
+			<seconds_elapsed>[% songtime | html %]</seconds_elapsed>
+			<seconds_total>[% duration | html %]</seconds_total>
+		[% END %]
+			[% IF title %]<song>[% END %]
+			[% PROCESS _xml_song.html %]
+			[% IF title %]</song>[% END %]
+		[% IF currentsong %]
 		</current_song>
-		[/IF]
+		[% END %]
 
 	</player_status>
 
-	[IF playlist]
+	[% IF playlist %]
 	<playlist>
-	[/IF]
-		[IF cansave]<save_url><![CDATA[xml/browse.xml?dir=__playlists%2f__current.m3u]]></save_url>[/IF]
-    	{playlist}
- 	[IF playlist]
+	[% END %]
+		[% IF cansave %]<save_url><![CDATA[xml/browse.xml?dir=__playlists%2f__current.m3u]]></save_url>[% END %]
+    	[% playlist %]
+ 	[% IF playlist %]
 	</playlist>
-	[/IF]  	
+	[% END %]  	
 </status>

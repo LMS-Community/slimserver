@@ -1,17 +1,17 @@
 <html>
 <head>
-<title>[S {playermodel}_MUSIC_PLAYER]</title>
-<meta http-equiv="refresh" content="{refresh}; url=status.html">
+<title>[% playermodel _ "_MUSIC_PLAYER" | string %]</title>
+<meta http-equiv="refresh" content="[% refresh %]; url=status.html">
 <link rel="stylesheet" href="slimserver.css">
 </head>
 <body bgcolor="#FFFFFF">
-	[S {playermodel}_MUSIC_PLAYER] | <a href="hitlist.html">[S STATISTICS]</a>
+	[% playermodel _ "_MUSIC_PLAYER" | string %] | <a href="hitlist.html">[% "STATISTICS" | string %]</a>
 	<p><hr><p>
-<p><h3>[S {playermodel}_MUSIC_PLAYER]</h3></p>
+<p><h3>[% playermodel _ "_MUSIC_PLAYER" | string %]</h3></p>
  <hr>
  <p>
-<b>[S NO_PLAYER_FOUND]</b>
-<p>[S NO_PLAYER_DETAILS]</p>
+<b>[% "NO_PLAYER_FOUND" | string %]</b>
+<p>[% "NO_PLAYER_DETAILS" | string %]</p>
 
 </body>
 </html>	

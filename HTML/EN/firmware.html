@@ -1,16 +1,16 @@
 <html>
   <head>
-    <title>[S PLAYER_NEEDS_UPGRADE_1]</title>
+    <title>[% "PLAYER_NEEDS_UPGRADE_1" | string %]</title>
     <link rel="stylesheet" href="slimserver.css">
   </head>
   <body bgcolor="#FFFFFF">
 
     <p>
 
-    <h3>[S PLAYER_NEEDS_UPGRADE_1]</h3>
+    <h3>[% "PLAYER_NEEDS_UPGRADE_1" | string %]</h3>
     
 	<p>
-	[S PLAYER_UPGRADE_INSTRUCTIONS]
+	[% "PLAYER_UPGRADE_INSTRUCTIONS" | string %]
 	
 	<form action="update_firmware.html"><input type=text name="ipaddress"><input type=submit></form>
 	</p>

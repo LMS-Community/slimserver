@@ -6,34 +6,34 @@
     <link rel="stylesheet" href="slimserver.css" />
   </head>
   <body>
-    <h3>[S MUSIC]</h3>
-    <div class="linktree"><ul><li><a href="home.html?player={%player}">[S {playermodel}_HOME]</a></li><li> / <a href="browse.html?player={%player}">[S MUSIC]</a></li>{pwd_list}</ul></div>
-    <div id="browselist_header">{browselist_header}</div>
-[IF browselist_pagebar]    <div id="topbrowselistpagebar" class="pagebar">
-      <span class="label">[S PAGES][S COLON]</span>
+    <h3>[% "MUSIC" | string %]</h3>
+    <div class="linktree"><ul><li><a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a></li><li> / <a href="browse.html?player=[% player | uri %]">[% "MUSIC" | string %]</a></li>[% pwd_list %]</ul></div>
+    <div id="browselist_header">[% browselist_header %]</div>
+[% IF browselist_pagebar %]    <div id="topbrowselistpagebar" class="pagebar">
+      <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
       <div class="controls">
         <ul>
-          {browselist_pagebar}
+          [% browselist_pagebar %]
         </ul>
       </div>
-    </div>[/IF]
-[IF coverart]  <div class="coverart">
-    <a href="/music/{%coverartpath}/cover.jpg" target="cover">
-    <img src="/music/{%coverartpath}/cover.jpg" /></a>
-  </div>[/IF]
+    </div>[% END %]
+[% IF coverart %]  <div class="coverart">
+    <a href="/music/[% coverartpath | uri %]/cover.jpg" target="cover">
+    <img src="/music/[% coverartpath | uri %]/cover.jpg" /></a>
+  </div>[% END %]
   <div id="browselist">
     <ul>
-{browse_list}
+[% browse_list %]
     </ul>
   </div>
 
-[IF browselist_pagebar]  <div id="bottombrowselistpagebar" class="pagebar">
-    <span class="label">[S PAGES][S COLON]</span>
+[% IF browselist_pagebar %]  <div id="bottombrowselistpagebar" class="pagebar">
+    <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
     <div class="controls">
       <ul>
-        {browselist_pagebar}
+        [% browselist_pagebar %]
       </ul>
     </div>
-  </div>[/IF]
+  </div>[% END %]
   </body>
 </html>

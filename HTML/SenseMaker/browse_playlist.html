@@ -16,7 +16,7 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
 cellPadding=0 width=90% border=0>
     <TBODY>
       <TR> 
-        <TD width="100%" valign="middle"> <b><img src="html/images/spacer.gif" width="1" height="17">[S {playermodel}] Music Network</b></TD>
+        <TD width="100%" valign="middle"> <b><img src="html/images/spacer.gif" width="1" height="17">[% playermodel | string %] Music Network</b></TD>
       </TR>
     </TBODY>
   </TABLE>
@@ -26,9 +26,8 @@ cellPadding=0 width=90% border=0>
 <BODY 
 style="BORDER-RIGHT: white 2px solid; BACKGROUND: #333; BORDER-BOTTOM: 0px" 
 leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
-<P class=menu1><B><a href="home.html?player={%player}"><font color="#FFFFFF">[S 
-  {playermodel}_HOME]</font></a><a href="home.html"></a> / <a href="http://172.16.30.103:9000/browse.html?player=%7Bplayer%7D&dir=__playlists"><font color="#CCCCCC">Saved 
-  Playlists </font></a><font color="#CCCCCC"> {pwd_list}</font></B></P>
+<P class=menu1><B><a href="home.html?player=[% player | uri %]"><font color="#FFFFFF">[% playermodel _ "_HOME" | string %]</font></a><a href="home.html"></a> / <a href="http://172.16.30.103:9000/browse.html?player=%7Bplayer%7D&dir=__playlists"><font color="#CCCCCC">Saved 
+  Playlists </font></a><font color="#CCCCCC"> [% pwd_list %]</font></B></P>
 <P class=menu2>&nbsp;</P>
 
 
@@ -41,42 +40,39 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
   <TABLE width="100%" height="100%" border=0 cellPadding=2 cellSpacing=0>
     <TBODY>
       <TR> 
-        <TD colspan="6" class=listinghead> Saved Playlists[S COLON]</TD>
+        <TD colspan="6" class=listinghead> Saved Playlists[% "COLON" | string %]</TD>
         <TD width="16%" class=listinghead>&nbsp;</TD>
       </TR>
       <TR> 
-        <TD colspan="7" class=listing><p>[IF warn]<b>[S NOTE]</b> [S SCAN_WARNING] 
-            [IFN itunes][S SCAN_CLICK] <a href="browse.html?player={%player}">[S 
-            HERE]</a>.[/IFN][/IF]
-          <p> [IF RENAME_WARNING] 
-          <p><b>[S NOTE]</b> [S RENAME_WARNIN
+        <TD colspan="7" class=listing><p>[% IF warn %]<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] 
+            [% IF not itunes %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %][% END %]
+          <p> [% IF RENAME_WARNING %] 
+          <p><b>[% "NOTE" | string %]</b> [S RENAME_WARNIN
           <hr>
-          [/IF] [IF playlistname] 
+          [% END %] [% IF playlistname %] 
           <form method="get" action="browse.html">
-            {savebuttonname} [S THIS_PLAYLIST_AS] 
-            <input name="newname" value="{playlistname}" size=40>
-            <input name="submit" type=submit value="{savebuttonname}">
-            <input type=hidden value="{player}" name="player">
-            <input type=hidden name="dir" value="{dir}">
+            [% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %] 
+            <input name="newname" value="[% playlistname %]" size=40>
+            <input name="submit" type=submit value="[% savebuttonname %]">
+            <input type=hidden value="[% player %]" name="player">
+            <input type=hidden name="dir" value="[% dir %]">
           </form>
-          [/IF] [IF titled] 
-          <p><a href="browse.html?player={%player}&dir={%dir}&delete=1">[S DELETE_THIS_PLAYLIST]</a></p>
-          [/IF] [IF playlistname]
+          [% END %] [% IF titled %] 
+          <p><a href="browse.html?player=[% player | uri %]&dir=[% dir | uri %]&delete=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></p>
+          [% END %] [% IF playlistname %]
 <hr>
-          [/IF] [IF browselist_header]{browselist_header} 
-          <p>[/IF] {browselist_pagebar} 
+          [% END %] [% IF browselist_header %][% browselist_header %] 
+          <p>[% END %] [% browselist_pagebar %] 
           <table border="0" cellspacing="0" cellpadding="4">
-            [IF playlistname] 
+            [% IF playlistname %] 
             <tr> 
-              <td class="odd" bgcolor="#FFFFFF">[S THIS_ENTIRE_PLAYLIST]</td>
-              [/IF] [IF playlistname] 
-              <td class="odd" bgcolor="#FFFFFF"><nobr><a href="status.html?p0=playlist&p1=load&p2={%dir}&player={%player}" target="status">[S 
-                PLAY]</a></nobr></td>
-              [/IF] [IF playlistname] 
-              <td class="odd" bgcolor="#FFFFFF"><nobr><a href="status.html?p0=playlist&p1=add&p2={%dir}&player={%player}" target="status">[NB][S 
-                ADD_TO_PLAYLIST][/NB]</a></nobr></td>
+              <td class="odd" bgcolor="#FFFFFF">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
+              [% END %] [% IF playlistname %] 
+              <td class="odd" bgcolor="#FFFFFF"><nobr><a href="status.html?p0=playlist&p1=load&p2=[% dir | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr></td>
+              [% END %] [% IF playlistname %] 
+              <td class="odd" bgcolor="#FFFFFF"><nobr><a href="status.html?p0=playlist&p1=add&p2=[% dir | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr></td>
             </tr>
-            [/IF] {browse_list} 
+            [% END %] [% browse_list %] 
           </table>
           
         </TD>

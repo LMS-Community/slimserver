@@ -1,10 +1,10 @@
-	[IF GroupHead]<p><h3>{GroupHead}</h3>[/IF]
-		[IF GroupDesc]<p>{GroupDesc}</p>[/IF]
-		[IF PrefsInTable]<table border="0" cellspacing="0">[/IF]
-		{GroupPrefHead}
-		{PrefList}
-		{GroupPrefFoot}
-		[IF PrefsInTable]</table>[/IF]
-		[IF GroupSub]<input type=submit value={ChangeButton} class="stdclick">[/IF]
-	[IF GroupHead]</p>[/IF]
-[IF GroupLine]<hr>[/IF]
+	[% IF GroupHead %]<p><h3>[% GroupHead %]</h3>[% END %]
+		[% IF GroupDesc %]<p>[% GroupDesc %]</p>[% END %]
+		[% IF PrefsInTable %]<table border="0" cellspacing="0">[% END %]
+		[% GroupPrefHead %]
+		[% PrefList %]
+		[% GroupPrefFoot %]
+		[% IF PrefsInTable %]</table>[% END %]
+		[% IF GroupSub %]<input type=submit value=[% ChangeButton %] class="stdclick">[% END %]
+	[% IF GroupHead %]</p>[% END %]
+[% IF GroupLine %]<hr>[% END %]

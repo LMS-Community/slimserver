@@ -5,31 +5,31 @@
   </head>
   <body bgcolor="#FFFFFF">
 
-	<a href="status.html?player={%player}">[S {playermodel}_MUSIC_PLAYER]</a> | [S STATISTICS]
+	<a href="status.html?player=[% player | uri %]">[% playermodel _ "_MUSIC_PLAYER" | string %]</a> | [% "STATISTICS" | string %]
 	<p><hr><p>
-    <h3>[S STATISTICS]</h3>
+    <h3>[% "STATISTICS" | string %]</h3>
     <p><hr><p>
     <table cellspacing="0" border="0" cellpadding="4" width="100%">
 	<tr>
 	  <td align="center">	
-		<B>{total_song_count} songs</B>
+		<B>[% total_song_count %] songs</B>
 	  </td>
 	  <td align="center">
-		<B>{album_count} albums</B>
+		<B>[% album_count %] albums</B>
 	  </td>
 	</tr>
 	<tr align="center">
 	  <td>
-		<B>{artist_count} artists</B>
+		<B>[% artist_count %] artists</B>
 	  </td>
 	  <td align="center">
-		<B>{genre_count} genres</B>
+		<B>[% genre_count %] genres</B>
 	  </td>
 	</table>
     <p><hr><p>
     <h4>Most requested songs</h4>
     <table cellspacing="0" border="0" cellpadding="4" width="100%">
-      {browse_list}
+      [% browse_list %]
     </table>
 
 

@@ -1,10 +1,10 @@
-[SET pageicon help]
-[SET title [S HELP_REMOTE]]
-[INCLUDE helpheader.html]
+[% pageicon = 'help' %]
+[% title = "HELP_REMOTE" | string %]
+[% PROCESS helpheader.html %]
 
 		<table>
 			<tr>
-				<td valign=top><img src="{webroot}html/images/remote.gif" alt="" width="217" height="700" border="0"></td>
+				<td valign=top><img src="[% webroot %]html/images/remote.gif" alt="" width="217" height="700" border="0"></td>
 				<td>
 					<h4>Mise en service de la télécommande</h4>
 					<p>La télécommande Slim Devices utilise deux piles de type AAA (alcalines de préférence). Attention à la fraîcheur des piles ;
@@ -75,5 +75,5 @@
 	</td>
     </tr>
     </table>
- 		<p>[S HELP_REMOTE_VOLUMEINFO]</p>
-[INCLUDE helpfooter.html]
+ 		<p>[% "HELP_REMOTE_VOLUMEINFO" | string %]</p>
+[% PROCESS helpfooter.html %]

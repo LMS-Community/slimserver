@@ -1,92 +1,92 @@
 <html>
 	<head>
-		<title>{title}</title>
-		<link rel="stylesheet" href="{webroot}slimserver.css">
+		<title>[% title %]</title>
+		<link rel="stylesheet" href="[% webroot %]slimserver.css">
 		
 		<script language="JavaScript">
 		<!--Hide
 		function setCookie(name, value)
-		&lbrc;
+		{
 			var expires = new Date();
 			expires.setTime(expires.getTime() + 1000*60*60*24*365);
 			document.cookie =
 				name + "=" + escape(value) +
 				((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
-		&rbrc;
+		}
 		
 		function chooseBrowser(value,option)
-		&lbrc;
+		{
 			var url;
 			switch(option)
-			&lbrc;
+			{
 				case 'genre':
 					url="browseid3.html?";
-					suffix ="[IF nofolder]&nofolder=1[/IF][IF noartwork]&noartwork=1[/IF]";
+					suffix ="[% IF nofolder %]&nofolder=1[% END %][% IF noartwork %]&noartwork=1[% END %]";
 				break
 				case 'artist':
 					url="browseid3.html?genre=*";
-					suffix ="[IF nofolder]&nofolder=1[/IF][IF noartwork]&noartwork=1[/IF]";
+					suffix ="[% IF nofolder %]&nofolder=1[% END %][% IF noartwork %]&noartwork=1[% END %]";
 				break
 				case 'artwork':
 					url="browseid3.html?genre=*&artist=*&artwork=1";
-					suffix ="[IF nofolder]&nofolder=1[/IF]";
+					suffix ="[% IF nofolder %]&nofolder=1[% END %]";
 				break
 				case 'album':
 					url="browseid3.html?genre=*&artist=*"
-					suffix ="[IF nofolder]&nofolder=1[/IF][IF noartwork]&noartwork=1[/IF]";
+					suffix ="[% IF nofolder %]&nofolder=1[% END %][% IF noartwork %]&noartwork=1[% END %]";
 				break
 				case 'song':
 					url="browseid3.html?genre=*&artist=*&album=*";
-					suffix ="[IF nofolder]&nofolder=1[/IF][IF noartwork]&noartwork=1[/IF]";
+					suffix ="[% IF nofolder %]&nofolder=1[% END %][% IF noartwork %]&noartwork=1[% END %]";
 				break
 				case 'playlist':
 					url="browse.html?dir=__playlists";
-					suffix ="[IF nofolder]&nofolder=1[/IF][IF noartwork]&noartwork=1[/IF]";
+					suffix ="[% IF nofolder %]&nofolder=1[% END %][% IF noartwork %]&noartwork=1[% END %]";
 				break
 				case 'folder':
 					url="browse.html?";
-					suffix = "[IF noartwork]&noartwork=1[/IF]";
+					suffix = "[% IF noartwork %]&noartwork=1[% END %]";
 				break
-			&rbrc;
+			}
 			setCookie("SlimServer-Browserpage",url);
-			parent.browser.location = url + suffix + '&player={%player}';
-		&rbrc;
+			parent.browser.location = url + suffix + '&player=[% player | uri %]';
+		}
 		-->
 		</script>
 	</head>
 	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
 		<div class="menu1" width="100%">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13">
-				<td width="33%" height="13" align="center"><nobr><a class="menu1" href="{webroot}home.html?player={%player}">[IF music]<b>[/IF][S {playermodel}_HOME][IF music]</b>[/IF]</nobr></td>
+				<td width="33%" height="13" align="center"><nobr><a class="menu1" href="[% webroot %]home.html?player=[% player | uri %]">[% IF music %]<b>[% END %][% playermodel _ "_HOME" | string %][% IF music %]</b>[% END %]</nobr></td>
 				<td>
-					<img src="{webroot}html/pixel.grey.gif" width="1" height="100%" border="0">
+					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
 				</td>
-				<td width="33%" height="13" align="center"><nobr><a class="menu1" href="{webroot}setup.html?page=server&player={%player}[IF nofolder]&nofolder=1[/IF]">[IF setup]<b>[/IF][S SERVER_SETTINGS][IF setup]</b>[/IF]</a></nobr></td>
+				<td width="33%" height="13" align="center"><nobr><a class="menu1" href="[% webroot %]setup.html?page=server&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]">[% IF setup %]<b>[% END %][% "SERVER_SETTINGS" | string %][% IF setup %]</b>[% END %]</a></nobr></td>
 				<td>
-					<img src="{webroot}html/pixel.grey.gif" width="1" height="100%" border="0">
+					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
 				</td>
 				<td width="33%" height="13" align="center">
-					<a class="menu1" href="{webroot}html/docs/help.html[IF nofolder]?&nofolder=1[/IF]">[IF help]<b>[/IF][S HELP][IF help]</b>[/IF]</a>
+					<a class="menu1" href="[% webroot %]html/docs/help.html[% IF nofolder %]?&nofolder=1[% END %]">[% IF help %]<b>[% END %][% "HELP" | string %][% IF help %]</b>[% END %]</a>
 				</td>
 			</table>
 		</div>
-		<div class="menu2" width="100%" [IF setup]style='position:absolute;top:-100;'[/IF]>
+		<div class="menu2" width="100%" [% IF setup %]style='position:absolute;top:-100;'[% END %]>
 			<table border="0" cellpadding="0" cellspacing="0" width="100%">
-				<FORM name="browse" method="Get" action="{webroot}search.html"><td width="35%"><center><nobr>
+				<FORM name="browse" method="Get" action="[% webroot %]search.html"><td width="35%"><center><nobr>
 					<SELECT NAME="type" class="stdedit" onchange="chooseBrowser(selectedIndex,options[selectedIndex].label)"  width="65">
-						<OPTION [EQ browseby BROWSE_BY_GENRE]selected[/EQ] label="genre" value="song">[S BROWSE_BY_GENRE]</OPTION>
-						<OPTION [EQ type artist]selected[/EQ][EQ browseby BROWSE_BY_ARTIST]selected[/EQ] label="artist" value="artist">[S BROWSE_BY_ARTIST]</OPTION>
-	[IFN noartwork]<OPTION [EQ browseby BROWSE_BY_ARTWORK]selected[/EQ] label="artwork" value="genre">[S BROWSE_BY_ARTWORK]</OPTION>[/IFN]
-						<OPTION [EQ type album]selected[/EQ][EQ browseby BROWSE_BY_ALBUM]selected[/EQ] label="album" value="album">[S BROWSE_BY_ALBUM]</OPTION>
-						<OPTION [EQ type song]selected[/EQ][EQ browseby BROWSE_BY_SONG]selected[/EQ] label="song" value="song">[S BROWSE_BY_SONG]</OPTION>
-						<OPTION [IF playlist]selected[/IF] label="playlist" value="song">[S SAVED_PLAYLISTS]</OPTION>
-	 [IFN nofolder]<OPTION [IF browse]selected[/IF] value="song" label="folder" >[S BROWSE_MUSIC_FOLDER]</OPTION>[/IFN]
-					</SELECT> [S FOR]
-					<input type=text class="stdedit" name="query" value="{query}" size="20">
-					<input type=hidden value="{player}" name="player">
-					[IF nofolder]<input type=hidden value="1" name="nofolder">[/IF]
-					[IF noartwork]<input type=hidden value="1" name="noartwork">[/IF]</p><nobr></center></td>
+						<OPTION [% IF browseby == 'BROWSE_BY_GENRE' %]selected[% END %] label="genre" value="song">[% "BROWSE_BY_GENRE" | string %]</OPTION>
+						<OPTION [% IF type == 'artist' %]selected[% END %][% IF browseby == 'BROWSE_BY_ARTIST' %]selected[% END %] label="artist" value="artist">[% "BROWSE_BY_ARTIST" | string %]</OPTION>
+	[% IF not noartwork %]<OPTION [% IF browseby == 'BROWSE_BY_ARTWORK' %]selected[% END %] label="artwork" value="genre">[% "BROWSE_BY_ARTWORK" | string %]</OPTION>[% END %]
+						<OPTION [% IF type == 'album' %]selected[% END %][% IF browseby == 'BROWSE_BY_ALBUM' %]selected[% END %] label="album" value="album">[% "BROWSE_BY_ALBUM" | string %]</OPTION>
+						<OPTION [% IF type == 'song' %]selected[% END %][% IF browseby == 'BROWSE_BY_SONG' %]selected[% END %] label="song" value="song">[% "BROWSE_BY_SONG" | string %]</OPTION>
+						<OPTION [% IF playlist %]selected[% END %] label="playlist" value="song">[% "SAVED_PLAYLISTS" | string %]</OPTION>
+	 [% IF not nofolder %]<OPTION [% IF browse %]selected[% END %] value="song" label="folder" >[% "BROWSE_MUSIC_FOLDER" | string %]</OPTION>[% END %]
+					</SELECT> [% "FOR" | string %]
+					<input type=text class="stdedit" name="query" value="[% query %]" size="20">
+					<input type=hidden value="[% player %]" name="player">
+					[% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
+					[% IF noartwork %]<input type=hidden value="1" name="noartwork">[% END %]</p><nobr></center></td>
 				</FORM>
 			</table>
 		</div>
-		[IF newVersion]<br>{newVersion}<br>[/IF]
+		[% IF newVersion %]<br>[% newVersion %]<br>[% END %]

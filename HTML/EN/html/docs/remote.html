@@ -4,13 +4,13 @@
   <title>Getting Started</title>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <meta name="CVS-ident" content="$id$" />
-    <link rel="stylesheet" href="{webroot}slimserver.css">
+    <link rel="stylesheet" href="[% webroot %]slimserver.css">
 </head>
 
 	<body>
 		<p></p>
 		<h3>Getting Started</h3>
-		<p><a href="{webroot}index.html?player={%player}" target="_top">[S {playermodel}_HOME]</a> / <b>Getting Started</b></p>
+		<p><a href="[% webroot %]index.html?player=[% player | uri %]" target="_top">[% playermodel _ "_HOME" | string %]</a> / <b>Getting Started</b></p>
 		<hr>
 		<br>
 		<h2>Guide: Remote</h2>
@@ -18,7 +18,7 @@
 		<h3>Slim Devices Remote</h3>
 		<table>
 				<tr>
-					<td valign=top><img src="{webroot}html/images/remote.gif" alt="" width="217" height="700" border="0"></td>
+					<td valign=top><img src="[% webroot %]html/images/remote.gif" alt="" width="217" height="700" border="0"></td>
 					<td>
 					<h4>Setting up the remote</h4>
 					<p>The Slim Devices remote control requires two AAA battery cells&#151;alkaline cells are recommended. Keep batteries fresh. Weak batteries cause the vast majority of problems with poor remote control performance. You can peel off the protective plastic sheet that surrounds the buttons on the remote.</p>

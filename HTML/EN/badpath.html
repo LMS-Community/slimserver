@@ -1,24 +1,24 @@
 <html>
   <head>
-	[IF playlist]<title>[S SAVED_PLAYLISTS]</title>[/IF]
-	[IFN playlist]<title>[S MUSIC]</title>[/IFN]
+	[% IF playlist %]<title>[% "SAVED_PLAYLISTS" | string %]</title>[% END %]
+	[% IF not playlist %]<title>[% "MUSIC" | string %]</title>[% END %]
     <link rel="stylesheet" href="slimserver.css">
   </head>
   <body bgcolor="#FFFFFF">
 
     <p>
 
-    <h3>[S MUSIC]</h3><p>
+    <h3>[% "MUSIC" | string %]</h3><p>
 
-    <a href="home.html?player={%player}">[S {playermodel}_HOME]</a> / 
-	[IF playlist]<a href="browse.html?dir=__playlists&player={%player}">[S SAVED_PLAYLISTS]</a>[/IF]
-	[IFN playlist]<a href="browse.html?player={%player}">[S MUSIC]</a>[/IFN]
+    <a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a> / 
+	[% IF playlist %]<a href="browse.html?dir=__playlists&player=[% player | uri %]">[% "SAVED_PLAYLISTS" | string %]</a>[% END %]
+	[% IF not playlist %]<a href="browse.html?player=[% player | uri %]">[% "MUSIC" | string %]</a>[% END %]
 
     <p><hr><p>
-	[IF playlist][S NEED_PLAYLIST_PATH][/IF]
-	[IFN playlist][S NEED_PATH][/IFN]
+	[% IF playlist %][% "NEED_PLAYLIST_PATH" | string %][% END %]
+	[% IF not playlist %][% "NEED_PATH" | string %][% END %]
 	</p>
-	<p><a href="setup.html?page=server&player={%player}">[S CLICK_HERE]</a> [S TO_GO_TO_SERVER_SETTINGS]
+	<p><a href="setup.html?page=server&player=[% player | uri %]">[% "CLICK_HERE" | string %]</a> [% "TO_GO_TO_SERVER_SETTINGS" | string %]
   </body>
 </html>
 

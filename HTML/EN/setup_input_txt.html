@@ -1,9 +1,9 @@
-[IF PrefsInTable]<tr><td>[/IF]
-[IF PrefChoose]<label for="{PrefName}" class="stdlabel">{PrefChoose}</label>[/IF]
-[IF PrefsInTable]</td><td>[/IF]
-<input type=text class="stdedit" name="{PrefName}" id="{PrefName}" value="{PrefValue}" 
-		size=[IFN PrefSize]10[/IFN][EQ PrefSize small]10[/EQ][EQ PrefSize medium]20[/EQ][EQ PrefSize large]40[/EQ]>
-[IF PrefsInTable]</td><td>[/IF]
-[IFN Suppress_PrefSub]<input type=submit value={ChangeButton} class="stdclick">[/IFN]
-[IF PrefsInTable]</td></tr>[/IF]
-[IFN PrefsInTable]<br>[/IFN]
+[% IF PrefsInTable %]<tr><td>[% END %]
+[% IF PrefChoose %]<label for="[% PrefName %]" class="stdlabel">[% PrefChoose %]</label>[% END %]
+[% IF PrefsInTable %]</td><td>[% END %]
+<input type=text class="stdedit" name="[% PrefName %]" id="[% PrefName %]" value="[% PrefValue %]" 
+		size=[% IF not PrefSize %]10[% END %][% IF PrefSize == 'small' %]10[% END %][% IF PrefSize == 'medium' %]20[% END %][% IF PrefSize == 'large' %]40[% END %]>
+[% IF PrefsInTable %]</td><td>[% END %]
+[% IF not Suppress_PrefSub %]<input type=submit value=[% ChangeButton %] class="stdclick">[% END %]
+[% IF PrefsInTable %]</td></tr>[% END %]
+[% IF not PrefsInTable %]<br>[% END %]

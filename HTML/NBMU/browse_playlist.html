@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>[S SAVED_PLAYLISTS]</title>
+    <title>[% "SAVED_PLAYLISTS" | string %]</title>
     <link rel="stylesheet" href="slimserver.css">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></head>
   
@@ -22,58 +22,55 @@
   <tr> 
     <td width="30"valign="middle" bgcolor="#333333"> 
       <h3> <img src="html/images/spacer.gif" width="30" height="8"></h3></td>
-    <td valign="middle" bgcolor="#999999"> <h3>[S SAVED_PLAYLISTS]<img src="html/images/spacer.gif" width="30" height="8"></h3>
+    <td valign="middle" bgcolor="#999999"> <h3>[% "SAVED_PLAYLISTS" | string %]<img src="html/images/spacer.gif" width="30" height="8"></h3>
       </td>
   </tr>
 </table>
 <h3></h3>
-<p><img src="html/images/spacer.gif" width="30" height="8"><a href="home.html?player={%player}">[S 
-  {playermodel}_HOME]</a> / <a href="browse.html?player={%player}&dir=__playlists">[S SAVED_PLAYLISTS]</a> 
-  {pwd_list} 
+<p><img src="html/images/spacer.gif" width="30" height="8"><a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a> / <a href="browse.html?player=[% player | uri %]&dir=__playlists">[% "SAVED_PLAYLISTS" | string %]</a> 
+  [% pwd_list %] 
 <p>
 <p>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="30">&nbsp;</td>
     <td><p> 
-      <p>[IF warn] </p>
-      <p><b>[S NOTE]</b> [S SCAN_WARNING] 
+      <p>[% IF warn %] </p>
+      <p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] 
       <p>
       <hr>
-      [/IF] [IF RENAME_WARNING]
-      <p><b>[S NOTE]</b> [S RENAME_WARNING]
+      [% END %] [% IF RENAME_WARNING %]
+      <p><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]
       <p>
       <hr>
-      [/IF] [IF playlistname]
+      [% END %] [% IF playlistname %]
       <p>
       <form method="get" action="browse.html">
-        {savebuttonname} [S THIS_PLAYLIST_AS] 
-        <input name="newname" value="{playlistname}" size=40>
-        <input name="submit" type=submit value="{savebuttonname}">
-        <input type=hidden value="{player}" name="player">
-        <input type=hidden name="dir" value="{dir}">
+        [% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %] 
+        <input name="newname" value="[% playlistname %]" size=40>
+        <input name="submit" type=submit value="[% savebuttonname %]">
+        <input type=hidden value="[% player %]" name="player">
+        <input type=hidden name="dir" value="[% dir %]">
       </form>
-      [/IF] [IF titled]
-      <p><a href="browse.html?player={%player}&dir={%dir}&delete=1">[S DELETE_THIS_PLAYLIST]</a></p>
-      [/IF] [IF playlistname]
+      [% END %] [% IF titled %]
+      <p><a href="browse.html?player=[% player | uri %]&dir=[% dir | uri %]&delete=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></p>
+      [% END %] [% IF playlistname %]
       <p>
       <hr>
-      <p>[/IF] [IF browselist_header]{browselist_header}
-      <p>[/IF] {browselist_pagebar} 
+      <p>[% END %] [% IF browselist_header %][% browselist_header %]
+      <p>[% END %] [% browselist_pagebar %] 
       <table border="0" cellspacing="0" cellpadding="4">
-        [IF playlistname]
+        [% IF playlistname %]
         <tr>
-          <td class="odd" bgcolor="#FFFFFF">[S THIS_ENTIRE_PLAYLIST]</td>
-          [/IF] [IF playlistname]
-          <td class="odd" bgcolor="#FFFFFF"><nobr><a href="status.html?p0=playlist&p1=load&p2={%dir}&player={%player}" target="status">[S 
-            PLAY]</a></nobr></td>
-          [/IF] [IF playlistname]
-          <td class="odd" bgcolor="#FFFFFF"><nobr><a href="status.html?p0=playlist&p1=add&p2={%dir}&player={%player}" target="status">[NB][S 
-            ADD_TO_PLAYLIST][/NB]</a></nobr></td>
+          <td class="odd" bgcolor="#FFFFFF">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
+          [% END %] [% IF playlistname %]
+          <td class="odd" bgcolor="#FFFFFF"><nobr><a href="status.html?p0=playlist&p1=load&p2=[% dir | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr></td>
+          [% END %] [% IF playlistname %]
+          <td class="odd" bgcolor="#FFFFFF"><nobr><a href="status.html?p0=playlist&p1=add&p2=[% dir | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr></td>
         </tr>
-        [/IF] {browse_list} 
+        [% END %] [% browse_list %] 
       </table>
-      <p>{browselist_pagebar}</p>
+      <p>[% browselist_pagebar %]</p>
 </td>
   </tr>
 </table>

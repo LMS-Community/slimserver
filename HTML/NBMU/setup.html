@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>{pagetitle}</title>
+    <title>[% pagetitle %]</title>
     <link rel="stylesheet" href="slimserver.css">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></head>
   
@@ -15,38 +15,37 @@
 <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#999999">
   <tr> 
     <td width="30" valign="middle" bgcolor="#333333"> <h3> <img src="html/images/spacer.gif" width="30" height="8"></h3></td>
-    <td valign="middle" bgcolor="#999999"> <h3>{pagetitle}<img src="html/images/spacer.gif" width="30" height="8"></h3>
+    <td valign="middle" bgcolor="#999999"> <h3>[% pagetitle %]<img src="html/images/spacer.gif" width="30" height="8"></h3>
       </td>
   </tr>
 </table>
-<p><img src="html/images/spacer.gif" width="30" height="8"><a href="home.html?player={%player}">[S 
-  {playermodel}_HOME]</a>[IF linktree] / {linktree}[/IF] 
+<p><img src="html/images/spacer.gif" width="30" height="8"><a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a>[% IF linktree %] / [% linktree %][% END %] 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr> 
     <td width="30">&nbsp;</td>
     <td><p> 
       <hr>
-      [IF warning]
-      <p><b>{warning}</b></p>
+      [% IF warning %]
+      <p><b>[% warning %]</b></p>
       <hr>
-      [/IF] [IF siblings]{siblings}
+      [% END %] [% IF siblings %][% siblings %]
       <hr>
-      [/IF] 
+      [% END %] 
       <form method="get" action="setup.html">
-        <input type=hidden value="{player}" name="player">
-        <input type=hidden value="{playerid}" name="playerid">
-        <input type=hidden value="{page}" name="page">
-        {GroupList} 
+        <input type=hidden value="[% player %]" name="player">
+        <input type=hidden value="[% playerid %]" name="playerid">
+        <input type=hidden value="[% page %]" name="page">
+        [% GroupList %] 
       </form>
-      [EQ page player] 
-      <h3>[S FORGET_PLAYER]</h3>
-      <p>[S FORGET_PLAYER_DESC]</p>
-      <p><a href="{webroot}home.html?player={%player}&forget={%playerid}">[S FORGET_PLAYER_LINK]</a></p>
+      [% IF page == 'player' %] 
+      <h3>[% "FORGET_PLAYER" | string %]</h3>
+      <p>[% "FORGET_PLAYER_DESC" | string %]</p>
+      <p><a href="[% webroot %]home.html?player=[% player | uri %]&forget=[% playerid | uri %]">[% "FORGET_PLAYER_LINK" | string %]</a></p>
       <hr>
-      [/EQ] 
-          [IF singleChildLink]{singleChildLink}<hr>[/IF]
-[IF versionInfo]{versionInfo}
-      <hr> <p>[/IF] </p>
+      [% END %] 
+          [% IF singleChildLink %][% singleChildLink %]<hr>[% END %]
+[% IF versionInfo %][% versionInfo %]
+      <hr> <p>[% END %] </p>
       <p>&nbsp;</p>
       </td>
   </tr>

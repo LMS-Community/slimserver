@@ -1,6 +1,6 @@
-[SET pageicon help]
-[SET title [S TECHNICAL_INFORMATION]]
-[INCLUDE helpheader.html]
+[% pageicon = 'help' %]
+[% title = "TECHNICAL_INFORMATION" | string %]
+[% PROCESS helpheader.html %]
 
 <ul>
   <li><a href="artwork.html">Artwork Setup</a></li>
@@ -20,4 +20,4 @@
     the display hardware (GIF)</a></li>
 </ul>
 
-[INCLUDE helpfooter.html]
+[% PROCESS helpfooter.html %]

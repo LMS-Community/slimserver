@@ -1,10 +1,10 @@
-[IF PrefsInTable]<tr><td>[/IF]
-&nbsp;{PrefExtValue}
-[IF PrefsInTable]</td><td>[/IF]
-<a class="linkbtn" href="setup.html?page={page}&{PrefNameRoot}Action{PrefIndex}=Up">&uarr;</a>
-[IF PrefsInTable]</td><td>[/IF]
-<a class="linkbtn" href="setup.html?page={page}&{PrefNameRoot}Action{PrefIndex}=Down">&darr;</a>
-[IF PrefsInTable]</td><td>[/IF]
-<a class="linkbtn" href="setup.html?page={page}&{PrefNameRoot}Action{PrefIndex}=Remove">&times;</a>
-[IF PrefsInTable]</td></tr>[/IF]
-[IFN PrefsInTable]<br>[/IFN]
+[% IF PrefsInTable %]<tr><td>[% END %]
+&nbsp;[% PrefExtValue %]
+[% IF PrefsInTable %]</td><td>[% END %]
+<a class="linkbtn" href="setup.html?page=[% page %]&[% PrefNameRoot %]Action[% PrefIndex %]=Up">&uarr;</a>
+[% IF PrefsInTable %]</td><td>[% END %]
+<a class="linkbtn" href="setup.html?page=[% page %]&[% PrefNameRoot %]Action[% PrefIndex %]=Down">&darr;</a>
+[% IF PrefsInTable %]</td><td>[% END %]
+<a class="linkbtn" href="setup.html?page=[% page %]&[% PrefNameRoot %]Action[% PrefIndex %]=Remove">&times;</a>
+[% IF PrefsInTable %]</td></tr>[% END %]
+[% IF not PrefsInTable %]<br>[% END %]

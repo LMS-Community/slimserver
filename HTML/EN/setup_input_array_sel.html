@@ -1,12 +1,12 @@
-[IF PrefsInTable]<tr><td align=middle>[/IF]
-[IF PrefArrayCurrName]<input type=radio {PrefSelected} value={PrefIndex} name={PrefArrayCurrName}>[/IF]
-[IF PrefsInTable]</td><td>[/IF]
-[IF PrefChoose]<label for="{PrefName}" class="stdlabel">{PrefChoose}</label>[/IF]
-[IF PrefsInTable]</td><td>[/IF]
-<select class="stdedit" name="{PrefName}" id="{PrefName}">
-	{PrefOptions}
+[% IF PrefsInTable %]<tr><td align=middle>[% END %]
+[% IF PrefArrayCurrName %]<input type=radio [% PrefSelected %] value=[% PrefIndex %] name=[% PrefArrayCurrName %]>[% END %]
+[% IF PrefsInTable %]</td><td>[% END %]
+[% IF PrefChoose %]<label for="[% PrefName %]" class="stdlabel">[% PrefChoose %]</label>[% END %]
+[% IF PrefsInTable %]</td><td>[% END %]
+<select class="stdedit" name="[% PrefName %]" id="[% PrefName %]">
+	[% PrefOptions %]
 </select>
-[IF PrefsInTable]</td><td>[/IF]
-[IFN Suppress_PrefSub]<input type=submit value={ChangeButton} class="stdclick">[/IFN]
-[IF PrefsInTable]</td></tr>[/IF]
-[IFN PrefsInTable]<br>[/IFN]
+[% IF PrefsInTable %]</td><td>[% END %]
+[% IF not Suppress_PrefSub %]<input type=submit value=[% ChangeButton %] class="stdclick">[% END %]
+[% IF PrefsInTable %]</td></tr>[% END %]
+[% IF not PrefsInTable %]<br>[% END %]

@@ -1,4 +1,4 @@
-[SET title SongInfo] [SET pageicon SongInfo] [INCLUDE pageheader.html] 
+[% title = 'SongInfo' %] [% pageicon = 'SongInfo' %] [% PROCESS pageheader.html %] 
 <TR height="44">
 				<TD width="4" height="44">
 			<IMG SRC="html/images/spacer.gif" WIDTH=8 HEIGHT=39 ALT=""></TD>
@@ -12,8 +12,7 @@
 						<tr>
 							<td width="8"><img src="html/images/spacer.gif" width=8 height=8 alt=""></td>
 							
-        <td class="exlisting" valign=top><a href="home.html?player={%player}">[S 
-          {playermodel}_HOME]</a> / [S SONG_INFO] [S FOR] <i>{&title}</i> </td>
+        <td class="exlisting" valign=top><a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a> / [% "SONG_INFO" | string %] [% "FOR" | string %] <i>[% title | html %]</i> </td>
 							<td width="4"></td>
 						</tr>
 						<tr height="5">
@@ -31,115 +30,113 @@
 				
   <td valign="top" height="100%">
     <br>
-    <p> <a href="status_header.html?p0=playlist&amp;p1=play&amp;p2={%itempath}&amp;player={%player}" target="status">[S 
-      PLAY_THIS_SONG]</a><p><a href="status_header.html?p0=playlist&amp;p1=append&amp;p2={%itempath}&amp;player={%player}" target="status">[NB][S 
-      ADD_THIS_SONG_TO_PLAYLIST][/NB]</a> </p>
+    <p> <a href="status_header.html?p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="status">[% "PLAY_THIS_SONG" | string %]</a><p><a href="status_header.html?p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a> </p>
 <table cellspacing="5">
       <tr> 
-        <td class="nowrap">[S TITLE][S COLON]</td>
-        <td> {&title} </td>
+        <td class="nowrap">[% "TITLE" | string %][% "COLON" | string %]</td>
+        <td> [% title | html %] </td>
       </tr>
-      [IF artist] 
+      [% IF artist %] 
       <tr> 
-        <td class="nowrap"> [S ARTIST][S COLON]</td>
-        <td> <a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{&artist}</a> 
+        <td class="nowrap"> [% "ARTIST" | string %][% "COLON" | string %]</td>
+        <td> <a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser">[% artist | html %]</a> 
         </td>
       </tr>
-      [/IF] [IF composer] 
+      [% END %] [% IF composer %] 
       <tr> 
-        <td class="nowrap"> [S COMPOSER][S COLON]</td>
-        <td> <a href="browseid3.html?genre=*&amp;artist={%composer}&amp;player={%player}" target="browser">{&composer}</a> 
+        <td class="nowrap"> [% "COMPOSER" | string %][% "COLON" | string %]</td>
+        <td> <a href="browseid3.html?genre=*&amp;artist=[% composer | uri %]&amp;player=[% player | uri %]" target="browser">[% composer | html %]</a> 
         </td>
       </tr>
-      [/IF] [IF conductor] 
+      [% END %] [% IF conductor %] 
       <tr> 
-        <td class="nowrap"> [S CONDUCTOR][S COLON]</td>
-        <td> <a href="browseid3.html?genre=*&amp;artist={%conductor}&amp;player={%player}" target="browser">{&conductor}</a> 
+        <td class="nowrap"> [% "CONDUCTOR" | string %][% "COLON" | string %]</td>
+        <td> <a href="browseid3.html?genre=*&amp;artist=[% conductor | uri %]&amp;player=[% player | uri %]" target="browser">[% conductor | html %]</a> 
         </td>
       </tr>
-      [/IF] [IF band] 
+      [% END %] [% IF band %] 
       <tr> 
-        <td class="nowrap"> [S BAND][S COLON]</td>
-        <td> <a href="browseid3.html?genre=*&amp;artist={%band}&amp;player={%player}" target="browser">{&band}</a> 
+        <td class="nowrap"> [% "BAND" | string %][% "COLON" | string %]</td>
+        <td> <a href="browseid3.html?genre=*&amp;artist=[% band | uri %]&amp;player=[% player | uri %]" target="browser">[% band | html %]</a> 
         </td>
       </tr>
-      [/IF] [IF album] 
+      [% END %] [% IF album %] 
       <tr> 
-        <td class="nowrap"> [S ALBUM][S COLON]</td>
-        <td> <a href="browseid3.html?genre=*&amp;artist=*&amp;album={%album}&amp;player={%player}" target="browser">{&album}</a> 
+        <td class="nowrap"> [% "ALBUM" | string %][% "COLON" | string %]</td>
+        <td> <a href="browseid3.html?genre=*&amp;artist=*&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album | html %]</a> 
         </td>
       </tr>
-      [/IF] [IF genre] 
+      [% END %] [% IF genre %] 
       <tr> 
-        <td class="nowrap"> [S GENRE][S COLON]</td>
-        <td> <a href="browseid3.html?genre={%genre}&amp;player={%player}" target="browser">{&genre} 
+        <td class="nowrap"> [% "GENRE" | string %][% "COLON" | string %]</td>
+        <td> <a href="browseid3.html?genre=[% genre | uri %]&amp;player=[% player | uri %]" target="browser">[% genre | html %] 
           </a></td>
       </tr>
-	  [/IF] [IF disc] 
+	  [% END %] [% IF disc %] 
 	  <tr> 
-	    <td class="nowrap"> [S DISC][S COLON]</td>
-	    <td> {&disc} </td>
+	    <td class="nowrap"> [% "DISC" | string %][% "COLON" | string %]</td>
+	    <td> [% disc | html %] </td>
 	  </tr>
-      [/IF] [IF track] 
+      [% END %] [% IF track %] 
       <tr> 
-        <td class="nowrap"> [S TRACK][S COLON]</td>
-        <td> {&track} </td>
+        <td class="nowrap"> [% "TRACK" | string %][% "COLON" | string %]</td>
+        <td> [% track | html %] </td>
       </tr>
-      [/IF] [IF type] 
+      [% END %] [% IF type %] 
 	<tr>
 		<td class="nowrap">
-			[S TYPE][S COLON] 
+			[% "TYPE" | string %][% "COLON" | string %] 
 		</td>
 		<td>
-			{type}
+			[% type %]
 		</td>
 	</tr>
-	[/IF] [IF duration] 
+	[% END %] [% IF duration %] 
       <tr> 
-        <td class="nowrap"> [S LENGTH][S COLON]</td>
-        <td> {&duration} </td>
+        <td class="nowrap"> [% "LENGTH" | string %][% "COLON" | string %]</td>
+        <td> [% duration | html %] </td>
       </tr>
-      [/IF] [IF year] 
+      [% END %] [% IF year %] 
       <tr> 
-        <td class="nowrap"> [S YEAR][S COLON]</td>
-        <td> {&year} </td>
+        <td class="nowrap"> [% "YEAR" | string %][% "COLON" | string %]</td>
+        <td> [% year | html %] </td>
       </tr>
-      [/IF] [IF comment] 
+      [% END %] [% IF comment %] 
       <tr> 
-        <td class="nowrap"> [S COMMENT][S COLON]</td>
-        <td> {&comment} </td>
+        <td class="nowrap"> [% "COMMENT" | string %][% "COLON" | string %]</td>
+        <td> [% comment | html %] </td>
       </tr>
-      [/IF] [IF filelength] 
+      [% END %] [% IF filelength %] 
       <tr> 
-        <td class="nowrap"> [S FILELENGTH][S COLON]</td>
-        <td> {&filelength} [S BYTES] </td>
+        <td class="nowrap"> [% "FILELENGTH" | string %][% "COLON" | string %]</td>
+        <td> [% filelength | html %] [% "BYTES" | string %] </td>
       </tr>
-      [/IF] [IF bitrate] 
+      [% END %] [% IF bitrate %] 
       <tr> 
-        <td class="nowrap"> [S BITRATE][S COLON]</td>
-        <td> {&bitrate} </td>
+        <td class="nowrap"> [% "BITRATE" | string %][% "COLON" | string %]</td>
+        <td> [% bitrate | html %] </td>
       </tr>
-      [/IF] [IF tagversion] 
+      [% END %] [% IF tagversion %] 
       <tr> 
-        <td class="nowrap"> [S TAGVERSION][S COLON]</td>
-        <td> {&tagversion} </td>
+        <td class="nowrap"> [% "TAGVERSION" | string %][% "COLON" | string %]</td>
+        <td> [% tagversion | html %] </td>
       </tr>
-      [/IF] [IF url] 
+      [% END %] [% IF url %] 
       <tr> 
-        <td class="nowrap"> [S LOCATION][S COLON]</td>
-        <td> <a href="{url}">{&url}</a> </td>
+        <td class="nowrap"> [% "LOCATION" | string %][% "COLON" | string %]</td>
+        <td> <a href="[% url %]">[% url | html %]</a> </td>
       </tr>
-      [/IF] [IF modtime] 
+      [% END %] [% IF modtime %] 
       <tr> 
-        <td class="nowrap"> [S MODTIME][S COLON]</td>
-        <td> {&modtime} </td>
+        <td class="nowrap"> [% "MODTIME" | string %][% "COLON" | string %]</td>
+        <td> [% modtime | html %] </td>
       </tr>
-      [/IF] [IF coverart] 
+      [% END %] [% IF coverart %] 
       <tr>
-      	<td valign="top">[S COVERART][S COLON]</td>
-      	<td><a href="/music/{%itempath}/cover.jpg" target="cover"><img src="/music/{%itempath}/cover.jpg"></a></td>
+      	<td valign="top">[% "COVERART" | string %][% "COLON" | string %]</td>
+      	<td><a href="/music/[% itempath | uri %]/cover.jpg" target="cover"><img src="/music/[% itempath | uri %]/cover.jpg"></a></td>
       </tr>
-      [/IF]
+      [% END %]
     </table>
     </td>
 				<td width="4" height="100%"></td>

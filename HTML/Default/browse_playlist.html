@@ -1,4 +1,4 @@
-[SET title [S SAVED_PLAYLISTS]] [SET pageicon SAVED_PLAYLISTS] [INCLUDE pageheader.html] 
+[% title = "SAVED_PLAYLISTS" | string %] [% pageicon = 'SAVED_PLAYLISTS' %] [% PROCESS pageheader.html %] 
 <TR height="44">
 				<TD width="4" height="44">
 			<IMG SRC="html/images/spacer.gif" WIDTH=8 HEIGHT=39 ALT=""></TD>
@@ -12,9 +12,7 @@
 						<tr>
 							<td width="8"><img src="html/images/spacer.gif" width=8 height=8 alt=""></td>
 							
-        <td class="exlisting" valign=top><a href="home.html?player={%player}">[S 
-          {playermodel}_HOME]</a> / <a href="browse.html?player={%player}&dir=__playlists">[S 
-          SAVED_PLAYLISTS]</a> {pwd_list} </td>
+        <td class="exlisting" valign=top><a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a> / <a href="browse.html?player=[% player | uri %]&dir=__playlists">[% "SAVED_PLAYLISTS" | string %]</a> [% pwd_list %] </td>
 							<td width="4"></td>
 						</tr>
 						<tr height="5">
@@ -32,46 +30,46 @@
 				
   <td valign="top" height="100%"> 
     <p>&nbsp; </p>
-    <p> [IF warn]</p>
-    <p><b>[S NOTE]</b> [S SCAN_WARNING] 
+    <p> [% IF warn %]</p>
+    <p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] 
     <p>
     <hr>
-    [/IF] [IF RENAME_WARNING]
-    <p><b>[S NOTE]</b> [S RENAME_WARNING]
+    [% END %] [% IF RENAME_WARNING %]
+    <p><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]
     <p>
     <hr>
-    [/IF] [IF playlistname]
+    [% END %] [% IF playlistname %]
     <p>
     <form method="get" action="browse.html">
-      {savebuttonname} [S THIS_PLAYLIST_AS] 
-      <input name="newname" value="{playlistname}" size=20>
-      <input name="submit" type=submit value="{savebuttonname}">
-      <input type=hidden value="{player}" name="player">
-      <input type=hidden name="dir" value="{dir}">
+      [% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %] 
+      <input name="newname" value="[% playlistname %]" size=20>
+      <input name="submit" type=submit value="[% savebuttonname %]">
+      <input type=hidden value="[% player %]" name="player">
+      <input type=hidden name="dir" value="[% dir %]">
     </form>
-    [/IF] [IF titled]
+    [% END %] [% IF titled %]
     <p>
-       <a href="browse.html?player={%player}&dir={%dir}&delete=1">[S DELETE_THIS_PLAYLIST]</a><p>
-       <a href="edit_playlist.html?player={%player}&dir={%dir}">[S EDIT_PLAYLIST]
+       <a href="browse.html?player=[% player | uri %]&dir=[% dir | uri %]&delete=1">[% "DELETE_THIS_PLAYLIST" | string %]</a><p>
+       <a href="edit_playlist.html?player=[% player | uri %]&dir=[% dir | uri %]">[% "EDIT_PLAYLIST" | string %]
     </p>
-    [/IF] [IF playlistname]
+    [% END %] [% IF playlistname %]
     <p>
     <hr>
-    <p>[/IF] [IF browselist_header]{browselist_header}
-    <p>[/IF] {browselist_pagebar} 
+    <p>[% END %] [% IF browselist_header %][% browselist_header %]
+    <p>[% END %] [% browselist_pagebar %] 
     <table cellspacing="0" cellpadding="4">
-      [IF playlistname]
+      [% IF playlistname %]
       <tr>
-        <td class="odd">[S THIS_ENTIRE_PLAYLIST]</td>
-        [/IF] [IF playlistname]
-        <td class="odd"><nobr><a href="status_header.html?p0=playlist&p1=load&p2={%dir}&player={%player}" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt=""></a></nobr></td>
-        [/IF] [IF playlistname]
-        <td class="odd"><nobr><a href="status_header.html?p0=playlist&p1=add&p2={%dir}&player={%player}" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt=""></a></nobr></td>
+        <td class="odd">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
+        [% END %] [% IF playlistname %]
+        <td class="odd"><nobr><a href="status_header.html?p0=playlist&p1=load&p2=[% dir | uri %]&player=[% player | uri %]" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt=""></a></nobr></td>
+        [% END %] [% IF playlistname %]
+        <td class="odd"><nobr><a href="status_header.html?p0=playlist&p1=add&p2=[% dir | uri %]&player=[% player | uri %]" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt=""></a></nobr></td>
       </tr>
-      [/IF] {browse_list} 
+      [% END %] [% browse_list %] 
     </table>
-    {browselist_pagebar} 
+    [% browselist_pagebar %] 
     <p>&nbsp;</p></td>
 				<td width="4" height="100%"></td>
 			</tr>
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]

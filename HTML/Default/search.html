@@ -1,7 +1,7 @@
-[SET title Search]
-[SET pageicon Search]
-[SET bodyscript onload="document.searchForm.query.focus();"]
-[INCLUDE pageheader.html]
+[% title = 'Search' %]
+[% pageicon = 'Search' %]
+[% bodyscript = 'onload="document.searchForm.query.focus();"' %]
+[% PROCESS pageheader.html %]
 <TR height="44"> 
   <TD width="4" height="44"><IMG SRC="html/images/spacer.gif" WIDTH=8 HEIGHT=39 ALT=""></TD>
 				<td valign="top" class="medgrey" height="44">
@@ -14,8 +14,7 @@
 						<tr>
 							<td width="8"><img src="html/images/spacer.gif" width=8 height=8 alt=""></td>
 							
-        <td class="exlisting" valign=top><a href="home.html?player={%player}">[S 
-          {playermodel}_HOME]</a> / <a href="search.html?player={%player}&type={type}">[EQ type artist][S SEARCHFOR_ARTIST][/EQ][EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type song][S SEARCHFOR_SONGTITLE][/EQ]</a></td>
+        <td class="exlisting" valign=top><a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a> / <a href="search.html?player=[% player | uri %]&type=[% type %]">[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</a></td>
 							<td width="4"></td>
 						</tr>
 						<tr height="5">
@@ -34,29 +33,29 @@
   <td valign="top" height="100%"> 
     <p>&nbsp;</p>
     <form name="searchForm" method="get" action="search.html">
-      [EQ type artist][S SEARCHFOR_ARTIST][/EQ][EQ type album][S SEARCHFOR_ALBUM][/EQ][EQ type song][S SEARCHFOR_SONGTITLE][/EQ][S COLON]
-      <input type=text class="stdedit" name="query" value="{query}" size=40>
-      <input name="submit" type=submit class="stdclick" value=[S SEARCH]>
-      <input type=hidden value="{type}" name="type">
-      <input type=hidden value="{player}" name="player">
+      [% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %][% "COLON" | string %]
+      <input type=text class="stdedit" name="query" value="[% query %]" size=40>
+      <input name="submit" type=submit class="stdclick" value=[% "SEARCH" | string %]>
+      <input type=hidden value="[% type %]" name="type">
+      <input type=hidden value="[% player %]" name="player">
     </form>
     <p></p>
-    <p>[NE numresults -1]</p>
+    <p>[% IF numresults != '-1' %]</p>
     <hr>
-    <p>[EQ type artist][S ARTISTSMATCHING][/EQ][EQ type album][S ALBUMSMATCHING][/EQ][EQ type song][S SONGSMATCHING][/EQ] "{query}"[S COLON]{numresults}</p>
-    <p>[/NE]</p>
-    [IF searchlist_pagebar]
-    <p>[S PAGES][S COLON]{searchlist_pagebar}</p>
-    [/IF][IF searchlist_header]
-    <p>{searchlist_header}[S COLON]</p>
-    [/IF] 
+    <p>[% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %][% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %][% IF type == 'song' %][% "SONGSMATCHING" | string %][% END %] "[% query %]"[% "COLON" | string %][% numresults %]</p>
+    <p>[% END %]</p>
+    [% IF searchlist_pagebar %]
+    <p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
+    [% END %][% IF searchlist_header %]
+    <p>[% searchlist_header %][% "COLON" | string %]</p>
+    [% END %] 
     <table cellspacing="0" cellpadding="4">
-      {browse_list} 
+      [% browse_list %] 
     </table>
-    [IF searchlist_pagebar]
-    <p>[S PAGES][S COLON]{searchlist_pagebar}</p>
-    [/IF] 
+    [% IF searchlist_pagebar %]
+    <p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
+    [% END %] 
     <p>&nbsp;</p></td>
 				<td width="4" height="100%"></td>
 			</tr>
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]

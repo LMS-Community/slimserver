@@ -1,18 +1,18 @@
 
 <tr>
-   <td>[IF currentsong]<img src="html/spinner.gif">[/IF]&nbsp;</td>
-   <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN]>
-       	[IF currentsong]<a name="currentsong"></a><b>[/IF]
-  			 <a href="status.html?p0=playlist&p1=jump&p2={num}&player={%player}">{&title}</a>
- 		[IF currentsong]</b>[/IF]
+   <td>[% IF currentsong %]<img src="html/spinner.gif">[% END %]&nbsp;</td>
+   <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+       	[% IF currentsong %]<a name="currentsong"></a><b>[% END %]
+  			 <a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]">[% title | html %]</a>
+ 		[% IF currentsong %]</b>[% END %]
 
 <span class="small">
-		[IF album][S FROM][/IF]
-<i><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{&album}</a></i>
-[IF artist][S BY] [/IF]
-<a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser">{&artist}</a></span>
+		[% IF album %][% "FROM" | string %][% END %]
+<i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>
+[% IF artist %][% "BY" | string %] [% END %]
+<a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist | html %]</a></span>
    </td>
-   <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN]>
-      (<a href="status.html?p0=playlist&p1=delete&p2={num}&player={%player}&start={start}">[S DELETE]</a>)
+   <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+      (<a href="status.html?p0=playlist&p1=delete&p2=[% num %]&player=[% player | uri %]&start=[% start %]">[% "DELETE" | string %]</a>)
    </td>
 </tr>

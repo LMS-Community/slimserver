@@ -1,20 +1,20 @@
 <html>
   <head>
-    <title>[S {browseby}]</title>
+    <title>[% browseby | string %]</title>
     <link rel="stylesheet" href="slimserver.css">
   </head>
   <body bgcolor="#FFFFFF">
 
     <p>
 
-    <h3>[S {browseby}]</h3><p>
+    <h3>[% browseby | string %]</h3><p>
 
-    {pwd_list}
+    [% pwd_list %]
 
     <p><hr><p>
-	[IF browselist_header]{browselist_header}[/IF]
+	[% IF browselist_header %][% browselist_header %][% END %]
     <table cellspacing="0" border="0" cellpadding="4" width="100%">
-      {browse_list}
+      [% browse_list %]
     </table>
 
 

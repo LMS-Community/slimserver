@@ -1,18 +1,18 @@
 
-<tr bgcolor = [IF odd]"#f7f7f7"[/IF] [IFN odd]"#FFFFFF"[/IFN]>
+<tr bgcolor = [% IF odd %]"#f7f7f7"[% END %] [% IF not odd %]"#FFFFFF"[% END %]>
    <td nowrap=true bgcolor="#FFFFFF">
-   	[IF currentsong] <img src="html/arrow-0065.gif">[/IF]
+   	[% IF currentsong %] <img src="html/arrow-0065.gif">[% END %]
    </td>
    <td nowrap=true>
-       	[IF currentsong]<a name="currentsong"></a><b>[/IF]
-  			 <a href="status.html?p0=playlist&p1=jump&p2={num}&player={%player}">{&title}</a>
- 		[IF currentsong]</b>[/IF]
+       	[% IF currentsong %]<a name="currentsong"></a><b>[% END %]
+  			 <a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]">[% title | html %]</a>
+ 		[% IF currentsong %]</b>[% END %]
     </td>
-    [IF album] <td nowrap=true>
-        <i><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{&album}</a></i></td>[/IF]
-    [IF artist] <td nowrap=true>
-        <a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser">{&artist}</a></td>[/IF]
+    [% IF album %] <td nowrap=true>
+        <i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i></td>[% END %]
+    [% IF artist %] <td nowrap=true>
+        <a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist | html %]</a></td>[% END %]
    <td nowrap=true>
-      (<a href="status.html?p0=playlist&p1=delete&p2={num}&player={%player}&start={start}">Delete</a>)
+      (<a href="status.html?p0=playlist&p1=delete&p2=[% num %]&player=[% player | uri %]&start=[% start %]">Delete</a>)
    </td>
 </tr>

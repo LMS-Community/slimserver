@@ -1,2 +1,2 @@
-[IFN currpage] <a href="{path}?{otherparams}&start={itemnum0}{fragment}">{pagenum}</a> [/IFN]
-[IF currpage] <a href="{path}?{otherparams}&start={itemnum0}{fragment}"><b>{pagenum}</b></a> [/IF]
+[% IF not currpage %] <a href="[% path %]?[% otherparams %]&start=[% itemnum0 %][% fragment %]">[% pagenum %]</a> [% END %]
+[% IF currpage %] <a href="[% path %]?[% otherparams %]&start=[% itemnum0 %][% fragment %]"><b>[% pagenum %]</b></a> [% END %]

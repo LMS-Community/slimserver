@@ -1,6 +1,6 @@
-[SET pageicon help]
-[SET title Internet Radio and Playlist Files]
-[INCLUDE helpheader.html]
+[% pageicon = 'help' %]
+[% title = 'Internet Radio and Playlist Files' %]
+[% PROCESS helpheader.html %]
 
       <p>The Squeezebox  supports  MP3 streaming protocols, including Shoutcast,
       Icecast, Live365, and HTTP. Other streaming formats which do not use MP3
@@ -45,4 +45,4 @@ Version=2
    you are having problems with a station that worked at one time, visit their
    website again and see if you need to update your playlist file for that station.</p>
 
-[INCLUDE helpfooter.html]
+[% PROCESS helpfooter.html %]

@@ -5,28 +5,28 @@
   </head>
   <body bgcolor="#FFFFFF">
 
-	<a href="status.html?player={%player}">[S {playermodel}_MUSIC_PLAYER]</a> | [S STATISTICS]
+	<a href="status.html?player=[% player | uri %]">[% playermodel _ "_MUSIC_PLAYER" | string %]</a> | [% "STATISTICS" | string %]
 	<p><hr><p>
-    <h3>[S STATISTICS]</h3>
+    <h3>[% "STATISTICS" | string %]</h3>
     <p><hr><p>
     <table cellspacing="0" border="0" cellpadding="4" width="100%">
 <tr><td align="center">	
-		<B>{total_song_count} [S SONGS]</B>
+		<B>[% total_song_count %] [% "SONGS" | string %]</B>
 	  </td>
 	  <td align="center">
-		<B>{album_count} [S ALBUMS]</B>
+		<B>[% album_count %] [% "ALBUMS" | string %]</B>
 </td></tr>
 <td align="center">	
-		<B>{artist_count} [S ARTISTS]</B>
+		<B>[% artist_count %] [% "ARTISTS" | string %]</B>
 	  </td>
 	  <td align="center">
-		<B>{genre_count} [S GENRES]</B>
+		<B>[% genre_count %] [% "GENRES" | string %]</B>
 </td>
 	</table>
     <p><hr><p>
-    <h4>[S MOSTPLAYED][S COLON]</h4>
+    <h4>[% "MOSTPLAYED" | string %][% "COLON" | string %]</h4>
     <table cellspacing="0" border="0" cellpadding="2" width="100%">
-      {browse_list}
+      [% browse_list %]
     </table>
   </body>
 </html>

@@ -1,5 +1,5 @@
-	[IFN Suppress_PrefHead]<p><h3>{PrefHead}</h3>[/IFN]
-		[IFN Suppress_PrefDesc]<p>{PrefDesc}</p>[/IFN]
-		{PrefInput}
-	[IFN Suppress_PrefHead]</p>[/IFN]
-[IFN Suppress_PrefLine]<hr>[/IFN]
+	[% IF not Suppress_PrefHead %]<p><h3>[% PrefHead %]</h3>[% END %]
+		[% IF not Suppress_PrefDesc %]<p>[% PrefDesc %]</p>[% END %]
+		[% PrefInput %]
+	[% IF not Suppress_PrefHead %]</p>[% END %]
+[% IF not Suppress_PrefLine %]<hr>[% END %]

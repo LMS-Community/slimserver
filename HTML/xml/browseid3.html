@@ -3,14 +3,14 @@
 <!DOCTYPE browse SYSTEM "html/slimserver_xml.dtd">
 
 <browse xmlns="http://www.slimdevices.com/slimserver/xml">
-	[IF itunes]<itunes/>[/IF]
-	[IF warn]<still_scanning/>[/IF]
-	[IF song_count]<song_count>{song_count}</song_count>[/IF]
-	[IF artist_count]<artist_count>{artist_count}</artist_count>[/IF]
-	[IF album_count]<album_count>{album_count}</album_count>[/IF]
-	[IF browseby]<browseby>{browseby}</browseby>[/IF]
-	[IF pwd_list]<location>{pwd_list}</location>[/IF]
-	[IF browselist_header]{browselist_header}[/IF]
-	[IF coverart]<coverart><![CDATA[/music/{%coverartpath}/cover.jpg]]></coverart>[/IF]
-	{browse_list}
+	[% IF itunes %]<itunes/>[% END %]
+	[% IF warn %]<still_scanning/>[% END %]
+	[% IF song_count %]<song_count>[% song_count %]</song_count>[% END %]
+	[% IF artist_count %]<artist_count>[% artist_count %]</artist_count>[% END %]
+	[% IF album_count %]<album_count>[% album_count %]</album_count>[% END %]
+	[% IF browseby %]<browseby>[% browseby %]</browseby>[% END %]
+	[% IF pwd_list %]<location>[% pwd_list %]</location>[% END %]
+	[% IF browselist_header %][% browselist_header %][% END %]
+	[% IF coverart %]<coverart><![CDATA[/music/[% coverartpath | uri %]/cover.jpg]]></coverart>[% END %]
+	[% browse_list %]
 </browse>

@@ -1,24 +1,24 @@
 <html>
   <head>
-    <title>[S MOODLOGIC_SELECT_MOOD]</title>
+    <title>[% "MOODLOGIC_SELECT_MOOD" | string %]</title>
     <link rel="stylesheet" href="slimserver.css">
   </head>
   <body bgcolor="#FFFFFF">
 
     <p>
 
-    <h3>[S MOODLOGIC_SELECT_MOOD]</h3><p>
+    <h3>[% "MOODLOGIC_SELECT_MOOD" | string %]</h3><p>
 
-    <a href="home.html?player={%player}">[S {playermodel}_HOME]</a>
-	{pwd_list}
+    <a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a>
+	[% pwd_list %]
 
     <p><hr><p>
-	[IF browselist_header]{browselist_header}[/IF]
-    [IF browselist_pagebar]<p>{browselist_pagebar}</p>[/IF]
+	[% IF browselist_header %][% browselist_header %][% END %]
+    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
     <table cellspacing="0" border="0" cellpadding="4" width="100%">
-      {mood_list}
+      [% mood_list %]
     </table>
-   [IF browselist_pagebar]<p>{browselist_pagebar}</p>[/IF]
+   [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 
 
   </body>

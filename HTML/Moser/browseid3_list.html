@@ -1,22 +1,22 @@
-      <li class="[IF odd]odd[/IF][IFN odd]even[/IFN]">
-[IF anchor]        <a name="{anchor}"></a>
-[/IF]        <div class="controls">
+      <li class="[% IF odd %]odd[% END %][% IF not odd %]even[% END %]">
+[% IF anchor %]        <a name="[% anchor %]"></a>
+[% END %]        <div class="controls">
           <ul class="songctl">
-            <li><a href="status.html?p0=playlist&amp;p1=play[IF descend]album&amp;p2={%genre}&amp;p3={%artist}&amp;p4={%album}[/IF][IFN descend]&amp;p2={%itempath}[/IFN]&amp;player={%player}" target="status" title="[S PLAY]"><span>&gt;</span></a></li>
-            <li><a href="status.html?p0=playlist&amp;p1=insert[IF descend]album&amp;p2={%genre}&amp;p3={%artist}&amp;p4={%album}[/IF][IFN descend]&amp;p2={%itempath}[/IFN]&amp;player={%player}" target="status" title="[S PLAY] [S NEXT]"><span>&gt;|</span></a></li>
-            <li><a href="status.html?p0=playlist&amp;p1=add[IF descend]album&amp;p2={%genre}&amp;p3={%artist}&amp;p4={%album}[/IF][IFN descend]&amp;p2={%itempath}[/IFN]&amp;player={%player}"  target="status" title="[S ADD_TO_PLAYLIST]"><span>+</span></a></li>
+            <li><a href="status.html?p0=playlist&amp;p1=play[% IF descend %]album&amp;p2=[% genre | uri %]&amp;p3=[% artist | uri %]&amp;p4=[% album | uri %][% END %][% IF not descend %]&amp;p2=[% itempath | uri %][% END %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %]"><span>&gt;</span></a></li>
+            <li><a href="status.html?p0=playlist&amp;p1=insert[% IF descend %]album&amp;p2=[% genre | uri %]&amp;p3=[% artist | uri %]&amp;p4=[% album | uri %][% END %][% IF not descend %]&amp;p2=[% itempath | uri %][% END %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %] [% "NEXT" | string %]"><span>&gt;|</span></a></li>
+            <li><a href="status.html?p0=playlist&amp;p1=add[% IF descend %]album&amp;p2=[% genre | uri %]&amp;p3=[% artist | uri %]&amp;p4=[% album | uri %][% END %][% IF not descend %]&amp;p2=[% itempath | uri %][% END %]&amp;player=[% player | uri %]"  target="status" title="[% "ADD_TO_PLAYLIST" | string %]"><span>+</span></a></li>
           </ul>
         </div>
         <div class="browseline">
-          [IF  descend]<a href="browseid3.html?song={%song}&amp;artist={%artist}&amp;album={%album}&amp;genre={%genre}&amp;player={%player}">{&title}</a>
-[/IF][IFN descend]<span class="songtitle"><a href="songinfo.html?songurl={%itempath}&amp;player={%player}">{&title}</a></span>
-          [IF includeAlbum][S FROM]
-          <span class="album"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;album={%album}&amp;player={%player}" target="browser">{&album}</a></span>
-          [/IF]
-          [IF includeArtist][S BY]
-          <span class="artist"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{&artist}</a></span>
-          [/IF]
-[/IFN]        </div>
+          [% IF descend %]<a href="browseid3.html?song=[% song | uri %]&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;genre=[% genre | uri %]&amp;player=[% player | uri %]">[% title | html %]</a>
+[% END %][% IF not descend %]<span class="songtitle"><a href="songinfo.html?songurl=[% itempath | uri %]&amp;player=[% player | uri %]">[% title | html %]</a></span>
+          [% IF includeAlbum %][% "FROM" | string %]
+          <span class="album"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album | html %]</a></span>
+          [% END %]
+          [% IF includeArtist %][% "BY" | string %]
+          <span class="artist"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser">[% artist | html %]</a></span>
+          [% END %]
+[% END %]        </div>
       </li>
 
 

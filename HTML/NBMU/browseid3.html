@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>[S {browseby}]</title>
+    <title>[% browseby | string %]</title>
     <link rel="stylesheet" href="slimserver.css">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></head>
   
@@ -17,37 +17,36 @@
     <td width="30" valign="middle" bgcolor="#333333"> 
       <h3> <img src="html/images/spacer.gif" width="30" height="8"></h3></td>
     <td valign="middle" bgcolor="#999999">
-<h3>[S {browseby}]</h3></td>
+<h3>[% browseby | string %]</h3></td>
   </tr>
 </table>
-<p> <img src="html/images/spacer.gif" width="30" height="8"><a href="home.html?player={%player}">[S 
-  {playermodel}_HOME]</a> {pwd_list} 
+<p> <img src="html/images/spacer.gif" width="30" height="8"><a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a> [% pwd_list %] 
 <p>&nbsp;
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="30"><img src="html/images/spacer.gif" width="30" height="8"></td>
-    <td><p>[IF warn]<b>[S NOTE]</b> [S SCAN_WARNING] [IFN itunes][S SCAN_CLICK] 
-        <a href="browse.html?player={%player}">[S HERE]</a>.[/IFN] 
+    <td><p>[% IF warn %]<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF not itunes %][% "SCAN_CLICK" | string %] 
+        <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %] 
       <p>&nbsp; 
       <p> 
-      <p>[/IF] [IF browselist_header]{browselist_header}[/IF] [IF browselist_pagebar]
-      <p>{browselist_pagebar}</p>
-      [/IF] 
+      <p>[% END %] [% IF browselist_header %][% browselist_header %][% END %] [% IF browselist_pagebar %]
+      <p>[% browselist_pagebar %]</p>
+      [% END %] 
       <table cellspacing="0" border="0" cellpadding="4" width="100%">
-	[IF coverart]
+	[% IF coverart %]
 	  <tr>
 	    <td>
-	      <p><a href="/music/{%coverartpath}/cover.jpg" target="cover"><img src="/music/{%coverartpath}/cover.jpg" border=0></a></p>
+	      <p><a href="/music/[% coverartpath | uri %]/cover.jpg" target="cover"><img src="/music/[% coverartpath | uri %]/cover.jpg" border=0></a></p>
 	    </td>
 	   </tr>
-	[/IF]
+	[% END %]
 			  
-	  {browse_list} 
+	  [% browse_list %] 
 
       </table>
-      [IF browselist_pagebar]
-      <p>{browselist_pagebar}</p>
-      [/IF] </td>
+      [% IF browselist_pagebar %]
+      <p>[% browselist_pagebar %]</p>
+      [% END %] </td>
   </tr>
 </table>
 <p>&nbsp; 

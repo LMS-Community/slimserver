@@ -11,12 +11,12 @@ href="html/styles.css" type=text/css rel=stylesheet>
 
 function switchPlayer(player_List){
    var player = player_List.options[player_List.selectedIndex].value;
-   parent.location.href = "{webroot}index.html?player=" + player;
+   parent.location.href = "[% webroot %]index.html?player=" + player;
 }
 
 // Stop Hiding script --->
 </SCRIPT> 	</HEAD>
-<meta http-equiv="refresh" content="{refresh}; url=status.html?player={%player}&start={start}&refresh=1">
+<meta http-equiv="refresh" content="[% refresh %]; url=status.html?player=[% player | uri %]&start=[% start %]&refresh=1">
 <BODY 
 style="BORDER-RIGHT: 0px; BORDER-TOP: 0px; BORDER-LEFT: 0px; BORDER-BOTTOM: 0px" 
 leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
@@ -24,8 +24,8 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
   <table width=99% border=0 cellpadding=0 cellspacing=0 bordercolor=#111111 style="BORDER-COLLAPSE: collapse">
     <tbody>
       <tr height="29"> 
-        <td valign="middle">&nbsp;<img height=17 src="html/images/{playermodel}_logo.small.gif" border=0></td>
-        <td valign="middle" align="right">[IF player_chooser_list]<select NAME="playerMenu" onChange="switchPlayer(this);" class="popup" name="player">{player_chooser_list}</select>[/IF]</td>
+        <td valign="middle">&nbsp;<img height=17 src="html/images/[% playermodel %]_logo.small.gif" border=0></td>
+        <td valign="middle" align="right">[% IF player_chooser_list %]<select NAME="playerMenu" onChange="switchPlayer(this);" class="popup" name="player">[% player_chooser_list %]</select>[% END %]</td>
       </tr>
     </tbody>
   </table>
@@ -35,16 +35,14 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
     <TBODY>
       <TR> 
         <TD vAlign=top>&nbsp; </TD>
-        <TD width="100%" height="130" vAlign=top> <P class=label>[IF modeplay][S 
-            PLAYING][/IF] [IF modepause][S PAUSED_ON][/IF] [IF modestop][S STOPPED_ON][/IF] 
-            [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF][IF bitrate]&nbsp; 
-            | Duration[S COLON]{duration} | Bitrate[S COLON]{bitrate}[/IF]</P>
-          <P class=songtitle><b><font color="#FFFFFF">{songtitle}</font></a></b></P>
+        <TD width="100%" height="130" vAlign=top> <P class=label>[% IF modeplay %][% "PLAYING" | string %][% END %] [% IF modepause %][% "PAUSED_ON" | string %][% END %] [% IF modestop %][% "STOPPED_ON" | string %][% END %] 
+            [% IF currentsong %][% currentsong %] [% "OUT_OF" | string %] [% songcount %][% END %][% IF bitrate %]&nbsp; 
+            | Duration[% "COLON" | string %][% duration %] | Bitrate[% "COLON" | string %][% bitrate %][% END %]</P>
+          <P class=songtitle><b><font color="#FFFFFF">[% songtitle %]</font></a></b></P>
           <P class=label>Artist</P>
-          <P class=artistname><a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser"><font color="#FFFFFF">{&artist}</font></a></P>
+          <P class=artistname><a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser"><font color="#FFFFFF">[% artist | html %]</font></a></P>
           <P class=label>Album</P>
-          <P class=artistname><i><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><font color="#FFFFFF">{&album}</font></a>[IF 
-            year]&nbsp;| Year[S COLON]{year}[/IF]</i></P>
+          <P class=artistname><i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser"><font color="#FFFFFF">[% album | html %]</font></a>[% IF year %]&nbsp;| Year[% "COLON" | string %][% year %][% END %]</i></P>
           </TD>
         <DIV></DIV>
       </TR>
@@ -59,26 +57,19 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
           <TABLE width="230" border=0 cellSpacing=5>
             <TBODY>
               <TR> 
-                <TD width="" vAlign=bottom><a href="status.html?p0=playlist&p1=jump&p2=-1&player={%player}"><img alt="Previous track" src="html/prev.gif" 
-      border=0></a><a href="status.html?p0=playlist&p1=jump&p2=%2b1&player={%player}"><img alt="Next track"src="html/next.gif" 
-      border=0></a><a href="status.html?p0=play&player={%player}">[IF modeplay]<b><font color="#00FF00">[/IF]<img alt="Play" src="html/play[IF modeplay]_ON[/IF].gif" 
-      border=0>[IF modeplay]</font></b>[/IF]</a><a href="status.html?p0=pause&player={%player}">[IF 
-                  modepause]<b><font color="#00FF00">[/IF]<img alt="Pause" src="html/pause[IF modepause]_ON[/IF].gif" 
-      border=0>[IF modepause]</font></b>[/IF]</a><a href="status.html?p0=stop&player={%player}">[IF 
-                  modestop]<b><font color="#00FF00">[/IF]<img alt="Stop" src="html/stop[IF modestop]_ON[/IF].gif" 
-      border=0>[IF modestop]</font></b>[/IF]</a> </TD>
+                <TD width="" vAlign=bottom><a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% player | uri %]"><img alt="Previous track" src="html/prev.gif" 
+      border=0></a><a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% player | uri %]"><img alt="Next track"src="html/next.gif" 
+      border=0></a><a href="status.html?p0=play&player=[% player | uri %]">[% IF modeplay %]<b><font color="#00FF00">[% END %]<img alt="Play" src="html/play[% IF modeplay %]_ON[% END %].gif" 
+      border=0>[% IF modeplay %]</font></b>[% END %]</a><a href="status.html?p0=pause&player=[% player | uri %]">[% IF modepause %]<b><font color="#00FF00">[% END %]<img alt="Pause" src="html/pause[% IF modepause %]_ON[% END %].gif" 
+      border=0>[% IF modepause %]</font></b>[% END %]</a><a href="status.html?p0=stop&player=[% player | uri %]">[% IF modestop %]<b><font color="#00FF00">[% END %]<img alt="Stop" src="html/stop[% IF modestop %]_ON[% END %].gif" 
+      border=0>[% IF modestop %]</font></b>[% END %]</a> </TD>
               </TR>
               <TR> 
-                <TD vAlign=bottom> [S REPEAT][S COLON]<a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">[IF 
-                  repeatone]<b><font color="#00FF00">[/IF][S ONE][IF repeatone]</font></b>[/IF]</a>/<a 
-                href="status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}">[IF 
-                  repeatall]<b><font color="#00FF00">[/IF][S ALL][IF repeatall]</font></b>[/IF]</a>/<a 
-                href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}">[IF 
-                  repeatoff]<b><font color="#00FF00">[/IF][S OFF][IF repeatoff]</font></b>[/IF]</a> 
-                  <img src="html/images/spacer.gif" width="10" height="1">Random[S COLON]<a href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF 
-                  shuffleon]<b><font color="#00FF00">[/IF][S ON][IF shuffleon]</font></b>[/IF]</a>/<a
-                href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">[IF 
-                  shuffleoff]<b><font color="#00FF00">[/IF][S OFF][IF shuffleoff]</font></b>[/IF]</a> 
+                <TD vAlign=bottom> [% "REPEAT" | string %][% "COLON" | string %]<a href="status.html?p0=playlist&p1=repeat&p2=1&player=[% player | uri %]&start=[% start %]">[% IF repeatone %]<b><font color="#00FF00">[% END %][% "ONE" | string %][% IF repeatone %]</font></b>[% END %]</a>/<a 
+                href="status.html?p0=playlist&p1=repeat&p2=2&player=[% player | uri %]&start=[% start %]">[% IF repeatall %]<b><font color="#00FF00">[% END %][% "ALL" | string %][% IF repeatall %]</font></b>[% END %]</a>/<a 
+                href="status.html?p0=playlist&p1=repeat&p2=0&player=[% player | uri %]&start=[% start %]">[% IF repeatoff %]<b><font color="#00FF00">[% END %][% "OFF" | string %][% IF repeatoff %]</font></b>[% END %]</a> 
+                  <img src="html/images/spacer.gif" width="10" height="1">Random[% "COLON" | string %]<a href="status.html?p0=playlist&p1=shuffle&p2=1&player=[% player | uri %]">[% IF shuffleon %]<b><font color="#00FF00">[% END %][% "ON" | string %][% IF shuffleon %]</font></b>[% END %]</a>/<a
+                href="status.html?p0=playlist&p1=shuffle&p2=0&player=[% player | uri %]">[% IF shuffleoff %]<b><font color="#00FF00">[% END %][% "OFF" | string %][% IF shuffleoff %]</font></b>[% END %]</a> 
                 </TD>
               </TR>
             </TBODY>
@@ -89,67 +80,29 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
           <TABLE cellSpacing=5 border=0>
             <TBODY>
               <TR> 
-                <TD width="532" vAlign=bottom>[S VOLUME][S COLON]<a href="status.html?p0=mixer&p1=volume&p2=-10&player={%player}&start={start}"></a></TD>
+                <TD width="532" vAlign=bottom>[% "VOLUME" | string %][% "COLON" | string %]<a href="status.html?p0=mixer&p1=volume&p2=-10&player=[% player | uri %]&start=[% start %]"></a></TD>
               </TR>
               <TR> 
-                <TD vAlign=bottom><a href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}">[EQ 
-                  volume 0]<b><font color="#00FF00">[/EQ][GT volume 0]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 0]green[/EQ][GT volume 0]green[/GT].gif" border=0>[EQ 
-                  volume 0]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=6&player={%player}&start={start}">[EQ 
-                  volume 6]<b><font color="#00FF00">[/EQ][GT volume 6]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 6]green[/EQ][GT volume 6]green[/GT].gif" border=0>[EQ 
-                  volume 6]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=12&player={%player}&start={start}">[EQ 
-                  volume 12]<b><font color="#00FF00">[/EQ][GT volume 12]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 12]green[/EQ][GT volume 12]green[/GT].gif" border=0>[EQ 
-                  volume 12]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=18&player={%player}&start={start}">[EQ 
-                  volume 18]<b><font color="#00FF00">[/EQ][GT volume 18]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 18]green[/EQ][GT volume 18]green[/GT].gif" border=0>[EQ 
-                  volume 18]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=24&player={%player}&start={start}">[EQ 
-                  volume 24]<b><font color="#00FF00">[/EQ][GT volume 24]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 24]green[/EQ][GT volume 24]green[/GT].gif" border=0>[EQ 
-                  volume 24]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=30&player={%player}&start={start}">[EQ 
-                  volume 30]<b><font color="#00FF00">[/EQ][GT volume 30]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 30]green[/EQ][GT volume 30]green[/GT].gif" border=0>[EQ 
-                  volume 30]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=35&player={%player}&start={start}">[EQ 
-                  volume 35]<b><font color="#00FF00">[/EQ][GT volume 35]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 35]green[/EQ][GT volume 35]green[/GT].gif" border=0>[EQ 
-                  volume 35]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=40&player={%player}&start={start}">[EQ 
-                  volume 40]<b><font color="#00FF00">[/EQ][GT volume 40]<font color="#00FF00"><b>[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 40]green[/EQ][GT volume 40]green[/GT].gif" border=0>[EQ 
-                  volume 40]</b></font>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=45&player={%player}&start={start}">[EQ 
-                  volume 45]<b><font color="#00FF00">[/EQ][GT volume 45]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 45]green[/EQ][GT volume 45]green[/GT].gif" border=0>[EQ 
-                  volume 45]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=50&player={%player}&start={start}">[EQ 
-                  volume 50]<b><font color="#00FF00">[/EQ][GT volume 50]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 50]green[/EQ][GT volume 50]green[/GT].gif" border=0>[EQ 
-                  volume 50]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=55&player={%player}&start={start}">[EQ 
-                  volume 55]<b><font color="#00FF00">[/EQ][GT volume 55]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 55]green[/EQ][GT volume 55]green[/GT].gif" border=0>[EQ 
-                  volume 55]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=60&player={%player}&start={start}">[EQ 
-                  volume 60]<b><font color="#00FF00">[/EQ][GT volume 60]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 60]green[/EQ][GT volume 60]green[/GT].gif" border=0>[EQ 
-                  volume 60]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=65&player={%player}&start={start}">[EQ 
-                  volume 65]<b><font color="#00FF00">[/EQ][GT volume 65]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 65]green[/EQ][GT volume 65]green[/GT].gif" border=0>[EQ 
-                  volume 65]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=70&player={%player}&start={start}">[EQ 
-                  volume 70]<b><font color="#00FF00">[/EQ][GT volume 70]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 70]green[/EQ][GT volume 70]green[/GT].gif" border=0>[EQ 
-                  volume 70]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=75&player={%player}&start={start}">[EQ 
-                  volume 75]<b><font color="#00FF00">[/EQ][GT volume 75]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 75]green[/EQ][GT volume 75]green[/GT].gif" border=0>[EQ 
-                  volume 75]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=81&player={%player}&start={start}">[EQ 
-                  volume 81]<b><font color="#00FF00">[/EQ][GT volume 81]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 81]green[/EQ][GT volume 81]green[/GT].gif" border=0>[EQ 
-                  volume 81]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=88&player={%player}&start={start}">[EQ 
-                  volume 88]<b><font color="#00FF00">[/EQ][GT volume 88]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 88]green[/EQ][GT volume 88]green[/GT].gif" border=0>[EQ 
-                  volume 88]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=94&player={%player}&start={start}">[EQ 
-                  volume 94]<b><font color="#00FF00">[/EQ][GT volume 94]<b><font color="#00FF00">[/GT]<IMG  
-      hspace=0 src="html/pixel[EQ volume 94]green[/EQ][GT volume 94]green[/GT].gif" border=0>[EQ 
-                  volume 94]</font></b>[/EQ]</a><a href="status.html?p0=mixer&p1=volume&p2=100&player={%player}&start={start}">[EQ 
-                  volume 100]<b><font color="#00FF00">[/EQ][GT volume 100]<font color="#00FF00"><b>[/GT]<IMG  
-      hspace=0 src="html/lastpixel[EQ volume 100]green[/EQ][GT volume 100]green[/GT].gif" border=0>[EQ 
-                  volume 100]</b></font>[/EQ]</a> </TD>
+                <TD vAlign=bottom><a href="status.html?p0=mixer&p1=volume&p2=0&player=[% player | uri %]&start=[% start %]">[% IF volume == '0' %]<b><font color="#00FF00">[% END %][% IF volume > '0' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '0' %]green[% END %][% IF volume > '0' %]green[% END %].gif" border=0>[% IF volume == '0' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=6&player=[% player | uri %]&start=[% start %]">[% IF volume == '6' %]<b><font color="#00FF00">[% END %][% IF volume > '6' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '6' %]green[% END %][% IF volume > '6' %]green[% END %].gif" border=0>[% IF volume == '6' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=12&player=[% player | uri %]&start=[% start %]">[% IF volume == '12' %]<b><font color="#00FF00">[% END %][% IF volume > '12' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '12' %]green[% END %][% IF volume > '12' %]green[% END %].gif" border=0>[% IF volume == '12' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=18&player=[% player | uri %]&start=[% start %]">[% IF volume == '18' %]<b><font color="#00FF00">[% END %][% IF volume > '18' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '18' %]green[% END %][% IF volume > '18' %]green[% END %].gif" border=0>[% IF volume == '18' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=24&player=[% player | uri %]&start=[% start %]">[% IF volume == '24' %]<b><font color="#00FF00">[% END %][% IF volume > '24' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '24' %]green[% END %][% IF volume > '24' %]green[% END %].gif" border=0>[% IF volume == '24' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=30&player=[% player | uri %]&start=[% start %]">[% IF volume == '30' %]<b><font color="#00FF00">[% END %][% IF volume > '30' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '30' %]green[% END %][% IF volume > '30' %]green[% END %].gif" border=0>[% IF volume == '30' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=35&player=[% player | uri %]&start=[% start %]">[% IF volume == '35' %]<b><font color="#00FF00">[% END %][% IF volume > '35' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '35' %]green[% END %][% IF volume > '35' %]green[% END %].gif" border=0>[% IF volume == '35' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=40&player=[% player | uri %]&start=[% start %]">[% IF volume == '40' %]<b><font color="#00FF00">[% END %][% IF volume > '40' %]<font color="#00FF00"><b>[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '40' %]green[% END %][% IF volume > '40' %]green[% END %].gif" border=0>[% IF volume == '40' %]</b></font>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=45&player=[% player | uri %]&start=[% start %]">[% IF volume == '45' %]<b><font color="#00FF00">[% END %][% IF volume > '45' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '45' %]green[% END %][% IF volume > '45' %]green[% END %].gif" border=0>[% IF volume == '45' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=50&player=[% player | uri %]&start=[% start %]">[% IF volume == '50' %]<b><font color="#00FF00">[% END %][% IF volume > '50' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '50' %]green[% END %][% IF volume > '50' %]green[% END %].gif" border=0>[% IF volume == '50' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=55&player=[% player | uri %]&start=[% start %]">[% IF volume == '55' %]<b><font color="#00FF00">[% END %][% IF volume > '55' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '55' %]green[% END %][% IF volume > '55' %]green[% END %].gif" border=0>[% IF volume == '55' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=60&player=[% player | uri %]&start=[% start %]">[% IF volume == '60' %]<b><font color="#00FF00">[% END %][% IF volume > '60' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '60' %]green[% END %][% IF volume > '60' %]green[% END %].gif" border=0>[% IF volume == '60' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=65&player=[% player | uri %]&start=[% start %]">[% IF volume == '65' %]<b><font color="#00FF00">[% END %][% IF volume > '65' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '65' %]green[% END %][% IF volume > '65' %]green[% END %].gif" border=0>[% IF volume == '65' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=70&player=[% player | uri %]&start=[% start %]">[% IF volume == '70' %]<b><font color="#00FF00">[% END %][% IF volume > '70' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '70' %]green[% END %][% IF volume > '70' %]green[% END %].gif" border=0>[% IF volume == '70' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=75&player=[% player | uri %]&start=[% start %]">[% IF volume == '75' %]<b><font color="#00FF00">[% END %][% IF volume > '75' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '75' %]green[% END %][% IF volume > '75' %]green[% END %].gif" border=0>[% IF volume == '75' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=81&player=[% player | uri %]&start=[% start %]">[% IF volume == '81' %]<b><font color="#00FF00">[% END %][% IF volume > '81' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '81' %]green[% END %][% IF volume > '81' %]green[% END %].gif" border=0>[% IF volume == '81' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=88&player=[% player | uri %]&start=[% start %]">[% IF volume == '88' %]<b><font color="#00FF00">[% END %][% IF volume > '88' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '88' %]green[% END %][% IF volume > '88' %]green[% END %].gif" border=0>[% IF volume == '88' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=94&player=[% player | uri %]&start=[% start %]">[% IF volume == '94' %]<b><font color="#00FF00">[% END %][% IF volume > '94' %]<b><font color="#00FF00">[% END %]<IMG  
+      hspace=0 src="html/pixel[% IF volume == '94' %]green[% END %][% IF volume > '94' %]green[% END %].gif" border=0>[% IF volume == '94' %]</font></b>[% END %]</a><a href="status.html?p0=mixer&p1=volume&p2=100&player=[% player | uri %]&start=[% start %]">[% IF volume == '100' %]<b><font color="#00FF00">[% END %][% IF volume > '100' %]<font color="#00FF00"><b>[% END %]<IMG  
+      hspace=0 src="html/lastpixel[% IF volume == '100' %]green[% END %][% IF volume > '100' %]green[% END %].gif" border=0>[% IF volume == '100' %]</b></font>[% END %]</a> </TD>
               </TR>
             </TBODY>
           </TABLE>

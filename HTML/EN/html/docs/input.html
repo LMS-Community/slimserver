@@ -1,7 +1,7 @@
-[SET pageicon help]
-[SET title Using Input Modes]
-[SET techinfo 1]
-[INCLUDE helpheader.html]
+[% pageicon = 'help' %]
+[% title = 'Using Input Modes' %]
+[% techinfo = '1' %]
+[% PROCESS helpheader.html %]
 
   <h4>Overview</h4>
   <p>
@@ -627,4 +627,4 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
   <h4><a id="Bar"></a>Bar</h4>
   <h5>Description</h5>
   <p>Not currently implemented.</p>
-[INCLUDE helpfooter.html]
+[% PROCESS helpfooter.html %]

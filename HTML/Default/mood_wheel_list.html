@@ -1,6 +1,6 @@
 <tr>
-  <td width="100%" [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN]>
-      <a href="instant_mix.html?song={%song}&artist={%artist}&album={%album}&genre={%genre}&player={%player}&mood={mood}">{mood}</a>
+  <td width="100%" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
+      <a href="instant_mix.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]&mood=[% mood %]">[% mood %]</a>
  </td>
 </tr>
 

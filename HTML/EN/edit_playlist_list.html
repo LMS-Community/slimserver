@@ -1,18 +1,18 @@
 <tr>
-  <td [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN] width="100%">
-    {&title}
+  <td [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %] width="100%">
+    [% title | html %]
   </td>
-  <td [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN]>
-    <a href="edit_playlist.html?player={%player}&up={num}&dir={%dir}">[S UP]</a>
+  <td [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
+    <a href="edit_playlist.html?player=[% player | uri %]&up=[% num %]&dir=[% dir | uri %]">[% "UP" | string %]</a>
   </td>
-  <td [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN]>
-    <a class="down" href="edit_playlist.html?player={%player}&down={num}&dir={%dir}">[S DOWN]</a>
+  <td [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
+    <a class="down" href="edit_playlist.html?player=[% player | uri %]&down=[% num %]&dir=[% dir | uri %]">[% "DOWN" | string %]</a>
   </td>
-  <td [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN]>
-    <a class="edit" href="edit_playlist.html?player={%player}&edit={num}&dir={%dir}">[S EDIT]</a>
+  <td [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
+    <a class="edit" href="edit_playlist.html?player=[% player | uri %]&edit=[% num %]&dir=[% dir | uri %]">[% "EDIT" | string %]</a>
   </td>
-  <td [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN]>
-    <a class="delete" href="edit_playlist.html?player={%player}&delete={num}&dir={%dir}">[S DELETE]</a>
+  <td [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
+    <a class="delete" href="edit_playlist.html?player=[% player | uri %]&delete=[% num %]&dir=[% dir | uri %]">[% "DELETE" | string %]</a>
   </td>
 </tr>
 

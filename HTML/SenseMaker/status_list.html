@@ -1,10 +1,10 @@
-<tr> <td [IF currentsong]class="super"[/IF] [IFN currentsong]class="listing"[/IFN] width="60"><nobr><a class="linkbtn" href="playlist.html?p0=playlist&p1=move&p2={num}&p3=%2D1&player={%player}&start={start}"><IMG height=10 alt="Move up" hspace=0 
+<tr> <td [% IF currentsong %]class="super"[% END %] [% IF not currentsong %]class="listing"[% END %] width="60"><nobr><a class="linkbtn" href="playlist.html?p0=playlist&p1=move&p2=[% num %]&p3=%2D1&player=[% player | uri %]&start=[% start %]"><IMG height=10 alt="Move up" hspace=0 
       src="html/moveup.gif" 
-      border=0></a><a class="linkbtn" href="playlist.html?p0=playlist&p1=move&p2={num}&p3=%2B1&player={%player}&start={start}"><IMG height=10 alt="Move down" hspace=0 
+      border=0></a><a class="linkbtn" href="playlist.html?p0=playlist&p1=move&p2=[% num %]&p3=%2B1&player=[% player | uri %]&start=[% start %]"><IMG height=10 alt="Move down" hspace=0 
       src="html/movedown.gif" 
-      border=0></a><a class="linkbtn" href="playlist.html?p0=playlist&p1=delete&p2={num}&player={%player}&start={start}"><IMG height=10 alt="Remove" hspace=0 
+      border=0></a><a class="linkbtn" href="playlist.html?p0=playlist&p1=delete&p2=[% num %]&player=[% player | uri %]&start=[% start %]"><IMG height=10 alt="Remove" hspace=0 
       src="html/remove.gif" 
-      border=0></a></nobr></td> <td 	[IF currentsong]class="super"[/IF][IFN currentsong]class="listing"[/IFN] > 
-  [IF currentsong]<a name="currentsong"></a><b>[/IF] <a href="playlist.html?p0=playlist&p1=jump&p2={num}&player={%player}" [IF currentsong]id="currentsong"[/IF]>{&title}</a> 
-  [IF currentsong]</b>[/IF] [IF artist] [S BY] [/IF] <a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser">{&artist}</a> </td> 
+      border=0></a></nobr></td> <td 	[% IF currentsong %]class="super"[% END %][% IF not currentsong %]class="listing"[% END %] > 
+  [% IF currentsong %]<a name="currentsong"></a><b>[% END %] <a href="playlist.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" [% IF currentsong %]id="currentsong"[% END %]>[% title | html %]</a> 
+  [% IF currentsong %]</b>[% END %] [% IF artist %] [% "BY" | string %] [% END %] <a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist | html %]</a> </td> 
 </tr>

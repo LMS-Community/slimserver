@@ -1,8 +1,8 @@
 <html>
-<title>[S WELCOME_TO_{playermodel}]</title>
+<title>[% "WELCOME_TO_" _ playermodel | string %]</title>
   <frameset cols="20%,*">
-    <!--frame src="browse.html?player={%player}" name="browser"-->
-    <frame src="home.html?player={%player}" name="browser">
-    <frame src="status.html?player={%player}" name="status">
+    <!--frame src="browse.html?player=[% player | uri %]" name="browser"-->
+    <frame src="home.html?player=[% player | uri %]" name="browser">
+    <frame src="status.html?player=[% player | uri %]" name="status">
    </frameset>
 </html>

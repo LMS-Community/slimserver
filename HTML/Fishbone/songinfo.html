@@ -1,182 +1,182 @@
-[SET title [S SONG_INFO]] [SET pageicon MUSIC] [INCLUDE pageheader.html]
+[% title = "SONG_INFO" | string %] [% pageicon = 'MUSIC' %] [% PROCESS pageheader.html %]
 <p>&nbsp;</p>
 <p>
 <a href="javascript:history.back(1)">Back</a>
-<H3>[S SONG_INFO] [S FOR] <i>{title}</i></H3>
+<H3>[% "SONG_INFO" | string %] [% "FOR" | string %] <i>[% title %]</i></H3>
 <p>
-[IF coverart]<center><a href="/music/{%itempath}/cover.jpg" target="_top"><img src="/music/{%itempath}/cover.jpg" border="0" width="300"></a></center>[/IF]
+[% IF coverart %]<center><a href="/music/[% itempath | uri %]/cover.jpg" target="_top"><img src="/music/[% itempath | uri %]/cover.jpg" border="0" width="300"></a></center>[% END %]
 <table width="100%" border="0">
 	<tr>
 		<td>
 			<nobr>
-				[S TITLE][S COLON]
+				[% "TITLE" | string %][% "COLON" | string %]
 			</nobr>
 		</td>
 		<td>
-			{title}
+			[% title %]
 		</td>
 	</tr>
-	[IF artist]
+	[% IF artist %]
 		<tr>
 			<td>
-				[S ARTIST][S COLON]
+				[% "ARTIST" | string %][% "COLON" | string %]
 			</td>
 			<td>
-				<a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{artist}</a>
+				<a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser">[% artist %]</a>
 			</td>
 		</tr>
-	[/IF]
-	[IF composer]
+	[% END %]
+	[% IF composer %]
 		<tr>
 			<td>
-				[S COMPOSER][S COLON]
+				[% "COMPOSER" | string %][% "COLON" | string %]
 			</td>
 			<td>
-				<a href="browseid3.html?genre=*&amp;artist={%composer}&amp;player={%player}" target="browser">{composer}</a>
+				<a href="browseid3.html?genre=*&amp;artist=[% composer | uri %]&amp;player=[% player | uri %]" target="browser">[% composer %]</a>
 			</td>
 		</tr>
-	[/IF]
-	[IF conductor]
+	[% END %]
+	[% IF conductor %]
 		<tr>
 			<td>
-				[S CONDUCTOR][S COLON]
+				[% "CONDUCTOR" | string %][% "COLON" | string %]
 			</td>
 			<td>
-				<a href="browseid3.html?genre=*&amp;artist={%conductor}&amp;player={%player}" target="browser">{conductor}</a>
+				<a href="browseid3.html?genre=*&amp;artist=[% conductor | uri %]&amp;player=[% player | uri %]" target="browser">[% conductor %]</a>
 			</td>
 		</tr>
-	[/IF]
-	[IF album]
+	[% END %]
+	[% IF album %]
 		<tr>
 			<td>
-				[S ALBUM][S COLON]
+				[% "ALBUM" | string %][% "COLON" | string %]
 			</td>
 			<td>
-				<a href="browseid3.html?genre=*&amp;artist=*&amp;album={%album}&amp;player={%player}" target="browser">{album}</a>
+				<a href="browseid3.html?genre=*&amp;artist=*&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album %]</a>
 			</td>
 		</tr>
-	[/IF]
-	[IF genre]
+	[% END %]
+	[% IF genre %]
 		<tr>
 			<td>
-				[S GENRE][S COLON]
+				[% "GENRE" | string %][% "COLON" | string %]
 			</td>
 			<td>
-				<a href="browseid3.html?genre={%genre}&amp;player={%player}" target="browser">{genre}
+				<a href="browseid3.html?genre=[% genre | uri %]&amp;player=[% player | uri %]" target="browser">[% genre %]
 			</td>
 		</tr>
-	[/IF]
-	[IF disc] 
+	[% END %]
+	[% IF disc %] 
 		<tr> 
 			<td> 
-				[S DISC][S COLON]
+				[% "DISC" | string %][% "COLON" | string %]
 			</td>
 			<td> 
-				{&disc} 
+				[% disc | html %] 
 			</td>
 		</tr>
-	[/IF]
-	[IF track]
+	[% END %]
+	[% IF track %]
 		<tr>
 			<td>
-				[S TRACK][S COLON]
+				[% "TRACK" | string %][% "COLON" | string %]
 			</td>
 			<td>
-				{track}
+				[% track %]
 			</td>
 		</tr>
-	[/IF]
-	[IF type] 
+	[% END %]
+	[% IF type %] 
 		<tr>
 			<td>
-				[S TYPE][S COLON]
+				[% "TYPE" | string %][% "COLON" | string %]
 			</td>
 			<td>
-				{type}
+				[% type %]
 			</td>
 		</tr>
-	[/IF]
-	[IF duration]
+	[% END %]
+	[% IF duration %]
 		<tr>
 			<td>
-				[S LENGTH][S COLON]
+				[% "LENGTH" | string %][% "COLON" | string %]
 			</td>
 			<td>
-				{duration}
+				[% duration %]
 			</td>
 		</tr>
-	[/IF]
-	[IF year]
+	[% END %]
+	[% IF year %]
 		<tr>
 			<td>
-				[S YEAR][S COLON]
+				[% "YEAR" | string %][% "COLON" | string %]
 			</td>
 			<td>
-				{year}
+				[% year %]
 			</td>
 		</tr>
-	[/IF]
-	[IF comment]
+	[% END %]
+	[% IF comment %]
 		<tr>
 			<td>
-				[S COMMENT][S COLON]
+				[% "COMMENT" | string %][% "COLON" | string %]
 			</td>
 			<td>
-				{comment}
+				[% comment %]
 			</td>
 		</tr>
-	[/IF]
-	[IF filelength]
+	[% END %]
+	[% IF filelength %]
 		<tr>
 			<td>
-				[S FILELENGTH][S COLON]
+				[% "FILELENGTH" | string %][% "COLON" | string %]
 			</td>
 			<td>
-				{filelength} [S BYTES]
+				[% filelength %] [% "BYTES" | string %]
 			</td>
 		</tr>
-	[/IF]
-	[IF bitrate]
+	[% END %]
+	[% IF bitrate %]
 		<tr>
 			<td>
-				[S BITRATE][S COLON]
+				[% "BITRATE" | string %][% "COLON" | string %]
 			</td>
 			<td>
-				{bitrate}
+				[% bitrate %]
 			</td>
 		</tr>
-	[/IF]
-	[IF tagversion]
+	[% END %]
+	[% IF tagversion %]
 		<tr>
 			<td>
-				[S TAGVERSION][S COLON]
+				[% "TAGVERSION" | string %][% "COLON" | string %]
 			</td>
 			<td>
-				{tagversion}
+				[% tagversion %]
 			</td>
 		</tr>
-	[/IF]
-	[IF modtime] 
+	[% END %]
+	[% IF modtime %] 
 		<tr> 
-			<td> [S MODTIME][S COLON]</td>
-			<td> {&modtime} </td>
+			<td> [% "MODTIME" | string %][% "COLON" | string %]</td>
+			<td> [% modtime | html %] </td>
 		</tr>
-	[/IF]
+	[% END %]
 </table>
-[IF url]
+[% IF url %]
 	<table>
 		<tr>
 			<td>
-				[S LOCATION][S COLON]
+				[% "LOCATION" | string %][% "COLON" | string %]
 			</td>
 			<td>
-				<a href="{url}">{&url}</a>
+				<a href="[% url %]">[% url | html %]</a>
 			</td>
 		</tr>
 	</table>
-[/IF]
-<p><a href="status_header.html?p0=playlist&amp;p1=play&amp;p2={%itempath}&amp;player={%player}" target="statusframe">[S PLAY_THIS_SONG]</a></p>
-<p><a href="status_header.html?p0=playlist&amp;p1=append&amp;p2={%itempath}&amp;player={%player}" target="statusframe">[NB][S ADD_THIS_SONG_TO_PLAYLIST][/NB]</a></p>
-[IF mixable]<p><a href="instant_mix.html?song={%itempath}&genre={%genre}&artist={%artist}&album={%album}&player={%player}">[S MOODLOGIC_INSTANT_MIX]</a></p>[/IF]
+[% END %]
+<p><a href="status_header.html?p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="statusframe">[% "PLAY_THIS_SONG" | string %]</a></p>
+<p><a href="status_header.html?p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="statusframe">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a></p>
+[% IF mixable %]<p><a href="instant_mix.html?song=[% itempath | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% "MOODLOGIC_INSTANT_MIX" | string %]</a></p>[% END %]
 </body>
 </html>

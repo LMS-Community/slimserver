@@ -2,20 +2,20 @@
 	<td width="4" height=21>
 		&nbsp;
 	</td>
-	<td [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN] width="8">
+	<td [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %] width="8">
 		&nbsp;
 	</td>
-	<td valign="center" [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN]>
-		[IF currentsong]<a name="currentsong"></a><span class="exboldlisting">[/IF][IFN currentsong]<span class="exlisting"><a href="status_header.html?p0=playlist&amp;p1=jump&amp;p2={num}&amp;player={%player}" target="status">[/IFN]{&title}[IFN currentsong]</a>[/IFN]</span> <span class="exboldnowplaying"></span> <span class="exlisting">[IF album][S FROM][/IF] <a href="browseid3.html?genre=*&amp;artist={%artist}&amp;album={%album}&amp;player={%player}" target="browser">{&album}</a> [IF artist] [S BY] [/IF] <a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{&artist}</a></span>
+	<td valign="center" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
+		[% IF currentsong %]<a name="currentsong"></a><span class="exboldlisting">[% END %][% IF not currentsong %]<span class="exlisting"><a href="status_header.html?p0=playlist&amp;p1=jump&amp;p2=[% num %]&amp;player=[% player | uri %]" target="status">[% END %][% title | html %][% IF not currentsong %]</a>[% END %]</span> <span class="exboldnowplaying"></span> <span class="exlisting">[% IF album %][% "FROM" | string %][% END %] <a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album | html %]</a> [% IF artist %] [% "BY" | string %] [% END %] <a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser">[% artist | html %]</a></span>
 	</td>
-	<td valign="center" [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN] width="13">
-		<a href="status_header.html?p0=playlist&amp;p1=move&amp;p2={num}&amp;p3=%2B1&amp;player={%player}&amp;start={start}" target="status"><img src="html/images/b_down.gif" width="13" height="13"></a>
+	<td valign="center" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %] width="13">
+		<a href="status_header.html?p0=playlist&amp;p1=move&amp;p2=[% num %]&amp;p3=%2B1&amp;player=[% player | uri %]&amp;start=[% start %]" target="status"><img src="html/images/b_down.gif" width="13" height="13"></a>
 	</td>
-	<td valign="center" [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN] width="13">
-		<a href="status_header.html?p0=playlist&amp;p1=move&amp;p2={num}&amp;p3=%2D1&amp;player={%player}&amp;start={start}" target="status"><img src="html/images/b_up.gif" width="13" height="13"></a>
+	<td valign="center" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %] width="13">
+		<a href="status_header.html?p0=playlist&amp;p1=move&amp;p2=[% num %]&amp;p3=%2D1&amp;player=[% player | uri %]&amp;start=[% start %]" target="status"><img src="html/images/b_up.gif" width="13" height="13"></a>
 	</td>
-	<td valign="center" [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN] width="13">
-		<a href="status_header.html?p0=playlist&amp;p1=delete&amp;p2={num}&amp;player={%player}&amp;start={start}"  target="status"><img src="html/images/b_delete.gif" width="13" height="13"></a>
+	<td valign="center" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %] width="13">
+		<a href="status_header.html?p0=playlist&amp;p1=delete&amp;p2=[% num %]&amp;player=[% player | uri %]&amp;start=[% start %]"  target="status"><img src="html/images/b_delete.gif" width="13" height="13"></a>
 	</td>
 	<td width="8"></td>
 </tr>

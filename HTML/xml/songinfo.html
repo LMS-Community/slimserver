@@ -3,7 +3,7 @@
 <!DOCTYPE songinfo SYSTEM "html/slimserver_xml.dtd">
 
 <songinfo xmlns="http://www.slimdevices.com/slimserver/xml">
-	[INCLUDE _xml_song.html]
-	<replace_url><![CDATA[xml/status.xml?p0=playlist&p1=play&p2={%itempath}]]></replace_url>
- 	<append_url><![CDATA[xml/status.xml?p0=playlist&p1=append&p2={%itempath}]]></append_url>
+	[% PROCESS _xml_song.html %]
+	<replace_url><![CDATA[xml/status.xml?p0=playlist&p1=play&p2=[% itempath | uri %]]]></replace_url>
+ 	<append_url><![CDATA[xml/status.xml?p0=playlist&p1=append&p2=[% itempath | uri %]]]></append_url>
 </songinfo>

@@ -1,7 +1,7 @@
-[SET pageicon help]
-[SET tSQUEEZEBOX Command Line Interface]
-[SET techinfo 1]
-[INCLUDE helpheader.html]
+[% pageicon = 'help' %]
+[% tSQUEEZEBOX = 'Command Line Interface' %]
+[% techinfo = '1' %]
+[% PROCESS helpheader.html %]
 
 <h4>Introduction</h4>
 <p>The SlimServer provides a command-line interface to the Slim Devices players via standard in and out and
@@ -395,4 +395,4 @@ data sent to the display, including any animation, double-size fonts, etc...</p>
     (Connection terminated)</p>
 </blockquote>
 
-[INCLUDE helpfooter.html]
+[% PROCESS helpfooter.html %]

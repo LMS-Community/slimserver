@@ -1,30 +1,30 @@
 <html>
   <head>
-    <title>[S {browseby}]</title>
+    <title>[% browseby | string %]</title>
     <link rel="stylesheet" href="slimserver.css">
   </head>
   <body bgcolor="#FFFFFF">
 
     <p>
 
-    <h3>[S {browseby}]</h3><p>
+    <h3>[% browseby | string %]</h3><p>
 
-    <a href="home.html?player={%player}">[S {playermodel}_HOME]</a>
-	{pwd_list}
+    <a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a>
+	[% pwd_list %]
 
-	[IF song_count]<p>{album_count} [S WITH] {song_count} [S BY] {artist_count}</p>[/IF]
+	[% IF song_count %]<p>[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %]</p>[% END %]
     <p><hr><p>
-	[IF warn]<b>[S NOTE]</b> [S SCAN_WARNING] [IFN itunes][S SCAN_CLICK] <a href="browse.html?player={%player}">[S HERE]</a>.[/IFN]<p><hr><p>[/IF]
-	[IF browselist_header]{browselist_header}[/IF]
-    [IF browselist_pagebar]<p>{browselist_pagebar}</p>[/IF]
-		[IF coverart]
-			<p><a href="/music/{%coverartpath}/cover.jpg" target="cover">
-			<img src="/music/{%coverartpath}/cover.jpg"></a></p>
-        [/IF]
+	[% IF warn %]<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF not itunes %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]<p><hr><p>[% END %]
+	[% IF browselist_header %][% browselist_header %][% END %]
+    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+		[% IF coverart %]
+			<p><a href="/music/[% coverartpath | uri %]/cover.jpg" target="cover">
+			<img src="/music/[% coverartpath | uri %]/cover.jpg"></a></p>
+        [% END %]
     <table cellspacing="0" border="0" cellpadding="4" width="100%">
-      {browse_list}
+      [% browse_list %]
     </table>
-   [IF browselist_pagebar]<p>{browselist_pagebar}</p>[/IF]
+   [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 
 
   </body>

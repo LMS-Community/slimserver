@@ -1,4 +1,4 @@
-[SET title [S MUSIC]] [SET pageicon MUSIC] [INCLUDE pageheader.html] 
+[% title = "MUSIC" | string %] [% pageicon = 'MUSIC' %] [% PROCESS pageheader.html %] 
 <TR height="44">
 				<TD width="4" height="44">
 			<IMG SRC="html/images/spacer.gif" WIDTH=8 HEIGHT=39 ALT=""></TD>
@@ -12,8 +12,7 @@
 						<tr height="34">
 							<td width="8"><img src="html/images/spacer.gif" width=8 height=34 alt=""></td>
 							
-        <td class="exlisting" valign=top><a href="home.html?player={%player}">[S 
-          {playermodel}_HOME]</a> / <a href="browse.html?player={%player}">[S MUSIC]</a> {pwd_list} 
+        <td class="exlisting" valign=top><a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a> / <a href="browse.html?player=[% player | uri %]">[% "MUSIC" | string %]</a> [% pwd_list %] 
         </td>
 							<td width="4"></td>
 						</tr>
@@ -32,26 +31,26 @@
 				
   <td valign="top" height="100%"> 
     <p>&nbsp; </p>
-    <p> {browselist_header}</p>
-    [IF browselist_pagebar]
-	<p>[S PAGES][S COLON]{browselist_pagebar}</p>
-[/IF] 
-[EQ badpath 1]
-	[IF playlist][S NEED_PLAYLIST_PATH][/IF]
-	[IFN playlist][S NEED_PATH][/IFN]
-<p><a href="setup.html?page=server&player={%player}">[S CLICK_HERE]</a> [S TO_GO_TO_SERVER_SETTINGS]
-[/EQ]
-	[IF coverart]<p>
-		<a href="/music/{%coverartpath}/cover.jpg" target="cover">
-		<img src="/music/{%coverartpath}/cover.jpg"></a></p>
-	[/IF]
+    <p> [% browselist_header %]</p>
+    [% IF browselist_pagebar %]
+	<p>[% "PAGES" | string %][% "COLON" | string %][% browselist_pagebar %]</p>
+[% END %] 
+[% IF badpath == '1' %]
+	[% IF playlist %][% "NEED_PLAYLIST_PATH" | string %][% END %]
+	[% IF not playlist %][% "NEED_PATH" | string %][% END %]
+<p><a href="setup.html?page=server&player=[% player | uri %]">[% "CLICK_HERE" | string %]</a> [% "TO_GO_TO_SERVER_SETTINGS" | string %]
+[% END %]
+	[% IF coverart %]<p>
+		<a href="/music/[% coverartpath | uri %]/cover.jpg" target="cover">
+		<img src="/music/[% coverartpath | uri %]/cover.jpg"></a></p>
+	[% END %]
     <table cellspacing="0" cellpadding="4" width="100%">
-      {browse_list} 
+      [% browse_list %] 
     </table>
-    [IF browselist_pagebar]
-    <p>[S PAGES][S COLON]{browselist_pagebar}</p>
-    [/IF] 
+    [% IF browselist_pagebar %]
+    <p>[% "PAGES" | string %][% "COLON" | string %][% browselist_pagebar %]</p>
+    [% END %] 
     <p>&nbsp;</p></td>
 				<td width="4" height="100%"></td>
 			</tr>
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]

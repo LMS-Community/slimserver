@@ -1,7 +1,7 @@
-[SET pageicon help]
-[SET title XML skin]
-[SET techinfo 1]
-[INCLUDE helpheader.html]
+[% pageicon = 'help' %]
+[% title = 'XML skin' %]
+[% techinfo = '1' %]
+[% PROCESS helpheader.html %]
 
 <h4>Overview</h4>
 <p>This document describes the XML skin, that allows the SlimServer to return 
@@ -85,12 +85,12 @@ browse.xml?itemsPerPage=8&start=0</code>.</p>
 <h5>The <code>include.html</code> file</h5>
 <p>The following parameters are set in the XML skin <code>include.html</code> file:</p>
 <ul>
-  <li><code>&lsqb;SET nopagebar 0&rsqb;</code>, to prevent the generation of pagebars. 
+  <li><code>[SET nopagebar 0]</code>, to prevent the generation of pagebars. 
   <b>Do not</b> set this to 1 or &quot;ugly&quot; HTML will appear in the XML.</li>
-  <li><code>&lsqb;SET includeItemStats 0&rsqb;</code>, to prevent the statistics calculations.</li>
+  <li><code>[SET includeItemStats 0]</code>, to prevent the statistics calculations.</li>
 </ul>  
-<p>If desired, <code>&lsqb;SET itemsPerPage number&rsqb;</code> could be added instead of adding
-it to every URL. If a single player is automated, <code>&lsqb;SET player player_id&rsqb;</code> 
+<p>If desired, <code>[SET itemsPerPage number]</code> could be added instead of adding
+it to every URL. If a single player is automated, <code>[SET player player_id]</code> 
 could be another option.</p>
 <p>Be aware that this file is within the Server software release. Any changes will be 
 overwritten by any upgrade to the Server software.</p>
@@ -130,6 +130,6 @@ on the various tags returned.</p>
   &quot;automated&quot; the Moodlogic software is)</li>
   <li> Configuring the server and player</li>
   <li> Item statistics (i.e. this genre includes &quot;12 albums with 
-  130 songs by 10 artists&quot;) (<code>&lsqb;SET includeItemStats 0&rsqb;</code> in include.html)</li>
+  130 songs by 10 artists&quot;) (<code>[SET includeItemStats 0]</code> in include.html)</li>
 </ol>
-[INCLUDE helpfooter.html]
+[% PROCESS helpfooter.html %]

@@ -1,4 +1,4 @@
-[IF PrefsInTable]<tr><td>[/IF]
-[IFN Suppress_PrefSub]<input type="submit" name="{PrefName}" value="{ChangeButton}" class="stdclick">[/IFN]
-[IF PrefsInTable]</td></tr>[/IF]
-[IFN PrefsInTable]<br>[/IFN]
+[% IF PrefsInTable %]<tr><td>[% END %]
+[% IF not Suppress_PrefSub %]<input type="submit" name="[% PrefName %]" value="[% ChangeButton %]" class="stdclick">[% END %]
+[% IF PrefsInTable %]</td></tr>[% END %]
+[% IF not PrefsInTable %]<br>[% END %]

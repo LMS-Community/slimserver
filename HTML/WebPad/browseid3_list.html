@@ -1,33 +1,29 @@
 <tr>
-  <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN]>
-	  [IF anchor]<a name="{anchor}"></a>[/IF]
-      [IF  descend] <a href="browseid3.html?song={%song}&artist={%artist}&album={%album}&genre={%genre}&player={%player}">{&title}</a> 
-[EVAL]
-my $bgcolor;
-if ($$hashref{'odd'}) {$bgcolor="#d0d0d0";} else {$bgcolor="#ffffff";}
-if ($$hashref{'artist_count'}) { $out.=$$hashref{'artist_count'}.' '; }
-if ($$hashref{'album_count'}) { $out.=$$hashref{'album_count'}.' '; }
-if ($$hashref{'song_count'}) { $out.=$$hashref{'song_count'}.' '; }
-chop($out);
-$out=~s- -</td><td bgcolor="$bgcolor" align="right">-g;
-if (length($out) gt 0) { $out='<td bgcolor="'.$bgcolor.'" align="right">'.$out.'</td>'; }
-[/EVAL][/IF]
-      [IFN descend]<a href="songinfo.html?songurl={%itempath}&player={%player}">{&title}</a>
-      [/IFN]
+  <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+	  [% IF anchor %]<a name="[% anchor %]"></a>[% END %]
+      [% IF descend %] <a href="browseid3.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]">[% title | html %]</a> 
+        [%- FOREACH item = [artist_count, album_count, song_count] -%]
+          [%- IF item -%]
+            <td bgcolor="[% odd ? '#d0d0d0' : '#ffffff' %]" " align="right">[% item %]</td>
+          [%- END -%]
+        [%- END -%]
+      [%- END -%]
+      [%- IF not descend %]<a href="songinfo.html?songurl=[% itempath | uri %]&player=[% player | uri %]">[% title | html %]</a>
+      [%- END %]
   </td>
-  <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN]>
-      [IF descend]  <nobr><a href="status.html?p0=playlist&p1=loadalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="status">[S PLAY]</a></nobr> [/IF]
-      [IFN descend] <nobr><a href="status.html?p0=playlist&p1=play&p2={%itempath}&player={%player}" target="status">[S PLAY]</a></nobr> [/IFN]
+  <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+      [% IF descend %]  <nobr><a href="status.html?p0=playlist&p1=loadalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr> [% END %]
+      [% IF not descend %] <nobr><a href="status.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr> [% END %]
   </td>
-  <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN]>
-      [IF descend]   <nobr><a href="status.html?p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="status">[NB][S ADD_TO_PLAYLIST][/NB]</a></nobr> [/IF]
-      [IF descend]   <nobr><a href="status.html?p0=playlist&p1=deletealbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="status">[NB][S REMOVE_FROM_PLAYLIST][/NB]</a></nobr> [/IF]
-      [IFN descend]  <nobr><a href="status.html?p0=playlist&p1=append&p2={%itempath}&player={%player}" target="status">[NB][S ADD_TO_PLAYLIST][/NB]</a></nobr> [/IFN]
-      [IFN descend]  <nobr><a href="status.html?p0=playlist&p1=deleteitem&p2={%itempath}&player={%player}" target="status">[NB][S REMOVE_FROM_PLAYLIST][/NB]</a></nobr> [/IFN]
+  <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+      [% IF descend %]   <nobr><a href="status.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr> [% END %]
+      [% IF descend %]   <nobr><a href="status.html?p0=playlist&p1=deletealbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "REMOVE_FROM_PLAYLIST" | string %][% END %]</a></nobr> [% END %]
+      [% IF not descend %]  <nobr><a href="status.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr> [% END %]
+      [% IF not descend %]  <nobr><a href="status.html?p0=playlist&p1=deleteitem&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "REMOVE_FROM_PLAYLIST" | string %][% END %]</a></nobr> [% END %]
   </td>
-  <td [IF odd]class="odd" bgcolor="#d0d0d0"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF"[/IFN]>
-      [IF mixable_descend] <nobr><a href="mood_wheel.html?genre={%genre}&artist={%artist}&album={%album}&player={%player}">[NB][S MOODLOGIC_MIX][/NB]</a></nobr> [/IF]
-      [IF mixable_not_descend] <nobr><a href="instant_mix.html?song={%item}&genre={%genre}&artist={%artist}&album={%album}&player={%player}">[NB][S MOODLOGIC_MIX][/NB]</a></nobr> [/IF]
+  <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+      [% IF mixable_descend %] <nobr><a href="mood_wheel.html?genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% FILTER nbsp %][% "MOODLOGIC_MIX" | string %][% END %]</a></nobr> [% END %]
+      [% IF mixable_not_descend %] <nobr><a href="instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% FILTER nbsp %][% "MOODLOGIC_MIX" | string %][% END %]</a></nobr> [% END %]
   </td>
 </tr>
 

@@ -1,49 +1,49 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	<link REL="shortcut icon" HREF="{webroot}favicon.ico" TYPE="image/x-icon">
-	<link rel="icon" href="{webroot}favicon.ico" type="image/x-icon" > 
-	<title>[S WELCOME_TO_SLIMSERVER] - [S {playermodel}]</title>
+	<link REL="shortcut icon" HREF="[% webroot %]favicon.ico" TYPE="image/x-icon">
+	<link rel="icon" href="[% webroot %]favicon.ico" type="image/x-icon" > 
+	<title>[% "WELCOME_TO_SLIMSERVER" | string %] - [% playermodel | string %]</title>
 </head>
 <script language="JavaScript" TYPE="text/javascript">
 //<!--Hide
 function getPlayer(Player) 
-&lbrc;
+{
 	var search = Player + "=";
-	if (document.cookie.length > 0) &lbrc;
+	if (document.cookie.length > 0) {
 		offset = document.cookie.indexOf(search);
-		if (offset != -1) &lbrc;
+		if (offset != -1) {
 			offset += search.length;
 			end = document.cookie.indexOf(";", offset);
 			if (end == -1)
 				end = document.cookie.length;
 			return unescape(document.cookie.substring(offset, end));
-		&rbrc;
-	&rbrc;
+		}
+	}
 	return "";
-&rbrc;
+}
 
-function getArgs() &lbrc;
+function getArgs() {
 	var args = new Object();
 	var query = location.search.substring(1);
 	var pairs = query.split("&");
-	for(var i = 0; i < pairs.length; i++) &lbrc;
+	for(var i = 0; i < pairs.length; i++) {
 		var pos = pairs[i].indexOf('=');
 		if (pos == -1) continue;
 		var argname = pairs[i].substring(0,pos);
 		var value = pairs[i].substring(pos+1);
 		args[argname] = unescape(value);
-	&rbrc;
+	}
 	return args;
-&rbrc;
+}
 
 var args = getArgs();
-if (args.player) &lbrc;
+if (args.player) {
 	var cPlayer = args.player;
-&rbrc;
-else &lbrc;
+}
+else {
 	var cPlayer = getPlayer('SlimServer-player');
-&rbrc;
+}
 
 document.write('<frameset cols="45%,*" framespacing="2" border="2">' );
 document.write('<frame src="home.html?player='+cPlayer+'" name="browser">');

@@ -1,44 +1,44 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-		<meta http-equiv="refresh" content="{refresh}; url=status_header.html?player={%player}&amp;start={start}&amp;refresh=1">
+		<meta http-equiv="refresh" content="[% refresh %]; url=status_header.html?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1">
 		<link rel="stylesheet" href="slimserver.css">
 		<script language="JavaScript">
 			<!--Hide
-			[EQ playercount 0]location="status.html";[/EQ]
+			[% IF playercount == '0' %]location="status.html";[% END %]
 			
 			function openRemote()
-			&lbrc;
-				window.open('status.html?player={%player}&start={start}&refresh=1', 'access', 'width=500,height=240');
-			&rbrc;
+			{
+				window.open('status.html?player=[% player | uri %]&start=[% start %]&refresh=1', 'access', 'width=500,height=240');
+			}
 			
 			function setCookie(name, value)
-			&lbrc;
+			{
 				var expires = new Date();
 				expires.setTime(expires.getTime() + 1000*60*60*24*365);
 				document.cookie =
 					name + "=" + escape(value) +
 					((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
-			&rbrc;
+			}
 			
 			function checkReload()
-			&lbrc;
+			{
 				if (top.document.getElementById('player_frame'))
-				&lbrc;
-					if (parent.playlist.location != 'playlist.html?player={%player}')
-					&lbrc;
-						parent.playlist.location = 'playlist.html?player={%player}';
-					&rbrc;
+				{
+					if (parent.playlist.location != 'playlist.html?player=[% player | uri %]')
+					{
+						parent.playlist.location = 'playlist.html?player=[% player | uri %]';
+					}
 					else 
-					&lbrc;
+					{
 						parent.playlist.location.reload(true);
-					&rbrc;
-				&rbrc;
+					}
+				}
 				else
-				&lbrc;
+				{
 					top.document.location.reload(true);
-				&rbrc;
-			&rbrc;
+				}
+			}
 			-->
 		</script>
 	</head>
@@ -47,55 +47,55 @@
 		<table border="0" cellpadding="2" cellspacing="0" width="100%"  bordercolor="#111111">
 		<tr>
 			<table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111">
-		<td width="34%"><img border="0" src="html/images/{playermodel}_logo.small.gif" width="98" height="17"></td>
-				[IF player_chooser_list]
+		<td width="34%"><img border="0" src="html/images/[% playermodel %]_logo.small.gif" width="98" height="17"></td>
+				[% IF player_chooser_list %]
 				<form method="get" action="index.html" target="_top"><td colspan="3">
-					<select name="player" onchange="setCookie('SlimServer-player',this.form.player.value);this.form.submit(); " class="stdedit">{player_chooser_list}</select>
+					<select name="player" onchange="setCookie('SlimServer-player',this.form.player.value);this.form.submit(); " class="stdedit">[% player_chooser_list %]</select>
 				</td></form>
-				[/IF]
+				[% END %]
 			</table>
 		<tr>
 			<table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111">
-				<td><nobr><span class="songtitle">[IF player_name]{player_name}[/IF]</span> [NE mode off](<A href="status_header.html?p0=button&p1=sleep&player={%player}">Sleep</a>[IF sleeptime] {sleep}[/IF])[/NE]</nobr></td>
-				<td valign="bottom" width="22%"><nobr><a href="setup.html?page=player&player={%player}&playerid={%player}" target="browser">[S PLAYER_SETTINGS]</a></nobr></td>
+				<td><nobr><span class="songtitle">[% IF player_name %][% player_name %][% END %]</span> [% IF mode != 'off' %](<A href="status_header.html?p0=button&p1=sleep&player=[% player | uri %]">Sleep</a>[% IF sleeptime %] [% sleep %][% END %])[% END %]</nobr></td>
+				<td valign="bottom" width="22%"><nobr><a href="setup.html?page=player&player=[% player | uri %]&playerid=[% player | uri %]" target="browser">[% "PLAYER_SETTINGS" | string %]</a></nobr></td>
 				<td valign="bottom" width="22%"><nobr><a href="javascript:openRemote()">Undock</a></nobr></td>
-				<td valign="bottom" width="22%"><nobr><a href="hitlist.html?player={%player}" target="playlist">[S STATISTICS]</a></nobr></td>
+				<td valign="bottom" width="22%"><nobr><a href="hitlist.html?player=[% player | uri %]" target="playlist">[% "STATISTICS" | string %]</a></nobr></td>
 			</table>
 		</tr>
 		</table></div>
 
 		<script language="JavaScript">
 		<!--
-		var _progressEnd = [IF durationseconds]{durationseconds}[/IF][IFN durationseconds]{refresh}[/IFN];
-		var _progressAt = [IF songtime]{songtime}[/IF][IFN songtime]0[/IFN];
+		var _progressEnd = [% IF durationseconds %][% durationseconds %][% END %][% IF not durationseconds %][% refresh %][% END %];
+		var _progressAt = [% IF songtime %][% songtime %][% END %][% IF not songtime %]0[% END %];
 		var p = 1;
 		
 		// Update the progress dialog with the current state
 		function ProgressUpdate() 
-		&lbrc;
-			[IF modeplay]_progressAt++;[/IF]
+		{
+			[% IF modeplay %]_progressAt++;[% END %]
 			if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
 			if (document.all) //if IE 4+
-			&lbrc;
+			{
 				p = (document.body.clientWidth / _progressEnd) * _progressAt;
 				//document.all.progressBar.innerWidth = p+" ";
 				eval("document.progressBar.width=p");
-			&rbrc;
+			}
 			else if (document.getElementById) //else if NS6+
-			&lbrc;
+			{
 				p = (document.width / _progressEnd) * _progressAt;
 				document.getElementById("progressBar").width=p+" ";
 				//eval("document.progressBar.width=p");
-			&rbrc;
+			}
 			setTimeout("ProgressUpdate()", 1000);
-		&rbrc;
+		}
 		
 		function Click() 
-		&lbrc;
+		{
 			if (document.all||document.getElementById)
-			document.write('<table border="0" cellspacing="0" cellpadding="0"><td height="5"><img id="progressBar" name="progressBar" src="html/pixel.green[IFN modeplay]_s[/IFN].gif" width="1" height="5"></td></table>');
+			document.write('<table border="0" cellspacing="0" cellpadding="0"><td height="5"><img id="progressBar" name="progressBar" src="html/pixel.green[% IF not modeplay %]_s[% END %].gif" width="1" height="5"></td></table>');
 			ProgressUpdate()
-		&rbrc;
+		}
 		
 		if (document.all||document.getElementById)
 			Click()
@@ -106,26 +106,26 @@
 		<div class="nowplaying">
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			<tr>
-				[IF coverthumb]<td valign="top">
-					<script language="JavaScript">top.document.getElementById('player_frame').rows = '240, *';</script><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="/music/{%itempath}/thumb.jpg" border="0" height="100">
-				</td>[/IF]
+				[% IF coverthumb %]<td valign="top">
+					<script language="JavaScript">top.document.getElementById('player_frame').rows = '240, *';</script><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser"><img src="/music/[% itempath | uri %]/thumb.jpg" border="0" height="100">
+				</td>[% END %]
 				<td><img src="html/images/spacer.gif" border="0" width="5"></td>
 				<td valign="top" width="100%"><nobr>
-					<p class="label"><img src="html/images/spacer.gif" border="0" width="2" height="14">[IF modeplay][S PLAYING][/IF]
-					[IF modepause][S PAUSED_ON][/IF]
-					[IF modestop][S STOPPED_ON][/IF]
-					[IF currentsong]<b>{currentsong}</b> [S OUT_OF] <b>&nbsp;{songcount}</b>&nbsp;<a class="label" href="status_header.html?p0=playlist&p1=zap&p2={thissongnum}&player={%player}&start={start}">[zap]</a>[/IF][S COLON]</p>
-					<p><img src="html/images/spacer.gif" border="0" width="5"><a class="songtitle" href="songinfo.html?songurl={%itempath}&player={%player}" target="browser">{title}</a>
-					[IF duration]&nbsp;({&duration})[/IF][IF bitrate]&nbsp;({bitrate})[/IF]</p>
-					[IFN coverthumb]<script language="JavaScript">top.document.getElementById('player_frame').rows = '215, *';</script>
-					<table border="0" cellpadding="0" cellspacing="0" width="100%"><td width="50%"><nobr>[/IFN]
-						<p class="label"><img src="html/images/spacer.gif" border="0" width="5" height="10">[IF artist][S ARTIST]&nbsp;<a class="label" href="status_header.html?p0=playlist&p1=deletealbum&p2=&p3={%artist}&player={%player}&astart={start}">[x]</a>[/IF]</p>
-						<p class="artistname"><a class="artistname" href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser"><img src="html/images/spacer.gif" border="0" width="5" height="10">{artist}</a></p>
-						[IFN coverthumb]</nobr></td><td><nobr>[/IFN]
-						<p class="label"><img src="html/images/spacer.gif" border="0" width="5" height="10">[IF album][S ALBUM]&nbsp;<a class="label" href="status_header.html?p0=playlist&p1=deletealbum&p2=&p3=&p4={%album}&player={%player}&start={start}">[x]</a>[/IF]</p>
-						<p class="artistname"><a class="artistname" href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="html/images/spacer.gif" border="0" width="5" height="10">{album}</a>
-						[IF year]&nbsp;({year})[/IF]</p>[IFN coverthumb]</td>
-					</table>[/IFN]
+					<p class="label"><img src="html/images/spacer.gif" border="0" width="2" height="14">[% IF modeplay %][% "PLAYING" | string %][% END %]
+					[% IF modepause %][% "PAUSED_ON" | string %][% END %]
+					[% IF modestop %][% "STOPPED_ON" | string %][% END %]
+					[% IF currentsong %]<b>[% currentsong %]</b> [% "OUT_OF" | string %] <b>&nbsp;[% songcount %]</b>&nbsp;<a class="label" href="status_header.html?p0=playlist&p1=zap&p2=[% thissongnum %]&player=[% player | uri %]&start=[% start %]">[zap]</a>[% END %][% "COLON" | string %]</p>
+					<p><img src="html/images/spacer.gif" border="0" width="5"><a class="songtitle" href="songinfo.html?songurl=[% itempath | uri %]&player=[% player | uri %]" target="browser">[% title %]</a>
+					[% IF duration %]&nbsp;([% duration | html %])[% END %][% IF bitrate %]&nbsp;([% bitrate %])[% END %]</p>
+					[% IF not coverthumb %]<script language="JavaScript">top.document.getElementById('player_frame').rows = '215, *';</script>
+					<table border="0" cellpadding="0" cellspacing="0" width="100%"><td width="50%"><nobr>[% END %]
+						<p class="label"><img src="html/images/spacer.gif" border="0" width="5" height="10">[% IF artist %][% "ARTIST" | string %]&nbsp;<a class="label" href="status_header.html?p0=playlist&p1=deletealbum&p2=&p3=[% artist | uri %]&player=[% player | uri %]&astart=[% start %]">[x]</a>[% END %]</p>
+						<p class="artistname"><a class="artistname" href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser"><img src="html/images/spacer.gif" border="0" width="5" height="10">[% artist %]</a></p>
+						[% IF not coverthumb %]</nobr></td><td><nobr>[% END %]
+						<p class="label"><img src="html/images/spacer.gif" border="0" width="5" height="10">[% IF album %][% "ALBUM" | string %]&nbsp;<a class="label" href="status_header.html?p0=playlist&p1=deletealbum&p2=&p3=&p4=[% album | uri %]&player=[% player | uri %]&start=[% start %]">[x]</a>[% END %]</p>
+						<p class="artistname"><a class="artistname" href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser"><img src="html/images/spacer.gif" border="0" width="5" height="10">[% album %]</a>
+						[% IF year %]&nbsp;([% year %])[% END %]</p>[% IF not coverthumb %]</td>
+					</table>[% END %]
 				</nobr></td>
 			</tr>
 		</table></div>
@@ -134,127 +134,127 @@
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<td><center>
 				<table border="0" cellspacing="0" cellpadding="0"><tr valign="bottom">
-					<td><a href="status_header.html?p0=play&player={%player}"><img src="html/play[IF modeplay][EQ rate norm]_s[/EQ][/IF].gif" border=0 width=42 height=43></a></td>
-					<td><a href="status_header.html?p0=stop&player={%player}"><img src="html/stop[IF modestop]_s[/IF].gif" border=0 width=23 height=32></a></td>
+					<td><a href="status_header.html?p0=play&player=[% player | uri %]"><img src="html/play[% IF modeplay %][% IF rate == 'norm' %]_s[% END %][% END %].gif" border=0 width=42 height=43></a></td>
+					<td><a href="status_header.html?p0=stop&player=[% player | uri %]"><img src="html/stop[% IF modestop %]_s[% END %].gif" border=0 width=23 height=32></a></td>
 					<td><table border="0" cellspacing="0" cellpadding="0">
-						<tr>[IF isplayer]
-							<td><a href="status_header.html?p0=rate&p1=-2&player={%player}&start={start}"><img src="html/rew_m[EQ rate rew]_s[/EQ].gif" border="0" width="30" height="10"></td>
-							<td><a href="status_header.html?p0=rate&p1=8&player={%player}&start={start}"><img src="html/ffwd_m[EQ rate ffwd]_s[/EQ].gif" border="0" width="30" height="10"></a></td>
-						</tr><tr>[/IF]
-							<td><a href="status_header.html?p0=playlist&p1=jump&p2=-1&player={%player}"><img src="html/back.gif" border=0 width=30 height=19></a></td>
-							<td><a href="status_header.html?p0=playlist&p1=jump&p2=%2b1&player={%player}"><img src="html/forward.gif" border=0 width=30 height=19></a></td>
-							<td><a href="status_header.html?p0=pause&player={%player}"><img src="html/pause[IF modepause]_s[/IF].gif" border=0 width=30 height=19></a></td>
-							<td><a href="status_header.html?p0=button&p1=muting&player={%player}&start={start}"><img src="html/mute[LT volume 0]_s[/LT].gif" border=0 width=30 height=19></a>
+						<tr>[% IF isplayer %]
+							<td><a href="status_header.html?p0=rate&p1=-2&player=[% player | uri %]&start=[% start %]"><img src="html/rew_m[% IF rate == 'rew' %]_s[% END %].gif" border="0" width="30" height="10"></td>
+							<td><a href="status_header.html?p0=rate&p1=8&player=[% player | uri %]&start=[% start %]"><img src="html/ffwd_m[% IF rate == 'ffwd' %]_s[% END %].gif" border="0" width="30" height="10"></a></td>
+						</tr><tr>[% END %]
+							<td><a href="status_header.html?p0=playlist&p1=jump&p2=-1&player=[% player | uri %]"><img src="html/back.gif" border=0 width=30 height=19></a></td>
+							<td><a href="status_header.html?p0=playlist&p1=jump&p2=%2b1&player=[% player | uri %]"><img src="html/forward.gif" border=0 width=30 height=19></a></td>
+							<td><a href="status_header.html?p0=pause&player=[% player | uri %]"><img src="html/pause[% IF modepause %]_s[% END %].gif" border=0 width=30 height=19></a></td>
+							<td><a href="status_header.html?p0=button&p1=muting&player=[% player | uri %]&start=[% start %]"><img src="html/mute[% IF volume < '0' %]_s[% END %].gif" border=0 width=30 height=19></a>
 						</tr></td>
 					</table>
 				</tr></table>
 			</center></td>
-			[IF isplayer]
+			[% IF isplayer %]
 			<td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
 			<td align="center" class="label2">
 				<table border="0" cellspacing="0" cellpadding="0">
-					<td align="right"  valign="bottom" class="label2"><nobr><B>VOLUME[S COLON]</B><p></td>
+					<td align="right"  valign="bottom" class="label2"><nobr><B>VOLUME[% "COLON" | string %]</B><p></td>
 					<td>
 						<table border="0" width="100%" cellspacing="0" cellpadding="0"><tr>
-							<td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="2" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}"><img src="html/pixel.green[LT volume 0]_s[/LT].gif" border="0" width="4" height="2" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="2" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=6&player={%player}&start={start}"><img src="html/pixel.green[LT volume 6]_s[/LT].gif" border="0" width="4" height="4" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=6&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="4" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=12&player={%player}&start={start}"><img src="html/pixel.green[LT volume 12]_s[/LT].gif" border="0" width="4" height="6" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=12&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="6" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=18&player={%player}&start={start}"><img src="html/pixel.green[LT volume 18]_s[/LT].gif" border="0" width="4" height="8" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=18&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="8" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=24&player={%player}&start={start}"><img src="html/pixel.green[LT volume 24]_s[/LT].gif" border="0" width="4" height="10" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=24&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="10" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=30&player={%player}&start={start}"><img src="html/pixel.green[LT volume 30]_s[/LT].gif" border="0" width="4" height="12" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=30&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="12" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=36&player={%player}&start={start}"><img src="html/pixel.green[LT volume 36]_s[/LT].gif" border="0" width="4" height="14" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=36&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="14" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=42&player={%player}&start={start}"><img src="html/pixel.green[LT volume 42]_s[/LT].gif" border="0" width="4" height="16" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=42&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="16" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=48&player={%player}&start={start}"><img src="html/pixel.green[LT volume 48]_s[/LT].gif" border="0" width="4" height="18" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=48&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="18" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=54&player={%player}&start={start}"><img src="html/pixel.green[LT volume 54]_s[/LT].gif" border="0" width="4" height="20" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=54&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="20" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=60&player={%player}&start={start}"><img src="html/pixel.green[LT volume 60]_s[/LT].gif" border="0" width="4" height="22" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=60&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="22" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=66&player={%player}&start={start}"><img src="html/pixel.green[LT volume 66]_s[/LT].gif" border="0" width="4" height="24" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=66&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="24" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=72&player={%player}&start={start}"><img src="html/pixel.green[LT volume 72]_s[/LT].gif" border="0" width="4" height="26" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=72&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="26" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=78&player={%player}&start={start}"><img src="html/pixel.green[LT volume 78]_s[/LT].gif" border="0" width="4" height="28" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=78&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="28" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=84&player={%player}&start={start}"><img src="html/pixel.green[LT volume 84]_s[/LT].gif" border="0" width="4" height="30" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=84&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="30" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=90&player={%player}&start={start}"><img src="html/pixel.green[LT volume 90]_s[/LT].gif" border="0" width="4" height="32" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=90&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="32" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=95&player={%player}&start={start}"><img src="html/pixel.green[LT volume 95]_s[/LT].gif" border="0" width="4" height="34" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=95&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="34" hspace="0" vspace="0"></a><p>
-							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=100&player={%player}&start={start}"><img src="html/pixel.green[LT volume 100]_s[/LT].gif" border="0" width="4" height="36" hspace="0" vspace="0"></a><p>
+							<td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=0&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="2" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=0&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '0' %]_s[% END %].gif" border="0" width="4" height="2" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=0&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="2" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=6&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '6' %]_s[% END %].gif" border="0" width="4" height="4" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=6&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="4" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=12&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '12' %]_s[% END %].gif" border="0" width="4" height="6" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=12&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="6" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=18&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '18' %]_s[% END %].gif" border="0" width="4" height="8" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=18&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="8" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=24&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '24' %]_s[% END %].gif" border="0" width="4" height="10" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=24&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="10" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=30&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '30' %]_s[% END %].gif" border="0" width="4" height="12" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=30&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="12" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=36&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '36' %]_s[% END %].gif" border="0" width="4" height="14" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=36&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="14" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=42&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '42' %]_s[% END %].gif" border="0" width="4" height="16" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=42&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="16" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=48&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '48' %]_s[% END %].gif" border="0" width="4" height="18" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=48&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="18" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=54&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '54' %]_s[% END %].gif" border="0" width="4" height="20" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=54&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="20" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=60&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '60' %]_s[% END %].gif" border="0" width="4" height="22" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=60&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="22" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=66&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '66' %]_s[% END %].gif" border="0" width="4" height="24" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=66&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="24" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=72&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '72' %]_s[% END %].gif" border="0" width="4" height="26" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=72&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="26" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=78&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '78' %]_s[% END %].gif" border="0" width="4" height="28" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=78&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="28" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=84&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '84' %]_s[% END %].gif" border="0" width="4" height="30" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=84&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="30" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=90&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '90' %]_s[% END %].gif" border="0" width="4" height="32" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=90&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="32" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=95&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '95' %]_s[% END %].gif" border="0" width="4" height="34" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=95&player=[% player | uri %]&start=[% start %]"><img src="html/images/spacer.gif" border="0" width="3" height="34" hspace="0" vspace="0"></a><p>
+							</td><td valign="bottom"><a href="status_header.html?p0=mixer&p1=volume&p2=100&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF volume < '100' %]_s[% END %].gif" border="0" width="4" height="36" hspace="0" vspace="0"></a><p>
 						</nobr></td></tr></table>
 					</td>
 					<td width="3%" >&nbsp;</td>
-					<td width="20" align="right" class="label2"><nobr><b>B[S COLON]</b>
+					<td width="20" align="right" class="label2"><nobr><b>B[% "COLON" | string %]</b>
 						<img src="html/images/spacer.gif" border="0" width="1" height="36"></a><p>
 					</nobr></td>
 					<td width="6" align="left" class="label2" valign="center"><nobr>
 						<table border="0" width="100%" cellspacing="0" cellpadding="0">
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=100&player={%player}&start={start}"><img src="html/pixel.green[LT bass 100]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=84&player={%player}&start={start}"><img src="html/pixel.green[LT bass 84]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=72&player={%player}&start={start}"><img src="html/pixel.green[LT bass 72]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=60&player={%player}&start={start}"><img src="html/pixel.green[LT bass 60]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=50&player={%player}&start={start}"><img src="html/pixel.middle[LT bass 50]_s[/LT].gif" border="0" width="6" height="5"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=36&player={%player}&start={start}"><img src="html/pixel.green[LT bass 36]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=24&player={%player}&start={start}"><img src="html/pixel.green[LT bass 24]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=12&player={%player}&start={start}"><img src="html/pixel.green[LT bass 12]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=0&player={%player}&start={start}"><img src="html/pixel.green[LT bass 0]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=100&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF bass < '100' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=84&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF bass < '84' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=72&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF bass < '72' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=60&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF bass < '60' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=50&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.middle[% IF bass < '50' %]_s[% END %].gif" border="0" width="6" height="5"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=36&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF bass < '36' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=24&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF bass < '24' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=12&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF bass < '12' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=bass&p2=0&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF bass < '0' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
 							<tr><td><img src="html/images/spacer.gif" width="6" height="1" border="0"></td></tr>
 						</table>
 					</nobr></td>
-					<td width="20" align="right" class="label2"><nobr><b>T[S COLON]</b>
+					<td width="20" align="right" class="label2"><nobr><b>T[% "COLON" | string %]</b>
 						<img src="html/images/spacer.gif" border="0" width="1" height="36"></a><p>
 					</nobr></td>
 					<td width="6" align="left" class="label2" valign="center"><nobr>
 						<table border="0" width="100%" cellspacing="0" cellpadding="0">
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=100&player={%player}&start={start}"><img src="html/pixel.green[LT treble 100]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=84&player={%player}&start={start}"><img src="html/pixel.green[LT treble 84]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=72&player={%player}&start={start}"><img src="html/pixel.green[LT treble 72]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=60&player={%player}&start={start}"><img src="html/pixel.green[LT treble 60]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=50&player={%player}&start={start}"><img src="html/pixel.middle[LT treble 50]_s[/LT].gif" border="0" width="6" height="5"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=36&player={%player}&start={start}"><img src="html/pixel.green[LT treble 36]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=24&player={%player}&start={start}"><img src="html/pixel.green[LT treble 24]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=12&player={%player}&start={start}"><img src="html/pixel.green[LT treble 12]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
-							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=0&player={%player}&start={start}"><img src="html/pixel.green[LT treble 0]_s[/LT].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=100&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF treble < '100' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=84&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF treble < '84' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=72&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF treble < '72' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=60&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF treble < '60' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=50&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.middle[% IF treble < '50' %]_s[% END %].gif" border="0" width="6" height="5"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=36&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF treble < '36' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=24&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF treble < '24' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=12&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF treble < '12' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
+							<tr><td align="center"><a href="status_header.html?p0=mixer&p1=treble&p2=0&player=[% player | uri %]&start=[% start %]"><img src="html/pixel.green[% IF treble < '0' %]_s[% END %].gif" border="0" width="6" height="4"></a></td></tr>
 							<tr><td><img src="html/images/spacer.gif" width="6" height="1" border="0"></td></tr>
 						</table>
 					</nobr></td>
 				</table>
-			[/IF]
+			[% END %]
 		</table></div>
 		<div class="nowplaying">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13">
-			<td [IF isplayer]width="33%"[/IF] class="label2" align="center"><nobr>
-				<b>REPEAT[S COLON]&nbsp;&nbsp;</b>
-				<a class="[IFN repeatone]dark[/IFN]button" href="status_header.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}"><b>ONE</b>&nbsp;&nbsp;</a>
-				<a class="[IFN repeatall]dark[/IFN]button" href="status_header.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}"><b>ALL</b>&nbsp;&nbsp;</a>
-				<a class="[IFN repeatoff]dark[/IFN]button" href="status_header.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}"><b>OFF</b></a>
+			<td [% IF isplayer %]width="33%"[% END %] class="label2" align="center"><nobr>
+				<b>REPEAT[% "COLON" | string %]&nbsp;&nbsp;</b>
+				<a class="[% IF not repeatone %]dark[% END %]button" href="status_header.html?p0=playlist&p1=repeat&p2=1&player=[% player | uri %]&start=[% start %]"><b>ONE</b>&nbsp;&nbsp;</a>
+				<a class="[% IF not repeatall %]dark[% END %]button" href="status_header.html?p0=playlist&p1=repeat&p2=2&player=[% player | uri %]&start=[% start %]"><b>ALL</b>&nbsp;&nbsp;</a>
+				<a class="[% IF not repeatoff %]dark[% END %]button" href="status_header.html?p0=playlist&p1=repeat&p2=0&player=[% player | uri %]&start=[% start %]"><b>OFF</b></a>
 			</nobr></td>
-			<td [IFN isplayer]width="1"[/IFN]><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
-			<td [IF isplayer]width="40%"[/IF] height="13" class="label2" align="center"><nobr>
-				<b>SHUFFLE[S COLON]&nbsp;&nbsp;</b>
-				<a class="[IFN shuffleoff]dark[/IFN]button" href="status_header.html?p0=playlist&p1=shuffle&p2=0&player={%player}"><b>OFF</b>&nbsp;&nbsp;</a>
-				<a class="[IFN shuffleon]dark[/IFN]button" href="status_header.html?p0=playlist&p1=shuffle&p2=1&player={%player}"><b>SONG</b>&nbsp;&nbsp;</a>
-				<a class="[IFN shufflealbum]dark[/IFN]button" href="status_header.html?p0=playlist&p1=shuffle&p2=2&player={%player}"><b>ALBUM</b></a>
+			<td [% IF not isplayer %]width="1"[% END %]><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
+			<td [% IF isplayer %]width="40%"[% END %] height="13" class="label2" align="center"><nobr>
+				<b>SHUFFLE[% "COLON" | string %]&nbsp;&nbsp;</b>
+				<a class="[% IF not shuffleoff %]dark[% END %]button" href="status_header.html?p0=playlist&p1=shuffle&p2=0&player=[% player | uri %]"><b>OFF</b>&nbsp;&nbsp;</a>
+				<a class="[% IF not shuffleon %]dark[% END %]button" href="status_header.html?p0=playlist&p1=shuffle&p2=1&player=[% player | uri %]"><b>SONG</b>&nbsp;&nbsp;</a>
+				<a class="[% IF not shufflealbum %]dark[% END %]button" href="status_header.html?p0=playlist&p1=shuffle&p2=2&player=[% player | uri %]"><b>ALBUM</b></a>
 			</nobr></td>
-			[IF isplayer]
+			[% IF isplayer %]
 				<td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
 				<td height="13" class="label2" align="center"><nobr>
-					<b>PLAYER[S COLON]&nbsp;&nbsp;</b>
-					<a target="_top" class="[EQ mode off]dark[/EQ]button" href="index.html?player={%player}&p0=power&p1=1"><b>ON</b>&nbsp;&nbsp;</a>
-					<a target="_top" class="[NE mode off]dark[/NE]button" href="index.html?player={%player}&p0=power&p1=0"><b>OFF</b></a>
+					<b>PLAYER[% "COLON" | string %]&nbsp;&nbsp;</b>
+					<a target="_top" class="[% IF mode == 'off' %]dark[% END %]button" href="index.html?player=[% player | uri %]&p0=power&p1=1"><b>ON</b>&nbsp;&nbsp;</a>
+					<a target="_top" class="[% IF mode != 'off' %]dark[% END %]button" href="index.html?player=[% player | uri %]&p0=power&p1=0"><b>OFF</b></a>
 				</nobr></td>
-			[/IF]
+			[% END %]
 		</table></div>
 	</body>
 </html>

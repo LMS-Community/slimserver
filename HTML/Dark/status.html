@@ -1,30 +1,30 @@
 <html>
   <head>
-    <meta http-equiv="refresh" content="{refresh}; url=status.html?player={%player}&start={start}&refresh=1">
-    <title>[S SQUEEZEBOX_MUSIC_PLAYER]</title>
+    <meta http-equiv="refresh" content="[% refresh %]; url=status.html?player=[% player | uri %]&start=[% start %]&refresh=1">
+    <title>[% "SQUEEZEBOX_MUSIC_PLAYER" | string %]</title>
     <link rel="stylesheet" href="slimserver.css">
   </head>
   <body bgcolor="#FFFFFF">
-	<h3>[S SQUEEZEBOX_MUSIC_PLAYER]</h3>
-  	[IF player_chooser_list]<form method="get" action="{webroot}index.html" target="_top">[S CURRENT_PLAYER] <select name="player">{player_chooser_list}</select><input type="submit" value="Change"></form>[/IF]
+	<h3>[% "SQUEEZEBOX_MUSIC_PLAYER" | string %]</h3>
+  	[% IF player_chooser_list %]<form method="get" action="[% webroot %]index.html" target="_top">[% "CURRENT_PLAYER" | string %] <select name="player">[% player_chooser_list %]</select><input type="submit" value="Change"></form>[% END %]
      
-    [IF modeplay][S PLAYING][/IF]
-    [IF modepause][S PAUSED_ON][/IF]
-    [IF modestop][S STOPPED_ON][/IF]
-    [IF currentsong]{currentsong} [S OUT_OF] {songcount}[/IF][S COLON]<br>
-<b><a href="status.html?player={%player}#currentsong">{songtitle}</a></b> [IF album]from[/IF] 
-<i><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser">{&album}</a></i> 
-[IF artist][S BY] [/IF] 
-<a href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser">{&artist}</a>
+    [% IF modeplay %][% "PLAYING" | string %][% END %]
+    [% IF modepause %][% "PAUSED_ON" | string %][% END %]
+    [% IF modestop %][% "STOPPED_ON" | string %][% END %]
+    [% IF currentsong %][% currentsong %] [% "OUT_OF" | string %] [% songcount %][% END %][% "COLON" | string %]<br>
+<b><a href="status.html?player=[% player | uri %]#currentsong">[% songtitle %]</a></b> [% IF album %]from[% END %] 
+<i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i> 
+[% IF artist %][% "BY" | string %] [% END %] 
+<a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist | html %]</a>
 
-[IFN songcount] [S NOTHING] [/IFN]
+[% IF not songcount %] [% "NOTHING" | string %] [% END %]
 
     <p><hr>
-    <a href="status.html?p0=playlist&p1=jump&p2=-1&player={%player}"><img src="html/back.gif" border=0 width=32 height=32></a>
-    <a href="status.html?p0=play&player={%player}"><img src="html/play[IF modeplay]_s[/IF].gif" border=0 width=32 height=32></a>
-    <a href="status.html?p0=pause&player={%player}"><img src="html/pause[IF modepause]_s[/IF].gif" border=0 width=32 height=32></a>
-    <a href="status.html?p0=stop&player={%player}"><img src="html/stop[IF modestop]_s[/IF].gif" border=0 width=32 height=32></a>
-    <a href="status.html?p0=playlist&p1=jump&p2=%2b1&player={%player}"><img src="html/forward.gif" border=0 width=32 height=32></a>
+    <a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% player | uri %]"><img src="html/back.gif" border=0 width=32 height=32></a>
+    <a href="status.html?p0=play&player=[% player | uri %]"><img src="html/play[% IF modeplay %]_s[% END %].gif" border=0 width=32 height=32></a>
+    <a href="status.html?p0=pause&player=[% player | uri %]"><img src="html/pause[% IF modepause %]_s[% END %].gif" border=0 width=32 height=32></a>
+    <a href="status.html?p0=stop&player=[% player | uri %]"><img src="html/stop[% IF modestop %]_s[% END %].gif" border=0 width=32 height=32></a>
+    <a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% player | uri %]"><img src="html/forward.gif" border=0 width=32 height=32></a>
 
 &nbsp;
 &nbsp;
@@ -33,29 +33,29 @@
 &nbsp;
 &nbsp;
 
-        <a href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}"><img src="html/volume[EQ volume 0]_s[/EQ]_01.gif" border=0 width=18 height=32></a><a
-        <a href="status.html?p0=mixer&p1=volume&p2=10&player={%player}&start={start}"><img src="html/volume[EQ volume 10]_s[/EQ]_02.gif" border=0 width=14 height=32></a><a
-        <a href="status.html?p0=mixer&p1=volume&p2=20&player={%player}&start={start}"><img src="html/volume[EQ volume 20]_s[/EQ]_03.gif" border=0 width=14 height=32></a><a
-        <a href="status.html?p0=mixer&p1=volume&p2=30&player={%player}&start={start}"><img src="html/volume[EQ volume 30]_s[/EQ]_04.gif" border=0 width=14 height=32></a><a
-        <a href="status.html?p0=mixer&p1=volume&p2=40&player={%player}&start={start}"><img src="html/volume[EQ volume 40]_s[/EQ]_05.gif" border=0 width=14 height=32></a><a
-        <a href="status.html?p0=mixer&p1=volume&p2=50&player={%player}&start={start}"><img src="html/volume[EQ volume 50]_s[/EQ]_06.gif" border=0 width=14 height=32></a><a
-        <a href="status.html?p0=mixer&p1=volume&p2=60&player={%player}&start={start}"><img src="html/volume[EQ volume 60]_s[/EQ]_07.gif" border=0 width=14 height=32></a><a
-        <a href="status.html?p0=mixer&p1=volume&p2=70&player={%player}&start={start}"><img src="html/volume[EQ volume 70]_s[/EQ]_08.gif" border=0 width=14 height=32></a><a
-        <a href="status.html?p0=mixer&p1=volume&p2=80&player={%player}&start={start}"><img src="html/volume[EQ volume 80]_s[/EQ]_09.gif" border=0 width=14 height=32></a><a
-        <a href="status.html?p0=mixer&p1=volume&p2=90&player={%player}&start={start}"><img src="html/volume[EQ volume 90]_s[/EQ]_10.gif" border=0 width=14 height=32></a><a
-        <a href="status.html?p0=mixer&p1=volume&p2=100&player={%player}&start={start}"><img src="html/volume[EQ volume 100]_s[/EQ]_11.gif" border=0 width=16 height=32></a><p>
+        <a href="status.html?p0=mixer&p1=volume&p2=0&player=[% player | uri %]&start=[% start %]"><img src="html/volume[% IF volume == '0' %]_s[% END %]_01.gif" border=0 width=18 height=32></a><a
+        <a href="status.html?p0=mixer&p1=volume&p2=10&player=[% player | uri %]&start=[% start %]"><img src="html/volume[% IF volume == '10' %]_s[% END %]_02.gif" border=0 width=14 height=32></a><a
+        <a href="status.html?p0=mixer&p1=volume&p2=20&player=[% player | uri %]&start=[% start %]"><img src="html/volume[% IF volume == '20' %]_s[% END %]_03.gif" border=0 width=14 height=32></a><a
+        <a href="status.html?p0=mixer&p1=volume&p2=30&player=[% player | uri %]&start=[% start %]"><img src="html/volume[% IF volume == '30' %]_s[% END %]_04.gif" border=0 width=14 height=32></a><a
+        <a href="status.html?p0=mixer&p1=volume&p2=40&player=[% player | uri %]&start=[% start %]"><img src="html/volume[% IF volume == '40' %]_s[% END %]_05.gif" border=0 width=14 height=32></a><a
+        <a href="status.html?p0=mixer&p1=volume&p2=50&player=[% player | uri %]&start=[% start %]"><img src="html/volume[% IF volume == '50' %]_s[% END %]_06.gif" border=0 width=14 height=32></a><a
+        <a href="status.html?p0=mixer&p1=volume&p2=60&player=[% player | uri %]&start=[% start %]"><img src="html/volume[% IF volume == '60' %]_s[% END %]_07.gif" border=0 width=14 height=32></a><a
+        <a href="status.html?p0=mixer&p1=volume&p2=70&player=[% player | uri %]&start=[% start %]"><img src="html/volume[% IF volume == '70' %]_s[% END %]_08.gif" border=0 width=14 height=32></a><a
+        <a href="status.html?p0=mixer&p1=volume&p2=80&player=[% player | uri %]&start=[% start %]"><img src="html/volume[% IF volume == '80' %]_s[% END %]_09.gif" border=0 width=14 height=32></a><a
+        <a href="status.html?p0=mixer&p1=volume&p2=90&player=[% player | uri %]&start=[% start %]"><img src="html/volume[% IF volume == '90' %]_s[% END %]_10.gif" border=0 width=14 height=32></a><a
+        <a href="status.html?p0=mixer&p1=volume&p2=100&player=[% player | uri %]&start=[% start %]"><img src="html/volume[% IF volume == '100' %]_s[% END %]_11.gif" border=0 width=16 height=32></a><p>
 
-    [S REPEAT][S COLON] 
-             <a href="status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}">[IF repeatone]<b>[/IF][S ONE][IF repeatone]</b>[/IF]</a>/<a 
-                href="status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}">[IF repeatall]<b>[/IF][S ALL][IF repeatall]</b>[/IF]</a>/<a 
-                href="status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}">[IF repeatoff]<b>[/IF][S OFF][IF repeatoff]</b>[/IF]</a>
+    [% "REPEAT" | string %][% "COLON" | string %] 
+             <a href="status.html?p0=playlist&p1=repeat&p2=1&player=[% player | uri %]&start=[% start %]">[% IF repeatone %]<b>[% END %][% "ONE" | string %][% IF repeatone %]</b>[% END %]</a>/<a 
+                href="status.html?p0=playlist&p1=repeat&p2=2&player=[% player | uri %]&start=[% start %]">[% IF repeatall %]<b>[% END %][% "ALL" | string %][% IF repeatall %]</b>[% END %]</a>/<a 
+                href="status.html?p0=playlist&p1=repeat&p2=0&player=[% player | uri %]&start=[% start %]">[% IF repeatoff %]<b>[% END %][% "OFF" | string %][% IF repeatoff %]</b>[% END %]</a>
 
-    [S SHUFFLE][S COLON] 
-             <a href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF shuffleon]<b>[/IF][S ON][IF shuffleon]</b>[/IF]</a>/<a
-                href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">[IF shuffleoff]<b>[/IF][S OFF][IF shuffleoff]</b>[/IF]</a>
+    [% "SHUFFLE" | string %][% "COLON" | string %] 
+             <a href="status.html?p0=playlist&p1=shuffle&p2=1&player=[% player | uri %]">[% IF shuffleon %]<b>[% END %][% "ON" | string %][% IF shuffleon %]</b>[% END %]</a>/<a
+                href="status.html?p0=playlist&p1=shuffle&p2=0&player=[% player | uri %]">[% IF shuffleoff %]<b>[% END %][% "OFF" | string %][% IF shuffleoff %]</b>[% END %]</a>
 
     <p>
 
-{playlist}
+[% playlist %]
   </body>
 </html>

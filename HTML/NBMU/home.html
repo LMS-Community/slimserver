@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>[S {playermodel}_HOME]</title>
+    <title>[% playermodel _ "_HOME" | string %]</title>
     <link rel="stylesheet" href="slimserver.css">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></head>
   
@@ -16,10 +16,9 @@
   <tr> 
     <td width="30" valign="middle" bgcolor="#333333"> 
       <h3>&nbsp; </h3></td>
-    <td width="149" valign="middle" bgcolor="#999999"><h3><font color="#FFFFFF">[S 
-        {playermodel}_HOME] <img src="html/images/spacer.gif" width="30" height="1"></font></h3></td>
+    <td width="149" valign="middle" bgcolor="#999999"><h3><font color="#FFFFFF">[% playermodel _ "_HOME" | string %] <img src="html/images/spacer.gif" width="30" height="1"></font></h3></td>
     <td valign="middle" bgcolor="#999999"> 
-      <p><font color="#FFFFFF">[IF song_count]The music collection contain <B>{song_count}</B> by <B>{artist_count}</B>[/IF]</font></p></td>
+      <p><font color="#FFFFFF">[% IF song_count %]The music collection contain <B>[% song_count %]</B> by <B>[% artist_count %]</B>[% END %]</font></p></td>
   </tr>
 </table>
 <h3>&nbsp;</h3>
@@ -27,47 +26,46 @@
   <tr>
     <td width="30" valign="middle">&nbsp;</td>
     <td>
-<h4><font color="#999999">[S BROWSE_MUSIC]</font></h4>
+<h4><font color="#999999">[% "BROWSE_MUSIC" | string %]</font></h4>
       <ul>
-        <li><a href="browseid3.html?player={%player}">[S BROWSE_BY_GENRE]</a> 
+        <li><a href="browseid3.html?player=[% player | uri %]">[% "BROWSE_BY_GENRE" | string %]</a> 
         </li>
-        <li> <a href="browseid3.html?genre=*&player={%player}">[S BROWSE_BY_ARTIST]</a> 
+        <li> <a href="browseid3.html?genre=*&player=[% player | uri %]">[% "BROWSE_BY_ARTIST" | string %]</a> 
         </li>
-        <li> <a href="browseid3.html?genre=*&artist=*&player={%player}">[S BROWSE_BY_ALBUM]</a> 
-          [IFN nofolder] </li>
-        <li><a href="browse.html?player={%player}">[S BROWSE_MUSIC_FOLDER]</a> 
-          [/IFN] </li>
-        <li><a href="browse.html?player={%player}&dir=__playlists">[S SAVED_PLAYLISTS]</a> 
+        <li> <a href="browseid3.html?genre=*&artist=*&player=[% player | uri %]">[% "BROWSE_BY_ALBUM" | string %]</a> 
+          [% IF not nofolder %] </li>
+        <li><a href="browse.html?player=[% player | uri %]">[% "BROWSE_MUSIC_FOLDER" | string %]</a> 
+          [% END %] </li>
+        <li><a href="browse.html?player=[% player | uri %]&dir=__playlists">[% "SAVED_PLAYLISTS" | string %]</a> 
         </li>
       </ul>
-      <h4><font color="#999999">[S SEARCH]</font></h4>
+      <h4><font color="#999999">[% "SEARCH" | string %]</font></h4>
       <ul>
-        <li> <a href="search.html?type=artist&player={%player}">[S SEARCHFOR_ARTIST]</a> </li>
-        <li> <a href="search.html?type=album&player={%player}">[S SEARCHFOR_ALBUM]</a> </li>
-        <li> <a href="search.html?type=song&player={%player}">[S SEARCHFOR_SONGTITLE]</a> </li>
+        <li> <a href="search.html?type=artist&player=[% player | uri %]">[% "SEARCHFOR_ARTIST" | string %]</a> </li>
+        <li> <a href="search.html?type=album&player=[% player | uri %]">[% "SEARCHFOR_ALBUM" | string %]</a> </li>
+        <li> <a href="search.html?type=song&player=[% player | uri %]">[% "SEARCHFOR_SONGTITLE" | string %]</a> </li>
       </ul>
-      <p>[IFN nosetup] </p>
-      <h4><font color="#999999">[S SETTINGS]</font></h4>
+      <p>[% IF not nosetup %] </p>
+      <h4><font color="#999999">[% "SETTINGS" | string %]</font></h4>
       <ul>
-        <li> <a href="setup.html?page=server&player={%player}">[S SERVER_SETTINGS]</a> 
-          {player_list} </li>
+        <li> <a href="setup.html?page=server&player=[% player | uri %]">[% "SERVER_SETTINGS" | string %]</a> 
+          [% player_list %] </li>
       </ul>
-      <p>[/IFN] </p>
-      <h4><font color="#999999">[S HELP]</font></h4>
+      <p>[% END %] </p>
+      <h4><font color="#999999">[% "HELP" | string %]</font></h4>
       <ul>
-        <li> <a href="html/docs/quickstart.html" target="_top">[S GETTING_STARTED]</a> 
+        <li> <a href="html/docs/quickstart.html" target="_top">[% "GETTING_STARTED" | string %]</a> 
         </li>
-        <li> <a href="html/docs/ipconfig.html" target="_top">[S PLAYER_SETUP]</a> 
+        <li> <a href="html/docs/ipconfig.html" target="_top">[% "PLAYER_SETUP" | string %]</a> 
         </li>
-        <li> <a href="html/docs/interface.html" target="_top">[S USING_REMOTE]</a> 
+        <li> <a href="html/docs/interface.html" target="_top">[% "USING_REMOTE" | string %]</a> 
         </li>
-        <li> <a href="html/help_remote.html?player={%player}" target="_top">[S 
-          HELP_REMOTE]</a> </li>
-        <li> <a href="html/docs/radio.html?player={%player}" target="_top">[S RADIO]</a>	
+        <li> <a href="html/help_remote.html?player=[% player | uri %]" target="_top">[% "HELP_REMOTE" | string %]</a> </li>
+        <li> <a href="html/docs/radio.html?player=[% player | uri %]" target="_top">[% "RADIO" | string %]</a>	
         </li>
-        <li><a href="html/docs/faq.html?player={%player}" target="_top">[S FAQ]</a> 
+        <li><a href="html/docs/faq.html?player=[% player | uri %]" target="_top">[% "FAQ" | string %]</a> 
         </li>
-        <li> <a href="html/docs/index.html" target="_top">[S TECHNICAL_INFORMATION]</a> 
+        <li> <a href="html/docs/index.html" target="_top">[% "TECHNICAL_INFORMATION" | string %]</a> 
         </li>
       </ul>
   </td>
