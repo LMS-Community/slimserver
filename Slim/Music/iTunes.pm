@@ -350,7 +350,7 @@ sub isMusicLibraryFileChanged {
 		my $itunesscaninterval = Slim::Utils::Prefs::get('itunesscaninterval');
 
 		$::d_itunes && msg("music library has changed!\n");
-		return if (!$lastMusicLibraryFinishTime);
+		return 1 if (!$lastMusicLibraryFinishTime);
 		
 		if (time()-$lastMusicLibraryFinishTime > $itunesscaninterval) {
 			return 1;
