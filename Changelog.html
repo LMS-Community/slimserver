@@ -1,6 +1,41 @@
-		<h2><a name="v5.0.0" id="v5.0.0"></a>Version 5.0.0</h2>
+		<h2><a name="v5.0.0" id="v5.0.0"></a>Version 5.0.0 - 2003-11-18</h2>
 <ul>
-	<li>Renamed SLIMP3 Server to SlimServer to indicate that it works with more than one device!</li>
+	<li>Renamed SLIMP3 Server to SlimServer to indicate that it works with more than one device! Namely, added support for Squeezebox, Slim Devices' latest creation</li>
+	<li>Added support for iTunes on Windows</li>
+	<li>New on-the-fly transcoding framework, use the convert.conf file to modify the behavior, can transcode arbitrarily depending on client type, client id and file type.</li>
+	<li>Restructured the source code into new directories.  There's a tool for updating plugins in the tools directory called "whack.pl" and another one for updating skins called "skinjob.pl"</li>
+	<li>Robert Moser sped up double-size rendering significantly</li>
+	<li>Kevin Walsh's Information Plugin is now part of settings and includes wireless signal strength for Squeezebox.</li>
+	<li>The Save Playlist plugin is now installed by default and can be accessed quickly by pressing and holding PLAY while viewing the current song in the current playlist.</li>
+	<li>Built-in firmware updater for Squeezebox.  Press and hold BRIGHTNESS to force a firmware update.</li>
+	<li>Substantial layout fixes in the Default skin</li>
+	<li>Fast-forward and rewind are more reliable</li>
+	<li>Built-in HTTP web server sped up significantly</li>
+	<li>Kevin Deane-Freeman added substantial fixes to the Fishbone Skin...</li>
+	<li>Some changes to the XML skin to improve XML-cleanliness.  Added some more player info tags.  Added status_header.xml if you just want the player status and not the whole playlist.</li>
+	<li>Added in contributed skin by Mark Erichsen for small displays called Handheld.</li>
+	<li>Added a preference for refresh rate in the web interface.  Will try to update sooner if the song is going to end.</li>
+	<li>Windows server is now built with the latest tools from the fine folks at ActiveState (ActivePerl 5.8.1 and PDK 5.3).  Should see some performance improvements.
+	<li>Using the new ActivePerl has the side effect of fixing a bad memory leak in the Web server under Windows.
+	<li>Added patch submitted by Jason Holzapple to allow priority setting from command line.
+	<li>Added basic support for AIFF, WAV and FLAC.
+	<li>Documentation updated, especially the FAQ.
+	<li>Windows installer now installs the service running under the user installing the software.  Makes it easier to access mounted volumes and iTunes libraries.
+	<li>Using a suggested tweak to the oggdec parameters to work around a bug in that program.
+	<li>Mac preferences are now saved in Home->Library->SlimDevices->slimserver.pref
+	<li>Windows preferences are now saved in C:\Program Files\SlimServer\server\slimserver.pref
+	<li>Unix preferences are now saved in ~/.slimserver.pref or /etc/slimserver.pref (if the latter exists)
+	<li>Fixed a problem using the wrong CLI port on windows.
+	<li>Fixed a crash if zapped playlist can't be opened for writing
+	<li>AAC transcoding works on Windows, not just Macs.
+	<li>Dave Nanian updated the Mac installer and preference pane to be ready for SlimServer.  It was a lot of work, mostly because Dean was breaking things.</li>
+	<li>Mac specific code is now built in XCode and is Panther friendly.
+	<li>SLIMP3 Firmware Updater is a separate Mac application now, rather than built in to the preference pane.
+	<li>Rod Nayfield submitted a patch to handle automounts in iTunes under Panther better.
+	<li>Added support for icy: URLs which are what NiceCast uses.
+	<li>Robert Moser made the button framework much more flexible, with wildcards, etc...
+	<li>Fixed a problem in settings in some languages where the iTunes choice was a bit scrambled
+	<li>Fixed the windows installer/uninstaller to uninstall SLIMP3 Server when installing SlimServer.  When uninstalling SlimServer (why would you ever do that?), it cleans up more better.
 </ul>
 		<h2><a name="v4.2.6" id="v4.2.6"></a>Version 4.2.6 - 2003-10-06</h2>
 <ul>
