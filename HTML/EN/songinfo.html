@@ -33,7 +33,7 @@
 			</td>
 			<td>
 			[% FOREACH contributor = contributors.sort %]
-				<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% contributor.id %]&amp;player=[% player | uri %]" target="brows>>er">[% contributor.name | html %]</a>
+				<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% contributor.id %]&amp;player=[% player | uri %]" target="browser">[% contributor.name | html %]</a>
 			[% END %]
 			</td>
 		</tr>

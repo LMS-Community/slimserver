@@ -34,7 +34,7 @@
 				<td>[% role | upper | string %][% "COLON" | string %]</td>
 				<td>
 				[% FOREACH contributor = contributors.sort %]
-					<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% contributor.id %]&amp;player=[% player | uri %]">[% contributor.name %]</a>
+					<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% contributor.id %]&amp;player=[% player | uri %]">[% contributor.name | html %]</a>
 				[% END %]
 				</td>
 			</tr>
@@ -45,7 +45,7 @@
 		<tr>
 			<td>[% "ALBUM" | string %][% "COLON" | string %]</td>
 			<td>
-				<a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]">[% track.album.title %]</a>
+				<a href="browsedb.html?hierarchy=album,track&level=1&album=[% track.album.id %]&amp;player=[% player | uri %]">[% track.album.title | html %]</a>
 			</td>
 		</tr>
 		[% END %]
