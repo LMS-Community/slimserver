@@ -3,7 +3,7 @@ package Slim::Networking::Stream;
 
 # $Id: Stream.pm,v
 
-# SlimServer Copyright (C) 2001-2003 Slim Devices Inc.
+# SlimServer Copyright (C) 2001-2004 Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.

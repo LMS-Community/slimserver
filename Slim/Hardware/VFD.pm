@@ -1,8 +1,8 @@
 package Slim::Hardware::VFD;
 
-# $Id: VFD.pm,v 1.12 2003/12/29 22:12:53 dean Exp $
+# $Id: VFD.pm,v 1.13 2004/01/26 05:44:17 dean Exp $
 
-# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.

@@ -1,6 +1,160 @@
-<h2><a name="v5.0.3" id="v5.0.3"></a>Version 5.0.3</h2>
+<h2><a name="v5.1" id="v5.1"></a>Version 5.1</h2>
 <ul>
-	<li>Outlook cloudy...</li>
+	<li>Kevin Deane-Freeman added a great Browse By Artwork facility.</li>
+	
+	<li>Fixed a number of bugs with Internet Radio</li>
+	
+	<li>The types.conf and convert.conf files can now be customized by the user.</li>
+	
+	<li>Tuned the audio output levels a bit to optimize headphone performance.</li>
+	
+	<li>Caleb Epstein fixed a problem with cue file parsing.</li>
+	
+	<li>Fixed a problem where we'd often say Disk 1 of 1.  That's unnessary.</li>
+	
+	<li>Distinguish in the debugging output between when a squeezebox disconnects and
+	when an HTTP client disconnects.</li>
+	
+	<li>Make sure that the currentsongindex is reset to zero appropriately to fix a warning.</li>
+	
+	<li>After a forced upgrade in squeezebox, unblock the client to avoid a glitch.</li>
+	
+	<li>Victor submitted a fix for the RPM to make it complain less during installs.  Fixes an old bug.</li>
+	
+	<li>You can choose to have the volume control affect both the analog and digital outputs, or keep the digital outputs fixed.</li>
+	
+	<li>Richard Purdie contributed a patch that re-enables the caching of the Music Library information across restarts. </li>
+	
+	<li>Squeezebox Owners Guide had some minor improvements.</li>
+	
+	<li>Patch from Victor to fix warning with rpmnew in RedHat RPM.</li>
+	
+	<li>Fixed a couple of cosmetic bugs associated with the Now Playing screen when STOPPING or hitting the end of a playlist.</li>
+	
+	<li>Skip undefined track numbers when checking for duplicate ones.</li>
+	
+	<li>Upgraded Inno Setup installer tools to latest version.</li>
+	
+	<li>Various updates to the Plugins documentation.</li>
+	
+	<li>Numerous performance improvements when dealing with long playlists.</li>
+	
+	<li>Fix broken easter egg animation.</li>
+	
+	<li>Use templates instead of hard coded HTML for error pages.</li>
+	
+	<li>Sort players by name in the web interface.</li>
+	
+	<li>Fix the problem with Squeezebox not working with security turned on.  Generate a one-time pad everytime we tell the player to connect and use that 
+	as our password.</li>
+	
+	<li>Preference Pane tester hadn't been updated to reference the new name for the server. Corrected this, and some header comments.</li>
+	
+	<li>Synchronization is vastly improved.</li>
+	
+	<li>Caleb Epstein contributed a patch to fix up shorten support.</li>
+	
+	<li>Added support for the RIFF INFO tags in WAV files.  The only software 
+	that I know that supports this is Turtle Beach's AudioStation software.
+	Now we do too.  </li>
+	
+	<li>Andreas posted a CLI command to get the count of genres, artists, albums,etc</li>
+	
+	<li>[bug #9] player UI display gets corrupted if its displaying the last
+	plugin, and the web UI disables some plugins.  for this case, set the
+	curr_plugin to the last in teh list if the curr_plugin is found to be
+	higher than the list size.</li>
+	
+	<li>Fix swapped channels in PCM mode. oops.</li>
+	
+	<li>Olaf Lenzmann submitted a neat patch to guess artist, album, title and track number information from paths, in the absense of tags.</li>
+	
+	<li>Disabled processing M4P files, since we can't really support them. Yet.</li>
+	
+	<li>Send 404 Not Found responses when appropriate.</li>
+	
+	<li>Added Richard's great start at the slimproto documentation.</li>
+	
+	<li>Fix a warning when sorting tracks that don't have track numbers.</li>
+	
+	<li>Improved performance during animation.</li>
+	
+	<li>FLAC support is greatly improved.</li>
+	
+	<li>Added screensavers, including one that snows.</li>
+	
+	<li>Fixed a problem where firmware updates didn't work on Win98SE.</li>
+	
+	<li>I added a shell for parsing QuickTime movies.  Alas, I don't know what I"m looking for.  Docs coming from Apple, in theory.</li>
+	
+	<li>John Bent added a setting for enabling xPL</li>
+	
+	<li>Phil Barrett noticed that the solid block is a standard character in both modules
+	and so we should use it.  Requires remapping an unused character (0x1f) to that char.</li>
+	
+	<li>KDF added a player web setting for the built in server alarm clock</li>
+	
+	<li>Peter Speck found that we still shouldn't mix buffered and unbuffered IO.  Use sysseek instead of seek and tell.</li>
+	
+	<li>Caleb Epstein added an option to treat multi-disk sets as a single album.</li>
+	
+	<li>KDF fixed problems and made significant improvements to the Fishbone skin.</li>
+	
+	<li>Handle invalid/0 length Ogg files better.</li>
+	
+	<li>Frederic Miserey submitted a patch to use the system locale to localize the time/date.</li>
+	
+	<li>Added a default transcode to uncompressed (no LAME) for AAC files on Squeezebox.</li>
+	
+	<li>The FAQ has been expanded.</li>
+	
+	<li>Sort the players by name on the home page.</li>
+	
+	<li>Give queued incoming SLIMP3 UDP packets an opportunity to be handled.  They are top priority.</li>
+	
+	<li>Tweak some overly verbose debug messages.</li>
+	
+	<li>Tim Long pointed out some inconsistencies in the CLI documentation and API.</li>
+	
+	<li>Buffer fullness in the place of progress indicator is now available as an option under Performance.</li>
+	
+	<li>There were a number of curcumstances where songs would be cut out at the beginning or end.  Not anymore.</li>
+	
+	<li>Added the plugins directories to the path for finding modules. This way you can drop CPAN modules right into the plugins folder to use them.</li>
+	
+	<li>Add finer granularity to the msg time printed.</li>
+	
+	<li>Poll the SLIMP3 UDP socket when we check timers so that we don't timeout on packets that we've already received.
+	This should improve the probelm with SLIMP3 streaming packet loss when handling web requests.</li>
+	
+	<li>Added a fix to calculate time correctly when pausing streams or transcoding.</li>
+	
+	<li>Olaf Lenzmann contributed a patch to handle UTF16 ID3 tags, mapping them to Latin1. Unmappale
+	characters appear as ?</li>
+	
+	<li>Fix click between PCM streams.</li>
+	
+	<li>Fix dimming so if its set to automatic, that it dims even if playing.</li>
+	
+	<li>French localization improved by Frederic Misery and Nicolas Guillemain.</li>
+	
+	<li>Fixed a bug where we didn't think we stopped playing at the end of a playlist.</li>
+	
+	<li>Default Plugins menu item to be turned on.</li>
+	
+	<li>Fixed a problem where we might get misaligned on WAV and AIFF files.</li>
+	
+	<li>Fixed a problem where MP2 files and streams wouldn't play properly.</li>
+	
+	<li>Grab and display the bitrate header from shoutcast streams.</li>
+	
+	<li>Fixed a problem where MoodLogic was broken due to missing meta information.</li>
+	
+	<li>Cue files use base 75 for the finest resolution, not base 100.</li>
+	
+	<li>Support for reading from named pipes/fifos.</li>
+	
+	<li>Fixed a problem where we would get stuck when playing back files stored on a HTTP server.</li>
 </ul>
 
 <h2><a name="v5.0.1" id="v5.0.1"></a>Version 5.0.1 - 2003-11-28</h2>

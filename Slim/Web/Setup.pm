@@ -1,8 +1,8 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.34 2004/01/24 21:18:54 kdf Exp $
+# $Id: Setup.pm,v 1.35 2004/01/26 05:44:24 dean Exp $
 
-# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

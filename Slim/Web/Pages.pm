@@ -1,7 +1,7 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.37 2004/01/24 21:18:54 kdf Exp $
-# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# $Id: Pages.pm,v 1.38 2004/01/26 05:44:24 dean Exp $
+# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.

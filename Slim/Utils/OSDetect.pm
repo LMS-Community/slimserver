@@ -2,9 +2,9 @@ package Slim::Utils::OSDetect;
 
 use Slim::Utils::Misc;
 
-# $Id: OSDetect.pm,v 1.4 2003/11/10 23:15:02 dean Exp $
+# $Id: OSDetect.pm,v 1.5 2004/01/26 05:44:22 dean Exp $
 
-# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.

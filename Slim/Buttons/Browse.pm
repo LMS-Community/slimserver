@@ -1,8 +1,8 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.9 2004/01/13 02:43:19 daniel Exp $
+# $Id: Browse.pm,v 1.10 2004/01/26 05:44:01 dean Exp $
 
-# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

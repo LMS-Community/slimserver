@@ -1,8 +1,8 @@
 package Slim::Formats::Ogg;
 
-# $Id: Ogg.pm,v 1.11 2004/01/13 00:36:11 dean Exp $
+# $Id: Ogg.pm,v 1.12 2004/01/26 05:44:14 dean Exp $
 
-# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.

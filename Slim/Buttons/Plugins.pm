@@ -4,12 +4,12 @@
 #
 # This code is derived from code with the following copyright message:
 #
-# SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.13 2004/01/13 19:11:39 kdf Exp $
+# $Id: Plugins.pm,v 1.14 2004/01/26 05:44:08 dean Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
