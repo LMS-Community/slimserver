@@ -25,8 +25,10 @@
    <hr>
 [/EQ]
     [IF singleChildLink]{singleChildLink}<hr>[/IF]
-    [IF versionInfo]{versionInfo}[/IF]
-    [IF newVersion]</p>{newVersion}</p>[/IF]
+    [IF versionInfo]<p>{versionInfo}</p>[/IF]
+    [IF newVersion]<p>{newVersion}</p>[/IF]
+    [IF ipaddress]<p>[S PLAYER_IP_ADDRESS] {ipaddress}</p>[/IF]
+    [IF macaddress]<p>[S PLAYER_MAC_ADDRESS] {macaddress}</p>[/IF] 
   </body>
 </html>
 
