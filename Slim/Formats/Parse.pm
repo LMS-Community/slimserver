@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.22 2004/10/08 06:04:28 vidur Exp $
+# $Id: Parse.pm,v 1.23 2004/10/15 23:48:24 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -539,41 +539,73 @@ sub ASX {
 	my @items  = ();
 
 	my $asx_playlist={};
-	eval {
-		$asx_playlist=XMLin($asxfile, ForceArray => ['entry', 'ref']);
-	};
+	my $asxstr = '';
+	while (<$asxfile>) {
+		$asxstr .= $_;
+	}
 
-	$::d_parse && Slim::Utils::Misc::msg("parsing ASX: $asxfile\n");
-
-	if (exists $asx_playlist->{entry}) {
-		foreach my $entry (@{$asx_playlist->{entry}}) {
-
-			my $title = $entry->{title};
-			$::d_parse && 
-			  Slim::Utils::Misc::msg("Found an entry title: $title\n");
-			my $path;
-			if (exists $entry->{ref}) {
-				for my $ref (@{$entry->{ref}}) {
-					my $url = URI->new($ref->{href});
-					$::d_parse && 
-					  Slim::Utils::Misc::msg("Checking if we can handle the url: $url\n");
-
-					my $scheme = $url->scheme();
-					if (exists $Slim::Player::Source::protocolHandlers{lc $scheme}) {
+	# First try for version 3.0 ASX
+	if ($asxstr =~ /<ASX/i) {
+		eval {
+			$asx_playlist=XMLin($asxstr, ForceArray => ['entry', 'Entry', 'ENTRY', 'ref', 'Ref', 'REF']);
+		};
+		
+		$::d_parse && Slim::Utils::Misc::msg("parsing ASX: $asxfile\n");
+		
+		my $entries = $asx_playlist->{entry} || 
+			$asx_playlist->{Entry} || $asx_playlist->{ENTRY};
+		if (defined($entries)) {
+			foreach my $entry (@$entries) {
+				
+				my $title = $entry->{title} || $entry->{Title} || $entry->{TITLE};
+				$::d_parse && 
+				  Slim::Utils::Misc::msg("Found an entry title: $title\n");
+				my $path;
+				my $refs = $entry->{ref} || $entry->{Ref} || $entry->{REF};
+				if (defined($refs)) {
+					for my $ref (@$refs) {
+						my $href = $ref->{href} || $ref->{Href} || 
+							$ref->{HREF};
+						my $url = URI->new($href);
 						$::d_parse && 
-						  Slim::Utils::Misc::msg("Found a handler for: $url\n");
-						$path = $ref->{href};
-						last;
+						  Slim::Utils::Misc::msg("Checking if we can handle the url: $url\n");
+						
+						my $scheme = $url->scheme();
+						if (exists $Slim::Player::Source::protocolHandlers{lc $scheme}) {
+							$::d_parse && 
+							  Slim::Utils::Misc::msg("Found a handler for: $url\n");
+							$path = $href;
+							last;
+						}
 					}
 				}
+				
+				if (defined($path)) {
+					$path = Slim::Utils::Misc::fixPath($path, $asxdir);
+					
+					_updateMetaData($path, $title);
+					push @items, $path;
+				}
 			}
-
-			if (defined($path)) {
-				$path = Slim::Utils::Misc::fixPath($path, $asxdir);
-		
-				_updateMetaData($path, $title);
-				push @items, $path;
+		}
+	}
+	# Next is version 2.0 ASX
+	elsif ($asxstr =~ /[Reference]/) {
+		while ($asxstr =~ /^Ref(\d+)=(.*)$/gm) {
+			my $url = URI->new($2);
+			# XXX We've found that ASX 2.0 refers to http: URLs, when it
+			# really means mms: URLs. Wouldn't it be nice if there were
+			# a real spec?
+			if ($url->scheme() eq 'http') {
+				$url->scheme('mms');
 			}
+			push @items, $url->as_string;
+		}
+	}
+	# And finally version 1.0 ASX
+	else {
+		while ($asxstr =~ /^(.*)$/gm) {
+			push @items, $1;
 		}
 	}
 
