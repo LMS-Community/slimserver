@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.159 2004/12/24 18:05:01 dsully Exp $
+# $Id: strings.txt,v 1.160 2004/12/30 06:44:20 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -2037,42 +2037,55 @@ SETUP_MUSICMAGICPLAYLISTFORMAT_DESC
 
 SETUP_MMMMIXTYPE
 	EN	MusicMagic Mix Type
+	ES	Tipo de mezcla de MusicMagic
 
 SETUP_MMMMIXTYPE_DESC
 	EN	Your MusicMagic Mix size may be set by the number of three types: Tracks, Minutes, MegaBytes (default tracks)
+	ES	La tamaño de la mezcla de MusicMagic puede establecerse utilizando 3 valores: Pistas, Minutos, MegaBytes (por defecto se utiliza Pistas)
 
 SETUP_MMMSIZE
 	EN	MusicMagic Mix Size
+	ES	Tamaño de mezcla de MusicMagic
 
 SETUP_MMMSIZE_DESC
 	EN	Choose Mix Size
+	ES	Elegir tamaño de Mezcla
 
 SETUP_MMSHOST
 	EN	MusicMagic HTTP Host
+	ES	Host HTTP de MusicMagic
 
 SETUP_MMSHOST_DESC
 	EN	Choose the hostname or ip of the remote or local MusicMagic server
+	ES	Elegir el nombre de host o dirección ip del servidor  MusicMagic, local o remoto
 
 SETUP_MMSREMOTEROOT
 	EN	MusicMagic Remote Root
+	ES	Raíz (Root) Remota de MusicMagic
 
 SETUP_MMSREMOTEROOT_DESC
 	EN	Enter the root filesystem of the music libary on the remote MusicMagic server.  This is used to convert remote paths to local paths.
+	ES	Ingresar el filesystem raiz de la colección musical en el servidor remoto de MusicMagic. Esto se utiliza para convertir paths remotos en paths locales.
 
 SETUP_MMMSTYLE
 	EN	MusicMagic Mix Style
+	ES	Estilo de mezcla de MusicMagic
 
 SETUP_MMMSTYLE_DESC
 	EN	How much like the artist style ( 0 = ignore (default), 200 = strict )
+	ES	Qué tan parecido al estilo del artista ( 0 = ignorar (por defecto), 200 = estricto )
 
 SETUP_MMMVARIETY
 	EN	MusicMagic Mix Variety
+	ES	Variedad de Mezcla de MusicMagic
 
 SETUP_MMMVARIETY_DESC
 	EN	How much variety in the mix ( 0 = less (default), 9 = more )
+	ES	Cuánta variedad en la mezcla ( 0 = menos (por defecto), 9 = más )
 
 MUSICMAGIC_MIXING
 	EN	MusicMagic Mixing
+	ES	Mezcla MusicMagic 
 
 SETUP_MOODLOGICPLAYLISTPREFIX_CHOOSE
 	DE	Prefix:
@@ -2629,12 +2642,15 @@ SETUP_MUSICMAGIC_DESC
 
 MMMMIXTYPE_TRACKS
 	EN	Number of Tracks
+	ES	Número de Pistas
 
 MMMMIXTYPE_MIN
 	EN	Number of Minutes
+	ES	Número de Minutos
 
 MMMMIXTYPE_MBYTES
 	EN	Number of MegaBytes
+	ES	Número de MegaBytes
 
 SETUP_MOODLOGIC_DESC
 	DE	Der SlimServer kann MoodLogic als Quelle für Titel- und Musikstil-Informationen verwenden. Zusätzlich können Sie "Instant Mixes" auf Grund von Musikstil, Interpret und Lied-Intensität erstellen. Aktivieren Sie die folgende Checkbox, falls Sie die Informationen aus MoodLogic verwenden wollen.
@@ -2976,6 +2992,7 @@ SETUP_COVERTHUMB
 
 SETUP_COVERTHUMB_DESC
 	EN	For Browse By Artwork thumbnails, the server will search the same default image files as above, and in ID3 Tags.  However, if you wish to use the variable filename feature, or specify your own filename, enter that here.
+	ES	Para el caso de  Examinar por Muestras de Arte de Tapa, el servidor buscará en los mismos archivos de imagen por defecto que arriba, y en los TAGs ID3. Sin embargo, si se quiere tener la posibilidad de utilizar un nombre de archivo variable en el futuro, o especificar un nombre propio de archivo, se lo puede ingresar aquí.
 
 SETUP_COVERTHUMB_OK
 	DE	Dateiname des Plattencovers (klein):
@@ -5984,6 +6001,7 @@ FLC
 FEC
 	DE	FLAC mit eingebettetem CUEsheet
 	EN	FLAC with embedded CUEsheet
+	ES	FLAC con CUEsheet embebida
 
 OGG
 	EN	Ogg Vorbis
