@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.63 2004/04/29 00:57:52 kdf Exp $
+# $Id: Setup.pm,v 1.64 2004/04/29 01:08:36 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1364,14 +1364,22 @@ sub initSetupConfig {
 								,q(|%Hh%M)		=> "h'h'mm (24h 03h00 15h00)"
 								}
 					}
- 			,'iTunesplaylistprefix' => {
- 						'validate' => \&validateAcceptAll
- 						,'PrefSize' => 'large'
- 					}
- 			,'iTunesplaylistsuffix' => {
- 						'validate' => \&validateAcceptAll
- 						,'PrefSize' => 'large'
- 					}
+			,'iTunesplaylistprefix' => {
+						'validate' => \&validateAcceptAll
+						,'PrefSize' => 'large'
+					}
+			,'iTunesplaylistsuffix' => {
+						'validate' => \&validateAcceptAll
+						,'PrefSize' => 'large'
+					}
+			,'MoodLogicplaylistprefix' => {
+						'validate' => \&validateAcceptAll
+						,'PrefSize' => 'large'
+					}
+			,'MoodLogicplaylistsuffix' => {
+						'validate' => \&validateAcceptAll
+						,'PrefSize' => 'large'
+					}
 			}
 		} #end of setup{'formatting'} hash
 	,'security' => {
