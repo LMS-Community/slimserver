@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.5 2003/09/03 20:08:05 dean Exp $
+#	$Id: Information.pm,v 1.6 2003/10/04 05:40:53 kdf Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -47,7 +47,7 @@ use Slim::Utils::Strings qw(string);
 use strict;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.5 $,10);
+$VERSION = substr(q$Revision: 1.6 $,10);
 
 my @main_list = qw(
     library
@@ -386,8 +386,8 @@ sub getDisplayName {
 __DATA__
 
 PLUGIN_INFORMATION_MODULE_NAME
-	EN	SLIMP3 Information
-	FR	Infos SLIMP3
+	EN	SlimServer Information
+	FR	Infos SlimServer
 
 PLUGIN_INFORMATION_MENU_PLAYER
 	EN	Player Information
