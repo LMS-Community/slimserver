@@ -1337,7 +1337,8 @@ sub execute {
  		    		push @returnArray, "mode:". $client->playmode;
 
  				if (Slim::Player::Playlist::song($client)) { 
- 					my $dur = Slim::Music::Info::durationSeconds(Slim::Player::Playlist::song($client));
+					my $track = $ds->objectForUrl(Slim::Player::Playlist::song($client));
+ 					my $dur = $track->secs() if $track;
  					if ($dur) {
  				    	push @returnArray, "rate:".Slim::Player::Source::rate($client); #(>1 ffwd, <0 rew else norm)
  		    			push @returnArray, "time:".Slim::Player::Source::songTime($client);
