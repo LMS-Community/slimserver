@@ -159,28 +159,8 @@ sub doneScanning {
 
 	$isScanning = 0;
 	
-	Slim::Utils::Scheduler::add_task(\&artScan);
 }
 
-sub artScan {
-	my @albums = keys %artwork;
-	my $album = $albums[0];
-	my $thumb = Slim::Music::Info::haveThumbArt($artwork{$album});
-
-	if (defined $thumb && $thumb) {
-		$::d_moodlogic && Slim::Utils::Misc::msg("Caching $thumb for $album\n");
-		Slim::Music::Info::updateArtworkCache($artwork{$album}, {'ALBUM' => $album, 'THUMB' => $thumb})
-	}
-
-	delete $artwork{$album};
-
-	if (!%artwork) { 
-		$::d_moodlogic && Slim::Utils::Misc::msg("Completed Artwork Scan\n");
-		return 0;
-	}
-	
-	return 1;
-}
 
 sub exportFunction {
  
@@ -207,32 +187,32 @@ sub exportFunction {
 	my @album_data = (-1, undef, undef);
 	
 	for (my $i=1; $i<$count; $i++) {
-	    my $filename;
-	    my %cacheEntry = ();
-	    my $song_id = $browser->FLT_Song_SID($i);
-	    
-	    # merge album info, from query ('cause it is not available via COM)
-	    while (defined $rs && !$rs->EOF && $album_data[0] < $song_id && defined $rs->Fields('songId')) {
-                @album_data = ($rs->Fields('songId')->value, $rs->Fields('name')->value, $rs->Fields('tocAlbumTrack')->value);
-                $rs->MoveNext;
-	    }
+		my $filename;
+		my %cacheEntry = ();
+		my $song_id = $browser->FLT_Song_SID($i);
+		
+		$mixer->{Seed_SID} = -$song_id;
+		$filename = $mixer->Mix_SongFile(-1);
+		%cacheEntry = %{Slim::Music::Info::readTags($filename)};
 
-            if (defined $album_data[0] && $album_data[0] == $song_id && $album_data[1] ne "") {
-                $cacheEntry{'ALBUM'} = $album_data[1];
-                $cacheEntry{'TRACKNUM'} = $album_data[2];
-            }
-               
-	    $mixer->{Seed_SID} = -$song_id;
+		# merge album info, from query ('cause it is not available via COM)
+		while (defined $rs && !$rs->EOF && $album_data[0] < $song_id && defined $rs->Fields('songId')) {
+			@album_data = ($rs->Fields('songId')->value, $rs->Fields('name')->value, $rs->Fields('tocAlbumTrack')->value);
+			$rs->MoveNext;
+		}
+
+		if (defined $album_data[0] && $album_data[0] == $song_id && $album_data[1] ne "") {
+			$cacheEntry{'ALBUM'} = $album_data[1];
+			$cacheEntry{'TRACKNUM'} = $album_data[2];
+		}
+		
 		$cacheEntry{'CT'} = 'mp3';
 		$cacheEntry{'TAG'} = 1;
 		$cacheEntry{'TITLE'} = $mixer->Mix_SongName(-1);
 		$cacheEntry{'ARTIST'} = $mixer->Mix_ArtistName(-1);
-		$filename = $mixer->Mix_SongFile(-1);
 		$cacheEntry{'GENRE'} = $genre_hash{$browser->FLT_Song_MGID($i)}[0] if (defined $genre_hash{$browser->FLT_Song_MGID($i)});
 		$cacheEntry{'SECS'} = int($mixer->Mix_SongDuration(-1) / 1000);
 		$cacheEntry{'SIZE'} = -s $filename;
-		$cacheEntry{'OFFSET'} = 0;
-		$cacheEntry{'BLOCKALIGN'} = 1;
 		
 		$cacheEntry{'MOODLOGIC_SONG_ID'} = $song_id;
 		$cacheEntry{'MOODLOGIC_ARTIST_ID'} = $browser->FLT_Song_AID($i);
@@ -245,10 +225,6 @@ sub exportFunction {
 			
 		Slim::Music::Info::updateCacheEntry($filename, \%cacheEntry);
 		Slim::Music::Info::updateGenreCache($filename, \%cacheEntry);
-		if ($cacheEntry{'ALBUM'} && !exists $artwork{$cacheEntry{'ALBUM'}} && !defined Slim::Music::Info::cacheItem($filename,'THUMB')) {
-			$artwork{$cacheEntry{'ALBUM'}} = $filename;
-			$::d_moodlogic && msg("$cacheEntry{'ALBUM'} refers to $filename\n");
-		}
 		Slim::Music::Info::updateGenreMixCache(\%cacheEntry);
 		Slim::Music::Info::updateArtistMixCache(\%cacheEntry);
 	}
