@@ -1,4 +1,3 @@
-#!/usr/local/bin/perl
 # Time-stamp: "2000-05-13 20:03:22 MDT" -*-Perl-*-
 
 package Class::ISA;

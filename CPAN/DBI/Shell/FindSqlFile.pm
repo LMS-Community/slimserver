@@ -1,5 +1,3 @@
-#!/usr/local/bin/perl
-
 package DBI::Shell::FindSqlFile;
 
 use strict;

@@ -1,4 +1,3 @@
-#!/usr/bin/perl -w
 package Slim::Display::VFD::Animation;
 
 # $Id$
