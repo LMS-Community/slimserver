@@ -70,18 +70,49 @@ sub volume {
 
 	} else {
 
-		# for Squeezebox, we reduce the range in the digital volume matrix to prevent clipping
-		# The factor of 23/40 was determined experimentally to achieve the highest level
-		# for a max-volume 1KHz test tone without any clipping. Gets us 3.04 v Pk-Pk (1.07 RMS)
-		# TODO: figure out the right way to do this so we're affecting the s/pdif output while
-		# also doing the analog volume control in analog land. Is it possible or do we maybe need
-		# different modes to accomplish both?
+		# really the only way to make everyone happy will be use a combination of digital and analog volume controls as the 
+		# default, but then have knobs so you can tune it for max headphone power, lowest noise at low volume, 
+		# fixed/variable s/pdif, etc.
 
-		my $level = sprintf('%X', 0xFFFFF - 0x7FFFF * (($volume * 23/40)**2));
-		$client->i2c(
-			Slim::Hardware::mas35x9::masWrite('out_LL', $level)
-			.Slim::Hardware::mas35x9::masWrite('out_RR', $level)
-		);
+		if (1) {
+			# here's one way to do it: adjust digital gains, leave fixed 3db boost on the main volume control
+			# this does achieve good analog output voltage (important for headphone power) but is not optimal
+			# for low volume levels. If only the analog outputs are being used, and digital gain is not required, then 
+			# use the other method.
+			#
+			# When the main volume control is set to +3db (0x7600), there is no clipping at the analog outputs 
+			# at max volume, for the loudest 1KHz sine wave I could record.
+			#
+			# At +12db, the clipping level is around 23/40 (on our thermometer bar).
+			#
+			# The higher the analog gain is set, the closer it can "match" (3v pk-pk) the max S/PDIF level. 
+			# However, at any more than +3db it starts to get noisy, so +3db is the max we should use without 
+			# some clever tricks to combine the two gain controls.
+			#
+
+			my $level = sprintf('%X', 0xFFFFF - 0x7FFFF * (($volume * 40/40)**2));
+			$client->i2c(
+				Slim::Hardware::mas35x9::masWrite('out_LL', $level)
+				.Slim::Hardware::mas35x9::masWrite('out_RR', $level)
+				.Slim::Hardware::mas35x9::masWrite('VOLUME', '7600')
+			);
+
+		} else {
+			# or: leave the digital controls always at 0db and vary the main volume:
+			# much better for the analog outputs, but this does force the S/PDIF level to be fixed.
+
+			print "\$volume: $volume\n";
+
+			my $level = sprintf('%02X00', 0x73 * $volume**2);
+
+			print "level: $level\n";
+
+			$client->i2c(
+				Slim::Hardware::mas35x9::masWrite('out_LL',  '80000')
+				.Slim::Hardware::mas35x9::masWrite('out_RR', '80000')
+				.Slim::Hardware::mas35x9::masWrite('VOLUME', $level)
+			);
+		}
 	}
 }
 
