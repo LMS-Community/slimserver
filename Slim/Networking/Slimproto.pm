@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.18 2003/08/22 21:05:48 dean Exp $
+# $Id: Slimproto.pm,v 1.19 2003/08/23 17:10:38 grotus Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -404,7 +404,7 @@ sub bytesReceived {
 	my $preset = shift;
 	
 	if (defined($preset)) {
-		msg("presetting streamed bytes to: $preset\n");
+		$::d_slimproto && msg("presetting streamed bytes to: $preset\n");
 		$status{$client}->{'byteoffset'} = $status{$client}->{'bytes_received'} + $preset;
 	}
 	return $status{$client}->{'bytes_received'} - $status{$client}->{'byteoffset'};
