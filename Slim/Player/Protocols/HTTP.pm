@@ -143,11 +143,16 @@ sub request {
 
 	my $type = $post ? 'POST' : 'GET';
 
+	# Although the port can be part of the Host: header, some hosts (such
+	# as online.wsj.com don't like it, and will infinitely redirect.
+	# According to the spec, http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
+	# The port is optional if it's 80, so follow that rule.
+	my $host = $port == 80 ? $server : "$server:$port";
+
 	# make the request
 	my $request = join($CRLF, (
 		"$type $path HTTP/1.0",
-		"Host: $server:$port",
-#		"User-Agent: SlimServer/$::VERSION ($^O)",
+		"Host: $host",
 		"User-Agent: iTunes/3.0 ($^O; SlimServer $::VERSION)",
 		"Accept: */*",
 		"Cache-Control: no-cache",
@@ -267,9 +272,14 @@ sub request {
 
 		my $ds       = Slim::Music::Info::getCurrentDataStore();
 		my $oldTrack = $ds->objectForUrl($infoUrl);
-		my $oldTitle = $oldTrack->title();
+		my $oldTitle = $oldTrack->title() if $create;
 		
-		$self = $class->open($redir, $redir);
+		$self = $class->open({
+			'url'     => $redir,
+			'infoUrl' => $redir,
+			'create'  => $create,
+			'post'    => $post,
+		});
 		
 		# if we've opened the redirect, re-use the old title and new content type.
 		
