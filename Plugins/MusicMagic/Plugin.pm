@@ -443,7 +443,18 @@ sub exportFunction {
 				$songInfo{'file'} = Encode::encode($Slim::Utils::Misc::locale, $songInfo{'file'}, Encode::FB_QUIET());
 
 				for my $key (qw(album artist genre name)) {
-					$songInfo{$key} = Encode::encode('utf8', $songInfo{$key}, Encode::FB_QUIET());
+
+					# Work around for bug #881
+					# The windows version of MMM doesn't send back proper UTF-8
+					if (Slim::Utils::OSDetect::OS() eq 'win' && $initialized =~ /1\.1\.4$/) {
+
+						$songInfo{$key} = Encode::decode($Slim::Utils::Misc::locale, $songInfo{$key}, Encode::FB_QUIET());
+
+					} else {
+
+						$songInfo{$key} = Encode::encode('utf8', $songInfo{$key}, Encode::FB_QUIET());
+						#Encode::_utf8_on($songInfo{$key});
+					}
 				}
 			}
 
@@ -774,7 +785,7 @@ sub mixerFunction {
 		}
 	}
 
-	if (defined $mix && scalar @$mix) {
+	if (defined $mix && ref($mix) eq 'ARRAY' && scalar @$mix) {
 		my %params = (
 			'listRef' => $mix,
 			'externRef' => \&Slim::Music::Info::standardTitle,
@@ -869,9 +880,19 @@ sub getMix {
 		return undef;
 	}
 
-	# url encode the request, but not the argstring
-	$mixArgs   = Slim::Web::HTTP::escape($mixArgs);
-	#$argString = Slim::Web::HTTP::escape($argString);
+	# Work around for bug #881 The windows version of MMM doesn't send back proper UTF-8
+	if (Slim::Utils::OSDetect::OS() eq 'win' && $initialized =~ /1\.1\.4$/) {
+
+		$mixArgs = Encode::encode($Slim::Utils::Misc::locale, $mixArgs, Encode::FB_QUIET());
+
+		$mixArgs = URI::Escape::uri_escape($mixArgs);
+
+	} else {
+
+		# url encode the request, but not the argstring
+		$mixArgs   = Slim::Web::HTTP::escape($mixArgs);
+		#$argString = Slim::Web::HTTP::escape($argString);
+	}
 	
 	$::d_musicmagic && msg("Musicmagic request: http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString\n");
 
@@ -990,7 +1011,7 @@ sub musicmagic_mix {
 		return 1;
 	}
 
-	if (defined $mix && ref $mix eq "ARRAY") {
+	if (defined $mix && ref $mix eq "ARRAY" && defined $client) {
 		# We'll be using this to play the entire mix using 
 		# playlist (add|play|load|insert)tracks listref=musicmagic_mix
 		$client->param('musicmagic_mix',$mix);
