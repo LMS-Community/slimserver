@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.58 2004/03/26 17:08:52 dean Exp $
+# $Id: Pages.pm,v 1.59 2004/04/02 04:39:27 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -582,6 +582,8 @@ sub status {
 		}
 	}
 
+	$params->{'nosetup'} = 1   if $::nosetup;
+
 	return Slim::Web::HTTP::filltemplatefile($params->{'omit_playlist'} ? "status_header.html" : "status.html" , $params);
 }
 
@@ -829,10 +831,15 @@ sub search {
 					$params->{'itemsPerPage'},
 				);
 			}
+			
+			my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
 
 			foreach my $item (@searchresults[$start..$end]) {
 
 				my %list_form = %$params;
+
+				$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
+				$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
 
 				$list_form{'genre'}	   = Slim::Music::Info::genre($item);
 				$list_form{'artist'}       = Slim::Music::Info::artist($item);
