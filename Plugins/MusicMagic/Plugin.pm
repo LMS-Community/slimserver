@@ -417,10 +417,6 @@ sub exportFunction {
 			$cacheEntry{'TRACKNUM'} = $songInfo{'track'};
 			$cacheEntry{'BITRATE'} = $songInfo{'bitrate'} * 1000;
 			$cacheEntry{'YEAR'} = $songInfo{'year'};
-			$cacheEntry{'SIZE'} = $songInfo{'bytes'};
-
-			# cache the file size & date
-			($cacheEntry{'FS'}, $cacheEntry{'AGE'}) = (stat($songInfo{'file'}))[7,9];
 		
 			$cacheEntry{'CT'} = Slim::Music::Info::typeFromPath($songInfo{'file'},'mp3');
 			$cacheEntry{'TAG'} = 1;
@@ -429,8 +425,6 @@ sub exportFunction {
 			$cacheEntry{'ARTIST'} = $songInfo{'artist'};
 			$cacheEntry{'GENRE'} = $songInfo{'genre'};
 			$cacheEntry{'SECS'} = $songInfo{'seconds'};
-			$cacheEntry{'OFFSET'} = 0;
-			$cacheEntry{'BLOCKALIGN'} = 1;
 		
 			if ($songInfo{'active'} eq 'yes') {
 				$cacheEntry{'MUSICMAGIC_MIXABLE'} = 1;
@@ -450,6 +444,7 @@ sub exportFunction {
 
 				'url'        => $fileurl,
 				'attributes' => \%cacheEntry,
+				'readTags'   => 1,
 
 			}) || do {
 

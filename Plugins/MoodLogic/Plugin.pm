@@ -299,7 +299,7 @@ sub exportFunction {
 
 		$::d_moodlogic && msg("MoodLogic: Opening Object Link...\n");
 		$conn->Open('PROVIDER=MSDASQL;DRIVER={Microsoft Access Driver (*.mdb)};DBQ='.$mixer->{JetFilePublic}.';UID=;PWD=F8F4E734E2CAE6B;');
-		$rs->Open('SELECT tblSongObject.songId, tblSongObject.profileReleaseYear, tblAlbum.name, tblSongObject.tocAlbumTrack, tblMediaObject.bitrate, tblMediaObject.fileSize FROM tblAlbum,tblMediaObject,tblSongObject WHERE tblAlbum.albumId = tblSongObject.tocAlbumId AND tblSongObject.songId = tblMediaObject.songId ORDER BY tblSongObject.songId', $conn, 1, 1);
+		$rs->Open('SELECT tblSongObject.songId, tblSongObject.profileReleaseYear, tblAlbum.name, tblSongObject.tocAlbumTrack, tblMediaObject.bitrate FROM tblAlbum,tblMediaObject,tblSongObject WHERE tblAlbum.albumId = tblSongObject.tocAlbumId AND tblSongObject.songId = tblMediaObject.songId ORDER BY tblSongObject.songId', $conn, 1, 1);
 		#PLAYLIST QUERY
 		$playlist->Open('Select tblPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename  From "tblPlaylist", "tblPlaylistSong", "tblMediaObject" where "tblPlaylist"."playlistId" = "tblPlaylistSong"."playlistId" AND "tblPlaylistSong"."songId" = "tblMediaObject"."songId" order by tblPlaylist.playlistId,tblPlaylistSong.playOrder', $conn, 1, 1);
 		{
@@ -349,7 +349,6 @@ sub exportFunction {
 				$rs->Fields('tocAlbumTrack')->value,
 				$rs->Fields('bitrate')->value,
 				$rs->Fields('profileReleaseYear')->value,
-				$rs->Fields('fileSize')->value
 			);
 			$rs->MoveNext;
 		}
@@ -359,23 +358,16 @@ sub exportFunction {
 			$cacheEntry{'TRACKNUM'} = $album_data[2];
 			$cacheEntry{'BITRATE'} = $album_data[3];
 			$cacheEntry{'YEAR'} = $album_data[4];
-			$cacheEntry{'SIZE'} = $album_data[5];
 		}
 
 		$cacheEntry{'CT'}         = Slim::Music::Info::typeFromPath($url,'mp3');
 		$cacheEntry{'TAG'}        = 1;
 		$cacheEntry{'VALID'}      = 1;
 		
-		# cache the file date
-		($cacheEntry{'FS'}, $cacheEntry{'AGE'}) = (stat($mixer->Mix_SongFile(-1)))[7,9];
-		$cacheEntry{'SIZE'} ||= $cacheEntry{'FS'};
-
 		$cacheEntry{'TITLE'}      = $mixer->Mix_SongName(-1);
 		$cacheEntry{'ARTIST'}     = $mixer->Mix_ArtistName(-1);
 		$cacheEntry{'GENRE'}      = $genre_hash{$browser->FLT_Song_MGID($isScanning)}[0] if (defined $genre_hash{$browser->FLT_Song_MGID($isScanning)});
 		$cacheEntry{'SECS'}       = int($mixer->Mix_SongDuration(-1) / 1000);
-		$cacheEntry{'OFFSET'}     = 0;
-		$cacheEntry{'BLOCKALIGN'} = 1;
 		
 		$cacheEntry{'MOODLOGIC_ID'} = $mixer->{'Seed_SID'} = $song_id;
 		$cacheEntry{'MOODLOGIC_MIXABLE'} = $mixer->Seed_SID_Mixable();
@@ -387,6 +379,7 @@ sub exportFunction {
 
 			'url' => $url,
 			'attributes' => \%cacheEntry,
+			'readTags'   => 1,
 
 		}) || do {
 

@@ -596,7 +596,7 @@ sub scanFunction {
 				Slim::Music::Info::addDiscNumberToAlbumTitle(\%cacheEntry);
 				
 				$cacheEntry{'GENRE'} = $curTrack{'Genre'};
-				$cacheEntry{'FS'} = $cacheEntry{'SIZE'} = $curTrack{'Size'};
+				$cacheEntry{'FS'} = $curTrack{'Size'};
 
 				if ($curTrack{'Total Time'}) { $cacheEntry{'SECS'} = $curTrack{'Total Time'} / 1000; };
 
@@ -613,6 +613,7 @@ sub scanFunction {
 
 					'url'        => $url,
 					'attributes' => \%cacheEntry,
+					'readTags'   => 1,
 
 				}) || do {
 
