@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.108 2004/06/15 05:45:04 dean Exp $
+# $Id: HTTP.pm,v 1.109 2004/06/16 17:29:52 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -423,6 +423,12 @@ sub processHTTP {
 				# 'close', be persistent
 				if ($request->header('Connection') && $request->header('Connection') ne 'close') {
 					$keepAlives{$httpClient}++;
+				}
+				# Put in an explicit close even if there wasn't
+				# one passed in. This ensures that the response
+				# logic will close the socket.
+				else {
+					$response->header('Connection' => 'close');
 				}
 			}
 		}
