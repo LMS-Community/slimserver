@@ -55,7 +55,6 @@ sub init {
 	$read_onfly = Slim::Utils::Prefs::get('plugins-onthefly');
 	
 	read_plugins() unless $plugins_read;
-	
 
 	for my $plugin (enabledPlugins()) {
 		# We use initPlugin() instead of the more succinct
@@ -107,6 +106,11 @@ sub installedPlugins {
 		opendir(DIR, $plugindir) || next;
 
 		for my $plugin ( sort(readdir(DIR)) ) {
+
+			# Skip loading MoodLogic (saves memory) unless we're on Windows.
+			if (Slim::Utils::OSDetect::OS() ne 'win' && $plugin =~ /MoodLogic/) {
+				next;
+			}
 
 			next if ($plugin =~ m/^\./i);
 
