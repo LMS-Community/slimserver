@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.49 2004/01/07 18:58:53 daniel Exp $
+# $Id: Source.pm,v 1.50 2004/01/12 23:16:19 dean Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -962,13 +962,16 @@ sub readNextChunk {
 			}
 			
 			if ($client->shoutMetaInterval()) {
-				$client->shoutMetaPointer($client->shoutMetaPointer() + length($chunk));
+				$client->shoutMetaPointer($client->shoutMetaPointer() + $readlen);
 				# handle instream metadata for shoutcast/icecast
 				if ($client->shoutMetaPointer() == $client->shoutMetaInterval()) {
 		
 					Slim::Web::RemoteStream::readMetaData($client);
 					$client->shoutMetaPointer(0);
 				}
+				elsif ($client->shoutMetaPointer() > $client->shoutMetaInterval()) {
+					msg("Problem: the shoutcast metadata overshot the interval.\n");
+				}	
 			}
 		}
 	} else {

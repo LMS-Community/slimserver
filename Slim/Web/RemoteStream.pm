@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.10 2003/12/02 05:16:22 grotus Exp $
+# $Id: RemoteStream.pm,v 1.11 2004/01/12 23:16:19 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -162,15 +162,29 @@ sub readMetaData {
 	my $handle = $client->mp3filehandle();
 	my $was_blocking = Slim::Utils::Misc::blocking($handle, 1);
 
-	$handle->sysread($metadataSize, 1);
+	my $byteRead;
+	do { 
+		$byteRead = $handle->sysread($metadataSize, 1);
+	} while ($byteRead == 0);
+
+	if (!$byteRead) { $::d_remotestream && msg("Metadata byte not read! $byteRead\n");  return; }
+ 
 	$metadataSize = ord($metadataSize) * 16;
 	
 	$::d_remotestream && msg("metadata size: $metadataSize\n");
 	if ($metadataSize > 0) {
 		my $metadata;
+		my $metadatapart;
 		
-		$handle->sysread($metadata, $metadataSize);
-
+		do {
+			$byteRead = $handle->sysread($metadatapart, $metadataSize);
+			if (!defined($byteRead)) {
+				$::d_remotestream && msg("undef returned by sysread on metadata\n");
+				return;
+			}	
+			$metadataSize -= $byteRead;	
+			$metadata .= $metadatapart;	
+		} while ($metadataSize > 0);			
 		$::d_remotestream && msg("metadata: $metadata\n");
 		if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
 			my $url = Slim::Player::Playlist::song($client);
