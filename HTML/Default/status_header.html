@@ -19,31 +19,38 @@ function switchPlayer(player_List){
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="if (parent.playlist.location != '') parent.playlist.location.reload(true);">
 	<table width="100%" cellspacing="0">
-	<tr height="32">
+		<tr height="32">
 			<td width="4" class="darkgrey"></td>
-			<td colspan="2" class="darkgrey" height="37" align="right"><a href="http://www.slimdevices.com/" target="slimdevices"><img src="[% webroot %]html/images/[% playermodel %]_logo.gif" alt="SQUEEZEBOX" width="134" height="19"></a><img src="[% webroot %]html/images/spacer.gif" width="8" alt=""></td>
-		<td class="darkgrey" width="8"><img src="html/images/spacer.gif" width="8"></td>
-	</tr>
+			<td colspan="2" style="vertical-align:middle"  class="darkgrey" height="37" align="right"
+				><img src="html/images/spacer.gif" width="6"
+				><a href="http://www.slimdevices.com/" target="slimdevices"
+				><img src="[% webroot %]html/images/[% playermodel %]_logo.gif" alt="SQUEEZEBOX" width="134" height="19"
+				></a><img src="[% webroot %]html/images/spacer.gif" width="8" alt=""
+				></td>
+			<td class="darkgrey" width="8"><img src="html/images/spacer.gif" width="8"></td>
+		<td width="8" class="darkgrey"><img src="html/images/spacer.gif" width="8" height="19" alt=""></td>
+		</tr>
 		<tr height="40">
 			<td class="darkgrey" width="4"><img src="html/images/spacer.gif" width="4" height="40" alt=""></td>
-		<td class="dmedgrey"><img src="html/images/musicplayer.gif" width="121" height="25" alt="Music Player"></td>
-			<td class="dmedgrey" align="right" valign="center">
-				[% IF player_chooser_list %]
-				<table>
-					<tr><td align="right"><form method="get" action="[% webroot %]index.html" target="_top"><select name="player" onchange="switchPlayer(this);" class="exnowplaying">[% player_chooser_list %]</select><img src="[% webroot %]html/images/spacer.gif" width="8" alt=""></form></td>
+			<td class="dmedgrey" width="269"><img src="html/images/musicplayer.gif" width="121" height="25" alt="Music Player"></td>
+			<td class="dmedgrey"  align="right" valign="center">
+				<table width="100%"  cellspacing="0" cellpadding="0">
+					<tr height="20"><td align="right"
+							>[% IF player_chooser_list %]<form style="text-align:right; vertical-align:middle;"  method="get" action="[% webroot %]index.html" target="_top"
+							><select name="player" onchange="switchPlayer(this);" class="exnowplaying"
+							>[% player_chooser_list %]</div>
+							</select
+							><img src="[% webroot %]html/images/spacer.gif" width="8" alt=""
+							></form>[% END %]</td>
 					</tr>
-					<tr><td class="dmedgrey" align="right" nowrap>
-					[% END %]
-						[% IF isplayer %][% IF mode == 'off' %]<a target="_top" href="index.html?player=[% player | uri %]&amp;p0=power&amp;p1=1">[% END %]<img src="html/images/player_on[% IF mode != 'off' %]_sel[% END %].gif" alt="" height="13">[% IF mode == 'off' %]</a>[% END %]<img src="html/images/nav_spacer.gif" alt="" width="1" height="13">[% IF mode != 'off' %]<a target="_top" href="index.html?player=[% player | uri %]&amp;p0=power&amp;p1=0">[% END %]<img src="html/images/player_standby[% IF mode == 'off' %]_sel[% END %].gif" alt="" height="13">[% IF mode != 'off' %]</a>[% END %][% END %]
-					[% IF player_chooser_list %]
+					<tr height="20"><td class="dmedgrey" align="right" valign=bottom nowrap bgcolor=red>				
+						[% IF isplayer %]<img src="html/images/nav_power.gif" alt="" height="13">[% IF mode == 'off' %]<a target="_top" href="index.html?player=[% player | uri %]&amp;p0=power&amp;p1=1">[% END %]<img src="html/images/player_on[% IF mode != 'off' %]_sel[% END %].gif" alt="" height="13">[% IF mode == 'off' %]</a>[% END %]<img src="html/images/nav_spacer.gif" alt="" width="1" height="13">[% IF mode != 'off' %]<a target="_top" href="index.html?player=[% player | uri %]&amp;p0=power&amp;p1=0">[% END %]<img src="html/images/player_standby[% IF mode == 'off' %]_sel[% END %].gif" alt="" height="13">[% IF mode != 'off' %]</a>[% END %][% END %]
 					</td></tr>
 				</table>
-				[% END %]
 			</td>
-		<td class="darkgrey" width="8"><img src="html/images/spacer.gif" width="8" alt=""></td>
-	</tr>
-	</table>
-	<table cellspacing="0" width="100%">
+			<td class="dmedgrey" width="8"><img src="html/images/spacer.gif" width="8" alt=""></td>
+		<td width="8" class="darkgrey"><img src="html/images/spacer.gif" width="8" height="19" alt=""></td>
+		</tr>
 	<tr height="19">
 		<td width="4" height="19"><img src="html/images/spacer.gif" width="4" height="19" alt=""></td>
 		<td class="dmedgrey" height="19" nowrap><a href="status_header.html?p0=playlist&amp;p1=jump&amp;p2=%2b1&amp;player=[% player | uri %]"><img src="html/images/nav_skip.gif" alt="" height="13"></a><img src="html/images/nav_spacer.gif" alt="" width="1" height="13">[% IF not modeplay %]<a href="status_header.html?p0=play&amp;player=[% player | uri %]">[% END %]<img src="html/images/nav_play[% IF modeplay %]_sel[% END %].gif" alt="" height="13">[% IF not modeplay %]</a>[% END %]<img src="html/images/nav_spacer.gif" alt="" width="1" height="13"><a href="status_header.html?p0=pause&amp;player=[% player | uri %]"><img src="html/images/nav_pause[% IF modepause %]_sel[% END %].gif" alt="" height="13"></a><img src="html/images/nav_spacer.gif" alt="" width="1" height="13">[% IF not modestop %]<a href="status_header.html?p0=stop&amp;player=[% player | uri %]">[% END %]<img src="html/images/nav_stop[% IF modestop %]_sel[% END %].gif" alt="" height="13">[% IF not modestop %]</a>[% END %]</td>
