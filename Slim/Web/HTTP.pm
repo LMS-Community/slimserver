@@ -909,9 +909,15 @@ sub generateHTTPResponse {
 	# for our static content
 	$response->last_modified($mtime) if defined $mtime;
 
-	# Always send back UTF8 for these.
+	# If we're perl 5.8 or above, always send back utf-8
+	# Otherwise, send back the charset from the current locale
 	if ($contentType =~ m!^text/(?:html|xml)!) {
-		$contentType .= '; charset=utf-8';
+
+		if ($] > 5.007) {
+			$contentType .= '; charset=utf-8';
+		} else {
+			$contentType .= "; charset=$Slim::Utils::Misc::locale";
+		}
 	}
 
 	$response->content_type($contentType);
@@ -1500,24 +1506,41 @@ sub getStaticContentForTemplate {
 
 sub _generateContentFromFile {
 	my ($type, $path, $params) = @_;
-	my ($content, $mtime);
+
 	my $skin = $params->{'skinOverride'} || Slim::Utils::Prefs::get('skin');
+
 	$::d_http && msg("generating from $path\n");
+
 	if ($type eq 'fill') {
+
 		my $template = $skinTemplates{$skin} || newSkinTemplate($skin);
 		my $output = '';
+
+		# Always set the locale
+		if ($Slim::Utils::Misc::locale && $Slim::Utils::Misc::locale =~ /utf\d+/) {
+
+			$params->{'LOCALE'} = $Slim::Utils::Misc::locale;
+			$params->{'LOCALE'} =~ s/utf(\d+)/utf-$1/;
+
+		} else {
+
+			$params->{'LOCALE'} = $Slim::Utils::Misc::locale || 'utf-8';
+		}
+
 		unless ($template->process($path,$params,\$output)) {
 			print $template->error() . "\n";
 		}
+
 		return \$output;
+	}
+
+	my ($content, $mtime) = _getFileContent($path, $skin, 1);
+
+	# some callers want the mtime for last-modified
+	if (wantarray()) {
+		return ($content, $mtime);
 	} else {
-		($content, $mtime) = _getFileContent($path, $skin, 1);
-		# some callers want the mtime for last-modified
-		if (wantarray()) {
-			return ($content, $mtime);
-		} else {
-			return $content;
-		}
+		return $content;
 	}
 }
 
@@ -1726,7 +1749,7 @@ sub addTemplateDirectory {
 	my $dir = shift;
 
 	$::d_http && msg("Adding template directory $dir\n");
-	unshift @templateDirs, $dir;
+	push @templateDirs, $dir;
 }
 
 sub isCsrfAuthCodeValid {

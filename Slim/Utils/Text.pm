@@ -36,18 +36,11 @@ sub matchCase {
 		{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAAABBCCDEEEEIIIINOOOOOOUUUUXYAAAAAABCEEEEIIIINOOOOOOUUUUYYD!D};
 
 	# Turn Æ & æ into AE
-	# Silence perl 5.6 stupidity.
-	if ($] < 5.007) {
+	$s =~ s/\x{00C6}/AE/go;
+	$s =~ s/\x{00E6}/AE/go;
 
-		use utf8;
-		$s =~ s/[\x{C6}\x{E6}]/AE/go;
-		$s =~ s/[\x{B5}]/MU/go;
-
-	} else {
-
-		$s =~ s/[\x{C6}\x{E6}]/AE/go;
-		$s =~ s/[\x{B5}]/MU/go;
-	}
+	# And µ into MU
+	$s =~ s/\x{00B5}/MU/go;
 
 	return $s;
 }

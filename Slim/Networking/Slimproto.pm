@@ -9,7 +9,7 @@ package Slim::Networking::Slimproto;
 
 use strict;
 use FindBin qw($Bin);
-use Socket qw(:all);
+use Socket qw(inet_ntoa SOMAXCONN);
 use IO::Socket;
 use FileHandle;
 use Sys::Hostname;
@@ -74,7 +74,8 @@ sub slimproto_accept {
 
 	defined(Slim::Utils::Misc::blocking($clientsock,0)) || die "Cannot set port nonblocking";
 
-	setsockopt ($clientsock, IPPROTO_TCP, TCP_NODELAY, 1);
+	# Use the Socket variables this way to silence a warning on perl 5.6
+	setsockopt ($clientsock, Socket::IPPROTO_TCP(), Socket::TCP_NODELAY(), 1);
 
 	my $peer;
 
