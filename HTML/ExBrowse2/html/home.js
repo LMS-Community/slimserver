@@ -19,7 +19,7 @@ function gosearch() {
 }
 
 function browseurl(url) {
-	document.getElementById("browseframe").src = "/ExBrowse2/" + url + "&player=" + currentPlayer;
+	document.getElementById("browseframe").src = webroot + url + "&player=" + currentPlayer;
 }
 
 function loadHome() {
@@ -28,7 +28,7 @@ function loadHome() {
 }
 
 function updateHome() {
-	postback("/ExBrowse2/home.xml", updateHome_handler);
+	postback(webroot + "home.xml?page=xml", updateHome_handler);
 	setTimeout(updateHome, 10000);
 }
 

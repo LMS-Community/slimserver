@@ -18,7 +18,7 @@ var BY = ' by ';
 //////////////////////////////////////
 
 function updatePlaylist(args) {
-	var url = "/ExBrowse2/playlist.xml?player=" + currentPlayer;
+	var url = webroot + "playlist.xml?player=" + currentPlayer;
 	if (args) {
 		url = url + args;
 	}

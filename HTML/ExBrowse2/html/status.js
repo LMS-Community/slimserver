@@ -91,7 +91,7 @@ function abortkey(e) {
 ///////////////////////////////////////////
 
 function updateStatus(args) {
-	var url = "/ExBrowse2/status_header.xml?player=" + currentPlayer;
+	var url = webroot + "status_header.xml?player=" + currentPlayer;
 	if (args) {
 		url = url + args;
 	}

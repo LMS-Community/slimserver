@@ -74,7 +74,7 @@ function updateStatusCombinedPeriodically() {
 }
 
 function updateStatusCombined(args) {
-	var url = "/ExBrowse2/status.xml?player=" + currentPlayer;
+	var url = webroot + "status.xml?player=" + currentPlayer;
 	if (args) {
 		url = url + args;
 	}
