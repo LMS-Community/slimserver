@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::VFD::Animation;
 
-# $Id: Animation.pm,v 1.6 2004/09/10 15:16:46 kdf Exp $
+# $Id: Animation.pm,v 1.7 2004/09/11 02:03:11 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -673,12 +673,12 @@ sub animateScrollSingle1 {
 		$client->update();
 		return;
 	}
-		
+
 	my $lines = $client->parseLines(Slim::Display::Display::curLines($client));
 	if ($pause_count < $hold) {
 		$client->update($lines,0);
 		return ($rate,\&animateScrollSingle1, $text22, $text22_length,
-				$pause_count + $scrollSingleLine1FrameRate);
+				$pause_count + $rate);
 	} else {
 		return animateScrollSingle2($client, 0, $text22, 0, $text22_length, $lines, 0);
 	}
