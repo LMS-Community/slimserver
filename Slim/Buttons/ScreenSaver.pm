@@ -1,6 +1,6 @@
 package Slim::Buttons::ScreenSaver;
 
-# $Id: ScreenSaver.pm,v 1.11 2003/12/13 08:29:17 kdf Exp $
+# $Id: ScreenSaver.pm,v 1.12 2003/12/23 08:36:48 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -62,11 +62,6 @@ sub screenSaver {
 
 	if (Slim::Display::Animation::animating($client)) {
 		# if we're animating, let the animation play out
-		if (Slim::Utils::Prefs::clientGet($client,"screensavertimeout") && 
-		 Slim::Hardware::IR::lastIRTime($client) < $now - Slim::Utils::Prefs::clientGet($client,"screensavertimeout")) {
-			#increase scrollPause to let the screensaver trigger.
-			Slim::Buttons::Common::param($client,'scrollPause',1.1);
-		}
 	} elsif ($mode eq 'block') {
 		# blocked mode handles its own updating of the screen.
 	} elsif (Slim::Utils::Prefs::clientGet($client,"screensavertimeout") && 

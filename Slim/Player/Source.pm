@@ -1,5 +1,7 @@
 package Slim::Player::Source;
 
+# $id:  $
+
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -241,6 +243,8 @@ sub playmode {
 			} elsif ($newmode =~ /^playout/) {
 				$everyclient->playmode("stop");
 				closeSong($everyclient);
+				resetSong($everyclient);
+				
 			} else {
 				$everyclient->playmode($newmode);
 			}
@@ -249,7 +253,6 @@ sub playmode {
 				$everyclient->currentplayingsong("");
 				$::d_source && msg("Stopping and clearing out old chunks for client " . $everyclient->id() . "\n");
 				@{$everyclient->chunks} = ();
-
 				$everyclient->stop();
 				closeSong($everyclient);
 				resetSong($everyclient);
@@ -279,13 +282,12 @@ sub playmode {
 				
 			} elsif ($newmode =~ /^playout/) {
 				$everyclient->playout();
-
 			} else {
 				$::d_source && msg(" Unknown play mode: " . $everyclient->playmode . "\n");
 				return $everyclient->playmode();
 			}
-			
 			Slim::Player::Playlist::refreshPlaylist($everyclient);
+			$everyclient->update();
 		}
 	}
 	$::d_source && msg($client->id() . ": Current playmode: " . $client->playmode() . "\n");
