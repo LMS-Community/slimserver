@@ -26,40 +26,31 @@
 	</td>
 	<td width="4" height="44"><img src="[% webroot %]html/images/spacer.gif" width="4" height="19" alt=""></td>
 </tr>
+<tr><td colspan="3" height="4" ><img src="[% webroot %]html/images/spacer.gif" height="4" alt=""></td></tr>
 <tr height="100%">
 	<td width="4" height="100%"></td>
-	<td valign="top" height="100%">
+	<td valign="top" height="100%">			
+		<!-- start plugins output -->
 		<table cellspacing="0" width="100%">
-			<tr height="5">
-				<td width="8" height="5"><img src="[% webroot %]html/images/spacer.gif" width="8" height="5" alt=""></td>
-				<td>
+			[% odd = 1 %]
+			[% FOREACH station = station_names %]
+				<tr>
+					<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+						<a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% station | uri %].mp3&player=[% player | uri %]" target="status">[% station %]</a>
+					</td>
+
+					<td align="right" width="13" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+						<a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% station | uri %].mp3&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
+					</td>
 				
-<!-- start plugins output -->
-<table cellspacing="0" width="100%">
-[% odd = 1 %]
-[% FOREACH station = station_names %]
-<tr>
-  <td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-      <a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% station | uri %].mp3&player=[% player | uri %]" target="status">[% station %]</a>
- </td>
-
-<td align="right" width="13" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-      <a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% station | uri %].mp3&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
-</td>
-
-<td  align="right" width="13" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-      <a href="[% webroot %]status_header.html?p0=playlist&p1=add&p2=[% 'radioio://' | uri %][% station | uri %].mp3&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a>
-  </td>
-</tr>
-[% odd = (not odd) %]
-[% END %]
-</table>
-<!-- end plugins output -->
-
-				</td>
-				<td width="4" height="5"><img src="[% webroot %]html/images/spacer.gif" width="4" height="5" alt=""></td>
-			</tr>
+					<td  align="right" width="13" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+						<a href="[% webroot %]status_header.html?p0=playlist&p1=add&p2=[% 'radioio://' | uri %][% station | uri %].mp3&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a>
+					</td>
+				</tr>
+				[% odd = (not odd) %]
+			[% END %]
 		</table>
+		<!-- end plugins output -->
 	</td>
 	<td width="4" height="100%"></td>
 </tr>
