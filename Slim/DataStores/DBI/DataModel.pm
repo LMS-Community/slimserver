@@ -326,6 +326,7 @@ our %cmpFields = (
 	'track.titlesort' => 1,
 	'comment' => 1,
 	'comment.value' => 1,
+	'url' => 1,
 );
 
 our %sortFieldMap = (

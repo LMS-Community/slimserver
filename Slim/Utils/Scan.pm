@@ -5,7 +5,7 @@ package Slim::Utils::Scan;
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
-# version 2.  
+# version 2.
 
 #
 # Scans a directory in the background, adding the contents to the specified list
@@ -14,7 +14,7 @@ package Slim::Utils::Scan;
 #
 #          addToList(path)
 #               |
-#               |		   
+#               |
 #          single file? [Y]----> add it ---> done
 #              [N]
 #               |
@@ -22,13 +22,13 @@ package Slim::Utils::Scan;
 #          push this directory onto stack
 #               |
 #               |
-#          is the stack empty? <-------------------------------<------------------------ 
-#              [N]	[Y]											|                       |
-#               |	  ->done									|                       |
-#               |												|                       |
-#          read the contents of the directory					|                       |
-#               |                    	         				|                       |
-#               |                             					|                       |
+#          is the stack empty? <-------------------------------<------------------------
+#              [N]	[Y]                                         |                       |
+#               |         ->done                                |                       |
+#               |                                               |                       |
+#          read the contents of the directory                   |                       |
+#               |                    	                        |                       |
+#               |                                               |                       |
 #    --->  have we done all items in this dir? [Y] ---> Sort these items, add then      |
 #    |          [N]                                      to the main list, then         |
 #    |           |                                       pop this dir from the stack    |
@@ -51,9 +51,9 @@ package Slim::Utils::Scan;
 use strict;
 use File::Spec::Functions qw(:ALL);
 use FileHandle;
-use Class::Struct;        
+use Class::Struct;
 use Time::HiRes;
-        
+
 use Slim::Utils::Misc;
 use Slim::Formats::Parse;
 

@@ -25,7 +25,7 @@ use IO::Seekable qw(SEEK_SET);
 
 my %tagMapping = (
 	'TRACKNUMBER'	=> 'TRACKNUM',
-	'DISCNUMBER'	=> 'SET',
+	'DISCNUMBER'	=> 'DISC',
 	'URL'		=> 'URLTAG',
 );
 
@@ -58,7 +58,7 @@ sub getTag {
 	# if we do have an embedded cuesheet, but no anchor then we need to parse
 	# the cuesheet.
 	#
-	# if we have an anchor then we're already parsing it, and we look for 
+	# if we have an anchor then we're already parsing it, and we look for
 	# metadata that matches our piece of the file.
 
 	unless (@$cuesheet > 0) {
@@ -70,14 +70,24 @@ sub getTag {
 
 	if ($anchor) {
 		# we have an anchor, so lets find metadata for this piece
+		## depricated -- new parsing should allow removing this block.
+		## this can hopefully be removed once updateOrCreate is fixed to honor
+		## readTags => 0
+#		$::d_parse && Slim::Utils::Misc::msg("WARN: some flac code still using anchors!\n"
+#											 ."      $file $anchor\n");
 		return getSubFileTag($file, $anchor, $flac);
 	}
 
 	# no anchor, handle the base file
 	# cue parsing will return file url references with start/end anchors
 	# we can now pretend that this (bare no-anchor) file is a playlist
-	my $tags = {};
 	my $taginfo = getStandardTag($file, $flac);
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
+	if (!defined $ds) {
+		$::d_parse && Slim::Utils::Misc::msg("FLAC getTag has no datastore\n");
+		return $taginfo; # should we return a more severe error?
+	}
 
 	push(@$cuesheet, "    REM END " . sprintf("%02d:%02d:%02d",
 		int(int($taginfo->{'SECS'})/60),
@@ -85,12 +95,39 @@ sub getTag {
 		(($taginfo->{'SECS'} - int($taginfo->{'SECS'})) * 75)
 	));
 
-	$tags->{'LIST'} = Slim::Formats::Parse::parseCUE($cuesheet, dirname($file), $taginfo->{'SECS'});
+	$taginfo->{'FILENAME'} = $file;
+
+	# get the tracks from the cuesheet
+	my $tracks = Slim::Formats::Parse::parseCUE($cuesheet, dirname($file));
+
+	# suck in metadata for all these tags
+	my $items = getSubFileTags($flac, $tracks);	
+
+	# fallback if we can't parse metadata
+	if ($items < 1) {
+		$::d_parse && Slim::Utils::Misc::msg("Unable to find metadata for tracks referenced by cuesheet\n");
+		return $taginfo;
+	}
+
+	# Do the actual data store
+	for my $key (keys %$tracks) {
+		my $track = $tracks->{$key};
+
+		next unless exists $track->{'URI'};
+		$ds->updateOrCreate({
+			'url'        => $track->{'URI'},
+			'attributes' => $track,
+			'readTags'   => 0,  # avoid the loop, don't read tags
+		});
+
+	}
 
 	# set fields appropriate for a playlist
-	$tags->{'CT'}    = "fec";
+	$taginfo->{'CT'}    = "fec";
 
-	return $tags;
+	$::d_parse && Slim::Utils::Misc::msg("    returning: $items items\n");	
+
+	return $taginfo;
 }
 
 # Given a file, return a hash of name value pairs,
@@ -143,6 +180,7 @@ sub addInfoTags {
 	my $flac = shift;
 	my $tags = shift;
 
+	return unless defined $tags;
 	# Handle all the UTF-8 decoding into perl's native format.
 	_decodeUTF8($tags);
 
@@ -166,6 +204,7 @@ sub addInfoTags {
 }
 
 sub getSubFileTag {
+## depricated -- new parsing should allow removing this block
 	my $file   = shift;
 	my $anchor = shift;
 	my $flac   = shift;
@@ -204,7 +243,47 @@ sub getSubFileTag {
 	return getStandardTag($file, $flac);
 }
 
+sub	getSubFileTags {
+	my $flac   = shift;
+	my $tracks = shift;
+
+	my $items  = 0;
+
+	# There is no official standard for multi-song metadata in a flac file
+	# so we try a few different approaches ordered from most useful to least
+	#
+	# as new methods are found in the wild, they can be added here. when
+	# a de-facto standard emerges, unused ones can be dropped.
+
+	# parse embedded xml metadata
+	$items = getXMLTags($flac, $tracks);
+	return $items if $items > 0;
+
+	# look for numbered vorbis comments
+	$items = getNumberedVCs($flac, $tracks);
+	return $items if $items > 0;
+
+	# parse cddb style metadata
+	$items = getCDDBTags($flac, $tracks);
+	return $items if $items > 0;
+
+	# parse cuesheet stuffed into a vorbis comment
+	$items = getCUEinVCs($flac, $tracks);
+	return $items if $items > 0;
+
+	# try parsing stacked vorbis comments
+	$items = getStackedVCs($flac, $tracks);
+	return $items if $items > 0;
+
+	# if we really wanted to, we could parse "standard" tags and apply to every track
+	# but that doesn't seem very useful.
+	$::d_mp3 && Slim::Utils::Misc::msg("No useable metadata found for this flac");
+	return 0;
+
+}
+
 sub getXMLTag {
+## depricated -- new parsing should allow removing this block
 	my $file   = shift;
 	my $anchor = shift;
 	my $flac   = shift;
@@ -344,7 +423,169 @@ sub getXMLTag {
 	return $tags;
 }
 
+sub getXMLTags {
+	my $flac   = shift;
+	my $tracks = shift;
+
+	# parse xml based metadata (musicbrainz rdf for example)
+	# retrieve the xml content from the flac
+	my $xml = $flac->application($PEEM) || return 0;
+
+	# TODO: parse this using the same xml modules slimserver uses to parse iTunes
+	# even better, use RDF::Simple::Parser
+
+	# grab the cuesheet and figure out which track is current
+	my $cuesheet = $flac->cuesheet();
+
+	# crude regex matching until we get a real rdf/xml parser in place
+	my $mbAlbum  = qr{"(http://musicbrainz.org/album/[\w-]+)"};
+	my $mbArtist = qr{"(http://musicbrainz.org/artist/[\w-]+)"};
+	my $mbTrack  = qr{"(http://musicbrainz.org/track/[\w-]+)"};
+
+	# get list of albums included in this file
+	# TODO: handle a collection of tracks without an album association (<mm:trackList> at a file level)
+	my @albumList = ();
+
+	if ($xml =~ m|<mm:albumList>(.+?)</mm:albumList>|m) {
+
+		my $albumListSegment = $1;
+		while ($albumListSegment =~ s|<rdf:li\s+rdf:resource=$mbAlbum\s*/>||m) {
+			push(@albumList, $1);
+		}
+		
+	} else {
+
+		# assume only one album
+		if ($xml =~ m|<mm:Album\s+rdf:about=$mbAlbum|m) {
+			push(@albumList, $1);
+		}
+	}
+
+	return 0 unless @albumList > 0;
+
+	my $defaultTags = {};
+	addInfoTags($flac, $defaultTags);
+
+	# parse the individual albums to get list of tracks, etc.
+	my $albumHash = {};
+	my $temp      = $xml;
+
+	while ($temp =~ s|(<mm:Album.*?</mm:Album>)||s) {
+
+		my $albumsegment = $1;
+		my $albumKey     = "";
+
+		if ($albumsegment =~ m|<mm:Album\s+rdf:about=$mbAlbum|s) {
+			$albumKey = $1;
+			$albumHash->{$albumKey} = {};
+		}
+
+		if ($albumsegment =~ m|<dc:title>(.+?)</dc:title>|s) {
+			$albumHash->{$albumKey}->{'ALBUM'} = $1;
+		}
+
+		if ($albumsegment =~ m|<dc:creator\s+rdf:resource=$mbArtist|s) {
+			$albumHash->{$albumKey}->{'ARTISTID'} = $1;
+		}
+
+		if ($albumsegment =~ m|<mm:coverart rdf:resource="(/images/[^"+])"/>|s) { #" vim syntax
+			$albumHash->{$albumKey}->{'COVER'} = $1 unless $1 eq "/images/no_coverart.png";
+			# This need expanding upon to be actually useful
+		}		
+
+		# a cheezy way to get the first (earliest) release date
+		if ($albumsegment =~ m|<rdf:Seq>\s*<rdf:li>\s*<mm:ReleaseDate>.*?<dc:date>(.+?)</dc:date>|s) {
+			$albumHash->{$albumKey}->{'YEAR'} = $1;
+		}
+
+		# grab the actual track listing
+		if ($albumsegment =~ m|<mm:trackList>\s*<rdf:Seq>(.+?)</rdf:Seq>\s*</mm:trackList>|s) {
+			my $trackList = $1;
+			while ($trackList =~ s|rdf:resource=$mbTrack||s) {
+				push(@{$albumHash->{$albumKey}->{'TRACKLIST'}}, $1);
+			}
+		}
+	}
+
+	# grab artist info
+	my $artistHash = {};
+
+	while ($xml =~ s|<mm:Artist\s+rdf:about="([^"]+)">(.+?)</mm:Artist>||s) {
+		my $artistid = $1;
+		my $artistSegment = $2;
+		$artistHash->{$artistid} = {};
+
+		$artistHash->{$artistid}->{'ARTISTID'} = $artistid;
+
+		my $message = "    ARTISTID: $artistid" if $::d_parse;
+
+		if ($artistSegment =~ m|<dc:title>(.+)</dc:title>|s) {
+			$artistHash->{$artistid}->{'ARTIST'} = $1;
+
+			$message .= " ARTIST: " . $artistHash->{$artistid}->{'ARTIST'} if $::d_parse;
+		}
+		if ($artistSegment =~ m|<mm:sortName>(.+)</mm:sortName>|s) {
+			$artistHash->{$artistid}->{'ARTISTSORT'} = $1;
+		}
+
+		$::d_parse && Slim::Utils::Misc::msg("$message\n");
+
+	}
+
+
+	# $tracks is keyed to the cuesheet TRACK number, which is sequential
+	# in some cases, that may not match the tracks official TRACKNUM
+	my $cuesheetTrack = 0;
+
+	for my $album (@albumList) {
+
+		my $tracknumber = 0;
+
+		$::d_parse && Slim::Utils::Misc::msg("    ALBUM: " . $albumHash->{$album}->{'ALBUM'} . "\n");
+
+		for my $track (@{$albumHash->{$album}->{'TRACKLIST'}}) {
+			my $tempTags = {};
+			$cuesheetTrack++;
+			$tracknumber++;
+
+			$::d_parse && Slim::Utils::Misc::msg("    processing track $cuesheetTrack -- $track\n");
+
+			next unless exists $tracks->{$cuesheetTrack};
+
+			$tracks->{$cuesheetTrack}->{'TRACKNUM'} = $tracknumber;
+			$::d_parse && Slim::Utils::Misc::msg("    TRACKNUM: $tracknumber\n");
+
+			%{$tracks->{$cuesheetTrack}} = (%{$tracks->{$cuesheetTrack}}, %{$albumHash->{$album}});
+			
+			# now process track info
+			if ($xml =~ m|<mm:Track\s+rdf:about="$track">(.+?)</mm:Track>|s) {
+
+				my $trackSegment = $1;
+				if ($trackSegment =~ m|<dc:title>(.+?)</dc:title>|s) {
+					$tracks->{$cuesheetTrack}->{'TITLE'} = $1;
+
+					$::d_parse && Slim::Utils::Misc::msg("    TITLE: "
+														 . $tracks->{$cuesheetTrack}->{'TITLE'} . "\n");
+				}
+
+				if ($trackSegment =~ m|<dc:creator rdf:resource="([^"]+)"/>|s) {
+					%{$tracks->{$cuesheetTrack}} = (%{$tracks->{$cuesheetTrack}}, %{$artistHash->{$1}});
+
+					$::d_parse && Slim::Utils::Misc::msg("    ARTIST: "
+														 . $tracks->{$cuesheetTrack}->{'ARTIST'} . "\n");
+				}
+			}
+			
+			%{$tracks->{$cuesheetTrack}} = (%{$defaultTags}, %{$tracks->{$cuesheetTrack}});
+			doTagMapping($tracks->{$cuesheetTrack});
+		}
+	}
+
+	return $cuesheetTrack;
+}
+
 sub getNumberedVC {
+## depricated -- new parsing should allow removing this block
 	my $file   = shift;
 	my $anchor = shift;
 	my $flac   = shift;
@@ -426,7 +667,103 @@ sub getNumberedVC {
 	return $tags;
 }
 
+sub getNumberedVCs {
+	my $flac   = shift;
+	my $tracks = shift;
+
+	# parse numbered vorbis comments
+	# this looks for parenthetical numbers on comment keys, and
+	# assumes the corrosponding key/value only applies to the
+	# track index whose number matches.
+	# note that we're matching against the "actual" track number
+	# as reported by the cuesheet, not the "apparent" track number
+	# as set with the TRACKNUMBER tag.
+	# unnumbered keys are assumed to apply to every track.
+
+	# as an example...
+	#
+	# ARTIST=foo
+	# ALBUM=bar
+	# TRACKNUMBER[1]=1
+	# TITLE[1]=baz
+	# TRACKNUMBER[2]=2
+	# TITLE[2]=something
+
+	# grab the raw comments for parsing
+	my $rawTags = $flac->{'rawTags'};
+
+	# grab the cuesheet for reference
+	my $cuesheet = $flac->cuesheet();
+
+	# look for a number of parenthetical TITLE keys that matches
+	# the number of tracks in the cuesheet
+	my $titletags = 0;
+	my $cuetracks = 0;
+
+	# to avoid conflicting with actual key characters,
+	# we allow a few different options for bracketing the track number
+	# allowed bracket types currently are () [] {} <>
+
+	# we're playing a bit fast and loose here, we really should make sure
+	# the same bracket types are used througout, not mixed and matched.
+	for my $tag (@$rawTags) {
+		$titletags++ if $tag =~ /^\s*TITLE\s*[\(\[\{\<]\d+[\)\]\}\>]\s*=/i;
+	}
+
+	return 0 if $titletags == 0;
+
+	for my $track (@$cuesheet) {
+		$cuetracks++ if $track =~ /^\s*TRACK/i;
+	}
+
+	if ($titletags != $cuetracks) {
+		$::d_parse && Slim::Utils::Misc::msg("ERROR: This file has tags for "
+											 . $titletags . " tracks but the cuesheet has "
+											 . $cuetracks . " tracks\n");
+		return 0;
+	}
+
+	# ok, let's see which tags apply to us
+
+	my $defaultTags = {};
+	addInfoTags($flac, $defaultTags);
+
+	for my $tag (@$rawTags) {
+
+		# Match the key and value
+		if ($tag =~ /^(.*?)=(.*)$/) {
+
+			# Make the key uppercase
+			my $tkey  = uc($1);
+			my $value = $2;
+			
+			# Match track number
+			my $group;
+			if ($tkey =~ /^(.+)\s*[\(\[\{\<](\d+)[\)\]\}\>]/) {
+				$tkey = $1;
+				$group = $2 + 0;
+			}
+
+			if (defined $group) {
+				$tracks->{$group}->{$tkey} = $value;
+			} else {
+				$defaultTags->{$tkey} = $value;
+			}
+		}
+	}
+	
+	# merge in the global tags
+	for (my $num = 1; $num <= $titletags; $num++) {
+		%{$tracks->{$num}} = (%{$defaultTags}, %{$tracks->{$num}});
+		doTagMapping($tracks->{$num});
+		$tracks->{$num}->{'TRACKNUM'} = $num unless exists $tracks->{$num}->{'TRACKNUM'};
+	}
+		
+	return $titletags;
+}
+
 sub getCDDBTag {
+## depricated -- new parsing should allow removing this block
 	my $file   = shift;
 	my $anchor = shift;
 	my $flac   = shift;
@@ -497,7 +834,96 @@ sub getCDDBTag {
 	return $tags;
 }
 
+sub getCDDBTags {
+	my $flac   = shift;
+	my $tracks = shift;
+
+	my $items = 0;
+
+	# parse cddb based metadata (foobar2000 does this, among others)
+	# it's rather crude, but probably the most widely used currently.
+
+	# TODO: detect various artist entries that reverse title and artist
+	# this is non-trivial to do automatically, so I'm open to suggestions
+	# currently we just expect you to have fairly clean tags.
+	my $order = 'standard';
+
+	my $tags = $flac->tags() || {};
+
+	# Detect CDDB style tags by presence of DTITLE, or return.
+	return 0 unless defined $tags->{'DTITLE'};
+
+	if ($tags->{'DTITLE'} =~ m|^(.+)\s*/\s*(.+)$|) {
+		$tags->{'ARTIST'} = $1;
+		$tags->{'ALBUM'} = $2;
+		delete $tags->{'DTITLE'};
+
+		$::d_parse && Slim::Utils::Misc::msg("    ARTIST: " . $tags->{'ARTIST'} . "\n");
+		$::d_parse && Slim::Utils::Misc::msg("    ALBUM: " . $tags->{'ALBUM'} . "\n");
+	}
+
+	if (exists $tags->{'DGENRE'}) {
+		$tags->{'GENRE'} = $tags->{'DGENRE'};
+		delete $tags->{'DGENRE'};
+
+		$::d_parse && Slim::Utils::Misc::msg("    GENRE: " . $tags->{'GENRE'} . "\n");
+	}
+
+	if (exists $tags->{'DYEAR'}) {
+		$tags->{'YEAR'} = $tags->{'DYEAR'};
+		delete $tags->{'DYEAR'};
+
+		$::d_parse && Slim::Utils::Misc::msg("    YEAR: " . $tags->{'YEAR'} . "\n");
+	}
+
+	# grab the cuesheet and process the individual tracks
+	my $cuesheet = $flac->cuesheet();
+
+	for my $key (keys(%$tags)) {
+
+		if ($key =~ /TTITLE(\d+)/) {
+			my $tracknum = $1;
+
+			if ($tags->{$key} =~ m|^(.+\S)\s*/\s*(.+)$|) {
+				
+				if ($order eq "standard") {
+					$tracks->{$tracknum}->{'ARTIST'} = $1;
+					$tracks->{$tracknum}->{'TITLE'} = $2;
+				} else {
+					$tracks->{$tracknum}->{'ARTIST'} = $2;
+					$tracks->{$tracknum}->{'TITLE'} = $1;
+				}
+
+				$::d_parse && Slim::Utils::Misc::msg("    ARTIST: " . $tracks->{$tracknum}->{'ARTIST'} . "\n");
+				
+			} else {
+				$tracks->{$tracknum}->{'TITLE'} = $tags->{$key};
+			}
+
+			$::d_parse && Slim::Utils::Misc::msg("    TITLE: " . $tracks->{$tracknum}->{'TITLE'} . "\n");
+
+			$tracks->{$tracknum}->{'TRACKNUM'} = $tracknum;
+
+			$::d_parse && Slim::Utils::Misc::msg("    TRACKNUM: " . $tracks->{$tracknum}->{'TRACKNUM'} . "\n");
+
+			delete $tags->{$key};
+			$items++;
+		}
+	}
+
+	addInfoTags($flac, $tags);
+
+	# merge in the global tags
+	for my $key (keys %$tracks) {
+		%{$tracks->{$key}} = (%{$tags}, %{$tracks->{$key}});
+		doTagMapping($tracks->{$key});
+	}
+
+	return $items;
+}
+
 sub getCUEinVC {
+## depricated -- new parsing should allow removing this block
 	my $file   = shift;
 	my $anchor = shift;
 	my $flac   = shift;
@@ -507,10 +933,10 @@ sub getCUEinVC {
 	# the CDTEXT hack for storing metadata, into a vorbis comment tag.
 
 	# TODO: we really should sanity check that this cuesheet matches the
-        # cuesheet we pulled from the vorbis file.
+	# cuesheet we pulled from the vorbis file.
 
-        # Right now this section borrows heavily from the existing cuesheet
-        # parsing code. Perhaps this should be abstracted out at some point.
+	# Right now this section borrows heavily from the existing cuesheet
+	# parsing code. Perhaps this should be abstracted out at some point.
 
 	$tags = $flac->tags() || {};
 
@@ -573,7 +999,53 @@ sub getCUEinVC {
 	return $tags;
 }
 
+sub getCUEinVCs {
+	my $flac   = shift;
+	my $tracks = shift;
+
+	my $items  = 0;
+
+	# foobar2000 alternately can stuff an entire cuesheet, along with
+	# the CDTEXT hack for storing metadata, into a vorbis comment tag.
+
+	# TODO: we really should sanity check that this cuesheet matches the
+	# cuesheet we pulled from the vorbis file.
+
+	my $tags = $flac->tags() || {};
+
+	return 0 unless exists $tags->{'CUESHEET'};
+
+	my @cuesheet = split(/\s*\n/, $tags->{'CUESHEET'});
+	push(@cuesheet, "    REM END " . sprintf("%02d:%02d:%02d",
+		int(int($tags->{'SECS'})/60),
+		int($tags->{'SECS'} % 60),
+		(($tags->{'SECS'} - int($tags->{'SECS'})) * 75)
+	));
+
+	# we don't have a proper dir to send parseCUE(), but we already have urls,
+	# so we can just fake it
+	my $metadata = Slim::Formats::Parse::parseCUE(\@cuesheet, "/BOGUS/PATH/");
+
+	# merge the existing track data and cuesheet metadata
+	for my $key (keys %$tracks) {
+
+		if (!exists $metadata->{$key}) {
+			$::d_parse && Slim::Utils::Misc::msg("No metadata found for track "
+												 . $tracks->{$key}->{'URI'} . "\n");
+			next;
+		}
+
+		%{$tracks->{$key}} = (%{$metadata->{$key}}, %{$tracks->{$key}});
+		doTagMapping($tracks->{$key});
+		addInfoTags($flac, $tracks->{$key});
+		$items++;
+	}
+
+	return $items;
+}
+
 sub getStackedVC {
+## depricated -- new parsing should allow removing this block
 	my $file   = shift;
 	my $anchor = shift;
 	my $flac   = shift;
@@ -647,8 +1119,101 @@ sub getStackedVC {
 	return $tags;
 }
 
+sub getStackedVCs {
+	my $flac   = shift;
+	my $tracks = shift;
+
+	my $items  = 0;
+
+	# parse "stacked" vorbis comments
+	# this is tricky when it comes to matching which groups belong together
+	# particularly for various artist, or multiple album compilations.
+	# this as also not terribly efficent, so it's not our first choice.
+
+	# here's a simple example of the sort of thing we're trying to work with
+	#
+	# ARTIST=foo
+	# ALBUM=bar
+	# TRACKNUMBER=1
+	# TITLE=baz
+	# TRACKNUMBER=2
+	# TITLE=something
+
+	# grab the raw comments for parsing
+	my $rawTags = $flac->{'rawTags'};
+
+	# grab the cuesheet for reference
+	my $cuesheet = $flac->cuesheet();
+
+	# validate number of TITLE tags against number of
+	# tracks in the cuesheet
+	my $titletags = 0;
+	my $cuetracks = 0;
+
+	for my $tag (@$rawTags) {
+		$titletags++ if $tag =~ /^\s*TITLE=/i;
+	}
+
+	for my $track (@$cuesheet) {
+		$cuetracks++ if $track =~ /^\s*TRACK/i;
+	}
+
+	return 0 unless $titletags == $cuetracks;
+	
+
+	# ok, let's see which tags apply to which tracks
+
+	my $tempTags = {};
+	my $defaultTags = {};
+	addInfoTags($flac, $defaultTags);
+
+	for my $tag (@$rawTags) {
+
+		# Match the key and value
+		if ($tag =~ /^(.*?)=(.*)$/) {
+
+			# Make the key uppercase
+			my $tkey  = uc($1);
+			my $value = $2;
+			
+			# use duplicate detection to find track boundries
+			# retain file wide values as defaults
+			if (defined $tempTags->{$tkey}) {
+				$items++;
+				my %merged = (%{$defaultTags}, %{$tempTags});				
+				$defaultTags = \%merged;
+				$tempTags = {};
+
+				# set the tags on the track
+				%{$tracks->{$items}} = (%{$tracks->{$items}}, %{$defaultTags});
+				doTagMapping($tracks->{$items});
+
+				if (!exists $tracks->{$items}->{'TRACKNUM'}) {
+					$tracks->{$items}->{'TRACKNUM'} = $items;
+				}
+
+			}
+
+			$tempTags->{$tkey} = $value;
+			$::d_parse && Slim::Utils::Misc::msg("    $tkey: $value\n");
+		}
+	}
+
+	# process the final track
+	$items++;
+	%{$tracks->{$items}} = (%{$tracks->{$items}}, %{$defaultTags}, %{$tempTags});
+	doTagMapping($tracks->{$items});
+
+	if (!exists $tracks->{$items}->{'TRACKNUM'}) {
+		$tracks->{$items}->{'TRACKNUM'} = $items;
+	}
+
+	return $items;
+}
+
 # determine a track number from a cuesheet and an anchor
 sub _trackFromAnchor {
+## depricated -- new parsing should allow removing this block
 	my $cuesheet = shift;
 	my $anchor   = shift;
 

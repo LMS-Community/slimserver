@@ -239,31 +239,23 @@ sub readPLS {
 	return @items;
 }
 
-# $noUTF8 comes from readCUE - which means it's an external cue sheet.
-# If that's the case, we don't want to readTags (in newTrack() either, since
-# all the data will be coming from the cuesheet.
-#
-# If we are an internal cuesheet, then readTags() needs to be called, which
-# will invoke Slim::Formats::FLAC->getTags() - with an anchor, which will
-# return before the cuesheet parsing - avoiding the infinite loop.
-
+# This now just processes the cuesheet into tags. The calling process is
+# responsible for adding the tracks into the datastore.
 sub parseCUE {
 	my $lines  = shift;
 	my $cuedir = shift;
-	my $secs   = shift || 0;
 	my $noUTF8 = shift || 0;
-	my @items;
 
+	my $artist;
 	my $album;
 	my $year;
 	my $genre;
 	my $comment;
 	my $filename;
 	my $currtrack;
-	my %tracks;
-	my $ds = Slim::Music::Info::getCurrentDataStore();
+	my $tracks = {};
 
-	$::d_parse && Slim::Utils::Misc::msg("parseCUE: cuedir: [$cuedir] secs: [$secs] noUTF8: [$noUTF8]\n");
+	$::d_parse && Slim::Utils::Misc::msg("parseCUE: cuedir: [$cuedir] noUTF8: [$noUTF8]\n");
 
 	if (!@$lines) {
 		$::d_parse && Slim::Utils::Misc::msg("parseCUE skipping empty cuesheet.\n");
@@ -282,169 +274,146 @@ sub parseCUE {
 		}
 
 		# strip whitespace from end
-		s/\s*$//; 
+		s/\s*$//;
 
 		if (/^TITLE\s+\"(.*)\"/i) {
 			$album = $1;
+
+		} elsif (/^PERFORMER\s+\"(.*)\"/i) {
+			$artist->{'ARTIST'} = $1;
+
 		} elsif (/^(?:REM\s+)?YEAR\s+\"(.*)\"/i) {
 			$year = $1;
+
 		} elsif (/^(?:REM\s+)?GENRE\s+\"(.*)\"/i) {
 			$genre = $1;
+
 		} elsif (/^(?:REM\s+)?COMMENT\s+\"(.*)\"/i) {
 			$comment = $1;
+
 		} elsif (/^FILE\s+\"(.*)\"/i) {
 			$filename = $1;
 			$filename = Slim::Utils::Misc::fixPath($filename, $cuedir);
+
 		} elsif (/^FILE\s+\"?(\S+)\"?/i) {
 			# Some cue sheets may not have quotes. Allow that, but
 			# the filenames can't have any spaces in them.
 			$filename = $1;
 			$filename = Slim::Utils::Misc::fixPath($filename, $cuedir);
+
 		} elsif (/^\s+TRACK\s+(\d+)\s+AUDIO/i) {
 			$currtrack = int ($1);
+
 		} elsif (defined $currtrack and /^\s+PERFORMER\s+\"(.*)\"/i) {
-			$tracks{$currtrack}->{'ARTIST'} = $1;
-		} elsif (defined $currtrack and /^\s+COMPOSER\s+\"(.*)\"/i) {
-			$tracks{$currtrack}->{'COMPOSER'} = $1;
-		} elsif (defined $currtrack and /^\s+CONDUCTOR\s+\"(.*)\"/i) {
-			$tracks{$currtrack}->{'CONDUCTOR'} = $1;
-		} elsif (defined $currtrack and /^\s+BAND\s+\"(.*)\"/i) {
-			$tracks{$currtrack}->{'BAND'} = $1;
+			$tracks->{$currtrack}->{'ARTIST'} = $1;
+
 		} elsif (defined $currtrack and
-			 /^(?:\s+REM)?\s+(TITLE|YEAR|GENRE|COMMENT)\s+\"(.*)\"/i) {
-		   $tracks{$currtrack}->{uc $1} = $2;
+			 /^(?:\s+REM)?\s+(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND)\s+\"(.*)\"/i) {
+		   $tracks->{$currtrack}->{uc $1} = $2;
+
+		} elsif (defined $currtrack and
+			 /^\s+INDEX\s+00\s+(\d+):(\d+):(\d+)/i) {
+			$tracks->{$currtrack}->{'PREGAP'} = ($1 * 60) + $2 + ($3 / 75);
+
 		} elsif (defined $currtrack and
 			 /^\s+INDEX\s+01\s+(\d+):(\d+):(\d+)/i) {
-			$tracks{$currtrack}->{'START'} = ($1 * 60) + $2 + ($3 / 75);
+			$tracks->{$currtrack}->{'START'} = ($1 * 60) + $2 + ($3 / 75);
+
 		} elsif (defined $currtrack and
 			 /^\s*REM\s+END\s+(\d+):(\d+):(\d+)/i) {
-			$tracks{$currtrack}->{'END'} = ($1 * 60) + $2 + ($3 / 75);
+			$tracks->{$currtrack}->{'END'} = ($1 * 60) + $2 + ($3 / 75);			
 		}
 	}
 
 	# calc song ending times from start of next song from end to beginning.
-	my $lastpos = (defined $tracks{$currtrack}->{'END'}) ? $tracks{$currtrack}->{'END'} : $secs;
+	my $lastpos = $tracks->{$currtrack}->{'END'} if (defined $tracks->{$currtrack}->{'END'});
 
 	# If we can't get $lastpos from the cuesheet, try and read it from the original file.
 	if (!$lastpos) {
 
+		$::d_parse && Slim::Utils::Misc::msg("Reading tags to get ending time of $filename\n");
+
+		my $ds = Slim::Music::Info::getCurrentDataStore();
 		my $track = $ds->updateOrCreate({
 			'url'        => $filename,
 			'attributes' => {},
 			'readTags'   => 1,
 		});
 
-		if ($track) {
-			$lastpos = $secs = $track->secs();
-		}
+		$lastpos = $track->secs();
 
 		$::d_parse && Slim::Utils::Misc::msg("Couldn't get duration of $filename\n") unless $lastpos;
 	}
 
-	for my $key (sort {$b <=> $a} keys %tracks) {
+	for my $key (sort {$b <=> $a} keys %$tracks) {
 
-		my $track = $tracks{$key};
+		my $track = $tracks->{$key};
 
 		if (!defined $track->{'END'}) {
 			$track->{'END'} = $lastpos;
 		}
 
-		$lastpos = $track->{'START'};
+		$lastpos = (exists $track->{'PREGAP'}) ? $track->{'PREGAP'} : $track->{'START'};
 	}
 
-	for my $key (sort {$a <=> $b} keys %tracks) {
+	for my $key (sort {$a <=> $b} keys %$tracks) {
 
-		my $track = $tracks{$key};
+		my $track = $tracks->{$key};
 	
+#		if (!defined $track->{'START'} || !defined $track->{'END'} || !defined $filename ) { next; }
 		if (!defined $track->{'START'} || !defined $filename ) { next; }
 
-		if (!defined $track->{'END'}) {
+		# Don't use $track->{'URL'} or the db will break
+		$track->{'URI'} = "$filename#".$track->{'START'}."-".$track->{'END'};
 
-			$track->{'END'} = $secs || '';
+		$::d_parse && Slim::Utils::Misc::msg("    URL: " . $track->{'URI'} . "\n");
+
+		# Ensure that we have a CT
+		if (!defined $track->{'CT'}) {
+			$track->{'CT'} = Slim::Music::Info::typeFromPath($filename, 'mp3');
 		}
+		
+		$track->{'TRACKNUM'} = $key;
+		$::d_parse && Slim::Utils::Misc::msg("    TRACKNUM: " . $track->{'TRACKNUM'} . "\n");
 
-		my $url = "$filename#".$track->{'START'}."-".$track->{'END'};
+		$track->{'FILENAME'} = $filename;
 
-		$::d_parse && Slim::Utils::Misc::msg("    URL: $url\n");
-
-		push @items, $url;
-
-		my $cacheEntry = {
-			'CT'       => Slim::Music::Info::typeFromPath($filename, 'mp3'),
-			'TRACKNUM' => $key,
-		};
-
-		$::d_parse && Slim::Utils::Misc::msg("    TRACKNUM: $key\n");
-
-		for my $attribute (qw(TITLE ARTIST ALBUM CONDUCTOR COMPOSER BAND)) {
+		for my $attribute (qw(TITLE ARTIST ALBUM CONDUCTOR COMPOSER BAND YEAR GENRE)) {
 
 			if (exists $track->{$attribute}) {
-				$cacheEntry->{$attribute} = $track->{$attribute};
-				$::d_parse && Slim::Utils::Misc::msg("    $attribute: " . $cacheEntry->{$attribute} . "\n");
+				$::d_parse && Slim::Utils::Misc::msg("    $attribute: " . $track->{$attribute} . "\n");
 			}
 		}
 
-		if (exists $track->{'YEAR'}) {
-
-			$cacheEntry->{'YEAR'} = $track->{'YEAR'};
-			$::d_parse && Slim::Utils::Misc::msg("    YEAR: " . $cacheEntry->{'YEAR'} . "\n");
-
-		} elsif (defined $year) {
-
-			$cacheEntry->{'YEAR'} = $year;
-			$::d_parse && Slim::Utils::Misc::msg("    YEAR: " . $year . "\n");
+		# Merge in file level attributes
+		if (!exists $track->{'ARTIST'} && defined $artist) {
+			$track->{'ARTIST'} = $artist;
+			$::d_parse && Slim::Utils::Misc::msg("    ARTIST: " . $track->{'ARTIST'} . "\n");
 		}
 
-		if (exists $track->{'GENRE'}) {
-
-			$cacheEntry->{'GENRE'} = $track->{'GENRE'};
-			$::d_parse && Slim::Utils::Misc::msg("    GENRE: " . $cacheEntry->{'GENRE'} . "\n");
-
-		} elsif (defined $genre) {
-
-			$cacheEntry->{'GENRE'} = $genre;
-			$::d_parse && Slim::Utils::Misc::msg("    GENRE: " . $genre . "\n");
+		if (!exists $track->{'ALBUM'} && defined $album) {
+			$track->{'ALBUM'} = $album;
+			$::d_parse && Slim::Utils::Misc::msg("    ALBUM: " . $track->{'ALBUM'} . "\n");
 		}
 
-		if (exists $track->{'COMMENT'}) {
-
-			$cacheEntry->{'COMMENT'} = $track->{'COMMENT'};
-			$::d_parse && Slim::Utils::Misc::msg("    COMMENT: " . $cacheEntry->{'COMMENT'} . "\n");
-
-		} elsif (defined $comment) {
-
-			$cacheEntry->{'COMMENT'} = $comment;
-			$::d_parse && Slim::Utils::Misc::msg("    COMMENT: " . $comment . "\n");
+		if (!exists $track->{'YEAR'} && defined $year) {
+			$track->{'YEAR'} = $year;
+			$::d_parse && Slim::Utils::Misc::msg("    YEAR: " . $track->{'YEAR'} . "\n");
 		}
 
-		if (defined $album) {
-			$cacheEntry->{'ALBUM'} = $album;
-			$::d_parse && Slim::Utils::Misc::msg("    ALBUM: " . $cacheEntry->{'ALBUM'} . "\n");
+		if (!exists $track->{'GENRE'} && defined $genre) {
+			$track->{'GENRE'} = $genre;
+			$::d_parse && Slim::Utils::Misc::msg("    GENRE: " . $track->{'GENRE'} . "\n");
 		}
 
-		# $noUTF8 will be set if this is an external cuesheet, in
-		# which case we want to set the content type on the source file
-		# so it won't show up in music listings
-
-		if ($noUTF8) {
-
-			$ds->updateOrCreate({
-				'url'        => $filename,
-				'attributes' => { 'CT' => 'cur' },
-				'readTags'   => 0,
-			});
+		if (!exists $track->{'COMMENT'} && defined $comment) {
+			$track->{'COMMENT'} = $comment;
+			$::d_parse && Slim::Utils::Misc::msg("    COMMENT: " . $track->{'COMMENT'} . "\n");
 		}
-
-		$ds->updateOrCreate({
-			'url'        => $url,
-			'attributes' => $cacheEntry,
-			'readTags'   => 1,
-		});
 	}
 
-	$::d_parse && Slim::Utils::Misc::msg("    returning: " . scalar(@items) . " items\n");	
+	return $tracks;
 
-	return @items;
 }
 
 sub readCUE {
@@ -453,7 +422,10 @@ sub readCUE {
 
 	$::d_parse && Slim::Utils::Misc::msg("Parsing cue: $cuefile \n");
 
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
 	my @lines = ();
+	my @items = ();
 
 	# The cuesheet will/may be encoded.
 	if ($] > 5.007) {
@@ -469,8 +441,67 @@ sub readCUE {
 
 	close $cuefile;
 
-	# Don't redecode it.
-	return (parseCUE([@lines], $cuedir, undef, 1));
+	# Don't redecode it when parsing the cuesheet.
+	my $tracks = (parseCUE([@lines], $cuedir, 1));
+	return @items unless defined $tracks && keys %$tracks > 0;
+
+	# Grab a random track to pull a filename from.
+	# for now we only support one FILE statement in the cuesheet
+	my ($sometrack) = (keys %$tracks);
+
+	my $previousContentType = Slim::Music::Info::info($tracks->{$sometrack}->{'FILENAME'}, 'ct');
+
+	# We may or may not have run updateOrCreate on the base filename
+	# during parseCUE, depending on the cuesheet contents.
+	# Run it here just to be sure.
+	# Set the content type on the base file to hide it from listings.
+	# Grab data from the base file to pass on to our individual tracks.
+	my $basetrack = $ds->updateOrCreate({
+	    'url'        => $tracks->{$sometrack}->{'FILENAME'},
+		'attributes' => { 'CT' => 'cur' },
+		'readTags'   => 1,
+	});
+
+
+	# Remove entries from other sources. This cuesheet takes precedence.
+	if ((defined $previousContentType) && ($previousContentType ne 'cur')) {
+		my $find = {'url', $tracks->{$sometrack}->{'FILENAME'} . "#*" };
+
+		my @oldtracks = $ds->find('url', $find);
+		for my $oldtrack (@oldtracks) {
+			$::d_parse && Slim::Utils::Misc::msg("Deleting previous entry for $oldtrack\n");
+			$ds->delete($oldtrack);
+		}
+	}
+
+	# Process through the individual tracks
+	for my $key (keys %$tracks) {
+		my $track = $tracks->{$key};
+
+		if (!defined $track->{'URI'}) {
+			$::d_parse && Slim::Utils::Misc::msg("Skipping track without url\n");
+			next;
+		}
+
+		push @items, $track->{'URI'}; #url;
+
+		# our tracks won't be visible if we don't include this
+		$track->{'fs'} = $basetrack->{'fs'};
+		$track->{'age'} = $basetrack->{'age'};
+			
+		# Do the actual data store
+		# Skip readTags since we'd just be reading the same file over and over
+		$ds->updateOrCreate({
+			'url'        => $track->{'URI'},
+			'attributes' => $track,
+			'readTags'   => 0,  # no need to read tags, since we did it for the base file
+		});
+
+	}
+
+	$::d_parse && Slim::Utils::Misc::msg("    returning: " . scalar(@items) . " items\n");	
+
+	return @items;
 }
 
 sub writePLS {
