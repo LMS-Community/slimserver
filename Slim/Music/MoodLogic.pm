@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.14 2004/05/13 17:57:35 dean Exp $
+#$Id: MoodLogic.pm,v 1.15 2004/05/17 19:46:39 kdf Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -160,7 +160,7 @@ sub startScan {
 		
 	$::d_moodlogic && msg("startScan: start export\n");
 	stopScan();
-	#Slim::Music::Info::clearplaylists = ();
+	Slim::Music::Info::clearplaylists();
 
 	Slim::Utils::Scheduler::add_task(\&exportFunction);
 	$isScanning = 1;

@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.28 2004/05/13 17:57:34 dean Exp $
+# $Id: Playlist.pm,v 1.29 2004/05/17 19:46:38 kdf Exp $
 
 # Slim Server Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -95,7 +95,8 @@ my %functions = (
 			Slim::Display::Animation::bumpRight($client);
 		} else {
 			my @oldlines = Slim::Display::Display::curLines($client);
-			Slim::Buttons::Common::pushMode($client, 'trackinfo', {'track' => Slim::Player::Playlist::song($client, browseplaylistindex($client)) } );
+			Slim::Buttons::Common::pushMode($client, 'trackinfo', {'track' => Slim::Player::Playlist::song($client, browseplaylistindex($client))
+																	,'current' => browseplaylistindex($client) == Slim::Player::Source::currentSongIndex($client)} );
 			Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
 		}
 	},

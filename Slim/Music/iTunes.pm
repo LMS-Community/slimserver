@@ -371,7 +371,7 @@ sub startScan {
 	}
 		
 	my $file = $ituneslibraryfile || findMusicLibraryFile();
-
+	Slim::Music::Info::clearplaylists();
 	$::d_itunes && msg("startScan: iTunes file: $file\n");
 
 	if (!defined($file)) {

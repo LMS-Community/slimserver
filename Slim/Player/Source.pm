@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.91 2004/05/16 04:52:18 kdf Exp $
+# $Id: Source.pm,v 1.92 2004/05/17 19:46:39 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -879,15 +879,10 @@ sub openSong {
 		my $rate    = (Slim::Music::Info::bitratenum($fullpath) || 0) / 1000;
 
 		# if http client has used the query param, use transcodeBitrate. otherwise we can use maxBitrate.
-		my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate') 
-				|| Slim::Utils::Prefs::clientGet($client,'maxBitrate');
+		my $maxRate = Slim::Utils::Prefs::setMaxRate($client);
 		
 		if (!defined $maxRate) {
-			# Possibly the first time this pref has been accessed
-			# if maxBitrate hasn't been set yet, allow wired squeezeboxes to default to no limit, others to 320kbps
-			$maxRate = ($client->model() eq 'squeezebox' && !defined $client->signalStrength())
-				? 0 : 320;
-			Slim::Utils::Prefs::clientSet($client,'maxBitrate',$maxRate);
+			setMaxRate($client);
 		}
 
 		my ($command, $type, $format) = getConvertCommand($client, $fullpath);
@@ -1051,13 +1046,13 @@ sub checkBin {
 	return $command;
 }
 
+
 sub underMax {
 	my $client = shift;
 	my $fullpath = shift;
 	
 	my $rate = (Slim::Music::Info::bitratenum($fullpath) || 0)/1000;
-	my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate') ||
-	Slim::Utils::Prefs::clientGet($client,'maxBitrate');
+	my $maxRate = Slim::Utils::Prefs::setMaxRate($client);
 
 	return ($maxRate >= $rate) || ($maxRate == 0);
 }
@@ -1100,8 +1095,7 @@ sub getConvertCommand {
 	foreach my $checkformat (@supportedformats) {
 		
 		# if there is a limiting bitrate, don't even check WAV or AIFF
-		my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate') ||
-					Slim::Utils::Prefs::clientGet($client,'maxBitrate');
+		my $maxRate = Slim::Utils::Prefs::setMaxRate($client);
 		next if ($maxRate != 0 && $checkformat ne 'mp3');
 
 		my @profiles = (
