@@ -1,0 +1,34 @@
+[% PROCESS pageheader.html pageicon=browseby %]
+
+<p id="pagetitle">
+ <a onclick="parent.browseurl('home.html?')">[% "HOME" | string %]</a>
+ [% pwd_list %]
+ [% IF song_count %]
+ <span id="songcount">
+ [% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].
+ </span>
+ [% END %]
+</p>
+
+[% IF warn %]
+ <p class="listing">
+  <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] 
+  [% IF audiodir %]
+   [% "SCAN_CLICK" | string %] <a class="fakelink" onclick="browseurl('browse.html')">[% "HERE" | string %]</a>.
+  [% END %]
+ </p>
+[% END %] 
+
+<p class="pagebar">
+[% IF browselist_pagebar ; browselist_pagebar ; END %]
+</p>
+
+<table class="browsetable">
+[% browse_list %]
+</table>
+
+<p class="pagebar">
+[% IF browselist_pagebar ; browselist_pagebar ; END %]
+</p>
+
+[% PROCESS pagefooter.html %]

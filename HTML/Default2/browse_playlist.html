@@ -1,0 +1,71 @@
+[% PROCESS pageheader.html pageicon="browse_playlists" nokbd="yes" %]
+
+<p id="pagetitle">
+ <a onclick="parent.browseurl('home.html?')">[% "HOME" | string %]</a> /
+ <a class="fakelink" onclick="browseurl('browse.html?dir=__playlists')">[% "SAVED_PLAYLISTS" | string %]</a>
+ [% pwd_list %]
+</p>
+ 
+[% IF warn %]
+ <p class="listing">
+  <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] 
+  [% IF audiodir %]
+   [% "SCAN_CLICK" | string %] <a class="fakelink" onclick="browseurl('browse.html')">[% "HERE" | string %]</a>.
+  [% END %]
+ </p>
+[% END %]
+ 
+[% IF RENAME_WARNING %]
+<p class="listing">
+ <b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]
+</p>
+[% END %]
+ 
+[% IF playlistname %]
+ <p class="listing" style="margin-top: 5px;">
+  [% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %]<br>
+  <form method="get" action="browse.html">
+   <input name="newname" value="[% IF current; current; ELSIF newname; newname; ELSE; playlistname; END %]" size=40>
+   <input name="submit" type=submit value="[% savebuttonname %]">
+   <input type=hidden value="[% player %]" name="player">
+   <input type=hidden name="dir" value="[% dir %]">
+   [% IF RENAME_WARNING %]<input type="checkbox" name="overwrite" class="stdedit">
+   [% "CONFIRM_OVERWRITE" | string %][% END %]
+  </form>
+ </p>
+[% END %]
+
+[% IF titled %]
+ <p class="listing" style="margin-bottom: 5px;">
+  <!--<a class="fakelink" onclick="parent.browseurl(&quot;edit_playlist.html?dir=[% dir | html %]&quot;)">[% "EDIT_PLAYLIST"
+   | string %]</a><br> playlist editing, not complete yet - the html files are there but they don't work right yet -->
+  <a class="fakelink" onclick="parent.browseurl(&quot;browse.html?dir=[% dir | uri %]&amp;delete=1&quot;)">[%
+   "DELETE_THIS_PLAYLIST" | string %]</a><br>
+ </p>
+[% END %]
+
+<p class="pagebar">
+[% IF browselist_pagebar ; browselist_pagebar ; END %]
+</p>
+
+<table class="browsetable">
+ [% IF playlistname %] 
+  <tr> 
+   <td class="listing">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
+   <td class="browselistbuttons">
+    <img width="13" height="13" onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=play&amp;p2=[% dir | uri
+    %]&quot;)" src="html/images/b/b_play.gif alt="Play"/><img width="13" height="13" src="html/images/b/b_add.gif"
+    onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=add&amp;p2=[% dir | uri %]&quot;)" alt="Add"/>
+   </td>
+  </tr>
+ [% END %]
+
+ [% browse_list %]
+
+</table>
+
+<p class="pagebar">
+[% IF browselist_pagebar ; browselist_pagebar ; END %]
+</p>
+
+[% PROCESS pagefooter.html %]

@@ -1,0 +1,20 @@
+<tr class="[% IF odd %]odd[% ELSE %]even[% END %]">
+ <td class="browselisting">
+  [% IF anchor %]<a name="[% anchor %]"></a>[% END ; IF descend ; IF NOT nobrowse %]
+  <a onclick="parent.browseurl(&quot;browse.html?dir=[% descend %]&quot;)">[% END ; title | html ; IF NOT nobrowse %]</a>[%
+  END ; ELSE %]
+  <a onclick="parent.browseurl(&quot;songinfo.html?item=[% item %]&quot;)">[% title | html %]</a>
+  [% IF includeAlbum && album %][% "FROM" | string %][% END %]
+  <i><a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% itemobj.album.id
+   %]&quot;)">[% album | html %]</a></i>
+  [% IF includeArtist %][% "BY" | string %] [% END %]
+  <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=artist,album,track&amp;level=1&amp;artist=[%
+   itemobj.contributorsOfType('artist').first.id %]&quot;)">[% artist | html %]</a>[% END %]
+ </td>
+ <td class="browselistbuttons">
+  <img alt="Play" width="13" height="13" onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=play&amp;p2=[%
+  itempath | uri %]&quot;)" src="html/images/b/b_play.gif"/><img width="13" height="13" src="html/images/b/b_add.gif"
+  alt="Add" src="html/images/b/b_add.gif" onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=add&amp;p2=[%
+  itempath | uri %]&quot;)"/>
+ </td>
+</tr>

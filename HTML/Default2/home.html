@@ -1,0 +1,85 @@
+[% IF page == 'xml' %]<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<slimhome>
+ <playerlist>
+ [% player_list %]
+ </playerlist>
+
+ <song_count>[% song_count %]</song_count>
+ <artist_count>[% artist_count %]</artist_count>
+ <album_count>[% album_count %]</album_count>
+
+ <browselinks>
+ [% FOREACH link = additionalLinks.browse %] 
+  <browselink loc="[% link.value | uri %]">[% link.key | string %]</browselink>
+ [% END %]
+ </browselinks>
+
+ <searchlinks>
+ [% FOREACH link = additionalLinks.search %]
+  <searchlink loc="[% link.value | uri %]">[% link.key | string %]</searchlink>
+ [% END %]
+ </searchlinks>
+
+ <helplinks>
+ [% FOREACH link = additionalLinks.help %]
+  <searchlink loc="[% link.value | uri %]">[% link.key | string %]</searchlink>
+ [% END %]
+ </helplinks>
+</slimhome>
+[% ELSE ; PROCESS pageheader.html pageicon='home'%]
+
+<p id="pagetitle" style="color:white;">
+[% IF song_count %]
+ [% "LIBRARY_CONTAINS" | string %] [% album_count %]
+ [% "WITH" | string %] [% song_count %]
+  [% "BY" | string %] [% artist_count %].
+[% END %]
+[% IF newVersion %]<br><br>[% newVersion %][% END %]
+</p>
+
+<p class="sectiontitle"><img src="html/images/sub_h_browse_music.gif" alt="" height="13"></p>
+<ul class="homelist">
+ [% IF additionalLinks.browse ; FOREACH link = additionalLinks.browse %]
+ <li>&#149; <a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a></li>
+ [% END ; END %]
+</ul>
+
+<p class="sectiontitle"><img src="html/images/sub_h_search_music.gif" alt="" height="13"></p>
+<ul class="homelist">
+ [% IF additionalLinks.search ; FOREACH key = additionalLinks.search.keys %]
+ <li>&#149; <a href="[% additionalLinks.search.$key %]player=[% player | uri %]">[% key | string %]</a></li>
+ [% END ; END %]
+</ul>
+
+[% IF not nosetup %]
+<p class="sectiontitle"><img src="html/images/sub_h_settings.gif" alt="" height="13"></p>
+<ul class="homelist">
+ [% IF not noserver %]<li>&#149; <a href="setup.html?page=server&amp;player=[% player | uri %]">[% "SERVER_SETTINGS" | string %]</a></li>[% END %]
+
+ [% player_list %]
+
+ [% IF additionalLinks.settings ; FOREACH key = additionalLinks.settings.keys %]
+  <li>&#149; <a href="[% additionalLinks.settings.$key %]player=[% player | uri %]">[% key | string %]</a></li>
+ [% END ; END %]
+</ul>
+[% END %]
+
+[% IF additionalLinks.plugins %]
+<p class="sectiontitle"><img src="html/images/sub_h_plugins.gif" alt="" height="13"></p>
+<ul class="homelist">
+ [% FOREACH key = additionalLinks.plugins.keys %]
+ <li>&#149; <a href="[% additionalLinks.plugins.$key %]player=[% player | uri %]">[% key | string %]</a></li>
+ [% END %]
+</ul>
+[% END %]
+
+<p class="sectiontitle"><img src="html/images/sub_h_help.gif" alt="" height="13"></p>
+<ul class="homelist">
+ [% IF additionalLinks.help ; FOREACH link = additionalLinks.help %]
+ <li>&#149; <a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a></li>
+ [% END ; END %]
+</ul>
+
+[% PROCESS pagefooter.html %]
+[% END %]
+
