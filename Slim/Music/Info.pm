@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.55 2004/01/15 07:03:12 kdf Exp $
+# $Id: Info.pm,v 1.56 2004/01/16 05:07:17 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -956,7 +956,7 @@ sub guessTags {
 	my $type = shift;
 	my $taghash = shift;
 
-	$::d_info && Slim::Utils::Misc::msg("Guessing tags for: " . $file);
+	$::d_info && Slim::Utils::Misc::msg("Guessing tags for: $file\n");
 
 	# Rip off from plainTitle()
 	if (isHTTPURL($file)) {
@@ -982,56 +982,29 @@ sub guessTags {
 		# Create pattern from string format
 		my $pat = $guess;
 		
-		# FIXME: Need to escape _all_ regex special chars
-		$pat =~ s/(\\|\||\.|\+|\?|\*|\(|\))/\\$1/g;
+		# Escape _all_ regex special chars
+		$pat =~ s/([{}[\]()^\$.|*+?\\])/\\$1/g;
 
 		# Replace the TAG string in the candidate format string
-		# with regex (.+) Since I'm too stupid to manage iteration
-		# over regex matches and tying them back to the correct TAG
-		# elegantly, I use two stupid hashes for matching $1, $2, ...
-		# back to the correct tag
+		# with regex (\d+) for TRACKNUM, DISC, and DISCC and
+		# ([^\/+) for all other tags
 		
-		# Map with <position of TAG in format string> -> <tag> mapping
-		my %ixmap = ();
-		
-		# Replace the TAGs and record their position in the string in a map#
-		# Positions change during replacement but that's ok
-		foreach my $tag ( ( 'DISC', 'DISCC', 'ARTIST', 'ALBUM', 'TITLE', 'TRACKNUM' ) ) {
-			# Is the TAG contained in the pat?
-			my $ix = index( $pat, $tag );
-			if( $ix >= 0 ) {
-				# Remember that position
-				$ixmap{ $ix } = $tag;
-				
-				# Replace by (.+), unless it's a  track number or disc number, in which case it has to be a number.
-				if ($tag eq 'TRACKNUM' || $tag eq 'DISC' || $tag eq 'DISCC') {
-					$pat =~ s/$tag/\(\\d+\)/;
-				} else {
-					$pat =~ s/$tag/\(\[^\\\/\]\+\)/;
-				}
-			}
-		}		
-		
-		$::d_info && Slim::Utils::Misc::msg("Testing $file against format \"$pat\"...\n" );
+		$pat =~ s/(TRACKNUM|DISC{1,2})/\(\\d+\)/g;
+		$pat =~ s/($elems)/\(\[^\\\/\]\+\)/g;
+		$::d_info && Slim::Utils::Misc::msg("Using format \"$guess\" = /$pat/...\n" );
+		$pat = qr/$pat/;
 
 		# Check if this format matches		
-		if( $file =~ $pat ) {
-			$::d_info && Slim::Utils::Misc::msg("Format string $pat matched $file\n" );
-			
-			# Again, I'm too stupid... Collect all matches into an arr
-			# and the keys (original substring positions) of the tags
-			my @matches = ( $1, $2, $3, $4, $5, $6, $7, $8, $9 );
-			my @k = sort {  $a <=> $b } keys %ixmap;
-			
-			# Apply the correct match to the function argument hash
-			foreach my $ix ( 0 .. scalar @k - 1 ) {
-				$::d_info && Slim::Utils::Misc::msg( "$ixmap{ $k[ $ix ] } -> $matches[ $ix ]\n" );
-				
-				if ($ixmap{ $k[ $ix ] }  eq 'TRACKNUM') { $matches[ $ix ] = cleanTrackNumber($matches[ $ix ]); }
-				
-				$taghash->{ $ixmap{ $k[ $ix ] } } = $matches[ $ix ];
+		my @matches;
+		if (@matches = $file =~ $pat) {
+			$::d_info && Slim::Utils::Misc::msg("Format string $guess matched $file\n" );
+			my @tags = $guess =~ /($elems)/g;
+			my $i = 0;
+			foreach my $match (@matches) {
+				$::d_info && Slim::Utils::Misc::msg("$tags[$i] => $match\n");
+				$match = int($match) if $tags[$i] =~ /TRACKNUM|DISC{1,2}/;
+				$taghash->{$tags[$i++]} = $match;
 			}
-			
 			return;
 		}
 	}
