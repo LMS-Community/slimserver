@@ -25,7 +25,7 @@
   </tr>
 </table>
 <p>
-<p><img src="html/images/spacer.gif" width="30" height="8"><a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a> / <a href="search.html?player=[% player | uri %]&type=[% type %]">[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %] [% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type 
+<p><img src="html/images/spacer.gif" width="30" height="8"><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / <a href="search.html?player=[% player | uri %]&type=[% type %]">[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %] [% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type 
   == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</a> 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>

@@ -11,3 +11,6 @@
 # support to be updated to version 20 and above.
  
 10..37        37
+
+# future versions may be downgraded to 37
+*			  37

@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.131 2004/09/10 02:44:29 kdf Exp $
+# $Id: strings.txt,v 1.132 2004/09/11 04:27:14 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1027,11 +1027,15 @@ SETUP_SCROLLPAUSE
 	NO	Pause ved scrolling
 	SE	Paus under scrollning
 
+SETUP_SCROLLPAUSEDOUBLE
+	EN	Large Text Scroll Pause
+
 SETUP_SCROLLPAUSE_DESC
 	DE	Sie können die Zeit definieren, die der Player wartet, bevor er mit dem horizontalen Scrollen beginnt. Geben Sie einen Wert in Sekunden ein, die vor oder zwischen dem Scrollen gewartet werden soll. Null (0) unterdrückt jegliche Pause und scrollt sofort. Standardwert ist 3.6 Sekunden.
 	EN	You can adjust the amount of time that the player waits before starting horizontal scrolling of the text on the display.  Enter a value, in seconds, for the amount of time to wait before scrolling or between scrolling.  Enter zero to not pause at all and scroll immediately. 3.6 seconds is the default.
 	FR	Vous pouvez ajuster le temps de pause avant que la platine active le défilement horizontal du texte sur l'afficheur. Entrez le temps d'attente avant défilement en secondes. Entrez zéro (0) pour un défilement continu. La valeur par défaut est de 3.6 secondes.
 	SE	Fördröjning innan scrollning av långa texter börjar. Multipel av 0.9 fungerar bäst. 0.001 rekommenderas som lägsta värde.
+
 
 SETUP_SCROLLRATE
 	DE	Scrollrate
@@ -1039,6 +1043,9 @@ SETUP_SCROLLRATE
 	FR	Vitesse de défilement
 	NO	Scroll-frekvens
 	SE	Scroll-frekvens
+
+SETUP_SCROLLRATEDOUBLE
+	EN	Large Text Scroll Rate
 
 SETUP_SCROLLRATE_DESC
 	DE	Sie können die Zeit definieren, die der Player zwischen dem Scrollen einzelner Buchstaben auf dem Display wartet. Geben Sie die Wartezeit in Sekunden ein. Kleinere Werte beschleunigen den Scrollvorgang. Standardwert ist 0.15 Sekunden.
@@ -2791,6 +2798,9 @@ SETUP_SCREENSAVER_CHOOSE
 
 SETUP_SCREENSAVER_DESC
 	EN	You can your current screensaver and the duration to wait before enabling the screensaver. Set this duration to zero to never show the current screensaver.
+
+SETUP_SCREENSAVERTIMEOUT
+	EN	Screensaver Delay
 
 SETUP_SCREENSAVERTIMEOUT_CHOOSE
 	DE	Wartezeit des Bildschirmschoners in Sekunden:

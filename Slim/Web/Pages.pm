@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.99 2004/08/25 23:24:46 dean Exp $
+# $Id: Pages.pm,v 1.100 2004/09/11 04:27:31 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -780,10 +780,10 @@ sub buildPlaylist {
 	my ($client, $params, $callback, $httpClient, $response, $listBuild) = @_;
 
 	my $itemCount         = 0;
-	my $buildItemsPerPass = Slim::Utils::Prefs::get('buildItemsPerPass');
+	my $itemsPerPass = Slim::Utils::Prefs::get('itemsPerPass');
 	my $starttime         = Time::HiRes::time();
 
-	while ($listBuild->{'item'} < ($listBuild->{'end'} + 1) && $itemCount < $buildItemsPerPass) {
+	while ($listBuild->{'item'} < ($listBuild->{'end'} + 1) && $itemCount < $itemsPerPass) {
 
 		my %list_form = %$params;
 

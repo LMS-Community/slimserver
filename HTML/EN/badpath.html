@@ -10,7 +10,7 @@
 
     <h3>[% "MUSIC" | string %]</h3><p>
 
-    <a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a> / 
+    <a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / 
 	[% IF playlist %]<a href="browse.html?dir=__playlists&player=[% player | uri %]">[% "SAVED_PLAYLISTS" | string %]</a>[% END %]
 	[% IF not playlist %]<a href="browse.html?player=[% player | uri %]">[% "MUSIC" | string %]</a>[% END %]
 

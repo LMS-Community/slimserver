@@ -7,7 +7,7 @@
   </head>
   <body>
     <h3>[% browseby | string %]</h3>
-    <div class="linktree"><ul><li><a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a></li>[% pwd_list %]</ul>
+    <div class="linktree"><ul><li><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a></li>[% pwd_list %]</ul>
 [% IF song_count %]    <div id="counts">[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %]</div>[% END %]
     </div>
 [% IF warn %]    <div id="warning"><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF not itunes %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]</div>[% END %]

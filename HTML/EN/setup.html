@@ -8,7 +8,7 @@
     <p>
 
     <h3>[% pagetitle %]</h3><p>
-    <a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a>[% IF linktree %] / [% linktree %][% END %]
+    <a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a>[% IF linktree %] / [% linktree %][% END %]
     <hr>
     [% IF warning %]<b>[% warning %]</b></p><hr>[% END %]
     [% IF siblings %][% siblings %]<hr>[% END %]

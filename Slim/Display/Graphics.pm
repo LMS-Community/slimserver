@@ -14,7 +14,6 @@ use Slim::Utils::Misc;
 
 my %fonts;
 my %fonthash;
-my @gfonts;
 
 sub init {
 	%fonts = ();

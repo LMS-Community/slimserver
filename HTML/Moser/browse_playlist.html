@@ -7,7 +7,7 @@
   </head>
   <body>
     <h3>[% "SAVED_PLAYLISTS" | string %]</h3>
-    <div class="linktree"><ul><li><a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a></li><li> / <a href="browse.html?player=[% player | uri %]&amp;dir=__playlists">[% "SAVED_PLAYLISTS" | string %]</a></li>[% pwd_list %]</ul></div>
+    <div class="linktree"><ul><li><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a></li><li> / <a href="browse.html?player=[% player | uri %]&amp;dir=__playlists">[% "SAVED_PLAYLISTS" | string %]</a></li>[% pwd_list %]</ul></div>
 [% IF warn %]    <div id="warning"><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] </div>[% END %]
 [% IF RENAME_WARNING %]<div class="warning"><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]</div>[% END %]
 	[% IF playlistname %]<form method="get" action="browse.html">[% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %] <input name="newname" value="[% playlistname %]" size=40>

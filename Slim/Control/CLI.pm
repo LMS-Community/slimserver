@@ -112,7 +112,10 @@ sub connectedSocket {
 }
 
 sub acceptSocket {
-	return if connectedSocket() > Slim::Utils::Prefs::get("tcpConnectMaximum");
+	if (connectedSocket() > Slim::Utils::Prefs::get("tcpConnectMaximum")) {
+		$::d_cli && msg("Too many sockets open, not accepting CLI connection...\n");
+		return;
+	}
 
 	my $clientsock = $server_socket->accept();
 
@@ -155,7 +158,7 @@ sub processRequest {
 		
 	if (!defined($firstline)) {
 		# socket half-closed from client
-		$::d_cli && msg("Client at " . inet_ntoa($clientsock->peeraddr) . " disconnected\n");
+		$::d_cli && msg("Client at disconnected\n");
 		closer($clientsock);
 	} else { 
 		# process the commands

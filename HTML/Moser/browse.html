@@ -7,7 +7,7 @@
   </head>
   <body>
     <h3>[% "MUSIC" | string %]</h3>
-    <div class="linktree"><ul><li><a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a></li><li> / <a href="browse.html?player=[% player | uri %]">[% "MUSIC" | string %]</a></li>[% pwd_list %]</ul></div>
+    <div class="linktree"><ul><li><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a></li><li> / <a href="browse.html?player=[% player | uri %]">[% "MUSIC" | string %]</a></li>[% pwd_list %]</ul></div>
     <div id="browselist_header">[% browselist_header %]</div>
 [% IF browselist_pagebar %]    <div id="topbrowselistpagebar" class="pagebar">
       <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>

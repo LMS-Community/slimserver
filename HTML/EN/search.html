@@ -9,7 +9,7 @@
 
     <h3>[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</h3>
     <p>
-    <a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a> /
+    <a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> /
     <a href="search.html?player=[% player | uri %]&type=[% type %]">[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</a>
         <p><hr><p>
 

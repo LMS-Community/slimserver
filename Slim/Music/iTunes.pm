@@ -526,7 +526,6 @@ sub scanFunction {
 			# skip track if Disabled in iTunes
 			return 1 if $curTrack{'Disabled'} && Slim::Utils::Prefs::get('ignoredisableditunestracks');
 
-			$::d_itunes && msg("got a track named " . $curTrack{'Name'} . "\n");
 			my $kind = $curTrack{'Kind'};
 			my $location = $curTrack{'Location'};
 			my $filetype = $curTrack{'File Type'};
@@ -539,7 +538,9 @@ sub scanFunction {
 				}
 			}
 			
-			if ($location =~ /^(\d+\.\d+\.\d+\.\d+)|([-\w]+(\.[-\w]+)*):\d+$/) {
+			$::d_itunes && msg("got a track named " . $curTrack{'Name'} . " location: $location\n");
+
+			if ($location =~ /^((\d+\.\d+\.\d+\.\d+)|([-\w]+(\.[-\w]+)*)):\d+$/) {
 				$location = "http://$location"; # fix missing prefix in old invalid entries
 			}
 

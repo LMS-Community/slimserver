@@ -165,6 +165,7 @@ sub needsUpgrade {
 	}
 
 	my $to;
+	my $default;
 	while (<$versionFile>) {
 		chomp;
 		next if /^\s*(#.*)?$/;
@@ -174,6 +175,8 @@ sub needsUpgrade {
 		} elsif (/^(\d+)\s+(\d+)\s*$/) {
 			next unless $1 == $from;
 			$to = $2;
+		} elsif (/^\*\s+(\d+)\s*$/) {
+			$default = $1;
 		} else {
 			msg("Garbage in $versionFilePath at line $.: $_\n");
 		}
@@ -183,8 +186,14 @@ sub needsUpgrade {
 	close($versionFile);
 
 	if (!defined $to) {
-		$::d_firmware && msg ("No upgrades found for squeezebox v. $from\n");
-		return 0;
+		if ($default) {
+			# use the default value in case we need to go back from the future.
+			$::d_firmware && msg ("No target found, using default version: $default\n");
+			$to = $default;
+		} else {
+			$::d_firmware && msg ("No upgrades found for squeezebox v. $from\n");
+			return 0;
+		}
 	}
 
 	if ($to == $from) {

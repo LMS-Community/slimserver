@@ -36,7 +36,7 @@ my %menuParams = (
 		,'header' => 'SEARCHFOR_ARTISTS'
 		,'stringHeader' => 1
 		,'cursorPos' => 0
-		,'charsRef' => 'BOTH'
+		,'charsRef' => 'UPPER'
 		,'callback' => \&searchHandler
 	}
 	,'search/ALBUMS' => {
@@ -44,7 +44,7 @@ my %menuParams = (
 		,'header' => 'SEARCHFOR_ALBUMS'
 		,'stringHeader' => 1
 		,'cursorPos' => 0
-		,'charsRef' => 'BOTH'
+		,'charsRef' => 'UPPER'
 		,'callback' => \&searchHandler
 	}
 	,'search/SONGS' => {
@@ -52,7 +52,7 @@ my %menuParams = (
 		,'header' => 'SEARCHFOR_SONGS'
 		,'stringHeader' => 1
 		,'cursorPos' => 0
-		,'charsRef' => 'BOTH'
+		,'charsRef' => 'UPPER'
 		,'callback' => \&searchHandler
 	}
 );

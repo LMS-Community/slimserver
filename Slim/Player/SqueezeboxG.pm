@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.13 2004/09/09 19:12:25 dean Exp $
+# $Id: SqueezeboxG.pm,v 1.14 2004/09/11 04:27:30 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -239,9 +239,7 @@ sub fonts {
 	}
 	
 	my $fontref = Slim::Display::Graphics::gfonthash;
-	my @fonts = @{$fontref->{$font}};
-	return \@fonts;
-	
+	return $fontref->{$font};
 }
 	
 # returns progress bar text

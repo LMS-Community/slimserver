@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.96 2004/09/10 04:30:24 kdf Exp $
+# $Id: Setup.pm,v 1.97 2004/09/11 04:27:32 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1022,6 +1022,7 @@ sub initSetupConfig {
 				,'changeMsg' => string('SETUP_PLUGINLIST_CHANGE')
 				,'externalValue' => sub {
 							my ($client,$value,$key) = @_;
+
 							if ($key =~ /\D+(\d+)$/) {
 								my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
 								return $pluginlistref->{(sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref}))[$1]};
@@ -1718,7 +1719,7 @@ sub initSetupConfig {
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['usetagdatabase','wipecache','templatecache','useplaylistcache',
-									'lookForArtwork','buildItemsPerPass']
+									'lookForArtwork','itemsPerPass']
 				}
 			}
 		,'Prefs' => {
@@ -1756,7 +1757,7 @@ sub initSetupConfig {
 								,'1' => string('SETUP_LOOKFORARTWORK')
 								}
 					}
-			,'buildItemsPerPass' => {
+			,'itemsPerPass' => {
 						'validate' => \&validateInt
 						}
 			}
@@ -2053,6 +2054,7 @@ sub initSetup {
 	fillSetupOptions('player','titleFormat','titleFormat');
 }
 
+
 sub fillFormatOptions {
 	$setup{'formatting'}{'Prefs'}{'guessFileFormats'}{'options'} = {hash_of_prefs('guessFileFormats')};
 	$setup{'formatting'}{'Prefs'}{'titleFormatWeb'}{'options'} = {hash_of_prefs('titleFormat')};
@@ -2064,6 +2066,7 @@ sub fillSetupOptions {
 	$setup{$set}{'Prefs'}{$pref}{'options'} = {hash_of_prefs($hash)};
 	$setup{$set}{'Prefs'}{$pref}{'validateArgs'} = [$setup{'player'}{'Prefs'}{$pref}{'options'}];
 }
+
 
 sub fillFontOptions {
 	my ($set,$pref,$hash) = @_;

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.85 2004/09/09 19:12:25 dean Exp $
+# $Id: Prefs.pm,v 1.86 2004/09/11 04:27:31 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -126,7 +126,7 @@ my %DEFAULT = (
 	,'coverThumb'			=> ''
 	,'coverArt'				=> ''
 	,'thumbSize'			=> 100
-	,'buildItemsPerPass'	=> 100
+	,'itemsPerPass'			=> 5
 	,'plugins-onthefly'		=> 0
 	,'longdateFormat'		=> q(%A, %B |%d, %Y)
 	,'shortdateFormat'		=> q(%m/%d/%Y)

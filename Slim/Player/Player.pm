@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.27 2004/09/10 03:07:39 vidur Exp $
+# $Id: Player.pm,v 1.28 2004/09/11 04:27:29 dean Exp $
 #
 package Slim::Player::Player;
 use strict;
@@ -317,16 +317,15 @@ sub mute {
 	my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
 	my $mute = Slim::Utils::Prefs::clientGet($client, "mute");
 	
-			
 	if (($vol < 0) && ($mute)) {
 		# mute volume
 		# todo: there is actually a hardware mute feature
 		# in both decoders. Need to add Decoder::mute
-		&volume($client, 0);
+		$client->volume(0);;
 	} else {
 		# un-mute volume
 		$vol *= -1;
-		&volume($client, $vol);
+		$client->volume($vol);
 	}
 	Slim::Utils::Prefs::clientSet($client, "volume", $vol);
 	Slim::Display::Display::volumeDisplay($client);
@@ -452,6 +451,7 @@ sub currentSongLines {
 	return $client->renderOverlay($line1, $line2, $overlay1, $overlay2);
 }
 
+
 sub nowPlayingModeLines {
 	my ($client,$line1) = @_;
 	my $overlay;
@@ -470,7 +470,6 @@ sub nowPlayingModeLines {
 
 	# check if we don't know how long the track is...
 	if (!$client->songduration() && ($playingDisplayMode != 6)) {
-
 		# no progress bar, remaining time is meaningless
 		$playingDisplayMode = ($playingDisplayMode % 3) ? 1 : 0;
 
