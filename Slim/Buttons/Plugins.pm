@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.28 2004/10/27 23:36:15 vidur Exp $
+# $Id: Plugins.pm,v 1.29 2004/11/03 22:13:45 vidur Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
@@ -141,8 +141,10 @@ sub addMenus {
 					);
 				$::d_plugins && msg("Adding $plugin to menu: $menu\n");
 				Slim::Buttons::Home::addSubMenu($menu,$plugin,\%params);
-				Slim::Buttons::Home::delSubMenu("PLUGINS",$plugin);
-				Slim::Buttons::Home::addSubMenu("PLUGINS",$menu,&Slim::Buttons::Home::getMenu("-".$menu));
+				if ($menu ne "PLUGINS") {
+					Slim::Buttons::Home::delSubMenu("PLUGINS",$plugin);
+					Slim::Buttons::Home::addSubMenu("PLUGINS",$menu,&Slim::Buttons::Home::getMenu("-".$menu));
+				}
 			}
 		}
 	}
@@ -155,7 +157,7 @@ sub addScreensavers {
 		if (UNIVERSAL::can("Plugins::${plugin}","screenSaver")) {
 			eval { &{"Plugins::${plugin}::screenSaver"}() };
 			if ($@) { $::d_plugins && msg("Failed screensaver for $plugin: " . $@);}
-			else {
+			elsif (!UNIVERSAL::can("Plugins::${plugin}","addMenu")) {
 				my %params = (
 					'useMode' => "PLUGIN.$plugin"
 					,'header' => $plugins{$plugin}->{'name'}
