@@ -1467,7 +1467,7 @@ sub initSetupConfig {
 				my $formatslistref = Slim::Player::Source::Conversions();
 
 				foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
-					next if $formats eq 'mp3-lame-*-*';
+					next if $formats =~ /\-transcode\-/;
 					my $oldVal = exists $formats{$formats} ? 0 : (Slim::Player::Source::checkBin($formats) ? 1 : 0);
 					if (exists $paramref->{"formatslist$i"} && $paramref->{"formatslist$i"} == $oldVal) {
 						delete $paramref->{"formatslist$i"};
@@ -1483,7 +1483,7 @@ sub initSetupConfig {
 				Slim::Utils::Prefs::delete('disabledformats');
 				my $formatslistref = Slim::Player::Source::Conversions();
 				foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
-					next if $formats eq 'mp3-lame-*-*';
+					next if $formats =~ /\-transcode\-/;
 					my $binAvailable = Slim::Player::Source::checkBin($formats);
 
 					# First time through, set the value of the checkbox
@@ -1551,7 +1551,7 @@ sub initSetupConfig {
 									
 								if ($key =~ /\D+(\d+)$/) {
 									my $formatslistref = Slim::Player::Source::Conversions();
-									my $profile = (sort {$a cmp $b} (grep {$_ ne 'mp3-lame-*-*'} (keys %{$formatslistref})))[$1];
+									my $profile = (sort {$a cmp $b} (grep {$_ !~ /transcode/} (keys %{$formatslistref})))[$1];
 									my @profileitems = split('-', $profile);
 									pop @profileitems; # drop ID
 									$profileitems[0] = string($profileitems[0]);
