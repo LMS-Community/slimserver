@@ -20,32 +20,32 @@
 			switch(option)
 			&lbrc;
 				case 'genre':
-					url="{webroot}browseid3.html?";
+					url="browseid3.html?";
 					suffix ="[IF nofolder]&nofolder=1[/IF][IF noartwork]&noartwork=1[/IF]";
 				break
 				case 'artist':
-					url="{webroot}browseid3.html?genre=*";
+					url="browseid3.html?genre=*";
 					suffix ="[IF nofolder]&nofolder=1[/IF][IF noartwork]&noartwork=1[/IF]";
 				break
 				case 'artwork':
-					url="{webroot}browseid3.html?genre=*&artist=*&artwork=1";
+					url="browseid3.html?genre=*&artist=*&artwork=1";
 					suffix ="[IF nofolder]&nofolder=1[/IF]";
 				break
 				case 'album':
-					url="{webroot}browseid3.html?genre=*&artist=*"
+					url="browseid3.html?genre=*&artist=*"
 					suffix ="[IF nofolder]&nofolder=1[/IF][IF noartwork]&noartwork=1[/IF]";
 				break
 				case 'song':
-					url="{webroot}browseid3.html?genre=*&artist=*&album=*";
+					url="browseid3.html?genre=*&artist=*&album=*";
 					suffix ="[IF nofolder]&nofolder=1[/IF][IF noartwork]&noartwork=1[/IF]";
 				break
 				case 'playlist':
-					url="{webroot}browse.html?dir=__playlists";
+					url="browse.html?dir=__playlists";
 					suffix ="[IF nofolder]&nofolder=1[/IF][IF noartwork]&noartwork=1[/IF]";
 				break
 				case 'folder':
-					url="{webroot}browse.html?";
-					suffix = "";
+					url="browse.html?";
+					suffix = "[IF noartwork]&noartwork=1[/IF]";
 				break
 			&rbrc;
 			setCookie("SlimServer-Browserpage",url);
