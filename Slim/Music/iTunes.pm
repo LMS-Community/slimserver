@@ -12,7 +12,6 @@ use strict;
 
 use Fcntl ':flock'; # import LOCK_* constants
 use File::Spec::Functions qw(:ALL);
-use Encode;
 if ($] > 5.007) {
 	require Encode;
 }
