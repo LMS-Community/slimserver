@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.26 2005/01/10 10:05:43 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -445,23 +445,30 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		$playlistpath = Slim::Utils::Misc::fixPath($playlistpath);
 		
 		$::d_scan && msg("Gonna try to open playlist $playlistpath\n");
+
 		if ($playlistpath =~ /\.\.[\/\\]/) {
 			# bogus path containing .. is illegal
 			$::d_scan && msg("Ignoring playlist name with .. in it: $playlistpath\n");
 			return 0;
 		}
 
+		# only do this stat once.
+		my $playlistpathpath = Slim::Utils::Misc::pathFromFileURL($playlistpath);
+		my $playlistpathAge  = (stat($playlistpathpath))[9];
+
 		if (Slim::Music::Info::isPlaylistURL($playlistpath) ||
 			(
 				defined Slim::Music::Info::cachedPlaylist($playlistpath) && 
 			  	(Slim::Music::Info::isDir($playlistpath) && 
-			  	(((stat(Slim::Utils::Misc::pathFromFileURL($playlistpath)))[9]) == Slim::Music::Info::age($playlistpath))) &&
-			  	(((stat(Slim::Utils::Misc::pathFromFileURL($playlistpath)))[9]) != 315529200)
+			  	($playlistpathAge == Slim::Music::Info::age($playlistpath))) &&
+			  	($playlistpathAge != 315529200)
 			  )
 			) {
 			
 			$::d_scan && msg("*** found a current entry for $playlisturl in playlist cache ***\n");
+
 			my $cacheentryref = Slim::Music::Info::cachedPlaylist( $playlistpath );
+
 			if ($cacheentryref) {
 				$numitems = (push @$listref, @{$cacheentryref}) - $startingsize;
 			} else {
@@ -474,8 +481,6 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			$::d_scan && msg("Treating directory like a playlist\n");
 
 			$numitems = 0;
-
-			my $playlistpathpath = Slim::Utils::Misc::pathFromFileURL($playlistpath);
 
 			my @dircontents = Slim::Utils::Misc::readDirectory($playlistpathpath);
 
@@ -490,7 +495,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			# add the loaded dir to the cache...
 			if ($numitems) {
 				my @cachelist = @$listref[ (0 - $numitems) .. -1];
-				Slim::Music::Info::cachePlaylist($playlistpath, \@cachelist, (stat($playlistpathpath))[9]);	
+				Slim::Music::Info::cachePlaylist($playlistpath, \@cachelist, $playlistpathAge);
 				$::d_scan && msg("adding $numitems to playlist cache: $playlistpath\n"); 
 			}
 

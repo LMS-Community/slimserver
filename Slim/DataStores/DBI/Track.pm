@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::Track;
 
-# $Id: Track.pm,v 1.2 2005/01/04 03:38:52 dsully Exp $
+# $Id$
 
 use strict;
 use base 'Slim::DataStores::DBI::DataModel';
@@ -190,7 +190,7 @@ sub setTracks {
 	my $self   = shift;
 	my @tracks = @_;
 
-	for my $track (Slim::DataStores::DBI::PlaylistTrack->tracksOf($self)) {
+	for my $track (Slim::DataStores::DBI::PlaylistTrack->tracksOf($self->id)) {
 		$track->delete();
 	}
 
@@ -209,7 +209,7 @@ sub setTracks {
 sub setDirItems {
 	my $self = shift;
 	
-	for my $item (Slim::DataStores::DBI::DirlistTrack->tracksOf($self)) {
+	for my $item (Slim::DataStores::DBI::DirlistTrack->tracksOf($self->id)) {
 		$item->delete();
 	}
 
