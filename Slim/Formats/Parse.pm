@@ -45,7 +45,9 @@ sub parseList {
 	my @items = ();
 
 	# This should work..
-	binmode($file, ":encoding($Slim::Utils::Misc::locale)");
+	if ($] > 5.007) {
+		binmode($file, ":encoding($Slim::Utils::Misc::locale)");
+	}
 
 	if (exists $playlistInfo{$type} && ($parser = $playlistInfo{$type}->[0])) {
 		return &$parser($file, $base, $list);
