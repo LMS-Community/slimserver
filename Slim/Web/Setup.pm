@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.117 2004/12/17 10:09:38 kdf Exp $
+# $Id: Setup.pm,v 1.118 2005/01/08 03:42:54 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1751,7 +1751,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['BasicAuth','Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['filterHosts', 'allowedHosts']
+					'PrefOrder' => ['filterHosts', 'allowedHosts','csrfProtectionLevel']
 				}
 			,'BasicAuth' => {
 					'PrefOrder' => ['authorize','username','password']
@@ -1789,6 +1789,17 @@ sub initSetupConfig {
 								,'1' => string('SETUP_IPFILTER')
 							}
 					}
+			,'csrfProtectionLevel' => {
+							'validate' => \&validateInt
+							,'validateArgs' => [0,2,1,1]
+							,'optionSort' => 'V'
+							,'options' => {
+									'0' => string('NONE')
+									,'1' => string('MEDIUM')
+									,'2' => string('HIGH')
+
+								}
+						}
 			,'allowedHosts' => {
 						'validate' => \&validateAllowedHosts
 						,'PrefHead' => string('SETUP_FILTERRULE_HEAD')

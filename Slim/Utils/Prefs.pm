@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.98 2005/01/06 03:59:51 kdf Exp $
+# $Id: Prefs.pm,v 1.99 2005/01/08 03:42:53 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -11,6 +11,7 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Path;
 use FindBin qw($Bin);
+use Digest::MD5;
 
 use Slim::Utils::Misc;
 use Slim::Hardware::IR;
@@ -21,9 +22,31 @@ my $prefsPath;
 my $prefsFile;
 my $canWrite;
 
+sub makeSecuritySecret {
+	# each SlimServer installation should have a unique,
+	# strongly random value for securitySecret. This routine
+	# will be called by checkServerPrefs() the first time
+	# SlimServer is started to "seed" the prefs file with a
+	# value for this installation
+	#
+	# do we already have a value?
+	my $currentVal = get('securitySecret');
+	if (defined($currentVal) && ($currentVal =~ m|^[0-9a-f]{32}$|)) {
+		$::d_prefs && msg("server already has a securitySecret\n");
+		return $currentVal;
+	}
+	# make a new value, based on a random number
+	my $hash = new Digest::MD5;
+	$hash->add(rand());
+	# explicitly "set" this so it persists through shutdown/startupa
+	my $secret = $hash->hexdigest();
+	$::d_prefs && msg("creating a securitySecret for this installation\n");
+	set('securitySecret',$secret);
+	return $secret;
+}
+
 sub defaultAudioDir {
 	my $path;
-
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		$path = ($ENV{'HOME'} . '/Music');
 
@@ -98,6 +121,8 @@ my %DEFAULT = (
 	,"music"				=> defaultAudioDir()
 	,"playlistdir"			=> defaultPlaylistDir()
 	,"cachedir"				=> defaultCacheDir()
+	,"securitySecret"			=> makeSecuritySecret()
+	,"csrfProtectionLevel"			=> 1
 	,"skin"					=> "Default"
 	,"language"				=> "EN"
 	,"refreshRate"			=> 30
@@ -449,7 +474,6 @@ sub set {
 		}
 		$prefs{$key} = $value;
 	}
-
 	onChange($key, $value, $ind);
 	#must mark $ind as defined or indexed prefs cause an error in this msg
 	$::d_prefs && msg("Setting prefs $key".defined($ind)." equal to " . ((defined $prefs{$key}) ? $prefs{$key} : "undefined") . "\n");

@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.135 2005/01/05 19:25:00 dsully Exp $
+# $Id: HTTP.pm,v 1.136 2005/01/08 03:42:54 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -9,6 +9,7 @@ package Slim::Web::HTTP;
 
 use strict;
 
+use Digest::MD5;
 use Data::Dumper;
 use FileHandle;
 use File::Spec::Functions qw(:ALL);
@@ -119,6 +120,17 @@ my %pageFunctions = ();
 		qr/^update_firmware\.(?:htm|xml)/ => \&Slim::Web::Pages::update_firmware,
 	);
 }
+
+my %dangerousCommands = (
+	# name of command => regexp for URI patterns that make it dangerous
+	# e.g.
+	#	\&Slim::Web::Pages::status => '\bp0=rescan\b'
+	# means inisist on CSRF protection for the status command *only*
+	# if the URL includes p0=rescan
+	\&Slim::Web::Setup::setup_HTTP => '.',
+	\&Slim::Web::EditPlaylist::editplaylist => '.',
+	\&Slim::Web::Pages::status => '(p0=debug|p0=pause|p0=stop|p0=play|p0=sleep|p0=playlist|p0=mixer|p0=display|p0=button|p0=rescan|(p0=(|player)pref\b.*p2=[^\?]|p2=[^\?].*p0=(|player)pref))',
+);
 
 # initialize the http server
 sub init {
@@ -288,6 +300,20 @@ sub processHTTP {
 		join(' ', ($request->method(), $request->protocol(), $request->uri()), "\n")
 	);
 
+	# remove our special X-Slim-CSRF header if present
+	$request->remove_header("X-Slim-CSRF");
+
+	# store CSRF auth code in fake request header if present
+	if (defined($request->uri()) && ($request->uri() =~ m|^(.*)\;cauth\=([0-9a-f]{32})$|) ) {
+		my $plainURI = $1;
+		my $csrfAuth = $2;
+		$::d_http && msg("Found CSRF auth token \"$csrfAuth\" in URI \"".$request->uri()."\", so resetting request URI to \"$plainURI\"\n");
+		# change the URI so later code doesn't "see" the cauth part
+		$request->uri($plainURI);
+		# store the cauth code in the request object (headers are handy!)
+		$request->push_header("X-Slim-CSRF",$csrfAuth);
+	}
+
 	# this bundles up all our response headers and content
 	my $response = HTTP::Response->new();
 
@@ -426,25 +452,17 @@ sub processHTTP {
 			$params->{"path"} = unescape($path);
 			$params->{"host"} = $request->header('Host');
 		}
-		# setup URLs should not work from referrers that are not from the web interface.
-		if ($params->{"path"} && $pageFunctions{$params->{"path"}} && $pageFunctions{$params->{"path"}} eq \&Slim::Web::Setup::setup_HTTP) {
-			if ($request->header('Referer')) {
-				my ($host, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($request->header('Referer'));
-				if ("$host:$port" ne $request->header('Host')) {
-					# throw 403, we don't allow setup from non-server pages.
-					$params->{'suggestion'} = "Invalid referrer.";
-					$::d_http && msg("Invalid referer: [" . join(' ', ($request->method(), $request->uri())) . "]\n");
-			
-					$response->code(RC_FORBIDDEN);
-					$response->content_type('text/html');
-					$response->header('Connection' => 'close');
-					$response->content(${filltemplatefile('html/errors/403.html', $params)});
-			
-					$httpClient->send_response($response);
-					closeHTTPSocket($httpClient);	
-					return;
-				}
-			}
+
+		# apply CSRF protection logic to "dangerous" commands
+		foreach my $d ( keys %dangerousCommands ) {
+			my $dregexp = $dangerousCommands{$d};
+			if ($params->{"path"} && $pageFunctions{$params->{"path"}} && $pageFunctions{$params->{"path"}} eq $d && $request->uri() =~ m|$dregexp| ) {
+				if ( ! isRequestCSRFSafe($request,$response) ) {
+					$::d_http && msg("client requested dangerous function/arguments and failed CSRF Referer/token test, sending 403 denial\n");
+					throwCSRFError($httpClient,$request,$response,$params);
+ 					return;
+ 				}
+ 			}
 		}
 
 		# HTTP/1.1 Persistent connections or HTTP 1.0 Keep-Alives
@@ -1718,6 +1736,132 @@ sub addTemplateDirectory {
 
 	$::d_http && msg("Adding template directory $dir\n");
 	push @templateDirs, $dir;
+}
+
+sub isCsrfAuthCodeValid($) {
+	my $req = shift;
+	my $csrfProtectionLevel = Slim::Utils::Prefs::get("csrfProtectionLevel");
+	if (! defined($csrfProtectionLevel) ) {
+		# Prefs.pm should have set this!
+		$::d_http && msg("Server unable to determine CRSF protection level due to missing server pref\n");
+		return 0;
+	}
+	if ( !$csrfProtectionLevel) {
+		# no protection, so we don't care
+		return 1;
+	}
+	my $uri = $req->uri();
+	my $code = $req->header("X-Slim-CSRF");
+	if ( (!defined($uri)) || (!defined($code)) ) { return 0; }
+	my $secret = Slim::Utils::Prefs::get("securitySecret");
+	if ( (!defined($secret)) || ($secret !~ m|^[0-9a-f]{32}$|) ) {
+		# invalid secret!
+		$::d_http && msg("Server unable to verify CRSF auth code due to missing or invalid securitySecret server pref\n");
+		return 0;
+	}
+	my $expectedCode = $secret;
+	# calculate what the auth code should look like
+	my $highHash = new Digest::MD5;
+	my $mediumHash = new Digest::MD5;
+	# only the "HIGH" cauth code depends on the URI
+	$highHash->add($uri);
+	# both "HIGH" and "MEDIUM" depend on the securitySecret
+	$highHash->add($secret);
+	$mediumHash->add($secret);
+	# a "HIGH" hash is always accepted
+	if ( $code eq $highHash->hexdigest() ) { return 1; }
+	if ( $csrfProtectionLevel == 1 ) {
+		# at "MEDIUM" level, we'll take the $mediumHash, too
+		if ( $code eq $mediumHash->hexdigest() ) { return 1; }
+	}
+	# the code is no good (invalid or MEDIUM hash presented when using HIGH protection)!
+	return 0;
+}
+
+sub isRequestCSRFSafe($$) {
+	my ($request,$response,$params) = @_;
+	my $rc = 0;
+	# referer test from SlimServer 5.4.0 code
+	if ($request->header('Referer') && defined($request->header('Referer')) && defined($request->header('Host')) ) {
+		my ($host, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($request->header('Referer'));
+		# if the Host request header lists no port, crackURL() reports it as port 80, so we should
+		# pretend the Host header specified port 80 if it did not
+		my $hostHeader = $request->header('Host');
+		if ($hostHeader !~ m/:\d{1,}$/ ) { $hostHeader .= ":80"; }
+		if ("$host:$port" ne $hostHeader) {
+			$::d_http && msg("Invalid referer: [" . join(' ', ($request->method(), $request->uri())) . "]\n");
+		} else {
+			# looks good
+			$rc = 1;
+		}
+	}
+	if ( ! $rc ) {
+		# need to also check if there's a valid "cauth" token
+		if ( ! isCsrfAuthCodeValid($request) ) {
+			$params->{'suggestion'} = "Invalid referrer and no valid cauth code.";
+			$::d_http && msg("No valid CSRF auth code: [" . join(' ', ($request->method(), $request->uri(), $request-header('X-Slim-CSRF'))) . "]\n");
+		} else {
+			# looks good
+			$rc = 1;
+		}
+	}
+	return $rc;
+}
+
+sub makeAuthorizedURI($) {
+	my $uri = shift;
+	my $secret = Slim::Utils::Prefs::get("securitySecret");
+	if ( (!defined($secret)) || ($secret !~ m|^[0-9a-f]{32}$|) ) {
+		# invalid secret!
+		$::d_http && msg("Server unable to compute CRSF auth code URL due to missing or invalid securitySecret server pref\n");
+		return undef;
+	}
+	my $csrfProtectionLevel = Slim::Utils::Prefs::get("csrfProtectionLevel");
+	if (! defined($csrfProtectionLevel) ) {
+		# Prefs.pm should have set this!
+		$::d_http && msg("Server unable to determine CRSF protection level due to missing server pref\n");
+		return 0;
+	}
+	my $hash = new Digest::MD5;
+	if ( $csrfProtectionLevel == 2 ) {
+		# different code for each different URI
+		$hash->add($uri);
+	}
+	$hash->add($secret);
+	return $uri . ';cauth=' . $hash->hexdigest();
+}
+
+sub throwCSRFError($$$$) {
+	my ($httpClient,$request,$response,$params) = @_;
+	# throw 403, we don't this from non-server pages
+	# unless valid "cauth" token is present
+	$params->{'suggestion'} = "Invalid Referer and no valid CSRF auth code.";
+	my $protoHostPort = 'http://' . $request->header('Host');
+	my $authURI = makeAuthorizedURI($request->uri());
+	my $authURL = $protoHostPort . $authURI;
+	# add a long SGML comment so Internet Explorer displays the page
+	my $msg = "<!--" . ( '.' x 500 ) . "-->\n<p>";
+	# BUG: stringify the following, as this message needs to be translatable!
+	$msg .= string('CSRF_ERROR_INFO'); 
+	$msg .= "<br>\n<br>\n<A HREF=\"${authURI}\">${authURL}</A></p>";
+	my $csrfProtectionLevel = Slim::Utils::Prefs::get("csrfProtectionLevel");
+	if ( defined($csrfProtectionLevel) && $csrfProtectionLevel == 1 ) {
+		# BUG: stringify the following, as this message needs to be translatable!
+		$msg .= string('CSRF_ERROR_MEDIUM');
+	}
+	$params->{'validURL'} = $msg;
+	# add the appropriate URL in a response header to make automated
+	# re-requests easy? (WARNING: this creates a potential Cross Site
+	# Tracing sort of vulnerability!
+	# (see http://computercops.biz/article2165.html for info on XST)
+	# If you enable this, also uncomment the text regarding this on the http.html docs
+	#$response->header('X-Slim-Auth-URI' => $authURI);
+	$response->code(RC_FORBIDDEN);
+	$response->content_type('text/html');
+	$response->header('Connection' => 'close');
+	$response->content(${filltemplatefile('html/errors/403.html', $params)});
+	$httpClient->send_response($response);
+	closeHTTPSocket($httpClient);	
 }
 
 1;

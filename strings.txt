@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.161 2005/01/04 03:38:51 dsully Exp $
+# $Id: strings.txt,v 1.162 2005/01/08 03:42:52 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -4505,6 +4505,12 @@ SETUP_TITLEFORMATWEB
 	PT	Título da Web actual
 	SE	Aktuellt titelformat för webgränssnittet
 
+SETUP_CSRFPROTECTIONLEVEL
+	EN	CSRF Protection Level
+
+SETUP_CSRFPROTECTIONLEVEL_DESC
+	EN	To protect against &quot;Cross Site Request Forgery&quot; (CSRF) security threats, SlimServer applies special scrutiny to HTTP requests for functions that can make changes to your system or manipulate playlists or players.  You may choose the level of scrutiny for the server to use.  The default is Medium. <a href="http://localhost:9000/html/docs/http.html#csrf">See Help Section</a> for more details.
+
 SETUP_IPFILTER_HEAD
 	DE	Blockieren eingehender Verbindungen
 	DK	Blokér indgående forbindelser
@@ -5554,6 +5560,12 @@ HUGE
 	ES	Muy grande
 	FR	Très grand
 	JP	特大
+
+NONE
+	EN	None
+	
+HIGH
+	EN	High
 
 TITLEFORMAT
 	DE	Titel Format
@@ -7546,6 +7558,12 @@ NEED_PLAYLIST_PATH
 	NO	Du må oppgi en søkesti til en folder for dine lagrede spillelister.
 	PT	Deve especificar a directoria que contêm os ficheiros de playlist.
 	SE	Du måste ange en sökväg till en mapp för dina sparade låtlistor.
+
+CSRF_ERROR_INFO
+	EN	In order to request this URL from a Bookmark/Favorite, or some means other than following a link from the SlimServer web interface, you will need to use a URL with a \"cauth\" security parameter. If you received this error when following a link from the SlimServer web interface, you will want to make sure your web browser software (including proxy servers and spyware/privacy software) is allowing \"Referer\" headers to be sent. Below is the appropriate URL for the URL you attempted.
+
+CSRF_ERROR_MEDIUM
+	EN	<p>Because your CSRF protection level is set at 'MEDIUM', you can use the same &quot;;cauth=&quot; value for any URL; this means you should be more careful who you share your URLs with.</p>
 
 CLICK_HERE
 	DE	Hier klicken
