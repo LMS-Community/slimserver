@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.128 2004/12/09 17:19:38 dsully Exp $
+# $Id: HTTP.pm,v 1.129 2004/12/15 22:29:24 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -936,7 +936,7 @@ sub sendResponse {
 	my $segment    = shift(@{$outbuf{$httpClient}});
 	my $sentbytes  = 0;
 
-	use bytes;
+#	use bytes;
 
 	# abort early if we don't have anything.
 	unless ($httpClient->connected()) {
