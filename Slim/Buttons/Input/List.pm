@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::List;
 
-# $Id: List.pm,v 1.8 2004/03/11 20:16:10 dean Exp $
+# $Id: List.pm,v 1.9 2004/07/23 04:04:41 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -106,14 +106,18 @@ sub lines {
 			&& Slim::Utils::Strings::stringExists($line1)) {
 		$line1 = string($line1);
 	}
-	if (Slim::Buttons::Common::param($client,'headerAddCount')) {
-		$line1 .= ' (' . ($listIndex + 1)
-			. ' ' . string('OF') .' ' . scalar(@$listRef) . ')';
-	}
-	$line2 = getExtVal($client,$listRef->[$listIndex],$listIndex,'externRef');
-	if (Slim::Buttons::Common::param($client,'stringExternRef')
-			&& Slim::Utils::Strings::stringExists($line2)) {
-		$line2 = Slim::Utils::Prefs::clientGet($client, 'doublesize') ? Slim::Utils::Strings::doubleString($line2) : string($line2);
+	if (scalar(@$listRef) == 0) {
+		$line2 = string('EMPTY');
+	} else {
+		if (Slim::Buttons::Common::param($client,'headerAddCount')) {
+			$line1 .= ' (' . ($listIndex + 1)
+				. ' ' . string('OF') .' ' . scalar(@$listRef) . ')';
+		}
+		$line2 = getExtVal($client,$listRef->[$listIndex],$listIndex,'externRef');
+		if (Slim::Buttons::Common::param($client,'stringExternRef')
+				&& Slim::Utils::Strings::stringExists($line2)) {
+			$line2 = Slim::Utils::Prefs::clientGet($client, 'doublesize') ? Slim::Utils::Strings::doubleString($line2) : string($line2);
+		}
 	}
 	my @overlay = getExtVal($client,$listRef->[$listIndex],$listIndex,'overlayRef');
 	return ($line1,$line2,@overlay);
