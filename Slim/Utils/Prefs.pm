@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.73 2004/06/25 01:43:53 dean Exp $
+# $Id: Prefs.pm,v 1.74 2004/06/25 07:07:42 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -540,7 +540,7 @@ sub maxRate {
 	return $rate if ($solorate);
 	
 	# if we're the master, make sure we return the lowest common denominator bitrate.
-	my @playergroup = ($client, Slim::Player::Sync::syncedWith($client);
+	my @playergroup = ($client, Slim::Player::Sync::syncedWith($client));
 	
 	foreach my $everyclient (@playergroup) {
 		next if Slim::Utils::Prefs::clientGet($everyclient,'silent');
