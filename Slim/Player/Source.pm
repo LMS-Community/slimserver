@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.41 2003/12/25 02:22:16 dean Exp $
+# $Id: Source.pm,v 1.42 2003/12/25 05:05:32 dean Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -133,7 +133,7 @@ sub progress {
 	my $client = shift;
 	
 	# enable this to show buffer fullness instead of the progress indicator...
-	# return $client->usage();
+	return $client->usage();
 	
 	$client = Slim::Player::Sync::masterOrSelf($client);
 
@@ -198,105 +198,107 @@ sub playmode {
 
 	assert($client);
 
-	if (!defined($newmode)) {
-		return $client->playmode;
-	}
+	if (defined($newmode)) {
 	
-	$::d_source && $newmode && msg($client->id() . ": Switching to mode $newmode\n");
-
-	my $prevmode = $client->playmode;
-
-	if ($newmode eq $prevmode) {
-		$::d_source && msg(" Already in playmode $newmode : ignoring mode change\n");
-	} else {
-		if ($newmode eq "pause" && $client->rate != 1) {
-			$newmode = "pausenow";
-		}
-		
-		# if we're playing, then open the new song the master.		
-		if ($newmode eq "play") {
-			my $opened;
-			
-			# if the player is off, we automatically power on when we start to play
-			if (!$client->power()) {
-				$client->power(1);
-			}
-			
-			$opened = openSong(Slim::Player::Sync::masterOrSelf($client));
-
-			# if we couldn't open the song, then stop...
-			if (!$opened) {
-				$::d_source && msg("Couldn't open song.  Stopping.\n");
-				$newmode = "stop";
-			}
-		}
-		
-		# when we change modes, make sure we do it to all the synced clients.
-		foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
-			$::d_source && msg(" New play mode: " . $newmode . "\n");
-			
-			# wake up the display if we've switched modes.
-			if ($everyclient->isPlayer()) { Slim::Buttons::ScreenSaver::wakeup($everyclient); };
-			
-			# when you resume, you go back to play mode
-			if (($newmode eq "resume") ||($newmode eq "resumenow")) {
-				$everyclient->playmode("play");
-				
-			} elsif ($newmode eq "pausenow") {
-				$everyclient->playmode("pause");
-				
-			} elsif ($newmode =~ /^playout/) {
-				closeSong($everyclient);
-				$everyclient->playmode("stop");
-			} else {
-				$everyclient->playmode($newmode);
-			}
+		$::d_source && $newmode && msg($client->id() . ": Switching to mode $newmode\n");
 	
-			if ($newmode eq "stop") {
-				$everyclient->currentplayingsong("");
-				$::d_source && msg("Stopping and clearing out old chunks for client " . $everyclient->id() . "\n");
-				@{$everyclient->chunks} = ();
-
-				$everyclient->stop();
-				closeSong($everyclient);
-				resetSong($everyclient);
-			} elsif ($newmode eq "play") {
-				$everyclient->readytosync(0);
-				$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
-				$everyclient->play(Slim::Player::Sync::isSynced($everyclient));				
-			} elsif ($newmode eq "pause") {
-				# since we can't count on the accuracy of the fade timers, we unfade them all, but the master calls back to pause everybody
-				if ($everyclient eq $client) {
-					$everyclient->fade_volume(-0.3125, \&pauseSynced, [$client]);
+		my $prevmode = $client->playmode;
+	
+		if ($newmode eq $prevmode) {
+			$::d_source && msg(" Already in playmode $newmode : ignoring mode change\n");
+		} else {
+			if ($newmode eq "pause" && $client->rate != 1) {
+				$newmode = "pausenow";
+			}
+			
+			# if we're playing, then open the new song the master.		
+			if ($newmode eq "play") {
+				my $opened;
+				
+				# if the player is off, we automatically power on when we start to play
+				if (!$client->power()) {
+					$client->power(1);
+				}
+				
+				$opened = openSong(Slim::Player::Sync::masterOrSelf($client));
+	
+				# if we couldn't open the song, then stop...
+				if (!$opened) {
+					$::d_source && msg("Couldn't open song.  Stopping.\n");
+					$newmode = "stop";
+				}
+			}
+			
+			# when we change modes, make sure we do it to all the synced clients.
+			foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
+				$::d_source && msg(" New play mode: " . $newmode . "\n");
+				
+				# wake up the display if we've switched modes.
+				if ($everyclient->isPlayer()) { Slim::Buttons::ScreenSaver::wakeup($everyclient); };
+				
+				# when you resume, you go back to play mode
+				if (($newmode eq "resume") ||($newmode eq "resumenow")) {
+					$everyclient->playmode("play");
+					
+				} elsif ($newmode eq "pausenow") {
+					$everyclient->playmode("pause");
+					
+				} elsif ($newmode =~ /^playout/) {
+					closeSong($everyclient);
+					$everyclient->playmode($newmode);
 				} else {
-					$everyclient->fade_volume(-0.3125);
-				}				
-				
-			} elsif ($newmode eq "pausenow") {
-				$everyclient->pause();
-			} elsif ($newmode eq "resumenow") {
-				$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
-				$everyclient->resume();
-				
-			} elsif ($newmode eq "resume") {
-				# set volume to 0 to make sure fade works properly
-				$everyclient->volume(0);
-				$everyclient->resume();
-				$everyclient->fade_volume(.3125);
-				
-			} elsif ($newmode =~ /^playout/) {
-				$everyclient->playout();
-			} else {
-				$::d_source && msg(" Unknown play mode: " . $everyclient->playmode . "\n");
-				return $everyclient->playmode();
+					$everyclient->playmode($newmode);
+				}
+		
+				if ($newmode eq "stop") {
+					$everyclient->currentplayingsong("");
+					$::d_source && msg("Stopping and clearing out old chunks for client " . $everyclient->id() . "\n");
+					@{$everyclient->chunks} = ();
+	
+					$everyclient->stop();
+					closeSong($everyclient);
+					resetSong($everyclient);
+				} elsif ($newmode eq "play") {
+					$everyclient->readytosync(0);
+					$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
+					$everyclient->play(Slim::Player::Sync::isSynced($everyclient));				
+				} elsif ($newmode eq "pause") {
+					# since we can't count on the accuracy of the fade timers, we unfade them all, but the master calls back to pause everybody
+					if ($everyclient eq $client) {
+						$everyclient->fade_volume(-0.3125, \&pauseSynced, [$client]);
+					} else {
+						$everyclient->fade_volume(-0.3125);
+					}				
+					
+				} elsif ($newmode eq "pausenow") {
+					$everyclient->pause();
+				} elsif ($newmode eq "resumenow") {
+					$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
+					$everyclient->resume();
+					
+				} elsif ($newmode eq "resume") {
+					# set volume to 0 to make sure fade works properly
+					$everyclient->volume(0);
+					$everyclient->resume();
+					$everyclient->fade_volume(.3125);
+					
+				} elsif ($newmode =~ /^playout/) {
+					$everyclient->playout();
+				} else {
+					$::d_source && msg(" Unknown play mode: " . $everyclient->playmode . "\n");
+					return $everyclient->playmode();
+				}
+				Slim::Player::Playlist::refreshPlaylist($everyclient);
+				$everyclient->update();
 			}
-			Slim::Player::Playlist::refreshPlaylist($everyclient);
-			$everyclient->update();
 		}
-	}
 	$::d_source && msg($client->id() . ": Current playmode: " . $client->playmode() . "\n");
-
-	return $client->playmode();
+	}
+	my $returnedmode = $client->playmode();
+	
+	$returnedmode = 'play' if ($returnedmode =~ /^play/);
+	
+	return $returnedmode;
 }
 
 sub underrun {
