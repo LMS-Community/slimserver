@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.32 2003/12/04 11:00:26 kdf Exp $
+# $Id: Info.pm,v 1.33 2003/12/05 00:23:30 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -180,8 +180,6 @@ sub init {
 		# TODO: MacOS X should really store this in a visible, findable place.
 		if (Slim::Utils::OSDetect::OS() eq 'unix') {
 			$dbname = '.slimserver.db';
-		} elsif (Slim::Utils::OSDetect::OS() eq 'win')  {
-			$dbname = 'SLIMSERVER.DB';
 		} else {
 			$dbname ='slimserver.db';
 		}
@@ -475,8 +473,16 @@ sub cacheItem {
 		$infoCache{$url} = $cacheEntryArray;
 
 		my $type = typeFromSuffix($url);
-		if ($type && $type=~/^mp[23]$/) { updateGenreCache($url, $cacheEntryHash); }
-
+		
+		if (isSong($url,$type) && !isHTTPURL($url)) { 
+		    updateGenreCache($url, $cacheEntryHash); 
+  		    $songCount++;
+		    my $time = $cacheEntryHash->{SECS};
+		    if ($time) {
+			$total_time += $time;
+		    }
+		}
+		
 		my $index = $infoCacheItemsIndex{$item};
 		if (defined $cacheEntryArray && exists $cacheEntryArray->[$index]) {
 			return $cacheEntryArray->[$index];
@@ -520,7 +526,14 @@ sub cacheEntry {
 
 	if ($cachemiss) {
 		my $type = typeFromSuffix($url);
-		if ($type && $type=~/^mp[23]$/) { updateGenreCache($url, $cacheEntryHash); }
+		if (isSong($url,$type) && !isHTTPURL($url)) { 
+		    updateGenreCache($url, $cacheEntryHash); 
+  		    $songCount++;
+		    my $time = $cacheEntryHash->{SECS};
+		    if ($time) {
+			$total_time += $time;
+		    }
+		}
 	}
 
 	return $cacheEntryHash;
@@ -565,7 +578,7 @@ sub updateCacheEntry {
 			$infoCacheDB{$url} = $cacheEntryArray;
 		}
 		
-		if ($newsong && isSong($url)) {
+		if ($newsong && isSong($url) && !isHTTPURL($url)) {
 			$songCount++;
 			my $time = $cacheEntryHash->{SECS};
 			if ($time) {
@@ -930,7 +943,7 @@ sub info {
 	
 	my $item = cacheItem($file, $tagname);
 
-	# we'll update the cache if we don't have a valid title in the cache
+	# update the cache if the tag is not defined in the cache
 	if (!defined($item)) {
 		# defer cover information until needed
 		if ($tagname =~ /^(COVER|COVERTYPE)$/) {
@@ -1404,9 +1417,12 @@ sub songs {
 		foreach my $item (@uniq) {
 			my $trnum = trackNumber($item);
 			next unless $trnum;
-			if ($seen[$trnum]) {
-				$duptracknum = 1;
-				last;
+			if ($trnum)
+			{
+				if ($seen[$trnum]) {
+					$duptracknum = 1;
+					last;
+				}
 			}
 			$seen[$trnum]++;
 		}
@@ -1684,7 +1700,7 @@ sub readTags {
 
 			$::d_info && !defined($tempCacheEntry) && Slim::Utils::Misc::msg("Info: no tags found for $filepath\n");
 
-			if ($tempCacheEntry->{'TRACKNUM'}) {
+			if (defined($tempCacheEntry->{'TRACKNUM'})) {
 				$tempCacheEntry->{'TRACKNUM'} = cleanTrackNumber($tempCacheEntry->{'TRACKNUM'});
 			}
 			
