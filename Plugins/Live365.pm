@@ -1,3 +1,4 @@
+# vim: foldmethod=marker
 # Live365 tuner plugin for Slim Devices SlimServer
 # Copyright (C) 2004  Jim Knepley
 #
@@ -16,19 +17,605 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 
-package Plugins::Live365;
+# {{{ Plugins::Live365::Live365API 
+
+package Plugins::Live365::Live365API;
 
 use strict;
 use vars qw( $VERSION );
 $VERSION = 1.00;
 
+use XML::Simple;
+use IO::Socket;
+
+sub new {
+	my $class = shift;  
+	my $self  = {
+		member_name		=> '',
+		password		=> '',
+		sessionid		=> '',
+		DirectoryLoaded	=> 0,
+		GenresLoaded	=> 0,
+		stationPointer	=> 0,
+		genrePointer	=> 0,
+		reqBatch		=> 1,
+		status			=> 0,
+		@_
+	};
+
+	bless $self, $class;
+
+	return $self;
+}
+
+
+sub setBlockingStatus {
+	my $self = shift;
+	my $status = shift;
+
+	$self->{status} = $status;
+}
+
+sub clearBlockingStatus {
+	my $self = shift;
+
+	$self->{status} = undef;
+}
+
+sub status {
+	my $self = shift;
+
+	return $self->{status};
+}
+
+
+#############################
+# Web functions
+#
+sub httpRequest {
+	my $self = shift;
+	my $url  = shift;
+	my $args = shift;
+	my $response;
+
+	my $socket = new IO::Socket::INET(
+		PeerAddr	=> 'www.live365.com',
+		PeerPort	=> 80,
+		Proto		=> 'tcp',
+		Type		=> SOCK_STREAM
+	) or return undef;
+
+	my $stringArgs = join( '&', map { "$_=$args->{$_}" } grep { $args->{$_} } keys %$args );
+	$url .= "?$stringArgs" if( $stringArgs );
+	my $getRequest = "GET $url HTTP/1.0\n\n";
+
+	print $socket $getRequest;
+	{
+		local $/ = undef;
+		$response = <$socket>;
+	}
+	$response =~ s/\015?\012/\n/g;
+
+	close $socket;
+
+	if( $response !~ /^HTTP\/1.1 200 OK/ ) {
+		return undef;
+	}
+
+	my $content = ( split( /\n\n/, $response, 2 ) )[1];
+
+	return $content; 
+}
+
+#############################
+# Login functions
+#
+sub login {
+	my $self = shift;
+	my ( $username, $password ) = @_;
+
+	my %args = (
+		action		=> 'login',
+		remember	=> 'Y',
+		org			=> 'live365',
+		member_name	=> $username,
+		password	=> $password
+	);
+
+	my $xmlResponse = $self->httpRequest( '/cgi-bin/api_login.cgi', \%args );
+	if( !defined $xmlResponse ) {
+		return 6;  # PLUGIN_LIVE365_LOGIN_ERROR_HTTP
+	}
+
+	eval '$self->{Login} = XMLin( $xmlResponse )'; 
+	return 2 if $@; # PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
+	
+	$self->{sessionid} = $self->{Login}->{Session_ID};
+	$self->{vip} = $self->{Login}->{Member_Status} eq 'PREFERRED';
+
+	return $self->{Login}->{Code};
+}
+
+sub logout {
+	my $self = shift;
+
+	if( !$self->{sessionid} ) {
+		return 1;
+	}
+
+	my %args = (
+		action		=> 'logout',
+		sessionid	=> $self->{sessionid},
+		org			=> 'live365'
+	);
+
+	my $xmlResponse = $self->httpRequest( '/cgi-bin/api_login.cgi', \%args ); 
+	if( !defined $xmlResponse ) {
+		return 6;  # PLUGIN_LIVE365_LOGIN_ERROR_HTTP
+	}
+
+	eval '$self->{Logout} = XMLin( $xmlResponse )'; 
+	return 2 if $@; # PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
+	
+	$self->{sessionid} = undef;
+
+	return $self->{Logout}->{Code};
+}
+
+sub getSessionID {
+	my $self = shift;
+
+	return $self->{sessionid};
+}
+
+sub setSessionID {
+	my $self = shift;
+
+	$self->{sessionid} = shift;
+}
+
+sub getMemberStatus {
+	my $self = shift;
+
+	return $self->{vip};
+}
+
+
+#############################
+# Genre functions 
+#
+sub loadGenreList {
+	my $self = shift;
+
+	# If we've already loaded the genres, don't do it again.
+	if( defined( $self->{Genres}->{Code} ) && $self->{Genres}->{Code} == 0 ) {
+		return @{ $self->{GenreList} };
+	}
+
+	my %args = (
+		format => 'xml'
+	);
+
+	my $xmlGenres = $self->httpRequest( '/cgi-bin/api_genres.cgi', \%args );
+
+	return undef if !defined $xmlGenres;
+
+	eval '$self->{Genres} = XMLin( $xmlGenres )'; 
+	return undef if $@;
+
+	# Build full display names for genres that list a Parent_ID
+	# (...and I'm happy I get to use an Orcish maneuver, it's a geek thing)
+	my %parentNameCache = ();
+	my @tmpGenres = @{ $self->{Genres}->{Genres}->{Genre} };
+	foreach my $g ( @tmpGenres ) {
+		if ( $g->{Parent_ID} != 0 ) {
+			my $baseName = $parentNameCache{ $g->{Parent_ID} }
+				||= ( grep { $g->{Parent_ID} == $_->{ID} } @tmpGenres )[0]->{Display_Name};
+			$g->{Display_Name} = "$baseName $g->{Display_Name}";
+		}
+
+		push @{ $self->{GenreList} }, [ $g->{Display_Name}, $g->{Name} ];
+	}
+
+	return @{ $self->{GenreList} };
+}
+
+
+#############################
+# Station preset functions
+#
+sub loadMemberPresets {
+	my $self = shift;
+
+	my %args = (
+		action		=> "get",
+		sessionid	=> $self->{sessionid},
+		device_id	=> "UNKNOWN",
+		app_id		=> "live365:BROWSER",
+		first		=> 1,
+		rows		=> 200,
+		access		=> "ALL",
+		format		=> "xml"
+	);
+
+	my $xmlPresets = $self->httpRequest( '/cgi-bin/api_presets.cgi', \%args );
+	if( !defined $xmlPresets ) {
+		return undef;
+	}
+
+	eval '$self->{Directory} = XMLin( $xmlPresets, forcearray => [ "LIVE365_STATION" ] )';
+	return undef if $@;
+	
+	if( defined $self->{Directory}->{LIVE365_STATION} ) {
+		push @{ $self->{Stations} }, @{ $self->{Directory}->{LIVE365_STATION} };
+	} else {
+		$self->{Directory}->{LIVE365_STATION} = [];
+	}
+
+	return scalar @{ $self->{Directory}->{LIVE365_STATION} } > 0;
+}
+
+
+#############################
+# Station functions
+#
+sub loadStationDirectory {
+	my $self = shift;
+
+	my %args = (
+		site		=> "xml",		# requests the data in XML format
+		access		=> "ALL",		# "ALL:PUBLIC:PRIVATE:NONE"
+		clienttype	=> 0,			# 3rd party MP3 player
+		first		=> 1,			# first row to print
+		rows		=> 50,			# number of rows to print, default 25, max 200
+		genre		=> "All",		# Limit display to these genres
+		maxspeed	=> 256,			# max bitrate to include
+		minspeed	=> 0,			# min bitrate to include
+		quality		=> 0,			# AM (0-99), FM (100-199), CD (200+)
+		only		=> "",			# "E:I:L:O:R:S:X" only include stations with these attribs
+		searchdesc	=> "",			# search term to look for
+		searchgenre	=> "All",		# genre restriction when searching
+		searchfields=> "T:A:C",		# "K:E:D:G:H:T:A:C:F:L:I:S", fields for searchdesc
+		sort		=> "L:D;R:D",	# "T|D|C|G|R|L|H:U|D;<2>;<3>"
+		source		=> "Live365:RdRunnder:BT",
+		tag			=> "",
+		text		=> "",
+		@_
+	);
+
+	my $xmlDirectory = $self->httpRequest( '/cgi-bin/directory.cgi', \%args );
+	if( !defined $xmlDirectory ) {
+		return undef;
+	}
+
+	eval '$self->{Directory} = XMLin( $xmlDirectory, forcearray => [ "LIVE365_STATION" ] )';
+	return undef if $@;
+	
+	if( defined $self->{Directory}->{LIVE365_STATION} ) {
+		push @{ $self->{Stations} }, @{ $self->{Directory}->{LIVE365_STATION} };
+	} else {
+		$self->{Directory}->{LIVE365_STATION} = [];
+	}
+
+	return scalar @{ $self->{Directory}->{LIVE365_STATION} } > 0;
+}
+
+sub clearStationDirectory {
+	my $self = shift;
+
+	$self->{Stations} = [];
+}
+
+
+sub getCurrentStation {
+	my $self = shift;
+
+    if( defined( my $current = $self->{Stations}->[$self->{stationPointer}] ) ) {
+		return $current;
+	} else {
+		return undef;
+	}
+
+	# return $self->{Stations}->[$self->{stationPointer}];
+}
+
+
+sub getStationListPointer {
+	my $self = shift;
+
+	return $self->{stationPointer};
+}
+
+sub willRequireLoad {
+	my $self = shift;
+	my $req  = shift;
+
+	return ( $req > $#{ $self->{Stations} } &&
+			 $self->{Directory}->{LIVE365_DIRECTORY_FILTERS}->{DIRECTORY_MORE_ROWS_AVAILABLE} );
+}
+
+sub setStationListPointer { 
+	my $self = shift;
+	my $req  = shift;
+
+	if( $req > $#{ $self->{Stations} } && $self->{Directory}->{LIVE365_DIRECTORY_FILTERS}->{DIRECTORY_MORE_ROWS_AVAILABLE} ) {
+		$self->loadStationDirectory( first => scalar @{ $self->{Stations} } );
+	}
+
+	$self->{stationPointer} = $req;
+}
+
+sub getStationListLength {
+	my $self = shift;
+
+	return $self->{Directory}->{LIVE365_DIRECTORY_FILTERS}->{DIRECTORY_ROWS_RETURNED};
+}
+
+
+sub findChannelStartingWith {
+	# Very, very slow for long search spaces.
+	my $self = shift;
+	my $startsWith = lc shift;
+
+	my $thisChannel = $self->getCurrentStation();;
+
+	# Only reset the entire channel list if we might already be past the title we want.
+	if( ( $startsWith cmp lc substr( $thisChannel->{STATION_TITLE}, 0, 1 ) ) <= 0 ) {
+		$self->resetChannelList();
+	}
+
+	# Scan the channel list until we either find a channel or pass it's spot.
+	while( $thisChannel = $self->getNextChannelRecord() ) {
+		if( ( $startsWith cmp lc substr( $thisChannel->{STATION_TITLE}, 0, 1 ) ) == 0 ) {
+			return $thisChannel;
+		}
+	}
+	return undef;
+}
+
+
+sub getCurrentChannelURL {
+	my $self = shift;
+
+	my $url = $self->{Directory}->{LIVE365_STATION}->[$self->{stationPointer}]->{STATION_ADDRESS};
+	$url =~ s/^http:/live365:/;
+	if( $self->{sessionid} ) {
+		$url .= '?sessionid=' . $self->{sessionid};
+	}
+
+	return $url;
+}
+
+
+#############################
+# Information functions
+#
+sub loadInfoForStation {
+	my $self = shift;
+	my $stationID = shift;
+
+	return 1 if( defined $self->{currentStationInfo} && $stationID == $self->{currentStationInfo} );
+
+	my %args = (
+		format	=> 'xml',
+		in		=> 'STATIONS',
+		channel	=> $stationID
+	); 
+
+	my $xmlInfo = $self->httpRequest( '/cgi-bin/station_info.cgi', \%args );
+	if( !defined $xmlInfo ) {
+		return undef;
+	}
+
+	eval '$self->{StationInfo} = XMLin( $xmlInfo )';
+	return undef if $@;
+	
+	$self->{currentStationInfo} = $stationID;
+
+    return defined $self->{StationInfo}->{LIVE365_STATION};
+}
+
+sub getStationInfo {
+	my $self = shift;
+
+	my @infoItems = (
+		[ 'STATION_LISTENERS_ACTIVE' ],
+		[ 'STATION_LISTENERS_MAX' ],
+		[ 'LISTENER_ACCESS' ],
+		[ 'STATION_QUALITY_LEVEL' ],
+		[ 'STATION_CONNECTION' ],
+		[ 'STATION_CODEC' ]
+	);
+
+	# Convert quality levels to a canonical phrase
+	my $quality = \$self->{StationInfo}->{LIVE365_STATION}->{STATION_QUALITY_LEVEL};
+	QUALITY: {
+		last QUALITY if( $$quality =~ /AM|FM|CD/ );
+		$$quality >= 0 && $$quality <= 99 && do {
+			$$quality = 'AM radio';
+			last QUALITY;
+		};
+
+		$$quality >= 100 && $$quality <=199 && do {
+			$$quality = 'FM radio';
+			last QUALITY;
+		};
+
+		$$quality >= 200 && do {
+			$$quality = 'CD';
+			last QUALITY;
+		}; 
+	}
+
+	foreach my $item ( @infoItems ) {
+		$item->[1] = $self->{StationInfo}->{LIVE365_STATION}->{ $item->[0] };
+	}
+
+	return @infoItems;
+}
+
+sub getStationInfoString {
+	my $self = shift;
+	my $infoString = shift;
+
+	return $self->{StationInfo}->{LIVE365_STATION}->{$infoString};
+}
+
+1;
+
+# }}}
+
+# {{{ Plugins::Live365::ProtocolHandler
+
+package Plugins::Live365::ProtocolHandler;
+
+use strict;
+use Slim::Utils::Misc qw( msg );
+use Slim::Utils::Timers;
+use base qw( Slim::Player::Protocols::HTTP );
+use IO::Socket;
+use XML::Simple;
+use vars qw( $VERSION );
+$VERSION = 1.00;
+
+sub new {
+	my $class = shift;
+	my $url = shift;
+	my $client = shift;
+	my $self = undef;
+
+	if( my( $station, $handle ) = $url =~ m{^live365://(www.live365.com/play/([^/?]+).+)$} ) {
+		$::d_plugins && msg( "Live365.protocolHandler requested: $url ($handle)\n" );	
+
+		my $socket = new IO::Socket::INET(
+			PeerAddr        => 'www.live365.com',
+			PeerPort        => 80,
+			Proto           => 'tcp',
+			Type            => SOCK_STREAM
+		) or return undef;
+
+		my $getRequest = "GET $url HTTP/1.0\n\n";
+
+		my $response;
+		print $socket $getRequest;
+		{
+			local $/ = undef;
+			$response = <$socket>;
+		}
+		$response =~ s/\015?\012/\n/g;
+
+		close $socket;
+
+		$response =~ /^HTTP\/1.1 302 Found/ or last;
+
+		my ($redir) = $response =~ /Location: (.+)/ or last;
+		$::d_plugins && msg( "Live365 station really at: '$redir'\n" );
+
+		$self = $class->SUPER::new( $redir, $client, $url );
+
+		if( $handle =~ /[a-zA-Z]/ ) {  # if our URL doesn't look like a handle, don't try to get a playlist
+			my $isVIP = Slim::Utils::Prefs::get( 'plugin_live365_memberstatus' );
+			Slim::Utils::Timers::setTimer(
+				$client,
+				Time::HiRes::time() + 1,
+				\&getPlaylist,
+				( $client, $handle, $url, $isVIP )
+			);
+		}
+
+	} else {
+		$::d_plugins && msg( "Not a Live365 station URL: $url\n" );
+	}
+
+	return $self;
+}
+
+sub getPlaylist {
+	my ( $class, $client, $handle, $url, $isVIP ) = @_;
+
+	my $getPlaylist = sprintf( "GET /pls/front?handler=playlist&cmd=view&handle=%s%s&viewType=xml\n\n",
+			$isVIP ? 'afl:' : '',
+			$handle );
+
+	$::d_plugins && msg( "(" . ref( $class ) . ") Get playlist: $getPlaylist\n" );
+
+	my $socket = new IO::Socket::INET(
+		PeerAddr	=> 'www.live365.com',
+		PeerPort	=> 80,
+		Proto		=> 'tcp',
+		Type		=> SOCK_STREAM
+	) or return undef;
+
+	$::d_plugins && msg( "Connected to Live365 playlist server\n" );
+
+	my $response;
+	print $socket $getPlaylist;
+	{
+		local $/ = undef;
+		$response = <$socket>;
+	}
+
+	$::d_plugins && msg( "Got playlist response: " . $response . " bytes\n" );
+
+	my $nowPlaying = XMLin( $response, ForceContent => 1 );
+	my $nextRefresh = $nowPlaying->{Refresh}->{content};
+
+	my @titleComponents = ();
+	if ($nowPlaying->{PlaylistEntry}->[0]->{Title}->{content}) {
+	    push @titleComponents, $nowPlaying->{PlaylistEntry}->[0]->{Title}->{content};
+	}
+	if ($nowPlaying->{PlaylistEntry}->[0]->{Artist}->{content}) {
+	    push @titleComponents, $nowPlaying->{PlaylistEntry}->[0]->{Artist}->{content};
+	}
+	if ($nowPlaying->{PlaylistEntry}->[0]->{Album}->{content}) {
+	    push @titleComponents, $nowPlaying->{PlaylistEntry}->[0]->{Album}->{content};
+	}
+
+	my $newTitle = join(" - ", @titleComponents);
+
+	if ($newTitle) {
+		$::d_plugins && msg( "Live365 Now Playing: $newTitle\n" );
+		$::d_plugins && msg( "Live365 next update: $nextRefresh seconds\n" );
+		Slim::Music::Info::setTitle( $url, $newTitle );
+	}
+
+	$client->[900] = Slim::Utils::Timers::setTimer(
+		$client,
+		Time::HiRes::time() + $nextRefresh,
+		\&getPlaylist,
+		( $client, $handle, $url, $isVIP )
+	);
+}
+
+sub DESTROY {
+	my $self = shift;
+
+	$::d_plugins && msg( ref($self) . " shutting down\n" );
+
+	Slim::Utils::Timers::killTimers( ${*$self}{client}, \&getPlaylist )
+		or $::d_plugins && msg( "Live365 failed to kill playlist job timer.\n" );
+}
+
+1;
+
+# }}}
+
+# {{{ Plugins::Live365
+
+package Plugins::Live365;
+
+use strict;
+use vars qw( $VERSION );
+$VERSION = 1.10;
+
 use Slim::Utils::Strings qw( string );
 use Slim::Utils::Misc qw( msg );
 use Slim::Control::Command;
 use Slim::Display::Animation;
-use Live365::Live365API 1.00;
 
+# {{{ Initialize
 my $live365;
+Slim::Player::Source::registerProtocolHandler("live365", "Plugins::Live365::ProtocolHandler");
 
 sub addMenu {
 	return "RADIO";
@@ -92,15 +679,18 @@ sub playOrAddCurrentStation {
 	$::d_plugins && msg( "Live365.ChannelMode URL: $stationURL\n" );
 
 	Slim::Music::Info::setContentType($stationURL, 'mp3');
-	Slim::Music::Info::setTitle($stationURL, $live365->{$client}->getCurrentStation()->{STATION_TITLE});
+	Slim::Music::Info::setTitle($stationURL, 
+		   $live365->{$client}->getCurrentStation()->{STATION_TITLE});
 
 	$play and Slim::Control::Command::execute( $client, [ 'playlist', 'clear' ] );
 	Slim::Control::Command::execute( $client, [ 'playlist', 'add', $stationURL ] );
 	$play and Slim::Control::Command::execute( $client, [ 'play' ] );
 }
 
+# }}}
+
 #############################
-# Main mode
+# Main mode {{{
 # 
 MAINMODE: {
 my $mainModeIdx = 0;
@@ -120,7 +710,7 @@ sub setMode {
 
 	$client->lines( \&mainModeLines );
 
-	$live365->{$client} = new Live365::Live365API();
+	$live365->{$client} = new Plugins::Live365::Live365API();
 
 	if( $entryType eq 'push' ) {
 		if( my $sessionid = Slim::Utils::Prefs::get( 'plugin_live365_sessionid' ) ) {
@@ -257,9 +847,10 @@ sub getFunctions {
 
 } # end main mode
 
+# }}}
 
 #############################
-# Login mode
+# Login mode {{{
 #
 LOGINMODE: {
 my $loginModeOk = 0;
@@ -346,6 +937,7 @@ my %loginModeFunctions = (
 			if( $loginStatus == 0 ) {
 				$::d_plugins && msg( "Live365 logged in: " . $live365->{$client}->getSessionID() . "\n" );
 				Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $live365->{$client}->getSessionID() );
+				Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', $live365->{$client}->getMemberStatus() );
 				Slim::Display::Animation::showBriefly( $client, string( $statusText[ $loginStatus ] ) );
 			} else {
 				$::d_plugins && msg( "Live365 login error: $loginStatus\n" );
@@ -405,9 +997,10 @@ Slim::Buttons::Common::addMode( 'loginMode', \%loginModeFunctions, $setLoginMode
 
 } # end login mode
 
+# }}}
 
 #############################
-# Genre mode
+# Genre mode {{{
 #
 my @genreList = ();
 my $genrePointer = 0;
@@ -422,9 +1015,9 @@ my $setGenreMode = sub {
 
 	@genreList = $live365->{$client}->loadGenreList();
 
-	if (! @genreList) {
+	if ( !@genreList ) {
 		Slim::Display::Animation::showBriefly( $client, string( 'PLUGIN_LIVE365_LOGIN_ERROR_HTTP' ), ' ' );
-		Slim::Buttons::Common::popModeRight( shift );
+		Slim::Buttons::Common::popModeRight( $client );
 	}
 
 	$live365->{$client}->clearBlockingStatus();
@@ -513,9 +1106,10 @@ Slim::Buttons::Common::addMode( 'genreMode', \%genreModeFunctions, $setGenreMode
 
 } # end genre mode
 
+# }}}
 
 #############################
-# Channel mode
+# Channel mode {{{
 #
 CHANNELMODE: {
 my $setChannelMode = sub {
@@ -623,9 +1217,10 @@ Slim::Buttons::Common::addMode( 'Live365Channels', \%channelModeFunctions, $setC
 
 } # end channel mode
 
+# }}}
 
 #############################
-# Information mode
+# Information mode {{{
 #
 INFOMODE: {
 my @infoItems = ();
@@ -721,9 +1316,10 @@ Slim::Buttons::Common::addMode( 'ChannelInfo', \%infoModeFunctions, $setInfoMode
 
 } # end info mode
 
+# }}}
+
 #############################
-#
-# Search mode
+# Search mode {{{
 #
 SEARCHMODE: { 
 
@@ -866,8 +1462,13 @@ Slim::Buttons::Common::addMode( 'searchMode', \%searchModeFunctions, $setSearchM
 
 } # end search mode
 
+# }}}
+
 1;
 
+# }}}
+
+# {{{ Strings
 __DATA__
 PLUGIN_LIVE365_MODULE_NAME
 	EN	Live365
@@ -1047,3 +1648,6 @@ PLUGIN_LIVE365_RECENT
 	EN	Recent
 
 __END__
+
+# }}}
+
