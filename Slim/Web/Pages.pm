@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.33 2004/01/13 08:12:56 kdf Exp $
+# $Id: Pages.pm,v 1.34 2004/01/17 03:50:16 kdf Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -957,10 +957,10 @@ sub browseid3 {
 		$list_form{'artist'} = '*';
 		$list_form{'genre'} = '*';
 		$list_form{'player'} = $player;
-		if ($$paramsref{'bycover'}) {
+		if ($$paramsref{'artwork'}) {
 			$list_form{'pwditem'} = string('BROWSE_BY_ARTWORK');
 			$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
-			$list_form{'bycover'} = 1;
+			$list_form{'artwork'} = 1;
 			$$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_pwdlist.html", \%list_form)};
 			$$paramsref{'browseby'} = 'BROWSE_BY_ARTWORK';
 		} else {
@@ -1177,7 +1177,12 @@ sub browseid3 {
 		}
 	} elsif (!$album) {
 		# Browse by Album
-		@items = Slim::Music::Info::albums([$genre], [$artist], [], [$song]);
+		if ($$paramsref{'artwork'}) {
+			# get a list of only the albums with valid artwork
+			@items = Slim::Music::Info::artwork();
+		} else {
+			@items = Slim::Music::Info::albums([$genre], [$artist], [], [$song]);
+		}
 		if (scalar(@items)) {
 				my ($start,$end);
 				if (defined $paramsref->{'nopagebar'}){
@@ -1189,10 +1194,21 @@ sub browseid3 {
 											$$paramsref{'itemsPerPage'},
 											(scalar(@items) > 1));
 				} else {
-					if  ($$paramsref{'bycover'}) {
-					  $otherparams .= 'bycover=1&';
+					if  ($$paramsref{'artwork'}) {
+					  $otherparams .= 'artwork=1&';
 					}
-					($start,$end) = alphapagebar(\@items
+					if ($$paramsref{'artwork'}) {
+						($start,$end) = pagebar(scalar(@items)
+							,$$paramsref{'path'}
+							,0
+							,$otherparams
+							,\$$paramsref{'start'}
+							,\$$paramsref{'browselist_header'}
+							,\$$paramsref{'browselist_pagebar'}
+							,$$paramsref{'skinOverride'}
+							,$$paramsref{'itemsPerPage'});
+					} else {
+						($start,$end) = alphapagebar(\@items
 							,$$paramsref{'path'}
 							,$otherparams
 							,\$$paramsref{'start'}
@@ -1200,9 +1216,10 @@ sub browseid3 {
 							,1
 							,$$paramsref{'skinOverride'}
 							,$$paramsref{'itemsPerPage'});
+					}
 				}
 			$descend = 'true';
-			if (!$$paramsref{'bycover'}) {
+			if (!$$paramsref{'artwork'}) {
 				if (scalar(@items) > 1) {
 					%list_form=();
 					if ($$paramsref{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
@@ -1221,7 +1238,7 @@ sub browseid3 {
 					$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
 				}
 			}
-			foreach my $item ( @items[$start..$end] ) {
+			foreach my $item ( @items[$start..$end]) {
 				%list_form=();
 				if ($$paramsref{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
 					$list_form{'song_count'}	= Slim::Music::Info::songCount([$genre],[$artist],[$item],[]);
@@ -1240,16 +1257,17 @@ sub browseid3 {
 					$list_form{'anchor'}  = $anchor;
 					$lastAnchor = $anchor;
 				}
-				if ($$paramsref{'bycover'}) {
+				if ($$paramsref{'artwork'}) {
 					my $song = Slim::Music::Info::pathFromAlbum($item);
-					if (Slim::Music::Info::haveThumbArt($song)) {
+					if (defined $song) {
 						$list_form{'coverthumb'} = 1; 
 						$list_form{'thumbartpath'} = $song;
 						$list_form{'itemnumber'} = $itemnumber;
+						$list_form{'artwork'} = 1;
 						$list_form{'size'} = Slim::Utils::Prefs::get('thumbSize');
 						$itemnumber++;
-						$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_artwork.html", \%list_form)};
 					}
+					$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_artwork.html", \%list_form)};
 				} else {
 					$itemnumber++;
 					$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
@@ -1303,7 +1321,7 @@ sub browseid3 {
 				my $title = Slim::Music::Info::standardTitle(undef, $item);
 				$list_form{'genre'}	  = Slim::Music::Info::genre($item);
 				$list_form{'artist'}  = Slim::Music::Info::artist($item);
-				$list_form{'album'}	  = $album; # Slim::Music::Info::album($item);
+				$list_form{'album'}	  = Slim::Music::Info::album($item);
 				$list_form{'itempath'} = $item; 
 				$list_form{'item'} = $item;
 				$list_form{'title'}   = $title;

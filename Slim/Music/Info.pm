@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.56 2004/01/16 05:07:17 grotus Exp $
+# $Id: Info.pm,v 1.57 2004/01/17 03:50:17 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -126,6 +126,8 @@ my %caseArticlesMemoize = ();
 my %infoCacheItemsIndex;
 my $dbname;
 
+my %artworkCache = ();
+
 # if we don't have storable, then stub out the cache routines
 
 if (defined @Storable::EXPORT) {
@@ -221,10 +223,14 @@ sub init {
 	$MP3::Info::v2_to_v1_names{'TP2'} = 'BAND';
 	$MP3::Info::v2_to_v1_names{'TPE2'} = 'BAND';	
 
+	# get artwork
+	$MP3::Info::v2_to_v1_names{'PIC'} = 'PIC';
+	$MP3::Info::v2_to_v1_names{'APIC'} = 'PIC';	
+
 	# get conductors
 	$MP3::Info::v2_to_v1_names{'TP3'} = 'CONDUCTOR';
 	$MP3::Info::v2_to_v1_names{'TPE3'} = 'CONDUCTOR';
-
+	
 	#turn on unicode support
 #	if (!MP3::Info::use_mp3_utf8(1)) {	
 #		$::d_info && Slim::Utils::Misc::msg("Couldn't turn on unicode support.\n");
@@ -287,66 +293,64 @@ sub loadTypesConfig {
 }
 
 sub checkForChanges {
-    my $file = shift;
-    my $filepath;
-    
-    # We return 0 if the file hasn't changed
-    #    return 1 if the file has (cached entry is deleted by us)
-
-    # *******************************************************
-    # Note: Can't use isMP3 or other isxxx routines from here 
-    # as we don't want to trigger other cache routines when 
-    # doing scanDBCache (isFileURL is safe)
-    # *******************************************************
-
-    if (defined($file) && (exists $infoCacheDB{$file})) {
+	my $file = shift;
+	my $filepath;
 	
-	# Check to see if the filename is URL encoded. If so, decode.
+	# We return 0 if the file hasn't changed
+	#    return 1 if the file has (cached entry is deleted by us)
 	
-	if (isFileURL($file)) {
-	    $filepath = Slim::Utils::Misc::pathFromFileURL($file);
-	} else {
-	    $filepath = $file;
+	# *******************************************************
+	# Note: Can't use isMP3 or other isxxx routines from here 
+	# as we don't want to trigger other cache routines when 
+	# doing scanDBCache (isFileURL is safe)
+	# *******************************************************
+	
+	if (defined($file) && (exists $infoCacheDB{$file})) {
+		# Check to see if the filename is URL encoded. If so, decode.
+		
+		if (isFileURL($file)) {
+			$filepath = Slim::Utils::Misc::pathFromFileURL($file);
+		} else {
+			$filepath = $file;
+		}
+		
+		# See if the file exists
+		
+		if ( -e $filepath) {
+			# Check FS and AGE (TIMESTAMP) to decide if we use the cached data.		
+			my $cacheEntryArray = $infoCacheDB{$file};
+			
+			my $index = $infoCacheItemsIndex{"FS"};
+			my $fsdef=(defined $cacheEntryArray->[$index]);
+			my $fscheck=0;
+			if ($fsdef) { $fscheck= ( -s $filepath == $cacheEntryArray->[$index]); }
+			
+			$index = $infoCacheItemsIndex{"AGE"};
+			my $agedef=(defined $cacheEntryArray->[$index]);
+			my $agecheck=0;
+			if ($agedef) { $agecheck=((stat($filepath))[9] == $cacheEntryArray->[$index]); }
+			
+			if ($fsdef && $fscheck && $agedef && $agecheck) { return 0; }
+			if ($fsdef && $fscheck && !$agedef) { return 0; }
+			if (!$fsdef && $agedef && $agecheck) { return 0; }
+			
+			# File has changed so remove the cached information
+			delete $infoCacheDB{$file};
+			$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as it has changed\n");		    
+			return 1;
+		}
+		
+		# Have a default delete policy
+		
+		# URL data (both http: and file:) is going to get dropped here.
+		# Directory data is also dropped as we can't tell if it's changed
+		
+		delete $infoCacheDB{$file};
+		$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as couldn't confirm it's validity\n");		    
+		return 1;
 	}
-	
-	# See if the file exists
-	
-	if ( -e $filepath) {
-	
-    	    # Check FS and AGE (TIMESTAMP) to decide if we use the cached data.		
-	    my $cacheEntryArray = $infoCacheDB{$file};
 
-    	    my $index = $infoCacheItemsIndex{"FS"};
-	    my $fsdef=(defined $cacheEntryArray->[$index]);
-	    my $fscheck=0;
-	    if ($fsdef) { $fscheck= ( -s $filepath == $cacheEntryArray->[$index]); }
-	    
-	    $index = $infoCacheItemsIndex{"AGE"};
-	    my $agedef=(defined $cacheEntryArray->[$index]);
-	    my $agecheck=0;
-	    if ($agedef) { $agecheck=((stat($filepath))[9] == $cacheEntryArray->[$index]); }
-	    
-	    if ($fsdef && $fscheck && $agedef && $agecheck) { return 0; }
-	    if ($fsdef && $fscheck && !$agedef) { return 0; }
-	    if (!$fsdef && $agedef && $agecheck) { return 0; }
-	
-	    # File has changed so remove the cached information
-	    delete $infoCacheDB{$file};
-	    $::d_info && Slim::Utils::Misc::msg("deleting $file from cache as it has changed\n");		    
-	    return 1;
-	}
-
-	# Have a default delete policy
-
-	# URL data (both http: and file:) is going to get dropped here.
-	# Directory data is also dropped as we can't tell if it's changed
-
-	delete $infoCacheDB{$file};
-	$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as couldn't confirm it's validity\n");		    
-	return 1;
-    }
-
-    $::d_info && Slim::Utils::Misc::msg("$file not in infoCacheDB! or undefined file. This shouldn't happen!\n");		    
+	$::d_info && Slim::Utils::Misc::msg("$file not in infoCacheDB! or undefined file. This shouldn't happen!\n");		    
 }
 
 # This gets called to save the infoDBCache every $dbSaveInterval seconds
@@ -372,6 +376,8 @@ sub clearCache {
         
 		$songCount = 0;
 		$total_time = 0;
+		
+		%artworkCache = ();
 		
 		%songCountMemoize=();
 		%artistCountMemoize=();
@@ -494,8 +500,8 @@ sub cacheItem {
 	
 		my $i = 0;
 		foreach my $key (@infoCacheItems) {
-		    $cacheEntryHash->{$key} = $cacheEntryArray->[$i];
-		    $i++;
+			$cacheEntryHash->{$key} = $cacheEntryArray->[$i];
+			$i++;
 		}
 
 		$infoCache{$url} = $cacheEntryArray;
@@ -503,13 +509,14 @@ sub cacheItem {
 		my $type = typeFromSuffix($url);
 		
 		if (isSong($url,$type) && !isHTTPURL($url) && -e $url) { 
-		    updateGenreCache($url, $cacheEntryHash); 
-  		    $::d_info && Slim::Utils::Misc::msg("Inc SoungCount(1) $url\n");
-		    $songCount++;
-		    my $time = $cacheEntryHash->{SECS};
-		    if ($time) {
+			updateGenreCache($url, $cacheEntryHash);
+			updateArtworkCache($url, $cacheEntryHash); 
+			$::d_info && Slim::Utils::Misc::msg("Inc SoungCount(1) $url\n");
+			$songCount++;
+			my $time = $cacheEntryHash->{SECS};
+			if ($time) {
 			$total_time += $time;
-		    }
+			}
 		}
 		
 		my $index = $infoCacheItemsIndex{$item};
@@ -556,13 +563,14 @@ sub cacheEntry {
 	if ($cachemiss) {
 		my $type = typeFromSuffix($url);
 		if (isSong($url,$type) && !isHTTPURL($url)  && -e $url) { 
-		    updateGenreCache($url, $cacheEntryHash); 
-      		    $::d_info && Slim::Utils::Misc::msg("Inc SongCount(2) $url\n");
-  		    $songCount++;
-		    my $time = $cacheEntryHash->{SECS};
-		    if ($time) {
-			$total_time += $time;
-		    }
+			updateGenreCache($url, $cacheEntryHash);
+			updateArtworkCache($url, $cacheEntryHash);
+			$::d_info && Slim::Utils::Misc::msg("Inc SongCount(2) $url\n");
+			$songCount++;
+			my $time = $cacheEntryHash->{SECS};
+			if ($time) {
+				$total_time += $time;
+			}
 		}
 	}
 
@@ -617,7 +625,7 @@ sub updateCacheEntry {
 		}
 		
 		if ($newsong && isSong($url) && !isHTTPURL($url) && -e $url) {
-  		        $::d_info && Slim::Utils::Misc::msg("Inc SongCount(3) $url\n");
+			$::d_info && Slim::Utils::Misc::msg("Inc SongCount(3) $url\n");
 			$songCount++;
 			my $time = $cacheEntryHash->{SECS};
 			if ($time) {
@@ -1049,10 +1057,6 @@ sub info {
 	};
 	
 	my $item = cacheItem($file, $tagname);
-
-	if ($tagname eq 'THUMB') {
-		my $text = (defined $item) ? $item : "undef";
-	}
 
 	# update the cache if the tag is not defined in the cache
 	if (!defined($item)) {
@@ -1488,6 +1492,17 @@ sub artists {
 	}
 }
 
+sub artwork {
+	my @covers;
+
+	foreach my $key (keys %artworkCache) {
+		if (exists $artworkCache{$key}) { # if its been lost since scan..
+			push @covers, $key;
+		}
+	}
+	return sortuniq_ignore_articles(@covers);
+}
+
 sub albums {
 	my $genre  = shift;
 	my $artist = shift;
@@ -1529,17 +1544,10 @@ sub albums {
 sub pathFromAlbum {
 
 	my $album = shift;
-	
-
-	my $index = $infoCacheItemsIndex{'ALBUM'};
-
-	foreach my $file (keys %infoCache) {
-		return $file if ((defined $infoCache{$file}[$index]) && ($infoCache{$file}[$index] eq $album));
-
+	if (exists $artworkCache{$album}) {
+		return $artworkCache{$album};
 	}
-
 	return undef;
-
 }
 
 # return all songs for a given genre, artist, and album
@@ -1955,7 +1963,7 @@ sub readTags {
 			}
 
 			# cache the file size & date
-	        	$tempCacheEntry->{'FS'} = -s $filepath;					
+			$tempCacheEntry->{'FS'} = -s $filepath;					
 			$tempCacheEntry->{'AGE'} = (stat($filepath))[9];
 			
 			# rewrite the size, offset and duration if it's just a fragment
@@ -2006,6 +2014,31 @@ sub readTags {
 				};
 			};
 			
+			# Check for Cover Artwork, only if not already present.
+			if (exists $tempCacheEntry->{'COVER'} || exists $tempCacheEntry->{'THUMB'}) {
+				$::d_info && Slim::Utils::Misc::msg("already checked artwork for $file\n");
+			} else {
+				my $album = $tempCacheEntry->{'ALBUM'};
+				if (defined $tempCacheEntry->{'APIC'} || defined $tempCacheEntry->{'PIC'}) {
+					$tempCacheEntry->{'COVER'} = $filepath;
+					$tempCacheEntry->{'THUMB'} = $filepath;
+					$artworkCache{$album} = $filepath;
+				} else {
+					
+					$tempCacheEntry->{'TAG'} = 1;
+					updateCacheEntry($file, $tempCacheEntry);
+					my ($body,$contenttype,$path) = readCoverArtFiles($filepath,'cover');
+					if (defined $body) {
+						$tempCacheEntry->{'COVER'} = $path;
+						if (!exists $artworkCache{$album}) {$artworkCache{$album} = $filepath;}
+					} else {$tempCacheEntry->{'COVER'} = '0';}
+					($body,$contenttype,$path) = readCoverArtFiles($filepath,'thumb');
+					if (defined $body) {
+						$tempCacheEntry->{'THUMB'} = $path;
+						if (!exists $artworkCache{$album}) {$artworkCache{$album} = $filepath;}
+					} else {$tempCacheEntry->{'THUMB'} = '0';}
+				}
+			}
 		} 
 	} else {
 		if (!defined(cacheItem($file, 'TITLE'))) {
@@ -2018,6 +2051,7 @@ sub readTags {
 		$tempCacheEntry->{'CT'} = $type;
 	}
 	
+			
 	# note that we've read in the tags.
 	$tempCacheEntry->{'TAG'} = 1;
 	
@@ -2091,7 +2125,7 @@ sub readCoverArt {
 		$filepath = $fullpath;
 	}
 
-	if ((isSong($filepath) && isFile($filepath)) || isDir($filepath)) {
+	if (isSong($filepath) && isFile($filepath)) {
 		
 		my $file = Slim::Utils::Misc::virtualToAbsolute($filepath);
 		
@@ -2150,7 +2184,6 @@ sub readCoverArt {
 		}	
 		
 		if ($body) {
-				
 			# iTunes sometimes puts PNG images in and says they are jpeg
 			if ($body =~ /^\x89PNG\x0d\x0a\x1a\x0a/) {
 				$contenttype = 'image/png';
@@ -2203,8 +2236,6 @@ sub readCoverArt {
 					last;
 				}
 			}
-		}
- 	}
 	return ($body, $contenttype,$cover);
 }
 
@@ -2233,12 +2264,13 @@ sub updateCoverArt {
  			$info->{'THUMB'} = '0';
  		}
  	}
- 		
+ 	
+ 	#if we're caching, might as well cache the actual type
  	if (defined($contenttype)) {
  		if ($type eq 'cover') {
- 			$info->{'COVERTYPE'} = '1';
+ 			$info->{'COVERTYPE'} = $contenttype;
  		} elsif ($type eq 'thumb') {
- 			$info->{'THUMBTYPE'} = '1';
+ 			$info->{'THUMBTYPE'} = $contenttype;
  		}
  	} else {
 		if ($type eq 'cover') {
@@ -2251,6 +2283,29 @@ sub updateCoverArt {
  	$::d_info && $body && Slim::Utils::Misc::msg("Got image!\n");
 
  	updateCacheEntry($fullpath, $info);
+}
+
+sub updateArtworkCache {
+	my $file = shift;
+	my $cacheEntry = shift;
+	my $filepath;
+	
+	if (defined($file) && (exists $infoCacheDB{$file})) {
+		if (isFileURL($file)) {
+			$filepath = Slim::Utils::Misc::pathFromFileURL($file);
+		} else {
+			$filepath = $file;
+		}
+		# Check for Artwork and update %artworkCache
+		my $thumb = $cacheEntry->{'THUMB'};
+		my $album = $cacheEntry->{'ALBUM'};
+		if (defined $thumb && defined $album && $thumb) {
+			if (!exists $artworkCache{$album}) { # only cache albums once each
+				$::d_info && Slim::Utils::Misc::msg("updating artwork path for $album with $filepath\n");
+				$artworkCache{$album} = $filepath;
+			}
+		}
+	}
 }
 
 sub updateGenreCache {

@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.60 2004/01/15 18:46:04 dean Exp $
+# $Id: HTTP.pm,v 1.61 2004/01/17 03:50:16 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -506,7 +506,6 @@ sub addstreamingresponse {
 	if (defined $paramref->{'p0'} && $paramref->{'p0'} eq 'playlist') {
 		Slim::Control::Command::execute($client, [$paramref->{'p0'},$paramref->{'p1'},$paramref->{'p2'}]);
 	}
-
 }
 
 sub checkAuthorization {
@@ -1059,7 +1058,8 @@ sub generateresponse {
 
  			if (defined($imagedata)) {
  				$body = \$imagedata; #$body should be a ref
-				%headers = statusHeaders($client);
+				my $imageExpireHeader = strftime "%a %b %d %H:%M:%S %Y", gmtime(time + 31536000);
+				$headers{"Expires"} = "$imageExpireHeader";;
  			} else {
 				$body = getStaticContentRef("html/images/spacer.gif");
 				$contentType = "image/gif";
