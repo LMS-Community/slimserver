@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.145 2004/09/22 19:00:51 dean Exp $
+# $Id: Info.pm,v 1.146 2004/09/23 01:35:32 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1131,6 +1131,7 @@ sub plainTitle {
 		if ($file) {
 			$title = (splitdir($file))[-1];
 		}
+		
 		# directories don't get the suffixes
 		if ($title && !($type && $type eq 'dir')) {
 				$title =~ s/\.[^.]+$//;
@@ -1179,10 +1180,11 @@ sub standardTitle {
 # match is accepted and applied to the argument tag hash.
 #
 sub guessTags {
-	my $file = shift;
+	my $filename = shift;
 	my $type = shift;
 	my $taghash = shift;
-
+	
+	my $file = $filename;
 	$::d_info && Slim::Utils::Misc::msg("Guessing tags for: $file\n");
 
 	# Rip off from plainTitle()
@@ -1237,7 +1239,7 @@ sub guessTags {
 	}
 	
 	# Nothing found; revert to plain title
-	$taghash->{'TITLE'} = plainTitle($file, $type);	
+	$taghash->{'TITLE'} = plainTitle($filename, $type);	
 }
 
 
