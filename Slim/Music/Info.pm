@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.44 2004/01/02 01:38:38 daniel Exp $
+# $Id: Info.pm,v 1.45 2004/01/02 23:32:21 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -349,7 +349,7 @@ sub checkForChanges {
 # This gets called to save the infoDBCache every $dbSaveInterval seconds
 sub saveDBCacheTimer {
 	saveDBCache();
-	Slim::Utils::setTimer(0, Time::HiRes::time() + $dbSaveInterval, \&saveDBCacheTimer);
+	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $dbSaveInterval, \&saveDBCacheTimer);
 }
 
 sub clearCache {
@@ -890,7 +890,7 @@ sub plainTitle {
 
 	my $title = "";
 
-	$::d_info && Slim::Utils::Misc::msg("Plain title for: " . $file);
+	$::d_info && Slim::Utils::Misc::msg("Plain title for: " . $file . "\n");
 
 	if (isHTTPURL($file)) {
 		$title = Slim::Web::HTTP::unescape($file);

@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.19 2003/12/27 21:23:24 dean Exp $
+# $Id: Misc.pm,v 1.20 2004/01/02 23:32:21 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -13,7 +13,7 @@ use File::Which;
 use Fcntl;
 use Slim::Music::Info;
 use Slim::Utils::OSDetect;
-use POSIX qw(strftime);
+use POSIX qw(strftime setlocale LC_TIME);
 use Net::hostent;              # for OO version of gethostbyaddr
 use Sys::Hostname;
 use Socket;
@@ -489,24 +489,39 @@ sub readDirectory {
 
 sub longDateF {
 	my $time = shift || Time::HiRes::time();
-	my $date = strftime Slim::Utils::Prefs::get('longdateFormat'), localtime($time);
+	my $date = localeStrftime(Slim::Utils::Prefs::get('longdateFormat'), $time);
 	$date =~ s/\|0*//;
 	return $date;
 }
 
 sub shortDateF {
 	my $time = shift || Time::HiRes::time();
-	my $date = strftime Slim::Utils::Prefs::get('shortdateFormat'),  localtime($time);
+	my $date = localeStrftime(Slim::Utils::Prefs::get('shortdateFormat'),  $time);
 	$date =~ s/\|0*//;
 	return $date;
 }
 
 sub timeF {
 	my $ltime = shift || Time::HiRes::time();
-	my $time = strftime Slim::Utils::Prefs::get('timeFormat'),  localtime($ltime);
+	my $time = localeStrftime(Slim::Utils::Prefs::get('timeFormat'),  $ltime);
 	# remove leading zero if another digit follows
 	$time =~ s/\|0?(\d+)/$1/;
 	return $time;
+}
+
+sub localeStrftime {
+      my $format = shift;
+      my $ltime = shift;
+      
+      (my $language = Slim::Utils::Prefs::get('language')) =~ tr/A-Z/a-z/;
+      (my $country = $language) =~ tr/a-z/A-Z/;
+      
+      my $serverlocale = $language . "_" . $country;
+
+      my $saved_locale = setlocale(LC_TIME, $serverlocale);
+      my $time = strftime $format, localtime($ltime);
+      setlocale(LC_TIME, "");
+      return $time;
 }
 
 sub assert {
