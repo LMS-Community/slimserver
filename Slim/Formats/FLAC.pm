@@ -150,7 +150,7 @@ sub addInfoTags {
 	# these are not tags, but calculated values from the streaminfo
 	$tags->{'SIZE'}    = $flac->{'fileSize'};
 	$tags->{'SECS'}    = $flac->{'trackTotalLengthSeconds'};
-	$tags->{'OFFSET'}  = $flac->{'startAudioData'};
+	$tags->{'OFFSET'}  = 0; # the header is an important part of the file. don't skip it
 	$tags->{'BITRATE'} = $flac->{'bitRate'};
 
 	# Add the stuff that's stored in the Streaminfo Block

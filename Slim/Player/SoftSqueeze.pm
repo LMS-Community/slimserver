@@ -43,12 +43,6 @@ sub needsUpgrade {
 	return 0;
 }
 
-sub formats {
-        my $client = shift;
-
-        return ('aif','wav','mp3');
-}
-
 sub maxTransitionDuration {
         return 0;
 }
