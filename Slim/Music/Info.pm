@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.121 2004/05/18 16:06:50 dean Exp $
+# $Id: Info.pm,v 1.122 2004/05/18 19:17:39 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2863,7 +2863,7 @@ sub isPlaylist {
 
 	my $type = contentType($fullpath);
 
-	if ($Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} eq 'playlist') {
+	if ($type && $Slim::Music::Info::slimTypes{$type} && $Slim::Music::Info::slimTypes{$type} eq 'playlist') {
 		return $type;
 	}
 }

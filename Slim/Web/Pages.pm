@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.80 2004/05/15 19:15:29 kdf Exp $
+# $Id: Pages.pm,v 1.81 2004/05/18 19:17:39 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -41,7 +41,7 @@ sub home {
 		$params->{'nofolder'}=1;
 	}
 	
-	if (Slim::Utils::Prefs::get('playlistdir')) {
+	if (Slim::Utils::Prefs::get('playlistdir') || Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic()) {
 		addLinks("browse",{string('SAVED_PLAYLISTS') => "browse.html?dir=__playlists"});
 	} else {
 		addLinks("browse",{string('SAVED_PLAYLISTS') => undef});

@@ -1,6 +1,6 @@
 package Slim::Utils::Strings;
 
-# $Id: Strings.pm,v 1.14 2004/05/14 23:07:51 dean Exp $
+# $Id: Strings.pm,v 1.15 2004/05/18 19:17:39 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -157,6 +157,7 @@ sub string {
 	my ($stringname) = @_;
 	
 	my $language = getLanguage();
+	
 	$stringname = uc($stringname);
 	
 	if ($strings{$language.'_'.$stringname}) {

@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.46 2004/05/18 18:11:28 dean Exp $
+# $Id: Misc.pm,v 1.47 2004/05/18 19:17:39 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -401,6 +401,8 @@ sub virtualToAbsolute {
 	} else {
 		$curdir = Slim::Utils::Prefs::get('audiodir');
 	}
+
+	return undef if (!$curdir);
 	
 	my @levels = ();
 	if (defined($virtual)) {
