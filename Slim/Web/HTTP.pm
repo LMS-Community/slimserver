@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.56 2004/01/08 06:20:19 kdf Exp $
+# $Id: HTTP.pm,v 1.57 2004/01/15 01:21:01 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -797,6 +797,8 @@ sub printheaders {
 sub filltemplate {
 
 	my ($template, $hashref) = @_;
+	
+	return $template if (!defined($template) || length($template) == 0);
 
 	my $client = defined($hashref) ? $$hashref{'myClientState'} : undef;
 
@@ -858,7 +860,7 @@ sub nonBreaking {
 sub getFileContent {
 	my ($path,$skin,$binary) = @_;
 	my $contentref;
-	$$contentref = '';
+	$$contentref = undef;
 	my $template;
 	my $skinkey = "${skin}/${path}";
 
@@ -1079,9 +1081,6 @@ sub generateresponse {
 					return 0;
 				}
 			}
-			# we failed to open the specified file
-			$result = "HTTP/1.0 404 Not Found";
-			$body = filltemplatefile('html/errors/404.html',$paramsref);
 	    } elsif ($path =~ /favicon\.ico/) {
 			$body = getStaticContentRef("html/mypage.ico", $paramsref); 
 	    } elsif ($path =~ /slimserver\.css/) {
@@ -1128,18 +1127,18 @@ sub generateresponse {
 				# otherwise just send back the binary file
 				$body = getStaticContentRef($path, $paramsref);
 			}
-	    }  else {
-			$result = "HTTP/1.0 404 Not Found";
-			$body = filltemplatefile('html/errors/404.html',$paramsref);
-		}
+	    }
 	} else {	
-		if ($path !~ /status/i) {
-			$result = "HTTP/1.0 404 Not Found";
-			$body = filltemplatefile('html/errors/404.html',$paramsref);
-		} else {
+		if ($path =~ /status/i) {
 			$result = "HTTP/1.0 200 OK";
 		}
 	}
+	
+	if (!defined($$body)) {
+		$body = filltemplatefile('html/errors/404.html',$paramsref);
+		$result = "HTTP/1.0 404 Not Found";
+	}
+
 	if ($body) {
 		return generateResponse_Done($client, $paramsref, $body, $httpclientsock, \$result, \%headers, \%paramheaders);
 	} else {
