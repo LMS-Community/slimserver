@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.87 2004/04/22 20:41:05 dean Exp $
+# $Id: strings.txt,v 1.88 2004/04/22 22:58:45 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -109,6 +109,7 @@ PLAYER_VERSION
 	SE	Spelar-version
 
 ABOUT_SLIMDEVICES
+	DE	Über Slim Devices
 	EN	About Slim Devices
 	FR	A propos de Slim Devices
 	NO	Om Slim Devices
@@ -594,7 +595,7 @@ POWERING_OFF
 	NO	Skrur av
 	PT	A Desligar
 	SE	Stänger av
-	
+
 POWER
 	EN	Power
 
@@ -762,6 +763,7 @@ FREE_YOUR_MUSIC
 	SE	Frige din musik
 
 UPDATING_FIRMWARE
+	DE	Firmware wird aktualisiert.
 	EN	Updating Squeezebox firmware.
 	SE	Uppdaterar spelarens mjukvara ('firmware')
 
@@ -910,16 +912,19 @@ SETUP_SCROLLPAUSE
 	EN	Scroll Pause
 	FR	Pause avant défilement
 	SE	Paus under scrollning
-	
+
 SETUP_SCROLLPAUSE_DESC
+	DE	Sie können die Zeit definieren, die der Player wartet, bevor er mit dem horizontalen Scrollen beginnt. Geben Sie einen Wert in Sekunden ein, die vor oder zwischen dem Scrollen gewartet werden soll. Null (0) unterdrückt jegliche Pause und scrollt sofort. Standardwert ist 3.6 Sekunden.
 	EN	You can adjust the amount of time that the player waits before starting horizontal scrolling of the text on the display.  Enter a value, in seconds, for the amount of time to wait before scrolling or between scrolling.  Enter zero to not pause at all and scroll immediately. 3.6 seconds is the default.
 	SE	Fördröjning innan scrollning av långa texter börjar. Multipel av 0.9 fungerar bäst. 0.001 rekommenderas som lägsta värde.
 
 SETUP_SCROLLRATE
+	DE	Scrollrate
 	EN	Scroll Rate
 	SE	Scroll-frekvens
-	
+
 SETUP_SCROLLRATE_DESC
+	DE	Sie können die Zeit definieren, die der Player zwischen dem Scrollen einzelner Buchstaben auf dem Display wartet. Geben Sie die Wartezeit in Sekunden ein. Kleinere Werte beschleunigen den Scrollvorgang. Standardwert ist 0.15 Sekunden.
 	EN	You can adjust the amount of time that the player waits before scrolling another letter of text on the display. Enter a value, in seconds, for the amount of time to wait.  Lower numbers make it scroll faster.  0.15 seconds is the default.
 	SE	Tid mellan rullande scroll-bilder. O.15 är standardvärdet. Värden mellan 0 och 1 kan sättas för att öka eller minska scroll-tempot 
 
@@ -932,7 +937,7 @@ SETUP_GROUP_ALARM
 	NO	Alarm
 	PT	Alarme
 	SE	Väckarklocka
-	
+
 SETUP_GROUP_ALARM_DESC
 	DE	Einstellungen für den Wecker. Jeder Player kann einen eigenen Wecker haben. Nach Aktivierung wird der Wecker alle 24h wiederholt.
 	EN	Settings for alarm clock. Each player can have an alarm set.  If active, it will repeat every 24 hours.
@@ -979,22 +984,27 @@ SETUP_GROUP_PLUGINS_DESC
 	SE	SlimServer inkluderar tilläggs-funktioner som du kan konfigurera och/eller använda via din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras var för sig. Kryssa i rutan bredvid tillägget nedan för att aktivera ett tillägg. Ta bort krysset när du vill avaktivera ett tillägg. Spara dina ändringar genom att klicka på "Ändra".
 
 SETUP_PLUGINS-ONTHEFLY
+	DE	Plugins während der Programmausführung laden
 	EN	Load Plugins On-The-Fly
 
 SETUP_PLUGINS-ONTHEFLY_0
+	DE	Plugins nur beim Programmstart laden
 	EN	Load Plugins at startup Only
 
 SETUP_PLUGINS-ONTHEFLY_1
+	DE	Plugins während der Programmausführung laden
 	EN	Load Plugins On-The-Fly
 
 SETUP_GROUP_FORMATS
+	DE	Dateikonvertierungseinstellungen
 	EN	File Format Conversion Setup
 	SE	Inställningar för konvertering mellan filformat
 
 SETUP_GROUP_FORMATS_DESC
+	DE	SlimServer kann Audio-Dateien während der Laufzeit für die Wiedergabe konvertieren. Sie können hier einzelne Formate deaktivieren.
 	EN	SlimServer can convert audio file formats on-the-fly for playback on your player.  You can disable specific formats below by unchecking them.  Click Change to save your changes.
 	SE	Slimserver kan konvertera mellan olika ljud-format för uppspelning i spelaren. 
-	
+
 SETUP_FORMATSLIST_CHANGE
 	DE	Einstellungen wurden gespeichert.
 	DK	Indstillingen blev ændret.
@@ -1005,27 +1015,32 @@ SETUP_FORMATSLIST_CHANGE
 	SE	Inställning är ändrad.
 
 SETUP_FORMATSLIST
+	DE	Dateikonvertierung
 	EN	File Format Conversions
 	SE	Filformat, konverteringar
 
 
 FILE_FORMAT
+	DE	Dateiformat
 	EN	File Format
 	SE	Filformat
 
 STREAM_FORMAT
+	DE	Streamingformat
 	EN	Stream Format
 	SE	Format för strömmande ljud
-	
+
 PLAYER_TYPE
+	DE	Wiedergabegerät
 	EN	Player Type
 	SE	Spelartyp
-	
+
 PLAYER_ID
 	EN	Player ID
 	SE	SpelarID
-	
+
 COMMAND
+	DE	Befehl
 	EN	Command
 	SE	Kommando
 
@@ -1339,16 +1354,20 @@ SETUP_SYNCVOLUME_DESC
 	SE	Du kan låta dina synkroniserade spelare använda samma volym eller vara oberoende. Gör ditt val och klicka på Ändra.
 
 SETUP_SYNCPOWER_ON
+	DE	Ein-/Ausschalten mit Gruppe
 	EN	Power off/on with group
 
 SETUP_SYNCPOWER_OFF
+	DE	Getrennt ein-/ausschalten
 	EN	Power off/on separately
 
 SETUP_SYNCPOWER
+	DE	Ein-/Ausschalten synchronisieren
 	EN	Synchronize Power
 	SE	Synkronisera på/av
 
 SETUP_SYNCPOWER_DESC
+	DE	Sie können diesen Player einzeln oder aber zusammen mit den anderen synchronisierten Playern ein-/ausschalten.
 	EN	You can choose to have this player turn off on its own, or turn off as a group with all other players in the group. Make a selection below and click Change.
 	SE	Du kan välja att låta dena spelare stänga av oberoende andra spelare, eller tillsammans med andra spelare i en grupp. Välj nedan och klicka Ändra.
 
@@ -1377,10 +1396,12 @@ SETUP_DIGITALVOLUMECONTROL_DESC
 	SE	Du kan välja mellan att låta ditital volym vara fix på max nivå, eller låta den styras av volymkontroller. När du väljer fix digital signalvolym, får den analoga signalen maximal kvalitet. Oavsett inställning, så påverkar påverkas analog volym av volymknapparna.
 
 SETUP_MAXBITRATE
+	DE	Maximale Transkodierungs-Bitrate
 	EN	Maximum Transcoding Bitrate
 	SE	Maximal transkodnings-bitrate
 
 SETUP_MAXBITRATE_DESC
+	DE	Die maximale Transkodierungs-Bitrate für diesen Player. Alle Musikstücke oder Streams höherer Bitrate werden auf diese Rate heruntergerechnet. Geringere Bitraten bleiben unverändert. Wird ein Stream mit definierter Bitrate aufgerufen (z.B. stream.mp3?bitrate=128), so gilt dieser Wert. Gültige Bitraten sind 0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320. Null (0) deaktiviert die Beschränkung.
 	EN	Maximum transcoding bitrate for this player.  All transcoded files or streams that are higher will be downsampled.  Lesser rates are left unchanged. Connecting to a stream with a bitrate parameter will override (eg. stream.mp3?bitrate=128). Valid bitrates are 0,32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320. Zero disables maximum Bitrate limits.
 	SE	Maximal transkodnings-bitrate för denna spelare. Alla kodade filer eller strömmar med högre rate, kommer att samplas ned. Lägre bitrate lämnas oförändrade. Sker uppkoppling mot en bitrate med fixt värde (ex. stream.mp3?bitrate=128) är det detta värde som gäller. Godkända värden är 0,32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256 och 320. Värdet 0 stänger av maximal bitrate-begränsningen.
 
@@ -1409,14 +1430,17 @@ SETUP_TITLEFORMAT
 	SE	Titelformat
 
 SETUP_TITLEFORMAT_DESC
+	DE	Sie können die Anzeige des Liedertitels auf dem Display ihres Players definieren, indem Sie eines der Formate im Menü wählen. Diese Auswahl steht im Menü Einstellungen -> Titelformat des Players zur Verfügung. Klicken Sie auf einen Knopf in der Aktuell-Spalte, um die aktuelle Anzeige zu ändern.
 	EN	You can customize the song title display on your player by choosing the format you'd like to see from the menus below. These choices available below will be available in Settings -> Song Title Format on the player.  Click on a button in the "Current" column to change the current format. When you are done, press the "Change" button to save your choices.
 
 SETUP_ITUNESPLAYLISTFORMAT
+	DE	iTunes Playlisten Format
 	EN	iTunes Playlist Format
 	FR	Format des listes de lecture iTunes
 	SE	Format iTunes låtlista
 
 SETUP_ITUNESPLAYLISTFORMAT_DESC
+	DE	Diese Option definiert das Format der von iTunes importierten Playlists.
 	EN	This option determines the format used when importing iTunes playlists.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture iTunes.
 	SE	Denna inställning avgör vilket format som används vid import av iTunes-låtlistor
@@ -1447,12 +1471,14 @@ SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE
 	EN	Suffix:
 	FR	Suffixe :
 	SE	Suffix:
-	
+
 SETUP_GUESSFILEFORMATS
+	DE	Tag Format erraten
 	EN	Guess Tags Formats
 	SE	Gissa tag-format
 
 SETUP_GROUP_GUESSFILEFORMATS_DESC
+	DE	Für Dateien, welche keine sinnvollen Tags enthalten, kann der Server versuchen, die Informationen aus dem Pfad und Dateinamen zu gewinnen. Mit denselben Variablen wie für das Titelformat können Sie Dateinamenskonventionen definieren, damit der Server besser erraten kann, wo die Informationen stehen. Das erste passende der folgenden Muster wird verwendet.
 	EN	For files that do not have reasonable tags, you can have the server guess at tags using the path and filename. Using the same variables as Title Format, you can create a pattern to match your file naming conventions so that the server can make a good guess at what the tags should be.  Priority goes in the order listed below.  The first valid pattern match is used.
 	SE	För filer som inte har rimliga metadata (taggar), kan servern gissa genom att använda fil- och mappinformation. Genom att använda samma variabler som för Låt-format kan du skapa mönster som passar det sätt dina filer är namngivna. Prioritet enligt listan nedan; första mönster-matchning används. 
 
@@ -1600,9 +1626,11 @@ SETUP_PLAYLISTDIR
 	SE	Mapp för sparade spellistor:
 
 SETUP_ARTFOLDER
+	DE	Ordner für Plattencover
 	EN	Artwork Folder
 
 SETUP_ARTFOLDER_DESC
+	DE	Sie können einen Ordner definieren, in welchem alle Plattencovers abgelegt werden sollen. Definieren Sie hier diesen Ordner. Unabhängig von dieser Einstellung wird der Server stets auch in den Verzeichnissen der Musikdateien nach Bilddateien für die Plattencovers schauen, falls in diesem Ordner nichts passendes gefunden wird.
 	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, the server will still look for artwork in the same path as each audio file if no matching artwork in found in the Artwork Folder.
 
 SETUP_BAD_DIRECTORY
@@ -1686,16 +1714,19 @@ SETUP_RESCAN_DESC
 	SE	Om du lägger till, tar bort eller ändrar musik in din Musikmapp kan du tvinga SlimServer att läsa av all din musik på nytt för att säkerställa att databasen är korrekt.
 
 SETUP_WIPECACHE
+	DE	Cache initialisieren
 	EN	Wipe Cache
 	FR	Ré-initialiser le cache
 	SE	Töm cache-minnet
 
 SETUP_WIPECACHE_BUTTON
+	DE	Cache initialisieren
 	EN	Wipe Cache
 	FR	Ré-initialiser
 	SE	Töm cache-minnet
 
 SETUP_WIPECACHE_DESC
+	DE	Falls Sie die Informationen zu den Musikdateien im Cache ablegen, so können Sie hier diesen Speicher neu initialisieren. Dies löscht die gespeicherten Werte und liest die Musiksammlung neu ein.
 	EN	If you use the tag database you may want to clear the disk based cache of tag information. This option does that and then rescans your music files (in the same way as the rescan button does).
 	FR	Si vous utilisez la mise en cache disque des tags ID3, vous pouvez remettre celle-ci à zéro avec cette option (le serveur va ensuite répertorier à nouveau votre dossier de musique).
 	SE	Om du använder funktionen 'lagra musikdatabas på disken', kanske du vill tömma densamma. Denna inställning tömmer och scannar sedan musikmappen på nytt.
@@ -1825,15 +1856,18 @@ SETUP_MOODLOGIC_DESC
 	SE	SlimServer kan använda din MoodLogic-applikation som källa till titel- och genre-information. Dessutom kan du skapa direktmixar baserat på genre, artist och låt-nivå.
 
 SETUP_INSTANTMIXMAX
+	DE	Maximale Anzahl Lieder für Instant Mix
 	EN	Instant Mix Max Count
 
 SETUP_INSTANTMIXMAX_DESC
-	EN	This is the number for the maximum number of songs you want for playlists created as an Instant Mix. Instant Mixes may have fewer songs, depending on the Variety setting. Minimum is 12.
+	DE	Definiert die maximale Anzahl Lieder, die in einer als Instant Mix erstellten Playlist erfasst sein sollen. Instant Mixes können weniger Lieder haben, abhängig von den Variety Einstellungen.
+	EN	This is the maximum number of songs you want in playlists created as an Instant Mix. Instant Mixes may have fewer songs, depending on the Variety setting.
 
 SETUP_VARIETYCOMBO
 	EN	Moodlogic Variety
 
 SETUP_VARIETYCOMBO_DESC
+	DE	Mit diesem Wert steuern Sie die Variety Einstellung für den Moodlogic Instant Mix. Kleinere Werte bedeuten eine grössere Variation an Musik, grössere Werte eine engere Auswahl. Gültige Werte sind 0-100.
 	EN	This is the value to control the variety setting for Moodlogic Instant Mixes.  Lower numbers mean a wider variety of music, higher numbers mean less variety.  Valid numbers are 0-100.
 
 # advanced server settings
@@ -1916,14 +1950,17 @@ SETUP_REFRESHRATE_OK
 	SE	Uppdateringsintervall satt till:
 
 SETUP_ITUNESSCANINTERVAL
+	DE	iTunes Reload Intervall
 	EN	iTunes Reload Interval
 
 SETUP_ITUNESSCANINTERVAL_DESC
+	DE	Wenn sich die iTunes Musiksammlung ändert, wird SlimServer automatisch die Daten neu einlesen. Sie können die Mindestwartezeit (in Sekunden) definieren, die SlimServer warten soll, bevor er die iTunes Musiksammlung neu einliest.
 	EN	When your iTunes Music Library changes SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your iTunes Music Library again.  
 
 SETUP_ITUNESSCANINTERVAL_OK
+	DE	Minimale Wartezeit fürs Einlesen der iTunes Musiksammlung
 	EN	Minimum iTunes Music Library reload time:
-	
+
 SETUP_COVERART
 	DE	Plattencover
 	DK	Cover-billeder
@@ -2015,12 +2052,15 @@ SETUP_INCLUDENOART_DESC
 	SE	Välj om album som inte har någon associerad bild ska inkluderas i listan eller ej. En tom bild (standardstorlek) och albumnamn kan visas, eller exkluderas helt.
 
 SETUP_IGNOREMP3TAGS
+	DE	MP3 Tags ignorieren
 	EN	Ignore MP3 Tags
 
 SETUP_IGNOREMP3TAGS_DESC
+	DE	Sie können angeben, ob der SlimServer die Informationen, die ev. in den ID3 Tags der MP3 Dateien gespeichert sind, ignorieren und seine Informationen nur aus Datei- und Ordnernamen beziehen soll.
 	EN	You can choose whether SlimServer should ignore the MP3 ID3 tag information that may be embedded in the MP3 files and just use the file and folder names to identify your music library.
 
 SETUP_READMP3TAGS
+	DE	MP3 Tags einlesen
 	EN	Read MP3 Tags
 
 SETUP_PLUGINS_OK
@@ -2261,7 +2301,7 @@ SETUP_SAVESHUFFLED_0
 	EN	Save playlists in order songs were added
 	FR	Sauvegarder les listes de lecture dans l'ordre d'origine
 	SE	Spara låtlistor i orginalordning
-	
+
 SETUP_SAVEHISTORY
 	DE	Speichern des Verlaufs
 	DK	Gem historik
@@ -2811,16 +2851,19 @@ SETUP_ANIMATIONLEVEL_DESC
 	SE	Detta val avgör tillåten animering. Animering är kortvariga meddelanden, skärmåkningar vid navigering samt rullande långa titlar.
 
 SETUP_LOOKFORARTWORK
+	DE	Plattencovers nachschlagen
 	EN	Look For Artwork
 	FR	Répertorier les pochettes
 	SE	Sök efter Album-omslag
 
 SETUP_LOOKFORARTWORK_DESC
+	DE	Wenn der SlimServer die Musiksammlung durchsucht, dann kann er auch gleich nach Plattencovers suchen. Sie können angeben, ob sie das wollen, oder ob die Umschlaghüllen ignoriert werden sollen (beschleunigt das Einlesen).
 	EN	When SlimServer scans your music library it can automatically look for album artwork.  You can choose to not have it look for album artwork, which may speed up the scan process but may make the artwork not appear in the web interface.
 	FR	Lorsque le SlimServer répertorie votre dossier de musique, il recherche automatiquement les pochettes d'album. Vous pouvez choisir de ne pas rechercher les pochettes pour accélérer ce processus, mais certaines pochettes présentes risquent de ne pas apparaître dans l'interface web.
 	SE	När Slimserver scannar din musikmapp kan programvaran automatiskt söka efter album-omslag. Du kan stänga av detta för att öka hastigheten på inläsning, men effekten kan bli att albumomslag inte syns i webgränssnittet.
 
 SETUP_NO_ARTWORK
+	DE	Plattencovers ignorieren
 	EN	Do not Look For Artwork
 	FR	Ne pas répertorier les pochettes
 	SE	Sök inte efter album-omslag
@@ -4008,6 +4051,7 @@ TITLEFORMAT
 	SE	Format på låttitel
 
 TITLEFORMAT_DBL
+	DE	Titelformat
 	FR	Format titres
 
 CURRENT_PLAYLIST
@@ -4084,6 +4128,7 @@ SAVED_PLAYLISTS
 	SE	Sparade låtlistor
 
 SAVED_PLAYLISTS_DBL
+	DE	Playlists
 	FR	Listes de lecture
 
 PLAYLISTDIR
@@ -4346,6 +4391,7 @@ WMA
 	EN	Windows Media
 
 M4P
+	DE	Geschütztes AAC
 	EN	Protected AAC
 
 AIF
@@ -4633,6 +4679,7 @@ ALL_SONGS
 	SE	Alla låtar
 
 ALL_ARTISTS
+	DE	Alle Interpreten
 	EN	All Artists
 
 ALL_ALBUMS
@@ -4646,6 +4693,7 @@ ALL_ALBUMS
 	SE	Alla album
 
 ALL_SUBFOLDERS
+	DE	Alle Unterverzeichnisse
 	EN	All Subfolders
 
 OF
@@ -5656,7 +5704,7 @@ PLAYER_NEEDS_UPGRADE_1
 	EN	Squeezebox Software Update
 	FR	Mise à jour du logiciel Squeezebox
 	SE	Mjukvaruppgradering av spelaren
-	
+
 PLAYER_NEEDS_UPGRADE_2
 	DE	Drücken und halten Sie BRIGHTNESS gedrückt, um den Vorgang zu starten.
 	EN	Press and hold BRIGHTNESS key to begin.
@@ -5790,7 +5838,7 @@ SEARCHFOR_ARTIST
 	NO	Søk etter Artist
 	PT	Procurar por Artista
 	SE	Sök efter artist
-	
+
 SEARCHFOR_ARTISTS
 	DE	Suchen nach Interpreten
 	DK	Søg efter Kunstnere
@@ -5802,7 +5850,7 @@ SEARCHFOR_ARTISTS
 	NO	Søk etter Artister
 	PT	Procurar por Artistas
 	SE	Sök efter artister
-	
+
 SEARCHFOR_ARTISTS_DBL
 	FR	Cherche artistes
 
@@ -5848,7 +5896,7 @@ SEARCHFOR_SONGS
 
 SEARCHFOR_SONGS_DBL
 	FR	Cherche morceaux
-	
+
 SEARCHFOR_SONGTITLE
 	DE	Suchen nach Liedertitel
 	DK	Søg efter Sangtitel
@@ -6213,10 +6261,12 @@ STATISTICS
 	SE	Statistik
 
 EDIT_PLAYLIST
+	DE	Playliste bearbeiten
 	EN	Edit Playlist
 	SE	Redigera låtlista
 
 DONE_EDITING
+	DE	Bearbeitung abgeschlossen
 	EN	Done Editing
 	SE	redigering klar
 
@@ -6372,7 +6422,7 @@ INFORMATION_ALBUMS
 	EN	Total Albums
 	FR	Albums
 	SE	Totalt antal album
-	
+
 INFORMATION_ARTISTS
 	DE	Anzahl Interpreten
 	EN	Total Artists
@@ -6424,7 +6474,7 @@ INFORMATION_DATE_FORMAT
 	DE	${shortdateFormat} um ${timeFormat}
 	EN	${shortdateFormat} at ${timeFormat}
 	FR	${shortdateFormat} à ${timeFormat}
-	
+
 COLON
 	EN	: 
 	FR	 : 
