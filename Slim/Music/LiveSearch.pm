@@ -30,7 +30,7 @@ sub query {
 	my @data  = ();
 	my $ds    = Slim::Music::Info->getCurrentDataStore();
 
-	my $search = Slim::Web::Pages::searchStringSplit($query, 0);
+	my $search = Slim::Web::Pages::searchStringSplit($query);
 
 	for my $type (keys %queries) {
 
