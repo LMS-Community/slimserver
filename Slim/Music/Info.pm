@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.97 2004/04/19 09:05:31 kdf Exp $
+# $Id: Info.pm,v 1.98 2004/04/19 09:16:54 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2334,7 +2334,7 @@ sub readCoverArtFiles {
 	if ($image eq 'thumb') {
 		@filestotry = map { @{$nameslist{$_}} } qw(thumb albumartsmall cover folder album);
 		if (Slim::Utils::Prefs::get('coverThumb')) {
-			$ artwork = Slim::Utils::Prefs::get('coverThumb');
+			$artwork = Slim::Utils::Prefs::get('coverThumb');
 		}
 	} else {
 		@filestotry = map { @{$nameslist{$_}} } qw(cover folder album thumb albumartsmall);
