@@ -389,7 +389,7 @@ sub newTrack {
 
 		$::d_info && Slim::Utils::Misc::msg("readTag was set for $url\n");
 
-		$attributeHash = $self->readTags($url);
+		$attributeHash = { %{$self->readTags($url)}, %$attributeHash  };
 	}
 
 	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($url, $attributeHash, 1);

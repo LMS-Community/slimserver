@@ -385,6 +385,7 @@ sub exportFunction {
 
 			'url' => $url,
 			'attributes' => \%cacheEntry,
+			'readTags'   => 1,
 
 		}) || do {
 
