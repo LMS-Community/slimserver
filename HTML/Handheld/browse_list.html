@@ -11,10 +11,10 @@
 			[% ELSE %]
 				<a href="songinfo.html?item=[% item %]&player=[% player | uri %]">"[% title %]"</a>
 				[% IF includeAlbum && album %][% "FROM" | string %]
-					<i><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>
+					<i><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]">[% album | html %]</a></i>
 				[% END %]
 				[% IF includeArtist && artist %][% "BY" | string %]
-					<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.contributorsOfType('artist').first.id %]&player=[% player | uri %]" target="browser">[% artist | html %]</a></i>
+					<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.contributorsOfType('artist').first.id %]&player=[% player | uri %]">[% artist | html %]</a></i>
 				[% END %] 
 			[% END %]
 		</td>
