@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.20 2004/02/16 04:14:19 dean Exp $
+# $Id: RemoteStream.pm,v 1.21 2004/02/20 20:56:53 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -77,7 +77,7 @@ sub openRemoteStream {
 
 	syswrite($sock, $request);
 
-	my $response = Slim::Utils::Misc::sysreadline($sock,2); #<$sock>;
+	my $response = Slim::Utils::Misc::sysreadline($sock,10); #<$sock>;
 
 	$::d_remotestream && msg("Response: $response");
 	

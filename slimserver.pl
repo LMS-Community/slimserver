@@ -299,6 +299,8 @@ sub start {
 	Slim::Web::History::load();
 	$::d_server && msg("Source conversion init..\n");
 	Slim::Player::Source::init();
+	$::d_server && msg("SlimServer Plugins init...\n");
+	Slim::Buttons::Plugins::init();
 	
 	$::d_server && msg("SlimServer persist playlists...\n");
 	if (Slim::Utils::Prefs::get('persistPlaylists')) {
@@ -747,6 +749,7 @@ sub cleanup {
 
 	remove_pid_file();
 	Slim::Networking::mDNS::stopAdvertise();
+	Slim::Buttons::Plugins::shutdownPlugins();
 }
 
 sub save_pid_file {
