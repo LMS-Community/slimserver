@@ -18,7 +18,7 @@
 		</td>
 		<td width="13">
 			[% IF descend %]
-				<a href="status.html?command=playlist&sub=loadtracks[% attributes %]&player=[% player | uri %]"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>
+				<a href="status.html?command=playlist&subcommand=loadtracks[% attributes %]&player=[% player | uri %]"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>
 			[% ELSE %]
 				<a href="status.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>
 			[% END %]
@@ -27,7 +27,7 @@
 		
 		<td width="13">
 			[% IF descend %]
-				<a href="status.html?command=playlist&sub=addtracks[% attributes %]&player=[% player | uri %]"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>
+				<a href="status.html?command=playlist&subcommand=addtracks[% attributes %]&player=[% player | uri %]"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>
 			[% ELSE %]
 				<a href="status.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>
 			[% END %]

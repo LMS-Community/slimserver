@@ -577,12 +577,12 @@ sub processURL {
 		$p[$i] = $params->{"p$i"};
 	}
 
-	# This is trumped by query parameters 'command' and 'sub'.
+	# This is trumped by query parameters 'command' and 'subcommand'.
 	# These are passed as the first two command parameters (p0 and p1), 
 	# while the rest of the query parameters are passed as third (p3).
 	if (defined $params->{'command'}) {
 		$p[0] = $params->{'command'};
-		$p[1] = $params->{'sub'};
+		$p[1] = $params->{'subcommand'};
 		$p[2] = join '&', map $_ . '=' . $params->{$_},  keys %{$params};
 	}
 

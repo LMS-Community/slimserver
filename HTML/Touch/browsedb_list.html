@@ -12,11 +12,11 @@
 <td align="right" style="padding-right:15px;">
  
 <nobr>
-[% IF descend %]<a href="[% webroot %][% path %]?command=playlist&sub=loadtracks[% attributes %]&player=[% player | uri %]">
+[% IF descend %]<a href="[% webroot %][% path %]?command=playlist&subcommand=loadtracks[% attributes %]&player=[% player | uri %]">
 <font class="actiontext">[% "PLAY" | string %]</a>[% END %]
 
 
-[% IF not descend %]<a href="[% webroot %][% path %]?command=playlist&sub=inserttracks[% attributes %]&player=[% player | uri %]"><font class="actiontext">[% "PLAY" | string %]</a>[% END %]
+[% IF not descend %]<a href="[% webroot %][% path %]?command=playlist&subcommand=inserttracks[% attributes %]&player=[% player | uri %]"><font class="actiontext">[% "PLAY" | string %]</a>[% END %]
 
 |&nbsp;
 

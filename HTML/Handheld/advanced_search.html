@@ -181,9 +181,9 @@
 		<table cellspacing="0" cellpadding="4" width="100%">
 			<tr bgcolor="#d0d0d0">
 				<td>[% "ALL_SONGS" | string %]</td>	
-				<td><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&sub=playtracks&listref=searchResults"><img src="html/images/b_play.gif" border=0 width="13" height="13"></a></td>	
+				<td><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults"><img src="html/images/b_play.gif" border=0 width="13" height="13"></a></td>	
 				<td>&nbsp;</td>
-				<td><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&sub=addtracks&listref=searchResults"><img src="html/images/b_add.gif" border=0 width="13" height="13"></a></td>	
+				<td><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=addtracks&listref=searchResults"><img src="html/images/b_add.gif" border=0 width="13" height="13"></a></td>	
 			</tr>
 			[% browse_list %]
 		</table>

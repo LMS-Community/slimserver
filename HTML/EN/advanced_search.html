@@ -252,8 +252,8 @@
 	[% END %]
 	[% IF numresults != '-1' %]
 		<p>[% "ALL_SONGS" | string %]</p>
-		<p><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&sub=playtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a>, 
-			<a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&sub=addtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a>
+		<p><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a>, 
+			<a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=addtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a>
 		</p>
 	[% END %]
 	<p>&nbsp;</p></td>
