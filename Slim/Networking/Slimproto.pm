@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.50 2004/04/15 18:49:40 dean Exp $
+# $Id: Slimproto.pm,v 1.51 2004/04/16 15:33:12 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -302,9 +302,11 @@ sub process_slimproto_frame {
 			Slim::Hardware::VFD::vfdBrightness($client,$Slim::Hardware::VFD::MAXBRIGHTNESS);
 			Slim::Buttons::Block::block($client, string('PLAYER_NEEDS_UPGRADE_1'), string('PLAYER_NEEDS_UPGRADE_2'));
 		} else {
-			Slim::Buttons::Block::unblock($client);
+			# workaround to handle multiple firmware versions causing blocking modes to stack
+			while (Slim::Buttons::Common::mode($client) eq 'block') {
+				Slim::Buttons::Block::unblock($client);
+			}
 		 	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
-
 		}
 		return;
 	} 

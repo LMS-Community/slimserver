@@ -1,6 +1,6 @@
 package HTML::Entities;
 
-# $Id: Entities.pm,v 1.1 2004/03/06 04:09:29 daniel Exp $
+# $Id: Entities.pm,v 1.2 2004/04/16 15:33:07 dean Exp $
 
 =head1 NAME
 
@@ -107,7 +107,7 @@ require Exporter;
 @EXPORT = qw(encode_entities decode_entities _decode_entities);
 @EXPORT_OK = qw(%entity2char %char2entity encode_entities_numeric);
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 sub Version { $VERSION; }
 
 # XXX - SlimServer mod, until HTML::Parser is included for all the platforms.
@@ -394,7 +394,7 @@ for (0 .. 255) {
 
 my %subst;  # compiled encoding regexps
 
-sub decode_entities_old
+sub decode_entities
 {
     my $array;
     if (defined wantarray) {
