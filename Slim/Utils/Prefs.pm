@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.55 2004/05/02 15:01:07 dean Exp $
+# $Id: Prefs.pm,v 1.56 2004/05/05 01:37:26 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -347,8 +347,7 @@ sub checkServerPrefs {
 				my @temp = @{$DEFAULT{$key}};
 				$prefs{$key} = \@temp;
 			} else {
-				#$prefs{$key} = $DEFAULT{$key};
-				set($key,$DEFAULT{$key});
+				$prefs{$key} = $DEFAULT{$key};
 			}
 		}
 	}
@@ -653,7 +652,7 @@ sub load {
 		$readFile = catdir(preferencesPath(), '.slimp3.pref');
 	}
 	
-	if (!-r $readFile) {
+	if (!-r $readFile && $ENV{'HOME'}) {
 		$readFile = catdir($ENV{'HOME'}, '.slimp3.pref');
 	}
 	
