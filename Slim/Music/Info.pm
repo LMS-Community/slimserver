@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.131 2004/07/01 05:10:32 dean Exp $
+# $Id: Info.pm,v 1.132 2004/07/01 19:06:48 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -606,7 +606,7 @@ sub clearPlaylists {
 }
 
 sub sortPlaylists {
-	@playlists = Slim::Music::Info::sortIgnoringCase(@playlists);
+	@playlists = Slim::Utils::Text::sortIgnoringCase(@playlists);
 }
 
 sub generatePlaylists {
