@@ -1443,7 +1443,7 @@ sub isURL {
 }
 
 sub isType {
-	my $pathOrObj = shift;
+	my $pathOrObj = shift || return 0;
 	my $testtype  = shift;
 
 	my $type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj, 1);
