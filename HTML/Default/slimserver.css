@@ -1,4 +1,4 @@
-body, table, input, select, p, li {
+body, table, input, select, textarea, select, p, li {
 	color: #444;
 	font-size: 10px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -53,6 +53,8 @@ pre, code, h3 {
 table, td, tr, form {
 	padding: 0px;
 	margin: 0px;
+	vertical-align: top; 
+	text-align: left;
 }
 
 .lightgrey, .odd {
@@ -94,6 +96,18 @@ img {
 
 .PrefExtValue {
 	width: 200px;
+}
+
+.alignright {
+	text-align: right;
+	width: 100%;
+	vertical-align: bottom;
+}
+
+.alignleft {
+	text-align: left;
+	width: 100%;
+	vertical-align: bottom;
 }
 
 /* Start various helpers for the live search */

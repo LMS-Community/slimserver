@@ -1989,7 +1989,7 @@ sub initSetupConfig {
 					'PrefOrder' => ['webproxy','httpport','cliport','mDNSname','remotestreamtimeout']
 				}
 			,'TCP_Params' => {
-					'PrefOrder' => ['tcpReadMaximum','tcpWriteMaximum','tcpConnectMaximum','udpChunkSize']
+					'PrefOrder' => ['tcpReadMaximum','tcpWriteMaximum','udpChunkSize']
 					,'PrefsInTable' => 1
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
@@ -2045,10 +2045,6 @@ sub initSetupConfig {
 						,'validateArgs' => [1,undef,1]
 					}
 			,"tcpWriteMaximum" => {
-						'validate' => \&validateInt
-						,'validateArgs' => [1,undef,1]
-					}
-			,"tcpConnectMaximum" => {
 						'validate' => \&validateInt
 						,'validateArgs' => [1,undef,1]
 					}

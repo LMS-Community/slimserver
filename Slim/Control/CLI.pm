@@ -116,11 +116,6 @@ sub connectedSocket {
 }
 
 sub acceptSocket {
-	if (connectedSocket() > Slim::Utils::Prefs::get("tcpConnectMaximum")) {
-		$::d_cli && msg("Too many sockets open, not accepting CLI connection...\n");
-		return;
-	}
-
 	my $clientsock = $server_socket->accept();
 
 	if ($clientsock && $clientsock->connected && $clientsock->peeraddr) {

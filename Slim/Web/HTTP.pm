@@ -243,11 +243,6 @@ sub connectedSocket {
 }
 
 sub acceptHTTP {
-	if (connectedSocket() > Slim::Utils::Prefs::get("tcpConnectMaximum")) {
-		$::d_http && msg("Too many sockets open, not accepting...\n");
-		return;
-	}
-
 	# try and pull the handle
 	my $httpClient = $http_server_socket->accept() || do {
 		$::d_http && msg("Did not accept connection, accept returned nothing\n");

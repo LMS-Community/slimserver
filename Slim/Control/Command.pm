@@ -888,7 +888,7 @@ sub execute {
 
 				push(@{Slim::Player::Playlist::playList($client)}, map { $_->url } @$results);
 
-				Slim::Player::Playlist::reshuffle($client);
+				Slim::Player::Playlist::reshuffle($client, 1);
 				Slim::Player::Source::jumpto($client, 0);
 				$client->currentPlaylist(undef);
 				$client->currentPlaylistChangeTime(time());
@@ -924,7 +924,7 @@ sub execute {
 					push(@{Slim::Player::Playlist::playList($client)}, parseListRef($client,$p2,$p3));
 				}
 					
-				Slim::Player::Playlist::reshuffle($client);
+				Slim::Player::Playlist::reshuffle($client,1);
 				Slim::Player::Source::jumpto($client, 0);
 
 				$client->currentPlaylistChangeTime(time());

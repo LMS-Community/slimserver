@@ -4411,31 +4411,6 @@ SETUP_TCPWRITEMAXIMUM_CHOOSE
 	PT	Número máximo de sockets TCP a escrever por passagem
 	SE	Maximalt antal skrivna "TCP-sockets" per pass
 
-SETUP_TCPCONNECTMAXIMUM
-	DE	Maximale Anzahl der zu akzepierenden TCP Verbindungen:
-	DK	Maksimum antal accepterede samtidige TCP forbindelser
-	EN	Maximum number of simultaneous TCP connections to accept
-	ES	Número máximo de conexiones TCP permitidas
-	FI	TCP -yhteyksien enimmäismäärä yhtäaikaa
-	FR	Nombre maximum de connexions TCP simultanées
-	JP	同時に受け入れるTCP接続の最大数
-	NL	Maximaal aantal te accepteren TCP verbindingen
-	NO	Maksimalt antall samtidige TCP-forbindelser
-	PT	Número máximo de conexões TCP simultâneas a aceitar
-	SE	Maximalt antal samtidiga TCP-uppkopplingar
-
-SETUP_TCPCONNECTMAXIMUM_CHOOSE
-	DE	Maximale Anzahlt der zu akzepierenden TCP Verbindungen:
-	DK	Maksimum antal accepterede samtidige TCP forbindelser:
-	EN	Maximum number of simultaneous TCP connections to accept:
-	ES	Número máximo de conexiones TCP permitidas
-	FI	TCP -yhteyksien enimmäismäärä yhtäaikaa
-	FR	Nombre maximum de connexions TCP simultanées :
-	NL	Maximaal aantal te accepteren TCP verbindingen:
-	NO	Maksimalt antall samtidige TCP-forbindelser:
-	PT	Número máximo de conexões TCP simultâneas a aceitar
-	SE	Maximalt antal samtidiga TCP-uppkopplingar:
-
 SETUP_UDPCHUNKSIZE
 	DE	Maximale UDP-Datengröße
 	DK	Maksimum UDP-datastørrelse

@@ -831,7 +831,9 @@ sub browser_addtolist_done {
 				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browse_list.html", \%list_form)};
 			}
 		}
-		
+		my $noArtist     = Slim::Utils::Strings::string('NO_ARTIST');
+		my $noAlbum      = Slim::Utils::Strings::string('NO_ALBUM');
+	
 		for my $item (@{$itemsref}[$start..$end]) {
 			
 			# make sure the players get some time...
@@ -860,8 +862,9 @@ sub browser_addtolist_done {
 				$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
 				$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
 
-				$list_form{'artist'}	= $list_form{'includeArtist'} ? ($obj->contributors)[0] : undef;
-				$list_form{'album'}	= $list_form{'includeAlbum'}  ? $obj->album() : undef;
+
+				$list_form{'artist'} = $list_form{'includeArtist'} && ($obj->contributors)[0] ne $noArtist ? ($obj->contributors)[0] : undef;
+				$list_form{'album'}	= $list_form{'includeAlbum'} && $obj->album() ne $noAlbum ? $obj->album() : undef;
 				
 				if (!defined $cover) {
 
