@@ -60,7 +60,7 @@ my %functions = (
 				Slim::Control::Command::execute($client, ["playlist", "jump", "0"]);
 			} else {
 				Slim::Buttons::Common::popModeRight($client);
-				Slim::Hardware::IR::executeButton($client, 'play');
+				Slim::Control::Command::execute($client, ["button", "play", undef]);
 			}
 	},
 	
@@ -97,7 +97,7 @@ my %functions = (
 				Slim::Control::Command::execute($client, ["playlist", "addalbum", Slim::Music::Info::genre(track($client)), Slim::Music::Info::artist(track($client)), Slim::Music::Info::album(track($client))]);			
 			} else {
 				Slim::Buttons::Common::popModeRight($client);
-				Slim::Hardware::IR::executeButton($client, 'add');
+				Slim::Control::Command::execute($client, ["button", "add", undef]);
 			}
 	},
 	
