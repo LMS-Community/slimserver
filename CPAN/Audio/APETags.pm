@@ -123,6 +123,10 @@ sub _init {
 				# No APE tag to be found
 				return -2;
 			}
+		} else {
+			# Proper tags haven't been found, so warn and return an error
+			warn "header not found, tags corrupt or not a supported version";
+			return -1;
 		}
 	}
 
@@ -146,8 +150,11 @@ sub _parseTags {
 	$tmp = substr $tmp, 8;
 
 	$self->{'tagVersion'}     = _grabInt32(\$tmp);
+
 	$self->{'tagTotalSize'}   = _grabInt32(\$tmp);
+
 	$self->{'tagTotalItems'}  = _grabInt32(\$tmp);
+
 	$self->{'tagGlobalFlags'} = _grabInt32(\$tmp);
 
 	# Check the tagGlobalFlags to determine whether or not this
