@@ -11,3 +11,7 @@ SELECT, INPUT {
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-size: x-small;
 }
+
+img {
+	border-style: none;
+}
