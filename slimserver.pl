@@ -239,7 +239,7 @@ use Slim::Utils::Timers;
 use Slim::Networking::Slimproto;
 use Slim::Networking::SimpleAsyncHTTP;
 
-use vars qw($VERSION $REVISION @AUTHORS);
+use vars qw($VERSION @AUTHORS);
 
 @AUTHORS = (
 	'Sean Adams',
@@ -259,8 +259,6 @@ use vars qw($VERSION $REVISION @AUTHORS);
 );
 
 $VERSION  = '6.0b1';
-$REVISION = '$Revision$';
-$REVISION =~ s/\$Revision:\s*(\d+)\s*\$/r$1/;
 
 # old preferences settings, only used by the .slim.conf configuration.
 # real settings are stored in the new preferences file:  .slim.pref
