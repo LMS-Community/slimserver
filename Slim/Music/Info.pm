@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.160 2004/12/09 08:47:42 kdf Exp $
+# $Id: Info.pm,v 1.161 2004/12/09 17:19:38 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2315,7 +2315,7 @@ sub getImageContent {
 	if (open (TEMPLATE, $path)) { 
 		local $/ = undef;
 		binmode(TEMPLATE);
-		$$contentref=join('',<TEMPLATE>);
+		$$contentref = <TEMPLATE>;
 		close TEMPLATE;
 	}
 	
