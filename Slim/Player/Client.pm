@@ -400,7 +400,7 @@ sub defaultName {
 sub getClient {
 	my $id = shift;
 	my $ret = $clientHash{$id};
-	$::d_protocol_verbose && msg ("getClient($id) == ".(defined($ret)?$ret:'UNDEF')."\n");
+	#$::d_protocol && msg ("getClient($id) == ".(defined($ret)?$ret:'UNDEF')."\n");
 	return($ret);
 }
 
