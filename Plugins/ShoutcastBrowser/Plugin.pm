@@ -85,27 +85,42 @@ $munge_genres = 1;
 # canonical form.
 
 %genre_aka = (
-	'50s' => '50', '60s' => '60', '70s' => '70', '80s' => '80', '90s' => '90',
-	top_40 => [qw(top40 chart top_hits)],
-	'drum_&_bass' => [qw(dnb d&b d_&_b drum_and_bass drum bass)],
-	 rap => [qw(hiphop hip_hop)],
-	comedy => [qw(humor humour)],
-	old_school => [qw(oldskool old_skool oldschool)],
-	dutch => [qw(holland netherland nederla)],
-	various => [qw(any every mixed eclectic mix variety random misc)],
-	'r_&_b' => [qw(rnb r_n_b r&b)], reggae => [qw(ragga dancehall dance_hall)],
-	hungarian => 'hungar', african => 'africa', classical => 'symphonic',
-	video_game => [qw(videogame gaming)], psychedelic => 'psych',
-	spiritual =>
-	[qw(christian praise worship prayer inspirational bible religious)],
-	freeform => 'freestyle', greek => 'greece', punjabi => 'punjab',
-	breakbeat => 'breakbeats', new_age => 'newage',
-	british => [qw(britpop)],
-	community => 'local', low_fi => [qw(lowfi lofi)],
-	anime => 'animation', electronic => [qw(electro electronica)],
-	trance => 'tranc', talk => [qw(spoken politics)], gothic => 'goth',
-	oldies => 'oldie', soundtrack => [qw(film movie)],
-	live => 'vivo'
+	'50s' => '50', 
+	'60s' => '60', 
+	'70s' => '70', 
+	'80s' => '80', 
+	'90s' => '90',
+	'top_40' => 'top40|chart|top_hits',
+	'drum_&_bass' => 'dnb|d&b|d_&_b|drum_and_bass|drum|bass',
+	'rap' => 'hiphop|hip_hop',
+	'comedy' => 'humor|humour',
+	'old_school' => 'oldskool|old_skool|oldschool',
+	'dutch' => 'holland|netherland|nederla',
+	'various' => 'any|every|mixed|eclectic|mix|variety|random|misc',
+	'r_&_b' => 'rnb|r_n_b|r&b', 
+	'reggae' => 'ragga|dancehall|dance_hall',
+	'hungarian' => 'hungar', 
+	'african' => 'africa',
+	'classical' => 'symphonic',
+	'video_game' => 'videogame gaming', 
+	'psychedelic' => 'psych',
+	'spiritual' => 'christian|praise|worship|prayer|inspirational|bible|religious',
+	'freeform' => 'freestyle', 
+	'greek' => 'greece', 
+	'punjabi' => 'punjab',
+	'breakbeat' => 'breakbeats', 
+	'new_age' => 'newage',
+	'british' => 'britpop',
+	'community' => 'local', 
+	'low_fi' => 'lowfi|lofi',
+	'anime' => 'animation', 
+	'electronic' => 'electro|electronica',
+	'trance' => 'tranc', 
+	'talk' => 'spoken|politics', 
+	'gothic' => 'goth',
+	'oldies' => 'oldie', 
+	'soundtrack' => 'film|movie',
+	'live' => 'vivo'
 );
 
 ## These are useful, descriptive genres, which should not be removed
@@ -171,7 +186,6 @@ if (Slim::Utils::Prefs::get('playlistdir')) {
 
 our ($top_limit, $most_popular_name, $custom_genres, %custom_genres);
 
-our $debug = 0;
 our (%current_genre, %current_stream, %status, %number, %current_info, %old_stream);
 our $last_time = 0;
 
@@ -180,14 +194,7 @@ our (@genres, %streams, %stream_data, %bitrates, %current_bitrate);
 our %genre_transform;
 
 for my $key (keys %genre_aka) {
-	my $rx;
-	
-	if (ref $genre_aka{$key}) {
-		$rx = join '|', @{ $genre_aka{$key} };
-	} else {
-		$rx = $genre_aka{$key};
-	}
-	
+	my $rx = $genre_aka{$key};
 	$rx = "\L$rx";
 	$rx =~ s/_/ /g;
 	
@@ -200,31 +207,15 @@ for my $key (keys %genre_aka) {
 	$genre_transform{$rx} = $key;
 }
 
-our $genre_list = join '|', @genre_keywords;
-
-$genre_list = "\L$genre_list";
-$genre_list =~ s/_/ /g;
-
 our %keyword_index;
 
 if (grep {$_ =~ m/keyword/i} @genre_criteria) {
 	my $i = 1;
-	
+
 	for (@genre_keywords) {
 		$keyword_index{$_} = $i;
 		$i++;
 	}
-}
-
-our %legit_genres;
-
-for my $g (@legit_genres) {
-	$g = "\L$g";
-	$g =~ s/\s+/ /g;
-	$g =~ s/^ //;
-	$g =~ s/ $//;
-	$g = "\u$g";
-	$legit_genres{$g}++;
 }
 
 sub getDisplayName {
@@ -330,7 +321,7 @@ sub setMode {
 	$number{$client} = undef;
 	
 	@info_order = ($client->string('BITRATE'), $client->string('PLUGIN_SHOUTCASTBROWSER_STREAM_NAME'), $client->string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS'), $client->string('GENRE'), $client->string('PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING'), $client->string('URL') );
-	@info_index = (                    4,                                         2,                                                          3,                                               6,                                         5,                                   0);
+	@info_index = (                    2,                                         -1,                                                          1,                                               4,                                         3,                                   0);
 	
 	$client->update();
 	
@@ -379,9 +370,17 @@ sub getStreams {
 
 	my $xml  = $http->content();
 	$http->close();
+	undef $http;
 	
 	$last_time = time;
 	&setup_custom_genres() if $custom_genres;
+	
+	my $genre_list;
+	if ($munge_genres) {
+		$genre_list = join '|', @genre_keywords;
+		$genre_list = "\L$genre_list";
+		$genre_list =~ s/_/ /g;
+	}
 	
 	unless ($xml) {
 		$status{$client} = -1;
@@ -393,46 +392,30 @@ sub getStreams {
 		$xml = Compress::Zlib::uncompress($xml);
 	}
 
-		# Using XML::Simple reduces the memory footprint by nearly 2 megs vs the old manual scanning.
+	# Using XML::Simple reduces the memory footprint by nearly 2 megs vs the old manual scanning.
 	my $data  = XML::Simple::XMLin($xml, SuppressEmpty => '');
-	my $label = $data->{'playlist'}->{'label'};
 
 	for my $entry (@{$data->{'playlist'}->{'entry'}}) {
 
 		my $url		 = $entry->{'Playstring'};
-		my $name		= $entry->{'Name'};
-		my $genre	   = $entry->{'Genre'};
-		my $now_playing = $entry->{'Nowplaying'};
+		my $name		= cleanMe($entry->{'Name'});
+		my $genre	   = cleanMe($entry->{'Genre'});
+		my $now_playing = cleanMe($entry->{'Nowplaying'});
 		my $listeners   = $entry->{'Listeners'};
 		my $bitrate	 = $entry->{'Bitrate'};
 
 		next if ($min_bitrate and $bitrate < $min_bitrate);
 		next if ($max_bitrate and $bitrate > $max_bitrate);
 
-		$genre =~ s/%([\dA-F][\dA-F])/chr hex $1/gei;#encoded chars
-		$name =~ s/%([\dA-F][\dA-F])/chr hex $1/gei;
-		$now_playing =~ s/%([\dA-F][\dA-F])/chr hex $1/gei;
-
-		HTML::Entities::decode_entities($name);
-		HTML::Entities::decode_entities($genre);
-		HTML::Entities::decode_entities($now_playing);
-
-		$name =~ s#\b([\w-]) ([\w-]) #$1$2#g;#S P A C E D  W O R D S
-		$name =~ s#\b(ICQ|AIM|MP3Pro)\b##i;# we don't care
-		$name =~ s#\W\W\W\W+# #g;# excessive non-word characters
-		$name =~ s#^\W+##;# leading non-word characters
-		$genre =~ s/\s+/ /g;
-
-		my $full_text;
 		my @keywords = ();
 		my $original = $genre;
 
-		if ($custom_genres) {
-			$genre = "\L$genre";
-			$genre =~ s/\s+/ /g;
-			$genre =~ s/^ //;
-			$genre =~ s/ $//;
-		
+		$genre = "\L$genre";
+		$genre =~ s/\s+/ /g;
+		$genre =~ s/^ //;
+		$genre =~ s/ $//;
+
+		if ($custom_genres) {	
 			my $match = 0;
 		
 			for my $key (keys %custom_genres) {
@@ -447,14 +430,7 @@ sub getStreams {
 				@keywords = ($misc_genre);
 			}
 		
-			$full_text= "$name | ${bitrate}kbps | $listeners online | $original | ";
-		
 		} elsif ($munge_genres) {
-			$genre = "\L$genre";
-			$genre =~ s/\s+/ /g;
-			$genre =~ s/^ //;
-			$genre =~ s/ $//;
-
 			for (keys %genre_transform) {
 				$genre =~ s/$_/$genre_transform{$_}/g;
 			}
@@ -464,17 +440,15 @@ sub getStreams {
 			}
 		
 			$genre = "\u$genre";
-			$genre = 'Unknown' if ($genre eq ' ' or $genre eq '');
+			$genre = 'Unknown' if (not $genre);
 
-			$full_text= "$name | ${bitrate}kbps | $listeners online | $original | ";
 			@keywords = ($genre) unless @keywords;
 		
 		} else {
-			$full_text= "$name | ${bitrate}kbps | $listeners online | ";
-			@keywords = ($genre);
+			@keywords = ($original);
 		}
 
-		my $data = [$url, $full_text, $name, $listeners, $bitrate, $now_playing, $original];
+		my $data = [$url, $listeners, $bitrate, $now_playing, $original];
 
 		foreach my $g (@keywords) {
 			$stream_data{$g}{$name}{$bitrate} = $data;
@@ -484,6 +458,7 @@ sub getStreams {
 		$stream_data{$all_name}{$name}{$bitrate} = $data;
 	}
 
+	undef $genre_list;
 	undef $xml;
 	undef $data;
 
@@ -491,7 +466,7 @@ sub getStreams {
 
 		foreach my $g (keys %stream_data) {
 
-			if ((exists $legit_genres{$g}) or (keys %{ $stream_data{$g} } > 1)) {
+			if ((grep(/$g/i, @legit_genres)) or (keys %{ $stream_data{$g} } > 1)) {
 				push @genres, $g;
 			} else {
 				my ($n) = keys %{ $stream_data{$g} };
@@ -510,54 +485,66 @@ sub getStreams {
 
 	}
 	
-	@genres = sort genre_sort keys %stream_data;
+	my $genre_sort = sub {
+		my $r = 0;
+		
+		return -1 if $a eq $all_name;
+		return 1  if $b eq $all_name;
+		return 1  if $a eq $misc_genre;
+		return -1 if $b eq $misc_genre;
+		
+		for my $criterion (@genre_criteria) {
+			
+			if ($criterion =~ m/^streams/i)	{
+				$r = keys %{ $stream_data{$b} } <=> keys %{ $stream_data{$a} };
+			} elsif ($criterion =~ m/^keyword/i) {
+			
+				if ($keyword_index{lc($a)}) {
+			
+					if ($keyword_index{lc($b)}) {
+						$r = $keyword_index{lc($a)} <=> $keyword_index{lc($b)};
+					} else {
+						$r = -1; 
+					}
+			
+				} else {
+					
+					if ($keyword_index{lc($b)}) { 
+						$r = 1; 
+					} else {
+						$r = 0;
+					}
+					
+				}
+			
+			} elsif ($criterion =~ m/^name/i or $criterion =~ m/^default/i) {
+				$r = (lc($a) cmp lc($b));
+			}
+			
+			$r = -1 * $r if $criterion =~ m/reverse$/i;
+			return $r if $r;
+		}
+		return $r;
+	};
+
+	@genres = sort $genre_sort keys %stream_data;
 
 	unshift @genres, $most_popular_name;
-
 	unshift @genres, $recent_name;
 	$position_of_recent = 0;
 }
 
-sub genre_sort {
-	my $r = 0;
-	
-	return -1 if $a eq $all_name;
-	return 1  if $b eq $all_name;
-	return 1  if $a eq $misc_genre;
-	return -1 if $b eq $misc_genre;
-	
-	for my $criterion (@genre_criteria) {
-		
-		if ($criterion =~ m/^streams/i)	{
-			$r = keys %{ $stream_data{$b} } <=> keys %{ $stream_data{$a} };
-		} elsif ($criterion =~ m/^keyword/i) {
-		
-			if ($keyword_index{lc($a)}) {
-		
-				if ($keyword_index{lc($b)}) {
-					$r = $keyword_index{lc($a)} <=> $keyword_index{lc($b)};
-				} else {
-					$r = -1; 
-				}
-		
-			} else {
-				
-				if ($keyword_index{lc($b)}) { 
-					$r = 1; 
-				} else {
-					$r = 0;
-				}
-				
-			}
-		
-		} elsif ($criterion =~ m/^name/i or $criterion =~ m/^default/i) {
-			$r = (lc($a) cmp lc($b));
-		}
-		
-		$r = -1 * $r if $criterion =~ m/reverse$/i;
-		return $r if $r;
-	}
-	return $r;
+sub cleanMe {
+	my $arg = shift;
+
+	$arg =~ s/%([\dA-F][\dA-F])/chr hex $1/gei;#encoded chars
+	$arg = HTML::Entities::decode_entities($arg);
+	$arg =~ s#\b([\w-]) ([\w-]) #$1$2#g;#S P A C E D  W O R D S
+	$arg =~ s#\b(ICQ|AIM|MP3Pro)\b##i;# we don't care
+	$arg =~ s#\W\W\W\W+# #g;# excessive non-word characters
+	$arg =~ s#^\W+##;# leading non-word characters
+	$arg =~ s/\s+/ /g;
+	return $arg;
 }
 
 sub reload_xml {
@@ -736,7 +723,7 @@ sub setupGroup
 		},
 		
 		plugin_shoutcastbrowser_custom_genres => {
-			validate => \&validateIsFile,
+			validate => sub { Slim::Web::Setup::validateIsFile(shift, 1); },
 			PrefSize => 'large',
 			onChange => sub { @genres = (); }
 		},
@@ -791,18 +778,6 @@ sub setupGroup
 	return (\%setupGroup,\%setupPrefs);
 }
 
-sub validateIsFile {
-	my $val = shift;
-	
-	if (not defined $val) {
-		return '';
-	} elsif (-f $val or $val eq '') {
-		return $val;
-	} else {
-		return (undef, string("SETUP_BAD_DIRECTORY"));
-	}
-}
-
 sub checkDefaults {
 	
 	if (!Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_how_many_streams')) {
@@ -848,16 +823,16 @@ our $popular_sort = sub {
 	my $r = 0;
 	my ($aa, $bb) = (0, 0);
 	
-	$aa += $stream_data{$all_name}{$a}{$_}[3]
-	foreach keys %{ $stream_data{$all_name}{$a} };
-	$bb += $stream_data{$all_name}{$b}{$_}[3]
-	foreach keys %{ $stream_data{$all_name}{$b} };
+	$aa += $stream_data{$all_name}{$a}{$_}[1] 
+		foreach keys %{ $stream_data{$all_name}{$a} };
+		
+	$bb += $stream_data{$all_name}{$b}{$_}[1]
+		foreach keys %{ $stream_data{$all_name}{$b} };
 
-			$r = $bb <=> $aa;
+	$r = $bb <=> $aa;
 	return $r if $r;
-	
-	$r = lc($a) cmp lc($b);
-	return $r;
+
+	return lc($a) cmp lc($b);
 };
 
 our $mode_sub = sub {
@@ -879,13 +854,11 @@ our $mode_sub = sub {
 				my ($aa, $bb) = (0, 0);
 				my $current_genre = $genres[$current_genre{$client}];
 				
-				$aa += $stream_data{$current_genre}{$a}{$_}[3]
+				$aa += $stream_data{$current_genre}{$a}{$_}[1]
+					foreach keys %{ $stream_data{$current_genre}{$a} };
 				
-				foreach keys %{ $stream_data{$current_genre}{$a} };
-				
-				$bb += $stream_data{$current_genre}{$b}{$_}[3]
-				
-				foreach keys %{ $stream_data{$current_genre}{$b} };
+				$bb += $stream_data{$current_genre}{$b}{$_}[1]
+					foreach keys %{ $stream_data{$current_genre}{$b} };
 				
 				$r = $bb <=> $aa;
 			
@@ -1148,9 +1121,7 @@ our $leave_bitrate_mode_sub = sub {
 
 sub bitrate_sort {
 	my $r = $b <=> $a;
-	
 	$r = -$r if $sort_bitrate_up;
-	
 	return $r;
 }
 
@@ -1294,7 +1265,14 @@ sub infoLines {
 		$lines[0] = $current_bitrate . 'kbps - ' .$current_stream;
 	}
 	
-	my $info = $current_data->[$info_index[$cur]] || $client->string('PLUGIN_SHOUTCASTBROWSER_NONE');
+	my $info;
+	# get the stream's name from the hash key, not the array
+	if ($info_index[$cur] == -1) {
+		$info = $current_stream;
+	}
+	else {
+		$info = $current_data->[$info_index[$cur]] || $client->string('PLUGIN_SHOUTCASTBROWSER_NONE');
+	}
 	
 	$lines[1] = $info_order[$cur] . ': ' . $info;
 
@@ -1503,6 +1481,7 @@ sub webPages {
     return (\%pages);
 }
 
+
 sub handleWebIndex {
 	my ($client, $params) = @_;
 
@@ -1521,41 +1500,12 @@ sub handleWebIndex {
 	}
 
 	if ($params->{'p0'}) {
-		my $stream_sort = sub {
-			my $r = 0;
-		
-			for my $criterion (@stream_criteria) {
-				if ($criterion =~ m/^listener/i) {
-					my ($aa, $bb) = (0, 0);
-					my $current_genre = $genres[$current_genre{$client}];
-					
-					$aa += $stream_data{$current_genre}{$a}{$_}[3]
-					
-					foreach keys %{ $stream_data{$current_genre}{$a} };
-					
-					$bb += $stream_data{$current_genre}{$b}{$_}[3]
-					
-					foreach keys %{ $stream_data{$current_genre}{$b} };
-					
-					$r = $bb <=> $aa;
-				
-				} elsif ($criterion =~ m/^name/i or $criterion =~ m/default/i) {
-					$r = lc($a) cmp lc($b);
-				}
-				
-				$r = -1 * $r if $criterion =~ m/reverse$/i;
-				
-				return $r if $r;
-			}
-			
-			return $r;
-		};
-	
 		# show stream information
 		if (defined $params->{'p1'}) {
 			$params->{'genreID'} = $params->{'p1'};
 			$params->{'genre'} = $genres[$params->{'p1'}];
-			$params->{'streaminfo'} = $stream_data{$all_name}{$params->{'p0'}}{$params->{'p2'}} ;
+			$params->{'streaminfo'} = $stream_data{$all_name}{$params->{'p0'}}{$params->{'p2'}};
+			$params->{'stream'} = $params->{'p0'};
 		} 
 		# show streams of the wanted genre
 		else {

@@ -9,7 +9,7 @@
 		<p><a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / 
 			[% IF streams || streaminfo %]<a href="index.html?player=[% player | uri %]">[% END %][% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %][% IF streams || streaminfo %]</a> / [% END %]
 			[% IF streams || streaminfo %][% IF streaminfo %]<a href="index.html?p0=[% genreID | uri %]&player=[% player | uri %]">[% END %][% genre %][% IF streaminfo %]</a> /[% END %][% END %]
-			[% IF streaminfo %][% streaminfo.2 %][% END %]
+			[% IF streaminfo %][% stream %][% END %]
 		</p>
 		<hr/>
 
@@ -17,24 +17,24 @@
 			[% IF streaminfo %]
 				<tr>
 					<td width="30%">[% 'PLUGIN_SHOUTCASTBROWSER_STREAM_NAME' | string %][% "COLON" | string %]</td>
-					<td width="70%"><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% streaminfo.0 | uri %]&player=[% player | uri %]" target="status">[% streaminfo.2 %]</a></td>
+					<td width="70%"><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% streaminfo.0 | uri %]&player=[% player | uri %]" target="status">[% stream %]</a></td>
 				</tr>
 				<tr>
 					<td width="30%">[% 'BITRATE' | string %][% "COLON" | string %]</td>
-					<td width="70%">[% streaminfo.4 %][% 'PLUGIN_SHOUTCASTBROWSER_KBPS' | string %]</td>
+					<td width="70%">[% streaminfo.2 %][% 'PLUGIN_SHOUTCASTBROWSER_KBPS' | string %]</td>
 				</tr>
 				<tr>
 					<td width="30%">[% 'SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS' | string %][% "COLON" | string %]</td>
-					<td width="70%">[% streaminfo.3 %]</td>
+					<td width="70%">[% streaminfo.1 %]</td>
 				</tr>
 				<tr>
 					<td width="30%">[% 'GENRE' | string %][% "COLON" | string %]</td>
-					<td width="70%">[% streaminfo.6 %]</td>
+					<td width="70%">[% streaminfo.4 %]</td>
 				</tr>
-				[% IF streaminfo.5 %]
+				[% IF streaminfo.3 %]
 				<tr>
 					<td width="30%">[% 'PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING' | string %][% "COLON" | string %]</td>
-					<td width="70%">[% streaminfo.5 %]</td>
+					<td width="70%">[% streaminfo.3 %]</td>
 				</tr>
 				[% END %]
 				<tr>
