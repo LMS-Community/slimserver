@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.51 2004/03/23 04:26:40 kdf Exp $
+# $Id: Setup.pm,v 1.52 2004/03/31 02:21:07 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -113,35 +113,30 @@ sub initSetupConfig {
 					if ($client->isPlayer()) {
 						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[1] = 'playingDisplayMode';
 						if ($client->hasDigitalOut()) {
-							$pageref->{'Groups'}{'Default'}{'PrefOrder'}[4] = 'digitalVolumeControl';
+							$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = 'digitalVolumeControl';
 						} else {
-							$pageref->{'Groups'}{'Default'}{'PrefOrder'}[4] = undef;
+							$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = undef;
 						}
 						$pageref->{'children'} = ['additional_player'];
 						$pageref->{'GroupOrder'}[1] = 'Brightness';
-						$pageref->{'GroupOrder'}[2] = 'TitleFormats';
+						$pageref->{'GroupOrder'}[2] = 'Synchronize';
 					} else {
 						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[1] = undef;
-						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[4] = undef;
+						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = undef;
 						$pageref->{'children'} = undef;
 						$pageref->{'GroupOrder'}[1] = undef;
 						$pageref->{'GroupOrder'}[2] = undef;
 					}
 					$pageref->{'Prefs'}{'titleFormatCurr'}{'validateArgs'} = [0,$titleFormatMax,1,1];
 					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [$client->defaultName()];
-					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[2] = undef;
 					removeExtraArrayEntries($client,'titleFormat',$paramref,$pageref);
 					if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0))  {
-						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[2] = 'synchronize';
-						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = 'syncVolume';
-						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[4] = 'syncPower';
+						$pageref->{'GroupOrder'}[2] = 'Synchronize';
 						my $syncGroupsRef = syncGroups($client);
 						$pageref->{'Prefs'}{'synchronize'}{'options'} = $syncGroupsRef;
 						$pageref->{'Prefs'}{'synchronize'}{'validateArgs'} = [$syncGroupsRef];
 					} else {
-						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[2] = undef;
-						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = undef;
-						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[4] = undef;
+						$pageref->{'GroupOrder'}[2] = undef;
 					}
 				}
 		,'postChange' => sub {
@@ -167,11 +162,11 @@ sub initSetupConfig {
 					}
 					$client->update();
 				}
-		,'GroupOrder' => ['Default','Brightness','TitleFormats']
+		,'GroupOrder' => ['Default','Brightness','Synchronize','TitleFormats']
 		#,'template' => 'setup_player.html'
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['playername','playingDisplayMode','synchronize','syncVolume','syncPower','digitalVolumeControl','maxBitrate'] 
+					'PrefOrder' => ['playername','playingDisplayMode','maxBitrate','digitalVolumeControl'] 
 				}
 			,'Brightness' => {
 					'PrefOrder' => ['powerOnBrightness','powerOffBrightness']
@@ -194,6 +189,9 @@ sub initSetupConfig {
 					,'GroupPrefHead' => '<tr><th>' . string('SETUP_CURRENT') . 
 										'</th><th></th><th>' . string('SETUP_FORMATS') . '</th><th></th></tr>'
 					,'GroupLine' => 1
+				}
+			,'Synchronize' => {
+					'PrefOrder' => ['synchronize','syncVolume','syncPower']
 				}
 			}
 		,'Prefs' => {
