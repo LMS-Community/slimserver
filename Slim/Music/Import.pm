@@ -10,6 +10,7 @@ use strict;
 use Slim::Music::Info;
 use Slim::Music::MusicFolderScan;
 use Slim::Utils::Misc;
+use Slim::Utils::Strings qw(string);
 
 # background scanning and cache prefilling of music information to speed up UI...
 
@@ -70,7 +71,7 @@ sub addImporter {
 		'setup' => $setupFuncRef,
 	};
 
-	$::d_info && msg("Adding $import Scan\n");
+	$::d_info && msgf("Adding %s Scan\n", string($import));
 }
 
 sub countImporters {
