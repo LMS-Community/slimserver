@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.18 2003/12/18 02:36:25 dean Exp $
+# $Id: Misc.pm,v 1.19 2003/12/27 21:23:24 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -572,7 +572,9 @@ sub watchDog {
 $Slim::Utils::Misc::log = "";
 
 sub msg {
-	my $entry = strftime "%Y-%m-%d %H:%M:%S ", localtime;
+	my $entry = strftime "%Y-%m-%d %H:%M:%S.", localtime;
+	my $now = int(Time::HiRes::time() * 10000);
+	$entry .= (substr $now, -4) . " ";
 	$entry .= shift;
 	print STDERR $entry;
 	

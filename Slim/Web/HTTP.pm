@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.54 2003/12/14 20:00:13 grotus Exp $
+# $Id: HTTP.pm,v 1.55 2003/12/27 21:23:25 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -50,6 +50,8 @@ my($NEWLINE) = "\012";
 my($defaultskin)="Default";
 my($baseskin)="EN";
 my($METADATAINTERVAL) = 32768;
+
+my($MAXCHUNKSIZE) = 32768;
 
 my($RETRY_TIME) = 0.05;
 
@@ -323,6 +325,7 @@ sub processHTTP {
 		}
 
 	$::d_http && msg("Ready to accept a new HTTP connection.\n\n");
+	
 	}
 }
 
@@ -622,7 +625,7 @@ sub sendstreamingresponse {
 			my $chunkRef;
 			if (defined($streamingFile)) {
 				my $chunk;
-				$streamingFile->sysread($chunk, 32768);
+				$streamingFile->sysread($chunk, $MAXCHUNKSIZE);
 				if (defined($chunk) && length($chunk)) {
 					$chunkRef = \$chunk;
 				} else {
@@ -632,7 +635,7 @@ sub sendstreamingresponse {
 					return 0;
 				}
 			} else {
-				$chunkRef = Slim::Player::Source::nextChunk($client, 32768);
+				$chunkRef = Slim::Player::Source::nextChunk($client, $MAXCHUNKSIZE);
 			}
 			
 			# otherwise, queue up the next chunk of sound
@@ -703,6 +706,7 @@ sub sendstreamingresponse {
 	}
 
 	if (defined($segmentref) && $httpclientsock->connected) {
+		my $prebytes =  $segmentref->{'length'};
 		$sentbytes = syswrite $httpclientsock,${$segmentref->{'data'}}, $segmentref->{'length'}, $segmentref->{'offset'};
 
 		if ($! == EWOULDBLOCK) {
@@ -711,6 +715,7 @@ sub sendstreamingresponse {
 
 		if (defined($sentbytes)) {
 			if ($sentbytes < $segmentref->{'length'}) { #sent incomplete message
+#				if (($sentbytes % 2) == 1) { msg( "ODD!:$sentbytes (tried: $prebytes)\n"); } else { msg( "even:$sentbytes (tried: $prebytes)\n"); }
 				$::d_http && $sentbytes && msg("sent incomplete chunk, requeuing " . ($segmentref->{'length'} - $sentbytes). " bytes\n");
 				$metaDataBytes{$httpclientsock} -= $segmentref->{'length'} - $sentbytes;
 				$segmentref->{'length'} -= $sentbytes;

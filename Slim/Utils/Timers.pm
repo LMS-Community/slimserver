@@ -1,6 +1,6 @@
 package Slim::Utils::Timers;
 
-# $Id: Timers.pm,v 1.7 2003/11/10 23:15:02 dean Exp $
+# $Id: Timers.pm,v 1.8 2003/12/27 21:23:24 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -29,6 +29,8 @@ my $sline = -1;
 # Call any pending timers which have now elapsed.
 #
 sub checkTimers {
+	Slim::Networking::Protocol::readUDP();
+
 	my $numtimers = (@timers);
 	my $now = Time::HiRes::time();
 	
