@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.116 2004/10/02 00:14:41 kdf Exp $
+# $Id: Source.pm,v 1.117 2004/10/11 19:17:18 vidur Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -50,6 +50,11 @@ my %commandTable = ();
 	moodlogicplaylist => '0',
 	file => '0'
 );
+
+if ($^O =~ /Win32/) {
+	eval 'require Slim::Player::Protocols::MMS';
+	$Slim::Player::Source::protocolHandlers{mms} = qw(Slim::Player::Protocols::MMS);
+}
 
 sub systell {
 	sysseek($_[0], 0, SEEK_CUR)
