@@ -784,6 +784,12 @@ sub gotoNext {
 	return $result;
 }
 
+# For backwards compatability
+sub currentSongIndex {
+
+	return streamingSongIndex(@_);
+}
+
 sub streamingSongIndex {
 	my $client = Slim::Player::Sync::masterOrSelf(shift);
 	my $index = shift;

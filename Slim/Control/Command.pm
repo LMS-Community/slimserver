@@ -1386,7 +1386,7 @@ sub execute {
 				push @returnArray, "playlist shuffle:".$shuffle; #(0 no, 1 title, 2 albums)
  		    
  				if ($songCount > 0) {
- 					$idx = Slim::Player::Source::currentSongIndex($client);
+ 					$idx = Slim::Player::Source::streamingSongIndex($client);
  					push @returnArray, "playlist_cur_index:".($idx);
  				}
 
