@@ -1,0 +1,34 @@
+<html>
+  <head>
+    <title>[% browseby | string %]</title>
+    <link rel="stylesheet" href="slimserver.css">
+  </head>
+  <body bgcolor="#FFFFFF">
+
+    <p>
+
+    <h3>[% browseby | string %]</h3><p>
+
+    <a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a>
+	[% pwd_list %]
+
+	[% IF song_count %]<p>[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %]</p>[% END %]
+    <p><hr><p>
+	[% IF warn %]<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]<p><hr><p>[% END %]
+	[% IF browselist_header %][% browselist_header %][% END %]
+    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+			[% IF browseby != 'BROWSE_BY_SONG' %][% IF coverart %]<center>
+			<a href="status_header.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="status">
+			<img src="/music/[% coverartpath | uri %]/cover.jpg" border="0" width="200"></a></center>
+		[% END %][% END %]<p>
+		<table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td>
+			[% IF browseby != 'BROWSE_BY_ARTWORK' %]<table cellpadding="0" cellspacing="0" border="0" width="100%">[% END %]
+			[% browse_list %]
+			[% IF browseby != 'BROWSE_BY_ARTWORK' %]</table>[% END %]
+			</td></tr><tr><td>
+			[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+		</td></tr></table>
+
+
+  </body>
+</html>
