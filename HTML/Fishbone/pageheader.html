@@ -2,6 +2,53 @@
   <head>
     <title>{title}</title>
     <link rel="stylesheet" href="{webroot}slimserver.css">
+        
+<script language="JavaScript">
+<!--Hide
+function setCookie(name, value)
+&lbrc;
+	var expires = new Date();
+	expires.setTime(expires.getTime() + 1000*60*60);
+	document.cookie =
+		name + "=" + escape(value) +
+		((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
+&rbrc;
+
+function chooseBrowser(value)
+&lbrc;
+	var url;
+	switch(value)
+	&lbrc;
+		case 0:
+		url="{webroot}browseid3.html?player={%player}[IF nofolder]&nofolder=1[/IF]";
+		break
+		case 1:
+		url="{webroot}browseid3.html?genre=*&player={%player}[IF nofolder]&nofolder=1[/IF]";
+		break
+		case 2:
+		url="{webroot}browseid3.html?genre=*&artist=*&player={%player}[IF nofolder]&nofolder=1[/IF]";
+		break
+		case 3:
+		url="{webroot}browse.html?player={%player}&dir=__playlists[IF nofolder]&nofolder=1[/IF]";
+		break
+		case 4:
+		url="{webroot}search.html?type=artist[IF nofolder]&nofolder=1[/IF]";
+		break
+		case 5:
+		url="{webroot}search.html?type=album[IF nofolder]&nofolder=1[/IF]";
+		break
+		case 6:
+		url="{webroot}search.html?type=song[IF nofolder]&nofolder=1[/IF]";
+		break
+		case 7:
+		url="{webroot}browse.html?player={%player}";
+		break
+	&rbrc;
+	setCookie("Slimp3-browserPage",url);
+	parent.browser.location = url;
+&rbrc;
+-->
+</script>
   </head>
   <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
    <div class="menu1" width="100%">
@@ -15,15 +62,15 @@
 <div class="menu2" width="100%" [IF setup]style='position:absolute;top:-100;'[/IF]>
    <table border="0" cellpadding="0" cellspacing="0" width="100%">
 	<FORM name="browse" method="Get" action="{webroot}search.html"><td width="35%"><center><nobr>
-	<SELECT NAME="type" class="stdedit" onchange="window.location=this.options[selectedIndex].label" onSubmit="window.location=this.options[selectedIndex].value"width="65">
-	<OPTION [EQ browseby BROWSE_BY_GENRE]selected[/EQ] value="song" label="{webroot}browseid3.html?player={%player}[IF nofolder]&nofolder=1[/IF]">By Genre</OPTION>
-	<OPTION [EQ browseby BROWSE_BY_ARTIST]selected[/EQ] value="artist" label="{webroot}browseid3.html?genre=*&player={%player}[IF nofolder]&nofolder=1[/IF]">By Artist</OPTION>
-	<OPTION [EQ browseby BROWSE_BY_ALBUM]selected[/EQ] value="album" label="{webroot}browseid3.html?genre=*&artist=*&player={%player}[IF nofolder]&nofolder=1[/IF]">By Album</OPTION>
-	[IFN nofolder]<OPTION [IF browse]selected[/IF] value="song" label="{webroot}browse.html?player={%player}">Music Folder</OPTION>[/IFN]
-	<OPTION [IF playlist]selected[/IF] label="{webroot}browse.html?player={%player}&dir=__playlists[IF nofolder]&nofolder=1[/IF]">Saved Playlists</OPTION>
-	<option [EQ type artist]selected[/EQ] label="{webroot}search.html?type=artist[IF nofolder]&nofolder=1[/IF]" value="artist"> Search Artist</option>
-	<option [EQ type album]selected[/EQ] label="{webroot}search.html?type=album[IF nofolder]&nofolder=1[/IF]" value="album">Search Album</option>
-   <option [EQ type song]selected[/EQ] label="{webroot}search.html?type=song[IF nofolder]&nofolder=1[/IF]" value="song">Search Song</option>
+	<SELECT NAME="type" class="stdedit" onchange="chooseBrowser(selectedIndex)"  width="65">
+	<OPTION [EQ browseby BROWSE_BY_GENRE]selected[/EQ] value="song">[S BROWSE_BY_GENRE]</OPTION>
+	<OPTION [EQ browseby BROWSE_BY_ARTIST]selected[/EQ] value="artist">[S BROWSE_BY_ARTIST]</OPTION>
+	<OPTION [EQ browseby BROWSE_BY_ALBUM]selected[/EQ] value="album">[S BROWSE_BY_ALBUM]</OPTION>
+	<OPTION [IF playlist]selected[/IF]>[S SAVED_PLAYLISTS]</OPTION>
+	<option [EQ type artist]selected[/EQ] value="artist">[S SEARCH_FOR_ARTISTS]</option>
+	<option [EQ type album]selected[/EQ] value="album">[S SEARCH_FOR_ALBUMS]</option>
+	<option [EQ type song]selected[/EQ] value="song">[S SEARCH_FOR_SONGS]</option>
+	[IFN nofolder]<OPTION [IF browse]selected[/IF] value="song">[S BROWSE_MUSIC_FOLDER]</OPTION>[/IFN]
 	</SELECT> for 
 	<input type=text class="stdedit" name="query" value="{query}" size="20">
 	<input type=hidden value="{%player}" name="player">

@@ -4,55 +4,6 @@
 	<link rel="stylesheet" href="slimserver.css">
     <script language="JavaScript">
 <!--Hide
-var count;
-var temp = getCookie("slimp3-refresh");
-if (temp =='true') &lbrc;
-	count = 30;
-&rbrc;
-else &lbrc;
-	count = "off"
-&rbrc;
-startClock();
-
-function doRefresh() 
-&lbrc;
-	var temp = getCookie("slimp3-refresh");
-	if (temp =='true') &lbrc;
-		temp = 'false';
-		alert("Auto refresh on song change");
-		count = "off";
-	&rbrc;
-	else &lbrc;
-		temp = 'true';
-		count = 30;
-		alert("Setting Timed Refresh to 30 seconds");
-		startClock();
-	&rbrc;
-	setCookie("slimp3-refresh",temp);
-&rbrc;
-
-
-function startClock() &lbrc;
-
-	if (count != "off") &lbrc;
-		count = count - 1;
-
-		if (count <= 0)
-
-		&lbrc;
-			count=30;
-
-			location.reload(true);
-
-		&rbrc;
-
-		timerID = setTimeout("startClock()", 1000);
-
-	&rbrc;
-
-&rbrc;
-
-
 function setCookie(name, value)
 &lbrc;
 	var expires = new Date();
@@ -95,22 +46,13 @@ function openRemote()
   	            <form method="get" action="/index.html" target="_top"><td colspan="3">
 					<select name="player" onchange="this.form.submit()" class="stdedit">{player_chooser_list}</select>
 					</td></form>[/IF]
-					<form name="refreshform" target="statusframe"><td align="center" width="22%">Timer<input type="checkbox" name="chooserefresh" value="refresh" onClick='doRefresh()'></td></form>
-<script language="JavaScript">
-<!-- Hide
-var temp = getCookie("slimp3-refresh");
-if (temp == 'true') &lbrc;
-this.document.refreshform.chooserefresh.checked = true;
-&rbrc;
-//-->
-</script>
-			</table>
+		</table>
 		<tr>
 			<table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111">
 				<td><nobr><span class="songtitle">[IF player_name]{player_name}[/IF]</span></nobr></td>
 				<td valign="bottom" width="22%"><nobr><a href="setup.html?page=player&player={%player}&playerid={%player}" target="browser">Player Settings</a></nobr></td>
   	         <td valign="bottom" width="22%"><nobr><a href="javascript:openRemote()">Undock</a></nobr></td>
-  	         <td valign="bottom" width="22%"><nobr><a href="hitlist.html?player={%player}" target="playlist">SLIMP3 Stats</a></nobr></td>
+  	         <td valign="bottom" width="22%"><nobr><a href="hitlist.html?player={%player}" target="playlist">Stats</a></nobr></td>
   	      </table>
   	   </tr>
   	   </table></div>
