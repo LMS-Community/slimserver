@@ -245,10 +245,15 @@ sub findMusicLibraryFile {
 			catdir($base, 'Music', 'iTunes'),
 			catdir($base, 'Documents', 'iTunes'),
 			$base,
-			catdir($audiodir, 'My Music', 'iTunes'),
-			catdir($audiodir, 'iTunes'),
-			$audiodir
 		);
+			
+		if (defined $audiodir) {
+			push @searchdirs, (
+				catdir($audiodir, 'My Music', 'iTunes'),
+				catdir($audiodir, 'iTunes'),
+				$audiodir
+			);
+		}
 
 		$path = findLibraryFromPlist($base);
 		if ($path && -r $path) {
@@ -280,7 +285,8 @@ sub findMusicLibraryFile {
 		}
 	}		
 	
-	$::d_itunes && msg("itunes: nable to find iTunes Music Library.xml.\n");
+	$::d_itunes && msg("itunes: unable to find iTunes Music Library.xml.\n");
+	
 	return undef;
 }
 
@@ -312,6 +318,7 @@ sub findMusicLibrary {
 	}
 
 	$path = Slim::Utils::Prefs::get('audiodir');
+	return undef unless $path;
 	$::d_itunes && msg("itunes: set iTunes library to audiodir value of: $path\n");
 	Slim::Utils::Prefs::set('itunes_library_music_path',$path);
 	return $path;

@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.87 2004/05/08 05:23:16 kdf Exp $
+# $Id: Source.pm,v 1.88 2004/05/14 07:55:51 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -876,9 +876,17 @@ sub openSong {
 		# smart bitrate calculations
 		my $rate    = (Slim::Music::Info::bitratenum($fullpath) || 0) / 1000;
 
+		# if http client has used the query param, use transcodeBitrate. otherwise we can use maxBitrate.
 		my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate') 
 				|| Slim::Utils::Prefs::clientGet($client,'maxBitrate');
-		$maxRate = 0 if !defined $maxRate;
+		
+		if (!defined $maxRate) {
+			# Possibly the first time this pref has been accessed
+			# if maxBitrate hasn't been set yet, allow wired squeezeboxes to default to no limit, others to 320kbps
+			$maxRate = ($client->model() eq 'squeezebox' && !defined $client->signalStrength())
+				? 0 : 320;
+			Slim::Utils::Prefs::clientSet($client,'maxBitrate',$maxRate);
+		}
 
 		my ($command, $type, $format) = getConvertCommand($client, $fullpath);
 		
@@ -1060,8 +1068,6 @@ sub getConvertCommand {
 
 	my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate') ||
 		Slim::Utils::Prefs::clientGet($client,'maxBitrate');
-
-	$maxRate = 0 if !defined $maxRate;
 
 	my $undermax = ($maxRate > $rate) || ($maxRate == 0);
 	

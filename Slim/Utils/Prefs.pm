@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.62 2004/05/14 01:32:30 kdf Exp $
+# $Id: Prefs.pm,v 1.63 2004/05/14 07:55:52 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -135,6 +135,7 @@ my %DEFAULT = (
  	,'itunesscaninterval'	=> 60
  	,'moodlogicscaninterval'	=> 60
  	,'itunes_library_autolocate' => 1
+ 	,'itunes_library_music_path' => defaultAudioDir()
  	,'ignoredisableditunestracks' => 0
  	,'instantMixMax'		=> 12
  	,'varietyCombo'			=> 50
@@ -182,7 +183,7 @@ my %DEFAULT = (
 			,'disabledirsets'		=> []
 			,'doublesize'			=> 0
 			,'irmap'				=> Slim::Hardware::IR::defaultMapFile()
-			,'maxBitrate' 			=> 320
+			,'maxBitrate'			=> undef # will be set by the client device OR default to server pref when accessed.
 			,'mp3SilencePrelude' 	=> 0
 			,'offDisplaySize'		=> 0
 			,'pitch'				=> 100
@@ -198,6 +199,8 @@ my %DEFAULT = (
 			,'scrollRate'			=> 0.15
 			,'shuffle'				=> 0
 			,'silent'				=> 0
+			,'syncPower'			=> 0
+			,'syncVolume'			=> 0
 			,'titleFormat'			=> [5, 1, 3, 6]
 			,'titleFormatCurr'		=> 1
 			,'treble'				=> 50

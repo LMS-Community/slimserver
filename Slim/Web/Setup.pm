@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.75 2004/05/13 22:56:39 dean Exp $
+# $Id: Setup.pm,v 1.76 2004/05/14 07:55:56 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -129,7 +129,7 @@ sub initSetupConfig {
 						$pageref->{'GroupOrder'}[1] = undef;
 						$pageref->{'GroupOrder'}[2] = undef;
 					}
-					if ($client->model() eq 'squeezebox') {
+					if ($client->model() ne 'slimp3') {
 						$pageref->{'Prefs'}{'maxBitrate'}{'PrefDesc'} = string('SETUP_MAXBITRATE_DESC');
 						$pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'} = '  '.string('NO_LIMIT');
 					} else {
@@ -545,6 +545,7 @@ sub initSetupConfig {
 				} else {
 					$pageref->{'GroupOrder'}[1] = undef;
 				}
+
 				if (Slim::Music::MoodLogic::canUseMoodLogic()) {
 					$pageref->{'GroupOrder'}[2] = 'moodlogic';
 				} else {
@@ -2105,7 +2106,9 @@ sub removeExtraArrayEntries {
 
 sub playlists {
 	my %list_hash;
-	my @list;	
+	my @list;
+	
+	return undef unless Slim::Utils::Prefs::get('playlistdir');
 	Slim::Utils::Scan::addToList(\@list, Slim::Utils::Prefs::get('playlistdir'), 0);
 	if (Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic()) {
 		push @list, @{Slim::Music::Info::playlists()};
