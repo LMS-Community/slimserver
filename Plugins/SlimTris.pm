@@ -320,6 +320,13 @@ my @bitmaps = (
 	"\xee\x00\xee\x00\xee\x00\xee\x00\xee\x00\x00\x00\x00",
 );
 
+my @bitmaps2 = (
+	"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+	"\x7f\x00\x00\x00\x55\x00\x00\x00\x6b\x00\x00\x00\x55\x00\x00\x00\x6b\x00\x00\x00\x7f\x00\x00\x00\x00\x00",
+	"\x00\x7f\x00\x00\x00\x55\x00\x00\x00\x6b\x00\x00\x00\x55\x00\x00\x00\x6b\x00\x00\x00\x7f\x00\x00\x00\x00",
+	"\x7f\x7f\x00\x00\x55\x55\x00\x00\x6b\x6b\x00\x00\x55\x55\x00\x00\x6b\x6b\x00\x00\x7f\x7f\x00\x00\x00\x00",
+);
+
 #
 # figure out the lines to be put up to display the directory
 #
@@ -356,7 +363,18 @@ sub lines {
 		$dispgrid[$x][$y] = 1;
 	}
 
-	if ($client->isa( "Slim::Player::SqueezeboxG")) {
+	if ($client->isa( "Slim::Player::Squeezebox2")) {
+		$line1 = Slim::Display::Display::symbol('framebuf');
+		for (my $x = 1; $x < $width+2; $x++)
+			{	
+				my $column = ($bitmaps2[$dispgrid[$x][1]] | $bitmaps2[$dispgrid[$x][2]*2]) . "\x00\x00";
+				
+				$column |= "\x00\x00" . ($bitmaps2[$dispgrid[$x][3]] | $bitmaps2[$dispgrid[$x][4]*2]);
+				
+				$line1 .= $column;
+			}
+		$line1 .=  Slim::Display::Display::symbol('/framebuf');
+	} elsif ($client->isa( "Slim::Player::SqueezeboxG")) {
 		$line1 = Slim::Display::Display::symbol('framebuf');
 		for (my $x = 1; $x < $width+2; $x++)
 			{	
