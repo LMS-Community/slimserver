@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.47 2004/01/13 00:36:12 dean Exp $
+# $Id: Info.pm,v 1.48 2004/01/13 02:02:25 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -202,7 +202,7 @@ sub init {
 	if (Slim::Utils::Prefs::get('usetagdatabase')) {
 		loadDBCache();
 	}
-	
+
 	saveDBCacheTimer(); # Start the timer to save the DB every $dbSaveInterval
 	
 	# use all the genres we know about...
@@ -474,7 +474,7 @@ sub cacheItem {
 	if (exists $infoCache{$url}) {
 		$cacheEntryArray = $infoCache{$url};
 		my $index = $infoCacheItemsIndex{$item};
-		if (exists $cacheEntryArray->[$index]) {
+		if (defined($index) && exists $cacheEntryArray->[$index]) {
 			return $cacheEntryArray->[$index];
 		} else {
 			return undef;
@@ -1331,15 +1331,16 @@ sub filterHashByValue {
 # level of the genre tree.
 
 sub genres {
-	my $genre = shift;
+	my $genre  = shift;
 	my $artist = shift;
-	my $album = shift;
-	my $song = shift;
-	my $count = shift;
-	$::d_info && Slim::Utils::Misc::msg("genres: $genre - $artist - $album - $song\n"	);
+	my $album  = shift;
+	my $song   = shift;
+	my $count  = shift;
+
+	$::d_info && Slim::Utils::Misc::msg("genres: $genre - $artist - $album - $song\n");
 
 	my $genre_pats = filterPats($genre);
-	my @genres = filter($genre_pats,"",keys %genreCache);
+	my @genres     = filter($genre_pats, "", keys %genreCache);
 	
 	if ($count) {
 		return scalar @genres;
@@ -1348,32 +1349,43 @@ sub genres {
 	}
 }
 
+# XXX - seems all these foreach loops could be eliminated with a
+# better?/different data structure.
 sub artists {
-	my $genre = shift;
+	my $genre  = shift;
 	my $artist = shift;
-	my $album = shift;
-	my $song = shift;
-	my $count = shift;
-	my @artists = ();
-	$::d_info && Slim::Utils::Misc::msg("artists: $genre - $artist - $album - $song\n"	);
+	my $album  = shift;
+	my $song   = shift;
+	my $count  = shift;
 
-	my $genre_pats = filterPats($genre);
+	my @artists = ();
+
+	$::d_info && Slim::Utils::Misc::msg("artists: $genre - $artist - $album - $song\n");
+
+	my $genre_pats  = filterPats($genre);
 	my $artist_pats = filterPats($artist);
 
 	if (defined($album) && scalar(@$album) && $$album[0]) {
+
 		my $album_pats = filterPats($album);
-		foreach my $g (filter($genre_pats,"",keys %genreCache)) {
-			foreach my $art (filter($artist_pats,"",keys %{$genreCache{$g}})) {
-				foreach my $alb (filter($album_pats,"",keys %{$genreCache{$g}{$art}})) {
-					push @artists, $art;				
+
+		foreach my $g (filter($genre_pats, "", keys %genreCache)) {
+
+			foreach my $art (filter($artist_pats, "", keys %{$genreCache{$g}})) {
+
+				foreach my $alb (filter($album_pats, "", keys %{$genreCache{$g}{$art}})) {
+					push @artists, $art;
 				}
 			}
 		}
+
 	} else {
+
 		foreach my $g (filter($genre_pats,"",keys %genreCache)) {
 			push @artists, filter($artist_pats,"",keys %{$genreCache{$g}});
 		}
 	}
+
 	if ($count) {
 		return scalar @artists;
 	} else {
@@ -1382,29 +1394,35 @@ sub artists {
 }
 
 sub albums {
-	my $genre = shift;
+	my $genre  = shift;
 	my $artist = shift;
-	my $album = shift;
-	my $song = shift;
-	my $count = shift;
+	my $album  = shift;
+	my $song   = shift;
+	my $count  = shift;
+
 	my @albums = ();
-	$::d_info && Slim::Utils::Misc::msg("albums: $genre - $artist - $album - $song\n"	);
 
-	my $genre_pats = filterPats($genre);
+	$::d_info && Slim::Utils::Misc::msg("albums: $genre - $artist - $album - $song\n");
+
+	my $genre_pats  = filterPats($genre);
 	my $artist_pats = filterPats($artist);
-	my $album_pats = filterPats($album);
+	my $album_pats  = filterPats($album);
 
-	foreach my $g (filter($genre_pats,"",keys %genreCache)) {
-		foreach my $art (filter($artist_pats,"",keys %{$genreCache{$g}})) {
+	foreach my $g (filter($genre_pats, "", keys %genreCache)) {
+
+		foreach my $art (filter($artist_pats, "", keys %{$genreCache{$g}})) {
+
 			if (Slim::Utils::Prefs::get("artistinalbumsearch")) {
-				push @albums, filter($album_pats,$art,keys %{$genreCache{$g}{$art}});
+				push @albums, filter($album_pats, $art, keys %{$genreCache{$g}{$art}});
+			} else {
+				push @albums, filter($album_pats, "",   keys %{$genreCache{$g}{$art}});
 			}
-			else {
-				push @albums, filter($album_pats,"",keys %{$genreCache{$g}{$art}});
-			}
-		::idleStreams();
+
+			# XXX?
+			::idleStreams();
 		}
 	}
+
 	if ($count) {
 		return scalar(@albums);
 	} else {
@@ -1412,40 +1430,47 @@ sub albums {
  	}
 }
 
-
 # return all songs for a given genre, artist, and album
 sub songs {
-	my $genre = shift;
-	my $artist = shift;
-	my $album = shift;
-	my $track = shift;
+	my $genre	= shift;
+	my $artist	= shift;
+	my $album	= shift;
+	my $track	= shift;
 	my $sortbytitle = shift;
 	
-	my $multalbums = (scalar(@$album) == 1 && $album->[0] !~ /\*/  && (!defined($artist->[0]) || $artist->[0] eq '*'));
-	my $tracksort = !$multalbums && !$sortbytitle;
+	my $multalbums  = (scalar(@$album) == 1 && $album->[0] !~ /\*/  && (!defined($artist->[0]) || $artist->[0] eq '*'));
+	my $tracksort   = !$multalbums && !$sortbytitle;
 	
-	my $genre_pats = filterPats($genre);
+	my $genre_pats  = filterPats($genre);
 	my $artist_pats = filterPats($artist);
-	my $album_pats = filterPats($album);
-	my $track_pats = filterPats($track);
+	my $album_pats  = filterPats($album);
+	my $track_pats  = filterPats($track);
 
-	my @alltracks = ();
+	my @alltracks	= ();
 
-	$::d_info && Slim::Utils::Misc::msg("songs: $genre - $artist - $album - $track\n"	);
-	foreach my $g (sortIgnoringCase(filter($genre_pats,'',keys %genreCache))) {
-		foreach my $art (sortIgnoringCase(filter($artist_pats,'',keys %{$genreCache{$g}}))) {
-			foreach my $alb (sortIgnoringCase(filter($album_pats,'',keys %{$genreCache{$g}{$art}}))) {
+	$::d_info && Slim::Utils::Misc::msg("songs: $genre - $artist - $album - $track\n");
+
+	foreach my $g (sortIgnoringCase(filter($genre_pats, '', keys %genreCache))) {
+
+		foreach my $art (sortIgnoringCase(filter($artist_pats, '', keys %{$genreCache{$g}}))) {
+
+			foreach my $alb (sortIgnoringCase(filter($album_pats, '', keys %{$genreCache{$g}{$art}}))) {
+
 				my %songs = ();
+
 				foreach my $trk (values %{$genreCache{$g}{$art}{$alb}}) {
+
 					$songs{$trk} = ignoreCaseArticles(title($trk));
 				}
+
 				if ($tracksort) {
 					push @alltracks, sortByTrack(filterHashByValue($track_pats,\%songs));
 				} else {
 					push @alltracks, filterHashByValue($track_pats,\%songs);
 				}
 			}
-		::idleStreams();
+
+			::idleStreams();
 		}
 	}
 
@@ -1454,20 +1479,26 @@ sub songs {
 	my @uniq = ();
 	
 	foreach my $item (@alltracks) {
-		push(@uniq, $item) unless (!defined($item) || ($item eq '') || $seen{ignoreCaseArticles($item)}++);
+
+		unless (!defined($item) || ($item eq '') || $seen{ignoreCaseArticles($item)}++) {
+			push(@uniq, $item);
+		}
 	}
 		
 	if ($sortbytitle && $sortbytitle ne 'count') {		
 
-		@uniq =  sortByTitles(@uniq);
+		@uniq = sortByTitles(@uniq);
+
 	# if we are getting a specific album with an unspecific artist, re-sort the tracks
 	} elsif ($multalbums) {
+
 		# if there are duplicate track numbers, then sort as multiple albums
 		my $duptracknum = 0;
 		my @seen = ();
+
 		foreach my $item (@uniq) {
-			my $trnum = trackNumber($item);
-			next unless $trnum;
+
+			my $trnum = trackNumber($item) || next;
 
 			if ($seen[$trnum]) {
 				$duptracknum = 1;
@@ -1476,57 +1507,72 @@ sub songs {
 
 			$seen[$trnum]++;
 		}
+
 		if ($duptracknum) {
 			@uniq =  sortByTrack(@uniq);
 		} else {
 			@uniq =  sortByAlbum(@uniq);
 		}
 	}
+
 	if ($sortbytitle && $sortbytitle eq 'count') {
 		return scalar @uniq;
 	} else {
 	 	return @uniq;
-	 }
+	}
 }
 
-my $articles;
+# XXX - sigh, globals
+my $articles = undef;
 
 sub sortByTrack {
+
 	$articles = undef;
+
 	#get info for items and ignoreCaseArticles it
 	my @sortinfo =  map {getInfoForSort($_)} @_;
+
 	#return the first element of each entry in the sorted array
 	return map {$_->[0]} sort sortByTrackAlg @sortinfo;
 }
 
 sub sortByAlbum {
+
 	$articles = undef;
+
 	#get info for items and ignoreCaseArticles it
 	my @sortinfo =  map {getInfoForSort($_)} @_;
+
 	#return an array of first elements of the entries in the sorted array
 	return map {$_->[0]} sort sortByAlbumAlg @sortinfo;
 }
 
 sub sortByTitles {
+
 	$articles = undef;
+
 	#get info for items and ignoreCaseArticles it
 	my @sortinfo =  map {getInfoForSort($_)} @_;
+
 	#return an array of first elements of the entries in the sorted array
 	return map {$_->[0]} sort sortByTitlesAlg @sortinfo;
 }
 
 sub ignoreArticles {
 	my $item = shift;
-	if ($item) {
-		if (!defined($articles)) {
-			$articles =  Slim::Utils::Prefs::get("ignoredarticles");
-			# allow a space seperated list in preferences (easier for humans to deal with)
-			$articles =~ s/\s+/|/g;
-		}
-		
-		#set up array for sorting items without leading articles
-		$item =~ s/^($articles)\s+//i;
+
+	return $item unless $item;
+
+	if (!defined($articles)) {
+
+		$articles =  Slim::Utils::Prefs::get("ignoredarticles");
+		# allow a space seperated list in preferences (easier for humans to deal with)
+		$articles =~ s/\s+/|/g;
 	}
+	
+	#set up array for sorting items without leading articles
+	$item =~ s/^($articles)\s+//i;
+
 	return $item;
 }
 
@@ -1541,14 +1587,17 @@ sub sortByTitlesAlg ($$) {
 
 #Sets up an array entry for performing complex sorts
 sub getInfoForSort {
-	my ($item) = @_;
-	return [$item
-		,isList($item)
-		,artistSort($item)
-		,albumSort($item)
-		,trackNumber($item)
-		,titleSort($item)
-		,disc($item)];
+	my $item = shift;
+
+	return [
+		$item,
+		isList($item),
+		artistSort($item),
+		albumSort($item),
+		trackNumber($item),
+		titleSort($item),
+		disc($item)
+	];
 }	
 
 #algorithm for sorting by Artist, Album, Track

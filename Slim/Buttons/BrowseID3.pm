@@ -159,6 +159,7 @@ my %functions = (
 		updateLastSelection($client);
 		$client->update();
 	},
+
 	# this routine handles play, add and insert ($addorinsert would be undef, 1 or 2 respectively)
 	'play' => sub  {
 		my $client = shift;
@@ -199,7 +200,14 @@ my %functions = (
 		 	$line2 = $currentItem;
 		}
 		
-		Slim::Display::Animation::showBriefly($client, Slim::Display::Display::renderOverlay($line1, $line2, undef, Slim::Hardware::VFD::symbol('notesymbol')),undef,1);
+		Slim::Display::Animation::showBriefly(
+			$client,
+			Slim::Display::Display::renderOverlay(
+				$line1, $line2, undef, Slim::Hardware::VFD::symbol('notesymbol')
+			),
+			undef,
+			1
+		);
 		
 		# if we've chosen a particular song to append, then append it
 		if (picked($genre) && picked($artist) && picked($album)) {
@@ -232,6 +240,7 @@ my %functions = (
 		}
 		$::d_files && msg("currentItem == $currentItem\n");
 	},
+
 	'moodlogic_mix' => sub  {
 		my $client = shift;
 		# if we don't have moodlogic, then just play
@@ -327,30 +336,81 @@ sub getLastSelection {
 sub loadDir {
 	my ($client) = @_;
 
-	my $genre = selection($client,'curgenre');
+	my $genre  = selection($client,'curgenre');
 	my $artist = selection($client,'curartist');
-	my $album = selection($client,'curalbum');
-	my $song = selection($client,'cursong');
+	my $album  = selection($client,'curalbum');
+	my $song   = selection($client,'cursong');
+
 	my $sortbytitle;
-	if (defined($album) && $album eq string('ALL_SONGS')) { $album = '*'; $sortbytitle = 1; };
-	if (defined($artist) && ($artist eq string('ALL_ALBUMS'))) { $artist = '*';  $sortbytitle = 1;};
-	if ($genre && $genre eq '*' && $artist && $artist eq '*' && $album && $album eq '*' && !specified($song)) { $sortbytitle = 1;};
+
+	if (defined($album) && $album eq string('ALL_SONGS')) {
+		$album = '*';
+		$sortbytitle = 1;
+	};
+
+	if (defined($artist) && ($artist eq string('ALL_ALBUMS'))) {
+		$artist = '*';
+		$sortbytitle = 1;
+	};
+
+	if ($genre  && $genre  eq '*' &&
+	    $artist && $artist eq '*' &&
+	    $album  && $album  eq '*' && !specified($song)) {
+
+		$sortbytitle = 1;
+	};
 
 	$::d_files && msg("loading dir for $genre - $artist - $album - $song\n");
 
 	if (picked($genre) && picked($artist) && picked($album)) {
-		@{browseID3dir($client)} = Slim::Music::Info::songs(singletonRef($genre), singletonRef($artist), singletonRef($album), singletonRef($song), $sortbytitle);
+
+		@{browseID3dir($client)} = Slim::Music::Info::songs(
+			singletonRef($genre),
+			singletonRef($artist),
+			singletonRef($album),
+			singletonRef($song),
+			$sortbytitle
+		);
+
 	} elsif (picked($genre) && picked($artist)) {
-		@{browseID3dir($client)} = Slim::Music::Info::albums(singletonRef($genre), singletonRef($artist), singletonRef($album), singletonRef($song));
-		if (scalar @{browseID3dir($client)} > 1) { push @{browseID3dir($client)}, string('ALL_SONGS'); }
+
+		@{browseID3dir($client)} = Slim::Music::Info::albums(
+			singletonRef($genre),
+			singletonRef($artist),
+			singletonRef($album),
+			singletonRef($song)
+		);
+
+		if (scalar @{browseID3dir($client)} > 1) {
+
+			push @{browseID3dir($client)}, string('ALL_SONGS');
+		}
+
 	} elsif (picked($genre)) {
-		@{browseID3dir($client)} = Slim::Music::Info::artists(singletonRef($genre), singletonRef($artist), singletonRef($album), singletonRef($song));
-		if (scalar @{browseID3dir($client)} > 1) { push @{browseID3dir($client)}, string('ALL_ALBUMS'); }
+
+		@{browseID3dir($client)} = Slim::Music::Info::artists(
+			singletonRef($genre),
+			singletonRef($artist),
+			singletonRef($album),
+			singletonRef($song)
+		);
+
+		if (scalar @{browseID3dir($client)} > 1) {
+
+			push @{browseID3dir($client)}, string('ALL_ALBUMS');
+		}
+
 	} else {
-		@{browseID3dir($client)} = Slim::Music::Info::genres(singletonRef($genre), singletonRef($artist), singletonRef($album), singletonRef($song));
+
+		@{browseID3dir($client)} = Slim::Music::Info::genres(
+			singletonRef($genre),
+			singletonRef($artist),
+			singletonRef($album),
+			singletonRef($song)
+		);
 	}
 
-	browseID3dirIndex($client,getLastSelection($client));
+	return browseID3dirIndex($client, getLastSelection($client));
 }
 
 #

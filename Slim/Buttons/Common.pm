@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.26 2003/12/20 01:52:04 kdf Exp $
+# $Id: Common.pm,v 1.27 2004/01/13 02:02:25 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -971,19 +971,26 @@ sub pushMode {
 	my $client = shift;
 	my $setmode = shift;
 	my $paramHashRef = shift;
+
 	$::d_files && msg("pushing button mode: $setmode\n");
-	my $oldmode =mode($client);
+
+	my $oldmode = mode($client);
+
 	if ($oldmode) {
+
 		my $exitFun = $leaveMode{$oldmode};
+
 		if ($exitFun) {
 			&$exitFun($client, 'push');
 		}
 	}
+
 	# reset the scroll parameters
 	push (@{$scrollClientHash->{$client}{scrollParamsStack}}, 
-		  $scrollClientHash->{$client}{scrollParams});
+		$scrollClientHash->{$client}{scrollParams});
 	
 	$scrollClientHash->{$client}{scrollParams} = scroll_getInitialScrollParams($minimumVelocity, 1, 1);
+
 	push @{$client->modeStack}, $setmode;
 
 	if (!defined($paramHashRef)) {
@@ -991,7 +998,9 @@ sub pushMode {
 	}
 
 	push @{$client->modeParameterStack}, $paramHashRef;
+
 	my $fun = $modes{$setmode};
+
 	&$fun($client,'push');
 }
 

@@ -64,18 +64,16 @@ sub recount {
 #	(don't worry if the file doesn't exist)
 #
 sub load {
-    @history = ();
-    return undef unless Slim::Utils::Prefs::get('savehistory');
+	@history = ();
+	return undef unless Slim::Utils::Prefs::get('savehistory');
 
-    my $filename = catfile(Slim::Utils::Prefs::get('playlistdir'),'__history.m3u');
+	my $filename = catfile(Slim::Utils::Prefs::get('playlistdir'),'__history.m3u');
 
-    open (FILE,$filename) or return undef;
-    @history = Slim::Formats::Parse::M3U(
-	\*FILE,
-	Slim::Utils::Prefs::get('mp3dir'),
-    );
-    close FILE;
-    undef;
+	open (FILE,$filename) or return undef;
+	@history = Slim::Formats::Parse::M3U(\*FILE, Slim::Utils::Prefs::get('musicdir'));
+	close FILE;
+
+	return undef;
 }
 
 # Record takes a song name and stores it at the first position of an array.  The max 
@@ -178,8 +176,4 @@ sub hitlist_bar {
     return $returnval;
 }
 
-
-
-	
 1;
-	
