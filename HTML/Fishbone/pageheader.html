@@ -86,10 +86,10 @@
 			<table border="0" cellpadding="0" cellspacing="0" width="100%">
 				<td>
 				<FORM name="browser" method="Get" action="" target="browser"><td><center><nobr>
-					<SELECT NAME="browse" class="stdedit" onchange="chooseBrowser(selectedIndex,options[selectedIndex].label)">
+					<SELECT NAME="browse" class="stdedit" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
 					[% IF additionalLinks.browse %]
 						[% FOREACH link = additionalLinks.browse %]
-						<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key %]">[% link.key | string %]</OPTION>
+						<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
 						[% END %]
 					[% END %]
 				</SELECT><nobr></center></td></FORM>
@@ -97,7 +97,7 @@
 					<SELECT NAME="search" class="stdedit">
 					[% IF additionalLinks.search %]
 						[% FOREACH link = additionalLinks.search %]
-						<OPTION [% IF page == link.key %]selected[% END %] value="[% link.value %]" label="[% link.key %]">[% link.key | string %]</OPTION>
+						<OPTION [% IF page == link.key %]selected[% END %] value="[% link.value %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
 						[% END %]
 					[% END %]
 					</SELECT> [% "FOR" | string %]
