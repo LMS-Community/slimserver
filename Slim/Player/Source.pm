@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.118 2004/10/13 19:29:12 dean Exp $
+# $Id: Source.pm,v 1.119 2004/10/15 23:46:55 vidur Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -33,6 +33,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Scan;
 use Slim::Utils::Strings qw(string);
+use Slim::Player::Pipeline;
 use Slim::Web::RemoteStream;
 use Slim::Player::Protocols::HTTP;
 
@@ -57,7 +58,7 @@ if ($^O =~ /Win32/) {
 }
 
 sub systell {
-	sysseek($_[0], 0, SEEK_CUR)
+	$_[0]->sysseek(0, SEEK_CUR)
 }
 
 sub Conversions {
@@ -835,6 +836,8 @@ sub openSong {
 	# parse the filetype
 	if (Slim::Music::Info::isRemoteURL($fullpath)) {
 
+		$::d_source && msg("URL is remote : $fullpath\n");
+
 		my $line1 = string('CONNECTING_FOR');
 		my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));			
 		$client->showBriefly($line1, $line2, undef,1);
@@ -847,17 +850,58 @@ sub openSong {
 			# if it's an mp3 stream, then let's stream it.
 			if (Slim::Music::Info::isSong($fullpath)) {
 
-				$client->audioFilehandle($sock);
-				$client->audioFilehandleIsSocket(1);
-				$client->streamformat(Slim::Music::Info::contentType($fullpath));
-				$client->remoteStreamStartTime(Time::HiRes::time());
-				$client->pauseTime(0);
-				defined(Slim::Utils::Misc::blocking($sock,0)) || die "Cannot set remote stream nonblocking";
+				$::d_source && msg("remoteURL is a song : $fullpath\n");
+
+				unless (defined(Slim::Utils::Misc::blocking($sock, 0))) {
+					$::d_source && msg("Cannot set remote stream nonblocking\n");
+					errorOpening($client);
+					return undef;
+				}
+
+				my ($command, $type, $format) = getConvertCommand($client, 
+																  $fullpath);
+				$::d_source && msg("remoteURL command $command type $type format $format\n");
+				$::d_source && msg("remoteURL stream format : " . 
+								   Slim::Music::Info::contentType($fullpath) . 
+								   "\n");				
+				$client->streamformat($format);
+
+				unless (defined($command)) {
+					$::d_source && msg("Couldn't create command line for $type playback for $fullpath\n");
+					errorOpening($client);
+					
+					return undef;
+				}
 
 				my $duration  = Slim::Music::Info::durationSeconds($fullpath);
 				if (defined($duration)) {
 					$client->songduration($duration);
 				}
+
+				# this case is when we play the file through as-is
+				if ($command eq '-') {
+					$client->audioFilehandle($sock);
+					$client->audioFilehandleIsSocket(1);
+				}
+				else {
+					my $maxRate = Slim::Utils::Prefs::maxRate($client);
+					$command = tokenizeConvertCommand($command, $type, '-', 
+													  $fullpath, 0 , $maxRate,
+													  1);
+					$::d_source && msg("tokenized command $command\n");
+					my $pipeline = Slim::Player::Pipeline->new($sock, 
+															   $command);
+					if (!defined($pipeline)) {
+						$::d_source && msg("Error creating conversion pipeline\n");
+						errorOpening($client);
+						return undef;
+					}
+					$client->audioFilehandle($pipeline);
+					$client->audioFilehandleIsSocket(2);
+					
+				}
+				$client->remoteStreamStartTime(Time::HiRes::time());
+				$client->pauseTime(0);
 
 			# if it's one of our playlists, parse it...
 			} elsif (Slim::Music::Info::isList($fullpath)) {
@@ -1013,7 +1057,7 @@ sub openSong {
 
 			$client->audioFilehandle( FileHandle->new() );
 			$client->audioFilehandle->open($command);
-			$client->audioFilehandleIsSocket(2);
+			$client->audioFilehandleIsSocket(1);
 			
 			$client->remoteStreamStartTime(Time::HiRes::time());
 			$client->pauseTime(0);
@@ -1044,7 +1088,9 @@ sub openSong {
 	# make sure the filehandle was actually set
 	if ($client->audioFilehandle()) {
 
-		binmode($client->audioFilehandle());
+		if ($client->audioFilehandleIsSocket() != 2) {
+			binmode($client->audioFilehandle());
+		}
 		Slim::Web::History::record(Slim::Player::Playlist::song($client));
 
 	} else {
@@ -1231,7 +1277,7 @@ sub getConvertCommand {
 }
 
 sub tokenizeConvertCommand {
-	my ($command, $type, $filepath, $fullpath, $samplerate, $maxRate) = @_;
+	my ($command, $type, $filepath, $fullpath, $samplerate, $maxRate, $nopipe) = @_;
 
 	# XXX what is this?
 	my $swap = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
@@ -1269,8 +1315,10 @@ sub tokenizeConvertCommand {
 
 	$command =~ s/\$([^\$]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
-	$command .= (Slim::Utils::OSDetect::OS() eq 'win') ? '' : ' &';
-	$command .= ' |';
+	unless (defined($nopipe)) {
+		$command .= (Slim::Utils::OSDetect::OS() eq 'win') ? '' : ' &';
+		$command .= ' |';
+	}
 
 	$::d_source && msg("Using command for conversion: $command\n");
 
