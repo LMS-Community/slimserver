@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DataModel;
 
-# $Id: DataModel.pm,v 1.12 2005/01/06 20:50:24 dsully Exp $
+# $Id: DataModel.pm,v 1.13 2005/01/09 05:59:53 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -263,17 +263,6 @@ sub getWhereValues {
 	return @values;
 }
 
-sub findTermsToWhereClause {
-	my $column = shift;
-	my $term = shift;
-	my $clause = '';
-
-	my @values = getWhereValues($term);
-
-	return $column . " IN (" . join(",", @values) . ")" if scalar(@values);
-	return undef;
-}
-
 my %fieldHasClass = (
 	'track' => 'Slim::DataStores::DBI::Track',
 	'genre' => 'Slim::DataStores::DBI::Genre',
@@ -290,6 +279,7 @@ my %searchFieldMap = (
 	'url' => 'tracks.url', 
 	'title' => 'tracks.title', 
 	'track' => 'tracks.id', 
+	'track.title' => 'tracks.title', 
 	'tracknum' => 'tracks.tracknum', 
 	'ct' => 'tracks.ct', 
 	'size' => 'tracks.size', 
@@ -302,12 +292,26 @@ my %searchFieldMap = (
 	'channels' => 'tracks.channels', 
 	'bpm' => 'tracks.bpm', 
 	'album' => 'tracks.album',
+	'album.title' => 'albums.title',
 	'genre' => 'genre_track.genre', 
+	'genre.name' => 'genres.name', 
 	'contributor' => 'contributor_track.contributor', 
+	'contributor.name' => 'contributors.name', 
 	'artist' => 'contributor_track.contributor', 
+	'artist.name' => 'contributors.name', 
 	'conductor' => 'contributor_track.contributor', 
+	'conductor.name' => 'contributors.name', 
 	'composer' => 'contributor_track.contributor', 
+	'composer.name' => 'contributors.name', 
 	'band' => 'contributor_track.contributor', 
+	'band.name' => 'contributors.name', 
+);
+
+my %cmpFields = (
+	'contributor.name' => 1,
+	'genre.name' => 1,
+	'album.title' => 1,
+	'track.title' => 1,
 );
 
 my %sortFieldMap = (
@@ -318,6 +322,7 @@ my %sortFieldMap = (
 	'artist' => ['contributors.namesort'],
 	'track' => ['contributor_track.namesort','albums.titlesort','albums.disc','tracks.tracknum','tracks.titlesort'],
 	'tracknum' => ['tracks.tracknum','tracks.titlesort'],
+	'year' => ['tracks.year'],
 );
 
 # This is a weight table which allows us to do some basic table reordering,
@@ -444,7 +449,6 @@ sub find {
 	# Include the table containing the data we're selecting
 	$tables{$fieldTable} = $tableSort{$fieldTable};
 
-
 	# Then the WHERE clause
 	my %whereHash = ();
 
@@ -457,15 +461,58 @@ sub find {
 			my @values = getWhereValues($val);
 
 			if (scalar(@values)) {
-				$whereHash{$searchFieldMap{$key}} = scalar(@values) > 1 ? \@values : $values[0];
+
+				# Turn wildcards into SQL wildcards
+				s/\*/%/g for @values;
+
+				# Try to optimize and use the IN SQL
+				# statement, instead of creating a massive OR
+				#
+				# Alternatively, create a multiple OR
+				# statement for a LIKE clause
+				if (scalar(@values) > 1) {
+
+					if ($cmpFields{$key}) {
+
+						for my $value (@values) {
+
+							push @{$whereHash{$searchFieldMap{$key}}}, { 'like', $value };
+						}
+
+					} else {
+
+						$whereHash{$searchFieldMap{$key}} = { 'in', \@values };
+					}
+
+				} else {
+
+					# Otherwise - we're a single value -
+					# check to see if a LIKE compare is needed.
+					if ($cmpFields{$key}) {
+
+						$whereHash{$searchFieldMap{$key}} = { 'like', $values[0] };
+
+					} else {
+
+						$whereHash{$searchFieldMap{$key}} = $values[0];
+					}
+				}
 			}
+
+			# if our $key is something like contributor.name -
+			# strip off the name so that our join is correctly optimized.
+			$key =~ s/\.\w+$//o;
 
 			my $startNode = $fieldToNodeMap{$key} || 'default';
 
 			# Find the query path that gives us the tables
 			# we need to join across to fulfill the query.
 			my $path = $queryPath{"$startNode:$endNode"};
+
+			$::d_sql && Slim::Utils::Misc::msg("Start and End node: [$startNode:$endNode]\n");
+
 			for my $i (0..$#{$path}) {
+
 				my $table = $path->[$i];
 				$tables{$table} = $tableSort{$table};
 				

@@ -1,6 +1,6 @@
 package Slim::Buttons::Search;
 
-# $Id: Search.pm,v 1.15 2005/01/04 03:38:52 dsully Exp $
+# $Id: Search.pm,v 1.16 2005/01/09 05:59:53 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -93,19 +93,19 @@ sub init {
 }
 
 sub searchExitHandler {
-	my ($client,$exittype) = @_;
+	my ($client,$exitType) = @_;
 	
-	$exittype = uc($exittype);
+	$exitType = uc($exitType);
 
-	if ($exittype eq 'LEFT') {
+	if ($exitType eq 'LEFT') {
 
 		Slim::Buttons::Common::popModeRight($client);
 
-	} elsif ($exittype eq 'RIGHT') {
+	} elsif ($exitType eq 'RIGHT') {
 
-		my $current = Slim::Buttons::Common::param($client,'valueRef');
+		my $current = Slim::Buttons::Common::param($client, 'valueRef');
 
-		my %nextParams = searchFor($client,$$current) ;
+		my %nextParams = searchFor($client, $$current) ;
 
 		Slim::Buttons::Common::pushModeLeft($client, $nextParams{'useMode'}, \%nextParams);
 	}
@@ -127,11 +127,11 @@ sub searchFor {
 }
 
 sub searchHandler {
-	my ($client,$exittype) = @_;
+	my ($client,$exitType) = @_;
 
-	$exittype = uc($exittype);
+	$exitType = uc($exitType);
 
-	if ($exittype eq 'BACKSPACE') {
+	if ($exitType eq 'BACKSPACE') {
 		Slim::Buttons::Common::popModeRight($client);
 	} else {
 		$context{$client} =~ s/$rightarrow//;
@@ -150,7 +150,7 @@ sub startSearch {
 	if ($client->searchFor eq 'ARTISTS') {
 
 		Slim::Buttons::Common::pushMode($client, 'browseid3', {
-			'search' => 1,
+			'search' => $term,
 			'genre'  => '*',
 			'artist' => $term,
 		});
@@ -158,7 +158,7 @@ sub startSearch {
 	} elsif ($client->searchFor eq 'ALBUMS') {
 
 		Slim::Buttons::Common::pushMode($client, 'browseid3', {
-			'search' => 1,
+			'search' => $term,
 			'genre'  => '*',
 			'artist' => '*',
 			'album'  => $term
@@ -167,7 +167,7 @@ sub startSearch {
 	} else {
 
 		Slim::Buttons::Common::pushMode($client, 'browseid3', {
-			'search' => 1,
+			'search' => $term,
 			'genre'  => '*',
 			'artist' => '*',
 			'album'  => '*',
@@ -184,7 +184,14 @@ sub searchTerm {
 	# do the search!
 	@{$client->searchTerm} = split(//,$context{$client});
 
-	my $term = '*';
+	my $term = '';
+
+	# Bug #738
+	# Which should be the default? Old - which is substring always?
+	# XXX - need to actually implement the pref in the web UI.
+	if (Slim::Utils::Prefs::get('searchSubString')) {
+		$term = '*';
+	}
 
 	for my $a (@{$client->searchTerm}) {
 
@@ -194,7 +201,15 @@ sub searchTerm {
 	}
 
 	$term .= '*';
-	return $term;
+
+	# If we're searching in substrings, return - otherwise append another
+	# search which is effectively \b for the query. We might (should?)
+	# deal with alternate separator characters other than space.
+	if (Slim::Utils::Prefs::get('searchSubString')) {
+		return $term;
+	}
+
+	return [ $term, "* $term" ];
 }
 
 1;

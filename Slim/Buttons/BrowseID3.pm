@@ -1,6 +1,6 @@
 package Slim::Buttons::BrowseID3;
 
-# $Id: BrowseID3.pm,v 1.25 2005/01/04 03:38:52 dsully Exp $
+# $Id: BrowseID3.pm,v 1.26 2005/01/09 05:59:52 dsully Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -95,21 +95,29 @@ sub init {
 		'left' => sub  {
 			my $client = shift;
 			my @oldlines = Slim::Display::Display::curLines($client);
-			my $genre = selection($client,'curgenre');
+
+			my $genre  = selection($client,'curgenre');
 			my $artist = selection($client,'curartist');
-			my $album = selection($client,'curalbum');
-			my $song = selection($client,'cursong');
-			my $startgenre = selection($client, 'genre');
+			my $album  = selection($client,'curalbum');
+			my $song   = selection($client,'cursong');
+
+			my $startgenre  = selection($client, 'genre');
 			my $startartist = selection($client, 'artist');
-			my $startalbum = selection($client, 'album');
-			my $startsong = selection($client, 'song');
+			my $startalbum  = selection($client, 'album');
+			my $startsong   = selection($client, 'song');
+
 			updateLastSelection($client);
+
 			if (equal($genre, $startgenre) && equal($artist, $startartist) && equal($album, $startalbum) && equal($song, $startsong)) {
+
 				# we don't know anything, go back to where we came from
 				Slim::Buttons::Common::popMode($client);
+
 			} else {
+
 				# go up one level
 				if (specified($album)) {
+
 					# we're at the song level
 					# forget we knew the album
 					setSelection($client,'curalbum', selection($client,'album'));
@@ -119,57 +127,81 @@ sub init {
 					#	setSelection($client,'curartist', selection($client,'artist'));
 					#	loadDir($client);
 					#}
+
 				} elsif (specified($artist)) {
+
 					# we're at the album level
 					# forget we knew the artist
 					setSelection($client,'curartist', selection($client,'artist'));
 					loadDir($client);
+
 				} elsif (specified($genre)) {
+
 					# we're at the artist level
 					# forget we knew the genre
 					setSelection($client,'curgenre', selection($client,'genre'));
 					loadDir($client);
+
+				} else {
+
+					loadDir($client);
 				}
-				loadDir($client);
 			}
+
 			$client->pushRight( \@oldlines, [Slim::Display::Display::curLines($client)]);
 		},
 
 		'right' => sub  {
 			my $client = shift;
+
 			if (scalar @{browseID3dir($client)} == 0) {
+
 				# don't do anything if the list is empty, which shouldn't happen anyways...
 				$client->bumpRight();
+
 			} else {
 				my $currentItem = browseID3dir($client,browseID3dirIndex($client));
+
 				$::d_files && msg("currentItem == $currentItem\n");
+
 				my @oldlines = Slim::Display::Display::curLines($client);
+
 				updateLastSelection($client);
-				my $genre = selection($client,'curgenre');
+
+				my $genre  = selection($client,'curgenre');
 				my $artist = selection($client,'curartist');
-				my $album = selection($client,'curalbum');
-				my $song = selection($client,'cursong');
+				my $album  = selection($client,'curalbum');
+				my $song   = selection($client,'cursong');
+
 				if (picked($genre) && picked($artist) && picked($album)) {
+
 					# we know the genre, artist, album and song.  show the song info for the track in $currentitem
-					Slim::Buttons::Common::pushMode($client, 'trackinfo', {'track' => $currentItem});
+					Slim::Buttons::Common::pushMode($client, 'trackinfo', { 'track' => $currentItem });
+
 				} elsif (picked($genre) && picked($artist)) {
+
 					# we know the genre, artist and album.  show the songs.
-					setSelection($client,'curalbum', $currentItem);
+					setSelection($client, 'curalbum', $currentItem);
 					loadDir($client);
+
 				} elsif (picked($genre)) {
+
 					# we know the genre and artist.  show the album.
-					setSelection($client,'curartist', $currentItem);
+					setSelection($client, 'curartist', $currentItem);
 					loadDir($client);
 					# Disabled: skip album, if there is only one
 					#if (scalar @{browseID3dir($client)} == 1) {
 					#	setSelection($client,'curalbum', browseID3dir($client, 0));
 					#	loadDir($client);
 					#}
+
 				} else {
+
 					# we just chose the genre, show it...
-					setSelection($client,'curgenre', $currentItem);
+					setSelection($client, 'curgenre', $currentItem);
 					loadDir($client);
 				}
+
 				$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 			}
 		},
@@ -360,7 +392,7 @@ sub setMode {
 		setSelection($client,'curartist', selection($client,'artist'));
 		setSelection($client,'curalbum', selection($client,'album'));
 		setSelection($client,'cursong', selection($client,'song'));
-		setSelection($client,'search', selection($client,'search'));
+		setSelection($client,'cursearch', selection($client,'search'));
 	}
 	
 	$client->lines(\&lines);
@@ -375,24 +407,35 @@ sub safe {
 
 sub updateLastSelection {
 	my $client = shift;
+
 	my $artist = safe(selection($client,'curartist'));
-	my $album = safe(selection($client,'curalbum'));
-	my $song = safe(selection($client,'cursong'));
-	my $genre = safe(selection($client,'curgenre'));
-	lastSelection($client, join('-', $genre, $artist, $album, $song), browseID3dirIndex($client));
-	$client->lastID3Selection(join('-', $genre, $artist, $album, $song), browseID3dirIndex($client));
+	my $album  = safe(selection($client,'curalbum'));
+	my $song   = safe(selection($client,'cursong'));
+	my $genre  = safe(selection($client,'curgenre'));
+	my $search = safe(selection($client,'cursearch'));
+
+	my $select = join('-', $genre, $artist, $album, $song, $search);
+
+	lastSelection($client, $select, browseID3dirIndex($client));
+
+	$client->lastID3Selection($select, browseID3dirIndex($client));
 }
 
 sub getLastSelection {
 	my $client = shift;
+
 	my $artist = safe(selection($client,'curartist'));
-	my $album = safe(selection($client,'curalbum'));
-	my $song = safe(selection($client,'cursong'));
-	my $genre = safe(selection($client,'curgenre'));
-	my $last = lastSelection($client, join('-', $genre, $artist, $album, $song));
+	my $album  = safe(selection($client,'curalbum'));
+	my $song   = safe(selection($client,'cursong'));
+	my $genre  = safe(selection($client,'curgenre'));
+	my $search = safe(selection($client,'cursearch'));
+
+	my $select = join('-', $genre, $artist, $album, $song, $search);
+
+	my $last   = lastSelection($client, $select);
 
 	if (!defined($last)) {
-		$last = $client->lastID3Selection(join('-', $genre, $artist, $album, $song));
+		$last = $client->lastID3Selection($select);
 	}
 
 	return $last || 0;
@@ -406,7 +449,7 @@ sub loadDir {
 	my $artist = selection($client, 'curartist');
 	my $album  = selection($client, 'curalbum');
 	my $song   = selection($client, 'cursong');
-	my $search = selection($client, 'search');
+	my $search = selection($client, 'cursearch');
 
 	my $sortByTitle;
 
@@ -432,16 +475,47 @@ sub loadDir {
 		$sortByTitle = 1;
 	}
 
-	$::d_files && msg("loading dir for $genre - $artist - $album - $song\n");
+	$::d_files && msgf(
+		"loading dir for genre: %s artist: %s album: %s song: %s search: %s\n",
+		($genre || 'undef'), ($artist || 'undef'), ($album || 'undef'), ($song || 'undef'), ($search || 0)
+	);
+
+	# If we've changed into a different mode (say trackinfo) and back,
+	# it's hard to keep track of the modestack parameters - so in
+	# Search.pm we set the search to be the terms (which may be an
+	# arrayref), and if that is equal to any of the below, we've gotten
+	# back to the top level (before the search entry), which should be a
+	# search and not a regular find().
+	my $setSearch = selection($client, 'search');
+
+	if (defined $setSearch && defined $artist && $setSearch eq $artist) {
+		$search = $artist;
+	} elsif (defined $setSearch && defined $album && $setSearch eq $album) {
+		$search = $album;
+	} elsif (defined $setSearch && defined $song && $setSearch eq $song) {
+		$search = $song;
+	}
 
 	# Build up a query hash
 	my $ds   = Slim::Music::Info::getCurrentDataStore();
 	my $find = {};
 
-	$find->{'genre'}       = singletonRef($genre)  if specified($genre);
-	$find->{'contributor'} = singletonRef($artist) if specified($artist);
-	$find->{'album'}       = singletonRef($album)  if specified($album);
-	$find->{'track'}       = singletonRef($song)   if specified($song);
+	if ($search) {
+
+		$find->{'contributor.name'} = singletonRef($artist) if defined $artist && !specified($artist);
+		$find->{'album.title'}      = singletonRef($album)  if defined $album  && !specified($album);
+		$find->{'track.title'}      = singletonRef($song)   if defined $song   && !specified($song);
+
+		# Don't try to search again when we're walking through the results tree.
+		setSelection($client, 'cursearch', 0);
+
+	} else {
+
+		$find->{'genre'}       = singletonRef($genre)  if specified($genre);
+		$find->{'contributor'} = singletonRef($artist) if specified($artist);
+		$find->{'album'}       = singletonRef($album)  if specified($album);
+		$find->{'track'}       = singletonRef($song)   if specified($song);
+	}
 
 	# These really shouldn't be unrolling the (potentially large) array
 	# But there's some wackiness when I try to make it use the ref directly.
@@ -489,10 +563,10 @@ sub lines {
 
 	my $songlist = 0;
 	
-	my $genre  = selection($client,'curgenre');
-	my $artist = selection($client,'curartist');
-	my $album  = selection($client,'curalbum');
-	my $song   = selection($client,'cursong');
+	my $genre  = _deRef(selection($client,'curgenre'));
+	my $artist = _deRef(selection($client,'curartist'));
+	my $album  = _deRef(selection($client,'curalbum'));
+	my $song   = _deRef(selection($client,'cursong'));
 
 	my $list   = browseID3dir($client);
 	my $plural = scalar @$list > 1 ? 'S' : '';
@@ -690,6 +764,7 @@ sub equal {
 sub specified {
 	my $i = shift;
 
+	return 0 if ref($i) eq 'ARRAY';
 	return 0 unless defined $i;
 	return $i !~ /\*/;
 }
@@ -698,6 +773,7 @@ sub specified {
 sub picked {
 	my $i = shift;
 
+	return 0 if ref($i) eq 'ARRAY';
 	return 0 unless defined $i;
 	return (specified($i) || $i eq "*");
 }
@@ -728,6 +804,10 @@ sub singletonRef {
 
 		return \@sa;
 
+	} elsif (ref $arg eq 'ARRAY') {
+
+		return $arg;
+
 	} elsif ($arg) {
 
 		return [$arg];
@@ -736,6 +816,13 @@ sub singletonRef {
 
 		return [];
 	}
+}
+
+sub _deRef {
+	my $item = shift;
+
+	return $item->[0] if ref($item) eq 'ARRAY';
+	return $item;
 }
 
 1;

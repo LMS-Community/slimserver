@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.44 2005/01/04 03:38:52 dsully Exp $
+# $Id: Common.pm,v 1.45 2005/01/09 05:59:53 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1171,7 +1171,7 @@ sub popMode {
 		&$fun($client,'pop');
 	}
 
-	$::d_files && msg("popped to button mode: " . mode($client) . "\n");
+	$::d_files && msg("popped to button mode: " . (mode($client) || 'empty!') . "\n");
 	
 	return $oldMode
 }

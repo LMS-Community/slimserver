@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DBIStore;
 
-# $Id: DBIStore.pm,v 1.8 2005/01/06 03:44:02 dsully Exp $
+# $Id: DBIStore.pm,v 1.9 2005/01/09 05:59:53 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -312,7 +312,6 @@ sub search {
 sub searchWithCriteria {
 	my $class	 = shift;
 	my $findCriteria = shift;
-	my $sortByTitle  = shift;
 
 	# First turn Artist 'ACDC' => id 10, etc.
 	while (my ($key, $value) = each %$findCriteria) {
@@ -326,12 +325,6 @@ sub searchWithCriteria {
 			$findCriteria->{$key} = $results;
 		}
 	}
-
-	my $sortBy = $sortByTitle ? 'title' : 'tracknum';
-
-	# Then search using the above id's. I wonder if it'd be possible to do
-	# a big join, and just have 1 query.
-	return map { $_->url } @{ $class->find('track', $findCriteria, $sortBy) };
 }
 
 sub albumsWithArtwork {
@@ -699,7 +692,7 @@ sub readTags {
 
 			# cache the file size & date
 			$attributesHash->{'FS'} = -s $filepath;					
-			$attributesHash->{'AGE'} = (stat($filepath))[9];
+			$attributesHash->{'AGE'} = (stat(_))[9];
 			
 			# rewrite the size, offset and duration if it's just a fragment
 			if ($anchor && $anchor =~ /([\d\.]+)-([\d\.]+)/ && $attributesHash->{'SECS'}) {

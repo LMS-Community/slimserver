@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.118 2005/01/08 08:20:16 dsully Exp $
+# $Id: Pages.pm,v 1.119 2005/01/09 05:59:53 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -270,10 +270,52 @@ sub init {
 			'alphaPageBar' => 1
 		},
 
+		'year' => {
+			'title' => 'BROWSE_BY_YEAR',
+			'allTitle' => 'ALL_YEARS',
+
+			'idToName' => sub {
+				my $ds  = shift;
+				my $id  = shift;
+				return $id;
+			},
+
+			'resultToId' => sub {
+				my $obj = shift;
+				return $obj;
+			},
+
+			'resultToName' => sub {
+				my $obj = shift;
+				return $obj;
+			},
+
+			'find' => sub {
+				my $ds = shift;
+				my $level = shift;
+				my $findCriteria = shift;
+
+				return $ds->find($level, $findCriteria, $level);
+			},
+
+			'listItem' => sub {
+				my $ds = shift;
+				my $list_form = shift;
+				my $item = shift;
+				my $itemname = shift;
+				my $descend = shift;
+
+				$list_form->{'mixable_descend'} = Slim::Music::Info::isGenreMixable($itemname) && ($descend eq "true");
+			},
+
+			'ignoreArticles' => 1,
+			'alphaPageBar' => 0
+		},
+
 		'default' => {
 			'title' => 'BROWSE',
 			'allTitle' => 'ALL',
-			'idToName' => sub { return shift },
+			'idToName' => sub { my $ds = shift; return shift },
 			'resultToId' => sub { return shift },
 			'resultToName' => sub { return shift },
 
@@ -1581,11 +1623,17 @@ sub browsedb {
 
 	for my $field (@levels) {
 
+		my $info = $fieldInfo{$field} || $fieldInfo{'default'};
+
+		# XXX - is this the right thing to do?
+		# For artwork browsing - we want to display the album.
+		if (my $transform = $info->{'nameTransform'}) {
+			push @levels, $transform;
+		}
+
 		# If we don't have this check, we'll create a massive query
 		# for each level in the hierarchy, even though it's not needed
 		next unless defined $params->{$field};
-
-		my $info = $fieldInfo{$field} || $fieldInfo{'default'};
 
 		$names{$field} = &{$info->{'idToName'}}($ds, $params->{$field});
 	}
@@ -1639,6 +1687,12 @@ sub browsedb {
 	for (my $i = 0; $i < $level ; $i++) {
 
 		my $attr = $levels[$i];
+
+		# XXX - is this the right thing to do?
+		# For artwork browsing - we want to display the album.
+		if (my $transform = $firstLevelInfo->{'nameTransform'}) {
+			$attr = $transform;
+		}
 
 		if ($params->{$attr}) {
 
@@ -1780,7 +1834,7 @@ sub browsedb {
 
 			my $anchor = Slim::Web::Pages::anchor(Slim::Utils::Text::getSortName($itemname), $ignoreArticles);
 
-			if ($lastAnchor ne $anchor) {
+			if ($lastAnchor && $lastAnchor ne $anchor) {
 				$list_form{'anchor'} = $lastAnchor = $anchor;
 			}
 
@@ -2265,9 +2319,6 @@ sub browseid3_old {
 
 				if ($params->{'artwork'}) {
 					$otherparams .= 'artwork=1&';
-				}
-
-				if ($params->{'artwork'}) {
 
 					($start, $end) = pageBar(
 						$numItems,
