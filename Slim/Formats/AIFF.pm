@@ -83,6 +83,7 @@ sub getTag {
 		$tags->{'BITRATE'} = $tags->{'RATE'} * $tags->{'SAMPLESIZE'} *  $tags->{'CHANNELS'};
 		$tags->{'SECS'} = $tags->{'SIZE'} / ($tags->{'BITRATE'} / 8);
 		$tags->{'FS'} = $filesize;
+		$tags->{'BLOCKALIGN'} = $tags->{'SAMPLESIZE'} / 8 * $tags->{'CHANNELS'};
 	}
 
 	return $tags;

@@ -78,6 +78,7 @@ my %clientHash = ();
 	# songtotalbytes				float		length of this song in bytes
 	# songduration					float		song length in seconds
 	# songoffset					int			offset in bytes to beginning of song in file
+	# songblockalign				int			block alignment of samples in file
 	# songBytes						int			number of bytes read from the current song
 	# currentplayingsong			string		current song that's playing out from player.  May not be the same as in the playlist as the client's buffer plays out.
 
@@ -260,6 +261,7 @@ sub new {
 	$client->[83] = undef; # settingsSelection
 	$client->[84] = undef; # songBytes
 	$client->[85] = undef; # pauseTime
+	$client->[86] = undef; # songblockalign
 
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -835,6 +837,11 @@ sub songBytes {
 sub pauseTime {
 	my $r = shift;
 	@_ ? ($r->[85] = shift) : $r->[85];
+}
+
+sub songblockalign {
+	my $r = shift;
+	@_ ? ($r->[86] = shift) : $r->[86];
 }
 
 1;

@@ -64,8 +64,7 @@ sub getTag {
 	$tags->{'SIZE'}    = $flac->{'fileSize'};
 	$tags->{'SECS'}    = $flac->{'trackTotalLengthSeconds'};
 	$tags->{'OFFSET'}  = $flac->{'startAudioData'};
-	$tags->{'BITRATE'} = $flac->{'bitRate'}/1000.0;
-	$tags->{'FRAMES'}   = $flac->{'trackLengthFrames'};
+	$tags->{'BITRATE'} = $flac->{'bitRate'};
 
 	# Add the stuff that's stored in the Streaminfo Block
 	my $flacInfo = $flac->info();

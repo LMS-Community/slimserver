@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.46 2004/01/10 12:22:46 kdf Exp $
+# $Id: Info.pm,v 1.47 2004/01/13 00:36:12 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -75,6 +75,9 @@ my @infoCacheItems = (
 	'CHANNELS', # number of channels
 	'BAND',
 	'CONDUCTOR', # conductor
+	'BLOCKALIGN', # block alignment
+	'DISC', # disc number
+	'DISCC', # disc count
 );
 
 # Save the persistant DB cache every hour
@@ -1157,7 +1160,7 @@ sub size {
 sub bitrate {
 	my $file = shift;
 	my $mode = (defined info($file,'VBR_SCALE')) ? 'VBR' : 'CBR';
-	if (info($file,'BITRATE')) {
+	if (info($file,'BITRATE') / 1000) {
 		return info($file,'BITRATE').Slim::Utils::Strings::string('KBPS').' '.$mode;
 	} else {
 		return;
@@ -1166,7 +1169,7 @@ sub bitrate {
 
 sub bitratenum {
 	my $file = shift;
-	return info($file,'BITRATE') * 1000;
+	return info($file,'BITRATE');
 }
 sub samplerate {
 	my $file = shift;
@@ -1176,6 +1179,11 @@ sub samplerate {
 sub channels {
 	my $file = shift;
 	return info($file, 'CHANNELS');
+}
+
+sub blockalign {
+	my $file = shift;
+	return info($file, 'BLOCKALIGN');
 }
 
 # we cache whether we had success reading the cover art.

@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.50 2004/01/12 23:16:19 dean Exp $
+# $Id: Source.pm,v 1.51 2004/01/13 00:36:12 dean Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,7 +10,7 @@ package Slim::Player::Source;
 use strict;
 
 use File::Spec::Functions qw(:ALL);
-use FileHandle;
+use Slim::Utils::FileHandle;
 use FindBin qw($Bin);
 use IO::Socket qw(:DEFAULT :crlf);
 use Time::HiRes;
@@ -119,13 +119,20 @@ sub rate {
 sub time2offset {
 	my $client	= shift;
 	my $time	= shift;
-
-	my $songLengthInBytes	= $client->songtotalbytes();
-	my $duration		= $client->songduration();
-	my $byterate		= $duration ? ($songLengthInBytes / $duration) : 0;
-
-	# offset
-	return int($byterate * $time);
+	
+	my $size	= $client->songtotalbytes();
+	my $duration	= $client->songduration();
+	my $align = $client->songblockalign();
+	
+	my $byterate	= $duration ? ($size / $duration) : 0;
+	
+	my $offset	= int($byterate * $time);
+	
+	$offset -= $offset % $align;
+	
+	$::d_source && msg( "$time to $offset (align: $align size: $size duration: $duration)\n");
+	
+	return $offset;
 }
 
 # fractional progress (0 - 1.0) of playback in the current song.
@@ -305,6 +312,8 @@ sub underrun {
 	# if we're synced, then we let resync handle this
 	if ($client && ($client->playmode eq 'playout-play' || $client->playmode eq 'stop') && !Slim::Player::Sync::isSynced($client)) {
 		skipahead($client);
+	} elsif ($client && ($client->playmode eq 'playout-stop') && !Slim::Player::Sync::isSynced($client)) {
+		playmode($client, 'stop');
 	}
 }
 
@@ -709,7 +718,8 @@ sub openSong {
 		my $duration   = Slim::Music::Info::durationSeconds($fullpath);
 		my $offset     = Slim::Music::Info::offset($fullpath);
 		my $samplerate = Slim::Music::Info::samplerate($fullpath);
-
+		my $blockalign = Slim::Music::Info::blockalign($fullpath);
+		
 		$::d_source && msg("openSong: getting duration  $duration, size $size, and offset $offset for $fullpath\n");
 
 		if (!$size || !$duration) {
@@ -727,8 +737,8 @@ sub openSong {
 
 			# this case is when we play the file through as-is
 			if ($command eq '-') {
-				$client->mp3filehandle( FileHandle->new() );
-		
+				 $client->mp3filehandle( Slim::Utils::FileHandle->new() );		
+				 
 				$::d_source && msg("openSong: opening file $filepath\n");
 				if ($client->mp3filehandle->open($filepath)) {
 
@@ -765,7 +775,7 @@ sub openSong {
 				
 				$::d_source && msg("Using command for conversion: $fullCommand\n");
 
-				$client->mp3filehandle( FileHandle->new() );
+				$client->mp3filehandle( Slim::Utils::FileHandle->new() );
 		
 				$client->mp3filehandle->open($fullCommand);
 				$client->mp3filehandleIsSocket(2);
@@ -780,6 +790,7 @@ sub openSong {
 			$client->songduration($duration);
 			$client->songoffset($offset);
 			$client->streamformat($format);
+			$client->songblockalign($blockalign);
 			$::d_source && msg("Streaming with format: $format\n");
 		
 		} else {
@@ -899,13 +910,18 @@ sub readNextChunk {
 				
 				my $tricksegmentbytes = $byterate * $TRICKSEGMENTLENGTH;
 				
+				$tricksegmentbytes -= $tricksegmentbytes % $client->songblockalign();
+				
 				# check to see if we've played tricksgementlength seconds worth of audio
-				$::d_source && msg("trick mode rate: $rate:  songbytes: $now lastskip: $lastskip byterate: $byterate\n");
+				$::d_source && msg("trick mode rate: $rate:  songbytes: $now lastskip: $lastskip byterate: $byterate tricksegmentbytes: $tricksegmentbytes\n");
 				if (($now - $lastskip) >= $tricksegmentbytes) { 
 					# if so, seek to the appropriate place.  (
 					# TODO: make this align on frame and sample boundaries as appropriate)
 					# TODO: Make the seek go into the next song, as appropriate.
 					my $howfar = ($rate -  $TRICKSEGMENTLENGTH) * $byterate;
+					
+					$howfar -= $howfar % $client->songblockalign();
+					$::d_source && msg("trick mode seeking to: $howfar\n");
 					my $seekpos = $now + $howfar;
 					
 					if ($seekpos < 0) {

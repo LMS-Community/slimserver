@@ -101,7 +101,7 @@ PLAYER_VERSION
 	DE	Player Firmware Version
 	EN	Player Firmware Version
 	ES	Versión del firmware
-	FR	Version du micrologiciel du lecteur
+	FR	Version du micrologiciel de la platine
 	NL	Speler Firmware Versie
 	NO	Spiller versjon
 	PT	Versão do firmware do cliente
@@ -233,7 +233,7 @@ PLAYLIST
 	EN	Playlist
 	ES	Lista discográfica
 	FI	Soittolista
-	FR	Playlist
+	FR	Liste de lecture
 	IT	Lista dei brani
 	NL	Playlist
 	NO	Spilleliste
@@ -378,7 +378,7 @@ REMOVING_FROM_PLAYLIST
 	EN	Removing from playlist:
 	ES	Eliminando de la lista:
 	FI	Poistetaan soittolistasta:
-	FR	Supprime de la playlist :
+	FR	Supprime de la liste de lecture :
 	IT	Cancella dalla Lista dei brani:
 	NL	Verwijderen uit playlist:
 	NO	Fjerner fra spilleliste:
@@ -389,7 +389,7 @@ ZAPPING_FROM_PLAYLIST
 	DE	Zu Zapped Songs Playlist verschieben:
 	DK	Flytter til playlisten Zappede sange
 	EN	Moving to Zapped Songs playlist:
-	FR	Déplace dans la playlist Morceaux Zappés
+	FR	Déplace dans la liste de lecture Morceaux Zappés
 	NL	Verplaatsen naar de lijst van gezapte stukken:
 	NO	Flytter til Zappede Sangers spilleliste:
 	PT	Mover para a playlist rápida de músicas
@@ -411,7 +411,7 @@ ADDING_TO_PLAYLIST
 	EN	Adding to end of playlist:
 	ES	Añadiendo a la lista:
 	FI	Lisätään soittolistalle:
-	FR	Ajoute à la fin de la playlist :
+	FR	Ajoute à la fin de la liste de lecture :
 	IT	Accodo alla Lista dei brani:
 	NL	Toevoegen aan playlist:
 	NO	Legger til i spilleliste:
@@ -460,7 +460,7 @@ CLEARING_PLAYLIST
 	EN	Clearing playlist...
 	ES	Vaciando lista discográfica...
 	FI	Tyhjennetään soittolistaa...
-	FR	Vidage de la playlist...
+	FR	Vidage de la liste de lecture...
 	NL	Bezig met leegmaken Playlist...
 	NO	Nullstiller spillelisten...
 	PT	A limpar a playlist...
@@ -485,7 +485,7 @@ PLAYLIST_EMPTY
 	EN	Playlist Empty
 	ES	Lista discográfica vacía
 	FI	Soittolista tyhjä
-	FR	Playlist vide
+	FR	Liste de lecture vide
 	IT	La Lista dei brani e' vuota
 	NL	Playlist is leeg
 	NO	Spillelisten er tom
@@ -550,7 +550,7 @@ REPEAT_ALL
 	EN	Repeat playlist
 	ES	Repetir la lista entera
 	FI	Soita soittolistaa toistuvasti
-	FR	Répète la playlist
+	FR	Répète la liste de lecture
 	IT	Ripeti la Lista dei brani
 	NL	Herhaal playlist
 	NO	Repetér spilleliste
@@ -584,7 +584,7 @@ SLEEPING_IN
 POWERING_OFF
 	DE	Schaltet ab
 	DK	Lukker ned
-	EN	Powering Off
+	EN	Going to standby...
 	ES	Apagando
 	FI	Järjestelmää sammutetaan
 	FR	Mise hors tension
@@ -641,7 +641,7 @@ ALARM_SELECT_PLAYLIST
 	DE	Wählen Sie eine Playlist für den Wecker
 	DK	Vælg playliste for alarmen
 	EN	Select Playlist for Alarm
-	FR	Sélection de la playlist pour le réveil
+	FR	Sélection de la liste de lecture pour le réveil
 	NL	Kies een playlist voor de wekker
 	NO	Velg Spilleliste for Alarm
 	PT	Escolha a Playlist para o Alarme
@@ -817,7 +817,7 @@ SETUP_GROUP_BRIGHTNESS_DESC
 	EN	The brightness of the player's display can be set for when it's on and off.
 	ES	Elija la luminosidad de la pantalla.
 	FI	Näytön valoisuuden voi säätää erikseen käyttöä ja lepotilaa varten.
-	FR	Il est possible de régler la luminosité de l'écran du lecteur pour les états allumé et éteint.
+	FR	Il est possible de régler la luminosité de l'écran de la platine lorsqu'elle est allumée ou en veille.
 	NL	De helderheid van het display kan afzonderlijk worden ingesteld voor de aan- en uitgeschakelde toestand.
 	NO	Lysstyrken på displayet kan settes for når enheten er på og av.
 	PT	Pode escolher o brilho do ecrã do cliente para quando estiver ligado ou desligado.
@@ -852,7 +852,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	EN	These are the formats available for selection both above and in the player setup. To remove a format, clear the text box, to enter a new format, place it in the empty one. Available data elements are: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
 	ES	Estos son los formatos disponibles para mostrar arriba y tambien en la configuración del reproductor. Para borrar un formato, vacie la casilla. Para introducir un formato nuevo, pongalo en la casilla vacía. Elementos disponibles son: CT (tipo de contenido), TITLE (nombre de la canción), GENRE (genero), TRACKNUM (indice de la canción en su disco), FS (tamaño del fichero), ARTIST (artista), ALBUM (disco), COMMENT (comentarios), YEAR (año), SECS (duración de la canción en segundos), DURATION (duración de la canción en minutos y segundos), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME, PATH (camino al fichero), FILE (nombre del fichero), EXT (extensión del fichero), LONGDATE (la fecha en formato largo), SHORTDATE (la fecha en formato corto), CURRTIME (la hora actual). Elementos pueden ser separados por lo que quiera, incluso nada. Los seperadores se usarán solamente si los valores son definidos.<br>La selección actual es la que se usará en el interfaz web.
 	FI	Seuraavat kentät ovat käytössäsi sekä yllä, että soittimen asetuksissa. Poistaaksesi kentän, tyhjennä teksi laatikosta, lisätäksesi uuden kentän, syötä teksi tyhjään laatikkoon. Vaihtoehtoja ovat: CT (sisältötyyppi), TITLE, GENRE, TRACKNUM (kappaleen numero kokonaislukuna), FS (tiedoston koko), ARTIST, ALBUM, COMMENT, YEAR, SECS (sekunnit), DURATION (minuutit ja sekunnit), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (äänenvoimakkuuden säätö), PATH, FILE, EXT (tiedoston pääte), LONGDATE (päiväys, pitkä esitystapa), SHORTDATE (päiväys, lyhyt esitystapa), CURRTIME(aika). Kentät voidaan erottaa toisistaan millä tahansa erottimella. Erottimia käytetään vain mikäli tietokenttiä on valittuna.<br>Tämänhetkistä valintaa tullaan käyttämään WWW-sivuilla.
-	FR	Voici les formats disponibles. Ils peuvent être choisis ci-dessus ou dans les réglages du lecteur. Pour supprimer un format, effacer la zone de saisie. Pour ajouter un format, utiliser une zone de saisie vide. Les codes suivants peuvent être utilisés pour représenter des données: CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), ALBUM, COMMENT (commentaire), YEAR (année), SECS (durée total en secondes), DURATION (durée en minutes et secondes), VBR_SCALE (vbr/cbr), BITRATE (débit binaire), TAGSIZE (taille des repères), VOLUME (nom du disque), PATH (chemin d'accès), FILE (fichier), EXT (extension du fichier), LONGDATE (date courante en format long), SHORTDATE (date courante en format court), CURRTIME (heure courante). Ces codes peuvent être entrecoupés de textes séparateurs. Les séparateurs ne sont utilisés que si des données sont présentes.<bt>La sélection courante est le format qui sera utilisé dans les documents Web.
+	FR	Voici les formats disponibles. Ils peuvent être choisis ci-dessus ou dans les réglages de la platine. Pour supprimer un format, effacer la zone de saisie. Pour ajouter un format, utiliser une zone de saisie vide. Les codes suivants peuvent être utilisés pour représenter des données: CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), ALBUM, COMMENT (commentaire), YEAR (année), SECS (durée total en secondes), DURATION (durée en minutes et secondes), VBR_SCALE (vbr/cbr), BITRATE (débit binaire), TAGSIZE (taille des repères), VOLUME (nom du disque), PATH (chemin d'accès), FILE (fichier), EXT (extension du fichier), LONGDATE (date courante en format long), SHORTDATE (date courante en format court), CURRTIME (heure courante). Ces codes peuvent être entrecoupés de textes séparateurs. Les séparateurs ne sont utilisés que si des données sont présentes.<bt>La sélection courante est le format qui sera utilisé dans les documents Web.
 	NL	Dit zijn de beschikbare formaten voor zowel hierboven als in de Speler instellingen. Om een formaat te verwijderen, leeg de textbox. Om een formaat toe te voegen, voer deze in in een lege textbox. Beschikbare data elementen zijn: CT (content type), TITLE, GENRE, TRACKNUM, FS (file grootte), ARTIST, ALBUM, COMMENT, YEAR, SECS (totaal seconden), DURATION (minuten en seconden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (album naam), PATH, FILE, EXT (file extention), LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). De elementen kunnen door alles gescheiden geworden. Scheidingstekens worden alleen gebruikt als de data elementen aanwezig zijn.<br>Het op dit moment geselecteerde formaat zal worden gebruikt op de web pagina's.
 	NO	Dette er tilgjengelige for web-interfacet og selve spilleren. For å fjerne et format, tøm boksen. For å legge til et format, skriv det i en tom boks. Tilgengelige elementer: CT (innholds type), TITLE, GENRE, TRACKNUM (spor nummer), FS (filstørrelse), ARTIST, ALBUM, COMMENT, YEAR, SECS (totalt antall sekunder), DURATION (minutter og sekunder), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volumnavn), PATH, FILE, EXT (filending), LONGDATE (dagens dato, langt), SHORTDATE (dagens dato, kort), CURRTIME (klokkeslett nå). Elementer kan skilles med ethvert tegn (eller ingen). Skilletegnet vises bare om dataelementet finnes. Det valgte formatet er det som blir brukt på websidene.
 	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no cliente. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
@@ -929,7 +929,7 @@ SETUP_GROUP_IRSETS_DESC
 	DE	Sie können wählen ob der Player auf bestimmte Infrarot Signale reagieren soll oder nicht. Zum Aktivieren einer Fernbedienung wählen Sie den entsprechenden Namen aus. Zum Deaktivieren einer Fernbedienung deaktivieren Sie die Auswahlbox.
 	DK	Du kan vælge hvilke fjernbetjeninger denne afspiller skal svare på. Afspilleren svarer på de fjernbetjeninger der er afkrydset nedenfor. Fjern afkrydsningen hvis afspilleren ikke skal lytte til den type fjernbetjening.
 	EN	You can choose to have this player respond to or ignore certain infrared remote signals. To enable a remote control code set, put a check next to the name below. To disable a remote control code set, clear the check mark.
-	FR	Vous pouvez sélectionner à quel type d'ordres infrarouge de la télécommande le lecteur répondra. Pour activer un type, cocher la case correspondante. Pour le désactiver, décochez la case.
+	FR	Vous pouvez sélectionner à quel type d'ordres infrarouge de la télécommande la platine répondra. Pour activer un type, cocher la case correspondante. Pour le désactiver, décochez la case.
 	NL	U kan instellen welke infraroodsignalen door de speler worden begrepen danwel genegeerd. Om een code set voor een afstandsbediening te activeren vinkt U de onderstaande naam aan. Om de code set te deactiveren verwijdert U het vinkje.
 	NO	Du kan velge om spilleren skal reagere på eller ignorere visse signaler fra fjernkontrollen. For å aktivere kodeoppsettet for en fjernkontroll, merk den nedenfor. For å deaktivere den, fjern merket.
 	PT	Pode optar por permitir ou negar alguns sinais do controlo remoto no seu cliente. Para activar um sinal, active a opção junto ao nome abaixo. Para desactivar, limpe a opção.
@@ -949,7 +949,7 @@ SETUP_GROUP_PLUGINS_DESC
 	DE	SlimServer beinhaltet ein paar Plugins, die Sie zum Menü hinzufügen können. Sie können die Plugins im Plugin-Verzeichnis hinzufügen oder löschen. Um ein Extra zu aktivieren, klicken Sie auf die Auswahlbox. Zum Deaktivieren deaktivieren Sie die Box. Klicken Sie auf "Ändern" zum Speichern der Einstellung.
 	DK	SlimServer inkluderer nogle ekstra funktioner, grupperet i moduler, som du kan anvende via din fjernbetjening. Modulerne ligger i Plugins-mappen og kan aktiveres eller deaktiveres individuelt. Aktiver moduler ved at afkrydse dem nedenfor, deaktiver moduler ved at fjerne afkrydsningen. Tryk Gem for at gemme dine ændringer.
 	EN	SlimServer includes some extra features, called Plugins, that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. To save your changes, click Change.
-	FR	Vous pouvez sélectionner des fonctionnalités supplémentaires du lecteur, appelées Plugins, disponibles à l'aide de la télécommande. Ces fonctionnalités sont situées dans le dossier Plugins. Pour activer un plugin, cocher la case correspondante. Pour le désactiver, décochez la case.
+	FR	Vous pouvez sélectionner des fonctionnalités supplémentaires de la platine, appelées Plugins, disponibles à l'aide de la télécommande. Ces fonctionnalités sont situées dans le dossier Plugins. Pour activer un plugin, cocher la case correspondante. Pour le désactiver, décochez la case.
 	NL	SlimServer laat toe om extra functies te koppelen aan de afstandsbediening. Deze functies vindt U terug in de Plugins folder. Om een funtie te activeren klikt U het vinkje naast de functie aan. Om de funtie uit te schakelen verwijdert U het vinkje. Om de wijzigingen op te slaan klikt U op 'Aanpassen'.
 	NO	SlimServer inneholder en del tilleggsfunksjoner, Plugins, som du kan benytte deg av med fjernkontrollen. Disse kan aktiveres eller deaktiveres individuelt. For å aktivere en Plugin, merk den. For å deaktivere en Plugin, fjern merket. For å lagre endringene, velg "Endre".
 	PT	O cliente SlimServer inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
@@ -972,7 +972,7 @@ SETUP_PLAYERNAME
 	EN	Player Name
 	ES	Nombre del player
 	FI	Player Nimi
-	FR	Nom du lecteur
+	FR	Nom de la platine
 	NL	Player Naam
 	NO	Player Navn
 	PT	Nome do Cliente
@@ -984,7 +984,7 @@ SETUP_PLAYERNAME_OK
 	EN	The new name for this player is:
 	ES	El nuevo nombre para este reproductor es:
 	FI	Uuden soittimen nimi on:
-	FR	Le nouveau nom du lecteur est :
+	FR	Le nouveau nom de la platine est :
 	NL	De nieuwe naam voor deze speler is:
 	NO	Spillerens nye navn er:
 	PT	O novo nome para este cliente é
@@ -996,7 +996,7 @@ SETUP_PLAYERNAME_DESC
 	EN	You can give this player a name that will be used to identify the player on these web pages.
 	ES	Puede usted asignar un nombre para identificar este reproductor en el interfaz web.
 	FI	Voit antaa nimen, jonka avulla soitin voidaan yhdistää näillä WWW-sivuilla.
-	FR	Vous pouvez donner au lecteur un nom qui sera utilisé pour l'identifier sur l'interface web.
+	FR	Vous pouvez donner à la platine un nom qui sera utilisé pour l'identifier sur l'interface web.
 	NL	U kunt deze speler een naam geven die zal worden gebruikt om de speler te identificeren op de web pagina's.
 	NO	Du kan gi denne spilleren et navn som vil brukes til å identifisere spilleren på disse web-sidene.
 	PT	Pode escolher um nome para identificar este cliente nas páginas web do servidor.
@@ -1008,7 +1008,7 @@ SETUP_PLAYERNAME_CHOOSE
 	EN	Player name:
 	ES	Elija un nombre para este reproductor:
 	FI	Soittimen nimi:
-	FR	Nom du lecteur :
+	FR	Nom de la platine :
 	NL	Naam voor deze speler:
 	NO	Spiller navn:
 	PT	Escolha um nome para este cliente
@@ -1076,7 +1076,7 @@ SETUP_AUTOBRIGHTNESS_DESC
 	DE	Die Helligkeit Anzeige kann sich automatisch anpassen, wenn Sie einen Knopf drücken, einen Titel abspielen oder eine zeitlang nichts tun. Sie können dieses automatische Verhalten abschalten.
 	DK	Lysstyrken i displayet på din player kan indstilles automatisk når du trykker en knap, begynder afspilning af en sang eller lader den stå i et stykke tid. Du kan vælge at slå denne automatiske lysstyrkeindstilling fra.
 	EN	The brightness of the display can be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
-	FR	La luminosité de l'affichage du lecteur peut être ajustée automatiquement lorsqu'un bouton est pressé, un morceau commence à jouer, ou lorsque le lecteur est inutilisé pendant un moment. Vous pouvez désactiver ce comportement automatique.
+	FR	La luminosité de l'affichage de la platine peut être ajustée automatiquement lorsqu'un bouton est pressé, un morceau commence à jouer, ou lorsque la platine est inutilisée pendant un moment. Vous pouvez désactiver ce comportement automatique.
 	NL	De helderheid van het scherm van kan automatisch aangepast worden bij knopdrukken, het begin van een liedje of na een periode van inactiviteit. Deze functie kan ook uitgeschakeld worden.
 	NO	Lyststyrken i displayet kan justeres automatisk når du trykker på en knapp, begynner å spille en sang, eller lar den være for en stund. Du kan velge å slå av denne automatikken.
 	PT	O brilho do ecrã do pode ser ajustado automaticamente quando usar um botão, começa uma música, ou fica inactivo ao fim de algum tempo. Pode desligar este comportamento automático se desejar.
@@ -1158,7 +1158,7 @@ SETUP_PLAYINGDISPLAYMODE_DESC
 	EN	The player can display information on the progress of a song as it's playing. Choose the information you wish to be displayed.
 	ES	Puede mostrarse información del progreso de la canción mientras puesto. Elija la información que quiera ver.
 	FI	Soitin voi näyttää tietoa kappaleen etenemisestä. Valitse, mitä tietoa haluat näytettävän.
-	FR	Le lecteur peut afficher la progression de la lecture du morceau en cours de différentes manières. Choisissez les informations que vous voulez voir apparaître.
+	FR	La platine peut afficher la progression de la lecture du morceau en cours de différentes manières. Choisissez les informations que vous voulez voir apparaître.
 	NL	De speler kan informatie over de voortgang van een nummer op het display tonen. Selecteer de informatie die U op het display wilt zien.
 	NO	Spilleren kan vise informasjon om avspillingen når den spiller. Velg hva du velger skal vises.
 	PT	O cliente pode mostrar informação do progresso da música enquanto toca. Escolha a informação que deseja que seja mostrada.
@@ -1180,7 +1180,7 @@ SETUP_SYNCHRONIZE_DESC
 	DE	Der Player kann mit anderen Playern synchronisiert werden, um simultan dieselbe Musik zu spielen. Wählen Sie den Player aus der Liste der vorhandenen Synchronisations-Gruppen, mit dem Sie synchronisieren möchten. Wählen Sie den aktuellen Player um die Synchronisation zu stoppen.
 	DK	Afspilleren kan synkronisers med andre afspillere, således at alle afspillerne spiller samme musik samtidigt. Vælg de afspillere du vil synkronisere med fra listen over tilgængelige synkroniseringsgrupper. Vælg Ingen synkronisering for at stoppe synkroniseringen.
 	EN	The player can be synchronized with other players, enabling them to play the same music simultaneously. Choose the players you would like to synchronize with from the list of available synchronization groups. Choose No Synchronization to stop synchronization.
-	FR	Le lecteur peut se synchroniser avec d'autres lecteurs pour jouer la même musique que ceux-ci. Choisissez les lecteurs avec lesquels vous voulez vous synchroniser à partir de la liste des groupes de synchronisation. Choisissez le nom du lecteur courant pour annuler la synchronisation.
+	FR	La platine peut se synchroniser avec d'autres platines pour jouer la même musique que ceux-ci. Choisissez les platines avec lesquels vous voulez vous synchroniser à partir de la liste des groupes de synchronisation. Choisissez le nom de la platine courante pour annuler la synchronisation.
 	NL	De speler kan gesynchroniseerd worden met andere spelers. De spelers geven dan dezelfde muziek weer. Kies de spelers waarmee gesynchroniseerd moet worden uit de lijst van beschikbare synchonisatiegroepen. Kies 'Geen Synchronisatie' om deze functie te annuleren.
 	NO	Spilleren kan synkroniseres med andre spillere slik at de spiller samme musikken samtidig. Velg spillerene du ønsker å synkronisere med fra listen of synkroniserings grupper. Velg Ingen Synkronisering for å stoppe synkroniseringen.
 	PT	O cliente por estar sincronizado com outros clientes, permitindo que toquem todos a mesma música em simultâneo. Escolha os clientes que deseja sincronizar na lista de grupos disponíveis para sincronizar. Escolha "Não Sincronizado" para parar a sincronização.
@@ -1210,7 +1210,7 @@ SETUP_SYNCVOLUME_ON
 	DE	Player-Lautsärke synchronisieren
 	DK	Synkroniser afspillerens lydstyrke
 	EN	Sync player's volume
-	FR	Synchroniser le volume du lecteur
+	FR	Synchroniser le volume de la platine
 	NO	Synkroniser spillerens volum
 	PT	Sincronizar o volume do cliente
 	SE	Synkronisera spelarens volym
@@ -1219,7 +1219,7 @@ SETUP_SYNCVOLUME_OFF
 	DE	Player-Lautstärke nicht synchronisieren
 	DK	Synkroniser ikke afspillerens lydstyrke
 	EN	Don't sync player's volume
-	FR	Ne pas synchroniser le volume du lecteur
+	FR	Ne pas synchroniser le volume de la platine
 	NO	Ikke synkroniser spillerens volum
 	PT	Não sincronizar o volume do cliente
 	SE	Synkronisera Inte spelarens volym
@@ -1237,7 +1237,7 @@ SETUP_SYNCVOLUME_DESC
 	DE	Sie können die Lautstärke synchronisierter Player aufeinander abstimmen oder unabhängig belassen. Wählen Sie unten und klicken Sie Ändern.
 	DK	Du kan vælge også at lade de synkroniserede afspillere synkronisere lydstyrken. Foretag et valg nedenfor og klik Ret.
 	EN	You can choose to have the volume levels for the synced players track each other or be independent.  Make a selection below and click Change.
-	FR	Vous pouvez faire en sorte que le réglage du volume sur un lecteur modifie le volume sur les lecteurs synchronisés. Faites un choix et cliquez sur Modifier.
+	FR	Vous pouvez faire en sorte que le réglage du volume sur une platine modifie le volume sur les platines synchronisées. Faites un choix et cliquez sur Modifier.
 	NO	Du kan velge å synkronisere lyd nivåene for de synkroniserte spiller eller la dem være uavhengige. Velg nedenfor og trykk Endre.
 	PT	Aqui pode activar ou desactivar a sincronização do volume entre os vários clientes. Altere abaixo e clique em "Modificar"
 	SE	Du kan få dina synkroniserade spelare använda samma volym eller vara oberoende. Gör ditt val och klicka på Ändra.
@@ -1256,7 +1256,7 @@ SETUP_DIGITALVOLUMECONTROL
 
 SETUP_DIGITALVOLUMECONTROL_DESC
 	EN	You can choose to have the digital audio output on your player be fixed at maximum level or be controlled by the volume buttons.  If you choose to have a fixed digital audio volume level, the analog outputs will have the highest quality possible.  With either setting, the analog output levels are adjusted by the volume buttons.
-	FR	Le niveau de la sortie audio numérique de votre lecteur peut être soit fixé à son maximum, soit contrôlé par les boutons de volume. Si le niveau de la sortie audio numérique est fixe, la qualité de la sortie analogique sera optimum. Dans tous les cas, le niveau de la sortie analogique est contrôlé par les boutons de volume.
+	FR	Le niveau de la sortie audio numérique de votre platine peut être soit fixé à son maximum, soit contrôlé par les boutons de volume. Si le niveau de la sortie audio numérique est fixe, la qualité de la sortie analogique sera optimum. Dans tous les cas, le niveau de la sortie analogique est contrôlé par les boutons de volume.
 
 SETUP_TITLEFORMATCURR
 	DE	Aktuelles Titelformat
@@ -1431,7 +1431,7 @@ SETUP_PLAYLISTDIR
 	EN	Saved Playlists Folder
 	ES	Carpeta de listas guardadas
 	FI	Tallenettujen soittolistojen hakemisto
-	FR	Dossier contenant les playlists enregistrées
+	FR	Dossier contenant les listes de lecture enregistrées
 	NL	Folder voor Bewaarde Playlists
 	PT	Directoria com Playlists
 	SE	Mapp för Sparade Spellistor
@@ -1468,7 +1468,7 @@ SETUP_PLAYLISTDIR_OK
 	EN	The server will now use this directory for saved playlists:
 	ES	El servidor usará esta carpeta para guardar listas discográficas:
 	FI	Palvelin käyttää seuraavaa polkua soittolistoja varten:
-	FR	Le serveur utilisera maintenant le dossier suivant pour conserver vos playlists :
+	FR	Le serveur utilisera maintenant le dossier suivant pour conserver vos listes de lecture :
 	NL	De server zal deze folder gebruiken om playlists te bewaren:
 	PT	O servidor irã usar a seguinte directoria para os ficheiros de playlist
 	SE	Använder nu följande mapp för Sparade Spellistor:
@@ -1479,7 +1479,7 @@ SETUP_PLAYLISTDIR_DESC
 	EN	You can enter the path to a directory where your saved playlist files are stored on your hard disk. (You can leave this blank if you don't want to save playlists.)
 	ES	Puede introducir el camino a una carpeta donde quiere guardar listas discográficas (dejelo en blanco si no quiere poder guardar listas)
 	FI	Voit syöttää polun hakemistoon, minne soittolistasi on tallennettu. (Tämän kohdan voi jättää täyttämättä, mikäli et halua tallentaa soittolistojasi.)
-	FR	Vous pouvez saisir le chemin d'accès vers le dossier d'enregistrement de vos playlists. Vous pouvez laisser cette zone vide si vous ne voulez pas enregistrer de playlist.
+	FR	Vous pouvez saisir le chemin d'accès du dossier où vos listes de lecture seront stockées. Vous pouvez laisser cette zone vide si vous ne voulez pas enregistrer de listes de lecture.
 	NL	U kan de folder opgeven waar Uw bewaarde Playlist bestanden worden opgeslagen. (Als U hier niets opgeeft, geeft U aan dat U geen playlists wil bewaren).
 	PT	A directoria onde serão guardadas as playlists. (Pode deixar vazio se não quiser guardar playlists)
 	SE	Sökväg till mappen där dina sparade spellistor lagras.<br>(Du kan lämna detta fält tomt om du inte vill spara spellistor.)
@@ -1597,14 +1597,14 @@ SETUP_ITUNES_NOT
 	SE	Servern kommer nu använda mappen som källa för ditt musikbibliotek.
 
 SETUP_ITUNES_DESC
-	DE	Der SlimServer kann ihre iTunes 3 & 4 Musik Sammlung und Playlists verwenden. Jegliche Änderungen, die Sie in iTunes vornehmen, werden auf ihrem Player abgebildet. Wenn Sie die iTunes Musiksammlung nicht verwenden wollen, dann geben Sie das Verzeichnis der Musiksammlung auf ihrem Computer an.
-	DK	SlimServer kan anvende din iTunes 3 & 4 musiksamling og playlister. Ændringer foretaget i iTunes vil kunne ses på din player. Hvis du ikke ønsker at bruge din iTunes musiksamling kan du indtaste stien på den mappe hvor dine musikfiler ligger på din harddisk.
-	EN	The SlimServer can use your iTunes 3 & 4 music library and playlists. Any changes that you make in iTunes will be reflected on your player. If you don't want to use your iTunes music library, you can enter the name of the directory where your music files are stored on your computer.
-	ES	El servidor puede usar su librería de música y listas discográficas de iTunes 3 & 4. Cualquiera cambio que haga en iTunes se reflejerá en el player. Si no quiere usar su librería de música de iTunes puede introducir el camino a la carpeta donde están guardados sus ficheros de música.
-	FR	Le SlimServer peut utiliser iTunes 3 & 4 pour accéder à votre musique et à vos playlists. Tous les changements effectués dans iTunes seront pris en considération par votre player. Si vous ne voulez pas utiliser votre bibliothèque iTunes, vous pouvez saisir le nom du dossier où se trouvent vos fichiers MP3.
-	NL	De SlimServer kan Uw iTunes 3 & 4 muziek bibliotheek en playlists gebruiken. Alle wijzigingen die U maakt aan Uw iTunes zullen ook voor de player zichtbaar zijn. Als U Uw iTunes bibliotheek niet wilt gebruiken, kunt U de naam van een folder opgeven waarin Uw muziek bestanden zijn opgeslagen.
+	DE	Der SlimServer kann ihre iTunes Musik Sammlung und Playlists verwenden. Jegliche Änderungen, die Sie in iTunes vornehmen, werden auf ihrem Player abgebildet. Wenn Sie die iTunes Musiksammlung nicht verwenden wollen, dann geben Sie das Verzeichnis der Musiksammlung auf ihrem Computer an.
+	DK	SlimServer kan anvende din iTunes musiksamling og playlister. Ændringer foretaget i iTunes vil kunne ses på din player. Hvis du ikke ønsker at bruge din iTunes musiksamling kan du indtaste stien på den mappe hvor dine musikfiler ligger på din harddisk.
+	EN	The SlimServer can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. If you don't want to use your iTunes music library, you can enter the name of the directory where your music files are stored on your computer.
+	ES	El servidor puede usar su librería de música y listas discográficas de iTunes. Cualquiera cambio que haga en iTunes se reflejerá en el player. Si no quiere usar su librería de música de iTunes puede introducir el camino a la carpeta donde están guardados sus ficheros de música.
+	FR	Le SlimServer peut utiliser iTunes pour accéder à votre musique et à vos listes de lecture. Tous les changements effectués dans iTunes seront pris en considération par votre player. Si vous ne voulez pas utiliser votre bibliothèque iTunes, vous pouvez saisir le nom du dossier où se trouvent vos fichiers MP3.
+	NL	De SlimServer kan Uw iTunes muziek bibliotheek en playlists gebruiken. Alle wijzigingen die U maakt aan Uw iTunes zullen ook voor de player zichtbaar zijn. Als U Uw iTunes bibliotheek niet wilt gebruiken, kunt U de naam van een folder opgeven waarin Uw muziek bestanden zijn opgeslagen.
 	PT	O SlimServer pode usar a biblioteca de música e as playlists do iTunes 3 e 4. As alterações efectuadas no iTunes serão reflectidas no player. Se não quiser usar a biblioteca do iTunes, introduza a directoria que contém os ficheiros de áudio no seu computador.
-	SE	SlimServer kan använda iTunes 3 & 4 musikbibliotek och spellistor. Alla ändringar som du gör i iTunes kommer märkas på din player. Om du inte vill använda iTunes som musikbibliotek, kan du skriva in namnet på den mapp där din musikfiler är lagrade.
+	SE	SlimServer kan använda iTunes musikbibliotek och spellistor. Alla ändringar som du gör i iTunes kommer märkas på din player. Om du inte vill använda iTunes som musikbibliotek, kan du skriva in namnet på den mapp där din musikfiler är lagrade.
 
 USE_MOODLOGIC
 	DE	MoodLogic verwenden
@@ -1987,22 +1987,22 @@ SETUP_TRANSCODE-MOV_0
 SETUP_SAVESHUFFLED
 	DE	Zufalls-Playlist speichern
 	EN	Save Shuffled Playlist
-	FR	Sauvegarde des playlists aléatoires
+	FR	Sauvegarde des listes de lecture aléatoires
 
 SETUP_SAVESHUFFLED_DESC
 	DE	Wenn Sie eine Playlist speichern, die in zufälliger Reihenfolge wiedergegeben wird, können Sie diese in der Reihenfolge abspeichern, in welcher die Musikstücke hinzugefügt wurden, oder die zufällige Reihenfolge beibehalten.
 	EN	When you choose to save a playlist, and it's been shuffled, you can choose to save it in the original order the songs were added or in the shuffled order.
-	FR	Lorsque vous sauvegardez une playlist aléatoire, vous pouvez soit la sauvegarder dans l'ordre original d'ajout des morceaux, soit préserver l'ordre aléatoire.
+	FR	Lorsque vous sauvegardez une liste de lecture aléatoire, vous pouvez soit la sauvegarder dans l'ordre original d'ajout des morceaux, soit préserver l'ordre aléatoire.
 
 SETUP_SAVESHUFFLED_1
 	DE	Playlist in zufälliger Reihenfolge speichern
 	EN	Save playlists in shuffled order
-	FR	Sauvegarder les playlists dans l'ordre aléatoire
+	FR	Sauvegarder les listes de lecture dans l'ordre aléatoire
 
 SETUP_SAVESHUFFLED_0
 	DE	Playlist abspeichern, wie die Musikstücke hinzugefügt wurden
 	EN	Save playlists in order songs were added
-	FR	Sauvegarder les playlists dans l'ordre d'origine
+	FR	Sauvegarder les listes de lecture dans l'ordre d'origine
 	
 SETUP_SAVEHISTORY
 	DE	Speichern des Verlaufs
@@ -2149,7 +2149,7 @@ SETUP_SCREENSAVERJUMP_DESC
 	EN	The player will automatically show the currently playing song after you stop using the remote for some amount of time. You can change what happens if you use the remote after this happens.
 	ES	El reproductor mostrará automaticamenta la canción actual si no usa el mando durante un tiempo determinado. Se puede cambiar este comportamiento.
 	FI	Kun kaukosäätimen viimeisestä napin painalluksesta on kulunut hieman aikaa, palaa soittimen näyttöön soimassa olevan kappaleen nimi. Voit vaikuttaa tähän toimintoon.
-	FR	Lorsque vous cessez d'utiliser la télécommande pendant un certain temps, le lecteur affichera automatiquement la pièce musicale en cours d'audition. Vous pouvez déterminer ce qui se produit lorsque vous utilisez la télécommande par la suite.
+	FR	Lorsque vous cessez d'utiliser la télécommande pendant un certain temps, la platine affichera automatiquement la pièce musicale en cours d'audition. Vous pouvez déterminer ce qui se produit lorsque vous utilisez la télécommande par la suite.
 	NL	De speler zal automatisch de gegevens van het huidige nummer tonen nadat U de afstandsbediening gedurende een bepaalde tijd niet heeft gebruikt. U kunt instellen wat er dient te gebeuren als U daarna de afstandsbediening weer gaat gebruiken.
 	PT	O cliente mostra automaticamente a música actualmente a tocar depois depois de algum tempo sem usar o controlo remoto. Pode mudar o comportamento do cliente depois de voltar a usar o controlo remoto.
 	SE	Spelaren kommer efter en fördröjning automatiskt hoppa till "Spelas nu" när du inte använder fjärrkontrollen.<br>Här kan du välja vad som skall hända om du använder fjärrkontrollen igen.
@@ -2199,7 +2199,7 @@ SETUP_DISPLAYTEXTTIMEOUT_DESC
 	DK	Når du indtaster tekst til en søgning vil SlimServer gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
 	EN	When you are entering text for a search, the player will move on to the next letter after some amount of time. You can change the duration of this wait below.
 	FI	Syöttäessäsi tekstiä hakua varten, kursori siirtyy automaattisesti eteenpäin jonkin ajan kuluttua. Voit alla olevasta valinnasta säätää odottamiseen käytettyä aikaa.
-	FR	Le lecteur passera automatiquement à la lettre suivante après un certain délai lors de la saisie de texte. Vous pouvez choisir ce délai ci-dessous.
+	FR	La platine passera automatiquement à la lettre suivante après un certain délai lors de la saisie de texte. Vous pouvez choisir ce délai ci-dessous.
 	NL	Als U tekst invoert om te gaan zoeken zal de speler na een aantal seconden naar de volgende letter doorschuiven. U kunt deze wachttijd hier instellen.
 	PT	Ao introduzir texto para uma procura, ao fim de algum tempo será seleccionado o caracter seguinte. Pode alterar a duração desta espera abaixo.
 	SE	När du matar in text för en sökning kommer spelaren automatiskt flytta till nästa tecken efter en liten fördröjning.<br>Här kan du ställa in tiden för denna fördröjning.
@@ -2312,7 +2312,7 @@ SETUP_PERSISTPLAYLISTS
 	DE	Merken der letzten Playlist
 	DK	Bevar afspilleres sidste playlister
 	EN	Maintain Client Playlists
-	FR	Conservation des playlists
+	FR	Conservation des listes de lecture
 	NL	Onthoud de Playlist van de Speler
 	PT	Manter as Playlists dos Clientes
 	SE	Behåll spellistor
@@ -2321,7 +2321,7 @@ SETUP_PERSISTPLAYLISTS_DESC
 	DE	Der Server kann sich die letzte Playlist merken, die beim Starten des Servers abgespielt wurde.
 	DK	Serveren kan bevare den sidste playliste for afpillere selvom serveren genstartes.
 	EN	The server can remember the last playlist of songs that were Now Playing when the server starts.
-	FR	Le serveur peut conserver le contenu de la dernière playlist du lecteur lorsqu'il est redémarré. Pour ce faire, il enregistre sur disque le contenu de la playlist des lecteurs à chaque fois que celle-ci est modifiée. La playlist est alors relue sur disque au démarrage du serveur.
+	FR	Le serveur peut conserver le contenu de la dernière liste de lecture de la platine lorsqu'il est redémarré. Pour ce faire, il enregistre sur disque le contenu de la listes de lecture des platines à chaque fois que celle-ci est modifiée. La liste de lecture est alors relue sur disque au démarrage du serveur.
 	NL	De server kan de playlist bijhouden die aan het spelen was en deze laden als de server start.
 	PT	O servidor pode manter a playlist de músicas actual quando é re-iniciado.
 	SE	Servern kan behålla innehållet i spelarnas spellistor när servern startas om. Den gör det genom att spara spellistan efter varje ändring. Spellistan laddas in när spelaren startar igen.
@@ -2330,7 +2330,7 @@ SETUP_PERSISTPLAYLISTS_1
 	DE	Merken der Playlist
 	DK	Bevar sidste playliste
 	EN	Remember playlist
-	FR	Conserver la playlist
+	FR	Conserver la liste de lecture
 	NL	Playlist bijhouden
 	PT	Manter as Playlists
 	SE	Behåll spellistor
@@ -2339,7 +2339,7 @@ SETUP_PERSISTPLAYLISTS_0
 	DE	Keine Erinnerung an die Playlist
 	DK	Bevar ikke sidste playliste
 	EN	Do not remember playlist
-	FR	Ne pas conserver la playlist
+	FR	Ne pas conserver la liste de lecture
 	NL	Playlist niet bijhouden
 	PT	Não Manter Playlists
 	SE	Behåll inte spellistor
@@ -2357,7 +2357,7 @@ SETUP_RESHUFFLEONREPEAT_DESC
 	DE	Der Server kann nach dem kompletten Durchspielen einer Zufall-Playlist diese erneut mischen.
 	DK	Serveren kan lave en ny vilkårlig rækkefølge af playlisten når playlisten starter forfra ved gentagelse.
 	EN	The server can reshuffle shuffled playlists after each complete pass through the list, if desired.
-	FR	Le serveur peut mélanger de nouveau la playlist à chaque répétition.
+	FR	Le serveur peut mélanger de nouveau la liste de lecture à chaque répétition.
 	NL	De server kan de volgorde van de liedjes in een playlist door elkaar gooien nadat een lijst gespeeld werd.
 	PT	O servidor pode re-misturar a lista de músicas no final dela, se necessário.
 	SE	Servern kan, om önskvärt, blanda om den slumpade spellistan efter varje fullständig genomgång av listan.
@@ -2411,7 +2411,7 @@ SETUP_PLAYTRACKALBUM_DESC
 	DE	Wenn Sie einen Titel auswählen und PLAY auf der Fernbedienung drücken, dann können Sie entscheiden, ob Sie nur dieses eine Lied hören wollen, oder alle Titel aus diesem Album oder Verzeichnis.
 	DK	Når du vælger en enkelt sang og trykker PLAY, kan du vælge om kun den valgte sang skal afspilles eller om alle sange fra det album eller i den mappe skal afspilles (startende med den valgte sang).
 	EN	When you select a single song and press PLAY on the remote, you can choose to play just that song or all the songs in that album or directory, starting with that song.
-	FR	Lorsque vous choisissez un morceau et que vous appuyez sur la touche PLAY de la télécommande, le lecteur peut jouer uniquement ce morceau ou tous les morceaux de l'album ou du dossier en commençant par le morceau choisi.
+	FR	Lorsque vous choisissez un morceau et que vous appuyez sur la touche PLAY de la télécommande, la platine peut jouer uniquement ce morceau ou tous les morceaux de l'album ou du dossier en commençant par le morceau choisi.
 	NL	Als U een liedje selecteert en op de PLAY toets van de afstandsbediening drukt kan U alleen dit liedje laten spelen of alle liedjes uit het album of de folder afspelen, te beginnen met het geselecteerde liedje.
 	PT	Ao escolher uma música em particular e usar o PLAY no controlo remoto, pode escolher aqui se quer tocar apenas essa música ou todas as músicas desse álbum ou directoria, começando pela música escolhida.
 	SE	När du väljer en låt och trycker på PLAY på fjärrkontrollen, kan du välj att bara spela den valda sången, eller spela alla låtar i albumet/mappen, med vald låt som första låt.
@@ -2498,7 +2498,7 @@ SETUP_USEPLAYLISTCACHE
 	EN	Playlist & Directory Caching
 	ES	Cachear listas discográficas y carpetas
 	FI	Soittolista/Hakemisto välimuisti
-	FR	Mise en cache des playlists et des dossiers
+	FR	Mise en cache des listes de lecture et des dossiers
 	NL	Playlist en Folder Caching
 	PT	Cache das Playlists e Directorias
 	SE	Spara spellistor och mappar i minnet
@@ -2509,7 +2509,7 @@ SETUP_USEPLAYLISTCACHE_DESC
 	EN	The server can cache playlists and directories to speed up navigation. Changes, such as newly added or deleted files, should be automatically detected. Turn caching off only if you notice that changes are being ignored.
 	ES	El servidor puede cachear listas y carpetas para accelerar navegación. Cambios, por ejemplo ficheros que se han añadido o borrado, deberían detecarse automaticamente. Debe quitar esta opción solamente si vea que cambios no aparezcan.
 	FI	Palvelin voi tallentaa soittolistat ja hakemistot välimuistiin selailun nopeuttamiseksi. Muutokset, kuten lisätyt/poistetut tiedostot huomataan automaattiesti. Kytke asetus pois päältä vain mikäli huomaat toimintahäiriöitä.
-	FR	Le serveur peut mettre en cache les playlists et le contenu du dossier de musique pour accélérer la navigation. Les changements, tels que l'ajout ou la suppression de morceaux, devraient être détectés automatiquement. Ne désactivez cette fonctionnalité que si vous constatez que les changements ne sont pas pris en compte.
+	FR	Le serveur peut mettre en cache les listes de lecture et le contenu du dossier de musique pour accélérer la navigation. Les changements, tels que l'ajout ou la suppression de morceaux, devraient être détectés automatiquement. Ne désactivez cette fonctionnalité que si vous constatez que les changements ne sont pas pris en compte.
 	NL	De server kan een cache aanleggen van playlists en folder om de navigatie te versnellen. Veranderingen, zoals nieuw toegevoegde of verwijderde bestanden worden automatisch gedetecteerd. Zet de cache alleen uit als U merkt dat wijzigingen niet worden waargenomen.
 	PT	O servidor poderá manter uma "cache" das playlists e das directorias para que a navegação seja mais rápida. Se houverem alterações, tais como novos ficheiros ou ficheiros apagados, serão automaticamente detectados. Se notar que as alterações não estão a ser reflectidas, desabilite esta "cache".
 	SE	Servern kan spara spellistor och mappar i minnet för att snabba upp navigering. Ändringar som nya eller borttagna filer, skall upptäckas automatiskt. Stäng av detta endast om du märker att ändringar inte upptäcks.
@@ -2520,7 +2520,7 @@ SETUP_USEINFOCACHE
 	EN	ID3 & Other Information Caching
 	ES	Cachear ID3 y otra información
 	FI	ID3 tietojen välimuisti
-	FR	Conservation de l'information ID3 et autre
+	FR	Conservation des repères ID3 et autre information
 	NL	Cache ID3 en andere informatie
 	PT	Cache da informação ID3 ou outra
 	SE	Spara ID3 och övrig information i minnet
@@ -2574,7 +2574,7 @@ SETUP_ANIMATIONLEVEL_DESC
 	EN	This option determines the amount of animation allowed. Animations include showing brief messages, screen wipes during navigation, and scrolling long titles.
 	ES	Esta opción determina el nivel de animación permitido.
 	FI	Tämä valinta säätelee animaation määrää. (mm. valikoiden piirto)
-	FR	Ce réglage contrôle le degré d'animation de l'écran du lecteur, comme l'affichage de message durant une courte période, les effets de fondu-déplacé et le défilement des titres trop longs.
+	FR	Ce réglage contrôle le degré d'animation de l'écran de la platine, comme l'affichage de message durant une courte période, les effets de fondu-déplacé et le défilement des titres trop longs.
 	NL	Deze optie bepaald de mate van toegestane animatie. Animaties zijn onder andere: het tonen van korte boodschappen, het verschuiven van de tekst gedurende navigatie en scrollende lange titles.
 	PT	Esta opção determina a quantidade de animação permitida. As animações são compostas por breves mensagens, animação de ecrãs e deslizamento de títulos compridos.
 	SE	Detta val avgör mängden tillåten animation. Animationer är kortvariga meddelanden, skärmåkningar vid navigering samt rullande långa titlar.
@@ -2603,7 +2603,7 @@ SETUP_LONGDATEFORMAT_DESC
 	DK	Denne indstilling angiver formatet for lange datoer (vises fx. når afspilleren er slukket). Følgende syntax anvendes nedenfor:<br>WWWW er det fulde navn for ugedagen (lørdag, søndag, etc.)<br>WWW er det forkortede navn for ugedagen (lør, søn, etc.)<br>DD er dagen på måneden (indledende nul fjernes)<br>MM er måneden på året<br>YY er det to-cifrede årstal<br>YYYY er det fire-cifrede årstal
 	EN	This option determines the format used for long dates (such as displayed when the player is off). The following conventions are used in the choices presented below:<br>WWWW is the full day of the week (Saturday, Sunday, etc)<br>WWW is the abbreviated day of the week (Sat, Sun, etc)<br>DD is the day of the month (leading zero removed)<br>MM is the month of the year<br>YY is the two digit year<br>YYYY is the four digit year
 	FI	Tämä asetus säätelee päiväyksen pitkää esitystapaa. Seuraavat esitystavat ovat mahdollisia: <br>WWWW viikonpäivä pitkä (Lauantai, Sunnuntai jne.)<br>WWW viikonpäivä lyhyt (La, Su jne.)<br>DD päivä<br>MM kuukausi<br>YY vuosi 2 numeroa<br>YYYY vuosi 4 numeroa
-	FR	Ce réglage détermine le format long pour les dates (affiché lorsque le lecteur est éteint). Les codes suivants peuvent être utilisés :<br>WWWW : le jour de la semaine complet (dimanche, lundi, mardi, etc.)<br>WWW : le jour de la semaine en abrégé (dim, lun, mar, etc.)<br>DD : le jour du mois sans zéro non significatif<br>MM : le mois de l'année<br>YY : l'année à deux chiffres<br>YYYY : l'année à quatre chiffres
+	FR	Ce réglage détermine le format long pour les dates (affiché lorsque la platine est éteinte). Les codes suivants peuvent être utilisés :<br>WWWW : le jour de la semaine complet (dimanche, lundi, mardi, etc.)<br>WWW : le jour de la semaine en abrégé (dim, lun, mar, etc.)<br>DD : le jour du mois sans zéro non significatif<br>MM : le mois de l'année<br>YY : l'année à deux chiffres<br>YYYY : l'année à quatre chiffres
 	NL	Deze optie bepaalt het lange datum formaat, zoals deze wordt getoond als de speler is uitgeschakeld. De volgende afspraken worden gebruikt in de onderstaande opties:<br> WWWW is de dag van de week voluit geschreven (Zondag, Maandag, etc.)<br> WWW is de afkorting van de dag van de week (Zon, Maa, etc)<br>DD is de dag van de maand (zonder voorloopnul)<br>MM is de maand van het jaar<br>YYYY is het viercijferige jaartal.
 	PT	Esta opção determina o formato longo a usar para datas (tais como a que é mostrada quando o cliente está desligado). São usadas as seguintes convenções para as opções abaixo
 	SE	Detta val avgör formatet för långt datum (som t.ex visas när spelaren är avstängd). Följande konventioner används för valen nedan:<br>WWWW är veckodagen (Lördag, Söndag, osv)<br>WWW är veckodagen förkortad (Lör, Sön, Mån, osv)<br>DD är dagen i månaden (inledande nolla borttagen)<br>MM är månaden<BR>YY är tvåsiffrigt årtal<BR>YYYY är fyrsiffrigt årtal
@@ -2772,7 +2772,7 @@ SETUP_UDPCHUNKSIZE_CHOOSE
 	DE	Maximale Anzahl Bytes an Audiodaten, die in UDP-Paketen zum Player geschickt werden
 	DK	Maksimum antal bytes audiodata der sendes til afspilleren i en UDP-pakke
 	EN	Maximum number of bytes of audio data to send to player in a UDP packet
-	FR	Nombre maximum d'octets de données audio à envoyer au lecteur par paquet UDP :
+	FR	Nombre maximum d'octets de données audio à envoyer à la platine par paquet UDP :
 	NL	Maximaal aantal bytes audio data dat in een UDP packet naar de speler wordt gestuurd
 	PT	Máximo de bytes de dados áudio a enviar ao cliente por pacote UDP
 	SE	Maximalt antal bytes ljud-data att skicka till spelaren i ett UDP-paket
@@ -3212,7 +3212,7 @@ CURRENT_PLAYER
 	EN	Current player:
 	ES	Reproductor actual:
 	FI	Soittimen nimi:
-	FR	Lecteur courant :
+	FR	Platine courante :
 	NL	Huidige Speler:
 	NO	Aktuell spiller:
 	PT	Cliente Actual
@@ -3224,7 +3224,7 @@ NOW_PLAYING_ON
 	EN	Now playing on the player at
 	ES	Ahora puesto en el player a
 	FI	Soittaa kappaletta
-	FR	Lecture sur le Slim Player à
+	FR	Lecture sur la platine à
 	IT	Riproduzione in corso su Slim Player a
 	NL	Speelt nu af op de Slim Player van
 	NO	Spilles nå på Slim Player
@@ -3291,7 +3291,7 @@ REMOVE_THIS_SONG_FROM_PLAYLIST
 	DE	Titel aus der Playlist entfernen
 	DK	Fjern denne sang fra playlisten
 	EN	Remove this song from playlist
-	FR	Supprimer ce morceau de la playlist
+	FR	Supprimer ce morceau de la liste de lecture
 	PT	Remover esta Música da Playlist
 	SE	Ta bort denna låt från spellistan
 
@@ -3300,7 +3300,7 @@ ADD_THIS_SONG_TO_PLAYLIST
 	DK	Tilføj denne sang til playlisten
 	EN	Add this song to the playlist
 	ES	Añadir esta canción a la lista
-	FR	Ajouter ce morceau à la playlist
+	FR	Ajouter ce morceau à la liste de lecture
 	NL	Voeg dit nummer toe aan de playlist
 	PT	Adicionar esta Música à Playlist
 	SE	Lägg till denna låt till spellistan
@@ -3522,7 +3522,7 @@ SHUFFLE_ON
 	EN	Shuffle Playlist
 	ES	Al azar activado
 	FI	Satunnaisoitto päällä
-	FR	Mélanger la playlist
+	FR	Mélanger la liste de lecture
 	IT	Attiva l'Ordinamento Casuale dei brani
 	NL	Willekeurig afspelen aan
 	NO	Vilkårlig avspilling på
@@ -3535,7 +3535,7 @@ SHUFFLE_OFF
 	EN	Don't Shuffle Playlist
 	ES	Al azar desactivado
 	FI	Satunnaissoitto pois päältä
-	FR	Ne pas mélanger la playlist
+	FR	Ne pas mélanger la liste de lecture
 	IT	Disattiva l'Ordinamento Casuale dei brani
 	NL	Willekeurig afspelen uit
 	NO	Vilkårlig avspilling av
@@ -3548,7 +3548,7 @@ CLEAR_PLAYLIST
 	EN	Clear playlist
 	ES	Vaciar lista discográfica
 	FI	Tyhjennä soittolista
-	FR	Vider la playlist
+	FR	Vider la liste de lecture
 	IT	Vuota la Lista dei brani
 	NL	Playlist leeg maken
 	NO	Tøm spillelisten
@@ -3628,7 +3628,8 @@ TEXTSIZE
 
 OFFDISPLAYSIZE
 	DE	Textgrösse im ausgeschalteten Modus
-	EN	Power Off Text Size
+	EN	Standby Text Size
+	FR	Taille du texte en veille
 	PT	Tamanho do Texto ao Desligar
 
 LARGE
@@ -3673,7 +3674,7 @@ CURRENT_PLAYLIST
 	EN	The current playlist
 	ES	Lista discográfica actual
 	FI	Soittolista
-	FR	La playlist actuelle
+	FR	La liste de lecture actuelle
 	IT	La Lista dei brani attiva
 	NL	De huidige playlist
 	NO	Aktiv spilleliste
@@ -3734,7 +3735,7 @@ SAVED_PLAYLISTS
 	EN	Saved Playlists
 	ES	Listas guardadas
 	FI	Tallennetut soittolistat
-	FR	Playlists enregistrées
+	FR	Listes de lecture enregistrées
 	NL	Bewaarde playlists
 	NO	Lagrede Spillelister
 	PT	Escolher por Playlists Guardadas
@@ -3746,7 +3747,7 @@ PLAYLISTDIR
 	EN	Saved Playlists Folder
 	ES	Carpeta de listas guardadas
 	FI	Soittolistakansio
-	FR	Dossier des playlists
+	FR	Dossier des listes de lecture
 	NL	Bewaarde Playlists Folder
 	NO	Folder med lagrede spillelister
 	PT	Escolher Pasta para Playlists
@@ -3758,7 +3759,7 @@ PLAYLISTDIR_IS_NOW
 	EN	You can enter the path to a directory where your saved playlist files are stored on your hard disk. (You can leave this blank if you don't want to save playlists.)
 	ES	Puede introducir el camino a una carpeta donde quiere guardar listas discográficas (dejelo en blanco si no quiere poder guardar listas)
 	FI	Voit syöttää polun hakemistoon, minne soittolistasi on tallennettu. (Tämän kohdan voi jättää täyttämättä, mikäli et halua tallentaa soittolistojasi.
-	FR	Vous pouvez saisir le chemin d'accès du dossier où seront enregistrées les playlists. Laissez vide si vous ne désirez pas enregistrer de playlist.
+	FR	Vous pouvez saisir le chemin d'accès du dossier où seront stockées les listes de lecture. Laissez vide si vous ne désirez pas enregistrer de listes de lecture.
 	NL	U kan hier de volledige naam van de folder opgeven waarin U Uw playlists wil opslaan op Uw harde schijf. (Als de naam leeg wordt gelaten zal de mogelijkheid om playlists op te slaan worden uitgeschakeld).
 	PT	Escolha a directoria onde as playlist serão gravadas no disco. (Deixe vazio para desactivar esta opção)
 	SE	Du kan ange sökvägen till mappen där dina sparade spellistor är lagrade. (Du kan lämna detta fält tomt om du inte vill spara spellistor)
@@ -3768,7 +3769,7 @@ THIS_PLAYLIST_AS
 	DK	denne playliste som:
 	EN	this playlist as:
 	ES	esta lista como:
-	FR	cette playlist sous :
+	FR	cette liste de lecture sous :
 	NL	deze playlist als:
 	NO	denne spillelisten som:
 	PT	esta playlist como
@@ -3780,7 +3781,7 @@ SAVE_THIS_PLAYLIST_AS
 	EN	Save this playlist as:
 	ES	Guardar esta lista como:
 	FI	Tallenna soittolista nimellä:
-	FR	Enregistrer cette playlist sous :
+	FR	Enregistrer cette liste de lecture sous :
 	NL	Bewaar deze playlist als:
 	NO	Lagre denne spillelisten som:
 	PT	Gravar a Playlist Como
@@ -3804,7 +3805,7 @@ DELETE_THIS_PLAYLIST
 	EN	Delete this playlist
 	ES	Borrar esta lista
 	FI	Poista soittolista
-	FR	Supprimer cette playlist
+	FR	Supprimer cette liste de lecture
 	NL	Verwijder deze playlist
 	NO	Slett denne spillelisten
 	PT	Remover esta Playlist
@@ -3816,7 +3817,7 @@ THIS_ENTIRE_PLAYLIST
 	EN	This entire playlist
 	ES	Esta lista entera
 	FI	Koko soittolista
-	FR	Cette playlist au complet
+	FR	Cette liste de lecture au complet
 	NL	Deze volledige playlist
 	NO	Hele spillelisten
 	PT	Esta lista inteira
@@ -3826,7 +3827,7 @@ REMOVE_FROM_PLAYLIST
 	DE	Aus Playlist entfernen
 	DK	Fjern denne playlist
 	EN	Remove from playlist
-	FR	Enlever de la playlist
+	FR	Enlever de la liste de lecture
 	NO	Slett fra spillelisten
 	PT	Remover da Playlist
 
@@ -4178,7 +4179,7 @@ TAGVERSION
 	DE	ID3-Tag Version
 	DK	ID3-version
 	EN	ID3 Tag Version
-	FR	Version du tag ID3
+	FR	Version du repère ID3
 	NL	ID3 Tag Versie
 	NO	ID3 Tag Versjon
 	PT	Versão da Informação ID3
@@ -4605,7 +4606,7 @@ RENAME_WARNING
 	DE	Der gewählte Name wird bereits verwendet. Bitte verwenden Sie einen anderen Namen für die Playlist.
 	DK	Det valgte navn er optaget. Vælg venligst et andet navn for din playliste.
 	EN	The name you chose is already taken. Please choose another name for your playlist.
-	FR	Le nom choisi est déjà utilisé. Veuillez choisir un autre nom pour votre playlist.
+	FR	Ce nom est déjà utilisé. Veuillez choisir un autre nom pour votre liste de lecture.
 	NL	De gekozen naam is al in gebruik. Kies een andere naam voor Uw playlist.
 	PT	O nome escolhido já existe. Escolha outro nome para a playlist.
 	SE	Namnet du valde används redan. Välj ett annat namn för din spellista.
@@ -4662,7 +4663,7 @@ PLAYER_SETTINGS
 	EN	Player Settings
 	ES	Configuración del reproductor para
 	FI	Soittimen asetukset
-	FR	Réglages du lecteur
+	FR	Réglages de la platine
 	NL	Instellingen van de Speler
 	NO	Spiller instillinger
 	PT	Configurações do Cliente
@@ -4674,7 +4675,7 @@ ADDITIONAL_PLAYER_SETTINGS
 	EN	Additional Player Settings
 	ES	Configuración avanzada del reproductor
 	FI	Lisää soittimen asetuksia
-	FR	Réglages supplémentaires du lecteur
+	FR	Réglages supplémentaires de la platine
 	NL	Extra Speler instellingen
 	NO	Ekstra spiller instillinger
 	PT	Configurações Avançadas do Cliente
@@ -4831,7 +4832,7 @@ PLAYER_IP_ADDRESS
 	EN	The IP address for this player is:
 	ES	La dirección IP para este reproductor es:
 	FI	Soittimen IP -osoite on:
-	FR	L'adresse IP de ce lecteur est :
+	FR	L'adresse IP de cette platine est :
 	NL	Het IP adress van deze Speler is:
 	PT	O endereço IP deste cliente é
 	SE	Spelarens IP-adress är:
@@ -4842,7 +4843,7 @@ PLAYER_MAC_ADDRESS
 	EN	The ethernet MAC address for this player is:
 	ES	La dirección MAC para este reproductor es:
 	FI	Soittimen MAC -osoite on:
-	FR	L'adresse MAC de ce lecteur est :
+	FR	L'adresse MAC de cette platine est :
 	NL	Het MAC adress van deze Speler is:
 	PT	O endereço MAC deste cliente é
 	SE	Spelarens MAC-adress är:
@@ -4853,7 +4854,7 @@ CHOOSE_NAME_DESCRIPTION
 	EN	You can give this player a name that will be used to identify the player.
 	ES	Puede dar un nombre a este reproductor para identificarlo en el interfaz web.
 	FI	Voit antaa nimen, jonka avulla soitin voidaan yhdistää näillä WWW-sivuilla.
-	FR	Vous pouvez donner à ce lecteur un nom qui sera utilisé pour l'identifier.
+	FR	Vous pouvez donner à cette platine un nom qui sera utilisé pour l'identifier.
 	NL	U kunt deze speler een naam geven die zal worden gebruikt om de speler te identificeren op de web pagina's.
 	PT	Pode definir um nome para este cliente de forma a identificá-lo.
 	SE	Du kan ge denna spelare ett namn som kommer att användas för att identifiera den på dessa sidor.
@@ -4864,7 +4865,7 @@ CHOOSE_A_NAME
 	EN	Player name:
 	ES	Elija un nombre para este reproductor:
 	FI	Soittimen nimi:
-	FR	Nom du lecteur :
+	FR	Nom de la platine :
 	NL	De naam van deze speler:
 	NO	Spillernavn:
 	PT	Escolha um nome para este cliente
@@ -4873,10 +4874,10 @@ CHOOSE_A_NAME
 CHOOSE_BRIGHTNESS
 	DE	Wählen Sie die Helligkeit des Displays in aus- bzw. eingeschaltetem Zustand.
 	DK	Lysstyrken på displayet kan angives for når enheden er tændt og slukket.
-	EN	The brightness of the display can be set for when it's on and off.
+	EN	The brightness of the display can be adjusted for when the player is powered on or in standby.
 	ES	Elija la luminosidad de la pantalla.
 	FI	Näytön valoisuuden voi säätää erikseen käyttöä ja lepotilaa varten.
-	FR	Il est possible de régler la luminosité de l'écran du lecteur pour les états allumé et éteint.
+	FR	Il est possible de régler la luminosité de l'écran de la platine lorsqu'elle est allumée ou en veille.
 	NL	De helderheid van het display kan appart worden ingesteld voor de aan- en uitgeschakelde toestand.
 	PT	Escolha o brilho do ecrã do cliente quando está ligado e desligado.
 	SE	Ljusstyrkan på display kan varieras för påslaget och avslaget läge.
@@ -4895,7 +4896,7 @@ BRIGHTNESS_ON
 BRIGHTNESS_OFF
 	DE	Helligkeit im ausgeschalteten Zustand:
 	DK	Lysstyrke når slukket:
-	EN	Brightness when off:
+	EN	Brightness in standby:
 	ES	Luminosidad mientras apagado:
 	FI	Näytön kirkkaus soittimen ollessa pois päältä:
 	FR	Luminosité lorsqu'éteint :
@@ -4969,7 +4970,7 @@ CHOOSE_PLAYING_DISPLAY_MODE
 	EN	The player can display information on the progress of a song as it's playing. Choose the information you wish to be displayed.
 	ES	Mostrar posición en la canción como:
 	FI	Soitin voi näyttää tietoa kappaleen etenemisestä. Valitse, mitä tietoa haluat näytettävän.
-	FR	Le lecteur peut afficher la progression de l'écoute des morceaux. Choisissez l'information qui doit être affichée.
+	FR	La platine peut afficher la progression de l'écoute des morceaux. Choisissez l'information qui doit être affichée.
 	NL	De speler kan informatie tonen over de voortgang van een nummer dat gespeeld wordt. Kies de informatie die U wil zien.
 	PT	O cliente pode mostrar informações da música actual a tocar. Escolha a informação a mostrar.
 	SE	Spelaren kan visa information om aktuell låt. Välj vilken information du vill skall visas.
@@ -5040,7 +5041,7 @@ FORGET_PLAYER
 	EN	Forget Player
 	ES	Olvidar reproductor
 	FI	Unohda soitin
-	FR	Retirer le lecteur
+	FR	Retirer la platine
 	NL	Vergeet Speler
 	NO	Glem spiller
 	PT	Esquecer cliente
@@ -5051,7 +5052,7 @@ FORGET_PLAYER_DESC
 	DK	Hvis du ikke længere anvender denne afspiller eller afspilleren optræder to gange i listen over afspillere kan du vælge, at serveren skal glemme denne afspiller.
 	EN	If you no longer are using this player or this player appears twice in your list of players, you can choose to have the server forget about this player.
 	FI	Mikäli et enää käytä soitinta tai se näkyy kahdesti listassa, voit unohtaa soittimen tällä valinnalla.
-	FR	Si vous n'utilisez plus ce lecteur ou si ce lecteur apparaît plus d'une fois dans la liste des lecteurs, vous pouvez choisir de retirer ce lecteur de la liste.
+	FR	Si vous n'utilisez plus cette platine ou si elle apparaît plus d'une fois dans la liste des platines, vous pouvez choisir de retirer cette platine de la liste.
 	NL	Als U deze speler niet langer gebruikt, of deze speler komt twee keer voor in de lijst van spelers, kunt U de server deze speler laten 'vergeten'.
 	PT	Se não usar mais este cliente (nome ou IP), ou se o cliente aparecer várias vezes, pode "esquecê-lo".
 	SE	Om du inte använder denna spelare eller om denna spelare finns två gånger i din lista över spelare, så kan du välja att servern skall glömma denna spelare.
@@ -5062,7 +5063,7 @@ FORGET_PLAYER_LINK
 	EN	Forget this player
 	ES	Olvidar este reproductor
 	FI	Unohda soitin
-	FR	Retirer ce lecteur
+	FR	Retirer cette platine
 	NL	Vergeet deze speler
 	PT	Esquecer este cliente
 	SE	Glöm denna spelare
@@ -5095,7 +5096,7 @@ SCREENSAVER_TIMEOUT
 	EN	The player will automatically show the currently playing song after you stop using the remote for some amount of time. You can change the duration of this wait below. Set this duration to zero to never automatically show the current song.
 	ES	El reproductor mostrará automaticamenta la canción actual si no usa el mando durante un tiempo determinado. Se puede cambiar este comportamiento e incluso desactivarlo introduciendo zero.
 	FI	Kun kaukosäätimen viimeisestä napin painalluksesta on kulunut hieman aikaa, palaa soittimen näyttöön soimassa olevan kappaleen nimi. Voit vaikuttaa tähän toimintoon.
-	FR	Lorsque vous cessez d'utiliser la télécommande pendant un certain temps, le lecteur affichera automatiquement le morceau en cours de lecture. Vous pouvez changer la durée de ce délai. La valeur zéro désactivera cette fonctionnalité.
+	FR	Lorsque vous cessez d'utiliser la télécommande pendant un certain temps, la platine affichera automatiquement le morceau en cours de lecture. Vous pouvez changer la durée de ce délai. La valeur zéro désactivera cette fonctionnalité.
 	NL	De speler zal automatisch het op dit moment spelende nummer tonen nadat U bepaalde tijd de afstandsbediening niet heeft gebruikt. U kunt dit interval hieronder instellen. Stel deze tijd in op 0 (nul) als U wilt dat het huidige nummer nooit vanzelf getoond wordt.
 	PT	O player irá mostrar automaticamente a música actual ao fim de algum tempo, se o parar com o controlo remoto. Pode mudar a duração da espera abaixo. Se não quiser este comportamento, coloque a 0 (zero).
 	SE	Spelaren kommer efter en fördröjning automatiskt hoppa till "Spelas nu" när du inte använder fjärrkontrollen. Nedan kan du ändra längden på denna fördröjning. Sätt fördröjningen till 0 (noll) för att aldrig automatiskt hoppa till "Spelas nu".
@@ -5105,7 +5106,7 @@ DISPLAYTEXT_TIMEOUT
 	DK	Når du indtaster tekst til en søgning vil SlimServer gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
 	EN	When you are entering text for a search, the player will move on to the next letter after some amount of time. You can change the duration of this wait below.
 	FI	Syöttäessäsi tekstiä hakua varten, kursori siirtyy automaattisesti eteenpäin jonkin ajan kuluttua. Voit alla olevasta valinnasta säätää odottamiseen käytettyä aikaa.
-	FR	Le lecteur passera à la lettre suivante après un certain délai lors de la saisie de texte. Vous pouvez choisir ce délai ci-dessous.
+	FR	La platine passera à la lettre suivante après un certain délai lors de la saisie de texte. Vous pouvez choisir ce délai ci-dessous.
 	NL	Als U tekst invoert om te gaan zoeken, zal de speler naar de volgende letter verschuiven na een zeker aantal seconden. U kan deze wachttijd hier instellen.
 	PT	Ao introduzir texto para a procura, o cliente moverá para a próxima letra ao fim de algum tempo. Pode mudar esse tempo de espera abaixo.
 	SE	När du matar in text för en sökning kommer spelaren automatiskt flytta till nästa tecken efter en liten fördröjning. Här kan du ändra denna fördröjning.
@@ -5150,7 +5151,7 @@ DISPLAY_PLUGINS
 	DE	Anzeigen des Plugins Menü auf dem Slim Player:
 	DK	Viser Modul-menuen på SlimServer:
 	EN	Display the Plugins menu on the Slim player:
-	FR	Afficher le menu Plugins sur le lecteur Slim :
+	FR	Afficher le menu Plugins sur la platine Slim :
 	NL	Toon het Plugins menu op de SlimServer:
 	PT	Mostrar menu de Extras no cliente Slim
 	SE	Visa tilläggs-menyn på Slim-spelaren:
@@ -5181,7 +5182,7 @@ SLIMP3_MUSIC_PLAYER
 	EN	SLIMP3 Music Player
 	ES	SLIMP3 Reproductor de Música
 	FI	SLIMP3 soitin
-	FR	Lecteur de musique SLIMP3
+	FR	Platine SLIMP3
 	NL	SLIMP3 Muziek Speler
 	NO	SLIMP3 Musikk Spiller
 	PT	Leitor de Música SLIMP3
@@ -5193,7 +5194,7 @@ SQUEEZEBOX_MUSIC_PLAYER
 	EN	Squeezebox Music Player
 	ES	Squeezebox Reproductor de Música
 	FI	Squeezebox soitin
-	FR	Lecteur de musique Squeezebox
+	FR	Platine Squeezebox
 	NL	Squeezebox Muziek Speler
 	NO	Squeezebox Musik Player
 	PT	Leitor de Música Squeezebox
@@ -5241,7 +5242,7 @@ NO_PLAYER_FOUND
 	EN	Your player was not found.
 	ES	No se ha encontrado ningún reproductor
 	FI	Soitinta ei löytynyt.
-	FR	Votre lecteur est introuvable.
+	FR	Votre platine est introuvable.
 	NL	Geen Speler gevonden
 	PT	Não foi encontrado nenhum cliente.
 	SE	Din spelare kunde inte hittas.
@@ -5250,7 +5251,7 @@ NO_PLAYER_DETAILS
 	DE	Stellen Sie sicher, dass ihr Player angeschlossen ist und die Netzwerkeinstellungen korrekt sind. Drücken Sie auf "Aktualisierung" im Menü ihres Browser zum erneuten Verbindungsversuch zu ihrem Player.
 	DK	Kontroller at din afspiller er sluttet til og at dens netværksindstillinger er korrekte. Tryk F5 (Refresh/Genindlæs) i din web-browser for at prøve at forbinde til afspilleren igen.
 	EN	Make sure that your player is plugged in and its networking settings are correct. Press the Refresh button to try to connect to your player again.
-	FR	Assurez-vous que votre lecteur est branché et que ses réglages de réseau sont valides. Cliquez sur le bouton "Actualiser" de votre navigateur pour vérifier de nouveau la présence du lecteur.
+	FR	Assurez-vous que votre platine est branchée et que ses réglages de réseau sont valides. Cliquez sur le bouton "Actualiser" de votre navigateur pour vérifier de nouveau la présence de la platine.
 	NL	Zorg ervoor dat Uw speler aan het netwerk is aangesloten en dat de netwerk instellingen goed zijn. Druk de Refresh knop om opnieuw contact te maken met de speler.
 	PT	Verifique se o cliente está ligado e se as configurações da rede estão correctas. Actualize esta página para verificar de novo a presença do leitor.
 	SE	Se till att din spelare är påslagen, inkopplad och har korrekta nätverksinställningar. Tryck på F5 (Uppdatera/Refresh) i din webbläsare för att försöka koppla upp mot din spelare igen.
@@ -5278,7 +5279,7 @@ PLAYER_NEEDS_UPGRADE_2
 PLAYER_UPGRADE_INSTRUCTIONS
 	DE	Falls die IP Adresse ihres Players nicht angezeigt wirde, drücken Sie den Knopf BRIGHTNESS und lassen ihn gedrückt, bis diese erscheint. Geben Sie dann die angezeigte IP Adresse hier ein:
 	EN	If the IP address of your player is not displayed on its screen, press and hold the BRIGHTNESS button until it is.  Then enter the IP address displayed on the screen here:
-	FR	Si l'adresse IP de votre lecteur n'est pas affichée sur son écran, appuyez et laissez appuyé BRIGHTNESS jusqu'à ce qu'elle soit affichée, puis entrez l'adresse ici :
+	FR	Si l'adresse IP de votre platine n'est pas affichée sur son écran, appuyez et laissez appuyé BRIGHTNESS jusqu'à ce qu'elle soit affichée, puis entrez l'adresse ici :
 
 UPGRADE_COMPLETE_DETAILS
 	DE	Update abgeschlossen.
@@ -5306,7 +5307,7 @@ NEED_PLAYLIST_PATH
 	DK	Du skal angive stien til mappen med dine gemte playlister.
 	EN	You need to specify a path to a directory for your saved playlist files.
 	FI	Sinun pitää syöttää polku tallennettuihin soittolista -tiedostoihisi.
-	FR	Vous devez spécifier le chemin d'accès du dossier qui contient vos playlists enregistrées.
+	FR	Vous devez spécifier le chemin d'accès du dossier qui contient vos listes de lecture enregistrées.
 	NL	U dient de volledige naam van de folder waar de playlists moeten worden bewaard op te geven.
 	PT	Deve especificar a directoria que contêm os ficheiros de playlist.
 	SE	Du måste ange en sökväg till en mapp för dina sparade spellistor.
@@ -5666,7 +5667,7 @@ RADIO
 	DE	Internet Radio und Playlists
 	DK	Internetradio- og playlist-filer
 	EN	Internet Radio and Playlist Files
-	FR	Radios Internet et playlists
+	FR	Radios Internet et liste de lecture
 	NL	Internet Radio en Playlist Bestanden
 	NO	Internet Radio og Spillelister
 	PT	Rádio via Internet e Ficheiros de Playlist
@@ -5675,7 +5676,7 @@ RADIO
 REMOTE_STREAMING
 	DK	Fjern-streaming
 	EN	Remote Streaming
-	FR	Streaming à distance
+	FR	Diffusion à distance
 	NO	Spiller instillinger
 	PT	Streaming à distância
 	SE	Fjärrströmning
@@ -5686,7 +5687,7 @@ PLAYER_SETUP
 	EN	Player Setup
 	ES	Configuración
 	FI	Soittimen asennus
-	FR	Réglage du lecteur
+	FR	Réglage de la platine
 	NL	Instellingen van de Speler
 	NO	Spiller instillinger
 	PT	Configurações dos Clientes
@@ -5717,7 +5718,7 @@ STATISTICS
 SLIM_PLAYLIST_EDITOR
 	DE	SLIM Playlist Editor
 	EN	SLIM Playlist Editor
-	FR	Editeur de playlist
+	FR	Editeur de liste de lecture
 
 UP
 	DE	Rauf
@@ -5742,22 +5743,22 @@ URL
 SAVE_PLAYLIST
 	DE	Playlist speichern
 	EN	Save Playlist
-	FR	Enregistrer la playlist
+	FR	Enregistrer la liste de lecture
 
 PLAYLIST_SAVE
 	DE	Zum Speichern der Playlist RIGHT drücken:
 	EN	Press RIGHT again to save playlist as:
-	FR	Appuyez à nouveau sur DROITE pour sauver la playlist sous :
+	FR	Appuyez à nouveau sur DROITE pour sauver la liste de lecture sous :
 
 PLAYLIST_AS
 	DE	Playliste unter folgendem Namen speichern:
 	EN	Save current playlist as:
-	FR	Enregistrer la playlist sous :
+	FR	Enregistrer la liste de lecture sous :
 
 PLAYLIST_SAVING
 	DE	Speichere Playlist als:
 	EN	Saving current playlist as:
-	FR	Enregistre la playlist sous :
+	FR	Enregistre la liste de lecture sous :
 
 INFORMATION
 	DE	Informationen
@@ -5767,7 +5768,7 @@ INFORMATION
 INFORMATION_MENU_PLAYER
 	DE	Player Informationen
 	EN	Player Information
-	FR	Infos lecteur
+	FR	Infos platine
 
 INFORMATION_MENU_SERVER
 	DE	Server Informationen
@@ -5795,26 +5796,27 @@ INFORMATION_PLAYER_MODEL
 
 INFORMATION_FIRMWARE
 	EN	Player Firmware Version
-	FR	Version firmware lecteur
+	FR	Version micrologiciel platine
 
 INFORMATION_PLAYER_IP
 	DE	Player IP Adresse
 	EN	Player IP Address
-	FR	Adresse IP lecteur
+	FR	Adresse IP platine
 
 INFORMATION_PLAYER_PORT
 	DE	Player UDP Portnummer
 	EN	Player UDP Port Number
-	FR	Port UDP lecteur
+	FR	Port UDP platine
 
 INFORMATION_PLAYER_MAC
 	DE	Player MAC Adresse
 	EN	Player MAC Address
-	FR	Adresse MAC lecteur
+	FR	Adresse MAC platine
 
 INFORMATION_PLAYER_SIGNAL_STRENGTH
 	DE	Wireless Signalstärke
 	EN	Wireless Signal Strength
+	FR	Puissance signal sans fil
 
 INFORMATION_VERSION
 	EN	Server Version
@@ -5823,7 +5825,7 @@ INFORMATION_VERSION
 INFORMATION_CLIENTS
 	DE	Anzahl erkannte Player
 	EN	Total Players Recognised
-	FR	Lecteur(s) identifié(s)
+	FR	Platine(s) identifiée(s)
 
 INFORMATION_SERVER_IP
 	DE	Server IP Adresse
@@ -5877,7 +5879,7 @@ INFORMATION_INSTALLED
 INFORMATION_DISABLED
 	DE	DEAKTIVIERT
 	EN	DISABLED
-	FR	DESACTIVE
+	FR	DESACTIVÉ
 
 INFORMATION_NO_VERSION
 	DE	Keine Versionsnummer

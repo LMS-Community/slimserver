@@ -1,6 +1,6 @@
 package Slim::Formats::Ogg;
 
-# $Id: Ogg.pm,v 1.10 2003/12/29 08:01:08 daniel Exp $
+# $Id: Ogg.pm,v 1.11 2004/01/13 00:36:11 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -83,7 +83,7 @@ sub getTag {
 	$tags->{'SIZE'}	    = -s $file;
 
 	$tags->{'SECS'}	    = $ogg->info('length');
-	$tags->{'BITRATE'}  = int($ogg->info('bitrate_nominal') / 1000);
+	$tags->{'BITRATE'}  = $ogg->info('bitrate_nominal');
 	$tags->{'STEREO'}   = $ogg->info('channels') == 2 ? 1 : 0;
 	$tags->{'CHANNELS'} = $ogg->info('channels');
 	$tags->{'RATE'}	    = $ogg->info('rate') / 1000;

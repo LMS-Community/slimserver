@@ -1,6 +1,6 @@
 package Slim::Formats::MP3;
 
-# $Id: MP3.pm,v 1.3 2003/12/27 23:48:05 daniel Exp $
+# $Id: MP3.pm,v 1.4 2004/01/13 00:36:11 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -24,6 +24,13 @@ sub getTag {
 
 	# sometimes we don't get this back.
 	$info->{'OFFSET'} += 0;
+	
+	# when scanning we brokenly align by bytes.  
+	# TODO: We need a frame saavy seek routine here...
+	$info->{'BLOCKALIGN'} = 1;
+	
+	# bitrate is in bits per second, not kbits per second.
+	$info->{'BITRATE'} = $info->{'BITRATE'} * 1000 if ($info->{'BITRATE'});
 
 	return $info;
 }

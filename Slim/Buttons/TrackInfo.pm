@@ -211,7 +211,7 @@ sub preloadLines {
 	}
 
  	if (Slim::Music::Info::conductor($url)) {
- 		push (@{$client->trackInfoLines}, Slim::Music::Strings::string('CONDUCTOR').": ".Slim::Music::Info::conductor($url));
+ 		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('CONDUCTOR').": ".Slim::Music::Info::conductor($url));
  		push (@{$client->trackInfoContent}, 'CONDUCTOR');
  	}
 

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.30 2004/01/01 21:25:10 daniel Exp $
+# $Id: Prefs.pm,v 1.31 2004/01/13 00:36:12 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -101,7 +101,7 @@ my %DEFAULT = (
 		'TITLE (ARTIST)',
 		'ARTIST - TITLE']
 	,'menuItem'			=> ['NOW_PLAYING', 'BROWSE_BY_GENRE', 'BROWSE_BY_ARTIST', 'BROWSE_BY_ALBUM', 'BROWSE_MUSIC_FOLDER'
-						, 'SEARCH', 'SAVED_PLAYLISTS', 'SETTINGS']
+						, 'SEARCH', 'SAVED_PLAYLISTS', 'PLUGINS', 'SETTINGS']
 	,'disabledplugins'		=> []
 	,'persistPlaylists'		=> 1
 	,'reshuffleOnRepeat'	=> 0

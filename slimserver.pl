@@ -132,6 +132,7 @@ use vars qw($VERSION
 	'Eric Lyons',
 	'Scott McIntyre',
 	'Robert Moser',
+	'Roy M. Silvernail',
 	'Richard Smith',
 	'Sam Saffron',
 	'Daniel Sully',
@@ -184,6 +185,7 @@ use vars qw(
 		$d_time
 		$d_ui
 		$d_usage
+		$d_filehandle
 
 	    $user
 	    $group
@@ -491,6 +493,7 @@ to the console via stderr:
     --d_protocol     => Client protocol information
     --d_prefs        => Preferences file information
     --d_remotestream => Information about remote HTTP streams and playlists
+    --d_filehandle => Information about the custom FileHandle object
     --d_scan         => Information about scanning directories and filelists
     --d_select       => Information about the select process
     --d_server       => Basic server functionality
@@ -568,6 +571,7 @@ sub initOptions {
 		'd_time'			=> \$d_time,
 		'd_ui'				=> \$d_ui,
 		'd_usage'			=> \$d_usage,
+		'd_filehandle'	=> \$d_filehandle,
 	)) {
 		showUsage();
 		exit(1);

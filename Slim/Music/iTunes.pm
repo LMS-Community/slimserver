@@ -415,7 +415,7 @@ sub scanFunction {
 				$cacheEntry{'GENRE'} = $curTrack{'Genre'};
 				$cacheEntry{'FS'} = $curTrack{'Size'};
 				if ($curTrack{'Total Time'}) { $cacheEntry{'SECS'} = $curTrack{'Total Time'} / 1000; };
-				$cacheEntry{'BITRATE'} = $curTrack{'Bit Rate'};
+				$cacheEntry{'BITRATE'} = $curTrack{'Bit Rate'} * 1000 if ($curTrack{'Bit Rate'});
 				$cacheEntry{'YEAR'} = $curTrack{'Year'};
 				$cacheEntry{'COMMENT'} = $curTrack{'Comments'};
 				# cacheEntry{'???'} = $curTrack{'Track Count'};
