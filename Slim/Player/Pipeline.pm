@@ -1,6 +1,6 @@
 package Slim::Player::Pipeline;
 
-# $Id: Pipeline.pm,v 1.3 2004/10/21 01:17:40 vidur Exp $
+# $Id: Pipeline.pm,v 1.4 2004/11/28 18:32:17 dsully Exp $
 
 # SlimServer Copyright (C) 2001-2004 Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -12,10 +12,10 @@ use strict;
 use IPC::Open2;
 use IO::Handle;
 use Slim::Utils::Misc;
-use Slim::Utils::Strings qw(string);
 use Slim::Utils::OSDetect;
 
 use bytes;
+use base qw(IO::Handle);
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -26,10 +26,6 @@ BEGIN {
 		import Errno qw(EWOULDBLOCK EINPROGRESS);
 	}
 }
-
-use vars qw(@ISA);
-
-@ISA = qw(IO::Handle);
 
 sub new {
 	my $class = shift;
