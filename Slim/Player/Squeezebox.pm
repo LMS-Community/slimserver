@@ -96,7 +96,9 @@ sub play {
 	my $quickstart = shift;
 
 	$client->stream('s', $paused, $format);
-	$client->volume($client->volume());
+	# make sure volume is set, without changing temp setting
+	$client->volume($client->volume(),
+					defined($client->tempVolume()));
 
 	Slim::Utils::Timers::killTimers($client, \&quickstart);
 	if ($quickstart) {

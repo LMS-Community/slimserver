@@ -95,7 +95,9 @@ sub play {
 	my $client = shift;
 	my $paused = shift;
 	
-	$client->volume($client->volume());
+	# make sure volume is set, without changing temp setting
+	$client->volume($client->volume(),
+					defined($client->tempVolume()));
 
 	$client->i2c(
 		 Slim::Hardware::mas3507d::masWrite('config','00002')
@@ -119,7 +121,9 @@ sub play {
 #
 sub resume {
 	my $client = shift;
-	$client->volume($client->volume());
+	# make sure volume is set, without changing temp setting
+	$client->volume($client->volume(),
+					defined($client->tempVolume()));
 	Slim::Networking::Stream::unpause($client);
 	$client->SUPER::resume();
 	return 1;

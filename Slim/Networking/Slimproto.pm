@@ -342,7 +342,9 @@ sub process_slimproto_frame {
 			while (Slim::Buttons::Common::mode($client) eq 'block') {
 				Slim::Buttons::Block::unblock($client);
 			}
-		 	$client->volume($client->volume());
+			# make sure volume is set, without changing temp setting
+		 	$client->volume($client->volume(),
+							defined($client->tempVolume()));
 		}
 		return;
 	} 

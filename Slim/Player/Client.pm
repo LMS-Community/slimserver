@@ -608,6 +608,7 @@ settingsSelection() - type: int
 our $defaultPrefs = {
 		'maxBitrate'			=> undef # will be set by the client device OR default to server pref when accessed.
 		,'alarmvolume'			=> 50
+		,'alarmfadeseconds'     => 0 # fade in alarm, 0 means disabled
 		,'alarm'				=> 0
 		,'lameQuality'			=> 9
 		,'playername'			=> undef
@@ -724,6 +725,9 @@ sub new {
 	$client->[92] = undef; # currentPlaylistModified
 	$client->[93] = undef; # songElapsedSeconds
 	$client->[94] = 0; #animating
+	# 95 is currentPlaylistRender
+	# 96 is currentPlaylistChangeTime
+	$client->[97] = undef; # tempVolume temporary volume setting
 	
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -1005,10 +1009,30 @@ sub volume {
 	if (defined($volume)) {
 		if ($volume > $client->maxVolume()) { $volume = $client->maxVolume(); }
 		if ($volume < $client->minVolume()) { $volume = $client->minVolume(); }
-		Slim::Utils::Prefs::clientSet($client, "volume", $volume) if (!$temp);
+		if ($temp) {
+			$client->[97] = $volume;
+		} else {
+			# persist only if $temp not set
+			Slim::Utils::Prefs::clientSet($client, "volume", $volume);
+			# forget any previous temporary volume
+			$client->[97] = undef;
+		}
 	}
-	return Slim::Utils::Prefs::clientGet($client, "volume");
+	# return the current volume, whether temporary or persisted
+	if (defined($client->tempVolume())) {
+		return $client->tempVolume();
+	} else {
+		return Slim::Utils::Prefs::clientGet($client, "volume");
+	}
 }
+
+# getter only.
+# use volume() to set, passing in temp flag
+sub tempVolume {
+	my $r = shift;
+	return $r->[97];
+}
+
 
 sub treble {
 	my ($client, $treble) = @_;

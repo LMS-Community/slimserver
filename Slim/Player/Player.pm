@@ -338,8 +338,9 @@ sub fade_volume {
 	my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
 	my $mute = Slim::Utils::Prefs::clientGet($client, "mute");
 	
-	if ($vol < 0 && $fade < 0) {
-		# the volume is muted, don't fade.
+	if (($fade == 0) ||
+		($vol < 0 && $fade < 0)) {
+		# the volume is muted or fade is instantaneous, don't fade.
 		$callback && (&$callback(@$callbackargs));
 		return;
 	}

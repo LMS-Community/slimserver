@@ -174,6 +174,10 @@ sub checkAlarms
 					if (defined ($volume)) {
 						Slim::Control::Command::execute($client, ["mixer", "volume", $volume]);
 					}
+
+					# fade volume over time
+					$client->fade_volume(Slim::Utils::Prefs::clientGet($client, "alarmfadeseconds"));
+
 					if (defined Slim::Utils::Prefs::clientGet($client, "alarmplaylist")) {
 						Slim::Control::Command::execute($client, ["power", 1]);
 						Slim::Buttons::Block::block($client,alarmLines($client));
