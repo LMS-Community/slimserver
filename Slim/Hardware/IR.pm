@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.4 2003/08/04 13:34:39 sadams Exp $
+# $Id: IR.pm,v 1.5 2003/08/07 17:48:25 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -27,6 +27,7 @@ sub enqueue {
 	my $irCodeBytes = shift;
 	my $irTime = shift;
 
+	$irTime = $irTime / $client->ticspersec;
 	assert($client);
 	assert($irCodeBytes);
 	assert($irTime);
@@ -38,7 +39,7 @@ sub enqueue {
 
 sub idle {
 	if (scalar(@queuedBytes)) {
-		process(shift @queuedClient, shift @queuedBytes, shift @queuedTime);
+		Slim::Control::Command::execute(shift @queuedClient, ['ir', (shift @queuedBytes), (shift @queuedTime)]);
 	}
 }
 
@@ -265,7 +266,7 @@ sub checkRelease {
 	if ($startIRCodeBytes ne $client->lastircodebytes) {
 		# a different button was pressed, so the original must have been released
 		if ($releaseType ne 'hold_check') {
-			releaseCode($client,$startIRCodeBytes,$releaseType);
+			releaseCode($client,$startIRCodeBytes,$releaseType, $estIRTime);
 			return 0; #should check for single press release
 		}
 	} elsif ($startIRTime != $client->startirhold) {
@@ -274,10 +275,10 @@ sub checkRelease {
 			#not really a double press
 			return 0;
 		} elsif ($releaseType eq 'hold_release') {
-			releaseCode($client,$startIRCodeBytes,$releaseType);
+			releaseCode($client,$startIRCodeBytes,$releaseType, $estIRTime);
 			return 0;
 		} else {
-			releaseCode($client,$startIRCodeBytes,'double');
+			releaseCode($client,$startIRCodeBytes,'double',$estIRTime);
 			#reschedule to check for whether to fire hold_release
 			Slim::Utils::Timers::setTimer($client,$now+($Slim::Hardware::IR::IRHOLDTIME),\&checkRelease
 						,'hold_check',$client->startirhold,$startIRCodeBytes
@@ -302,18 +303,17 @@ sub checkRelease {
 	} else {
 		#button released
 		if ($releaseType ne 'hold_check') {
-			releaseCode($client,$startIRCodeBytes,$releaseType);
+			releaseCode($client,$startIRCodeBytes,$releaseType, $estIRTime);
 		}
 		return 0;
 	}
 }
 
-sub process {
+sub processIR {
 	my $client = shift;
 	my $irCodeBytes = shift;
 	my $irTime = shift;	
 		
-	$irTime = $irTime / $client->ticspersec;
 	my $timediff = $irTime - $client->lastirtime();
 	if ($timediff < 0) {$timediff += (0xffffffff / $client->ticspersec());}
 
@@ -339,7 +339,6 @@ sub process {
 		$::d_ir && msg("Ignoring spurious null repeat code.\n");
 		return;
 	} 
-	Slim::Control::Command::execute($client, ['ir', $irCodeBytes, $irTime]);
 
 	if (($irCodeBytes eq ($client->lastircodebytes())) #same button press as last one
 		&& ( ($client->irtimediff < $Slim::Hardware::IR::IRMINTIME) #within the minimum time to be considered a repeat
@@ -364,7 +363,7 @@ sub process {
 		}
 		my $irCode  = lookup($client,$irCodeBytes);
 		$::d_ir && msg("irCode = [$irCode] timer = [$irTime] timediff = [" . $client->irtimediff . "] last = [".$client->lastircode()."]\n");
-		processCode($client, $irCode);
+		processCode($client, $irCode, $irTime);
 	}
 }
 
@@ -379,7 +378,7 @@ sub resendButton {
 	my $client = shift;
 	my $ircode = lookup($client,$client->lastircodebytes);
 	if (defined $ircode) {
-		processCode($client,$ircode);
+		processCode($client,$ircode, $client->lastirtime);
 	}
 }
 
@@ -395,6 +394,7 @@ sub setLastIRTime {
 
 #
 #
+	my $irtime = shift;
 sub releaseCode {
 	my $client = shift;
 	my $irCodeBytes = shift;
@@ -402,7 +402,7 @@ sub releaseCode {
 
 	my $ircode = lookup($client,$irCodeBytes, $releaseType);
 	if ($ircode) {
-		processCode( $client, $ircode);
+		processCode( $client, $ircode, $irtime);
 	}
 }
 
@@ -417,7 +417,7 @@ sub holdCode {
 		# the time for the hold firing took place within the last ir interval
 		my $ircode = lookup($client,$irCodeBytes, 'hold');
 		if ($ircode) {
-			processCode( $client, $ircode);
+			processCode( $client, $ircode, $client->lastirtime);
 		}
 	}
 }
@@ -433,7 +433,7 @@ sub repeatCode {
 	my $ircode = lookup($client,$irCodeBytes, 'repeat');
 	$::d_ir && msg("irCode = [$ircode] timer = [" . $client->lastirtime . "] timediff = [" . $client->irtimediff . "] last = [".$client->lastircode()."]\n");
 	if ($ircode) {
-		processCode( $client, $ircode);
+		processCode( $client, $ircode, $client->lastirtime);
 	}
 }
 
@@ -466,6 +466,7 @@ sub accelCount {
 	my $accel = shift;
 	
 	return 0.5 * $accel * $time * $time;
+	if ($client->lastirtime ==  0) { return 0;}
 }
 
 
@@ -480,6 +481,7 @@ sub holdTime {
 
 
 #
+	my $time = shift;
 # calls the appropriate handler for the specified button.
 #
 sub executeButton {
@@ -491,11 +493,15 @@ sub executeButton {
 	if (!defined $irCode || $irCode eq '') {
 		$irCode = $button;
 	}
-
+	
 	$::d_ir && msg("trying to execute button: $irCode\n");
 
-	if ($irCode ne "0") {
+	if ($irCode ne "0" || !defined $time) {
 		setLastIRTime($client, Time::HiRes::time());
+	}
+
+	if (!defined $time) {
+		$client->lastirtime(0);
 	}
 
 	if (my ($subref,$subarg) = Slim::Buttons::Common::getFunction($client,$irCode) ) {
@@ -516,7 +522,7 @@ sub executeButton {
 }
 
 sub processCode {
-	my ($client, $irCode) = @_;
+	my ($client, $irCode, $irTime) = @_;
 
 	$::d_ir && msg("irCode: $irCode, ".Slim::Player::Client::id($client)."\n");
 
@@ -532,7 +538,7 @@ sub processCode {
 		$client->easteregg('');
 		Slim::Display::Animation::doEasterEgg($client);
 	} else {
-		Slim::Control::Command::execute($client, ['button', $irCode]);
+		Slim::Control::Command::execute($client, ['button', $irCode, $irTime]);
 	}
 }
 

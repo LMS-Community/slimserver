@@ -940,7 +940,7 @@ SETUP_AUTOBRIGHTNESS
 	PT	Brilho Automático
 
 SETUP_AUTOBRIGHTNESS_DESC
-	DE	Die Helligkeit der SLIMP3 Anzeige kann sich automatisch anpassen, wenn Sie einen Knopf drücken, einen Titel abspielen oder eine zeitlang nichts tun. Sie können dieses automatische Verhalten abschalten.
+	DE	Die Helligkeit Anzeige kann sich automatisch anpassen, wenn Sie einen Knopf drücken, einen Titel abspielen oder eine zeitlang nichts tun. Sie können dieses automatische Verhalten abschalten.
 	EN	The brightness of the display can be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
 	FR	La luminosité de l'affichage du lecteur peut être ajustée automatiquement lorsqu'un bouton est pressé, un morceau commence à jouer, ou lorsque le lecteur est inutilisé pendant un moment. Vous pouvez désactiver ce comportement automatique.
 	NL	De helderheid van het scherm van kan automatisch aangepast worden bij knopdrukken, het begin van een liedje of na een periode van inactiviteit. Deze functie kan ook uitgeschakeld worden.
@@ -1660,7 +1660,7 @@ SETUP_TRANSCODE-MOV
 	PT	Converter ficheiros QuickTime e AAC
 
 SETUP_TRANSCODE-MOV_DESC
-	DE	Nur Macintosh OS X: Wenn Sie LAME installiert haben, kann Ihr SLIMP3 Server QuickTime Filme und AAC Musik Dateien in Echtzeit für das Abspielen auf Ihrem SLIMP3 Player konvertieren.
+	DE	Nur Macintosh OS X: Wenn Sie LAME installiert haben, kann Ihr Slim Server QuickTime Filme und AAC Musik Dateien in Echtzeit für das Abspielen auf Ihrem Slim Player konvertieren.
 	EN	Macintosh OS X only: If you have LAME installed, you can have your Slim Server convert your QuickTime movies and AAC music files on-the-fly for playback on your Slim player.
 	FR	Uniquement pour Macintosh OS X : Si vous disposez de LAME, le serveur Slim peut convertir en temps réel vos morceaux au format Quicktime movie et AAC pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant la lecture sur le serveur et n'est pas stockée sur le disque.
 	NL	Enkel voor Macintosh OS X: Indien U LAME geinstalleerd hebt kan U de Slim server instellen om QuickTime films (alleen het geluid) en AAC muziekbestanden real-time om te zetten voor weergave op de Slim speler.
@@ -1721,7 +1721,7 @@ SETUP_CHECKVERSION
 	PT	Actualizações
 
 SETUP_CHECKVERSION_DESC
-	DE	Der Server kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Software Version vorhanden ist. Falls ja, erscheint eine Meldung im SLIMP3 Web Interface.
+	DE	Der Server kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Software Version vorhanden ist. Falls ja, erscheint eine Meldung im Slim Server Web Interface.
 	EN	The server can automatically connect to www.slimdevices.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in the Slim Server web interface.
 	FR	Le serveur Slim peut se connecter tous les jours à www.slimdevices.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Un message dans l'interface web signale cette disponibilité le cas échéant.
 	PT	O servidor poderá ligar-se automaticamente a www.slimdevices.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.

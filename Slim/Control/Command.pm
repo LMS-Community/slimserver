@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.3 2003/07/24 23:14:03 dean Exp $
+# $Id: Command.pm,v 1.4 2003/08/07 17:48:24 dean Exp $
 
 # Slim Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -517,7 +517,10 @@ sub execute {
 			}
 		} elsif ($p0 eq "button") {
 			# all buttons now go through execute()
-			Slim::Hardware::IR::executeButton($client, $p1);
+			Slim::Hardware::IR::executeButton($client, $p1, $p2);
+		} elsif ($p0 eq "ir") {
+			# all ir signals go through execute()
+			Slim::Hardware::IR::processIR($client, $p1, $p2);
 		}
 	# mark html status page invalid so it will update
 	$client->htmlstatusvalid(0);
