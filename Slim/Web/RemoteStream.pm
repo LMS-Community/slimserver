@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.12 2004/01/13 02:43:21 daniel Exp $
+# $Id: RemoteStream.pm,v 1.13 2004/01/19 05:58:45 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -29,44 +29,50 @@ sub openRemoteStream {
 	
 	$::d_remotestream && msg("Opening connection to $url: [$server on port $port with path $path]\n");
 	
-   	my $sock = IO::Socket::INET->new(PeerAddr => "$server:$port",
- 					LocalAddr => $main::localStreamAddr,
- 					 Timeout  => Slim::Utils::Prefs::get('remotestreamtimeout'));
+   	my $sock = IO::Socket::INET->new(
 
-	if (!$sock)	{
+		PeerAddr  => "$server:$port",
+ 		LocalAddr => $main::localStreamAddr,
+ 		#Timeout   => Slim::Utils::Prefs::get('remotestreamtimeout')
+
+	) || do {
+
 		my $errnum = 0 + $!;
  		$::d_remotestream && msg("Can't open socket to [$server:$port]: $errnum: $!\n");
+
 		return undef;
-	}
+	};
 
 	$sock->autoflush(1);
 
 	# make the request
-	my $request =   "GET $path HTTP/1.0" . $CRLF . 
-					"Host: " . $server . ":" . $port . $CRLF .
-#					"User-Agent: SlimServer/" . $::VERSION . " (" . $^O . ")" . $CRLF .
-					"User-Agent: iTunes/3.0 (" . $^O . "; SlimServer " . $::VERSION . ")" . $CRLF .
-					"Accept: */*" . $CRLF .
-					"Cache-Control: no-cache" . $CRLF .
-					"Connection: close" . $CRLF .
-					"Icy-MetaData:1" . $CRLF;
+	my $request = join($CRLF, (
+		"GET $path HTTP/1.0",
+		"Host: $server:$port",
+#		"User-Agent: SlimServer/$::VERSION ($^O)",
+		"User-Agent: iTunes/3.0 ($^O; SlimServer $::VERSION)",
+		"Accept: */*",
+		"Cache-Control: no-cache",
+		"Connection: close",
+		"Icy-MetaData:1" . $CRLF,
+	));
 	
 	if (defined($user) && defined($password)) {
 		$request .= "Authorization: Basic " . MIME::Base64::encode_base64($user . ":" . $password,'') . $CRLF;
 	}
 
-	$request .=  $CRLF;
+	$request .= $CRLF;
 
 	$::d_remotestream && msg("Request: $request");
 
-	syswrite $sock, $request;
+	syswrite($sock, $request);
 
 	my $response = Slim::Utils::Misc::sysreadline($sock,2); #<$sock>;
 
 	$::d_remotestream && msg("Response: $response");
 	
 	if (!$response || $response !~ / (\d\d\d)/) {
-		close $sock;
+		$sock->close();
 		$::d_remotestream && msg("Invalid response code ($response) from remote stream $url\n");
 		return undef; 	
 	} 
@@ -75,13 +81,13 @@ sub openRemoteStream {
 	
 	if ($response < 200) {
 		$::d_remotestream && msg("Invalid response code ($response) from remote stream $url\n");
-		close $sock;
+		$sock->close();
 		return undef;
 	}
 
 	if ($response > 399) {
 		$::d_remotestream && msg("Invalid response code ($response) from remote stream $url\n");
-		close $sock;
+		$sock->close();
 		return undef;
 	}
 
@@ -90,21 +96,21 @@ sub openRemoteStream {
 	while(my $header = Slim::Utils::Misc::sysreadline($sock,2)) { #<$sock>) {
 
 		$::d_remotestream && msg("header: " . $header);
-		if ($header =~ /^icy-name:\s*(.+)\015\012$/i) {
+		if ($header =~ /^ic[ey]-name:\s*(.+)$CRLF$/i) {
 			Slim::Music::Info::setTitle($url, $1);
 		}
 		
-		if ($header =~ /^icy-metaint:\s*(.+)\015\012$/) {
+		if ($header =~ /^icy-metaint:\s*(.+)$CRLF$/) {
 			if ($client) {
 				$client->shoutMetaInterval($1);
 			}
 		}
 		
-		if ($header =~ /^Location:\s*(.*)\015\012$/i) {
+		if ($header =~ /^Location:\s*(.*)$CRLF$/i) {
 			$redir = $1;
 		}
 
-		if ($header =~ /^Content-Type:\s*(.*)\015\012$/i) {
+		if ($header =~ /^Content-Type:\s*(.*)$CRLF$/i) {
 			my $contenttype = $1;
 			
 			if ($contenttype =~ /text/i) {
@@ -123,7 +129,7 @@ sub openRemoteStream {
 
 	if ($redir) {
 		# Redirect -- maybe recursively?
-		$sock->close;
+		$sock->close();
 
 		$::d_remotestream && msg("Redirect to: $redir\n");
 		
@@ -139,6 +145,7 @@ sub openRemoteStream {
 				$::d_remotestream && msg("Saving old title: $oldtitle for $redir\n");
 				Slim::Music::Info::setTitle($redir, $oldtitle);
 			}
+
 			my $redirectedcontenttype = Slim::Music::Info::contentType($redir);
 			$::d_remotestream && msg("Content type ($redirectedcontenttype) of $url is being set to the content type of the redir: $redir\n");
 			Slim::Music::Info::setContentType($url,$redirectedcontenttype);

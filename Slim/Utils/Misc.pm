@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.21 2004/01/13 02:43:21 daniel Exp $
+# $Id: Misc.pm,v 1.22 2004/01/19 05:58:44 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -709,27 +709,24 @@ sub sysreadline(*;$) {
 	my $line = '';
 	my $result;
 
-#	print STDOUT "GIMME A LINE\n";
-#	bt();
 SLEEP:
 	until (at_eol($line)) {
+
 		unless ($infinitely_patient) {
+
 			if (Time::HiRes::time() > $start_time + $maxnap) {
-#				print "Sorry, Charlie, time's up!\n";
 				return $line;
 			} 
 		} 
+
 		my @ready_handles;
 
 		unless (@ready_handles = $selector->can_read(.1)) {  # seconds
-#			print STDOUT "STILL SLEEPING at ", scalar(localtime()), "...sleeping ";
+
 			unless ($infinitely_patient) {
 				my $time_left = $start_time + $maxnap - Time::HiRes::time();
-#				print "no more than $time_left more seconds";
-			} else {
-#				print "until you're darned good and ready";
 			} 
-#			print "\n";
+
 			next SLEEP;
 		}
 
@@ -738,25 +735,28 @@ INPUT_READY:
 
 			my $was_blocking = blocking($handle,0);
 
-CHAR:       while ($result = sysread($handle, my $char, 1)) {
+CHAR:
+			while ($result = sysread($handle, my $char, 1)) {
 				$line .= $char;
 				last CHAR if $char eq "\n";
 			} 
+
 			my $err = $!;
+
 			blocking($handle, $was_blocking);
 
 			unless (at_eol($line)) {
+
 				if (!defined($result) && $err != EWOULDBLOCK) { 
-#					print "WARNING: error: $err in sysread during syslineread\n";
 					return undef;					
 				}
-#				printf "WARNING: Incomplete line (%s) result: $result, err: $err still trying\n", $line;
 				next SLEEP;
 			} 
-#			printf "Got line from fd#%d: <<%s>>\n", $handle->fileno, $line;
+
 			last INPUT_READY;
 		}
 	} 
+
 	return $line;
 }
 
