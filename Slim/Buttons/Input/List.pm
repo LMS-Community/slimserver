@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::List;
 
-# $Id: List.pm,v 1.5 2003/11/25 07:02:35 grotus Exp $
+# $Id: List.pm,v 1.6 2003/11/26 02:53:16 grotus Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -106,6 +106,10 @@ sub lines {
 			&& Slim::Utils::Strings::stringExists($line1)) {
 		$line1 = string($line1);
 	}
+	if (Slim::Buttons::Common::param($client,'headerAddCount')) {
+		$line1 .= ' (' . ($listIndex + 1)
+			. ' ' . string('OF') .' ' . scalar(@$listRef) . ')';
+	}
 	$line2 = getExtVal($client,$listRef->[$listIndex],$listIndex,'externRef');
 	if (Slim::Buttons::Common::param($client,'stringExternRef')
 			&& Slim::Utils::Strings::stringExists($line2)) {
@@ -162,6 +166,8 @@ sub setMode {
 # headerArgs = CV
 # stringHeader = undef # if true, put the value of header through the string function
 	# before displaying it.
+# headerAddCount = undef # if true add (I of T) to end of header
+	# where I is the 1 based index and T is the total # of items
 # valueRef =  # reference to value to be selected
 # callback = undef # function to call to exit mode
 # listIndex = 0 or position of valueRef in listRef
