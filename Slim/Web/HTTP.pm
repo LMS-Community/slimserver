@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.123 2004/11/08 18:31:34 dean Exp $
+# $Id: HTTP.pm,v 1.124 2004/11/10 18:56:49 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -400,20 +400,22 @@ sub processHTTP {
 		}
 		# setup URLs should not work from referrers that are not from the web interface.
 		if ($params->{"path"} && $pageFunctions{$params->{"path"}} && $pageFunctions{$params->{"path"}} eq \&Slim::Web::Setup::setup_HTTP) {
-			my ($host, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($request->header('Referer'));
-			if ("$host:$port" ne $request->header('Host')) {
-				# throw 403, we don't allow setup from non-server pages.
-				$params->{'suggestion'} = "Invalid referrer.";
-				$::d_http && msg("Invalid referer: [" . join(' ', ($request->method(), $request->uri())) . "]\n");
-		
-				$response->code(RC_FORBIDDEN);
-				$response->content_type('text/html');
-				$response->header('Connection' => 'close');
-				$response->content(${filltemplatefile('html/errors/403.html', $params)});
-		
-				$httpClient->send_response($response);
-				closeHTTPSocket($httpClient);	
-				return;
+			if ($request->header('Referer')) {
+				my ($host, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($request->header('Referer'));
+				if ("$host:$port" ne $request->header('Host')) {
+					# throw 403, we don't allow setup from non-server pages.
+					$params->{'suggestion'} = "Invalid referrer.";
+					$::d_http && msg("Invalid referer: [" . join(' ', ($request->method(), $request->uri())) . "]\n");
+			
+					$response->code(RC_FORBIDDEN);
+					$response->content_type('text/html');
+					$response->header('Connection' => 'close');
+					$response->content(${filltemplatefile('html/errors/403.html', $params)});
+			
+					$httpClient->send_response($response);
+					closeHTTPSocket($httpClient);	
+					return;
+				}
 			}
 		}
 

@@ -282,7 +282,7 @@ sub findMusicLibraryFile {
 
 	if (! $path) {
 		$path = Slim::Utils::Prefs::get('itunes_library_xml_path');
-		if (-d $path) {
+		if ($path && -d $path) {
 			$path = catfile(($path), 'iTunes Music Library.xml');
 		}
 		if ($path && -r $path) {
