@@ -2,7 +2,7 @@
   <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
 	  [% IF anchor %]<a name="[% anchor %]"></a>[% END %]
       [% IF descend %][% IF not nobrowse %]<a href="browse.html?dir=[% descend | uri %]&player=[% player | uri %]">[% END %][% title | html %][% IF not nobrowse %]</a>[% END %][% END %]
-      [% IF not descend %]HI<a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% title | html %]</a>
+      [% IF not descend %]<a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% title | html %]</a>
          [% IF includeAlbum && album %][% "FROM" | string %]
          <i><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>[% END %]
          [% IF includeArtist && artist %][% "BY" | string %]
