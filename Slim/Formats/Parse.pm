@@ -335,7 +335,7 @@ sub parseCUE {
 	}
 
 	# don't keep this around.
-	$wholeFile->delete();
+	# $wholeFile->delete();
 
 	$::d_parse && Slim::Utils::Misc::msg("    returning: " . scalar(@items) . " items\n");	
 	return @items;
