@@ -1,6 +1,6 @@
 <tr>
   <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-      <a href="[% webroot %]songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% title %]</a>
+      <a href="[% webroot %]songinfo.html?item=[% item | uri %]&player=[% player | uri %]">[% title %]</a>
   </td>
   <td align="right" width="13" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
       <nobr><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
