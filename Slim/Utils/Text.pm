@@ -1,6 +1,8 @@
 package Slim::Utils::Text;
 
-# $Id: Text.pm,v 1.2 2004/07/16 12:55:19 dean Exp $
+use strict;
+
+# $Id: Text.pm,v 1.3 2004/08/05 22:59:52 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -35,15 +37,15 @@ sub ignoreArticles {
 
 	return $item unless $item;
 
-	if (!defined($articles)) {
+	if (!defined($Slim::Music::Info::articles)) {
 
-		$articles =  Slim::Utils::Prefs::get("ignoredarticles");
+		$Slim::Music::Info::articles =  Slim::Utils::Prefs::get("ignoredarticles");
 		# allow a space seperated list in preferences (easier for humans to deal with)
-		$articles =~ s/\s+/|/g;
+		$Slim::Music::Info::articles =~ s/\s+/|/g;
 	}
 	
 	#set up array for sorting items without leading articles
-	$item =~ s/^($articles)\s+//i;
+	$item =~ s/^($Slim::Music::Info::articles)\s+//i;
 
 	return $item;
 }
@@ -98,7 +100,7 @@ sub sortuniq_ignore_articles {
 	#set up array for sorting items without leading articles
 	my @noarts = map {
 			my $item = $_; 
-			exists($sortCache{$item}) ? $item = $sortCache{$item} : $item =~ s/^($articles)\s+//i; 
+			exists($Slim::Music::Info::sortCache{$item}) ? $item = $Slim::Music::Info::sortCache{$item} : $item =~ s/^($articles)\s+//i; 
 			$item; 
 		} @uniq;
 		
@@ -108,7 +110,7 @@ sub sortuniq_ignore_articles {
 
 sub getSortName {
 	my $item = shift;
-	return exists($sortCache{ignoreCaseArticles($item)}) ? $sortCache{ignoreCaseArticles($item)} : $item;
+	return exists($Slim::Music::Info::sortCache{ignoreCaseArticles($item)}) ? $Slim::Music::Info::sortCache{ignoreCaseArticles($item)} : $item;
 
 }
 

@@ -1,5 +1,5 @@
 
-# $Id: Client.pm,v 1.54 2004/08/03 17:29:16 vidur Exp $
+# $Id: Client.pm,v 1.55 2004/08/05 22:59:51 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -942,6 +942,8 @@ sub needsUpgrade {
 sub signalStrength {
 	return undef;
 }
+
+sub maxBrightness() { return undef; }
 
 # stub out display functions, some players may not have them.
 sub update {}
