@@ -1034,6 +1034,8 @@ sub addHTTPResponse {
 sub sendResponse {
 	my $httpClient = shift;
 
+	use bytes;
+
 	my $segment    = shift(@{$outbuf{$httpClient}});
 	my $sentbytes  = 0;
 
@@ -1054,7 +1056,7 @@ sub sendResponse {
 		return;
 	}
 
-	if (defined $segment->{'data'} && defined ${$segment->{'data'}}) {
+	if (defined $segment->{'data'} && defined ${$segment->{'data'}} && $segment->{'length'} > $segment->{'offset'}) {
 
 		$sentbytes = syswrite($httpClient, ${$segment->{'data'}}, $segment->{'length'}, $segment->{'offset'});
 	}
