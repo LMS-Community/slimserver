@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.13 2004/05/05 07:01:21 kdf Exp $
+# $Id: Parse.pm,v 1.14 2004/05/13 19:11:52 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -83,6 +83,7 @@ sub M3U {
 		$entry =~ s|$LF||g;
 		
 		$entry = Slim::Utils::Misc::fixPath($entry, $m3udir);
+		$entry = Slim::Utils::Misc::fileURLFromPath($entry);
 		
 		$::d_parse && msg("    entry: $entry\n");
 
@@ -132,6 +133,10 @@ sub PLS {
 		next unless defined $urls[$i];
 
 		my $entry = $urls[$i];
+
+		$entry = Slim::Utils::Misc::fixPath($entry);
+		$entry = Slim::Utils::Misc::fileURLFromPath($entry);
+		
 		my $title = $titles[$i];
 
 		_updateMetaData($entry, $title);
@@ -203,6 +208,7 @@ sub parseCUE {
 		if (!defined $track->{'START'} || !defined $track->{'END'} || !defined $filename ) { next; }
 		my $url = "$filename#".$track->{'START'}."-".$track->{'END'};
 		$::d_parse && msg("    url: $url\n");
+		
 		push @items, $url;
 
 		my $cacheEntry = Slim::Music::Info::cacheEntry($url);

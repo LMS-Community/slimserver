@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.117 2004/05/13 17:57:35 dean Exp $
+# $Id: Info.pm,v 1.118 2004/05/13 19:11:53 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -716,10 +716,11 @@ sub updateCacheEntry {
 	
 	if (!defined $newsong) { $newsong=0; }
 	
-	if ($::d_info && !defined($url)) {
+	if (!defined($url)) {
+		Slim::Utils::Misc::msg("No URL specified for updateCacheEntry\n");
 		Slim::Utils::Misc::msg(%{$cacheEntryHash});
 		Slim::Utils::Misc::bt();
-		die "No URL specified for updateCacheEntry";
+		return;
 	}
 	
 	if (!isURL($url)) { 
@@ -727,8 +728,6 @@ sub updateCacheEntry {
 		Slim::Utils::Misc::bt();
 		$url=Slim::Utils::Misc::fileURLFromPath($url); 
 	}
-
-	return unless defined $url;
 	
 	if ( isFileURL($url)) {
 		$cacheEntryHash->{'TTL'}=(time()+$dbCacheLifeTime);

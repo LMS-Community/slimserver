@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.72 2004/05/13 17:57:37 dean Exp $
+# $Id: Setup.pm,v 1.73 2004/05/13 19:11:53 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -565,15 +565,6 @@ sub initSetupConfig {
 					pop @{$pageref->{'children'}} if $pageref->{'children'}[9];
 				}
 				
-				# Let Wipe Cache appear unless cache is turned off..
-				if ( #!Slim::Music::iTunes::useiTunesLibrary() && 
-					#!Slim::Music::MoodLogic::useMoodLogic() &&
-					Slim::Utils::Prefs::get('usetagdatabase')) {
-					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = 'wipecache';
-				} else {
-					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = undef;
-				}
-				
 				$paramref->{'versionInfo'} = string('SERVER_VERSION') . string("COLON") . $::VERSION;
 				$paramref->{'newVersion'} = $::newVersion;
 			}
@@ -624,7 +615,6 @@ sub initSetupConfig {
 						'PrefOrder' => ['audiodir','playlistdir','rescan',undef]
 						#if not able to use iTunesLibrary then undef at [0] will be replaced by 'audiodir'
 						#if not using iTunesLibrary then undef at [2] will be replaced by 'rescan'
-						#if not using iTunesLibrary then undef at [3] will be replaced by 'wipecache'
 						}
 			}
 		,'Prefs' => {
@@ -678,20 +668,6 @@ sub initSetupConfig {
 							,'dontSet' => 1
 							,'changeMsg' => ''
 						}
-				,'wipecache' => {
-							'validate' => \&validateAcceptAll
-							,'onChange' => sub {	
-										my $client = shift;
-											Slim::Control::Command::execute
-											 ($client, ["wipecache"], undef, undef);
-										}
-							,'inputTemplate' => 'setup_input_submit.html'
-							,'changeIntro' => string('RESCANNING')
-							,'ChangeButton' => string('SETUP_WIPECACHE_BUTTON')
-							,'dontSet' => 1
-							,'changeMsg' => ''
-						}
-						
 		
 			}
 		} #end of setup{'server'} hash
@@ -1427,7 +1403,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['usetagdatabase','templatecache','useplaylistcache',
+					'PrefOrder' => ['usetagdatabase','wipecache','templatecache','useplaylistcache',
 									# 'animationLevel',
 									'lookForArtwork','buildItemsPerPass','showbufferfullness']
 				}
@@ -1440,6 +1416,20 @@ sub initSetupConfig {
 								,'1' => string('SETUP_CACHE')
 								}
 					}
+			,'wipecache' => {
+						'validate' => \&validateAcceptAll
+						,'onChange' => sub {	
+									my $client = shift;
+										Slim::Control::Command::execute
+										 ($client, ["wipecache"], undef, undef);
+									}
+						,'inputTemplate' => 'setup_input_submit.html'
+						,'changeIntro' => string('RESCANNING')
+						,'ChangeButton' => string('SETUP_WIPECACHE_BUTTON')
+						,'dontSet' => 1
+						,'changeMsg' => ''
+					}
+					
 			,'templatecache' => {
 						'validate' => \&validateTrueFalse
 						,'options' => {

@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.104 2004/05/13 17:57:30 dean Exp $
+# $Id: strings.txt,v 1.105 2004/05/13 19:11:52 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -2917,7 +2917,7 @@ SETUP_TEMPLATECACHE_DESC
 SETUP_USETAGDATABASE
 	DE	MP3 Datenbank
 	DK	MP3 Tag-database
-	EN	MP3 Tag Database
+	EN	Music Library Database
 	ES	Usar base de datos de los "tags" de MP3
 	FI	MP3 tietokanta
 	FR	Base de données des repères MP3
@@ -2928,7 +2928,7 @@ SETUP_USETAGDATABASE
 SETUP_USETAGDATABASE_DESC
 	DE	Die ID3-Tag Informationen der MP3 Dateien können beim Stoppen des Servers gespeichert und beim Neustart wieder ausgelesen werden, um das Durchsuchen des Musik-Verzeichnisses zu beschleunigen. 
 	DK	Informationerne fra MP3-tag'ene kan gemmes når serveren stoppes og genindlæses når den starter igen, hvilket vil få serveren til at starte hurtigere op. 
-	EN	The tag information from each file can be saved in a cache when the server finishes scanning and reloaded quickly when it starts again. This setting has no effect if you are using iTunes or MoodLogic.
+	EN	The  information from each file in your music library can be saved in a cache when the server finishes scanning.  It can then be reloaded quickly when it starts again.
 	ES	El "tag" de un MP3 puede guardarse cuando se para el servidor para accelerar el escaneo de la carpeta de música una vez arrancado de nuevo.
 	FI	MP3 -tiedostot sisältävät tietoa kuten esittäjän nimen. Tämä tieto voidaan tallentaa, jotta palvelimen käynnistys nopeutuu.
 	FR	Les informations contenues dans le repère ID3 de chaque fichier MP3 peuvent être sauvegardées sur disque lorsque le serveur est arrêté et relues lorsqu'il est redémarré afin d'accélérer le balayage du dossier de musique.
@@ -4495,6 +4495,12 @@ MOV
 	NO	Apple AAC eller film
 	PT	Apple AAC of Ficheiro Movie
 	SE	Apple AAC eller film
+
+M3U
+	EN	M3U Playlist
+
+PLS
+	EN	PLS Playlist
 
 MPC
 	DE	MPC
