@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.125 2004/05/30 16:26:23 dean Exp $
+# $Id: Info.pm,v 1.126 2004/06/01 19:15:40 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -796,8 +796,6 @@ sub updateCacheEntry {
 	
 	$dbCacheDirty=1;
 			
-	my $type = typeFromSuffix($url);
-	
 	if ($newsong) {
 		updateCaches($url);
 	}
@@ -805,8 +803,7 @@ sub updateCacheEntry {
 
 sub updateCaches {
 	my $url=shift;
-	my $type = typeFromSuffix($url);
-	if (isSong($url,$type) && !isHTTPURL($url) && (-e (Slim::Utils::Misc::pathFromFileURL($url)) )) { 
+	if (isSong($url) && !isHTTPURL($url) && (-e (Slim::Utils::Misc::pathFromFileURL($url)) )) { 
 		my $cacheEntryHash=cacheEntry($url);
 		updateGenreCache($url, $cacheEntryHash);
 		updateArtworkCache($url, $cacheEntryHash);
@@ -2991,7 +2988,8 @@ sub typeFromPath {
 sub ignorePunct {
 	my $s = shift;
 	return undef unless defined($s);
-	$s =~ s/[^\w\s\-*]//g;
+	$s =~ s/[!?,=+<>#%&()\"\'\$\.\\]+/ /g;
+	$s =~ s/  +/ /g; # compact multiple spaces, "L.A. Mix" -> "L A Mix", not "L A  Mix"
 	return $s;
 }
 

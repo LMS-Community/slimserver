@@ -458,7 +458,6 @@ sub scanFunction {
 	$::d_itunes_verbose && msg("scanFunction()\n");
 
 	my $file = $ituneslibraryfile || findMusicLibraryFile();;
-	my $path = $ituneslibrarypath || findMusicLibrary();
 
 	if ($doneXML) {
 		my $artScan = artScan();
@@ -532,27 +531,18 @@ sub scanFunction {
 				}
 			}
 			
-			$location = strip_automounter($location);
+			if ($location =~ /^(\d+\.\d+\.\d+\.\d+)|([-\w]+(\.[-\w]+)*):\d+$/) {
+				$location = "http://$location"; # fix missing prefix in old invalid entries
+			}
 
-			my $url = Slim::Utils::Misc::fixPath($location);
-			if (Slim::Music::Info::isFileURL($url)) {
-				if (Slim::Utils::OSDetect::OS() eq 'unix') {
-					$url = $location;
-					my $base = Slim::Utils::Misc::fileURLFromPath($path);
-					$url =~ s,$iBase,$base,isg;
-					$::d_itunes && msg("Correcting for Linux: $location to $url\n");
-				};
-				$url =~ s/\/$//;
-				$url =~ s/file:\/\/localhost\//file:\/\/\//;
-			}
+			my $url = normalize_location($location);
+
+			my $file = Slim::Utils::Misc::pathFromFileURL($url, 1);
 			
-			if (Slim::Music::Info::isFileURL($url)) {
-				my $file = Slim::Utils::Misc::pathFromFileURL($url, 1);
-				if (!$file || !-r $file) { 
-					$::d_itunes && msg("iTunes: file not found: $file\n");
-					$url = undef;
-				 } 
-			}
+			if (!$file || !-r $file) { 
+				$::d_itunes && msg("iTunes: file not found: $file\n");
+				$url = undef;
+			} 
 
 			if ($url && !defined($type)) {
 				$type = Slim::Music::Info::typeFromPath($url, 'mp3');
@@ -642,6 +632,32 @@ sub scanFunction {
 
 	return 1;
 }
+
+sub normalize_location {
+	my $location = shift;
+	my $url;
+	
+	my $stripped = strip_automounter($location);
+
+	# on non-mac or windows, we need to substitute the itunes library path for the one in the iTunes xml file
+	if (Slim::Utils::OSDetect::OS() eq 'unix') {
+		# find the new base location.  make sure it ends with a slash.
+		my $path = $ituneslibrarypath || findMusicLibrary();
+		my $base = Slim::Utils::Misc::fileURLFromPath($path);
+
+		$url = $stripped;		
+		$url =~ s,$iBase,$base,isg;
+	} else {
+		$url = Slim::Utils::Misc::fixPath($stripped);
+	}
+
+	$url =~ s/file:\/\/localhost\//file:\/\/\//;
+	
+	$::d_itunes && msg("iTunes: normalized $location to $url\n");
+
+	return $url;
+}
+			
 
 sub getValue {
 	my $curLine = getLine();
@@ -782,6 +798,10 @@ sub strip_automounter {
 		$path =~ s/private\/automount\///;
 		$path =~ s/automount\/static\///;
 	}
+	
+	#remove trailing slash
+	$path && $path =~ s/\/$//;
+
 	return $path;
 }
 1;

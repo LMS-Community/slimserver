@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.96 2004/05/28 12:47:03 kdf Exp $
+# $Id: Source.pm,v 1.97 2004/06/01 19:15:41 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1314,7 +1314,7 @@ sub readNextChunk {
 			}
 		}
 		
-		if ($chunksize) {
+		if ($chunksize > 0) {
 
 			my $readlen = $client->audioFilehandle()->sysread($chunk, $chunksize);
 			
