@@ -43,7 +43,7 @@
       <p>
       <hr>
       <p>[% IF numresults != '-1' %][% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %][% IF type 
-        == 'album' %][% "ALBUMSMATCHING" | string %][% END %][% IF type == 'song' %][% "SONGSMATCHING" | string %][% END %] "[% query %]"[% "COLON" | string %][% numresults %]</p>
+        == 'album' %][% "ALBUMSMATCHING" | string %][% END %][% IF type == 'song' %][% "TRACKSMATCHING" | string %][% END %] "[% query %]"[% "COLON" | string %][% numresults %]</p>
       <p>[% END %]</p>
       [% IF searchlist_pagebar %]
       <p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>

@@ -23,7 +23,7 @@
 <input type="hidden" value="[% player %]" name="player" />
 </form>
 [% IF numresults != '-1' %]
-[% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %][% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %][% IF type == 'song' %][% "SONGSMATCHING" | string %][% END %] "[% query %]"[% "COLON" | string %][% numresults %]
+[% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %][% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %][% IF type == 'song' %][% "TRACKSMATCHING" | string %][% END %] "[% query %]"[% "COLON" | string %][% numresults %]
 [% END %]
 </div>
 [% IF searchlist_pagebar %]    <div id="topbrowselistpagebar" class="pagebar">
