@@ -1355,6 +1355,7 @@ sub livesearch {
 		for my $item (@$data) {
 
 			$params->{'type'} = $item->[0];
+			$params->{'path'} = 'search.html';
 			push @results, $item->[1];
 
 			_fillInSearchResults($params, $item->[1], undef, []);
@@ -1591,7 +1592,7 @@ sub _fillInSearchResults {
 
 			($start, $end) = pageBar(
 				$params->{'numresults'},
-				'search.html',
+				$params->{'path'},
 				0,
 				$otherParams,
 				\$params->{'start'},
