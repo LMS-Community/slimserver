@@ -17,10 +17,8 @@
 	    <p><a href="setup.html?page=server&player=[% player | uri %]">[% "CLICK_HERE" | string %]</a> [% "TO_GO_TO_SERVER_SETTINGS" | string %]</p>
 	[% END %]
 
-	[% IF coverArt %]
-	    <p><center>
-	    <img src="/music/[% coverArt %]/cover.jpg" border="0" width="150"></a>
-	    </center></p>
+	[% IF coverThumb %]
+		<p><a href="/music/[% coverArt %]/cover.jpg" target="cover"><img src="/music/[% coverArt %]/thumb.jpg"></a></p>
 	[% END %]
 
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
