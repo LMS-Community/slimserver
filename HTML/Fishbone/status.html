@@ -1,6 +1,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
 	 <meta http-equiv="refresh" content="30; url=status.html?player={%player}&amp;start={start}&amp;refresh=1">
     <link rel="stylesheet" href="slimserver.css">
   </head>
@@ -8,7 +9,7 @@
 	  <div class="masthead">
 	  <table border="0" cellpadding="2" cellspacing="0" width="100%"  bordercolor="#111111">
 	   <tr>
-	      <table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111"><td width="35%"><img border="0" src="html/{playermodel}.small.gif" width="98" height="17"></td>
+	      <table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111"><td width="35%"><img border="0" src="html/images/{playermodel}_logo.small.gif" width="98" height="17"></td>
 	      <td colspan="3">&nbsp;[IF sync][S SYNCHRONIZED_WITH] {sync}[/IF]</td></table>
 	   <tr>
 	      <table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111">
@@ -25,22 +26,22 @@
           [IF coverart]<td valign="top">
 		   <a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="/music/{%itempath}/cover.jpg" border="0" height="100">
 	      </td>[/IF]
-	      <td><img src="html/spacer.gif" border="0" width="5"></td>
+	      <td><img src="html/images/spacer.gif" border="0" width="5"></td>
 	      <td valign="top" width="100%"><nobr>
 				<p class="label">
-                <img src="html/spacer.gif" border="0" width="5">[IF modeplay][S PLAYING][/IF]
+                <img src="html/images/spacer.gif" border="0" width="5">[IF modeplay][S PLAYING][/IF]
                 [IF modepause][S PAUSED_ON][/IF]
                 [IF modestop][S STOPPED_ON][/IF]
                 [IF currentsong]<b>{currentsong}</b> [S OUT_OF] <b>&nbsp;{songcount}</b>&nbsp;<a class="label" href="status.html?p0=button&amp;p1=modefunction_playlist->zap&amp;player={%player}&amp;start={start}">[zap]</a>[/IF]:</p>
-                <p><img src="html/spacer.gif" border="0" width="5"><a class="songtitle" href="songinfo.html?songurl={%itempath}&player={%player}" target="browser">{title}</a>
+                <p><img src="html/images/spacer.gif" border="0" width="5"><a class="songtitle" href="songinfo.html?songurl={%itempath}&player={%player}" target="browser">{title}</a>
                 [IF duration]&nbsp;({&duration})[/IF][IF bitrate]&nbsp;({bitrate})[/IF]</p>
                 [IFN coverart]
                 <table border="0" cellpadding="0" cellspacing="0" width="100%"><td width="50%"><nobr>[/IFN]
-                   <p class="label"><img src="html/spacer.gif" border="0" width="5">[IF artist][S ARTIST]&nbsp;<a class="label" href="status.html?p0=playlist&amp;p1=deletealbum&amp;p2=&amp;p3={%artist}&amp;player={%player}&amp;start={start}">[x]</a>[/IF]</p>
-                   <p><a class="artistname" href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser"><img src="html/spacer.gif" border="0" width="5">{artist}</a></p>
+                   <p class="label"><img src="html/images/spacer.gif" border="0" width="5">[IF artist][S ARTIST]&nbsp;<a class="label" href="status.html?p0=playlist&amp;p1=deletealbum&amp;p2=&amp;p3={%artist}&amp;player={%player}&amp;start={start}">[x]</a>[/IF]</p>
+                   <p><a class="artistname" href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser"><img src="html/images/spacer.gif" border="0" width="5">{artist}</a></p>
                    [IFN coverart]</nobr></td><td><nobr>[/IFN]
-                   <p class="label"><img src="html/spacer.gif" border="0" width="5">[IF album][S ALBUM]&nbsp;<a class="label" href="status.html?p0=playlist&amp;p1=deletealbum&amp;p2=&amp;p3=&amp;p4={%album}&amp;player={%player}&amp;start={start}">[x]</a>[/IF]</p>
-                   <p class="artistname"><a class="artistname" href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="html/spacer.gif" border="0" width="5">{album}</a>
+                   <p class="label"><img src="html/images/spacer.gif" border="0" width="5">[IF album][S ALBUM]&nbsp;<a class="label" href="status.html?p0=playlist&amp;p1=deletealbum&amp;p2=&amp;p3=&amp;p4={%album}&amp;player={%player}&amp;start={start}">[x]</a>[/IF]</p>
+                   <p class="artistname"><a class="artistname" href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="html/images/spacer.gif" border="0" width="5">{album}</a>
                    [IF year]&nbsp;({year})[/IF]</p>[IFN coverart]</td>
                 </table>[/IFN]
           </nobr></td>
@@ -71,47 +72,47 @@
         <td align="right"  valign="bottom" class="label2"><nobr><B>VOLUME:</B><p>
         </td><td>
         <table border="0" width="100%" cellspacing="0" cellpadding="0"><tr>
-	        <td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="2" hspace="0" vspace="0"></a><p>
+	        <td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="2" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}"><img src="html/pixel.green[LT volume 0]_s[/LT].gif" border="0" width="4" height="2" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="2" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="2" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=6&player={%player}&start={start}"><img src="html/pixel.green[LT volume 6]_s[/LT].gif" border="0" width="4" height="4" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=6&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="4" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=6&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="4" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=12&player={%player}&start={start}"><img src="html/pixel.green[LT volume 12]_s[/LT].gif" border="0" width="4" height="6" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=12&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="6" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=12&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="6" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=18&player={%player}&start={start}"><img src="html/pixel.green[LT volume 18]_s[/LT].gif" border="0" width="4" height="8" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=18&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="8" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=18&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="8" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=24&player={%player}&start={start}"><img src="html/pixel.green[LT volume 24]_s[/LT].gif" border="0" width="4" height="10" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=24&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="10" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=24&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="10" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=30&player={%player}&start={start}"><img src="html/pixel.green[LT volume 30]_s[/LT].gif" border="0" width="4" height="12" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=30&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="12" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=30&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="12" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=36&player={%player}&start={start}"><img src="html/pixel.green[LT volume 36]_s[/LT].gif" border="0" width="4" height="14" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=36&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="14" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=36&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="14" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=42&player={%player}&start={start}"><img src="html/pixel.green[LT volume 42]_s[/LT].gif" border="0" width="4" height="16" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=42&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="16" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=42&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="16" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=48&player={%player}&start={start}"><img src="html/pixel.green[LT volume 48]_s[/LT].gif" border="0" width="4" height="18" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=48&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="18" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=48&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="18" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=54&player={%player}&start={start}"><img src="html/pixel.green[LT volume 54]_s[/LT].gif" border="0" width="4" height="20" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=54&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="20" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=54&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="20" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=60&player={%player}&start={start}"><img src="html/pixel.green[LT volume 60]_s[/LT].gif" border="0" width="4" height="22" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=60&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="22" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=60&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="22" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=66&player={%player}&start={start}"><img src="html/pixel.green[LT volume 66]_s[/LT].gif" border="0" width="4" height="24" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=66&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="24" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=66&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="24" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=72&player={%player}&start={start}"><img src="html/pixel.green[LT volume 72]_s[/LT].gif" border="0" width="4" height="26" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=72&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="26" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=72&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="26" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=78&player={%player}&start={start}"><img src="html/pixel.green[LT volume 78]_s[/LT].gif" border="0" width="4" height="28" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=78&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="28" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=78&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="28" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=84&player={%player}&start={start}"><img src="html/pixel.green[LT volume 84]_s[/LT].gif" border="0" width="4" height="30" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=84&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="30" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=84&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="30" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=90&player={%player}&start={start}"><img src="html/pixel.green[LT volume 90]_s[/LT].gif" border="0" width="4" height="32" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=90&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="32" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=90&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="32" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=95&player={%player}&start={start}"><img src="html/pixel.green[LT volume 95]_s[/LT].gif" border="0" width="4" height="34" hspace="0" vspace="0"></a><p>
-	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=95&player={%player}&start={start}"><img src="html/spacer.gif" border="0" width="3" height="34" hspace="0" vspace="0"></a><p>
+	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=95&player={%player}&start={start}"><img src="html/images/spacer.gif" border="0" width="3" height="34" hspace="0" vspace="0"></a><p>
 	        </td><td valign="bottom"><a href="status.html?p0=mixer&p1=volume&p2=100&player={%player}&start={start}"><img src="html/pixel.green[LT volume 100]_s[/LT].gif" border="0" width="4" height="36" hspace="0" vspace="0"></a><p>
 	     	  </nobr></td>
 	     	  </tr></table></td>
            <td width="3%" >&nbsp;</td>
            <td width="20" align="right" class="label2"><nobr><b>B:</b>
-              <img src="html/spacer.gif" border="0" width="1" height="36"></a><p>
+              <img src="html/images/spacer.gif" border="0" width="1" height="36"></a><p>
            </nobr></td>
            <td width="6" align="left" class="label2" valign="center"><nobr>
               <table border="0" width="100%" cellspacing="0" cellpadding="0">
@@ -124,12 +125,12 @@
                  <tr><td align="center"><a href="status.html?p0=mixer&p1=bass&p2=24&player={%player}&start={start}"><img src="html/pixel.green[LT bass 24]_s[/LT].gif" border="0" width="6" height="4"></a></tr></td>
                  <tr><td align="center"><a href="status.html?p0=mixer&p1=bass&p2=12&player={%player}&start={start}"><img src="html/pixel.green[LT bass 12]_s[/LT].gif" border="0" width="6" height="4"></a></tr></td>
                  <tr><td align="center"><a href="status.html?p0=mixer&p1=bass&p2=0&player={%player}&start={start}"><img src="html/pixel.green[LT bass 0]_s[/LT].gif" border="0" width="6" height="4"></a></tr></td>
-                 <tr><td><img src="html/spacer.gif" width="6" height="1" border="0"></td></tr>
+                 <tr><td><img src="html/images/spacer.gif" width="6" height="1" border="0"></td></tr>
                  <!--<tr><td align="center" class="label2" valign="center"><B>BASS</B></td></tr>-->
               </table>
            </nobr></td>
            <td width="20" align="right" class="label2"><nobr><b>T:</b>
-              <img src="html/spacer.gif" border="0" width="1" height="36"></a><p>
+              <img src="html/images/spacer.gif" border="0" width="1" height="36"></a><p>
            </nobr></td>
            <td width="6" align="left" class="label2" valign="center"><nobr>
               <table border="0" width="100%" cellspacing="0" cellpadding="0">
@@ -142,7 +143,7 @@
                  <tr><td align="center"><a href="status.html?p0=mixer&p1=treble&p2=24&player={%player}&start={start}"><img src="html/pixel.green[LT treble 24]_s[/LT].gif" border="0" width="6" height="4"></a></tr></td>
                  <tr><td align="center"><a href="status.html?p0=mixer&p1=treble&p2=12&player={%player}&start={start}"><img src="html/pixel.green[LT treble 12]_s[/LT].gif" border="0" width="6" height="4"></a></tr></td>
                  <tr><td align="center"><a href="status.html?p0=mixer&p1=treble&p2=0&player={%player}&start={start}"><img src="html/pixel.green[LT treble 0]_s[/LT].gif" border="0" width="6" height="4"></a></tr></td>
-                 <tr><td><img src="html/spacer.gif" width="6" height="1" border="0"></td></tr>
+                 <tr><td><img src="html/images/spacer.gifhtml/images/spacer.gifhtml/images/spacer.gifhtml/images/spacer.gif" width="6" height="1" border="0"></td></tr>
                  <!--<tr><td align="center" class="label2" valign="center"><B>TREB</B></td></tr>-->
               </table>
            </nobr></td>

@@ -143,7 +143,7 @@ SQUEEZEBOX_HOME
 
 LIBRARY_CONTAINS
 	DE	Die Musikbibliothek enthält
-	EN	The music library contains
+	EN	Your music library contains
 	FR	La collection contient
 	NL	Inhoud van de bibliotheek
 	NO	Musikk biblioteket inneholder
