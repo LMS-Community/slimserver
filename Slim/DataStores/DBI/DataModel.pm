@@ -23,6 +23,7 @@ use FindBin qw($Bin);
 use Slim::Utils::Misc;
 
 our $dbh;
+our $dirtyCount = 0;
 
 sub executeSQLFile {
 	my $class = shift;
@@ -714,6 +715,14 @@ sub removeStaleDBEntries {
 			$item->delete();
 		}
 	}
+}
+
+# overload update() to maintain $dirtyCount
+sub update {
+	my $self = shift;
+
+	$self->SUPER::update();
+	$dirtyCount++;
 }
 
 1;

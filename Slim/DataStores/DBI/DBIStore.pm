@@ -929,8 +929,15 @@ sub _retrieveTrack {
 
 sub _commitDBTimer {
 	my $self = shift;
+	my $items = $Slim::DataStores::DBI::DataModel::dirtyCount;
 
-	$self->forceCommit();
+	if ($items > 0) {
+		$::d_info && Slim::Utils::Misc::msg("DBI: Periodic commit - $items dirty items\n");
+		$self->forceCommit();
+		$Slim::DataStores::DBI::DataModel::dirtyCount = 0;
+	} else {
+		$::d_info && Slim::Utils::Misc::msg("DBI: Supressing periodic commit - no dirty items\n");
+	}
 
 	Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + DB_SAVE_INTERVAL, \&_commitDBTimer);
 }
