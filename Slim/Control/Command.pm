@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.8 2003/08/20 21:13:11 dean Exp $
+# $Id: Command.pm,v 1.9 2003/08/29 08:37:55 kdf Exp $
 
 # Slim Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -340,8 +340,15 @@ sub execute {
 					# just use the filename to avoid nasties
 					my $savename = basename ($p2);
                     # save the current playlist position as a comment at the head of the list
-					my @annotatedlist = @{Slim::Player::Playlist::playList($client)};
-					Slim::Formats::Parse::writeM3U( \@annotatedlist, catfile(Slim::Utils::Prefs::get('playlistdir'), $savename . ".m3u"), 1, Slim::Player::Source::currentSongIndex($client));
+					my $annotatedlistRef;
+					if (Slim::Utils::Prefs::get('saveShuffled')) {
+						foreach my $shuffleitem (@{Slim::Player::Playlist::shuffleList($client)}) {
+							push (@$annotatedlistRef,@{Slim::Player::Playlist::playList($client)}[$shuffleitem]);
+						}
+					} else {
+						$annotatedlistRef = Slim::Player::Playlist::playList($client);
+					}
+					Slim::Formats::Parse::writeM3U( $annotatedlistRef, catfile(Slim::Utils::Prefs::get('playlistdir'), $savename . ".m3u"), 1, Slim::Player::Source::currentSongIndex($client));
 				}				
 			} elsif ($p1 eq "deletealbum") {
 				my @listToRemove=Slim::Music::Info::songs(singletonRef($p2),singletonRef($p3),singletonRef($p4),singletonRef($p5),$p6);
