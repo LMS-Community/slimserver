@@ -412,7 +412,7 @@ sub playmode {
 			# if this is a remote stream, then let's start after 5 seconds even if we haven't filled the buffer yet.
 			my $quickstart = Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::song($client, streamingSongIndex($client))) ? 5 : undef;
 			
-			$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat(), $quickstart, ($seekoffset > 0));
+			$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat(), $quickstart, (defined($seekoffset) && $seekoffset > 0));
 
 		} elsif ($newmode eq "pause") {
 
