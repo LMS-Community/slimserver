@@ -877,7 +877,8 @@ sub picked {
 
 sub searchTerm {
 	my $t = shift;
-	$t =~ s/^\*(.+)\*$/$1/;
+	
+	$t =~ s/^\*?(.+)\*$/$1/;
 	return $t;
 }
 
