@@ -19,6 +19,8 @@ $Slim::Player::Client::maxTreble = 100;
 $Slim::Player::Client::minTreble = 0;
 $Slim::Player::Client::maxBass = 100;
 $Slim::Player::Client::minBass = 0;
+$Slim::Player::Client::minPitch = 80;
+$Slim::Player::Client::maxPitch = 120;
 
 # This is a hash of clientState structs, indexed by the IP:PORT of the client
 # Use the access functions.

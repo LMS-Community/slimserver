@@ -1,4 +1,4 @@
-[% title = "MUSIC" | string %] [% pageicon = 'MUSIC' %] [% browse = '1' %] [% music = '1' %][% playlist = '0' %] [% PROCESS pageheader.html %]
+[% pagetitle = "MUSIC" | string %] [% pageicon = 'MUSIC' %] [% browse = '1' %] [% music = '1' %][% playlist = '0' %] [% PROCESS pageheader.html %]
 	<center><p>[% IF song_count %][% "LIBRARY_CONTAINS" | string %] <B>[% song_count %]</B> [% "BY" | string %] <B>[% artist_count %]</B>[% END %]</p></center>
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
 		<tr><td><a href="browse.html?dir=&player=[% player | uri %]">[% "MUSIC" | string %]</a>

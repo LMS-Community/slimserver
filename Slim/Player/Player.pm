@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.18 2004/04/07 17:16:35 dean Exp $
+# $Id: Player.pm,v 1.19 2004/04/15 18:49:41 dean Exp $
 #
 package Slim::Player::Player;
 
@@ -99,6 +99,9 @@ sub power {
 					Slim::Utils::Prefs::clientSet($client, "volume", $vol);
 				}
 				Slim::Control::Command::execute($client, ["mixer", "volume", $vol]);
+
+				my $pitch = Slim::Utils::Prefs::clientGet($client,"pitch");
+				Slim::Control::Command::execute($client, ["mixer", "pitch", $pitch]);
 			
 			} else {
 				Slim::Buttons::Common::setMode($client, 'off');
@@ -142,6 +145,14 @@ sub bass {
 	if ($bass < $Slim::Player::Client::minBass) { $bass = $Slim::Player::Client::minBass; }
 
 	Slim::Hardware::Decoder::bass($client, $bass);
+}
+
+sub pitch {
+	my ($client, $pitch) = @_;
+	if ($pitch > $Slim::Player::Client::maxPitch) { $pitch = $Slim::Player::Client::maxPitch; }
+	if ($pitch < $Slim::Player::Client::minPitch) { $pitch = $Slim::Player::Client::minPitch; }
+
+	Slim::Hardware::Decoder::pitch($client, $pitch);
 }
 
 

@@ -72,7 +72,7 @@ If there is no player defined on the Server, playercount is 0.
 						)>
 
 <!ELEMENT transport	(	mode, 
-						(playing|paused|stopped), 
+						playmode,
 						play_url?, 
 						pause_url?, 
 						stop_url?, 

@@ -20,9 +20,10 @@ Slim::Buttons::Common::addMode('settings',Slim::Buttons::Settings::getFunctions(
 Slim::Buttons::Common::addMode('treble',getTrebleFunctions(),\&setTrebleMode);
 Slim::Buttons::Common::addMode('volume',getVolumeFunctions(),\&setVolumeMode);
 Slim::Buttons::Common::addMode('bass',getBassFunctions(),\&setBassMode);
+Slim::Buttons::Common::addMode('pitch',getPitchFunctions(),\&setPitchMode);
 
 # button functions for browse directory
-my @defaultSettingsChoices = ('ALARM','VOLUME', 'BASS','TREBLE','REPEAT','SHUFFLE','TITLEFORMAT','TEXTSIZE','OFFDISPLAYSIZE','INFORMATION','SETUP_SCREENSAVER');
+my @defaultSettingsChoices = ('ALARM','VOLUME', 'BASS','TREBLE','PITCH','REPEAT','SHUFFLE','TITLEFORMAT','TEXTSIZE','OFFDISPLAYSIZE','INFORMATION','SETUP_SCREENSAVER');
 my @settingsChoices;
 
 my %current;
@@ -45,6 +46,9 @@ my %menuParams = (
 	}
 	,catdir('settings','BASS') => {
 		'useMode' => 'bass' # replace with INPUT.Bar when available
+	}
+	,catdir('settings','PITCH') => {
+		'useMode' => 'pitch' # replace with INPUT.Bar when available
 	}
 	,catdir('settings','TREBLE') => {
 		'useMode' => 'treble' # replace with INPUT.Bar when available
@@ -286,6 +290,47 @@ sub setBassMode {
 	$line1 = string('BASS') . " ($level)";
 
 	$line2 = Slim::Display::Display::balanceBar($client, 40, Slim::Utils::Prefs::clientGet($client, "bass"));	
+	if (Slim::Utils::Prefs::clientGet($client,'doublesize')) { $line2 = $line1; }
+	return ($line1, $line2);
+}
+
+#################################################################################
+my %pitchSettingsFunctions = (
+	'up' => sub {
+		my $client = shift;
+		Slim::Buttons::Common::mixer($client,'pitch','up');
+	},
+	'down' => sub {
+		my $client = shift;
+		Slim::Buttons::Common::mixer($client,'pitch','down');
+	},
+	'left' => sub   {
+		my $client = shift;
+		Slim::Buttons::Common::popModeRight($client);
+	},
+	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
+	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
+	'play' => sub { Slim::Display::Animation::bumpRight(shift); },
+);
+
+sub getPitchFunctions {
+	return \%pitchSettingsFunctions;
+}
+
+sub setPitchMode {
+	my $client = shift;
+	$client->lines(\&pitchSettingsLines);
+}
+
+ sub pitchSettingsLines {
+	my $client = shift;
+	my ($line1, $line2);
+	
+	my $level = int(Slim::Utils::Prefs::clientGet($client, "pitch"));
+	$line1 = string('PITCH') . " ($level%)";
+
+	$line2 = Slim::Display::Display::balanceBar($client, 40, ((Slim::Utils::Prefs::clientGet($client, "pitch") - 80) / 40 * 100));	
+	
 	if (Slim::Utils::Prefs::clientGet($client,'doublesize')) { $line2 = $line1; }
 	return ($line1, $line2);
 }

@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.93 2004/04/06 16:41:41 grotus Exp $
+# $Id: Info.pm,v 1.94 2004/04/15 18:49:40 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1293,7 +1293,7 @@ sub bitrate {
 	my $file = shift;
 	my $mode = (defined info($file,'VBR_SCALE')) ? 'VBR' : 'CBR';
 	if (info($file,'BITRATE')) {
-		return (info($file,'BITRATE')/1000).Slim::Utils::Strings::string('KBPS').' '.$mode;
+		return int (info($file,'BITRATE')/1000).Slim::Utils::Strings::string('KBPS').' '.$mode;	
 	} else {
 		return;
 	}
@@ -1317,6 +1317,11 @@ sub channels {
 sub blockalign {
 	my $file = shift;
 	return info($file, 'BLOCKALIGN');
+}
+
+sub endian {
+	my $file = shift;
+	return info($file, 'ENDIAN');
 }
 
 # we cache whether we had success reading the cover art.
@@ -2270,18 +2275,19 @@ sub readCoverArtTags {
 						}					
 						my ($encoding, $format) = unpack 'C Z*', $pic;
 						my $len = length($format) + 2;
-						
-						my ($picturetype, $description) = unpack "x$len C Z*", $pic;
-						$len += 1 + length($description) + 1;
-						if ($encoding) { $len++; } # skip extra terminating null if unicode
-						
-						my ($data) = unpack"x$len A*", $pic;
-						
-						$::d_artwork && Slim::Utils::Misc::msg( "APIC format: $format length: " . length($data) . "\n");
-
-						if (length($data)) {
-							$contenttype = $format;
-							$body = $data;
+						if ($len < length($pic)) {
+							my ($picturetype, $description) = unpack "x$len C Z*", $pic;
+							$len += 1 + length($description) + 1;
+							if ($encoding) { $len++; } # skip extra terminating null if unicode
+							
+							my ($data) = unpack"x$len A*", $pic;
+							
+							$::d_artwork && Slim::Utils::Misc::msg( "APIC format: $format length: " . length($data) . "\n");
+	
+							if (length($data)) {
+								$contenttype = $format;
+								$body = $data;
+							}
 						}
 					}
 				}

@@ -169,6 +169,32 @@ sub bass {
 	$::d_control && msg("setting new bass value of $bass\n");
 }
 
+#
+# set the MAS3507D pitch rate as a percentage of the normal rate, where 100% is 100.
+#
+sub pitch {
+	my ($client, $pitch) = @_;
+	
+	$pitch = 50 if ($pitch < 50);
+	$pitch = 200 if ($pitch > 200);
+	
+	if ($client->decoder eq 'mas3507d') {
+		# not supported here yet.
+		$::d_control && msg("Pitch not supported in SLIMP3 yet.\n");
+	} elsif ($client->decoder eq 'mas35x9') {
+		my $freq = int(18432 / ($pitch / 100));
+		my $freqHex = sprintf('%05X', $freq);
+		$::d_control && msg("Pitch frequency set to $freq ($freqHex)\n");
+		$client->i2c(
+			Slim::Hardware::mas35x9::masWrite('OfreqControl', $freqHex).
+			Slim::Hardware::mas35x9::masWrite('OutClkConfig', '00001'));
+	} else {
+		$::d_control && msg("Unknown decoder " . $client->decoder . " trying to set pitch.\n");
+		return;
+	}
+	$::d_control && msg("setting new pitch value of $pitch\n");
+}
+
 
 1;
 

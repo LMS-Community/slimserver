@@ -1,6 +1,6 @@
 package Slim::Hardware::VFD;
 
-# $Id: VFD.pm,v 1.13 2004/01/26 05:44:17 dean Exp $
+# $Id: VFD.pm,v 1.14 2004/04/15 18:49:39 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -159,17 +159,17 @@ sub vfdBrightness {
 	return $client->vfdbrightness();
 }
 
+my %customChars;
+
 sub vfdUpdate {
 	my $client = shift;
 	my $line1  = shift; 
 	my $line2  = shift;
 	my $noDoubleSize = shift; #to suppress the doublesize call (in case the input lines have already been doubled)
-	my @custom;
+	my %customUsed;
+	my %newCustom;
 	my $cur = -1;
 	my $pos;
-	my %customChars;
-	my $customCharCount = 0;
-	my @customCharBitmaps;
 	my $double;
 	
 	# convert to the VFD char set
@@ -214,8 +214,8 @@ sub vfdUpdate {
 	my $line;
 
 	my $centerspaces=0;
-	foreach my $curline ($line1, $line2) {
 		my $i = 0;
+	foreach my $curline ($line1, $line2) {
 		my $linepos = 0;
 
 		# make line exactly 40 chars
@@ -223,7 +223,7 @@ sub vfdUpdate {
 			
 		while (1) {
 			# if we're done with the line, break;
-			if ($linepos > length($curline)) {
+			if ($linepos >= length($curline)) {
 				last;
 			}
 
@@ -232,7 +232,7 @@ sub vfdUpdate {
 			
 			# if this is a cursor position token, remember the location and go on
 			if ($scan =~ /^__cursorpos__/) {
-				$cur = length($line);
+				$cur = $i;
 				$linepos += length('__cursorpos__');
 				redo;
 			# is this a center character?
@@ -260,17 +260,14 @@ sub vfdUpdate {
 					$line .= $symbolmap{$lang}{$1};
 				} else {
 					# must be a custom character, check if we have it already mapped
-					if (exists($customChars{$1})) {
-						$line .= $customChars{$1};
-					# if we've already used up all 8, then just put in a space
-					} elsif ($customCharCount == 8) {
-						$line .= ' ';
-					# remember the character bits and use the identifier.
+					if (exists($customChars{$client}{$1})) {
+						my $cchar = $customChars{$client}{$1};
+						$line .= $cchar;
+						$customUsed{$cchar} = $1;
+					# remember the new custom character and use temporary
 					} else {
-						$customCharBitmaps[$customCharCount] = $vfdcustomchars{$1};
-						$customChars{$1} = chr($customCharCount);
-						$line .= $customChars{$1};
-						$customCharCount++;
+						$line .= 'vfD_' . $1 . '_Vfd';
+						$newCustom{$1} = 1;
 					}
 				}
 				$i++;
@@ -283,6 +280,32 @@ sub vfdUpdate {
 		}
 	}
 	
+	# Find out which custom chars we need to add, and which we can discard
+	my $usedCustom = scalar keys(%customUsed);
+	my $nextChr = chr(0);
+	foreach my $custom (keys %newCustom) {
+		my $encodedCustom = 'vfD_' . $custom . '_Vfd';
+		if ($usedCustom < 8) { # Room to add this one
+			while(defined $customUsed{$nextChr}) {
+				$nextChr = chr(ord($nextChr)+1);
+			}
+			# Insert code into line, replacing temporaries
+			$line =~ s/$encodedCustom/$nextChr/g;
+			# Forget previous custom at this code
+			foreach my $prevCustom (keys(%{$customChars{$client}})) {
+				delete $customChars{$client}{$prevCustom} if($customChars{$client}{$prevCustom} eq $nextChr);
+			}
+			# Record new custom and code
+			$customChars{$client}{$custom} = $nextChr;
+			$customUsed{$nextChr} = $custom;
+			$usedCustom++;
+			$nextChr = chr(ord($nextChr)+1);
+		} else { # No space left; use a space
+			$line =~ s/$encodedCustom/ /g;
+			delete $newCustom{$custom};
+		}
+	}
+
 	if ($lang eq 'european') {
 		# why can't we all just get along?
 		$line =~ tr{\x1f\x92\xa1\xa2\xa3\xa4\xa5\xa6\xa8\xa9\xab\xad\xaf \xbb\xbf \xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf \xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf \xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef \xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff}
@@ -308,16 +331,12 @@ sub vfdUpdate {
 	} else {
 		$vfddata .= $noritakeBrightPrelude . $vfdBright[$vfdbrightness];
 	}
-
-	# include the custom character maps, if any
-	if ($customCharCount) {
-		my $i = 0;
-		foreach my $bitmapref (@customCharBitmaps) {
+	# define required custom characters
+	while((my $custc,my $ncustom) = each %customUsed) {
+		my $bitmapref = $vfdcustomchars{$ncustom};
 			my $bitmap = pack ('C8', @$bitmapref);
 			$bitmap =~ s/(.)/$vfdCodeChar$1/gos;
-			$vfddata .= $vfdCodeCmd . pack('C',0b01000000 + ($i * 8)) . $bitmap;
-			$i++;			
-		}
+		$vfddata .= $vfdCodeCmd . pack('C',0b01000000 + (ord($custc) * 8)) . $bitmap;
 	}	
 	
 	# put us in incrementing mode and move the cursor home

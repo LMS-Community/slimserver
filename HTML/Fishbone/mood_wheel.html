@@ -1,4 +1,4 @@
-[% title = "MOODLOGIC_SELECT_MOOD" | string %] [% browse = '0' %] [% playlist = '0' %] [% music = '0' %] [% pageicon = 'MUSIC' %] [% PROCESS pageheader.html %]
+[% pagetitle = "MOODLOGIC_SELECT_MOOD" | string %] [% browse = '0' %] [% playlist = '0' %] [% music = '0' %] [% pageicon = 'MUSIC' %] [% PROCESS pageheader.html %]
 	[% IF warn %]<div class="nowplaying"><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF not itunes %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]
 	</div>[% END %]
 	<center><p>[% IF song_count %]Browsing <b>[% album_count %]</b> [% "WITH" | string %] <B>[% song_count %]</B> [% "BY" | string %] <B>[% artist_count %]</B>[% END %]</p></center>

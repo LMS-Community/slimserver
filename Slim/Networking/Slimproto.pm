@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.49 2004/03/29 22:18:58 dean Exp $
+# $Id: Slimproto.pm,v 1.50 2004/04/15 18:49:40 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -313,6 +313,11 @@ sub process_slimproto_frame {
 	
 	assert($client);
 
+	if (!defined($client)) {
+		msg("Client not found for slimproto\n");
+		return;
+	}
+	
 	if ($op eq 'IR  ') {
 		# format for IR:
 		# [4]   time since startup in ticks (1KHz)

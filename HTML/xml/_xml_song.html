@@ -29,7 +29,7 @@
 	[% IF bitrate %]<bitrate>[% bitrate | html %]</bitrate>[% END %]
 	[% IF tagversion %]<tagversion>[% tagversion | html %]</tagversion>[% END %]
 	[% IF modtime %]<modtime>[% modtime | html %]</modtime>[% END %]
- 	[% IF url %]<song_url>[% url %]</song_url>[% END %]
- 	<path>[% itempath | html %]</path>
+ 	<song_url><![CDATA[[% itempath %]]]></song_url>
+ 	[% IF url %]<path>[% url %]</path>[% END %]
   	[% IF coverart %]<coverart><![CDATA[/music/[% itempath | uri %]/cover.jpg]]></coverart>[% END %]
  	[% IF mixable %]<mixable>[% mixable | html %]</mixable>[% END %]

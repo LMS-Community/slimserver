@@ -1,5 +1,5 @@
 [% pageicon = 'help' %]
-[% title = 'The SlimProto TCP Protocol:' %]
+[% pagetitle = 'The SlimProto TCP Protocol:' %]
 [% techinfo = '1' %]
 [% PROCESS helpheader.html %]
 
@@ -182,6 +182,16 @@ are no commands as a sort of keep-alive. They inform the server of the status of
 <p>Sends VFD data to the client.</p>
 
 <p>The data is the vfd data to send in the same format as for the SLIMP3 protocol.</p>
+
+</blockquote>
+
+<p><b>Command: "vers"</b></p>
+
+<blockquote>
+
+<p>Sends server version string to the client.</p>
+
+<p>The data is the human readable version information for the server.</p>
 
 </blockquote>
 

@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.93 2004/04/06 15:56:37 dean Exp $
+# $Id: HTTP.pm,v 1.94 2004/04/15 18:49:42 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -959,6 +959,17 @@ sub addStreamingResponse {
 	}	
 }
 
+sub clearOutputBuffer {
+	my $client = shift;
+	foreach my $httpClient (keys %peerclient) {
+		if ($client eq $peerclient{$httpClient}) {
+		print "Clearing output buffer\n";
+			delete $outbuf{$httpClient};
+			last;
+		}
+	}	
+}
+
 sub sendStreamingResponse {
 	my $httpClient = shift;
 	my $sentbytes;
@@ -1146,7 +1157,7 @@ sub sendStreamingResponse {
 			}
 
 		} else {
-			$::d_http && msg("sendstreamingsocket syswrite returned undef\n");
+			$::d_http && msg("sendstreamingsocket syswrite returned undef: $!\n");
 			closeStreamingSocket($httpClient);
 			return undef;
 		}

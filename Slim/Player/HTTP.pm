@@ -41,10 +41,10 @@ sub bytesReceived {
 # dummy methods
 sub update		{ }
 sub isPlayer		{ 0 }
-sub power 	   	{ 1 }
-sub stop		{ 1 }
-sub play		{ 1 }
-sub pause		{ 1 }
+sub power 	   	{ Slim::Web::HTTP::clearOutputBuffer(shift); 1 }
+sub stop		{ Slim::Web::HTTP::clearOutputBuffer(shift); 1 }
+sub play		{ Slim::Web::HTTP::clearOutputBuffer(shift); 1 }
+sub pause		{ Slim::Web::HTTP::clearOutputBuffer(shift); 1 }
 sub playout		{ 1 }
 sub resume		{ 1 }
 sub volume		{ 1 }

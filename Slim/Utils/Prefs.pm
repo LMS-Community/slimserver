@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.46 2004/04/06 05:59:38 kdf Exp $
+# $Id: Prefs.pm,v 1.47 2004/04/15 18:49:42 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -153,6 +153,7 @@ my %DEFAULT = (
 			,'volume'		=> 50
 			,'treble'		=> 50
 			,'bass'			=> 50
+			,'pitch'		=> 100
 			,'shuffle'		=> 0
 			,'offDisplaySize'	=> 0
 			,'playingDisplayMode'	=> 0

@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.32 2004/03/29 22:18:57 dean Exp $
+# $Id: Command.pm,v 1.33 2004/04/15 18:49:39 dean Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -103,6 +103,7 @@ sub execute {
 	# mixer			balance		(-100 .. 100)|(-200 .. +200)			(not implemented!)
 	# mixer			bass			(0 .. 100)|(-100 .. +100)
 	# mixer			treble		(0 .. 100)|(-100 .. +100)
+	# mixer			pitch		(0 .. 100 .. 1000)|(-100 .. +100)
 	# display		<line1>		<line2>	<duration>
 	# display		?				?
 	# displaynow	?				?
@@ -613,6 +614,24 @@ sub execute {
 					$client->bass($newbass);
 					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newbass, "bass",\&setBass);};
 				}
+			} elsif ($p1 eq "pitch") {
+				my $newpitch;
+				my $oldpitch = Slim::Utils::Prefs::clientGet($client, "pitch");
+				if ($p2 eq "?") {
+					$p2 = $oldpitch;
+				} else {
+				
+					if ($p2 =~ /^[\+\-]/) {
+						$newpitch = $oldpitch + $p2;
+					} else {
+						$newpitch = $p2;
+					}
+					if ($newpitch > $Slim::Player::Client::maxPitch) { $newpitch = $Slim::Player::Client::maxPitch; }
+					if ($newpitch < $Slim::Player::Client::minPitch) { $newpitch = $Slim::Player::Client::minPitch; }
+					Slim::Utils::Prefs::clientSet($client, "pitch", $newpitch);
+					$client->pitch($newpitch);
+					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newpitch, "pitch",\&setPitch);};
+				}
 			}
 		} elsif ($p0 eq "displaynow") {
 			if ($p1 eq "?" && $p2 eq "?") {
@@ -701,6 +720,12 @@ sub setBass {
 	my $client = shift;
 	my $bass = shift;
 	$client->bass($bass);
+}
+
+sub setPitch {
+	my $client = shift;
+	my $pitch = shift;
+	$client->pitch($pitch);
 }
 
 sub setTreble {

@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.77 2004/04/15 01:37:36 kdf Exp $
+# $Id: Source.pm,v 1.78 2004/04/15 18:49:41 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -736,7 +736,7 @@ sub openSong {
 			$filepath = $fullpath;
 		}
 
-		my ($size, $duration, $offset, $samplerate, $blockalign) = (0, 0, 0, 0, 0);
+		my ($size, $duration, $offset, $samplerate, $blockalign, $endian) = (0, 0, 0, 0, 0, undef);
 		
 		# don't try and read this if we're a pipe
 		unless (-p $fullpath) {
@@ -746,7 +746,8 @@ sub openSong {
 			$offset     = Slim::Music::Info::offset($fullpath);
 			$samplerate = Slim::Music::Info::samplerate($fullpath);
 			$blockalign = Slim::Music::Info::blockalign($fullpath);
-			$::d_source && msg("openSong: getting duration  $duration, size $size, and offset $offset for $fullpath\n");
+			$endian     = Slim::Music::Info::endian($fullpath);
+			$::d_source && msg("openSong: getting duration  $duration, size $size, endian $endian and offset $offset for $fullpath\n");
 			if (!$size || !$duration) {
 				$::d_source && msg("openSong: not bothering opening file with zero size or duration\n");
 				my $line1 = string('PROBLEM_OPENING');
@@ -769,6 +770,7 @@ sub openSong {
 		if (defined($command)) {
 			# this case is when we play the file through as-is
 			if ($command eq '-') {
+				$format = "wav" if $format eq "aif" && defined($endian) && !$endian; # hack for little-endian aiff.
 				$client->audioFilehandle( FileHandle->new() );		
 				$::d_source && msg("openSong: opening file $filepath\n");
 				if ($client->audioFilehandle->open($filepath)) {

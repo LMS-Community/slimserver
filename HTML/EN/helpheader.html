@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title></title>
+  <title>[% pagetitle %]</title>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <meta name="CVS-ident" content="$id$" />
     <link rel="stylesheet" href="[% webroot %]slimserver.css">
@@ -8,7 +8,7 @@
 <body>
     <p>
 
-    <h3>[% title %]</h3><p>
+    <h3>[% pagetitle %]</h3><p>
 
     <a href="[% webroot %]index.html?player=[% player | uri %]" target="_top">[% playermodel _ "_HOME" | string %]</a> /
  					[% IF techinfo %]<a href="[% webroot %]html/docs/index.html?player=[% player | uri %]">Technical Information</a> /[% END %]

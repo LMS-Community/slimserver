@@ -20,6 +20,16 @@ use MIME::Base64;
 
 @ISA = ("Slim::Player::Player");
 
+BEGIN {
+	if ($^O =~ /Win32/) {
+		*EWOULDBLOCK = sub () { 10035 };
+		*EINPROGRESS = sub () { 10036 };
+	} else {
+		require Errno;
+		import Errno qw(EWOULDBLOCK EINPROGRESS);
+	}
+}
+
 sub new {
 	my (
 		$class,
@@ -47,6 +57,9 @@ sub reconnect {
 	$client->tcpsock($tcpsock);
 	$client->paddr($paddr);
 	$client->revision($revision);	
+	
+	# tell the client the server version
+#	$client->sendFrame('vers', \$::VERSION);
 	
 	$client->update();	
 }
@@ -201,14 +214,7 @@ sub upgradeFirmware_SDK5 {
 	while ($bytesread=read(FS, $buf, 1024)) {
 		assert(length($buf) == $bytesread);
 
-		$frame = pack('n',$bytesread+4) . 'upda' . $buf;  # upgrade data
-
-		$bytesleft = length($frame);
-		while ($bytesleft > 0) {
-			$byteswritten = $client->tcpsock->syswrite($frame, length($frame));
-			$bytesleft-=$byteswritten;
-			$frame = substr($frame, -$bytesleft);
-		}
+		$client->sendFrame('upda', \$buf);
 		
 		$totalbytesread += $bytesread;
 		$::d_firmware && msg("Updating firmware: $totalbytesread / $size\n");
@@ -221,10 +227,7 @@ sub upgradeFirmware_SDK5 {
 
 	}
 	
-
-	$frame = pack('n', 4) . 'updn';	# upgrade done
-	$client->tcpsock->syswrite($frame, length($frame));
-	
+	$client->sendFrame('updn'); # upgrade done
 
 	$::d_firmware && msg("Firmware updated successfully.\n");
 	
@@ -341,11 +344,7 @@ sub vfd {
 	my $data = shift;
 
 	if ($client->opened()) {
-		$frame = 'vfdc'.$data;
-		my $len = pack('n',length($frame));
-		$::d_slimproto_v && msg ("sending squeezebox frame, length ".length($frame)."\n");
-		$frame = $len.$frame;
-		$client->tcpsock->syswrite($frame,length($frame));
+		$client->sendFrame('vfdc', \$data);
 	} 
 }
 
@@ -421,7 +420,7 @@ sub stream {
 		}
 		$::d_slimproto && msg("starting with decoder with options: format: $formatbyte samplesize: $pcmsamplesize samplerate: $pcmsamplerate endian: $pcmendian channels: $pcmchannels\n");
 		
-		my $frame = 'strm'.pack 'aaaaaaaCCCnL', (
+		my $frame = pack 'aaaaaaaCCCnL', (
 			$command,	# command
 			$autostart,
 			$formatbyte,
@@ -436,7 +435,7 @@ sub stream {
 			0		# server IP of 0 means use IP of control server
 		);
 	
-		assert(length($frame) == 4+16);
+		assert(length($frame) == 16);
 	
 		my $path = '/stream.mp3?player='.$client->id;
 	
@@ -453,12 +452,44 @@ sub stream {
 		$request_string .= "\n";
 
 		$frame .= $request_string;
+
+		$client->sendFrame('strm',\$frame);
+	}
+}
+
+sub sendFrame {
+	my $client = shift;
+	my $type = shift;
+	my $dataRef = shift;
+	my $empty = '';
 	
-		my $len = pack('n', length($frame));
+	if (!defined($dataRef)) { $dataRef = \$empty; }
 	
-		$frame = $len.$frame;
+	my $len = length($$dataRef);
+
+	assert(length($type) == 4);
 	
-		$client->tcpsock->syswrite($frame, length($frame));
+	my $frame = pack('n', $len + 4) . $type . $$dataRef;
+
+	$::d_slimproto_v && msg ("sending squeezebox frame: $type, length: $len\n");
+
+	$len = length($frame); # include the header
+	
+	my $offset = 0;
+	
+	while ($len > 0) {
+		my $sentbytes = $client->tcpsock->syswrite($frame, $len, $offset);
+		
+		if ($! == EWOULDBLOCK) {
+			$sentbytes = 0 unless defined $sentbytes;
+		}
+		if (!defined($sentbytes)) {
+			msg("error on sending frame '$type': $!\n");
+			return;
+		}
+		$::d_slimproto_v && msg ("sent squeezebox frame fragment: $sentbytes\n");
+		$len -= $sentbytes;
+		$offset += $sentbytes;
 	}
 }
 
@@ -482,11 +513,7 @@ sub i2c {
 	my ($client, $data) = @_;
 	if ($client->opened()) {
 		$::d_i2c && msg("i2c: sending ".length($data)." bytes\n");
-	
-		my $frame='i2cc'.$data;
-		my $len = pack('n', length($frame));
-		$frame=$len.$frame;
-		$client->tcpsock->syswrite($frame, length($frame));
+		$client->sendFrame('i2cc', \$data);
 	}
 }
 

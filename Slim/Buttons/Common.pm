@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.31 2004/03/18 02:57:14 kdf Exp $
+# $Id: Common.pm,v 1.32 2004/04/15 18:49:38 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -779,34 +779,42 @@ sub scroll_original {
 
 sub mixer {
 	my $client = shift;
-	my $feature = shift; # bass/treble
+	my $feature = shift; # bass/treble/pitch
 	my $setting = shift; # up/down/value
 	
 	my $accel = 8; # Hz/sec
 	my $rate = 50; # Hz
 	my $inc = 1;
+	my $midpoint = 50;
+
 	my $cmd;
 	if (Slim::Hardware::IR::holdTime($client) > 0) {
 		$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
 	} else {
 		$inc = 2.5;
 	}
-	if ((!$inc && $setting =~ /up|down/) || $feature !~ /bass|treble/) {
+	if ($feature eq 'pitch') {
+		$midpoint = 100; 
+		$inc = 1;
+	};
+	
+	if ((!$inc && $setting =~ /up|down/) || $feature !~ /bass|treble|pitch/) {
 		return;
 	}
+	
 	my $currVal = Slim::Utils::Prefs::clientGet($client,$feature);
 	if ($setting  eq 'up') {
 		$cmd = "+$inc";
-		if ($currVal < 48.5 && ($currVal + $inc) >= 48.5) {
+		if ($currVal < ($midpoint - 1.5) && ($currVal + $inc) >= ($midpoint - 1.5)) {
 			# make the midpoint sticky by resetting the start of the hold
-			$cmd = 50;
+			$cmd = $midpoint;
 			Slim::Hardware::IR::resetHoldStart($client);
 		}
 	} elsif ($setting eq 'down') {
 		$cmd = "-$inc";
-		if ($currVal > 51.5 && ($currVal - $inc) <= 51.5) {
+		if ($currVal > ($midpoint + 1.5) && ($currVal - $inc) <= ($midpoint + 1.5)) {
 			# make the midpoint sticky by resetting the start of the hold
-			$cmd = 50;
+			$cmd = $midpoint;
 			Slim::Hardware::IR::resetHoldStart($client);
 		}
 	} elsif ($setting =~ /(\d+)/) {

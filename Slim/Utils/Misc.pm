@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.29 2004/03/27 09:13:19 kdf Exp $
+# $Id: Misc.pm,v 1.30 2004/04/15 18:49:42 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -545,8 +545,11 @@ sub fracSecToMinSec {
 	$min = ($seconds/60)%60;
 	$sec = $seconds%60;
 	$sec = "0$sec" if length($sec) < 2;
-	$fracrounded = sprintf "%0.2f", $seconds;
-	($frac) = ($fracrounded =~ /\.(\d\d)$/);
+	
+	# We want to round the last two decimals but we
+    # always round down to avoid overshooting EOF on last track
+    $fracrounded = int($seconds * 100);
+    $frac = substr($fracrounded, -2, 2);
 									
 	return "$min:$sec.$frac";
 }
