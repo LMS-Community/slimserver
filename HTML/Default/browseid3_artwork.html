@@ -1,6 +1,8 @@
 <div align="left" width="100%" style="float:left"><table class="even" cellpadding="5" cellspacing="0" border="0" align="left">
-	<tr><td>
-		<center><a href="browseid3.html?genre=*&artist={%genre}&album={%album}&player={%player}" target="browser"><img src="/music/{thumbartpath}/thumb.jpg" border="0" height="100" width="100"></a></center>
+	<tr><td width="{size}">
+		<center>[IF coverthumb]<a href="browseid3.html?genre=*&artist={%genre}&album={%album}&player={%player}&artwork={artwork}" target="browser"><img src="/music/{thumbartpath}/thumb.jpg" border="0" height="{size}" width="{size}"></a>[/IF]
+		[IFN coverthumb]<table border="0" cellspacing="0" cellpadding="0"><td><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}&artwork={artwork}" target="browser">{thumbartpath}</a></td><td><img src="html/images/spacer.gif" border="0" height="{size}" width="0"></td></table>[/IFN]
+		</center>
 	</td></tr>
 	<tr><td><table cellpadding="5" cellspacing="0" border="0" align="left">
 		<td class="even">
@@ -8,12 +10,12 @@
 			[IF mixable_not_descend] <nobr><a href="instant_mix.html?song={%item}&genre={%genre}&artist={%artist}&album={%album}&player={%player}"><img src="html/images/b_mix.gif" width=13 height=13 alt=""></a></nobr> [/IF]
 		</td>
 	
-	  	<td align="right" width="13" class="even">
+		<td align="right" width="13" class="even">
 			[IF descend]<nobr><a href="status_header.html?p0=playlist&p1=loadalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt=""></a></nobr> [/IF]
 			[IFN descend]<nobr><a href="status_header.html?p0=playlist&p1=play&p2={%itempath}&player={%player}" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt=""></a></nobr> [/IFN]
 		</td>
 	
-	  	<td  align="right" width="13" class="even">
+		<td  align="right" width="13" class="even">
 			[IF descend]<nobr><a href="status_header.html?p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt=""></a></nobr> [/IF]	
 			[IFN descend]<nobr><a href="status_header.html?p0=playlist&p1=append&p2={%itempath}&player={%player}" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt=""></a></nobr> [/IFN]
 		</td>

@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.36 2004/01/17 09:12:45 kdf Exp $
+# $Id: Pages.pm,v 1.37 2004/01/24 21:18:54 kdf Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -1177,7 +1177,7 @@ sub browseid3 {
 		}
 	} elsif (!$album) {
 		# Browse by Album
-		if ($$paramsref{'artwork'}) {
+		if ($$paramsref{'artwork'} && !Slim::Utils::Prefs::get('includeNoArt')) {
 			# get a list of only the albums with valid artwork
 			@items = Slim::Music::Info::artwork();
 		} else {
@@ -1262,6 +1262,13 @@ sub browseid3 {
 					if (defined $song) {
 						$list_form{'coverthumb'} = 1; 
 						$list_form{'thumbartpath'} = $song;
+						$list_form{'itemnumber'} = $itemnumber;
+						$list_form{'artwork'} = 1;
+						$list_form{'size'} = Slim::Utils::Prefs::get('thumbSize');
+						$itemnumber++;
+					} elsif (Slim::Utils::Prefs::get('includeNoArt')) {
+						$list_form{'coverthumb'} = 0; 
+						$list_form{'thumbartpath'} = $item;
 						$list_form{'itemnumber'} = $itemnumber;
 						$list_form{'artwork'} = 1;
 						$list_form{'size'} = Slim::Utils::Prefs::get('thumbSize');

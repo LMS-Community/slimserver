@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.33 2004/01/13 08:12:56 kdf Exp $
+# $Id: Setup.pm,v 1.34 2004/01/24 21:18:54 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -269,7 +269,7 @@ sub initSetupConfig {
 									'1' => string('SETUP_DIGITALVOLUMECONTROL_ON')
 									,'0' => string('SETUP_DIGITALVOLUMECONTROL_OFF')
 								}
-						}			
+						}
 			,'titleFormat'		=> {
 							'isArray' => 1
 							,'arrayAddExtra' => 1
@@ -350,7 +350,7 @@ sub initSetupConfig {
 		# if more than one ir map exists the undef will be replaced by 'Default'
 		,'Groups' => {
 			'Default' => {
-				'PrefOrder' => ['autobrightness','scrollPause','screensavertimeout']
+				'PrefOrder' => ['autobrightness','screensavertimeout','scrollPause']
 			}
 			,'AlarmClock' => {
 				'PrefOrder' => ['alarm','alarmtime','alarmvolume','alarmplaylist']
@@ -719,7 +719,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['MenuItems','NonMenuItems','Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['skin','itemsPerPage','refreshRate','coverArt','coverThumb','thumbSize']
+					'PrefOrder' => ['skin','itemsPerPage','refreshRate','coverArt','coverThumb','thumbSize','includeNoArt']
 				}
 			,'MenuItems' => {
 					'PrefOrder' => ['menuItem']
@@ -875,6 +875,13 @@ sub initSetupConfig {
 					'validate' => \&validateInt
 					,'validateArgs' => [25,250,1,1]
 				}
+			,'includeNoArt' => {
+						'validate' => \&validateTrueFalse
+						,'options' => {
+								'1' => string('SETUP_INCLUDENOART_1')
+								,'0' => string('SETUP_INCLUDENOART_0')
+							}
+					}
 			}
 		}# end of setup{'interface'} hash
 	,'formats' => {

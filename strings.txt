@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.53 2004/01/24 18:52:45 dean Exp $
+# $Id: strings.txt,v 1.54 2004/01/24 21:18:54 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1779,6 +1779,18 @@ SETUP_THUMBSIZE
 SETUP_THUMBSIZE_DESC
 	EN	Choose the size in pixels (25-250) for the default thumbnail image when browsing by cover art. Default is 100.
 	FR	Choisissez une taille en pixels (entre 25 et 250) pour l'affichage par défaut de la vignette en mode "Parcourir les pochettes". La valeur par défaut est 100.
+
+SETUP_INCLUDENOART_0
+	EN	Delete placeholders from the list
+
+SETUP_INCLUDENOART_1
+	EN	Include all albums, using placeholders
+
+SETUP_INCLUDENOART
+	EN	Browse By Artwork
+
+SETUP_INCLUDENOART_DESC
+	EN	Choose whether or not to include albums that currently have no artwork when browsing by artwork.  Where no art is found, a blank image will be inserted as a placeholder, or they can be left out of the browse entirely.
 
 SETUP_PLUGINS_OK
 	DE	Ihr Plugin-Menü enthält:
