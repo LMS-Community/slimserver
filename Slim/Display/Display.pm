@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.20 2004/09/02 19:31:49 dean Exp $
+# $Id: Display.pm,v 1.21 2004/09/02 19:36:04 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -34,9 +34,7 @@ sub update {
 }
 
 sub renderOverlay {
-	my $client = shift;
-	
-	return $client->renderOverlay(@_);
+	return Slim::Player::Player::renderOverlay(undef, @_);
 }
 
 sub balanceBar {
