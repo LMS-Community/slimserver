@@ -808,7 +808,8 @@ sub browser_addtolist_done {
 
 		my $itemnumber = $start;
 		my $offset     = $start % 2 ? 0 : 1;
-		my $filesort   = Slim::Utils::Prefs::get('filesort');
+		my $filesort   = Slim::Utils::Prefs::get('filesort') && 
+			(!$params->{'dir'} || $params->{'dir'} !~ /^__playlists/);
 
 		# don't look up cover art info if we're browsing a playlist or
 		# the top level directory
@@ -862,7 +863,12 @@ sub browser_addtolist_done {
 			if ($isList) {
 
 				$list_form{'descend'} = $shortitem;
-				$list_form{'title'}  = Slim::Music::Info::fileName($item);
+				if (!$filesort && Slim::Music::Info::isPlaylist($item)) {
+					$list_form{'title'}         = Slim::Music::Info::standardTitle(undef, $item);
+				}
+				else {
+					$list_form{'title'}  = Slim::Music::Info::fileName($item);
+				}
 
 			} elsif (Slim::Music::Info::isSong($item)) {
 
