@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.116 2004/08/25 23:24:46 dean Exp $
+# $Id: HTTP.pm,v 1.117 2004/08/30 15:16:52 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -770,7 +770,7 @@ sub generateHTTPResponse {
 		if (defined($client)) {
 
 			my $count = Slim::Player::Playlist::count($client) && do {
-				$body = Slim::Formats::Parse::writeM3U(\@{Slim::Player::Playlist::playList($client)});
+				$$body = Slim::Formats::Parse::writeM3U(\@{Slim::Player::Playlist::playList($client)});
 			};
 		}
 
