@@ -6711,18 +6711,6 @@ SLIMTRIS
 	PT	SlimTris
 	SE	SlimTris
 
-SHOOTER
-	DE	Space Shooter
-	EN	Space Shooter
-	ES	Tiroteo espacial
-	FI	Avaruustaistelu
-	FR	Space Shooter
-	JP	Space Shooter
-	NL	Space Shooter
-	NO	Space Shooter
-	PT	Space Shooter
-	SE	Space Shooter
-
 PLUGINS
 	DE	Plugins
 	DK	Moduler
