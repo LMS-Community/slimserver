@@ -364,12 +364,14 @@ sub newTrack {
 	$::d_info && Slim::Utils::Misc::msg("New track for $url\n");
 
 	# Explictly read the tag, and start populating the database.
-	if ($args->{'readTags'}) {
+	# XXX For now, always readTags for a new track, since none of our
+	# callers expect anything different.
+	# if ($args->{'readTags'}) {
 
 		$::d_info && Slim::Utils::Misc::msg("readTag was set for $url\n");
 
 		$attributeHash = { %{$self->readTags($url)}, %$attributeHash  };
-	}
+	#}
 
 	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($url, $attributeHash, 1);
 

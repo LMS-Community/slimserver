@@ -855,22 +855,20 @@ sub browser_addtolist_done {
 			my $shortitem = Slim::Utils::Misc::descendVirtual($params->{'dir'}, $item, $itemnumber);
 
 			# Create objects, and read tags if needed.
-			my $isList = Slim::Music::Info::isList($item);
-			my $lightweight = $isList || ($filesort && $cover && $thumb);
-			my $obj = $ds->objectForUrl($item, 1, 1, $lightweight);
+			my $obj = $ds->objectForUrl($item, 1, 1, 1);
 			next if !defined($obj);
 
-			if ($isList) {
+			if (Slim::Music::Info::isList($obj)) {
 
 				$list_form{'descend'} = $shortitem;
-				if (!$filesort && Slim::Music::Info::isPlaylist($item)) {
-					$list_form{'title'}         = Slim::Music::Info::standardTitle(undef, $item);
+				if (!$filesort && Slim::Music::Info::isPlaylist($obj)) {
+					$list_form{'title'}         = Slim::Music::Info::standardTitle(undef, $obj);
 				}
 				else {
 					$list_form{'title'}  = Slim::Music::Info::fileName($item);
 				}
 
-			} elsif (Slim::Music::Info::isSong($item)) {
+			} elsif (Slim::Music::Info::isSong($obj)) {
 
 				$list_form{'descend'} = 0;
 			
@@ -888,7 +886,7 @@ sub browser_addtolist_done {
 					$list_form{'artist'} = $list_form{'includeArtist'} && ($obj->contributors)[0] ne $noArtist ? ($obj->contributors)[0] : undef;
 					$list_form{'album'}	= $list_form{'includeAlbum'} && $obj->album() ne $noAlbum ? $obj->album() : undef;
 
-					$list_form{'title'}         = Slim::Music::Info::standardTitle(undef, $item);
+					$list_form{'title'}         = Slim::Music::Info::standardTitle(undef, $obj);
 				}
 
 				if (!defined $cover) {
