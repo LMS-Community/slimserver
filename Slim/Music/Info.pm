@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.132 2004/07/01 19:06:48 kdf Exp $
+# $Id: Info.pm,v 1.133 2004/07/10 23:10:13 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2060,7 +2060,7 @@ sub readTags {
 
 			# Extract tag and audio info per format
 			if (exists $tagFunctions{$type}) {
-				$tempCacheEntry = &{$tagFunctions{$type}}($filepath);
+				$tempCacheEntry = &{$tagFunctions{$type}}($filepath, $anchor);
 			}
 			$::d_info && !defined($tempCacheEntry) && Slim::Utils::Misc::msg("Info: no tags found for $filepath\n");
 
@@ -2069,11 +2069,11 @@ sub readTags {
 			}
 			
 			# Turn the tag SET into DISC and DISCC if it looks like # or #/#
-			if ($tempCacheEntry->{'SET'} and 
-				$tempCacheEntry->{'SET'} =~ /(\d+)(?:\/(\d+))?/) {
-			   $tempCacheEntry->{'DISC'} = $1;
-			   $tempCacheEntry->{'DISCC'} = $2 if defined $2;
+			if ($tempCacheEntry->{'SET'} and $tempCacheEntry->{'SET'} =~ /(\d+)(?:\/(\d+))?/) {
+				$tempCacheEntry->{'DISC'} = $1;
+				$tempCacheEntry->{'DISCC'} = $2 if defined $2;
  			}
+
 			addDiscNumberToAlbumTitle($tempCacheEntry);
 			
 			if (!$tempCacheEntry->{'TITLE'} && !defined(cacheItem($file, 'TITLE'))) {
@@ -2117,9 +2117,6 @@ sub readTags {
 				$::d_info && Slim::Utils::Misc::msg("readTags: calculating header $header, startbytes $startbytes and endbytes $endbytes\n");
 			}
 
-			# cache the content type
-			$tempCacheEntry->{'CT'} = $type;
-			
 			if (! Slim::Music::iTunes::useiTunesLibrary()) {
 				# Check for Cover Artwork, only if not already present.
 				if (exists $tempCacheEntry->{'COVER'} || exists $tempCacheEntry->{'THUMB'}) {

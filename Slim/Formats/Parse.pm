@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.16 2004/05/18 16:06:50 dean Exp $
+# $Id: Parse.pm,v 1.17 2004/07/10 23:10:13 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -37,7 +37,7 @@ sub _updateMetaData {
 	if (Slim::Music::Info::isCached($entry)) {
 
 		if (!Slim::Music::Info::isKnownType($entry)) {
-			$::d_parse && msg("    entry: $entry not known type\n"); 
+			$::d_parse && Slim::Utils::Misc::msg("    entry: $entry not known type\n"); 
 			Slim::Music::Info::setContentType($entry,'mp3');
 		}
 
@@ -57,7 +57,7 @@ sub M3U {
 
 	my @items  = ();
 	
-	$::d_parse && msg("parsing M3U: $m3u\n");
+	$::d_parse && Slim::Utils::Misc::msg("parsing M3U: $m3u\n");
 	
 	while (my $entry = <$m3u>) {
 
@@ -69,7 +69,7 @@ sub M3U {
 		$entry =~ s/^\s*//; 
 		$entry =~ s/\s*$//; 
 
-		$::d_parse && msg("  entry from file: $entry\n");
+		$::d_parse && Slim::Utils::Misc::msg("  entry from file: $entry\n");
 
 		my $title;
 
@@ -84,14 +84,14 @@ sub M3U {
 		
 		$entry = Slim::Utils::Misc::fixPath($entry, $m3udir);
 		
-		$::d_parse && msg("    entry: $entry\n");
+		$::d_parse && Slim::Utils::Misc::msg("    entry: $entry\n");
 
 		_updateMetaData($entry, $title);
 		
 		push @items, $entry;
 	}
 
-	$::d_parse && msg("parsed " . scalar(@items) . " items in m3u playlist\n");
+	$::d_parse && Slim::Utils::Misc::msg("parsed " . scalar(@items) . " items in m3u playlist\n");
 
 	return @items;
 }
@@ -105,10 +105,10 @@ sub PLS {
 	
 	# parse the PLS file format
 
-	$::d_parse && msg("Parsing playlist: $pls \n");
+	$::d_parse && Slim::Utils::Misc::msg("Parsing playlist: $pls \n");
 	
 	while (<$pls>) {
-		$::d_parse && msg("Parsing line: $_\n");
+		$::d_parse && Slim::Utils::Misc::msg("Parsing line: $_\n");
 
 		# strip carriage return from dos playlists
 		s/\cM//g;  
@@ -199,14 +199,14 @@ sub parseCUE {
 		if (!defined $track->{'END'}) {$track->{'END'} = $lastpos};
 		$lastpos = $track->{'START'};
 	}
-	
+
 	foreach my $key (sort {$a <=> $b} keys %tracks) {
 
 		my $track = $tracks{$key};
 		if (!defined $track->{'START'} || !defined $track->{'END'} || !defined $filename ) { next; }
 		my $url = "$filename#".$track->{'START'}."-".$track->{'END'};
-		$::d_parse && msg("    url: $url\n");
-		
+		$::d_parse && Slim::Utils::Misc::msg("    url: $url\n");
+
 		push @items, $url;
 
 		my $cacheEntry = Slim::Music::Info::cacheEntry($url);
@@ -214,59 +214,80 @@ sub parseCUE {
 		$cacheEntry->{'CT'} = Slim::Music::Info::typeFromPath($url, 'mp3');
 		
 		$cacheEntry->{'TRACKNUM'} = $key;
-		$::d_parse && msg("    tracknum: $key\n");
-		$cacheEntry->{'TITLE'} = $track->{'TITLE'};
-		$::d_parse && msg("    title: " . $cacheEntry->{'TITLE'} . "\n");
-		$cacheEntry->{'ARTIST'} = $track->{'ARTIST'};
-		$::d_parse && msg("    artist: " . $cacheEntry->{'ARTIST'} . "\n");
+		$::d_parse && Slim::Utils::Misc::msg("    tracknum: $key\n");
+
+		if (exists $track->{'TITLE'}) {
+			$cacheEntry->{'TITLE'} = $track->{'TITLE'};
+			$::d_parse && Slim::Utils::Misc::msg("    title: " . $cacheEntry->{'TITLE'} . "\n");
+		}
+
+		if (exists $track->{'ARTIST'}) {
+			$cacheEntry->{'ARTIST'} = $track->{'ARTIST'};
+			$::d_parse && Slim::Utils::Misc::msg("    artist: " . $cacheEntry->{'ARTIST'} . "\n");
+		}
+
 		if (exists $track->{'YEAR'}) {
+
 			$cacheEntry->{'YEAR'} = $track->{'YEAR'};
-			$::d_parse && msg("    year: " . $cacheEntry->{'YEAR'} . "\n");
+			$::d_parse && Slim::Utils::Misc::msg("    year: " . $cacheEntry->{'YEAR'} . "\n");
 		} elsif (defined $year) {
+
 			$cacheEntry->{'YEAR'} = $year;
-			$::d_parse && msg("    year: " . $year . "\n");
+			$::d_parse && Slim::Utils::Misc::msg("    year: " . $year . "\n");
 		}
+
 		if (exists $track->{'GENRE'}) {
+
 			$cacheEntry->{'GENRE'} = $track->{'GENRE'};
-			$::d_parse && msg("    genre: " . $cacheEntry->{'GENRE'} . "\n");
+			$::d_parse && Slim::Utils::Misc::msg("    genre: " . $cacheEntry->{'GENRE'} . "\n");
 		} elsif (defined $genre) {
+
 			$cacheEntry->{'GENRE'} = $genre;
-			$::d_parse && msg("    genre: " . $genre . "\n");
+			$::d_parse && Slim::Utils::Misc::msg("    genre: " . $genre . "\n");
 		}
+
 		if (exists $track->{'COMMENT'}) {
+
 			$cacheEntry->{'COMMENT'} = $track->{'COMMENT'};
-			$::d_parse && msg("    comment: " . $cacheEntry->{'COMMENT'} . "\n");
+			$::d_parse && Slim::Utils::Misc::msg("    comment: " . $cacheEntry->{'COMMENT'} . "\n");
+
 		} elsif (defined $comment) {
+
 			$cacheEntry->{'COMMENT'} = $comment;
-			$::d_parse && msg("    comment: " . $comment . "\n");
+			$::d_parse && Slim::Utils::Misc::msg("    comment: " . $comment . "\n");
 		}
-		$cacheEntry->{'ALBUM'} = $album;
-		$::d_parse && msg("    album: " . $cacheEntry->{'ALBUM'} . "\n");
+
+		if (defined $album) {
+			$cacheEntry->{'ALBUM'} = $album;
+			$::d_parse && Slim::Utils::Misc::msg("    album: " . $cacheEntry->{'ALBUM'} . "\n");
+		}
 
 		Slim::Music::Info::readTags($url);
 		Slim::Music::Info::updateCacheEntry($url, $cacheEntry);
+		$cacheEntry = Slim::Music::Info::cacheEntry($url); #grab the merged info
 		Slim::Music::Info::updateGenreCache($url, $cacheEntry);
 
 	}
-	$::d_parse && msg("    returning: " . scalar(@items) . " items\n");	
+
+	$::d_parse && Slim::Utils::Misc::msg("    returning: " . scalar(@items) . " items\n");	
 	return @items;
 }
 
 sub CUE {
-	my $cue = shift;
 	my $cuefile = shift;
+	my $cuedir  = shift;
 
-	$::d_parse && msg("Parsing cue: $cuefile \n");
+	$::d_parse && Slim::Utils::Misc::msg("Parsing cue: $cuefile \n");
 
 	my @lines = ();
 
-	while (my $line = <$cue>) {
+	while (my $line = <$cuefile>) {
 		chomp($line);
 		$line =~ s/\cM//g;  
 		push @lines, $line;
 	}
 
-	return (parseCUE([@lines], $cuefile));
+	return (parseCUE([@lines], $cuedir));
 }
 
 sub writePLS {
