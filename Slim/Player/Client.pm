@@ -1,5 +1,5 @@
 
-# $Id: Client.pm,v 1.51 2004/05/14 07:55:51 kdf Exp $
+# $Id: Client.pm,v 1.52 2004/05/14 23:07:50 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -239,12 +239,6 @@ playmode() - type: string
 rate() - type: float
 
 	playback rate: 1 is normal, 0 is paused, 2 is ffwd, -1 is rew
-
-=item
-
-lastskip() - type: time
-
-	last time we skipped forward or back while playing at a non-1 rate
 
 =item
 
@@ -684,7 +678,7 @@ sub new {
 	$client->[30] = undef; # currentsong
 	$client->[31] = undef; # playmode
 	$client->[32] = undef; # rate
-	$client->[33] = undef; # lastskip
+
 	$client->[34] = undef; # songtotalbytes
 	$client->[35] = undef; # songduration
 	$client->[36] = undef; # songoffset
@@ -740,6 +734,7 @@ sub new {
 	$client->[87] = 0; # bytesReceivedOffset
 	$client->[88] = 0; # buffersize
 	$client->[89] = 0; # streamBytes
+	$client->[90] = undef; # trickSegmentRemaining
 
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -765,7 +760,6 @@ sub new {
 
 	$client->playmode("stop");
 	$client->rate(1);
-	$client->lastskip(0);
 
 	$client->currentsong(0);
 	$client->songBytes(0);
@@ -1083,10 +1077,9 @@ sub rate {
 	my $r = shift;
 	@_ ? ($r->[32] = shift) : $r->[32];
 }
-sub lastskip {
-	my $r = shift;
-	@_ ? ($r->[33] = shift) : $r->[33];
-}
+
+
+
 
 sub songtotalbytes {
 	my $r = Slim::Player::Sync::masterOrSelf(shift);
@@ -1340,6 +1333,11 @@ sub bufferSize {
 sub streamBytes {
 	my $r = shift;
 	@_ ? ($r->[89] = shift) : $r->[89];
+}
+
+sub trickSegmentRemaining {
+	my $r = shift;
+	@_ ? ($r->[90] = shift) : $r->[90];
 }
 
 1;

@@ -170,7 +170,7 @@ sub menuOptions {
 	my %menuChoices = ();
 	$menuChoices{""} = "";
 	foreach my $menuOption (@menuOptions) {
-		if ($menuOption eq 'BROWSE_MUSIC_FOLDER' && Slim::Music::iTunes::useiTunesLibrary()) {
+		if ($menuOption eq 'BROWSE_MUSIC_FOLDER' && !Slim::Utils::Prefs::get('audiodir')) {
 			next;
 		}
 		if ($menuOption eq 'SAVED_PLAYLISTS' && !Slim::Utils::Prefs::get('playlistdir')) {
@@ -202,10 +202,13 @@ sub updateMenu {
 	@homeChoices = ();
 	
 	foreach my $menuItem (Slim::Utils::Prefs::getArray('menuItem')) {
-		if ($menuItem eq 'BROWSE_MUSIC_FOLDER' && Slim::Music::iTunes::useiTunesLibrary()) {
+		if ($menuItem eq 'BROWSE_MUSIC_FOLDER' && !Slim::Utils::Prefs::get('audiodir')) {
 			next;
 		}
-		if ($menuItem eq 'SAVED_PLAYLISTS' && !Slim::Utils::Prefs::get('playlistdir') && !Slim::Music::iTunes::useiTunesLibrary()) {
+		if ($menuItem eq 'SAVED_PLAYLISTS' && 
+			!Slim::Utils::Prefs::get('playlistdir') && 
+			!Slim::Music::iTunes::useiTunesLibrary() && 
+			!Slim::Music::MoodLogic::useMoodLogic() ) {
 			next;
 		}
 		push @homeChoices, $menuItem;
@@ -248,6 +251,7 @@ sub lines {
 	}
 	my $menuChoice = $homeChoices[$client->homeSelection];
 	for(my $i=0;$i<=$#menuOptions;$i++){
+
 		if ($menuOptions[$i] eq $menuChoice) {
 			$line2 = Slim::Utils::Prefs::clientGet($client, 'doublesize') ? Slim::Utils::Strings::doubleString($menuChoice) : string($menuChoice);
 			return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
@@ -255,6 +259,7 @@ sub lines {
 			my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
 			$line2 = $pluginsRef->{$menuChoice};
 		}
+
 	}
 
 	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));

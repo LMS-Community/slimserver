@@ -10,9 +10,6 @@
 <table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "BROWSE_MUSIC" | string %]</h4></td></tr></table>
 <ul>
     <li>
-         <a href="browse.html?player=[% player | uri %]&dir=__playlists">[% "SAVED_PLAYLISTS" | string %]</a>
-    </li>
-    <li>
         <a href="browseid3.html?player=[% player | uri %]">[% "BROWSE_BY_GENRE" | string %]</a>
     </li>
     <li>
@@ -21,11 +18,13 @@
     <li>
          <a href="browseid3.html?genre=*&artist=*&player=[% player | uri %]">[% "BROWSE_BY_ALBUM" | string %]</a>
     </li>
-    [% IF not nofolder %]
+[% IF additionalLinks.browse %]
+    [% FOREACH key = additionalLinks.browse.keys %]
     <li>
-         <a href="browse.html?player=[% player | uri %]">[% "BROWSE_MUSIC_FOLDER" | string %]</a>
-    </li>
+ 		<a href="[% additionalLinks.browse.$key %]player=[% player | uri %]">[% key %]</a>
+ 	</li>
     [% END %]
+[% END %]
 </ul>
 
 <table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "SEARCH" | string %]</h4></td></tr></table>
@@ -39,6 +38,13 @@
     <li>
          <a href="search.html?type=song&player=[% player | uri %]">[% "SEARCHFOR_SONGTITLE" | string %]</a>
     </li>
+[% IF additionalLinks.search %]
+    [% FOREACH key = additionalLinks.search.keys %]
+    <li>
+ 		<a href="[% additionalLinks.search.$key %]player=[% player | uri %]">[% key %]</a>
+ 	</li>
+    [% END %]
+[% END %]
 </ul>
 
 <table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "HELP" | string %]</h4></td></tr></table>

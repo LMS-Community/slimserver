@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.88 2004/05/14 07:55:51 kdf Exp $
+# $Id: Source.pm,v 1.89 2004/05/14 23:07:50 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Scan;
 use Slim::Utils::Strings qw(string);
 
-my $TRICKSEGMENTLENGTH = 1.0;
+my $TRICKSEGMENTDURATION = 1.0;
 my $FADEVOLUME         = 0.3125;
 
 my %commandTable = ();
@@ -156,8 +156,11 @@ sub time2offset {
 
 	my $offset   = int($byterate * $time);
 	
-	$offset     -= $offset % $align;
-	
+	if ($client->streamformat() eq 'mp3') {
+		($offset, undef) = Slim::Formats::MP3::seekNextFrame($client->audioFilehandle(), $offset, 1);
+	} else {
+		$offset     -= $offset % $align;
+	}
 	$::d_source && msg( "$time to $offset (align: $align size: $size duration: $duration)\n");
 	
 	return $offset;
@@ -524,7 +527,6 @@ sub gototime {
 	my $dataoffset = $client->songoffset();
 
 	$client->songBytes($newoffset);
-	$client->lastskip($newoffset);
 	$client->songStartStreamTime($newtime);
 
 	$client->audioFilehandle()->sysseek($newoffset + $dataoffset, 0);
@@ -732,9 +734,9 @@ sub resetSong {
 	$client->songtotalbytes(0);
 	$client->songduration(0);
 	$client->songBytes(0);
-	$client->lastskip(0);
 	$client->songStartStreamTime(0);
 	$client->bytesReceivedOffset($client->bytesReceived());
+	$client->trickSegmentRemaining(0);
 	
 	# reset shoutcast variables
 	$client->shoutMetaInterval(0);
@@ -1237,44 +1239,51 @@ sub readNextChunk {
 			# if we're scanning
 			if ($rate != 0 && $rate != 1) {
 				
-				my $lastskip = $client->lastskip();
-				
-				my $now = $client->songBytes();
-				
-				my $byterate = Slim::Music::Info::bitratenum(Slim::Player::Playlist::song($client)) / 8;
-				
-				my $tricksegmentbytes = $byterate * $TRICKSEGMENTLENGTH;
-				
-				$tricksegmentbytes -= $tricksegmentbytes % $client->songblockalign();
-				
-				# check to see if we've played tricksgementlength seconds worth of audio
-				$::d_source && msg(
-					"trick mode rate: $rate: songbytes: $now lastskip: $lastskip " .
-					"byterate: $byterate tricksegmentbytes: $tricksegmentbytes\n"
-				);
-
-				if (($now - $lastskip) >= $tricksegmentbytes) { 
-
-					# if so, seek to the appropriate place.  (
-					# TODO: make this align on frame and sample boundaries as appropriate)
-					# TODO: Make the seek go into the next song, as appropriate.
-					my $howfar = ($rate -  $TRICKSEGMENTLENGTH) * $byterate;
+				if ($client->trickSegmentRemaining()) {
+					# we're in the middle of a trick segment
+					!$::d_source && msg("still in the middle of a trick segment: ". $client->trickSegmentRemaining() . " bytes remaining\n");
 					
+				} else {
+					# starting a new trick segment, calculate the chunk offset and length
+					
+					my $now = $client->songBytes();
+					
+					my $byterate = Slim::Music::Info::bitratenum(Slim::Player::Playlist::song($client)) / 8;
+				
+					my $howfar = ($rate -  $TRICKSEGMENTDURATION) * $byterate;					
 					$howfar -= $howfar % $client->songblockalign();
 					$::d_source && msg("trick mode seeking to: $howfar\n");
+
 					my $seekpos = $now + $howfar;
-					
-					if ($seekpos < 0) {
-						# trying to seek past the beginning, let's let opennext do it's job
-						$chunksize = 0;
-					} else {
-						$client->audioFilehandle->sysseek($seekpos, 0);
-						$client->songBytes($client->songBytes() + $howfar);
-						$client->lastskip($client->songBytes());
+
+					my $tricksegmentbytes = $byterate * $TRICKSEGMENTDURATION;				
+
+					$tricksegmentbytes -= $tricksegmentbytes % $client->songblockalign();					
+
+					if ($client->streamformat() eq 'mp3') {
+						($seekpos, undef) = Slim::Formats::MP3::seekNextFrame($client->audioFilehandle(), $seekpos, 1);
+						my (undef, $endsegment) = Slim::Formats::MP3::seekNextFrame($client->audioFilehandle(), $seekpos + $tricksegmentbytes, -1);
+						
+						if ($seekpos == 0 || $endsegment == 0) {
+							$endofsong = 1;
+							$::d_source && msg("trick mode couldn't seek: $seekpos/$endsegment\n");
+							goto bail;
+						} else {
+							$tricksegmentbytes = $endsegment - $seekpos + 1;
+						}
 					}
+					
+					$::d_source && msg("new trick mode segment offset: $seekpos for length:$tricksegmentbytes\n");
+
+					$client->audioFilehandle->sysseek($seekpos, 0);
+					$client->songBytes($client->songBytes() + $seekpos - $now);
+					$client->trickSegmentRemaining($tricksegmentbytes);
+				}
+								
+				if ($chunksize > $client->trickSegmentRemaining()) { 
+					$chunksize = $client->trickSegmentRemaining(); 
 				}
 				
-				if ($chunksize > $tricksegmentbytes) { $chunksize = $tricksegmentbytes; }
 			}
 
 			# don't send extraneous ID3 data at the end of the file
@@ -1344,6 +1353,7 @@ sub readNextChunk {
 
 	# if nothing was read from the filehandle, then we're done with it,
 	# so open the next filehandle.
+bail:
 	if ($endofsong) {
 		$::d_source && msg("end of file or error on socket, opening next song, (song pos: " .
 				$client->songBytes() . "(tell says: . " . systell($client->audioFilehandle()).
@@ -1365,6 +1375,7 @@ sub readNextChunk {
 		$::d_source_v && msg("metadata now: " . $client->shoutMetaPointer() . "\n");
 		$client->songBytes($client->songBytes() + $chunkLength);
 		$client->streamBytes($client->streamBytes() + $chunkLength);
+		$client->trickSegmentRemaining($client->trickSegmentRemaining() - $chunkLength) if ($client->trickSegmentRemaining())
 	}
 	
 	return \$chunk;

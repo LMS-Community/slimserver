@@ -1,6 +1,6 @@
 package Slim::Utils::Strings;
 
-# $Id: Strings.pm,v 1.13 2004/05/05 02:06:36 kdf Exp $
+# $Id: Strings.pm,v 1.14 2004/05/14 23:07:51 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -165,7 +165,7 @@ sub string {
 		if ($strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname}) {
 			return $strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname};
 		} else {
-			warn "Undefined string: $stringname\nrequested language: $language\nfailsafe language: $Slim::Utils::Strings::failsafe_language\n";
+			Slim::Utils::Misc::msg("Undefined string: $stringname\nrequested language: $language\nfailsafe language: $Slim::Utils::Strings::failsafe_language\n");
 			return '';
 		}
 	}
