@@ -162,7 +162,7 @@ use vars qw(
 	    $loopsecond
 	    $localClientNetAddr
 	    $localStreamAddr
-		$newVersion
+            $newVersion
 	    $pidfile
 	    $prefsfile
 	    $quiet
@@ -181,7 +181,6 @@ use vars qw(
 
 sub init {
 	srand();
-
 	$selRead = IO::Select->new();
 	$selWrite = IO::Select->new();
 
