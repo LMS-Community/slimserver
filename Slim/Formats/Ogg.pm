@@ -18,21 +18,7 @@ package Slim::Formats::Ogg;
 use strict;
 use Slim::Utils::Misc;
 
-# try and use the C based version of the Vorbis::Header if it exists
-# the ::PurePerl version is checked into Slim CVS, so it will always be available.
-my $oggHeaderClass;
-
-{
-        eval 'use Ogg::Vorbis::Header';
-
-        if ($@ !~ /Can't locate/) {
-                $oggHeaderClass = 'Ogg::Vorbis::Header';
-        } else {
-                $@ = '';
-        	eval 'use Ogg::Vorbis::Header::PurePerl';
-                $oggHeaderClass = 'Ogg::Vorbis::Header::PurePerl';
-        }
-}
+use Ogg::Vorbis::Header::PurePerl;
 
 my %tagMapping = (
 	'TRACKNUMBER'	=> 'TRACKNUM',
@@ -56,7 +42,7 @@ sub getTag {
 	# some ogg files can blow up - especially if they are invalid.
 	eval {
 		local $^W = 0;
-		$ogg = $oggHeaderClass->new($file);
+		$ogg = Ogg::Vorbis::Header::PurePerl->new($file);
 	};
 
 	if (!$ogg or $@) {
