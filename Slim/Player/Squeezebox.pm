@@ -309,6 +309,11 @@ sub upgradeFirmware_SDK5 {
 		}
 	}
 	
+	$client->showBriefly(
+		$client->string('UPDATING_FIRMWARE'),
+				
+		Slim::Display::Display::progressBar($client, $client->displayWidth(), 1)
+	);
 	$client->sendFrame('updn'); # upgrade done
 
 	$::d_firmware && msg("Firmware updated successfully.\n");
@@ -441,7 +446,7 @@ sub opened {
 #	u8_t command;		// [1]	's' = start, 'p' = pause, 'u' = unpause, 'q' = stop, 't' = status
 #	u8_t autostart;		// [1]	'0' = don't auto-start, '1' = auto-start
 #	u8_t mode;		// [1]	'm' = mpeg bitstream, 'p' = PCM
-#	u8_t pcm_sample_size;	// [1]	'0' = 8, '1' = 16, '2' = 20, '3' = 32
+#	u8_t pcm_sample_size;	// [1]	'0' = 8, '1' = 16, '2' = 24, '3' = 32
 #	u8_t pcm_sample_rate;	// [1]	'0' = 11kHz, '1' = 22, '2' = 32, '3' = 44.1, '4' = 48
 #	u8_t pcm_channels;	// [1]	'1' = mono, '2' = stereo
 #	u8_t pcm_endianness;	// [1]	'0' = big, '1' = little
