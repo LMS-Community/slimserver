@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.18 2003/11/10 23:15:02 dean Exp $
+# $Id: Prefs.pm,v 1.19 2003/11/17 06:10:31 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -112,7 +112,7 @@ my %DEFAULT = (
 			,'powerOnBrightness'	=> 4
 			,'powerOffBrightness'	=> 1
 			,'repeat'		=> 2
-			,'volume'		=> 100
+			,'volume'		=> 50
 			,'treble'		=> 50
 			,'bass'			=> 50
 			,'shuffle'		=> 0
