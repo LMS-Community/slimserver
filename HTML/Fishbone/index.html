@@ -46,7 +46,7 @@ function getPlayer(Player)
 &rbrc;
 
 document.write('<frameset cols="45%,*" framespacing="2" border="2">' );
-document.write('<frame src="home.html" name="browser">');
+document.write('<frame src="home.html?player={%player}" name="browser">');
 document.write('<frameset name="player_frame" ID="player_frame" border="0" frameborder="no" framespacing="0" rows="240,*">');
 document.write('<frame name="statusframe"  scrolling="no" src="status_header.html?player='+getPlayer('SlimServer-player')+'">');
 document.write('<frame name="playlist" src="playlist.html?player={%player}">');
