@@ -361,7 +361,8 @@ sub init {
 		$SIG{QUIT} = \&sigquit;
 	}
 
-	$SIG{__DIE__} = \&Slim::Utils::Misc::bt;
+	# Uncomment to enable crash debugging.
+	#$SIG{__DIE__} = \&Slim::Utils::Misc::bt;
 
 	# we have some special directories under OSX.
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
