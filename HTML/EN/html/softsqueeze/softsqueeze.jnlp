@@ -10,7 +10,7 @@
   codebase="http://[% host %]/html/softsqueeze/"
   href="softsqueeze.jnlp">
   <information>
-    <title>Softsqueeze 1.0</title>
+    <title>Softsqueeze 1.1</title>
     <vendor>Richard Titmuss, et.al.</vendor>
     <homepage href="http://softsqueeze.sourceforge.net"/>
     <description>Softsqueeze Slim Devices Squeezebox Emulator</description>
@@ -35,7 +35,7 @@
 <!-- Set the following properties to configure the server and firmware  -->
 
     <property name="slimserver" value="[% host.match('([^:]*)').0 %]"/>    
-    <property name="serverversion" value="5.3.0b1"/>    
+    <property name="serverversion" value="5.3"/>    
   </resources>
   <application-desc main-class="com.slim.softsqueeze.Application"/>
 </jnlp> 
