@@ -511,6 +511,7 @@ sub initSetupConfig {
 								'1' => string('SETUP_AUTOBRIGHTNESS_ON')
 								,'0' => string('SETUP_AUTOBRIGHTNESS_OFF')
 							}
+						,'changeIntro' => string ('SETUP_AUTOBRIGHTNESS_CHOOSE')
 					}
 			,'scrollPause' => {
 				'validate' => \&validateNumber
