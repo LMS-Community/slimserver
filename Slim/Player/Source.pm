@@ -169,6 +169,13 @@ sub time2offset {
 	my $duration = $song->{duration};
 	my $align    = $song->{blockalign};
 	
+	# Short circuit the computation if the time for which we're asking
+	# the offset is the duration of the song - in that case, it's just
+	# the length of the song.
+	if ($time == $duration) {
+		return $size;
+	}
+
 	my $byterate = $duration ? ($size / $duration) : 0;
 
 	my $offset   = int($byterate * $time);
@@ -277,6 +284,11 @@ sub songTime {
 	}
 
 	$songtime = $songLengthInBytes ? (($realpos / $songLengthInBytes * $duration * $rate) + $startStream - $outputBufferSeconds) : 0;
+
+	# The songtime should never be negative
+	if ($songtime < 0) {
+		$songtime = 0;
+	}
 
 	if ($songtime && $duration) {
 		0 && $::d_source && msg("songTime: [$songtime] = ($realpos(realpos) / $songLengthInBytes(size) * ".
@@ -598,12 +610,14 @@ sub nextChunk {
 #
 # jump to a particular time in the current song
 #  should be dead-on for CBR, approximate for VBR
-#  third argument determines whether this is an instant jump or wait until the
-#   buffer gets around to it
+#  third argument determines whether we should range check i.e. whether
+#  we should jump to the next or previous song if the newtime is 
+#  beyond the range of the current one.
 #
 sub gototime {
 	my $client  = Slim::Player::Sync::masterOrSelf(shift);
 	my $newtime = shift;
+	my $rangecheck = shift;
 	
 	return unless Slim::Player::Playlist::song($client);
 
@@ -625,6 +639,15 @@ sub gototime {
 	
 	my $newoffset = time2offset($client, $newtime);
 	
+	if ($rangecheck) {
+		if ($newoffset > $songLengthInBytes) {
+			$newoffset = $songLengthInBytes;
+		}
+		elsif ($newoffset < 0) {
+			$newoffset = 0;
+		}
+	}
+
 	$::d_source && msg("gototime: going to time $newtime\n");
 
 	# skip to the previous or next track as necessary
@@ -657,7 +680,7 @@ sub gototime {
 		jumpto($client, playingSongIndex($client));
 		rate($client, $rate);
 		$::d_source && msg("gototime: resetting to the track that's currently playing (but no longer streaming)\n");
-		gototime($client, $newtime);
+		gototime($client, $newtime, $rangecheck);
 		return;
 	}
 
@@ -857,7 +880,8 @@ sub streamingSongIndex {
 	my $client = Slim::Player::Sync::masterOrSelf(shift);
 	my $index = shift;
 	my $clear = shift;
-	
+	my $song = shift;
+
 	my $queue = $client->currentsongqueue();
 	if (defined($index)) {
 		$::d_source && msg("Adding song index $index to song queue\n");
@@ -866,12 +890,17 @@ sub streamingSongIndex {
 			$#{$queue} = -1;
 		}
 		
-		unshift(@{$queue}, { index => $index, 
-							 status => STATUS_STREAMING});
+		if (defined($song)) {
+			unshift(@{$queue}, $song);
+		}
+		else {
+			unshift(@{$queue}, { index => $index, 
+								 status => STATUS_STREAMING});
+		}
 		$::d_source && msg("Song queue is now " . join(',', map { $_->{index} } @$queue) . "\n");
 	}
 
-	my $song = $client->currentsongqueue()->[0];
+	$song = $client->currentsongqueue()->[0];
 	return 0 if !defined($song);
 
 	return $song->{index};
@@ -1275,13 +1304,24 @@ sub openSong {
 			$size   = $duration * ($maxRate * 1000) / 8;
 			$offset = 0;
 		}
-	
+
 		$song->{totalbytes} = $size;
 		$song->{duration} = $duration;
 		$song->{offset} = $offset;
 		$song->{blockalign} = $blockalign;
 		$client->streamformat($format);
 		$::d_source && msg("Streaming with format: $format\n");
+
+		# Deal with the case where we are rewinding and get to
+		# this song. In this case, we should jump to the end of
+		# the newly opened song.
+		if (rate($client) < 0 && !$client->audioFilehandleIsSocket()) {
+			# Clear out the song queue to just include this song
+			streamingSongIndex($client, streamingSongIndex($client), 1, $song);
+			gototime($client, $duration, 1);
+			return 1;
+		}
+
 		
 	} else {
 
@@ -1629,9 +1669,15 @@ sub readNextChunk {
 				
 					my $howfar = int(($rate -  $TRICKSEGMENTDURATION) * $byterate);					
 					$howfar -= $howfar % $song->{blockalign};
-					$::d_source && msg("trick mode seeking to: $howfar\n");
+					$::d_source && msg("trick mode seeking: $howfar from: $now\n");
 
 					my $seekpos = $now + $howfar;
+
+					if ($seekpos < 0) {
+						$::d_source && msg("trick mode reached beginning of song: $seekpos\n");
+						$endofsong = 1;
+						goto bail;						
+					}
 
 					my $tricksegmentbytes = int($byterate * $TRICKSEGMENTDURATION);				
 
