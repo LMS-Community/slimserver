@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.55 2004/04/04 20:42:01 kdf Exp $
+# $Id: Setup.pm,v 1.56 2004/04/06 05:59:38 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -566,14 +566,9 @@ sub initSetupConfig {
 						,'GroupSub' => 1
 						},
 				'moodlogic' => {
-						'PrefOrder' => ['moodlogic']
-						,'PrefsInTable' => 1
-						,'Suppress_PrefHead' => 1
-						,'Suppress_PrefDesc' => 1
+						'PrefOrder' => ['moodlogic','instantMixMax','varietyCombo']
 						,'Suppress_PrefLine' => 1
 						,'Suppress_PrefSub' => 1
-						,'GroupHead' => string('SETUP_MOODLOGIC')
- 						,'GroupDesc' => string('SETUP_MOODLOGIC_DESC')
 						,'GroupLine' => 1
 						,'GroupSub' => 1
 					},
@@ -605,7 +600,7 @@ sub initSetupConfig {
 									}
 							,'PrefSize' => 'large'
 						}
-				,'moodlogic'    => {
+				,'moodlogic' => {
 							'onChange' => sub {
 								my ($client,$changeref,$paramref,$pageref) = @_;
 								if (defined $changeref->{'moodlogic'}{'new'} &&
@@ -628,6 +623,14 @@ sub initSetupConfig {
 							,'optionSort' => 'KR'
 							,'inputTemplate' => 'setup_input_radio.html'
 							,'PrefSize' => 'large'
+						}
+				,'instantMixMax'	=> {
+							'validate' => \&validateInt
+							,'validateArgs' => [1,undef,1]
+						}
+				,'varietyCombo'	=> {
+							'validate' => \&validateInt
+							,'validateArgs' => [1,100,1,1]
 						}
 				,'audiodir'	=> {
 							'validate' => \&validateIsAudioDir

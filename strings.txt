@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.78 2004/04/06 03:10:50 kdf Exp $
+# $Id: strings.txt,v 1.79 2004/04/06 05:59:38 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1762,6 +1762,19 @@ SETUP_MOODLOGIC_DESC
 	NL	De SlimServer kan Uw MoodLogic programma gebruiken als basis voor titel en genre informatie. Bijkomend kan U mixen samenstellen op basis van genre, artiest of muziekstuk.
 	PT	O SlimServer pode usar o módulo de Ambiência (MoodLogic) como fonte de títulos e informação do género de música. Adicionalmente, pode gerar misturas instantâneas a partir do género, artista ou nível de som.
 	SE	SlimServer kan använda din MoodLogic-applikation som källa för titel- och genre-information. Utöver det kan du skapa direktmixar på genre, artist och låt nivå.
+
+
+SETUP_INSTANTMIXMAX
+	EN	Instant Mix Max Count
+
+SETUP_INSTANTMIXMAX_DESC
+	EN	This is the number for the maximum number of songs you want for playlists created as an Instant Mix. Instant Mixes may have fewer songs, depending on the Variety setting.
+
+SETUP_VARIETYCOMBO
+	EN	Moodlogic Variety
+
+SETUP_VARIETYCOMBO_DESC
+	EN	This is the value to control the variety setting for Moodlogic Instant Mixes.  Lower numbers mean a wider variety of music, higher numbers mean less variety.  Valid numbers are 0-100.
 
 # advanced server settings
 SETUP_MENUITEM

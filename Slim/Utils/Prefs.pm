@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.45 2004/04/06 03:13:58 kdf Exp $
+# $Id: Prefs.pm,v 1.46 2004/04/06 05:59:38 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -111,6 +111,8 @@ my %DEFAULT = (
 	,'iTunesplaylistprefix'	=> 'iTunes: '
  	,'iTunesplaylistsuffix'	=> ''
  	,'itunesscaninterval'	=> 60
+ 	,'instantMixMax'		=> 12
+ 	,'varietyCombo'			=> 50
     ,'ignoreDirRE'          => ''
     ,'checkVersion'			=> 1
     ,'mDNSname'				=> 'SlimServer'
@@ -135,13 +137,13 @@ my %DEFAULT = (
 	,'disabledplugins'		=> []
 	,'persistPlaylists'		=> 1
 	,'reshuffleOnRepeat'	=> 0
-	,'maxBitrate'		=> 320	# Maximum bitrate for maximum quality.  MPEG-1 layer III bitrates (kbps): 32 40 48 56 64 80 96 112 128 160 192 224 256 320
+	,'maxBitrate'			=> 320	# Maximum bitrate for maximum quality.  MPEG-1 layer III bitrates (kbps): 32 40 48 56 64 80 96 112 128 160 192 224 256 320
 	,'savehistory'			=> 1
 	,'historylength'		=> 1000
 	,'composerInArtists'	=> 0 # include composer and band information in the artists list
 	,'groupdiscs' 			=> 0
 	,'livelog'				=> 102400 # keep around an in-memory log of 100kbytes, available from the web interfaces
-	,'remotestreamtimeout'  => 5 # seconds to try to connect for a remote stream
+	,'remotestreamtimeout'	=> 5 # seconds to try to connect for a remote stream
 	,"CLIENTPREFS" => {
 			'autobrightness'	=> 1
 			,'doublesize'		=> 0

@@ -16,6 +16,8 @@ my @mood_names;
 my %mood_hash;
 my %artwork;
 my $last_error = 0;
+my $instantMixMax = 40;
+my $instantMixVariety = 35;
 
 sub useMoodLogic {
 	my $newValue = shift;
@@ -287,20 +289,29 @@ sub getMix {
             $::d_moodlogic && msg("no valid type specified for instant mix");
             return undef;
         }
-    } else {
-        $::d_moodlogic && msg("no valid mood specified for instant mix");
-        return undef;
-    }
+	} else {
+		$::d_moodlogic && msg("no valid mood specified for instant mix");
+		return undef;
+	}
 
-    $mixer->Process();
-    my $count = $mixer->Mix_PlaylistSongCount();
+	$mixer->Process();      # the VarietyCombo property can only be set
+							# after an initial mix has been created
+	my $count = Slim::Utils::Prefs::get('instantMixMax') || $instantMixMax;
+	my $variety = Slim::Utils::Prefs::get('varietyCombo') || $instantMixVariety;
+	while ($mixer->Mix_PlaylistSongCount() < $count && $mixer->{VarietyCombo} > $variety)
+	{
+		$mixer->{VarietyCombo} = $mixer->{VarietyCombo} - 10;
+		$mixer->Process(); # recreate mix
+	}
 
-    for (my $i=1; $i<=$count; $i++) {
-        push @instant_mix, $mixer->Mix_SongFile($i);
-    }
-    
-    return @instant_mix;
-}
+	$count = $mixer->Mix_PlaylistSongCount();
+
+	for (my $i=1; $i<=$count; $i++) {
+		push @instant_mix, $mixer->Mix_SongFile($i);
+	}
+
+	return @instant_mix;
+ }
 
 sub event_hook {
 	my ($mixer,$event,@args) = @_;
