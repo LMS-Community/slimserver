@@ -798,6 +798,7 @@ Version=2</pre></p>
 
 <h4><a id="troubleshooting">Troubleshooting</a></h4>
 <ul>
+	<li><a href="#troubleshooting-nortonantivirus">I just upgraded Norton Antivirus and my Squeezebox stopped working.</a>
 	<li><a href="#troubleshooting-shoutcast">The SHOUTcast Internet Radio plugin can't connect, how can I fix this?</a>
 	<li><a href="#troubleshooting-wireless">My Squeezebox seems to lose its wireless connection quite often.  
 What can I do to make the wireless connection more stable?</a>
@@ -808,7 +809,7 @@ What can I do to make the wireless connection more stable?</a>
 	<li><a href="#troubleshooting-remote">The IR remote is not responding, or is functioning erratically.</a>
 	<li><a href="#troubleshooting-dhcp">SLIMP3 doesn't find a DHCP server.</a>
 	<li><a href="#troubleshooting-findserver">The player doesn't find a SlimServer.</a>
-	<li><a href="#troubleshooting-intelpro">My Squeezebox, connected to a Windows XP system, makes audio that comes out intermittantly, or in little bursts and the elapsed time counter skips around.</a>
+<!--	<li><a href="#troubleshooting-intelpro">My Squeezebox, connected to a Windows XP system, makes audio that comes out intermittantly, or in little bursts and the elapsed time counter skips around.</a> -->
 	<li><a href="#troubleshooting-volume">The volume is too high or too low.</a>
 	<li><a href="#troubleshooting-audio">There's something wrong with the audio quality. I hear buzzing and clicks. How can I fix this?</a>
 	<li><a href="#troubleshooting-debugoutput">I'm seeing messages in the SlimServer's console or debug window, but the server seems to be running fine.</a>
@@ -836,7 +837,13 @@ What can I do to make the wireless connection more stable?</a>
 <h4>Troubleshooting</h4>
 
 <div class="faq">
-<h5><a id="troubleshooting-shoutcast"</a>The SHOUTcast Internet Radio plugin can't connect, how can I fix this?</h5>
+<h5><a id="troubleshooting-nortonantivirus"></a>I just upgraded Norton Antivirus and my Squeezebox stopped working.</h5>
+	<p>Norton Antivirus 2005 has a feature called Internet Worm Protection, which is a firewall of sorts.  Even when SlimServer is set as an exception, it may still block players from connecting.</p>
+	<p>You may just need to disable this feature, since there is no known way at this time to get around this problem.</p>
+</div>
+
+<div class="faq">
+<h5><a id="troubleshooting-shoutcast"></a>The SHOUTcast Internet Radio plugin can't connect, how can I fix this?</h5>
 	<p>If you have any firewall software on the system in question, ensure that it allows outgoing connections initiated by the computer.</p>
 	<p>This can also be caused by content filtering applications like CYBERsitter.  You may want to try disabling or removing that software and see if the problem goes away.</p>
 </div>
@@ -984,7 +991,7 @@ of IR light, such as an optical mouse. Turn off your dragon plasma orb.</p>
 
 </div>
 
-<div class="faq">
+<!-- <div class="faq">
 <h5><a id="troubleshooting-intelpro"></a>My Squeezebox, connected to a Windows XP system, makes audio that comes out intermittantly, or in little bursts and the elapsed time counter skips around.</h5>
 
 <p>First, install the newest driver from Intel. It's available here:
@@ -999,7 +1006,7 @@ of IR light, such as an optical mouse. Turn off your dragon plasma orb.</p>
 <li>Set the Value: field to Disabled and click OK.
 </ol>
 
-</div>
+</div> -->
 
 <div class="faq">
 <h5><a id="troubleshooting-volume"></a>The volume is too high or too low.</h5>
