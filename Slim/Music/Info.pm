@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.39 2003/12/18 02:36:25 dean Exp $
+# $Id: Info.pm,v 1.40 2003/12/21 11:50:42 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1951,12 +1951,23 @@ sub readCoverArt {
 			$::d_info && Slim::Utils::Misc::msg("Looking for image files\n");
 
 			my @filestotry = ();
-
 			if ($image eq 'thumb') {
-				if (Slim::Utils::Prefs::get('coverThumb')) { push @filestotry, Slim::Utils::Prefs::get('coverThumb'); }
+				if (Slim::Utils::Prefs::get('coverThumb')) {
+					my $cover = Slim::Utils::Prefs::get('coverThumb');
+					if ($cover =~ m/\%(.*?)/isg) {
+						$cover = infoFormat($file, $1, "TITLE").".jpg";
+					}
+					push @filestotry, $cover; 
+				}
 				push @filestotry, ('thumb.jpg', 'albumartsmall.jpg', 'cover.jpg',  'folder.jpg', 'album.jpg');
 			} else {
-				if (Slim::Utils::Prefs::get('coverArt')) { push @filestotry, Slim::Utils::Prefs::get('coverArt'); }
+				if (Slim::Utils::Prefs::get('coverArt')) {
+					my $cover = Slim::Utils::Prefs::get('coverArt');
+					if ($cover =~ m/\%(.*?)/isg) {
+						$cover = infoFormat($file, $1, "TITLE").".jpg";
+					}
+					push @filestotry, $cover; 
+				}
 				push @filestotry, ('cover.jpg', 'albumartsmall.jpg', 'folder.jpg', 'album.jpg', 'thumb.jpg');
 			}
 									

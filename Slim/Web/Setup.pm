@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.27 2003/12/19 01:32:03 dean Exp $
+# $Id: Setup.pm,v 1.28 2003/12/21 11:50:43 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -78,7 +78,7 @@ my %setup = ();
 # 'currentValue' => sub ref taking $client,$key,$ind as parameters, returns current value of preference.  Only needed for preferences which don't use Slim::Utils::Prefs
 # 'noWarning' => flag to suppress change information
 # 'externalValue' => sub ref taking $client,$value, $key as parameters, used to map an internal value to an external one
-# 'PrefName' => friendly name of the preference (defaults to string('SETUP_$prefname')
+# 'PrefHead' => friendly name of the preference (defaults to string('SETUP_$prefname')
 # 'PrefDesc' => long description of the preference (defaults to string('SETUP_$prefname_DESC')
 # 'PrefChoose' => label to use for input of the preference (defaults to string('SETUP_$prefname_CHOOSE')
 # 'PrefSize' => size to use for text box of input (choices are 'small','medium', and 'large', default 'small')
@@ -298,17 +298,20 @@ sub initSetupConfig {
 		,'isClient' => 1
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
+				my $playlistRef = playlists();
+				$pageref->{'Prefs'}{'alarmplaylist'}{'options'} = $playlistRef;
+				$pageref->{'Prefs'}{'alarmplaylist'}{'validateArgs'} = [$playlistRef];
 				if (scalar(keys %{Slim::Buttons::Common::hash_of_savers()}) > 0) {
-					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = 'screensaver';
+					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[7] = 'screensaver';
 					$pageref->{'Prefs'}{'screensaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
 				} else {
-					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = undef;
+					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[7] = undef;
 				}
 				if (scalar(keys %{Slim::Hardware::IR::mapfiles()}) > 1) {  
-					$pageref->{'GroupOrder'}[4] = 'IRMap';  
+					$pageref->{'GroupOrder'}[3] = 'IRMap';  
 					$pageref->{'Prefs'}{'irmap'}{'options'} = Slim::Hardware::IR::mapfiles();  
 				} else {  
-					$pageref->{'GroupOrder'}[4] = undef;
+					$pageref->{'GroupOrder'}[3] = undef;
 				}
 				my $i = 0;
 				my %irsets = map {$_ => 1} Slim::Utils::Prefs::clientGetArray($client,'disabledirsets');
@@ -343,11 +346,22 @@ sub initSetupConfig {
 					$i++;
 				}
 			}
-		,'GroupOrder' => ['Default', 'IRSets', undef]
+		,'GroupOrder' => ['Default', 'AlarmClock','IRSets', undef]
 		# if more than one ir map exists the undef will be replaced by 'Default'
 		,'Groups' => {
 			'Default' => {
 				'PrefOrder' => ['autobrightness','scrollPause','screensavertimeout']
+			}
+			,'AlarmClock' => {
+				'PrefOrder' => ['alarm','alarmtime','alarmvolume','alarmplaylist']
+				,'Suppress_PrefHead' => 1
+				,'Suppress_PrefDesc' => 1
+				,'Suppress_PrefLine' => 1
+				,'Suppress_PrefSub' => 1
+				,'GroupHead' => string('SETUP_GROUP_ALARM')
+				,'GroupDesc' => string('SETUP_GROUP_ALARM_DESC')
+				,'GroupLine' => 1
+				,'GroupSub' => 1
 			}
 			,'IRSets' => {
 				'PrefOrder' => ['irsetlist']
@@ -406,10 +420,53 @@ sub initSetupConfig {
 								return $value;
 							}
 						}
-			}
+			},
+			'alarmtime' => {
+				'validate' => \&validateAcceptAll
+				,'validateArgs' => [0,undef]
+				,'PrefChoose' => string('ALARM_SET')
+				,'changeIntro' => string('ALARM_SET')
+				,'currentValue' => sub {
+						my $client = shift;
+						my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::AlarmClock::timeDigits($client);
+						my $timestring = ((defined($p) && $h0 == 0) ? ' ' : $h0) . $h1 . ":" . $m0 . $m1 . " " . (defined($p) ? $p : '');
+						return $timestring;
+					}
+					,'onChange' => sub {
+							my ($client,$changeref,$paramref,$pageref) = @_;
+							my $time = $changeref->{'alarmtime'}{'new'};
+							my $newtime = 0;
+							$time =~ s{
+								^(0?[0-9]|1[0-9]|2[0-4]):([0-5][0-9]).?(P|PM)?$
+							}{
+								$newtime = $1 * 60 * 60 + $2 * 60 + ((defined($3))?(12 * 60 * 60):0);
+							}iegsx;
+							Slim::Utils::Prefs::clientSet($client,'alarmtime',$newtime);
+						}
+			},
+			'alarmvolume'	=> {
+				'validate' => \&validateNumber
+				,'PrefChoose' => string('ALARM_SET_VOLUME')
+				,'validateArgs' => [0,$Slim::Player::Client::maxVolume,1,1]
+			},
+			'alarmplaylist' => {
+				'validate' => \&validateInHash
+				,'PrefChoose' => string('ALARM_SELECT_PLAYLIST')
+				,'validateArgs' => [] #[\&playlists]
+				,'options' => {} #{playlists()}
+			},
+			'alarm' => {
+				'validate' => \&validateTrueFalse
+				,'PrefHead' => ' '
+				,'PrefChoose' => string('SETUP_ALARM')
+				,'options' => {
+						'1' => string('ON')
+						,'0' => string('OFF')
+					}
+			},
 		}
 	} # end of setup{'ADDITIONAL_PLAYER'} hash
-			
+
 	,'server' => {
 		'children' => ['interface','behavior',
 #		'formats',
@@ -1291,7 +1348,6 @@ sub initSetupConfig {
 					,'Suppress_PrefLine' => 1
 					,'PrefsInTable' => 1
 					,'GroupDesc' => string('SETUP_GROUP_DEBUG_DESC')
-
 				}
 			}
 		,'Prefs' => {
@@ -1655,6 +1711,19 @@ sub removeExtraArrayEntries {
 			delete $paramref->{$array . $i};
 		}
 	}
+}
+
+sub playlists {
+	my %list_hash;
+	my @list;	
+	Slim::Utils::Scan::addToList(\@list, Slim::Utils::Prefs::get('playlistdir'), 0);
+	if (Slim::Music::iTunes::useiTunesLibrary()) {
+		push @list, @{Slim::Music::iTunes::playlists()};
+	}
+	foreach my $item ( @list) {
+		$list_hash{$item} = Slim::Music::Info::standardTitle(undef, $item);
+	}
+	return \%list_hash;
 }
 
 sub skins {
