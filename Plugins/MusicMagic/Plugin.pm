@@ -103,15 +103,18 @@ sub disablePlugin {
 sub initPlugin {
 	return $initialized if ($initialized == 1);
 	checkDefaults();
-	
+
 	$MMSport = Slim::Utils::Prefs::get('MMSport');
 	$MMSHost = Slim::Utils::Prefs::get('MMSHost');
+
+	$::d_musicmagic && msg("MusicMagic: Testing for API on $MMSHost:$MMSport\n");
 
 	my $http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/version");
 
 	unless ($http) {
 
 		$initialized = 0;
+		$::d_musicmagic && msg("MusicMagic: Cannot Connect\n");
 
 	} else {
 
