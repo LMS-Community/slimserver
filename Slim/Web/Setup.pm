@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.67 2004/05/05 08:46:49 kdf Exp $
+# $Id: Setup.pm,v 1.68 2004/05/06 08:13:58 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -128,6 +128,13 @@ sub initSetupConfig {
 						$pageref->{'children'} = undef;
 						$pageref->{'GroupOrder'}[1] = undef;
 						$pageref->{'GroupOrder'}[2] = undef;
+					}
+					if ($client->model() eq 'squeezebox') {
+						$pageref->{'Prefs'}{'maxBitrate'}{'PrefDesc'} = string('SETUP_MAXBITRATE_DESC');
+						$pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'} = '  '.string('NO_LIMIT');
+					} else {
+						delete $pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'};
+						$pageref->{'Prefs'}{'maxBitrate'}{'PrefDesc'} = string('SETUP_MP3BITRATE_DESC');
 					}
 					$pageref->{'Prefs'}{'titleFormatCurr'}{'validateArgs'} = [0,$titleFormatMax,1,1];
 					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [$client->defaultName()];
@@ -303,7 +310,18 @@ sub initSetupConfig {
 						}
 			,'maxBitrate' => {
 							'validate' => \&validateInList
-							,'validateArgs' => [0,32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320]
+							,'validateArgs' => [0, 64, 96, 128, 160, 192, 256, 320]
+							,'optionSort' => 'V'
+							,'options' => {
+									'0' => '  '.string('NO_LIMIT')
+									,'64' => ' 64 '.string('KBPS')
+									,'96' => ' 96 '.string('KBPS')
+									,'128' => '128 '.string('KBPS')
+									,'160' => '160 '.string('KBPS')
+									,'192' => '192 '.string('KBPS')
+									,'256' => '256 '.string('KBPS')
+									,'320' => '320 '.string('KBPS')
+								}
 						}
 			,'titleFormat'		=> {
 							'isArray' => 1

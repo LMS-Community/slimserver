@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.85 2004/04/30 16:42:12 dean Exp $
+# $Id: Source.pm,v 1.86 2004/05/06 08:13:58 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -877,11 +877,7 @@ sub openSong {
 
 		my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate') 
 				|| Slim::Utils::Prefs::clientGet($client,'maxBitrate');
-
-		# if player setting is 0 or we have no birate defined, use the server fallback of 320
-		if ((!defined $maxRate) || !$maxRate) {
-			$maxRate = Slim::Utils::Prefs::get('maxBitrate') || 0;
-		}
+		$maxRate = 0 if !defined $maxRate;
 
 		my ($command, $type, $format) = getConvertCommand($client, $fullpath);
 		
@@ -1058,6 +1054,9 @@ sub getConvertCommand {
 	}
 
 	foreach my $checkformat (@supportedformats) {
+		
+		# if there is a limiting bitrate, don't even check WAV or AIFF
+		next if ($maxRate != 0 && $checkformat ne 'mp3');
 
 		my @profiles = (
 			"$type-$checkformat-$player-$clientid",
@@ -1095,7 +1094,7 @@ sub getConvertCommand {
 
 		$format = $checkformat;
 
-		# special case for mp3 to mp3.
+		# special case for mp3 to mp3 when input is higher than specified max bitrate.
 		my $downsample = "$type-$checkformat-downsample-*";
 		
 		if (defined $command && $command eq "-" && !$undermax &&

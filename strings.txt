@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.100 2004/05/06 04:42:14 dean Exp $
+# $Id: strings.txt,v 1.101 2004/05/06 08:13:57 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1458,16 +1458,13 @@ SETUP_DIGITALVOLUMECONTROL_DESC
 	SE	Du kan välja mellan att låta ditital volym vara fix på max nivå, eller låta den styras av volymkontroller. När du väljer fix digital signalvolym, får den analoga signalen maximal kvalitet. Oavsett inställning, så påverkar påverkas analog volym av volymknapparna.
 
 SETUP_MAXBITRATE
-	DE	Maximale Transkodierungs-Bitrate
-	EN	Maximum Transcoding Bitrate
-	NO	Maksimal transkodings-bitrate
-	SE	Maximal transkodnings-bitrate
+	EN	Bitrate Limiting
 
 SETUP_MAXBITRATE_DESC
-	DE	Die maximale Transkodierungs-Bitrate für diesen Player. Alle Musikstücke oder Streams höherer Bitrate werden auf diese Rate heruntergerechnet. Geringere Bitraten bleiben unverändert. Wird ein Stream mit definierter Bitrate aufgerufen (z.B. stream.mp3?bitrate=128), so gilt dieser Wert. Gültige Bitraten sind 0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320. Null (0) deaktiviert die Beschränkung.
-	EN	Maximum transcoding bitrate for this player.  All transcoded files or streams that are higher will be downsampled.  Lower rates are left unchanged. Connecting to a stream with a bitrate parameter will override (eg. stream.mp3?bitrate=128). Valid bitrates are 0,32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320. Zero disables maximum Bitrate limits.
-	NO	Maksimal transkodings-bitrate for denne spilleren. Alle kodede filer eller strømmer (streams) med høyere rate vil bli samplet ned. Lavere bitrate forblir uendret. Skjer oppkoblingen mot en bitrate ned fast verdi (f.eks stream.mp3?bitrate=128) er det denne verdien som gjelder. Aksepterte verdier er 0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256 og 320. Verdien 0 slår av begrensningen.
-	SE	Maximal transkodnings-bitrate för denna spelare. Alla kodade filer eller strömmar med högre rate, kommer att samplas ned. Lägre bitrate lämnas oförändrade. Sker uppkoppling mot en bitrate med fixt värde (ex. stream.mp3?bitrate=128) är det detta värde som gäller. Godkända värden är 0,32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256 och 320. Värdet 0 stänger av maximal bitrate-begränsningen.
+	EN	SlimServer can automatically convert your music files to WAV/AIFF or MP3 on-the-fly to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to SlimServer across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that SlimServer will stream to your player.  MP3 songs encoded at a bitrate lower than below won't be converted.  If you choose No Limit, SlimServer will stream your MP3 files without conversion and your other file types as uncompressed PCM audio.  <br>(Note: In order to convert to MP3, SlimServer will need the LAME MP3 encoder installed on your system.  You can find out more about LAME <a href="http://lame.sourceforge.net/">here</a>.)
+
+SETUP_MP3BITRATE_DESC
+	EN	SlimServer can automatically convert your music files to MP3 on-the-fly to play back other formats than MP3.  SlimServer can also recompress your MP3 files to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to SlimServer across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that SlimServer will stream to your player.  MP3 songs encoded at a bitrate lower than below won't be converted.  <br>(Note: In order to convert to MP3, SlimServer will need the LAME MP3 encoder installed on your system.  You can find out more about LAME <a href="http://lame.sourceforge.net/">here</a>.)
 
 SETUP_MP3SILENCEPRELUDE
 	DE	Audio Startzeit
@@ -4759,6 +4756,9 @@ KBPS
 	NO	kbps
 	PT	kbps
 	SE	kbps
+
+NO_LIMIT
+	EN	No Limit
 
 GENRES
 	DE	Stilrichtungen

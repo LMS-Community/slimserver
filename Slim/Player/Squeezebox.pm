@@ -340,14 +340,7 @@ sub upgradeFirmware {
 sub formats {
 	my $client = shift;
 	
-	if (defined $client->signalStrength()) {
-		$::d_slimproto && msg ("Supporting formats: mp3 aif wav\n");
-		return ('mp3', 'aif','wav');
-	} else {
-		$::d_slimproto && msg ("Supporting formats: aif wav mp3\n");
-		return ('aif','wav','mp3');
-	}
-	
+	return ('aif','wav','mp3');
 }
 
 sub vfd {

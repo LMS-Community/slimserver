@@ -1,3 +1,6 @@
+
+# $Id: Client.pm,v 1.49 2004/05/06 08:13:58 kdf Exp $
+
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
