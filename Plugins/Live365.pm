@@ -533,7 +533,7 @@ sub getStationInfoString {
 
 # }}}
 
-# {{{ Plugins::Live365::ProtocolHandler
+#  Plugins::Live365::ProtocolHandler
 
 package Plugins::Live365::ProtocolHandler;
 
@@ -648,7 +648,7 @@ sub getPlaylist {
 		#$client->songduration($nextRefresh) if $nextRefresh;
 	}
 
-	if ( $nextRefresh and $currentSong->[0] =~ /^live365:/ ) {
+	if ( $nextRefresh and $currentSong =~ /^live365:/ ) {
 		Slim::Utils::Timers::setTimer(
 			$client,
 			Time::HiRes::time() + $nextRefresh,
@@ -669,7 +669,7 @@ sub DESTROY {
 
 1;
 
-# }}}
+# 
 
 # {{{ Plugins::Live365
 
