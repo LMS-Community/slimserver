@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.12 2004/09/03 07:26:46 kdf Exp $
+# $Id: SqueezeboxG.pm,v 1.13 2004/09/09 19:12:25 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -36,11 +36,13 @@ my $fullscreen = chr(255) x $screensize;
 my $topRowMask = (chr(255) . chr(0)) x ($screensize / 2);
 my $bottomRowMask = (chr(0) . chr(255)) x ($screensize / 2);
 
-my @fonttable = ( ['small.1', 'small.2'],
-		   		  ['medium.1', 'medium.2'],
-		   		  [ undef, 'large.2'],
-		          [ undef, 'huge.2']);
-		   
+my $defaultPrefs = {
+	'activeFont'			=> ['small','medium','large','huge']
+	,'activeFont_curr'		=> 1
+	,'idleFont'				=> ['small','medium','large','huge']
+	,'idleFont_curr'		=> 1
+	,'idleBrightness'		=> 2
+};
 
 sub new {
 	my (
@@ -54,7 +56,10 @@ sub new {
 	my $client = Slim::Player::Squeezebox->new($id, $paddr, $revision, $tcpsock);
 
 	bless $client, $class;
-	
+
+	# make sure any preferences unique to this client may not have set are set to the default
+	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
+
 	return $client;
 }
 
@@ -89,9 +94,28 @@ sub maxBrightness {
 	return $#brightnessMap;
 }
 
-
 sub maxTextSize {
-	return $#fonttable;
+	my $client = shift;
+
+	my $mode = Slim::Buttons::Common::mode($client);
+	my $prefname = ($mode && $mode eq 'off') ? "idleFont" : "activeFont";
+	Slim::Utils::Prefs::clientGetArrayMax($client,$prefname);
+}
+
+sub textSize {
+	my $client = shift;
+	my $newsize = shift;
+	
+	my $mode = Slim::Buttons::Common::mode($client);
+	
+	# grab base for prefname depending on mode
+	my $prefname = ($mode && $mode eq 'off') ? "idleFont" : "activeFont";
+	
+	if (defined($newsize)) {
+		return	Slim::Utils::Prefs::clientSet($client, $prefname."_curr", $newsize);
+	} else {
+		return	Slim::Utils::Prefs::clientGet($client, $prefname."_curr");
+	}
 }
 
 sub linesPerScreen {
@@ -116,7 +140,7 @@ my %fontSymbols = (
 	'hardspace' => "\x20"
 );
 
-sub update {	
+sub update {
 	my $client = shift;
 	my $lines = shift;
 	my $nodoublesize = shift;
@@ -199,8 +223,25 @@ sub render {
 sub fonts {
 	my $client = shift;
 	my $size = shift;
-	unless (defined $size) {$size = $client->textSize();}
-	return $fonttable[$size];
+	my $current;
+	
+	my $font;
+	
+	if (defined Slim::Buttons::Common::param($client,'font')) {
+		$font = Slim::Buttons::Common::param($client,'font');
+	} else {
+		unless (defined $size) {$size = $client->textSize();}
+		my $mode = Slim::Buttons::Common::mode($client);
+		
+		# grab base for prefname depending on mode
+		my $prefname = ($mode && $mode eq 'off') ? "idleFont" : "activeFont";
+		$font	= Slim::Utils::Prefs::clientGet($client, $prefname, $size);
+	}
+	
+	my $fontref = Slim::Display::Graphics::gfonthash;
+	my @fonts = @{$fontref->{$font}};
+	return \@fonts;
+	
 }
 	
 # returns progress bar text
@@ -307,7 +348,7 @@ sub measureText {
 	my $line = shift;
 	
 	my $fonts = $client->fonts();
-	
+
 	my $len = Slim::Display::Graphics::measureText($fonts->[$line-1], $client->symbols($text));
 	return $len;
 }

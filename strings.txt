@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.129 2004/09/03 01:34:44 kdf Exp $
+# $Id: strings.txt,v 1.130 2004/09/09 19:12:22 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -982,6 +982,21 @@ SETUP_GROUP_XPL_DESC
 	NO	Dette er innstillinger for xPL-protokollen
 	SE	Detta är inställningar för xPL-protokollet
 
+SETUP_FONTLIST
+	EN	Font List
+
+SETUP_ACTIVEFONT
+	EN	Font
+
+SETUP_ACTIVEFONT_DESC
+	EN	You can use the SIZE button on the remote or the radio buttons below to switch between fonts on the player display. You may choose the order that they appear using the menus below.  
+
+SETUP_IDLEFONT
+	EN	Standby Font
+
+SETUP_IDLEFONT_DESC
+	EN	When the player is standby, you can use the SIZE button on the remote or the radio buttons below to switch between fonts for the clock display. You may choose the order that they appear using the menus below.  
+
 SETUP_DOUBLESIZE
 	DE	Textgröße
 	DK	Tekststørrelse
@@ -1005,27 +1020,27 @@ SETUP_OFFDISPLAYSIZE
 	PT	Tamanho do Texto ao Desligar
 	SE	Textstorlek i standby-läge
 
-SETUP_GROUP_SCROLLPAUSE
+SETUP_SCROLLPAUSE
 	DE	Pause vor dem Scrollen
 	EN	Scroll Pause
 	FR	Pause avant défilement
 	NO	Pause ved scrolling
 	SE	Paus under scrollning
 
-SETUP_GROUP_SCROLLPAUSE_DESC
+SETUP_SCROLLPAUSE_DESC
 	DE	Sie können die Zeit definieren, die der Player wartet, bevor er mit dem horizontalen Scrollen beginnt. Geben Sie einen Wert in Sekunden ein, die vor oder zwischen dem Scrollen gewartet werden soll. Null (0) unterdrückt jegliche Pause und scrollt sofort. Standardwert ist 3.6 Sekunden.
 	EN	You can adjust the amount of time that the player waits before starting horizontal scrolling of the text on the display.  Enter a value, in seconds, for the amount of time to wait before scrolling or between scrolling.  Enter zero to not pause at all and scroll immediately. 3.6 seconds is the default.
 	FR	Vous pouvez ajuster le temps de pause avant que la platine active le défilement horizontal du texte sur l'afficheur. Entrez le temps d'attente avant défilement en secondes. Entrez zéro (0) pour un défilement continu. La valeur par défaut est de 3.6 secondes.
 	SE	Fördröjning innan scrollning av långa texter börjar. Multipel av 0.9 fungerar bäst. 0.001 rekommenderas som lägsta värde.
 
-SETUP_GROUP_SCROLLRATE
+SETUP_SCROLLRATE
 	DE	Scrollrate
 	EN	Scroll Rate
 	FR	Vitesse de défilement
 	NO	Scroll-frekvens
 	SE	Scroll-frekvens
 
-SETUP_GROUP_SCROLLRATE_DESC
+SETUP_SCROLLRATE_DESC
 	DE	Sie können die Zeit definieren, die der Player zwischen dem Scrollen einzelner Buchstaben auf dem Display wartet. Geben Sie die Wartezeit in Sekunden ein. Kleinere Werte beschleunigen den Scrollvorgang. Standardwert ist 0.15 Sekunden.
 	EN	You can adjust the amount of time that the player waits before scrolling another letter of text on the display. Enter a value, in seconds, for the amount of time to wait.  Lower numbers make it scroll faster.  0.15 seconds is the default for slingle-line, 0.1 seconds for double-line.
 	FR	Vous pouvez ajuster le temps de pause avant que la platine active le défilement du caractère suivant sur l'afficheur. Entrez le temps d'attente avant défilement en secondes. Plus le nombre est bas, plus le défilement sera rapide. La valeur par défaut est de 0.15 seconde.
@@ -1918,7 +1933,7 @@ SETUP_RESCAN_BUTTON
 SETUP_RESCAN_DESC
 	DE	Wenn Sie Musik hinzufügen, löschen oder Änderungen in ihrem Musik Verzeichnis vornehmen, dann können Sie die SlimServer Software mit einem erneuten Durchsuchen dazu veranlassen, ihre Datenbank zu aktualisieren.
 	DK	Hvis du tilføjer, fjerner eller ændrer musik i din musiksamling kan du få SlimServer-softwaren til at genindlæse informationerne omkring din musiksamling så du er sikker på SlimServer database er up-to-date.
-	EN	If you add, remove or change music in your music folder, you can have the SlimServer rescan your music to make sure that its database is up to date.
+	EN	If you add, remove or change music in your music library, you can have the SlimServer rescan your music to make sure that its database is up to date.
 	FI	Varmistaaksesi, että SlimServer soittimesi tietokanta on ajan tasalla voit lukea musiikkikansiosi uudelleen.
 	FR	Si vous modifiez le contenu de votre dossier de musique, vous pouvez forcer le système de gestion du SlimServer à répertorier de nouveau son contenu pour garantir que sa base de données est à jour.
 	NL	Als U muziek heeft toegevoegd, verwijderd of veranderd, kunt U de SlimServer software opdracht geven de muziekfolder opnieuw in te lezen.
@@ -5539,23 +5554,17 @@ PLAYER_SETTINGS
 	SE	Spelarinställningar
 
 ALARM_SETTINGS
-	EN	Alarm Settings
+	EN	Alarm
+
+DISPLAY_SETTINGS
+	EN	Display
 
 AUDIO_SETTINGS
-	EN	Audio Settings
+	EN	Audio
 
-ADDITIONAL_PLAYER_SETTINGS
-	DE	Erweiterte Player Einstellungen
-	DK	Yderligere afspiller-indstillinger
-	EN	Additional Settings
-	ES	Configuración avanzada del reproductor
-	FI	Lisää soittimen asetuksia
-	FR	Réglages supplémentaires de la platine
-	NL	Extra Speler instellingen
-	NO	Ekstra spiller instillinger
-	PT	Configurações Avançadas do Cliente
-	SE	Extra inställningar
-
+REMOTE_SETTINGS
+	EN	Remote
+	
 PLAYERIR_SETTINGS
 	DE	IR Einstellungen
 	DK	IR-indstillinger

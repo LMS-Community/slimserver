@@ -36,7 +36,11 @@ sub song {
 	if (!defined($index)) {
 		$index = Slim::Player::Source::currentSongIndex($client);
 	}
-	return ${playList($client)}[${shuffleList($client)}[$index]];
+	if (defined ${shuffleList($client)}[$index]) {
+		return ${playList($client)}[${shuffleList($client)}[$index]];
+	} else {
+		return ${playList($client)}[$index];
+	}
 }
 
 sub shuffleList {

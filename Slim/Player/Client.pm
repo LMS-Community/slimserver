@@ -1,4 +1,4 @@
-# $Id: Client.pm,v 1.56 2004/08/25 23:24:44 dean Exp $
+# $Id: Client.pm,v 1.57 2004/09/09 19:12:24 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -628,6 +628,15 @@ settingsSelection() - type: int
 
 =cut
 
+my $defaultPrefs = {
+		'maxBitrate'			=> undef # will be set by the client device OR default to server pref when accessed.
+		,'alarmvolume'			=> 50
+		,'alarm'				=> 0
+		,'playername'			=> undef
+		,'repeat'				=> 2
+		,'shuffle'				=> 0
+	};
+
 sub new {
 	my ($class, $id, $paddr) = @_;
 	
@@ -776,7 +785,7 @@ sub new {
 	$clientHash{$id} = $client;
 
 	# make sure any preferences this client may not have set are set to the default
-	Slim::Utils::Prefs::checkClientPrefs($client);
+	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
 
 	$client->paddr($paddr);
 
@@ -936,6 +945,8 @@ sub needsUpgrade {
 sub signalStrength {
 	return undef;
 }
+
+sub hasDigitalOut() { return 0; }
 
 sub maxBrightness() { return undef; }
 

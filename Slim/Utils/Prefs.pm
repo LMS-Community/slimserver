@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.84 2004/09/02 23:03:18 dean Exp $
+# $Id: Prefs.pm,v 1.85 2004/09/09 19:12:25 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -88,6 +88,8 @@ sub defaultCacheDir {
 # in the client key of the main hash.
 # If the preference ends in a digit or a # then it will be interpreted as an array preference,
 # so if this is not what you intend, don't end it with a digit or a #
+# Squeezebox G may include several prefs not needed by other players.  For those defaults, use
+# %Slim::Player::Player::GPREFS
 my %DEFAULT = (
 	"httpport"				=> 9000
 	,"cliport"				=> 9090
@@ -97,10 +99,10 @@ my %DEFAULT = (
 	,"skin"					=> "Default"
 	,"language"				=> "EN"
 	,"refreshRate"			=> 30
-	,"displaytexttimeout" 	=> 1.0
+	,"displaytexttimeout"	=> 1.0
 	,"filesort"				=> 0
-	,"playtrackalbum" 		=> 1
-	,"artistinalbumsearch" 	=> 0
+	,"playtrackalbum"		=> 1
+	,"artistinalbumsearch"	=> 0
 	,"ignoredarticles"		=> "The El La Los Las Le Les"
 	,"splitchars"			=> ''
 	,"authorize"			=> 0				# No authorization by default
@@ -132,37 +134,49 @@ my %DEFAULT = (
 	,'timeFormat'			=> q(|%I:%M:%S %p)
 	,'titleFormatWeb'		=> 1
 	,'iTunesplaylistprefix'	=> 'iTunes: '
- 	,'iTunesplaylistsuffix'	=> ''
-	,'MoodLogicplaylistprefix'	=> 'MoodLogic: '
- 	,'MoodLogicplaylistsuffix'	=> ''
- 	,'itunesscaninterval'	=> 60
- 	,'moodlogicscaninterval'	=> 60
- 	,'itunes_library_autolocate' => 1
- 	,'itunes_library_music_path' => defaultAudioDir()
- 	,'ignoredisableditunestracks' => 0
- 	,'instantMixMax'		=> 12
- 	,'varietyCombo'			=> 50
-	,'ignoreDirRE'          => ''
+	,'iTunesplaylistsuffix'	=> ''
+	,'MoodLogicplaylistprefix'		=> 'MoodLogic: '
+	,'MoodLogicplaylistsuffix'		=> ''
+	,'itunesscaninterval'	=> 60
+	,'moodlogicscaninterval'		=> 60
+	,'itunes_library_autolocate'	=> 1
+	,'itunes_library_music_path'	=> defaultAudioDir()
+	,'ignoredisableditunestracks'	=> 0
+	,'instantMixMax'		=> 12
+	,'varietyCombo'			=> 50
+	,'ignoreDirRE'			=> ''
 	,'checkVersion'			=> 1
 	,'mDNSname'				=> 'SlimServer'
 	,'titleFormat'			=> ['TITLE',
-		'DISC-TRACKNUM. TITLE',
-		'TRACKNUM. TITLE',
-		'TRACKNUM. ARTIST - TITLE',
-		'TRACKNUM. TITLE (ARTIST)',
-		'TRACKNUM. TITLE - ARTIST - ALBUM',
-		'FILE.EXT',
-		'TRACKNUM. TITLE from ALBUM by ARTIST',
-		'TITLE (ARTIST)',
-		'ARTIST - TITLE']
+								'DISC-TRACKNUM. TITLE',
+								'TRACKNUM. TITLE',
+								'TRACKNUM. ARTIST - TITLE',
+								'TRACKNUM. TITLE (ARTIST)',
+								'TRACKNUM. TITLE - ARTIST - ALBUM',
+								'FILE.EXT',
+								'TRACKNUM. TITLE from ALBUM by ARTIST',
+								'TITLE (ARTIST)',
+								'ARTIST - TITLE'
+								]
 	,'guessFileFormats'		=> [
-		'(ARTIST - ALBUM) TRACKNUM - TITLE', 
-		'/ARTIST/ALBUM/TRACKNUM - TITLE', 
-		'/ARTIST/ALBUM/TRACKNUM TITLE', 
-		'/ARTIST/ALBUM/TRACKNUM. TITLE' ]
-	,'menuItem'			=> ['NOW_PLAYING', 'BROWSE_BY_GENRE', 'BROWSE_BY_ARTIST', 'BROWSE_BY_ALBUM', 'BROWSE_MUSIC_FOLDER'
-						, 'SEARCH', 'SAVED_PLAYLISTS', 'ShoutcastBrowser', 'PLUGINS', 'SETTINGS',]
+								'(ARTIST - ALBUM) TRACKNUM - TITLE', 
+								'/ARTIST/ALBUM/TRACKNUM - TITLE', 
+								'/ARTIST/ALBUM/TRACKNUM TITLE', 
+								'/ARTIST/ALBUM/TRACKNUM. TITLE' 
+								]
+	,'menuItem'				=> ['NOW_PLAYING', 
+								'BROWSE_BY_GENRE', 
+								'BROWSE_BY_ARTIST', 
+								'BROWSE_BY_ALBUM', 
+								'BROWSE_MUSIC_FOLDER', 
+								'SEARCH', 
+								'SAVED_PLAYLISTS', 
+								'ShoutcastBrowser', 
+								'PLUGINS', 
+								'SETTINGS',
+								]
 	,'disabledplugins'		=> []
+	,'enabledfonts'			=> ['small', 'medium', 'large', 'huge']
 	,'persistPlaylists'		=> 1
 	,'reshuffleOnRepeat'	=> 0
 	,'saveShuffled'			=> 0
@@ -176,43 +190,7 @@ my %DEFAULT = (
 	,'xplir'				=> 'both'
 	,'xplinterval'			=> 5
 	,'xplsupport'			=> 0
-	,"CLIENTPREFS" => {
-			'autobrightness'		=> 1
-			,'alarmvolume'			=> 50
-			,'alarm'				=> 0
-			,'bass'					=> 50
-			,'digitalVolumeControl' => 1
-			,'disabledirsets'		=> []
-			,'doublesize'			=> 0
-			,'irmap'				=> Slim::Hardware::IR::defaultMapFile()
-			,'maxBitrate'			=> undef # will be set by the client device OR default to server pref when accessed.
-			,'mp3SilencePrelude' 	=> 0
-			,'offDisplaySize'		=> 0
-			,'pitch'				=> 100
-			,'playername'			=> undef
-			,'playingDisplayMode'	=> 0
-			,'power'				=> 1
-			,'powerOffBrightness'	=> 1
-			,'powerOnBrightness'	=> 4
-			,'idleBrightness'		=> 1
-			,'repeat'				=> 2
-			,'screensaver'			=> 'playlist'
-			,'screensavertimeout' 	=> 30
-			,'scrollPause'			=> 3.6
-			,'scrollPauseDouble'	=> 3.6
-			,'scrollRate'			=> 0.15
-			,'scrollRateDouble'		=> 0.1
-			,'shuffle'				=> 0
-			,'showbufferfullness'	=> 0
-			,'silent'				=> 0
-			,'syncPower'			=> 0
-			,'syncVolume'			=> 0
-			,'titleFormat'			=> [5, 1, 3, 6]
-			,'titleFormatCurr'		=> 1
-			,'treble'				=> 50
-			,'volume'				=> 50
-			}
-	);
+);
 
 # The following hash contains functions that are executed when the pref corresponding to
 # the hash key is changed.  Client specific preferences are contained in a hash stored
@@ -362,7 +340,6 @@ sub onChange {
 # If they aren't there already they are set to the value in %DEFAULT
 sub checkServerPrefs {
 	foreach my $key (keys %DEFAULT) {
-		next if $key eq "CLIENTPREFS";
 		if (!defined($prefs{$key})) {
 			if (ref($DEFAULT{$key} eq 'ARRAY')) {
 				my @temp = @{$DEFAULT{$key}};
@@ -374,18 +351,18 @@ sub checkServerPrefs {
 	}
 }
 
-# This makes sure all the client preferences defined in %DEFAULT are in the pref file.
-# If they aren't there already they are set to the value in %DEFAULT
-sub checkClientPrefs {
+# This makes sure all the client preferences defined in the submitted hash are in the pref file.
+sub initClientPrefs {
 	my $client = shift;
-	foreach my $key (keys %{$DEFAULT{"CLIENTPREFS"}}) {
+	my $defaultPrefs = shift;
+	foreach my $key (keys %{$defaultPrefs}) {
 		my $clientkey = $client->id() . '-' . $key;
 		if (!defined($prefs{$clientkey})) {
-			if (ref($DEFAULT{"CLIENTPREFS"}{$key}) eq 'ARRAY') {
-				my @temp = @{$DEFAULT{"CLIENTPREFS"}{$key}};
+			if (ref($defaultPrefs->{$key}) eq 'ARRAY') {
+				my @temp = @{$defaultPrefs->{$key}};
 				$prefs{$clientkey} = \@temp;
 			} else {
-				$prefs{$clientkey} = $DEFAULT{"CLIENTPREFS"}{$key};
+				$prefs{$clientkey} = $defaultPrefs->{$key};
 			}
 		}
 	}
@@ -479,15 +456,6 @@ sub getDefault {
 		return $DEFAULT{$key}[$ind];
 	}
 	return $DEFAULT{$key};
-}
-
-sub clientGetDefault {
-	my $key = shift;
-	my $ind = shift;
-	if (defined($ind)) {
-		return $DEFAULT{'CLIENTPREFS'}{$key}[$ind];
-	}
-	return $DEFAULT{'CLIENTPREFS'}{$key};
 }
 
 sub set {

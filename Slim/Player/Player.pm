@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.25 2004/09/01 00:14:32 dean Exp $
+# $Id: Player.pm,v 1.26 2004/09/09 19:12:24 dean Exp $
 #
 package Slim::Player::Player;
 use strict;
@@ -16,11 +16,43 @@ use Slim::Player::Client;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw (string);
 use Slim::Display::VFD::Animation;
+use Slim::Hardware::IR;
 
 our @ISA = ("Slim::Player::Client");
 
 my @fonttable = ( ['small', 'small'],
 		   		  [ undef, 'large']);
+
+my $defaultPrefs = {
+		'autobrightness'		=> 1
+		,'bass'					=> 50
+		,'digitalVolumeControl'	=> 1
+		,'disabledirsets'		=> []
+		,'doublesize'			=> 0
+		,'idleBrightness'		=> 1
+		,'irmap'				=> Slim::Hardware::IR::defaultMapFile()
+		,'mp3SilencePrelude' 	=> 0
+		,'offDisplaySize'		=> 0
+		,'pitch'				=> 100
+		,'playingDisplayMode'	=> 0
+		,'power'				=> 1
+		,'powerOffBrightness'	=> 1
+		,'powerOnBrightness'	=> 4
+		,'screensaver'			=> 'playlist'
+		,'screensavertimeout'	=> 30
+		,'scrollPause'			=> 3.6
+		,'scrollPauseDouble'	=> 3.6
+		,'scrollRate'			=> 0.15
+		,'scrollRateDouble'		=> 0.1
+		,'showbufferfullness'	=> 0
+		,'silent'				=> 0
+		,'syncPower'			=> 0
+		,'syncVolume'			=> 0
+		,'titleFormat'			=> [5, 1, 3, 6]
+		,'titleFormatCurr'		=> 1
+		,'treble'				=> 50
+		,'volume'				=> 50
+	};
 
 sub new {
 	my $class = shift;
@@ -29,6 +61,9 @@ sub new {
 	my $revision = shift;
 	my $client = Slim::Player::Client->new($id, $paddr);
 	bless $client, $class;
+
+	# make sure any preferences this client may not have set are set to the default
+	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
 
 	# initialize model-specific features:
 	$client->revision($revision);
@@ -41,10 +76,11 @@ sub init {
 	# fire it up!
 	$client->power(Slim::Utils::Prefs::clientGet($client,'power'));
 	$client->startup();
-                
+
 	# start the screen saver
 	Slim::Buttons::ScreenSaver::screenSaver($client);
 }
+
 
 # usage							float		buffer fullness as a percentage
 sub usage {

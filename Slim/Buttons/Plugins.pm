@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.25 2004/08/03 17:29:10 vidur Exp $
+# $Id: Plugins.pm,v 1.26 2004/09/09 19:12:23 dean Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
@@ -38,6 +38,7 @@ my $read_onfly = Slim::Utils::Prefs::get('plugins-onthefly');	# set to 1 to pick
 my %plugins = ();
 my %curr_plugin = ();
 my $plugins_read;
+my %playerplugins = ();
 
 my %functions = (
 	'left' => sub  {
@@ -124,6 +125,10 @@ sub enabledPlugins {
 	}
 	@enabled = sort { Slim::Utils::Text::ignoreCaseArticles($plugins{$a}->{'name'}) cmp Slim::Utils::Text::ignoreCaseArticles($plugins{$b}->{'name'}) } @enabled;
 	return @enabled;
+}
+
+sub playerPlugins {
+	return \%playerplugins;
 }
 
 sub installedPlugins {
@@ -243,19 +248,25 @@ sub addWebPages {
 sub addSetupGroups {
 	no strict 'refs';
 	foreach my $plugin (keys %{installedPlugins()}) {
-		my ($groupRef,$prefRef);
+		my ($groupRef,$prefRef,$isClient);
 		if (UNIVERSAL::can("Plugins::${plugin}","setupGroup")) {
-			eval {($groupRef,$prefRef) = &{"Plugins::${plugin}::setupGroup"}()};
+			eval {($groupRef,$prefRef,$isClient) = &{"Plugins::${plugin}::setupGroup"}()};
 			if ($@) {
 				$::d_plugins && msg("Can't get setup group for plugin $plugin : " . $@);
 			} else {
 				if ($groupRef && $prefRef && exists($plugins{$plugin})) {
-					Slim::Web::Setup::addGroup('plugins',$plugin,$groupRef,undef,$prefRef);
-					Slim::Web::Setup::addCategory("PLUGINS.${plugin}",
-									 { title => $plugins{$plugin}->{'name'},
-									   Groups => { 'Default' => $groupRef },
-									   GroupOrder => ['Default'],
-									   Prefs => $prefRef });
+					my %params =  ( title => $plugins{$plugin}->{'name'},
+						Groups => { 'Default' => $groupRef },
+						GroupOrder => ['Default'],
+						Prefs => $prefRef
+						);
+					if (defined $isClient) {
+						$playerplugins{$plugins{$plugin}->{'name'}} = 1;
+						Slim::Web::Setup::addGroup('player_plugins',$plugin,$groupRef,undef,$prefRef);
+					} else {
+						Slim::Web::Setup::addGroup('plugins',$plugin,$groupRef,undef,$prefRef);
+						Slim::Web::Setup::addCategory("PLUGINS.${plugin}",\%params);
+					}
 				}
 			}
 		}
@@ -263,11 +274,11 @@ sub addSetupGroups {
 }
 
 sub init {
-    no strict 'refs';
-    foreach my $plugindir (pluginDirs()) {
+	no strict 'refs';
+	foreach my $plugindir (pluginDirs()) {
 		unshift @INC,  $plugindir;
 	}
-    foreach my $plugin (enabledPlugins()) {
+	foreach my $plugin (enabledPlugins()) {
 		# We use initPlugin() instead of the more succinct
 		# init() because it's less likely to cause backward
 		# compatibility problems.
@@ -278,8 +289,8 @@ sub init {
 }
 
 sub shutdownPlugins {
-    no strict 'refs';
-    foreach my $plugin (enabledPlugins()) {
+	no strict 'refs';
+	foreach my $plugin (enabledPlugins()) {
 		# We use shutdownPlugin() instead of the more succinct
 		# shutdown() because it's less likely to cause backward
 		# compatibility problems.

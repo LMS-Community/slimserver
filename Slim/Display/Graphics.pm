@@ -13,11 +13,29 @@ use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 
 my %fonts;
+my %fonthash;
+my @gfonts;
 
 sub init {
 	%fonts = ();
 	loadFonts();
 }
+
+sub gfonthash {
+	return \%fonthash;
+}
+
+sub fontnames {
+	my $client = shift;
+	my %fontnames;
+	my $i=0;
+	foreach my $gfont (keys %fonthash) {
+		my $fontname = $fonthash{$gfont}->[1];
+		$fontname =~ s/(\.2)?//g;
+		$fontnames{$fontname} = $fontname;
+	}
+	return \%fontnames;
+};
 
 sub string {
 	use bytes;
@@ -104,11 +122,11 @@ sub loadFonts {
 	foreach my $font (keys %fontfiles) {
 
 		$::d_graphics && msg( "Now parsing: $font\n");
-
+		if ($font =~ m/(.*?).(\d)/i) {
+			$fonthash{$1}->[$2-1] = $font;
+		}
 		my $fontgrid = parseBMP($fontfiles{$font});
-		
 		my $fonttable = parseFont($fontgrid);
-
 		$fonts{$font} = $fonttable;
 	}
 	return;

@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.94 2004/09/03 01:34:44 kdf Exp $
+# $Id: Setup.pm,v 1.95 2004/09/09 19:12:25 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -104,50 +104,26 @@ sub initSetupConfig {
 	%setup = (
 	'player' => {
 		'title' => string('PLAYER_SETTINGS') #may be modified in postChange to reflect player name
-		,'children' => ['player','audio','alarm','misc']
+		,'children' => []
+		,'GroupOrder' => []
 		,'isClient' => 1
 		,'preEval' => sub {
 					my ($client,$paramref,$pageref) = @_;
-					my $titleFormatMax = Slim::Utils::Prefs::clientGetArrayMax($client,'titleFormat') + $pageref->{'Prefs'}{'titleFormat'}{'arrayAddExtra'};
+					return if (!defined($client));
+					playerChildren($client, $pageref);
+
 					if ($client->isPlayer()) {
-						$pageref->{'children'}[3] = 'misc';
-						$pageref->{'GroupOrder'}[2] = 'Brightness';
-						$pageref->{'GroupOrder'}[3] = 'TextSize';
-						$pageref->{'GroupOrder'}[4] = 'Display';
+						$pageref->{'GroupOrder'} = ['Default','TitleFormats','Display'];
+						if (scalar(keys %{Slim::Buttons::Common::hash_of_savers()}) > 0) {
+							push @{$pageref->{'GroupOrder'}}, 'ScreenSaver';
+							$pageref->{'Prefs'}{'screensaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
+						}
 					} else {
-						$pageref->{'children'}[3] = undef;
-						$pageref->{'GroupOrder'}[2] = undef;
-						$pageref->{'GroupOrder'}[3] = undef;
-						$pageref->{'GroupOrder'}[4] = undef;
+						$pageref->{'GroupOrder'} = ['Default'];
 					}
-					$pageref->{'Prefs'}{'titleFormatCurr'}{'validateArgs'} = [0,$titleFormatMax,1,1];
-					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [$client->defaultName()];
-					removeExtraArrayEntries($client,'titleFormat',$paramref,$pageref);
-					my @text = (0..$client->maxTextSize);
-					$pageref->{'Prefs'}{'doublesize'}{'validateArgs'} = \@text;
-					$pageref->{'Prefs'}{'doublesize'}{'options'} = fonts($client);
-					$pageref->{'Prefs'}{'offDisplaySize'}{'validateArgs'} = \@text;
-					$pageref->{'Prefs'}{'offDisplaySize'}{'options'} = fonts($client);
-					if (scalar(keys %{Slim::Buttons::Common::hash_of_savers()}) > 0) {
-						$pageref->{'GroupOrder'}[5] = 'ScreenSaver';
-						$pageref->{'Prefs'}{'screensaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
-					} else {
-						$pageref->{'GroupOrder'}[5] = undef;
-					}
-					if (defined $client->maxBrightness) {
-						$pageref->{'Prefs'}{'powerOnBrightness'}{'validateArgs'} = [0,$client->maxBrightness,1,1];
-						$pageref->{'Prefs'}{'powerOffBrightness'}{'validateArgs'} = [0,$client->maxBrightness,1,1];
-						$pageref->{'Prefs'}{'idleBrightness'}{'validateArgs'} = [0,$client->maxBrightness,1,1];
-						
-						$pageref->{'Prefs'}{'powerOnBrightness'}{'options'}{$client->maxBrightness} =  $client->maxBrightness.' ('.string('BRIGHTNESS_BRIGHTEST').')';
-						$pageref->{'Prefs'}{'powerOffBrightness'}{'options'}{$client->maxBrightness} =  $client->maxBrightness.' ('.string('BRIGHTNESS_BRIGHTEST').')';
-						$pageref->{'Prefs'}{'idleBrightness'}{'options'}{$client->maxBrightness} =  $client->maxBrightness.' ('.string('BRIGHTNESS_BRIGHTEST').')';
-					} else {
-						$pageref->{'Prefs'}{'powerOnBrightness'}{'validateArgs'} = [0,4,1,1];
-						$pageref->{'Prefs'}{'powerOffBrightness'}{'validateArgs'} = [0,4,1,1];
-						$pageref->{'Prefs'}{'idleBrightness'}{'validateArgs'} = [0,4,1,1];
-						$pageref->{'Prefs'}{'idleBrightness'}{'options'}{'4'} =  '4 ('.string('BRIGHTNESS_BRIGHTEST').')';
-					}
+					
+					Slim::Buttons::Plugins::addSetupGroups();
+	
 					
 					if (Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {
 					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'options'}{'6'} =  string('SETUP_SHOWBUFFERFULLNESS');
@@ -156,6 +132,8 @@ sub initSetupConfig {
 						delete $pageref->{'Prefs'}{'playingDisplayMode'}{'options'}{'6'};
 					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,5,1,1];
 					}
+
+					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [$client->defaultName()];
 
 				}
 		,'postChange' => sub {
@@ -178,7 +156,6 @@ sub initSetupConfig {
 					}
 					$client->update();
 				}
-		,'GroupOrder' => ['Default','TitleFormats',undef,undef,undef,undef]
 		#,'template' => 'setup_player.html'
 		,'Groups' => {
 			'Default' => {
@@ -194,26 +171,6 @@ sub initSetupConfig {
 					,'GroupDesc' => string('SETUP_TITLEFORMAT_DESC')
 					,'GroupPrefHead' => '<tr><th>' . string('SETUP_CURRENT') . 
 										'</th><th></th><th>' . string('SETUP_FORMATS') . '</th><th></th></tr>'
-					,'GroupLine' => 1
-				}
-			,'Brightness' => {
-					'PrefOrder' => ['powerOnBrightness','powerOffBrightness','idleBrightness','autobrightness']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'GroupHead' => string('SETUP_GROUP_BRIGHTNESS')
-					,'GroupDesc' => string('SETUP_GROUP_BRIGHTNESS_DESC')
-					,'GroupLine' => 1
-				}
-			,'TextSize' => {
-					'PrefOrder' => ['doublesize','offDisplaySize',]
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'GroupHead' => string('SETUP_DOUBLESIZE')
-					,'GroupDesc' => string('SETUP_DOUBLESIZE_DESC')
 					,'GroupLine' => 1
 				}
 			,'Display' => {
@@ -236,42 +193,9 @@ sub initSetupConfig {
 				,'GroupLine' => 1
 				,'GroupSub' => 1
 			}
-			}
+		}
 		,'Prefs' => {
-			'powerOnBrightness' => {
-							'validate' => \&validateInt
-							,'validateArgs' => undef
-							,'options' => {
-									'0' => '0 ('.string('BRIGHTNESS_DARK').')'
-									,'1' => '1'
-									,'2' => '2'
-									,'3' => '3'
-									,'4' => '4'
-									}
-						}
-			,'powerOffBrightness' => {
-							'validate' => \&validateInt
-							,'validateArgs' => undef
-							,'options' => {
-									'0' => '0 ('.string('BRIGHTNESS_DARK').')'
-									,'1' => '1'
-									,'2' => '2'
-									,'3' => '3'
-									,'4' => '4'
-									}
-						}
-			,'idleBrightness' => {
-							'validate' => \&validateInt
-							,'validateArgs' => undef
-							,'options' => {
-									'0' => '0 ('.string('BRIGHTNESS_DARK').')'
-									,'1' => '1'
-									,'2' => '2'
-									,'3' => '3'
-									,'4' => '4'
-									}
-						}
-			,'playername' => {
+			'playername' => {
 							'validate' => \&validateHasText
 							,'validateArgs' => [] #will be set by preEval
 							,'PrefSize' => 'medium'
@@ -311,7 +235,7 @@ sub initSetupConfig {
 							,'inputTemplate' => 'setup_input_array_sel.html'
 							,'validate' => \&validateInHash
 							,'validateArgs' => [] #filled by initSetup
-							,'options' => {} #filled by initSetup using hash_of_titleFormats()
+							,'options' => {} #filled by initSetup using hash_of_prefs('titleFormat')
 							,'onChange' => sub {
 										my ($client,$changeref,$paramref,$pageref) = @_;
 										if (exists($changeref->{'titleFormat'}{'Processed'})) {
@@ -330,10 +254,172 @@ sub initSetupConfig {
 							'validate' => \&validateNumber
 							,'validateArgs' => [0,undef,1]
 						}
+			}
+		} #end of setup{'player'} hash
+
+	,'display' => {
+		'title' => string('DISPLAY_SETTINGS')
+		,'parent' => 'player'
+		,'isClient' => 1
+		,'GroupOrder' => [undef,undef,undef,'ScrollPause','ScrollRate']
+		,'preEval' => sub {
+					my ($client,$paramref,$pageref) = @_;
+					playerChildren($client, $pageref);
+
+					if ($client->isPlayer()) {
+						$pageref->{'GroupOrder'}[0] = 'Brightness';
+						if ($client->isa("Slim::Player::SqueezeboxG")) {
+							$pageref->{'GroupOrder'}[1] = 'activeFont'; 
+							$pageref->{'GroupOrder'}[2] = 'idleFont';
+
+							my $activeFontMax = Slim::Utils::Prefs::clientGetArrayMax($client,'activeFont') + 1;
+							my $idleFontMax = Slim::Utils::Prefs::clientGetArrayMax($client,'idleFont') + 1;
+							$pageref->{'Prefs'}{'activeFont_curr'}{'validateArgs'} = [0,$activeFontMax,1,1];
+							$pageref->{'Prefs'}{'idleFont_curr'}{'validateArgs'} = [0,$idleFontMax,1,1];
+		
+							fillFontOptions('display','idleFont');
+							fillFontOptions('display','activeFont');
+							removeExtraArrayEntries($client,'activeFont',$paramref,$pageref);
+							removeExtraArrayEntries($client,'idleFont',$paramref,$pageref);
+						} else {
+							$pageref->{'GroupOrder'}[1] = 'TextSize';
+							$pageref->{'GroupOrder'}[2] = undef;
+						}
+
+					} else {
+						$pageref->{'GroupOrder'}[0] = undef;
+						$pageref->{'GroupOrder'}[1] = undef;
+						$pageref->{'GroupOrder'}[2] = undef;
+					}
+
+					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [$client->defaultName()];
+
+					if (defined $client->maxBrightness) {
+						$pageref->{'Prefs'}{'powerOnBrightness'}{'validateArgs'} = [0,$client->maxBrightness,1,1];
+						$pageref->{'Prefs'}{'powerOffBrightness'}{'validateArgs'} = [0,$client->maxBrightness,1,1];
+						$pageref->{'Prefs'}{'idleBrightness'}{'validateArgs'} = [0,$client->maxBrightness,1,1];
+						
+						$pageref->{'Prefs'}{'powerOnBrightness'}{'options'}{$client->maxBrightness} =  $client->maxBrightness.' ('.string('BRIGHTNESS_BRIGHTEST').')';
+						$pageref->{'Prefs'}{'powerOffBrightness'}{'options'}{$client->maxBrightness} =  $client->maxBrightness.' ('.string('BRIGHTNESS_BRIGHTEST').')';
+						$pageref->{'Prefs'}{'idleBrightness'}{'options'}{$client->maxBrightness} =  $client->maxBrightness.' ('.string('BRIGHTNESS_BRIGHTEST').')';
+					} else {
+						$pageref->{'Prefs'}{'powerOnBrightness'}{'validateArgs'} = [0,4,1,1];
+						$pageref->{'Prefs'}{'powerOffBrightness'}{'validateArgs'} = [0,4,1,1];
+						$pageref->{'Prefs'}{'idleBrightness'}{'validateArgs'} = [0,4,1,1];
+						$pageref->{'Prefs'}{'idleBrightness'}{'options'}{'4'} =  '4 ('.string('BRIGHTNESS_BRIGHTEST').')';
+					}
+
+				}
+		,'postChange' => sub {
+					my ($client,$paramref,$pageref) = @_;
+					$client->update();
+				}
+		#,'template' => 'setup_player.html'
+		,'Groups' => {
+			'Brightness' => {
+					'PrefOrder' => ['powerOnBrightness','powerOffBrightness','idleBrightness','autobrightness']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'GroupHead' => string('SETUP_GROUP_BRIGHTNESS')
+					,'GroupDesc' => string('SETUP_GROUP_BRIGHTNESS_DESC')
+					,'GroupLine' => 1
+				}
+			,'TextSize' => {
+					'PrefOrder' => ['doublesize','offDisplaySize']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'GroupHead' => string('SETUP_DOUBLESIZE')
+					,'GroupDesc' => string('SETUP_DOUBLESIZE_DESC')
+					,'GroupLine' => 1
+				}
+			,'activeFont' => {
+					'PrefOrder' => ['activeFont']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'GroupHead' => string('SETUP_ACTIVEFONT')
+					,'GroupDesc' => string('SETUP_ACTIVEFONT_DESC')
+					,'GroupPrefHead' => ''
+					,'GroupLine' => 1
+				}
+			,'idleFont' => {
+					'PrefOrder' => ['idleFont']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'GroupHead' => string('SETUP_IDLEFONT')
+					,'GroupDesc' => string('SETUP_IDLEFONT_DESC')
+					,'GroupPrefHead' => ''
+					,'GroupLine' => 1
+				}
+			,'ScrollRate' => {
+				'PrefOrder' => ['scrollRate','scrollRateDouble']
+				,'PrefsInTable' => 1
+				,'Suppress_PrefHead' => 1
+				,'Suppress_PrefDesc' => 1
+				,'Suppress_PrefLine' => 1
+				,'GroupHead' => string('SETUP_SCROLLRATE')
+				,'GroupDesc' => string('SETUP_SCROLLRATE_DESC')
+				,'GroupLine' => 1
+			}
+			,'ScrollPause' => {
+				'PrefOrder' => ['scrollPause','scrollPauseDouble']
+				,'PrefsInTable' => 1
+				,'Suppress_PrefHead' => 1
+				,'Suppress_PrefDesc' => 1
+				,'Suppress_PrefLine' => 1
+				,'GroupHead' => string('SETUP_SCROLLPAUSE')
+				,'GroupDesc' => string('SETUP_SCROLLPAUSE_DESC')
+				,'GroupLine' => 1
+			}
+			}
+		,'Prefs' => {
+			'powerOnBrightness' => {
+							'validate' => \&validateInt
+							,'validateArgs' => undef
+							,'options' => {
+									'0' => '0 ('.string('BRIGHTNESS_DARK').')'
+									,'1' => '1'
+									,'2' => '2'
+									,'3' => '3'
+									,'4' => '4'
+									}
+						}
+			,'powerOffBrightness' => {
+							'validate' => \&validateInt
+							,'validateArgs' => undef
+							,'options' => {
+									'0' => '0 ('.string('BRIGHTNESS_DARK').')'
+									,'1' => '1'
+									,'2' => '2'
+									,'3' => '3'
+									,'4' => '4'
+									}
+						}
+			,'idleBrightness' => {
+							'validate' => \&validateInt
+							,'validateArgs' => undef
+							,'options' => {
+									'0' => '0 ('.string('BRIGHTNESS_DARK').')'
+									,'1' => '1'
+									,'2' => '2'
+									,'3' => '3'
+									,'4' => '4'
+									}
+						}
 			,'doublesize' => {
 							'validate' => \&validateInList
-							,'validateArgs' => undef
-							,'options' => undef
+							,'validateArgs' => [0,1]
+							,'options' => {
+								'0' => string('SMALL'),
+								'1' => string('LARGE')
+							}
 							,'PrefChoose' => string('SETUP_DOUBLESIZE').string('COLON')
 							,'currentValue' => sub { shift->textSize();}
 							,'onChange' => sub { 
@@ -343,9 +429,62 @@ sub initSetupConfig {
 						}
 			,'offDisplaySize' => {
 							'validate' => \&validateInList
-							,'validateArgs' => undef
-							,'options' => undef
+							,'validateArgs' => [0,1]
+							,'options' => {
+								'0' => string('SMALL'),
+								'1' => string('LARGE')
+							}
 							,'PrefChoose' => string('SETUP_OFFDISPLAYSIZE').string('COLON')
+						}
+			,'activeFont'		=> {
+							'isArray' => 1
+							,'arrayAddExtra' => 1
+							,'arrayDeleteNull' => 1
+							,'arrayDeleteValue' => -1
+							,'arrayBasicValue' => 0
+							,'arrayCurrentPref' => 'activeFont_curr'
+							,'inputTemplate' => 'setup_input_array_sel.html'
+							,'validate' => \&validateInHash
+							,'validateArgs' => [] #filled by initSetup
+							,'options' => {} #filled by initSetup using hash_of_prefs('activeFont')
+							,'onChange' => sub {
+										my ($client,$changeref,$paramref,$pageref) = @_;
+										if (exists($changeref->{'activeFont'}{'Processed'})) {
+											return;
+										}
+										processArrayChange($client,'activeFont',$paramref,$pageref);
+										$changeref->{'activeFont'}{'Processed'} = 1;
+									}
+						}
+			,'idleFont'		=> {
+							'isArray' => 1
+							,'arrayAddExtra' => 1
+							,'arrayDeleteNull' => 1
+							,'arrayDeleteValue' => -1
+							,'arrayBasicValue' => 0
+							,'arrayCurrentPref' => 'idleFont_curr'
+							,'inputTemplate' => 'setup_input_array_sel.html'
+							,'validate' => \&validateInHash
+							,'validateArgs' => [] #filled by initSetup
+							,'options' => {} #filled by initSetup using hash_of_prefs('activeFont')
+							,'onChange' => sub {
+										my ($client,$changeref,$paramref,$pageref) = @_;
+										if (exists($changeref->{'idleFont'}{'Processed'})) {
+											return;
+										}
+										processArrayChange($client,'idleFont',$paramref,$pageref);
+										$changeref->{'idleFont'}{'Processed'} = 1;
+									}
+						}
+			,'activeFont_curr' => {
+							'validate' => \&validateInt
+							,'validateArgs' => undef
+							,'changeIntro' => string('SETUP_ACTIVEFONT')
+						}
+			,'idleFont_curr' => {
+							'validate' => \&validateInt
+							,'validateArgs' => undef
+							,'changeIntro' => string('SETUP_IDLEFONT')
 						}
 			,'autobrightness' => {
 						'validate' => \&validateTrueFalse
@@ -354,24 +493,42 @@ sub initSetupConfig {
 								,'0' => string('SETUP_AUTOBRIGHTNESS_OFF')
 							}
 					}
-			}
-		} #end of setup{'player'} hash
+			,'scrollPause' => {
+				'validate' => \&validateNumber
+				,'validateArgs' => [0,undef,1]
+				,'PrefChoose' => string('SINGLE-LINE').' '.string('SETUP_SCROLLPAUSE').string('COLON')
+			},
+			'scrollPauseDouble' => {
+				'validate' => \&validateNumber
+				,'validateArgs' => [0,undef,1]
+				,'PrefChoose' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLPAUSE').string('COLON')
+			},
+			'scrollRate' => {
+				'validate' => \&validateNumber
+				,'validateArgs' => [0,undef,1]
+				,'PrefChoose' => string('SINGLE-LINE').' '.string('SETUP_SCROLLRATE').string('COLON')
+			},
+			'scrollRateDouble' => {
+				'validate' => \&validateNumber
+				,'validateArgs' => [0,undef,1]
+				,'PrefChoose' =>  string('DOUBLE-LINE').' '.string('SETUP_SCROLLRATE').string('COLON')
+			},
+		}
+	}
+
 	,'alarm' => {
 		'title' => string('ALARM_SETTINGS')
 		,'parent' => 'player'
 		,'isClient' => 1
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
+					playerChildren($client, $pageref);
 				my $playlistRef = playlists();
 				$pageref->{'Prefs'}{'alarmplaylist'}{'options'} = $playlistRef;
 				$pageref->{'Prefs'}{'alarmplaylist'}{'validateArgs'} = [$playlistRef];
 				if (!$paramref->{'playername'}) {
 					$paramref->{'playername'} = $client->name();
 				}
-				if ($paramref->{'playername'}) {
-					$pageref->{'title'} = string('ADDITIONAL_PLAYER_SETTINGS') . ' ' . string('FOR') . ' ' . $paramref->{'playername'};
-				}
-				$paramref->{'versionInfo'} = string('PLAYER_VERSION') . string("COLON") . $client->revision;
 			}
 		,'GroupOrder' => ['AlarmClock']
 		,'Groups' => {
@@ -390,10 +547,11 @@ sub initSetupConfig {
 		}
 		,'Prefs' => {
 			'alarmtime' => {
-				'validate' => \&validateAcceptAll
+				'validate' => \&validateTime
 				,'validateArgs' => [0,undef]
 				,'PrefChoose' => string('ALARM_SET').string('COLON')
 				,'changeIntro' => string('ALARM_SET')
+				,'rejectIntro' => string('ALARM_SET')
 				,'currentValue' => sub {
 						my $client = shift;
 						my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
@@ -446,8 +604,9 @@ sub initSetupConfig {
 		,'isClient' => 1
 		,'preEval' => sub {
 					my ($client,$paramref,$pageref) = @_;
+					playerChildren($client, $pageref);
 					$pageref->{'GroupOrder'}[1] = 'Display';
-					if ($client->hasDigitalOut()) {
+					if ($client && $client->hasDigitalOut()) {
 						$pageref->{'GroupOrder'}[2] = 'Digital';
 					} else {
 						$pageref->{'GroupOrder'}[2] = undef;
@@ -592,12 +751,13 @@ sub initSetupConfig {
 						}
 		}
 	}
-	,'misc' => {
-		'title' => string('ADDITIONAL_PLAYER_SETTINGS')
+	,'remote' => {
+		'title' => string('REMOTE_SETTINGS')
 		,'parent' => 'player'
 		,'isClient' => 1
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
+					playerChildren($client, $pageref);
 				if (scalar(keys %{Slim::Hardware::IR::mapfiles()}) > 1) {  
 					$pageref->{'GroupOrder'}[1] = 'IRMap';  
 					$pageref->{'Prefs'}{'irmap'}{'options'} = Slim::Hardware::IR::mapfiles();  
@@ -616,10 +776,6 @@ sub initSetupConfig {
 				if (!$paramref->{'playername'}) {
 					$paramref->{'playername'} = $client->name();
 				}
-				if ($paramref->{'playername'}) {
-					$pageref->{'title'} = string('ADDITIONAL_PLAYER_SETTINGS') . ' ' . string('FOR') . ' ' . $paramref->{'playername'};
-				}
-				$paramref->{'versionInfo'} = string('PLAYER_VERSION') . string("COLON") . $client->revision;
 			}
 		,'postChange' => sub {
 				my ($client,$paramref,$pageref) = @_;
@@ -637,30 +793,10 @@ sub initSetupConfig {
 					$i++;
 				}
 			}
-		,'GroupOrder' => ['IRSets',undef,'ScrollPause','ScrollRate']
+		,'GroupOrder' => ['IRSets']
 		# if more than one ir map exists the undef will be replaced by 'Default'
 		,'Groups' => {
-			'ScrollRate' => {
-				'PrefOrder' => ['scrollRate','scrollRateDouble']
-				,'PrefsInTable' => 1
-				,'Suppress_PrefHead' => 1
-				,'Suppress_PrefDesc' => 1
-				,'Suppress_PrefLine' => 1
-				,'GroupHead' => string('SETUP_GROUP_SCROLLRATE')
-				,'GroupDesc' => string('SETUP_GROUP_SCROLLRATE_DESC')
-				,'GroupLine' => 1
-			}
-			,'ScrollPause' => {
-				'PrefOrder' => ['scrollPause','scrollPauseDouble']
-				,'PrefsInTable' => 1
-				,'Suppress_PrefHead' => 1
-				,'Suppress_PrefDesc' => 1
-				,'Suppress_PrefLine' => 1
-				,'GroupHead' => string('SETUP_GROUP_SCROLLPAUSE')
-				,'GroupDesc' => string('SETUP_GROUP_SCROLLPAUSE_DESC')
-				,'GroupLine' => 1
-			}
-			,'IRSets' => {
+			'IRSets' => {
 				'PrefOrder' => ['irsetlist']
 				,'PrefsInTable' => 1
 				,'Suppress_PrefHead' => 1
@@ -681,26 +817,6 @@ sub initSetupConfig {
 				'validate' => \&validateInHash  
 				,'validateArgs' => [\&Slim::Hardware::IR::mapfiles,1]  
 				,'options' => undef #will be set by preEval  
-			},
-			'scrollPause' => {
-				'validate' => \&validateNumber
-				,'validateArgs' => [0,undef,1]
-				,'PrefChoose' => string('SINGLE-LINE').' '.string('SETUP_GROUP_SCROLLPAUSE').string('COLON')
-			},
-			'scrollPauseDouble' => {
-				'validate' => \&validateNumber
-				,'validateArgs' => [0,undef,1]
-				,'PrefChoose' => string('DOUBLE-LINE').' '.string('SETUP_GROUP_SCROLLPAUSE').string('COLON')
-			},
-			'scrollRate' => {
-				'validate' => \&validateNumber
-				,'validateArgs' => [0,undef,1]
-				,'PrefChoose' => string('SINGLE-LINE').' '.string('SETUP_GROUP_SCROLLRATE').string('COLON')
-			},
-			'scrollRateDouble' => {
-				'validate' => \&validateNumber
-				,'validateArgs' => [0,undef,1]
-				,'PrefChoose' =>  string('DOUBLE-LINE').' '.string('SETUP_GROUP_SCROLLRATE').string('COLON')
 			},
 			'irsetlist' => {
 				'isArray' => 1
@@ -726,6 +842,7 @@ sub initSetupConfig {
 		,'isClient' => 1
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
+					playerChildren($client, $pageref);
 				Slim::Buttons::Plugins::addSetupGroups();
 			}
 	} # end of setup{'ADDITIONAL_PLAYER'} hash
@@ -746,10 +863,10 @@ sub initSetupConfig {
 
 				if (Slim::Music::MoodLogic::canUseMoodLogic()) {
 					$pageref->{'GroupOrder'}[2] = 'moodlogic';
-					$pageref->{'children'}[11] = 'moodlogic';
+					$pageref->{'children'}[12] = 'moodlogic';
 				} else {
 					$pageref->{'GroupOrder'}[2] = undef;
-					pop @{$pageref->{'children'}} if $pageref->{'children'}[11];
+					pop @{$pageref->{'children'}} if $pageref->{'children'}[-1] eq 'moodlogic';
 				}
 				
 				$paramref->{'versionInfo'} = string('SERVER_VERSION') . string("COLON") . $::VERSION;
@@ -894,7 +1011,7 @@ sub initSetupConfig {
 				}
 			}
 		,'Prefs' => {
-				'pluginlist' => {
+			'pluginlist' => {
 				'isArray' => 1
 				,'dontSet' => 1
 				,'validate' => \&validateTrueFalse
@@ -910,14 +1027,14 @@ sub initSetupConfig {
 								return $value;
 							}
 						}
+			}
+			,'plugins-onthefly' => {
+					'validate' => \&validateTrueFalse
+					,'options' => {
+							'1' => string('SETUP_PLUGINS-ONTHEFLY_1')
+							,'0' => string('SETUP_PLUGINS-ONTHEFLY_0')
+						}
 				}
-				,'plugins-onthefly' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_PLUGINS-ONTHEFLY_1')
-								,'0' => string('SETUP_PLUGINS-ONTHEFLY_0')
-							}
-					}
 			}
 		} #end of setup{'plugins'}
 	,'interface' => {
@@ -1212,11 +1329,11 @@ sub initSetupConfig {
 					,'GroupDesc' => string('SETUP_GROUP_FORMATS_DESC')
 					,'GroupLine' => 1
 					,'GroupSub' => 1
-					,'GroupPrefHead' => '<tr><th>&nbsp;' .  
-									    '</th><th>' . string('FILE_FORMAT') .
-									    '</th><th>' . string('STREAM_FORMAT') .
-									    '</th><th>' . string('DECODER') .
-									    '</th></tr>'
+					,'GroupPrefHead' => '<tr><th>&nbsp;' .
+										'</th><th>' . string('FILE_FORMAT') .
+										'</th><th>' . string('STREAM_FORMAT') .
+										'</th><th>' . string('DECODER') .
+										'</th></tr>'
 				}
 			}
 		,'Prefs' => {
@@ -1408,8 +1525,8 @@ sub initSetupConfig {
 		,'Prefs' => {
 			'titleFormatWeb' => {
 						'validate' => \&validateInHash
-						,'validateArgs' => [\&hash_of_titleFormats]
-						#,'options' => undef #filled by initSetup using hash_of_titleFormats()
+						,'validateArgs' => undef #filled in initSetup using hash_of_prefs
+						,'options' => undef #filled by initSetup using hash_of_prefs('titleFormatWeb')
 					}
 			,'titleFormat'	=> {
 						'isArray' => 1
@@ -1920,9 +2037,6 @@ sub initSetupConfig {
 	}
 	if (scalar(keys %{Slim::Buttons::Plugins::installedPlugins()})) {
 		push @{$setup{'server'}{'children'}},'plugins';
-		
-		#TODO: figure out why this doesn't show plugins first time the page loads.
-		#push @{$setup{'player'}{'children'}},'player_plugins';
 	}
 }
 
@@ -1933,54 +2047,62 @@ sub initSetup {
 	$setup{'formatting'}{'Prefs'}{'longdateFormat'}{'validateArgs'} = [$setup{'formatting'}{'Prefs'}{'longdateFormat'}{'options'}];
 	$setup{'formatting'}{'Prefs'}{'shortdateFormat'}{'validateArgs'} = [$setup{'formatting'}{'Prefs'}{'shortdateFormat'}{'options'}];
 	$setup{'formatting'}{'Prefs'}{'timeFormat'}{'validateArgs'} = [$setup{'formatting'}{'Prefs'}{'timeFormat'}{'options'}];
-	fillTitleFormatOptions();
-	fillGuessTagOptions();
+	fillFormatOptions();
+	fillSetupOptions('player','titleFormat','titleFormat');
 }
 
-sub fillGuessTagOptions {
-	$setup{'formatting'}{'Prefs'}{'guessFileFormats'}{'options'} = {hash_of_guesstags()};
+sub fillFormatOptions {
+	$setup{'formatting'}{'Prefs'}{'guessFileFormats'}{'options'} = {hash_of_prefs('guessFileFormats')};
+	$setup{'formatting'}{'Prefs'}{'titleFormatWeb'}{'options'} = {hash_of_prefs('titleFormat')};
+	$setup{'formatting'}{'Prefs'}{'titleFormatWeb'}{'validateArgs'} = [$setup{'player'}{'Prefs'}{'titleFormatWeb'}{'options'}];
 }
 
-sub fillTitleFormatOptions {
-	$setup{'formatting'}{'Prefs'}{'titleFormatWeb'}{'options'} = {hash_of_titleFormats()};
-	$setup{'player'}{'Prefs'}{'titleFormat'}{'options'} = {hash_of_titleFormats()};
-	$setup{'player'}{'Prefs'}{'titleFormat'}{'validateArgs'} = [$setup{'player'}{'Prefs'}{'titleFormat'}{'options'}];
+sub fillSetupOptions {
+	my ($set,$pref,$hash) = @_;
+	$setup{$set}{'Prefs'}{$pref}{'options'} = {hash_of_prefs($hash)};
+	$setup{$set}{'Prefs'}{$pref}{'validateArgs'} = [$setup{'player'}{'Prefs'}{$pref}{'options'}];
+}
+
+sub fillFontOptions {
+	my ($set,$pref,$hash) = @_;
+	my $fonts = Slim::Display::Graphics::fontnames();
+	$fonts->{'-1'} = ' ';
+	$setup{$set}{'Prefs'}{$pref}{'options'} = $fonts;
+	$setup{$set}{'Prefs'}{$pref}{'validateArgs'} = [$fonts];
+}
+
+sub playerChildren {
+	my $client = shift;
+	my $pageref = shift;
+	
+	if ($client->isPlayer()) {
+		$pageref->{'children'} = ['player','display','alarm','audio','remote'];
+		if (scalar(keys %{Slim::Buttons::Plugins::playerPlugins()})) {
+			push @{$pageref->{'children'}}, 'player_plugins';
+		}
+	} else {
+		$pageref->{'children'} = ['player','alarm','audio'];
+	}
 }
 
 #returns a hash of title formats with the key being their array index and the value being the
 #format string
-sub hash_of_titleFormats {
-	my %titleFormats;
+sub hash_of_prefs {
+	my $pref = shift;
+	my %prefsHash;
 	
 	# hack around a race condition at startup
-	if (!Slim::Utils::Prefs::getArrayMax('titleFormat')) {
+	if (!Slim::Utils::Prefs::getArrayMax($pref)) {
 		return;
 	};
 	
-	$titleFormats{'-1'} = ' '; #used to delete a title format from the list
-	my $tf = 0;
-	foreach my $titleFormat (Slim::Utils::Prefs::getArray('titleFormat')) {
-		$titleFormats{$tf++} = $titleFormat;
+	$prefsHash{'-1'} = ' '; #used to delete a title format from the list
+	my $i = 0;
+	foreach my $item (Slim::Utils::Prefs::getArray($pref)) {
+		$prefsHash{$i++} = Slim::Utils::Strings::stringExists($item) ? Slim::Utils::Strings::string($item) : $item;
 	}
 	
-	return %titleFormats;
-}
-
-sub hash_of_guesstags {
-	my %taglist;
-	
-	# hack around a race condition at startup
-	if (!Slim::Utils::Prefs::getArrayMax('guessFileFormats')) {
-		return;
-	};
-	
-	$taglist{'-1'} = ' '; #used to delete a title format from the list
-	my $tf = 0;
-	foreach my $tag (Slim::Utils::Prefs::getArray('guessFileFormats')) {
-		$taglist{$tf++} = $tag;
-	}
-	
-	return %taglist;
+	return %prefsHash;
 }
 
 #returns a hash reference to syncGroups available for a client
@@ -2298,18 +2420,6 @@ sub removeExtraArrayEntries {
 	}
 }
 
-sub fonts {
-	my $client = shift;
-	my %fonts_hash;
-	my $i=0;
-	for ($i=0; $i<=$client->maxTextSize; $i++) {
-		my $fontname = ${$client->fonts($i)}[1];
-		$fontname =~ s/(\.2)?//g;
-		$fonts_hash{$i} = Slim::Utils::Strings::stringExists($fontname) ? string($fontname) : $fontname;
-	}
-	return \%fonts_hash;
-};
-
 sub playlists {
 	my %list_hash;
 	my @list;
@@ -2357,15 +2467,17 @@ sub setup_evaluation {
 	my ($client, $paramref, $settingsref) = @_;
 	my %changes = ();
 	my %rejects = ();
+
 	foreach my $key (keys %$settingsref) {
 		my $arrayMax = 0;
 		if (exists($settingsref->{$key}{'isArray'})) {
+
 			if (defined($settingsref->{$key}{'arrayMax'})) {
 				$arrayMax = $settingsref->{$key}{'arrayMax'};
 			} else {
 				$arrayMax = ($client) ? Slim::Utils::Prefs::clientGetArrayMax($client,$key) : Slim::Utils::Prefs::getArrayMax($key);
 			}
-			if (exists($settingsref->{$key}{'arrayAddExtra'})) {
+			if (defined($arrayMax) && exists($settingsref->{$key}{'arrayAddExtra'})) {
 				my $adval = defined($settingsref->{$key}{'arrayDeleteValue'}) ? $settingsref->{$key}{'arrayDeleteValue'} : '';
 				for (my $i=$arrayMax + $settingsref->{$key}{'arrayAddExtra'}; $i > $arrayMax; $i--) {
 					if (exists $paramref->{$key . $i} && (defined($paramref->{$key . $i}) || $paramref->{$key . $i} ne '' || $paramref->{$key . $i} ne $adval)) {
@@ -2376,58 +2488,60 @@ sub setup_evaluation {
 			}
 		}
 
-		for (my $i=0; $i <= $arrayMax; $i++) {
-			my ($key2,$currVal);
-			if (exists($settingsref->{$key}{'isArray'})) {
-				$key2 = $key . $i;
-				if (exists($settingsref->{$key}{'currentValue'})) {
-					$currVal = &{$settingsref->{$key}{'currentValue'}}($client,$key,$i);
-				} else {
-					$currVal = ($client) ? Slim::Utils::Prefs::clientGet($client,$key,$i) : Slim::Utils::Prefs::getInd($key,$i);
-				}
-			} else {
-				$key2 = $key;
-				if (exists($settingsref->{$key}{'currentValue'})) {
-					$currVal = &{$settingsref->{$key}{'currentValue'}}($client,$key);
-				} else {
-					$currVal = ($client) ? Slim::Utils::Prefs::clientGet($client,$key) : Slim::Utils::Prefs::get($key);
-				}
-			}
-			if (defined($paramref->{$key2})) {
-				my ($pvalue, $errmsg);
-				if (exists $settingsref->{$key}{'validate'}) {
-					if (exists $settingsref->{$key}{'validateArgs'}) {
-						($pvalue, $errmsg) = &{$settingsref->{$key}{'validate'}}($paramref->{$key2},@{$settingsref->{$key}{'validateArgs'}});
+		if (defined($arrayMax)) {
+			for (my $i=0; $i <= $arrayMax; $i++) {
+				my ($key2,$currVal);
+				if (exists($settingsref->{$key}{'isArray'})) {
+					$key2 = $key . $i;
+					if (exists($settingsref->{$key}{'currentValue'})) {
+						$currVal = &{$settingsref->{$key}{'currentValue'}}($client,$key,$i);
 					} else {
-						($pvalue, $errmsg) = &{$settingsref->{$key}{'validate'}}($paramref->{$key2});
-					}
-				} else { #accept everything
-					$pvalue = $paramref->{$key2};
-				}
-				if (defined($pvalue)) {
-					# the following if is true if the current setting is different
-					# from the setting in the param hash
-					if (!(defined($currVal) && $currVal eq $pvalue)) {
-						if ($client) {
-							$changes{$key2}{'old'} = $currVal;
-							if (!exists $settingsref->{$key}{'dontSet'}) {
-								Slim::Utils::Prefs::clientSet($client,$key2,$pvalue);
-							}
-						} else {
-							$changes{$key2}{'old'} = $currVal;
-							if (!exists $settingsref->{$key}{'dontSet'}) {
-								Slim::Utils::Prefs::set($key2,$pvalue);
-							}
-						}
-						$changes{$key2}{'new'} = $pvalue;
-						$currVal = $pvalue;
+						$currVal = ($client) ? Slim::Utils::Prefs::clientGet($client,$key,$i) : Slim::Utils::Prefs::getInd($key,$i);
 					}
 				} else {
-					$rejects{$key2} = $paramref->{$key2};
+					$key2 = $key;
+					if (exists($settingsref->{$key}{'currentValue'})) {
+						$currVal = &{$settingsref->{$key}{'currentValue'}}($client,$key);
+					} else {
+						$currVal = ($client) ? Slim::Utils::Prefs::clientGet($client,$key) : Slim::Utils::Prefs::get($key);
+					}
 				}
-			}
-			if (!exists $settingsref->{$key}{'dontSet'}) {
-				$paramref->{$key2} = $currVal;
+				if (defined($paramref->{$key2})) {
+					my ($pvalue, $errmsg);
+					if (exists $settingsref->{$key}{'validate'}) {
+						if (exists $settingsref->{$key}{'validateArgs'}) {
+							($pvalue, $errmsg) = &{$settingsref->{$key}{'validate'}}($paramref->{$key2},@{$settingsref->{$key}{'validateArgs'}});
+						} else {
+							($pvalue, $errmsg) = &{$settingsref->{$key}{'validate'}}($paramref->{$key2});
+						}
+					} else { #accept everything
+						$pvalue = $paramref->{$key2};
+					}
+					if (defined($pvalue)) {
+						# the following if is true if the current setting is different
+						# from the setting in the param hash
+						if (!(defined($currVal) && $currVal eq $pvalue)) {
+							if ($client) {
+								$changes{$key2}{'old'} = $currVal;
+								if (!exists $settingsref->{$key}{'dontSet'}) {
+									Slim::Utils::Prefs::clientSet($client,$key2,$pvalue);
+								}
+							} else {
+								$changes{$key2}{'old'} = $currVal;
+								if (!exists $settingsref->{$key}{'dontSet'}) {
+									Slim::Utils::Prefs::set($key2,$pvalue);
+								}
+							}
+							$changes{$key2}{'new'} = $pvalue;
+							$currVal = $pvalue;
+						}
+					} else {
+						$rejects{$key2} = $paramref->{$key2};
+					}
+				}
+				if (!exists $settingsref->{$key}{'dontSet'}) {
+					$paramref->{$key2} = $currVal;
+				}
 			}
 		}
 	}
@@ -2861,6 +2975,15 @@ sub validateInList {
 		last if $inList;
 	}
 	if ($inList) {
+		return $val;
+	} else {
+		return undef;
+	}
+}
+
+sub validateTime {
+	my $val = shift;
+	if ($val =~ m/^([0\s]?[0-9]|1[0-9]|2[0-4]):([0-5][0-9])\s*(P|PM|A|AM)?$/isg) {
 		return $val;
 	} else {
 		return undef;
