@@ -1,0 +1,22 @@
+<locator>
+	<locator_name>[% pwditem | html %]</locator_name>
+	<locator_url><![CDATA[xml/browseid3.xml?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]]]></locator_url>
+	[% IF genre %]
+		[% IF genre != '*' %]
+	<genre>[% genre | html %]</genre>
+	<genre_browse_url><![CDATA[xml/browseid3.xml?genre=[% genre | uri %]]]></genre_browse_url>
+		[% END %]
+	[% END %] 
+	[% IF artist %]
+		[% IF artist != '*' %]
+	<artist>[% artist | html %]</artist>
+	<artist_browse_url><![CDATA[xml/browseid3.xml?genre=*&artist=[% artist | uri %]]]></artist_browse_url>
+		[% END %]
+	[% END %]
+	[% IF album %]
+		[% IF album != '*' %]
+	<album>[% album | html %]</album>
+	<album_browse_url><![CDATA[xml/browseid3.xml?genre=*&artist=*&album=[% album | uri %]]]></album_browse_url>
+		[% END %]
+	[% END %]
+</locator>

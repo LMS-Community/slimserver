@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+
+<search xmlns="http://www.slimdevices.com/slimserver/xml">
+	<num_results>[% numresults | html %]</num_results>
+	<query>[% query | html %]</query>
+	[% IF searchlist_header %][% searchlist_header %][% END %]
+	[% browse_list %]
+</search>

@@ -1,0 +1,30 @@
+
+	[% IF title %]<title>[% title | html %]</title>[% END %]
+	[% IF genre %]
+		<genre>[% genre | html %]</genre> 
+	[% END %] 
+	[% IF artist %]
+		<artist>[% artist | html %]</artist>
+	[% END %]
+	[% IF album %] 
+		<album>[% album | html %]</album>
+	[% END %]
+	[% IF composer %] 
+		<composer>[% composer | html %]</composer>
+	[% END %]
+	[% IF conductor %] 
+		<conductor>[% conductor | html %]</conductor>
+	[% END %]
+	[% IF track %]<track>[% track | html %]</track>[% END %]
+	[% IF type %]<type>[% type | html %]</type>[% END %]
+	[% IF duration %]<duration>[% duration | html %]</duration>[% END %]
+	[% IF year %]<year>[% year | html %]</year>[% END %]
+	[% IF comment %]<comment>[% comment | html %]</comment>[% END %]
+	[% IF filelength %]<filelength>[% filelength | html %]</filelength>[% END %]
+	[% IF bitrate %]<bitrate>[% bitrate | html %]</bitrate>[% END %]
+	[% IF tagversion %]<tagversion>[% tagversion | html %]</tagversion>[% END %]
+	[% IF modtime %]<modtime>[% modtime | html %]</modtime>[% END %]
+ 	<song_url><![CDATA[[% itempath %]]]></song_url>
+ 	[% IF url %]<path>[% url %]</path>[% END %]
+  	[% IF coverart %]<coverart><![CDATA[/music/[% itempath | uri %]/cover.jpg]]></coverart>[% END %]
+ 	[% IF mixable %]<mixable>[% mixable | html %]</mixable>[% END %]

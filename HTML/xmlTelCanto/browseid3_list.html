@@ -1,0 +1,9 @@
+	[% IF descend == 'true' %]
+   		[% IF genre %][% IF genre != '*' %]<genre>[% genre | html %]</genre>[% END %][% END %] 
+   		[% IF artist %][% IF artist != '*' %]<artist>[% artist | html %]</artist>[% END %][% END %] 
+   		[% IF album %][% IF album != '*' %]<album>[% album | html %]</album>[% END %][% END %]
+	[% END %]
+
+	[% IF not descend %]
+		[% PROCESS _xml_song.html %]
+	[% END %]
