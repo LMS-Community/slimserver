@@ -36,7 +36,7 @@ CHOOSE_A_LANGUAGE
 
 BASE_SKIN
 	EN	Light
-	FR	Édulcoré
+	FR	Light
 	NL	Light
 	NO	Lys
 	PT	Leve
@@ -363,7 +363,7 @@ ABOUT
 	EN	SlimServer V.%s, written by:
 	ES	SlimServer V.%s, escrito por:
 	FI	SlimServer V.%s, tekijä:
-	FR	SlimServer V.%s, écrit par :
+	FR	SlimServer v.%s, écrit par :
 	IT	SlimServer V.%s, scritto da:
 	NL	SlimServer V.%s, geschreven door:
 	NO	SlimServer V.%s, skrevet av:
@@ -743,7 +743,7 @@ WELCOME_TO_SQUEEZEBOX
 	EN	Welcome to Squeezebox
 	ES	Bienvenido al Squeezebox
 	FI	Squeezebox Tervetuloa!
-	FR	Bienvenue sur le Squeezebox
+	FR	Bienvenue sur la Squeezebox
 	IT	Benvenuto a Squeezebox
 	NL	Welkom bij Squeezebox
 	NO	Velkommen til Squeezebox
@@ -943,7 +943,7 @@ SETUP_PLAYERNAME
 	EN	Player Name
 	ES	Nombre del player
 	FI	Player Nimi
-	FR	Nom du player
+	FR	Nom du lecteur
 	NL	Player Naam
 	NO	Player Navn
 	PT	Nome do Cliente
@@ -1627,12 +1627,15 @@ SETUP_PLUGINS_DESC
 
 SETUP_REFRESHRATE
 	EN	Browser Refresh Timing
+	FR	Délai de mise à jour
 
 SETUP_REFRESHRATE_DESC
 	EN	Set the time between browser reloads in seconds.  While playing a song, the server will set the refresh near a song end if it is less than this value. (Default is 30, minimum is 2)
+	FR	Règle le délai de mise à jour de l'affichage du navigateur en secondes. Le serveur forcera la mise à jour de l'affichage à la fin d'un morceau s'il reste moins que la valeur de cette variable. (Valeur par défaut : 30, minimum : 2)
 
 SETUP_REFRESHRATE_OK
 	EN	Refresh time set to
+	FR	Délai de mise à jour :
 
 SETUP_COVERART
 	DK	Cover-billeder
@@ -1902,15 +1905,19 @@ SETUP_TRANSCODE-MOV_0
 
 SETUP_SAVESHUFFLED
 	EN	Save Shuffled Playlist
+	FR	Sauvegarde des playlists aléatoires
 
 SETUP_SAVESHUFFLED_DESC
 	EN	When you choose to save a playlist, and it's been shuffled, you can choose to save it in the original order the songs were added or in the shuffled order.
+	FR	Lorsque vous sauvegardez une playlist aléatoire, vous pouvez soit la sauvegarder dans l'ordre original d'ajout des morceaux, soit préserver l'ordre aléatoire.
 
 SETUP_SAVESHUFFLED_1
 	EN	Save playlists in shuffled order
+	FR	Sauvegarder les playlists dans l'ordre aléatoire
 
 SETUP_SAVESHUFFLED_0
 	EN	Save playlists in order songs were added
+	FR	Sauvegarder les playlists dans l'ordre d'origine
 	
 SETUP_SAVEHISTORY
 	DE	Speicherung des Verlaufs
@@ -2988,15 +2995,19 @@ SETUP_MDNSNAME_CHOOSE
 
 SETUP_REMOTESTREAMTIMEOUT
 	EN	Radio Station Timeout
+	FR	Délai d'attente radio
 
 SETUP_REMOTESTREAMTIMEOUT_OK
 	EN	Radio station timeout:
+	FR	Délai d'attente radio :
 
 SETUP_REMOTESTREAMTIMEOUT_DESC
 	EN	You can set the length of time that the SlimServer will try to connect to an internet radio station or other source before giving up. Enter the amount of time, in seconds, below.
+	FR	Vous pouvez régler la durée maximum pendant laquelle le SlimServer tentera de se connecter à une radio internet ou à une autre source.  Entrez une valeur en secondes ci-dessous.
 
 SETUP_REMOTESTREAMTIMEOUT_CHOOSE
 	EN	Radio Station Timeout (seconds):
+	FR	Délai d'attente radio (secondes) :
 
 MP3DIR
 	DE	Ihr Musikverzeichnis
@@ -3912,7 +3923,7 @@ THOUSANDS_SEP
 	DK	.
 	EN	,
 	ES	.
-	FR	.
+	FR	 
 	NL	.
 	NO	.
 	PT	. 
@@ -5056,24 +5067,31 @@ NO_PLAYER_DETAILS
 
 PLAYER_NEEDS_UPGRADE
 	EN	Squeezebox Software Update Required
+	FR	Mise à jour Squeezebox requise
 
 PLAYER_NEEDS_UPGRADE_DETAILS
 	EN	The software in your Squeezebox needs to be updated to the latest version.  Please press and hold the BRIGHTNESS button on your remote until the display on your Squeezebox indicates that the update has begun.  The update only takes a few seconds.
+	FR	Le logiciel de votre Squeezebox doit être mis à jour. Appuyez sur le bouton BRIGHTNESS de votre télécommande et laissez appuyé jusqu'à ce que l'affichage de votre Squeezebox indique le début de la mise à jour. La mise à jour ne dure que quelques secondes.
 
 PLAYER_NEEDS_UPGRADE_1
 	EN	Squeezebox Software Update
+	FR	Mise à jour logiciel Squeezebox
 	
 PLAYER_NEEDS_UPGRADE_2
 	EN	Press and hold BRIGHTNESS key to begin.
+	FR	Appuyez sur BRIGHTNESS et laissez appuyé pour lancer la mise à jour
 
 PLAYER_UPGRADE_INSTRUCTIONS
 	EN	If the IP address of your player is not displayed on its screen, press and hold the BRIGHTNESS button until it is.  Then enter the IP address displayed on the screen here:
+	FR	Si l'adresse IP de votre lecteur n'est pas affichée, appuyez sur BRIGHTNESS et laissez appuyé jusqu'à ce qu'elle le soit, puis entrez l'adresse IP ici :
 
 UPGRADE_COMPLETE_DETAILS
 	EN	Your update is complete.
+	FR	Mise à jour terminée.
 
 UPGRADE_COMPLETE
 	EN	Firmware Update
+	FR	Mise à jour firmware
 
 NEED_PATH
 	DE	Sie müssen einen Pfad zum Verzeichnis mit Ihrem MP3 Dateien angeben.
@@ -5133,6 +5151,7 @@ MUTED
 
 MUTE
 	EN	Mute
+	FR	Silence
 
 LCMUTED
 	DE	Stumm geschaltet
@@ -5500,34 +5519,43 @@ STATISTICS
 SLIM_PLAYLIST_EDITOR
 	DE	SLIM Playlist Editor
 	EN	SLIM Playlist Editor
+	FR	Editeur de playlist
 
 UP
 	DE	Rauf
 	EN	Up
+	FR	Haut
 
 DOWN
 	DE	Runter
 	EN	Down
+	FR	Bas
 
 EDIT
 	DE	Editieren
 	EN	Edit
+	FR	Modifier
 
 URL
 	DE	URL
 	EN	URL
+	FR	URL
 
 SAVE_PLAYLIST
 	EN	Save Playlist
+	FR	Sauver playlist
 
 PLAYLIST_SAVE
 	EN	Press RIGHT again to save playlist as:
+	FR	Appuyez à nouveau sur DROITE pour sauver la playlist sous :
 
 PLAYLIST_AS
 	EN	Save current playlist as:
+	FR	Sauver la playlist courante sous :
 
 PLAYLIST_SAVING
 	EN	Saving current playlist as:
+	FR	Playlist courante sauvée sous :
 
 INFORMATION
 	EN	Information
