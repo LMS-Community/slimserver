@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.28 2004/09/23 21:59:04 vidur Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -9,12 +9,18 @@ package Slim::Web::RemoteStream;
 
 use strict;
 
+use Slim::Player::Source;
 use Slim::Utils::Misc;
 
 # Kept around for compatibility with older plugins
 
 sub openRemoteStream {
-    return Slim::Player::Source::openRemoteStream(@_);
+
+	warn "Please update your plugin! Use Slim::Player::Source::openRemoteStream() instead.";
+
+	Slim::Utils::Misc::bt();
+
+	return Slim::Player::Source::openRemoteStream(@_);
 }
 
 1;
