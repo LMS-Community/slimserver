@@ -1198,6 +1198,10 @@ sub playlist {
 		$listBuild{'currsongind'}   = Slim::Player::Source::currentSongIndex($client);
 		$listBuild{'item'}          = $listBuild{'start'};
 
+		# So we only do this once per page request.
+		$listBuild{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
+		$listBuild{'noAlbum'}       = Slim::Utils::Strings::string('NO_ALBUM');
+
 		if (buildPlaylist($client, $params, $callback, $httpClient, $response, \%listBuild)) {
 
 			Slim::Utils::Scheduler::add_task(
