@@ -98,7 +98,7 @@
   <td class="listing"> [% "MODTIME" | string %][% "COLON" | string %] </td>
   <td class="listing"> [% track.modificationTime | html %] </td>
  </tr>
- [% END %] [% IF track.coverArt %] 
+ [% END %] [% IF track.coverArt('cover', 1) %]
  <tr>
   <td class="listing" valign="top">[% "COVERART" | string %]</td>
   <td class="listing">

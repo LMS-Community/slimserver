@@ -15,7 +15,7 @@
 <br>
 <p>[% "SONG_INFO" | string %] [% "FOR" | string %] <b>[% track.title %]</b></p>
 
-[% IF track.coverArt %]
+[% IF track.coverArt('cover', 1) %]
     <center><a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]"><img src="/music/[% itempath | uri %]/cover.jpg" border="0" width="200"></a></center>
 [% END %]
 

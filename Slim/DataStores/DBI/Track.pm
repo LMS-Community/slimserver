@@ -237,6 +237,7 @@ sub bitrate {
 sub coverArt {
 	my $self = shift;
 	my $art  = shift || 'cover';
+	my $list = shift || 0;
 
 	my $image;
 
@@ -294,7 +295,9 @@ sub coverArt {
 		$mtime = (stat(_))[9];
 	}
 
-	if (wantarray()) {
+	# This is a hack, as Template::Stash::XS calls us in list context,
+	# even though it should be in scalar context.
+	if (!$list && wantarray()) {
 		return ($body, $contenttype, $mtime);
 	} else {
 		return $body;

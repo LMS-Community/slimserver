@@ -173,7 +173,7 @@
 		</td>
 	</tr>
 	[% END %]
-	[% IF track.coverArt %] 
+	[% IF track.coverArt('cover', 1) %]
       <tr>
       	<td valign="top">[% "COVERART" | string %]</td>
       	<td><a href="/music/[% itempath | uri %]/cover.jpg" target="cover"><img src="/music/[% itempath | uri %]/cover.jpg"></a></td>
