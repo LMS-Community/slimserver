@@ -254,11 +254,12 @@ where: </p>
   <p>Request: &quot;04:20:00:12:23:45 playlist tracks ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist tracks 7&lt;CR&gt;&quot;</p>
 </blockquote>
 <hr>
-<p><strong>playlist shuffle &lt;0|1|?&gt;</strong></p>
-<p>The &quot;playlist shuffle&quot; command is used to shuffle, unshuffle or query 
-  the shuffle state for the current playlist. A value of &quot;0&quot; indicates 
-  that the playlist is not shuffled, &quot;1&quot; indicates that the playlist 
-  is shuffled.</p>
+ <p><strong>playlist shuffle &lt;0|1|2|?&gt;</strong></p>
+  <p>The &quot;playlist shuffle&quot; command is used to shuffle, unshuffle or query 
+    the shuffle state for the current playlist. A value of &quot;0&quot; indicates 
+    that the playlist is not shuffled, &quot;1&quot; indicates that the playlist 
+   is shuffled by song, and &quot;2&quot; indicates that the playlist is shuffled
+   by album.</p>
 <p> Example: </p>
 <blockquote> 
   <p>Request: &quot;04:20:00:12:23:45 playlist shuffle ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist shuffle 1&lt;CR&gt;&quot;</p>
