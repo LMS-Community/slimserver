@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.77 2004/03/06 04:23:52 daniel Exp $
+# $Id: HTTP.pm,v 1.78 2004/03/06 04:31:06 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1206,19 +1206,19 @@ sub nonBreaking {
 # these are all very similar
 
 sub filltemplatefile {
-	return _generateContentFromFile(@_, 'fill');
+	return _generateContentFromFile('fill', @_);
 }
 
 sub getStaticContent {
-	return _generateContentFromFile(@_, 'get');
+	return _generateContentFromFile('get', @_);
 }
 
 sub getStaticContentForTemplate {
-	return ${_generateContentFromFile(@_, 'get')};
+	return ${_generateContentFromFile('get', @_)};
 }
 
 sub _generateContentFromFile {
-	my ($path, $params, $type) = @_;
+	my ($type, $path, $params) = @_;
 
 	my ($content, $mtime);
 
