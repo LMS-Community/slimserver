@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.64 2004/04/19 08:48:29 kdf Exp $
+# $Id: Pages.pm,v 1.65 2004/04/19 17:07:14 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -528,7 +528,7 @@ sub status {
 				my $remaining = $params->{'durationseconds'} - $params->{'songtime'};
 
 				if ($remaining < $params->{'refresh'}) {	
-					$params->{'refresh'} = ($remaining < 2) ? 2 : $remaining;
+					$params->{'refresh'} = ($remaining < 5) ? 5 : $remaining;
 				}
 			}
 

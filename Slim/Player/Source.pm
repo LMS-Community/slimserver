@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.79 2004/04/18 03:37:20 dean Exp $
+# $Id: Source.pm,v 1.80 2004/04/19 17:07:14 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -177,7 +177,7 @@ sub songTime {
 	my $duration	  	= $client->songduration();
 	my $byterate	  	= $duration ? ($songLengthInBytes / $duration) : 0;
 
-	my $bytesReceived 	= $client->bytesReceived() || 0;
+	my $bytesReceived 	= ($client->bytesReceived() || 0) - $client->bytesReceivedOffset();
 	my $fullness	  	= $client->bufferFullness() || 0;
 	my $realpos	  	= $bytesReceived - $fullness;
 	my $rate	  	= $client->rate();
@@ -238,6 +238,7 @@ sub playmode {
 					$::d_source && msg("Couldn't open song.  Stopping.\n");
 					if (!openNext($client)) {$newmode = "stop";}
 				}
+				$client->bytesReceivedOffset(0);
 			}
 			
 			# when we change modes, make sure we do it to all the synced clients.
@@ -624,6 +625,7 @@ sub resetSong {
 	$client->songBytes(0);
 	$client->lastskip(0);
 	$client->songStartStreamTime(0);
+	$client->bytesReceivedOffset($client->bytesReceived());
 	
 	# reset shoutcast variables
 	$client->shoutMetaInterval(0);
