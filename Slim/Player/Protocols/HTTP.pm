@@ -1,6 +1,6 @@
 package Slim::Player::Protocols::HTTP;
 		  
-# $Id: HTTP.pm,v 1.3 2004/09/15 05:47:33 vidur Exp $
+# $Id: HTTP.pm,v 1.4 2004/11/03 18:19:40 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -60,7 +60,7 @@ sub open {
 	my $peeraddr = "$server:$port";
 	if ($proxy) {
 		$peeraddr = $proxy;
-		$path = "http://$server:$port$path";
+		$::d_remotestream && msg("Opening connection using proxy $proxy\n");
 	}
 
 	$::d_remotestream && msg("Opening connection to $url: [$server on port $port with path $path with timeout $timeout]\n");
@@ -92,6 +92,11 @@ sub request {
 
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
  	my $timeout = Slim::Utils::Prefs::get('remotestreamtimeout');
+
+	my $proxy = Slim::Utils::Prefs::get('webproxy');
+	if ($proxy) {
+		$path = "http://$server:$port$path";
+	}
 
 	# make the request
 	my $request = join($CRLF, (

@@ -78,8 +78,15 @@ sub httpRequest {
 	my $args = shift;
 	my $response;
 
+	my $proxy = Slim::Utils::Prefs::get('webproxy');
+	my $peeraddr = 'www.live365.com';
+	if ($proxy) {
+		$peeraddr = $proxy;
+		$url = "http://www.live365.com$url";
+	}
+
 	my $socket = new IO::Socket::INET(
-		PeerAddr	=> 'www.live365.com',
+		PeerAddr	=> $peeraddr,
 		PeerPort	=> 80,
 		Proto		=> 'tcp',
 		Type		=> SOCK_STREAM
@@ -98,7 +105,7 @@ sub httpRequest {
 
 	close $socket;
 
-	if( $response !~ /^HTTP\/1.1 200 OK/ ) {
+	if( $response !~ /^HTTP\/1.. 200 OK/ ) {
 		return undef;
 	}
 
@@ -531,7 +538,7 @@ sub new {
 			my $isVIP = Slim::Utils::Prefs::get( 'plugin_live365_memberstatus' );
 			Slim::Utils::Timers::setTimer(
 				$client,
-				Time::HiRes::time() + 1,
+				Time::HiRes::time() + 5,
 				\&getPlaylist,
 				( $client, $handle, $url, $isVIP )
 			);
