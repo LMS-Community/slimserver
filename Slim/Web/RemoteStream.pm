@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.21 2004/02/20 20:56:53 dean Exp $
+# $Id: RemoteStream.pm,v 1.22 2004/04/01 15:43:07 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -36,6 +36,8 @@ sub openRemoteStream {
 	my $client = shift;
 	
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
+
+ 	my $timeout = Slim::Utils::Prefs::get('remotestreamtimeout');
 	
 	$::d_remotestream && msg("Opening connection to $url: [$server on port $port with path $path]\n");
 	
@@ -43,7 +45,7 @@ sub openRemoteStream {
 
 		PeerAddr  => "$server:$port",
  		LocalAddr => $main::localStreamAddr,
- 		Timeout   => Slim::Utils::Prefs::get('remotestreamtimeout')
+ 		Timeout   => $timeout,
 
 	) || do {
 
@@ -77,7 +79,7 @@ sub openRemoteStream {
 
 	syswrite($sock, $request);
 
-	my $response = Slim::Utils::Misc::sysreadline($sock,10); #<$sock>;
+	my $response = Slim::Utils::Misc::sysreadline($sock, $timeout);
 
 	$::d_remotestream && msg("Response: $response");
 	
@@ -103,7 +105,7 @@ sub openRemoteStream {
 
 	my $redir = '';
 	Slim::Music::Info::setContentType($url,Slim::Music::Info::typeFromPath($url, 'mp3'));
-	while(my $header = Slim::Utils::Misc::sysreadline($sock,2)) { #<$sock>) {
+	while(my $header = Slim::Utils::Misc::sysreadline($sock, $timeout)) {
 
 		$::d_remotestream && msg("header: " . $header);
 		if ($header =~ /^ic[ey]-name:\s*(.+)$CRLF$/i) {
