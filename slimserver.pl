@@ -20,7 +20,7 @@ use strict;  # _NOPERL2EXE_
 
 package PerlSvc;
 
-our $Name = 'slimsvc';
+our $Name = 'slimserversvc';
 our $DisplayName = 'Slim Server';
 
 sub Startup {
