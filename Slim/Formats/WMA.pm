@@ -1,6 +1,6 @@
 package Slim::Formats::WMA;
 
-# $Id: WMA.pm,v 1.6 2004/10/02 00:14:40 kdf Exp $
+# $Id: WMA.pm,v 1.7 2004/10/02 03:13:16 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -24,14 +24,12 @@ sub getTag {
 	# This hash will map the keys in the tag to their values.
 	my $tags = {};
 
-	my $wma  = Audio::WMA->new($file);
+	my $wma  = Audio::WMA->new($file) || return $tags;
 	
-	return $tags if (!$wma);
-
 	# why this is an array, I don't know.
-	if ($wma->comment()) {
-		foreach my $key (keys %{$wma->comment()}) {
-			$tags->{uc $key} = $wma->comment($key);
+	if ($wma->tags()) {
+		foreach my $key (keys %{$wma->tags()}) {
+			$tags->{uc $key} = $wma->tags($key);
 		}
 	}
 	
@@ -45,16 +43,16 @@ sub getTag {
 	}
 
 	# Add additional info
-	$tags->{'SIZE'}	    = -s $file;
+	$tags->{'SIZE'}	    = $wma->info('filesize');
 	$tags->{'SECS'}	    = $wma->info('playtime_seconds');
-	$tags->{'RATE'}	    = $wma->info('max_bitrate');
+	$tags->{'RATE'}	    = $wma->info('sample_rate');
+
 	# WMA bitrate is reported in kbps
 	$tags->{'BITRATE'}  = $wma->info('bitrate')*1000;
 	$tags->{'DRM'}      = $wma->info('drm');
 
-	# not supported yet - slimserver doesn't appear to use them anyways
-	#$tags->{'STEREO'}   = $wma->info('channels') == 2 ? 1 : 0;
-	#$tags->{'CHANNELS'} = $wma->info('channels');
+	$tags->{'STEREO'}   = $wma->info('channels') == 2 ? 1 : 0;
+	$tags->{'CHANNELS'} = $wma->info('channels');
 
 	return $tags;
 }

@@ -3,7 +3,15 @@ package Audio::WMA;
 use strict;
 use vars qw($VERSION);
 
-$VERSION = '0.3';
+# WMA stores tags in UTF-16LE by default.
+my $utf8 = 0;
+
+# Minimum requirements
+if ($] > 5.007) {
+	require Encode;
+}
+
+$VERSION = '0.5';
 
 my %guidMapping   = _knownGUIDs();
 my %reversedGUIDs = reverse %guidMapping;
@@ -44,6 +52,15 @@ sub new {
 	return $self;
 }
 
+sub setConvertTagsToUTF8 {   
+	my $class = shift;
+	my $val   = shift;
+
+	$utf8 = $val if (($val == 0) || ($val == 1));
+
+	return $utf8;
+}
+
 sub setDebug {
 	my $self = shift;
 
@@ -58,12 +75,12 @@ sub info {
 	return $self->{'INFO'}{lc $key};
 }
 
-sub comment {
+sub tags {
 	my $self = shift;
 	my $key = shift;
 
-	return $self->{'COMMENTS'} unless $key;
-	return $self->{'COMMENTS'}{uc $key};
+	return $self->{'TAGS'} unless $key;
+	return $self->{'TAGS'}{uc $key};
 }
 
 sub _readAndIncrementOffset {
@@ -101,10 +118,10 @@ sub _parseWMAHeader {
 	
 	if ($DEBUG) {
 		printf("ObjectId: [%s]\n", _byteStringToGUID($objectId));
-		print  "objectSize: [$objectSize]\n";
-		print  "headerObjects [$headerObjects]\n";
-		print  "reserved1 [$reserved1]\n";
-		print  "reserved2 [$reserved2]\n";
+		print  "\tobjectSize: [$objectSize]\n";
+		print  "\theaderObjects [$headerObjects]\n";
+		print  "\treserved1 [$reserved1]\n";
+		print  "\treserved2 [$reserved2]\n\n";
 	}
 
 	read($fh, $self->{'headerData'}, ($objectSize - 30));
@@ -125,38 +142,60 @@ sub _parseWMAHeader {
 			print "nextObjectGUID: [" . $nextObjectGUIDText . "]\n";
 			print "nextObjectName: [" . $nextObjectGUIDName . "]\n";
 			print "nextObjectSize: [" . $nextObjectSize . "]\n";
+			print "\n";
 		}
         
         	if (defined($nextObjectGUIDName)) {
 
 			# start the different header types parsing              
-			if ($nextObjectGUIDName eq 'GETID3_ASF_File_Properties_Object') {
+			if ($nextObjectGUIDName eq 'ASF_File_Properties_Object') {
 	
 				$self->_parseASFFilePropertiesObject();
 				next;
 			}
 	
-			if ($nextObjectGUIDName eq 'GETID3_ASF_Content_Description_Object') {
+			if ($nextObjectGUIDName eq 'ASF_Content_Description_Object') {
 	
 				$self->_parseASFContentDescriptionObject();
 				next;
 			}
 
-			if ($nextObjectGUIDName eq 'GETID3_ASF_Content_Encryption_Object') {
+			if ($nextObjectGUIDName eq 'ASF_Content_Encryption_Object' ||
+			    $nextObjectGUIDName eq 'ASF_Extended_Content_Encryption_Object') {
 
 				$self->_parseASFContentEncryptionObject();
 				next;
 			}
 	
-			if ($nextObjectGUIDName eq 'GETID3_ASF_Extended_Content_Description_Object') {
+			if ($nextObjectGUIDName eq 'ASF_Extended_Content_Description_Object') {
 	
 				$self->_parseASFExtendedContentDescriptionObject();
+				next;
+			}
+
+			if ($nextObjectGUIDName eq 'ASF_Stream_Properties_Object') {
+
+				$self->_parseASFStreamPropertiesObject();
 				next;
 			}
 		}
 
 		# set our next object size
 		$self->{'offset'} += ($nextObjectSize - 16 - 8);
+	}
+
+	# Now work on the subtypes.
+	for my $stream (@{$self->{'STREAM'}}) {
+
+		if ($reversedGUIDs{ $stream->{'stream_type_guid'} } eq 'ASF_Audio_Media') {
+
+			my $audio = $self->_parseASFAudioMediaObject($stream);
+
+			for my $item (qw(bits_per_sample channels sample_rate)) {
+
+				$self->{'INFO'}->{$item} = $audio->{$item};
+			}
+		}
 	}
 
 	# pull these out and make them more normalized
@@ -167,7 +206,7 @@ sub _parseWMAHeader {
 		# this gets both WM/Title and isVBR
 		next unless $name =~ s#^(?:WM/|is)##i;
 
-		$self->{'COMMENTS'}->{uc $name} = $v->{'value'} || 0;
+		$self->{'TAGS'}->{uc $name} = $v->{'value'} || 0;
 	}
 
 	delete $self->{'EXT'};
@@ -228,13 +267,27 @@ sub _parseASFContentDescriptionObject {
 	# now pull the data based on length
 	for my $key (@keys) {
 
-		my $lengthKey		= "_${key}length";
-		$desc{$key}		= _denull( $self->_readAndIncrementOffset($desc{$lengthKey}) );
+		my $lengthKey = "_${key}length";
+		my $value     = $self->_readAndIncrementOffset($desc{$lengthKey});
+
+		if ($utf8) {
+
+			# This also turns on the utf8 flag - perldoc Encode
+			$value = Encode::decode('UTF-16LE', $value);
+
+		} elsif ($] > 5.007) {
+
+			# otherwise try and turn it into ISO-8859-1 if we have Encode
+			$value = Encode::encode('latin1', $value);
+		}
+
+		# Always remove nulls.
+		$desc{$key} = _denull($value);
 
 		delete $desc{$lengthKey};
 	}
 
-	$self->{'COMMENTS'}		= \%desc;
+	$self->{'TAGS'}	= \%desc;
 }
 
 sub _parseASFExtendedContentDescriptionObject {
@@ -250,7 +303,7 @@ sub _parseASFExtendedContentDescriptionObject {
 		$ext{'content'}->{$id}->{'name_length'}  = unpack('v', $self->_readAndIncrementOffset(2));
 
 		$ext{'content'}->{$id}->{'name'}         = _denull( $self->_readAndIncrementOffset(
-				$ext{'content'}->{$id}->{'name_length'}
+			$ext{'content'}->{$id}->{'name_length'}
 		) );
 
 		$ext{'content'}->{$id}->{'value_type'}   = unpack('v', $self->_readAndIncrementOffset(2));
@@ -284,15 +337,117 @@ sub _parseASFExtendedContentDescriptionObject {
 
 		if ($DEBUG) {
 			print "Ext Cont Desc: $id";
-			print " name  = " . $ext{'content'}->{$id}->{'name'};
-			print " value = " . $ext{'content'}->{$id}->{'value'};
-			print " type  = " . $ext{'content'}->{$id}->{'value_type'};
-			print " value_length = " . $ext{'content'}->{$id}->{'value_length'};
+			printf "\tname  = %s\n", $ext{'content'}->{$id}->{'name'};
+			printf "\tvalue = %s\n", $ext{'content'}->{$id}->{'value'};
+			printf "\ttype  = %s\n", $ext{'content'}->{$id}->{'value_type'};
+			printf "\tvalue_length = %s\n", $ext{'content'}->{$id}->{'value_length'};
 			print "\n";
 		}
 	}
 
 	$self->{'EXT'} = \%ext;
+}
+
+sub _parseASFStreamPropertiesObject {
+	my $self = shift;
+
+	my %ext  = ();
+	my %stream  = ();
+	my $streamNumber;
+
+	# Stream Properties Object: (mandatory, one per media stream)
+	# Field Name                   Field Type   Size (bits)
+	# Object ID                    GUID         128             GUID for stream properties object - ASF_Stream_Properties_Object
+	# Object Size                  QWORD        64              size of stream properties object, including 78 bytes of 
+	# 							    Stream Properties Object header
+	# Stream Type                  GUID         128             ASF_Audio_Media, ASF_Video_Media or ASF_Command_Media
+	# Error Correction Type        GUID         128             ASF_Audio_Spread for audio-only streams, 
+	# 							     ASF_No_Error_Correction for other stream types
+	# Time Offset                  QWORD        64              100-nanosecond units. typically zero. added to all 
+	# 							    timestamps of samples in the stream
+	# Type-Specific Data Length    DWORD        32              number of bytes for Type-Specific Data field
+	# Error Correction Data Length DWORD        32              number of bytes for Error Correction Data field
+	# Flags                        WORD         16              
+	# * Stream Number              bits         7 (0x007F)      number of this stream.  1 <= valid <= 127
+	# * Reserved                   bits         8 (0x7F80)      reserved - set to zero
+	# * Encrypted Content Flag     bits         1 (0x8000)      stream contents encrypted if set
+	# Reserved                     DWORD        32              reserved - set to zero
+	# Type-Specific Data           BYTESTREAM   variable        type-specific format data, depending on value of Stream Type
+	# Error Correction Data        BYTESTREAM   variable        error-correction-specific format data, depending on 
+	# 							    value of Error Correct Type
+	#
+	# There is one ASF_Stream_Properties_Object for each stream (audio, video) but the
+	# stream number isn't known until halfway through decoding the structure, hence it
+	# it is decoded to a temporary variable and then stuck in the appropriate index later
+
+	$stream{'stream_type'}	      = $self->_readAndIncrementOffset(16);
+	$stream{'stream_type_guid'}   = _byteStringToGUID($stream{'stream_type'});
+	$stream{'error_correct_type'} = $self->_readAndIncrementOffset(16);
+	$stream{'error_correct_guid'} = _byteStringToGUID($stream{'error_correct_type'});
+
+	$stream{'time_offset'}        = unpack('v', $self->_readAndIncrementOffset(8));
+	$stream{'type_data_length'}   = unpack('v', $self->_readAndIncrementOffset(4));
+	$stream{'error_data_length'}  = unpack('v', $self->_readAndIncrementOffset(4));
+	$stream{'flags_raw'}          = unpack('v', $self->_readAndIncrementOffset(2));
+	$streamNumber                 = $stream{'flags_raw'} & 0x007F;
+	$stream{'flags'}{'encrypted'} = ($stream{'flags_raw'} & 0x8000);
+
+	# Skip the DWORD
+	$self->_readAndIncrementOffset(4);
+
+	$stream{'type_specific_data'} = $self->_readAndIncrementOffset($stream{'type_data_length'});
+	$stream{'error_correct_data'} = $self->_readAndIncrementOffset($stream{'error_data_length'});
+
+	push @{$self->{'STREAM'}}, \%stream;
+}
+
+sub _parseASFAudioMediaObject {
+	my $self   = shift;
+	my $stream = shift;
+
+	# Field Name                   Field Type   Size (bits)
+	# Codec ID / Format Tag        WORD         16              unique ID of audio codec - defined as wFormatTag 
+	# 							      field of WAVEFORMATEX structure
+	#
+	# Number of Channels           WORD         16              number of channels of audio - defined as nChannels 
+	# 							    field of WAVEFORMATEX structure
+	#
+	# Samples Per Second           DWORD        32              in Hertz - defined as nSamplesPerSec field 
+	# 							    of WAVEFORMATEX structure
+	#
+	# Average number of Bytes/sec  DWORD        32              bytes/sec of audio stream  - defined as 
+	# 							    nAvgBytesPerSec field of WAVEFORMATEX structure
+	#
+	# Block Alignment              WORD         16              block size in bytes of audio codec - defined 
+	# 							    as nBlockAlign field of WAVEFORMATEX structure
+	#
+	# Bits per sample              WORD         16              bits per sample of mono data. set to zero for 
+	# 							    variable bitrate codecs. defined as wBitsPerSample 
+	# 							    field of WAVEFORMATEX structure
+	#
+	# Codec Specific Data Size     WORD         16              size in bytes of Codec Specific Data buffer - 
+	# 							    defined as cbSize field of WAVEFORMATEX structure
+	#
+	# Codec Specific Data          BYTESTREAM   variable        array of codec-specific data bytes
+
+	$stream->{'audio'} = $self->_parseWavFormat(substr($stream->{'type_specific_data'}, 0, 16));
+
+	return $stream->{'audio'};
+}
+
+sub _parseWavFormat {
+	my $self = shift;
+	my $data = shift;
+
+	my %wav  = ();
+
+	#$wav{'codec'}          = RIFFwFormatTagLookup(unpack('v', substr($data,  0, 2));
+	$wav{'channels'}        = unpack('v', substr($data,  2, 2));
+	$wav{'sample_rate'}     = unpack('v', substr($data,  4, 4));
+	$wav{'bitrate'}         = unpack('v', substr($data,  8, 4)) * 8;
+	$wav{'bits_per_sample'} = unpack('v', substr($data, 14, 2));
+
+	return \%wav;
 }
 
 sub _parse64BitString {
@@ -305,65 +460,65 @@ sub _knownGUIDs {
 
 	my %guidMapping = (
 
-		'GETID3_ASF_Extended_Stream_Properties_Object'		=> '14E6A5CB-C672-4332-8399-A96952065B5A',
-		'GETID3_ASF_Padding_Object'				=> '1806D474-CADF-4509-A4BA-9AABCB96AAE8',
-		'GETID3_ASF_Payload_Ext_Syst_Pixel_Aspect_Ratio'	=> '1B1EE554-F9EA-4BC8-821A-376B74E4C4B8',
-		'GETID3_ASF_Script_Command_Object'			=> '1EFB1A30-0B62-11D0-A39B-00A0C90348F6',
-		'GETID3_ASF_No_Error_Correction'			=> '20FB5700-5B55-11CF-A8FD-00805F5C442B',
-		'GETID3_ASF_Content_Branding_Object'			=> '2211B3FA-BD23-11D2-B4B7-00A0C955FC6E',
-		'GETID3_ASF_Content_Encryption_Object'			=> '2211B3FB-BD23-11D2-B4B7-00A0C955FC6E',
-		'GETID3_ASF_Digital_Signature_Object'			=> '2211B3FC-BD23-11D2-B4B7-00A0C955FC6E',
-		'GETID3_ASF_Extended_Content_Encryption_Object'		=> '298AE614-2622-4C17-B935-DAE07EE9289C',
-		'GETID3_ASF_Simple_Index_Object'			=> '33000890-E5B1-11CF-89F4-00A0C90349CB',
-		'GETID3_ASF_Degradable_JPEG_Media'			=> '35907DE0-E415-11CF-A917-00805F5C442B',
-		'GETID3_ASF_Payload_Extension_System_Timecode'		=> '399595EC-8667-4E2D-8FDB-98814CE76C1E',
-		'GETID3_ASF_Binary_Media'				=> '3AFB65E2-47EF-40F2-AC2C-70A90D71D343',
-		'GETID3_ASF_Timecode_Index_Object'			=> '3CB73FD0-0C4A-4803-953D-EDF7B6228F0C',
-		'GETID3_ASF_Metadata_Library_Object'			=> '44231C94-9498-49D1-A141-1D134E457054',
-		'GETID3_ASF_Reserved_3'					=> '4B1ACBE3-100B-11D0-A39B-00A0C90348F6',
-		'GETID3_ASF_Reserved_4'					=> '4CFEDB20-75F6-11CF-9C0F-00A0C90349CB',
-		'GETID3_ASF_Command_Media'				=> '59DACFC0-59E6-11D0-A3AC-00A0C90348F6',
-		'GETID3_ASF_Header_Extension_Object'			=> '5FBF03B5-A92E-11CF-8EE3-00C00C205365',
-		'GETID3_ASF_Media_Object_Index_Parameters_Obj'		=> '6B203BAD-3F11-4E84-ACA8-D7613DE2CFA7',
-		'GETID3_ASF_Header_Object'				=> '75B22630-668E-11CF-A6D9-00AA0062CE6C',
-		'GETID3_ASF_Content_Description_Object'			=> '75B22633-668E-11CF-A6D9-00AA0062CE6C',
-		'GETID3_ASF_Error_Correction_Object'			=> '75B22635-668E-11CF-A6D9-00AA0062CE6C',
-		'GETID3_ASF_Data_Object'				=> '75B22636-668E-11CF-A6D9-00AA0062CE6C',
-		'GETID3_ASF_Web_Stream_Media_Subtype'			=> '776257D4-C627-41CB-8F81-7AC7FF1C40CC',
-		'GETID3_ASF_Stream_Bitrate_Properties_Object'		=> '7BF875CE-468D-11D1-8D82-006097C9A2B2',
-		'GETID3_ASF_Language_List_Object'			=> '7C4346A9-EFE0-4BFC-B229-393EDE415C85',
-		'GETID3_ASF_Codec_List_Object'				=> '86D15240-311D-11D0-A3A4-00A0C90348F6',
-		'GETID3_ASF_Reserved_2'					=> '86D15241-311D-11D0-A3A4-00A0C90348F6',
-		'GETID3_ASF_File_Properties_Object'			=> '8CABDCA1-A947-11CF-8EE4-00C00C205365',
-		'GETID3_ASF_File_Transfer_Media'			=> '91BD222C-F21C-497A-8B6D-5AA86BFC0185',
-		'GETID3_ASF_Advanced_Mutual_Exclusion_Object'		=> 'A08649CF-4775-4670-8A16-6E35357566CD',
-		'GETID3_ASF_Bandwidth_Sharing_Object'			=> 'A69609E6-517B-11D2-B6AF-00C04FD908E9',
-		'GETID3_ASF_Reserved_1'					=> 'ABD3D211-A9BA-11cf-8EE6-00C00C205365',
-		'GETID3_ASF_Bandwidth_Sharing_Exclusive'		=> 'AF6060AA-5197-11D2-B6AF-00C04FD908E9',
-		'GETID3_ASF_Bandwidth_Sharing_Partial'			=> 'AF6060AB-5197-11D2-B6AF-00C04FD908E9',
-		'GETID3_ASF_JFIF_Media'					=> 'B61BE100-5B4E-11CF-A8FD-00805F5C442B',
-		'GETID3_ASF_Stream_Properties_Object'			=> 'B7DC0791-A9B7-11CF-8EE6-00C00C205365',
-		'GETID3_ASF_Video_Media'				=> 'BC19EFC0-5B4D-11CF-A8FD-00805F5C442B',
-		'GETID3_ASF_Audio_Spread'				=> 'BFC3CD50-618F-11CF-8BB2-00AA00B4E220',
-		'GETID3_ASF_Metadata_Object'				=> 'C5F8CBEA-5BAF-4877-8467-AA8C44FA4CCA',
-		'GETID3_ASF_Payload_Ext_Syst_Sample_Duration'		=> 'C6BD9450-867F-4907-83A3-C77921B733AD',
-		'GETID3_ASF_Group_Mutual_Exclusion_Object'		=> 'D1465A40-5A79-4338-B71B-E36B8FD6C249',
-		'GETID3_ASF_Extended_Content_Description_Object'	=> 'D2D0A440-E307-11D2-97F0-00A0C95EA850',
-		'GETID3_ASF_Stream_Prioritization_Object'		=> 'D4FED15B-88D3-454F-81F0-ED5C45999E24',
-		'GETID3_ASF_Payload_Ext_System_Content_Type'		=> 'D590DC20-07BC-436C-9CF7-F3BBFBF1A4DC',
-		'GETID3_ASF_Index_Object'				=> 'D6E229D3-35DA-11D1-9034-00A0C90349BE',
-		'GETID3_ASF_Bitrate_Mutual_Exclusion_Object'		=> 'D6E229DC-35DA-11D1-9034-00A0C90349BE',
-		'GETID3_ASF_Index_Parameters_Object'			=> 'D6E229DF-35DA-11D1-9034-00A0C90349BE',
-		'GETID3_ASF_Mutex_Language'				=> 'D6E22A00-35DA-11D1-9034-00A0C90349BE',
-		'GETID3_ASF_Mutex_Bitrate'				=> 'D6E22A01-35DA-11D1-9034-00A0C90349BE',
-		'GETID3_ASF_Mutex_Unknown'				=> 'D6E22A02-35DA-11D1-9034-00A0C90349BE',
-		'GETID3_ASF_Web_Stream_Format'				=> 'DA1E6B13-8359-4050-B398-388E965BF00C',
-		'GETID3_ASF_Payload_Ext_System_File_Name'		=> 'E165EC0E-19ED-45D7-B4A7-25CBD1E28E9B',
-		'GETID3_ASF_Marker_Object'				=> 'F487CD01-A951-11CF-8EE6-00C00C205365',
-		'GETID3_ASF_Timecode_Index_Parameters_Object'		=> 'F55E496D-9797-4B5D-8C8B-604DFE9BFB24',
-		'GETID3_ASF_Audio_Media'				=> 'F8699E40-5B4D-11CF-A8FD-00805F5C442B',
-		'GETID3_ASF_Media_Object_Index_Object'			=> 'FEB103F8-12AD-4C64-840F-2A1D2F7AD48C',
-		'GETID3_ASF_Alt_Extended_Content_Encryption_Obj'	=> 'FF889EF1-ADEE-40DA-9E71-98704BB928CE',
+		'ASF_Extended_Stream_Properties_Object'		=> '14E6A5CB-C672-4332-8399-A96952065B5A',
+		'ASF_Padding_Object'				=> '1806D474-CADF-4509-A4BA-9AABCB96AAE8',
+		'ASF_Payload_Ext_Syst_Pixel_Aspect_Ratio'	=> '1B1EE554-F9EA-4BC8-821A-376B74E4C4B8',
+		'ASF_Script_Command_Object'			=> '1EFB1A30-0B62-11D0-A39B-00A0C90348F6',
+		'ASF_No_Error_Correction'			=> '20FB5700-5B55-11CF-A8FD-00805F5C442B',
+		'ASF_Content_Branding_Object'			=> '2211B3FA-BD23-11D2-B4B7-00A0C955FC6E',
+		'ASF_Content_Encryption_Object'			=> '2211B3FB-BD23-11D2-B4B7-00A0C955FC6E',
+		'ASF_Digital_Signature_Object'			=> '2211B3FC-BD23-11D2-B4B7-00A0C955FC6E',
+		'ASF_Extended_Content_Encryption_Object'	=> '298AE614-2622-4C17-B935-DAE07EE9289C',
+		'ASF_Simple_Index_Object'			=> '33000890-E5B1-11CF-89F4-00A0C90349CB',
+		'ASF_Degradable_JPEG_Media'			=> '35907DE0-E415-11CF-A917-00805F5C442B',
+		'ASF_Payload_Extension_System_Timecode'		=> '399595EC-8667-4E2D-8FDB-98814CE76C1E',
+		'ASF_Binary_Media'				=> '3AFB65E2-47EF-40F2-AC2C-70A90D71D343',
+		'ASF_Timecode_Index_Object'			=> '3CB73FD0-0C4A-4803-953D-EDF7B6228F0C',
+		'ASF_Metadata_Library_Object'			=> '44231C94-9498-49D1-A141-1D134E457054',
+		'ASF_Reserved_3'				=> '4B1ACBE3-100B-11D0-A39B-00A0C90348F6',
+		'ASF_Reserved_4'				=> '4CFEDB20-75F6-11CF-9C0F-00A0C90349CB',
+		'ASF_Command_Media'				=> '59DACFC0-59E6-11D0-A3AC-00A0C90348F6',
+		'ASF_Header_Extension_Object'			=> '5FBF03B5-A92E-11CF-8EE3-00C00C205365',
+		'ASF_Media_Object_Index_Parameters_Obj'		=> '6B203BAD-3F11-4E84-ACA8-D7613DE2CFA7',
+		'ASF_Header_Object'				=> '75B22630-668E-11CF-A6D9-00AA0062CE6C',
+		'ASF_Content_Description_Object'		=> '75B22633-668E-11CF-A6D9-00AA0062CE6C',
+		'ASF_Error_Correction_Object'			=> '75B22635-668E-11CF-A6D9-00AA0062CE6C',
+		'ASF_Data_Object'				=> '75B22636-668E-11CF-A6D9-00AA0062CE6C',
+		'ASF_Web_Stream_Media_Subtype'			=> '776257D4-C627-41CB-8F81-7AC7FF1C40CC',
+		'ASF_Stream_Bitrate_Properties_Object'		=> '7BF875CE-468D-11D1-8D82-006097C9A2B2',
+		'ASF_Language_List_Object'			=> '7C4346A9-EFE0-4BFC-B229-393EDE415C85',
+		'ASF_Codec_List_Object'				=> '86D15240-311D-11D0-A3A4-00A0C90348F6',
+		'ASF_Reserved_2'				=> '86D15241-311D-11D0-A3A4-00A0C90348F6',
+		'ASF_File_Properties_Object'			=> '8CABDCA1-A947-11CF-8EE4-00C00C205365',
+		'ASF_File_Transfer_Media'			=> '91BD222C-F21C-497A-8B6D-5AA86BFC0185',
+		'ASF_Advanced_Mutual_Exclusion_Object'		=> 'A08649CF-4775-4670-8A16-6E35357566CD',
+		'ASF_Bandwidth_Sharing_Object'			=> 'A69609E6-517B-11D2-B6AF-00C04FD908E9',
+		'ASF_Reserved_1'				=> 'ABD3D211-A9BA-11cf-8EE6-00C00C205365',
+		'ASF_Bandwidth_Sharing_Exclusive'		=> 'AF6060AA-5197-11D2-B6AF-00C04FD908E9',
+		'ASF_Bandwidth_Sharing_Partial'			=> 'AF6060AB-5197-11D2-B6AF-00C04FD908E9',
+		'ASF_JFIF_Media'				=> 'B61BE100-5B4E-11CF-A8FD-00805F5C442B',
+		'ASF_Stream_Properties_Object'			=> 'B7DC0791-A9B7-11CF-8EE6-00C00C205365',
+		'ASF_Video_Media'				=> 'BC19EFC0-5B4D-11CF-A8FD-00805F5C442B',
+		'ASF_Audio_Spread'				=> 'BFC3CD50-618F-11CF-8BB2-00AA00B4E220',
+		'ASF_Metadata_Object'				=> 'C5F8CBEA-5BAF-4877-8467-AA8C44FA4CCA',
+		'ASF_Payload_Ext_Syst_Sample_Duration'		=> 'C6BD9450-867F-4907-83A3-C77921B733AD',
+		'ASF_Group_Mutual_Exclusion_Object'		=> 'D1465A40-5A79-4338-B71B-E36B8FD6C249',
+		'ASF_Extended_Content_Description_Object'	=> 'D2D0A440-E307-11D2-97F0-00A0C95EA850',
+		'ASF_Stream_Prioritization_Object'		=> 'D4FED15B-88D3-454F-81F0-ED5C45999E24',
+		'ASF_Payload_Ext_System_Content_Type'		=> 'D590DC20-07BC-436C-9CF7-F3BBFBF1A4DC',
+		'ASF_Index_Object'				=> 'D6E229D3-35DA-11D1-9034-00A0C90349BE',
+		'ASF_Bitrate_Mutual_Exclusion_Object'		=> 'D6E229DC-35DA-11D1-9034-00A0C90349BE',
+		'ASF_Index_Parameters_Object'			=> 'D6E229DF-35DA-11D1-9034-00A0C90349BE',
+		'ASF_Mutex_Language'				=> 'D6E22A00-35DA-11D1-9034-00A0C90349BE',
+		'ASF_Mutex_Bitrate'				=> 'D6E22A01-35DA-11D1-9034-00A0C90349BE',
+		'ASF_Mutex_Unknown'				=> 'D6E22A02-35DA-11D1-9034-00A0C90349BE',
+		'ASF_Web_Stream_Format'				=> 'DA1E6B13-8359-4050-B398-388E965BF00C',
+		'ASF_Payload_Ext_System_File_Name'		=> 'E165EC0E-19ED-45D7-B4A7-25CBD1E28E9B',
+		'ASF_Marker_Object'				=> 'F487CD01-A951-11CF-8EE6-00C00C205365',
+		'ASF_Timecode_Index_Parameters_Object'		=> 'F55E496D-9797-4B5D-8C8B-604DFE9BFB24',
+		'ASF_Audio_Media'				=> 'F8699E40-5B4D-11CF-A8FD-00805F5C442B',
+		'ASF_Media_Object_Index_Object'			=> 'FEB103F8-12AD-4C64-840F-2A1D2F7AD48C',
+		'ASF_Alt_Extended_Content_Encryption_Obj'	=> 'FF889EF1-ADEE-40DA-9E71-98704BB928CE',
 	);
 
 	return %guidMapping;
@@ -469,13 +624,23 @@ Audio::WMA - Perl extension for reading WMA/ASF Metadata
 
 	my $info = $wma->info();
 
+	foreach (keys %$info) {
+                print "$_: $info->{$_}\n";
+        }
+
+	my $tags = $wma->tags();
+
+        foreach (keys %$tags) {
+                print "$_: $tags->{$_}\n";
+        }
+
 =head1 DESCRIPTION
 
 This module implements access to metadata contained in WMA files.
 
 =head1 SEE ALSO
 
-Audio::FLAC, L<http://getid3.sf.net/>
+Audio::FLAC::Header, L<http://getid3.sf.net/>
 
 =head1 AUTHOR
 
@@ -483,7 +648,7 @@ Dan Sully, E<lt>Dan@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2003 by Dan Sully
+Copyright 2003-2004 by Dan Sully
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 
