@@ -941,7 +941,7 @@ sub status {
 		$params->{'songtime'} = int(Slim::Player::Source::songTime($client));
 
 		if (Slim::Player::Playlist::song($client)) { 
-			my $dur = Slim::Music::Info::durationSeconds(Slim::Player::Playlist::song($client));
+			my $dur = $client->songduration;
 			if ($dur) { $dur = int($dur); }
 			$params->{'durationseconds'} = $dur; 
 		}

@@ -624,15 +624,20 @@ sub getPlaylist {
 		$newTitle = join(" - ", @titleComponents);
 	}
 	else {
-        	$::d_plugins && msg( "Playlist handler returned an invalid response, falling back to the station title" );
-	        $newTitle = ${*$self}{live365_original_title};
+		$::d_plugins && msg( "Playlist handler returned an invalid response, falling back to the station title" );
+		$newTitle = ${*$self}{live365_original_title};
 	}
 
 	if ($newTitle) {
 		$::d_plugins && msg( "Live365 Now Playing: $newTitle\n" );
 		$::d_plugins && msg( "Live365 next update: $nextRefresh seconds\n" );
+		
 		$client->killAnimation();
-		Slim::Music::Info::setTitle( $url, $newTitle );
+		Slim::Music::Info::setTitle( $url, $newTitle);
+		
+		$::d_plugins && msg( "Live365 setting songtime: $nextRefresh\n" );
+		$client->remoteStreamStartTime(Time::HiRes::time());
+		$client->songduration($nextRefresh) if $nextRefresh;
 	}
 
 	if ($nextRefresh) {
@@ -843,7 +848,7 @@ our %mainModeFunctions = (
 
 			$mainModeItems[$mainModeIdx][1] eq 'PLUGIN_LIVE365_BROWSEPICKS' && do {
 				$live365->{$client}->clearStationDirectory();
-	  			$live365->{$client}->loadStationDirectory(
+				$live365->{$client}->loadStationDirectory(
 					sort			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
 					searchfields	=> Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
 					genre 			=> 'ESP'
