@@ -1,4 +1,4 @@
-# $Id: Picks.pm,v 1.2 2004/10/14 05:29:06 vidur Exp $
+# $Id: Picks.pm,v 1.3 2004/10/22 20:24:48 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -19,9 +19,14 @@ use Slim::Utils::Strings qw (string);
 use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 
+# Could be configurable through preferences if we wanted.
+use constant PLAYLIST_RELOAD_INTERVAL => 600;
+
 my $picksurl = 'http://update.slimdevices.com/update/picks.pls';
 
 my %context;
+my $stationList;
+my $lastStationLoadTime = 0;
 
 my %mapping = (
 	'play' => 'dead',
@@ -84,7 +89,22 @@ sub doneLoading {
 	Slim::Buttons::Block::unblock($client);
 	$context{$client}->{blocking} = 0;
 
-	my @stationTitles = map Slim::Music::Info::standardTitle($client, $_), @{$context{$client}->{stations}};
+	if (scalar @{$context{$client}->{stations}} == 0) {
+		Slim::Display::Animation::showBriefly($client, 
+						string('PLUGIN_PICKS_LOADING_ERROR'));
+		Slim::Buttons::Common::popMode($client);
+	}
+	else {
+		$lastStationLoadTime = Time::HiRes::time();
+		$stationList = $context{$client}->{stations};
+		listStations($client);
+	}
+}
+
+sub listStations {
+	my $client = shift;
+
+	my @stationTitles = map Slim::Music::Info::standardTitle($client, $_), @$stationList;
 															 
 	my %params = (
 		stringHeader => 1,
@@ -93,7 +113,7 @@ sub doneLoading {
 		callback => \&mainModeCallback,
 		valueRef => \$context{$client}->{mainModeIndex},
 		headerAddCount => 1,
-		stations => $context{$client}->{stations},
+		stations => $stationList,
 		overlayRef => sub {return (undef,Slim::Display::Display::symbol('notesymbol'));},
 		parentMode => Slim::Buttons::Common::mode($client),		  
 	);
@@ -113,15 +133,23 @@ sub setMode {
 		return;
 	}
 
-	Slim::Buttons::Block::block($client, 
-								string('PLUGIN_PICKS_LOADING_PICKS'));
-	$context{$client}->{blocking} = 1;
+	my $now = Time::HiRes::time();
+	# Only regrab every hour
+	if (defined($stationList) &&
+		(($now - $lastStationLoadTime) < PLAYLIST_RELOAD_INTERVAL)) {
+		listStations($client);
+	}
+	else {
+		Slim::Buttons::Block::block($client, 
+									string('PLUGIN_PICKS_LOADING_PICKS'));
+		$context{$client}->{blocking} = 1;
 
-	$context{$client}->{stations} = [];
-	Slim::Utils::Scan::addToList($context{$client}->{stations},
-								 $picksurl,
-								 0, 0, 
-								 \&doneLoading, $client);
+		$context{$client}->{stations} = [];
+		Slim::Utils::Scan::addToList($context{$client}->{stations},
+									 $picksurl,
+									 0, 0, 
+									 \&doneLoading, $client);
+	}
 }
 
 sub defaultMap {
@@ -213,6 +241,9 @@ PLUGIN_PICKS_LOADING_PICKS
 
 PLUGIN_PICKS_STATION
 	EN	Station
+
+PLUGIN_PICKS_LOADING_ERROR
+	EN	Error loading Slim Devices Picks
 ";}
 
 1;
