@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.30 2003/12/04 04:50:21 dean Exp $
+# $Id: Info.pm,v 1.31 2003/12/04 05:34:45 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -941,10 +941,6 @@ sub info {
 			updateCoverArt($file,'thumb');
 			$item = cacheItem($file, $tagname);
 		# load up item information if we've never seen it or we haven't loaded the tags
-		} elsif ($tagname =~ /^(THUMB|THUMBTYPE)$/) {
-			updateCoverArt($file,1);
-			$item = cacheItem($file, $tagname);
-		# load up item information if we've never seen it or we haven't loaded the tags
 		} elsif (!isCached($file) || !cacheItem($file, 'TAG')) {
 			#$::d_info && Slim::Utils::Misc::bt();
 			$::d_info && Slim::Utils::Misc::msg("cache miss for $file\n");
@@ -1407,7 +1403,8 @@ sub songs {
 		my @seen = ();
 		foreach my $item (@uniq) {
 			my $trnum = trackNumber($item);
-			if ($trnum && $seen[$trnum]) {
+			next unless $trnum;
+			if ($seen[$trnum]) {
 				$duptracknum = 1;
 				last;
 			}
