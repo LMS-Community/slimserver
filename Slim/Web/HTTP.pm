@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.55 2003/12/27 21:23:25 dean Exp $
+# $Id: HTTP.pm,v 1.56 2004/01/08 06:20:19 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -366,7 +366,7 @@ sub executeurl {
 		$i++;
 	}
 	
-	$::d_http && msg("ExecuteURL Clients $command: ", join " ", Slim::Player::Client::clientIPs(), "\n");
+	$::d_http && msg("ExecuteURL Clients $command: ".join(" ", Slim::Player::Client::clientIPs())."\n");
 
 	# explicitly specified player (for web browsers or squeezeboxen)
 	
@@ -875,7 +875,7 @@ sub getFileContent {
 		$::d_http && msg("couldn't find $skin $path trying for $baseskin\n");
 		my $defaultpath = fixHttpPath($baseskin, $path);
 		if (defined($defaultpath)) {
-			$::d_http && msg("couldn't find $skinpath, reading template: $defaultpath\n");
+			$::d_http && msg("reading template: $defaultpath\n");
 			open $template, $defaultpath;
 		} 
 	}
@@ -1018,7 +1018,7 @@ sub generateresponse {
 	if (defined($contentType)) {
 		if ($contentType =~ /image/) {
 			# images should expire from cache one year from now
-			my $imageExpireHeader = strftime "%a %b %e %H:%M:%S %Y", gmtime(time + 31536000);
+			my $imageExpireHeader = strftime "%a %b %d %H:%M:%S %Y", gmtime(time + 31536000);
 			$headers{"Expires"} = "$imageExpireHeader";
 		} else {
 			$headers{"Expires"} = "0";
@@ -1054,7 +1054,7 @@ sub generateresponse {
 			$song = Slim::Utils::Misc::fixPath($song);
 			my $imagedata;
  			($imagedata, $contenttype) = Slim::Music::Info::coverArt($song,$image);
- 			 			
+
  			if (defined($imagedata)) {
  				$body = \$imagedata; #$body should be a ref
 				%headers = statusHeaders($client);
