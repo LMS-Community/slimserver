@@ -44,6 +44,19 @@ sub add {
 
 	my @contributors = ();
 
+	# Handle the case where $genre is already an object:
+	if (ref $artist && $artist->isa('Slim::DataStores::DBI::Contributor')) {
+
+		Slim::DataStores::DBI::ContributorTrack->create({
+			track => $track,
+			contributor => $artist,
+			role => $role,
+			namesort => Slim::Utils::Text::ignoreCaseArticles($artist),
+		});
+
+		return wantarray ? ($artist) : $artist;
+	}
+
 	# Split both the regular and the normalized tags
 	my @artistList   = Slim::Music::Info::splitTag($artist);
 	my @sortedList   = Slim::Music::Info::splitTag($artistSort);
@@ -73,9 +86,7 @@ sub add {
 
 		push @contributors, $artistObj;
 
-		# XXX - hog
-		# xxx - removed album => $track->album(), creates database coherency problem
-		Slim::DataStores::DBI::ContributorTrack->find_or_create({
+		Slim::DataStores::DBI::ContributorTrack->create({
 			track => $track,
 			contributor => $artistObj,
 			role => $role,

@@ -738,8 +738,11 @@ sub removeStaleDBEntries {
 sub update {
 	my $self = shift;
 
-	$self->SUPER::update();
-	$dirtyCount++;
+	if ($self->is_changed()) {
+
+		$self->SUPER::update();
+		$dirtyCount++;
+	}
 }
 
 1;

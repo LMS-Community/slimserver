@@ -28,6 +28,17 @@ sub add {
 
 	my @genres = ();
 
+	# Handle the case where $genre is already an object:
+	if (ref $genre && $genre->isa('Slim::DataStores::DBI::Genre')) {
+
+		Slim::DataStores::DBI::GenreTrack->create({
+			track => $track,
+			genre => $genre,
+		});
+
+		return wantarray ? ($genre) : $genre;
+	}
+
 	for my $genreSub (Slim::Music::Info::splitTag($genre)) {
 
 		$_cache{$genreSub} ||= Slim::DataStores::DBI::Genre->find_or_create({ 
@@ -37,7 +48,7 @@ sub add {
 
 		push @genres, $_cache{$genreSub};
 		
-		Slim::DataStores::DBI::GenreTrack->find_or_create({
+		Slim::DataStores::DBI::GenreTrack->create({
 			track => $track,
 			genre => $_cache{$genreSub},
 		});

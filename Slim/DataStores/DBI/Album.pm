@@ -35,41 +35,6 @@ sub searchTitle {
 	return wantarray ? @{$_cache{$findKey}} : $_cache{$findKey}->[0];
 }
 
-sub contributors {
-	my $self = shift;
-	my @contributors = @_;
-
-	# Setter case
-	if (scalar @contributors > 0) {
-
-		# Take the contributors that were passed in directly.
-		my %contributorMap = map { $_->id, 1 } @contributors;
-
-		# Merge in any previous contributors
-		for my $id (split /:/, $self->get('contributors')) {
-
-			# Need a better way to do this.
-			# Remove "No Artist", which is always id 1 from the list.
-			next if $id == 1;
-
-			$contributorMap{$id} = 1;
-		}
-
-		# Set them all back.
-		$self->set('contributors', join(':', sort { $a <=> $b } keys %contributorMap));
-
-	} else {
-
-		# and getters
-		for my $id (split /:/, $self->get('contributors')) {
-
-			push @contributors, Slim::DataStores::DBI::Contributor->retrieve($id);
-		}
-	}
-
-	return @contributors;
-}
-
 1;
 
 __END__

@@ -64,8 +64,8 @@ our %tagFunctions = (
 	'ape' => \&Slim::Formats::APE::getTag,
 );
 
-# Only look these up once.
-our ($_unknownArtistID, $_unknownGenreID);
+# Singleton objects for Unknowns
+our ($_unknownArtist, $_unknownGenre, $_unknownAlbum);
 
 # Keep the last 5 find results set in memory and expire them after 60 seconds
 tie our %lastFind, 'Tie::Cache::LRU::Expires', EXPIRES => 60, ENTRIES => 5;
@@ -1011,86 +1011,9 @@ sub _preCheckAttributes {
 	# Copy the incoming hash, so we don't modify it
 	my $attributes = { %$attributeHash };
 
-	# These need to be handled
-	$deferredAttributes->{'GENRE'}   = delete $attributes->{'GENRE'};
-	$deferredAttributes->{'ARTWORK'} = delete $attributes->{'ARTWORK'};
-	$deferredAttributes->{'ARTIST'}  = delete $attributes->{'ARTIST'};
-
-	# Artwork is now taken care of in _postCheckAttributes()
-	$deferredAttributes->{'PIC'}     = delete $attributes->{'PIC'};
-	$deferredAttributes->{'APIC'}    = delete $attributes->{'APIC'};
-
 	# We also need these in _postCheckAttributes, but they should be set during create()
 	$deferredAttributes->{'COVER'}   = $attributes->{'COVER'};
 	$deferredAttributes->{'THUMB'}   = $attributes->{'THUMB'};
-
-	# Normalize in ContributorTrack->add() the tag may need to be split. See bug #295
-	$deferredAttributes->{'ARTISTSORT'} = delete $attributes->{'ARTISTSORT'};
-
-	my $artist = '';
-	my $album  = $attributes->{'ALBUM'};
-
-	$album = string('NO_ALBUM') if (!$album && $create);
-
-	if ($album) {
-
-		my $sortable_title = $attributes->{'ALBUMSORT'} || $album;
-
-		my $disc  = $attributes->{'DISC'};
-		my $discc = $attributes->{'DISCC'};
-
-		# We'll find an artist record if this isn't the first track in
-		# the album for this artist.
-		my ($artistObj) = Slim::DataStores::DBI::Contributor->search({
-			'name' => $artist
-		});
-
-		# If there wasn't an artist associated yet, create a dummy contributor.
-		my $albumObj;
-		my $basename = dirname($url);
-
-		# Go through some contortions to see if the album we're in
-		# already exists. Because we keep contributors now, but an
-		# album can have many contributors, check the last path and
-		# album name, to see if we're actually the same.
-		if ($self->{'lastTrack'}->{$basename} && 
-			$self->{'lastTrack'}->{$basename}->album() && 
-			$self->{'lastTrack'}->{$basename}->album() eq $album &&
-			dirname($self->{'lastTrack'}->{$basename}->url()) eq $basename
-			) {
-
-			$albumObj = $self->{'lastTrack'}->{$basename}->album();
-
-			if (defined $artistObj) {
-
-				$albumObj->contributors($artistObj);
-			}
-
-		} else {
-
-			$albumObj = Slim::DataStores::DBI::Album->find_or_create({ 
-				title => $album,
-				contributors => (defined $artistObj ? $artistObj->id() : 1),
-			});
-		}
-
-		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
-		$albumObj->titlesort(Slim::Utils::Text::ignoreCaseArticles($sortable_title)) if $sortable_title;
-		$albumObj->disc($disc) if $disc;
-		$albumObj->discc($discc) if $discc;
-		$albumObj->update();
-
-		$attributes->{'ALBUM'} = $albumObj;
-		$deferredAttributes->{'ALBUM'} = $albumObj;
-
-	} else {
-
-		delete $attributes->{'ALBUM'};
-	}
-
-	delete $attributes->{'ALBUMSORT'};
-	delete $attributes->{'DISC'};
-	delete $attributes->{'DISCC'};
 
 	if ($attributes->{'TITLE'} && !$attributes->{'TITLESORT'}) {
 		$attributes->{'TITLESORT'} = $attributes->{'TITLE'};
@@ -1101,8 +1024,10 @@ sub _preCheckAttributes {
 		$attributes->{'TITLESORT'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'TITLESORT'});
 	}
 
+	# Normalize ARTISTSORT in ContributorTrack->add() the tag may need to be split. See bug #295
+	#
 	# Push these back until we have a Track object.
-	for my $tag (qw(COMMENT BAND COMPOSER CONDUCTOR)) {
+	for my $tag (qw(COMMENT BAND COMPOSER CONDUCTOR GENRE ARTIST ARTISTSORT PIC APIC ALBUM ALBUMSORT DISC DISCC)) {
 
 		next unless defined $attributes->{$tag};
 
@@ -1118,80 +1043,172 @@ sub _postCheckAttributes {
 	my $attributes = shift;
 	my $create = shift;
 
-	# Add comments if we have them:
-	if (my $comment = $attributes->{'COMMENT'}) {
+	# Genre addition. If there's no genre for this track, and no 'No Genre' object, create one.
+	my $genre = $attributes->{'GENRE'};
 
-		Slim::DataStores::DBI::Comment->find_or_create({
-			'track' => $track->id,
-			'value' => $comment,
-		});
-	}
+	if ($create && !$genre && !$_unknownGenre) {
 
-	# Genre addition. If there's no genre for this track, and no 
-	# 'No Genre' object, create one.
-	if (my $genre = $attributes->{'GENRE'}) {
+		$_unknownGenre = Slim::DataStores::DBI::GenreTrack->add(string('NO_GENRE'), $track);
+
+	} elsif ($create && !$genre) {
+
+		Slim::DataStores::DBI::GenreTrack->add($_unknownGenre, $track);
+
+	} elsif ($create && $genre) {
 
 		Slim::DataStores::DBI::GenreTrack->add($genre, $track);
-
-	} elsif ($create && !defined $_unknownGenreID) {
-
-		($_unknownGenreID) = Slim::DataStores::DBI::GenreTrack->add(string('NO_GENRE'), $track);
 	}
 
-	# Do a similar thing for artist, conductor, etc
+	# Walk through the valid contributor roles, adding them to the
+	# database for each track.
 	my $foundContributor = 0;
+	my @contributors     = ();
 
 	for my $tag (qw(ARTIST BAND COMPOSER CONDUCTOR)) {
 
-		my $contributor = $attributes->{$tag};
+		my $contributor = $attributes->{$tag} || next;
 
-		if ($contributor) {
+		# Is ARTISTSORT/TSOP always right for non-artist
+		# contributors? I think so. ID3 doesn't have
+		# "BANDSORT" or similar at any rate.
+		push @contributors, Slim::DataStores::DBI::ContributorTrack->add(
+			$contributor, 
+			$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{$tag},
+			$track,
+			$attributes->{'ARTISTSORT'}
+		);
 
-			# Is ARTISTSORT/TSOP always right for non-artist
-			# contributors? I think so. ID3 doesn't have
-			# "BANDSORT" or similar at any rate.
-			my @contributors = Slim::DataStores::DBI::ContributorTrack->add(
-				$contributor, 
-				$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{$tag},
-				$track,
-				$attributes->{'ARTISTSORT'}
-			);
-
-			# If we have an album associated with the contributors - mark it as such. 
-			if (my $albumObj = $attributes->{'ALBUM'}) {
-
-				my $artworkPath = $self->_findCoverArt($track->url, $attributes);
-
-				if ($artworkPath) {
-
-					$self->{'artworkCache'}->{$albumObj->id} = $artworkPath;
-
-					$albumObj->artwork_path($artworkPath);
-				}
-
-				# XXX - will we ever have multiple artist albums that
-				# have duplicate album names? Seems pretty unlikely to me.
-				$albumObj->contributors(@contributors);
-				$albumObj->update();
-			}
-
-			$foundContributor = 1;
-		}
+		$foundContributor = 1;
 	}
 
-	# We need to create this guy the first time through..
-	if ($create && (!$foundContributor || !$_unknownArtistID)) {
+	# Create a singleton for "No Artist"
+	if ($create && !$foundContributor && !$_unknownArtist) {
 
-		($_unknownArtistID) = Slim::DataStores::DBI::ContributorTrack->add(
+		$_unknownArtist = Slim::DataStores::DBI::ContributorTrack->add(
 			string('NO_ARTIST'),
 			$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'},
 			$track
 		);
+
+		push @contributors, $_unknownArtist;
+
+	} elsif ($create && !$foundContributor) {
+
+		# Otherwise - reuse the singleton object, since this is the
+		# second time through.
+		Slim::DataStores::DBI::ContributorTrack->add(
+			$_unknownArtist,
+			$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'},
+			$track
+		);
+
+		push @contributors, $_unknownArtist;
 	}
+
+	# Now handle Album creation
+	my $album = $attributes->{'ALBUM'};
+
+	# Create a singleton for "No Album"
+	# Album should probably have an add() method
+	if ($create && !$album && !$_unknownAlbum) {
+
+		$_unknownAlbum = Slim::DataStores::DBI::Album->create({
+			'title'     => string('NO_ALBUM'),
+			'titlesort' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ALBUM')),
+		});
+
+		$track->album($_unknownAlbum);
+		$track->update();
+
+	} elsif ($create && !$album) {
+
+		$track->album($_unknownAlbum);
+		$track->update();
+
+	} elsif ($create && $album) {
+
+		my $sortable_title = $attributes->{'ALBUMSORT'} || $album;
+
+		my $disc  = $attributes->{'DISC'};
+		my $discc = $attributes->{'DISCC'};
+
+		# If there wasn't an artist associated yet, create a dummy contributor.
+		my $albumObj;
+
+		# Used for keeping track of the album name.
+		my $basename = dirname($track->url);
+
+		# Go through some contortions to see if the album we're in
+		# already exists. Because we keep contributors now, but an
+		# album can have many contributors, check the last path and
+		# album name, to see if we're actually the same.
+		if ($self->{'lastTrack'}->{$basename} && 
+			$self->{'lastTrack'}->{$basename}->album() && 
+			$self->{'lastTrack'}->{$basename}->album() eq $album
+			) {
+
+			$albumObj = $self->{'lastTrack'}->{$basename}->album();
+
+		} else {
+
+			if ($contributors[0]) {
+
+				($albumObj) = Slim::DataStores::DBI::Album->search({ 
+					title => $album,
+					contributors => $contributors[0]->id,
+				});
+			}
+
+			# Didn't match anything? It's a new album - create it.
+			unless ($albumObj) {
+
+				$albumObj = Slim::DataStores::DBI::Album->create({ 
+					title => $album,
+				});
+			}
+		}
+
+		# Associate cover art with this album, and keep it cached.
+		unless ($self->{'artworkCache'}->{$albumObj->id}) {
+
+			my $artworkPath = $self->_findCoverArt($track->url, $albumObj, $attributes);
+
+			if ($artworkPath) {
+
+				$self->{'artworkCache'}->{$albumObj->id} = $artworkPath;
+
+				$albumObj->artwork_path($artworkPath);
+			}
+		}
+
+		$albumObj->contributors($contributors[0]->id);
+
+		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
+		$albumObj->titlesort(Slim::Utils::Text::ignoreCaseArticles($sortable_title)) if $sortable_title;
+
+		$albumObj->disc($disc) if $disc;
+		$albumObj->discc($discc) if $discc;
+		$albumObj->update();
+
+		$track->album($albumObj);
+		$track->update();
+	}
+
+	# Add comments if we have them:
+	if ($attributes->{'COMMENT'}) {
+
+		Slim::DataStores::DBI::Comment->find_or_create({
+			'track' => $track->id,
+			'value' => $attributes->{'COMMENT'},
+		});
+	}
+
+	# refcount--
+	@contributors = ();
 }
 
 sub _findCoverArt {
-	my ($self, $file, $attributesHash) = @_;
+	my ($self, $file, $album, $attributesHash) = @_;
 
 	# Check for Cover Artwork, only if not already present.
 	if ($attributesHash->{'COVER'} || $attributesHash->{'THUMB'}) {
@@ -1204,7 +1221,6 @@ sub _findCoverArt {
 	# Don't bother if the user doesn't care.
 	return unless Slim::Utils::Prefs::get('lookForArtwork');
 
-	my $album    = $attributesHash->{'ALBUM'};
 	my $filepath = $file;
 
 	if (Slim::Music::Info::isFileURL($file)) {
