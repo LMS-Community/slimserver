@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.10 2004/01/26 05:44:13 dean Exp $
+# $Id: Display.pm,v 1.11 2004/02/22 05:26:29 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -512,8 +512,8 @@ my %doublechars = (
 	"(" => [ $slash,
 			 $backslash ],
 	
-	")" => [ ' ' . $backslash,
-			 ' ' . $slash ],
+	")" => [ $hardspace . $backslash,
+			 $hardspace . $slash ],
 	
 	"[" => [ $rightvbar . $toplinechar,
 			 $rightvbar . '_' ],
@@ -534,26 +534,26 @@ my %doublechars = (
 			 ')' ],
 	
 	'"' => [ '\'\'',
-			 '  '],
+			 $hardspace . $hardspace],
 	"%" => [ 'o/', '/o'],
 	"&" => [ '_' . 'L', $backslash . $leftvbar],
-	"^" => [ $slash . $backslash, '  '],
-	" " => [ '  ', '  ' ],
-	"'" => [ '|', ' ' ],
+	"^" => [ $slash . $backslash, $hardspace . $hardspace],
+	" " => [ $hardspace . $hardspace, $hardspace . $hardspace ],
+	"'" => [ '|', $hardspace ],
 	"!" => [ '|', '.' ],
 	":" => [ '.', '.' ],
-	"." => [ ' ', '.' ],
+	"." => [ $hardspace, '.' ],
 	";" => [ '.', ',' ],
-	"," => [ ' ', '/' ],
-	"`" => [ $backslash, ' ' ],
+	"," => [ $hardspace, '/' ],
+	"`" => [ $backslash, $hardspace ],
 	
-	"_" => [ '  ', '_' . '_' ],
+	"_" => [ $hardspace . $hardspace, '_' . '_' ],
 	
-	"+" => [ '_' . 'L', ' ' . $leftvbar],
+	"+" => [ '_' . 'L', $hardspace . $leftvbar],
 	
 	"*" => [ '**', '**'],
 	
-	'~' => [ $slash . $toplinechar, '  ' ],
+	'~' => [ $slash . $toplinechar, $hardspace . $hardspace ],
 	
 	"@" => [ $slash . 'd',
 			 $backslash . '_' ],
@@ -566,13 +566,13 @@ my %doublechars = (
 			 '|' ],
 	
 	"-" => [ '_' . '_',
-			 '  ' ],
+			 $hardspace . $hardspace ],
 	
-	"/" => [ ' ' . $slash,
-			 $slash . ' ' ],
+	"/" => [ $hardspace . $slash,
+			 $slash . $hardspace ],
 	
-	"\\" => [ $backslash . ' ',
-			  ' ' . $backslash ],
+	"\\" => [ $backslash . $hardspace,
+			  $hardspace . $backslash ],
 	
 	"=" => ['--'
 		   ,'--'],
@@ -584,46 +584,46 @@ my %doublechars = (
 		
 	$notesymbol => [ $leftvbar . $backslash , $filledcircle . " "],
 
-	$rightarrow => [ ' _' . $backslash , ' ' . $toplinechar . '/'],
+	$rightarrow => [ ' _' . $backslash , $hardspace . $toplinechar . '/'],
 
-	$hardspace => [ ' ', ' '],
+	$hardspace => [ $hardspace, $hardspace],
 	
 	$centerchar => [$centerchar,$centerchar]
 	,'0' => [$slash . $toplinechar . $backslash, $backslash . '_' . $slash]
-	,'1' => [' ' . $slash . $leftvbar , '  ' . $leftvbar]
-	,'2' => [' ' . $toplinechar . ')' , ' ' . $Zbottom . '_']
-	,'3' => [' ' . $doublelinechar . ')' , ' _)']
-	,'4' => [$rightvbar . '_' . $leftvbar , '  ' . $leftvbar]
+	,'1' => [$hardspace . $slash . $leftvbar , $hardspace . $hardspace . $leftvbar]
+	,'2' => [$hardspace . $toplinechar . ')' , $hardspace . $Zbottom . '_']
+	,'3' => [$hardspace . $doublelinechar . ')' , ' _)']
+	,'4' => [$rightvbar . '_' . $leftvbar , $hardspace . $hardspace . $leftvbar]
 	,'5' => [$rightvbar . $doublelinechar . $toplinechar , ' _)']
-	,'6' => [' ' . $Zbottom . ' ' , '(_)']
-	,'7' => [' ' . $toplinechar . $Ztop , ' ' . $slash . ' ']
+	,'6' => [$hardspace . $Zbottom . $hardspace , '(_)']
+	,'7' => [$hardspace . $toplinechar . $Ztop , $hardspace . $slash . $hardspace]
 	,'8' => ['(' . $doublelinechar . ')' , '(_)']
-	,'9' => ['(' . $doublelinechar . ')' , ' ' . $slash . ' ']
-	,'A' => [' ' . $slash . $backslash . ' ' , $rightvbar . $toplinechar . $toplinechar . $leftvbar]
+	,'9' => ['(' . $doublelinechar . ')' , $hardspace . $slash . $hardspace]
+	,'A' => [$hardspace . $slash . $backslash . $hardspace , $rightvbar . $toplinechar . $toplinechar . $leftvbar]
 	,'B' => [$rightvbar . $doublelinechar . ')' , $rightvbar . '_)']
 	,'C' => [$slash . $toplinechar , $backslash . '_']
 	,'D' => [$rightvbar . $toplinechar . $backslash , $rightvbar . '_' . $slash]
 	,'E' => [$rightvbar . $doublelinechar , $rightvbar . '_']
-	,'F' => [$rightvbar . $doublelinechar , $rightvbar . ' ']
-	,'G' => [$slash . $toplinechar . ' ' , $backslash . $doublelinechar . $leftvbar]
-	,'H' => [$rightvbar . '_' . $leftvbar , $rightvbar . ' ' . $leftvbar]
-	,'I' => [' ' . $leftvbar , ' ' . $leftvbar]
-	,'J' => ['  ' . $leftvbar , $rightvbar . '_' . $leftvbar]
+	,'F' => [$rightvbar . $doublelinechar , $rightvbar . $hardspace]
+	,'G' => [$slash . $toplinechar . $hardspace , $backslash . $doublelinechar . $leftvbar]
+	,'H' => [$rightvbar . '_' . $leftvbar , $rightvbar . $hardspace . $leftvbar]
+	,'I' => [$hardspace . $leftvbar , $hardspace . $leftvbar]
+	,'J' => [$hardspace . $hardspace . $leftvbar , $rightvbar . '_' . $leftvbar]
 	,'K' => [$rightvbar . $slash , $rightvbar . $backslash]
-	,'L' => [$rightvbar . ' ' , $rightvbar . '_']
-	,'M' => [$rightvbar . $backslash . $slash . $leftvbar , $rightvbar . '  ' . $leftvbar]
-	,'N' => [$rightvbar . $backslash . $leftvbar , $rightvbar . ' ' . $leftvbar]
+	,'L' => [$rightvbar . $hardspace , $rightvbar . '_']
+	,'M' => [$rightvbar . $backslash . $slash . $leftvbar , $rightvbar . $hardspace . $hardspace . $leftvbar]
+	,'N' => [$rightvbar . $backslash . $leftvbar , $rightvbar . $hardspace . $leftvbar]
 	,'O' => [$slash . $toplinechar . $backslash , $backslash . '_' . $slash]
-	,'P' => [$rightvbar . $doublelinechar .')' , $rightvbar . '  ']
+	,'P' => [$rightvbar . $doublelinechar .')' , $rightvbar . $hardspace . $hardspace]
 	,'Q' => [$slash . $toplinechar . $backslash , $backslash . '_X']
-	,'R' => [$rightvbar . $doublelinechar . ')' , $rightvbar . ' ' . $backslash]
+	,'R' => [$rightvbar . $doublelinechar . ')' , $rightvbar . $hardspace . $backslash]
 	,'S' => ['(' . $toplinechar , '_)']
 	,'T' => [$toplinechar . '|' . $toplinechar , ' | ']
-	,'U' => [$rightvbar . ' ' . $leftvbar , $rightvbar . '_' . $leftvbar]
+	,'U' => [$rightvbar . $hardspace . $leftvbar , $rightvbar . '_' . $leftvbar]
 	,'V' => [$leftvbar . $rightvbar , $backslash . $slash]
-	,'W' => [$leftvbar . '  ' . $rightvbar , $backslash . $slash . $backslash . $slash]
+	,'W' => [$leftvbar . $hardspace . $hardspace . $rightvbar , $backslash . $slash . $backslash . $slash]
 	,'X' => [$backslash . $slash , $slash . $backslash]
-	,'Y' => [$backslash . $slash , ' ' . $leftvbar]
+	,'Y' => [$backslash . $slash , $hardspace . $leftvbar]
 	,'Z' => [$toplinechar . $Ztop , $Zbottom . '_']
 );
 

@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.17 2004/02/20 20:59:02 dean Exp $
+# $Id: Plugins.pm,v 1.18 2004/02/22 05:26:29 dean Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
@@ -135,8 +135,12 @@ sub installedPlugins {
 			unshift @INC,  $plugindir;
 			foreach my $plugin ( sort(readdir(DIR)) ) {
 				if ($plugin =~ s/(.+)\.pm$/$1/i) {
-					my $pluginname;
 					$pluginlist{$plugin} = exists($plugins{$plugin}) ? $plugins{$plugin}{'name'} : $plugin;
+				}
+				elsif (-d catdir($plugindir, $plugin) &&
+					   -e catdir($plugindir, $plugin, "Plugin.pm")) {
+					my $pluginname = $plugin . '::' . "Plugin";
+					$pluginlist{$pluginname} = exists($plugins{$pluginname}) ? $plugins{$pluginname}{'name'} : $plugin;
 				}
 			}
 			closedir(DIR);
@@ -274,3 +278,9 @@ sub getFunctions {
 }
 
 1;
+__END__
+
+# Local Variables:
+# tab-width:4
+# indent-tabs-mode:t
+# End:
