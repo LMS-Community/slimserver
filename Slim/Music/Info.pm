@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.58 2004/01/17 04:09:52 kdf Exp $
+# $Id: Info.pm,v 1.59 2004/01/17 07:51:36 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1237,7 +1237,7 @@ sub bitrate {
 	my $file = shift;
 	my $mode = (defined info($file,'VBR_SCALE')) ? 'VBR' : 'CBR';
 	if (info($file,'BITRATE')) {
-		return (info($file,'BITRATE')/1000).Slim::Utils::Strings::string('KBPS').' '.$mode;
+		return int(info($file,'BITRATE')/1000).Slim::Utils::Strings::string('KBPS').' '.$mode;
 	} else {
 		return;
 	}
