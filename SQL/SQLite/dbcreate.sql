@@ -43,6 +43,9 @@ CREATE TABLE tracks (
   tagversion varchar,      -- ID3 tag version
   tagsize integer,         -- tagsize
   drm integer,             -- DRM enabled
+  rating integer,          -- track rating - placeholder
+  playCount integer,       -- number of times the track has been played - placeholder
+  lastPlayed integer,      -- timestamp of the last play - placeholder
   moodlogic_song_id integer, -- moodlogic fields
   moodlogic_artist_id integer,
   moodlogic_genre_id integer,
@@ -62,6 +65,10 @@ CREATE INDEX trackTitleIndex ON tracks (title);
 CREATE INDEX trackAlbumIndex ON tracks (album);
 
 CREATE INDEX trackSortIndex ON tracks (titlesort);
+
+CREATE INDEX trackRatingIndex ON tracks (rating);
+
+CREATE INDEX trackPlayCountIndex ON tracks (playCount);
 
 CREATE TABLE playlist_track (
   id integer UNIQUE PRIMARY KEY NOT NULL,
