@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.12 2003/10/29 22:27:16 sadams Exp $
+# $Id: IR.pm,v 1.13 2003/11/02 19:29:51 grotus Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -136,6 +136,8 @@ sub addModeDefaultMapping {
 	}
 }
 
+my @buttonPressStyles = ( '','.single','.double','.repeat','.hold','.hold_release');
+
 sub loadMapFile {
 	my $mapfile = shift;
 	my $mode;
@@ -156,7 +158,13 @@ sub loadMapFile {
 			s/\s*#.*$//;		# trim comments (note, no #'s or ='s allowed in button names)
 			next unless length;	#anything left?
 			my ($buttonName, $function) = split(/\s*=\s*/, $_, 2);
-			$irMap{$mapfile}{$mode}{$buttonName} = $function;
+			unless ($buttonName =~ /(.+)\.\*/) {
+				$irMap{$mapfile}{$mode}{$buttonName} = $function;
+			} else {
+				foreach my $style (@buttonPressStyles) {
+					$irMap{$mapfile}{$mode}{$1 . $style} = $function;
+				}
+			}
 		}
 		close(MAP);
 		
