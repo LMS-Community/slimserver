@@ -257,7 +257,12 @@ sub parseCUE {
 			$genre = $1;
 		} elsif (/^(?:REM\s+)?COMMENT\s+\"(.*)\"/i) {
 			$comment = $1;
-		} elsif (/^FILE\s+\"?(.*)\"?/i) {
+		} elsif (/^FILE\s+\"(.*)\"/i) {
+			$filename = $1;
+			$filename = Slim::Utils::Misc::fixPath($filename, $cuedir);
+		} elsif (/^FILE\s+\"?(\S+)\"?/i) {
+			# Some cue sheets may not have quotes. Allow that, but
+			# the filenames can't have any spaces in them.
 			$filename = $1;
 			$filename = Slim::Utils::Misc::fixPath($filename, $cuedir);
 		} elsif (/^\s+TRACK\s+(\d+)\s+AUDIO/i) {
@@ -321,11 +326,11 @@ sub parseCUE {
 
 		push @items, $url;
 
-		my $cacheEntry = {};
-		
-		$cacheEntry->{'CT'} = Slim::Music::Info::typeFromPath($url, 'mp3');
-		
-		$cacheEntry->{'TRACKNUM'} = $key;
+		my $cacheEntry = {
+			'CT'       => Slim::Music::Info::typeFromPath($filename, 'mp3'),
+			'TRACKNUM' => $key,
+		};
+
 		$::d_parse && Slim::Utils::Misc::msg("    TRACKNUM: $key\n");
 
 		if (exists $track->{'TITLE'}) {
