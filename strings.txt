@@ -108,17 +108,29 @@ ABOUT_SLIMDEVICES
 # Player user interface, sent by the server
 # Keep these as short as possible.
 #
-HOME
-	DE	Hauptmenü
-	DK	Hovedmenu
-	EN	Home
-	ES	Inicio
-	FI	Alkuun
-	FR	Menu principal
-	NL	Hoofdmenu
-	NO	Hjem
-	PT	Início
-	SE	Huvudmeny
+SLIMP3_HOME
+	DE	SLIMP3 Hauptmenü
+	DK	SLIMP3 Hovedmenu
+	EN	SLIMP3 Home
+	ES	Inicio SLIMP3
+	FI	SLIMP3 Alkuun
+	FR	Menu SLIMP3
+	NL	SLIMP3 Hoofdmenu
+	NO	SLIMP3 Hjem
+	PT	Início SLIMP3
+	SE	SLIMP3 Huvudmeny
+
+SQUEEZEBOX_HOME
+	DE	Squeezebox Hauptmenü
+	DK	Squeezebox Hovedmenu
+	EN	Squeezebox Home
+	ES	Inicio Squeezebox
+	FI	Squeezebox Alkuun
+	FR	Menu Squeezebox
+	NL	Squeezebox Hoofdmenu
+	NO	Squeezebox Hjem
+	PT	Início Squeezebox
+	SE	Squeezebox Huvudmeny
 
 LIBRARY_CONTAINS
 	DE	Die Musikbibliothek enthält

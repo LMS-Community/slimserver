@@ -1,6 +1,6 @@
 package Slim::Network::Discovery;
 
-# $Id: Discovery.pm,v 1.2 2003/07/24 23:14:04 dean Exp $
+# $Id: Discovery.pm,v 1.3 2003/07/31 23:35:57 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -37,7 +37,7 @@ sub sendDiscoveryResponse {
 	my $udpsock = shift;
 	my $clientpaddr = shift;
 
-	my $response = 'D'. serverHostname();
+	my $response = 'D'. pack('C', 0) x 17; 
 	
 	$::d_protocol && msg(" send discovery response\n");
 

@@ -223,8 +223,11 @@ sub jump {
 sub lines {
 	my $client = shift;
 	my ($line1, $line2);
-
-	$line1 = string('HOME');
+	if ($client->model() eq 'slimp3') {
+		$line1 = string('SLIMP3_HOME');
+	} else {
+		$line1 = string('SQUEEZEBOX_HOME');
+	}
 	$line2 = string($homeChoices[$client->homeSelection]);
 
 	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
