@@ -1,8 +1,8 @@
 <html>
-  <head>
-    <title>{title}</title>
-    <link rel="stylesheet" href="{webroot}slimserver.css">
-    
+	<head>
+	<title>{title}</title>
+	<link rel="stylesheet" href="{webroot}slimserver.css">
+	
 <script language="JavaScript">
 <!--Hide
 function setCookie(name, value)
@@ -26,7 +26,7 @@ function chooseBrowser(value)
 		url="{webroot}browseid3.html?genre=*[IF nofolder]&nofolder=1[/IF]";
 		break
 		case 2:
-		url="{webroot}browseid3.html?genre=*&artist=*&bycover=1[IF nofolder]&nofolder=1[/IF]";
+		url="{webroot}browseid3.html?genre=*&artist=*&artwork=1[IF nofolder]&nofolder=1[/IF]";
 		break
 		case 3:
 		url="{webroot}browseid3.html?genre=*&artist=*[IF nofolder]&nofolder=1[/IF]";
@@ -46,17 +46,17 @@ function chooseBrowser(value)
 &rbrc;
 -->
 </script>
-  <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
-   <div class="menu1" width="100%">
-   <table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13">
-   <td width="33%" height="13" align="center"><nobr><a class="menu1" href="{webroot}home.html?player={%player}">[IF music]<b>[/IF][S {playermodel}_HOME][IF music]</b>[/IF]</nobr></td>
-   <td><img src="{webroot}html/pixel.grey.gif" width="1" height="100%" border="0"></td>
-   <td width="33%" height="13" align="center"><nobr><a class="menu1" href="{webroot}setup.html?page=server&player={%player}[IF nofolder]&nofolder=1[/IF]">[IF setup]<b>[/IF][S SERVER_SETTINGS][IF setup]</b>[/IF]</a></nobr></td>
-   <td><img src="{webroot}html/pixel.grey.gif" width="1" height="100%" border="0"></td>
-   <td width="33%" height="13" align="center"><a class="menu1" href="{webroot}html/docs/help.html[IF nofolder]?&nofolder=1[/IF]">[IF help]<b>[/IF][S HELP][IF help]</b>[/IF]</a></td>
+	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
+	<div class="menu1" width="100%">
+	<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13">
+	<td width="33%" height="13" align="center"><nobr><a class="menu1" href="{webroot}home.html?player={%player}">[IF music]<b>[/IF][S {playermodel}_HOME][IF music]</b>[/IF]</nobr></td>
+	<td><img src="{webroot}html/pixel.grey.gif" width="1" height="100%" border="0"></td>
+	<td width="33%" height="13" align="center"><nobr><a class="menu1" href="{webroot}setup.html?page=server&player={%player}[IF nofolder]&nofolder=1[/IF]">[IF setup]<b>[/IF][S SERVER_SETTINGS][IF setup]</b>[/IF]</a></nobr></td>
+	<td><img src="{webroot}html/pixel.grey.gif" width="1" height="100%" border="0"></td>
+	<td width="33%" height="13" align="center"><a class="menu1" href="{webroot}html/docs/help.html[IF nofolder]?&nofolder=1[/IF]">[IF help]<b>[/IF][S HELP][IF help]</b>[/IF]</a></td>
 	</table></div>
 <div class="menu2" width="100%" [IF setup]style='position:absolute;top:-100;'[/IF]>
-   <table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 	<FORM name="browse" method="Get" action="{webroot}search.html"><td width="35%"><center><nobr>
 	<SELECT NAME="type" class="stdedit" onchange="chooseBrowser(selectedIndex)"  width="65">
 	<OPTION [EQ browseby BROWSE_BY_GENRE]selected[/EQ] value="song">[S BROWSE_BY_GENRE]</OPTION>

@@ -23,8 +23,8 @@
       <div class="nowplaying">
 	   <table border="0" cellspacing="0" cellpadding="0" width="100%">
        <tr>
-          [IF coverart]<td valign="top">
-		   <a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="/music/{%itempath}/cover.jpg" border="0" height="100">
+          [IF coverthumb]<td valign="top">
+		   <a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="/music/{%itempath}/thumb.jpg" border="0" height="100">
 	      </td>[/IF]
 	      <td><img src="html/images/spacer.gif" border="0" width="5"></td>
 	      <td valign="top" width="100%"><nobr>
@@ -35,14 +35,14 @@
                 [IF currentsong]<b>{currentsong}</b> [S OUT_OF] <b>&nbsp;{songcount}</b>&nbsp;<a class="label" href="status.html?p0=button&amp;p1=modefunction_playlist->zap&amp;player={%player}&amp;start={start}">[zap]</a>[/IF]:</p>
                 <p><img src="html/images/spacer.gif" border="0" width="5"><a class="songtitle" href="songinfo.html?songurl={%itempath}&player={%player}" target="browser">{title}</a>
                 [IF duration]&nbsp;({&duration})[/IF][IF bitrate]&nbsp;({bitrate})[/IF]</p>
-                [IFN coverart]
+                [IFN coverthumb]
                 <table border="0" cellpadding="0" cellspacing="0" width="100%"><td width="50%"><nobr>[/IFN]
                    <p class="label"><img src="html/images/spacer.gif" border="0" width="5">[IF artist][S ARTIST]&nbsp;<a class="label" href="status.html?p0=playlist&amp;p1=deletealbum&amp;p2=&amp;p3={%artist}&amp;player={%player}&amp;start={start}">[x]</a>[/IF]</p>
                    <p><a class="artistname" href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser"><img src="html/images/spacer.gif" border="0" width="5">{artist}</a></p>
-                   [IFN coverart]</nobr></td><td><nobr>[/IFN]
+                   [IFN coverthumb]</nobr></td><td><nobr>[/IFN]
                    <p class="label"><img src="html/images/spacer.gif" border="0" width="5">[IF album][S ALBUM]&nbsp;<a class="label" href="status.html?p0=playlist&amp;p1=deletealbum&amp;p2=&amp;p3=&amp;p4={%album}&amp;player={%player}&amp;start={start}">[x]</a>[/IF]</p>
                    <p class="artistname"><a class="artistname" href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="html/images/spacer.gif" border="0" width="5">{album}</a>
-                   [IF year]&nbsp;({year})[/IF]</p>[IFN coverart]</td>
+                   [IF year]&nbsp;({year})[/IF]</p>[IFN coverthumb]</td>
                 </table>[/IFN]
           </nobr></td>
        </tr>
