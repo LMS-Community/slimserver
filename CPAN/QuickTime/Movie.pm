@@ -1,6 +1,6 @@
 package QuickTime::Movie;
 
-# $Id: Movie.pm,v 1.1 2003/12/18 02:36:14 dean Exp $
+# $Id: Movie.pm,v 1.2 2004/03/15 18:37:38 dean Exp $
 
 use strict;
 use base qw(Exporter);
@@ -82,10 +82,27 @@ sub readUserData {
 											last if !defined($tag);
 											last if $ilstends > $length;
 											
-											if (DEBUG) {
-												print "                ilst atom: $tag [ends: $ilstends]\n";
+											my ($payload, $dataends) = atom($moviefile);
+											
+											if ($payload eq 'data') {
+												my $data;
+												my $len =  $dataends - tell($moviefile);
+												read $moviefile, $data, $len;
+											
+												my ($long1, $long2, $string) = unpack('NNa*', $data);
+
+												if (DEBUG) {
+													print "                payload atom: $tag [length: " . length($data) . "calculated: $len]: $long1 $long2\n";
+													print " $string\n" if (length($string) < 1000)
+												}
+
+												$movieInfo->{$tag} = $string;
+											} else {
+												if (DEBUG) {
+													print "                skipping atom: $tag\n";
+												}
 											}
-									
+											
 											# move on to the next atom
 											seek $moviefile, $ilstends, 0;
 											
