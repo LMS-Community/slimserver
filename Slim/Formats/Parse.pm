@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.19 2004/08/03 17:29:14 vidur Exp $
+# $Id: Parse.pm,v 1.20 2004/08/06 02:22:35 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -58,7 +58,7 @@ sub M3U {
 	my @items  = ();
 	
 	$::d_parse && Slim::Utils::Misc::msg("parsing M3U: $m3u\n");
-	
+	my $title;
 	while (my $entry = <$m3u>) {
 
 		chomp($entry);
@@ -71,7 +71,7 @@ sub M3U {
 
 		$::d_parse && Slim::Utils::Misc::msg("  entry from file: $entry\n");
 
-		my $title;
+		
 
 		if ($entry =~ /^#EXTINF:.*?,(.*)$/) {
 			$title = $1;	
@@ -87,7 +87,7 @@ sub M3U {
 		$::d_parse && Slim::Utils::Misc::msg("    entry: $entry\n");
 
 		_updateMetaData($entry, $title);
-		
+		$title = undef;
 		push @items, $entry;
 	}
 
