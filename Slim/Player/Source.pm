@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.56 2004/01/20 20:30:59 dean Exp $
+# $Id: Source.pm,v 1.57 2004/01/20 21:58:20 daniel Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -713,18 +713,24 @@ sub openSong {
 		} else {
 			$filepath = $fullpath;
 		}
-		
-		my $size       = Slim::Music::Info::size($fullpath);
-		my $duration   = Slim::Music::Info::durationSeconds($fullpath);
-		my $offset     = Slim::Music::Info::offset($fullpath);
-		my $samplerate = Slim::Music::Info::samplerate($fullpath);
-		my $blockalign = Slim::Music::Info::blockalign($fullpath);
-		
-		$::d_source && msg("openSong: getting duration  $duration, size $size, and offset $offset for $fullpath\n");
 
-		if (!$size || !$duration) {
-			$::d_source && msg("openSong: not bothering opening file with zero size or duration\n");
-			return undef;
+		my ($size, $duration, $offset, $samplerate, $blockalign) = (0, 0, 0, 0, 0);
+		
+		# don't try and read this if we're a pipe
+		unless (-p $fullpath) {
+
+			$size       = Slim::Music::Info::size($fullpath);
+			$duration   = Slim::Music::Info::durationSeconds($fullpath);
+			$offset     = Slim::Music::Info::offset($fullpath);
+			$samplerate = Slim::Music::Info::samplerate($fullpath);
+			$blockalign = Slim::Music::Info::blockalign($fullpath);
+			
+			$::d_source && msg("openSong: getting duration  $duration, size $size, and offset $offset for $fullpath\n");
+
+			if (!$size || !$duration) {
+				$::d_source && msg("openSong: not bothering opening file with zero size or duration\n");
+				return undef;
+			}
 		}
 		
 		my ($command, $type, $format) = getCommand($client, $fullpath);
@@ -742,12 +748,20 @@ sub openSong {
 				if ($client->audioFilehandle->open($filepath)) {
 
 					$::d_source && msg(" seeking in $offset into $filepath\n");
+
 					if ($offset) {
 						if (!defined(sysseek($client->audioFilehandle, $offset, 0))) {
 							msg("couldn't seek to $offset for $filepath");
 						};
 					}
-					$client->audioFilehandleIsSocket(0);
+
+					# pipe is a socket
+					if (-p $fullpath) {
+						$client->audioFilehandleIsSocket(1);
+					} else {
+						$client->audioFilehandleIsSocket(0);
+					}
+
 				} else { 
 					$client->audioFilehandle(undef);
 				}
