@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.116 2005/01/06 20:50:24 dsully Exp $
+# $Id: Pages.pm,v 1.117 2005/01/08 04:20:47 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2251,7 +2251,6 @@ sub browseid3_old {
 					\$params->{'start'},
 					\$params->{'browselist_header'},
 					$params->{'skinOverride'},
-					$params->{'itemsPerPage'},
 					$params->{'itemsPerPage'},
 					($numItems > 1)
 				);
