@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.31 2004/10/06 15:56:12 vidur Exp $
+# $Id: Player.pm,v 1.32 2004/10/06 23:10:20 vidur Exp $
 #
 package Slim::Player::Player;
 use strict;
@@ -60,8 +60,25 @@ my $defaultPrefs = {
 		,'syncPower'			=> 0
 		,'syncVolume'			=> 0
 		,'treble'				=> 50
+		,'upgrade-5.4b1-script'		=> 1
 		,'volume'				=> 50
 	};
+
+my %upgradeScripts = (
+      '5.4b1' => sub {
+	  my $client = shift;
+
+	  my $ind = 0;
+	  foreach my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
+		if ($menuItem eq 'ShoutcastBrowser') {
+			Slim::Utils::Prefs::clientSet($client, 'menuItem', 
+						      'RADIO', $ind);
+			last;
+		}
+		$ind++;
+	  }
+      },
+);
 
 sub new {
 	my $class = shift;
@@ -82,6 +99,14 @@ sub new {
 
 sub init {
 	my $client = shift;
+
+	for my $version (sort keys %upgradeScripts) {
+		if (Slim::Utils::Prefs::clientGet($client, "upgrade-$version-script")) {
+			&{$upgradeScripts{$version}}($client);
+			Slim::Utils::Prefs::clientSet($client, "upgrade-$version-script", 0);
+		}
+	}
+
 	Slim::Buttons::Home::updateMenu($client);
 	# fire it up!
 	$client->power(Slim::Utils::Prefs::clientGet($client,'power'));
