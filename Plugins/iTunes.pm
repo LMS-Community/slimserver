@@ -593,7 +593,7 @@ sub scanFunction {
 				$cacheEntry{'DISCC'} = $discCount if defined $discCount;
 				$cacheEntry{'ALBUM'} = $curTrack{'Album'};			
 
-				Slim::Music::Info::addDiscNumberToAlbumTitle(\%cacheEntry);
+				# Slim::Music::Info::addDiscNumberToAlbumTitle(\%cacheEntry);
 				
 				$cacheEntry{'GENRE'} = $curTrack{'Genre'};
 				$cacheEntry{'FS'} = $curTrack{'Size'};
@@ -655,6 +655,12 @@ sub scanFunction {
 			my $url = 'itunesplaylist:' . Slim::Web::HTTP::escape($name);
 		
 			$::d_itunes && msg("iTunes: got a playlist ($url) named $name\n");
+
+			if ($name eq 'Library') {
+				
+				$::d_itunes && msg("iTunes: Skipping default 'Library' playlist.\n");
+				return 1;
+			}
 		
 			# add this playlist to our playlist library
 			#	'LIST',	 # list items (array)
