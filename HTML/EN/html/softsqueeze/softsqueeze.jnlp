@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!-- JNLP File for Softsqueeze -->
 
-<!-- Edit the 'codebase' attribute to point to the location of your jnlp -->
-<!-- on your webserver. Note you must make sure that the webserver       -->
-<!-- returns the MIME type 'application/x-java-jnlp-file'.               -->
+<!--        ** This file is configured for the slimserver ** 			-->
+
+<!-- To use this jnlp file from another webserver or your local file    -->
+<!-- system you must edit the 'codebase' and 'slimserver' attributes.	-->
+<!-- Note you must make sure that the webserver returns the MIME        -->
+<!-- type 'application/x-java-jnlp-file'.               				-->
 
 <jnlp
   spec="1.0+"
   codebase="http://[% host %]/html/softsqueeze/"
   href="softsqueeze.jnlp">
   <information>
-    <title>Softsqueeze 1.5</title>
+    <title>Softsqueeze 1.7</title>
     <vendor>Richard Titmuss, et.al.</vendor>
     <homepage href="http://softsqueeze.sourceforge.net"/>
     <description>Softsqueeze Slim Devices Squeezebox Emulator</description>
