@@ -1329,7 +1329,7 @@ and saves in the top level of the playlists directory.</p>
   <p>Request: &quot;04:20:00:12:23:45 playlist repeat 0&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist repeat 0&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p id="playlistcontrol"><strong><code>playlistcontrol &lt;taggedParameters&gt;</code></strong></p>
+<br><p id="playlistcontrol"><strong><code>&lt;playerid&gt; playlistcontrol &lt;taggedParameters&gt;</code></strong></p>
 <p>The &quot;playlistcontrol&quot; command enables playlist operations using IDs as returned by extended CLI queries (titles, artists, etc).</p>
 <p>Accepted tagged parameters:</p>
 <table border="0" spacing="50">
@@ -1377,11 +1377,11 @@ and saves in the top level of the playlists directory.</p>
 </table>
 <p>Example:</p>
 <blockquote> 
-  <p> Request: &quot;playlistcontrol cmd:add genre_id:9&lt;LF&gt;&quot;<br>
-  	 Response: &quot;playlistcontrol cmd:add genre_id:9 count:33&lt;LF&gt;&quot;</p>
+  <p> Request: &quot;a5:41:d2:cd:cd:05 playlistcontrol cmd:add genre_id:9&lt;LF&gt;&quot;<br>
+  	 Response: &quot;a5:41:d2:cd:cd:05 playlistcontrol cmd:add genre_id:9 count:33&lt;LF&gt;&quot;</p>
 
-  <p> Request: &quot;playlistcontrol cmd:load album_id:22&lt;LF&gt;&quot;<br>
-  	 Response: &quot;playlistcontrol cmd:load album_id:22 count:12&lt;LF&gt;&quot;</p>
+  <p> Request: &quot;a5:41:d2:cd:cd:05 playlistcontrol cmd:load album_id:22&lt;LF&gt;&quot;<br>
+  	 Response: &quot;a5:41:d2:cd:cd:05 playlistcontrol cmd:load album_id:22 count:12&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p id="status"><strong><code>&lt;playerid&gt; status &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>

@@ -16,6 +16,7 @@ use Slim::Networking::Select;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::OSDetect;
+use Slim::Web::HTTP;
 
 
 # This module provides a command-line interface to the server via a TCP/IP port.
@@ -26,6 +27,7 @@ my $server_socket;
 my $connected = 0;
 my %outbuf = ();
 my %listen = ();
+my %authenticated = ();
 
 my $mdnsID;
 
@@ -116,6 +118,11 @@ sub connectedSocket {
 }
 
 sub acceptSocket {
+	if (connectedSocket() > Slim::Utils::Prefs::get("tcpConnectMaximum")) {
+		$::d_cli && msg("Too many sockets open, not accepting CLI connection...\n");
+		return;
+	}
+
 	my $clientsock = $server_socket->accept();
 
 	if ($clientsock && $clientsock->connected && $clientsock->peeraddr) {
@@ -184,18 +191,48 @@ sub executeCmd {
 	$::d_cli && msg("Clients: ". join " " ,Slim::Player::Client::clientIPs(), "\n");
 	$::d_cli && msg("Processing command: $command\n");
 	
-	if ($command =~ /^listen\s*(0|1|)/) {
-		if ($1 eq 0) {
-			$listen{$clientsock} = undef;
-		} elsif ($1 eq 1) {
-			$listen{$clientsock} = $clientsock;
+	# Check authentification if not already done
+	if (!defined($authenticated{$clientsock})) {
+		if (Slim::Utils::Prefs::get('authorize')) {
+			$::d_cli && msg("CLI connection requires authentication.\n");
+			if ($command =~ m|^login (\S*?) (\S*)|) {
+				# unescape: like other CLI command arguments, user and password should be URI-escaped
+				my ($user, $pass) = (Slim::Web::HTTP::unescape($1),Slim::Web::HTTP::unescape($2));
+				if (Slim::Web::HTTP::checkAuthorization($user, $pass)) {
+					$::d_cli && msg("CLI authentication successful.\n");
+					$authenticated{$clientsock} = 1;
+					$output = "login " . Slim::Web::HTTP::escape($user) . " ******";
+				}
+			}
+			
+			# failed, disconnect
+			if (!defined($authenticated{$clientsock})) {
+				closer($clientsock);
+				return;
+			}
+			
 		} else {
-			$listen{$clientsock} = $listen{$clientsock} ? undef : $clientsock;
+			# we're authenticated if no authentication is required!
+			$authenticated{$clientsock} = 1;
 		}
+		
 	}
 	
-	$output = Slim::Control::Stdio::executeCmd($command);
+	if (defined($authenticated{$clientsock})) {
 	
+		if ($command =~ /^listen\s*(0|1|)/) {
+			if ($1 eq 0) {
+				$listen{$clientsock} = undef;
+			} elsif ($1 eq 1) {
+				$listen{$clientsock} = $clientsock;
+			} else {
+				$listen{$clientsock} = $listen{$clientsock} ? undef : $clientsock;
+			}
+		}
+		
+		$output = Slim::Control::Stdio::executeCmd($command);
+		
+	}	
 	# if the callback isn't goint to print the response...
 	if (!$listen{$clientsock}) {
 
@@ -261,6 +298,8 @@ sub sendresponse {
 
 sub closer {
 	my $clientsock = shift;
+
+	$::d_cli && msg("Closing connection\n");
 
 	Slim::Networking::Select::addWrite($clientsock, undef);
 	Slim::Networking::Select::addRead($clientsock, undef);
