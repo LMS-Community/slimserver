@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.19 2004/02/13 18:45:52 dean Exp $
+# $Id: RemoteStream.pm,v 1.20 2004/02/16 04:14:19 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,6 +11,16 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use FileHandle;
 use IO::Socket qw(:DEFAULT :crlf);
+
+BEGIN {
+	if ($^O =~ /Win32/) {
+		*EWOULDBLOCK = sub () { 10035 };
+		*EINPROGRESS = sub () { 10036 };
+	} else {
+		require Errno;
+		import Errno qw(EWOULDBLOCK EINPROGRESS);
+	}
+}
 
 use Slim::Display::Display;
 use Slim::Utils::Misc;
@@ -171,7 +181,6 @@ sub readMetaData {
 
 	my $metadataSize = 0;
 	my $handle = $client->audioFilehandle();
-	my $was_blocking = Slim::Utils::Misc::blocking($handle, 1);
 
 	my $byteRead = 0;
 		
@@ -179,9 +188,12 @@ sub readMetaData {
 	{
 		$byteRead = $handle->sysread($metadataSize, 1);
 		if ($!) {
-			 $::d_remotestream && msg("Metadata byte not read! $!\n");  
-			 Slim::Utils::Misc::blocking($handle, $was_blocking);
-			 return;
+			if ($! ne "Unknown error" && $! != EWOULDBLOCK) {
+			 	$::d_remotestream && msg("Metadata byte not read! $!\n");  
+			 	return;
+			 } else {
+			 	$::d_remotestream && msg("Metadata byte not read, trying again: $!\n");  
+			 }			 
 		}
 		$byteRead = defined $byteRead ? $byteRead : 0;
 	}
@@ -196,15 +208,20 @@ sub readMetaData {
 		do {
 			$byteRead = $handle->sysread($metadatapart, $metadataSize);
 			if ($!) {
-				$::d_remotestream && msg("undef returned by sysread on metadata: $!\n");
-				Slim::Utils::Misc::blocking($handle, $was_blocking);
-				return;
+				 if ($! ne "Unknown error" && $! != EWOULDBLOCK) {
+					$::d_remotestream && msg("Metadata bytes not read! $!\n");  
+					return;
+				 } else {
+					$::d_remotestream && msg("Metadata bytes not read, trying again: $!\n");  
+				 }			 
 			}
 			$byteRead = 0 if (!defined($byteRead));
 			$metadataSize -= $byteRead;	
 			$metadata .= $metadatapart;	
 		} while ($metadataSize > 0);			
+
 		$::d_remotestream && msg("metadata: $metadata\n");
+
 		if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
 			my $url = Slim::Player::Playlist::song($client);
 			my $oldtitle = Slim::Music::Info::title($url);
@@ -235,7 +252,6 @@ sub readMetaData {
 		# new song, so reset counters
 		$client->songBytes(0);
 	}
-	Slim::Utils::Misc::blocking($handle, $was_blocking);
 }
 
 1;
