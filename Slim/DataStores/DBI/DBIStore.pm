@@ -117,8 +117,8 @@ sub new {
 	$self->_commitDBTimer();
 
 	$common_albums = Slim::Utils::Prefs::get('commonAlbumTitles');
-	Slim::Utils::Prefs::addPrefChangeHandler('commonAlbumTitles', 
-											 \&commonAlbumTitlesChanged);
+
+	Slim::Utils::Prefs::addPrefChangeHandler('commonAlbumTitles', \&commonAlbumTitlesChanged);
 	
 	return $self;
 }
@@ -1137,14 +1137,15 @@ sub _postCheckAttributes {
 
 		} else {
 
-			if ((grep $album =~ m/^$_$/i, @$common_albums) &&
-				$contributors[0]) {
+			if ((grep $album =~ m/^$_$/i, @$common_albums) && $contributors[0]) {
+
 				($albumObj) = Slim::DataStores::DBI::Album->search({ 
 					titlesort => $sortable_title,
 					contributors => $contributors[0]->id,
 				});			
-			}
-			else {
+
+			} else {
+
 				($albumObj) = Slim::DataStores::DBI::Album->search({ 
 					titlesort => $sortable_title,
 				});
@@ -1333,7 +1334,17 @@ sub updateCoverArt {
 }
 
 sub commonAlbumTitlesChanged {
-	$common_albums = shift;
+	my ($value, $key, $index) = @_;
+
+	# Add the new value, or splice it out.
+	if ($value) {
+
+		$common_albums->[$index] = $value;
+
+	} else {
+
+		splice @$common_albums, $index, 1;
+	}
 }
 
 1;
