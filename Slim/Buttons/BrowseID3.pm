@@ -1,7 +1,7 @@
 package Slim::Buttons::BrowseID3;
-# $Id:
+# $Id: BrowseID3.pm,v 1.8 2004/01/13 07:46:28 kdf Exp $
 
-# SliMP3 Server Copyright (C) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (C) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -350,7 +350,12 @@ sub loadDir {
 
 	if (defined($artist) && ($artist eq string('ALL_ALBUMS'))) {
 		$artist = '*';
-		$sortbytitle = 1;
+		$sortbytitle = picked($album) ? 0 : 1;
+	};
+
+	if (defined($genre) && ($genre eq string('ALL_ALBUMS'))) {
+		$genre = '*';
+		$sortbytitle = picked($album) ? 0 : 1;
 	};
 
 	if ($genre  && $genre  eq '*' &&
@@ -396,18 +401,19 @@ sub loadDir {
 		);
 
 		if (scalar @{browseID3dir($client)} > 1) {
-
 			push @{browseID3dir($client)}, string('ALL_ALBUMS');
 		}
 
 	} else {
-
 		@{browseID3dir($client)} = Slim::Music::Info::genres(
 			singletonRef($genre),
 			singletonRef($artist),
 			singletonRef($album),
 			singletonRef($song)
 		);
+		
+		if (scalar @{browseID3dir($client)} > 1) { 
+			push @{browseID3dir($client)}, string('ALL_ALBUMS'); }
 	}
 
 	return browseID3dirIndex($client, getLastSelection($client));
