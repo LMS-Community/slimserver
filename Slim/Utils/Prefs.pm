@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.54 2004/04/30 16:42:12 dean Exp $
+# $Id: Prefs.pm,v 1.55 2004/05/02 15:01:07 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -112,7 +112,7 @@ my %DEFAULT = (
 	,"streamWriteMaximum"	=> 30
 	,'webproxy'				=> ''
 	,"udpChunkSize"			=> 1400
-	,"usetagdatabase"		=> 0				# use 0 for false, 1 for true
+	,"usetagdatabase"		=> 1				# use 0 for false, 1 for true
 	,"templatecache"		=> 1				# use 0 for false, 1 for true
 	,'animationLevel'		=> 3
 	,'itemsPerPage'			=> 100

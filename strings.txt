@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.96 2004/05/02 06:00:02 dean Exp $
+# $Id: strings.txt,v 1.97 2004/05/02 15:01:05 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1441,9 +1441,11 @@ SETUP_MAXBITRATE_DESC
 	SE	Maximal transkodnings-bitrate för denna spelare. Alla kodade filer eller strömmar med högre rate, kommer att samplas ned. Lägre bitrate lämnas oförändrade. Sker uppkoppling mot en bitrate med fixt värde (ex. stream.mp3?bitrate=128) är det detta värde som gäller. Godkända värden är 0,32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256 och 320. Värdet 0 stänger av maximal bitrate-begränsningen.
 
 SETUP_MP3SILENCEPRELUDE
+	DE	Audio Startzeit
 	EN	Audio Startup Time
 
 SETUP_MP3SILENCEPRELUDE_DESC
+	DE	Einige Verstärker und D/A-Konverter brauchen etwas zusätzliche Zeit, um die Dekodierung zu beginnen, wenn der Player MP3 Daten wiedergibt. Definieren Sie hier die Wartezeit in Sekunden, die nach dem Druck auf Play abgewartet werden soll. Vorgabewert ist 0, ein Wert von 0.25 Sekunden funktioniert mit den meisten Verstärkern.
 	EN	Some audio receivers and D/A converters need a little extra time to start decoding audio from the player when playing back MP3 audio.  You can specify how much time, in seconds, to wait after pressing play to start sending MP3 audio.  The default value is 0, a value of 0.25 seconds works for many receivers.
 
 SETUP_TITLEFORMATCURR

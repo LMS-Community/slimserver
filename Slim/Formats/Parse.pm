@@ -271,7 +271,7 @@ sub writePLS {
 	my $outstring = '';
 	my $writeproc;
 
-	if ($filename && -e $filename) {
+	if ($filename) {
 
 		$output = FileHandle->new($filename, "w") || do {
 			msg("Could not open $filename for writing.\n");
