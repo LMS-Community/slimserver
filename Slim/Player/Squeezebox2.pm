@@ -206,6 +206,14 @@ sub visualizer {
 		$visu = 0 if (!$client->power());
 	}
 	
+	if ($visu < 0) { 
+	    $visu = 0; 
+	}
+	my $nmodes = $client->nowPlayingModes();
+	if ($visu >= $nmodes) { 
+	    $visu = $nmodes - 1;
+	}
+
 	my $params = pack "CC", $visualizer[$visu], scalar(@{$visualizerParameters[$visu]});
 	for my $param (@{$visualizerParameters[$visu]}) {
 		$params .= pack "N", $param;
