@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.54 2004/01/15 02:07:38 dean Exp $
+# $Id: Info.pm,v 1.55 2004/01/15 07:03:12 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2199,19 +2199,23 @@ sub readCoverArt {
 			if ($image eq 'thumb') {
 				if (Slim::Utils::Prefs::get('coverThumb')) {
 					my $cover = Slim::Utils::Prefs::get('coverThumb');
-					if ($cover =~ m/\%(.*?)/isg) {
-						$cover = infoFormat($file, $1, "TITLE").".jpg";
+					if ($cover =~ /^%(.*?)(\..*?){0,1}$/) {
+						my $suffix = $2 ? $2 : ".jpg";
+						$cover = infoFormat($file, $1)."$suffix";
+						$::d_info && Slim::Utils::Misc::msg("Variable Thumbnail: $cover from $1\n");
 					}
-					push @filestotry, $cover; 
+					if (defined $cover) {push @filestotry, $cover;}
 				}
 				push @filestotry, ('thumb.jpg', 'albumartsmall.jpg', 'cover.jpg',  'folder.jpg', 'album.jpg');
 			} else {
 				if (Slim::Utils::Prefs::get('coverArt')) {
 					my $cover = Slim::Utils::Prefs::get('coverArt');
-					if ($cover =~ m/\%(.*?)/isg) {
-						$cover = infoFormat($file, $1, "TITLE").".jpg";
+					if ($cover =~ /^%(.*?)(\..*?){0,1}$/) {
+						my $suffix = $2 ? $2 : ".jpg";
+						$cover = infoFormat($file, $1)."$suffix";
+						$::d_info && Slim::Utils::Misc::msg("Variable Cover: $cover from $1\n");
 					}
-					push @filestotry, $cover; 
+					if (defined $cover) {push @filestotry, $cover;}
 				}
 				push @filestotry, ('cover.jpg', 'albumartsmall.jpg', 'folder.jpg', 'album.jpg', 'thumb.jpg');
 			}
