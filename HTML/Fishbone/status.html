@@ -62,8 +62,8 @@
 			        <td><a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% player | uri %]"><img src="html/back.gif" border=0 width=30 height=19></a></td>
 			        <td><a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% player | uri %]"><img src="html/forward.gif" border=0 width=30 height=19></a></td>
 			        <td><a href="status.html?p0=pause&player=[% player | uri %]"><img src="html/pause[% IF modepause %]_s[% END %].gif" border=0 width=30 height=19></a></td>
-			        <td><a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=[% start %]"><img src="html/mute[% IF volume < '0' %]_s[% END %].gif" border=0 width=30 height=19></a>
-		        </tr></td></table>
+			        [% IF isplayer %]<td><a href="status_header.html?p0=button&p1=muting&player=[% player | uri %]&start=[% start %]"><img src="html/mute[% IF volume < '0' %]_s[% END %].gif" border=0 width=30 height=19></a>[% END %]
+					</tr></td></table>
 	        </tr></table>
         </center></td>
      [% IF isplayer %]<td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
