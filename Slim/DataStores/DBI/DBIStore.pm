@@ -713,13 +713,15 @@ sub wipeAllData {
 
 	$self->forceCommit();
 
-	Slim::DataStores::DBI::ContributorTrack->clearCache();
-	Slim::DataStores::DBI::GenreTrack->clearCache();
+	# clear the references to these singletons
+	$_unknownArtist = undef;
+	$_unknownGenre  = undef;
+	$_unknownAlbum  = undef;
 
-	# Not sure why we're clearing the play lists when 
-	# deleting everything from the database a minute later.
-	#$self->clearExternalPlaylists();
-	Slim::DataStores::DBI::DataModel->wipeDB();
+	# nuke any caches we may have.
+	%contentTypeCache = ();
+	%validityCache    = ();
+	%lastFind         = ();
 
 	$self->{'totalTime'}    = 0;
 	$self->{'trackCount'}   = 0;
@@ -730,9 +732,9 @@ sub wipeAllData {
 	$self->{'lastTrack'}    = {};
 	$self->{'zombieList'}   = {};
 
-	%contentTypeCache = ();
-	%validityCache    = ();
-	%lastFind         = ();
+	Slim::DataStores::DBI::ContributorTrack->clearCache();
+	Slim::DataStores::DBI::GenreTrack->clearCache();
+	Slim::DataStores::DBI::DataModel->wipeDB();
 
 	$::d_info && Slim::Utils::Misc::msg("wipeAllData: Wiped info database\n");
 

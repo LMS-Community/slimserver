@@ -97,13 +97,13 @@ sub db_Main {
 		};
 	}
 
-	$::d_info && Slim::Utils::Misc::msg("Tag database support is ON, saving into: $dbname\n");
+	$::d_info && Slim::Utils::Misc::msg("Metadata database saving into: $dbname\n");
 
 	my $source = sprintf(Slim::Utils::Prefs::get('dbsource'), $dbname);
 	my $username = Slim::Utils::Prefs::get('dbusername');
 	my $password = Slim::Utils::Prefs::get('dbpassword');
 
-	$dbh = DBI->connect_cached($source, $username, $password, { 
+	$dbh = DBI->connect($source, $username, $password, { 
 		RaiseError => 1,
 		AutoCommit => 0,
 		PrintError => 1,
@@ -113,7 +113,7 @@ sub db_Main {
 
 	# Not much we can do if there's no DB.
 	unless ($dbh) {
-		Slim::Utils::Misc::msg("Couldn't connect to info database! Error: [$!] Exiting!\n");
+		Slim::Utils::Misc::msg("Couldn't connect to info database! Fatal error: [$!] Exiting!\n");
 		Slim::Utils::Misc::bt();
 		exit;
 	}
@@ -123,7 +123,6 @@ sub db_Main {
 	my $version;
 	my $nextversion;
 	do {
-	
 		if (grep { /metainformation/ } $dbh->tables()) {
 			($version) = $dbh->selectrow_array("SELECT version FROM metainformation");
 		}
@@ -203,10 +202,14 @@ sub findUpgrade {
 sub wipeDB {
 	my $class = shift;
 
+	$dirtyCount      = 0;
+	$cleanupIterator = undef;
+
 	$class->clear_object_index();
-	$class->executeSQLFile("dbclear.sql");
+	$class->executeSQLFile("dbdrop.sql");
 
 	$dbh->commit();
+	$dbh->disconnect();
 	$dbh = undef;
 }
 
