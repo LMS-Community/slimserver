@@ -212,13 +212,21 @@ sub currentLine {
 
 sub preloadLines {
 	my $client = shift;
-	my $url = shift;
+	my $url    = shift;
 
-	@{$client->trackInfoLines} = ();
+	@{$client->trackInfoLines}   = ();
 	@{$client->trackInfoContent} = ();
 
 	my $ds    = Slim::Music::Info::getCurrentDataStore();
 	my $track = $ds->objectForUrl($url);
+
+	# Couldn't get a track or URL? How do people get in this state?
+	if (!$url || !$track) {
+		push (@{$client->trackInfoLines}, "Error! url: [$url] is empty or a track could not be retrieved.\n");
+		push (@{$client->trackInfoContent}, undef);
+
+		return;
+	}
 
 	if (my $title = $track->title()) {
 		push (@{$client->trackInfoLines}, $client->string('TITLE') . ": $title");
