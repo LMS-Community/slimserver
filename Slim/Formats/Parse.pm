@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.28 2004/12/18 00:58:51 dean Exp $
+# $Id: Parse.pm,v 1.29 2005/01/03 06:12:38 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -239,7 +239,13 @@ sub parseCUE {
 	foreach my $key (sort {$a <=> $b} keys %tracks) {
 
 		my $track = $tracks{$key};
-		if (!defined $track->{'START'} || !defined $track->{'END'} || !defined $filename ) { next; }
+		if (!defined $track->{'START'} || !defined $filename ) { next; }
+
+		if (!defined $track->{'END'}) {
+		  Slim::Music::Info::readTags($filename);
+		  $track->{'END'} = Slim::Music::Info::durationSeconds($filename);
+		}
+
 		my $url = "$filename#".$track->{'START'}."-".$track->{'END'};
 		$::d_parse && Slim::Utils::Misc::msg("    url: $url\n");
 
