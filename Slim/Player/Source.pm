@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $id:  $
+# $Id: Source.pm,v 1.38 2003/12/23 08:48:09 kdf Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
