@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.39 2003/12/24 21:13:15 dean Exp $
+# $Id: Source.pm,v 1.40 2003/12/24 21:43:04 dean Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -244,6 +244,7 @@ sub playmode {
 				
 			} elsif ($newmode =~ /^playout/) {
 				closeSong($everyclient);
+				$everyclient->playmode("stop");
 			} else {
 				$everyclient->playmode($newmode);
 			}
@@ -311,11 +312,11 @@ sub underrun {
 
 sub skipahead {
 	my $client = shift;
-	$::d_source && msg("**underrun: stopping\n");
+	$::d_source && msg("**skipahead: stopping\n");
 	playmode($client, 'stop');
-	$::d_source && msg("**underrun: opening next song\n");
+	$::d_source && msg("**skipahead: opening next song\n");
 	openNext($client);
-	$::d_source && msg("**underrun: restarting after underrun\n");
+	$::d_source && msg("**skipahead: restarting after underrun\n");
 	playmode($client, 'play');
 } 
 
