@@ -7,12 +7,9 @@
               <form name="browse" method="Get" action="[% webroot %]search.html">
               <font face="arial,hlevetica">&nbsp;[% "SEARCH" | string %]</font>
               <select name="type" width="65">
-              <option [eq type song]selected[/eq] value="song">
-              [% "SONGS" | string %]</option>
-              <option [eq type artist]selected[/eq] value="artist">
-              [% "ARTISTS" | string %]</option>
-              <option [eq type album]selected[/eq] value="album">
-              [% "ALBUMS" | string %]</option>
+		<option [% IF type == 'track' %]selected[% END %] value="track">[% "SONGS" | string %]</option>
+		<option [% IF type == 'artist' %]selected[% END %] value="artist">[% "ARTISTS" | string %]</option>
+		<option [% IF type == 'album' %]selected[% END %] value="album">[% "ALBUMS" | string %]</option>
               </select><font face="arial,hlevetica"> [% "FOR" | string %]</font><br>
               &nbsp;<input type=text name="query" value="[% query %]" size="20">
 			  <input type=submit value="Go" name="Go">

@@ -180,7 +180,8 @@ function liveSearchDoSearch() {
 		liveSearchParams = "";
 	}
 
-	value = document.forms.searchForm.query.value;
+	value  = document.forms.searchForm.query.value;
+	player = document.forms.searchForm.player.value;
 
 	if (liveSearchLast != value) {
 
@@ -200,7 +201,7 @@ function liveSearchDoSearch() {
 		}
 
 		liveSearchReq.onreadystatechange= liveSearchProcessReqChange;
-		liveSearchReq.open("GET", "/livesearch.xml?query=" + value);
+		liveSearchReq.open("GET", "/livesearch.xml?query=" + value + "&player=" + player);
 		liveSearchLast = value;
 		liveSearchReq.send(null);
 	}

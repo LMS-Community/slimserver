@@ -1521,6 +1521,11 @@ sub search {
 
 	my $searchStrings = searchStringSplit($query, $params->{'searchSubString'});
 
+	# Be backwards compatible.
+	if ($type eq 'song') {
+		$type = $params->{'type'} = 'track';
+	}
+
 	# Search for each type of data we have
 	if ($type eq 'artist') {
 

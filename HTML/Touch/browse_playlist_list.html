@@ -4,7 +4,7 @@
   <td >
       [% IF anchor %]<a name="[% anchor %]"></a>[% END %]
       [% IF descend %]&nbsp;<a href="browse.html?dir=[% descend | uri %]&player=[% player | uri %]"><font class="itemtext">[% title | html %]</a> [% END %]
-      [% IF not descend %]&nbsp;<a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]"><font class="itemtext">:[% title | html %]</a> [% END %]
+      [% IF not descend %]&nbsp;<a href="songinfo.html?item=[% item %]&player=[% player | uri %]"><font class="itemtext">:[% title | html %]</a> [% END %]
   </td>
 
 <td align="right" style="padding-right:15px;">

@@ -10,7 +10,7 @@
           [%- IF descend %]
             <a href="browse.html?dir=[% descend | uri %]&amp;player=[% player | uri %]">[% title | html %]</a>
           [%- ELSE %]
-            <span class="songtitle"><a href="songinfo.html?itempath=[% itempath | uri %]&amp;player=[% player | uri %]">[% title | html %]</a></span>
+            <span class="songtitle"><a href="songinfo.html?item=[% item %]&amp;player=[% player | uri %]">[% title | html %]</a></span>
            [%- IF album %]
             [% "FROM" | string %] <span class="album"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album | html %]</a></span>
            [%- END %]

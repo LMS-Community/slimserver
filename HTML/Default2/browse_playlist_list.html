@@ -2,7 +2,7 @@
  <td class="browselisting">
   [% IF anchor %]<a name="[% anchor %]"></a>[% END ; IF descend ; IF NOT nobrowse %]
   <a onclick="parent.browseurl(&quot;browse.html?dir=[% descend %]&quot;)">[% END ; title | html ; IF NOT nobrowse %]</a>[% END ; ELSE %]
-  <a onclick="parent.browseurl(&quot;songinfo.html?itempath=[% itempath | uri %]&quot;)">[% title | html %]</a>
+  <a onclick="parent.browseurl(&quot;songinfo.html?item=[% item %]&quot;)">[% title | html %]</a>
   [% IF album %][% "FROM" | string %][% END %]
   <i><a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=artist,album,track&amp;level=2&amp;artist=[% artist.id
    %]&amp;album=[% album.id %]&quot;)">[% album | html %]</a></i>

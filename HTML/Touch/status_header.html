@@ -22,7 +22,7 @@
 [% IF currentsong %]<b>[% currentsong %]</b> [% "OUT_OF" | string %] <b>&nbsp;[% songcount %]</b>&nbsp;[% END %]
 </small>
 <p>
-   [% IF songtitle %]<a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% songtitle %]</a> [% END %]
+   [% IF songtitle %]<a href="songinfo.html?item=[% item %]&player=[% player | uri %]">[% songtitle %]</a> [% END %]
    [% IF artist %] [% "BY" | string %] <a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]">[% artist %]</a>   [% END %]
    [% IF album %]  [% "FROM" | string %] <a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% album %]</a>[% END %]
    [% IF year %]&nbsp;([% year %])[% END %]

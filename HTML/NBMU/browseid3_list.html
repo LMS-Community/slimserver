@@ -2,7 +2,7 @@
   <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
 	  [% IF anchor %]<a name="[% anchor %]"></a>[% END %]
       [% IF descend %] <a href="browseid3.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]">[% title | html %]</a>  [% END %]
-      [% IF not descend %]<a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% title | html %]</a>
+      [% IF not descend %]<a href="songinfo.html?item=[% item %]&player=[% player | uri %]">[% title | html %]</a>
          [% IF album %][% "FROM" | string %][% END %] 
          <i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i> 
          [% IF artist %][% "BY" | string %] [% END %] 
