@@ -448,7 +448,7 @@ Usage: $0 [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
                         command line interface server.
     --cliaddr        => Activate the command line interface TCP/IP 
                         interface on the specified IP address.
-    --prefsfile      => Specify where the preferences file should be stored
+    --prefsfile      => Specify the path of the the preferences file
     --pidfile        => Specify where a process ID file should be stored
     --quiet          => Minimize the amount of text output
     --playeraddr     => Specify the _server's_ IP address to use to connect 
@@ -774,7 +774,7 @@ sub remove_pid_file {
 }
  
 sub END {
-	$::d_server && msg("Got to the END!");
+	$::d_server && msg("Got to the END.\n");
 	sigint();
 }
 

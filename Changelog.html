@@ -1,9 +1,119 @@
-<h2><a name="v5.1.1" id="v5.1.1"></a>Version 5.1.1</h2>
 <ul>
-	<li>Coming soon!</li>
+<h2><a name="v5.1.1" id="v5.1.1"></a>Version 5.1.1 - 2002-3-3</h2>
+<ul>
+	
+	<li>Fix a couple missing alarm strings and translations, with an additional DE string change suggested by Michael Herger.
+	
+	<li>Web setting for Alarm was parsing 12hr time format incorrectly.  Now fixed.
+		
+		
+	<li>Victor Brilon submitted a patch to not strip binaries going into the RPM.
+	
+	<li>Remove a number of annoying, but harmless warning messages.
+	
+	<li>A bug in mov123 caused AAC audio on Windows to come out in little endian format.
+	
+	<li>There was a sanity check in AIFF file scanning to make sure that the top level chunk size header was 
+	smaller than the file size.  Unfortunately, iTunes for Windows creates AIFF files that are 
+	insane.
+	
+	<li>Bumping copyright to 2004
+	
+	<li>Fixed a bug that would cause AAC files to appear twice when using iTunes and cover art scanning.
+	
+	<li>Fixed a problem where items in playlists would appear as MP3 even if they weren't.
+	<li>Added a few FAQ entries from Kevin Pearsall
+	
+	<li>Fixed the layout on the song info page on the Default skin.
+	
+	<li>We're calling Cover Art just Artwork now.
+	
+	<li>Added Frederick Miserey's French localization for the Mac installer and prefpane.
+	
+	<li>Numerous bug fixes and improvements to the Fishbone skin by KDF.
+	
+	<li>SLIMP3 version 2.3 firmware with ethernet collision fix.
+	
+	<li>Added some sanity checks to handle some insane WMA files.
+	
+	<li>Modified a patch from KDF that speeds up iTunes scanning substantially.
+	
+	<li>Fixed a problem where we were calculating the elapsed time incorrectly when synced.
+	
+	<li>Added the iTunes naming convention to the tag guessing from path names list.
+	
+	<li>Updated the FAQ.
+	
+	<li>Michael the Fallen Angel found a bug in the NBMU skin and fixed it.
+	
+	<li>Fix a misleading warning in the screensaver.
+	
+	<li>Accepted a patch that makes iTunes XML importing work better under Linux.
+	
+	<li>Fix the format of the Expires header for images.  
+	
+	<li>Fixed a number of problems with internet radio streams.
+	
+	<li>Fixed a problem with the alphabetical list of first letters on web pages that contain tracks that have sort tags associated with them.
+	
+	<li>Michael Herger updated the German translations.
+	
+	<li>Skins have access to the full query parameters, as well as the the magnitude of the currently playing rate.
+	
+	<li>It turns out that iTunes, when ripping AIFF files tosses ID3 tags in there. Now we know how to look for them.
+	
+	<li>Performance improvements to scanning cover art when using iTunes.
+	
+	<li>Stefan Christiansson created the Touch skin, appropriate for large touch-screen displays.
+	
+	<li>Add the sleep info to the skins, including the XML skin.
+	
+	<li>Make sure we reset the pause time when appropriate.  Should fix one problem with bogus progress times on radio stations.
+	
+	<li>Make sure we block align offsets into URL fragments (used with CUE files) .
+	
+	<li>Michael, the fallen angel, patched the NBMU skin to do basic cover art.
+	
+	<li>Fixed some problems with MoodLogic that could cause the server to stop when turning on MoodLogic support.
+	
+	<li>Patch to fix the old Mac Remote app.
+	
+	<li>Add a couple of sanity checks to make sure we don't crash in some rare cases.
+	
+	<li>There were some situations where the SlimServer could make it hard to delete a music folder on Windows. Follow a few opendir() calls with corresponding closedir() calls.
+	
+	<li>Vidur Apparao needed an init and shutdown function for his upcoming plugin, so we'll add these. 
+	Vidur added another neat feature for plugins.  You can create a packaged plugin with lots of dependent
+	files by putting it in a folder in the plugins folder.  It simply loads the file Plugin.pm in that folder.
+	
+	
+	<li>Up the remote stream timeout.  Should make some streams more reliable.
+	
+	<li>Use hard spaces in double height characters to fix centering problems.
+	
+	<li>Nicolas Guillemain updated the french translation.
+	
+	<li>Fix crash if Radio Station.pls doesn't exist.
+	
+	<li>There's no reason (that I can think of) to not accept commands on a stream.mp3 URL.
+	For example:
+	http://locahost:9000/stream.mp3?p0=play
+	is very useful.
+	
+	<li>Patch from KDF to make sure we only worry about images that have coverart when doing the iTunes coverart scan.
+	
+	<li>Remove duplicate call to Command::execute for streaming connections.
+	
+	<li>Fix a problem transcoding AAC to MP3 on Windows machines.  Props to Kevin Pearsall for regressing...
+	
+	<li>Fix a couple missing alarm strings, with an additional German string change suggested by Michael Herger.
+	
+	<li>Web setting for Alarm was parsing 12hr time format incorrectly.  Now fixed.
+	
+	<li>Victor's patch to not strip binaries going into the RPM.
+	
 </ul>
 
-<ul>
 <h2><a name="v5.1" id="v5.1"></a>Version 5.1 - 2004-02-05</h2>
 <ul>
 	<li>Kevin Deane-Freeman added a great Browse By Artwork facility.</li>
