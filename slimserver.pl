@@ -371,13 +371,6 @@ sub idle {
 	Slim::Utils::Timers::checkTimers();	
 	if ($::d_perf) { $to = watchDog($to, "checkTimers"); }
 
-	# handle client protocol activity
-	Slim::Networking::Protocol::idle();
-	if ($::d_perf) { $to = watchDog($to, "Protocol::idle"); }
-
-	Slim::Networking::Slimproto::idle();
-	if ($::d_perf) { $to = watchDog($to, "Slimproto::idle"); }
-	
 	# handle queued IR activity
 	Slim::Hardware::IR::idle();
 	if ($::d_perf) { $to = watchDog($to, "IR::idle"); }
@@ -390,24 +383,24 @@ sub idle {
 	if ($::d_perf) { $to = watchDog($to, "run_tasks"); } 
 	
 	# if background tasks are running, don't wait in select.
-	if (!$tasks) {
+	if ($tasks) {
+		$select_time = 0;
+	} else {
 		# undefined if there are no timers, 0 if overdue, otherwise delta to next timer
 		$select_time = Slim::Utils::Timers::nextTimer();
 		
 		# loop through once a second, at a minimum
 		if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
 		
-		$::d_time && msg("select_time: ". (defined($select_time) ? $select_time : "UNDEF")."\n");
-
-		Slim::Networking::Select::select($select_time);
+		$::d_time && msg("select_time: $select_time\n");
 	}
+	
+	Slim::Networking::Select::select($select_time);
 	
 	# handle HTTP and command line interface activity, including:
 	#   opening sockets, 
 	#   reopening sockets if the port has changed, 
-	#   and handling HTTP traffic
 	Slim::Web::HTTP::idle();
-	
 	if ($::d_perf) { $to = watchDog($to, "http::idle"); }
 
 	Slim::Control::CLI::idle();

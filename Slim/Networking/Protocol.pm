@@ -74,18 +74,18 @@ sub processMessage {
 
 sub init {
 
-# FIXME: Add a setup option to bind the server to a particular IP:PORT
-#
 	$udpsock = IO::Socket::INET->new(
 		Proto     => 'udp',
 		LocalPort => $SERVERPORT,
 		LocalAddr => $main::localClientNetAddr
 	);
-	
 	if (!$udpsock) {
 		msg("Problem: There is already another copy of the Slim Server running on this machine.\n");
 		exit 1;
 	}
+	
+	defined(Slim::Utils::Misc::blocking($udpsock,0)) || die "Cannot set port nonblocking";
+
 	Slim::Networking::Select::addRead($udpsock, \&readUDP);
 	
 # say hello to the old slimp3 clients that we might remember...
@@ -107,15 +107,13 @@ sub init {
 	}
 }
 
-sub idle { };
-
 sub readUDP {
 	my $sock = shift;
 	my $clientpaddr;
 	my $msg = '';
-	
-	$clientpaddr = recv($sock,$msg,1500,0);
 
+	$clientpaddr = recv($sock,$msg,1500,0);
+	
 	# simulate random packet loss
 #	next if ($SIMULATE_RX_LOSS && (rand() < $SIMULATE_RX_LOSS));
 
@@ -185,7 +183,7 @@ sub ipaddress2paddr {
 # return the client based on IP address and socket.  will create a new one if
 # necessary 
 sub getUdpClient {
-	my ($clientpaddr,$udpsock, $msg) = @_;
+	my ($clientpaddr,$sock, $msg) = @_;
 
 	my ($msgtype, $deviceid, $revision, @mac) = unpack 'aCCxxxxxxxxxH2H2H2H2H2H2', $msg;
 	
@@ -215,13 +213,13 @@ sub getUdpClient {
 					$id, 
 					$clientpaddr,
 					$revision,
-					$udpsock,
+					$sock,
 				);			
 			$client->macaddress($mac);
 			$client->init();
 
 		} else {
-			Slim::Network::Discovery::sayHello($udpsock, $clientpaddr);
+			Slim::Network::Discovery::sayHello($sock, $clientpaddr);
 			return undef;
 		} 
 	}
@@ -229,10 +227,4 @@ sub getUdpClient {
 	$client->paddr($clientpaddr);
 	
 	return $client
-}
-
-sub pending {
-#	my @readablesocks = ($selUDPRead->can_read(0));
-#	return(shift(@readablesocks));
-	return 0;
 }

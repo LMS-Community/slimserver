@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.37 2003/10/31 22:09:05 dean Exp $
+# $Id: HTTP.pm,v 1.38 2003/10/31 23:22:43 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -155,7 +155,6 @@ sub checkHTTP {
 #		my $streamWriteMaximum = Slim::Utils::Prefs::get("tcpWriteMaximum");
 
 sub idle {
-
 	# check to see if the HTTP settings have changed
 	Slim::Web::HTTP::checkHTTP();
 }

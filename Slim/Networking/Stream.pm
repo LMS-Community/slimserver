@@ -270,7 +270,6 @@ sub timeout {
 		
 	Slim::Utils::Timers::killOneTimer($client, \&timeout);
 
-	Slim::Networking::Protocol::idle();
 	if ($packetInFlight{$client}) {
 		my $packet = $packetInFlight{$client};
 		$::d_stream && msg($client->id() . " " . Time::HiRes::time() . " Timeout on seq: " . $packet->{'seq'} . "\n");

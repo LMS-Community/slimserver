@@ -1,6 +1,6 @@
 package Slim::Networking::Select;
 
-# $Id: Select.pm,v 1.1 2003/10/31 22:09:04 dean Exp $
+# $Id: Select.pm,v 1.2 2003/10/31 23:22:42 dean Exp $
 
 # Slim Server Copyright (c) 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -14,8 +14,8 @@ use Slim::Utils::Misc;
 
 my %readSockets;
 my %writeSockets;
-my $readSelects;
-my $writeSelects;
+my $readSelects = IO::Select->new();
+my $writeSelects = IO::Select->new();
 
 tie %readSockets, "Tie::RefHash";
 tie %writeSockets, "Tie::RefHash";
@@ -52,7 +52,7 @@ sub select {
 
 	my ($r, $w, $e) = IO::Select->select($readSelects,$writeSelects,undef,$select_time);
 
-	$::d_select && msg("select returns: reads: " . (defined($r) && scalar(@$r)) . " of " . $readSelects->count .
+	$::d_select && msg("select returns ($select_time): reads: " . (defined($r) && scalar(@$r)) . " of " . $readSelects->count .
 					" writes: " . (defined($w) && scalar(@$w)) . " of " . $writeSelects->count .
 					" err: " . (defined($e) && scalar(@$e)) . "\n");
 					
