@@ -176,7 +176,18 @@ sub init {
 			},
 
 			'listItem' => sub {
-				# XXX FIXME "showYear" functionality broken
+				my $ds = shift;
+				my $form = shift;
+				my $item = shift;
+				my $itemname = shift;
+				my $descend = shift;
+
+				if (Slim::Utils::Prefs::get('showYear')) {
+
+					if (my ($track) = $item->tracks()) {
+						$form->{'year'} = $track->year();
+					}
+				}
 			},
 
 			'ignoreArticles' => 1,
@@ -234,7 +245,14 @@ sub init {
 					$form->{'coverthumb'}   = 0;
 				}
 
-				# XXX FIXME "showYear" functionality broken
+				# add the year to artwork browsing if requested.
+				if (Slim::Utils::Prefs::get('showYear')) {
+
+					if (my ($track) = $item->tracks()) {
+						$form->{'year'} = $track->year();
+					}
+				}
+
 				$form->{'item'}    = $itemname;
 				$form->{'artwork'} = 1;
 				$form->{'size'}	   = Slim::Utils::Prefs::get('thumbSize');
