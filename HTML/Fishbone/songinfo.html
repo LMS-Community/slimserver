@@ -2,6 +2,7 @@
 <p>&nbsp;</p>
 <p>
 <a href="javascript:history.back(1)">Back</a>
+
 <H3>[% "SONG_INFO" | string %] [% "FOR" | string %] <i>[% title %]</i></H3>
 <p>
 [% IF coverart %]<center><a href="/music/[% itempath | uri %]/cover.jpg" target="_top"><img src="/music/[% itempath | uri %]/cover.jpg" border="0" width="300"></a></center>[% END %]
@@ -170,7 +171,7 @@
 				[% "LOCATION" | string %][% "COLON" | string %]&nbsp;
 			</td>
 			<td>
-				<a href="[% url %]">[% url | html %]</a>
+				<a href="[% url %]">[% songpath | html %]</a>
 			</td>
 		</tr>
 	</table>

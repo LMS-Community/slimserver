@@ -1,7 +1,102 @@
-	[% pagetitle = "MUSIC" | string %] [% pageicon = 'MUSIC' %] [% browse = '1' %] [% music = '1' %][% playlist = '0' %][% PROCESS pageheader.html %]
-	[% IF newVersion %]<br>[% newVersion %]<br>[% END %]
-	<script language="JavaScript">
-		parent.browser.location=getHomeCookie('SlimServer-Browserpage') +'&player=[% player | uri %]'[% IF noartwork %]+"&noartwork=1"[% END %][% IF nofolder %]+"&nofolder=1"[% END %];
-	</script>
-	</body>
+	[% pagetitle = "MUSIC" | string %] [% pageicon = 'MUSIC' %] [% browse = '1' %] [% music = '0' %][% home = '1' %][% playlist = '0' %][% PROCESS pageheader.html %]
+
+    <h4>[% "BROWSE_MUSIC" | string %]</h4>
+    <ul>
+    <li>
+ 		<a href="browseid3.html?player=[% player | uri %]">[% "BROWSE_BY_GENRE" | string %]</a>
+ 	</li>
+    <li>
+ 		<a href="browseid3.html?genre=*&player=[% player | uri %]">[% "BROWSE_BY_ARTIST" | string %]</a>
+ 	</li>
+    <li>
+ 		<a href="browseid3.html?genre=*&artist=*&player=[% player | uri %]">[% "BROWSE_BY_ALBUM" | string %]</a>
+ 	</li>
+ 	[% IF not nofolder %]
+    <li>
+ 		<a href="browse.html?player=[% player | uri %]">[% "BROWSE_MUSIC_FOLDER" | string %]</a>
+ 	</li>
+ 	[% END %]
+    <li>
+ 		<a href="browse.html?player=[% player | uri %]&dir=__playlists">[% "SAVED_PLAYLISTS" | string %]</a>
+ 	</li>
+[% IF additionalLinks.browse %]
+    [% FOREACH key = additionalLinks.browse.keys %]
+    <li>
+ 		<a href="[% additionalLinks.browse.$key %]player=[% player | uri %]">[% key %]</a>
+ 	</li>
+    [% END %]
+[% END %]
+ 	</ul>
+    <h4>[% "SEARCH" | string %]</h4>
+    <ul>
+    <li>
+    	<a href="search.html?type=artist&player=[% player | uri %]">[% "SEARCHFOR_ARTIST" | string %]</a>
+  	</li>
+    <li>
+  	 	<a href="search.html?type=album&player=[% player | uri %]">[% "SEARCHFOR_ALBUM" | string %]</a>
+ 	</li>
+    <li>
+	   	<a href="search.html?type=song&player=[% player | uri %]">[% "SEARCHFOR_SONGTITLE" | string %]</a>
+ 	</li>
+[% IF additionalLinks.search %]
+    [% FOREACH key = additionalLinks.search.keys %]
+    <li>
+ 		<a href="[% additionalLinks.search.$key %]player=[% player | uri %]">[% key %]</a>
+ 	</li>
+    [% END %]
+[% END %]
+    </ul>
+[% IF not nosetup %]    <h4>[% "SETTINGS" | string %]</h4>
+	<ul>
+    <li>
+ 		<a href="setup.html?page=server&player=[% player | uri %]">[% "SERVER_SETTINGS" | string %]</a>
+ 	</li>
+[% player_list %]
+[% IF additionalLinks.settings %]
+    [% FOREACH key = additionalLinks.settings.keys %]
+    <li>
+ 		<a href="[% additionalLinks.settings.$key %]player=[% player | uri %]">[% key %]</a>
+ 	</li>
+    [% END %]
+[% END %]
+	</ul>[% END %]
+
+[% IF additionalLinks.plugins %]    <h4>[% "PLUGINS" | string %]</h4>
+    <ul>
+    [% FOREACH key = additionalLinks.plugins.keys %]
+    <li> <a href="[% additionalLinks.plugins.$key %]player=[% player | uri %]">[% key %]</a>
+    </li>
+    [% END %]
+    </ul>
+[% END %]
+    <h4>[% "HELP" | string %]</h4>
+	<ul>
+    <li>
+    	<a href="html/docs/quickstart.html" target="_top">[% "GETTING_STARTED" | string %]</a>
+    </li>
+   <li>
+    	<a href="html/docs/ipconfig.html" target="_top">[% "PLAYER_SETUP" | string %]</a>
+  </li>
+    <li>
+    	<a href="html/docs/interface.html" target="_top">[% "USING_REMOTE" | string %]</a>
+    </li>
+     <li>
+ 		<a href="html/help_remote.html?player=[% player | uri %]" target="_top">[% "HELP_REMOTE" | string %]</a>
+ 	</li>
+     <li> <a href="html/docs/radio.html?player=[% player | uri %]" target="_top">[% "RADIO" | string %]</a>	   </li>
+     <li> <a href="html/docs/remotestream.html?player=[% player | uri %]" target="_top">[% "REMOTE_STREAMING" | string %]</a>	   </li>
+     <li><a href="html/docs/faq.html?player=[% player | uri %]" target="_top">[% "FAQ" | string %]</a> </li>
+     <li>
+ 		<a href="html/docs/index.html" target="_top">[% "TECHNICAL_INFORMATION" | string %]</a>
+ 	</li>
+[% IF additionalLinks.help %]
+    [% FOREACH key = additionalLinks.help.keys %]
+    <li>
+ 		<a href="[% additionalLinks.help.$key %]player=[% player | uri %]">[% key %]</a>
+ 	</li>
+    [% END %]
+[% END %]
+	</ul>
+	[% IF newVersion %][% newVersion %][% END %]
+  </body>
 </html>

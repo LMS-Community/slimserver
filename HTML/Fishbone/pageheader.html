@@ -95,6 +95,10 @@
 		</div>
 		<div class="menu2" width="100%" [% IF setup %]style='position:absolute;top:-100;'[% END %]>
 			<table border="0" cellpadding="0" cellspacing="0" width="100%">
+				<td width="5%" align="center">
+					<a href="javascript:parent.browser.location='/'+getHomeCookie('SlimServer-Browserpage') +'&player=[% player | uri %]'[% IF noartwork %]+'&noartwork=1'[% END %][% IF nofolder %]+'&nofolder=1'[% END %]"><IMG src="[% webroot %]html/move.up.gif" border="0"></a>
+				</td>
+				<td>
 				<FORM name="browse" method="Get" action="[% webroot %]search.html"><td width="35%"><center><nobr>
 					<SELECT NAME="type" class="stdedit" onchange="chooseBrowser(selectedIndex,options[selectedIndex].label)"  width="65">
 						<OPTION [% IF browseby == 'BROWSE_BY_GENRE' %]selected[% END %] label="genre" value="song">[% "BROWSE_BY_GENRE" | string %]</OPTION>
@@ -109,7 +113,7 @@
 					<input type=hidden value="[% player %]" name="player">
 					[% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
 					[% IF noartwork %]<input type=hidden value="1" name="noartwork">[% END %]</p><nobr></center></td>
-				</FORM>
+				</FORM></td><td width="5%" align="center">&nbsp;</td>
 			</table>
 		</div>
 		[% IF newVersion %]<br>[% newVersion %]<br>[% END %]
