@@ -392,6 +392,8 @@ sub playmode {
 			@{$everyclient->chunks} = ();
 
 			$everyclient->stop();
+			# Next time we start, start at normal playback rate
+			$everyclient->rate(1);
 			closeSong($everyclient);
 			resetSong($everyclient);
 			resetSongQueue($everyclient);
@@ -746,8 +748,10 @@ sub gotoNext {
 		# here's where we decide whether to start the next song in a new stream after playing out
 		# the current song or to just continue streaming
 		if (($client->playmode() eq 'play') && 
-			(($oldstreamformat ne $newstreamformat) || Slim::Player::Sync::isSynced($client) || $client->isa("Slim::Player::Squeezebox2")) ||
-			($client->rate() != 1 && $client->playmode() ne 'playout-play')) {
+			(($oldstreamformat ne $newstreamformat) || 
+			Slim::Player::Sync::isSynced($client) || 
+			 $client->isa("Slim::Player::Squeezebox2") ||
+			($client->rate() != 1))) {
 
 			$::d_source && msg(
 				"playing out before starting next song. (old format: " .
@@ -1578,6 +1582,18 @@ sub readNextChunk {
 							goto bail;
 						} else {
 							$tricksegmentbytes = $endsegment - $seekpos + 1;
+						}
+					}
+					elsif ($client->streamformat() eq 'flc') {
+						$seekpos = Slim::Formats::FLAC::seekNextFrame($client->audioFilehandle(), $seekpos, 1);
+						my $endsegment = Slim::Formats::FLAC::seekNextFrame($client->audioFilehandle(), $seekpos + $tricksegmentbytes, -1);
+						if ($seekpos == 0 || $endsegment == 0 ||
+							$seekpos == $endsegment) {
+							$endofsong = 1;
+							$::d_source && msg("trick mode couldn't seek: $seekpos/$endsegment\n");
+							goto bail;
+						} else {
+							$tricksegmentbytes = $endsegment - $seekpos;
 						}
 					}
 					
