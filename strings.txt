@@ -935,11 +935,21 @@ FREE_YOUR_MUSIC
 	PT	Liberte a sua música
 	SE	Frige din musik
 
-UPDATING_FIRMWARE
+UPDATING_FIRMWARE_SQUEEZEBOX
 	DE	Firmware wird aktualisiert.
 	EN	Updating Squeezebox firmware.
 	ES	Actualizando firmware de Squeezebox
 	FR	Mise à jour du micrologiciel Squeezebox
+	JP	ファームウェアをアップデートしています
+	NO	Oppdaterer spillerens programvare ('firmware')
+	PT	Atualizando firmware ...
+	SE	Uppdaterar spelarens mjukvara
+
+UPDATING_FIRMWARE_SQUEEZEBOX2
+	DE	Firmware wird aktualisiert.
+	EN	Updating Squeezebox2 firmware.
+	ES	Actualizando firmware de Squeezebox2
+	FR	Mise à jour du micrologiciel Squeezebox2
 	JP	ファームウェアをアップデートしています
 	NO	Oppdaterer spillerens programvare ('firmware')
 	PT	Atualizando firmware ...
@@ -1984,22 +1994,22 @@ SETUP_MP3SILENCEPRELUDE_DESC
 
 SETUP_TRANSITIONTYPE
 	DE	Überblendung
-	EN	Transition
+	EN	Crossfade
 	ES	Transición
 
 SETUP_TRANSITIONTYPE_DESC
 	DE	Die Squeezebox2 kann zwischen Liedern überblenden, entweder per Crossfading beider Songs, oder indem der eine aus-, der andere eingeblendet wird. Wählen Sie die Art der Überblendung.
-	EN	Squeezebox2 can gradually transition between songs, either by crossfading between them, or by fading songs in or out. Choose the type of transition you would like.
+	EN	Squeezebox2 can gradually transition between songs, either by crossfading between them, or by fading songs in or out. Choose the type of crossfade you would like.
 	ES	Squeezebox2 puede hacer hacer una transición gradual entre canciones, ya sea haciendo un crossfading entre ellas, o haciendo fade in o fade out en las canciones. Elegir el tipo de transición que se desea.
 
 SETUP_TRANSITIONDURATION
 	DE	Dauer der Überblendung
-	EN	Transition duration
+	EN	Crossfade duration
 	ES	Duración de la transición
 
 SETUP_TRANSITIONDURATION_DESC
 	DE	Definieren Sie die Dauer der Überblendung zwischen Songs (in Sekunden).
-	EN	Enter the amount of time to take to transition between songs, in seconds.
+	EN	Enter the amount of time to take to crossfade between songs, in seconds.  The maximum is 10 seconds.
 	ES	Ingresar la cantidad de tiempo que se utilizará para la transición entre canciones, en segundos.
 
 TRANSITION_NONE

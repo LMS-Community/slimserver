@@ -327,8 +327,7 @@ sub upgradeFirmware_SDK5 {
 		
 		if (($fraction - $lastFraction) > (1/20)) {
 			$client->showBriefly(
-				$client->string('UPDATING_FIRMWARE'),
-				
+				$client->string('UPDATING_FIRMWARE_' . uc($client->model())),
 				Slim::Display::Display::progressBar($client, $client->displayWidth(), $totalbytesread/$size)
 			);
 			$lastFraction = $fraction;
@@ -336,7 +335,7 @@ sub upgradeFirmware_SDK5 {
 	}
 	
 	$client->showBriefly(
-		$client->string('UPDATING_FIRMWARE'),
+		$client->string('UPDATING_FIRMWARE_' . uc($client->model())),
 				
 		Slim::Display::Display::progressBar($client, $client->displayWidth(), 1)
 	);

@@ -139,9 +139,14 @@ sub nowPlayingModes {
 	return scalar(keys %{$client->playingModeOptions()});
 }
 
+sub showVisualizer {
+	my $client = shift;
+	return ($client->power() && (Slim::Player::Source::playmode($client) eq 'play'));
+}
+
 sub displayWidth {
 	my $client = shift;
-	my $mode = $client->power() ? Slim::Utils::Prefs::clientGet($client, "playingDisplayMode") : 0;
+	my $mode = $client->showVisualizer() ? Slim::Utils::Prefs::clientGet($client, "playingDisplayMode") : 0;
 	return $displayWidth[$mode || 0];
 }
 
@@ -173,15 +178,31 @@ sub formats {
 	return ('flc','aif','wav','mp3');
 }
 
+# we only have 129 levels to work with now, and within 100 range, that's pretty tight.
+# this table is optimized for 40 steps (like we have in the current player UI.
+# TODO: Increase dynamic range of multiplier in client.
+my @volume_map = ( 
+0, 1, 1, 1, 2, 2, 2, 3,  3,  4, 
+5, 5, 6, 6, 7, 8, 9, 9, 10, 11, 
+12, 13, 14, 15, 16, 16, 17, 18, 19, 20, 
+22, 23, 24, 25, 26, 27, 28, 29, 30, 32, 
+33, 34, 35, 37, 38, 39, 40, 42, 43, 44, 
+46, 47, 48, 50, 51, 53, 54, 56, 57, 59, 
+60, 61, 63, 65, 66, 68, 69, 71, 72, 74, 
+75, 77, 79, 80, 82, 84, 85, 87, 89, 90, 
+92, 94, 96, 97, 99, 101, 103, 104, 106, 108, 110, 
+112, 113, 115, 117, 119, 121, 123, 125, 127, 128
+ );
+
+
 sub volume {
 	my $client = shift;
 	my $newvolume = shift;
 
 	my $volume = $client->Slim::Player::Client::volume($newvolume, @_);
 	if (defined($newvolume)) {
-		my ($right_level, $left_level);
-	    	$right_level = $left_level = int(0x80 * (($volume / $client->maxVolume) ** 2));
-		my $data = pack('NNC', $left_level, $right_level, Slim::Utils::Prefs::clientGet($client, "digitalVolumeControl"));
+		my $level = $volume_map[int($volume)];
+		my $data = pack('NNC', $level, $level, Slim::Utils::Prefs::clientGet($client, "digitalVolumeControl"));
 		$client->sendFrame('audg', \$data);
 	}
 	return $volume;
@@ -219,7 +240,7 @@ sub visualizer {
 	my $visu = shift;
 	if (!defined($visu)) {
 		$visu = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
-		$visu = 0 if (!$client->power());
+		$visu = 0 if (!$client->showVisualizer());
 	}
 	
 	if ($visu < 0) { 
@@ -404,7 +425,7 @@ sub nowPlayingModeLines {
 }
 
 sub maxTransitionDuration {
-	return 8;
+	return 10;
 }
 
 sub reportsTrackStart {
@@ -415,16 +436,39 @@ sub power {
 	my $client = shift;
 	my $on = shift;
 	
-	if (defined($on) && !$on) {
-		$client->visualizer(0);
-	} 
 	my $pow = $client->SUPER::power($on);
 
-	if ($on) {		
+	# update the visualizer if we're setting the power.
+	if (defined($on)) {
 		$client->visualizer();
 	}
 	return $pow;
 }
+
+sub play {
+	my $client = shift;
+	$client->visualizer();
+	$client->SUPER::play(@_);
+}
+
+sub resume {
+	my $client = shift;
+	$client->SUPER::resume(@_);
+	$client->visualizer();
+}
+
+sub pause {
+	my $client = shift;
+	$client->SUPER::pause(@_);
+	$client->visualizer();
+}
+
+sub stop {
+	my $client = shift;
+	$client->SUPER::stop(@_);
+	$client->visualizer();
+}
+
 
 sub reconnect {
 	my $client = shift;
