@@ -1208,6 +1208,8 @@ sub initSetupConfig {
 				my $i = 0;
 				my %plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 
+				Slim::Buttons::Plugins::addSetupGroups();
+
 				Slim::Utils::Prefs::delete('disabledplugins');
 
 				my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
@@ -1253,6 +1255,7 @@ sub initSetupConfig {
 				,'inputTemplate' => 'setup_input_array_chk.html'
 				,'arrayMax' => undef #set in preEval
 				,'changeMsg' => string('SETUP_PLUGINLIST_CHANGE')
+				,'onChange' => \&Slim::Buttons::Plugins::clearGroups
 				,'externalValue' => sub {
 							my ($client,$value,$key) = @_;
 
