@@ -61,7 +61,10 @@ sub reconnect {
 	$client->revision($revision);	
 	
 	# tell the client the server version
-#	$client->sendFrame('vers', \$::VERSION);
+	if ($revision > 39) {
+		$client->sendFrame('vers', \$::VERSION);
+		print "sent version frame\n";
+	}
 	
 	# if we're reconnecting (i.e. the player hasn't rebooted, just continue on)
 	# if the player's connecting the first time from boot, and were playing previously, start the track over.
