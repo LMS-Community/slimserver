@@ -198,22 +198,19 @@ sub findLibraryFromPlist {
 	my $path = undef;
 	my $base = shift @_;
 	
-	my $plist = catfile(($base, 'Library', 'Preferences'),
-		'com.apple.iApps.plist');
+	my $plist = catfile(($base, 'Library', 'Preferences'), 'com.apple.iApps.plist');
 
-	if (-r $plist) {
-		open (PLIST, "< $plist");
+	open (PLIST, $plist) || return $path;
 
-		while (<PLIST>) {
+	while (<PLIST>) {
 
-			if ( /<string>(.*iTunes%20Music%20Library.xml)<\/string>$/) {
-				$path = Slim::Utils::Misc::pathFromFileURL($1);
-				last;
-			}
-
+		if (/<string>(.*iTunes%20Music%20Library.xml)<\/string>$/) {
+			$path = Slim::Utils::Misc::pathFromFileURL($1);
+			last;
 		}
-
 	}
+
+	close PLIST;
 
 	return $path;
 }
@@ -222,33 +219,30 @@ sub findLibraryFromRegistry {
 
 	my $path = undef;
 
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
+	return if Slim::Utils::OSDetect::OS() ne 'win';
 
-		if (!eval "use Win32::Registry;") {
-			my $folder;
+	if (!eval "use Win32::Registry;") {
+		my $folder;
 
-			if ($::HKEY_CURRENT_USER->Open("Software\\Microsoft\\Windows"
-					."\\CurrentVersion\\Explorer\\Shell Folders",
-					$folder)) {
-				my ($type, $value);
+		if ($::HKEY_CURRENT_USER && $::HKEY_CURRENT_USER->Open("Software\\Microsoft\\Windows"
+				."\\CurrentVersion\\Explorer\\Shell Folders",
+				$folder)) {
+			my ($type, $value);
 
-				if ($folder->QueryValueEx("My Music", $type, $value)) {
-					$path = $value . '\\iTunes\\iTunes Music Library.xml';
-					$::d_itunes && msg("iTunes: found My Music here: $value for $path\n");
-				}
-
-				if ($path && -r $path) {
-					return $path;
-
-				} elsif ($folder->QueryValueEx("Personal", $type, $value)) {
-						$path = $value . '\\My Music\\iTunes\\iTunes Music Library.xml';
-						$::d_itunes && msg("iTunes: found  Personal: $value for $path\n");
-				}
-
+			if ($folder->QueryValueEx("My Music", $type, $value)) {
+				$path = $value . '\\iTunes\\iTunes Music Library.xml';
+				$::d_itunes && msg("iTunes: found My Music here: $value for $path\n");
 			}
 
-		}
+			if ($path && -r $path) {
 
+				return $path;
+
+			} elsif ($folder->QueryValueEx("Personal", $type, $value)) {
+				$path = $value . '\\My Music\\iTunes\\iTunes Music Library.xml';
+				$::d_itunes && msg("iTunes: found  Personal: $value for $path\n");
+			}
+		}
 	}
 	
 	return $path;
@@ -259,7 +253,7 @@ sub findMusicLibraryFile {
 	my $path = undef;
 
 	my $base = "";
-	$base = $ENV{HOME} if $ENV{HOME};
+	$base = $ENV{'HOME'} if $ENV{'HOME'};
 
 	my $audiodir = Slim::Utils::Prefs::get('audiodir');
 	my $autolocate = Slim::Utils::Prefs::get('itunes_library_autolocate');
@@ -309,7 +303,7 @@ sub findMusicLibraryFile {
 		}
 	}
 
-	if (! $path) {
+	if (!$path) {
 		$path = Slim::Utils::Prefs::get('itunes_library_xml_path');
 
 		if ($path && -d $path) {
@@ -354,12 +348,11 @@ sub findMusicLibrary {
 		return $path;
 	}
 
-	$path = Slim::Utils::Prefs::get('audiodir');
-	return undef unless $path;
+	$path = Slim::Utils::Prefs::get('audiodir') || return undef;
 
 	$::d_itunes && msg("iTunes: set iTunes library to audiodir value of: $path\n");
 
-	Slim::Utils::Prefs::set('itunes_library_music_path',$path);
+	Slim::Utils::Prefs::set('itunes_library_music_path', $path);
 
 	return $path;
 }
@@ -634,6 +627,9 @@ sub scanFunction {
 
 				$tracks{$id} = $url;
 
+				%curTrack = ();
+				%cacheEntry = ();
+
 			} else {
 
 				$::d_itunes && warn "iTunes: unknown file type " . $curTrack{'Kind'} . " $url";
@@ -645,7 +641,10 @@ sub scanFunction {
 	} elsif ($inPlaylists) {
 		
 		if ($curLine eq '</array>') {
+
 			$inPlaylists = 0;
+
+			%tracks = ();
 		
 		} else {
 		
@@ -673,6 +672,9 @@ sub scanFunction {
 			$cacheEntry{'VALID'} = '1';
 		
 			Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
+
+			%curPlaylist = ();
+			%cacheEntry  = ();
 		
 			$::d_itunes && msg("iTunes: playlists now has " . scalar @{Slim::Music::Info::playlists()} . " items...\n");
 		}
@@ -748,7 +750,7 @@ sub normalize_location {
 
 	$url =~ s,file:\/\/localhost\/,file:\/\/\/,;
 	
-	$::d_itunes && msg("iTunes: normalized $location to $url\n");
+	$::d_itunes_verbose && msg("iTunes: normalized $location to $url\n");
 
 	return $url;
 }
