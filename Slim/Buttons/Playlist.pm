@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.6 2003/08/09 16:23:43 dean Exp $
+# $Id: Playlist.pm,v 1.7 2003/08/12 00:52:42 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@ my %functions = (
 			if (($playlistlen > 0) && (showingNowPlaying($client))) {
 				$pdm = ($pdm + 1) % 6;
 			} elsif ($playlistlen > 0) {
-				browseplaylistindex($client,Slim::Player::Playlist::currentSongIndex($client));
+				browseplaylistindex($client,Slim::Player::Source::currentSongIndex($client));
 			}
 		} else {
 			if ($buttonarg =~ /[0-5]$/) {
@@ -121,7 +121,7 @@ my %functions = (
  		my $zapped=catfile(Slim::Utils::Prefs::get('playlistdir'), string('ZAPPED_SONGS') . '.m3u');
  
  		my $currsong = Slim::Player::Playlist::song($client);
- 		my $currindex = Slim::Player::Playlist::currentSongIndex($client);
+ 		my $currindex = Slim::Player::Source::currentSongIndex($client);
  		$::d_stdio && msg("ZAP SONG!! $currsong, Index: $currindex\n");
  		
  		#Remove from current playlist
@@ -147,9 +147,9 @@ my %functions = (
 	'play' => sub  {
 		my $client = shift;
 		if (showingNowPlaying($client)) {
-			if (Slim::Player::Playlist::playmode($client) eq 'pause') {
+			if (Slim::Player::Source::playmode($client) eq 'pause') {
 				Slim::Control::Command::execute($client, ["pause"]);
-			} elsif (Slim::Player::Playlist::rate($client) != 1) {
+			} elsif (Slim::Player::Source::rate($client) != 1) {
 				Slim::Control::Command::execute($client, ["rate", 1]);
 			} else {
 				Slim::Control::Command::execute($client, ["playlist", "jump", browseplaylistindex($client)]);
@@ -177,7 +177,7 @@ sub jump {
 	my $pos = shift;
 	if (Slim::Buttons::Common::mode($client) eq 'playlist') {
 		if (!defined($pos)) { 
-			$pos = Slim::Player::Playlist::currentSongIndex($client);
+			$pos = Slim::Player::Source::currentSongIndex($client);
 		}
 		browseplaylistindex($client,$pos);
 	}
@@ -202,7 +202,7 @@ sub lines {
 
 sub showingNowPlaying {
 	my $client = shift;
-	return ((Slim::Buttons::Common::mode($client) eq 'playlist') && (browseplaylistindex($client) == Slim::Player::Playlist::currentSongIndex($client)));
+	return ((Slim::Buttons::Common::mode($client) eq 'playlist') && (browseplaylistindex($client) == Slim::Player::Source::currentSongIndex($client)));
 }
 
 sub currentSongLines {
@@ -221,18 +221,18 @@ sub currentSongLines {
 		$line1 = string('NOW_PLAYING');
 		$line2 = string('NOTHING');
 	} else {
-		if (Slim::Player::Playlist::playmode($client) eq "pause") {
-			$line1 = sprintf string('PAUSED')." (%d %s %d) ", Slim::Player::Playlist::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen;
+		if (Slim::Player::Source::playmode($client) eq "pause") {
+			$line1 = sprintf string('PAUSED')." (%d %s %d) ", Slim::Player::Source::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen;
 
 		# for taking photos of the display, comment out the line above, and use this one instead.
 		# this will cause the display to show the "Now playing" screen to show when paused.
-		#	$line1 = "Now playing" . sprintf " (%d %s %d) ", Slim::Player::Playlist::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen;
+		#	$line1 = "Now playing" . sprintf " (%d %s %d) ", Slim::Player::Source::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen;
 
-		} elsif (Slim::Player::Playlist::playmode($client) eq "stop") {
-			$line1 = sprintf string('STOPPED')." (%d %s %d) ", Slim::Player::Playlist::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen;
+		} elsif (Slim::Player::Source::playmode($client) eq "stop") {
+			$line1 = sprintf string('STOPPED')." (%d %s %d) ", Slim::Player::Source::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen;
 		} else {
-			if (Slim::Player::Playlist::rate($client) != 1) {
-				$line1 = string('NOW_SCANNING') . ' ' . Slim::Player::Playlist::rate($client) . 'x';	
+			if (Slim::Player::Source::rate($client) != 1) {
+				$line1 = string('NOW_SCANNING') . ' ' . Slim::Player::Source::rate($client) . 'x';	
 		#		$line1 = Slim::Player::Playlist::rate($client) > 0 ? string('NOW_SCANNING') : string('NOW_REWINDING');
 			} elsif (Slim::Player::Playlist::shuffle($client)) {
 				$line1 = string('PLAYING_RANDOMLY');
@@ -243,7 +243,7 @@ sub currentSongLines {
 			if (Slim::Utils::Prefs::clientGet($client, "volume") < 0) {
 				$line1 .= " ".string('LCMUTED')
 			}
-			$line1 = $line1 . sprintf " (%d %s %d) ", Slim::Player::Playlist::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen;
+			$line1 = $line1 . sprintf " (%d %s %d) ", Slim::Player::Source::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen;
 		}
 
 		my $playingDisplayMode = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
@@ -256,11 +256,11 @@ sub currentSongLines {
 		        # no progress bar, remaining time is meaningless
 			$playingDisplayMode = ($playingDisplayMode % 3) ? 1 : 0;
 		} else {
-			if (Slim::Player::Playlist::playmode($client) eq "stop") {
+			if (Slim::Player::Source::playmode($client) eq "stop") {
 				$fractioncomplete = 0;		
 			} else {
 				my $length = Slim::Music::Info::size(Slim::Player::Playlist::song($client));
-				my $realpos = Slim::Player::Playlist::songRealPos($client);
+				my $realpos = Slim::Player::Source::songRealPos($client);
 	
 				$fractioncomplete = $realpos / $length if ($length && $realpos);
 			}
@@ -300,10 +300,10 @@ sub songTime {
 
 	my ($time, $delta);	
 
-	if (Slim::Player::Playlist::playmode($client) eq "stop") {
+	if (Slim::Player::Source::playmode($client) eq "stop") {
 		$delta = 0;
 	} else {	
-		$delta = Slim::Player::Playlist::songTime($client);
+		$delta = Slim::Player::Source::songTime($client);
 	}
 	
 	# 2 and 5 display remaining time, not elapsed

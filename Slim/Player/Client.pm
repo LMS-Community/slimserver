@@ -418,10 +418,10 @@ sub startup {
 	my $currsong = 0;
 	my $id = $client->id;
 	
-	Slim::Player::Playlist::restoreSync($client);
+	Slim::Player::Sync::restoreSync($client);
 	
 	# restore the old playlist if we aren't already synced with somebody (that has a playlist)
-	if (!Slim::Player::Playlist::isSynced($client)) {	
+	if (!Slim::Player::Sync::isSynced($client)) {	
 		if (Slim::Utils::Prefs::get('defaultPlaylist')) {
 			$restoredPlaylist = Slim::Utils::Prefs::get('defaultPlaylist');
 		} elsif (Slim::Utils::Prefs::get('persistPlaylists') && Slim::Utils::Prefs::get('playlistdir')) {
@@ -452,12 +452,12 @@ sub initial_add_done {
 			}
 			$i++;
 		}
-		Slim::Player::Playlist::currentSongIndex($client,0);
+		Slim::Player::Source::currentSongIndex($client,0);
 	} elsif (Slim::Player::Playlist::shuffle($client) == 2) {
 		# reshuffle set this properly, for album shuffle
 		# no need to move the currentSongIndex
 	} else {
-		Slim::Player::Playlist::currentSongIndex($client,$currsong);
+		Slim::Player::Source::currentSongIndex($client,$currsong);
 	}
 	Slim::Utils::Prefs::clientSet($client,'currentSong',$currsong);
 	if (Slim::Utils::Prefs::get('autoPlay') || Slim::Utils::Prefs::clientGet($client,'autoPlay')) {

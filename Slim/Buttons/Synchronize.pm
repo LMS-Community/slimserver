@@ -1,6 +1,6 @@
 package Slim::Buttons::Synchronize;
 
-# $Id: Synchronize.pm,v 1.4 2003/08/09 16:23:43 dean Exp $
+# $Id: Synchronize.pm,v 1.5 2003/08/12 00:52:43 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -36,10 +36,10 @@ my %functions = (
 	
 		my @oldlines = Slim::Display::Display::curLines($client);
 	
-		if (Slim::Player::Playlist::isSyncedWith($client, $selectedClient) || ($client eq $selectedClient)) {
-			Slim::Player::Playlist::unsync($client);
+		if (Slim::Player::Sync::isSyncedWith($client, $selectedClient) || ($client eq $selectedClient)) {
+			Slim::Player::Sync::unsync($client);
 		} else {
-			Slim::Player::Playlist::sync($client, $selectedClient);
+			Slim::Player::Sync::sync($client, $selectedClient);
 		}
 		Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
 	}
@@ -58,10 +58,10 @@ sub setMode {
 sub loadList {
 	my $client = shift;
 	
-	@{$client->syncSelections} = Slim::Player::Playlist::canSyncWith($client);
+	@{$client->syncSelections} = Slim::Player::Sync::canSyncWith($client);
 	
 	# add ourselves (for unsyncing) if we're already part of a synced.
-	if (Slim::Player::Playlist::isSynced($client)) { push @{$client->syncSelections}, $client };
+	if (Slim::Player::Sync::isSynced($client)) { push @{$client->syncSelections}, $client };
 
 	if (!defined($client->syncSelection()) || $client->syncSelection >= @{$client->syncSelections}) {
 		$client->syncSelection(0);
@@ -83,7 +83,7 @@ sub lines {
 			# get the currently selected client
 			my $selectedClient = $client->syncSelections($client->syncSelection);
 			
-			if (Slim::Player::Playlist::isSyncedWith($client, $selectedClient) || $selectedClient eq $client) {
+			if (Slim::Player::Sync::isSyncedWith($client, $selectedClient) || $selectedClient eq $client) {
 				$line1 = Slim::Utils::Strings::string('UNSYNC_WITH');
 			} else {
 				$line1 = Slim::Utils::Strings::string('SYNC_WITH');
@@ -91,7 +91,7 @@ sub lines {
 			
 			my @buddies = ();
 			
-			foreach my $buddy (Slim::Player::Playlist::syncedWith($selectedClient)) {
+			foreach my $buddy (Slim::Player::Sync::syncedWith($selectedClient)) {
 				if ($buddy ne $client) {
 					push @buddies, $buddy;	
 				}

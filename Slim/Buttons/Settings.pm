@@ -74,7 +74,7 @@ sub setMode {
 sub updateMenu {
 	my $client = shift;
 	@settingsChoices = @defaultSettingsChoices;
- 	if (Slim::Player::Playlist::isSynced($client) || (scalar(Slim::Player::Playlist::canSyncWith($client)) > 0)) {
+ 	if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0)) {
 		push @settingsChoices, 'SYNCHRONIZE';
 	}
 }

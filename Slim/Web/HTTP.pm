@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.17 2003/08/11 20:56:08 dean Exp $
+# $Id: HTTP.pm,v 1.18 2003/08/12 00:52:45 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -71,7 +71,7 @@ my %metaDataBytes;
 my %streamingFiles;
 my %peeraddr;
 my %paddr;
-my %peerid;
+my %peerclient;
 
 my $mdnsIDslimserver;
 my $mdnsIDhttp;
@@ -504,7 +504,6 @@ sub addstreamingresponse {
 
 	# Use squeezebox's client id if specified, otherwise just the IP
 	my $id = defined($paramref->{'id'}) ? $paramref->{'id'} : $address;
-	$peerid{$httpclientsock} = $id;
 
 	$::d_http && msg("addstreamingresponse: id=$id, address=$address\n");
 
@@ -524,6 +523,8 @@ sub addstreamingresponse {
 		$client->streamingsocket($httpclientsock);
 		$client->paddr(getpeername($httpclientsock));
 	}
+	
+	$peerclient{$httpclientsock} = $client;
 
 	push @{$outbuf{$httpclientsock}}, \%segment;
 	$streamingSelWrite->add($httpclientsock);
@@ -599,6 +600,7 @@ sub closeStreamingSocket {
 			$client->streamingsocket(undef);
 		}
 	}
+	delete($peerclient{$httpclientsock});
 	closeHTTPSocket($httpclientsock);
 	return;
 } 
@@ -614,14 +616,13 @@ sub sendstreamingresponse {
 		return $fullsend;
 	}
 	
-	my $address = inet_ntoa($httpclientsock->peeraddr);
-	my $client = Slim::Player::Client::getClient($peerid{$httpclientsock});
+	my $client = $peerclient{$httpclientsock};
 	assert($client);
 	my $segmentref = shift(@{$outbuf{$httpclientsock}});
 	my $streamingFile = $streamingFiles{$httpclientsock};
 	my $silence = 0;
 	
-	if (!defined($streamingFile) && ((Slim::Player::Playlist::playmode($client) ne 'play') || (Slim::Player::Playlist::count($client) == 0))) {
+	if (!defined($streamingFile) && ((Slim::Player::Source::playmode($client) ne 'play') || (Slim::Player::Playlist::count($client) == 0))) {
 		$silence = 1;
 	}
 	
@@ -631,11 +632,11 @@ sub sendstreamingresponse {
 		if ($silence) {
 			$::d_http && msg("(silence)");
 			$silence = 1;
-			my $silencedata = getStaticContent("html/silence.mp3");
+			my $silencedataref = getStaticContentRef("html/silence.mp3");
 			my %segment = ( 
-				'data' => \$silencedata,
+				'data' => $silencedataref,
 				'offset' => 0,
-				'length' => length($silencedata)
+				'length' => length($$silencedataref)
 			);
 			unshift @{$outbuf{$httpclientsock}},\%segment;
 		} else {
@@ -645,7 +646,7 @@ sub sendstreamingresponse {
 				$streamingFile->sysread($chunk, 32768);
 				$chunkRef = \$chunk;
 			} else {
-				$chunkRef = Slim::Player::Playlist::nextChunk($client, 32768);
+				$chunkRef = Slim::Player::Source::nextChunk($client, 32768);
 			}
 			# otherwise, queue up the next chunk of sound
 			if ($chunkRef) {
@@ -925,6 +926,11 @@ sub filltemplatefile {
 # Returns the retrieved binary data.
 #
 sub getStaticContent {
+	my $contentref = getStaticContentRef(@_);
+	return $$contentref;
+}
+
+sub getStaticContentRef {
 	my ($path, $hashref) = @_;
 	my $contentref;
 	if (defined $hashref->{'skinOverride'}) {
@@ -932,8 +938,7 @@ sub getStaticContent {
 	} else {
 		$contentref = getFileContent($path, Slim::Utils::Prefs::get('skin'),1);
 	}
-
-	return $$contentref;
+	return $contentref;
 }
 
 sub clearCaches {
@@ -1227,14 +1232,14 @@ sub statusHeaders {
 	
 	if ($client->isPlayer()) {
 		$headers{"x-playervolume"} = int(Slim::Utils::Prefs::clientGet($client, "volume") + 0.5);
-		$headers{"x-playermode"} = Slim::Buttons::Common::mode($client) eq "power" ? "off" : Slim::Player::Playlist::playmode($client);
+		$headers{"x-playermode"} = Slim::Buttons::Common::mode($client) eq "power" ? "off" : Slim::Player::Source::playmode($client);
 		$headers{"x-playersleep"} = $sleeptime;
 	}	
 	
 	if (Slim::Player::Playlist::count($client)) { 
 		$headers{"x-playertrack"} 	 = Slim::Player::Playlist::song($client); 
-		$headers{"x-playerindex"} 	 = Slim::Player::Playlist::currentSongIndex($client) + 1;
-		$headers{"x-playertime"} 	 = Slim::Player::Playlist::songTime($client);
+		$headers{"x-playerindex"} 	 = Slim::Player::Source::currentSongIndex($client) + 1;
+		$headers{"x-playertime"} 	 = Slim::Player::Source::songTime($client);
 		$headers{"x-playerduration"} = Slim::Music::Info::durationSeconds(Slim::Player::Playlist::song($client));
 
 		my $i = Slim::Music::Info::artist(Slim::Player::Playlist::song($client));

@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.6 2003/08/09 16:23:44 dean Exp $
+# $Id: Command.pm,v 1.7 2003/08/12 00:52:43 dean Exp $
 
 # Slim Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -182,45 +182,45 @@ sub execute {
 			}
 			$p2 = Slim::Utils::Prefs::clientGet($client, $p1);
 		} elsif ($p0 eq "play") {
-			Slim::Player::Playlist::playmode($client, "play");
-			Slim::Player::Playlist::rate($client,1);
+			Slim::Player::Source::playmode($client, "play");
+			Slim::Player::Source::rate($client,1);
 		} elsif ($p0 eq "pause") {
 			if (defined($p1)) {
 				if ($p1 && $client->playmode eq "play") {
-					Slim::Player::Playlist::playmode($client, "pause");
+					Slim::Player::Source::playmode($client, "pause");
 				} elsif (!$p1 && $client->playmode eq "pause") {
-					Slim::Player::Playlist::playmode($client, "resume");
+					Slim::Player::Source::playmode($client, "resume");
 				}
 			} else {
 				if ($client->playmode eq "pause") {
-					Slim::Player::Playlist::playmode($client, "resume");
+					Slim::Player::Source::playmode($client, "resume");
 				} elsif ($client->playmode eq "play") {
-					Slim::Player::Playlist::playmode($client, "pause");
+					Slim::Player::Source::playmode($client, "pause");
 				}
 			}
 		} elsif ($p0 eq "rate") {
 			if ($client->mp3filehandleIsSocket) {
-				Slim::Player::Playlist::rate($client, 1);
+				Slim::Player::Source::rate($client, 1);
 			} elsif (!defined($p1) || $p1 eq "?") {
-				$p1 = Slim::Player::Playlist::rate($client);
+				$p1 = Slim::Player::Source::rate($client);
 			} else {
 				if ($p1 == 0) {
-					Slim::Player::Playlist::playmode($client, "pausenow");
+					Slim::Player::Source::playmode($client, "pausenow");
 				} elsif ($p1 == 1) {
-					Slim::Player::Playlist::playmode($client, "play");
+					Slim::Player::Source::playmode($client, "play");
 				}
-				Slim::Player::Playlist::rate($client,$p1);
+				Slim::Player::Source::rate($client,$p1);
 			}
 		} elsif ($p0 eq "stop") {
-			Slim::Player::Playlist::playmode($client, "stop");
+			Slim::Player::Source::playmode($client, "stop");
 		} elsif ($p0 eq "mode") {
 			if (!defined($p1) || $p1 eq "?") {
 				$p1 = $client->playmode;
 			} else {
 				if ($client->playmode eq "pause" && $p1 eq "play") {
-					Slim::Player::Playlist::playmode($client, "resume");
+					Slim::Player::Source::playmode($client, "resume");
 				} else {
-					Slim::Player::Playlist::playmode($client, $p1);
+					Slim::Player::Source::playmode($client, $p1);
 				}
 			}
 		} elsif ($p0 eq "sleep") {
@@ -242,9 +242,9 @@ sub execute {
 			}	
 		} elsif ($p0 eq "gototime" || $p0 eq "time") {
 			if ($p1 eq "?") {
-				$p1 = Slim::Player::Playlist::songTime($client);
+				$p1 = Slim::Player::Source::songTime($client);
 			} else {
-				Slim::Player::Playlist::gototime($client, $p1, 1);
+				Slim::Player::Source::gototime($client, $p1, 1);
 			}
 		} elsif ($p0 eq "duration") {
 			$p1 = Slim::Music::Info::durationSeconds(Slim::Player::Playlist::song($client)) || 0;
@@ -283,7 +283,7 @@ sub execute {
 				}
 				
 				if ($p1 =~ /^(play|load|resume)$/) {
-					Slim::Player::Playlist::playmode($client, "stop");
+					Slim::Player::Source::playmode($client, "stop");
 					Slim::Player::Playlist::clear($client);
 				}				
 				
@@ -319,11 +319,11 @@ sub execute {
 				$p2 = $path;
 				
 			} elsif ($p1 eq "loadalbum" | $p1 eq "playalbum") {
-				Slim::Player::Playlist::playmode($client, "stop");
+				Slim::Player::Source::playmode($client, "stop");
 				Slim::Player::Playlist::clear($client);
 				push(@{Slim::Player::Playlist::playList($client)}, Slim::Music::Info::songs(singletonRef($p2), singletonRef($p3), singletonRef($p4), singletonRef($p5), $p6));
 				Slim::Player::Playlist::reshuffle($client);
-				Slim::Player::Playlist::jumpto($client, 0);
+				Slim::Player::Source::jumpto($client, 0);
 			} elsif ($p1 eq "addalbum") {
 				push(@{Slim::Player::Playlist::playList($client)}, Slim::Music::Info::songs(singletonRef($p2), singletonRef($p3), singletonRef($p4), singletonRef($p5), $p6));
 				Slim::Player::Playlist::reshuffle($client);
@@ -341,7 +341,7 @@ sub execute {
 					my $savename = basename ($p2);
                     # save the current playlist position as a comment at the head of the list
 					my @annotatedlist = @{Slim::Player::Playlist::playList($client)};
-					Slim::Formats::Parse::writeM3U( \@annotatedlist, catfile(Slim::Utils::Prefs::get('playlistdir'), $savename . ".m3u"), 1, Slim::Player::Playlist::currentSongIndex($client));
+					Slim::Formats::Parse::writeM3U( \@annotatedlist, catfile(Slim::Utils::Prefs::get('playlistdir'), $savename . ".m3u"), 1, Slim::Player::Source::currentSongIndex($client));
 				}				
 			} elsif ($p1 eq "deletealbum") {
 				my @listToRemove=Slim::Music::Info::songs(singletonRef($p2),singletonRef($p3),singletonRef($p4),singletonRef($p5),$p6);
@@ -396,7 +396,7 @@ sub execute {
 				}
 			} elsif ($p1 eq "clear") {
 				Slim::Player::Playlist::clear($client);
-				Slim::Player::Playlist::playmode($client, "stop");
+				Slim::Player::Source::playmode($client, "stop");
 			} elsif ($p1 eq "move") {
 				Slim::Player::Playlist::moveSong($client, $p2, $p3);
 			} elsif ($p1 eq "delete") {
@@ -405,12 +405,12 @@ sub execute {
 				}
 			} elsif (($p1 eq "jump") || ($p1 eq "index")) {
 				if ($p2 eq "?") {
-					$p2 = Slim::Player::Playlist::currentSongIndex($client);
+					$p2 = Slim::Player::Source::currentSongIndex($client);
 				} else {
 				#	if (Slim::Player::Playlist::playmode($client) eq 'play') {
 				#		Slim::Player::Control::fade_volume($client, -0.3125, \&jumpto, [$client, $p2]);
 				#	} else {
-						Slim::Player::Playlist::jumpto($client, $p2);
+						Slim::Player::Source::jumpto($client, $p2);
 				#	}
 				}
 			} elsif ($p1 eq "tracks") {
@@ -450,7 +450,7 @@ sub execute {
 					if ($newvol < 0) { $newvol = 0; }
 					Slim::Utils::Prefs::clientSet($client, "volume", $newvol);
 					Slim::Player::Control::volume($client, $newvol);
-					if (Slim::Player::Playlist::isSynced($client)) {syncFunction($client, $newvol, "volume",\&Slim::Player::Control::volume);};
+					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newvol, "volume",\&Slim::Player::Control::volume);};
 				}
 			} elsif ($p1 eq "muting") {
 				my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
@@ -466,7 +466,7 @@ sub execute {
 					$fade = -0.3125;
 				}
 				Slim::Player::Control::fade_volume($client, $fade, \&Slim::Player::Control::mute, [$client]);
-				if (Slim::Player::Playlist::isSynced($client)) {syncFunction($client, $fade, "mute",undef);};
+				if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $fade, "mute",undef);};
 			} elsif ($p1 eq "balance") {
 				# unsupported yet
 			} elsif ($p1 eq "treble") {
@@ -485,7 +485,7 @@ sub execute {
 					if ($newtreb < $Slim::Player::Control::minTreble) { $newtreb = $Slim::Player::Control::minTreble; }
 					Slim::Utils::Prefs::clientSet($client, "treble", $newtreb);
 					Slim::Player::Control::treble($client, $newtreb);
-					if (Slim::Player::Playlist::isSynced($client)) {syncFunction($client, $newtreb, "treble",\&Slim::Player::Control::treble);};
+					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newtreb, "treble",\&Slim::Player::Control::treble);};
 				}
 			} elsif ($p1 eq "bass") {
 				my $newbass;
@@ -503,7 +503,7 @@ sub execute {
 					if ($newbass < $Slim::Player::Control::minBass) { $newbass = $Slim::Player::Control::minBass; }
 					Slim::Utils::Prefs::clientSet($client, "bass", $newbass);
 					Slim::Player::Control::bass($client, $newbass);
-					if (Slim::Player::Playlist::isSynced($client)) {syncFunction($client, $newbass, "bass",\&Slim::Player::Control::bass);};
+					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newbass, "bass",\&Slim::Player::Control::bass);};
 				}
 			}
 		} elsif ($p0 eq "display") {
@@ -557,7 +557,7 @@ sub syncFunction {
 	my $setting = shift;
 	my $controlRef = shift;
 	
-	my @buddies = Slim::Player::Playlist::syncedWith($client);
+	my @buddies = Slim::Player::Sync::syncedWith($client);
 	if (scalar(@buddies) > 0) {
 		foreach my $eachclient (@buddies) {
 			if (Slim::Utils::Prefs::clientGet($eachclient,'syncVolume')) {
@@ -601,7 +601,7 @@ sub load_done {
 	my ($client, $index, $callbackf, $callbackargs)=@_;
 	Slim::Player::Playlist::reshuffle($client);
 	if (defined($index)) {
-		Slim::Player::Playlist::jumpto($client, $index);
+		Slim::Player::Source::jumpto($client, $index);
 	}
 	$callbackf && (&$callbackf(@$callbackargs));
 	Slim::Control::Command::executeCallback($client, ['playlist','load_done']);
@@ -610,7 +610,7 @@ sub load_done {
 sub insert_done {
 	my ($client, $listsize, $size,$callbackf, $callbackargs)=@_;
 	my $i;
-	my $playlistIndex = Slim::Player::Playlist::currentSongIndex($client)+1;
+	my $playlistIndex = Slim::Player::Source::currentSongIndex($client)+1;
 	my @reshuffled;
 
 	if (Slim::Player::Playlist::shuffle($client)) {

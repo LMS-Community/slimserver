@@ -77,7 +77,7 @@ sub run_tasks {
 	#run tasks at least once a second.
 	if (($now - $lastpass) < 1.0) {
 		foreach my $client (Slim::Player::Client::clients()) {
-			if (Slim::Player::Playlist::playmode($client) eq 'play' && 
+			if (Slim::Player::Source::playmode($client) eq 'play' && 
 			    $client->isPlayer() && 
 			    $client->model eq 'slimp3' && 
 			    $client->usage() < 0.5) {

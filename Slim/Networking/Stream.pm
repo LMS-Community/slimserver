@@ -272,7 +272,7 @@ sub timeout {
 		$packetInFlight{$client} = undef;
 		if (($lastAck{$client} + $ACK_TIMEOUT) < Time::HiRes::time()) {
 			# we haven't gotten an ack in a long time.  shut it down and don't bother resending.
-			Slim::Player::Playlist::unsync($client);
+			Slim::Player::Sync::unsync($client);
 			Slim::Control::Command::execute($client, ["stop"]);
 		} else {
 			sendStreamPkt($client, $packet);
@@ -377,7 +377,7 @@ sub sendNextChunk {
 		$requestedChunkSize = $remainingSpace;
 	}
 
-	my $chunkRef = Slim::Player::Playlist::nextChunk($client, $requestedChunkSize);
+	my $chunkRef = Slim::Player::Source::nextChunk($client, $requestedChunkSize);
 	
 	if (!defined($chunkRef)) {
 		$::d_stream && msg("stream not readable\n");

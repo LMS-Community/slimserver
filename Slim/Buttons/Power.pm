@@ -1,6 +1,6 @@
 package Slim::Buttons::Power;
 
-# $Id: Power.pm,v 1.3 2003/08/09 05:47:13 dean Exp $
+# $Id: Power.pm,v 1.4 2003/08/12 00:52:42 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -29,9 +29,9 @@ sub getFunctions {
 sub setMode {
 	my $client = shift;
 	$client->lines(\&lines);
-	Slim::Player::Playlist::unsync($client);
+	Slim::Player::Sync::unsync($client);
 	
-	if (Slim::Player::Playlist::playmode($client) eq 'play' && Slim::Player::Playlist::song($client)) {
+	if (Slim::Player::Source::playmode($client) eq 'play' && Slim::Player::Playlist::song($client)) {
 		if (Slim::Music::Info::isHTTPURL(Slim::Player::Playlist::song($client))) {
 			Slim::Control::Command::execute($client, ["stop"]);
 		} else {

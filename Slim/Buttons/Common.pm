@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.5 2003/08/09 16:23:43 dean Exp $
+# $Id: Common.pm,v 1.6 2003/08/12 00:52:42 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -63,7 +63,7 @@ my %functions = (
 		my $client = shift;
 		# ignore if we aren't playing anything or if we're scanning
 		my $playlistlen = Slim::Player::Playlist::count($client);
-		my $rate = Slim::Player::Playlist::rate($client);
+		my $rate = Slim::Player::Source::rate($client);
 		
 		if ($playlistlen == 0 || ($rate != 0 && $rate != 1)) {
 			return;
@@ -75,7 +75,7 @@ my %functions = (
 		my $client = shift;
 		# ignore if we aren't playing anything or if we're scanning
 		my $playlistlen = Slim::Player::Playlist::count($client);
-		my $rate = Slim::Player::Playlist::rate($client);
+		my $rate = Slim::Player::Source::rate($client);
 		
 		if ($playlistlen == 0 || ($rate != 0 && $rate != 1)) {
 			return;
@@ -98,7 +98,7 @@ my %functions = (
 		my $functarg = shift;
 		# ignore if we aren't playing anything or if we're scanning
 		my $playlistlen = Slim::Player::Playlist::count($client);
-		my $rate = Slim::Player::Playlist::rate($client);
+		my $rate = Slim::Player::Source::rate($client);
 		
 		if (!defined $functarg) { $functarg = ''; }
 
@@ -121,7 +121,7 @@ my %functions = (
 
 		if ($functarg eq 'rew') { 
 			my $now = Time::HiRes::time();
-			if (Slim::Player::Playlist::songTime($client) < 5 || Slim::Player::Playlist::playmode($client) eq "stop") {
+			if (Slim::Player::Source::songTime($client) < 5 || Slim::Player::Source::playmode($client) eq "stop") {
 				#jump back a song if stopped, invalid songtime, or current song has been playing less
 				#than 5 seconds (use modetime instead of now when paused)
 				Slim::Control::Command::execute($client, ["playlist", "jump", "-1"]);
@@ -158,7 +158,7 @@ my %functions = (
 	},
 	'scan' => sub {
 		my ($client,$funct,$functarg) = @_;
-		my $rate = Slim::Player::Playlist::rate($client);
+		my $rate = Slim::Player::Source::rate($client);
 		if (!defined $functarg) {
 			return;
 		} elsif ($functarg eq 'fwd') {

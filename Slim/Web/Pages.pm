@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.4 2003/08/09 16:23:46 dean Exp $
+# $Id: Pages.pm,v 1.5 2003/08/12 00:52:45 dean Exp $
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -378,7 +378,7 @@ sub status {
 			$$main_form_ref{'shuffleoff'} = "off";
 		}
 	
-		$$main_form_ref{'songtime'} = int(Slim::Player::Playlist::songTime($client));
+		$$main_form_ref{'songtime'} = int(Slim::Player::Source::songTime($client));
 		if (Slim::Player::Playlist::song($client)) { 
 			my $dur = Slim::Music::Info::durationSeconds(Slim::Player::Playlist::song($client));
 			if ($dur) { $dur = int($dur); }
@@ -393,22 +393,22 @@ sub status {
 			$$main_form_ref{'repeatall'} = "all";
 		}
 	
-		if("play" eq Slim::Player::Playlist::playmode($client)) {
+		if("play" eq Slim::Player::Source::playmode($client)) {
 			$$main_form_ref{'modeplay'} = "Play";
-		} elsif ("pause" eq Slim::Player::Playlist::playmode($client)) {
+		} elsif ("pause" eq Slim::Player::Source::playmode($client)) {
 			$$main_form_ref{'modepause'} = "Pause";
 		} else {
 			$$main_form_ref{'modestop'} = "Stop";
 		}
-		if (Slim::Player::Playlist::rate($client) > 1) {
+		if (Slim::Player::Source::rate($client) > 1) {
 			$$main_form_ref{'rate'} = 'ffwd';
-		} elsif (Slim::Player::Playlist::rate($client) < 0) {
+		} elsif (Slim::Player::Source::rate($client) < 0) {
 			$$main_form_ref{'rate'} = 'rew';
 		} else {
 			$$main_form_ref{'rate'} = 'norm';
 		}
 		
-		$$main_form_ref{'sync'} = Slim::Player::Playlist::syncwith($client);
+		$$main_form_ref{'sync'} = Slim::Player::Sync::syncwith($client);
 		
 		$$main_form_ref{'mode'} = Slim::Buttons::Common::mode($client);
 		if ($client->isPlayer()) {
@@ -423,8 +423,8 @@ sub status {
 	
 	if ($songcount > 0) {
 		my $song = Slim::Player::Playlist::song($client);
-		$$main_form_ref{'currentsong'}    = Slim::Player::Playlist::currentSongIndex($client) + 1;
-		$$main_form_ref{'thissongnum'}    = Slim::Player::Playlist::currentSongIndex($client);
+		$$main_form_ref{'currentsong'}    = Slim::Player::Source::currentSongIndex($client) + 1;
+		$$main_form_ref{'thissongnum'}    = Slim::Player::Source::currentSongIndex($client);
 		$$main_form_ref{'songcount'}      = $songcount;
 		$$main_form_ref{'songtitle'}      = Slim::Music::Info::standardTitle(undef,$song);
 		$$main_form_ref{'artist'} 	  = Slim::Music::Info::artist($song);
@@ -443,8 +443,8 @@ sub status {
 		my %clientlist = ();
 		foreach my $eachclient (@players) {
 			$clientlist{$eachclient->id()} =  $eachclient->name();
-			if (Slim::Player::Playlist::isSynced($eachclient)) {
-				$clientlist{$eachclient->id()} .= " (".string('SYNCHRONIZED_WITH')." ".Slim::Player::Playlist::syncwith($eachclient).")";
+			if (Slim::Player::Sync::isSynced($eachclient)) {
+				$clientlist{$eachclient->id()} .= " (".string('SYNCHRONIZED_WITH')." ".Slim::Player::Sync::syncwith($eachclient).")";
 			}	
 		}
 		$$main_form_ref{'player_chooser_list'} = options($client->id(),\%clientlist,$$main_form_ref{'skinOverride'});
@@ -483,7 +483,7 @@ sub playlist {
 		else{
 			($start,$end) = pagebar($songcount,
 								$$main_form_ref{'path'},
-								Slim::Player::Playlist::currentSongIndex($client),
+								Slim::Player::Source::currentSongIndex($client),
 								"player=" . Slim::Web::HTTP::escape($client->id()) . "&", 
 								\$$main_form_ref{'start'}, 
 								\$$main_form_ref{'playlist_header'},
@@ -495,7 +495,7 @@ sub playlist {
 		my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
 		my $includeArtist =  ($webFormat !~ /ARTIST/);
 		my $includeAlbum = ($webFormat !~ /ALBUM/) ;
-		my $currsongind = Slim::Player::Playlist::currentSongIndex($client);
+		my $currsongind = Slim::Player::Source::currentSongIndex($client);
 		for( $item = $start; $item < $end + 1; $item++) {
 			%list_form = ();
 			$list_form{'myClientState'} = $client;

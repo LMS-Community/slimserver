@@ -108,6 +108,8 @@ use Slim::Music::iTunes;
 use Slim::Music::MusicFolderScan;
 use Slim::Utils::OSDetect;
 use Slim::Player::Playlist;
+use Slim::Player::Sync;
+use Slim::Player::Source;
 use Slim::Utils::Prefs;
 use Slim::Networking::Protocol;
 use Slim::Utils::Scheduler;

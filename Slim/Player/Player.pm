@@ -76,7 +76,7 @@ sub power {
 				}
 				Slim::Utils::Prefs::clientSet($client, "powerOnBrightness", $powerOnBrightness);
 				#check if there is a sync group to restore
-				Slim::Player::Playlist::restoreSync($client);
+				Slim::Player::Sync::restoreSync($client);
 				# restore volume (un-mute if necessary)
 				my $vol = Slim::Utils::Prefs::clientGet($client,"volume");
 				if($vol < 0) { 

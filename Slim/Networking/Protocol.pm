@@ -65,7 +65,7 @@ sub processMessage {
 
 		Slim::Networking::Stream::gotAck($client, $wptr, $rptr, $seq);
 
-		Slim::Player::Playlist::checkSync($client);
+		Slim::Player::Sync::checkSync($client);
 
 	} else {
 		$::d_protocol && msg("debug: unknown type: [$type]\n");

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.4 2003/08/11 20:56:08 dean Exp $
+# $Id: Prefs.pm,v 1.5 2003/08/12 00:52:45 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -203,7 +203,7 @@ my %prefChange = (
 		if ($newvalue) {
 			Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
 			foreach my $client (Slim::Player::Client::clients()) {
-				next if Slim::Player::Playlist::isSlave($client);
+				next if Slim::Player::Sync::isSlave($client);
 				Slim::Player::Playlist::modifyPlaylistCallback($client,['playlist','load_done']);
 			}
 		} else {
