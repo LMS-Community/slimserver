@@ -9,13 +9,13 @@
 		[% IF currentsong %]<a name="currentsong"></a><span class="exboldlisting">[% END %][% IF not currentsong %]<span class="exlisting"><a href="status_header.html?p0=playlist&amp;p1=jump&amp;p2=[% num %]&amp;player=[% player | uri %]" target="status">[% END %][% title | html %][% IF not currentsong %]</a>[% END %]</span> <span class="exboldnowplaying"></span> <span class="exlisting">[% IF album %][% "FROM" | string %][% END %] <a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album | html %]</a> [% IF artist %] [% "BY" | string %] [% END %] <a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser">[% artist | html %]</a></span>
 	</td>
 	<td valign="center" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %] width="13">
-		<a href="status_header.html?p0=playlist&amp;p1=move&amp;p2=[% num %]&amp;p3=%2B1&amp;player=[% player | uri %]&amp;start=[% start %]" target="status"><img src="html/images/b_down.gif" width="13" height="13"></a>
+		<a href="status_header.html?p0=playlist&amp;p1=move&amp;p2=[% num %]&amp;p3=%2B1&amp;player=[% player | uri %]&amp;start=[% start %]" target="status"><img src="html/images/b_down.gif" width="13" height="13" alt="[% "DOWN" | string %]" title="[% "DOWN" | string %]"></a>
 	</td>
 	<td valign="center" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %] width="13">
-		<a href="status_header.html?p0=playlist&amp;p1=move&amp;p2=[% num %]&amp;p3=%2D1&amp;player=[% player | uri %]&amp;start=[% start %]" target="status"><img src="html/images/b_up.gif" width="13" height="13"></a>
+		<a href="status_header.html?p0=playlist&amp;p1=move&amp;p2=[% num %]&amp;p3=%2D1&amp;player=[% player | uri %]&amp;start=[% start %]" target="status"><img src="html/images/b_up.gif" width="13" height="13" alt="[% "UP" | string %]" title="[% "UP" | string %]"></a>
 	</td>
 	<td valign="center" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %] width="13">
-		<a href="status_header.html?p0=playlist&amp;p1=delete&amp;p2=[% num %]&amp;player=[% player | uri %]&amp;start=[% start %]"  target="status"><img src="html/images/b_delete.gif" width="13" height="13"></a>
+		<a href="status_header.html?p0=playlist&amp;p1=delete&amp;p2=[% num %]&amp;player=[% player | uri %]&amp;start=[% start %]"  target="status"><img src="html/images/b_delete.gif" width="13" height="13" alt="[% "REMOVE_FROM_PLAYLIST" | string %]" title="[% "REMOVE_FROM_PLAYLIST" | string %]"></a>
 	</td>
 	<td width="8"></td>
 </tr>
