@@ -221,6 +221,7 @@ sub playmode {
 				
 			} elsif ($newmode eq "playout") {
 				$everyclient->playmode("stop");
+				closeSong($everyclient);
 				currentSongIndex($everyclient, "0");
 			} else {
 				$everyclient->playmode($newmode);
@@ -758,7 +759,9 @@ sub readNextChunk {
 			# request.
 			#
 			my $selRead = IO::Select->new();
-			$selRead->add($client->mp3filehandle);
+			
+			$selRead->add($client->mp3filehandle());
+			
 			my ($selCanRead,$selCanWrite)=IO::Select->select($selRead,undef,undef,0);
 			if (!$selCanRead) {
 				#$::d_source && msg("remote stream not readable\n");

@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.31 2003/09/30 23:18:13 dean Exp $
+# $Id: HTTP.pm,v 1.32 2003/10/02 21:00:40 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -206,32 +206,38 @@ sub idle {
 }
 
 sub idleStreams {
+
 	my $streamingSelCanWrite;
 	#send data to streaming clients
 	my $count = 0; 
 	
 	my $continue = $streamingSelWrite->count();
 
+	my $streamWriteMaximum = Slim::Utils::Prefs::get("tcpWriteMaximum");
+	
 	while ($continue) {
+		$::d_http && msg("Got some players to stream to\n");
+
+		my $writes = 0;
     	(undef,$streamingSelCanWrite) = IO::Select->select(undef,$streamingSelWrite,undef,0);
 
 	    if (defined($streamingSelCanWrite) && scalar(@$streamingSelCanWrite)) {
-	    		#my $streamWriteMaximum = Slim::Utils::Prefs::get("streamWriteMaximum");
-	    		#use tcp write maximum for now
-	    		my $streamWriteMaximum = Slim::Utils::Prefs::get("tcpWriteMaximum");
+			$::d_http && msg("select returned: " . scalar(@$streamingSelCanWrite) . " streams to write to: ");
+			
 			foreach my $sockHand (@$streamingSelCanWrite) {
-				$continue = (Slim::Web::HTTP::sendstreamingresponse($sockHand) && 
-							!Slim::Networking::Protocol::pending() && 
-						($count < $streamWriteMaximum) && $continue );
+				$::d_http && msg("...writing...");
+				my $sent = Slim::Web::HTTP::sendstreamingresponse($sockHand);
+				$writes += $sent;
+				
+				$continue = ($sent && !Slim::Networking::Protocol::pending() && ($count < $streamWriteMaximum) && $continue );
 				$count++;
 				last if (!$continue || Slim::Networking::Protocol::pending() || $count > $streamWriteMaximum);
 			}
-	    } else {
-			$continue=0
 	    }
+	    $continue = 0 if (!$writes);
 	}
 	
-	$::d_http && $count && msg("Done streaming to all players\n");
+	$::d_http && $count && msg("\nDone streaming to all players\n");
 }
 
 sub serverSocket {
@@ -458,13 +464,16 @@ sub executeurl {
 		$client = Slim::Player::Client::getClient($address);
 		
 		if (!defined($client)) {
+			my $paddr = getpeername($httpclientsock);
 			$::d_http && msg ("new http client at $address\n");
-			$client = Slim::Player::HTTP->new(
-				$address,
-				getpeername($httpclientsock), 
-				$httpclientsock);
-				
-			$client->init();
+			if ($paddr) {
+				$client = Slim::Player::HTTP->new(
+					$address,
+					$paddr, 
+					$httpclientsock);
+					
+				$client->init();
+			}
 		}
 	}
 
@@ -648,8 +657,7 @@ sub closeStreamingSocket {
 
 sub sendstreamingresponse {
 	my $httpclientsock = shift;
-	my $sentbytes = 0;
-	my $fullsend = 0;
+	my $sentbytes;
 	
 	my $client = $peerclient{$httpclientsock};
 	assert($client);
@@ -662,13 +670,13 @@ sub sendstreamingresponse {
 	if (!$httpclientsock->connected) {
 		closeStreamingSocket($httpclientsock);
 		$::d_http && msg("Streaming client closed connection...\n");
-		return $fullsend;
+		return undef;
 	}
 	
 	if ( $client && ($client->model eq 'squeezebox') && (Slim::Player::Source::playmode($client) eq 'stop')) {
 		closeStreamingSocket($httpclientsock);
 		$::d_http && msg("Streaming client closed connection...\n");
-		return $fullsend;
+		return undef;
 	}
 	
 	if (	!defined($streamingFile) && 
@@ -700,7 +708,7 @@ sub sendstreamingresponse {
 					# we're done streaming this stored file, closing connection.
 					closeStreamingSocket($httpclientsock);
 					$::d_http && msg("we're done streaming this stored file, closing connection....\n");
-					return $fullsend;
+					return 0;
 				}
 			} else {
 				$chunkRef = Slim::Player::Source::nextChunk($client, 32768);
@@ -715,6 +723,12 @@ sub sendstreamingresponse {
 					'length' => length($$chunkRef)
 				);
 				unshift @{$outbuf{$httpclientsock}},\%segment;
+				# if we were previously removed from the select list, then add us back in since we have data.
+				$main::selWrite->add($httpclientsock) if (!$main::selWrite->exists($httpclientsock));
+			} else {
+				# since we didn't get any data, we're going to remove ourselves from the main select list, this is the case when we run out of data on a streaming side.  
+				# we'll try agan when the read side has some data.
+				$main::selWrite->remove($httpclientsock);
 			}
 		}
 		# try again...
@@ -782,22 +796,19 @@ sub sendstreamingresponse {
 				$segmentref->{'length'} -= $sentbytes;
 				$segmentref->{'offset'} += $sentbytes;
 				unshift @{$outbuf{$httpclientsock}},$segmentref;
-				$fullsend = 0;
-			} else {
-				$fullsend = 1;
 			}
 		} else {
 			$::d_http && msg("sendstreamingsocket syswrite returned undef\n");
 			closeStreamingSocket($httpclientsock);
-			return $fullsend;
+			return undef;
 		}
 	} else {
 		$::d_http && msg("Got nothing for streaming data to " . $peeraddr{$httpclientsock} . "\n");
-		return 1;
+		return 0;
 	}
 
 	$::d_http && $sentbytes && msg("Streamed $sentbytes to " . $peeraddr{$httpclientsock} . "\n");
-	return $fullsend;
+	return $sentbytes;
 }
 
 #

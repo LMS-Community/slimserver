@@ -408,6 +408,10 @@ sub idle {
 		$::d_time && msg("select counts: " . $selRead->count . " " . $selWrite->count . "\n");
 
 		my ($r, $w, $e) = IO::Select->select($selRead,$selWrite,undef,$select_time);
+
+		$::d_time && msg("select returns: reads:" . (defined($r) && scalar(@$r)) . 
+						" writes:" . (defined($w) && scalar(@$w)) . " err: " . (defined($e) && scalar(@$e)) . "\n");
+		
 		if ($::d_perf) { $to = watchDog($to, "select"); }
 		
 		if ($stdio) {
