@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.12 2003/09/06 09:55:37 fm Exp $
+# $Id: Command.pm,v 1.13 2003/09/19 20:05:13 dean Exp $
 
 # Slim Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -63,9 +63,8 @@ sub execute {
 	# mode			?	
 	# sleep 		(0..n)																	
 	# sleep 		?																		
-	# gototime		(0..n sec)|(-n..+n sec)	
+	# gototime		(0..n sec)|(-n..+n sec)?
 	# power 		(0|1|?)	
-	# time			?	
 	# genre			?	
 	# artist		?	
 	# album			?	
@@ -244,7 +243,7 @@ sub execute {
 			if ($p1 eq "?") {
 				$p1 = Slim::Player::Source::songTime($client);
 			} else {
-				Slim::Player::Source::gototime($client, $p1, 1);
+				Slim::Player::Source::gototime($client, $p1);
 			}
 		} elsif ($p0 eq "duration") {
 			$p1 = Slim::Music::Info::durationSeconds(Slim::Player::Playlist::song($client)) || 0;

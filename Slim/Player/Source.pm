@@ -19,8 +19,8 @@ use Slim::Utils::Misc;
 use Slim::Utils::Scan;
 use Slim::Utils::Strings qw(string);
 
-my $CLIENTBUFFERLEN = (128 * 1024);
-
+my $TRICKSEGMENTLENGTH = 1.0;
+				
 my %commandTable = ();
 
 sub loadConversionTables {
@@ -77,16 +77,44 @@ sub rate {
 		return $client->rate;
 	}
 	my $oldrate = $client->rate();
-	$client->rate($newrate);
 	
 	$::d_source && msg("switching rate from $oldrate to $newrate\n");
 	# restart playback if we've changed and we're not pausing or unpauseing
 	if ($oldrate != $newrate) {  		
 	 	if ($oldrate != 0 && $newrate != 0) {
-	 		$::d_source && msg("gototime, jumping to here in order to restart the stream\n");
-			gototime($client, "+0", 1);
+	 		$::d_source && msg("rate change, jumping to the current position in order to restart the stream\n");
+			gototime($client, "+0");
 		}
 	}
+	$client->rate($newrate);
+}
+
+sub time2offset {
+	my $client = shift;
+	my $time = shift;
+
+	my $size = $client->songtotalbytes();
+	my $duration = $client->songduration();
+
+	my $byterate;
+
+	if (!$duration) {
+		$byterate = 0;
+	} else {
+		$byterate = $size / $duration;
+	}
+	my $offset = int($byterate * $time);
+	
+	return $offset;
+}
+
+
+# fractional progress (0 - 1.0) of playback in the current song.
+sub progress {
+	my $client = shift;
+	
+	return 0 if (!$client->songduration);
+	return songTime($client) / $client->songduration;
 }
 
 sub songTime {
@@ -105,6 +133,7 @@ sub songTime {
 
 	my $size = $client->songtotalbytes;
 	my $duration = $client->songduration;
+	
 	my $byterate;
 	if (!$duration) {
 		$byterate = 0;
@@ -112,38 +141,30 @@ sub songTime {
 		$byterate = $size / $duration;
 	}
 
+	my $realpos = $client->bytesReceived() - $client->bufferFullness();
+	$::d_source && msg("realpos $realpos calcuated from bytes received: " . $client->bytesReceived() . " minus buffer fullness: " . $client->bufferFullness() . "\n");
+	
+	if ($realpos<0) {
+		$::d_source && msg("Negative position calculated, we are still playing out the previous song.\n");	
+		$realpos = 0;
+	}
+
 	my $songtime;
+	my $rate = $client->rate;
+	my $startStream =  $client->songStartStreamTime();
+
 	if (!$size) {
 		$songtime = 0;
 	} else {
-		$songtime = (songRealPos($client) / $size * $duration);
+		$songtime = ($realpos / $size * $duration * $rate) + $startStream;
 	}
 
-	$::d_source && msg( "byterate = $byterate, size = $size, songrealpos = ".songRealPos($client)." songtime = $songtime\n");
+	$::d_source && msg( "songTime: $songtime = ($realpos(realpos) / $size(size) * $duration(duration) * $rate(rate)) + $startStream(time offset of started stream)\n");
 
 	return($songtime);
 
 }	
 
-# the "real" position in the track, accounting for client and server-side buffering
-# TODO include server-side buffering
-# TODO this won't work when scanning in reverse
-#
-sub songRealPos {
-	my ($client) = shift;
-
-	$client = Slim::Player::Sync::masterOrSelf($client);
-
-	my $realpos = $client->bytesReceived() - $client->bufferFullness();
-
-	if ($realpos<0) {
-		warn("came up with a negative position in the stream: ".
-		     "bytesReceived = ".$client->bytesReceived.", fullness = ".$client->bufferFullness()."\n");
-		$realpos = 0;
-	}
-	$::d_source && msg("songRealPos bytesReceived: ". $client->bytesReceived . " realpos: $realpos\n");
-	return $realpos;	
-}
 
 # playmode - start playing, pause or stop
 sub playmode {
@@ -255,12 +276,6 @@ sub playmode {
 	return $client->playmode();
 }
 
-sub lastChunk {
-	my $client = shift;
-	return $client->lastchunk;
-}
-
-
 
 sub nextChunk {
 	my $client = shift;
@@ -274,21 +289,6 @@ sub nextChunk {
 	} else {
 		#otherwise, read a new chunk
 		my $readfrom = Slim::Player::Sync::masterOrSelf($client);
-
-		# if we're at a non-regular rate (not 0 or 1), play for one second 
-		# then skip a calculated amount to play back at the apparent rate.
-		my $rate = rate($client);
-		my $lastskip = $client->lastskip();
-		my $now = Time::HiRes::time();
-		if (($rate != 0 && $rate != 1) && (($now - $lastskip) > 1.0)) { 
-			my $skip = $rate - 1.0;
-			if ($skip > 0) { $skip = "+" . $skip; }
-			$::d_source && msg("non regular play rate ($rate), skipping $skip seconds\n");
-			$client->lastskip($now);
-			gototime($readfrom, $skip, 1);
-			# the gototime above will reload the data, so we should just return;
-			return undef;
-		}
 			
 		$chunkRef = readNextChunk($readfrom, $maxChunkSize);
 			
@@ -306,11 +306,6 @@ sub nextChunk {
 			push @{$client->chunks}, \substr($$chunkRef, $maxChunkSize - $len, $len - $maxChunkSize);
 			$chunkRef = \substr($$chunkRef, 0, $maxChunkSize);
 		}
-		
-		# remember the last chunk we sent
-		if (defined($chunkRef)) {
-			$client->lastchunk($chunkRef);
-		}
 	}
 	
 	return $chunkRef;
@@ -325,9 +320,8 @@ sub nextChunk {
 #   buffer gets around to it
 #
 sub gototime {
-	my($client, $newtime, $doitnow) = @_;
+	my($client, $newtime) = @_;
 	my $newoffset;
-	my $oldoffset;
 	my $oldtime;
 
 	if (Slim::Player::Sync::isSynced($client)) {
@@ -340,70 +334,55 @@ sub gototime {
 	my $size = $client->songtotalbytes;
 	my $duration = $client->songduration;
 
-	$oldoffset = songRealPos($client);
-	
-	if ($oldoffset > $size) {
-		 warn ("song position > size\n") 
-	}
-
 	$oldtime = songTime($client);
 
 	if ($newtime =~ /^[\+\-]/) {
-		$newoffset = int($oldoffset + ($newtime / $duration * $size));
-		$::d_source && msgf("going to time %s, offset %s from old offset %s\n", $newtime, $newoffset, $oldoffset);
-		# skip to the previous or next track as necessary
-		if ($newoffset > $size) {
-			my $rate = rate($client);
-			jumpto($client, "+1");
-			rate($client, $rate);
-			$newtime = ($newoffset - $size) * $duration / $size;
-			$::d_source && msg("skipping forward to the next track to time $newtime\n");
-			gototime($client, $newtime, $doitnow);
-			return;
-		} elsif ($newoffset < 0) {
-			my $rate = rate($client);
-			while ($newtime < 0) {
-				jumpto($client, "-1");
-				rate($client, $rate);
-				$newtime = $client->songduration - ((-$newoffset) * $duration / $size);
-				$::d_source && msg("skipping backwards to the previous track to time $newtime\n");
-			}
-			gototime($client, $newtime, $doitnow);
-			return;
-		}
-	} else {
-		$::d_source && msgf("going to time %s\n", $newtime);
-		$newoffset = int($newtime / $duration * ($size));
-		if ($newoffset > $size) {
-			$newoffset = $size;
-		} elsif ($newoffset < 0) {
-			$newoffset = 0;
-		}
+		$::d_source && msg("gototime: relative jump $newtime from current time $oldtime\n");
+		$newtime += $oldtime;
 	}
 	
-	$::d_source && msgf("oldoffset $oldoffset, old time = %d, newoffset: %d new time = %d\n", $oldtime, $newoffset, $newoffset / $size * $duration);
+	$newoffset = time2offset($client, $newtime);
+	
+	$::d_source && msg("gototime: going to time $newtime, offset $newoffset from old time: $oldtime\n");
 
-	if ($doitnow) {
-		foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
-			$::d_source && msg("gototime: stopping playback\n");
-			$everybuddy->stop();
-			@{$everybuddy->chunks} = ();
+	# skip to the previous or next track as necessary
+	if ($newoffset > $size) {
+		my $rate = rate($client);
+		jumpto($client, "+1");
+		rate($client, $rate);
+		$newtime = ($newoffset - $size) * $duration / $size;
+		$::d_source && msg("gototime: skipping forward to the next track to time $newtime\n");
+		gototime($client, $newtime);
+		return;
+	} elsif ($newoffset < 0) {
+		my $rate = rate($client);
+		while ($newtime < 0) {
+			jumpto($client, "-1");
+			rate($client, $rate);
+			$newtime = $client->songduration - ((-$newoffset) * $duration / $size);
+			$::d_source && msg("gototime: skipping backwards to the previous track to time $newtime\n");
 		}
+		gototime($client, $newtime);
+		return;
 	}
+	foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
+		$::d_source && msg("gototime: stopping playback\n");
+		$everybuddy->stop();
+		@{$everybuddy->chunks} = ();
+	}
+
 	my $dataoffset =  $client->songoffset;
 	$client->songBytes($newoffset);
+	$client->lastskip($newoffset);
 	$client->mp3filehandle->seek($newoffset+$dataoffset, 0);
+	$client->songStartStreamTime($newtime);
 
-	if ($doitnow) {
-		foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
-			$::d_source && msg("gototime: restarting playback\n");
-			$everybuddy->readytosync(0);
-			$everybuddy->play(Slim::Player::Sync::isSynced($client));
-		}
-	}	
+	foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
+		$::d_source && msg("gototime: restarting playback\n");
+		$everybuddy->readytosync(0);
+		$everybuddy->play(Slim::Player::Sync::isSynced($client));
+	}
 }
-
-
 
 # jumpto - set the current song to a given offset
 sub jumpto {
@@ -472,12 +451,17 @@ sub openNext {
 		
 		$result = openSong($client);
 		
+		# if we're playing backwards, we need to start at the end of the file.
+		if ($client->rate() < 0) {
+			gototime($client, $client->songduration() - $TRICKSEGMENTLENGTH);
+		}
+		
 	} while (!$result);
 	
 	# this is
 	if ($result && Slim::Player::Sync::isSynced($client)) {
 		my $silence = Slim::Web::HTTP::getStaticContent("html/silentpacket.mp3");
-		my $count = int($CLIENTBUFFERLEN / length($silence)) + 1;
+		my $count = int($client->buffersize() / length($silence)) + 1;
 		my @fullbufferofsilence =  (\$silence) x $count;
 		$::d_source && msg("stuffing " . scalar(@fullbufferofsilence) . " of silence into the buffers to sync.\n"); 
 		# stuff silent packets to fill the buffers for each player
@@ -509,8 +493,13 @@ sub skipsong {
 	my ($client) = @_;
 	# mark htmlplaylist invalid so the current song changes
 	$client->htmlstatusvalid(0);
-
-	currentSongIndex($client, currentSongIndex($client) + 1);
+	
+	return if (Slim::Player::Playlist::count($client) == 0);
+	
+	my $direction = 1;
+	if ($client->rate() < 0) { $direction = -1; }
+	 
+	currentSongIndex($client, currentSongIndex($client) + $direction);
 
 	if (currentSongIndex($client) >= Slim::Player::Playlist::count($client)) {
 		if (Slim::Player::Playlist::shuffle($client) && Slim::Utils::Prefs::get('reshuffleOnRepeat')) {
@@ -520,6 +509,10 @@ sub skipsong {
 			playmode($client,$playmode);
 		}
 		currentSongIndex($client, 0);
+	}
+	
+	if (currentSongIndex($client) < 0) {
+		currentSongIndex($client, Slim::Player::Playlist::count($client) - 1);
 	}
 }
 
@@ -542,6 +535,8 @@ sub openSong {
 	$client->songduration(0);
 	$client->bytesReceived(0);
 	$client->songBytes(0);
+	$client->lastskip(0);
+	$client->songStartStreamTime(0);
 	
 	# reset shoutcast variables
 	$client->shoutMetaInterval(0);
@@ -647,7 +642,7 @@ sub openSong {
 		my $size = Slim::Music::Info::size($fullpath);
 		my $duration = Slim::Music::Info::durationSeconds($fullpath);
 		my $offset = Slim::Music::Info::offset($fullpath);
-		my $rate = Slim::Music::Info::samplerate($fullpath);
+		my $samplerate = Slim::Music::Info::samplerate($fullpath);
 		$::d_source && msg("openSong: getting duration  $duration, size $size, and offset $offset for $fullpath\n");
 
 		if (!$size || !$duration)  {
@@ -695,7 +690,7 @@ sub openSong {
 	
 				$fullCommand =~ s/\$FILE\$/"$filepath"/g;
 				$fullCommand =~ s/\$URL\$/"$fullpath"/g;
-				$fullCommand =~ s/\$RATE\$/$rate/g;
+				$fullCommand =~ s/\$RATE\$/$samplerate/g;
 				$fullCommand =~ s/\$([^\$]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
 				$fullCommand .= Slim::Utils::OSDetect::OS() eq 'win' ? "" : " &";
@@ -756,7 +751,7 @@ sub readNextChunk {
 	
 	my $chunksize = $givenChunkSize;
 	
-	my $chunk  = 0;
+	my $chunk  = '';
 
 	if ($client->mp3filehandle()) {
 	
@@ -782,6 +777,44 @@ sub readNextChunk {
 				$chunksize = $client->shoutMetaInterval() - $client->shoutMetaPointer();
 			}
 		} else {
+		
+			# use the rate to seek to an appropriate place in the file.
+			my $rate = rate($client);
+			
+			# if we're scanning
+			if ($rate != 0 && $rate != 1) {
+				
+				my $lastskip = $client->lastskip();
+				
+				my $now = $client->songBytes();
+				
+				my $byterate = Slim::Music::Info::bitratenum(Slim::Player::Playlist::song($client)) / 8;
+				
+				my $tricksegmentbytes = $byterate * $TRICKSEGMENTLENGTH;
+				
+				# check to see if we've played tricksgementlength seconds worth of audio
+				$::d_source && msg("trick mode rate: $rate:  songbytes: $now lastskip: $lastskip byterate: $byterate\n");
+				if (($now - $lastskip) >= $tricksegmentbytes) { 
+					# if so, seek to the appropriate place.  (
+					# TODO: make this align on frame and sample boundaries as appropriate)
+					# TODO: Make the seek go into the next song, as appropriate.
+					my $howfar = ($rate -  $TRICKSEGMENTLENGTH) * $byterate;
+					my $seekpos = $now + $howfar;
+					
+					if ($seekpos < 0) {
+						# trying to seek past the beginning, let's let opennext do it's job
+						$chunksize = 0;
+					} else {
+						$client->mp3filehandle->seek($seekpos, 0);
+						$client->songBytes($client->songBytes() + $howfar);
+						$client->lastskip($client->songBytes());
+					}
+				}
+				
+				if ($chunksize > $tricksegmentbytes) { $chunksize = $tricksegmentbytes; }
+			}
+
+		
 			# don't send extraneous ID3 data at the end of the file
 			my $size = $client->songtotalbytes();
 			my $pos = $client->songBytes();
@@ -790,18 +823,23 @@ sub readNextChunk {
 				$chunksize = $size - $pos;
 				$::d_source && msg( "Reduced chunksize to $chunksize at end of file ($size - $pos)\n");
 			}
+			if ($pos > $size) {
+				$::d_source && msg( "Trying to read past the end of file, skipping to next file\n");
+				$chunksize = 0;
+			}
 		}
-
-		$client->mp3filehandle()->read($chunk, $chunksize);
+		if ($chunksize) {
+			$client->mp3filehandle()->read($chunk, $chunksize);
+			
+			if ($client->shoutMetaInterval()) {
+				$client->shoutMetaPointer($client->shoutMetaPointer() + length($chunk));
 		
-		if ($client->shoutMetaInterval()) {
-			$client->shoutMetaPointer($client->shoutMetaPointer() + length($chunk));
-	
-			# handle instream metadata for shoutcast/icecast
-			if ($client->shoutMetaPointer() == $client->shoutMetaInterval()) {
-	
-				Slim::Web::RemoteStream::readMetaData($client);
-				$client->shoutMetaPointer(0);
+				# handle instream metadata for shoutcast/icecast
+				if ($client->shoutMetaPointer() == $client->shoutMetaInterval()) {
+		
+					Slim::Web::RemoteStream::readMetaData($client);
+					$client->shoutMetaPointer(0);
+				}
 			}
 		}
 	} else {
@@ -818,14 +856,10 @@ sub readNextChunk {
 				$client->songBytes() . "(tell says: . " . tell($client->mp3filehandle()). "), totalbytes: " . $client->songtotalbytes() . "\n");
 		if (!openNext($client)) {
 			$::d_source && msg("Can't opennext, returning no chunk.");
-			return undef;
 		}
 		
-		$client->mp3filehandle()->read($chunk, $givenChunkSize);
-		
-		if ($client->mp3filehandleIsSocket) {
-			$client->shoutMetaPointer(length($chunk));
-		}
+		# we'll have to be called again to get a chunk from the next song.
+		return undef;
 	}
 	
 	$::d_source_verbose && msg("read a chunk of " . length($chunk) . " length\n");

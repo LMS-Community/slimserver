@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.22 2003/09/03 20:08:07 dean Exp $
+# $Id: Slimproto.pm,v 1.23 2003/09/19 20:05:13 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -412,6 +412,10 @@ sub process_slimproto_frame {
 
 sub fullness {
 	my $client = shift;
+	my $set = shift;
+	
+	if (defined($set)) { $status{$client}->{'fullness'} = $set; }
+	
 	return $status{$client}->{'fullness'};
 }
 

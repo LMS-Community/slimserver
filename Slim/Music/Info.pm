@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.8 2003/09/18 22:39:56 dean Exp $
+# $Id: Info.pm,v 1.9 2003/09/19 20:05:13 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -990,6 +990,10 @@ sub bitrate {
 	}
 }
 
+sub bitratenum {
+	my $file = shift;
+	return info($file,'BITRATE') * 1000;
+}
 sub samplerate {
 	my $file = shift;
 	return info($file,'RATE');

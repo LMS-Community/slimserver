@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.7 2003/09/15 18:50:18 dean Exp $
+# $Id: Common.pm,v 1.8 2003/09/19 20:05:12 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -154,7 +154,7 @@ my %functions = (
 		} else {
 			return;
 		}
-		Slim::Control::Command::execute($client, ['gototime', $dir, 1]);
+		Slim::Control::Command::execute($client, ['gototime', $dir]);
 	},
 	'scan' => sub {
 		my ($client,$funct,$functarg) = @_;

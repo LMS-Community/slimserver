@@ -55,7 +55,7 @@ my %clientHash = ();
 	# mp3filehandle					filehandle	the currently open MP3 file OR TCP stream
 	# mp3filehandleIsSocket			bool		becase Windows gets confused if you select on a regular file.
 	# chunks						array		array of references to chunks of data to be sent to client.
-	# lastchunk						ref			ref to the last chunk sent to this client, for retransmissions
+	# songStartStreamTime			float		time offset at which we started streaming this song
 	# remoteStreamStartTime			int			time we began playing the remote stream
 
 # client variables for shoutcast meta information 
@@ -78,7 +78,6 @@ my %clientHash = ();
 	# songtotalbytes				float		length of this song in bytes
 	# songduration					float		song length in seconds
 	# songoffset					int			offset in bytes to beginning of song in file
-	# bytesReceived					int			number of bytes in the current song that the player has received
 	# songBytes						int			number of bytes read from the current song
 	# currentplayingsong			string		current song that's playing out from player.  May not be the same as in the playlist as the client's buffer plays out.
 
@@ -201,7 +200,7 @@ sub new {
 	$client->[18] = undef; # mp3filehandle
 	$client->[19] = undef; # mp3filehandleIsSocket
 	$client->[20] = []; # chunks
-	$client->[21] = undef; # lastchunk
+	$client->[21] = undef; # songStartStreamTime
 	$client->[22] = undef; # remoteStreamStartTime
 	$client->[23] = undef; # shoutMetaPointer
 	$client->[24] = undef; # shoutMetaInterval
@@ -217,7 +216,7 @@ sub new {
 	$client->[34] = undef; # songtotalbytes
 	$client->[35] = undef; # songduration
 	$client->[36] = undef; # songoffset
-	$client->[37] = undef; # bytesReceived
+	$client->[37] = 0; # bytesReceived
 	$client->[38] = undef; # currentplayingsong
 	$client->[39] = undef; # currentSleepTime
 	$client->[40] = undef; # sleepTime
@@ -292,12 +291,9 @@ sub new {
 	$client->lastskip(0);
 
 	$client->currentsong(0);
-	$client->bytesReceived(0);
 	$client->songBytes(0);
 	$client->songtotalbytes(0);
 	$client->currentplayingsong("");
-
-	$client->lastchunk(undef);
 
 	$client->readytosync(0);
 
@@ -525,7 +521,7 @@ sub chunks {
 	@_ ? ($i = shift) : return $r->[20];
 	@_ ? ($r->[20]->[$i] = shift) : $r->[20]->[$i];
 }
-sub lastchunk {
+sub songStartStreamTime {
 	my $r = shift;
 	@_ ? ($r->[21] = shift) : $r->[21];
 }

@@ -45,8 +45,7 @@ use vars qw($stdin);
 #   <playerip> mode			<play|pause|stop|?>
 #   <playerip> sleep 		<0..n|?>															
 #	<playerip> power 	    (0|1|?)
-#   <playerip> gototime		(0..n sec)|(-n..+n sec)
-#   <playerip> time			?
+#   <playerip> time			(0..n sec)|(-n..+n sec)|?
 #   <playerip> genre		?
 #   <playerip> artist		?
 #   <playerip> album		?

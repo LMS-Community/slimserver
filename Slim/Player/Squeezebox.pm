@@ -96,6 +96,8 @@ sub pause {
 
 sub stop {
 	my $client = shift;
+	$client->bufferFullness(0);
+	$client->bytesReceived(0);
 	$client->stream('q');
 }
 
