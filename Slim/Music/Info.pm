@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.158 2004/11/25 04:02:42 kdf Exp $
+# $Id: Info.pm,v 1.159 2004/12/04 19:04:33 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2088,6 +2088,7 @@ sub isFragment {
 
 sub readTags {
 	my $file = shift;
+	my $cacheEntry = shift;
 	my ($track, $song, $artistName,$albumName);
 	my $filepath;
 	my $type;
@@ -2129,7 +2130,8 @@ sub readTags {
 				$tempCacheEntry = &{$tagFunctions{$type}}($filepath, $anchor);
 			}
 			$::d_info && !defined($tempCacheEntry) && Slim::Utils::Misc::msg("Info: no tags found for $filepath\n");
-
+			@{$tempCacheEntry}{keys %{$cacheEntry}} = values %{$cacheEntry} if defined $cacheEntry;
+			
 			if (defined($tempCacheEntry->{'TRACKNUM'})) {
 				$tempCacheEntry->{'TRACKNUM'} = cleanTrackNumber($tempCacheEntry->{'TRACKNUM'});
 			}

@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.24 2004/11/27 05:53:18 kdf Exp $
+# $Id: Parse.pm,v 1.25 2004/12/04 19:04:33 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -298,11 +298,7 @@ sub parseCUE {
 			$::d_parse && Slim::Utils::Misc::msg("    album: " . $cacheEntry->{'ALBUM'} . "\n");
 		}
 
-		Slim::Music::Info::readTags($url);
-		Slim::Music::Info::updateCacheEntry($url, $cacheEntry);
-		$cacheEntry = Slim::Music::Info::cacheEntry($url); #grab the merged info
-		Slim::Music::Info::updateGenreCache($url, $cacheEntry);
-
+		Slim::Music::Info::readTags($url,$cacheEntry);
 	}
 
 	$::d_parse && Slim::Utils::Misc::msg("    returning: " . scalar(@items) . " items\n");	
