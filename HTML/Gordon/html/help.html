@@ -1,0 +1,35 @@
+ <html>
+  <head>
+    <title>[% playermodel _ "_HOME" | string %]</title>
+    <link rel="stylesheet" href="slimserver.css">
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<style type="text/css"> <!--
+		[% INSERT slimserver.css %]
+	--> </style>
+  </head>
+  <body>
+<h3>[% "HELP" | string %]</h3>
+
+	<ul>
+    <li>
+    	<a href="html/docs/quickstart.html" target="_top">[% "GETTING_STARTED" | string %]</a>
+    </li>
+   <li>
+    	<a href="html/docs/ipconfig.html" target="_top">[% "PLAYER_SETUP" | string %]</a>
+  </li>
+    <li>
+    	<a href="html/docs/interface.html" target="_top">[% "USING_REMOTE" | string %]</a>
+    </li>
+     <li>
+ 		<a href="html/help_remote.html?player=[% player | uri %]" target="_top">[% "HELP_REMOTE" | string %]</a>
+ 	</li>
+     <li> <a href="html/docs/radio.html?player=[% player | uri %]" target="_top">[% "RADIO" | string %]</a>	   </li>
+     <li> <a href="html/docs/remotestream.html?player=[% player | uri %]" target="_top">[% "REMOTE_STREAMING" | string %]</a>	   </li>
+     <li><a href="html/docs/faq.html?player=[% player | uri %]" target="_top">[% "FAQ" | string %]</a> </li>
+     <li>
+ 		<a href="html/docs/index.html" target="_top">[% "TECHNICAL_INFORMATION" | string %]</a>
+ 	</li>
+</ul>
+
+  </body>
+</html>
