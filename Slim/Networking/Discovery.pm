@@ -1,6 +1,6 @@
 package Slim::Network::Discovery;
 
-# $Id: Discovery.pm,v 1.5 2003/08/03 04:02:33 sadams Exp $
+# $Id: Discovery.pm,v 1.6 2003/08/09 00:17:51 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ sub sayHello {
 	my $udpsock = shift;
 	my $paddr = shift;
 	$::d_protocol && msg(" Saying hello!\n");	
-	$udpsock->send( 'h'. serverHostname(), 0, $paddr);
+	$udpsock->send( 'h'. pack('C', 0) x 17, 0, $paddr);
 }
 
 

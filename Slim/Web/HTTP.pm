@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.10 2003/08/06 02:14:40 sadams Exp $
+# $Id: HTTP.pm,v 1.11 2003/08/09 00:17:52 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -20,6 +20,7 @@ use MIME::Base64;
 use POSIX qw(:fcntl_h strftime);
 use Fcntl qw(F_GETFL F_SETFL);
 
+use Slim::Player::HTTP;
 use Slim::Web::History;
 use Slim::Networking::mDNS;
 use Slim::Utils::Misc;
@@ -501,7 +502,7 @@ sub addstreamingresponse {
 #	my $client = Slim::Player::Client::getClient($address);
 	
 #	if (!defined($client) && !defined($streamingFiles{$httpclientsock})) {
-		$client = Slim::Player::Client::newClient(
+		$client = Slim::Player::HTTP->new(
 			$id,
 			getpeername($httpclientsock), 
 			$address,
@@ -510,6 +511,8 @@ sub addstreamingresponse {
 			0, 
 			$httpclientsock);
 		$newclient = 1;
+		
+		$client->init();
 #	}
 	
 #	if (defined($client)) {

@@ -16,7 +16,7 @@ use IO::Socket;
 use IO::Select;
 
 use Slim::Utils::Misc;
-
+use Slim::Player::SLIMP3;
 # The following settings are for testing the new streaming protocol.
 # They allow easy simulation of latency and packet loss in the receive direction.
 # This is just to for *very* basic testing - for real network simulation, use Dummynet.
@@ -92,15 +92,17 @@ sub init {
 
 	$selUDPRead->add($udpsock); #to allow full processing of all pending UDP requests
 	$::selRead->add($udpsock);
-
+	
 # say hello to the old clients that we might remember...
 	my $clients = Slim::Utils::Prefs::get("clients");
+
+	$::d_protocol && msg("Going to say hello to everybody we remember: $clients\n");
+	
 	if (defined($clients)) {
 		foreach my $addr (split( /,/, $clients)) {
 			#make sure any new preferences get set to default values
-
 			assert($addr);
-			next unless ($addr=~/\d+\.\d+\.\d+\.:\d+/); # skip client addrs that don't have a port
+			next unless ($addr=~/\d+\.\d+\.\d+\.\d+:\d+/); # skip client addrs that aren't dotted-4 with a port
 			### FIXME don't say hello to http clients!!!
 			Slim::Network::Discovery::sayHello($udpsock, ipaddress2paddr($addr));
 			
@@ -225,19 +227,20 @@ sub getUdpClient {
 			
 			$newplayeraddr = paddr2ipaddress($clientpaddr);
 
-			if ($deviceid > 0x02 || $deviceid < 0x01) { return undef;}
+			if ($deviceid != 0x01) { return undef;}
 
 			$::d_protocol && msg("$id ($msgtype) deviceid: $deviceid revision: $revision address: $newplayeraddr\n");
-
-			$client = Slim::Player::Client::newClient(
-				$id, 
-				$clientpaddr,
-				$newplayeraddr,
-				$deviceid,
-				$revision,
-				$udpsock,
-				undef
-			);
+			$client = Slim::Player::SLIMP3->new(
+					$id, 
+					$clientpaddr,
+					$newplayeraddr,
+					$deviceid,
+					$revision,
+					$udpsock,
+					undef
+				);			
+			
+			$client->init();
 
 		} else {
 			Slim::Network::Discovery::sayHello($udpsock, $clientpaddr);
@@ -248,18 +251,6 @@ sub getUdpClient {
 	$client->paddr($clientpaddr);
 	
 	$revision = $client->revision;
-
-# DISABLING FIRMWARE 2.0 SUPPORT		
-#	# alas, the mac address isn't included with the 2.0 hello packet, 
-#	# so we need to check subsequently in order to get the MAC and therefor the VFD model...
-#	if ($revision < 2.2 && $revision >= 2.0) {
-#		if (!defined($client->macaddress)) {
-#			$::d_protocol && msg("MAC: $mac from message type: $msgtype\n");
-#			if ($mac ne '00:00:00:00:00:00') {
-#				$client->macaddress($mac);
-#			}
-#		}
-#	}
 		
 	return $client
 }

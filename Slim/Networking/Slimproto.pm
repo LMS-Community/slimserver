@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.9 2003/08/05 15:41:31 sadams Exp $
+# $Id: Slimproto.pm,v 1.10 2003/08/09 00:17:51 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -17,6 +17,7 @@ use Sys::Hostname;
 use File::Spec::Functions qw(:ALL);
 use POSIX qw(:fcntl_h strftime);
 use Fcntl qw(F_GETFL F_SETFL);
+use Slim::Player::Squeezebox;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -284,7 +285,7 @@ sub process_slimproto_frame {
 		my $paddr = sockaddr_in($s->peerport, $s->peeraddr);
 
 		$::d_protocol && msg("creating new client, id:$id ipport: $ipport{$s}\n");
-		my $client=Slim::Player::Client::newClient(
+		my $client=Slim::Player::Squeezebox->new(
 			$id, 		# mac
 			$paddr,		# sockaddr_in
 			$ipport{$s},	# ascii ip:port
@@ -295,6 +296,9 @@ sub process_slimproto_frame {
 		);
 
 		$sock2client{$s}=$client;
+		
+		$client->init();
+		
 		return;
 	} 
 
