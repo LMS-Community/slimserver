@@ -560,7 +560,8 @@ sub new {
 		$self = $class->SUPER::new({ 
 				'url' => $redir, 
 				'client' => $client, 
-				'infoUrl' => $url 
+				'infoUrl' => $url,
+				'create' => 1,
 			});
 
 		if( $handle =~ /[a-zA-Z]/ ) {  # if our URL doesn't look like a handle, don't try to get a playlist
