@@ -1,6 +1,6 @@
 # ShoutcastBrowser.pm Copyright (C) 2003 Peter Heslin
 # version 3.0, 5 Apr, 2004
-#$Id: ShoutcastBrowser.pm,v 1.12 2004/05/04 17:08:45 dean Exp $
+#$Id: ShoutcastBrowser.pm,v 1.13 2004/06/17 23:12:54 dean Exp $
 #
 # A Slim plugin for browsing the Shoutcast directory of mp3
 # streams.  Inspired by streamtuner.
@@ -346,7 +346,7 @@ sub setMode
     $misc_genre= Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_MISC');
     $recent_filename{$client} =
 	catfile($recent_dir,
-		Slim::Utils::Prefs::clientGet($client, "playername") . '.m3u');
+		$client->name() . '.m3u');
 
     # Get streams
     unless (@genres)
