@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.30 2004/07/07 03:38:18 kdf Exp $
+# $Id: Playlist.pm,v 1.31 2004/07/08 02:46:44 kdf Exp $
 
 # Slim Server Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -287,26 +287,23 @@ sub nowPlayingModeLines {
 		$playingDisplayMode = ($playingDisplayMode % 3) ? 1 : 0;
 
 	} else {
-
-		if (Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {
-			$fractioncomplete = $client->usage();
-		} else {
-			$fractioncomplete = Slim::Player::Source::progress($client);
-		}
+		$fractioncomplete = Slim::Player::Source::progress($client);
 	}
 
 	my $songtime = songTime($client, $playingDisplayMode);
-	my $usageLine = int($fractioncomplete * 100 + 0.5)."%";
 
 	my $line1LineLength = Slim::Hardware::VFD::lineLength($line1);
 	my $songLineLength  = Slim::Hardware::VFD::lineLength($songtime);
-	my $usageLineLength = Slim::Hardware::VFD::lineLength($usageLine);
 
 	if ( $playingDisplayMode == 6) {
 		if (!Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {
 			$playingDisplayMode = 1; #sanity check.  revert to showing nothign is showbufferfullnes has been turned off.
 		} else {
 			# show both the usage bar and numberical usage
+			$fractioncomplete = $client->usage();
+			my $usageLine = int($fractioncomplete * 100 + 0.5)."%";
+			my $usageLineLength = Slim::Hardware::VFD::lineLength($usageLine);
+			
 			my $barlen = $displayColumns - $line1LineLength - $usageLineLength - 1;
 			my $bar    = Slim::Display::Display::progressBar($client, $barlen, $fractioncomplete);
 	
