@@ -194,7 +194,7 @@ sub unusedMenuOptions {
 	foreach my $usedOption (@homeChoices) {
 		delete $menuChoices{$usedOption};
 	}
-	return sort(keys(%menuChoices));
+	return sort(values(%menuChoices));
 }
 
 sub updateMenu {
