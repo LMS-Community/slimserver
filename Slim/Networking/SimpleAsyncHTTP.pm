@@ -60,8 +60,16 @@ sub get {
 	# start asynchronous get
 	# we'll be called back when its done.
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
+	# even though we've set non-blocking.  This call could block on a system call to inet_ntoa.  That is, DNS lookups still block.
 	my $http = Slim::Networking::AsyncHTTP->new(Host => $server,
 												PeerPort => $port);
+
+	# error if we failed to connect
+	if (!$http) {
+		$self->{error} = "Failed to connect to $server:$port.  Perl's error is '$!'.\n";
+		&{$self->{ecb}}($self);
+		return;
+	}
 	# TODO: handle basic auth if username, password provided
 	$http->write_request_async(GET => $path);
 	
@@ -122,6 +130,11 @@ sub content {
 sub url {
 	my $self = shift;
 	return $self->{url};
+}
+
+sub error {
+	my $self = shift;
+	return $self->{error};
 }
 
 sub close {
