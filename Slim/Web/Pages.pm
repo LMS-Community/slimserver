@@ -1830,7 +1830,7 @@ sub _addSongInfo {
 
 		} else {
 
-			$params->{'download'} = sprintf('/music/%d/download', $track->id());
+			$params->{'download'} = sprintf('%smusic/%d/download', $params->{'webroot'}, $track->id());
 		}
 	}
 	
