@@ -38,8 +38,8 @@
     [% IF browselist_pagebar %]
     <p>[% browselist_pagebar %]</p>
     <p>[% END %] </p>
-    <p><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&sub=playtracks&listref=musicmagic_mix"  target="status">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a>, 
-       <a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&sub=addtracks&listref=musicmagic_mix"  target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a>
+    <p><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=musicmagic_mix"  target="status">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a>, 
+       <a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=addtracks&listref=musicmagic_mix"  target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a>
    </p>
 
     </td>
