@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.81 2004/03/08 07:11:42 daniel Exp $
+# $Id: HTTP.pm,v 1.82 2004/03/08 07:49:00 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -716,10 +716,12 @@ sub generateHTTPResponse {
 	}
 
 	# if there's a reference to an empty value, then there is no valid page at all
-	if ((defined $body && !defined $$body) || !defined $body) {
+	if (defined $body && !defined $$body) {
 		$response->code(RC_NOT_FOUND);
 		$body = filltemplatefile('html/errors/404.html', $params);
 	}
+
+	return 0 unless $body;
 
 	# for our static content
 	$response->last_modified($mtime) if defined $mtime;
