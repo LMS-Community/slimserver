@@ -17,26 +17,26 @@ function getCookie(Name)
 			end = document.cookie.indexOf("nofolder", offset);
 			if (end == -1)
 				end = document.cookie.length;
-			return unescape(document.cookie.substring(offset, end));
+			url = unescape(document.cookie.substring(offset, end));
+			if (url == 'undefined') return "home.html?player={%player}";
+			return url;
 		&rbrc;
 	&rbrc;
 	return "home.html?player={%player}";
 &rbrc;
 
-function getPlayer(Name) 
+function getPlayer(Player) 
 &lbrc;
-	var search = Name + "=";
+	var search = Player + "=";
 	if (document.cookie.length > 0) &lbrc;
 		offset = document.cookie.indexOf(search);
 		if (offset != -1) &lbrc;
 			offset += search.length;
-			end = document.cookie.indexOf(";", offset);
-			if (end == -1)
-				end = document.cookie.length;
+			end = document.cookie.length;
 			return unescape(document.cookie.substring(offset, end));
 		&rbrc;
 	&rbrc;
-	return "home.html?player={%player}";
+	return "";
 &rbrc;
 
 document.write('<frameset cols="45%,*" framespacing="2" border="2">' );

@@ -11,10 +11,12 @@ function getCookie(Name)
 		offset = document.cookie.indexOf(search);
 		if (offset != -1) &lbrc;
 			offset += search.length;
-			end = document.cookie.indexOf(";", offset);
+			end = document.cookie.indexOf("nofolder", offset);
 			if (end == -1)
 				end = document.cookie.length;
-			return unescape(document.cookie.substring(offset, end));
+			url = unescape(document.cookie.substring(offset, end));
+			if (url == 'undefined') 	[IFN nofolder]return "browse.html?";[/IFN]
+												[IF nofolder]return "browseid3.html?nofolder=1"[/IF]
 		&rbrc;
 	&rbrc;
 	[IFN nofolder]return "browse.html?";[/IFN]
