@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Bar;
 
-# $Id: Bar.pm,v 1.8 2004/10/08 08:46:16 kdf Exp $
+# $Id: Bar.pm,v 1.9 2004/10/21 02:13:16 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -118,13 +118,13 @@ sub lines {
 	
 	$line1 = defined $header ? $header : Slim::Buttons::Input::List::getExtVal($client,$$valueRef,undef,'header');
 
-	$min = $min || Slim::Buttons::Common::param($client,'min') || 0;
-	$mid = $mid || Slim::Buttons::Common::param($client,'mid') || 0;
-	$max = $max || Slim::Buttons::Common::param($client,'max') || 100;
+	$min = Slim::Buttons::Common::param($client,'min') || 0 unless defined $min;
+	$mid = Slim::Buttons::Common::param($client,'mid') || 0 unless defined $mid;
+	$max = Slim::Buttons::Common::param($client,'max') || 100 unless defined $max;
 
 	my $val = $max == $min ? 0 : int(($$valueRef - $min)*100/($max-$min));
 	my $fullstep = 1 unless Slim::Buttons::Common::param($client,'smoothing');
-	
+
 	$line2 = $client->sliderBar($client->displayWidth(), $val,$max == $min ? 0 :($mid-$min)/($max-$min)*100,$fullstep);
 
 	if ($client->linesPerScreen() == 1) {

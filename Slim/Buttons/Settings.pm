@@ -277,7 +277,7 @@ sub volumeLines {
 
 	my $volume = $client->volume();
 	my $volumestring = volumeHeader($client,$volume);
-	return Slim::Buttons::Input::Bar::lines($client,$volume,$volumestring);
+	return Slim::Buttons::Input::Bar::lines($client,$volume,$volumestring ,$client->minVolume(), $client->minVolume(), $client->maxVolume());
 }
 
 sub pitchLines {
