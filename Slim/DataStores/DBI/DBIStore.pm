@@ -212,14 +212,31 @@ sub find {
 	#
 	# Can't easily use $limit/offset for the page bars, because they
 	# require knowing the entire result set.
+	my @values = ();
+
+	for my $value (values %$findCriteria) {
+
+		if (ref $value eq 'ARRAY') {
+
+			push @values, join(':', map { (ref $_ eq 'ARRAY' ? @{$_} : $_) } @{$value});
+
+		} elsif (ref $value eq 'HASH') {
+
+			push @values, join(':', map { $_, (ref $value->{$_} eq 'ARRAY' ? @{$value->{$_}} : $value->{$_}) } keys %$value);
+
+		} else {
+			push @values, $value;
+		}
+	}
+
 	my $findKey = join(':', 
 		$field,
 		(keys %$findCriteria),
-		(map { join(':', (ref($_) eq 'ARRAY' ? @{$_} : $_)) } values %$findCriteria),
+		(join(':', @values)),
 		($sortBy || ''),
 		($limit  || ''),
 		($offset || ''),
-		($count  || '')
+		($count  || ''),
 	);
 
 	$::d_sql && Slim::Utils::Misc::msg("Generated findKey: [$findKey]\n");

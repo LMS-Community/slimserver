@@ -16,6 +16,7 @@ use File::Path;
 use SQL::Abstract;
 use SQL::Abstract::Limit;
 use Tie::Cache::LRU;
+use UNIVERSAL;
 
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
@@ -256,7 +257,7 @@ sub getWhereValues {
 				# recurse if needed
 				push @values, getWhereValues($item);
 
-			} elsif (ref $item) {
+			} elsif (ref $item && UNIVERSAL::isa($item, 'Slim::DataStores::DBI::DataModel')) {
 
 				push @values, $item->id();
 
@@ -266,7 +267,7 @@ sub getWhereValues {
 			}
 		}
 
-	} elsif (ref $term) {
+	} elsif (ref $term && UNIVERSAL::isa($term, 'Slim::DataStores::DBI::DataModel')) {
 
 		push @values, $term->id();
 
@@ -297,6 +298,7 @@ our %searchFieldMap = (
 	'track.title' => 'tracks.titlesort', 
 	'tracknum' => 'tracks.tracknum', 
 	'ct' => 'tracks.ct', 
+	'age' => 'tracks.age', 
 	'size' => 'tracks.size', 
 	'year' => 'tracks.year', 
 	'secs' => 'tracks.secs', 
@@ -512,6 +514,10 @@ sub find {
 						$whereHash{$searchFieldMap{$key}} = $values[0];
 					}
 				}
+
+			} else {
+
+				$whereHash{$searchFieldMap{$key}} = $val;
 			}
 
 			# if our $key is something like contributor.name -
