@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::VFD::Animation;
 
-# $Id: Animation.pm,v 1.5 2004/09/03 20:13:23 dean Exp $
+# $Id: Animation.pm,v 1.6 2004/09/10 15:16:46 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -235,7 +235,9 @@ sub doEasterEgg {
 			,$frame_rate,1);
 		$easter++;
 	} elsif ($easter == 1) {
-		my ($text1,$text2) = Slim::Display::Display::curLines($client);
+		my $lines = $client->parseLines(Slim::Display::Display::curLines($client));
+		my $text1 = $lines->{line1};
+		my $text2 = $lines->{line2};
 		$text1 = Slim::Display::Display::subString(($text1 . (' ' x (40 - Slim::Display::Display::lineLength($text1)))),0,40);
 		$text2 = Slim::Display::Display::subString(($text2 . (' ' x (40 - Slim::Display::Display::lineLength($text2)))),0,40);
 		my $line1 = $text1 . join('',reverse(@{Slim::Display::Display::splitString($text2)})) . $text1;
@@ -672,13 +674,13 @@ sub animateScrollSingle1 {
 		return;
 	}
 		
-	my ($line1,$line2) = Slim::Display::Display::curLines($client);
+	my $lines = $client->parseLines(Slim::Display::Display::curLines($client));
 	if ($pause_count < $hold) {
-		$client->update([$line1, $line2],0);
+		$client->update($lines,0);
 		return ($rate,\&animateScrollSingle1, $text22, $text22_length,
 				$pause_count + $scrollSingleLine1FrameRate);
 	} else {
-		return animateScrollSingle2($client, 0, $text22, 0, $text22_length, \$line1, 0);
+		return animateScrollSingle2($client, 0, $text22, 0, $text22_length, $lines, 0);
 	}
 }
 
@@ -689,7 +691,7 @@ sub animateScrollSingle2 {
 	my $text22 = shift;
 	my $ind = shift;
 	my $len = shift;
-	my $line1 = shift;
+	my $lines = shift;
 	my $line1_age = shift(@_) + $overdue;
 	my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');
 	if ($rate == 0) {
@@ -706,14 +708,13 @@ sub animateScrollSingle2 {
 			# often enough to have it look smooth.  But calling curLines can be
 			# kind of expensive, so we'll try to keep the old value for just a
 			# little less than a second.
-			my ($nline1) = Slim::Display::Display::curLines($client);
-			$line1 = \$nline1;
+			$lines = $client->parseLines(Slim::Display::Display::curLines($client));
 			$line1_age = 0;
 		}
-		$client->update([$$line1, Slim::Display::Display::subString($$text22, $ind, 40)], 0);
+		$client->update([$lines->{line1}, Slim::Display::Display::subString($$text22, $ind, 40),$lines->{overlay1}], 0);
 
 		return ($rate, \&animateScrollSingle2, $text22, $ind+1, $len,
-				 $line1, $line1_age + $rate);
+				 $lines, $line1_age + $rate);
 	} else {
 		return animateScrollSingle1($client, 0, $text22, $len, 0);
 	}
