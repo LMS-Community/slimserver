@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.70 2004/03/23 04:26:40 kdf Exp $
+# $Id: strings.txt,v 1.71 2004/03/26 17:08:52 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -5526,7 +5526,7 @@ PLAYER_NEEDS_UPGRADE
 
 PLAYER_NEEDS_UPGRADE_DETAILS
 	DE	Die Software in ihrer Squeezebox muss aktualisiert werden.  Bitte drücken Sie den BRIGHTNESS Knopf auf der Fernsteuerung und halten ihn gedrückt, bis ihre Squeezebox anzeigt, dass das Update installiert wird. Dieser Vorgang dauert nur wenige Sekunden.
-	EN	The software in your Squeezebox needs to be updated to the latest version.  Please press and hold the BRIGHTNESS button on your remote until the display on your Squeezebox indicates that the update has begun.  The update only takes a few seconds.
+	EN	The software in your Squeezebox needs to be updated to the latest version.  Please press and hold the BRIGHTNESS button on your remote until the display on your Squeezebox indicates that the update has begun.  The update only takes a few seconds.<p>If your Squeezebox is stuck on a screen that indicates that it's ready for an upgrade and is displaying its IP address, click <a href="firmware.html">here</a>.
 	FR	Le logiciel de votre Squeezebox doit être mis à jour. Veuillez appuyer et laisser appuyer le bouton BRIGHTNESS de votre télécommande jusqu'à ce que la Squeezbox indique la mise à jour. Cette procédure prendra quelques secondes.
 
 PLAYER_NEEDS_UPGRADE_1

@@ -728,6 +728,7 @@ Version=2</pre></p>
 
 <h4><a id="troubleshooting">Troubleshooting</a></h4>
 <ul>
+	<li><a href="#troubleshooting-sp2">I installed Windows XP Service Pack 2, and my SliMP3 or Squeezebox no longer find Slim Server.</a>
 	<li><a href="#troubleshooting-sleep">After several minutes my player turns off and stops responding.  What's going on?</a>
 	<li><a href="#troubleshooting-wep">I'm having trouble connecting my Squeezebox to a wireless network with WEP enabled.</a>
 	<li><a href="#troubleshooting-aacwireless">I'm trying to play AAC files on my Squeezebox over a wireless network and the audio sometimes pauses or breaks up.</a>
@@ -759,11 +760,30 @@ Version=2</pre></p>
 <h4>Troubleshooting</h4>
 
 <div class="faq">
+<h5><a id="troubleshooting-sp2"></a>I installed Windows XP Service Pack 2, and my SliMP3 or Squeezebox no longer find Slim Server.</h5>
+
+<p>Windows XP Service Pack 2 turns on a built-in firewall by default.  You will need to configure the firewall to allow access to Slim Server.  To do this:
+<ol>
+	<li>Go to Control Panel
+	<li>Click Security Center
+	<li>Click Windows Firewall under 'Manage security settings for:'
+	<li>Click the Exceptions tab
+</ol>
+
+<p>You will then need to add exceptions for these applications:
+<ul>
+	<li>Program Files\SlimServer\SlimServer.exe
+	<li>Program Files\SlimServer\server\slim.exe
+	<li>Program Files\SlimServer\server\slimsvc.exe
+</ul>
+
+Alternately, you can add an exception for Slim Server program files.  This is done by clicking 'Add Program', and adding the exception for SlimServer.exe, slim.exe and slimsvc.exe.
+</div>
+
+<div class="faq">
 <h5><a id="troubleshooting-sleep"></a>After several minutes my player turns off and stops responding.  What's going on?</h5>
 
 <p>Make sure that your energy saver settings on your computer are set so that your computer doesn't go to sleep.  If it does, your player will go to sleep as well.   If that's not the problem, make sure that the IP address on your computer isn't changing.  To do this, adjust  your TCP/IP settings to use a static IP address.</a>
-
-
 </div>
 
 <div class="faq">

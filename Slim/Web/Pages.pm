@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.57 2004/03/25 05:55:33 grotus Exp $
+# $Id: Pages.pm,v 1.58 2004/03/26 17:08:52 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -462,6 +462,7 @@ sub status {
 	} elsif ($client->needsUpgrade()) {
 
 		$params->{'player_needs_upgrade'} = 1;
+		$params->{'modestop'} = 'Stop';
 		return Slim::Web::HTTP::filltemplatefile("status_needs_upgrade.html", $params);
 	}
 
