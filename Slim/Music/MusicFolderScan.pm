@@ -19,7 +19,7 @@ sub init {
 	Slim::Music::Import::addImporter('FOLDER',\&startScan);
 
 	# Enable Folder scan only if audiodir is set and is a valid directory
-	Slim::Music::Import::useImporter('FOLDER',defined(Slim::Utils::Prefs::get('audiodir')) && -d Slim::Utils::Prefs::get("audiodir"));
+	Slim::Music::Import::useImporter('FOLDER',(defined(Slim::Utils::Prefs::get('audiodir')) && -d Slim::Utils::Prefs::get("audiodir"))?1:0);
 }
 
 sub startScan {
