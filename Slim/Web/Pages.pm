@@ -1116,13 +1116,40 @@ sub playlist {
 	}
 
 	$params->{'playlist_items'} = '';
+	$params->{'skinOverride'} ||= '';
+
 	if ($client && $client->currentPlaylist()) {
 		$params->{'current_playlist'} = $client->currentPlaylist();
 		$params->{'current_playlist_modified'} = $client->currentPlaylistModified();
 		$params->{'current_playlist_name'} = Slim::Music::Info::standardTitle($client,$client->currentPlaylist());
 	}
 
-	if ($songcount > 0) {
+	if ($::d_playlist && $client && $client->currentPlaylistRender() && ref($client->currentPlaylistRender()) eq 'ARRAY') {
+
+		Slim::Utils::Misc::msg("currentPlaylistChangeTime: " . localtime($client->currentPlaylistChangeTime()) . "\n");
+		Slim::Utils::Misc::msg("currentPlaylistRender    : " . localtime($client->currentPlaylistRender()->[0]) . "\n");
+	}
+
+	# Only build if we need to.
+	# Check to see if we're newer, and the same skin.
+	if ($songcount > 0 && 
+		$client &&
+		defined $params->{'skinOverride'} &&
+		defined $params->{'start'} &&
+		$client->currentPlaylistRender() && 
+		ref($client->currentPlaylistRender()) eq 'ARRAY' && 
+		$client->currentPlaylistChangeTime() && 
+		$client->currentPlaylistRender()->[1] eq $params->{'skinOverride'} &&
+		$client->currentPlaylistRender()->[2] eq $params->{'start'} &&
+		$client->currentPlaylistChangeTime() < $client->currentPlaylistRender()->[0]) {
+
+		$::d_playlist && Slim::Utils::Misc::msg("Skipping playlist build - not modified.\n");
+
+		$params->{'playlist_header'}  = $client->currentPlaylistRender()->[3];
+		$params->{'playlist_pagebar'} = $client->currentPlaylistRender()->[4];
+		$params->{'playlist_items'}   = $client->currentPlaylistRender()->[5];
+
+	} elsif ($songcount > 0) {
 
 		my %listBuild = ();
 		my $item;
@@ -1155,8 +1182,8 @@ sub playlist {
 				\$params->{'start'}, 
 				\$params->{'playlist_header'},
 				\$params->{'playlist_pagebar'},
-				$params->{'skinOverride'}
-				,$params->{'itemsPerPage'}
+				$params->{'skinOverride'},
+				$params->{'itemsPerPage'}
 			);
 		}
 
@@ -1172,18 +1199,11 @@ sub playlist {
 		$listBuild{'currsongind'}   = Slim::Player::Source::playingSongIndex($client);
 		$listBuild{'item'}          = $listBuild{'start'};
 
-		if (buildPlaylist($client, $params, $callback, $httpClient, $response, \%listBuild)) {
-
-			Slim::Utils::Scheduler::add_task(
-				\&buildPlaylist,
-				$client,
-				$params,
-				$callback,
-				$httpClient,
-				$response,
-				\%listBuild,
-			);
-		}
+		# Without the scheduler may be faster.
+		#buildPlaylist($client, $params, $callback, $httpClient, $response, \%listBuild);
+		Slim::Utils::Scheduler::add_task(
+			\&buildPlaylist, $client, $params, $callback, $httpClient, $response, \%listBuild,
+		);
 
 		return undef;
 	}
@@ -1221,6 +1241,8 @@ sub buildPlaylist {
 
 	my $itemCount    = 0;
 	my $itemsPerPass = Slim::Utils::Prefs::get('itemsPerPass');
+	my $itemsPerPage = Slim::Utils::Prefs::get('itemsPerPage');
+	my $composerIn   = Slim::Utils::Prefs::get('composerInArtists');
 	my $starttime    = Time::HiRes::time();
 
 	my $ds           = Slim::Music::Info::getCurrentDataStore();
@@ -1228,7 +1250,22 @@ sub buildPlaylist {
 	my $noArtist     = Slim::Utils::Strings::string('NO_ARTIST');
 	my $noAlbum      = Slim::Utils::Strings::string('NO_ALBUM');
 
-	while ($listBuild->{'item'} < ($listBuild->{'end'} + 1) && $itemCount < $itemsPerPass) {
+	$params->{'playlist_items'} = '';
+
+	Slim::Utils::Misc::msg("Starting playlist build.\n");
+
+	# This is a hot loop.
+	# But it's better done all at once than through the scheduler.
+	while ($listBuild->{'item'} < ($listBuild->{'end'} + 1) && $itemCount < $itemsPerPage) {
+
+		my $song = Slim::Player::Playlist::song($client, $listBuild->{'item'});
+
+		my $track = $ds->objectForUrl($song) || do {
+			$::d_info && Slim::Utils::Misc::msg("Couldn't retrieve objectForUrl: [$song] - skipping!\n");
+			$listBuild->{'item'}++;
+			$itemCount++;
+			next;
+		};
 
 		my %list_form = %$params;
 
@@ -1240,82 +1277,78 @@ sub buildPlaylist {
 		$list_form{'noArtist'}      = $noArtist;
 		$list_form{'noAlbum'}       = $noAlbum;
 
-		my $song = Slim::Player::Playlist::song($client, $listBuild->{'item'});
-
 		if ($listBuild->{'item'} == $listBuild->{'currsongind'}) {
 			$list_form{'currentsong'} = "current";
-			$list_form{'title'}    = Slim::Music::Info::getCurrentTitle(undef,$song);
+			$list_form{'title'}    = Slim::Music::Info::getCurrentTitle(undef, $track->url());
 		} else {
 			$list_form{'currentsong'} = undef;
-			$list_form{'title'}    = Slim::Music::Info::standardTitle(undef,$song);
+			$list_form{'title'}    = Slim::Music::Info::standardTitle(undef, $track);
 		}
 
 		$list_form{'nextsongind'} = $listBuild->{'currsongind'} + (($listBuild->{'item'} > $listBuild->{'currsongind'}) ? 1 : 0);
+		$list_form{'album'}       = $listBuild->{'includeAlbum'}  ? $track->album() : undef;
 
-		$list_form{'player'}   = $params->{'player'};
-
-		my $track = $ds->objectForUrl($song) || do {
-			$::d_info && Slim::Utils::Misc::msg("Couldn't retrieve objectForUrl: [$song] - skipping!\n");
-			$listBuild->{'item'}++;
-			$itemCount++;
-			next;
-		};
-
-		$list_form{'itempath'} = $song;
+		$list_form{'itempath'} = $track->url();
 		$list_form{'item'}     = $track->id();
 		$list_form{'itemobj'}  = $track;
 
 		if ($listBuild->{'includeArtist'}) {
 
-			if (Slim::Utils::Prefs::get('composerInArtists')) {
+			if ($composerIn) {
 				$list_form{'artists'} = $track->contributors();
 			} else {
 				$list_form{'artists'} = $track->artists();
 			}
 		}
 
-		$list_form{'album'}    = $listBuild->{'includeAlbum'}  ? $track->album() : undef;
-
-		$list_form{'start'}	   = $params->{'start'};
-		$list_form{'skinOverride'} = $params->{'skinOverride'};
-
-		push @{$listBuild->{'playlist_items'}}, ${Slim::Web::HTTP::filltemplatefile("status_list.html", \%list_form)};
+		$params->{'playlist_items'} .= ${Slim::Web::HTTP::filltemplatefile("status_list.html", \%list_form)};
 
 		$listBuild->{'item'}++;
 		$itemCount++;
 
 		# don't neglect the streams for over 0.25 seconds
-		if ((Time::HiRes::time() - $starttime) > 0.25) {
-			::idleStreams() ;
+		if ($itemCount > 1 && $itemCount % $itemsPerPass && (Time::HiRes::time() - $starttime) > 0.25) {
+			::idleStreams();
 		}
 	}
 
-	if ($listBuild->{'item'} < $listBuild->{'end'} + 1) {
+	Slim::Utils::Misc::msg("End playlist build. $itemCount items\n");
 
-		return 1;
+	undef %$listBuild;
 
-	} else {
+	if ($client) {
 
-		if (defined $listBuild->{'playlist_items'}) {
-			$params->{'playlist_items'} = join('', @{$listBuild->{'playlist_items'}});
-		}
-
-		undef %$listBuild;
-
-		playlist_done($client, $params, $callback, $httpClient, $response);
-
-		return 0;
+		# Stick the rendered data into the client object as a stopgap
+		# solution to the cpu spike issue.
+		$client->currentPlaylistRender([
+			time(),
+			($params->{'skinOverride'} || ''),
+			$params->{'start'},
+			$params->{'playlist_header'},
+			$params->{'playlist_pagebar'},
+			$params->{'playlist_items'}
+		]);
 	}
+
+	playlist_done($client, $params, $callback, $httpClient, $response);
+
+	return 0;
 }
 
 sub playlist_done {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
+
 	$params->{'playercount'} = Slim::Player::Client::clientCount();
-	my $body = Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
 
 	if (ref($callback) eq 'CODE') {
 
-		$callback->($client, $params, $body, $httpClient, $response);
+		$callback->(
+			$client,
+			$params,
+			Slim::Web::HTTP::filltemplatefile("playlist.html", $params),
+			$httpClient,
+			$response
+		);
 	}
 }
 

@@ -876,6 +876,8 @@ sub execute {
 					$callcallback = 0;
 					$p2 = $path;
 				}
+
+				$client->currentPlaylistChangeTime(time());
 			
 			} elsif ($p1 eq "loadalbum" || $p1 eq "playalbum") {
 
@@ -887,6 +889,7 @@ sub execute {
 				Slim::Player::Playlist::reshuffle($client);
 				Slim::Player::Source::jumpto($client, 0);
 				$client->currentPlaylist(undef);
+				$client->currentPlaylistChangeTime(time());
 			
 			} elsif ($p1 eq "addalbum") {
 
@@ -894,6 +897,7 @@ sub execute {
 
 				Slim::Player::Playlist::reshuffle($client);
 				$client->currentPlaylistModified(1);
+				$client->currentPlaylistChangeTime(time());
 			
 			} elsif ($p1 eq "insertalbum") {
 
@@ -905,6 +909,7 @@ sub execute {
 				insert_done($client, $playListSize, $size);
 				#Slim::Player::Playlist::reshuffle($client);
 				$client->currentPlaylistModified(1);
+				$client->currentPlaylistChangeTime(time());
 			
 			} elsif ($p1 eq "loadtracks" || $p1 eq "playtracks") {
 					
@@ -920,6 +925,7 @@ sub execute {
 				Slim::Player::Playlist::reshuffle($client);
 				Slim::Player::Source::jumpto($client, 0);
 
+				$client->currentPlaylistChangeTime(time());
 				$client->currentPlaylist(undef);
 			
 			} elsif ($p1 eq "addtracks") {
@@ -927,11 +933,12 @@ sub execute {
 				unless ($p2 =~ /listref/) {	
 					push(@{Slim::Player::Playlist::playList($client)}, parseSearchTerms($p2));
 				} else {
-					push(@{Slim::Player::Playlist::playList($client)}, parseListRef($client,$p2,$p3));					
+					push(@{Slim::Player::Playlist::playList($client)}, parseListRef($client,$p2,$p3));
 				}
 
 				Slim::Player::Playlist::reshuffle($client);
 				$client->currentPlaylistModified(1);
+				$client->currentPlaylistChangeTime(time());
 			
 			} elsif ($p1 eq "inserttracks") {
 					
@@ -945,6 +952,7 @@ sub execute {
 				insert_done($client, $playListSize, $size);
 				#Slim::Player::Playlist::reshuffle($client);
 				$client->currentPlaylistModified(1);
+				$client->currentPlaylistChangeTime(time());
 			
 			} elsif ($p1 eq "deletetracks") {
 
@@ -952,6 +960,7 @@ sub execute {
  
 				Slim::Player::Playlist::removeMultipleTracks($client, \@listToRemove);
 				$client->currentPlaylistModified(1);
+				$client->currentPlaylistChangeTime(time());
 			
 			} elsif ($p1 eq "save") {
 					
@@ -986,6 +995,7 @@ sub execute {
 
 				Slim::Player::Playlist::removeMultipleTracks($client, $results);
 				$client->currentPlaylistModified(1);
+				$client->currentPlaylistChangeTime(time());
 			
 			} elsif ($p1 eq "deleteitem") {
  
@@ -1034,6 +1044,7 @@ sub execute {
 					}
 
 					$client->currentPlaylistModified(1);
+					$client->currentPlaylistChangeTime(time());
 				}
 			
 			} elsif ($p1 eq "repeat") {
@@ -1069,17 +1080,21 @@ sub execute {
 					Slim::Player::Playlist::shuffle($client, $p2);
 					Slim::Player::Playlist::reshuffle($client);
 				}
+
+				$client->currentPlaylistChangeTime(time());
 			
 			} elsif ($p1 eq "clear") {
 
 				Slim::Player::Playlist::clear($client);
 				Slim::Player::Source::playmode($client, "stop");
 				$client->currentPlaylist(undef);
+				$client->currentPlaylistChangeTime(time());
 			
 			} elsif ($p1 eq "move") {
 
 				Slim::Player::Playlist::moveSong($client, $p2, $p3);
 				$client->currentPlaylistModified(1);
+				$client->currentPlaylistChangeTime(time());
 			
 			} elsif ($p1 eq "delete") {
 
@@ -1088,6 +1103,7 @@ sub execute {
 				}
 
 				$client->currentPlaylistModified(1);
+				$client->currentPlaylistChangeTime(time());
 			
 			} elsif (($p1 eq "jump") || ($p1 eq "index")) {
 
@@ -1148,6 +1164,7 @@ sub execute {
 				}
 
 				$client->currentPlaylistModified(1);
+				$client->currentPlaylistChangeTime(time());
 			}
 
 		} elsif ($p0 eq "mixer") {

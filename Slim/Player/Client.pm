@@ -1545,4 +1545,14 @@ sub animating {
 	@_ ? ($r->[94] = shift) : $r->[94];
 }
 
+sub currentPlaylistRender {
+	my $r = shift;
+	@_ ? ($r->[95] = shift) : $r->[95];
+}
+
+sub currentPlaylistChangeTime {
+	my $r = shift;
+	@_ ? ($r->[96] = shift) : $r->[96];
+}
+
 1;
