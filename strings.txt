@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.66 2004/03/11 20:15:56 dean Exp $
+# $Id: strings.txt,v 1.67 2004/03/17 16:45:56 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1348,13 +1348,13 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 	EN	This option determines the format used when importing iTunes playlists.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture iTunes.
 
-SETUP_ITUNESPLAYLISTPREFIX
-	EN	Prefix
-	FR	Préfixe
+SETUP_ITUNESPLAYLISTPREFIX_CHOOSE
+	EN	Prefix:
+	FR	Préfixe :
 
-SETUP_ITUNESPLAYLISTSUFFIX
-	EN	Suffix
-	FR	Suffixe
+SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE
+	EN	Suffix:
+	FR	Suffixe :
 
 SETUP_GUESSFILEFORMATS
 	EN	Guess Tags Formats

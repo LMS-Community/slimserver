@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.26 2004/03/11 20:16:11 dean Exp $
+# $Id: Misc.pm,v 1.27 2004/03/17 16:46:01 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -18,7 +18,7 @@ use Net::hostent;              # for OO version of gethostbyaddr
 use Sys::Hostname;
 use Socket;
 use Symbol qw(qualify_to_ref);
-use Encode;
+
 if ($] > 5.007) {
 	require Encode;
 }

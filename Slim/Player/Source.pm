@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.69 2004/03/13 22:12:54 kdf Exp $
+# $Id: Source.pm,v 1.70 2004/03/17 16:46:00 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -535,6 +535,7 @@ sub openNext {
 			playmode($client, 'playout-play');
 			return 0;
 		} else {
+			$::d_source && msg("opening next song (old format: $oldstreamformat, new: $newstreamformat) current playmode: " . playmode($client) . "\n");
 			currentSongIndex($client, $nextsong);
 			$result = openSong($client);
 		}
@@ -744,11 +745,11 @@ sub openSong {
 			}
 		}
 		# smart bitrate calculations
-		my $rate = Slim::Music::Info::bitratenum($fullpath)/1000;
+		my $rate = (Slim::Music::Info::bitratenum($fullpath) || 0) / 1000;
 		my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate') 
 				|| Slim::Utils::Prefs::clientGet($client,'maxBitrate');
 		if (!defined $maxRate) {$maxRate = 0;}
-		my ($command, $type, $format) = getCommand($client, $fullpath,(($maxRate > $rate)||($maxRate == 0)));
+		my ($command, $type, $format) = getCommand($client, $fullpath);
 		
 		$::d_source && msg("openSong: this is an $type file: $fullpath\n");
 		$::d_source && msg("  file type: $type format: $format inrate: $rate maxRate: $maxRate\n");
@@ -856,7 +857,6 @@ sub openSong {
 sub getCommand {
 	my $client = shift;
 	my $fullpath = shift;
-	my $undermax = shift || 0;
 	
 	my $type = Slim::Music::Info::contentType($fullpath);
 	my $player = $client->model();
@@ -867,6 +867,15 @@ sub getCommand {
 	my @playergroup = ($client, Slim::Player::Sync::syncedWith($client));
 	my %formatcounter;
 	my $audibleplayers = 0;
+
+	my $rate = (Slim::Music::Info::bitratenum($fullpath) || 0)/1000;
+
+	my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate')  || Slim::Utils::Prefs::clientGet($client,'maxBitrate');
+
+	if (!defined $maxRate) {$maxRate = 0;}
+
+	my $undermax = ($maxRate > $rate) || ($maxRate == 0);
+
 	
 	# make sure we only test formats that are supported.
 	foreach my $everyclient (@playergroup) {
@@ -918,7 +927,9 @@ sub getCommand {
 	}
 
 	if (!defined $command) {
-		$::d_source && msg("******* Error:  Didn't find any command matches ******\n");
+		$::d_source && msg("******* Error:  Didn't find any command matches for type: $type format: $format ******\n");
+	} else {
+		$::d_source && msg("Format: $format Type: $type Command: $command \n");
 	}
 
 	return ($command, $type, $format);

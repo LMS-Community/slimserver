@@ -502,17 +502,23 @@ sub _read_list {
 	my %allowed = $self -> {'tools'} -> get_info_fields();
 	while ( $pos < $length ) {
 	    my $head = $self -> _read_raw( 4 );
+	    return undef if (!defined($head));
+	    
 	    $pos += 4;
-	    my $bits = $self -> _read_long();
+	    my $bits = $self -> _read_long();    
+	    return undef if (!defined($bits));
+	    
 	    $pos += $bits + 4;
 	    my $text = $self -> _read_raw( $bits );
+	    return undef if (!defined($text));
+
 	    if ( $allowed{$head} ) {
-		$text =~ s/\0+$//;
-		$details -> {'info'} -> { $allowed{$head} } = $text;
+			$text =~ s/\0+$//;
+			$details -> {'info'} -> { $allowed{$head} } = $text;
 	    }
 	    if ($bits % 2) { # eat padding
-		my $padding = $self -> _read_raw(1);
-		$pos++;
+			my $padding = $self -> _read_raw(1);
+			$pos++;
 	    }
 	}
     } else {

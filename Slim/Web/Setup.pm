@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.46 2004/03/11 20:16:13 dean Exp $
+# $Id: Setup.pm,v 1.47 2004/03/17 16:46:02 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -119,10 +119,13 @@ sub initSetupConfig {
 						}
 						$pageref->{'children'} = ['additional_player'];
 						$pageref->{'GroupOrder'}[1] = 'Brightness';
+						$pageref->{'GroupOrder'}[2] = 'TitleFormats';
 					} else {
 						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[1] = undef;
+						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[4] = undef;
 						$pageref->{'children'} = undef;
 						$pageref->{'GroupOrder'}[1] = undef;
+						$pageref->{'GroupOrder'}[2] = undef;
 					}
 					$pageref->{'Prefs'}{'titleFormatCurr'}{'validateArgs'} = [0,$titleFormatMax,1,1];
 					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [$client->defaultName()];
