@@ -96,11 +96,15 @@ sub commandCallback {
 
 		next unless $sock;
 
-		my $output = $client->id();
+		my $output = '';
+		
+		$output = $client->id() . ' ' if $client;
 
 		foreach my $param (@$paramsRef) {
-			$output .= ' ' . Slim::Web::HTTP::escape($param);
+			$output .= Slim::Web::HTTP::escape($param) . ' ';
 		}
+		
+		chop($output);
 
 		addresponse($sock, $output . $LF);
 		sendresponse($sock);
