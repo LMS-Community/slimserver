@@ -14,7 +14,7 @@ use FindBin qw($Bin);
 use Fcntl;
 use Slim::Music::Info;
 use Slim::Utils::OSDetect;
-use POSIX qw(strftime setlocale LC_TIME);
+use POSIX qw(strftime setlocale LC_TIME LC_CTYPE);
 use Net::hostent qw(gethost);
 use Sys::Hostname;
 use Socket;
@@ -65,7 +65,7 @@ our $locale = '';
 
 	} else {
 
-		my $lc = POSIX::setlocale(0) || 'C';
+		my $lc = POSIX::setlocale(LC_CTYPE) || 'C';
 
 		# If the locale is C or POSIX, that's ASCII - we'll set to iso-8859-1
 		# Otherwise, normalize the codeset part of the locale.
@@ -79,6 +79,10 @@ our $locale = '';
 		if (!defined $lc || $lc =~ /^\s*$/) {
 			$lc = 'iso-8859-1';
 		}
+
+		# Apparently the iso-NNNN-N notation isn't standard. Try to normalize it.
+		$lc =~ s/_/-/g;
+		$lc =~ s/iso(\d{4})-?(\d)/iso-$1-$2/;
 
 		$lc =~ s/utf-8/utf8/gi;
 
