@@ -1663,7 +1663,7 @@ sub parseSearchTerms {
 		}
 	}
 
-	return @{ $ds->find('track', \%find, exists $find{'album'} ? 'tracknum' : 'title') };
+	return @{ $ds->find('track', \%find, exists $find{'album'} ? 'tracknum' : 'track') };
 }
 
 sub parseListRef {
