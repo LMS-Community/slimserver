@@ -1,4 +1,249 @@
 <ul>
+<h2><a name="v5.1.3" id="v5.1.3"></a>Version 5.1.3 - 2004-4-16</h2>
+<ul>
+	<li>Plugins
+		<ul>
+			<li>The SHOUTcast brower plugin, originally written by Peter Heslin is included in the standard release.</li>
+			<li>We added a few more modules from CPAN, including libwww, File::Temp and Compress:Zlib to our release, which should make it easier for folks to write plugins</li>
+			<li>Plugins can now be configured to reside at the Home menu level if desired.  Default to doing so with the SHOUTcast pluging for new users.
+		</ul>
+	</li>
+
+	<li>Localization & Internationalization
+		<ul>
+			<li>Added contributed patch by Peter Speck for some Danish characters.
+			<li>Peter Nou updated the Swedish translations.  Thanks, Peter!</li>
+			<li>Frederic Miserey updated the french localized images, fixed a bug in the remote documentation.
+			<li>More updates from Frederic Miserey on the default skin, including moving the power on/off button up a bit, placing the french remote help in the right folder and cleaning up the html in the Default skin.
+			<li>Frederic Miserey fixed some problems with the French localization of the installer.
+			<li>Another patch from Frederic for iTunes names' suffixes and prefixes.
+			<li>Frederic Miserey did some internationalization work to fix how colons are displayed, added some more localized images, and fixed some problems with iTunes XML file's paths.
+			<li>Adding contributed Dutch localization by Paul Roomberg
+			<li>Frederic Miserey submitted some localized images for the default skin.  Added a patch to try to open these first and if they aren't there, open the default one.
+		</ul>
+	</li>
+
+	<li>Player Interface
+		<ul>
+			<li>Accepted patch that reduce custom character flicker from Phil Barrett
+			<li>Fixed a problem where the bitrate displayed for some songs was not rounded properly.
+			<li>screensaver was not jumping to proper screensaver while playing.  Only ongoing animation, power off, and blocking should stop screensaver.
+			<li>screensaver was not jumping to proper screensaver while playing.  Only ongoing animation, power off, and blocking should stop screensaver.
+			<li>Fixed several problems with FFWD and REW trick modes.  Seems better about jumping to random locations, but occasionally still won't go back to 1x when we're towards the end of a song.  
+			<li>Fixed a problem where players wer resyncing after restart even if master was powered off.  Check the power state for masters as well, and only resync if they are on. For temporary unsync, save settings before issuing the stop command.
+			<li>Can now add by artist name again.
+			<li>Fix a problem with a deadlock that could cause buffer underruns or stalls with short songs to not get played if the server hits the end of the song while waiting to fill the buffer.			
+			<li>fix lists and sorting created by 'ALL_ALBUMS' and/or 'ALL_SONGS' while browsing using the remote.
+		</ul>
+	</li>
+	
+	<li>iTunes Support
+		<ul>
+			<li>Added a server setting to allow folks to set the minimum wait time between iTunes library importing.  The default is (and was) 60.
+			<li>Peter Timofejew submitted a patch to not import songs marked as disabled in iTunes.
+			<li>Peter Timofejew submitted a patch to fix a problem with automount paths in iTunes XML files.
+		</ul>
+	</li>
+	
+	<li>File Formats
+		<ul>
+			<li>Contributed patch by Guy Albertelli to handle multiple artist and genre names in ID3 tags.
+			<li>Accept John Harding's patch to WMA.pm to fix parsing of Track numbers (and probably more).  Dan, please review.
+			<li>Updated patch for AIFF files and AIFC files from Caleb Epstein.  We now can extract metadata and play many more AIFF and AIFC files.
+			<li>Rob Funk submitted a patch that ignores punctuation for the purposes of sorting.
+			<li>Extract more ID3 tag information from QuickTime movies and AAC files, especially those ripped with iTunes.
+			<li>Fixed a problem for files that have [ and ] chars in filename
+			<li>Split multi-value ID3 tags by / as well as the ; and \0 we had before
+			<li>Add multiple tag support for Composer and Band			
+			<li>Frederic Miserey noticed that we weren't extracting the number of discs in a set from Movie/AAC metadata.  Fixed.
+			<li>Accepted Peter Speck's patch for fixing the bug in that failed to detect missing binaries used in transcoding. Also, Peter patched up some problems in the AIFF parser:
+				<ul>
+					<li>The sample rate is an 'extended', which is 10 bytes. Only first 6 bytes was read, so $encoding was always garbage.
+					<li>Chunks are always an even number of bytes, even if the chunkSize entry is odd (it is null-byte padded).  All my AIFF files have an even chunk size for all chunks except the last chunk, which is an ID3 entry lacking the null-padding. So it have not been a problem for me, just noticed it...
+					<li>Removed the redundant tell($f) statements and made the chunk-seeking logic a simple while() loop, which makes the diff big.
+					<li>I have renamed chunkoffset to dataoffset, as it is the offset of the sound data, and not the offset of the chunk.
+				</ul>
+			<li>Updated the convert.conf file so that when LAME is invoked to encode into MP3, we force to resample at a 44.1k sample rate.  Some non-standard sample rates were causing LAME to fail.
+			<li>Kevin Pearsall found that convert.conf file had some extraneous "1" options in the oggdec entries, which breaks under the latest oggdec.
+			<li>Reformatted types.conf to remove tabs to make it easier for folks to edit.
+			<li>Applied patch for FLAC cue files to play to the end.
+			<li>We now check to see if the appropriate binaries are available and skip any configurations that require specific binaries.  The syntax of the convert.conf file has been changed slightly, now binaries are expressed as [binaryname] instead of $binaryname$
+			<li>Older config files that use the $binaryname$ format should still work, but won't get run-time checks for the presence of the binaries.
+			<li>Squeezebox also "prefers" MP3 conversion when possible on wireless, uncompress when wired.  Use the File Formats page in Additional Server Settings to override this behavior.  All of this is to make life easier for new customers who are trying to get AAC and other non-MP3 formats working with the least amount of messing. Out of the box, the behavior is similar as it was, but if you install LAME, it will try to use it unless you disable that line in the configuration.
+			<li>Jason Holtzapple submitted a patch that makes cue sheets for FLAC work.  Requires the very latest FLAC to work. 
+			<li>Accepted patch from Henry Mason that uses MovieExport data procs in mov123.  This supports more file types under QuickTime.
+			<li>More sanity checking in the WAV package to handle some malformed WAV files.
+			<li>Fixed a problem where we sometimes weren't switching between PCM and MP3 modes between different file types.
+			<li>Track current directory and artwork during scan. Don't search if we already know the cover and thumb in that dir.
+			<li>Robert Moser noted that we don't need to uppercase everything twice.
+			<li>Victor Brilon submitted a patch for a more thorough list of artwork filenames
+		</ul>
+	</li>
+	
+
+	
+	<li>Web Interface
+		<ul>
+			<li>The built-in webserver is now HTTP 1.1 compliant, thanks to Dan Sully, so page reloads should be much quicker and overall performance improved
+			<li>Stefan Christiansson updated the Touch skin to include settings and an about page.
+			<li>Cover artwork images now search large-to-small for cover and small-to-large for thumb sizes.
+			<li>We've updated our HTML skins system to use the excellent Template Toolkit. Visit http://www.template-toolkit.org for documentation on Template Toolkit.  <li>Script for converting homebrew templates to Template Toolkit compatible ones.	
+			<li>There was a conflict between the parameter used to declare a page title and the parameter used to declare a song title. Changed the page title to "pagetitle" from just "title".
+			<li>KDF suggested a patch that fixes errant arrows in the search pages.
+			<li>Check to make sure Cache directory is writable or creatable.  If not, just cache in RAM.
+			<li>Override uri filter when creating new template objects rather than universally.
+			<li>Fixed a problem where all_subfolders link was accidentally included when browsing playlists too
+			<li>The ability to create variable artwork filenames is in there, but for full compatibility, there needs to be an option to store them all in a central location. This is now added.  Windows and Linux, by default use $bin/Artwork, while OSX will use $ENV{'HOME'}/Music/Artwork
+			<li>Make use of title tag on images in default skin, since we're working on it.		
+			<li>Eliminated mysterious extra &lt;html&gt;...&lt;/html&gt; from status.html
+			<li>Took out the dead playlist add/play links for Music Folder top level.
+			<li>Added a whitespace in songinfo to keep give the location url a bit of room.
+			<li>Status and Status Header don't need to show the mute button for non-players, since there is no volume control.
+			<li>Clean up some overlapping elements in Player Settings
+			<li>Group sync settings to help avoid overlapping again.
+			<li>Bring Titleformats back for http players, stream title will show standardTitle so its nice to be able to configure it.
+			<li>Fix a missing image in the upgrade page for the Default skin.
+			<li>Clarify the upgrade explanation in case of failure.
+			<li>Also, reordered the repeat buttons on the default skin to make more sense.  (Another from Fred)
+			<li>Dean suggested changes to the scrollrate and scrollpause descriptions.
+			<li>changed the setup values to allow zero scrollpause, since it should be working now. 
+			<li>duration and durationseconds got mixed together at some point.  This broke the progressbar in Touch and Fishbone. durationseconds is now the duration in seconds, while duration is the song duration in minutes and seconds.
+			<li>Added settings page for enabling/disabling convert.conf entries.  Useful if you want to force LAME transcoding if you have a slower network.
+			<li>Another patch from Frederic for power status in the Default skin.
+			<li>Fixed a problem where the song duration wasn't passed correctly to the XML skin.
+			<li>use proper countdown number for sleep time in status
+			<li>cleanup songinfo to fit comments in readable space
+			<li>tidy up alignment of status_header code
+			<li>add support for editing playlists in Fishbone, cleanup the code tabbing.
+			<li>Felix Mueller submitted some improvements to his playlist editor.  I modified it a bit to make it work for all saved M3U and PLS playlists.
+			<li>Throw a 404 if requested setup page doesn't exist, as in  setup.html?page=bogus
+			<li>Throw a 404 if a requested skin does not exist.
+			<li>Throw a 404 if no handler found in generateHTTPResponse.
+			<li>Add content_type of text/html to error responses, and close socket after sending them.
+			<li>constrain image sizes in main views.  default to using 100x100 and 200x200 images.
+			<li>songinfo artwork is now a link to the raw full size image.
+			<li>A surprising number of the HTML files had DOS line endings, which messes with cvs diff sometimes.  Reverted them to unix line endings.
+			<li>{'sleeptime'} and {'sleep'} can be more useful as different values. use {'sleeptime'} for the sleep setting, and {'sleep'} for the time remaining
+			<li>Disabled Animation setting because it just confuses folks, breaks stuff, and doesn't really improve things.
+			<li>Make guessTags a server formatting setting, user able to add more or re-order
+		</ul>
+	</li>
+	
+	<li>Streaming to MP3 Players
+		<ul>
+			<li>Trying to reduce latency in the HTTP streaming.  Clearing the buffer if the song stops or changes.
+		</ul>
+	</li>
+		
+	<li>Command Line & Debugging
+		<ul>
+			<li>d_itunes_verbose is a valid debug flag, so it should be accepted from the command line as well.
+			<li>Safety check on buffersize to prevent crashes from clients that misbehave.
+			<li>Fix an errant tab in the strings.txt file that was causing a warning.
+			<li>Add --d_http_verbose debugging flag.
+			<li>Fixed a harmless warning noticed by Kevin Pearsall.
+			<li>Added cli command displaynow to return the contents of the display including any animated and size activity.
+			<li>Fix alignment of usage message in slimserver.pl
+			<li>Move iTunes artwork scan debug msgs to d_artwork
+			<li>Fixed a warning I was seeing sometimes when using the web interface before a player was discovered.
+			<li>Add d_artwork debugging option
+		</ul>
+	</li>
+	
+	<li>Documentation
+		<ul>
+			<li>Updated FAQ from Kevin Pearsall.
+			<li>Updated FAQ to distinguish Wired from Wireless hardware.
+			<li>Updated FAQ with a bunch of new questions.
+			<li>Fixed another problem in the example in the CLI documentation.
+			<li>Minor tweaks to owner's guide.
+			<li>Added cover art information from Pat Farrell to docs.
+			
+		</ul>
+	</li>		
+
+	<li>Macintosh
+		<ul>
+			<li>Move tag database to ~/Library/Caches/SlimServer under Mac OSX
+		</ul
+	</li>
+	
+	<li>Windows
+		<ul>
+			<li>Added a couple of additional Windows registry keys in the installer to help find the Music library.
+			<li>Moodlogic: Thanks to Chris at Moodlogic, we now have a bit more information on what we can make available. Now added two settings to the moodlogic server settings:
+			<ul>
+				<li>instantMixMax - sets the maximum songs for a playlist.
+				<li>varietyCombo - from 0-100 where Lower number means a wider selection of songs and a higher number means a closer match to the song picked.
+			</ul>
+		
+			<li>Moodlogic: Some info that the server uses was not being provided by Moodlogic (ie Bitrate), so use readTags and let moodlogic alter info as it	requires.  readTags also handles artwork, so its no longer needed in Moodlogic.pm
+			<li>Adding artwork scanning for Moodlogic
+			<li>We now include flac.exe and oggdec.exe for windows in the release for yummy FLAC and Ogg playback.
+		</ul>
+	</li>
+
+	<li>Unix/Linux
+		<ul>
+			<li>Pat Farrell updated the unix Installation.txt file.
+		</ul>
+	</li>
+	
+	<li>Squeezebox Firmware - Experimental
+		<ul>
+			<li>Updated default Squeezebox Firmware to v.10 - no changes from version 8, except that it can be updated to versions 20 and above.
+			<li>Firmware v.21 is included for testing, but is not installed by default.  To enable, edit the file Firmware/squeezebox.version and remove the # signs on the last two lines.  The following changes are for version 21:
+			<li>This firmware update uses a new mechanism for downloading the firmware and storing it in flash memory. Due to the extent of these changes, this is a one-way upgrade.  - Current SlimServer version is required
+			<li>TCP has been enhanced to respond better under packet loss conditions. This should dramatically reduce dropouts when streaming uncompressed audio over wireless. Also, interactive performance is improved. In particular, this should eliminate any small delays in screen updates during an animation sequence (eg push animation, slimtris).	
+			<li>There is a new mechanism for transferring firmware upgrade images, which uses slimproto instead of a separate data connection. This provides for a few things, 1)  firmware updates may now be installed over NAT and through firewalls and 2) display updates and status messages can still be communicated during the update process, so we now show a nice progress bar during the download. 3) updates which are interrupted during download or during installation no longer require the failsafe update mode.  Instead, the squeezebox will boot normally using the previous image.
+			<li>"Raw" infrared codes are now transmitted to the server. This means that the server will now receive ANY 39KHz infrared signals that the squeezebox receives. This feature is not currently utilized by the server, but is available for potential applications such as keyboard interfaces (webtv keyboards, for example, should work), macros, and controlling the squeezebox in response to other events (eg receiver being turned on).
+			<li>Other internal changes: updated OS and drivers, new flash and sram organization, increased ethernet and TCP rx buffers, reduced CPU usage
+			<li>Fix buffer overrun condition when streaming from Windows XP machines using Intel ethernet cards that use TCP segmentation offloading
+			<li>JVC infrared codes now work correctly
+			<li>Fix problem where firmware updates over wireless could occasionally  fail.
+			<li>Fixed "Can't alloc netpages for dll" message during setup
+			<li>Fix problem where WLAN scan results would disappear if the user backs up  through the setup menu after selecting a wireless network.
+			<li>New firmware will report buffer size and fullness rather than read and write pointer.  Account for this in the server.
+			<li>Don't complain about the server being gone except when pressing up/down/left/right/power buttons. Before, we would nag about the server on  receiving any kind of NEC-compatible IR signal.
+			<li>Adding support for raw IR pass-through so that somebody can make an ssh client using a webtv keyboard.
+			<li>Upcoming firmware revisions will use a new update mechanism. We're going to jump to from rev 8 to 20 for the new SDK5-based firmware and that'll be how we tell the difference for the purpose of loading a firmware image.
+			<li>Instead of the server connecting to the squeezebox and uploading the image, the new mechanism will use slimproto. This means, among other things, that the control channel stays connected, and we can display a nice status screen during the update. Some changes to slimproto:
+			<li>Deprecated client->server opcode: BYE!. We might use this later for  something else. In the mean time, it is still of course supported for  older firmware revs.
+		</ul>
+	</li>
+				
+	<li>Lots of bugs listed in the <a href="http://bugs.slimdevices.com/">bug database</a> were fixed:
+		<ul>
+			<li>Bug 197 - Add 'All Subfolders' link under browse music folder.  To make it simple, its still a link, but it does nothing.  It allows access to playlist commands to add/play/remove/insert the entire library.
+			<li>Bug 212 - Missing Documentation.  Adding title tags and filling out the alt tags will give the tooltips requested for the graphic buttons.
+			<li>Bug 233 - I accidentally swapped scrollpause and scrollrate EN text
+			<li>Bug 208 - titleformat description was out of date.  Used updated string suggested by Kevin Pearsall
+			<li>Bug 41 - add 'includeArtist' and 'includeAlbum' to browse_list so that search can show more detailed info for when simpler titleformats are used. This is a dupe of the status_list feature.
+			<li>Bug 219 - Phil Barrett suggested a patch  to make the # sign more attractive when in double size.
+			<li>Bug 227 - Some dirs can look too much like a URL. 
+			<li>Bug 97 - player specific option for transcoding bitrate, validates mp3 bitrates only.
+			<li>Bug 27 - make the transcoding to HTTP streams able to be specified in the URL: http://slimserver:9000/stream.mp3?bitrate=128
+			<li>Bug 33 - smart bandwidth limitation, transcode only when necessary
+			<li>Bug 45 - scroll rate player preference
+			<li>Bug 189 - Sync lost between players when powering off one of them sync is now restored when players are powered on.  permanent unsyc now from player settings only.
+			<li>Bug 37 - sync POWER commands.  There's a new player option to sync power settings.  Players will power off and on as a group.  changing this setting will affect all players in the group.  Turning this off, will unsync all players that are currently powered off, though they will resync as they are powered back on.
+			<li>Bug 185 - Set Last-Modified header, honor If-Modified-Since, etc.
+			<li>Bug 221 - Fixed a problem where HTTP clients had some inappropriate player settings in the web interface.
+			<li>Bug 46 - the location URL on the song info page should be a full URL This seemed to need to be case insensitive so that windows users who type in an audiodir in lower case, will still match with the songpath, which has uppercase drive letters
+			<li>Bug 122 - allow the user to control the timeout when connecting to remote sites.
+			<li>Bug 213 - repeating playlist when synched checksync wasn't paying attention to the playmode, so when players were ready, it would skip head.  Now it checks for playmode-stop and will stop the playback.  playmode-play will allow the playback to continue for the next song, or the repeat loopback.
+		</ul>
+	</li>
+		
+	<li>Experimental
+		<ul>
+			<li>Added support for a "silent" setting that should allow slave players that don't actually have audio streamed to them.  This has not been thoroughly tested.
+			<li>Added a prototype pitch control.  It only works on Squeezebox now and only with MP3 files, and only after a song is restarted.  But it's a start.
+		</ul>	
+	</li>		
+						
+</ul>
+
 <h2><a name="v5.1.1" id="v5.1.1"></a>Version 5.1.1 - 2004-3-3</h2>
 <ul>
 	<li>Added built-in support for WMA audio on Windows.  (Note: DRM protected WMA files aren't supported...)
@@ -11,7 +256,7 @@
 	
 	<li>Remove a number of annoying, but harmless warning messages.
 	
-	<li>A bug in mov123 caused AAC audio on Windows to come out in little endian format.
+	<li>Fixed bug in mov123 caused AAC audio on Windows to come out in little endian format, causing lots of noise.
 	
 	<li>There was a sanity check in AIFF file scanning to make sure that the top level chunk size header was 
 	smaller than the file size.  Unfortunately, iTunes for Windows creates AIFF files that are 

@@ -122,6 +122,8 @@ my %functions = (
 			Slim::Buttons::Common::pushModeLeft($client, 'searchfor');
 		} elsif ($homeChoices[$client->homeSelection] eq 'SEARCH') {
 			Slim::Buttons::Common::pushModeLeft($client, 'search');
+		} else {
+			Slim::Buttons::Common::pushModeLeft($client, "PLUGIN.".$homeChoices[$client->homeSelection]);
 		}
 	},
 	'numberScroll' => sub  {
@@ -164,6 +166,7 @@ sub setMode {
  					);
  
 sub menuOptions {
+	my $client = shift;
 	my %menuChoices = ();
 	$menuChoices{""} = "";
 	foreach my $menuOption (@menuOptions) {
@@ -175,11 +178,18 @@ sub menuOptions {
 		}
 		$menuChoices{$menuOption} = string($menuOption);
 	}
+	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
+	my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
+	foreach my $item (keys %{$pluginlistref}) {
+		next if (exists $disabledplugins{$item});
+		$menuChoices{$item} = $item;
+	}
 	return %menuChoices;
 }
 
 sub unusedMenuOptions {
-	my %menuChoices = menuOptions();
+	my $client = shift;
+	my %menuChoices = menuOptions($client);
 	delete $menuChoices{""};
 	foreach my $usedOption (@homeChoices) {
 		delete $menuChoices{$usedOption};
@@ -235,7 +245,15 @@ sub lines {
 		$line1 = string('SQUEEZEBOX_HOME');
 	}
 	my $menuChoice = $homeChoices[$client->homeSelection];
-	$line2 = Slim::Utils::Prefs::clientGet($client, 'doublesize') ? Slim::Utils::Strings::doubleString($menuChoice) : string($menuChoice);
+	for(my $i=0;$i<=$#menuOptions;$i++){
+		if ($menuOptions[$i] eq $menuChoice) {
+			$line2 = Slim::Utils::Prefs::clientGet($client, 'doublesize') ? Slim::Utils::Strings::doubleString($menuChoice) : string($menuChoice);
+			return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
+		} else {
+			my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
+			$line2 = $pluginsRef->{$menuChoice};
+		}
+	}
 
 	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
 }

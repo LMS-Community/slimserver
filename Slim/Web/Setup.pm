@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.56 2004/04/06 05:59:38 kdf Exp $
+# $Id: Setup.pm,v 1.57 2004/04/17 14:57:40 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -713,7 +713,7 @@ sub initSetupConfig {
 		# if more than one ir map exists the undef will be replaced by 'Default'
 		,'Groups' => {
 				'Default' => {
-					'PrefOrder' => ['pluginlist']
+					'PrefOrder' => ['plugins-onthefly', 'pluginlist']
 					,'PrefsInTable' => 1
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
@@ -743,6 +743,13 @@ sub initSetupConfig {
 							}
 						}
 				}
+				,'plugins-onthefly' => {
+						'validate' => \&validateTrueFalse
+						,'options' => {
+								'1' => string('SETUP_PLUGINS-ONTHEFLY_1')
+								,'0' => string('SETUP_PLUGINS-ONTHEFLY_0')
+							}
+					}
 			}
 		} #end of setup{'plugins'}
 	,'interface' => {
@@ -1402,7 +1409,7 @@ sub initSetupConfig {
 			'Default' => {
 					'PrefOrder' => ['itunesscaninterval','usetagdatabase','templatecache','useplaylistcache',
 									# 'animationLevel',
-									'lookForArtwork','ignoreMP3Tags','buildItemsPerPass','showbufferfullness']
+									'lookForArtwork','buildItemsPerPass','showbufferfullness']
 				}
 			}
 		,'Prefs' => {
@@ -1448,13 +1455,13 @@ sub initSetupConfig {
 								,'1' => string('SETUP_LOOKFORARTWORK')
 								}
 					}
-			,'ignoreMP3Tags' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'0' => string('SETUP_READMP3TAGS')
-								,'1' => string('SETUP_IGNOREMP3TAGS')
-								}
-					}
+#			,'ignoreMP3Tags' => {
+#						'validate' => \&validateTrueFalse
+#						,'options' => {
+#								'0' => string('SETUP_READMP3TAGS')
+#								,'1' => string('SETUP_IGNOREMP3TAGS')
+#								}
+#					}
 			,'buildItemsPerPass' => {
 						'validate' => \&validateInt
 						}

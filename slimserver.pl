@@ -133,7 +133,7 @@ use vars qw($VERSION @AUTHORS);
 	'Dan Sully',
 );
 
-$VERSION = '5.1.2';
+$VERSION = '5.1.3';
 
 # old preferences settings, only used by the .slim.conf configuration.
 # real settings are stored in the new preferences file:  .slim.pref
@@ -636,7 +636,7 @@ sub initSettings {
 
 	} else {
 
-		if (Slim::Utils::Prefs::get("audiodir") =~ m|[/\\]$|) {
+		if (defined(Slim::Utils::Prefs::get("audiodir")) && Slim::Utils::Prefs::get("audiodir") =~ m|[/\\]$|) {
 			$audiodir = Slim::Utils::Prefs::get("audiodir");
 			$audiodir =~ s|[/\\]$||;
 			Slim::Utils::Prefs::set("audiodir",$audiodir);

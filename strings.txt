@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.81 2004/04/16 18:20:09 dean Exp $
+# $Id: strings.txt,v 1.82 2004/04/17 14:57:35 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -971,12 +971,18 @@ SETUP_GROUP_PLUGINS
 SETUP_GROUP_PLUGINS_DESC
 	DE	SlimServer beinhaltet ein paar Plugins, die Sie zum Menü hinzufügen können. Sie können die Plugins im Plugin-Verzeichnis hinzufügen oder löschen. Um ein Extra zu aktivieren, klicken Sie auf die Auswahlbox. Zum Deaktivieren deaktivieren Sie die Box. Klicken Sie auf "Ändern" zum Speichern der Einstellung.
 	DK	SlimServer inkluderer nogle ekstra funktioner, grupperet i moduler, som du kan anvende via din fjernbetjening. Modulerne ligger i Plugins-mappen og kan aktiveres eller deaktiveres individuelt. Aktiver moduler ved at afkrydse dem nedenfor, deaktiver moduler ved at fjerne afkrydsningen. Tryk Gem for at gemme dine ændringer.
-	EN	SlimServer includes some extra features, called Plugins, that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. To save your changes, click Change.
+	EN	SlimServer includes some extra features, called Plugins, that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. You may choose to have the server scan for plugins each time you navigate to the player plugins menu or the plugins settings. Default is to load on startup only.  To save your changes, click Change.
 	FR	Vous pouvez sélectionner des fonctionnalités supplémentaires de la platine, appelées Modules d'extension, disponibles à l'aide de la télécommande. Ces fonctionnalités sont situées dans le dossier Plugins. Pour activer un module d'extension, cocher la case correspondante. Pour le désactiver, décochez la case.
 	NL	SlimServer laat toe om extra functies te koppelen aan de afstandsbediening. Deze functies vindt U terug in de Plugins folder. Om een funtie te activeren klikt U het vinkje naast de functie aan. Om de funtie uit te schakelen verwijdert U het vinkje. Om de wijzigingen op te slaan klikt U op 'Aanpassen'.
 	NO	SlimServer inneholder en del tilleggsfunksjoner, Plugins, som du kan benytte deg av med fjernkontrollen. Disse kan aktiveres eller deaktiveres individuelt. For å aktivere en Plugin, merk den. For å deaktivere en Plugin, fjern merket. For å lagre endringene, velg "Endre".
 	PT	O cliente SlimServer inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
 	SE	SlimServer inkluderar tilläggs-funktioner som du kan konfigurera och/eller använda via din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras var för sig. Kryssa i rutan bredvid tillägget nedan för att aktivera ett tillägg. Ta bort krysset när du vill avaktivera ett tillägg. Spara dina ändringar genom att klicka på "Ändra".
+
+SETUP_PLUGINS-ONTHEFLY_0
+	EN	Load Plugins at startup Only
+
+SETUP_PLUGINS-ONTHEFLY_1
+	EN	Load Plugins On-The-Fly
 
 SETUP_GROUP_FORMATS
 	EN	File Format Conversion Setup
@@ -1865,7 +1871,7 @@ SETUP_PLUGINS
 SETUP_PLUGINS_DESC
 	DE	SlimServer enthält ein paar Plugins, inklusive einiger Spiele, die Sie mit ihrer Fernbedienung bedienen können. Verwenden Sie die unten stehende Auswahl, um die Plugins dem Menü ihres Slim Players hinzuzufügen oder zu entfernen.
 	DK	SlimServer inkluderer nogle ekstra funktioner (Moduler), såsom spil, som du kan anvende med din fjernbetjening. Marker nedenfor om du ønsker adgang til Modul-menuen fra Slim-hovedmenuen.
-	EN	SlimServer includes some extra features, including some games, you can use with your remote. Use the menu below to add or remove the Plugins menu from your Home.
+	EN	SlimServer includes some extra features, including some games, you can use with your remote. Use the menu below to add or remove the Plugins menu from your Home. 
 	FR	Le SlimServer comprend des fonctionnalités supplémentaires, dont des jeux, que vous pouvez utiliser avec votre télécommande. Utilisez le menu ci-dessous pour ajouter ou retirer le menu Modules d'extension de votre Menu principal.
 	NL	Slim biedt de mogelijkheid om extra functionaliteiten, waaronder spelletjes, toe te voegen. Deze kunnen bestuurd worden via de afstandsbediening. Gebruik onderstaande keuze om het Plugins menu aan Uw Home toe te voegen of om het eruit te verwijderen.
 	PT	O SlimServer inclui algumas funcionalidades extras, tais como alguns jogos, que podem ser usados com o controlo remoto. Use o menu abaixo para adicionar ou remover os menus extra do cliente. 

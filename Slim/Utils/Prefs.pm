@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.47 2004/04/15 18:49:42 dean Exp $
+# $Id: Prefs.pm,v 1.48 2004/04/17 14:57:39 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -104,6 +104,7 @@ my %DEFAULT = (
 	,'lookForArtwork'		=> 1
 	,'thumbSize'			=> 100
 	,'buildItemsPerPass'	=> 100
+	,'plugins-onthefly'		=> 0
 	,'longdateFormat'		=> q(%A, %B |%d, %Y)
 	,'shortdateFormat'		=> q(%m/%d/%Y)
 	,'timeFormat'			=> q(|%I:%M:%S %p)
@@ -133,7 +134,7 @@ my %DEFAULT = (
 		'/ARTIST/ALBUM/TRACKNUM TITLE', 
 		'/ARTIST/ALBUM/TRACKNUM. TITLE' ]
 	,'menuItem'			=> ['NOW_PLAYING', 'BROWSE_BY_GENRE', 'BROWSE_BY_ARTIST', 'BROWSE_BY_ALBUM', 'BROWSE_MUSIC_FOLDER'
-						, 'SEARCH', 'SAVED_PLAYLISTS', 'PLUGINS', 'SETTINGS']
+						, 'SEARCH', 'SAVED_PLAYLISTS', 'ShoutcastBrowser', 'PLUGINS', 'SETTINGS',]
 	,'disabledplugins'		=> []
 	,'persistPlaylists'		=> 1
 	,'reshuffleOnRepeat'	=> 0
