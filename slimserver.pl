@@ -189,6 +189,7 @@ use vars qw(
 	$d_slimproto
 	$d_slimproto_v
 	$d_source
+	$d_source_v
 	$d_stdio
 	$d_stream
 	$d_stream_v
@@ -527,6 +528,7 @@ to the console via stderr:
     --d_slimproto    => Slimproto debugging information
     --d_slimproto_v  => Slimproto verbose debugging information
     --d_source       => Information about source audio files and conversion
+    --d_source_v     => Verbose information about source audio files
     --d_stdio        => Standard I/O command debugging
     --d_stream       => Information about player streaming protocol 
     --d_stream_v     => Verbose information about player streaming protocol 
@@ -598,6 +600,7 @@ sub initOptions {
 		'd_slimproto'		=> \$d_slimproto,
 		'd_slimproto_v'		=> \$d_slimproto_v,
 		'd_source'			=> \$d_source,
+		'd_source_v'			=> \$d_source_v,
 		'd_stdio'			=> \$d_stdio,
 		'd_stream'			=> \$d_stream,
 		'd_stream_v'		=> \$d_stream_v,
@@ -745,7 +748,7 @@ sub checkVersion {
 	my $url  = "http://www.slimdevices.com/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
 
 	# XXX - dsully - this really shouldn't be overloaded like this.
-	my $sock = Slim::Web::RemoteStream::openRemoteStream($url);
+	my $sock = Slim::Player::Source::openRemoteStream($url);
 
 	if ($sock) {
 
