@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.82 2004/03/14 04:36:32 kdf Exp $
+# $Id: Info.pm,v 1.83 2004/03/15 18:39:23 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2208,16 +2208,16 @@ sub readCoverArtTags {
 	
 	if (isSong($fullpath) && isFile($fullpath)) {
 	
-		if (isMP3($fullpath) || isWav($fullpath)) {
-
-			if (isFileURL($fullpath)) {
-				$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
-			} else {
-				$filepath = $fullpath;
-			}
-	
-			my $file = Slim::Utils::Misc::virtualToAbsolute($filepath);
+		if (isFileURL($fullpath)) {
+			$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
+		} else {
+			$filepath = $fullpath;
+		}
+		
+		my $file = Slim::Utils::Misc::virtualToAbsolute($filepath);
 			
+		if (isMP3($fullpath) || isWav($fullpath)) {
+	
 			$::d_artwork && Slim::Utils::Misc::msg("Looking for image in ID3 tag in file $file\n");
 
 			my $tags = MP3::Info::get_mp3tag($file, 2, 1);
@@ -2273,13 +2273,20 @@ sub readCoverArtTags {
 					}
 				}
 			}
-		}	
+		} elsif (isMOV($fullpath)) {
+			$::d_artwork && Slim::Utils::Misc::msg("Looking for image in Movie metadata in file $file\n");
+			$body = Slim::Formats::Movie::getCoverArt($file);
+			$::d_artwork && $body && Slim::Utils::Misc::msg("found image in $file of length " . length($body) . " bytes \n");
+		}
 		
 		if ($body) {
 			# iTunes sometimes puts PNG images in and says they are jpeg
 			if ($body =~ /^\x89PNG\x0d\x0a\x1a\x0a/) {
-				$::d_info && Slim::Utils::Misc::msg( "Fixing iTunes PNG image\n");
+				$::d_info && Slim::Utils::Misc::msg( "found PNG image\n");
 				$contenttype = 'image/png';
+			} elsif ($body =~ /^\xff\xd8\xff\xe0..JFIF/) {
+				$::d_info && Slim::Utils::Misc::msg( "found JPEG image\n");
+				$contenttype = 'image/jpeg';
 			}
 			
 			# jpeg images must start with ff d8 ff e0 or they ain't jpeg, sometimes there is junk before.

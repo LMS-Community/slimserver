@@ -1,6 +1,6 @@
 package Slim::Formats::Movie;
 
-# $Id: Movie.pm,v 1.7 2004/01/26 05:44:14 dean Exp $
+# $Id: Movie.pm,v 1.8 2004/03/15 18:39:23 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -19,10 +19,15 @@ use strict;
 use QuickTime::Movie;
 
 my %tagMapping = (
-	'TRACKNUMBER'	=> 'TRACKNUM',
-	'DATE'			=> 'YEAR',
-	'SAMPLERATE'	=> 'RATE',
-	'TRACKLENGTH'	=> 'SECS',
+	'©nam'	=> 'TITLE',
+	'©ART'	=> 'ARTIST',
+	'©alb'	=> 'ALBUM',
+	'©gen'	=> 'GENRE',
+	'trkn'	=> 'TRACKNUM',
+	'disk'	=> 'DISC',
+	'©day'	=> 'YEAR',
+	'cpil'	=> 'COMPILATION',
+	'covr'	=> 'COVER'
 );
 
 # Given a file, return a hash of name value pairs,
@@ -46,10 +51,30 @@ sub getTag {
 	}
 
 	$tags->{'SIZE'} = -s $file;
-	$tags->{'SECS'}   = ($tags->{'SIZE'}) * 8 / 128000;
+	$tags->{'SECS'}   = ($tags->{'SIZE'}) * 8 / 128000;  # todo: fix this!
 	$tags->{'OFFSET'} = 0;
+	
+	# clean up binary tags
+	$tags->{'COVER'} = 1 if ($tags->{'COVER'});
+	
+	$tags->{'TRACKNUM'} = unpack('N', $tags->{'TRACKNUM'}) if $tags->{'TRACKNUM'};
+	$tags->{'DISC'} = unpack('N', $tags->{'DISC'}) if $tags->{'DISC'};
+	$tags->{'COMPILATION'} = unpack('N', $tags->{'COMPILATION'}) if $tags->{'COMPILATION'};	
 
 	return $tags;
 }
+
+sub getCoverArt {
+	my $file = shift;
+	my $tags = QuickTime::Movie::readUserData($file);
+
+	my $coverart;
+	
+	$coverart = $tags->{'covr'};
+	
+	return $coverart;
+}
+
+
 
 1;
