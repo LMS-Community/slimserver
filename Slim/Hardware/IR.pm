@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.13 2003/11/02 19:29:51 grotus Exp $
+# $Id: IR.pm,v 1.14 2003/11/02 19:50:37 grotus Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -162,7 +162,7 @@ sub loadMapFile {
 				$irMap{$mapfile}{$mode}{$buttonName} = $function;
 			} else {
 				foreach my $style (@buttonPressStyles) {
-					$irMap{$mapfile}{$mode}{$1 . $style} = $function;
+					$irMap{$mapfile}{$mode}{$1 . $style} = $function unless exists($irMap{$mapfile}{$mode}{$1 . $style}) ;
 				}
 			}
 		}
