@@ -1096,7 +1096,7 @@ sub getImageContent {
 		$$contentref = <TEMPLATE>;
 		close TEMPLATE;
 	}
-	
+
 	defined($$contentref) && length($$contentref) || $::d_artwork && Slim::Utils::Misc::msg("Image File empty or couldn't read: $path\n");
 	return $$contentref;
 }
@@ -1222,99 +1222,132 @@ sub readCoverArtTags {
 }
 
 sub readCoverArtFiles {
-	use bytes;
 	my $fullpath = shift;
-	my $image = shift || 'cover';
-	my $artwork;
+	my $image    = shift || 'cover';
 
-	my $body;	
-	my $contenttype;
+	my ($artwork, $contentType, $body);
+	my @filestotry = ();
+	my @names      = qw(cover thumb album albumartsmall folder);
+	my @ext        = qw(jpg gif);
+
+	use bytes;
 
 	my $file = isFileURL($fullpath) ? Slim::Utils::Misc::pathFromFileURL($fullpath) : $fullpath;
 
 	my @components = splitdir($file);
 	pop @components;
+
 	$::d_artwork && Slim::Utils::Misc::msg("Looking for image files in ".catdir(@components)."\n");
-	
-	my @filestotry = ();
-	my @names = qw(cover thumb album albumartsmall folder);
-	my @ext = qw(jpg gif);
-	my %nameslist = map { $_ => [do { my $t=$_; map { "$t.$_" } @ext }] } @names ;
+
+	my %nameslist = map { $_ => [do { my $t = $_; map { "$t.$_" } @ext }] } @names;
 	
 	if ($image eq 'thumb') {
+
+		# these seem to be in a particular order - not sure if that means anything.
 		@filestotry = map { @{$nameslist{$_}} } qw(thumb albumartsmall cover folder album);
+
 		if (Slim::Utils::Prefs::get('coverThumb')) {
 			$artwork = Slim::Utils::Prefs::get('coverThumb');
 		}
+
 	} else {
+
+		# these seem to be in a particular order - not sure if that means anything.
 		@filestotry = map { @{$nameslist{$_}} } qw(cover folder album thumb albumartsmall);
+
 		if (Slim::Utils::Prefs::get('coverArt')) {
 			$artwork = Slim::Utils::Prefs::get('coverArt');
 		}
 	}
+
 	if (defined($artwork) && $artwork =~ /^%(.*?)(\..*?){0,1}$/) {
+
 		my $suffix = $2 ? $2 : ".jpg";
+
 		$artwork = infoFormat(Slim::Utils::Misc::fileURLFromPath($fullpath), $1)."$suffix";
-		my $artworktype = $image eq 'thumb' ? "Thumbnail" : "Cover";
-		$::d_artwork && Slim::Utils::Misc::msg("Variable $artworktype: $artwork from $1\n");
+
+		$::d_artwork && Slim::Utils::Misc::msgf(
+			"Variable %s: %s from %s\n", ($image eq 'thumb' ? 'Thumbnail' : 'Cover'), $artwork, $1
+		);
+
 		my $artpath = catdir(@components, $artwork);
+
 		$body = getImageContent($artpath);
+
 		my $artfolder = Slim::Utils::Prefs::get('artfolder');
+
 		if (!$body && defined $artfolder) {
+
 			$artpath = catdir(Slim::Utils::Prefs::get('artfolder'),$artwork);
 			$body = getImageContent($artpath);
 		}
+
 		if ($body) {
+
 			$::d_artwork && Slim::Utils::Misc::msg("Found $image file: $artpath\n\n");
-			$contenttype = mimeType(Slim::Utils::Misc::fileURLFromPath($artpath));
-			return ($body, $contenttype, $artpath);
+
+			$contentType = mimeType(Slim::Utils::Misc::fileURLFromPath($artpath));
+
+			return ($body, $contentType, $artpath);
 		}
-	} elsif (defined($artwork)) {
-		unshift @filestotry,$artwork;
+
+	} elsif (defined $artwork) {
+
+		unshift @filestotry, $artwork;
 	}
 
 	if (defined $artworkDir && $artworkDir eq catdir(@components)) {
+
 		if (exists $lastFile{$image}  && $lastFile{$image} ne '1') {
+
 			$::d_artwork && Slim::Utils::Misc::msg("Using existing $image: $lastFile{$image}\n");
+
 			$body = getImageContent($lastFile{$image});
-			$contenttype = mimeType(Slim::Utils::Misc::fileURLFromPath($lastFile{$image}));
+
+			$contentType = mimeType(Slim::Utils::Misc::fileURLFromPath($lastFile{$image}));
+
 			$artwork = $lastFile{$image};
-			return ($body, $contenttype, $artwork);
+
+			return ($body, $contentType, $artwork);
+
 		} elsif (exists $lastFile{$image}) {
+
 			$::d_artwork && Slim::Utils::Misc::msg("No $image in $artworkDir\n");
+
 			return undef;
 		}
+
 	} else {
+
 		$artworkDir = catdir(@components);
 		%lastFile = ();
 	}
 
 	foreach my $file (@filestotry) {
+
 		$file = catdir(@components, $file);
+
+		next unless -r $file;
+
 		$body = getImageContent($file);
+
 		if ($body) {
 			$::d_artwork && Slim::Utils::Misc::msg("Found $image file: $file\n\n");
-			$contenttype = mimeType(Slim::Utils::Misc::fileURLFromPath($file));
+
+			$contentType = mimeType(Slim::Utils::Misc::fileURLFromPath($file));
+
 			$artwork = $file;
 			$lastFile{$image} = $file;
+
 			last;
-		} else {$lastFile{$image} = '1'};
-	}
-	return ($body, $contenttype, $artwork);
-}
 
-sub updateArtworkCache {
-	my $file = shift;
-	my $cacheEntry = shift;
+		} else {
 
-	unless (Slim::Utils::Prefs::get('lookForArtwork')) {
-		return undef;
+			$lastFile{$image} = '1';
+		}
 	}
 
-	my $artworksmall = $cacheEntry->{'THUMB'};
-	my $album = $cacheEntry->{'ALBUM'};
-
-	$currentDB->setAlbumArtwork($album, $artworksmall);
+	return ($body, $contentType, $artwork);
 }
 
 sub splitTag {
