@@ -81,7 +81,9 @@ sub screenSaver {
 		$client->brightness($dim);
 	}
 
-	if ($mode eq 'block') {
+	if ($client->animating()) {
+		# don't interrupt client side animations
+	} elsif ($mode eq 'block') {
 		# blocked mode handles its own updating of the screen.
 	} elsif ($timeout && 
 			$irtime < $now - $timeout && 
@@ -121,11 +123,11 @@ sub screenSaver {
 			}
 			$client->update();
 		} else {
-			$client->scrollBottom() unless $client->animating();
+			$client->scrollBottom();
 		}
 	} else {
 		# try to scroll the bottom, if necessary
-		$client->scrollBottom() unless $client->animating();
+		$client->scrollBottom();
 	}
 	# Call ourselves again after 1 second
 	Slim::Utils::Timers::setTimer($client, ($now + 1.0), \&screenSaver);
