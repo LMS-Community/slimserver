@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.25 2004/01/06 08:25:21 daniel Exp $
+# $Id: Playlist.pm,v 1.26 2004/01/24 18:50:24 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -351,7 +351,7 @@ sub songTime {
 	
 	# 2 and 5 display remaining time, not elapsed
 	if ($playingDisplayMode % 3 == 2) {
-		my $duration = Slim::Music::Info::durationSeconds(Slim::Player::Playlist::song($client)) || 0;
+		my $duration = $client->songduration() || 0;
 		$delta = $duration - $delta;
 
 		$sign = '-';

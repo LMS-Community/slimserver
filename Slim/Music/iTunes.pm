@@ -431,17 +431,19 @@ sub scanFunction {
 					$url =~ s/\/$//;
 				}
 				if ($url) {
-					Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
-					Slim::Music::Info::updateGenreCache($url, \%cacheEntry);
-	
-					if ($::d_itunes) {
-						if (Slim::Music::Info::isFileURL($url)) {
-							my $file = Slim::Utils::Misc::pathFromFileURL($url);
-							if ($file && !-f $file) { warn "iTunes: file not found: $file\n"; } 
-						}
+					if (Slim::Music::Info::isFileURL($url)) {
+						my $file = Slim::Utils::Misc::pathFromFileURL($url);
+						if (!$file || !-r $file) { 
+							$::d_itunes && msg("iTunes: file not found: $file\n");
+							$url = undef;
+						 } 
 					}
 					
-					$tracks{$id} = $url;
+					if ($url) {
+						Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
+						Slim::Music::Info::updateGenreCache($url, \%cacheEntry);					
+						$tracks{$id} = $url;
+					}
 				} else {
 					$::d_itunes && warn "iTunes: missing Location " . %cacheEntry;
 				}

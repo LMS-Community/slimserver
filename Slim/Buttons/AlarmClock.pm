@@ -387,7 +387,7 @@ sub scrollDigit {
 
 sub timeDigits {
 	my $client = shift;
-	my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
+	my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime") || 0;
 
 	my $h = int($time / (60*60));
 	my $m = int(($time - $h * 60 * 60) / 60);

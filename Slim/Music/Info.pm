@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.62 2004/01/20 20:30:58 dean Exp $
+# $Id: Info.pm,v 1.63 2004/01/24 18:50:25 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -76,12 +76,11 @@ my @infoCacheItems = (
 	'BAND',
 	'CONDUCTOR', # conductor
 	'BLOCKALIGN', # block alignment
-	'DISC', # disc number
-	'DISCC', # disc count
 );
 
 # Save the persistant DB cache every hour
 my $dbSaveInterval = 3600;
+my $dbCacheDirty = 0;		# Set to 0 if cache is clean, 1 if dirty
 
 # three hashes containing the types we know about, populated b tye loadTypesConfig routine below
 # hash of default mime type index by three letter content type e.g. 'mp3' => audio/mpeg
@@ -124,7 +123,9 @@ my %genreCountMemoize = ();
 my %caseArticlesMemoize = ();
 
 my %infoCacheItemsIndex;
+
 my $dbname;
+my $DBVERSION = 1;
 
 my %artworkCache = ();
 
@@ -133,9 +134,14 @@ my %artworkCache = ();
 if (defined @Storable::EXPORT) {
 	eval q{
 		sub saveDBCache {
-			if (Slim::Utils::Prefs::get('usetagdatabase')) {
+			if (Slim::Utils::Prefs::get('usetagdatabase') && $dbCacheDirty) {
+				my $cacheEntryArray;
+				$cacheEntryArray->[0] = $DBVERSION;
+				$infoCacheDB{"ver"} = $cacheEntryArray;
+			
 				$::d_info && Slim::Utils::Misc::msg("saving DB cache\n");
 				store \%infoCacheDB, $dbname;
+				$dbCacheDirty=0;
 			}
 		}
 		
@@ -149,9 +155,19 @@ if (defined @Storable::EXPORT) {
 				if (-f $dbname)	{
 					my $hashref= retrieve($dbname);
 					%infoCacheDB=%$hashref;
+					$dbCacheDirty=0;
+					
+					my $cacheEntryArray = $infoCacheDB{"ver"};
+					if (!defined($cacheEntryArray->[0]) || $cacheEntryArray->[0] ne $DBVERSION) {
+					    $::d_info && Slim::Utils::Misc::msg("Deleting Tag database. DB is version ".$cacheEntryArray->[0]." and SlimServer is $DBVERSION\n");
+					    %infoCacheDB=();
+					    $dbCacheDirty=1;
+					}
+					
 					scanDBCache();
 				} else {
 					$::d_info && warn "Tag database $dbname does not exist";
+					$dbCacheDirty=0;
 				}	
 			}
 		}    
@@ -164,7 +180,7 @@ if (defined @Storable::EXPORT) {
 			}
 				$::d_info && Slim::Utils::Misc::msg("done DB cache scan\n");
 			}
-		}
+    		}
 	};
 
 } else {
@@ -304,7 +320,7 @@ sub checkForChanges {
 	# as we don't want to trigger other cache routines when 
 	# doing scanDBCache (isFileURL is safe)
 	# *******************************************************
-	
+
 	if (defined($file) && (exists $infoCacheDB{$file})) {
 		# Check to see if the filename is URL encoded. If so, decode.
 		
@@ -319,8 +335,19 @@ sub checkForChanges {
 		if ( -e $filepath) {
 			# Check FS and AGE (TIMESTAMP) to decide if we use the cached data.		
 			my $cacheEntryArray = $infoCacheDB{$file};
+
+			# Remove any entry for uncached coverart - we scan for it again once upon a rescan
+			my $index = $infoCacheItemsIndex{"COVER"};
+			if (defined $cacheEntryArray->[$index] && $cacheEntryArray->[$index] eq "0") {
+				$cacheEntryArray->[$index]=undef;
+			}
+
+			$index = $infoCacheItemsIndex{"THUMB"};
+			if (defined $cacheEntryArray->[$index] && $cacheEntryArray->[$index] eq "0") {
+				$cacheEntryArray->[$index]=undef;
+			}
 			
-			my $index = $infoCacheItemsIndex{"FS"};
+			$index = $infoCacheItemsIndex{"FS"};
 			my $fsdef=(defined $cacheEntryArray->[$index]);
 			my $fscheck=0;
 			if ($fsdef) { $fscheck= ( -s $filepath == $cacheEntryArray->[$index]); }
@@ -334,6 +361,7 @@ sub checkForChanges {
 			if ($fsdef && $fscheck && !$agedef) { return 0; }
 			if (!$fsdef && $agedef && $agecheck) { return 0; }
 			
+			$dbCacheDirty=1;
 			# File has changed so remove the cached information
 			delete $infoCacheDB{$file};
 			$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as it has changed\n");		    
@@ -350,7 +378,7 @@ sub checkForChanges {
 		return 1;
 	}
 
-	$::d_info && Slim::Utils::Misc::msg("$file not in infoCacheDB! or undefined file. This shouldn't happen!\n");		    
+	$::d_info && Slim::Utils::Misc::msg("$file not in infoCacheDB! or undefined file. This shouldn't happen!\n");
 }
 
 # This gets called to save the infoDBCache every $dbSaveInterval seconds
@@ -387,9 +415,19 @@ sub clearCache {
 	}
 }
 
+# Wipe the memory cache
 sub clearDBCache {
 	%infoCacheDB = ();	# Empty the cache
+	$dbCacheDirty=1;
 	$::d_info && Slim::Utils::Misc::msg("Cleared infoCacheDB\n");
+}
+
+# Wipe the disk cache as well as memory
+sub wipeDBCache {
+	clearDBCache();
+	saveDBCache();
+	$::d_info && Slim::Utils::Misc::msg("Wiped infoCacheDB\n");
+
 }
 
 sub total_time {
@@ -512,7 +550,6 @@ sub cacheItem {
 			updateGenreCache($url, $cacheEntryHash);
 			updateArtworkCache($url, $cacheEntryHash); 
 			$::d_info && Slim::Utils::Misc::msg("Inc SoungCount(1) $url\n");
-			$songCount++;
 			my $time = $cacheEntryHash->{SECS};
 			if ($time) {
 			$total_time += $time;
@@ -566,7 +603,6 @@ sub cacheEntry {
 			updateGenreCache($url, $cacheEntryHash);
 			updateArtworkCache($url, $cacheEntryHash);
 			$::d_info && Slim::Utils::Misc::msg("Inc SongCount(2) $url\n");
-			$songCount++;
 			my $time = $cacheEntryHash->{SECS};
 			if ($time) {
 				$total_time += $time;
@@ -622,15 +658,16 @@ sub updateCacheEntry {
 		$infoCache{$url} = $cacheEntryArray;
 		if (Slim::Utils::Prefs::get('usetagdatabase')) {
 			$infoCacheDB{$url} = $cacheEntryArray;
+			$dbCacheDirty=1;
 		}
 		
-		if ($newsong && isSong($url) && !isHTTPURL($url) && -e $url) {
+		if ($newsong && isSong($url) && !isHTTPURL($url)) {
 			$::d_info && Slim::Utils::Misc::msg("Inc SongCount(3) $url\n");
-			$songCount++;
 			my $time = $cacheEntryHash->{SECS};
 			if ($time) {
 				$total_time += $time;
 			}
+			$songCount++;
 		}
 	}
 }

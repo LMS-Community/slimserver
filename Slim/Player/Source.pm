@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.58 2004/01/23 05:59:43 kdf Exp $
+# $Id: Source.pm,v 1.59 2004/01/24 18:50:25 dean Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -290,7 +290,6 @@ sub playmode {
 					return $everyclient->playmode();
 				}
 				Slim::Player::Playlist::refreshPlaylist($everyclient);
-				$everyclient->update();
 			}
 		}
 	$::d_source && msg($client->id() . ": Current playmode: " . $client->playmode() . "\n");
@@ -315,6 +314,7 @@ sub underrun {
 		skipahead($client);
 	} elsif ($client && ($client->playmode eq 'playout-stop') && !Slim::Player::Sync::isSynced($client)) {
 		playmode($client, 'stop');
+		$client->update();
 	}
 }
 
@@ -514,6 +514,7 @@ sub openNext {
 				$nextsong = 0;
 				currentSongIndex($client, $nextsong);
 				playmode($client, $result ? 'playout-stop' : 'stop');
+				$client->update();
 				return 0;
 			} else {
 				$nextsong = nextsong($client);

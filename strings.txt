@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.51 2004/01/20 20:30:56 dean Exp $
+# $Id: strings.txt,v 1.52 2004/01/24 18:50:24 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -916,7 +916,7 @@ SETUP_GROUP_ALARM
 	SE	Väckarklocka
 	
 SETUP_GROUP_ALARM_DESC
-	EN	Settings for server alarm clock. Each player can have an alarm set.  If active, it will repeat every 24 hours.
+	EN	Settings for alarm clock. Each player can have an alarm set.  If active, it will repeat every 24 hours.
 
 SETUP_GROUP_IRSETS
 	DE	Fernbedienungen
