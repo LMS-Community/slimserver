@@ -897,10 +897,10 @@ sub browser_addtolist_done {
 				$list_form{'title'}         = Slim::Music::Info::standardTitle(undef, $item);
 			}
 			
-			$list_form{'item'}		= $obj->id();
+			$list_form{'item'}	= $obj->id();
 			$list_form{'itempath'}	= Slim::Utils::Misc::virtualToAbsolute($item);
 			$list_form{'itemobj'}	= $obj;
-			$list_form{'odd'}		= ($itemnumber + $offset) % 2;
+			$list_form{'odd'}	= ($itemnumber + $offset) % 2;
 			$list_form{'player'}	= $current_player;
 
 			my $anchor = anchor(Slim::Utils::Text::getSortName($list_form{'title'}),1);
@@ -1608,38 +1608,39 @@ sub _fillInSearchResults {
 		for my $item (@$results[$start..$end]) {
 
 			# Contributor/Artist uses name, Album & Track uses title.
-			my $title     = $item->can('title') ? $item->title() : $item->name();
+			my $title     = $item->can('title')     ? $item->title()     : $item->name();
+			my $sorted    = $item->can('titlesort') ? $item->titlesort() : $item->namesort();
 			my %list_form = %$params;
 
-			$list_form{'includeArtist'}	= ($webFormat !~ /ARTIST/);
-			$list_form{'includeAlbum'}	= ($webFormat !~ /ALBUM/) ;
+			$list_form{'includeArtist'}    = ($webFormat !~ /ARTIST/);
+			$list_form{'includeAlbum'}     = ($webFormat !~ /ALBUM/) ;
 
 			if ($type eq 'song') {
 
-				$list_form{'title'}		= Slim::Music::Info::standardTitle(undef, $item);
-				$list_form{'artist'}	= $item->artist();
-				$list_form{'album'}		= $item->album();
-				$list_form{'item'}		= $item->id();
-				$list_form{'itempath'}	= $item->url();
+				$list_form{'title'}    = Slim::Music::Info::standardTitle(undef, $item);
+				$list_form{'artist'}   = $item->artist();
+				$list_form{'album'}    = $item->album();
+				$list_form{'item'}     = $item->id();
+				$list_form{'itempath'} = $item->url();
 
 			} else {
 
 				$list_form{'title'}		= $title;
 			}
 
-			$list_form{'itemobj'}		= $item;
-			$list_form{'attributes'}	= '&' . join('=', $type, $item->id());
-			$list_form{'hierarchy'}		= $hierarchy{$type};
-			$list_form{'level'}			= 0;
-			$list_form{'text'}			= $title;
-			$list_form{'descend'}		= $descend;
-			$list_form{'player'}		= $player;
-			$list_form{'odd'}			= ($itemnumber + 1) % 2;
-			$list_form{'skinOverride'}	= $params->{'skinOverride'};
+			$list_form{'itemobj'}      = $item;
+			$list_form{'attributes'}   = '&' . join('=', $type, $item->id());
+			$list_form{'hierarchy'}	   = $hierarchy{$type};
+			$list_form{'level'}        = 0;
+			$list_form{'text'}         = $title;
+			$list_form{'descend'}      = $descend;
+			$list_form{'player'}       = $player;
+			$list_form{'odd'}          = ($itemnumber + 1) % 2;
+			$list_form{'skinOverride'} = $params->{'skinOverride'};
 
 			$itemnumber++;
 
-			my $anchor = anchor(Slim::Utils::Text::getSortName($title), 1) || '';
+			my $anchor = substr($sorted, 0, 1);
 
 			if ($lastAnchor ne $anchor) {
 				$list_form{'anchor'} = $lastAnchor = $anchor;
@@ -1897,7 +1898,6 @@ sub browsedb {
 		my ($start, $end);
 
 		my $ignoreArticles = $levelInfo->{'ignoreArticles'};
-		my $alpha = $levelInfo->{'alphaPageBar'};
 
 		if (defined $params->{'nopagebar'}) {
 
@@ -1910,8 +1910,8 @@ sub browsedb {
 				$ignoreArticles ? (scalar(@$items) > 1) : 0,
 			);
 
-		} elsif ($alpha) {
-			
+		} elsif ($levelInfo->{'alphaPageBar'}) {
+
 			my $alphaitems = [ map &{$levelInfo->{'resultToSortedName'}}($_), @$items ];
 
 			($start, $end) = alphaPageBar(
@@ -1984,6 +1984,8 @@ sub browsedb {
 
 			my $itemid   = &{$levelInfo->{'resultToId'}}($item);
 			my $itemname = &{$levelInfo->{'resultToName'}}($item);
+			my $itemsort = &{$levelInfo->{'resultToSortedName'}}($item);
+
 			my $attrName = $levelInfo->{'nameTransform'} || $levels[$level];
 
 			$list_form{'hierarchy'}	    = $hierarchy;
@@ -1992,19 +1994,19 @@ sub browsedb {
 				$attrName . '=' . Slim::Web::HTTP::escape($itemid);
 
 			$list_form{'levelName'}	    = $attrName;
-			$list_form{'text'}	    	= $itemname;
+			$list_form{'text'}	    = $itemname;
 			$list_form{'descend'}	    = $descend;
 			$list_form{'player'}	    = $player;
-			$list_form{'odd'}	    	= ($itemnumber + 1) % 2;
+			$list_form{'odd'}	    = ($itemnumber + 1) % 2;
 			$list_form{$levels[$level]} = $itemid;
 			$list_form{'skinOverride'}  = $params->{'skinOverride'};
 			$list_form{'itemnumber'}    = $itemnumber;
-			$list_form{'itemobj'}		= $item;
+			$list_form{'itemobj'}	    = $item;
 
 			# This is calling into the %fieldInfo hash
 			&{$levelInfo->{'listItem'}}($ds, \%list_form, $item, $itemname, $descend);
 
-			my $anchor = Slim::Web::Pages::anchor(Slim::Utils::Text::getSortName($itemname), $ignoreArticles);
+			my $anchor = substr($itemsort, 0, 1);
 
 			if ($lastAnchor && $lastAnchor ne $anchor) {
 				$list_form{'anchor'} = $lastAnchor = $anchor;
@@ -2255,37 +2257,35 @@ sub alphaPageBar {
 	my $ignorearticles = shift;
 	my $skinOverride = shift;
 	my $maxcount = shift || Slim::Utils::Prefs::get('itemsPerPage');
+
 	my $itemcount = scalar(@$itemsref);
+
 	my $start = $$startref;
+
 	if (!$start) { 
 		$start = 0;
 	}
-	
+
 	if ($start >= $itemcount) { 
 		$start = $itemcount - $maxcount; 
 	}
-	
-	$$startref = $start;
-	
-	my $end = $itemcount-1;
-	if ($itemcount > $maxcount/2) {
 
-		my %pagebar_params = ();
-		if (!defined($otherparams)) {
-			$otherparams = '';
-		}
-		$pagebar_params{'otherparams'} =  $otherparams;
-		
+	$$startref = $start;
+
+	my $end = $itemcount - 1;
+
+	if ($itemcount > ($maxcount / 2)) {
+
 		my $lastLetter = '';
 		my $lastLetterIndex = 0;
 		my $pageslist = '';
+
 		$end = -1;
 
-		# This seems very inefficient - we're calling into anchor()
-		# and getSortName() more times than we need to be.
+		# This could be more efficient.
 		for (my $j = 0; $j < $itemcount; $j++) {
 
-			my $curLetter = anchor(Slim::Utils::Text::getSortName($itemsref->[$j]), $ignorearticles) || '';
+			my $curLetter = substr($itemsref->[$j], 0, 1) || '';
 
 			if ($lastLetter ne $curLetter) {
 
@@ -2297,26 +2297,30 @@ sub alphaPageBar {
 				}
 
 				$pageslist .= ${Slim::Web::HTTP::filltemplatefile('alphapagebarlist.html', {
-					'currpage' => ($lastLetterIndex == $start),
-					'itemnum0' => $lastLetterIndex,
-					'itemnum1' => ($lastLetterIndex + 1),
-					'pagenum' => $curLetter,
-					'fragment' => ("#" . $curLetter),
-					'otherparams' => $otherparams,
+					'currpage'     => ($lastLetterIndex == $start),
+					'itemnum0'     => $lastLetterIndex,
+					'itemnum1'     => ($lastLetterIndex + 1),
+					'pagenum'      => $curLetter,
+					'fragment'     => ("#" . $curLetter),
+					'otherparams'  => ($otherparams || ''),
 					'skinOverride' => $skinOverride,
-					'path' => $path
+					'path'         => $path
 				})};
-				
+
 				$lastLetter = $curLetter;
 			}
 		}
-		
+
 		if ($end == -1) {
 			$end = $itemcount - 1;
 		}
 
-		$pagebar_params{'pageslist'} = $pageslist;
-		$pagebar_params{'skinOverride'} = $skinOverride;
+		my %pagebar_params = (
+			'otherparams'  => ($otherparams || ''),
+			'pageslist'    => $pageslist,
+			'skinOverride' => $skinOverride,
+		);
+
 		$$pagebarref = ${Slim::Web::HTTP::filltemplatefile("pagebar.html", \%pagebar_params)};
 	}
 	
