@@ -85,7 +85,7 @@
 				<td class="content" align="left" valign="middle" width="70%">
 
 					<select name="search.genre">
-						<option value="">Any [% "GENRE" | string %]</option>
+						<option value="">[% "ANY_GENRE" | string %]</option>
 
 						[% FOREACH genre = genres %]
 
@@ -147,7 +147,7 @@
 					[% logicalSelectionBlock(name='search.bitrate.op') %]
 
 					<select name="search.bitrate">
-						<option value="">Any Value</option>
+						<option value="">[% "ANY_VALUE" | string %]</option>
 
 						[% FOREACH bitRate = [ 32 40 48 56 64 80 96 112 128 160 192 224 256 320 ] %]
 							<option value="[% bitRate %]" [% IF search.bitrate.value == (bitRate * 100) %]selected[% END %]>[% bitRate %]</option>
@@ -165,7 +165,7 @@
 					[% logicalSelectionBlock(name='search.samplerate.op') %]
 
 					<select name="search.samplerate">
-						<option value="">Any Value</option>
+						<option value="">[% "ANY_VALUE" | string %]</option>
 
 						[% FOREACH sampleRate = [ 32000 44100 ] %]
 							<option value="[% sampleRate %]">[% sampleRate %]</option>
@@ -180,7 +180,7 @@
 				<td class="content" align="left" valign="middle" width="70%">
 
 					<select name="search.ct">
-						<option value="">Any Type</option>
+						<option value="">[% "ANY_TYPE" | string %]</option>
 
 						[% FOREACH type = fileTypes.keys %]
 							<option value="[% type %]" [% IF search.ct.value == type %]selected[% END %]>[% fileTypes.$type %]</option>

@@ -21,6 +21,7 @@
 	
 	[% IF numresults == '-1' %]
 		<form action="advanced_search.html" method="GET" name="searchForm">
+		<input type="hidden" value="[% player %]" name="player">
 		<table border="0" cellpadding="3" cellspacing="1" width="100%">
 			<tr>
 				<td align="right">[% "TRACK" | string %]&nbsp;</td>
@@ -122,7 +123,7 @@
 				<td align="right" nowrap="nowrap">[% "TYPE" | string %]&nbsp;</td>
 				<td align="left">
 					<select name="search.ct">
-						<option value="">[% "ANY_VALUE" | string %]</option>
+						<option value="">[% "ANY_TYPE" | string %]</option>
 						[% FOREACH type = fileTypes.keys %]
 							<option value="[% type %]" [% IF search.ct.value == type %]selected[% END %]>[% fileTypes.$type %]</option>
 						[% END %]
@@ -178,6 +179,12 @@
 		    [% END %]
 		</table>
 		<table cellspacing="0" cellpadding="4" width="100%">
+			<tr bgcolor="#d0d0d0">
+				<td>[% "ALL_SONGS" | string %]</td>	
+				<td><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&sub=playtracks&listref=searchResults"><img src="html/images/b_play.gif" border=0 width="13" height="13"></a></td>	
+				<td>&nbsp;</td>
+				<td><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&sub=addtracks&listref=searchResults"><img src="html/images/b_add.gif" border=0 width="13" height="13"></a></td>	
+			</tr>
 			[% browse_list %]
 		</table>
 	[% END %]

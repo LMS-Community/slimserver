@@ -8611,3 +8611,15 @@ SETUP_SCROLLPIXELS_DESC
 	EN	On a player with a graphical display you can adjust the number of pixels (dots) that the player scrolls in each interval defined above.  Adjust this in conjunction with the Scroll Rate to adjust scrolling speed and quality.  Note that small values with low Scroll Rates look good, but require a higher performance server and uncongested network.  If in doubt leave as the default of 7 pixels.  (Min 1, Max 20).
 	ES	En un reproductor con pantalla gráfica, se puede ajustar el número de pixels (puntos) que el reproductor desplazará en cada intervalo definido arriba.  Para ajustar la velocidad y calidad de desplazamiento, ajustar este valor junto a la tasa de desplazamiento. Notar que valores muy pequeños, con una tasa de desplazamiento muy lenta se pueden ver muy bien, pero requieren un servidor con mayor perfomance y una red no congestionada. Si hay dudas, dejar el valor por defecto: 7 pixels. (Min 1, Max 20).
 
+ANY_GENRE
+	DE	Beliebige Stilrichtung
+	EN	Any Genre
+
+ANY_VALUE
+	DE	Beliebiger Wert
+	EN	Any Value
+
+ANY_TYPE
+	DE	Beliebiges Format
+	EN	Any File Format
+	
