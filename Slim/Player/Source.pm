@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.121 2004/11/07 06:37:05 vidur Exp $
+# $Id: Source.pm,v 1.122 2004/11/19 04:04:25 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -886,9 +886,11 @@ sub openSong {
 				}
 				else {
 					my $maxRate = Slim::Utils::Prefs::maxRate($client);
+					my $quality = Slim::Utils::Prefs::clientGet($client,'lameQuality');
+					
 					$command = tokenizeConvertCommand($command, $type, '-', 
 													  $fullpath, 0 , $maxRate,
-													  1);
+													  1, $quality);
 					$::d_source && msg("tokenized command $command\n");
 					my $pipeline = Slim::Player::Pipeline->new($sock, 
 															   $command);
@@ -1054,7 +1056,8 @@ sub openSong {
 						
 		} else {
 
-			$command = tokenizeConvertCommand($command, $type, $filepath, $fullpath, $samplerate, $maxRate);
+			my $quality = Slim::Utils::Prefs::clientGet($client,'lameQuality');
+			$command = tokenizeConvertCommand($command, $type, $filepath, $fullpath, $samplerate, $maxRate,undef,$quality);
 
 			$client->audioFilehandle( FileHandle->new() );
 			$client->audioFilehandle->open($command);
@@ -1289,7 +1292,7 @@ sub getConvertCommand {
 }
 
 sub tokenizeConvertCommand {
-	my ($command, $type, $filepath, $fullpath, $samplerate, $maxRate, $nopipe) = @_;
+	my ($command, $type, $filepath, $fullpath, $samplerate, $maxRate, $nopipe,$quality) = @_;
 
 	# XXX what is this?
 	my $swap = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
@@ -1322,6 +1325,7 @@ sub tokenizeConvertCommand {
 	$command =~ s/\$FILE\$/"$filepath"/g;
 	$command =~ s/\$URL\$/"$fullpath"/g;
 	$command =~ s/\$RATE\$/$samplerate/g;
+	$command =~ s/\$QUALITY\$/$quality/g;
 	$command =~ s/\$BITRATE\$/$maxRate/g;
 	$command =~ s/\$-x\$/$swap/g;
 

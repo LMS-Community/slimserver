@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.110 2004/11/03 22:28:10 vidur Exp $
+# $Id: Setup.pm,v 1.111 2004/11/19 04:04:26 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -121,6 +121,8 @@ sub initSetupConfig {
 						if (scalar(keys %{Slim::Buttons::Common::hash_of_savers()}) > 0) {
 							push @{$pageref->{'GroupOrder'}}, 'ScreenSaver';
 							$pageref->{'Prefs'}{'screensaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
+							$pageref->{'Prefs'}{'idlesaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
+							$pageref->{'Prefs'}{'offsaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
 						}
 					} else {
 						$pageref->{'GroupOrder'} = ['Default','TitleFormats'];
@@ -187,12 +189,13 @@ sub initSetupConfig {
 					,'GroupLine' => 1
 				}
 			,'ScreenSaver' => {
-				'PrefOrder' => ['screensaver','screensavertimeout']
+				'PrefOrder' => ['screensaver','idlesaver','offsaver','screensavertimeout']
 				,'Suppress_PrefHead' => 1
 				,'Suppress_PrefDesc' => 1
 				,'Suppress_PrefLine' => 1
 				,'Suppress_PrefSub' => 1
-				,'GroupHead' => string('SETUP_SCREENSAVER')
+				,'PrefsInTable' => 1
+				,'GroupHead' => string('SCREENSAVERS')
 				,'GroupDesc' => string('SETUP_SCREENSAVER_DESC')
 				,'GroupLine' => 1
 				,'GroupSub' => 1
@@ -250,6 +253,16 @@ sub initSetupConfig {
 									}
 						}
 			,'screensaver'	=> {
+							'validate' => \&validateInHash
+							,'validateArgs' => [\&Slim::Buttons::Common::hash_of_savers,1]
+							,'options' => undef #will be set by preEval  
+						}
+			,'idlesaver'	=> {
+							'validate' => \&validateInHash
+							,'validateArgs' => [\&Slim::Buttons::Common::hash_of_savers,1]
+							,'options' => undef #will be set by preEval  
+						}
+			,'offsaver'	=> {
 							'validate' => \&validateInHash
 							,'validateArgs' => [\&Slim::Buttons::Common::hash_of_savers,1]
 							,'options' => undef #will be set by preEval  
@@ -833,11 +846,11 @@ sub initSetupConfig {
 					my ($client,$paramref,$pageref) = @_;
 					return if (!defined($client));
 					playerChildren($client, $pageref);
-					$pageref->{'GroupOrder'}[1] = 'Display';
+					
 					if ($client && $client->hasDigitalOut()) {
-						$pageref->{'GroupOrder'}[2] = 'Digital';
+						$pageref->{'GroupOrder'}[3] = 'Digital';
 					} else {
-						$pageref->{'GroupOrder'}[2] = undef;
+						$pageref->{'GroupOrder'}[3] = undef;
 					}
 					my @formats = $client->formats();
 					if ($formats[0] ne 'mp3') {
@@ -847,15 +860,20 @@ sub initSetupConfig {
 						delete $pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'};
 						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = string('SETUP_MP3BITRATE_DESC');
 					}
-					$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = Slim::Utils::Misc::findbin('lame') ? string('SETUP_LAME_FOUND') : string('SETUP_LAME_NOT_FOUND');
-					
+					if (Slim::Utils::Misc::findbin('lame')) {
+						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = string('SETUP_LAME_FOUND');
+						$pageref->{'GroupOrder'}[1] = 'Quality';
+					} else {
+						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = string('SETUP_LAME_NOT_FOUND');
+						$pageref->{'GroupOrder'}[1] = undef;
+					}
 					if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0))  {
-						$pageref->{'GroupOrder'}[1] = 'Synchronize';
+						$pageref->{'GroupOrder'}[2] = 'Synchronize';
 						my $syncGroupsRef = syncGroups($client);
 						$pageref->{'Prefs'}{'synchronize'}{'options'} = $syncGroupsRef;
 						$pageref->{'Prefs'}{'synchronize'}{'validateArgs'} = [$syncGroupsRef];
 					} else {
-						$pageref->{'GroupOrder'}[1] = undef;
+						$pageref->{'GroupOrder'}[2] = undef;
 					}
 		}
 		,'postChange' => sub {
@@ -874,7 +892,7 @@ sub initSetupConfig {
 					}
 					$client->update();
 				}
-		,'GroupOrder' => ['Format',undef,'Digital']
+		,'GroupOrder' => ['Format',undef,undef,'Digital']
 		,'Groups' => {
 			'Format' => {
 					'PrefOrder' => ['lame','maxBitrate']
@@ -884,6 +902,9 @@ sub initSetupConfig {
 					,'GroupHead' => string('SETUP_MAXBITRATE')
 					,'GroupLine' => 1
 					,'GroupSub' => 1
+				}
+			,'Quality' => {
+					'PrefOrder' => ['lameQuality']
 				}
 			,'Synchronize' => {
 					'PrefOrder' => ['synchronize','syncVolume','syncPower']
@@ -916,6 +937,23 @@ sub initSetupConfig {
 						,'noWarning' => 1
 						,'dontSet' => 1
 						,'inputTemplate' => undef
+						}
+			,'lameQuality' => {
+							'validate' => \&validateInt
+							,'validateArgs' => [0,9,1,1]
+							,'optionSort' => 'V'
+							,'options' => {
+									'0' => '0 '.string('LAME0')
+									,'1' => '1'
+									,'2' => '2'
+									,'3' => '3'
+									,'4' => '4'
+									,'5' => '5'
+									,'6' => '6'
+									,'7' => '7'
+									,'8' => '8'
+									,'9' => '9 '.string('LAME9')
+								}
 						}
 			,'synchronize' => {
 							'dontSet' => 1

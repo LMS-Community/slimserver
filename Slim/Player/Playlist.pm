@@ -139,7 +139,7 @@ sub removeTrack {
 		Slim::Player::Source::jumpto($client, $tracknum);
 	}
 	
-	refreshPlaylist($client);
+	refreshPlaylist($client,Slim::Buttons::Playlist::browseplaylistindex($client));
 
 }
 
@@ -228,10 +228,11 @@ sub forgetClient {
 
 sub refreshPlaylist {
 	my $client = shift;
+	my $index = shift;
 	# make sure we're displaying the new current song in the playlist view.
 	foreach my $everybuddy ($client, Slim::Player::Sync::syncedWith($client)) {
 		if ($everybuddy->isPlayer()) {
-			Slim::Buttons::Playlist::jump($everybuddy);
+			Slim::Buttons::Playlist::jump($everybuddy,$index);
 		}
 	}
 	

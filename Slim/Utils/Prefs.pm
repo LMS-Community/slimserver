@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.91 2004/10/19 23:35:37 vidur Exp $
+# $Id: Prefs.pm,v 1.92 2004/11/19 04:04:26 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -195,13 +195,13 @@ my %prefChange = (
 	'CLIENTPREFS' => {
 		'powerOnBrightness' => sub {
 			my ($client,$newvalue) = @_;
-			if (Slim::Buttons::Common::mode($client) && Slim::Buttons::Common::mode($client) ne 'off') {
+			if ($client->power()) {
 				$client->brightness($newvalue);
 			}
 		}
 		,'powerOffBrightness' => sub {
 			my ($client,$newvalue) = @_;
-			if (Slim::Buttons::Common::mode($client) && Slim::Buttons::Common::mode($client) eq 'off') {
+			if (!$client->power()) {
 				$client->brightness($newvalue);
 			}
 		}

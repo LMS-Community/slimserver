@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.145 2004/10/27 23:36:14 vidur Exp $
+# $Id: strings.txt,v 1.146 2004/11/19 04:04:23 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1621,6 +1621,18 @@ SETUP_LAME_FOUND
 	FR	LAME semble être installé correctement sur votre système.
 	SE	LAME verkar vara korrekt installerad i ditt system.
 
+LAME0
+	EN	Highest Quality, very slow
+
+LAME9
+	EN	Poor Quality, but fast
+
+SETUP_LAMEQUALITY
+	EN	LAME Quality Level
+
+SETUP_LAMEQUALITY_DESC
+	EN	The LAME MP3 encoder may be used to convert your music to MP3 format for streaming.  You can adjust the quality setting for LAME in the range 0 to 9.  9 is the default setting, which sounds very good at high bit rates and and uses the least amount of computing power. 0 is the highest quality, but may slow your computer down.  Some computers running SlimServer may not be able to convert fast enough with higher quality settings.
+
 SETUP_MP3SILENCEPRELUDE
 	DE	Audio Startzeit
 	EN	Audio Startup Time
@@ -2838,7 +2850,7 @@ SETUP_HISTORYLENGTH_DESC
 SETUP_SCREENSAVER
 	DE	Bildschirmschoner
 	DK	Pauseskærm
-	EN	Screensaver
+	EN	Screensaver (Playing)
 	ES	Salvapantalla
 	FI	Näytönsäästäjä
 	FR	Ecran de veille
@@ -2847,17 +2859,28 @@ SETUP_SCREENSAVER
 	PT	Protecção de Ecrã
 	SE	Skärmsläckare
 
+SETUP_OFFSAVER
+	EN	Screensaver (Off)
+
+SETUP_IDLESAVER
+	EN	Screensaver (Stopped)
+
 SETUP_SCREENSAVER_CHOOSE
 	DE	Wählen Sie einen Bildschirmschoner
-	EN	Choose your custom screensaver:
+	EN	Choose a screensaver to use when playing:
 	FR	Choisissez un écran de veille
 	NO	Velg din skjermsparer
 	SE	Välj din anpassade skärmsläckare
 
-SETUP_SCREENSAVER_DESC
-	FR	Vous pouvez modifier l'écran de veille courant ainsi que le délai avant son activation. Entrez 0 pour désactiver l'écran de veille courant.
-	EN	You can your current screensaver and the duration to wait before enabling the screensaver. Set this duration to zero to never show the current screensaver.
+SETUP_IDLESAVER_CHOOSE
+	EN	Choose a screensaver to use when not playing:
 
+SETUP_OFFSAVER_CHOOSE
+	EN	Choose a screensaver to use when powered off:
+
+SETUP_SCREENSAVER_DESC
+	EN	You can choose screensavers to display information after some duration of inactivity from the remote control.  You can choose and the duration to wait before enabling the screensaver. You can also choose different screensavers depending on if the player is playing audio, stopped, or powered off.
+	
 SETUP_SCREENSAVERTIMEOUT
 	DE	Bildschirmschoner Verzögerung:
 	EN	Screensaver Delay

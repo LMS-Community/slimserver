@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.36 2004/10/19 23:35:37 vidur Exp $
+# $Id: Player.pm,v 1.37 2004/11/19 04:04:25 kdf Exp $
 #
 package Slim::Player::Player;
 use strict;
@@ -40,6 +40,7 @@ my $defaultPrefs = {
 									'PLUGINS', 
 									]
 		,'mp3SilencePrelude' 	=> 0
+		,'lameQuality'			=> 9
 		,'offDisplaySize'		=> 0
 		,'pitch'				=> 100
 		,'playingDisplayMode'	=> 0
@@ -47,6 +48,8 @@ my $defaultPrefs = {
 		,'powerOffBrightness'	=> 1
 		,'powerOnBrightness'	=> 4
 		,'screensaver'			=> 'playlist'
+		,'idlesaver'			=> 'playlist'
+		,'offsaver'				=> 'off'
 		,'screensavertimeout'	=> 30
 		,'scrollPause'			=> 3.6
 		,'scrollPauseDouble'	=> 3.6
@@ -245,16 +248,13 @@ sub power {
 	my $client = shift;
 	my $on = shift;
 	
-	my $mode = Slim::Buttons::Common::mode($client);
-	my $currOn;
-	if (defined($mode)) {
-		$currOn = $mode ne "off" ? 1 : 0;
-	}
+	my $currOn = Slim::Utils::Prefs::clientGet($client,'power');
 	
 	if (!defined $on) {
 		return ($currOn);
 	} else {
-		if (!defined($currOn) || ($currOn != $on)) {
+		if (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on)) {
+			Slim::Utils::Prefs::clientSet($client, 'power', $on);
 			if ($on) {
 				Slim::Buttons::Common::setMode($client, 'home');
 				
@@ -273,11 +273,9 @@ sub power {
 			} else {
 				Slim::Buttons::Common::setMode($client, 'off');
 			}
-			# remember that we were on if we restart the server
-			Slim::Utils::Prefs::clientSet($client, 'power', $on ? 1 : 0);
 		}
 	}
-}			
+}
 
 sub maxVolume { return 100; }
 sub minVolume {	return 0; }
@@ -405,9 +403,7 @@ sub textSize {
 	my $client = shift;
 	my $newsize = shift;
 	
-	my $mode = Slim::Buttons::Common::mode($client);
-	
-	my $prefname = ($mode && $mode eq 'off') ? "offDisplaySize" : "doublesize";
+	my $prefname = ($client->power()) ? "doublesize" : "offDisplaySize";
 	
 	if (defined($newsize)) {
 		return	Slim::Utils::Prefs::clientSet($client, $prefname, $newsize);

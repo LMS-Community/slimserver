@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.41 2004/10/06 15:56:06 vidur Exp $
+# $Id: Common.pm,v 1.42 2004/11/19 04:04:24 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -284,7 +284,7 @@ my %functions = (
 		my $button = shift;
 		my $buttonarg = shift;
 		unless (defined $buttonarg) { return; }
-		my $brightmode = 'power' . ((mode($client) eq 'off') ? 'Off' : 'On') . 'Brightness';
+		my $brightmode = 'power' . ($client->power() ? 'On' : 'Off') . 'Brightness';
 		my $newBrightness;
 		if ($buttonarg eq 'toggle') {
 			$newBrightness = $client->brightness() - 1;

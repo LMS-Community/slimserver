@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.16 2004/11/04 18:12:18 dave Exp $
+# $Id: SqueezeboxG.pm,v 1.17 2004/11/19 04:04:25 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -97,8 +97,7 @@ sub maxBrightness {
 sub maxTextSize {
 	my $client = shift;
 
-	my $mode = Slim::Buttons::Common::mode($client);
-	my $prefname = ($mode && $mode eq 'off') ? "idleFont" : "activeFont";
+	my $prefname = ($client->power()) ? "activeFont" : "idleFont";
 	Slim::Utils::Prefs::clientGetArrayMax($client,$prefname);
 }
 
@@ -106,10 +105,8 @@ sub textSize {
 	my $client = shift;
 	my $newsize = shift;
 	
-	my $mode = Slim::Buttons::Common::mode($client);
-	
 	# grab base for prefname depending on mode
-	my $prefname = ($mode && $mode eq 'off') ? "idleFont" : "activeFont";
+	my $prefname = ($client->power()) ? "activeFont" : "idleFont";
 	
 	if (defined($newsize)) {
 		return	Slim::Utils::Prefs::clientSet($client, $prefname."_curr", $newsize);
@@ -252,10 +249,9 @@ sub fonts {
 		$font = Slim::Buttons::Common::param($client,'font');
 	} else {
 		unless (defined $size) {$size = $client->textSize();}
-		my $mode = Slim::Buttons::Common::mode($client);
 		
 		# grab base for prefname depending on mode
-		my $prefname = ($mode && $mode eq 'off') ? "idleFont" : "activeFont";
+		my $prefname = ($client->power()) ? "activeFont" : "idleFont";
 		$font	= Slim::Utils::Prefs::clientGet($client, $prefname, $size);
 	}
 	

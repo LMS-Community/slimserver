@@ -1,6 +1,6 @@
 package Slim::Buttons::ScreenSaver;
 
-# $Id: ScreenSaver.pm,v 1.21 2004/08/06 04:16:45 kdf Exp $
+# $Id: ScreenSaver.pm,v 1.22 2004/11/19 04:04:25 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -49,7 +49,7 @@ sub screenSaver {
 	assert($mode);
 	
 	# some variables, so save us calling the same functions multiple times.
-	my $saver = Slim::Utils::Prefs::clientGet($client,'screensaver');
+	my $saver = $client->playmode eq 'play' ? Slim::Utils::Prefs::clientGet($client,'screensaver') : Slim::Utils::Prefs::clientGet($client,'idlesaver');
 	my $dim = Slim::Utils::Prefs::clientGet($client,'idleBrightness');
 	my $timeout = Slim::Utils::Prefs::clientGet($client,"screensavertimeout");
 	my $irtime = Slim::Hardware::IR::lastIRTime($client);
@@ -67,7 +67,7 @@ sub screenSaver {
 			$irtime &&
 			$irtime < $now - $timeout && 
 			$mode ne 'block' &&
-			$mode ne 'off') {
+			$client->power()) {
 		$client->brightness($dim);
 	}
 
@@ -80,7 +80,7 @@ sub screenSaver {
 			$mode ne $saver &&
 			$mode ne 'screensaver' && # just in case it falls into default, we dont want recursive pushModes
 			$mode ne 'block' &&
-			$mode ne 'off') {
+			$client->power()) {
 		
 		# we only go into screensaver mode if we've timed out 
 		# and we're not off or blocked
@@ -100,7 +100,16 @@ sub screenSaver {
 				Slim::Buttons::Common::pushMode($client,'screensaver');
 			}
 			$client->update();
-		} 
+		}
+	} elsif (!$client->power()) {
+		$saver = Slim::Utils::Prefs::clientGet($client,'offsaver');
+		if (Slim::Buttons::Common::validMode($saver)) {
+			Slim::Buttons::Common::pushMode($client, $saver);
+		} else {
+			$::d_plugins && msg("Mode ".$saver." not found, using default\n");
+			Slim::Buttons::Common::setMode($client,'off');
+		}
+		$client->update();
 	} else {
 		# try to scroll the bottom, if necessary
 		$client->scrollBottom();
@@ -119,7 +128,7 @@ sub wakeup {
 	
 	my $curBrightnessPref;
 	
-	if (Slim::Buttons::Common::mode($client) eq 'off') {
+	if (Slim::Buttons::Common::mode($client) eq 'off' || !$client->power()) {
 		$curBrightnessPref = Slim::Utils::Prefs::clientGet($client, 'powerOffBrightness');
 	} else {
 		$curBrightnessPref = Slim::Utils::Prefs::clientGet($client, 'powerOnBrightness');		
@@ -137,7 +146,7 @@ sub wakeup {
 		$button ne 'brightness_up' && 
 		$button ne 'brightness_toggle' &&
 		$client->brightness() == 0 &&
-		Slim::Buttons::Common::mode($client) ne 'off') { 
+		$client->power()) { 
 			Slim::Utils::Prefs::clientSet($client, 'powerOnBrightness', 1);		
 	}
 } 

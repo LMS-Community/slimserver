@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.36 2004/09/13 18:44:42 dean Exp $
+# $Id: Playlist.pm,v 1.37 2004/11/19 04:04:24 kdf Exp $
 
 # Slim Server Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -112,11 +112,11 @@ my %functions = (
 		my $client = shift;
 		if (Slim::Player::Playlist::count($client) > 0) {
 			# rec button deletes an entry if you are browsing the playlist...
+			my $songtitle = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, browseplaylistindex($client)));
+			Slim::Control::Command::execute($client, ["playlist", "delete", browseplaylistindex($client)]);	
 			$client->showBriefly(
 					string('REMOVING_FROM_PLAYLIST'), 
-					Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, browseplaylistindex($client))), undef, 1);
-		
-			Slim::Control::Command::execute($client, ["playlist", "delete", browseplaylistindex($client)]);	
+					$songtitle, undef, 1);
 		}
 	},
 	
