@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.8 2003/08/12 00:52:46 dean Exp $
+# $Id: Setup.pm,v 1.9 2003/08/29 09:51:24 kdf Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -814,7 +814,7 @@ sub initSetupConfig {
 			'Default' => {
 					'PrefOrder' => ['screensaverjump','screensavertimeout','displaytexttimeout'
 							,'composerInArtists','playtrackalbum','artistinalbumsearch', 'ignoredarticles','filesort'
-							,'persistPlaylists','reshuffleOnRepeat',
+							,'persistPlaylists','reshuffleOnRepeat','saveShuffled',
 							,'savehistory','historylength','checkVersion']
 				}
 			}
@@ -878,6 +878,13 @@ sub initSetupConfig {
 						,'options' => {
 								'1' => string('SETUP_RESHUFFLEONREPEAT_1')
 								,'0' => string('SETUP_RESHUFFLEONREPEAT_0')
+							}
+					}
+			,'saveShuffled' => {
+						'validate' => \&validateTrueFalse
+						,'options' => {
+								'1' => string('SETUP_SAVESHUFFLED_1')
+								,'0' => string('SETUP_SAVESHUFFLED_0')
 							}
 					}
 			,'savehistory' => {
