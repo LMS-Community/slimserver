@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.71 2004/03/26 17:08:52 dean Exp $
+# $Id: strings.txt,v 1.72 2004/04/03 02:41:10 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1925,6 +1925,15 @@ SETUP_INCLUDENOART_DESC
 	DE	Legen Sie fest, ob Albums ohne Plattencover beim Nachschlagen nach Plattencover angezeigt werden sollen. Fehlt das Plattencover, so wird ein leerer Platzhalter eingesetzt, oder das Album wird gänzlich weggelassen.
 	EN	Choose whether or not to include albums that currently have no artwork when browsing by artwork.  Where no art is found, a blank image will be inserted as a placeholder, or they can be left out of the browse entirely.
 	FR	Choisissez si l'interface doit afficher ou non les albums qui ne possèdent pas de pochette en mode Parcourir les pochettes. En l'absence de pochette, vous pouvez soit afficher une image vide, soit ignorer l'album.
+
+SETUP_IGNOREMP3TAGS
+	EN	Ignore MP3 Tags
+
+SETUP_IGNOREMP3TAGS_DESC
+	EN	You can choose whether SlimServer should ignore the MP3 ID3 tag information that may be embedded in the MP3 files and just use the file and folder names to identify your music library.
+
+SETUP_READMP3TAGS
+	EN	Read MP3 Tags
 
 SETUP_PLUGINS_OK
 	DE	Ihr Plugin-Menü enthält:
@@ -4518,6 +4527,9 @@ ALL_SONGS
 	NO	Alle sanger
 	PT	Todas as Músicas
 	SE	Alla låtar
+
+ALL_ARTISTS
+	EN	All Artists
 
 ALL_ALBUMS
 	DE	Alle Alben

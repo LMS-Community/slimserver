@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.85 2004/03/30 16:32:22 dean Exp $
+# $Id: Info.pm,v 1.86 2004/04/03 02:41:11 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1956,6 +1956,15 @@ sub readTags {
 
 
 	$::d_info && Slim::Utils::Misc::msg("Updating cache for: " . $file . "\n");
+
+	if (Slim::Utils::Prefs::get('ignoreMP3Tags')) {
+		$tempCacheEntry->{'TITLE'} = plainTitle($file, $type);;
+		$tempCacheEntry->{'CT'} = $type;
+		$tempCacheEntry->{'TAG'} = 1;
+	
+		updateCacheEntry($file, $tempCacheEntry);
+		return $tempCacheEntry;
+	}
 	
 	if (isSong($file, $type) ) {
 		if (isHTTPURL($file)) {
@@ -2199,7 +2208,7 @@ sub readCoverArtTags {
 	my $filepath;
 	my $image = shift || 'cover';
 
-	if (! Slim::Utils::Prefs::get('lookForArtwork')) { return undef};
+	if (! Slim::Utils::Prefs::get('lookForArtwork') || Slim::Utils::Prefs::get('ignoreMP3Tags')) { return undef};
 
 	my $body;	
 	my $contenttype;
@@ -2471,10 +2480,10 @@ sub updateGenreCache {
 		}
 	}
 
-	foreach my $genre (split(/[;\0]/,$genre)) {
+	foreach my $genre (split(/[;\/\0]/,$genre)) {
 		$genre=~s/^\s*//;$genre=~s/\s*$//;
 		my $genreCase = ignoreCaseArticles($genre);
-		foreach my $artist (split(/[;\0]/,$artist)) {
+		foreach my $artist (split(/[;\/\0]/,$artist)) {
 			$artist=~s/^\s*//;$artist=~s/\s*$//;
 			my $artistCase = ignoreCaseArticles($artist);
 			my $albumCase = ignoreCaseArticles($album);
@@ -2506,7 +2515,7 @@ sub updateGenreCache {
 sub includeSplitTag {
 	my ($genreCase,$albumCase,$trackCase,$file,$tag) = @_;	
 	if (defined $tag) {
-		foreach my $tag (split(/[;\0]/,$tag)) {
+		foreach my $tag (split(/[;\/\0]/,$tag)) {
 			$tag=~s/^\s*//;$tag=~s/\s*$//;
 			my $tagCase = ignoreCaseArticles($tag);
 			$genreCache{$genreCase}{$tagCase}{$albumCase}{$trackCase} = $file;

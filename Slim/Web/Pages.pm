@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.59 2004/04/02 04:39:27 kdf Exp $
+# $Id: Pages.pm,v 1.60 2004/04/03 02:41:10 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -26,6 +26,7 @@ sub home {
 	$params->{'newVersion'} = $::newVersion if $::newVersion;
 	$params->{'nofolder'} = 1  if  Slim::Music::iTunes::useiTunesLibrary();
 	$params->{'noartwork'} = 1 if !Slim::Utils::Prefs::get('lookForArtwork');
+	$params->{'noID3'} = 1 if Slim::Utils::Prefs::get('ignoreMP3Tags');
 	
 	# fill out the client setup choices
 	foreach my $player (sort { $a->name() cmp $b->name() } Slim::Player::Client::clients()) {
