@@ -1560,9 +1560,11 @@ sub _fillInSearchResults {
 
 			if ($type eq 'song') {
 
-				$list_form{'title'} = Slim::Music::Info::standardTitle(undef, $item);
-				$list_form{'item'}  = $item->id();
-				$list_form{'itempath'} = $item->url();
+				$list_form{'title'}		= Slim::Music::Info::standardTitle(undef, $item);
+				$list_form{'artist'}	= Slim::Music::Info::artist($item);
+				$list_form{'album'}		= Slim::Music::Info::album($item);
+				$list_form{'item'}		= $item->id();
+				$list_form{'itempath'}	= $item->url();
 
 			} else {
 
