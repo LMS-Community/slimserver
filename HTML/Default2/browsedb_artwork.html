@@ -9,14 +9,13 @@
   %]&quot;)">[% item | html %][% IF year %] ([% year %])[% END %]</a>
   [% END %]
  </div>
- <br><span class="browselistbuttons">[% IF descend %]
- <img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks[% attributes | html %]&quot;)"
- alt="Add" src="html/images/add.gif" width="8" height="8"/><img src="html/images/play.this.gif" width="5" height="9"
- alt="Play" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks[% attributes | html
- %]&quot;)"/>[% ELSE %]
- <img src="html/images/add.gif" onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=add&amp;p2=[% itempath |
- uri %]&quot;)" alt="Add" width="8" height="8"/><img alt="Play" src="html/images/play.this.gif" width="5" height="9"
- onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&quot;)"/>[% END %]
+ <span class="browselistbuttons">[% IF descend %]
+ <a onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks[% attributes | html %]&quot;)"
+ >[% "PLAY" | string %]</a>&nbsp;&nbsp;<a onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks[% attributes | html %]&quot;)">[% "ADD_TO_PLAYLIST" | string %]</a>[% ELSE %]
+  <a onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks&amp;track=[%
+  item %]&quot;)">[% "PLAY" | string %]</a>&nbsp;&nbsp;<a
+  onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks&amp;track=[% item %]&quot;)"
+  >[% "ADD_TO_PLAYLIST" | string %]</a>[% END %]
  </span>
 </div>
 

@@ -1,8 +1,12 @@
 <tr>
- <td class="browselistbuttons">
-  <img src="html/images/add.gif" onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=add&amp;p2=[% itempath
-  | uri %]&quot;)" alt="Add" width="8" height="8"/><img alt="Play" src="html/images/play.this.gif" width="5" height="9"
-  onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&quot;)"/>
+ <td class="browselistbuttons">[% IF descend %]
+  <img height="8" width="8" onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=append&amp;p2=[% itempath |
+  uri %]&quot;)" src="html/images/add.gif" alt="Add"/><img alt="Play" src="html/images/play.this.gif" width="5" height="9"
+  onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&quot;)"/>[% ELSE %]
+  <img height="8" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks&amp;track=[%
+  item %]&quot;)" width="8" src="html/images/add.gif" alt="Add"/><img alt="Play" src="html/images/play.this.gif" width="5"
+  onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks&amp;track=[% item %]&quot;)"
+  height="9"/>[% END %]
  </td>
  <td class="listing">
   [% IF anchor %]<a name="[% anchor %]"></a>[% END ; IF descend ; IF NOT nobrowse %]
