@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.68 2004/04/23 18:58:24 vidur Exp $
+# $Id: Pages.pm,v 1.69 2004/04/23 19:27:09 vidur Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -47,9 +47,11 @@ sub home {
 	foreach my $plugin (Slim::Buttons::Plugins::enabledPlugins()) {
 		my $pages = Slim::Buttons::Plugins::getWebPages($plugin);
 		my $path;
+		# Check if the plugin handles pages directly
 		if (defined($pages)) {
 			$path = $pages->{'path'} . $pages->{'index'};
 		}
+		# If not, check if it has a setup group
 		elsif (Slim::Web::Setup::existsCategory("PLUGINS.${plugin}")) {
 			$path = "setup.html?page=PLUGINS.${plugin}";
 		}
