@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.8 2003/10/09 04:19:50 dean Exp $
+#	$Id: Information.pm,v 1.9 2003/10/09 15:27:37 kdf Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -47,7 +47,7 @@ use Slim::Utils::Strings qw(string);
 use strict;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.8 $,10);
+$VERSION = substr(q$Revision: 1.9 $,10);
 
 my @main_list = qw(
     library
@@ -71,15 +71,6 @@ my @player_list = (
     [ 'PLAYER_IP',    'string',  1,  sub { shift->ip } ],
     [ 'PLAYER_PORT',  'string',  1,  sub { shift->port } ],
     [ 'PLAYER_MAC',   'string',  1,  sub { uc(shift->macaddress) } ],
-    [ 'PLAYER_SIGNAL_STRENGTH', 'string', 1, sub { 
-    	my $client = shift;
-    	if ($client->model eq 'squeezebox') { 
-    		return $client->signalStrength();
-    	}
-    	else { 
-    		return undef;
-    	}
-    } ],
 );
 
 my @server_list = (
@@ -342,50 +333,53 @@ sub strings {
 sub setmode_submenu {
     my $client = shift;
     my $ref = $context{$client};
-
-    $ref->{current} = $ref->{list}->[$ref->{$ref->{current}}];
+    if ($ref->{current} eq 'main') {
+		$ref->{current} = $ref->{list}->[$ref->{$ref->{current}}];
+    }
     $ref->{list} = $menu{$ref->{current}}->{list};
     $ref->{$ref->{current}} ||= 0;
-
     $client->lines($menu{$ref->{current}}->{lines});
     $client->update();
 }
 
 sub setMode {
-    my $client = shift;
+	my $client = shift;
 
-    unless ($modes_set) {
-    	$modes_set = 1;
-	foreach (keys %menu) {
-	    next if $_ eq 'main';
-
-	    Slim::Buttons::Common::addMode(
-		"plugins-information-$_",
-		\%functions,
-		\&setmode_submenu,
-	    );
+	if ($client->model eq 'squeezebox') {
+		push (@player_list,[ 'PLAYER_SIGNAL_STRENGTH', 'string', 1, sub { return shift->signalStrength(); } ]);
 	}
-    }
-    unless (ref($modules)) {
-	$modules = Slim::Buttons::Plugins::installedPlugins();
-	@module_list = sort { $modules->{$a} cmp $modules->{$b} } keys %$modules;
-	$enabled{$_} = 1 for (Slim::Buttons::Plugins::enabledPlugins($client));
-    }
+	unless ($modes_set) {
+		$modes_set = 1;
+		foreach (keys %menu) {
+			next if $_ eq 'main';
 
-    $context{$client}->{current} = 'main';
-    $context{$client}->{list} = \@main_list,
-    $context{$client}->{main} ||= 0;
+			Slim::Buttons::Common::addMode(
+			"plugins-information-$_",
+			\%functions,
+			\&setmode_submenu,
+			);
+		}
+	}
+	unless (ref($modules)) {
+		$modules = Slim::Buttons::Plugins::installedPlugins();
+		@module_list = sort { $modules->{$a} cmp $modules->{$b} } keys %$modules;
+		$enabled{$_} = 1 for (Slim::Buttons::Plugins::enabledPlugins($client));
+	}
 
-    $client->lines(\&main_lines);
-    $client->update();
+	$context{$client}->{current} = 'main';
+	$context{$client}->{list} = \@main_list,
+	$context{$client}->{main} ||= 0;
+
+	$client->lines(\&main_lines);
+	$client->update();
 }
 
 sub getFunctions {
-    \%functions;
+	\%functions;
 }
 
 sub getDisplayName {
-    string('PLUGIN_INFORMATION_MODULE_NAME');
+	string('PLUGIN_INFORMATION_MODULE_NAME');
 }
 
 1;
