@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.2 2003/07/24 23:14:04 dean Exp $
+# $Id: Display.pm,v 1.3 2003/07/30 05:23:26 grotus Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -516,8 +516,8 @@ my $cursorpos = Slim::Hardware::VFD::symbol('cursorpos');
 my $hardspace = Slim::Hardware::VFD::symbol('hardspace');
 my $centerchar = Slim::Hardware::VFD::symbol('center');
 
-# special characters that are not handled by the format string
-my %specialchars = (
+# double sized characters
+my %doublechars = (
 	
 	"(" => [ $slash,
 			 $backslash ],
@@ -599,27 +599,91 @@ my %specialchars = (
 	$hardspace => [ ' ', ' '],
 	
 	$centerchar => [$centerchar,$centerchar]
+	,'0' => [$slash . $toplinechar . $backslash, $backslash . '_' . $slash]
+	,'1' => [' ' . $slash . $leftvbar , '  ' . $leftvbar]
+	,'2' => [' ' . $toplinechar . ')' , ' ' . $Zbottom . '_']
+	,'3' => [' ' . $doublelinechar . ')' , ' _)']
+	,'4' => [$rightvbar . '_' . $leftvbar , '  ' . $leftvbar]
+	,'5' => [$rightvbar . $doublelinechar . $toplinechar , ' _)']
+	,'6' => [' ' . $Zbottom . ' ' , '(_)']
+	,'7' => [' ' . $toplinechar . $Ztop , ' ' . $slash . ' ']
+	,'8' => ['(' . $doublelinechar . ')' , '(_)']
+	,'9' => ['(' . $doublelinechar . ')' , ' ' . $slash . ' ']
+	,'A' => [' ' . $slash . $backslash . ' ' , $rightvbar . $toplinechar . $toplinechar . $leftvbar]
+	,'B' => [$rightvbar . $doublelinechar . ')' , $rightvbar . '_)']
+	,'C' => [$slash . $toplinechar , $backslash . '_']
+	,'D' => [$rightvbar . $toplinechar . $backslash , $rightvbar . '_' . $slash]
+	,'E' => [$rightvbar . $doublelinechar , $rightvbar . '_']
+	,'F' => [$rightvbar . $doublelinechar , $rightvbar . ' ']
+	,'G' => [$slash . $toplinechar . ' ' , $backslash . $doublelinechar . $leftvbar]
+	,'H' => [$rightvbar . '_' . $leftvbar , $rightvbar . ' ' . $leftvbar]
+	,'I' => [' ' . $leftvbar , ' ' . $leftvbar]
+	,'J' => ['  ' . $leftvbar , $rightvbar . '_' . $leftvbar]
+	,'K' => [$rightvbar . $slash , $rightvbar . $backslash]
+	,'L' => [$rightvbar . ' ' , $rightvbar . '_']
+	,'M' => [$rightvbar . $backslash . $slash . $leftvbar , $rightvbar . '  ' . $leftvbar]
+	,'N' => [$rightvbar . $backslash . $leftvbar , $rightvbar . ' ' . $leftvbar]
+	,'O' => [$slash . $toplinechar . $backslash , $backslash . '_' . $slash]
+	,'P' => [$rightvbar . $doublelinechar .')' , $rightvbar . '  ']
+	,'Q' => [$slash . $toplinechar . $backslash , $backslash . '_X']
+	,'R' => [$rightvbar . $doublelinechar . ')' , $rightvbar . ' ' . $backslash]
+	,'S' => ['(' . $toplinechar , '_)']
+	,'T' => [$toplinechar . '|' . $toplinechar , ' | ']
+	,'U' => [$rightvbar . ' ' . $leftvbar , $rightvbar . '_' . $leftvbar]
+	,'V' => [$leftvbar . $rightvbar , $backslash . $slash]
+	,'W' => [$leftvbar . '  ' . $rightvbar , $backslash . $slash . $backslash . $slash]
+	,'X' => [$backslash . $slash , $slash . $backslash]
+	,'Y' => [$backslash . $slash , ' ' . $leftvbar]
+	,'Z' => [$toplinechar . $Ztop , $Zbottom . '_']
 );
 
-# the font format string
-my $double = 
+sub addDoubleChar {
+	my ($char,$doublechar) = @_;
+	if (!exists $doublechars{$char} && ref($doublechar) eq 'ARRAY' 
+			&& Slim::Hardware::VFD::lineLength($doublechar->[0]) == Slim::Hardware::VFD::lineLength($doublechar->[1])) {
+		$doublechars{$char} = $doublechar;
+	} else {
+		if ($::d_display) {
+			msg("Could not add character $char, it already exists.\n") if exists $doublechars{$char};
+			msg("Could not add character $char, doublechar is not array reference.\n") if ref($doublechar) ne 'ARRAY';
+			msg("Could not add character $char, lines of doublechar have unequal lengths.\n")
+				if Slim::Hardware::VFD::lineLength($doublechar->[0]) != Slim::Hardware::VFD::lineLength($doublechar->[1]);
+		}
+	}
+}
 
+sub updateDoubleChar {
+	my ($char,$doublechar) = @_;
+	if (ref($doublechar) eq 'ARRAY' 
+			&& Slim::Hardware::VFD::lineLength($doublechar->[0]) == Slim::Hardware::VFD::lineLength($doublechar->[1])) {
+		$doublechars{$char} = $doublechar;
+	} else {
+		if ($::d_display) {
+			msg("Could not update character $char, doublechar is not array reference.\n") if ref($doublechar) ne 'ARRAY';
+			msg("Could not update character $char, lines of doublechar have unequal lengths.\n")
+				if Slim::Hardware::VFD::lineLength($doublechar->[0]) != Slim::Hardware::VFD::lineLength($doublechar->[1]);
+		}
+	}
+}
+
+# the font format string
+#my $double = 
 	# all digits are 3 chars wide
-	'0/~\01 /[12 ~)23 =)34]_[45]=~56 < 67 ~?78(=)89(=)9' .
-	'0\_/01  [12 <_23 _)34  [45 _)56(_)67 / 78(_)89 / 9' .
+#	'0/~\01 /[12 ~)23 =)34]_[45]=~56 < 67 ~?78(=)89(=)9' .
+#	'0\_/01  [12 <_23 _)34  [45 _)56(_)67 / 78(_)89 / 9' .
+#	# kerning is custom so exclude blanks here except for 'I'
+#	'A /\ AB]=)BC/~CD]~\DE]=EF]=FG/~ GH]_[HI [IJ  [J' .
+#	'A]~~[AB]_)BC\_CD]_/DE]_EF] FG\=[GH] [HI [IJ]_[J' .
+#	'K]/KL] LM]\/[MN]\[NO/~\OP]=)PQ/~\QR]=)RS(~S' .
+#	'K]\KL]_LM]  [MN] [NO\_/OP]  PQ\_xQR] \RS_)S' .
+#	'T~|~TU] [UV[]VW[  ]WX\/XY\/YZ~?Z' .
+#	'T | TU]_[UV\/VW\/\/WX/\XY [YZ<_Z';
 	
- 	# kerning is custom so exclude blanks here except for 'I'
- 	'A /\ AB]=)BC/~CD]~\DE]=EF]=FG/~ GH]_[HI [IJ  [J' .
- 	'A]~~[AB]_)BC\_CD]_/DE]_EF] FG\=[GH] [HI [IJ]_[J' .
-	
-	'K]/KL] LM]\/[MN]\[NO/~\OP]=)PQ/~\QR]=)RS(~S' .
-	'K]\KL]_LM]  [MN] [NO\_/OP]  PQ\_xQR] \RS_)S' .
-	
-	'T~|~TU] [UV[]VW[  ]WX\/XY\/YZ~?Z' .
-	'T | TU]_[UV\/VW\/\/WX/\XY [YZ<_Z';
-	
-my $kernL = '\~\]\?\_\<\=';
-my $kernR = '\~\[\<\_\\\\/';
+#my $kernL = '\~\]\?\_\<\=';
+#my $kernR = '\~\[\<\_\\\\/';
+
+my $kernL = qr/(?:$toplinechar|$rightvbar|$Ztop|_|$Zbottom|$doublelinechar)$/o;
+my $kernR = qr/^(?:$toplinechar|$leftvbar|$Zbottom|_|$backslash|$slash)/o;
 
 #
 # double the height and width of line 2 of the display
@@ -644,62 +708,31 @@ sub doubleSize {
 	my $split = Slim::Hardware::VFD::splitString($line2);
 	
 	foreach my $char (@$split) {
-		if (exists($specialchars{$char})) {
-			$newline1 .= @{$specialchars{$char}}[0];
-			$newline2 .= @{$specialchars{$char}}[1];
-		} else {
-			$char = Slim::Music::Info::matchCase($char);
-
-			if (index($double, $char) != -1) {
-	
-				my $pat = "$char(.*)$char.*$char(.*)$char";
-				my ($char1, $char2) = $double =~ /$pat/;
-				
-				if ($char =~ /[A-Z]/) {
-					if ($lastchar ne ' ') {
-						if (($lastch1 =~ /[$kernL]$/ && $char1 =~ /^[$kernR]/) ||
-							 ($lastch2 =~ /[$kernL]$/ && $char2 =~ /^[$kernR]/)) {
-						
-							if ($lastchar =~ /[CGLSTZ]/ && $char =~ /[COQ]/) {
-								# Special cases to exclude kerning between
-							} else {
-							   $newline1 .= ' ';
-							   $newline2 .= ' ';
-							}
+		if (exists($doublechars{$char}) || exists($doublechars{Slim::Music::Info::matchCase($char)})) {
+			my ($char1,$char2);
+			if (!exists($doublechars{$char})) {
+				$char = Slim::Music::Info::matchCase($char);
+			}
+			($char1,$char2)=  @{$doublechars{$char}};
+			if ($char =~ /[A-Z]/ && $lastchar ne ' ' && $lastchar !~ /\d/) {
+					if (($lastch1 =~ $kernL && $char1 =~ $kernR) ||
+						 ($lastch2 =~ $kernL && $char2 =~ $kernR)) {
+					
+						if ($lastchar =~ /[CGLSTZ]/ && $char =~ /[COQ]/) {
+							# Special cases to exclude kerning between
+						} else {
+						   $newline1 .= ' ';
+						   $newline2 .= ' ';
 						}
 					}
-				}
-				
-				$lastch1 = $char1;
-				$lastch2 = $char2;
-				
-				$char1 =~ s/~/$toplinechar/g;
-				$char1 =~ s/=/$doublelinechar/g;
-				$char1 =~ s/\?/$Ztop/g;
-				$char1 =~ s/\[/$leftvbar/g;
-				$char1 =~ s/\]/$rightvbar/g;
-				$char1 =~ s/\//$slash/g;
-				$char1 =~ s/\\/$backslash/g;
-				$char1 =~ s/</$Zbottom/g;
-				$char1 =~ s/x/X/g;  # use capitol "X" in letter "Q"
-				
-				$char2 =~ s/~/$toplinechar/g;
-				$char2 =~ s/=/$doublelinechar/g;
-				$char2 =~ s/\?/$Ztop/g;
-				$char2 =~ s/\[/$leftvbar/g;
-				$char2 =~ s/\]/$rightvbar/g;
-				$char2 =~ s/\//$slash/g;
-				$char2 =~ s/\\/$backslash/g;
-				$char2 =~ s/</$Zbottom/g;
-				$char2 =~ s/x/X/g;  # use capitol "X" in letter "Q"
-				
-				$newline1 .= $char1;
-				$newline2 .= $char2;
-				
-			} else {
-				# warn "unknown character '$char' in double mode";
-				next;
 			}
+			$lastch1 = $char1;
+			$lastch2 = $char2;
+			$newline1 .= $char1;
+			$newline2 .= $char2;
+		} else {
+			$::d_display && msg("Character $char has no double\n");
+			next;
 		}
 		$lastchar = $char;
 	}
