@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.90 2004/10/14 05:19:47 dean Exp $
+# $Id: Prefs.pm,v 1.91 2004/10/19 23:35:37 vidur Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -142,6 +142,7 @@ my %DEFAULT = (
 	,'itunes_library_autolocate'	=> 1
 	,'itunes_library_music_path'	=> defaultAudioDir()
 	,'ignoredisableditunestracks'	=> 0
+	,'lastITunesMusicLibraryDate'	=> 0
 	,'instantMixMax'		=> 12
 	,'varietyCombo'			=> 50
 	,'ignoreDirRE'			=> ''
@@ -180,6 +181,7 @@ my %DEFAULT = (
 	,'xplir'				=> 'both'
 	,'xplinterval'			=> 5
 	,'xplsupport'			=> 0
+	,'rank-Picks'			=> 4
 );
 
 # The following hash contains functions that are executed when the pref corresponding to

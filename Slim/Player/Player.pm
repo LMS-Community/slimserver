@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.35 2004/10/14 06:54:42 kdf Exp $
+# $Id: Player.pm,v 1.36 2004/10/19 23:35:37 vidur Exp $
 #
 package Slim::Player::Player;
 use strict;
@@ -32,10 +32,7 @@ my $defaultPrefs = {
 		,'idleBrightness'		=> 1
 		,'irmap'				=> Slim::Hardware::IR::defaultMapFile()
 		,'menuItem'				=> ['NOW_PLAYING', 
-									'BROWSE_BY_GENRE', 
-									'BROWSE_BY_ARTIST', 
-									'BROWSE_BY_ALBUM', 
-									'BROWSE_MUSIC_FOLDER', 
+									'BROWSE_MUSIC', 
 									'SEARCH', 
 									'SAVED_PLAYLISTS', 
 									'RADIO', 
@@ -61,6 +58,7 @@ my $defaultPrefs = {
 		,'syncVolume'			=> 0
 		,'treble'				=> 50
 		,'upgrade-5.4b1-script'		=> 1
+		,'upgrade-5.4b2-script'		=> 1
 		,'volume'				=> 50
 	};
 
@@ -77,6 +75,24 @@ my %upgradeScripts = (
 		}
 		$ind++;
 	  }
+      },
+      '5.4b2' => sub {
+	  my $client = shift;
+
+	  my $addedBrowse = 0;
+	  my @newitems = ();
+	  foreach my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
+		if ($menuItem =~ 'BROWSE_') {
+			if (!$addedBrowse) {
+				push @newitems, 'BROWSE_MUSIC';
+				$addedBrowse = 1;
+			}
+		}
+		else {
+			push @newitems, $menuItem;
+		}
+	  }
+	  Slim::Utils::Prefs::clientSet($client, 'menuItem', \@newitems);
       },
 );
 

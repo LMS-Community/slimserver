@@ -357,7 +357,10 @@ sub createList {
 	my @list;
 	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 	
-	foreach my $sub (sort {string($a) cmp string($b)} keys %{$paramsref->{'submenus'}}) {
+	foreach my $sub (sort {((Slim::Utils::Prefs::get("rank-$b") || 0) <=> 
+				(Slim::Utils::Prefs::get("rank-$a") || 0)) || 
+				    (lc(string($a)) cmp lc(string($b)))} 
+			 keys %{$paramsref->{'submenus'}}) {
 		next if (exists $disabledplugins{$sub});
 		push @list, $sub;
 	}

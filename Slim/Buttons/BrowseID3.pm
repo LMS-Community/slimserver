@@ -1,5 +1,5 @@
 package Slim::Buttons::BrowseID3;
-# $Id: BrowseID3.pm,v 1.19 2004/10/06 15:56:04 vidur Exp $
+# $Id: BrowseID3.pm,v 1.20 2004/10/19 23:35:36 vidur Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -41,7 +41,9 @@ sub init {
 	);
 	
 	foreach my $name (sort keys %browse) {
-		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC',$name,$browse{$name});
+		if ($name ne 'BROWSE_BY_SONG') {
+			Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC',$name,$browse{$name});
+		}
 		Slim::Buttons::Home::addMenuOption($name,$browse{$name});
 	};
 }
