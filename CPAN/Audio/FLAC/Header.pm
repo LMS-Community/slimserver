@@ -6,7 +6,7 @@ use strict;
 use vars qw($VERSION $HAVE_XS);
 use File::Basename;
 
-$VERSION = '1.2';
+$VERSION = '1.4';
 
 # First four bytes of stream are always fLaC
 use constant FLACHEADERFLAG => 'fLaC';
@@ -946,9 +946,9 @@ Dan Sully, E<lt>daniel@cpan.orgE<gt> for XS code.
 
 =head1 COPYRIGHT
 
-Pure perl code Copyright (c) 2003-2004, Erik Reckase.
+Pure perl code Copyright (c) 2003-2005, Erik Reckase.
 
-XS code Copyright (c) 2004, Dan Sully.
+XS code Copyright (c) 2004-2005, Dan Sully.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.2 or,
