@@ -220,7 +220,10 @@ sub mute {
 	Slim::Display::Display::volumeDisplay($client);
 }
 
-
+sub hasDigitalOut {
+	return 0;
+}
+	
 
 1;
 

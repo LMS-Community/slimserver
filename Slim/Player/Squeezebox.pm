@@ -124,6 +124,10 @@ sub signalStrength {
 	return Slim::Networking::Slimproto::signalStrength(@_);
 }
 
+sub hasDigitalOut {
+	return 1;
+}
+
 sub needsUpgrade {
 	my $client = shift;
 	my $versionFilePath = catdir($Bin, "Firmware", "squeezebox.version");

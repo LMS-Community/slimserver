@@ -74,7 +74,7 @@ sub volume {
 		# default, but then have knobs so you can tune it for max headphone power, lowest noise at low volume, 
 		# fixed/variable s/pdif, etc.
 
-		if (1) {
+		if (Slim::Utils::Prefs::clientGet($client, 'digitalVolumeControl')) {
 			# here's one way to do it: adjust digital gains, leave fixed 3db boost on the main volume control
 			# this does achieve good analog output voltage (important for headphone power) but is not optimal
 			# for low volume levels. If only the analog outputs are being used, and digital gain is not required, then 
@@ -101,11 +101,7 @@ sub volume {
 			# or: leave the digital controls always at 0db and vary the main volume:
 			# much better for the analog outputs, but this does force the S/PDIF level to be fixed.
 
-			print "\$volume: $volume\n";
-
 			my $level = sprintf('%02X00', 0x73 * $volume**2);
-
-			print "level: $level\n";
 
 			$client->i2c(
 				Slim::Hardware::mas35x9::masWrite('out_LL',  '80000')

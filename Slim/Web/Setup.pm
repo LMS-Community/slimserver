@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.18 2003/11/23 19:16:33 grotus Exp $
+# $Id: Setup.pm,v 1.19 2003/12/01 23:59:07 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -111,6 +111,11 @@ sub initSetupConfig {
 					my $titleFormatMax = Slim::Utils::Prefs::clientGetArrayMax($client,'titleFormat') + $pageref->{'Prefs'}{'titleFormat'}{'arrayAddExtra'};
 					if ($client->isPlayer()) {
 						$pageref->{'Groups'}{'Default'}{'PrefOrder'}[1] = 'playingDisplayMode';
+						if ($client->hasDigitalOut()) {
+							$pageref->{'Groups'}{'Default'}{'PrefOrder'}[4] = 'digitalVolumeControl';
+						} else {
+							$pageref->{'Groups'}{'Default'}{'PrefOrder'}[4] = undef;
+						}
 						$pageref->{'children'} = ['additional_player'];
 						$pageref->{'GroupOrder'}[1] = 'Brightness';
 					} else {
@@ -160,7 +165,7 @@ sub initSetupConfig {
 		#,'template' => 'setup_player.html'
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['playername','playingDisplayMode','synchronize','syncVolume'] 
+					'PrefOrder' => ['playername','playingDisplayMode','synchronize','syncVolume','digitalVolumeControl'] 
 				}
 			,'Brightness' => {
 					'PrefOrder' => ['powerOnBrightness','powerOffBrightness']
@@ -256,6 +261,13 @@ sub initSetupConfig {
 							,'options' => {
 									'1' => string('SETUP_SYNCVOLUME_ON')
 									,'0' => string('SETUP_SYNCVOLUME_OFF')
+								}
+						}			
+			,'digitalVolumeControl' => {
+							'validate' => \&validateTrueFalse  
+							,'options' => {
+									'1' => string('SETUP_DIGITALVOLUMECONTROL_ON')
+									,'0' => string('SETUP_DIGITALVOLUMECONTROL_OFF')
 								}
 						}			
 			,'titleFormat'		=> {

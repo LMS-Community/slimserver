@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.21 2003/11/27 21:48:47 grotus Exp $
+# $Id: Prefs.pm,v 1.22 2003/12/01 23:59:07 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -120,6 +120,7 @@ my %DEFAULT = (
 			,'disabledirsets'	=> []
 			,'irmap'		=> Slim::Hardware::IR::defaultMapFile()
 			,'power'		=> 1
+			,'digitalVolumeControl' => 1
 			}
 	);
 

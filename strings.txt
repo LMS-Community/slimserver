@@ -1189,6 +1189,18 @@ SETUP_SYNCVOLUME_DESC
 	PT	Aqui pode activar ou desactivar a sincronização do volume entre os vários clientes. Altere abaixo e clique em "Modificar"
 	SE	Du kan få dina synkroniserade spelare använda samma volym eller vara oberoende. Gör ditt val och klicka på Ändra.
 
+SETUP_DIGITALVOLUMECONTROL_ON
+	EN	Volume controls adjust digital outputs
+
+SETUP_DIGITALVOLUMECONTROL_OFF
+	EN	Digital output level is fixed (Best analog quality)
+
+SETUP_DIGITALVOLUMECONTROL
+	EN	Digital Volume Control
+
+SETUP_DIGITALVOLUMECONTROL_DESC
+	EN	You can choose to have the digital audio output on your player be fixed at maximum level or be controlled by the volume controls.  If you choose to have a fixed digital audio volume level, the analog outputs will have the highest quality possible.
+
 SETUP_TITLEFORMATCURR
 	DE	Aktuelles Titelformat
 	DK	Valgt sangtitelformat
