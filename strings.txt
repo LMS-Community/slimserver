@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.157 2004/12/17 10:09:07 kdf Exp $
+# $Id: strings.txt,v 1.158 2004/12/24 00:03:23 dsully Exp $
 #
 # This tab-delimited file contains all the text strings used in SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -17,6 +17,7 @@ CREDITS
 	FI	Tomi Tuominen
 	FR	Serge Froment, Cédric Blancher, Terry Adams, Nicolas Guillemain
 	IT	Marco Barbieri
+	JP	Ken Hokugo
 	NL	Terry Adams, Patrick van Zweden, Carel Bast, Lieven Hollevoet
 	NO	Øyvind L. Eggen, Georg Engstrand
 	PT	Walter Wullschleger, Bruno Rodrigues, Paulo Mannheimer
@@ -30,6 +31,7 @@ CHOOSE_A_LANGUAGE
 	FI	Valitse kieli
 	FR	Sélectionnez une langue
 	IT	Per favore, scegli una lingua
+	JP	言語を選んでください
 	NL	Selecteer een taal
 	NO	Velg språk
 	PT	Escolha um idioma
@@ -40,6 +42,7 @@ BASE_SKIN
 	EN	Light
 	ES	Liviana
 	FR	Light
+	JP	ライト
 	NL	Light
 	NO	Lys
 	PT	Leve
@@ -56,6 +59,7 @@ DEFAULT_MAP
 	ES	Estandar
 	FI	Normaali ulkoasu
 	FR	Par défaut
+	JP	スタンダード
 	NL	Standaard
 	NO	Standard
 	PT	Padrão
@@ -68,6 +72,7 @@ HIT_RELOAD
 	ES	<a href="/" target="_top">Actualice esta página para ver el estilo nuevo.</a>
 	FI	<a href="/" target="_top">Lataa sivu uudelleen nähdäksesi uuden ulkoasun.</a>
 	FR	<a href="/" target="_top">Cliquez ici</a> pour afficher la nouvelle interface.
+	JP	<a href="/" target="_top">ここ</a>をクリックして更新し、新しいスキンを見る
 	NL	<a href="/" target="_top">Klik hier</a> om de nieuwe skin te tonen
 	NO	<a href="/" target="_top">Trykk her</a> or å oppdatere med nytt utseende.
 	PT	<a href="/" target="_top">Actualize esta página para activar o novo tema.</a>
@@ -81,6 +86,7 @@ LANGUAGE_CHOICES
 	FI	Suomi
 	FR	Français
 	IT	Italiano
+	JP	日本語
 	NL	Nederlands
 	NO	Norsk
 	PT	Português
@@ -91,6 +97,7 @@ SERVER_VERSION
 	EN	SlimServer Version
 	ES	Versión del SlimServer
 	FR	Version du SlimServer
+	JP	スリムサーバー・バージョン
 	NL	SlimServer Versie
 	NO	SlimServer versjon
 	PT	Versão do SlimServer
@@ -101,6 +108,7 @@ PLAYER_VERSION
 	EN	Player Firmware Version
 	ES	Versión del firmware
 	FR	Version du micrologiciel de la platine
+	JP	ファームウェア・バージョン
 	NL	Speler Firmware Versie
 	NO	Spiller versjon
 	PT	Versão do firmware do cliente
@@ -111,6 +119,7 @@ ABOUT_SLIMDEVICES
 	EN	About Slim Devices
 	ES	Acerca de Slim Devices
 	FR	A propos de Slim Devices
+	JP	スリムデバイス社について
 	NO	Om Slim Devices
 	PT	Acerca de Slim Devices
 	SE	Om Slim Devices
@@ -126,6 +135,7 @@ SLIMP3_HOME
 	ES	Inicio SLIMP3
 	FI	SLIMP3 Alkuun
 	FR	Menu SLIMP3
+	JP	SLIMP3 ホーム
 	NL	SLIMP3 Hoofdmenu
 	NO	SLIMP3 Hjem
 	PT	Início SLIMP3
@@ -138,6 +148,7 @@ SQUEEZEBOX_HOME
 	ES	Inicio Squeezebox
 	FI	Squeezebox Alkuun
 	FR	Menu Squeezebox
+	JP	Squeezebox ホーム
 	NL	Squeezebox Hoofdmenu
 	NO	Squeezebox Hjem
 	PT	Início Squeezebox
@@ -150,6 +161,7 @@ SOFTSQUEEZE_HOME
 	ES	Inicio SoftSqueeze
 	FI	SoftSqueeze Alkuun
 	FR	Menu SoftSqueeze
+	JP	SoftSqueeze ホーム
 	NL	SoftSqueeze Hoofdmenu
 	NO	SoftSqueeze Hjem
 	PT	Início SoftSqueeze
@@ -161,6 +173,7 @@ LIBRARY_CONTAINS
 	EN	Your music library contains
 	ES	La colección musical contiene
 	FR	La collection contient
+	JP	ミュージック ライブラリ
 	NL	Inhoud van de bibliotheek
 	NO	Musikk biblioteket inneholder
 	PT	O arquivo de música contém
@@ -173,6 +186,7 @@ BROWSEMENU
 	ES	Examinar música
 	FI	Selaa
 	FR	Parcourir la musique
+	JP	音楽をブラウズする
 	NL	Muziek doorzoeken
 	NO	Bla i musikk
 	PT	Escolher Música
@@ -185,6 +199,7 @@ MUSIC
 	ES	Música
 	FI	Musiikkikansio
 	FR	Musique
+	JP	ミュージック フォルダ
 	NL	Muziek Folder
 	NO	Musikk
 	PT	Música
@@ -197,6 +212,7 @@ SETTINGS
 	ES	Configuración
 	FI	Asetukset
 	FR	Réglages
+	JP	セッティング
 	NL	Instellingen
 	NO	Innstillinger
 	PT	Configurações
@@ -210,6 +226,7 @@ EMPTY
 	FI	Tyhjä
 	FR	Vide
 	IT	Vuoto
+	JP	空
 	NL	Leeg
 	NO	Tom
 	PT	Vazio
@@ -223,6 +240,7 @@ NOTHING
 	FI	Ei mitään
 	FR	Rien
 	IT	Niente
+	JP	なし
 	NL	Niets
 	NO	Ingenting
 	PT	Nada
@@ -236,6 +254,7 @@ ONLY_ONE
 	FI	Vain yksi kappale!
 	FR	Il n'y a qu'un élément ici !
 	IT	Qui c'e un solo elemento!
+	JP	ここには１つのアイテムしかありません！
 	NL	Slechts een item beschikbaar!
 	NO	Det er bare én fil her!
 	PT	Existe apenas um item para escolher!
@@ -269,6 +288,7 @@ PLAYLIST
 	FI	Soittolista
 	FR	Liste de lecture
 	IT	Lista dei brani
+	JP	プレイ リスト
 	NL	Playlist
 	NO	Spilleliste
 	PT	Playlist
@@ -281,6 +301,7 @@ PAUSED_ON
 	ES	Con pausa en
 	FI	Tauko
 	FR	En pause à
+	JP	一時停止
 	NL	Gepauseerd bij
 	NO	Pause på
 	PT	Pausado na
@@ -293,6 +314,7 @@ STOPPED_ON
 	ES	Parado en
 	FI	Pysäytetty
 	FR	En arrêt à
+	JP	停止
 	NL	Gestopt bij
 	NO	Stoppet på
 	PT	Parado na
@@ -305,6 +327,7 @@ NOW_PLAYING
 	ES	Se está escuchando...
 	FI	Soittaa kappaletta
 	FR	Lecture
+	JP	再生中
 	NL	Speelt Nu
 	NO	Nå spilles
 	PT	A tocar...
@@ -316,6 +339,7 @@ NOW_SCANNING
 	EN	Now Scanning
 	ES	Recopilando...
 	FR	Recherche
+	JP	スキャンしています
 	NO	Søker
 	PT	A Procurar
 	SE	Scannar
@@ -326,6 +350,7 @@ NOW_REWINDING
 	EN	Now Rewinding
 	ES	Rebobinando
 	FR	Retour rapide
+	JP	巻き戻しています
 	NO	Spoler tilbake
 	PT	A Rebobinar
 	SE	Spolar tillbaka
@@ -336,6 +361,7 @@ EVERYTHING
 	EN	Everything
 	ES	Todo
 	FR	Tout
+	JP	すべて
 	NL	Alles
 	NO	Alt
 	PT	Tudo
@@ -349,6 +375,7 @@ PLAYING
 	FI	Soittaa kappaletta
 	FR	Lecture
 	IT	Riproduzione in corso
+	JP	再生中
 	NL	Speelt nu
 	NO	Spiller
 	PT	A tocar
@@ -361,6 +388,7 @@ PLAYING_RANDOMLY
 	ES	Se está escuchando
 	FI	Soittaa kappaletta
 	FR	Lecture
+	JP	再生中
 	NL	Speelt Nu
 	NO	Nå spilles
 	PT	A tocar...
@@ -374,6 +402,7 @@ OUT_OF
 	FI	/
 	FR	sur
 	IT	di
+	JP	の
 	NL	van
 	NO	av
 	PT	de
@@ -387,6 +416,7 @@ PAUSED
 	FI	Tauko
 	FR	Pause
 	IT	Pausa
+	JP	一時停止
 	NL	Pause
 	NO	Pause
 	PT	Pausado
@@ -406,6 +436,7 @@ ABOUT
 	FI	SlimServer V.%s, tekijä:
 	FR	SlimServer V.%s, écrit par :
 	IT	SlimServer V.%s, scritto da:
+	JP	SlimServer V.%s, 製作:
 	NL	SlimServer V.%s, geschreven door:
 	NO	SlimServer V.%s, skrevet av:
 	PT	SlimServer v.%s, escrito por
@@ -419,6 +450,7 @@ REMOVING_FROM_PLAYLIST
 	FI	Poistetaan soittolistasta:
 	FR	Supprime de la liste de lecture :
 	IT	Cancella dalla Lista dei brani:
+	JP	プレイ リストから削除する:
 	NL	Verwijderen uit playlist:
 	NO	Fjerner fra spilleliste:
 	PT	Remover da playlist
@@ -430,6 +462,7 @@ ZAPPING_FROM_PLAYLIST
 	EN	Moving to Zapped Songs playlist:
 	ES	Moviendo a la lista de canciones Zapped:
 	FR	Déplace dans la liste de lecture Morceaux Zappés
+	JP	プレイ リストから消去:
 	NL	Verplaatsen naar de lijst van gezapte stukken:
 	NO	Flytter til Zappede Sangers spilleliste:
 	PT	Mover para a playlist rápida de músicas
@@ -441,6 +474,7 @@ ZAPPED_SONGS
 	EN	Zapped Songs
 	ES	Canciones Zapped
 	FR	Morceaux Zappés
+	JP	消去された曲
 	NL	Gezapte Liedjes
 	NO	Zappede Sanger
 	PT	Playlist Rápida de Músicas
@@ -454,6 +488,7 @@ ADDING_TO_PLAYLIST
 	FI	Lisätään soittolistalle:
 	FR	Ajoute à la fin de la liste de lecture :
 	IT	Accodo alla Lista dei brani:
+	JP	プレイ リストに追加:
 	NL	Toevoegen aan playlist:
 	NO	Legger til i spilleliste:
 	PT	Adicionar ao fim da playlist
@@ -465,6 +500,7 @@ INSERT_TO_PLAYLIST
 	EN	Adding to play next:
 	ES	Añadiendo como próxima canción:
 	FR	Ajoute après le morceau en cours :
+	JP	プレイ リストの次の曲に追加:
 	NL	Toevoegen aan playlist:
 	NO	Legger til som neste:
 	PT	Adicionar e tocar a seguir
@@ -478,6 +514,7 @@ STOPPING
 	FI	Pysähtyy
 	FR	Arrêt
 	IT	Stop
+	JP	停止
 	NL	Stop
 	NO	Stopper
 	PT	Parado
@@ -491,6 +528,7 @@ PLAYING_RANDOMLY_FROM
 	FI	Soitetaan satunnaisesti:
 	FR	Lecture aléatoire depuis :
 	IT	Riproduzione in ordine casuale da:
+	JP	シャッフル:
 	NL	Willekeurig weergeven van:
 	NO	Spiller i vilkårlig rekkefølge fra:
 	PT	A tocar aleatoriamente de
@@ -503,6 +541,7 @@ CLEARING_PLAYLIST
 	ES	Vaciando lista de temas...
 	FI	Tyhjennetään soittolistaa...
 	FR	Vidage de la liste de lecture...
+	JP	プレイ リストを消去しています...
 	NL	Bezig met leegmaken Playlist...
 	NO	Nullstiller spillelisten...
 	PT	A limpar a playlist...
@@ -516,6 +555,7 @@ VIEWING_PLAYLIST
 	FI	Soittaa...
 	FR	Lecture en cours...
 	IT	Leggo la Lista dei brani...
+	JP	現在再生中...
 	NL	Bekijken van playlist...
 	NO	Viser spillelisten...
 	PT	Playlist a Tocar...
@@ -529,6 +569,7 @@ PLAYLIST_EMPTY
 	FI	Soittolista tyhjä
 	FR	Liste de lecture vide
 	IT	La Lista dei brani e' vuota
+	JP	プレイ リストがありません
 	NL	Playlist is leeg
 	NO	Spillelisten er tom
 	PT	Playlist Vazia
@@ -542,6 +583,7 @@ BROWSING_MUSIC
 	FI	Selaa musiikkia...
 	FR	Parcours des morceaux...
 	IT	Scorro i brani...
+	JP	曲をブラウズしています...
 	NL	Door muziek aan het bladeren ...
 	NO	Blar gjennom musikk...
 	PT	Lista de músicas...
@@ -555,6 +597,7 @@ NOW_PLAYING_FROM
 	FI	Soitetaan:
 	FR	Lecture de :
 	IT	Riproduzione in corso da:
+	JP	現在再生中:
 	NL	Speelt nu af van:
 	NO	Spiller fra:
 	PT	A tocar de
@@ -568,6 +611,7 @@ REPEAT_OFF
 	FI	Toisto pois päältä
 	FR	Répétition désactivée
 	IT	Ripetizione disattivata
+	JP	リピート オフ
 	NL	Herhalen uit
 	NO	Repetisjon av
 	PT	Sem repetição
@@ -581,6 +625,7 @@ REPEAT_ONE
 	FI	Soita kappaletta toistuvasti
 	FR	Répète le morceau en cours
 	IT	Ripeti il brano corrente
+	JP	1曲リピート
 	NL	Herhaal huidig nummer
 	NO	Repetér denne
 	PT	A repetir a música actual
@@ -594,6 +639,7 @@ REPEAT_ALL
 	FI	Soita soittolistaa toistuvasti
 	FR	Répète la liste de lecture
 	IT	Ripeti la Lista dei brani
+	JP	すべてリピート
 	NL	Herhaal playlist
 	NO	Repetér spilleliste
 	PT	A repetir a playlist toda
@@ -606,6 +652,7 @@ CANCEL_SLEEP
 	ES	No se dormirá
 	FI	Unikytkin peruutettu.
 	FR	Mise en veille annulée
+	JP	スリープ キャンセル
 	NL	Sluimermodus uit
 	NO	Sovefunksjon avslått.
 	PT	Inactividade cancelada
@@ -618,6 +665,7 @@ SLEEPING_IN
 	ES	Se dormirá en
 	FI	Unikytkin päälle
 	FR	Mise en veille dans
+	JP	スリープ
 	NL	Sluimermodus aan
 	NO	Sovner om
 	PT	Inactivo dentro de
@@ -631,6 +679,7 @@ POWERING_OFF
 	FI	Järjestelmää sammutetaan
 	FR	Mise hors tension
 	IT	Spegnimento
+	JP	パワー オフ
 	NL	Bezig met uitschakelen
 	NO	Skrur av
 	PT	A Desligar
@@ -640,6 +689,7 @@ POWER
 	DE	Power
 	EN	Power
 	ES	Encendido
+	JP	パワー
 	SE	Strömförsörjning
 
 ALARM
@@ -648,6 +698,7 @@ ALARM
 	EN	Alarm Clock
 	ES	Reloj de Alarma
 	FR	Réveil
+	JP	アラーム
 	NL	Wekker
 	NO	Alarm
 	PT	Alarme
@@ -659,6 +710,7 @@ ALARM_SET
 	EN	Set Alarm Time
 	ES	Establecer Hora de Alarma
 	FR	Heure de réveil
+	JP	アラーム セット
 	NL	Wektijd instellen
 	NO	Sett Alarm Tid
 	PT	Acertar Alarme
@@ -670,6 +722,7 @@ ALARM_ON
 	EN	On (Press RIGHT to turn off)
 	ES	Encendido (Presionar DERECHA para apagar)
 	FR	Activé (Appuyer sur DROITE pour désactiver)
+	JP	アラーム オン（オフにするにはRIGHTを押してください）
 	NL	Aan (Druk RIGHT om uit te schakelen)
 	NO	På (Trykk HØYRE for å slå av)
 	PT	Ligado (Prima DIREITA para desligar)
@@ -681,6 +734,7 @@ ALARM_OFF
 	EN	Off (Press RIGHT to turn on)
 	ES	Apagado (Presionar DERECHA para encender)
 	FR	Désactivé (Appuyer sur DROITE pour activer)
+	JP	アラーム オフ（オンにするにはRIGHTを押してください）
 	NL	UIT (Druk RIGHT om in te schakelen)
 	NO	Av (Trykk HØYRE for å slå på)
 	PT	Desligado (Prima DIREITA para ligar)
@@ -692,6 +746,7 @@ ALARM_SELECT_PLAYLIST
 	EN	Select Playlist for Alarm
 	ES	Elegir Lista para Alarma
 	FR	Sélection de la liste de lecture pour le réveil
+	JP	アラーム曲をセットして下さい
 	NL	Kies een playlist voor de wekker
 	NO	Velg Spilleliste for Alarm
 	PT	Escolha a Playlist para o Alarme
@@ -703,6 +758,7 @@ ALARM_SET_VOLUME
 	EN	Set Alarm Volume
 	ES	Establecer volumen de alarma
 	FR	Réglage du volume de réveil
+	JP	アラーム ボリュームをセットして下さい
 	NL	Kies het wekvolume
 	NO	Sett Alarm volum
 	PT	Mudar Volume do Alarme
@@ -714,6 +770,7 @@ ALARM_SET_VOLUME_SHORT
 	EN	Alarm Vol
 	ES	Vol Alarma
 	FR	Volume réveil
+	JP	アラーム ボリューム
 	NL	Wekvolume
 	NO	Alarm volum
 	PT	Volume do Alarme
@@ -725,6 +782,7 @@ ALARM_SET_ENTRY
 	EN	Alarm Clock Set Time
 	ES	Establecer Hora de Alarma
 	FR	Heure de réveil
+	JP	アラーム時間
 	NL	Kies wektijd
 	NO	Sett Alarm tid
 	PT	Hora do Alarme
@@ -736,6 +794,7 @@ ALARM_TURNING_ON
 	EN	Turning alarm on...
 	ES	Encendiendo alarma...
 	FR	Activation du réveil...
+	JP	アラームをオンにする...
 	NL	Wekker wordt geactiveerd...
 	NO	Slår på alarm...
 	PT	A ligar o alarme...
@@ -747,6 +806,7 @@ ALARM_TURNING_OFF
 	EN	Turning alarm off...
 	ES	Apagando alarma...
 	FR	Désactivation du réveil...
+	JP	アラームをオフにする...
 	NL	Wekker wordt uitgeschakeld...
 	NO	Slår av alarm...
 	PT	A desligar o alarme...
@@ -758,6 +818,7 @@ ALARM_NOW_PLAYING
 	EN	Alarm Clock Now Playing
 	ES	La Alarma esta reproduciendo
 	FR	Le réveil est en marche
+	JP	アラーム再生中
 	NL	De Wekker Speelt Nu
 	NO	Alarm spiller nå
 	PT	A Tocar o Alarme
@@ -780,6 +841,7 @@ WELCOME_TO_SLIMP3
 	FI	SLIMP3 Tervetuloa!
 	FR	Bienvenue sur le SLIMP3
 	IT	Benvenuto a SLIMP3
+	JP	SLIMP3へようこそ
 	NL	Welkom bij SLIMP3
 	NO	Velkommen til SLIMP3
 	PT	Bem-vindo ao SLIMP3
@@ -793,6 +855,7 @@ WELCOME_TO_SLIMSERVER
 	FI	SlimServer Tervetuloa!
 	FR	Bienvenue sur le SlimServer
 	IT	Benvenuto a SlimServer
+	JP	SlimServerへようこそ
 	NL	Welkom bij SlimServer
 	NO	Velkommen til SlimServer
 	PT	Bem-vindo ao SlimServer
@@ -806,6 +869,7 @@ WELCOME_TO_SQUEEZEBOX
 	FI	Squeezebox Tervetuloa!
 	FR	Bienvenue sur la Squeezebox
 	IT	Benvenuto a Squeezebox
+	JP	Squeezeboxへようこそ
 	NL	Welkom bij Squeezebox
 	NO	Velkommen til Squeezebox
 	PT	Bem-vindo ao Squeezebox
@@ -819,6 +883,7 @@ WELCOME_TO_SOFTSQUEEZE
 	FI	SoftSqueeze Tervetuloa!
 	FR	Bienvenue sur la SoftSqueeze
 	IT	Benvenuto a SoftSqueeze
+	JP	SoftSqueezeへようこそ
 	NL	Welkom bij SoftSqueeze
 	NO	Velkommen til SoftSqueeze
 	PT	Bem-vindo ao SoftSqueeze
@@ -830,6 +895,7 @@ FREE_YOUR_MUSIC
 	EN	Free your music
 	ES	Libera tu música
 	FR	Libérez votre musique
+	JP	音楽を自由に！
 	NO	Sett musikken din fri
 	PT	Liberte a sua música
 	SE	Frige din musik
@@ -839,6 +905,7 @@ UPDATING_FIRMWARE
 	EN	Updating Squeezebox firmware.
 	ES	Actualizando firmware de Squeezebox
 	FR	Mise à jour du micrologiciel Squeezebox
+	JP	ファームウェアをアップデートしています
 	NO	Oppdaterer spillerens programvare ('firmware')
 	PT	Atualizando firmware ...
 	SE	Uppdaterar spelarens mjukvara
@@ -849,6 +916,7 @@ CONNECTING_FOR
 	EN	Connecting to play:
 	ES	Conectando a:
 	FR	Connexion à :
+	JP	接続しています:
 	NL	Verbinden voor afspelen van:
 	NO	Kobler til for å spille:
 	PT	Ligando a
@@ -860,6 +928,7 @@ PROBLEM_CONNECTING
 	EN	Problem: Can't connect to server for:
 	ES	Error, no se puede conectar al servidor:
 	FR	Impossible de joindre le serveur :
+	JP	エラー: 接続できません:
 	NL	Fout: Contact maken met server mislukt voor:
 	NO	Problem: Kan ikke koble til server for:
 	PT	Não foi possível ligar ao servidor para
@@ -871,6 +940,7 @@ PROBLEM_OPENING
 	EN	Problem: Can't open file for:
 	ES	Error, no se puede abrir archivo:
 	FR	Impossible d'ouvrir le fichier :
+	JP	エラー: ファイルを開けません:
 	NL	Fout: Fout bij openen bestand voor:
 	NO	Problem: Kan ikke åpne fil for:
 	PT	Não foi possível abrir o ficheiro para
@@ -881,6 +951,7 @@ NO_PLAYLIST_DIR
 	EN	Problem: No Saved Playlist folder.
 	ES	Problem: No existe una carpeta de Listas Guardadas
 	FR	Dossier Listes de lecture enregistrées introuvable.
+	JP	エラー: プレイ  リストがみつかりません
 	SE	Problem: Det finns ingen mapp för sparade spellistor
 
 NO_PLAYLIST_DIR_MORE
@@ -888,6 +959,7 @@ NO_PLAYLIST_DIR_MORE
 	EN	Visit Server Settings to fix this.
 	ES	Ver Configuración del Servidor para solucionar esto.
 	FR	Consultez "Réglages du serveur".
+	JP	サーバー セッティングを調整して下さい
 	SE	Ändra serverinställningar för att korrigera detta
 
 HOME
@@ -897,6 +969,7 @@ HOME
 	ES	Inicio
 	FI	Alkuun
 	FR	Menu
+	JP	メニュー
 	NL	Hoofdmenu
 	NO	Hjem
 	PT	Início
@@ -907,6 +980,7 @@ STATUS
 	EN	Status
 	ES	Estado
 	FR	État
+	JP	ステータス
 	SE	status
 
 SERVER
@@ -915,6 +989,7 @@ SERVER
 	EN	Server
 	ES	Servidor
 	FR	Serveur
+	JP	サーバー
 	NL	Server
 	NO	Server
 	PT	Servidor
@@ -925,6 +1000,7 @@ ABOUT_SHORT
 	EN	About
 	ES	Acerca de
 	FR	A propos
+	JP	...について
 	PT	Sobre ...
 	SE	Om
 
@@ -941,6 +1017,7 @@ SETUP_GROUP_BRIGHTNESS
 	ES	Luminosidad
 	FI	Valoisuus
 	FR	Luminosité
+	JP	明るさ
 	NL	Helderheid
 	NO	Lysstyrke
 	PT	Brilho
@@ -951,6 +1028,7 @@ SETUP_GROUP_BRIGHTNESS_DESC
 	EN	The brightness of the player's display can be set for when it's on, off, or sitting idle (screensaver). It can also be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
 	ES	La luminosidad del display del reproductor se puede establecer para cuando está encendido, apagado, o inactivo (salvapantalla). También puede ajustarse automaticamente cuando se aprieta un botón, al comenzar una canción, o al estar sin actividad por un tiempo. Se puede elegir deshabilitar este comportamiento.
 	FR	La luminosité de l'afficheur de la platine peut être modifiée lorsque cette dernière est allumée, éteinte ou en veille (activation de l'écran de veille). Elle peut également être réglée automatiquement lorsque vous pressez une touche de la télécommande, qu'un fichier audio est lancé ou que la platine n'est pas utilisée. Ce réglage automatique peut être désactivé.
+	JP	パワー オン・オフ時、スクリーンセーバー時のプレーヤーのディスプレイの明るさを調節できます
 	SE	Ljusstyrkan på spelarens skärm kan ställas in oberoende för lägena av, på och vänteläge. Ljusstyrkan kan också justeras automatiskt vid knapptryckning, vid start eller slut på sång, eller efter förinställd tid av oaktivitet. Du kan också välja att stänga av denna automatik.
 
 SETUP_GROUP_TCP_PARAMS
@@ -960,6 +1038,7 @@ SETUP_GROUP_TCP_PARAMS
 	ES	Parámetros TCP
 	FI	TCP parametrit
 	FR	Paramètres TCP
+	JP	TCP パラメータ
 	NL	TCP instellingen
 	NO	TCP parametre
 	PT	Parâmetros TCP
@@ -995,6 +1074,7 @@ SETUP_GROUP_MENUITEMS
 	EN	Home Menu Customization
 	ES	Personalización de Menú de Inicio
 	FR	Personnalisation du Menu principal
+	JP	ホーム メニュー カスタマイズ
 	NL	Hoofdmenu aanpassen
 	NO	Tilpass hovedmenyen
 	PT	Personalização do Menu Inicial
@@ -1006,6 +1086,7 @@ SETUP_GROUP_MENUITEMS_DESC
 	EN	You can customize the choices that are available on the top-level Home menu on the player's display. Click to move items up and down or to remove menu items. Click on "Add" to add a removed item back to the menu.
 	ES	Se pueden personalizar las opciones que estan disponibles en el nivel superior del menu de Inicio de la pantalla del reproductor. Hacer click para mover items hacia arriba o abajo, o para removerlos. Hacer click en "Añadir" para añadir al menu un item previamente eliminado.
 	FR	Vous pouvez personnaliser les choix disponibles dans le Menu principal. Cliquez pour supprimer un choix ou pour le déplacer verticalement. Cliquer sur "Ajouter" pour restaurer un choix supprimé.
+	JP	プレーヤー ディスプレイのホーム 
 	NL	U kunt instellen welke keuzes aanwezig zijn in het Hoofdmenu. Klik om de items naar boven of naar beneden te verplaatsen of ze te verwijderen. Klik op "Toevoegen" om een verwijderd item terug te plaatsen in het menu.
 	NO	Du kan tilpasse hovedmenyen på din Slim-player. Trykk for å flytte elementer oppover og nedover eller for å fjerne dem. Trykk "Legg til" for å legge til et fjernet element.
 	PT	Pode personalizar as opções disponíveis no menu inicial. Escolha as opções para mover para cima, para baixo, ou para apagar. Escolha "Adicionar" para adicionar um item ao menu.
@@ -1028,6 +1109,7 @@ SETUP_GROUP_NONMENUITEMS_INTRO
 	EN	Inactive menu items:
 	ES	Items inactivos
 	FR	Eléments de menu inactifs :
+	JP	使われていないメニューアイテム:
 	NL	Inactieve menu items:
 	NO	Inaktive meny elementer:
 	PT	Items disponíveis
@@ -1038,6 +1120,7 @@ SETUP_GROUP_XPL
 	EN	xPL Settings
 	ES	Configuración de xPL
 	FR	Paramètres xPL
+	JP	xPL セッティング
 	NO	xPL-innstillinger
 	SE	xPL-inställningar
 
@@ -1046,6 +1129,7 @@ SETUP_GROUP_XPL_DESC
 	EN	These settings control the behavior of the xPL protocol
 	ES	Estos valores controlan el comportamiento del protocolo xPL
 	FR	Ces réglages permettent de paramétrer le protocole xPL.
+	JP	これらのセッティングはxPLプロトコルを調節します
 	NO	Dette er innstillinger for xPL-protokollen
 	SE	Detta är inställningar för xPL-protokollet
 
@@ -1091,6 +1175,7 @@ SETUP_DOUBLESIZE
 	ES	Tamaño de texto
 	FI	Tekstin koko
 	FR	Taille du texte
+	JP	テキストサイズ
 	NL	Tekstgrootte
 	NO	Tekststørrelse
 	PT	Tamanho do Texto
@@ -1100,6 +1185,7 @@ SETUP_DOUBLESIZE_DESC
 	DE	Schriftgrösse wählen
 	EN	Choose the size of text for player display
 	ES	Elegir el tamaño en el que se mostrará el texto
+	JP	プレーヤー ディスプレイのテキストサイズを選んでください
 	SE	Välj textstorlek för spelarens skärm
 
 SETUP_OFFDISPLAYSIZE
@@ -1107,6 +1193,7 @@ SETUP_OFFDISPLAYSIZE
 	EN	Standby Text Size
 	ES	Tamaño de Texto para standby
 	FR	Taille du texte en veille
+	JP	スタンドバイ時のテキストサイズ
 	NO	Tekststørrelse i standby modus
 	PT	Tamanho do Texto ao Desligar
 	SE	Textstorlek i standby-läge
@@ -1158,6 +1245,7 @@ SETUP_SCROLLRATE_DESC
 DOUBLE-LINE
 	EN	Double-Size
 	ES	Tamaño Doble
+	JP	ダブルサイズ
 
 SINGLE-LINE
 	EN	Single Line
@@ -1169,6 +1257,7 @@ SETUP_GROUP_ALARM
 	EN	Alarm Clock
 	ES	Reloj de Alarma
 	FR	Réveil
+	JP	アラーム時計
 	NL	Wekker
 	NO	Alarm
 	PT	Alarme
@@ -1179,6 +1268,7 @@ SETUP_GROUP_ALARM_DESC
 	EN	Settings for alarm clock. Each player can have an alarm set.  If active, it will repeat every 24 hours.
 	ES	Configuración del reloj de Alarma. Cada reproductor puede tener una alarma configurada. Si está activada, se repetirá cada 24 horas.
 	FR	Réglages du mode réveil. Chaque platine peut activer son propre réveil ; en mode activé, celui-ci se déclenchera toutes les 24 heures.
+	JP	アラーム時計設定。それぞれのプレーヤーに別の設定をできます。設定されれば毎日動作します。
 	NO	Innstillinger for vekkerklokka. Hver spiller kan ha en vekkersklokke. Når aktivert går alarmen hvert døgn.
 	SE	Inställningar för väckarklockan. Varje spelare kan ha en separat väckarklocka. I aktiverat läge repeteras larmet varje dygn.
 
@@ -1188,6 +1278,7 @@ SETUP_GROUP_IRSETS
 	EN	Remote Controls
 	ES	Controles remotos
 	FR	Modèles de télécommande
+	JP	リモートコントロール
 	NL	Afstandsbedieningen
 	NO	Fjernkontroller
 	PT	Controlo Remoto
@@ -1199,6 +1290,7 @@ SETUP_GROUP_IRSETS_DESC
 	EN	You can choose to have this player respond to or ignore certain infrared remote signals. To enable a remote control code set, put a check next to the name below. To disable a remote control code set, clear the check mark.
 	ES	Se puede elegir que el reproductor responda o ignore ciertos señales remotas infrarojas. Para habilitar un conjunto de códigos de controles remotos, tildar el nombre debajo. Para deshabilitar un conjunto de códigos de controles remotos, destildar.
 	FR	Vous pouvez sélectionner à quel type d'ordres infrarouge de la télécommande la platine répondra. Pour activer un type, cocher la case correspondante. Pour le désactiver, décochez la case.
+	JP	特定のリモートコントロール信号に反応または無視するように設定できます。以下、チェックすると有効に、チェックを消すと無効になります。
 	NL	U kan instellen welke infraroodsignalen door de speler worden begrepen danwel genegeerd. Om een code set voor een afstandsbediening te activeren vinkt U de onderstaande naam aan. Om de code set te deactiveren verwijdert U het vinkje.
 	NO	Du kan velge om spilleren skal reagere på eller ignorere visse signaler fra fjernkontrollen. For å aktivere kodeoppsettet for en fjernkontroll, merk den nedenfor. For å deaktivere den, fjern merket.
 	PT	Pode optar por permitir ou negar alguns sinais do controlo remoto no seu cliente. Para activar um sinal, active a opção junto ao nome abaixo. Para desactivar, limpe a opção.
@@ -1210,6 +1302,7 @@ SETUP_GROUP_PLUGINS
 	EN	Plugins
 	ES	Plugins
 	FR	Modules d'extension
+	JP	プラグイン
 	NL	Plugins
 	NO	Plugins
 	PT	Extras
@@ -1221,6 +1314,7 @@ SETUP_GROUP_PLUGINS_DESC
 	EN	SlimServer includes some extra features, called Plugins, that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. You may choose to have the server scan for plugins each time you navigate to the player plugins menu or the plugins settings. Default is to load on startup only.  To save your changes, click Change.
 	ES	SlimServer incluye algunas características extra, llamadas Plugins, que se pueden utilizar con el control remoto. Se puede habilitar o deshabilitar plugins individuales en la carpeta de Plugins. Para habilitar, tildar junto al nombre debajo. Para deshabilitar, destildar. Se puede hacer que el servidor busque los plugins cada vez que se navega por el menu de plugins del reproductor o la configuración de los plugins. Por defecto solo se lo hace al momento del inicio del servidor. Para guardar los cambios, hacer click en Cambiar.
 	FR	Vous pouvez sélectionner des fonctionnalités supplémentaires de la platine, appelées Modules d'extension, disponibles à l'aide de la télécommande. Ces fonctionnalités sont situées dans le dossier Plugins. Pour activer un module d'extension, cocher la case correspondante. Pour le désactiver, décochez la case.
+	JP	SlimServerには、リモートコントロールで使えるプラグインがあります。プラグインのディレクトリで選んでください。プレーヤーのプラグイン 
 	NL	SlimServer laat toe om extra functies te koppelen aan de afstandsbediening. Deze functies vindt U terug in de Plugins folder. Om een funtie te activeren klikt U het vinkje naast de functie aan. Om de funtie uit te schakelen verwijdert U het vinkje. Om de wijzigingen op te slaan klikt U op 'Aanpassen'.
 	NO	SlimServer inneholder en del tilleggsfunksjoner, Plugins, som du kan benytte deg av med fjernkontrollen. Disse kan aktiveres eller deaktiveres individuelt. For å aktivere en Plugin, merk den. For å deaktivere en Plugin, fjern merket. For å lagre endringene, velg "Endre".
 	PT	O cliente SlimServer inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
@@ -1231,6 +1325,7 @@ SETUP_PLUGINS-ONTHEFLY
 	EN	Load Plugins On-The-Fly
 	ES	Cargar Plugins en el momento
 	FR	Charger les modules à la volée
+	JP	プラグインを逐次チェックする。
 	SE	Ladda tilläggsprogram On-the-Fly
 
 SETUP_PLUGINS-ONTHEFLY_0
@@ -1238,6 +1333,7 @@ SETUP_PLUGINS-ONTHEFLY_0
 	EN	Load Plugins at startup Only
 	ES	Cargar plugins solo al inicio
 	FR	Charger les modules au démarrage uniquement
+	JP	プラグインをスタートアップの時のみチェックする。
 	SE	Ladda tilläggsprogram endast vid serverstart
 
 SETUP_PLUGINS-ONTHEFLY_1
@@ -1245,6 +1341,7 @@ SETUP_PLUGINS-ONTHEFLY_1
 	EN	Load Plugins On-The-Fly
 	ES	Cargar Plugins en el momento
 	FR	Charger les modules à la volée
+	JP	プラグインを逐次チェックする。
 	SE	Laddar tilläggsprogram
 
 SETUP_GROUP_FORMATS
@@ -1252,6 +1349,7 @@ SETUP_GROUP_FORMATS
 	EN	File Format Conversion Setup
 	ES	Configuración de Conversión de Formatos de Archivo
 	FR	Conversion des types de fichier
+	JP	ファイルフォーマット変換セットアップ
 	NO	Innstillinger for konvertering mellom filformater
 	SE	Inställningar för konvertering mellan filformat
 
@@ -1269,6 +1367,7 @@ SETUP_FORMATSLIST_CHANGE
 	EN	Setting was changed.
 	ES	La configuración ha sido cambiada.
 	FR	Le réglage a été modifié.
+	JP	セッティングは変更されました。
 	NL	Instelling is aangepast.
 	NO	Innstillingen er endret.
 	PT	A opção mudou.
@@ -1279,6 +1378,7 @@ SETUP_FORMATSLIST_MISSING_BINARY
 	EN	Required binary was not found:
 	ES	El ejecutable reuqerido no ha sido encontrado:
 	FR	Binaire introuvable :
+	JP	ご指定のフォーマットが見つかりません:
 	SE	Programmet kunde inte hittas:
 
 SETUP_FORMATSLIST
@@ -1286,6 +1386,7 @@ SETUP_FORMATSLIST
 	EN	File Format Conversions
 	ES	Conversiones de Formato de Archivo
 	FR	Conversion types de fichier
+	JP	ファイルフォーマット変換
 	NO	Filformat, konverteringer
 	SE	Filformat, konverteringar
 
@@ -1294,6 +1395,7 @@ FILE_FORMAT
 	EN	File Format
 	ES	Formato de Archivo
 	FR	Type fichier
+	JP	ファイルフォーマット
 	NO	Filformat
 	SE	Filformat
 
@@ -1302,6 +1404,7 @@ STREAM_FORMAT
 	EN	Stream Format
 	ES	Formato de transmisión
 	FR	Type stream
+	JP	ストリームフォーマット
 	NO	Streamingformat
 	SE	Format för strömmande ljud
 
@@ -1310,6 +1413,7 @@ PLAYER_TYPE
 	EN	Player Type
 	ES	Tipo de Reproductor
 	FR	Type platine
+	JP	プレーヤー タイプ
 	NO	Spillertype
 	SE	Spelartyp
 
@@ -1318,6 +1422,7 @@ PLAYER_ID
 	EN	Player ID
 	ES	ID del Reproductor
 	FR	ID platine
+	JP	プレーヤーID
 	NO	Spiller ID
 	SE	SpelarID
 
@@ -1326,6 +1431,7 @@ COMMAND
 	EN	Command
 	ES	Comando
 	FR	Commande
+	JP	コマンド
 	NO	Kommando
 	SE	Kommando
 
@@ -1334,6 +1440,7 @@ DECODER
 	EN	Decoder
 	ES	Decodificador
 	FR	Décodeur
+	JP	デコーダー
 	SE	Avkodare
 
 #
@@ -1354,6 +1461,7 @@ SETUP_PLAYERNAME
 	ES	Nombre del reproductor
 	FI	Player Nimi
 	FR	Nom de la platine
+	JP	プレーヤー名
 	NL	Player Naam
 	NO	Spillernavn
 	PT	Nome do Cliente
@@ -1366,6 +1474,7 @@ SETUP_PLAYERNAME_OK
 	ES	El nuevo nombre para este reproductor es:
 	FI	Uuden soittimen nimi on:
 	FR	Le nouveau nom de la platine est :
+	JP	プレーヤーの新しい名前は:
 	NL	De nieuwe naam voor deze speler is:
 	NO	Spillerens nye navn er:
 	PT	O novo nome para este cliente é
@@ -1390,6 +1499,7 @@ SETUP_PLAYERNAME_CHOOSE
 	ES	Elija un nombre para este reproductor:
 	FI	Soittimen nimi:
 	FR	Nom de la platine :
+	JP	プレーヤー名:
 	NL	Naam voor deze speler:
 	NO	Spillernavn:
 	PT	Escolha um nome para este cliente
@@ -1402,6 +1512,7 @@ SETUP_POWERONBRIGHTNESS
 	ES	Luminosidad cuando está encendido
 	FI	Näytön kirkkaus soittimen ollessa päällä
 	FR	Luminosité lorsqu'allumée
+	JP	パワーオン時の明るさ
 	NL	Helderheid bij ingeschakelde toestand
 	NO	Lysstyrke når på
 	PT	Brilho quando Ligado
@@ -1414,6 +1525,7 @@ SETUP_POWERONBRIGHTNESS_CHOOSE
 	ES	Luminosidad cuando está encendido:
 	FI	Näytön kirkkaus soittimen ollessa päällä:
 	FR	Luminosité lorsqu'allumée :
+	JP	パワーオン時の明るさ:
 	NL	Helderheid bij ingeschakelde toestand:
 	NO	Lysstyrke når på:
 	PT	Brilho quando Ligado
@@ -1426,6 +1538,7 @@ SETUP_POWEROFFBRIGHTNESS
 	ES	Luminosidad cuando está apagado
 	FI	Näytön kirkkaus soittimen ollessa pois päältä
 	FR	Luminosité en veille
+	JP	パワーオフ時の明るさ
 	NL	Helderheid bij uitgeschakelde toestand
 	NO	Lysstyrke når av
 	PT	Brilho quando Desligado
@@ -1438,6 +1551,7 @@ SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	ES	Luminosidad cuando está apagado:
 	FI	Näytön kirkkaus soittimen ollessa pois päältä:
 	FR	Luminosité en veille :
+	JP	パワーオフ時の明るさ:
 	NL	Helderheid bij uitgeschakelde toestand:
 	NO	Lysstyrke når av:
 	PT	Brilho quando Desligado
@@ -1448,6 +1562,7 @@ SETUP_IDLEBRIGHTNESS
 	EN	Brightness when idle
 	ES	Luminosidad cuando está inactivo:
 	FR	Luminosité en veille
+	JP	アイドル時の明るさ
 	SE	Ljusstyrka i viloläge
 
 SETUP_IDLEBRIGHTNESS_CHOOSE
@@ -1455,6 +1570,7 @@ SETUP_IDLEBRIGHTNESS_CHOOSE
 	EN	Brightness when idle:
 	ES	Luminosidad cuando está inactivo:
 	FR	Luminosité en veille :
+	JP	アイドル時の明るさ:
 	SE	Ljusstyrka i viloläge
 
 SETUP_AUTOBRIGHTNESS_CHOOSE
@@ -1463,6 +1579,7 @@ SETUP_AUTOBRIGHTNESS_CHOOSE
 	EN	Automatic Display Brightness:
 	ES	Luminosidad Automática de Pantalla:
 	FR	Réglage automatique de la luminosité de l'affichage :
+	JP	ディスプレイ明るさ自動調節
 	NL	Automatische helderheidsregeling van het scherm:
 	NO	Vis lysstyrke automatisk:
 	PT	Brilho Automático:
@@ -1474,6 +1591,7 @@ SETUP_AUTOBRIGHTNESS_OFF
 	EN	Adjust Brightness Manually
 	ES	Ajustar Luminosidad en Forma Manual
 	FR	Régler la luminosité manuellement
+	JP	明るさを手動調節にする
 	NL	Manuele Helderheidsregeling
 	NO	Juster lysstyrke manuelt
 	PT	Ajustar o Brilho Manualmente
@@ -1485,6 +1603,7 @@ SETUP_AUTOBRIGHTNESS_ON
 	EN	Adjust Brightness Automatically
 	ES	Ajustar Luminosidad en Forma Automática
 	FR	Régler la luminosité automatiquement
+	JP	明るさを自動調節にする
 	NL	Automatische Helderheidsregeling
 	NO	Juster lysstyrke automatisk
 	PT	Ajustar o Brilho Automaticamente
@@ -1496,6 +1615,7 @@ SETUP_ALARM
 	EN	Alarm
 	ES	Alarma
 	FR	Réveil
+	JP	アラーム
 	NL	Wekker
 	NO	Alarm
 	PT	Alarme
@@ -1507,6 +1627,7 @@ SETUP_ALARMVOLUME
 	EN	Set Alarm Volume (0-100)
 	ES	Establecer Volumen de Alarma (0-100)
 	FR	Réglage du volume de réveil (0-100)
+	JP	アラームのボリュームをセットして下さい (0-100)
 	NL	Kies het wekvolume (0-100)
 	NO	Sett Alarm volum (0-100)
 	PT	Mudar Volume do Alarme (0-100)
@@ -1518,6 +1639,7 @@ SETUP_ALARMPLAYLIST
 	EN	Playlist for Alarm
 	ES	Lista de temas para Alarma
 	FR	Liste de lecture pour le réveil
+	JP	アラーム用のプレイリスト
 	NL	Kies een playlist voor de wekker
 	NO	Velg Spilleliste for Alarm
 	PT	Playlist para o Alarme
@@ -1528,6 +1650,7 @@ SETUP_PLAYINGDISPLAYMODE
 	EN	Now Playing Information
 	ES	Información de lo que se está escuchando
 	FR	Affichage en mode Lecture
+	JP	現在再生中の曲の情報
 	SE	Information i läge "Nu spelas"
 
 SETUP_PLAYINGDISPLAYMODE_OK
@@ -1537,6 +1660,7 @@ SETUP_PLAYINGDISPLAYMODE_OK
 	ES	La pantalla mostrará el progreso de la canción actual como:
 	FI	Näyttö kuvaa soivan kappaleen kulumista:
 	FR	L'écran affichera le déroulement de la lecture du morceau avec :
+	JP	ディスプレイは曲の進行を以下のように表示します:
 	NL	Het display zal nu de voortgang van de huidige song als volgt laten zien:
 	NO	Displayet viser nå status for sangen som spilles slik:
 	PT	O ecrã irá mostrar o progresso da música actual como
@@ -1549,6 +1673,7 @@ SETUP_PLAYINGDISPLAYMODE_DESC
 	ES	Puede mostrarse información del progreso de la canción mientras se está escuchando. Elija la información que quiere ver.
 	FI	Soitin voi näyttää tietoa kappaleen etenemisestä. Valitse, mitä tietoa haluat näytettävän.
 	FR	La platine peut afficher la progression de la lecture du morceau en cours de différentes manières. Choisissez les informations que vous voulez voir apparaître.
+	JP	プレーヤーは演奏中の曲の進行具合を表示することができます。表示したい情報を選んでください。
 	NL	De speler kan informatie over de voortgang van een nummer op het display tonen. Selecteer de informatie die U op het display wilt zien.
 	NO	Spilleren kan vise informasjon om avspillingen når den spiller. Velg hva du velger skal vises.
 	PT	O cliente pode mostrar informação do progresso da música enquanto toca. Escolha a informação que deseja que seja mostrada.
@@ -1561,6 +1686,7 @@ SETUP_SYNCHRONIZE
 	ES	Sincronizar
 	FI	Saata ajantasalle
 	FR	Synchroniser
+	JP	シンクロさせる
 	NL	Synchronizeren
 	NO	Synkroniser
 	PT	Sincronizado
@@ -1572,6 +1698,7 @@ SETUP_SYNCHRONIZE_DESC
 	EN	The player can be synchronized with other players, enabling them to play the same music simultaneously. Choose the players you would like to synchronize with from the list of available synchronization groups. Choose No Synchronization to stop synchronization.
 	ES	El reproductor puede sincronizarse con otros reproductores, permitiéndoles reproducir la misma música simultánemanente. Se debe elegir los reproductores que se queire sincronizar de la lista de groupos de sincronización disponibles. Elegir Sin Sincronización para detener la sincronización.
 	FR	La platine peut se synchroniser avec d'autres platines pour jouer la même musique que ceux-ci. Choisissez les platines avec lesquels vous voulez vous synchroniser à partir de la liste des groupes de synchronisation. Choisissez le nom de la platine courante pour annuler la synchronisation.
+	JP	プレーヤーは他のプレーヤーとシンクロし、同じ曲を同時に再生することができます。シンクロさせるプレーヤーを選ぶか、シンクロなしを選んでください。
 	NL	De speler kan gesynchroniseerd worden met andere spelers. De spelers geven dan dezelfde muziek weer. Kies de spelers waarmee gesynchroniseerd moet worden uit de lijst van beschikbare synchonisatiegroepen. Kies 'Geen Synchronisatie' om deze functie te annuleren.
 	NO	Spilleren kan synkroniseres med andre spillere slik at de spiller samme musikken samtidig. Velg spillerene du ønsker å synkronisere med fra listen of synkroniserings grupper. Velg Ingen Synkronisering for å stoppe synkroniseringen.
 	PT	O cliente por estar sincronizado com outros clientes, permitindo que toquem todos a mesma música em simultâneo. Escolha os clientes que deseja sincronizar na lista de grupos disponíveis para sincronizar. Escolha "Não Sincronizado" para parar a sincronização.
@@ -1583,6 +1710,7 @@ SETUP_NO_SYNCHRONIZATION
 	EN	No Synchronization
 	ES	Sin Sincronización
 	FR	Non synchronisé
+	JP	シンクロなし
 	NL	Geen Synchronisatie
 	NO	Ingen Synkronisering
 	PT	Não Sincronizado
@@ -1594,6 +1722,7 @@ SETUP_SYNCHRONIZE_OK
 	EN	Joining synchronization group:
 	ES	Sumaándose al grupo de sincronización:
 	FR	Ajouter au groupe de synchronisation :
+	JP	シンクログループに入れる:
 	NL	Toevoegen aan synchronisatiegroep:
 	NO	Blir med i synkroniseringsgruppe:
 	PT	Juntar ao Grupo Sincronizado
@@ -1605,6 +1734,7 @@ SETUP_SYNCVOLUME_ON
 	EN	Sync player's volume
 	ES	Sincronizar el volumen del reproductor
 	FR	Synchroniser le volume de la platine
+	JP	プレーヤーのボリュームをシンクロさせる
 	NO	Synkroniser spillerens volum
 	PT	Sincronizar o volume do cliente
 	SE	Synkronisera spelarens volym
@@ -1615,6 +1745,7 @@ SETUP_SYNCVOLUME_OFF
 	EN	Don't sync player's volume
 	ES	No sincronizar el volumen del reproductor
 	FR	Ne pas synchroniser le volume de la platine
+	JP	プレーヤーのボリュームをシンクロさせない
 	NO	Ikke synkroniser spillerens volum
 	PT	Não sincronizar o volume do cliente
 	SE	Synkronisera inte spelarens volym
@@ -1625,6 +1756,7 @@ SETUP_SYNCVOLUME
 	EN	Synchronize Volume
 	ES	Sincronizar Volumen
 	FR	Synchroniser le volume
+	JP	シンクロ ボリューム
 	NO	Synkroniser volum
 	PT	Sincronizar o volume
 	SE	Synkronisera volym
@@ -1644,6 +1776,7 @@ SETUP_SYNCPOWER_ON
 	EN	Power off/on with group
 	ES	Encender/Apagar en grupo
 	FR	Allumer/éteindre avec groupe
+	JP	グループでパワー オン・オフをシンクロさせる
 	NO	Strøm av/på med gruppe
 	SE	På/av med synk-gruppen
 
@@ -1652,6 +1785,7 @@ SETUP_SYNCPOWER_OFF
 	EN	Power off/on separately
 	ES	Encender/Apagar en forma separada
 	FR	Allumer/éteindre indépendamment
+	JP	パワー オン・オフは独立させる
 	NO	Strøm av/på alene
 	SE	På/av individuellt
 
@@ -1660,6 +1794,7 @@ SETUP_SYNCPOWER
 	EN	Synchronize Power
 	ES	Sincronizar encendido
 	FR	Synchroniser la mise en marche
+	JP	電源オン・オフをシンクロさせる
 	NO	Synkroniser strøm på/av
 	SE	Synkronisera på/av
 
@@ -1676,6 +1811,7 @@ SETUP_DIGITALVOLUMECONTROL_ON
 	EN	Volume controls adjust digital outputs
 	ES	Los controles de volumen ajustan las salidas digitales
 	FR	Niveau sortie numérique contrôlé par boutons de volume
+	JP	ボリュームは、デジタル出力を調整します。
 	NO	Volumkontrollen påvirker digital utgangen
 	SE	Volymkontrollen påverkar den digitala utsignalen
 
@@ -1684,6 +1820,7 @@ SETUP_DIGITALVOLUMECONTROL_OFF
 	EN	Digital output level is fixed (Best analog quality)
 	ES	El nivel de la salida digital es fijo (Mejor calidad análoga)
 	FR	Niveau sortie numérique fixe (qualité analogique optimale)
+	JP	デジタル出力は固定です（アナログ音質は最高）
 	NO	Digital utgangsnivå er fast (gir best analog kvalitet)
 	SE	Den digitala utnivån är fixerad (ger bäst analog kvalitet)
 
@@ -1692,6 +1829,7 @@ SETUP_DIGITALVOLUMECONTROL
 	EN	Digital Volume Control
 	ES	Control Digital de Volumen
 	FR	Niveau sortie numérique
+	JP	デジタルボリューム調整
 	NO	Digital volumkontroll
 	SE	Digital volymkontroll
 
@@ -1700,6 +1838,7 @@ SETUP_DIGITALVOLUMECONTROL_DESC
 	EN	You can choose to have the digital audio output on your player be fixed at maximum level or be controlled by the volume buttons.  If you choose to have a fixed digital audio volume level, the analog outputs will have the highest quality possible.  With either setting, the analog output levels are adjusted by the volume buttons.
 	ES	Se puede elegir que las salidas de audio digital del reproductor estén fijas al máximo nivel o que sean controladas por los botones de volumen. Si se elige un nivel digital fijo de volumen, la salidas analogicas tendrán la mayor calidad posible. Con cualquiera de las dos opciones, los niveles de las salidas analógicas (no digitales) pueden ser ajustadas por los botones de volumen.
 	FR	Le niveau de la sortie audio numérique de votre platine peut être soit fixé à son maximum, soit contrôlé par les boutons de volume. Si le niveau de la sortie audio numérique est fixe, la qualité de la sortie analogique sera optimale. Dans tous les cas, le niveau de la sortie analogique est contrôlé par les boutons de volume.
+	JP	デジタル出力のボリュームを固定、あるいは調整可能にできます。デジタル出力を固定にするとアナログの音質は最高になります。どちらのセッティングでも、音量はボリュームボタンで調節することができます。
 	NO	Du kan velge mellom å la digitalt volum være fast på maks nivå eller la den styres av volumkontrollen. Når du velger fast digitalt utgangsnivå, får det analoge signalet maksimal kvalitet. Uansett innstilling påvirkes analogt volum av volumknappene.
 	SE	Du kan välja mellan att låta ditital volym vara fix på max nivå, eller låta den styras av volymkontroller. När du väljer fix digital signalvolym, får den analoga signalen maximal kvalitet. Oavsett inställning, så påverkar påverkas analog volym av volymknapparna.
 
@@ -1708,6 +1847,7 @@ SETUP_MAXBITRATE
 	EN	Bitrate Limiting
 	ES	Límite de tasa de transmisión
 	FR	Limite transcodage
+	JP	ビットレート制限
 	SE	Begränsa bitkodningstakten
 
 SETUP_MAXBITRATE_DESC
@@ -1715,6 +1855,7 @@ SETUP_MAXBITRATE_DESC
 	EN	SlimServer can automatically convert your music files to WAV/AIFF or MP3 on-the-fly to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to SlimServer across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that SlimServer will stream to your player.  MP3 songs encoded at a bitrate lower than below won't be converted.  If you choose No Limit, SlimServer will stream your MP3 files without conversion and your other file types as uncompressed PCM audio.
 	ES	SlimServer puede convertir automaticamente los archivos de música a WAV/AIFF o MP3 en-el-momento para reducir la tasa de transmisión hacia el reproductor. Esto es útil si se conecta  el reproductor al SlimServer a través de internet o se encuentran problemas intermitentes utilizando una red inalámbrica. Se puede elegir la tasa de transmisión máxima que el SlimServer usará para transmitir hacia el reproductor. Las canciones MP3 codificadas a una tasa menor, no serán convertidas. Si se elige Sin Límite, SlimServer transmitirá los archivos MP3 sin conversión y los archivos de otros formatos como audio PCM sin compresión.
 	FR	Le SlimServer peut convertir automatiquement et à la volée vos fichiers de musique en WAV/AIFF ou MP3 afin de limiter le débit binaire envoyé à votre platine. Ce réglage est utile lorsque vous vous connectez au SlimServer depuis l'internet ou via un réseau sans fil défectueux. Vous pouvez spécifier le débit maximum envoyé par le SlimServer à votre platine. Les fichiers MP3 encodés à un débit inférieur ne seront pas transcodés. Si vous choisissez Pas de limite, le SlimServer enverra les fichiers MP3 sans transcodage et les autres types de fichiers au format PCM audio non compressé.
+	JP	SlimServerは、自動的にあなたの音楽ファイルをWAV/AIFFまたはMP3に変換します。ビットレートの最大値を設定することができます。｢制限なし」を選択しますと、元のファイル通りのビットレートで再生されます。
 	SE	SlimServer kan automatiskt och löpande konvertera dina musikfiler till WAV/AIFF eller MP3 för att sända lägre bitkodningstakt till din spelare. Detta är användbart om du kopplar till din SlimServer över Internet, eller emellanåt har problem med överföring via trådlöst nätverk. Du kan bestämma vilken maximal bitkodningstakt Slimserver ska sända till din spelare. MP3-filer ursprungligen kodade i lägre takt kommer inte att kodas om. Om du väljer "Ingen begräsning" kommer SlimServer sända dina MP3-filer utan omkodning och övriga filtyper i det okomprimerade PCM-audio-formatet.
 
 SETUP_MP3BITRATE_DESC
@@ -1722,6 +1863,7 @@ SETUP_MP3BITRATE_DESC
 	EN	SlimServer can automatically convert your music files to MP3 on-the-fly to play back other formats than MP3.  SlimServer can also recompress your MP3 files to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to SlimServer across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that SlimServer will stream to your player.  MP3 songs encoded at a bitrate lower than below won't be converted.
 	ES	SlimServer puede convertir automaticamente los archivos de música a MP3 en-el-momento para reproducir otros formatos, ademas de MP3. Slimserver puede tambien recomprimir para reducir la tasa de transmisión hacia el reproductor. Esto es útil si se conecta  el reproductor al SlimServer a través de internet o se encuentran problemas intermitentes utilizando una red inalámbrica. Se puede elegir la tasa de transmisión máxima que el SlimServer usará para transmitir hacia el reproductor. Las canciones MP3 codificadas a una tasa menor, no serán convertidas. 
 	FR	Le SlimServer peut encoder automatiquement et à la volée vos fichiers de musique non-MP3 au format MP3, ainsi que ré-encoder vos fichiers MP3 existants afin de réduire le débit binaire envoyé à votre platine. Ce réglage est utile lorsque vous vous connectez au SlimServer depuis l'internet ou via un réseau sans fil défectueux. Vous pouvez spécifier le débit maximum envoyé par le SlimServer à votre platine. Les fichiers MP3 encodés à un débit inférieur ne seront pas transcodés.
+	JP	SlimServerは、自動的にあなたの音楽ファイルをMP3に変換します。MP3からさらに下のビットレートへの変換もできます。
 	SE	SlimServer kan automatiskt och löpande konvertera dina musikfiler till MP3 för att spela upp andra format än MP3. SlimServer kan också komprimera om dina MP3-filer så att lägre datatakt skickas till din spelare. Detta är värdefullt om du kopplar mot en server över Internet eller via trådlöst nätverk. Du kan bestämma vilken maximal bitkodningstakt Slimserver ska sända till din spelare. MP3-filer ursprungligen kodade i lägre takt kommer inte att kodas om.
 
 CONVERTED_TO
@@ -1729,6 +1871,7 @@ CONVERTED_TO
 	EN	Converted to
 	ES	Convertido a 
 	FR	Converti en
+	JP	以下のフォーマットに変換されました
 	SE	Konverterad till
 
 SETUP_LAME_NOT_FOUND
@@ -1743,6 +1886,7 @@ SETUP_LAME_FOUND
 	EN	The LAME encoder appears to be installed correctly on your system.
 	ES	El codificador LAME parece estar instalado correctamente en el sistema.
 	FR	LAME semble être installé correctement sur votre système.
+	JP	LAMEは正しくシステムにインストールされています。
 	SE	LAME verkar vara korrekt installerad i ditt system.
 
 LAME0
@@ -1773,6 +1917,7 @@ SETUP_MP3SILENCEPRELUDE
 	EN	Audio Startup Time
 	ES	Tiempo de espera para Comenzar Audio
 	FR	Délai de décodage audio
+	JP	オーディオ スタートアップ タイム
 	SE	Audio start-fördröjning
 
 SETUP_MP3SILENCEPRELUDE_DESC
@@ -1780,6 +1925,7 @@ SETUP_MP3SILENCEPRELUDE_DESC
 	EN	Some audio receivers and D/A converters need a little extra time to start decoding audio from the player when playing back MP3 audio.  You can specify how much time, in seconds, to wait after pressing play to start sending MP3 audio.  The default value is 0, a value of 0.25 seconds works for many receivers.
 	ES	Algunos receptores de audio y convertidores D/A  (DACs) necesitan un tiempo extra para empezar a decodificar audio desde el reproductor cuando estan reproduciendo audio MP3. Se puede especificar cuanto tiempo esperar, en segundos, despues de presionar PLAY para empezar a enviar audio MP3. El valor por defecto es 0, un valor de 0.25 segundos funciona para la mayoría de los receptores.
 	FR	Certains récepteurs audio et convertisseurs numérique/analogique nécessitent un délai avant de pouvoir commencer le décodage d'une source MP3. Vous pouvez définir la durée en secondes de ce délai après l'appui sur la touche lecture. La valeur par défaut est 0, une valeur de 0.25 seconde est recommandée pour la plupart des récepteurs.
+	JP	いくつかのレシーバーやD/Aコンバーターは、MP3を再生する際にデジタル信号をデコードし始めるのに時間がかかることがあります。どれくらいのスタートアップタイムが必要か、秒数で入力してください。標準は0になっています。0.25秒あればほとんどの機器で対応可能です。
 	SE	Vissa förstärkare och D/A-omvandlare behöver lite extra tid för att inleda avkodning av MP3-ljud. Du kan ange hur lång fördröjning (i sekunder) som som ska gälla från det att du trycker Play tills det att MP3-ljud börjar sändas. Standard-värdet är 0. Värdet 0.25 fungerar bra med många förstärkare.
 
 SETUP_TITLEFORMATCURR
@@ -1789,6 +1935,7 @@ SETUP_TITLEFORMATCURR
 	ES	Actual formato del título
 	FI	Tämänhetkinen otsikkomuotoilu
 	FR	Format du titre courant
+	JP	現在のタイトルフォーマット
 	NL	Huidig titelformaat
 	NO	Valgt sangtittelformat
 	PT	Formato do Titulo Actual
@@ -1801,6 +1948,7 @@ SETUP_TITLEFORMAT
 	ES	Formato del título
 	FI	Otsikon muoto
 	FR	Format du titre
+	JP	タイトルフォーマット
 	NL	Titelformaat
 	NO	Sangtittelformat
 	PT	Formato do Título
@@ -1811,12 +1959,14 @@ SETUP_TITLEFORMAT_DESC
 	EN	You can customize the song title display on your player by choosing the format you'd like to see from the menus below. These choices available below will be available in Settings -> Song Title Format on the player.  Click on a button in the "Current" column to change the current format. When you are done, press the "Change" button to save your choices.
 	ES	Se puede personalizar cómo se muestra el título de la canción en el reproductor eligiendo el formato que se desea ver de los menus debajo. Estas opciones disponibles debajo estarán disponibles en Configuración -> Formato de Título de Canción en el reproductor. Hacer click en un botón en la columna "Actual" para cambiar el formato actual. Al finalizar, presionar el botón "Cambiar" para guardar los cambios.
 	FR	Vous pouvez spécifier le format d'affichage du titre sur votre platine en choisissant parmi les menus ci-dessous. Ces choix seront accessibles sur la platine dans Réglages -> Format du titre. Cliquez sur un bouton dans la colonne "Courant" pour modifier le format courant.
+	JP	ディスプレーに表示される曲のタイトルのフォーマットを指定することができます。セッティング->曲タイトル 
 
 SETUP_ITUNESPLAYLISTFORMAT
 	DE	iTunes Playlisten Format
 	EN	iTunes Playlist Format
 	ES	Formato de Lista de iTunes
 	FR	Format des listes de lecture iTunes
+	JP	iTunesプレイリストフォーマット
 	NO	iTunes spillieliste format
 	SE	Format iTunes låtlista
 
@@ -1825,6 +1975,7 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 	EN	This option determines the format used when importing iTunes playlists.
 	ES	Esta opción determina el formato utilizado cuando se importan listas de iTunes.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture iTunes.
+	JP	このオプションでは、iTunesプレイリストをインポートする時に使われるフォーマットを決めます。
 	NO	Denne innstillingen avgjør hvliket format som brukes ved import av iTunes spillelister.
 	SE	Denna inställning avgör vilket format som används vid import av iTunes-låtlistor
 
@@ -1833,6 +1984,7 @@ SETUP_MOODLOGICPLAYLISTFORMAT
 	EN	MoodLogic Playlist Format
 	ES	Formato de Lista de MoodLogic
 	FR	Format des listes de lecture MoodLogic
+	JP	ムードロジック プレイリストフォーマット
 	NO	MoodLogic spilleliste format
 	SE	MoodLogic låtlistsformat
 
@@ -1841,6 +1993,7 @@ SETUP_MOODLOGICPLAYLISTFORMAT_DESC
 	EN	This option determines the format used when importing MoodLogic playlists.
 	ES	Esta opción determina el formato utilizado cuando se importan listas de MoodLogic.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture MoodLogic.
+	JP	このオプションでは、ムードロジック プレイリストをインポートする時に使われるフォーマットを決めます。
 	NO	Denne innstillingen avgjør hvilket format som brukes ved import av MoodLogic spillelister.
 	SE	Denna inställning styr format vid import av MoodLogic-låtlistor
 
@@ -1904,6 +2057,7 @@ SETUP_MOODLOGICPLAYLISTPREFIX_CHOOSE
 	EN	Prefix:
 	ES	Prefijo:
 	FR	Préfixe :
+	JP	プレフィックス:
 	NO	Prefic:
 	SE	Prefix:
 
@@ -1912,6 +2066,7 @@ SETUP_MOODLOGICPLAYLISTSUFFIX_CHOOSE
 	EN	Suffix:
 	ES	Sufijo:
 	FR	Suffixe :
+	JP	サフィックス:
 	NO	Suffix:
 	SE	Suffix:
 
@@ -1920,6 +2075,7 @@ SETUP_ITUNESPLAYLISTPREFIX_CHOOSE
 	EN	Prefix:
 	ES	Prefijo:
 	FR	Préfixe :
+	JP	プレフィックス:
 	NO	Prefix:
 	SE	Prefix:
 
@@ -1928,6 +2084,7 @@ SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE
 	EN	Suffix:
 	ES	Sufijo:
 	FR	Suffixe :
+	JP	サフィックス:
 	NO	Suffix:
 	SE	Suffix:
 
@@ -1966,6 +2123,7 @@ SETUP_SHOWYEAR
 	EN	Show Year with Albums
 	ES	Mostrar Año con Discos
 	FR	Affichage de l'année avec l'album
+	JP	アルバム年を表示する
 
 SETUP_SHOWYEAR_DESC
 	DE	Sie können das Jahr eines Albums anzeigen lassen, wenn Sie nach Album oder Plattencover nachschlagen. Das Jahr wird neben dem Albumtitel angezeigt.
@@ -1978,6 +2136,7 @@ SETUP_GUESSFILEFORMATS
 	EN	Guess Tags Formats
 	ES	Suponer Formatos de Tags
 	FR	Repères ID3 manquants
+	JP	タグ フォーマットを推測する
 	NO	Gjett tag-format
 	SE	Gissa tag-format
 
@@ -1995,6 +2154,7 @@ SETUP_IRMAP
 	EN	Remote Button Functions
 	ES	Funciones del Control Remoto
 	FR	Fonctions des touches de la télécommande
+	JP	リモートボタン機能
 	NL	Functies Knoppen Afstandsbediening
 	NO	Knappefunksjoner på fjernkontroll
 	PT	Funções do Controlo Remoto
@@ -2006,6 +2166,7 @@ SETUP_IRMAP_DESC
 	EN	You can choose between button function sets. These sets map particular buttons on the infrared remote to particular functions. The "Standard" set is the one that is described in the documentation.
 	ES	Se puede elegir entre conjuntos de funciones de botones. Estos conjuntos mapean botones particulares en el control remoto infra-rojo a funciones particulares. El conjunto "estandar" es el que se describe en la documentación.
 	FR	Vous pouvez choisir entre plusieurs jeux de touches de fonction. Ces jeux de configuration permettent d'associer les boutons de la télécommande aux fonctions disponibles. Le jeu intitulé "Par défaut" est celui documenté dans le manuel.
+	JP	ボタン機能のセットを選択することができます。これらのセットは、どのボタンがどの機能を持つかを指定します。工場出荷時ははマニュアルに出ている通りです。
 	NL	U kan kiezen uit verschillende Knop Functie sets. Deze sets koppelen bepaalde knoppen op de infrarood afstansbediening aan bepaalde functies. The "Standaard" set is degene die beschreven staat in de documentatie.
 	NO	Du kan velge mellom ulike funksjonsgrupper. Disse gruppene angir hva en spesiell knapp på fjernkontrollen har for funksjon. "Standard" grupper en den som er beskrevet i dokumentasjonen.
 	PT	Pode escolher entre vários mapas de botões do seu controlo remoto. Estes mapas associam botões do controlo remoto a determinadas funções. O mapa "Padrão" é o que está descrito na documentação.
@@ -2017,6 +2178,7 @@ SETUP_IRSETLIST_OK
 	EN	Remote Controls:
 	ES	Controles remotos:
 	FR	Télécommandes :
+	JP	リモートコントロール:
 	NL	Afstandsbedieningen:
 	NO	Fjernkontroller:
 	PT	Controlos Remotos
@@ -2028,6 +2190,7 @@ SETUP_IRSETLIST_CHANGE
 	EN	Setting for %s was changed.
 	ES	El valor de %s ha sido cambiado.
 	FR	Le réglage pour %s a été modifié.
+	JP	%sのセッティングが変更されました。
 	NL	Instelling voor %s is aangepast.
 	NO	Innstillingen for %s er endret.
 	PT	A opção para %s mudou.
@@ -2039,6 +2202,7 @@ SETUP_PLUGINLIST_OK
 	EN	Plugins:
 	ES	Plugins:
 	FR	Modules d'extension :
+	JP	プラグイン:
 	NL	Plugins:
 	NO	Plugins:
 	PT	Extras
@@ -2050,6 +2214,7 @@ SETUP_PLUGINLIST_CHANGE
 	EN	Setting for %s was changed.
 	ES	El valor para %s ha sido cambiado.
 	FR	Le réglage pour %s a été modifié.
+	JP	%sのセッティングが変更されました。
 	NL	Instelling voor %s is aangepast.
 	NO	Innstilling for %s er endret.
 	PT	A opção para %s mudou.
@@ -2061,6 +2226,7 @@ SETUP_PASSWORD_CHANGED
 	EN	The password has been changed.
 	ES	La contraseña ha sido cambiada.
 	FR	Le mot de passe a été modifié.
+	JP	パスワードが変更されました。
 	NL	Het paswoord werd aangepast.
 	NO	Passordet har blitt endret.
 	PT	A palavra chave foi alterada.
@@ -2074,6 +2240,7 @@ SETUP_LANGUAGE
 	ES	Idioma
 	FI	Kieli
 	FR	Langue
+	JP	言語
 	NL	Taal
 	NO	Språk
 	PT	Idioma
@@ -2086,6 +2253,7 @@ SETUP_LANGUAGE_DESC
 	ES	Puede cambiar el idioma que quiere que use el SlimServer.
 	FI	Voit vaihtaa Slim soittimesi kieltä halutessasi.
 	FR	Vous pouvez modifier la langue utilisée par le système Slim.
+	JP	SlimServerで使われる言語を変更することができます。
 	NL	U kan de taal die het Slim systeem gebruikt instellen.
 	NO	Du kan velge hvilket språk Slim-systemet skal benytte.
 	PT	Escolha o idioma a usar pelo sistema Slim.
@@ -2098,6 +2266,7 @@ SETUP_LANGUAGE_OK
 	ES	Ahora su idioma es:
 	FI	Kielivalintasi on:
 	FR	La langue choisie est :
+	JP	現在の言語は:
 	NL	Uw taal is nu:
 	NO	Valgt språk er:
 	PT	O idioma escolhido é
@@ -2108,6 +2277,7 @@ SETUP_AUDIODIR
 	EN	Music Folder
 	ES	Carpeta de Música
 	FR	Dossier de musique
+	JP	ミュージック フォルダー
 	SE	Musikmapp
 
 SETUP_AUDIODIR_DESC
@@ -2125,6 +2295,7 @@ SETUP_AUDIODIR_OK
 	FI	Palvelin käyttää seuraavaa polkua MP3 -tiedostoihisi:
 	FR	Le serveur utilisera le chemin d'accès suivant pour repérer vos fichiers MP3 :
 	IT	Okay, uso:
+	JP	サーバーは、以下のパスを検索します。
 	NL	De server zal volgend pad gebruiken naar Uw MP3 bestanden:
 	NO	Ok, bruker:
 	PT	O servidor irã usar a seguinte directoria para os ficheiros áudio
@@ -2137,6 +2308,7 @@ SETUP_PLAYLISTDIR
 	ES	Carpeta de listas guardadas
 	FI	Tallenettujen soittolistojen hakemisto
 	FR	Dossier contenant les listes de lecture enregistrées
+	JP	現在のプレイリストフォルダー
 	NL	Folder voor Bewaarde Playlists
 	NO	Folder for lagrede spillelister
 	PT	Directoria com Playlists
@@ -2147,6 +2319,7 @@ SETUP_ARTFOLDER
 	EN	Artwork Folder
 	ES	Carpeta de Arte de Tapa
 	FR	Dossier des pochettes
+	JP	アートワークのフォルダー
 	NO	Folder for platecover
 	SE	Grafikmapp
 
@@ -2155,6 +2328,7 @@ SETUP_ARTFOLDER_DESC
 	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, the server will still look for artwork in the same path as each audio file if no matching artwork in found in the Artwork Folder.
 	ES	Se puede elegir alamcenar todos los Artes de Tapa en una única carpeta, utilizando los nombres de archivo variables de arriba. Ingrese la ubicación de los archivos de Arte de Tapa aquí. No obstante esta ubicación, el servidor también buscará en el mismo camino en el que está cada archivo de audio si no se encuentra ningun archivo de arte de tapa en la Carpeta de Arte de Tapa.
 	FR	Vous pouvez choisir de stocker toutes les pochettes dans un dossier unique en utilisant les noms de fichier variables décrits plus haut. Entrez l'emplacement des fichiers de pochettes ci-dessous. Si aucune pochette correspondante n'est trouvée à cet emplacement, le SlimServer la cherchera à l'emplacement du fichier de musique.
+	JP	アートワークを１つのフォルダーにまとめて保存しても構いません。以下に入力してください。フォルダー名を指定しても、もし見つからなければ、音楽ファイルがある場所を探します。
 	NO	Du kan velge å lagre alle platecover i en folder, ved å benytte innstillingen over. Skriv inn adressen til Grafikk folderen her. Serveren vil fremdeles lete etter platecover i samme folder som lydfilen ligger i om ikke det finnes et treff i Grafikk folderen.
 	SE	Du kan välja att lagra all grafik i en enda mapp genom att använda valet för variabla filnamn enligt ovan. Ange sökvägen till Grafikmappen här. Servern kommer ändå att leta efter grafik på samma plats som ljudfilerna om den inte hittar nåhon grafik som passar i Grafikmappen.
 
@@ -2163,6 +2337,7 @@ SETUP_BAD_FILE
 	EN	Oops - "%s" doesn't seem to be a valid file. Try again.
 	ES	Upsss - "%s" no parece ser un tipo de archivo válido. Intente de nuevo.
 	FR	"%s" ne semble pas être un fichier valide. Ré-essayez.
+	JP	"%s"は正しいファイルではありません。もう一度入力してください。
 	SE	Oops - "%s" verkar inte vara en giltig fil. Försök igen.
 
 SETUP_BAD_DIRECTORY
@@ -2173,6 +2348,7 @@ SETUP_BAD_DIRECTORY
 	FI	Hups! - "%s" ei ole hakemisto. Yritä uudelleen.
 	FR	Le répertoire "%s" n'est pas valide. Ré-essayez.
 	IT	Oops - "%s" non sembra essere un percorso valido. Riprova.
+	JP	"%s"は正しいフォルダーではありません。もう一度入力してください。
 	NL	Oeps! "%s" is geen geldige folder. Probeer opnieuw.
 	NO	Huffda, "%s" er ikke en gyldig katalog. Forsøk igjen.
 	PT	A Pasta "%s" não é válida. Tente de novo.
@@ -2186,6 +2362,7 @@ SETUP_OK_USING
 	FI	Palvelin käyttää seuraavaa polkua mp3 -tiedostoihisi:
 	FR	Le serveur utilisera le chemin suivant pour vos fichiers MP3 :
 	IT	Okay, uso:
+	JP	サーバーは音楽ファイルを検索するのに以下のパスを使います:
 	NL	OK, het pad naar de MP3 bestanden is:
 	NO	Ok, bruker:
 	PT	O servidor irá usar a seguinte directoria para os ficheiros de áudio
@@ -2198,6 +2375,7 @@ SETUP_PLAYLISTDIR_OK
 	ES	El servidor usará esta carpeta para guardar listas:
 	FI	Palvelin käyttää seuraavaa polkua soittolistoja varten:
 	FR	Le serveur utilisera maintenant le dossier suivant pour conserver vos listes de lecture :
+	JP	サーバーは今後このフォルダーのプレイリストを使います::
 	NL	De server zal deze folder gebruiken om playlists te bewaren:
 	NO	Bruker nå følgende folder for lagrede spillelister:
 	PT	O servidor irã usar a seguinte directoria para os ficheiros de playlist
@@ -2222,6 +2400,7 @@ SETUP_RESCAN
 	ES	Recopilar nuevamente
 	FI	Lue uudelleen
 	FR	Répertorier de nouveau
+	JP	再スキャン
 	NL	Opnieuw inlezen
 	NO	Les på nytt
 	PT	Ler Directoria com Lista de Músicas
@@ -2234,6 +2413,7 @@ SETUP_RESCAN_BUTTON
 	ES	Recopilar nuevamente
 	FI	Lue uudelleen
 	FR	Répertorier
+	JP	再スキャン
 	NL	Opnieuw inlezen
 	NO	Scan musikkfolderen på nytt
 	PT	Ler Directoria
@@ -2256,6 +2436,7 @@ SETUP_WIPECACHE
 	EN	Wipe Cache
 	ES	Limpiar Cache
 	FR	Ré-initialiser le cache
+	JP	キャッシュをクリアする
 	NO	Tøm cache-minnet
 	SE	Töm cache-minnet
 
@@ -2264,6 +2445,7 @@ SETUP_WIPECACHE_BUTTON
 	EN	Wipe Cache
 	ES	Limpiar Cache
 	FR	Ré-initialiser
+	JP	キャッシュをクリアする
 	NO	Tøm cache-minnet
 	SE	Töm cache-minnet
 
@@ -2272,6 +2454,7 @@ SETUP_WIPECACHE_DESC
 	EN	If you use the tag database you may want to clear the disk based cache of tag information. This option does that and then rescans your music files (in the same way as the rescan button does).
 	ES	Si se utiliza la base de datos de tags, se puede querer limpiar el cache en disco de información de tags. Esta opción realiza esa limpieza y recopila nuevamente todos los archivos de música (de la misma forma en que lo hace el botón de "Recopilar Nuevamente")
 	FR	Si vous utilisez la mise en cache disque des tags ID3, vous pouvez remettre celle-ci à zéro avec cette option (le serveur va ensuite répertorier à nouveau votre dossier de musique).
+	JP	タグ 
 	NO	Hvis du bruker tag databasen kan du trenge å slette den disk baserte cache med tag informasjon. Dette valget gjør det og scanner så gjennom musikkfilene (på samme måte som rescan).
 	SE	Om du använder funktionen 'lagra musikdatabas på disken', kanske du vill tömma densamma. Denna inställning tömmer och scannar sedan musikmappen på nytt.
 
@@ -2282,6 +2465,7 @@ RESCANNING
 	ES	El servidor está recopilando nuevamente su carpeta de música.
 	FI	Palvelin lukee uudelleen musiikkikansiosi sisällön.
 	FR	Le serveur répertorie maintenant votre dossier de musique.
+	JP	サーバーは音楽ライブラリーを再スキャンしています。
 	NL	De server leest nu de Muziek Folder opnieuw in.
 	NO	Serveren scanner gjennom din musikkfolder.
 	PT	O servidor está a analisar o arquivo de músicas.
@@ -2292,6 +2476,7 @@ USING_ITUNES
 	EN	The server will import iTunes information.
 	ES	El servidor importará información de iTunes.
 	FR	Le SlimServer importera les données iTunes.
+	JP	サーバーはiTunesの情報をインポートします。
 	SE	SlimServer kommer importera iTunes-information
 
 NOT_USING_ITUNES
@@ -2299,6 +2484,7 @@ NOT_USING_ITUNES
 	EN	The server will no longer import iTunes information.
 	ES	El servidor dejará de importar información de iTunes.
 	FR	Le SlimServer n'importera plus les données iTunes.
+	JP	サーバーはiTunesの情報をインポートしません。
 	SE	SlimServer kommer inte att importera iTunes-information längre.
 
 USE_ITUNES
@@ -2307,6 +2493,7 @@ USE_ITUNES
 	EN	Use iTunes
 	ES	Usar iTunes
 	FR	Utiliser iTunes
+	JP	iTunesを使用する
 	NL	Gebruik iTunes
 	NO	Bruk iTunes
 	PT	Usar iTunes
@@ -2317,6 +2504,7 @@ DONT_USE_ITUNES
 	EN	Do Not Use iTunes
 	ES	No Utilizar iTunes
 	FR	Ne pas utiliser iTunes
+	JP	iTunesを使用しない
 	SE	Använd inte iTunes
 
 SETUP_ITUNES
@@ -2324,6 +2512,7 @@ SETUP_ITUNES
 	EN	iTunes
 	ES	iTunes
 	FR	iTunes
+	JP	iTunes
 	NL	iTunes
 	NO	iTunes
 	PT	iTunes
@@ -2334,6 +2523,7 @@ SETUP_ITUNES_OK
 	EN	The server will import iTunes information.
 	ES	El servidor importará información de iTunes.
 	FR	Le SlimServer importera les données iTunes.
+	JP	サーバーはiTunesの情報をインポートします。
 	SE	SlimServer kommer att importera iTunes-information.
 
 SETUP_ITUNES_DESC
@@ -2341,6 +2531,7 @@ SETUP_ITUNES_DESC
 	EN	SlimServer can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. Check the box below if you want to import your iTunes Music Library information.
 	ES	El SlimServer puede utilizar las listas y colección musical de iTunes. Cualquier cambio en iTunes se reflejará en el reproductor. Marcar l aopción debajo si se quiere importar la información de colección musical de iTunes.
 	FR	Le SlimServer peut utiliser votre bibliothèque et vos listes de lecture iTunes. Les modifications que vous apporterez dans iTunes seront répercutées sur votre platine. Cochez la case ci-dessous pour importer les données de votre bibliothèque iTunes.
+	JP	SlimServerはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
 	SE	SlimServer kan använda ditt iTunes-bibliotek och -låtlistor. Alla förändringar som görs via iTunes kommer att få genomslag i din spelare. Klicka i rutan nedan om du vill importera iTunes-informationen.
 
 USE_MOODLOGIC
@@ -2349,6 +2540,7 @@ USE_MOODLOGIC
 	EN	Use MoodLogic
 	ES	Usar Moodlogic
 	FR	Utiliser MoodLogic
+	JP	ムードロジックを使用する
 	NL	MoodLogic Inschakelen
 	NO	Bruk MoodLogic
 	PT	Usar MoodLogic
@@ -2360,6 +2552,7 @@ DONT_USE_MOODLOGIC
 	EN	Don't use MoodLogic
 	ES	No usar MoodLogic
 	FR	Ne pas utiliser MoodLogic
+	JP	ムードロジックを使用しない
 	NL	Schakel MoodLogic uit
 	NO	Ikke bruk MoodLogic
 	PT	Não usar MoodLogic
@@ -2392,6 +2585,7 @@ SETUP_MOODLOGIC
 	EN	MoodLogic
 	ES	MoodLogic
 	FR	MoodLogic
+	JP	ムードロジック
 	NL	MoodLogic
 	NO	MoodLogic
 	PT	MoodLogic
@@ -2427,6 +2621,7 @@ SETUP_INSTANTMIXMAX
 	EN	Instant Mix Max Count
 	ES	Número Máximo por Mezcla Instantánea
 	FR	Nombre maximum de morceaux par Mix
+	JP	インスタント ミックス 最大数
 	NO	Maks antall for hurtigmiks
 	SE	Max antal låtar för "Instant Mix"
 
@@ -2443,6 +2638,7 @@ SETUP_VARIETYCOMBO_DBL
 	EN	Variety
 	ES	Variedad
 	FR	Variété
+	JP	ムードロジック バラエティ
 	NO	Variasjon
 	SE	Variation
 
@@ -2451,6 +2647,7 @@ SETUP_VARIETYCOMBO
 	EN	Moodlogic Variety
 	ES	Variedad de MoodLogic
 	FR	Variété MoodLogic
+	JP	ムードロジック バラエティ
 	NO	Moodlogic Variasjon
 	SE	MoodLogic-Variation
 
@@ -2459,6 +2656,7 @@ SETUP_VARIETYCOMBO_DESC
 	EN	This is the value to control the variety setting for Moodlogic Instant Mixes.  Lower numbers mean a wider variety of music, higher numbers mean less variety.  Valid numbers are 0-100.
 	ES	Este es el valor para controlar la el parámetro Variedad para las Mezclas Instantáneas de MoodLogic. Números bajos significan una mayor variedad de música, números más altos significan menos variedad. Números válidos son 0-100. 
 	FR	Spécifiez un nombre pour régler le paramètre Variété des Mixes instantanés MoodLogic. Un nombre bas signifie une variété plus importante de musique, un nombre élevé une variété réduite. Les valeurs acceptées sont 0-100.
+	JP	これが、ムードロジック インスタント 
 	NO	Dette er verdien som kontrollerer variasjonsinstillingen for Moodlogic Hurtigmiks. Lavere verdi betyr bredere variasjon av musikk, høyere verdi betyr mindre variasjon. Gyldige verdier er 0-100.
 	SE	Detta värde styr variationen på musik i "Instant Mix"-listor skapade av MoodLogic. Lägre värden betyder större variation. Värden mellan 0 och 100 är möjliga.
 
@@ -2469,6 +2667,7 @@ SETUP_MENUITEM
 	EN	Menu item
 	ES	Item de menu
 	FR	Elément de menu
+	JP	メニュー アイテム
 	NL	Menu item
 	NO	Meny valg
 	PT	Item de Menu
@@ -2481,6 +2680,7 @@ SETUP_SKIN
 	ES	Interfaz web
 	FI	WWW-käyttöliittymä
 	FR	Interface web
+	JP	ウェブ インターフェース
 	NL	Web Interface
 	NO	Webgrensesnitt
 	PT	Interface Web
@@ -2505,6 +2705,7 @@ SETUP_SKIN_OK
 	ES	Estilo seleccionado:
 	FI	Käyttöliittymävalintasi on:
 	FR	L'interface utilise maintenant :
+	JP	選択されている外観は:
 	NL	Uw nieuwe skin is nu:
 	NO	Det valgte utseendet er:
 	PT	O tema escolhido é
@@ -2516,6 +2717,7 @@ SETUP_PLUGINS
 	EN	Plugins
 	ES	Plugins
 	FR	Modules d'extension
+	JP	プラグイン
 	NL	Plugins
 	NO	Plugins
 	PT	Extras
@@ -2537,6 +2739,7 @@ SETUP_REFRESHRATE
 	EN	Browser Refresh Timing
 	ES	Intervalo entre refrescos del navegador.
 	FR	Recharge automatique du navigateur
+	JP	ブラウザーを更新するタイミング
 	NO	Oppdateringsintervall for webgrensesnittet
 	SE	Refresh-intervall för webgränssnittet
 
@@ -2545,6 +2748,7 @@ SETUP_REFRESHRATE_DESC
 	EN	Set the time between browser reloads in seconds.  While playing a song, the server will set the refresh near a song end if it is less than this value. (Default is 30, minimum is 2)
 	ES	Establecer el intervalo entre refrescos del navegador, en segundos. Mientras se escucha una canción, el servidor pondrá el refresco cerca del final de esta, si es menor que este valor. (Por defecto es 30, el mínimo es 2)
 	FR	Définissez le délai en secondes entre chaque recharge automatique du navigateur. Pendant l'écoute d'un morceau, le serveur forcera la recharge vers la fin du morceau s'il reste moins que le délai prévu. (Défaut 30, minimum 2)
+	JP	ブラウザーが更新する時間を秒数で入力してください。曲を再生中の場合には、曲の最後に更新します。（工場出荷時は30秒、最小は2秒）
 	NO	Juster tiden mellom hver oppdatering av webgrensesninttet. Angis i sekunder, minimum 2, maksimum 30. Når en sang spilles foretas oppdatering nær slutten av sangen, om gjenværende tid er mindre en angitt verdi.
 	SE	Ställ in tiden mellan uppdatering av webgränssnittet. Anges i sekunder, minimum 2, maximum 30. När en sång spelas sker refresh närs slutet på sången, om återstående tid är mindre än angivet värde.
 
@@ -2553,6 +2757,7 @@ SETUP_REFRESHRATE_OK
 	EN	Refresh time set to
 	ES	Intervalo de refresco puesto en 
 	FR	Délai d'attente entre recharge réglé à
+	JP	更新時間セット
 	NO	Oppdateringstid satt til
 	SE	Uppdateringsintervall satt till:
 
@@ -2561,6 +2766,7 @@ SETUP_MOODLOGICSCANINTERVAL
 	EN	Moodlogic Reload Interval
 	ES	Intervalo de recarga de MoodLogic
 	FR	Délai d'actualisation MoodLogic
+	JP	ムードロジック 更新時間
 	SE	Intervall för uppdatering av MoodLogic
 
 SETUP_MOODLOGICSCANINTERVAL_DESC
@@ -2568,6 +2774,7 @@ SETUP_MOODLOGICSCANINTERVAL_DESC
 	EN	When your Moodlogic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your Moodlogic Database again.
 	ES	Cuando la base de datos de MoodLogic cambie, SlimServer importará automaticamente la información de la colección. Se puede especificar el tiempo mínimo (en segundos) que SlimServer esperará anted de recargar la base de datos de MoodLogic.
 	FR	Le SlimServer importe automatiquement les modifications apportées à votre bibliothèque MoodLogic. Vous pouvez spécifier le délai minimum en secondes avant lequel le SlimServer rechargera les données MoodLogic.
+	JP	ムードロジックのデータベースに変更があった場合、SlimServerは自動的にライブラリー情報をインポートします。ムードロジックのデータベースを更新する時間を秒数でセットすることができます。
 	SE	När någon förändring sker i MoodLogic-databasen importerar SlimServer automatiskt dessa ändringar. Slimserver väntar minimalt det antal sekunder som anges här.
 
 SETUP_MUSICMAGICSCANINTERVAL
@@ -2594,6 +2801,7 @@ SETUP_MOODLOGICSCANINTERVAL_OK
 	EN	Minimum Moodlogic Database reload time:
 	ES	Mínimo tiempo de recarga de base de datos de Moodlogic
 	FR	Délai d'actualisation MoodLogic
+	JP	ムードロジック データベース更新時間:
 	SE	Minsta intervall mellan MoodLogic-laddningar
 
 SETUP_ITUNESSCANINTERVAL
@@ -2601,6 +2809,7 @@ SETUP_ITUNESSCANINTERVAL
 	EN	iTunes Reload Interval
 	ES	Intervalo de recarga de iTunes
 	FR	Délai d'actualisation iTunes
+	JP	iTunes更新時間
 	NO	iTunes Oppdateringsintervall
 	SE	iTunes uppdateringsintervall
 
@@ -2609,6 +2818,7 @@ SETUP_ITUNESSCANINTERVAL_DESC
 	EN	When your iTunes Music Library changes SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your iTunes Music Library again.
 	ES	Cuando iTunes Music Library cambia, SlimServer importará automaticamente la información. Se puede especificar el tiempo mínimo (en segundos) que SlimServer esperará antes de cargar nuevamente la iTunes Music Library.
 	FR	Le SlimServer importe automatiquement les changements apportés à votre bibliothèque iTunes. Vous pouvez spécifier le délai minimum en secondes avant que le SlimServer actualise la bibliothèque iTunes.
+	JP	iTunesの音楽ライブラリーに変更があった場合、SlimServerは自動的にライブラリー情報をインポートします。iTunesの音楽ライブラリーを更新する時間を秒数でセットすることができます
 	NO	Når ditt iTunes Musikkbibliotek endres, vil SlimServer automatisk importere bibliotek informasjonen. Du kan spesifisere minimumstiden (i sekunder) som SlimServer vil vente før den oppdaterer iTunes Musikkbiblioteket igjen.
 	SE	När någon förändring sker i ditt iTunes musikbibliotek importerar SlimServer automatiskt dessa ändringar. Slimserver väntar minimalt det antal sekunder som anges här.
 
@@ -2617,6 +2827,7 @@ SETUP_ITUNESSCANINTERVAL_OK
 	EN	Minimum iTunes Music Library reload time:
 	ES	Tiempo mínimo para recarga de iTunes Music Library:
 	FR	Délai minimum d'actualisation bibliothèque iTunes :
+	JP	iTunes 音楽ライブラリー更新時間:
 	NO	Minimum iTunes Musikkbibliotek oppdaterings tid:
 	SE	Minsta omläsningstid för iTunes musikbibliotek
 
@@ -2625,6 +2836,7 @@ SETUP_ITUNES_LIBRARY_AUTOLOCATE
 	EN	Find iTunes Library Automatically
 	ES	Encontrar iTunes Library Automaticamente
 	FR	Localisation automatique de la bibliothèque iTunes
+	JP	iTunesライブラリーを自動的に検索する。
 	SE	Hitta ditt iTunes musikbibliotek
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE_DESC
@@ -2632,6 +2844,7 @@ SETUP_ITUNES_LIBRARY_AUTOLOCATE_DESC
 	EN	You may choose to have the server try to find the iTunes Music Library automatically or specify the locations manually.  To specify the locations, choose Specify iTunes Library Locations below and enter the path to the iTunes Music Library.xml file and your iTunes Music folder.
 	ES	Se puede elegir si el SlimServer intentará encontrar la iTunes Music Library automáticamente o se especificarán las ubicaciones en forma manual. Para especificar las ubicaciones, elegir Especificar las ubicaciones de iTunes Library debajo e ingresar el camino al archivo iTunes Music Library.xml y a las carpetas de iTunes Music.
 	FR	Vous pouvez choisir que le SlimServer tente de localiser la bibliothèque iTunes automatiquement ou que son emplacement soit spécifié. Pour spécifier l'emplacement, choisissez Spécifier l'emplacement de la bibliothèque iTunes ci-dessous et entrez le chemin vers votre fichier iTunes Music Library.xml et votre dossier iTunes.
+	JP	サーバーはiTunes音楽ライブラリーを自動的に検索するか、あるいは、手動で場所を指定することができます。手動で指定する場合には、以下で、xmlファイルとiTunesフォルダーがある場所を指定してください。
 	SE	Du kan välja mellan att låta SlimServer försöka finna iTunes automatiskt eller specificera var det är intstallerat. Klicka nedan för att specificera manuellt och ange läget på "iTunes Music Library.xml"-fil och ditt iTunes musikbibliotek
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE_0
@@ -2639,6 +2852,7 @@ SETUP_ITUNES_LIBRARY_AUTOLOCATE_0
 	EN	Specify iTunes Library Locations
 	ES	Especificar las ubicaciones de iTunes Library
 	FR	Spécifier l'emplacement de la bibliothèque iTunes
+	JP	iTunesライブラリー場所を指定する
 	SE	Specificera var iTunes musikbibliotek är installerat
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE_1
@@ -2646,6 +2860,7 @@ SETUP_ITUNES_LIBRARY_AUTOLOCATE_1
 	EN	Find iTunes Library Automatically
 	ES	Encontrar iTunes Library Automaticamente
 	FR	Localiser automatiquement la bibliothèque iTunes
+	JP	iTunesライブラリーを自動的に検索する
 	SE	Hitta iTunes musikbibliotek automatiskt
 
 SETUP_ITUNES_LIBRARY_XML_PATH
@@ -2653,6 +2868,7 @@ SETUP_ITUNES_LIBRARY_XML_PATH
 	EN	iTunes Music Library.xml Location
 	ES	Ubicación del archivo iTunes Music Library.xml
 	FR	Emplacement de iTunes Music Library.xml
+	JP	iTunes音楽ライブラリー xmlファイルの場所
 	SE	Läge för filen "iTunes Music Library.xml"
 
 SETUP_ITUNES_LIBRARY_XML_PATH_DESC
@@ -2667,6 +2883,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH
 	EN	iTunes Music Folder
 	ES	Carpeta de Música de iTunes
 	FR	Dossier musique iTunes
+	JP	iTunes音楽フォルダー
 	SE	iTunes musikbibliotek
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
@@ -2674,6 +2891,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	EN	If you are specifying the location of your iTunes Music Library, enter the path, including the folder name, containing your iTunes Music.
 	ES	Si se va a especificar la ubicación de la iTunes Music Library, ingresar el camino, incluyendo el nombre de la carpeta que contiene a iTunes Music.
 	FR	Si vous avez choisi de spécifier l'emplacement de votre bibliothèque iTunes, entrez le chemin de celle-ci ci-dessous, nom de dossier inclus.
+	JP	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここに該当フォルダーへのパスを入力してください。
 	SE	Om du valt att specificera iTunes anger du läget på ditt iTunes musikbibliotek här
 
 SETUP_COVERART
@@ -2682,6 +2900,7 @@ SETUP_COVERART
 	EN	Artwork
 	ES	Arte de tapa
 	FR	Pochettes
+	JP	アートワーク
 	NL	Hoesjes
 	NO	Platecover
 	PT	Capa Álbum
@@ -2693,6 +2912,7 @@ SETUP_COVERART_DESC
 	EN	Images of album artwork, when available, are displayed when viewing an album or song information.  Artwork images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail or full size images. Prefix the option with % and you can follow it with any string made up of the same elements available for Title Formats (eq %ARTIST - ALBUM, will look for Artist - Album.jpg to fit the artist and album information found.
 	ES	Las imágenes del Arte de Tapa, cuando están disponibles, se muestran al estar viendo un disco o información de una canción. Las imágenes de Arte de Tapa se encuentran en los tags ID3 de canciones individuales, o pueden encontrarse en la misma carpeta que los archivos de canciones. Por defecto, se utilizan las imágenes llamadas "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", o "thumb.jpg". Se pueden especificar nombres de archivo adicionales para imágenes de Arte de Tapa de discos. Se pueden especificar nombres de archivo diferentes para imágenes de Arte de Tapa de discos o muestras de imágenes. Se puede poner % como prefijo y completarlo con cualquier linea de texto que utilice los mismos elementos que los utilizados en el formato de Títulos (ej %ARTISTA - DISCO, buscará el par Artista - Disco.jpg que coincida con la información de artista y disco encontrada.
 	FR	Si elle existe, l'image de la pochette du disque est affichée en regard de l'information d'un album ou d'un morceau. Les images se trouvent soit dans un repère ID3 par morceau, soit dans le même répertoire que les fichiers. Le serveur recherche de lui-même les noms de fichiers suivants: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", ou "thumb.jpg". Vous pouvez spécifier d'autres noms de fichiers pour les images de pochettes, et spécifier différents noms de fichiers pour les vignettes ou les images.
+	JP	アルバムのアートワークがある場合には、アルバム/曲情報を見るときに表示されます。アートワーク 
 	NL	Indien er een afbeelding beschikbaar is van de hoezen wordt deze getoond als U een album bekijkt of informatie over een liedje opvraagt. Deze beelden worden opgegeven in de ID3 tag voor liedjes of staan in dezelfde map als de muziekbestanden. Standaard worden de bestanden "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" en "thumb.jpg" gebruikt. Bijkomende bestandsnamen kunnen gedefinieerd worden. Voor de verkleinde beelden (thumbmails) en de volledige afbeeldingen kunnen afzonderlijke namen opgegeven worden.
 	NO	Platecover kan vises sammen med informasjon om sanger. Disse bildene kan lagres i ID3-tag, eller lagres som en separat fil i samme folder som låta. Bildefiler med navn "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", eller "thumb.jpg" brukes som standard. Du kan angi andre mulige navn på disse album-filene, og også angi egne navn på filer med thumbnail bilder. Bruk Prefix % og samme elementer som er tilgjengelige for Tittelformat. (f.eks: %ARTIST - ALBUM.jpg søker etter filer med funnet verdier for artist og album.)
 	PT	As imagens da capa do álbum, quando disponíveis, são mostradas na visualização da informação do álbum ou da música. As capas dos álbuns poderão estar integradas nas "tags ID3" do próprio ficheiro, ou em ficheiros separados na pasta dos ficheiros de música. Por omissão, serão usados os nomes de ficheiros "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Pode especificar nomes de ficheiros adicionais para a imagem da capa do álbum. Pode especificar nomes diferentes para a miniatura ou para a imagem completa.
@@ -2704,6 +2924,7 @@ SETUP_COVERART_OK
 	EN	Artwork image file name set to
 	ES	El nombre de archivo para el Arte de Tapa es	
 	FR	Nom de fichier pour les images de pochette :
+	JP	アートワーク イメージファイル名設定:
 	NL	Naam van de afbeelding van de hoes ingesteld op
 	NO	Filnavn for platecover er satt til:
 	PT	Nome do ficheiro para a Capa do Álbum é
@@ -2715,6 +2936,7 @@ SETUP_COVERTHUMB
 	EN	Artwork Thumbnail
 	ES	Imagen de Muestra de Arte de Tapa
 	FR	Vignettes
+	JP	アートワーク サムネイル
 	NL	Verkleinde afbeelding van de hoes
 	NO	Platecover thumbnail
 	PT	Miniatura da Capa do Álbum
@@ -2729,6 +2951,7 @@ SETUP_COVERTHUMB_OK
 	EN	Artwork thumbnail image file name set to
 	ES	El nombre de archivo para la imagen de muestra del Arte de Tapa es	
 	FR	Nom de fichier pour les vignettes des images de pochette :
+	JP	アートワーク サムネイル イメージファイル名設定
 	NL	Bestandsnaam voor verkleinde afbeelding van de hoes ingesteld op
 	NO	Filnavn for platecover-thumbnails er satt til:
 	PT	O nome do ficheiro para a miniatura da Capa do Álbum é
@@ -2739,6 +2962,7 @@ SETUP_THUMBSIZE
 	EN	Thumbnail Size
 	ES	Tamaño de imagen de muestra
 	FR	Taille des vignettes
+	JP	サムネイル サイズ
 	NO	Thumbnail størrelse
 	SE	Storlek på miniatyrer
 
@@ -2747,6 +2971,7 @@ SETUP_THUMBSIZE_DESC
 	EN	Choose the size in pixels (25-250) for the default thumbnail image when browsing by artwork. Default is 100.
 	ES	Elegir el tamaño en pixels (25-250) para el tamaño por defecto de la imagen de muestra cuando se examina por arte de tapa. Por defecto es 100.
 	FR	Choisissez une taille en pixels (entre 25 et 250) pour l'affichage par défaut de la vignette en mode "Parcourir les pochettes". La valeur par défaut est 100.
+	JP	アートワークでブラウズする場合の、サムネイルの大きさをピクセル数（25-250）で指定してください。工場出荷時は100です。
 	NO	Velg størrelse i pixler (25-250) som platecover thumbnails nortmal skal vises i. Standardverdien er 100.
 	SE	Välj storlek i antal pixlar (25-250) som albumomslagsminatyrer normalt ska presenteras i. Standardvärdet är 100
 
@@ -2755,6 +2980,7 @@ SETUP_INCLUDENOART_0
 	EN	Delete placeholders from the list
 	ES	Borrar los discos sin Arte de Tapa
 	FR	Ne pas afficher les albums sans pochette
+	JP	プレースホルダーをリストから削除する
 	NO	Ikke vis tomme bilderammer i listen
 	SE	Visa inte tomma bildramar i listan
 
@@ -2771,6 +2997,7 @@ SETUP_INCLUDENOART
 	EN	Browse By Artwork
 	ES	Examinar por Arte de Tapa
 	FR	Parcourir les pochettes
+	JP	アートワークでブラウズする
 	NO	Bla i platecover
 	SE	Bläddra bland albumomslag
 
@@ -2779,6 +3006,7 @@ SETUP_INCLUDENOART_DESC
 	EN	Choose whether or not to include albums that currently have no artwork when browsing by artwork.  Where no art is found, a blank image will be inserted as a placeholder, or they can be left out of the browse entirely.
 	ES	Elegir si se debe incluir o no los discos qeu actualmente no tienen arte de tapa cuando se busca por arte de tapa. Cuando no se encuentre arte de tapa, una imagen vacía se insertará en el lugar del arte de tapa, o se puede deshechar completamente de la búsqueda.
 	FR	Choisissez si l'interface doit afficher ou non les albums qui ne possèdent pas de pochette en mode Parcourir les pochettes. En l'absence de pochette, vous pouvez soit afficher une image vide, soit ignorer l'album.
+	JP	アートワークでブラウズする場合に、アートワークがないアルバムを含めるか選択してください。アートワークがなければ、ブランクを表示するか、ブラウズに含めないか指定できます。
 	NO	Velg om album som ikke har noe grafikk tilknyttet skal vises i listen eller ikke. Et tomt bilde (standard størrelse) og albumnavn kan vises, eller ekskluderes helt.
 	SE	Välj om album som inte har någon associerad bild ska inkluderas i listan eller ej. En tom bild (standardstorlek) och albumnamn kan visas, eller exkluderas helt.
 
@@ -2787,6 +3015,7 @@ SETUP_IGNOREMP3TAGS
 	EN	Ignore MP3 Tags
 	ES	Ignorar Tags MP3
 	FR	Ignorer les repères MP3
+	JP	MP3のタグを無視する
 	NO	Ignorer MP3 tagger
 	SE	Ignorera MP3-taggar
 
@@ -2795,6 +3024,7 @@ SETUP_IGNOREMP3TAGS_DESC
 	EN	You can choose whether SlimServer should ignore the tag information that may be embedded in the music files and just use the file and folder names to identify your music library.
 	ES	Se puede elegir si SlimServer debe ignorar la imformación en tags que puede estar embebida en los archivos de música y solo usar los nombres de archivo y carpeta para identificar en la colección musical.
 	FR	Vous pouvez forcer le SlimServer à ignorer les repères ID3 contenus dans vos fichiers de musique et utiliser à la place les noms de dossiers et de fichier pour répertorier votre bibliothèque de musique.
+	JP	SlimServerがタグ情報を無視するように選択できます。その場合には、ファイル名、ホルダー名を利用します。
 	SE	Du kan välja om SlimServer ska ignorera information lagrad i dina MP3-filer och istället läsa information från mapp- och filnamn
 
 SETUP_READMP3TAGS
@@ -2802,6 +3032,7 @@ SETUP_READMP3TAGS
 	EN	Read MP3 Tags
 	ES	Leer Tags MP3
 	FR	Lire les repères MP3
+	JP	MP3のタグを読む
 	NO	Les MP3 tagger
 	SE	Läs MP3-taggar
 
@@ -2811,6 +3042,7 @@ SETUP_PLUGINS_OK
 	EN	Your Plugins menu is now:
 	ES	El Menu de Plugins es ahora:
 	FR	Votre menu Modules d'extension :
+	JP	あなたのプラグイン メニューは現在:
 	NL	Uw Plugins menu bestaat nu uit:
 	NO	Din Pluginmeny er nå:
 	PT	O menu de extras é
@@ -2822,6 +3054,7 @@ SETUP_CLIPORT
 	EN	Command Line Interface Port Number
 	ES	Número de puerto para la interfaz de linea de comandos
 	FR	Numéro de port de l'interface en ligne de commande
+	JP	コマンドライン インターフェース ポートナンバー
 	NL	Poortnummer van de command line interface
 	NO	Portnummer for terminalgrensesnitt
 	PT	Porta TCP da Interface de Linha de Comando
@@ -2844,6 +3077,7 @@ SETUP_CLIPORT_OK
 	EN	Now using the following port for the command line interface:
 	ES	Utilizando puerto:
 	FR	L'interface en ligne de commande utilise maintenant le port :
+	JP	現在コマンドライン 
 	NL	De volgende poort wordt gebruikt voor de command line interface:
 	NO	Bruker nå følgende portnummer for terminalgrensesnitt:
 	PT	A porta para acesso via linha de comando é
@@ -2856,6 +3090,7 @@ SETUP_HTTPPORT
 	ES	Número de puerto del servidor web
 	FI	WWW-palvelimen porttinumero
 	FR	Numéro de port du serveur web
+	JP	ウェブ サーバー ポート ナンバー
 	NL	Web Server Poort Nummer
 	NO	Portnummer for webserver
 	PT	Porta TCP do Servidor WEB
@@ -2868,6 +3103,7 @@ SETUP_HTTPPORT_DESC
 	ES	Se puede cambiar el número de puerto para controlar el servidor con un navegador (9000 por defecto)
 	FI	Voit vaihtaa WWW-palvelimen käyttämää porttinumeroa. (Oletusasetus on 9000.)
 	FR	Vous pouvez changer le port utilisé pour accéder au serveur à partir d'un navigateur web. Le port par défaut est 9000.
+	JP	ウェブ 
 	NL	Het nummer van de poort die gebruikt wordt om de server met een browser te bedienen kan worden ingesteld. (Standaard is dit poort 9000).
 	NO	Du kan endre portnummeret som brukes for å nå webserveren fra en webleser. (Standardverdi er 9000)
 	PT	Pode mudar a porta usada para aceder ao servidor usando um navegador web. (Por omissão é 9000)
@@ -2880,6 +3116,7 @@ SETUP_HTTPPORT_OK
 	ES	Utilizando puerto:
 	FI	Porttinumero on:
 	FR	Utiliser le port :
+	JP	現在のポートナンバー :
 	NL	De gebruikte poort is:
 	NO	Brukes nå portnummer:
 	PT	A porta é
@@ -2891,6 +3128,7 @@ SETUP_TRANSCODE-OGG
 	EN	Convert Ogg Vorbis Files
 	ES	Convertir Archivos Ogg Vorbis
 	FR	Conversion des fichiers Ogg Vorbis
+	JP	Ogg Vorbis ファイルを変換する
 	NL	Converteer Ogg Vorbis bestanden
 	NO	Konverter Ogg Vorbis-filer
 	PT	Converter Ficheiros Ogg Vorbis
@@ -2901,6 +3139,7 @@ SETUP_TRANSCODE-OGG_DESC
 	EN	If you have LAME and the Ogg Vorbis tools installed (ogginfo and ogg123), you can have your SlimServer convert your Ogg music files on-the-fly for playback on your Slim player.
 	ES	Si se ha instalado LAME y las herramientas de Ogg Vorbis, se puede hacer que el SlimServer convierta lo archivos Ogg de música en-el-momento para ser escuchados en el reproductor
 	FR	Si vous disposez de LAME et des outils Ogg Vorbis (ogginfo et ogg123), le SlimServer peut convertir en temps réel vos morceaux au format Ogg pour qu'ils soient lus sur le Slim. La conversion est effectuée sur le serveur pendant la lecture et n'est pas stockée sur le disque.
+	JP	LAMEをお持ちで、Ogg Vorbisツール（ogginfo と 
 	NL	Indien U LAME en de Ogg Vorbis hulpprogramma's (ogginfo en ogg123) geinstalleerd hebt kan U de SlimServer instellen om Ogg bestanden real-time om te zetten zodat deze op Uw SlimServer afgespeeld kunnen worden.
 	NO	Om du har LAME og Ogg Vorbis-verktøy (ogginfo & ogg123) installert kan serveren automatisk konvertere Ogg-musikkfiler for avspilning i din spiller.
 	PT	Se tiver instalado no sistema o LAME (utilitários de MP3) ou os utilitários do Ogg Vorbis (ogginfo e ogg123), pode configurar o SlimServer para converter automaticamente os ficheiros para MP3, de forma a serem usados no cliente Slim.
@@ -2912,6 +3151,7 @@ SETUP_TRANSCODE-OGG_OK
 	EN	Ogg Vorbis Files
 	ES	Archivos Ogg Vorbis
 	FR	Fichiers Ogg Vorbis
+	JP	Ogg Vorbisファイル
 	NL	Ogg Vorbis bestanden
 	NO	Ogg Vorbis filer
 	PT	Ficheiros Ogg Vorbis
@@ -2923,6 +3163,7 @@ SETUP_TRANSCODE-OGG_1
 	EN	Convert automatically
 	ES	Convertit automaticamente
 	FR	Convertir automatiquement
+	JP	自動的に変換する
 	NL	Automatisch omzetten
 	NO	Konverter automatisk
 	PT	Converter automaticamente
@@ -2934,6 +3175,7 @@ SETUP_TRANSCODE-OGG_0
 	EN	Don't convert automatically
 	ES	No convertir automaticamente
 	FR	Ne pas convertir
+	JP	自動的に変換しない
 	NL	Niet omzetten
 	NO	Ikke konverter automatisk
 	PT	Não converter automaticamente
@@ -2945,6 +3187,7 @@ SETUP_TRANSCODE-WAV
 	EN	Convert WAV and AIFF Files
 	ES	Convertir Archivos WAV y AIFF
 	FR	Conversion des fichiers WAV et AIFF
+	JP	WAVファイルとAIFFファイルを変換する
 	NL	Converteer WAV en AIFF bestanden
 	NO	Konverter WAV og AIFF filer
 	PT	Converter ficheiros WAV e AIFF
@@ -2966,6 +3209,7 @@ SETUP_TRANSCODE-WAV_OK
 	EN	WAV and AIFF Files
 	ES	Archivos WAV y AIFF
 	FR	Fichiers WAV et AIFF
+	JP	WAV、AIFFファイル
 	NL	WAV en AIFF bestanden
 	NO	WAV og AIFF filer
 	PT	Ficheiros WAV e AIFF
@@ -2977,6 +3221,7 @@ SETUP_TRANSCODE-WAV_1
 	EN	Convert automatically
 	ES	Convertir automaticamente
 	FR	Convertir automatiquement
+	JP	自動的に変換する
 	NL	Automatisch omzetten
 	NO	Konverter automatisk
 	PT	Converter automaticamente
@@ -2988,6 +3233,7 @@ SETUP_TRANSCODE-WAV_0
 	EN	Don't convert automatically
 	ES	No convertir automaticamente
 	FR	Ne pas convertir
+	JP	自動的に変換しない
 	NL	Niet omzetten
 	NO	Ikke konverter automatisk
 	PT	Não converter automaticamente
@@ -2999,6 +3245,7 @@ SETUP_TRANSCODE-MOV
 	EN	Convert QuickTime & AAC Files
 	ES	Convertir archivos Quicktime y AAC
 	FR	Conversion des fichiers QuickTime et AAC
+	JP	クイックタイムとAACファイルを変換する
 	NL	Omzetten van QuickTime en AAC bestanden
 	NO	Konverter QuickTime og AAC filer
 	PT	Converter ficheiros QuickTime e AAC
@@ -3009,6 +3256,7 @@ SETUP_TRANSCODE-MOV_DESC
 	EN	Macintosh OS X only: If you have LAME installed, you can have your SlimServer convert your QuickTime movies and AAC music files on-the-fly for playback on your Slim player.
 	ES	Sólo para Macintosh OS X: si se ha instalado LAME, se puede hacer que Slimserver convierta sus películas QuickTime y archivos AAC en-el-momento, para ser escuchadas en el reproductor.
 	FR	Uniquement pour Macintosh OS X : Si vous disposez de LAME, le SlimServer peut convertir en temps réel vos morceaux au format Quicktime movie et AAC pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant la lecture sur le serveur et n'est pas stockée sur le disque.
+	JP	マッキントッシュOSのみ: 
 	NL	Enkel voor Macintosh OS X: Indien U LAME geinstalleerd hebt kan U de SlimServer instellen om QuickTime films (alleen het geluid) en AAC muziekbestanden real-time om te zetten voor weergave op de SlimServer.
 	NO	Kun for Mac OS X: Om du har LAME installert kan din SlimServer automatisk konvertere QuickTime- og AAC-filer for avspilling i din spiller.
 	PT	Apenas Apple OS X
@@ -3020,6 +3268,7 @@ SETUP_TRANSCODE-MOV_OK
 	EN	QuickTime and AAC
 	ES	Quicktime y AAC
 	FR	Fichiers QuickTime et AAC
+	JP	クイックタイム、AAC
 	NL	QuickTime en AAC
 	NO	QuickTime og AAC
 	PT	QuickTime e AAC
@@ -3031,6 +3280,7 @@ SETUP_TRANSCODE-MOV_1
 	EN	Convert automatically
 	ES	Convertit automaticamente
 	FR	Convertir automatiquement
+	JP	自動的に変換する
 	NL	Automatisch omzetten
 	NO	Konverter automatisk
 	PT	Converter automaticamente
@@ -3042,6 +3292,7 @@ SETUP_TRANSCODE-MOV_0
 	EN	Don't convert automatically
 	ES	No convertir automaticamente
 	FR	Ne pas convertir
+	JP	自動的に変換しない
 	NL	Niet omzetten
 	NO	Ikke konverter automatisk
 	PT	Não converter automaticamente
@@ -3052,6 +3303,7 @@ SETUP_SAVESHUFFLED
 	EN	Save Shuffled Playlist
 	ES	Guardar Lista Desordenada
 	FR	Sauvegarde des listes de lecture aléatoires
+	JP	ランダム プレイリストを保存する
 	NO	Lagre blandet spilleliste
 	SE	Spara blandad låtlista
 
@@ -3060,6 +3312,7 @@ SETUP_SAVESHUFFLED_DESC
 	EN	When you choose to save a playlist, and it's been shuffled, you can choose to save it in the original order the songs were added or in the shuffled order.
 	ES	Cuando se elige guardar una lista, y esta ha sido desordenada, se puede elegir guardarla en su orden original, o en el orden en que quedaron despues de "desordenarlas al azar"
 	FR	Lorsque vous sauvegardez une liste de lecture aléatoire, vous pouvez soit la sauvegarder dans l'ordre original d'ajout des morceaux, soit préserver l'ordre aléatoire.
+	JP	ランダムにされたプレイリストを保存することも、元の順序で保存することも選択できます。
 	NO	Når du velger å spare en spilleliste som har blitt blandet, kan du angi om den skal spares i original rekkefølge eller blandet.
 	SE	När du väljer att spara en låtlista som blivit 'blandad', kan du ange om den ska sparas i orginalordning eller blandad
 
@@ -3068,6 +3321,7 @@ SETUP_SAVESHUFFLED_1
 	EN	Save playlists in shuffled order
 	ES	Guardar listas en forma desordenada
 	FR	Sauvegarder les listes de lecture dans l'ordre aléatoire
+	JP	プレイリストをランダムな状態で保存する
 	NO	Lagre spillelister blandet
 	SE	Spara låtlistor blandade
 
@@ -3076,6 +3330,7 @@ SETUP_SAVESHUFFLED_0
 	EN	Save playlists in order songs were added
 	ES	Guardar las canciones en el orden en que fueron añadidas
 	FR	Sauvegarder les listes de lecture dans l'ordre d'origine
+	JP	プレイリストを元の順序で保存する
 	NO	Lagre spillelister i original rekkefølge
 	SE	Spara låtlistor i orginalordning
 
@@ -3085,6 +3340,7 @@ SETUP_SAVEHISTORY
 	EN	Save History
 	ES	Guardar Historial
 	FR	Historique
+	JP	履歴を保存する
 	NL	Geschiedenis Opslaan
 	NO	Lagre historikk
 	PT	Gravar Historial
@@ -3107,6 +3363,7 @@ SETUP_SAVEHISTORY_1
 	EN	Save history
 	ES	Guardar historial
 	FR	Conserver l'historique
+	JP	履歴を保存する
 	NL	Geschiedenis opslaan
 	NO	Lagre historikk
 	PT	Gravar historial
@@ -3118,6 +3375,7 @@ SETUP_SAVEHISTORY_0
 	EN	Don't save history
 	ES	No guardar historial
 	FR	Ne pas conserver l'historique
+	JP	履歴を保存しない
 	NL	Geschiedenis niet opslaan
 	NO	Ikke lagre historikk
 	PT	Não gravar historial
@@ -3129,6 +3387,7 @@ SETUP_CHECKVERSION
 	EN	Software Updates
 	ES	Actualizaciones de Software
 	FR	Mise à jour du logiciel
+	JP	ソフトウェア アップデート
 	NO	Software oppdateringer
 	PT	Actualizações
 	SE	Mjukvaruupgraderingar
@@ -3139,6 +3398,7 @@ SETUP_CHECKVERSION_DESC
 	EN	The server can automatically connect to www.slimdevices.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in SlimServer's web interface.
 	ES	El servidor puede conectarse automáticamente a www.slimdevices.com todos los días y ver si existe una versión más actualizada disponible. Si existe, entonces un mensaje aparecerá en la interfaz web de SlimServer. 
 	FR	Le SlimServer peut se connecter tous les jours à www.slimdevices.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Un message dans l'interface web signale cette disponibilité le cas échéant.
+	JP	サーバーソフトウェアは、毎日www.slimdevices.comに接続してアップデートを確認します。アップデート 
 	NO	Serveren kan automatisk sjekke www.slimdevices.com hver dag etter en nyere versjon av programvaren. Om en nyere versjon finnes, blir dette meddelt i webgrensesnittet.
 	PT	O servidor poderá ligar-se automaticamente a www.slimdevices.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
 	SE	Servern kan automatiskt koppla upp sig mot www.slimdevices.com varje dag för att kontrollera om en nyare version av mjukvaran finns tillgänglig. Om nyare version finns, kommer ett meddelande visas i web-gränssnittet.
@@ -3149,6 +3409,7 @@ SETUP_CHECKVERSION_1
 	EN	Automatically Check For Software Updates
 	ES	Buscar Actualizaciones de Software en forma Automática
 	FR	Vérifier automatiquement
+	JP	ソフトウェアのアップデートを自動的に確認する
 	NO	Automatisk sjekk for software oppdateringer
 	PT	Verificar Versões Novas
 	SE	Kontrollera automatiskt
@@ -3159,6 +3420,7 @@ SETUP_CHECKVERSION_0
 	EN	Don't Check For Software Updates
 	ES	No Buscar Actualizaciones de Software
 	FR	Ne pas vérifier
+	JP	ソフトウェアのアップデートを確認しない
 	NO	Ikke sjekk for software oppdateringer
 	PT	Não Verificar
 	SE	Kontrollera INTE automatiskt
@@ -3168,6 +3430,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS
 	EN	Ignore Songs Disabled in iTunes
 	ES	Ignorar Canciones deshabilitadas en iTunes
 	FR	Ignorer les morceaux désactivés dans iTunes
+	JP	iTunesで再生しないように設定された曲を無視する
 	NO	Ignorer sanger som er deaktivert i iTunes
 	SE	Ignorera låtar som är de-aktiverade i iTunes
 
@@ -3184,6 +3447,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_1
 	EN	Ignore songs unchecked in iTunes
 	ES	Ignorar canciones no marcadas en iTunes 
 	FR	Ignorer les morceaux désactivés dans iTunes
+	JP	iTunesで再生しないように設定された曲を無視する
 	NO	Ignorer sanger bortvalgt i iTunes
 	SE	Ignorera låtar som är omarkerade i iTunes
 
@@ -3192,6 +3456,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_0
 	EN	Don't ignore songs unchecked in iTunes
 	ES	No ignorar canciones no marcadas en iTunes 
 	FR	Ne pas ignorer les morceaux désactivés dans iTunes
+	JP	iTunesで再生しないように設定された曲を有効にする
 	NO	Ikke ignorer sanger bortvalgt i iTunes
 	SE	Ignorera inte låtar som är omarkerade i iTunes
 
@@ -3201,6 +3466,7 @@ SETUP_HISTORYLENGTH
 	EN	History Length
 	ES	Tamaño del historial
 	FR	Longueur de l'historique
+	JP	履歴の長さ
 	NL	Lengte van de geschiedenis
 	NO	Historikk lengde
 	PT	Tamanho do Historial
@@ -3212,6 +3478,7 @@ SETUP_HISTORYLENGTH_DESC
 	EN	The server can retain a list of the most recently played songs. Choose the number of songs to retain.
 	ES	El servidor puede retenet una lista de las canciones escuchadas recientemente. Elegir el número de canciones que el servidor debe retener.
 	FR	Le serveur peut tenir à jour une liste des morceaux joués les plus récemment. Choisissez le nombre de morceaux à conserver.
+	JP	サーバーは、最近再生された曲のリストを保存することができます。何曲まで保存するが指定してください。
 	NL	De server kan een lijst bijhouden van de laatst gespeelde liedjes. Stel het aantal liedjes dat bijgehouden moet worden in.
 	NO	Serveren kan lagre en liste over de siste spilte låter. Velg antallet låter som skal lagres.
 	PT	O servidor pode preservar a lista das músicas mais tocadas. Escolha o número máximo de músicas a reter.
@@ -3224,6 +3491,7 @@ SETUP_SCREENSAVER
 	ES	Salvapantalla
 	FI	Näytönsäästäjä
 	FR	Ecran de veille
+	JP	スクリーンセーバー
 	NL	Schermbeveiliging
 	NO	Skjermsparer
 	PT	Protecção de Ecrã
@@ -3246,6 +3514,7 @@ SETUP_SCREENSAVER_CHOOSE
 	EN	Choose a screensaver to use when playing:
 	ES	Elegir un salvapantalla para utilizar cuando se está escuchando:
 	FR	Choisissez un écran de veille
+	JP	お好きなスクリーンセーバーを選んでください:
 	NO	Velg din skjermsparer
 	SE	Välj din anpassade skärmsläckare
 
@@ -3271,6 +3540,7 @@ SETUP_SCREENSAVERTIMEOUT_CHOOSE
 	ES	Tiempo de espera antes de mostrar salvapantalla (seg.):
 	FI	Näytönsäästäjän viive sekunteina:
 	FR	Délai de l'écran de veille en secondes :
+	JP	スクリーンセーバー開示時間（秒）:
 	NL	Interval waarna de schermbeveiliging aktief wordt (in seconden):
 	NO	Ventetid før skjermspareren aktiveres, i sekunder:
 	PT	Tempo de espera da proteção de ecrã, em segundos
@@ -3286,6 +3556,7 @@ SCREENSAVER_JUMP_BACK_NAME
 	EN	Now Playing (Jump back on wake.)
 	ES	Se está escuchando... (Volver al despertarse)
 	FR	Lecture (retour veille)
+	JP	現在再生中（解くと元の場所に戻ります）
 	NO	Nå spilles (Hopp tilbake ved aktivitet)
 	SE	Nu spelas (Hoppa tillbaka när spelaren 'vaknar').
 
@@ -3296,6 +3567,7 @@ SETUP_DISPLAYTEXTTIMEOUT
 	ES	Espera en el Ingreso de Texto
 	FI	Tekstisyötön ajastus
 	FR	Délai de saisie de texte
+	JP	テキスト入力タイミング
 	NL	Invoer timing
 	NO	Tid for inntasting av tekst
 	PT	Espera na Escrita de Texto
@@ -3320,6 +3592,7 @@ SETUP_DISPLAYTEXTTIMEOUT_CHOOSE
 	ES	Espera en segundos:
 	FI	Viive sekunneissa:
 	FR	Délai en secondes :
+	JP	タイムアウト時間（秒）:
 	NL	Wachttijd in seconden:
 	NO	Ventetid i sekunder:
 	PT	Tempo de espera, em segundos
@@ -3332,6 +3605,7 @@ SETUP_THROTTLESCAN
 	ES	Velocidad de recopilación de música:
 	FI	Musiikin lukunopeus
 	FR	Vitesse de mise à jour du dossier de musique :
+	JP	曲スキャンスピード
 	NL	Snelheid voor muziek doorzoeken:
 	NO	Hastighet for scanning av musikk
 	PT	Velocidade de pesquisa da música
@@ -3344,6 +3618,7 @@ SETUP_THROTTLESCAN_DESC
 	ES	Cuando se enciende el servidor, hace una revisión total de su carpeta de música para determinar todos los artistas, discos y canciones. En algunos sistemas lentos y PCs con Windows que utilizan filesystems FAT y FAT32 esto puede reducir la peroformance de la computadora. Se puede cambiar esta opción para hacer mas lenta la revisión y utilizar menos recursos de la computadora.
 	FI	Kun palvelin käynnistyy, se lukee musiikkikansion läpi saadakseen mm. esittäjän ja levyn tiedot. Vanhoissa tietokoneissa, jotka käyttävät FAT/FAT32 tiedostojärjestelmää, tämä voi kestää luvattoman kauan. Tätä asetusta säätämällä voit vaikuttaa siihen, kuinka paljon aikaa operaatioon käytetään.
 	FR	Lorsqu'il démarre, le serveur répertorie votre dossier de musique afin de mettre à jour sa base de données contenant l'information sur les albums, les artistes, etc. à partir des repères ID3 de vos fichiers de musique. Ceci peut taxer exagérément les ressources des ordinateurs plus lents. Vous pouvez réduire la vitesse de balayage afin d'éviter que le temps de réponse de l'ordinateur ne soit trop long.
+	JP	サーバーソフトウェアがスタートする時に、あなたの音楽フォルダーからアーチスト、アルバム等の情報をスキャンします。この場合、古いPCですと極端にPCのパフォーマンスを損ないます。以下で、PCのリソースを使いすぎない設定にして下さい。
 	NL	Als de server opstart zal deze Uw muziek folder inlezen om uit de MP3 tags de artiest, het album en andere gegevens te lezen. Op langzamere systemen en Windows PCs die FAT of FAT32 bestandsystemen gebruiken kan dit een onacceptabele vertraging van Uw PC tot gevolg hebben. U kunt met deze instelling de inleessnelheid verminderen om zodanig minder computercapaciteit te gebruiken.
 	NO	Når serveren starter scanner den gjennom musikkfolderen din for å finne artistnavn, album osv fra MP3-filene. På noen tregere systemer og Windows PCer som bruker FAT og FAT32 filsystem kan dette gjøre maskinen din veldig treg. Du kan endre denne innstillingen slik at scanningen går tregere og bruker mindre system ressurser.
 	PT	O servidor, ao iniciar, pesquisa toda a pasta de músicas, indexando o nome do artista, album e outras informações, a partir das tags ID3 dos ficheiros MP3. Em computadores mais lentos ou em sistemas operativos Windows com sistemas de ficheiros FAT ou FAT32, esta operação poderá ocupar demasiados recursos. Pode usar esta opção para adicionar um tempo de espera e abrandar a operação.
@@ -3356,6 +3631,7 @@ SETUP_ARTISTINALBUMSEARCH
 	ES	Buscar artistas en las búsquedas por disco
 	FI	Esittäjän nimi hakutuloksissa
 	FR	Nom d'artiste lors de la recherche d'albums
+	JP	アルバム検索におけるアーチスト名
 	NL	Naam van de artiest gebruiken in album zoekopdrachten
 	NO	Artistnavn i album søk
 	PT	Usar o nome do artista nas procuras por álbums
@@ -3367,6 +3643,7 @@ SETUP_ARTISTINALBUMSEARCH_1
 	EN	Include artist name in album searches
 	ES	Incluir nombre de artista en las búsquedas por disco
 	FR	Inclure le nom d'artiste
+	JP	アルバム検索にアーチスト名を含める
 	NL	Naam van de artiest gebruiken
 	NO	Inkluder artistnavn i album søk
 	PT	Usar o nome do artista nas procuras por álbums
@@ -3378,6 +3655,7 @@ SETUP_ARTISTINALBUMSEARCH_0
 	EN	Don't include artist name in album searches
 	ES	No incluir nombre de artista en búsquedas por disco
 	FR	Ne pas inclure le nom d'artiste
+	JP	アルバム検索にアーチスト名を含めない
 	NL	Naam van de artiest niet gebruiken
 	NO	Ikke inkluder artistnavn i album søk
 	PT	Não usar o nome do artista nas procuras por álbums
@@ -3390,6 +3668,7 @@ SETUP_ARTISTINALBUMSEARCH_DESC
 	ES	Con esta opción se puede permitir que se pueda buscar por nombre de artista al buscar en discos. Cuando esta opción está habilitada, buscar por "bach" encontrará también "Brandenburg Concertos" por J.S. Bach aunque "bach" no sea parte del nombre del disco.
 	FI	Tämä asetus määrittelee, haetaanko esittäjän nimeä hauissa, jotka kohdistuvat levyn nimeen. Mikäli tämä asetus on päällä, haettaessa "bach" löytyisi mm. "Brandenberg Concertos" J.S. Bach, vaikka "bach" ei olekaan osa levyn nimeä.
 	FR	Détermine si les noms des artistes sont utilisés lors de la recherche d'albums. Lorsque cette option est activée, une recherche de "bach" trouvera "Concertos Brandebourgeois" de J. S. Bach même si le mot "bach" ne fait pas partie du titre de l'album.
+	JP	アーチスト名をアルバム検索に含めるかどうかを選択します。このオプションを有効にすると、例えば「バッハ」による検索では、アルバムタイトルに「バッハ」と入っていなくても、「ブランデンブルグ協奏曲」をヒットします。
 	NL	Met deze optie kan U instellen of de namen van artiesten worden gebruikt bij het zoeken naar albums. Als deze optie ingeschakeld is zal bijvoorbeeld de zoekopdracht "bach" ook "Brandenberg Concertos" van J.S. Bach teruggeven, ondanks het feit dat "bach" geen onderdeel is van de titel van het album.
 	NO	Kontrollerer om artistnavn skal tas med i album søk. Med dette valget aktivt, vil et søk på "bach" gi treff på "Bradenberg Concertos" av J.S Bach, selv om "bach" ikke finnes i albumnavnet.
 	PT	Esta opção controla se o nome do artista é usado numa procura por álbuns. Com esta opção ligada, uma procura, por exemplo, por "bach" irá encontrar "Brandenberg Concertos by J.S. Bach", mesmo "bach" não sendo parte do título.
@@ -3401,6 +3680,7 @@ SETUP_COMPOSERINARTISTS
 	EN	Composer, Band and Orchestra in Artists
 	ES	Compositor, Banda y Orquesta en Artistas
 	FR	Compositeur, Groupe et Orchestre
+	JP	「アーチスト」に、作曲家、バンド、オーケストラ
 	NO	Komponist, band og orkester i Artister
 	PT	Compositor, Banda e Orquestra em Artistas
 	SE	Kompositör, grupp och orkester i Artister
@@ -3411,6 +3691,7 @@ SETUP_COMPOSERINARTISTS_1
 	EN	Include composer, band and orchestra in artists
 	ES	Incluir compositor, banda y orquesta en artistas
 	FR	Inclure les compositeurs, groupes et orchestres dans les artistes
+	JP	「アーチスト」に、作曲家、バンド、オーケストラを含める
 	NO	Inkluder komponist, band og orkester i artister
 	PT	Incluir compositor, banda e orquestra nos artistas
 	SE	Inkludera kompositör, grupp och orkester i Artister
@@ -3421,6 +3702,7 @@ SETUP_COMPOSERINARTISTS_0
 	EN	Don't include composer, band and orchestra in artists
 	ES	No incluir compositor, banda y orquesta en artistas
 	FR	Ne pas inclure compositeurs, groupes et orchestres dans les artistes
+	JP	「アーチスト」に、作曲家、バンド、オーケストラを含めない
 	NO	Ikke inkluder komponist, band og orkerster i artister
 	PT	Não incluir compositor, banda e orquestra nos artistas
 	SE	Inkludera INTE kompositör, grupp och orkester i Artister
@@ -3431,6 +3713,7 @@ SETUP_COMPOSERINARTISTS_DESC
 	EN	Song information about composers, bands and orchestras can be included in the artists list for browsing and search.
 	ES	La información acerca de compositores, bandas y orquestas de una canción puede ser incluida en la lista de artistas para recorrer y buscar.
 	FR	Les informations relatives aux compositeurs, groupes et orchestres contenues dans les morceaux peuvent être ajoutées à la liste d'artistes pour parcourir ou rechercher.
+	JP	作曲家、バンド、オーケストラの情報は、ブラウズ・検索の時にアーチスト情報として認識させることができます。
 	NO	Sanginformasjon om komonist, band og orkester kan inkluderes i artistlisten når du blar og søker.
 	PT	A informação relativa ao compositor, banda e orquestra poderá ser incluida na listas ou na procura.
 	SE	Låtinformation om kompositör, grupp och orkester kan inkluderas i artist-listan vid bläddring eller sökning.
@@ -3441,6 +3724,7 @@ SETUP_PERSISTPLAYLISTS
 	EN	Maintain Client Playlists
 	ES	Mantener Listas de Clientes
 	FR	Conservation des listes de lecture
+	JP	プレーヤーのプレイリストを維持する
 	NL	Onthoud de Playlist van de Speler
 	NO	Husk spillelister
 	PT	Manter as Playlists dos Clientes
@@ -3463,6 +3747,7 @@ SETUP_PERSISTPLAYLISTS_1
 	EN	Remember playlist
 	ES	Recordar lista
 	FR	Conserver la liste de lecture
+	JP	プレイリストを記憶する
 	NL	Playlist bijhouden
 	NO	Husk spillelister
 	PT	Manter as Playlists
@@ -3474,6 +3759,7 @@ SETUP_PERSISTPLAYLISTS_0
 	EN	Do not remember playlist
 	ES	No recordar lista
 	FR	Ne pas conserver la liste de lecture
+	JP	プレイリストを記憶しない
 	NL	Playlist niet bijhouden
 	NO	Ikke husk spillelister
 	PT	Não Manter Playlists
@@ -3485,6 +3771,7 @@ SETUP_RESHUFFLEONREPEAT
 	EN	Reshuffle on Repeat
 	ES	Desordenar al azar al repetir
 	FR	Répétition aléatoire
+	JP	リピートする時には、再度ランダムをかける
 	NL	Volgorde veranderen bij herhaling
 	NO	Bland på nytt ved repetisjon
 	PT	Misturar Lista ao Repetir
@@ -3507,6 +3794,7 @@ SETUP_RESHUFFLEONREPEAT_0
 	EN	Leave in same order
 	ES	Conservar el mismo orden
 	FR	Conserver le même ordre
+	JP	同じ順序にする
 	NL	Bewaar de volgorde
 	NO	Behold spillelistens rekkefølge
 	PT	Deixar na mesma ordem
@@ -3518,6 +3806,7 @@ SETUP_RESHUFFLEONREPEAT_1
 	EN	Reshuffle each time
 	ES	Desordenar al azar cada vez
 	FR	Mélanger à chaque répétition
+	JP	毎回、再度ランダムをかける
 	NL	Verander de volgorde elke keer
 	NO	Bland listen hver gang
 	PT	Misturar Lista Sempre
@@ -3529,6 +3818,7 @@ SETUP_PLAYTRACKALBUM
 	EN	Play other songs in album
 	ES	Tocar otras canciones del disco
 	FR	Jouer les autres morceaux de l'album
+	JP	同じアルバムのその他の曲を再生する
 	NL	Speel de andere liedjes van het album
 	NO	Spill andre låter i albumet
 	PT	Tocar outras músicas do álbum
@@ -3540,6 +3830,7 @@ SETUP_PLAYTRACKALBUM_1
 	EN	Play other songs in album or directory
 	ES	Tocar otras canciones en disco o carpeta
 	FR	Jouer les autres morceaux de l'album ou du dossier
+	JP	同じアルバム、またはフォルダーのその他の曲を再生する
 	NL	Speel de andere liedjes uit het album of uit de folder
 	NO	Spill andre låter i album eller folder
 	PT	Tocar outras músicas do álbum ou da mesma directoria
@@ -3551,6 +3842,7 @@ SETUP_PLAYTRACKALBUM_0
 	EN	Play only selected song
 	ES	Tocar sólo la canción elegida
 	FR	Jouer seulement les morceaux choisis
+	JP	選択した曲だけを再生する
 	NL	Speel enkel het geselecteerde liedje
 	NO	Spill bare valgte sang
 	PT	Tocar apenas a música selecionada
@@ -3573,6 +3865,7 @@ SETUP_IGNOREDARTICLES
 	EN	Articles to ignore when sorting artist names
 	ES	Artículos a ignorar cuando se ordenan nombres de artistas
 	FR	Articles à ignorer lors du tri des noms d'artiste
+	JP	アーチスト名を並べ替える場合に無視する単語
 	NL	Voorzetsels die moeten worden genegeerd bij het sorteren op artiest
 	NO	Artikler som skal ignoreres ved sortering av artistnavn
 	PT	Articos a ignorar ao ordenar nomes de artistas
@@ -3584,6 +3877,7 @@ SETUP_IGNOREDARTICLES_DESC
 	EN	A list of articles ("the", "les", "los", etc.) to ignore at the beginning of artist or album names when sorting. Separate multiple articles by spaces or leave this list blank to disable this behavior.
 	ES	Una lista de artículos ("the", "les", "los", etc.) a ignorar al comienzo del nombre de artistas o discos cuando se ordena. Separar múltiples artículos con espacios o dejar la lista en blanco , para deshabilitar este comportamiento.
 	FR	Une liste d'articles ("the", "les", "los", etc.) à ignorer au début des noms d'artistes lors du tri alphabetique. Séparer les articles par des espaces. Laisser la zone de saisie vide pour désactiver ce comportement.
+	JP	"the" , "les" , "los" , 
 	NL	Een lijst van voorzetsels ("de" "the" "les" "los" etc..) die moeten worden genegeerd bij het sorteren op Artiest.
 	NO	En liste med artikler ("the" "les" "los"...) i artistnavn som skal ignoreres ved sortering. Skill flere artikler med opphåld eller la feltet stå tomt for å deaktivere.
 	PT	A lista de artigos ("o", "os", "as", etc). a ignorar no iníco do nome do artista ou do álbum, ao ordenar. Separe multiplos artigos por espaços ou deixe a lista vazia para desactivar esta funcionalidade.
@@ -3594,6 +3888,7 @@ SETUP_SPLITCHARS
 	EN	Multiple Items In Tags
 	ES	Items múltiples en Tags
 	FR	Eléments multiples dans les répères ID3
+	JP	タグに複数のアイテム
 	NO	Multiple elementer i tagger
 	SE	Flera element i taggarna
 
@@ -3602,6 +3897,7 @@ SETUP_SPLITCHARS_DESC
 	EN	SlimServer can extract multiple artist, album titles and genres from the tags inside your music files.  If SlimServer finds any of the characters below in your tags, it will create individual listings for each item.  For example, if you put a semicolon in the list below, a song with an artist tag of "J. S. Bach;Michael Tilson Thomas" will appear in the artists area for both "J. S. Bach" and "Michael Tilson Thomas".
 	ES	SlimServer puede extraer múltiples artistas, títulos de discos y géneros de los tags que estan dentro de los archivos de música. Si SlimServer encuentra cualquiera de los carácteres de abajo en los tags, creará listados individuales para cada item. For ejemplo, si se pone un punto y coma en la lista debajo, una canción con un tag de Artista igual a "J. S. Bach;Michael Tilson Thomas" aparecerá en el área de artistas tanto para "J. S. Bach" como para "Michael Tilson Thomas".
 	FR	Le SlimServer peut extraire plusieurs noms d'artistes, titres d'albums ou genres des repères ID3 de vos fichiers musicaux. Si le SlimServer détecte l'un des caractères ci-dessous dans les répères ID3, il créera une entrée différente pour chaque élément présent - par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le répère ID3 "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas".
+	JP	SlimServerは、複数のアーチスト、アルバム、ジャンルを検索することができます。SlimServerが、音楽ファイルのタグに以下のどれかを見つけたときには、それぞれのアイテムに関してリストを作ります。例えば、セミコロン（:）で区切ってアーチストタグを"J. 
 	NO	SlimServer kan lese ut multiple artister, album titler og genre fra taggene i musikkfilene dine. Dersom SlimServer finner noen av tegnene nedenfor i taggene, vil den lage individuelle oppføringer for hvert av elementene. F.eks, hvis du putter et semikolon i listen nedenfor, vil en samg med artist taggen "J. S. Back;Michael Tilson Thomas" listes under artister både med "J. S. Bach" og "Michael Tilson Thomas".
 	SE	SlimServer kan läsa multipla artister, album och genres från taggarna i dina musikfiler. Om SlimServer finner något av tecknen nedan i taggarna, skapas individuella låtar för vart och ett. Exempelvis: "J. S. Back;Michael Tilson Thomas" listes under artister både med "J. S. Bach" och "Michael Tilson Thomas" som artist.
 
@@ -3611,6 +3907,7 @@ SETUP_FILESORT
 	EN	Sort By File Name
 	ES	Ordenar por Nombre de Archivo
 	FR	Trier par nom de fichier
+	JP	ファイル名でソートする
 	NL	Sorteer op Bestandsnaam
 	NO	Sorter etter filnavn
 	PT	Ordenar por Nome de Ficheiro
@@ -3633,6 +3930,7 @@ SORTID3
 	EN	Sort by song information
 	ES	Ordenar por información de canción
 	FR	Trier à partir des repères ID3
+	JP	曲情報でソートする
 	NL	Sorteer op ID3 informatie
 	NO	Sorter etter ID3-informasjon
 	PT	Ordenar pela informação da música (ID3)
@@ -3644,6 +3942,7 @@ SORTBYFILENAME
 	EN	Sort by file name
 	ES	Ordenar por nombre de archivo
 	FR	Trier par nom de fichier
+	JP	ファイル名でソートする
 	NL	Sorteer op bestandsnaam
 	NO	Sorter etter filnavn
 	PT	Ordenar por nome de ficheiro
@@ -3656,6 +3955,7 @@ SETUP_TEMPLATECACHE
 	ES	Cache de plantillas HTML:
 	FI	WWW-käyttöliittymän välimuisti
 	FR	Mise en cache des fichiers HTML
+	JP	HTMLキャッシュ
 	NL	HTML caching
 	NO	HTML cache
 	PT	Cache das páginas HTML
@@ -3680,6 +3980,7 @@ SETUP_USETAGDATABASE
 	ES	Usar base de datos de los "tags" de MP3
 	FI	MP3 tietokanta
 	FR	Base de données des repères MP3
+	JP	音楽ライブラリ データベース
 	NL	Bewaren van MP3 Tag Informatie
 	NO	MP3 tag database
 	PT	Base de dados de "Tags" MP3
@@ -3692,6 +3993,7 @@ SETUP_USETAGDATABASE_DESC
 	ES	La información de cada archivo en la colección musical puede guardarse en el cache cuando el servidor termina de recopilar. Puede ser recargado rápidamente cuando comienza nuevamente.
 	FI	MP3 -tiedostot sisältävät tietoa kuten esittäjän nimen. Tämä tieto voidaan tallentaa, jotta palvelimen käynnistys nopeutuu.
 	FR	Les informations contenues dans le repère ID3 de chaque fichier MP3 peuvent être sauvegardées sur disque lorsque le serveur est arrêté et relues lorsqu'il est redémarré afin d'accélérer le balayage du dossier de musique.
+	JP	サーバーがスキャンし終わった時に、音楽ライブラリのそれぞれのファイルの情報をキャッシュに保存し、再スキャンするスピードを上げることができます。
 	NL	De MP3 tag informatie uit elk MP3 bestand kan worden bewaard als de server stopt en zal herladen worden als de server weer opstart. Dit zal het scannen van de Muziek Folder zeer versnellen.
 	NO	MP3 tag informasjonen fra MP3 filene kan lagres når serveren stoppes og leses igjen når serveren starter igjen for å gjøre oppstarten raskere. Dette har ingen effekt når du bruker iTunes eller MoodLogic.
 	PT	A informação das tags ID3 para cada ficheiro MP3 pode ser guardada para que esteja disponível quando o servidor for reiniciado. Esta opção aumenta a velocidade de indexação dos ficheiros.
@@ -3703,6 +4005,7 @@ SETUP_ANIMATIONLEVEL
 	ES	Animación
 	FI	Animaatio
 	FR	Animations
+	JP	アニメーション
 	NL	Animatie
 	NO	Animasjon
 	PT	Animações
@@ -3715,6 +4018,7 @@ SETUP_ANIMATIONLEVEL_DESC
 	ES	Esta opción determina el nivel de animación permitido.
 	FI	Tämä valinta säätelee animaation määrää. (mm. valikoiden piirto)
 	FR	Ce réglage contrôle le degré d'animation de l'écran de la platine, comme l'affichage de message durant une courte période, les effets de fondu-déplacé et le défilement des titres trop longs.
+	JP	このオプションは、許容できるアニメーションの量を決めます。アニメーションとは、短いメッセージの表示、ナビゲーション中のスクリーン消去、長いタイトルのスクロール、を含みます。
 	NL	Deze optie bepaald de mate van toegestane animatie. Animaties zijn onder andere: het tonen van korte boodschappen, het verschuiven van de tekst gedurende navigatie en scrollende lange titles.
 	NO	Dette valget avgjør bruken av animasjoner. Animasjoner inkluderer visning av korte meldinger, skjermsletting ved navigasjon, og scrolling av lange titler.
 	PT	Esta opção determina a quantidade de animação permitida. As animações são compostas por breves mensagens, animação de ecrãs e deslizamento de títulos compridos.
@@ -3725,6 +4029,7 @@ SETUP_LOOKFORARTWORK
 	EN	Look For Artwork
 	ES	Buscar Arte de Tapa
 	FR	Répertorier les pochettes
+	JP	アートワークを探す
 	NO	Søk etter Album-omslag
 	SE	Sök efter Album-omslag
 
