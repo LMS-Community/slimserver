@@ -154,6 +154,7 @@ replaced by the desired level.
 -->
 
 <!ELEMENT current_song 	(	playlist_offset, 
+							playlist_length,
 							remove_url,
 							seconds_elapsed, 
 							seconds_total, 
@@ -162,6 +163,9 @@ replaced by the desired level.
 						
 <!ELEMENT playlist_offset (#PCDATA)>	
 <!-- Song offset in the playlist. 0= first song
+-->
+<!ELEMENT playlist_length (#PCDATA)>	
+<!-- Total number of songs in the playlist
 -->
 <!ELEMENT remove_url (#PCDATA)>
 <!-- URL to remove this song from the playlist 

@@ -63,6 +63,7 @@
 		[% IF currentsong %]	
 		<current_song>
 			<playlist_offset>[% thissongnum %]</playlist_offset>
+			<playlist_length>[% songcount %]</playlist_length>
 			<remove_url><![CDATA[xml/status.xml?p0=playlist&p1=delete&p2=[% thissongnum %]]]></remove_url>
 			<seconds_elapsed>[% songtime | html %]</seconds_elapsed>
 			<seconds_total>[% durationseconds | html %]</seconds_total>

@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.63 2004/09/19 21:28:52 sadams Exp $
+# $Id: Slimproto.pm,v 1.64 2004/10/02 02:55:18 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -24,7 +24,6 @@ use Slim::Utils::Strings qw(string);
 
 use Errno qw(:POSIX);
 
-my $SLIMPROTO_ADDR = 0;
 my $SLIMPROTO_PORT = 3483;
 
 my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox');
@@ -48,11 +47,11 @@ sub setEventCallback {
 }
 
 sub init {
-	my ($listenerport, $listeneraddr) = ($SLIMPROTO_PORT, $SLIMPROTO_ADDR);
+	my $listenerport = $SLIMPROTO_PORT;
 
 	$slimproto_socket = IO::Socket::INET ->new(
 		Proto => 'tcp',
-		LocalAddr => $listeneraddr,
+		LocalAddr => $main::localClientNetAddr,
 		LocalPort => $listenerport,
 		Listen    => SOMAXCONN,
 		ReuseAddr     => 1,
