@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DataModel;
 
-# $Id: DataModel.pm,v 1.14 2005/01/10 08:43:24 dsully Exp $
+# $Id: DataModel.pm,v 1.15 2005/01/10 09:04:15 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,6 +11,8 @@ use strict;
 
 use base 'Class::DBI';
 use DBI;
+use File::Basename;
+use File::Path;
 use SQL::Abstract;
 use SQL::Abstract::Limit;
 use Tie::Cache::LRU;
@@ -84,6 +86,15 @@ sub db_Main {
 	my $dbname = Slim::Utils::OSDetect::OS() eq 'unix' ? '.slimserversql.db' : 'slimserversql.db';
 
 	$dbname = catdir(Slim::Utils::Prefs::get('cachedir'), $dbname);
+
+	# Check and see if we need to create the path.
+	unless (-d dirname($dbname)) {
+		mkpath(dirname($dbname)) or do {
+			Slim::Utils::Misc::bt();
+			Slim::Utils::Misc::msg("Couldn't create directory for $dbname : $!\n");
+			return;
+		};
+	}
 
 	$::d_info && Slim::Utils::Misc::msg("Tag database support is ON, saving into: $dbname\n");
 
