@@ -11,6 +11,7 @@ package Slim::Music::iTunes;
 use strict;
 
 use Fcntl ':flock'; # import LOCK_* constants
+use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
