@@ -1,5 +1,26 @@
-<h2><a name="v5.4.0" id="v5.4.0"></a>Version 5.4.0 - 2004-10-25</h2>
+<h2><a name="v5.4.0" id="v5.4.0"></a>Version 5.4.0 - 2004-11-9</h2>
 <ul>
+
+	<li>Radio Plugins:
+		<ul>
+			<li>New plugin: Slim Devices Picks.
+			<li>New plugin: Live365 Internet Radio is now part of the default installation (thanks to Jim Kneply).
+			<li>radioio plugin: fixed branding and wrong port for Acoustic station.
+			<li>Added an "Internet Radio" link in the
+	  "Help" section of te SlimServer home page. Besides
+	  information on radio options, it presents a simple web UI to
+	  play a radio stream if you know its URL, without having to
+	  create a playlist file.
+		</ul>
+	</li>
+
+	<li>RSS Reader Plugin: Dave Cohen contributed an RSS Reader plugin that
+		is now part of the release. It can be used to browse a
+		configurable set of RSS feeds. It can also be set as a
+		screensaver to present a ticker of articles. The list
+		of feeds can be changed by browsing to Slim Server
+		&gt; Plugins through the SlimServer web interface.
+	</li>
 
 	<li>Menu system changes:
 		<ul>
@@ -22,18 +43,6 @@
 		</ul>
 	</li>
 
-	<li>Radio Plugins:
-		<ul>
-			<li>New plugin: Slim Devices Picks.
-			<li>New plugin: Live365 Internet Radio is now part of the default installation.
-			<li>radioio plugin: fixed branding and wrong port for Acoustic station.
-			<li>Added a simple web UI to play a radio
-	  stream if you know its URL, without having to create a
-	  playlist file. The page is linked to from the "Internet
-	  Radio and Playlists" document.
-		</ul>
-	</li>
-
 	<li>Remote Streaming and Formats:
 		<ul>
 			<li>Based on a submission from Craig
@@ -53,6 +62,7 @@
 			<li>Support for mono streams in wmadec
 			<li>Updated WMA code
 	  to handle sample_rate.
+			<li>Fixed proxy support for remote streams.
 			<li>bug552: DRM protected WMA files are now
 	  reported as such in songinfo and trackinfo playback of a DRM
 	  WMA will produce an error on the player display and server
@@ -60,10 +70,13 @@
 			<li>Bugs #388, 447, 581 Add binaries for flac
 	  1.1.1, and update convert.conf to enable --skip and --until
 	  Also add oggdec binaries.
+			<li>Fixed problem where oggdec to lame
+	  transcoding was not correctly byte-swapping on some
+	  platforms (PowerPC specifically).
 		</ul>
 	</li>
 
-	<li>SoftSqueeze 1.10
+	<li>SoftSqueeze 1.10 (thanks to Richard Titmuss)
 		<ul>
 			<li>Music search contributed by Brian Hein (alpha status).
 			<li>Simpler configuration dialog.
@@ -95,6 +108,20 @@
 	<li>Nicolas Guillemain updated the french translations. German updates from Pascal Berger...
 	<li>Various bug fixes:
 		<ul>
+			<li>Fixed problem where we weren't detecting
+          iTunes file changes in some cases.
+			<li>Don't require a trailing slash when
+	  specifying skins.
+			<li>fix bug 368, move image in songinfo of
+	  fishbone skin to bottom and now display unscaled.
+			<li>Fix for bug 366. Directories that consist
+	  of just spaces do not cause the scan algorithm to fall into
+	  an infinite loop.
+			<li>Fix for bug 640 - We could get into
+          situations where going left from the home menu would crash
+          the server.
+			<li>fixed an infinite loop in INPUT.List for
+	  empty lists.
 			<li>fix a bug where volume bar is rendered
 	  incorrectly when activated from another INPUT.Bar mode
 			<li>fix a bug in fishbone skin that made all
