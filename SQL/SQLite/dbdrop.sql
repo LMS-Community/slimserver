@@ -15,3 +15,5 @@ DROP TABLE genres;
 DROP TABLE genre_track;
 
 DROP TABLE comments;
+
+DROP TABLE dirlist_track;
