@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.127 2005/01/03 06:55:42 dsully Exp $
+# $Id: Source.pm,v 1.128 2005/01/10 22:01:20 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -811,7 +811,7 @@ sub resetSong {
 sub errorOpening {
 	my $client = shift;
 
-	my $line1 = $client->string('PROBLEM_OPENING');
+	my $line1 = shift || $client->string('PROBLEM_OPENING');
 	my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
 	
 	$client->showBriefly($line1, $line2, 1,1);
