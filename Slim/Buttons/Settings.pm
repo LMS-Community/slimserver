@@ -16,7 +16,7 @@ use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
 
 # button functions for browse directory
-our @defaultSettingsChoices = qw(ALARM VOLUME BASS TREBLE REPEAT SHUFFLE TITLEFORMAT TEXTSIZE OFFDISPLAYSIZE INFORMATION SETUP_SCREENSAVER);
+our @defaultSettingsChoices = qw(ALARM VOLUME REPEAT SHUFFLE TITLEFORMAT TEXTSIZE OFFDISPLAYSIZE INFORMATION SETUP_SCREENSAVER);
 
 our @settingsChoices = ();
 our %current = ();
@@ -291,6 +291,14 @@ sub setMode {
 	$params{'valueRef'} = \$current{$client};
 	
 	my @settingsChoices = @defaultSettingsChoices;
+	
+	if ($client->maxBass() - $client->minBass()) {
+		push @settingsChoices, 'BASS';
+	}
+	
+	if ($client->maxTreble() - $client->minTreble()) {
+		push @settingsChoices, 'TREBLE';
+	}
 	
 	if ($client->maxPitch() - $client->minPitch()) {
 		push @settingsChoices, 'PITCH';

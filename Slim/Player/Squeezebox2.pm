@@ -213,6 +213,13 @@ sub displayHeight {
 	return 32;
 }
 
+sub maxBass { 0 };
+sub minBass { 0 };
+sub maxTreble { 0 };
+sub minTreble { 0 };
+sub maxPitch { 0 };
+sub minPitch { 0 };
+
 sub model {
 	return 'squeezebox2';
 };
