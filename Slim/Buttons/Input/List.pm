@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::List;
 
-# $Id: List.pm,v 1.3 2003/11/23 20:41:58 grotus Exp $
+# $Id: List.pm,v 1.4 2003/11/25 04:14:15 grotus Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -42,6 +42,14 @@ my %functions = (
 				Slim::Buttons::Common::param($client,'listIndex',$newIndex);
 				my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 				$$valueRef = $listRef->[$newIndex];
+				my $onChange = Slim::Buttons::Common::param($client,'onChange');
+				if (ref($onChange) eq 'CODE') {
+					my $onChangeArgs = Slim::Buttons::Common::param($client,'onChangeArgs');
+					my @args;
+					push @args, $client if $onChangeArgs =~ /c/i;
+					push @args, $$valueRef if $onChangeArgs =~ /v/i;
+					$onChange->(@args);
+				}
 			}
 			$client->update;
 		}
