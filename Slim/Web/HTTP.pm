@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.97 2004/04/23 18:58:24 vidur Exp $
+# $Id: HTTP.pm,v 1.98 2004/04/26 17:23:25 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -401,6 +401,7 @@ sub processHTTP {
 
 			$path =~ s|^/+||;
 			$params->{"path"} = unescape($path);
+			$params->{"host"} = $request->header('Host');
 		}
 
 		# HTTP/1.1 Persistent connections or HTTP 1.0 Keep-Alives
@@ -762,7 +763,7 @@ sub generateHTTPResponse {
 		# content is in the "html" subdirectory within the template directory.
 
 		# if it's HTML then use the template mechanism
-		if ($contentType eq 'text/html' || $contentType eq 'text/xml') {
+		if ($contentType eq 'text/html' || $contentType eq 'text/xml' || $contentType eq 'application/x-java-jnlp-file') {
 
 			# if the path ends with a slash, then server up the index.html file
 			$path .= 'index.html' if $path =~ m|/$|;
@@ -1307,6 +1308,7 @@ sub newSkinTemplate {
 			'string' => \&Slim::Utils::Strings::string
 			,'nbsp' => \&nonBreaking
 			,'uri' => \&URI::Escape::uri_escape
+			,'unuri' => \&URI::Escape::uri_unescape
 		}
 		,EVAL_PERL => 1
 	});

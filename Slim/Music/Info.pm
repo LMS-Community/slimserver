@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.107 2004/04/25 03:14:14 kdf Exp $
+# $Id: Info.pm,v 1.108 2004/04/26 17:23:24 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -765,6 +765,7 @@ sub setContentType {
 	}
 	
 	$cacheEntry->{'CT'} = $type;
+	$cacheEntry->{'VALID'} = '1';
 
 	updateCacheEntry($url, $cacheEntry);
 	$::d_info && Slim::Utils::Misc::msg("Content type for $url is cached as $type\n");
@@ -780,6 +781,8 @@ sub setTitle {
 	my $cacheEntry = cacheEntry($url);
 
 	$cacheEntry->{'TITLE'} = $title;
+	$cacheEntry->{'VALID'} = '1';
+				
 	updateCacheEntry($url, $cacheEntry);
 }
 
@@ -789,6 +792,8 @@ sub setBitrate {
 
 	my $cacheEntry = cacheEntry( $url);
 	$cacheEntry->{'BITRATE'} = $bitrate;
+	$cacheEntry->{'VALID'} = '1';
+					
 	updateCacheEntry($url, $cacheEntry);
 }
 

@@ -458,6 +458,7 @@ sub scanFunction {
 				$cacheEntry{'COMMENT'} = $curTrack{'Comments'};
 				# cacheEntry{'???'} = $curTrack{'Track Count'};
 				# cacheEntry{'???'} = $curTrack{'Sample Rate'};
+				$cacheEntry{'VALID'} = '1';
 				my $url = $location;
 				if (Slim::Music::Info::isFileURL($url)) {
 					if (Slim::Utils::OSDetect::OS() eq 'unix') {

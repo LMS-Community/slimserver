@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.51 2004/04/16 15:33:12 dean Exp $
+# $Id: Slimproto.pm,v 1.52 2004/04/26 17:23:25 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -389,7 +389,7 @@ sub process_slimproto_frame {
 		
 		$status{$client}->{'bytes_received'} = $status{$client}->{'bytes_received_H'} * 2**32 + $status{$client}->{'bytes_received_L'}; 
 		
-		if ($client->revision() < 20) {
+		if ($client->revision() < 20 && $client->revision() > 0) {
 			$client->bufferSize(262144);
 			$status{$client}->{'rptr'} = $fullnessA;
 			$status{$client}->{'wptr'} = $fullnessB;

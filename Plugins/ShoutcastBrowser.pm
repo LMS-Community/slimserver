@@ -1,6 +1,6 @@
 # ShoutcastBrowser.pm Copyright (C) 2003 Peter Heslin
 # version 3.0, 5 Apr, 2004
-#$Id: ShoutcastBrowser.pm,v 1.9 2004/04/24 14:33:06 dean Exp $
+#$Id: ShoutcastBrowser.pm,v 1.10 2004/04/26 17:23:24 dean Exp $
 #
 # A Slim plugin for browsing the Shoutcast directory of mp3
 # streams.  Inspired by streamtuner.
@@ -156,7 +156,7 @@ my $recent_dirname = 'ShoutcastBrowser_Recently_Played';
 my $recent_dir = catdir(Slim::Utils::Prefs::get('playlistdir'), $recent_dirname);
 mkdir $recent_dir unless (-d $recent_dir);
 
-my ($top_limit, $most_popular_name);
+my ($top_limit, $most_popular_name, $custom_genres, %custom_genres);
 
 my $debug = 0;
 my (%current_genre, %current_stream, %status, %number, %current_info, %old_stream);
@@ -289,6 +289,12 @@ sub get_prefs
 	$top_limit =
 	    Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_popular');
     }
+    if ((not $prefs_override) and
+	Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_custom_genres'))
+    {
+	$custom_genres =
+	    Slim::Utils::Prefs::get('plugin_shoutcastbrowser_custom_genres');
+    }
 
     # Fallback defaults if undefined in prefs or at start of this file
     $how_many_streams = 300 unless $how_many_streams;
@@ -296,6 +302,32 @@ sub get_prefs
     @stream_criteria = qw(listeners bitrate name) unless @stream_criteria;
     $lump_singletons = 1 if ($genre_criteria[0] =~ m/default/i);
     $recent_max = 50 unless defined $recent_max;
+}
+
+sub setup_custom_genres
+{
+    my $i = 1;
+    my $fh = FileHandle->new();
+    $fh->open('< '. $custom_genres);
+    if (defined $fh)
+    {
+	while(my $entry = <$fh>)
+	{
+	    next if $entry =~ m/^\s*$/;
+	    my ($genre, @patterns) = split ' ', $entry;
+	    $genre =~ s/_/ /g;
+	    for (@patterns)
+	    {
+		$_ = "\L$_";
+		$_ =~ s/_/ /g;
+	    }
+	    $custom_genres{$genre} = join '|', @patterns;
+	    $genre = lc($genre);
+	    $keyword_index{$genre} = $i;
+	    $i++;
+	}
+	$fh->close;
+    }
 }
 
 ##### Main mode for genres #####
@@ -334,6 +366,7 @@ sub setMode
 	$u .= "&limit=$how_many_streams" if $how_many_streams;
 	my $xml = get($u);
 	$last_time = time;
+	&setup_custom_genres() if $custom_genres;
 	unless ($xml)
 	{
 	    $status{$client} = -1;
@@ -378,7 +411,30 @@ sub setMode
 	    my $full_text;
 	    my @keywords = ();
 	    my $original = $genre;
-	    if ($munge_genres)
+
+	    if ($custom_genres)
+	    {
+		$genre = "\L$genre";
+		$genre =~ s/\s+/ /g;
+		$genre =~ s/^ //;
+		$genre =~ s/ $//;
+		my $match = 0;
+		for my $key (keys %custom_genres)
+		{
+		    my $re = $custom_genres{$key};
+		    while ($genre =~ m/$re/g)
+		    {
+			push @keywords, $key;
+			$match++;
+		    }
+		}
+		if ($match == 0)
+		{
+		    @keywords = ($misc_genre);
+		}
+		$full_text= "$name | ${bitrate}kbps | $listeners online | $original | ";
+	    }
+	    elsif ($munge_genres)
 	    {
 		$genre = "\L$genre";
 		$genre =~ s/\s+/ /g;
@@ -397,16 +453,17 @@ sub setMode
 		$genre = 'Unknown' if ($genre eq ' ' or $genre eq '');
 
 		$full_text= "$name | ${bitrate}kbps | $listeners online | $original | ";
+		@keywords = ($genre) unless @keywords;
 	    }
 	    else
 	    {
 		$full_text= "$name | ${bitrate}kbps | $listeners online | ";
+		@keywords = ($genre);
 	    }
 
 	    my $data =
 		[$url, $full_text, $name, $listeners, $bitrate, $now_playing, $original];
 
-	    @keywords = ($genre) unless @keywords;
 	    foreach my $g (@keywords)
 	    {
 		$stream_data{$g}{$name}{$bitrate} = $data;
@@ -415,7 +472,7 @@ sub setMode
 	    $stream_data{$all_name}{$name}{$bitrate} = $data;
 	}
 
-	if ($lump_singletons)
+	if ($lump_singletons and not $custom_genres)
 	{
 	    foreach my $g (keys %stream_data)
 	    {
@@ -619,6 +676,7 @@ sub setupGroup
 	 PrefOrder =>
 	 [
 	  'plugin_shoutcastbrowser_how_many_streams',
+	  'plugin_shoutcastbrowser_custom_genres',
 	  'plugin_shoutcastbrowser_genre_primary_criterion',
 	  'plugin_shoutcastbrowser_genre_secondary_criterion',
 	  'plugin_shoutcastbrowser_stream_primary_criterion',
@@ -646,7 +704,12 @@ sub setupGroup
 			 streams_reverse =>
 			  string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS_REVERSE'),
 			 default =>
-			  string('SETUP_PLUGIN_SHOUTCASTBROWSER_DEFAULT_ALPHA')
+			  string('SETUP_PLUGIN_SHOUTCASTBROWSER_DEFAULT_ALPHA'),
+			 keyword =>
+			  string('SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD'),
+			 keyword_reverse =>
+			  string('SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD_REVERSE'),
+
 			);
 
     my %stream_options = (
@@ -667,6 +730,11 @@ sub setupGroup
 	 {
  	  validate => \&Slim::Web::Setup::validateInt,
  	  validateArgs => [1,2000,1,2000]
+	 },
+	 plugin_shoutcastbrowser_custom_genres =>
+	 {
+ 	  validate => \&validateIsFile,
+	  PrefSize => 'large'
 	 },
 	 plugin_shoutcastbrowser_genre_primary_criterion =>
 	 {
@@ -707,6 +775,23 @@ sub setupGroup
 	);
     &checkDefaults;
     return (\%setupGroup,\%setupPrefs);
+}
+
+sub validateIsFile
+{
+    my $val = shift;
+    if (not defined $val)
+    {
+	return '';
+    }
+    elsif (-f $val or $val eq '')
+    {
+	return $val;
+    }
+    else
+    {
+	return (undef, "SETUP_BAD_DIRECTORY");
+    }
 }
 
 sub checkDefaults
@@ -1440,7 +1525,6 @@ PLUGIN_SHOUTCASTBROWSER_KBPS
 
 PLUGIN_SHOUTCASTBROWSER_RECENT
 	EN	Recently played
-	DE	Favoriten
 
 PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR
 	EN	Most Popular
@@ -1532,7 +1616,13 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR
 	EN	Most Popular
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR_DESC
-	EN	Number of streams to include in the category of most popular streams, as given when using the default alphabetical sorting order for genres.
+	EN	Number of streams to include in the category of most popular streams, measured by the total of all listeners at all bitrates.
+
+SETUP_PLUGIN_SHOUTCASTBROWSER_CUSTOM_GENRES
+	EN	Custom Genre Definitions
+
+SETUP_PLUGIN_SHOUTCASTBROWSER_CUSTOM_GENRES_DESC
+	EN	You can define your own SHOUTcast categories by indicating the name of a custom genre definition file here.  Each line in this file defines a category per line, and each line consists of a series of terms separated by whitespace.  The first term is the name of the genre, and each subsequent term is a pattern associated with that genre.  If any of these patterns matches the advertised genre of a stream, that stream is considered to belong to that genre.  You may use an underscore to represent a space within any of these terms, and in the patterns, case does not matter.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE
 	EN	Alphabetical (reverse)
@@ -1557,3 +1647,10 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS_REVERSE
 	EN	Number of listeners (reverse)
 	DE	Anzahl Hörer (umgekehrte Reihenfolge)
+
+SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD
+	EN	Order of definition
+
+SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD_REVERSE
+	EN	Order of definition (reverse)
+

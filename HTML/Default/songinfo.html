@@ -124,7 +124,7 @@
       [% END %] [% IF url %] 
       <tr> 
         <td class="nowrap"> [% "LOCATION" | string %][% "COLON" | string %]</td>
-        <td> <a href="[% url %]">[% url | html %]</a> </td>
+        <td> <a href="[% url %]">[% url | unuri | html %]</a> </td>
       </tr>
       [% END %] [% IF modtime %] 
       <tr> 

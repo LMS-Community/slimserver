@@ -1,6 +1,6 @@
 package Slim::Utils::Strings;
 
-# $Id: Strings.pm,v 1.11 2004/03/11 20:16:12 dean Exp $
+# $Id: Strings.pm,v 1.12 2004/04/26 17:23:25 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -113,7 +113,7 @@ sub addStrings {
 			if ($one=~/./) {
 				# if the string spans multiple lines, language can be left blank, and
 				# we'll remember it from the last time we saw it.
-				$language = $one;
+				$language = uc($one);
 
 				# keep track of all the languages we've seen
 				if (!exists($languages{$language})) {
