@@ -1,6 +1,6 @@
 package Slim::Networking::Select;
 
-# $Id: Select.pm,v 1.3 2003/11/10 23:14:59 dean Exp $
+# $Id: Select.pm,v 1.4 2003/11/20 18:59:23 dean Exp $
 
 # SlimServer Copyright (c) 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -8,43 +8,50 @@ package Slim::Networking::Select;
 # version 2.
 
 use IO::Select;
-use Tie::RefHash;
 
 use Slim::Utils::Misc;
 
 my %readSockets;
+my %readCallbacks;
+
 my %writeSockets;
+my %writeCallbacks;
+
 my $readSelects = IO::Select->new();
 my $writeSelects = IO::Select->new();
-
-tie %readSockets, "Tie::RefHash";
-tie %writeSockets, "Tie::RefHash";
 
 sub addRead {
 	my $r = shift;
 	my $callback = shift;
 	if (!defined($callback)) {
-		delete $readSockets{$r};
+		delete $readSockets{"$r"};
+		delete $readCallbacks{"$r"};
 		$::d_select && msg("removing select write $r\n");
 	} else {
-		$readSockets{$r} = $callback;
+		$readSockets{"$r"} = $r;
+		$readCallbacks{"$r"} = $callback;
 		$::d_select && msg("adding select read $r $callback\n");
 	}
-	$readSelects = IO::Select->new(keys %readSockets); 
+	$readSelects = IO::Select->new(map {$readSockets{$_}} (keys %readSockets));
 }
 
 sub addWrite {
 	my $w = shift;
 	my $callback = shift;
 	
+	$::d_select && msg("before: " . scalar(keys %writeSockets) . "/" . $writeSelects->count . "\n");
 	if (!defined($callback)) {
-		delete $writeSockets{$w};
+		delete $writeSockets{"$w"};
+		delete $writeCallbacks{"$w"};	
 		$::d_select && msg("removing select write $w\n");
 	} else {
-		$writeSockets{$w} = $callback;
+		$writeSockets{"$w"} = $w;
+		$writeCallbacks{"$w"} = $callback;
 		$::d_select && msg("adding select write $w $callback\n");
 	}
-	$writeSelects = IO::Select->new(keys %writeSockets);
+	$writeSelects = IO::Select->new(map {$writeSockets{$_}} (keys %writeSockets));
+
+	$::d_select && msg("now: " . scalar(keys %writeSockets) . "/" . $writeSelects->count . "\n");
 }
 
 sub select {
@@ -59,13 +66,13 @@ sub select {
 	my $sock;		
 	my $count = 0;
 	foreach $sock (@$r) {
-		my $readsub = $readSockets{$sock};
+		my $readsub = $readCallbacks{"$sock"};
 		$readsub->($sock) if $readsub;
 		$count++;
 	}
 	
 	foreach $sock (@$w) {
-		my $writesub = $writeSockets{$sock};
+		my $writesub = $writeCallbacks{"$sock"};
 		$writesub->($sock) if $writesub;
 		$count++;
 	}
