@@ -14,6 +14,7 @@ use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 
 use MP3::Info;
+use Tie::Cache::LRU;
 
 use Slim::DataStores::DBI::DBIStore;
 
@@ -65,6 +66,9 @@ my %lastFile      = ();
 my %display_cache = ();
 
 my ($currentDB, $localDB);
+
+# Save our stats.
+tie our %isFile, 'Tie::Cache::LRU', 16;
 
 sub init {
 
@@ -1405,9 +1409,14 @@ sub splitTag {
 }
 
 sub isFile {
-	my $fullpath = shift;
+	my $url = shift;
 
-	$fullpath = isFileURL($fullpath) ? Slim::Utils::Misc::pathFromFileURL($fullpath) : $fullpath;
+	# We really don't need to check this every time.
+	if (defined $isFile{$url}) {
+		return $isFile{$url};
+	}
+
+	my $fullpath = isFileURL($url) ? Slim::Utils::Misc::pathFromFileURL($url) : $url;
 	
 	return 0 if (isURL($fullpath));
 	
@@ -1417,6 +1426,8 @@ sub isFile {
 	my $stat = (-f $fullpath && -r $fullpath ? 1 : 0);
 
 	$::d_info && Slim::Utils::Misc::msgf("isFile(%s) == %d\n", $fullpath, (1 * $stat));
+
+	$isFile{$url} = $stat;
 
 	return $stat;
 }
