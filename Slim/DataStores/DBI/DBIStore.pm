@@ -652,13 +652,14 @@ sub addExternalPlaylist {
 
 sub clearExternalPlaylists {
 	my $self = shift;
+	my $url = shift;
 
 	$self->{'externalPlaylists'} = [];
 
 	my $playLists = Slim::DataStores::DBI::Track->externalPlaylists();
 
 	while (my $track = $playLists->next()) {
-		$track->delete();
+		$track->delete() if (defined $url ? $track->url() =~ /^$url/ : 1);
 	}
 
 	$self->forceCommit();

@@ -1221,6 +1221,11 @@ sub initSetupConfig {
 				no strict 'refs';
 				foreach my $plugin (sort {string($pluginlistref->{$a}) cmp string($pluginlistref->{$b})}(keys %{$pluginlistref})) {
 
+					if ($paramref->{"pluginlist$i"} && UNIVERSAL::can("Plugins::$plugin","initPlugin")) {
+						&{"Plugins::" . $plugin . "::initPlugin"};
+					}
+						
+
 					if (!exists $paramref->{"pluginlist$i"}) {
 						$paramref->{"pluginlist$i"} = exists $plugins{$plugin} ? 0 : 1;
 					}
@@ -1229,9 +1234,9 @@ sub initSetupConfig {
 						Slim::Utils::Prefs::push('disabledplugins',$plugin);
 					}
 
-					# disable and remove groups for Plugins that fail enable citeria
-					if (exists &{"Plugins::" . $plugin . "::enabled"} && 
-							! &{"Plugins::" . $plugin . "::enabled"}($client) ) {
+					# disable and remove groups for non-disabled Plugins that fail enable citeria
+					if (!exists $plugins{$plugin} && exists &{"Plugins::" . $plugin . "::enabled"} && 
+							! &{"Plugins::" . $plugin . "::enabled"}($client)) {
 						$paramref->{"pluginlist$i"} = 0;
 						delGroup('plugins',$plugin,1);
 					}
@@ -2022,12 +2027,12 @@ sub initSetupConfig {
 		$setup{'debug'}{'Prefs'}{$key}{'changeIntro'} = $key;
 	}
 	if (scalar(keys %{Slim::Buttons::Plugins::installedPlugins()})) {
-		#$setup{'server'}{'children'}[10]='plugins';
+		
 		Slim::Web::Setup::addChildren('server','plugins');
+
 		# XXX This should be added conditionally based on whether there
 		# are any radio plugins. We need to find a place to make that
 		# check *after* plugins have been correctly initialized.
-		#$setup{'server'}{'children'}[11]='radio';
 		Slim::Web::Setup::addChildren('server','radio');
 	}
 }
@@ -2188,28 +2193,42 @@ sub setup_HTTP {
 
 sub buildLinkList {
 	my ($separator,$paramref,@pages) = @_;
+
 	my $output = '';
 	my $pagenum = 0;
 	my %linkinfo;
+
 	foreach my $page (@pages) {
-		next if !defined $page;
+
+		next if !(defined $page && $page ne "");
+
 		%linkinfo = ();
+
 		#usePrefix is true for all but first item
 		$linkinfo{'usePrefix'} = $pagenum;
+
 		#useSuffix is true for all but last item
 		$linkinfo{'useSuffix'} = !($pagenum == scalar(@pages));
+
 		$pagenum++;
+
 		$linkinfo{'paramlist'} = '?page=' . $page . '&player=' . (Slim::Web::HTTP::escape($paramref->{'player'})); 
+
 		if (defined $paramref->{'playerid'}) {$linkinfo{'paramlist'} .= '&playerid=' . (Slim::Web::HTTP::escape($paramref->{'playerid'}));}
+
 		$linkinfo{'linktitle'} = $setup{$page}{'title'};
+
 		if ($separator ne 'tree') {
 			$linkinfo{'currpage'} = ($paramref->{'page'} eq $page);
 		}
+
 		$linkinfo{'linkpage'} = 'setup.html';
 		$linkinfo{'separator'} = $separator;
 		$linkinfo{'skinOverride'} = $$paramref{'skinOverride'};
+
 		$output .= ${Slim::Web::HTTP::filltemplatefile('linklist.html',\%linkinfo)};
 	}
+
 	return $output;
 }
 
@@ -2938,6 +2957,17 @@ sub delGroup {
 		@preflist = @{$setup{$category}{'Groups'}{$groupname}{'PrefOrder'}};
 	}
 	
+
+	if ($setup{$category}{'children'}) {
+		# remove ghost children
+		my @children;
+			foreach (@{$setup{$category}{'children'}}) {
+			next if !defined $_;
+			next if $_ eq $groupname;
+			push @children,$_;
+		}
+		@{$setup{$category}{'children'}} = @children;
+	}
 	#remove from Groups hash
 	delete $setup{$category}{'Groups'}{$groupname};
 	

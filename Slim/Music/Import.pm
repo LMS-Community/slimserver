@@ -28,29 +28,33 @@ sub startScan {
 	
 	# Don't rescan folders if we are only enabling an Import.
 	unless (defined $import) {
+
 		$::d_info && msg("Clearing tag cache\n");
 		Slim::Music::Info::clearCache();
+
 		$::d_info && msg("Starting background scanning.\n");
 		$importsRunning{'folder'} = Time::HiRes::time();
+
 		Slim::Music::MusicFolderScan::startScan();
 	}
 
 	# Check Import scanners
 	foreach my $importer (keys %Importers) {
 
-		if (exists $Importers{$importer}->{'scan'} && $Importers{$importer}->{'scan'} && $Importers{$importer}->{'use'}) {
+		if (exists $Importers{$importer}->{'scan'} && $Importers{$importer}->{'use'}) {
 
 			if (!defined $import || (defined $import && ($importer eq $import))) {
 
 				$importsRunning{$importer} = Time::HiRes::time();
 
 				# rescan each enabled Import, or scan the newly enabled Import
-				$::d_info && msg("Starting $importer scanning.\n");
+				$::d_info && msgf("Starting %s scan\n", string($importer));
 
 				&{$Importers{$importer}->{'scan'}};
 			}
 		}
 	}
+	Slim::Music::Info::generatePlaylists() unless stillScanning();
 }
 
 sub deleteImporter {

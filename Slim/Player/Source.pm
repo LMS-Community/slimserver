@@ -851,6 +851,8 @@ sub openSong {
 
 		if ($sock) {
 
+			Slim::Music::Info::setContentType($fullpath, $sock->contentType());
+
 			# if it's an mp3 stream, then let's stream it.
 			if (Slim::Music::Info::isSong($track)) {
 

@@ -185,9 +185,9 @@ sub request {
 	}
 	
 	my $redir = '';
-	my $ct = Slim::Music::Info::typeFromPath($infoUrl, 'mp3');
+	#my $ct = Slim::Music::Info::typeFromPath($infoUrl, 'mp3');
 
-	Slim::Music::Info::setContentType($infoUrl, $ct);
+	#Slim::Music::Info::setContentType($infoUrl, $ct);
 
 	while(my $header = Slim::Utils::Misc::sysreadline($self, $timeout)) {
 
@@ -220,14 +220,14 @@ sub request {
 		}
 
 		if ($header =~ /^Content-Type:\s*(.*)$CRLF$/i) {
-			my $contenttype = $1;
+			my $contentType = $1;
 			
-			if ($contenttype =~ /text/i) {
+			if ($contentType =~ /text/i) {
 				# webservers often lie about playlists.  This will make it guess from the suffix. 
-				$contenttype = '';
+				$contentType = '';
 			}
 			
-			Slim::Music::Info::setContentType($infoUrl,$contenttype);
+			 ${*$self}{'contentType'} = $contentType;
 		}
 		
 		if ($header =~ /^Content-Length:\s*(.*)$CRLF$/i) {
@@ -278,7 +278,7 @@ sub request {
 			my $redirectedContentType = Slim::Music::Info::contentType($redir);
 
 			$::d_remotestream && msg("Content type ($redirectedContentType) of $infoUrl is being set to the content type of the redir: $redir\n");
-			Slim::Music::Info::setContentType($infoUrl,$redirectedContentType);
+			#Slim::Music::Info::setContentType($infoUrl,$redirectedContentType);
 		}
 		
 		return $self;
@@ -476,6 +476,16 @@ sub contentLength {
 	my $self = shift;
 
 	return ${*$self}{'contentLength'};
+}
+
+sub contentType {
+
+	my $self = shift;
+
+
+
+	return ${*$self}{'contentType'};
+
 }
 
 sub skipForward {

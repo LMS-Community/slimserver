@@ -899,7 +899,6 @@ sub browser_addtolist_done {
 			$list_form{'itempath'}            = Slim::Utils::Misc::virtualToAbsolute($item);
 			$list_form{'odd'}	  	  = ($itemnumber + $offset) % 2;
 			$list_form{'player'}	          = $current_player;
-			$list_form{'mixable_not_descend'} = $obj->moodlogic_mixable() if ($obj && $obj->can('moodlogic_mixable'));
 
 			my $anchor = anchor(Slim::Utils::Text::getSortName($list_form{'title'}),1);
 
@@ -1670,7 +1669,6 @@ sub _addSongInfo {
 
 		$params->{'filelength'} = Slim::Utils::Misc::delimitThousands($track->filesize());
 		$params->{'songtitle'}  = Slim::Music::Info::standardTitle(undef, $track);
-		$params->{'mixable'}	= $track->moodlogic_mixable;
 
 		# make urls in comments into links
 		for my $comment ($track->comment()) {

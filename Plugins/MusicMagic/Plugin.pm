@@ -61,7 +61,7 @@ sub useMusicMagic {
 	$use = Slim::Utils::Prefs::get('musicmagic') && $can;
 	Slim::Music::Import::useImporter('MUSICMAGIC',$use);
 
-	$::d_musicmagic && msg("using musicmagic: $use\n");
+	$::d_musicmagic && msg("MusicMagic: using musicmagic: $use\n");
 	
 	return $use;
 }
@@ -91,6 +91,13 @@ sub disablePlugin {
 	# disable protocol handler?
 	#Slim::Player::Source::registerProtocolHandler("musicmaglaylist", "0");
 	
+	# reset last scan time
+
+	$lastMusicLibraryFinishTime = undef;
+
+
+	$initialized = 0;
+
 	# delGroups, categories and prefs
 	Slim::Web::Setup::delCategory('musicmagic');
 	Slim::Web::Setup::delGroup('server','musicmagic',1);
@@ -101,7 +108,8 @@ sub disablePlugin {
 }
 
 sub initPlugin {
-	return $initialized if ($initialized == 1);
+	return 1 if $initialized;
+	
 	checkDefaults();
 
 	$MMSport = Slim::Utils::Prefs::get('MMSport');
@@ -119,7 +127,7 @@ sub initPlugin {
 	} else {
 
 		my $content = $http->content();
-		$::d_musicmagic && msg("$content\n");
+		$::d_musicmagic && msg("MusicMagic: $content\n");
 		$http->close();
 
 		# Note: Check version restrictions if any
@@ -181,7 +189,7 @@ sub addGroups {
 
 	Slim::Web::Setup::addCategory('musicmagic',&setupCategory);
 
-	my ($groupRef,$prefRef) = &setupGroup();
+	my ($groupRef,$prefRef) = &setupUse();
 
 	Slim::Web::Setup::addGroup('server', 'musicmagic', $groupRef, 2, $prefRef);
 	Slim::Web::Setup::addChildren('server', 'musicmagic');
@@ -204,7 +212,7 @@ sub isMusicLibraryFileChanged {
 
 		my $musicmagicscaninterval = Slim::Utils::Prefs::get('musicmagicscaninterval') || 1;
 
-		$::d_musicmagic && msg("music library has changed!\n");
+		$::d_musicmagic && msg("MusicMagic: music library has changed!\n");
 
 		$lastMusicLibraryFinishTime = 0 unless $lastMusicLibraryFinishTime;
 
@@ -213,7 +221,7 @@ sub isMusicLibraryFileChanged {
 			return 1;
 		}
 
-		$::d_musicmagic && msg("waiting for $musicmagicscaninterval seconds to pass before rescanning\n");
+		$::d_musicmagic && msg("MusicMagic: waiting for $musicmagicscaninterval seconds to pass before rescanning\n");
 	}
 	
 	return 0;
@@ -234,14 +242,13 @@ sub checker {
 }
 
 sub startScan {
+	
 	if (!useMusicMagic()) {
 		return;
 	}
 		
 	$::d_musicmagic && msg("MusicMagic: start export\n");
 	stopScan();
-	Slim::Music::Info::clearPlaylists();
-
 	
 	$export = 'start';
 	$scan = 0;
@@ -329,7 +336,7 @@ sub convertPath {
 		}
 	}
 
-	$::d_musicmagic && msg("$original is now $mmsPath\n");
+	$::d_musicmagic && msg("MusicMagic: $original is now $mmsPath\n");
 
 	return $mmsPath
 }
@@ -363,7 +370,7 @@ sub exportFunction {
 
 		$count += 0;
 		
-		$::d_musicmagic && msg("Got $count song(s).\n");
+		$::d_musicmagic && msg("MusicMagic: Got $count song(s).\n");
 		
 		$scan = 0;
 		$export = 'songs';
@@ -413,7 +420,7 @@ sub exportFunction {
 				$cacheEntry{'MUSICMAGIC_MIXABLE'} = 1;
 			}
 
-			$::d_musicmagic && msg("Exporting song $scan: $songInfo{'file'}\n");
+			$::d_musicmagic && msg("MusicMagic: Exporting song $scan: $songInfo{'file'}\n");
 
 			# fileURLFromPath will turn this into UTF-8 - so we
 			# need to make sure we're in the current locale first.
@@ -423,7 +430,6 @@ sub exportFunction {
 		
 			my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});
 
-			$ds->updateOrCreate($fileurl, \%cacheEntry);
 			$ds->updateOrCreate($fileurl, \%cacheEntry);
 			
 			# NYI: MMM has more ways to access artwork...
@@ -452,7 +458,6 @@ sub exportFunction {
 
 		if ($scan == $count) {
 			$export = 'genres';
-			$ds->forceCommit();
 		}
 		
 		# would be nice to chunk this in groups.  One at a time is slow, 
@@ -466,7 +471,7 @@ sub exportFunction {
 
 		@lines = split(/\n/, $http->content());
 		$count = scalar @lines;
-		$::d_musicmagic && msg("Got $count active genre(s).\n");
+		$::d_musicmagic && msg("MusicMagic: Got $count active genre(s).\n");
 
 		$http->close();
 	
@@ -491,7 +496,7 @@ sub exportFunction {
 
 		@lines = split(/\n/, $http->content());
 		$count = scalar @lines;
-		$::d_musicmagic && msg("Got $count active artist(s).\n");
+		$::d_musicmagic && msg("MusicMagic: Got $count active artist(s).\n");
 
 		$http->close();
 
@@ -538,7 +543,7 @@ sub exportFunction {
 				my $url = 'musicmagicplaylist:' . Slim::Web::HTTP::escape($name);
 
 				if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
-					$::d_musicmagic && msg("Found MusicMagic Playlist: $url\n");
+					$::d_musicmagic && msg("MusicMagic: Found playlist: $url\n");
 				}
 
 				# add this playlist to our playlist library
@@ -564,8 +569,7 @@ sub exportFunction {
 
 	$::d_musicmagic && msgf("exportFunction: finished export ($count records, %d playlists)\n", scalar @{Slim::Music::Info::playlists()});
 	$export = '';
-	$ds->forceCommit();
-
+	
 	return 0;
 }
 
@@ -757,7 +761,7 @@ sub getMix {
 	my $id = shift;
 	my $for = shift;
 
-	my @instant_mix = ();
+	my @mix = ();
 	my $mixArgs;
 	my $req;
 	my $res;
@@ -781,13 +785,13 @@ sub getMix {
 	} elsif ($for eq "genre") {
 		$mixArgs = "genre=$id";
 	} else {
-		$::d_musicmagic && msg("no valid type specified for instant mix");
+		$::d_musicmagic && msg("MusicMagic no valid type specified for mix");
 		return undef;
 	}
 
-	# url encode the request
+	# url encode the request, but not the argstring
 	$mixArgs   = Slim::Web::HTTP::escape($mixArgs);
-	$argString = Slim::Web::HTTP::escape($argString);
+	#$argString = Slim::Web::HTTP::escape($argString);
 	
 	$::d_musicmagic && msg("Musicmagic request: http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString\n");
 
@@ -796,7 +800,7 @@ sub getMix {
 	unless ($http) {
 		# NYI
 		$::d_musicmagic && msg("Musicmagic Error - Couldn't get mix: $mixArgs\&$argString");
-		return @instant_mix;
+		return @mix;
 	}
 
 	my @songs = split(/\n/, $http->content());
@@ -807,12 +811,12 @@ sub getMix {
 	for (my $j = 0; $j < $count; $j++) {
 		my $newPath = convertPath($songs[$j]);
 
-		$::d_musicmagic && msg("Original $songs[$j] : New $newPath\n");
+		$::d_musicmagic && msg("MusicMagic: Original $songs[$j] : New $newPath\n");
 
-		push @instant_mix, Slim::Utils::Misc::fileURLFromPath($newPath);
+		push @mix, Slim::Utils::Misc::fileURLFromPath($newPath);
 	}
 
-	return @instant_mix;
+	return \@mix;
 }
 
 sub webPages {
@@ -827,7 +831,7 @@ sub musicmagic_mix {
 	my ($client, $params) = @_;
 
 	my $output = "";
-	my @mix  = ();
+	my $mix;
 
 	my $song   = $params->{'song'};
 	my $artist = $params->{'artist'};
@@ -856,7 +860,7 @@ sub musicmagic_mix {
 		if ($obj && $obj->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			@mix = getMix(Slim::Utils::Misc::pathFromFileURL($song), 'song');
+			$mix = getMix(Slim::Utils::Misc::pathFromFileURL($song), 'song');
 		}
 
 	} elsif (defined $artist && $artist ne "" && !$album) {
@@ -866,7 +870,7 @@ sub musicmagic_mix {
 		if ($obj && $obj->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			@mix = getMix($obj->name(), 'artist');
+			$mix = getMix($obj->name(), 'artist');
 		}
 
 	} elsif (defined $album && $album ne "") {
@@ -884,7 +888,7 @@ sub musicmagic_mix {
 				Slim::Utils::Misc::pathFromFileURL($obj->{'url'}) : 
 				$ds->objectForId('contributor', $artist)->name()."\@\@".$obj->title();
 				
-			@mix = getMix($key, 'album');
+			$mix = getMix($key, 'album');
 		}
 		
 	} elsif (defined $genre && $genre ne "" && $genre ne "*") {
@@ -894,7 +898,7 @@ sub musicmagic_mix {
 		if ($obj && $obj->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			@mix = getMix($genre, 'genre');
+			$mix = getMix($genre, 'genre');
 		}
 	
 	} else {
@@ -903,7 +907,7 @@ sub musicmagic_mix {
 		return 1;
 	}
 
-	for my $item (@mix) {
+	for my $item (@$mix) {
 
 		my %list_form = %$params;
 		my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
@@ -926,17 +930,17 @@ sub musicmagic_mix {
 
 	if (defined $p0 && defined $client) {
 
-		Slim::Control::Command::execute($client, ["playlist", $p0 eq "append" ? "append" : "play", $mix[0]]);
+		Slim::Control::Command::execute($client, ["playlist", $p0 eq "append" ? "append" : "play", $mix->[0]]);
 		
-		for (my $i = 1; $i <= $#mix; $i++) {
-			Slim::Control::Command::execute($client, ["playlist", "append", $mix[$i]]);
+		for (my $i = 1; $i <= $#$mix; $i++) {
+			Slim::Control::Command::execute($client, ["playlist", "append", $mix->[$i]]);
 		}
 	}
 
 	return Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_mix.html", $params);
 }
 
-sub setupGroup {
+sub setupUse {
 	my $client = shift;
 
 	my %setupGroup = (
@@ -966,6 +970,7 @@ sub setupGroup {
 				}
 
 				Slim::Music::Import::useImporter('MUSICMAGIC',$changeref->{'musicmagic'}{'new'});
+				Slim::Music::Info::clearPlaylists('musicmagicplaylist:');
 				Slim::Music::Import::startScan('MUSICMAGIC');
 			},
 
@@ -1067,6 +1072,10 @@ sub setupCategory {
 };
 
 sub checkDefaults {
+
+	if (!Slim::Utils::Prefs::isDefined('musicmagic')) {
+		Slim::Utils::Prefs::set('musicmagic',0)
+	}
 
 	if (!Slim::Utils::Prefs::isDefined('MMMMixType')) {
 		Slim::Utils::Prefs::set('MMMMixType',0)

@@ -61,7 +61,7 @@ sub useMoodLogic {
 	$use = Slim::Utils::Prefs::get('moodlogic') && $can;
 	Slim::Music::Import::useImporter('MOODLOGIC',$use);
 	
-	$::d_moodlogic && msg("using moodlogic: $use\n");
+	$::d_moodlogic && msg("MoodLogic: using moodlogic: $use\n");
 	
 	return $use;
 }
@@ -91,6 +91,13 @@ sub disablePlugin {
 	# disable protocol handler
 	#Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
 	
+	# reset last scan time
+
+	$lastMusicLibraryFinishTime = undef;
+
+
+	$initialized = 0;
+	
 	# delGroups, categories and prefs
 	Slim::Web::Setup::delCategory('moodlogic');
 	Slim::Web::Setup::delGroup('server','moodlogic',1);
@@ -101,7 +108,7 @@ sub disablePlugin {
 }
 
 sub initPlugin {
-	return $initialized if ($initialized == 1);
+	return 1 if $initialized;
 	
 	checkDefaults();
 	
@@ -119,14 +126,14 @@ sub initPlugin {
 	}
 	
 	if (!defined $mixer) {
-		$::d_moodlogic && msg("could not find moodlogic mixer component\n");
+		$::d_moodlogic && msg("MoodLogic: could not find moodlogic mixer component\n");
 		return 0;
 	}
 	
 	$browser = Win32::OLE->new("$name.MlMixerFilter");
 	
 	if (!defined $browser) {
-		$::d_moodlogic && msg("could not find moodlogic filter component\n");
+		$::d_moodlogic && msg("MoodLogic: could not find moodlogic filter component\n");
 		return 0;
 	}
 	
@@ -140,7 +147,7 @@ sub initPlugin {
 	$mixer->{MixMode} = 0;
 	
 	if ($last_error != 0) {
-		$::d_moodlogic && msg("rebuilding mixer db\n");
+		$::d_moodlogic && msg("MoodLogic: rebuilding mixer db\n");
 		$mixer->MixerDb_Create();
 		$last_error = 0;
 		$mixer->Initialize();
@@ -178,7 +185,7 @@ sub initPlugin {
 }
 
 sub addGroups {
-	my ($groupRef,$prefRef) = &setupGroup();
+	my ($groupRef,$prefRef) = &setupUse();
 	Slim::Web::Setup::addGroup('server','moodlogic',$groupRef,2,$prefRef);
 	Slim::Web::Setup::addChildren('server','moodlogic');
 	Slim::Web::Setup::addCategory('moodlogic',&setupCategory);
@@ -196,13 +203,13 @@ sub isMusicLibraryFileChanged {
 	if ($file && $fileMTime > Slim::Utils::Prefs::get('lastMoodLogicLibraryDate')) {
 		my $moodlogicscaninterval = Slim::Utils::Prefs::get('moodlogicscaninterval');
 		
-		$::d_moodlogic && msg("music library has changed!\n");
+		$::d_moodlogic && msg("MoodLogic: music library has changed!\n");
 		return 1 if (!$lastMusicLibraryFinishTime);
 		
 		if (time() - $lastMusicLibraryFinishTime > $moodlogicscaninterval) {
 			return 1;
 		} else {
-			$::d_moodlogic && msg("waiting for $moodlogicscaninterval seconds to pass before rescanning\n");
+			$::d_moodlogic && msg("MoodLogic: waiting for $moodlogicscaninterval seconds to pass before rescanning\n");
 		}
 	}
 	
@@ -224,15 +231,14 @@ sub checker {
 }
 
 sub startScan {
+	
 	if (!useMoodLogic()) {
 		return;
 	}
 		
-	$::d_moodlogic && msg("startScan: start export\n");
+	$::d_moodlogic && msg("MoodLogic: start export\n");
 	
 	stopScan();
-	
-	Slim::Music::Info::clearPlaylists();
 	
 	Slim::Utils::Scheduler::add_task(\&exportFunction);
 } 
@@ -273,7 +279,7 @@ sub getPlaylistItems {
 		push @list,Slim::Utils::Misc::fileURLFromPath(catfile($playlist->Fields('volume')->value.$playlist->Fields('path')->value,$playlist->Fields('filename')->value));
 		$playlist->MoveNext;
 	}
-	$::d_moodlogic && msg("adding ". scalar(@list)." items\n");
+	$::d_moodlogic && msg("MoodLogic: adding ". scalar(@list)." items\n");
 	return \@list;
 }
 
@@ -373,9 +379,9 @@ sub exportFunction {
 		$cacheEntry{'MOODLOGIC_ID'} = $mixer->{'Seed_SID'} = $song_id;
 		$cacheEntry{'MOODLOGIC_MIXABLE'} = $mixer->Seed_SID_Mixable();
 
-		$::d_moodlogic && msg("Creating entry for: $url\n");
+		$::d_moodlogic && msg("MoodLogic: Creating entry for: $url\n");
+
 		# that's all for the track
-		$ds->updateOrCreate($url, \%cacheEntry);
 		$ds->updateOrCreate($url, \%cacheEntry);
 
 		# the above object was just created - fetch it back into something we can use
@@ -425,7 +431,7 @@ sub exportFunction {
 		my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
 
 		if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
-			$::d_moodlogic && msg("Found MoodLogic Playlist: $url\n");
+			$::d_moodlogic && msg("MoodLogic: Found MoodLogic Playlist: $url\n");
 		}
 
 		# add this playlist to our playlist library
@@ -451,7 +457,7 @@ sub exportFunction {
 			my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
 
 			if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
-				$::d_moodlogic && msg("Found MoodLogic Auto Playlist: $url\n");
+				$::d_moodlogic && msg("MoodLogic: Found MoodLogic Auto Playlist: $url\n");
 			}
 
 			# add this playlist to our playlist library
@@ -467,7 +473,6 @@ sub exportFunction {
 		}
 	}
 
-	$ds->forceCommit();
 	$rs->Close;
 	$playlist->Close;
 	$auto->Close if $isauto;
@@ -490,7 +495,7 @@ sub getMoodWheel {
 		$mixer->{Seed_AID} = $id;
 		$mixer->{MixMode} = 2;
 	} else {
-		$::d_moodlogic && msg('no/unknown type specified for mood wheel');
+		$::d_moodlogic && msg('MoodLogic: no/unknown type specified for mood wheel');
 		return undef;
 	}
 	
@@ -541,7 +546,7 @@ sub mixerlink {
 		$form->{'mixable_not_descend'} = 1;
 	}
 	
-	if ($item->moodlogic_mixable() && canUseMoodLogic() && Slim::Utils::Prefs::get('moodlogic')) {
+	if ($item->can('moodlogic_mixable') && $item->moodlogic_mixable() && canUseMoodLogic() && Slim::Utils::Prefs::get('moodlogic')) {
 		#set up a musicmagic link
 		Slim::Web::Pages::addLinks("mixer", {'MOODLOGIC' => "plugins/MoodLogic/mixerlink.html"},1);
 	} else {
@@ -558,7 +563,7 @@ sub getMix {
 	my @instant_mix = ();
 	
 	$mixer->{VarietyCombo} = 0; # resets mixer
-	if (defined $mood) {$::d_moodlogic && msg("Create $mood mix for $for $id\n")};
+	if (defined $mood) {$::d_moodlogic && msg("MoodLogic: Create $mood mix for $for $id\n")};
 	
 	if ($for eq "song") {
 		$mixer->{Seed_SID} = $id;
@@ -572,11 +577,11 @@ sub getMix {
 			$mixer->{Seed_MGID} = $id;
 			$mixer->{MixMode} = 3;
 		} else {
-			$::d_moodlogic && msg("no valid type specified for instant mix");
+			$::d_moodlogic && msg("MoodLogic: no valid type specified for instant mix");
 			return undef;
 		}
 	} else {
-		$::d_moodlogic && msg("no valid mood specified for instant mix");
+		$::d_moodlogic && msg("MoodLogic: no valid mood specified for instant mix");
 		return undef;
 	}
 
@@ -617,7 +622,7 @@ sub DESTROY {
 	Win32::OLE->Uninitialize();
 }
 
-sub setupGroup {
+sub setupUse {
 	my $client = shift;
 	my %setupGroup = (
 		'PrefOrder' => ['moodlogic']
@@ -641,6 +646,7 @@ sub setupGroup {
 						Slim::Buttons::Home::updateMenu($client);
 					}
 					Slim::Music::Import::useImporter('MOODLOGIC',$changeref->{'moodlogic'}{'new'});
+					Slim::Music::Info::clearPlaylists('moodlogicplaylist:');
 					Slim::Music::Import::startScan('MOODLOGIC');
 				}
 			,'optionSort' => 'KR'
@@ -652,18 +658,26 @@ sub setupGroup {
 
 sub checkDefaults {
 
+	if (!Slim::Utils::Prefs::isDefined('moodlogic')) {
+		Slim::Utils::Prefs::set('moodlogic',0)
+	}
+	
 	if (!Slim::Utils::Prefs::isDefined('moodlogicscaninterval')) {
 		Slim::Utils::Prefs::set('moodlogicscaninterval',60)
 	}
+	
 	if (!Slim::Utils::Prefs::isDefined('MoodLogicplaylistprefix')) {
 		Slim::Utils::Prefs::set('MoodLogicplaylistprefix','MoodLogic: ');
 	}
+	
 	if (!Slim::Utils::Prefs::isDefined('MoodLogicplaylistsuffix')) {
 		Slim::Utils::Prefs::set('MoodLogicplaylistsuffix','');
 	}
+	
 	if (!Slim::Utils::Prefs::isDefined('instantMixMax')) {
 		Slim::Utils::Prefs::set('instantMixMax',12);
 	}
+	
 	if (!Slim::Utils::Prefs::isDefined('varietyCombo')) {
 		Slim::Utils::Prefs::set('varietyCombo',50);
 	}
