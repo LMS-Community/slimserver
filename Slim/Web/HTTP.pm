@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.120 2004/09/17 00:53:32 grotus Exp $
+# $Id: HTTP.pm,v 1.121 2004/09/17 18:25:13 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1344,7 +1344,7 @@ sub newSkinTemplate {
 	$skinTemplates{$skin} = Template->new({
 		INCLUDE_PATH => \@include_path
 		,COMPILE_DIR => Slim::Utils::Prefs::get('cachedir')
-		,PLUGIN_BASE => 'Plugins::TT'
+		,PLUGIN_BASE => ['Plugins::TT',"HTML::$skin"]
 		,FILTERS => {
 			'string' => \&Slim::Utils::Strings::string
 			,'nbsp' => \&nonBreaking
