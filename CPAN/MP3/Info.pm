@@ -23,8 +23,8 @@ use vars qw(
 	all	=> [@EXPORT, @EXPORT_OK]
 );
 
-# $Id: Info.pm,v 1.8 2004/02/03 00:27:06 dean Exp $
-($REVISION) = ' $Revision: 1.8 $ ' =~ /\$Revision:\s+([^\s]+)/;
+# $Id: Info.pm,v 1.9 2004/02/14 01:06:21 dean Exp $
+($REVISION) = ' $Revision: 1.9 $ ' =~ /\$Revision:\s+([^\s]+)/;
 $VERSION = '1.01';
 
 =pod
@@ -575,9 +575,10 @@ sub _get_v2tag {
 	}
 	
 	$off = $v2->{ext_header_size} + 10;
+	
 	my $end = 10 + $v2->{tag_size}; # should we read in the footer too?
-
-	seek $fh, 0, 0;
+	
+	seek $fh, $v2->{offset}, 0;
 	
 	my $wholetag;
 	
@@ -594,6 +595,7 @@ sub _get_v2tag {
 		return unless $bytes =~ /^([A-Z0-9 ]{$num})/;
 
 		my($id, $size) = ($1, $hlen);
+
 		my @bytes = reverse unpack "C$num", substr($bytes, $num, $num);
 		# use syncsafe bytes if using version 2.4
 		my $bytesize = ($v2->{major_version} > 3) ? 128 : 256;
@@ -649,7 +651,7 @@ sub _get_v2tag {
 		
 		$off += $size;
 	}
-	
+
 	return($h, $v2);
 }
 
@@ -903,7 +905,7 @@ sub _get_v2head {
 	# check first three bytes for 'ID3'
 	seek $fh, 0, 0;
 	read $fh, $bytes, 3;
-	
+
 	if ($bytes eq 'RIF') {
 		if(_find_wav_id3_chunk($fh)) {
 			$offset = tell($fh);
@@ -912,7 +914,19 @@ sub _get_v2head {
 			return;
 		};
 	}
+	
+	if ($bytes eq 'FOR') {
+		if(_find_aiff_id3_chunk($fh)) {
+			$offset = tell($fh);
+			read $fh, $bytes, 3;
+		} else {
+			return;
+		}
+	}
 	return unless $bytes eq 'ID3';
+	
+	$h->{offset} = $offset;
+	
 	# TODO: add support for tags at the end of the file
 
 	# get version
@@ -947,7 +961,7 @@ sub _get_v2head {
 	}
 
 	# get extended header size
-	$h->{ext_header_size} = $offset;
+	$h->{ext_header_size} = 0;
 	if ($h->{ext_header}) {
 
 	        # this next line inexplicably adds 10 bytes to the size of
@@ -990,6 +1004,27 @@ sub _find_wav_id3_chunk {
 	return 0;
 }
 
+sub _find_aiff_id3_chunk {
+	my $fh = shift;
+	my $bytes;
+	my $size;
+	my $tag;
+	
+	read $fh, $bytes, 1;	
+
+	if ($bytes ne 'M') { return 0; }  # must be a RIFF file	
+	seek $fh, 12, 0;  # skip to the first chunk
+	
+	while ((read $fh, $bytes, 8) == 8) {
+		($tag, $size)  = unpack "a4N", $bytes;
+		if ($tag eq 'ID3 ') { 
+			return 1;
+		}
+		seek $fh, $size, 1;
+	}
+	
+	return 0;
+}
 
 sub _unpack_head {
 	unpack('l', pack('L', unpack('N', $_[0])));

@@ -6,6 +6,7 @@ package Slim::Formats::AIFF;
 # version 2.
 
 use strict;
+use MP3::Info;  # because WAV files sometimes have ID3 tags in them!
 
 # Given a file, return a hash of name value pairs,
 # where each name is a tag name.
@@ -15,11 +16,14 @@ sub getTag {
 
 	my $filesize = -s $file;
 
-	# This hash will map the keys in the tag to their values.
-	my $tags = {};
-
 	# Make sure the file exists.
 	return undef unless $filesize && -r $file;
+
+	$::d_formats && Slim::Utils::Misc::msg( "Reading AIFF information for $file\n");
+
+	# This hash will map the keys in the tag to their values.
+	my $tags = MP3::Info::get_mp3tag($file);
+
 	my $f;
 	my $chunkheader;
 	
