@@ -860,7 +860,15 @@ sub browser_addtolist_done {
 			} elsif (Slim::Music::Info::isSong($obj)) {
 
 				$list_form{'descend'} = 0;
+				
+				my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
+				$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
+				$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
 
+				my ($artist) = $obj->album()->contributors();
+				$list_form{'artist'}	= $list_form{'includeArtist'} ? $artist : undef;
+				$list_form{'album'}		= $list_form{'includeAlbum'}  ? $obj->album() : undef;
+				
 				if (!defined $cover) {
 
 					if ($obj->coverArt()) {
