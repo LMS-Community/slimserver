@@ -76,6 +76,11 @@ sub NEXTKEY {
 sub DESTROY {
 }
 
+sub CLEAR {
+    my ($self) = @_;
+    $self->{LRUOBJ}->CLEAR();
+}
+
 sub EXISTS {
   my $self = shift;
   my $key  = shift;
