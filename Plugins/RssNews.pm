@@ -194,6 +194,7 @@ PLUGIN_RSSNEWS_RESETTING
 	EN	Resetting to default RSS Feeds.
 
 SETUP_PLUGIN_RSSNEWS_RESET_BUTTON
+	DE	Zurücksetzen
 	EN	Reset
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED
@@ -380,7 +381,10 @@ sub unescapeAndTrim {
 sub getFeedXml {
     my $feed_url = shift;
     
-    my $http = Slim::Player::Source::openRemoteStream($feed_url);
+    my $http = Slim::Player::Protocols::HTTP->new({
+	'url'    => $feed_url,
+	'create' => 0,
+    });
     
     if (defined $http) {
 
