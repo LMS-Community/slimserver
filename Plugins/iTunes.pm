@@ -620,7 +620,7 @@ sub scanFunction {
 
 				if (Slim::Utils::Prefs::get('lookForArtwork') && $albumObj) {
 
-					if (!Slim::Music::Import::artwork($albumObj) && !defined $albumObj->thumb()) {
+					if (!Slim::Music::Import::artwork($albumObj) && !defined $track->thumb()) {
 
 						Slim::Music::Import::artwork($albumObj, $track);
 					}
