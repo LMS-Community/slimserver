@@ -17,11 +17,10 @@ sub new {
 		$class,
 		$id,
 		$paddr,			# sockaddr_in
-		$newplayeraddr,		# ASCII ip:port  TODO don't pass both of these in
 		$tcpsock
 	) = @_;
 	
-	my $client = Slim::Player::Client->new( $id, $paddr, $newplayeraddr, 0,0,0);
+	my $client = Slim::Player::Client->new( $id, $paddr, 0,0,0);
 	$client->streamingsocket($tcpsock);
 	bless $client, $class;
 
@@ -33,11 +32,15 @@ sub init {
 	Slim::Player::Client::startup($client);
 }
 
-sub type {
-	return 'http';
+sub update {
 }
 
-sub update {
+sub isPlayer {
+	return 0;
+}
+
+sub power {
+	return 1;
 }
 
 1;

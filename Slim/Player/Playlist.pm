@@ -178,8 +178,8 @@ sub playmode {
 			my $opened;
 			
 			# if the player is off, we automatically power on when we start to play
-			if (!Slim::Player::Client::power($client)) {
-				Slim::Player::Client::power($client, 1);
+			if (!$client->power()) {
+				$client->power(1);
 			}
 			
 			$opened = openSong(masterOrSelf($client));
@@ -196,7 +196,7 @@ sub playmode {
 			$::d_playlist && msg(" New play mode: " . $newmode . "\n");
 			
 			# wake up the display if we've switched modes.
-			if (Slim::Player::Client::isPlayer($everyclient)) { Slim::Buttons::ScreenSaver::wakeup($everyclient); };
+			if ($everyclient->isPlayer()) { Slim::Buttons::ScreenSaver::wakeup($everyclient); };
 			
 			# when you resume, you go back to play mode
 			if (($newmode eq "resume") ||($newmode eq "resumenow")) {
@@ -617,10 +617,10 @@ sub isSyncedWith {
 sub canSyncWith {
 	my $client = shift;
 	my @buddies = ();
-	if (Slim::Player::Client::isPlayer($client)) {
+	if ($client->isPlayer()) {
 		foreach my $otherclient (Slim::Player::Client::clients()) {
 			next if ($client eq $otherclient);					# skip ourself
-			next if (!Slim::Player::Client::isPlayer($otherclient));  # we only sync hardware devices
+			next if (!$otherclient->isPlayer());  # we only sync hardware devices
 			next if (isSlave($otherclient)); 					# only include masters and un-sync'ed clients.
 			push @buddies, $otherclient;
 		}
@@ -784,7 +784,7 @@ sub refreshPlaylist {
 	my $client = shift;
 	# make sure we're displaying the new current song in the playlist view.
 	foreach my $everybuddy ($client, syncedWith($client)) {
-		if (Slim::Player::Client::isPlayer($everybuddy)) {
+		if ($everybuddy->isPlayer()) {
 			Slim::Buttons::Playlist::jump($everybuddy);
 		}
 		$client->htmlstatusvalid(0); #invalidate cached htmlplaylist

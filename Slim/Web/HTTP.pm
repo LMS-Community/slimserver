@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.13 2003/08/09 06:43:28 dean Exp $
+# $Id: HTTP.pm,v 1.14 2003/08/09 14:22:21 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -417,7 +417,7 @@ sub executeurl {
 		$client = $allclients[0];
 	}
 	
-	if ($client && $client->type eq 'player' && $client->model() eq 'slimp3') {
+	if ($client && $client->isPlayer() && $client->model() eq 'slimp3') {
 		$$paramsref{"playermodel"} = 'slimp3';
 	} else {
 		$$paramsref{"playermodel"} = 'squeezebox';
@@ -503,7 +503,7 @@ sub addstreamingresponse {
 		$client = Slim::Player::HTTP->new(
 			$id,
 			getpeername($httpclientsock), 
-			$address);
+			$httpclientsock);
 			
 		$newclient = 1;
 		
@@ -1180,7 +1180,7 @@ sub statusHeaders {
 	#		"x-playersleep" => "0",
 	);
 	
-	if (Slim::Player::Client::isPlayer($client)) {
+	if ($client->isPlayer()) {
 		$headers{"x-playervolume"} = int(Slim::Utils::Prefs::clientGet($client, "volume") + 0.5);
 		$headers{"x-playermode"} = Slim::Buttons::Common::mode($client) eq "power" ? "off" : Slim::Player::Playlist::playmode($client);
 		$headers{"x-playersleep"} = $sleeptime;

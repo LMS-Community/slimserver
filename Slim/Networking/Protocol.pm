@@ -204,8 +204,6 @@ sub getUdpClient {
 
 	my ($msgtype, $deviceid, $revision, @mac) = unpack 'aCCxxxxxxxxxH2H2H2H2H2H2', $msg;
 	
-	my $newplayeraddr;
-
 	my $mac = join(':', @mac);
 	my $id = $mac;
 
@@ -225,15 +223,12 @@ sub getUdpClient {
 			
 			if ($revision >= 2.2) { $id = $mac; }
 			
-			$newplayeraddr = paddr2ipaddress($clientpaddr);
-
 			if ($deviceid != 0x01) { return undef;}
 
-			$::d_protocol && msg("$id ($msgtype) deviceid: $deviceid revision: $revision address: $newplayeraddr\n");
+			$::d_protocol && msg("$id ($msgtype) deviceid: $deviceid revision: $revision address: " .  paddr2ipaddress($clientpaddr) . "\n");
 			$client = Slim::Player::SLIMP3->new(
 					$id, 
 					$clientpaddr,
-					$newplayeraddr,
 					$revision,
 					$udpsock,
 				);			

@@ -19,12 +19,11 @@ sub new {
 		$class,
 		$id,
 		$paddr,			# sockaddr_in
-		$newplayeraddr,		# ASCII ip:port  TODO don't pass both of these in
 		$revision,
 		$tcpsock,		# defined only for squeezebox
 	) = @_;
 	
-	my $client = Slim::Player::Player->new( $id, $paddr, $newplayeraddr, $revision);
+	my $client = Slim::Player::Player->new( $id, $paddr, $revision);
 	
 	$client->tcpsock($tcpsock);
 	
@@ -35,10 +34,6 @@ sub new {
 
 sub model {
 	return 'squeezebox';
-}
-
-sub type {
-	return 'player';
 }
 
 sub ticspersec {

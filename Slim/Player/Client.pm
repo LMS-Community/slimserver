@@ -11,9 +11,9 @@
 package Slim::Player::Client;
 
 use strict;
-use Class::Struct;
 use Slim::Utils::Misc;
 use File::Spec::Functions qw(:ALL);
+
 
 # This is a hash of clientState structs, indexed by the IP:PORT of the client
 # Use the access functions.
@@ -164,7 +164,6 @@ sub new {
 		$class,
 		$id,
 		$paddr,			# sockaddr_in
-		$newplayeraddr,		# ASCII ip:port  TODO don't pass both of these in
 		$revision,
 	) = @_;
 	
@@ -328,6 +327,7 @@ sub new {
 	# add the new client all the currently known clients so we can say hello to them later
 	my $clientlist = Slim::Utils::Prefs::get("clients");
 
+	my $newplayeraddr = $client->ipaddress();
 	if (defined($clientlist)) {
 		$clientlist .= ",$newplayeraddr";
 	} else {
@@ -398,6 +398,18 @@ sub getClient {
 	return $clientHash{$id};
 }
 
+sub forgetClient {
+	my $id = shift;
+	my $client = getClient($id);
+	
+	if ($client) {
+		Slim::Web::HTTP::forgetClient($client);
+		Slim::Player::Playlist::forgetClient($client);
+		Slim::Utils::Timers::forgetClient($client);
+		delete $clientHash{$id};
+	}	
+}
+
 sub startup {
 	my $client = shift;
 
@@ -451,77 +463,6 @@ sub initial_add_done {
 		Slim::Control::Command::execute($client,['play']);
 	}
 }	
-
-sub forgetClient {
-	my $id = shift;
-	my $client = getClient($id);
-	
-	if ($client) {
-		Slim::Web::HTTP::forgetClient($client);
-		Slim::Player::Playlist::forgetClient($client);
-		Slim::Utils::Timers::forgetClient($client);
-		delete $clientHash{$id};
-	}
-	
-}
-
-sub power {
-	my $client = shift;
-	my $on = shift;
-	
-	if (!isPlayer($client)) {
-		return 1;
-	}
-	my $mode = Slim::Buttons::Common::mode($client);
-	my $currOn;
-	if (defined($mode)) {
-		$currOn = $mode ne "off" ? 1 : 0;
-	}
-	
-	if (!defined $on) {
-		return ($currOn);
-	} else {
-		if (!defined($currOn) || ($currOn != $on)) {
-			if ($on) {
-				Slim::Buttons::Common::setMode($client, 'home');
-				
-				
-				my $welcome =  Slim::Display::Display::center(Slim::Utils::Strings::string(Slim::Utils::Prefs::clientGet($client, "doublesize") ? 'SQUEEZEBOX' : 'WELCOME_TO_SQUEEZEBOX'));
-				my $welcome2 = Slim::Utils::Prefs::clientGet($client, "doublesize") ? '' : Slim::Display::Display::center(Slim::Utils::Strings::string('FREE_YOUR_MUSIC'));
-				Slim::Display::Animation::showBriefly($client, $welcome, $welcome2);
-				
-				# restore the saved brightness, unless its completely dark...
-				my $powerOnBrightness = Slim::Utils::Prefs::clientGet($client, "powerOnBrightness");
-				if ($powerOnBrightness < 1) { 
-					$powerOnBrightness = 1;
-				}
-				Slim::Utils::Prefs::clientSet($client, "powerOnBrightness", $powerOnBrightness);
-				#check if there is a sync group to restore
-				Slim::Player::Playlist::restoreSync($client);
-				# restore volume (un-mute if necessary)
-				my $vol = Slim::Utils::Prefs::clientGet($client,"volume");
-				if($vol < 0) { 
-					# un-mute volume
-					$vol *= -1;
-					Slim::Utils::Prefs::clientSet($client, "volume", $vol);
-				}
-				Slim::Control::Command::execute($client, ["mixer", "volume", $vol]);
-			
-			} else {
-				Slim::Buttons::Common::setMode($client, 'off');
-			}
-			# remember that we were on if we restart the server
-			Slim::Utils::Prefs::clientSet($client, 'power', $on ? 1 : 0);
-		}
-	}
-}			
-
-sub isPlayer {
-	my $client = shift;
-	assert($client);
-	assert($client->type);
-	return ($client->type eq 'player');
-}
 
 sub id {
 	my $r = shift;

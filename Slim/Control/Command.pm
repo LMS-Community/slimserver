@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.4 2003/08/07 17:48:24 dean Exp $
+# $Id: Command.pm,v 1.5 2003/08/09 14:22:19 dean Exp $
 
 # Slim Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -646,7 +646,7 @@ sub singletonRef {
 
 sub gotosleep {
 	my $client = shift;
-	if (Slim::Player::Client::isPlayer($client)) {
+	if ($client->isPlayer()) {
 		Slim::Player::Control::fade_volume($client,-60,\&turnitoff,[$client]);
 	}
 	$client->sleepTime(0);

@@ -28,7 +28,7 @@ sub play {
 	my $paused = shift;
 	my $pcm = shift;
 
-	if (!Slim::Player::Client::isPlayer($client)) {
+	if (!$client->isPlayer()) {
 		return 1;
 	}
 
@@ -53,7 +53,7 @@ sub play {
 sub volume {
 	my ($client, $volume) = @_;
 
-	if (!Slim::Player::Client::isPlayer($client)) {
+	if (!$client->isPlayer()) {
 		return 1;
 	}
 
@@ -104,7 +104,7 @@ sub fade_volume {
 
 	my $faderate = 10;  # how often do we send updated fade volume commands per second
 	
-	if (!Slim::Player::Client::isPlayer($client)) {
+	if (!$client->isPlayer()) {
 		return 1;
 	}
 	Slim::Utils::Timers::killTimers($client, \&fade_volume);
@@ -151,7 +151,7 @@ sub fade_volume {
 sub mute {
 	my $client = shift;
 	
-	if (!Slim::Player::Client::isPlayer($client)) {
+	if (!$client->isPlayer()) {
 		return 1;
 	}
 	my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
@@ -178,7 +178,7 @@ sub mute {
 sub resume {
 	my $client = shift;
 
-	if (!Slim::Player::Client::isPlayer($client)) {
+	if (!$client->isPlayer()) {
 		return 1;
 	}
 
@@ -194,7 +194,7 @@ sub resume {
 #
 sub pause {
 	my $client = shift;
-	if (!Slim::Player::Client::isPlayer($client)) {
+	if (!$client->isPlayer()) {
 		return 1;
 	}
 	Slim::Networking::Stream::pause($client);
@@ -207,7 +207,7 @@ sub pause {
 sub stop {
 	my $client = shift;
 
-	if (!Slim::Player::Client::isPlayer($client)) {
+	if (!$client->isPlayer()) {
 		return 1;
 	}
 
@@ -219,7 +219,7 @@ sub stop {
 #
 sub playout {
 	my $client = shift;
-	if (!Slim::Player::Client::isPlayer($client)) {
+	if (!$client->isPlayer()) {
 		return 1;
 	}
 	Slim::Networking::Stream::playout($client);

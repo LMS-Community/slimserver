@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::Animation;
 
-# $Id: Animation.pm,v 1.3 2003/08/09 05:47:15 dean Exp $
+# $Id: Animation.pm,v 1.4 2003/08/09 14:22:19 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -71,7 +71,7 @@ sub animating {
 # find all the queued up animation frames and toss them
 sub killAnimation {
 	my $client = shift;
-	if (!Slim::Player::Client::isPlayer($client)) { return; };
+	if (!$client->isPlayer()) { return; };
 	Slim::Utils::Timers::killTimers($client, \&animate);
 	Slim::Utils::Timers::killTimers($client, \&endAnimation);
 }
@@ -98,7 +98,7 @@ sub showBriefly {
 		$line1 = '';
 	}
 	
-	if (!Slim::Player::Client::isPlayer($client)) { return; };
+	if (!$client->isPlayer()) { return; };
 
 	if (Slim::Utils::Prefs::get('animationLevel') < 1) {
 		$client->update();

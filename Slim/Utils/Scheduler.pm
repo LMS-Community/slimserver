@@ -78,7 +78,7 @@ sub run_tasks {
 	if (($now - $lastpass) < 1.0) {
 		foreach my $client (Slim::Player::Client::clients()) {
 			if (Slim::Player::Playlist::playmode($client) eq 'play' && 
-			    $client->type eq 'player' && 
+			    $client->isPlayer() && 
 			    $client->model eq 'slimp3' && 
 			    $client->usage() < 0.5) {
 				$busy = 1;
