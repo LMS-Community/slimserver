@@ -164,7 +164,7 @@ sub volume {
 	my $volume = $client->Slim::Player::Client::volume($newvolume, @_);
 	if ($newvolume) {
 		my ($right_level, $left_level);
-	    	$right_level = $left_level = int(0x8E38 * (($volume / $client->maxVolume) ** 2));
+	    	$right_level = $left_level = int(0x8000 * (($volume / $client->maxVolume) ** 2));
 		my $data = pack('NN', $left_level, $right_level);
 		$client->sendFrame('audg', \$data);
 	}
