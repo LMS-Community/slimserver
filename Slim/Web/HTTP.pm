@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.67 2004/02/11 19:20:27 dean Exp $
+# $Id: HTTP.pm,v 1.68 2004/02/12 19:53:19 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -273,6 +273,7 @@ sub processHTTP {
 			}
 
 			if ($2) {
+				$params{'query'} = $2;
 				@paramarray = split(/&/, $2);
 				foreach $param (@paramarray) {
 					if ($param =~ /([^=]+)=(.*)/) {
