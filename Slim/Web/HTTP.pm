@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.83 2004/03/10 07:04:44 grotus Exp $
+# $Id: HTTP.pm,v 1.84 2004/03/10 07:19:53 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -337,7 +337,7 @@ sub processHTTP {
 				$params->{'webroot'} = "/slimserver/"
 			}
 
-			if ($path =~ m|^/(.+?)/.*| && $path !~ m|^/html/|i) {
+			if ($path =~ m|^/(.+?)/.*| && $path !~ m{^/(?:html|music)/}i) {
 
 				my $desiredskin = $1;
 
