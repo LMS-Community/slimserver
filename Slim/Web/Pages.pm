@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.82 2004/05/20 05:46:09 kdf Exp $
+# $Id: Pages.pm,v 1.83 2004/05/26 18:21:14 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -242,17 +242,8 @@ sub browser {
 			$aggregate = (defined($aggregate) && $aggregate ne '') ? catdir($aggregate, $c) : $c;
 
 			$list_form{'dir'}=Slim::Web::HTTP::escape($aggregate);
-
-			if ($c =~ /(.*)\.m3u$/) {
-				$c = $1;
-			}
 			
-			if (Slim::Music::Info::isURL($c)) {
-				$list_form{'shortdir'} = Slim::Music::Info::standardTitle(undef, $c);
-			} else {
-				# possibly make this into the TITLE of the playlist if this is a number
-				$list_form{'shortdir'} = $c;
-			}
+			$list_form{'shortdir'} = Slim::Music::Info::standardTitle(undef, Slim::Utils::Misc::virtualToAbsolute($c));
 
 			$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browse_pwdlist.html", \%list_form)};
 		}

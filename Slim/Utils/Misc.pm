@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.48 2004/05/25 00:14:45 dean Exp $
+# $Id: Misc.pm,v 1.49 2004/05/26 18:21:13 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -403,7 +403,7 @@ sub virtualToAbsolute {
 	}
 
 	return undef if (!$curdir);
-	
+	$curdir = fileURLFromPath($curdir);	
 	my @levels = ();
 	if (defined($virtual)) {
 		@levels = splitdir($virtual);
@@ -472,7 +472,7 @@ sub virtualToAbsolute {
 	
 	$::d_paths && msg("became: $curdir\n");
 	
-	if (!$recursion && $virtual =~ /\.(?:m3u|pls|cue)$/ && $virtual !~ /^__playlists/ && !-e $curdir) {
+	if (!$recursion && $virtual =~ /\.(?:m3u|pls|cue)$/ && $virtual !~ /^__playlists/ && !-e pathFromFileURL($curdir)) {
 		#Not a real file, could be a naked saved playlist
 		return virtualToAbsolute(catdir('__playlists',$virtual),1);
 	}
