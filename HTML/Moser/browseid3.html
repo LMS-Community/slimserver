@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>[S {browseby}]</title>
+    <link rel="stylesheet" href="slimserver.css" />
+  </head>
+  <body>
+    <h3>[S {browseby}]</h3>
+    <div class="linktree"><ul><li><a href="home.html?player={%player}">[S {playermodel}_HOME]</a></li>{pwd_list}</ul>
+[IF song_count]    <div id="counts">{album_count} [S WITH] {song_count} [S BY] {artist_count}</div>[/IF]
+    </div>
+[IF warn]    <div id="warning"><b>[S NOTE]</b> [S SCAN_WARNING] [IFN itunes][S SCAN_CLICK] <a href="browse.html?player={%player}">[S HERE]</a>.[/IFN]</div>[/IF]
+[IF browselist_header]    <div id="browselist_header">{browselist_header}<div>[/IF]
+[IF browselist_pagebar]    <div id="topbrowselistpagebar" class="linktree"><ul>{browselist_pagebar}</ul></div>[/IF]
+[IF coverart]    <div class="coverart">
+      <a href="/music/{%coverartpath}/cover.jpg" target="cover">
+      <img src="/music/{%coverartpath}/cover.jpg" /></a>
+    </div>[/IF]
+    <div id="browselist">
+      <ul>
+{browse_list}
+      </ul>
+    </div>
+[IF browselist_pagebar]    <div id="bottombrowselistpagebar" class="linktree"><ul>{browselist_pagebar}</ul></div>[/IF]
+  </body>
+</html>

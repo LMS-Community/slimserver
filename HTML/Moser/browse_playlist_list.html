@@ -1,0 +1,17 @@
+      <li class="[IF odd]odd[/IF][IFN odd]even[/IFN]">
+        <div class="controls">
+          <ul class="songctl">
+            <li><a href="status.html?p0=playlist&amp;p1=play&amp;p2={%itempath}&amp;player={%player}" target="status" title="[S PLAY]"><span>&gt;</span></a></li>
+            <li><a href="status.html?p0=playlist&amp;p1=insert&amp;p2={%itempath}&amp;player={%player}" target="status" title="[S PLAY] [S NEXT]"><span>&gt;|</span></a></li>
+            <li><a href="status.html?p0=playlist&amp;p1=add&amp;p2={%itempath}&amp;player={%player}"  target="status" title="[S ADD_TO_PLAYLIST]"><span>+</span></a></li>
+          </ul>
+        </div>
+        <div class="browseline">
+          [IF  descend]<a href="browse.html?dir={%descend}&amp;player={%player}">{&title}</a>
+[/IF][IFN descend]<span class="songtitle"><a href="songinfo.html?songurl={%itempath}&amp;player={%player}">{&title}</a></span>
+          [IF album][S FROM][/IF]
+          <span class="album"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;album={%album}&amp;player={%player}" target="browser">{&album}</a></span>
+          [IF artist][S BY] [/IF]
+          <span class="artist"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{&artist}</a></span>
+[/IFN]        </div>
+      </li>

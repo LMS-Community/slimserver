@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <title>[S SAVED_PLAYLISTS]</title>
+    <link rel="stylesheet" href="slimserver.css">
+  </head>
+  <body bgcolor="#FFFFFF">
+
+    <p>
+
+    <h3>[S SAVED_PLAYLISTS]</h3><p>
+    <div class="linktree"><ul><li><a href="home.html?player={%player}">[S {playermodel}_HOME]</a></li><li> / <a href="browse.html?player={%player}&amp;dir=__playlists">[S SAVED_PLAYLISTS]</a></li>{pwd_list}</ul></div>
+[IF warn]    <div id="warning"><b>[S NOTE]</b> [S SCAN_WARNING] </div>[/IF]
+[IF RENAME_WARNING]<div class="warning"><b>[S NOTE]</b> [S RENAME_WARNING]</div>[/IF]
+	[IF playlistname]<p><form method="get" action="browse.html">{savebuttonname} [S THIS_PLAYLIST_AS] <input name="newname" value="{playlistname}" size=40>
+			<input type=submit value="{savebuttonname}"><input type=hidden value="{player}" name="player">
+			<input type=hidden name="dir" value="{dir}"></form>
+	[/IF]
+	
+	[IF titled]<p><a href="browse.html?player={%player}&dir={%dir}&delete=1">[S DELETE_THIS_PLAYLIST]</a></p>[/IF]
+	
+	[IF playlistname]<p><hr><p>[/IF]
+[IF browselist_header]    <div id="browselist_header">{browselist_header}<div>[/IF]
+[IF browselist_pagebar]    <div id="topbrowselistpagebar" class="pagebar">
+      <span class="label">[S PAGES]:</span>
+      <div class="controls">
+        <ul>
+          {browselist_pagebar}
+        </ul>
+      </div>
+    </div>[/IF]
+    <div id="browselist">
+      <ul>
+[IF playlistname]      <li class="even">
+        <div class="controls">
+          <ul class="songctl">
+            <li><a href="status.html?p0=playlist&amp;p1=play&amp;p2={%dir}&amp;player={%player}" target="status" title="[S PLAY]"><span>&gt;</span></a></li>
+            <li><a href="status.html?p0=playlist&amp;p1=insert&amp;p2={%dir}&amp;player={%player}" target="status" title="[S PLAY] [S NEXT]"><span>&gt;|</span></a></li>
+            <li><a href="status.html?p0=playlist&amp;p1=add&amp;p2={%dir}&amp;player={%player}"  target="status" title="[S ADD_TO_PLAYLIST]"><span>+</span></a></li>
+          </ul>
+        </div>
+        <div class="browseline">[S THIS_ENTIRE_PLAYLIST]</div>
+      </li>
+[/IF]
+{browse_list}
+      </ul>
+    </div>
+[IF browselist_pagebar]    <div id="bottombrowselistpagebar" class="pagebar">
+      <span class="label">[S PAGES]:</span>
+      <div class="controls">
+        <ul>
+          {browselist_pagebar}
+        </ul>
+      </div>
+    </div>[/IF]
+  </body>
+</html>
