@@ -108,7 +108,7 @@ sub getStandardTag {
 			next unless exists $tags->{$tag};
 
 			if ($] > 5.007) {
-				$tags->{$tag} = Encode::decode("utf8", $tags->{$tag});
+				$tags->{$tag} = eval { Encode::decode("utf8", $tags->{$tag}) };
 			} else {
 				$tags->{$tag} = Slim::Utils::Misc::utf8toLatin1($tags->{$tag});
 			}

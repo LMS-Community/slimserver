@@ -1,6 +1,6 @@
 package Slim::Formats::Ogg;
 
-# $Id: Ogg.pm,v 1.13 2004/12/07 20:19:52 dsully Exp $
+# $Id: Ogg.pm,v 1.14 2004/12/15 22:43:42 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -74,7 +74,7 @@ sub getTag {
 	foreach my $key ($ogg->comment_tags()) {
 
 		if ($] > 5.007) {
-			$tags->{uc($key)} = Encode::decode("utf8", ($ogg->comment($key))[0]);
+			$tags->{uc($key)} = eval { Encode::decode("utf8", ($ogg->comment($key))[0]) };
 		} else {
 			$tags->{uc($key)} = Slim::Utils::Misc::utf8toLatin1(($ogg->comment($key))[0]);
 		}

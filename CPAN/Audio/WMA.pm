@@ -111,12 +111,12 @@ sub _UTF16ToUTF8 {
 	if ($utf8 && $] > 5.007) {
 
 		# This also turns on the utf8 flag - perldoc Encode
-		$data = Encode::decode('UTF-16LE', $data);
+		$data = eval { Encode::decode('UTF-16LE', $data) } || $data;
 
 	} elsif ($] > 5.007) {
 
 		# otherwise try and turn it into ISO-8859-1 if we have Encode
-		$data = Encode::encode('latin1', $data);
+		$data = eval { Encode::encode('latin1', $data) } || $data;
 	}
 
 	return _denull($data);
@@ -124,7 +124,7 @@ sub _UTF16ToUTF8 {
 
 sub _denull {
         my $string = shift;
-        $string =~ s/\0//g;
+        $string =~ s/\0//g if defined $string;
         return $string;
 }
 

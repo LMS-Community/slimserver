@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.129 2004/12/15 22:29:24 dean Exp $
+# $Id: HTTP.pm,v 1.130 2004/12/15 22:43:43 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -349,7 +349,7 @@ sub processHTTP {
 					# string with the appropriate magic set.
 					if ($value ne '*' && $value ne '' && $] > 5.007) {
 
-						$value = Encode::decode_utf8($value);
+						$value = eval { Encode::decode_utf8($value) } || $value;
 					}
 
 					$params->{$name} = $value;
@@ -915,6 +915,11 @@ sub addHTTPResponse {
 	my $httpClient = shift;
 	my $response   = shift;
 
+	# Force byte semantics on $data and length($data) - otherwise we'll
+	# try to write out multibyte characters with invalid byte lengths in
+	# sendResponse() below.
+	use bytes;
+
 	# XXX
 	my $data = join($CRLF, _stringifyHeaders($response), $response->content());
 
@@ -935,8 +940,6 @@ sub sendResponse {
 
 	my $segment    = shift(@{$outbuf{$httpClient}});
 	my $sentbytes  = 0;
-
-#	use bytes;
 
 	# abort early if we don't have anything.
 	unless ($httpClient->connected()) {

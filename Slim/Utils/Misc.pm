@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.58 2004/12/07 20:19:56 dsully Exp $
+# $Id: Misc.pm,v 1.59 2004/12/15 22:43:43 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -158,7 +158,7 @@ sub pathFromFileURL {
 	}
 	
 	if ($file && $] > 5.007 && Slim::Utils::OSDetect::OS() eq "win") {
-		Encode::from_to($file,"utf8","iso-8859-1");
+		$file = eval { Encode::decode("utf8", $file) } || $file;
 	}
 	
 	if (!defined($file))  {
@@ -176,7 +176,7 @@ sub fileURLFromPath {
 	return $path if (Slim::Music::Info::isURL($path));
 
 	if ($path && $] > 5.007 && Slim::Utils::OSDetect::OS() eq "win") {
-		Encode::from_to($path,"iso-8859-1","utf8");
+		$path = eval { Encode::decode("iso-8859-1", $path) } || $path;
 	}
 	
 	my $uri  = URI::file->new($path);
@@ -788,7 +788,7 @@ sub utf8toLatin1 {
 
 	if ($] > 5.007) {
 
-		$data = Encode::encode('iso-8859-1', $data);
+		$data = eval { Encode::encode('iso-8859-1', $data) } || $data;
 
 	} else {
 
