@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.2 2003/07/24 23:14:03 dean Exp $
+# $Id: Browse.pm,v 1.3 2003/07/31 22:41:41 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -88,10 +88,12 @@ my %functions = (
 		my $client = shift;
 		my $button = shift;
 		my $digit = shift;
-		my $i = Slim::Buttons::Common::numberScroll($client, $digit, $client->dirItems, 0,
+		my $i = Slim::Buttons::Common::numberScroll($client, $digit, $client->dirItems, Slim::Utils::Prefs::get('filesort'),
 			sub {
 				my $j = $client->dirItems(shift);
-				if (Slim::Music::Info::trackNumber($j)) {
+				if (Slim::Utils::Prefs::get('filesort')) {
+ 			       return Slim::Music::Info::plainTitle($j);
+				} elsif (Slim::Music::Info::trackNumber($j)) {
 					return Slim::Music::Info::trackNumber($j);
 				} else {
 					return Slim::Music::Info::title($j);
