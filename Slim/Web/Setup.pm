@@ -2506,8 +2506,8 @@ sub skins {
 
 	foreach my $templatedir (Slim::Web::HTTP::HTMLTemplateDirs()) {
 		foreach my $dir (Slim::Utils::Misc::readDirectory($templatedir)) {
-			# reject CVS and html directories as skins
-			next if $dir =~ /^(?:cvs|html)$/i;
+			# reject CVS, html, and .svn directories as skins
+			next if $dir =~ /^(?:cvs|html|\.svn)$/i;
 			next if $forUI && $dir =~ /^x/;
 			next if !-d catdir($templatedir, $dir);
 			
