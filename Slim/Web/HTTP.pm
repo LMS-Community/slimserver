@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.122 2004/09/21 22:53:53 grotus Exp $
+# $Id: HTTP.pm,v 1.123 2004/11/08 18:31:34 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -355,7 +355,10 @@ sub processHTTP {
 			if ($path =~ s{^/slimserver/}{/}i) {
 				$params->{'webroot'} = "/slimserver/"
 			}
-
+			
+			# paths that are pure alpha without a trailing slash get a slash added, to make skins easier to find
+			$path =~ s|^/([a-zA-Z]+)$|/$1/|;
+			
 			if ($path =~ m|^/(.+?)/.*| && $path !~ m{^/(?:html|music|plugins)/}i) {
 
 				my $desiredskin = $1;
