@@ -1075,6 +1075,44 @@ sub doubleString {
 	return Slim::Utils::Strings::doubleString($string, $failsafeLanguage);
 }
 
+sub param {
+	my $client = shift;
+	my $name   = shift;
+	my $value  = shift;
+
+	my $mode   = $client->modeParameterStack(-1) || return undef;
+
+	if (defined $value) {
+
+		$mode->{$name} = $value;
+
+	} else {
+
+		return $mode->{$name};
+	}
+}
+
+sub paramOrPref {
+	my $client = shift;
+	my $name   = shift;
+
+	my $mode   = $client->modeParameterStack(-1) || return undef;
+
+	if (defined $mode && defined $mode->{$name}) {
+		return $mode->{$name};
+	}
+
+	return Slim::Utils::Prefs::clientGet($client, $name);
+}
+	
+sub getPref {
+	Slim::Utils::Prefs::clientGet(@_);
+}
+
+sub setPref {
+	Slim::Utils::Prefs::clientSet(@_);
+}
+
 # data accessors
 
 sub id {

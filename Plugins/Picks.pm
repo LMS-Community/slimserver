@@ -41,8 +41,8 @@ our %mainModeFunctions = (
    'play' => sub {
 	   my $client = shift;
 
-	   my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
-	   my $stations = Slim::Buttons::Common::param($client, 'stations');
+	   my $listIndex = $client->param( 'listIndex');
+	   my $stations = $client->param( 'stations');
 
 	   Slim::Control::Command::execute( $client, [ 'playlist', 'clear' ] );
 	   Slim::Control::Command::execute( $client, [ 'playlist', 'add', $stations->[$listIndex]] );
@@ -51,8 +51,8 @@ our %mainModeFunctions = (
    'add' => sub {
 	   my $client = shift;
 
-	   my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
-	   my $stations = Slim::Buttons::Common::param($client, 'stations');
+	   my $listIndex = $client->param( 'listIndex');
+	   my $stations = $client->param( 'stations');
 
 	   Slim::Control::Command::execute( $client, [ 'playlist', 'add', $stations->[$listIndex]] );
    }
@@ -65,8 +65,8 @@ sub mainModeCallback {
 		Slim::Buttons::Common::popModeRight($client);
 	} 
 	elsif ($exittype eq 'RIGHT') {
-		my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
-		my $stations = Slim::Buttons::Common::param($client, 'stations');
+		my $listIndex = $client->param( 'listIndex');
+		my $stations = $client->param( 'stations');
 
 		my %params = (
 			stationTitle => $context{$client}->{mainModeIndex},
@@ -158,7 +158,7 @@ our %detailsModeFunctions = (
    'play' => sub {
 	   my $client = shift;
 
-	   my $station = Slim::Buttons::Common::param($client, 'stationURL');
+	   my $station = $client->param( 'stationURL');
 
 	   Slim::Control::Command::execute( $client, [ 'playlist', 'clear' ] );
 	   Slim::Control::Command::execute( $client, [ 'playlist', 'add', $station ] );
@@ -167,7 +167,7 @@ our %detailsModeFunctions = (
    'add' => sub {
 	   my $client = shift;
 
-	   my $station = Slim::Buttons::Common::param($client, 'stationURL');
+	   my $station = $client->param( 'stationURL');
 
 	   Slim::Control::Command::execute( $client, [ 'playlist', 'add', $station ] );
    }
@@ -193,8 +193,8 @@ sub detailsSetMode {
 		return;
 	}
 
-	my $stationURL = Slim::Buttons::Common::param($client, 'stationURL');
-	my $stationTitle = Slim::Buttons::Common::param($client, 'stationTitle');
+	my $stationURL = $client->param( 'stationURL');
+	my $stationTitle = $client->param( 'stationTitle');
 
 	my @details = ( $client->string('PLUGIN_PICKS_STATION') . ': ' . $stationTitle,
 					$client->string('URL') . ': ' . $stationURL );

@@ -132,7 +132,7 @@ sub exitSetHandler {
 
 	if ($exittype eq 'LEFT' || $exittype eq 'PLAY') {
 
-		Slim::Utils::Prefs::clientSet($client,"alarmtime",Slim::Buttons::Common::param($client,'valueRef'));
+		Slim::Utils::Prefs::clientSet($client,"alarmtime",$client->param('valueRef'));
 		Slim::Buttons::Common::popModeRight($client);
 
 	} elsif ($exittype eq 'RIGHT') {

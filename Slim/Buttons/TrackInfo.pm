@@ -198,14 +198,14 @@ sub setMode {
 # get (and optionally set) the track URL
 sub track {
 	my $client = shift;
-	return Slim::Buttons::Common::param($client, 'track', shift);
+	return $client->param( 'track', shift);
 }
 
 # get (and optionally set) the track info scroll position
 sub currentLine {
 	my $client = shift;
 
-	my $line = Slim::Buttons::Common::param($client, 'line', shift) || 0;
+	my $line = $client->param( 'line', shift) || 0;
 
 	return $line
 }
@@ -288,7 +288,7 @@ sub preloadLines {
 
 		push (@{$client->trackInfoLines}, 
 			$client->string('BITRATE').": $bitrate " .
-				((Slim::Buttons::Common::param($client, 'current') && (defined $undermax && !$undermax)) 
+				(($client->param( 'current') && (defined $undermax && !$undermax)) 
 					? '('.$client->string('CONVERTED_TO').' '.$rate.')' : ''));
 
 		push (@{$client->trackInfoContent}, undef);

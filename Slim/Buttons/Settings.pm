@@ -29,7 +29,7 @@ sub init {
 	%functions = (
 		'right' => sub  {
 			my ($client,$funct,$functarg) = @_;
-			if (defined(Slim::Buttons::Common::param($client,'useMode'))) {
+			if (defined($client->param('useMode'))) {
 				#in a submenu of settings, which is passing back a button press
 				$client->bumpRight();
 			} else {
@@ -130,7 +130,7 @@ sub init {
 			'externRef' => undef, #filled before changing modes
 			'header' => 'TITLEFORMAT',
 			'stringHeader' => 1,
-			'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0],"titleFormatCurr",Slim::Buttons::Common::param($_[0],'listIndex')) },
+			'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0],"titleFormatCurr",$_[0]->param('listIndex')) },
 			'onChangeArgs' => 'C',
 		},
 

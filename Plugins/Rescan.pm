@@ -132,7 +132,7 @@ sub settingsExitHandler {
 	my ($client,$exittype) = @_;
 	$exittype = uc($exittype);
 	if ($exittype eq 'LEFT') {
-		Slim::Utils::Prefs::set("rescan-time",Slim::Buttons::Common::param($client,'valueRef'));
+		Slim::Utils::Prefs::set("rescan-time",$client->param('valueRef'));
 		Slim::Buttons::Common::popModeRight($client);
 	} elsif ($exittype eq 'RIGHT') {
 			$client->bumpRight();

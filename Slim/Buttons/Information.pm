@@ -212,9 +212,9 @@ sub timeFormat {
 sub infoDisplay {
 	my ($client,$value) = @_;
 
-	my $listIndex     = Slim::Buttons::Common::param($client,'listIndex');
-	my $formatRef     = Slim::Buttons::Common::param($client,'formatRef');
-	my $valueFunctRef = Slim::Buttons::Common::param($client,'valueFunctRef');
+	my $listIndex     = $client->param('listIndex');
+	my $formatRef     = $client->param('formatRef');
+	my $valueFunctRef = $client->param('valueFunctRef');
 
 	if (defined($formatRef) && defined($formatRef->[$listIndex])) {
 		return $client->string('INFORMATION_' . uc($value)) . ': '

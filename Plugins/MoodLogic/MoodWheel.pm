@@ -63,8 +63,8 @@ sub init {
 		
 			Slim::Buttons::Common::pushModeLeft($client, 'moodlogic_variety_combo', {
 
-				'genre'  => Slim::Buttons::Common::param($client, 'genre'),
-				'artist' => Slim::Buttons::Common::param($client, 'artist'),
+				'genre'  => $client->param( 'genre'),
+				'artist' => $client->param( 'artist'),
 				'mood'   => $browseMoodChoices[selection($client, 'mood_wheel_index')]
 			});
 			
@@ -81,8 +81,8 @@ sub setMode {
 	my $push   = shift;
 
 	my $ds     = Slim::Music::Info::getCurrentDataStore();
-	my $genre  = Slim::Buttons::Common::param($client, 'genre');
-	my $artist = Slim::Buttons::Common::param($client, 'artist');
+	my $genre  = $client->param( 'genre');
+	my $artist = $client->param( 'artist');
 
 	if (defined $genre) {
 
@@ -122,7 +122,7 @@ sub selection {
 	my $client = shift;
 	my $index = shift;
 
-	my $value = Slim::Buttons::Common::param($client, $index);
+	my $value = $client->param( $index);
 
 	if (defined $value  && $value eq '__undefined') {
 		undef $value;
@@ -141,7 +141,7 @@ sub setSelection {
 		$value = '__undefined';
 	}
 
-	Slim::Buttons::Common::param($client, $index, $value);
+	$client->param( $index, $value);
 }
 
 1;

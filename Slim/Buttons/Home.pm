@@ -36,7 +36,7 @@ sub init {
 
 		'onChange' => sub {
 			my ($client, $value) = @_;
-			my $curMenu = Slim::Buttons::Common::param($client,'curMenu');
+			my $curMenu = $client->param('curMenu');
 			$client->curSelection($curMenu,$value);
 		},
 
@@ -292,7 +292,7 @@ sub homeExitHandler {
 		my $nextmenu = $client->curSelection($client->curDepth());
 		# map default selection in case no onChange was done in INPUT.List
 		if (!defined($nextmenu)) { 
-			$nextmenu = ${Slim::Buttons::Common::param($client,'valueRef')};
+			$nextmenu = ${$client->param('valueRef')};
 			$client->curSelection($client->curDepth(),$nextmenu);
 		}
 		unless (defined $nextmenu) {
@@ -485,7 +485,7 @@ sub updateMenu {
 
 	$homeChoices{$client} = \@home;
 
-	Slim::Buttons::Common::param($client,'listRef',\@home);
+	$client->param('listRef',\@home);
 }
  
 1;

@@ -815,12 +815,12 @@ sub errorOpening {
 	my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
 	
 	$client->showBriefly($line1, $line2, 1,1);
-	Slim::Buttons::Common::param($client,'noUpdate',1);
+	$client->param('noUpdate',1);
 	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&errorDone)
 }
 
 sub errorDone {
-	Slim::Buttons::Common::param(shift,'noUpdate',0);
+	$_[0]->param('noUpdate',0);
 }
 
 sub openSong {

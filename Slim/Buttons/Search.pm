@@ -103,7 +103,7 @@ sub searchExitHandler {
 
 	} elsif ($exitType eq 'RIGHT') {
 
-		my $current = Slim::Buttons::Common::param($client, 'valueRef');
+		my $current = $client->param( 'valueRef');
 
 		my %nextParams = searchFor($client, $$current) ;
 

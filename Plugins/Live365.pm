@@ -917,7 +917,7 @@ sub getFunctions {
 LOGINMODE: {
 our $setLoginMode = sub {
 	my $client = shift;
-	my $silent = Slim::Buttons::Common::param($client, 'silent');
+	my $silent = $client->param( 'silent');
 
 	my @statusText = qw(
 		PLUGIN_LIVE365_LOGIN_SUCCESS
@@ -1107,7 +1107,7 @@ CHANNELMODE: {
 our $setChannelMode = sub {
 	my $client = shift;
 
-	my $source = Slim::Buttons::Common::param($client, 'source');
+	my $source = $client->param( 'source');
 	if (defined($source)) {
 		$live365->{$client}->setStationListPointer(
 			$live365->{$client}->getChannelModePointer($source) ||
@@ -1173,7 +1173,7 @@ our %channelModeFunctions = (
     'left' => sub {
         my $client = shift;
 
-	my $source = Slim::Buttons::Common::param($client, 'source');
+	my $source = $client->param( 'source');
 	if (defined($source)) {
 		$live365->{$client}->setChannelModePointer($source, 
 				$live365->{$client}->getStationListPointer());
@@ -1185,7 +1185,7 @@ our %channelModeFunctions = (
     'right' => sub {
         my $client = shift;
 
-	my $source = Slim::Buttons::Common::param($client, 'source');
+	my $source = $client->param( 'source');
 	if (defined($source)) {
 		$live365->{$client}->setChannelModePointer($source, 
 				$live365->{$client}->getStationListPointer());

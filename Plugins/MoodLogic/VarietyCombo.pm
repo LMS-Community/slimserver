@@ -69,10 +69,10 @@ sub init {
 			my $client = shift;
 			my $instantMix;
 
-			my $mood   = Slim::Buttons::Common::param($client,'mood');
-			my $track  = Slim::Buttons::Common::param($client,'song');
-			my $artist = Slim::Buttons::Common::param($client,'artist');
-			my $genre  = Slim::Buttons::Common::param($client,'genre');
+			my $mood   = $client->param('mood');
+			my $track  = $client->param('song');
+			my $artist = $client->param('artist');
+			my $genre  = $client->param('genre');
 			my $ds     = Slim::Music::Info::getCurrentDataStore();
 			
 			if (defined $track) {
@@ -100,10 +100,10 @@ sub init {
 		'play' => sub  {
 			my $client = shift;
 			my $currentItem;
-			if (defined Slim::Buttons::Common::param($client, 'song')) {
+			if (defined $client->param( 'song')) {
 				my @oldlines = Slim::Display::Display::curLines($client);
-				$currentItem = Slim::Buttons::Common::param($client, 'song');
-				Slim::Buttons::Common::pushMode($client, 'instant_mix', {'song' => Slim::Buttons::Common::param($client, 'song')});
+				$currentItem = $client->param( 'song');
+				Slim::Buttons::Common::pushMode($client, 'instant_mix', {'song' => $client->param( 'song')});
 				specialPushLeft($client, 0, @oldlines);
 			} else {
 				$client->bumpRight()

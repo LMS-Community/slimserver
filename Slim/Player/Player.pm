@@ -159,7 +159,7 @@ sub update {
 	my $lines = shift;
 	my $nodoublesize = shift;
 
-	unless (Slim::Buttons::Common::param($client,'noUpdate')) {
+	unless ($client->param('noUpdate')) {
 
 		$client->killAnimation();
 
@@ -523,8 +523,7 @@ sub nowPlayingModeLines {
 	my $fractioncomplete   = 0;
 	my $playingDisplayMode = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
 
-	Slim::Buttons::Common::param(
-		$client,
+	$client->param(
 		'animateTop',
 		(Slim::Player::Source::playmode($client) ne "stop") ? $playingDisplayMode : 0
 	);

@@ -188,7 +188,7 @@ sub linexExitHandler {
 our %functions = (
   'right' => sub  {
     my ( $client, $funct, $functarg) = @_;
-    if( defined( Slim::Buttons::Common::param( $client, 'useMode'))) {
+    if( defined( $client->param('useMode'))) {
       #in a submenu of settings, which is passing back a button press
       $client->bumpRight();
     } else {

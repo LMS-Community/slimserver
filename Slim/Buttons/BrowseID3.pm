@@ -573,6 +573,9 @@ sub loadDir {
 
 	# These really shouldn't be unrolling the (potentially large) array
 	# But there's some wackiness when I try to make it use the ref directly.
+	# The wackiness is due to caching of result sets in Slim::Datastores::DBI::DBIStore
+	# This combined with the pushes below result in the ALL_X being added
+	# to the cached result set each time you perform a loadDir.
 	if (picked($genre) && picked($artist) && picked($album)) {
 
 		my $sortBy  = $sortByTitle ? 'title' : 'tracknum';
@@ -729,14 +732,14 @@ sub browseID3dir {
 	my $value = shift;
 
 	# get a reference to the browseID3dir array that's kept in param stack
-	my $arrayref = Slim::Buttons::Common::param($client, 'browseID3dir');
+	my $arrayref = $client->param( 'browseID3dir');
 
 	# if it doesn't exist, make a new one (anonymously)
 	if (!defined $arrayref) {
 
 		$arrayref = [];
 
-		Slim::Buttons::Common::param($client, 'browseID3dir', $arrayref);
+		$client->param( 'browseID3dir', $arrayref);
 	}
 
 	# if the value is set, then save it in the array
@@ -757,7 +760,7 @@ sub selection {
 	my $client = shift;
 	my $index = shift;
 
-	my $value = Slim::Buttons::Common::param($client, $index);
+	my $value = $client->param( $index);
 
 	if (defined $value  && $value eq '__undefined') {
 		undef $value;
@@ -776,7 +779,7 @@ sub setSelection {
 		$value = '__undefined';
 	}
 
-	Slim::Buttons::Common::param($client, $index, $value);
+	$client->param( $index, $value);
 }
 
 #	get or set the lastSelection in the hash in the parameter stack
@@ -785,11 +788,11 @@ sub lastSelection {
 	my $index = shift;
 	my $value = shift;
 
-	my $arrayref = Slim::Buttons::Common::param($client, 'lastSelection');
+	my $arrayref = $client->param( 'lastSelection');
 
 	if (!defined $arrayref) {
 		$arrayref = {};
-		Slim::Buttons::Common::param($client, 'lastSelection', $arrayref);
+		$client->param( 'lastSelection', $arrayref);
 	}
 
 	if (defined $value) {
@@ -807,7 +810,7 @@ sub lastSelection {
 sub browseID3dirIndex {
 	my $client = shift;
 
-	return Slim::Buttons::Common::param($client, 'browseID3dirIndex', shift) || 0;
+	return $client->param( 'browseID3dirIndex', shift) || 0;
 }
 
 # undefined or contains a *

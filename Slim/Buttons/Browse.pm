@@ -277,7 +277,7 @@ sub setMode {
 	my @oldlines = Slim::Display::Display::curLines($client) unless $method eq 'pop';
 	
 	$client->lines(\&lines);
-	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
+	my $valueRef = $client->param('valueRef');
 	if ($method ne 'pop' && defined $valueRef && ref($valueRef) eq 'CODE') {
 		my @args;
 		push @args, $client;

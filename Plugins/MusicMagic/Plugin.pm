@@ -175,7 +175,7 @@ sub playMix {
 	
 	$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')));
 	
-	my $mixRef = Slim::Buttons::Common::param($client,'listRef');
+	my $mixRef = $client->param('listRef');
 
 	Slim::Control::Command::execute($client, ["playlist", $append ? "append" : "play", $mixRef->[0]]);
 	
@@ -769,7 +769,7 @@ sub mixExitHandler {
 	} elsif ($exittype eq 'RIGHT') {
 
 		my @oldlines = Slim::Display::Display::curLines($client);
-		my $valueref = Slim::Buttons::Common::param($client,'valueRef');
+		my $valueref = $client->param('valueRef');
 
 		Slim::Buttons::Common::pushMode($client, 'trackinfo', {'track' => $$valueref});
 

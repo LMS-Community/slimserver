@@ -98,8 +98,8 @@ sub setMode {
 	if ($push eq "push") {
 		setSelection($client, 'instant_mix_index', 0);
 		
-		if (defined Slim::Buttons::Common::param($client, 'mix')) {
-			@instantMix = @{Slim::Buttons::Common::param($client,'mix')};
+		if (defined $client->param( 'mix')) {
+			@instantMix = @{$client->param('mix')};
 		}
 	}
 
@@ -124,7 +124,7 @@ sub selection {
 	my $client = shift;
 	my $index = shift;
 
-	my $value = Slim::Buttons::Common::param($client, $index);
+	my $value = $client->param( $index);
 
 	if (defined $value  && $value eq '__undefined') {
 		undef $value;
@@ -143,7 +143,7 @@ sub setSelection {
 		$value = '__undefined';
 	}
 
-	Slim::Buttons::Common::param($client, $index, $value);
+	$client->param( $index, $value);
 }
 
 1;

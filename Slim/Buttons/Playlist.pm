@@ -48,7 +48,7 @@ sub init {
 					$pdm = $buttonarg;
 				}
 			}
-			Slim::Buttons::Common::param($client,'animateTop',$pdm);
+			$client->param('animateTop',$pdm);
 			Slim::Utils::Prefs::clientSet($client, "playingDisplayMode", $pdm);
 			$client->update();
 		},
@@ -228,7 +228,7 @@ sub browseplaylistindex {
 	my $playlistindex = shift;
 	
 	# get (and optionally set) the browseplaylistindex parameter that's kept in param stack
-	return Slim::Buttons::Common::param($client, 'browseplaylistindex', $playlistindex);
+	return $client->param( 'browseplaylistindex', $playlistindex);
 }
 
 # DEPRECATED: for compatibility only, use $client->nowPlayingModeLines();

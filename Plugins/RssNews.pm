@@ -213,14 +213,6 @@ SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE
 	EN	RSS Feeds list changed.
 !};
 
-sub param {
-	my $client = shift;
-	my $paramname = shift;
-	my $paramvalue = shift;
-	# why isn't this a method on Client?????
-	return Slim::Buttons::Common::param($client, $paramname, $paramvalue);
-}
-
 # Plugin descriptions
 
 sub getDisplayName {
@@ -232,19 +224,19 @@ sub nextTopic {
     my $client = shift;
 	my $display_current;
 	
-	my $display_stack = param($client, 'PLUGIN.RssNews.display_stack');
+	my $display_stack = $client->param('PLUGIN.RssNews.display_stack');
     #if there are no topics left then wrap around if selected (always wrap when running as screensaver)
     if((!$display_stack) ||
 	   (scalar(@$display_stack) == 0)) {
         my @display_stack_copy = @feed_order;
 		$display_stack = \@display_stack_copy;
-		param($client, 'PLUGIN.RssNews.display_stack', $display_stack);
+		$client->param('PLUGIN.RssNews.display_stack', $display_stack);
     }
 	
     #Move up the list of topics
     if($display_stack) {
         $display_current=shift @{$display_stack};
-		param($client, 'PLUGIN.RssNews.display_current', $display_current);
+		$client->param('PLUGIN.RssNews.display_current', $display_current);
     } else {
 		assert(0, 'display stack empty');
 	}
@@ -420,7 +412,7 @@ sub retrieveNews {
     my $now = time();
     
     my $must_get_news = 0;
-	my $display_current = param($client, 'PLUGIN.RssNews.display_current');
+	my $display_current = $client->param('PLUGIN.RssNews.display_current');
 
     if (!$display_current) {
 		# should never be here, but just in case...
@@ -440,13 +432,13 @@ sub retrieveNews {
     
     if ($must_get_news) {
         $thenews{$feedname} = ();
-		if (!Slim::Buttons::Common::param($client, 'PLUGIN.RssNews.screensaver_mode')){
+		if (!$client->param('PLUGIN.RssNews.screensaver_mode')){
 			Slim::Buttons::Block::block($client, $client->string('PLUGIN_RSSNEWS_LOADING_FEED'));
 		}
 
         my $xml = getFeedXml($feed_urls{$feedname});
 
-		if (!Slim::Buttons::Common::param($client, 'PLUGIN.RssNews.screensaver_mode')) {
+		if (!$client->param('PLUGIN.RssNews.screensaver_mode')) {
 			Slim::Buttons::Block::unblock($client);
 		}
 
@@ -565,7 +557,7 @@ sub autoScrollTimer {
     &retrieveNews($client, $display_current);
 	
 	# forget any lines we've cached...
-	Slim::Buttons::Common::param($client, 'PLUGIN.RssNews.lines',
+	$client->param('PLUGIN.RssNews.lines',
 								 0);
 	# ensure the display is refreshed
     $client->update();
@@ -599,11 +591,11 @@ sub lines {
     my $now = time();
 
 	# the current RSS feed
-	my $display_current = param($client, 'PLUGIN.RssNews.display_current');
+	my $display_current = $client->param('PLUGIN.RssNews.display_current');
 	assert($display_current, 'current rss feed not set\n');
 
 	# the current item within each feed.
-	my $display_current_items = param($client, 'PLUGIN.RssNews.display_current_items');
+	my $display_current_items = $client->param('PLUGIN.RssNews.display_current_items');
 
 	#remember which item in feed we are currently showing
 	# this will be stored on a per-client basis
@@ -617,13 +609,13 @@ sub lines {
         &retrieveNews($client, $display_current);
         # use this to display new news each time through the screensaver
         $display_current_items->{$display_current}->{'next_item'} = 0;
-		Slim::Buttons::Common::param($client, 'PLUGIN.RssNews.lines',
+		$client->param('PLUGIN.RssNews.lines',
 									 undef);
     }
 	
     if (exists($thenews{$display_current}) &&
-		Slim::Buttons::Common::param($client, 'PLUGIN.RssNews.lines')) {
-		$lineref = Slim::Buttons::Common::param($client, 'PLUGIN.RssNews.lines');
+		$client->param('PLUGIN.RssNews.lines')) {
+		$lineref = $client->param('PLUGIN.RssNews.lines');
 	}
 
 	# if we don't have lines cached, get them from cached news...
@@ -681,8 +673,8 @@ sub lines {
 			$display_current_items->{$display_current}->{'next_item'} = $i;
 			$lineref->[0] = $line1;
 			$lineref->[1] = $line2;
-			param($client, 'PLUGIN.RssNews.lines', $lineref);
-			param($client, 'PLUGIN.RssNews.display_current_items', $display_current_items);
+			$client->param('PLUGIN.RssNews.lines', $lineref);
+			$client->param('PLUGIN.RssNews.display_current_items', $display_current_items);
 		} else {
 			my $line1 = "RSS News - ".$display_current;
 			my $line2;
@@ -731,7 +723,7 @@ sub getScreensaverRssNews {
 sub setScreensaverRssNewsMode() {
     my $client = shift;
 
-    Slim::Buttons::Common::param($client, 'PLUGIN.RssNews.screensaver_mode', 1);
+    $client->param('PLUGIN.RssNews.screensaver_mode', 1);
 
     # call the method that updates the display...
     autoScrollTimer($client);
@@ -744,7 +736,7 @@ sub leaveScreenSaverRssNews {
     #kill timers
     my $client = shift;
     Slim::Utils::Timers::killTimers($client, \&autoScrollTimer);
-    Slim::Buttons::Common::param($client, 'PLUGIN.RssNews.screensaver_mode', 0);
+    $client->param('PLUGIN.RssNews.screensaver_mode', 0);
 }
 
 
@@ -850,7 +842,7 @@ sub mainModeCallback {
         Slim::Buttons::Common::popModeRight($client);
       } 
     elsif ($exittype eq 'RIGHT') {
-        my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
+        my $listIndex = $client->param('listIndex');
         my $feedname = $feed_order[$listIndex];
         
         retrieveNews($client, $feedname);
@@ -913,8 +905,8 @@ sub headlinesModeCallback {
         Slim::Buttons::Common::popModeRight($client);
       } 
     elsif ($exittype eq 'RIGHT') {
-        my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
-        my $items = Slim::Buttons::Common::param($client, 'feedItems');
+        my $listIndex = $client->param('listIndex');
+        my $items = $client->param('feedItems');
 
         my $item = $items->[$listIndex];
         my $description;
@@ -933,7 +925,7 @@ sub headlinesModeCallback {
 		} else {
 			$title = $client->string('PLUGIN_RSSNEWS_NO_TITLE');
 		}
-        my $feed = Slim::Buttons::Common::param($client, 'feed');
+        my $feed = $client->param('feed');
         
         Slim::Buttons::Common::pushModeLeft($client, 
                                             'PLUGIN.RssNews.description',
@@ -954,8 +946,8 @@ sub headlinesSetMode {
               return;
           }
     
-    my $feed = Slim::Buttons::Common::param($client, 'feed');
-    my $items = Slim::Buttons::Common::param($client, 'feedItems');
+    my $feed = $client->param('feed');
+    my $items = $client->param('feedItems');
     
     my @lines = map unescapeAndTrim($_->{title}), @$items;
     
@@ -1008,9 +1000,9 @@ sub descriptionSetMode {
           return;
       }
     
-    my $feed = Slim::Buttons::Common::param($client, 'feed');
-    my $title = unescapeAndTrim(Slim::Buttons::Common::param($client, 'title'));
-    my $description = unescapeAndTrim(Slim::Buttons::Common::param($client, 'description'));
+    my $feed = $client->param('feed');
+    my $title = unescapeAndTrim($client->param('title'));
+    my $description = unescapeAndTrim($client->param('description'));
     
     my @lines;
     my $curline = '';

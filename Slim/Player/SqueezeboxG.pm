@@ -132,7 +132,7 @@ sub update {
 	my $lines = shift;
 	my $nodoublesize = shift;
 
-	if (Slim::Buttons::Common::param($client,'noUpdate')) {
+	if ($client->param('noUpdate')) {
 		#mode has blocked client updates temporarily
 	} else { 
 		$client->killAnimation();
@@ -235,8 +235,8 @@ sub fonts {
 	
 	my $font;
 	
-	if (defined Slim::Buttons::Common::param($client,'font')) {
-		$font = Slim::Buttons::Common::param($client,'font');
+	if (defined $client->param('font')) {
+		$font = $client->param('font');
 	} else {
 		unless (defined $size) {$size = $client->textSize();}
 		
@@ -505,9 +505,9 @@ sub doEasterEgg {
 sub scrollBottom {
 	my $client = shift;
 	my $lines = shift;
-	return if Slim::Buttons::Common::param($client,'noScroll');
+	return if $client->param('noScroll');
 	
-	my $rate = Slim::Buttons::Common::paramOrPref($client,$client->linesPerScreen() == 1 ? 'scrollRateDouble': 'scrollRate');
+	my $rate = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollRateDouble': 'scrollRate');
 	
 	my $linefunc  = $client->lines();
 	my $parts = $client->parseLines(&$linefunc($client));
@@ -529,7 +529,7 @@ sub scrollBottom {
 		$parts->{deltaTime} = $rate ? $rate : 1;
 		
 		# use a negative offset to indicate that we are going to pause at the beginning
-		my $pause = Slim::Buttons::Common::paramOrPref($client,$client->linesPerScreen() == 1 ? 'scrollPauseDouble': 'scrollPause');
+		my $pause = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollPauseDouble': 'scrollPause');
 		$parts->{offset2} = 0 - int($pause / $parts->{deltaTime}) * $parts->{scroll2};
 		
 		$client->killAnimation();
@@ -590,7 +590,7 @@ sub animating {
 # find all the queued up animation frames and toss them
 sub killAnimation {
 	my $client = shift;
-	Slim::Buttons::Common::param($client,'noUpdate',0);
+	$client->param('noUpdate',0);
 	Slim::Utils::Timers::killTimers($client, \&pushUpdate);
 	Slim::Utils::Timers::killTimers($client, \&update);
 	Slim::Utils::Timers::killTimers($client, \&scrollUpdate);
@@ -598,7 +598,7 @@ sub killAnimation {
 
 sub endAnimation {
 	my $client = shift;
-	Slim::Buttons::Common::param($client,'noUpdate',0); 
+	$client->param('noUpdate',0); 
 	$client->update();
 }
 

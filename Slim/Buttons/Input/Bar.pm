@@ -37,7 +37,7 @@ our %functions = (
 		}
 	,'passback' => sub {
 			my ($client,$funct,$functarg) = @_;
-			my $parentMode = Slim::Buttons::Common::param($client,'parentMode');
+			my $parentMode = $client->param('parentMode');
 			if (defined($parentMode)) {
 				Slim::Hardware::IR::executeButton($client,$client->lastirbutton,$client->lastirtime,$parentMode);
 			}
@@ -46,8 +46,8 @@ our %functions = (
 
 sub changePos {
 	my ($client, $dir,$funct) = @_;
-	my $listRef = Slim::Buttons::Common::param($client,'listRef');
-	my $listIndex = Slim::Buttons::Common::param($client,'listIndex');
+	my $listRef = $client->param('listRef');
+	my $listIndex = $client->param('listIndex');
 
 	if (($listIndex == 0 && $dir < 0) || ($listIndex == (scalar(@$listRef) - 1) && $dir > 0)) {
 			#not wrapping and at end of list
@@ -57,9 +57,9 @@ sub changePos {
 	my $accel = 8; # Hz/sec
 	my $rate = 50; # Hz
 	my $inc = 1;
-	my $mid = Slim::Buttons::Common::param($client,'mid')||0;
-	my $min = Slim::Buttons::Common::param($client,'min')||0;
-	my $max = Slim::Buttons::Common::param($client,'max')||100;
+	my $mid = $client->param('mid')||0;
+	my $min = $client->param('min')||0;
+	my $max = $client->param('max')||100;
 	my $midpoint = ($mid-$min)/($max-$min)*(scalar(@$listRef) - 1);
 	my $newposition;
 	
@@ -87,12 +87,12 @@ sub changePos {
 
 	$newposition = scalar(@$listRef)-1 if $newposition > scalar(@$listRef)-1;
 	$newposition = 0 if $newposition < 0;
-	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
+	my $valueRef = $client->param('valueRef');
 	$$valueRef = $listRef->[$newposition];
-	Slim::Buttons::Common::param($client,'listIndex',int($newposition));
-	my $onChange = Slim::Buttons::Common::param($client,'onChange');
+	$client->param('listIndex',int($newposition));
+	my $onChange = $client->param('onChange');
 	if (ref($onChange) eq 'CODE') {
-		my $onChangeArgs = Slim::Buttons::Common::param($client,'onChangeArgs');
+		my $onChangeArgs = $client->param('onChangeArgs');
 		my @args;
 		push @args, $client if $onChangeArgs =~ /c/i;
 		push @args, $$valueRef if $onChangeArgs =~ /v/i;
@@ -112,22 +112,22 @@ sub lines {
 
 	my ($line1, $line2);
 
-	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
+	my $valueRef = $client->param('valueRef');
 	$valueRef = \$value if defined $value;
 	
 	$line1 = defined $header ? $header : Slim::Buttons::Input::List::getExtVal($client,$$valueRef,undef,'header');
 
-	$min = Slim::Buttons::Common::param($client,'min') || 0 unless defined $min;
-	$mid = Slim::Buttons::Common::param($client,'mid') || 0 unless defined $mid;
-	$max = Slim::Buttons::Common::param($client,'max') || 100 unless defined $max;
+	$min = $client->param('min') || 0 unless defined $min;
+	$mid = $client->param('mid') || 0 unless defined $mid;
+	$max = $client->param('max') || 100 unless defined $max;
 
 	my $val = $max == $min ? 0 : int(($$valueRef - $min)*100/($max-$min));
-	my $fullstep = 1 unless Slim::Buttons::Common::param($client,'smoothing');
+	my $fullstep = 1 unless $client->param('smoothing');
 
 	$line2 = $client->sliderBar($client->displayWidth(), $val,$max == $min ? 0 :($mid-$min)/($max-$min)*100,$fullstep);
 
 	if ($client->linesPerScreen() == 1) {
-		if (Slim::Buttons::Common::param($client,'barOnDouble')) {
+		if ($client->param('barOnDouble')) {
 			$line1 = $line2;
 			$line2 = '';
 		} else {
@@ -170,35 +170,35 @@ sub setMode {
 
 sub init {
 	my $client = shift;
-	if (!defined(Slim::Buttons::Common::param($client,'parentMode'))) {
+	if (!defined($client->param('parentMode'))) {
 		my $i = -2;
 		while ($client->modeStack->[$i] =~ /^INPUT./) { $i--; }
-		Slim::Buttons::Common::param($client,'parentMode',$client->modeStack->[$i]);
+		$client->param('parentMode',$client->modeStack->[$i]);
 	}
-	if (!defined(Slim::Buttons::Common::param($client,'header'))) {
-		Slim::Buttons::Common::param($client,'header','Select item:');
+	if (!defined($client->param('header'))) {
+		$client->param('header','Select item:');
 	}
-	if (!defined(Slim::Buttons::Common::param($client,'min'))) {
-		Slim::Buttons::Common::param($client,'min',0);
+	if (!defined($client->param('min'))) {
+		$client->param('min',0);
 	}
-	if (!defined(Slim::Buttons::Common::param($client,'mid'))) {
-		Slim::Buttons::Common::param($client,'mid',0);
+	if (!defined($client->param('mid'))) {
+		$client->param('mid',0);
 	}	
-	if (!defined(Slim::Buttons::Common::param($client,'max'))) {
-		Slim::Buttons::Common::param($client,'max',100);
+	if (!defined($client->param('max'))) {
+		$client->param('max',100);
 	}
-	if (!defined(Slim::Buttons::Common::param($client,'increment'))) {
-		Slim::Buttons::Common::param($client,'increment',2.5);
+	if (!defined($client->param('increment'))) {
+		$client->param('increment',2.5);
 	}
-	if (!defined(Slim::Buttons::Common::param($client,'barOnDouble'))) {
-		Slim::Buttons::Common::param($client,'barOnDouble',0);
+	if (!defined($client->param('barOnDouble'))) {
+		$client->param('barOnDouble',0);
 	}
 
 
-	my $min = Slim::Buttons::Common::param($client,'min');
-	my $mid = Slim::Buttons::Common::param($client,'mid');
-	my $max = Slim::Buttons::Common::param($client,'max');
-	my $step = Slim::Buttons::Common::param($client,'increment');
+	my $min = $client->param('min');
+	my $mid = $client->param('mid');
+	my $max = $client->param('max');
+	my $step = $client->param('increment');
 
 	my $listRef;
 	my $i;
@@ -207,9 +207,9 @@ sub init {
 		$listRef->[$j] = $i;
 		$j++;
 	}
-	Slim::Buttons::Common::param($client,'listRef',$listRef);
-	my $listIndex = Slim::Buttons::Common::param($client,'listIndex');
-	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
+	$client->param('listRef',$listRef);
+	my $listIndex = $client->param('listIndex');
+	my $valueRef = $client->param('valueRef');
 	if (!defined($listIndex)) {
 		$listIndex = 0;
 	} elsif ($listIndex > $#$listRef) {
@@ -220,10 +220,10 @@ sub init {
 	}
 	if (!defined($valueRef)) {
 		$$valueRef = $listRef->[$listIndex];
-		Slim::Buttons::Common::param($client,'valueRef',$valueRef);
+		$client->param('valueRef',$valueRef);
 	} elsif (!ref($valueRef)) {
 		$$valueRef = $valueRef;
-		Slim::Buttons::Common::param($client,'valueRef',$valueRef);
+		$client->param('valueRef',$valueRef);
 	}
 	if ($$valueRef != $listRef->[$listIndex]) {
 		my $newIndex;
@@ -237,20 +237,20 @@ sub init {
 		}
 	}
 
-	Slim::Buttons::Common::param($client,'listIndex',$listIndex);
+	$client->param('listIndex',$listIndex);
 
-	if (!defined(Slim::Buttons::Common::param($client,'onChangeArgs'))) {
-		Slim::Buttons::Common::param($client,'onChangeArgs','CV');
+	if (!defined($client->param('onChangeArgs'))) {
+		$client->param('onChangeArgs','CV');
 	}
-	if (!defined(Slim::Buttons::Common::param($client,'headerArgs'))) {
-		Slim::Buttons::Common::param($client,'headerArgs','CV');
+	if (!defined($client->param('headerArgs'))) {
+		$client->param('headerArgs','CV');
 	}
 	return 1;
 }
 
 sub exitInput {
 	my ($client,$exitType) = @_;
-	my $callbackFunct = Slim::Buttons::Common::param($client,'callback');
+	my $callbackFunct = $client->param('callback');
 	if (!defined($callbackFunct) || !(ref($callbackFunct) eq 'CODE')) {
 		if ($exitType eq 'right') {
 			$client->bumpRight();

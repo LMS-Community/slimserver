@@ -32,13 +32,13 @@ our %functions = (
 	,'left' => sub {
 			my ($client,$funct,$functarg) = @_;
 			Slim::Utils::Timers::killTimers($client, \&nextChar);
-			my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
+			my $cursorPos = $client->param('cursorPos');
 			$cursorPos--;
 			if ($cursorPos < 0) {
 				exitInput($client,'left');
 				return;
 			}
-			Slim::Buttons::Common::param($client,'cursorPos',$cursorPos);
+			$client->param('cursorPos',$cursorPos);
 			$client->update();
 		}
 	#advance to next character, exiting if last char is right arrow
@@ -66,13 +66,13 @@ our %functions = (
 			if (Slim::Buttons::Common::testSkipNextNumberLetter($client, $digit)) {
 				nextChar($client);
 			}
-			my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
+			my $valueRef = $client->param('valueRef');
 			my ($h0, $h1, $m0, $m1, $p) = timeDigits($client,$valueRef);
 
 			my $h = $h0 * 10 + $h1;
 			if ($p && $h == 12) { $h = 0 };
 	
-			my $c = Slim::Buttons::Common::param($client,'cursorPos');
+			my $c = $client->param('cursorPos');
 			if ($c == 0 && $digit < ($p ? 2:3)) { $h0 = $digit; nextChar($client); };
 			if ($c == 1 && (($h0 * 10 + $digit) < 24)) { $h1 = $digit; nextChar($client); };
 			if ($c == 2) { $m0 = $digit; nextChar($client); };
@@ -82,13 +82,13 @@ our %functions = (
 			if ($c == 4 && (Slim::Utils::Prefs::get('timeFormat') =~ /%p/)) { $p = $digit % 2; }
 	
 			my $time = ($h0 * 10 + $h1) * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
-			Slim::Buttons::Common::param($client,'valueRef',$time);
+			$client->param('valueRef',$time);
 			
 			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + Slim::Utils::Prefs::get("displaytexttimeout"), \&nextChar);
 			#update the display
-			my $onChange = Slim::Buttons::Common::param($client,'onChange');
+			my $onChange = $client->param('onChange');
 			if (ref($onChange) eq 'CODE') {
-				my $onChangeArgs = Slim::Buttons::Common::param($client,'onChangeArgs');
+				my $onChangeArgs = $client->param('onChangeArgs');
 				my @args;
 				push @args, $client if $onChangeArgs =~ /c/i;
 				push @args, $$valueRef if $onChangeArgs =~ /v/i;
@@ -108,7 +108,7 @@ our %functions = (
 		}
 	,'passback' => sub {
 			my ($client,$funct,$functarg) = @_;
-			my $parentMode = Slim::Buttons::Common::param($client,'parentMode');
+			my $parentMode = $client->param('parentMode');
 			if (defined($parentMode)) {
 				Slim::Hardware::IR::executeButton($client,$client->lastirbutton,$client->lastirtime,$parentMode);
 			}
@@ -118,8 +118,8 @@ our %functions = (
 sub lines {
 	my $client = shift;
 	my ($line1, $line2);
-	$line1 = Slim::Buttons::Common::param($client,'header');
-	my $valueRef = \&timeString($client,timeDigits($client,Slim::Buttons::Common::param($client,'valueRef')));
+	$line1 = $client->param('header');
+	my $valueRef = \&timeString($client,timeDigits($client,$client->param('valueRef')));
 	if (!defined($valueRef)) { return ('',''); }
 	$line2 = $$valueRef;
 	return ($line1,$line2);
@@ -152,22 +152,22 @@ sub setMode {
 # onChangeArgs = CV
 sub init {
 	my $client = shift;
-	if (!defined(Slim::Buttons::Common::param($client,'parentMode'))) {
+	if (!defined($client->param('parentMode'))) {
 		my $i = -2;
 		while ($client->modeStack->[$i] =~ /^INPUT./) { $i--; }
-		Slim::Buttons::Common::param($client,'parentMode',$client->modeStack->[$i]);
+		$client->param('parentMode',$client->modeStack->[$i]);
 	}
-	if (!defined(Slim::Buttons::Common::param($client,'header'))) {
-		Slim::Buttons::Common::param($client,'header','Enter Time:');
+	if (!defined($client->param('header'))) {
+		$client->param('header','Enter Time:');
 	}
-	if (!defined(Slim::Buttons::Common::param($client,'noScroll'))) {
-		Slim::Buttons::Common::param($client,'noScroll',1)
+	if (!defined($client->param('noScroll'))) {
+		$client->param('noScroll',1)
 	}
-	if (!defined(Slim::Buttons::Common::param($client,'cursorPos'))) {
-		Slim::Buttons::Common::param($client,'cursorPos',1)
+	if (!defined($client->param('cursorPos'))) {
+		$client->param('cursorPos',1)
 	}
-	if (!defined(Slim::Buttons::Common::param($client,'onChangeArgs'))) {
-		Slim::Buttons::Common::param($client,'onChangeArgs','CV');
+	if (!defined($client->param('onChangeArgs'))) {
+		$client->param('onChangeArgs','CV');
 	}
 	return 1;
 }
@@ -202,7 +202,7 @@ sub timeString {
 	my ($client, $h0, $h1, $m0, $m1, $p) = @_;
 		
 	my $cs = Slim::Display::Display::symbol('cursorpos');
-	my $c = Slim::Buttons::Common::param($client,'cursorPos') || 0;
+	my $c = $client->param('cursorPos') || 0;
 	
 	my $timestring = ($c == 0 ? $cs : '') . ((defined($p) && $h0 == 0) ? ' ' : $h0) . ($c == 1 ? $cs : '') . $h1 . ":" . ($c == 2 ? $cs : '') .  $m0 . ($c == 3 ? $cs : '') . $m1 . " " . ($c == 4 ? $cs : '') . (defined($p) ? $p : '');
 
@@ -211,7 +211,7 @@ sub timeString {
 
 sub exitInput {
 	my ($client,$exitType) = @_;
-	my $callbackFunct = Slim::Buttons::Common::param($client,'callback');
+	my $callbackFunct = $client->param('callback');
 	if (!defined($callbackFunct) || !(ref($callbackFunct) eq 'CODE')) {
 		Slim::Buttons::Common::popMode($client);
 		return;
@@ -230,13 +230,13 @@ sub moveCursor {
 	my $client = shift;
 	my $increment = shift || 1;
 	
-	my $valueRef = \&timeString($client,timeDigits($client,Slim::Buttons::Common::param($client,'valueRef')));
-	my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
+	my $valueRef = \&timeString($client,timeDigits($client,$client->param('valueRef')));
+	my $cursorPos = $client->param('cursorPos');
 
 	$cursorPos += $increment;
 	if ($cursorPos < 0) {
 		$cursorPos = 0;
-		if (Slim::Buttons::Common::param($client,'cursorPos') == 0) {
+		if ($client->param('cursorPos') == 0) {
 			exitInput($client,'left');
 			return;
 		}
@@ -246,7 +246,7 @@ sub moveCursor {
 		exitInput($client,'right');
 		return;
 	}
-	Slim::Buttons::Common::param($client,'cursorPos',$cursorPos);
+	$client->param('cursorPos',$cursorPos);
 	$client->update();
 	return;
 }
@@ -254,9 +254,9 @@ sub moveCursor {
 sub scroll {
 	my ($client,$dir) = @_;
 	my $time = scrollTime($client,$dir);
-	my $onChange = Slim::Buttons::Common::param($client,'onChange');
+	my $onChange = $client->param('onChange');
 	if (ref($onChange) eq 'CODE') {
-		my $onChangeArgs = Slim::Buttons::Common::param($client,'onChangeArgs');
+		my $onChangeArgs = $client->param('onChangeArgs');
 		my @args;
 		push @args, $client if $onChangeArgs =~ /c/i;
 		push @args, $time if $onChangeArgs =~ /v/i;
@@ -268,8 +268,8 @@ sub scroll {
 sub scrollTime {
 	my ($client,$dir,$valueRef,$c) = @_;
 	
-	$c = Slim::Buttons::Common::param($client,'cursorPos') unless defined $c;
-	$valueRef = Slim::Buttons::Common::param($client,'valueRef') unless defined $valueRef;
+	$c = $client->param('cursorPos') unless defined $c;
+	$valueRef = $client->param('valueRef') unless defined $valueRef;
 	
 	my ($h0, $h1, $m0, $m1, $p) = timeDigits($client,$valueRef);
 	my $h = $h0 * 10 + $h1;
@@ -297,7 +297,7 @@ sub scrollTime {
 	};
 
 	my $time = $h * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
-	Slim::Buttons::Common::param($client,'valueRef',$time);
+	$client->param('valueRef',$time);
 	
 	return $time;
 }
