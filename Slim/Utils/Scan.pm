@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.2 2003/07/24 23:14:04 dean Exp $
+# $Id: Scan.pm,v 1.3 2003/08/19 23:38:21 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -364,7 +364,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 		if (Slim::Music::Info::isWinShortcut($playlisturl)) {
 			if (defined Slim::Music::Info::cachedPlaylist($playlisturl)) {
-				$playlistpath = @{Slim::Music::Info::cachedPlaylist($playlisturl)};
+				$playlistpath = ${Slim::Music::Info::cachedPlaylist($playlisturl)}[0];
 			} else {
 				$playlistpath = Slim::Utils::Misc::pathFromWinShortcut($playlisturl);
 				Slim::Music::Info::cachePlaylist($playlisturl, [$playlistpath]);

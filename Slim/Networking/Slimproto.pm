@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.15 2003/08/13 00:22:15 sadams Exp $
+# $Id: Slimproto.pm,v 1.16 2003/08/19 23:38:21 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -130,6 +130,7 @@ sub slimproto_accept {
 
 sub slimproto_close {
 	my $clientsock = shift;
+	$::d_slimproto && msg("Slimproto connection closed\n");
 
 	# stop selecting	
 	$slimSelRead->remove($clientsock);
@@ -159,7 +160,7 @@ sub client_writeable {
 	$::d_slimproto_v && msg("Slimproto client writeable: ".$ipport{$clientsock}."\n");
 
 	if (!($clientsock->connected)) {
-		$::d_slimproto && msg("Slimproto connection closed by peer.\n");
+		$::d_slimproto && msg("Slimproto connection closed by peer in writable.\n");
 		slimproto_close($clientsock);		
 		return;
 	}		
@@ -174,7 +175,7 @@ sub client_readable {
 
 GETMORE:
 	if (!($s->connected)) {
-		$::d_slimproto && msg("Slimproto connection closed by peer.\n");
+		$::d_slimproto && msg("Slimproto connection closed by peer in readable.\n");
 		slimproto_close($s);		
 		return;
 	}			
@@ -203,9 +204,6 @@ GETMORE:
 
 	my $indata;
 	my $bytes_read = $s->sysread($indata, $bytes_remaining);
-	if (defined($bytes_read)) {
-		$total_bytes_read += $bytes_read;
-	}
 
 	if (!defined($bytes_read) || ($bytes_read == 0)) {
 		if ($total_bytes_read == 0) {
@@ -219,6 +217,7 @@ GETMORE:
 
 	}
 
+	$total_bytes_read += $bytes_read;
 
 	$inputbuffer{$s}.=$indata;
 	$bytes_remaining -= $bytes_read;
@@ -269,7 +268,7 @@ sub process_slimproto_frame {
 
 	my $len = length($data);
 
-	$::d_slimproto_v && msg("Got Slimptoto frame, op $op, length $len\n");
+	$::d_slimproto_v && msg("Got Slimproto frame, op $op, length $len, $s\n");
 
 	if ($op eq 'HELO') {
 		if ($len != 8) {
@@ -283,23 +282,30 @@ sub process_slimproto_frame {
 
 		my $id=$mac;
 		my $paddr = sockaddr_in($s->peerport, $s->peeraddr);
-
-		$::d_slimproto && msg("creating new client, id:$id ipport: $ipport{$s}\n");
-		my $client=Slim::Player::Squeezebox->new(
-			$id, 		# mac
-			$paddr,		# sockaddr_in
-			$revision,	# rev
-			$s		# tcp sock
-		);
-
-		$sock2client{$s}=$client;
+		my $client = Slim::Player::Client::getClient($id); 
 		
-		$client->init();
+		if (!defined($client)) {
+			$::d_slimproto && msg("creating new client, id:$id ipport: $ipport{$s}\n");
+			$client = Slim::Player::Squeezebox->new(
+				$id, 		# mac
+				$paddr,		# sockaddr_in
+				$revision,	# rev
+				$s		# tcp sock
+			);
+	
+			$client->init();
+		} else {
+			$::d_slimproto && msg("hello from existing client: $id on ipport: $ipport{$s}\n");
+			$client->reconnect($paddr, $revision, $s);
+		}
+		
+		$sock2client{$s}=$client;
 		
 		return;
 	} 
 
 	my $client=$sock2client{$s};
+	
 	assert($client);
 
 	if ($op eq 'IR  ') {

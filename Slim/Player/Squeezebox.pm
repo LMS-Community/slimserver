@@ -24,12 +24,25 @@ sub new {
 	) = @_;
 	
 	my $client = Slim::Player::Player->new($id, $paddr, $revision);
-	
-	$client->tcpsock($tcpsock);
-	
+
 	bless $client, $class;
-	
+
+	$client->reconnect($paddr, $revision, $tcpsock);
+		
 	return $client;
+}
+
+sub reconnect {
+	my $client = shift;
+	my $paddr = shift;
+	my $revision = shift;
+	my $tcpsock = shift;
+
+	$client->tcpsock($tcpsock);
+	$client->paddr($paddr);
+	$client->revision($revision);	
+	
+	$client->update();	
 }
 
 sub model {

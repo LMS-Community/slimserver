@@ -26,6 +26,9 @@ our $DisplayName = 'Slim Server';
 
 sub Startup {
 
+	# added to workaround a problem with 5.8 and perlsvc.
+    $SIG{BREAK} = sub {} if RunningAsService();
+
 	main::init();
 	
 	main::start();

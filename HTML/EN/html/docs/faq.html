@@ -449,7 +449,7 @@ Version=2</pre></p>
 <p>If this doesn't address the problem, try using a UNC-style path to specify your music library in the Server Settings page. Instead of X:\path for a mounted volume, use \\SERVER\path style addressing. This may work for some servers where direct volume letter mapping does not.</p>
 <h5><a id="troubleshooting-rh9"></a>I can't seem to get the SLIMP3 software to run under RedHat Linux 9.0. There's an error about &quot;Time::HiRes&quot; when it starts up.</h5>
 <p>The default installation of Perl on RH9 doesn't include Time::HiRes as it should. There's a binary perl-Time-HiRes-1.38-3.i386.rpm RPM on disk 2 of the RedHat install that works fine and is what you need to get the SLIMP3 server running under RH9. I also found a copy on the net that worked for me. As root, use this command to install it from the net:</p>
-<p>rpm -i http://athena.fit.qut.edu.au/pub/redhat9.0/RedHat/RPMS/perl-Time-HiRes-1.38-3.i386.rpm</p>
+<p>rpm -i http://www.slimdevices.com/downloads/misc/perl-Time-HiRes-1.38-3.i386.rpm</p>
 <h5><a id="troubleshooting-lockup"></a>A while after the SLIMP3 Server starts, it locks up or starts using a huge amount of memory and CPU, even without playing any music. What's up?</h5>
 <p>Check to make sure that any playlists in your music library contain valid paths to music files in your library. Playlists that refer to themselves or other folders in your library, or playlist entries that refer to disks that aren't available can cause the SLIMP3 server to get confused.</p>
 <p>If this isn't the problem, try moving all of your music files out of the library and then move them back in groups and restarting the server. Try to find, by process of elimination, which files are confusing the SLIMP3 server.</p>

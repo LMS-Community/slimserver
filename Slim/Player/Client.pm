@@ -169,159 +169,146 @@ sub new {
 	my $clientAlreadyKnown = 0;
 	bless $client, $class;
 
-	$::d_protocol && msg "new($id)\n";
+	$::d_protocol && msg "new client id: ($id)\n";
 
-	if (defined(getClient($id))) {
-		$::d_protocol && msg("We know this client. Skipping client prefs and state initialization.\n");
-		$client=getClient($id);
-		$clientAlreadyKnown = 1;
-	} else {
-		$::d_protocol && msg("This a new client. Initializing\n");
+	assert(!defined(getClient($id)));
 
-		$client->[0] = undef; # id 	
+	$client->[0] = undef; # id 	
 
-		# client variables id and version info
-		$client->[4] = undef; # revision		int        firmware rev   0=unknown, 1.2 = old (1.0, 1.1, 1.2), 1.3 = new streaming protocol, 2.0 = client sends MAC address, NEC IR codes supported
-		$client->[5] = undef; # macaddress		string     client's MAC (V2.0 firmware)
-		$client->[6] = undef; # paddr			sockaddr_in client's ip and port
-		
-		# client hardware information
-		$client->[9] = undef; # udpsock
-		$client->[10] = undef; # tcpsock
-		$client->[11] = undef; # RTT
-		$client->[12] = undef; # prevwptr
-		$client->[13] = undef; # waitforstart
-		$client->[14] = undef; # readytosync
-		$client->[15] = undef; # usage
-		$client->[16] = undef; # resync
-		$client->[17] = undef; # streamingsocket
-		$client->[18] = undef; # mp3filehandle
-		$client->[19] = undef; # mp3filehandleIsSocket
-		$client->[20] = []; # chunks
-		$client->[21] = undef; # lastchunk
-		$client->[22] = undef; # remoteStreamStartTime
-		$client->[23] = undef; # shoutMetaPointer
-		$client->[24] = undef; # shoutMetaInterval
-		$client->[25] = undef; # vfdbrightness
-		$client->[26] = undef; # prevline1
-		$client->[27] = undef; # prevline2
-		$client->[28] = []; # playlist
-		$client->[29] = []; # shufflelist
-		$client->[30] = undef; # currentsong
-		$client->[31] = undef; # playmode
-		$client->[32] = undef; # rate
-		$client->[33] = undef; # lastskip
-		$client->[34] = undef; # songtotalbytes
-		$client->[35] = undef; # songduration
-		$client->[36] = undef; # songoffset
-		$client->[37] = undef; # songpos
-		$client->[38] = undef; # currentplayingsong
-		$client->[39] = undef; # currentSleepTime
-		$client->[40] = undef; # sleepTime
-		$client->[41] = undef; # master
-		$client->[42] = []; # slaves
-		$client->[43] = undef; # syncgroupid
-		$client->[44] = undef; # htmlstatus
-		$client->[45] = undef; # htmlstatusvalid
-		$client->[46] = undef; # lastirtime
-		$client->[47] = undef; # lastircode
-		$client->[48] = undef; # lastircodebytes
-		$client->[50] = undef; # startirhold
-		$client->[51] = undef; # irtimediff
-		$client->[52] = undef; # irrepeattime
-		$client->[53] = undef; # easteregg
-		$client->[54] = undef; # epochirtime
-		$client->[55] = []; # modeStack
-		$client->[56] = []; # modeParameterStack
-		$client->[57] = undef; # lines
-		$client->[58] = []; # trackInfoLines
-		$client->[59] = []; # trackInfoContent
-		$client->[60] = {}; # lastID3Selection
-		$client->[61] = []; # blocklines
-		$client->[62] = undef; # homeSelection
-		$client->[63] = undef; # pluginsSelection
-		$client->[64] = undef; # pwd
-		$client->[65] = undef; # currentDirItem
-		$client->[66] = undef; # numberOfDirItems
-		$client->[67] = []; # dirItems
-		$client->[68] =  {}; # lastSelection
-		$client->[69] = undef; # searchSelection
-		$client->[70] = undef; # searchFor
-		$client->[71] = []; # searchTerm
-		$client->[72] = undef; # searchCursor
-		$client->[73] = undef; # lastLetterIndex
-		$client->[74] = undef; # lastLetterDigit
-		$client->[75] = undef; # lastLetterTime
-		$client->[76] = []; # otype
-		$client->[77] = []; # opos
-		$client->[78] = undef; # cpos
-		$client->[79] = undef; # gplay
-		$client->[80] = undef; # syncSelection
-		$client->[81] = []; # syncSelections
-		$client->[82] = undef; # browseMenuSelection
-		$client->[83] = undef; # settingsSelection
+	# client variables id and version info
+	$client->[4] = undef; # revision		int        firmware rev   0=unknown, 1.2 = old (1.0, 1.1, 1.2), 1.3 = new streaming protocol, 2.0 = client sends MAC address, NEC IR codes supported
+	$client->[5] = undef; # macaddress		string     client's MAC (V2.0 firmware)
+	$client->[6] = undef; # paddr			sockaddr_in client's ip and port
 	
-		$::d_protocol && msg("New client connected: $id\n");
-		$client->lastirtime(0);
-		$client->lastircode(0);
-		$client->lastircodebytes(0);
-		$client->startirhold(0);
-		$client->epochirtime(0);
-		$client->irrepeattime(0);
-		$client->irtimediff(0);
+	# client hardware information
+	$client->[9] = undef; # udpsock
+	$client->[10] = undef; # tcpsock
+	$client->[11] = undef; # RTT
+	$client->[12] = undef; # prevwptr
+	$client->[13] = undef; # waitforstart
+	$client->[14] = undef; # readytosync
+	$client->[15] = undef; # usage
+	$client->[16] = undef; # resync
+	$client->[17] = undef; # streamingsocket
+	$client->[18] = undef; # mp3filehandle
+	$client->[19] = undef; # mp3filehandleIsSocket
+	$client->[20] = []; # chunks
+	$client->[21] = undef; # lastchunk
+	$client->[22] = undef; # remoteStreamStartTime
+	$client->[23] = undef; # shoutMetaPointer
+	$client->[24] = undef; # shoutMetaInterval
+	$client->[25] = undef; # vfdbrightness
+	$client->[26] = undef; # prevline1
+	$client->[27] = undef; # prevline2
+	$client->[28] = []; # playlist
+	$client->[29] = []; # shufflelist
+	$client->[30] = undef; # currentsong
+	$client->[31] = undef; # playmode
+	$client->[32] = undef; # rate
+	$client->[33] = undef; # lastskip
+	$client->[34] = undef; # songtotalbytes
+	$client->[35] = undef; # songduration
+	$client->[36] = undef; # songoffset
+	$client->[37] = undef; # songpos
+	$client->[38] = undef; # currentplayingsong
+	$client->[39] = undef; # currentSleepTime
+	$client->[40] = undef; # sleepTime
+	$client->[41] = undef; # master
+	$client->[42] = []; # slaves
+	$client->[43] = undef; # syncgroupid
+	$client->[44] = undef; # htmlstatus
+	$client->[45] = undef; # htmlstatusvalid
+	$client->[46] = undef; # lastirtime
+	$client->[47] = undef; # lastircode
+	$client->[48] = undef; # lastircodebytes
+	$client->[50] = undef; # startirhold
+	$client->[51] = undef; # irtimediff
+	$client->[52] = undef; # irrepeattime
+	$client->[53] = undef; # easteregg
+	$client->[54] = undef; # epochirtime
+	$client->[55] = []; # modeStack
+	$client->[56] = []; # modeParameterStack
+	$client->[57] = undef; # lines
+	$client->[58] = []; # trackInfoLines
+	$client->[59] = []; # trackInfoContent
+	$client->[60] = {}; # lastID3Selection
+	$client->[61] = []; # blocklines
+	$client->[62] = undef; # homeSelection
+	$client->[63] = undef; # pluginsSelection
+	$client->[64] = undef; # pwd
+	$client->[65] = undef; # currentDirItem
+	$client->[66] = undef; # numberOfDirItems
+	$client->[67] = []; # dirItems
+	$client->[68] =  {}; # lastSelection
+	$client->[69] = undef; # searchSelection
+	$client->[70] = undef; # searchFor
+	$client->[71] = []; # searchTerm
+	$client->[72] = undef; # searchCursor
+	$client->[73] = undef; # lastLetterIndex
+	$client->[74] = undef; # lastLetterDigit
+	$client->[75] = undef; # lastLetterTime
+	$client->[76] = []; # otype
+	$client->[77] = []; # opos
+	$client->[78] = undef; # cpos
+	$client->[79] = undef; # gplay
+	$client->[80] = undef; # syncSelection
+	$client->[81] = []; # syncSelections
+	$client->[82] = undef; # browseMenuSelection
+	$client->[83] = undef; # settingsSelection
+
+	$::d_protocol && msg("New client connected: $id\n");
+	$client->lastirtime(0);
+	$client->lastircode(0);
+	$client->lastircodebytes(0);
+	$client->startirhold(0);
+	$client->epochirtime(0);
+	$client->irrepeattime(0);
+	$client->irtimediff(0);
+
+	$client->id($id);
+	$client->prevwptr(-1);
+	$client->pwd('');  # start browsing at the root MP3 directory
+
+	$client->prevline1('');
+	$client->prevline2('');
+
+	$client->lastircode('');
+
+	$client->lastLetterIndex(0);
+	$client->lastLetterDigit('');
+	$client->lastLetterTime(0);
+
+	$client->playmode("stop");
+	$client->rate(1);
+	$client->lastskip(0);
+
+	$client->currentsong(0);
+	$client->songpos(0);
+	$client->songtotalbytes(0);
+	$client->currentplayingsong("");
+
+	$client->lastchunk(undef);
+
+	$client->readytosync(0);
+
+	$client->currentSleepTime(0);
+	$client->sleepTime(0);
 	
-		$client->id($id);
-		$client->prevwptr(-1);
-		$client->pwd('');  # start browsing at the root MP3 directory
+	$client->htmlstatus("");
+	$client->htmlstatusvalid(0);
 
-		$client->prevline1('');
-		$client->prevline2('');
+	$client->RTT(.5);
 
-		$client->lastircode('');
+	$client->searchCursor(0);
 
-		$client->lastLetterIndex(0);
-		$client->lastLetterDigit('');
-		$client->lastLetterTime(0);
+	$client->vfdbrightness(1);
 
-		$client->playmode("stop");
-		$client->rate(1);
-		$client->lastskip(0);
-	
-		$client->currentsong(0);
-		$client->songpos(0);
-		$client->songtotalbytes(0);
-		$client->currentplayingsong("");
-	
-		$client->lastchunk(undef);
+	$clientHash{$id} = $client;
 
-		$client->readytosync(0);
-
-		$client->currentSleepTime(0);
-		$client->sleepTime(0);
-		
-		$client->htmlstatus("");
-		$client->htmlstatusvalid(0);
-
-		$client->RTT(.5);
-
-		$client->searchCursor(0);
-	
-		$client->vfdbrightness(1);
-
-		$clientHash{$id} = $client;
-		# make sure any preferences this client may not have set are set to the default
-		Slim::Utils::Prefs::checkClientPrefs($client);
-
-	}
-
-	# the rest of this stuff is set each time the client connects, even if we know him already.
-
-	assert($clientHash{$id} == $client);
+	# make sure any preferences this client may not have set are set to the default
+	Slim::Utils::Prefs::checkClientPrefs($client);
 
 	$client->paddr($paddr);
-
-	# skip the rest of this if the client was already known
-	$clientAlreadyKnown && return($client);
 
 	# add the new client all the currently known clients so we can say hello to them later
 	my $clientlist = Slim::Utils::Prefs::get("clients");

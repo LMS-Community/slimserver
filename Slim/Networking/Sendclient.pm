@@ -102,8 +102,6 @@ sub stream {
 
 	my $request_string = "GET $path HTTP/1.0\n\n";
 
-	print "$request_string";
-	
 	$frame .= $request_string;
 
 	my $len = pack('n', length($frame));
