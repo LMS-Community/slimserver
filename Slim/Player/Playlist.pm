@@ -122,7 +122,7 @@ sub removeTrack {
 
 	my @reshuffled;
 	my $counter = 0;
-	foreach my $i (@{shuffleList($client)}) {
+	for my $i (@{shuffleList($client)}) {
 		if ($i < $playlistIndex) {
 			push @reshuffled, $i;
 		} elsif ($i > $playlistIndex) {
@@ -148,7 +148,7 @@ sub removeMultipleTracks {
 	my %songlistentries;
 	if (defined($songlist) && ref($songlist) eq 'ARRAY') {
 
-		foreach my $item (@$songlist) {
+		for my $item (@$songlist) {
 			$songlistentries{$item} = 1;
 		}
 	}
@@ -188,7 +188,7 @@ sub removeMultipleTracks {
 	# new positions, also get an update for the current track, if the 
 	# currently playing track was deleted, try to play the next track 
 	# in the new list
-	foreach my $oldnum (@{shuffleList($client)}) {
+	for my $oldnum (@{shuffleList($client)}) {
 		if ($oldnum == $curtrack) { $getnext=1; }
 		if (exists($oldToNew{$oldnum})) { 
 			push(@reshuffled,$oldToNew{$oldnum});
@@ -230,7 +230,7 @@ sub refreshPlaylist {
 	my $client = shift;
 	my $index = shift;
 	# make sure we're displaying the new current song in the playlist view.
-	foreach my $everybuddy ($client, Slim::Player::Sync::syncedWith($client)) {
+	for my $everybuddy ($client, Slim::Player::Sync::syncedWith($client)) {
 		if ($everybuddy->isPlayer()) {
 			Slim::Buttons::Playlist::jump($everybuddy,$index);
 		}
@@ -343,21 +343,27 @@ sub reshuffle {
 
 		my %albtracks;
 		my %trackToNum;
-		my $i = 0;			
+		my $i  = 0;
+		my $ds = Slim::Music::Info::getCurrentDataStore();
 
-		foreach my $track (@{playList($client)}) {
+		for my $track (@{playList($client)}) {
 
-			my $album = Slim::Utils::Text::matchCase(Slim::Music::Info::album($track)) || $client->string('NO_ALBUM');
+			$track = $ds->objectForUrl($track);
+
+			my $album = Slim::Utils::Text::matchCase($track->album()->title()) || $client->string('NO_ALBUM');
 
 			push @{$albtracks{$album}}, $i;
-			$trackToNum{$track} = $i++;
+
+			$trackToNum{$track->url} = $i++;
 		}
 
 		if ($realsong == -1 && !$dontpreservecurrsong) {
 			$realsong = $listRef->[Slim::Utils::Prefs::clientGet($client,'currentSong')];
 		}
 
-		my $curalbum = Slim::Utils::Text::matchCase(Slim::Music::Info::album(${playList($client)}[$realsong])) || $client->string('NO_ALBUM');
+		my $curtrack = $ds->objectForUrl(${playList($client)}[$realsong]);
+
+		my $curalbum = Slim::Utils::Text::matchCase($curtrack->album()) || $client->string('NO_ALBUM');
 
 		my @albums = keys(%albtracks);
 
@@ -382,19 +388,19 @@ sub reshuffle {
 		@albumorder = Slim::Music::Info::sortByAlbum(@albumorder);
 		$i = 0;
 
-		foreach my $trackname (@albumorder) {
+		for my $trackname (@albumorder) {
 
 			push @shufflelist, $trackToNum{$trackname};
 			$i++
 		}
 
-		foreach my $album (@albums) {
+		for my $album (@albums) {
 
 			my @albumorder = map { ${playList($client)}[$_] } @{$albtracks{$album}};
 
 			@albumorder = Slim::Music::Info::sortByAlbum(@albumorder);
 
-			foreach my $trackname (@albumorder) {
+			for my $trackname (@albumorder) {
 				push @shufflelist, $trackToNum{$trackname};
 			}
 		}
@@ -451,7 +457,7 @@ sub modifyPlaylistCallback {
 		push @syncedclients,$client;
 		my $playlistref = Slim::Player::Playlist::playList($client);
 		my $currsong = (Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Source::currentSongIndex($client)];
-		foreach my $eachclient (@syncedclients) {
+		for my $eachclient (@syncedclients) {
 			if ($saveplaylist) {
 				my $playlistname = "__" . $eachclient->id() . ".m3u";
 				$playlistname =~ s/\:/_/g;

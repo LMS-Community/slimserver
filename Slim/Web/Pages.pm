@@ -1440,7 +1440,7 @@ sub advancedSearch {
 	# Do the actual search
 	my $results = $ds->find('track', \%query, 'title');
 
-	_fillInSearchResults($params, $results, undef, \@qstring);
+	_fillInSearchResults($params, $results, undef, \@qstring, $ds);
 
 	return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 }
@@ -1491,13 +1491,13 @@ sub search {
 		$descend = undef;
 	}
 
-	_fillInSearchResults($params, $results, $descend, []);
+	_fillInSearchResults($params, $results, $descend, [], $ds);
 
 	return Slim::Web::HTTP::filltemplatefile("search.html", $params);
 }
 
 sub _fillInSearchResults {
-	my ($params, $results, $descend, $qstring) = @_;
+	my ($params, $results, $descend, $qstring, $ds) = @_;
 
 	my $player = $params->{'player'};
 	my $query  = $params->{'query'}  || '';
@@ -1564,10 +1564,10 @@ sub _fillInSearchResults {
 
 			if ($type eq 'song') {
 
-				$list_form{'title'}		= Slim::Music::Info::standardTitle(undef, $item);
-				$list_form{'artist'}	= Slim::Music::Info::artist($item);
-				$list_form{'album'}		= Slim::Music::Info::album($item);
-				$list_form{'item'}		= $item->id();
+				$list_form{'title'}	= Slim::Music::Info::standardTitle(undef, $item);
+				$list_form{'artist'}	= $item->artist();
+				$list_form{'album'}	= $item->album();
+				$list_form{'item'}	= $item->id();
 				$list_form{'itempath'}	= $item->url();
 
 			} else {
