@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.34 2004/09/01 00:14:30 dean Exp $
+# $Id: Playlist.pm,v 1.35 2004/09/04 18:17:36 kdf Exp $
 
 # Slim Server Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -180,6 +180,9 @@ sub lines {
 	if (showingNowPlaying($client) || (Slim::Player::Playlist::count($client) < 1)) {
 		return $client->currentSongLines();
 	} else {
+		if ( browseplaylistindex($client) + 1 > Slim::Player::Playlist::count($client)) {
+			browseplaylistindex($client,Slim::Player::Playlist::count($client)-1)
+		}
 		$line1 = sprintf "%s (%d %s %d) ", string('PLAYLIST'), browseplaylistindex($client) + 1, string('OUT_OF'), Slim::Player::Playlist::count($client);
 		$line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, browseplaylistindex($client)));
 		$overlay2 = Slim::Display::Display::symbol('notesymbol');
