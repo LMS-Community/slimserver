@@ -1,5 +1,6 @@
 # ShoutcastBrowser.pm Copyright (C) 2003 Peter Heslin
 # version 3.0, 5 Apr, 2004
+# $Id: ShoutcastBrowser.pm,v 1.5 2004/04/21 07:13:25 kdf Exp $
 #
 # A Slim plugin for browsing the Shoutcast directory of mp3
 # streams.  Inspired by streamtuner.
