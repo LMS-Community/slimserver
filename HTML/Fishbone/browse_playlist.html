@@ -7,12 +7,13 @@
 		[% IF warn %]<div class="nowplaying"><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF not itunes %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]
 		</div>[% END %]
 		[% IF RENAME_WARNING %]<div class="nowplaying"><p><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]</div>[% END %]
-		[% IF titled %]<div class="nowplaying">
-			<table border="0" cellspacing="0" cellpadding="0" width="100%">[% END %]
-				[% IF playlistname %]<tr><form method="get" action="browse.html"><td>[% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %]
-						<input name="newname" value="[% playlistname %]" class="stdedit" size="30">
+		[% IF playlistname %]<div class="nowplaying">
+			<table border="0" cellspacing="0" cellpadding="0" width="100%">
+				<tr><form method="get" action="browse.html"><td width="325">[% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %]
+						<input name="newname" value="[% IF newname %][% newname %][% ELSE %][% playlistname %][% END %]" class="stdedit" size="30">
 						<input type=submit value="[% savebuttonname %]" class="stdclick">
 						<input type=hidden value="[% player %]" name="player">
+						[% IF RENAME_WARNING %]</td><td valign="absmiddle" width="25"><input align="absmiddle" type="checkbox" name="overwrite" class="stdedit"></td><td>[% "CONFIRM_OVERWRITE" | string %][% END %]
 						<input type=hidden name="dir" value="[% dir %]"></td></form></tr>
 				</table>[% END %]
 			[% IF titled %]
@@ -20,8 +21,8 @@
 				<tr><td><a href="browse.html?player=[% player | uri %]&dir=[% dir | uri %]&delete=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></td>
 				<td>&nbsp;&nbsp;<img src="html/pixel.grey.gif" width="1" height="100%" border="0">&nbsp;&nbsp;</td>
 				<td><a href="edit_playlist.html?dir=[% dir | uri %]&player=[% player | uri %]">[% "EDIT_PLAYLIST" | string %]</a></td></tr>
-			</table>
-		</div>[% END %]
+			</table>[% END %]
+		</div>
 		<center><p>[% IF song_count %][% "LIBRARY_CONTAINS" | string %] <B>[% song_count %]</B> [% "BY" | string %] <B>[% artist_count %]</B>[% END %]</p></center>
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			<tr><td><a href="browse.html?player=[% player | uri %]&dir=__playlists">[% "SAVED_PLAYLISTS" | string %]</a>

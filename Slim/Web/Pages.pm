@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.91 2004/07/01 05:10:33 dean Exp $
+# $Id: Pages.pm,v 1.92 2004/07/24 02:05:00 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -204,7 +204,7 @@ sub browser {
 
 			$::d_http && msg("renaming $fulldir to $newfullname\n");
 
-			if ($newfullname ne $fulldir && !-e Slim::Utils::Misc::pathFromFileURL($newfullname) && rename(Slim::Utils::Misc::pathFromFileURL($fulldir), Slim::Utils::Misc::pathFromFileURL($newfullname))) {
+			if ($newfullname ne $fulldir && (!-e Slim::Utils::Misc::pathFromFileURL($newfullname) || defined $params->{'overwrite'}) && rename(Slim::Utils::Misc::pathFromFileURL($fulldir), Slim::Utils::Misc::pathFromFileURL($newfullname))) {
 
 				Slim::Music::Info::clearCache($container);
 				Slim::Music::Info::clearCache($fulldir);
@@ -445,6 +445,9 @@ sub browser_addtolist_done {
 			if ($filesort) {
 				$list_form{'title'}  = Slim::Music::Info::fileName($item);
 			} else {
+				my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
+				$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
+				$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
 				$list_form{'title'}  = Slim::Music::Info::standardTitle(undef, $item);
 				$list_form{'artist'} = Slim::Music::Info::artist($item);
 				$list_form{'album'}  = Slim::Music::Info::album($item);
@@ -598,6 +601,7 @@ sub status {
 			$params->{'sleep'} = $sleep < 0 ? 0 : int($sleep/60);
 		}
 		
+		$params->{'fixedVolume'} = !Slim::Utils::Prefs::clientGet($client, 'digitalVolumeControl');
 		$params->{'player'} = $client->id();
 	}
 	

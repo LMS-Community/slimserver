@@ -42,8 +42,9 @@
     <p>
     <form method="get" action="browse.html">
       [% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %] 
-      <input name="newname" value="[% playlistname %]" size=20>
+      <input name="newname" value="[% IF newname %][% newname %][% ELSE %][% playlistname %][% END %]" size=20>
       <input name="submit" type=submit value="[% savebuttonname %]">
+      [% IF RENAME_WARNING %]<input align="absmiddle" type="checkbox" name="overwrite">[% "CONFIRM_OVERWRITE" | string %][% END %]
       <input type=hidden value="[% player %]" name="player">
       <input type=hidden name="dir" value="[% dir %]">
     </form>

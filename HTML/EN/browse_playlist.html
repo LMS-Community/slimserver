@@ -17,9 +17,11 @@
 
 	[% IF RENAME_WARNING %]<p><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]<p><hr>[% END %]
 	
-	[% IF playlistname %]<p><form method="get" action="browse.html">[% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %] <input name="newname" value="[% playlistname %]" size=40>
+	[% IF playlistname %]<p><form method="get" action="browse.html">[% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %] 
+			<input name="newname" value="[% IF newname %][% newname %][% ELSE %][% playlistname %][% END %]" size=40>
 			<input type=submit value="[% savebuttonname %]"><input type=hidden value="[% player %]" name="player">
 			<input type=hidden name="dir" value="[% dir %]"></form>
+			[% IF RENAME_WARNING %]<input align="absmiddle" type="checkbox" name="overwrite">[% "CONFIRM_OVERWRITE" | string %][% END %]
 	[% END %]
 	
 	[% IF titled %]<p><a href="browse.html?player=[% player | uri %]&dir=[% dir | uri %]&delete=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></p>[% END %]
