@@ -1,5 +1,5 @@
 # RssNews Ticker v1.0
-# $Id: RssNews.pm,v 1.4 2004/11/05 23:41:10 dave Exp $
+# $Id: RssNews.pm,v 1.5 2004/11/05 23:57:39 dave Exp $
 # Copyright (c) 2004 Slim Devices, Inc. (www.slimdevices.com)
 
 # Based on BBCTicker 1.3 which had this copyright...
@@ -85,7 +85,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Prefs;
 
-$VERSION = substr(q$Revision: 1.4 $,10);
+$VERSION = substr(q$Revision: 1.5 $,10);
 my %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
@@ -301,8 +301,8 @@ sub updateFeedNames {
 
 sub initUserAgent {
     my $proxy = Slim::Utils::Prefs::get('webproxy');
-    
-    $ua = LWP::UserAgent->new;
+    # set parse_head to 0 so news feeds which claim to be HTML do not cause HeadParser.pm not to be found. (i.e. Rolling Stones Music News)
+    $ua = LWP::UserAgent->new('parse_head' => 0);
     $ua->timeout(5);
     if ($proxy) {
         $ua->proxy('http', "http://$proxy");
