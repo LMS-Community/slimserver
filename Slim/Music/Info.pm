@@ -135,7 +135,7 @@ sub init {
 	$elemstring = (join '|', map { uc $_ } 
 		keys %{Slim::DataStores::DBI::Track->attributes()},
 		$ncElemstring,
-		"ARTIST|ALBUM|GENRE|ALBUMSORT|ARTISTSORT|DISC|DISCC"
+		"ARTIST|COMPOSER|CONDUCTOR|BAND|ALBUM|GENRE|ALBUMSORT|ARTISTSORT|DISC|DISCC"
 	);
 
 	#. "|VOLUME|PATH|FILE|EXT" #file data (not in infoCache)
@@ -865,6 +865,18 @@ sub infoHash {
 		if ($track->artist()) {
 			$cacheEntryHash->{"ARTIST"}     = $track->artist()->name();
 			$cacheEntryHash->{"ARTISTSORT"} = $track->artist()->namesort();
+		}
+
+		for my $contributorType (qw(COMPOSER CONDUCTOR BAND)) {
+
+			# $contributor must be in array context, otherwise
+			# we'll get an iterator.
+			my $method        = lc($contributorType);
+			my ($contributor) = $track->$method();
+
+			if ($contributor) {
+				$cacheEntryHash->{$contributorType} = $contributor->name();
+			}
 		}
 
 		if ($track->genre()) {
