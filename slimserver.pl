@@ -21,8 +21,11 @@ use strict;  # _NOPERL2EXE_
 
 package PerlSvc;
 
-our $Name = 'slimsvc';
-our $DisplayName = 'SlimServer';
+our %Config = (
+	DisplayName => 'SlimServer',
+	Description => "Slim Devices' SlimServer Music Server",
+	ServiceName => "slimsvc",
+);
 
 sub Startup {
 
@@ -38,8 +41,18 @@ sub Startup {
     }
 }
 
+
 sub Install {
-    # add your additional install messages or functions here
+	my($Username,$Password);
+    Getopt::Long::GetOptions(
+        'username=s' => \$Username,
+        'password=s' => \$Password,
+    );
+
+    if ((defined $Username) && ((defined $Password) && length($Password) != 0)) {
+        $Config{UserName} = $Username;
+        $Config{Password} = $Password;
+    }
 }
 
 sub Remove {
@@ -48,7 +61,7 @@ sub Remove {
 
 sub Help {
     # add your additional help messages or functions here
-    $DisplayName . $Name;
+    $Config{DisplayName};
 }
 
 package main;
