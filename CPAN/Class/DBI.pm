@@ -509,19 +509,23 @@ sub _attribute_exists {
 my %Live_Objects;
 my $Init_Count = 0;
 
+sub _live_object_key {
+	my ($class, $data) = @_;
+	my @primary_columns = $class->primary_columns;
+
+	# no key unless all PK columns are defined
+	return "" unless @primary_columns == grep defined $data->{$_}, @primary_columns;
+
+	# create single unique key for this object
+	return join "\030", ref($class)||$class, map { $_ . "\032" . $data->{$_} }
+		       sort @primary_columns;
+}
+
 sub _init {
 	my $class = shift;
 	my $data = shift || {};
 	my $obj;
-	my $obj_key = "";
-
-	my @primary_columns = $class->primary_columns;
-	if (@primary_columns == grep defined, @{$data}{@primary_columns}) {
-
-		# create single unique key for this object
-		$obj_key = join "|", $class, map { $_ . '=' . $data->{$_} }
-			sort @primary_columns;
-	}
+	my $obj_key = $class->_live_object_key($data);
 
 	unless (defined($obj = $Live_Objects{$obj_key})) {
 
@@ -548,11 +552,7 @@ sub purge_dead_from_object_index {
 
 sub remove_from_object_index {
 	my $self            = shift;
-	my @primary_columns = $self->primary_columns;
-	my %data;
-	@data{@primary_columns} = $self->get(@primary_columns);
-	my $obj_key = join "|", ref $self, map $_ . '=' . $data{$_},
-		sort @primary_columns;
+	my $obj_key = $self->_live_object_key($self);
 	delete $Live_Objects{$obj_key};
 }
 
