@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Text;
 
-# $Id: Text.pm,v 1.20 2004/09/02 06:15:35 kdf Exp $
+# $Id: Text.pm,v 1.21 2004/09/02 07:40:51 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -465,8 +465,6 @@ sub validateChar {
 	return cleanString(Slim::Display::Display::subString($char,0,1),$charsRef);
 }
 
-
-
 sub exitInput {
 	my ($client,$exitType) = @_;
 	my $callbackFunct = Slim::Buttons::Common::param($client,'callback');
@@ -507,6 +505,11 @@ sub moveCursor {
 	}
 	my $rightIndex = Slim::Buttons::Common::param($client,'rightIndex');
 	my $charsRef = Slim::Buttons::Common::param($client,'charsRef');
+	if (!defined $charsRef) {
+		# server will crash if no charsRef from here.  
+		#This can happen if there is an unpredicted exit from this mode
+		return;
+	}
 	my $charIndex;
 	if ($cursorPos == $valueLen) {
 		#add right arrow char to end of string (if defined and $addChar set)
