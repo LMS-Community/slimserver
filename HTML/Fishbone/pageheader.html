@@ -44,7 +44,7 @@ function chooseBrowser(value)
 		url="{webroot}browse.html?";
 		break
 	&rbrc;
-	setCookie("Slimp3-browserPage",url);
+	setCookie("Slimd-Browserpage",url);
 	parent.browser.location = url + '&player={%player}';
 &rbrc;
 -->
@@ -72,7 +72,7 @@ function chooseBrowser(value)
 	[IFN nofolder]<OPTION [IF browse]selected[/IF] value="song">[S BROWSE_MUSIC_FOLDER]</OPTION>[/IFN]
 	</SELECT> for 
 	<input type=text class="stdedit" name="query" value="{query}" size="20">
-	<input type=hidden value="{%player}" name="player">
+	<input type=hidden value="{player}" name="player">
 	[IF nofolder]<input type=hidden value="1" name="nofolder">[/IF]</p><nobr></center></td></FORM>
 	</table></div>
 	[IF newVersion]<br>{newVersion}<br>[/IF]
