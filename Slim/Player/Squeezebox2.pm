@@ -416,4 +416,8 @@ sub reconnect {
 	$client->visualizer();
 }
 
+sub requestStatus {
+	shift->sendFrame('stat');
+}
+
 1;

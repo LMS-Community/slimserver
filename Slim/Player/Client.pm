@@ -1174,6 +1174,24 @@ sub setPref {
 	Slim::Utils::Prefs::clientSet(@_);
 }
 
+sub masterOrSelf {
+	Slim::Player::Sync::masterOrSelf(@_)
+}
+
+sub requestStatus {
+}
+
+sub contentTypeSupported {
+	my $client = shift;
+	my $type = shift;
+	foreach my $format ($client->formats()) {
+		if ($type && $type eq $format) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
 # data accessors
 
 sub id {

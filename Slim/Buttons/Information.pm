@@ -274,9 +274,11 @@ sub mainExitHandler {
 
 		if ($nextmenu eq catdir('main','player')) {
 			my @nextList = @player_list;
-			push @nextList, 'PLAYER_SIGNAL_STRENGTH' if defined($client->signalStrength());
+			if (defined($client->signalStrength())) {
+				push @nextList, 'PLAYER_SIGNAL_STRENGTH';
+				Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&updateSignalStrength);
+			}
 			$nextParams{'listRef'} = \@nextList;
-			Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&updateSignalStrength);
 		}
 
 		Slim::Buttons::Common::pushModeLeft($client, "INPUT.List", \%nextParams);
@@ -312,10 +314,8 @@ sub setMode {
 sub updateSignalStrength {
 	my $client = shift;				
 
-	# send blank i2cc frame to ensure we get a recent STAT update from the client
-	# and thus a real time signal_strength update
+	$client->requestStatus();
 	
-	$client->sendFrame('i2cc');
 	$client->update();
 	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&updateSignalStrength);
 }

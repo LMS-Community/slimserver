@@ -163,7 +163,7 @@ sub quickstart {
 	if ($fullness > 10 * 1024) {
 		$client->resume();
 	} else {
-		stream($client, 't');
+		$client->requestStatus();
 		Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&quickstart);
 	}
 }
@@ -748,4 +748,7 @@ sub treble {
 	return $treble;
 }
 
+sub requestStatus {
+	shift->sendFrame('i2cc');
+}
 1;

@@ -1108,7 +1108,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 SETUP_GROUP_MENUITEMS
 	DE	Anpassung des Player-Hauptmenüs
 	DK	Tilpas hovedmenuen
-	EN	Home Menu Customization
+	EN	Home Menu
 	ES	Personalización de Menú de Inicio
 	FR	Personnalisation du Menu principal
 	JP	ホーム メニュー カスタマイズ
