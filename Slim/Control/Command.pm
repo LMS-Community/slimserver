@@ -663,7 +663,14 @@ sub execute {
 			my $method = $1;
 			my $track  = $ds->objectForUrl(Slim::Player::Playlist::song($client));
 
-			$p1 = $track->$method() || 0;
+			if ($p0 eq 'title') {
+
+				$p1 = Slim::Music::Info::getCurrentTitle($track->url());
+
+			} else {
+
+				$p1 = $track->$method() || 0;
+			}
 
 		} elsif ($p0 eq "path") {
 
@@ -1338,11 +1345,12 @@ sub execute {
 
  				if (Slim::Player::Playlist::song($client)) { 
 					my $track = $ds->objectForUrl(Slim::Player::Playlist::song($client));
- 					my $dur = $track->secs() if $track;
+ 					my $dur   = $track->secs() if $track;
+
  					if ($dur) {
- 				    	push @returnArray, "rate:".Slim::Player::Source::rate($client); #(>1 ffwd, <0 rew else norm)
- 		    			push @returnArray, "time:".Slim::Player::Source::songTime($client);
- 		    			push @returnArray, "duration:".$dur;
+						push @returnArray, "rate:".Slim::Player::Source::rate($client); #(>1 ffwd, <0 rew else norm)
+						push @returnArray, "time:".Slim::Player::Source::songTime($client);
+						push @returnArray, "duration:".$dur;
  					}
  				}
  				
