@@ -10,15 +10,14 @@
 #
 package Slim::Player::HTTP;
 
-@ISA = ("Slim::Player::Client");
+use strict;
+use vars qw(@ISA);
+use Slim::Player::Client;
+
+@ISA = qw(Slim::Player::Client);
 
 sub new {
-	my (
-		$class,
-		$id,
-		$paddr,			# sockaddr_in
-		$tcpsock
-	) = @_;
+	my ($class, $id, $paddr, $tcpsock) = @_;
 	
 	my $client = Slim::Player::Client->new($id, $paddr);
 
@@ -34,47 +33,27 @@ sub init {
 	$client->startup();
 }
 
-sub update {
-}
-
-sub isPlayer { return 0; }
-
-sub power {	return 1; }
-
-sub stop { return 1; }
-sub play { return 1; }
-sub pause { return 1; }
-sub playout { return 1; }
-sub resume { return 1;}
-
-sub volume {
-	return 1;
-}
-
-sub model {
-	return 'http';
-}
-
-sub fade_volume {
-	return 1;
-}
-
-sub bufferFullness {
-	return 0;
-}
-
 sub bytesReceived {
 	my $client = shift;
 	return @_ ? $client->songBytes(shift) : $client->songBytes();
 }
 
-sub formats {
-	return ('mp3');
-}
-
-#dummy methods
-sub vfdmodel { return 'http';}
-sub vfd { return undef;}
-sub decoder { return 'http';}
+# dummy methods
+sub update		{ }
+sub isPlayer		{ 0 }
+sub power 	   	{ 1 }
+sub stop		{ 1 }
+sub play		{ 1 }
+sub pause		{ 1 }
+sub playout		{ 1 }
+sub resume		{ 1 }
+sub volume		{ 1 }
+sub fade_volume		{ 1 }
+sub bufferFullness	{ 0 }
+sub formats		{ 'mp3' }
+sub model		{ 'http' }
+sub decoder		{ 'http' }
+sub vfdmodel		{ 'http' }
+sub vfd			{ undef }
 
 1;
