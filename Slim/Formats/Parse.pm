@@ -275,12 +275,13 @@ sub parseCUE {
 	# If we can't get $lastpos from the cuesheet, try and read it from the original file.
 	if (!$lastpos) {
 
-		my $track = $ds->updateOrCreate({
-			'url'        => $filename,
-			'readTags'   => 1,
-		});
+		# This needs more thought.
+		#my $track = $ds->updateOrCreate({
+		#	'url'        => $filename,
+		#	'readTags'   => 1,
+		#});
 
-		$lastpos = $secs = $track->secs();
+		# $lastpos = $secs = $track->secs();
 
 		$::d_parse && Slim::Utils::Misc::msg("Couldn't get duration of $filename\n") unless $lastpos;
 	}
