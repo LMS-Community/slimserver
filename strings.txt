@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.152 2004/12/07 20:19:32 dsully Exp $
+# $Id: strings.txt,v 1.153 2004/12/08 06:40:49 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1267,7 +1267,7 @@ SETUP_FORMATSLIST_CHANGE
 SETUP_FORMATSLIST_MISSING_BINARY
 	DE	Ausführbare Datei wurde nicht gefunden:
 	EN	Required binary was not found:
-	EL	El ejecutable reuqerido no ha sido encontrado:
+	ES	El ejecutable reuqerido no ha sido encontrado:
 	FR	Binaire introuvable :
 	SE	Programmet kunde inte hittas:
 
@@ -5412,6 +5412,9 @@ WAV
 
 FLC
 	EN	FLAC
+
+FEC
+	EN	FLAC with embedded CUEsheet
 
 OGG
 	EN	Ogg Vorbis
