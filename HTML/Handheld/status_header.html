@@ -8,7 +8,7 @@
 				[% IF player_chooser_list %]
 					<form method="get" action="[% webroot %]status.html">[% "CURRENT_PLAYER" | string %]
 						<select name="player">[% player_chooser_list %]</select>
-						<input class="stdclick" type="submit" value="Change">
+						<input class="stdclick" type="submit" value="[% "CHANGE" | string %]">
 					</form>
 				[% ELSE %]
 					[% IF sync %][% "SYNCHRONIZED_WITH" | string %] [% sync %][% END %]
