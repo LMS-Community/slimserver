@@ -35,7 +35,7 @@ function updateHome() {
 function updateHome_handler(req, url) {
 	resp = req.responseXML;
 	playerlist = resp.getElementsByTagName("playerlist")[0];
-	players = playerlist.getElementsByTagName("a");
+	players = resp.getElementsByTagName("player");
 	playersel = document.getElementById("playersel");
 
 	if (players.length == 1) {

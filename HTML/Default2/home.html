@@ -40,26 +40,26 @@
 <p class="sectiontitle"><img src="html/images/sub_h_browse_music.gif" alt="" height="13"></p>
 <ul class="homelist">
  [% IF additionalLinks.browse ; FOREACH link = additionalLinks.browse %]
- <li>&#149; <a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a></li>
+ <li>&#149; <a onclick="parent.browseurl(&quot;[% link.value %]&quot;)">[% link.key | string %]</a></li>
  [% END ; END %]
 </ul>
 
 <p class="sectiontitle"><img src="html/images/sub_h_search_music.gif" alt="" height="13"></p>
 <ul class="homelist">
  [% IF additionalLinks.search ; FOREACH key = additionalLinks.search.keys %]
- <li>&#149; <a href="[% additionalLinks.search.$key %]player=[% player | uri %]">[% key | string %]</a></li>
+ <li>&#149; <a onclick="parent.browseurl(&quot;[% additionalLinks.search.$key %]&quot;)">[% key | string %]</a></li>
  [% END ; END %]
 </ul>
 
 [% IF not nosetup %]
 <p class="sectiontitle"><img src="html/images/sub_h_settings.gif" alt="" height="13"></p>
 <ul class="homelist">
- [% IF not noserver %]<li>&#149; <a href="setup.html?page=server&amp;player=[% player | uri %]">[% "SERVER_SETTINGS" | string %]</a></li>[% END %]
+ [% IF not noserver %]<li>&#149; <a onclick="parent.browseurl('setup.html?page=server')">[% "SERVER_SETTINGS" | string %]</a></li>[% END %]
 
  [% player_list %]
 
  [% IF additionalLinks.settings ; FOREACH key = additionalLinks.settings.keys %]
-  <li>&#149; <a href="[% additionalLinks.settings.$key %]player=[% player | uri %]">[% key | string %]</a></li>
+  <li>&#149; <a onclick="parent.browseurl(&quot;[% additionalLinks.settings.$key %]&quot;)">[% key | string %]</a></li>
  [% END ; END %]
 </ul>
 [% END %]
@@ -68,7 +68,7 @@
 <p class="sectiontitle"><img src="html/images/sub_h_plugins.gif" alt="" height="13"></p>
 <ul class="homelist">
  [% FOREACH key = additionalLinks.plugins.keys %]
- <li>&#149; <a href="[% additionalLinks.plugins.$key %]player=[% player | uri %]">[% key | string %]</a></li>
+ <li>&#149; <a onclick="parent.browseurl(&quot;[% additionalLinks.plugins.$key %]&quot;)">[% key | string %]</a></li>
  [% END %]
 </ul>
 [% END %]
@@ -76,7 +76,7 @@
 <p class="sectiontitle"><img src="html/images/sub_h_help.gif" alt="" height="13"></p>
 <ul class="homelist">
  [% IF additionalLinks.help ; FOREACH link = additionalLinks.help %]
- <li>&#149; <a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a></li>
+ <li>&#149; <a onclick="parent.browseurl(&quot;[% link.value %]&quot;)">[% link.key | string %]</a></li>
  [% END ; END %]
 </ul>
 

@@ -30,9 +30,7 @@ function maybeDoneLoading() {
 
 function hideLoadingScreen() {
 	document.getElementById("loading").style.display = "none";
-	document.getElementById("browsemode").style.display = "inline";
 	document.getElementById("playersel").style.display = "inline";
-	//document.getElementById("browseframe").style.display = "block";
 }
 
 function scrollfix(divname, scrollbase) {

@@ -1,9 +1,14 @@
 #outerplaylist {
-	height: expression(document.documentElement.clientHeight - 270);
+	height: expression(document.documentElement.clientHeight - 184);
+	width: expression(document.documentElement.clientWidth / 2 - 12);
 }
 
 html, body {
 	overflow: hidden;
+}
+
+body {
+	behavior:url("html/csshover.htc");
 }
 
 #loading, #outerbrowse {
@@ -21,3 +26,4 @@ html, body {
 #statusmain {
 	width: expression(document.documentElement.clientWidth / 2 - 12);
 }
+

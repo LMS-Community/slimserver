@@ -8,20 +8,13 @@ body, table, input, select, p, li, .formfield, .button {
 	color: #444;
 }
 
+body {
+	behavior: url("html/csshover.htc"); 
+}
+
 .exlisting, p, ol, ul, dl, dd, td, .stdclick, .stdedit, .exboldlisting, th, h3, h4, h5 {
         color: #666;
 }
-
-#test {
-	width: 1px;
-	height: 100%;
-	top: 0;
-	left: 75%;
-	position: absolute;
-	background: red;
-	z-index: 100;
-}
-	
 
 body {
 	background: white;
@@ -125,6 +118,10 @@ a {
 }
 
 a:hover {
+	text-decoration: underline;
+}
+
+.fakehover {
 	text-decoration: underline;
 }
 
@@ -404,7 +401,6 @@ a:hover {
 	position: absolute;
 	left: 0px;
 	top: 63px;
-	font-size: 9px;
 	height: 13px;
 	width: 138px;
 	background: url(html/images/nav_spacer.gif);
@@ -440,9 +436,6 @@ a:hover {
 }
 
 #repeatoff.active	{ background: url(html/images/modebutton.gif) -58px -13px no-repeat;	}
-
-
-
 
 #shufflebuttons {
 	position: absolute;
@@ -531,33 +524,37 @@ a:hover {
 	position: absolute;
 	top: 184px;
 	left: 50%;
+	padding-right: 8px;
 	right: 0;
 	bottom: 0;
+	margin-left: 4px; 
 	overflow: auto;
-	outline: 2px solid red;
 }
 
 #playlist {
+	position: absolute;
+	left: 0;
+	top: 0;
 	width: 100%;
 	color: black;
 	border-collapse: collapse;
-	overflow: hidden;
+	padding: 0;
 }
 
 .playlistitem {
-	padding: 0 0 0 24px;
+	padding: 0 0 0 20px;
 	margin: 0;
 }
 
 .playlistbuttons {
 	white-space: nowrap;
 	width: 63px;
-	padding-right: 8px;
+	margin-right: 8px;
 }
 
 .playlistbuttons img {
 	margin: 0;
-	padding: 3px 4px;
+	padding: 4px 4px;
 	border: 0;
 	cursor: pointer;
 }
@@ -600,11 +597,11 @@ table {
 	width: 100%;
 }
 
-.odd {
+.odd, .odd td {
 	background-color: #ececec;
 }
 
-.even {
+.even, .even td {
 	background-color: #ffffff;
 }
 
@@ -645,20 +642,25 @@ table {
 
 #pagehead1 {
 	background: #333333;
-	height: 57px;	
-	padding: 10px 0;	
+	height: 67px;	
+	padding: 10px 4px 0 8px;	
+	width: expression(document.documentElement.clientWidth - 12);
 	margin: 0;
-	width: 100%;
 }
 
 #pagehead1 a {
-	position: absolute;
-	left: 16px;
+	margin: 0 0 0 8px;
 }
+
 #pagehead1 p {	
+	position: absolute;
+	top: 37px;
+	left: 8px;
+	right: 4px;
+	width: expression(document.documentElement.clientWidth - 12);
 	background: #737373;
-	margin: 27px 4px 0px 8px;	
-	padding: 7px 0;	
+	padding: 7px 0 7px 0;	
+	margin: 0;
 	height: 26px;
 }
 

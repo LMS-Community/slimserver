@@ -1,3 +1,7 @@
-<li>&#149; <a href="setup.html?page=player&amp;playerid=[% playerid | uri %]" playerid="[% playerid | uri %]" playername="[% playername | html %]">
+[% IF page == 'xml' %]
+ <player playerid="[% playerid | uri %]" playername="[% playername | html %]"/>
+[% ELSE %]
+<li>&#149; <a onclick="parent.browseurl(&quot;setup.html?page=player&amp;playerid=[% playerid | uri %]&quot;)">
 [% "PLAYER_SETTINGS" | string %][% IF playername %] [% "FOR" | string %] [% playername %][% END %]
 </a></li>
+[% END %]

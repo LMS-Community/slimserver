@@ -1,4 +1,4 @@
-<playlistitem[% IF currentsong %] currentsong="currentsong"[% END %]>
+<playlistitem[% IF currentsong %] currentsong="currentsong"[% END ; IF album == noAlbum %] noalbum="1"[% END ; IF artists.count == 1 and artists == noArtist %] noartist="1"[% END %]>
  <title>[% title | html %]</title>
  <artists>
   [% WHILE (artist = artists.next) %]<artist id="[% artist.id %]">[% artist.name | html %]</artist>[% END %]

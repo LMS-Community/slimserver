@@ -10,6 +10,7 @@ var cansave = 0;
 var playlistinfo = "";
 
 var BY = ' by ';
+var FROM = ' from ';
 
 //////////////////////////////////////
 //                                  //
@@ -36,6 +37,12 @@ function updatePlaylist_handler(req, url) {
 
 	for (i = 0; i < playlistnodes.length; i++) {
 		newitem = new Object();
+
+		for (j = 0; j < playlistnodes[i].attributes.length; j++) {
+			plni = playlistnodes[i].attributes[j];
+			newitem[plni.name] = plni.value;
+		}
+
 		iv = playlistnodes[i].getElementsByTagName("title")[0];
 		if (iv && iv.firstChild) newitem.title = iv.firstChild.data; else newitem.title = "";
 		iv = playlistnodes[i].getElementsByTagName("artist")[0];
@@ -52,8 +59,14 @@ function updatePlaylist_handler(req, url) {
 	else baselength = newPlaylist.length;
 
 	for (i = 0; i < baselength; i++) {
-		newHTML = '<a onclick="doSelect(event)" class="plstitle">' + newPlaylist[i].title +
-			'</a>' + BY + '<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
+		newHTML = '<a onclick="doSelect(event)" class="plstitle">' + newPlaylist[i].title + '</a>'
+		if (!newPlaylist[i].noalbum) {
+			newHTML += FROM + '<a onclick="doAlbum(event)">' + newPlaylist[i].album + '</a>';
+		}
+		if (!newPlaylist[i].noartist) {
+			newHTML += BY + '<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
+		}
+
 		if (listbox.rows[i].childNodes[0].innerHTML != newHTML) {
 			listbox.rows[i].childNodes[0].innerHTML = newHTML;
 		}
@@ -61,23 +74,12 @@ function updatePlaylist_handler(req, url) {
 		if (listbox.rows[i].url != newPlaylist[i].url) {
 			listbox.rows[i].url = newPlaylist[i].url;
 		}
-
-		if (i == csIndex) {
-			listbox.rows[i].className = "currentsong";
-		} else {
-			listbox.rows[i].className = "";
-		}
 	}
 
 	if (playlist.length < newPlaylist.length) {
 		for (i = baselength; i < newPlaylist.length; i++) {
 			theTR = listbox.insertRow(-1);
 			theTR.url = newPlaylist[i].url;
-			if (i == csIndex) {
-				theTR.className = "currentsong";
-			} else {
-				theTR.className = "";
-			}
 
 			buttonsTD = document.createElement('td');
 			buttonsTD.innerHTML = '<img onclick="doMoveDown(event)" src="html/images/playlist/down.gif"/>' +
@@ -86,8 +88,14 @@ function updatePlaylist_handler(req, url) {
 			buttonsTD.className = "playlistbuttons";
 
 			titleTD = document.createElement('td');
-			titleTD.innerHTML = '<a onclick="doSelect(event)" class="plstitle">' + newPlaylist[i].title +
-				'</a>' + BY + '<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
+			titleTD.innerHTML = '<a onclick="doSelect(event)" class="plstitle">'+newPlaylist[i].title+'</a>';
+			if (!newPlaylist[i].noalbum) {
+				titleTD.innerHTML += FROM + '<a onclick="doAlbum(event)">' + newPlaylist[i].album + '</a>';
+			}
+			if (!newPlaylist[i].noartist) {
+				titleTD.innerHTML += BY + '<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
+			}
+
 			titleTD.className = "playlistitem";
 
 			theTR.appendChild(titleTD);
@@ -119,11 +127,15 @@ function highlightCurrentSong() {
         listbox = document.getElementById("playlist");
 	for (i = 0; i < songCount; i++) {
 		if (listbox.rows[i]) {
-			listbox.rows[i].className = "";
+			if (i % 2) {
+				listbox.rows[i].className = "even";
+			} else {
+				listbox.rows[i].className = "odd";
+			}
 		}
 	}
         if (currentSong > 0 && listbox.rows[currentSong - 1]) {
-                listbox.rows[currentSong - 1].className = "currentsong";
+                listbox.rows[currentSong - 1].className += " currentsong";
         }
 }
 
