@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.7 2003/10/04 15:30:40 kdf Exp $
+#	$Id: Information.pm,v 1.8 2003/10/09 04:19:50 dean Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -47,7 +47,7 @@ use Slim::Utils::Strings qw(string);
 use strict;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.7 $,10);
+$VERSION = substr(q$Revision: 1.8 $,10);
 
 my @main_list = qw(
     library
@@ -71,6 +71,15 @@ my @player_list = (
     [ 'PLAYER_IP',    'string',  1,  sub { shift->ip } ],
     [ 'PLAYER_PORT',  'string',  1,  sub { shift->port } ],
     [ 'PLAYER_MAC',   'string',  1,  sub { uc(shift->macaddress) } ],
+    [ 'PLAYER_SIGNAL_STRENGTH', 'string', 1, sub { 
+    	my $client = shift;
+    	if ($client->model eq 'squeezebox') { 
+    		return $client->signalStrength();
+    	}
+    	else { 
+    		return undef;
+    	}
+    } ],
 );
 
 my @server_list = (
@@ -135,47 +144,45 @@ my %context;
 
 my %functions = (
     'left' => sub {
-	my $client = shift;
-
-	Slim::Buttons::Common::popModeRight($client);
-    },
+		my $client = shift;
+	
+		Slim::Buttons::Common::popModeRight($client);
+	},
     'right' => sub {
-	my $client = shift;
-	my $nextmode = find_nextmode($client);
-
-	if ($nextmode && ref($menu{$nextmode}->{list})) {
-	    Slim::Buttons::Common::pushModeLeft(
-		$client,
-		"plugins-information-$nextmode",
-	    );
-	}
-	else {
-	    Slim::Display::Animation::bumpRight($client);
-	}
+		my $client = shift;
+		my $nextmode = find_nextmode($client);
+	
+		if ($nextmode && ref($menu{$nextmode}->{list})) {
+			Slim::Buttons::Common::pushModeLeft(
+			$client,
+			"plugins-information-$nextmode",
+			);
+		}
+		else {
+			Slim::Display::Animation::bumpRight($client);
+		}
     },
     'up' => sub {
-	my $client = shift;
-	my $ref = $context{$client};
-
-	$ref->{$ref->{current}} = Slim::Buttons::Common::scroll(
-	    $client,
-	    -1,
-	    ($#{$ref->{list}} + 1),
-	    $ref->{$ref->{current}},
-	);
-	$client->update();
+		my $client = shift;
+		my $ref = $context{$client};
+		$ref->{$ref->{current}} = Slim::Buttons::Common::scroll(
+			$client,
+			-1,
+			($#{$ref->{list}} + 1),
+			$ref->{$ref->{current}},
+		);
+		$client->update();
     },
     'down' => sub {
-	my $client = shift;
-	my $ref = $context{$client};
-
-	$ref->{$ref->{current}} = Slim::Buttons::Common::scroll(
-	    $client,
-	    1,
-	    ($#{$ref->{list}} + 1),
-	    $ref->{$ref->{current}},
-	);
-	$client->update();
+		my $client = shift;
+		my $ref = $context{$client};
+		$ref->{$ref->{current}} = Slim::Buttons::Common::scroll(
+			$client,
+			1,
+			($#{$ref->{list}} + 1),
+			$ref->{$ref->{current}},
+		);
+		$client->update();
     },
 );
 
@@ -386,8 +393,8 @@ sub getDisplayName {
 __DATA__
 
 PLUGIN_INFORMATION_MODULE_NAME
-	EN	Slim Server Information
-	FR	Infos Slim Server
+	EN	Information
+	FR	Infos
 
 PLUGIN_INFORMATION_MENU_PLAYER
 	EN	Player Information
@@ -429,6 +436,9 @@ PLUGIN_INFORMATION_PLAYER_MAC
 	EN	Player MAC Address
 	FR	Adresse MAC lecteur
 
+PLUGIN_INFORMATION_PLAYER_SIGNAL_STRENGTH
+	EN	Wireless Signal Strength
+
 PLUGIN_INFORMATION_VERSION
 	EN	Server Version
 	FR	Version serveur
@@ -452,7 +462,7 @@ PLUGIN_INFORMATION_SERVER_HTTP
 PLUGIN_INFORMATION_ALBUMS
 	EN	Total Albums
 	FR	Albums
-
+	
 PLUGIN_INFORMATION_ARTISTS
 	EN	Total Artists
 	FR	Artistes

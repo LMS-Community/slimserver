@@ -136,14 +136,14 @@ sub idle {
 			acceptSocket();
 		} else {
 			processRequest($sockHand);
-			last if ++$tcpReads >= Slim::Utils::Prefs::get("tcpReadMaximum") || Slim::Networking::Protocol::pending();
+			last if ++$tcpReads >= Slim::Utils::Prefs::get("tcpReadMaximum") || main::networkPending();
 		}
 	}
 
 	#send command line interface responses
 	my $tcpWrites = 0;
 	foreach my $sockHand (@$selCanWrite) {
-		last if ++$tcpWrites > Slim::Utils::Prefs::get("tcpWriteMaximum") || Slim::Networking::Protocol::pending();
+		last if ++$tcpWrites > Slim::Utils::Prefs::get("tcpWriteMaximum") || main::networkPending();
 		sendresponse($sockHand);
 	}
 }

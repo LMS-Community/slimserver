@@ -165,6 +165,7 @@ use vars qw(
 		$d_parse
 		$d_paths
 		$d_playlist
+		$d_plugins
 		$d_protocol
 		$d_prefs
 		$d_remotestream
@@ -382,6 +383,7 @@ sub idle {
 	if ($::d_perf) { $to = watchDog($to, "Protocol::idle"); }
 
 	Slim::Networking::Slimproto::idle();
+	if ($::d_perf) { $to = watchDog($to, "Slimproto::idle"); }
 	
 	# handle queued IR activity
 	Slim::Hardware::IR::idle();
@@ -440,6 +442,12 @@ sub idle {
 sub idleStreams {
 	Slim::Networking::Protocol::idle();
 	Slim::Web::HTTP::idleStreams();
+}
+
+sub networkPending {
+	my $slimproto =  Slim::Networking::Slimproto::pending();
+	my $slimp3proto = Slim::Networking::Protocol::pending();
+	return $slimp3proto || $slimproto;
 }
 
 sub showUsage {
@@ -505,6 +513,7 @@ to the console via stderr:
     --d_perf         => Performance information
     --d_parse        => Playlist parsing information
     --d_playlist     => High level playlist and control information
+    --d_plugins      => Show information about plugins
     --d_protocol     => Client protocol information
     --d_prefs        => Preferences file information
     --d_remotestream => Information about remote HTTP streams and playlists
@@ -563,6 +572,7 @@ sub initOptions {
 		'd_perf'			=> \$d_perf,
 		'd_parse'			=> \$d_parse,
 		'd_playlist'		=> \$d_playlist,
+		'd_plugins'			=> \$d_plugins,
 		'd_protocol'		=> \$d_protocol,
 		'd_prefs'			=> \$d_prefs,
 		'd_remotestream'	=> \$d_remotestream,

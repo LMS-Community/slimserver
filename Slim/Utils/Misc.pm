@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.10 2003/10/03 21:42:04 grotus Exp $
+# $Id: Misc.pm,v 1.11 2003/10/09 04:19:51 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -639,23 +639,23 @@ sub isAllowedHost {
 	return 0;
 }
 
+
 sub hostaddr {
 	my @hostaddr = ();
 	my @hostnames;
+	
 	push @hostnames, 'localhost';
 	push @hostnames, hostname();
 	
 	foreach my $hostname (@hostnames) {
+		next if (!$hostname);
+
 		my $host = gethost($hostname);
-		if (!$host) { next; };
-		if ( @{$host->addr_list} > 1 ) 
-		{ 
-			my $i;
-			for my $addr ( @{$host->addr_list} ) {
-				push @hostaddr, inet_ntoa($addr);
-			} 
-		} else {
-			push @hostaddr, inet_ntoa($host->addr);
+
+		next if (!$host);
+		
+		foreach my $addr ( @{$host->addr_list} ) {
+			push @hostaddr, inet_ntoa($addr) if $addr;
 		} 
 	}
 	return @hostaddr;

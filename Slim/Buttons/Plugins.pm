@@ -15,6 +15,7 @@ use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use Slim::Utils::Strings qw (string);
 use Slim::Utils::Prefs;
+use Slim::Utils::Misc;
 
 use FindBin qw($Bin);
 
@@ -106,10 +107,9 @@ sub enabledPlugins {
 	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 	my $pluginlistref = installedPlugins();
     foreach my $item (keys %{$pluginlistref}) {
-    	
-		if (exists $disabledplugins{$item}) { 
-			next;
-		}
+		next if (exists $disabledplugins{$item});
+		next if (!exists $plugins{$item});
+		
 		no strict 'refs';
 		if (exists &{$plugins{$item}->{'module'} . "::enabled"} && 
 			! &{$plugins{$item}->{'module'} . "::enabled"}($client) ) {
@@ -147,12 +147,13 @@ sub read_plugins {
 	
 		eval "require $fullname";
 		if ($@) {
-			warn "Can't require $fullname for Plugins menu: " . $@;
+			$::d_plugins && msg("Can't require $fullname for Plugins menu: " . $@);
 		} else {
 			# load up the localized strings, if available
 			my $strings;
 			eval {$strings = &{$fullname . "::strings"}()};
-			if ($strings) { Slim::Utils::Strings::addStrings($strings); }
+			if (!$@ && $strings) { Slim::Utils::Strings::addStrings($strings); }
+			
 			my $ref = {
 				module => $fullname,
 				name => &{$fullname . "::getDisplayName"}(),
@@ -181,8 +182,12 @@ sub addSetupGroups {
 	foreach my $plugin (enabledPlugins()) {
 		my ($groupRef,$prefRef);
 		eval {($groupRef,$prefRef) = &{"Plugins::${plugin}::setupGroup"}()};
-		if ($groupRef && $prefRef && exists($plugins{$plugin})) {
-			Slim::Web::Setup::addGroup('plugins',$plugin,$groupRef,undef,$prefRef)
+		if ($@) {
+			$::d_plugins && msg("Can't get setup group for plugin $plugin : " . $@);
+		} else {
+			if ($groupRef && $prefRef && exists($plugins{$plugin})) {
+				Slim::Web::Setup::addGroup('plugins',$plugin,$groupRef,undef,$prefRef)
+			}
 		}
 	}
 }

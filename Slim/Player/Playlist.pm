@@ -356,7 +356,7 @@ sub reshuffle {
 			$i=0;
 			my $album=shift(@albums);
 			my @albumorder=map {${playList($client)}[$_]} @{$albtracks{$album}};
-			@albumorder=Slim::Music::Info::sortByTrack(@albumorder);
+			@albumorder=Slim::Music::Info::sortByAlbum(@albumorder);
 			foreach my $trackname (@albumorder) {
 				my $track=$trackToNum{$trackname};
 				push @shufflelist,$track;
@@ -364,7 +364,7 @@ sub reshuffle {
 			}
 			foreach my $album (@albums) {
 				my @albumorder=map {${playList($client)}[$_]} @{$albtracks{$album}};
-				@albumorder=Slim::Music::Info::sortByTrack(@albumorder);
+				@albumorder=Slim::Music::Info::sortByAlbum(@albumorder);
 				foreach my $trackname (@albumorder) {
 					push @shufflelist,$trackToNum{$trackname};
 				}

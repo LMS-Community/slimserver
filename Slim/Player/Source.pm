@@ -300,9 +300,17 @@ sub nextChunk {
 	
 	if (defined($chunkRef)) {
 		my $len = length($$chunkRef);
-		if ($len > $maxChunkSize) {
-			push @{$client->chunks}, \substr($$chunkRef, $maxChunkSize - $len, $len - $maxChunkSize);
-			$chunkRef = \substr($$chunkRef, 0, $maxChunkSize);
+		if (defined($chunkRef)) {
+			my $len = length($$chunkRef);
+			if ($len > $maxChunkSize) {
+				$::d_playlist && msg("chunk too big, pushing the excess for later.\n");
+				
+				my $queued = substr($$chunkRef, $maxChunkSize - $len, $len - $maxChunkSize);
+				unshift @{$client->chunks}, \$queued;
+				
+				my $returned = substr($$chunkRef, 0, $maxChunkSize);
+				$chunkRef = \$returned;
+			}
 		}
 	}
 	

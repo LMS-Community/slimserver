@@ -1,6 +1,6 @@
 package Slim::Utils::Timers;
 
-# $Id: Timers.pm,v 1.4 2003/09/26 04:12:49 kdf Exp $
+# $Id: Timers.pm,v 1.5 2003/10/09 04:19:51 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@ sub checkTimers {
 	my $timer = shift(@timers);
 	
 	while (defined($timer) && ($timer->{'when'} <= $now) && 
-			!Slim::Networking::Protocol::pending()) {
+			!main::networkPending()) {
 
 		my $subptr = $timer->{'subptr'};
 		my $client = $timer->{'client'};

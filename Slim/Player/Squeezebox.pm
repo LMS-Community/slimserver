@@ -120,6 +120,16 @@ sub bytesReceived {
 	return Slim::Networking::Slimproto::bytesReceived(@_);
 }
 
+sub signalStrength {
+	my $strength = Slim::Networking::Slimproto::signalStrength(@_);
+	
+	if (defined($strength)) {
+		return $strength . '%';
+	} else {
+		return undef;
+	}
+}
+
 sub needsUpgrade {
 	my $client = shift;
 	my $versionFilePath = catdir($Bin, "Firmware", "squeezebox.version");
@@ -166,7 +176,7 @@ sub upgradeFirmware {
 	
 	my $size = -s $file;	
 	
-	!$::d_firmware && msg("Updating firmware: Sending $size bytes\n");
+	$::d_firmware && msg("Updating firmware: Sending $size bytes\n");
 	
 	my $bytesread=0;
 	my $totalbytesread=0;
@@ -194,7 +204,7 @@ sub vfd {
 	my $data = shift;
 
 	if ($client->opened()) {
-		$frame = 'l   '.$data;
+		$frame = 'vfdc'.$data;
 		my $len = pack('n',length($frame));
 		$::d_protocol_verbose && msg ("sending squeezebox frame, length ".length($frame)."\n");
 		$frame = $len.$frame;
@@ -246,7 +256,7 @@ sub stream {
 			$autostart = 3;
 		}
 		
-		my $frame = 's   '.pack 'aaaaaaaCCCnL', (
+		my $frame = 'strm'.pack 'aaaaaaaCCCnL', (
 			$command,	# command
 			$autostart,
 			'm',		# mpeg
@@ -282,7 +292,7 @@ sub i2c {
 	if ($client->opened()) {
 		$::d_i2c && msg("i2c: sending ".length($data)." bytes\n");
 	
-		my $frame='2   '.$data;
+		my $frame='i2cc'.$data;
 		my $len = pack('n', length($frame));
 		$frame=$len.$frame;
 		$client->tcpsock->syswrite($frame, length($frame));

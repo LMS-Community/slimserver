@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.33 2003/10/03 21:44:09 grotus Exp $
+# $Id: HTTP.pm,v 1.34 2003/10/09 04:19:52 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -184,7 +184,7 @@ sub idle {
 				Slim::Web::HTTP::acceptHTTP();
 			} else {
 				Slim::Web::HTTP::processHTTP($sockHand);
-				last if ++$tcpReads >= $tcpReadMaximum || Slim::Networking::Protocol::pending();
+				last if ++$tcpReads >= $tcpReadMaximum || main::networkPending();
 			}
 		}
 	}
@@ -194,7 +194,7 @@ sub idle {
 	if (defined($httpSelCanWrite) && scalar(@$httpSelCanWrite)) {
 		my $tcpWriteMaximum = Slim::Utils::Prefs::get("tcpWriteMaximum");
 		foreach my $sockHand (@$httpSelCanWrite) {
-			last if ++$tcpWrites > $tcpWriteMaximum || Slim::Networking::Protocol::pending();
+			last if ++$tcpWrites > $tcpWriteMaximum || main::networkPending();
 			Slim::Web::HTTP::sendresponse($sockHand);
 		}
 	}
@@ -225,9 +225,9 @@ sub idleStreams {
 				my $sent = Slim::Web::HTTP::sendstreamingresponse($sockHand);
 				$writes += $sent;
 				
-				$continue = ($sent && !Slim::Networking::Protocol::pending() && ($count < $streamWriteMaximum) && $continue );
+				$continue = ($sent && !main::networkPending() && ($count < $streamWriteMaximum) && $continue );
 				$count++;
-				last if (!$continue || Slim::Networking::Protocol::pending() || $count > $streamWriteMaximum);
+				last if (!$continue || main::networkPending() || $count > $streamWriteMaximum);
 			}
 	    }
 	    $continue = 0 if (!$writes);

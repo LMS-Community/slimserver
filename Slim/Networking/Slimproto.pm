@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.26 2003/10/03 21:49:45 grotus Exp $
+# $Id: Slimproto.pm,v 1.27 2003/10/09 04:19:50 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -66,6 +66,8 @@ sub idle {
 	my $selReadable;
 	my $selWriteable;
 
+	$::d_slimproto_v && msg("Slimproto::idle\n");
+	
 	($selReadable, $selWriteable) = IO::Select->select($slimSelRead, $slimSelWrite, undef, 0);
 
 	my $sock;
@@ -84,6 +86,13 @@ sub idle {
 	}
 }
 
+sub pending {
+	my $selReadable;
+	my $selWriteable;
+
+	($selReadable, $selWriteable) = IO::Select->select($slimSelRead, $slimSelWrite, undef, 0);
+	return defined($selReadable) && scalar(@$selReadable);
+}
 
 sub slimproto_accept {
 	my $clientsock = $slimproto_socket->accept();
@@ -327,35 +336,20 @@ sub process_slimproto_frame {
 	} elsif ($op eq 'RESP') {
 		# HTTP stream headers
 		$::d_slimproto && msg("Squeezebox got HTTP response:\n$data\n");
-	} elsif ($op eq 'STRM') {
+	} elsif ($op eq 'STAT') {
 
-		#	struct status_struct {
-		#		u8_t event_code;
-		#		u8_t num_crlf;
-		#		u8_t mas_initialized;	// 'm' or 'p'
-		#		u8_t mas_mode;		// serdes mode
-		#		u32_t rptr;
-		#		u32_t wptr;
-		#		u64_t bytes_received;	}
-
-		#define EVENT_TIMER	't'
-		#define EVENT_AUTOSTART	'a'
-		#define EVENT_CLOSE	'f'
-		#define EVENT_ESTABLISH	'e'
-		#define EVENT_CONNECT	'c'
-
-		my %EVENT_CODES = (
-				'a', 'AUTOSTART',
-				'c', 'CONNECT',
-				'e', 'ESTABLISH',
-				'f', 'CLOSE',
-				'h', 'ENDOFHEADERS',
-				'p', 'PAUSE',
-				'r', 'RESUME',
-				't', 'TIMER',
-				'u', 'UNDERRUN',
-			);
-
+		#struct status_struct {
+		#        u32_t event;
+		#        u8_t num_crlf;          // number of consecutive cr|lf received while parsing headers
+		#        u8_t mas_initialized;   // 'm' or 'p'
+		#        u8_t mas_mode;          // serdes mode
+		#        u32_t rptr;
+		#        u32_t wptr;
+		#        u64_t bytes_received;
+        #		 u16_t  signal_strength;
+		#        u32_t  jiffies;
+		#
+		
 		(	$status{$client}->{'event_code'},
 			$status{$client}->{'num_crlf'},
 			$status{$client}->{'mas_initialized'},
@@ -363,12 +357,10 @@ sub process_slimproto_frame {
 			$status{$client}->{'rptr'},
 			$status{$client}->{'wptr'},
 			$status{$client}->{'bytes_received_H'},
-			$status{$client}->{'bytes_received_L'}
-		) = unpack ('aCCCNNNN', $data);
-
-		if (defined($EVENT_CODES{$status{$client}->{'event_code'}})) {
-			$status{$client}->{'event_code'} = $EVENT_CODES{$status{$client}->{'event_code'}};
-		}
+			$status{$client}->{'bytes_received_L'},
+			$status{$client}->{'signal_strength'},
+			$status{$client}->{'jiffies'}
+		) = unpack ('a4CCCNNNNnN', $data);
 		
 		my $firststatus;
 		if (!defined($status{$client}->{'bytes_received'}) && defined($status{$client}->{'byteoffset'})) {
@@ -398,6 +390,8 @@ sub process_slimproto_frame {
 		"	fullness:        $status{$client}->{'fullness'}\n".
 		"	byteoffset:      $status{$client}->{'byteoffset'}\n".
 		"	bytes_received   $status{$client}->{'bytes_received'}\n".
+		"	signal_strength: $status{$client}->{'signal_strength'}\n".
+		"	jiffies:         $status{$client}->{'jiffies'}\n".
 		"");
 		Slim::Player::Sync::checkSync($client);
 	} elsif ($op eq 'BYE!') {
@@ -415,6 +409,16 @@ sub process_slimproto_frame {
 		
 	} else {
 		msg("Unknown slimproto op: $op\n");
+	}
+}
+
+sub signalStrength {
+	my $client = shift;
+
+	if (exists($status{$client})) {
+		return $status{$client}->{'signal_strength'};
+	} else {
+		return undef;
 	}
 }
 
