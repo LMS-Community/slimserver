@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.96 2004/08/03 17:29:20 vidur Exp $
+# $Id: Pages.pm,v 1.97 2004/08/06 04:16:50 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -1042,6 +1042,7 @@ sub _addSongInfo {
 	$params->{'songtitle'}  = Slim::Music::Info::standardTitle(undef,$song);
 	$params->{'duration'}   = Slim::Music::Info::duration($song);
 	$params->{'disc'}       = Slim::Music::Info::disc($song);
+	$params->{'bpm'}        = Slim::Music::Info::bpm($song);
 	$params->{'track'}      = Slim::Music::Info::trackNumber($song);
 	$params->{'year'}       = Slim::Music::Info::year($song);
 	$params->{'type'}       = string(uc(Slim::Music::Info::contentType($song)));
@@ -1635,7 +1636,6 @@ sub browseid3 {
 				$list_form{'genre'}	   = $genre;
 				$list_form{'artist'}       = $artist;
 				$list_form{'album'}	   = '*';
-				$list_form{'song'}	   = $song;
 				$list_form{'title'}        = string('ALL_SONGS');
 				$list_form{'descend'}      = 1;
 				$list_form{'player'}       = $player;
@@ -1658,7 +1658,6 @@ sub browseid3 {
 				$list_form{'genre'}	   = $genre;
 				$list_form{'artist'}       = $artist;
 				$list_form{'album'}	   = $item;
-				$list_form{'song'}	   = $song;
 				$list_form{'title'}        = $item;
 				$list_form{'descend'}      = $descend;
 				$list_form{'player'}       = $player;
@@ -1675,24 +1674,35 @@ sub browseid3 {
 				if ($params->{'artwork'}) {
 
 					my $song = Slim::Music::Info::pathFromAlbum($item);
-
+					my @songs;
 					if (defined $song) {
 						$list_form{'coverthumb'}   = 1; 
 						$list_form{'thumbartpath'} = $song;
 					} else {
 						$list_form{'coverthumb'}   = 0;
+						if (Slim::Utils::Prefs::get('showYear')) {
+							@songs = Slim::Music::Info::songs([$genre], [$artist], [$item], []);
+							$song = $songs[0];
+						}
 					}
-					$list_form{'item'}	   = $item;
+					if (Slim::Utils::Prefs::get('showYear')) {
+						$list_form{'year'}   = Slim::Music::Info::year($song);
+					}
+					$list_form{'item'}		 = $item;
 					$list_form{'itemnumber'} = $itemnumber;
-					$list_form{'artwork'}    = 1;
-					$list_form{'size'}       = Slim::Utils::Prefs::get('thumbSize');
+					$list_form{'artwork'}	 = 1;
+					$list_form{'size'}		 = Slim::Utils::Prefs::get('thumbSize');
 
 					$itemnumber++;
 
 					$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_artwork.html", \%list_form)};
 
 				} else {
-
+					if (Slim::Utils::Prefs::get('showYear')) {
+						my @songs = Slim::Music::Info::songs([$genre], [$artist], [$item], []);
+						my $song = $songs[0];
+						$list_form{'year'}		 = Slim::Music::Info::year($song);
+					}
 					$itemnumber++;
 					$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
 				}

@@ -116,6 +116,11 @@
         <td class="nowrap"> [% "BITRATE" | string %][% "COLON" | string %]</td>
         <td> [% bitrate | html %] </td>
       </tr>
+      [% END %] [% IF bpm %]
+      <tr>
+        <td class="nowrap"> [% "BPM" | string %][% "COLON" | string %] </td>
+        <td> [% bpm | html %] </td>
+      </tr>
       [% END %] [% IF tagversion %] 
       <tr> 
         <td class="nowrap"> [% "TAGVERSION" | string %][% "COLON" | string %]</td>

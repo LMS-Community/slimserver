@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.90 2004/08/03 17:29:22 vidur Exp $
+# $Id: Setup.pm,v 1.91 2004/08/06 04:16:51 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -304,8 +304,8 @@ sub initSetupConfig {
 			,'showbufferfullness' => {
 						'validate' => \&validateTrueFalse
 						,'options' => {
-								'0' => string('SETUP_SHOWBUFFERFULLNESS_DISABLED')
-								,'1' => string('SETUP_SHOWBUFFERFULLNESS_ENABLED')
+								'0' => string('DISABLED')
+								,'1' => string('ENABLED')
 								}
 					}
 			,'synchronize' => {
@@ -816,8 +816,6 @@ sub initSetupConfig {
 					}
 					$pageref->{'Prefs'}{'nonMenuItem'}{'arrayMax'} = $i - 1;
 					$pageref->{'Prefs'}{'nonMenuItemAction'}{'arrayMax'} = $i - 1;
-					$pageref->{'Prefs'}{'coverArt'}{'validateArgs'} = [(defined(Slim::Utils::Prefs::get('coverArt'))) ? Slim::Utils::Prefs::get('coverArt') : ''];
-					$pageref->{'Prefs'}{'coverThumb'}{'validateArgs'} = [(defined(Slim::Utils::Prefs::get('coverThumb'))) ? Slim::Utils::Prefs::get('coverThumb') : ''];
 					removeExtraArrayEntries($client,'menuItem',$paramref,$pageref);
 				}
 		,'postChange' => sub {
@@ -996,11 +994,11 @@ sub initSetupConfig {
 						,'validateArgs' => [2,undef,1]
 					}
 			,'coverArt' => {
-						'validate' => \&validateHasText
+						'validate' => \&validateAcceptAll
 						,'PrefSize' => 'large'
 					}
 			,'coverThumb' => {
-						'validate' => \&validateHasText
+						'validate' => \&validateAcceptAll
 						,'PrefSize' => 'large'
 					}
 			,'artfolder' => {
@@ -1257,7 +1255,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default','TitleFormats','GuessFileFormats']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['longdateFormat','shortdateFormat','timeFormat']
+					'PrefOrder' => ['longdateFormat','shortdateFormat','timeFormat','showYear']
 				}
 			,'TitleFormats' => {
 					'PrefOrder' => ['titleFormat']
@@ -1315,6 +1313,13 @@ sub initSetupConfig {
 									processArrayChange($client,'titleFormat',$paramref,$pageref);
 									fillTitleFormatOptions();
 									$changeref->{'titleFormat'}{'Processed'} = 1;
+								}
+							}
+			,'showYear' => {
+						'validate' => \&validateTrueFalse
+						,'options' => {
+									'0' => string('DISABLED')
+									,'1' => string('ENABLED')
 								}
 							}
 			,'guessFileFormats'	=> {
@@ -1598,8 +1603,8 @@ sub initSetupConfig {
 			,'xplsupport' => {
 						'validate' => \&validateTrueFalse
 						,'options' => {
-								'0' => string('SETUP_XPLSUPPORT_DISABLED')
-								,'1' => string('SETUP_XPLSUPPORT_ENABLED')
+								'0' => string('DISABLED')
+								,'1' => string('ENABLED')
 								}
 				}
 			,'xplinterval' => {

@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.3 2004/08/05 18:43:25 dean Exp $
+# $Id: SqueezeboxG.pm,v 1.4 2004/08/06 04:16:49 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -256,7 +256,8 @@ sub parseLines {
 
 sub fonts {
 	my $client = shift;
-	return $fonttable[$client->textSize()];
+	my $size = shift || $client->textSize();
+	return $fonttable[$size];
 }
 	
 # returns progress bar text

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.79 2004/08/03 17:29:18 vidur Exp $
+# $Id: Prefs.pm,v 1.80 2004/08/06 04:16:50 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -126,6 +126,7 @@ my %DEFAULT = (
 	,'plugins-onthefly'		=> 0
 	,'longdateFormat'		=> q(%A, %B |%d, %Y)
 	,'shortdateFormat'		=> q(%m/%d/%Y)
+	,'showYear'				=> 0
 	,'timeFormat'			=> q(|%I:%M:%S %p)
 	,'titleFormatWeb'		=> 1
 	,'iTunesplaylistprefix'	=> 'iTunes: '

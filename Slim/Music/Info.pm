@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.138 2004/08/05 17:42:31 dean Exp $
+# $Id: Info.pm,v 1.139 2004/08/06 04:16:47 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -82,6 +82,7 @@ my @infoCacheItems = (
 	'ENDIAN', # 0 - little endian, 1 - big endian
 	'VALID', # 0 - entry not checked, 1 - entry checked and valid. Used to find stale entries in the cache
 	'TTL', # Time to Live for Cache Entry
+	'BPM', # Beats per minute
 );
 
 # Save the persistant DB cache every hour
@@ -352,6 +353,9 @@ sub init {
 	$MP3::Info::v2_to_v1_names{'TP3'} = 'CONDUCTOR';
 	$MP3::Info::v2_to_v1_names{'TPE3'} = 'CONDUCTOR';
 	
+	$MP3::Info::v2_to_v1_names{'TBP'} = 'BPM';
+	$MP3::Info::v2_to_v1_names{'TBPM'} = 'BPM';
+
 	#turn on unicode support
 #	if (!MP3::Info::use_mp3_utf8(1)) {	
 #		$::d_info && Slim::Utils::Misc::msg("Couldn't turn on unicode support.\n");
@@ -1369,6 +1373,8 @@ sub year { return info(shift,'YEAR'); }
 sub disc { return info(shift,'DISC'); }
 
 sub discCount { return info(shift,'DISCC'); }
+
+sub bpm { return info(shift,'BPM'); }
 
 sub comment {
 	my $file = shift;

@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.20 2004/08/03 17:29:17 vidur Exp $
+# $Id: Player.pm,v 1.21 2004/08/06 04:16:49 kdf Exp $
 #
 package Slim::Player::Player;
 
@@ -19,6 +19,10 @@ use Slim::Utils::Strings qw (string);
 use Slim::Display::VFD::Animation;
 
 @ISA = ("Slim::Player::Client");
+
+my @fonttable = ( ['small', 'small'],
+		   		  [ undef, 'large']);
+		   
 
 sub new {
 	my $class = shift;
@@ -164,7 +168,11 @@ sub pitch {
 	Slim::Hardware::Decoder::pitch($client, $pitch);
 }
 
-
+sub fonts {
+	my $client = shift;
+	my $size = shift || $client->textSize();
+	return $fonttable[$size];
+}
 
 
 # fade the volume up or down
@@ -288,9 +296,10 @@ sub textSize {
 	}
 }
 
+# $client->textSize = 1 for LARGE text, 0 for small.
 sub linesPerScreen {
 	my $client = shift;
-	return $client->textSize() ? 2 : 1;	
+	return $client->textSize() ? 1 : 2;	
 }
 
 sub maxTextSize {

@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.123 2004/08/03 17:28:53 vidur Exp $
+# $Id: strings.txt,v 1.124 2004/08/06 04:16:43 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1684,6 +1684,12 @@ SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE
 	FR	Suffixe :
 	NO	Suffix:
 	SE	Suffix:
+
+SETUP_SHOWYEAR
+	EN	Show Year with Albums
+
+SETUP_SHOWYEAR_DESC
+	EN	You may choose to show the album year when browsing by Albums or by Artwork.  When enabled, the album year will be shown next to the album title.
 
 SETUP_GUESSFILEFORMATS
 	DE	Tag Format erraten
@@ -3546,20 +3552,6 @@ SETUP_SHOWBUFFERFULLNESS
 SETUP_SHOWBUFFERFULLNESS_CHOOSE
 	EN	Show buffer fullness in Playing Display Mode list:
 
-SETUP_SHOWBUFFERFULLNESS_ENABLED
-	DE	Aktiviert
-	EN	Enabled
-	FR	Activé
-	NO	Aktivert
-	SE	Aktiverad
-
-SETUP_SHOWBUFFERFULLNESS_DISABLED
-	DE	Desaktiviert
-	EN	Disabled
-	FR	Désactivé
-	NO	Deaktivert
-	SE	Avaktiverad
-
 SETUP_XPLSUPPORT
 	DE	xPL Support
 	EN	xPL support
@@ -3573,20 +3565,6 @@ SETUP_XPLSUPPORT_CHOOSE
 	FR	Support du xPL :
 	NO	xPL støtte:
 	SE	xPL-stöd:
-
-SETUP_XPLSUPPORT_ENABLED
-	DE	Aktiviert
-	EN	Enabled
-	FR	Activé
-	NO	Aktivert
-	SE	Aktiverad
-
-SETUP_XPLSUPPORT_DISABLED
-	DE	Desaktiviert
-	EN	Disabled
-	FR	Désactivé
-	NO	Deaktivert
-	SE	Avaktiverad
 
 SETUP_XPLINTERVAL
 	DE	Heartbeat Intervall
@@ -4423,6 +4401,20 @@ SHUFFLE_OFF
 	PT	Mistura de Playlist Desligada
 	SE	Blanda inte låtlista
 
+ENABLED
+	DE	Aktiviert
+	EN	Enabled
+	FR	Activé
+	NO	Aktivert
+	SE	Aktiverad
+
+DISABLED
+	DE	Desaktiviert
+	EN	Disabled
+	FR	Désactivé
+	NO	Deaktivert
+	SE	Avaktiverad
+
 CLEAR_PLAYLIST
 	DE	Playlist Löschen
 	DK	Nulstil playlisten
@@ -5042,6 +5034,9 @@ BITRATE
 	NO	Bitrate
 	PT	Bits por seg.
 	SE	Bithastighet
+
+BPM
+	EN	Beats Per Minute
 
 YEAR
 	DE	Jahr
@@ -7046,3 +7041,17 @@ COLON
 	FR	 : 
 	NO	:
 	SE	: 
+
+
+# Font Name Strings
+SMALL
+	EN	Small
+
+MEDIUM
+	EN	Medium
+
+LARGE
+	EN	Large
+
+HUGE
+	EN	Huge

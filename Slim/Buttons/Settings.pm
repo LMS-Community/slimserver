@@ -87,9 +87,13 @@ my %menuParams = (
 	}
 	,catdir('settings','TEXTSIZE') => {
 		'useMode' => 'INPUT.List'
-		,'listRef' => [0,1]
-		,'externRef' => [ 'SMALL','LARGE']
-		,'stringExternRef' => 1
+		,'listRef' => undef #filled before changing modes
+		,'externRef' => sub {
+								my @font = @{$_[0]->fonts};
+								my $fontname = $font[1];
+								$fontname =~ s/(\.2)?//g;
+								return Slim::Utils::Strings::stringExists($fontname) ? string($fontname) : $fontname;
+							}
 		,'header' => 'TEXTSIZE'
 		,'stringHeader' => 1
 		,'onChange' => sub { $_[0]->textSize($_[1]);}
@@ -98,9 +102,13 @@ my %menuParams = (
 	}
 	,catdir('settings','OFFDISPLAYSIZE') => {
 		'useMode' => 'INPUT.List'
-		,'listRef' => [0,1]
-		,'externRef' => [ 'SMALL','LARGE']
-		,'stringExternRef' => 1
+		,'listRef' => undef #filled before changing modes
+		,'externRef' => sub {
+								my @font = @{$_[0]->fonts($_[1])};
+								my $fontname = $font[1];
+								$fontname =~ s/(\.2)?//g;
+								return Slim::Utils::Strings::stringExists($fontname) ? string($fontname) : $fontname;
+							}
 		,'header' => 'OFFDISPLAYSIZE'
 		,'stringHeader' => 1
 		,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0], "offDisplaySize", $_[1]); }
@@ -161,6 +169,10 @@ sub settingsExitHandler {
 				my @names = values %hash;
 				$nextParams{'listRef'} = \@modes;
 				$nextParams{'externRef'} = \@names;
+			}
+			if ($nextmenu eq catdir('settings','TEXTSIZE') || $nextmenu eq catdir('settings','OFFDISPLAYSIZE')) {
+				my @text = (0..$client->maxTextSize);
+				$nextParams{'listRef'} = \@text;
 			}
 			Slim::Buttons::Common::pushModeLeft(
 				$client

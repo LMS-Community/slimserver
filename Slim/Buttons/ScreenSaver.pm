@@ -1,6 +1,6 @@
 package Slim::Buttons::ScreenSaver;
 
-# $Id: ScreenSaver.pm,v 1.20 2004/08/03 17:29:10 vidur Exp $
+# $Id: ScreenSaver.pm,v 1.21 2004/08/06 04:16:45 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -47,28 +47,38 @@ sub screenSaver {
 	$::d_time && msg("screenSaver idle display " . ($now - Slim::Hardware::IR::lastIRTime($client) - Slim::Utils::Prefs::clientGet($client,"screensavertimeout")) . "(mode:" . Slim::Buttons::Common::mode($client) . ")\n");
 	my $mode = Slim::Buttons::Common::mode($client);
 	assert($mode);
+	
+	# some variables, so save us calling the same functions multiple times.
 	my $saver = Slim::Utils::Prefs::clientGet($client,'screensaver');
-		
+	my $dim = Slim::Utils::Prefs::clientGet($client,'idleBrightness');
+	my $timeout = Slim::Utils::Prefs::clientGet($client,"screensavertimeout");
+	my $irtime = Slim::Hardware::IR::lastIRTime($client);
+	
+	# if we are already in now playing, jump back screensaver is redundant and confusing
+	if ($saver eq 'screensaver' && $mode eq 'playlist') {
+		$saver = 'playlist'; 
+	}
+	
 	# dim the screen if we're not playing...  will restore brightness on next IR input.
-	if (Slim::Utils::Prefs::clientGet($client,"screensavertimeout") && 
+	# only ned to do this once, but its hard to ensure all cases, so it might be repeated.
+	if ( $timeout && $client->brightness() && 
+			$client->brightness() != $dim &&
 			Slim::Utils::Prefs::clientGet($client, 'autobrightness') &&
-			Slim::Hardware::IR::lastIRTime($client) &&
-			Slim::Hardware::IR::lastIRTime($client) < $now - Slim::Utils::Prefs::clientGet($client,"screensavertimeout") && 
+			$irtime &&
+			$irtime < $now - $timeout && 
 			$mode ne 'block' &&
-			$mode ne $saver &&
-			$mode ne 'off' &&
-			$client->brightness()) {
-		$client->brightness(Slim::Utils::Prefs::clientGet($client,'idleBrightness'));
+			$mode ne 'off') {
+		$client->brightness($dim);
 	}
 
 	if ($client->animating()) {
 		# if we're animating, let the animation play out
 	} elsif ($mode eq 'block') {
 		# blocked mode handles its own updating of the screen.
-	} elsif (Slim::Utils::Prefs::clientGet($client,"screensavertimeout") && 
-			Slim::Hardware::IR::lastIRTime($client) < $now - Slim::Utils::Prefs::clientGet($client,"screensavertimeout") && 
-			$mode ne Slim::Utils::Prefs::clientGet($client,'screensaver') &&
-			$mode ne 'screensaver' && # just in case it falls into default
+	} elsif ($timeout && 
+			$irtime < $now - $timeout && 
+			$mode ne $saver &&
+			$mode ne 'screensaver' && # just in case it falls into default, we dont want recursive pushModes
 			$mode ne 'block' &&
 			$mode ne 'off') {
 		
@@ -80,7 +90,7 @@ sub screenSaver {
 				$client->scrollBottom();
 			} else {
 				Slim::Buttons::Common::pushMode($client,'playlist');
-				$client->update();		
+				$client->update();
 			}
 		} else {
 			if (Slim::Buttons::Common::validMode($saver)) {
