@@ -98,7 +98,7 @@ sub commandCallback {
 
 		my $output = '';
 		
-		$output = $client->id() . ' ' if $client;
+		$output = Slim::Web::HTTP::escape($client->id()) . ' ' if $client;
 
 		foreach my $param (@$paramsRef) {
 			$output .= Slim::Web::HTTP::escape($param) . ' ';

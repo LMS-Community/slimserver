@@ -449,17 +449,17 @@ sub execute {
  				$badconfig = 1;
  			}
  		}
+
+		if (Slim::Utils::Misc::stillScanning()) {
+			push @returnArray, "rescan:1";
+		}
  		
  		if ($badconfig) {
 
- 			push @returnArray, "bad_config:1";
+ 			push @returnArray, "count:0";
 
  		} else {
 
- 			if (Slim::Utils::Misc::stillScanning()) {
- 				push @returnArray, "rescan:1";
- 			}
- 
  			# Get all playlist items
  			my  $items = [];
  					
@@ -680,16 +680,25 @@ sub execute {
 		} elsif ($p0 eq "power") {
 
 			if (!defined $p1) {
+
 				if (Slim::Player::Sync::isSynced($client)) {
-					syncFunction($client,!$client->power(), "power",undef);
+
+					syncFunction($client, !$client->power(), "power", undef);
 				}
+
 				$client->power(!$client->power());
+
 			} elsif ($p1 eq "?") {
+
 				$p1 = $client->power();
+
 			} else {
+
 				if (Slim::Player::Sync::isSynced($client)) {
-					syncFunction($client,$p1, "power",undef);
+
+					syncFunction($client, $p1, "power", undef);
 				}
+
 				$client->power($p1);
 			}
 
@@ -1257,7 +1266,7 @@ sub execute {
 
 		} elsif ($p0 eq "linesperscreen") {
 
-			$p2 = $client->linesPerScreen();
+			$p1 = $client->linesPerScreen();
 
 		} elsif ($p0 eq "display") {
 
@@ -1327,8 +1336,8 @@ sub execute {
  				if ($client->currentSleepTime()) {
 
  					my $sleep = $client->sleepTime() - Time::HiRes::time();
-					push @returnArray, "sleep:".$client->currentSleepTime();
-					push @returnArray, "will_sleep_in:".($sleep < 0 ? 0 : int($sleep/60));
+					push @returnArray, "sleep:" . $client->currentSleepTime() * 60;
+					push @returnArray, "will_sleep_in:" . ($sleep < 0 ? 0 : $sleep);
  				}
  				
  				if (Slim::Player::Sync::isSynced($client)) {
@@ -1402,7 +1411,7 @@ sub execute {
  						if (($repeat == 2) && ($shuffle == 0) && ($count < scalar($p2))) {
 
  							# wrap around the playlist...
- 							($valid, $start, $end) = normalize(1, (scalar($p2) - $count), $songCount);		
+ 							($valid, $start, $end) = normalize(0, (scalar($p2) - $count), $songCount);		
 
  							if ($valid) {
 
@@ -1416,6 +1425,14 @@ sub execute {
  					}
  				}
  			}
+
+		} elsif ($p0 eq "listen") {
+
+			$client = undef;
+
+		} elsif ($p0 eq "exit") {
+
+			$client = undef;
 
  		} else {
 
