@@ -467,15 +467,27 @@ sub exportFunction {
 				}
 			}
 
-			if ($songInfo{'active'} eq 'yes' && defined $albumObj) {
+			if ($songInfo{'active'} eq 'yes') {
 
-				$albumObj->musicmagic_mixable(1);
-				$albumObj->update();
+				if (defined $albumObj) {
+					$albumObj->musicmagic_mixable(1);
+					$albumObj->update();
+				}
+
+				for my $artistObj ($track->contributors()) {
+					$artistObj->musicmagic_mixable(1);
+					$artistObj->update();
+				}
+				
+				for my $genreObj ($track->genres()) {
+					$genreObj->musicmagic_mixable(1);
+					$genreObj->update();
+				}
 			}
 		}
 
 		if ($scan == $count) {
-			$export = 'genres';
+			$export = 'playlists';
 		}
 		
 		# would be nice to chunk this in groups.  One at a time is slow, 
