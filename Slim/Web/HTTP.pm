@@ -819,7 +819,7 @@ sub generateHTTPResponse {
 			if ($songHandle) {
 
 				my $ds  = Slim::Music::Info::getCurrentDataStore();
-				my $obj = $ds->objectFromUrl($file);
+				my $obj = $ds->objectForUrl($file);
 
 				$response->content_type(Slim::Music::Info::mimeType($file));
 				$response->content_length($obj->filesize());
