@@ -23,7 +23,7 @@ use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.4 $,10);
+$VERSION = substr(q$Revision: 1.5 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_SNOW');}
 
@@ -245,14 +245,12 @@ my %snowStyle;
 my %snowQuantity;
 my %lastTime;
 my %flakes;
-my $flakes_ref;
 
 sub setScreensaverSnowMode() {
 	my $client = shift;
 	$client->lines(\&screensaverSnowlines);
 	$wasDoubleSize{$client} = Slim::Utils::Prefs::clientGet($client,'doublesize');
 	Slim::Utils::Prefs::clientSet($client,'doublesize',0);
-	$flakes_ref = $flakes{client};
 	# save time on later lookups - we know these can't change while we're active
 	$snowStyle{$client} = Slim::Utils::Prefs::clientGet($client,'snowStyle') || 0;
 	$snowQuantity{$client} = Slim::Utils::Prefs::clientGet($client,'snowQuantity') || 1;
@@ -281,7 +279,7 @@ sub screensaverSnowlines {
 		# Just snow
 		$simple = 1;
 	}
-	($line1, $line2,$flakes_ref) = letItSnow($client, $line1, $line2, $onlyInSpaces, $simple,$flakes_ref);
+	($line1, $line2) = letItSnow($client, $line1, $line2, $onlyInSpaces, $simple);
 	return ($line1, $line2);
 }
 
@@ -351,19 +349,18 @@ sub letItSnow {
 	my @lines = (shift, shift);
 	my $onlyInSpaces = shift;
 	my $simple = shift;
-	my $flakes_ref = shift;
 	
 	$lastTime{$client} = defined($lastTime{$client}) ? $lastTime{$client} : 0;
 	if (Time::HiRes::time() - $lastTime{$client} > 0.25) {
 		$lastTime{$client} = Time::HiRes::time();
 		my $flake;
-		foreach $flake (@$flakes_ref) {
+		foreach $flake (@{$flakes{$client}}) {
 			$flake->{line} ++;
 			$flake->{pos} += (int rand(3) - 1);
 		}
 		
 		# cull flakes which have left the screen
-		@$flakes_ref = grep { $_->{line} < 6 && $_->{pos} >= 0 && $_->{pos} < 80} @$flakes_ref;
+		@{$flakes{$client}} = grep { $_->{line} < 6 && $_->{pos} >= 0 && $_->{pos} < 80} @{$flakes{$client}};
 		
 		my $i;
 		foreach $i (0..5) {
@@ -371,7 +368,7 @@ sub letItSnow {
 				my $newflake = {};
 				$newflake->{line} = 0;
 				$newflake->{pos} = int rand(80);
-				push @$flakes_ref, $newflake;
+				push @{$flakes{$client}}, $newflake;
 			}
 		}
 	}
@@ -389,7 +386,7 @@ sub letItSnow {
 		$lines[$i] = Slim::Hardware::VFD::subString($lines[$i] . (' ' x 40), 0, 40);
 	}
 
-	foreach my $flake (@$flakes_ref) {
+	foreach my $flake (@{$flakes{$client}}) {
 		my $row = int($flake->{line} / 3);
 		my $col = int($flake->{pos} / 2);
 		my $sym = 'star' . ($flake->{line} - $row * 3) . ($flake->{pos} - $col * 2);
@@ -406,7 +403,7 @@ sub letItSnow {
 
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.25, \&tick);
 
-	return @lines,$flakes_ref;
+	return @lines;
 }
 
 1;
