@@ -1269,7 +1269,7 @@ sub buildPlaylist {
 
 		$list_form{'itempath'} = $song;
 		$list_form{'item'}     = $track->id();
-		$list_form{'track'}    = $track;
+		$list_form{'itemobj'}  = $track;
 
 		$list_form{'artists'}  = $listBuild->{'includeArtist'} ? $track->contributors() : undef;
 		$list_form{'album'}    = $listBuild->{'includeAlbum'}  ? $track->album() : undef;
