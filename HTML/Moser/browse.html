@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>Music Folder</title>
+    <link rel="stylesheet" href="slimserver.css" />
+  </head>
+  <body>
+    <h3>[S MUSIC]</h3>
+    <div class="linktree"><ul><li><a href="home.html?player={%player}">[S {playermodel}_HOME]</a></li><li> / <a href="browse.html?player={%player}">[S MUSIC]</a></li>{pwd_list}</ul></div>
+    <div id="browselist_header">{browselist_header}</div>
+[IF browselist_pagebar]    <div id="topbrowselistpagebar" class="pagebar">
+      <span class="label">[S PAGES]:</span>
+      <div class="controls">
+        <ul>
+          {browselist_pagebar}
+        </ul>
+      </div>
+    </div>[/IF]
+[IF coverart]  <div class="coverart">
+    <a href="/music/{%coverartpath}/cover.jpg" target="cover">
+    <img src="/music/{%coverartpath}/cover.jpg" /></a>
+  </div>[/IF]
+  <div id="browselist">
+    <ul>
+{browse_list}
+    </ul>
+  </div>
+
+[IF browselist_pagebar]  <div id="bottombrowselistpagebar" class="pagebar">
+    <span class="label">[S PAGES]:</span>
+    <div class="controls">
+      <ul>
+        {browselist_pagebar}
+      </ul>
+    </div>
+  </div>[/IF]
+  </body>
+</html>
