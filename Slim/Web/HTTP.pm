@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.136 2005/01/08 03:42:54 kdf Exp $
+# $Id: HTTP.pm,v 1.137 2005/01/08 06:04:41 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -455,14 +455,19 @@ sub processHTTP {
 
 		# apply CSRF protection logic to "dangerous" commands
 		foreach my $d ( keys %dangerousCommands ) {
+
 			my $dregexp = $dangerousCommands{$d};
+
 			if ($params->{"path"} && $pageFunctions{$params->{"path"}} && $pageFunctions{$params->{"path"}} eq $d && $request->uri() =~ m|$dregexp| ) {
+
 				if ( ! isRequestCSRFSafe($request,$response) ) {
+
 					$::d_http && msg("client requested dangerous function/arguments and failed CSRF Referer/token test, sending 403 denial\n");
 					throwCSRFError($httpClient,$request,$response,$params);
- 					return;
- 				}
- 			}
+					return;
+
+				}
+			}
 		}
 
 		# HTTP/1.1 Persistent connections or HTTP 1.0 Keep-Alives
@@ -494,11 +499,13 @@ sub processHTTP {
 				if ($request->header('Connection') && $request->header('Connection') ne 'close') {
 					$keepAlives{$httpClient}++;
 				}
+
 				# Put in an explicit close even if there wasn't
 				# one passed in. This ensures that the response
 				# logic will close the socket.
 				else {
 					$response->header('Connection' => 'close');
+
 				}
 			}
 		}
@@ -594,12 +601,15 @@ sub processURL {
 			# must validate 32 40 48 56 64 80 96 112 128 160 192 224 256 320 CBR
 			#set to the closest lower value of its not a match
 			my $temprate = $params->{'bitrate'};
+
 			foreach my $i (320, 256, 244, 192, 160, 128, 112, 96, 80, 64, 56, 48, 40, 32) {
 				$temprate = $i; 	 
 				last if ($i <= $params->{'bitrate'}); 	 
 			}
+
 			Slim::Utils::Prefs::clientSet($client,'transcodeBitrate',$temprate); 	 
 			$::d_http && msg("Setting transcode bitrate to $temprate\n"); 	 
+
 		} else {
 				Slim::Utils::Prefs::clientSet($client,'transcodeBitrate',undef);
 		}
@@ -713,9 +723,11 @@ sub generateHTTPResponse {
 	if ($contentType =~ /text/) {
 		$params->{'params'} = {};
 		filltemplatefile('include.html', $params);
+
 		while (my ($key,$value) = each %{$params->{'params'}}) {
 			$params->{$key} = $value;
 		}
+
 		delete $params->{'params'};
 	}
 
@@ -819,12 +831,16 @@ sub generateHTTPResponse {
 		$response->header("Refresh" => "30; url=$path");
 
 		if ($path =~ /status/) {
+
 			my ($line1, $line2) = Slim::Display::Display::curLines($client);
 			$line1 = '' if (!defined($line1));
 			$line2 = '' if (!defined($line2));
 			$$body = $line1 . $CRLF . $line2 . $CRLF;
+
 		} else {
+
 			$$body = $Slim::Utils::Misc::log;
+
 		}
 
 	} elsif ($path =~ /status\.m3u/) {
@@ -863,8 +879,10 @@ sub generateHTTPResponse {
 
 	# if there's a reference to an empty value, then there is no valid page at all
 	if (defined $body && !defined $$body) {
+
 		$response->code(RC_NOT_FOUND);
 		$body = filltemplatefile('html/errors/404.html', $params);
+
 	}
 
 	return 0 unless $body;
@@ -1667,15 +1685,19 @@ sub closeStreamingSocket {
 	$::d_http && msg("Closing streaming socket.\n");
 	
 	if (defined $streamingFiles{$httpClient}) {
+
 		$::d_http && msg("Closing streaming file.\n");
 		close  $streamingFiles{$httpClient};
 		delete $streamingFiles{$httpClient};
+
 	}
 	
 	foreach my $client (Slim::Player::Client::clients()) {
+
 		if (defined($client->streamingsocket) && $client->streamingsocket == $httpClient) {
 			$client->streamingsocket(undef);
 		}
+
 	}
 
 	closeHTTPSocket($httpClient);
@@ -1684,6 +1706,7 @@ sub closeStreamingSocket {
 }
 
 sub checkAuthorization {
+
 	my $username = shift;
 	my $password = shift;
 
@@ -1706,8 +1729,8 @@ sub checkAuthorization {
 		} else {
 
 			my $salt = substr($pwd, 0, 2);
-
 			$ok = 1 if crypt($password, $salt) eq $pwd;
+
 		}
 
 	} else {
@@ -1738,130 +1761,190 @@ sub addTemplateDirectory {
 	push @templateDirs, $dir;
 }
 
-sub isCsrfAuthCodeValid($) {
+sub isCsrfAuthCodeValid {
+	
 	my $req = shift;
 	my $csrfProtectionLevel = Slim::Utils::Prefs::get("csrfProtectionLevel");
+
 	if (! defined($csrfProtectionLevel) ) {
+
 		# Prefs.pm should have set this!
 		$::d_http && msg("Server unable to determine CRSF protection level due to missing server pref\n");
 		return 0;
+
 	}
-	if ( !$csrfProtectionLevel) {
-		# no protection, so we don't care
-		return 1;
-	}
+
+	# no protection, so we don't care
+	return 1 if ( !$csrfProtectionLevel);
+
 	my $uri = $req->uri();
 	my $code = $req->header("X-Slim-CSRF");
+
 	if ( (!defined($uri)) || (!defined($code)) ) { return 0; }
+
 	my $secret = Slim::Utils::Prefs::get("securitySecret");
+
 	if ( (!defined($secret)) || ($secret !~ m|^[0-9a-f]{32}$|) ) {
+
 		# invalid secret!
 		$::d_http && msg("Server unable to verify CRSF auth code due to missing or invalid securitySecret server pref\n");
 		return 0;
+
 	}
+
 	my $expectedCode = $secret;
+
 	# calculate what the auth code should look like
 	my $highHash = new Digest::MD5;
 	my $mediumHash = new Digest::MD5;
+
 	# only the "HIGH" cauth code depends on the URI
 	$highHash->add($uri);
+
 	# both "HIGH" and "MEDIUM" depend on the securitySecret
 	$highHash->add($secret);
 	$mediumHash->add($secret);
+
 	# a "HIGH" hash is always accepted
-	if ( $code eq $highHash->hexdigest() ) { return 1; }
+	return 1 if ( $code eq $highHash->hexdigest() );
+
 	if ( $csrfProtectionLevel == 1 ) {
+
 		# at "MEDIUM" level, we'll take the $mediumHash, too
-		if ( $code eq $mediumHash->hexdigest() ) { return 1; }
+		return 1 if ( $code eq $mediumHash->hexdigest() );
+
 	}
+
 	# the code is no good (invalid or MEDIUM hash presented when using HIGH protection)!
 	return 0;
+
 }
 
-sub isRequestCSRFSafe($$) {
+sub isRequestCSRFSafe {
+	
 	my ($request,$response,$params) = @_;
 	my $rc = 0;
+
 	# referer test from SlimServer 5.4.0 code
+
 	if ($request->header('Referer') && defined($request->header('Referer')) && defined($request->header('Host')) ) {
+
 		my ($host, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($request->header('Referer'));
+
 		# if the Host request header lists no port, crackURL() reports it as port 80, so we should
 		# pretend the Host header specified port 80 if it did not
+
 		my $hostHeader = $request->header('Host');
+
 		if ($hostHeader !~ m/:\d{1,}$/ ) { $hostHeader .= ":80"; }
+
 		if ("$host:$port" ne $hostHeader) {
 			$::d_http && msg("Invalid referer: [" . join(' ', ($request->method(), $request->uri())) . "]\n");
 		} else {
 			# looks good
 			$rc = 1;
 		}
+
 	}
+
 	if ( ! $rc ) {
+
 		# need to also check if there's a valid "cauth" token
 		if ( ! isCsrfAuthCodeValid($request) ) {
+
 			$params->{'suggestion'} = "Invalid referrer and no valid cauth code.";
 			$::d_http && msg("No valid CSRF auth code: [" . join(' ', ($request->method(), $request->uri(), $request-header('X-Slim-CSRF'))) . "]\n");
+
 		} else {
+
 			# looks good
 			$rc = 1;
+
 		}
 	}
+
 	return $rc;
 }
 
-sub makeAuthorizedURI($) {
+sub makeAuthorizedURI {
+
 	my $uri = shift;
 	my $secret = Slim::Utils::Prefs::get("securitySecret");
+
 	if ( (!defined($secret)) || ($secret !~ m|^[0-9a-f]{32}$|) ) {
+
 		# invalid secret!
 		$::d_http && msg("Server unable to compute CRSF auth code URL due to missing or invalid securitySecret server pref\n");
 		return undef;
+
 	}
+
 	my $csrfProtectionLevel = Slim::Utils::Prefs::get("csrfProtectionLevel");
+
 	if (! defined($csrfProtectionLevel) ) {
+
 		# Prefs.pm should have set this!
 		$::d_http && msg("Server unable to determine CRSF protection level due to missing server pref\n");
 		return 0;
+
 	}
+
 	my $hash = new Digest::MD5;
+
 	if ( $csrfProtectionLevel == 2 ) {
+
 		# different code for each different URI
 		$hash->add($uri);
+
 	}
+
 	$hash->add($secret);
+
 	return $uri . ';cauth=' . $hash->hexdigest();
 }
 
-sub throwCSRFError($$$$) {
+sub throwCSRFError {
+
 	my ($httpClient,$request,$response,$params) = @_;
+
 	# throw 403, we don't this from non-server pages
 	# unless valid "cauth" token is present
 	$params->{'suggestion'} = "Invalid Referer and no valid CSRF auth code.";
+
 	my $protoHostPort = 'http://' . $request->header('Host');
 	my $authURI = makeAuthorizedURI($request->uri());
 	my $authURL = $protoHostPort . $authURI;
+
 	# add a long SGML comment so Internet Explorer displays the page
 	my $msg = "<!--" . ( '.' x 500 ) . "-->\n<p>";
-	# BUG: stringify the following, as this message needs to be translatable!
+
 	$msg .= string('CSRF_ERROR_INFO'); 
 	$msg .= "<br>\n<br>\n<A HREF=\"${authURI}\">${authURL}</A></p>";
+	
 	my $csrfProtectionLevel = Slim::Utils::Prefs::get("csrfProtectionLevel");
+	
 	if ( defined($csrfProtectionLevel) && $csrfProtectionLevel == 1 ) {
-		# BUG: stringify the following, as this message needs to be translatable!
 		$msg .= string('CSRF_ERROR_MEDIUM');
 	}
+	
 	$params->{'validURL'} = $msg;
+	
 	# add the appropriate URL in a response header to make automated
 	# re-requests easy? (WARNING: this creates a potential Cross Site
 	# Tracing sort of vulnerability!
+
 	# (see http://computercops.biz/article2165.html for info on XST)
 	# If you enable this, also uncomment the text regarding this on the http.html docs
 	#$response->header('X-Slim-Auth-URI' => $authURI);
+	
 	$response->code(RC_FORBIDDEN);
 	$response->content_type('text/html');
 	$response->header('Connection' => 'close');
 	$response->content(${filltemplatefile('html/errors/403.html', $params)});
+
 	$httpClient->send_response($response);
 	closeHTTPSocket($httpClient);	
+
 }
 
 1;
