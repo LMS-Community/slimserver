@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.5 2003/08/03 04:02:34 sadams Exp $
+# $Id: HTTP.pm,v 1.6 2003/08/04 17:57:19 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -894,8 +894,8 @@ sub HTMLTemplateDirs {
 	my @dirs;
 	push @dirs, catdir($Bin,'HTML');
 	if ($^O eq 'darwin') {
-		push @dirs, $ENV{'HOME'} . "/Library/SlimDevices/HTML/";
-		push @dirs, "/Library/SlimDevices/HTML/";
+		push @dirs, $ENV{'HOME'} . "/Library/SlimDevices/html/";
+		push @dirs, "/Library/SlimDevices/html/";
 	}
 	return @dirs;
 }

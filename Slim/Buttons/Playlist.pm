@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.3 2003/07/30 18:02:49 dean Exp $
+# $Id: Playlist.pm,v 1.4 2003/08/04 17:57:18 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -151,6 +151,8 @@ my %functions = (
 				Slim::Control::Command::execute($client, ["pause"]);
 			} elsif (Slim::Player::Playlist::rate($client) != 1) {
 				Slim::Control::Command::execute($client, ["rate", 1]);
+			} else {
+				Slim::Control::Command::execute($client, ["playlist", "jump", browseplaylistindex($client)]);
 			}	
 		} else {
 			Slim::Control::Command::execute($client, ["playlist", "jump", browseplaylistindex($client)]);
