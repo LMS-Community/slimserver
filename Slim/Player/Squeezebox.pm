@@ -151,7 +151,7 @@ sub needsUpgrade {
 	while ($line = <$versionFile>) {
 		$line=~/^(\d+)\s+(\d+)\s*$/ || next;
 		($from, $to) = ($1, $2);
-		print "\"$from\"\t\"$to\"\n";
+		#print "\"$from\"\t\"$to\"\n";
 		$from == $client->revision && last;
 	}
 
