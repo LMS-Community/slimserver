@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.108 2004/12/11 23:51:35 vidur Exp $
+# $Id: Pages.pm,v 1.109 2004/12/16 01:13:56 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -27,9 +27,16 @@ sub home {
 	$params->{'nosetup'} = 1   if $::nosetup;
 	$params->{'newVersion'} = $::newVersion if $::newVersion;
 
+	# Uncomment these lines and comment the ones following to enable
+	# the new web interface scheme using browsedb. Look a few lines
+	# below for cover art related browsing.
+#	addLinks("browse",{'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=artist,album,track&level=0"});
+#	addLinks("browse",{'BROWSE_BY_GENRE' => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
+#	addLinks("browse",{'BROWSE_BY_ALBUM' => "browsedb.html?hierarchy=album,track&level=0"});
 	addLinks("browse",{'BROWSE_BY_ARTIST' => "browseid3.html?genre=*"});
 	addLinks("browse",{'BROWSE_BY_GENRE' => "browseid3.html"});
 	addLinks("browse",{'BROWSE_BY_ALBUM' => "browseid3.html?genre=*&artist=*"});
+
 	addLinks("search",{'SEARCHFOR_ARTIST' => "search.html?type=artist"});
 	addLinks("search",{'SEARCHFOR_ALBUM' => "search.html?type=album"});
 	addLinks("search",{'SEARCHFOR_SONGTITLE' => "search.html?type=song"});
@@ -45,6 +52,9 @@ sub home {
 
 
 	if (Slim::Utils::Prefs::get('lookForArtwork')) {
+		# Uncomment the next lines and comment the one following to enable
+		# the new web interface scheme using browsedb.
+#		addLinks("browse",{'BROWSE_BY_ARTWORK' => "browsedb.html?hierarchy=artwork,track&level=0"});
 		addLinks("browse",{'BROWSE_BY_ARTWORK' => "browseid3.html?genre=*&artist=*&artwork=1"});
 	} else {
 		addLinks("browse",{'BROWSE_BY_ARTWORK' => undef});
@@ -1219,6 +1229,504 @@ sub generate_pwd_list {
 	
 	return $pwd_list;
 }
+
+my %fieldInfo = (
+	'track' => {
+		'title' => 'BROWSE_BY_SONG'
+		,'allTitle' => 'ALL_SONGS'
+		,'idToName' => sub { 
+			my $db = shift;
+			my $id = shift;
+			my $objs = $db->find('track', { 'track' => $id });
+			if (defined($objs) && scalar(@$objs)) {
+				return $objs->[0]->title;
+			}
+			return '';
+		}
+		,'resultToId' => sub { 
+			my $obj = shift;
+			return $obj->id;
+		}
+		,'resultToName' => sub { 
+			my $obj = shift;
+			return $obj->title;
+		}
+		,'find' => sub { 
+			my $db = shift;
+			my $level = shift;
+			my $findCriteria = shift;
+			return $db->find('track', $findCriteria,  
+							 exists $findCriteria->{album} ? 'tracknum' : 'title');
+		}
+        ,'listItem' => sub {
+			my $db = shift;
+			my $list_form = shift;
+			my $item = shift;
+
+			my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
+			$list_form->{'text'} = Slim::Music::Info::standardTitle(undef, $item->url);
+
+			my @contributors = $item->contributors;
+			if (scalar(@contributors)) {
+				$list_form->{'artist'} = $contributors[0]->name;
+				$list_form->{'artistid'} = $contributors[0]->id;
+			}
+
+			my $album = $item->album;
+			if (defined($album)) {
+				$list_form->{'album'} = $album->title;
+				$list_form->{'albumid'} = $album->id;
+			}
+
+			$list_form->{'includeArtist'} = ($webFormat !~ /ARTIST/);
+			$list_form->{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
+			$list_form->{'item'}	          	  = $item->url;
+			$list_form->{'itempath'}	          = $item->url;
+			$list_form->{'mixable_not_descend'} = Slim::Music::Info::isSongMixable($item->url);
+
+			my ($body, $type, $mtime) =  Slim::Music::Info::coverArt($item->url);
+
+			if (defined($body)) {
+				$list_form->{'coverart'} = 1;
+				$list_form->{'coverartpath'} = $item->url;
+			}
+		},
+		,'ignoreArticles' => 1
+	}
+
+	,'genre' => {
+		'title' => 'BROWSE_BY_GENRE'
+		,'allTitle' => 'ALL_GENRES'
+		,'idToName' => sub { 
+			my $db = shift;
+			my $id = shift;
+			my $objs = $db->find('genre', { 'genre' => $id });
+			if (defined($objs) && scalar(@$objs)) {
+				return $objs->[0]->name;
+			}
+			return '';
+		}
+		,'resultToId' => sub { 
+			my $obj = shift;
+			return $obj->id;
+		}
+		,'resultToName' => sub { 
+			my $obj = shift;
+			return $obj->name;
+		}
+		,'find' => sub { 
+			my $db = shift;
+			my $level = shift;
+			my $findCriteria = shift;
+			return $db->find('genre', $findCriteria, 'genre');
+		}
+        ,'listItem' => sub {
+			my $db = shift;
+			my $list_form = shift;
+			my $item = shift;
+			my $itemname = shift;
+			my $descend = shift;
+
+			$list_form->{'mixable_descend'} = Slim::Music::Info::isGenreMixable($itemname) && ($descend eq "true");
+		},
+		,'ignoreArticles' => 0
+		,'alphapagebar' => 1
+	}
+
+	,'album' => {
+		'title' => 'BROWSE_BY_ALBUM'
+		,'allTitle' => 'ALL_ALBUMS'
+		,'idToName' => sub { 
+			my $db = shift;
+			my $id = shift;
+			my $objs = $db->find('album', { 'album' => $id });
+			if (defined($objs) && scalar(@$objs)) {
+				return $objs->[0]->title;
+			}
+			return '';
+		}
+		,'resultToId' => sub { 
+			my $obj = shift;
+			return $obj->id;
+		}
+		,'resultToName' => sub { 
+			my $obj = shift;
+			return $obj->title;
+		}
+		,'find' => sub { 
+			my $db = shift;
+			my $level = shift;
+			my $findCriteria = shift;
+			return $db->find('album', $findCriteria, 'album');
+		}
+        ,'listItem' => sub {
+			# XXX FIXME "showYear" functionality broken
+		},
+		,'ignoreArticles' => 1
+		,'alphapagebar' => 1
+	}
+
+	,'artwork' => {
+		'title' => 'BROWSE_BY_ARTWORK'
+		,'idToName' => sub { 
+			my $db = shift;
+			my $id = shift;
+			my $objs = $db->find('album', { 'album' => $id });
+			if (defined($objs) && scalar(@$objs)) {
+				return $objs->[0]->title;
+			}
+			return '';
+		}
+		,'resultToId' => sub { 
+			my $obj = shift;
+			return $obj->id;
+		}
+		,'resultToName' => sub { 
+			my $obj = shift;
+			return $obj->title;
+		}
+		,'find' => sub { 
+			my $db = shift;
+			my $level = shift;
+			my $findCriteria = shift;
+			if (Slim::Utils::Prefs::get('includeNoArt')) {
+				return $db->find('album', $findCriteria, 'album');
+			}
+			
+			return $db->albumsWithArtwork()
+		}
+        ,'listItem' => sub {
+			my $db = shift;
+			my $list_form = shift;
+			my $item = shift;
+			my $itemname = shift;
+
+			if ($item->artwork_path) {
+				$list_form->{'coverthumb'} = 1;
+				$list_form->{'thumbartpath'} = $item->artwork_path;
+			}
+			else {
+				$list_form->{'coverthumb'}   = 0;
+			}
+			# XXX FIXME "showYear" functionality broken
+
+			$list_form->{'item'} = $itemname;
+			$list_form->{'artwork'} = 1;
+			$list_form->{'size'}		 = Slim::Utils::Prefs::get('thumbSize');
+		},
+        ,'nameTransform' => 'album'
+		,'ignoreArticles' => 1
+		,'alphapagebar' => 0
+		,'suppressAll' => 1
+	}
+
+	,'artist' => {
+		'title' => 'BROWSE_BY_ARTIST'
+		,'allTitle' => 'ALL_ARTISTS'
+		,'idToName' => sub { 
+			my $db = shift;
+			my $id = shift;
+			my $objs = $db->find('contributor', { 'contributor' => $id });
+			if (defined($objs) && scalar(@$objs)) {
+				return $objs->[0]->name;
+			}
+			return '';
+		}
+		,'resultToId' => sub { 
+			my $obj = shift;
+			return $obj->id;
+		}
+		,'resultToName' => sub { 
+			my $obj = shift;
+			return $obj->name;
+		}
+		,'find' => sub { 
+			my $db = shift;
+			my $level = shift;
+			my $findCriteria = shift;
+			return $db->find('artist', $findCriteria, 'artist');
+		}
+        ,'listItem' => sub {
+			my $db = shift;
+			my $list_form = shift;
+			my $item = shift;
+			my $itemname = shift;
+			my $descend = shift;
+
+			$list_form->{'mixable_descend'} = Slim::Music::Info::isArtistMixable($itemname) && ($descend eq "true");
+		},
+		,'ignoreArticles' => 1
+		,'alphapagebar' => 1
+	}
+
+	,'default' => {			 
+		'title' => 'BROWSE'
+		,'allTitle' => 'ALL'
+		,'idToName' => sub { 
+			return shift;
+		}
+		,'resultToId' => sub { 
+			return shift;
+		}
+		,'resultToName' => sub { 
+			return shift;
+		}
+		,'find' => sub { 
+			my $db = shift;
+			my $level = shift;
+			my $findCriteria = shift;
+			return $db->find($level, $findCriteria, $level);
+		}
+        ,'listItem' => sub {
+		},
+		,'ignoreArticles' => 0
+	}
+);
+
+# XXX FIXME The fieldInfo type structure, at some level, is going to
+# be needed here, in the command code (for playlist commands), and in
+# the browse menu code. The following method is a placeholder till we
+# figure out how to share it.
+sub queryFields {
+	return keys %fieldInfo;
+}
+
+sub browsedb {
+	my ($client, $params) = @_;
+
+	my $hierarchy   = $params->{'hierarchy'} || "genre";
+	my $level   = $params->{'level'} || 0;
+	my $player = $params->{'player'};
+
+	my @levels = split(",", $hierarchy);
+	my $maxLevel = scalar(@levels) - 1;
+	if ($level > $maxLevel)	{
+		$level = $maxLevel;
+	}
+
+	my $db = Slim::Music::Info::getCurrentDataStore();
+	my $itemnumber = 0;
+	my $lastAnchor = '';
+	my $descend;
+
+	my %names;
+	for my $field (@levels) {
+		my $info = $fieldInfo{$field} || $fieldInfo{default};
+		$names{$field} = &{$info->{idToName}}($db, $params->{$field});
+	}
+
+	# warn the user if the scanning isn't complete.
+	if (Slim::Utils::Misc::stillScanning()) {
+		$params->{'warn'} = 1;
+	}
+
+	if (Slim::Music::iTunes::useiTunesLibrary()) {
+		$params->{'itunes'} = 1;
+	}
+
+	my $firstLevelInfo = $fieldInfo{$levels[0]} || $fieldInfo{default};
+	my $title = $firstLevelInfo->{title};
+
+	$params->{'browseby'} = $title;
+
+
+	my @attrs;
+	my %findCriteria=();	
+	for my $key (keys %fieldInfo) {
+		if (defined($params->{$key})) {
+			# Populate the find criteria with all query parameters in 
+			# the URL
+			$findCriteria{$key} = $params->{$key};
+
+			# Pre-populate the attrs list with all query parameters that 
+			# are not part of the hierarchy. This allows a URL to put
+			# query constraints on a hierarchy using a field that isn't
+			# necessarily part of the hierarchy.
+			if (!grep {$_ eq $key} @levels) {
+				push @attrs, $key . '=' . URI::Escape::uri_escape($params->{$key});
+			}
+		}
+	}
+
+	my %list_form = (
+		'player'       => $player,
+		'pwditem'      => string($title),
+		'skinOverride' => $params->{'skinOverride'},
+		'title'		   => $title,
+		'hierarchy'	   => $hierarchy,
+		'level'		   => '0',
+		'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
+	);
+	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_pwdlist.html", \%list_form)};
+
+	for (my $i = 0; $i < $level ; $i++) {
+		my $attr = $levels[$i];
+		if ($params->{$attr}) {
+			push @attrs, $attr . '=' . URI::Escape::uri_escape($params->{$attr});
+			my %list_form = (
+							 'player'       => $player,
+							 'pwditem'      => $names{$attr},
+							 'skinOverride' => $params->{'skinOverride'},
+							 'title'		   => $title,
+							 'hierarchy'	   => $hierarchy,
+							 'level'		   => $i+1,
+							 'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
+							 );
+			
+			$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_pwdlist.html", \%list_form)};
+		}
+	}
+
+	my $otherparams = 
+		'player='		. Slim::Web::HTTP::escape($player || '') . 
+		'&hierarchy='	. $hierarchy .
+		'&level='		. $level;
+	if (scalar(@attrs)) {
+		$otherparams .= '&'	. join("&", @attrs);
+	}
+	$otherparams .= '&';
+
+	my $levelInfo = $fieldInfo{$levels[$level]} || $fieldInfo{default};
+	my $items = &{$levelInfo->{find}}($db, $levels[$level], \%findCriteria);
+
+	if ($items && scalar(@$items)) {
+		my ($start, $end);
+
+		my $ignoreArticles = $levelInfo->{ignoreArticles};
+		my $alpha = $levelInfo->{alphaPageBar};
+		if (defined $params->{'nopagebar'}){
+
+			($start, $end) = Slim::Web::Pages::simpleheader(
+				scalar(@$items),
+				\$params->{'start'},
+				\$params->{'browselist_header'},
+				$params->{'skinOverride'},
+				$params->{'itemsPerPage'},
+				$ignoreArticles ? (scalar(@$items) > 1) : 0,
+			);
+
+		} elsif ($alpha) {
+			
+			my $alphaitems;
+			my @names = map &{$levelInfo->{resultToName}}($_), @$items;
+			$alphaitems = \@names;
+
+			($start, $end) = Slim::Web::Pages::alphapagebar(
+				$alphaitems,
+				$params->{'path'},
+				$otherparams,
+				\$params->{'start'},
+				\$params->{'browselist_pagebar'},
+				$ignoreArticles, 
+				$params->{'skinOverride'},
+				$params->{'itemsPerPage'},
+			);
+		} else {
+			($start, $end) = pagebar(
+				scalar(@$items),
+				$params->{'path'},
+				0,
+				$otherparams,
+				\$params->{'start'},
+				\$params->{'browselist_header'},
+				\$params->{'browselist_pagebar'},
+				$params->{'skinOverride'},
+				$params->{'itemsPerPage'},
+			);
+		}
+
+		$descend = ($level >= $maxLevel) ? undef: 'true';
+
+		if (scalar(@$items) > 1 && !$levelInfo->{suppressAll}) {
+			if ($params->{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
+				# XXX include statistics
+			}
+
+			my $nextLevelInfo;
+			if ($descend) {
+				my $nextLevel = $levels[$level+1];
+				$nextLevelInfo = $fieldInfo{$nextLevel} || $fieldInfo{default};
+			}
+			else {
+				$nextLevelInfo = $fieldInfo{track};
+			}
+
+			if ($level == 0) {
+				$list_form{'hierarchy'}		= join(',', @levels[1..$#levels]);
+				$list_form{'level'}			= 0;
+			}
+			else {
+				$list_form{'hierarchy'}		= $hierarchy;
+				$list_form{'level'}		= $descend ? $level+1 : $level;
+			}
+			$list_form{'text'} =  string($nextLevelInfo->{allTitle});
+
+			$list_form{'descend'}      = 1;
+			$list_form{'player'}       = $player;
+			$list_form{'odd'}	   = ($itemnumber + 1) % 2;
+			$list_form{'skinOverride'} = $params->{'skinOverride'};
+			$list_form{'attributes'}   = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '');
+				
+			$itemnumber++;
+				
+			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
+		}
+
+		foreach my $item ( @{$items}[$start..$end] ) {
+			my %list_form = %$params;
+
+			my $itemid = &{$levelInfo->{resultToId}}($item);
+			my $itemname = &{$levelInfo->{resultToName}}($item);
+			my $attrName = $levelInfo->{nameTransform} || $levels[$level];
+			$list_form{'hierarchy'}		= $hierarchy;
+			$list_form{'level'}		= $level + 1;
+			$list_form{'attributes'}    = 
+				(scalar(@attrs) ? ('&' . join("&", @attrs)) : ''). '&' .
+				$attrName . '=' . URI::Escape::uri_escape($itemid);
+			$list_form{'text'}		= $itemname;
+			$list_form{'descend'}		= $descend;
+			$list_form{'player'}		= $player;
+			$list_form{'odd'}		= ($itemnumber + 1) % 2;
+			$list_form{$levels[$level]}	= $itemid;
+			$list_form{'skinOverride'}    = $params->{'skinOverride'};
+			$list_form{'itemnumber'} = $itemnumber;
+
+			&{$levelInfo->{listItem}}($db, \%list_form, $item, $itemname, $descend);
+
+			my $anchor = Slim::Web::Pages::anchor(Slim::Utils::Text::getSortName($itemname), $ignoreArticles);
+
+			if ($lastAnchor ne $anchor) {
+				$list_form{'anchor'} = $anchor;
+				$lastAnchor          = $anchor;
+			}
+
+			$itemnumber++;
+			if ($levels[$level] eq 'artwork') {
+				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_artwork.html", \%list_form)};
+			}
+			else {
+				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
+			}
+
+			::idleStreams();
+		}
+
+		if ($level == $maxLevel && $levels[$level] eq 'track') {
+			my ($body, $type, $mtime) =  Slim::Music::Info::coverArt($items->[$start]->url);
+
+			if (defined($body)) {
+				$params->{'coverart'} = 1;
+				$params->{'coverartpath'} = $items->[$start]->url;
+			}
+		}
+	}
+
+	$params->{'descend'} = $descend;
+	
+	return Slim::Web::HTTP::filltemplatefile("browseid3.html", $params);
+}
+
+
 
 sub browseid3 {
 	my ($client, $params) = @_;

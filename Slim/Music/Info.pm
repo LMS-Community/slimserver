@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.165 2004/12/15 17:53:18 grotus Exp $
+# $Id: Info.pm,v 1.166 2004/12/16 01:13:55 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1234,9 +1234,9 @@ sub artists {
 }
 
 sub artwork {
-	my @albums = $currentDB->albumsWithArtwork();
+	my $albums = $currentDB->albumsWithArtwork();
 
-	return Slim::Utils::Text::sortuniq_ignore_articles(map {$_->title} @albums);
+	return Slim::Utils::Text::sortuniq_ignore_articles(map {$_->title} @$albums);
 }
 
 sub albums {

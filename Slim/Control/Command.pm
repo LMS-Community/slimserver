@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.51 2004/12/11 17:36:28 dean Exp $
+# $Id: Command.pm,v 1.52 2004/12/16 01:13:53 vidur Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -446,6 +446,28 @@ sub execute {
 				#Slim::Player::Playlist::reshuffle($client);
 				$client->currentPlaylistModified(1);
 			
+			} elsif ($p1 eq "loadtracks" | $p1 eq "playtracks") {
+				Slim::Player::Source::playmode($client, "stop");
+				Slim::Player::Playlist::clear($client);
+				push(@{Slim::Player::Playlist::playList($client)}, parseSearchTerms($p2));
+				Slim::Player::Playlist::reshuffle($client);
+				Slim::Player::Source::jumpto($client, 0);
+				$client->currentPlaylist(undef);
+			
+			} elsif ($p1 eq "addtracks") {
+				push(@{Slim::Player::Playlist::playList($client)}, parseSearchTerms($p2));
+				Slim::Player::Playlist::reshuffle($client);
+				$client->currentPlaylistModified(1);
+			
+			} elsif ($p1 eq "inserttracks") {
+				my @songs = parseSearchTerms($p2);
+				my $playListSize = Slim::Player::Playlist::count($client);
+				my $size = scalar(@songs);
+				push(@{Slim::Player::Playlist::playList($client)}, @songs);
+				insert_done($client, $playListSize, $size);
+				#Slim::Player::Playlist::reshuffle($client);
+				$client->currentPlaylistModified(1);
+			
 			} elsif ($p1 eq "save") {
 				if ( Slim::Utils::Prefs::get('playlistdir')) {
 					# just use the filename to avoid nasties
@@ -861,6 +883,22 @@ sub turnitoff {
 	# Turn off quietly
 	execute($client, ['stop', 0]);
 	execute($client, ['power', 0]);
+}
+
+sub parseSearchTerms {
+	my $terms = shift;
+
+	my $db = Slim::Music::Info::getCurrentDataStore();
+	my %findCriteria = ();
+	my @queryFields = Slim::Web::Pages::queryFields();
+	for my $term (split '&', $terms) {
+		if ($term =~ /(.*)=(.*)/ && grep $_ eq $1, @queryFields) {
+			$findCriteria{URI::Escape::uri_unescape($1)} = URI::Escape::uri_unescape($2);
+		}
+	}
+	my $tracks = $db->find('track', \%findCriteria,
+						   exists $findCriteria{album} ? 'tracknum' : 'title');
+	return @$tracks;
 }
 
 1;

@@ -1,0 +1,21 @@
+<tr>
+  <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+	  [% IF anchor %]<a name="[% anchor %]"></a>[% END %]
+      [% IF descend %]<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% text | html %]</a>[% END %]
+      [% IF not descend %]<a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% text | html %][% IF year %] ([% year %])[% END %]</a>
+      [% END %]
+  </td>
+  <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+      [% IF descend %]  <nobr><a href="status.html?command=playlist&sub=loadtracks[% attributes %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr> [% END %]
+      [% IF not descend %] <nobr><a href="status.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr> [% END %]
+  </td>
+  <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+      [% IF descend %]   <nobr><a href="status.html?command=playlist&sub=addtracks[% attributes %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr> [% END %]
+      [% IF not descend %]  <nobr><a href="status.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr> [% END %]
+  </td>
+  <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+      [% IF mixable_descend %] <nobr><a href="mood_wheel.html?genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% FILTER nbsp %][% "MOODLOGIC_MIX" | string %][% END %]</a></nobr> [% END %]
+      [% IF mixable_not_descend %] <nobr><a href="instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% FILTER nbsp %][% "MOODLOGIC_MIX" | string %][% END %]</a></nobr> [% END %]
+  </td>
+</tr>
+

@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.130 2004/12/15 22:43:43 dsully Exp $
+# $Id: HTTP.pm,v 1.131 2004/12/16 01:13:55 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -100,6 +100,7 @@ my %pageFunctions = ();
 		qr/^$/				=> \&Slim::Web::Pages::home,
 		qr/^index\.(?:htm|xml)/		=> \&Slim::Web::Pages::home,
 		qr/^browseid3\.(?:htm|xml)/	=> \&Slim::Web::Pages::browseid3,
+		qr/^browsedb\.(?:htm|xml)/	=> \&Slim::Web::Pages::browsedb,
 		qr/^browse\.(?:htm|xml)/		=> \&Slim::Web::Pages::browser,
 		qr/^edit_playlist\.(?:htm|xml)/	=> \&Slim::Web::EditPlaylist::editplaylist,  # Needs to be before playlist
 		qr/^firmware\.(?:html|xml)/	=> \&Slim::Web::Pages::firmware,
@@ -530,7 +531,16 @@ sub processURL {
 		last unless defined $params->{"p$i"};
 		$p[$i] = $params->{"p$i"};
 	}
-	
+
+	# This is trumped by query parameters 'command' and 'sub'.
+	# These are passed as the first two command parameters (p0 and p1), 
+	# while the rest of the query parameters are passed as third (p3).
+	if (defined $params->{'command'}) {
+		$p[0] = $params->{'command'};
+		$p[1] = $params->{'sub'};
+		$p[2] = join '&', map $_ . '=' . $params->{$_},  keys %{$params};
+	}
+
 	$::d_http && msg("processURL Clients: " . join(" ", Slim::Player::Client::clientIPs()) . "\n");
 
 	# explicitly specified player (for web browsers or squeezeboxen)

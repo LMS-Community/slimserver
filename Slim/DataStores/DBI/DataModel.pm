@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DataModel;
 
-# $Id: DataModel.pm,v 1.4 2004/12/14 02:33:23 vidur Exp $
+# $Id: DataModel.pm,v 1.5 2004/12/16 01:13:55 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -664,6 +664,7 @@ __PACKAGE__->columns(Essential => qw/id title titlesort artwork_path disc discc/
 __PACKAGE__->columns(Stringify => qw/title/);
 __PACKAGE__->set_sql(count_all => "SELECT COUNT(*) FROM __TABLE__");
 __PACKAGE__->add_constructor('hasArtwork' => 'artwork_path IS NOT NULL');
+__PACKAGE__->has_many(tracks => ['Slim::DataStores::DBI::Track' => 'album']);
 
 sub count {
 	return __PACKAGE__->sql_count_all->select_val;

@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DBIStore;
 
-# $Id: DBIStore.pm,v 1.1 2004/12/11 23:51:31 vidur Exp $
+# $Id: DBIStore.pm,v 1.2 2004/12/16 01:13:55 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -246,7 +246,8 @@ sub search {
 sub albumsWithArtwork {
 	my $self = shift;
 	
-	return Slim::DataStores::DBI::Album->hasArtwork();
+	my @albums = Slim::DataStores::DBI::Album->hasArtwork();
+	return \@albums;
 }
 
 sub totalTime {
@@ -812,10 +813,11 @@ sub _includeInTrackCount {
 }
 
 sub _preCheckAttributes {
- 	my $attributes = shift;
+ 	my $attributeHash = shift;
  	my $create = shift;
 	my $deferredAttributes = {};
-	
+	# Copy the incoming hash, so we don't modify it
+	my $attributes = { %$attributeHash };
 
 	if (my $genre = $attributes->{GENRE}) {
 		$deferredAttributes->{GENRE} = $genre;
@@ -900,9 +902,11 @@ sub _postCheckAttributes {
 				$unknownID = $unkwn->id;
 			}
 			
-			foreach my $contrib (@contributors) {
-				$contrib->delete if ($contrib->contributor->id eq $unknownID);
-			} 
+			if (defined($unknownID)) {
+				foreach my $contrib (@contributors) {
+					$contrib->delete if ($contrib->contributor->id eq $unknownID);
+				} 
+			}
 		}
 	}
 	elsif ($create) {

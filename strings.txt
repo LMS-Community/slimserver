@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.155 2004/12/13 06:11:59 dean Exp $
+# $Id: strings.txt,v 1.156 2004/12/16 01:13:52 vidur Exp $
 #
 # This tab-delimited file contains all the text strings used in SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -5708,6 +5708,17 @@ LCALBUMS
 	PT	álbums
 	SE	album
 
+ALL
+	DE	Alle
+	DK	Alle
+	EN	All
+	ES	Todas
+	FR	Tous
+	NL	Alle
+	NO	Alle
+	PT	Todas
+	SE	Alla
+
 ALL_SONGS
 	DE	Alle Titel
 	DK	Alle sange
@@ -5828,6 +5839,18 @@ LCSONGS
 	NO	sanger
 	PT	músicas
 	SE	Låtar
+
+BROWSE
+	DE	Nachschlagen
+	DK	Gennemse
+	EN	Browse
+	ES	Examinar
+	FI	Selaa
+	FR	Parcourir
+	NL	Doorzoeken
+	NO	Bla
+	PT	Escolher
+	SE	Bläddra
 
 BROWSE_MUSIC
 	DE	Musik nachschlagen
