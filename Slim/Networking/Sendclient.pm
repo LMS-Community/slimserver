@@ -37,6 +37,8 @@ sub vfd {
 	}
 }
 
+# SliMP3 UDP streaming
+#
 sub udpstream {
 	my ($client, $controlcode, $wptr, $seq, $chunk) = @_;
 
@@ -52,6 +54,56 @@ sub udpstream {
 	$frame .= $chunk;
         
 	send($client->udpsock, $frame, 0, $client->paddr());
+}
+
+# Squeezebox control for tcp stream
+#
+#	u8_t command;		// [1]	's' = start, 'p' = pause, 'u' = unpause, 'q' = stop 
+#	u8_t autostart_threshold;// [1]	'0' = don't auto-start, '1' = 25%, '2' = 50%, '3'= 75%, '4' = 100%
+#	u8_t mode;		// [1]	'm' = mpeg bitstream, 'p' = PCM
+#	u8_t pcm_sample_size;	// [1]	'0' = 8, '1' = 16, '2' = 20, '3' = 32
+#	u8_t pcm_sample_rate;	// [1]	'0' = 11kHz, '1' = 22, '2' = 32, '3' = 44.1, '4' = 48
+#	u8_t pcm_channels;	// [1]	'1' = mono, '2' = stereo
+#	u8_t pcm_endianness;	// [1]	'0' = big, '1' = little
+#	u8_t prebuffer_silence;	// [1]	number of mpeg frames
+#	u8_t spdif_enable;	// [1]  '0' = auto, '1' = on, '2' = off
+#	u8_t reserved;		// [1]	reserved
+#	u16_t server_port;	// [2]	server's port
+#	u32_t server_ip;	// [4]	server's IP
+#				// ____
+#				// [16]
+#
+sub stream {
+
+	my ($client, $command) = @_;
+
+	assert($client->model eq 'squeezebox');
+
+	my $frame = pack 'aaaaaaaCaanL', (
+		$command,
+		'3',
+		'm',
+		'1',
+		'3',
+		'1',
+		'0',
+		5,
+		0,
+		9000,
+		0		# server IP of 0 means use IP of control server
+	);
+
+	assert(length($frame) == 16);
+
+	my $path = '/music/Sean/Mellow/Pink%20Floyd/The%20Dark%20Side%20Of%20The%20Moon/05%20Money.mp3';
+	$frame .= "GET $path HTTP/1.0\n\n";
+
+	my $len = pack('n', length($frame));
+
+	$frame = $len.$frame;
+
+	$client->tcpsock->syswrite($frame, length($frame));
+
 }
 
 sub i2c {

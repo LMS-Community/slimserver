@@ -34,18 +34,19 @@ sub play {
 
 	&volume($client, Slim::Utils::Prefs::clientGet($client, "volume"));
 	Slim::Hardware::Decoder::reset($client, $pcm);
+
+	if ($client->model eq 'slimp3') {
 	
+		Slim::Networking::Stream::newStream($client, $paused);
+		return 1;
+	
+	} else {
+		assert($client->model eq 'squeezebox');
 
-	Slim::Networking::Stream::newStream($client, $paused);
-	#
-	# We can't start playing until the i2c has all been acked. Ideally
-	# something like:
-	#	Slim::Hardware::i2c::callback_when_done(Slim::Networking::Stream::newStream,($client,$paused));
-	# For now just kludge it:
-	#Slim::Utils::Timers::setTimer($client, Time::HiRes::time()+2, 
-	#	\&Slim::Networking::Stream::newStream, ($paused));
+		Slim::Networking::Sendclient::stream($client, 's');
+		return 1;
+	}
 
-	return 1;
 }
 
 #

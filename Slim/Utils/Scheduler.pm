@@ -77,7 +77,9 @@ sub run_tasks {
 	#run tasks at least once a second.
 	if (($now - $lastpass) < 1.0) {
 		foreach my $client (Slim::Player::Client::clients()) {
-			if ($client->revision() >= 1.3 && Slim::Player::Playlist::playmode($client) eq 'play' && $client->usage() < 0.5) {
+			if ($client->revision() >= 1.3 
+			    && Slim::Player::Playlist::playmode($client) eq 'play' && 
+			    $client->model eq 'slimp3' && $client->usage() < 0.5) {
 				$busy = 1;
 				$::d_perf && msg(Slim::Player::Client::id($client) . " Usage low, not running tasks.\n");
 				last;
