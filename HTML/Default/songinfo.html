@@ -136,6 +136,11 @@
         <td class="nowrap"> [% "MODTIME" | string %][% "COLON" | string %]</td>
         <td> [% modtime | html %] </td>
       </tr>
+      [% END %] [% IF drm %]
+      <tr>
+        <td class="nowrap">[% "NOTE" | string %]</td>
+        <td>[% "DRM" | string %]</td>
+      </tr>
       [% END %] [% IF coverart %] 
       <tr>
       	<td valign="top">[% "COVERART" | string %][% "COLON" | string %]</td>

@@ -281,6 +281,11 @@ sub preloadLines {
 		push (@{$client->trackInfoContent}, undef);
 	}
 
+	if (Slim::Music::Info::digitalrights($url)) {
+		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('DRM'));
+		push (@{$client->trackInfoContent}, undef);
+	}
+
 }
 
 #

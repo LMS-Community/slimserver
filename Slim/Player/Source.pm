@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.115 2004/09/23 21:59:05 vidur Exp $
+# $Id: Source.pm,v 1.116 2004/10/02 00:14:41 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -803,6 +803,12 @@ sub errorOpening {
 	my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
 	
 	$client->showBriefly($line1, $line2, 1,1);
+	Slim::Buttons::Common::param($client,'noUpdate',1);
+	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&errorDone)
+}
+
+sub errorDone {
+	Slim::Buttons::Common::param(shift,'noUpdate',0);
 }
 
 sub openSong {
@@ -905,7 +911,7 @@ sub openSong {
 			$filepath = $fullpath;
 		}
 
-		my ($size, $duration, $offset, $samplerate, $blockalign, $endian) = (0, 0, 0, 0, 0, undef);
+		my ($size, $duration, $offset, $samplerate, $blockalign, $endian,$drm) = (0, 0, 0, 0, 0, undef,undef);
 		
 		# don't try and read this if we're a pipe
 		unless (-p $filepath) {
@@ -917,11 +923,19 @@ sub openSong {
 			$samplerate = Slim::Music::Info::samplerate($fullpath);
 			$blockalign = Slim::Music::Info::blockalign($fullpath);
 			$endian     = Slim::Music::Info::endian($fullpath) || '';
+			$drm = Slim::Music::Info::digitalrights($fullpath);
 
 			$::d_source && msg(
 				"openSong: getting duration  $duration, size $size, endian " .
 				"$endian and offset $offset for $fullpath\n"
 			);
+
+			if ($drm) {
+
+				$::d_source && msg("openSong: $fullpath is rights protected. skipping.\n");
+				errorOpening($client);
+				return undef;
+			}
 
 			if (!$size || !$duration) {
 

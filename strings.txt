@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.138 2004/09/23 01:27:28 kdf Exp $
+# $Id: strings.txt,v 1.139 2004/10/02 00:14:39 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -5012,6 +5012,9 @@ BITRATE
 BPM
 	EN	Beats Per Minute
 	FR	Bats par Minute
+
+DRM
+	EN	This file is locked by Digital Rights Management
 
 YEAR
 	DE	Jahr

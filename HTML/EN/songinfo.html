@@ -176,7 +176,18 @@
 			[% modtime | html %]
 		</td>
 	</tr>
-      [% END %] [% IF coverart %] 
+	[% END %]
+	[% IF drm %]
+	<tr>
+		<td>
+			[% "NOTE" | string %]
+		</td>
+		<td>
+			[% "DRM" | string %]
+		</td>
+	</tr>
+	[% END %]
+	[% IF coverart %] 
       <tr>
       	<td valign="top">[% "COVERART" | string %]</td>
       	<td><a href="/music/[% itempath | uri %]/cover.jpg" target="cover"><img src="/music/[% itempath | uri %]/cover.jpg"></a></td>

@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.147 2004/10/01 21:11:26 dean Exp $
+# $Id: Info.pm,v 1.148 2004/10/02 00:14:41 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -83,6 +83,7 @@ my @infoCacheItems = (
 	'VALID', # 0 - entry not checked, 1 - entry checked and valid. Used to find stale entries in the cache
 	'TTL', # Time to Live for Cache Entry
 	'BPM', # Beats per minute
+	'DRM', # Digital Rights Management
 );
 
 # Save the persistant DB cache every hour
@@ -1438,6 +1439,8 @@ sub bitrate {
 		return;
 	}
 }
+
+sub digitalrights { return info(shift,'DRM'); }
 
 sub bitratenum { return info(shift,'BITRATE'); }
 

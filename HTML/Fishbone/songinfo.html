@@ -179,6 +179,16 @@
 			<td> [% modtime | html %] </td>
 		</tr>
 	[% END %]
+	[% IF drm %]
+		<tr>
+			<td>
+				[% "NOTE" | string %]
+			</td>
+			<td>
+				[% "DRM" | string %]
+			</td>
+		</tr>
+	[% END %]
 </table>
 [% IF itempath %]
 	<table>

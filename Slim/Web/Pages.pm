@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.100 2004/09/11 04:27:31 dean Exp $
+# $Id: Pages.pm,v 1.101 2004/10/02 00:14:41 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -1057,6 +1057,7 @@ sub _addSongInfo {
 	$params->{'tagversion'} = Slim::Music::Info::tagVersion($song);
 	$params->{'mixable'}    = Slim::Music::Info::isSongMixable($song);
 	$params->{'bitrate'}    = Slim::Music::Info::bitrate($song);
+	$params->{'drm'}        = Slim::Music::Info::digitalrights($song);
 	
 	# handle artwork bits
 	my ($body, $type, $mtime) =  Slim::Music::Info::coverArt($song,'cover');
