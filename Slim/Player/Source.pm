@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.128 2005/01/10 22:01:20 dean Exp $
+# $Id$
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -39,11 +39,11 @@ use Slim::Player::Protocols::HTTP;
 my $TRICKSEGMENTDURATION = 1.0;
 my $FADEVOLUME         = 0.3125;
 
-my %commandTable = ();
+our %commandTable = ();
 
 # the protocolHandlers hash contains the modules that handle specific URLs, indexed by the URL protocol.
 # built-in protocols are exist in the hash, but have a zero value
-%Slim::Player::Source::protocolHandlers = ( 
+our %protocolHandlers = ( 
 	http => qw(Slim::Player::Protocols::HTTP),
 	icy => qw(Slim::Player::Protocols::HTTP),
 	file => '0'
@@ -51,7 +51,7 @@ my %commandTable = ();
 
 if ($^O =~ /Win32/) {
 	eval 'require Slim::Player::Protocols::MMS';
-	$Slim::Player::Source::protocolHandlers{mms} = qw(Slim::Player::Protocols::MMS);
+	$protocolHandlers{mms} = qw(Slim::Player::Protocols::MMS);
 }
 
 sub systell {

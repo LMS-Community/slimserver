@@ -1,4 +1,4 @@
-# $Id: SavePlaylist.pm,v 1.10 2004/12/07 20:19:44 dsully Exp $
+# $Id$
 # This code is derived from code with the following copyright message:
 #
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
@@ -16,11 +16,11 @@ use Slim::Utils::Misc;
 use vars qw($VERSION);
 $VERSION = substr(q$Revision: 1.10 $,10);
 
-my %context = ();
+our %context = ();
 
 my $rightarrow = Slim::Display::Display::symbol('rightarrow');
 
-my @LegalChars = (
+our @LegalChars = (
 	Slim::Display::Display::symbol('rightarrow'),
 	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
 	'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
@@ -31,7 +31,7 @@ my @LegalChars = (
 	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
 );
 
-my @legalMixed = (
+our @legalMixed = (
 	[' ','0'], 				# 0
 	['.','-','_','1'], 			# 1
 	['a','b','c','A','B','C','2'],		# 2
@@ -69,7 +69,7 @@ sub setMode {
 	}
 }
 
-my %functions = (
+our %functions = (
 	'left' => sub  {
 		my $client = shift;
 		Slim::Buttons::Common::popModeRight($client);
@@ -137,10 +137,10 @@ sub savePluginCallback {
 ####################################################################
 # Adds a mapping for 'save' function in Now Playing mode.
 ####################################################################
-my %mapping = ('play.hold' => 'save');
+our %mapping = ('play.hold' => 'save');
 sub defaultMap { return \%mapping; }
 Slim::Hardware::IR::addModeDefaultMapping('playlist',\%mapping);
-my $functref = Slim::Buttons::Playlist::getFunctions();
+our $functref = Slim::Buttons::Playlist::getFunctions();
 $functref->{'save'} = $functions{'save'};
 
 1;

@@ -12,7 +12,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
 # a cache of songs played
-my @history = ();
+our @history = ();
 
 sub get_history {
 	return @history;

@@ -82,7 +82,7 @@ sub defaultMap {
 	}
 }
 
-my %functions = (
+our %functions = (
 	'rotate' => sub {
 		my ($client,$funct,$functarg) = @_;
 		if (defaultHandler($client)) {return};

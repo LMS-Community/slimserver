@@ -1,6 +1,6 @@
 package Slim::Networking::Select;
 
-# $Id: Select.pm,v 1.14 2004/08/10 23:08:33 dean Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2003-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -22,20 +22,20 @@ BEGIN {
 }
 
 
-my %readSockets;
-my %readCallbacks;
+our %readSockets;
+our %readCallbacks;
 
-my %writeSockets;
-my %writeCallbacks;
+our %writeSockets;
+our %writeCallbacks;
 
-my %errorSockets;
-my %errorCallbacks;
+our %errorSockets;
+our %errorCallbacks;
 
-my %writeQueue;
+our %writeQueue;
 
-my $readSelects  = IO::Select->new();
-my $writeSelects = IO::Select->new();
-my $errorSelects  = IO::Select->new();
+our $readSelects  = IO::Select->new();
+our $writeSelects = IO::Select->new();
+our $errorSelects  = IO::Select->new();
 
 sub addRead {
 	my $r = shift;

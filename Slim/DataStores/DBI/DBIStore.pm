@@ -48,7 +48,7 @@ use constant VALID_INDEX => 0;
 use constant TTL_INDEX => 1;
 
 # Hash for tag function per format
-my %tagFunctions = (
+our %tagFunctions = (
 	'mp3' => \&Slim::Formats::MP3::getTag,
 	'mp2' => \&Slim::Formats::MP3::getTag,
 	'ogg' => \&Slim::Formats::Ogg::getTag,
@@ -63,10 +63,10 @@ my %tagFunctions = (
 );
 
 # Only look these up once.
-my ($_unknownArtistID, $_unknownGenreID);
+our ($_unknownArtistID, $_unknownGenreID);
 
 # Keep the last 5 find results set in memory and expire them after 60 seconds
-tie my %lastFind, 'Tie::Cache::LRU::Expires', EXPIRES => 60, ENTRIES => 5;
+tie our %lastFind, 'Tie::Cache::LRU::Expires', EXPIRES => 60, ENTRIES => 5;
 
 #
 # Readable DataStore interface methods:

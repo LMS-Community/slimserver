@@ -1,4 +1,4 @@
-# $Id: Picks.pm,v 1.5 2004/12/23 07:28:57 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -39,7 +39,7 @@ my %mapping = (
 ###############
 # Main mode
 #
-my %mainModeFunctions = (
+our %mainModeFunctions = (
    'play' => sub {
 	   my $client = shift;
 
@@ -156,7 +156,7 @@ sub getFunctions {
 ###############
 # Details mode
 #
-my %detailsModeFunctions = (
+our %detailsModeFunctions = (
    'play' => sub {
 	   my $client = shift;
 

@@ -15,7 +15,7 @@ use Slim::Buttons::Common;
 my $ticklength = .25;            # length of each tick, seconds
 my $tickdelay  = .5;              # wait half a second before starting the display update
 my @tickchars  = ('|','/','-','\\');
-my %functions  = ();
+our %functions  = ();
 
 # Don't do this at compile time - not at run time
 sub init {

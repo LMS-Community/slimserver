@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::List;
 
-# $Id: List.pm,v 1.15 2004/12/22 01:12:00 kdf Exp $
+# $Id$
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -16,7 +16,7 @@ Slim::Buttons::Common::addMode('INPUT.List',getFunctions(),\&setMode);
 ###########################
 #Button mode specific junk#
 ###########################
-my %functions = (
+our %functions = (
 	#change character at cursorPos (both up and down)
 	'up' => sub {
 			my ($client,$funct,$functarg) = @_;

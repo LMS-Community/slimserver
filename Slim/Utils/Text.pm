@@ -2,14 +2,14 @@ package Slim::Utils::Text;
 
 use strict;
 
-# $Id: Text.pm,v 1.5 2004/12/17 20:33:04 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-my %caseArticlesMemoize = ();
+our %caseArticlesMemoize = ();
 
 sub ignorePunct {
 	my $s = shift || return undef;

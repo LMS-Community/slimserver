@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.56 2005/01/06 03:44:02 dsully Exp $
+# $Id$
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Scan;
 use Slim::Utils::Strings qw(string);
 
-my %executeCallbacks;
+our %executeCallbacks;
 
 #############################################################################
 # execute - does all the hard work.  Use it.

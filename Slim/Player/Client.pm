@@ -1,4 +1,4 @@
-# $Id: Client.pm,v 1.61 2004/12/07 20:19:53 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@ $Slim::Player::Client::maxVolume = 100;
 
 # This is a hash of clientState structs, indexed by the IP:PORT of the client
 # Use the access functions.
-my %clientHash = ();
+our %clientHash = ();
 
 =head1 Object Definition
 
@@ -629,7 +629,7 @@ settingsSelection() - type: int
 
 =cut
 
-my $defaultPrefs = {
+our $defaultPrefs = {
 		'maxBitrate'			=> undef # will be set by the client device OR default to server pref when accessed.
 		,'alarmvolume'			=> 50
 		,'alarm'				=> 0
@@ -641,8 +641,8 @@ my $defaultPrefs = {
 	};
 
 # Do this once for speed.
-my $failsafeLanguage     = Slim::Utils::Strings::failsafeLanguage();
-my %validClientLanguages = Slim::Utils::Strings::validClientLanguages();
+our $failsafeLanguage     = Slim::Utils::Strings::failsafeLanguage();
+our %validClientLanguages = Slim::Utils::Strings::validClientLanguages();
 
 sub new {
 	my ($class, $id, $paddr) = @_;

@@ -15,7 +15,8 @@ use HTTP::Status;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
-my %setup = ();
+our %setup = ();
+
 # Setup uses strings extensively, for many values it defaults to a certain combination of the
 # preference name with other characters.  For this reason it is important to follow the naming
 # convention when adding strings for preferences into strings.txt.

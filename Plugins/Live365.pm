@@ -672,7 +672,7 @@ use Slim::Control::Command;
 use Slim::Display::Animation;
 
 # {{{ Initialize
-my $live365;
+our $live365;
 Slim::Player::Source::registerProtocolHandler("live365", "Plugins::Live365::ProtocolHandler");
 
 sub addMenu {
@@ -786,7 +786,7 @@ sub setMode {
 	$client->update();
 }
 
-my %mainModeFunctions = (
+our %mainModeFunctions = (
 	'up' => sub {
 		my $client = shift;
 		$mainModeIdx = Slim::Buttons::Common::scroll(
@@ -910,7 +910,7 @@ sub getFunctions {
 # Login mode {{{
 #
 LOGINMODE: {
-my $setLoginMode = sub {
+our $setLoginMode = sub {
 	my $client = shift;
 	my $silent = Slim::Buttons::Common::param($client, 'silent');
 
@@ -993,7 +993,7 @@ my @genreList = ();
 my $genrePointer = 0;
 
 GENREMODE: {
-my $setGenreMode = sub {
+our $setGenreMode = sub {
 	my $client = shift;
 	$client->lines( \&GenreModeLines );
 
@@ -1011,11 +1011,11 @@ my $setGenreMode = sub {
 	$client->update();
 };
 
-my $noGenreMode = sub {
+our $noGenreMode = sub {
 	my $client = shift;
 };
 
-my %genreModeFunctions = (
+our %genreModeFunctions = (
 	'up' => sub {
 		my $client = shift;
 		$genrePointer = Slim::Buttons::Common::scroll(
@@ -1099,7 +1099,7 @@ Slim::Buttons::Common::addMode( 'genreMode', \%genreModeFunctions, $setGenreMode
 # Channel mode {{{
 #
 CHANNELMODE: {
-my $setChannelMode = sub {
+our $setChannelMode = sub {
 	my $client = shift;
 
 	my $source = Slim::Buttons::Common::param($client, 'source');
@@ -1121,7 +1121,7 @@ my $noChannelMode = sub {
 	my $client = shift;
 };
 
-my %channelModeFunctions = (
+our %channelModeFunctions = (
     'up' => sub {
         my $client = shift;
 
@@ -1238,10 +1238,10 @@ Slim::Buttons::Common::addMode( 'Live365Channels', \%channelModeFunctions, $setC
 # Information mode {{{
 #
 INFOMODE: {
-my @infoItems = ();
+our @infoItems = ();
 my $infoItem = 0;
 
-my $setInfoMode = sub {
+our $setInfoMode = sub {
 	my $client = shift;
 	$client->lines( \&infoModeLines );
 
@@ -1260,11 +1260,11 @@ my $setInfoMode = sub {
 	$infoItem = 0;
 };
 
-my $noInfoMode = sub {
+our $noInfoMode = sub {
 	my $client = shift;
 };
 
-my %infoModeFunctions = (
+our %infoModeFunctions = (
 	'up' => sub {
 		my $client = shift;
 		$infoItem = Slim::Buttons::Common::scroll(
@@ -1338,9 +1338,9 @@ Slim::Buttons::Common::addMode( 'ChannelInfo', \%infoModeFunctions, $setInfoMode
 #
 SEARCHMODE: { 
 
-my %searchString;
+our %searchString;
 
-my @searchModeItems = (
+our @searchModeItems = (
 	[ 'PLUGIN_LIVE365_SEARCH_TAC', 'T:A:C' ],
 	[ 'PLUGIN_LIVE365_SEARCH_A', 'A' ],
 	[ 'PLUGIN_LIVE365_SEARCH_T', 'T' ],
@@ -1352,7 +1352,7 @@ my @searchModeItems = (
 
 my $searchModeIdx = 0;
 
-my $setSearchMode = sub {
+our $setSearchMode = sub {
 	my $client = shift;
 
 	$client->lines( \&searchModeLines );
@@ -1360,7 +1360,7 @@ my $setSearchMode = sub {
 	$searchString{$client} = '';
 };
 
-my %searchModeFunctions = (
+our %searchModeFunctions = (
 	'up' => sub {
 		my $client = shift;
 		$searchModeIdx = Slim::Buttons::Common::scroll(
@@ -1586,19 +1586,19 @@ PLUGIN_LIVE365_DESCRIPTION
 	EN	Station Description
 
 PLUGIN_LIVE365_STATION_LISTENERS_ACTIVE
-	DE	Aktive Zuhörer
+	DE	Aktive ZuhÃ¶rer
 	EN	Active listeners
 
 PLUGIN_LIVE365_STATION_LISTENERS_MAX
-	DE	Maximale Anzahl Zuhörer
+	DE	Maximale Anzahl ZuhÃ¶rer
 	EN	Maximum listeners
 
 PLUGIN_LIVE365_LISTENER_ACCESS
-	DE	Zuhörer Zugang
+	DE	ZuhÃ¶rer Zugang
 	EN	Listener access
 
 PLUGIN_LIVE365_STATION_QUALITY_LEVEL
-	DE	Sender Qualität
+	DE	Sender QualitÃ¤t
 	EN	Station quality
 
 PLUGIN_LIVE365_STATION_CONNECTION
@@ -1644,7 +1644,7 @@ SETUP_GROUP_PLUGIN_LIVE365
 	EN	Live365 Internet Radio
 
 SETUP_GROUP_PLUGIN_LIVE365_DESC
-	DE	Suche und höre Live365 Radiostationen
+	DE	Suche und hÃ¶re Live365 Radiostationen
 	EN	Search, browse, and tune Live365 stations
 
 SETUP_PLUGIN_LIVE365_USERNAME
@@ -1664,7 +1664,7 @@ SETUP_PLUGIN_LIVE365_PASSWORD_DESC
 	EN	Your Live365 password
 
 SETUP_PLUGIN_LIVE365_PASSWORD_CHANGED
-	DE	Dein Live365 Passwort wurde geändert
+	DE	Dein Live365 Passwort wurde geÃ¤ndert
 	EN	Your Live365 password has been changed
 
 SETUP_PLUGIN_LIVE365_SORT_ORDER
@@ -1688,7 +1688,7 @@ SETUP_PLUGIN_LIVE365_SORT_RATING
 	EN	Station rating
 
 SETUP_PLUGIN_LIVE365_SORT_LISTENERS
-	DE	Anzahl Hörer
+	DE	Anzahl HÃ¶rer
 	EN	Number of listeners
 
 PLUGIN_LIVE365_GENRES
@@ -1700,11 +1700,11 @@ PLUGIN_LIVE365_STATIONS
 	EN	Live365 stations
 
 PLUGIN_LIVE365_POPULAR
-	DE	Populär
+	DE	PopulÃ¤r
 	EN	Popular
 
 PLUGIN_LIVE365_RECENT
-	DE	Kürzlich gehört
+	DE	KÃ¼rzlich gehÃ¶rt
 	EN	Recent
 
 __END__

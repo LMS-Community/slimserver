@@ -29,7 +29,7 @@ sub addMenu {
 
 sub getDisplayName { 'Shooter' }
 
-my %functions = (
+our %functions = (
 	'play' => sub  {
 		my $client = shift;
 		if ($client->gplay) {

@@ -1,6 +1,6 @@
 package Slim::Buttons::MoodWheel;
 
-#$Id: MoodWheel.pm,v 1.8 2005/01/04 03:38:52 dsully Exp $
+#$Id$
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -12,9 +12,9 @@ use Slim::Buttons::Common;
 use Slim::Music::MoodLogic;
 
 # 
-my @browseMoodChoices = ();
+our @browseMoodChoices = ();
 
-my %functions = ();
+our %functions = ();
 
 sub init {
 

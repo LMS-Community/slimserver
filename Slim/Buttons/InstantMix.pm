@@ -1,6 +1,6 @@
 package Slim::Buttons::InstantMix;
 
-#$Id: InstantMix.pm,v 1.10 2005/01/04 03:38:52 dsully Exp $
+#$Id$
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -13,9 +13,9 @@ use Slim::Utils::Timers;
 use Slim::Hardware::VFD;
 
 # button functions for browse directory
-my @instantMix = ();
+our @instantMix = ();
 
-my %functions = ();
+our %functions = ();
 
 sub init {
 

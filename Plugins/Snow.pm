@@ -1,6 +1,6 @@
 package Plugins::Snow;
 
-# $Id: Snow.pm,v 1.16 2004/12/23 07:28:58 dsully Exp $
+# $Id$
 # by Phil Barrett, December 2003
 # screensaver conversion by Kevin Deane-Freeman Dec 2003
 
@@ -37,12 +37,12 @@ PLUGIN_SCREENSAVER_SNOW
 PLUGIN_SCREENSAVER_SNOW_SETTINGS
 	DE	Schnee Einstellungen
 	EN	Snow Screensaver settings
-	FR	Réglages Ecran de veille Neige
+	FR	RÃ©glages Ecran de veille Neige
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATE
 	DE	Diesen Bildschirmschoner aktivieren
 	EN	Select Current Screensaver
-	FR	Choisir écran de veille courant
+	FR	Choisir Ã©cran de veille courant
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATE_TITLE
 	DE	Aktueller Bildschirmschoner
@@ -52,22 +52,22 @@ PLUGIN_SCREENSAVER_SNOW_ACTIVATE_TITLE
 PLUGIN_SCREENSAVER_SNOW_ACTIVATED
 	DE	Schnee Bildschirmschoner aktivieren
 	EN	Use Snow as current screensaver
-	FR	Utiliser Neige comme écran de veille
+	FR	Utiliser Neige comme Ã©cran de veille
 
 PLUGIN_SCREENSAVER_SNOW_DEFAULT
 	DE	Standard-Bildschirmschoner aktivieren
 	EN	Use default screensaver (not Snow)
-	FR	Utiliser écran de veille par défaut (hors Neige)
+	FR	Utiliser Ã©cran de veille par dÃ©faut (hors Neige)
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY
 	DE	Schneemenge
 	EN	Quantity of snow
-	FR	Intensité neige
+	FR	IntensitÃ© neige
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
 	DE	Schnee Bildschirmschoner: Schneemenge
 	EN	Snow Screensaver: Quantity of snow
-	FR	Ecran de veille neige: Intensité
+	FR	Ecran de veille neige: IntensitÃ©
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
 	DE	Ein paar Schneeflocken
@@ -75,14 +75,14 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
 	FR	Quelques flocons
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
-	DE	Weihnächtlich weiss
+	DE	WeihnÃ¤chtlich weiss
 	EN	Christmassy
-	FR	C\'est Noël !
+	FR	C\'est NoÃ«l !
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
-	DE	Heftiges Schneegestöber
+	DE	Heftiges SchneegestÃ¶ber
 	EN	Blizzard
-	FR	Tempête
+	FR	TempÃªte
 
 PLUGIN_SCREENSAVER_SNOW_STYLE
 	DE	Schneetyp
@@ -95,12 +95,12 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
 	FR	Ecran de veille Neige: Type
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_1
-	DE	Es läuft gerade... mit Schnee im Hintergrund
+	DE	Es lÃ¤uft gerade... mit Schnee im Hintergrund
 	EN	Now Playing, snow falling behind
-	FR	Lecture + neige en arrière-plan
+	FR	Lecture + neige en arriÃ¨re-plan
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_2
-	DE	Es läuft gerade... mit Schnee im Vordergrund
+	DE	Es lÃ¤uft gerade... mit Schnee im Vordergrund
 	EN	Now Playing, snow falling in front
 	FR	Lecture +  neige en avant-plan
 
@@ -143,7 +143,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_2
 	EN	AND A VERY
 
 PLUGIN_SCREENSAVER_SNOW_WORD_3
-	DE	GLÜCKLICHES
+	DE	GLÃœCKLICHES
 	EN	HAPPY
 
 PLUGIN_SCREENSAVER_SNOW_WORD_4
@@ -151,7 +151,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_4
 	EN	NEW YEAR !
 
 PLUGIN_SCREENSAVER_SNOW_SORRY
-	DE	Sorry, Schnee funktioniert auf diesem Gerät nicht.
+	DE	Sorry, Schnee funktioniert auf diesem GerÃ¤t nicht.
 	EN	Sorry, Snow doesn\'t work with this player.
 '};
 
@@ -162,8 +162,8 @@ PLUGIN_SCREENSAVER_SNOW_SORRY
 # button functions for browse directory
 my @snowSettingsChoices = ('PLUGIN_SCREENSAVER_SNOW_ACTIVATE','PLUGIN_SCREENSAVER_SNOW_QUANTITY', 'PLUGIN_SCREENSAVER_SNOW_STYLE');
 
-my %current;
-my %menuParams = (
+our %current;
+our %menuParams = (
 	'snow' => {
 		'listRef' => \@snowSettingsChoices
 		,'stringExternRef' => 1
@@ -241,7 +241,7 @@ sub snowExitHandler {
 	}
 }
 
-my %functions = (
+our %functions = (
 	'right' => sub  {
 		my ($client,$funct,$functarg) = @_;
 		if (defined(Slim::Buttons::Common::param($client,'useMode'))) {
@@ -294,9 +294,9 @@ sub screenSaver {
 	);
 }
 
-my %wasDoubleSize;
+our %wasDoubleSize;
 
-my %screensaverSnowFunctions = (
+our %screensaverSnowFunctions = (
 	'done' => sub  {
 		my ($client, $funct, $functarg) = @_;
 		Slim::Buttons::Common::popMode($client);
@@ -316,10 +316,10 @@ sub getScreensaverSnowFunctions {
 	return \%screensaverSnowFunctions;
 }
 
-my %snowStyle;
-my %snowQuantity;
-my %lastTime;
-my %flakes;
+our %snowStyle;
+our %snowQuantity;
+our %lastTime;
+our %flakes;
 
 sub setScreensaverSnowMode() {
 	my $client = shift;
@@ -498,7 +498,7 @@ sub drawFlake {
     }
 }
 
-my %flakeMap = (0 => ' ',
+our %flakeMap = (0 => ' ',
 		1 => Slim::Display::Display::symbol('snow00'),
 		2 => Slim::Display::Display::symbol('snow10'),
 		4 => Slim::Display::Display::symbol('snow20'),
@@ -510,7 +510,7 @@ my %flakeMap = (0 => ' ',
 		33 => Slim::Display::Display::symbol('snow9'),
 		);
 
-my %letters = (A => [3, [2], [], [0,4], [0,2,4], [], [0,4] ],
+our %letters = (A => [3, [2], [], [0,4], [0,2,4], [], [0,4] ],
 	       B => [3, [0,2], [4], [0,2], [0], [4], [0,2] ],
 	       C => [3, [2,4], [1], [], [1], [], [2,4] ],
 	       D => [3, [0,2], [4], [0], [0,4], [], [0,2] ],
@@ -645,10 +645,10 @@ sub paintWord {
     return $paintedSomething;
 }
 
-my %wordState;
-my %word;
-my %offsets;
-my %wordIndex;
+our %wordState;
+our %word;
+our %offsets;
+our %wordIndex;
 
 sub letItSnow {
 	my $client = shift;

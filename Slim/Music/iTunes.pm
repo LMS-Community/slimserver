@@ -42,6 +42,7 @@ use strict;
 use Fcntl ':flock'; # import LOCK_* constants
 use File::Spec::Functions qw(:ALL);
 use File::Basename;
+
 if ($] > 5.007) {
 	require Encode;
 }
@@ -57,7 +58,7 @@ my $iBase = '';
 
 my $inPlaylists;
 my $inTracks;
-my %tracks;
+our %tracks;
 my $applicationVersion;
 my $majorVersion;
 my $minorVersion;
@@ -69,7 +70,7 @@ my $ituneslibrarypath;
 my $initialized = 0;
 
 # mac file types
-my %filetypes = (
+our %filetypes = (
 	1095321158 => 'aif', # AIFF
 	1295270176 => 'mov', # M4A 
 	1295270432 => 'mov', # M4B 

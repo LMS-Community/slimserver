@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.10 2005/01/04 03:38:52 dsully Exp $
+#	$Id$
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -49,22 +49,22 @@ $VERSION = substr(q$Revision: 1.10 $,10);
 
 use File::Spec::Functions qw(catdir);
 
-my $modules = ();
-my %enabled = ();
+our $modules = ();
+our %enabled = ();
 
 # since we just jump into INPUT.List, we don't need any functions of our own
-my %functions = ();
+our %functions = ();
 
 # array for internal values of the player submenu
-my @player_list = ('PLAYER_NAME','PLAYER_MODEL','FIRMWARE','PLAYER_IP','PLAYER_PORT','PLAYER_MAC');
+our @player_list = ('PLAYER_NAME','PLAYER_MODEL','FIRMWARE','PLAYER_IP','PLAYER_PORT','PLAYER_MAC');
 
 # hash of current locations in the menu structure
 # This is keyed by the $client object, then the second level
 # is keyed by the menu.  When entering any menu, the valueRef parameter
 # passed to INPUT.List refers back to here.
-my %current = ();
+our %current = ();
 
-my %menuParams = ();
+our %menuParams = ();
 
 sub init {
 	Slim::Buttons::Common::addMode('information', getFunctions(), \&setMode);

@@ -29,7 +29,7 @@ use strict;
 use Slim::Utils::Misc;
 
 my $curtask = 0;            # the next task to run
-my @background_tasks = ();  # circular list of references to arrays (sub ptrs with args)
+our @background_tasks = ();  # circular list of references to arrays (sub ptrs with args)
 my $lastpass = 0;
 
 #

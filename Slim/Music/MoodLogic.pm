@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.29 2005/01/06 03:59:51 kdf Exp $
+#$Id$
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -12,9 +12,9 @@ my $mixer;
 my $browser;
 my $isScanning = 0;
 my $initialized = 0;
-my @mood_names;
-my %mood_hash;
-my %artwork;
+our @mood_names;
+our %mood_hash;
+our %artwork;
 my $last_error = 0;
 my $isauto = 1;
 

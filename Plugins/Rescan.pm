@@ -1,6 +1,6 @@
 # Rescan.pm by Andrew Hedges (andrew@hedges.me.uk) October 2002
 # Timer functions added by Kevin Deane-Freeman (kevindf@shaw.ca) June 2004
-# $Id: Rescan.pm,v 1.12 2005/01/12 06:01:25 kdf Exp $
+# $Id$
 
 # This code is derived from code with the following copyright message:
 #
@@ -23,9 +23,9 @@ use vars qw($VERSION);
 $VERSION = substr(q$Revision: 1.12 $,10);
 
 my $interval = 1; # check every x seconds
-my @browseMenuChoices;
-my %menuSelection;
-my %searchCursor;
+our @browseMenuChoices;
+our %menuSelection;
+our %searchCursor;
 
 sub getDisplayName {
 	return 'PLUGIN_RESCAN_MUSIC_LIBRARY';
@@ -53,7 +53,7 @@ sub setMode {
 
 }
 
-my %functions = (
+our %functions = (
 	'up' => sub  {
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#browseMenuChoices + 1), $menuSelection{$client});
@@ -259,7 +259,7 @@ __DATA__
 PLUGIN_RESCAN_MUSIC_LIBRARY
 	DE	Musikverzeichnis erneut durchsuchen
 	EN	Rescan Music Library
-	FR	Répertorier musique
+	FR	RÃ©pertorier musique
 	
 PLUGIN_RESCAN_RESCANNING
 	DE	Server durchsucht Verzeichnisse...
@@ -267,7 +267,7 @@ PLUGIN_RESCAN_RESCANNING
 	FR	En cours...
 
 PLUGIN_RESCAN_PRESS_PLAY
-	DE	Drücke Play, um Durchsuchen zu starten
+	DE	DrÃ¼cke Play, um Durchsuchen zu starten
 	EN	Press PLAY to rescan now.
 
 PLUGIN_RESCAN_TIMER_NAME
@@ -275,7 +275,7 @@ PLUGIN_RESCAN_TIMER_NAME
 	EN	Rescan Timer
 
 PLUGIN_RESCAN_TIMER_SET
-	DE	Startzeit für erneutes Durchsuchen
+	DE	Startzeit fÃ¼r erneutes Durchsuchen
 	EN	Set Rescan Time
 
 PLUGIN_RESCAN_TIMER_TURNING_OFF
@@ -291,7 +291,7 @@ PLUGIN_RESCAN_TIMER_ON
 	EN	Rescan Timer ON
 
 PLUGIN_RESCAN_TIMER_DESC
-	DE	Sie können ihre Musiksammlung automatisch alle 24h durchsuchen lassen. Setzen Sie den Zeitpunkt, und schalten Sie die Automatik ein oder aus.
+	DE	Sie kÃ¶nnen ihre Musiksammlung automatisch alle 24h durchsuchen lassen. Setzen Sie den Zeitpunkt, und schalten Sie die Automatik ein oder aus.
 	EN	You can choose to allow a scheduled rescan of your music library every 24 hours.  Set the time, and set the Rescan Timer to ON to use this feature.
 
 PLUGIN_RESCAN_TIMER_OFF

@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DataModel;
 
-# $Id: DataModel.pm,v 1.15 2005/01/10 09:04:15 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ use Slim::Utils::Misc;
 
 our $dbh;
 
-tie my %lru, 'Tie::Cache::LRU', 5000;
+tie our %lru, 'Tie::Cache::LRU', 5000;
 
 sub executeSQLFile {
 	my $class = shift;
@@ -279,7 +279,7 @@ sub getWhereValues {
 	return @values;
 }
 
-my %fieldHasClass = (
+our %fieldHasClass = (
 	'track' => 'Slim::DataStores::DBI::Track',
 	'genre' => 'Slim::DataStores::DBI::Genre',
 	'album' => 'Slim::DataStores::DBI::Album',
@@ -290,7 +290,7 @@ my %fieldHasClass = (
 	'band' => 'Slim::DataStores::DBI::Contributor',
 );
 
-my %searchFieldMap = (
+our %searchFieldMap = (
 	'id' => 'tracks.id',
 	'url' => 'tracks.url', 
 	'title' => 'tracks.title', 
@@ -323,14 +323,14 @@ my %searchFieldMap = (
 	'band.name' => 'contributors.name', 
 );
 
-my %cmpFields = (
+our %cmpFields = (
 	'contributor.name' => 1,
 	'genre.name' => 1,
 	'album.title' => 1,
 	'track.title' => 1,
 );
 
-my %sortFieldMap = (
+our %sortFieldMap = (
 	'title' => ['tracks.titlesort'],
 	'genre' => ['genres.name'],
 	'album' => ['albums.titlesort','albums.disc'],
@@ -343,7 +343,7 @@ my %sortFieldMap = (
 
 # This is a weight table which allows us to do some basic table reordering,
 # resulting in a more optimized query. EXPLAIN should tell you more.
-my %tableSort = (
+our %tableSort = (
 	'albums' => 0.6,
 	'contributors' => 0.7,
 	'contributor_track' => 0.9,
@@ -358,7 +358,7 @@ my %tableSort = (
 # to the entity-relationship graph, but not exactly the same.
 # In the hash table below, the keys are tables and the values are
 # the arcs describing the relationship.
-my %joinGraph = (
+our %joinGraph = (
 	'genres' => {
 		'genre_track' => 'genres.id = genre_track.genre',
 	},		 
@@ -394,7 +394,7 @@ my %joinGraph = (
 # Note that while the paths below are hardcoded, for a larger graph we
 # could compute the shortest path algorithmically, using Dijkstra's
 # (or other) shortest path algorithm.
-my %queryPath = (
+our %queryPath = (
 	'genre:album' => ['genre_track', 'tracks', 'albums'],
 	'genre:genre' => ['genre_track', 'genres'],
 	'genre:contributor' => ['genre_track', 'contributor_track', 'contributors'],
@@ -413,7 +413,7 @@ my %queryPath = (
 	'default:default' => ['tracks'],
 );
 
-my %fieldToNodeMap = (
+our %fieldToNodeMap = (
 	'album' => 'album',
 	'genre' => 'genre',
 	'contributor' => 'contributor',

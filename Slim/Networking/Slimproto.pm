@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.66 2004/10/18 20:24:29 dean Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -30,15 +30,15 @@ my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox');
 
 my $slimproto_socket;
 
-my %ipport;		# ascii IP:PORT
-my %inputbuffer;  	# inefficiently append data here until we have a full slimproto frame
-my %parser_state; 	# 'LENGTH', 'OP', or 'DATA'
-my %parser_framelength; # total number of bytes for data frame
-my %parser_frametype;   # frame type eg "HELO", "IR  ", etc.
-my %sock2client;	# reference to client for each sonnected sock
-my %status;
+our %ipport;		# ascii IP:PORT
+our %inputbuffer;  	# inefficiently append data here until we have a full slimproto frame
+our %parser_state; 	# 'LENGTH', 'OP', or 'DATA'
+our %parser_framelength; # total number of bytes for data frame
+our %parser_frametype;   # frame type eg "HELO", "IR  ", etc.
+our %sock2client;	# reference to client for each sonnected sock
+our %status;
 
-my %callbacks;
+our %callbacks;
 
 sub setEventCallback {
 	my $event	= shift;

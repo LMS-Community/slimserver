@@ -10,7 +10,7 @@ use Slim::Utils::Strings qw(string);
 use FindBin qw($Bin);
 use File::Spec::Functions qw(:ALL);
  
-my %children;
+our %children;
 
 sub advertise {
 	my $name = shift;

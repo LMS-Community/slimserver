@@ -52,7 +52,7 @@ PLUGIN_SCREENSAVER_LINEX_SETTINGS
 	EN	LineX Screensaver settings
 
 PLUGIN_SCREENSAVER_LINEX_ACTIVATE
-	DE	Diesen Bildschirmschoner wählen
+	DE	Diesen Bildschirmschoner wÃ¤hlen
 	EN	Select Current Screensaver
 
 PLUGIN_SCREENSAVER_LINEX_ACTIVATE_TITLE
@@ -68,19 +68,19 @@ PLUGIN_SCREENSAVER_LINEX_DEFAULT
 	EN	Use default screensaver (not LineX)
 
 PLUGIN_SCREENSAVER_LINEX_NUMBER
-	DE	Anzahl Objekte wählen
+	DE	Anzahl Objekte wÃ¤hlen
 	EN	Select number of objects
 
 PLUGIN_SCREENSAVER_LINEX_NUMBER_TITLE
-	DE	LineX Bildschirmschoner: Anzahl wählen
+	DE	LineX Bildschirmschoner: Anzahl wÃ¤hlen
 	EN	LineX Screensaver: Select number
 
 PLUGIN_SCREENSAVER_LINEX_OBJECT
-	DE	Objekttyp wählen
+	DE	Objekttyp wÃ¤hlen
 	EN	Select type of object
 
 PLUGIN_SCREENSAVER_LINEX_OBJECT_TITLE
-	DE	LineX Bildschirmschoner: Objekttyp wählen
+	DE	LineX Bildschirmschoner: Objekttyp wÃ¤hlen
 	EN	LineX Screensaver: Select type
 
 PLUGIN_SCREENSAVER_LINEX_OBJECT_LINE
@@ -92,11 +92,11 @@ PLUGIN_SCREENSAVER_LINEX_OBJECT_RECTANGLE
 	EN	Rectangle
 
 PLUGIN_SCREENSAVER_LINEX_OBJECT_RANDOM
-	DE	Zufällig
+	DE	ZufÃ¤llig
 	EN	Random
 
 PLUGIN_SCREENSAVER_LINEX_NEEDS_GRAPHICS_DISPLAY
-	DE	Benötigt graphisches Display
+	DE	BenÃ¶tigt graphisches Display
 	EN	Needs graphics display
 
 '};
@@ -108,8 +108,8 @@ PLUGIN_SCREENSAVER_LINEX_NEEDS_GRAPHICS_DISPLAY
 # button functions for browse directory
 my @linexSettingsChoices = ('PLUGIN_SCREENSAVER_LINEX_ACTIVATE','PLUGIN_SCREENSAVER_LINEX_OBJECT','PLUGIN_SCREENSAVER_LINEX_NUMBER');
 
-my %current;
-my %menuParams = (
+our %current;
+our %menuParams = (
   'linex' => {
     'listRef' => \@linexSettingsChoices
     ,'stringExternRef' => 1
@@ -185,7 +185,7 @@ sub linexExitHandler {
 }
 
 # ----------------------------------------------------------------------------
-my %functions = (
+our %functions = (
   'right' => sub  {
     my ( $client, $funct, $functarg) = @_;
     if( defined( Slim::Buttons::Common::param( $client, 'useMode'))) {
@@ -243,7 +243,7 @@ sub screenSaver {
 }
 
 # ----------------------------------------------------------------------------
-my %screensaverLineXFunctions = (
+our %screensaverLineXFunctions = (
   'done' => sub  {
     my ( $client, $funct, $functarg) = @_;
     Slim::Buttons::Common::popMode( $client);
@@ -260,8 +260,8 @@ sub getScreensaverLineXFunctions {
   return \%screensaverLineXFunctions;
 }
 
-my %linexObject;
-my %linexNumber;
+our %linexObject;
+our %linexNumber;
 
 # ----------------------------------------------------------------------------
 sub setScreensaverLineXMode() {

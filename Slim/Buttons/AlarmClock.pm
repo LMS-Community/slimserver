@@ -16,9 +16,9 @@ use Slim::Buttons::Common;
 use Time::HiRes;
 
 my $interval = 1; # check every x seconds
-my @browseMenuChoices;
-my %menuSelection;
-my %searchCursor;
+our @browseMenuChoices;
+our %menuSelection;
+our %searchCursor;
 
 # some initialization code, adding modes for this module
 sub init {
@@ -53,7 +53,7 @@ sub setMode {
 	}
 }
 
-my %functions = (
+our %functions = (
 	'up' => sub  {
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#browseMenuChoices + 1), $menuSelection{$client});
@@ -240,7 +240,7 @@ sub getFunctions {
 
 #################################################################################
 # Alarm Volume Mode
-my %alarmVolumeSettingsFunctions = (
+our %alarmVolumeSettingsFunctions = (
 	'left' => sub { Slim::Buttons::Common::popModeRight(shift); },
 	'up' => sub {
 		my $client = shift;

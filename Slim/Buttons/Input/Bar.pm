@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Bar;
 
-# $Id: Bar.pm,v 1.10 2004/12/07 20:19:50 dsully Exp $
+# $Id$
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -17,7 +17,7 @@ Slim::Buttons::Common::addMode('INPUT.Bar', getFunctions(), \&setMode);
 ###########################
 #Button mode specific junk#
 ###########################
-my %functions = (
+our %functions = (
 	#change character at cursorPos (both up and down)
 	'up' => sub {
 			my ($client,$funct,$functarg) = @_;

@@ -7,11 +7,11 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 use Slim::Utils::Misc;
 
-my %primaryColumns = (
+our %primaryColumns = (
 	'id' => 'id',
 );
 
-my %essentialColumns = (
+our %essentialColumns = (
 	'url' => 'url',
 	'ct' => 'content_type',
 	'title' => 'title',
@@ -24,7 +24,7 @@ my %essentialColumns = (
 	'thumb' => 'thumb',
 );
 
-my %otherColumns = (
+our %otherColumns = (
 	'size' => 'audio_size',
 	'offset' => 'audio_offset',
 	'year' => 'year',
@@ -55,7 +55,7 @@ my %otherColumns = (
 	'musicmagic_song_mixable' => 'musicmagic_song_mixable',
 );
 
-my %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );
+our %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );
 
 __PACKAGE__->table('tracks');
 __PACKAGE__->columns(Primary => keys %primaryColumns);
@@ -78,9 +78,9 @@ __PACKAGE__->add_constructor(externalPlaylists => qq{
 	url LIKE 'musicmagicplaylist:%'
 });
 
-tie my %_cache, 'Tie::Cache::LRU', 5000;
+tie our %_cache, 'Tie::Cache::LRU', 5000;
 
-my $loader;
+our $loader;
 
 sub setLoader {
 	my $class = shift;

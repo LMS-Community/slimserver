@@ -10,7 +10,7 @@ use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Utils::Misc;
 
-my %functions = ();
+our %functions = ();
 
 # button functions for track info screens
 sub init {

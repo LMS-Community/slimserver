@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.122 2005/01/11 09:31:34 kdf Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -14,9 +14,9 @@ use POSIX ();
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
-my %additionalLinks = ();
+our %additionalLinks = ();
 
-my %fieldInfo = ();
+our %fieldInfo = ();
 
 sub init {
 
@@ -1204,6 +1204,26 @@ sub playlist_done {
 	if (ref($callback) eq 'CODE') {
 
 		$callback->($client, $params, $body, $httpClient, $response);
+	}
+}
+
+# Call into the memory usage class - this will return live data about memory
+# usage, opcodes, and more. Note that loading this takes up memory itself!
+sub memory_usage {
+	my ($client, $params) = @_;
+
+	my $item    = $params->{'item'};
+	my $type    = $params->{'type'};
+	my $command = $params->{'command'};
+
+	unless ($item && $command) {
+
+		return Slim::Utils::MemoryUsage->status_memory_usage();
+	}
+
+	if (defined $item && defined $command && Slim::Utils::MemoryUsage->can($command)) {
+
+		return Slim::Utils::MemoryUsage->$command($item, $type);
 	}
 }
 

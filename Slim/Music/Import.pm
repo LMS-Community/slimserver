@@ -15,9 +15,9 @@ use Slim::Music::MusicFolderScan;
 # background scanning and cache prefilling of music information to speed up UI...
 
 # Total of how many file scanners are running
-my %importsRunning;
-my %Importers=();
-my %artwork=();
+our %importsRunning;
+our %Importers = ();
+our %artwork   = ();
 
 # Force a rescan of all the importers (TODO: Make importers pluggable)
 sub startScan {
@@ -154,5 +154,5 @@ sub artScan {
 }
 
 1;
-__END__
 
+__END__

@@ -16,12 +16,12 @@ use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
 
 # button functions for browse directory
-my @defaultSettingsChoices = qw(ALARM VOLUME BASS TREBLE REPEAT SHUFFLE TITLEFORMAT TEXTSIZE OFFDISPLAYSIZE INFORMATION SETUP_SCREENSAVER);
+our @defaultSettingsChoices = qw(ALARM VOLUME BASS TREBLE REPEAT SHUFFLE TITLEFORMAT TEXTSIZE OFFDISPLAYSIZE INFORMATION SETUP_SCREENSAVER);
 
-my @settingsChoices = ();
-my %current = ();
-my %menuParams = ();
-my %functions = ();
+our @settingsChoices = ();
+our %current = ();
+our %menuParams = ();
+our %functions = ();
 
 sub init {
 	Slim::Buttons::Common::addMode('settings',Slim::Buttons::Settings::getFunctions(),\&Slim::Buttons::Settings::setMode);

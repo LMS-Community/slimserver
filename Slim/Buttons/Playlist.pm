@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.40 2005/01/04 03:38:52 dsully Exp $
+# $Id$
 
 # Slim Server Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -13,7 +13,7 @@ use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 
-my %functions = ();
+our %functions = ();
 
 sub init {
 

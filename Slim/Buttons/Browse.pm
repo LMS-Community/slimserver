@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.25 2005/01/04 03:38:52 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -18,7 +18,7 @@ use Slim::Utils::Misc;
 use Slim::Buttons::Home;
 use Slim::Utils::Scan;
 
-my %functions = ();
+our %functions = ();
 
 sub init {
 

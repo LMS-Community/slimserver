@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Text;
 
-# $Id: Text.pm,v 1.25 2005/01/04 03:38:52 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -16,7 +16,7 @@ use Slim::Hardware::VFD;
 our $DOUBLEWIDTH = 10;
 my $rightarrow = Slim::Display::Display::symbol('rightarrow');
 
-my @numberLettersMixed = (
+our @numberLettersMixed = (
 	[' ','0'], # 0
 	['.',',',"'",'?','!','@','-','1'], # 1
 	['a','b','c','A','B','C','2'], 	   # 2
@@ -29,7 +29,7 @@ my @numberLettersMixed = (
 	['w','x','y','z','W','X','Y','Z','9']   # 9
 );
 
-my @numberLettersUpper = (
+our @numberLettersUpper = (
 	[' ','0'],				# 0
 	['.',',',"'",'?','!','@','-','1'],	# 1
 	['A','B','C','2'], 			# 2
@@ -42,7 +42,7 @@ my @numberLettersUpper = (
 	['W','X','Y','Z','9'],			# 9
 );
 
-my @UpperChars = (
+our @UpperChars = (
 	Slim::Display::Display::symbol('rightarrow'),
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
 	'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
@@ -53,7 +53,7 @@ my @UpperChars = (
 	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
 );
 
-my @BothChars = (
+our @BothChars = (
 	Slim::Display::Display::symbol('rightarrow'),
 	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
 	'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
@@ -71,7 +71,7 @@ Slim::Buttons::Common::addMode('INPUT.Text',getFunctions(),\&setMode);
 ###########################
 #Button mode specific junk#
 ###########################
-my %functions = (
+our %functions = (
 	#change character at cursorPos (both up and down)
 	'up' => sub {
 			my ($client,$funct,$functarg) = @_;

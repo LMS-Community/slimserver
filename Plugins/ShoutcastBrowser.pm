@@ -38,12 +38,12 @@ use XML::Simple ();
 
 eval { require Compress::Zlib };
 
-my $have_zlib = 1 unless $@;
+our $have_zlib = 1 unless $@;
 
 ################### Configuration Section ########################
 
 ### These first few preferences can only be set by editing this file
-my (%genre_aka, @genre_keywords, $munge_genres, @legit_genres);
+our (%genre_aka, @genre_keywords, $munge_genres, @legit_genres);
 
 # By default, we normalize genres based on keywords, because otherwise
 # there are nearly as many genres as there are streams.  If you would
@@ -132,9 +132,9 @@ hard_core video_game big_band classic_rock easy_listening new_age
 ### configuration interface.  If for some reason you want to specify
 ### these values here (eg. you really want to have a tertiary sorting
 ### criterion), then set $prefs_override to a true value.
-my ($prefs_override, @genre_criteria, @stream_criteria, $how_many_streams);
-my ($min_bitrate, $max_bitrate, $recent_max);
-my $lump_singletons = 1;
+our ($prefs_override, @genre_criteria, @stream_criteria, $how_many_streams);
+our ($min_bitrate, $max_bitrate, $recent_max);
+our $lump_singletons = 1;
 
 # Maximum number of streams to fetch (default is 300; 2000 is max)
 # $how_many_streams = 2000;
@@ -159,27 +159,27 @@ my $lump_singletons = 1;
 ################### End Configuration Section ####################
 
 ## Order for info sub-mode
-my @info_order = ('Bitrate', 'Name', 'Listeners', 'Genre', 'Was Playing', 'Url' );
-my @info_index = ( 4,         2,      3,           6,       5,             0    );
+our @info_order = ('Bitrate', 'Name', 'Listeners', 'Genre', 'Was Playing', 'Url' );
+our @info_index = ( 4,         2,      3,           6,       5,             0    );
 
-my $all_name = '';
-my $sort_bitrate_up = 0;
+our $all_name = '';
+our $sort_bitrate_up = 0;
 
-my ($recent_name, $misc_genre, $position_of_recent);
-my (%recent_filename, %recent_data);
-my $recent_dirname = 'ShoutcastBrowser_Recently_Played';
-my $recent_dir = File::Spec::Functions::catdir(Slim::Utils::Prefs::get('playlistdir'), $recent_dirname);
+our ($recent_name, $misc_genre, $position_of_recent);
+our (%recent_filename, %recent_data);
+our $recent_dirname = 'ShoutcastBrowser_Recently_Played';
+our $recent_dir = File::Spec::Functions::catdir(Slim::Utils::Prefs::get('playlistdir'), $recent_dirname);
 mkdir $recent_dir unless (-d $recent_dir);
 
-my ($top_limit, $most_popular_name, $custom_genres, %custom_genres);
+our ($top_limit, $most_popular_name, $custom_genres, %custom_genres);
 
-my $debug = 0;
-my (%current_genre, %current_stream, %status, %number, %current_info, %old_stream);
-my $last_time = 0;
+our $debug = 0;
+our (%current_genre, %current_stream, %status, %number, %current_info, %old_stream);
+our $last_time = 0;
 
-my (@genres, %streams, %stream_data, %bitrates, %current_bitrate);
+our (@genres, %streams, %stream_data, %bitrates, %current_bitrate);
 
-my %genre_transform;
+our %genre_transform;
 for my $key (keys %genre_aka)
 {
     my $rx;
@@ -202,11 +202,11 @@ for my $key (keys %genre_aka)
     $genre_transform{$rx} = $key;
 }
 
-my $genre_list = join '|', @genre_keywords;
+our $genre_list = join '|', @genre_keywords;
 $genre_list = "\L$genre_list";
 $genre_list =~ s/_/ /g;
 
-my %keyword_index;
+our %keyword_index;
 if (grep {$_ =~ m/keyword/i} @genre_criteria)
 {
     my $i = 1;
@@ -217,7 +217,7 @@ if (grep {$_ =~ m/keyword/i} @genre_criteria)
     }
 }
 
-my %legit_genres;
+our %legit_genres;
 for my $g (@legit_genres)
 {
     $g = "\L$g";
@@ -570,7 +570,7 @@ sub reload_xml
     }
 }
 
-my %functions =
+our %functions =
     (
      'up' => sub
      {
@@ -832,7 +832,7 @@ sub checkDefaults
 
 ##### Sub-mode for streams #####
 
-my $mode_sub = sub
+our $mode_sub = sub
 {
     my $client = shift;
     $current_bitrate{$client} = 0;
@@ -910,7 +910,7 @@ my $mode_sub = sub
     $client->update();
 };
 
-my $leave_mode_sub = sub
+our $leave_mode_sub = sub
 {
     my $client = shift;
     $number{$client} = undef;
@@ -967,7 +967,7 @@ sub streamsLines
     return @lines;
 }
 
-my %StreamsFunctions =
+our %StreamsFunctions =
     (
      'up' => sub
      {
@@ -1102,7 +1102,7 @@ my %StreamsFunctions =
 
 ##### Sub-mode for bitrates #####
 
-my $bitrate_mode_sub = sub
+our $bitrate_mode_sub = sub
 {
     my $client = shift;
     unless(exists $bitrates{$current_genre{$client}}{$current_stream{$client}})
@@ -1127,7 +1127,7 @@ sub bitrate_mode_helper
     $bitrates{$current_genre{$client}}{$current_stream{$client}} = [@bitrates];
 }
 
-my $leave_bitrate_mode_sub = sub
+our $leave_bitrate_mode_sub = sub
 {
     my $client = shift;
 };
@@ -1160,7 +1160,7 @@ sub bitrateLines
     return @lines;
 }
 
-my %BitrateFunctions =
+our %BitrateFunctions =
     (
      'up' => sub
      {
@@ -1243,14 +1243,14 @@ my %BitrateFunctions =
 
 ##### Sub-mode for stream info #####
 
-my $info_mode_sub = sub {
+our $info_mode_sub = sub {
     my $client = shift;
     $current_info{$client} = 0;
     $client->lines(\&infoLines);
     $client->update();
 };
 
-my $leave_info_mode_sub = sub
+our $leave_info_mode_sub = sub
 {
     my $client = shift;
 };
@@ -1286,7 +1286,7 @@ sub infoLines
     return @lines;
 }
 
-my %InfoFunctions =
+our %InfoFunctions =
     (
      'up' => sub
      {

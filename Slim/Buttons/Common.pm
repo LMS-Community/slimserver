@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.45 2005/01/09 05:59:53 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -16,25 +16,25 @@ use Slim::Buttons::Plugins;
 use Slim::Display::Display;
 
 # hash of references to functions to call when we leave a mode
-my %leaveMode = ();
+our %leaveMode = ();
 
 #references to mode specific function hashes
-my %modeFunctions = ();
+our %modeFunctions = ();
 
 my $SCAN_RATE_MULTIPLIER = 2;
 
 # hash of references to functions to call when we enter a mode
 # Note:  don't add to this list, rather use the addMode() function 
 # below to have the module add its mode itself
-my %modes = ();
+our %modes = ();
 
 # Hashed list for registered Screensavers. Register these using addSaver. 
-my %savers = (
+our %savers = (
 	'playlist'	=> 'Now Playing',
 );
 
 # Map the numbers on the remote to their corresponding letter sequences.
-my @numberLetters = (
+our @numberLetters = (
 	[' ','0'], # 0
 	['.',',',"'",'?','!','@','-','1'], # 1
 	['A','B','C','2'], 	# 2
@@ -55,7 +55,7 @@ my $minimumVelocity = 2;
 # in seconds.
 my $holdTimeBeforeScroll = 0.300;  
 
-my $scrollClientHash = {};
+our $scrollClientHash = {};
 
 # The address of the function hash is set at run time rather than compile time
 # so initialize the modeFunctions hash here
@@ -113,7 +113,7 @@ sub addMode {
 }
  	
 # Common functions for more than one mode:
-my %functions = (
+our %functions = (
 	'dead' => sub  {},
 	'fwd' => sub  {
 		my $client = shift;

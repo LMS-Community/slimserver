@@ -17,7 +17,7 @@ use Slim::Utils::Misc;
 use Slim::Hardware::IR;
 use Slim::Utils::Strings qw(string);
 
-my %prefs = ();
+our %prefs = ();
 my $prefsPath;
 my $prefsFile;
 my $canWrite;
@@ -127,7 +127,7 @@ sub defaultCacheDir {
 # so if this is not what you intend, don't end it with a digit or a #
 # Squeezebox G may include several prefs not needed by other players.  For those defaults, use
 # %Slim::Player::Player::GPREFS
-my %DEFAULT = (
+our %DEFAULT = (
 	"httpport"				=> 9000
 	,"cliport"				=> 9090
 	,"music"				=> defaultAudioDir()
@@ -221,7 +221,7 @@ my %DEFAULT = (
 # where $pref is the preference which changed and $newvalue is the new value of the preference.
 # Client specific functions also expect a $client param containing a reference to the client
 # struct.  The param order is $client,$pref,$newvalue.
-my %prefChange = (
+our %prefChange = (
 	'CLIENTPREFS' => {
 		'powerOnBrightness' => sub {
 			my ($client,$newvalue) = @_;

@@ -20,9 +20,9 @@ use Slim::Utils::Misc;
 
 #-------------------------------------------------
 
-my %strings   = ();
-my %languages = ();
-my $failsafe_language = 'EN';
+our %strings   = ();
+our %languages = ();
+our $failsafe_language = 'EN';
 
 #
 # Initializes the module

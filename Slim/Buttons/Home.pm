@@ -12,9 +12,9 @@ use Slim::Buttons::BrowseID3;
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 
-my %home = ();
-my %defaultParams = ();
-my %homeChoices;
+our %home = ();
+our %defaultParams = ();
+our %homeChoices;
 
 sub init {
 	Slim::Buttons::Common::addMode('home',getFunctions(),\&setMode);
@@ -143,7 +143,7 @@ sub delMenuOption {
 # TODO: some of this is obvious cruft.  'MUSIC' doesn't seem to exist an a menu option any more.
 # This is also a big source of the inconsistency in "play" and "add" functions.
 # We might want to make this a simple...'add' = clear playlist, 'play' = play everything
-my %functions = (
+our %functions = (
 	'add' => sub  {
 		my $client = shift;
 	

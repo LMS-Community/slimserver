@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.19 2004/12/17 10:09:35 kdf Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@ my $fullscreen = chr(255) x $screensize;
 my $topRowMask = (chr(255) . chr(0)) x ($screensize / 2);
 my $bottomRowMask = (chr(0) . chr(255)) x ($screensize / 2);
 
-my $defaultPrefs = {
+our $defaultPrefs = {
 	'activeFont'		=> [qw(small medium large huge)],
 	'activeFont_curr'	=> 1,
 	'idleFont'		=> [qw(small medium large huge)],

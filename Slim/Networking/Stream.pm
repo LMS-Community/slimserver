@@ -30,14 +30,14 @@ my $BUFFER_FULL_THRESHOLD 	= $BUFFER_SIZE - $MAX_PACKET_SIZE * 2; # fraction of 
 my $BUFFER_FULL_DELAY		= 0.05; # seconds to wait until trying to resend packet when the buffer is full
 
 # for each client:
-my %streamState;		# the state of the stream
-my %curWptr;			# the highest outstanding wptr we've sent to the client
-my %bytesSent;			# bytes sent in this stream
-my %seq;				# the next sequence number to send
-my %packetInFlight;		# hash of references of  the packet in flight to this client
-my %fullness;			# number of bytes in the buffer as of the last packet
-my %lastAck;			# timeout in the case that the player disappears completely.
-my %lastByte;			# if we get an odd number of bytes from the upper level, hold on to the last one.
+our %streamState;		# the state of the stream
+our %curWptr;			# the highest outstanding wptr we've sent to the client
+our %bytesSent;			# bytes sent in this stream
+our %seq;				# the next sequence number to send
+our %packetInFlight;		# hash of references of  the packet in flight to this client
+our %fullness;			# number of bytes in the buffer as of the last packet
+our %lastAck;			# timeout in the case that the player disappears completely.
+our %lastByte;			# if we get an odd number of bytes from the upper level, hold on to the last one.
 
 my $empty = '';
 

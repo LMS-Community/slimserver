@@ -1,5 +1,5 @@
 # RssNews Ticker v1.0
-# $Id: RssNews.pm,v 1.17 2004/12/23 07:28:57 dsully Exp $
+# $Id$
 # Copyright (c) 2004 Slim Devices, Inc. (www.slimdevices.com)
 
 # Based on BBCTicker 1.3 which had this copyright...
@@ -16,13 +16,13 @@ package Plugins::RssNews;
 use strict;
 
 # User Agent used to retrieve RSS feeds via HTTP
-my $ua;
+our $ua;
 
 # plugin state variables.
-my %feed_urls;
-my %feed_names;
-my @feed_order;
-my %context;
+our %feed_urls;
+our %feed_names;
+our @feed_order;
+our %context;
 my $screensaver_mode = 0;
 
 # in screensaver mode, number of items to display per channel before switching
@@ -50,7 +50,7 @@ if ($] < 5.008) {
 
 # defaults only if file not found...
 use constant FEEDS_VERSION => 1.0;
-my %default_feeds = (
+our %default_feeds = (
 					 'BBC News World Edition' => 'http://news.bbc.co.uk/rss/newsonline_world_edition/front_page/rss091.xml',
 					 'CNET News.com' => 'http://news.com.com/2547-1_3-0-5.xml',
 					 'New York Times Home Page' => 'http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml',
@@ -92,7 +92,7 @@ use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Prefs;
 
 $VERSION = substr(q$Revision: 1.17 $,10);
-my %thenews = ();
+our %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
 my $screensaver_timeout = 0;
@@ -120,11 +120,11 @@ PLUGIN_RSSNEWS_ERROR
 	EN	Failed to retrieve RSS feed
 
 PLUGIN_RSSNEWS_NO_DESCRIPTION
-	DE	Keine Beschreibung verfügbar
+	DE	Keine Beschreibung verfÃ¼gbar
 	EN	Description not available
 
 PLUGIN_RSSNEWS_NO_TITLE
-	DE	Kein Titel verfübar
+	DE	Kein Titel verfÃ¼bar
 	EN	Title not available
 
 PLUGIN_RSSNEWS_SCREENSAVER
@@ -138,7 +138,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_SETTINGS
 	EN	RSS News Screensaver Settings
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE
-	DE	Diesen Bildschirmschoner wählen
+	DE	Diesen Bildschirmschoner wÃ¤hlen
 	EN	Select Current Screensaver
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE_TITLE
@@ -173,15 +173,15 @@ SETUP_GROUP_PLUGIN_RSSNEWS
 	EN	RSS News Ticker
 
 SETUP_GROUP_PLUGIN_RSSNEWS_DESC
-	DE	Das RSS News Ticker Plugin kann verwendet werden, um RSS Feeds zu durchsuchen und lesen. Die folgenden Einstellungen helfen ihnen beim Definieren der anzuzeigenden RSS Feeds, und wie diese dargestellt werden sollen. Klicken Sie auf Ändern, um die Änderungen zu aktivieren.
+	DE	Das RSS News Ticker Plugin kann verwendet werden, um RSS Feeds zu durchsuchen und lesen. Die folgenden Einstellungen helfen ihnen beim Definieren der anzuzeigenden RSS Feeds, und wie diese dargestellt werden sollen. Klicken Sie auf Ã„ndern, um die Ã„nderungen zu aktivieren.
 	EN	The RSS News Ticker plugin can be used to browse and display items from RSS Feeds. The preferences below can be used to determine which RSS Feeds to use and control how they are displayed. Click on the Change button when you are done.
 
 SETUP_PLUGIN_RSSNEWS_FEEDS
-	DE	RSS Feeds ändern
+	DE	RSS Feeds Ã¤ndern
 	EN	Modify RSS feeds
 
 SETUP_PLUGIN_RSSNEWS_FEEDS_DESC
-	DE	Dies ist die Liste der anzuzeigenden RSS Feeds. Um einen neuen zu abonnieren, tippen Sie einfach dessen URL in eine leere Zeile. Um einen Feed zu entfernen, löschen Sie dessen URL. Bestehende URLs können im entsprechenden Feld bearbeitet werden. Klicken Sie auf Ändern, um die Änderungen zu aktivieren.
+	DE	Dies ist die Liste der anzuzeigenden RSS Feeds. Um einen neuen zu abonnieren, tippen Sie einfach dessen URL in eine leere Zeile. Um einen Feed zu entfernen, lÃ¶schen Sie dessen URL. Bestehende URLs kÃ¶nnen im entsprechenden Feld bearbeitet werden. Klicken Sie auf Ã„ndern, um die Ã„nderungen zu aktivieren.
 	EN	This is the list of RSS Feeds to display. To add a new one, just type its URL into the empty line. To remove one, simply delete the URL from the corresponding line. To change the URL of an existing feed, edit its text value. Click on the Change button when you are done.
 
 SETUP_PLUGIN_RSSNEWS_RESET
@@ -193,26 +193,26 @@ SETUP_PLUGIN_RSSNEWS_RESET_DESC
 	EN	Click the Reset button to revert to the default set of RSS Feeds.
 
 PLUGIN_RSSNEWS_RESETTING
-	DE	RSS Feeds wurden auf Standardwerte zurückgesetzt.
+	DE	RSS Feeds wurden auf Standardwerte zurÃ¼ckgesetzt.
 	EN	Resetting to default RSS Feeds.
 
 SETUP_PLUGIN_RSSNEWS_RESET_BUTTON
 	EN	Reset
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED
-	DE	Anzahl Einträge pro Feed
+	DE	Anzahl EintrÃ¤ge pro Feed
 	EN	Items displayed per channel
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
-	DE	Definieren Sie die Anzahl Einträge, die im Bildschirmschonermodus pro Feed angezeigt werden sollen. Eine grössere Anzahl hat zur Folge, dass mehr Einträge angezeigt werden, bevor der nächste Feed angezeigt wird.
+	DE	Definieren Sie die Anzahl EintrÃ¤ge, die im Bildschirmschonermodus pro Feed angezeigt werden sollen. Eine grÃ¶ssere Anzahl hat zur Folge, dass mehr EintrÃ¤ge angezeigt werden, bevor der nÃ¤chste Feed angezeigt wird.
 	EN	The maximum number of items displayed for each feed while the screensaver is active. A larger value implies that the screensaver will display more items before switching to the next feed.
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_CHOOSE
-	DE	Einträge pro Feed
+	DE	EintrÃ¤ge pro Feed
 	EN	Items per channel
 
 SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE
-	DE	RSS Feed Liste wurde geändert.
+	DE	RSS Feed Liste wurde geÃ¤ndert.
 	EN	RSS Feeds list changed.
 !};
 
@@ -723,7 +723,7 @@ sub screenSaver {
 	);
 }
 
-my %screensaverRssNewsFunctions = (
+our %screensaverRssNewsFunctions = (
         'done' => sub  {
 		my ($client, $funct, $functarg) = @_;
        		Slim::Buttons::Common::popMode($client);
@@ -765,8 +765,8 @@ sub leaveScreenSaverRssNews {
 #
 
 my @screensaverSettingsMenu = ('PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE');
-my %current;
-my %menuParams = (
+our %current;
+our %menuParams = (
 				  'rssnews' => {
 					  'listRef' => \@screensaverSettingsMenu
 						  ,'stringExternRef' => 1
@@ -838,8 +838,8 @@ sub screensaverSettingsSetMode {
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
 	$client->update();
 }
-my %noModeFunctions = (
-                              );
+
+our %noModeFunctions = ();
 
 Slim::Buttons::Common::addMode('PLUGIN.RssNews.screensaversettings', 
                                \%noModeFunctions, 
@@ -905,8 +905,7 @@ sub setMode {
 }
 
 # needed in getFunctions
-my %mainModeFunctions = (
-);
+our %mainModeFunctions = ();
 
 # The server will call this subroutine
 sub getFunctions() {
@@ -956,8 +955,7 @@ sub headlinesModeCallback {
     }
 }
 
-my %headlinesModeFunctions = (
-                              );
+our %headlinesModeFunctions = ();
 
 sub headlinesSetMode {
     my $client = shift;
@@ -1011,8 +1009,7 @@ sub descriptionModeCallback {
     }
 }
 
-my %descriptionModeFunctions = (						  
-                                                                                  );
+our %descriptionModeFunctions = ();
 
 sub descriptionSetMode {
     my $client = shift;

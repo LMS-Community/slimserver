@@ -1,6 +1,6 @@
 package Slim::Music::MusicMagic;
 
-# $Id: MusicMagic.pm,v 1.5 2005/01/06 03:59:51 kdf Exp $
+# $Id$
 
 use strict;
 
@@ -9,11 +9,11 @@ use File::Spec::Functions qw(catfile);
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
-use LWP;
+use LWP ();
 
 my $isScanning = 0;
 my $initialized = 0;
-my %artwork;
+our %artwork;
 my $last_error = 0;
 my $export = '';
 my $count = 0;
@@ -22,7 +22,6 @@ my $MMSHost;
 my $MMSport;
 
 my $lastMusicLibraryFinishTime = undef;
-
 
 sub useMusicMagic {
 	my $newValue = shift;

@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::Contributor;
 
-# $Id: Contributor.pm,v 1.2 2005/01/04 03:38:52 dsully Exp $
+# $Id$
 
 use strict;
 use base 'Slim::DataStores::DBI::DataModel';
@@ -13,9 +13,9 @@ use base 'Slim::DataStores::DBI::DataModel';
 	$class->columns(Stringify => qw/name/);
 }
 
-my @fields = qw(contributor artist composer conductor band);
+our @fields = qw(contributor artist composer conductor band);
 
-tie my %_cache, 'Tie::Cache::LRU', 5000;
+tie our %_cache, 'Tie::Cache::LRU', 5000;
 
 sub contributorFields {
 	return \@fields;

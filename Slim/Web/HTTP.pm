@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.138 2005/01/11 04:11:41 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -63,37 +63,52 @@ use constant KEEPALIVETIMEOUT => 10;
 
 # Package variables
 
-my %templatefiles = ();
+our %templatefiles = ();
 
 my $openedport = 0;
 my $http_server_socket;
 my $connected = 0;
 
-my %outbuf = (); # a hash for each writeable socket containing a queue of output segments
+our %outbuf = (); # a hash for each writeable socket containing a queue of output segments
                  #   each segment is a hash of a ref to data, an offset and a length
 
-my %sendMetaData   = ();
-my %metaDataBytes  = ();
-my %streamingFiles = ();
-my %peeraddr       = ();
-my %peerclient     = ();
-my %keepAlives     = ();
+our %sendMetaData   = ();
+our %metaDataBytes  = ();
+our %streamingFiles = ();
+our %peeraddr       = ();
+our %peerclient     = ();
+our %keepAlives     = ();
 
 my $mdnsIDslimserver;
 my $mdnsIDhttp;
 
-my @templateDirs;
-{
+our @templateDirs;
+our %pageFunctions = ();
+
+our %dangerousCommands = (
+	# name of command => regexp for URI patterns that make it dangerous
+	# e.g.
+	#	\&Slim::Web::Pages::status => '\bp0=rescan\b'
+	# means inisist on CSRF protection for the status command *only*
+	# if the URL includes p0=rescan
+	\&Slim::Web::Setup::setup_HTTP => '.',
+	\&Slim::Web::EditPlaylist::editplaylist => '.',
+	\&Slim::Web::Pages::status => '(p0=debug|p0=pause|p0=stop|p0=play|p0=sleep|p0=playlist|p0=mixer|p0=display|p0=button|p0=rescan|(p0=(|player)pref\b.*p2=[^\?]|p2=[^\?].*p0=(|player)pref))',
+);
+
+# initialize the http server
+sub init {
+
+	@templateDirs = ();
+
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @templateDirs, $ENV{'HOME'} . "/Library/SlimDevices/html/";
 		push @templateDirs, "/Library/SlimDevices/html/";
 	}
 
 	push @templateDirs, catdir($Bin, 'HTML');
-}
-my %pageFunctions = ();
 
-{
+	#
 	tie %pageFunctions, 'Tie::RegexpHash';
 
 	%pageFunctions = (
@@ -118,21 +133,14 @@ my %pageFunctions = ();
 		qr/^setup\.(?:htm|xml)/		=> \&Slim::Web::Setup::setup_HTTP,
 		qr/^update_firmware\.(?:htm|xml)/ => \&Slim::Web::Pages::update_firmware,
 	);
-}
 
-my %dangerousCommands = (
-	# name of command => regexp for URI patterns that make it dangerous
-	# e.g.
-	#	\&Slim::Web::Pages::status => '\bp0=rescan\b'
-	# means inisist on CSRF protection for the status command *only*
-	# if the URL includes p0=rescan
-	\&Slim::Web::Setup::setup_HTTP => '.',
-	\&Slim::Web::EditPlaylist::editplaylist => '.',
-	\&Slim::Web::Pages::status => '(p0=debug|p0=pause|p0=stop|p0=play|p0=sleep|p0=playlist|p0=mixer|p0=display|p0=button|p0=rescan|(p0=(|player)pref\b.*p2=[^\?]|p2=[^\?].*p0=(|player)pref))',
-);
+	# pull in the memory usage module if requested.
+	if ($::d_memory) {
 
-# initialize the http server
-sub init {
+		eval "use Slim::Utils::MemoryUsage";
+	
+		$pageFunctions{qr/^memoryusage\.html.*/} = \&Slim::Web::Pages::memory_usage;
+	}
 
 	# this initializes the %fieldInfo structure
 	Slim::Web::Pages::init();

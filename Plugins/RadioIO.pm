@@ -1,4 +1,4 @@
-# $Id: RadioIO.pm,v 1.4 2004/12/07 20:19:43 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -12,15 +12,15 @@
 #
 package Plugins::RadioIO;
 
-use FileHandle;
-use IO::Socket qw(:DEFAULT :crlf);
-use File::Spec::Functions qw(:ALL);
-use Slim::Utils::Prefs;
-use Slim::Utils::Misc;
+use Slim::Buttons::Common;
+use Slim::Control::Command;
+use Slim::Display::Display;
+use Slim::Music::Info;
+use Slim::Player::Source;
 
-my %current = ();
+our %current = ();
 
-my %stations = (
+our %stations = (
 	'radioio70s'  => '3765',			
 	'radioio80s'  => '3795',
 	'radioioACOUSTIC' => '3675',
@@ -35,7 +35,7 @@ my %stations = (
 	'radioioROCK' => '3515',
 );
 
-my @station_names = sort keys %stations;
+our @station_names = sort keys %stations;
 
 sub initPlugin {
 	Slim::Player::Source::registerProtocolHandler("radioio", "Plugins::RadioIO::ProtocolHandler");
@@ -65,34 +65,26 @@ sub getRadioIOURL {
 	my $key = $station_names[$num];
 	my $url = "radioio://" . $key . ".mp3";
 
-	my %cacheEntry;
-	$cacheEntry{'TITLE'} = $key;
-	$cacheEntry{'CT'} = 'mp3';
-	$cacheEntry{'VALID'} = 1;
+	my %cacheEntry = (
+		'TITLE' => $key,
+		'CT'    => 'mp3',
+		'VALID' => 1,
+	);
+
 	Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
 
 	return $url;
 }
 
-my %functions = (
+our %functions = (
 	'up' => sub {
 		my $client = shift;
-		$current{$client} =
-		  Slim::Buttons::Common::scroll($client,
-										-1,
-										scalar(@station_names),
-										$current{$client} || 0,
-										);
+		$current{$client} = Slim::Buttons::Common::scroll($client, -1, scalar(@station_names), $current{$client} || 0);
 		$client->update();
 	},
 	'down' => sub {
 		my $client = shift;
-		$current{$client} =
-		  Slim::Buttons::Common::scroll($client,
-										1,
-										scalar(@station_names),
-										$current{$client} || 0,
-										);
+		$current{$client} = Slim::Buttons::Common::scroll($client, 1, scalar(@station_names), $current{$client} || 0);
 		$client->update();
 	},
 	'left' => sub {
@@ -177,10 +169,10 @@ PLUGIN_RADIOIO_MODULE_TITLE
 package Plugins::RadioIO::ProtocolHandler;
 
 use strict;
+use base  qw(Slim::Player::Protocols::HTTP);
 
-use vars qw(@ISA);
-
-@ISA = qw(Slim::Player::Protocols::HTTP);
+use Slim::Formats::Parse;
+use Slim::Player::Source;
 
 sub new {
 	my $class = shift;
@@ -208,6 +200,3 @@ sub new {
 # tab-width:4
 # indent-tabs-mode:t
 # End:
-
-
-    

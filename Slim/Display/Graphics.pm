@@ -12,8 +12,8 @@ use FindBin qw($Bin);
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 
-my %fonts;
-my %fonthash;
+our %fonts;
+our %fonthash;
 
 my $char0 = chr(0);
 my $ord0a = ord("\x0a");

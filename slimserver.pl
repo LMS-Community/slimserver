@@ -275,6 +275,7 @@ use vars qw(
 	$d_itunes
 	$d_itunes_verbose
 	$d_mdns
+	$d_memory
 	$d_moodlogic
 	$d_musicmagic
 	$d_mp3
@@ -648,6 +649,7 @@ to the console via stderr:
     --d_itunes       => iTunes synchronization information
     --d_itunes_verbose => verbose iTunes Synchronization information
     --d_mdns         => Multicast DNS aka Zeroconf aka Rendezvous information
+    --d_memory       => Turns on memory debugging interface - developers only.
     --d_moodlogic    => MoodLogic synchronization information
     --d_musicmagic   => MusicMagic synchronization information
     --d_mp3    		 => MP3 frame detection
@@ -727,6 +729,7 @@ sub initOptions {
 		'd_itunes'			=> \$d_itunes,
 		'd_itunes_verbose'	=> \$d_itunes_verbose,
 		'd_mdns'			=> \$d_mdns,
+		'd_memory'			=> \$d_memory,
 		'd_moodlogic'		=> \$d_moodlogic,
 		'd_musicmagic'		=> \$d_musicmagic,
 		'd_mp3'				=> \$d_mp3,

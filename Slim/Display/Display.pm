@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.24 2004/12/13 05:25:37 dean Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -14,7 +14,7 @@ use Slim::Utils::Timers;
 use Slim::Buttons::Settings;
 use Slim::Utils::Strings qw(string);
 
-my %commandmap = (
+our %commandmap = (
 	'center' => "\x1ecenter\x1e",
 	'cursorpos' => "\x1ecursorpos\x1e",
 	'framebuf' => "\x1eframebuf\x1e",

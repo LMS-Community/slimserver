@@ -10,7 +10,7 @@ package Slim::Buttons::Plugins;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.37 2005/01/04 03:38:52 dsully Exp $
+# $Id$
 #
 
 use strict;
@@ -40,10 +40,11 @@ use lib (pluginDirs());
 # set to 1 to pick up modules on the fly rather than
 # on the first visit to the plug-ins section
 my $read_onfly;
-my %plugins = ();
-my %curr_plugin = ();
 my $plugins_read;
-my %playerplugins = ();
+
+our %plugins = ();
+our %curr_plugin = ();
+our %playerplugins = ();
 
 sub init {
 	no strict 'refs';
@@ -145,7 +146,7 @@ sub read_plugins {
 		my $strings = eval { &{$fullname . "::strings"}() };
 
 		if (!$@ && $strings) {
-			Slim::Utils::Strings::addStrings($strings);
+			Slim::Utils::Strings::addStrings(\$strings);
 		}
 
 		my $displayName = eval { &{$fullname . "::getDisplayName"}() };

@@ -10,7 +10,7 @@ package Slim::Player::Player;
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.41 2005/01/02 06:47:16 kdf Exp $
+# $Id$
 #
 
 use strict;
@@ -21,9 +21,9 @@ use Slim::Hardware::IR;
 
 use base qw(Slim::Player::Client);
 
-my @fonttable = ( ['small', 'small'], [ undef, 'large']);
+our @fonttable = ( ['small', 'small'], [ undef, 'large']);
 
-my $defaultPrefs = {
+our $defaultPrefs = {
 		'autobrightness'		=> 1
 		,'bass'					=> 50
 		,'digitalVolumeControl'	=> 1
@@ -65,7 +65,7 @@ my $defaultPrefs = {
 		,'volume'				=> 50
 	};
 
-my %upgradeScripts = (
+our %upgradeScripts = (
 
 	# Allow the "upgrading" of old menu items to new ones.
 	'5.4b1' => sub {
@@ -319,7 +319,7 @@ sub fonts {
 # fade the volume up or down
 # $fade = number of seconds to fade 100% (positive to fade up, negative to fade down) 
 # $callback is function reference to be called when the fade is complete
-my %fvolume;  # keep temporary fade volume for each client
+our %fvolume;  # keep temporary fade volume for each client
 
 sub fade_volume {
 	my($client, $fade, $callback, $callbackargs) = @_;

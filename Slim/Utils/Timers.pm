@@ -1,6 +1,6 @@
 package Slim::Utils::Timers;
 
-# $Id: Timers.pm,v 1.10 2004/08/25 23:24:46 dean Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -18,8 +18,9 @@ use Slim::Utils::Misc;
 # Timers are checked whenever we come out of select, or every 10ms,
 # whichever is greater.
 
-my @timers = ();
-my @secondlines = ();
+our @timers = ();
+our @secondlines = ();
+
 my $pos = 0;
 my $pos2 = 0;
 my $string;

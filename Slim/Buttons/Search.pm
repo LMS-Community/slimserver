@@ -1,6 +1,6 @@
 package Slim::Buttons::Search;
 
-# $Id: Search.pm,v 1.17 2005/01/10 08:43:24 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -17,9 +17,9 @@ use Slim::Display::Display;
 my @defaultSearchChoices = qw(ARTISTS ALBUMS SONGS);
 my $rightarrow = Slim::Display::Display::symbol('rightarrow');
 
-my %current    = ();
-my %context    = ();
-my %menuParams = ();
+our %current    = ();
+our %context    = ();
+our %menuParams = ();
 
 sub init {
 	my %subs = (

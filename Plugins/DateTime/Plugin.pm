@@ -60,7 +60,7 @@ sub setMode {
 	$client->lines(\&lines);
 }
 
-my %functions = (
+our %functions = (
 	'up' => sub  {
 		my $client = shift;
 		$client->bumpUp();
@@ -170,7 +170,7 @@ sub screenSaver {
 	);
 }
 
-my %screensaverDateTimeFunctions = (
+our %screensaverDateTimeFunctions = (
 	'done' => sub  {
 		my ($client ,$funct ,$functarg) = @_;
 
