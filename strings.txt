@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.93 2004/04/29 16:14:24 dean Exp $
+# $Id: strings.txt,v 1.94 2004/04/29 16:31:13 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -36,6 +36,7 @@ CHOOSE_A_LANGUAGE
 	SE	Välj språk
 
 BASE_SKIN
+	DE	Light
 	EN	Light
 	FR	Light
 	NL	Light
@@ -44,6 +45,7 @@ BASE_SKIN
 	SE	Lätt-utseende
 
 DEFAULT_SKIN
+	DE	Standard
 	EN	Standard
 	ES	Estandar
 	FI	Normaali ulkoasu
@@ -54,6 +56,7 @@ DEFAULT_SKIN
 	SE	Standard-utseende
 
 DEFAULT_MAP
+	DE	Standard
 	EN	Standard
 	ES	Estandar
 	FI	Normaali ulkoasu
@@ -359,6 +362,7 @@ PAUSED
 	SE	Pausad
 
 SLIMSERVER
+	DE	SlimServer
 	EN	SlimServer
 
 ABOUT
@@ -597,6 +601,7 @@ POWERING_OFF
 	SE	Stänger av
 
 POWER
+	DE	Power
 	EN	Power
 
 ALARM
@@ -710,9 +715,11 @@ ALARM_NOW_PLAYING
 	SE	Väckarklockan spelar nu
 
 SLIMP3
+	DE	SliMP3
 	EN	SLIMP3
 
 SQUEEZEBOX
+	DE	Squeezebox
 	EN	Squeezebox
 
 WELCOME_TO_SLIMP3
@@ -755,6 +762,7 @@ WELCOME_TO_SQUEEZEBOX
 	SE	Välkommen till Squeezebox
 
 FREE_YOUR_MUSIC
+	DE	Befreie deine Musik!
 	DK	Lyt til din musik!
 	EN	Free your music
 	FR	Libérez votre musique
@@ -1030,7 +1038,6 @@ SETUP_FORMATSLIST
 	NO	Filformat, konverteringer
 	SE	Filformat, konverteringar
 
-
 FILE_FORMAT
 	DE	Dateiformat
 	EN	File Format
@@ -1050,6 +1057,7 @@ PLAYER_TYPE
 	SE	Spelartyp
 
 PLAYER_ID
+	DE	Player ID
 	EN	Player ID
 	NO	Spiller ID
 	SE	SpelarID
@@ -1475,25 +1483,28 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 	SE	Denna inställning avgör vilket format som används vid import av iTunes-låtlistor
 
 SETUP_MOODLOGICPLAYLISTFORMAT
+	DE	MoodLogic Playlist Format
 	EN	MoodLogic Playlist Format
 	FR	Format des listes de lecture MoodLogic
 	NO	MoodLogic spilleliste format
 
 SETUP_MOODLOGICPLAYLISTFORMAT_DESC
+	DE	Diese Option definiert das Format, in welcher MoodLogic Playlists importiert werden.
 	EN	This option determines the format used when importing MoodLogic playlists.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture MoodLogic.
 	NO	Denne innstillingen avgjør hvilket format som brukes ved import av MoodLogic spillelister.
 
 SETUP_MOODLOGICPLAYLISTPREFIX_CHOOSE
+	DE	Prefix:
 	EN	Prefix:
 	FR	Préfixe :
 	NO	Prefic:
 
 SETUP_MOODLOGICPLAYLISTSUFFIX_CHOOSE
+	DE	Suffix:
 	EN	Suffix:
 	FR	Suffixe :
 	NO	Suffix:
-
 
 SETUP_ITUNESPLAYLISTPREFIX_CHOOSE
 	EN	Prefix:
@@ -1502,6 +1513,7 @@ SETUP_ITUNESPLAYLISTPREFIX_CHOOSE
 	SE	Prefix:
 
 SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE
+	DE	Suffix:
 	EN	Suffix:
 	FR	Suffixe :
 	NO	Suffix:
@@ -1923,6 +1935,7 @@ SETUP_INSTANTMIXMAX_DESC
 	EN	This is the maximum number of songs you want in playlists created as an Instant Mix. Instant Mixes may have fewer songs, depending on the Variety setting.
 
 SETUP_VARIETYCOMBO
+	DE	Moodlogic Variety
 	EN	Moodlogic Variety
 
 SETUP_VARIETYCOMBO_DESC
@@ -2436,15 +2449,19 @@ SETUP_CHECKVERSION_0
 	SE	Kontrollera INTE automatiskt
 
 SETUP_IGNOREDISABLEDITUNESTRACKS
+	DE	In iTunes deaktiverte Musikstücke ignorieren
 	EN	Ignore Songs Disabled in iTunes
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
+	DE	Wenn SlimServer ihre iTunes Musiksammlung verwendet, so kann er die in iTunes deaktivierten Musikstücke ignorieren. Falls Sie dennoch auf alle Lieder (auch die deaktivierten) zugreifen wollen, können Sie dies hier konfigurieren.
 	EN	If SlimServer is using your iTunes Music Library, it can ignore the songs that you have unchecked in iTunes.  If you want to access all the songs in your iTunes Library even if they are unchecked, you can change that setting here.
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_1
+	DE	Deaktivierte Musikstücke ignorieren
 	EN	Ignore songs unchecked in iTunes
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_0
+	DE	Deaktivierte Musikstücke anzeigen
 	EN	Don't ignore songs unchecked in iTunes
 
 SETUP_HISTORYLENGTH
@@ -2809,9 +2826,11 @@ SETUP_IGNOREDARTICLES_DESC
 	SE	En lista med artiklar ("the" "les" "los"...) innan artistnamn som skall ignoreras vid sortering. Separera flera artiklar med mellanslag eller lämna detta fält tomt för att avaktivera.
 
 SETUP_SPLITCHARS
+	DE	Mehrere Einträge in Tags
 	EN	Multiple Items In Tags
 
 SETUP_SPLITCHARS_DESC
+	DE	SlimServer kann mehrere Interpreten, Albumtitel und Musikstile in den Tags ihrer Musikstücke erkennen. Falls SlimServer in den Tags eines der folgenden Trennzeichen erkennt, so kann es individuelle Einträge für die einzelnen Werte in die Listen aufnehmen. Wenn Sie z.B. den Strichpunkt als Trennzeichen definieren, so wird ein Lied mit dem Interpreten Tag "J. S. Bach;Michael Tilson Thomas" sowohl unter "J. S. Bach" als auch "Michael Tilson Thomas" aufgelistet .
 	EN	SlimServer can extract multiple artist, album titles and genres from the tags inside your music files.  If SlimServer finds any of the characters below in your tags, it will create individual listings for each item.  For example, if you put a semicolon in the list below, a song with an artist tag of "J. S. Bach;Michael Tilson Thomas" will appear in the artists area for both "J. S. Bach" and "Michael Tilson Thomas".
 
 SETUP_FILESORT
@@ -3136,12 +3155,15 @@ SETUP_UDPCHUNKSIZE_CHOOSE
 	SE	Maximalt antal bytes ljud-data att skicka till spelaren i ett UDP-paket (SLIMP3): 
 
 SETUP_WEBPROXY
+	DE	Web Proxy
 	EN	Web Proxy
 
 SETUP_WEBPROXY_DESC
+	DE	Sie können die IP Adresse und den Port eines HTTP/Web Proxys definieren, den SlimServer verwenden soll, um auf Server ausserhalb ihres Netzwerkes zugreifen zu können. Benutzen Sie das Format xxx.xxx.xxx.xxx:yyy. xxx.xxx.xxx.xxx bezeichnet die IP Adresse des Servers, während yyy die Port-Nummer definiert. Lassen Sie das Feld frei, falls Sie keinen HTTP/Web Proxy verwenden.
 	EN	You can specify the IP address and port for an HTTP/Web proxy to use when SlimServer connects to servers outside your local network.  Use the format xx.xx.xx.xx:yyyy where xx.xx.xx.xx is the IP address of the proxy, and yyyy is the port number.  Leave this field blank of you don't use a HTTP web proxy.
 
 SETUP_WEBPROXY_CHOOSE
+	DE	Web Proxy Adresse
 	EN	Web Proxy Address
 
 SETUP_SHOWBUFFERFULLNESS
@@ -4058,6 +4080,7 @@ BASS
 	SE	Bas
 
 PITCH
+	DE	Pitch
 	EN	Pitch
 
 TEXTSIZE
@@ -4375,6 +4398,7 @@ BAND
 	SE	Grupp/Orkester
 
 ALBUM
+	DE	Album
 	DK	Album
 	EN	Album
 	ES	Disco
@@ -4418,6 +4442,7 @@ TYPE
 	SE	Filformat
 
 MP3
+	DE	MP3
 	EN	MP3
 	FR	MP3
 	NL	MP3
@@ -4426,6 +4451,7 @@ MP3
 	SE	MP3
 
 MP2
+	DE	MP2
 	EN	MP2
 	FR	MP2
 	NL	MP2
@@ -4443,16 +4469,16 @@ MOV
 	PT	Apple AAC of Ficheiro Movie
 	SE	Apple AAC eller film
 
-FLC
-	EN	FLAC
-
 MPC
+	DE	MPC
 	EN	Musepack
 
 SHN
+	DE	SHN
 	EN	Shorten
 
 WMA
+	DE	WMA
 	EN	Windows Media
 
 M4P
@@ -4460,6 +4486,7 @@ M4P
 	EN	Protected AAC
 
 AIF
+	DE	AIF
 	EN	AIFF
 	FR	AIFF
 	NL	AIFF
@@ -4478,6 +4505,7 @@ UNK
 	SE	Okänd
 
 WAV
+	DE	WAV
 	EN	WAV
 	FR	WAV
 	NL	WAV
@@ -4486,6 +4514,7 @@ WAV
 	SE	WAV
 
 FLC
+	DE	FLC
 	EN	FLAC
 	FR	FLAC
 	NL	FLAC
@@ -4494,6 +4523,7 @@ FLC
 	SE	FLAC
 
 OGG
+	DE	OGG
 	EN	Ogg Vorbis
 	FR	Ogg Vorbis
 	NL	Ogg Vorbis
@@ -5958,7 +5988,6 @@ SEARCHFOR_SONGS
 	PT	Procurar por Músicas
 	SE	Sök efter låtar
 
-
 SEARCHFOR_SONGS_DBL
 	FR	Cherche morceaux
 
@@ -6183,6 +6212,7 @@ MOODLOGIC_MOOD_0
 	SE	Överraskning
 
 MOODLOGIC_MOOD_1
+	DE	Upbeat
 	EN	Upbeat
 	NO	Tempo
 
@@ -6196,6 +6226,7 @@ MOODLOGIC_MOOD_2
 	PT	Fácil
 
 MOODLOGIC_MOOD_3
+	DE	Sanft
 	EN	Mild
 	NO	Mild
 
@@ -6218,6 +6249,7 @@ MOODLOGIC_MOOD_5
 	PT	Saída
 
 MOODLOGIC_MOOD_6
+	DE	Wild
 	EN	Wild
 	NO	Vill
 
@@ -6436,6 +6468,7 @@ INFORMATION_MENU_MODULE
 	SE	Tillägg
 
 INFORMATION_PLAYER_NAME
+	DE	Player Name
 	EN	Player Name
 	FR	Nom platine
 	NO	Spiller navn
@@ -6449,6 +6482,7 @@ INFORMATION_PLAYER_MODEL
 	SE	Modell, spelare
 
 INFORMATION_FIRMWARE
+	DE	Player Firmware-Version
 	EN	Player Firmware Version
 	FR	Version micrologiciel platine
 	NO	Spillerens programvare versjon ('firmware')
@@ -6483,6 +6517,7 @@ INFORMATION_PLAYER_SIGNAL_STRENGTH
 	SE	Trådlös signalstyrka
 
 INFORMATION_VERSION
+	DE	Server-Version
 	EN	Server Version
 	FR	Version serveur
 	NO	Server versjon
@@ -6585,6 +6620,7 @@ INFORMATION_DATE_FORMAT
 	NO	${shortdateFormat} kl ${timeFormat}
 
 COLON
+	DE	:
 	EN	: 
 	FR	 : 
 	NO	:
