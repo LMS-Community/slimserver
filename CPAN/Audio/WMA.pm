@@ -17,7 +17,7 @@ sub new {
 	my $self  = {};
 
 	open(FILE, $file) or do {
-		warn "File does not exist or cannot be read.";
+		warn "[$file] does not exist or cannot be read: $!";
 		return undef;
 	};
 

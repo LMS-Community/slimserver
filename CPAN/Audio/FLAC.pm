@@ -1,6 +1,6 @@
 package Audio::FLAC;
 
-# $Id: FLAC.pm,v 1.5 2004/01/27 04:13:41 daniel Exp $
+# $Id: FLAC.pm,v 1.6 2004/01/29 07:28:44 daniel Exp $
 
 use strict;
 use vars qw($VERSION);
@@ -36,7 +36,7 @@ sub new {
 
 	# open up the file
 	open(FILE, $file) or do {
-		warn "File does not exist or cannot be read.";
+		warn "[$file] does not exist or cannot be read: $!";
 		return $self;
 	};
 
@@ -50,7 +50,7 @@ sub new {
 	# Initialize FLAC analysis
 	$errflag = $self->_init();
 	if ($errflag < 0) {
-		warn "File does not appear to be a FLAC file!";
+		warn "[$file] does not appear to be a FLAC file!";
 		close FILE;
 		undef $self->{'fileHandle'};
 		return $self;
@@ -59,7 +59,7 @@ sub new {
 	# Grab the metadata blocks from the FLAC file
 	$errflag = $self->_getMetadataBlocks();
 	if ($errflag < 0) {
-		warn "Unable to read metadata from FLAC file!";
+		warn "[$file] Unable to read metadata from FLAC!";
 		close FILE;
 		undef $self->{'fileHandle'};
 		return $self;
@@ -68,7 +68,7 @@ sub new {
 	# Parse streaminfo
 	$errflag = $self->_parseStreaminfo();
 	if ($errflag < 0) {
-		warn "Can't find streaminfo metadata block!";
+		warn "[$file] Can't find streaminfo metadata block!";
 		close FILE;
 		undef $self->{'fileHandle'};
 		return $self;
@@ -77,7 +77,7 @@ sub new {
 	# Parse vorbis tags
 	$errflag = $self->_parseVorbisComments();
 	if ($errflag < 0) {
-		warn "Can't find/parse vorbis comment metadata block!";
+		warn "[$file] Can't find/parse vorbis comment metadata block!";
 		close FILE;
 		undef $self->{'fileHandle'};
 		return $self;
@@ -86,7 +86,7 @@ sub new {
 	# Parse cuesheet
 	$errflag = $self->_parseCueSheet();
 	if ($errflag < 0) {
-		warn "Problem parsing cuesheet metadata block!";
+		warn "[$file] Problem parsing cuesheet metadata block!";
 		close FILE;
 		undef $self->{'fileHandle'};
 		return $self;
