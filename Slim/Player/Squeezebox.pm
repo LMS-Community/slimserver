@@ -62,6 +62,15 @@ sub reconnect {
 	# tell the client the server version
 #	$client->sendFrame('vers', \$::VERSION);
 	
+	# if we're reconnecting and were playing previously, start the track over.
+	# if we were paused, then stop.
+	if (Slim::Player::Source::playmode($client) eq 'play') {
+		Slim::Player::Source::playmode($client, "stop");
+		Slim::Player::Source::playmode($client, "play");
+	} elsif (Slim::Player::Source::playmode($client) eq 'pause') {
+		Slim::Player::Source::playmode($client, "stop");
+	}
+	
 	$client->update();	
 }
 
