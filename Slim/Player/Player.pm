@@ -40,7 +40,6 @@ our $defaultPrefs = {
 										PLUGINS
 							   )]
 		,'mp3SilencePrelude' 	=> 0
-		,'lameQuality'			=> 9
 		,'offDisplaySize'		=> 0
 		,'pitch'				=> 100
 		,'playingDisplayMode'	=> 0
@@ -55,7 +54,7 @@ our $defaultPrefs = {
 		,'scrollPauseDouble'	=> 3.6
 		,'scrollRate'			=> 0.15
 		,'scrollRateDouble'		=> 0.1
-		,'scrollPixels'         => 7
+		,'scrollPixels'			=> 7
 		,'scrollPixelsDouble'   => 7
 		,'showbufferfullness'	=> 0
 		,'silent'				=> 0

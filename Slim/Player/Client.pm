@@ -609,6 +609,7 @@ our $defaultPrefs = {
 		'maxBitrate'			=> undef # will be set by the client device OR default to server pref when accessed.
 		,'alarmvolume'			=> 50
 		,'alarm'				=> 0
+		,'lameQuality'			=> 9
 		,'playername'			=> undef
 		,'repeat'				=> 2
 		,'shuffle'				=> 0
@@ -775,6 +776,7 @@ sub new {
 
 sub init {
 	my $client = shift;
+
 	# make sure any preferences unique to this client may not have set are set to the default
 	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
 }

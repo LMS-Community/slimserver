@@ -30,6 +30,7 @@ sub new {
 
 sub init {
 	my $client = shift;
+	$client->SUPER::init();
 	$client->startup();
 }
 
