@@ -10,12 +10,12 @@
 		</td>
 	
 		<td align="right" class="even">
-			[% IF descend %]<nobr><a href="status_header.html?p0=playlist&p1=loadalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr> [% END %]
+			[% IF descend %]<nobr><a href="status_header.html?command=playlist&sub=loadtracks[% attributes | html %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr> [% END %]
 			[% IF not descend %]<nobr><a href="status_header.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]"></a></nobr> [% END %]
 		</td>
 	
 		<td  align="right" class="even">
-			[% IF descend %]<nobr><a href="status_header.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr> [% END %]	
+			[% IF descend %]<nobr><a href="status_header.html?command=playlist&sub=addtracks[% attributes | html %]&player=[% player | uri %]" target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr> [% END %]	
 			[% IF not descend %]<nobr><a href="status_header.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr> [% END %]
 		</td>
 	</table></td></tr>

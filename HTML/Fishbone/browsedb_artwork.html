@@ -1,0 +1,26 @@
+<div align="left" style="float:left; width:[% size + 15 %]px;margin:0px">
+<table cellpadding="5" cellspacing="0" border="0" align="left">
+<tr>
+	<td>
+		[% IF coverthumb %]<table border="0" cellspacing="0" cellpadding="0"><tr><td width="[% size %]"><a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]" target="browser"><center><img src="/music/[% thumbartpath | uri %]/thumb.jpg" border="0" height="[% size %]" width="[% size %]" alt="[% item | html %][% IF year %] ([% year %])[% END %]" title="[% item | html %][% IF year %] ([% year %])[% END %]"></a></td></table>[% END %]
+		[% IF not coverthumb %]<table border="0" cellspacing="0" cellpadding="0" height="[% size %]"><tr><td width="[% size %]"><a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]" target="browser"><center>[% item | html %][% IF year %] ([% year %])[% END %]</center></a></td><td><a href=""><img src="html/images/spacer.gif" border="0" height="[% size %]" width="0" alt="[% item | html %][% IF year %] ([% year %])[% END %]"></a></td></table>[% END %]
+	</td>
+</tr>
+<tr>
+	<td><center>
+		<table cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			<td width="11" align="center"><nobr><a href="status_header.html?p0=playlist&sub=loadtracks[% attributes %]&player=[% player | uri %]" target="status"><img src="html/queue.gif" border=0 align="center" width="6" height="9" alt='Queue' title='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]';return true"></a></nobr></td>
+			<td width="3" align="center">&nbsp;</td>
+			<td width="11" align="center"><nobr><a href="status_header.html?command=playlist&sub=loadtracks[% attributes %]&player=[% player | uri %]" target="status"><img src="html/play.this.gif" border=0 align="center" width="5" height="9" alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a></nobr></td>
+			<td width="3" align="center">&nbsp;</td>
+			<td width="11" align="center"><nobr><a href="status_header.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="status"><img src="html/add.gif" border=0 align="center" width="8" height="8" alt='Add' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a></nobr></td>
+			<td width="3" align="center">&nbsp;</td>
+			<td width="11" align="center"><nobr><a href="status_header.html?p0=playlist&p1=deletealbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="status"><img src="html/subtract.gif" border=0 align="center" width="8" height="8" alt='Delete' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a></nobr></td>
+			<td width="3" align="center">&nbsp;</td>
+			</tr>
+		</table></center>
+	</td>
+</tr>
+</table>
+</div>
