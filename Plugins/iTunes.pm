@@ -953,8 +953,15 @@ sub setupCategory {
 				}
 		}
 	);
+
 	return (\%setupCategory);
-};
+}
+
+sub strings {
+	return '';
+}
+
 1;
+
 __END__
 
