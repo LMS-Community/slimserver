@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.56 2004/05/05 01:37:26 dean Exp $
+# $Id: Prefs.pm,v 1.57 2004/05/05 01:50:46 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -129,6 +129,7 @@ my %DEFAULT = (
 	,'MoodLogicplaylistprefix'	=> 'MoodLogic: '
  	,'MoodLogicplaylistsuffix'	=> ''
  	,'itunesscaninterval'	=> 60
+ 	,'itunes_library_autolocate' => 1
  	,'ignoredisableditunestracks' => 0
  	,'instantMixMax'		=> 12
  	,'varietyCombo'			=> 50
@@ -165,6 +166,8 @@ my %DEFAULT = (
 	,'remotestreamtimeout'	=> 5 # seconds to try to connect for a remote stream
 	,"CLIENTPREFS" => {
 			'autobrightness'		=> 1
+			,'alarmvolume'			=> 50
+			,'alarm'				=> 0
 			,'bass'					=> 50
 			,'digitalVolumeControl' => 1
 			,'disabledirsets'		=> []
