@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.49 2004/01/13 08:12:55 kdf Exp $
+# $Id: Info.pm,v 1.50 2004/01/13 18:05:53 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1164,8 +1164,8 @@ sub size {
 sub bitrate {
 	my $file = shift;
 	my $mode = (defined info($file,'VBR_SCALE')) ? 'VBR' : 'CBR';
-	if (info($file,'BITRATE') / 1000) {
-		return info($file,'BITRATE').Slim::Utils::Strings::string('KBPS').' '.$mode;
+	if (info($file,'BITRATE')) {
+		return (info($file,'BITRATE')/1000).Slim::Utils::Strings::string('KBPS').' '.$mode;
 	} else {
 		return;
 	}
@@ -1231,9 +1231,12 @@ sub coverArt {
 		}
 	}
 	elsif ( (($art eq 'cover') && $cover) || 
+
 		(($art eq 'thumb') && $thumb) ) {
 		$::d_info && Slim::Utils::Misc::msg("Reading $art from $file\n");
+
 		($body, $contenttype) = readCoverArt($file,$art);
+
 	}
 	return ($body, $contenttype);
 }
@@ -1456,13 +1459,19 @@ sub albums {
 
 # Return cached path for a given album name
 sub pathFromAlbum {
+
 	my $album = shift;
 	
+
 	my $index = $infoCacheItemsIndex{'ALBUM'};
+
 	foreach my $file (keys %infoCache) {
 		return $file if ((defined $infoCache{$file}[$index]) && ($infoCache{$file}[$index] eq $album));
+
 	}
+
 	return undef;
+
 }
 
 # return all songs for a given genre, artist, and album
