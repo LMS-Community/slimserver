@@ -21,7 +21,7 @@ use MIME::Base64;
 
 use Slim::Hardware::mas35x9;
 
-our @ISA = ("Slim::Player::Player");
+use base qw(Slim::Player::Player);
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -33,21 +33,7 @@ BEGIN {
 	}
 }
 
-sub new {
-	my (
-		$class,
-		$id,
-		$paddr,			# sockaddr_in
-		$revision,
-		$tcpsock,		# defined only for squeezebox
-	) = @_;
-	
-	my $client = Slim::Player::Player->new($id, $paddr, $revision);
-
-	bless $client, $class;
-
-	return $client;
-}
+# We inherit new() completely from our parent class.
 
 sub reconnect {
 	my $client = shift;
@@ -368,7 +354,6 @@ sub upgradeFirmware_SDK4 {
 	return undef; 
 }
 
-
 sub upgradeFirmware {
 	my $client = shift;
 
@@ -413,7 +398,7 @@ sub upgradeFirmware {
 sub formats {
 	my $client = shift;
 	
-	return ('aif','wav','mp3');
+	return qw(aif wav mp3);
 }
 
 sub vfd {
@@ -464,7 +449,7 @@ sub stream {
 		$::d_slimproto && msg("*************stream called: $command\n");
 		my $autostart;
 		
-		 # autostart off when pausing or stopping, otherwise 75%
+		# autostart off when pausing or stopping, otherwise 75%
 		if ($paused || $command =~ /^[pq]$/) {
 			$autostart = 0;
 		} else {
@@ -477,7 +462,8 @@ sub stream {
 		my $pcmendian;
 		my $pcmchannels;
 		
-		$format = 'mp3'	if (!$format); 
+		# default to mp3
+		$format ||= 'mp3';
 		
 		if ($format eq 'wav') {
 			$formatbyte = 'p';
@@ -498,6 +484,7 @@ sub stream {
 			$pcmendian = '?';
 			$pcmchannels = '?';
 		}
+
 		$::d_slimproto && msg("starting with decoder with options: format: $formatbyte samplesize: $pcmsamplesize samplerate: $pcmsamplerate endian: $pcmendian channels: $pcmchannels\n");
 		
 		my $frame = pack 'aaaaaaaCCCnnLnL', (
@@ -571,21 +558,23 @@ sub sendFrame {
 # This function generates random strings of a given length
 sub generate_random_string
 {
-		#the length of the random string to generate
-        my $length_of_randomstring=shift;
+	# the length of the random string to generate
+        my $length_of_randomstring = shift;
 
-        my @chars=('a'..'z','A'..'Z','0'..'9','_');
+        my @chars = ('a'..'z','A'..'Z','0'..'9','_');
         my $random_string;
-        foreach (1..$length_of_randomstring) 
-        {
+
+        foreach (1..$length_of_randomstring) {
                 #rand @chars will generate a random number between 0 and scalar @chars
-                $random_string.=$chars[rand @chars];
+                $random_string .= $chars[rand @chars];
         }
+
         return $random_string;
 }
 
 sub i2c {
 	my ($client, $data) = @_;
+
 	if ($client->opened()) {
 		$::d_i2c && msg("i2c: sending ".length($data)." bytes\n");
 		$client->sendFrame('i2cc', \$data);
@@ -604,6 +593,7 @@ sub pitch {
 	if (defined($newpitch)) {
 		$client->sendPitch($pitch, 1);
 	}
+
 	return $pitch;
 }
 
@@ -704,6 +694,7 @@ sub volume {
 sub bass {
 	my $client = shift;
 	my $newbass = shift;
+
 	my $bass = $client->SUPER::bass($newbass);
 	$client->i2c( Slim::Hardware::mas35x9::masWrite('BASS', Slim::Hardware::mas35x9::getToneCode($bass,'bass'))) if (defined($newbass));	
 
@@ -713,6 +704,7 @@ sub bass {
 sub treble {
 	my $client = shift;
 	my $newtreble = shift;
+
 	my $treble = $client->SUPER::treble($newtreble);
 	$client->i2c( Slim::Hardware::mas35x9::masWrite('TREBLE', Slim::Hardware::mas35x9::getToneCode($treble,'treble'))) if (defined($newtreble));	
 
