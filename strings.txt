@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.149 2004/11/27 15:36:19 dean Exp $
+# $Id: strings.txt,v 1.150 2004/12/06 07:36:08 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -48,6 +48,7 @@ BASE_SKIN
 DEFAULT_SKIN
 	DE	Standard
 	EN	Default
+	ES	Por defecto
 
 DEFAULT_MAP
 	DE	Standard
@@ -243,10 +244,12 @@ ONLY_ONE
 SCREENSAVERS
 	DE	Bildschirmschoner
 	EN	Screensavers
+	ES	Salvapantallas
 	FR	Ecrans de veille
 
 RADIO
 	EN	Internet Radio
+	ES	Radio de Internet
 	FR	Radio Internet
 
 GAMES
@@ -387,6 +390,7 @@ PAUSED
 SLIMSERVER
 	DE	SlimServer
 	EN	SlimServer
+	ES	SlimServer
 	SE	SlimServer
 
 ABOUT
@@ -452,6 +456,7 @@ INSERT_TO_PLAYLIST
 	DE	Hinzufügen und als nächstes spielen:
 	DK	Tilføjer til afspilning næste gang:
 	EN	Adding to play next:
+	ES	Agregando como próxima canción:
 	FR	Ajoute après le morceau en cours :
 	NL	Toevoegen aan playlist:
 	NO	Legger til som neste:
@@ -627,12 +632,14 @@ POWERING_OFF
 POWER
 	DE	Power
 	EN	Power
+	ES	Encendido
 	SE	Strömförsörjning
 
 ALARM
 	DE	Wecker
 	DK	Alarm
 	EN	Alarm Clock
+	ES	Reloj de Alarma
 	FR	Réveil
 	NL	Wekker
 	NO	Alarm
@@ -643,6 +650,7 @@ ALARM_SET
 	DE	Stellen der Weckzeit
 	DK	Indstil alarmtid
 	EN	Set Alarm Time
+	ES	Establecer Hora de Alarma
 	FR	Heure de réveil
 	NL	Wektijd instellen
 	NO	Sett Alarm Tid
@@ -673,6 +681,7 @@ ALARM_SELECT_PLAYLIST
 	DE	Wählen Sie eine Playliste für den Wecker
 	DK	Vælg playliste for alarmen
 	EN	Select Playlist for Alarm
+	ES	Elegir Lista para Alarma
 	FR	Sélection de la liste de lecture pour le réveil
 	NL	Kies een playlist voor de wekker
 	NO	Velg Spilleliste for Alarm
@@ -683,6 +692,7 @@ ALARM_SET_VOLUME
 	DE	Stellen Sie die Lautstärke für den Wecker
 	DK	Indstil volume for alarmen
 	EN	Set Alarm Volume
+	ES	Establecer volumen de alarma
 	FR	Réglage du volume de réveil
 	NL	Kies het wekvolume
 	NO	Sett Alarm volum
@@ -693,6 +703,7 @@ ALARM_SET_VOLUME_SHORT
 	DE	Wecker Lautstärke
 	DK	Alarm vol:
 	EN	Alarm Vol
+	ES	Vol Alarma
 	FR	Volume réveil
 	NL	Wekvolume
 	NO	Alarm volum
@@ -703,6 +714,7 @@ ALARM_SET_ENTRY
 	DE	Stellen der Weckzeit
 	DK	Alarmtid
 	EN	Alarm Clock Set Time
+	ES	Establecer Hora de Alarma
 	FR	Heure de réveil
 	NL	Kies wektijd
 	NO	Sett Alarm tid
@@ -713,6 +725,7 @@ ALARM_TURNING_ON
 	DE	Einschalten des Weckers...
 	DK	Alarmen slås til...
 	EN	Turning alarm on...
+	ES	Encendiendo alarma...
 	FR	Activation du réveil...
 	NL	Wekker wordt geactiveerd...
 	NO	Slår på alarm...
@@ -723,6 +736,7 @@ ALARM_TURNING_OFF
 	DE	Ausschalten des Weckers...
 	DK	Alarmen slås fra...
 	EN	Turning alarm off...
+	ES	Apagando alarma...
 	FR	Désactivation du réveil...
 	NL	Wekker wordt uitgeschakeld...
 	NO	Slår av alarm...
@@ -742,12 +756,15 @@ ALARM_NOW_PLAYING
 SLIMP3
 	DE	SLIMP3
 	EN	SLIMP3
+	ES	SLIMP3
 
 SQUEEZEBOX
 	EN	Squeezebox
+	ES	Squeezebox
 
 SOFTSQUEEZE
 	EN	SoftSqueeze
+	ES	SoftSqueeze
 
 WELCOME_TO_SLIMP3
 	DE	Willkommen bei SLIMP3
@@ -862,6 +879,7 @@ NO_PLAYLIST_DIR
 NO_PLAYLIST_DIR_MORE
 	DE	Bitte Server Einstellungen überprüfen
 	EN	Visit Server Settings to fix this.
+	ES	Ver Configuración del Servidor para solucionar esto.
 	FR	Consultez "Réglages du serveur".
 	SE	Ändra serverinställningar för att korrigera detta
 
@@ -880,6 +898,7 @@ HOME
 STATUS
 	DE	Status
 	EN	Status
+	ES	Estado
 	FR	État
 
 SERVER
@@ -963,6 +982,7 @@ SETUP_GROUP_MENUITEMS
 	DE	Anpassung des Player-Hauptmenüs
 	DK	Tilpas hovedmenuen
 	EN	Home Menu Customization
+	ES	Personalización de Menú de Inicio
 	FR	Personnalisation du Menu principal
 	NL	Hoofdmenu aanpassen
 	NO	Tilpass hovedmenyen
@@ -983,6 +1003,7 @@ SETUP_GROUP_PLUGINITEMS_INTRO
 	DE	Plugins:
 	DK	Moduler:
 	EN	Plugins:
+	ES	Plugins:
 	FR	Modules d'extension :
 	NL	Plugins:
 	NO	Plugins:
@@ -993,6 +1014,7 @@ SETUP_GROUP_NONMENUITEMS_INTRO
 	DE	Inaktiver Menüeintrag:
 	DK	Inaktive menupunkter:
 	EN	Inactive menu items:
+	ES	Items inactivos
 	FR	Eléments de menu inactifs :
 	NL	Inactieve menu items:
 	NO	Inaktive meny elementer:
@@ -1002,6 +1024,7 @@ SETUP_GROUP_NONMENUITEMS_INTRO
 SETUP_GROUP_XPL
 	DE	xPL Einstellungen
 	EN	xPL Settings
+	ES	Configuración de xPL
 	FR	Paramètres xPL
 	NO	xPL-innstillinger
 	SE	xPL-inställningar
@@ -1009,6 +1032,7 @@ SETUP_GROUP_XPL
 SETUP_GROUP_XPL_DESC
 	DE	Diese Einstellungen steuern das Verhalten des xPL Protokolls
 	EN	These settings control the behavior of the xPL protocol
+	ES	Estos valores controlan el comportamiento del protocolo xPL
 	FR	Ces réglages permettent de paramétrer le protocole xPL.
 	NO	Dette er innstillinger for xPL-protokollen
 	SE	Detta är inställningar för xPL-protokollet
@@ -1016,11 +1040,13 @@ SETUP_GROUP_XPL_DESC
 SETUP_FONTLIST
 	DE	Schriftartenliste
 	EN	Font List
+	ES	Lista de Fuentes
 	FR	Liste des polices
 
 SETUP_ACTIVEFONT
 	DE	Schriftart
 	EN	Font
+	ES	Fuente
 	FR	Police
 
 SETUP_ACTIVEFONT_DESC
@@ -1053,6 +1079,7 @@ SETUP_DOUBLESIZE
 SETUP_DOUBLESIZE_DESC
 	DE	Schriftgrösse wählen
 	EN	Choose the size of text for player display
+	ES	Elegir el tamaño en el que se mostrará el texto
 
 SETUP_OFFDISPLAYSIZE
 	DE	Textgrösse im Standby Modus
@@ -1108,6 +1135,7 @@ SETUP_GROUP_ALARM
 	DE	Wecker
 	DK	Alarm
 	EN	Alarm Clock
+	ES	Reloj de Alarma
 	FR	Réveil
 	NL	Wekker
 	NO	Alarm
@@ -1145,6 +1173,7 @@ SETUP_GROUP_PLUGINS
 	DE	Plugins
 	DK	Moduler
 	EN	Plugins
+	ES	Plugins
 	FR	Modules d'extension
 	NL	Plugins
 	NO	Plugins
@@ -1182,6 +1211,7 @@ SETUP_PLUGINS-ONTHEFLY_1
 SETUP_GROUP_FORMATS
 	DE	Dateikonvertierungseinstellungen
 	EN	File Format Conversion Setup
+	ES	Configuración de Conversión de Formatos de Archivo
 	FR	Conversion des types de fichier
 	NO	Innstillinger for konvertering mellom filformater
 	SE	Inställningar för konvertering mellan filformat
@@ -1197,6 +1227,7 @@ SETUP_FORMATSLIST_CHANGE
 	DE	Einstellungen wurden gespeichert.
 	DK	Indstillingen blev ændret.
 	EN	Setting was changed.
+	ES	La configuración ha sido cambiada.
 	FR	Le réglage a été modifié.
 	NL	Instelling is aangepast.
 	NO	Innstillingen er endret.
@@ -1212,6 +1243,7 @@ SETUP_FORMATSLIST_MISSING_BINARY
 SETUP_FORMATSLIST
 	DE	Dateikonvertierung
 	EN	File Format Conversions
+	ES	Conversiones de Formato de Archivo
 	FR	Conversion types de fichier
 	NO	Filformat, konverteringer
 	SE	Filformat, konverteringar
@@ -1219,6 +1251,7 @@ SETUP_FORMATSLIST
 FILE_FORMAT
 	DE	Dateiformat
 	EN	File Format
+	ES	Formato de Archivo
 	FR	Type fichier
 	NO	Filformat
 	SE	Filformat
@@ -1247,6 +1280,7 @@ PLAYER_ID
 COMMAND
 	DE	Befehl
 	EN	Command
+	ES	Comando
 	FR	Commande
 	NO	Kommando
 	SE	Kommando
@@ -1254,6 +1288,7 @@ COMMAND
 DECODER
 	DE	Decoder
 	EN	Decoder
+	ES	Decodificador
 	FR	Décodeur
 	SE	Avkodare
 
@@ -1378,6 +1413,7 @@ SETUP_AUTOBRIGHTNESS_CHOOSE
 	DE	Automatische Anzeigehelligkeit:
 	DK	Automatisk lysstyrkeindstilling:
 	EN	Automatic Display Brightness:
+	ES	Luminosidad Automática de Pantalla:
 	FR	Réglage automatique de la luminosité de l'affichage :
 	NL	Automatische helderheidsregeling van het scherm:
 	NO	Vis lysstyrke automatisk:
@@ -1388,6 +1424,7 @@ SETUP_AUTOBRIGHTNESS_OFF
 	DE	Helligkeit manuell anpassen
 	DK	Indstil lysstyrke manuelt
 	EN	Adjust Brightness Manually
+	ES	Ajustar Luminosidad en Forma Manual
 	FR	Régler la luminosité manuellement
 	NL	Manuele Helderheidsregeling
 	NO	Juster lysstyrke manuelt
@@ -1398,6 +1435,7 @@ SETUP_AUTOBRIGHTNESS_ON
 	DE	Helligkeit automatisch anpassen
 	DK	Indstil lysstyrke automatisk
 	EN	Adjust Brightness Automatically
+	ES	Ajustar Luminosidad en Forma Automática
 	FR	Régler la luminosité automatiquement
 	NL	Automatische Helderheidsregeling
 	NO	Juster lysstyrke automatisk
@@ -1408,6 +1446,7 @@ SETUP_ALARM
 	DE	Wecker
 	DK	Alarm
 	EN	Alarm
+	ES	Alarma
 	FR	Réveil
 	NL	Wekker
 	NO	Alarm
@@ -1418,6 +1457,7 @@ SETUP_ALARMVOLUME
 	DE	Lautstärke für den Wecker einstellen (0-100)
 	DK	Indstil volume for alarmen (0-100)
 	EN	Set Alarm Volume (0-100)
+	ES	Establecer Volumen de Alarma (0-100)
 	FR	Réglage du volume de réveil (0-100)
 	NL	Kies het wekvolume (0-100)
 	NO	Sett Alarm volum (0-100)
@@ -1527,6 +1567,7 @@ SETUP_SYNCVOLUME
 	DE	Lautstärke synchronisieren
 	DK	Synkroniser lydstyrke
 	EN	Synchronize Volume
+	ES	Sincronizar Volumen
 	FR	Synchroniser le volume
 	NO	Synkroniser volum
 	PT	Sincronizar o volume
@@ -1572,6 +1613,7 @@ SETUP_SYNCPOWER_DESC
 SETUP_DIGITALVOLUMECONTROL_ON
 	DE	Lautstärkekontrolle der digitalen Ausgabe
 	EN	Volume controls adjust digital outputs
+	ES	Los controles de volumen ajustan las salidas digitales
 	FR	Niveau sortie numérique contrôlé par boutons de volume
 	NO	Volumkontrollen påvirker digital utgangen
 	SE	Volymkontrollen påverkar den digitala utsignalen
@@ -1618,6 +1660,7 @@ SETUP_MP3BITRATE_DESC
 CONVERTED_TO
 	DE	Konvertiert nach
 	EN	Converted to
+	ES	Convertido a 
 	FR	Converti en
 	SE	Konverterad till
 
@@ -1630,20 +1673,24 @@ SETUP_LAME_NOT_FOUND
 SETUP_LAME_FOUND
 	DE	LAME scheint korrekt auf ihrem System installiert zu sein.
 	EN	The LAME encoder appears to be installed correctly on your system.
+	ES	El codificador LAME parece estar instalado correctamente en el sistema.
 	FR	LAME semble être installé correctement sur votre système.
 	SE	LAME verkar vara korrekt installerad i ditt system.
 
 LAME0
 	DE	Höchste Qualität, sehr langsam
 	EN	Highest Quality, very slow
+	ES	Mejor calidad posible, muy lento
 
 LAME9
 	DE	Geringe Qualität, aber schnell
 	EN	Poor Quality, but fast
+	ES	Baja calidad, pero rápido
 
 SETUP_LAMEQUALITY
 	DE	LAME Qualitätsstufe
 	EN	LAME Quality Level
+	ES	Nivel de Calidad de LAME
 
 SETUP_LAMEQUALITY_DESC
 	DE	Der LAME MP3 Kodierer kann verwendet werden, um Musik für das Streaming in MP3 umzuwandeln. Definieren Sie LAMEs Ausgabequalität mit einem Wert von 0 bis 9. 9 ist der Standardwert, welcher eine sehr gute Wiedergabe bei hohen Bitraten gewährleistet, den Prozessor aber am wenigsten belastet. 0 ist die höchste Qualität, kann aber ihren Rechner ausbremsen. Es ist möglich, dass ein Rechner, auf welchem die SlimServer Software läuft, nicht genügend rechenstark ist, um höhere Qualitätseinstellungen zu verarbeiten.
@@ -1735,6 +1782,7 @@ SETUP_MUSICMAGICPLAYLISTFORMAT_DESC
 SETUP_MOODLOGICPLAYLISTPREFIX_CHOOSE
 	DE	Prefix:
 	EN	Prefix:
+	ES	Prefijo:
 	FR	Préfixe :
 	NO	Prefic:
 	SE	Prefix:
@@ -1742,6 +1790,7 @@ SETUP_MOODLOGICPLAYLISTPREFIX_CHOOSE
 SETUP_MOODLOGICPLAYLISTSUFFIX_CHOOSE
 	DE	Suffix:
 	EN	Suffix:
+	ES	Sufijo:
 	FR	Suffixe :
 	NO	Suffix:
 	SE	Suffix:
@@ -1749,6 +1798,7 @@ SETUP_MOODLOGICPLAYLISTSUFFIX_CHOOSE
 SETUP_ITUNESPLAYLISTPREFIX_CHOOSE
 	DE	Prefix:
 	EN	Prefix:
+	ES	Prefijo:
 	FR	Préfixe :
 	NO	Prefix:
 	SE	Prefix:
@@ -1756,6 +1806,7 @@ SETUP_ITUNESPLAYLISTPREFIX_CHOOSE
 SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE
 	DE	Suffix:
 	EN	Suffix:
+	ES	Sufijo:
 	FR	Suffixe :
 	NO	Suffix:
 	SE	Suffix:
@@ -1787,6 +1838,7 @@ SETUP_ITUNESPLAYLISTSUFFIX
 SETUP_SHOWYEAR
 	DE	Jahr für Alben anzeigen
 	EN	Show Year with Albums
+	ES	Mostrar Año con Albums
 	FR	Affichage de l'année avec l'album
 
 SETUP_SHOWYEAR_DESC
@@ -1842,6 +1894,7 @@ SETUP_IRSETLIST_CHANGE
 	DE	Einstellungen für %s wurden gespeichert.
 	DK	Indstillingen for %s blev ændret.
 	EN	Setting for %s was changed.
+	ES	El valor de %s ha sido cambiado.
 	FR	Le réglage pour %s a été modifié.
 	NL	Instelling voor %s is aangepast.
 	NO	Innstillingen for %s er endret.
@@ -1852,6 +1905,7 @@ SETUP_PLUGINLIST_OK
 	DE	Plugins:
 	DK	Moduler:
 	EN	Plugins:
+	ES	Plugins:
 	FR	Modules d'extension :
 	NL	Plugins:
 	NO	Plugins:
@@ -1918,6 +1972,7 @@ SETUP_LANGUAGE_OK
 SETUP_AUDIODIR
 	DE	Musikverzeichnis
 	EN	Music Folder
+	ES	Carpeta de Música
 	FR	Dossier de musique
 	SE	Musikmapp
 
@@ -1955,6 +2010,7 @@ SETUP_PLAYLISTDIR
 SETUP_ARTFOLDER
 	DE	Ordner für Plattencover
 	EN	Artwork Folder
+	ES	Carpeta de Arte de Tapa
 	FR	Dossier des pochettes
 	NO	Folder for platecover
 	SE	Grafikmapp
@@ -1969,6 +2025,7 @@ SETUP_ARTFOLDER_DESC
 SETUP_BAD_FILE
 	DE	Ups! "%s" scheint keine korrekte Datei zu sein. Bitte versuchen Sie es erneut.
 	EN	Oops - "%s" doesn't seem to be a valid file. Try again.
+	ES	Upsss - "%s" no parece ser un tipo de archivo válido. Intente de nuevo.
 	FR	"%s" ne semble pas être un fichier valide. Ré-essayez.
 	SE	Oops - "%s" verkar inte vara en giltig fil. Försök igen.
 
@@ -2060,6 +2117,7 @@ SETUP_RESCAN_DESC
 SETUP_WIPECACHE
 	DE	Cache initialisieren
 	EN	Wipe Cache
+	ES	Limpiar Cache
 	FR	Ré-initialiser le cache
 	NO	Tøm cache-minnet
 	SE	Töm cache-minnet
@@ -2067,6 +2125,7 @@ SETUP_WIPECACHE
 SETUP_WIPECACHE_BUTTON
 	DE	Cache initialisieren
 	EN	Wipe Cache
+	ES	Limpiar Cache
 	FR	Ré-initialiser
 	NO	Tøm cache-minnet
 	SE	Töm cache-minnet
@@ -2116,6 +2175,7 @@ USE_ITUNES
 DONT_USE_ITUNES
 	DE	iTunes nicht verwenden
 	EN	Do Not Use iTunes
+	ES	No Utilizar iTunes
 	FR	Ne pas utiliser iTunes
 	SE	Använd inte iTunes
 
@@ -2243,6 +2303,7 @@ SETUP_MENUITEM
 	DE	Menüauswahl
 	DK	Menupunkt
 	EN	Menu item
+	ES	Item de menu
 	FR	Elément de menu
 	NL	Menu item
 	NO	Meny valg
@@ -2416,6 +2477,7 @@ SETUP_ITUNES_LIBRARY_XML_PATH_DESC
 SETUP_ITUNES_LIBRARY_MUSIC_PATH
 	DE	iTunes Musik Ordner
 	EN	iTunes Music Folder
+	ES	Carpeta de Música de iTunes
 	FR	Dossier musique iTunes
 	SE	iTunes musikbibliotek
 
@@ -2429,6 +2491,7 @@ SETUP_COVERART
 	DE	Plattencover
 	DK	Cover-billeder
 	EN	Artwork
+	ES	Arte de tapa
 	FR	Pochettes
 	NL	Hoesjes
 	NO	Platecover
@@ -2530,6 +2593,7 @@ SETUP_INCLUDENOART_DESC
 SETUP_IGNOREMP3TAGS
 	DE	MP3 Tags ignorieren
 	EN	Ignore MP3 Tags
+	ES	Ignorar Tags MP3
 	FR	Ignorer les repères MP3
 	NO	Ignorer MP3 tagger
 	SE	Ignorera MP3-taggar
@@ -2543,6 +2607,7 @@ SETUP_IGNOREMP3TAGS_DESC
 SETUP_READMP3TAGS
 	DE	MP3 Tags einlesen
 	EN	Read MP3 Tags
+	ES	Leer Tags MP3
 	FR	Lire les repères MP3
 	NO	Les MP3 tagger
 	SE	Läs MP3-taggar
@@ -2805,6 +2870,7 @@ SETUP_SAVEHISTORY
 	DE	Speichern des Verlaufs
 	DK	Gem historik
 	EN	Save History
+	ES	Guardar Historia
 	FR	Historique
 	NL	Geschiedenis Opslaan
 	NO	Lagre historikk
@@ -2836,6 +2902,7 @@ SETUP_SAVEHISTORY_0
 	DE	Kein Speichern des Verlaufs
 	DK	Gem ikke historik
 	EN	Don't save history
+	ES	No guardar historia
 	FR	Ne pas conserver l'historique
 	NL	Geschiedenis niet opslaan
 	NO	Ikke lagre historikk
@@ -2846,6 +2913,7 @@ SETUP_CHECKVERSION
 	DE	Software Aktualisierungen
 	DK	Softwareopdateringer
 	EN	Software Updates
+	ES	Actualizaciones de Software
 	FR	Mise à jour du logiciel
 	NO	Software oppdateringer
 	PT	Actualizações
@@ -2864,6 +2932,7 @@ SETUP_CHECKVERSION_1
 	DE	Automatisch nach aktueller Software suchen
 	DK	Check automatisk for softwareopdateringer
 	EN	Automatically Check For Software Updates
+	ES	Buscar Actualizaciones de Software en forma Automática
 	FR	Vérifier automatiquement
 	NO	Automatisk sjekk for software oppdateringer
 	PT	Verificar Versões Novas
@@ -2873,6 +2942,7 @@ SETUP_CHECKVERSION_0
 	DE	Nicht automatisch nach aktueller Software suchen
 	DK	Check ikke automatisk for softwareopdateringer
 	EN	Don't Check For Software Updates
+	ES	No Buscar Actualizaciones de Software
 	FR	Ne pas vérifier
 	NO	Ikke sjekk for software oppdateringer
 	PT	Não Verificar
@@ -3061,6 +3131,7 @@ SETUP_ARTISTINALBUMSEARCH_1
 	DE	Verwendung des Namen bei der Album-Suche
 	DK	Inkluder kunstnernavn i album-søgninger
 	EN	Include artist name in album searches
+	ES	Incluir nombre de artista en las búsquedas por disco
 	FR	Inclure le nom d'artiste
 	NL	Naam van de artiest gebruiken
 	NO	Inkluder artistnavn i album søk
@@ -3071,6 +3142,7 @@ SETUP_ARTISTINALBUMSEARCH_0
 	DE	Keine Verwendung des Namen bei der Album-Suche
 	DK	Inkluder ikke kunstnernavn i albumsøgninger
 	EN	Don't include artist name in album searches
+	ES	No incluir nombre de artista en búsqueda por disco
 	FR	Ne pas inclure le nom d'artiste
 	NL	Naam van de artiest niet gebruiken
 	NO	Ikke inkluder artistnavn i album søk
@@ -3093,6 +3165,7 @@ SETUP_COMPOSERINARTISTS
 	DE	Komponist, Gruppe und Orchester in Interpreten
 	DK	Komponist, band og orkester som kunstner
 	EN	Composer, Band and Orchestra in Artists
+	ES	Compositor, Banda y Orquesta en Artistas
 	FR	Compositeur, Groupe et Orchestre
 	NO	Komponist, band og orkester i Artister
 	PT	Compositor, Banda e Orquestra em Artistas
@@ -3102,6 +3175,7 @@ SETUP_COMPOSERINARTISTS_1
 	DE	Komponist, Gruppe und Orchester in Interpreten einschliessen
 	DK	Vis komponist, band og orkester som kunstner
 	EN	Include composer, band and orchestra in artists
+	ES	Incluir compositor, banda y orquesta en artistas
 	FR	Inclure les compositeurs, groupes et orchestres dans les artistes
 	NO	Inkluder komponist, band og orkester i artister
 	PT	Incluir compositor, banda e orquestra nos artistas
@@ -3111,6 +3185,7 @@ SETUP_COMPOSERINARTISTS_0
 	DE	Komponist, Gruppe und Orchester nicht in Interpreten einschliessen
 	DK	Vis ikke komponist, band og orkester som kunstner
 	EN	Don't include composer, band and orchestra in artists
+	ES	No incluir compositor, banda y orquesta en artistas
 	FR	Ne pas inclure compositeurs, groupes et orchestres dans les artistes
 	NO	Ikke inkluder komponist, band og orkerster i artister
 	PT	Não incluir compositor, banda e orquestra nos artistas
@@ -3149,6 +3224,7 @@ SETUP_PERSISTPLAYLISTS_1
 	DE	Playliste beibehalten
 	DK	Bevar sidste playliste
 	EN	Remember playlist
+	ES	Recordar lista
 	FR	Conserver la liste de lecture
 	NL	Playlist bijhouden
 	NO	Husk spillelister
@@ -3159,6 +3235,7 @@ SETUP_PERSISTPLAYLISTS_0
 	DE	Playliste nicht beibehalten
 	DK	Bevar ikke sidste playliste
 	EN	Do not remember playlist
+	ES	No recordar lista
 	FR	Ne pas conserver la liste de lecture
 	NL	Playlist niet bijhouden
 	NO	Ikke husk spillelister
@@ -3189,6 +3266,7 @@ SETUP_RESHUFFLEONREPEAT_0
 	DE	Die gleiche Reihenfolge beibehalten
 	DK	Bevar playlistens rækkefølge
 	EN	Leave in same order
+	ES	Conservar el mismo orden
 	FR	Conserver le même ordre
 	NL	Bewaar de volgorde
 	NO	Behold spillelistens rekkefølge
@@ -3209,6 +3287,7 @@ SETUP_PLAYTRACKALBUM
 	DE	Abspielen weiterer Titel des Albums
 	DK	Afspil andre sange i album
 	EN	Play other songs in album
+	ES	Tocar otras canciones del disco
 	FR	Jouer les autres morceaux de l'album
 	NL	Speel de andere liedjes van het album
 	NO	Spill andre låter i albumet
@@ -3219,6 +3298,7 @@ SETUP_PLAYTRACKALBUM_1
 	DE	Auch andere Titel aus dem Album oder dem Verzeichnis spielen
 	DK	Afspil andre sange i album eller mappe
 	EN	Play other songs in album or directory
+	ES	Tocar otras canciones en disco o directorio
 	FR	Jouer les autres morceaux de l'album ou du dossier
 	NL	Speel de andere liedjes uit het album of uit de folder
 	NO	Spill andre låter i album eller folder
@@ -3229,6 +3309,7 @@ SETUP_PLAYTRACKALBUM_0
 	DE	Nur den ausgewählten Titel spielen
 	DK	Afspil kun den valgte sang
 	EN	Play only selected song
+	ES	Tocar solo la canción elegida
 	FR	Jouer seulement les morceaux choisis
 	NL	Speel enkel het geselecteerde liedje
 	NO	Spill bare valgte sang
@@ -3249,6 +3330,7 @@ SETUP_IGNOREDARTICLES
 	DE	Artikel, die nicht bei der Sortierung berücksichtigt werden sollen
 	DK	Artikler der skal ignoreres ved sortering af kunstnernavne
 	EN	Articles to ignore when sorting artist names
+	ES	Artículos a ignorar cuando se ordenan nombres de artistas
 	FR	Articles à ignorer lors du tri des noms d'artiste
 	NL	Voorzetsels die moeten worden genegeerd bij het sorteren op artiest
 	NO	Artikler som skal ignoreres ved sortering av artistnavn
@@ -3283,6 +3365,7 @@ SETUP_FILESORT
 	DE	Sortieren nach Dateinamen
 	DK	Sorter efter filnavn
 	EN	Sort By File Name
+	ES	Ordenar por Nombre de Archivo
 	FR	Trier par nom de fichier
 	NL	Sorteer op Bestandsnaam
 	NO	Sorter etter filnavn
@@ -3303,6 +3386,7 @@ SORTID3
 	DE	Sortieren nach den ID3-Tags
 	DK	Sorter efter sangtitelinformation
 	EN	Sort by song information
+	ES	Ordenar por información de canción
 	FR	Trier à partir des repères ID3
 	NL	Sorteer op ID3 informatie
 	NO	Sorter etter ID3-informasjon
@@ -3313,6 +3397,7 @@ SORTBYFILENAME
 	DE	Sortieren nach dem Dateinamen
 	DK	Sorter efter filnavn
 	EN	Sort by file name
+	ES	Ordenar por nombre de archivo
 	FR	Trier par nom de fichier
 	NL	Sorteer op bestandsnaam
 	NO	Sorter etter filnavn
@@ -3393,6 +3478,7 @@ SETUP_ANIMATIONLEVEL_DESC
 SETUP_LOOKFORARTWORK
 	DE	Plattencovers nachschlagen
 	EN	Look For Artwork
+	ES	Buscar Arte de Tapa
 	FR	Répertorier les pochettes
 	NO	Søk etter Album-omslag
 	SE	Sök efter Album-omslag
@@ -3407,6 +3493,7 @@ SETUP_LOOKFORARTWORK_DESC
 SETUP_NO_ARTWORK
 	DE	Plattencovers ignorieren
 	EN	Do not Look For Artwork
+	ES	No buscar Arte de Tapa
 	FR	Ne pas répertorier les pochettes
 	NO	Ikke søk etter albumgrafikk
 	SE	Sök inte efter album-omslag
@@ -3617,6 +3704,7 @@ SETUP_UDPCHUNKSIZE
 	DE	Maximale UDP-Datengröße
 	DK	Maksimum UDP-datastørrelse
 	EN	Maximum UDP Data Size
+	ES	Tamaño Máximo de Datos UDP
 	FR	Taille maximum des paquets UDP
 	NL	Maximale UDP Data Grootte
 	NO	Maksimum UDP data størrelse
@@ -3669,6 +3757,7 @@ SETUP_SHOWBUFFERFULLNESS_CHOOSE
 SETUP_XPLSUPPORT
 	DE	xPL Support
 	EN	xPL support
+	ES	soporte xPL
 	FR	Support du xPL
 	NO	xPL støtte
 	SE	xPL-stöd
@@ -3676,6 +3765,7 @@ SETUP_XPLSUPPORT
 SETUP_XPLSUPPORT_CHOOSE
 	DE	xPL Support:
 	EN	xPL support:
+	ES	soporte xPL:
 	FR	Support du xPL :
 	NO	xPL støtte:
 	SE	xPL-stöd:
@@ -3697,6 +3787,7 @@ SETUP_XPLINTERVAL_CHOOSE
 SETUP_XPLIR
 	DE	Infrarot Verarbeitung
 	EN	Infra-red Processing
+	ES	Procesando Infra-rojo
 	FR	Traitement infrarouge
 	NO	Infrarød håndtering
 	SE	Infraröd, hantering
@@ -3704,6 +3795,7 @@ SETUP_XPLIR
 SETUP_XPLIR_CHOOSE
 	DE	Infrarot Verarbeitung:
 	EN	Infra-red Processing:
+	ES	Procesamiento Infra-rojo
 	FR	Traitement infrarouge :
 	NO	Infrarød håndtering:
 	SE	Infraröd, hantering:
@@ -3711,6 +3803,7 @@ SETUP_XPLIR_CHOOSE
 SETUP_XPLIR_NONE
 	DE	Keine
 	EN	None
+	ES	Ninguno
 	FR	Aucun
 	NO	Ingen
 	SE	Ingen
@@ -3718,6 +3811,7 @@ SETUP_XPLIR_NONE
 SETUP_XPLIR_BUTTONS
 	DE	Tasten
 	EN	Buttons
+	ES	Botones
 	FR	Touches
 	NO	Knapper
 	SE	Knappar
@@ -3732,6 +3826,7 @@ SETUP_XPLIR_RAW
 SETUP_XPLIR_BOTH
 	DE	Beide
 	EN	Both
+	ES	Ambos
 	FR	Les deux
 	NO	Begge
 	SE	Båda
@@ -3751,6 +3846,7 @@ SETUP_IPFILTER_HEAD
 	DE	Blockieren eingehender Verbindungen
 	DK	Blokér indgående forbindelser
 	EN	Block Incoming Connections
+	ES	Bloquear conexiones entrantes
 	FR	Bloquer les connexions entrantes
 	NL	Blokkeer Binnenkomende Verbindingen
 	NO	Blokker inngående forbindelser
@@ -3771,6 +3867,7 @@ SETUP_IPFILTER
 	DE	Blockieren
 	DK	Blokér
 	EN	Block
+	ES	Bloquear
 	FR	Bloquer
 	NL	Blokkeren
 	NO	Blokkere
@@ -3781,6 +3878,7 @@ SETUP_NO_IPFILTER
 	DE	Nicht Blockieren
 	DK	Blokér ikke
 	EN	Do not block
+	ES	No bloquear
 	FR	Ne pas bloquer
 	NL	Niet blokkeren
 	NO	Ikke blokkér
@@ -3791,6 +3889,7 @@ SETUP_FILTERRULE_HEAD
 	DE	Erlaubte IP-Adressen
 	DK	Tilladte IP-adresser
 	EN	Allowed IP Addresses
+	ES	Direcciones IP permitidas
 	FR	Adresses IP autorisées
 	NL	Geldige IP adressen
 	NO	Tillatte IP-adresser
@@ -3801,6 +3900,7 @@ SETUP_FILTERHOSTS
 	DE	Blockieren eingehender Verbindungen
 	DK	Blokér indgående forbindelser
 	EN	Block incoming connections
+	ES	Bloquear conexiones entrantes
 	FR	Bloquer les connexions entrantes
 	NL	Blokkeer binnenkomende verbindingen
 	NO	Blokker inngående forbindelser
@@ -3811,6 +3911,7 @@ SETUP_ALLOWEDHOSTS
 	DE	IP-Adressen, denen eingehende Verbindungen erlaubt sind
 	DK	Tilladte IP-adresser ved indgående forbindelser
 	EN	IP addresses allowed to make incoming connections
+	ES	Direcciones IP habilitadas a realizar conexiones entrantes
 	FR	Adresses IP autorisées pour les connexions entrantes
 	NL	IP adressen die een verbinding mogen maken
 	NO	Tillatte IP-adresser ved inngående forbindelser
@@ -3903,6 +4004,7 @@ SETUP_NO_AUTHORIZE
 	DE	Kein Passwortschutz
 	DK	Beskyt ikke med kodeord
 	EN	No password protection
+	ES	Sin protección de contraseña
 	FR	Pas de mot de passe
 	NL	Niet paswoordbeveiligd
 	NO	Ikke beskytt med passord
@@ -3913,6 +4015,7 @@ SETUP_AUTHORIZE
 	DE	Passwortschutz
 	DK	Beskyt med kodeord
 	EN	Password protection
+	ES	Protección de Contraseña
 	FR	Mot de passe
 	NL	Paswoordbeveiligd
 	NO	Passordbeskyttet
@@ -3932,6 +4035,7 @@ SETUP_USERNAME
 	DE	Benutzername
 	DK	Brugernavn
 	EN	Username
+	ES	Nombre de usuario
 	FR	Nom d'utilisateur
 	NL	Gebruikersnaam
 	NO	Brukernavn
@@ -3942,6 +4046,7 @@ SETUP_PASSWORD
 	DE	Passwort
 	DK	Kodeord
 	EN	Password
+	ES	Contraseña
 	FR	Mot de passe
 	NL	Wachtwoord
 	NO	Passord
@@ -3952,6 +4057,7 @@ SETUP_DONT_CACHE
 	DE	Nicht Zwischenspeichern
 	DK	Cache ikke
 	EN	Don't Cache
+	ES	No usar Cache
 	FR	Ne pas utiliser de cache
 	NL	Geen Cache
 	NO	Ikke cache
@@ -3962,6 +4068,7 @@ SETUP_CACHE
 	DE	Zwischenspeichern
 	DK	Cache
 	EN	Cache
+	ES	Cache
 	FR	Utiliser un cache
 	NL	Cache
 	NO	Cache
@@ -3972,6 +4079,7 @@ SETUP_NO_ANIMATIONS
 	DE	Keine Animationen
 	DK	Ingen animationer
 	EN	No animations
+	ES	Sin animación
 	FR	Pas d'animation
 	NL	Geen animaties
 	NO	Ingen animasjon
@@ -3982,6 +4090,7 @@ SETUP_BRIEF_MESSAGES
 	DE	Nur kurze Meldungen
 	DK	Kun korte beskeder
 	EN	Brief messages only
+	ES	Sólo mensajes cortos
 	FR	Messages brefs seulement
 	NL	Alleen korte boodschappen
 	NO	Kun korte beskjeder
@@ -4002,6 +4111,7 @@ SETUP_FULL_ANIMATION
 	DE	Volle Animation
 	DK	Fuld animation
 	EN	Full animation
+	ES	Animación Completa
 	FR	Toutes les animations
 	NL	Alle animaties
 	NO	Alle animasjoner
@@ -4218,6 +4328,7 @@ FFWD
 	DE	Vorwärtsspulen
 	DK	Spol frem
 	EN	Fast Forward
+	ES	Avance rápido
 	FR	Avance rapide
 	NL	Vooruitspoelen
 	NO	Spol forover
@@ -4228,6 +4339,7 @@ REW
 	DE	Zurückspulen
 	DK	Spol tilbage
 	EN	Rewind
+	ES	Rebobinar
 	FR	Retour rapide
 	NL	Terugspoelen
 	NO	Spol bakover
@@ -4262,6 +4374,7 @@ REMOVE_THIS_SONG_FROM_PLAYLIST
 	DE	Titel aus der Playlist entfernen
 	DK	Fjern denne sang fra playlisten
 	EN	Remove this song from playlist
+	ES	Remover esta canción de la lista
 	FR	Supprimer ce morceau de la liste de lecture
 	NO	Ta bort denne sanger fra spillelisten
 	PT	Remover esta Música da Playlist
@@ -4430,6 +4543,7 @@ MOVEUP
 	DE	Eins rauf
 	DK	Flyt op
 	EN	Move Up
+	ES	Subir
 	FR	Haut
 	NL	Naar Boven
 	NO	Flytt opp
@@ -4440,6 +4554,7 @@ MOVEDOWN
 	DE	Eins runter
 	DK	Flyt ned
 	EN	Move Down
+	ES	Bajar
 	FR	Bas
 	NL	Naar Beneden
 	NO	Flytt ned
@@ -4450,6 +4565,7 @@ ADD
 	DE	Hinzufügen
 	DK	Tilføj
 	EN	Add
+	ES	Agregar
 	FR	Ajouter
 	NL	Toevoegen
 	NO	Legg til
@@ -4518,6 +4634,7 @@ SHUFFLE_OFF
 ENABLED
 	DE	Aktiviert
 	EN	Enabled
+	ES	Habilitado
 	FR	Activé
 	NO	Aktivert
 	SE	Aktiverad
@@ -4525,6 +4642,7 @@ ENABLED
 DISABLED
 	DE	Deaktiviert
 	EN	Disabled
+	ES	Deshabilitado
 	FR	Désactivé
 	NO	Deaktivert
 	SE	Avaktiverad
@@ -4585,6 +4703,7 @@ TREBLE
 	DE	Höhen
 	DK	Diskant
 	EN	Treble
+	ES	Agudos
 	FR	Aigus
 	NL	Hoog
 	NO	Diskant
@@ -4595,6 +4714,7 @@ BASS
 	DE	Bass
 	DK	Bas
 	EN	Bass
+	ES	Graves
 	FR	Graves
 	NL	Laag
 	NO	Bass
@@ -4844,6 +4964,7 @@ REMOVE_FROM_PLAYLIST
 	DE	Aus Playlist entfernen
 	DK	Fjern denne playlist
 	EN	Remove from playlist
+	ES	Eliminar de la lista
 	FR	Enlever de la liste de lecture
 	NO	Slett fra spillelisten
 	PT	Remover da Playlist
@@ -4865,6 +4986,7 @@ ADD_TO_PLAYLIST
 CONFIRM_OVERWRITE
 	DE	Überschreiben bestätigen
 	EN	Confirm Overwrite
+	ES	Confirmar Sobrescritura
 	FR	Confirmer remplacement
 
 TRACK
@@ -4920,6 +5042,7 @@ COMPOSER
 	DE	Komponist
 	DK	Komponist
 	EN	Composer
+	ES	Compositor
 	FR	Compositeur
 	NL	Componist
 	NO	Komponist
@@ -4929,6 +5052,7 @@ COMPOSER
 CONDUCTOR
 	DE	Dirigent
 	EN	Conductor
+	ES	Conductor
 	FR	Chef d'Orchestre
 	NO	Dirigent
 	SE	Dirigent
@@ -4937,6 +5061,7 @@ BAND
 	DE	Band/Orchester
 	DK	Band/Orkester
 	EN	Band/Orchestra
+	ES	Banda/Orquesta
 	FR	Groupe/Orchestre
 	NL	Band/Orkest
 	NO	Band/Orkester
@@ -4959,6 +5084,7 @@ DISC
 	DE	Disk
 	DK	Disc
 	EN	Disc
+	ES	Disco
 	FR	Disque
 	NL	Plaat
 	NO	Plate
@@ -4981,6 +5107,7 @@ TYPE
 	DE	Datenformat
 	DK	Filformat
 	EN	File Format
+	ES	Formato de Archivo
 	FR	Format de fichier
 	NL	Bestandsformaat
 	NO	Filformat
@@ -4992,6 +5119,7 @@ APE
 
 MP3
 	EN	MP3
+	ES	MP3
 
 MP2
 	EN	MP2
@@ -5041,6 +5169,7 @@ UNK
 	DE	Unbekannt
 	DK	Ukendt
 	EN	Unknown
+	ES	Desconocido
 	FR	Inconnu
 	NL	Onbekend
 	NO	Ukjent
@@ -5059,12 +5188,14 @@ OGG
 MODIFIED
 	DE	Geändert
 	EN	Modified
+	ES	Modificado
 	FR	Modifié
 
 MODTIME
 	DE	Datum geändert
 	DK	Dato ændret
 	EN	Date Modified
+	ES	Fecha de Modificación
 	FR	Dernière modif.
 	NL	Wijzigingsdatum
 	NO	Dato endret
@@ -5075,6 +5206,7 @@ COVERART
 	DE	Plattencover
 	DK	Cover-billede
 	EN	Artwork
+	ES	Arte de Tapa
 	FR	Pochette
 	NL	Hoesjes
 	NO	Platecover
@@ -5097,6 +5229,7 @@ NO_ARTIST
 	DE	Kein Artist
 	DK	Ingen kunstner
 	EN	No Artist
+	ES	Sin Artista
 	FR	Pas d'artiste
 	NL	Geen Artiest
 	NO	Ingen artist
@@ -5107,6 +5240,7 @@ NO_ALBUM
 	DE	Kein Album
 	DK	Intet album
 	EN	No Album
+	ES	Sin Disco
 	FR	Pas d'album
 	NL	Geen Album
 	NO	Ingen album
@@ -5117,6 +5251,7 @@ NO_GENRE
 	DE	Keine Stilrichtung
 	DK	Ingen genre
 	EN	No Genre
+	ES	Sin Género
 	FR	Pas de genre
 	NL	Geen Genre
 	NO	Ingen genre
@@ -5127,6 +5262,7 @@ NO_TITLE
 	DE	Kein Titel
 	DK	Ingen titel
 	EN	No Title
+	ES	Sin Título
 	FR	Pas de titre
 	NL	Geen Titel
 	NO	Ingen tittel
@@ -5226,6 +5362,7 @@ LOCATION
 	DE	Ort
 	DK	Sti
 	EN	Location
+	ES	Ubicación
 	FR	Emplacement
 	NL	Plaats
 	NO	Sted
@@ -5246,6 +5383,7 @@ KBPS
 NO_LIMIT
 	DE	Keine Einschränkung
 	EN	No Limit
+	ES	Sin Límite
 	FR	Pas de limite
 	SE	Ingen begränsning
 
@@ -5313,6 +5451,7 @@ ALL_SONGS
 	DE	Alle Titel
 	DK	Alle sange
 	EN	All Songs
+	ES	Todas las canciones
 	FR	Tous les morceaux
 	NL	Alle Liedjes
 	NO	Alle sanger
@@ -5322,6 +5461,7 @@ ALL_SONGS
 ALL_ARTISTS
 	DE	Alle Interpreten
 	EN	All Artists
+	ES	Todos los Artistas
 	FR	Tous les Artistes
 	NO	Alle artister
 	SE	Alla artister
@@ -5330,6 +5470,7 @@ ALL_ALBUMS
 	DE	Alle Alben
 	DK	Alle albums
 	EN	All Albums
+	ES	Todos los Discos
 	FR	Tous les albums
 	NL	Alle Albums
 	NO	Alle album
@@ -5339,6 +5480,7 @@ ALL_ALBUMS
 ALL_SUBFOLDERS
 	DE	Alle Unterverzeichnisse
 	EN	All Subfolders
+	ES	Todas las Subcarpetas
 	FR	Tous les dossiers
 	NO	Alle underfoldere
 	SE	Alla undermappar
@@ -5535,6 +5677,7 @@ SYNCHRONIZE
 NOT_SYNCHRONIZED
 	DE	Nicht synchronisiert
 	EN	Not Synchronized
+	ES	No Sincronizado
 	FR	Non synchronisé
 	SE	Inte synkroniserad
 
@@ -5542,6 +5685,7 @@ SYNCHRONIZED_WITH
 	DE	Synchronisiert mit
 	DK	Synkroniseret med
 	EN	Synced with
+	ES	Sincronizado con
 	FR	Synchronisé avec
 	NO	Synkronisert med
 	PT	Sincronizado com
@@ -5573,6 +5717,7 @@ PLUGINS
 	DE	Plugins
 	DK	Moduler
 	EN	Plugins
+	ES	Plugins
 	FR	Modules d'extension
 	NL	Plugins
 	NO	Plugins
@@ -5748,27 +5893,33 @@ PLAYER_SETTINGS
 ALARM_SETTINGS
 	DE	Wecker
 	EN	Alarm
+	ES	Alarma
 	FR	Réveil
 
 MENU_SETTINGS
 	DE	Menüs
 	EN	Menus
+	ES	Menus
 
 DISPLAY_SETTINGS
 	DE	Anzeige
 	EN	Display
+	ES	Pantalla
 	FR	Affichage
 
 AUDIO_SETTINGS
 	EN	Audio
+	ES	Audio
 
 REMOTE_SETTINGS
 	EN	Remote
+	ES	Remoto
 
 PLAYERIR_SETTINGS
 	DE	IR Einstellungen
 	DK	IR-indstillinger
 	EN	IR Settings
+	ES	Configuración IR
 	FR	Réglages infrarouge
 	NL	IR instellingen
 	NO	IR instillinger
@@ -5814,6 +5965,7 @@ INTERFACE_SETTINGS
 	DE	Interface
 	DK	Interface
 	EN	Interface
+	ES	Interfaz
 	FR	Interface
 	NL	Interface
 	NO	Grensesnitt
@@ -5824,6 +5976,7 @@ BEHAVIOR_SETTINGS
 	DE	Verhalten
 	DK	Funktion
 	EN	Behavior
+	ES	Comportamiento
 	FR	Comportement
 	NL	Gedrag
 	NO	Oppførsel
@@ -5834,6 +5987,7 @@ FORMATS_SETTINGS
 	DE	Dateiarten
 	DK	Filtyper
 	EN	File Types
+	ES	Tipos de Archivo
 	FR	Types de fichier
 	NL	Bestandsformaten
 	NO	Filtyper
@@ -5844,6 +5998,7 @@ SECURITY_SETTINGS
 	DE	Sicherheit
 	DK	Sikkerhed
 	EN	Security
+	ES	Seguridad
 	FR	Sécurité
 	NL	Beveiliging
 	NO	Sikkerhet
@@ -5854,6 +6009,7 @@ PERFORMANCE_SETTINGS
 	DE	Leistung
 	DK	Ydelse
 	EN	Performance
+	ES	Performance
 	FR	Performance
 	NL	Performantie
 	NO	Ytelse
@@ -5864,6 +6020,7 @@ FORMATTING_SETTINGS
 	DE	Formatierung
 	DK	Formatering
 	EN	Formatting
+	ES	Formateo
 	FR	Format
 	NL	Formatering
 	NO	Formatering
@@ -5874,6 +6031,7 @@ NETWORK_SETTINGS
 	DE	Netzwerk
 	DK	Netværk
 	EN	Network
+	ES	Red
 	FR	Réseau
 	NL	Netwerk
 	NO	Nettverk
@@ -6211,6 +6369,7 @@ SHOW_PLUGINS
 	DE	Plugins anzeigen
 	DK	Vis moduler
 	EN	Show Plugins
+	ES	Mostrat plugins
 	FR	Afficher le menu Module d'extensions
 	NL	Toon Plugins
 	NO	Vis Plugins
@@ -6221,6 +6380,7 @@ NO_PLUGINS
 	DE	Keine Plugins vorhanden.
 	DK	Ingen moduler til rådighed.
 	EN	No Plugins available.
+	ES	No existen Plugins disponibles
 	FR	Aucun module d'extension disponible.
 	NL	Geen Plugins beschikbaar.
 	NO	Ingen Plugins tilgjengelig.
@@ -6324,6 +6484,7 @@ NO_PLAYER_DETAILS
 PLAYER_NEEDS_UPGRADE
 	DE	Squeezebox Software Update notwendig
 	EN	Squeezebox Software Update Required
+	ES	Se requiere actualización del software del Squeezebox
 	FR	Mise à jour du logiciel Squeezebox nécessaire
 	NO	Programvaren i spilleren din må oppdateres
 	SE	Mjukvara ('firmware') i din spelare behöver uppdateras
@@ -6338,6 +6499,7 @@ PLAYER_NEEDS_UPGRADE_DETAILS
 PLAYER_NEEDS_UPGRADE_1
 	DE	Squeezebox Software Update
 	EN	Squeezebox Software Update
+	ES	Actualización de Software del Squeezebox
 	FR	Mise à jour du logiciel Squeezebox
 	NO	Programvareoppdatering av spilleren
 	SE	Mjukvaruppgradering av spelaren
@@ -6359,6 +6521,7 @@ PLAYER_UPGRADE_INSTRUCTIONS
 UPGRADE_COMPLETE_DETAILS
 	DE	Update abgeschlossen.
 	EN	Your update is complete.
+	ES	La actualización ha finalizado.
 	FR	La mise à jour a réussi.
 	NO	Oppdatering av spilleren ferdig
 	SE	Uppdatering av spelaren avslutad
@@ -6366,6 +6529,7 @@ UPGRADE_COMPLETE_DETAILS
 UPGRADE_COMPLETE
 	DE	Firmware Update
 	EN	Firmware Update
+	ES	Actualización de Firmware
 	FR	Mise à jour micrologiciel
 	NO	Programvareoppdatering avsluttet
 	SE	Mjukvaruuppdatering ('firmware') avslutad
@@ -6721,6 +6885,7 @@ MOODLOGIC_SELECT_MOOD_SHORT
 	DE	Wählen Sie eine Stimmung
 	DK	Vælg en stemning
 	EN	Select a Mood
+	ES	Elegir un Ambiente
 	FR	Choisissez une ambiance
 	NL	Kies een sfeer
 	NO	Velg stemning (MoodLogic)
@@ -6730,6 +6895,7 @@ MOODLOGIC_SELECT_MOOD_SHORT
 MOODLOGIC_MIX
 	DE	Mix
 	EN	Mix
+	ES	Mezcla
 	FR	Mix
 	NL	Mix
 	NO	Mix
@@ -6776,6 +6942,7 @@ MOODLOGIC_MOOD_0
 	DE	Überraschung
 	DK	Overraskelse
 	EN	Surprise
+	ES	Sorpresa
 	FR	Surprise
 	NL	Verrassing
 	NO	Overraskelse
@@ -6785,6 +6952,7 @@ MOODLOGIC_MOOD_0
 MOODLOGIC_MOOD_1
 	DE	Upbeat
 	EN	Upbeat
+	ES	Alegre
 	FR	Rythmé
 	NO	Tempo
 
@@ -6792,6 +6960,7 @@ MOODLOGIC_MOOD_2
 	DE	Easy
 	DK	Easy
 	EN	Easy
+	ES	Tranquilo
 	FR	Easy
 	NL	Easy
 	NO	Lett
@@ -6800,6 +6969,7 @@ MOODLOGIC_MOOD_2
 MOODLOGIC_MOOD_3
 	DE	Sanft
 	EN	Mild
+	ES	Dulce
 	FR	Doux
 	NO	Mild
 
@@ -6807,6 +6977,7 @@ MOODLOGIC_MOOD_4
 	DE	Trist
 	DK	Trist
 	EN	Blue
+	ES	Triste
 	FR	Blues
 	NL	Blue
 	NO	Blå
@@ -6824,6 +6995,7 @@ MOODLOGIC_MOOD_5
 MOODLOGIC_MOOD_6
 	DE	Wild
 	EN	Wild
+	ES	Salvaje
 	FR	Sauvage
 	NO	Vill
 
@@ -6879,6 +7051,7 @@ FAQ
 	DE	Häufig gestellte Fragen (FAQ)
 	DK	Ofte stillede spørgsmål (FAQ) (Engelsk)
 	EN	Frequently Asked Questions
+	ES	Preguntas más frecuentes
 	FR	Foire Aux Questions
 	NL	Veel Gestelde Vragen
 	NO	Ofte Stilte Spørsmål (FAQ)
@@ -6932,6 +7105,7 @@ STATISTICS
 	DE	Statistik
 	DK	Statistik
 	EN	Statistics
+	ES	Estadísticas
 	FR	Statistiques
 	NL	Statistieken
 	NO	Statistikk
@@ -6941,6 +7115,7 @@ STATISTICS
 EDIT_PLAYLIST
 	DE	Playliste bearbeiten
 	EN	Edit Playlist
+	ES	Editar Lista
 	FR	Modifier la liste de lecture
 	NO	Endre spilleliste
 	SE	Redigera låtlista
@@ -6948,6 +7123,7 @@ EDIT_PLAYLIST
 DONE_EDITING
 	DE	Bearbeitung abgeschlossen
 	EN	Done Editing
+	ES	Edición finalizada
 	FR	Modification effectuée
 	NO	Endring utført
 	SE	redigering klar
@@ -6955,6 +7131,7 @@ DONE_EDITING
 UP
 	DE	Rauf
 	EN	Up
+	ES	Arriba
 	FR	Haut
 	NO	Opp
 	SE	Upp
@@ -6962,6 +7139,7 @@ UP
 DOWN
 	DE	Runter
 	EN	Down
+	ES	Abajo
 	FR	Bas
 	NO	Ned
 	SE	Ned
@@ -6969,6 +7147,7 @@ DOWN
 EDIT
 	DE	Editieren
 	EN	Edit
+	ES	Editar
 	FR	Modifier
 	NO	Endre
 	SE	Redigera
@@ -6983,6 +7162,7 @@ URL
 SAVE_PLAYLIST
 	DE	Playlist speichern
 	EN	Save Playlist
+	ES	Guardar Lista
 	FR	Enregistrer la liste de lecture
 	NO	Lagre spilleliste
 	SE	Lagra låtlista
@@ -6997,6 +7177,7 @@ PLAYLIST_SAVE
 PLAYLIST_AS
 	DE	Playliste unter folgendem Namen speichern:
 	EN	Save current playlist as:
+	ES	Guardar la lista actual como:
 	FR	Enregistrer la liste de lecture sous :
 	NO	Lagre spillelisten som:
 	SE	Lagra aktuell låtlista som:
@@ -7004,6 +7185,7 @@ PLAYLIST_AS
 PLAYLIST_SAVING
 	DE	Speichere Playlist als:
 	EN	Saving current playlist as:
+	ES	Guardando la lista actual como:
 	FR	Enregistre la liste de lecture sous :
 	NO	Lagrer spillelisten som:
 	SE	Lagrar aktuell låtlista som:
@@ -7011,6 +7193,7 @@ PLAYLIST_SAVING
 INFORMATION
 	DE	Informationen
 	EN	Information
+	ES	Información
 	FR	Infos
 	NO	Informasjon
 	SE	Information
@@ -7025,6 +7208,7 @@ INFORMATION_MENU_PLAYER
 INFORMATION_MENU_SERVER
 	DE	Server Informationen
 	EN	Server Information
+	ES	Información del servidor
 	FR	Infos serveur
 	NO	Server informasjon
 	SE	Server-information
@@ -7088,6 +7272,7 @@ INFORMATION_PLAYER_MAC
 INFORMATION_PLAYER_SIGNAL_STRENGTH
 	DE	Wireless Signalstärke
 	EN	Wireless Signal Strength
+	ES	Potencia de señal inalámbrica
 	FR	Puissance signal sans fil
 	NO	Trådløs signalstyrke
 	SE	Trådlös signalstyrka
@@ -7095,6 +7280,7 @@ INFORMATION_PLAYER_SIGNAL_STRENGTH
 INFORMATION_CLIENTS
 	DE	Anzahl erkannte Player
 	EN	Total Players Recognised
+	ES	Cantidad de Players Reconocidos
 	FR	Platine(s) identifiée(s)
 	NO	Totalt antall tilkoblede spillere
 	SE	Totalt antal anslutna spelare
@@ -7102,6 +7288,7 @@ INFORMATION_CLIENTS
 INFORMATION_SERVER_IP
 	DE	Server IP Adresse
 	EN	Server IP Address
+	ES	Dirección IP del Servidor
 	FR	Adresse IP serveur
 	NO	Serveren IP adresse
 	SE	Serverns IP-adress
@@ -7109,6 +7296,7 @@ INFORMATION_SERVER_IP
 INFORMATION_SERVER_PORT
 	DE	Server UDP Portnummer
 	EN	Server UDP Port Number
+	ES	Número de Puerto UDP del Servidor
 	FR	Port UDP serveur
 	NO	Serveren UDP port
 	SE	Serverns UDP-port
@@ -7116,6 +7304,7 @@ INFORMATION_SERVER_PORT
 INFORMATION_SERVER_HTTP
 	DE	Server HTTP Portnummer
 	EN	Server HTTP Port Number
+	ES	Número de Puerto de Servidor HTTP
 	FR	Port HTTP serveur
 	NO	Serveren HTTP port
 	SE	Serverns HTTP-port
@@ -7123,6 +7312,7 @@ INFORMATION_SERVER_HTTP
 INFORMATION_ALBUMS
 	DE	Anzahl Alben
 	EN	Total Albums
+	ES	Total de Discos
 	FR	Albums
 	NO	Totalt antall album
 	SE	Totalt antal album
@@ -7130,6 +7320,7 @@ INFORMATION_ALBUMS
 INFORMATION_ARTISTS
 	DE	Anzahl Interpreten
 	EN	Total Artists
+	ES	Total de Artistas
 	FR	Artistes
 	NO	Totalt antall artister
 	SE	Totalt antal artister
@@ -7137,6 +7328,7 @@ INFORMATION_ARTISTS
 INFORMATION_GENRES
 	DE	Anzahl Stilrichtungen
 	EN	Total Genres
+	ES	Total de Géneros
 	FR	Genres
 	NO	Totalt antall genre
 	SE	Totalt antal genrer
@@ -7144,6 +7336,7 @@ INFORMATION_GENRES
 INFORMATION_TRACKS
 	DE	Anzahl Titel
 	EN	Total Tracks
+	ES	Total de Temas
 	FR	Morceaux
 	NO	Totalt antall låter
 	SE	Totalt antal låtar
@@ -7151,6 +7344,7 @@ INFORMATION_TRACKS
 INFORMATION_TIME
 	DE	Gesamte Spieldauer
 	EN	Total Playing Time
+	ES	Tiempo de Duración Total
 	FR	Durée totale
 	NO	Total musikktid
 	SE	Total låttid
@@ -7158,6 +7352,7 @@ INFORMATION_TIME
 INFORMATION_VERSION
 	DE	Version
 	EN	Version
+	ES	Versión
 	FR	Version
 	NO	Versjon
 	SE	Version
@@ -7165,6 +7360,7 @@ INFORMATION_VERSION
 INFORMATION_INSTALLED
 	DE	Installiert
 	EN	Installed
+	ES	Instalado
 	FR	Installé
 	NO	Installert
 	SE	Installerad
@@ -7172,6 +7368,7 @@ INFORMATION_INSTALLED
 INFORMATION_DISABLED
 	DE	DEAKTIVIERT
 	EN	DISABLED
+	ES	DESHABILITADO
 	FR	DÉSACTIVÉ
 	NO	Deaktivert
 	SE	Avaktiverad
@@ -7179,6 +7376,7 @@ INFORMATION_DISABLED
 INFORMATION_NO_VERSION
 	DE	Keine Versionsnummer
 	EN	No version number
+	ES	Sin número de versión
 	FR	Pas de version
 	NO	Ingen versjonsnummer
 	SE	Inget versionsnummer
