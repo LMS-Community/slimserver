@@ -1,5 +1,5 @@
 # RssNews Ticker v1.0
-# $Id: RssNews.pm,v 1.5 2004/11/05 23:57:39 dave Exp $
+# $Id: RssNews.pm,v 1.6 2004/11/06 01:40:29 dave Exp $
 # Copyright (c) 2004 Slim Devices, Inc. (www.slimdevices.com)
 
 # Based on BBCTicker 1.3 which had this copyright...
@@ -85,7 +85,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Prefs;
 
-$VERSION = substr(q$Revision: 1.5 $,10);
+$VERSION = substr(q$Revision: 1.6 $,10);
 my %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
@@ -322,6 +322,34 @@ sub unescape {
 	$data =~ s/&quot;/\"/sg;
 	$data =~ s/&#(\d+);/chr($1)/gse;
 
+	return $data;
+}
+
+sub trim {
+	my $data = shift;
+	return '' unless(defined($data));
+	use utf8; # required for 5.6
+
+	$data =~ s/\s+/ /g; # condense multiple spaces
+	$data =~ s/^\s//g; # remove leading space
+	$data =~ s/\s$//g; # remove trailing spaces
+
+	return $data;
+}
+
+# unescape and also remove unnecesary spaces
+sub unescapeAndTrim {
+	my $data = shift;
+	return '' unless(defined($data));
+	use utf8; # required for 5.6
+	my $olddata = $data;
+
+	$data = unescape($data);
+
+	$data = trim($data);
+	utf8::decode($data);
+	#$::d_plugins && msg("old text: \"$olddata\"\n\n");
+	#$::d_plugins && msg("new text: \"$data\"\n\n\n");
 	return $data;
 }
 
@@ -573,7 +601,7 @@ sub lines {
 			if (!exists($thenews{$display_current}->{item}[$display_current_items->{$display_current}->{'next_item'}])) {
 				$display_current_items->{$display_current}->{'next_item'} = 0;
 			}
-			my $line1 = $thenews{$display_current}->{title};
+			my $line1 = unescapeAndTrim($thenews{$display_current}->{title});
 			my $line2 = "";
 			my $i = $display_current_items->{$display_current}->{'next_item'};
 			my $max = $i + $screensaver_items_per_feed;
@@ -589,14 +617,14 @@ sub lines {
 				}
 				$line2 .= sprintf($screensaver_item_format,
 								  $i + 1,
-								  unescape($thenews{$display_current}->{item}[$i]->{title}),
-								  unescape($description));
+								  unescapeAndTrim($thenews{$display_current}->{item}[$i]->{title}),
+								  unescapeAndTrim($description));
 				$i++;
 			}
 			# remove tags
 			$line2 =~ s/<\/?[A-Za-z]+ ?\/?>/ /g; # matches, for example, "<b>" and "<br />"
 			# convert newlines in line2 to spaces
-			$line2 =~ s/\n/ /g;
+			#$line2 =~ s/\n/ /g; # no longer needed (unescape and trim)
 			$display_current_items->{$display_current}->{'next_item'} = $i;
 			$lineref->[0] = $line1;
 			$lineref->[1] = $line2;
@@ -772,7 +800,7 @@ sub mainModeCallback {
 			@{$thenews{$feedname}->{item}}) {
             Slim::Buttons::Common::pushModeLeft($client, 
                                                 'PLUGIN.RssNews.headlines',
-                                                { feed => $thenews{$feedname}->{title},
+                                                { feed => unescapeAndTrim($thenews{$feedname}->{title}),
                                                   feedItems => $thenews{$feedname}->{item} });
           } else {
               Slim::Display::Animation::showBriefly($client, 
@@ -837,16 +865,16 @@ sub headlinesModeCallback {
 			ref($item->{description})) {
 			$description = string('PLUGIN_RSSNEWS_NO_DESCRIPTION');
 		} else {
-			$description = unescape($item->{description});
+			$description = $item->{description};
 		}
-        my $title = unescape($item->{title});
+        my $title = $item->{title};
         my $feed = Slim::Buttons::Common::param($client, 'feed');
         
         Slim::Buttons::Common::pushModeLeft($client, 
                                             'PLUGIN.RssNews.description',
                                             { feed => $feed,
-                                              title => $title,
-                                              description => $description });
+                                              title => "$title",
+                                              description => "$description" });
     }
 }
 
@@ -865,7 +893,7 @@ sub headlinesSetMode {
     my $feed = Slim::Buttons::Common::param($client, 'feed');
     my $items = Slim::Buttons::Common::param($client, 'feedItems');
     
-    my @lines = map unescape($_->{title}), @$items;
+    my @lines = map unescapeAndTrim($_->{title}), @$items;
     
     my %params = (
                   header => $feed,
@@ -917,8 +945,8 @@ sub descriptionSetMode {
       }
     
     my $feed = Slim::Buttons::Common::param($client, 'feed');
-    my $title = Slim::Buttons::Common::param($client, 'title');
-    my $description = Slim::Buttons::Common::param($client, 'description');
+    my $title = unescapeAndTrim(Slim::Buttons::Common::param($client, 'title'));
+    my $description = unescapeAndTrim(Slim::Buttons::Common::param($client, 'description'));
     
     my @lines;
     my $curline = '';
@@ -926,7 +954,7 @@ sub descriptionSetMode {
     while ($description =~ /(\S+)/g) {
         my $newline = $curline . ' ' . $1;
         if ($client->measureText($newline, 2) > $client->displayWidth) {
-            push @lines, $curline;
+            push @lines, trim($curline);
             $curline = $1;
         }
         else {
@@ -934,7 +962,7 @@ sub descriptionSetMode {
         }
     }
     if ($curline) {
-        push @lines, $curline;
+        push @lines, trim($curline);
     }
     
     # also shorten title to fit
@@ -951,7 +979,7 @@ sub descriptionSetMode {
     }
     
     my %params = (
-                  header => $titleline,
+                  header => trim($titleline),
                   listRef => \@lines,
                   callback => \&descriptionModeCallback,
                   valueRef => \$context{$client}->{descriptionModeIndex},
