@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.105 2004/11/25 03:51:05 kdf Exp $
+# $Id: Pages.pm,v 1.106 2004/11/29 06:16:45 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1550,7 +1550,7 @@ sub browseid3 {
 				$list_form{'descend'}         = $descend;
 				$list_form{'player'}          = $player;
 				$list_form{'odd'}	      = ($itemnumber + 1) % 2;
-				$list_form{'mixable_descend'} = (Slim::Music::Info::isArtistMixable($item) || Slim::Music::Info::isArtistMMMixable($item)) && ($descend eq "true");
+				$list_form{'mixable_descend'} = (Slim::Music::Info::isArtistMixable($item)) && ($descend eq "true");
 				$list_form{'skinOverride'}    = $params->{'skinOverride'};
 
 				my $anchor = anchor(Slim::Utils::Text::getSortName($item), 1);
