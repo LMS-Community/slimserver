@@ -125,8 +125,8 @@ sub nowPlayingModes {
 
 sub displayWidth {
 	my $client = shift;
-	my $mode = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode") || 0;
-	return $displayWidth[$mode];
+	my $mode = $client->power() ? Slim::Utils::Prefs::clientGet($client, "playingDisplayMode") : 0;
+	return $displayWidth[$mode || 0];
 }
 
 sub bytesPerColumn {
