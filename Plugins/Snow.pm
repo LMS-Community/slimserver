@@ -1,6 +1,6 @@
 package Plugins::Snow;
 
-# $Id: Snow.pm,v 1.8 2003/12/24 07:56:46 kdf Exp $
+# $Id: Snow.pm,v 1.9 2003/12/29 22:12:52 dean Exp $
 # by Phil Barrett, December 2003
 # screensaver conversion by Kevin Deane-Freeman Dec 2003
 
@@ -23,7 +23,7 @@ use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.8 $,10);
+$VERSION = substr(q$Revision: 1.9 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_SNOW');}
 
@@ -444,23 +444,22 @@ sub insertChar {
 	($col < (40-$len) ? Slim::Hardware::VFD::subString($line, $col+$len, 40 - $len - $col) : '');
 }
 
-#sub drawFlake {
-#    my $bigrow = shift;
-#    my $bigcol = shift;
-#    my $onlyInSpaces = shift;
-#    my @lines = (shift, shift);
-#
-#    my $row = int($bigrow / 3);
-#    my $col = int($bigcol / 2);
-#    my $sym = Slim::Hardware::VFD::symbol('snow' . ($bigrow - $row * 3) . ($bigcol - $col * 2));
-#    
-#    if(! $onlyInSpaces
-#       ||
-#       Slim::Hardware::VFD::subString($lines[$row], $col, 1) eq ' ') {
-#	$lines[$row] = insertChar($lines[$row], $sym, $col, 1);
-#    }
-#    return @lines;
-#}
+sub drawFlake {
+    my $bigrow = shift;
+    my $bigcol = shift;
+    my $onlyInSpaces = shift;
+    my $lines = shift;
+
+    my $row = int($bigrow / 3);
+    my $col = int($bigcol / 2);
+    my $sym = Slim::Hardware::VFD::symbol('snow' . ($bigrow - $row * 3) . ($bigcol - $col * 2));
+    
+    if(! $onlyInSpaces
+       ||
+       Slim::Hardware::VFD::subString($lines->[$row], $col, 1) eq ' ') {
+	$lines->[$row] = insertChar($lines->[$row], $sym, $col, 1);
+    }
+}
 
 my %flakeMap = (0 => ' ',
 		1 => Slim::Hardware::VFD::symbol('snow00'),
@@ -665,7 +664,12 @@ sub letItSnow {
 	}
 
 	foreach my $flake (@{$flakes{$client}}) {
-	    paintFlake(@{$flake}[0], @{$flake}[1], $torender, 1, $onlyInSpaces, \@lines);
+	    if($showWords) {
+		paintFlake(@{$flake}[0], @{$flake}[1], $torender, 1, $onlyInSpaces, \@lines);
+	    } else {
+		# Use older, but faster, code
+		drawFlake(@{$flake}[0], @{$flake}[1], $onlyInSpaces, \@lines);
+	    }
 	}
 	    
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.25, \&tick);
@@ -694,9 +698,9 @@ sub letItSnow {
 		    $wordState{$client} = -1;
 		}
 	    }
-	}
 
-	@lines = renderFlakes($torender, \@lines);
+	    @lines = renderFlakes($torender, \@lines);
+	}
 
 	return @lines;
 }

@@ -320,13 +320,14 @@ Version=2</pre></p>
 <p>Mac users: The Plugins folder is hidden within the SlimServer preference pane. Look in either the folder named Library at the top level of your hard disk or the Library folder in your Home folder. Inside one of these folders you should find a folder called &quot;SlimServer.preferencePane&quot;. Control-click on this folder and choose &quot;Show Package Contents&quot;, then open the &quot;contents&quot; folder, then the &quot;server&quot; folder, then the for a folder called &quot;Plugins&quot;. Place the downloaded plugins files in this folder.  <b>Note:</b> If you upgrade your SlimServer software, you'll need to re-install any plugins you may have added.</p>
 <p>Windows Users: The Plugins folder is installed by default here: C:\Program Files\SlimServer\server\Plugins</p>
 <hr>
-<h4><a href="#troubleshooting">Troubleshooting</a></h4>
+<h4><a id="troubleshooting">Troubleshooting</a></h4>
 <ul>
 	<li><a href="#troubleshooting-sleep">After several minutes my player turns off and stops responding.  What's going on?</a>
 	<li><a href="#troubleshooting-wep">I'm having trouble connecting my Squeezebox to a wireless network with WEP enabled.</a>
 	<li><a href="#troubleshooting-remote">The IR remote is not responding, or is functioning erratically.</a>
 	<li><a href="#troubleshooting-dhcp">SLIMP3 doesn't find a DHCP server.</a>
 	<li><a href="#troubleshooting-findserver">The player doesn't find a SlimServer.</a>
+	<li><a href="#troubleshooting-intelpro">My Squeezebox audio only comes out in little bursts or the elapsed time counter runs backwards sometimes.</a>
 	<li><a href="#troubleshooting-volume">The volume is too high or too low.</a>
 	<li><a href="#troubleshooting-audio">There's something wrong with the audio quality. I hear buzzing and clicks. How can I fix this?</a>
 	<li><a href="#troubleshooting-debugoutput">I'm seeing messages in the SlimServer's console or debug window, but the server seems to be running fine.</a>
@@ -346,7 +347,7 @@ Version=2</pre></p>
 	<li><a href="#troubleshooting-autoupdate">The SlimServer software seems to be connecting to a website on its own every time I run the software.  What's going on?</a>
 	<li><a href="#troubleshooting-annoyingclick">When the SlimServer software pages reload I hear an annoying click.  How do I get rid of it?</a>
 </ul>
-<h4><a id="troubleshooting"></a>Troubleshooting</h4>
+<h4>Troubleshooting</h4>
 
 <h5><a id="troubleshooting-sleep"></a>After several minutes my player turns off and stops responding.  What's going on?</h5>
 <p>Make sure that your energy saver settings on your computer are set so that your computer doesn't go to sleep.  If it does, your player will go to sleep as well.   If that's not the problem, make sure that the IP address on your computer isn't changing.  To do this, adjust  your TCP/IP settings to use a static IP address.</a>
@@ -370,6 +371,16 @@ not Open-System Authentication, which is less secure.</p>
 <p>Check all your network connections, and make sure that the DHCP server is running. Try a different Ethernet cable, even if the hub indicates a good link.</p>
 <h5><a id="troubleshooting-findserver"></a>The player doesn't find a SlimServer</h5>
 <p>Ensure that the SlimServer software is running, and that you can access it using a web browser.</p>
+
+<h5><a id="troubleshooting-intelpro"></a>My Squeezebox audio only comes out in little bursts or the elapsed time counter runs backwards sometimes.</h5>
+<p>Do you have an Intel PRO ethernet card installed in your machine? 
+If so and you're having streaming problems such as short bursts of sound, or the elapsed time counter jumping backwards, 
+please try the following:
+<p>First, install the newest driver from Intel. It's available here:</p>
+<p><a href="http://support.intel.com/support/network/adapter/index.htm#PRO/1000">http://support.intel.com/support/network/adapter/index.htm#PRO/1000</a></p>
+<p>Next, open the network control panel and click "Configure", then view the advanced options. 
+Look for "TCP Segmentation Offloading" - turn that off.</p>
+
 <h5><a id="troubleshooting-volume"></a>The volume is too high or too low.</h5>
 <p>Squeezebox is capable of slightly higher volume levels than most consumer audio gear and may cause clipping with some receivers. If you notice clipping, you may wish to reduce Squeezebox's volume level. If the volume is too low even at the maximum setting or if it varies between tracks, try using your encoder's normalize setting to ensure that all your tracks use the full range.</p>
 <h5><a id="troubleshooting-audio"></a>There's something wrong with the audio quality. I hear buzzing and clicks. How can I fix this?</h5>

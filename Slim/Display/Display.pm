@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.8 2003/12/19 19:18:48 dean Exp $
+# $Id: Display.pm,v 1.9 2003/12/29 22:12:53 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -244,17 +244,19 @@ sub progressBar {
 	my $client = shift;
 	my $width = shift;
 	my $fractioncomplete = shift;
+
+	if ($width == 0) {
+		return "";
+	}
+	
 	my $charwidth = 5;
+
 	if ($fractioncomplete < 0) {
 		$fractioncomplete = 0;
 	}
 	
 	if ($fractioncomplete > 1.0) {
 		$fractioncomplete = 1.0;
-	}
-	
-	if ($width == 0) {
-		return "";
 	}
 	
 	my $chart = "";

@@ -1,6 +1,6 @@
 package Slim::Networking::Select;
 
-# $Id: Select.pm,v 1.6 2003/12/25 02:22:15 dean Exp $
+# $Id: Select.pm,v 1.7 2003/12/29 22:12:53 dean Exp $
 
 # SlimServer Copyright (c) 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -69,12 +69,16 @@ sub select {
 		my $readsub = $readCallbacks{"$sock"};
 		$readsub->($sock) if $readsub;
 		$count++;
+		# this is totally overkill...
+		Slim::Networking::Protocol::readUDP();
 	}
 	
 	foreach $sock (@$w) {
 		my $writesub = $writeCallbacks{"$sock"};
 		$writesub->($sock) if $writesub;
 		$count++;
+		# this is totally overkill...
+		Slim::Networking::Protocol::readUDP();
 	}
 	return $count;
 }
