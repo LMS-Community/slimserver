@@ -1983,30 +1983,38 @@ SETUP_MP3SILENCEPRELUDE_DESC
 	SE	Vissa förstärkare och D/A-omvandlare behöver lite extra tid för att inleda avkodning av MP3-ljud. Du kan ange hur lång fördröjning (i sekunder) som som ska gälla från det att du trycker Play tills det att MP3-ljud börjar sändas. Standard-värdet är 0. Värdet 0.25 fungerar bra med många förstärkare.
 
 SETUP_TRANSITIONTYPE
+	DE	Überblendung
 	EN	Transition
 
 SETUP_TRANSITIONTYPE_DESC
+	DE	Die Squeezebox2 kann zwischen Liedern überblenden, entweder per Crossfading beider Songs, oder indem der eine aus-, der andere eingeblendet wird. Wählen Sie die Art der Überblendung.
 	EN	Squeezebox2 can gradually transition between songs, either by crossfading between them, or by fading songs in or out. Choose the type of transition you would like.
 
 SETUP_TRANSITIONDURATION
+	DE	Dauer der Überblendung
 	EN	Transition duration
 
 SETUP_TRANSITIONDURATION_DESC
+	DE	Definieren Sie die Dauer der Überblendung zwischen Songs (in Sekunden).
 	EN	Enter the amount of time to take to transition between songs, in seconds.
 
 TRANSITION_NONE
+	DE	Keine
 	EN	None
 
 TRANSITION_CROSSFADE
 	EN	Crossfade
 
 TRANSITION_FADE_IN
+	DE	Einblenden
 	EN	Fade in
 
 TRANSITION_FADE_OUT
+	DE	Ausblenden
 	EN	Fade out
 
 TRANSITION_FADE_IN_OUT
+	DE	Ein- und Ausblenden
 	EN	Fade in and out
 
 SETUP_TITLEFORMATCURR
@@ -8691,4 +8699,4 @@ ANY_VALUE
 ANY_TYPE
 	DE	Beliebiges Format
 	EN	Any File Format
-	
+

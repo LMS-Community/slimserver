@@ -54,9 +54,11 @@ sub getDisplayName {
 
 sub strings { return '
 PLUGIN_SCREENSAVER_VISUALIZER
+	DE	Visualizer Bildschirmschoner
 	EN	Visualizer Screensaver
 
 PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
+	DE	Benötigt Squeezebox2
 	EN	Needs Squeezebox2
 
 PLUGIN_SCREENSAVER_VISUALIZER_SPECTRUM_ANALYZER
@@ -69,12 +71,15 @@ PLUGIN_SCREENSAVER_VISUALIZER_DIGITAL_VUMETER
 	EN	Digital VU Meter
 
 PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
+	DE	RIGHT drücken zum Aktivieren des Bildschirmschoners
 	EN	Press -> to enable this screensaver 
 
 PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
+	DE	Bildschirmschoner aktiviert
 	EN	This screensaver is enabled
 
 PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
+	DE	Standard Bildschirmschoner
 	EN	Default screenaver
 '};
 
