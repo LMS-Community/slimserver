@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.140 2004/08/11 15:43:15 grotus Exp $
+# $Id: Info.pm,v 1.141 2004/08/17 22:46:30 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -132,7 +132,7 @@ my %genreCountMemoize = ();
 my %infoCacheItemsIndex;
 
 my $dbname;
-my $DBVERSION = 12;
+my $DBVERSION = 13;
 
 my %artworkCache = ();
 my $artworkDir;
@@ -1670,10 +1670,10 @@ sub artwork {
 
 	foreach my $key (keys %artworkCache) {
 		if (exists $artworkCache{$key}) { # if its been lost since scan..
-			push @covers, $key;
+			push @covers, Slim::Utils::Text::ignoreCaseArticles(uc($key));
 		}
 	}
-	return Slim::Utils::Text::sortuniq_ignore_articles(@covers);
+	return fixCase(Slim::Utils::Text::sortuniq_ignore_articles(@covers));
 }
 
 sub albums {
