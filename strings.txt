@@ -36,7 +36,7 @@ CHOOSE_A_LANGUAGE
 
 BASE_SKIN
 	EN	Light
-	FR	Édulcoré
+	FR	Light
 	NL	Light
 	NO	Lys
 	PT	Leve
@@ -890,9 +890,11 @@ SETUP_GROUP_NONMENUITEMS_INTRO
 
 SETUP_SCROLLPAUSE
 	EN	Scroll Pause
+	FR	Pause avant défilement
 	
 SETUP_SCROLLPAUSE_DESC
 	EN	Time for scrolling of long lines to start. Multiples of 0.9 work best. Zero is an option for no pause delay.
+	FR	Le délai durant lequel l'affichage s'arrête avant de faire défiler les lignes longues peut être modifié en multiples de 0.9 secondes. Entrez 0 pour supprimer la pause.
 
 SETUP_GROUP_IRSETS
 	DE	Fernbedienungen
@@ -1087,7 +1089,7 @@ SETUP_SCREENSAVER
 	EN	Screensaver
 	ES	Salvapantalla
 	FI	Näytönsäästäjä
-	FR	Économiseur d'écran
+	FR	Ecran de veille
 	NL	Schermbeveiliging
 	NO	Skjermsparer
 	PT	Protecção de Ecrã
@@ -1095,6 +1097,7 @@ SETUP_SCREENSAVER
 
 SETUP_SCREENSAVER_DESC
 	EN	Choose your custom screensaver
+	FR	Choisissez un écran de veille
 
 SETUP_PLAYINGDISPLAYMODE
 	DE	Abspielen im Anzeigemodus
@@ -1212,15 +1215,19 @@ SETUP_SYNCVOLUME_DESC
 
 SETUP_DIGITALVOLUMECONTROL_ON
 	EN	Volume controls adjust digital outputs
+	FR	Niveau sortie numérique contrôlé par boutons de volume
 
 SETUP_DIGITALVOLUMECONTROL_OFF
 	EN	Digital output level is fixed (Best analog quality)
+	FR	Niveau sortie numérique fixe (qualité analogique optimum)
 
 SETUP_DIGITALVOLUMECONTROL
 	EN	Digital Volume Control
+	FR	Niveau sortie numérique
 
 SETUP_DIGITALVOLUMECONTROL_DESC
 	EN	You can choose to have the digital audio output on your player be fixed at maximum level or be controlled by the volume buttons.  If you choose to have a fixed digital audio volume level, the analog outputs will have the highest quality possible.  With either setting, the analog output levels are adjusted by the volume buttons.
+	FR	Le niveau de la sortie audio numérique de votre lecteur peut être soit fixé à son maximum, soit contrôlé par les boutons de volume. Si le niveau de la sortie audio numérique est fixe, la qualité de la sortie analogique sera optimum. Dans tous les cas, le niveau de la sortie analogique est contrôlé par les boutons de volume.
 
 SETUP_TITLEFORMATCURR
 	DE	Aktuelles Titelformat
@@ -1395,7 +1402,7 @@ SETUP_PLAYLISTDIR
 	EN	Saved Playlists Folder
 	ES	Carpeta de listas guardadas
 	FI	Tallenettujen soittolistojen hakemisto
-	FR	Dossier contenant les playlists enregistrées :
+	FR	Dossier contenant les playlists enregistrées
 	NL	Folder voor Bewaarde Playlists
 	PT	Directoria com Playlists
 	SE	Mapp för Sparade Spellistor
@@ -1673,12 +1680,12 @@ SETUP_REFRESHRATE
 SETUP_REFRESHRATE_DESC
 	DE	Setzen Sie die gewünschte Wartezeit in Sekunden zwischen automatischen Browser Aktualisierungen. Während dem Abspielen eines Liedes wird der Server den Refresh nahe dem Lied-Ende durchführen, falls er vor Ablauf der gewünschten Wartezeit liegt. (Vorgabe 30, minimum 2)
 	EN	Set the time between browser reloads in seconds.  While playing a song, the server will set the refresh near a song end if it is less than this value. (Default is 30, minimum is 2)
-	FR	Définissez le délai en secondes entre les recharges automatique du navigateur. Pendant l'écoute d'une chanson le serveur va lancer la recharge à peu près à la fin de la pièce, si c'est moins que le délai prévu. (Défaut 30, minimum 2)
+	FR	Définissez le délai en secondes entre chaque recharge automatique du navigateur. Pendant l'écoute d'un morceau, le serveur forcera la recharge vers la fin du morceau s'il reste moins que le délai prévu. (Défaut 30, minimum 2)
 
 SETUP_REFRESHRATE_OK
 	DE	Browser Aktualisierung gesetzt auf
 	EN	Refresh time set to
-	FR	Délai d'attente entre recharge mit à 
+	FR	Délai d'attente entre recharge réglé à 
 
 SETUP_COVERART
 	DE	Plattencover
@@ -2067,7 +2074,7 @@ SETUP_SCREENSAVERTIMEOUT
 	EN	Screensaver Timing
 	ES	Salvapantalla
 	FI	Näytönsäästäjän ajastus
-	FR	Délai de l'économiseur d'écran
+	FR	Délai de l'écran de veille
 	NL	Interval van de schermbeveiliging
 	NO	Skjermsparer tid
 	PT	Intervalo para Protecção de Ecrã
@@ -2090,7 +2097,7 @@ SETUP_SCREENSAVERTIMEOUT_CHOOSE
 	EN	Screensaver delay time in seconds:
 	ES	Tiempo de espera antes de mostrar salvapantalla (seg.):
 	FI	Näytönsäästäjän viive sekunteina:
-	FR	Délai de l'économiseur d'écran en secondes :
+	FR	Délai de l'écran de veille en secondes :
 	NL	Interval waarna de schermbeveiliging aktief wordt (in seconden): 
 	PT	Tempo de espera da proteção de ecrã, em segundos
 	SE	Fördröjning innan skärmsläckare i sekunder:
@@ -2101,7 +2108,7 @@ SETUP_SCREENSAVERJUMP
 	EN	Screensaver
 	ES	Salvapantalla
 	FI	Näytönsäästäjä
-	FR	Économiseur d'écran
+	FR	Ecran de veille
 	NL	Schermbeveiliging
 	NO	Skjermsparer
 	PT	Protecção de Ecrã
@@ -2123,7 +2130,7 @@ SETUP_SCREENSAVERJUMP_CHOOSE
 	DK	Når du anvender fjernbetjeningen når pauseskærmen bliver vist.
 	EN	When you use the remote after the screensaver starts:
 	FI	Käyttäessäsi kaukosäädintä näytönsäästäjän ollessa päällä:
-	FR	Lorsque vous utilisez votre télécommande après l'activation de l'économiseur d'écran :
+	FR	Lorsque vous utilisez votre télécommande après l'activation de l'écran de veille :
 	NL	Als U de afstandsbediening gebruikt na het starten van de screensaver:
 	PT	Quando usa o controlo remoto depois de começar a protecção de ecrã
 	SE	Om du använder fjärrkontrollen efter att skärmsläckaren startats:
@@ -2506,7 +2513,7 @@ SETUP_USETAGDATABASE
 	EN	MP3 Tag Database
 	ES	Usar base de datos de los "tags" de MP3
 	FI	MP3 tietokanta
-	FR	Base de donnée des tags MP3
+	FR	Base de données des tags MP3
 	NL	Bewaren van MP3 Tag Informatie
 	PT	Base de dados de "Tags" MP3
 	SE	Spara ID3-information:
@@ -2517,7 +2524,7 @@ SETUP_USETAGDATABASE_DESC
 	EN	The MP3 tag information from each MP3 file can be saved in a cache when the server finishes scanning and reloaded quickly when it starts again. This setting has no effect if you are using iTunes or MoodLogic.
 	ES	El "tag" de un MP3 puede guardarse cuando se para el servidor para accelerar el escaneo de la carpeta de música una vez arrancado de nuevo.
 	FI	MP3 -tiedostot sisältävät tietoa kuten esittäjän nimen. Tämä tieto voidaan tallentaa, jotta palvelimen käynnistys nopeutuu.
-	FR	Les informations contenues dans le tag ID3 de chaque fichier MP3 peuvent être sauvegardées lorsque le serveur est arrêté et relues lorsqu'il est redémarré. Ceci accélère le balayage de votre dossier de musique.
+	FR	Les informations contenues dans le tag ID3 de chaque fichier MP3 peuvent être sauvegardées sur disque lorsque le serveur est arrêté et relues lorsqu'il est redémarré afin d'accélérer le balayage du dossier de musique.
 	NL	De MP3 tag informatie uit elk MP3 bestand kan worden bewaard als de server stopt en zal herladen worden als de server weer opstart. Dit zal het scannen van de Muziek Folder zeer versnellen.
 	PT	A informação das tags ID3 para cada ficheiro MP3 pode ser guardada para que esteja disponível quando o servidor for reiniciado. Esta opção aumenta a velocidade de indexação dos ficheiros.
 	SE	ID3-informationen från varje MP3-fil kan sparas när servern stoppas och laddas in igen när server startas igen. Detta snabbar upp inläsningen av musikmappen.
@@ -2545,9 +2552,11 @@ SETUP_ANIMATIONLEVEL_DESC
 
 SETUP_BUILDITEMSPERPASS
 	EN	Build Items Per Pass
+	FR	Nombre d'éléments par passe
 
 SETUP_BUILDITEMSPERPASS_DESC
 	EN	To avoid interrupting the music, SlimServer builds long lists in chunks. This setting determines how many items to build in a single pass.
+	FR	Pour ne pas interrompre la musique, le SlimServer génère les listes longues en plusieurs passes. Ce réglage détermine le nombre d'éléments générés à chaque passe.
 
 SETUP_LONGDATEFORMAT
 	DE	Format des langen Datums
@@ -3061,7 +3070,7 @@ SETUP_REMOTESTREAMTIMEOUT_OK
 SETUP_REMOTESTREAMTIMEOUT_DESC
 	DE	Sie können die Dauer definieren, während der SlimServer versuchen wird, Internet Radio Stationen oder andere Quelle zu erreichen. Geben Sie die Wartezeit in Sekunden an.
 	EN	You can set the length of time that the SlimServer will try to connect to an internet radio station or other source before giving up. Enter the amount of time, in seconds, below.
-	FR	Vous pouvez régler la durée maximum pendant laquelle le SlimServer tentera de se connecter à une radio internet ou à une autre source.  Entrez une valeur en secondes ci-dessous.
+	FR	Vous pouvez régler la durée maximum pendant laquelle le SlimServer tentera de se connecter à une radio internet ou à une autre source distante.  Entrez une valeur en secondes ci-dessous.
 
 SETUP_REMOTESTREAMTIMEOUT_CHOOSE
 	DE	Internet Radio Timeout (Sekunden):
@@ -3074,7 +3083,7 @@ MP3DIR
 	EN	Your Music Folder
 	ES	Su carpeta de música
 	FI	Musiikkikansiosi
-	FR	Votre dossier de musique
+	FR	Dossier de musique
 	NL	Uw Muziek Folder
 	NO	Din musikkfolder
 	PT	Pasta de Música Pessoal
@@ -3804,6 +3813,10 @@ COMPOSER
 	PT	Compositor
 	SE	Kompositör
 
+CONDUCTOR
+	EN	Conductor
+	FR	Chef d'Orchestre
+
 BAND
 	DE	Band/Orchester
 	DK	Band/Orkester
@@ -3882,6 +3895,12 @@ MOV
 	NO	QuickTime AAC eller film
 	PT	QuickTime AAC of Ficheiro Movie
 	SE	Quicktime AAC eller film
+
+FLC
+	EN	FLAC
+
+SHN
+	EN	Shorten
 
 AIF
 	EN	AIFF
@@ -5155,7 +5174,7 @@ PLAYER_NEEDS_UPGRADE
 PLAYER_NEEDS_UPGRADE_DETAILS
 	DE	Die Software in ihrer Squeezebox muss aktualisiert werden.  Bitte drücken Sie den BRIGHTNESS Knopf auf der Fernsteuerung und halten ihn gedrückt, bis ihre Squeezebox anzeigt, dass das Update installiert wird. Dieser Vorgang dauert nur wenige Sekunden.
 	EN	The software in your Squeezebox needs to be updated to the latest version.  Please press and hold the BRIGHTNESS button on your remote until the display on your Squeezebox indicates that the update has begun.  The update only takes a few seconds.
-	FR	Le logiciel de votre Squeezebox doit être mise à jour. Veuillez appuyer et laisser appuyer le bouton BRIGHTNESS de votre télécommande jusqu'à ce que la Squeezbox indique la mise à jour. Cette procédure sera finit après quelques secondes.
+	FR	Le logiciel de votre Squeezebox doit être mis à jour. Veuillez appuyer et laisser appuyer le bouton BRIGHTNESS de votre télécommande jusqu'à ce que la Squeezbox indique la mise à jour. Cette procédure prendra quelques secondes.
 
 PLAYER_NEEDS_UPGRADE_1
 	DE	Squeezebox Software Update
@@ -5170,7 +5189,7 @@ PLAYER_NEEDS_UPGRADE_2
 PLAYER_UPGRADE_INSTRUCTIONS
 	DE	Falls die IP Adresse ihres Players nicht angezeigt wirde, drücken Sie den Knopf BRIGHTNESS und lassen ihn gedrückt, bis diese erscheint. Geben Sie dann die angezeigte IP Adresse hier ein:
 	EN	If the IP address of your player is not displayed on its screen, press and hold the BRIGHTNESS button until it is.  Then enter the IP address displayed on the screen here:
-	FR	Si l'adresse IP de votre lecteur n'est pas affichée sur son écran, appuyez et laissez appuyé BRIGHTNESS jusqu'à ce qu'elle est affichée. Puis entrez l'adresse ici:
+	FR	Si l'adresse IP de votre lecteur n'est pas affichée sur son écran, appuyez et laissez appuyé BRIGHTNESS jusqu'à ce qu'elle soit affichée, puis entrez l'adresse ici :
 
 UPGRADE_COMPLETE_DETAILS
 	DE	Update abgeschlossen.

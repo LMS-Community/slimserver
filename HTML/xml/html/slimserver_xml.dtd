@@ -341,6 +341,7 @@ one of genre/artist/album info.
 						(artist, artist_browse_url)?,
 						(album, album_browse_url)?,
 						(composer, composer_browse_url)?,
+						(conductor, conductor_browse_url)?,
 						track?, 
 						type?, 
 						duration?, 
@@ -371,6 +372,8 @@ one of genre/artist/album info.
 <!-- i.e. browse by artists with artist=composer -->
 <!ELEMENT composer (#PCDATA)>
 <!ELEMENT composer_browse_url (#PCDATA)>
+<!ELEMENT conductor (#PCDATA)>
+<!ELEMENT conductor_browse_url (#PCDATA)>
 <!ELEMENT track (#PCDATA)>
 <!ELEMENT type (#PCDATA)>
 <!ELEMENT duration (#PCDATA)>				<!-- in mm:ss                    -->
@@ -413,6 +416,7 @@ to various related tidbits.
 					(artist, artist_browse_url)?,
 					(album, album_browse_url)?,
 					(composer, composer_browse_url)?,
+					(conductor, conductor_browse_url)?,
 					track?, 
 					type?, 
 					duration?, 
@@ -423,7 +427,7 @@ to various related tidbits.
 					tagversion?, 
 					modtime?, 
 					song_url?, 
-					path,? 
+					path?, 
 					coverart?,
 					mixable?
 				)>

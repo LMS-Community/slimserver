@@ -5,8 +5,8 @@
 
 <h4>Overview</h4>
 
-<p><b>Note: This document describes the previous version of the SLIMP3 protocol.  This document will be updated to 
-accurately reflect the current protocol.  It also doesn't describe the Squeezebox control protocol.  Sorry.</b>
+<p>This documents the SLIMP3 protocol, as implemented in the 5.0.1 server.  The
+protocol is UDP based.
 The SLIMP3 communicates using a custom UDP-based protocol. This protocol
 is designed to be extremely light-weight. It gives the server low-level
 access to the hardware and full control over the user interface, so as to
@@ -14,13 +14,14 @@ mimize the amount of hardware and software required on the client side.
 </p>
 
 <p>
-All packets are preceded by an 18-byte header. The first byte in this
-header is a token which indicates the format of the rest of the header.
-Some kinds of packets may have also have variable amount data of
-after the header. Variable length data is not delimited - the length is taken from the UDP header. All
-numbers are unsigned integers, in network order.
-The server listens on port 1069, and replies to the source port of the
-packets it receives from the client.
+All packets are preceded by an 18-byte header. The first byte in this header
+is a token which indicates the format of the rest of the header. Some kinds of
+packets may have also have variable amounts of data after the header. Variable
+length data is not delimited - the length is taken from the UDP header. All
+numbers are unsigned integers, in network order. The server listens on port
+1069, and replies to the source port of the packets it receives from the
+client.  The server identifies individual clients by MAC address.  The last 6
+bytes of any Client -> Server message are the client's MAC address. 
 </p>
 
 <p> </p><hr><p> </p>
@@ -32,22 +33,24 @@ packets it receives from the client.
 </p>
 <blockquote>
 
-<pre><p>
-Field    Value/Description
-
-0        'D' as in "discovery"
-1	 reserved
-2..5	 server's IP address, or 0.0.0.0
-6..7	 server's port
-8..17	 reserved
-</p></pre>
+<pre>
+Field   Value/Description 
+0       'D' as in "discovery" 
+1       reserved 
+2..5    server's IP address, or 0.0.0.0 
+6..7    server's port 
+8..17   reserved
+</pre>
 
 <p>
-On receiving a (d)iscovery request broadcast (see below) from a supported client, the server replies with a unicast
-(D)iscovery response, containing the IP and port number that the client should contact. If the server's IP address is left
-blank (0.0.0.0), then the client will instead get the IP address and port from the IP/UDP packet headers.  A server replying
-to a discovery request may redirect a client to another server (for load balancing) using this mechanism.  If multiple
-discovery responses are received, the client will select the first one it receives.
+On receiving a (d)iscovery request broadcast (see below) from a supported
+client, the server replies with a unicast (D)iscovery response, containing the
+IP and port number that the client should contact. If the server's IP address
+is left blank (0.0.0.0), then the client will instead get the IP address and
+port from the IP/UDP packet headers. A server replying to a discovery request
+may redirect a client to another server (for load balancing) using this
+mechanism. If multiple discovery responses are received, the client will
+select the first one it receives.
 </p>
 
 </blockquote>
@@ -58,99 +61,58 @@ discovery responses are received, the client will select the first one it receiv
 
 <blockquote>
 
-<pre><p>
-Field    Value/Description
-
-0        'h' as in "hello"
-1..17	 reserved
-</p></pre>
+<pre>
+Field   Value/Description 
+0       'h' as in "hello" 
+1..17   reserved
+</pre>
 
 <p>
-This is used by the server to determine if previous known clients are up, and to obtain the model and firmware revision of
-those clients. Clients reply with another (h)ello, see below.
+This is used by the server to determine if previous known clients are up, and
+to obtain the model and firmware revision of those clients. Clients reply with
+another (h)ello, see below.
 </p>
 </blockquote>
 
 <p>
-<b>'l' - Send data to the lcd/vfd display</b>
+<b>'l' - Send data to the lcd/vfd display
+</b>
 </p>
 <blockquote>
 
-<pre><p>
-Field    Value/Description
-
-0        'l' as in "lcd"
-1..17    reserved (ignored)
-18...    variable length string of 16-bit codes
-</p></pre>
+<pre>
+Field   Value/Description 
+0       'l' as in "lcd" 
+1..17   reserved (ignored) 
+18...   variable length string of 16-bit codes
+</pre>
 
 <p>
 The Noritake vacuum fluorescent display used in the SLIMP3 implements the
 standard Hitachi LCD interface, plus additional codes for controlling
-brightness. The data sheet is in CVS under docs/datasheets. The SLIMP3
-protocol allows both "character data" and "commands" to be sent directly
-to the display. It also allows you to insert a delay between characters.
-This is used to insert the required delay after the "clear screen"
-command, and can also be used to create animated sequences. The delay
-feature is not currently used by the server, and probably shouldn't be
-used in its current implementation, because the player has to spin for the
-specified time and can not be interrupted. Instead, delays should be
-implemented in an interruptible manner on the server side.
+brightness. The data sheet is in CVS under docs/datasheets. The SLIMP3 protocol
+allows both "character data" and "commands" to be sent directly to the display.
+It also allows you to insert a delay between characters. This is used to insert
+the required delay after the "clear screen" command, and can also be used to
+create animated sequences. The delay feature is not currently used by the
+server, and probably shouldn't be used in its current implementation, because
+the player has to spin for the specified time and can not be interrupted.
+Instead, delays should be implemented in an interruptible manner on the server
+side.
 </p>
 
 <p>
 The 16-bit codes are:
 </p>
 
-<pre><p>
+<pre>
 00XX, where XX specifies a delay in ms, up to 255
 02XX, where XX is a command
 03XX, where XX is one of the 256 characters supported by the display
-</p></pre>
+</pre>
 
 </blockquote>
 
-<p>
-<b>'s' - stream control</b>
-</p>
-<blockquote>
-
-<pre><p>
-Field    Value/Description
-
-0        's' as in "stream"
-1        One of three control codes
-2	 Delay in ms before executing the command
-3..17    Reserved
-
-</p></pre>
-
-<p>
-This tells the player to start, pause, or unpause the stream. 
-The three control codes are:
-</p>
-
-<pre><p>
-0x01	Reset the buffer and start a new stream
-0x02	Pause playback
-0x04	Resume playback
-0x08    Enable buffer usage display (for debugging)
-</p></pre>
-
-<p>
-To synchronize multiple players, combine the "start" and "pause" codes
-(0x03) to tell the player to fill its buffer without playing anything.
-Then, send "resume" commands to each of the players to make them unpause
-the stream. You can specify a delay in ms before the command takes effect,
-if necessary.
-</p>
-
-<p>
-If 0x08 is set, the SLIMP3 will display its buffer usage in the top left corner of the display, 
-as an 8-bit hex value. 
-</p>
-
-</blockquote>
 
 <p>
 <b>'m' - write MPEG data into the player's buffer</b>
@@ -158,21 +120,34 @@ as an 8-bit hex value.
 
 <blockquote>
 
-<pre><p>
-Field    Value/Description
-
-0        'm' as in "mpeg"
-1        reserved
-2..3     16-bit address to write into the player's 1Mbit buffer (16-bit words)
-4..17    reserved
-18..     variable length string of data (length must be even # of bytes)
-</p></pre>
+<pre>
+Field   Value/Description 
+0       'm' as in "mpeg" 
+1       control signal
+2..5    reserved (used in earlier protocols)
+6..7    write pointer
+8..9    reserved
+10..11  sequence number
+12..17  reserved 
+18..    variable length string of data (length must be even # of bytes)
+</pre>
 
 
 <p>
-The operation of the player's buffer and the workings of the streaming
-protocol are covered in the
-last section of this document, "Streaming".
+This message feeds data into the client's buffer, and also controls whether
+the decoder is running.  The control signal indicates what the decoder should
+be doing:
+</p>
+
+<pre>
+        0       decoding
+        1       stopped (but do not reset buffer)
+        3       stopped, reset read pointer to 0
+</pre>
+
+<p>The write pointer gives the address in the buffer to which the data should be
+written.  The sequence number is an identifier for the packet.  The client must
+acknowledge each MPEG data packet received with an "ack" message.
 </p>
 
 </blockquote>
@@ -183,14 +158,12 @@ last section of this document, "Streaming".
 
 <blockquote>
 
-<pre><p>
-
+<pre>
 Field    Value/Description
-
 0        '2' as in "i2c"
 1..17    reserved
 18..     string of i2c commands and data  
-</p></pre>
+</pre>
 
 <p>
 The protocol allows the i2c bus to be manipulated down to the level of
@@ -199,14 +172,14 @@ sent after the header is a string of these operations, specified as
 follows:
 </p>
 
-<pre><p>
+<pre>
 wX   write the byte X onto the bus
 r    read a byte from the bus
 s    start
 p    stop
 a    ack
 n    nack
-</p></pre>
+</pre>
 
 <p>
 The client acknowledges all i2c packets. See '2' under the
@@ -232,18 +205,21 @@ the i2c spec sheet in PDF format.
 
 <blockquote>
 
-<pre><p>
-Field    Value/Description
-
-0        'd' as in "discovery"
-1	 Device ID, '1' for SLIMP3
-2	 Firmware rev, eg 0x11 for version 1.1
-3..17	 reserved
-</p></pre>
+<pre>
+Field   Value/Description 
+0       'd' as in "discovery" 
+1       reserved
+2       Device ID, '1' for SLIMP3 
+3       Firmware rev, eg 0x11 for version 1.1 
+4..11   reserved
+12..17  MAC address
+</pre>
 
 <p>
-This packet is sent to the broadcast address on port 1069. The client sends this during startup to discover the server's
-IP address, after the client has configured his own IP interface. The server replies with a unicast 'D' packet - see above.
+This packet is sent to the broadcast address on port 1069. The client sends
+this during startup to discover the server's IP address, after the client has
+configured his own IP interface. The server replies with a unicast 'D' packet -
+see above.  Firmware v2.2 identifies itself as 1.1.
 </p>
 
 </blockquote>
@@ -253,18 +229,24 @@ IP address, after the client has configured his own IP interface. The server rep
 </p>
 
 <blockquote>
-<pre><p>
-Field    Value/Description
-
-0        'h' as in "hello"
-1	 Device ID, '1' for SLIMP3
-2	 Firmware rev, eg 0x11 for version 1.1
-3..17	 reserved
-</p></pre>
+<pre>
+Field   Value/Description 
+0       'h' as in "hello" 
+1       Device ID, '1' for SLIMP3 
+2       Firmware rev, eg 0x11 for version 1.1 
+3..11   reserved
+12..17  MAC address
+</pre>
 
 <p>
-The SLIMP3 sends a hello packet to the server when it first starts up, and whenever it receives a hello from the server. This
-is for the server to learn that a new client is ready, or for the server to query a client to see if here's still there.
+The SLIMP3 sends a hello packet to the server when it first starts up, and
+whenever it receives a hello from the server. This is for the server to learn
+that a new client is ready, or for the server to query a client to see if
+here's still there.
+</p>
+<p>
+NB whilst this may be what the client sends, the server is only interested in
+the MAC address, and ignores thee device id and firmware completely.
 </p>
 </blockquote>
 
@@ -274,41 +256,18 @@ is for the server to learn that a new client is ready, or for the server to quer
 
 <blockquote>
 
-<pre><p>
-Field    Value/Description
-
-0        'i' as in "IR"
-1	 0x00
-2..5	 player's time since startup in ticks @625 KHz
-6        0xFF (will eventually be an identifier 
-         for different IR code sets)
-7        number of meaningful bits - always 16 (0x10) for JVC
-8..11	 the 32-bit IR code
-12..17   reserved
-</p></pre>
-</blockquote>
-
-<p>
-<b>'r' - request stream data</b>
-</p>
-<blockquote>
-
-<p>
 <pre>
-Field    Value/Description
-
-0        'r' as in "request"
-1        reserved
-2..3     write pointer (client is requesting data starting 
-         at this address)
-4..5     read pointer (decoder is currently reading out of 
-         the buffer at this address - not implemented yet)
-6..17    reserved
-
+Field   Value/Description 
+0       'i' as in "IR" 
+1       0x00 
+2..5    player's time since startup in ticks @625 KHz 
+6       0xFF (will eventually be an identifier for different IR code sets) 
+7       number of meaningful bits - always 16 (0x10) for JVC 
+8..11   the 32-bit IR code 
+12..17  MAC address
 </pre>
-</p>
-
 </blockquote>
+
 
 <p>
 <b>'2' - i2c response</b>
@@ -318,7 +277,6 @@ Field    Value/Description
 <p>
 <pre>
 Field    Value/Description
-
 0        '2' as in "i2c"
 1..17    reserved
 18...    string of bytes in response to the requested i2c 
@@ -330,8 +288,62 @@ Field    Value/Description
 
 <p> </p><hr><p> </p>
 
+<p>
+<b>'a' - ack response</b>
+</p>
+
+<blockquote>
+<p>
+<pre>
+Field    Value/Description
+
+0        'a' as in ack
+1..5     reserved
+6..7     write pointer
+8..9     read pointer
+10..11   sequence number
+12..17   MAC address
+</pre>
+</blockquote>
+
+
+<p>
+This packet is sent in response to an mpeg data packet.  Write pointer is
+ignored by the server (this makes sense, because the client no longer
+maintains the write pointer).  The read pointer is the position in the buffer
+that the decoder is reading from.  The sequence number is the sequence number
+from the packet being acknowledged.
+</p>
+
 <h4>Streaming and Buffering</h4>
 <p> </p>
+
+<p>
+The SLIMP3's buffer chip is a 128K x 8 (1Mbit) SRAM. It is presented to the
+server as a 64K x 16 circular buffer.  The server sends packets to the client,
+with the address in the buffer where they are to be stored, and with a
+sequence identifier.  The client acks each packet as it receives it.  The
+server ensures that each packet has been acknowledged by the client, and will
+resend any packets that are not acknowledged promptly.  Once the server has
+filled the client's buffer it will send zero length data packets, and will
+monitor the read pointer returned in the client's acknowledgement, sending
+further packets as necessary to keep the buffer full.
+</p>
+
+<p>
+The read pointer is maintained by the client, and is the position from which
+the decoder is currently reading.  The server can order this read pointer to
+be reset to the beginning of the buffer by sending a control code of "3" to
+the client in a data packet.  These control codes also control whether the
+decoder is running or not (see 'm' write MPEG data).
+</p>
+
+<p>
+At the start of each track, the server will send a number of packets with the
+control set to "3", in order to allow the client to build up a small buffer
+before starting decoding.  The control with then switch to "0".  "1" is used
+to pause the player.
+</p>
 
 <p>
 The SLIMP3's buffer chip is a 128K x 8 (1Mbit) SRAM.  It is presented to the server as a 64K
@@ -349,15 +361,6 @@ only when the buffer usage drops below the "almost full" level.
 <p>
 Timeouts due to a lost packet are handled by the client. It the SLIMP3 does not receive a
 response from the server after 100ms, then it sends the request again.
-</p>
-
-<p>
-This is a pretty simple streaming protocol, intended only for use on low-latency networks. A
-future protocol will behave in a somewhat TCP-like fashion, with the server handling
-timeouts, maintaining multiple packets in flight, and taking responsibility for the client's
-buffer. The client will simply acknowledge each packet, instead of requesting data at a
-particular offset.  The specification for the new streaming protocol (and why we don't just
-use TCP) will be discussed in another document.
 </p>
 
 <p> </p><hr><p> </p>
@@ -396,15 +399,6 @@ fix your gateway setting).
 <p>
 The player will echo any packet sent to it on UDP port 7. This could be used to obtain an
 RTT estimate. Unlike ping, it does not cause anything to be displayed on the screen.
-</p>
-</blockquote>
-
-<p>
-<b>TCP - experimental/future</b>
-</p>
-<blockquote>
-<p>
-Doesn't do much right now. You can connect on port 23 but that's about it.
 </p>
 </blockquote>
 

@@ -308,6 +308,9 @@ sub new {
 
 	$client->paddr($paddr);
 
+	# Tell the xPL module that a new client has connected
+	Slim::Control::xPL::newClient($client);
+
 	return $client;
 }
 

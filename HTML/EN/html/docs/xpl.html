@@ -1,0 +1,84 @@
+[SET pageicon help]
+[SET title SlimServer xPL Support]
+[SET techinfo 1]
+[INCLUDE helpheader.html]
+
+<h4>Introduction</h4>
+<p>The SlimServer software includes native support for the xPL home automation protocol.
+xPL is an open standard, intended to permit the control and monitoring of devices throughout the home.
+The purpose of xPL is to provide an efficient, unified 
+mechanism for devices to communicate with each other, and with an intelligent house manager.
+This approach leads to a truly integrated home, and makes it very 
+easy to accomplish tasks which in the past would have required custom programming skills.
+There is xPL support for a growing list of hardware, including the popular X10 home automation 
+modules.
+</p>
+
+<h4>xPL Messages</h4>
+<p>xPL messages are text-based, and are sent on UDP port 3865.  Messages 
+are broadcast to all nodes on the network using the Ethernet broadcast address,
+allowing xPL-enabled applications, such as an intelligent house manager, to listen
+to all xPL messages and take appropriate action.</p>
+
+<p>The complete <a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=1&page=1" target="_blank">xPL Protocol Specification</a> 
+can be found on the <a href="http://www.xplproject.org.uk/" target="_blank">Official xPL Project Site</a>, and
+is recommended reading for anyone who is interested in using the xPL protocol to greatest advantage.
+</p>
+
+<h4>Enabling xPL Support in SlimServer</h4>
+<p>To enable xPL support, add the following line to your slimserver.pref file and restart the SlimServer software:
+</p>
+<blockquote>
+xplsupport = 1
+</blockquote>
+<p>Once enabled, each player that is connected to SlimServer (including software players) will generate an xPL heartbeat message, 
+alerting other nodes on the network of it's presence.
+</p>
+
+<h4>Starting an xPL Hub</h4>
+<p>To allow multiple xPL applications to run simultaniously on the same host, it is necessary to run an xPL Hub. The Hub handles all incoming xPL messages and distributes them to all xPL-enabled applications that are running
+on the local machine. There are many different hub implementations available for a variety of platforms
+including Windows and Linux. See the xPL Project Site for a complete list.
+</p>
+
+<h4>Controlling SlimServer via xPL</h4>
+<p>You can control SlimServer by sending xPL messages, either to all devices, or targetted at a particular player.
+There are a number of ways of sending an xPL message - see the xPL Project Site for a list of
+applications that support xPL, and for a variety of command-line tools.
+</p>
+<p>SlimServer can be controlled using four different types of xPL message.</p>
+<p><a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=6&page=1" target="_blank">
+audio.basic</a> messages can be used to provide basic control of SlimServer. This includes functions common to all audio players, such as play, stop, volume etc.</p>
+<p><a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=32&page=1" target="_blank">
+audio.slimserv</a> messages are used to harness the more advanced features of SlimServer, performing any of the commands that can be performed
+via the command-line interface.</p>
+<p><a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=13&page=1">remote.basic</a> messages are used to control SlimServer by simulating button presses on a remote control,
+in a similar way to the &quot;button&quot; command in the command-line interface.</p>
+<p><a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=8&page=1" target="_blank">
+osd.basic</a> messages are used to display text on a players screen.</p>
+
+<h4>SlimServer Status Messages</h4>
+<p>Each player that is connected to SlimServer will send out a heartbeat message as soon as it connects,
+and at intervals of between 5 and 30 minutes thereafter. The heartbeat message includes
+information about the player, such as the player's mode (playing, paused or stopped),
+the name of the song that is currently playing, and the text that is
+currently displayed on the player's screen.<br>
+You can request this information at any time by sending an audio.request message
+to the player you wish to query.
+</p>
+
+<h4>Remote Control Messages</h4>
+<p>When buttons are pressed on a player's remote control, it is possible to have xPL messages generated to inform
+other nodes on your network, e.g. to fire macros in your home automation software.<br>
+Operation of this feature is controlled through the xplir setting in the slimserver.pref file.
+The following values are supported:<br>
+<i>xplir = none</i> : No xPL message will be sent when a button is pressed.<br>
+<i>xplir = button</i> : An xPL message will be sent when a recognised button code is 
+received, and the name of the button will be included.<br>
+<i>xplir = raw</i> : All infra-red codes that the player can receive will cause an xPL message to be sent.
+The message will contain the raw hex value of the infra-red code. This allows the player to be used as a general purpose infra-red receiver.
+</p>
+
+
+
+[INCLUDE helpfooter.html]

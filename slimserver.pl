@@ -12,7 +12,8 @@
 #
 
 require 5.006_000;
-use strict;  # _NOPERL2EXE_
+use strict;
+
 #use diagnostics;  # don't use this as it slows down regexp parsing dramatically
 #use utf8;
 
@@ -49,22 +50,15 @@ sub Install {
 	my($Username,$Password);
 
     Getopt::Long::GetOptions(
-
         'username=s' => \$Username,
-
         'password=s' => \$Password,
-
     );
-
 
 
     if ((defined $Username) && ((defined $Password) && length($Password) != 0)) {
         $Config{UserName} = $Username;
-
         $Config{Password} = $Password;
-
     }
-
 }
 
 
@@ -103,6 +97,7 @@ use Slim::Buttons::InstantMix;
 use Slim::Player::Client;
 use Slim::Control::Command;
 use Slim::Control::CLI;
+use Slim::Control::xPL;
 use Slim::Networking::Discovery;
 use Slim::Display::Display;
 use Slim::Web::HTTP;
@@ -316,6 +311,12 @@ sub start {
 		Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
 	}
 	
+	
+	if (Slim::Utils::Prefs::get('xplsupport')) {
+		$::d_server && msg("SlimServer xPL init...\n");
+		Slim::Control::xPL::init();
+	}		
+
 	$::d_server && msg("SlimServer iTunes init...\n");
 
 # start scanning based on a timer...

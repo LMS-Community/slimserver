@@ -43,6 +43,11 @@ my %functions = (
 				Slim::Display::Animation::showBriefly($client, Slim::Display::Display::renderOverlay($line1, $line2, undef, Slim::Hardware::VFD::symbol('notesymbol')), undef,1);
 				Slim::Control::Command::execute($client, ["playlist", "loadalbum", Slim::Music::Info::genre(track($client)), Slim::Music::Info::composer(track($client)), "*"]);			
 				Slim::Control::Command::execute($client, ["playlist", "jump", "0"]);
+			} elsif ($curitem && ($curitem eq 'CONDUCTOR')) {
+				$line2 = Slim::Music::Info::conductor(track($client));
+				Slim::Display::Animation::showBriefly($client, Slim::Display::Display::renderOverlay($line1, $line2, undef, Slim::Hardware::VFD::symbol('notesymbol')), undef,1);
+				Slim::Control::Command::execute($client, ["playlist", "loadalbum", Slim::Music::Info::genre(track($client)), Slim::Music::Info::conductor(track($client)), "*"]);			
+				Slim::Control::Command::execute($client, ["playlist", "jump", "0"]);
 			} elsif ($curitem && ($curitem eq 'BAND')) {
 				$line2 = Slim::Music::Info::band(track($client));
 				Slim::Display::Animation::showBriefly($client, Slim::Display::Display::renderOverlay($line1, $line2, undef, Slim::Hardware::VFD::symbol('notesymbol')), undef,1);
@@ -78,6 +83,10 @@ my %functions = (
 				$line2 = Slim::Music::Info::composer(track($client));
 				Slim::Display::Animation::showBriefly($client, Slim::Display::Display::renderOverlay($line1, $line2, undef, Slim::Hardware::VFD::symbol('notesymbol')), undef,1);
 				Slim::Control::Command::execute($client, ["playlist", "addalbum", Slim::Music::Info::genre(track($client)), Slim::Music::Info::composer(track($client)), "*"]);			
+			} elsif ($curitem && $curitem eq 'CONDUCTOR') {
+				$line2 = Slim::Music::Info::conductor(track($client));
+				Slim::Display::Animation::showBriefly($client, Slim::Display::Display::renderOverlay($line1, $line2, undef, Slim::Hardware::VFD::symbol('notesymbol')), undef,1);
+				Slim::Control::Command::execute($client, ["playlist", "addalbum", Slim::Music::Info::genre(track($client)), Slim::Music::Info::conductor(track($client)), "*"]);			
 			} elsif ($curitem && $curitem eq 'BAND') {
 				$line2 = Slim::Music::Info::band(track($client));
 				Slim::Display::Animation::showBriefly($client, Slim::Display::Display::renderOverlay($line1, $line2, undef, Slim::Hardware::VFD::symbol('notesymbol')), undef,1);
@@ -123,6 +132,9 @@ my %functions = (
 			$push = 1;
 		} elsif ($curitem eq 'COMPOSER') {
 			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist' => Slim::Music::Info::composer(track($client)) });
+			$push = 1;
+		} elsif ($curitem eq 'CONDUCTOR') {
+			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist' => Slim::Music::Info::conductor(track($client)) });
 			$push = 1;
 		} elsif ($curitem eq 'BAND') {
 			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist' => Slim::Music::Info::band(track($client)) });
@@ -197,6 +209,11 @@ sub preloadLines {
 		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('COMPOSER').": ".Slim::Music::Info::composer($url));
 		push (@{$client->trackInfoContent}, 'COMPOSER');
 	}
+
+ 	if (Slim::Music::Info::conductor($url)) {
+ 		push (@{$client->trackInfoLines}, Slim::Music::Strings::string('CONDUCTOR').": ".Slim::Music::Info::conductor($url));
+ 		push (@{$client->trackInfoContent}, 'CONDUCTOR');
+ 	}
 
 	if (Slim::Music::Info::album($url)) {
 		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('ALBUM').": ".Slim::Music::Info::album($url));

@@ -16,6 +16,10 @@
 		<composer>{&composer}</composer>
 		<composer_browse_url><![CDATA[xml/browseid3.xml?genre=*&artist={%composer}]]></composer_browse_url>
 	[/IF]
+	[IF conductor] 
+		<conductor>{&conductor}</conductor>
+		<conductor_browse_url><![CDATA[xml/browseid3.xml?genre=*&artist={%conductor}]]></conductor_browse_url>
+	[/IF]
 	[IF track]<track>{&track}</track>[/IF]
 	[IF type]<type>{&type}</type>[/IF]
 	[IF duration]<duration>{&duration}</duration>[/IF]

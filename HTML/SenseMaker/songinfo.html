@@ -63,6 +63,12 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
               <td class=listing> <a href="browseid3.html?genre=*&amp;artist={%composer}&amp;player={%player}" target="browser">{composer}</a> 
               </td>
             </tr>
+           [/IF] [IF conductor] 
+            <tr> 
+              <td class=listing> [S CONDUCTOR]: </td>
+              <td class=listing> <a href="browseid3.html?genre=*&amp;artist={%conductor}&amp;player={%player}" target="browser">{conductor}</a> 
+              </td>
+            </tr>
             [/IF] [IF album] 
             <tr> 
               <td class=listing> [S ALBUM]: </td>

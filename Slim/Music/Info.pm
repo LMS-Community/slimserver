@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.38 2003/12/15 22:46:50 daniel Exp $
+# $Id: Info.pm,v 1.39 2003/12/18 02:36:25 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -73,7 +73,8 @@ my @infoCacheItems = (
 	'RATE', # Sample rate
 	'SAMPLESIZE', # Sample size
 	'CHANNELS', # number of channels
-	'BAND'
+	'BAND',
+	'CONDUCTOR', # conductor
 );
 
 # three hashes containing the types we know about, populated b tye loadTypesConfig routine below
@@ -206,6 +207,10 @@ sub init {
 	# get band/orchestra
 	$MP3::Info::v2_to_v1_names{'TP2'} = 'BAND';
 	$MP3::Info::v2_to_v1_names{'TPE2'} = 'BAND';	
+
+	# get conductors
+	$MP3::Info::v2_to_v1_names{'TP3'} = 'CONDUCTOR';
+	$MP3::Info::v2_to_v1_names{'TPE3'} = 'CONDUCTOR';
 
 	#turn on unicode support
 #	if (!MP3::Info::use_mp3_utf8(1)) {	
@@ -1032,6 +1037,11 @@ sub composer {
 sub band {
 	my $file = shift;
 	return (info($file,'BAND'));
+}
+
+sub conductor {
+	my $file = shift;
+	return (info($file,'CONDUCTOR'));
 }
 
 sub album {

@@ -23,61 +23,78 @@ use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.5 $,10);
+$VERSION = substr(q$Revision: 1.6 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_SNOW');}
 
 sub strings() { return '
 PLUGIN_SCREENSAVER_SNOW
 	EN	Snow Screensaver
+	FR	Ecran de veille Neige
 
 PLUGIN_SCREENSAVER_SNOW_SETTINGS
 	EN	Snow Screensaver settings
+	FR	Réglages Ecran de veille Neige
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATE
 	EN	Select Current Screensaver
+	FR	Choisir écran de veille courant
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATE_TITLE
 	EN	Current Screensaver
+	FR	Ecran de veille courant
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATED
 	EN	Use Snow as current screensaver
+	FR	Utiliser Neige comme écran de veille
 
 PLUGIN_SCREENSAVER_SNOW_DEFAULT
 	EN	Use default screensaver (not Snow)
+	FR	Utiliser écran de veille par défaut (hors Neige)
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY
 	EN	Quantity of snow
+	FR	Intensité neige
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
 	EN	Snow Screensaver: Quantity of snow
+	FR	Ecran de veille neige: Intensité
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
 	EN	Light flurries
+	FR	Quelques flocons
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
 	EN	Christmassy
+	FR	C\'est Noël !
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
 	EN	Blizzard
+	FR	Tempête
 
 PLUGIN_SCREENSAVER_SNOW_STYLE
 	EN	Style of snow
+	FR	Type neige
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
 	EN	Snow Screensaver: Style of snow
+	FR	Ecran de veille Neige: Type
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_0
 	EN	Now Playing, snow falling behind
+	FR	Lecture + neige en arrière-plan
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_1
 	EN	Now Playing, snow falling in front
+	FR	Lecture +  neige en avant-plan
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_2
 	EN	Date/Time
+	FR	Date/Heure
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_3
 	EN	Just snow
+	FR	Neige seule
 
 '};
 
