@@ -44,6 +44,9 @@ sub parseList {
 	my $parser;
 	my @items = ();
 
+	# This should work..
+	binmode($file, ":encoding($Slim::Utils::Misc::locale)");
+
 	if (exists $playlistInfo{$type} && ($parser = $playlistInfo{$type}->[0])) {
 		return &$parser($file, $base, $list);
 	}
@@ -236,14 +239,14 @@ sub parseCUE {
 
 	# This is needed for readTags
 	my $ds       = Slim::Music::Info::getCurrentDataStore();
-	my $trackObj = $ds->objectForUrl($filename, 1) || do {
+	my $wholeFile = $ds->objectForUrl($filename, 1) || do {
 
 		$::d_parse && Slim::Utils::Misc::msg("Warning - couldn't get object for file: $filename !\n");
 		return;
 	};
 
 	# calc song ending times from start of next song from end to beginning.
-	my $lastpos = (defined $tracks{$currtrack}->{'END'}) ? $tracks{$currtrack}->{'END'} : $trackObj->secs();
+	my $lastpos = (defined $tracks{$currtrack}->{'END'}) ? $tracks{$currtrack}->{'END'} : $wholeFile->secs();
 
 	for my $key (sort {$b <=> $a} keys %tracks) {
 
@@ -259,16 +262,20 @@ sub parseCUE {
 	for my $key (sort {$a <=> $b} keys %tracks) {
 
 		my $track = $tracks{$key};
+	
 		if (!defined $track->{'START'} || !defined $filename ) { next; }
 
 		if (!defined $track->{'END'}) {
 
-			$ds->readTags($trackObj);
+			$ds->readTags($wholeFile);
 
-			$track->{'END'} = $trackObj->secs();
+			$track->{'END'} = $wholeFile->secs() || '';
 		}
 
 		my $url = "$filename#".$track->{'START'}."-".$track->{'END'};
+
+		my $trackObj = $ds->objectForUrl($url, 1);
+
 		$::d_parse && Slim::Utils::Misc::msg("    url: $url\n");
 
 		push @items, $url;
