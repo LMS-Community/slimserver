@@ -454,6 +454,10 @@ sub needsUpgrade {
 	return 0;
 }
 
+sub signalStrength {
+	return undef;
+}
+
 sub id {
 	my $r = shift;
 	@_ ? ($r->[0] = shift) : $r->[0];

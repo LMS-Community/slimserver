@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.9 2003/10/09 15:27:37 kdf Exp $
+#	$Id: Information.pm,v 1.10 2003/10/09 18:52:02 dean Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -47,7 +47,7 @@ use Slim::Utils::Strings qw(string);
 use strict;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.9 $,10);
+$VERSION = substr(q$Revision: 1.10 $,10);
 
 my @main_list = qw(
     library
@@ -64,14 +64,8 @@ my @library_list = (
     [ 'GENRES',       'int',     0,  sub { Slim::Music::Info::genreCount([],[],[],[]) } ],
 );
 
-my @player_list = (
-    [ 'PLAYER_NAME',  'string',  1,  sub { Slim::Utils::Prefs::clientGet(shift,'playername') } ],
-    [ 'PLAYER_MODEL', 'string',  1,  sub { shift->model() } ],
-    [ 'FIRMWARE',     'string',  1,  sub { shift->revision } ],
-    [ 'PLAYER_IP',    'string',  1,  sub { shift->ip } ],
-    [ 'PLAYER_PORT',  'string',  1,  sub { shift->port } ],
-    [ 'PLAYER_MAC',   'string',  1,  sub { uc(shift->macaddress) } ],
-);
+my @player_list = ();
+
 
 my @server_list = (
     [ 'VERSION',      'string',  0,  sub { $::VERSION } ],
@@ -345,9 +339,19 @@ sub setmode_submenu {
 sub setMode {
 	my $client = shift;
 
-	if ($client->model eq 'squeezebox') {
+	@player_list = ( 
+		[ 'PLAYER_NAME',  'string',  1,  sub { Slim::Utils::Prefs::clientGet(shift,'playername') || '' } ],
+		[ 'PLAYER_MODEL', 'string',  1,  sub { shift->model() } ],
+		[ 'FIRMWARE',     'string',  1,  sub { shift->revision } ],
+		[ 'PLAYER_IP',    'string',  1,  sub { shift->ip } ],
+		[ 'PLAYER_PORT',  'string',  1,  sub { shift->port } ],
+		[ 'PLAYER_MAC',   'string',  1,  sub { uc(shift->macaddress) } ],
+	);
+
+	if ($client->signalStrength) {
 		push (@player_list,[ 'PLAYER_SIGNAL_STRENGTH', 'string', 1, sub { return shift->signalStrength(); } ]);
 	}
+	
 	unless ($modes_set) {
 		$modes_set = 1;
 		foreach (keys %menu) {

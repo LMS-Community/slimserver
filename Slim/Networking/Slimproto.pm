@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.27 2003/10/09 04:19:50 dean Exp $
+# $Id: Slimproto.pm,v 1.28 2003/10/09 18:52:02 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -306,7 +306,7 @@ sub process_slimproto_frame {
 		$sock2client{$s}=$client;
 		
 		if ($client->needsUpgrade()) {
-			Slim::Hardware::VFD::vfdBrightness($client,4);
+			Slim::Hardware::VFD::vfdBrightness($client,$Slim::Hardware::VFD::MAXBRIGHTNESS);
 			Slim::Buttons::Block::block($client, string('PLAYER_NEEDS_UPGRADE_1'), string('PLAYER_NEEDS_UPGRADE_2'));
 		} else {
 			Slim::Buttons::Block::unblock($client);
