@@ -33,7 +33,7 @@ our %contributorToRoleMap = (
 	$class->add_constructor('bandsFor'        => "track = ? AND role = $contributorToRoleMap{'BAND'}");
 }
 
-tie my %_cache, 'Tie::Cache::LRU', 5000;
+tie our %_cache, 'Tie::Cache::LRU::Expires', EXPIRES => 1200, ENTRIES => 25;
 
 sub add {
 	my $class      = shift;

@@ -19,22 +19,6 @@ use base 'Slim::DataStores::DBI::DataModel';
 	$class->has_many(tracks => 'Slim::DataStores::DBI::Track', { order_by => 'tracknum'});
 }
 
-tie my %_cache, 'Tie::Cache::LRU', 5000;
-
-sub searchTitle {
-	my $class   = shift;
-	my $pattern = shift;
-
-	s/\*/%/g for @$pattern;
-
-	my %where   = ( titlesort => $pattern, );
-	my $findKey = join(':', @$pattern);
-
-	$_cache{$findKey} ||= [ $class->searchPattern('albums', \%where, ['titlesort']) ];
-
-	return wantarray ? @{$_cache{$findKey}} : $_cache{$findKey}->[0];
-}
-
 1;
 
 __END__

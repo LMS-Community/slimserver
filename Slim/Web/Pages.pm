@@ -2039,6 +2039,13 @@ sub browseid3 {
 		'song'   => 'track'
 	);
 
+	my %queryMap = (
+		'genre'  => 'genre.name',
+		'artist' => 'artist.name',
+		'album'  => 'album.title',
+		'track'  => 'track.title'
+	);
+
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
 	$params->{'level'} = 0;
@@ -2066,9 +2073,9 @@ sub browseid3 {
 
 			# Search for each real name - normalize the query,
 			# then turn it into the ID suitable for browsedb()
-			$params->{$category} = (@{$ds->search(
+			$params->{$category} = (@{$ds->find(
 				$category,
-				[ Slim::Utils::Text::ignoreCaseArticles($params->{$category}) ]
+				{ $queryMap{$category} => Slim::Utils::Text::ignoreCaseArticles($params->{$category}) }
 			)})[0]->id();
 		}
 	}

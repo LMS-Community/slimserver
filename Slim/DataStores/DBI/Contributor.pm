@@ -17,24 +17,8 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 our @fields = qw(contributor artist composer conductor band);
 
-tie our %_cache, 'Tie::Cache::LRU', 5000;
-
 sub contributorFields {
 	return \@fields;
-}
-
-sub searchName {
-	my $class   = shift;
-	my $pattern = shift;
-
-	s/\*/%/g for @$pattern;
-
-	my %where   = ( namesort => $pattern, );
-	my $findKey = join(':', @$pattern);
-
-	$_cache{$findKey} ||= [ $class->searchPattern('contributors', \%where, ['namesort']) ];
-
-	return wantarray ? @{$_cache{$findKey}} : $_cache{$findKey}->[0];
 }
 
 1;

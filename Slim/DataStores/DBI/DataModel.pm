@@ -216,28 +216,6 @@ sub setMetaInformation {
 	$dbh->do("UPDATE metainformation SET track_count = " . $track_count . ", total_time  = " . $total_time);
 }
 
-sub searchPattern {
-	my $class = shift;
-	my $table = shift;
-	my $where = shift;
-	my $order = shift;
-
-	my $sql  = SQL::Abstract->new(cmp => 'like');
-
-	my ($stmt, @bind) = $sql->select($table, 'id', $where, $order);
-
-	if ($::d_sql) {
-		Slim::Utils::Misc::msg("Running SQL query: [$stmt]\n");
-		Slim::Utils::Misc::msg(sprintf("Bind arguments: [%s]\n\n", join(', ', @bind))) if scalar @bind;
-	}
-
- 	my $sth = db_Main()->prepare_cached($stmt);
-
-	$sth->execute(@bind);
-
-	return [ $class->sth_to_objects($sth) ];
-}
-
 sub getWhereValues {
 	my $term = shift;
 

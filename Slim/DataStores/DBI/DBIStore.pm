@@ -303,38 +303,6 @@ sub count {
 	return $self->find($field, $findCriteria, undef, undef, undef, 1);
 }
 
-sub search {
-	my $self    = shift;
-	my $field   = shift;
-	my $pattern = shift;
-	my $sortby  = shift;
-
-	my $contributorFields = Slim::DataStores::DBI::Contributor->contributorFields();
-
-	if ($field eq 'track') {
-
-		my $items = Slim::DataStores::DBI::Track->searchTitle($pattern);
-
-		if (defined($items)) {
-			return [ grep $self->_includeInTrackCount($_), @$items ];
-		}
-
-	} elsif ($field eq 'genre') {
-
-		return Slim::DataStores::DBI::Genre->searchName($pattern);
-
-	} elsif (grep { $_ eq $field } @$contributorFields) {
-
-		return Slim::DataStores::DBI::Contributor->searchName($pattern, $field);
-
-	} elsif ($field eq 'album') {
-
-		return Slim::DataStores::DBI::Album->searchTitle($pattern);
-	}
-
-	return Slim::DataStores::DBI::Track->searchColumn($pattern, $field);
-}
-
 sub albumsWithArtwork {
 	my $self = shift;
 	
@@ -543,6 +511,17 @@ sub delete {
 			if ($time) {
 				$self->{'totalTime'} -= $time;
 			}
+		}
+
+		# Be sure to clear the track out of the cache as well.
+		if ($url eq $self->{'lastTrackURL'}) {
+			$self->{'lastTrackURL'} = '';
+		}
+
+		my $dirname = dirname($url);
+
+		if (defined $self->{'lastTrack'}->{$dirname} && $self->{'lastTrack'}->{$dirname}->url() eq $url) {
+			delete $self->{'lastTrack'}->{$dirname};
 		}
 
 		$track->delete();

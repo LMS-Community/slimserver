@@ -84,8 +84,6 @@ our %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );
 	});
 }
 
-tie our %_cache, 'Tie::Cache::LRU', 5000;
-
 our $loader;
 
 sub setLoader {
@@ -398,28 +396,6 @@ sub contributorRoles {
 	my $self = shift;
 
 	return grep { ! /contributor/ } @{ Slim::DataStores::DBI::Contributor->contributorFields() };
-}
-
-sub searchTitle {
-	my $class   = shift;
-	my $pattern = shift;
-
-	return $class->searchColumn($pattern, 'titlesort');
-}
-
-sub searchColumn {
-	my $class   = shift;
-	my $pattern = shift;
-	my $column  = shift;
-
-	s/\*/%/g for @$pattern;
-
-	my %where   = ( $column => $pattern, );
-	my $findKey = join(':', $column, @$pattern);
-
-	$_cache{$findKey} = [ $class->searchPattern('tracks', \%where, ['titlesort']) ];
-
-	return wantarray ? @{$_cache{$findKey}} : $_cache{$findKey}->[0];
 }
 
 1;

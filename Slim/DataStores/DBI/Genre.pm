@@ -15,22 +15,6 @@ use base 'Slim::DataStores::DBI::DataModel';
 	$class->has_many('genreTracks' => ['Slim::DataStores::DBI::GenreTrack' => 'genre']);
 }
 
-tie my %_cache, 'Tie::Cache::LRU', 5000;
-
-sub searchName {
-	my $class   = shift;
-	my $pattern = shift;
-
-	s/\*/%/g for @$pattern;
-
-	my %where   = ( namesort => $pattern, );
-	my $findKey = join(':', @$pattern);
-
-	$_cache{$findKey} = [ $class->searchPattern('genres', \%where, ['name']) ];
-
-	return wantarray ? @{$_cache{$findKey}} : $_cache{$findKey}->[0];
-}
-
 1;
 
 __END__
