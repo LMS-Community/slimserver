@@ -1,6 +1,6 @@
 # ShoutcastBrowser.pm Copyright (C) 2003 Peter Heslin
 # version 3.0, 5 Apr, 2004
-#$Id: ShoutcastBrowser.pm,v 1.7 2004/04/23 16:24:57 dean Exp $
+#$Id: ShoutcastBrowser.pm,v 1.8 2004/04/23 16:36:40 dean Exp $
 #
 # A Slim plugin for browsing the Shoutcast directory of mp3
 # streams.  Inspired by streamtuner.
@@ -622,22 +622,22 @@ sub setupGroup
 
     my %genre_options = (
 #			 name => 'Alphabetical',
-			 name_reverse => 'Alphabetical (reverse)',
-			 streams => 'Number of streams',
-			 streams_reverse => 'Number of streams (reverse)',
+			 name_reverse => string('SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE'),
+			 streams => string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS'),
+			 streams_reverse => string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS_REVERSE'),
 #			 keyword => 'By genre keyword',
 #			 keyword_reverse => 'By genre keyword (reverse)',
-			 default => 'Default (alphabetical)'
+			 default => string('SETUP_PLUGIN_SHOUTCASTBROWSER_DEFAULT_ALPHA')
 			);
 
     my %stream_options = (
 #			  name => 'Alphabetical',
-			 name_reverse => 'Alphabetical (reverse)',
+			 name_reverse => string('SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE'),
 			 listeners => 'Number of listeners',
 			 listeners_reverse => 'Number of listeners (reverse)',
 #			 bitrate => 'By bitrate',
 #			 bitrate_reverse => 'By bitrate (reverse)',
-			 default => 'Default (alphabetical)'
+			 default => string('SETUP_PLUGIN_SHOUTCASTBROWSER_DEFAULT_ALPHA')
 			);
 
     my %setupPrefs =
@@ -1242,40 +1242,40 @@ sub get_recent_streams
 
 sub add_recent_stream
 {
-if ($have_storable) {
-    my ($client, $new, $bitrate, $data_ref) = @_;
-
-    # Another client may have changed it since our last access
-    my $fh = FileHandle->new();
-    $fh->open("<$recent_filename");
-    flock($fh, LOCK_EX);
-    my @recent = @{ get_recent_streams($fh) };
-
-    @recent = () if (@recent == 1 and $recent[0] eq
-	Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_NONE'));
-
-    if (exists $stream_data{$recent_name}{$new})
-    {
-	my ($i) = grep $recent[$_] eq $new, 0..$#recent;
-	splice @recent, $i, 1;
-	unshift @recent, $new;
-    }
-    else
-    {
-	unshift @recent, $new;
-	pop @recent if @recent > $recent_max;
-    }
-    $streams{$position_of_recent} = \@recent;
-    $stream_data{$recent_name}{$new}{$bitrate} = $data_ref;
-
-    ## Force reload in case this is a new bitrate of an old stream
-    delete $bitrates{$position_of_recent}{0};
-    bitrate_mode_helper($client);
-
-    my $rv = store([ $stream_data{$recent_name}, \@recent ], $recent_filename);
-    warn "ShoutcastBrowser: Storing recent streams failed.\n" unless $rv;
-    $fh->close;
-}
+	if ($have_storable) {
+		my ($client, $new, $bitrate, $data_ref) = @_;
+	
+		# Another client may have changed it since our last access
+		my $fh = FileHandle->new();
+		$fh->open("<$recent_filename");
+		flock($fh, LOCK_EX);
+		my @recent = @{ get_recent_streams($fh) };
+	
+		@recent = () if (@recent == 1 and $recent[0] eq
+		Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_NONE'));
+	
+		if (exists $stream_data{$recent_name}{$new})
+		{
+		my ($i) = grep $recent[$_] eq $new, 0..$#recent;
+		splice @recent, $i, 1;
+		unshift @recent, $new;
+		}
+		else
+		{
+		unshift @recent, $new;
+		pop @recent if @recent > $recent_max;
+		}
+		$streams{$position_of_recent} = \@recent;
+		$stream_data{$recent_name}{$new}{$bitrate} = $data_ref;
+	
+		## Force reload in case this is a new bitrate of an old stream
+		delete $bitrates{$position_of_recent}{0};
+		bitrate_mode_helper($client);
+	
+		my $rv = store([ $stream_data{$recent_name}, \@recent ], $recent_filename);
+		warn "ShoutcastBrowser: Storing recent streams failed.\n" unless $rv;
+		$fh->close;
+	}
 }
 
 
@@ -1295,11 +1295,11 @@ Slim::Buttons::Common::addMode('ShoutcastStreamInfo', \%InfoFunctions,
 __DATA__
 PLUGIN_SHOUTCASTBROWSER_MODULE_NAME
 	EN	SHOUTcast Internet Radio
-	DE	SHOUTcast Sender
+	DE	SHOUTcast Internet Radio
 
 PLUGIN_SHOUTCASTBROWSER_GENRES
 	EN	SHOUTcast Genres
-	DE	SHOUTcast Kategorien
+	DE	SHOUTcast Musikstile
 
 PLUGIN_SHOUTCASTBROWSER_CONNECTING
 	EN	Connecting to SHOUTcast web site ...
@@ -1311,81 +1311,130 @@ PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
 
 PLUGIN_SHOUTCASTBROWSER_STREAMS
 	EN	Streams
+	DE	Streams (Radiostationen)
 
 PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS
 	EN	All Streams
+	DE	Alle Streams (Radiostationen)
 
 PLUGIN_SHOUTCASTBROWSER_NONE
 	EN	None
+	DE	Keine
 
 PLUGIN_SHOUTCASTBROWSER_BITRATE
 	EN	Bitrate
 
 PLUGIN_SHOUTCASTBROWSER_BITRATES
 	EN	Bitrates
+	DE	Bitraten
 
 PLUGIN_SHOUTCASTBROWSER_RECENT
 	EN	Favorites
+	DE	Favoriten
 
 PLUGIN_SHOUTCASTBROWSER_MISC
 	EN	Misc. genres
+	DE	Diverse Stile
 
 PLUGIN_SHOUTCASTBROWSER_TOO_SOON
 	EN	Try again in a minute
+	DE	Versuche es in einer Minute wieder
 
 PLUGIN_SHOUTCASTBROWSER_SORTING
 	EN	Sorting streams ...
+	DE	Sortiere Streams...
 
 SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER
 	EN	SHOUTcast Internet Radio
 
 SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER_DESC
 	EN	Browse SHOUTcast list of Internet Radio streams.  Hit rewind after changing any settings to reload the list of streams.
+	DE	Blättere durch die Liste der SHOUTcast Internet Radiostationen. Drücke nach jedem Einstellungswechsel REW, um die Liste neu zu laden.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_HOW_MANY_STREAMS
 	EN	Number of Streams
+	DE	Anzahl Streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_HOW_MANY_STREAMS_DESC
 	EN	How many streams to get.  Default is 300, maximum is 2000.
+	DE	Anzahl aufzulistender Streams (Radiostationen). Voreinstellung ist 300, das Maximum 2000.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_PRIMARY_CRITERION
 	EN	Main Sort Criterion for Genres
+	DE	Haupt Sortierkriterium für Musikstile
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_PRIMARY_CRITERION_DESC
 	EN	Primary criterion for sorting genres.
+	DE	Erstes Kriterium für die Sortierung der Musikstile
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_SECONDARY_CRITERION
 	EN	Other Sort Criterion for Genres
+	DE	Weiteres Sortierkriterium für Musikstile
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_SECONDARY_CRITERION_DESC
 	EN	Secondary criterion for sorting genres, if the primary is equal.
+	DE	Das zweite Sortierkriterium für Musikstile, falls das erste mehrere Vorkommen hat.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_PRIMARY_CRITERION
 	EN	Main Sort Criterion for Streams
+	DE	Haupt Sortierkriterium für Streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_PRIMARY_CRITERION_DESC
 	EN	Primary criterion for sorting streams.
+	DE	Erstes Kriterium für die Sortierung der Streams (Radiostationen)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_SECONDARY_CRITERION
 	EN	Other Sort Criterion for Streams
+	DE	Weiteres Sortierkriterium für Streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_SECONDARY_CRITERION_DESC
 	EN	Secondary criterion for sorting streams, if the primary is equal.
+	DE	Das zweite Sortierkriterium für Streams (Radiostationen), falls das erste mehrere Vorkommen hat.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MIN_BITRATE
 	EN	Minimum Bitrate
+	DE	Minimale Bitrate
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MIN_BITRATE_DESC
 	EN	Minimum Bitrate in which you are interested (0 for no limit).
+	DE	Minimal erwünschte Bitrate (0 für unbeschränkt).
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_BITRATE
 	EN	Maximum Bitrate
+	DE	Maximale Bitrate
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_BITRATE_DESC
 	EN	Maximum Bitrate in which you are interested (0 for no limit).
+	DE	Maximal erwünschte Bitrate (0 für unbeschränkt).
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT
 	EN	Recent Streams
+	DE	Zuletzt gehörte Streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT_DESC
 	EN	Maximum number of recently played streams to remember.
+	DE	Anzahl zu merkender Streams (Radiostationen)
+
+SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE
+	EN	Alphabetical (reverse)
+	DE	Alphabetisch (umgekehrte Reihenfolge)
+
+SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS
+	EN	Number of streams
+	DE	Anzahl Streams
+
+SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS_REVERSE
+	EN	Number of streams (reverse)
+	DE	Anzahl Streams (umgekehrte Reihenfolge)
+
+SETUP_PLUGIN_SHOUTCASTBROWSER_DEFAULT_ALPHA
+	EN	Default (alphabetical)
+	DE	Standard (alphabetisch)
+
+SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS
+	EN	Number of listeners
+	DE	Anzahl Hörer
+
+SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS_REVERSE
+	EN	Number of listeners (reverse)
+	DE	Anzahl Hörer (umgekehrte Reihenfolge)
