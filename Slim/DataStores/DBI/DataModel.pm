@@ -622,6 +622,40 @@ sub find {
 	return $objects;
 }
 
+sub print {
+	my $self   = shift;
+	my $fh	   = shift || *STDOUT;
+
+	my $class  = ref($self);
+
+	# array context lets us handle multi-column primary keys.
+	print $fh join('.', $self->id()) . "\n";
+
+	# XXX - handle meta_info here, and recurse.
+	for my $column (sort ($class->columns('All'))) {
+
+		# this is needed if the accessor was mutated.
+		$column = $class->accessor_name($column);
+
+		my $value = defined($self->$column()) ? $self->$column() : '';
+
+		next unless defined $value && $value !~ /^\s*$/;
+
+		print $fh "\t$column: ";
+
+		if (ref($value) && $value->isa('Slim::DataStores::DBI::DataModel') && $value->can('id')) {
+
+			print $fh $value->id();
+
+		} else {
+
+			print $fh $value if defined $value;
+		}
+
+		print $fh "\n";
+	}
+}
+
 1;
 
 __END__
