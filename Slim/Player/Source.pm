@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.98 2004/06/02 01:50:53 dean Exp $
+# $Id: Source.pm,v 1.99 2004/06/08 20:22:40 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -103,10 +103,11 @@ sub loadConversionTables {
 				next unless defined $command && $command !~ /^\s*$/;
 
 				$commandTable{"$inputtype-$outputtype-$clienttype-$clientid"} = $command;
-				checkBin("$inputtype-$outputtype-$clienttype-$clientid");
 			}
 		}
-
+		foreach my $profile (keys %commandTable) {
+				checkBin("$profile");
+		}
 		close CONVERT;
 	}
 }
@@ -1057,7 +1058,11 @@ sub underMax {
 	
 	my $maxRate = Slim::Utils::Prefs::setMaxRate($client);
 	return 1 if $maxRate == 0;
-	return undef if !Slim::Utils::Misc::findbin('lame');
+	my @formats = $client->formats();
+	if (!Slim::Utils::Misc::findbin('lame')) {
+		return 1 unless $formats[0] eq 'mp3';
+		return undef;
+	};
 	my $rate = (Slim::Music::Info::bitratenum($fullpath) || 0)/1000;
 	return ($maxRate >= $rate);
 }
@@ -1130,7 +1135,7 @@ sub getConvertCommand {
 
 		# only finish if the rate isn't over the limit, or the file is
 		# set to transcode to mp3 (which gets set to maxRate)
-		last if ($command && ($undermax || ($format eq "mp3")));
+		last if ($command && ((defined $undermax && $undermax) || ($format eq "mp3")));
 	}
 
 	if (!defined $command) {
