@@ -14,159 +14,629 @@ use strict;
 use Slim::Utils::Misc;
 use File::Spec::Functions qw(:ALL);
 
-
 $Slim::Player::Client::maxVolume = 100;
 $Slim::Player::Client::maxTreble = 100;
 $Slim::Player::Client::minTreble = 0;
 $Slim::Player::Client::maxBass = 100;
 $Slim::Player::Client::minBass = 0;
 
-
 # This is a hash of clientState structs, indexed by the IP:PORT of the client
 # Use the access functions.
 my %clientHash = ();
 
-# The following object contains all the state that we keep about each player.
+=head1 Object Definition
 
-# Methods:
+The following object contains all the state that we keep about each player.
 
-# client variables id and version info
-	# revision						int			firmware rev   0=unknown, 1.2 = old (1.0, 1.1, 1.2), 1.3 = new streaming protocol, 2.0 = client sends MAC address, NEC IR codes supported
-	# macaddress					string		client's MAC (V2.0 firmware)
-	# paddr							sockaddr_in client's ip and port
-		
-# client variables for slim protocol networking
-	# udpsock						filehandle	the socket we should use to talk to this client
-	# tcpsock						filehandle	the socket we should use to talk to this client
-	# RTT							float		rtt estimate (seconds)
-	# prevwptr						int			wptr at previous request - see protocol docs
- 
-	# waitforstart					bool		1 = we've sent the client the start command, and we're waiting
-	#											for him to start a new stream
-	# readytosync					bool		when starting a new synced stream, indicates whether this 
-	#											client is ready to be unpaused. 
-	# resync						bool		1 if we are in the process of resyncing clients
+=head1 Client variables id and version info
 
-# client variables for HTTP protocol clients
-	# streamingsocket				filehandle streaming socket for http clients
+=over
 
-# client variables for song data
-	# audioFilehandle					filehandle	the currently open MP3 file OR TCP stream
-	# audioFilehandleIsSocket			bool		becase Windows gets confused if you select on a regular file.
-	# chunks						array		array of references to chunks of data to be sent to client.
-	# songStartStreamTime			float		time offset at which we started streaming this song
-	# remoteStreamStartTime			float		time we began playing the remote stream
-	# pauseTime						float		time that we started pausing
+=item 
 
-# client variables for shoutcast meta information 
-	# shoutMetaPointer				int			shoutcast metadata stream pointer
-	# shoutMetaInterval				int			shoutcast metadata interval
+revision() - type: int
 
-# client variables for display
-	# vfdbrightness					int			current brightness setting of the client's VFD display, range 0..4
-	# prevline1						string		what's currently on the the client's display, line 1
-	# prevline2						string		and line 2
+	firmware rev
 
-# client variables for current playlist and mode
-	# playlist						array		playlist of songs  (when synced, use the master's)
-	# shufflelist					array		array of indices into playlist which may be shuffled (when synced, use the master's)
-	# currentsong					int			index into the playlist of the currently playing song (updated when reshuffled)
+		  0 = unknown,
+		1.2 = old (1.0, 1.1, 1.2),
+		1.3 = new streaming protocol,
+		2.0 = client sends MAC address, NEC IR codes supported
 
-	# playmode						string		'stop', 'play', or 'pause'
-	# rate							float		playback rate: 1 is normal, 0 is paused, 2 is ffwd, -1 is rew
-	# lastskip						time		last time we skipped forward or back while playing at a non-1 rate
-	# songtotalbytes				float		length of this song in bytes
-	# songduration					float		song length in seconds
-	# songoffset					int			offset in bytes to beginning of song in file
-	# songblockalign				int			block alignment of samples in file
-	# songBytes						int			number of bytes read from the current song
-	# currentplayingsong			string		current song that's playing out from player.  May not be the same as in the playlist as the client's buffer plays out.
+=item
 
-# client variables for sleep
-	# currentSleepTime				int			what the sleep time is currently set to (in minutes)
-	# sleepTime						int			time() value for when we'll sleep
+macaddress() - type: string
 
-# client variables for synchronzation
-	# master						client		if we're synchronized, 'master' points to master client
-	# slaves						clients		if we're a master, this is an array of slaves which are synced to us
-	# syncgroupid					uniqueid	unique identifier for this sync group
+	client's MAC (V2.0 firmware)
 
-# client variables are for IR processing
-	# lastirtime					int			time at which we last received an IR code (in client's 625KHz ticks)
-	# lastircode					string		the last IR command we received, so we can tell if a button's being held down
-	# lastircodebytes				string		the last IR code we received, so we can tell if a button's being held down
-	# ticspersec					int			number of IR tics per second
-	# startirhold					string		the first time the button was pressed, so we can tell how long the button is held
-	# irtimediff					float		calculated diff ir time
-	# irrepeattime					float		calculated time for repeat codes
-	# easteregg						string		IR history for the easter egg, see IR.pm
-	# epochirtime					int			epoch time that we last received an IR signal
+=item
 
-# state for button navigation
-	# modeStack						array		stack of current browse modes: 'playlist', 'browse', 'off', etc...
-	# modeParameterStack			array		stack of hashes of mode parameters for previous modes
-	# lines							\function	reference to function to display lines for current mode
+paddr() - type: sockaddr_in
 
-#
-# the remainder are temporary and global client variables are for the various button display modes
-# TODO - These don't belong in the client object
+	Client's IP and port
 
-# trackinfo mode
-	# trackInfoLines				strings		current trackinfo lines
-	# trackInfoContent				strings		content type for trackinfo lines.
+=back
 
-# browseid3 mode
-	# lastID3Selection				hash		the item that was last selected for a given browse position
+=head1 Client variables for slim protocol networking
 
-# blocked mode
-	# blocklines					strings		what to display when we're blocked.
+=over
 
-# home mode
-	# homeSelection					int			index into home selection: 'music', 'playlist', 'settings', ...
+=item
 
-# plugins mode
-	# pluginsSelection				int			index into plugins list
+udpsock() - type: filehandle
 
-# browse music folder mode
-	# pwd							string		present directory, relative to $audiodir
-	# currentDirItem				int			the index of the currently selected item (in @dirItems)
-	# numberOfDirItems				int			size of @dirItems	 FIXME this is redundant, right?
-	# dirItems						strings		list of file names in the current directory
-	# lastSelection					hash		the curdiritem (integer) that was selected last time we
-	#											were in each directory (string)
-# search mode
-	# searchSelection				int			index into search selection
-	# searchFor						string		what we are searching for from the remote: "ALBUMS", "ARTISTS", "SONGS"
-	# searchTerm					array		of characters we are searching for
-	# searchCursor					int			position of cursor (zero based)
+	the socket we should use to talk to this client
 
-	# lastLetterIndex				int			index into letters for each digit when using digits to type letters
-	# lastLetterDigit				int			last digit hit while entering text
-	# lastLetterTime				int			epoch time of previous letter
+=item
 
-# games
-	# otype							array		game obstacles
-	# opos							array		game obstacles
-	# cpos							int			game player position
-	# gplay							int			is the game playing?
+tcpsock() - type: filehandle
 
-# synchronization mode
-	# syncSelection					int			scroll selection while in the syncronization screen, 0 is to unsync
-	# syncSelections				clients		addresses of possible syncable selections
+	the socket we should use to talk to this client
 
-# browse menu mode
-	# browseMenuSelection			int			scroll selection when in browse menu
-	# 
-# settings menu mode
-	# settingsSelection				int			scroll selection when in browse menu
-	# 
+=item
+
+RTT() - type: float
+
+	rtt estimate (seconds)
+
+=item
+
+prevwptr() - type: int
+
+	wptr at previous request - see protocol docs
+
+=item
+
+waitforstart() - type: bool
+
+	1 = we've sent the client the start command, and we're waiting for him to start a new stream
+
+=item
+
+readytosync() - type: bool
+
+	when starting a new synced stream, indicates whether this client is ready to be unpaused. 
+
+=item
+
+resync() - type: bool
+
+	1 if we are in the process of resyncing clients
+
+=back
+
+=head1 client variables for HTTP protocol clients
+
+=over
+
+=item
+
+streamingsocket() - type: filehandle
+
+	streaming socket for http clients
+
+=back
+
+=head1 client variables for song data
+
+=over
+
+=item
+
+audioFilehandle() - type: filehandle
+
+	The currently open MP3 file OR TCP stream
+
+=item
+
+audioFilehandleIsSocket() - type: bool
+
+	Becase Windows gets confused if you select on a regular file.
+
+=item
+
+chunks() - type: array
+
+	array of references to chunks of data to be sent to client.
+
+=item
+
+songStartStreamTime() - type: float
+
+	time offset at which we started streaming this song
+
+=item
+
+remoteStreamStartTime() - type: float
+
+	time we began playing the remote stream
+
+=item
+
+pauseTime() - type: float
+
+	time that we started pausing
+
+=back
+
+=head1 client variables for shoutcast meta information 
+
+=over
+
+=item
+
+shoutMetaPointer() - type: int
+
+	shoutcast metadata stream pointer
+
+=item
+
+shoutMetaInterval() - type: int
+
+	shoutcast metadata interval
+
+=back
+
+=head1 client variables for display
+
+=over
+
+=item
+
+vfdbrightness() - type: int
+
+	current brightness setting of the client's VFD display, range 0..4
+
+=item
+
+prevline1() - type: string
+
+	what's currently on the the client's display, line 1
+
+=item
+
+prevline2() - type: string
+
+	and line 2
+
+=back
+
+=head1 client variables for current playlist and mode
+
+=over
+
+=item
+
+playlist() - type: array
+
+	playlist of songs  (when synced, use the master's)
+
+=item
+
+shufflelist() - type: array
+
+	array of indices into playlist which may be shuffled (when synced, use the master's)
+
+=item
+
+currentsong() - type: int
+
+	index into the playlist of the currently playing song (updated when reshuffled)
+
+=item
+
+playmode() - type: string
+
+	'stop', 'play', or 'pause'
+
+=item
+
+rate() - type: float
+
+	playback rate: 1 is normal, 0 is paused, 2 is ffwd, -1 is rew
+
+=item
+
+lastskip() - type: time
+
+	last time we skipped forward or back while playing at a non-1 rate
+
+=item
+
+songtotalbytes() - type: float
+
+	length of this song in bytes
+
+=item
+
+songduration() - type: float
+
+	song length in seconds
+
+=item
+
+songoffset() - type: int
+
+	offset in bytes to beginning of song in file
+
+=item
+
+songblockalign() - type: int
+
+	block alignment of samples in file
+
+=item
+
+songBytes	() - type: int
+
+	number of bytes read from the current song
+
+=item
+
+currentplayingsong() - type: string
+
+	current song that's playing out from player.  May not be the same as in the playlist as the client's buffer plays out.
+
+=back
+
+=head1 client variables for sleep
+
+=over
+
+=item
+
+currentSleepTime() - type: int
+
+	what the sleep time is currently set to (in minutes)
+
+=item
+
+sleepTime() - type: int
+
+	time() value for when we'll sleep
+
+=back
+
+=head1 client variables for synchronzation
+
+=over
+
+=item
+
+master() - type: client
+
+	if we're synchronized, 'master' points to master client
+
+=item
+
+slaves() - type: clients
+
+	if we're a master, this is an array of slaves which are synced to us
+
+=item
+
+syncgroupid() - type: uniqueid
+
+	unique identifier for this sync group
+
+=back
+
+=head1 client variables are for IR processing
+
+=over
+
+=item
+
+lastirtime() - type: int
+
+	time at which we last received an IR code (in client's 625KHz ticks)
+
+=item
+
+lastircode() - type: string
+
+	the last IR command we received, so we can tell if a button's being held down
+
+=item
+
+lastircodebytes() - type: string
+
+	the last IR code we received, so we can tell if a button's being held down
+
+=item
+
+ticspersec() - type: int
+
+	number of IR tics per second
+
+=item
+
+startirhold() - type: string
+
+	the first time the button was pressed, so we can tell how long the button is held
+
+=item
+
+irtimediff() - type: float
+
+	calculated diff ir time
+
+=item
+
+irrepeattime() - type: float
+
+	calculated time for repeat codes
+
+=item
+
+easteregg() - type: string
+
+	IR history for the easter egg, see IR.pm
+
+=item
+
+epochirtime	() - type: int
+
+		epoch time that we last received an IR signal
+
+=back
+
+=head1 state for button navigation
+
+=over
+
+=item
+
+modeStack() - type: array
+
+	stack of current browse modes: 'playlist', 'browse', 'off', etc...
+
+=item
+
+modeParameterStack() - type: array
+
+	stack of hashes of mode parameters for previous modes
+
+=item
+
+lines() - type: function
+
+	reference to function to display lines for current mode
+
+=back
+
+=head1 Other
+
+The remainder are temporary and global client variables are for the various button display modes
+
+TODO - These don't belong in the client object
+
+=head1 trackinfo mode
+
+=over
+
+=item
+
+trackInfoLines() - type: strings
+
+	current trackinfo lines
+
+=item
+
+trackInfoContent() - type: strings
+
+	content type for trackinfo lines.
+
+=back
+
+=head1 browseid3 mode
+
+=over
+
+=item
+
+lastID3Selection() - type: hash
+
+	the item that was last selected for a given browse position
+
+=back
+
+=head1 blocked mode
+
+=over
+
+=item
+
+blocklines() - type: strings
+
+	what to display when we're blocked.
+
+=back
+
+=head1 home mode
+
+=over
+
+=item
+
+homeSelection() - type: int
+
+	index into home selection: 'music', 'playlist', 'settings', ...
+
+=back
+
+=head1 plugins mode
+
+=over
+
+=item
+
+pluginsSelection() - type: int
+
+	index into plugins list
+
+=back
+
+=head1 browse music folder mode
+
+=over
+
+=item
+
+pwd() - type: string
+
+	present directory, relative to $audiodir
+
+=item
+
+currentDirItem() - type: int
+
+	the index of the currently selected item (in @dirItems)
+
+=item
+
+numberOfDirItems() - type: int
+
+	size of @dirItems -  FIXME this is redundant, right?
+
+=item
+
+dirItems() - type: strings
+
+	list of file names in the current directory
+
+=item
+
+lastSelection() - type: hash
+
+	the curdiritem (integer) that was selected last time we were in each directory (string)
+
+=back
+
+=head1 search mode
+
+=over
+
+=item
+
+searchSelection() - type: int
+
+	index into search selection
+
+=item
+
+searchFor() - type: string
+
+	what we are searching for from the remote: "ALBUMS", "ARTISTS", "SONGS"
+
+=item
+
+searchTerm() - type: array
+
+	of characters we are searching for
+
+=item
+
+searchCursor() - type: int
+
+	position of cursor (zero based)
+
+=item
+
+lastLetterIndex() - type: int
+
+	index into letters for each digit when using digits to type letters
+
+=item
+
+lastLetterDigit() - type: int
+
+	last digit hit while entering text
+
+=item
+
+lastLetterTime() - type: int
+
+	epoch time of previous letter
+
+=back
+
+=head1 games
+
+=over
+
+=item
+
+otype() - type: array
+
+	game obstacles
+
+=item
+
+opos() - type: array
+
+	game obstacles
+
+=item
+
+cpos() - type: int
+
+	game player position
+
+=item
+
+gplay() - type: int
+
+	is the game playing?
+
+=back
+
+=head1 synchronization mode
+
+=over
+
+=item
+
+syncSelection() - type: int
+
+	scroll selection while in the syncronization screen, 0 is to unsync
+
+=item
+
+syncSelections() - type: clients
+
+	addresses of possible syncable selections
+
+=back
+
+=head1 browse menu mode
+
+=over
+
+=item
+
+browseMenuSelection() - type: int
+
+	scroll selection when in browse menu
+
+=back
+
+=head1 settings menu mode
+
+=over
+
+=item
+
+settingsSelection() - type: int
+
+	scroll selection when in browse menu
+
+=back
+
+=cut
 
 sub new {
-	my (
-		$class,
-		$id,
-		$paddr,			# sockaddr_in
-	) = @_;
+	my ($class, $id, $paddr) = @_;
 	
 	# if we haven't seen this client, initialialize a new one
 	my $client =[];	
@@ -318,8 +788,6 @@ sub new {
 
 	return $client;
 }
-
-
 
 ###################
 # Accessors for the list of known clients
