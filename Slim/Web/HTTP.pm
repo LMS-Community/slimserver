@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.117 2004/08/30 15:16:52 dean Exp $
+# $Id: HTTP.pm,v 1.118 2004/09/02 20:57:53 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1230,7 +1230,8 @@ sub tryStreamingLater {
 =pod
 
 =HEAD1 Templates
-
+# The filltemplate code described below is not currently in use.  It has
+# been replaced by Template Toolkit
 #  all the HTML is read from template files, to make it easier to edit
 #  templates are parsed with the following rules, in this order:
 #
