@@ -136,6 +136,7 @@ sub stop {
 	}
 	$streamState{$client}='stop';
 	sendNextChunk($client);	
+	$client->bytesReceived(0);
 	return 1;
 }
 

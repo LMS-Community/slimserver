@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.78 2004/04/15 18:49:41 dean Exp $
+# $Id: Source.pm,v 1.79 2004/04/18 03:37:20 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -177,7 +177,7 @@ sub songTime {
 	my $duration	  	= $client->songduration();
 	my $byterate	  	= $duration ? ($songLengthInBytes / $duration) : 0;
 
-	my $bytesReceived 	= ($client->bytesReceived() || 0) - $client->bytesReceivedOffset();
+	my $bytesReceived 	= $client->bytesReceived() || 0;
 	my $fullness	  	= $client->bufferFullness() || 0;
 	my $realpos	  	= $bytesReceived - $fullness;
 	my $rate	  	= $client->rate();
@@ -188,7 +188,6 @@ sub songTime {
 		$::d_source && msg("Negative position calculated, we are still playing out the previous song.\n");	
 		$::d_source && msg("realpos $realpos calcuated from bytes received: " . 
 			$client->bytesReceived() . 
-			" minus bytes offset: " . $client->bytesReceivedOffset() . 
 			" minus buffer fullness: " . $client->bufferFullness() . "\n");
 
 		$realpos = 0;
@@ -239,7 +238,6 @@ sub playmode {
 					$::d_source && msg("Couldn't open song.  Stopping.\n");
 					if (!openNext($client)) {$newmode = "stop";}
 				}
-				$client->bytesReceivedOffset(0);
 			}
 			
 			# when we change modes, make sure we do it to all the synced clients.
@@ -623,7 +621,6 @@ sub resetSong {
 	# at the end of a song, reset the song time
 	$client->songtotalbytes(0);
 	$client->songduration(0);
-	$client->bytesReceivedOffset($client->bytesReceived());
 	$client->songBytes(0);
 	$client->lastskip(0);
 	$client->songStartStreamTime(0);
