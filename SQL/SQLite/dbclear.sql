@@ -1,6 +1,6 @@
-DELETE FROM metainformation;
+DELETE track_count FROM metainformation;
 
-INSERT INTO metainformation VALUES (4, 0, 0);
+DELETE total_time FROM metainformation;
 
 DELETE FROM tracks;
 

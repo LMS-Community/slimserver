@@ -106,6 +106,7 @@ CREATE TABLE albums (
   id int(10) unsigned NOT NULL auto_increment,
   title varchar(255),
   titlesort varchar(255),
+  contributors varchar(255),
   artwork_path varchar(255),
   disc  int(10) unsigned,
   discc  int(10) unsigned,

@@ -379,7 +379,7 @@ sub newTrack {
 	
 	$::d_info && Slim::Utils::Misc::msg("New track for $url\n");
 
-	($attributeHash, $deferredAttributes) = _preCheckAttributes($attributeHash, 1);
+	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($attributeHash, 1);
 
 	# Creating the track only wants lower case values from valid columns.
 	my $columnValueHash = { url => $url };
@@ -403,7 +403,7 @@ sub newTrack {
 
 	} else {
 
-		_postCheckAttributes($track, $deferredAttributes, 1);
+		$self->_postCheckAttributes($track, $deferredAttributes, 1);
 	}
 
 	$self->{'lastTrackURL'} = $url;
@@ -443,7 +443,7 @@ sub updateOrCreate {
 		Slim::Utils::Misc::bt();
 		return;
 	}
-	
+
 	if (defined($track)) {
 		delete $self->{'zombieList'}->{$track->id};
 	} else {
@@ -457,7 +457,7 @@ sub updateOrCreate {
 		$::d_info && Slim::Utils::Misc::msg("Merging entry for $url\n");
 
 		my $deferredAttributes;
-		($attributeHash, $deferredAttributes) = _preCheckAttributes($attributeHash, 0);
+		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($attributeHash, 0);
 
 		while (my ($key, $val) = each %$attributeHash) {
 			if (defined $val && exists $trackAttrs->{lc $key}) {
@@ -465,7 +465,8 @@ sub updateOrCreate {
 			}
 		}
 
-		_postCheckAttributes($track, $deferredAttributes, 0);
+		$self->_postCheckAttributes($track, $deferredAttributes, 0);
+
 		$self->updateTrack($track, $commit);
 
 	} else {
@@ -792,11 +793,14 @@ sub readTags {
 					$::d_artwork && Slim::Utils::Misc::msg("already checked artwork for $file\n");
 
 				} elsif (Slim::Utils::Prefs::get('lookForArtwork')) {
+
 					my $album = $attributesHash->{'ALBUM'};
+
 					$attributesHash->{'TAG'} = 1;
 
 					# cache the content type
 					$attributesHash->{'CT'} = $type unless defined $track->getCached('ct');
+
 					# update the cache so we can use readCoverArt without recursion.
 					$self->updateOrCreate($track, $attributesHash);
 
@@ -807,14 +811,17 @@ sub readTags {
 						($body,$contenttype,$path) = Slim::Music::Info::readCoverArtTags($file, $attributesHash);
 					}
 
+					# Greatest Hits problem - need to use contributor as the top key.
+					my $contributors = join(':', map { $_->id() } $track->contributors());
+
 					if (defined $body) {
 
 						$attributesHash->{'COVER'} = 1;
 						$attributesHash->{'THUMB'} = 1;
 
-						if ($album && !exists $self->{artworkCache}->{$album}) {
+						if ($album && !exists $self->{'artworkCache'}->{$contributors}->{$album}) {
 							$::d_artwork && Slim::Utils::Misc::msg("ID3 Artwork cache entry for $album: $filepath\n");
-							$self->setAlbumArtwork($album, $filepath);
+							$self->setAlbumArtwork($album, $contributors, $filepath);
 						}
 
 					} else {
@@ -830,9 +837,10 @@ sub readTags {
 
 						if (defined $body) {
 							$attributesHash->{'THUMB'} = $path;
-							if ($album && !exists $self->{artworkCache}->{$album}) {
+
+							if ($album && !exists $self->{'artworkCache'}->{$contributors}->{$album}) {
 								$::d_artwork && Slim::Utils::Misc::msg("Artwork cache entry for $album: $filepath\n");
-								$self->setAlbumArtwork($album, $filepath);
+								$self->setAlbumArtwork($album, $contributors, $filepath);
 							}
 						}
 					}
@@ -858,6 +866,7 @@ sub readTags {
 sub setAlbumArtwork {
 	my $self = shift;
 	my $album = shift;
+	my $contributors = shift;
 	my $filepath = shift;
 	
 	if (!Slim::Utils::Prefs::get('lookForArtwork')) {
@@ -865,7 +874,7 @@ sub setAlbumArtwork {
 	}
 
 	# only cache albums once each
-	if (!exists $self->{'artworkCache'}->{$album}) {
+	if (!exists $self->{'artworkCache'}->{$contributors}->{$album}) {
 
 		if (Slim::Music::Info::isFileURL($filepath)) {
 			$filepath = Slim::Utils::Misc::pathFromFileURL($filepath);
@@ -875,7 +884,10 @@ sub setAlbumArtwork {
 
 		$self->{'artworkCache'}->{$album} = $filepath;
 
-		my ($album) = Slim::DataStores::DBI::Album->search(title => $album);
+		my ($album) = Slim::DataStores::DBI::Album->search(
+			title => $album,
+			contributors => $contributors,
+		);
 
 		if ($album) {
 			$album->artwork_path($filepath);
@@ -1019,6 +1031,7 @@ sub _includeInTrackCount {
 }
 
 sub _preCheckAttributes {
+	my $self = shift;
  	my $attributeHash = shift;
  	my $create = shift;
 	my $deferredAttributes = {};
@@ -1030,8 +1043,10 @@ sub _preCheckAttributes {
 		$deferredAttributes->{'GENRE'} = $genre;
 		delete $attributes->{'GENRE'};
 	}
+
+	my $artist = '';
 	
-	if (my $artist = $attributes->{'ARTIST'}) {
+	if ($artist = $attributes->{'ARTIST'}) {
 
 		$deferredAttributes->{'ARTIST'} = $artist;
 
@@ -1053,9 +1068,31 @@ sub _preCheckAttributes {
 		my $disc  = $attributes->{'DISC'};
 		my $discc = $attributes->{'DISCC'};
 
-		my $albumObj = Slim::DataStores::DBI::Album->find_or_create({ 
-			title => $album,
+		# We'll find an artist record if this isn't the first track in
+		# the album for this artist.
+		my ($artistObj) = Slim::DataStores::DBI::Contributor->search({
+			'name' => $artist
 		});
+
+		# If there wasn't an artist associated yet, create a dummy contributor.
+		my $albumObj;
+
+		if ($self->{'lastTrack'} && $self->{'lastTrack'}->album() && $self->{'lastTrack'}->album() eq $album) {
+
+			$albumObj = $self->{'lastTrack'}->album();
+
+			if (defined $artistObj) {
+
+				$albumObj->contributors($artistObj);
+			}
+
+		} else {
+
+			$albumObj = Slim::DataStores::DBI::Album->find_or_create({ 
+				title => $album,
+				contributors => (defined $artistObj ? $artistObj->id() : 1),
+			});
+		}
 
 		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
 		$albumObj->titlesort(Slim::Utils::Text::ignoreCaseArticles($sortable_title)) if $sortable_title;
@@ -1064,6 +1101,7 @@ sub _preCheckAttributes {
 		$albumObj->update();
 
 		$attributes->{'ALBUM'} = $albumObj;
+		$deferredAttributes->{'ALBUM'} = $albumObj;
 
 	} else {
 		delete $attributes->{'ALBUM'};
@@ -1095,6 +1133,7 @@ sub _preCheckAttributes {
 }
 
 sub _postCheckAttributes {
+	my $self = shift;
 	my $track = shift;
 	my $attributes = shift;
 	my $create = shift;
@@ -1131,12 +1170,21 @@ sub _postCheckAttributes {
 			# Is ARTISTSORT/TSOP always right for non-artist
 			# contributors? I think so. ID3 doesn't have
 			# "BANDSORT" or similar at any rate.
-			Slim::DataStores::DBI::ContributorTrack->add(
+			my @contributors = Slim::DataStores::DBI::ContributorTrack->add(
 				$contributor, 
 				$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{$tag},
 				$track,
 				$attributes->{'ARTISTSORT'}
 			);
+
+			# If we have an album associated with the contributors - mark it as such. 
+			if (my $albumObj = $attributes->{'ALBUM'}) {
+
+				# XXX - will we ever have multiple artist albums that
+				# have duplicate album names? Seems pretty unlikely to me.
+				$albumObj->contributors(@contributors);
+				$albumObj->update();
+			}
 
 			$foundContributor = 1;
 		}
@@ -1169,7 +1217,6 @@ sub _updateTrackValidity {
 		$self->{'validityCache'}->{$url}->[TTL_INDEX] = 0;
 	}
 }
-
 
 sub updateCoverArt {
 	my $self     = shift;

@@ -88,6 +88,7 @@ CREATE TABLE albums (
   id integer UNIQUE PRIMARY KEY NOT NULL,
   title varchar,           -- title
   titlesort varchar,       -- version of title used for sorting
+  contributors varchar,    -- stringified list of contributors
   artwork_path varchar,    -- path to cover art
   disc integer,            -- album number in set
   discc integer            -- number of albums in set
