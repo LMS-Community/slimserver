@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.25 2004/12/04 19:04:33 vidur Exp $
+# $Id: Parse.pm,v 1.26 2004/12/04 20:30:51 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -543,6 +543,9 @@ sub ASX {
 
 	# First try for version 3.0 ASX
 	if ($asxstr =~ /<ASX/i) {
+		# Deal with the common parsing problem of unescaped ampersands
+		# found in many ASX files on the web.
+		$asxstr =~ s/&(?!(#|amp;|quot;|lt;|gt;|apos;))/&amp;/g;
 		eval {
 			$asx_playlist=XMLin($asxstr, ForceArray => ['entry', 'Entry', 'ENTRY', 'ref', 'Ref', 'REF']);
 		};
