@@ -1,5 +1,5 @@
 package Slim::Buttons::MoodWheel;
-#$Id: MoodWheel.pm,v 1.4 2004/04/22 05:47:10 kdf Exp $
+#$Id: MoodWheel.pm,v 1.5 2004/06/30 05:00:15 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -55,11 +55,7 @@ my %functions = (
 		my @oldlines = Slim::Display::Display::curLines($client);
 		Slim::Buttons::Common::pushMode($client, 'moodlogic_variety_combo', {'genre' => Slim::Buttons::Common::param($client, 'genre'), 'artist' => Slim::Buttons::Common::param($client, 'artist'), 'mood' => $browseMoodChoices[selection($client, 'mood_wheel_index')]});
 		
-		if (Slim::Utils::Prefs::get('animationLevel') == 3) {
-			Slim::Buttons::InstantMix::specialPushLeft($client, 0, @oldlines);
-		} else {
-			Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
-		}
+		Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
 	}
 );
 

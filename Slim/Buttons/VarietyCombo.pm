@@ -1,5 +1,5 @@
 package Slim::Buttons::VarietyCombo;
-#$Id: VarietyCombo.pm,v 1.1 2004/04/22 05:47:11 kdf Exp $
+#$Id: VarietyCombo.pm,v 1.2 2004/06/30 05:00:16 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -67,11 +67,13 @@ my %functions = (
 			my @oldlines = Slim::Display::Display::curLines($client);
 			$currentItem = Slim::Buttons::Common::param($client, 'song');
 			Slim::Buttons::Common::pushMode($client, 'moodlogic_instant_mix', {'song' => Slim::Buttons::Common::param($client, 'song')});
-			if (Slim::Utils::Prefs::get('animationLevel') == 3) {
-				specialPushLeft($client, 0, @oldlines);
-			} else {
-				Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
-			}
+			specialPushLeft($client, 0, @oldlines);
+		} elsif (defined Slim::Buttons::Common::param($client,'mood')) {
+			my @oldlines = Slim::Display::Display::curLines($client);
+			Slim::Buttons::Common::pushMode($client, 'moodlogic_instant_mix', {'genre' => Slim::Buttons::Common::param($client, 'mood'),
+					'artist' => Slim::Buttons::Common::param($client, 'artist'),
+					'mood' => Slim::Buttons::Common::param($client, 'mood')});
+			specialPushLeft($client, 0, @oldlines);
 		} else {
 			Slim::Display::Animation::bumpRight($client)
 		}

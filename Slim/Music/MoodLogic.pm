@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.19 2004/05/20 04:14:00 kdf Exp $
+#$Id: MoodLogic.pm,v 1.20 2004/06/30 05:00:15 kdf Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -445,7 +445,7 @@ sub getMix {
 	$count = $mixer->Mix_PlaylistSongCount();
 
 	for (my $i=1; $i<=$count; $i++) {
-		push @instant_mix, $mixer->Mix_SongFile($i);
+		push @instant_mix, Slim::Utils::Misc::fileURLFromPath($mixer->Mix_SongFile($i));
 	}
 
 	return @instant_mix;
