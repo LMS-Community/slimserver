@@ -1311,9 +1311,9 @@ sub execute {
 		} elsif ($p0 eq "display") {
 
 			if ($p1 eq "?" && $p2 eq "?") {
-				my ($line1, $line2) = Slim::Display::Display::curLines($client);
-				$p1 = $line1;
-				$p2 = $line2;
+				my $parsed = $client->parseLines(Slim::Display::Display::curLines($client));
+				$p1 = $parsed->{line1} || '';
+				$p2 = $parsed->{line2} || '';
 			} else {
 				Slim::Buttons::ScreenSaver::wakeup($client);
 				$client->showBriefly($p1, $p2, $p3, $p4);
