@@ -260,13 +260,13 @@ element)
 <!-- ....................................................................... -->
 <!-- Browse ................................................................ -->
 <!-- .......................................................................
-Element returned by browse.xml and browseid3.xml requests. Browses the Server DB
-by directory (browse.xml) or by tag (browseid3.xml).
+Element returned by browse.xml and browsedb.xml requests. Browses the Server DB
+by directory (browse.xml) or by tag (browsedb.xml).
 Counts returned are language dependant strings (i.e. "XXX albums") and 
 must be parsed by client. Also counts are very slow to generate and are disabled
 in the skin for now.
 -->
-<!-- (Skin file: browseid3.html.html, (browse.html, browse_playlist.html)).. -->
+<!-- (Skin file: browsedb.html.html, (browse.html, browse_playlist.html)).. -->
 
 <!ELEMENT browse (	itunes?, 
 					still_scanning?,
@@ -287,12 +287,12 @@ in the skin for now.
 <!ELEMENT artist_count (#PCDATA)>	<!-- Number of artists in returned data  -->
 <!ELEMENT album_count (#PCDATA)>	<!-- Number of albums in returned data   -->
 <!ELEMENT browseby (#PCDATA)>		
-<!-- For browseid3, "BROWSE_BY_GENRE", "BROWSE_BY_ARTIST" or "BROWSE_BY_ALBUM" 
+<!-- For browsedb, "BROWSE_BY_GENRE", "BROWSE_BY_ARTIST" or "BROWSE_BY_ALBUM" 
 -->
 <!ELEMENT location (locator*)>		<!-- Path down followed, see locator     -->
 <!ELEMENT coverart (#PCDATA)>		<!-- Coverart URL?                       -->
 
-<!-- (Skin file: browse_pwdlist.html, browseid3_pwdlist.html) .............. -->
+<!-- (Skin file: browse_pwdlist.html, browsedb_pwdlist.html) .............. -->
 
 <!ELEMENT locator 	(	locator_name, 
 						locator_url, 
@@ -310,7 +310,7 @@ one of genre/artist/album info.
 -->
 
 <!-- (Skin file: browse_list.html (browse_playlist_list.html)............... -->
-<!-- (Skin file: browseid3_pwdlist.html) ................................... -->
+<!-- (Skin file: browsedb_pwdlist.html) ................................... -->
 
 <!ELEMENT browse_entry (	(dir|song), 
 							replace_url, 
