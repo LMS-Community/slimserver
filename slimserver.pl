@@ -487,6 +487,19 @@ sub start {
 		Slim::Control::Stdio::init(\*STDIN, \*STDOUT);
 	}
 
+	if (Slim::Utils::Prefs::get('xplsupport')) {
+		$::d_server && msg("SlimServer xPL init...\n");
+
+		eval "use Slim::Control::xPL";
+
+		if ($@) {
+			msg("Problem initializing xPL support: [$@]\n");
+			msg("Trying to continue..\n");
+		} else {
+			Slim::Control::xPL::init();
+		}
+	}
+
 	$::d_server && msg("Old SLIMP3 Protocol init...\n");
 	Slim::Networking::Protocol::init();
 
@@ -518,19 +531,6 @@ sub start {
 		Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
 	}
 	
-	if (Slim::Utils::Prefs::get('xplsupport')) {
-		$::d_server && msg("SlimServer xPL init...\n");
-
-		eval "use Slim::Control::xPL";
-
-		if ($@) {
-			msg("Problem initializing xPL support: [$@]\n");
-			msg("Trying to continue..\n");
-		} else {
-			Slim::Control::xPL::init();
-		}
-	}		
-
 	$lastlooptime = Time::HiRes::time();
 	$loopcount = 0;
 	$loopsecond = int($lastlooptime);
