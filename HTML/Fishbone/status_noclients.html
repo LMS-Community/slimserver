@@ -3,8 +3,24 @@
 	<title>[S {playermodel}_MUSIC_PLAYER]</title>
 	<meta http-equiv="refresh" content="{refresh}; url=status_header.html">
 	<link rel="stylesheet" href="slimserver.css">
+<script>
+<!-- HIDE
+function checkLoad ()
+&lbrc;
+	if (top.document.getElementById('player_frame'))
+	&lbrc;
+		top.document.getElementById('player_frame').rows = '100%,*';
+		parent.playlist.location='about:blank';
+	&rbrc;
+	else 
+	&lbrc;
+		top.document.location.reload(true);
+	&rbrc;
+&rbrc;
+-->
+</script>
 </head>
-<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onLoad="javascript:top.document.getElementById('player_frame').rows = '100%,*';parent.playlist.location='about:blank';">
+<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onLoad="javascript:checkLoad();">
 	<div class="masthead">
 		<table border="0" cellpadding="2" cellspacing="0" width="100%"  bordercolor="#111111">
 			<tr>

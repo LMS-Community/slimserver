@@ -23,13 +23,20 @@ function setCookie(name, value)
 
 function checkReload()
 &lbrc;
-   if (parent.playlist.location != 'playlist.html?player={%player}')
+	if (top.document.getElementById('player_frame'))
 	&lbrc;
-		parent.playlist.location = 'playlist.html?player={%player}';
+		if (parent.playlist.location != 'playlist.html?player={%player}')
+		&lbrc;
+			parent.playlist.location = 'playlist.html?player={%player}';
+		&rbrc;
+		else 
+		&lbrc;
+		    parent.playlist.location.reload(true);
+		&rbrc;
 	&rbrc;
-	else 
+	else
 	&lbrc;
-	    parent.playlist.location.reload(true);
+		top.document.location.reload(true);
 	&rbrc;
 &rbrc;
 -->
