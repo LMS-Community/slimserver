@@ -154,8 +154,7 @@ sub upgradeFirmware {
 	} else {
 		$ip = $client;
 	}
-	
-	
+
 	my $port = 31337;  # upgrade port
 	
 	my $file = shift || catdir($Bin, "Firmware", "squeezebox.bin");

@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.11 2003/10/10 12:54:55 grotus Exp $
+#	$Id: Information.pm,v 1.12 2003/10/10 20:31:39 dean Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -47,55 +47,81 @@ use Slim::Utils::Strings qw(string);
 use strict;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.11 $,10);
+$VERSION = substr(q$Revision: 1.12 $,10);
 
-my @main_list = qw(
-    library
-    player
-    server
-    module
-);
-
-my @library_list = (
-    [ 'TIME',         'time',    0,  \&Slim::Music::Info::total_time ],
-    [ 'ALBUMS',       'int',     0,  sub { Slim::Music::Info::albumCount([],[],[],[]) } ],
-    [ 'TRACKS',       'int',     0,  sub { Slim::Music::Info::songCount([],[],[],[]) } ],
-    [ 'ARTISTS',      'int',     0,  sub { Slim::Music::Info::artistCount([],[],[],[]) } ],
-    [ 'GENRES',       'int',     0,  sub { Slim::Music::Info::genreCount([],[],[],[]) } ],
-);
-
-my @player_list = ();
+my $modes_set;
+my $modules;
+my %enabled;
+my %context;
 
 
-my @server_list = (
+sub main_list {
+	return ['library','player','server','module'];
+}
+
+sub library_list {
+	return  [
+		[ 'TIME',         'time',    0,  \&Slim::Music::Info::total_time ],
+		[ 'ALBUMS',       'int',     0,  sub { Slim::Music::Info::albumCount([],[],[],[]) } ],
+		[ 'TRACKS',       'int',     0,  sub { Slim::Music::Info::songCount([],[],[],[]) } ],
+		[ 'ARTISTS',      'int',     0,  sub { Slim::Music::Info::artistCount([],[],[],[]) } ],
+		[ 'GENRES',       'int',     0,  sub { Slim::Music::Info::genreCount([],[],[],[]) } ],
+	];
+}
+
+sub server_list {
+	return [
     [ 'VERSION',      'string',  0,  sub { $::VERSION } ],
     [ 'SERVER_PORT',  'string',  0,  sub { 3483 } ],
     [ 'SERVER_HTTP',  'string',  0,  sub { Slim::Utils::Prefs::get('httpport') } ],
     [ 'CLIENTS',      'int',     1,  \&Slim::Player::Client::clientCount ],
-);
+	];
+}
 
-my @module_list;
+sub player_list {
+	my $client = shift;
+	my @player_list = ( 
+		[ 'PLAYER_NAME',  'string',  1,  sub { Slim::Utils::Prefs::clientGet(shift,'playername') || '' } ],
+		[ 'PLAYER_MODEL', 'string',  1,  sub { shift->model() } ],
+		[ 'FIRMWARE',     'string',  1,  sub { shift->revision } ],
+		[ 'PLAYER_IP',    'string',  1,  sub { shift->ip } ],
+		[ 'PLAYER_PORT',  'string',  1,  sub { shift->port } ],
+		[ 'PLAYER_MAC',   'string',  1,  sub { uc(shift->macaddress) } ],
+	);
+
+	if ($client->signalStrength) {
+		push (@player_list,[ 'PLAYER_SIGNAL_STRENGTH', 'string', 1, sub { return shift->signalStrength(); } ]);
+	}
+	
+	return \@player_list;
+}
+
+sub module_list {
+	return undef unless $modules;
+	
+	return [sort { $modules->{$a} cmp $modules->{$b} } keys %$modules];
+}
 
 my %menu = (
     main => {
 	lines => \&main_lines,
-	list => \@main_list,
+	list => \&main_list,
     },
     library => {
 	lines => \&info_lines,
-	list => \@library_list,
+	list => \&library_list,
     },
     player => {
 	lines => \&info_lines,
-	list => \@player_list,
+	list => \&player_list,
     },
     server => {
 	lines => \&info_lines,
-	list => \@server_list,
+	list => \&server_list,
     },
     module => {
 	lines => \&module_lines,
-	list => \@module_list,
+	list => \&module_list,
     },
 );
 
@@ -118,11 +144,6 @@ my %format = (
     },
 );
 
-my $modes_set;
-my $modules;
-my %enabled;
-my %context;
-
 my %functions = (
     'left' => sub {
 		my $client = shift;
@@ -132,8 +153,9 @@ my %functions = (
     'right' => sub {
 		my $client = shift;
 		my $nextmode = find_nextmode($client);
-	
-		if ($nextmode && ref($menu{$nextmode}->{list})) {
+		my $listfunc = $menu{$nextmode}->{list};
+		
+		if ($nextmode && ref(&$listfunc($client))) {
 			Slim::Buttons::Common::pushModeLeft(
 			$client,
 			"plugins-information-$nextmode",
@@ -197,7 +219,7 @@ sub main_lines {
     my $ref = $context{$client};
     my $current = $ref->{$ref->{current}};
     my $list = $ref->{list};
-
+	
     return (
     	(
 	    string('PLUGIN_INFORMATION_MODULE_NAME') .
@@ -290,22 +312,6 @@ sub module_lines {
 	push(@info,string('PLUGIN_INFORMATION_VERSION') . ": $version");
     }
 
-# disabling, since we don't have all the plugins in one folder.
-if (0) {
-    my $filename = catfile(
-        Slim::Buttons::Plugins::pluginDir(),
-	"${item}.pm"
-    );
-
-    my $date = Slim::Utils::Strings::string('PLUGIN_INFORMATION_DATE_FORMAT');
-    $date =~ s/\${(\w+?)}/Slim::Utils::Prefs::get($1)/eg;
-    $date =~ s/:%S//;
-    $date = strftime($date,localtime((stat($filename))[9] || 0)),
-    $date =~ s/\|0?(\d+)/$1/g;
-
-    push(@info,string('PLUGIN_INFORMATION_INSTALLED') . ": $date");
-}
-
     $lines[1] = join(' ' . Slim::Hardware::VFD::symbol('rightarrow') . ' ',@info);
     @lines;
 }	
@@ -326,7 +332,8 @@ sub setmode_submenu {
     if ($ref->{current} eq 'main') {
 		$ref->{current} = $ref->{list}->[$ref->{$ref->{current}}];
     }
-    $ref->{list} = $menu{$ref->{current}}->{list};
+    my $listfunc = $menu{$ref->{current}}->{list};
+    $ref->{list} = &$listfunc($client);
     $ref->{$ref->{current}} ||= 0;
     $client->lines($menu{$ref->{current}}->{lines});
     $client->update();
@@ -335,19 +342,6 @@ sub setmode_submenu {
 sub setMode {
 	my $client = shift;
 
-	@player_list = ( 
-		[ 'PLAYER_NAME',  'string',  1,  sub { Slim::Utils::Prefs::clientGet(shift,'playername') || '' } ],
-		[ 'PLAYER_MODEL', 'string',  1,  sub { shift->model() } ],
-		[ 'FIRMWARE',     'string',  1,  sub { shift->revision } ],
-		[ 'PLAYER_IP',    'string',  1,  sub { shift->ip } ],
-		[ 'PLAYER_PORT',  'string',  1,  sub { shift->port } ],
-		[ 'PLAYER_MAC',   'string',  1,  sub { uc(shift->macaddress) } ],
-	);
-
-	if ($client->signalStrength) {
-		push (@player_list,[ 'PLAYER_SIGNAL_STRENGTH', 'string', 1, sub { return shift->signalStrength(); } ]);
-	}
-	
 	unless ($modes_set) {
 		$modes_set = 1;
 		foreach (keys %menu) {
@@ -362,12 +356,11 @@ sub setMode {
 	}
 	unless (ref($modules)) {
 		$modules = Slim::Buttons::Plugins::installedPlugins();
-		@module_list = sort { $modules->{$a} cmp $modules->{$b} } keys %$modules;
 		$enabled{$_} = 1 for (Slim::Buttons::Plugins::enabledPlugins($client));
 	}
 
 	$context{$client}->{current} = 'main';
-	$context{$client}->{list} = \@main_list,
+	$context{$client}->{list} = &main_list($client),
 	$context{$client}->{main} ||= 0;
 
 	$client->lines(\&main_lines);
@@ -381,6 +374,8 @@ sub getFunctions {
 sub getDisplayName {
 	string('PLUGIN_INFORMATION_MODULE_NAME');
 }
+
+
 
 1;
 

@@ -9,6 +9,7 @@
 
 <small>[IF player_name]{player_name}[/IF] [IF sync][S SYNCHRONIZED_WITH] {sync}:[/IF]</small>
 <small>
+[IF player_chooser_list]<form method="get" action="{webroot}status.html" target="_top">[S CURRENT_PLAYER] <select name="player">{player_chooser_list}</select><input class="stdclick" type="submit" value="Change"></form>[/IF]
 [IF modeplay][S PLAYING][/IF]
 [IF modepause][S PAUSED_ON][/IF]
 [IF modestop][S STOPPED_ON][/IF]
