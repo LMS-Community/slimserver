@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.34 2004/04/22 05:47:11 kdf Exp $
+# $Id: Command.pm,v 1.35 2004/04/27 20:48:47 dean Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -695,7 +695,7 @@ sub syncFunction {
 					$eachclient->fade_volume($newval, "mute", [$eachclient]);
 				} else {
 					Slim::Utils::Prefs::clientSet($eachclient, $setting, $newval);
-					&$controlRef($eachclient, $newval);
+					&$controlRef($eachclient, $newval) if ($controlRef);
 				}
 				if ($setting eq "volume") {
 					Slim::Display::Display::volumeDisplay($eachclient);
