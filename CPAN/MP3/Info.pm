@@ -874,11 +874,12 @@ sub get_mp3info {
 	seek $fh, 0, 2;
 	$eof = tell $fh;
 	seek $fh, -128, 2;
-	$off += 128 if <$fh> =~ /^TAG/ ? 1 : 0;
+	$eof -= 128 if <$fh> =~ /^TAG/ ? 1 : 0;
 
 	_close($file, $fh);
 
 	$h->{size} = $eof - $off;
+	$h->{offset} = $off;
 
 	return _get_info($h, $vbr);
 }
@@ -903,6 +904,7 @@ sub _get_info {
 	$i->{MODE}	= $h->{mode};
 
 	$i->{SIZE}	= $vbr && $vbr->{bytes} ? $vbr->{bytes} : $h->{size};
+	$i->{OFFSET}	= $h->{offset};
 
 	my $mfs		= $h->{fs} / ($h->{ID} ? 144000 : 72000);
 	$i->{FRAMES}	= int($vbr && $vbr->{frames}
