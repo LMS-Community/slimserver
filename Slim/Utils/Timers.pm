@@ -1,6 +1,6 @@
 package Slim::Utils::Timers;
 
-# $Id: Timers.pm,v 1.5 2003/10/09 04:19:51 dean Exp $
+# $Id: Timers.pm,v 1.6 2003/10/31 22:09:04 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -35,10 +35,10 @@ sub checkTimers {
 	if ($numtimers > 500) {
 		die "Insane number of timers: $numtimers\n";		
 	}
+	
 	my $timer = shift(@timers);
 	
-	while (defined($timer) && ($timer->{'when'} <= $now) && 
-			!main::networkPending()) {
+	if (defined($timer) && ($timer->{'when'} <= $now)) {
 
 		my $subptr = $timer->{'subptr'};
 		my $client = $timer->{'client'};

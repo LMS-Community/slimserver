@@ -121,13 +121,7 @@ sub bytesReceived {
 }
 
 sub signalStrength {
-	my $strength = Slim::Networking::Slimproto::signalStrength(@_);
-	
-	if (defined($strength)) {
-		return $strength . '%';
-	} else {
-		return undef;
-	}
+	return Slim::Networking::Slimproto::signalStrength(@_);
 }
 
 sub needsUpgrade {

@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.5 2003/10/14 19:13:21 dean Exp $
+# $Id: RemoteStream.pm,v 1.6 2003/10/31 22:09:05 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,7 +11,6 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use FileHandle;
 use IO::Socket qw(:DEFAULT :crlf);
-use IO::Select;
 
 use Slim::Display::Display;
 use Slim::Utils::Misc;

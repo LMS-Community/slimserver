@@ -114,6 +114,7 @@ use Slim::Player::Sync;
 use Slim::Player::Source;
 use Slim::Utils::Prefs;
 use Slim::Networking::Protocol;
+use Slim::Networking::Select;
 use Slim::Utils::Scheduler;
 use Slim::Web::Setup;
 use Slim::Control::Stdio;
@@ -172,6 +173,7 @@ use vars qw(
 		$d_remotestream
 		$d_scan
 		$d_server
+		$d_select
 		$d_scheduler
 		$d_slimproto
 		$d_slimproto_v
@@ -206,18 +208,8 @@ use vars qw(
 	    $stop
 	);
 
-# these IO::Select objects contain references to every socket we might be listening
-# or connected to, so we can wait in select for network events
-use vars qw(
-	    $selRead
-		$selWrite
-	);
-	
-
 sub init {
 	srand();
-	$selRead = IO::Select->new();
-	$selWrite = IO::Select->new();
 
 	autoflush STDERR;
 	autoflush STDOUT;
@@ -406,24 +398,8 @@ sub idle {
 		if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
 		
 		$::d_time && msg("select_time: ". (defined($select_time) ? $select_time : "UNDEF")."\n");
-		
-		# wait in select until we get something.  
-		$::d_time && msg("select counts: " . $selRead->count . " " . $selWrite->count . "\n");
 
-		my ($r, $w, $e) = IO::Select->select($selRead,$selWrite,undef,$select_time);
-
-		$::d_time && msg("select returns: reads:" . (defined($r) && scalar(@$r)) . 
-						" writes:" . (defined($w) && scalar(@$w)) . " err: " . (defined($e) && scalar(@$e)) . "\n");
-		
-		if ($::d_perf) { $to = watchDog($to, "select"); }
-		
-		if ($stdio) {
-			foreach my $fh (@$r) {
-				if ($fh == $Slim::Control::Stdio::stdin) {
-				  Slim::Control::Stdio::processRequest($fh);
-				}
-			}
-		}
+		Slim::Networking::Select::select($select_time);
 	}
 	
 	# handle HTTP and command line interface activity, including:
@@ -441,14 +417,7 @@ sub idle {
 }
 
 sub idleStreams {
-	Slim::Networking::Protocol::idle();
-	Slim::Web::HTTP::idleStreams();
-}
-
-sub networkPending {
-	my $slimproto =  Slim::Networking::Slimproto::pending();
-	my $slimp3proto = Slim::Networking::Protocol::pending();
-	return $slimp3proto || $slimproto;
+	Slim::Networking::Select::select(0);
 }
 
 sub showUsage {
@@ -520,6 +489,7 @@ to the console via stderr:
     --d_prefs        => Preferences file information
     --d_remotestream => Information about remote HTTP streams and playlists
     --d_scan         => Information about scanning directories and filelists
+	--d_select		 => Information about the select process
     --d_server       => Basic server functionality
     --d_scheduler    => Internal scheduler information
     --d_slimproto    => Slimproto debugging information
@@ -562,13 +532,13 @@ sub initOptions {
 		'd_command'			=> \$d_command,
 		'd_control'			=> \$d_control,
 		'd_display'			=> \$d_display,
-		'd_factorytest'			=> \$d_factorytest,
+		'd_factorytest'		=> \$d_factorytest,
 		'd_files'			=> \$d_files,
 		'd_http'			=> \$d_http,
 		'd_info'			=> \$d_info,
 		'd_ir'				=> \$d_ir,
 		'd_itunes'			=> \$d_itunes,
-		'd_moodlogic'			=> \$d_moodlogic,
+		'd_moodlogic'		=> \$d_moodlogic,
 		'd_mdns'			=> \$d_mdns,
 		'd_os'				=> \$d_os,
 		'd_paths'			=> \$d_paths,
@@ -580,8 +550,9 @@ sub initOptions {
 		'd_prefs'			=> \$d_prefs,
 		'd_remotestream'	=> \$d_remotestream,
 		'd_scan'			=> \$d_scan,
-		'd_server'			=> \$d_server,
 		'd_scheduler'		=> \$d_scheduler,
+		'd_select'			=> \$d_select,
+		'd_server'			=> \$d_server,
 		'd_slimproto'		=> \$d_slimproto,
 		'd_slimproto_v'		=> \$d_slimproto_v,
 		'd_source'			=> \$d_source,

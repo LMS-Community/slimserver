@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.12 2003/10/10 20:31:39 dean Exp $
+#	$Id: Information.pm,v 1.13 2003/10/31 22:09:02 dean Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -47,7 +47,7 @@ use Slim::Utils::Strings qw(string);
 use strict;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.12 $,10);
+$VERSION = substr(q$Revision: 1.13 $,10);
 
 my $modes_set;
 my $modules;
@@ -89,8 +89,8 @@ sub player_list {
 		[ 'PLAYER_MAC',   'string',  1,  sub { uc(shift->macaddress) } ],
 	);
 
-	if ($client->signalStrength) {
-		push (@player_list,[ 'PLAYER_SIGNAL_STRENGTH', 'string', 1, sub { return shift->signalStrength(); } ]);
+	if (defined($client->signalStrength)) {
+		push (@player_list,[ 'PLAYER_SIGNAL_STRENGTH', 'string', 1, sub { return (shift->signalStrength() . '%'; } ]);
 	}
 	
 	return \@player_list;

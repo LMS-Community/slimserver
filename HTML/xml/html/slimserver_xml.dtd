@@ -26,14 +26,18 @@ Status.xml uses the player parameter to determine which player to return info
 on. If player is absent or wrong, the server will select a player at random.
 -->
 <!-- (Skin file: status.html) .............................................. -->
-
-<!ELEMENT status (	players, 		<!-- Players known to the server         -->
-					player_status?, <!-- Status of the player                -->
-					playlist?		<!-- Playlist of the player              -->
+<!-- Players known to the server         -->
+<!-- Status of the player                -->
+<!-- Playlist of the player              -->
+<!ELEMENT status (	players, 		
+					player_status?, 
+					playlist?		
 				 )>
 				 
-<!ELEMENT players (	playercount, 	<!-- Number of players available         -->
-					player*			<!-- <player> element for each player    -->
+				 <!-- Number of players available         -->
+				 <!-- <player> element for each player    -->
+<!ELEMENT players (	playercount, 	
+					player*			
 				   )>
 				   
 <!ELEMENT playercount (#PCDATA)>	<!-- Number of players available         -->
@@ -54,12 +58,17 @@ If there is no player defined on the Server, playercount is 0.
 <!ELEMENT player_id    (#PCDATA)>	<!-- Player identifier (MAC address)     -->
 <!ELEMENT player_name  (#PCDATA)>	<!-- Name of the player if defined       -->
 
-
-<!ELEMENT player_status	(	transport, 		<!-- playing, stopping, info     -->
-							shuffle, 		<!-- shuffle status              -->
-							repeat, 		<!-- repeat mode                 -->
-							audio,          <!-- volume & tone controls      -->
-							current_song?   <!-- the song being played now   -->
+ 		<!-- playing, stopping, info     -->
+ 		<!-- shuffle status              -->
+ 		<!-- repeat mode                 -->
+ 		<!-- volume & tone controls      -->
+ 		<!-- the song being played now   -->
+ 		
+<!ELEMENT player_status	(	transport,
+							shuffle, 		
+							repeat, 		
+							audio,          
+							current_song?   
 						)>
 
 <!ELEMENT transport	(	mode, 
@@ -298,12 +307,14 @@ one of genre/artist/album info.
 							replace_url, 
 							append_url
 						)>
-
+<!-- Genre of the dir (if browsing by tag)  -->
+<!-- Artist of the dir (if browsing by tag) -->
+<!-- Album of the dir (if browsing by tag)  -->
 <!ELEMENT dir (	dir_name, 				
 				dir_browse_url, 		
-				genre?, 		 <!-- Genre of the dir (if browsing by tag)  -->
-				artist?, 		 <!-- Artist of the dir (if browsing by tag) -->
-				album?			 <!-- Album of the dir (if browsing by tag)  -->
+				genre?, 		 
+				artist?, 		
+				album?			 
 			  )>
 			  
 <!ELEMENT dir_name (#PCDATA)>		<!-- Name of dir/genre/artist/album      -->
@@ -320,10 +331,7 @@ one of genre/artist/album info.
 
 <!-- ....................................................................... -->
 <!-- Songinfo .............................................................. -->
-<!-- .......................................................................
-Element returned by songinfo.xml requests. Returns all info in the DB for a 
-song. Must indicate song by path, so better to use songinfo_url links.
--->
+<!--  Element returned by songinfo.xml requests. Returns all info in the DB for a  song. Must indicate song by path, so better to use songinfo_url links. -->
 <!-- (Skin file: songinfo.html) ............................................ -->
 
 <!ELEMENT songinfo (	title,
@@ -365,8 +373,7 @@ song. Must indicate song by path, so better to use songinfo_url links.
 
 <!-- ....................................................................... -->
 <!-- Song .................................................................. -->
-Element returned by search.xml requests.
--->
+<!-- Element returned by search.xml requests. -->
 <!-- (Skin file: search.html)............................................... -->
 
 <!ELEMENT search 	(	num_results, 
@@ -416,7 +423,7 @@ May be returned by any request if server settings or parameters are incorrect.
 
 <!-- ....................................................................... -->
 <!-- Various................................................................ -->
-<!-- .......................................................................
+<!-- ....................................................................... -->
 
 <!-- (browse_list_empty.html)............................................... -->
 <!-- no elements -->

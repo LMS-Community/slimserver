@@ -7,14 +7,17 @@ package Slim::Control::Stdio;
 
 use strict;
 use FindBin qw($Bin);
-use IO::Select;
 use File::Spec::Functions qw(:ALL);
 
+use Slim::Networking::Select;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::OSDetect;
 use Slim::Utils::Misc;
 
 use vars qw($stdin);
+
+
+
 
 #$::d_stdio = 1;
 
@@ -189,7 +192,8 @@ sub init {
 	$stdin = shift;
 	$stdout = shift;
 
-	$main::selRead->add($stdin);
+	Slim::Networking::Select::addRead($stdin, \&processRequest);
+
 	$stdin->autoflush(1);
 	$stdout->autoflush(1);
 }

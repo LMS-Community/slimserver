@@ -885,17 +885,19 @@ sub readNextChunk {
 			if ($pos + $chunksize > $size) {
 				$chunksize = $size - $pos;
 				$::d_source && msg( "Reduced chunksize to $chunksize at end of file ($size - $pos)\n");
+				if ($chunksize le 0) { $endofsong = 1; }
 			}
 			if ($pos > $size) {
 				$::d_source && msg( "Trying to read past the end of file, skipping to next file\n");
 				$chunksize = 0;
+				$endofsong = 1;
 			}
 		}
 		
 		if ($chunksize) {
 			my $readlen = $client->mp3filehandle()->read($chunk, $chunksize);
 			
-			if ($readlen == undef) { 
+			if (!defined($readlen)) { 
 				$::d_source && msg("readlen undef $!\n"); 
 				$endofsong = 1; 
 			}

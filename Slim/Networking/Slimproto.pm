@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.31 2003/10/30 22:11:01 dean Exp $
+# $Id: Slimproto.pm,v 1.32 2003/10/31 22:09:04 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,13 +10,14 @@ package Slim::Networking::Slimproto;
 use strict;
 use FindBin qw($Bin);
 use IO::Socket;
-use IO::Select;
 use FileHandle;
 use Net::hostent;              # for OO version of gethostbyaddr
 use Sys::Hostname;
 use File::Spec::Functions qw(:ALL);
 use POSIX qw(:fcntl_h strftime);
 use Fcntl qw(F_GETFL F_SETFL);
+
+use Slim::Networking::Select;
 use Slim::Player::Squeezebox;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
@@ -29,8 +30,6 @@ my $SLIMPROTO_ADDR = 0;
 my $SLIMPROTO_PORT = 3483;
 
 my $slimproto_socket;
-my $slimSelRead  = IO::Select->new();
-my $slimSelWrite = IO::Select->new();
 
 my %ipport;		# ascii IP:PORT
 my %inputbuffer;  	# inefficiently append data here until we have a full slimproto frame
@@ -63,44 +62,12 @@ sub init {
 
 	defined(Slim::Utils::Misc::blocking($slimproto_socket,0)) || die "Cannot set port nonblocking";
 
-	$slimSelRead->add($slimproto_socket);
-	$main::selRead->add($slimproto_socket);
+	Slim::Networking::Select::addRead($slimproto_socket, \&slimproto_accept);
 
 	$::d_slimproto && msg "Squeezebox protocol listening on port $listenerport\n";	
 }
 
-sub idle {
-
-	my $selReadable;
-	my $selWriteable;
-
-	$::d_slimproto_v && msg("Slimproto::idle\n");
-	
-	($selReadable, $selWriteable) = IO::Select->select($slimSelRead, $slimSelWrite, undef, 0);
-
-	my $sock;
-	foreach $sock (@$selReadable) {
-
-		if ($sock eq $slimproto_socket) {
-			slimproto_accept();
-		} else {
-			client_readable($sock);
-		}
-	}
-
-	foreach $sock (@$selWriteable) {
-		next if ($sock == $slimproto_socket);  # never happens, right?
-		client_writeable($sock);
-	}
-}
-
-sub pending {
-	my $selReadable;
-	my $selWriteable;
-
-	($selReadable, $selWriteable) = IO::Select->select($slimSelRead, $slimSelWrite, undef, 0);
-	return defined($selReadable) && scalar(@$selReadable);
-}
+sub idle { }
 
 sub slimproto_accept {
 	my $clientsock = $slimproto_socket->accept();
@@ -111,13 +78,22 @@ sub slimproto_accept {
 
 #	$clientsock->sockopt(Socket::TCP_NODELAY => 1);
 
-	my $peer = $clientsock->peeraddr;
+	my $peer;
 
-	if (!($clientsock->connected && $peer)) {
-		$::d_slimproto && msg ("Slimproto accept failed; couldn't get peer addr.\n");
+	if ($clientsock->connected) {
+		$peer = $clientsock->peeraddr;
+	} else {
+		$::d_slimproto && msg ("Slimproto accept failed; not connected.\n");
+		$clientsock->close();
 		return;
 	}
 
+	if (!$peer) {
+		$::d_slimproto && msg ("Slimproto accept failed; couldn't get peer address.\n");
+		$clientsock->close();
+		return;
+	}
+		
 	my $tmpaddr = inet_ntoa($peer);
 
 	if ((Slim::Utils::Prefs::get('filterHosts')) &&
@@ -132,10 +108,8 @@ sub slimproto_accept {
 	$parser_framelength{$clientsock} = 0;
 	$inputbuffer{$clientsock}='';
 
-	$slimSelRead->add($clientsock);
-#	$slimSelWrite->add($clientsock);      # for now assume it's always writeable.
-	$::main::selRead->add($clientsock);
-#	$::main::selWrite->add($clientsock);
+	Slim::Networking::Select::addRead($clientsock, \&client_readable);
+	# Slim::Networking::Select::addWrite($clientsock, \&client_writable);  # for now assume it's always writeable.
 
 	$::d_slimproto && msg ("Slimproto accepted connection from: $tmpaddr\n");
 }
@@ -144,11 +118,9 @@ sub slimproto_close {
 	my $clientsock = shift;
 	$::d_slimproto && msg("Slimproto connection closed\n");
 
-	# stop selecting	
-	$slimSelRead->remove($clientsock);
-	$main::selRead->remove($clientsock);
-	$slimSelWrite->remove($clientsock);
-	$main::selWrite->remove($clientsock);
+	# stop selecting
+	Slim::Networking::Select::addRead($clientsock, undef);
+	Slim::Networking::Select::addWrite($clientsock, undef);
 
 	# close socket
 	$clientsock->close();
@@ -172,7 +144,7 @@ sub client_writeable {
 	$::d_slimproto_v && msg("Slimproto client writeable: ".$ipport{$clientsock}."\n");
 
 	if (!($clientsock->connected)) {
-		$::d_slimproto && msg("Slimproto connection closed by peer in writable.\n");
+		$::d_slimproto && msg("Slimproto connection closed by peer in writeable.\n");
 		slimproto_close($clientsock);		
 		return;
 	}		
@@ -457,10 +429,12 @@ sub process_slimproto_frame {
 	}
 }
 
+# returns the signal strength (0 to 100), outside that range, it's not a wireless connection, so return undef
 sub signalStrength {
+
 	my $client = shift;
 
-	if (exists($status{$client})) {
+	if (exists($status{$client}) && $status{$client}->{'signal_strength'} le 100) {
 		return $status{$client}->{'signal_strength'};
 	} else {
 		return undef;

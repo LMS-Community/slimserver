@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.36 2003/10/30 00:05:26 dean Exp $
+# $Id: HTTP.pm,v 1.37 2003/10/31 22:09:05 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,7 +10,6 @@ package Slim::Web::HTTP;
 use strict;
 use FindBin qw($Bin);
 use IO::Socket;
-use IO::Select;
 use FileHandle;
 use Net::hostent;              # for OO version of gethostbyaddr
 use Sys::Hostname;
@@ -24,6 +23,7 @@ use Tie::RegexpHash;
 use Slim::Player::HTTP;
 use Slim::Web::History;
 use Slim::Networking::mDNS;
+use Slim::Networking::Select;
 use Slim::Utils::Misc;
 use Slim::Web::Olson;
 use Slim::Utils::OSDetect;
@@ -61,11 +61,6 @@ my(%templatefiles);
 my $openedport = 0;
 my $http_server_socket;
 my $connected = 0;
-
-my $httpSelRead = IO::Select->new();
-my $httpSelWrite = IO::Select->new();
-
-my $streamingSelWrite = IO::Select->new();
 
 my %outbuf = (); # a hash for each writeable socket containing a queue of output segments
                  #   each segment is a hash of a ref to data, an offset and a length
@@ -123,9 +118,7 @@ sub openport {
 	defined(Slim::Utils::Misc::blocking($http_server_socket,0)) || die "Cannot set port nonblocking";
 
 	$openedport = $listenerport;
-
-	$httpSelRead->add(Slim::Web::HTTP::serverSocket());   # readability on the HTTP server
-	$main::selRead->add(Slim::Web::HTTP::serverSocket());
+	Slim::Networking::Select::addRead($http_server_socket, \&acceptHTTP);
 	
 	$::d_http && msg("Server $0 accepting http connections on port $listenerport\n");
 	
@@ -145,8 +138,7 @@ sub checkHTTP {
 			if ($mdnsIDhttp) { Slim::Networking::mDNS::stopAdvertise($mdnsIDhttp); };
 			
 			$::d_http && msg("closing http server socket\n");
-			$httpSelRead->remove($http_server_socket);
-			$main::selRead->remove($http_server_socket);
+			Slim::Networking::Select::addRead($http_server_socket, undef);
 			$http_server_socket->close();
 			$openedport = 0;
 		}
@@ -158,93 +150,24 @@ sub checkHTTP {
 	}
 }
 
-sub idle {
+# TODO: Turn this back on
+#		my $tcpReadMaximum = Slim::Utils::Prefs::get("tcpReadMaximum");
+#		my $streamWriteMaximum = Slim::Utils::Prefs::get("tcpWriteMaximum");
 
-	my $httpSelCanRead;
-	my $httpSelCanWrite;
+sub idle {
 
 	# check to see if the HTTP settings have changed
 	Slim::Web::HTTP::checkHTTP();
-	
-	# check for HTTP
-	($httpSelCanRead,$httpSelCanWrite)=IO::Select->select($httpSelRead,$httpSelWrite,undef, 0);
-
-	$::d_http && msg("Select returned\n");
-	$::d_http && defined($httpSelCanRead) && msg( "\tRead: ".join(',',@$httpSelCanRead)."\n");
-	$::d_http && defined($httpSelCanWrite) && msg("\tWrite:".join(',',@$httpSelCanWrite)."\n");
-
-	# check to see if there's HTTP activity...
-	my $tcpReads = 0;
-	if (defined($httpSelCanRead) && scalar(@$httpSelCanRead)) {
-		my $tcpConnectMaximum = Slim::Utils::Prefs::get("tcpConnectMaximum");
-		my $tcpReadMaximum = Slim::Utils::Prefs::get("tcpReadMaximum");
-		foreach my $sockHand (@$httpSelCanRead) {
-			if ($sockHand == Slim::Web::HTTP::serverSocket()) {
-				next if Slim::Web::HTTP::connectedSocket() > $tcpConnectMaximum;
-				Slim::Web::HTTP::acceptHTTP();
-			} else {
-				Slim::Web::HTTP::processHTTP($sockHand);
-				last if ++$tcpReads >= $tcpReadMaximum || main::networkPending();
-			}
-		}
-	}
-
-	#send HTTP responses
-	my $tcpWrites = 0;
-	if (defined($httpSelCanWrite) && scalar(@$httpSelCanWrite)) {
-		my $tcpWriteMaximum = Slim::Utils::Prefs::get("tcpWriteMaximum");
-		foreach my $sockHand (@$httpSelCanWrite) {
-			last if ++$tcpWrites > $tcpWriteMaximum || main::networkPending();
-			Slim::Web::HTTP::sendresponse($sockHand);
-		}
-	}
-	idleStreams();
 }
 
-sub idleStreams {
-
-	my $streamingSelCanWrite;
-	#send data to streaming clients
-	my $count = 0; 
-	
-	my $continue = $streamingSelWrite->count();
-
-	my $streamWriteMaximum = Slim::Utils::Prefs::get("tcpWriteMaximum");
-	
-	while ($continue) {
-		$::d_http && msg("Got some players to stream to\n");
-
-		my $writes = 0;
-    	(undef,$streamingSelCanWrite) = IO::Select->select(undef,$streamingSelWrite,undef,0);
-
-	    if (defined($streamingSelCanWrite) && scalar(@$streamingSelCanWrite)) {
-			$::d_http && msg("select returned: " . scalar(@$streamingSelCanWrite) . " streams to write to: ");
-			
-			foreach my $sockHand (@$streamingSelCanWrite) {
-				$::d_http && msg("...writing...");
-				my $sent = Slim::Web::HTTP::sendstreamingresponse($sockHand);
-				$writes += $sent if $sent;
-				
-				$continue = ($sent && !main::networkPending() && ($count < $streamWriteMaximum) && $continue );
-				$count++;
-				last if (!$continue || main::networkPending() || $count > $streamWriteMaximum);
-			}
-	    }
-	    $continue = 0 if (!$writes);
-	}
-	
-	$::d_http && $count && msg("\nDone streaming to all players\n");
-}
-
-sub serverSocket {
-	return $http_server_socket;
-}
 
 sub connectedSocket {
 	return $connected;
 }
 
 sub acceptHTTP {
+	return if Slim::Web::HTTP::connectedSocket() > Slim::Utils::Prefs::get("tcpConnectMaximum");
+
 	my $httpclientsock = $http_server_socket->accept();
 
 	if ($httpclientsock) {
@@ -260,8 +183,7 @@ sub acceptHTTP {
 			   )
 			{	
 				$peeraddr{$httpclientsock} = $tmpaddr;
-				$httpSelRead->add($httpclientsock);
-				$main::selRead->add($httpclientsock);
+				Slim::Networking::Select::addRead($httpclientsock, \&processHTTP);
 				$connected++;
 				$::d_http && msg("Accepted connection $connected from ". $peeraddr{$httpclientsock} . "\n");
 			} else {
@@ -290,17 +212,18 @@ sub processHTTP {
 
 		$httpclientsock->autoflush(1);
 
-		$firstline = <$httpclientsock>;
-	  
+		$::d_http && msg("reading request...\n");
+		$firstline = <$httpclientsock>;	  
 	  	$::d_http && msg("HTTP request: $firstline\n");
+	  	
 		if (!defined($firstline)) { #socket half-closed from client
 			$::d_http && msg("Client at " . $peeraddr{$httpclientsock} . " disconnected\n");
-			$httpSelRead->remove($httpclientsock);
-			$main::selRead->remove($httpclientsock);
-			if (!($httpSelWrite->exists($httpclientsock)) && !($streamingSelWrite->exists($httpclientsock))) {
+			Slim::Networking::Select::addRead($httpclientsock, undef);
+
+#			if (!($httpSelWrite->exists($httpclientsock)) && !($streamingSelWrite->exists($httpclientsock))) {
 				close $httpclientsock;
 				$connected--;
-			}
+#			}
 		} elsif ($firstline =~ /^GET ([\w\$\-\.\+\*\(\)\?\/,;:@&=!\'%]*) HTTP\/1.[01][\015\012]+$/i)  {
 			my @paramarray;
 			my $param;
@@ -510,8 +433,7 @@ sub addresponse {
 		'length' => length($message)
 	);
 	push @{$outbuf{$httpclientsock}}, \%segment;
-	$httpSelWrite->add($httpclientsock);
-	$main::selWrite->add($httpclientsock);
+	Slim::Networking::Select::addWrite($httpclientsock, \&sendresponse);
 }
 
 sub sendresponse {
@@ -563,13 +485,11 @@ sub addstreamingresponse {
 	);
 
 	push @{$outbuf{$httpclientsock}}, \%segment;
-	$streamingSelWrite->add($httpclientsock);
-	$main::selWrite->add($httpclientsock);
+	Slim::Networking::Select::addWrite($httpclientsock, \&sendstreamingresponse);
 		
 	# we aren't going to read from this socket anymore so don't select on it...
-	$httpSelRead->remove($httpclientsock);
-	$main::selRead->remove($httpclientsock);
-		
+	Slim::Networking::Select::addRead($httpclientsock, undef);
+
 	my $client = $peerclient{$httpclientsock};
 	$client->streamingsocket($httpclientsock);
 	my $newpeeraddr = getpeername($httpclientsock);
@@ -614,11 +534,8 @@ sub forgetClient {
 sub closeHTTPSocket {
 	my $httpclientsock = shift;
 
-	$streamingSelWrite->remove($httpclientsock);
-	$httpSelWrite->remove($httpclientsock);
-	$main::selWrite->remove($httpclientsock);
-	$httpSelRead->remove($httpclientsock);
-	$main::selRead->remove($httpclientsock);
+	Slim::Networking::Select::addRead($httpclientsock, undef);
+	Slim::Networking::Select::addWrite($httpclientsock, undef);
 	close $httpclientsock;
 	delete($outbuf{$httpclientsock}); #clean up the hashes
 	delete($sendMetaData{$httpclientsock});
@@ -673,7 +590,7 @@ sub sendstreamingresponse {
 		return undef;
 	}
 	
-	if (	!defined($streamingFile) && 
+	if (!defined($streamingFile) && 
 			$client && ($client->model eq 'http') && 
 			((Slim::Player::Source::playmode($client) ne 'play') || (Slim::Player::Playlist::count($client) == 0))) {
 		$silence = 1;
@@ -717,8 +634,6 @@ sub sendstreamingresponse {
 					'length' => length($$chunkRef)
 				);
 				unshift @{$outbuf{$httpclientsock}},\%segment;
-				# if we were previously removed from the select list, then add us back in since we have data.
-				$main::selWrite->add($httpclientsock) if (!$main::selWrite->exists($httpclientsock));
 			} 
 		}
 		# try again...
