@@ -1,6 +1,6 @@
 package Audio::FLAC;
 
-# $Id: FLAC.pm,v 1.2 2003/12/15 16:39:14 daniel Exp $
+# $Id: FLAC.pm,v 1.3 2003/12/20 05:44:44 daniel Exp $
 
 use strict;
 use vars qw($VERSION);
@@ -362,7 +362,7 @@ sub _parseStreaminfo {
 
 	$self->{'trackLengthMinutes'} = int(int($totalSeconds) / 60);
 	$self->{'trackLengthSeconds'} = int($totalSeconds) % 60;
-	$self->{'trackLengthFrames'}  = ($totalSeconds - int($totalSeconds)) % 75;
+	$self->{'trackLengthFrames'}  = ($totalSeconds - int($totalSeconds)) * 75;
 	$self->{'bitRate'}            = 8 * ($self->{'fileSize'} - $self->{'startAudioData'}) / $totalSeconds;
 
 	return 0;
@@ -433,7 +433,7 @@ sub _findMetadataIndex {
 	my $self  = shift;
 	my $htype = shift;
 
-	my ($idx, $found) = 0;
+	my ($idx, $found) = (0, 0);
 
 	# Loop through the metadata_blocks until one of $htype is found
 	while ($idx < @{$self->{'metadataBlocks'}}) {
