@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.83 2004/04/24 19:16:02 daniel Exp $
+# $Id: Source.pm,v 1.84 2004/04/30 16:36:28 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1263,7 +1263,7 @@ sub readNextChunk {
 			if (!defined($readlen)) { 
 
 				if ($! != EWOULDBLOCK) {
-					$::d_source && msg("readlen undef $!" . ($! + 0) . "\n"); 
+					$::d_source && msg("readlen undef: ($!)" . ($! + 0) . "\n"); 
 					$endofsong = 1; 
 				} else {
 					$::d_source && msg("would have blocked, will try again later\n");
