@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.62 2004/08/27 21:53:56 sadams Exp $
+# $Id: Slimproto.pm,v 1.63 2004/09/19 21:28:52 sadams Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -252,12 +252,16 @@ sub process_slimproto_frame {
 	$::d_slimproto_v && msg("Got Slimproto frame, op $op, length $len, $s\n");
 
 	if ($op eq 'HELO') {
-		my ($deviceid, $revision, @mac, $bitmapped, $reserved, $wlan_channellist);
+		my ($deviceid, $revision, @mac, $bitmapped, $wlan_channellist);
 
 		(	$deviceid, $revision, 
 			$mac[0], $mac[1], $mac[2], $mac[3], $mac[4], $mac[5],
-			$bitmapped, $reserved, $wlan_channellist,
-		) = unpack("CCH2H2H2H2H2H2B1B1B14", $data);
+			$wlan_channellist,
+		) = unpack("CCH2H2H2H2H2H2n2", $data);
+
+		$bitmapped = $wlan_channellist & 0x8000;
+		$wlan_channellist = sprintf('%04x', $wlan_channellist & 0x7fff);
+
 		my $mac = join(':', @mac);
 		$::d_slimproto && msg(	
 			"Squeezebox says hello.\n".
@@ -265,7 +269,6 @@ sub process_slimproto_frame {
 			"\trevision: $revision\n".
 			"\tmac: $mac\n".
 			"\tbitmapped: $bitmapped\n".
-			"\treserved: $reserved\n" .	
 			"\twlan_channellist: $wlan_channellist\n"
 			);
 
