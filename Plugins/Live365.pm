@@ -514,9 +514,11 @@ $VERSION = 1.00;
 
 sub new {
 	my $class = shift;
-	my $url = shift;
-	my $client = shift;
-	my $self = undef;
+	my $args = shift;
+	
+	my $url = $args->{'url'};
+	my $client = $args->{'client'};
+	my $self = $args->{'self'};
 
 	if( my( $station, $handle ) = $url =~ m{^live365://(www.live365.com/play/([^/?]+).+)$} ) {
 		$::d_plugins && msg( "Live365.protocolHandler requested: $url ($handle)\n" );	
@@ -555,7 +557,11 @@ sub new {
 
 		$::d_plugins && msg( "Live365 station really at: '$redir'\n" );
 
-		$self = $class->SUPER::new( $redir, $client, $url );
+		$self = $class->SUPER::new({ 
+				'url' => $redir, 
+				'client' => $client, 
+				'infoUrl' => $url 
+			});
 
 		if( $handle =~ /[a-zA-Z]/ ) {  # if our URL doesn't look like a handle, don't try to get a playlist
 			my $isVIP = Slim::Utils::Prefs::get( 'plugin_live365_memberstatus' );
