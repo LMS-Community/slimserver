@@ -1,6 +1,6 @@
 package Slim::Utils::Strings;
 
-# $Id: Strings.pm,v 1.12 2004/04/26 17:23:25 dean Exp $
+# $Id: Strings.pm,v 1.13 2004/05/05 02:06:36 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -156,8 +156,9 @@ sub hash_of_languages {
 sub string {
 	my ($stringname) = @_;
 	
-	my $language = Slim::Utils::Prefs::get('language');
+	my $language = getLanguage();
 	$stringname = uc($stringname);
+	
 	if ($strings{$language.'_'.$stringname}) {
 		return $strings{$language.'_'.$stringname};
 	} else {

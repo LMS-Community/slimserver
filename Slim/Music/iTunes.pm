@@ -8,10 +8,40 @@ package Slim::Music::iTunes;
 # todo:
 #   Enable saving current playlist in iTunes playlist format
 
+# LKS 05-May-2004
+#
+# This module supports the following configuration variables:
+#
+#	itunes	-- 1 to attempt to use iTunes library XML file,
+#		0 to simply scan filesystem.
+#
+#	itunes_library_autolocate
+#		-- if this is set (1), attempt to automatically set both
+#		itunes_library_xml_path or itunes_library_music_path.  If
+#		this is unset (0) or undefined, you MUST explicitly set both
+#		itunes_library_xml_path and itunes_library_music_path.
+#
+#	itunes_library_xml_path
+#		-- full path to 'iTunes Music Library.xml' file.
+#
+#	itunes_library_music_path
+#		-- full path to 'iTunes Music' directory (that is, the
+#		directory that contains your actual song files).
+#
+#	ignoredisableditunestracks
+#		-- if this is set (1), songs that are 'disabled' (unchecked)
+#		in iTunes will still be available to Slimserver.  If this is
+#		unset (0) or undefined, disabled songs will be skipped.
+#
+#	itunesscaninterval
+#		-- how long to wait between checking
+#		'iTunes Music Library.xml' for changes.
+
 use strict;
 
 use Fcntl ':flock'; # import LOCK_* constants
 use File::Spec::Functions qw(:ALL);
+use File::Basename;
 if ($] > 5.007) {
 	require Encode;
 }
@@ -41,6 +71,8 @@ my $majorVersion;
 my $minorVersion;
 
 my $ituneslibrary;
+my $ituneslibraryfile;
+my $ituneslibrarypath;
 
 sub iTunesPlaylist {
 #	'CT',	 # content type
@@ -113,123 +145,180 @@ my %filetypes = (
 # database, instead of scanning the file system.
 
 # should we use the itunes library?
+
+# LKS 05-May-2004
+#
+# I've removed the code the would set or reset the iTunes
+# preference if it wasn't explicitly defined.  This seems like
+# questionable behavior.
+#
+# I have also removed the conditional code surrounding the handling
+# of $newValue, since set or not we still called canUseiTunesLibrary().
+# All the extra code wasn't really gaining us anything.
 sub useiTunesLibrary {
+	$::d_itunes_verbose && msg("useiTunesLibrary().\n");
 	
 	my $newValue = shift;
-	my $can = canUseiTunesLibrary();
 	
 	if (defined($newValue)) {
-		if (!$can) {
-			Slim::Utils::Prefs::set('itunes', 0);
-		} else {
 			Slim::Utils::Prefs::set('itunes', $newValue);
 		}
-	}
 	
 	my $use = Slim::Utils::Prefs::get('itunes');
+	return 0 unless $use;
 	
-	if (!defined($use) && $can) { 
-		Slim::Utils::Prefs::set('itunes', 1);
-	} elsif (!defined($use) && !$can) {
-		Slim::Utils::Prefs::set('itunes', 0);
-	}
-	
-	$use = Slim::Utils::Prefs::get('itunes');
+	my $can = canUseiTunesLibrary();
+	return 0 unless $can;
 
-	$::d_itunes && msg("using itunes library: $use\n");
+	$::d_itunes && msg("using itunes library.\n");
 	
-	return $use && $can;
+	return 1;
 }
 
 sub canUseiTunesLibrary {
-	return (defined(findMusicLibraryFile()));
+	$::d_itunes_verbose && msg("canUseiTunesLibrary().\n");
+	$ituneslibraryfile = defined $ituneslibraryfile ? $ituneslibraryfile : findMusicLibraryFile();
+	$ituneslibrarypath = defined $ituneslibrarypath ? $ituneslibrarypath : findMusicLibrary();
+	return defined $ituneslibraryfile && $ituneslibrarypath;
 }
 
-sub findMusicLibraryFile {
-	my $filename;
-	my $base = "";
-	$base = $ENV{HOME} if $ENV{HOME};
-	
-	my $plist = $base . '/Library/Preferences/com.apple.iApps.plist';
+sub findLibraryFromPlist {
+	$::d_itunes_verbose && msg("findLibraryFromPlist().\n");
+
+	my $path = undef;
+	my $base = shift @_;
+	my $plist = catfile(($base, 'Library', 'Preferences'),
+		'com.apple.iApps.plist');
 
 	if (-r $plist) {
 		open (PLIST, "< $plist");
 		while (<PLIST>) {
 			if ( /<string>(.*iTunes%20Music%20Library.xml)<\/string>$/) {
-				$filename = Slim::Utils::Misc::pathFromFileURL($1);
+				$path = Slim::Utils::Misc::pathFromFileURL($1);
 				last;
 			}
 		}
 	}
 
-	if ($filename && -r $filename) {
-		return $filename;
-	}
+	return $path;
+}
 	
-	
-	$filename = $base . '/Music/iTunes/iTunes Music Library.xml';
-	if (-r $filename) {
-		return $filename;
-	}
+sub findLibraryFromRegistry {
+	$::d_itunes_verbose && msg("findLibraryFromRegistry().\n");
 
-	$filename = $base . '/Documents/iTunes/iTunes Music Library.xml';
-	if (-r $filename) {
-		return $filename;
-	}
-
+	my $path = undef;
 
 	if (Slim::Utils::OSDetect::OS() eq 'win') {
 		if (!eval "use Win32::Registry;") {
 			my $folder;
 			if ($::HKEY_CURRENT_USER->Open("Software\\Microsoft\\Windows"
-								   ."\\CurrentVersion\\Explorer\\Shell Folders", $folder)) {
+					."\\CurrentVersion\\Explorer\\Shell Folders",
+					$folder)) {
 				my ($type, $value);
 				if ($folder->QueryValueEx("My Music", $type, $value)) {
-					$filename = $value . '\\iTunes\\iTunes Music Library.xml';
-					$::d_itunes && msg("iTunes: found My Music here: $value for $filename\n");
+					$path = $value . '\\iTunes\\iTunes Music Library.xml';
+					$::d_itunes && msg("iTunes: found My Music here: $value for $path\n");
 				} elsif ($folder->QueryValueEx("Personal", $type, $value)) {
-					$filename = $value . '\\My Music\\iTunes\\iTunes Music Library.xml';
-					$::d_itunes && msg("iTunes: found  Personal: $value for $filename\n");
-				}
-				
-				if (-r $filename) {
-					return $filename;
-				} else {
-					$::d_itunes && msg("iTunes: couldn't read $filename\n");
+					$path = $value . '\\My Music\\iTunes\\iTunes Music Library.xml';
+					$::d_itunes && msg("iTunes: found  Personal: $value for $path\n");
 				}
 			}
 		}		
 	}
 	
-	$filename = catdir($base, 'iTunes Music Library.xml');
-	if (-r $filename) {
-		return $filename;
+	return $path;
+}
+
+sub findMusicLibraryFile {
+	$::d_itunes_verbose && msg("findMusicLibraryFile().\n");
+
+	my $path = undef;
+
+	my $base = "";
+	$base = $ENV{HOME} if $ENV{HOME};
+
+	my $audiodir = Slim::Utils::Prefs::get('audiodir');
+	my $autolocate = Slim::Utils::Prefs::get('itunes_library_autolocate');
+
+	if ($autolocate) {
+		$::d_itunes && msg("itunes: attempting to locate iTunes Music Library.xml\n");
+	
+		# This defines the list of directories we will search for
+		# the 'iTunes Music Library.xml' file.
+		my @searchdirs = (
+			catdir($base, 'Music', 'iTunes'),
+			catdir($base, 'Documents', 'iTunes'),
+			$base,
+			catdir($audiodir, 'My Music', 'iTunes'),
+			catdir($audiodir, 'iTunes'),
+			$audiodir
+		);
+
+		$path = findLibraryFromPlist($base);
+		if ($path && -r $path) {
+			$::d_itunes && msg("itunes: found path via iTunes preferences at: $path\n");
+			return $path;
+		}
+
+		$path = findLibraryFromRegistry();
+		if ($path && -r $path) {
+			$::d_itunes && msg("itunes: found path via Windows registry at: $path\n");
+			return $path;
 	}		
-
-	$base = Slim::Utils::Prefs::get('audiodir');
-
-	if (defined $base) {
-		$filename = catdir($base, 'My Music', 'iTunes', 'iTunes Music Library.xml');
 	
-		if (-r $filename) {
-			return $filename;
-		}		
-		
-	
-		$filename = catdir($base, 'iTunes', 'iTunes Music Library.xml');
-	
-		if (-r $filename) {
-			return $filename;
-		}		
-		
-		$filename = catdir($base, 'iTunes Music Library.xml');
-	
-		if (-r $filename) {
-			return $filename;
-		}		
+		for my $dir (@searchdirs) {
+			$path = catfile(($dir), 'iTunes Music Library.xml');
+			if ($path && -r $path) {
+				$::d_itunes && msg("itunes: found path via directory search at: $path\n");
+				Slim::Utils::Prefs::set('itunes_library_xml_path',$path);
+				return $path;
+			}
+		}
 	}
+
+	if (! $path) {
+		$path = Slim::Utils::Prefs::get('itunes_library_xml_path');
+		if ($path && -r $path) {
+			$::d_itunes && msg("itunes: found path via config file at: $path\n");
+			return $path;
+		}
+	}		
 	
+	$::d_itunes && msg("itunes: nable to find iTunes Music Library.xml.\n");
 	return undef;
+}
+
+
+sub findMusicLibrary {
+	$::d_itunes_verbose && msg("findMusicLibrary().\n");
+ 	
+	my $autolocate = Slim::Utils::Prefs::get('itunes_library_autolocate');
+	my $path = undef;
+	my $file = $ituneslibraryfile || findMusicLibraryFile();
+
+	if (defined($file) && $autolocate) {
+		$::d_itunes && msg("itunes: attempting to locate iTunes library relative to $file.\n");
+
+		my $itunesdir = dirname($file);
+		$path = catdir($itunesdir, 'iTunes Music');
+
+		if ($path && -d $path) {
+			$::d_itunes && msg("itunes: set iTunes library relative to $file: $path\n");
+			Slim::Utils::Prefs::set('itunes_library_music_path',$path);
+			return $path;
+		}
+	}
+
+	$path = Slim::Utils::Prefs::get('itunes_library_music_path');
+	if ($path && -d $path) {
+		$::d_itunes && msg("itunes: set iTunes library to itunes_library_music_path value of: $path\n");
+		return $path;
+	}
+
+	$path = Slim::Utils::Prefs::get('audiodir');
+	$::d_itunes && msg("itunes: set iTunes library to audiodir value of: $path\n");
+	Slim::Utils::Prefs::set('itunes_library_music_path',$path);
+	return $path;
 }
 
 sub playlists {
@@ -237,7 +326,9 @@ sub playlists {
 }
 
 sub isMusicLibraryFileChanged {
-	my $file = findMusicLibraryFile();
+	$::d_itunes_verbose && msg("isMusicLibraryFileChanged().\n");
+
+	my $file = $ituneslibraryfile || findMusicLibraryFile();
 	my $fileMTime = (stat $file)[9];
 	
 	# Only say "yes" if it has been more than one minute since we last finished scanning
@@ -258,6 +349,7 @@ sub isMusicLibraryFileChanged {
 }
 
 sub checker {
+	$::d_itunes_verbose && msg("checker().\n");
 	if (useiTunesLibrary() && !stillScanning() && isMusicLibraryFileChanged()) {
 		startScan();
 	}
@@ -270,11 +362,12 @@ sub checker {
 }
 
 sub startScan {
+	$::d_itunes_verbose && msg("startScan().\n");
 	if (!useiTunesLibrary()) {
 		return;
 	}
 		
-	my $file = findMusicLibraryFile();
+	my $file = $ituneslibraryfile || findMusicLibraryFile();
 
 	$::d_itunes && msg("startScan: iTunes file: $file\n");
 
@@ -298,6 +391,7 @@ sub startScan {
 } 
 
 sub stopScan {
+	$::d_itunes_verbose && msg("stopScan().\n");
 	if (stillScanning()) {
 		Slim::Utils::Scheduler::remove_task(\&scanFunction);
 		doneScanning();
@@ -358,6 +452,10 @@ sub artScan {
     # Abandon all hope ye who enter here...
 ###########################################################################################
 sub scanFunction {
+	$::d_itunes_verbose && msg("scanFunction()\n");
+
+	my $file = $ituneslibraryfile || findMusicLibraryFile();;
+	my $path = $ituneslibrarypath || findMusicLibrary();
 
 	if ($doneXML) {
 		my $artScan = artScan();
@@ -369,7 +467,6 @@ sub scanFunction {
 
 	# this assumes that iTunes uses file locking when writing the xml file out.
 	if (!$opened) {
-		my $file = findMusicLibraryFile();
 		if (!open(ITUNESLIBRARY, "<$file")) {
 			$::d_itunes && warn "Couldn't open iTunes Library: $file";
 			return 0;	
@@ -385,7 +482,7 @@ sub scanFunction {
 		if ($locked) {
 			$::d_itunes && msg("Got file lock on iTunes Library\n");
 			$locked = 1;
-			my $len = read ITUNESLIBRARY, $ituneslibrary, -s findMusicLibraryFile();
+			my $len = read ITUNESLIBRARY, $ituneslibrary, -s $file;
 			die "couldn't read itunes library!" if (!defined($len));
 			flock(ITUNESLIBRARY, LOCK_UN) unless ($^O eq 'MSWin32');
 			close ITUNESLIBRARY;
@@ -465,11 +562,9 @@ sub scanFunction {
 				my $url = $location;
 				if (Slim::Music::Info::isFileURL($url)) {
 					if (Slim::Utils::OSDetect::OS() eq 'unix') {
-						my $base = Slim::Utils::Prefs::get('itunes_basedir')
-							|| Slim::Utils::Prefs::get('audiodir');
-						$base = Slim::Utils::Misc::fileURLFromPath($base);
+						my $base = Slim::Utils::Misc::fileURLFromPath($path);
 						$url =~ s,$iBase,$base/,isg;
-						$::d_itunes && msg("Correcting for Linux: $iBase to $url\n");
+						$::d_itunes && msg("Correcting for Linux: $location to $url\n");
 					};
 					$url =~ s/\/$//;
 				}

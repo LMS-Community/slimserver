@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.11 2004/04/29 00:57:53 kdf Exp $
+#$Id: MoodLogic.pm,v 1.12 2004/05/05 02:06:35 kdf Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -226,7 +226,7 @@ sub exportFunction {
 	my %genre_hash;
 	my $count = $browser->FLT_Genre_Count();
 	
-	for (my $i=1; $i<$count; $i++) {
+	for (my $i=1; $i<=$count; $i++) {
 		my $genre_id = $browser->FLT_Genre_MGID($i);
 		$mixer->{Seed_MGID} = -$genre_id;
 		my $genre_name = $mixer->Mix_GenreName(-1);
@@ -236,9 +236,10 @@ sub exportFunction {
 	}
 	
 	$count = $browser->FLT_Song_Count();
+	
 	my @album_data = (-1, undef, undef);
 	
-	for (my $i=1; $i<$count; $i++) {
+	for (my $i=1; $i<=$count; $i++) {
 		my $filename;
 		my %cacheEntry = ();
 		my $song_id = $browser->FLT_Song_SID($i);
@@ -267,11 +268,10 @@ sub exportFunction {
 				push @playlists, $url;
 				$::d_moodlogic && msg("Found MoodLogic Playlist: $url\n");
 			} else {print $playlists[-1];}
-			$::d_moodlogic && msg("got a playlist ($url) named $name\n");
 			# add this playlist to our playlist library
 			$cacheEntry{'TITLE'} = Slim::Utils::Prefs::get('MoodLogicplaylistprefix') . $name . Slim::Utils::Prefs::get('MoodLogicplaylistsuffix');
 			$cacheEntry{'LIST'} = getPlaylistItems($playlist);
-			$cacheEntry{'CT'} = 'itu';
+			$cacheEntry{'CT'} = 'mlp';
 			$cacheEntry{'TAG'} = 1;
 			$cacheEntry{'VALID'} = '1';
 			Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
@@ -288,7 +288,6 @@ sub exportFunction {
 					push @playlists, $url;
 					$::d_moodlogic && msg("Found MoodLogic Auto Playlist: $url\n");
 				}
-				$::d_moodlogic && msg("got a playlist ($url) named $name\n");
 				# add this playlist to our playlist library
 				$cacheEntry{'TITLE'} = Slim::Utils::Prefs::get('MoodLogicplaylistprefix') . $name . Slim::Utils::Prefs::get('MoodLogicplaylistsuffix');
 				$cacheEntry{'LIST'} = getPlaylistItems($auto);
@@ -307,7 +306,7 @@ sub exportFunction {
 			$cacheEntry{'YEAR'} = $album_data[4];
 			$cacheEntry{'SIZE'} = $album_data[5];
 		}
-		$cacheEntry{'CT'} = 'mp3';
+		$cacheEntry{'CT'} = Slim::Music::Info::typeFromPath($filename,'mp3');
 		$cacheEntry{'TAG'} = 1;
 		$cacheEntry{'VALID'} = 1;
 		$cacheEntry{'TITLE'} = $mixer->Mix_SongName(-1);
@@ -325,7 +324,7 @@ sub exportFunction {
 		$mixer->{Seed_AID} = $browser->FLT_Song_AID($i);
 		$cacheEntry{'MOODLOGIC_ARTIST_MIXABLE'} = $mixer->Seed_AID_Mixable();
 		$cacheEntry{'MOODLOGIC_GENRE_MIXABLE'} = $genre_hash{$browser->FLT_Song_MGID($i)}[1] if (defined $genre_hash{$browser->FLT_Song_MGID($i)});
-			
+		$::d_moodlogic && msg("Exporting song $song_id: $filename\n");
 		Slim::Music::Info::updateCacheEntry($filename, \%cacheEntry);
 
 		if (Slim::Utils::Prefs::get('lookForArtwork')) {

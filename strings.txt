@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.97 2004/05/02 15:01:05 dean Exp $
+# $Id: strings.txt,v 1.98 2004/05/05 02:06:35 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1068,6 +1068,9 @@ COMMAND
 	NO	Kommando
 	SE	Kommando
 
+DECODER
+	EN	Decoder
+
 #
 # Setup preference strings
 # Place preferences under the comments reflecting where they appear on the setup pages,
@@ -1705,6 +1708,9 @@ SETUP_ARTFOLDER_DESC
 	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, the server will still look for artwork in the same path as each audio file if no matching artwork in found in the Artwork Folder.
 	NO	Du kan velge å lagre alle platecover i en folder, ved å benytte innstillingen over. Skriv inn adressen til Grafikk folderen her. Serveren vil fremdeles lete etter platecover i samme folder som lydfilen ligger i om ikke det finnes et treff i Grafikk folderen.
 
+SETUP_BAD_FILE
+	EN	Oops - "%s" doesn't seem to be a valid file. Try again.
+
 SETUP_BAD_DIRECTORY
 	DE	Oops - "%s" ist kein gültiges Verzeichnis. Bitte versuchen Sie es noch einmal.
 	DK	Desværre, "%s" er ikke en brugbar folder. Prøv en anden.
@@ -1881,14 +1887,7 @@ SETUP_ITUNES_OK
 	SE	Servern kommer nu använda iTunes som musikbibliotek.
 
 SETUP_ITUNES_NOT
-	DE	Der Server wird nun das Verzeichnis ihrer Musiksammlung durchsuchen.
-	DK	Serveren vil gennemsøge den angivne mappe for din musiksamling.
-	EN	The server will now scan the folder for your music library.
-	ES	El servidor usará la carpeta normal como librería de música.
-	FR	Le serveur va maintenant répertorier le contenu de votre dossier de musique.
-	NL	De server zal nu de folder gebruiken voor Uw muziek bibliotheek.
-	PT	O servidor vai analisar a directoria para ser o arquivo de músicas.
-	SE	Servern kommer nu använda mappen som musikbibliotek.
+	EN	The server will no longer use iTunes for your music library.
 
 SETUP_ITUNES_DESC
 	DE	Der SlimServer kann ihre iTunes Musik Sammlung und Playlists verwenden. Jegliche Änderungen, die Sie in iTunes vornehmen, werden auf ihrem Player abgebildet. Wenn Sie die iTunes Musiksammlung nicht verwenden wollen, dann geben Sie das Verzeichnis der Musiksammlung auf ihrem Computer an.
@@ -2040,6 +2039,30 @@ SETUP_ITUNESSCANINTERVAL_DESC
 SETUP_ITUNESSCANINTERVAL_OK
 	DE	Minimale Wartezeit fürs Einlesen der iTunes Musiksammlung
 	EN	Minimum iTunes Music Library reload time:
+
+SETUP_ITUNES_LIBRARY_AUTOLOCATE
+	EN	Autolocate iTunes Library
+
+SETUP_ITUNES_LIBRARY_AUTOLOCATE_DESC
+	EN	You may choose to have the server attempt to automatically set both iTunes XML Path or iTunes Library Music Path.  To skip the seach, you MUST explicitly set both iTunes XML Path or iTunes Library Music Path and set this to Use Manual Locations.
+
+SETUP_ITUNES_LIBRARY_AUTOLOCATE_0
+	EN	Use Manual locations for iTunes Library
+
+SETUP_ITUNES_LIBRARY_AUTOLOCATE_1
+	EN	Find iTunes Library Automatically
+
+SETUP_ITUNES_LIBRARY_XML_PATH
+	EN	iTunes XML Path
+
+SETUP_ITUNES_LIBRARY_XML_PATH_DESC
+	EN	Full path and filename for iTunes Music Library.xml file.
+
+SETUP_ITUNES_LIBRARY_MUSIC_PATH
+	EN	iTunes Library Music Path
+
+SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
+	EN	Full path to the location of the actual files that are part of your iTunes Music Library.
 
 SETUP_COVERART
 	DE	Plattencover
