@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.52 2004/01/13 02:43:20 daniel Exp $
+# $Id: Source.pm,v 1.53 2004/01/13 08:12:55 kdf Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -545,7 +545,7 @@ sub currentSongIndex {
 		$client->currentsong($newindex);
 	}
 	
-	return $client->currentsong();
+	return $client->currentsong() || 0;
 }
 
 # nextsong is for figuring out what the next song will be.

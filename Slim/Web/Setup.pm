@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.32 2004/01/13 02:43:22 daniel Exp $
+# $Id: Setup.pm,v 1.33 2004/01/13 08:12:56 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -719,7 +719,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['MenuItems','NonMenuItems','Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['skin','itemsPerPage','refreshRate','coverArt','coverThumb']
+					'PrefOrder' => ['skin','itemsPerPage','refreshRate','coverArt','coverThumb','thumbSize']
 				}
 			,'MenuItems' => {
 					'PrefOrder' => ['menuItem']
@@ -871,6 +871,10 @@ sub initSetupConfig {
 						'validate' => \&validateHasText
 						,'PrefSize' => 'large'
 					}
+			,'thumbSize' => {
+					'validate' => \&validateInt
+					,'validateArgs' => [25,250,1,1]
+				}
 			}
 		}# end of setup{'interface'} hash
 	,'formats' => {

@@ -1,3 +1,4 @@
+# $Id: strings.txt,v 1.48 2004/01/13 08:12:55 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1768,6 +1769,12 @@ SETUP_COVERTHUMB_OK
 	NL	Bestandsnaam voor verkleinde afbeelding van de hoes ingesteld op
 	PT	O nome do ficheiro para a miniatura da Capa do Álbum é
 	SE	Filnamn för Miniatyrer av albumomslag satt till:
+
+SETUP_THUMBSIZE
+	EN	Thumbnail Size
+
+SETUP_THUMBSIZE_DESC
+	EN	Choose the size in pixels (25-250) for the default thumbnail image when browsing by cover art. Default is 100.
 
 SETUP_PLUGINS_OK
 	DE	Ihr Plugin-Menü enthält:
@@ -3992,6 +3999,9 @@ FLC
 SHN
 	EN	Shorten
 
+WMA
+	EN	Windows Media 
+
 AIF
 	EN	AIFF
 	FR	AIFF
@@ -4415,6 +4425,9 @@ BROWSE_BY_ALBUM
 	NO	Bla i Album
 	PT	Escolher por Álbum
 	SE	Bläddra Album
+
+BROWSE_BY_ARTWORK
+	EN	Browse Artwork
 
 BROWSE_BY_SONG
 	DE	Titel nachschlagen

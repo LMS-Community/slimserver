@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.32 2004/01/13 02:43:21 daniel Exp $
+# $Id: Pages.pm,v 1.33 2004/01/13 08:12:56 kdf Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -45,7 +45,7 @@ sub home {
 	}
 	
 	addStats($paramsref, [],[],[],[]);
- 
+
 	my $template = 'index.html';
 	if ( $$paramsref{"path"}  =~ /home\.(htm|xml)/) { $template = 'home.html'; }
 	
@@ -176,7 +176,6 @@ sub browser {
 	# Make separate links for each component of the pwd
 	#
 	%list_form=();
-#	$list_form{'player'} = Slim::Web::HTTP::escape($current_player);
 	$list_form{'player'} = $current_player;
 	$list_form{'myClientState'} = $client;
 	$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
@@ -185,17 +184,17 @@ sub browser {
 	$$paramsref{'pwd_list'} = " ";
 	my $lastpath;
 	foreach my $c (splitdir($dir)) {
-	    if ($c ne "" && $c ne "__playlists" && $c ne "__current.m3u") {
-		    $aggregate = (defined($aggregate) && $aggregate ne '') ? catdir($aggregate, $c) : $c;        # incrementally build the path for each link
-		    $list_form{'dir'}=Slim::Web::HTTP::escape($aggregate);
-            if ($c =~ /(.*)\.m3u$/) { $c = $1; }
-		    
-		    if (Slim::Music::Info::isURL($c)) {
-		    	$list_form{'shortdir'}= Slim::Music::Info::standardTitle(undef, $c);
-		    } else {
-		    	$list_form{'shortdir'}=$c; #possibly make this into the TITLE of the playlist if this is a number
-		    }
-		    $$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browse_pwdlist.html", \%list_form)};
+		if ($c ne "" && $c ne "__playlists" && $c ne "__current.m3u") {
+			$aggregate = (defined($aggregate) && $aggregate ne '') ? catdir($aggregate, $c) : $c;        # incrementally build the path for each link
+			$list_form{'dir'}=Slim::Web::HTTP::escape($aggregate);
+				if ($c =~ /(.*)\.m3u$/) { $c = $1; }
+			
+			if (Slim::Music::Info::isURL($c)) {
+				$list_form{'shortdir'}= Slim::Music::Info::standardTitle(undef, $c);
+			} else {
+				$list_form{'shortdir'}=$c; #possibly make this into the TITLE of the playlist if this is a number
+			}
+			$$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browse_pwdlist.html", \%list_form)};
 		}
 		if ($c) { $lastpath = $c; }
 	}
@@ -360,14 +359,12 @@ sub browser_addtolist_done {
 #
 
 sub status_header {
-	#my($client, $main_form_ref) = @_;
 	my($client, $paramsref, $callback, $httpclientsock, $result, $headersref, $paramheadersref) = @_;
 	$$paramsref{'omit_playlist'} = 1;
 	return status(@_);
 }
 
 sub status {
-	#my($client, $main_form_ref) = @_;
 	my($client, $main_form_ref, $callback, $httpclientsock, $resultref, $headersref, $paramheadersref) = @_;
 
 	$$main_form_ref{'playercount'} = Slim::Player::Client::clientCount();
@@ -402,7 +399,6 @@ sub status {
 		if ($client->defaultName() ne $client->name()) {
 			$$main_form_ref{'player_name'} = $client->name();
 		}
-		
 		if (Slim::Player::Playlist::shuffle($client) == 1) {
 			$$main_form_ref{'shuffleon'} = "on";
 		} elsif (Slim::Player::Playlist::shuffle($client) == 2) {
@@ -485,7 +481,6 @@ sub status {
 			$$main_form_ref{'playlist'} = ${$$main_form_ref{'playlist'}};
 		}
 	}
-			  
 	return Slim::Web::HTTP::filltemplatefile($$main_form_ref{'omit_playlist'} ? "status_header.html" : "status.html" , $main_form_ref);
 }
 
@@ -556,6 +551,7 @@ sub playlist {
 	}
 	return  Slim::Web::HTTP::filltemplatefile("playlist.html", $main_form_ref);
 }
+
 sub buildPlaylist {
 	my($client, $main_form_ref, $callback, $httpclientsock, $result, $headersref, $paramheadersref, $listBuild) = @_;
 	my %list_form = ();
@@ -595,6 +591,7 @@ sub buildPlaylist {
 		return 0;
 	}
 }
+
 sub playlist_done {
 	my($client, $main_form_ref, $callback, $httpclientsock, $result, $headersref, $paramheadersref) = @_;
 	my $body = Slim::Web::HTTP::filltemplatefile("playlist.html", $main_form_ref);
@@ -750,7 +747,6 @@ sub search {
 			}
 		}
 	}
-
 	return Slim::Web::HTTP::filltemplatefile("search.html", $paramsref);
 }
 
@@ -765,8 +761,8 @@ sub addsonginfo {
 		$$paramsref{'genre'} = Slim::Music::Info::genre($song);
 		$$paramsref{'artist'} = Slim::Music::Info::artist($song);
 		$$paramsref{'composer'} = Slim::Music::Info::composer($song);
- 		$$paramsref{'band'} = Slim::Music::Info::band($song);
- 		$$paramsref{'conductor'} = Slim::Music::Info::conductor($song);
+		$$paramsref{'band'} = Slim::Music::Info::band($song);
+		$$paramsref{'conductor'} = Slim::Music::Info::conductor($song);
 		$$paramsref{'album'} = Slim::Music::Info::album($song);
 		$$paramsref{'title'} = Slim::Music::Info::title($song);
 		if (Slim::Music::Info::fileLength($song)) { $$paramsref{'filelength'} = Slim::Utils::Misc::delimitThousands(Slim::Music::Info::fileLength($song)); }
@@ -840,10 +836,10 @@ sub songinfo {
 }
 
 sub generate_pwd_list {
-        my ($genre, $artist, $album, $player) = @_;
-        my %list_form;
-        my $pwd_list = "";
-        
+	my ($genre, $artist, $album, $player) = @_;
+	my %list_form;
+	my $pwd_list = "";
+
 	if (defined($genre) && $genre eq '*' && 
 	    defined($artist) && $artist eq '*') {
 		%list_form=();
@@ -852,7 +848,7 @@ sub generate_pwd_list {
 		$list_form{'artist'} = '*';
 		$list_form{'genre'} = '*';
 		$list_form{'player'} = $player;
-                $list_form{'pwditem'} = string('BROWSE_BY_ALBUM');
+		$list_form{'pwditem'} = string('BROWSE_BY_ALBUM');
 		$pwd_list .= ${Slim::Web::HTTP::filltemplatefile("browseid3_pwdlist.html", \%list_form)};
 	} elsif (defined($genre) && $genre eq '*') {
 		%list_form=();
@@ -861,7 +857,7 @@ sub generate_pwd_list {
 		$list_form{'album'} = '';
 		$list_form{'genre'} = '*';
 		$list_form{'player'} = $player;
-                $list_form{'pwditem'} = string('BROWSE_BY_ARTIST');
+		$list_form{'pwditem'} = string('BROWSE_BY_ARTIST');
 		$pwd_list .= ${Slim::Web::HTTP::filltemplatefile("browseid3_pwdlist.html", \%list_form)};
 	} else {
 		%list_form=();
@@ -870,7 +866,7 @@ sub generate_pwd_list {
 		$list_form{'album'} = '';
 		$list_form{'genre'} = '';
 		$list_form{'player'} = $player;
-                $list_form{'pwditem'} = string('BROWSE_BY_GENRE');
+		$list_form{'pwditem'} = string('BROWSE_BY_GENRE');
 		$pwd_list .= ${Slim::Web::HTTP::filltemplatefile("browseid3_pwdlist.html", \%list_form)};
 	};
 
@@ -961,10 +957,18 @@ sub browseid3 {
 		$list_form{'artist'} = '*';
 		$list_form{'genre'} = '*';
 		$list_form{'player'} = $player;
-		$list_form{'pwditem'} = string('BROWSE_BY_ALBUM');
-		$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
-		$$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_pwdlist.html", \%list_form)};
-		$$paramsref{'browseby'} = 'BROWSE_BY_ALBUM';
+		if ($$paramsref{'bycover'}) {
+			$list_form{'pwditem'} = string('BROWSE_BY_ARTWORK');
+			$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
+			$list_form{'bycover'} = 1;
+			$$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_pwdlist.html", \%list_form)};
+			$$paramsref{'browseby'} = 'BROWSE_BY_ARTWORK';
+		} else {
+			$list_form{'pwditem'} = string('BROWSE_BY_ALBUM');
+			$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
+			$$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_pwdlist.html", \%list_form)};
+			$$paramsref{'browseby'} = 'BROWSE_BY_ALBUM';
+		}
 	} elsif (defined($genre) && $genre eq '*') {
 		%list_form=();
 		$list_form{'song'} = '';
@@ -1025,10 +1029,10 @@ sub browseid3 {
 		$$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_pwdlist.html", \%list_form)};
 	}
 	my $otherparams = 'player=' . Slim::Web::HTTP::escape($player) . 
-					  '&genre=' . Slim::Web::HTTP::escape($genre) . 
-					  '&artist=' . Slim::Web::HTTP::escape($artist) . 
-					  '&album=' . Slim::Web::HTTP::escape($album) . 
-					  '&song=' . Slim::Web::HTTP::escape($song) . '&';
+							'&genre=' . Slim::Web::HTTP::escape($genre) . 
+							'&artist=' . Slim::Web::HTTP::escape($artist) . 
+							'&album=' . Slim::Web::HTTP::escape($album) . 
+							'&song=' . Slim::Web::HTTP::escape($song) . '&';
 	if (!$genre) {
 		# Browse by Genre
 		@items = Slim::Music::Info::genres([], [$artist], [$album], [$song]);
@@ -1053,6 +1057,26 @@ sub browseid3 {
 							,$$paramsref{'itemsPerPage'});
 				}
 			$descend = 'true';
+			
+			if (scalar(@items) > 1) {
+				%list_form=();
+				if ($$paramsref{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
+					$list_form{'album_count'}	= Slim::Music::Info::albumCount(['*'],[],[],[]);
+					$list_form{'song_count'}	= Slim::Music::Info::songCount(['*'],[],[],[]);
+				}
+				$list_form{'genre'}	  = '*';
+				$list_form{'artist'}  = '*';
+				$list_form{'album'}	  = $album;
+				$list_form{'song'}	  = $song;
+				$list_form{'title'}   = string('ALL_ALBUMS');
+				$list_form{'descend'} = $descend;
+				$list_form{'player'} = $player;
+				$list_form{'odd'}	  = ($itemnumber + 1) % 2;
+				$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
+				$itemnumber++;
+				$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
+			}
+			
 			foreach my $item ( @items[$start..$end] ) {
 				%list_form=();
 				$list_form{'genre'}	  = $item;
@@ -1162,9 +1186,12 @@ sub browseid3 {
 											\$$paramsref{'browselist_header'},
 											$$paramsref{'skinOverride'},
 											$$paramsref{'itemsPerPage'},
+											$$paramsref{'itemsPerPage'},
 											(scalar(@items) > 1));
-				}
-				else{
+				} else {
+					if  ($$paramsref{'bycover'}) {
+					  $otherparams .= 'bycover=1&';
+					}
 					($start,$end) = alphapagebar(\@items
 							,$$paramsref{'path'}
 							,$otherparams
@@ -1175,25 +1202,25 @@ sub browseid3 {
 							,$$paramsref{'itemsPerPage'});
 				}
 			$descend = 'true';
-			
-			if (scalar(@items) > 1) {
-				%list_form=();
-				if ($$paramsref{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
-					$list_form{'song_count'}	= Slim::Music::Info::songCount([$genre],[$artist],['*'],[]);
+			if (!$$paramsref{'bycover'}) {
+				if (scalar(@items) > 1) {
+					%list_form=();
+					if ($$paramsref{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
+						$list_form{'song_count'}	= Slim::Music::Info::songCount([$genre],[$artist],['*'],[]);
+					}
+					$list_form{'genre'}	  = $genre;
+					$list_form{'artist'}  = $artist;
+					$list_form{'album'}	  = '*';
+					$list_form{'song'}	  = $song;
+					$list_form{'title'}   = string('ALL_SONGS');
+					$list_form{'descend'} = 1;
+					$list_form{'player'} =  $player;
+					$list_form{'odd'}	  = ($itemnumber + 1) % 2;
+					$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
+					$itemnumber++;
+					$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
 				}
-				$list_form{'genre'}	  = $genre;
-				$list_form{'artist'}  = $artist;
-				$list_form{'album'}	  = '*';
-				$list_form{'song'}	  = $song;
-				$list_form{'title'}   = string('ALL_SONGS');
-				$list_form{'descend'} = 1;
-				$list_form{'player'} =  $player;
-				$list_form{'odd'}	  = ($itemnumber + 1) % 2;
-				$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
-				$itemnumber++;
-				$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
 			}
-			
 			foreach my $item ( @items[$start..$end] ) {
 				%list_form=();
 				if ($$paramsref{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
@@ -1213,8 +1240,20 @@ sub browseid3 {
 					$list_form{'anchor'}  = $anchor;
 					$lastAnchor = $anchor;
 				}
-				$itemnumber++;
-				$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
+				if ($$paramsref{'bycover'}) {
+					my $song = Slim::Music::Info::pathFromAlbum($item);
+					if (Slim::Music::Info::haveThumbArt($song)) {
+						$list_form{'coverthumb'} = 1; 
+						$list_form{'thumbartpath'} = $song;
+						$list_form{'itemnumber'} = $itemnumber;
+						$list_form{'size'} = Slim::Utils::Prefs::get('thumbSize');
+						$itemnumber++;
+						$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_artwork.html", \%list_form)};
+					}
+				} else {
+					$itemnumber++;
+					$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
+				}
 				::idleStreams();
 			}
 		}
@@ -1273,6 +1312,8 @@ sub browseid3 {
 				$list_form{'odd'}	  = ($itemnumber + 1) % 2;
 				$list_form{'mixable_not_descend'} = Slim::Music::Info::isSongMixable($item);
 				$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
+			my ($body, $type) =  Slim::Music::Info::coverArt($item);
+			if (defined($body)) { $list_form{'coverart'} = 1; $list_form{'coverartpath'} = $item;}
 				$itemnumber++;
 				$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
 				::idleStreams();
@@ -1297,32 +1338,32 @@ sub mood_wheel {
 	my $player = $$paramsref{'player'};
 	my $itemnumber = 0;
 	
-        if (defined $artist && $artist ne "") {
-                @items = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicArtistId($artist), 'artist');
-        } elsif (defined $genre && $genre ne "" && $genre ne "*") {
-                @items = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicGenreId($genre), 'genre');
+	if (defined $artist && $artist ne "") {
+		@items = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicArtistId($artist), 'artist');
+	} elsif (defined $genre && $genre ne "" && $genre ne "*") {
+		@items = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicGenreId($genre), 'genre');
 	} else {
-                $::d_moodlogic && msg('no/unknown type specified for mood wheel');
-                return undef;
+		$::d_moodlogic && msg('no/unknown type specified for mood wheel');
+		return undef;
 	}
 
-        $$paramsref{'pwd_list'} = &generate_pwd_list($genre, $artist, $album, $player);
-        $$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("mood_wheel_pwdlist.html", $paramsref)};
-        
+	$$paramsref{'pwd_list'} = &generate_pwd_list($genre, $artist, $album, $player);
+	$$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("mood_wheel_pwdlist.html", $paramsref)};
+
 	foreach my $item ( @items ) {
-                my %list_form=();
-                $list_form{'mood'} = $item;
-                $list_form{'genre'} = $genre;
-                $list_form{'artist'}  = $artist;
-                $list_form{'album'} = $album;
-                $list_form{'player'} = $player;
-                $list_form{'itempath'} = $item; 
-                $list_form{'item'} = $item; 
-                $list_form{'odd'} = ($itemnumber + 1) % 2;
-                $itemnumber++;
-                $$paramsref{'mood_list'} .= ${Slim::Web::HTTP::filltemplatefile("mood_wheel_list.html", \%list_form)};
+		my %list_form=();
+		$list_form{'mood'} = $item;
+		$list_form{'genre'} = $genre;
+		$list_form{'artist'}  = $artist;
+		$list_form{'album'} = $album;
+		$list_form{'player'} = $player;
+		$list_form{'itempath'} = $item; 
+		$list_form{'item'} = $item; 
+		$list_form{'odd'} = ($itemnumber + 1) % 2;
+		$itemnumber++;
+		$$paramsref{'mood_list'} .= ${Slim::Web::HTTP::filltemplatefile("mood_wheel_list.html", \%list_form)};
 	}
-        
+
 	return Slim::Web::HTTP::filltemplatefile("mood_wheel.html", $paramsref);
 }
 
@@ -1340,52 +1381,51 @@ sub instant_mix {
 	my $p0 = $$paramsref{'p0'};
 	my $itemnumber = 0;
 
-        $$paramsref{'pwd_list'} = &generate_pwd_list($genre, $artist, $album, $player);
-        if (defined $mood && $mood ne "") {
-            $$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("mood_wheel_pwdlist.html", $paramsref)};
-        }
-        
-        if (defined $song && $song ne "") {
-            $$paramsref{'src_mix'} = Slim::Music::Info::standardTitle(undef, $song);
-        } elsif (defined $mood && $mood ne "") {
-            $$paramsref{'src_mix'} = $mood;
-        }
-        
-        $$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("instant_mix_pwdlist.html", $paramsref)};
-        
-        if (defined $song && $song ne "") {
-                @items = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicSongId($song), undef, 'song');
-        } elsif (defined $artist && $artist ne "" && $artist ne "*" && $mood ne "") {
-                @items = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicArtistId($artist), $mood, 'artist');
-        } elsif (defined $genre && $genre ne "" && $genre ne "*" && $mood ne "") {
-                @items = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicGenreId($genre), $mood, 'genre');
-        } else {
-            $::d_moodlogic && msg('no/unknown type specified for instant mix');
-            return undef;
-        }
-        
+	$$paramsref{'pwd_list'} = &generate_pwd_list($genre, $artist, $album, $player);
+	if (defined $mood && $mood ne "") {
+		$$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("mood_wheel_pwdlist.html", $paramsref)};
+	}
+
+	if (defined $song && $song ne "") {
+		$$paramsref{'src_mix'} = Slim::Music::Info::standardTitle(undef, $song);
+	} elsif (defined $mood && $mood ne "") {
+		$$paramsref{'src_mix'} = $mood;
+	}
+
+	$$paramsref{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("instant_mix_pwdlist.html", $paramsref)};
+
+	if (defined $song && $song ne "") {
+		@items = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicSongId($song), undef, 'song');
+	} elsif (defined $artist && $artist ne "" && $artist ne "*" && $mood ne "") {
+		@items = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicArtistId($artist), $mood, 'artist');
+	} elsif (defined $genre && $genre ne "" && $genre ne "*" && $mood ne "") {
+		@items = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicGenreId($genre), $mood, 'genre');
+	} else {
+		$::d_moodlogic && msg('no/unknown type specified for instant mix');
+		return undef;
+	}
+
 	foreach my $item ( @items ) {
-                my %list_form=();
-                $list_form{'artist'} = $artist;
-                $list_form{'album'} = $album;
-                $list_form{'genre'} = $genre;
-                $list_form{'player'} = $player;
-                $list_form{'itempath'} = $item; 
-                $list_form{'item'} = $item; 
-                $list_form{'title'} = Slim::Music::Info::infoFormat($item, 'TITLE (ARTIST)', 'TITLE');
+		my %list_form=();
+		$list_form{'artist'} = $artist;
+		$list_form{'album'} = $album;
+		$list_form{'genre'} = $genre;
+		$list_form{'player'} = $player;
+		$list_form{'itempath'} = $item; 
+		$list_form{'item'} = $item; 
+		$list_form{'title'} = Slim::Music::Info::infoFormat($item, 'TITLE (ARTIST)', 'TITLE');
 		$list_form{'odd'} = ($itemnumber + 1) % 2;
 		$itemnumber++;
-                $$paramsref{'instant_mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("instant_mix_list.html", \%list_form)};
+		$$paramsref{'instant_mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("instant_mix_list.html", \%list_form)};
 	}
-        
-        if (defined $p0) {
-            Slim::Control::Command::execute($client, ["playlist", $p0 eq "append" ? "append" : "play", $items[0]]);
+
+	if (defined $p0) {
+		Slim::Control::Command::execute($client, ["playlist", $p0 eq "append" ? "append" : "play", $items[0]]);
 		
-	    for (my $i=1; $i<=$#items; $i++) {
-                        Slim::Control::Command::execute($client, ["playlist", "append", $items[$i]]);
-	    }
-        }
-        
+		for (my $i=1; $i<=$#items; $i++) {
+			Slim::Control::Command::execute($client, ["playlist", "append", $items[$i]]);
+		}
+	}
 	return Slim::Web::HTTP::filltemplatefile("instant_mix.html", $paramsref);
 }
 
@@ -1520,11 +1560,8 @@ sub alphapagebar {
 	my $ignorearticles = shift;
 	my $skinOverride = shift;
 	my $maxcount = shift || Slim::Utils::Prefs::get('itemsPerPage');
-	
 	my $itemcount = scalar(@$itemsref);
-
 	my $start = $$startref;
-
 	if (!$start) { 
 		$start = 0;
 	}
@@ -1536,7 +1573,6 @@ sub alphapagebar {
 	$$startref = $start;
 	
 	my $end = $itemcount-1;
-
 	if ($itemcount > $maxcount/2) {
 
 		my %pagebar_params = ();

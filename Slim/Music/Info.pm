@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.48 2004/01/13 02:02:25 daniel Exp $
+# $Id: Info.pm,v 1.49 2004/01/13 08:12:55 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -606,7 +606,7 @@ sub updateCacheEntry {
 			if (defined $val) {
 				$cacheEntryArray->[$i] = $val;
 			}
-			$::d_info && $cacheEntryHash->{$key} && 
+			$::d_info && defined($cacheEntryHash->{$key}) && 
 				Slim::Utils::Misc::msg("updating $url with " . $cacheEntryHash->{$key} . " for $key\n");
 			$i++;
 		}
@@ -982,6 +982,10 @@ sub info {
 	
 	my $item = cacheItem($file, $tagname);
 
+	if ($tagname eq 'THUMB') {
+		my $text = (defined $item) ? $item : "undef";
+	}
+
 	# update the cache if the tag is not defined in the cache
 	if (!defined($item)) {
 		# defer cover information until needed
@@ -1203,15 +1207,35 @@ sub coverArt {
 	my $image;
 
 	$::d_info && Slim::Utils::Misc::msg("Cover Art ($art) for: $file\n");
-
+	
 	my ($body, $contenttype);
-
-	if ( (($art eq 'cover') && haveCoverArt($file)) || 
-	     (($art eq 'thumb') && haveThumbArt($file)) ) {
+	my $cover = haveCoverArt($file);
+	my $thumb = haveThumbArt($file);
+	
+	if (($art eq 'cover') && $cover && ($cover ne $file)) {
+		$body = getImageContent($cover);
+		if ($body) {
+			$::d_info && Slim::Utils::Misc::msg("Found cached cover art: $cover\n");
+			$contenttype = mimeType($cover);
+		} else {
+			($body, $contenttype) = readCoverArt($file,$art);
+		}
+	} 
+	elsif (($art eq 'thumb') && $thumb && ($thumb ne $file)) {
+		$body = getImageContent($thumb);
+		if ($body) {
+			$::d_info && Slim::Utils::Misc::msg("Found cached thumb art: $thumb\n");
+			$contenttype = mimeType($thumb);
+		} else {
+			($body, $contenttype) = readCoverArt($file,$art);
+		}
+	}
+	elsif ( (($art eq 'cover') && $cover) || 
+		(($art eq 'thumb') && $thumb) ) {
+		$::d_info && Slim::Utils::Misc::msg("Reading $art from $file\n");
 		($body, $contenttype) = readCoverArt($file,$art);
 	}
-
- 	return ($body, $contenttype);
+	return ($body, $contenttype);
 }
 
 sub tagVersion {
@@ -1428,6 +1452,17 @@ sub albums {
 	} else {
  		return fixCase(sortuniq_ignore_articles(@albums));
  	}
+}
+
+# Return cached path for a given album name
+sub pathFromAlbum {
+	my $album = shift;
+	
+	my $index = $infoCacheItemsIndex{'ALBUM'};
+	foreach my $file (keys %infoCache) {
+		return $file if ((defined $infoCache{$file}[$index]) && ($infoCache{$file}[$index] eq $album));
+	}
+	return undef;
 }
 
 # return all songs for a given genre, artist, and album
@@ -1965,6 +2000,7 @@ sub readCoverArt {
 	my $fullpath = shift;
 	my $filepath;
 	my $image = shift || 'cover';
+	my $cover;
 
 	my $body;	
 	my $contenttype;
@@ -1977,7 +2013,7 @@ sub readCoverArt {
 		$filepath = $fullpath;
 	}
 
-	if (isSong($filepath) && isFile($filepath)) {
+	if ((isSong($filepath) && isFile($filepath)) || isDir($filepath)) {
 		
 		my $file = Slim::Utils::Misc::virtualToAbsolute($filepath);
 		
@@ -2046,10 +2082,12 @@ sub readCoverArt {
 			if ($contenttype && $contenttype eq 'image/jpeg')	{
 				$body =~ s/^.*?\xff\xd8\xff\xe0/\xff\xd8\xff\xe0/;
 			}
-			
+			$cover = $filepath;
 		} else {
 			my @components = splitdir($file);
-			pop @components;
+			if (!isDir($file)) {
+				pop @components;
+			}
 			$::d_info && Slim::Utils::Misc::msg("Looking for image files\n");
 
 			my @filestotry = ();
@@ -2079,12 +2117,13 @@ sub readCoverArt {
 				if ($body) {
 					$::d_info && Slim::Utils::Misc::msg("Found image file: $file\n");
 					$contenttype = mimeType($file);
+					$cover = $file;
 					last;
 				}
 			}
 		}
  	}
-	return ($body, $contenttype);
+	return ($body, $contenttype,$cover);
 }
 
 sub updateCoverArt {
@@ -2092,17 +2131,19 @@ sub updateCoverArt {
 	my $type = shift || 'cover';
 	my $body;	
 	my $contenttype;
+	my $path;
 	
-	($body, $contenttype) = readCoverArt($fullpath, $type);
+	($body, $contenttype, $path) = readCoverArt($fullpath, $type);
 	 	
  	my $info;
  	
  	if (defined($body)) {
  		if ($type eq 'cover') {
- 			$info->{'COVER'} = '1';
+ 			$info->{'COVER'} = $path;
  		} elsif ($type eq 'thumb') {
- 			$info->{'THUMB'} = '1';
+ 			$info->{'THUMB'} = $path;
  		}
+ 		$::d_info && Slim::Utils::Misc::msg("$type caching $path for $fullpath\n");
  	} else {
 		if ($type eq 'cover') {
  			$info->{'COVER'} = '0';
