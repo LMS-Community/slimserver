@@ -237,6 +237,7 @@ sub playmode {
 				closeSong($everyclient);
 			} elsif ($newmode eq "play") {
 				$everyclient->readytosync(0);
+				$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
 				$everyclient->play(Slim::Player::Sync::isSynced($everyclient));				
 			} elsif ($newmode eq "pause") {
 				# since we can't count on the accuracy of the fade timers, we unfade them all, but the master calls back to pause everybody
@@ -249,6 +250,7 @@ sub playmode {
 			} elsif ($newmode eq "pausenow") {
 				$everyclient->pause();
 			} elsif ($newmode eq "resumenow") {
+				$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
 				$everyclient->resume();
 				
 			} elsif ($newmode eq "resume") {
@@ -947,9 +949,6 @@ sub pauseSynced {
 	my $client = shift;
 	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
 		$everyclient->pause();
-	}
-	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
-		$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
 	}
 }
 
