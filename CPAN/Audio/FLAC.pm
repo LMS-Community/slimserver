@@ -1,6 +1,6 @@
 package Audio::FLAC;
 
-# $Id: FLAC.pm,v 1.8 2004/07/10 23:08:29 daniel Exp $
+# $Id: FLAC.pm,v 1.9 2004/07/29 19:32:21 daniel Exp $
 
 use strict;
 use vars qw($VERSION);
@@ -343,6 +343,9 @@ sub _getMetadataBlocks {
 		my $metadataBlockType   = (BLOCKTYPEFLAG & $metadataBlockHeader)>>24;
 		my $metadataBlockLength = (BLOCKLENFLAG  & $metadataBlockHeader);
 		   $lastBlockFlag       = (LASTBLOCKFLAG & $metadataBlockHeader)>>31;
+
+		# If the block size is zero go to the next block 
+		next unless $metadataBlockLength;
 
 		# Read the contents of the metadata_block
 		read $fh, my $metadataBlockData, $metadataBlockLength or return -1;
