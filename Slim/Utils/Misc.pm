@@ -725,10 +725,22 @@ sub localeStrftime {
 	my $ltime = shift;
 	
 	(my $language = Slim::Utils::Prefs::get('language')) =~ tr/A-Z/a-z/;
+
+	# we can't display japanese or chinese, etc right now.
+	unless ($Slim::Player::Client::validClientLanguages{$language}) {
+		$language = $Slim::Player::Client::failsafeLanguage;
+	}
+
 	(my $country = $language) =~ tr/a-z/A-Z/;
+
+	# This is for when we can display japanese on the display.
+	# We might want to consider changing s/JP/JA/ in strings.txt ?
+	if ($language eq 'jp') {
+		$language = 'ja';
+	}
 	
 	my $serverlocale = $language . "_" . $country;
-	
+
 	my $saved_locale = setlocale(LC_TIME, $serverlocale);
 	my $time = strftime $format, localtime($ltime);
 	
