@@ -14,8 +14,8 @@
 8	10
 
 # version 10 is the same as version 8, except that it has additional
-# support to be updated to version 20. The upgrade from 10 to 20 is not
-# forced (yet) because 20 is still considered beta. To enable it, install
-# squeezebox_20.bin in the Firmware/ directory.
+# support to be updated to version 20. 
 
-10	20
+10	21
+
+20	21
