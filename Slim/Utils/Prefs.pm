@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.71 2004/06/18 16:25:26 dean Exp $
+# $Id: Prefs.pm,v 1.72 2004/06/25 00:53:34 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -525,23 +525,31 @@ sub clientSet {
 
 sub maxRate {
 	my $client = shift;
-	my $maxRate = clientGet($client,'maxBitrate');
-	if (!defined $maxRate) {
+	my $solorate = shift;
+	my $rate = clientGet($client,'maxBitrate');
+	if (!defined $rate) {
 		# Possibly the first time this pref has been accessed
 		# if maxBitrate hasn't been set yet, allow wired squeezeboxes to default to no limit, others to 320kbps
-		$maxRate = (($client->model() eq 'squeezebox' && !defined $client->signalStrength()) || $client->model() eq 'softsqueeze')
+		$rate = (($client->model() eq 'squeezebox' && !defined $client->signalStrength()) || $client->model() eq 'softsqueeze')
 			? 0 : 320;
 	}
-	# return the maxrate, or override with ?bitrate= query if it exists.
-	my $rate = 0;
-	my @playergroup = ($client, Slim::Player::Sync::syncedWith($client));
+	
+	# override the saved or default bitrate if a transcodeBitrate has been set via HTTP parameter
+	$rate = clientGet($client,'transcodeBitrate') || $rate;
+	
+	return $rate if (!Slim::Player::Sync::isMaster($client) || $solorate);
+	
+	# if we're the master, make sure we return the lowest common denominator bitrate.
+	my @playergroup = Slim::Player::Sync::slaves($client);
 	
 	foreach my $everyclient (@playergroup) {
 		next if Slim::Utils::Prefs::clientGet($everyclient,'silent');
-		my $otherRate = clientGet($everyclient,'transcodeBitrate') || clientGet($everyclient,'maxBitrate');
+		my $otherRate = maxRate($everyclient);
+		
 		#find the lowest bitrate limit of the sync group. Zero refers to no limit.
-		$rate = ($otherRate && (($rate && $otherRate < $rate) || !$rate))? $otherRate : $rate;
+		$rate = ($otherRate && (($rate && $otherRate < $rate) || !$rate)) ? $otherRate : $rate;
 	}
+
 	#return lowest bitrate limit.
 	return $rate;
 }
