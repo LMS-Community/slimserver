@@ -291,106 +291,124 @@ sub fischer_yates_shuffle {
 #reshuffle - every time the playlist is modified, the shufflelist should be updated
 #		We also invalidate the htmlplaylist at this point
 sub reshuffle {
-	my($client) = shift;
-	my($dontpreservecurrsong) = shift;
-	my($realsong);
-	my($i);
-	my($temp);
-	my($songcount) = count($client);
-	my $listRef = shuffleList($client);
+	my $client = shift;
+	my $dontpreservecurrsong = shift;
 
-	if ($songcount) {
-		$realsong = ${$listRef}[Slim::Player::Source::currentSongIndex($client)];
+	my $songcount = count($client);
+	my $listRef   = shuffleList($client);
 
-		if (!defined($realsong) || $dontpreservecurrsong) {
-			$realsong = -1;
-		} elsif ($realsong > $songcount) {
-			$realsong = $songcount;
-		}
+	unless ($songcount) {
 
-		@{$listRef} = (0 .. ($songcount - 1));
+		@{$listRef} = ();
 
-		if (shuffle($client) == 1) {
-			fischer_yates_shuffle($listRef);
-			for ($i = 0; $i < $songcount; $i++) {
-				if (${$listRef}[$i] == $realsong) {
-					if (shuffle($client)) {
-						$temp = ${$listRef}[$i];
-						${$listRef}[$i] = ${$listRef}[0];
-						${$listRef}[0] = $temp;
-						$i = 0;
-					}
-					last;
+		Slim::Player::Source::currentSongIndex($client, 0);
+		refreshPlaylist($client);
+
+		return;
+	}
+
+	my $realsong = ${$listRef}[Slim::Player::Source::currentSongIndex($client)];
+
+	if (!defined($realsong) || $dontpreservecurrsong) {
+		$realsong = -1;
+	} elsif ($realsong > $songcount) {
+		$realsong = $songcount;
+	}
+
+	@{$listRef} = (0 .. ($songcount - 1));
+
+	if (shuffle($client) == 1) {
+
+		fischer_yates_shuffle($listRef);
+
+		for (my $i = 0; $i < $songcount; $i++) {
+
+			if ($listRef->[$i] == $realsong) {
+				if (shuffle($client)) {
+					my $temp = $listRef->[$i];
+					$listRef->[$i] = $listRef->[0];
+					$listRef->[0] = $temp;
+					$i = 0;
 				}
-			}
-		} elsif (shuffle($client) == 2) {
-			my %albtracks;
-			my %trackToNum;
-			my $i = 0;			
-			foreach my $track (@{playList($client)}) {
-				my $album=Slim::Utils::Text::matchCase(Slim::Music::Info::album($track));
-				if (!defined($album)) {
-					$album=string('NO_ALBUM');
-				}
-				push @{$albtracks{$album}},$i;
-				$trackToNum{$track}=$i;
-				$i++;
-			}
-			if ($realsong == -1 && !$dontpreservecurrsong) {
-				$realsong=${$listRef}[Slim::Utils::Prefs::clientGet($client,'currentSong')];
-			}
-			my $curalbum=Slim::Utils::Text::matchCase(Slim::Music::Info::album(${playList($client)}[$realsong]));
-			if (!defined($curalbum)) {
-				$curalbum = string('NO_ALBUM');
-			}
-			my @albums = keys(%albtracks);
-
-			fischer_yates_shuffle(\@albums);
-
-			for ($i = 0; $i <= $#albums && $realsong != -1; $i++) {
-				my $album=shift(@albums);
-				if ($album ne $curalbum) {
-					push(@albums,$album);
-				} else {
-					unshift(@albums,$album);
-					last;
-				}
-			}
-			my @shufflelist;
-			$i=0;
-			my $album=shift(@albums);
-			my @albumorder=map {${playList($client)}[$_]} @{$albtracks{$album}};
-			@albumorder=Slim::Music::Info::sortByAlbum(@albumorder);
-			foreach my $trackname (@albumorder) {
-				my $track=$trackToNum{$trackname};
-				push @shufflelist,$track;
-				$i++
-			}
-			foreach my $album (@albums) {
-				my @albumorder=map {${playList($client)}[$_]} @{$albtracks{$album}};
-				@albumorder=Slim::Music::Info::sortByAlbum(@albumorder);
-				foreach my $trackname (@albumorder) {
-					push @shufflelist,$trackToNum{$trackname};
-				}
-			}
-			@{$listRef}=@shufflelist;
-		} 
-		
-		for ($i = 0; $i < $songcount; $i++) {
-			if (${$listRef}[$i] == $realsong) {
-				Slim::Player::Source::currentSongIndex($client,$i);
 				last;
 			}
 		}
+
+	} elsif (shuffle($client) == 2) {
+
+		my %albtracks;
+		my %trackToNum;
+		my $i = 0;			
+
+		foreach my $track (@{playList($client)}) {
+
+			my $album = Slim::Utils::Text::matchCase(Slim::Music::Info::album($track)) || string('NO_ALBUM');
+
+			push @{$albtracks{$album}}, $i;
+			$trackToNum{$track} = $i++;
+		}
+
+		if ($realsong == -1 && !$dontpreservecurrsong) {
+			$realsong = $listRef->[Slim::Utils::Prefs::clientGet($client,'currentSong')];
+		}
+
+		my $curalbum = Slim::Utils::Text::matchCase(Slim::Music::Info::album(${playList($client)}[$realsong])) || string('NO_ALBUM');
+
+		my @albums = keys(%albtracks);
+
+		fischer_yates_shuffle(\@albums);
+
+		for (my $i = 0; $i <= $#albums && $realsong != -1; $i++) {
+
+			my $album = shift(@albums);
+
+			if ($album ne $curalbum) {
+				push(@albums,$album);
+			} else {
+				unshift(@albums,$album);
+				last;
+			}
+		}
+
+		my @shufflelist = ();
+		my $album = shift(@albums);
+		my @albumorder = map { ${playList($client)}[$_] } @{$albtracks{$album}};
+
+		@albumorder = Slim::Music::Info::sortByAlbum(@albumorder);
+		$i = 0;
+
+		foreach my $trackname (@albumorder) {
+
+			push @shufflelist, $trackToNum{$trackname};
+			$i++
+		}
+
+		foreach my $album (@albums) {
+
+			my @albumorder = map { ${playList($client)}[$_] } @{$albtracks{$album}};
+
+			@albumorder = Slim::Music::Info::sortByAlbum(@albumorder);
+
+			foreach my $trackname (@albumorder) {
+				push @shufflelist, $trackToNum{$trackname};
+			}
+		}
+
+		@{$listRef} = @shufflelist;
+	} 
 	
-		if (Slim::Player::Source::currentSongIndex($client) >= $songcount) { 
-			Slim::Player::Source::currentSongIndex($client, 0);
-		};
-		
-	} else {
-		@{$listRef} = ();
+	for (my $i = 0; $i < $songcount; $i++) {
+
+		if ($listRef->[$i] == $realsong) {
+			Slim::Player::Source::currentSongIndex($client, $i);
+			last;
+		}
+	}
+
+	if (Slim::Player::Source::currentSongIndex($client) >= $songcount) { 
 		Slim::Player::Source::currentSongIndex($client, 0);
 	}
+		
 	refreshPlaylist($client);
 }
 
@@ -443,7 +461,9 @@ sub modifyPlaylistCallback {
 }
 
 1;
+
 __END__
+
 
 # Local Variables:
 # tab-width:4
