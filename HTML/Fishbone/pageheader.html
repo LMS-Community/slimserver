@@ -43,7 +43,7 @@
 					url = "search.html?"
 					suffix = "searchchoice=SEARCH&manualsearch=1"
 				break
-			[% IF additionalLinks.browse %]
+			[% IF additionalLinks.search %]
 				[% FOREACH link = additionalLinks.search %]
 				case "[% link.key %]":
 					url = "[% link.value %]"
@@ -77,27 +77,40 @@
 		
 		function changeAction()
 		{
-		document.header.action=document.header.search.options[document.header.search.selectedIndex].value;
-		alert(document.header.action);
+			document.header.action=document.header.search.options[document.header.search.selectedIndex].value;
+			alert(document.header.action);
+		}
+		
+		var selectedLink;
+		
+
+		function selectLink(lnk) {
+
+			if (selectedLink) selectedLink.style.fontWeight='normal';
+
+			lnk.style.fontWeight='bold';
+
+			selectedLink=lnk;
 		}
 		-->
 		</script>
 	</head>
 	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" 
-	[% IF setup || help %]onload="top.document.getElementById('home').rows = ' 0 , *';"
-	onunload = "top.document.getElementById('home').rows = ' 87 , *';"
-	[% ELSIF not query %] 
-	onload="parent.browser.location = getHomeCookie('SlimServer-Browserpage')+'&player=[% player | uri %]';"
+	[% IF not query  && home %] 
+		onload="parent.browser.location = getHomeCookie('SlimServer-Browserpage')+'&player=[% player | uri %]';"
 	[% END %]>
+	[% IF home %]
 	<div class="menu1" width="100%">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13">
-				<td width="33%" height="13" align="center"><nobr><a class="menu1" href="[% webroot %]home.html?player=[% player | uri %]" target="header">[% IF home %]<b>[% END %][% "HOME" | string %][% IF home %]</b>[% END %]</nobr></td>
+				<td width="33%" height="13" align="center">
+					<nobr><a class="menu1" onload="style.fontWeight='bold'" href="[% webroot %]home.html?player=[% player | uri %]" target="header" onclick="selectLink(this)">[% "HOME" | string %]</nobr>
+				</td>
 				<td>
 					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
 				</td>
 				[% IF not nosetup && not noserver %]
 				<td width="33%" height="13" align="center">
-					<nobr><a class="menu1" href="[% webroot %]setup.html?page=server&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser">[% IF setup %]<b>[% END %][% "SERVER_SETTINGS" | string %][% IF setup %]</b>[% END %]</a></nobr>
+					<nobr><a class="menu1" href="[% webroot %]setup.html?page=server&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "SERVER_SETTINGS" | string %]</a></nobr>
 				</td>
 				<td>
 					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
@@ -106,7 +119,7 @@
 				<td colspan="2" width="0"></td>
 				[% END %]
 				<td width="33%" height="13" align="center">
-					<a class="menu1" href="[% webroot %]home.html?page=help&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser">[% IF help %]<b>[% END %][% "HELP" | string %][% IF help %]</b>[% END %]</a>
+					<a class="menu1" href="[% webroot %]home.html?page=help&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "HELP" | string %]</a>
 				</td>
 			</table>
 		</div>
@@ -140,4 +153,5 @@
 				</FORM></td>
 			</table>
 		</div>
+		[% END %]
 		[% IF newVersion %]<br>[% newVersion %]<br>[% END %]

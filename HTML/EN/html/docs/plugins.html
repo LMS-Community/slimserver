@@ -4,7 +4,14 @@
 [% PROCESS helpheader.html %]
 
  <h4>Introduction</h4>
-<p>This document illustrates the basic framework upon which to build a Plugin or module compatible with the SlimServer software. The SlimServer provides a method to load custom modules at startup which are then made available to the user via remote control menus. Each plugin serves as an area within SlimServer remote menu system, available from within the Plugins menu. Plugin files are stored in the &quot;Plugins&quot; folder which is in the same folder as the SlimServer software. The Plugin interface can provide a very powerful control and has complete access to the functionality of the SlimServer. As with the rest of the SlimServer, plugin modules are created using the Perl language.</p>
+<p>This document illustrates the basic framework upon which to build a Plugin or module compatible with the SlimServer software. 
+The SlimServer provides a method to load custom modules at startup which are then made available to the user via remote control menus. 
+Each plugin serves as an area within SlimServer remote menu system, available from within the Plugins menu. Plugin files are stored in 
+the &quot;Plugins&quot; folder which is in the same folder as the SlimServer software. For simple plugins, a single file in this folder will suffice.
+ For more complex plugins, you can store an entire set of files in a sub-folder, naming the main plugin file: Plugin.pm. The Plugin interface can 
+ provide a very powerful 
+control and has complete access to the functionality of the SlimServer. As with the rest of the SlimServer, plugin modules are created 
+using the Perl language.</p>
 
 <h4>Perl Module Basics</h4>
 		<p>Here are a couple of basic calls that should be made at the beginning of the Plugin code:</p>
@@ -27,13 +34,18 @@
      return \%functions;
   &#125;
 
-  sub getDisplayName &#123; return "My Plugin Name")&#125;
+  sub getDisplayName &#123; return "MY_PLUGIN_STRING_TOKEN")&#125;
+
+  sub strings &#123; return '
+    MY_PLUGIN_STRING_TOKEN
+    &lt;tab&gt; EN &lt;tab&gt; My Plugin English Name
+'&#125;;
 
 			</pre></blockquote>
 <hr>
 
 <h4>Modes</h4>
-<p>The remote buttons are context sensitive, meaning that they can serve different roles when the SlimServer is in different modes.  The setMode()
+<p>If you wish for your plugin to have a player display interface, then you will need to set up what is called a Mode.  The remote buttons are context sensitive, meaning that they can serve different roles when the SlimServer is in different modes.  The setMode()
 subroutine defines this mode.  Within this subroutine, there must be a definition for $client->lines, which is the text to be displayed on the
 Slim client while in this plugin mode.  Typically, this is labeled just as above, though it can be any name you wish. The lines subroutine, or other name
 if you have chosen one, returns two strings. One for each line of the display.  They can be updated at any time from any point in the plugin module by using the
@@ -100,8 +112,25 @@ function calls such as: </p>
 <blockquote>
 			<pre>$client->showBriefly(, $line1, $line2);</pre></blockquote>
 		<p>Examples of remote control functions include: 'up','down','play,'add' (REC button),'left','right','numberScroll' and 'stop' The full button to function map is found in the Default.map file, which is in the IR directory under the SlimServer directory.</p>
-		<hr>
-		<h4>Lines</h4>
+
+<hr>
+<h4>Player Menu</h4>
+<p>By default, plugins will appear in the Plugins menu on the player. However, some plugins may be similar to others, and could be better organised into submenus.  The addMenu function allows a 
+plugin to choose its submenu location:</p>
+
+<p>The simple line subroutine, below, is taken from Picks.pm.</p>
+<blockquote>
+<p><em>Example 3</em></p>
+<pre>sub addMenu &#123;
+	return "RADIO";
+&#125;;
+</pre></blockquote>
+This will make the plugin appear in a submenu with the string token RADIO.  This submenu string can then be localized by the server to the chosen language.  Each submenu can, as an option, be added to the top level 
+menus for any player via the player settings.
+
+
+<hr>
+<h4>Lines</h4>
 <p>The lines subroutine returns the text that the Slim Client will display while using your plugin. The setMode() function creates the reference for the lines subroutine, and your lines subroutine name must match that. Each mode may have its own set of lines, and each is named after the reference created in each setMode. The input for this function is the current client information, and the return is two strings for main display and optionally a pair of strings which may need to be overlayed on top of the first pair, right justified. The lines are sent to the display at any time using the command:</p>
 <blockquote>
 			<pre>
@@ -109,7 +138,7 @@ $client->update();
 </pre></blockquote>
 <p>The simple line subroutine, below, is taken from Rescan.pm.</p>
 <blockquote>
-<p><em>Example 3</em></p>
+<p><em>Example 4</em></p>
 <pre>sub lines &#123;
    my $client = shift;
    my ($line1, $line2);
@@ -179,7 +208,7 @@ $client->update();
 <dt>SETUP_$prefname_OK</dt><dd>the change intro message to use when the preference changes</dd>
 </dl>
 <blockquote>
-<p><em>Example 4</em></p>
+<p><em>Example 5</em></p>
 <pre>
 sub setupGroup {
    my $client = shift;
@@ -187,8 +216,8 @@ sub setupGroup {
    my %setupGroup = (
       PrefOrder =>
       ['plugin-pluginName-pref-one','plugin-pluginName-pref-two']
-      ,GroupHead => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_PLUGINNAME')
-      ,GroupDesc => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_PLUGINNAME_DESC')
+      ,GroupHead => $client->string('SETUP_GROUP_PLUGIN_PLUGINNAME')
+      ,GroupDesc => $client->string('SETUP_GROUP_PLUGIN_PLUGINNAME_DESC')
       ,GroupLine => 1
       ,GroupSub => 1
       ,Suppress_PrefSub => 1
@@ -202,36 +231,38 @@ sub setupGroup {
       'plugin-pluginName-pref-two' => {
          'validate' => \&Slim::Web::Setup::validateTrueFalse  
          ,'options' => {
-            '0' => Slim::Utils::Strings::string('SETUP_PLUGIN-PLUGINNAME_PREFTWO_NO)
-            ,'1' => Slim::Utils::Strings::string('SETUP_PLUGIN-PLUGINNAME_PREFTWO_YES)
+            '0' => $client->string('SETUP_PLUGIN-PLUGINNAME_PREFTWO_NO)
+            ,'1' => $client->string('SETUP_PLUGIN-PLUGINNAME_PREFTWO_YES)
          }
       },
    );	
    return (\%setupGroup,\%setupPrefs);
 }
 </pre></blockquote>
+
+Some plugins may wish to operate as a per-client setup.  The server allows for plugin settings to be a player settings 
+page instead of a server settings page by setting the isClient parameter like so:
+<pre><blockquote>
+return (\%setupGroup,\%setupPrefs,1);
+</pre></blockquote>
+
 <hr>
 <h4>Strings</h4>
 <p>The plugin API also allows you to add in your own localization. The format of the strings list follows the same format as the strings.txt file used by the SlimServer for localization. The function strings() can be used within the plugin to extract a strings for the user's specified language. Defining the strings is done as follows:</p>
 <blockquote>
-<p><em>Example 5</em></p>
+<p><em>Example 6</em></p>
 <pre>sub strings &#123; return '
 PLUGIN_STRING_ONE
 &lt;tab&gt; EN &lt;tab&gt; English version of line one
 &lt;tab&gt; FR &lt;tab&gt; Version française de la ligne une
 '&#125;;
-</pre></blockquote>and to use your strings in your module, you make the call to strings in any place where you would use a text string.   For example, referring to the getDisplayName() call from Example 1:
-<blockquote>
-			<pre>sub getDisplayName &#123; return "My Plugin Name" &#125;</pre></blockquote>
-
-can be changed to
-<blockquote>
-			<pre>sub getDisplayName &#123; my $client = shift; return $client->strings('PLUGIN_NAME') &#125;</pre></blockquote>
+</pre></blockquote>and to use your strings in your module, you make the call to strings in any place where you would use a text string.   For example:
+			<pre>$client->string('MY_STRING');</pre></blockquote>
 where your strings function contains:
 <blockquote><pre>
 sub strings &#123; return '
-PLUGIN_NAME
-<i>&lt;tab&gt;</i> EN <i>&lt;tab&gt;</i> My Plugin Name
+MY_STRING
+<i>&lt;tab&gt;</i> EN <i>&lt;tab&gt;</i> Useful text
 '&#125;;
 </pre></blockquote>
 <p><b>One special note, the format of the strings list is very strict. The whitespace must be a tab, not spaces, which is why the tabs are shown above.</b></p>
@@ -258,7 +289,7 @@ expression keys nor the index URL path need to take this prefix
 into account.</p>
 
 <blockquote>
-<p><em>Example 6</em></p>
+<p><em>Example 7</em></p>
 <pre>sub webPages {
     my %pages = (
         "index\.(?:htm|xml)" => \&handleIndex,
@@ -309,6 +340,19 @@ sub screenSaver {
 <dt>leaveScreensaverMode</dt><dd>subroutine to execute before the mode exits</dd>
 <dt>$client->string('SCREENSAVER_NAME')</dt><dd>SCREENSAVER_NAME should be change to a unique identifier for your plugin name.  This can be the same as your plugin, or something different.  This allows for future nationalisation for the other languages supported by SlimServer.</dd>
 </dl>
+
+<hr>
+<h4>Other Functions</h4>
+<p>There are several other optional plugin functions that allow you to control how you plugin will integrate with the server:</p>
+<dl>
+<dt>initPlugin()</dt><dd>subroutine to handle any operations that your plugin needs to execute on startup, on when the plugin becomes enabled.</dd>
+<dt>shutdownPlugin()</dt><dd>subroutine to handle any operations that need to be performed to shut down the plugin cleanly, or to be run when disabled. This is particularly useful in cases
+
+where external processes need to be informed or resources need to be freed when the plugin is shut down</dd>
+<dt>enabled()</dt><dd>a subroutine to test the conditions required for the plugin to be enabled.  returns a logical true/false indicating whether the plugin can be enabled.</dd>
+<dt>defaultMap()</dt><dd>automatically loaded by the server if this is present, this routine can override the IR button mapping found in IR/Default.map for your plugin mode see <a href="buttons.html">Button Mapping</a> for details on mapping.</dd>
+</dl>
+
 <hr>
 <h4>Summary</h4>
 <p>Using the existing plugins as examples (one appears below) and this document as an explanation of what each section of the plugin can do, you should now be able to start working on a plugin of your own. Remember that this is only a framework to allow you to hook into the SlimServer. There are always many other ways to implement the features of a plugin. As long as your provide the lines from the examples above, the server will try to work with your Plugin. The rest can be just about anything you want, including using any of functions and subroutines within the SlimServer.  Remember, there's more than one way to do it.</p>
@@ -342,9 +386,7 @@ use Slim::Player::Playlist;
 use Slim::Utils::Strings qw (string);
 
 sub getDisplayName {
-	my $client = shift;
-
-	return $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY')
+	return 'PLUGIN_RESCAN_MUSIC_LIBRARY'
 };
 
 sub strings {  return '
