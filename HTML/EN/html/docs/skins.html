@@ -149,13 +149,29 @@
       <var>param</var> is undefined, it is considered to be not equal to
       <var>value</var>.
     </dd>
-    <dt><strong>&#91;NE <var>param</var> <var>value</var>&#93; <var>text</var> &#91;/NE&#93;</strong></dt>
+    <dt><strong>&#91;NE<var>param</var> <var>value</var>&#93; <var>text</var> &#91;/NE&#93;</strong></dt>
     <dd>
       The <strong>NE</strong> directive works the same as the
       <strong>EQ</strong> directive, except that <var>text</var> is included if
       the value of <var>param</var> is not equal to <var>value</var>.  Once again,
       if <var>param</var> is undefined, it is considered to be not equal to
       <var>value</var>, so <var>text</var> would be included in that case.
+    </dd>
+    <dt><strong>&#91;GT<var>param</var> <var>value</var>&#93; <var>text</var> &#91;/GT&#93;</strong></dt>
+    <dd>
+      The <strong>GT</strong> directive evaluates <var>param</var> to see if its
+      value is greater than <var>value</var>.  If so, <var>text</var> is included in the
+      final output, otherwise the empty string replaces the directive.  If
+      <var>param</var> is undefined, it is considered to be not greater than
+      <var>value</var>.
+    </dd>
+    <dt><strong>&#91;LT<var>param</var> <var>value</var>&#93; <var>text</var> &#91;/LT&#93;</strong></dt>
+    <dd>
+      The <strong>LT</strong> directive evaluates <var>param</var> to see if its
+      value is less than <var>value</var>. If so, <var>text</var> is included in the
+      final output, otherwise the empty string replaces the directive. If
+      <var>param</var> is undefined, it is considered to be not less than
+      <var>value</var>.
     </dd>
     <dt><strong>&#91;INCLUDE <i>html/path/here.html</i>&#93;</strong></dt>
     <dd>
