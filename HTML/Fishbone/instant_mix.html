@@ -1,0 +1,25 @@
+[SET title [S MOODLOGIC_INSTANT_MIX]] [SET browse 0] [SET playlist 0] [SET music 0] [SET pageicon MUSIC] [INCLUDE pageheader.html]
+	[IF warn]<div class="nowplaying"><b>[S NOTE]</b> [S SCAN_WARNING] [IFN itunes][S SCAN_CLICK] <a href="browse.html?player={%player}">[S HERE]</a>.[/IFN]
+	</div>[/IF]
+	<center><p>[IF song_count]Browsing <b>{album_count}</b> [S WITH] <B>{song_count}</B> [S BY] <B>{artist_count}</B>[/IF]</p></center>
+   <h3>[S MOODLOGIC_INSTANT_MIX]</h3><p>
+   <table border="0" cellspacing="0" cellpadding="0" width="100%">
+	<tr><td>{pwd_list}</td></tr></table>
+	[IF browselist_pagebar]<p>{browselist_pagebar}[/IF][IF browselist_header]&nbsp;|&nbsp;{browselist_header}</p>[/IF]
+	[IF browselist_header]{browselist_header}[/IF]
+    [IF browselist_pagebar]<p>{browselist_pagebar}</p>[/IF]
+    <table cellspacing="0" border="0" cellpadding="0" width="100%">
+      {instant_mix_list}
+    </table>
+   [IF browselist_pagebar]<p>{browselist_pagebar}</p>[/IF]
+   <p><a href="instant_mix.html?song={%song}&genre={%genre}&artist={%artist}&album={%album}&player={%player}&mood={mood}&p0=play">[NB][S PLAY][/NB]</a>, 
+      <a href="instant_mix.html?song={%song}&genre={%genre}&artist={%artist}&album={%album}&player={%player}&mood={mood}&p0=append">[NB][S ADD_TO_PLAYLIST][/NB]</a>
+   </p>
+
+<script language="JavaScript">
+<!-- Hide
+parent.statusframe.location="status_header.html?player={%player}&start={start}";
+-->
+</script>
+  </body>
+</html>

@@ -27,6 +27,11 @@
         [IF descend]<nobr><a href="status_header.html?p0=playlist&p1=deleteitem&p2={%itempath}&player={%player}" target="statusframe"><img src="html/subtract.gif" border=0 align="center" width="8" height="8" onMouseOver="self.status='Delete List';return true"></a></nobr>[/IF]
         [IFN descend]<nobr><a href="status_header.html?p0=playlist&p1=deleteitem&p2={%itempath}&player={%player}" target="statusframe"><img src="html/subtract.gif" border=0 align="center" width="8" height="8" onMouseOver="self.status='Delete List';return true"></a></nobr>[/IFN]
   </td>
+  [IF mixable_not_descend]<td  class="listing" width="3" align="center">&nbsp;</td>
+  <td class="listing" align="center" width="11">
+         <nobr><a href="instant_mix.html?song={%itempath}&artist={%artist}&album={%album}&player={%player}"><font style="color:#EE3823"><b>M</b></font></a></nobr>
+  </td>
+  [/IF]
   <td class="listing" width="3" align="center">&nbsp;</td>
 </tr>
 
