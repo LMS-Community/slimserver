@@ -11,8 +11,8 @@ require DynaLoader;
 @EXPORT = qw( );
 @EXPORT_OK = qw (usleep sleep ualarm alarm gettimeofday time tv_interval);
 
-#$VERSION = do{my@r=q$Revision: 1.3 $=~/\d+/g;sprintf '%02d.'.'%02d'x$#r,@r};
-$VERSION = "01.59";
+#$VERSION = do{my@r=q$Revision: 1.4 $=~/\d+/g;sprintf '%02d.'.'%02d'x$#r,@r};
+$VERSION = "1.59";
 
 bootstrap Time::HiRes $VERSION;
 
@@ -201,9 +201,16 @@ G. Aas <gisle@aas.no>
 
 =head1 REVISION
 
-$Id: HiRes.pm,v 1.3 2004/05/11 13:23:23 dean Exp $
+$Id: HiRes.pm,v 1.4 2004/12/18 00:58:53 dean Exp $
 
 $Log: HiRes.pm,v $
+Revision 1.4  2004/12/18 00:58:53  dean
+Merge changes from 5.4.x tree:
+
+Triode submitted a patch that allows web and CLI api to specify a name for an item loaded, as well as pass the URL to playlist parsers.  Needed to support their forthcoming RTSP plugin.
+
+Fix version number in Time::HiRes for 5.6 i686-linux
+
 Revision 1.3  2004/05/11 13:23:23  dean
 Fix a version number in the i686-linux Time::HiRes
 Victor fixed a bug in the rpm.

@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.53 2004/12/17 10:09:31 kdf Exp $
+# $Id: Command.pm,v 1.54 2004/12/18 00:58:53 dean Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -74,7 +74,7 @@ sub execute {
 	# sync			<playerindex|playerid|-|?>
 
 			
-	# playlist		play 			<item>		(item can be a song, playlist or directory. synonym: load)
+	# playlist		play 			<item>		[title] (item can be a song, playlist or directory. synonym: load)
 	# playlist		insert		<item>		(item can be a song, playlist or directory. synonym: insertlist)
 	# playlist		add 			<item>		(item can be a song, playlist or directory. synonym: append)
 
@@ -365,7 +365,9 @@ sub execute {
 					if ($p1 =~ /^(play|load|resume)$/) {
 						Slim::Player::Source::playmode($client, "stop");
 						Slim::Player::Playlist::clear($client);
-						$client->currentPlaylist(Slim::Utils::Misc::fixPath($path));
+						my $fixpath = Slim::Utils::Misc::fixPath($path);
+						$client->currentPlaylist($fixpath);
+						Slim::Music::Info::setTitle($fixpath, $p3) if defined $p3;
 						$client->currentPlaylistModified(0);
 					} else {
 						$client->currentPlaylistModified(1);

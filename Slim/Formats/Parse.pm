@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.27 2004/12/11 23:51:31 vidur Exp $
+# $Id: Parse.pm,v 1.28 2004/12/18 00:58:51 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ sub parseList {
 	my $parser;
 	if (exists $Slim::Player::Source::playlistInfo{$type} &&
 	    ($parser = $Slim::Player::Source::playlistInfo{$type}->[0])) {
-	    return &$parser($file, $base);
+	    return &$parser($file, $base, $list);
 	}
 }
 
