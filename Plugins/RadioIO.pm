@@ -1,4 +1,4 @@
-# $Id: RadioIO.pm,v 1.2 2004/10/06 15:56:01 vidur Exp $
+# $Id: RadioIO.pm,v 1.3 2004/10/25 15:41:44 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ my %current = ();
 my %stations = (
 	'radioio70s'  => '3765',			
 	'radioio80s'  => '3795',
-	'radioioACOUSTIC' => '3765',
+	'radioioACOUSTIC' => '3675',
     'radioioAMBIENT'  => '3605',
 	'radioioBEAT' => '3725',
 	'radioioCLASSICAL' => '3635',
