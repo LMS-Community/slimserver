@@ -57,18 +57,18 @@ sub execute {
 	# returned by the function
 	# Below are a list of the commands:
 	#
-	# P0				P1				P2				P3			P4			P5			P6
+	# P0			P1				P2			P3			P4			P5			P6
 	# play		
 	# pause			(0|1|)	
 	# stop
 	# mode			<play|pause|stop>	
 	# mode			?
-	# sleep 			(0..n)
-	# sleep 			?
+	# sleep 		(0..n)
+	# sleep 		?
 	# gototime		(0..n sec)|(-n..+n sec)?
-	# power 			(0|1|?)
+	# power 		(0|1|?)
 	# genre			?
-	# artist			?
+	# artist		?
 	# album			?
 	# title			?
 	# duration		?
@@ -77,55 +77,61 @@ sub execute {
 
 			
 	# playlist		play 			<item>		[title] (item can be a song, playlist or directory. synonym: load)
-	# playlist		insert		<item>		(item can be a song, playlist or directory. synonym: insertlist)
+	# playlist		insert			<item>		(item can be a song, playlist or directory. synonym: insertlist)
 	# playlist		add 			<item>		(item can be a song, playlist or directory. synonym: append)
 
-	# playlist		playalbum	<genre>		<artist>	<album>	<songtitle>	(synonym: loadalbum)
-	# playlist		insertalbum	<genre>		<artist>	<album>	<songtitle>
+	# playlist		playalbum		<genre>		<artist>	<album>	<songtitle>	(synonym: loadalbum)
+	# playlist		insertalbum		<genre>		<artist>	<album>	<songtitle>
 	# playlist		addalbum		<genre>		<artist>	<album>	<songtitle>
 	
-	# playlist		deletealbum	<genre>		<artist>	<album>	<songtitle>
-	# playlist		deleteitem	<filename/playlist>	
+	# playlist		playtracks		<searchterms>
+	# playlist		loadtracks		<searchterms>
+	# playlist		addtracks		<searchterms>
+	# playlist		inserttracks	<searchterms>
+	# playlist		deletetracks	<searchterms>
+	
+	# playlist		deletealbum		<genre>		<artist>	<album>	<songtitle>
+	# playlist		deleteitem		<filename/playlist>	
 		
-	# playlist 		resume 		<playlist>	
-	# playlist 		save 			<playlist>	
+	# playlist		resume			<playlist>	
+	# playlist		save			<playlist>	
 		
-	# playlist 		clear	
-	# playlist 		move 			<fromoffset> <tooffset>	
-	# playlist 		delete 		<songoffset>
+	# playlist		clear	
+	# playlist		move			<fromoffset> <tooffset>	
+	# playlist		delete			<songoffset>
 			
-	# playlist 		jump 			<index>	
-	# playlist 		index			<index>		?
+	# playlist		jump 			<index>	
+	# playlist		index			<index>		?
 	# playlist		genre			<index>		?
-	# playlist		artist		<index>		?
+	# playlist		artist			<index>		?
 	# playlist		album			<index>		?
 	# playlist		title			<index>		?
 	# playlist		duration		<index>		?
-	# playlist		tracks		?
-	# playlist		zap			<index>
+	# playlist		tracks			?
+	# playlist		zap				<index>
 	# playlist		name ?
 	# playlist		url ?
 	
-	# mixer			volume		(0 .. 100)|(-100 .. +100)
-	# mixer			volume		?
-	# mixer			balance		(-100 .. 100)|(-200 .. +200)			(not implemented!)
+	# mixer			volume			(0 .. 100)|(-100 .. +100)
+	# mixer			volume			?
+	# mixer			balance			(-100 .. 100)|(-200 .. +200)			(not implemented!)
 	# mixer			bass			(0 .. 100)|(-100 .. +100)
-	# mixer			treble		(0 .. 100)|(-100 .. +100)
-	# mixer			pitch		(0 .. 100 .. 1000)|(-100 .. +100)
-	# display		<line1>		<line2>	<duration>
+	# mixer			treble			(0 .. 100)|(-100 .. +100)
+	# mixer			pitch			(0 .. 100 .. 1000)|(-100 .. +100)
+	# display		<line1>			<line2>	<duration>
 	# display		?				?
 	# displaynow	?				?
-	# button			<buttoncode>
-	# player			count			?
-	# player			id				<playerindex|playerid>				?
-	# player			name			<playerindex|playerid>				?
-	# player			ip				<playerindex|playerid>				?
-	# player			address			<playerindex|playerid>				?	(deprecated)
-	# player			model			<playerindex|playerid>				?
-	# pref			<prefname>	<prefvalue>
-	# pref			<prefname>	?
-	# playerpref	<prefname>	<prefvalue>
-	# playerpref	<prefname>	?
+	# button		<buttoncode>
+	# player		count			?
+	# player		id				<playerindex|playerid>				?
+	# player		name			<playerindex|playerid>				?
+	# player		ip				<playerindex|playerid>				?
+	# player		address			<playerindex|playerid>				?	(deprecated)
+	# player		model			<playerindex|playerid>				?
+	# pref			<prefname>		<prefvalue>
+	# pref			<prefname>		?
+	# playerpref	<prefname>		<prefvalue>
+	# playerpref	<prefname>		?
 	
 	# rescan	
 	# wipecache
@@ -543,6 +549,13 @@ sub execute {
 				push(@{Slim::Player::Playlist::playList($client)}, @songs);
 				insert_done($client, $playListSize, $size);
 				#Slim::Player::Playlist::reshuffle($client);
+				$client->currentPlaylistModified(1);
+			
+			} elsif ($p1 eq "deletetracks") {
+
+				my @listToRemove = parseSearchTerms($p2);
+ 
+				Slim::Player::Playlist::removeMultipleTracks($client, \@listToRemove);
 				$client->currentPlaylistModified(1);
 			
 			} elsif ($p1 eq "save") {
