@@ -376,10 +376,13 @@ sub opened {
 #	u8_t reserved;	// [1]	reserved
 #	u8_t spdif_enable;	// [1]  '0' = auto, '1' = on, '2' = off
 #	u8_t reserved;		// [1]	reserved
+#	u16_t reserved2;	// [2]	reserved
+#	u16_t visualizer_port;	// [2]	visualizer's port - leave port 0 for no vis
+#	u32_t visualizer_ip;	// [4]	visualizer's ip - leave server 0 to use slim server's ip
 #	u16_t server_port;	// [2]	server's port
 #	u32_t server_ip;	// [4]	server's IP
 #				// ____
-#				// [16]
+#				// [24]
 #
 sub stream {
 	my ($client, $command, $paused, $format) = @_;
@@ -424,7 +427,7 @@ sub stream {
 		}
 		$::d_slimproto && msg("starting with decoder with options: format: $formatbyte samplesize: $pcmsamplesize samplerate: $pcmsamplerate endian: $pcmendian channels: $pcmchannels\n");
 		
-		my $frame = pack 'aaaaaaaCCCnL', (
+		my $frame = pack 'aaaaaaaCCCnnLnL', (
 			$command,	# command
 			$autostart,
 			$formatbyte,
@@ -435,11 +438,14 @@ sub stream {
 			0,		# reserved
 			0,		# s/pdif auto
 			0,		# reserved
+			0,		# reserved2
+			3484,		# vis port - call IANA!!!  :)
+			0,		# use slim server's IP
 			Slim::Utils::Prefs::get('httpport'),		# port
-			0		# server IP of 0 means use IP of control server
+			0,		# server IP of 0 means use IP of control server
 		);
 	
-		assert(length($frame) == 16);
+		assert(length($frame) == 24);
 	
 		my $path = '/stream.mp3?player='.$client->id;
 	
