@@ -872,7 +872,7 @@ sub cachedPlaylist {
 
 		} else {
 
-			$::d_info && msg("Invalid track object for playlist $url !\n");
+			$::d_info && Slim::Utils::Misc::msg("Invalid track object for playlist $url !\n");
 		}
 	}
 
