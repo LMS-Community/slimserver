@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.23 2004/01/26 05:44:22 dean Exp $
+# $Id: Misc.pm,v 1.24 2004/02/18 17:52:55 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -127,10 +127,13 @@ sub pathFromFileURL {
 	my $path;
 	
 	# TODO - FIXME - this isn't mac or dos friendly with the path...
-	# file URLs must start with file:/// or file://localhost/
-	if ($url =~ /^file:\/\/(\/|localhost\/)(.*)/i || $url =~ /^file:(\/\/|\/\/\/)([a-zA-Z]:.*)/i)  {
+	# file URLs must start with file:/// or file://localhost/ or file://\\uncpath
+	if ($url =~ /^file:\/\/(\/|localhost\/)(.*)/i || 
+	    $url =~ /^file:(\/\/|\/\/\/)([a-zA-Z]:.*)/i ||
+	    $url =~ /^file:(\/\/)(\\\\.*)/i)  {
 		$path = $2;
-		if ($path !~ /^[a-zA-Z]:/) { $path = '/' . $path; };
+		if ($path !~ /^([a-zA-Z]:)|(\\\\)/ ) { $path = '/' . $path; };
+		$path =~ s/^\/\/\//\\\\/;
 		$path =~ s/(.*)#.*$/$1/;
 		my $audiodir = Slim::Utils::Prefs::get("audiodir");
 		$::d_files && msg("Got $path from file url $url\n");
