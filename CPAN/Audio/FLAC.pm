@@ -1,12 +1,12 @@
 package Audio::FLAC;
 
-# $Id: FLAC.pm,v 1.7 2004/01/29 16:45:07 daniel Exp $
+# $Id: FLAC.pm,v 1.8 2004/07/10 23:08:29 daniel Exp $
 
 use strict;
 use vars qw($VERSION);
 use File::Basename;
 
-$VERSION = '0.7';
+$VERSION = '0.8';
 
 # First four bytes of stream are always fLaC
 use constant FLACHEADERFLAG => 'fLaC';
@@ -92,6 +92,15 @@ sub new {
 		return $self;
 	};
 
+	# Parse third-party application metadata block
+	$errflag = $self->_parseAppBlock();
+	if ($errflag < 0) {
+		warn "[$file] Problem parsing application metadata block!";
+		close FILE;
+		undef $self->{'fileHandle'};
+		return $self;
+	};
+
 	close FILE;
 	undef $self->{'fileHandle'};
 
@@ -128,6 +137,17 @@ sub cuesheet {
 
 	# otherwise, return an empty arrayref
 	return [];
+}
+
+sub application {
+	my $self = shift;
+	my $appID = shift || "default";
+
+	# if the application block exists, return it's content
+	return $self->{'application'}->{$appID} if exists($self->{'application'}->{$appID});
+
+	# otherwise, return nothing
+	return undef;
 }
 
 sub write {
@@ -399,6 +419,7 @@ sub _parseStreaminfo {
 sub _parseVorbisComments {
 	my $self = shift;
 	my $tags = {};
+	my $rawTags = [];
 	my $idx  = $self->_findMetadataIndex(BT_VORBIS_COMMENT);
 
 	# continue parsing, even if we can't find the comment.
@@ -422,11 +443,14 @@ sub _parseVorbisComments {
 		my $tagStr = substr($tmpBlock,0,$tagLen);
 		$tmpBlock  = substr($tmpBlock,$tagLen);
 
+		# Save the raw tag
+		push(@$rawTags, $tagStr);
+
 		# Match the key and value
 		if ($tagStr =~ /^(.*?)=(.*)$/) {
 			# Make the key uppercase
 			my $tkey = $1;
-			   $tkey =~ tr/a-z/A-Z/;
+			$tkey =~ tr/a-z/A-Z/;
 
 			# Stick it in the tag hash
 			$tags->{$tkey} = $2;
@@ -434,6 +458,7 @@ sub _parseVorbisComments {
 	}
 
 	$self->{'tags'} = $tags;
+	$self->{'rawTags'} = $rawTags;
 
 	return 0;
 }
@@ -634,22 +659,43 @@ sub _parseCueSheet {
 	return 0;
 }
 
- # Take an offset as number of flac samples 
+sub _parseAppBlock {
+	my $self = shift;
+
+	# there may be multiple application blocks with different ids
+	# so we need to loop through them all.
+	my $idx = $self->_findMetadataIndex(BT_APPLICATION);
+	while ($idx >= 0) {
+		my $appContent = [];
+
+		# Parse out the tags from the metadata block
+		my $tmpBlock  = $self->{'metadataBlocks'}[$idx]->{'contents'};
+
+		# Find the application id
+		my $appID   = unpack('N', substr($tmpBlock,0,4));
+	
+		$self->{'application'}->{$appID} = substr($tmpBlock,4);
+		$idx  = $self->_findMetadataIndex(BT_APPLICATION, ++$idx);
+	}
+	return 0;
+}
+
+# Take an offset as number of flac samples
 # and return CD-DA style mm:ss:ff
 sub _samplesToTime {
-        my $samples    = shift;
+	my $samples    = shift;
 	my $samplerate = shift;
 
 	if ($samplerate == 0) {
-	        warn "Couldn't find SAMPLERATE for time calculation!\n";
+		warn "Couldn't find SAMPLERATE for time calculation!\n";
 		return;
 	}
 
 	my $totalSeconds = $samples / $samplerate;
 
 	if ($totalSeconds == 0) {
-	        # handled specially to avoid division by zero errors
-	        return "00:00:00";		
+		# handled specially to avoid division by zero errors
+		return "00:00:00";		
 	}
 
 	my $trackMinutes  = int(int($totalSeconds) / 60);
@@ -657,7 +703,7 @@ sub _samplesToTime {
 	my $trackFrames   = ($totalSeconds - int($totalSeconds)) * 75;
 
 	# Poor man's rounding. Needed to match the output of metaflac.
-	$trackFrames = int($trackFrames + 0.5); 
+	$trackFrames = int($trackFrames + 0.5);
 	
 	my $formattedTime = sprintf("%02d:%02d:%02d", $trackMinutes, $trackSeconds, $trackFrames); 
 
@@ -685,8 +731,9 @@ sub _packInt32 {
 sub _findMetadataIndex {
 	my $self  = shift;
 	my $htype = shift;
+	my $idx   = shift || 0;
 
-	my ($idx, $found) = (0, 0);
+	my $found = 0;
 
 	# Loop through the metadata_blocks until one of $htype is found
 	while ($idx < @{$self->{'metadataBlocks'}}) {
