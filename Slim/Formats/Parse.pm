@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.20 2004/08/06 02:22:35 kdf Exp $
+# $Id: Parse.pm,v 1.21 2004/09/29 15:22:09 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -316,8 +316,8 @@ sub writePLS {
 	foreach my $item (@{$listref}) {
 
 		$itemnum++;
-
-		print $output "File$itemnum=$item\n";
+		my $path = Slim::Music::Info::isFileURL($item) ? Slim::Utils::Misc::pathFromFileURL($item) : $item;
+		print $output "File$itemnum=$path\n";
 
 		my $title = Slim::Music::Info::title($item);
 
@@ -372,8 +372,8 @@ sub writeM3U {
 				print $output "#EXTINF:-1,$title\n";
 			}
 		}
-
-		print $output "$item\n";
+		my $path = Slim::Music::Info::isFileURL($item) ? Slim::Utils::Misc::pathFromFileURL($item) : $item;
+		print $output "$path\n";
 	}
 
 	if ($filename) {
