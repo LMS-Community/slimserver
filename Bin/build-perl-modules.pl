@@ -10,6 +10,7 @@
 # A compiler is obviously needed too.
 
 use strict;
+use lib qw(CPAN);
 use Config;
 use Cwd;
 use File::Basename qw(dirname basename);
