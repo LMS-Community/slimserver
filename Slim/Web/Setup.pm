@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.102 2004/09/13 15:26:28 dean Exp $
+# $Id: Setup.pm,v 1.103 2004/09/14 16:21:29 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -531,7 +531,7 @@ sub initSetupConfig {
 					my ($client,$paramref,$pageref) = @_;
 					return if (!defined($client));
 					playerChildren($client, $pageref);
-					$pageref->{'Prefs'}{'menuItemAction'}{'arrayMax'} = Slim::Utils::Prefs::getArrayMax('menuItem');
+					$pageref->{'Prefs'}{'menuItemAction'}{'arrayMax'} = Slim::Utils::Prefs::clientGetArrayMax($client,'menuItem');
 					my $i = 0;
 					foreach my $nonItem (Slim::Buttons::Home::unusedMenuOptions($client)) {
 						$paramref->{'nonMenuItem' . $i++} = $nonItem;
@@ -1339,6 +1339,9 @@ sub initSetupConfig {
 				my $i = 0;
 				my %formats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
 				my $formatslistref = Slim::Player::Source::Conversions();
+use Data::Dumper;
+print Dumper(\%formats, $formatslistref);
+
 				foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
 					next if $formats eq 'mp3-lame-*-*';
 					my $oldVal = exists $formats{$formats} ? 0 : (Slim::Player::Source::checkBin($formats) ? 1 : 0);
