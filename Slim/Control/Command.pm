@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.9 2003/08/29 08:37:55 kdf Exp $
+# $Id: Command.pm,v 1.10 2003/09/02 15:50:10 kdf Exp $
 
 # Slim Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -630,7 +630,7 @@ sub insert_done {
 		for ($i = 0; $i < $size; $i++) {
 			push @reshuffled,$listsize+$i;
 		};
-		if (Slim::Player::Playlist::isSlave($client)) {
+		if (Slim::Player::Sync::isSlave($client)) {
 			$client = $client->master;
 		}
 		splice @{$client->shufflelist},$playlistIndex, 0, @reshuffled;
