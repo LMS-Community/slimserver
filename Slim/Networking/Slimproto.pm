@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.29 2003/10/13 23:57:33 dean Exp $
+# $Id: Slimproto.pm,v 1.30 2003/10/29 22:27:16 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -282,13 +282,26 @@ sub process_slimproto_frame {
 	$::d_slimproto_v && msg("Got Slimproto frame, op $op, length $len, $s\n");
 
 	if ($op eq 'HELO') {
-		if ($len != 8) {
+		if ($len != 10) {
 			$::d_slimproto && msg("bad length $len for HELO. Ignoring.\n");
 			return;
 		}
-		my ($deviceid, $revision, @mac) = unpack("CCH2H2H2H2H2H2", $data);
+		my ($deviceid, $revision, @mac, $wlan_channellist);
+
+		(	$deviceid, $revision, 
+			$mac[0], $mac[1], $mac[2], $mac[3], $mac[4], $mac[5],
+			$wlan_channellist
+		) = unpack("CCH2H2H2H2H2H2H4", $data);
 		my $mac = join(':', @mac);
-		$::d_slimproto && msg("Squeezebox says hello. Deviceid: $deviceid, revision: $revision, mac: $mac\n");
+		$::d_slimproto && msg(	
+			"Squeezebox says hello.\n".
+			"\tDeviceid: $deviceid\n".
+			"\trevision: $revision\n".
+			"\tmac: $mac\n".
+			"\twlan_channellist: $wlan_channellist\n"
+			);
+
+		$::d_factorytest && msg("FACTORYTEST\tevent=helo\tmac=$mac\tdeviceid=$deviceid\trevision=$revision\twlan_channellist=$wlan_channellist\n");
 
 		my $id=$mac;
 		my $paddr = sockaddr_in($s->peerport, $s->peeraddr);
@@ -339,6 +352,9 @@ sub process_slimproto_frame {
 
 		my ($irTime, $irCode) =unpack 'NxxH8', $data;
 		Slim::Hardware::IR::enqueue($client, $irCode, $irTime);
+
+		$::d_factorytest && msg("FACTORYTEST\tevent=ir\tmac=".$client->id."\tcode=$irCode\n");
+
 	} elsif ($op eq 'RESP') {
 		# HTTP stream headers
 		$::d_slimproto && msg("Squeezebox got HTTP response:\n$data\n");
@@ -397,7 +413,8 @@ sub process_slimproto_frame {
 			$fullness = $client->buffersize() + $fullness;
 		};
 		$status{$client}->{'fullness'} = $fullness;
-		$::d_slimproto && msg("Squeezebox stream status:\n".
+# TODO make a "verbose" option for this
+		0 && $::d_slimproto && msg("Squeezebox stream status:\n".
 		"	event_code:      $status{$client}->{'event_code'}\n".
 		"	num_crlf:        $status{$client}->{'num_crlf'}\n".
 		"	mas_initiliazed: $status{$client}->{'mas_initialized'}\n".

@@ -153,6 +153,7 @@ use vars qw(
 		$d_control
 		$d_command
 		$d_display
+		$d_factorytest
 		$d_files
 		$d_http
 		$d_info
@@ -501,6 +502,7 @@ to the console via stderr:
     --d_command      => Display internal command execution
     --d_control      => Low level player control information
     --d_display      => Show what (should be) on the player's display 
+    --d_factorytest  => Information used during factory testing
     --d_files        => Files, paths, opening and closing
     --d_http         => HTTP activity
     --d_info         => MP3/ID3 track information
@@ -560,6 +562,7 @@ sub initOptions {
 		'd_command'			=> \$d_command,
 		'd_control'			=> \$d_control,
 		'd_display'			=> \$d_display,
+		'd_factorytest'			=> \$d_factorytest,
 		'd_files'			=> \$d_files,
 		'd_http'			=> \$d_http,
 		'd_info'			=> \$d_info,

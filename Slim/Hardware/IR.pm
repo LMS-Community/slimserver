@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.11 2003/09/29 22:40:34 dean Exp $
+# $Id: IR.pm,v 1.12 2003/10/29 22:27:16 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -198,6 +198,7 @@ sub lookup {
 	my $client = shift;
 	my $code = shift;
 	my $modifier = shift;
+
 	if (defined $code) {
 	
 		my %enabled = %{irfiles()};
