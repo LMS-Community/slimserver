@@ -262,21 +262,33 @@ sub coverArt {
 		$body = Slim::Music::Info::getImageContent($artwork);
 
 		if ($body) {
+
 			$::d_artwork && Slim::Utils::Misc::msg("Found cached $art file: $artwork\n");
+
 			$contenttype = Slim::Music::Info::mimeType(Slim::Utils::Misc::fileURLFromPath($artwork));
+
 			$path = $artwork;
 
 		} else {
 
 			($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($self->url, $art);
-			$art eq 'cover' ? $self->cover($path) : $self->thumb($path);
-			$self->update();
+
+			if (defined $path) {
+
+				$art eq 'cover' ? $self->cover($path) : $self->thumb($path);
+				$self->update();
+			}
 		}
 
 	} else {
-		($body, $contenttype,$path) = Slim::Music::Info::readCoverArt($self->url, $art);
-		$art eq 'cover' ? $self->cover($path) : $self->thumb($path);
-		$self->update();
+
+		($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($self->url, $art);
+
+		if (defined $path) {
+
+			$art eq 'cover' ? $self->cover($path) : $self->thumb($path);
+			$self->update();
+		}
 	}
 
 	# kick this back up to the webserver so we can set last-modified
