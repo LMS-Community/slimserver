@@ -16,7 +16,7 @@ use Slim::Utils::Strings qw (string);
 Slim::Buttons::Common::addMode('browsemenu',Slim::Buttons::BrowseMenu::getFunctions(),\&Slim::Buttons::BrowseMenu::setMode);
 
 # button functions for browse directory
-my @browseMenuChoices = ('GENRES','ARTISTS','ALBUMS','MUSIC');
+my @browseMenuChoices = ('GENRES','ARTISTS','ALBUMS','MUSIC','SONGS');
 my %functions = (
 	
 	'up' => sub  {
@@ -59,6 +59,8 @@ my %functions = (
 			Slim::Buttons::Common::pushMode($client, 'browseid3',{'genre'=>'*'});
 		} elsif ($browseMenuChoices[$client->browseMenuSelection] eq 'GENRES') {
 			Slim::Buttons::Common::pushMode($client, 'browseid3',{});
+		} elsif ($browseMenuChoices[$client->browseMenuSelection] eq 'SONGS') {
+			Slim::Buttons::Common::pushModeLeft($client, 'browseid3', {'genre'=>'*', 'artist'=>'*', 'album'=>'*'});
 		}
 		if ($push) {
 			Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));

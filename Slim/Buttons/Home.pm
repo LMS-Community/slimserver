@@ -92,6 +92,8 @@ my %functions = (
 		if ($homeChoices[$client->homeSelection] eq 'NOW_PLAYING') {
 			# reset to the top level of the music
 			Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+		} elsif ($homeChoices[$client->homeSelection] eq 'BROWSE_MUSIC') {
+			Slim::Buttons::Common::pushModeLeft($client, 'browsemenu',{});
 		} elsif ($homeChoices[$client->homeSelection] eq 'BROWSE_BY_GENRE') {
 			Slim::Buttons::Common::pushModeLeft($client, 'browseid3',{});
 		} elsif ($homeChoices[$client->homeSelection] eq 'BROWSE_BY_ARTIST') {
@@ -151,6 +153,7 @@ sub setMode {
  }
  
  my @menuOptions = ('NOW_PLAYING',
+ 					'BROWSE_MUSIC',
  					'BROWSE_BY_GENRE',
  					'BROWSE_BY_ARTIST',
  					'BROWSE_BY_ALBUM',
@@ -206,6 +209,7 @@ sub updateMenu {
 	my $client = shift;
 	@homeChoices = ();
 	
+	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 	foreach my $menuItem (Slim::Utils::Prefs::getArray('menuItem')) {
 		if ($menuItem eq 'BROWSE_MUSIC_FOLDER' && !Slim::Utils::Prefs::get('audiodir')) {
 			next;
@@ -216,6 +220,8 @@ sub updateMenu {
 			!Slim::Music::MoodLogic::useMoodLogic() ) {
 			next;
 		}
+		next if (exists $disabledplugins{$menuItem});
+
 		push @homeChoices, $menuItem;
 	}
 	if (!scalar @homeChoices) {
