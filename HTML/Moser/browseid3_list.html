@@ -10,10 +10,12 @@
         <div class="browseline">
           [IF  descend]<a href="browseid3.html?song={%song}&amp;artist={%artist}&amp;album={%album}&amp;genre={%genre}&amp;player={%player}">{&title}</a>
 [/IF][IFN descend]<span class="songtitle"><a href="songinfo.html?songurl={%itempath}&amp;player={%player}">{&title}</a></span>
-          [IF album][S FROM][/IF]
+          [IF includeAlbum][S FROM]
           <span class="album"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;album={%album}&amp;player={%player}" target="browser">{&album}</a></span>
-          [IF artist][S BY] [/IF]
+          [/IF]
+          [IF includeArtist][S BY]
           <span class="artist"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}" target="browser">{&artist}</a></span>
+          [/IF]
 [/IFN]        </div>
       </li>
 

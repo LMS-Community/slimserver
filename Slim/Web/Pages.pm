@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.50 2004/03/10 21:29:40 dean Exp $
+# $Id: Pages.pm,v 1.51 2004/03/11 04:27:05 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -545,7 +545,7 @@ sub status {
 			$params->{'treble'}    = int(Slim::Utils::Prefs::clientGet($client, "treble") + 0.5);
 
 			my $sleep = $client->sleepTime() - Time::HiRes::time();
-			$params->{'sleep'} = $sleep < 0 ? 0 : $sleep;
+			$params->{'sleep'} = $sleep < 0 ? 0 : int($sleep/60);
 		}
 		
 		$params->{'player'} = $client->id();
@@ -1642,7 +1642,7 @@ sub browseid3 {
 					$params->{'itemsPerPage'},
 				);
 			}
-
+			
 			$descend = undef;
 			
 			if (scalar(@items) > 1) {
@@ -1669,6 +1669,10 @@ sub browseid3 {
 				my %list_form = %$params;
 
 				my $title = Slim::Music::Info::standardTitle(undef, $item);
+
+				my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
+				$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
+				$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
 
 				$list_form{'genre'}	          = Slim::Music::Info::genre($item);
 				$list_form{'artist'}              = Slim::Music::Info::artist($item);

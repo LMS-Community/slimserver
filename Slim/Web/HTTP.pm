@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.85 2004/03/10 22:02:56 dean Exp $
+# $Id: HTTP.pm,v 1.86 2004/03/11 04:27:05 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1404,7 +1404,7 @@ sub buildStatusHeaders {
 
 		my $sleep = $client->sleepTime() - Time::HiRes::time();
 
-		$headers{"x-playersleep"}  = $sleep < 0 ? 0 : $sleep;
+		$headers{"x-playersleep"}  = $sleep < 0 ? 0 : int($sleep/60);
 	}	
 	
 	if (Slim::Player::Playlist::count($client)) { 
