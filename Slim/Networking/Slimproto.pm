@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.23 2003/09/19 20:05:13 dean Exp $
+# $Id: Slimproto.pm,v 1.24 2003/09/30 18:08:46 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -399,6 +399,9 @@ sub process_slimproto_frame {
 		$::d_slimproto && msg("Slimproto: Saying goodbye\n");
 		if ($data eq chr(1)) {
 			$::d_slimproto && msg("Going out for upgrade...\n");
+			# give the player a chance to get into upgrade mode
+			sleep(2);
+
 			my $success = $client->upgradeFirmware();
 			if (defined($success)) {
 				msg("Problem with upgrade: $success\n");

@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.29 2003/09/29 22:40:35 dean Exp $
+# $Id: HTTP.pm,v 1.30 2003/09/30 18:08:47 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -86,7 +86,7 @@ $pageFunctions{qr/^$/} = \&Slim::Web::Pages::home;
 $pageFunctions{qr/^index\.(?:htm|xml)/} = \&Slim::Web::Pages::home;
 $pageFunctions{qr/browseid3\.(?:htm|xml)/} = \&Slim::Web::Pages::browseid3;
 $pageFunctions{qr/edit_playlist\.(?:htm|xml)/} = \&Slim::Web::EditPlaylist::editplaylist;  # Needs to be before playlist
-$pageFunctions{qr/firmware\.(?:html|xml)/} = \&Slim::Web::Pages::firmware;
+$pageFunctions{qr/^firmware\.(?:html|xml)/} = \&Slim::Web::Pages::firmware;
 $pageFunctions{qr/hitlist\.(?:htm|xml)/} = \&Slim::Web::History::hitlist;
 $pageFunctions{qr/home\.(?:htm|xml)/} = \&Slim::Web::Pages::home;
 $pageFunctions{qr/instant_mix\.(?:htm|xml)/} = \&Slim::Web::Pages::instant_mix;
@@ -98,7 +98,7 @@ $pageFunctions{qr/search\.(?:htm|xml)/} = \&Slim::Web::Pages::search;
 $pageFunctions{qr/songinfo\.(?:htm|xml)/} = \&Slim::Web::Pages::songinfo;
 $pageFunctions{qr/status_header\.(?:htm|xml)/} = \&Slim::Web::Pages::status_header;
 $pageFunctions{qr/status\.(?:htm|xml)/} = \&Slim::Web::Pages::status;
-$pageFunctions{qr/updatefirmware\.(?:htm|xml)/} = \&Slim::Web::Pages::update_firmware;
+$pageFunctions{qr/^update_firmware\.(?:htm|xml)/} = \&Slim::Web::Pages::update_firmware;
 
 # initialize the http server
 sub init {

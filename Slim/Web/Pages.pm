@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.11 2003/09/26 04:12:49 kdf Exp $
+# $Id: Pages.pm,v 1.12 2003/09/30 18:08:47 dean Exp $
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -1516,6 +1516,7 @@ sub firmware {
 	my($client, $paramsref) = @_;
 	Slim::Web::HTTP::filltemplatefile("firmware.html", $paramsref);	
 }
+
 sub update_firmware {
 	my($client, $paramsref) = @_;
 	my $result;

@@ -4884,6 +4884,15 @@ PLAYER_NEEDS_UPGRADE_1
 PLAYER_NEEDS_UPGRADE_2
 	EN	Press and hold BRIGHTNESS key to begin.
 
+PLAYER_UPGRADE_INSTRUCTIONS
+	EN	If the IP address of your player is not displayed on its screen, press and hold the BRIGHTNESS button until it is.  Then enter the IP address displayed on the screen here:
+
+UPGRADE_COMPLETE_DETAILS
+	EN	Your upgrade is complete.
+
+UPGRADE_COMPLETE
+	EN	Upgrade Complete
+
 NEED_PATH
 	DE	Sie müssen einen Pfad zum Verzeichnis mit Ihrem MP3 Dateien angeben.
 	DK	Du skal angive stien til mappen med dine MP3-filer.

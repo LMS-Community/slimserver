@@ -139,10 +139,13 @@ sub needsUpgrade {
 
 sub upgradeFirmware {
 	my $client = shift;
-	my $ip = $client->ip;
+	my $ip;
+	if (ref $client ) {
+		$ip = $client->ip;
+	} else {
+		$ip = $client;
+	}
 	
-	# give the player a chance to get into upgrade mode
-	sleep(2);
 	
 	my $port = 31337;  # upgrade port
 	

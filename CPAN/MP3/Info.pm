@@ -4,8 +4,6 @@ use strict;
 use Carp;
 use Symbol;
 
-use IO::String;
-
 use vars qw(
 	@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION $REVISION
 	@mp3_genres %mp3_genres @winamp_genres %winamp_genres $try_harder
@@ -25,8 +23,8 @@ use vars qw(
 	all	=> [@EXPORT, @EXPORT_OK]
 );
 
-# $Id: Info.pm,v 1.2 2003/08/12 20:50:35 dean Exp $
-($REVISION) = ' $Revision: 1.2 $ ' =~ /\$Revision:\s+([^\s]+)/;
+# $Id: Info.pm,v 1.3 2003/09/30 18:08:46 dean Exp $
+($REVISION) = ' $Revision: 1.3 $ ' =~ /\$Revision:\s+([^\s]+)/;
 $VERSION = '1.01';
 
 =pod
@@ -574,17 +572,16 @@ sub _get_v2tag {
 
 	seek $fh, 0, 0;
 	
-	read $fh, (my $wholetag), $end;
+	my $wholetag;
+	
+	read $fh, $wholetag, $end;
 	
 	if ($v2->{unsync}) {
 		my $hits = ($wholetag =~ s/\xFF\x00/\xFF/gs);
 	}
-	    
-	$fh = IO::String->new( $wholetag );
 	
 	$myseek = sub {
-		seek $fh, $off, 0;
-		read $fh, my($bytes), $hlen;
+		my $bytes = substr($wholetag, $off, $hlen);
 		# djb - iTunes uses a space in one of the tag names.  not to spec, but safe nonetheless
 		return unless $bytes =~ /^([A-Z0-9 ]{$num})/;
 		my($id, $size) = ($1, $hlen);
@@ -597,10 +594,9 @@ sub _get_v2tag {
 
 	while ($off < $end) {
 		my($id, $size) = &$myseek or last;
-		seek $fh, $off + $hlen, 0;
 		# djb - sanity check on size of tag.
 		last if ($size > $v2->{tag_size});
-		read $fh, my($bytes), $size - $hlen;
+		my $bytes = substr($wholetag, $off+$hlen, $size-$hlen);
 
 		if (exists $h->{$id}) {
 			if (ref $h->{$id} eq 'ARRAY') {
@@ -613,7 +609,7 @@ sub _get_v2tag {
 		}
 		$off += $size;
 	}
-
+	
 	return($h, $v2);
 }
 
