@@ -101,10 +101,11 @@ sub lines {
 	my $listIndex = Slim::Buttons::Common::param($client,'listIndex');
 	my $listRef = Slim::Buttons::Common::param($client,'listRef');
 	if (!defined($listRef)) { return ('','');}
-	if ($listIndex == scalar(@$listRef)) {
+	if ($listIndex && ($listIndex == scalar(@$listRef))) {
 		Slim::Buttons::Common::param($client,'listIndex',$listIndex-1);
 		$listIndex--;
 	}
+	
 	$line1 = getExtVal($client,$listRef->[$listIndex],$listIndex,'header');
 	if (Slim::Buttons::Common::param($client,'stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
 		$line1 = $client->string($line1);
