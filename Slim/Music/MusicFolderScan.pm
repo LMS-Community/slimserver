@@ -49,7 +49,6 @@ sub doneScanning {
 	Slim::Music::Info::saveDBCache();
 	$stillScanning=0;
 	@dummylist = ();
-	exit;
 }
 
 sub stillScanning {
