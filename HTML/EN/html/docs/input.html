@@ -107,10 +107,20 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         as the first parameter and the exit event type as the second.
       </dd>
       <dt>header</dt>
-      <dd>Default: &quot;Enter Text:&quot; (not localized)</dd>
+      <dd>Default: &quot;Input Text:&quot; (not localized)</dd>
       <dd>
-        String to display on the top line of the display. This string is displayed
-        as supplied, so be sure to localize any strings used.
+        String to display on the top line of the display. This parameter can
+        be interpreted in a number of ways, see above. After the value to be
+        displayed is determined, it is then modified according to the
+        <var>stringHeader</var> and <var>headerAddCount</var> parameters, below.
+      </dd>
+      <dt>stringHeader</dt>
+      <dd>Default: undef</dd>
+      <dd>
+        If set to a true value, the display value of <var>header</var> is
+        passed to the <code>string()</code> function to be localized. If no
+        localized string is defined for the value of <var>header</var>, it is
+        displayed as is.
       </dd>
       <dt>valueRef</dt>
       <dd>Default: &quot;&quot;</dd>
