@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.82 2004/04/24 18:27:12 kdf Exp $
+# $Id: Source.pm,v 1.83 2004/04/24 19:16:02 daniel Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1139,6 +1139,8 @@ sub tokenizeConvertCommand {
 		}
 	}
 
+	# This must come above the FILE substitutions, otherwise it will break
+	# files with [] in their names.
 	$command =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
 	$command =~ s/\$FILE\$/"$filepath"/g;
