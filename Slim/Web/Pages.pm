@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.6 2003/08/25 22:52:37 dean Exp $
+# $Id: Pages.pm,v 1.7 2003/08/31 07:19:06 kdf Exp $
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -365,7 +365,8 @@ sub status {
 	 
 	if (defined($client)) {
 		$songcount = Slim::Player::Playlist::count($client);
-
+		$$main_form_ref{'refresh'} = Slim::Utils::Prefs::get("refreshRate");
+		
 		if ($client->defaultName() ne $client->name()) {
 			$$main_form_ref{'player_name'} = $client->name();
 		}
@@ -395,8 +396,11 @@ sub status {
 	
 		if("play" eq Slim::Player::Source::playmode($client)) {
 			$$main_form_ref{'modeplay'} = "Play";
+			my $remaining = $$main_form_ref{'songduration'} - $$main_form_ref{'songtime'};
+			if ($remaining < $$main_form_ref{'refresh'} && $remaining > 2) { $$main_form_ref{'refresh'} = $remaining;}
 		} elsif ("pause" eq Slim::Player::Source::playmode($client)) {
 			$$main_form_ref{'modepause'} = "Pause";
+		
 		} else {
 			$$main_form_ref{'modestop'} = "Stop";
 		}

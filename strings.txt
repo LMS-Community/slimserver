@@ -1575,6 +1575,15 @@ SETUP_PLUGINS_DESC
 	PT	O Slim Server inclui algumas funcionalidades extras, tais como alguns jogos, que podem ser usados com o controlo remoto. Use o menu abaixo para adicionar ou remover os menus extra do cliente. 
 	SE	Slim Server inkluderar några tillägg, t.ex några spel, som du kan använda med din fjärrkontroll. Använd menyn nedan för att lägga till eller ta bort Tilläggs-menyn from din Huvudmeny.
 
+SETUP_REFRESHRATE
+	EN	Browser Refresh Timing
+
+SETUP_REFRESHRATE_DESC
+	EN	Set the time between browser reloads in seconds.  While playing a song, the server will set the refresh near a song end if it is less than this value. (Default is 30, minimum is 2)
+
+SETUP_REFRESHRATE_OK
+	EN	Refresh time set to
+
 SETUP_COVERART
 	EN	Cover Art
 	FR	Pochette

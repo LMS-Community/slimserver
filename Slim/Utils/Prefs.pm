@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.6 2003/08/20 21:13:13 dean Exp $
+# $Id: Prefs.pm,v 1.7 2003/08/31 07:19:06 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -32,6 +32,7 @@ my %DEFAULT = (
 	,"playlistdir"			=> (($^O eq 'darwin') ? $ENV{'HOME'} . '/Music/Playlists' : ((Slim::Utils::OSDetect::OS() eq 'win') ? $Bin . '/Playlists' : ''))
 	,"skin"					=> "Default"
 	,"language"				=> "EN"
+	,"refreshRate"			=> 30
 	,"displaytexttimeout" 	=> 2.0
 	,"filesort"				=> 0
 	,"screensavertimeout" 	=> 30
