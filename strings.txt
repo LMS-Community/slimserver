@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.136 2004/09/14 16:21:27 dean Exp $
+# $Id: strings.txt,v 1.137 2004/09/17 15:03:42 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -19,7 +19,7 @@ CREDITS
 	IT	Marco Barbieri
 	NL	Terry Adams, Patrick van Zweden, Carel Bast, Lieven Hollevoet
 	NO	Øyvind L. Eggen, Georg Engstrand
-	PT	Walter Wullschleger, Bruno Rodrigues
+	PT	Walter Wullschleger, Bruno Rodrigues, Paulo Mannheimer
 	SE	Andreas Olsson, Hans Nystrom, Johan Hübner, Peter Nõu
 
 CHOOSE_A_LANGUAGE
@@ -790,6 +790,7 @@ FREE_YOUR_MUSIC
 	SE	Frige din musik
 
 UPDATING_FIRMWARE
+	PT	Atualizando firmware ...
 	DE	Firmware wird aktualisiert.
 	EN	Updating Squeezebox firmware.
 	FR	Mise à jour du micrologiciel Squeezebox
@@ -870,6 +871,7 @@ SERVER
 	SE	Server
 
 ABOUT_SHORT
+	PT	Sobre ...
 	DE	Über...
 	EN	About
 	FR	A propos
