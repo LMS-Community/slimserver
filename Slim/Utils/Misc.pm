@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.54 2004/10/08 06:04:29 vidur Exp $
+# $Id: Misc.pm,v 1.55 2004/11/02 15:19:13 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -57,10 +57,20 @@ sub blocking {
 sub findbin {
 	my $executable = shift;
 	
-	my @paths;
+	my @paths = ();
 	my $path;
+
+	my $arch = $Config::Config{'archname'};
+
+	# This is hackish - unfortunately the Kurobox/Linkstation's perl
+	# identifies itself as ppc-linux, of which there's already binaries
+	# for - GX series Macs, with Altivec. The Motorola 82xx doesn't, so we
+	# need a different binary directory.
+	if ($arch =~ /^ppc-/ && $Config::Config{'cc'} =~ /82xx/) {
+		$arch = 'powerpc-hardhat-linux';
+	}
 	
-	push @paths, catdir( $Bin, 'Bin', $Config::Config{archname});
+	push @paths, catdir( $Bin, 'Bin', $arch);
 	push @paths, catdir( $Bin, 'Bin', $^O);
 	push @paths, catdir( $Bin, 'Bin');
 		
