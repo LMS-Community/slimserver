@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.46 2003/11/22 20:31:08 dean Exp $
+# $Id: HTTP.pm,v 1.47 2003/11/24 19:23:39 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -212,7 +212,7 @@ sub processHTTP {
 		$httpclientsock->autoflush(1);
 
 		$::d_http && msg("reading request...\n");
-		$firstline = Slim::Utils::Misc::sysreadline($httpclientsock); # <$httpclientsock>;	  
+		$firstline = Slim::Utils::Misc::sysreadline($httpclientsock,1); # <$httpclientsock>;	  
 	  	$::d_http && msg("HTTP request: $firstline\n");
 	  	
 		if (!defined($firstline)) { #socket half-closed from client
@@ -231,7 +231,7 @@ sub processHTTP {
 			
 			my $authorized = !Slim::Utils::Prefs::get("authorize");
 
-			while (my $line = Slim::Utils::Misc::sysreadline($httpclientsock)){ # <$httpclientsock>) {
+			while (my $line = Slim::Utils::Misc::sysreadline($httpclientsock,1)){ # <$httpclientsock>) {
 				if ($line) {
 					# authorization header.
 					if ($line =~ /^Icy-MetaData/i) {

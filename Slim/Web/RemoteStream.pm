@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.8 2003/11/21 18:25:04 dean Exp $
+# $Id: RemoteStream.pm,v 1.9 2003/11/24 19:23:39 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -61,7 +61,7 @@ sub openRemoteStream {
 
 	syswrite $sock, $request;
 
-	my $response = Slim::Utils::Misc::sysreadline($sock); #<$sock>;
+	my $response = Slim::Utils::Misc::sysreadline($sock,2); #<$sock>;
 
 	$::d_remotestream && msg("Response: $response");
 	
@@ -87,7 +87,8 @@ sub openRemoteStream {
 
 	my $redir = '';
 	Slim::Music::Info::setContentType($url,Slim::Music::Info::typeFromPath($url, 'mp3'));
-	while(my $header = Slim::Utils::Misc::sysreadline($sock)) { #<$sock>) {
+	while(my $header = Slim::Utils::Misc::sysreadline($sock,2)) { #<$sock>) {
+
 		$::d_remotestream && msg("header: " . $header);
 		if ($header =~ /^icy-name:\s*(.+)\015\012$/i) {
 			Slim::Music::Info::setTitle($url, $1);
