@@ -44,9 +44,7 @@ our %mainModeFunctions = (
 	   my $listIndex = $client->param( 'listIndex');
 	   my $stations = $client->param( 'stations');
 
-	   Slim::Control::Command::execute( $client, [ 'playlist', 'clear' ] );
-	   Slim::Control::Command::execute( $client, [ 'playlist', 'add', $stations->[$listIndex]] );
-	   Slim::Control::Command::execute( $client, [ 'play' ] );
+	   Slim::Control::Command::execute( $client, [ 'playlist', 'play', $stations->[$listIndex]] );
    },
    'add' => sub {
 	   my $client = shift;
