@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.74 2004/04/04 17:47:24 dean Exp $
+# $Id: strings.txt,v 1.75 2004/04/04 20:42:00 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1550,6 +1550,12 @@ SETUP_PLAYLISTDIR
 	NL	Folder voor Bewaarde Playlists
 	PT	Directoria com Playlists
 	SE	Mapp för Sparade Spellistor
+
+SETUP_ARTFOLDER
+	EN	Artwork Folder
+
+SETUP_ARTFOLDER_DESC
+	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, the server will still look for artwork in the same path as each audio file if no matching artwork in found in the Artwork Folder.
 
 SETUP_BAD_DIRECTORY
 	DE	Oops - "%s" ist kein gültiges Verzeichnis. Bitte versuchen Sie es noch einmal.
