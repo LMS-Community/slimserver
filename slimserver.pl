@@ -312,6 +312,7 @@ sub init {
 }
 
 sub start {
+	my $logfilename;
 
 	$::d_server && msg("SlimServer starting up...\n");
 
@@ -326,10 +327,14 @@ sub start {
 	} else {
 		save_pid_file();
 		if (defined $logfile) {
+			$logfilename = $logfile;
+			if (substr($logfile, 0, 1) ne "|") {
+				$logfilename = ">>" . $logfile;
+			}
 			if ($stdio) {
-				if (!open STDERR, ">>$logfile") { die "Can't write to $logfile: $!";}
+				if (!open STDERR, $logfilename) { die "Can't write to $logfilename: $!";}
 			} else {
-				if (!open STDOUT, ">>$logfile") { die "Can't write to $logfile: $!";}
+				if (!open STDOUT, $logfilename) { die "Can't write to $logfilename: $!";}
 				if (!open STDERR, '>&STDOUT') { die "Can't dup stdout: $!"; }
 			}
 		}
@@ -716,11 +721,19 @@ sub daemonize {
 	my $uid ; 
 	my @grp ; 
 	my $log;
+	my $logfilename;
 	
 	if ($logfile) { $log = $logfile } else { $log = '/dev/null' };
 	
 	if (!open STDIN, '/dev/null') { die "Can't read /dev/null: $!";}
-	if (!open STDOUT, ">>$log") { die "Can't write to $log: $!";}
+
+	# check for log file being pipe, e.g. multilog
+	$logfilename = $log;
+	if (substr($log, 0, 1) ne "|") {
+		$logfilename = ">>" . $log;
+	}
+
+	if (!open STDOUT, $logfilename) { die "Can't write to $logfilename: $!";}
 	if (!defined($pid = fork)) { die "Can't fork: $!"; }
 	
 	if ($pid) {
