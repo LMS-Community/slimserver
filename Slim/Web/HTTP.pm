@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.126 2004/12/07 20:19:57 dsully Exp $
+# $Id: HTTP.pm,v 1.127 2004/12/09 09:29:33 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1495,6 +1495,7 @@ sub _getFileContent {
 	}
 	
 	if ($template) {
+		local $/ = undef;;
 		binmode($template) if $binary;
 		$content = join('', <$template>);
 		close $template;
