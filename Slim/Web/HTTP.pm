@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.89 2004/04/01 02:11:52 grotus Exp $
+# $Id: HTTP.pm,v 1.90 2004/04/05 19:17:42 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -21,6 +21,7 @@ use HTML::Entities;
 use Socket qw(:DEFAULT :crlf);
 use Sys::Hostname;
 use Template;
+use Template::Filters;
 use Tie::RegexpHash;
 use URI::Escape;
 
@@ -39,6 +40,8 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 
 # constants
+
+$Template::Filters::FILTERS->{'uri'} = \&URI::Escape::uri_escape;
 
 BEGIN {
 	if ($^O =~ /Win32/) {
