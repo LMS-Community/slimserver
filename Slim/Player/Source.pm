@@ -41,7 +41,11 @@ sub loadConversionTables {
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @convertFiles, $ENV{'HOME'} . "/Library/SlimDevices/convert.conf";
 		push @convertFiles, "/Library/SlimDevices/convert.conf";
+		push @convertFiles, $ENV{'HOME'} . "/Library/SlimDevices/slimserver-convert.conf";
+		push @convertFiles, "/Library/SlimDevices/slimserver-convert.conf";
 	}
+	push @convertFiles, catdir($Bin, 'slimserver-convert.conf');
+	push @convertFiles, catdir($Bin, '.slimserver-convert.conf');
 	
 	foreach my $convertFileName (@convertFiles) {
 		if (open my $convertFile, "<$convertFileName") {

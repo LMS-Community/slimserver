@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.23 2003/11/29 01:03:27 daniel Exp $
+# $Id: Info.pm,v 1.24 2003/11/30 08:53:12 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -201,7 +201,12 @@ sub loadTypesConfig {
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @typesFiles, $ENV{'HOME'} . "/Library/SlimDevices/types.conf";
 		push @typesFiles, "/Library/SlimDevices/types.conf";
+		push @typesFiles, $ENV{'HOME'} . "/Library/SlimDevices/slimserver-types.conf";
+		push @typesFiles, "/Library/SlimDevices/slimserver-types.conf";
 	}
+	push @typesFiles, catdir($Bin, 'slimserver-types.conf');
+	push @typesFiles, catdir($Bin, '.slimserver-types.conf');
+	
 	
 	foreach my $typeFileName (@typesFiles) {
 		if (open my $typesFile, "<$typeFileName") {
