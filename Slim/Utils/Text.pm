@@ -1,6 +1,7 @@
 package Slim::Utils::Text;
 
 use strict;
+use Tie::Cache::LRU;
 
 # $Id$
 
@@ -9,8 +10,8 @@ use strict;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-our %caseArticlesMemoize = ();
-our %sortCache = ();
+tie our %caseArticlesMemoize, 'Tie::Cache::LRU', 128;
+tie our %sortCache, 'Tie::Cache::LRU', 128;
 
 sub ignorePunct {
 	my $s = shift || return undef;
