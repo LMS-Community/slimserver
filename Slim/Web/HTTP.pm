@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.63 2004/02/03 16:44:09 dean Exp $
+# $Id: HTTP.pm,v 1.64 2004/02/03 22:07:58 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -571,7 +571,7 @@ sub closeStreamingSocket {
 	foreach my $client (Slim::Player::Client::clients()) {
 		if (defined($client->streamingsocket) && $client->streamingsocket == $httpclientsock) {
 			$client->streamingsocket(undef);
-			Slim::Utils::Timer::killTimers($client, \&tryStreamingLater);
+			Slim::Utils::Timers::killTimers($client, \&tryStreamingLater);
 		}
 	}
 	delete($peerclient{$httpclientsock});
