@@ -342,6 +342,12 @@ sub setContentType {
 	$::d_info && Slim::Utils::Misc::msg("Content type for $url is cached as $type\n");
 }
 
+sub title {
+	my $url = shift;
+
+        return info($url, 'title');
+}
+
 sub setTitle {
 	my $url = shift;
 	my $title = shift;
