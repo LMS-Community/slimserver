@@ -249,6 +249,19 @@ sub position {
     return $self -> {'pos'} - $self -> {'data'} -> {'data_start'};
 }
 
+=head2 offset
+
+Returns the current audio data offset (as bytes from the beginning of the file).
+
+    my $byte_offset = $read -> offset();
+
+=cut
+
+sub offset {
+    my $self = shift;
+    return $self -> {'data'} -> {'data_start'};
+}
+
 =head2 move_to
 
 Moves the current audio data position to byte offset.

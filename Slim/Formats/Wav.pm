@@ -1,6 +1,6 @@
 package Slim::Formats::Wav;
 
-# $Id: Wav.pm,v 1.7 2003/12/11 06:01:10 dean Exp $
+# $Id: Wav.pm,v 1.8 2004/01/05 05:17:45 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -50,7 +50,7 @@ sub getTag {
 
 	unless ($bail) {
 
-		$tags->{'OFFSET'} = $read->position();
+		$tags->{'OFFSET'} = $read->offset();
 		$tags->{'SIZE'}   = $read->length();
 		$tags->{'SECS'}   = $read->length_seconds();
 		
