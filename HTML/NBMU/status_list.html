@@ -9,7 +9,7 @@
 <td>&nbsp;</td>
 <td>
 
-<a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" [% IF currentsong %]id="currentsong"[% END %]>[% track.title | html %]</a>
+<a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" [% IF currentsong %]id="currentsong"[% END %]>[% title | html %]</a>
 
 [% IF album; "FROM" | string; END %]
 <em><a href="browsedb.html?hierarchy=album,track&level=0&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a></em>
