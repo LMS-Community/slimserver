@@ -564,7 +564,12 @@ sub clearStaleEntries {
 	my $tracks = Slim::DataStores::DBI::Track->retrieve_all();
 
 	while (my $track = $tracks->next()) {
-
+	
+		unless (Slim::Music::Info::isFileURL($track->url())) {
+			undef $track;
+			next;
+		}
+		
 		my $filepath = Slim::Utils::Misc::pathFromFileURL($track->url());
 
 		# Don't use _hasChanged - because that does more than we want.
@@ -1086,7 +1091,7 @@ sub _postCheckAttributes {
 
 		my @genres = Slim::DataStores::DBI::GenreTrack->add($genre, $track);
 
-		if (!$create) {
+		if (!$create && defined $_unknownGenreID) {
 
 			foreach my $gen (@genres) {
 				$gen->delete() if ($gen->id() eq $_unknownGenreID);
