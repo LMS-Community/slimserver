@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.95 2004/09/09 19:12:25 dean Exp $
+# $Id: Setup.pm,v 1.96 2004/09/10 04:30:24 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -501,6 +501,7 @@ sub initSetupConfig {
 			'scrollPauseDouble' => {
 				'validate' => \&validateNumber
 				,'validateArgs' => [0,undef,1]
+				,'changeIntro' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLPAUSE').string('COLON')
 				,'PrefChoose' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLPAUSE').string('COLON')
 			},
 			'scrollRate' => {
@@ -511,7 +512,8 @@ sub initSetupConfig {
 			'scrollRateDouble' => {
 				'validate' => \&validateNumber
 				,'validateArgs' => [0,undef,1]
-				,'PrefChoose' =>  string('DOUBLE-LINE').' '.string('SETUP_SCROLLRATE').string('COLON')
+				,'changeIntro' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLRATE').string('COLON')
+				,'PrefChoose' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLRATE').string('COLON')
 			},
 		}
 	}
@@ -863,7 +865,7 @@ sub initSetupConfig {
 
 				if (Slim::Music::MoodLogic::canUseMoodLogic()) {
 					$pageref->{'GroupOrder'}[2] = 'moodlogic';
-					$pageref->{'children'}[12] = 'moodlogic';
+					push @{$pageref->{'children'}}, 'moodlogic' if $pageref->{'children'}[-1] ne 'moodlogic';;
 				} else {
 					$pageref->{'GroupOrder'}[2] = undef;
 					pop @{$pageref->{'children'}} if $pageref->{'children'}[-1] eq 'moodlogic';
