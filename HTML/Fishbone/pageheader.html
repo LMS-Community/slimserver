@@ -53,7 +53,7 @@
 				[% END %]
 			[% END %]
 			}
-			if (submit) {suffix = suffix + "&manualSearch=1&query=' + value"}
+			if (submit) {suffix = suffix + "&manualSearch=1&query=" + value}
 			parent.browser.location=url + suffix + '&player=[% player %]';
 			document.searcher.search.options[0].selected = true;
 		}
