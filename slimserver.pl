@@ -38,6 +38,8 @@ sub Startup {
 	
 	# here's where your startup code will go
 	while (ContinueRun() && !main::idle()) { }
+
+	stopServer();
 }
 
 sub Install {
