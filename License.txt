@@ -20,7 +20,7 @@ included below for your convenience.
 
 - Certain integral components of Slim Server, such as CPAN modules, 
 are (c) of their respective authors, and are included in SlimServer
-per GPL.
+per their respective licenses.
 
 - Certain ancillary programs included in the SlimServer distribution 
 on our web site are licensed to us only for direct distribution to
@@ -31,7 +31,7 @@ binaries.
 circumstances. It is (c) Slim Devices, and additonally contains
 code which is (c) Ubicom. Ubicom's code is licenced to us only
 for direct distribution in binary form. You may use the firmware
-only on hardware purchased from Slim Devices.
+only on hardware manufactured by Slim Devices.
 
 - SLIMP3 firmware is (c) Slim Devices, and source is available
 under the Slim Devices Public Source Licence, for certain educational 
