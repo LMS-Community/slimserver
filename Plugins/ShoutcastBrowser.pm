@@ -230,15 +230,6 @@ sub getDisplayName {
 	return 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME';
 }
 
-sub strings {
-	local $/ = undef;
-
-	my $strings = <DATA>;
-	close DATA;
-
-	return $strings;
-}
-
 sub get_prefs {
 	if ((not $prefs_override) and
 			Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_how_many_streams')) {
@@ -1486,10 +1477,9 @@ Slim::Buttons::Common::addMode('ShoutcastBitrates', \%BitrateFunctions,
 Slim::Buttons::Common::addMode('ShoutcastStreamInfo', \%InfoFunctions,
 				$info_mode_sub, $leave_info_mode_sub);
 
-1;
 
-__DATA__
-PLUGIN_SHOUTCASTBROWSER_MODULE_NAME
+sub strings {
+	return q^PLUGIN_SHOUTCASTBROWSER_MODULE_NAME
 	EN	SHOUTcast Internet Radio
 	DE	SHOUTcast Internet Radio
 	ES	Radio por Internet SHOUTcast
@@ -1704,4 +1694,8 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD
 SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD_REVERSE
 	EN	Order of definition (reverse)
 	DE	Definitions-Reihenfolge (umgekehrt)
-	ES	Orden de definición (reverso)
+	ES	Orden de definición (reverso)^;
+}
+
+1;
+

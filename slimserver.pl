@@ -369,9 +369,6 @@ sub init {
 	$::d_server && msg("SlimServer OSDetect init...\n");
 	Slim::Utils::OSDetect::init();
 
-	$::d_server && msg("SlimServer Strings init...\n");
-	Slim::Utils::Strings::init(catdir($Bin,'strings.txt'), "EN");
-
 	$::d_server && msg("SlimServer OS Specific init...\n");
 
 	$SIG{CHLD} = 'IGNORE';
@@ -406,6 +403,12 @@ sub init {
 
 	$::d_server && msg("SlimServer settings init...\n");
 	initSettings();
+
+	$::d_server && msg("SlimServer strings init...\n");
+	Slim::Utils::Strings::init(catdir($Bin,'strings.txt'), "EN");
+
+	$::d_server && msg("SlimServer Setup init...\n");
+	Slim::Web::Setup::initSetup();
 
 	unless ($scanOnly) {
 
@@ -824,7 +827,6 @@ sub initOptions {
 sub initSettings {	
 	Slim::Utils::Prefs::load($prefsfile, $nosetup || $noserver);
 	Slim::Utils::Prefs::checkServerPrefs();
-	Slim::Web::Setup::initSetup();
 
 	# upgrade mp3dir => audiodir
 	if (my $mp3dir = Slim::Utils::Prefs::get('mp3dir')) {

@@ -36,7 +36,7 @@ our $failsafe_language = 'EN';
 sub init {
 	my $usr_strings;
 
-	# clear these so they can be reused for Michael's translator plugin
+	# clear these so they can be reloaded after language change
 	%strings   = ();
 	%languages = ();
 
@@ -163,6 +163,10 @@ sub addStrings {
 		} elsif ($line =~ /^\t(\S*)\t(.+)$/) {
 
 			my $one = $1;
+			
+			# only read strings in our preferred and the failback language - plus the language names for the setup page
+			if (($one ne failsafeLanguage()) && ($one ne getLanguage()) && ($stringname ne 'LANGUAGE_CHOICES')) { next LINE; }
+			
 			$string = $2;
 
 			if ($one =~ /./) {
@@ -220,7 +224,7 @@ sub string {
 
 		next unless $strings{$stringname}->{$tryLang};
 
-		return $strings{$stringname}->{$tryLang} . (($tryLang ne $language) && Slim::Utils::Prefs::get('translatorMode') ? " {$stringname}" : '');
+		return $strings{$stringname}->{$tryLang} . (($tryLang ne $language) && Slim::Utils::Prefs::get('plugin-stringeditor-translatormode') ? " {$stringname}" : '');
 	}
 
 	unless ($dontWarn) {

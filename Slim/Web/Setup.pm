@@ -1208,6 +1208,11 @@ sub initSetupConfig {
 							'validate' => \&validateInHash
 							,'validateArgs' => [\&Slim::Utils::Strings::hash_of_languages]
 							,'options' => undef #filled by initSetup using Slim::Utils::Strings::hash_of_languages()
+							,'onChange' => sub {
+								Slim::Utils::Strings::init();
+								Slim::Buttons::Plugins::read_plugins();
+								Slim::Web::Setup::initSetup();
+							}
 						}
 				,'audiodir'	=> {
 							'validate' => \&validateIsAudioDir

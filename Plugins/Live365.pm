@@ -698,15 +698,6 @@ sub getDisplayName {
 	return 'PLUGIN_LIVE365_MODULE_NAME';
 }
 
-sub strings {
-	local $/ = undef;
-
-	my $strings = <DATA>;
-	close DATA;
-
-	return $strings;
-}
-
 sub setupGroup {
 	my %Group = (
 		PrefOrder => [
@@ -1497,15 +1488,8 @@ Slim::Buttons::Common::addMode( 'searchMode', \%searchModeFunctions, $setSearchM
 
 } # end search mode
 
-# }}}
-
-1;
-
-# }}}
-
-# {{{ Strings
-__DATA__
-PLUGIN_LIVE365_MODULE_NAME
+sub strings {
+	return q^PLUGIN_LIVE365_MODULE_NAME
 	EN	Live365 Internet Radio
 	ES	Radio por Internet Live365
 
@@ -1780,8 +1764,12 @@ PLUGIN_LIVE365_RECENT
 	DE	Kürzlich gehört
 	EN	Recent
 	ES	Reciente
+	^;
+}
 
-__END__
+# }}}
+
+1;
 
 # }}}
 

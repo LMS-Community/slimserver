@@ -263,17 +263,7 @@ sub setupGroup {
 };
 
 sub strings {
-	local $/ = undef;
-	my $strings = <DATA>;
-	close DATA;
-	return $strings;
-}
-
-1;
-
-__DATA__
-
-PLUGIN_RESCAN_MUSIC_LIBRARY
+	return q^PLUGIN_RESCAN_MUSIC_LIBRARY
 	DE	Musikverzeichnis erneut durchsuchen
 	EN	Rescan Music Library
 	ES	Recopilar nuevamente la Colección Musical
@@ -323,5 +313,9 @@ PLUGIN_RESCAN_TIMER_DESC
 PLUGIN_RESCAN_TIMER_OFF
 	DE	Automatisches Durchsuchen AUS
 	EN	Rescan Timer OFF
-	ES	Timer de Recopilación APAGADO
+	ES	Timer de Recopilación APAGADO^;
+}
+
+1;
+
 
