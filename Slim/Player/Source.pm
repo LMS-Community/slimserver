@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.97 2004/06/01 19:15:41 dean Exp $
+# $Id: Source.pm,v 1.98 2004/06/02 01:50:53 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -855,7 +855,7 @@ sub openSong {
 		my ($size, $duration, $offset, $samplerate, $blockalign, $endian) = (0, 0, 0, 0, 0, undef);
 		
 		# don't try and read this if we're a pipe
-		unless (-p $fullpath) {
+		unless (-p $filepath) {
 
 			# XXX - endian can be undef here - set to ''.
 			$size       = Slim::Music::Info::size($fullpath);
@@ -925,7 +925,7 @@ sub openSong {
 				}
 
 				# pipe is a socket
-				if (-p $fullpath) {
+				if (-p $filepath) {
 					$client->audioFilehandleIsSocket(1);
 				} else {
 					$client->audioFilehandleIsSocket(0);
