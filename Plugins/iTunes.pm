@@ -527,6 +527,7 @@ sub scanFunction {
 			my $id = $1;
 			my %curTrack = getDict();
 			my %cacheEntry = ();
+			my $ds = Slim::Music::Info::getCurrentDataStore();
 
 			# add this track to the library
 			if ($id ne $curTrack{'Track ID'}) {
@@ -613,7 +614,7 @@ sub scanFunction {
 					}
 				}
 				
-				Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
+				$ds->updateOrCreate($url, \%cacheEntry, undef, 1);
 
 				$tracks{$id} = $url;
 			} else {

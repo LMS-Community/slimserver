@@ -441,6 +441,7 @@ sub updateOrCreate {
 	my $urlOrObj = shift;
 	my $attributeHash = shift;
 	my $commit = shift;
+	my $noTags = shift;
 
 	my $track = ref $urlOrObj ? $urlOrObj : undef;
 	my $url   = ref $urlOrObj ? $track->url : $urlOrObj;
@@ -479,7 +480,7 @@ sub updateOrCreate {
 
 	} else {
 
-		$track = $self->newTrack($url, $attributeHash, undef, 1);
+		$track = $self->newTrack($url, $attributeHash, undef, !$noTags);
 	}
 
 	if ($attributeHash->{'CT'}) {

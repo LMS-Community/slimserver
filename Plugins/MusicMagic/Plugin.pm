@@ -369,7 +369,7 @@ sub exportFunction {
 		}
 
 		$count += 0;
-		
+
 		$::d_musicmagic && msg("MusicMagic: Got $count song(s).\n");
 		
 		$scan = 0;
@@ -430,7 +430,7 @@ sub exportFunction {
 		
 			my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});
 
-			$ds->updateOrCreate($fileurl, \%cacheEntry);
+			$ds->updateOrCreate($fileurl, \%cacheEntry, undef, 1);
 			
 			# NYI: MMM has more ways to access artwork...
 			if (Slim::Utils::Prefs::get('lookForArtwork')) {
