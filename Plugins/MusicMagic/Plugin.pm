@@ -1107,11 +1107,6 @@ sub setupGroup {
 			'validate' => \&Slim::Web::Setup::validateInt,
 			'validateArgs' => [1025,65535,undef,1],
 		},
-
-		'MMSHost' => {
-			'validate' => \&Slim::Web::Setup::validateAcceptAll,
-			'PrefSize' => 'large'
-		},
 	);
 
 	return (\%setupGroup,\%setupPrefs);
@@ -1127,7 +1122,11 @@ sub setupCategory {
 		'Groups' => {
 
 			'Default' => {
-				'PrefOrder' => [qw(MMMSize MMMMixType MMMStyle MMMVariety musicmagicscaninterval MMSHost MMSport MMSremoteRoot)]
+				'PrefOrder' => [qw(MMMSize MMMMixType MMMStyle MMMVariety musicmagicscaninterval MMSport)]
+				
+				# disable remote host access, its confusing and only works in specific cases
+				# leave it here for hackers who really want to try it
+				#'PrefOrder' => [qw(MMMSize MMMMixType MMMStyle MMMVariety musicmagicscaninterval MMSport MMSHost MMSremoteRoot)]
 			},
 
 			'MusicMagicPlaylistFormat' => {

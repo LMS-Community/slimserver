@@ -518,8 +518,10 @@ sub maxRate {
 	my $rate = clientGet($client,'maxBitrate');
 	if (!defined $rate) {
 		# Possibly the first time this pref has been accessed
-		# if maxBitrate hasn't been set yet, allow wired squeezeboxes to default to no limit, others to 320kbps
-		$rate = ($client->isa("Slim::Player::Squeezebox") && !defined $client->signalStrength()) ? 0 : 320;
+		# if maxBitrate hasn't been set yet, allow wired squeezeboxen and ALL SB2's to default to no limit, others to 320kbps
+		$rate = ($client->isa("Slim::Player::Squeezebox2") 
+				|| ($client->isa("Slim::Player::Squeezebox") && !defined $client->signalStrength())) 
+				? 0 : 320;
 	}
 	
 	# override the saved or default bitrate if a transcodeBitrate has been set via HTTP parameter

@@ -399,12 +399,15 @@ sub unusedPluginOptions {
 	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
 	my %homeplugins = map { $_ => 1 } @{Slim::Buttons::Home::getHomeChoices($client)};
 
-	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
-	
+	my $pluginsRef = \%plugins;
+
 	for my $menuOption (keys %{$pluginsRef}) {
 
 		next if exists $disabledplugins{$menuOption};
-		next if exists $homeplugins{$pluginsRef->{$menuOption}};
+		next if exists $homeplugins{$pluginsRef->{$menuOption}->{'name'}};
+		next if (!UNIVERSAL::can("$pluginsRef->{$menuOption}->{'module'}","setMode"));
+		next if (!UNIVERSAL::can("$pluginsRef->{$menuOption}->{'module'}","getFunctions"));
+		
 		no strict 'refs';
 
 		if (exists &{"Plugins::" . $menuOption . "::enabled"} && $client &&
@@ -412,7 +415,7 @@ sub unusedPluginOptions {
 			next;
 		}
 
-		$menuChoices{$menuOption} = $client->string($pluginsRef->{$menuOption});
+		$menuChoices{$menuOption} = $client->string($pluginsRef->{$menuOption}->{'name'});
 
 	}
 	return sort { $menuChoices{$a} cmp $menuChoices{$b} } keys %menuChoices;
