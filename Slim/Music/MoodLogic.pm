@@ -76,8 +76,8 @@ sub init {
         }
         
         Win32::OLE->WithEvents($mixer, \&event_hook);
-
-        $mixer->{JetPwdMixer} = 'C393558B6B794D';
+        
+	$mixer->{JetPwdMixer} = 'C393558B6B794D';
         $mixer->{JetPwdPublic} = 'F8F4E734E2CAE6B';
         $mixer->{JetPwdPrivate} = '5B1F074097AA49F5B9';
         $mixer->{UseStrings} = 1;
@@ -198,7 +198,7 @@ sub exportFunction {
                 $cacheEntry{'ALBUM'} = $album_data[1];
                 $cacheEntry{'TRACKNUM'} = $album_data[2];
             }
-                
+               
 	    $mixer->{Seed_SID} = -$song_id;
 		$cacheEntry{'CT'} = 'mp3';
 		$cacheEntry{'TAG'} = 1;
