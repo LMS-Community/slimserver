@@ -1,17 +1,19 @@
 package URI::file;
 
 use strict;
-use vars qw(@ISA $VERSION);
+use vars qw(@ISA $VERSION $DEFAULT_AUTHORITY %OS_CLASS);
 
 require URI::_generic;
 @ISA = qw(URI::_generic);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 use URI::Escape qw(uri_unescape);
 
+$DEFAULT_AUTHORITY = "";
+
 # Map from $^O values to implementation classes.  The Unix
 # class is the default.
-my %os_class = (
+%OS_CLASS = (
      os2     => "OS2",
      mac     => "Mac",
      MacOS   => "Mac",
@@ -26,7 +28,7 @@ sub os_class
 {
     my($OS) = shift || $^O;
 
-    my $class = "URI::file::" . ($os_class{$OS} || "Unix");
+    my $class = "URI::file::" . ($OS_CLASS{$OS} || "Unix");
     no strict 'refs';
     unless (%{"$class\::"}) {
 	eval "require $class";
@@ -47,7 +49,7 @@ sub new
 sub new_abs
 {
     my $class = shift;
-    my $file = $class->new(shift);
+    my $file = $class->new(@_);
     return $file->abs($class->cwd) unless $$file =~ /^file:/;
     $file;
 }
@@ -61,6 +63,33 @@ sub cwd
     $cwd = $class->new($cwd);
     $cwd .= "/" unless substr($cwd, -1, 1) eq "/";
     $cwd;
+}
+
+sub canonical {
+    my $self = shift;
+    my $other = $self->SUPER::canonical;
+
+    my $scheme = $other->scheme;
+    my $auth = $other->authority;
+    return $other if !defined($scheme) && !defined($auth);  # relative
+
+    if (!defined($auth) ||
+	$auth eq "" ||
+	lc($auth) eq "localhost" ||
+	(defined($DEFAULT_AUTHORITY) && lc($auth) eq lc($DEFAULT_AUTHORITY))
+       )
+    {
+	# avoid cloning if $auth already match
+	if ((defined($auth) || defined($DEFAULT_AUTHORITY)) &&
+	    (!defined($auth) || !defined($DEFAULT_AUTHORITY) || $auth ne $DEFAULT_AUTHORITY)
+	   )
+	{
+	    $other = $other->clone if $self == $other;
+	    $other->authority($DEFAULT_AUTHORITY);
+        }
+    }
+
+    $other;
 }
 
 sub file
@@ -257,13 +286,42 @@ RFC 1630
 
    A void host field is equivalent to "localhost".
 
+=head1 CONFIGURATION VARIABLES
+
+The following configuration variables influence how the class and its
+methods behave:
+
+=over
+
+=item %URI::file::OS_CLASS
+
+This hash maps OS identifiers to implementation classes.  You might
+want to add or modify this if you want to plug in your own file
+handler class.  Normally the keys should match the $^O values in use.
+
+If there is no mapping then the "Unix" implementation is used.
+
+=item $URI::file::DEFAULT_AUTHORITY
+
+This determine what "authority" string to include in absolute file
+URIs.  It defaults to "".  If you prefer verbose URIs you might set it
+to be "localhost".
+
+Setting this value to C<undef> force behaviour compatible to URI v1.31
+and earlier.  In this mode host names in UNC paths and drive letters
+are mapped to the authority component on Windows, while we produce
+authority-less URIs on Unix.
+
+=back
+
+
 =head1 SEE ALSO
 
 L<URI>, L<File::Spec>, L<perlport>
 
 =head1 COPYRIGHT
 
-Copyright 1995-1998 Gisle Aas.
+Copyright 1995-1998,2004 Gisle Aas.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.

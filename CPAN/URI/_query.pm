@@ -42,7 +42,7 @@ sub query_form {
             $key = '' unless defined $key;
 	    $key =~ s/([;\/?:@&=+,\$\[\]%])/$URI::Escape::escapes{$1}/g;
 	    $key =~ s/ /+/g;
-	    $vals = [ref($vals) ? @$vals : $vals];
+	    $vals = [ref($vals) eq "ARRAY" ? @$vals : $vals];
             for my $val (@$vals) {
                 $val = '' unless defined $val;
 		$val =~ s/([;\/?:@&=+,\$\[\]%])/$URI::Escape::escapes{$1}/g;
@@ -66,7 +66,7 @@ sub query_keywords
     if (@_) {
         # Try to set query string
 	my @copy = @_;
-	@copy = @{$copy[0]} if @copy == 1 && ref($copy[0]);
+	@copy = @{$copy[0]} if @copy == 1 && ref($copy[0]) eq "ARRAY";
 	for (@copy) { s/([;\/?:@&=+,\$\[\]%])/$URI::Escape::escapes{$1}/g; }
 	$self->query(@copy ? join('+', @copy) : undef);
     }

@@ -5,7 +5,7 @@ require URI::file::Unix;
 
 use strict;
 
-sub extract_path
+sub _file_extract_path
 {
     my($class, $path) = @_;
     # tidy path

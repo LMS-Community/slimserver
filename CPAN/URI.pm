@@ -2,7 +2,7 @@ package URI;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = "1.30"; # $Date: 2004/02/21 22:27:22 $
+$VERSION = "1.35"; # $Date: 2004/11/28 17:55:28 $
 
 use vars qw($ABS_REMOTE_LEADING_DOTS $ABS_ALLOW_RELATIVE_SCHEME);
 
@@ -245,20 +245,26 @@ sub as_string
 
 sub canonical
 {
-    my $self = shift;
+    # Make sure scheme is lowercased, that we don't escape unreserved chars,
+    # and that we use upcase escape sequences.
 
-    # Make sure scheme is lowercased
+    my $self = shift;
     my $scheme = $self->_scheme || "";
     my $uc_scheme = $scheme =~ /[A-Z]/;
-    my $lc_esc    = $$self =~ /%(?:[a-f][a-fA-F0-9]|[A-F0-9][a-f])/;
-    if ($uc_scheme || $lc_esc) {
-	my $other = $self->clone;
-	$other->_scheme(lc $scheme) if $uc_scheme;
-	$$other =~ s/(%(?:[a-f][a-fA-F0-9]|[A-F0-9][a-f]))/uc($1)/ge
-	    if $lc_esc;
-	return $other;
+    my $esc = $$self =~ /%[a-fA-F0-9]{2}/;
+    return $self unless $uc_scheme || $esc;
+
+    my $other = $self->clone;
+    if ($uc_scheme) {
+	$other->_scheme(lc $scheme);
     }
-    $self;
+    if ($esc) {
+	$$other =~ s{%([0-9a-fA-F]{2})}
+	            { my $a = chr(hex($1));
+                      $a =~ /^[$unreserved]\z/o ? $a : "%\U$1"
+                    }ge;
+    }
+    return $other;
 }
 
 # Compare two URIs, subclasses will provide a more correct implementation
@@ -563,6 +569,10 @@ is the unescaped path segment proper;  subsequent elements are escaped
 parameter strings.  Such an anonymous array uses overloading so it can
 be treated as a string too, but this string does not include the
 parameters.
+
+Note that absolute paths have the empty string as their first
+I<path_segment>, i.e. the I<path> C</foo/bar> have 3
+I<path_segments>; "", "foo" and "bar".
 
 =item $uri->query
 

@@ -6,7 +6,7 @@ require URI::file::Win32;
 # The Win32 version translates k:/foo to file://k:/foo  (?!)
 # We add an empty host
 
-sub extract_authority
+sub _file_extract_authority
 {
     my $class = shift;
     return $1 if $_[0] =~ s,^\\\\([^\\]+),,;  # UNC

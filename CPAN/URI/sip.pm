@@ -76,11 +76,11 @@ sub params
 }
 
 # Inherited methods that make no sense for a SIP URI.
-sub path {};
-sub path_query {};
-sub path_segments {};
-sub abs {};
-sub rel {};
-sub query_keywords {};
+sub path {}
+sub path_query {}
+sub path_segments {}
+sub abs { shift }
+sub rel { shift }
+sub query_keywords {}
 
 1;

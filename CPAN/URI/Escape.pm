@@ -1,5 +1,5 @@
 #
-# $Id: Escape.pm,v 1.1 2004/02/21 22:26:09 daniel Exp $
+# $Id: Escape.pm,v 1.2 2004/11/28 17:55:12 dsully Exp $
 #
 
 package URI::Escape;
@@ -44,10 +44,16 @@ The functions provided (and exported by default) from this module are:
 
 =over 4
 
-=item uri_escape($string, [$unsafe])
+=item uri_escape( $string )
 
-Replaces each unsafe character in the $string with the
-corresponding escape sequence and returns the result.
+=item uri_escape( $string, $unsafe )
+
+Replaces each unsafe character in the $string with the corresponding
+escape sequence and returns the result.  The $string argument should
+be a string of bytes.  The uri_escape() function will croak if given a
+characters with code above 255.  Use uri_escape_utf8() if you know you
+have such chars or/and want chars in the 128 .. 255 range treated as
+UTF-8.
 
 The uri_escape() function takes an optional second argument that
 overrides the set of characters that are to be escaped.  The set is
@@ -63,6 +69,35 @@ I<not> part of the C<uric> character class shown above as well as the
 reserved characters.  I.e. the default is:
 
   "^A-Za-z0-9\-_.!~*'()"
+
+=item uri_escape_utf8( $string )
+
+=item uri_escape_utf8( $string, $unsafe )
+
+Works like uri_escape(), but will encode chars as UTF-8 before
+escaping them.  This makes this function able do deal with characters
+with code above 255 in $string.  Note that chars in the 128 .. 255
+range will be escaped differently by this function compared to what
+uri_escape() would.  For chars in the 0 .. 127 range there is no
+difference.
+
+The call:
+
+    $uri = uri_escape_utf8($string);
+
+will be the same as:
+
+    use Encode qw(encode);
+    $uri = uri_escape(encode("UTF-8", $string));
+
+but will even work for perl-5.6 for chars in the 128 .. 255 range.
+
+Note: Javascript has a function called escape() that produce the
+sequence "%uXXXX" for chars in the 256 .. 65535 range.  This function
+has really nothing to do with URI escaping but some folks got confused
+since it "does the right thing" in the 0 .. 255 range.  Because of
+this you sometimes see "URIs" with these kind of escapes.  The
+JavaScript encodeURI() function is similar to uri_escape_utf8().
 
 =item uri_unescape($string,...)
 
@@ -100,7 +135,7 @@ L<URI>
 
 =head1 COPYRIGHT
 
-Copyright 1995-2001 Gisle Aas.
+Copyright 1995-2004 Gisle Aas.
 
 This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
@@ -113,8 +148,8 @@ use vars qw(%escapes);
 require Exporter;
 @ISA = qw(Exporter);
 @EXPORT = qw(uri_escape uri_unescape);
-@EXPORT_OK = qw(%escapes);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+@EXPORT_OK = qw(%escapes uri_escape_utf8);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 use Carp ();
 
@@ -133,15 +168,33 @@ sub uri_escape
 	unless (exists  $subst{$patn}) {
 	    # Because we can't compile the regex we fake it with a cached sub
 	    (my $tmp = $patn) =~ s,/,\\/,g;
-	    eval "\$subst{\$patn} = sub {\$_[0] =~ s/([$tmp])/\$escapes{\$1}/g; }";
+	    eval "\$subst{\$patn} = sub {\$_[0] =~ s/([$tmp])/\$escapes{\$1} || _fail_hi(\$1)/ge; }";
 	    Carp::croak("uri_escape: $@") if $@;
 	}
 	&{$subst{$patn}}($text);
     } else {
 	# Default unsafe characters.  RFC 2732 ^(uric - reserved)
-	$text =~ s/([^A-Za-z0-9\-_.!~*'()])/$escapes{$1}/g;
+	$text =~ s/([^A-Za-z0-9\-_.!~*'()])/$escapes{$1} || _fail_hi($1)/ge;
     }
     $text;
+}
+
+sub _fail_hi {
+    my $chr = shift;
+    Carp::croak(sprintf "Can't escape \\x{%04X}, try uri_escape_utf8() instead", ord($chr));
+}
+
+sub uri_escape_utf8
+{
+    my $text = shift;
+    if ($] < 5.008) {
+	$text =~ s/([^\0-\x7F])/do {my $o = ord($1); sprintf("%c%c", 0xc0 | ($o >> 6), 0x80 | ($o & 0x3f)) }/ge;
+    }
+    else {
+	utf8::encode($text);
+    }
+
+    return uri_escape($text, @_);
 }
 
 sub uri_unescape
