@@ -143,6 +143,10 @@ sub enabled {
 	return ($::VERSION !~/^5/) && initPlugin();
 }
 
+sub getFunctions {
+	return '';
+}
+
 sub initPlugin {
 	return 1 if $initialized;
 	
