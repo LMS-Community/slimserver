@@ -339,9 +339,10 @@ sub start {
 		Slim::Music::MoodLogic::startScan();
 
 	} else {
-
-		$::d_server && msg("SlimServer Music Folder Scan init...\n");
-		Slim::Music::MusicFolderScan::startScan(1);
+		if (!Slim::Utils::Prefs::get('usetagdatabase')) {
+			$::d_server && msg("SlimServer Music Folder Scan init...\n");
+			Slim::Music::MusicFolderScan::startScan(1);
+		}
 	}
 	
 	$lastlooptime = Time::HiRes::time();

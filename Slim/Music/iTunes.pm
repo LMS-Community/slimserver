@@ -512,6 +512,7 @@ sub scanFunction {
 			$cacheEntry{'LIST'} = $curPlaylist{'Playlist Items'};
 			$cacheEntry{'CT'} = 'itu';
 			$cacheEntry{'TAG'} = 1;
+			$cacheEntry->{'VALID'} = '1';
 			Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
 			push @playlists, $url;
 			$::d_itunes && msg("playlists now has " . scalar(@playlists) . " items...\n");

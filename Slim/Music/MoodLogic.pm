@@ -210,6 +210,7 @@ sub exportFunction {
 		
 		$cacheEntry{'CT'} = 'mp3';
 		$cacheEntry{'TAG'} = 1;
+		$cacheEntry{'VALID'} = 1;
 		$cacheEntry{'TITLE'} = $mixer->Mix_SongName(-1);
 		$cacheEntry{'ARTIST'} = $mixer->Mix_ArtistName(-1);
 		$cacheEntry{'GENRE'} = $genre_hash{$browser->FLT_Song_MGID($i)}[0] if (defined $genre_hash{$browser->FLT_Song_MGID($i)});
