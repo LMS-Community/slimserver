@@ -24,7 +24,7 @@ sub load
     # check that the file exists and is readable
     unless ( -e $file && -r _ )
     {
-	warn "File does not exist or cannot be read.";
+	warn "File $file does not exist or cannot be read.";
 	# file does not exist, can't do anything
 	return undef;
     }
