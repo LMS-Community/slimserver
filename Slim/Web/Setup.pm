@@ -1823,7 +1823,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['wipecache','templatecache','useplaylistcache', 'lookForArtwork','itemsPerPass','prefsWriteDelay']
+					'PrefOrder' => ['wipecache','templatecache','lookForArtwork','itemsPerPass','prefsWriteDelay']
 				}
 			}
 		,'Prefs' => {
@@ -1857,10 +1857,10 @@ sub initSetupConfig {
 			,'itemsPerPass' => {
 						'validate' => \&validateInt
 						}
-			}
 			,'prefsWriteDelay' => {
 						'validate' => \&validateInt
 						,'validateArgs' => [0,undef,1]
+						}
 			}
 		} #end of setup{'performance'} hash
 	,'network' => {
