@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.104 2004/09/14 16:54:59 dean Exp $
+# $Id: Setup.pm,v 1.105 2004/09/23 08:07:31 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -114,6 +114,7 @@ sub initSetupConfig {
 
 					if ($client->isPlayer()) {
 						$pageref->{'GroupOrder'} = ['Default','TitleFormats','Display'];
+						fillSetupOptions('player','titleFormat','titleFormat');
 						if (scalar(keys %{Slim::Buttons::Common::hash_of_savers()}) > 0) {
 							push @{$pageref->{'GroupOrder'}}, 'ScreenSaver';
 							$pageref->{'Prefs'}{'screensaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
