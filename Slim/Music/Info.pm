@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.14 2003/10/13 23:57:33 dean Exp $
+# $Id: Info.pm,v 1.15 2003/10/17 19:34:51 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1022,7 +1022,7 @@ sub coverArt {
 	my $art = shift || 'cover';
 	my $image;
 
-	$::d_info && Slim::Utils::Misc::msg("Cover Art  $art for: $file\n");
+	$::d_info && Slim::Utils::Misc::msg("Cover Art ($art) for: $file\n");
 
 	my ($body, $contenttype);
 

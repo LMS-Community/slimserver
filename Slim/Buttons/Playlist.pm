@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.10 2003/10/06 06:40:56 kdf Exp $
+# $Id: Playlist.pm,v 1.11 2003/10/17 19:34:51 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -218,9 +218,8 @@ sub currentSongLines {
 		} else {
 			if (Slim::Player::Source::rate($client) != 1) {
 				$line1 = string('NOW_SCANNING') . ' ' . Slim::Player::Source::rate($client) . 'x';	
-		#		$line1 = Slim::Player::Playlist::rate($client) > 0 ? string('NOW_SCANNING') : string('NOW_REWINDING');
-			} elsif (Slim::Player::Playlist::shuffle($client)) {
-				$line1 = string('PLAYING_RANDOMLY');
+#			} elsif (Slim::Player::Playlist::shuffle($client)) {
+#				$line1 = string('PLAYING_RANDOMLY');
 			} else {
 				$line1 = string('PLAYING');
 			}

@@ -240,7 +240,7 @@ sub playmode {
 				$everyclient->readytosync(0);
 				$everyclient->play(Slim::Player::Sync::isSynced($everyclient));				
 			} elsif ($newmode eq "pause") {
-				# since we can't count on the accuracy of the fade timers, we unfade them all, but the master calls back to unpause everybody
+				# since we can't count on the accuracy of the fade timers, we unfade them all, but the master calls back to pause everybody
 				if ($everyclient eq $client) {
 					$everyclient->fade_volume(-0.3125, \&pauseSynced, [$client]);
 				} else {
@@ -927,7 +927,11 @@ sub pauseSynced {
 	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
 		$everyclient->pause();
 	}
+	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
+		$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
+	}
 }
+
 
 1;
 __END__

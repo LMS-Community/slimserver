@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.15 2003/10/14 19:13:21 dean Exp $
+# $Id: Prefs.pm,v 1.16 2003/10/17 19:34:52 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -20,6 +20,32 @@ my $prefsPath;
 my $prefsFile;
 my $canWrite;
 
+sub defaultMP3Dir {
+	my $path;
+	if (($^O eq 'darwin')) {
+		$path = ($ENV{'HOME'} . '/Music');
+	} elsif (Slim::Utils::OSDetect::OS() eq 'win') {
+		if (!eval "use Win32::Registry;") {
+			my $folder;
+			if ($::HKEY_CURRENT_USER->Open("Software\\Microsoft\\Windows"
+								   ."\\CurrentVersion\\Explorer\\Shell Folders", $folder)) {
+				my ($type, $value);
+				if ($folder->QueryValueEx("My Music", $type, $value)) {
+					$path = $value;
+				} elsif ($folder->QueryValueEx("Personal", $type, $value)) {
+					$path = $value . '\\My Music';
+				}
+			}
+		}		
+	}
+	
+	if ($path && -d $path) {
+		return $path;
+	} else {	
+		return '';
+	}
+}
+
 # When adding new server and client preference options, put a default value for the option
 # into the DEFAULT hash.  For client options put the key => value pair in the client hash
 # in the client key of the main hash.
@@ -28,7 +54,7 @@ my $canWrite;
 my %DEFAULT = (
 	"httpport"				=> 9000
 	,"cliport"				=> 9090
-	,"mp3dir"				=> ((Slim::Utils::OSDetect::OS() eq 'mac') && (-d ($ENV{'HOME'} . '/Music/'))) ? ($ENV{'HOME'} . '/Music') : ""
+	,"mp3dir"				=> defaultMP3Dir()
 	,"playlistdir"			=> ((Slim::Utils::OSDetect::OS() eq 'mac') ? $ENV{'HOME'} . '/Music/Playlists' : ((Slim::Utils::OSDetect::OS() eq 'win') ? $Bin . '/Playlists' : ''))
 	,"skin"					=> "Default"
 	,"language"				=> "EN"

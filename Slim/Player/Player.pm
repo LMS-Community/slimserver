@@ -12,6 +12,7 @@ package Slim::Player::Player;
 
 use Slim::Player::Client;
 use Slim::Hardware::Decoder;
+use Slim::Utils::Misc;
 
 @ISA = ("Slim::Player::Client");
 
@@ -73,7 +74,7 @@ sub power {
 				Slim::Buttons::Common::setMode($client, 'home');
 				
 				
-				my $welcome =  Slim::Display::Display::center(Slim::Utils::Strings::string(Slim::Utils::Prefs::clientGet($client, "doublesize") ? 'SQUEEZEBOX' : 'WELCOME_TO_SQUEEZEBOX'));
+				my $welcome =  Slim::Display::Display::center(Slim::Utils::Strings::string(Slim::Utils::Prefs::clientGet($client, "doublesize") ? '' : 'WELCOME_TO_' . $client->model));
 				my $welcome2 = Slim::Utils::Prefs::clientGet($client, "doublesize") ? '' : Slim::Display::Display::center(Slim::Utils::Strings::string('FREE_YOUR_MUSIC'));
 				Slim::Display::Animation::showBriefly($client, $welcome, $welcome2);
 				
@@ -177,14 +178,18 @@ sub fade_volume {
 
 	$fvolume{$client} += $Slim::Player::Client::maxVolume * (1/$faderate) / $fade; # fade volume
 
-	if($fvolume{$client} <= 0 || $fvolume{$client} >= $vol) {
+	if ($fvolume{$client} < 0) { $fvolume{$client} = 0; };
+	if ($fvolume{$client} > $vol) { $fvolume{$client} = $vol; };
+
+	&volume($client, $fvolume{$client}); # set volume
+
+	if ($fvolume{$client} == 0 || $fvolume{$client} == $vol) {	
 		# done fading
 		$::d_ui && msg("fade_volume done.\n");
 		$fvolume{$client} = 0; # reset temporary fade volume 
 		$callback && (&$callback(@$callbackargs));
 	} else {
-		$::d_ui && msg("fade_volume - setting volume to $fvolume{$client}\n");
-		&volume($client, $fvolume{$client}); # set volume
+		$::d_ui && msg("fade_volume - setting volume to $fvolume{$client} (originally $vol)\n");
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time()+ (1/$faderate), \&fade_volume, ($fade, $callback, $callbackargs));
 	}
 }

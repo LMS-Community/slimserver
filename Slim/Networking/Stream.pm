@@ -111,7 +111,11 @@ sub pause {
 
 	$streamState{$client}='paused';
 
-	sendNextChunk($client);
+	if ($fullness{$client} > $BUFFER_FULL_THRESHOLD) {
+		sendEmptyChunk($client);
+	} else {
+		sendNextChunk($client);
+	}
 	
 	return 1;
 }

@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.12 2003/10/10 19:03:30 caleb Exp $
+# $Id: Common.pm,v 1.13 2003/10/17 19:34:51 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -41,14 +41,14 @@ my %modes = (
 	'repeat' =>					\&Slim::Buttons::Settings::setRepeatMode,
 	'shuffle' =>				\&Slim::Buttons::Settings::setShuffleMode,
 	'textsize' =>				\&Slim::Buttons::Settings::setTextSizeMode,
-	'offdisplaysize' =>				\&Slim::Buttons::Settings::setOffDisplaySettingsMode,
+	'offdisplaysize' =>			\&Slim::Buttons::Settings::setOffDisplaySettingsMode,
 	'titleformat' =>			\&Slim::Buttons::Settings::setTitleFormatMode,
 	'treble' =>					\&Slim::Buttons::Settings::setTrebleMode,
 	'bass' =>					\&Slim::Buttons::Settings::setBassMode,
 	'volume' =>					\&Slim::Buttons::Settings::setVolumeMode,
 	'moodlogic_mood_wheel' =>	\&Slim::Buttons::MoodWheel::setMode,
 	'moodlogic_instant_mix' =>	\&Slim::Buttons::InstantMix::setMode,
-	'INPUT.Text'		=>	\&Slim::Buttons::Input::Text::setMode,
+	'INPUT.Text' =>				\&Slim::Buttons::Input::Text::setMode,
 );
 
 # hash of references to functions to call when we leave a mode

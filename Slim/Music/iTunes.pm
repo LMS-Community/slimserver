@@ -143,12 +143,7 @@ sub canUseiTunesLibrary {
 sub findMusicLibraryFile {
 	my $filename;
 	
-	my $base = '';
-	if ($ENV{HOME}) {
-		$base = $ENV{HOME};
-	}
-
-	my $plist = $base . '/Library/Preferences/com.apple.iApps.plist';
+	my $plist = $ENV{HOME} . '/Library/Preferences/com.apple.iApps.plist';
 
 	if (-r $plist) {
 		open (PLIST, "< $plist");
@@ -164,25 +159,67 @@ sub findMusicLibraryFile {
 		return $filename;
 	}
 	
-	$filename = $base . '/Music/iTunes/iTunes Music Library.xml';
-	if (-r $filename) {
-		return $filename;
-	}
-
-	$filename = $base . '/Documents/iTunes/iTunes Music Library.xml';
-	if (-r $filename) {
-		return $filename;
-	}
-
 	
-	$filename = $base . '/iTunes Music Library.xml';
+	$filename = $ENV{HOME} . '/Music/iTunes/iTunes Music Library.xml';
+	if (-r $filename) {
+		return $filename;
+	}
+
+	$filename = $ENV{HOME} . '/Documents/iTunes/iTunes Music Library.xml';
+	if (-r $filename) {
+		return $filename;
+	}
+
+
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+		if (!eval "use Win32::Registry;") {
+			my $folder;
+			if ($::HKEY_CURRENT_USER->Open("Software\\Microsoft\\Windows"
+								   ."\\CurrentVersion\\Explorer\\Shell Folders", $folder)) {
+				my ($type, $value);
+				if ($folder->QueryValueEx("My Music", $type, $value)) {
+					$filename = $value . '\\iTunes\\iTunes Music Library.xml';
+					$::d_itunes && msg("iTunes: found My Music here: $value for $filename\n");
+				} elsif ($folder->QueryValueEx("Personal", $type, $value)) {
+					$filename = $value . '\\My Music\\iTunes\\iTunes Music Library.xml';
+					$::d_itunes && msg("iTunes: found  Personal: $value for $filename\n");
+				}
+				
+				if (-r $filename) {
+					return $filename;
+				} else {
+					$::d_itunes && msg("iTunes: couldn't read $filename\n");
+				}
+			}
+		}		
+	}
+
+	my $base = '';
+	if ($ENV{HOME}) {
+		$base = $ENV{HOME};
+	}
+	
+	$filename = catdir($base, 'iTunes Music Library.xml');
 	if (-r $filename) {
 		return $filename;
 	}		
 
+	$base = Slim::Utils::Prefs::get('mp3dir');
+
+	$filename = catdir($base, 'iTunes', 'iTunes Music Library.xml');
+
+	if (-r $filename) {
+		return $filename;
+	}		
+	
+	$filename = catdir($base, 'iTunes Music Library.xml');
+
+	if (-r $filename) {
+		return $filename;
+	}		
+	
 	return undef;
 }
-
 
 sub playlists {
 	return \@playlists;
@@ -386,6 +423,9 @@ sub scanFunction {
 				# cacheEntry{'???'} = $curTrack{'Track Count'};
 				# cacheEntry{'???'} = $curTrack{'Sample Rate'};
 				my $url = $curTrack{'Location'};
+				if (Slim::Music::Info::isFileURL($url)) {
+					$url =~ s/\/$//;
+				}
 				if ($url) {
 					Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
 					Slim::Music::Info::updateGenreCache($url, \%cacheEntry);
@@ -436,11 +476,11 @@ sub scanFunction {
 		} elsif ($curLine eq "<key>Application Version</key>") {
 			$applicationVersion = getValue();
 			$::d_itunes && msg("iTunes application version: $applicationVersion\n");
-		} elsif ($curLine eq "<key>Music Folder</key>") {
-			my $musicPath = getValue();
-			$musicPath = Slim::Utils::Misc::pathFromFileURL($musicPath);
-			$::d_itunes && msg("iTunes: found the music folder: $musicPath\n");
-			Slim::Utils::Prefs::set("mp3dir", $musicPath);
+#		} elsif ($curLine eq "<key>Music Folder</key>") {
+#			my $musicPath = getValue();
+#			$musicPath = Slim::Utils::Misc::pathFromFileURL($musicPath);
+#			$::d_itunes && msg("iTunes: found the music folder: $musicPath\n");
+#			Slim::Utils::Prefs::set("mp3dir", $musicPath);
 		} elsif ($curLine eq "<key>Tracks</key>") {
 			$inTracks = 1;
 			$inPlaylists = 0;
