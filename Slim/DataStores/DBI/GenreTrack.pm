@@ -36,7 +36,7 @@ sub add {
 
 		push @genres, $_cache{$genreSub};
 		
-		Slim::DataStores::DBI::GenreTrack->create({
+		Slim::DataStores::DBI::GenreTrack->find_or_create({
 			track => $track,
 			genre => $_cache{$genreSub},
 		});
