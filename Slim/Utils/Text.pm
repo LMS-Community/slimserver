@@ -35,14 +35,17 @@ sub matchCase {
 	$s =~ tr{abcdefghijklmnopqrstuvwxyzְֱֲֳִֵßÞַ¢׀ָֹÊֻּֽ־ֿׁׂ׃װױײ״ÙÚÛÜ׳Ýאבגדהו‏חטיךכלםמןסעףפץצרשתûüÿ‎נ¡°}
 		{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAAABBCCDEEEEIIIINOOOOOOUUUUXYAAAAAABCEEEEIIIINOOOOOOUUUUYYD!D};
 
-	use utf8;
-
 	# Turn ֶ & ז into AE
-	$s =~ s/\x{00C6}/AE/go;
-	$s =~ s/\x{00E6}/AE/go;
+	$s =~ s/\xC6/AE/go;
+	$s =~ s/\xC3\x86/AE/go;
+
+	# and the lowercase version
+	$s =~ s/\xE6/AE/go;
+	$s =~ s/\xC3\xA6/AE/go;
 
 	# And µ into MU
-	$s =~ s/\x{00B5}/MU/go;
+	$s =~ s/\xB5/MU/go;
+	$s =~ s/\xC2\xB5/MU/go;
 
 	return $s;
 }
