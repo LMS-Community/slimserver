@@ -12,6 +12,9 @@
 			document.cookie =
 				name + "=" + escape(value) +
 				((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
+			if (value == "ADVANCEDSEARCH") {
+				doSearch("","ADVANCEDSEARCH");
+			}
 		}
 		
 		function getHomeCookie(Name) 
