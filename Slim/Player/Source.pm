@@ -1612,7 +1612,7 @@ sub readNextChunk {
 
 			# don't send extraneous ID3 data at the end of the file
 			my $songLengthInBytes = $song->{totalbytes};
-			my $pos		      = $client->songBytes();
+			my $pos		      = $client->songBytes() || 0;
 			
 			if ($pos + $chunksize > $songLengthInBytes) {
 
