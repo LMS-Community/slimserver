@@ -24,11 +24,11 @@ sub startScan {
 	my $import = shift;
 
 	# Only start if the database has been initialized
-	return if (!defined(Slim::Music::Info::getCurrentDataStore()));
+	return unless defined Slim::Music::Info::getCurrentDataStore();
 	
-	#dont rescan folders if we are only enabling an Import.
+	# Don't rescan folders if we are only enabling an Import.
 	unless (defined $import) {
-		$::d_info && msg("Clearing ID3 cache\n");
+		$::d_info && msg("Clearing tag cache\n");
 		Slim::Music::Info::clearCache();
 		$::d_info && msg("Starting background scanning.\n");
 		$importsRunning{'folder'} = Time::HiRes::time();
@@ -37,11 +37,16 @@ sub startScan {
 
 	# Check Import scanners
 	foreach my $importer (keys %Importers) {
+
 		if (exists $Importers{$importer}->{'scan'} && $Importers{$importer}->{'scan'} && $Importers{$importer}->{'use'}) {
+
 			if (!defined $import || (defined $import && ($importer eq $import))) {
+
 				$importsRunning{$importer} = Time::HiRes::time();
+
 				# rescan each enabled Import, or scan the newly enabled Import
 				$::d_info && msg("Starting $importer scanning.\n");
+
 				&{$Importers{$importer}->{'scan'}};
 			}
 		}
@@ -61,23 +66,30 @@ sub addImporter {
 	my $scanFuncRef = shift;
 	my $mixerFuncRef = shift;
 	my $setupFuncRef = shift;
-	$Importers{$import}= {'mixer' => $mixerFuncRef
-						,'scan' => $scanFuncRef
-						,'setup' => $setupFuncRef
-					};
+
+	$Importers{$import} = {
+		'mixer' => $mixerFuncRef,
+		'scan'  => $scanFuncRef,
+		'setup' => $setupFuncRef,
+	};
+
 	$::d_info && msg("Adding $import Scan\n");
 }
 
 sub countImporters {
 	my $count = 0;
-	foreach my $import (keys %Importers) {
-		$count ++ if $Importers{$import}->{'use'};
+
+	for my $import (keys %Importers) {
+		$count++ if $Importers{$import}->{'use'};
 	}
+
 	return $count;
 }
 
 sub resetSetupGroups {
+
 	for my $importer (keys %Importers) {
+
 		if (exists $Importers{$importer}->{'setup'}) {
 			&{$Importers{$importer}->{'setup'}};
 		}
@@ -89,7 +101,7 @@ sub importers {
 }
 
 sub useImporter {
-	my $import = shift;
+	my $import   = shift;
 	my $newValue = shift;
 	
 	if (defined $newValue && exists $Importers{$import}) {
@@ -101,15 +113,22 @@ sub useImporter {
 
 sub endImporter {
 	my $import = shift;
+
 	if (exists $importsRunning{$import}) { 
 		$::d_info && msg("Completing $import Scan in ".(Time::HiRes::time() - $importsRunning{$import})." seconds\n");
 		delete $importsRunning{$import};
 	}
 
 	if (scalar keys %importsRunning == 0) {
-		if (Slim::Utils::Prefs::get('lookForArtwork')) {Slim::Utils::Scheduler::add_task(\&artScan);}
+
+		if (Slim::Utils::Prefs::get('lookForArtwork')) {
+
+			Slim::Utils::Scheduler::add_task(\&artScan);
+		}
+
 		Slim::Music::Info::clearStaleCacheEntries();
 		Slim::Music::Info::reBuildCaches();
+
 		$::d_info && msg("Finished background scanning.\n");
 		Slim::Music::Info::saveDBCache();
 	}
@@ -117,7 +136,9 @@ sub endImporter {
 
 sub stillScanning {
 	my $imports = scalar keys %importsRunning;
+
 	$::d_info && msg("Scanning with $imports import plugins\n");
+
 	return $imports;
 }
 
@@ -134,8 +155,10 @@ sub artwork {
 
 sub artScan {
 	my @albums = keys %artwork;
-	my $album = $albums[0];
+	my $album  = $albums[0];
+
 	return 0 unless $album;
+
 	my $thumb = Slim::Music::Info::haveThumbArt($artwork{$album});
 
 	if (defined $thumb && $thumb) {
