@@ -1,6 +1,6 @@
 package Slim::Hardware::VFD;
 
-# $Id: VFD.pm,v 1.16 2004/08/28 04:58:25 dean Exp $
+# $Id: VFD.pm,v 1.17 2004/09/01 00:14:31 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -105,6 +105,64 @@ sub setCustomChar {
 
 my %customChars;
 
+sub render {
+	my $client = shift;
+	my $lines = shift;
+	my $noDoubleSize = shift;
+	my $double;
+	my ($line1, $line2) = ('','');
+	my ($overlay1, $overlay2);
+	my ($center1, $center2);	
+
+	if (ref($lines) ne 'HASH') {
+		$lines = $client->parseLines($lines);
+	}
+	
+	if (!$noDoubleSize && $client->linesPerScreen() == 1)
+	{
+		($line1, $line2) = doubleSize($client,$lines->{line1}, $lines->{line2});
+		$double = 1;
+	} else {
+		$line1 = $lines->{line1} if defined($lines->{line1});
+		$line2 = $lines->{line2} if defined($lines->{line2});
+		if (defined($lines->{overlay1})) {
+			my $overlayLength =  Slim::Display::Display::lineLength($lines->{overlay1});
+			$line1 .= ' ' x 40;
+			$line1 = Slim::Display::Display::subString($line1, 0, 40 - $overlayLength) . $lines->{overlay1};
+		} 
+		
+		if (defined($lines->{overlay2})) {
+			my $overlayLength =  Slim::Display::Display::lineLength($lines->{overlay2});
+			$line2 .= ' ' x 40;
+			$line2 = Slim::Display::Display::subString($line2, 0, 40 - $overlayLength) . $lines->{overlay2};
+		}
+	
+		if (defined($lines->{center1})) {
+			my $len = lineLength($lines->{center1}); 
+			if ($len < 39) {
+				$line1 = ' ' x ((40 - $len)/2) . $lines->{center1};
+			} else {
+				$line1 = $lines->{center1};
+			}
+		}
+	
+		if (defined($lines->{center2})) {
+			my $len = lineLength($lines->{center2}); 
+			if ($len < 39) {
+				$line2 = ' ' x ((40 - $len)/2) . $lines->{center2};
+			} else {
+				$line2 = $lines->{center2};
+			}
+		}
+	}
+
+	$line1 = subString($line1 . (' ' x 40), 0, 40);
+	$line2 = subString($line2 . (' ' x 40), 0, 40);
+
+	return ($line1, $line2);
+}
+
+
 sub vfdUpdate {
 	my $client = shift;
 	my $lines  = shift; 
@@ -113,17 +171,10 @@ sub vfdUpdate {
 	my %newCustom;
 	my $cur = -1;
 	my $pos;
-	my $double;
 
-	my $line1;
-	my $line2;
+	my ($line1, $line2);
 
-	if (ref($lines) eq 'ARRAY') {
-		$line1= $lines->[0];
-		$line2= $lines->[1];
-	} else {
-		($line1, $line2) = split("\x1elinebreak\x1e", $lines) if (defined($lines)) ;
-	}
+	($line1, $line2) = render($client, $lines, $noDoubleSize);
 	
 	# convert to the VFD char set
 	my $lang = $client->vfdmodel;
@@ -140,16 +191,6 @@ sub vfdUpdate {
 	if (!defined($line1)) { $line1 = '' };
 	if (!defined($line2)) { $line2 = '' };
 
-	# don't display carriage returns
-	$line1 =~ s/\n//g;
-	$line2 =~ s/\n//g;
-	
-	if (!$noDoubleSize && $client->linesPerScreen() == 1)
-	{
-		($line1, $line2) = doubleSize($client,$line1, $line2);
-		$double = 1;
-	}
-
 	$client->prevline1($line1);
 	$client->prevline2($line2);
 	
@@ -160,17 +201,12 @@ sub vfdUpdate {
 	
 	my $line;
 
-	my $centerchar = Slim::Display::Display::symbol('center');
 	my $cursorchar = Slim::Display::Display::symbol('cursorpos');
 
-	my $centerspaces=0;
 	my $i = 0;
 	
 	foreach my $curline ($line1, $line2) {
 		my $linepos = 0;
-
-		# make line exactly 40 chars
-		$curline = subString($curline . (' ' x 40), 0, 40);
 			
 		while (1) {
 			# if we're done with the line, break;
@@ -185,23 +221,6 @@ sub vfdUpdate {
 			if ($scan =~ /^$cursorchar/) {
 				$cur = $i;
 				$linepos += length($cursorchar);
-				redo;
-			# is this a center character?
-			} elsif (index($scan,$centerchar) == 0)  {
-				# remove the center symbol
-				$curline = substr($curline, length($centerchar));
-				# have we centered before?  if so, use the 
-				if (!$double || !$centerspaces) {
-					# do the work to $curline and re-start loop
-					# trim line to ensure proper centering
-					$curline =~ s/\s*$//;
-					#now center the line, but take into
-					# account odd and even lengths for kerning
-					$centerspaces = int((40-lineLength($curline))/2);
-				}
-				$curline = (" " x $centerspaces).$curline;
-				# reset to exactly 40 chars long
-				$curline = subString($curline . (' ' x 40), 0, 40);
 				redo;
 			# if this is a custom character, process it
 			} elsif ($scan =~ /^\x1F([^\x1F]+)\x1F/) {
@@ -809,7 +828,7 @@ sub doubleSize {
 	
 	$::d_ui && msg("undoubled line1: $line1\n");
 	$::d_ui && msg("undoubled line2: $line2\n");
-	
+
 	$line2 =~ tr/æøð/ÆØÐ/;
 	$line2 =~ s/[åÅ]/AA/g;
 	
@@ -817,6 +836,14 @@ sub doubleSize {
 	my $lastch2 = "";
    
 	my $lastchar = "";
+	my $center2;
+	
+	($line2, $center2) = split("\x1ecenter\x1e", $line2) if $line2;
+
+	if (defined($center2)) {
+		$line2 = $center2;
+	}
+
 	my $split = Slim::Display::Display::splitString($line2);
 	
 	foreach my $char (@$split) {
@@ -848,35 +875,20 @@ sub doubleSize {
 		}
 		$lastchar = $char;
 	}
-
+	
+	if ($center2) {
+		my $len = Slim::Display::Display::lineLength($newline1);
+		if ($len < 39) {
+			$newline1 = ' ' x ((40 - $len)/2) . $newline1;
+			$newline2 = ' ' x ((40 - $len)/2) . $newline2;
+		}
+	}
+	
 	$newline1 = $newline1 . (' ' x (40 - Slim::Display::Display::lineLength($newline1)));
 	$newline2 = $newline2 . (' ' x (40 - Slim::Display::Display::lineLength($newline1)));
 
 	return ($newline1, $newline2);
 
-}
-
-sub renderOverlay {
-	my $line1 = shift;
-	my $line2 = shift;
-	my $overlay1 = shift;
-	my $overlay2 = shift;
-	
-	($line1, $overlay1) = split("\x1eright\x1e", $line1) if (!$overlay1 && $line1);
-	($line2, $overlay2) = split("\x1eright\x1e", $line2) if (!$overlay2 && $line2);
-
-	if (defined($overlay1)) {
-		my $overlayLength =  Slim::Display::Display::lineLength($overlay1);
-		$line1 .= ' ' x 40;
-		$line1 = Slim::Display::Display::subString($line1, 0, 40 - $overlayLength) . $overlay1;
-	}
-	
-	if (defined($overlay2)) {
-		my $overlayLength =  Slim::Display::Display::lineLength($overlay2);
-		$line2 .= ' ' x 40;
-		$line2 = Slim::Display::Display::subString($line2, 0, 40 - $overlayLength) . $overlay2;
-	}
-	return ($line1, $line2);
 }
 
 1;

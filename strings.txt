@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.125 2004/08/27 23:54:53 kdf Exp $
+# $Id: strings.txt,v 1.126 2004/09/01 00:14:29 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1712,6 +1712,7 @@ SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE
 	SE	Suffix:
 
 SETUP_SHOWYEAR
+	FR	Montrez L'an avec L'albums
 	EN	Show Year with Albums
 
 SETUP_SHOWYEAR_DESC
@@ -4521,6 +4522,7 @@ BASS
 	SE	Bas
 
 PITCH
+	FR	Voix
 	DE	Pitch
 	EN	Pitch
 	NO	Pitch
@@ -4547,6 +4549,7 @@ OFFDISPLAYSIZE
 	SE	Textstorlek i standby-läge
 
 LARGE
+	FR	Grand
 	DE	Gross
 	DK	Stor
 	EN	Large
@@ -4564,7 +4567,7 @@ SMALL
 	EN	Small
 	ES	Pequeño
 	FI	Pieni
-	FR	Petite
+	FR	Petit
 	NL	Klein
 	NO	Liten
 	PT	Pequeno
@@ -5069,6 +5072,7 @@ BITRATE
 	SE	Bithastighet
 
 BPM
+	FR	Bats par Minute
 	EN	Beats Per Minute
 
 YEAR
@@ -5215,6 +5219,7 @@ ALL_SONGS
 	SE	Alla låtar
 
 ALL_ARTISTS
+	FR	Tous les Artistes
 	DE	Alle Interpreten
 	EN	All Artists
 	NO	Alle artister
@@ -7081,6 +7086,7 @@ SMALL
 	EN	Small
 
 MEDIUM
+	FR	Moyenne
 	EN	Medium
 
 LARGE

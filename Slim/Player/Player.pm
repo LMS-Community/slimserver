@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.24 2004/08/27 23:54:54 kdf Exp $
+# $Id: Player.pm,v 1.25 2004/09/01 00:14:32 dean Exp $
 #
 package Slim::Player::Player;
 use strict;
@@ -56,7 +56,7 @@ sub update {
 	my $client = shift;
 	my $lines = shift;
 	my $nodoublesize = shift;
-	
+
 	if (Slim::Buttons::Common::param($client,'noUpdate')) {
 		#mode has blocked client updates temporarily
 	}	else	{ 
@@ -71,6 +71,87 @@ sub update {
 
 sub isPlayer {
 	return 1;
+}
+
+sub symbols {
+	my $client = shift;
+	my $line = shift;
+	return $line;
+}
+	
+	# parse the stringified display commands into a hash.  try to extract them if they come as a reference to an array,
+	# a scalar, a reference to a scalar or even a pre-processed hash.
+sub parseLines {
+	my $client = shift;
+	my $lines = shift;
+	my %parts;
+	my $line1 = '';
+	my $line2 = '';
+	my $line3;
+	my $line4;
+	my $overlay1 = '';
+	my $overlay2 = '';
+	my $center1 = '';
+	my $center2 = '';
+	my $bits = '';
+	
+	if (ref($lines) eq 'HASH') { 
+		return $lines;
+	} elsif (ref($lines) eq 'SCALAR') {
+		$line1 = $$lines;
+	} else {
+		if (ref($lines) eq 'ARRAY') {
+			$line1= $lines->[0];
+			$line2= $lines->[1];
+			$line3= $lines->[2];
+			$line4= $lines->[3];
+		} else {
+			$line1 = $lines;
+			$line2 = shift;
+			$line3 = shift;
+			$line4 = shift;
+		}
+		
+		return $line1 if (ref($line1) eq 'HASH');
+		
+		if (!defined($line1)) { $line1 = ''; }
+		if (!defined($line2)) { $line2 = ''; }
+		
+		$line1 .= "\x1eright\x1e" . $line3 if (defined($line3));
+
+		$line2 .= "\x1eright\x1e" . $line4 if (defined($line4));
+
+		if (length($line2)) { 
+			$line1 .= "\x1elinebreak\x1e" . $line2;
+		}
+	}
+	
+	while ($line1 =~ s/\x1eframebuf\x1e(.*)\x1e\/framebuf\x1e//s) {
+		$bits |= $1;
+	}
+
+	$line1 = $client->symbols($line1);
+	($line1, $line2) = split("\x1elinebreak\x1e", $line1);
+
+	if (!defined($line2)) { $line2 = '';}
+	
+	($line1, $overlay1) = split("\x1eright\x1e", $line1) if $line1;
+	($line2, $overlay2) = split("\x1eright\x1e", $line2) if $line2;
+
+	($line1, $center1) = split("\x1ecenter\x1e", $line1) if $line1;
+	($line2, $center2) = split("\x1ecenter\x1e", $line2) if $line2;
+
+	$line1 = '' if (!defined($line1));
+
+	$parts{bits} = $bits;
+	$parts{line1} = $line1;
+	$parts{line2} = $line2;
+	$parts{overlay1} = $overlay1;
+	$parts{overlay2} = $overlay2;
+	$parts{center1} = $center1;
+	$parts{center2} = $center2;
+
+	return \%parts;
 }
 
 sub power {
@@ -277,10 +358,8 @@ sub displayWidth {
 
 sub currentSongLines {
 	my $client = shift;
-	my ($line1, $line2, $overlay2);
-
-	my $overlay1 = "";
-
+	my ($line1, $line2, $overlay1, $overlay2);
+	
 	my $playlistlen = Slim::Player::Playlist::count($client);
 
 	if ($playlistlen < 1) {
@@ -329,17 +408,17 @@ sub currentSongLines {
 		} 
 
 		$line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
-		$overlay2 = Slim::Display::Display::symbol('notesymbol');
+		$overlay2 = $client->symbols(Slim::Display::Display::symbol('notesymbol'));
 
-		$line1 = $client->nowPlayingModeLines($line1);
+		($line1, $overlay1) = $client->nowPlayingModeLines($line1);
 	}
-
-	return ($line1, $line2, $overlay1, $overlay2);
+	
+	return $client->renderOverlay($line1, $line2, $overlay1, $overlay2);
 }
 
 sub nowPlayingModeLines {
-	my ($client,$line1,$overlay) = @_;
-
+	my ($client,$line1) = @_;
+	my $overlay;
 	my $fractioncomplete   = 0;
 	my $playingDisplayMode = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
 
@@ -374,13 +453,13 @@ sub nowPlayingModeLines {
 		} else {
 			# show both the usage bar and numerical usage
 			$fractioncomplete = $client->usage();
-			my $usageLine = int($fractioncomplete * 100 + 0.5)."%";
+			my $usageLine = ' ' . int($fractioncomplete * 100 + 0.5)."%";
 			my $usageLineLength = $client->measureText($usageLine,1);
 			
 			my $barlen = $client->displayWidth()  - $leftLength - $usageLineLength;
 			my $bar    = $client->progressBar($barlen, $fractioncomplete);
 	
-			$overlay = $bar . " " . $usageLine;
+			$overlay = $bar . $usageLine;
 		}
 	}
 	
@@ -405,8 +484,7 @@ sub nowPlayingModeLines {
 		$overlay = $bar . $songtime;
 	}
 
-	$line1 .= Slim::Display::Display::symbol('right') . $overlay if (defined($overlay));
-	return $line1;
+	return ($line1, $overlay);
 }
 
 sub measureText {
@@ -467,11 +545,31 @@ sub scrollBottom {
 	
 sub renderOverlay {
 	my $client = shift;
-	my $line1 = shift;
-	my $line2 = shift;
+	my $line1 = shift || '';
+	my $line2 = shift || '';
 	my $overlay1 = shift;
 	my $overlay2 = shift;
-	return Slim::Hardware::VFD::renderOverlay($line1, $line2, $overlay1, $overlay2);
+	
+	return $line1 if (ref($line1) eq 'HASH');
+	return $line1 if $line1 =~ /\x1e(framebuf|linebreak|right)\x1e/s;
+	
+	if (defined($overlay1)) { 
+		$line1 .= "\x1eright\x1e" . $overlay1;
+	}
+	
+	if (defined($overlay2) || defined($line2)) {
+		$line1 .= "\x1elinebreak\x1e";
+	}
+	
+	if (defined($line2)) {
+		$line1 .= $line2;
+	}
+	
+	if (defined($overlay2)) {
+		$line1 .= "\x1eright\x1e" . $overlay2;
+	}
+
+	return $line1;
 }
 
 # Draws a slider bar, bidirectional or single direction is possible.

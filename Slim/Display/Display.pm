@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.18 2004/08/28 04:58:24 dean Exp $
+# $Id: Display.pm,v 1.19 2004/09/01 00:14:31 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -49,7 +49,7 @@ sub progressBar {
 # display text manipulation routines
 sub lineLength {
 	my $line = shift;
-	return 0 unless length($line);
+	return 0 if (!defined($line) || !length($line));
 
 	$line =~ s/\x1f[^\x1f]+\x1f/x/g;
 	$line =~ s/(\x1eframebuf\x1e.*\x1e\/framebuf\x1e|\n|\xe1[^\x1e]\x1e)//gs;
@@ -65,12 +65,12 @@ sub splitString {
 
 sub subString {
 	my ($string,$start,$length,$replace) = @_;
-	$string =~ s/\x1eframebuf\x1e.*\x1e\/framebuf\x1e//s;
+	$string =~ s/\x1eframebuf\x1e.*\x1e\/framebuf\x1e//s if ($string);
 
 	my $newstring = '';
 	my $oldstring = '';
 
-	if ($string =~ s/^(((?:(\x1e[^\x1e]+\x1e)|)(?:[^\x1e\x1f]|\x1f[^\x1f]+\x1f)){0,$start})//) {
+	if ($string && $string =~ s/^(((?:(\x1e[^\x1e]+\x1e)|)(?:[^\x1e\x1f]|\x1f[^\x1f]+\x1f)){0,$start})//) {
 		$oldstring = $1;
 	}
 	
@@ -86,6 +86,11 @@ sub subString {
 		$newstring = $string;
 	}
 	return $newstring;
+}
+
+sub command {
+	my $symname = shift;
+	if (exists($commandmap{$symname})) { return $commandmap{$symname}; }
 }
 
 sub symbol {

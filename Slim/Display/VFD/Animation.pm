@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::VFD::Animation;
 
-# $Id: Animation.pm,v 1.2 2004/08/04 06:18:40 kdf Exp $
+# $Id: Animation.pm,v 1.3 2004/09/01 00:14:31 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -53,7 +53,7 @@ my $scrollSeparator = "      ";
 sub animating {
 	my $client = shift;
 
-	if (Slim::Utils::Timers::pendingTimers($client, \&animate) > 0) {
+	if ((Slim::Utils::Timers::pendingTimers($client, \&animate) + Slim::Utils::Timers::pendingTimers($client, \&update)) > 0) {
 		return 1;
 	} else {
 		return 0;
@@ -67,6 +67,7 @@ sub killAnimation {
 	Slim::Buttons::Common::param($client,'noUpdate',0);
 	Slim::Utils::Timers::killTimers($client, \&animate);
 	Slim::Utils::Timers::killTimers($client, \&endAnimation);
+	Slim::Utils::Timers::killTimers($client, \&update);
 }
 
 sub endAnimation {
@@ -87,15 +88,17 @@ sub showBriefly {
 	my $duration = shift;
 	my $firstLineIfDoubled = shift;
 
-	my $right = Slim::Display::Display::symbol('right');
+	my $parsed;
+	
+	if (ref($line1) eq 'HASH') {
+		$parsed = $line1;
+	} else {
+		$parsed = $client->parseLines([$line1,$line2]);
+	}
 	
 	if ($firstLineIfDoubled && ($client->linesPerScreen() == 1)) {
-		$line2 = $line1;
-		$line1 = '';
+		$parsed->{line2} = $parsed->{line1};
 	}
-	# todo, animate the right aligned overlays.  until then, just drop the overlay part
-	$line1 =~ s/$right(.*)//g if ($line1);
-	$line2 =~ s/$right(.*)//g if ($line2);
 	
 	my $pause = Slim::Buttons::Common::paramOrPref($client,'scrollPause');
 	
@@ -106,11 +109,13 @@ sub showBriefly {
 	}
 	
 	my ($measure1, $measure2);
+	
 	my $double = ($client->linesPerScreen() == 1);
+	
 	if ($double) {
-		($measure1, $measure2) = Slim::Hardware::VFD::doubleSize($client,$line1,$line2);
+		($measure1, $measure2) = Slim::Hardware::VFD::doubleSize($client,$parsed->{line1},$parsed->{line2});
 	} else {
-		($measure1, $measure2) = ($line1, $line2);
+		($measure1, $measure2) = ($parsed->{line1}, $parsed->{line2});
 	}
 	
 	if (($duration >  $pause) && (Slim::Display::Display::lineLength($measure2) > 40) || (Slim::Display::Display::lineLength($measure1) > 40)) {
@@ -123,7 +128,7 @@ sub showBriefly {
 		# double them
 		if ($double) {
 			$rate = Slim::Buttons::Common::paramOrPref($client,'scrollRateDouble');
-			($line1, $line2) = Slim::Hardware::VFD::doubleSize($client,$line1,$line2);
+			($parsed->{line1}, $parsed->{line2}) = Slim::Hardware::VFD::doubleSize($client,$parsed->{line1},$parsed->{line2});
 		} else {
 			$rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');
 		}
@@ -133,23 +138,23 @@ sub showBriefly {
 		}
 	
 		# add some blank space to the end of each line
-		if (Slim::Display::Display::lineLength($line1) > 40) {
+		if (Slim::Display::Display::lineLength($parsed->{line1}) > 40) {
 			$measure1 .= $scrollSeparator;		
 		}
-		if (Slim::Display::Display::lineLength($line2) > 40) {
+		if (Slim::Display::Display::lineLength($parsed->{line2}) > 40) {
 			$measure2 .= $scrollSeparator;		
 		}
 
 		# even them out
 		# put another copy of the text at the end of the line to make it appear to wrap around
-		if (Slim::Display::Display::lineLength($line2) > 40) {
+		if (Slim::Display::Display::lineLength($parsed->{line2}) > 40) {
 			while (Slim::Display::Display::lineLength($measure1) > Slim::Display::Display::lineLength($measure2)) { $measure2 .= ' '; }
-			$line2 = $measure2 . $line2;
+			$parsed->{line2} = $measure2 . $parsed->{line2};
 		}
 		
-		if (Slim::Display::Display::lineLength($line1) > 40) {
+		if (Slim::Display::Display::lineLength($parsed->{line1}) > 40) {
 			while (Slim::Display::Display::lineLength($measure2) > Slim::Display::Display::lineLength($measure1)) { $measure1 .= ' '; }
-			$line1 = $measure1 . $line1;
+			$parsed->{line1} = $measure1 . $parsed->{line1};
 		}
 		
 		my $len2 = Slim::Display::Display::lineLength($measure2);
@@ -157,29 +162,23 @@ sub showBriefly {
 
 		startAnimate ($client,\&animateScrollBottom
 				,$pause
-				,[$line1,$line2] #lines
+				,[$parsed->{line1},$parsed->{line2}] #lines
 				,['',''] #overlays
 				,[$len1,$len2] #end 40 chars from the right
 				,[0,0] #start at the begining
-				,[$double || (Slim::Display::Display::lineLength($line1) > 40),Slim::Display::Display::lineLength($line2) > 40] #scroll the top if doublesize
+				,[$double || (Slim::Display::Display::lineLength($parsed->{line1}) > 40),Slim::Display::Display::lineLength($parsed->{line2}) > 40] #scroll the top if doublesize
 				,$rate,$double);
 		
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $duration, \&endAnimation);
 	} else {
-		my ($end1, $end2) = Slim::Display::Display::curLines($client);
+		$client->update($parsed);
 	
-		my @newqueue = ();
-		my $i = 0;
-		if ($duration > 1) {
-			for ($i = 1; $i < $duration; $i++) {
-				push @newqueue, [1,$line1,$line2];	
-			}
-		}
-		push @newqueue, [$duration - $i,$line1,$line2];
-		push @newqueue, [0,$end1,$end2];
-		startAnimate($client,\&animateFrames,\@newqueue,0);
-		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $duration, \&endAnimation);
+		Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $duration,\&update)
 	}
+}
+
+sub update {
+	shift->update();
 }
 
 # push the old lines (start1,2) off the left side
@@ -188,15 +187,9 @@ sub pushLeft {
 	my $startref = shift;
 	my $endref = shift;
 	
-	my $start1 = $startref->[0] || '';
-	my $start2 = $startref->[1] || '';
-	my $end1 = $endref->[0] || '';
-	my $end2 = $endref->[1] || '';
-
-	if ($client->linesPerScreen() == 1) {
-		($start1,$start2) = Slim::Hardware::VFD::doubleSize($client,$start1,$start2);
-		($end1,$end2) = Slim::Hardware::VFD::doubleSize($client,$end1,$end2);
-	}
+	my ($start1, $start2) = Slim::Hardware::VFD::render($client, $startref);
+	my ($end1, $end2) = Slim::Hardware::VFD::render($client, $endref);
+	
 	$start1 = Slim::Display::Display::subString($start1 . ' ' x (40 - Slim::Display::Display::lineLength($start1)),0,40);
 	$start2 = Slim::Display::Display::subString($start2 . ' ' x (40 - Slim::Display::Display::lineLength($start2)),0,40);
 
@@ -212,17 +205,11 @@ sub pushRight {
 	my $startref = shift;
 	my $endref = shift;
 	
-	my $start1 = $startref->[0] || '';
-	my $start2 = $startref->[1] || '';
-	my $end1 = $endref->[0] || '';
-	my $end2 = $endref->[1] || '';
-
-	if ($client->linesPerScreen() == 1) {
-		($start1,$start2) = Slim::Hardware::VFD::doubleSize($client,$start1,$start2);
-		($end1,$end2) = Slim::Hardware::VFD::doubleSize($client,$end1,$end2);
-	}
-	$end1 = Slim::Display::Display::subString($end1 . ' ' x (40 - Slim::Display::Display::lineLength($end1)),0,40);
-	$end2 = Slim::Display::Display::subString($end2 . ' ' x (40 - Slim::Display::Display::lineLength($end2)),0,40);
+	my ($start1, $start2) = Slim::Hardware::VFD::render($client, $startref);
+	my ($end1, $end2) = Slim::Hardware::VFD::render($client, $endref);
+	
+	$start1 = Slim::Display::Display::subString($start1 . ' ' x (40 - Slim::Display::Display::lineLength($start1)),0,40);
+	$start2 = Slim::Display::Display::subString($start2 . ' ' x (40 - Slim::Display::Display::lineLength($start2)),0,40);
 
 	startAnimate($client,\&animateSlideWindows
 			,[$end1 . $start1,$end2 . $start2] #lines
@@ -276,49 +263,52 @@ sub doEasterEgg {
 
 sub bumpLeft {
 	my $client = shift;
+	my $lines = $client->parseLines(Slim::Display::Display::curLines($client));
 
-	my ($end1, $end2) = Slim::Display::Display::curLines($client);
-	my @newqueue = ();
-	push @newqueue, [.125,Slim::Display::Display::symbol('hardspace') 
-		. $end1,Slim::Display::Display::symbol('hardspace') . $end2];
-	push @newqueue, [.125,$end1,$end2];
-	startAnimate($client,\&animateFrames,\@newqueue);
+	$lines->{line1} = Slim::Display::Display::symbol('hardspace') . $lines->{line1} if ($lines->{line1});
+	$lines->{line2} = Slim::Display::Display::symbol('hardspace') . $lines->{line2} if ($lines->{line2});
+	$lines->{overlay1} = Slim::Display::Display::subString($lines->{overlay1}, 0, -1) if ($lines->{overlay1});
+	$lines->{overlay2} = Slim::Display::Display::subString($lines->{overlay2}, 0, -1) if ($lines->{overlay2});
+
+	showBriefly($client, $lines, undef, 0.125);
 }
 
 sub bumpUp {
 	my $client = shift;
+	my $lines = $client->parseLines(Slim::Display::Display::curLines($client));
 
-	my ($end1, $end2) = Slim::Display::Display::curLines($client);
-	my @newqueue = ();
-	push @newqueue, [.125,$end2,' '];
-	push @newqueue, [.125,$end1,$end2];
-	startAnimate($client,\&animateFrames,\@newqueue);
+	$lines->{line1} = $lines->{line2};
+	$lines->{line2} = '';
+	$lines->{overlay1} = $lines->{overlay2};
+	$lines->{overlay2} = '';
+
+	showBriefly($client, $lines, undef, 0.125);
 }
 
 sub bumpDown {
 	my $client = shift;
+	my $lines = $client->parseLines(Slim::Display::Display::curLines($client));
 
-	my ($end1, $end2) = Slim::Display::Display::curLines($client);
-	my @newqueue = ();
-	push @newqueue, [.125,' ',$end1];
-	push @newqueue, [.125,$end1,$end2];
-	startAnimate($client,\&animateFrames,\@newqueue);
+	$lines->{line2} = $lines->{line1};
+	$lines->{line1} = '';
+	$lines->{overlay2} = $lines->{overlay1};
+	$lines->{overlay1} = '';
+
+	showBriefly($client, $lines, undef, 0.125);
 }
 
 sub bumpRight {
 	my $client = shift;
+	my $lines = $client->parseLines(Slim::Display::Display::curLines($client));
 
-	my ($end1, $end2) = Slim::Display::Display::curLines($client);
+	$lines->{line1} = Slim::Display::Display::subString($lines->{line1}, 1, 39) . ' ' if ($lines->{line1});
+	$lines->{line2} = Slim::Display::Display::subString($lines->{line2}, 1, 39) . ' ' if ($lines->{line1});
+	$lines->{overlay1} = $lines->{overlay1} . Slim::Display::Display::symbol('hardspace') if ($lines->{overlay1});
+	$lines->{overlay2} = $lines->{overlay2} . Slim::Display::Display::symbol('hardspace') if ($lines->{overlay2});
 
-	my $start1 = Slim::Display::Display::subString($end1, 1, 39) . ' ';
-	my $start2 = Slim::Display::Display::subString($end2, 1, 39) . ' ';
-
-	my @newqueue = ();
-
-	push @newqueue, [.125,$start1,$start2];
-	push @newqueue, [.125,$end1,$end2];
-	startAnimate($client,\&animateFrames,\@newqueue);
+	showBriefly($client, $lines, undef, 0.125);
 }
+
 
 sub scrollBottom {
 	my $client = shift;

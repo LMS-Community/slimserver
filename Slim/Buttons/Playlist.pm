@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.33 2004/08/25 23:24:42 dean Exp $
+# $Id: Playlist.pm,v 1.34 2004/09/01 00:14:30 dean Exp $
 
 # Slim Server Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -205,10 +205,6 @@ sub browseplaylistindex {
 	return Slim::Buttons::Common::param($client, 'browseplaylistindex', $playlistindex);
 }
 
-# DEPRECATED: for compatibility only, use $client->nowPlayingModeLines();
-sub nowPlayingModeLines {
-	shift->nowPlayingModeLines(shift);
-}
 1;
 
 __END__

@@ -13,6 +13,7 @@
 <ul>
 	<li><a href="#about-multiple">Can I use multiple Squeezeboxes with a single server?</a>
 	<li><a href="#about-diffs">What's the difference between Squeezebox Wired and Squeezebox Wireless?</a>
+	<li><a href="#about-softsqueeze">Can I play the same audio the Squeezebox is playing on my computer at the same time, synchronized?</a>
 	<li><a href="#about-display">The fluorescent display looks great, but aren't those pretty expensive? Have you considered using a cheaper LCD display?</a>
 	<li><a href="#about-dhcp">Does Squeezebox support DHCP?</a>
 	<li><a href="#about-80211">What kind of wireless networks can Squeezebox connect to?</a>
@@ -36,20 +37,22 @@
 <h4><a id="about">About Squeezebox</a></h4>
 
 <div class="faq"><h5><a id="about-multiple"></a>Can I use multiple Squeezeboxes with a single server?</h5>
-
 <p>Yes, you can have any number of Squeezeboxes on your LAN, using a single instance of the SlimServer software. Thanks to the efficient design of our software and streaming protocol, even a low-end PC can service more than a dozen Squeezeboxes. Each player operates completely independently of the others, so you can have different music playing in your garage, kitchen, bed room, living room... wherever! In addition, if you have multiple Squeezeboxes, you can synchronize them so that they play back the same audio in every room of your house.</p>
-
-
 </div>
 
 <div class="faq">
 <h5><a id="about-diffs"></a>What's the difference between Squeezebox Wired and Squeezebox Wireless?</h5>
-
 <p>Squeezebox Wired and Squeezebox Wireless share all the same features, including a built-in ethernet port.  
 Squeezebox Wireless adds a built-in 802.11b wireless adaptor to connect to wireless networks.</p>
-
-
 </div>
+
+<div class="faq">
+<h5><a id="about-softsqueeze"></a>Can I play the same audio Squeezebox is playing on my computer at the same time, synchronized?</h5>
+<p>Yes, this is possible through a program by Richard Titmuss named SoftSqueeze.  Please note that SoftSqueeze is written in Java and requires
+Java 1.5 in order to synchronize, but for more information <a href="http://softsqueeze.sourceforge.net/">please see Richard's SoftSqueeze web site</a>.  SoftSqueeze
+is also now included in SlimServer.  For more information on this, see the <a href="http://softsqueeze.sourceforge.net/download.html#webstart">WebStart documentation</a>.</p>
+</div>
+
 
 <div class="faq">
 <h5><a id="about-display"></a>The fluorescent display looks great, but aren't those pretty expensive? Have you considered using a cheaper LCD display?</h5>
@@ -364,6 +367,9 @@ make the server rebuild everything from scratch.</p>
 	<li><a href="#formats-wmareal">Does Squeezebox support Windows Media or Real Player formats?</a>
 	<li><a href="#formats-ogg">Does Squeezebox support Ogg Vorbis?</a>
 	<li><a href="#formats-aiffwav">Does Squeezebox support AIFF or WAV?</a>
+	<li><a href="#formats-flac">Does Squeezebox support FLAC?</a>
+	<li><a href="#formats-shn">Does Squeezebox support Shorten (SHN)?</a>
+	<li><a href="#formats-mpc">Does Squeezebox support MusePack Compression (MPC)?</a>
 	<li><a href="#formats-shout">Does Squeezebox support streaming protocols such as Shoutcast or Live365?</a>
 	<li><a href="#formats-playlists">Does Squeezebox support playlists?</a>
 	<li><a href="#formats-cue">Does Squeezebox support CUE files?</a>
@@ -395,31 +401,17 @@ The SlimServer software can automatically handle many formats, including Ogg Vor
 
 <div class="faq">
 <h5><a id="formats-mp3pro"></a>Does Squeezebox support MP3Pro?</h5>
-
 <p>Squeezebox can play back MP3Pro files using the backwards compatibility feature of MP3Pro. Unfortunately, the audio quality in this mode has significantly reduced quality. We recommend encoding your music using standard MP3 format.</p>
-
-
 </div>
 
-<div class="faq">
-<h5><a id="formats-wmareal"></a>Does Squeezebox support Windows Media or Real Player formats?</h5>
-
-<p>Squeezebox does support WMA encoded files (but not DRM protected files) when SlimServer is running on Windows.  We hope to add support for streamed WMA and Real formats in the near future.</p>
-
-
-</div>
 
 <div class="faq">
 <h5><a id="formats-aac"></a>Does Squeezebox support AAC?</h5>
 
-<p>Squeezebox's hardware decoder supports MP3 and uncompressed formats for decoding. Under Mac OS X and Windows, Squeezebox software can convert iTunes AAC files to uncompressed for playback on Squeezebox on-the-fly. To enable this feature, you'll need to install the free (and high quality) LAME MP3 encoder. For more information about LAME in general, <a href="http://lame.sourceforge.net/">click here</a>. LAME is free, but in some countries you may need to pay a license fee in order to legally encode MP3 files. 
+<p>Yes.  Unprotected AAC files (.m4a) that are created by iTunes can be played on Squeezebox.  Squeezebox's hardware decoder supports MP3 and uncompressed formats for decoding.  Under Mac OS X and Windows, SlimServer can uncompress AAC files and send the raw audio to the Squeezebox on-the-fly.</p>
+<p>For use on some wireless networks where there is not enough bandwidth to stream uncompressed audio, <a href=#troubleshooting-aacwireless>please refer to this FAQ entry</a>.
+<p>Please note that music purchased from the iTunes Music Store (&quot;Protected AAC&quot; (.m4p) files) is encrypted and cannot be played back with Squeezebox until Apple provides the necessary hooks to enable this. In the meantime, it is possible to burn your iTunes Music Store songs to CD and re-rip them as unprotected .m4a files.</p>
 
-<p>There are several ways to install LAME.  Mac users can install the excellent 
-<a href="http://www.blacktree.com/apps/index.html?iTunes-LAME/index.html">iTunes-LAME Encoder</a>.  Windows users can download lame.exe from one of the links on <a href="http://lame.sourceforge.net/links.html#software">this</a> page, including <a href="http://mitiok.cjb.net/">here</a>.  Place the lame.exe file in either C:\Windows or C:\Program Files\SlimServer\server\Bin, then restart the SlimServer.</p>
-
-<p>Once you have LAME installed, you should be able to playback iTunes-ripped AAC files (.m4a) as well as the audio from any QuickTime movie (.mov). Music purchased from the Apple Music Store (.m4p files) is protected and cannot be played back with Squeezebox until Apple provides the necessary hooks to enable this. In the mean time, it is possible to burn your Apple Music Store songs to CD and re-rip them.</p>
-
-<p>Note that LAME-based encoding to MP3 for playback can use a substantial amount of CPU power.  We continue to recommend high-bitrate MP3 encoded files for best performance, highest audio quality, and best compatibililty.</p>
 </div>
 
 <div class="faq">
@@ -435,21 +427,34 @@ The SlimServer software can automatically handle many formats, including Ogg Vor
 </ol>
 </div>
 
+<div class="faq">
+<h5><a id="formats-wmareal"></a>Does Squeezebox support Windows Media or Real Player formats?</h5>
+<p>Squeezebox does support WMA CBR, WMA VBR, and WMA Lossless encoded files (but not DRM protected files) when SlimServer is running on Windows.  We hope to add support for streamed WMA and Real formats in the near future.</p>
+</div>
 
 <div class="faq">
 <h5><a id="formats-ogg"/></a>Does Squeezebox support Ogg Vorbis?</h5>
-
-<p>If you have both LAME and the oggtools installed, SlimServer will automatically convert Ogg files to raw PCM on the fly for playback.</p>
-
-
+<p>Yes.  SlimServer will automatically convert Ogg files to raw PCM on the fly for playback.  On Windows, Mac OS X, and Linux, the Ogg Vorbis decoder is included in SlimServer.</p>
 </div>
 
 <div class="faq">
 <h5><a id="formats-aiffwav"></a>Does Squeezebox support AIFF or WAV?</h5>
-
 <p>Yes, Squeezebox support playback of AIFF and WAV files in their native digital PCM format.</p>
+</div>
 
+<div class="faq">
+<h5><a id="formats-flac"/></a>Does Squeezebox support FLAC?</h5>
+<p>Yes.  SlimServer will automatically convert FLAC files to raw PCM on the fly for playback.  On Windows, Mac OS X, and Linux, the FLAC decoder is included in SlimServer.</p>
+</div>
 
+<div class="faq">
+<h5><a id="formats-shn"/></a>Does Squeezebox support Shorten (SHN)?</h5>
+<p>Shorten is supported on UNIX operating systems, when a shorten decoder binary is available.  Unfortunately it is not supported on Windows at this time, but we're working on it.</p>
+</div>
+
+<div class="faq">
+<h5><a id="formats-mpc"></a>Does Squeezebox support MusePack Compression (MPC)?</h5>
+<p>Yes.  SlimServer will automatically convert MPC files to raw PCM on the fly for playback.  On Windows and Linux, the MusePack decoder is included in SlimServer.</p>
 </div>
 
 <div class="faq">
@@ -793,6 +798,7 @@ Version=2</pre></p>
 
 <h4><a id="troubleshooting">Troubleshooting</a></h4>
 <ul>
+	<li><a href="#troubleshooting-shoutcast">The SHOUTcast Internet Radio plugin can't connect, how can I fix this?</a>
 	<li><a href="#troubleshooting-wireless">My Squeezebox seems to lose its wireless connection quite often.  
 What can I do to make the wireless connection more stable?</a>
 	<li><a href="#troubleshooting-sp2">I installed Windows XP Service Pack 2, and my SliMP3 or Squeezebox no longer find Slim Server.</a>
@@ -817,7 +823,7 @@ What can I do to make the wireless connection more stable?</a>
 	<li><a href="#troubleshooting-itunesripping">I was ripping a CD with iTunes while the SlimServer software was running and the songs didn't appear in my music library. What happened?</a>
 	<li><a href="#troubleshooting-noweb">The web interface won't show up, even though Squeezebox is working.</a>
 	<li><a href="#troubleshooting-squeezeboxfirmware">I'm having trouble upgrading the firmware on Squeezebox.  Do you have any hints?</a>
-	<li><a href="#troubleshooting-mtu">When my SLIMP3 plays a song, it sounds chirpy, like the song is being fast-forwarded and skips. What could cause this?</a>
+	<li><a href="#troubleshooting-mtu">When my SLIMP3 plays a song, it sounds jittery, chirpy, or distorted, like the song is being fast-forwarded or skipping. What could cause this?</a>
 	<li><a href="#troubleshooting-noplayer">The SlimServer software and the player can't find each other, but the web interface is working fine.</a>
 	<li><a href="#troubleshooting-upgrading">I'm having trouble upgrading the firmware on my SLIMP3 Player. Do you have any hints?</a>
 	<li><a href="#troubleshooting-autoupdate">The SlimServer software seems to be connecting to a website on its own every time I run the software.  What's going on?</a>
@@ -829,18 +835,25 @@ What can I do to make the wireless connection more stable?</a>
 </ul>
 <h4>Troubleshooting</h4>
 
+<div class="faq">
+<h5><a id="troubleshooting-shoutcast"</a>The SHOUTcast Internet Radio plugin can't connect, how can I fix this?</h5>
+	<p>If you have any firewall software on the system in question, ensure that it allows outgoing connections initiated by the computer.</p>
+	<p>This can also be caused by content filtering applications like CYBERsitter.  You may want to try disabling or removing that software and see if the problem goes away.</p>
+</div>
 
 <div class="faq">
 <h5><a id="troubleshooting-wireless"></a>My Squeezebox seems to lose its wireless connection quite often.  
-What can I do to make the wireless connection more stable?</h5
+What can I do to make the wireless connection more stable?</h5>
 
 <p>
-A: There are several things you can do.  Please note that if you are hearing audio dropouts, these settings may not affect this performance.  This FAQ just contains some tips on how to optimize your network.  If you are hearing audio dropouts with AAC audio, <a href="#troubleshooting-aacwireless">please see this FAQ entry.</a>  First off, here are some basic things that anyone can do:
+There are several things you can do.  Please note that if you are hearing audio dropouts, these settings may not affect this performance.  This FAQ just contains some tips on how to optimize your network.  If you are hearing audio dropouts with AAC audio, <a href="#troubleshooting-aacwireless">please see this FAQ entry.</a>  First off, here are some basic things that anyone can do:
 </p>
 <p>
 <ul>
 	<li>Ensure that you have the latest firmware for your wireless access point.  Vendors often make fixes to improve their wireless capabilities after a product has first shipped, so it's good to keep it up-to-date.
-	
+
+	<li>Try restarting your wireless access point/router and see if its behavior improves after the restart.  If it does, it's possible that there is a hardware malfunction in the WAP/router that may need addressing.
+
 	<li>Try reorienting the antenna of the Squeezebox.  The most effective way to do this is to restart your Squeezebox by holding down the power button for 5 seconds.  When it says "Welcome to Squeezebox" press the right button on the remote.  Instead of going into "Setup networking", press up to go to "View Current Settings"--then press right and find the Wireless signal strength.  With this on the display, you can move the antenna around to see what orientation gives you the best signal strength at the player's location.
 	
 	<li>Try to keep both your Squeezebox and your access point somewhat free of obstacles.  If you have the Squeezebox inside a wood and glass entertainment center, try placing it on top of the unit.  If your access point is under a desk, try putting it on top of the desk.  Either of these can make a large improvement.
@@ -922,7 +935,7 @@ as opposed to the compressed AAC bitrate which is typically around 128 kilobits 
 802.11b has an absolute maximum data rate of 11 megabits per second.  
 Typical throughput to a given wireless client on an 802.11b network rarely ever exceeds 3-5 megabits per second.</p>
 
-<p>For better AAC performance over wireless, you can reconfigure the server to convert the AAC audio to a very high quality MP3 format.  To do this, you'll need to install an MP3 encoder called LAME. 
+<p>For better AAC performance over wireless, you can reconfigure the server to convert the AAC audio to a very high quality MP3 format.  To do this, you'll first need to install an MP3 encoder called LAME. 
 <p>Mac Users: 
 <ul>
 <li>Download the <a href="http://www.blacktree.com/apps/index.html?iTunes-LAME/index.html">iTunes-LAME plugin</a>, and drag the iTunes-LAME program from the top left to the bottom right alias (following the arrow).
@@ -932,9 +945,7 @@ Typical throughput to a given wireless client on an 802.11b network rarely ever 
 <li>Download <a href="http://mitiok.cjb.net">LAME 3.96 from one of these mirror sites</a>
 <li>Extract two files <strong>LAME.EXE</strong> and <strong>LAME_ENC.DLL</strong> and copy them to C:\Program Files\SlimServer\server\bin\
 </ul>
-</p>
-<!-- <li>Then if you are running SlimServer 5.1.1 or earlier, you'll need to tell SlimServer to use LAME to convert your AAC files to MP3.  
-To install a settings file that does this,  <a href="http://www.slimdevices.com/downloads/convert.conf">download this file</a> and drag it into the folder Home -> Library -> SlimDevices. -->
+</p><p>Then in Player Settings for your Squeezebox, set a Bitrate Limit of 320, and you should notice an improvement.</p>
 </ul>
 </div>
 
@@ -1036,7 +1047,7 @@ enter the account information for the user account that has access to the networ
 <p>
 If you are still having problems, or are using Windows 98, try using a UNC-style path to specify 
 your music library in 
-the Server Settings page. Instead of X:\path for a mounted volume, use \\SERVER\path style 
+the Server Settings page. Instead of X:\path for a mounted volume, use \\SERVER\path\ style 
 addressing. This may work for some servers where direct volume letter mapping does not.
 </p>
 
@@ -1118,7 +1129,7 @@ Now your iTunes playlists should show up under Saved Playlists on the player and
 </div>
 
 <div class="faq">
-<h5><a id="troubleshooting-mtu"></a>When my SLIMP3 plays a song, it sounds chirpy, like the song is being fast-forwarded and skips. What could cause this?</h5>
+<h5><a id="troubleshooting-mtu"></a>When my SLIMP3 plays a song, it sounds jittery, chirpy, or distorted, like the song is being fast-forwarded or skipping. What could cause this?</h5>
 
 <p>There is probably a problem with the MTU setting for your network interface. VPN clients such as the Cisco VPN client utility may change your machine's MTU setting from the default. This causes the fast-stuttering on the SLIMP3. If you have the Cisco client installed, run the included Set MTU utility and change the MTU setting to &quot;default&quot; for your network adapter. Reboot your machine to implement the change.</p>
 
@@ -1143,10 +1154,14 @@ Now your iTunes playlists should show up under Saved Playlists on the player and
 <p>Here are some things to try:</p>
 <ul>
 	<li>Make sure your network settings are entered correctly. Double-check.
+	<li>Make sure that SlimServer is still running and has not been stopped.
 	<li>If you have any firewall software installed, configure it to allow communications between your server computer and your player.
-	<li>Make sure that your ethernet hub or switch supports 10Mbps connections (most do).
+	<li>Make sure that your ethernet hub or switch supports 10Mbps connections (most do, but some do not).
+ut some do not).
 	<li>Also try a different cable.
-	<li>Try to use your systems &quot;ping&quot; utility to try to connect to your player. You should see a message on the display of the player when it recieves a ping message.
+	<li>Try to use your systems &quot;ping&quot; utility to try to connect to your player.  If you get a message claiming 100 percent packet loss, there could be a network problem or misconfiguration.
+	<li>Ensure that your player has an IP address on the same subnet as the server.  This usually means that the first 3 numbers of their IP addresses have the same values.
+	<li>If using a wired player and there is a long run of ethernet cable in use, ensure that it is terminated with <a href="http://www.duxcw.com/digest/Howto/network/cable/cable5.htm">EIA/TIA 568A standard termination</a>.
 </ul>
 
 

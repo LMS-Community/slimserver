@@ -1,5 +1,5 @@
 package Slim::Buttons::BrowseID3;
-# $Id: BrowseID3.pm,v 1.17 2004/08/03 17:29:09 vidur Exp $
+# $Id: BrowseID3.pm,v 1.18 2004/09/01 00:14:30 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -196,8 +196,7 @@ my %functions = (
 		}
 		
 		$client->showBriefly(
-			$client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')
-			),
+			$client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')),
 			undef,
 			1
 		);

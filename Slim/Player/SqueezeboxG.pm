@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.10 2004/08/27 23:54:54 kdf Exp $
+# $Id: SqueezeboxG.pm,v 1.11 2004/09/01 00:14:33 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -196,68 +196,6 @@ sub render {
 	return \$bits;
 }
 
-sub parseLines {
-	my $client = shift;
-	my $lines = shift;
-	my %parts;
-
-	my $line1 = '';
-	my $line2 = '';
-	my $overlay1 = '';
-	my $overlay2 = '';
-	my $center1 = '';
-	my $center2 = '';
-	my $bits = '';
-	
-	if (ref($lines) eq 'ARRAY') {
-		$line1= $lines->[0];
-		$line2= $lines->[1];
-
-		if (!defined($line1)) { $line1 = ''; }
-		if (!defined($line2)) { $line2 = ''; }
-		$line1 .= "\x1eright\x1e" . $lines->[2] if (defined($lines->[2]));
-
-		$line2 .= "\x1eright\x1e" . $lines->[3] if (defined($lines->[3]));
-	
-		if (defined($line2)) { $line1 .= "\x1elinebreak\x1e" . $line2; }
-		
-	} elsif (ref($lines) eq 'SCALAR') {
-		$line1 = $$lines;
-	} else {
-		$line1 = $lines;
-	}
-
-	while ($line1 =~ s/\x1eframebuf\x1e(.*)\x1e\/framebuf\x1e//s) {
-		$bits |= $1;
-	}
-	
-	($line1, $line2) = split("\x1elinebreak\x1e", $line1);
-
-	if (!defined($line2)) { $line2 = '';}
-
-	$line1 = symbols($line1);
-	$line2 = symbols($line2);
-	
-	($line1, $overlay1) = split("\x1eright\x1e", $line1) if $line1;
-	($line2, $overlay2) = split("\x1eright\x1e", $line2) if $line2;
-
-	($line1, $center1) = split("\x1ecenter\x1e", $line1) if $line1;
-	($line2, $center2) = split("\x1ecenter\x1e", $line2) if $line2;
-
-	$line1 = '' if (!defined($line1));
-
-	$parts{bits} = $bits;
-	$parts{line1} = $line1;
-	$parts{line2} = $line2;
-	$parts{overlay1} = $overlay1;
-	$parts{overlay2} = $overlay2;
-	$parts{center1} = $center1;
-	$parts{center2} = $center2;
-	
-	return \%parts;
-}
-
-
 sub fonts {
 	my $client = shift;
 	my $size = shift;
@@ -375,6 +313,7 @@ sub measureText {
 }
 
 sub symbols {
+	my $client = shift;
 	my $line = shift;
 	
 	if (defined($line)) {
@@ -385,33 +324,6 @@ sub symbols {
 	}
 	
 	return $line;
-}
-
-sub renderOverlay {
-	my $client = shift;
-	my $line1 = shift || '';
-	my $line2 = shift || '';
-	my $overlay1 = shift;
-	my $overlay2 = shift;
-	
-	return $line1 if $line1 =~ /\x1eframebuf\x1e/s;
-	
-	if (defined($overlay1)) { 
-		$line1 .= "\x1eright\x1e" . $overlay1;
-	}
-	
-	if (defined($overlay2) || defined($line2)) {
-		$line1 .= "\x1elinebreak\x1e";
-	}
-	
-	if (defined($line2)) {
-		$line1 .= $line2;
-	}
-	
-	if (defined($overlay2)) {
-		$line1 .= "\x1eright\x1e" . $overlay2;
-	}
-	return $line1;
 }
 	
 sub drawFrameBuf {
@@ -445,7 +357,6 @@ sub showBriefly {
 	}
 
 	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $duration,\&update)
-	
 }
 
 # push the old screen off the left side
@@ -549,8 +460,7 @@ sub scrollBottom {
 	my $lines = shift;
 	return if Slim::Buttons::Common::param($client,'noScroll');
 	my $linefunc  = $client->lines();
-	my @lines = &$linefunc($client);
-	my $parts = $client->parseLines(\@lines);
+	my $parts = $client->parseLines(&$linefunc($client));
 
 	my $fonts = $client->fonts();
 	
@@ -586,8 +496,7 @@ sub scrollUpdate {
 	
 	# get the latest content from line 1 (so we can animate the progress indicator...
 	my $linefunc  = $client->lines();
-	my @lines = &$linefunc($client);
-	my $parts1 = $client->parseLines(\@lines);
+	my $parts1 = $client->parseLines(&$linefunc($client));
 	
 	$parts->{line1} = $parts1->{line1};
 	$parts->{overlay1} = $parts1->{overlay1};
@@ -597,7 +506,9 @@ sub scrollUpdate {
 	
 	if ($parts->{offset2} <= $parts->{endscroll2}) {
 		Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $parts->{deltaTime},\&scrollUpdate,$parts);
-	} else {$client->update};
+	} else {
+		$client->update()
+	};
 }
 
 sub animating {
