@@ -167,8 +167,9 @@ use vars qw(
 	$d_ir
 	$d_itunes
 	$d_itunes_verbose
-	$d_moodlogic
 	$d_mdns
+	$d_moodlogic
+	$d_mp3
 	$d_os
 	$d_perf
 	$d_parse
@@ -502,8 +503,9 @@ to the console via stderr:
     --d_ir           => Infrared activity
     --d_itunes       => iTunes synchronization information
     --d_itunes_verbose => verbose iTunes Synchronization information
-    --d_moodlogic    => MoodLogic synchronization information
     --d_mdns         => Multicast DNS aka Zeroconf aka Rendezvous information
+    --d_moodlogic    => MoodLogic synchronization information
+    --d_mp3    		 => MP3 frame detection
     --d_os           => Operating system detection information
     --d_paths        => File path processing information
     --d_perf         => Performance information
@@ -571,8 +573,9 @@ sub initOptions {
 		'd_ir'				=> \$d_ir,
 		'd_itunes'			=> \$d_itunes,
 		'd_itunes_verbose'	=> \$d_itunes_verbose,
-		'd_moodlogic'		=> \$d_moodlogic,
 		'd_mdns'			=> \$d_mdns,
+		'd_moodlogic'		=> \$d_moodlogic,
+		'd_mp3'				=> \$d_mp3,
 		'd_os'				=> \$d_os,
 		'd_paths'			=> \$d_paths,
 		'd_perf'			=> \$d_perf,

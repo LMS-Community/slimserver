@@ -1,6 +1,6 @@
 package Slim::Formats::MP3;
 
-# $Id: MP3.pm,v 1.7 2004/06/01 22:47:51 dean Exp $
+# $Id: MP3.pm,v 1.8 2004/06/03 15:41:34 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -9,14 +9,23 @@ package Slim::Formats::MP3;
 
 use strict;
 use IO::Seekable qw(SEEK_SET);
-use MP3::Info ();
+use MP3::Info;
+
+use Slim::Utils::Misc;
+
+#$::d_mp3 = 1;
 
 sub getTag {
 
 	my $file = shift || "";
 
-	my $tags = MP3::Info::get_mp3tag($file); 
-	my $info = MP3::Info::get_mp3info($file);
+	open my $fh, "< $file\0";
+	
+	return undef if (!$fh);
+
+	$::d_mp3 && Slim::Utils::Misc::msg("Getting tags for: $file\n");	
+	my $tags = MP3::Info::get_mp3tag($fh); 
+	my $info = MP3::Info::get_mp3info($fh);
 
 	# we'll always have $info, as it's machine generated.
 	if ($tags && $info) {
@@ -27,14 +36,15 @@ sub getTag {
 	$info->{'OFFSET'} += 0;
 	
 	my ($start, $end);
-	open my $fh, "< $file\0";
-	if ($fh) {
-		($start, $end) = seekNextFrame($fh, $info->{'OFFSET'}, 1);
-		close $fh;
-	}
-	
+
+	($start, undef) = seekNextFrame($fh, $info->{'OFFSET'}, 1);
+	(undef, $end) = seekNextFrame($fh, $info->{'OFFSET'} + $info->{'SIZE'}, -1);
+
 	if ($start) {
 		$info->{'OFFSET'} = $start;
+		if ($end) {
+			$info->{'SIZE'} = $end - $start + 1;
+		}
 	}
 	
 	# when scanning we brokenly align by bytes.  
@@ -43,11 +53,12 @@ sub getTag {
 	# bitrate is in bits per second, not kbits per second.
 	$info->{'BITRATE'} = $info->{'BITRATE'} * 1000 if ($info->{'BITRATE'});
 
+	close $fh;
+
 	return $info;
 }
 
 
-my $DEBUG = 0;
 my $MINFRAMELEN = 96;    # 144 * 32000 kbps / 48000 kHz + 0 padding
 my $MAXDISTANCE = 8192;  # (144 * 320000 kbps / 32000 kHz + 1 padding + fudge factor) for garbage data * 2 frames
 
@@ -63,6 +74,7 @@ my $MAXDISTANCE = 8192;  # (144 * 320000 kbps / 32000 kHz + 1 padding + fudge fa
 # from EOF, it skips any truncated frame at the end of file.
 #
 sub seekNextFrame {
+	use bytes;
 	my ($fh, $startoffset, $direction) =@_;
 	defined($fh) || die;
 	defined($startoffset) || die;
@@ -73,13 +85,13 @@ sub seekNextFrame {
 	my ($found_at_offset);
 
 	$seekto = ($direction == 1) ? $startoffset : $startoffset-$MAXDISTANCE;
-	$DEBUG && print("reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction) \n");
+	$::d_mp3 && Slim::Utils::Misc::msg("reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction) \n");
 	sysseek($fh, $seekto, SEEK_SET);
 	sysread $fh, $buf, $MAXDISTANCE, 0;
 
 	$len = length($buf);
 	if ($len<4) {
-		$DEBUG && print "got less than 4 bytes\n";
+		$::d_mp3 && Slim::Utils::Misc::msg("got less than 4 bytes\n");
 		return (0,0) 
 	}
 
@@ -89,57 +101,51 @@ sub seekNextFrame {
 	} else {
 		#assert($direction==-1);
 		$start = $len-$MINFRAMELEN;
-		$end=-1;
+		$end=0;
 	}
 
-	$DEBUG && printf("scanning: len = $len, start = $start, end = $end\n");
+	$::d_mp3 && Slim::Utils::Misc::msg("scanning: len = $len, start = $start, end = $end\n");
 
 	for ($pos = $start; $pos!=$end; $pos+=$direction) {
-		#$DEBUG && printf "looking at $pos\n";
-		
-		my $h = MP3::Info::_get_head(substr($buf, $pos, 4));
+		#$::d_mp3 && Slim::Utils::Misc::msg("looking at $pos\n");
+		my $head = substr($buf, $pos, 4);
+		my $h = MP3::Info::_get_head($head);
 		
 		next if !MP3::Info::_is_mp3($h);
 		
-		$found_at_offset = $startoffset + (($direction==1) ? $pos : ($pos-$len));		
+		$found_at_offset = $seekto + $pos;
 		
 		$calculatedlength = int(144 * $h->{bitrate} * 1000 / $h->{fs}) + $h->{padding_bit};
 
-		# double check by making sure the next frame has a good header
-		next if (($pos + $calculatedlength + 4) > length($buf));
-		my $j= MP3::Info::_get_head(substr($buf, $pos + $calculatedlength, 4));
+		# skip if we haven't scanned back by the calculated length
+		next if (($pos + $calculatedlength + 4) > $len);
+
+		# if we're scanning forward, double check by making sure the next frame has a good header
+		if ($direction == 1) {
+			my $j= MP3::Info::_get_head(substr($buf, $pos + $calculatedlength, 4));
+			next if !MP3::Info::_is_mp3($j);
+		} else {
+			# continue to scan backwards one frame and make sure that it's valid...
+			# TODO - we may get false positives at the end of some files.	
+		}
 		
-		next if !MP3::Info::_is_mp3($j);
-		
-		if ($DEBUG) {
-			printf "sync at offset %d\n", $found_at_offset;
+		if ($::d_mp3) {
+			Slim::Utils::Misc::msg(printf "sync at offset %d (%x %x %x %x)\n", $found_at_offset, (unpack 'CCCC', $head));
 			
 			foreach my $k (sort keys %$h) {
-				print  $k . ":\t" . $h->{$k} . "\n";
+				Slim::Utils::Misc::msg(  $k . ":\t" . $h->{$k} . "\n");
 			}
-			print "\nCalculated length including header: $calculatedlength\n";
+			Slim::Utils::Misc::msg( "Calculated length including header: $calculatedlength\n");
 		}
-		
-		# when scanning backwards, skip any truncated frame at the end of the buffer
-		if ($direction == -1) {
-			$numgarbagebytes = $len-$pos+1 - $calculatedlength;
-			$DEBUG && printf "%d byte(s) of crap at the end.\n", $numgarbagebytes;
-
-			if ($numgarbagebytes<0) {
-				$DEBUG && print "calculated length > bytes remaining. Either this wasn't a real frame header, or the frame was truncated. Searching further...\n\n";
-				$foundsync=0;
-				next;
-			}
-		}
-		
+				
 		my $frame_end =  $found_at_offset + $calculatedlength - 1;
-		$DEBUG && printf "Frame found at offset: $found_at_offset (started looking at $startoffset) frame end: $frame_end\n\n";
+		$::d_mp3 && Slim::Utils::Misc::msg("Frame found at offset: $found_at_offset (started looking at $startoffset) frame end: $frame_end\n");
 
 		return($found_at_offset, $frame_end);
 	}
 
 	if (!$foundsync) {
-		!$DEBUG && printf("Couldn't find any frame header\n");
+		$::d_mp3 && Slim::Utils::Misc::msg("Couldn't find any frame header\n");
 		return(0,0);
 	}
 }
