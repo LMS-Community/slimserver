@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.44 2003/11/14 21:07:40 dean Exp $
+# $Id: HTTP.pm,v 1.45 2003/11/21 18:25:04 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -211,14 +211,13 @@ sub processHTTP {
 		$httpclientsock->autoflush(1);
 
 		$::d_http && msg("reading request...\n");
-		$firstline = <$httpclientsock>;	  
+		$firstline = Slim::Utils::Misc::sysreadline($httpclientsock); # <$httpclientsock>;	  
 	  	$::d_http && msg("HTTP request: $firstline\n");
 	  	
 		if (!defined($firstline)) { #socket half-closed from client
 			$::d_http && msg("Client at " . $peeraddr{$httpclientsock} . " disconnected\n");
 
 			closeHTTPSocket($httpclientsock);
-#			}
 		} elsif ($firstline =~ /^GET ([\w\$\-\.\+\*\(\)\?\/,;:@&=!\'%]*) HTTP\/1.[01][\015\012]+$/i)  {
 			my @paramarray;
 			my $param;
@@ -231,18 +230,18 @@ sub processHTTP {
 			
 			my $authorized = !Slim::Utils::Prefs::get("authorize");
 
-			while (<$httpclientsock>) {
-				if ($_) {
+			while (my $line = Slim::Utils::Misc::sysreadline($httpclientsock)){ # <$httpclientsock>) {
+				if ($line) {
 					# authorization header.
-					if ($_ =~ /^Icy-MetaData/i) {
+					if ($line =~ /^Icy-MetaData/i) {
 						$sendMetaData{$httpclientsock} = 1;
 					}
 					
-					if ($_ =~ /^Authorization: Basic (.*)/) {
+					if ($line =~ /^Authorization: Basic (.*)/) {
 						$authorized = &checkAuthorization($1);
 					}
                     # End of headers
-					if ($_ !~ /\S/) {  
+					if ($line !~ /\S/) {  
 						last;
 					}
 				}

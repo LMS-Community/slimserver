@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.7 2003/11/10 23:15:04 dean Exp $
+# $Id: RemoteStream.pm,v 1.8 2003/11/21 18:25:04 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -59,9 +59,9 @@ sub openRemoteStream {
 
 	$::d_remotestream && msg("Request: $request");
 
-	print $sock $request;
+	syswrite $sock, $request;
 
-	my $response = <$sock>;
+	my $response = Slim::Utils::Misc::sysreadline($sock); #<$sock>;
 
 	$::d_remotestream && msg("Response: $response");
 	
@@ -87,23 +87,23 @@ sub openRemoteStream {
 
 	my $redir = '';
 	Slim::Music::Info::setContentType($url,Slim::Music::Info::typeFromPath($url, 'mp3'));
-	while(<$sock>) {
-		$::d_remotestream && msg("header: " . $_);
-		if (/^icy-name:\s*(.+)\015\012$/i) {
+	while(my $header = Slim::Utils::Misc::sysreadline($sock)) { #<$sock>) {
+		$::d_remotestream && msg("header: " . $header);
+		if ($header =~ /^icy-name:\s*(.+)\015\012$/i) {
 			Slim::Music::Info::setTitle($url, $1);
 		}
 		
-		if (/^icy-metaint:\s*(.+)\015\012$/) {
+		if ($header =~ /^icy-metaint:\s*(.+)\015\012$/) {
 			if ($client) {
 				$client->shoutMetaInterval($1);
 			}
 		}
 		
-		if (/^Location:\s*(.*)\015\012$/i) {
+		if ($header =~ /^Location:\s*(.*)\015\012$/i) {
 			$redir = $1;
 		}
 
-		if (/^Content-Type:\s*(.*)\015\012$/i) {
+		if ($header =~ /^Content-Type:\s*(.*)\015\012$/i) {
 			my $contenttype = $1;
 			
 			if ($contenttype =~ /text/i) {
@@ -114,7 +114,7 @@ sub openRemoteStream {
 			Slim::Music::Info::setContentType($url,$contenttype);
 		}
 		
-		if ($_ eq $CRLF) { 
+		if ($header eq $CRLF) { 
 			$::d_remotestream && msg("Recieved final blank line...\n");
 			last; 
 		}
@@ -158,14 +158,19 @@ sub readMetaData {
 	my $client = shift;
 
 	my $metadataSize = 0;
-	$client->mp3filehandle()->read($metadataSize, 1);
+	my $handle = $client->mp3filehandle();
+	my $was_blocking = Slim::Utils::Misc::blocking($handle, 1);
+
+	$handle->sysread($metadataSize, 1);
 	$metadataSize = ord($metadataSize) * 16;
-		
+	
+	$::d_remotestream && msg("metadata size: $metadataSize\n");
 	if ($metadataSize > 0) {
 		my $metadata;
 		
-		$client->mp3filehandle()->read($metadata, $metadataSize);
+		$handle->sysread($metadata, $metadataSize);
 
+		$::d_remotestream && msg("metadata: $metadata\n");
 		if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
 			my $url = Slim::Player::Playlist::song($client);
 			my $oldtitle = Slim::Music::Info::title($url);
@@ -196,8 +201,8 @@ sub readMetaData {
 		# new song, so reset counters
 		$client->songBytes(0);
 		$client->htmlstatusvalid(0);
-		
 	}
+	Slim::Utils::Misc::blocking($handle, $was_blocking);
 }
 
 1;

@@ -844,6 +844,7 @@ sub readNextChunk {
 				($client->shoutMetaPointer() + $chunksize) > $client->shoutMetaInterval()) {
 	
 				$chunksize = $client->shoutMetaInterval() - $client->shoutMetaPointer();
+				$::d_source && msg("reduced chunksize to $chunksize for metadata\n");
 			}
 		} else {
 		
@@ -901,7 +902,7 @@ sub readNextChunk {
 		}
 		
 		if ($chunksize) {
-			my $readlen = $client->mp3filehandle()->read($chunk, $chunksize);
+			my $readlen = $client->mp3filehandle()->sysread($chunk, $chunksize);
 			
 			if (!defined($readlen)) { 
 				if ($! != EWOULDBLOCK) {
@@ -918,7 +919,6 @@ sub readNextChunk {
 			
 			if ($client->shoutMetaInterval()) {
 				$client->shoutMetaPointer($client->shoutMetaPointer() + length($chunk));
-		
 				# handle instream metadata for shoutcast/icecast
 				if ($client->shoutMetaPointer() == $client->shoutMetaInterval()) {
 		
@@ -947,6 +947,7 @@ sub readNextChunk {
 	}
 	
 	$::d_source && msg("read a chunk of " . length($chunk) . " length\n");
+	$::d_source && msg( "metadata now: " . $client->shoutMetaPointer . "\n");
 	$client->songBytes($client->songBytes + length($chunk));
 	
 	return \$chunk;

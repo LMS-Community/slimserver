@@ -679,7 +679,7 @@ sub checkVersion {
 		if ($sock) {
 			my $content;
 			my $line;
-			while ($line = <$sock>) {
+			while ($line = Slim::Utils::Misc::sysreadline($sock,5)) {
 				$content .= $line;
 			}
 			$::newVersion = $content;

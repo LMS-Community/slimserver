@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.13 2003/11/21 16:02:36 dean Exp $
+# $Id: Misc.pm,v 1.14 2003/11/21 18:25:03 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -17,6 +17,7 @@ use POSIX qw(strftime);
 use Net::hostent;              # for OO version of gethostbyaddr
 use Sys::Hostname;
 use Socket;
+use Symbol qw(qualify_to_ref);
 
 use FindBin qw($Bin);
 
@@ -664,6 +665,74 @@ sub hostaddr {
 
 sub stillScanning {
 	return Slim::Music::MusicFolderScan::stillScanning() || Slim::Music::iTunes::stillScanning() || Slim::Music::MoodLogic::stillScanning();
+}
+
+
+# this function based on a posting by Tom Christiansen: http://www.mail-archive.com/perl5-porters@perl.org/msg71350.html
+sub at_eol($) { $_[0] =~ /\n\z/ }
+sub sysreadline(*;$) { 
+	my($handle, $maxnap) = @_;
+	$handle = qualify_to_ref($handle, caller());
+
+	my $infinitely_patient = @_ == 1;
+
+	my $start_time = time();
+
+	my $selector = IO::Select->new();
+	$selector->add($handle);
+
+	my $line = '';
+	my $result;
+
+#	print STDOUT "GIMME A LINE\n";
+#	bt();
+SLEEP:
+	until (at_eol($line)) {
+		unless ($infinitely_patient) {
+			if (time() > $start_time + $maxnap) {
+#				print "Sorry, Charlie, time's up!\n";
+				return $line;
+			} 
+		} 
+		my @ready_handles;
+
+		unless (@ready_handles = $selector->can_read(1.0)) {  # seconds
+#			print STDOUT "STILL SLEEPING at ", scalar(localtime()), "...sleeping ";
+			unless ($infinitely_patient) {
+				my $time_left = $start_time + $maxnap - time();
+#				print "no more than $time_left more seconds";
+			} else {
+#				print "until you're darned good and ready";
+			} 
+#			print "\n";
+			next SLEEP;
+		}
+
+INPUT_READY:
+		while (() = $selector->can_read(0.0)) {
+
+			my $was_blocking = $handle->blocking(0);
+
+CHAR:       while ($result = sysread($handle, my $char, 1)) {
+				$line .= $char;
+				last CHAR if $char eq "\n";
+			} 
+
+			$handle->blocking($was_blocking);
+
+			unless (at_eol($line)) {
+				if (!defined($result)) { 
+#					print "WARNING: error in sysread during syslineread\n";
+					return undef;					
+				}
+#				printf "WARNING: Incomplete line (%s) result: $result, still trying\n", $line;
+				next SLEEP;
+			} 
+#			printf "Got line from fd#%d: <<%s>>\n", $handle->fileno, $line;
+			last INPUT_READY;
+		}
+	} 
+	return $line;
 }
 
 1;
