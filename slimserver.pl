@@ -169,7 +169,7 @@ $VERSION = '5.4.0';
 
 # old preferences settings, only used by the .slim.conf configuration.
 # real settings are stored in the new preferences file:  .slim.pref
-use vars qw($audiodir $httpport);
+use vars qw($audiodir $playlistdir $httpport);
 
 use vars qw(
 	$d_artwork
@@ -470,7 +470,7 @@ sub idleStreams {
 
 sub showUsage {
 	print <<EOF;
-Usage: $0 [--audiodir <dir>] [--diag] [--daemon] [--stdio] [--logfile <logfilepath>]
+Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio] [--logfile <logfilepath>]
           [--user <username>]
           [--group <groupname>]
           [--httpport <portnumber> [--httpaddr <listenip>]]
@@ -481,6 +481,7 @@ Usage: $0 [--audiodir <dir>] [--diag] [--daemon] [--stdio] [--logfile <logfilepa
 
     --help           => Show this usage information.
     --audiodir       => The path to a directory of your MP3 files.
+    --playlistdir    => The path to a directory of your playlist files.
     --cachedir       => Directory for SlimServer to save cached music and web data
     --diag			 => Use diagnostics, shows more verbose errors.  Also slows down library processing considerably
     --logfile        => Specify a file for error logging.
@@ -584,6 +585,7 @@ sub initOptions {
 		'httpport=s'   		=> \$httpport,
 		'logfile=s'   		=> \$logfile,
 		'audiodir=s' 		=> \$audiodir,
+		'playlistdir=s'		=> \$playlistdir,
 		'cachedir=s' 		=> \$cachedir,
 		'pidfile=s' 		=> \$pidfile,
 		'playeraddr=s'		=> \$localClientNetAddr,
@@ -662,6 +664,10 @@ sub initSettings {
 	if (defined($audiodir)) {
 		Slim::Utils::Prefs::set("audiodir", $audiodir);
 	}
+
+	if (defined($playlistdir)) {
+		Slim::Utils::Prefs::set("playlistdir", $playlistdir);
+	}
 	
 	if (defined($cachedir)) {
 		Slim::Utils::Prefs::set("cachedir", $cachedir);
@@ -696,6 +702,12 @@ sub initSettings {
 			$audiodir =~ s|[/\\]$||;
 			Slim::Utils::Prefs::set("audiodir",$audiodir);
 		}
+	}
+
+	if (defined(Slim::Utils::Prefs::get("playlistdir")) && Slim::Utils::Prefs::get("playlistdir") =~ m|[/\\]$|) {
+		$playlistdir = Slim::Utils::Prefs::get("playlistdir");
+		$playlistdir =~ s|[/\\]$||;
+		Slim::Utils::Prefs::set("playlistdir",$playlistdir);
 	}
 }
 

@@ -129,6 +129,7 @@ Usage: ./slimserver.pl [--audiodir <dir>] [--diag] [--daemon] [--stdio] [--logfi
                         command line interface server.
     --cliaddr        => Activate the command line interface TCP/IP 
                         interface on the specified IP address.
+    --playlistdir    => The path to a directory of your playlist files.
     --prefsfile      => Specify the path of the the preferences file
     --pidfile        => Specify where a process ID file should be stored
     --quiet          => Minimize the amount of text output
