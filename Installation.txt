@@ -12,11 +12,11 @@ Linux Notes:
 If you've installed the RPM on a RedHat or Mandrake Linux system, you can start 
 the server with this command:
 
-	/etc/rc.d/init.d/slimd start
+	/etc/rc.d/init.d/slimserver start
 
 and stop it with this:
 
-	/etc/rc.d/init.d/slimd stop
+	/etc/rc.d/init.d/slimserver stop
 	
 	
 Note: The default installation of Perl on Red Hat 9.0 doesn't include Time::HiRes

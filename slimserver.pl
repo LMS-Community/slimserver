@@ -664,7 +664,7 @@ sub daemonize {
 		}
 	}
 
-	$0 = "slimd";
+	$0 = "slimserver";
 	
 	if (!setsid) { die "Can't start a new session: $!"; }
 	if (!open STDERR, '>&STDOUT') { die "Can't dup stdout: $!"; }

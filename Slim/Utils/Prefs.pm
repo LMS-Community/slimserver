@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.16 2003/10/17 19:34:52 dean Exp $
+# $Id: Prefs.pm,v 1.17 2003/11/07 18:41:28 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -555,14 +555,14 @@ sub prefsFile {
 	my $pref_path = preferencesPath();
 
 	if (Slim::Utils::OSDetect::OS() eq 'win')  {	
-		$prefsFile = catdir($pref_path, 'SLIMD.PRF');
+		$prefsFile = catdir($pref_path, 'slimserver.pref');
 	} elsif (Slim::Utils::OSDetect::OS() eq 'mac') {
-		$prefsFile = catdir($pref_path, 'slimd.pref');
+		$prefsFile = catdir($pref_path, 'slimserver.pref');
 	} else {
-		if (-r '/etc/slimd.conf') {
-			$prefsFile = '/etc/slimd.conf';
+		if (-r '/etc/slimserver.conf') {
+			$prefsFile = '/etc/slimserver.conf';
 		} else {
-			$prefsFile = catdir($pref_path, '.slimd.pref');
+			$prefsFile = catdir($pref_path, '.slimserver.pref');
 		}
 	}
 	
