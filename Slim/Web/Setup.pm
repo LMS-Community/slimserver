@@ -1487,7 +1487,7 @@ sub initSetupConfig {
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['displaytexttimeout',
-							,'composerInArtists','playtrackalbum','artistinalbumsearch', 'searchSubString', 'ignoredarticles','splitchars','filesort'
+							,'composerInArtists','playtrackalbum','artistinalbumsearch', 'searchSubString', 'ignoredarticles','splitList','filesort'
 							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
 							,'savehistory','historylength','checkVersion']
 				}
@@ -1508,9 +1508,9 @@ sub initSetupConfig {
 						'validate' => \&validateAcceptAll
 						,'PrefSize' => 'large'
 					}
-			,'splitchars' => {
+			,'splitList' => {
 						'validate' => \&validateAcceptAll
-						,'PrefSize' => 'small'
+						,'PrefSize' => 'large'
 					}
 			,'playtrackalbum' => {
 						'validate' => \&validateTrueFalse

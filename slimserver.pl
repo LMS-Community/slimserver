@@ -776,6 +776,17 @@ sub initSettings {
 		Slim::Utils::Prefs::delete("mp3dir");
 		$audiodir = $mp3dir;
 	}
+
+	# upgrade splitchars => splitList
+	if (my $splitChars = Slim::Utils::Prefs::get('splitchars')) {
+
+		Slim::Utils::Prefs::delete("splitchars");
+
+		# Turn the old splitchars list into a space separated list.
+		my $splitList = join(' ', map { $_ } (split /\s+/, $splitChars)); 
+
+		Slim::Utils::Prefs::set("splitList", $splitList);
+	}
 	
 	# options override existing preferences
 	if (defined($audiodir)) {

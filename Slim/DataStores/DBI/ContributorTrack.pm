@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::ContributorTrack;
 
-# $Id: ContributorTrack.pm,v 1.2 2005/01/04 03:38:52 dsully Exp $
+# $Id$
 #
 # Contributor to track mapping class
 
@@ -44,9 +44,6 @@ sub add {
 	
 	for my $artistSub (Slim::Music::Info::splitTag($artist)) {
 
-		$artistSub =~ s/^\s*//o;
-		$artistSub =~ s/\s*$//o;
-
 		my $sortable_name = $artistSort || Slim::Utils::Text::ignoreCaseArticles($artist);
 			
 		my $artistObj;
@@ -58,7 +55,7 @@ sub add {
 		} else {
 
 			$artistObj = Slim::DataStores::DBI::Contributor->find_or_create({ 
-				name => $artist,
+				name => $artistSub,
 			});
 
 			$artistObj->namesort($sortable_name);

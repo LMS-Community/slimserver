@@ -1799,31 +1799,47 @@ sub updateArtworkCache {
 
 sub splitTag {
 	my $tag = shift;
-	my @splittags=();
-	
-	my $splitpref = Slim::Utils::Prefs::get('splitchars');
-	#only bother if there are some characters in the pref
-	if ($splitpref) {
-		# get rid of white space
-		$splitpref =~ s/\s//g;
 
-		
-		foreach my $char (split('',$splitpref),'\x00') {
-			my @temp=();
-			foreach my $item (split(/\Q$char\E/,$tag)) {
-				push (@temp,$item);
-				$::d_info && Slim::Utils::Misc::msg("Splitting $tag by $char = @temp\n") unless scalar @temp <= 1;
-			}
-			#store this for return only if there has been a successfil split
-			if (scalar @temp > 1) { push @splittags,@temp}
-		}
-	}
-	#return the split array, or just return the whole tag is we know there hasn't been any splitting.
-	if (scalar @splittags > 1) {
-		return @splittags;
-	} else {
+	# Splitting this is probably not what the user wants.
+	# part of bug #774
+	if ($tag =~ /^\s*R\s*\&\s*B\s*$/oi) {
 		return $tag;
 	}
+
+	my @splitTags = ();
+	my $splitList = Slim::Utils::Prefs::get('splitList');
+
+	# only bother if there are some characters in the pref
+	if ($splitList) {
+
+		for my $splitOn (split(/\s+/, $splitList),'\x00') {
+
+			my @temp = ();
+
+			for my $item (split(/\Q$splitOn\E/, $tag)) {
+
+				$item =~ s/^\s*//go;
+				$item =~ s/\s*$//go;
+
+				push @temp, $item if $item !~ /^\s*$/;
+
+				$::d_info && Slim::Utils::Misc::msg("Splitting $tag by $splitOn = @temp\n") unless scalar @temp <= 1;
+			}
+
+			# store this for return only if there has been a successfil split
+			if (scalar @temp > 1) {
+				push @splitTags, @temp;
+			}
+		}
+	}
+
+	# return the split array, or just return the whole tag is we know there hasn't been any splitting.
+	if (scalar @splitTags > 1) {
+
+		return @splitTags;
+	}
+
+	return $tag;
 }
 
 sub fileLength { return info(shift,'FS'); }

@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::GenreTrack;
 
-# $Id: GenreTrack.pm,v 1.2 2005/01/04 03:38:52 dsully Exp $
+# $Id$
 #
 # Genre to track mapping class
 
@@ -29,9 +29,6 @@ sub add {
 	my @genres = ();
 
 	for my $genreSub (Slim::Music::Info::splitTag($genre)) {
-
-		$genreSub =~ s/^\s*//o;
-		$genreSub =~ s/\s*$//o;
 
 		$_cache{$genreSub} ||= Slim::DataStores::DBI::Genre->find_or_create({ 
 			name => $genreSub,

@@ -143,7 +143,7 @@ our %DEFAULT = (
 	,"playtrackalbum"		=> 1
 	,"artistinalbumsearch"	=> 0
 	,"ignoredarticles"		=> "The El La Los Las Le Les"
-	,"splitchars"			=> ''
+	,"splitList"			=> ''
 	,"authorize"			=> 0				# No authorization by default
 	,"username"				=> ''
 	,"password"				=> ''
@@ -467,29 +467,36 @@ sub getDefault {
 }
 
 sub set {
-	my $key = shift;
+	my $key   = shift || return;
 	my $value = shift;
-	my $ind = shift;
-	if (!defined $key) {
-		return;
-	}
+	my $ind   = shift;
+
 	if (defined $ind) {
+
 		if (defined($prefs{$key}[$ind]) && defined($value) && $value eq $prefs{$key}[$ind]) {
 				return;
 		}
+
 		$prefs{$key}[$ind] = $value;
+
 	} elsif ($key =~ /(.+?)(\d+)$/) { 
-		#trying to set a member of an array pref directly
-		#re-call function the correct way
+
+		# trying to set a member of an array pref directly
+		# re-call function the correct way
 		return set($1,$value,$2);
+
 	} else {
+
 		if (defined($prefs{$key}) && defined($value) && $value eq $prefs{$key}) {
 				return;
 		}
+
 		$prefs{$key} = $value;
 	}
+
 	onChange($key, $value, $ind);
-	#must mark $ind as defined or indexed prefs cause an error in this msg
+
+	# must mark $ind as defined or indexed prefs cause an error in this msg
 	$::d_prefs && msg("Setting prefs $key".defined($ind)." equal to " . ((defined $prefs{$key}) ? $prefs{$key} : "undefined") . "\n");
 
 	scheduleWrite() unless $writePending;
