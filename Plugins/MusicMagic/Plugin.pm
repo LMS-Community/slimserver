@@ -994,7 +994,9 @@ sub musicmagic_mix {
 		my %list_form = %$params;
 		my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
 
-		my $trackObj  = $ds->objectForUrl($item);
+		# If we can't get an object for this url, skip it, as the
+		# user's database is likely out of date. Bug 863
+		my $trackObj  = $ds->objectForUrl($item) || next;
 		
 		$list_form{'artist'}        = $track ? $track->artist() : $artist;
 		$list_form{'album'}         = $track ? $track->album() : $album;
