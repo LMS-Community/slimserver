@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::Animation;
 
-# $Id: Animation.pm,v 1.14 2004/03/10 06:48:35 kdf Exp $
+# $Id: Animation.pm,v 1.15 2004/04/26 06:45:10 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -371,7 +371,7 @@ sub scrollBottom {
 	
 	# calculate the displayed length
 	if ($double = Slim::Utils::Prefs::clientGet($client,'doublesize')) {
-		my $rate = $scrollDoubleFrameRate;
+		my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');#*2/3;
 		$double = 1;
 		$overlay2 = "";
 		$overlay1 = "";
@@ -448,7 +448,7 @@ sub scrollDouble {
 	my $rate = shift;
 	
 	if (!defined($rate) || $rate < 0) {
-		$rate = $scrollDoubleFrameRate;
+		my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');#*2/3;
 	}
 
 	my ($text1,$text2) = Slim::Display::Display::doubleSize($client,$line2);
@@ -740,11 +740,11 @@ sub animateScrollDouble {
 	my $ind = shift;
 	my $len = shift;
 	my $hold = Slim::Buttons::Common::paramOrPref($client,'scrollPause');
-	
-	if ($overdue > $scrollDoubleFrameRate) {
-		$ind += int($overdue/$scrollDoubleFrameRate);
+	my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');#*2/3;
+	if ($overdue > $rate) {
+		$ind += int($overdue/$rate);
 	}
-	if ($ind >= $len) {
+	if ($ind > $len) {
 		Slim::Hardware::VFD::vfdUpdate($client, Slim::Hardware::VFD::subString($$text11, 0, 40), 
 				Slim::Hardware::VFD::subString($$text22, 0, 40), 1);
 		return ($hold, \&animateScrollDouble, $text11, $text22, 0, $len);
@@ -752,7 +752,7 @@ sub animateScrollDouble {
 	else {
 		Slim::Hardware::VFD::vfdUpdate($client, Slim::Hardware::VFD::subString($$text11, $ind, 40),
 							   Slim::Hardware::VFD::subString($$text22, $ind, 40), 1);
-		return ($scrollDoubleFrameRate,\&animateScrollDouble, $text11, $text22, $ind+1, $len);
+		return ($rate,\&animateScrollDouble, $text11, $text22, $ind+1, $len);
 	}
 }
 
