@@ -94,7 +94,7 @@ This will start up the server and run itself in the background.
 
 Visit the URL that's printed out with your web browser to configure your 
 SlimServer and see the complete documentation.
-
+ 
 --------------------------------------------------------------------------------
 
 Usage: $0 [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
