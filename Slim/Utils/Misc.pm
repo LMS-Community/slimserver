@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.8 2003/09/17 22:46:42 dean Exp $
+# $Id: Misc.pm,v 1.9 2003/09/29 22:40:35 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@ sub findbin {
 		$executable .= '.exe';
 	}
 	
-	if ($^O eq 'darwin') {
+	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @paths, $ENV{'HOME'} . "/Library/SlimDevices/bin/";
 		push @paths, "/Library/SlimDevices/bin/";
 		push @paths, $ENV{'HOME'} . "/Library/iTunes/Scripts/iTunes-LAME.app/Contents/Resources/";

@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.9 2003/09/19 20:05:13 dean Exp $
+# $Id: Info.pm,v 1.10 2003/09/29 22:40:34 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -132,17 +132,18 @@ sub init {
 	}
 	
 	if (Slim::Utils::Prefs::get('usetagdatabase')) {
-		$dbname = catdir(Slim::Utils::Prefs::preferencesPath(), "mp3tag.db");
 
 		# TODO: MacOS X should really store this in a visible, findable place.
 		if (Slim::Utils::OSDetect::OS() eq 'unix') {
-			# try the default one (in the home directory) should be read...
-			$dbname = catdir(Slim::Utils::Prefs::preferencesPath(), '.slimp3info.db');
+			$dbname = '.slimp3info.db';
 		} elsif (Slim::Utils::OSDetect::OS() eq 'win')  {
-			$dbname = catdir(Slim::Utils::Prefs::preferencesPath(), 'SLIMP3INFO.DB');
+			$dbname = 'SLIMP3INFO.DB';
 		} else {
-			die "Unknown OS type, don't know what style name to save.";
+			$dbname ='slimp3info.db';
 		}
+		
+		# put it in the same folder as the preferences.
+		$dbname = catdir(Slim::Utils::Prefs::preferencesPath(), $dbname);
 
 		$::d_info && Slim::Utils::Misc::msg("ID3 tag database support is ON, saving into: $dbname\n");
 
@@ -196,7 +197,7 @@ sub loadTypesConfig {
 	$::d_info && Slim::Utils::Misc::msg("loading types config file...\n");
 	
 	push @typesFiles, catdir($Bin, 'types.conf');
-	if ($^O eq 'darwin') {
+	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @typesFiles, $ENV{'HOME'} . "/Library/SlimDevices/types.conf";
 		push @typesFiles, "/Library/SlimDevices/types.conf";
 	}
@@ -1734,22 +1735,26 @@ sub readCoverArt {
 				# look for ID3 v2.2 picture
 				my $pic = $tags->{'PIC'};
 				if (defined($pic)) {
-				
+					if (ref($pic) eq 'ARRAY') {
+						$pic = (@$pic)[0];
+					}					
 					my ($encoding, $format, $picturetype, $description) = unpack 'Ca3CZ*', $pic;
 					my $len = length($description) + 1 + 5;
 					if ($encoding) { $len++; } # skip extra terminating null if unicode
 					
-					my ($data) = unpack "x$len A*", $pic;
-					
-					$::d_info && Slim::Utils::Misc::msg( "PIC format: $format length: " . length($data) . "\n");
-
-					# iTunes sometimes puts PNG images in and says they are jpeg
-					if ($format eq 'PNG' || $data =~ /^\x89PNG\x0d\x0a\x1a\x0a/) {
-							$contenttype = 'image/png';
-							$body = $data;
-					} elsif ($format eq 'JPG') {
-							$contenttype = 'image/jpeg';
-							$body = $data;
+					if ($len < length($pic)) {		
+						my ($data) = unpack "x$len A*", $pic;
+						
+						$::d_info && SliMP3::Misc::msg( "PIC format: $format length: " . length($pic) . "\n");
+	
+						# iTunes sometimes puts PNG images in and says they are jpeg
+						if ($format eq 'PNG' || $data =~ /^\x89PNG\x0d\x0a\x1a\x0a/) {
+								$contenttype = 'image/png';
+								$body = $data;
+						} elsif ($format eq 'JPG') {
+								$contenttype = 'image/jpeg';
+								$body = $data;
+						}
 					}
 				} else {
 					# look for ID3 v2.3 picture

@@ -228,19 +228,17 @@ sub init {
 
 
 	$::d_server && msg("Slim Server OS Specific init...\n");
-	if (Slim::Utils::OSDetect::OS() ne 'mac') {
-		$SIG{CHLD} = 'IGNORE';
-		$SIG{PIPE} = 'IGNORE';
-		if (Slim::Utils::OSDetect::OS() ne 'win') {
-			$SIG{INT} = \&sigint;
-			$SIG{HUP} = \&initSettings;
-		}		
-		$SIG{TERM} = \&sigint;
-		$SIG{QUIT} = \&sigint;
-	}
+	$SIG{CHLD} = 'IGNORE';
+	$SIG{PIPE} = 'IGNORE';
+	if (Slim::Utils::OSDetect::OS() ne 'win') {
+		$SIG{INT} = \&sigint;
+		$SIG{HUP} = \&initSettings;
+	}		
+	$SIG{TERM} = \&sigint;
+	$SIG{QUIT} = \&sigint;
 	
 	# we have some special directories under OSX.
-	if ($^O eq 'darwin') {
+	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		mkdir $ENV{'HOME'} . "/Library/SlimDevices";
 		mkdir $ENV{'HOME'} . "/Library/SlimDevices/Plugins";
 		mkdir $ENV{'HOME'} . "/Library/SlimDevices/html";
@@ -250,7 +248,9 @@ sub init {
 		unshift @INC, $ENV{'HOME'} . "/Library/SlimDevices";
 		unshift @INC, "/Library/SlimDevices/";
 	}
-	 unshift @INC, catdir($Bin,'CPAN','arch',$Config::Config{archname});
+	
+	unshift @INC, catdir($Bin,'CPAN','arch',$Config::Config{archname});
+	
 	$::d_server && msg("Slim Server settings init...\n");
 	initSettings();
 

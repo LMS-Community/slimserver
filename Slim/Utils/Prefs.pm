@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.11 2003/09/18 22:39:58 dean Exp $
+# $Id: Prefs.pm,v 1.12 2003/09/29 22:40:35 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -28,8 +28,8 @@ my $canWrite;
 my %DEFAULT = (
 	"httpport"				=> 9000
 	,"cliport"				=> 9090
-	,"mp3dir"				=> (($^O eq 'darwin') && (-d ($ENV{'HOME'} . '/Music/'))) ? ($ENV{'HOME'} . '/Music') : ""
-	,"playlistdir"			=> (($^O eq 'darwin') ? $ENV{'HOME'} . '/Music/Playlists' : ((Slim::Utils::OSDetect::OS() eq 'win') ? $Bin . '/Playlists' : ''))
+	,"mp3dir"				=> ((Slim::Utils::OSDetect::OS() eq 'mac') && (-d ($ENV{'HOME'} . '/Music/'))) ? ($ENV{'HOME'} . '/Music') : ""
+	,"playlistdir"			=> ((Slim::Utils::OSDetect::OS() eq 'mac') ? $ENV{'HOME'} . '/Music/Playlists' : ((Slim::Utils::OSDetect::OS() eq 'win') ? $Bin . '/Playlists' : ''))
 	,"skin"					=> "Default"
 	,"language"				=> "EN"
 	,"refreshRate"			=> 30
@@ -408,8 +408,8 @@ sub set {
 	}
 
 	onChange($key, $value, $ind);
-	
-	$::d_prefs && msg("Setting prefs $key$ind equal to " . ((defined $prefs{$key}) ? $prefs{$key} : "undefined") . "\n");
+	#must mark $ind as defined or indexed prefs cause an error in this msg
+	$::d_prefs && msg("Setting prefs $key".defined($ind)." equal to " . ((defined $prefs{$key}) ? $prefs{$key} : "undefined") . "\n");
 	writePrefs();
 }
 
@@ -469,141 +469,13 @@ sub clientIsDefined {
 	return isDefined($client->id() . "-" . $key,$ind);
 }
 
-sub preferencesPath {
-
-	if (defined($prefsPath)) {
-		return $prefsPath;
-	}
-
-	if (Slim::Utils::OSDetect::OS() eq 'unix') {
-	 	$prefsPath = $ENV{'HOME'};
-	 }
-
-		#FIXME: On MacOS, use the correct way to find "System Folder/Preferences"
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		$prefsPath = $Bin;
-	}
-
-	if (Slim::Utils::OSDetect::OS() eq 'win')  {
-# We used to save prefs in C:\WINDOWS or C:\WINNT
-
-		# this should work for all versions of windows
-		$prefsPath = $ENV{'windir'};
-		
-		# just in case something very whacky is going on
-		if (not -d $ENV{'windir'}) {
-			$prefsPath = '';
-		}
-# Now we save them in the same place as slimserver.pl
-		if (!-f(catdir($prefsPath, 'SLIMP3.PRF'))) {
-			$prefsPath = $Bin;
-		}
-	}
-
-	return  $prefsPath;
-}
-
-sub oldPrefsFile {
-	my $oldPrefsFile;
-	my $pref_path = preferencesPath();
-
-	if (Slim::Utils::OSDetect::OS() eq 'unix') {
-		# try the default one (in the home directory) should be read...
-		$oldPrefsFile = catdir($pref_path, '.slimp3.conf'); 
-	}
-		
-	if (Slim::Utils::OSDetect::OS() eq 'win')  {	
-		$oldPrefsFile = catdir($pref_path, 'SLIMP3.INI');
-	}
-
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		$oldPrefsFile = '';						# legacy prefs file doens't apply to MacOS
-	}
-	return $oldPrefsFile;
-}
-
-sub prefsFile {
-	if (defined($prefsFile)) {
-		return $prefsFile;
-	}
-	my $pref_path = preferencesPath();
-
-	if (Slim::Utils::OSDetect::OS() eq 'unix') {
-		# try the default one (in the home directory) should be read...
-		$prefsFile = catdir($pref_path, '.slimp3.pref'); 
-	}
-		
-	if (Slim::Utils::OSDetect::OS() eq 'win')  {	
-		$prefsFile = catdir($pref_path, 'SLIMP3.PRF');
-	}
-
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		$prefsFile = catdir($pref_path, 'SliMP3 Preferences');
-	}
-
-	return $prefsFile;
-}
-
-#
-# Figures out where the preferences file should be on our platform, and loads it.
-#
-sub load {
-	my $pref_file = shift;
-	my $nosetup = shift;
-	if (defined($pref_file)) {
-		my ($volume,$path,$file) = splitpath($pref_file);
-		$path = $volume . $path;
-		if (-d $path) {
-			#set package level variables
-			$prefsPath = $path;
-			$prefsFile = $pref_file;
-		}
-	}
-	prefsFile();
-	my $oldPrefsFile = oldPrefsFile();
-
-	if (Slim::Utils::OSDetect::OS() eq 'unix') {
-		# if it ain't there, then try a global one
-		unless (-r $oldPrefsFile) {
-			$oldPrefsFile = '/etc/slimp3.conf';
-		}
-	}
-		
-	# open up the old one...
-	if (-r $oldPrefsFile) {
-		require $oldPrefsFile if -s $oldPrefsFile && -r $oldPrefsFile;		
-	}
-	
-	# open up the new one...
-	if (-r $prefsFile) {
-		open(NUPREFS, $prefsFile);
-		while (<NUPREFS>) {
-			chomp; 			# no newline
-			s/^\s+//;		# no leading white
-			s/\s+$//;		# no trailing white
-			next unless length;	#anything left?
-			my ($var, $value) = split(/\s*=\s*/, $_, 2);
-			if ($var =~ /(.+?)(\d+|#)$/) {
-				#part of array
-				unless ($2 eq '#') {
-					$prefs{$1}[$2] = $value;
-				}
-			} else {
-				$prefs{$var} = $value;
-			}
-		}
-		
-		close(NUPREFS);	
-	}
-	$canWrite = (-w $prefsFile || -w $prefsPath);
-	if (!$canWrite && !$nosetup) {
-		warn "Cannot write to preferences file, any changes made will not be preserved for the next startup of the server";
-	}
-}
-
 sub writePrefs {
 	if ($canWrite) {
-		if (open(NUPREFS, ">$prefsFile")) {
+		my $writeFile = prefsFile();
+		
+		$::d_prefs && msg("Writing out prefs in $writeFile\n");
+		
+		if (open(NUPREFS, ">$writeFile")) {
 			foreach my $k (sort keys (%prefs)) {
 				if (defined $prefs{$k}) {
 					if (ref($prefs{$k}) eq 'ARRAY') {
@@ -619,8 +491,122 @@ sub writePrefs {
 			}
 			close NUPREFS;
 		} else {
-			warn "Couldn't write preferences file out.";
+			msg("Couldn't write preferences file out $writeFile\n");
 		}
+	}
+}
+
+
+sub preferencesPath {
+
+	if (defined($prefsPath)) {
+		return $prefsPath;
+	}
+
+	if (Slim::Utils::OSDetect::OS() eq 'mac') {
+		$prefsPath = catdir($ENV{'HOME'}, 'Library', 'SlimDevices');
+	} elsif (Slim::Utils::OSDetect::OS() eq 'win')  {
+		# We used to save prefs in C:\WINDOWS or C:\WINNT
+		# this should work for all versions of windows
+		$prefsPath = $ENV{'windir'};
+		
+		# just in case something very whacky is going on
+		if (not -d $ENV{'windir'}) {
+			$prefsPath = '';
+		}
+	} else {
+	 	$prefsPath = $ENV{'HOME'};
+	}
+	
+	$::d_prefs && msg("The default prefs directory is $prefsPath\n");
+
+	return  $prefsPath;
+}
+
+sub prefsFile {
+	my $setFile = shift;
+	
+	if (defined $setFile) { $prefsFile = $setFile; }
+	
+	if (defined($prefsFile)) {
+		return $prefsFile;
+	}
+
+	my $pref_path = preferencesPath();
+
+	if (Slim::Utils::OSDetect::OS() eq 'win')  {	
+		$prefsFile = catdir($pref_path, 'SLIMD.PRF');
+	} elsif (Slim::Utils::OSDetect::OS() eq 'mac') {
+		$prefsFile = catdir($pref_path, 'slimd.pref');
+	} else {
+		if (-r '/etc/slimd.conf') {
+			$prefsFile = '/etc/slimd.conf';
+		} else {
+			$prefsFile = catdir($pref_path, '.slimp3.pref');
+		}
+	}
+	
+	$::d_prefs && msg("The default prefs file location is $prefsFile\n");
+	
+	return $prefsFile;
+}
+
+#
+# Figures out where the preferences file should be on our platform, and loads it.
+#
+sub load {
+	my $setFile = shift;
+	my $nosetup = shift;
+
+	my $readFile = prefsFile($setFile);
+	
+	# if we can't open up the new one, try the old ones
+	if (!-r $readFile) {
+		$readFile = '/etc/slimp3.pref';
+	}
+	
+	if (!-r $readFile) {
+		$readFile = catdir(preferencesPath(), 'SLIMP3.PRF');
+	}
+	
+	if (!-r $readFile) {
+		$readFile = catdir(preferencesPath(), '.slimp3.pref');
+	}
+	
+	if (!-r $readFile) {
+		$readFile = catdir($ENV{'HOME'}, '.slimp3.pref');
+	}
+	
+	# if we found some file to read, then let's read it!
+	if (-r $readFile) {
+		$::d_prefs && msg("reading in prefs file $readFile\n");
+		open(NUPREFS, $readFile);
+		while (<NUPREFS>) {
+			chomp; 			# no newline
+			s/^\s+//;		# no leading white
+			s/\s+$//;		# no trailing white
+			next unless length;	#anything left?
+			my ($var, $value) = split(/\s*=\s*/, $_, 2);
+			if ($var =~ /(.+?)(\d+|#)$/) {
+				#part of array
+				unless ($2 eq '#') {
+					$prefs{$1}[$2] = $value;
+				}
+			} else {
+				$prefs{$var} = $value;
+			}
+		}
+		close(NUPREFS);	
+	}
+	
+	# see if we can write out the real prefs file
+	$canWrite = (-e prefsFile() && -w prefsFile()) || (-w preferencesPath());
+	
+	# write it out no matter what.
+	writePrefs();
+	
+	if (!$canWrite && !$nosetup) {
+		msg("Cannot write to preferences file $prefsFile, any changes made will not be preserved for the next startup of the server\n");
 	}
 }
 

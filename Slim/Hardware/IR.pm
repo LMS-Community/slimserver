@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.10 2003/09/17 20:50:33 dean Exp $
+# $Id: IR.pm,v 1.11 2003/09/29 22:40:34 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -66,7 +66,7 @@ sub IRFileDirs {
 	my @dirs;
 	
 	push @dirs, catdir($Bin,"IR");
-	if ($^O eq 'darwin') {
+	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @dirs, $ENV{'HOME'} . "/Library/SlimDevices/IR/";
 		push @dirs, "/Library/SlimDevices/IR/";
 	}

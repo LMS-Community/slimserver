@@ -1,20 +1,77 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-	 <meta http-equiv="refresh" content="{refresh}; url=status_header.html?player={%player}&amp;start={start}&amp;refresh=1">
+	 <meta http-equiv="refresh" content="{refresh}; url=status_header.html?player={%player}&amp;start={start}">
 	<link rel="stylesheet" href="slimserver.css">
-    <script language="JavaScript">
-<!--Hide
-[EQ playercount 0]location="status.html";[/EQ]
+    <script language="JavaScript"><!--Hide
 
-function openRemote()
-&lbrc;
-	window.open('status_header.html?player={%player}&start={start}&refresh=1', 'access', 'width=500,height=240');
-&rbrc;
-//-->
-</script>
+		[EQ playercount 0]location="status.html";[/EQ]
+		var waitTime={refresh};
+		
+		function openRemote()
+		&lbrc;
+			window.open('status_header.html?player={%player}&start={start}&refresh=1', 'access', 'width=500,height=240');
+		&rbrc;
+		
+		//Modified from Progress Bar script- by Todd King (tking@igpp.ucla.edu)
+		//Visit JavaScript Kit (http://javascriptkit.com) for full script
+		
+		var duration=[IF songduration]{songduration}[/IF][IFN songduration]0[/IFN];
+		// Specify duration of progress bar in seconds
+		
+		var _progressEnd = [IF songduration]{songduration}[/IF][IFN songduration]1[/IFN];
+		var _progressAt = [IF songtime]{songtime}[/IF][IFN songtime]0[/IFN];
+		
+		// Increment the progress dialog one step
+		function ProgressStepIt() &lbrc;
+			_progressAt++;
+			if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
+			ProgressUpdate();
+		&rbrc;
+		
+		// Update the progress dialog with the current state
+		function ProgressUpdate() &lbrc;
+			if (document.progress) &lbrc;
+				if (document.all) &lbrc;
+					//alert (document.body.clientWidth+"/"+_progressEnd+"*"+_progressAt+"="+p);
+					var p = (document.body.clientWidth / _progressEnd) * _progressAt;
+					eval("document.progress.width=p");
+				&rbrc;
+				else &lbrc;
+					var p = (document.width / _progressEnd) * _progressAt;
+					eval("document.progress.width=p");
+				&rbrc;
+			&rbrc;
+		&rbrc;
+		
+		//configure refresh interval (in seconds)
+		var countDownInterval={songduration}-{songtime};
+		
+		var counter;
+		
+		var countDownTime=countDownInterval+1;
+		
+		function countDown() &lbrc;
+			countDownTime--;
+			if (countDownTime <=0)&lbrc;
+				countDownTime=countDownInterval;
+				clearTimeout(counter)
+				return
+			&rbrc;
+		
+			[IF modeplay]ProgressStepIt();[/IF]
+			counter=setTimeout("countDown()", 1000);
+		&rbrc;
+		
+		if (document.all||document.getElementById)
+			countDown()
+		else
+			window.onload=startit
+
+	-->
+	</script>
   </head>
-  <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload='javascript:parent.playlist.location="playlist.html?player={%player}&start={start}&refresh=1";'>
+  <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload='javascript:parent.playlist.location="playlist.html?player={%player}&start={start}&refresh=1"'>
 	  <div class="masthead">
 	  <table border="0" cellpadding="2" cellspacing="0" width="100%"  bordercolor="#111111">
 	   <tr>
@@ -35,22 +92,23 @@ function openRemote()
   	      </table>
   	   </tr>
   	   </table></div>
+  	   <table border="0" cellspacing="0" cellpadding="0"><td><img name="progress" src="html/pixel.green[IFN modeplay]_s[/IFN].gif" width="1" height="5"></td></table>
       <div class="nowplaying">
 	   <table border="0" cellspacing="0" cellpadding="0" width="100%">
        <tr>
           [IF coverart]<td valign="top">
-		  <script language="JavaScript">top.document.getElementById('player_frame').rows = '235, *';</script><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="/music/{%itempath}/cover.jpg" border="0" height="100">
+		  <script language="JavaScript">top.document.getElementById('player_frame').rows = '240, *';</script><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="/music/{%itempath}/cover.jpg" border="0" height="100">
 	      </td>[/IF]
 	      <td><img src="html/images/spacer.gif" border="0" width="5"></td>
 	      <td valign="top" width="100%"><nobr>
-				<p class="label">
-                <img src="html/images/spacer.gif" border="0" width="5">[IF modeplay][S PLAYING][/IF]
+				<p class="label"><img src="html/images/spacer.gif" border="0" width="2" height="14">[IF modeplay][S PLAYING][/IF]
                 [IF modepause][S PAUSED_ON][/IF]
                 [IF modestop][S STOPPED_ON][/IF]
-                [IF currentsong]<b>{currentsong}</b> [S OUT_OF] <b>&nbsp;{songcount}</b>&nbsp;<a class="label" href="status_header.html?p0=button&p1=modefunction_playlist->zap&player={%player}&start={start}">[zap]</a>[/IF]:</p>
+                [IF currentsong]<b>{currentsong}</b> [S OUT_OF] <b>&nbsp;{songcount}</b>&nbsp;<a class="label" href="status_header.html?p0=button&p1=modefunction_playlist->zap&player={%player}&start={start}">[zap]</a>[/IF]
+		</p>
                 <p><img src="html/images/spacer.gif" border="0" width="5"><a class="songtitle" href="songinfo.html?songurl={%itempath}&player={%player}" target="browser">{title}</a>
                 [IF duration]&nbsp;({&duration})[/IF][IF bitrate]&nbsp;({bitrate})[/IF]</p>
-                [IFN coverart]<script language="JavaScript">top.document.getElementById('player_frame').rows = '210, *';</script>
+                [IFN coverart]<script language="JavaScript">top.document.getElementById('player_frame').rows = '215, *';</script>
                 <table border="0" cellpadding="0" cellspacing="0" width="100%"><td width="50%"><nobr>[/IFN]
                    <p class="label"><img src="html/images/spacer.gif" border="0" width="5" height="10">[IF artist][S ARTIST]&nbsp;<a class="label" href="status_header.html?p0=playlist&p1=deletealbum&p2=&p3={%artist}&player={%player}&astart={start}">[x]</a>[/IF]</p>
                    <p class="artistname"><a class="artistname" href="browseid3.html?genre=*&artist={%artist}&player={%player}" target="browser"><img src="html/images/spacer.gif" border="0" width="5" height="10">{artist}</a></p>
@@ -167,23 +225,23 @@ function openRemote()
    </div>
 <div class="nowplaying">
 <table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13">
-<td width="33%" class="label2" align="center"><nobr>
+<td [IF isplayer]width="33%"[/IF] class="label2" align="center"><nobr>
     <b>REPEAT:&nbsp;&nbsp;</b>
              <a class="[IFN repeatone]dark[/IFN]button" href="status_header.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}"><b>ONE</b>&nbsp;&nbsp;</a>
              <a class="[IFN repeatall]dark[/IFN]button" href="status_header.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}"><b>ALL</b>&nbsp;&nbsp;</a>
              <a class="[IFN repeatoff]dark[/IFN]button" href="status_header.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}"><b>OFF</b></a>
-</nobr></td><td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
-<td width="40%" height="13" class="label2" align="center"><nobr>
+</nobr></td><td [IFN isplayer]width="1"[/IFN]><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
+<td [IF isplayer]width="40%"[/IF] height="13" class="label2" align="center"><nobr>
     <b>SHUFFLE:&nbsp;&nbsp;</b>
+             <a class="[IFN shuffleoff]dark[/IFN]button" href="status_header.html?p0=playlist&p1=shuffle&p2=0&player={%player}"><b>OFF</b>&nbsp;&nbsp;</a>
              <a class="[IFN shuffleon]dark[/IFN]button" href="status_header.html?p0=playlist&p1=shuffle&p2=1&player={%player}"><b>SONG</b>&nbsp;&nbsp;</a>
-             <a class="[IFN shufflealbum]dark[/IFN]button" href="status_header.html?p0=playlist&p1=shuffle&p2=2&player={%player}"><b>ALBUM</b>&nbsp;&nbsp;</a>
-             <a class="[IFN shuffleoff]dark[/IFN]button" href="status_header.html?p0=playlist&p1=shuffle&p2=0&player={%player}"><b>OFF</b></a>
-</nobr></td><td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
+             <a class="[IFN shufflealbum]dark[/IFN]button" href="status_header.html?p0=playlist&p1=shuffle&p2=2&player={%player}"><b>ALBUM</b></a>
+</nobr></td>[IF isplayer]<td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
 <td height="13" class="label2" align="center"><nobr>
 	<b>PLAYER:&nbsp;&nbsp;</b>
 	         <a target="_top" class="[EQ mode off]dark[/EQ]button" href="index.html?player={%player}&p0=power&p1=1"><b>ON</b>&nbsp;&nbsp;</a>
 	         <a target="_top" class="[NE mode off]dark[/NE]button" href="index.html?player={%player}&p0=power&p1=0"><b>OFF</b></a>
-</nobr></td>
+</nobr></td>[/IF]
 </table></div>
   </body>
 </html>

@@ -142,29 +142,46 @@ sub canUseiTunesLibrary {
 
 sub findMusicLibraryFile {
 	my $filename;
-	if ($^O eq 'darwin') {
-		$filename = $ENV{HOME} . '/Music/iTunes/iTunes Music Library.xml';
-		if (-r $filename) {
-			return $filename;
-		}
 	
-		$filename = $ENV{HOME} . '/Documents/iTunes/iTunes Music Library.xml';
-		if (-r $filename) {
-			return $filename;
+	my $plist = $ENV{HOME} . '/Library/Preferences/com.apple.iApps.plist';
+
+	if (-r $plist) {
+		open (PLIST, "< $plist");
+		while (<PLIST>) {
+			if ( /<string>(.*iTunes%20Music%20Library.xml)<\/string>$/) {
+				$filename = Slim::Utils::Misc::pathFromFileURL($1);
+				last;
+			}
 		}
-	} else {
-		my $base = '';
-		if ($ENV{HOME}) {
-			$base = $ENV{HOME} . '/';
-		}
-		
-		$filename = $base . 'iTunes Music Library.xml';
-		if (-r $filename) {
-			return $filename;
-		}		
 	}
+
+	if ($filename && -r $filename) {
+		return $filename;
+	}
+	
+	$filename = $ENV{HOME} . '/Music/iTunes/iTunes Music Library.xml';
+	if (-r $filename) {
+		return $filename;
+	}
+
+	$filename = $ENV{HOME} . '/Documents/iTunes/iTunes Music Library.xml';
+	if (-r $filename) {
+		return $filename;
+	}
+
+	my $base = '';
+	if ($ENV{HOME}) {
+		$base = $ENV{HOME} . '/';
+	}
+	
+	$filename = $base . 'iTunes Music Library.xml';
+	if (-r $filename) {
+		return $filename;
+	}		
+
 	return undef;
 }
+
 
 sub playlists {
 	return \@playlists;

@@ -2,7 +2,7 @@ package Slim::Utils::OSDetect;
 
 use Slim::Utils::Misc;
 
-# $Id: OSDetect.pm,v 1.2 2003/07/24 23:14:04 dean Exp $
+# $Id: OSDetect.pm,v 1.3 2003/09/29 22:40:35 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -20,16 +20,15 @@ sub OS {
 
 #
 # Figures out where the preferences file should be on our platform, and loads it.
-# also sets the global $detectedOS to 'unix' 'win' or 'mac'
+# also sets the global $detectedOS to 'unix' 'win'
 #
 sub init {
 	if (!$detectedOS) {
 
 		$::d_os && Slim::Utils::Misc::msg("Auto-detecting OS: $^O\n");
 
-		if ($^O =~/^macos/i) {
+		if ($^O =~/darwin/i) {
 			$detectedOS = 'mac';
-
 		} elsif ($^O =~ /^m?s?win/i) {
 			$detectedOS = 'win';
 

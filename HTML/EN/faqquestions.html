@@ -16,7 +16,7 @@
 	<li><a href="#about-multiple">Can I use multiple Squeezebox with a single server?</a>
 	<li><a href="#about-display">The fluorescent display looks great, but aren't those pretty expensive? Have you considered using a cheaper LCD display?</a>
 	<li><a href="#about-dhcp">Does the Squeezebox support DHCP?</a>
-	<li><a href="#about-cable">What kind of network cable do I need?</a>
+	<li><a href="#about-cable">What kind of network cable do I need? How long can it be?</a>
 	<li><a href="#about-networkspeed">How fast does my network need to be to use Squeezebox?</a>
 	<li><a href="#about-os">Which operating systems are supported?</a>
 	<li><a href="#about-minhardware">What are the minimum hardware reqirements for the server computer?</a>
@@ -41,7 +41,9 @@
 <h5><a id="about-dhcp"></a>Does the Squeezebox support DHCP?</h5>
 <p>Yes, the Squeezebox supports both DHCP and static IP addresses. It also has a feature called &quot;Slim Discovery Protocol&quot;, which automatically locates the Slim Server on your network. For LANs which already have a DHCP server, Squeezebox is ready to run out-of-the-box, without having to do any configuration. If you don't have DHCP, you can enter the IP addresses manually.</p>
 <h5><a id="about-cable"></a>What kind of network cable do I need?</h5>
-<p>Since the Squeezebox network interface is 10 megabit ethernet, you can use either a CAT3 or CAT5 ethernet cable. If you are connecting directly to a computer you will need a crossover cable, otherwise a regular straight cable will work just fine.  (Note: <a href="http://docs.info.apple.com/article.html?artnum=42717">Some Macintosh computers</a> will work with either a regular or crossover cable.)</p>
+<p>Since the Squeezebox network interface is 10 megabit ethernet, you can use either a CAT3 or CAT5 ethernet cable. 
+If you are connecting directly to a computer you will need a crossover cable, otherwise a regular straight cable will work just fine. 
+ (Note: <a href="http://docs.info.apple.com/article.html?artnum=42717">Some Macintosh computers</a> will work with either a regular or crossover cable.)  The maximum length for 10base-T and 100base-T cables is 100 meters or about 328 feet, assuming that the appropriate type of wire is used and it is laid correctly.</p>
 <h5><a id="about-networkspeed"></a>How fast does my network need to be to use the Squeezebox?</h5>
 <p>An inexpensive 10Mbps hub has about 25 times the capacity needed to stream MP3 audio at the highest quality (320Kbps). Typically, MP3s are encoded at 128Kbps to 192Kbps. You do not need 10/100 Ethernet - Squeezebox is compatible with fast Ethernet LANS, as long as your hub/switch also supports 10Mbps (most do).</p>
 <h5><a id="about-os"></a>Which operating systems are supported?</h5>
@@ -217,9 +219,9 @@
 <p>Once you have LAME installed, you should be able to playback iTunes-ripped AAC files (.m4a) as well as the audio from any QuickTime movie (.mov). Music purchased from the Apple Music Store (.m4p files) is protected and cannot be played back with Squeezebox until Apple provides the necessary hooks to enable this. In the mean time, it is possible to burn your Apple Music Store songs to CD and re-rip them.</p>
 <p>Note that LAME-based encoding to MP3 for playback can use a substantial amount of CPU power.  We continue to recommend high-bitrate MP3 encoded files for best performance, highest audio quality, and best compatibililty.</p>
 <h5><a id="formats-ogg"/>Does the Squeezebox support Ogg Vorbis?</h5>
-<p>If you have both LAME and the ogg tools installed, the Slim Server will automatically convert Ogg files to MP3 on the fly for playback. To enable this feature, visit the Server Settings -&gt; Additional Server Settings -&gt; Behavior section of the web interface and turn on this feature. There may be some reduction of quality due to the conversion, but it generally sounds pretty good. Note that this conversion will use a substantial amount of CPU power and may put a substantial load on your server computer.</p>
+<p>If you have both LAME and the ogg tools installed, the Slim Server will automatically convert Ogg files to MP3 on the fly for playback. To enable this feature, visit the Server Settings -&gt; Additional Server Settings -&gt; File Types section of the web interface and turn on this feature. There may be some reduction of quality due to the conversion, but it generally sounds pretty good. Note that this conversion will use a substantial amount of CPU power and may put a substantial load on your server computer.</p>
 <h5><a id="formats-aiffwav"></a>Does the Squeezebox support AIFF or WAV?</h5>
-<p>If you have LAME installed, the Slim Server will automatically convert uncompressed WAV and AIFF files to MP3 on the fly for playback. To enable this feature, visit the Server Settings -&gt; Additional Server Settings -&gt; Behavior section of the web interface and turn on this feature. Note that this conversion will use a substantial amount of CPU power and may put a substantial load on your server computer.</p>
+<p>If you have LAME installed, the Slim Server will automatically convert uncompressed WAV and AIFF files to MP3 on the fly for playback. To enable this feature, visit the Server Settings -&gt; Additional Server Settings -&gt; File Types section of the web interface and turn on this feature. Note that this conversion will use a substantial amount of CPU power and may put a substantial load on your server computer.</p>
 <h5><a id="formats-shout"></a>Does the Squeezebox support streaming protocols such as Shoutcast or Live365?</h5>
 <p>Yes! Slim Server can proxy to all of the popular MP3 streaming protocols, including HTTP, Icecast/Shoutcast, and Live365.</p>
 <h5><a id="formats-playlists"></a>Does the Squeezebox support playlists?</h5>

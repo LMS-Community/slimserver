@@ -28,7 +28,7 @@ sub loadConversionTables {
 	$::d_source && msg("loading conversion config files...\n");
 	
 	push @convertFiles, catdir($Bin, 'convert.conf');
-	if ($^O eq 'darwin') {
+	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @convertFiles, $ENV{'HOME'} . "/Library/SlimDevices/convert.conf";
 		push @convertFiles, "/Library/SlimDevices/convert.conf";
 	}
@@ -328,6 +328,8 @@ sub gototime {
 
 	my $size = $client->songtotalbytes;
 	my $duration = $client->songduration;
+
+	return if (!$size || !$duration);
 
 	$oldtime = songTime($client);
 

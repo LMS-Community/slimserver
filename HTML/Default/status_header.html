@@ -19,17 +19,14 @@ function switchPlayer(player_List){
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="javascript:parent.playlist.location.reload(true);">
 <table width="100%" cellspacing=0>
 	<tr height="32">
-	<td width=4 class="darkgrey"></td><td class="darkgrey" height="37" align="right"><a href="http://www.slimdevices.com/" target="slimdevices"><img src="{webroot}html/images/{playermodel}_logo.gif" alt="SQUEEZEBOX" width="134" height="19"></a><IMG SRC="{webroot}html/images/spacer.gif" WIDTH=8 ALT=""></td>
+	<td width=4 class="darkgrey"></td>
+		<td colspan=2 class="darkgrey" height="37" align="right"><a href="http://www.slimdevices.com/" target="slimdevices"><img src="{webroot}html/images/{playermodel}_logo.gif" alt="SQUEEZEBOX" width="134" height="19"></a><IMG SRC="{webroot}html/images/spacer.gif" WIDTH=8 ALT=""></td>
 		<td class="darkgrey" width="8"><img src="html/images/spacer.gif" width="8"></td>
 	</tr>
 	<tr height="32">
 		<td class="darkgrey" width="4"><img src="html/images/spacer.gif" width="4" alt=""></td>
-		<td class="dmedgrey"><table cellspacing="0" width="100%" height="100%">
-				<tr height="32">
-					<td><img src="html/images/musicplayer.gif" width="121" height="25" alt="Music Player"></td>
-					<td align="right" valign="center">[IF player_chooser_list]<form method="get" action="{webroot}index.html" target="_top"><select name="player" onchange="switchPlayer(this);" class="exnowplaying">{player_chooser_list}</select><IMG SRC="{webroot}html/images/spacer.gif" WIDTH=8 ALT=""></form>[/IF]</td>
-				</tr>
-			</table></td>
+		<td class="dmedgrey"><img src="html/images/musicplayer.gif" width="121" height="25" alt="Music Player"></td>
+		<td class="dmedgrey" align="right" valign="center">[IF player_chooser_list]<form method="get" action="{webroot}index.html" target="_top"><select name="player" onchange="switchPlayer(this);" class="exnowplaying">{player_chooser_list}</select><IMG SRC="{webroot}html/images/spacer.gif" WIDTH=8 ALT=""></form>[/IF]</td>
 		<td class="darkgrey" width="8"><img src="html/images/spacer.gif" width="8" height="25" alt=""></td>
 	</tr>
 </table>

@@ -1,6 +1,6 @@
 package Slim::Utils::Strings;
 
-# $Id: Strings.pm,v 1.4 2003/08/01 17:43:21 dean Exp $
+# $Id: Strings.pm,v 1.5 2003/09/29 22:40:35 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -51,7 +51,7 @@ sub stringsDirs {
       my @pluginDirs;
       push @pluginDirs, $Bin;
       push @pluginDirs, Slim::Utils::Prefs::preferencesPath();
-      if ($^O eq 'darwin') {
+      if (Slim::Utils::OSDetect::OS() eq 'mac') {
               push @pluginDirs, $ENV{'HOME'} . "/Library/SlimDevices/";
               push @pluginDirs, "/Library/SlimDevices/";
       }

@@ -93,7 +93,7 @@ sub lines {
 sub pluginDirs {
 	my @pluginDirs;
 	push @pluginDirs, catdir($Bin, "Plugins");
-	if ($^O eq 'darwin') {
+	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @pluginDirs, $ENV{'HOME'} . "/Library/SlimDevices/Plugins/";
 		push @pluginDirs, "/Library/SlimDevices/Plugins/";
 	}
