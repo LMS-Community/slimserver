@@ -61,6 +61,15 @@
 			<a href="browseid3.html?genre={%genre}&amp;player={%player}" target="browser">{genre}
 		</td>
 	</tr>
+	[/IF]  [IF disc] 
+		<tr> 
+			<td> 
+				[S DISC]: 
+			</td>
+			<td> 
+				{&disc} 
+			</td>
+		</tr>
 	[/IF] [IF track]
 	<tr>
 		<td>
@@ -68,6 +77,15 @@
 		</td>
 		<td>
 			{track}
+		</td>
+	</tr>
+	[/IF] [IF type] 
+	<tr>
+		<td>
+			[S TYPE]: 
+		</td>
+		<td>
+			{type}
 		</td>
 	</tr>
 	[/IF] [IF duration]
@@ -127,13 +145,18 @@
 	[/IF] [IF url]
 	<tr>
 		<td>
-			URL:
+			[S LOCATION]:
 		</td>
 		<td>
 			<a href="{url}">{&url}</a>
 		</td>
 	</tr>
-	[/IF]
+	[/IF][IF modtime] 
+      <tr> 
+        <td> [S MODTIME]: </td>
+        <td> {&modtime} </td>
+      </tr>
+   [/IF]
 </table>
 <p><a href="status_header.html?p0=playlist&amp;p1=play&amp;p2={%itempath}&amp;player={%player}" target="statusframe">[S PLAY_THIS_SONG]</a></p>
 <p><a href="status_header.html?p0=playlist&amp;p1=append&amp;p2={%itempath}&amp;player={%player}" target="statusframe">[NB][S ADD_THIS_SONG_TO_PLAYLIST][/NB]</a></p>
