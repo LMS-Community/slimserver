@@ -1,6 +1,6 @@
 package Slim::Formats::Movie;
 
-# $Id: Movie.pm,v 1.8 2004/03/15 18:39:23 dean Exp $
+# $Id: Movie.pm,v 1.9 2004/03/24 18:42:40 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -58,7 +58,8 @@ sub getTag {
 	$tags->{'COVER'} = 1 if ($tags->{'COVER'});
 	
 	$tags->{'TRACKNUM'} = unpack('N', $tags->{'TRACKNUM'}) if $tags->{'TRACKNUM'};
-	$tags->{'DISC'} = unpack('N', $tags->{'DISC'}) if $tags->{'DISC'};
+	($tags->{'DISC'}, $tags->{'DISCC'}) = unpack('Nn', $tags->{'DISC'}) if $tags->{'DISC'};
+	
 	$tags->{'COMPILATION'} = unpack('N', $tags->{'COMPILATION'}) if $tags->{'COMPILATION'};	
 
 	return $tags;

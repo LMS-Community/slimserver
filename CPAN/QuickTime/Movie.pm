@@ -1,6 +1,6 @@
 package QuickTime::Movie;
 
-# $Id: Movie.pm,v 1.2 2004/03/15 18:37:38 dean Exp $
+# $Id: Movie.pm,v 1.3 2004/03/24 18:42:40 dean Exp $
 
 use strict;
 use base qw(Exporter);
@@ -92,7 +92,7 @@ sub readUserData {
 												my ($long1, $long2, $string) = unpack('NNa*', $data);
 
 												if (DEBUG) {
-													print "                payload atom: $tag [length: " . length($data) . "calculated: $len]: $long1 $long2\n";
+													print "                payload atom: $tag [length: " . length($string) . " calculated: $len]: $long1 $long2\n";
 													print " $string\n" if (length($string) < 1000)
 												}
 
