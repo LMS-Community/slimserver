@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.163 2005/01/10 08:43:23 dsully Exp $
+# $Id: strings.txt,v 1.164 2005/01/11 09:31:34 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -3730,16 +3730,16 @@ SETUP_ARTISTINALBUMSEARCH_DESC
 	SE	Kontrollerar om sökningar på album också skall inkludera artistnamn. Med detta aktiverat kommer albumsökningar på "bach" generera träffar även för "Bradenberg Concertos" av J.S Bach, även om "bach" inte finns med i albumnamnet.
 
 SETUP_SEARCHSUBSTRING
-	EN	Searching Behavior
+	EN	Search Within Words
 
 SETUP_SEARCHSUBSTRING_0
-	EN	Search term begins with..
+	EN	Search Beginning of Words
 
 SETUP_SEARCHSUBSTRING_1
-	EN	Search term contains..
+	EN	Search Within Words
 
 SETUP_SEARCHSUBSTRING_DESC
-	EN	Controls whether a search will match beginnings of words, or match anywhere in the word.
+	EN	When you search for music, you can have SlimServer find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN".
 
 SETUP_COMPOSERINARTISTS
 	DE	Komponist, Gruppe und Orchester in Interpreten

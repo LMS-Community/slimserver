@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.121 2005/01/10 20:36:24 dsully Exp $
+# $Id: Pages.pm,v 1.122 2005/01/11 09:31:34 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1228,7 +1228,7 @@ sub search {
 			  '&type=' . ($params->{'type'} ? $params->{'type'} : ''). 
 			  '&query=' . Slim::Web::HTTP::escape($params->{'query'}) . '&';
 
-	my $searchStrings = searchStringSplit($query);
+	my $searchStrings = searchStringSplit($query,$params->{'searchSubString'});
 
 	# artist and album are similar enough - move them to their own function
 	if ($params->{'type'} eq 'artist') {
@@ -2700,12 +2700,15 @@ sub instant_mix {
 
 sub searchStringSplit {
 	my $search  = shift;
-
+	my $searchSubString = shift;
+	
+	$searchSubString = defined $searchSubString ? $searchSubString : Slim::Utils::Prefs::get('searchSubString');
+	
 	my @strings = ();
 
 	for my $string (split(/\s+/, $search)) {
 
-		if (Slim::Utils::Prefs::get('searchSubString')) {
+		if ($searchSubString) {
 
 			push @strings, "\*$string\*";
 
