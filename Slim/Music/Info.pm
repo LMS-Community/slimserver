@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.115 2004/05/05 22:01:12 dean Exp $
+# $Id: Info.pm,v 1.116 2004/05/06 02:32:28 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -22,6 +22,7 @@ use Slim::Formats::MP3;
 use Slim::Formats::Ogg;
 use Slim::Formats::Wav;
 use Slim::Formats::WMA;
+use Slim::Formats::Musepack;
 use Slim::Formats::Shorten;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
@@ -132,6 +133,20 @@ my $DBVERSION = 7;
 my %artworkCache = ();
 my $artworkDir;
 my %lastFile;
+
+# Hash for tag function per format
+my %tagFunctions = (
+			'mp3' => \&Slim::Formats::MP3::getTag
+			,'mp2' => \&Slim::Formats::MP3::getTag
+			,'ogg' => \&Slim::Formats::Ogg::getTag
+			,'flc' => \&Slim::Formats::FLAC::getTag
+			,'wav' => \&Slim::Formats::Wav::getTag
+			,'aif' => \&Slim::Formats::AIFF::getTag
+			,'wma' => \&Slim::Formats::WMA::getTag
+			,'mov' => \&Slim::Formats::Movie::getTag
+			,'shn' => \&Slim::Formats::Shorten::getTag
+			,'mpc' => \&Slim::Formats::Musepack::getTag
+		);
 
 # if we don't have storable, then stub out the cache routines
 
@@ -2060,22 +2075,8 @@ sub readTags {
 			}
 
 			# Extract tag and audio info per format
-			if ($type =~ /^mp[23]$/) {
-				$tempCacheEntry = Slim::Formats::MP3::getTag($filepath);
-			} elsif ($type eq "ogg") {
-				$tempCacheEntry = Slim::Formats::Ogg::getTag($filepath);
-			} elsif ($type eq "flc") {
-				$tempCacheEntry = Slim::Formats::FLAC::getTag($filepath);
-			} elsif ($type eq "wav") {
-				$tempCacheEntry = Slim::Formats::Wav::getTag($filepath);
-			} elsif ($type eq "aif") {
-				$tempCacheEntry = Slim::Formats::AIFF::getTag($filepath);
-			} elsif ($type eq "wma") {
-				$tempCacheEntry = Slim::Formats::WMA::getTag($filepath);
-			} elsif ($type eq "mov") {
-				$tempCacheEntry = Slim::Formats::Movie::getTag($filepath);
-			} elsif ($type eq "shn") {
-				$tempCacheEntry = Slim::Formats::Shorten::getTag($filepath);
+			if (exists $tagFunctions{$type}) {
+				$tempCacheEntry = &{$tagFunctions{$type}}($filepath);
 			}
 			$::d_info && !defined($tempCacheEntry) && Slim::Utils::Misc::msg("Info: no tags found for $filepath\n");
 
