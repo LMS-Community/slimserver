@@ -162,7 +162,7 @@ sub volume {
 	my $newvolume = shift;
 
 	my $volume = $client->Slim::Player::Client::volume($newvolume, @_);
-	if ($newvolume) {
+	if (defined($newvolume)) {
 		my ($right_level, $left_level);
 	    	$right_level = $left_level = int(0x80 * (($volume / $client->maxVolume) ** 2));
 		my $data = pack('NN', $left_level, $right_level);
