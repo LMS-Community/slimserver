@@ -56,31 +56,39 @@ sub strings { return '
 PLUGIN_SCREENSAVER_VISUALIZER
 	DE	Visualizer Bildschirmschoner
 	EN	Visualizer Screensaver
+	ES	Salvapantallas de Visualizador
 
 PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
 	DE	Benötigt Squeezebox2
 	EN	Needs Squeezebox2
+	ES	Requiere Squeezebox2
 
 PLUGIN_SCREENSAVER_VISUALIZER_SPECTRUM_ANALYZER
 	EN	Spectrum Analyzer
+	ES	Analizador de Espectro
 
 PLUGIN_SCREENSAVER_VISUALIZER_ANALOG_VUMETER
 	EN	Analog VU Meter
+	ES	VUmetro análogo
 
 PLUGIN_SCREENSAVER_VISUALIZER_DIGITAL_VUMETER
 	EN	Digital VU Meter
+	ES	VUmetro digital
 
 PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
 	DE	RIGHT drücken zum Aktivieren des Bildschirmschoners
 	EN	Press -> to enable this screensaver 
+	ES	Presionar -> para activar este salvapantallas
 
 PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
 	DE	Bildschirmschoner aktiviert
 	EN	This screensaver is enabled
+	ES	Este salvapantallas está activo
 
 PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	DE	Standard Bildschirmschoner
 	EN	Default screenaver
+	ES	Salvapantallas por defecto
 '};
 
 ##################################################

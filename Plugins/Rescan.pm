@@ -276,42 +276,52 @@ __DATA__
 PLUGIN_RESCAN_MUSIC_LIBRARY
 	DE	Musikverzeichnis erneut durchsuchen
 	EN	Rescan Music Library
+	ES	Recopilar nuevamente la Colección Musical
 	FR	Répertorier musique
 	
 PLUGIN_RESCAN_RESCANNING
 	DE	Server durchsucht Verzeichnisse...
 	EN	Server now rescanning...
+	ES	El server está recopilando...
 	FR	En cours...
 
 PLUGIN_RESCAN_PRESS_PLAY
 	DE	Drücke Play, um Durchsuchen zu starten
 	EN	Press PLAY to rescan now.
+	ES	Presionar PLAY para recopilar ahora.
 
 PLUGIN_RESCAN_TIMER_NAME
 	DE	Automatisches Durchsuchen 
 	EN	Rescan Timer
+	ES	Timer de Recopilación
 
 PLUGIN_RESCAN_TIMER_SET
 	DE	Startzeit für erneutes Durchsuchen
 	EN	Set Rescan Time
+	ES	Establecer Horario de Recopilación
 
 PLUGIN_RESCAN_TIMER_TURNING_OFF
 	DE	Automatisches Durchsuchen deaktivieren...
 	EN	Turning rescan timer off...
+	ES	Apagando el timer de recopilación...
 
 PLUGIN_RESCAN_TIMER_TURNING_ON
 	DE	Automatisches Durchsuchen aktivieren...
 	EN	Turning rescan timer on...
+	ES	Encendiendo el timer de recopilación...
 
 PLUGIN_RESCAN_TIMER_ON
 	DE	Automatisches Durchsuchen EIN
 	EN	Rescan Timer ON
+	ES	Timer de Recopilación ENCENDIDO
 
 PLUGIN_RESCAN_TIMER_DESC
 	DE	Sie können ihre Musiksammlung automatisch alle 24h durchsuchen lassen. Setzen Sie den Zeitpunkt, und schalten Sie die Automatik ein oder aus.
 	EN	You can choose to allow a scheduled rescan of your music library every 24 hours.  Set the time, and set the Rescan Timer to ON to use this feature.
+	ES	Se puede elegir tener una recopilación programada de la colección musical cada 24 horas. Establecer la hora, y poner el Timer de Recopilación en ENCENDIDO para utilizar esta característica.
 
 PLUGIN_RESCAN_TIMER_OFF
 	DE	Automatisches Durchsuchen AUS
 	EN	Rescan Timer OFF
+	ES	Timer de Recopilación APAGADO
 

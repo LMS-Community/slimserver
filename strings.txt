@@ -283,7 +283,7 @@ SCREENSAVERS
 
 RADIO
 	EN	Internet Radio
-	ES	Radio de Internet
+	ES	Radio por Internet
 	FR	Radio Internet
 	JP	インターネットラジオ
 	SE	Internetradio
@@ -1985,22 +1985,27 @@ SETUP_MP3SILENCEPRELUDE_DESC
 SETUP_TRANSITIONTYPE
 	DE	Überblendung
 	EN	Transition
+	ES	Transición
 
 SETUP_TRANSITIONTYPE_DESC
 	DE	Die Squeezebox2 kann zwischen Liedern überblenden, entweder per Crossfading beider Songs, oder indem der eine aus-, der andere eingeblendet wird. Wählen Sie die Art der Überblendung.
 	EN	Squeezebox2 can gradually transition between songs, either by crossfading between them, or by fading songs in or out. Choose the type of transition you would like.
+	ES	Squeezebox2 puede hacer hacer una transición gradual entre canciones, ya sea haciendo un crossfading entre ellas, o haciendo fade in o fade out en las canciones. Elegir el tipo de transición que se desea.
 
 SETUP_TRANSITIONDURATION
 	DE	Dauer der Überblendung
 	EN	Transition duration
+	ES	Duración de la transición
 
 SETUP_TRANSITIONDURATION_DESC
 	DE	Definieren Sie die Dauer der Überblendung zwischen Songs (in Sekunden).
 	EN	Enter the amount of time to take to transition between songs, in seconds.
+	ES	Ingresar la cantidad de tiempo que se utilizará para la transición entre canciones, en segundos.
 
 TRANSITION_NONE
 	DE	Keine
 	EN	None
+	ES	Ninguna
 
 TRANSITION_CROSSFADE
 	EN	Crossfade
@@ -2016,6 +2021,7 @@ TRANSITION_FADE_OUT
 TRANSITION_FADE_IN_OUT
 	DE	Ein- und Ausblenden
 	EN	Fade in and out
+	ES	Fade in y Fade out
 
 SETUP_TITLEFORMATCURR
 	DE	Aktuelles Titelformat
@@ -4988,7 +4994,7 @@ SETUP_REMOTESTREAMTIMEOUT_OK
 SETUP_REMOTESTREAMTIMEOUT_DESC
 	DE	Sie können die Dauer definieren, während der SlimServer versuchen wird, Internet Radio Stationen oder andere Quelle zu erreichen. Geben Sie die Wartezeit in Sekunden an.
 	EN	You can set the length of time that SlimServer will try to connect to an internet radio station or other source before giving up. Enter the amount of time, in seconds, below.
-	ES	Se puede establecer el tiempo de espera durante el cual el SlimServer intentará conectarse a la estación de radio de Internet u otra fuente , antes de darse por vencido. Ingrese la duración de ese intervalo, en segundos, debajo.
+	ES	Se puede establecer el tiempo de espera durante el cual el SlimServer intentará conectarse a la estación de radio por Internet u otra fuente , antes de darse por vencido. Ingrese la duración de ese intervalo, en segundos, debajo.
 	FR	Vous pouvez régler la durée maximale pendant laquelle le SlimServer tentera de se connecter à une radio internet ou à une autre source distante.  Entrez une valeur en secondes ci-dessous.
 	NO	Du kan oppgi antall sekunder som SlimServer skal forsøke å få kontakt med internett radiostasjonen eller andre stream kilder, før den gir opp.
 	SE	Du kan ange antal sekunder som Slimserver ska försöka etablera kontakt med internetradio-station eller andra strömmande källor, innan den ger upp.
@@ -8067,6 +8073,7 @@ MOODLOGIC_MIX
 
 MUSICMAGIC_MIX
 	EN	MusicMagic Mix
+	ES	Mezcla MusicMagic
 
 MOODLOGIC_INSTANT_MIX
 	EN	MoodLogic Instant Mix
@@ -8208,7 +8215,7 @@ FAQ
 HELP_RADIO
 	DE	Internet Radio
 	DK	Internetradio-
-	EN	Internet Radio
+	ES	Radios por Internet
 	ES	Radios de Internet
 	FR	Radios Internet
 	JP	インターネットラジオとプレイリストファイル
@@ -8653,7 +8660,7 @@ COLON
 SETUP_GROUP_RADIO_DESC
 	DE	SlimServer unterstützt Internet Radio durch verschiedene Radiostationen. Sie können auf dieser Seite diese Unterstützung für einige Anbieter konfigurieren, inklusive der Angabe von Benutzername und Passwort für Premium-Zugänge.
 	EN	SlimServer includes support for Internet Radio through several radio providers. You can configure support for some of these providers, including entering your username and password for premium access, on this page. To save your changes, click Change.
-	ES	Slimserver incluye soporte para Radios de Internet de varios proveedores de radio. Se puede configurar el soporte para algunos de estos proveedodes, incluyendo el ingreso de usuario y contraseña para servicios Premium, en esta página. Para guardar los cambio, haga click en Cambiar.
+	ES	Slimserver incluye soporte para Radios por  Internet de varios proveedores de radio. Se puede configurar el soporte para algunos de estos proveedodes, incluyendo el ingreso de usuario y contraseña para servicios Premium, en esta página. Para guardar los cambio, haga click en Cambiar.
 	JP	SlimServer は複数の無線の提供者を通してインターネ ットのラジオのためのサポートを含んでいる。あなたはこのペー ジの優れたアクセスのためのあなたのusername そしてパスワード を, 入れることを含むこれらの提供者のいくつかのためのサポー トを, 形成できる。あなたの変更を救うため, かちりと言う音の 変更。
 
 SETUP_SCROLLPIXELS
@@ -8669,14 +8676,17 @@ SETUP_SCROLLPIXELS_DESC
 ANY_GENRE
 	DE	Beliebige Stilrichtung
 	EN	Any Genre
+	ES	Cualquier género
 
 ANY_VALUE
 	DE	Beliebiger Wert
 	EN	Any Value
+	ES	Cualquier valor
 
 ANY_TYPE
 	DE	Beliebiges Format
 	EN	Any File Format
+	ES	Cualquier formato de archivo
 
 WMA_NO_CONVERT_CMD
 	DE	Fehler beim WMA Konvertieren - bitte Dateityp überprüfen

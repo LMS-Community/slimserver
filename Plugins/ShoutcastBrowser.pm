@@ -1492,18 +1492,22 @@ __DATA__
 PLUGIN_SHOUTCASTBROWSER_MODULE_NAME
 	EN	SHOUTcast Internet Radio
 	DE	SHOUTcast Internet Radio
+	ES	Radio por Internet SHOUTcast
 
 PLUGIN_SHOUTCASTBROWSER_GENRES
 	EN	SHOUTcast Internet Radio
 	DE	SHOUTcast Musikstile
+	ES	Radio por Internet SHOUTcast
 
 PLUGIN_SHOUTCASTBROWSER_CONNECTING
 	EN	Connecting to SHOUTcast...
 	DE	Verbinde mit der SHOUTcast...
+	ES	Conectando a SHOUTcast...
 
 PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
 	EN	Error: SHOUTcast web site not available
 	DE	Fehler: SHOUTcast Web-Seite nicht verfügbar
+	ES	Error: el sitio web de SHOUTcast no está disponible
 
 PLUGIN_SHOUTCASTBROWSER_SHOUTCAST
 	EN	SHOUTcast
@@ -1512,154 +1516,192 @@ PLUGIN_SHOUTCASTBROWSER_SHOUTCAST
 PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS
 	EN	All Streams
 	DE	Alle Streams
+	ES	Todos los streams
 
 PLUGIN_SHOUTCASTBROWSER_NONE
 	EN	None
 	DE	Keine
+	ES	Ninguno
 
 PLUGIN_SHOUTCASTBROWSER_BITRATE
 	EN	Bitrate
 	DE	Bitrate
+	ES	Tasa de bits
 
 PLUGIN_SHOUTCASTBROWSER_KBPS
 	EN	kbps
 	DE	kbps
 
 PLUGIN_SHOUTCASTBROWSER_RECENT
-	EN	Recently played
 	DE	Kürzlich gehört
+	EN	Recently played
+	ES	Recientemente escuchado
 
 PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR
 	EN	Most Popular
 	DE	Populäre Streams
+	ES	Más Popular
 
 PLUGIN_SHOUTCASTBROWSER_MISC
 	EN	Misc. genres
 	DE	Diverse Stile
+	ES	Géneros misceláneos
 
 PLUGIN_SHOUTCASTBROWSER_TOO_SOON
 	EN	Try again in a minute
 	DE	Versuche es in einer Minute wieder
+	ES	Volver a intentar en un minuto
 
 PLUGIN_SHOUTCASTBROWSER_SORTING
 	EN	Sorting streams ...
 	DE	Sortiere Streams...
+	ES	Ordenando streams...
 
 SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER
 	EN	SHOUTcast Internet Radio
+	ES	Radio por Internet SHOUTcast
 
 SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER_DESC
 	EN	Browse SHOUTcast list of Internet Radio streams.  Hit rewind after changing any settings to reload the list of streams.
 	DE	Blättere durch die Liste der SHOUTcast Internet Radiostationen. Drücke nach jedem Einstellungswechsel REW, um die Liste neu zu laden.
+	ES	Recorrer la lista de streams de Radio por Internet de  SHOUTcast. Presionar rewind después de cambiar la configuración, para recargar la lista de streams.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_HOW_MANY_STREAMS
 	EN	Number of Streams
 	DE	Anzahl Streams
+	ES	Número de Streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_HOW_MANY_STREAMS_DESC
 	EN	How many streams to get.  Default is 300, maximum is 2000.
 	DE	Anzahl aufzulistender Streams (Radiostationen). Voreinstellung ist 300, das Maximum 2000.
+	ES	Cuántos streams traer. Por defecto es 300, máximo es 2000.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_PRIMARY_CRITERION
 	EN	Main Sort Criterion for Genres
 	DE	Haupt Sortierkriterium für Musikstile
+	ES	Criterio principal  para Ordenar por Géneros
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_PRIMARY_CRITERION_DESC
 	EN	Primary criterion for sorting genres.
 	DE	Erstes Kriterium für die Sortierung der Musikstile
+	ES	Criterio principal  para Ordenar por Géneros
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_SECONDARY_CRITERION
 	EN	Other Sort Criterion for Genres
 	DE	Weiteres Sortierkriterium für Musikstile
+	ES	Otros Criterios de Búsqueda para Géneros
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_SECONDARY_CRITERION_DESC
 	EN	Secondary criterion for sorting genres, if the primary is equal.
 	DE	Das zweite Sortierkriterium für Musikstile, falls das erste mehrere Vorkommen hat.
+	ES	Segundo Criterio para ordenar por géneros, si el principal es igual.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_PRIMARY_CRITERION
 	EN	Main Sort Criterion for Streams
 	DE	Haupt Sortierkriterium für Streams
+	ES	Criterio principal para ordenar streams.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_PRIMARY_CRITERION_DESC
 	EN	Primary criterion for sorting streams.
 	DE	Erstes Kriterium für die Sortierung der Streams (Radiostationen)
+	ES	Criterio principal para ordenar streams.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_SECONDARY_CRITERION
 	EN	Other Sort Criterion for Streams
 	DE	Weiteres Sortierkriterium für Streams
+	ES	Otros Criterios de Ordenamiento para Streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_SECONDARY_CRITERION_DESC
 	EN	Secondary criterion for sorting streams, if the primary is equal.
 	DE	Das zweite Sortierkriterium für Streams (Radiostationen), falls das erste mehrere Vorkommen hat.
+	ES	Segundo criterio para ordenar streams, si el principal es igual.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MIN_BITRATE
 	EN	Minimum Bitrate
 	DE	Minimale Bitrate
+	ES	Mínima Tasa de Bits
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MIN_BITRATE_DESC
 	EN	Minimum Bitrate in which you are interested (0 for no limit).
 	DE	Minimal erwünschte Bitrate (0 für unbeschränkt).
+	ES	Mínima Tasa de Bits que nos interesa (0 para no tener límite).
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_BITRATE
 	EN	Maximum Bitrate
 	DE	Maximale Bitrate
+	ES	Máxima Tasa de Bits
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_BITRATE_DESC
 	EN	Maximum Bitrate in which you are interested (0 for no limit).
 	DE	Maximal erwünschte Bitrate (0 für unbeschränkt).
+	ES	Máxima Tasa de Bits que nos interesa (0 para no tener límite).
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT
 	EN	Recent Streams
 	DE	Zuletzt gehörte Streams
+	ES	Streams recientes
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT_DESC
 	EN	Maximum number of recently played streams to remember.
 	DE	Anzahl zu merkender Streams (Radiostationen)
+	ES	Máximo número a recordar de streams escuchados recientemente.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR
 	EN	Most Popular
 	DE	Populäre Streams
+	ES	Más Popular
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR_DESC
 	EN	Number of streams to include in the category of most popular streams, measured by the total of all listeners at all bitrates.
 	DE	Die Anzahl Streams, die unter "Populäre Streams" aufgeführt werden sollen. Die Beliebtheit misst sich an der Anzahl Hörer aller Bitraten.
+	ES	Número de streams a incluir en la categoría de streams más populares, medida por el total de oyentes en todas las tasas de bits.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_CUSTOM_GENRES
 	EN	Custom Genre Definitions
 	DE	Eigene Musikstil-Definitionen
+	ES	Definiciones Personalizadas de Géneros
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_CUSTOM_GENRES_DESC
 	EN	You can define your own SHOUTcast categories by indicating the name of a custom genre definition file here.  Each line in this file defines a category per line, and each line consists of a series of terms separated by whitespace.  The first term is the name of the genre, and each subsequent term is a pattern associated with that genre.  If any of these patterns matches the advertised genre of a stream, that stream is considered to belong to that genre.  You may use an underscore to represent a space within any of these terms, and in the patterns, case does not matter.
 	DE	Sie können eigene SHOUTcast-Kategorien definieren, indem Sie hier eine Datei mit den eigenen Musikstil-Definitionen angeben. Jede Zeile dieser Datei bezeichnet eine Kategorie, und besteht aus einer Serie von Ausdrücken, die durch Leerzeichen getrennt sind. Der erste Ausdruck ist der Name des Musikstils, alle folgenden bezeichnen ein Textmuster, das mit diesem Musikstil assoziiert wird. Jeder Stream, dessen Stil eines dieser Textmuster enthält, wird diesem Musikstil zugeordnet. Leerzeichen innerhalb eines Begriffs können durch Unterstriche (_) definiert werden. Gross-/Kleinschreibung ist irrelevant.
+	ES	Se pueden definir categorías propias para SHOUTcast, indicando el nombre de un archivo de definición de géneros propio aquí. Cada línea de este archivo define una categoría, y cada línea consiste de una serie de términos separados por espacions en blanco. El primer término es el nombre del género, y cada término subsiguiente es un patrón asociado a ese género. Si cualquiera de estos patrones concuerda con el género promocionado de un stream, se considerará que ese stream pertenece a ese género. Se puede utilizar un guión bajo (un derscore) para representar un espacio dentro de estos términos, y no hay distinción de mayúsculas y minúsculas en los patrones.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE
 	EN	Alphabetical (reverse)
 	DE	Alphabetisch (umgekehrte Reihenfolge)
+	ES	Alfabético (reverso)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS
 	EN	Number of streams
 	DE	Anzahl Streams
+	ES	Número de streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS_REVERSE
 	EN	Number of streams (reverse)
 	DE	Anzahl Streams (umgekehrte Reihenfolge)
+	ES	Número de Streams (reverso)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_DEFAULT_ALPHA
 	EN	Default (alphabetical)
 	DE	Standard (alphabetisch)
+	ES	Por Defecto ( alfabético)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS
 	EN	Number of listeners
 	DE	Anzahl Hörer
+	ES	Número de oyentes
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS_REVERSE
 	EN	Number of listeners (reverse)
 	DE	Anzahl Hörer (umgekehrte Reihenfolge)
+	ES	Número de oyentes (reverso)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD
 	EN	Order of definition
 	DE	Definitions-Reihenfolge
+	ES	Orden de definición
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD_REVERSE
 	EN	Order of definition (reverse)
 	DE	Definitions-Reihenfolge (umgekehrt)
+	ES	Orden de definición (reverso)
