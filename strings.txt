@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.76 2004/04/04 21:20:07 kdf Exp $
+# $Id: strings.txt,v 1.77 2004/04/05 15:05:16 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1376,7 +1376,7 @@ SETUP_TITLEFORMAT
 	SE	Titelformat
 
 SETUP_TITLEFORMAT_DESC
-		EN	You can customize the song title display on your player by choosing the format you'd like to see from the menus below. These choices available below will be available in Settings -> Song Title Format on the player.  Click on a button in the "Current" column to change the current format. When you are done, press the "Change" button to save your choices.
+	EN	You can customize the song title display on your player by choosing the format you'd like to see from the menus below. These choices available below will be available in Settings -> Song Title Format on the player.  Click on a button in the "Current" column to change the current format. When you are done, press the "Change" button to save your choices.
 
 SETUP_ITUNESPLAYLISTFORMAT
 	EN	iTunes Playlist Format
