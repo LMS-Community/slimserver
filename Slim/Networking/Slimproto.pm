@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.3 2003/07/31 00:17:04 sadams Exp $
+# $Id: Slimproto.pm,v 1.4 2003/08/02 20:40:59 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -190,7 +190,7 @@ GETMORE:
 	my $bytes_read = $s->sysread($indata, $bytes_remaining);
 	$inputbuffer{$s}.=$indata;
 
-	if ($bytes_read == 0) {
+	if (!defined($bytes_read) || ($bytes_read == 0)) {
 #		$::d_protocol && msg("Slimproto half-close from client: ".$peeraddr{$s}."\n");
 #		slimproto_close($s);
 #		return;

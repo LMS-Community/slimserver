@@ -161,7 +161,15 @@ sub idle {
 				}
 
 			} elsif ($msg =~/^d/) {
-				Slim::Network::Discovery::gotDiscoveryRequest($sock, $clientpaddr);
+				# Discovery request: note that slimp3 sends deviceid and revision in the discovery
+				# request, but the revision is wrong (v 2.2 sends revision 1.1). Oops. 
+				# also, it does not send the MAC address until the [h]ello packet.
+				# Squeezebox sends all fields correctly.
+
+				my ($msgtype, $deviceid, $revision, @mac) = unpack 'axCCxxxxxxxxH2H2H2H2H2H2', $msg;
+				my $mac = join(':', @mac);
+				Slim::Network::Discovery::gotDiscoveryRequest($sock, $clientpaddr, $deviceid, $revision, $mac);
+
 			# Playlist::executecommand can be accessed over the UDP port
 			} elsif ($msg=~/^executecommand\((.*)\)$/) {
 				my $ecArgs=$1;
