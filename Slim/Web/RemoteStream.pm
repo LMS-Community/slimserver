@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.14 2004/01/19 22:48:30 dean Exp $
+# $Id: RemoteStream.pm,v 1.15 2004/01/21 02:11:33 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ sub openRemoteStream {
 
 		PeerAddr  => "$server:$port",
  		LocalAddr => $main::localStreamAddr,
- 		#Timeout   => Slim::Utils::Prefs::get('remotestreamtimeout')
+ 		Timeout   => Slim::Utils::Prefs::get('remotestreamtimeout')
 
 	) || do {
 
