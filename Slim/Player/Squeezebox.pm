@@ -81,6 +81,7 @@ sub play {
 sub resume {
 	my $client = shift;
 	$client->stream('u');
+	$client->SUPER::resume();
 	return 1;
 }
 
@@ -90,6 +91,7 @@ sub resume {
 sub pause {
 	my $client = shift;
 	$client->stream('p');
+	$client->SUPER::pause();
 	return 1;
 }
 

@@ -55,7 +55,8 @@ my %clientHash = ();
 	# mp3filehandleIsSocket			bool		becase Windows gets confused if you select on a regular file.
 	# chunks						array		array of references to chunks of data to be sent to client.
 	# songStartStreamTime			float		time offset at which we started streaming this song
-	# remoteStreamStartTime			int			time we began playing the remote stream
+	# remoteStreamStartTime			float		time we began playing the remote stream
+	# pauseTime						float		time that we started pausing
 
 # client variables for shoutcast meta information 
 	# shoutMetaPointer				int			shoutcast metadata stream pointer
@@ -258,6 +259,7 @@ sub new {
 	$client->[82] = undef; # browseMenuSelection
 	$client->[83] = undef; # settingsSelection
 	$client->[84] = undef; # songBytes
+	$client->[85] = undef; # pauseTime
 
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -466,6 +468,19 @@ sub needsUpgrade {
 sub signalStrength {
 	return undef;
 }
+
+sub pause {
+	my $client = shift;
+	$client->pauseTime(Time::HiRes::time());
+}
+
+sub resume {
+	my $client = shift;
+	$client->remoteStreamStartTime($client->remoteStreamStartTime() + (Time::HiRes::time() - $client->pauseTime()));
+	$client->pauseTime(undef);
+}
+	
+# data accessors
 
 sub id {
 	my $r = shift;
@@ -816,6 +831,10 @@ sub settingsSelection {
 sub songBytes {
 	my $r = shift;
 	@_ ? ($r->[84] = shift) : $r->[84];
+}
+sub pauseTime {
+	my $r = shift;
+	@_ ? ($r->[85] = shift) : $r->[85];
 }
 
 1;

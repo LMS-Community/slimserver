@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.23 2003/12/29 07:06:05 daniel Exp $
+# $Id: Playlist.pm,v 1.24 2004/01/05 04:45:55 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -206,11 +206,6 @@ sub currentSongLines {
 
 	my $overlay1 = "";
 
-	if ($::d_usage) {
-		$overlay1 = $client->usage() ? " " . int($client->usage() * 10) : "";
-		$client->usage() && msg($client->id() . " Usage: ". int($client->usage() * 100) . "%\n");
-	}
-	
 	my $playlistlen = Slim::Player::Playlist::count($client);
 
 	if ($playlistlen < 1) {

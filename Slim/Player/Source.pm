@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.46 2003/12/29 06:52:01 daniel Exp $
+# $Id: Source.pm,v 1.47 2004/01/05 04:45:56 dean Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -150,9 +150,10 @@ sub songTime {
 	if ($client->mp3filehandleIsSocket()) {
 
 		my $startTime = $client->remoteStreamStartTime();
-
+		my $endTime = $client->pauseTime() || Time::HiRes::time();
+		
 		if ($startTime) {
-			return Time::HiRes::time() - $startTime;
+			return $endTime - $startTime;
 		} else {
 			return 0;
 		}
@@ -641,8 +642,8 @@ sub openSong {
 			if (Slim::Music::Info::isSong($fullpath)) {
 				$client->mp3filehandle($sock);
 				$client->mp3filehandleIsSocket(1);
-				$client->remoteStreamStartTime(time());
-
+				$client->streamformat(Slim::Music::Info::contentType($fullpath));
+				$client->remoteStreamStartTime(Time::HiRes::time());
 				defined(Slim::Utils::Misc::blocking($sock,0)) || die "Cannot set remote stream nonblocking";
 
 			# if it's one of our playlists, parse it...
@@ -764,7 +765,7 @@ sub openSong {
 				$client->mp3filehandle->open($fullCommand);
 				$client->mp3filehandleIsSocket(2);
 				
-				$client->remoteStreamStartTime(time());
+				$client->remoteStreamStartTime();
 				
 				$size = $duration * ($bitrate * 1000) / 8;
 				$offset = 0;
@@ -819,6 +820,7 @@ sub getCommand {
 	foreach my $checkformat ($client->formats()) {
 		$::d_source && msg("checking formats for: $type-$checkformat-$player-$clientid\n");
 		# TODO: match partial wildcards in IP addresses.
+		# todo: pre-check to see if the necessary  binaries are installed.
 		# use Data::Dumper; print Dumper(\%commandTable);
 		$command = $commandTable{"$type-$checkformat-$player-$clientid"};
 		if (defined($command)) {

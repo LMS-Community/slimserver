@@ -105,6 +105,7 @@ sub resume {
 	my $client = shift;
 	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
 	Slim::Networking::Stream::unpause($client);
+	$client->SUPER::resume();
 	return 1;
 }
 
@@ -114,6 +115,7 @@ sub resume {
 sub pause {
 	my $client = shift;
 	Slim::Networking::Stream::pause($client);
+	$client->SUPER::pause();
 	return 1;
 }
 

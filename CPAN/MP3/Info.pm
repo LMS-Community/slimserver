@@ -23,8 +23,8 @@ use vars qw(
 	all	=> [@EXPORT, @EXPORT_OK]
 );
 
-# $Id: Info.pm,v 1.5 2003/11/26 21:24:37 dean Exp $
-($REVISION) = ' $Revision: 1.5 $ ' =~ /\$Revision:\s+([^\s]+)/;
+# $Id: Info.pm,v 1.6 2004/01/05 04:45:55 dean Exp $
+($REVISION) = ' $Revision: 1.6 $ ' =~ /\$Revision:\s+([^\s]+)/;
 $VERSION = '1.01';
 
 =pod
@@ -515,6 +515,13 @@ sub get_mp3tag {
 							} elsif ($encoding eq "\000") {
 								my $u = Unicode::String::latin1($data);
 								$data = $u->utf8;
+							}
+						} else {
+							# Added: if the string starts with an UTF-16 little endian BOM, use a hack to convert to ASCII per best-effort
+							if( $data =~ s/^\xFF\xFE// ) {
+								$data = pack "C*", map { if($_>255) {$_=ord('?')}; $_ } unpack("v*", $data );
+							} elsif( $data =~ s/^\xFE\xFF// ) {
+								$data = pack "C*", map { if($_>255) {$_=ord('?')}; $_ } unpack("n*", $data );
 							}
 						}
 						$info{$v2_to_v1_names{$_}} = $data;
