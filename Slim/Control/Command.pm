@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.16 2003/11/14 03:22:02 grotus Exp $
+# $Id: Command.pm,v 1.17 2003/11/25 06:10:44 grotus Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -525,7 +525,7 @@ sub execute {
 					if ($newtreb < $Slim::Player::Client::minTreble) { $newtreb = $Slim::Player::Client::minTreble; }
 					Slim::Utils::Prefs::clientSet($client, "treble", $newtreb);
 					$client->treble($newtreb);
-					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newtreb, "treble",\&$client->treble);};
+					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newtreb, "treble",\&setTreble);};
 				}
 			} elsif ($p1 eq "bass") {
 				my $newbass;
@@ -543,7 +543,7 @@ sub execute {
 					if ($newbass < $Slim::Player::Client::minBass) { $newbass = $Slim::Player::Client::minBass; }
 					Slim::Utils::Prefs::clientSet($client, "bass", $newbass);
 					$client->bass($newbass);
-					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newbass, "bass",\&$client->bass);};
+					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newbass, "bass",\&setBass);};
 				}
 			}
 		} elsif ($p0 eq "display") {
@@ -619,6 +619,18 @@ sub setVolume {
 	my $client = shift;
 	my $volume = shift;
 	$client->volume($volume);
+}
+
+sub setBass {
+	my $client = shift;
+	my $bass = shift;
+	$client->bass($bass);
+}
+
+sub setTreble {
+	my $client = shift;
+	my $treble = shift;
+	$client->treble($treble);
 }
 
 sub setExecuteCallback {
