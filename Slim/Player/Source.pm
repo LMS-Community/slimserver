@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.109 2004/09/10 03:07:39 vidur Exp $
+# $Id: Source.pm,v 1.110 2004/09/13 05:08:04 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1180,7 +1180,7 @@ sub getConvertCommand {
 		}
 
 		# only finish if the rate isn't over the limit
-		last if ($command && $undermax);
+		last if ($command && underMax($client,$fullpath,$format));
 	}
 
 	if (!defined $command) {
