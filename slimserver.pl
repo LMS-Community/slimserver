@@ -432,15 +432,15 @@ sub start {
 	# If we're only scanning, just do that. 
 	if ($scanOnly) {
 		msg("Will only scan music library, then exit!\n");
-	
+
 		Slim::Music::Info::init();
 		Slim::Music::Import::startup();
 
 		# Run the scanner - but don't kill the CPU.
 		while (Slim::Music::Import::stillScanning()) {
 
+			Slim::Utils::Timers::checkTimers();
 			Slim::Utils::Scheduler::run_tasks();
-			Time::HiRes::sleep(0.05);
 		}
 
 		exit;

@@ -30,7 +30,7 @@ my $sline = -1;
 # Call any pending timers which have now elapsed.
 #
 sub checkTimers {
-	Slim::Networking::Protocol::readUDP();
+	Slim::Networking::Protocol::readUDP() unless $::scanOnly;
 
 	my $numtimers = (@timers);
 	my $now = Time::HiRes::time();
