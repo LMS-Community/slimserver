@@ -37,7 +37,16 @@ sub query {
 
 	for my $type (@types) {
 
-		push @data, [ $type, [$ds->find($queries{$type}->[0], { $queries{$type}->[1] => $search }, undef, $limit, 0)] ];
+		my $find = {
+			$queries{$type}->[1] => $search,
+		};
+
+		if (!Slim::Utils::Prefs::get('composerInArtists')) {
+
+                	$find->{'contributor.role'} = $Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'};
+		}
+
+		push @data, [ $type, [$ds->find($queries{$type}->[0], $find, undef, $limit, 0)] ];
 	}
 
 	return \@data;
