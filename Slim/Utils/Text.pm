@@ -32,7 +32,7 @@ sub matchCase {
 
 	# Upper case and fold latin1 diacritical characters into their plain versions, surprisingly useful.
 	$s =~ tr{abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅßŞÇ¢ĞÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜ×İàáâãäåşçèéêëìíîïñòóôõöøùúûüÿığ¡°}
-		{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAAABBCCDEEEEIIIINOOOOOOUUUUXYAAAAAABCEEEEIIIINOOOOOOUUUUYYD!o};
+		{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAAABBCCDEEEEIIIINOOOOOOUUUUXYAAAAAABCEEEEIIIINOOOOOOUUUUYYD!D};
 
 	# Turn Æ & æ into AE
 	# Silence perl 5.6 stupidity.
@@ -40,10 +40,12 @@ sub matchCase {
 
 		use utf8;
 		$s =~ s/[\x{C6}\x{E6}]/AE/go;
+		$s =~ s/[\x{B5}]/MU/go;
 
 	} else {
 
 		$s =~ s/[\x{C6}\x{E6}]/AE/go;
+		$s =~ s/[\x{B5}]/MU/go;
 	}
 
 	return $s;
