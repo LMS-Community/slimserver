@@ -60,7 +60,7 @@ sub volume {
 		# volume squared seems to correlate better with the linear scale.  
 		# I'm sure there's something optimal, but this is better.
 
-		my $level = sprintf('%X', 0xFFFFF - 0x7FFFF * ($volume ** 2));
+		my $level = sprintf('%05X', 0x80000 * ($volume ** 2));
 
 		$client->i2c(
 			 Slim::Hardware::mas3507d::masWrite('ll', $level)
@@ -89,7 +89,7 @@ sub volume {
 			# some clever tricks to combine the two gain controls.
 			#
 
-			my $level = sprintf('%X', 0xFFFFF - 0x7FFFF * (($volume * 40/40)**2));
+			my $level = sprintf('%05X', 0x80000 * (($volume * 40/40)**2));
 			$client->i2c(
 				Slim::Hardware::mas35x9::masWrite('out_LL', $level)
 				.Slim::Hardware::mas35x9::masWrite('out_RR', $level)
@@ -100,7 +100,7 @@ sub volume {
 			# or: leave the digital controls always at 0db and vary the main volume:
 			# much better for the analog outputs, but this does force the S/PDIF level to be fixed.
 
-			my $level = sprintf('%02X00', 0x73 * $volume**2);
+			my $level = sprintf('%02X00', 0x73 * $volume);
 
 			$client->i2c(
 				Slim::Hardware::mas35x9::masWrite('out_LL',  '80000')
