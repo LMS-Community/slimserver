@@ -98,7 +98,13 @@ sub open {
 		$::d_remotestream && msg("Couldn't set non-blocking on socket!\n");
 	};
 
-		$sock->connect(pack_sockaddr_in($port, inet_aton($server))) || do {
+	my $in_addr = inet_aton($server) || do {
+
+		Slim::Utils::Misc::msg("Couldn't resolve IP address for: $server\n");
+		return undef;
+	};
+
+	$sock->connect(pack_sockaddr_in($port, $in_addr)) || do {
 
 		my $errnum = 0 + $!;
 
