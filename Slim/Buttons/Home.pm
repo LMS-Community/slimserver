@@ -114,14 +114,14 @@ my %functions = (
 			Slim::Buttons::Common::pushMode($client, 'browse');
 			Slim::Buttons::Browse::loadDir($client, '__playlists', 'right', \@oldlines);
 		} elsif ($homeChoices[$client->homeSelection] eq 'SEARCH_FOR_ARTISTS') {
-			Slim::Buttons::SearchFor::searchFor($client, 'ARTISTS');
-			Slim::Buttons::Common::pushModeLeft($client, 'searchfor');
+			my %params = Slim::Buttons::Search::searchFor($client, 'ARTISTS');
+			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'},\%params);
 		} elsif ($homeChoices[$client->homeSelection] eq 'SEARCH_FOR_ALBUMS') {
-			Slim::Buttons::SearchFor::searchFor($client, 'ALBUMS');
-			Slim::Buttons::Common::pushModeLeft($client, 'searchfor');
+			my %params = Slim::Buttons::Search::searchFor($client, 'ALBUMS');
+			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'},\%params);
 		} elsif ($homeChoices[$client->homeSelection] eq 'SEARCH_FOR_SONGS') {
-			Slim::Buttons::SearchFor::searchFor($client, 'SONGS');
-			Slim::Buttons::Common::pushModeLeft($client, 'searchfor');
+			my %params = Slim::Buttons::Search::searchFor($client, 'SONGS');
+			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'},\%params);
 		} elsif ($homeChoices[$client->homeSelection] eq 'SEARCH') {
 			Slim::Buttons::Common::pushModeLeft($client, 'search');
 		} else {

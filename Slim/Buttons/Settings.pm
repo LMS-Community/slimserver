@@ -34,10 +34,10 @@ my %menuParams = (
 		,'overlayRef' => sub {return (undef,Slim::Display::Display::symbol('rightarrow'));}
 		,'overlayRefArgs' => ''
 	}
-	,catdir('settings','ALARM') => {
+	,'settings/ALARM' => {
 		'useMode' => 'alarm'
 	}
-	,catdir('settings','VOLUME') => {
+	,'settings/VOLUME' => {
 		'useMode' => 'INPUT.Bar'
 		,'header' => \&volumeHeader
 		,'onChange' => sub { 
@@ -46,7 +46,7 @@ my %menuParams = (
 		,'onChangeArgs' => 'CV'
 		,'initialValue' => sub { return $_[0]->volume();}
 	}
-	,catdir('settings','BASS') => {
+	,'settings/BASS' => {
 		'useMode' => 'INPUT.Bar'
 		,'header' => \&bassHeader
 		,'mid' => 50
@@ -54,7 +54,7 @@ my %menuParams = (
 		,'onChangeArgs' => 'CV'
 		,'initialValue' => sub { return $_[0]->bass();}
 	}
-	,catdir('settings','PITCH') => {
+	,'settings/PITCH' => {
 		'useMode' => 'INPUT.Bar'
 		,'header' => \&pitchHeader
 		,'min' => 80
@@ -65,7 +65,7 @@ my %menuParams = (
 		,'onChangeArgs' => 'CV'
 		,'initialValue' => sub { return $_[0]->pitch();}
 	}
-	,catdir('settings','TREBLE') => {
+	,'settings/TREBLE' => {
 		'useMode' => 'INPUT.Bar'
 		,'header' => \&trebleHeader
 		,'mid' => 50
@@ -73,7 +73,7 @@ my %menuParams = (
 		,'onChangeArgs' => 'CV'
 		,'initialValue' => sub { return $_[0]->treble();}
 	}
-	,catdir('settings','REPEAT') => {
+	,'settings/REPEAT' => {
 		'useMode' => 'INPUT.List'
 		,'listRef' => [0,1,2]
 		,'externRef' => ['REPEAT_OFF', 'REPEAT_ONE', 'REPEAT_ALL']
@@ -84,7 +84,7 @@ my %menuParams = (
 		,'onChangeArgs' => 'CV'
 		,'initialValue' => \&Slim::Player::Playlist::repeat
 	}
-	,catdir('settings','SHUFFLE') => {
+	,'settings/SHUFFLE' => {
 		'useMode' => 'INPUT.List'
 		,'listRef' => [0,1,2]
 		,'externRef' => [ 'SHUFFLE_OFF','SHUFFLE_ON_SONGS','SHUFFLE_ON_ALBUMS']
@@ -95,7 +95,7 @@ my %menuParams = (
 		,'onChangeArgs' => 'CV'
 		,'initialValue' => \&Slim::Player::Playlist::shuffle
 	}
-	,catdir('settings','TITLEFORMAT') => {
+	,'settings/TITLEFORMAT' => {
 		'useMode' => 'INPUT.List'
 		,'listRef' => undef # filled before changing modes
 		,'listIndex' => undef #filled before changing modes
@@ -105,7 +105,7 @@ my %menuParams = (
 		,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0],"titleFormatCurr",Slim::Buttons::Common::param($_[0],'listIndex')); }
 		,'onChangeArgs' => 'C'
 	}
-	,catdir('settings','TEXTSIZE') => {
+	,'settings/TEXTSIZE' => {
 		'useMode' => 'INPUT.List'
 		,'listRef' => undef #filled before changing modes
 		,'externRef' => sub {
@@ -120,7 +120,7 @@ my %menuParams = (
 		,'onChangeArgs' => 'CV'
 		,'initialValue' => sub { $_[0]->textSize();}
 	}
-	,catdir('settings','OFFDISPLAYSIZE') => {
+	,'settings/OFFDISPLAYSIZE' => {
 		'useMode' => 'INPUT.List'
 		,'listRef' => undef #filled before changing modes
 		,'externRef' => sub {
@@ -135,17 +135,17 @@ my %menuParams = (
 		,'onChangeArgs' => 'CV'
 		,'initialValue' => 'offDisplaySize'
 	}
-	,catdir('settings','INFORMATION') => {
+	,'settings/INFORMATION' => {
 		'useMode' => 'information'
 	}
-	,catdir('settings','SYNCHRONIZE') => {
+	,'settings/SYNCHRONIZE' => {
 		'useMode' => 'synchronize'
 	}
-	#,catdir('settings','PLAYER_NAME') => {
+	#,'settings/PLAYER_NAME' => {
 	#	'useMode' => 'INPUT.Text'
 		#add more params here after the rest is working
 	#}
-	,catdir('settings','SETUP_SCREENSAVER') => {
+	,'settings/SETUP_SCREENSAVER' => {
 		'useMode' => 'INPUT.List'
 		,'listRef' => undef
 		,'externRef' => undef
@@ -163,7 +163,7 @@ sub settingsExitHandler {
 	if ($exittype eq 'LEFT') {
 		Slim::Buttons::Common::popModeRight($client);
 	} elsif ($exittype eq 'RIGHT') {
-		my $nextmenu = catdir('settings',$current{$client});
+		my $nextmenu = 'settings/'.$current{$client};
 		if (exists($menuParams{$nextmenu})) {
 			my %nextParams = %{$menuParams{$nextmenu}};
 			if (($nextParams{'useMode'} eq 'INPUT.List' || $nextParams{'useMode'} eq 'INPUT.Bar')  && exists($nextParams{'initialValue'})) {
@@ -176,21 +176,21 @@ sub settingsExitHandler {
 				}
 				$nextParams{'valueRef'} = \$value;
 			}
-			if ($nextmenu eq catdir('settings','TITLEFORMAT')) {
+			if ($nextmenu eq 'settings/TITLEFORMAT') {
 				my @titleFormat = Slim::Utils::Prefs::clientGetArray($client,'titleFormat');
 				$nextParams{'listRef'} = \@titleFormat;
 				my @externTF = map {Slim::Utils::Prefs::getInd('titleFormat',$_)} @titleFormat;
 				$nextParams{'externRef'} = \@externTF;
 				$nextParams{'listIndex'} = Slim::Utils::Prefs::clientGet($client,'titleFormatCurr');	
 			}
-			if ($nextmenu eq catdir('settings','SETUP_SCREENSAVER')) {
+			if ($nextmenu eq 'settings/SETUP_SCREENSAVER') {
 				my %hash = %{&Slim::Buttons::Common::hash_of_savers};
 				my @modes = keys %hash;
 				my @names = values %hash;
 				$nextParams{'listRef'} = \@modes;
 				$nextParams{'externRef'} = \@names;
 			}
-			if ($nextmenu eq catdir('settings','TEXTSIZE') || $nextmenu eq catdir('settings','OFFDISPLAYSIZE')) {
+			if ($nextmenu eq 'settings/TEXTSIZE' || $nextmenu eq 'settings/OFFDISPLAYSIZE') {
 				my @text = (0..$client->maxTextSize);
 				$nextParams{'listRef'} = \@text;
 			}
@@ -228,7 +228,7 @@ sub setMode {
 	my $client = shift;
 	my $method = shift;
 	if ($method eq 'pop') {
-		Slim::Buttons::Common::popModeRight($client);
+		Slim::Buttons::Common::popMode($client);
 		return;
 	}
 

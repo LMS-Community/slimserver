@@ -1,6 +1,6 @@
 package Plugins::Snow;
 
-# $Id: Snow.pm,v 1.13 2004/08/28 04:58:23 dean Exp $
+# $Id: Snow.pm,v 1.14 2004/09/01 01:27:18 kdf Exp $
 # by Phil Barrett, December 2003
 # screensaver conversion by Kevin Deane-Freeman Dec 2003
 
@@ -23,7 +23,7 @@ use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.13 $,10);
+$VERSION = substr(q$Revision: 1.14 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_SNOW');}
 
@@ -259,7 +259,7 @@ sub setMode {
 	my $client = shift;
 	my $method = shift;
 	if ($method eq 'pop') {
-		Slim::Buttons::Common::popModeRight($client);
+		Slim::Buttons::Common::popMode($client);
 		return;
 	}
 

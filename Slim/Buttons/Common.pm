@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.39 2004/08/29 18:00:51 kdf Exp $
+# $Id: Common.pm,v 1.40 2004/09/01 01:27:18 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -262,16 +262,16 @@ my %functions = (
 			$jump = 'SETTINGS';
 			Slim::Buttons::Common::pushModeLeft($client, 'synchronize');
 		} elsif ($button eq 'menu_search_artist') {
-			Slim::Buttons::SearchFor::searchFor($client, 'ARTISTS');
-			Slim::Buttons::Common::pushMode($client, 'searchfor');
+			my %params = Slim::Buttons::Search::searchFor($client, 'ARTISTS');
+			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'},\%params);
 			$jump = 'SEARCH_FOR_ARTISTS';
 		} elsif ($button eq 'menu_search_album') {
-			Slim::Buttons::SearchFor::searchFor($client, 'ALBUMS');
-			Slim::Buttons::Common::pushMode($client, 'searchfor');
+			my %params = Slim::Buttons::Search::searchFor($client, 'ALBUMS');
+			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'},\%params);
 			$jump = 'SEARCH_FOR_ALBUMS';
 		} elsif ($button eq 'menu_search_song') {
-			Slim::Buttons::SearchFor::searchFor($client, 'SONGS');
-			Slim::Buttons::Common::pushMode($client, 'searchfor');
+			my %params = Slim::Buttons::Search::searchFor($client, 'SONGS');
+			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'},\%params);
 			$jump = 'SEARCH_FOR_SONGS';
 		} elsif ($button eq 'menu_browse_playlists' && Slim::Utils::Prefs::get('playlistdir')) {
 			Slim::Buttons::Common::pushMode($client, 'browse');
