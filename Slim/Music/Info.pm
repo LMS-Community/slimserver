@@ -46,7 +46,6 @@ our %suffixes = ();
 our %slimTypes = ();
 
 # Global caches:
-my %artworkCache = ();
 my $artworkDir   = '';
 
 # do we ignore articles?
@@ -1308,7 +1307,9 @@ sub updateArtworkCache {
 	my $file = shift;
 	my $cacheEntry = shift;
 
-	if (! Slim::Utils::Prefs::get('lookForArtwork')) { return undef};
+	unless (Slim::Utils::Prefs::get('lookForArtwork')) {
+		return undef;
+	}
 
 	my $artworksmall = $cacheEntry->{'THUMB'};
 	my $album = $cacheEntry->{'ALBUM'};
