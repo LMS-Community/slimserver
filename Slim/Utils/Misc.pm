@@ -114,7 +114,7 @@ sub findbin {
 	# directory per *nix OS.
 	my $arch = $Config::Config{'archname'};
 
-	   $arch =~ s/^(i[3456]86)/i386/;
+	   $arch =~ s/^i[3456]86-([^-]+).*$/i386-$1/;
 
 	my $path;
 	my @paths = (
