@@ -1,6 +1,6 @@
 package Slim::Buttons::ScreenSaver;
 
-# $Id: ScreenSaver.pm,v 1.22 2004/11/19 04:04:25 kdf Exp $
+# $Id: ScreenSaver.pm,v 1.23 2004/11/23 05:27:34 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -104,10 +104,10 @@ sub screenSaver {
 	} elsif (!$client->power()) {
 		$saver = Slim::Utils::Prefs::clientGet($client,'offsaver');
 		if (Slim::Buttons::Common::validMode($saver)) {
-			Slim::Buttons::Common::pushMode($client, $saver);
+			Slim::Buttons::Common::pushMode($client, $saver) unless $mode eq $saver;
 		} else {
 			$::d_plugins && msg("Mode ".$saver." not found, using default\n");
-			Slim::Buttons::Common::setMode($client,'off');
+			Slim::Buttons::Common::setMode($client,'off') unless $mode eq 'off';
 		}
 		$client->update();
 	} else {
