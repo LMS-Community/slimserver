@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.45 2004/01/02 23:32:21 dean Exp $
+# $Id: Info.pm,v 1.46 2004/01/10 12:22:46 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -544,7 +544,7 @@ sub cacheEntry {
 	
 	my $i = 0;
 	foreach my $key (@infoCacheItems) {
-		if ($cacheEntryArray->[$i]) {
+		if (defined $cacheEntryArray->[$i]) {
 			$cacheEntryHash->{$key} = $cacheEntryArray->[$i];
 		}
 		$i++;
