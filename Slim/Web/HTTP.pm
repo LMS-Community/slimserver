@@ -293,12 +293,10 @@ sub acceptHTTP {
 sub isaSkin {
 	my $name = shift;
 	my %skins = Slim::Web::Setup::skins();
-	my $skinlist = join '|',keys %skins;
-	if ($name =~ /^($skinlist)$/io) {
-		return $1;
-	} else {
-		return undef;
+	for my $skin (keys %skins) {
+		return $skin if $name =~ /^($skin)$/i;
 	}
+	return undef;
 }
 
 # Handle an HTTP request
