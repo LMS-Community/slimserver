@@ -1315,7 +1315,7 @@ sub buildPlaylist {
 		my $song = Slim::Player::Playlist::song($client, $listBuild->{'item'});
 
 		my $track = $ds->objectForUrl($song) || do {
-			$::d_info && Slim::Utils::Misc::msg("Couldn't retrieve objectForUrl: [$song] - skipping!\n");
+			Slim::Utils::Misc::msg("Couldn't retrieve objectForUrl: [$song] - skipping!\n");
 			$listBuild->{'item'}++;
 			$itemCount++;
 			next;
@@ -1442,7 +1442,10 @@ sub livesearch {
 		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
 	}
 
-	return unless length($query) > 2;
+	# Don't auto-search for 2 chars, but allow manual search. IE: U2
+	if (!$params->{'manualSearch'} && length($query) <= 2) {
+		return;
+	}
 
 	my $data = Slim::Music::LiveSearch->query($query);
 
