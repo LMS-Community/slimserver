@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.99 2004/05/05 18:04:31 dean Exp $
+# $Id: strings.txt,v 1.100 2004/05/06 04:42:14 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -146,6 +146,18 @@ SQUEEZEBOX_HOME
 	NO	Squeezebox Hjem
 	PT	Início Squeezebox
 	SE	Squeezebox huvudmeny
+
+SOFTSQUEEZE_HOME
+	DE	SoftSqueeze Hauptmenü
+	DK	SoftSqueeze Hovedmenu
+	EN	SoftSqueeze Home
+	ES	Inicio SoftSqueeze
+	FI	SoftSqueeze Alkuun
+	FR	Menu SoftSqueeze
+	NL	SoftSqueeze Hoofdmenu
+	NO	SoftSqueeze Hjem
+	PT	Início SoftSqueeze
+	SE	SoftSqueeze huvudmeny
 
 LIBRARY_CONTAINS
 	DE	Die Musikbibliothek enthält
@@ -715,12 +727,13 @@ ALARM_NOW_PLAYING
 	SE	Väckarklockan spelar nu
 
 SLIMP3
-	DE	SliMP3
 	EN	SLIMP3
 
 SQUEEZEBOX
-	DE	Squeezebox
 	EN	Squeezebox
+
+SOFTSQUEEZE
+	EN	SoftSqueeze
 
 WELCOME_TO_SLIMP3
 	DE	Willkommen bei SLIMP3
@@ -760,6 +773,19 @@ WELCOME_TO_SQUEEZEBOX
 	NO	Velkommen til Squeezebox
 	PT	Bem-vindo ao Squeezebox
 	SE	Välkommen till Squeezebox
+
+WELCOME_TO_SOFTSQUEEZE
+	DE	Willkommen bei SoftSqueeze
+	DK	Velkommen til SoftSqueeze
+	EN	Welcome to SoftSqueeze
+	ES	Bienvenido al SoftSqueeze
+	FI	SoftSqueeze Tervetuloa!
+	FR	Bienvenue sur la SoftSqueeze
+	IT	Benvenuto a SoftSqueeze
+	NL	Welkom bij SoftSqueeze
+	NO	Velkommen til SoftSqueeze
+	PT	Bem-vindo ao SoftSqueeze
+	SE	Välkommen till SoftSqueeze
 
 FREE_YOUR_MUSIC
 	DE	Befreie deine Musik!
@@ -5756,6 +5782,18 @@ SQUEEZEBOX_MUSIC_PLAYER
 	NO	Squeezebox Musik Player
 	PT	Leitor de Música Squeezebox
 	SE	Squeezebox musikspelare
+
+SOFTSQUEEZE_MUSIC_PLAYER
+	DE	SoftSqueeze Musik Player
+	DK	SoftSqueeze-afspiller
+	EN	SoftSqueeze Music Player
+	ES	SoftSqueeze Reproductor de Música
+	FI	SoftSqueeze soitin
+	FR	Platine SoftSqueeze
+	NL	SoftSqueeze Muziek Speler
+	NO	SoftSqueeze Musik Player
+	PT	Leitor de Música SoftSqueeze
+	SE	SoftSqueeze musikspelare
 
 BY
 	DE	von
