@@ -179,8 +179,8 @@ use vars qw($stdin);
 #
 # pref    - will set or query a prefs value
 # Example: 
-#		Request:  "01:02:03:04:05:06 pref mp3dir ?<cr>"
-#		Response: "01:02:03:04:05:06 pref mp3dir %2fUsers%2fdean%2fDesktop%2ftest%20music<cr>"
+#		Request:  "01:02:03:04:05:06 pref audiodir ?<cr>"
+#		Response: "01:02:03:04:05:06 pref audiodir %2fUsers%2fdean%2fDesktop%2ftest%20music<cr>"
 
 
 my $stdout;

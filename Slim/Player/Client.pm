@@ -51,8 +51,8 @@ my %clientHash = ();
 	# streamingsocket				filehandle streaming socket for http clients
 
 # client variables for song data
-	# mp3filehandle					filehandle	the currently open MP3 file OR TCP stream
-	# mp3filehandleIsSocket			bool		becase Windows gets confused if you select on a regular file.
+	# audioFilehandle					filehandle	the currently open MP3 file OR TCP stream
+	# audioFilehandleIsSocket			bool		becase Windows gets confused if you select on a regular file.
 	# chunks						array		array of references to chunks of data to be sent to client.
 	# songStartStreamTime			float		time offset at which we started streaming this song
 	# remoteStreamStartTime			float		time we began playing the remote stream
@@ -128,7 +128,7 @@ my %clientHash = ();
 	# pluginsSelection				int			index into plugins list
 
 # browse music folder mode
-	# pwd							string		present directory, relative to $mp3dir
+	# pwd							string		present directory, relative to $audiodir
 	# currentDirItem				int			the index of the currently selected item (in @dirItems)
 	# numberOfDirItems				int			size of @dirItems	 FIXME this is redundant, right?
 	# dirItems						strings		list of file names in the current directory
@@ -194,8 +194,8 @@ sub new {
 	$client->[15] = undef; # streamformat
 	$client->[16] = undef; # resync
 	$client->[17] = undef; # streamingsocket
-	$client->[18] = undef; # mp3filehandle
-	$client->[19] = 0; # mp3filehandleIsSocket
+	$client->[18] = undef; # audioFilehandle
+	$client->[19] = 0; # audioFilehandleIsSocket
 	$client->[20] = []; # chunks
 	$client->[21] = undef; # songStartStreamTime
 	$client->[22] = undef; # remoteStreamStartTime
@@ -538,11 +538,11 @@ sub streamingsocket {
 	my $r = shift;
 	@_ ? ($r->[17] = shift) : $r->[17];
 }
-sub mp3filehandle {
+sub audioFilehandle {
 	my $r = shift;
 	@_ ? ($r->[18] = shift) : $r->[18];
 }
-sub mp3filehandleIsSocket {
+sub audioFilehandleIsSocket {
 	my $r = shift;
 	@_ ? ($r->[19] = shift) : $r->[19];
 }

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.31 2004/01/13 00:36:12 dean Exp $
+# $Id: Prefs.pm,v 1.32 2004/01/13 02:43:21 daniel Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -20,15 +20,21 @@ my $prefsPath;
 my $prefsFile;
 my $canWrite;
 
-sub defaultMP3Dir {
+sub defaultAudioDir {
 	my $path;
-	if (($^O eq 'darwin')) {
+
+	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		$path = ($ENV{'HOME'} . '/Music');
+
 	} elsif (Slim::Utils::OSDetect::OS() eq 'win') {
+
 		if (!eval "use Win32::Registry;") {
+
 			my $folder;
+
 			if ($::HKEY_CURRENT_USER->Open("Software\\Microsoft\\Windows"
-								   ."\\CurrentVersion\\Explorer\\Shell Folders", $folder)) {
+				   ."\\CurrentVersion\\Explorer\\Shell Folders", $folder)) {
+
 				my ($type, $value);
 				if ($folder->QueryValueEx("My Music", $type, $value)) {
 					$path = $value;
@@ -41,9 +47,23 @@ sub defaultMP3Dir {
 	
 	if ($path && -d $path) {
 		return $path;
-	} else {	
+	} else {
 		return '';
 	}
+}
+
+sub defaultPlaylistDir {
+	my $path;
+
+	if (Slim::Utils::OSDetect::OS() eq 'mac') {
+		$path = $ENV{'HOME'} . '/Music/Playlists';
+	} elsif (Slim::Utils::OSDetect::OS() eq 'win') {
+		$path = $Bin . '/Playlists';
+	} else {
+		$path = '';
+	}
+
+	return $path;
 }
 
 # When adding new server and client preference options, put a default value for the option
@@ -54,8 +74,8 @@ sub defaultMP3Dir {
 my %DEFAULT = (
 	"httpport"				=> 9000
 	,"cliport"				=> 9090
-	,"mp3dir"				=> defaultMP3Dir()
-	,"playlistdir"			=> ((Slim::Utils::OSDetect::OS() eq 'mac') ? $ENV{'HOME'} . '/Music/Playlists' : ((Slim::Utils::OSDetect::OS() eq 'win') ? $Bin . '/Playlists' : ''))
+	,"music"				=> defaultAudioDir()
+	,"playlistdir"				=> defaultPlaylistDir()
 	,"skin"					=> "Default"
 	,"language"				=> "EN"
 	,"refreshRate"			=> 30
@@ -190,7 +210,7 @@ my %prefChange = (
 			Slim::Music::MusicFolderScan::startScan();
 		}
 	}
-	,'mp3dir' => sub {
+	,'audiodir' => sub {
 		my $newvalue = shift;
 		Slim::Music::MusicFolderScan::startScan();
 	}

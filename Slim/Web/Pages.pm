@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.31 2003/12/25 02:22:16 dean Exp $
+# $Id: Pages.pm,v 1.32 2004/01/13 02:43:21 daniel Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -112,8 +112,8 @@ sub browser {
 		}
 
 	} else {
-		if (!defined(Slim::Utils::Prefs::get("mp3dir"))) {
-			$::d_http && msg("no mp3dir, so we can't save a file!!\n");
+		if (!defined(Slim::Utils::Prefs::get("audiodir"))) {
+			$::d_http && msg("no audiodir, so we can't save a file!!\n");
 			return Slim::Web::HTTP::filltemplatefile("badpath.html", $paramsref);
 		}
 	}
@@ -811,7 +811,7 @@ sub addsonginfo {
 			}
 			$loc = Slim::Utils::Misc::fixPath($loc);
 			$songpath = $loc;
-			my $curdir = Slim::Utils::Prefs::get('mp3dir');
+			my $curdir = Slim::Utils::Prefs::get('audiodir');
 			if ($loc =~ /^\Q$curdir\E(.*)/) {
 				$url = '/music';
 				@path = splitdir($1);

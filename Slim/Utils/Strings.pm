@@ -1,6 +1,6 @@
 package Slim::Utils::Strings;
 
-# $Id: Strings.pm,v 1.8 2003/12/10 06:01:47 kdf Exp $
+# $Id: Strings.pm,v 1.9 2004/01/13 02:43:21 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -36,13 +36,13 @@ sub init {
 	my $usr_strings;
 	$Slim::Utils::Strings::failsafe_language = 'EN';
 
-      foreach my $dir (stringsDirs()) {
-              foreach my $stringfile (stringsFiles()) {
-                      load_strings_file(catdir($dir, $stringfile));
-              }
-      }
+	foreach my $dir (stringsDirs()) {
+		foreach my $stringfile (stringsFiles()) {
+			load_strings_file(catdir($dir, $stringfile));
+		}
+	}
 
-    foreach my $lang (keys(%languages)) {
+	foreach my $lang (keys(%languages)) {
 		$languages{$lang} = languageName($lang);
 	}
 }
@@ -75,9 +75,10 @@ sub stringsFiles {
 #
 sub load_strings_file {
 	my $strings_file = shift;
-      if (!-e $strings_file) {
-              return;
-      }
+
+	if (!-e $strings_file) {
+		return;
+	}
 		
 	open STRINGS, $strings_file || die "couldn't open $strings_file\n";
 	my $strings = join('', <STRINGS>);
@@ -200,7 +201,7 @@ sub setLanguage {
 }
 
 sub getLanguage {
-	return Slim::Utils::Prefs::get('language');
+	return Slim::Utils::Prefs::get('language') || failsafeLanguage();
 }
 
 sub languageName {

@@ -202,7 +202,7 @@ sub findMusicLibraryFile {
 		return $filename;
 	}		
 
-	$base = Slim::Utils::Prefs::get('mp3dir');
+	$base = Slim::Utils::Prefs::get('audiodir');
 
 	$filename = catdir($base, 'My Music', 'iTunes', 'iTunes Music Library.xml');
 
@@ -423,7 +423,7 @@ sub scanFunction {
 				my $url = $location;
 				if (Slim::Music::Info::isFileURL($url)) {
 					if (Slim::Utils::OSDetect::OS() eq 'unix') {
-						my $base = Slim::Utils::Prefs::get('mp3dir');
+						my $base = Slim::Utils::Prefs::get('audiodir');
 						$::d_itunes && msg("Correcting for Linux: $iBase to $base\n");
 						$url =~ s/$iBase/$base/isg;
 						$url = Slim::Web::HTTP::unescape($url);
@@ -484,7 +484,7 @@ sub scanFunction {
 			$iBase = getValue();
 			#$iBase = Slim::Utils::Misc::pathFromFileURL($iBase);
 			$::d_itunes && msg("iTunes: found the music folder: $iBase\n");
-#			Slim::Utils::Prefs::set("mp3dir", $musicPath);
+#			Slim::Utils::Prefs::set("audiodir", $musicPath);
 		} elsif ($curLine eq "<key>Tracks</key>") {
 			$inTracks = 1;
 			$inPlaylists = 0;

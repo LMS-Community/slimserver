@@ -29,8 +29,8 @@ sub startScan {
 		Slim::Music::Info::clearCache();
 	}
 
-	if (!defined(Slim::Utils::Prefs::get("mp3dir")) or not -d Slim::Utils::Prefs::get("mp3dir")) {
-		$::d_info && msg("Skipping pre-scan - mp3dir is undefined.\n");
+	if (!defined(Slim::Utils::Prefs::get('audiodir')) or not -d Slim::Utils::Prefs::get("audiodir")) {
+		$::d_info && msg("Skipping pre-scan - audiodir is undefined.\n");
 		return 0;
 	}
 
@@ -40,7 +40,7 @@ sub startScan {
 	}
 
 	$stillScanning=1;
-	Slim::Utils::Scan::addToList(\@dummylist, Slim::Utils::Prefs::get("mp3dir"), 1, 0, \&doneScanning, 0);
+	Slim::Utils::Scan::addToList(\@dummylist, Slim::Utils::Prefs::get('audiodir'), 1, 0, \&doneScanning, 0);
 }
 
 sub doneScanning {

@@ -59,7 +59,7 @@ SlimServer and see the complete documentation.
 
 Command Line Usage Information
 
-Usage: ./slimserver.pl [--mp3dir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
+Usage: ./slimserver.pl [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
           [--user <username>]
           [--group <groupname>]
           [--httpport <portnumber> [--httpaddr <listenip>]]
@@ -68,7 +68,7 @@ Usage: ./slimserver.pl [--mp3dir <dir>] [--daemon] [--stdio] [--logfile <logfile
           [--d_various]
 
     --help           => Show this usage information.
-    --mp3dir         => The path to a directory of your MP3 files.
+    --audiodir         => The path to a directory of your MP3 files.
     --logfile        => Specify a file for error logging.
     --daemon         => Run the server in the background.
                         This may only work on Unix-like systems.

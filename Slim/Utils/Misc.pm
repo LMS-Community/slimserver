@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.20 2004/01/02 23:32:21 dean Exp $
+# $Id: Misc.pm,v 1.21 2004/01/13 02:43:21 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -132,10 +132,10 @@ sub pathFromFileURL {
 		$path = $2;
 		if ($path !~ /^[a-zA-Z]:/) { $path = '/' . $path; };
 		$path =~ s/(.*)#.*$/$1/;
-		my $mp3dir = Slim::Utils::Prefs::get("mp3dir");
+		my $audiodir = Slim::Utils::Prefs::get("audiodir");
 		$::d_files && msg("Got $path from file url $url\n");
 		# only allow absolute file URLs and don't allow .. in files...
-		# make sure they are in the mp3dir or are already in the library...		
+		# make sure they are in the audiodir or are already in the library...		
 		if (($path !~ /\.\.[\/\\]/) || Slim::Music::Info::isCached($url)) {
 			$file = Slim::Web::HTTP::unescape($path);
 		} 
@@ -226,10 +226,10 @@ sub fixPath {
 		 
 	# the only kind of absolute file we like is one in 
 	# the music directory or the playlist directory...
-	my $mp3dir = Slim::Utils::Prefs::get("mp3dir");
+	my $audiodir = Slim::Utils::Prefs::get("audiodir");
 	my $savedplaylistdir = Slim::Utils::Prefs::get("playlistdir");
 	
-	if ($mp3dir && $file =~ /^\Q$mp3dir\E/) {
+	if ($audiodir && $file =~ /^\Q$audiodir\E/) {
 			$fixed = $file;
 	} elsif ($savedplaylistdir && $file =~ /^\Q$savedplaylistdir\E/) {
 			$fixed = $file;
@@ -251,8 +251,8 @@ sub fixPath {
 	} elsif (file_name_is_absolute($file)) {
 			$fixed = $file;
 	} else {
-			$file =~ s/\Q$mp3dir\E//;
-			$fixed = catfile($mp3dir, $file);
+			$file =~ s/\Q$audiodir\E//;
+			$fixed = catfile($audiodir, $file);
 	}
 	
 	$::d_paths && ($file ne $fixed) && msg("*****fixed: " . $file . " to " . $fixed . "\n");
@@ -314,7 +314,7 @@ sub descendVirtual {
 sub virtualToAbsolute {
 	my $virtual = shift;
 	my $recursion = shift;
-	my $curdir = Slim::Utils::Prefs::get('mp3dir');
+	my $curdir = Slim::Utils::Prefs::get('audiodir');
 	my $playdir = Slim::Utils::Prefs::get('playlistdir');
 	if (!defined($virtual)) { $virtual = "" };
 	
@@ -345,7 +345,7 @@ sub virtualToAbsolute {
 		$recursion = 1;
 		
 	} else {
-		$curdir = Slim::Utils::Prefs::get('mp3dir');
+		$curdir = Slim::Utils::Prefs::get('audiodir');
 	}
 	
 	my @levels = ();

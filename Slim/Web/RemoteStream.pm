@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.11 2004/01/12 23:16:19 dean Exp $
+# $Id: RemoteStream.pm,v 1.12 2004/01/13 02:43:21 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -159,7 +159,7 @@ sub readMetaData {
 	my $client = shift;
 
 	my $metadataSize = 0;
-	my $handle = $client->mp3filehandle();
+	my $handle = $client->audioFilehandle();
 	my $was_blocking = Slim::Utils::Misc::blocking($handle, 1);
 
 	my $byteRead;

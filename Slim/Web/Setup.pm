@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.31 2003/12/26 20:12:55 dean Exp $
+# $Id: Setup.pm,v 1.32 2004/01/13 02:43:22 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -481,7 +481,7 @@ sub initSetupConfig {
 					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[0] = undef;
 				} else {
 					$pageref->{'GroupOrder'}[1] = undef;
-					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[0] = 'mp3dir';
+					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[0] = 'audiodir';
 				}
 				if (Slim::Music::iTunes::useiTunesLibrary()) {
 					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[2] = undef;
@@ -505,7 +505,7 @@ sub initSetupConfig {
 						'PrefOrder' => ['language']
 						},
 				'itunes' => {
-						'PrefOrder' => ['itunes','mp3dir']
+						'PrefOrder' => ['itunes','audiodir']
 						,'PrefsInTable' => 1
 						,'Suppress_PrefHead' => 1
 						,'Suppress_PrefDesc' => 1
@@ -530,7 +530,7 @@ sub initSetupConfig {
 					},
 				'Default' => {
 						'PrefOrder' => [undef,'playlistdir',undef]
-						#if not able to use iTunesLibrary then undef at [0] will be replaced by 'mp3dir'
+						#if not able to use iTunesLibrary then undef at [0] will be replaced by 'audiodir'
 						#if not using iTunesLibrary then undef at [2] will be replaced by 'rescan'
 						}
 			}
@@ -579,8 +579,8 @@ sub initSetupConfig {
 							,'inputTemplate' => 'setup_input_radio.html'
 							,'PrefSize' => 'large'
 						}
-				,'mp3dir'	=> {
-							'validate' => \&validateIsMP3Dir
+				,'audiodir'	=> {
+							'validate' => \&validateIsAudioDir
 							,'changeIntro' => string('SETUP_OK_USING')
 							,'rejectMsg' => string('SETUP_BAD_DIRECTORY')
 							,'PrefSize' => 'large'
@@ -2296,7 +2296,7 @@ sub validateIsDir {
 	}
 }
 
-sub validateIsMP3Dir {
+sub validateIsAudioDir {
 	my $val = shift;
 	my $allowEmpty = shift;
 	

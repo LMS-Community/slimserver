@@ -88,8 +88,8 @@ sub unsync {
 
 		# and copy the playlist to the new master
 		Slim::Player::Playlist::copyPlaylist($newmaster, $client);	
-		$newmaster->mp3filehandle($client->mp3filehandle);
-		$client->mp3filehandle(undef);	
+		$newmaster->audioFilehandle($client->audioFilehandle);
+		$client->audioFilehandle(undef);	
 	} elsif (isSlave($client)) {
 		# if we're a slave, remove us from the master's list
 		my $i = 0;

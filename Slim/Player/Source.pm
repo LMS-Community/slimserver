@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.51 2004/01/13 00:36:12 dean Exp $
+# $Id: Source.pm,v 1.52 2004/01/13 02:43:20 daniel Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -153,7 +153,7 @@ sub songTime {
 	# this used to check against == 1, however, we can't properly
 	# calculate duration for non-native formats (pcm, mp3) unless we treat
 	# the file as streaming. do this for all files right now.
-	if ($client->mp3filehandleIsSocket()) {
+	if ($client->audioFilehandleIsSocket()) {
 
 		my $startTime = $client->remoteStreamStartTime();
 		my $endTime = $client->pauseTime() || Time::HiRes::time();
@@ -381,7 +381,7 @@ sub gototime {
 	my $newtime = shift;
 	
 	return unless Slim::Player::Playlist::song($client);
-	return unless defined $client->mp3filehandle();
+	return unless defined $client->audioFilehandle();
 
 	my $songLengthInBytes   = $client->songtotalbytes();
 	my $duration		= $client->songduration();
@@ -434,7 +434,7 @@ sub gototime {
 	my $dataoffset =  $client->songoffset;
 	$client->songBytes($newoffset);
 	$client->lastskip($newoffset);
-	$client->mp3filehandle->sysseek($newoffset+$dataoffset, 0);
+	$client->audioFilehandle->sysseek($newoffset+$dataoffset, 0);
 	$client->songStartStreamTime($newtime);
 
 	foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
@@ -589,10 +589,10 @@ sub closeSong {
 	my $client = shift;
 
 	# close the previous handle to prevent leakage.
-	if (defined $client->mp3filehandle()) {
-		$client->mp3filehandle->close();
-		$client->mp3filehandle(undef);
-		$client->mp3filehandleIsSocket(0);
+	if (defined $client->audioFilehandle()) {
+		$client->audioFilehandle->close();
+		$client->audioFilehandle(undef);
+		$client->audioFilehandleIsSocket(0);
 	}	
 }
 
@@ -650,8 +650,8 @@ sub openSong {
 			# if it's an mp3 stream, then let's stream it.
 			if (Slim::Music::Info::isSong($fullpath)) {
 
-				$client->mp3filehandle($sock);
-				$client->mp3filehandleIsSocket(1);
+				$client->audioFilehandle($sock);
+				$client->audioFilehandleIsSocket(1);
 				$client->streamformat(Slim::Music::Info::contentType($fullpath));
 				$client->remoteStreamStartTime(Time::HiRes::time());
 				defined(Slim::Utils::Misc::blocking($sock,0)) || die "Cannot set remote stream nonblocking";
@@ -674,7 +674,7 @@ sub openSong {
 				# close the socket
 				$sock->close();
 				$sock = undef;
-				$client->mp3filehandle(undef);
+				$client->audioFilehandle(undef);
 
 				# insert the list onto the playlist
 				splice @{Slim::Player::Playlist::playList($client)}, currentSongIndex($client), 1, @items;
@@ -690,13 +690,13 @@ sub openSong {
 				$::d_source && msg("don't know how to handle content for $fullpath\n");
 				$sock->close();
 				$sock = undef;
-				$client->mp3filehandle(undef);
+				$client->audioFilehandle(undef);
 			}
 		} 
 		
 		if (!$sock) {
 			$::d_source && msg("Remote stream failed to open, showing message.\n");
-			$client->mp3filehandle(undef);
+			$client->audioFilehandle(undef);
 			
 			my $line1 = string('PROBLEM_CONNECTING');
 			my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));			
@@ -737,20 +737,19 @@ sub openSong {
 
 			# this case is when we play the file through as-is
 			if ($command eq '-') {
-				 $client->mp3filehandle( Slim::Utils::FileHandle->new() );		
-				 
+				$client->audioFilehandle( Slim::Utils::FileHandle->new() );		
 				$::d_source && msg("openSong: opening file $filepath\n");
-				if ($client->mp3filehandle->open($filepath)) {
+				if ($client->audioFilehandle->open($filepath)) {
 
 					$::d_source && msg(" seeking in $offset into $filepath\n");
 					if ($offset) {
-						if (!defined(sysseek($client->mp3filehandle, $offset, 0))) {
+						if (!defined(sysseek($client->audioFilehandle, $offset, 0))) {
 							msg("couldn't seek to $offset for $filepath");
 						};
 					}
-					$client->mp3filehandleIsSocket(0);
+					$client->audioFilehandleIsSocket(0);
 				} else { 
-					$client->mp3filehandle(undef);
+					$client->audioFilehandle(undef);
 				}
 							
 			} else {
@@ -775,10 +774,9 @@ sub openSong {
 				
 				$::d_source && msg("Using command for conversion: $fullCommand\n");
 
-				$client->mp3filehandle( Slim::Utils::FileHandle->new() );
-		
-				$client->mp3filehandle->open($fullCommand);
-				$client->mp3filehandleIsSocket(2);
+				$client->audioFilehandle( Slim::Utils::FileHandle->new() );
+				$client->audioFilehandle->open($fullCommand);
+				$client->audioFilehandleIsSocket(2);
 				
 				$client->remoteStreamStartTime(Time::HiRes::time());
 				
@@ -807,8 +805,8 @@ sub openSong {
 
 	######################
 	# make sure the filehandle was actually set
-	if ($client->mp3filehandle()) {
-		binmode($client->mp3filehandle());
+	if ($client->audioFilehandle()) {
+		binmode($client->audioFilehandle());
 		Slim::Web::History::record(Slim::Player::Playlist::song($client));
 	} else {
 		$::d_source && msg("Can't open [$fullpath] : $!");
@@ -882,9 +880,9 @@ sub readNextChunk {
 
 	my $endofsong = undef;
 
-	if ($client->mp3filehandle()) {
+	if ($client->audioFilehandle()) {
 	
-		if ($client->mp3filehandleIsSocket) {
+		if ($client->audioFilehandleIsSocket) {
 
 			# adjust chunksize to lie on metadata boundary (for shoutcast/icecast)
 			if ($client->shoutMetaInterval() &&
@@ -928,7 +926,7 @@ sub readNextChunk {
 						# trying to seek past the beginning, let's let opennext do it's job
 						$chunksize = 0;
 					} else {
-						$client->mp3filehandle->sysseek($seekpos, 0);
+						$client->audioFilehandle->sysseek($seekpos, 0);
 						$client->songBytes($client->songBytes() + $howfar);
 						$client->lastskip($client->songBytes());
 					}
@@ -960,7 +958,7 @@ sub readNextChunk {
 		
 		if ($chunksize) {
 
-			my $readlen = $client->mp3filehandle()->sysread($chunk, $chunksize);
+			my $readlen = $client->audioFilehandle()->sysread($chunk, $chunksize);
 			
 			if (!defined($readlen)) { 
 
@@ -972,7 +970,7 @@ sub readNextChunk {
 					return undef;	
 				}	
 
-			} elsif ($readlen == 0 && ($client->mp3filehandleIsSocket != 1)) { 
+			} elsif ($readlen == 0 && ($client->audioFilehandleIsSocket != 1)) { 
 				$::d_source && msg("Read to end of file or pipe\n");  
 				$endofsong = 1;
 			}
@@ -999,7 +997,7 @@ sub readNextChunk {
 	# so open the next filehandle.
 	if ($endofsong) {
 		$::d_source && msg("end of file or error on socket, opening next song, (song pos: " .
-				$client->songBytes() . "(tell says: . " . systell($client->mp3filehandle()).
+				$client->songBytes() . "(tell says: . " . systell($client->audioFilehandle()).
 				"), totalbytes: " . $client->songtotalbytes() . ")\n");
 
 		if (!openNext($client)) {

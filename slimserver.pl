@@ -28,47 +28,41 @@ our %Config = (
 	ServiceName => "slimsvc",
 );
 
-
 sub Startup {
 
 	# added to workaround a problem with 5.8 and perlsvc.
 	# $SIG{BREAK} = sub {} if RunningAsService();
-
 	main::init();
 	
 	main::start();
 	
-   # here's where your startup code will go
-    while (ContinueRun() && !main::idle()) {
-    }
+	# here's where your startup code will go
+	while (ContinueRun() && !main::idle()) { }
 }
-
-
 
 sub Install {
 
 	my($Username,$Password);
 
-    Getopt::Long::GetOptions(
-        'username=s' => \$Username,
-        'password=s' => \$Password,
-    );
+	Getopt::Long::GetOptions(
+		'username=s' => \$Username,
+		'password=s' => \$Password,
+	);
 
-
-    if ((defined $Username) && ((defined $Password) && length($Password) != 0)) {
-        $Config{UserName} = $Username;
-        $Config{Password} = $Password;
-    }
+	if ((defined $Username) && ((defined $Password) && length($Password) != 0)) {
+		$Config{UserName} = $Username;
+		$Config{Password} = $Password;
+	}
 }
 
 
 sub Remove {
-    # add your additional remove messages or functions here
+	# add your additional remove messages or functions here
 }
 
 sub Help {
-    # add your additional help messages or functions here
-    $Config{DisplayName};
+	# add your additional help messages or functions here
+	$Config{DisplayName};
 }
 
 package main;
@@ -120,8 +114,7 @@ use Slim::Utils::Timers;
 use Slim::Music::MoodLogic;
 use Slim::Networking::Slimproto;
 
-use vars qw($VERSION
-		@AUTHORS);
+use vars qw($VERSION @AUTHORS);
 
 @AUTHORS = (
 	'Sean Adams',
@@ -135,79 +128,76 @@ use vars qw($VERSION
 	'Roy M. Silvernail',
 	'Richard Smith',
 	'Sam Saffron',
-	'Daniel Sully',
+	'Dan Sully',
 );
 
 $VERSION = '5.0.3';
 
 # old preferences settings, only used by the .slim.conf configuration.
 # real settings are stored in the new preferences file:  .slim.pref
+use vars qw($audiodir $httpport);
+
 use vars qw(
-	    $mp3dir
-	    $httpport
+	$d_cli
+	$d_control
+	$d_command
+	$d_display
+	$d_factorytest
+	$d_files
+	$d_firmware
+	$d_formats
+	$d_http
+	$d_info
+	$d_ir
+	$d_itunes
+	$d_moodlogic
+	$d_mdns
+	$d_os
+	$d_perf
+	$d_parse
+	$d_paths
+	$d_playlist
+	$d_plugins
+	$d_protocol
+	$d_prefs
+	$d_remotestream
+	$d_scan
+	$d_server
+	$d_select
+	$d_scheduler
+	$d_slimproto
+	$d_slimproto_v
+	$d_source
+	$d_stdio
+	$d_stream
+	$d_stream_v
+	$d_sync
+	$d_time
+	$d_ui
+	$d_usage
+	$d_filehandle
+
+	$user
+	$group
+	$cliaddr
+	$cliport
+	$daemon
+	$httpaddr
+	$lastlooptime
+	$logfile
+	$loopcount
+	$loopsecond
+	$localClientNetAddr
+	$localStreamAddr
+	$newVersion
+	$pidfile
+	$prefsfile
+	$priority
+	$quiet
+	$nosetup
+	$stdio
+	$stop
 );
-
-use vars qw(
-		$d_cli
-		$d_control
-		$d_command
-		$d_display
-		$d_factorytest
-		$d_files
-		$d_firmware
-		$d_formats
-		$d_http
-		$d_info
-		$d_ir
-		$d_itunes
-		$d_moodlogic
-		$d_mdns
-		$d_os
-		$d_perf
-		$d_parse
-		$d_paths
-		$d_playlist
-		$d_plugins
-		$d_protocol
-		$d_prefs
-		$d_remotestream
-		$d_scan
-		$d_server
-		$d_select
-		$d_scheduler
-		$d_slimproto
-		$d_slimproto_v
-		$d_source
-		$d_stdio
-		$d_stream
-		$d_stream_v
-		$d_sync
-		$d_time
-		$d_ui
-		$d_usage
-		$d_filehandle
-
-	    $user
-	    $group
-	    $cliaddr
-	    $cliport
-	    $daemon
-	    $httpaddr
-	    $lastlooptime
-	    $logfile
-	    $loopcount
-	    $loopsecond
-	    $localClientNetAddr
-	    $localStreamAddr
-	    $newVersion
-	    $pidfile
-	    $prefsfile
-	    $priority
-	    $quiet
-	    $nosetup
-	    $stdio
-	    $stop
-	);
 
 sub init {
 	srand();
@@ -425,7 +415,7 @@ sub idleStreams {
 
 sub showUsage {
 	print <<EOF;
-Usage: $0 [--mp3dir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
+Usage: $0 [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
           [--user <username>]
           [--group <groupname>]
           [--httpport <portnumber> [--httpaddr <listenip>]]
@@ -435,7 +425,7 @@ Usage: $0 [--mp3dir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
           [--d_various]
 
     --help           => Show this usage information.
-    --mp3dir         => The path to a directory of your MP3 files.
+    --audiodir         => The path to a directory of your MP3 files.
     --logfile        => Specify a file for error logging.
     --daemon         => Run the server in the background.
                         This may only work on Unix-like systems.
@@ -525,7 +515,7 @@ sub initOptions {
 		'httpaddr=s'   		=> \$httpaddr,
 		'httpport=s'   		=> \$httpport,
 		'logfile=s'   		=> \$logfile,
-		'mp3dir=s' 			=> \$mp3dir,
+		'audiodir=s' 			=> \$audiodir,
 		'pidfile=s' 		=> \$pidfile,
 		'playeraddr=s'		=> \$localClientNetAddr,
 		'priority=i'        => \$priority,
@@ -583,10 +573,16 @@ sub initSettings {
 	Slim::Utils::Prefs::checkServerPrefs();
 	Slim::Buttons::Home::updateMenu();
 	Slim::Web::Setup::initSetup();
+
+	# upgrade mp3dir => audiodir
+	if (my $mp3dir = Slim::Utils::Prefs::get('mp3dir')) {
+		Slim::Utils::Prefs::delete("mp3dir");
+		$audiodir = $mp3dir;
+	}
 	
-	#options override existing preferences
-	if (defined($mp3dir)) {
-		Slim::Utils::Prefs::set("mp3dir", $mp3dir);
+	# options override existing preferences
+	if (defined($audiodir)) {
+		Slim::Utils::Prefs::set("audiodir", $audiodir);
 	}
 	
 	if (defined($httpport)) {
@@ -597,20 +593,23 @@ sub initSettings {
 		Slim::Utils::Prefs::set("cliport", $cliport);
 	}
 
-	# warn if there's no mp3dir preference
+	# warn if there's no audiodir preference
 	# FIXME put the strings in strings.txt
-	if (!(defined Slim::Utils::Prefs::get("mp3dir") && 
-				-d Slim::Utils::Prefs::get("mp3dir")) && 
-				!$quiet && 
-				!Slim::Music::iTunes::useiTunesLibrary()) {
+	if (!(defined Slim::Utils::Prefs::get("audiodir") && 
+		-d Slim::Utils::Prefs::get("audiodir")) && 
+		!$quiet && 
+		!Slim::Music::iTunes::useiTunesLibrary()) {
+
 		msg("Your MP3 directory needs to be configured. Please open your web browser,\n");
 		msg("go to the following URL, and click on the \"Server Settings\" link.\n\n");
 		msg(string('SETUP_URL_WILL_BE') . "\n\t" . Slim::Web::HTTP::HomeURL() . "\n");
+
 	} else {
-		if (Slim::Utils::Prefs::get("mp3dir") =~ m|[/\\]$|) {
-			$mp3dir = Slim::Utils::Prefs::get("mp3dir");
-			$mp3dir =~ s|[/\\]$||;
-			Slim::Utils::Prefs::set("mp3dir",$mp3dir);
+
+		if (Slim::Utils::Prefs::get("audiodir") =~ m|[/\\]$|) {
+			$audiodir = Slim::Utils::Prefs::get("audiodir");
+			$audiodir =~ s|[/\\]$||;
+			Slim::Utils::Prefs::set("audiodir",$audiodir);
 		}
 	}
 }
@@ -777,7 +776,5 @@ sub END {
 if (!defined($PerlSvc::VERSION)) { 
 	main()
 };
-
-
 
 __END__

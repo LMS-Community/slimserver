@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.22 2003/12/24 21:13:15 dean Exp $
+# $Id: Command.pm,v 1.23 2004/01/13 02:43:20 daniel Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -216,7 +216,7 @@ sub execute {
 				}
 			}
 		} elsif ($p0 eq "rate") {
-			if ($client->mp3filehandleIsSocket) {
+			if ($client->audioFilehandleIsSocket) {
 				Slim::Player::Source::rate($client, 1);
 			} elsif (!defined($p1) || $p1 eq "?") {
 				$p1 = Slim::Player::Source::rate($client);

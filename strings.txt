@@ -1390,7 +1390,7 @@ SETUP_LANGUAGE_OK
 	PT	O idioma escolhido é
 	SE	Valt språk är:
 
-SETUP_MP3DIR
+SETUP_AUDIODIR
 	DE	Ihr Musik-Verzeichnis
 	DK	Din musiksamling
 	EN	Your Music Folder
@@ -1401,7 +1401,7 @@ SETUP_MP3DIR
 	PT	Directoria com Músicas
 	SE	Din Musikmapp
 
-SETUP_MP3DIR_DESC
+SETUP_AUDIODIR_DESC
 	DE	Das Verzeichnis, in dem sich ihre MP3 Dateien auf ihrer Festplatte befinden:
 	DK	Mappen hvor dine MP3-filer er gemt på din harddisk.
 	EN	The directory where your MP3 files are stored on your hard disk:
@@ -1412,7 +1412,7 @@ SETUP_MP3DIR_DESC
 	PT	A directoria onde estão guardados os ficheiros áudio
 	SE	Sökväg till mappen där dina MP3-filer är lagrade:
 
-SETUP_MP3DIR_OK
+SETUP_AUDIODIR_OK
 	DE	Der Server verwendet den folgenden Pfad zu ihren MP3 Dateien:
 	DK	OK, anvender:
 	EN	The server will use the following path to your MP3 files:

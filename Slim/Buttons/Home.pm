@@ -30,7 +30,7 @@ my %functions = (
 		if ($homeChoices[$client->homeSelection] eq 'MUSIC') {
 			# add the whole of the music folder to the playlist!
 			Slim::Buttons::Block::block($client, string('ADDING_TO_PLAYLIST'), string('MUSIC'));
-			Slim::Control::Command::execute($client, ['playlist', 'add', Slim::Utils::Prefs::get('mp3dir')], \&Slim::Buttons::Block::unblock, [$client]);
+			Slim::Control::Command::execute($client, ['playlist', 'add', Slim::Utils::Prefs::get('audiodir')], \&Slim::Buttons::Block::unblock, [$client]);
 		} elsif($homeChoices[$client->homeSelection] eq 'NOW_PLAYING') {
 			Slim::Display::Animation::showBriefly($client, string('CLEARING_PLAYLIST'), '');
 			Slim::Control::Command::execute($client, ['playlist', 'clear']);
@@ -48,7 +48,7 @@ my %functions = (
 			} else {
 				Slim::Buttons::Block::block($client, string('NOW_PLAYING_FROM'), string('MUSIC'));
 			}
-			Slim::Control::Command::execute($client, ['playlist', 'load', Slim::Utils::Prefs::get('mp3dir')], \&Slim::Buttons::Block::unblock, [$client]);
+			Slim::Control::Command::execute($client, ['playlist', 'load', Slim::Utils::Prefs::get('audiodir')], \&Slim::Buttons::Block::unblock, [$client]);
 		} elsif($homeChoices[$client->homeSelection] eq 'NOW_PLAYING') {
 			Slim::Control::Command::execute($client, ['play']);
 			#The address of the %functions hash changes from compile time to run time

@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.8 2003/12/13 08:29:15 kdf Exp $
+# $Id: Browse.pm,v 1.9 2004/01/13 02:43:19 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -341,7 +341,7 @@ sub line1 {
 
 	if ($client->pwd() eq "__playlists") {
 		$line1 = string('SAVED_PLAYLISTS');
-	} elsif ((defined $client->pwd() and $client->pwd() =~ m|^[/\\]?$|) || !Slim::Utils::Prefs::get("mp3dir")) {
+	} elsif ((defined $client->pwd() and $client->pwd() =~ m|^[/\\]?$|) || !Slim::Utils::Prefs::get('audiodir')) {
 		$line1 = string('MUSIC');
 	} else {
 		my $dir;
