@@ -432,7 +432,7 @@ sub vfd {
 sub opened {
 	my $client = shift;
 	if ($client->tcpsock) {
-		if ($client->tcpsock->connected) {
+		if (fileno $client->tcpsock && $client->tcpsock->connected) {
 			return $client->tcpsock;
 		} else {
 			$client->tcpsock(undef);
