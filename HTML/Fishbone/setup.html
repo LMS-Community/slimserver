@@ -1,9 +1,4 @@
-<html>
-	<head>
-		<title>[% pagetitle %]</title>
-		<link rel="stylesheet" href="[% webroot %]slimserver.css">
-	</head>
-	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
+[% pagetitle = pagetitle %] [% pageicon = 'MUSIC' %] [% setup = '1' %] [% PROCESS pageheader.html %]
 		<div class="menu2" style="min-height:20">
 			[% IF children %][% children %][% END %]
 			[% IF siblings %][% siblings %][% END %]

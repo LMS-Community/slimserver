@@ -37,12 +37,11 @@ function getPlayer(Player)
 					if (url == 'undefined') [% IF not nofolder %]return "browse.html?"[% END %]
 											[% IF nofolder and noartwork %]return "browseid3.html?noartwork=1"[% END %]
 											[% IF nofolder and not noartwork %]return "browseid3.html?nofolder=1"[% END %]
-					return url [% IF noartwork %]+"&noartwork=1"[% END %][% IF nofolder %]+"&nofolder=1"[% END %][% IF nosetup %]+"&nosetup=1"[% END %];
+					return url [% IF nosetup %]+"&nosetup=1"[% END %];
 				}
 			}
 			[% IF not nofolder %]return "browse.html?"[% END %]
-			[% IF nofolder %]return "browseid3.html?nofolder=1"[% END %]
-			[% IF noartwork %]return "browseid3.html?noartwork=1"[% END %]
+			[% IF nofolder %]return "browseid3.html?"[% END %]
 			
 		}
 		
@@ -79,7 +78,7 @@ document.write('<frame name="playlist" src="playlist.html?player='+cPlayer+'">')
 document.write('</frameset>');
 document.write('</frameset>');
 //-->
-		parent.browser.location=getHomeCookie('SlimServer-Browserpage') +'&player='+getPlayer('SlimServer-player')[% IF noartwork %]+"&noartwork=1"[% END %][% IF nofolder %]+"&nofolder=1"[% END %];
+		parent.browser.location=getHomeCookie('SlimServer-Browserpage') +'&player='+getPlayer('SlimServer-player');
 
 </script>
 </html>

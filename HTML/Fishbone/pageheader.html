@@ -25,16 +25,12 @@
 					if (end == -1)
 						end = document.cookie.length;
 					url = unescape(document.cookie.substring(offset, end));
-					if (url == 'undefined') [% IF not nofolder %]return "browse.html?"[% END %]
-											[% IF nofolder and noartwork %]return "browseid3.html?noartwork=1"[% END %]
-											[% IF nofolder and not noartwork %]return "browseid3.html?nofolder=1"[% END %]
-					return url [% IF noartwork %]+"&noartwork=1"[% END %][% IF nofolder %]+"&nofolder=1"[% END %][% IF nosetup %]+"&nosetup=1"[% END %];
+					if (url == 'undefined') return "browse.html?"
+					return url [% IF nosetup %]+"&nosetup=1"[% END %];
 				}
 			}
 			[% IF not nofolder %]return "browse.html?"[% END %]
-			[% IF nofolder %]return "browseid3.html?nofolder=1"[% END %]
-			[% IF noartwork %]return "browseid3.html?noartwork=1"[% END %]
-			
+			[% IF nofolder %]return "browseid3.html?"[% END %]
 		}
 		
 		function chooseBrowser(value,option)
@@ -44,44 +40,46 @@
 			{
 				case 'genre':
 					url="browseid3.html?";
-					suffix ="[% IF nofolder %]&nofolder=1[% END %][% IF noartwork %]&noartwork=1[% END %]";
+					suffix ="&page=genre";
 				break
 				case 'artist':
 					url="browseid3.html?genre=*";
-					suffix ="[% IF nofolder %]&nofolder=1[% END %][% IF noartwork %]&noartwork=1[% END %]";
+					suffix ="&page=artist";
 				break
 				case 'album':
 					url="browseid3.html?genre=*&artist=*"
-					suffix ="[% IF nofolder %]&nofolder=1[% END %][% IF noartwork %]&noartwork=1[% END %]";
+					suffix ="&page=album";
 				break
 				case 'song':
 					url="browseid3.html?genre=*&artist=*&album=*";
-					suffix ="[% IF nofolder %]&nofolder=1[% END %][% IF noartwork %]&noartwork=1[% END %]";
+					suffix ="&page=song";
 				break
-[% IF additionalLinks.browse %]
-	[% FOREACH link = additionalLinks.browse %]
-	case "[% link.key %]":
-		url = "[% link.value %]"
-		suffix = ""
-	break
-	[% END %]
-[% END %]
+			[% IF additionalLinks.browse %]
+				[% FOREACH link = additionalLinks.browse %]
+				case "[% link.key %]":
+					url = "[% link.value %]"
+					suffix = "&page=[% link.key %]"
+				break
+				[% END %]
+			[% END %]
 			}
-			setCookie("SlimServer-Browserpage",url);
+			setCookie("SlimServer-Browserpage",url + suffix);
 			parent.browser.location = url + suffix + '&player=[% player | uri %]';
 		}
 		-->
 		</script>
 	</head>
-	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
+	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" [% IF NOT home %]onload="top.document.getElementById('home').rows = ' 0 , *';"[% END %]>
 	<div class="menu1" width="100%">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13">
-				<td width="33%" height="13" align="center"><nobr><a class="menu1" href="" onclick="parent.browser.location='/'+getHomeCookie('SlimServer-Browserpage') +'&player=[% player | uri %]'[% IF noartwork %]+'&noartwork=1'[% END %][% IF nofolder %]+'&nofolder=1'[% END %]">[% IF music %]<b>[% END %][% playermodel _ "_HOME" | string %][% IF music %]</b>[% END %]</nobr></td>
+				<td width="33%" height="13" align="center"><nobr><a class="menu1" href="[% IF NOT home %]javascript:parent.browser.location='/'+getHomeCookie('SlimServer-Browserpage') +'&player=[% player | uri %]'[% END %]" onclick="parent.browser.location='/'+getHomeCookie('SlimServer-Browserpage') +'&player=[% player | uri %]';">[% IF home %]<b>[% END %][% playermodel _ "_HOME" | string %][% IF home %]</b>[% END %]</nobr></td>
 				<td>
 					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
 				</td>
 				
-				<td width="33%" height="13" align="center"><nobr><a class="menu1" href="[% webroot %]setup.html?page=server&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser">[% IF setup %]<b>[% END %][% "SERVER_SETTINGS" | string %][% IF setup %]</b>[% END %]</a></nobr></td>
+				<td width="33%" height="13" align="center">
+					<nobr><a class="menu1" href="[% webroot %]setup.html?page=server&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser">[% IF setup %]<b>[% END %][% "SERVER_SETTINGS" | string %][% IF setup %]</b>[% END %]</a></nobr>
+				</td>
 				<td>
 					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
 				</td>
@@ -90,20 +88,20 @@
 				</td>
 			</table>
 		</div>
-		<div class="menu2" width="100%" [% IF setup %]style='position:absolute;top:-100;'[% END %]>
+		<div class="menu2" width="100%" [% IF setup || help %]style='position:absolute;top:-100;'[% END %]>
 			<table border="0" cellpadding="0" cellspacing="0" width="100%">
 				<td>
 				<FORM name="browse" method="Get" action="[% webroot %]search.html"><td width="35%"><center><nobr>
 					<SELECT NAME="type" class="stdedit" onchange="chooseBrowser(selectedIndex,options[selectedIndex].label)"  width="65">
-						<OPTION [% IF browseby == 'BROWSE_BY_GENRE' %]selected[% END %] label="genre" value="song">[% "BROWSE_BY_GENRE" | string %]</OPTION>
-						<OPTION [% IF type == 'artist' %]selected[% END %][% IF browseby == 'BROWSE_BY_ARTIST' %]selected[% END %] label="artist" value="artist">[% "BROWSE_BY_ARTIST" | string %]</OPTION>
-						<OPTION [% IF type == 'album' %]selected[% END %][% IF browseby == 'BROWSE_BY_ALBUM' %]selected[% END %] label="album" value="album">[% "BROWSE_BY_ALBUM" | string %]</OPTION>
-						<OPTION [% IF type == 'song' %]selected[% END %][% IF browseby == 'BROWSE_BY_SONG' %]selected[% END %] label="song" value="song">[% "BROWSE_BY_SONG" | string %]</OPTION>
-[% IF additionalLinks.browse %]
-	[% FOREACH link = additionalLinks.browse %]
-	<OPTION value="song" label="[% link.key %]">[% link.key %]</OPTION>
-	[% END %]
-[% END %]
+						<OPTION [% IF page == 'genre' %]selected[% END %] label="genre" value="song">[% "BROWSE_BY_GENRE" | string %]</OPTION>
+						<OPTION [% IF page == 'artist' %]selected[% END %][% IF browseby == 'BROWSE_BY_ARTIST' %]selected[% END %] label="artist" value="artist">[% "BROWSE_BY_ARTIST" | string %]</OPTION>
+						<OPTION [% IF page == 'album' %]selected[% END %][% IF browseby == 'BROWSE_BY_ALBUM' %]selected[% END %] label="album" value="album">[% "BROWSE_BY_ALBUM" | string %]</OPTION>
+						<OPTION [% IF page == 'song' %]selected[% END %][% IF browseby == 'BROWSE_BY_SONG' %]selected[% END %] label="song" value="song">[% "BROWSE_BY_SONG" | string %]</OPTION>
+					[% IF additionalLinks.browse %]
+						[% FOREACH link = additionalLinks.browse %]
+						<OPTION [% IF page == link.key %]selected[% END %] value="song" label="[% link.key %]">[% link.key %]</OPTION>
+						[% END %]
+					[% END %]
 					</SELECT> [% "FOR" | string %]
 					<input type=text class="stdedit" name="query" value="[% query %]" size="20">
 					<input type=hidden value="[% player %]" name="player">
