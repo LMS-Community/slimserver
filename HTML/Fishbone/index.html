@@ -1,84 +1,86 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-<head>
-	<link REL="shortcut icon" HREF="[% webroot %]favicon.ico" TYPE="image/x-icon">
-	<link rel="icon" href="[% webroot %]favicon.ico" type="image/x-icon" > 
-	<title>[% "WELCOME_TO_SLIMSERVER" | string %]</title>
-</head>
-<script language="JavaScript" TYPE="text/javascript">
-//<!--Hide
-	function getPlayer(Player) 
-	{
-		var search = Player + "=";
-		if (document.cookie.length > 0) {
-			offset = document.cookie.indexOf(search);
-			if (offset != -1) {
-				offset += search.length;
-				end = document.cookie.indexOf(";", offset);
-				if (end == -1)
-					end = document.cookie.length;
-				return unescape(document.cookie.substring(offset, end));
+	<head>
+		<link REL="shortcut icon" HREF="[% webroot %]favicon.ico" TYPE="image/x-icon">
+		<link rel="icon" href="[% webroot %]favicon.ico" type="image/x-icon" > 
+		<title>[% "WELCOME_TO_SLIMSERVER" | string %]</title>
+		<script language="JavaScript" TYPE="text/javascript">
+			//<!--Hide
+			function getPlayer(Player) 
+			{
+				var search = Player + "=";
+				if (document.cookie.length > 0) {
+					offset = document.cookie.indexOf(search);
+					if (offset != -1) {
+						offset += search.length;
+						end = document.cookie.indexOf(";", offset);
+						if (end == -1)
+							end = document.cookie.length;
+						return unescape(document.cookie.substring(offset, end));
+					}
+				}
+				return "";
 			}
-		}
-		return "";
-}
-
-	function getHomeCookie(Name) 
-	{
-		var search = Name + "=";
-		if (document.cookie.length > 0) {
-			offset = document.cookie.indexOf(search);
-			if (offset != -1) {
-				offset += search.length;
-				end = document.cookie.indexOf(";", offset);
-				if (end == -1)
-					end = document.cookie.length;
-				url = unescape(document.cookie.substring(offset, end));
-				if (url == 'undefined') [% IF not nofolder %]return "browse.html?"[% END %]
-										[% IF nofolder and noartwork %]return "browseid3.html?noartwork=1"[% END %]
-										[% IF nofolder and not noartwork %]return "browseid3.html?nofolder=1"[% END %]
-				return url [% IF nosetup %]+"&nosetup=1"[% END %];
-			}
-		}
-		[% IF not nofolder %]return "browse.html?"[% END %]
-		[% IF nofolder %]return "browseid3.html?"[% END %]
 		
-	}
-	
-	function getArgs() {
-		var args = new Object();
-		var query = location.search.substring(1);
-		var pairs = query.split("&");
-		for(var i = 0; i < pairs.length; i++) {
-			var pos = pairs[i].indexOf('=');
-			if (pos == -1) continue;
-			var argname = pairs[i].substring(0,pos);
-			var value = pairs[i].substring(pos+1);
-			args[argname] = unescape(value);
-		}
-		return args;
-	}
-
-var args = getArgs();
-if (args.player) {
-	var cPlayer = args.player;
-}
-else {
-	var cPlayer = getPlayer('SlimServer-player');
-}
-
-document.write('<frameset cols="50%,*" framespacing="2" border="2">' );
-document.write('<frameset name="home" ID="home" border="0" frameborder="no" framespacing="0" rows="87,*">');
-document.write('<frame name="header" ID="header" scrolling="no" src="home.html?player='+cPlayer+'&page='+getHomeCookie('page')+'">');
-document.write('<frame name="browser" ID="browser" src="home.html?player='+cPlayer+'">');
-document.write('</frameset>');
-document.write('<frameset name="player_frame" ID="player_frame" border="0" frameborder="no" framespacing="0" rows="240,*">');
-document.write('<frame name="statusframe"  scrolling="no" src="status_header.html?player='+cPlayer+'">');
-document.write('<frame name="playlist" src="playlist.html?player='+cPlayer+'">');
-document.write('</frameset>');
-document.write('</frameset>');
-
-parent.browser.location=getHomeCookie('SlimServer-Browserpage') +'&player='+cPlayer;
-//-->
-</script>
+			function getHomeCookie(Name) 
+			{
+				var search = Name + "=";
+				if (document.cookie.length > 0) {
+					offset = document.cookie.indexOf(search);
+					if (offset != -1) {
+						offset += search.length;
+						end = document.cookie.indexOf(";", offset);
+						if (end == -1)
+							end = document.cookie.length;
+						url = unescape(document.cookie.substring(offset, end));
+						if (url == 'undefined') [% IF not nofolder %]return "browse.html?"[% END %]
+												[% IF nofolder and noartwork %]return "browseid3.html?noartwork=1"[% END %]
+												[% IF nofolder and not noartwork %]return "browseid3.html?nofolder=1"[% END %]
+						return url [% IF nosetup %]+"&nosetup=1"[% END %];
+					}
+				}
+				[% IF not nofolder %]return "browse.html?"[% END %]
+				[% IF nofolder %]return "browseid3.html?"[% END %]
+				
+			}
+			
+			function getArgs() {
+				var args = new Object();
+				var query = location.search.substring(1);
+				var pairs = query.split("&");
+				for(var i = 0; i < pairs.length; i++) {
+					var pos = pairs[i].indexOf('=');
+					if (pos == -1) continue;
+					var argname = pairs[i].substring(0,pos);
+					var value = pairs[i].substring(pos+1);
+					args[argname] = unescape(value);
+				}
+				return args;
+			}
+		
+			var args = getArgs();
+			if (args.player) {
+				var cPlayer = args.player;
+			}
+			else {
+				var cPlayer = getPlayer('SlimServer-player') +'&player='+cPlayer;
+			}
+			
+			document.write('<frameset cols="50%,*" framespacing="2" border="2">' );
+			document.write('<frameset name="home" ID="home" border="0" frameborder="no" framespacing="0" rows="87,*">');
+			document.write('<frame name="header" ID="header" scrolling="no" src="home.html?player='+cPlayer+'&page='+getHomeCookie('page')+'">');
+			document.write('<frame name="browser" ID="browser" src="' + getHomeCookie('SlimServer-Browserpage') +'&player='+cPlayer + '">');
+			document.write('</frameset>');
+			document.write('<frameset name="player_frame" ID="player_frame" border="0" frameborder="no" framespacing="0" rows="240,*">');
+			document.write('<frame name="statusframe"  scrolling="no" src="status_header.html?player='+cPlayer+'">');
+			document.write('<frame name="playlist" src="playlist.html?player='+cPlayer+'">');
+			document.write('</frameset>');
+			document.write('</frameset>');
+			document.close();
+			
+			//-->
+		</script>
+	</head>
+	<body>
+	</body>
 </html>
