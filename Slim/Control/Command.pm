@@ -132,7 +132,8 @@ sub execute {
 # Y    playlist        loadtracks                  <searchterms>    
 # Y    playlist        addtracks                   <searchterms>    
 # Y    playlist        inserttracks                <searchterms>    
-# Y    playlist        deletetracks                <searchterms>    
+# Y    playlist        deletetracks                <searchterms>   
+# Y    playlistcontrol <params>
 
 # Y    playlist        play|load                   <item>                       [<title>] (item can be a song, playlist or directory)
 # Y    playlist        add|append                  <item> (item can be a song, playlist or directory)
@@ -351,20 +352,20 @@ sub execute {
  		if ($valid) {
 
  			for my $eachitem (@$results[$start..$end]) {
- 				push @returnArray, $label . '_id:'. $eachitem->id;
+ 				push @returnArray, 'id:'. $eachitem->id;
  				push @returnArray, $label . ':' . $eachitem;
  			}
  		}
 
  		$client = undef;
  		
- 	} elsif ($p0 =~ /^(title|song)s$/) {
+ 	} elsif ($p0 =~ /^(title|song|tracks)s$/) {
 
  		$pushParams = 0;
  	
 		my $label = 'track';
  		my $sort  = 'title';
- 		my $tags  = 'galdu';
+ 		my $tags  = 'galdx';
  		
  		my %params = parseParams($parrayref, \@returnArray);
 
@@ -384,6 +385,10 @@ sub execute {
  		
  		$sort = $params{'sort'} if defined($params{'sort'});
  		$tags = $params{'tags'} if defined($params{'tags'});
+ 		#always include id
+ 		if ($tags !~ /x/){
+ 			$tags = $tags . "x";
+ 		}
  		
  		if ($sort eq "tracknum") {
  			$tags = $tags . "t";
@@ -403,10 +408,9 @@ sub execute {
  		my $cur = $start;
  
  		if ($valid) {
-
+ 		
  			for my $item (@$results[$start..$end]) {
 
- 				push @returnArray, "index:" . $cur++;
  				push @returnArray, pushSong($item, $tags);
 
  				::idleStreams();
@@ -420,7 +424,7 @@ sub execute {
  		$pushParams = 0;
  #		${$pcmdIsQuery} = 1;
  	
- 		my $tags = "galdu";
+ 		my $tags = "galdx";
  		my $dir = "__playlists";
  		my $search = "*";
  		
@@ -435,7 +439,7 @@ sub execute {
  		my $dirscan = 1;
  		
  		if (!Slim::Utils::Prefs::get("playlistdir") && !Slim::Music::Info::playlists()) {
- #			$::d_http && msg("no valid playlists directory!!\n");
+ 			# No valid playlists directory!
  			$badconfig = 1;
  		}
  		
@@ -444,7 +448,7 @@ sub execute {
  			if (Slim::Music::Info::playlists()) {
  				$dirscan = 0;
  			} else {
- #				$::d_http && msg("the selected playlist $fulldir isn't good!!.\n");
+ 				# The selected playlist $fulldir isn't good!
  				$badconfig = 1;
  			}
  		}
@@ -470,8 +474,10 @@ sub execute {
  				push @$items, @{Slim::Music::Info::playlists()};
  			}
  			
+ 			my $numitems = scalar @{$items};
+ 			
  			# Perform search if necessary
- 			if (scalar @{$items} && $search ne "*") {
+ 			if ($numitems && $search ne "*") {
 
  				my $search_pats = Slim::Music::Info::filterPats(Slim::Web::Pages::searchStringSplit($search));
  				
@@ -495,7 +501,6 @@ sub execute {
  				@$items = @found;
  			}
  			
- 			my $numitems = scalar @{$items};
  			push @returnArray, "count:" . $numitems;
  			
  			my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), $numitems);
@@ -508,11 +513,9 @@ sub execute {
  					
  					next if $eachitem =~ /__current.m3u$/;
  					
- 					push @returnArray, "index:" . ($cur);
- 					
- 					
  					if (Slim::Music::Info::isList($eachitem)) {
 
+ 						push @returnArray, "index:" . ($cur);
  						push @returnArray, "item:" . Slim::Music::Info::standardTitle(undef, $eachitem);
  						push @returnArray, "dir:"  . Slim::Utils::Misc::descendVirtual($dir, $eachitem, $cur);
 
@@ -533,23 +536,35 @@ sub execute {
  		$pushParams = 0;
  	
  		my $path;
- 		my $tags = "abcdefghijklmnopqrstvwxyz"; # all letter EXCEPT u
- 		
+ 		my $id;
+ 		my $tags   = "abcdefghijklmnopqrstvwyz"; # all letter EXCEPT u AND x
+ 		my $ds     = Slim::Music::Info::getCurrentDataStore();
  		my %params = parseParams($parrayref, \@returnArray);
+ 		my $track;
  		
  		$path = $params{'url'} if defined($params{'url'});
+ 		$id = $params{'track_id'} if defined($params{'track_id'});
  		$tags = $params{'tags'} if defined($params{'tags'});
  		
-# 		msg("path:$path\n");
- 				
+ 		if (defined $id){
+ 			$tags .= 'u';
+ 			$track = $ds->objectForId('track', $id);
+ 		} else {
+ 			if (defined $path && Slim::Music::Info::isSong($path)){
+ 				$tags .= 'x';
+ 				$track = $ds->objectForUrl($path)
+ 			}
+ 		}
+ 		 				
  		if (Slim::Utils::Misc::stillScanning()) {
  			push @returnArray, "rescan:1";
  		}
  		
- 		if (Slim::Music::Info::isSong($path)) {
+ 		
+ 		
+ 		if (defined $track) {
  
-# 			msg("isSong\n");
- 			my @items = pushSong($path, $tags);
+ 			my @items = pushSong($track, $tags);
  			
  			push @returnArray, "count:" . scalar(@items);
  	
@@ -563,11 +578,8 @@ sub execute {
 
  		} else {
 
-#			msg("isNotSong\n");
-
  			push @returnArray, "count:0";
  		}
-# 		msg("Done\n");
 
  		$client = undef;
 
@@ -749,6 +761,61 @@ sub execute {
 				}
 				Slim::Player::Sync::sync($buddy, $client) if defined $buddy;
 			}
+
+		} elsif ($p0 eq "playlistcontrol") {
+		
+ 			$pushParams = 0;
+ 	
+ 			my $ds     = Slim::Music::Info::getCurrentDataStore();
+ 			my %params = parseParams($parrayref, \@returnArray);
+ 			my @songs;
+ 			
+ 			my $load = ($params{'cmd'} eq 'load');
+			my $insert = ($params{'cmd'} eq 'insert');
+			my $add = ($params{'cmd'} eq 'add');
+			my $delete = ($params{'cmd'} eq 'delete');
+
+			Slim::Player::Source::playmode($client, "stop") if $load;
+			Slim::Player::Playlist::clear($client) if $load;
+			
+			if (defined $params{'genre_id'}){
+				$find->{'genre'} = $params{'genre_id'};
+			}
+			if (defined $params{'artist_id'}){
+				$find->{'artist'} = $params{'artist_id'};
+			}
+			if (defined $params{'album_id'}){
+				$find->{'album'} = $params{'album_id'};
+			}
+			if (defined $params{'track_id'}){
+				$find->{'id'} = $params{'track_id'};
+			}
+				
+			my $sort = exists $find->{'album'} ? 'tracknum' : 'track';
+			if ($load || $add || $insert || $delete){
+				@songs = map { $_->url } @{ $ds->find('lightweighttrack', $find, $sort) } ;
+			}
+			
+			my $size  = scalar(@songs);
+			my $playListSize = Slim::Player::Playlist::count($client);
+			
+			push(@{Slim::Player::Playlist::playList($client)}, @songs) if ($load || $add || $insert);
+			Slim::Player::Playlist::removeMultipleTracks($client, \@songs) if $delete;
+			
+			insert_done($client, $playListSize, $size) if $insert;
+			
+			Slim::Player::Playlist::reshuffle($client,$load?1:0) if ($load || $add);
+			Slim::Player::Source::jumpto($client, 0) if $load;
+
+			$client->currentPlaylistModified(1) if ($add || $insert || $delete);
+			$client->currentPlaylistChangeTime(time()) if ($load || $add || $insert || $delete);
+			$client->currentPlaylist(undef) if $load;
+			
+ 			if (Slim::Utils::Misc::stillScanning()) {
+ 				push @returnArray, "rescan:1";
+ 			}
+
+	 		push @returnArray, "count:$size";
 
 		} elsif ($p0 eq "playlist") {
 
@@ -1347,7 +1414,7 @@ sub execute {
 
  			$pushParams = 0;
  
- 			my $tags = "galdu";
+ 			my $tags = "galdx";
  			
  			my %params = parseParams($parrayref, \@returnArray);
  			
@@ -1375,7 +1442,7 @@ sub execute {
  			if ($power) {
  			
  				#push @returnArray, "player_mode:".Slim::Buttons::Common::mode($client);
- 		    		push @returnArray, "mode:". $client->playmode;
+ 		    		push @returnArray, "mode:". Slim::Player::Source::playmode($client);
 
  				if (Slim::Player::Playlist::song($client)) { 
 					my $track = $ds->objectForUrl(Slim::Player::Playlist::song($client));
@@ -1420,7 +1487,7 @@ sub execute {
 				push @returnArray, "playlist shuffle:".$shuffle; #(0 no, 1 title, 2 albums)
  		    
  				if ($songCount > 0) {
- 					$idx = Slim::Player::Source::streamingSongIndex($client);
+ 					$idx = Slim::Player::Source::playingSongIndex($client);
  					push @returnArray, "playlist_cur_index:".($idx);
  				}
 
@@ -1733,7 +1800,7 @@ sub parseListRef {
 
 # This maps the extended CLI commands to methods on Track.
 # Allocation map: capital letters are still free:
-#  a b c d e f g h i j k l m n o p q r s t u v X y z
+#  a b c d e f g h i j k l m n o p q r s t u v x y z
 
 our %cliTrackMap = (
 	'g' => 'genre',
@@ -1763,6 +1830,7 @@ our %cliTrackMap = (
 # e album_id
 # p genre_id
 # s artist_id
+# x id
 
 sub pushSong {
 	my $pathOrObj = shift;
@@ -1770,8 +1838,19 @@ sub pushSong {
 
 	my $ds        = Slim::Music::Info::getCurrentDataStore();
 	my $track     = ref $pathOrObj ? $pathOrObj : $ds->objectForUrl($pathOrObj);
+	my @returnArray;
+	
+	if (!defined $track){
+		msg("Slim::Control::Command::pushSong called on undefined track!\n");
+		return;
+	}
 
-	my @returnArray = sprintf('title:%s', $track->title());
+	
+	if ($tags =~ /x/){
+		push @returnArray, sprintf('id:%s', $track->id());
+	}
+	
+	push @returnArray, sprintf('title:%s', $track->title());
 	
 	for my $tag (split //, $tags) {
 

@@ -15,7 +15,8 @@
   CRLF as end of line, but always terminates replies with LF.</p>
   
 <p>To use the command line interface interactively, use the telnet command from your system's command prompt:
-  <em>telnet localhost 9090</em> and when it connects, you can start typing commands.</p>
+  <em>telnet localhost 9090</em> and when it connects, you can start typing commands. Beware that the server
+  expects parameters to be encoded using percent-style escaping (see below); &quot; and \ are not supported as in shell-like environments. </p>
   
 
 <h4>General command format</h4>
@@ -39,7 +40,7 @@
   In the examples below, the escaping is not show for readability (except %20 for space).</p>
 
 <h4>Extended query format</h4>
-<p>A few extended commands are defined, to regroup multiple queries and allow browsing the SlimServer database. These
+<p>A few extended quries are defined, to regroup multiple queries and allow browsing the SlimServer database. These
   queries return <em>multiple</em> items. Overall however, their format is compliant with the general command format above:</p>
 <blockquote> 
   <p><strong><code>[&lt;playerid&gt;] &lt;command&gt; &lt;start&gt; &lt;itemsPerResponse&gt; &lt;p3&gt; ... &lt;pN&gt; &lt;LF&gt;</code></strong></p> 
@@ -78,6 +79,28 @@
      name:Movy model:slimp3 displaytype:noritake-katakana connected:1&lt;LF&gt;&quot;</p>
 </blockquote>
 
+<h4>Extended command format</h4>
+<p>Extended commands are commands that reuse the general principle of tagged parameters as introduced by extended queries:</p>
+<blockquote> 
+  <p><strong><code>[&lt;playerid&gt;] &lt;command&gt; &lt;p1&gt; ... &lt;pN&gt; &lt;LF&gt;</code></strong></p> 
+</blockquote>
+<p>where: </p> 
+<blockquote>
+	<p><code>&lt;playerid&gt;</code> is the unique identifier for the player, as above.</p>
+	<p><code>&lt;command&gt;</code> is the command name, currently limited to &quot;<a href="#playlistcontrol">playlistcontrol</a>&quot;.</p>
+	<p><code>&lt;p1&gt;</code> through <code>&lt;pN&gt;</code> are <em>tagged</em> parameters as defined above.</p>
+</blockquote>
+<p>The server performs the command and returns: </p>
+<blockquote> 
+  <p><strong><code>[&lt;playerid&gt;] &lt;command&gt; &lt;p1&gt; ... &lt;pN&gt; &lt;pN+1&gt; ... &lt;pM&gt; &lt;LF&gt;</code></strong></p> 
+</blockquote>
+<p>where: </p> 
+<blockquote>
+	<p>The entire query is repeated.</p>
+	<p><code>&lt;pN+1&gt;</code> through <code>&lt;pM&gt;</code> is the <em>tagged</em> returned data. See the command description
+	for definitions. In general commands do return some information about the command performed.</p>
+</blockquote>
+
 <h4>Notes</h4>
 <ul>
 <li>Commands that use paths to songs or playlists (<code>&lt;item&gt;</code> parameters below)  can use 
@@ -86,19 +109,34 @@
   can specify just &quot;foo.mp3&quot; in the command parameter.  Likewise, to refer to items in the Saved Playlist folder, 
   you can use a prefix of  &quot;__playlists/&quot; before the path.  For example, to refer to the saved playlist 
   &quot;bar.m3u&quot; in the Saved Playlists folder, you can specify a path of &quot;__playlists/bar.m3u&quot;.</li>
+<p></p>
 <li>The HTTP server can return cover art for songs using the path URL as returned by any of the CLI functions.
-  If no cover art exists for the given song, the server returns a 1x1 white gif image. If thumbs are requested and
-  none exist, the cover is returned if it exists. Use the following URLs:
+  If no cover art exists for the given song, the server returns special "no artwork" image. Please refer to 
+  the <a href="artwork.html">Artwork Setup</a> documentation for more details on artwork management in SlimServer. 
+  Use the following URLs:
 <blockquote> 
   <p><strong><code>http://&lt;server&gt;:&lt;port&gt;/music/&lt;path&gt;/cover.jpg</code></strong><br> 
      <strong><code>http://&lt;server&gt;:&lt;port&gt;/music/&lt;path&gt;/thumb.jpg</code></strong></p> 
 </blockquote>
+where: <br> 
+<blockquote>
+	<code>&lt;server&gt;</code> is the ip address or name of the server.<br>
+	<code>&lt;port&gt;</code> is the HTTP port of the server (not the same as the CLI port).<br>
+	<code>&lt;path&gt;</code> is the song path as returned by the CLI functions.<br>
+</blockquote>
+<p>In addition, there is a shortcut URL to return the artwork of the currently playing song for a player:
+<blockquote> 
+  <p><strong><code>http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&gt;</code></strong><br> 
+     <strong><code>http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&gt;</code></strong></p> 
+</blockquote>
 <p>where: </p> 
 <blockquote>
-	<p><code>&lt;server&gt;</code> is the ip address or name of the server.</p>
-	<p><code>&lt;port&gt;</code> is the HTTP port of the server (not the same as the CLI port).</p>
-	<p><code>&lt;path&gt;</code> is the song path as returned by the CLI functions.</p>
-</blockquote></li>
+	<code>&lt;server&gt;</code> is the ip address or name of the server.<br>
+	<code>&lt;port&gt;</code> is the HTTP port of the server (not the same as the CLI port).<br>
+	<code>&lt;playerid&gt;</code> is the unique identifier for the player, as above. If omitted, the server will use a random player.<br>
+</blockquote>
+
+</li>
 
 <li>For commands using positional parameters, any extra parameters (after all required ones) will be returned. For commands using tagged parameters,
 parameters using unknown tags will be returned as well. This allows the client to add to commands and queries some context
@@ -321,10 +359,12 @@ already synced with this player by passing in a &quot;?&quot; parameter.  Multip
 
 <br><p><strong><code>&lt;playerid&gt; display &lt;line1&gt; &lt;line2&gt; &lt;duration&gt;</code></strong></p>
 <p>The &quot;display&quot; command specifies some text to be displayed on the 
-  player screen for a specified amount of time (in seconds).</p>
+  player screen for a specified amount of time (in seconds). Please note the CLI expects parameters to be encoded using
+  percent-style escaping (see above): space is represented by &quot;%20&quot;. See the examples.</p>
 <p>Examples:</p>
 <blockquote> 
   <p>Request: &quot;04:20:00:12:23:45 display Hello World 5&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 display Hello World 5&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 display Hello%20World Second%20Line 5&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 display Hello%20World Second%20Line 5&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p><strong><code>&lt;playerid&gt; linesperscreen ?</code></strong></p>
@@ -523,7 +563,7 @@ preferences values.</p>
 		<td></td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;<b>genre_id</b></td>
+		<td>&nbsp;&nbsp;<b>id</b></td>
 		<td>Genre ID. Item delimiter.</td>
 	</tr>
 	<tr>
@@ -534,9 +574,9 @@ preferences values.</p>
 <p>Example:</p>
 <blockquote> 
   <p> Request: &quot;genres 0 5&lt;LF&gt;&quot;<br>
-  	 Response: &quot;genres 0 5 rescan:1 count:6 genre_id:3 genre:Acid%20Jazz genre_id:4 genre:Alternative%20&%20Punk genre_id:5 genre:French genre_id:6 genre:No%20Genre genre_id:7 genre:Pop&lt;LF&gt;&quot;</p>
+  	 Response: &quot;genres 0 5 rescan:1 count:6 id:3 genre:Acid%20Jazz id:4 genre:Alternative%20&%20Punk id:5 genre:French id:6 genre:No%20Genre id:7 genre:Pop&lt;LF&gt;&quot;</p>
   <p> Request: &quot;genres 0 5 search:unk&lt;LF&gt;&quot;<br>
-  	 Response: genres 0 5 search:unk count:1 genre_id:4 genre:Alternative%20&%20Punk&lt;LF&gt;&quot;</p>
+  	 Response: genres 0 5 search:unk count:1 id:4 genre:Alternative%20&%20Punk&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p id="artists"><strong><code>artists &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
@@ -580,7 +620,7 @@ preferences values.</p>
 		<td></td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;<b>artist_id</b></td>
+		<td>&nbsp;&nbsp;<b>id</b></td>
 		<td>Artist ID. Item delimiter.</td>
 	</tr>
 	<tr>
@@ -591,9 +631,9 @@ preferences values.</p>
 <p>Example:</p>
 <blockquote> 
   <p> Request: &quot;artists 0 5&lt;LF&gt;&quot;<br>
-  	 Response: artists 0 5 count:7 artist_id:2 artist:Anastacia artist_id:3 artist:Calogero artist_id:4 artist:Evanescence artist_id:5 artist:Leftfield%20%26%20Lydon artist_id:18 artist:Llorca&lt;LF&gt;&quot;</p>
+  	 Response: artists 0 5 count:7 id:2 artist:Anastacia id:3 artist:Calogero id:4 artist:Evanescence id:5 artist:Leftfield%20%26%20Lydon id:18 artist:Llorca&lt;LF&gt;&quot;</p>
   <p> Request: &quot;artists 0 5 genre_id:7&lt;LF&gt;&quot;<br>
-  	 Response: artists 0 5 genre_id:7 count:2 artist_id:2 artist:Anastacia artist_id:19 artist:Sarah%20Connor&lt;LF&gt;&quot;</p>
+  	 Response: artists 0 5 genre_id:7 count:2 id:2 artist:Anastacia id:19 artist:Sarah%20Connor&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p id="albums"><strong><code>albums &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
@@ -633,11 +673,11 @@ preferences values.</p>
 		<td>Number of results returned by the query. If no search string is present, this is the same value as returned by &quot;info total albums ?&quot;</td>
 	</tr>
 	<tr>
+	<tr>
 		<td><em>For each album:</em></td>
 		<td></td>
 	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;<b>album_id</b></td>
+		<td>&nbsp;&nbsp;<b>id</b></td>
 		<td>Album ID. Item delimiter.</td>
 	</tr>
 	<tr>
@@ -648,11 +688,11 @@ preferences values.</p>
 <p>Example:</p>
 <blockquote> 
   <p> Request: &quot;albums 0 4&lt;LF&gt;&quot;<br>
-  	 Response: &quot;albums 0 4 count:14 album_id:1 album:Amadeus%20(Disc%201%20of%202) album_id:4 album:Anastacia album_id:5 album:Bounce%20[Single] album_id:6 album:Fallen&lt;LF&gt;&quot;</p>
+  	 Response: &quot;albums 0 4 count:14 id:1 album:Amadeus%20(Disc%201%20of%202) id:4 album:Anastacia id:5 album:Bounce%20[Single] id:6 album:Fallen&lt;LF&gt;&quot;</p>
   <p> Request: &quot;albums 0 5 genre_id:7&lt;LF&gt;&quot;<br>
-  	 Response: &quot;albums 0 5 genre_id:7 count:2  album_id:4 album:Anastacia  album_id:5 album:Bounce%20[Single]&lt;LF&gt;&quot;</p>
+  	 Response: &quot;albums 0 5 genre_id:7 count:2  id:4 album:Anastacia  id:5 album:Bounce%20[Single]&lt;LF&gt;&quot;</p>
   <p> Request: &quot;albums 0 5 artist_id:19&lt;LF&gt;&quot;<br>
-  	 Response: &quot;albums 0 5 artist_id:19 count:1 album_id:5 album:Bounce%20[Single]&lt;LF&gt;&quot;</p>
+  	 Response: &quot;albums 0 5 artist_id:19 count:1 id:5 album:Bounce%20[Single]&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p id="songinfo"><strong><code>songinfo &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
@@ -665,11 +705,15 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td>url</td>
-		<td>Song path as returned by other CLI commands. This is a mandatory parameter.</td>
+		<td>Song path as returned by other CLI commands. This is a mandatory parameter, except if &quot;track_id&quot; is provided.</td>
+	</tr>
+	<tr>
+		<td>track_id</td>
+		<td>Track ID as returned by other CLI commands. This is a mandatory parameter, except if &quot;url&quot; is provided.</td>
 	</tr>
 	<tr>
 		<td>tags</td>
-		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is all info except the url.</td>
+		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is all info except the url or id, depending on the given parameter.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
@@ -689,6 +733,10 @@ preferences values.</p>
 		<td></td>
 		<td>count</td>
 		<td>Number of results returned by the query, that is, total number of elements to return for this song.</td>
+	</tr>
+	<tr>
+		<td>id</td>
+		<td>Track ID</td>
 	</tr>
 	<tr>
 		<td></td>
@@ -828,7 +876,7 @@ preferences values.</p>
   	 title:Left%20Outside%20Alone genre:Pop artist:Anastacia composer:D.%20Austin/G.%20Ballard album:Anastacia duration:257.488975&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p id="titles"><strong><code>titles|songs &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
+<br><p id="titles"><strong><code>titles|songs|tracks &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
 <p>The &quot;titles&quot; command returns all titles known by the SlimServer.</p>
 <p>Accepted tagged parameters:</p>
 <table border="0" spacing="50">
@@ -852,7 +900,7 @@ preferences values.</p>
 		<td>tags</td>
 		<td>Determines which tags are returned. Each returned tag is identified by a letter (see command 
 		    &quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible fields and their identifying 
-		    letter). The default tags value for this command is &quot;galdu&quot;.</td>
+		    letter). The default tags value for this command is &quot;galdx&quot;.</td>
 	</tr>
 	<tr>
 		<td>search</td>
@@ -884,8 +932,8 @@ preferences values.</p>
 		<td></td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;<b>index</b></td>
-		<td>Title index, zero-based. Item delimiter.</td>
+		<td>&nbsp;&nbsp;<b>id</b></td>
+		<td>Track ID (even if x is not specified by tags:). Item delimiter.</td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;<em>Tags</em></td>
@@ -895,13 +943,13 @@ preferences values.</p>
 <p>Example:</p>
 <blockquote> 
   <p> Request: &quot;titles 0 2&lt;LF&gt;&quot;<br>
-  	 Response: &quot;titles 0 2 count:100 index:0 title:Ancestral%20Aid genre:Soundtrack artist:Various%20Artists album:The%20Hunt%20For%20Red%20October
+  	 Response: &quot;titles 0 2 count:100 id:55 title:Ancestral%20Aid genre:Soundtrack artist:Various%20Artists album:The%20Hunt%20For%20Red%20October
   	 duration:136.93387755102 disc:1 track:5 year:1990 url:file:///Users/dean/slimp3/Music/Various%20Artists/The%20Hunt%20For%20Red%20October/Ancestral%20Aid.mp3
-  	 index:1 title:Any%20How genre:Acid%20Jazz artist:Llorca album:New%20Comer duration:340.297142857143 track:5 year:2001 url:...&lt;LF&gt;&quot;</p>
+  	 id:1 title:Any%20How genre:Acid%20Jazz artist:Llorca album:New%20Comer duration:340.297142857143 track:5 year:2001 url:...&lt;LF&gt;&quot;</p>
 
   <p> Request: &quot;titles 0 12 album:Anastacia tags:p&lt;LF&gt;&quot;<br>
-  	 Response: &quot;titles 0 12 album:Anastacia tags:p count:12 index:0 title:Heavy%20On%20My%20Heart url:...
-  	 index:1 title:I%20Do url:... index:2 title:Left%20Outside%20Alone url:...&lt;LF&gt;&quot;</p>
+  	 Response: &quot;titles 0 12 album:Anastacia tags:p count:12 id:4 title:Heavy%20On%20My%20Heart url:...
+  	 id:1 title:I%20Do url:... id:2 title:Left%20Outside%20Alone url:...&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p id="playlists"><strong><code>playlists &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
@@ -922,7 +970,7 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td>tags</td>
-		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is &quot;galdu&quot;.</td>
+		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is &quot;galdx&quot;.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
@@ -945,12 +993,12 @@ preferences values.</p>
 		<td></td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;<b>index</b></td>
-		<td>Item index, zero-based. Item delimiter.</td>
-	</tr>
-	<tr>
 		<td>&nbsp;&nbsp;<em>If item is path:</em></td>
 		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<b>index</b></td>
+		<td>Item index, zero-based. Item delimiter.</td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;&nbsp;&nbsp;item</td>
@@ -965,6 +1013,10 @@ preferences values.</p>
 		<td></td>
 	</tr>
 	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<b>id</b></td>
+		<td>Track ID (even if x is not specified by tags:). Item delimiter.</td>
+	</tr>
+	<tr>
 		<td>&nbsp;&nbsp;&nbsp;&nbsp;<em>Tags</em></td>
 		<td>Same tags as defined in command &quot;<a href="#songinfo">songinfo</a>&quot;.</td>
 	</tr>
@@ -975,11 +1027,11 @@ preferences values.</p>
   	 Response: &quot;playlists 0 2 count:2 index:0 item:ShoutcastBrowser%20Recently%20Played 
   	 dir:__playlists/ShoutcastBrowser_Recently_Played index:1 item:SUPER dir:__playlists/SUPER.m3u&lt;LF&gt;&quot;</p>
   <p> Request: &quot;playlists 0 2 dir:__playlists/SUPER.m3u&lt;LF&gt;&quot;<br>
-  	 Response: &quot;playlists 0 2 dir:__playlists/SUPER.m3u count:3 index:0 
+  	 Response: &quot;playlists 0 2 dir:__playlists/SUPER.m3u count:3 id:1 
   	 title:Left%20Outside%20Alone genre:Pop artist:Anastacia composer:D.%20Austin/G.%20Ballard 
   	 album:Anastacia duration:257.488975 disc:1 track:2 year:2004 
   	 url:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%20Outside%20Alone.mp3 
-  	 index:1 title:Bounce%20[Original%20Version] genre:Pop artist:Sarah%20Connor 
+  	 id:2 title:Bounce%20[Original%20Version] genre:Pop artist:Sarah%20Connor 
   	 album:Bounce%20[Single] duration:252.630204081633 disc:1 track:3 
   	 year:2003 url:file:///Users/dean/slimp3/Music/Sarah%20Connor/Bounce%20[Single]/Bounce%20[Original%20Version].mp3&lt;LF&gt;&quot;</p>
 </blockquote>
@@ -1264,6 +1316,61 @@ and saves in the top level of the playlists directory.</p>
   <p>Request: &quot;04:20:00:12:23:45 playlist repeat 0&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist repeat 0&lt;LF&gt;&quot;</p>
 </blockquote>
 
+<br><p id="playlistcontrol"><strong><code>playlistcontrol &lt;taggedParameters&gt;</code></strong></p>
+<p>The &quot;playlistcontrol&quot; command enables playlist operations using IDs as returned by extended CLI queries (titles, artists, etc).</p>
+<p>Accepted tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>cmd</td>
+		<td>Command to perform on the playlist, one of &quot;load&quot;, &quot;add&quot;, &quot;insert&quot; or &quot;delete&quot;.
+		 This parameter is mandatory. If no additional parameter is provided, the entire DB is loaded/added/inserted/deleted.</td>
+	</tr>
+	<tr>
+		<td>genre_id</td>
+		<td>Genre ID, to restrict the results to the titles of that genre.</td>
+	</tr>
+	<tr>
+		<td>artist_id</td>
+		<td>Artist ID, to restrict the results to the titles of that artist.</td>
+	</tr>
+	<tr>
+		<td>album_id</td>
+		<td>Album ID, to restrict the results to the titles of that album.</td>
+	</tr>
+	<tr>
+		<td>track_id</td>
+		<td>Track ID, to restrict the results to this track_id.</td>
+	</tr>
+</table>
+<p>Returned tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>rescan</td>
+		<td>Returned with value 1 if the SlimServer is still scanning the database. The command may therefore have missed items.
+		Not returned if no scan is in progress.</td>
+	</tr>
+	<tr>
+		<td>count</td>
+		<td>Number of elements loaded/added/inserted or max number of elements deleted</td>
+	</tr>
+</table>
+<p>Example:</p>
+<blockquote> 
+  <p> Request: &quot;playlistcontrol cmd:add genre_id:9&lt;LF&gt;&quot;<br>
+  	 Response: &quot;playlistcontrol cmd:add genre_id:9 count:33&lt;LF&gt;&quot;</p>
+
+  <p> Request: &quot;playlistcontrol cmd:load album_id:22&lt;LF&gt;&quot;<br>
+  	 Response: &quot;playlistcontrol cmd:load album_id:22 count:12&lt;LF&gt;&quot;</p>
+</blockquote>
+
 <br><p id="status"><strong><code>&lt;playerid&gt; status &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
 <p>The &quot;status&quot; command returns the complete status about a given player, including the current playlist. Set the &lt;start&gt; parameter
 to &quot;-&quot; to have the command return the playlist data starting from the current song.</p>
@@ -1277,7 +1384,7 @@ to &quot;-&quot; to have the command return the playlist data starting from the 
 		<td>tags</td>
 		<td>Determines which tags are returned. Each returned tag is identified by a letter (see command 
 		    &quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible fields and their identifying 
-		    letter). The default tags value for this command is &quot;gald&quot;.</td>
+		    letter). The default tags value for this command is &quot;galdx&quot;.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
