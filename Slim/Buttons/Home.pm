@@ -182,6 +182,11 @@ sub menuOptions {
 	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
 	foreach my $menuOption (keys %{$pluginsRef}) {
 		next if (exists $disabledplugins{$menuOption});
+		no strict 'refs';
+		if (exists &{"Plugins::" . $menuOption . "::enabled"} && 
+			! &{"Plugins::" . $menuOption . "::enabled"}($client) ) {
+			next;
+		}
 		$menuChoices{$menuOption} = $pluginsRef->{$menuOption};
 	}
 	return %menuChoices;
