@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.57 2004/01/15 01:21:01 dean Exp $
+# $Id: HTTP.pm,v 1.58 2004/01/15 02:07:38 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1134,11 +1134,13 @@ sub generateresponse {
 		}
 	}
 	
-	if (!defined($$body)) {
+	# if there's a reference to an empty value, then there is no valid page at all
+	if (defined($body) && !defined($$body)) {
 		$body = filltemplatefile('html/errors/404.html',$paramsref);
 		$result = "HTTP/1.0 404 Not Found";
 	}
 
+	# if the reference to the body is itself undefined, then we've started generating the page in the background
 	if ($body) {
 		return generateResponse_Done($client, $paramsref, $body, $httpclientsock, \$result, \%headers, \%paramheaders);
 	} else {

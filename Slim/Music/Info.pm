@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.53 2004/01/15 00:33:16 dean Exp $
+# $Id: Info.pm,v 1.54 2004/01/15 02:07:38 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1721,7 +1721,7 @@ sub sortByTitlesAlg ($$) {
 	my $k = $_[1];
 
 	#compare titles
-	return $j->[5] cmp $k->[5];
+	return ($j->[5] || 0) cmp ($k->[5] || 0);
 }
 
 #Sets up an array entry for performing complex sorts
