@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.154 2004/12/11 17:36:27 dean Exp $
+# $Id: strings.txt,v 1.155 2004/12/13 06:11:59 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -246,17 +246,20 @@ SCREENSAVERS
 	EN	Screensavers
 	ES	Salvapantallas
 	FR	Ecrans de veille
+	SE	Skärmsläckare
 
 RADIO
 	EN	Internet Radio
 	ES	Radio de Internet
 	FR	Radio Internet
+	SE	Internetradio
 
 GAMES
 	DE	Spiele
 	EN	Games
 	ES	Juegos
 	FR	Jeux
+	SE	Spel
 
 PLAYLIST
 	DE	Playlist
@@ -761,17 +764,13 @@ ALARM_NOW_PLAYING
 	SE	Väckarklockan spelar nu
 
 SLIMP3
-	DE	SLIMP3
 	EN	SLIMP3
-	ES	SLIMP3
 
 SQUEEZEBOX
 	EN	Squeezebox
-	ES	Squeezebox
 
 SOFTSQUEEZE
 	EN	SoftSqueeze
-	ES	SoftSqueeze
 
 WELCOME_TO_SLIMP3
 	DE	Willkommen bei SLIMP3
@@ -908,6 +907,7 @@ STATUS
 	EN	Status
 	ES	Estado
 	FR	État
+	SE	status
 
 SERVER
 	DE	Server
@@ -926,6 +926,7 @@ ABOUT_SHORT
 	ES	Acerca de
 	FR	A propos
 	PT	Sobre ...
+	SE	Om
 
 #
 # Setup Group strings
@@ -950,6 +951,7 @@ SETUP_GROUP_BRIGHTNESS_DESC
 	EN	The brightness of the player's display can be set for when it's on, off, or sitting idle (screensaver). It can also be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
 	ES	La luminosidad del display del reproductor se puede establecer para cuando está encendido, apagado, o inactivo (salvapantalla). También puede ajustarse automaticamente cuando se aprieta un botón, al comenzar una canción, o al estar sin actividad por un tiempo. Se puede elegir deshabilitar este comportamiento.
 	FR	La luminosité de l'afficheur de la platine peut être modifiée lorsque cette dernière est allumée, éteinte ou en veille (activation de l'écran de veille). Elle peut également être réglée automatiquement lorsque vous pressez une touche de la télécommande, qu'un fichier audio est lancé ou que la platine n'est pas utilisée. Ce réglage automatique peut être désactivé.
+	SE	Ljusstyrkan på spelarens skärm kan ställas in oberoende för lägena av, på och vänteläge. Ljusstyrkan kan också justeras automatiskt vid knapptryckning, vid start eller slut på sång, eller efter förinställd tid av oaktivitet. Du kan också välja att stänga av denna automatik.
 
 SETUP_GROUP_TCP_PARAMS
 	DE	TCP Parameter
@@ -1052,30 +1054,35 @@ SETUP_FONTLIST
 	EN	Font List
 	ES	Lista de Fuentes
 	FR	Liste des polices
+	SE	Typsnittslista
 
 SETUP_ACTIVEFONT
 	DE	Schriftart
 	EN	Font
 	ES	Fuente
 	FR	Police
+	SE	Typsnitt
 
 SETUP_ACTIVEFONT_DESC
 	DE	Sie können den SIZE-Knopf der Fernsteuerung oder die Knöpfe unten verwenden, um zwischen den verschiedenen Schriften des Displays umzuschalten. Mit dem untenstehenden Menü können Sie die Reihenfolge festlegen, in welcher die Schriften erscheinen.
 	EN	You can use the SIZE button on the remote or the radio buttons below to switch between fonts on the player display. You may choose the order that they appear using the menus below.
 	ES	Se puede utilizar el botón SIZE en el control remoto o los botones debajo para cambiar entre los diferentes fuentes del display del reproductor. Se puede elegir el orden en que apararecerán utilizando el menu debajo.
 	FR	Vous pouvez utiliser la touche SIZE de la télécommande ou les cases à cocher ci-dessous pour modifier la police de caractères utilisée par la platine. L'ordre d'affichage des polices peut être modifié ci-dessous.
+	SE	Du kan använda Size-knappen på fjärrkontrollen eller knapparna nedan för att växla mellan olika typsnitt. Du kan också ställa in i vilken ordning som typsnitten visas.
 
 SETUP_IDLEFONT
 	DE	Schriftart (Standby)
 	EN	Standby Font
 	ES	Fuente para Standby
 	FR	Police (mode veille)
+	SE	Typsnitt i viloläge
 
 SETUP_IDLEFONT_DESC
 	DE	Wenn der Player im Standby-Modus ist, können Sie den SIZE-Knopf der Fernsteuerung oder die Knöpfe unten verwenden, um die Schrift für die Uhr zu definieren. Mit dem untenstehenden Menü können Sie die Reihenfolge festlegen, in welcher die Schriften erscheinen.
 	EN	When the player is standby, you can use the SIZE button on the remote or the radio buttons below to switch between fonts for the clock display. You may choose the order that they appear using the menus below.
 	ES	Cuando el reproductor está en standby, se puede utilizar el botón SIZE en el control remoto o los botones debajo para cambiar entre los diferentes fuentes del display del reloj. Se puede elegir el orden en que apararecerán utilizando el menu debajo.
 	FR	Lorsque la platine est en mode veille, vous pouvez utiliser la touche SIZE de la télécommande ou les cases à cocher ci-dessous pour modifier la police de caractères utilisée. L'ordre d'affichage des polices peut être modifié ci-dessous.
+	SE	När en spelare är i vänteläge kan du använda SIZE-knappen på fjärrkontrollen eller knapparna nedan för att växla typsnitt. Du kan även kontrollera den ordning som typsnitt visas i. 
 
 SETUP_DOUBLESIZE
 	DE	Textgröße
@@ -1093,6 +1100,7 @@ SETUP_DOUBLESIZE_DESC
 	DE	Schriftgrösse wählen
 	EN	Choose the size of text for player display
 	ES	Elegir el tamaño en el que se mostrará el texto
+	SE	Välj textstorlek för spelarens skärm
 
 SETUP_OFFDISPLAYSIZE
 	DE	Textgrösse im Standby Modus
@@ -1115,6 +1123,7 @@ SETUP_SCROLLPAUSEDOUBLE
 	DE	Pause für Scrollen bei grosser Schriftart
 	EN	Large Text Scroll Pause
 	ES	Pause de Desplazamiento en Texto Grande
+	SE	Paus vid skollning med stor text
 
 SETUP_SCROLLPAUSE_DESC
 	DE	Sie können die Zeit definieren, die der Player wartet, bevor er mit dem horizontalen Scrollen beginnt. Geben Sie einen Wert in Sekunden ein, die vor oder zwischen dem Scrollen gewartet werden soll. Null (0) unterdrückt jegliche Pause und scrollt sofort. Standardwert ist 3.6 Sekunden.
@@ -1136,6 +1145,7 @@ SETUP_SCROLLRATEDOUBLE
 	DE	Tempo für Scrollen bei grosser Schriftart
 	EN	Large Text Scroll Rate
 	ES	Velocidad de desplazamiento en Texto Grande
+	SE	Tempo för skrollning av stor text
 
 SETUP_SCROLLRATE_DESC
 	DE	Sie können die Zeit definieren, die der Player zwischen dem Scrollen einzelner Buchstaben auf dem Display wartet. Geben Sie die Wartezeit in Sekunden ein. Kleinere Werte beschleunigen den Scrollvorgang. Standardwert ist 0.15 Sekunden.
@@ -1438,12 +1448,14 @@ SETUP_IDLEBRIGHTNESS
 	EN	Brightness when idle
 	ES	Luminosidad cuando está inactivo:
 	FR	Luminosité en veille
+	SE	Ljusstyrka i viloläge
 
 SETUP_IDLEBRIGHTNESS_CHOOSE
 	DE	Helligkeit wenn im Standby Modus:
 	EN	Brightness when idle:
 	ES	Luminosidad cuando está inactivo:
 	FR	Luminosité en veille :
+	SE	Ljusstyrka i viloläge
 
 SETUP_AUTOBRIGHTNESS_CHOOSE
 	DE	Automatische Anzeigehelligkeit:
@@ -1516,6 +1528,7 @@ SETUP_PLAYINGDISPLAYMODE
 	EN	Now Playing Information
 	ES	Información de lo que se está escuchando
 	FR	Affichage en mode Lecture
+	SE	Information i läge "Nu spelas"
 
 SETUP_PLAYINGDISPLAYMODE_OK
 	DE	Das Display zeigt nun den Fortschritt des aktuell abgespielten Titels an:
@@ -1736,16 +1749,19 @@ LAME0
 	DE	Höchste Qualität, sehr langsam
 	EN	Highest Quality, very slow
 	ES	Mejor calidad posible, muy lento
+	SE	Högsta kvalitet, långsamt
 
 LAME9
 	DE	Geringe Qualität, aber schnell
 	EN	Poor Quality, but fast
 	ES	Baja calidad, pero rápido
+	SE	Lägsta kvalitet, snabbt
 
 SETUP_LAMEQUALITY
 	DE	LAME Qualitätsstufe
 	EN	LAME Quality Level
 	ES	Nivel de Calidad de LAME
+	SE	LAME kvalitetsnivå
 
 SETUP_LAMEQUALITY_DESC
 	DE	Der LAME MP3 Kodierer kann verwendet werden, um Musik für das Streaming in MP3 umzuwandeln. Definieren Sie LAMEs Ausgabequalität mit einem Wert von 0 bis 9. 9 ist der Standardwert, welcher eine sehr gute Wiedergabe bei hohen Bitraten gewährleistet, den Prozessor aber am wenigsten belastet. 0 ist die höchste Qualität, kann aber ihren Rechner ausbremsen. Es ist möglich, dass ein Rechner, auf welchem die SlimServer Software läuft, nicht genügend rechenstark ist, um höhere Qualitätseinstellungen zu verarbeiten.
@@ -2347,6 +2363,7 @@ SETUP_MUSICMAGIC
 	ES	MusicMagic
 
 SETUP_MUSICMAGIC_DESC
+	DE	SlimServer kann MusicMagic als Quelle für Titel- und Musikstilinformationen verwenden. Das Programm erlaubt es zudem, Mixe in abhängigkeit von Musikstil, Interpret oder Charakteristik der Musikstücke zu erstellen. Kreuzen Sie die Checkbox unten an, um MusicMagics Informationen zu importieren.
 	EN	SlimServer can use your MusicMagic program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level. Check the box below to import your MusicMagic Library information.
 	ES	El SlimServer puede utilizar el programa MusicMagic como fuente para obtener la información de género y título. Además se pueden generar mezclas instantáneas a nivel de género, artista y canción. Marcar la opción debajo para importar la información de la colección de MusicMagic. 
 
@@ -2506,10 +2523,12 @@ SETUP_MOODLOGICSCANINTERVAL_DESC
 	SE	När någon förändring sker i MoodLogic-databasen importerar SlimServer automatiskt dessa ändringar. Slimserver väntar minimalt det antal sekunder som anges här.
 
 SETUP_MUSICMAGICSCANINTERVAL
+	DE	MusicMagic Aktualisierungs-Intervall
 	EN	MusicMagic Reload Interval
 	ES	Intervalo de recarga de MusicMagic
 
 SETUP_MUSICMAGICSCANINTERVAL_DESC
+	DE	Sobald MusicMagic seine Informationssammlung ändert, importiert SlimServer die Daten erneut. Sie können ein minimales Zeitintervall definieren (in Sekunden), das SlimServer warten soll, bevor es die Daten neu importiert.
 	EN	When your MusicMagic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your MusicMagic Database again.  
 	ES	Cuando la base de datos de MusicMagic cambie, SlimServer importará automaticamente la información de la colección. Se puede especificar el tiempo mínimo (en segundos) que SlimServer esperará anted de recargar la base de datos de MusicMagic.
 
@@ -2518,6 +2537,7 @@ SETUP_MMSPORT
 	ES	Puerto HTTP de MusicMagic
 
 SETUP_MMSPORT_DESC
+	DE	Das MusicMagic Service API erlaubt die Wahl des HTTP Ports für die API-Anfragen. Geben Sie hier bitte die Portnummer ein, die in den MusicMagic Mixer Einstellungen definiert ist.
 	EN	The MusicMagic Service API allows the selection of an http port to use for queries to the MusicMagic API. Enter the port number here to match the setting you have chosen in MusicMagic Mixer settings.
 	ES	La API de Servicios de MusicMagic permite elegir un puerto http para utilizar en consultas a la API de MusicMagic. Ingresar el número de puerto aquí para que coincida con el que se eligió en la configuración del Mezclador de MusicMagic.
 
@@ -3173,11 +3193,13 @@ SETUP_OFFSAVER
 	DE	Bildschirmschoner (Aus)
 	EN	Screensaver (Off)
 	ES	Salvapantalla (Apagado)
+	SE	Skärmsläckare i avslaget läge
 
 SETUP_IDLESAVER
 	DE	Bildschirmschoner (gestoppt)
 	EN	Screensaver (Stopped)
 	ES	Salvapantalla (Parado)
+	SE	Skärmsläckare i stoppat läge
 
 SETUP_SCREENSAVER_CHOOSE
 	DE	Wählen Sie einen Bildschirmschoner
@@ -5213,6 +5235,7 @@ CONFIRM_OVERWRITE
 	EN	Confirm Overwrite
 	ES	Confirmar Sobre-escritura
 	FR	Confirmer remplacement
+	SE	bekräfta överskrivning
 
 TRACK
 	DE	Lied
@@ -5414,6 +5437,7 @@ FLC
 	EN	FLAC
 
 FEC
+	DE	FLAC mit eingebettetem CUEsheet
 	EN	FLAC with embedded CUEsheet
 
 OGG
@@ -6149,6 +6173,7 @@ DISPLAY_SETTINGS
 AUDIO_SETTINGS
 	EN	Audio
 	ES	Audio
+	SE	Ljudinställningar
 
 REMOTE_SETTINGS
 	EN	Remote
