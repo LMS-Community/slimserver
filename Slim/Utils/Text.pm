@@ -35,6 +35,8 @@ sub matchCase {
 	$s =~ tr{abcdefghijklmnopqrstuvwxyzְֱֲֳִֵßÞַ¢׀ָֹÊֻּֽ־ֿׁׂ׃װױײ״ÙÚÛÜ׳Ýאבגדהו‏חטיךכלםמןסעףפץצרשתûüÿ‎נ¡°}
 		{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAAABBCCDEEEEIIIINOOOOOOUUUUXYAAAAAABCEEEEIIIINOOOOOOUUUUYYD!D};
 
+	use utf8;
+
 	# Turn ֶ & ז into AE
 	$s =~ s/\x{00C6}/AE/go;
 	$s =~ s/\x{00E6}/AE/go;
