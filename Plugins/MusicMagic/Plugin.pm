@@ -415,7 +415,7 @@ sub exportFunction {
 		
 			$cacheEntry{'ALBUM'} = $songInfo{'album'};
 			$cacheEntry{'TRACKNUM'} = $songInfo{'track'};
-			$cacheEntry{'BITRATE'} = $songInfo{'bitrate'};
+			$cacheEntry{'BITRATE'} = $songInfo{'bitrate'} * 1000;
 			$cacheEntry{'YEAR'} = $songInfo{'year'};
 			$cacheEntry{'SIZE'} = $songInfo{'bytes'};
 
