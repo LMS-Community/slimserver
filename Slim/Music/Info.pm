@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.35 2003/12/08 19:26:50 dean Exp $
+# $Id: Info.pm,v 1.36 2003/12/09 19:20:25 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2080,7 +2080,7 @@ sub isFile {
 	my $fullpath = shift;
 
 	# check against types.conf
-	return 0 if $Slim::Music::Info::suffixes{ (split /\./, $fullpath)[-1] };
+	return 0 unless $Slim::Music::Info::suffixes{ (split /\./, $fullpath)[-1] };
 
 	my $stat = (-f $fullpath && -r $fullpath ? 1 : 0);
 
