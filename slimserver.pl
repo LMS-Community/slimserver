@@ -972,7 +972,7 @@ sub daemonize {
 		$logfilename = ">>" . $log;
 	}
 
-	open(STDOUT, ">>$log") || die "Can't write to $log: $!";
+	open(STDOUT, $logfilename) || die "Can't write to $logfilename: $!";
 
 	$0 = "slimserver";
 
