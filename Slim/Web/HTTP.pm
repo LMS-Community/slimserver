@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.76 2004/03/06 04:10:01 daniel Exp $
+# $Id: HTTP.pm,v 1.77 2004/03/06 04:23:52 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -940,7 +940,7 @@ sub sendStreamingResponse {
 
 			$::d_http && msg("(silence)");
 
-			my $silencedataref = getStaticConten("html/silence.mp3");
+			my $silencedataref = getStaticContent("html/silence.mp3");
 
 			my %segment = ( 
 				'data'   => $silencedataref,
