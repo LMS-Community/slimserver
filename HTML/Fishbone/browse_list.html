@@ -4,9 +4,9 @@
 		[% IF descend %][% IF not nobrowse %]<a href="browse.html?dir=[% descend | uri %]&player=[% player | uri %]" title='Descend'><font style="color:yellow">+ </font>[% END %][% title %]</a>[% IF not nobrowse %]</a>[% END %][% END %]
 		[% IF not descend %]<b><a href="songinfo.html?item=[% item | uri %]&player=[% player | uri %]">[% title | html %]</a></b>
 			[% IF includeArtist && artist %][% "BY" | string %] 
-			<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.contributorsOfType('artist').first.id %]&player=[% player | uri %]" target="browser">[% artist | html %]</a>[% END %]
+			<a href="browsedb.html?hierarchy=artist,album,track&level=0&artist=[% itemobj.contributorsOfType('artist').first.id %]&player=[% player | uri %]" target="browser">[% artist | html %]</a>[% END %]
 			[% IF includeAlbum && album %][% "FROM" | string %]
-			<i><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>[% END %]
+			<i><a href="browsedb.html?hierarchy=album,track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>[% END %]
 		[% END %]
 	</td>
 	<td class="listing" width="11" align="center">

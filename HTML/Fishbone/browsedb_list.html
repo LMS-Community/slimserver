@@ -4,9 +4,9 @@
 		[% IF descend %]<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% text | html %]</a>[% END %]
 		[% IF not descend %]<b><a href="songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&player=[% player | uri %]">[% text | html %][% IF year %] ([% year %])[% END %]</a></b>
 			[% IF includeArtist && artist && artist != noArtist %][% "BY" | string %] 
-			<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.contributorsOfType('artist').first.id %]&player=[% player | uri %]" target="browser">[% artist | html %]</a>[% END %]
+			<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% itemobj.contributorsOfType('artist').first.id %]&player=[% player | uri %]" target="browser">[% artist | html %]</a>[% END %]
 			[% IF includeAlbum && album  && album != noAlbum %][% "FROM" | string %]
-			<i><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>[% END %]
+			<i><a href="browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>[% END %]
 		[% END %]
 	</td>
 	<td class="listing" width="11" align="center">

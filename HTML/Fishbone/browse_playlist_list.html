@@ -4,9 +4,9 @@
 		[% IF descend %]<a href="browse.html?dir=[% descend | uri %]&player=[% player | uri %]" title='View'><b><font style="color:yellow">+ </font>[% title | html %]</b></a>  [% END %]
 		[% IF not descend %]<a href="songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&player=[% player | uri %]"><b>[% title | html %]</b></a>
 			[% IF album %] [% "FROM" | string %] [% END %] 
-			<i><a href="browsedb.html?hierarchy=track&level=0&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a></i> 
+			<i><a href="browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a></i> 
 		[% IF artist %] [% "BY" | string %] [% END %] 
-			<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
+			<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
 		[% END %]
 	</td>
 	<td class="listing" width="11" align="center">

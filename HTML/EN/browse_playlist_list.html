@@ -3,9 +3,9 @@
       [% IF descend %] <a href="browse.html?dir=[% descend | uri %]&player=[% player | uri %]">[% title | html %]</a>  [% END %]
       [% IF not descend %]<a href="songinfo.html?item=[% item %]&player=[% player | uri %]">[% title | html %]</a>
          [% IF album %] [% "FROM" | string %] [% END %] 
-         <i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i> 
+         <i><a href="browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a></i> 
          [% IF artist %] [% "BY" | string %] [% END %] 
-         <a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist | html %]</a>
+         <a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
       [% END %]
   </td>
   <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
