@@ -6,7 +6,7 @@
  </td>
  <td class="listing">
   [% IF anchor %]<a name="[% anchor %]"></a>[% END ; IF descend ; IF NOT nobrowse %]
-  <a onclick="parent.browseurl(&quot;browse.html?dir=[% descend %]&quot;)">[% END ; title | html ; IF NOT nobrowse %]</a>[%
+  <a onclick="parent.browseurl(&quot;browse.html?dir=[% descend | uri %]&quot;)">[% END ; title | html ; IF NOT nobrowse %]</a>[%
   END ; ELSE %]
   <a onclick="parent.browseurl(&quot;songinfo.html?item=[% item %]&quot;)">[% title | html %]</a>
   [% IF includeAlbum && album %][% "FROM" | string %][% END %]
