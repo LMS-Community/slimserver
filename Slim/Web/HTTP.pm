@@ -340,7 +340,6 @@ sub processHTTP {
 		msg("Request Headers: [\n" . $request->as_string() . "]\n");
 	}
 
-
 	if ($request->method() eq 'GET' || $request->method() eq 'HEAD') {
 
 		$sendMetaData{$httpClient} = 0;
@@ -362,7 +361,7 @@ sub processHTTP {
 			$response->code(RC_UNAUTHORIZED);
 			$response->header('Connection' => 'close');
 			$response->content_type('text/html');
-			$response->content(${filltemplatefile('html/errors/401.html', $params)});
+			$response->content_ref(filltemplatefile('html/errors/401.html', $params));
 			$response->www_authenticate(sprintf('Basic realm="%s"', string('SLIMSERVER')));
 
 			$httpClient->send_response($response);
@@ -457,7 +456,7 @@ sub processHTTP {
 					$response->code(RC_NOT_FOUND);
 					$response->content_type('text/html');
 					$response->header('Connection' => 'close');
-					$response->content(${filltemplatefile('html/errors/404.html', $params)});
+					$response->content_ref(filltemplatefile('html/errors/404.html', $params));
 			
 					$httpClient->send_response($response);
 					closeHTTPSocket($httpClient);
@@ -536,7 +535,7 @@ sub processHTTP {
 		$response->code(RC_METHOD_NOT_ALLOWED);
 		$response->header('Connection' => 'close');
 		$response->content_type('text/html');
-		$response->content(${filltemplatefile('html/errors/405.html', $params)});
+		$response->content_ref(filltemplatefile('html/errors/405.html', $params));
 
 		$httpClient->send_response($response);
 		closeHTTPSocket($httpClient);
@@ -896,7 +895,6 @@ sub generateHTTPResponse {
 
 		$response->code(RC_NOT_FOUND);
 		$body = filltemplatefile('html/errors/404.html', $params);
-
 	}
 
 	return 0 unless $body;
@@ -927,32 +925,43 @@ sub prepareResponseForSending {
 
 	use bytes;
 
-	$response->header('Content-Length' => length($$body));
-
-	# don't fill these in for HEAD requests
-	if ($response->request()->method() eq 'HEAD') {
-		$response->content("");
-	} else {
-		$response->content($$body);
-	}
+	# Set the Content-Length - valid for either HEAD or GET, even if HEAD
+	# will clear out the actual content below.
+	$response->content_length(length($$body));
+	$response->date(time());
 
 	my $request = $response->request();
 	my $mtime   = $response->last_modified() || 0;
+	my $method  = $request->method();
 
-	# Don't send back content if it hasn't been modified.
-	my $ifModified = $request->if_modified_since();
-	if (0 && $ifModified) {
+	# Don't send back content for a HEAD request.
+	if ($method eq 'HEAD') {
+		$$body = "";
+	}
 
-		if ($mtime && $mtime <= $ifModified) {
+	my $ifModified  = $request->if_modified_since();
+	my $requestTime = $request->client_date();
+
+	if (0 && $ifModified && $requestTime && $mtime) {
+
+		if (($ifModified >= $mtime) && ($ifModified <= $requestTime)) {
 
 			$::d_http && msg("Content has not been modified - returning 304.\n");
 
 			$response->code(RC_NOT_MODIFIED);
-			$response->content("");
 		}
 	}
 
-	addHTTPResponse($httpClient, $response);
+	if ($response->code() eq RC_NOT_MODIFIED) {
+
+		for my $header (qw(Content-Length Cache-Control Content-Type Expires Last-Modified)) {
+			$response->remove_header($header);
+		}
+
+		$$body = "";
+	}
+
+	addHTTPResponse($httpClient, $response, $body);
 
 	return 0;
 }
@@ -968,7 +977,6 @@ sub _stringifyHeaders {
 		$CRLF
 	);
 
-	$data .= sprintf("Date: %s%s", HTTP::Date::time2str(time), $CRLF);
 	$data .= $response->headers_as_string($CRLF);
 	
 	# hack to make xmms like the audio better, since it appears to be case sensitive on for headers.
@@ -986,23 +994,39 @@ sub _stringifyHeaders {
 sub addHTTPResponse {
 	my $httpClient = shift;
 	my $response   = shift;
+	my $body       = shift;
 
-	# Force byte semantics on $data and length($data) - otherwise we'll
+	# Force byte semantics on $body and length($$body) - otherwise we'll
 	# try to write out multibyte characters with invalid byte lengths in
 	# sendResponse() below.
 	use bytes;
 
-	# XXX
-	my $data = join($CRLF, _stringifyHeaders($response), $response->content());
+	# Take the refcnt down, so we don't leak.
+	if ($Class::DBI::Weaken_Is_Available) {
 
-	my $segment = {
-		'data'	   => \$data,
+		Scalar::Util::weaken($body);
+	}
+
+	# First add the headers
+	my $headers = _stringifyHeaders($response) . $CRLF;
+
+	push @{$outbuf{$httpClient}}, {
+		'data'     => \$headers,
 		'offset'   => 0,
-		'length'   => length($data),
+		'length'   => length($headers),
 		'response' => $response,
 	};
 
-	push @{$outbuf{$httpClient}}, $segment;
+	# And now the body.
+	if ($body && length($$body)) {
+
+		push @{$outbuf{$httpClient}}, {
+			'data'     => $body,
+			'offset'   => 0,
+			'length'   => length($$body),
+			'response' => $response,
+		};
+	}
 
 	Slim::Networking::Select::addWrite($httpClient, \&sendResponse);
 }
@@ -1030,7 +1054,10 @@ sub sendResponse {
 		return;
 	}
 
-	$sentbytes = syswrite($httpClient, ${$segment->{'data'}}, $segment->{'length'}, $segment->{'offset'});
+	if (defined $segment->{'data'} && defined ${$segment->{'data'}}) {
+
+		$sentbytes = syswrite($httpClient, ${$segment->{'data'}}, $segment->{'length'}, $segment->{'offset'});
+	}
 
 	if ($! == EWOULDBLOCK) {
 		$::d_http && msg("Would block while sending. Resetting sentbytes for: " . $peeraddr{$httpClient} . "\n");
@@ -1062,10 +1089,14 @@ sub sendResponse {
 			# no more messages to send
 			$::d_http && msg("No more messages to send to " . $peeraddr{$httpClient} . "\n");
 
-			my $connection = $segment->{'response'}->header('Connection');
+			my $connection = 0;
+
+			if ($segment->{'response'}) {
+				$connection = $segment->{'response'}->header('Connection');
+			}
 
 			# if either the client or the server has requested a close, respect that.
-			if ($connection && $connection eq 'close') {
+			if (($connection && $connection eq 'close') || !$connection) {
 
 				$::d_http && msg("End request, connection closing for: $httpClient\n");
 				closeHTTPSocket($httpClient);
@@ -1554,9 +1585,14 @@ sub _getFileContent {
 	my $skinkey = "${skin}/${path}";
 
 	# return if we have the template cached.
+	# XXX - this seems broken, and will start returning data of 0 length
+	# at some point. - dsully
 	if (Slim::Utils::Prefs::get('templatecache')) {
 
 		if (defined $templatefiles{$skinkey}) {
+
+			$::d_http && msg("Sending $skinkey from cache\n");
+
 			return @{$templatefiles{$skinkey}};
 		}
 	}
@@ -1675,7 +1711,6 @@ sub closeStreamingSocket {
 		$::d_http && msg("Closing streaming file.\n");
 		close  $streamingFiles{$httpClient};
 		delete $streamingFiles{$httpClient};
-
 	}
 	
 	foreach my $client (Slim::Player::Client::clients()) {
@@ -1683,7 +1718,6 @@ sub closeStreamingSocket {
 		if (defined($client->streamingsocket) && $client->streamingsocket == $httpClient) {
 			$client->streamingsocket(undef);
 		}
-
 	}
 
 	closeHTTPSocket($httpClient);
@@ -1692,7 +1726,6 @@ sub closeStreamingSocket {
 }
 
 sub checkAuthorization {
-
 	my $username = shift;
 	my $password = shift;
 
@@ -1716,7 +1749,6 @@ sub checkAuthorization {
 
 			my $salt = substr($pwd, 0, 2);
 			$ok = 1 if crypt($password, $salt) eq $pwd;
-
 		}
 
 	} else {
@@ -1757,7 +1789,6 @@ sub isCsrfAuthCodeValid {
 		# Prefs.pm should have set this!
 		$::d_http && msg("Server unable to determine CRSF protection level due to missing server pref\n");
 		return 0;
-
 	}
 
 	# no protection, so we don't care
@@ -1775,7 +1806,6 @@ sub isCsrfAuthCodeValid {
 		# invalid secret!
 		$::d_http && msg("Server unable to verify CRSF auth code due to missing or invalid securitySecret server pref\n");
 		return 0;
-
 	}
 
 	my $expectedCode = $secret;
@@ -1798,7 +1828,6 @@ sub isCsrfAuthCodeValid {
 
 		# at "MEDIUM" level, we'll take the $mediumHash, too
 		return 1 if ( $code eq $mediumHash->hexdigest() );
-
 	}
 
 	# the code is no good (invalid or MEDIUM hash presented when using HIGH protection)!
@@ -1845,7 +1874,6 @@ sub isRequestCSRFSafe {
 
 			# looks good
 			$rc = 1;
-
 		}
 	}
 
@@ -1862,7 +1890,6 @@ sub makeAuthorizedURI {
 		# invalid secret!
 		$::d_http && msg("Server unable to compute CRSF auth code URL due to missing or invalid securitySecret server pref\n");
 		return undef;
-
 	}
 
 	my $csrfProtectionLevel = Slim::Utils::Prefs::get("csrfProtectionLevel");
@@ -1872,7 +1899,6 @@ sub makeAuthorizedURI {
 		# Prefs.pm should have set this!
 		$::d_http && msg("Server unable to determine CRSF protection level due to missing server pref\n");
 		return 0;
-
 	}
 
 	my $hash = new Digest::MD5;
@@ -1881,7 +1907,6 @@ sub makeAuthorizedURI {
 
 		# different code for each different URI
 		$hash->add($uri);
-
 	}
 
 	$hash->add($secret);
@@ -1926,11 +1951,10 @@ sub throwCSRFError {
 	$response->code(RC_FORBIDDEN);
 	$response->content_type('text/html');
 	$response->header('Connection' => 'close');
-	$response->content(${filltemplatefile('html/errors/403.html', $params)});
+	$response->content_ref(filltemplatefile('html/errors/403.html', $params));
 
 	$httpClient->send_response($response);
 	closeHTTPSocket($httpClient);	
-
 }
 
 1;
