@@ -117,7 +117,7 @@ sub readM3U {
 	# XXX - should this move to Slim::Utils::Scan::readList() ?
 	if ($] > 5.007) {
 
-		binmode($m3u, ":bytes");
+		binmode($m3u, ":raw");
 
 		my $enc = File::BOM::get_encoding_from_filehandle($m3u);
 
@@ -130,10 +130,14 @@ sub readM3U {
 
 	while (my $entry = <$m3u>) {
 
+		my $donttranslate = 0;
 		# Turn the UTF-8 back into a sequences of octets -
 		# fileURLFromPath will turn it back into UTF-8
 		if ($] > 5.007 && $mode =~ /utf-?8/i) {
-			$entry = Encode::encode_utf8($entry) if Encode::is_utf8($entry, 1);
+			if (Encode::is_utf8($entry, 1)) {
+				$entry = Encode::encode_utf8($entry);
+				$donttranslate = 1;
+			}
 		}
 
 		chomp($entry);
@@ -155,7 +159,7 @@ sub readM3U {
 
 		$entry =~ s|$LF||g;
 		
-		$entry = Slim::Utils::Misc::fixPath($entry, $m3udir);
+		$entry = Slim::Utils::Misc::fixPath($entry, $m3udir, $donttranslate);
 		
 		$::d_parse && Slim::Utils::Misc::msg("    entry: $entry\n");
 
@@ -526,7 +530,7 @@ sub writeM3U {
 			}
 		}
 
-		my $path = _pathForItem($item);
+		my $path = _pathForItem($item, 1);
 
 		if ($] > 5.007) {
 			$path = Encode::decode_utf8($path);
@@ -740,9 +744,10 @@ sub readASX {
 
 sub _pathForItem {
 	my $item = shift;
+	my $dontencode = shift;
 
 	if (Slim::Music::Info::isFileURL($item) && !Slim::Music::Info::isFragment($item)) {
-		return Slim::Utils::Misc::pathFromFileURL($item);
+		return Slim::Utils::Misc::pathFromFileURL($item, $dontencode);
 	}
 
 	return $item;
@@ -764,7 +769,7 @@ sub _filehandleFromNameOrString {
 		# Always write out in UTF-8 with a BOM.
 		if ($] > 5.007) {
 
-			binmode($output, ":bytes");
+			binmode($output, ":raw");
 
 			print $output $File::BOM::enc2bom{'utf8'};
 

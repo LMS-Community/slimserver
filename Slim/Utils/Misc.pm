@@ -200,6 +200,7 @@ sub pathFromWinShortcut {
 
 sub pathFromFileURL {
 	my $url = shift;
+	my $donttranslate = shift;
 	my $file;
 	
 	assert(Slim::Music::Info::isFileURL($url), "Path isn't a file URL: $url\n");
@@ -228,7 +229,7 @@ sub pathFromFileURL {
 	}
 
 	# convert from the utf8 back to the local codeset.
-	if ($file && $] > 5.007) {
+	if (!$donttranslate && $file && $] > 5.007) {
 		eval { Encode::from_to($file, 'utf8', $locale) };
 	}
 
@@ -243,11 +244,12 @@ sub pathFromFileURL {
 
 sub fileURLFromPath {
 	my $path = shift;
+	my $donttranslate = shift;
 	
 	return $path if (Slim::Music::Info::isURL($path));
 
 	# convert from the the local codeset to utf8
-	if ($path && $] > 5.007) {
+	if (!$donttranslate && $path && $] > 5.007) {
 		eval { Encode::from_to($path, $locale, 'utf8') };
 	}
 
@@ -361,6 +363,7 @@ sub fixPathCase {
 sub fixPath {
 	my $file = shift || return;
 	my $base = shift;
+	my $donttranslate = shift;
 
 	my $fixed;
 
@@ -425,7 +428,7 @@ sub fixPath {
 	if (Slim::Music::Info::isFileURL($fixed)) {
 		return $fixed;
 	} else {
-		return Slim::Utils::Misc::fileURLFromPath($fixed);  
+		return Slim::Utils::Misc::fileURLFromPath($fixed, $donttranslate);  
 	}
 }
 
