@@ -101,7 +101,7 @@ sub init {
 
 			if ($curitem eq 'ALBUM') {
 
-				my $album = $track->album()->title();
+				my $album = $track->album();
 
 				Slim::Buttons::BrowseID3::setSelection($client, '*', '*', $album, undef);
 
@@ -245,7 +245,7 @@ sub preloadLines {
 		push (@{$client->trackInfoContent}, 'CONDUCTOR');
 	}
 
-	if (my $album = $track->album()->title()) {
+	if (my $album = $track->album()) {
 		push (@{$client->trackInfoLines}, $client->string('ALBUM') . ": $album");
 		push (@{$client->trackInfoContent}, 'ALBUM');
 	}
