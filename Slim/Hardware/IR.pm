@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.16 2003/11/19 02:55:01 grotus Exp $
+# $Id: IR.pm,v 1.17 2003/11/27 21:46:52 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -101,6 +101,10 @@ sub defaultMap {
 }
 
 my $defaultMapFile;
+
+sub defaultMapFile {
+	return $defaultMapFile;
+}
 
 #returns a reference to a hash of filenames/external names
 sub mapfiles {
