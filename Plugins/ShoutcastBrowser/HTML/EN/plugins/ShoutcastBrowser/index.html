@@ -31,10 +31,12 @@
 					<td width="30%">[% 'GENRE' | string %][% "COLON" | string %]</td>
 					<td width="70%">[% streaminfo.6 %]</td>
 				</tr>
+				[% IF streaminfo.5 %]
 				<tr>
 					<td width="30%">[% 'PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING' | string %][% "COLON" | string %]</td>
 					<td width="70%">[% streaminfo.5 %]</td>
 				</tr>
+				[% END %]
 				<tr>
 					<td width="30%">[% 'URL' | string %][% "COLON" | string %]</td>
 					<td width="70%"><a href="[% streaminfo.0 %]" target="_blank">[% streaminfo.0 %]</a></td>

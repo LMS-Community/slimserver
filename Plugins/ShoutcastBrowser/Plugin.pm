@@ -394,7 +394,7 @@ sub getStreams {
 	}
 
 		# Using XML::Simple reduces the memory footprint by nearly 2 megs vs the old manual scanning.
-	my $data  = XML::Simple::XMLin($xml);
+	my $data  = XML::Simple::XMLin($xml, SuppressEmpty => 1);
 	my $label = $data->{'playlist'}->{'label'};
 
 	for my $entry (@{$data->{'playlist'}->{'entry'}}) {
@@ -402,7 +402,7 @@ sub getStreams {
 		my $url		 = $entry->{'Playstring'};
 		my $name		= $entry->{'Name'};
 		my $genre	   = $entry->{'Genre'};
-		my $now_playing = $entry->{'Nowplaying'};
+		my $now_playing = (defined($entry->{'Nowplaying'}) ? $entry->{'Nowplaying'} : '');
 		my $listeners   = $entry->{'Listeners'};
 		my $bitrate	 = $entry->{'Bitrate'};
 
