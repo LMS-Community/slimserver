@@ -372,6 +372,13 @@ sub exportFunction {
 		$cacheEntry{'MOODLOGIC_ID'} = $mixer->{'Seed_SID'} = $song_id;
 		$cacheEntry{'MOODLOGIC_MIXABLE'} = $mixer->Seed_SID_Mixable();
 
+		if ($] > 5.007) {
+
+			for my $key (qw(ALBUM ARTIST GENRE TITLE)) {
+				$cacheEntry{$key} = Encode::encode('utf8', $cacheEntry{$key}, Encode::FB_QUIET());
+			}
+		}
+
 		$::d_moodlogic && msg("MoodLogic: Creating entry for: $url\n");
 
 		# that's all for the track
