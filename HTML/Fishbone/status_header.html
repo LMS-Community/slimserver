@@ -27,14 +27,14 @@
 				{
 					var myloc = parent.playlist.location;
 					var regex = /^playlist/g;
-					//if (!regex.test(myloc))
-					//{
+					if (!regex.test(myloc))
+					{
 						parent.playlist.location = 'playlist.html?player=[% player | uri %]';
-					//}
-					//else 
-					//{
-					//	parent.playlist.location.reload(true);
-					//}
+					}
+					else 
+					{
+						parent.playlist.location.reload(true);
+					}
 				}
 				else
 				{
