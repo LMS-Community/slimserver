@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.8 2003/09/19 20:05:12 dean Exp $
+# $Id: Common.pm,v 1.9 2003/09/19 23:08:29 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -181,6 +181,9 @@ my %functions = (
 			return;
 		}
 		Slim::Control::Command::execute($client, ["pause"]);
+		if (Slim::Player::Source::playmode($client) eq 'play' && Slim::Player::Source::rate($client) != 1) {
+			Slim::Player::Source::rate($client,1);
+		}
 		Slim::Display::Animation::showBriefly($client, (Slim::Buttons::Playlist::currentSongLines($client))[0..1]);
 	},
 	'stop' => sub  {

@@ -78,10 +78,10 @@ sub rate {
 	}
 	my $oldrate = $client->rate();
 	
-	$::d_source && msg("switching rate from $oldrate to $newrate\n");
+	$::d_source && msg("switching rate from $oldrate to $newrate\n") && bt();
 	# restart playback if we've changed and we're not pausing or unpauseing
 	if ($oldrate != $newrate) {  		
-	 	if ($oldrate != 0 && $newrate != 0) {
+	 	if ($newrate != 0) {
 	 		$::d_source && msg("rate change, jumping to the current position in order to restart the stream\n");
 			gototime($client, "+0");
 		}
@@ -215,11 +215,9 @@ sub playmode {
 			# when you resume, you go back to play mode
 			if (($newmode eq "resume") ||($newmode eq "resumenow")) {
 				$everyclient->playmode("play");
-				rate($everyclient, 1);
 				
 			} elsif ($newmode eq "pausenow") {
 				$everyclient->playmode("pause");
-				rate($everyclient, 0);
 				
 			} elsif ($newmode eq "playout") {
 				$everyclient->playmode("stop");
@@ -237,7 +235,6 @@ sub playmode {
 				closeSong($everyclient);
 			} elsif ($newmode eq "play") {
 				$everyclient->readytosync(0);
-				rate($everyclient, 1);
 				$everyclient->play(Slim::Player::Sync::isSynced($everyclient));				
 			} elsif ($newmode eq "pause") {
 				# since we can't count on the accuracy of the fade timers, we unfade them all, but the master calls back to unpause everybody
@@ -249,10 +246,8 @@ sub playmode {
 				
 			} elsif ($newmode eq "pausenow") {
 				$everyclient->pause();
-				rate($everyclient,0);
 			} elsif ($newmode eq "resumenow") {
 				$everyclient->resume();
-				rate($everyclient, 1);
 				
 			} elsif ($newmode eq "resume") {
 				# set volume to 0 to make sure fade works properly
@@ -872,7 +867,6 @@ sub pauseSynced {
 	my $client = shift;
 	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
 		$everyclient->pause();
-		rate($everyclient, 0);
 	}
 }
 
