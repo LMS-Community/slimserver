@@ -293,7 +293,9 @@ sub parseCUE {
 			'readTags'   => 1,
 		});
 
-		$lastpos = $secs = $track->secs();
+		if ($track) {
+			$lastpos = $secs = $track->secs();
+		}
 
 		$::d_parse && Slim::Utils::Misc::msg("Couldn't get duration of $filename\n") unless $lastpos;
 	}
