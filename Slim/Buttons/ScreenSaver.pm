@@ -1,6 +1,6 @@
 package Slim::Buttons::ScreenSaver;
 
-# $Id: ScreenSaver.pm,v 1.9 2003/12/05 04:54:30 kdf Exp $
+# $Id: ScreenSaver.pm,v 1.10 2003/12/09 09:45:14 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -75,7 +75,7 @@ sub screenSaver {
 			if ($mode eq 'playlist') {
 				Slim::Buttons::Playlist::jump($client);
 				my $linefunc = $client->lines();
-				Slim::Display::Animation::scrollBottom($client, &$linefunc($client),1);
+				Slim::Display::Animation::scrollBottom($client, 0,undef,&$linefunc($client));
 			} else {
 				Slim::Buttons::Common::pushMode($client,'playlist');
 				$client->update();		
@@ -87,7 +87,7 @@ sub screenSaver {
 	} else {
 		# try to scroll the bottom, if necessary
 		my $linefunc = $client->lines();
-		Slim::Display::Animation::scrollBottom($client, &$linefunc($client),1);
+		Slim::Display::Animation::scrollBottom($client, 0,undef,&$linefunc($client));
 	}
 	# Call ourselves again after 1 second
 	Slim::Utils::Timers::setTimer($client, ($now + 1.0), \&screenSaver);

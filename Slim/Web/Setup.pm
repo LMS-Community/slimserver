@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.22 2003/12/07 19:16:10 grotus Exp $
+# $Id: Setup.pm,v 1.23 2003/12/09 09:45:14 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -341,7 +341,7 @@ sub initSetupConfig {
 		# if more than one ir map exists the undef will be replaced by 'Default'
 		,'Groups' => {
 			'Default' => {
-				'PrefOrder' => ['autobrightness']
+				'PrefOrder' => ['autobrightness','scrollPause']
 			}
 			,'IRSets' => {
 				'PrefOrder' => ['irsetlist']
@@ -364,6 +364,10 @@ sub initSetupConfig {
 				'validate' => \&validateInHash  
 				,'validateArgs' => [\&Slim::Hardware::IR::mapfiles,1]  
 				,'options' => undef #will be set by preEval  
+			},
+			'scrollPause' => {
+				'validate' => \&validateNumber
+				,'validateArgs' => [0,undef,5]
 			},
 			'autobrightness' => {
 				'validate' => \&validateTrueFalse  

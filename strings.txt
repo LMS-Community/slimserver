@@ -888,6 +888,12 @@ SETUP_GROUP_NONMENUITEMS_INTRO
 	PT	Items disponíveis
 	SE	Inaktiva meny-val:
 
+SETUP_SCROLLPAUSE
+	EN	Scroll Pause
+	
+SETUP_SCROLLPAUSE_DESC
+	EN	Time for scrolling of long lines to start. Multiples of 0.9 work best. Zero is an option for no pause delay.
+
 SETUP_GROUP_IRSETS
 	DE	Fernbedienungen
 	DK	Fjernbetjeninger
