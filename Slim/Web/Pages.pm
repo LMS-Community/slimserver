@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.38 2004/01/26 05:44:24 dean Exp $
+# $Id: Pages.pm,v 1.39 2004/01/27 16:59:17 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -1262,18 +1262,14 @@ sub browseid3 {
 					if (defined $song) {
 						$list_form{'coverthumb'} = 1; 
 						$list_form{'thumbartpath'} = $song;
-						$list_form{'itemnumber'} = $itemnumber;
-						$list_form{'artwork'} = 1;
-						$list_form{'size'} = Slim::Utils::Prefs::get('thumbSize');
-						$itemnumber++;
-					} elsif (Slim::Utils::Prefs::get('includeNoArt')) {
-						$list_form{'coverthumb'} = 0; 
-						$list_form{'thumbartpath'} = $item;
-						$list_form{'itemnumber'} = $itemnumber;
-						$list_form{'artwork'} = 1;
-						$list_form{'size'} = Slim::Utils::Prefs::get('thumbSize');
-						$itemnumber++;
+					} else {
+						$list_form{'coverthumb'} = 0;
 					}
+					$list_form{'itempath'} = $item;
+					$list_form{'itemnumber'} = $itemnumber;
+					$list_form{'artwork'} = 1;
+					$list_form{'size'} = Slim::Utils::Prefs::get('thumbSize');
+					$itemnumber++;
 					$$paramsref{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_artwork.html", \%list_form)};
 				} else {
 					$itemnumber++;
