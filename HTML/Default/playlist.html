@@ -40,7 +40,7 @@
 		<td valign=top width="13" height="21"></td>
 		<td width="8" height="21"></td>
 	</tr>[% END %]
-	[% IF not playlist_items %]<tr><td width="4"></td><td width="8"></td><td colspan=8><p>[% "EMPTY" | string %]</p></td></tr>[% END %]
+	[% IF not playlist_items %]<tr><td width="4"></td><td width="8"></td><td colspan=8><p>[% "EMPTY" | string %]<a name="currentsong"></a></p></td></tr>[% END %]
 	[% playlist_items %]
 	<tr>
 		<td width="4"></td>
