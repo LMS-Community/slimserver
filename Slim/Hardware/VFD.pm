@@ -1,6 +1,6 @@
 package Slim::Hardware::VFD;
 
-# $Id: VFD.pm,v 1.7 2003/09/30 23:18:12 dean Exp $
+# $Id: VFD.pm,v 1.8 2003/10/08 03:17:53 kdf Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -188,10 +188,10 @@ sub vfdUpdate {
 	$line1 =~ s/\n//g;
 	$line2 =~ s/\n//g;
 		
-	if (!$noDoubleSize &&
-		(Slim::Utils::Prefs::clientGet($client,'doublesize') && (Slim::Buttons::Common::mode($client) ne 'off'))
+	if (!$noDoubleSize && 
+		((Slim::Utils::Prefs::clientGet($client,'doublesize') && (Slim::Buttons::Common::mode($client) ne 'off'))
 		||
-		(Slim::Utils::Prefs::clientGet($client,'offDisplaySize') && (Slim::Buttons::Common::mode($client) eq 'off')))
+		(Slim::Utils::Prefs::clientGet($client,'offDisplaySize') && (Slim::Buttons::Common::mode($client) eq 'off'))))
 	{
 		($line1, $line2) = Slim::Display::Display::doubleSize($client,$line1, $line2);
 		$double = 1;
