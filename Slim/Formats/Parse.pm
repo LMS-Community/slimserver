@@ -269,6 +269,12 @@ sub parseCUE {
 			$currtrack = int ($1);
 		} elsif (defined $currtrack and /^\s+PERFORMER\s+\"(.*)\"/i) {
 			$tracks{$currtrack}->{'ARTIST'} = $1;
+		} elsif (defined $currtrack and /^\s+COMPOSER\s+\"(.*)\"/i) {
+			$tracks{$currtrack}->{'COMPOSER'} = $1;
+		} elsif (defined $currtrack and /^\s+CONDUCTOR\s+\"(.*)\"/i) {
+			$tracks{$currtrack}->{'CONDUCTOR'} = $1;
+		} elsif (defined $currtrack and /^\s+BAND\s+\"(.*)\"/i) {
+			$tracks{$currtrack}->{'BAND'} = $1;
 		} elsif (defined $currtrack and
 			 /^(?:\s+REM)?\s+(TITLE|YEAR|GENRE|COMMENT)\s+\"(.*)\"/i) {
 		   $tracks{$currtrack}->{uc $1} = $2;
