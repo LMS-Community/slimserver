@@ -260,11 +260,11 @@ sub parseCUE {
 
 		if (/^TITLE\s+\"(.*)\"/i) {
 			$album = $1;
-		} elsif (/^YEAR\s+\"(.*)\"/i) {
+		} elsif (/^(?:REM\s+)?YEAR\s+\"(.*)\"/i) {
 			$year = $1;
-		} elsif (/^GENRE\s+\"(.*)\"/i) {
+		} elsif (/^(?:REM\s+)?GENRE\s+\"(.*)\"/i) {
 			$genre = $1;
-		} elsif (/^COMMENT\s+\"(.*)\"/i) {
+		} elsif (/^(?:REM\s+)?COMMENT\s+\"(.*)\"/i) {
 			$comment = $1;
 		} elsif (/^FILE\s+\"(.*)\"/i) {
 			$filename = $1;
@@ -274,7 +274,7 @@ sub parseCUE {
 		} elsif (defined $currtrack and /^\s+PERFORMER\s+\"(.*)\"/i) {
 			$tracks{$currtrack}->{'ARTIST'} = $1;
 		} elsif (defined $currtrack and
-			 /^\s+(TITLE|YEAR|GENRE|COMMENT)\s+\"(.*)\"/i) {
+			 /^(?:\s+REM)?\s+(TITLE|YEAR|GENRE|COMMENT)\s+\"(.*)\"/i) {
 		   $tracks{$currtrack}->{uc $1} = $2;
 		} elsif (defined $currtrack and
 			 /^\s+INDEX\s+01\s+(\d+):(\d+):(\d+)/i) {
