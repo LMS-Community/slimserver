@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.16 2003/08/19 23:38:21 dean Exp $
+# $Id: Slimproto.pm,v 1.17 2003/08/21 21:51:31 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -21,15 +21,9 @@ use Slim::Player::Squeezebox;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
-use Socket;
-# qw(IPPROTO_TCP
-#TCP_KEEPALIVE
-#TCP_MAXRT
-#TCP_MAXSEG
-#TCP_NODELAY
-#TCP_STDURG);
+use Socket qw(IPPROTO_TCP TCP_KEEPALIVE TCP_MAXRT TCP_MAXSEG TCP_NODELAY TCP_STDURG);
 
-use Errno qw(EWOULDBLOCK EINPROGRESS);
+use Errno qw(:POSIX);
 
 my $SLIMPROTO_ADDR = 0;
 my $SLIMPROTO_PORT = 3483;
@@ -97,7 +91,7 @@ sub slimproto_accept {
 
         defined($clientsock->blocking(0))  || die "Cannot set port nonblocking";
 #	setsockopt($clientsock, SOL_SOCKET, &TCP_NODELAY, 1);  # no nagle
-	$clientsock->setsockopt(Socket::IPPROTO_TCP(), Socket::TCP_NODELAY(), 1);
+	$clientsock->setsockopt(6, TCP_NODELAY, 1);
 
 	my $peer = $clientsock->peeraddr;
 
