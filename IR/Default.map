@@ -195,22 +195,6 @@ add						= right
 play					= right
 add						= right
 
-[repeat]
-play					= right
-add						= right
-
-[shuffle]
-play					= right
-add						= right
-
-[textsize]
-play					= right
-add						= right
-
-[titleformat]
-play					= right
-add						= right
-
 [volume]
 arrow_up				= volume_up
 arrow_down				= volume_down
