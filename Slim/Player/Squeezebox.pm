@@ -657,7 +657,7 @@ sub pitch {
 	my $pitch = $client->SUPER::pitch($newpitch, @_);
 
 	if (defined($newpitch)) {
-		$client->sendPitch($pitch, 1);
+		$client->sendPitch($pitch);
 	}
 
 	return $pitch;
@@ -666,36 +666,18 @@ sub pitch {
 sub sendPitch {
 	my $client = shift;
 	my $pitch = shift;
-	my $pause = shift;
 	
 	my $freq = int(18432 / ($pitch / 100));
 	my $freqHex = sprintf('%05X', $freq);
-	$::d_control && msg("Pitch frequency set to $freq ($freqHex), pause: $pause\n");
 
-	if ($client->streamformat()) {
-		if ($client->streamformat() eq 'mp3') {
-			$client->i2c(
-				Slim::Hardware::mas35x9::masWrite('OfreqControl', $freqHex).
-					Slim::Hardware::mas35x9::masWrite('OutClkConfig', '00001').
-					Slim::Hardware::mas35x9::masWrite('IOControlMain', '00015')     # MP3
-			);
-		} else {
-			if ($pause && ($client->playmode() =~ /^play/)) {
-				if (Slim::Utils::Timers::killTimers($client, \&resume) == 0) {
-					$client->pause();
-				}	
-			}
-			
-			$client->i2c(
-				Slim::Hardware::mas35x9::masWrite('OfreqControl', $freqHex).
-					Slim::Hardware::mas35x9::masWrite('OutClkConfig', '00001').
-					Slim::Hardware::mas35x9::masWrite('IOControlMain', '00101')     # PCM
-			);
-
-			if ($pause && ($client->playmode()  =~ /^play/)) {
-				Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 0.5,\&resume,$client);
-			}
-		}	
+	# This only works for mp3 - only change pitch for mp3 format
+	if ($client->streamformat() && ($client->streamformat() eq 'mp3')) {
+		$client->i2c(
+			Slim::Hardware::mas35x9::masWrite('OfreqControl', $freqHex).
+				Slim::Hardware::mas35x9::masWrite('OutClkConfig', '00001').
+				Slim::Hardware::mas35x9::masWrite('IOControlMain', '00015')     # MP3
+		);
+		$::d_control && msg("Pitch frequency set to $freq ($freqHex)\n");
 	}
 }
 	
