@@ -1,6 +1,6 @@
 package Slim::Formats::Movie;
 
-# $Id: Movie.pm,v 1.17 2004/08/03 17:29:14 vidur Exp $
+# $Id: Movie.pm,v 1.18 2004/12/02 02:42:40 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -69,33 +69,36 @@ sub getTag {
 
 	my $file = shift || "";
 
-	my $tags = QuickTime::Movie::readUserData($file);
+	my $tags = QuickTime::Movie::readUserData($file) || {};
 
 	# lazy? no. efficient. =)
 	if (ref $tags eq "HASH") {
-	   while (my ($old,$new) = each %tagMapping) {
-	      if (exists $tags->{$old}) {
 
-			 $tags->{$new} = Slim::Utils::Misc::utf8toLatin1($tags->{$old});
+		while (my ($old,$new) = each %tagMapping) {
 
-			 delete $tags->{$old};
-	      }
-	   }
-	   while (my ($old,$new) = each %binaryTags) {
-	      if (exists $tags->{$old}) {
-			 $tags->{$new} = $tags->{$old};
-			 delete $tags->{$old};
-	      }
-	   }
-	} else {
-	   $tags = {};
+			if (exists $tags->{$old}) {
+
+				$tags->{$new} = $tags->{$old};
+				delete $tags->{$old};
+			}
+		}
+
+		while (my ($old,$new) = each %binaryTags) {
+
+			if (exists $tags->{$old}) {
+				$tags->{$new} = $tags->{$old};
+				delete $tags->{$old};
+			}
+		}
 	}
 
 	$tags->{'SIZE'} = -s $file;
+
 	if ($tags->{'TIMESCALE'} && $tags->{'DURATION'}) {
 		$tags->{'SECS'} = $tags->{'DURATION'} / $tags->{'TIMESCALE'};
 		$tags->{'BITRATE'} = $tags->{'SIZE'} * 8 / $tags->{'SECS'};
 	}
+
 	$tags->{'OFFSET'} = 0;
 	
 	# clean up binary tags
@@ -118,7 +121,5 @@ sub getCoverArt {
 	
 	return $coverart;
 }
-
-
 
 1;
