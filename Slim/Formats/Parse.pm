@@ -58,7 +58,7 @@ sub M3U {
 		$entry =~ s|$LF||g;
 		
 		$entry = Slim::Utils::Misc::fixPath($entry, $m3udir);
-
+		
 		$::d_parse && msg("    entry: $entry\n");
 
 		if (defined($title)) {
@@ -107,6 +107,9 @@ sub PLS {
 		if (defined($urls[$i])) {
 			my $entry = $urls[$i];
 			my $title = $titles[$i];
+			
+			if(!Slim::Music::Info::isURL($entry)) { $entry=Slim::Utils::Misc::fileURLFromPath($entry); }
+			
 			push @items, $entry;
 
 			if (defined($title)) {
@@ -172,7 +175,7 @@ sub parseCUE {
 
 		my $track = $tracks{$key};
 		if (!defined $track->{'START'} || !defined $track->{'END'} || !defined $filename ) { next; }
-		my $url = "file://$filename#".$track->{'START'}."-".$track->{'END'};
+		my $url = "$filename#".$track->{'START'}."-".$track->{'END'};
 		$::d_parse && msg("    url: $url\n");
 		push @items, $url;
 
@@ -241,7 +244,7 @@ sub writePLS {
 	my $outstring = '';
 	my $writeproc;
 	if ($filename) {
-		$output = new FileHandle $filename, "w";
+		$output =FileHandle->new($filename, "w");
 		if (!$output) {
 			msg("Could not open $filename for writing.\n");
 			return;
@@ -279,7 +282,7 @@ sub writeM3U {
 	my $outstring = '';
 	my $writeproc;
 	if ($filename) {
-		$output = new FileHandle $filename, "w";
+		$output =FileHandle->new($filename, "w");
 		if (!$output) {
 			msg("Could not open $filename for writing.\n");
 			return;

@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.69 2004/04/23 19:27:09 vidur Exp $
+# $Id: Pages.pm,v 1.70 2004/04/28 13:10:54 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -166,18 +166,18 @@ sub browser {
 		
 		if ($newname) {
 
-			my @newpath = splitdir($fulldir);
+			my @newpath = splitdir(Slim::Utils::Misc::pathFromFileURL($fulldir));
 			pop @newpath;
 
-			my $container = catdir(@newpath);
+			my $container = Slim::Utils::Misc::fileURLFromPath(catdir(@newpath));
 
 			push @newpath, $newname;
 
-			my $newfullname = catdir(@newpath);
+			my $newfullname = Slim::Utils::Misc::fileURLFromPath(catdir(@newpath));
 
 			$::d_http && msg("renaming $fulldir to $newfullname\n");
 
-			if ($newfullname ne $fulldir && !-e $newfullname && rename($fulldir, $newfullname)) {
+			if ($newfullname ne $fulldir && !-e Slim::Utils::Misc::pathFromFileURL($newfullname) && rename(Slim::Utils::Misc::pathFromFileURL($fulldir), Slim::Utils::Misc::pathFromFileURL($newfullname))) {
 
 				Slim::Music::Info::clearCache($container);
 				Slim::Music::Info::clearCache($fulldir);
@@ -198,10 +198,10 @@ sub browser {
 
 	} elsif ($playlist && $params->{'delete'} && -f $fulldir && unlink $fulldir) {
 
-		my @newpath  = splitdir($fulldir);
+		my @newpath  = splitdir(Slim::Utils::Misc::pathFromFileURL($fulldir));
 		pop @newpath;
 
-		my $container = catdir(@newpath);
+		my $container = Slim::Utils::Misc::fileURLFromPath(catdir(@newpath));
 
 		Slim::Music::Info::clearCache($container);
 		Slim::Music::Info::clearCache($fulldir);

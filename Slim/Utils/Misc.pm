@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.33 2004/04/22 05:47:12 kdf Exp $
+# $Id: Misc.pm,v 1.34 2004/04/28 13:10:54 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -155,6 +155,17 @@ sub pathFromFileURL {
 	return $file;
 }
 
+sub fileURLFromPath {
+	my $path = shift;
+	if (Slim::Utils::OSDetect::OS() eq "win") {
+		$path=~ s/\\/\//;
+	}
+	$path=Slim::Web::HTTP::escape($path);
+	$path=~ s/\%2F/\//g; 	# Allow forward slashes
+	$path=~ s/\%3A/:/g; 	# Allow colons (for Win32)
+	return "file://".$path;
+}
+
 sub anchorFromURL {
 	my $url = shift;
 
@@ -229,7 +240,10 @@ sub fixPath {
 
 	my $fixed;
 			   
-	if (!defined($file) || $file eq "") { return; }        
+	if (!defined($file) || $file eq "") { return; }   
+	
+	if (Slim::Music::Info::isFileURL($file)) { $file=Slim::Utils::Misc::pathFromFileURL($file); } 
+	if (Slim::Music::Info::isFileURL($base)) { $base=Slim::Utils::Misc::pathFromFileURL($base); } 
 		 
 	# the only kind of absolute file we like is one in 
 	# the music directory or the playlist directory...
@@ -264,7 +278,11 @@ sub fixPath {
 	
 	$::d_paths && ($file ne $fixed) && msg("*****fixed: " . $file . " to " . $fixed . "\n");
 	$::d_paths && ($file ne $fixed) && ($base) && msg("*****base: " . $base . "\n");
-	return $fixed;  
+	if (Slim::Music::Info::isFileURL($fixed)) {
+		return $fixed;
+	} else {
+		return Slim::Utils::Misc::fileURLFromPath($fixed);  
+	}
 }
 
 sub ascendVirtual {
@@ -376,14 +394,14 @@ sub virtualToAbsolute {
 
 # optimization for pre-cached itunes/moodlogic playlists.
 		if (Slim::Music::Info::isITunesPlaylistURL($curdir) || Slim::Music::Info::isMoodLogicPlaylistURL($curdir)) {
-			my $listref = Slim::Music::Info::cachedPlaylist($curdir);
+			my $listref = Slim::Music::Info::cachedPlaylist(Slim::Utils::Misc::fileURLFromPath($curdir));
 			if ($listref) {
 				return @{$listref}[$level];
 			}
 			
 		} 
 		
-		if (Slim::Music::Info::isPlaylist($curdir)) {
+		if (Slim::Music::Info::isPlaylist(Slim::Utils::Misc::fileURLFromPath($curdir))) {
 			@items = ();
 			Slim::Utils::Scan::addToList(\@items,$curdir, 0, 0);
 			if (scalar(@items)) {
@@ -394,7 +412,7 @@ sub virtualToAbsolute {
 				}
 				#continue traversing if the item was found in the list
 				#and the item found is itself a list
-				next if (Slim::Music::Info::isList($curdir));
+				next if (Slim::Music::Info::isList(Slim::Utils::Misc::fileURLFromPath($curdir)));
 				#otherwise stop traversing, curdir is either the playlist
 				#if no entry found or the located entry in the playlist
 				last;
@@ -407,16 +425,16 @@ sub virtualToAbsolute {
 				$curdir = catdir($curdir,$level);
 			}
 		}
-		next if (Slim::Music::Info::isDir($curdir));
-		if (Slim::Music::Info::isWinShortcut($curdir)) {
-			if (defined($Slim::Utils::Scan::playlistCache{$curdir})) {
-				$curdir = $Slim::Utils::Scan::playlistCache{$curdir}
+		next if (Slim::Music::Info::isDir(Slim::Utils::Misc::fileURLFromPath($curdir)));
+		if (Slim::Music::Info::isWinShortcut(Slim::Utils::Misc::fileURLFromPath($curdir))) {
+			if (defined($Slim::Utils::Scan::playlistCache{Slim::Utils::Misc::fileURLFromPath($curdir)})) {
+				$curdir = $Slim::Utils::Scan::playlistCache{Slim::Utils::Misc::fileURLFromPath($curdir)}
 			} else {
-				$curdir = pathFromWinShortcut($curdir);
+				$curdir = pathFromWinShortcut(Slim::Utils::Misc::fileURLFromPath($curdir));
 			}
 		}
 		#continue traversing if curdir is a list
-		next if (Slim::Music::Info::isList($curdir));
+		next if (Slim::Music::Info::isList(Slim::Utils::Misc::fileURLFromPath($curdir)));
 		#otherwise stop traversing, non-list items cannot be traversed
 		last;
 	}
@@ -425,7 +443,11 @@ sub virtualToAbsolute {
 		#Not a real file, could be a naked saved playlist
 		return virtualToAbsolute(catdir('__playlists',$virtual),1);
 	}
-	return $curdir;
+	if (Slim::Music::Info::isFileURL($curdir)) {
+		return $curdir;
+	} else {
+		return Slim::Utils::Misc::fileURLFromPath($curdir);  
+	}
 }
 
 sub inPlaylistFolder {

@@ -20,7 +20,7 @@ sub editplaylist {
 
 	my $fulldir = Slim::Utils::Misc::virtualToAbsolute( $dir);
 
-	my $filehandle = FileHandle->new($fulldir, "r");
+	my $filehandle = FileHandle->new(Slim::Utils::Misc::pathFromFileURL($fulldir), "r");
 
 	my $count = 0;
 	my $playlist;
@@ -109,9 +109,9 @@ sub editplaylist {
 
 	if ($changed) {
 		if (Slim::Music::Info::typeFromSuffix($fulldir) eq 'm3u') {
-			Slim::Formats::Parse::writeM3U(\@items, $fulldir);
+			Slim::Formats::Parse::writeM3U(\@items, Slim::Utils::Misc::pathFromFileURL($fulldir));
 		} elsif (Slim::Music::Info::typeFromSuffix($fulldir) eq 'pls') {
-			Slim::Formats::Parse::writePLS(\@items, undef, $fulldir);
+			Slim::Formats::Parse::writePLS(\@items, undef, Slim::Utils::Misc::pathFromFileURL($fulldir));
 		}
 	}
 	

@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.110 2004/04/26 22:23:51 dean Exp $
+# $Id: Info.pm,v 1.111 2004/04/28 13:10:53 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -447,6 +447,7 @@ sub checkForChanges {
 	$::d_info && Slim::Utils::Misc::msg("$file not in infoCache! or undefined file. This shouldn't happen!\n");
 }
 
+
 # This gets called to save the infoDBCache every $dbSaveInterval seconds
 sub saveDBCacheTimer {
 	saveDBCache();
@@ -681,6 +682,13 @@ sub updateCacheEntry {
 		Slim::Utils::Misc::bt();
 		die "No cacheEntryHash for $url";
 	}
+	
+	if (!isURL($url)) { 
+		Slim::Utils::Misc::msg("None URL passed to updateCacheEntry::info ($url)\n");
+		Slim::Utils::Misc::bt();
+		$url=Slim::Utils::Misc::fileURLFromPath($url); 
+	}
+
 
 	return unless defined $url;
 	return unless defined $cacheEntryHash;
@@ -711,7 +719,7 @@ sub updateCacheEntry {
 	$dbCacheDirty=1;
 			
 	my $type = typeFromSuffix($url);
-	if ($newsong && isSong($url,$type) && !isHTTPURL($url) && (-e $url || Slim::Music::iTunes::useiTunesLibrary())) { 
+	if ($newsong && isSong($url,$type) && !isHTTPURL($url) && (-e (Slim::Utils::Misc::pathFromFileURL($url)) )) { 
 	
 		$cacheEntryHash=cacheEntry($url);
 		updateGenreCache($url, $cacheEntryHash);
@@ -778,13 +786,11 @@ sub setTitle {
 	my $title = shift;
 
 	$::d_info && Slim::Utils::Misc::msg("Adding title $title for $url\n");
-	$::d_info && Slim::Utils::Misc::bt();
-	
+		
 	my $cacheEntry = cacheEntry($url);
-
 	$cacheEntry->{'TITLE'} = $title;
 	$cacheEntry->{'VALID'} = '1';
-				
+
 	updateCacheEntry($url, $cacheEntry);
 }
 
@@ -836,6 +842,7 @@ sub addToinfoHash {
 	my $str = shift;
 	
 	if ($str =~ /VOLUME|PATH|FILE|EXT/) {
+		if (isFileURL($file)) { $file=Slim::Utils::Misc::pathFromFileURL($file); }
 		my ($volume, $path, $filename) = splitpath($file);
 		$filename =~ s/\.([^\.]*?)$//;
 		my $ext = $1;
@@ -1139,6 +1146,12 @@ sub infoHash {
 		return; 
 	};
 	
+	if (!isURL($file)) { 
+		Slim::Utils::Misc::msg("None URL passed to InfoHash::info ($file)\n");
+		Slim::Utils::Misc::bt();
+		$file=Slim::Utils::Misc::fileURLFromPath($file); 
+	}
+	
 	my $item = cacheEntry($file);
 	
 	# we'll update the cache if we don't have a valid title in the cache
@@ -1154,6 +1167,7 @@ sub infoHash {
 sub info {
 	my $file = shift;
 	my $tagname = shift;
+	my $update = shift;
 
 	if (!defined($file) || $file eq "" || !defined($tagname)) { 
 		$::d_info && Slim::Utils::Misc::msg("trying to get info on an empty file name\n");
@@ -1162,6 +1176,12 @@ sub info {
 	};
 	
 	$::d_info && Slim::Utils::Misc::msg("Request for $tagname on file $file\n");
+	
+	if (!isURL($file)) { 
+		$::d_info && Slim::Utils::Misc::msg("None URL passed to Info::info ($file)\n");
+		$::d_info && Slim::Utils::Misc::bt();
+		$file=Slim::Utils::Misc::fileURLFromPath($file); 
+	}
 	
 	my $item = cacheItem($file, $tagname);
 
@@ -1184,6 +1204,7 @@ sub info {
 	}
 	return $item;
 }
+
 
 sub trackNumber {
 	my $file = shift;
@@ -2123,7 +2144,7 @@ sub readTags {
 					# Look for Cover Art and cache location
 					my ($body,$contenttype,$path);
 					if (defined $tempCacheEntry->{'PIC'}) {
-						($body,$contenttype,$path) = readCoverArtTags($filepath,'cover');
+						($body,$contenttype,$path) = readCoverArtTags($file,'cover');
 					}
 					if (defined $body) {
 						$tempCacheEntry->{'COVER'} = 1;
@@ -2133,12 +2154,12 @@ sub readTags {
 							$artworkCache{$album} = $filepath;
 						}
 					} else {
-						($body,$contenttype,$path) = readCoverArtFiles($filepath,'cover');
+						($body,$contenttype,$path) = readCoverArtFiles($file,'cover');
 						if (defined $body) {
 							$tempCacheEntry->{'COVER'} = $path;
 						}
 						# look for Thumbnail Art and cache location
-						($body,$contenttype,$path) = readCoverArtFiles($filepath,'thumb');
+						($body,$contenttype,$path) = readCoverArtFiles($file,'thumb');
 						if (defined $body) {
 							$tempCacheEntry->{'THUMB'} = $path;
 							# add song entry to %artworkcache if we have valid artwork
@@ -2263,7 +2284,6 @@ sub readCoverArt {
 sub readCoverArtTags {
 	use bytes;
 	my $fullpath = shift;
-	my $filepath;
 	my $image = shift || 'cover';
 
 	if (! Slim::Utils::Prefs::get('lookForArtwork')) { return undef};
@@ -2275,13 +2295,13 @@ sub readCoverArtTags {
 	
 	if (isSong($fullpath) && isFile($fullpath)) {
 	
-		if (isFileURL($fullpath)) {
-			$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
+		my $file = Slim::Utils::Misc::virtualToAbsolute($fullpath);
+	
+		if (isFileURL($file)) {
+			$file = Slim::Utils::Misc::pathFromFileURL($file);
 		} else {
-			$filepath = $fullpath;
+			$file = $fullpath;
 		}
-		
-		my $file = Slim::Utils::Misc::virtualToAbsolute($filepath);
 			
 		if (isMP3($fullpath) || isWav($fullpath)) {
 	
@@ -2402,7 +2422,7 @@ sub readCoverArtFiles {
 	}
 	if (defined($artwork) && $artwork =~ /^%(.*?)(\..*?){0,1}$/) {
 		my $suffix = $2 ? $2 : ".jpg";
-		$artwork = infoFormat($file, $1)."$suffix";
+		$artwork = infoFormat(Slim::Utils::Misc::fileURLFromPath($file), $1)."$suffix";
 		my $artworktype = $image eq 'thumb' ? "Thumbnail" : "Cover";
 		$::d_artwork && Slim::Utils::Misc::msg("Variable $artworktype: $artwork from $1\n");
 		my $artpath = catdir(@components, $artwork);
@@ -2414,7 +2434,7 @@ sub readCoverArtFiles {
 		}
 		if ($body) {
 			$::d_artwork && Slim::Utils::Misc::msg("Found $image file: $artpath\n\n");
-			$contenttype = mimeType($artpath);
+			$contenttype = mimeType(Slim::Utils::Misc::fileURLFromPath($artpath));
 			$lastFile{$image} = $artpath;
 			return ($body, $contenttype, $artpath);
 		}
@@ -2426,7 +2446,7 @@ sub readCoverArtFiles {
 		if (exists $lastFile{$image}  && $lastFile{$image} ne '1') {
 			$::d_artwork && Slim::Utils::Misc::msg("Using existing $image: $lastFile{$image}\n");
 			$body = getImageContent($lastFile{$image});
-			$contenttype = mimeType($lastFile{$image});
+			$contenttype = mimeType(Slim::Utils::Misc::fileURLFromPath($lastFile{$image}));
 			$artwork = $lastFile{$image};
 			return ($body, $contenttype, $artwork);
 		} elsif (exists $lastFile{$image}) {
@@ -2443,7 +2463,7 @@ sub readCoverArtFiles {
 		$body = getImageContent($file);
 		if ($body) {
 			$::d_artwork && Slim::Utils::Misc::msg("Found $image file: $file\n\n");
-			$contenttype = mimeType($file);
+			$contenttype = mimeType(Slim::Utils::Misc::fileURLFromPath($file));
 			$artwork = $file;
 			$lastFile{$image} = $file;
 			last;

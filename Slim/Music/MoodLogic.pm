@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.9 2004/04/25 03:32:13 kdf Exp $
+#$Id: MoodLogic.pm,v 1.10 2004/04/28 13:10:53 kdf Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -20,6 +20,7 @@ my %mood_hash;
 my @playlists=();
 my %artwork;
 my $last_error = 0;
+my $isauto = 1;
 
 sub useMoodLogic {
 	my $newValue = shift;
@@ -236,7 +237,7 @@ sub exportFunction {
 		my $song_id = $browser->FLT_Song_SID($i);
 		
 		$mixer->{Seed_SID} = -$song_id;
-		$filename = $mixer->Mix_SongFile(-1);
+		$filename = Slim::Utils::Misc::fileURLFromPath($mixer->Mix_SongFile(-1));
 
 		# merge album info, from query ('cause it is not available via COM)
 		while (defined $rs && !$rs->EOF && $album_data[0] < $song_id && defined $rs->Fields('songId')) {
@@ -270,24 +271,26 @@ sub exportFunction {
 			$playlist->MoveNext unless $playlist->EOF;
 		}
 		
-		while (defined $auto && !$auto->EOF) {
-			my $name= $auto->Fields('name')->value;
-			
-			my %cacheEntry = ();
-			my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
-			if ($playlists[-1] ne $name) {
-				push @playlists, $url;
-				$::d_moodlogic && msg("Found MoodLogic Auto Playlist: $url\n");
+		if ($isauto) { #TODO find a way to prevent a crash if no auto playlists exist.  they don't for old versions of moodlogic.
+			while (defined $auto && !$auto->EOF) {
+				my $name= $auto->Fields('name')->value;
+				
+				my %cacheEntry = ();
+				my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
+				if ($playlists[-1] ne $name) {
+					push @playlists, $url;
+					$::d_moodlogic && msg("Found MoodLogic Auto Playlist: $url\n");
+				}
+				$::d_moodlogic && msg("got a playlist ($url) named $name\n");
+				# add this playlist to our playlist library
+				$cacheEntry{'TITLE'} = Slim::Utils::Prefs::get('MoodLogicplaylistprefix') . $name . Slim::Utils::Prefs::get('MoodLogicplaylistsuffix');
+				$cacheEntry{'LIST'} = getPlaylistItems($auto);
+				$cacheEntry{'CT'} = 'itu';
+				$cacheEntry{'TAG'} = 1;
+				$cacheEntry{'VALID'} = '1';
+				Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
+				$auto->MoveNext unless $auto->EOF;
 			}
-			$::d_moodlogic && msg("got a playlist ($url) named $name\n");
-			# add this playlist to our playlist library
-			$cacheEntry{'TITLE'} = Slim::Utils::Prefs::get('MoodLogicplaylistprefix') . $name . Slim::Utils::Prefs::get('MoodLogicplaylistsuffix');
-			$cacheEntry{'LIST'} = getPlaylistItems($auto);
-			$cacheEntry{'CT'} = 'itu';
-			$cacheEntry{'TAG'} = 1;
-			$cacheEntry{'VALID'} = '1';
-			Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
-			$auto->MoveNext unless $auto->EOF;
 		}
 		
 		if (defined $album_data[0] && $album_data[0] == $song_id && $album_data[1] ne "") {
@@ -320,8 +323,8 @@ sub exportFunction {
 
 		if (Slim::Utils::Prefs::get('lookForArtwork')) {
 			if ($cacheEntry{'ALBUM'} && !exists $artwork{$cacheEntry{'ALBUM'}} && !defined Slim::Music::Info::cacheItem($filename,'THUMB')) { 	 
-				$artwork{$cacheEntry{'ALBUM'}} = $filename; 	 
-				$::d_artwork && msg("$cacheEntry{'ALBUM'} refers to $filename\n"); 	 
+				$artwork{$cacheEntry{'ALBUM'}} = Slim::Utils::Misc::pathFromFileURL($filename); 	 
+				$::d_artwork && msg("$cacheEntry{'ALBUM'} refers to ".Slim::Utils::Misc::pathFromFileURL($filename)."\n"); 	 
 			}
 		}
 		Slim::Music::Info::updateGenreMixCache(\%cacheEntry);

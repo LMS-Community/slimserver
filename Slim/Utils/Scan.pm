@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.7 2004/04/22 20:41:07 dean Exp $
+# $Id: Scan.pm,v 1.8 2004/04/28 13:10:54 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -101,6 +101,8 @@ sub addToList {
 	$recursive = 1 if (!defined($recursive));
 	$callbackf = 0 if (!defined($callbackf));
 
+	$playlisturl = Slim::Utils::Misc::fixPath($playlisturl);
+
 	if (!defined($sorted)) {
 		if (Slim::Music::Info::isPlaylist($playlisturl)) { 
 			$sorted = 0;
@@ -108,9 +110,7 @@ sub addToList {
 			$sorted = 1;
 		}
 	}
-	
- 	$playlisturl = Slim::Utils::Misc::fixPath($playlisturl);
-
+	 	
 	if (Slim::Music::Info::isWinShortcut($playlisturl)) {
 		$playlisturl = Slim::Utils::Misc::pathFromWinShortcut($playlisturl);
 	}
@@ -271,7 +271,6 @@ sub addToList_run {
 	my $itempath = Slim::Utils::Misc::fixPath($item, $curdirState->path);
 	$::d_scan && msg("itempath: $item and " .  $curdirState->path . " made $itempath\n");
 
-	
 ######### If it's a directory or playlist and we're recursing, push it onto the stack, othwerwise add it to the list
 
 	$::d_scan && msg("isList(".$itempath.") == ".Slim::Music::Info::isList($itempath)."\n");
@@ -372,6 +371,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			if ($playlistpath eq "") {
 				return 0;
 			}
+			$playlistpath=Slim::Utils::Misc::fileURLFromPath($playlistpath);
 			if (Slim::Music::Info::isSong($playlistpath) || Slim::Music::Info::isWinShortcut($playlistpath)) {
 				push @$listref , $playlistpath;
 				return 1;
@@ -391,7 +391,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 		if (Slim::Music::Info::isITunesPlaylistURL($playlistpath) || Slim::Music::Info::isMoodLogicPlaylistURL($playlistpath) ||
 			(defined Slim::Music::Info::cachedPlaylist($playlistpath) && 
-			(Slim::Music::Info::isDir($playlistpath) && (((stat($playlistpath))[9]) == Slim::Music::Info::age($playlistpath))))
+			(Slim::Music::Info::isDir($playlistpath) && (((stat(Slim::Utils::Misc::pathFromFileURL($playlistpath)))[9]) == Slim::Music::Info::age($playlistpath))))
 			) {
 			
 			$::d_scan && msg("*** found a current entry for $playlisturl in playlist cache ***\n");
@@ -407,11 +407,11 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			$::d_scan && msg("Treating directory like a playlist\n");
 			my @dircontents;
 			$numitems = 0;
-			@dircontents = Slim::Utils::Misc::readDirectory( $playlistpath );
+			@dircontents = Slim::Utils::Misc::readDirectory(Slim::Utils::Misc::pathFromFileURL($playlistpath));
 
 			foreach my $dir ( @dircontents ) {
 
-				my $itempath = catfile($playlistpath, $dir);
+				my $itempath = Slim::Utils::Misc::fileURLFromPath(catfile(Slim::Utils::Misc::pathFromFileURL($playlistpath), $dir));
 
 				$::d_scan && msg(" directory entry: $itempath\n");
 
@@ -421,13 +421,13 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			# add the loaded dir to the cache...
 			if ($numitems) {
 				my @cachelist = @$listref[ (0 - $numitems) .. -1];
-				Slim::Music::Info::cachePlaylist($playlistpath, \@cachelist, (stat($playlistpath))[9]);	
+				Slim::Music::Info::cachePlaylist($playlistpath, \@cachelist, (stat(Slim::Utils::Misc::pathFromFileURL($playlistpath)))[9]);	
 				$::d_scan && msg("adding $numitems to playlist cache: $playlistpath\n"); 
 			}
 		} else {
 			# it's a playlist file
 			$playlist_filehandle = new FileHandle;
-			if (!open($playlist_filehandle, $playlistpath)) {
+			if (!open($playlist_filehandle, Slim::Utils::Misc::pathFromFileURL($playlistpath))) {
 				$::d_scan && msg("Couldn't open playlist file $playlistpath : $!");
 				$playlist_filehandle = undef;
 			}
@@ -436,7 +436,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 	
 	if ($playlist_filehandle) {
 		$::d_scan && msg("Scan::readList loading $playlisturl\n");
-		$numitems = (push @$listref, Slim::Formats::Parse::parseList($playlisturl,$playlist_filehandle, (splitpath($playlisturl))[0] . (splitpath($playlisturl))[1])) - $startingsize;
+		$numitems = (push @$listref, Slim::Formats::Parse::parseList($playlisturl,$playlist_filehandle, (splitpath(Slim::Utils::Misc::pathFromFileURL($playlisturl)))[0] . (splitpath(Slim::Utils::Misc::pathFromFileURL($playlisturl)))[1])) - $startingsize;
 		$::d_scan && msg("Scan::readList loaded playlist with $numitems items\n");
 	}
 	

@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.100 2004/04/26 22:23:52 dean Exp $
+# $Id: HTTP.pm,v 1.101 2004/04/28 13:10:54 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -691,7 +691,7 @@ sub generateHTTPResponse {
 
 			$::d_http && msg("Opening $file to stream...\n");
 
-			my $songHandle =  FileHandle->new($file);
+			my $songHandle =  FileHandle->new(Slim::Utils::Misc::pathFromFileURL($file));
 
 			if ($songHandle) {
 
