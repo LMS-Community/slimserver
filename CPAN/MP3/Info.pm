@@ -24,8 +24,8 @@ use vars qw(
 	all	=> [@EXPORT, @EXPORT_OK]
 );
 
-# $Id: Info.pm,v 1.12 2004/12/07 20:19:34 dsully Exp $
-($REVISION) = ' $Revision: 1.12 $ ' =~ /\$Revision:\s+([^\s]+)/;
+# $Id$
+($REVISION) = ' $Revision: 1.13 $ ' =~ /\$Revision:\s+([^\s]+)/;
 $VERSION = '1.02';
 
 =pod
@@ -569,7 +569,10 @@ sub get_mp3tag {
 
 								if ($encoding eq "\001" || $encoding eq "\002") {  # UTF-16, UTF-16BE
 
-									$data = Encode::decode('utf16', $data);
+									my $decoded = eval { Encode::decode('utf16', $data) };
+									   $decoded = eval { Encode::decode('utf16le', $data) } if $@;
+
+									$data = $decoded;
 
 								} elsif ($encoding eq "\000") {
 
