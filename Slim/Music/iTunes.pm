@@ -566,6 +566,11 @@ sub scanFunction {
 			}
 
 			if ($url && (Slim::Music::Info::isSong($url, $type) || Slim::Music::Info::isHTTPURL($url))) {
+				# Force a reading of the file itself,
+				# since lazy reading can result in slow
+				# performance down the road.
+				Slim::Music::Info::info($url, 'TAG');
+
 				$cacheEntry{'CT'} = $type;
 				$cacheEntry{'TITLE'} = $curTrack{'Name'};
 				$cacheEntry{'ARTIST'} = $curTrack{'Artist'};
