@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.14 2003/11/21 18:25:03 dean Exp $
+# $Id: Misc.pm,v 1.15 2003/11/21 18:55:26 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -674,6 +674,8 @@ sub sysreadline(*;$) {
 	my($handle, $maxnap) = @_;
 	$handle = qualify_to_ref($handle, caller());
 
+	return undef unless $handle;
+
 	my $infinitely_patient = @_ == 1;
 
 	my $start_time = time();
@@ -711,14 +713,14 @@ SLEEP:
 INPUT_READY:
 		while (() = $selector->can_read(0.0)) {
 
-			my $was_blocking = $handle->blocking(0);
+			my $was_blocking = blocking($handle,0);
 
 CHAR:       while ($result = sysread($handle, my $char, 1)) {
 				$line .= $char;
 				last CHAR if $char eq "\n";
 			} 
 
-			$handle->blocking($was_blocking);
+			blocking($handle, $was_blocking);
 
 			unless (at_eol($line)) {
 				if (!defined($result)) { 
