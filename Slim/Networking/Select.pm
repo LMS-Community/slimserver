@@ -1,6 +1,6 @@
 package Slim::Networking::Select;
 
-# $Id: Select.pm,v 1.5 2003/12/11 17:04:40 dean Exp $
+# $Id: Select.pm,v 1.6 2003/12/25 02:22:15 dean Exp $
 
 # SlimServer Copyright (c) 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -78,7 +78,6 @@ sub select {
 	}
 	return $count;
 }
-
 
 1;
 __END__

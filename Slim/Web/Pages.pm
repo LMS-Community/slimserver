@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.30 2003/12/24 03:14:44 kdf Exp $
+# $Id: Pages.pm,v 1.31 2003/12/25 02:22:16 dean Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -30,7 +30,7 @@ sub home {
 	}
 	
 	# fill out the client setup choices
-	foreach my $player (Slim::Player::Client::clients()) {
+	foreach my $player (sort { $a->name() cmp $b->name() } Slim::Player::Client::clients()) {
 		# every player gets a page.
 		# next if (!$player->isPlayer());
 		$listform{'playername'} = $player->name();

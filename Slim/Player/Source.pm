@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.40 2003/12/24 21:43:04 dean Exp $
+# $Id: Source.pm,v 1.41 2003/12/25 02:22:16 dean Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -132,6 +132,9 @@ sub time2offset {
 sub progress {
 	my $client = shift;
 	
+	# enable this to show buffer fullness instead of the progress indicator...
+	# return $client->usage();
+	
 	$client = Slim::Player::Sync::masterOrSelf($client);
 
 	return 0 if (!$client->songduration);
@@ -166,10 +169,10 @@ sub songTime {
 	my $fullness = $client->bufferFullness() || 0;
 	my $realpos =  $bytesReceived - $fullness;
 	
-	$::d_source_v && msg("realpos $realpos calcuated from bytes received: " . $client->bytesReceived() . " minus buffer fullness: " . $client->bufferFullness() . "\n");
 	
 	if ($realpos<0) {
 		$::d_source && msg("Negative position calculated, we are still playing out the previous song.\n");	
+		$::d_source && msg("realpos $realpos calcuated from bytes received: " . $client->bytesReceived() . " minus buffer fullness: " . $client->bufferFullness() . "\n");
 		$realpos = 0;
 	}
 

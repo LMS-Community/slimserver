@@ -375,7 +375,7 @@ sub sendNextChunk {
 	}
 	
 	if ($fullness > $BUFFER_FULL_THRESHOLD) {
-		$::d_stream && msg($client->id() . "- $streamState -  Buffer full, need to poll to see if there is space\n");
+		$::d_stream_v && msg($client->id() . "- $streamState -  Buffer full, need to poll to see if there is space\n");
 		# if client's buffer is full, poll it every 50ms until there's room if we're playing
 		# otherwise, we can't send a chunk.
 		if ($streamState eq 'play') {

@@ -108,61 +108,60 @@ sub init {
 }
 
 sub readUDP {
-	my $sock = shift;
+	my $sock = shift || $udpsock;
 	my $clientpaddr;
 	my $msg = '';
-
-	$clientpaddr = recv($sock,$msg,1500,0);
 	
-	# simulate random packet loss
-#	next if ($SIMULATE_RX_LOSS && (rand() < $SIMULATE_RX_LOSS));
-
-	if ($clientpaddr) {
-		# check that it's a message type we know: starts with i r 2 d a or h (but not h followed by 0x00 0x00)
-		if ($msg =~ /^(?:[ir2a]|h(?!\x00\x00))/) {
-			my $client = getUdpClient($clientpaddr, $sock, $msg);
-
-			if (!defined($client)) {
-				return;
-			}
-			if ($::d_protocol_verbose) {
-				my ($clientport, $clientip) = sockaddr_in($clientpaddr);
-				msg("Client: ".inet_ntoa($clientip).":$clientport\n");
-			}
-
-			if ($SIMULATE_RX_DELAY) {
-				# simulate rx delay
-				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $SIMULATE_RX_DELAY/1000,
-							\&Slim::Networking::Protocols::processMessage, $msg);
+	do {
+		$clientpaddr = recv($sock,$msg,1500,0);
+		
+		if ($clientpaddr) {
+			# check that it's a message type we know: starts with i r 2 d a or h (but not h followed by 0x00 0x00)
+			if ($msg =~ /^(?:[ir2a]|h(?!\x00\x00))/) {
+				my $client = getUdpClient($clientpaddr, $sock, $msg);
+	
+				if (!defined($client)) {
+					return;
+				}
+				if ($::d_protocol_verbose) {
+					my ($clientport, $clientip) = sockaddr_in($clientpaddr);
+					msg("Client: ".inet_ntoa($clientip).":$clientport\n");
+				}
+	
+				if ($SIMULATE_RX_DELAY) {
+					# simulate rx delay
+					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $SIMULATE_RX_DELAY/1000,
+								\&Slim::Networking::Protocols::processMessage, $msg);
+				} else {
+					processMessage($client, $msg);
+				}
+	
+			} elsif ($msg =~/^d/) {
+				# Discovery request: note that slimp3 sends deviceid and revision in the discovery
+				# request, but the revision is wrong (v 2.2 sends revision 1.1). Oops. 
+				# also, it does not send the MAC address until the [h]ello packet.
+				# Squeezebox sends all fields correctly.
+	
+				my ($msgtype, $deviceid, $revision, @mac) = unpack 'axCCxxxxxxxxH2H2H2H2H2H2', $msg;
+				my $mac = join(':', @mac);
+				Slim::Network::Discovery::gotDiscoveryRequest($sock, $clientpaddr, $deviceid, $revision, $mac);
+	
+			# Playlist::executecommand can be accessed over the UDP port
+			} elsif ($msg=~/^executecommand\((.*)\)$/) {
+				my $ecArgs=$1;
+				my @ecArgs=split(/, ?/, $ecArgs);
+				$::d_protocol && msg("UDP: executecommand($ecArgs)\n");
+				my $clientipport = shift(@ecArgs);
+				my $client = Slim::Player::Client::getClient($clientipport);
+				Slim::Control::Command::execute($client, \@ecArgs);
 			} else {
-				processMessage($client, $msg);
-			}
-
-		} elsif ($msg =~/^d/) {
-			# Discovery request: note that slimp3 sends deviceid and revision in the discovery
-			# request, but the revision is wrong (v 2.2 sends revision 1.1). Oops. 
-			# also, it does not send the MAC address until the [h]ello packet.
-			# Squeezebox sends all fields correctly.
-
-			my ($msgtype, $deviceid, $revision, @mac) = unpack 'axCCxxxxxxxxH2H2H2H2H2H2', $msg;
-			my $mac = join(':', @mac);
-			Slim::Network::Discovery::gotDiscoveryRequest($sock, $clientpaddr, $deviceid, $revision, $mac);
-
-		# Playlist::executecommand can be accessed over the UDP port
-		} elsif ($msg=~/^executecommand\((.*)\)$/) {
-			my $ecArgs=$1;
-			my @ecArgs=split(/, ?/, $ecArgs);
-			$::d_protocol && msg("UDP: executecommand($ecArgs)\n");
-			my $clientipport = shift(@ecArgs);
-			my $client = Slim::Player::Client::getClient($clientipport);
-			Slim::Control::Command::execute($client, \@ecArgs);
-		} else {
-			if ($::d_protocol) {
-				my ($clientport, $clientip) = sockaddr_in($clientpaddr);
-				msg("ignoring Client: ".inet_ntoa($clientip).":$clientport that sent bogus message $msg\n");
+				if ($::d_protocol) {
+					my ($clientport, $clientip) = sockaddr_in($clientpaddr);
+					msg("ignoring Client: ".inet_ntoa($clientip).":$clientport that sent bogus message $msg\n");
+				}
 			}
 		}
-	}
+	} while $clientpaddr;
 }
 
 sub paddr2ipaddress {
