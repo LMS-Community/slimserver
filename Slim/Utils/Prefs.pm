@@ -584,12 +584,14 @@ sub clientIsDefined {
 
 sub scheduleWrite {
 	my $writeDelay = get('prefsWriteDelay') || 0;
+	
+	$writePending = 1;
+	
 	if ($writeDelay > 0) {
 		Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + $writeDelay), \&writePrefs, 1);
 	} else {
 		writePrefs();
 	}
-	$writePending = 1;
 }	
 
 sub writePrefs {
