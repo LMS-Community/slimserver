@@ -382,7 +382,6 @@ ZAPPED_SONGS
 
 ADDING_TO_PLAYLIST
 	DE	Am Ende der Playlist hinzufügen:
-	DE	Hinzufügen und als nächstes spielen:
 	DK	Tilføjer til slutning af playlisten:
 	EN	Adding to end of playlist:
 	ES	Añadiendo a la lista:
@@ -395,6 +394,7 @@ ADDING_TO_PLAYLIST
 	SE	Lägger till i spellista:
 
 INSERT_TO_PLAYLIST
+	DE	Hinzufügen und als nächstes spielen:
 	EN	Adding to play next:
 	FR	Ajoute après le morceau en cours :
 	NL	Toevoegen aan playlist:
@@ -933,24 +933,28 @@ SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	SE	Ljusstyrka avslagen:
 
 SETUP_AUTOBRIGHTNESS
+	DE	Helligkeit automatisch anpassen
 	EN	Automatic Display Brightness
 	FR	Réglage automatique de la luminosité de l'affichage
 	NL	Automatische helderheidsregeling van het scherm
 	PT	Brilho Automático
 
 SETUP_AUTOBRIGHTNESS_DESC
+	DE	Die Helligkeit der SLIMP3 Anzeige kann sich automatisch anpassen, wenn Sie einen Knopf drücken, einen Titel abspielen oder eine zeitlang nichts tun. Sie können dieses automatische Verhalten abschalten.
 	EN	The brightness of the display can be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
 	FR	La luminosité de l'affichage du lecteur peut être ajustée automatiquement lorsqu'un bouton est pressé, un morceau commence à jouer, ou lorsque le lecteur est inutilisé pendant un moment. Vous pouvez désactiver ce comportement automatique.
 	NL	De helderheid van het scherm van kan automatisch aangepast worden bij knopdrukken, het begin van een liedje of na een periode van inactiviteit. Deze functie kan ook uitgeschakeld worden.
 	PT	O brilho do ecrã do pode ser ajustado automaticamente quando usar um botão, começa uma música, ou fica inactivo ao fim de algum tempo. Pode desligar este comportamento automático se desejar.
 
 SETUP_AUTOBRIGHTNESS_OFF
+	DE	Helligkeit von hand anpassen
 	EN	Adjust Brightness Manually
 	FR	Régler la luminosité manuellement
 	NL	Manuele Helderheidsregeling
 	PT	Ajustar o Brilho Manualmente
 
 SETUP_AUTOBRIGHTNESS_ON
+	DE	Automatische Anzeigehelligkeit
 	EN	Adjust Brightness Automatically
 	FR	Régler la luminosité automatiquement
 	NL	Automatische Helderheidsregeling
@@ -1080,7 +1084,7 @@ SETUP_IRMAP
 	SE	Knappfunktioner på fjärrkontroll
 
 SETUP_IRMAP_DESC
- 	DE	Sie können zwischen den Tastenfunktion Sets auswählen. Diese Sets bilden genau die Funktionen auf der Fernbedienung ab. Das "Default" Set ist in der Dokumentation beschrieben.
+	DE	Sie können zwischen den Tastenfunktion Sets auswählen. Diese Sets bilden genau die Funktionen auf der Fernbedienung ab. Das "Default" Set ist in der Dokumentation beschrieben.
 	EN	You can choose between button function sets. These sets map particular buttons on the infrared remote to particular functions. The "Default" set is the one that is described in the documentation.
 	FR	Vous pouvez choisir entre plusieurs jeux de boutons de fonctions. Ces jeux de configuration permettent d'associer les boutons de la télécommande aux fonctions disponibles. Le jeu intitulé "Défaut" est celui documenté dans le manuel.
 	NL	U kan kiezen uit verschillende Knop Functie sets. Deze sets koppelen bepaalde knoppen op de infrarood afstansbediening aan bepaalde functies. The "Standaard" set is degene die beschreven staat in de documentatie.
@@ -1099,21 +1103,18 @@ SETUP_IRSETLIST_CHANGE
 	DE	Einstellungen für %s sind gespeichert.
 	EN	Setting for %s was changed.
 	FR	Le réglage pour %s a été modifié.
-	DE	Automatische Anzeigehelligkeit
 	NL	Instelling voor %s is aangepast.
 	PT	A opção para %s mudou.
 	SE	Inställningen för %s är ändrad.
 
 SETUP_PLUGINLIST_OK
 	DE	Plugins:
-	DE	Die Helligkeit der SLIMP3 Anzeige kann sich automatisch anpassen, wenn Sie einen Knopf drücken, einen Titel abspielen oder eine zeitlang nichts tun. Sie können dieses automatische Verhalten abschalten.
 	EN	Plugins:
 	FR	Plugins :
 	NL	Plugins:
 	PT	Extras
 	SE	Tillägg:
 
-	DE	Helligkeit von hand anpassen
 SETUP_PLUGINLIST_CHANGE
 	DE	Einstellungen für %s sind gespeichert.
 	EN	Setting for %s was changed.
@@ -1477,18 +1478,21 @@ SETUP_COVERART
 	PT	Capa Álbum
 
 SETUP_COVERART_DESC
+	DE	Bilder der Plattenhülle werden, falls vorhanden, beim Anschauen der Album- oder Titelinformationen angezeigt. Sie befinden sich in den ID3 tags für einen einzelnen Titel, oder im selben Verzeichnis, wie die Titel Dateien.  Per Voreinstellung werden Dateien mit den folgenden Namen benutzt:"cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", "thumb.jpg".  Sie können einen zusätzlichen Dateinamen für die Plattenhülle festlegen und unterschiedliche Namen für kleine und grosse Bilder verwenden.
 	EN	Images of album cover art, when available, are displayed when viewing an album or song information.  Cover art images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail or full size images.
 	FR	Si elle existe, l'image de la pochette du disque est affichée en regard de l'information d'un album ou d'un morceau. Les images se trouvent soit dans un tag ID3 par morceau, soit dans le même répertoire que les fichiers. Le serveur recherche de lui-même les noms de fichiers suivants: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", ou "thumb.jpg". Vous pouvez spécifier d'autres noms de fichiers pour les images de pochettes, et spécifier différents noms de fichiers pour les vignettes ou les images.
 	NL	Indien er een afbeelding beschikbaar is van de hoezen wordt deze getoond als U een album bekijkt of informatie over een liedje opvraagt. Deze beelden worden opgegeven in de ID3 tag voor liedjes of staan in dezelfde map als de muziekbestanden. Standaard worden de bestanden "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" en "thumb.jpg" gebruikt. Bijkomende bestandsnamen kunnen gedefinieerd worden. Voor de verkleinde beelden (thumbmails) en de volledige afbeeldingen kunnen afzonderlijke namen opgegeven worden.  
 	PT	As imagens da capa do álbum, quando disponíveis, são mostradas na visualização da informação do álbum ou da música. As capas dos álbuns poderão estar integradas nas "tags ID3" do próprio ficheiro, ou em ficheiros separados na pasta dos ficheiros de música. Por omissão, serão usados os nomes de ficheiros "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Pode especificar nomes de ficheiros adicionais para a imagem da capa do álbum. Pode especificar nomes diferentes para a miniatura ou para a imagem completa.
 
 SETUP_COVERART_OK
+	DE	Dateiname der Plattenhülle:
 	EN	Cover art image file name set to
 	FR	Nom de fichier pour les images de pochette :
 	NL	Naam van de afbeelding van de hoes ingesteld op
 	PT	Nome do ficheiro para a Capa do Álbum é
 
 SETUP_COVERTHUMB
+	DE	Dateiname der Plattenhülle (klein)
 	EN	Cover Art Thumbnail
 	FR	Vignettes
 	NL	Verkleinde afbeelding van de hoes
@@ -1501,6 +1505,7 @@ SETUP_COVERTHUMB_DESC
 	PT	Nome do ficheiro da miniatura da Capa do Álbum
 
 SETUP_COVERTHUMB_OK
+	DE	Dateiname der Plattenhülle (klein):
 	EN	Cover art thumbnail image file name set to
 	FR	Nom de fichier pour les vignettes des images de pochette :
 	NL	Bestandsnaam voor verkleinde afbeelding van de hoes ingesteld op
@@ -1623,42 +1628,39 @@ SETUP_TRANSCODE-WAV_DESC
 	DE	Wenn Sie LAME installiert haben, kann der Slim Server Ihre WAV und AIFF Dateien automatisch zum Abspielen auf dem Slim Player konvertieren. 
 	EN	If you have LAME installed, you can have your Slim Server convert your uncompressed WAV and AIFF music files on-the-fly for playback on your Slim player.
 	FR	Si vous disposez de LAME, le serveur Slim peut convertir en temps réel vos morceaux non-compressés au format WAV et/ou AIFF pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant sur le serveur pendant la lecture et n'est pas stockée sur le disque.
-	DE	Bilder der Plattenhülle werden, falls vorhanden, beim Anschauen der Album- oder Titelinformationen angezeigt. Sie befinden sich in den ID3 tags für einen einzelnen Titel, oder im selben Verzeichnis, wie die Titel Dateien.  Per Voreinstellung werden Dateien mit den folgenden Namen benutzt:"cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", "thumb.jpg".  Sie können einen zusätzlichen Dateinamen für die Plattenhülle festlegen und unterschiedliche Namen für kleine und grosse Bilder verwenden.
 	NL	Indien U LAME geinstalleerd hebt kan U de Slim instellen om niet gecomrimeerde WAV en AIFF bestanden om te zetten zodat deze kunnen afgespeeld worden op de Slim speler.
 	PT	Se tiver instalado no sistema o LAME (utilitários de MP3), pode configurar o servidor Slim para converter automaticamente os ficheiros WAV e AIFF para MP3, de forma a serem usados no cliente Slim.
 
 SETUP_TRANSCODE-WAV_OK
 	DE	WAV und AIFF Dateien
 	EN	WAV and AIFF Files
-	DE	Dateiname der Plattenhülle:
 	FR	Fichiers WAV et AIFF
 	NL	WAV en AIFF bestanden
 	PT	Ficheiros WAV e AIFF
 
 SETUP_TRANSCODE-WAV_1
 	DE	Automatisch konvertieren
-	DE	Dateiname der Plattenhülle (klein)
 	EN	Convert automatically
 	FR	Convertir automatiquement
 	NL	Automatisch omzetten
 	PT	Converter automaticamente
 
 SETUP_TRANSCODE-WAV_0
-	DE	Dateiname der Plattenhülle
 	DE	Nicht automatisch konvertieren
 	EN	Don't convert automatically
 	FR	Ne pas convertir
 	NL	Niet omzetten
 	PT	Não converter automaticamente
 
-	DE	Dateiname der Plattenhülle (klein):
 SETUP_TRANSCODE-MOV
+	DE	QuickTime & AAC Dateien konvertieren
 	EN	Convert QuickTime & AAC Files
 	FR	Conversion des fichiers QuickTime et AAC
 	NL	Omzetten van QuickTime en AAC bestanden
 	PT	Converter ficheiros QuickTime e AAC
 
 SETUP_TRANSCODE-MOV_DESC
+	DE	Nur Macintosh OS X: Wenn Sie LAME installiert haben, kann Ihr SLIMP3 Server QuickTime Filme und AAC Musik Dateien in Echtzeit für das Abspielen auf Ihrem SLIMP3 Player konvertieren.
 	EN	Macintosh OS X only: If you have LAME installed, you can have your Slim Server convert your QuickTime movies and AAC music files on-the-fly for playback on your Slim player.
 	FR	Uniquement pour Macintosh OS X : Si vous disposez de LAME, le serveur Slim peut convertir en temps réel vos morceaux au format Quicktime movie et AAC pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant la lecture sur le serveur et n'est pas stockée sur le disque.
 	NL	Enkel voor Macintosh OS X: Indien U LAME geinstalleerd hebt kan U de Slim server instellen om QuickTime films (alleen het geluid) en AAC muziekbestanden real-time om te zetten voor weergave op de Slim speler.
@@ -1671,12 +1673,14 @@ SETUP_TRANSCODE-MOV_OK
 	PT	QuickTime e AAC
 
 SETUP_TRANSCODE-MOV_1
+	DE	Automatisch konvertieren
 	EN	Convert automatically
 	FR	Convertir automatiquement
 	NL	Automatisch omzetten
 	PT	Converter automaticamente
 
 SETUP_TRANSCODE-MOV_0
+	DE	Nicht automatisch konvertieren
 	EN	Don't convert automatically
 	FR	Ne pas convertir
 	NL	Niet omzetten
@@ -1711,21 +1715,25 @@ SETUP_SAVEHISTORY_0
 	PT	Não gravar historial
 
 SETUP_CHECKVERSION
+	DE	Software Aktualisierungen
 	EN	Software Updates
 	FR	Mise à jour du logiciel
 	PT	Actualizações
 
 SETUP_CHECKVERSION_DESC
+	DE	Der Server kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Software Version vorhanden ist. Falls ja, erscheint eine Meldung im SLIMP3 Web Interface.
 	EN	The server can automatically connect to www.slimdevices.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in the Slim Server web interface.
 	FR	Le serveur Slim peut se connecter tous les jours à www.slimdevices.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Un message dans l'interface web signale cette disponibilité le cas échéant.
 	PT	O servidor poderá ligar-se automaticamente a www.slimdevices.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
 
 SETUP_CHECKVERSION_1
+	DE	Automatisch nach aktueller Software suchen
 	EN	Automatically Check For Software Updates
 	FR	Vérifier automatiquement
 	PT	Verificar Versões Novas
 
 SETUP_CHECKVERSION_0
+	DE	Nicht automatisch nach aktueller Software suchen
 	EN	Don't Check For Software Updates
 	FR	Ne pas vérifier
 	PT	Não Verificar
@@ -1799,14 +1807,12 @@ SETUP_SCREENSAVERJUMP_DESC
 	PT	O cliente mostra automaticamente a música actualmente a tocar depois depois de algum tempo sem usar o controlo remoto. Pode mudar o comportamento do cliente depois de voltar a usar o controlo remoto.
 	SE	Spelaren kommer efter en fördröjning automatiskt hoppa till "Spelas nu" när du inte använder fjärrkontrollen.<br>Här kan du välja vad som skall hända om du använder fjärrkontrollen igen.
 
-	DE	QuickTime & AAC Dateien konvertieren
 SETUP_SCREENSAVERJUMP_CHOOSE
 	DE	Wenn sie die Fernbedienung verwenden, nachdem der Bildschirmschoner eingeschaltet ist:
 	DK	Når du anvender fjernbetjeningen når pauseskærmen bliver vist.
 	EN	When you use the remote after the screensaver starts:
 	FI	Käyttäessäsi kaukosäädintä näytönsäästäjän ollessa päällä:
 	FR	Lorsque vous utilisez votre télécommande après l'activation de l'économiseur d'écran :
-	DE	Nur Macintosh OS X: Wenn Sie LAME installiert haben, kann Ihr SLIMP3 Server QuickTime Filme und AAC Musik Dateien in Echtzeit für das Abspielen auf Ihrem SLIMP3 Player konvertieren.
 	NL	Als U de afstandsbediening gebruikt na het starten van de screensaver:
 	PT	Quando usa o controlo remoto depois de começar a protecção de ecrã
 	SE	Om du använder fjärrkontrollen efter att skärmsläckaren startats:
@@ -1819,14 +1825,12 @@ SCREENSAVERJUMP_BACK
 	FR	Retourner au dernier endroit visité
 	NL	Ga terug naar de laatste locatie die U bezocht met de afstandsbediening.
 	PT	Voltar ao ultimo menu selecionado com o controlo remoto.
-	DE	Automatisch konvertieren
 	SE	Återgå till där du var innan.
 
 SCREENSAVERJUMP_STAY
 	DE	Im aktuellen Abspiel-Bereich bleiben.
 	DK	Forbliv i Afspiller nu området.
 	EN	Stay in the Now Playing area.
-	DE	Nicht automatisch konvertieren
 	FI	Pysy siinä missä olet.
 	FR	Rester dans la section Lecture
 	NL	Blijf in 'Speelt nu'.
@@ -1861,25 +1865,21 @@ SETUP_DISPLAYTEXTTIMEOUT_CHOOSE
 	FR	Délai en secondes :
 	NL	Wachttijd in seconden:
 	PT	Tempo de espera, em segundos
-	DE	Software Aktualisierungen
 	SE	Fördröjning i sekunder:
 
 SETUP_THROTTLESCAN
 	DE	Musik Durchsuchungsgeschwindigkeit:
 	DK	Hastighed for gennemlæsning af musik
-	DE	Der Server kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Software Version vorhanden ist. Falls ja, erscheint eine Meldung im SLIMP3 Web Interface.
 	EN	Music scan speed
 	ES	Velocidad del escaneo de la música:
 	FI	Musiikin lukunopeus
 	FR	Vitesse de mise à jour du dossier de musique :
 	NL	Snelheid voor muziek doorzoeken:
-	DE	Automatisch nach aktueller Software suchen
 	PT	Velocidade de pesquisa da música
 	SE	Hastighet på inläsning av musikfiler:
 
 SETUP_THROTTLESCAN_DESC
 	DE	Wenn der Server damit beginnt, in Ihrem Musikverzeichnis in den ID-Tags der MP3 Dateien nach Informationen zu suchen, kann das bei langsamen Systemen und PCs mit einem FAT oder FAT32 Datensystem zu einer inakzeptablen Verlangsamung Ihres Computers kommen. Sie können mit folgender Einstellung diesen Prozess verlangsamen und Ihrem Rechner mehr Ressourcen überlassen.
-	DE	Nicht automatisch nach aktueller Software suchen
 	DK	Når serveren starter, gennemlæser den din musiksamling for at indlæse kunstner, album og anden information fra de tags der er tilknyttet dine musikfiler. På ældre systemer og Windows-PCere der anvender FAT eller FAT32 filsystemerne kan dette betyde at computeren belastes i en uacceptabel grad. Du kan ændre denne indstilling så gennemlæsningen af musiksamlingen ikke benytter så mange ressourcer.
 	EN	When the server starts it scans your music folder to load the artist, album and other information from the tags in the MP3 files. On some slower systems and Windows PCs using FAT and FAT32 filesystems this may unacceptably slow down your computer. You can change this setting to slow down scanning and use less computer resources.
 	ES	Cuando arranca el servidor, hace un escaneo total de su carpeta de música para determinar todos los artistas, discos y canciones. Si este proceso ralentiza demasiado su ordenador puede cambiar esta opción para hacer que el escaneo se hace más despacio.
@@ -1928,21 +1928,25 @@ SETUP_ARTISTINALBUMSEARCH_DESC
 	SE	Kontrollerar om sökningar på album också skall inkludera artistnamn. Med detta aktiverat kommer albumsökningar på "bach" generera träffar även för "Bradenberg Concertos" av J.S Bach, även om "bach" inte finns med i albumnamnet.
 
 SETUP_COMPOSERINARTISTS
+	DE	Komponist, Gruppe und Orchester in Interpreten
 	EN	Composer, Band and Orchestra in Artists
 	FR	Compositeur, Groupe et Orchestre
 	PT	Compositor, Banda e Orquestra em Artistas
 
 SETUP_COMPOSERINARTISTS_1
+	DE	Komponist, Gruppe und Orchester in Interpreten einschliessen
 	EN	Include composer, band and orchestra in artists
 	FR	Inclure les compositeurs, groupes et orchestres dans les artistes
 	PT	Incluir compositor, banda e orquestra nos artistas
 
 SETUP_COMPOSERINARTISTS_0
+	DE	Komponist, Gruppe und Orchester nicht in Interpreten einschliessen
 	EN	Don't include composer, band and orchestra in artists
 	FR	Ne pas inclure compositeurs, groupes et orchestres dans les artistes
 	PT	Não incluir compositor, banda e orquestra nos artistas
 
 SETUP_COMPOSERINARTISTS_DESC
+	DE	Titelinformationen über Komponist, Gruppe und Orchester kann in der Interpretenliste beim Stöbern und Suchen eingeschlossen werden.
 	EN	Song information about composers, bands and orchestras can be included in the artists list for browsing and search.
 	FR	Les informations relatives aux compositeurs, groupes et orchestres contenues dans les morceaux peuvent être ajoutées à la liste d'artistes pour parcourir ou rechercher.
 	PT	A informação relativa ao compositor, banda e orquestra poderá ser incluida na listas ou na procura.
@@ -2074,25 +2078,21 @@ SETUP_FILESORT_DESC
 	EN	When you are browsing the Music Folder, you can choose to have the songs sorted by file name or by ID3 tag information (Artist, Album, Track Number).
 	FR	Lorsque vous parcourez votre dossier de musique, vous pouvez choisir un tri par nom de fichier ou à partir des tags ID3 (artiste, album, numéro de piste).
 	NL	Als U de Muziek Folder doorloopt, kunt U nummers laten sorteren op bestandsnaam of op ID3 tag informatie (Artiest, Album, Tracknummer).
-	DE	Komponist, Gruppe und Orchester in Interpreten
 	PT	Ao percorrer a pasta de músicas, pode escolher se deseja ordenar por nome de ficheiro ou pela informação das tags ID3 (artista, álbum, número de pista).
 	SE	När du bläddrar i Musikmappen kan du välja att få sångerna sorterade efter filnamn eller efter ID3-information (Artist, Album, Spårnummer).
 
 SORTID3
 	DE	Sortieren nach den ID3-Tags
-	DE	Komponist, Gruppe und Orchester in Interpreten einschliessen
 	DK	Sorter efter sangtitelinformation
 	EN	Sort by song information
 	FR	Trier à partir des tags ID3
 	NL	Sorteer op ID3 informatie
 	PT	Ordenar pela informação da música (ID3)
-	DE	Komponist, Gruppe und Orchester nicht in Interpreten einschliessen
 	SE	Sortera efter ID3-information
 
 SORTBYFILENAME
 	DE	Sortieren nach dem Dateinamen
 	DK	Sorter efter filnavn
-	DE	Titelinformationen über Komponist, Gruppe und Orchester kann in der Interpretenliste beim Stöbern und Suchen eingeschlossen werden.
 	EN	Sort by file name
 	FR	Trier par nom de fichier
 	NL	Sorteer op bestandsnaam
@@ -4026,6 +4026,7 @@ BEHAVIOR_SETTINGS
 	SE	Beteende
 
 FORMATS_SETTINGS
+	DE	Dateiarten
 	EN	File Types
 	FR	Types de fichier
 	NL	Bestandsformaten
@@ -4159,7 +4160,6 @@ BRIGHTNESS_OFF
 	EN	Brightness when off:
 	ES	Luminosidad mientras apagado:
 	FI	Näytön kirkkaus soittimen ollessa pois päältä:
-	DE	Dateiarten
 	FR	Luminosité lorsqu'éteint :
 	NL	Helderheid indien uitgeschakeld:
 	PT	O brilho quando está desligado
