@@ -4,10 +4,7 @@
 //                         //
 /////////////////////////////
 
-var playlistNames = new Array();
-var playlistURLs = new Array();
-var playlistArtists = new Array();
-var playlistAlbums = new Array();
+var playlist = new Array();
 
 var cansave = 0;
 var playlistinfo = "";
@@ -31,32 +28,32 @@ function updatePlaylist(args) {
 function updatePlaylist_handler(req, url) {
 	playlistnodes = req.responseXML.getElementsByTagName("playlistitem");
 	var resp = req.responseXML;
-	var newPlaylistNames = new Array();
-	var newPlaylistURLs = new Array();
-	var newPlaylistArtists = new Array();
-	var newPlaylistAlbums = new Array();
+	var newPlaylist = new Array();
 	listbox = document.getElementById("playlist");
 
 
 	csIndex = currentSong - 1;
 
 	for (i = 0; i < playlistnodes.length; i++) {
+		newitem = new Object();
 		iv = playlistnodes[i].getElementsByTagName("title")[0];
-		if (iv && iv.firstChild) newPlaylistNames.push(iv.firstChild.data); else newPlaylistNames.push("");
+		if (iv && iv.firstChild) newitem.title = iv.firstChild.data; else newitem.title = "";
 		iv = playlistnodes[i].getElementsByTagName("artist")[0];
-		if (iv && iv.firstChild) newPlaylistArtists.push(iv.firstChild.data); else newPlaylistArtists.push("");
+		if (iv && iv.firstChild) newitem.artist = iv.firstChild.data; else newitem.artist = "";
+		if (iv) newitem.artistid = iv.getAttribute("id");
 		iv = playlistnodes[i].getElementsByTagName("album")[0];
-		if (iv && iv.firstChild) newPlaylistAlbums.push(iv.firstChild.data); else newPlaylistAlbums.push("");
+		if (iv && iv.firstChild) newitem.album = iv.firstChild.data; else newitem.album = "";
 		iv = playlistnodes[i].getElementsByTagName("url")[0];
-		if (iv && iv.firstChild) newPlaylistURLs.push(iv.firstChild.data); else newPlaylistURLs.push("");
+		if (iv && iv.firstChild) newitem.url = iv.firstChild.data; else newitem.url = "";
+		newPlaylist.push(newitem);
 	}
 
-	if (playlistNames.length < newPlaylistNames.length) baselength = playlistNames.length;
-	else baselength = newPlaylistNames.length;
+	if (playlist.length < newPlaylist.length) baselength = playlist.length;
+	else baselength = newPlaylist.length;
 
 	for (i = 0; i < baselength; i++) {
-		newHTML = '<a onclick="doSelect(event)">' + newPlaylistNames[i] + '</a>'
-			+ BY + '<a onclick="doArtist(event)">' + newPlaylistArtists[i] + '</a>';
+		newHTML = '<a onclick="doSelect(event)">' + newPlaylist[i].title + '</a>'
+			+ BY + '<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
 		if (listbox.rows[i].childNodes[2].innerHTML != newHTML) {
 			listbox.rows[i].childNodes[2].innerHTML = newHTML;
 		}
@@ -66,8 +63,8 @@ function updatePlaylist_handler(req, url) {
 			listbox.rows[i].childNodes[1].innerHTML = newNum;
 		}
 
-		if (listbox.rows[i].url != newPlaylistURLs[i]) {
-			listbox.rows[i].url = newPlaylistURLs[i];
+		if (listbox.rows[i].url != newPlaylist[i].url) {
+			listbox.rows[i].url = newPlaylist[i].url;
 		}
 
 		if (i == csIndex) {
@@ -77,13 +74,12 @@ function updatePlaylist_handler(req, url) {
 		}
 	}
 
-	if (playlistNames.length < newPlaylistNames.length) {
-		for (i = baselength; i < newPlaylistNames.length; i++) {
+	if (playlist.length < newPlaylist.length) {
+		for (i = baselength; i < newPlaylist.length; i++) {
 			theTR = listbox.insertRow(-1);
-			theTR.url = newPlaylistURLs[i];
+			theTR.url = newPlaylist[i].url;
 			if (i == csIndex) {
 				theTR.className = "currentsong";
-
 			} else {
 				theTR.className = "";
 			}
@@ -99,8 +95,8 @@ function updatePlaylist_handler(req, url) {
 			indexTD.className = "playlistindex";
 
 			titleTD = document.createElement('td');
-			titleTD.innerHTML = '<a onclick="doSelect(event)">' + newPlaylistNames[i] + '</a>' + BY +
-				'<a onclick="doArtist(event)">' + newPlaylistArtists[i] + '</a>';
+			titleTD.innerHTML = '<a onclick="doSelect(event)">' + newPlaylist[i].title + '</a>' + BY +
+				'<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
 			titleTD.className = "listing";
 
 			theTR.appendChild(buttonsTD);
@@ -108,8 +104,8 @@ function updatePlaylist_handler(req, url) {
 			theTR.appendChild(titleTD);
 		}
 	}
-	if (newPlaylistNames.length < playlistNames.length) {
-		extras = playlistNames.length - baselength;
+	if (newPlaylist.length < playlist.length) {
+		extras = playlist.length - baselength;
 		for (i = 0; i < extras; i++) {
 			listbox.deleteRow(baselength);
 		}
@@ -117,10 +113,7 @@ function updatePlaylist_handler(req, url) {
 
 	highlightCurrentSong();
 
-	playlistNames = newPlaylistNames;
-	playlistURLs = newPlaylistURLs;
-	playlistArtists = newPlaylistArtists;
-	playlistAlbums = newPlaylistAlbums;
+	playlist = newPlaylist;
 
 	cansave = getdata(resp, "cansave");
 	playlistinfo = getdata(resp, "playlistinfo");
@@ -173,16 +166,13 @@ function doRemove(e) {
 	if (selIndex < 0) return;
 	listbox = document.getElementById("playlist");
 	listbox.deleteRow(selIndex);
-	playlistNames.splice(selIndex, 1);
-	playlistURLs.splice(selIndex, 1);
-	playlistArtists.splice(selIndex, 1);
-	playlistAlbums.splice(selIndex, 1);
+	playlist.splice(selIndex, 1);
 	if (songCount == 1) {
 		displayCurrentSong("", "", "");
 	} else if ((selIndex == songCount - 1) && currentSong == songCount) {
-		displayCurrentSong(playlistNames[0], playlistArtists[0], playlistAlbums[0]);
+		displayCurrentSong(playlist[0].title, playlist[0].artist, playlist[0].album);
 	} else if (selIndex == currentSong - 1) { 
-		displayCurrentSong(playlistNames[selIndex], playlistArtists[selIndex], playlistAlbums[selIndex]);
+		displayCurrentSong(playlist[selIndex].title, playlist[selIndex].artist, playlist[selIndex].album);
 	}
 
 	if (selIndex < songCount - 1) {
@@ -279,7 +269,7 @@ function doSelect(e) {
 	if (selIndex < 0 || selIndex >= songCount) return;
 	displayPlayMode("play");
 	currentSong = selIndex + 1;
-	displayCurrentSong(playlistNames[selIndex], playlistArtists[selIndex], playlistAlbums[selIndex]);
+	displayCurrentSong(playlist[selIndex].title, playlist[selIndex].artist, playlist[selIndex].album);
 	displayPlayString();
 	highlightCurrentSong();
 
@@ -291,8 +281,19 @@ function doArtist(e) {
 	if (!e) var e = window.event;
 	et = (e.target || e.srcElement);
 	if (!et) return;
+	if (et && et.parentNode && et.parentNode.parentNode) {
+		etpp = et.parentNode.parentNode;
+		if (etpp.rowIndex) {
+			selIndex = etpp.rowIndex;
+		} else {
+			selIndex = etpp.parentNode.rowIndex;
+		}
+	} else {
+		return;
+	}
+	if (selIndex < 0 || selIndex >= songCount) return;
 
-	// XXX FIXME this is disabled for now
+	browseurl("browsedb.html?hierarchy=artist,album,track&level=1&artist=" + playlist[selIndex].artistid);
 }
 
 function doSave() {
@@ -308,10 +309,7 @@ function doClear() {
 	if (controlLockout) return;
 	listbox = document.getElementById("playlist");
 	displayCurrentSong("", "", "");
-	playlistNames = new Array();
-	playlistArtists = new Array();
-	playlistAlbums = new Array();
-	playlistURLs = new Array();
+	playlist = new Array();
 	for (i = 0; i < songCount; i++) {
 		listbox.deleteRow(0);
 	}

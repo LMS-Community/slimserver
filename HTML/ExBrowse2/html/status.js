@@ -15,6 +15,8 @@ var curPlayMode;
 var currentSong;
 var songCount;
 
+var repMode, shufMode, curVol;
+
 var controlLockout;
 
 var lastCoverArt;
@@ -54,6 +56,32 @@ function initStatus() {
 	document.getElementById("playersel").options.length = 0;
 
 	updateCounterPeriodically();
+
+	document.onkeypress = handlekey;
+}
+
+function handlekey(e) {
+	if (!e) e = window.event;
+	if (e.keyCode) kcval = e.keyCode;
+	else if (e.which) kcval = e.which;
+	else return true;
+	kc = String.fromCharCode(kcval);
+
+	if (kc == 'c') doPlay();
+	else if (kc == 'b') doNext();
+	else if (kc == 'z') doPrev();
+	else if (kc == 'v') doStop();
+	else if (kc == 'r') rotateRepeat();
+	else if (kc == 's') rotateShuffle();
+	else if (kc == '-') decVolume();
+	else if (kc == '+' || kc == '=') incVolume();
+	else return true;
+
+	return false;
+}
+
+function abortkey(e) {
+	return true;
 }
 
 ///////////////////////////////////////////
@@ -198,6 +226,7 @@ function displayCurrentSong(song, artist, album) {
 }
 
 function displayRepeat(mode) {
+	repMode = mode;
 	if (mode == 1) {
 		document.getElementById("repeatone").className = "fakelink active";
 		document.getElementById("repeatall").className = "fakelink";
@@ -218,6 +247,7 @@ function displayRepeat(mode) {
 }
 
 function displayShuffle(mode) {
+	shufMode = mode;
         if (mode == 1) {
                 document.getElementById("shufsongs").className = "fakelink active";
                 document.getElementById("shufalbums").className = "fakelink";
@@ -238,6 +268,7 @@ function displayShuffle(mode) {
 }
 
 function displayVolume(volume) {
+	curVol = volume;
         for (i = 0; i*10 <= volume; i++) {
                 document.getElementById("volume").childNodes[i].src = 'html/images/volpixel_s.gif';
         }
@@ -252,11 +283,13 @@ function displayCoverArt(url) {
 			document.getElementById("coverart").src = "/music/" + url + "/thumb.jpg";
 			lastCoverArt = url;
 		}
-		document.getElementById("coverart").style.position = "";
-		document.getElementById("coverart").style.visibility = "visible";
+		document.getElementById("coverart").style.display = "block";
+		document.getElementById("playtext").style.left = "120px";
+		document.getElementById("playtext").style.width = "270px";
 	} else {
-		document.getElementById("coverart").style.position = "absolute";
-		document.getElementById("coverart").style.visibility = "hidden";
+		document.getElementById("coverart").style.display = "none";
+		document.getElementById("playtext").style.left = "10px";
+		document.getElementById("playtext").style.width = "380px";
 	}
 }
 
@@ -292,7 +325,7 @@ function doPrev() {
 	if (controlLockout) return;
         currentSong--;
         if (currentSong == 0) currentSong = songCount;
-        displayCurrentSong(playlistNames[currentSong - 1], playlistArtists[currentSong - 1], playlistAlbums[currentSong - 1]);
+        displayCurrentSong(playlist[currentSong - 1].title, playlist[currentSong - 1].artist, playlist[currentSong - 1].album);
         displayPlayMode("play");
 	progressAt = 0;
 	resyncSongCounter();
@@ -304,7 +337,7 @@ function doNext() {
 	if (controlLockout) return;
         currentSong++;
         if (currentSong > songCount) currentSong = 1;
-        displayCurrentSong(playlistNames[currentSong - 1], playlistArtists[currentSong - 1], playlistAlbums[currentSong - 1]);
+        displayCurrentSong(playlist[currentSong - 1].title, playlist[currentSong - 1].artist, playlist[currentSong - 1].album);
         displayPlayMode("play");
 	progressAt = 0;
 	resyncSongCounter();
@@ -323,11 +356,32 @@ function doVolume(e) {
 	}
 }
 
+function incVolume() {
+	// Firefox seems to think that 20 + 10 = 2010...
+	curVol -= -10;
+	if (curVol > 100) curVol = 100;
+	displayVolume(curVol);
+	updateStatus("&p0=mixer&p1=volume&p2=" + curVol);
+}
+
+function decVolume() {
+	curVol -= 10;
+	if (curVol < 0) curVol = 0;
+	displayVolume(curVol);
+	updateStatus("&p0=mixer&p1=volume&p2=" + curVol);
+}
+
 function doRepeat(repmode) {
 	if (controlLockout) return;
 	displayRepeat(repmode);
         cmdstring = "&p0=playlist&p1=repeat&p2=" + repmode;
         updateStatus(cmdstring);
+}
+
+function rotateRepeat() {
+	repMode++;
+	if (repMode == 3) repMode = 0;
+	doRepeat(repMode);
 }
 
 function doShuffle(shufmode) {
@@ -336,6 +390,12 @@ function doShuffle(shufmode) {
         cmdstring = "&p0=playlist&p1=shuffle&p2=" + shufmode;
         updateStatusCombined(cmdstring);
         updatePlaylist();
+}
+
+function rotateShuffle() {
+	shufMode++;
+	if (shufMode == 3) shufMode = 0;
+	doShuffle(shufMode);
 }
 
 function songCounterUpdate() {

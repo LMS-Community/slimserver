@@ -1,7 +1,4 @@
-[% pagetitle = 'Search' %]
-[% pageicon = 'Search' %]
-[% bodyscript = 'onload="document.searchForm.query.focus();"' %]
-[% PROCESS header.html pwd="yes" %]
+[% PROCESS header.html pwd="yes" nokbd="yes" %]
 
 [% MACRO logicalSelectionBlock BLOCK %]
 <select name="[% name %]">

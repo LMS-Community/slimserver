@@ -265,6 +265,27 @@ a:hover {
 	z-index: 0;
 }
 
+#playtext {
+	position: absolute;
+	top: 10px;
+	left: 0px;
+	width: 380px;
+	height: 135px;
+	margin: 0;
+	padding: 0;
+}
+
+#coverart {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	width: 100px;
+	height: 100px;
+	margin: 0;
+	padding: 0;
+	display: none;
+}
+
 .label {
 	font-size: 9px;
 	color: #bbb;
@@ -476,13 +497,13 @@ a:hover {
 	border-left: 1px solid silver;
 	font-size: 10px;
 }
-
+/*
 #coverart {
 	float: left;
 	border-right: 10px solid #61676c;
 	background: #61676c;
 }
-
+*/
 /************\
  * Playlist *
 \************/
