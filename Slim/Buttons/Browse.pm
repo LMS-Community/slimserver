@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.22 2004/12/07 20:19:46 dsully Exp $
+# $Id: Browse.pm,v 1.23 2004/12/15 22:35:50 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -251,7 +251,7 @@ sub setMode {
 	my $client = shift;
 	my $method = shift;
 	
-	my @oldlines = Slim::Display::Display::curLines($client);
+	my @oldlines = Slim::Display::Display::curLines($client) unless $method eq 'pop';
 	
 	$client->lines(\&lines);
 	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
