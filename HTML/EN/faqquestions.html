@@ -16,7 +16,7 @@
 	<li><a href="#about-display">The fluorescent display looks great, but aren't those pretty expensive? Have you considered using a cheaper LCD display?</a>
 	<li><a href="#about-dhcp">Does Squeezebox support DHCP?</a>
 	<li><a href="#about-80211">What kind of wireless networks can Squeezebox connect to?</a>
-	<li><a href="#about-wirelessperformance">What kind impact will Squeezebox have on my wireless network?</a>
+	<li><a href="#about-wirelessperformance">What kind of impact will Squeezebox have on my wireless network?</a>
 	<li><a href="#about-slimp3sync">Does SlimServer support synchronization between SLIMP3 and Squeezebox?</a>
 	<li><a href="#about-cable">What kind of ethernet cable do I need? How long can it be?</a>
 	<li><a href="#about-networkspeed">How fast does my network need to be to use Squeezebox?</a>
@@ -76,7 +76,7 @@ Squeezebox Wireless adds a built-in 802.11b wireless adaptor to connect to wirel
 </div>
 
 <div class="faq">
-<h5><a id="about-wirelessperformance"></a>What kind impact will Squeezebox have on my wireless network?</h5>
+<h5><a id="about-wirelessperformance"></a>What kind of impact will Squeezebox have on my wireless network?</h5>
 
 <p>While streaming music, Squeezebox will use some network bandwidth.    The amount of bandwidth depends on the bitrate of the audio file.  MP3 files use up to 320k bits per second, AIFF, WAV, AAC and other formats may use up to 1.5M bits per second.  A solid 802.11b network can generally support around 5M bits per second of data, even though it's rated for 11M bits per second.  This means that you can support more than one Squeezebox on an 802.11 network, but the number depends on the audio data rate.</p>
 
@@ -360,6 +360,7 @@ make the server rebuild everything from scratch.</p>
 	<li><a href="#formats-compression">What compression format does Squeezebox use?</a>
 	<li><a href="#formats-mp3pro">Does Squeezebox support MP3Pro?</a>
 	<li><a href="#formats-aac">Does Squeezebox support AAC?</a>
+	<li><a href="#formats-linuxaac">Does Squeezebox support AAC on Linux systems?</a>
 	<li><a href="#formats-wmareal">Does Squeezebox support Windows Media or Real Player formats?</a>
 	<li><a href="#formats-ogg">Does Squeezebox support Ogg Vorbis?</a>
 	<li><a href="#formats-aiffwav">Does Squeezebox support AIFF or WAV?</a>
@@ -369,6 +370,7 @@ make the server rebuild everything from scratch.</p>
 	<li><a href="#formats-transcode">How do I get other file formats (transcoding) to work?</a>
 	<li><a href="#formats-binarywhere">Where do I put the lame, oggtools or other transcoding programs?</a>
 	<li><a href="#formats-tcodeversions">Which versions of the transcoding programs should I use?</a>
+
 </ul>
 <h4><a id="formats">Supported Formats</a></h4>
 
@@ -408,7 +410,7 @@ The SlimServer software can automatically handle many formats, including Ogg Vor
 </div>
 
 <div class="faq">
-<h5><a id="formats-aac"/></a>Does Squeezebox support AAC?</h5>
+<h5><a id="formats-aac"></a>Does Squeezebox support AAC?</h5>
 
 <p>Squeezebox's hardware decoder supports MP3 and uncompressed formats for decoding. Under Mac OS X and Windows, Squeezebox software can convert iTunes AAC files to uncompressed for playback on Squeezebox on-the-fly. To enable this feature, you'll need to install the free (and high quality) LAME MP3 encoder. For more information about LAME in general, <a href="http://lame.sourceforge.net/">click here</a>. LAME is free, but in some countries you may need to pay a license fee in order to legally encode MP3 files. 
 
@@ -418,9 +420,21 @@ The SlimServer software can automatically handle many formats, including Ogg Vor
 <p>Once you have LAME installed, you should be able to playback iTunes-ripped AAC files (.m4a) as well as the audio from any QuickTime movie (.mov). Music purchased from the Apple Music Store (.m4p files) is protected and cannot be played back with Squeezebox until Apple provides the necessary hooks to enable this. In the mean time, it is possible to burn your Apple Music Store songs to CD and re-rip them.</p>
 
 <p>Note that LAME-based encoding to MP3 for playback can use a substantial amount of CPU power.  We continue to recommend high-bitrate MP3 encoded files for best performance, highest audio quality, and best compatibililty.</p>
-
-
 </div>
+
+<div class="faq">
+<h5><a id="formats-linuxaac"></a>Does Squeezebox support AAC on Linux systems?</h5>
+<p>AAC files can be played from SlimServer on Linux using a program called <a href="http://www.audiocoding.com/">FAAD2</a>.  To get this working with SlimServer you must do the following:</p>
+<ol>
+<li>Download the <a href="http://www.audiocoding.com/download.php">FAAD2 source code</a>, compile it, and install it.  (Note: It has been advised to use their latest CVS due to some bugs)
+<li>Download and install the <a href="http://www.slimdevices.com/downloads/nightly/latest/">latest nightly build of SlimServer</a>.
+<li>Edit your convert.conf file to use FAAD2 instead of mov123:
+	<br>Comment the lines &quot;mov aif * *&quot; and &quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[mov123] $FILE$&quot;
+	<br>Add two lines beneath the commented lines reading: &quot;mov wav squeezebox *&quot; then &quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[faad] -w -f 2 $FILE$&quot;
+<li>Restart SlimServer
+</ol>
+</div>
+
 
 <div class="faq">
 <h5><a id="formats-ogg"/></a>Does Squeezebox support Ogg Vorbis?</h5>
@@ -462,78 +476,6 @@ The SlimServer software can automatically handle many formats, including Ogg Vor
 </p>
 
 </div>
-
-<h4><a href="#networking">Networking</a></h4>
-<ul>
-	<li><a href="#networking-firewall">How do I set up my firewall to allow Squeezebox to communicate with the server?</a>
-	<li><a href="#networking-nas">Can I use a Network Attached Storage (NAS) device with my Squeezebox?</a>
-</ul>
-<h4><a id="networking">Networking</a></h4>
-
-
-<div class="faq">
-<h5><a id="networking-firewall"></a>How do I set up my firewall to allow Squeezebox to communicate with the server?</h5>
-
-<p><b>Macintosh:</b>
-You will have to create a new  exception in the built-in firewall to allow the Squeezebox to connect to Slim Server.  To do this:
-<ol>
-<li>Open System Preferences -> Sharing, and click 'Firewall'
-<li>Click 'New...' to create a new rule
-<li>For 'Port Name:' specify 'Other'
-<li>For 'Port Number, Range or Series:' specify '3483, 9000'
-<li>For 'Description:', specify 'Slim Server'
-<li>Click [OK], and ensure that your new exception is checked on.
-</ol>
-
-<p><b>Windows:</b>  Windows XP Service Pack 2 turns on a built-in firewall by default.  You will need to configure the firewall to allow access to Slim Server.  To do this:
-<ol>
-	<li>Go to Control Panel
-	<li>Click Security Center
-	<li>Click Windows Firewall under 'Manage security settings for:'
-	<li>Click the Exceptions tab
-</ol
-
-<p>You will then need to add exceptions for these applications:
-<ul>
-	<li>Program Files\SlimServer\SlimServer.exe
-	<li>Program Files\SlimServer\server\slim.exe
-</ul>
-
-<p><b>Third-party Firewalls:</b> You will need to configure your firewall software or hardware to allow connections to ports 3483, 9000 and 9090 for both UDP and TCP connections.  Refer to the instructions that came with your firewall for details.</p>
-</p>
-</div>
-
-
-<div class="faq">
-<h5><a id="nas"></a>Can I use a Network Attached Storage (NAS) device with my Squeezebox?</h5>
-
-<p>The SlimServer software must be running in order to use the Squeezebox.  So if the NAS device in question can have programs installed on it (for example the LaCie Ethernet Disk, or the Cobalt Qube), then it is supported.  If the NAS device can not have programs installed on it, then you can still store your music files on a NAS device, but you'll still need SlimServer running on a computer with access to that device.</p>
-
-</div>
-
-<h4><a href="#remote">Using the Remote Control</a></h4>
-<ul>
-	<li><a href="#remote-universal">How can I control Squeezebox with my universal remote?</a>
-	<li><a href="#remote-removesong">How do I remove a song from my &quot;Now Playing&quot; playlist with the remote control? How do I clear the whole playlist?</a>
-</ul>
-<h4><a id="remote"></a>Using the Remote Control</h4>
-
-<div class="faq">
-<h5><a id="remote-universal"></a>How can I control Squeezebox with my universal remote?</h5>
-
-<p>Squeezebox will respond to the infrared signals intended for a JVC DVD player. The instructions that came with your remote control tell you how to program your remote to send these codes. If you have a Philips Pronto remote, check the <a href="http://www.slimdevices.com/dev_third_party.html">third-party support page</a> on the Slim Devices website for some pre-programmed screens for this remote.</p>
-
-
-</div>
-
-<div class="faq">
-<h5><a id="remote-removesong"></a>How do I remove a song from my &quot;Now Playing&quot; playlist with the remote control? How do I clear the whole playlist?</h5>
-
-<p>To remove a song from the &quot;Now Playing&quot; playlist, navigate to the &quot;Now Playing&quot; menu, scroll to that song in the playlist, then press the ADD button. If you press and hold the ADD button, the displayed song will be removed from the playlist and added to a special Saved Playlist called &quot;Zapped Songs&quot; for you to review later. To clear the whole playlist, navigate to the &quot;Squeezebox Home&quot; menu and scroll down until it says &quot;Now Playing&quot; on the second line. Press the ADD button and your playlist will be emptied.</p>
-
-
-</div>
-
 <div class="faq">
 <h5><a id="formats-transcode"></a>How do I get other file formats (transcoding) to work?</h5>
 
@@ -569,6 +511,85 @@ you can find. Specific cases known about are listed below:</p>
 </ul>
 
 </div>
+
+<h4><a href="#networking">Networking</a></h4>
+<ul>
+	<li><a href="#networking-firewall">How do I set up my firewall to allow Squeezebox to communicate with the server?</a>
+	<li><a href="#networking-nas">Can I use a Network Attached Storage (NAS) device with my Squeezebox?</a>
+</ul>
+<h4><a id="networking">Networking</a></h4>
+
+
+<div class="faq">
+<h5><a id="networking-firewall"></a>How do I set up my firewall to allow Squeezebox to communicate with the server?</h5>
+
+<p><b>Macintosh:</b>
+You will have to create a new  exception in the built-in firewall to allow the Squeezebox to connect to Slim Server.  To do this:
+<ol>
+<li>Open System Preferences -> Sharing, and click 'Firewall'
+<li>Click 'New...' to create a new rule
+<li>For 'Port Name:' specify 'Other'
+<li>For 'Port Number, Range or Series:' specify '3483, 9000'
+<li>For 'Description:', specify 'Slim Server'
+<li>Click [OK], and ensure that your new exception is checked on.
+</ol>
+
+<p><b>Windows:</b>  Windows XP Service Pack 2 turns on a built-in firewall by default.  You will need to configure the firewall to allow access to Slim Server.  To do this:
+<ol>
+	<li>Go to Control Panel
+	<li>Click Security Center
+	<li>Click Windows Firewall under 'Manage security settings for:'
+	<li>Click the Exceptions tab
+</ol>
+
+<p>You will then need to add exceptions for these applications:
+<ul>
+	<li>Program Files\SlimServer\SlimServer.exe
+	<li>Program Files\SlimServer\server\slim.exe
+</ul>
+
+<p><b>Third-party Firewalls:</b> You will need to configure your firewall software or hardware to allow connections to ports 3483, 9000 and 9090 for both UDP and TCP connections.  Refer to the instructions that came with your firewall for details.</p>
+</p>
+</div>
+
+
+<div class="faq">
+<h5><a id="nas"></a>Can I use a Network Attached Storage (NAS) device with my Squeezebox?</h5>
+
+<p>The SlimServer software must be running in order to use the Squeezebox.  So if the NAS device in question can have programs installed on it (for example the LaCie Ethernet Disk, or the Cobalt Qube), then it is supported.  If the NAS device can not have programs installed on it, then you can still store your music files on a NAS device, but you'll still need SlimServer running on a computer with access to that device.</p>
+
+</div>
+
+<h4><a href="#remote">Using the Remote Control</a></h4>
+<ul>
+	<li><a href="#remote-universal">How can I control Squeezebox with my universal remote?</a>
+	<li><a href="#remote-removesong">How do I remove a song from my &quot;Now Playing&quot; playlist with the remote control? How do I clear the whole playlist?</a>
+	<li><a href="#remote-otherremotes">Why does my Squeezebox react when I'm controlling my DVD player?</a>
+</ul>
+<h4><a id="remote"></a>Using the Remote Control</h4>
+
+<div class="faq">
+<h5><a id="remote-universal"></a>How can I control Squeezebox with my universal remote?</h5>
+
+<p>Squeezebox will respond to the infrared signals intended for a JVC DVD player. The instructions that came with your remote control tell you how to program your remote to send these codes. If you have a Philips Pronto remote, check the <a href="http://www.slimdevices.com/dev_plugins.html">Plugins</a> page on the Slim Devices website for some pre-programmed screens for this remote.</p>
+
+
+</div>
+
+<div class="faq">
+<h5><a id="remote-removesong"></a>How do I remove a song from my &quot;Now Playing&quot; playlist with the remote control? How do I clear the whole playlist?</h5>
+
+<p>To remove a song from the &quot;Now Playing&quot; playlist, navigate to the &quot;Now Playing&quot; menu, scroll to that song in the playlist, then press the ADD button. If you press and hold the ADD button, the displayed song will be removed from the playlist and added to a special Saved Playlist called &quot;Zapped Songs&quot; for you to review later. To clear the whole playlist, navigate to the &quot;Squeezebox Home&quot; menu and scroll down until it says &quot;Now Playing&quot; on the second line. Press the ADD button and your playlist will be emptied.</p>
+
+</div>
+
+<div class="faq">
+<h5><a id="remote-otherremotes"></a>Why does my Squeezebox react when I'm controlling my DVD player?</h5>
+<p>You may need to disable a remote for the Squeezebox in the same room as that DVD player.  Go to Player Settings -> Additional Settings and deselect the remote file that corresponds to your DVD player.</p>
+</div>
+
+
+
 <h4><a href="#advanced">Advanced Features</a></h4>
 <ul>
 	<li><a href="#advanced-streamout">Is it possible to stream from SlimServer to my computer using MP3 player software like WinAmp or iTunes?</a>
@@ -757,14 +778,13 @@ Version=2</pre></p>
 
 <div class="faq">
 <h5><a id="advanced-plugins"></a>How do I add Plugins to the SlimServer software?</h5>
-
 <p>Some Squeezebox owners have written &quot;Plugins&quot; for the SlimServer software that add functionality beyond what comes with the SlimServer software. A few of these have been included with the latest version of the SlimServer software.</p>
 
 <p>To turn on the Plugins menu on Squeezebox, use the &quot;Server Settings&quot; web page and click on the Additional Server Settings link at the bottom of the page. Then click on &quot;Add&quot;, next to the listing for the Plugins menu on this page.</p>
 
-<p>You can find some of these plugins <a href="http://www.slimdevices.com/dev_third_party.html">here</a> on the Slim Devices website. To install these files, download them with your web browser and place them in the folder named &quot;Plugins&quot; that's inside your &quot;server&quot; folder. Double-check that the files have a &quot;.pm&quot; at the end of the file name. Now reboot or restart your server software. The new functions should appear in your Plugins menu.</p>
+<p>You can find some of these plugins <a href="http://www.slimdevices.com/dev_plugins.html">here</a> on the Slim Devices website. To install these files, download them with your web browser and place them in the folder named &quot;Plugins&quot; that's inside your &quot;server&quot; folder. Double-check that the files have a &quot;.pm&quot; at the end of the file name. Now reboot or restart your server software. The new functions should appear in your Plugins menu.</p>
 
-<p>Mac users: The Plugins folder is hidden within the SlimServer preference pane. Look in either the folder named Library at the top level of your hard disk or the Library folder in your Home folder. Inside one of these folders you should find a folder called &quot;SlimServer.preferencePane&quot;. Control-click on this folder and choose &quot;Show Package Contents&quot;, then open the &quot;contents&quot; folder, then the &quot;server&quot; folder, then the for a folder called &quot;Plugins&quot;. Place the downloaded plugins files in this folder.  <b>Note:</b> If you upgrade your SlimServer software, you'll need to re-install any plugins you may have added.</p>
+<p>Mac users: The Plugins folder is hidden within the SlimServer preference pane. Look in either the folder named Library at the top level of your hard disk or the Library folder in your Home folder. Inside one of these folders you should find a folder called &quot;SlimServer.prefPane&quot;. Control-click on this folder and choose &quot;Show Package Contents&quot;, then open the &quot;contents&quot; folder, then the &quot;server&quot; folder, then the for a folder called &quot;Plugins&quot;. Place the downloaded plugins files in this folder.  <b>Note:</b> If you upgrade your SlimServer software, you'll need to re-install any plugins you may have added.</p>
 
 <p>Windows Users: The Plugins folder is installed by default here: C:\Program Files\SlimServer\server\Plugins</p>
 
@@ -802,6 +822,8 @@ What can I do to make the wireless connection more stable?</a>
 	<li><a href="#troubleshooting-autoupdate">The SlimServer software seems to be connecting to a website on its own every time I run the software.  What's going on?</a>
 	<li><a href="#troubleshooting-annoyingclick">When the SlimServer software pages reload I hear an annoying click.  How do I get rid of it?</a>
 	<li><a href="#troubleshooting-logfile">Where does the system write it's logfile and how do I control this?</a>
+	<li><a href="#troubleshooting-anothercopy">On Windows XP, Slim Server hangs on startup, and sometimes the debug window says there is another copy running, how do I fix this?</a>
+	<li><a href="#troubleshooting-lowsamplerate">I have some audio files or radio stations that do not play when using the digital outputs on my Squeezebox, but do with the analog.  Why?</a>
 </ul>
 <h4>Troubleshooting</h4>
 
@@ -865,7 +887,9 @@ A: There are several things you can do.  Please note that if you are hearing aud
 <div class="faq">
 <h5><a id="troubleshooting-sleep"></a>After several minutes my player turns off and stops responding.  What's going on?</h5>
 
-<p>Make sure that your energy saver settings on your computer are set so that your computer doesn't go to sleep.  If it does, your player will go to sleep as well.   If that's not the problem, make sure that the IP address on your computer isn't changing.  To do this, adjust  your TCP/IP settings to use a static IP address.</a>
+<p>Make sure that your energy saver settings on your computer are set so that your computer doesn't go to sleep.  If it does, your player will go to sleep as well.</p>
+<p>If you installed SlimServer to not start up automatically, and are using a screen saver on Windows, this can halt the server as well.  If that's the case, it's recommended to reinstall SlimServer to start automatically.
+<p>If that's not the problem, make sure that the IP address on your computer isn't changing.  To do this, adjust  your TCP/IP settings to use a static IP address.</a>
 </div>
 
 <div class="faq">
@@ -877,7 +901,7 @@ A: There are several things you can do.  Please note that if you are hearing aud
 it's available under the Base Station menu item Equivalent Network Password.
 
 <p>Also, make sure that your access point is configured to use Shared-Key Authentication, 
-not Open-System Authentication, which is less secure.</p>
+not Open-System Authentication.</p>
 </div>
 
 <div class="faq">
@@ -900,8 +924,15 @@ Typical throughput to a given wireless client on an 802.11b network rarely ever 
 <p>Mac Users: 
 <ul>
 <li>Download the <a href="http://www.blacktree.com/apps/index.html?iTunes-LAME/index.html">iTunes-LAME plugin</a>, and drag the iTunes-LAME program from the top left to the bottom right alias (following the arrow).
-<li>Then if you are running SlimServer 5.1.1 or earlier, you'll need to tell SlimServer to use LAME to convert your AAC files to MP3.  
-To install a settings file that does this,  <a href="http://www.slimdevices.com/downloads/convert.conf">download this file</a> and drag it into the folder Home -> Library -> SlimDevices.
+</ul>
+<p>Windows Users:
+<ul>
+<li>Download <a href="http://mitiok.cjb.net">LAME 3.96 from one of these mirror sites</a>
+<li>Extract two files <strong>LAME.EXE</strong> and <strong>LAME_ENC.DLL</strong> and copy them to C:\Program Files\SlimServer\server\bin\
+</ul>
+</p>
+<!-- <li>Then if you are running SlimServer 5.1.1 or earlier, you'll need to tell SlimServer to use LAME to convert your AAC files to MP3.  
+To install a settings file that does this,  <a href="http://www.slimdevices.com/downloads/convert.conf">download this file</a> and drag it into the folder Home -> Library -> SlimDevices. -->
 </ul>
 </div>
 
@@ -935,6 +966,7 @@ of IR light, such as an optical mouse. Turn off your dragon plasma orb.</p>
 <h5><a id="troubleshooting-findserver"></a>The player doesn't find a SlimServer</h5>
 
 <p>Ensure that the SlimServer software is running, and that you can access it using a web browser.</p>
+<p>Firewall software can also cause the server to not respond.  Ensure that you've allowed access to Slim Server in your firewall software.</p>
 
 
 </div>
@@ -993,7 +1025,7 @@ of IR light, such as an optical mouse. Turn off your dragon plasma orb.</p>
 
 <p>If you are running on Windows NT, 2000 or XP, SlimServer is running as Windows service.  
 Windows services do  not have permission to use networked drives by default.  
-You will need to run the SlimServer service as a user who has permission to use the shared volum.
+You will need to run the SlimServer service as a user who has permission to use the shared volume.
 To do this, visit Control Panels -> Administrative Tools -> Services.  Find SlimServer and 
 double-click to view the properties.   Click on the Log On tab, then click This Account and 
 enter the account information for the user account that has access to the network volume.  
@@ -1025,7 +1057,7 @@ addressing. This may work for some servers where direct volume letter mapping do
 
 <p>If this isn't the problem, try moving all of your music files out of the library and then move them back in groups and restarting the server. Try to find, by process of elimination, which files are confusing the SlimServer software.</p>
 
-
+<p>If you have a very large music library, it can take a long time to scan and possibly use up a lot of memory.  There are a couple of tricks you can use to optimize this process though.  Try disabling Album Artwork in &quot;Server Settings&quot;, &quot;Additional Server Settings&quot;, &quot;Performance&quot;.  Also enable MP3 Tag Caching.</p>
 </div>
 
 <div class="faq">
@@ -1039,7 +1071,7 @@ addressing. This may work for some servers where direct volume letter mapping do
 <div class="faq">
 <h5><a id="troubleshooting-itunes-windows"></a>How do I access my iTunes playlists if I am using iTunes on Microsoft Windows?</a></h5>
 
-<p>If SlimServer can't find your iTunes Music Library, it may not show iTunes as a choice in the Server Settings area.
+<p>If SlimServer doesn't find your iTunes Music Library, it may not show iTunes as a choice in the Server Settings area.
 In order to have Slim Server access your iTunes Library on Windows, you may need to:
 <ol>
 <li>Set your music folder in Slim Server's Server Settings to the folder iTunes keeps its xml database in.  (Usually C:\Documents and Settings\Your-Username\My Documents\My Music\iTunes\) and click Change.</li>
@@ -1188,7 +1220,7 @@ Now your iTunes playlists should show up under Saved Playlists on the player and
 </div>
 
 <div class="faq">
-<h5><a id="#troubleshooting-logfile"></a>Where does the system write it's logfile and how do I control this?</h5>
+<h5><a id="troubleshooting-logfile"></a>Where does the system write it's logfile and how do I control this?</h5>
 
 <p>On all systems, the lastest log entries can be seen on <a href="/log.txt">http://serverip:9000/log.txt</a>.</p>
 
@@ -1197,6 +1229,29 @@ Now your iTunes playlists should show up under Saved Playlists on the player and
 <p>Under Linux if using the standard init.d script the default path for log files is /tmp/slimserver.log . The path is controlled by the "SLIMSERVER_LOG" entry in the /etc/sysconfig/slimserver file. </p>
 
 </div>
+
+<div class="faq">
+<h5><a id="troubleshooting-anothercopy"></a>On Windows XP, Slim Server hangs on startup, and sometimes the debug window says there is another copy running, how do I fix this?</h5>
+<p>This seems to happen on Windows XP when the IP stack is keeping erroneous information or just not functioning properly.  Microsoft has published a <a href="http://support.microsoft.com/default.aspx?scid=kb;en-us;299357">knowledge base article</a> about it.  
+But the short of it is that you need to run one command to reset the stack.  To do this:</p>
+<ol>
+	<li>Click Start
+	<li>Click Run
+	<li>Type in &quot;cmd&quot; and hit enter
+	<li>In the DOS window, type in &quot;netsh int ip reset c:\resetlog.txt&quot; and hit enter.
+	<li>Try to start Slim Server again
+</ol>
+</div>
+
+
+<div class="faq">
+<h5><a id="troubleshooting-lowsamplerate"></a>I have some audio files or radio stations that do not play when using the digital outputs on my Squeezebox, but do with the analog.  Why?</h5>
+<p>What you should probably check is the sampling rate of the audio file or stream in question.  If it's lower than 44.1kHz, that could explain why it's not working with the digital output.
+S/P-DIF, the signal sent over the optical and coaxial digital outputs, supports sampling rates of 44.1kHz and 48kHz.</p>
+<p>Some receivers may auto-sense whether a digital or analog signal is in use, as well.  If your receiver supports digital and analog connections for the input you are using, you may
+want to connect both.  That way, when an audio signal that is not compatible with S/P-DIF is sent to the Squeezebox is sent, your receiver may automatically switch to the analog input.</p>
+</div>
+
 
 <h4><a href="#more">More Information</a></h4>
 <ul>
