@@ -38,30 +38,35 @@ sub add {
 	my $artist     = shift;
 	my $role       = shift;
 	my $track      = shift;
-	my $artistSort = shift;
+	my $artistSort = shift || $artist;
 
 	my @contributors = ();
-	
-	for my $artistSub (Slim::Music::Info::splitTag($artist)) {
 
-		my $sortable_name = $artistSort || Slim::Utils::Text::ignoreCaseArticles($artist);
-			
+	# Split both the regular and the normalized tags
+	my @artistList   = Slim::Music::Info::splitTag($artist);
+	my @sortedList   = Slim::Music::Info::splitTag($artistSort);
+	
+	for (my $i = 0; $i < scalar @artistList; $i++) {
+
+		my $name = $artistList[$i];
+		my $sort = Slim::Utils::Text::ignoreCaseArticles($sortedList[$i]);
+
 		my $artistObj;
 
-		if (defined $_cache{$artistSub}) {
+		if (defined $_cache{$name}) {
 
-			$artistObj = $_cache{$artistSub};
+			$artistObj = $_cache{$name};
 
 		} else {
 
 			$artistObj = Slim::DataStores::DBI::Contributor->find_or_create({ 
-				name => $artistSub,
+				name => $name,
 			});
 
-			$artistObj->namesort($sortable_name);
+			$artistObj->namesort($sort);
 			$artistObj->update();
 
-			$_cache{$artistSub} = $artistObj;
+			$_cache{$name} = $artistObj;
 		}
 
 		push @contributors, $artistObj;
@@ -72,7 +77,7 @@ sub add {
 			track => $track,
 			contributor => $artistObj,
 			role => $role,
-			namesort => $sortable_name,
+			namesort => $sort,
 		});
 	}
 

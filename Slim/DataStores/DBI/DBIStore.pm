@@ -971,8 +971,8 @@ sub _preCheckAttributes {
 
 		$deferredAttributes->{'ARTIST'} = $artist;
 
-		# Always normalize the sort, as ARTISTSORT could come from a TSOP tag.
-		$deferredAttributes->{'ARTISTSORT'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ARTISTSORT'});
+		# Normalize in ContributorTrack->add() the tag may need to be split. See bug #295
+		$deferredAttributes->{'ARTISTSORT'} = $attributes->{'ARTISTSORT'};
 		delete $attributes->{'ARTIST'};
 	}
 
