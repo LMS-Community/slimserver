@@ -657,7 +657,7 @@ sub clearStaleEntries {
 
 		$::d_info && Slim::Utils::Misc::msg("Starting db garbage collection..\n");
 
-		$cleanupIterator = Slim::DataStores::DBI::Track->retrieve_all();
+		$cleanupIterator = Slim::DataStores::DBI::LightWeightTrack->retrieve_all();
 	}
 
 	# return 0 when we're done, and there are no more rows.
