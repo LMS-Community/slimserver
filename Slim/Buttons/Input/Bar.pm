@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Bar;
 
-# $Id: Bar.pm,v 1.2 2004/08/24 04:28:48 kdf Exp $
+# $Id: Bar.pm,v 1.3 2004/08/25 04:26:50 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -106,9 +106,9 @@ sub lines {
 	my $header = shift;
 	my ($line1, $line2);
 
-
-	my $valueRef = defined $value ? \$value : Slim::Buttons::Common::param($client,'valueRef');
 	
+	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
+	$valueRef = \$value if defined $value;
 	$line1 = defined $header ? $header : Slim::Buttons::Input::List::getExtVal($client,$$valueRef,undef,'header');
 	if (!($client->linesPerScreen() == 1)) {
 		my $max = Slim::Buttons::Common::param($client,'max') || 100;
@@ -222,10 +222,10 @@ sub init {
 		$$valueRef = $valueRef;
 		Slim::Buttons::Common::param($client,'valueRef',$valueRef);
 	}
-	if ($$valueRef ne $listRef->[$listIndex]) {
+	if ($$valueRef != $listRef->[$listIndex]) {
 		my $newIndex;
 		for ($newIndex = 0; $newIndex < scalar(@$listRef); $newIndex++) {
-			last if $$valueRef eq $listRef->[$newIndex];
+			last if $$valueRef <= $listRef->[$newIndex];
 		}
 		if ($newIndex < scalar(@$listRef)) {
 			$listIndex = $newIndex;
