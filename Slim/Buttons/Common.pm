@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.29 2004/01/26 05:44:04 dean Exp $
+# $Id: Common.pm,v 1.30 2004/03/10 06:48:34 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -964,6 +964,15 @@ sub param {
 	}
 }
 
+sub paramOrPref {
+	my $client = shift;
+	my $paramname = shift;
+	if (defined($client->modeParameterStack(-1)) && defined ${$client->modeParameterStack(-1)}{$paramname}) {
+		return ${$client->modeParameterStack(-1)}{$paramname};
+	} else {
+		return Slim::Utils::Prefs::clientGet($client,$paramname);
+	}
+}
 # pushMode takes the following parameters:
 #   client - reference to a client structure
 #   setmode - name of mode we are pushing into

@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.42 2004/03/06 05:56:46 kdf Exp $
+# $Id: Setup.pm,v 1.43 2004/03/10 06:48:35 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1653,7 +1653,8 @@ sub buildLinkList {
 		#useSuffix is true for all but last item
 		$linkinfo{'useSuffix'} = !($pagenum == scalar(@pages));
 		$pagenum++;
-		$linkinfo{'paramlist'} = '?page=' . $page . '&player=' . (Slim::Web::HTTP::escape($paramref->{'player'})) . '&playerid=' . (Slim::Web::HTTP::escape($paramref->{'playerid'}));
+		$linkinfo{'paramlist'} = '?page=' . $page . '&player=' . (Slim::Web::HTTP::escape($paramref->{'player'})); 
+		if (defined $paramref->{'playerid'}) {$linkinfo{'paramlist'} .= '&playerid=' . (Slim::Web::HTTP::escape($paramref->{'playerid'}));}
 		$linkinfo{'linktitle'} = $setup{$page}{'title'};
 		if ($separator ne 'tree') {
 			$linkinfo{'currpage'} = ($paramref->{'page'} eq $page);
@@ -1779,7 +1780,7 @@ sub buildHTTP {
 		@pages = @{$pageref->{'children'}};
 		$paramref->{'children'} = buildLinkList('list',$paramref,@pages);
 		my %linkinfo = ('linkpage' => 'setup.html'
-				,'paramlist' => '?page=' . $pageref->{'children'}[0] . '&player=' . Slim::Web::HTTP::escape($paramref->{'player'}) . '&playerid=' . Slim::Web::HTTP::escape($paramref->{'playerid'})
+				,'paramlist' => '?page=' . $pageref->{'children'}[0] . '&player=' . Slim::Web::HTTP::escape($paramref->{'player'}) . '&playerid=' . (defined $paramref->{'playerid'} ? Slim::Web::HTTP::escape($paramref->{'playerid'}) : "")
 				,'skinOverride' => $$paramref{'skinOverride'}
 				);
 		if (defined $pageref->{'singleChildLinkText'}) {
