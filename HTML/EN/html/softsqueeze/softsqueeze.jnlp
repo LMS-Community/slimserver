@@ -34,7 +34,7 @@
 <!-- Set the following properties to configure the server and firmware  -->
 
     <property name="slimserver" value="[% host.match('([^:]*)').0 %]"/>    
-    <property name="serverversion" value="5.2.1"/>    
+    <property name="serverversion" value="5.3.0"/>    
   </resources>
   <application-desc main-class="com.slim.softsqueeze.Application"/>
 </jnlp> 
