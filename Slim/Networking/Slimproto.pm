@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.52 2004/04/26 17:23:25 dean Exp $
+# $Id: Slimproto.pm,v 1.53 2004/04/29 22:21:52 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,18 +11,13 @@ use strict;
 use FindBin qw($Bin);
 use IO::Socket;
 use FileHandle;
-use Net::hostent;              # for OO version of gethostbyaddr
 use Sys::Hostname;
 use File::Spec::Functions qw(:ALL);
-use POSIX qw(:fcntl_h strftime);
-use Fcntl qw(F_GETFL F_SETFL);
 
 use Slim::Networking::Select;
 use Slim::Player::Squeezebox;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
-
-use Socket qw(IPPROTO_TCP TCP_KEEPALIVE TCP_MAXRT TCP_MAXSEG TCP_NODELAY TCP_STDURG);
 
 use Errno qw(:POSIX);
 

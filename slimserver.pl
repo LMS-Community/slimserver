@@ -77,7 +77,7 @@ use Getopt::Long;
 use FindBin qw($Bin);
 use File::Spec::Functions qw(:ALL);
 use FileHandle;
-use POSIX qw(:signal_h :errno_h :sys_wait_h);
+use POSIX qw(:signal_h :errno_h :sys_wait_h setsid);
 use Socket qw(:DEFAULT :crlf);
 
 use lib (@INC, $Bin, catdir($Bin,'CPAN'), catdir($Bin,'CPAN','arch',$Config::Config{archname}));
@@ -662,7 +662,6 @@ sub daemonize {
 	my $uname ;
 	my $uid ; 
 	my @grp ; 
-	use POSIX 'setsid';
 	my $log;
 	
 	if ($logfile) { $log = $logfile } else { $log = '/dev/null' };
@@ -729,24 +728,27 @@ sub daemonize {
 }
 
 sub checkVersion {
-	if (Slim::Utils::Prefs::get("checkVersion")) {
-		my $url = "http://www.slimdevices.com/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
-		my $sock = Slim::Web::RemoteStream::openRemoteStream($url);
-		if ($sock) {
-			my $content;
-			my $line;
-			while ($line = Slim::Utils::Misc::sysreadline($sock,5)) {
-				$content .= $line;
-			}
-			$::newVersion = $content;
-		}
-		if ($sock) {
-			$sock->close();
-		}
-		Slim::Utils::Timers::setTimer(0, time() + 60*60*24, \&checkVersion);
-	} else {
+
+	unless (Slim::Utils::Prefs::get("checkVersion")) {
 		$::newVersion = undef;
+		return;
 	}
+
+	my $url  = "http://www.slimdevices.com/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
+
+	# XXX - dsully - this really shouldn't be overloaded like this.
+	my $sock = Slim::Web::RemoteStream::openRemoteStream($url);
+
+	if ($sock) {
+
+		while (my $line = Slim::Utils::Misc::sysreadline($sock,5)) {
+			$::newVersion .= $line;
+		}
+
+		$sock->close();
+	}
+
+	Slim::Utils::Timers::setTimer(0, time() + 60*60*24, \&checkVersion);
 }
 
 #------------------------------------------

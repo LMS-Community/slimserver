@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.13 2004/03/29 22:18:58 dean Exp $
+# $Id: Display.pm,v 1.14 2004/04/29 22:21:52 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -13,7 +13,6 @@ use Slim::Utils::Misc;
 use Slim::Hardware::VFD;
 use Slim::Utils::Timers;
 use Slim::Utils::Strings qw(string);
-use POSIX qw(strftime);
 
 #depricated, use $client->update
 sub update {

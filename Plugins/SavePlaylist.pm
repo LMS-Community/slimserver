@@ -1,4 +1,4 @@
-# $Id: SavePlaylist.pm,v 1.5 2003/12/16 08:14:30 kdf Exp $
+# $Id: SavePlaylist.pm,v 1.6 2004/04/29 22:21:51 daniel Exp $
 # This code is derived from code with the following copyright message:
 #
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
@@ -9,15 +9,13 @@
 package Plugins::SavePlaylist;
 
 use strict;
-use FileHandle;
 use Slim::Player::Playlist;
-use Slim::Utils::Strings qw (string);
+use Slim::Utils::Strings qw(string);
 use File::Spec::Functions qw(:ALL);
-use POSIX qw(strftime);
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.5 $,10);
+$VERSION = substr(q$Revision: 1.6 $,10);
 
 my %context = ();
 

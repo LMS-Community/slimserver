@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.6 2004/01/15 09:28:35 kdf Exp $
+#	$Id: Information.pm,v 1.7 2004/04/29 22:21:51 daniel Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -42,13 +42,13 @@
 
 package Slim::Buttons::Information;
 
-use POSIX qw(strftime);
+use strict;
+use vars qw($VERSION);
+
+$VERSION = substr(q$Revision: 1.7 $,10);
+
 use File::Spec::Functions qw(catdir);
 use Slim::Utils::Strings qw(string);
-use strict;
-
-use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.6 $,10);
 
 my $modules;
 my %enabled;

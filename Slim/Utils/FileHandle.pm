@@ -1,6 +1,6 @@
 package Slim::Utils::FileHandle;
 
-# $Id: FileHandle.pm,v 1.2 2004/01/19 05:58:44 daniel Exp $
+# $Id: FileHandle.pm,v 1.3 2004/04/29 22:21:53 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -9,7 +9,7 @@ package Slim::Utils::FileHandle;
 
 use Carp;
 use FileHandle;
-use POSIX;
+use POSIX ();
 
 use Slim::Utils::Misc qw(msg);
 use base qw(FileHandle);

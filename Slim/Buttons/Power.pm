@@ -1,6 +1,6 @@
 package Slim::Buttons::Power;
 
-# $Id: Power.pm,v 1.10 2004/03/18 02:57:15 kdf Exp $
+# $Id: Power.pm,v 1.11 2004/04/29 22:21:52 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,7 +11,6 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use Slim::Utils::Strings qw(string);
-use POSIX qw(strftime);
 
 Slim::Buttons::Common::addMode('off',getFunctions(),\&setMode);
 

@@ -8,11 +8,8 @@ package Slim::Control::CLI;
 use strict;
 use FindBin qw($Bin);
 use IO::Socket;
-use Net::hostent;              # for OO version of gethostbyaddr
 use File::Spec::Functions qw(:ALL);
-use POSIX;
 use Socket qw(:crlf);
-use Sys::Hostname;
 
 use Slim::Networking::mDNS;
 use Slim::Networking::Select;
@@ -66,6 +63,7 @@ sub openport {
 }
 
 sub idle {
+
 	# check to see if our command line interface port has changed.
 	if ($openedport != Slim::Utils::Prefs::get('cliport')) {
 
@@ -224,30 +222,31 @@ sub sendresponse {
 	
 	$sentbytes = send($clientsock, $message, 0);
 
-	if (defined($sentbytes)) {
+	unless (defined($sentbytes)) {
 
-		if ($sentbytes < length($message)) {
-
-			# sent incomplete message
-			unshift @{$outbuf{$clientsock}},substr($message,$sentbytes);
-
-		} else {
-
-			# sent full message
-			if (@{$outbuf{$clientsock}} == 0) {
-
-				# no more messages to send
-				$::d_cli && msg("No more messages to send to " . inet_ntoa($clientsock->peeraddr) . "\n");
-				Slim::Networking::Select::addWrite($clientsock, undef);
-			} else {
-				$::d_cli && msg("More to send to " . inet_ntoa($clientsock->peeraddr) . "\n");
-			}
-		}
-
-	} else {
 		# Treat $clientsock with suspicion
 		$::d_cli && msg("Send to " . inet_ntoa($clientsock->peeraddr)  . " had error\n");
 		closer($clientsock);
+
+		return;
+	}
+
+	if ($sentbytes < length($message)) {
+
+		# sent incomplete message
+		unshift @{$outbuf{$clientsock}},substr($message,$sentbytes);
+
+	} else {
+
+		# sent full message
+		if (@{$outbuf{$clientsock}} == 0) {
+
+			# no more messages to send
+			$::d_cli && msg("No more messages to send to " . inet_ntoa($clientsock->peeraddr) . "\n");
+			Slim::Networking::Select::addWrite($clientsock, undef);
+		} else {
+			$::d_cli && msg("More to send to " . inet_ntoa($clientsock->peeraddr) . "\n");
+		}
 	}
 }
 

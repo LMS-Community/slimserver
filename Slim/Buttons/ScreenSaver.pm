@@ -1,6 +1,6 @@
 package Slim::Buttons::ScreenSaver;
 
-# $Id: ScreenSaver.pm,v 1.18 2004/04/18 22:18:36 kdf Exp $
+# $Id: ScreenSaver.pm,v 1.19 2004/04/29 22:21:52 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,7 +10,6 @@ package Slim::Buttons::ScreenSaver;
 use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
-use POSIX qw(strftime);
 
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
