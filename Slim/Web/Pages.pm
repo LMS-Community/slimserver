@@ -2105,46 +2105,43 @@ sub browseid3 {
 		'song'   => 'track'
 	);
 
-	my $find  = {
-		'player' => $params->{'player'},
-		'level'  => 0,
-	};
-
 	my $ds = Slim::Music::Info::getCurrentDataStore();
+
+	$params->{'level'} = 0;
 
 	# Turn the browseid3 params into something browsedb can use.
 	for my $category (keys %categories) {
 
 		next unless $params->{$category};
 
-		$find->{ $categories{$category} } = $params->{$category};
+		$params->{ $categories{$category} } = $params->{$category};
 	}
 
 	# These must be in order.
 	for my $category (qw(genre artist album track)) {
 
-		if (!defined $find->{$category}) {
+		if (!defined $params->{$category}) {
 
 			push @hierarchy, $category;
 
-		} elsif ($find->{$category} eq '*') {
+		} elsif ($params->{$category} eq '*') {
 
-			delete $find->{$category};
+			delete $params->{$category};
 
-		} elsif ($find->{$category}) {
+		} elsif ($params->{$category}) {
 
 			# Search for each real name - normalize the query,
 			# then turn it into the ID suitable for browsedb()
-			$find->{$category} = (@{$ds->search(
+			$params->{$category} = (@{$ds->search(
 				$category,
-				[ Slim::Utils::Text::ignoreCaseArticles($find->{$category}) ]
+				[ Slim::Utils::Text::ignoreCaseArticles($params->{$category}) ]
 			)})[0]->id();
 		}
 	}
 
-	$find->{'hierarchy'} = join(',', @hierarchy);
+	$params->{'hierarchy'} = join(',', @hierarchy);
 
-	return browsedb($client, $find);
+	return browsedb($client, $params);
 }
 
 # the following two functions are MoodLogic related.
