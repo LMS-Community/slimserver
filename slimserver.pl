@@ -87,7 +87,7 @@ use FileHandle;
 use POSIX qw(:signal_h :errno_h :sys_wait_h);
 use Socket qw(:DEFAULT :crlf);
 
-use lib (@INC, $Bin, catdir($Bin,'CPAN'), catdir($Bin,'CPAN','arch',$Config::Config{archname}) );
+use lib ($Bin, catdir($Bin,'CPAN'), catdir($Bin,'CPAN','arch',$Config::Config{archname}), @INC);
 use Time::HiRes;
 
 use Slim::Utils::Misc;

@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.36 2003/12/09 19:20:25 daniel Exp $
+# $Id: Info.pm,v 1.37 2003/12/10 23:02:04 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -22,6 +22,7 @@ use Slim::Formats::MP3;
 use Slim::Formats::Ogg;
 use Slim::Formats::Wav;
 use Slim::Formats::WMA;
+use Slim::Formats::Shorten;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
@@ -1707,7 +1708,10 @@ sub readTags {
 				$tempCacheEntry = Slim::Formats::WMA::getTag($filepath);
 			} elsif ($type eq "mov") {
 				$tempCacheEntry = Slim::Formats::Movie::getTag($filepath);		
+			} elsif ($type eq "shn") {
+			        $tempCacheEntry = Slim::Formats::Shorten::getTag ($filepath);
 			}
+				
 
 			$::d_info && !defined($tempCacheEntry) && Slim::Utils::Misc::msg("Info: no tags found for $filepath\n");
 

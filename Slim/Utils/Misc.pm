@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.16 2003/11/24 19:23:38 dean Exp $
+# $Id: Misc.pm,v 1.17 2003/12/10 23:02:05 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -513,10 +513,6 @@ sub assert {
 	my $exp = shift;
 	defined($exp) && $exp && return;
 
-	msg("OOPS! An error has occurred in the SlimServer which may cause \n");
-	msg("incorrect behvior or an eventual crash. The information below\n");
-	msg("indicates where the error occurred. For help, please contact\n"); 
-	msg("support\@slimdevices.com, and include the following error message:\n");
 	bt();
 }
 

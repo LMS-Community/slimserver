@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.52 2003/12/10 06:55:59 grotus Exp $
+# $Id: HTTP.pm,v 1.53 2003/12/10 23:02:05 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -292,16 +292,17 @@ sub processHTTP {
 					$params{'webroot'} = "/slimserver/"
 				}
 				if ($path =~ m|^/(.+?)/.*| && $path !~ m|^/html/|i) {
+					my $desiredskin = $1;
 					#Requesting a specific skin, verify and set the skinOverride param
+					$::d_http && msg("Alternate skin $desiredskin requested\n");
 					my %skins = Slim::Web::Setup::skins();
-					my $skinlist = join '|',keys %skins;
-					if ($1 =~ /($skinlist)/i) {
-						$::d_http && msg("Alternate skin $1 requested\n");
-						$params{'skinOverride'} = $1;
-						$params{'webroot'} = $params{'webroot'} . "$1/";
-						$path =~ s{^/.+?/}{/};
-					} else {
-						$::d_http && msg("Alternate skin $1 requested but not found\n");
+					foreach my $skin (keys %skins) {
+						 if ($skin =~ /$desiredskin$/) {
+							$params{'skinOverride'} = $desiredskin;
+							$params{'webroot'} = $params{'webroot'} . "$desiredskin/";
+							$path =~ s{^/.+?/}{/};
+							last;
+						}
 					}
 				}
 				$path =~ s|^/+||;
@@ -967,8 +968,8 @@ sub fixHttpPath {
 	my $skin = shift;
 	my $path = shift;
 	foreach my $dir (HTMLTemplateDirs()) {
-		$path = catdir($dir, $skin, $path);
-		return $path if (-r $path);
+		my $fullpath = catdir($dir, $skin, $path);
+		return $fullpath if (-r $fullpath);
 	} 
 	return undef;
 }

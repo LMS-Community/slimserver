@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.23 2003/12/09 09:45:14 kdf Exp $
+# $Id: Setup.pm,v 1.24 2003/12/10 23:02:05 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1655,14 +1655,16 @@ sub skins {
 			next if $forUI && $dir eq 'xml';
 			next if !-d catdir($templatedir, $dir);
 			
+			my $path = catdir($templatedir, $dir);
+			
 			$::d_http && msg(" skin entry: $dir\n");
 			
 			if ($dir eq Slim::Web::HTTP::defaultSkin()) {
-				$skinlist{$dir} = string('DEFAULT_SKIN');
+				$skinlist{$path} = string('DEFAULT_SKIN');
 			} elsif ($dir eq Slim::Web::HTTP::baseSkin()) {
-				$skinlist{$dir} = string('BASE_SKIN');
+				$skinlist{$path} = string('BASE_SKIN');
 			} else {
-				$skinlist{$dir} = Slim::Web::HTTP::unescape($dir);
+				$skinlist{$path} = Slim::Web::HTTP::unescape($dir);
 			}
 		}
 	}

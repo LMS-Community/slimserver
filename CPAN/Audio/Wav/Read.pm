@@ -41,7 +41,7 @@ sub new {
     my $tools = shift;
     $file =~ s#//#/#g;
     my $size = -s $file;
-    my $handle = new FileHandle "<$file";
+    my $handle = new FileHandle $file;
 
     my $self = {
 		'real_size'	=> $size,

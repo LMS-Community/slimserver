@@ -406,6 +406,7 @@ Version=2</pre></p>
 <p>If Squeezebox is connected to the SlimServer software, you can press and hold the BRIGHTNESS button on the remote for 5 seconds to start the upgrade process.</p>
 <p>If the firmware upgrade failed and the display reads "Ready to update this Squeezebox" and indicates the IP address for the player, then you can open up this URL: <a href="http://localhost:9000/firmware.html">http://localhost:9000/firmware.html</a>.  This page will have a place for you to enter the IP address displayed on Squeezebox.  Click Submit to begin the upgrade process.</p>
 <p>If the firmware on Squeezebox is corrupted, it may be reset to the IP address "192.168.1.69".  If this happens AND the IP address of the computer running the SlimServer software does not begin with 192.168.1, you may need to  change the network settings temporarily on the SlimServer computer to an IP address that does, such as 192.168.1.65, in order to peform the firmware update.</p>
+
 <h5><a id="troubleshooting-upgrading"></a>I'm having trouble upgrading the firmware on my SLIMP3 Player. Do you have any hints?</h5>
 <p>Try following these steps:</p>
 <ol>
@@ -414,7 +415,13 @@ Version=2</pre></p>
 	<li>Stop the SlimServer software.
 	<li>Run a browser and check that the SlimServer software has REALLY stopped.
 	<li>Point the remote at the right side of the SLIMP3, hold down a numeric key, and reconnect the power plug to the SLIMP3. You should see the SLIMP3 display its MAC address. If not then unplug the DC power connector from the device, wait 30 seconds and try this operation again. The SLIMP3 device MUST be displaying its MAC address before you can update the firmware. Write down the MAC address that the SLIMP3 is showing.
-	<li>Start the updater application.
+	<li>Start the updater application:
+	<ul>
+		<li>On Windows, the SLIMP3 Updater is in Program Files\SlimServer\firmware.   
+		<li>Mac users can find the SLIMP3 Updater application in the Utilities folder of the SlimServer installer disk image.
+		<li>On Linux, the firmware updater is /usr/local/bin/slimserver/slimp3/update_firmware.pl.
+	</ul>
+	</li>
 	<li>You will be prompted to enter the SLIMP3 MAC address in the form 00:04:20:xx:xx:xx - enter the exact same MAC address that the sliMP3 displayed in (5) at the updater prompt.
 	<li>The updater will then ask for an IP address so enter the IP address that you have assigned to the SLIMP3 device or, if you have a DHCP server, then enter an address in the DHCP pool.
 	<li>The updater may ask if you want to use &quot;Kiosk&quot; - you answer with &quot;y&quot; or &quot;N&quot;. Use &quot;N&quot; if you are having problems getting the SLIMP3 running - use the Kiosk mode once everything is working.

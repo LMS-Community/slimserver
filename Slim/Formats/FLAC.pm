@@ -1,6 +1,6 @@
 package Slim::Formats::FLAC;
 
-# $Id: FLAC.pm,v 1.2 2003/12/05 16:56:43 daniel Exp $
+# $Id: FLAC.pm,v 1.3 2003/12/10 23:02:04 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -34,12 +34,15 @@ sub getTag {
 	my $tags = Audio::FLAC::readFlacTag($file);
 
 	# lazy? no. efficient. =)
-	while (my ($old,$new) = each %tagMapping) {
-
-		if (exists $tags->{$old}) {
-			$tags->{$new} = $tags->{$old};
-			delete $tags->{$old};
-		}
+	if (ref $tags eq "HASH") {
+	   while (my ($old,$new) = each %tagMapping) {
+	      if (exists $tags->{$old}) {
+		 $tags->{$new} = $tags->{$old};
+		 delete $tags->{$old};
+	      }
+	   }
+	} else {
+	   $tags = {};
 	}
 
 	$tags->{'SIZE'} = -s $file;
