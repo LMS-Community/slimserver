@@ -1,6 +1,6 @@
 package Slim::Formats::WMA;
 
-# $Id: WMA.pm,v 1.2 2004/01/26 05:44:15 dean Exp $
+# $Id: WMA.pm,v 1.3 2004/01/28 04:32:03 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -25,6 +25,8 @@ sub getTag {
 	my $tags = {};
 
 	my $wma  = Audio::WMA->new($file);
+	
+	return $tags if (!$wma);
 
 	# why this is an array, I don't know.
 	foreach my $key (keys %{$wma->comment()}) {

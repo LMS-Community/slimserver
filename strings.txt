@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.54 2004/01/24 21:18:54 kdf Exp $
+# $Id: strings.txt,v 1.55 2004/01/28 04:32:02 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1518,6 +1518,15 @@ SETUP_RESCAN_DESC
 	NL	Als U muziek heeft toegevoegd, verwijderd of veranderd, kunt U de SlimServer software opdracht geven de muziekfolder opnieuw in te lezen.
 	PT	Se adicionar, apagar ou mudar o nome a alguma música na sua directoria de músicas, deverá forçar a re-leitura da directoria de músicas.
 	SE	Om du lägger till, tar bort eller ändrar musik in din Musikmapp kan du tvinga SlimServer att läsa om all din musik för att säkerställa att databasen är korrekt.
+
+SETUP_WIPECACHE
+	EN	Wipe Cache
+
+SETUP_WIPECACHE_BUTTON
+	EN	Wipe Cache
+
+SETUP_WIPECACHE_DESC
+	EN	If you use the Tag Database you may want to clear the disk based Cache for some reason. This option does that and then rescans your music files (in the same way as the rescan button does).
 
 RESCANNING
 	DE	Der Server durchsucht nun das Musik-Verzeichnis.
