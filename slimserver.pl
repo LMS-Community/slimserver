@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# SlimServer Copyright (C) 2001 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (C) 2001-2005 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -247,7 +247,7 @@ use vars qw($VERSION @AUTHORS);
 	'Dan Sully',
 );
 
-$VERSION = '6.0.0';
+$VERSION = '6.0a1';
 
 # old preferences settings, only used by the .slim.conf configuration.
 # real settings are stored in the new preferences file:  .slim.pref
