@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.58 2004/04/19 18:39:10 dean Exp $
+# $Id: Setup.pm,v 1.59 2004/04/19 19:31:05 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -688,13 +688,13 @@ sub initSetupConfig {
 					$i++;
 				}
 				$pageref->{'Prefs'}{'pluginlist'}{'arrayMax'} = $i - 1;
-                Slim::Utils::Prefs::delete('disabledplugins');
-                Slim::Buttons::Plugins::addSetupGroups();
+				Slim::Buttons::Plugins::addSetupGroups();
 			}
 		,'postChange' => sub {
 				my ($client,$paramref,$pageref) = @_;
 				my $i = 0;
 				my %plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
+				Slim::Utils::Prefs::delete('disabledplugins');
 				my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
 				foreach my $plugin (sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}}(keys %{$pluginlistref})) {
 					if (!exists $paramref->{"pluginlist$i"}) {
