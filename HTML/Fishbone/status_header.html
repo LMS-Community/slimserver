@@ -49,7 +49,7 @@ function checkReload()
 			</table>
 		<tr>
 			<table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111">
-				<td><nobr><span class="songtitle">[IF player_name]{player_name}[/IF]</span></nobr></td>
+				<td><nobr><span class="songtitle">[IF player_name]{player_name}[/IF]</span> [NE mode off](<A href="status_header.html?p0=button&p1=sleep&player={%player}">Sleep</a>[IF sleeptime] {sleeptime}[/IF])[/NE]</nobr></td>
 				<td valign="bottom" width="22%"><nobr><a href="setup.html?page=player&player={%player}&playerid={%player}" target="browser">[S PLAYER_SETTINGS]</a></nobr></td>
   	         <td valign="bottom" width="22%"><nobr><a href="javascript:openRemote()">Undock</a></nobr></td>
   	         <td valign="bottom" width="22%"><nobr><a href="hitlist.html?player={%player}" target="playlist">[S STATISTICS]</a></nobr></td>
