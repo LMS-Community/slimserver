@@ -1554,7 +1554,7 @@ sub _fillInSearchResults {
 			  join('&', @$qstring);
 
 	# set some defaults for the template
-	$params->{'browse_list'} = " ";
+	#$params->{'browse_list'} = " ";
 	$params->{'numresults'}  = -1;
 	$params->{'liveSearch'}  = 0;
 
@@ -1562,6 +1562,14 @@ sub _fillInSearchResults {
 	if (defined $results && ref($results) eq 'ARRAY') {
 
 		$params->{'numresults'} = scalar @$results;
+	}
+
+	# put in the type separator
+	if ($type && !$ds) {
+
+		$params->{'browse_list'} .= sprintf("<tr><td><hr width=\"75%%\"/><br/>%s \"$query\": %d<br/><br/></td></tr>",
+			Slim::Utils::Strings::string(uc($type . 'SMATCHING')), $params->{'numresults'},
+		);
 	}
 
 	if ($params->{'numresults'}) {
@@ -1618,7 +1626,7 @@ sub _fillInSearchResults {
 
 			} else {
 
-				$list_form{'title'}		= $title;
+				$list_form{'title'} = $title;
 			}
 
 			$list_form{'itemobj'}      = $item;
