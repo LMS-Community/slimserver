@@ -115,6 +115,15 @@ sub new_PP {
 			return $self;
 		};
 
+		# Parse cuesheet
+		$errflag = $self->_parseSeekTable();
+		if ($errflag < 0) {
+			warn "[$file] Problem parsing seekpoint table!";
+			close FILE;
+			undef $self->{'fileHandle'};
+			return $self;
+		};
+
 		# Parse third-party application metadata block
 		$errflag = $self->_parseAppBlock();
 		if ($errflag < 0) {
@@ -158,6 +167,16 @@ sub cuesheet {
 
 	# if the cuesheet block exists, return it as an arrayref
 	return $self->{'cuesheet'} if exists($self->{'cuesheet'});
+
+	# otherwise, return an empty arrayref
+	return [];
+}
+
+sub seektable {
+	my $self = shift;
+
+	# if the seekpoint table block exists, return it as an arrayref
+	return $self->{'seektable'} if exists($self->{'seektable'});
 
 	# otherwise, return an empty arrayref
 	return [];
@@ -698,6 +717,53 @@ sub _parseCueSheet {
 	push (@$cuesheet, "REM FLAC__lead-out " . $leadouttracknum . " " . $leadout . "\n");
 
 	$self->{'cuesheet'} = $cuesheet;
+
+	return 0;
+}
+
+sub _parseSeekTable {
+	my $self = shift;
+	my $seektable = [];
+
+	my $idx  = $self->_findMetadataIndex(BT_SEEKTABLE);
+
+	# seekpoint tables are optional, so return 0 if we don't have one
+	if ($idx < 0) {
+		return 0;
+	}
+
+	#grab the seekpoint table
+	my $tmpBlock = $self->{'metadataBlocks'}[$idx]->{'contents'};
+
+	#parse out the seekpoints
+	while (my $seekpoint = substr($tmpBlock, 0, 18)) {
+		# Sample number of first sample in the target frame
+		my $highbits = unpack('N', substr($seekpoint,0,4));
+		my $sampleNumber = $highbits * 2 ** 32 + unpack('N', (substr($seekpoint,4,4)));
+
+		# Detect placeholder seekpoint
+		# since the table is sorted, a placeholder means were finished
+		last if ($sampleNumber == (0xFFFFFFFF * 2 ** 32 + 0xFFFFFFFF));
+
+		# Offset (in bytes) from the first byte of the first frame header 
+		# to the first byte of the target frame's header.
+		$highbits = unpack('N', substr($seekpoint,8,4));
+		my $streamOffset = $highbits * 2 ** 32 + unpack('N', (substr($seekpoint,12,4)));
+
+		# Number of samples in the target frame
+		my $frameSamples = unpack('n', (substr($seekpoint,16,2)));
+
+		# remove this point from the tmpBlock
+		$tmpBlock = substr($tmpBlock, 18);
+
+		# add this point to our copy of the table
+		push (@$seektable, { "sampleNumber" => $sampleNumber, 
+				     "streamOffset" => $streamOffset,
+				     "frameSamples" => $frameSamples });
+	}
+
+	# make it official
+	$self->{'seektable'} = $seektable;
 
 	return 0;
 }
