@@ -1251,9 +1251,10 @@ sub _postCheckAttributes {
 			# the same album name.
 			$search->{'disc'} = $disc if $disc;
 
-			if ((grep $album =~ m/^$_$/i, @$common_albums) && $contributors[0]) {
+			if ((grep $album =~ m/^$_$/i, @$common_albums) && 
+				$contributors[0]) {
 
-				$search->{'contributors'} = $contributors[0]->id;
+				$search->{'contributors'} = $contributors[0]->namesort;
 
 				($albumObj) = Slim::DataStores::DBI::Album->search($search);			
 
@@ -1284,7 +1285,9 @@ sub _postCheckAttributes {
 			}
 		}
 
-		$albumObj->contributors($contributors[0]->id);
+		if ($contributors[0]) {
+			$albumObj->contributors($contributors[0]->namesort);
+		}
 
 		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
 		$albumObj->titlesort($sortable_title) if $sortable_title;

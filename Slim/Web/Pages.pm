@@ -61,7 +61,7 @@ sub init {
 				my $ds = shift;
 				my $level = shift;
 				my $findCriteria = shift;
-				return $ds->find('track', $findCriteria, exists $findCriteria->{'album'} ? 'tracknum' : 'title');
+				return $ds->find('track', $findCriteria, exists $findCriteria->{'album'} ? 'tracknum' : 'track');
 			},
 
 			'listItem' => sub {

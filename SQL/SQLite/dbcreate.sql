@@ -11,7 +11,7 @@ CREATE TABLE metainformation (
   total_time integer      -- cumulative play time
 );
 
-INSERT INTO metainformation VALUES (4, 0, 0);
+INSERT INTO metainformation VALUES (5, 0, 0);
 
 CREATE TABLE tracks (
   id integer UNIQUE PRIMARY KEY NOT NULL,
@@ -112,7 +112,7 @@ CREATE TABLE contributor_track (
   contributor integer,    -- contributor object
   track integer,          -- track object
   album integer,          -- album object
-  namesort varchar        -- convenience for sorting
+  namesort varchar        -- convenience for sorting, no longer used
 );
 
 CREATE INDEX contributor_trackContribIndex ON contributor_track (contributor);
