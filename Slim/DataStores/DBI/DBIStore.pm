@@ -391,7 +391,7 @@ sub newTrack {
 
 	if ($@) {
 		Slim::Utils::Misc::bt();
-		Slim::Utils::Misc::msg("Couldn't create track for $url\n");
+		Slim::Utils::Misc::msg("Couldn't create track for $url : $@\n");
 
 		#require Data::Dumper;
 		#print Data::Dumper::Dumper($columnValueHash);
