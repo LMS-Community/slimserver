@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.73 2004/05/13 19:11:53 dean Exp $
+# $Id: Setup.pm,v 1.74 2004/05/13 22:36:18 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -550,19 +550,15 @@ sub initSetupConfig {
 				} else {
 					$pageref->{'GroupOrder'}[2] = undef;
 				}
-				if (Slim::Music::iTunes::useiTunesLibrary()) {
-					$pageref->{'children'}[9] = 'itunes';
-					if (Slim::Music::MoodLogic::useMoodLogic()) {
-						$pageref->{'children'}[10] = 'moodlogic';
-					} else {
-						pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
-					}
-				} elsif (Slim::Music::MoodLogic::useMoodLogic()) {
-					$pageref->{'children'}[9] = 'moodlogic';
-					pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
+				
+				# always show the itunes advanced settings.
+				$pageref->{'children'}[9] = 'itunes';
+				
+				# show moodlogic setting if moodlogic is installed.
+				if (Slim::Music::MoodLogic::canUseMoodlogic()) {
+					$pageref->{'children'}[10] = 'moodlogic';
 				} else {
 					pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
-					pop @{$pageref->{'children'}} if $pageref->{'children'}[9];
 				}
 				
 				$paramref->{'versionInfo'} = string('SERVER_VERSION') . string("COLON") . $::VERSION;
