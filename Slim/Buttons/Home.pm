@@ -181,6 +181,23 @@ sub menuOptions {
 		}
 		$menuChoices{$menuOption} = string($menuOption);
 	}
+	return %menuChoices;
+}
+
+sub unusedMenuOptions {
+	my $client = shift;
+	my %menuChoices = menuOptions($client);
+	delete $menuChoices{""};
+	foreach my $usedOption (@{$homeChoices{$client}}) {
+		delete $menuChoices{$usedOption};
+	}
+	return sort { $menuChoices{$a} cmp $menuChoices{$b} } keys %menuChoices;
+}
+
+sub pluginOptions {
+	my $client = shift;
+	my %menuChoices = ();
+	$menuChoices{""} = "";
 	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
 	foreach my $menuOption (keys %{$pluginsRef}) {
@@ -195,9 +212,9 @@ sub menuOptions {
 	return %menuChoices;
 }
 
-sub unusedMenuOptions {
+sub unusedPluginOptions {
 	my $client = shift;
-	my %menuChoices = menuOptions($client);
+	my %menuChoices = pluginOptions($client);
 	delete $menuChoices{""};
 	foreach my $usedOption (@{$homeChoices{$client}}) {
 		delete $menuChoices{$usedOption};

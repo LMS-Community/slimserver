@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.134 2004/09/11 14:50:51 dean Exp $
+# $Id: strings.txt,v 1.135 2004/09/11 16:14:20 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -949,6 +949,16 @@ SETUP_GROUP_MENUITEMS_DESC
 	NO	Du kan tilpasse hovedmenyen på din Slim-player. Trykk for å flytte elementer oppover og nedover eller for å fjerne dem. Trykk "Legg til" for å legge til et fjernet element.
 	PT	Pode personalizar as opções disponíveis no menu inicial. Escolha as opções para mover para cima, para baixo, ou para apagar. Escolha "Adicionar" para adicionar um item ao menu.
 	SE	Du kan välja vilka alternativ som skall finnas tillgängliga på din huvudmeny. Klicka för att flytta upp, ner eller ta bort menyval. Klicka på "Lägg till" för att återställa ett menyval.
+
+SETUP_GROUP_PLUGINITEMS_INTRO
+	DE	Plugins:
+	DK	Moduler:
+	EN	Plugins:
+	FR	Modules d'extension :
+	NL	Plugins:
+	NO	Plugins:
+	PT	Extras:
+	SE	Tillägg:
 
 SETUP_GROUP_NONMENUITEMS_INTRO
 	DE	Inaktiver Menüeintrag:

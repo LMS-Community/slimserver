@@ -17,4 +17,4 @@ table, td, tr, form 																		{ padding: 0px; margin: 0px; }
 a 																							{ text-decoration:none; }
 img 																						{ border-style: none; }
 .nowrap																						{ white-space: nowrap; }
-
+.PrefExtValue																				{ width: 200px }

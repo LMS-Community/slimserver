@@ -207,6 +207,7 @@ use vars qw(
 	$cliaddr
 	$cliport
 	$daemon
+	$diag
 	$httpaddr
 	$lastlooptime
 	$logfile
@@ -292,6 +293,9 @@ sub start {
 
 	$::d_server && msg("SlimServer starting up...\n");
 
+	if ($diag) { 
+		use diagnostics;
+	}
 	# background if requested
 	if (Slim::Utils::OSDetect::OS() ne 'win' && $daemon) {
 		$::d_server && msg("SlimServer daemonizing...\n");
@@ -446,7 +450,7 @@ sub idleStreams {
 
 sub showUsage {
 	print <<EOF;
-Usage: $0 [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
+Usage: $0 [--audiodir <dir>] [--diag] [--daemon] [--stdio] [--logfile <logfilepath>]
           [--user <username>]
           [--group <groupname>]
           [--httpport <portnumber> [--httpaddr <listenip>]]
@@ -458,6 +462,7 @@ Usage: $0 [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
     --help           => Show this usage information.
     --audiodir       => The path to a directory of your MP3 files.
     --cachedir       => Directory for SlimServer to save cached music and web data
+    --diag			 => Use diagnostics, shows more verbose errors.  Also slows down library processing considerably
     --logfile        => Specify a file for error logging.
     --daemon         => Run the server in the background.
                         This may only work on Unix-like systems.
@@ -552,6 +557,7 @@ sub initOptions {
 		'cliaddr=s'   		=> \$cliaddr,
 		'cliport=s'   		=> \$cliport,
 		'daemon'   			=> \$daemon,
+		'diag'   			=> \$diag,
 		'httpaddr=s'   		=> \$httpaddr,
 		'httpport=s'   		=> \$httpport,
 		'logfile=s'   		=> \$logfile,

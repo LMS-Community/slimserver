@@ -97,7 +97,7 @@ SlimServer and see the complete documentation.
  
 --------------------------------------------------------------------------------
 
-Usage: $0 [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
+Usage: ./slimserver.pl [--audiodir <dir>] [--diag] [--daemon] [--stdio] [--logfile <logfilepath>]
           [--user <username>]
           [--group <groupname>]
           [--httpport <portnumber> [--httpaddr <listenip>]]
@@ -109,6 +109,7 @@ Usage: $0 [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
     --help           => Show this usage information.
     --audiodir       => The path to a directory of your MP3 files.
     --cachedir       => Directory for SlimServer to save cached music and web data
+    --diag                       => Use diagnostics, shows more verbose errors.  Also slows down library processing considerably
     --logfile        => Specify a file for error logging.
     --daemon         => Run the server in the background.
                         This may only work on Unix-like systems.
@@ -138,6 +139,7 @@ Usage: $0 [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
     --streamaddr     => Specify the _server's_ IP address to use to connect
                         to streaming audio sources
     --nosetup        => Disable setup via http.
+    --noserver       => Disable web access server settings, but leave player settings accessible. Settings changes arenot preserved.
 
 The following are debugging flags which will print various information 
 to the console via stderr:
@@ -153,6 +155,7 @@ to the console via stderr:
     --d_filehandle   => Information about the custom FileHandle object
     --d_firmware     => Information during Squeezebox firmware updates 
     --d_formats      => Information about importing data from various file formats
+    --d_graphics     => Information bitmap graphic display 
     --d_http         => HTTP activity
     --d_http_verbose => Even more HTTP activity 
     --d_info         => MP3/ID3 track information
@@ -161,7 +164,7 @@ to the console via stderr:
     --d_itunes_verbose => verbose iTunes Synchronization information
     --d_mdns         => Multicast DNS aka Zeroconf aka Rendezvous information
     --d_moodlogic    => MoodLogic synchronization information
-    --d_mp3    		 => MP3 frame detection
+    --d_mp3              => MP3 frame detection
     --d_os           => Operating system detection information
     --d_paths        => File path processing information
     --d_perf         => Performance information
@@ -178,6 +181,7 @@ to the console via stderr:
     --d_slimproto    => Slimproto debugging information
     --d_slimproto_v  => Slimproto verbose debugging information
     --d_source       => Information about source audio files and conversion
+    --d_source_v     => Verbose information about source audio files
     --d_stdio        => Standard I/O command debugging
     --d_stream       => Information about player streaming protocol 
     --d_stream_v     => Verbose information about player streaming protocol 
