@@ -1,5 +1,5 @@
 # RssNews Ticker v1.0
-# $Id: RssNews.pm,v 1.10 2004/11/23 23:38:29 dave Exp $
+# $Id: RssNews.pm,v 1.11 2004/11/24 20:55:53 dave Exp $
 # Copyright (c) 2004 Slim Devices, Inc. (www.slimdevices.com)
 
 # Based on BBCTicker 1.3 which had this copyright...
@@ -27,6 +27,9 @@ my $screensaver_mode = 0;
 
 # in screensaver mode, number of items to display per channel before switching
 my $screensaver_items_per_feed;
+
+# we need to limit the number of characters we scroll through, because the server could crash rendering on pre-SqueezeboxG displays.
+my $screensaver_chars_per_feed = 1024;
 
 # how long to scroll news before switching channels.
 my $screensaver_sec_per_channel = 0; # if 0, we use sec_per_letter instead
@@ -85,7 +88,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Prefs;
 
-$VERSION = substr(q$Revision: 1.10 $,10);
+$VERSION = substr(q$Revision: 1.11 $,10);
 my %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
@@ -622,8 +625,10 @@ sub lines {
 			my $line2 = "";
 			my $i = $display_current_items->{$display_current}->{'next_item'};
 			my $max = $i + $screensaver_items_per_feed;
+			my $char_limit_exceeded = 0;
 			while (($i < $max) &&
-				   ($thenews{$display_current}->{item}[$i])) {
+				   ($thenews{$display_current}->{item}[$i]) &&
+				   !$char_limit_exceeded) {
 				my $description;
 				if ((!($thenews{$display_current}->{item}[$i]->{description})) ||
 					ref ($thenews{$display_current}->{item}[$i]->{description})) {
@@ -632,17 +637,31 @@ sub lines {
 				} else {
 					$description = $thenews{$display_current}->{item}[$i]->{description};
 				}
-				$line2 .= sprintf($screensaver_item_format,
-								  $i + 1,
-								  unescapeAndTrim($thenews{$display_current}->{item}[$i]->{title}),
-								  unescapeAndTrim($description));
-				$i++;
+				my $text = sprintf($screensaver_item_format,
+								   $i + 1,
+								   unescapeAndTrim($thenews{$display_current}->{item}[$i]->{title}),
+								   unescapeAndTrim($description));
+				# append the next item, unless it makes the string too long.
+				if (length($line2) + length($text) > $screensaver_chars_per_feed) {
+					$char_limit_exceeded = 1;
+					$::d_plugins && msg("RssNews screensaver character limit exceeded.  Displaying fewer than $screensaver_items_per_feed items.\n");
+				} else {
+					$line2 .= $text;
+					$i++;
+				}
 			}
 			# remove tags
 			# this is now done in unescape and trim
 			#$line2 =~ s/<\/?[A-Za-z]+ ?\/?>/ /g; # matches, for example, "<b>" and "<br />"
 			# convert newlines in line2 to spaces
 			#$line2 =~ s/\n/ /g; # no longer needed (unescape and trim)
+
+			# if character limit exceeded, truncate string
+			if (length($line2) > $screensaver_chars_per_feed) {
+				$line2 = substr($line2, 0, $screensaver_chars_per_feed);
+				$::d_plugins && msg("RssNews screensaver character limit exceeded.  Truncating.\n");				
+			}
+
 			$display_current_items->{$display_current}->{'next_item'} = $i;
 			$lineref->[0] = $line1;
 			$lineref->[1] = $line2;
