@@ -139,7 +139,7 @@ our %DEFAULT = (
 	,"language"				=> "EN"
 	,"refreshRate"			=> 30
 	,"displaytexttimeout"	=> 1.0
-	,"filesort"				=> 0
+	,"filesort"				=> 1
 	,'browseagelimit'		=> 100
 	,"playtrackalbum"		=> 1
 	,"ignoredarticles"		=> "The El La Los Las Le Les"
@@ -215,6 +215,7 @@ our %DEFAULT = (
 								'Live'
 								]
 	,'rank-PLUGIN_PICKS_MODULE_NAME'			=> 4
+	,'upgrade-6.0b3-script'		=> 1
 );
 
 # The following hash contains functions that are executed when the pref corresponding to
@@ -342,6 +343,15 @@ sub onChange {
 	}
 }
 
+# These are scripts that are run once on old prefs file to bring them
+# up-to-date with specific changes we want to push out to default prefs.
+our %upgradeScripts = (
+	# Default browse mode for music folders is sort by filename				   
+	'6.0b3' => sub {
+		Slim::Utils::Prefs::set('filesort', 1);
+	},
+);
+
 # This makes sure all the server preferences defined in %DEFAULT are in the pref file.
 # If they aren't there already they are set to the value in %DEFAULT
 sub checkServerPrefs {
@@ -353,6 +363,13 @@ sub checkServerPrefs {
 			} else {
 				$prefs{$key} = $DEFAULT{$key};
 			}
+		}
+	}
+
+	for my $version (sort keys %upgradeScripts) {
+		if (Slim::Utils::Prefs::get("upgrade-$version-script")) {
+			&{$upgradeScripts{$version}}();
+			Slim::Utils::Prefs::set("upgrade-$version-script", 0);
 		}
 	}
 }

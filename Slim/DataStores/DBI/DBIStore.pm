@@ -137,6 +137,7 @@ sub objectForUrl {
 	my $url    = shift;
 	my $create = shift;
 	my $readTag = shift;
+	my $lightweight = shift;
 
 	if (!defined($url)) {
 		Slim::Utils::Misc::msg("Null track request!\n"); 
@@ -144,9 +145,9 @@ sub objectForUrl {
 		return undef;
 	}
 	
-	my $track = $self->_retrieveTrack($url);
+	my $track = $self->_retrieveTrack($url, $lightweight);
 
-	if (defined $track && !$create) {
+	if (defined $track && !$create && !$lightweight) {
 		$track = $self->_checkValidity($track);
 	}
 
@@ -905,6 +906,7 @@ sub setAlbumArtwork {
 sub _retrieveTrack {
 	my $self = shift;
 	my $url  = shift;
+	my $lightweight = shift;
 
 	return undef if $self->{'zombieList'}->{$url};
 
@@ -917,6 +919,8 @@ sub _retrieveTrack {
 
 		$track = $self->{'lastTrack'}->{$dirname};
 
+	} elsif ($lightweight) {
+		($track) = Slim::DataStores::DBI::LightWeightTrack->search('url' => $url);
 	} else {
 
 		# XXX - keep a url => id cache. so we can use the
@@ -924,7 +928,7 @@ sub _retrieveTrack {
 		($track) = Slim::DataStores::DBI::Track->search('url' => $url);
 	}
 	
-	if (defined($track)) {
+	if (defined($track) && !$lightweight) {
 		$self->{'lastTrackURL'} = $url;
 		$self->{'lastTrack'}->{$dirname} = $track;
 	}

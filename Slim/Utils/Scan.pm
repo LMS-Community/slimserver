@@ -188,6 +188,9 @@ sub addToList_run {
 		return 0;
 	}
 
+	my $item = '';
+	my $itempath;
+
 	########## index==-1 means we need to read the directory
 
 	$::d_scan && msgf("index: %d\n", $curdirState->index);
@@ -224,12 +227,55 @@ sub addToList_run {
 				}
 			}
 
+			my $itemsToAddref = $curdirState->itemsToAdd;
+
 			if (Slim::Music::Info::isWinShortcut($curdirState->path) && 
 					Slim::Music::Info::isDir(@{Slim::Music::Info::cachedPlaylist($curdirState->path)})) {
 				$curdirState->path(@{Slim::Music::Info::cachedPlaylist($curdirState->path)});
 			}
+			# Special case if we're not recursing.
+			# Just iterate through the list and confirm that it's
+			# a known type. We then return immediately if not
+			# sorting. Note that this path will NOT create new
+			# entries in the database - it's up to the calling
+			# code to do the right thing.
+			elsif (!$jobState->recursive) { 
 
-			my $itemsToAddref = $curdirState->itemsToAdd;
+				# If we're going to sort, we do so in the
+				# next iteration of the task, so don't pop.
+				if (!$jobState->sorted) {
+
+					$jobState->numstack($jobState->numstack - 1);
+				}
+
+				my $ref;
+
+				if ($jobState->numstack) {
+				    $ref = $itemsToAddref;
+				}
+				else {
+				    $ref = $listref;
+				}
+
+				for $item (@$contentsref) {
+					next if ($item =~ /^\s+$/);
+					$itempath = Slim::Utils::Misc::fixPath($item, $curdirState->path);
+					if (Slim::Music::Info::isList($itempath) ||
+					    Slim::Music::Info::isSong($itempath)) {
+						push @$ref, $itempath;
+						$jobState->numitems($jobState->numitems+1);
+					}
+				}
+
+				$curdirState->index($numcontents);
+
+				if ($jobState->numstack) {
+					return 1;
+				} else {
+					addToList_done($listref);
+					return 0;
+				}
+			}
 
 			@$itemsToAddref = ();
 
@@ -249,8 +295,6 @@ sub addToList_run {
 	}
 	
 	########## OK, the directory has been opened, and index points to the entry we should look at
-
-	my $item = '';
 
 	if (defined($curdirState->numcontents) && $curdirState->index == $curdirState->numcontents) {
 
@@ -276,7 +320,7 @@ sub addToList_run {
 				my @seen = ();
 				for my $item (@{$itemstoaddref}) {
 
-					my $track = $ds->objectForUrl($item, 0) || next;
+					my $track = $ds->objectForUrl($item, 1) || next;
 					my $trnum = $track->tracknum();
 
 					if ($trnum) { 
@@ -325,7 +369,7 @@ sub addToList_run {
 		return 1;
 	}
 
-	my $itempath = Slim::Utils::Misc::fixPath($item, $curdirState->path);
+	$itempath = Slim::Utils::Misc::fixPath($item, $curdirState->path);
 
 	$::d_scan && msg("itempath: $item and " . $curdirState->path . " made $itempath\n");
 
