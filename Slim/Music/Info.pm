@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.92 2004/04/06 15:33:24 grotus Exp $
+# $Id: Info.pm,v 1.93 2004/04/06 16:41:41 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -217,7 +217,7 @@ sub init {
 
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		#store with the rest of the caches
-		$dbname = catdir('~','Library','Caches','SlimServer',$dbname);
+		$dbname = catdir($ENV{'HOME'},'Library','Caches','SlimServer',$dbname);
 	} else {
 		# put it in the same folder as the preferences.
 		$dbname = catdir(Slim::Utils::Prefs::preferencesPath(), $dbname);
