@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.85 2004/04/19 06:15:40 kdf Exp $
+# $Id: strings.txt,v 1.86 2004/04/22 05:47:09 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1421,6 +1421,23 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture iTunes.
 	SE	Denna inställning avgör vilket format som används vid import av iTunes-låtlistor
 
+SETUP_MOODLOGICPLAYLISTFORMAT
+	EN	MoodLogic Playlist Format
+	FR	Format des listes de lecture MoodLogic
+
+SETUP_MOODLOGICPLAYLISTFORMAT_DESC
+	EN	This option determines the format used when importing MoodLogic playlists.
+	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture MoodLogic.
+
+SETUP_MOODLOGICPLAYLISTPREFIX_CHOOSE
+	EN	Prefix:
+	FR	Préfixe :
+
+SETUP_MOODLOGICPLAYLISTSUFFIX_CHOOSE
+	EN	Suffix:
+	FR	Suffixe :
+
+
 SETUP_ITUNESPLAYLISTPREFIX_CHOOSE
 	EN	Prefix:
 	FR	Préfixe :
@@ -1811,7 +1828,7 @@ SETUP_INSTANTMIXMAX
 	EN	Instant Mix Max Count
 
 SETUP_INSTANTMIXMAX_DESC
-	EN	This is the number for the maximum number of songs you want for playlists created as an Instant Mix. Instant Mixes may have fewer songs, depending on the Variety setting.
+	EN	This is the number for the maximum number of songs you want for playlists created as an Instant Mix. Instant Mixes may have fewer songs, depending on the Variety setting. Minimum is 12.
 
 SETUP_VARIETYCOMBO
 	EN	Moodlogic Variety
@@ -6073,14 +6090,7 @@ MOODLOGIC_MOOD_0
 	SE	Överraskning
 
 MOODLOGIC_MOOD_1
-	DE	Aufwachen
-	DK	Vågn op
-	EN	Get up
-	FR	Debout
-	NL	Opstaan
-	NO	Våkn opp
-	PT	Acordar
-	SE	Vakna
+	EN	Upbeat
 
 MOODLOGIC_MOOD_2
 	DE	Easy
@@ -6092,13 +6102,7 @@ MOODLOGIC_MOOD_2
 	PT	Fácil
 
 MOODLOGIC_MOOD_3
-	DE	Entspannt
-	DK	Afslapning
-	EN	Relax
-	FR	Relax
-	NL	Relax
-	NO	Avslappet
-	PT	Relax
+	EN	Mild
 
 MOODLOGIC_MOOD_4
 	DE	Trist
@@ -6118,12 +6122,7 @@ MOODLOGIC_MOOD_5
 	PT	Saída
 
 MOODLOGIC_MOOD_6
-	DE	Hammer
-	DK	Slagkraftig
-	EN	Punch
-	FR	Coup de poing
-	NL	Met pit
-	PT	Batida
+	EN	Wild
 
 HELP
 	DE	Hilfe (Englisch)

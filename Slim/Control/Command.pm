@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.33 2004/04/15 18:49:39 dean Exp $
+# $Id: Command.pm,v 1.34 2004/04/22 05:47:11 kdf Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -317,7 +317,7 @@ sub execute {
 				my $jumptoindex = undef;
 				my $path = $p2;
 				if ($path) {
-					if (!-e $path) {
+					if (!-e $path && !(Slim::Music::Info::isITunesPlaylistURL($path) || Slim::Music::Info::isMoodLogicPlaylistURL($path))) {
 						my $easypath = catfile(Slim::Utils::Prefs::get('playlistdir'), basename ($p2) . ".m3u");
 						if (-e $easypath) {
 							$path = $easypath;

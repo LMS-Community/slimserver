@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.32 2004/04/17 14:57:38 dean Exp $
+# $Id: Misc.pm,v 1.33 2004/04/22 05:47:12 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -297,7 +297,7 @@ sub descendVirtual {
 	
 	if (Slim::Music::Info::isPlaylist($curAP)) {
 		$component = $itemindex;
-	} elsif (Slim::Music::Info::isITunesPlaylistURL($item)) {
+	} elsif (Slim::Music::Info::isITunesPlaylistURL($item) || Slim::Music::Info::isMoodLogicPlaylistURL($item)) {
 		$component = $item;
 	} elsif (Slim::Music::Info::isURL($item)) {
 		$component = Slim::Web::HTTP::unescape((split(m|/|,$item))[-1]);
@@ -341,7 +341,7 @@ sub virtualToAbsolute {
 		my @v = splitdir($virtual);
 		shift @v;
 		
-		if (Slim::Music::Info::isITunesPlaylistURL($v[0])) {
+		if (Slim::Music::Info::isITunesPlaylistURL($v[0]) || Slim::Music::Info::isMoodLogicPlaylistURL($v[0])) {
 			$curdir = shift @v;
 		} else {
 			$curdir = Slim::Utils::Prefs::get('playlistdir');
@@ -374,8 +374,8 @@ sub virtualToAbsolute {
 # this was breaking songinfo and other pages when using windows .lnk files.
 #		last if $level eq "..";
 
-# optimization for pre-cached itunes playlists.
-		if (Slim::Music::Info::isITunesPlaylistURL($curdir)) {
+# optimization for pre-cached itunes/moodlogic playlists.
+		if (Slim::Music::Info::isITunesPlaylistURL($curdir) || Slim::Music::Info::isMoodLogicPlaylistURL($curdir)) {
 			my $listref = Slim::Music::Info::cachedPlaylist($curdir);
 			if ($listref) {
 				return @{$listref}[$level];

@@ -90,6 +90,7 @@ use Slim::Buttons::Power;
 use Slim::Buttons::ScreenSaver;
 use Slim::Buttons::MoodWheel;
 use Slim::Buttons::InstantMix;
+use Slim::Buttons::VarietyCombo;
 use Slim::Player::Client;
 use Slim::Control::Command;
 use Slim::Control::CLI;

@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.66 2004/04/20 20:40:57 dean Exp $
+# $Id: Pages.pm,v 1.67 2004/04/22 05:47:13 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -87,7 +87,7 @@ sub browser {
 		$playlist = 1;
 		$params->{'playlist'} = 1;
 
-		if (!defined(Slim::Utils::Prefs::get("playlistdir") && !Slim::Music::iTunes::useiTunesLibrary())) {
+		if (!defined(Slim::Utils::Prefs::get("playlistdir") && !(Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic()))) {
 			$::d_http && msg("no valid playlists directory!!\n");
 			return Slim::Web::HTTP::filltemplatefile("badpath.html", $params);
 		}
@@ -117,7 +117,7 @@ sub browser {
 	if (!$fulldir || !Slim::Music::Info::isList($fulldir)) {
 
 		# check if we're just showing itunes playlists
-		if (Slim::Music::iTunes::useiTunesLibrary()) {
+		if (Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic()) {
 			browser_addtolist_done($current_player, $httpClient, $params, [], $response);
 			return undef;
 		} else {
@@ -261,7 +261,7 @@ sub browser {
 
 sub browser_addtolist_done {
 	my ($current_player, $callback, $httpClient, $params, $itemsref, $response) = @_;
-	
+
 	if (defined $params->{'dir'} && $params->{'dir'} eq '__playlists' && Slim::Music::iTunes::useiTunesLibrary()) {
 
 		$::d_http && msg("just showing itunes playlists\n");
@@ -272,6 +272,17 @@ sub browser_addtolist_done {
 			$params->{'warn'} = 1;
 		}
 	} 
+	
+	if (defined $params->{'dir'} && $params->{'dir'} eq '__playlists' && Slim::Music::MoodLogic::useMoodLogic()) {
+
+		$::d_http && msg("just showing moodlogic playlists\n");
+
+		push @$itemsref, @{Slim::Music::MoodLogic::playlists()};
+
+		if (Slim::Music::MoodLogic::stillScanning()) {
+			$params->{'warn'} = 1;
+		}
+	}
 	
 	my $numitems = scalar @{$itemsref};
 	

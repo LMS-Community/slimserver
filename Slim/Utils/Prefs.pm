@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.48 2004/04/17 14:57:39 dean Exp $
+# $Id: Prefs.pm,v 1.49 2004/04/22 05:47:12 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -111,6 +111,8 @@ my %DEFAULT = (
 	,'titleFormatWeb'		=> 1
 	,'iTunesplaylistprefix'	=> 'iTunes: '
  	,'iTunesplaylistsuffix'	=> ''
+	,'MoodLogicplaylistprefix'	=> 'MoodLogic: '
+ 	,'MoodLogicplaylistsuffix'	=> ''
  	,'itunesscaninterval'	=> 60
  	,'instantMixMax'		=> 12
  	,'varietyCombo'			=> 50

@@ -1,6 +1,9 @@
 package Slim::Music::MoodLogic;
 
+#$Id: MoodLogic.pm,v 1.8 2004/04/22 05:47:12 kdf Exp $
 use strict;
+
+use File::Spec::Functions qw(catfile);
 
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
@@ -14,10 +17,9 @@ my $isScanning = 0;
 my $initialized = 0;
 my @mood_names;
 my %mood_hash;
+my @playlists=();
 my %artwork;
 my $last_error = 0;
-my $instantMixMax = 40;
-my $instantMixVariety = 35;
 
 sub useMoodLogic {
 	my $newValue = shift;
@@ -50,79 +52,77 @@ sub canUseMoodLogic {
 	return (Slim::Utils::OSDetect::OS() eq 'win' && init());
 }
 
+sub playlists {
+	return \@playlists;
+}
+
 sub init {
-        return $initialized if ($initialized == 1);
-    
-        require Win32::OLE;
-        import Win32::OLE qw(EVENTS);
-
-	Win32::OLE->Option(Warn => \&OLEError);
-        my $name = "mL_MixerCenter";
-        
-        $mixer = Win32::OLE->new("$name.MlMixerComponent");
-        
-        if (!defined $mixer) {
-            $name = "mL_Mixer";
-            $mixer = Win32::OLE->new("$name.MlMixerComponent");
-        }
-        
-        if (!defined $mixer) {
-            $::d_moodlogic && msg("could not find moodlogic mixer component\n");
-            return 0;
-        }
-        
-        $browser = Win32::OLE->new("$name.MlMixerFilter");
-        
-        if (!defined $browser) {
-            $::d_moodlogic && msg("could not find moodlogic filter component\n");
-            return 0;
-        }
-        
-        Win32::OLE->WithEvents($mixer, \&event_hook);
-        
-	$mixer->{JetPwdMixer} = 'C393558B6B794D';
-        $mixer->{JetPwdPublic} = 'F8F4E734E2CAE6B';
-        $mixer->{JetPwdPrivate} = '5B1F074097AA49F5B9';
-        $mixer->{UseStrings} = 1;
-        $mixer->Initialize();
-        $mixer->{MixMode} = 0;
-
-	if ($last_error != 0) {
-	    $::d_moodlogic && msg("rebuilding mixer db\n");
-	    $mixer->MixerDb_Create();
-	    $last_error = 0;
-	    $mixer->Initialize();
-	    if ($last_error != 0) {
-                return 0;
-	    }
+	return $initialized if ($initialized == 1);
+	
+	require Win32::OLE;
+	import Win32::OLE qw(EVENTS);
+	
+		Win32::OLE->Option(Warn => \&OLEError);
+	my $name = "mL_MixerCenter";
+	
+	$mixer = Win32::OLE->new("$name.MlMixerComponent");
+	
+	if (!defined $mixer) {
+		$name = "mL_Mixer";
+		$mixer = Win32::OLE->new("$name.MlMixerComponent");
 	}
-
-        my $i = 0;
-
-        push @mood_names, string('MOODLOGIC_MOOD_0');
-        push @mood_names, string('MOODLOGIC_MOOD_1');
-        push @mood_names, string('MOODLOGIC_MOOD_2');
-        push @mood_names, string('MOODLOGIC_MOOD_3');
-        push @mood_names, string('MOODLOGIC_MOOD_4');
-        push @mood_names, string('MOODLOGIC_MOOD_5');
-        push @mood_names, string('MOODLOGIC_MOOD_6');
-        
-        map { $mood_hash{$_} = $i++ } @mood_names;
-    
-        $initialized = 1;
-        return $initialized;
+	
+	if (!defined $mixer) {
+		$::d_moodlogic && msg("could not find moodlogic mixer component\n");
+		return 0;
+	}
+	
+	$browser = Win32::OLE->new("$name.MlMixerFilter");
+	
+	if (!defined $browser) {
+		$::d_moodlogic && msg("could not find moodlogic filter component\n");
+		return 0;
+	}
+	
+	Win32::OLE->WithEvents($mixer, \&event_hook);
+	
+	$mixer->{JetPwdMixer} = 'C393558B6B794D';
+	$mixer->{JetPwdPublic} = 'F8F4E734E2CAE6B';
+	$mixer->{JetPwdPrivate} = '5B1F074097AA49F5B9';
+	$mixer->{UseStrings} = 1;
+	$mixer->Initialize();
+	$mixer->{MixMode} = 0;
+	
+	if ($last_error != 0) {
+		$::d_moodlogic && msg("rebuilding mixer db\n");
+		$mixer->MixerDb_Create();
+		$last_error = 0;
+		$mixer->Initialize();
+		if ($last_error != 0) {
+			return 0;
+		}
+	}
+	
+	my $i = 0;
+	
+	push @mood_names, string('MOODLOGIC_MOOD_0');
+	push @mood_names, string('MOODLOGIC_MOOD_1');
+	push @mood_names, string('MOODLOGIC_MOOD_2');
+	push @mood_names, string('MOODLOGIC_MOOD_3');
+	push @mood_names, string('MOODLOGIC_MOOD_4');
+	push @mood_names, string('MOODLOGIC_MOOD_5');
+	push @mood_names, string('MOODLOGIC_MOOD_6');
+	
+	map { $mood_hash{$_} = $i++ } @mood_names;
+	
+	$initialized = 1;
+	return $initialized;
 }
 
 sub checker {
 	if (useMoodLogic() && !stillScanning()) {
 		startScan();
 	}
-
-	# make sure we aren't doing this more than once...
-	# Slim::Utils::Timers::killTimers(0, \&checker);
-
-	# Call ourselves again after 5 seconds
-	# Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 5.0), \&checker);
 }
 
 sub startScan {
@@ -132,6 +132,7 @@ sub startScan {
 		
 	$::d_moodlogic && msg("startScan: start export\n");
 	stopScan();
+	@playlists = ();
 
 	$::d_moodlogic && msg("Clearing ID3 cache\n");
 
@@ -161,28 +162,69 @@ sub doneScanning {
 
 	$isScanning = 0;
 	
+	Slim::Utils::Scheduler::add_task(\&artScan);
+	
+	@playlists = Slim::Music::Info::sortIgnoringCase(@playlists);
 }
 
+sub artScan {
+	my @albums = keys %artwork;
+	my $album = $albums[0];
+	my $thumb = Slim::Music::Info::haveThumbArt($artwork{$album});
+	
+	if (defined $thumb && $thumb) {
+		$::d_artwork && Slim::Utils::Misc::msg("Caching $thumb for $album\n");
+		Slim::Music::Info::updateArtworkCache($artwork{$album}, {'ALBUM' => $album, 'THUMB' => $thumb});
+	}
+	
+	delete $artwork{$album};
+	
+	if (!%artwork) {
+		$::d_artwork && Slim::Utils::Misc::msg("Completed Artwork Scan\n");
+		return 0;
+	}
+	
+	return 1;
+}
+
+sub getPlaylistItems {
+	my $playlist = shift;
+	my $item = $playlist->Fields('name')->value;
+	my @list;
+	
+	while (!$playlist->EOF && defined($playlist->Fields('name')->value) && ($playlist->Fields('name')->value eq $item)) {
+		push @list,"file://localhost/".catfile($playlist->Fields('volume')->value.$playlist->Fields('path')->value,$playlist->Fields('filename')->value);
+		$playlist->MoveNext;
+	}
+	$::d_moodlogic && msg("adding ". scalar(@list)." items\n");
+	return \@list;
+}
 
 sub exportFunction {
- 
-        my $conn = Win32::OLE->new("ADODB.Connection");
-        my $rs   = Win32::OLE->new("ADODB.Recordset");
+	
+	my $conn = Win32::OLE->new("ADODB.Connection");
+	my $rs   = Win32::OLE->new("ADODB.Recordset");
+	my $playlist   = Win32::OLE->new("ADODB.Recordset");
+	my $auto   = Win32::OLE->new("ADODB.Recordset");
 
-        $conn->Open('PROVIDER=MSDASQL;DRIVER={Microsoft Access Driver (*.mdb)};DBQ='.$mixer->{JetFilePublic}.';UID=;PWD=F8F4E734E2CAE6B;');
-        $rs->Open('SELECT tblSongObject.songId, tblAlbum.name, tblSongObject.tocAlbumTrack FROM tblAlbum INNER JOIN tblSongObject ON tblAlbum.albumId = tblSongObject.tocAlbumId ORDER BY tblSongObject.songId', $conn, 1, 1);
+	$conn->Open('PROVIDER=MSDASQL;DRIVER={Microsoft Access Driver (*.mdb)};DBQ='.$mixer->{JetFilePublic}.';UID=;PWD=F8F4E734E2CAE6B;');
+	$rs->Open('SELECT tblSongObject.songId, tblSongObject.profileReleaseYear, tblAlbum.name, tblSongObject.tocAlbumTrack, tblMediaObject.bitrate FROM tblAlbum,tblMediaObject,tblSongObject WHERE tblAlbum.albumId = tblSongObject.tocAlbumId AND tblSongObject.songId = tblMediaObject.songId ORDER BY tblSongObject.songId', $conn, 1, 1);
+	#PLAYLIST QUERY
+	$playlist->Open('Select tblPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename  From "tblPlaylist", "tblPlaylistSong", "tblMediaObject" where "tblPlaylist"."playlistId" = "tblPlaylistSong"."playlistId" AND "tblPlaylistSong"."songId" = "tblMediaObject"."songId" order by tblPlaylist.playlistId,tblPlaylistSong.playOrder', $conn, 1, 1);
+	# AUTO PLAYLIST QUERY: 
+	$auto->Open('Select tblAutoPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename From "tblAutoPlaylist", "tblAutoPlaylistSong", "tblMediaObject" where "tblAutoPlaylist"."playlistId" = tblAutoPlaylistSong.playlistId AND tblAutoPlaylistSong.songId = tblMediaObject.songId order by tblAutoPlaylist.playlistId,tblAutoPlaylistSong.playOrder', $conn, 1, 1);
 
 	$browser->filterExecute();
 	my %genre_hash;
 	my $count = $browser->FLT_Genre_Count();
 	
 	for (my $i=1; $i<$count; $i++) {
-	    my $genre_id = $browser->FLT_Genre_MGID($i);
-	    $mixer->{Seed_MGID} = -$genre_id;
-	    my $genre_name = $mixer->Mix_GenreName(-1);
-	    $mixer->{Seed_MGID} = $genre_id;
-	    my $genre_mixable = $mixer->Seed_MGID_Mixable();
-	    $genre_hash{$genre_id} = [$genre_name, $genre_mixable];
+		my $genre_id = $browser->FLT_Genre_MGID($i);
+		$mixer->{Seed_MGID} = -$genre_id;
+		my $genre_name = $mixer->Mix_GenreName(-1);
+		$mixer->{Seed_MGID} = $genre_id;
+		my $genre_mixable = $mixer->Seed_MGID_Mixable();
+		$genre_hash{$genre_id} = [$genre_name, $genre_mixable];
 	}
 	
 	$count = $browser->FLT_Song_Count();
@@ -195,19 +237,60 @@ sub exportFunction {
 		
 		$mixer->{Seed_SID} = -$song_id;
 		$filename = $mixer->Mix_SongFile(-1);
-		%cacheEntry = %{Slim::Music::Info::readTags($filename)};
 
 		# merge album info, from query ('cause it is not available via COM)
 		while (defined $rs && !$rs->EOF && $album_data[0] < $song_id && defined $rs->Fields('songId')) {
-			@album_data = ($rs->Fields('songId')->value, $rs->Fields('name')->value, $rs->Fields('tocAlbumTrack')->value);
+			@album_data = ($rs->Fields('songId')->value, $rs->Fields('name')->value, $rs->Fields('tocAlbumTrack')->value,$rs->Fields('bitrate')->value,$rs->Fields('profileReleaseYear')->value);
 			$rs->MoveNext;
 		}
 
+		while (defined $playlist && !$playlist->EOF) {
+			my $name= $playlist->Fields('name')->value;
+			my %cacheEntry = ();
+			my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
+			if (!defined($playlists[-1]) || $playlists[-1] ne $name) {
+				push @playlists, $url;
+				$::d_moodlogic && msg("Found MoodLogic Playlist: $url\n");
+			} else {print $playlists[-1];}
+			$::d_moodlogic && msg("got a playlist ($url) named $name\n");
+			# add this playlist to our playlist library
+			$cacheEntry{'TITLE'} = Slim::Utils::Prefs::get('MoodLogicplaylistprefix') . $name . Slim::Utils::Prefs::get('MoodLogicplaylistsuffix');
+			$cacheEntry{'LIST'} = getPlaylistItems($playlist);
+			$cacheEntry{'CT'} = 'itu';
+			$cacheEntry{'TAG'} = 1;
+			$cacheEntry{'VALID'} = '1';
+			Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
+			$playlist->MoveNext unless $playlist->EOF;
+		}
+		
+		while (defined $auto && !$auto->EOF) {
+			my $name= $auto->Fields('name')->value;
+			#$name =~ s/\+//g;
+			#$name =~ s/[\{\[]/\(/g;
+			#$name =~ s/[\}\]]/\)/g;
+			my %cacheEntry = ();
+			my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
+			if ($playlists[-1] ne $name) {
+				push @playlists, $url;
+				$::d_moodlogic && msg("Found MoodLogic Auto Playlist: $url\n");
+			}
+			$::d_moodlogic && msg("got a playlist ($url) named $name\n");
+			# add this playlist to our playlist library
+			$cacheEntry{'TITLE'} = Slim::Utils::Prefs::get('MoodLogicplaylistprefix') . $name . Slim::Utils::Prefs::get('MoodLogicplaylistsuffix');
+			$cacheEntry{'LIST'} = getPlaylistItems($auto);
+			$cacheEntry{'CT'} = 'itu';
+			$cacheEntry{'TAG'} = 1;
+			$cacheEntry{'VALID'} = '1';
+			Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
+			$auto->MoveNext unless $auto->EOF;
+		}
+		
 		if (defined $album_data[0] && $album_data[0] == $song_id && $album_data[1] ne "") {
 			$cacheEntry{'ALBUM'} = $album_data[1];
 			$cacheEntry{'TRACKNUM'} = $album_data[2];
+			$cacheEntry{'BITRATE'} = $album_data[3];
+			$cacheEntry{'YEAR'} = $album_data[4];
 		}
-		
 		$cacheEntry{'CT'} = 'mp3';
 		$cacheEntry{'TAG'} = 1;
 		$cacheEntry{'VALID'} = 1;
@@ -216,6 +299,8 @@ sub exportFunction {
 		$cacheEntry{'GENRE'} = $genre_hash{$browser->FLT_Song_MGID($i)}[0] if (defined $genre_hash{$browser->FLT_Song_MGID($i)});
 		$cacheEntry{'SECS'} = int($mixer->Mix_SongDuration(-1) / 1000);
 		$cacheEntry{'SIZE'} = -s $filename;
+		$cacheEntry{'OFFSET'} = 0; 	 
+		$cacheEntry{'BLOCKALIGN'} = 1;
 		
 		$cacheEntry{'MOODLOGIC_SONG_ID'} = $song_id;
 		$cacheEntry{'MOODLOGIC_ARTIST_ID'} = $browser->FLT_Song_AID($i);
@@ -228,80 +313,86 @@ sub exportFunction {
 			
 		Slim::Music::Info::updateCacheEntry($filename, \%cacheEntry);
 		Slim::Music::Info::updateGenreCache($filename, \%cacheEntry);
+		if ($cacheEntry{'ALBUM'} && !exists $artwork{$cacheEntry{'ALBUM'}} && !defined Slim::Music::Info::cacheItem($filename,'THUMB')) { 	 
+			$artwork{$cacheEntry{'ALBUM'}} = $filename; 	 
+			$::d_artwork && msg("$cacheEntry{'ALBUM'} refers to $filename\n"); 	 
+		}
 		Slim::Music::Info::updateGenreMixCache(\%cacheEntry);
 		Slim::Music::Info::updateArtistMixCache(\%cacheEntry);
 	}
 
-        $rs->Close;
-        $conn->Close;
-        
-        doneScanning();
-	$::d_moodlogic && msg("exportFunction: finished export ($count records)\n");
+	$rs->Close;
+	$playlist->Close;
+	$auto->Close;
+	$conn->Close;
+	
+	doneScanning();
+	$::d_moodlogic && msg("exportFunction: finished export ($count records, ".scalar @playlists." playlists)\n");
 	return 0;
 }
 
 sub getMoodWheel {
-    my $id = shift @_;
-    my $for = shift @_;
-    my @enabled_moods = ();
-        
-    if ($for eq "genre") {
-        $mixer->{Seed_MGID} = $id;
-        $mixer->{MixMode} = 3;
-    } elsif ($for eq "artist") {
-        $mixer->{Seed_AID} = $id;
-        $mixer->{MixMode} = 2;
-    } else {
-        $::d_moodlogic && msg('no/unknown type specified for mood wheel');
-        return undef;
-    }
-       
-    push @enabled_moods, $mood_names[1] if ($mixer->{MF_1_Enabled});
-    push @enabled_moods, $mood_names[2] if ($mixer->{MF_2_Enabled});
-    push @enabled_moods, $mood_names[3] if ($mixer->{MF_3_Enabled});
-    push @enabled_moods, $mood_names[4] if ($mixer->{MF_4_Enabled});
-    push @enabled_moods, $mood_names[5] if ($mixer->{MF_5_Enabled});
-    push @enabled_moods, $mood_names[6] if ($mixer->{MF_6_Enabled});
-    push @enabled_moods, $mood_names[0] if ($mixer->{MF_0_Enabled});
-    
-    return @enabled_moods;
+	my $id = shift @_;
+	my $for = shift @_;
+	my @enabled_moods = ();
+	
+	if ($for eq "genre") {
+		$mixer->{Seed_MGID} = $id;
+		$mixer->{MixMode} = 3;
+	} elsif ($for eq "artist") {
+		$mixer->{Seed_AID} = $id;
+		$mixer->{MixMode} = 2;
+	} else {
+		$::d_moodlogic && msg('no/unknown type specified for mood wheel');
+		return undef;
+	}
+	
+	push @enabled_moods, $mood_names[1] if ($mixer->{MF_1_Enabled});
+	push @enabled_moods, $mood_names[3] if ($mixer->{MF_3_Enabled});
+	push @enabled_moods, $mood_names[4] if ($mixer->{MF_4_Enabled});
+	push @enabled_moods, $mood_names[6] if ($mixer->{MF_6_Enabled});
+	push @enabled_moods, $mood_names[0] if ($mixer->{MF_0_Enabled});
+	
+	return @enabled_moods;
 }
 
 sub getMix {
-    my $id = shift @_;
-    my $mood = shift @_;
-    my $for = shift @_;
-    my @instant_mix = ();
-        
-    $mixer->{VarietyCombo} = 0; # resets mixer
-
-    if ($for eq "song") {
-        $mixer->{Seed_SID} = $id;
-        $mixer->{MixMode} = 0;
-    } elsif (defined $mood && defined $mood_hash{$mood}) {
-        $mixer->{MoodField} = $mood_hash{$mood};
-        if ($for eq "artist") {
-            $mixer->{Seed_AID} = $id;
-            $mixer->{MixMode} = 2;
-        } elsif ($for eq "genre") {
-            $mixer->{Seed_MGID} = $id;
-            $mixer->{MixMode} = 3;
-        } else {
-            $::d_moodlogic && msg("no valid type specified for instant mix");
-            return undef;
-        }
+	my $id = shift @_;
+	my $mood = shift @_;
+	my $for = shift @_;
+	my @instant_mix = ();
+	
+	$mixer->{VarietyCombo} = 0; # resets mixer
+	if (defined $mood) {$::d_moodlogic && msg("Create $mood mix for $for $id\n")};
+	
+	if ($for eq "song") {
+		$mixer->{Seed_SID} = $id;
+		$mixer->{MixMode} = 0;
+	} elsif (defined $mood && defined $mood_hash{$mood}) {
+		$mixer->{MoodField} = $mood_hash{$mood};
+		if ($for eq "artist") {
+			$mixer->{Seed_AID} = $id;
+			$mixer->{MixMode} = 2;
+		} elsif ($for eq "genre") {
+			$mixer->{Seed_MGID} = $id;
+			$mixer->{MixMode} = 3;
+		} else {
+			$::d_moodlogic && msg("no valid type specified for instant mix");
+			return undef;
+		}
 	} else {
 		$::d_moodlogic && msg("no valid mood specified for instant mix");
 		return undef;
 	}
 
-	$mixer->Process();      # the VarietyCombo property can only be set
-							# after an initial mix has been created
-	my $count = Slim::Utils::Prefs::get('instantMixMax') || $instantMixMax;
-	my $variety = Slim::Utils::Prefs::get('varietyCombo') || $instantMixVariety;
+	$mixer->Process();	# the VarietyCombo property can only be set
+						# after an initial mix has been created
+	my $count = Slim::Utils::Prefs::get('instantMixMax');
+	my $variety = Slim::Utils::Prefs::get('varietyCombo');
 	while ($mixer->Mix_PlaylistSongCount() < $count && $mixer->{VarietyCombo} > $variety)
 	{
-		$mixer->{VarietyCombo} = $mixer->{VarietyCombo} - 10;
+		# $mixer->{VarietyCombo} = 0 causes a mixer reset, so we have to avoid it.
+		$mixer->{VarietyCombo} = $mixer->{VarietyCombo} == 10 ? $mixer->{VarietyCombo} - 9 : $mixer->{VarietyCombo} - 10;
 		$mixer->Process(); # recreate mix
 	}
 
@@ -312,7 +403,7 @@ sub getMix {
 	}
 
 	return @instant_mix;
- }
+}
 
 sub event_hook {
 	my ($mixer,$event,@args) = @_;
@@ -327,7 +418,7 @@ sub OLEError {
 }
 
 sub DESTROY {
-        Win32::OLE->Uninitialize();
+	Win32::OLE->Uninitialize();
 }
 
 1;

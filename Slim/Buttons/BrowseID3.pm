@@ -1,5 +1,5 @@
 package Slim::Buttons::BrowseID3;
-# $Id: BrowseID3.pm,v 1.13 2004/04/03 02:33:43 kdf Exp $
+# $Id: BrowseID3.pm,v 1.14 2004/04/22 05:47:10 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -262,12 +262,8 @@ my %functions = (
 	
 			# if we've chosen a particular song
 			if (picked($genre) && picked($artist) && picked($album) && Slim::Music::Info::isSongMixable($currentItem)) {
-					Slim::Buttons::Common::pushMode($client, 'moodlogic_instant_mix', {'song' => $currentItem});
-					if (Slim::Utils::Prefs::get('animationLevel') == 3) {
-						Slim::Buttons::InstantMix::specialPushLeft($client, 0, @oldlines);
-					} else {
-						Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
-					}
+					Slim::Buttons::Common::pushMode($client, 'moodlogic_variety_combo', {'song' => $currentItem});
+					Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
 			# if we've picked an artist 
 			} elsif (picked($genre) && ! picked($album) && Slim::Music::Info::isArtistMixable($currentItem)) {
 					Slim::Buttons::Common::pushMode($client, 'moodlogic_mood_wheel', {'artist' => $currentItem});

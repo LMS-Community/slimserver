@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.103 2004/04/21 22:47:54 dean Exp $
+# $Id: Info.pm,v 1.104 2004/04/22 05:47:12 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1034,7 +1034,7 @@ sub standardTitle {
 	my $title;
 	my $format;
 
-	if (isITunesPlaylistURL($fullpath)) {
+	if (isITunesPlaylistURL($fullpath) || isMoodLogicPlaylistURL($fullpath)) {
 		$format = 'TITLE';
 	} elsif (defined($client)) {
 		#in array syntax this would be $titleFormat[$clientTitleFormat[$clientTitleFormatCurr]]
@@ -2632,6 +2632,12 @@ sub isITunesPlaylistURL {
 	return (defined($url) && ($url =~ /^itunesplaylist:/i));
 }
 
+sub isMoodLogicPlaylistURL { 
+	my $url = shift;
+
+	return (defined($url) && ($url =~ /^moodlogicplaylist:/i));
+}
+
 sub isHTTPURL {
 	my $url = shift;
 
@@ -2640,7 +2646,7 @@ sub isHTTPURL {
 
 sub isURL {
 	my $url = shift;
-	return (defined($url) && ($url =~ /^(http|icy|itunesplaylist|file):/i));
+	return (defined($url) && ($url =~ /^(http|icy|itunesplaylist|moodlogicplaylist|file):/i));
 }
 
 sub isType {

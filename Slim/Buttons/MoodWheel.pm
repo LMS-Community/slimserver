@@ -1,6 +1,10 @@
 package Slim::Buttons::MoodWheel;
+#$Id: MoodWheel.pm,v 1.4 2004/04/22 05:47:10 kdf Exp $
 
-# license bla
+# SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
 
 use strict;
 use Slim::Buttons::Common;
@@ -16,14 +20,14 @@ my %functions = (
 	
 	'up' => sub  {
 		my $client = shift;
-                my $count = scalar @browseMoodChoices;
-                
+		my $count = scalar @browseMoodChoices;
+		
 		if ($count < 2) {
 			Slim::Display::Animation::bumpUp($client);
 		} else {
-                    my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index'));
-                    setSelection($client, 'mood_wheel_index', $newposition);
-                    $client->update();
+			my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index'));
+			setSelection($client, 'mood_wheel_index', $newposition);
+			$client->update();
 		}
 	},
 	
@@ -34,9 +38,9 @@ my %functions = (
 		if ($count < 2) {
 			Slim::Display::Animation::bumpDown($client);
 		} else {
-                    my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index'));
-                    setSelection($client, 'mood_wheel_index', $newposition);
-                    $client->update();
+			my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index'));
+			setSelection($client, 'mood_wheel_index', $newposition);
+			$client->update();
 		}
 	},
 	
@@ -49,12 +53,12 @@ my %functions = (
 		my $client = shift;
 	
 		my @oldlines = Slim::Display::Display::curLines($client);
-		Slim::Buttons::Common::pushMode($client, 'moodlogic_instant_mix', {'genre' => Slim::Buttons::Common::param($client, 'genre'), 'artist' => Slim::Buttons::Common::param($client, 'artist'), 'mood' => $browseMoodChoices[selection($client, 'mood_wheel_index')]});
+		Slim::Buttons::Common::pushMode($client, 'moodlogic_variety_combo', {'genre' => Slim::Buttons::Common::param($client, 'genre'), 'artist' => Slim::Buttons::Common::param($client, 'artist'), 'mood' => $browseMoodChoices[selection($client, 'mood_wheel_index')]});
 		
 		if (Slim::Utils::Prefs::get('animationLevel') == 3) {
-                    Slim::Buttons::InstantMix::specialPushLeft($client, 0, @oldlines);
+			Slim::Buttons::InstantMix::specialPushLeft($client, 0, @oldlines);
 		} else {
-                    Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
+			Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
 		}
 	}
 );
@@ -68,17 +72,17 @@ sub setMode {
 	my $push = shift;
 
 	if (defined Slim::Buttons::Common::param($client, 'genre')) {
-            @browseMoodChoices = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicGenreId(Slim::Buttons::Common::param($client, 'genre')), 'genre');
+		@browseMoodChoices = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicGenreId(Slim::Buttons::Common::param($client, 'genre')), 'genre');
 	} elsif (defined Slim::Buttons::Common::param($client, 'artist')) {
-	    @browseMoodChoices = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicArtistId(Slim::Buttons::Common::param($client, 'artist')), 'artist');
+		@browseMoodChoices = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicArtistId(Slim::Buttons::Common::param($client, 'artist')), 'artist');
 	} else {
-	    die 'no/unknown type specified for mood wheel';
+		die 'no/unknown type specified for mood wheel';
 	}
 
-        if ($push eq "push") {
-            setSelection($client, 'mood_wheel_index', 0);
-        } 
-    
+	if ($push eq "push") {
+		setSelection($client, 'mood_wheel_index', 0);
+	}
+	
 	$client->lines(\&lines);
 }
 
@@ -90,7 +94,7 @@ sub lines {
 	my ($line1, $line2);
 
 	$line1 = string('MOODLOGIC_SELECT_MOOD');
-	$line1 .= sprintf(" (%d ".string('OUT_OF')." %s)", selection($client, 'mood_wheel_index') + 1, scalar @browseMoodChoices);	
+	$line1 .= sprintf(" (%d ".string('OUT_OF')." %s)", selection($client, 'mood_wheel_index') + 1, scalar @browseMoodChoices);
 	$line2 = $browseMoodChoices[selection($client, 'mood_wheel_index')];
 
 	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));

@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.12 2004/02/19 17:38:56 dean Exp $
+# $Id: Browse.pm,v 1.13 2004/04/22 05:47:10 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -251,7 +251,7 @@ sub loadDir {
 
 	unless (defined($abspwd) && 
 			(Slim::Music::Info::isHTTPURL($abspwd) || 
-			 Slim::Music::Info::isITunesPlaylistURL($abspwd) || 
+			 Slim::Music::Info::isITunesPlaylistURL($abspwd) || Slim::Music::Info::isMoodLogicPlaylistURL($abspwd) ||
 			 (-e $abspwd)
 			)
 		   ) {
@@ -285,7 +285,12 @@ sub opendir_done {
 	if ($pwd eq '__playlists' && Slim::Music::iTunes::useiTunesLibrary()) {
 		$::d_files && msg("adding itunes playlists\n");
 		push @{$client->dirItems}, @{Slim::Music::iTunes::playlists()};
-	} 
+	}
+
+	if ($pwd eq '__playlists' && Slim::Music::MoodLogic::useMoodLogic()) {
+		$::d_files && msg("adding itunes playlists\n");
+		push @{$client->dirItems}, @{Slim::Music::MoodLogic::playlists()};
+	}
 
 	# in case we were blocked...
 	Slim::Buttons::Block::unblock($client);
