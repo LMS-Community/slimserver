@@ -1,12 +1,12 @@
 <!-- Page songinfo.html -->
-[SET title [S {playermodel}]:[S SONG_INFO]] [SET pageicon MUSIC]
+[% title = '[% playermodel | string %' %]:[% "SONG_INFO" | string %]] [% pageicon = 'MUSIC' %]
 
-[INCLUDE pageheader.html]
-[INCLUDE menu.html]
+[% PROCESS pageheader.html %]
+[% PROCESS menu.html %]
 
 <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#EEEEEE">
 <tr><td width="40" align="left"><img src="html/images/leftcorner.gif"></td>
-<td><p align="center"><font class="pagebartext">[S SONG_INFO] [S FOR] <b>{title}</b></p></td>
+<td><p align="center"><font class="pagebartext">[% "SONG_INFO" | string %] [% "FOR" | string %] <b>[% title %]</b></p></td>
 <td width="40" align="right"><img src="html/images/rightcorner.gif"></td>
 </tr>
 </table>
@@ -15,9 +15,9 @@
 
 
 
-[IF coverart]
-<a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}"><p align="center"><img src="/music/{%itempath}/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a>
-[/IF]
+[% IF coverart %]
+<a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]"><p align="center"><img src="/music/[% itempath | uri %]/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a>
+[% END %]
 
 <br><br>
 
@@ -27,13 +27,13 @@
 <tr><td width="40" align="left"><img src="html/images/lefttopcorner.gif"></td><td></td><td width="40" align="right"><img src="html/images/righttopcorner.gif"></td></tr>
 <tr><td></td><td align="center">
 
-<a href="{webroot}{path}?{queryparams}&p0=playlist&amp;p1=play&amp;p2={%itempath}&amp;player={%player}" style="text-decoration:none">
-<font class="menutext">[S PLAY]</a>&nbsp;&nbsp;&nbsp;<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=insert&p2={%itempath}&player={%player}">
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" style="text-decoration:none">
+<font class="menutext">[% "PLAY" | string %]</a>&nbsp;&nbsp;&nbsp;<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% player | uri %]">
 
-<font class="menutext">[S NEXT]</a>
-&nbsp;<a href="{webroot}{path}?{queryparams}&p0=playlist&amp;p1=append&amp;p2={%itempath}&amp;player={%player}" style="text-decoration:none">
+<font class="menutext">[% "NEXT" | string %]</a>
+&nbsp;<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" style="text-decoration:none">
 
-<Font class="menutext">&nbsp;[S ADD]</a>&nbsp;</small></td><td></td></tr>
+<Font class="menutext">&nbsp;[% "ADD" | string %]</a>&nbsp;</small></td><td></td></tr>
 
 <td align="left"><img src="html/images/leftcorner.gif"></td><td></td><td><img src="html/images/rightcorner.gif"></td>
 </tr>
@@ -59,124 +59,124 @@
         <tr>
                 <td>
                         <nobr><font size="+1">
-                                [S TITLE]:
+                                [% "TITLE" | string %]:
                         </nobr>
                 </td>
                 <td>
-                        <font size="+2">{title}
+                        <font size="+2">[% title %]
                 </td>
         </tr>
-        [IF artist]
+        [% IF artist %]
         <tr>
                 <td><font size="+1">
-                        [S ARTIST]:
+                        [% "ARTIST" | string %]:
                 </td>
                 <td>
-                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}"style="text-decoration:none">{artist}</a>
+                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]"style="text-decoration:none">[% artist %]</a>
                 </td>
         </tr>
-        [/IF] [IF composer]
+        [% END %] [% IF composer %]
         <tr>
                 <td><font size="+1">
-                        [S COMPOSER]:
+                        [% "COMPOSER" | string %]:
                 </td>
                 <td>
-                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist={%composer}&amp;player={%player}"style="text-decoration:none">{composer}</a>
+                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist=[% composer | uri %]&amp;player=[% player | uri %]"style="text-decoration:none">[% composer %]</a>
                 </td>
         </tr>
-       [/IF] [IF conductor]
+       [% END %] [% IF conductor %]
         <tr>
                 <td><font size="+1">
-                        [S CONDUCTOR]:
+                        [% "CONDUCTOR" | string %]:
                 </td>
                 <td>
-                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist={%conductor}&amp;player={%player}"style="text-decoration:none">{conductor}</a>
+                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist=[% conductor | uri %]&amp;player=[% player | uri %]"style="text-decoration:none">[% conductor %]</a>
                 </td>
         </tr>
-        [/IF] [IF album]
+        [% END %] [% IF album %]
         <tr>
                 <td><font size="+1">
-                        [S ALBUM]:
+                        [% "ALBUM" | string %]:
                 </td>
                 <td>
-                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist=*&amp;album={%album}&amp;player={%player}"style="text-decoration:none">{album}</a>
+                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist=*&amp;album=[% album | uri %]&amp;player=[% player | uri %]"style="text-decoration:none">[% album %]</a>
                 </td>
         </tr>
-        [/IF] [IF genre]
+        [% END %] [% IF genre %]
         <tr>
                 <td><font size="+1">
-                        [S GENRE]:
+                        [% "GENRE" | string %]:
                 </td>
                 <td>
-                        <font size="+2"><a href="browseid3.html?genre={%genre}&amp;player={%player}"style="text-decoration:none">{genre}
+                        <font size="+2"><a href="browseid3.html?genre=[% genre | uri %]&amp;player=[% player | uri %]"style="text-decoration:none">[% genre %]
                 </td>
         </tr><tr><td height="30"></td><td>
-        [/IF] [IF track]
+        [% END %] [% IF track %]
         <tr>
                 <td><font size="+1">
-                        [S TRACK]:
+                        [% "TRACK" | string %]:
                 </td>
                 <td>
-                        <font size="+1">{track}
+                        <font size="+1">[% track %]
                 </td>
         </tr>
-        [/IF] [IF duration]
+        [% END %] [% IF duration %]
         <tr>
                 <td><font size="+1">
-                        [S LENGTH]:
+                        [% "LENGTH" | string %]:
                 </td>
                 <td>
-                        <font size="+1">{duration}
+                        <font size="+1">[% duration %]
                 </td>
         </tr>
-        [/IF] [IF year]
+        [% END %] [% IF year %]
         <tr>
                 <td><font size="+1">
-                        [S YEAR]:
+                        [% "YEAR" | string %]:
                 </td>
                 <td>
-                        <font size="+1">{year}
+                        <font size="+1">[% year %]
                 </td>
         </tr>
-        [/IF] [IF comment]
+        [% END %] [% IF comment %]
         <tr>
                 <td><font size="+1">
-                        [S COMMENT]:
+                        [% "COMMENT" | string %]:
                 </td>
                 <td>
-                        <font size="+1">{comment}
+                        <font size="+1">[% comment %]
                 </td>
         </tr>
-        [/IF] [IF filelength]
+        [% END %] [% IF filelength %]
         <tr>
                 <td><font size="+1">
-                        [S FILELENGTH]:
+                        [% "FILELENGTH" | string %]:
                 </td>
                 <td>
-                        <font size="+1">{filelength} [S BYTES]
+                        <font size="+1">[% filelength %] [% "BYTES" | string %]
                 </td>
         </tr>
-        [/IF] [IF bitrate]
+        [% END %] [% IF bitrate %]
         <tr>
                 <td><font size="+1">
-                        [S BITRATE]:
+                        [% "BITRATE" | string %]:
                 </td>
                 <td>
-                        <font size="+1">{bitrate}
+                        <font size="+1">[% bitrate %]
                 </td>
         </tr>
-        [/IF] [IF tagversion]
+        [% END %] [% IF tagversion %]
         <tr>
                 <td><font size="+1">
-                        [S TAGVERSION]:
+                        [% "TAGVERSION" | string %]:
                 </td>
                 <td>
-                        <font size="+1">{tagversion}
+                        <font size="+1">[% tagversion %]
                 </td>
         </tr>
-        [/IF]
+        [% END %]
 </table>
 
 </font>
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]
 <!-- /Page songinfo.html -->

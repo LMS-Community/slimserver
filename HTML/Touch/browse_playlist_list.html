@@ -1,10 +1,10 @@
 <!-- Element browser_playlist_list -->
 <table width="100%" border="0" cellspacing="0">
-<tr [IFN odd]bgcolor="#EEEEEE"[/IFN]>
+<tr [% IF not odd %]bgcolor="#EEEEEE"[% END %]>
   <td >
-      [IF anchor]<a name="{anchor}"></a>[/IF]
-      [IF descend]&nbsp;<a href="browse.html?dir={%descend}&player={%player}"><font class="itemtext">{&title}</a> [/IF]
-      [IFN descend]&nbsp;<a href="songinfo.html?songurl={%itempath}&player={%player}"><font class="itemtext">:{&title}</a> [/IFN]
+      [% IF anchor %]<a name="[% anchor %]"></a>[% END %]
+      [% IF descend %]&nbsp;<a href="browse.html?dir=[% descend | uri %]&player=[% player | uri %]"><font class="itemtext">[% title | html %]</a> [% END %]
+      [% IF not descend %]&nbsp;<a href="songinfo.html?songurl=[% itempath | uri %]&player=[% player | uri %]"><font class="itemtext">:[% title | html %]</a> [% END %]
   </td>
 
 <td align="right" style="padding-right:15px;">
@@ -12,22 +12,22 @@
 
 <nobr>
 
-<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=play&p2={%itempath}&player={%player}"><font class="actiontext">[S PLAY]</a>
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]"><font class="actiontext">[% "PLAY" | string %]</a>
 
 <font class="actiontext">|
 
-<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=insert&p2={%itempath}&player={%player}">
-<font class="actiontext">[S NEXT]</a>
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% player | uri %]">
+<font class="actiontext">[% "NEXT" | string %]</a>
 
 <font class="actiontext">|
 
-<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=add&p2={%itempath}&player={%player}">
-<font class="actiontext">[S ADD]</a>
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=add&p2=[% itempath | uri %]&player=[% player | uri %]">
+<font class="actiontext">[% "ADD" | string %]</a>
 
 <font class="actiontext">|
 
-<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=deleteitem&p2={%itempath}&player={%player}">
-<font class="actiontext">[S DELETE]</a>
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=deleteitem&p2=[% itempath | uri %]&player=[% player | uri %]">
+<font class="actiontext">[% "DELETE" | string %]</a>
 
 
 

@@ -2,46 +2,46 @@
 
 <table width=100% border="0" cellspacing="0">
 
-<tr [IFN odd]bgcolor="#EEEEEE"[/IFN]>
+<tr [% IF not odd %]bgcolor="#EEEEEE"[% END %]>
   <td>
-      [IF anchor]<a name="{anchor}"></a>[/IF]
-      [IF  descend]&nbsp;<a href="browseid3.html?song={%song}&artist={%artist}&album={%album}&genre={%genre}&player={%player}">
-<font class="itemtext">{title}</a>[/IF]
-      [IFN descend]&nbsp;<a href="songinfo.html?songurl={%itempath}&player={%player}"><font class="itemtext">:{title}</a>[/IFN]
+      [% IF anchor %]<a name="[% anchor %]"></a>[% END %]
+      [% IF descend %]&nbsp;<a href="browseid3.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]">
+<font class="itemtext">[% title %]</a>[% END %]
+      [% IF not descend %]&nbsp;<a href="songinfo.html?songurl=[% itempath | uri %]&player=[% player | uri %]"><font class="itemtext">:[% title %]</a>[% END %]
   </td>
 <td align="right" style="padding-right:15px;">
       
 <nobr>
-[IF  descend]<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=loadalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}">
-<font class="actiontext">[S PLAY]</a>[/IF]
+[% IF descend %]<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=loadalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]">
+<font class="actiontext">[% "PLAY" | string %]</a>[% END %]
 
 
-[IFN descend]<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=play&p2={%itempath}&player={%player}"><font class="actiontext">[S PLAY]</a>[/IFN]
+[% IF not descend %]<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]"><font class="actiontext">[% "PLAY" | string %]</a>[% END %]
 
 |&nbsp;
 
-[IF  descend]
-<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=insertalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}">
-<font class="actiontext">[S NEXT]</a>[/IF]
+[% IF descend %]
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=insertalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]">
+<font class="actiontext">[% "NEXT" | string %]</a>[% END %]
  
 
-[IFN descend]
-<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=insert&p2={%itempath}&player={%player}"><font class="actiontext">[S NEXT]</a>[/IFN]
+[% IF not descend %]
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% player | uri %]"><font class="actiontext">[% "NEXT" | string %]</a>[% END %]
 
 |&nbsp;
 
-[IF descend]
-<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}">
-<font class="actiontext">[S ADD]</a>[/IF]
+[% IF descend %]
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]">
+<font class="actiontext">[% "ADD" | string %]</a>[% END %]
       
 
-[IFN descend]
-<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=append&p2={%itempath}&player={%player}"><font class="actiontext">[S ADD]</a>[/IFN]
+[% IF not descend %]
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]"><font class="actiontext">[% "ADD" | string %]</a>[% END %]
 </nobr>
 
 |&nbsp;
 
-<a href="{webroot}{path}?{queryparams}&p0=playlist&p1=deletealbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}"><font class="actiontext">[S DELETE]</a>
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=deletealbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]"><font class="actiontext">[% "DELETE" | string %]</a>
 
 
 

@@ -5,28 +5,28 @@
 
 <STYLE type="text/css">
 <!--
-A &lbrc; text-decoration:none; &rbrc;
+A { text-decoration:none; }
 -->
 </STYLE>
 </head>
 </html>
 
 
-[SET title [S {playermodel}]:[S PLAYING]] [SET pageicon MUSIC] [SET setup 1] [SET music 0][SET playlist 0] [SET status 1]
+[% title = '[% playermodel | string %' %]:[% "PLAYING" | string %]] [% pageicon = 'MUSIC' %] [% setup = '1' %] [% music = '0' %][% playlist = '0' %] [% status = '1' %]
 
-[INCLUDE pageheader.html]
-[INCLUDE menu.html]
+[% PROCESS pageheader.html %]
+[% PROCESS menu.html %]
 
 <table width=100% bgcolor="#EEEEEE" border="0" cellspacing="0" cellpadding="0">
 <tr><td height="15" colspan="5"></td></tr>
 
 <tr><td width="15"></td><td colspan="3" rowspan="2" width="500">
-<font class="smalltext">[IF modeplay][S PLAYING][/IF]
-[IF modepause][S PAUSED_ON][/IF]
-[IF modestop][S STOPPED_ON][/IF]
-[IF currentsong]<b>{currentsong}</b>&nbsp;[S OUT_OF]<b>&nbsp;{songcount}</b>&nbsp;[/IF]
+<font class="smalltext">[% IF modeplay %][% "PLAYING" | string %][% END %]
+[% IF modepause %][% "PAUSED_ON" | string %][% END %]
+[% IF modestop %][% "STOPPED_ON" | string %][% END %]
+[% IF currentsong %]<b>[% currentsong %]</b>&nbsp;[% "OUT_OF" | string %]<b>&nbsp;[% songcount %]</b>&nbsp;[% END %]
 </font>
-<a href="status.html?p0=playlist&p1=zap&p2={thissongnum}&player={%player}&start={start}">[zap]</a>
+<a href="status.html?p0=playlist&p1=zap&p2=[% thissongnum %]&player=[% player | uri %]&start=[% start %]">[zap]</a>
 <font class="actiontext">
 </td>
 
@@ -34,14 +34,14 @@ A &lbrc; text-decoration:none; &rbrc;
 
 <td rowspan="6" colspan="5">	   
 
-[IF coverart]
-<a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}"><p align="right"><img src="/music/{%itempath}/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a></p>
-[/IF]
+[% IF coverart %]
+<a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]"><p align="right"><img src="/music/[% itempath | uri %]/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a></p>
+[% END %]
    
 
-[IFN coverart]
+[% IF not coverart %]
 <p align="right"><img src="html/images/nocoverart.gif" height="220" STYLE="border: dashed #666666 15px"></p>
-[/IFN]
+[% END %]
 
 </td>
 <td width="15"></td>
@@ -49,27 +49,27 @@ A &lbrc; text-decoration:none; &rbrc;
 </tr>
 
 <tr><td height="10"></td></tr>
-<tr><td height="50"></td><td><p align="left"><font class="actiontext">[S TITLE]:&nbsp;&nbsp;</p></td>
+<tr><td height="50"></td><td><p align="left"><font class="actiontext">[% "TITLE" | string %]:&nbsp;&nbsp;</p></td>
 
-[IF songtitle]<td width="500"><a href="songinfo.html?songurl={%itempath}&player={%player}" style="text-decoration:none"><font class="itemtext">{songtitle}</a></td>[/IF]
+[% IF songtitle %]<td width="500"><a href="songinfo.html?songurl=[% itempath | uri %]&player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% songtitle %]</a></td>[% END %]
 
-<tr><td></td><td height="55"><p align="left"><font class="actiontext">[S ARTIST]:&nbsp;&nbsp;</p></td>
+<tr><td></td><td height="55"><p align="left"><font class="actiontext">[% "ARTIST" | string %]:&nbsp;&nbsp;</p></td>
    
-[IF artist]<td><a href="browseid3.html?genre=*&artist={%artist}&player={%player}" style="text-decoration:none"><font class="itemtext">{artist}</a></td>
-[/IF]
+[% IF artist %]<td><a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% artist %]</a></td>
+[% END %]
 </tr><tr>
           
-<td height="55"></td><td><p align="left"><font class="actiontext">[S ALBUM]:&nbsp;&nbsp;</p></td>
-<td>[IF album]<a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" style="text-decoration:none"><font class="itemtext">{album}</a></td></tr>
-[/IF]
+<td height="55"></td><td><p align="left"><font class="actiontext">[% "ALBUM" | string %]:&nbsp;&nbsp;</p></td>
+<td>[% IF album %]<a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% album %]</a></td></tr>
+[% END %]
 
-<tr><td height="55"></td><td><p align="left"><font class="actiontext">[S GENRE]:&nbsp;&nbsp;</p></td>
-[IF genre]<td><a href="browseid3.html?genre={%genre}&player={%player}" style="text-decoration:none"><font class="itemtext">{genre}</a></td>
-[/IF]
+<tr><td height="55"></td><td><p align="left"><font class="actiontext">[% "GENRE" | string %]:&nbsp;&nbsp;</p></td>
+[% IF genre %]<td><a href="browseid3.html?genre=[% genre | uri %]&player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% genre %]</a></td>
+[% END %]
 
 </tr>
 <tr><td colspan="2"><p align="left"><img src="html/images/leftcorner.gif" border="0" width="40" height="40"></p></td>
-<td colspan="7"><p align="left">[IF player_chooser_list]<form method="get" action="{webroot}{path}"><select name="player"onchange="submit()">{player_chooser_list}</select></form>[/IF]
+<td colspan="7"><p align="left">[% IF player_chooser_list %]<form method="get" action="[% webroot %][% path %]"><select name="player"onchange="submit()">[% player_chooser_list %]</select></form>[% END %]
 </td>
 <td colspan="3"><p align="right"><img src="html/images/rightcorner.gif" border="0" width="40" height="40"></p></td>
 
@@ -82,35 +82,35 @@ A &lbrc; text-decoration:none; &rbrc;
 
 <script language="JavaScript">
 <!--
-	var _progressEnd = [IF durationseconds]{durationseconds}+8[/IF][IFN durationseconds]{refresh}[/IFN];
-	var _progressAt = [IF songtime]{songtime}[/IF][IFN songtime]0[/IFN];
+	var _progressEnd = [% IF durationseconds %][% durationseconds %]+8[% END %][% IF not durationseconds %][% refresh %][% END %];
+	var _progressAt = [% IF songtime %][% songtime %][% END %][% IF not songtime %]0[% END %];
 	var p = 1;
 
 // Update the progress dialog with the current state
-function ProgressUpdate()&lbrc;[IF modeplay]_progressAt++;[/IF]	
+function ProgressUpdate(){[% IF modeplay %]_progressAt++;[% END %]	
 	if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
 	if (document.all)
-		&lbrc;
+		{
 			p = (document.body.clientWidth * 0.8 / _progressEnd) * _progressAt;
 			//document.all.progressBar.innerWidth = p+" ";
 			eval("document.progressBar.width=p");
-		&rbrc;
+		}
 
 	else if (document.getElementById)
-		&lbrc;
+		{
 			p = (document.width * 0.8 / _progressEnd) * _progressAt;
 			document.getElementById("progressBar").width=p+" ";
 			//eval("document.progressBar.width=p");
-		&rbrc;
+		}
 			setTimeout("ProgressUpdate()", 1000);
-		&rbrc;
+		}
 
 function Click()
-	&lbrc;
+	{
 		if (document.all||document.getElementById)
 		document.write('<center><table width="80%" border="1" cellspacing="0" cellpadding="0" style="border-color:#EEEEEE;"><td height="5"><img id="progressBar" 		name="progressBar" src="html/images/progress.gif" width="1" height="5"></td></table>');
 		ProgressUpdate()
-	&rbrc;
+	}
 
 if (document.all||document.getElementById)
 	Click()
@@ -124,26 +124,26 @@ if (document.all||document.getElementById)
 <table width=100% bgcolor="#FFFFFF" border="0" cellspacing="0" cellpadding="0">
 <tr align="center">
 
-<td height="70" onclick="location.href='status.html?p0=play&player={%player}'">
-[IF modeplay]<img src="html/images/play[EQ rateval 1]_active[/EQ].gif" border="0" width="55" height="55">[/IF]
-[IFN modeplay]<img src="html/images/play.gif" border="0">[/IFN]</td>
+<td height="70" onclick="location.href='status.html?p0=play&player=[% player | uri %]'">
+[% IF modeplay %]<img src="html/images/play[% IF rateval == '1' %]_active[% END %].gif" border="0" width="55" height="55">[% END %]
+[% IF not modeplay %]<img src="html/images/play.gif" border="0">[% END %]</td>
         
-<td onclick="location.href='status.html?p0=pause&player={%player}'">
-<img src="html/images/pause[IF modepause]_active[/IF].gif" border="0" width="55" height="55"></td>
+<td onclick="location.href='status.html?p0=pause&player=[% player | uri %]'">
+<img src="html/images/pause[% IF modepause %]_active[% END %].gif" border="0" width="55" height="55"></td>
         
-<td onclick="location.href='status.html?p0=stop&player={%player}'">
-<img src="html/images/stop[IF modestop]_active[/IF].gif" border="0" width="55" height="55"></td>   
+<td onclick="location.href='status.html?p0=stop&player=[% player | uri %]'">
+<img src="html/images/stop[% IF modestop %]_active[% END %].gif" border="0" width="55" height="55"></td>   
         
-<td onclick="location.href='status.html?p0=playlist&p1=jump&p2=-1&player={%player}'" onMouseDown="document.prev.src = 'html/images/prev_active.gif';">
+<td onclick="location.href='status.html?p0=playlist&p1=jump&p2=-1&player=[% player | uri %]'" onMouseDown="document.prev.src = 'html/images/prev_active.gif';">
 <img src="html/images/prev.gif" border="0" name="prev" width="55" height="55"></td>
       
-<td onclick="location.href='status.html?p0=rate&p1=-2&player={%player}&start={start}'" onMouseDown="document.rew.src = 'html/images/rew_active.gif';">
-<img src="html/images/rew[LT rateval 0]_active[/LT].gif" border="0" name="rew" width="55" height="55"></td>
+<td onclick="location.href='status.html?p0=rate&p1=-2&player=[% player | uri %]&start=[% start %]'" onMouseDown="document.rew.src = 'html/images/rew_active.gif';">
+<img src="html/images/rew[% IF rateval < '0' %]_active[% END %].gif" border="0" name="rew" width="55" height="55"></td>
 
-<td onclick="location.href='status.html?p0=rate&p1=2&player={%player}&start={start}'" onMouseDown="document.ffw.src = 'html/images/ffw_active.gif';">
-<img src="html/images/ffw[GT rateval 1]_active[/GT].gif" border="0" name="ffw" width="55" height="55"></td>
+<td onclick="location.href='status.html?p0=rate&p1=2&player=[% player | uri %]&start=[% start %]'" onMouseDown="document.ffw.src = 'html/images/ffw_active.gif';">
+<img src="html/images/ffw[% IF rateval > '1' %]_active[% END %].gif" border="0" name="ffw" width="55" height="55"></td>
 
-<td onclick="location.href='status.html?p0=playlist&p1=jump&p2=%2b1&player={%player}'" onMouseDown="document.next.src = 'html/images/next_active.gif';">
+<td onclick="location.href='status.html?p0=playlist&p1=jump&p2=%2b1&player=[% player | uri %]'" onMouseDown="document.next.src = 'html/images/next_active.gif';">
 <img src="html/images/next.gif" border="0" name="next" width="55" height="55"></td>
 
 </tr></table>
@@ -151,100 +151,100 @@ if (document.all||document.getElementById)
 
 <table><tr><td height="10"></td></tr></table>
 <p align="left">
-[IF isplayer]
+[% IF isplayer %]
 <table bgcolor="#FFFFFF" border="0" cellspacing="0" cellpadding="3">
 <tr><td valign="bottom" height="70" width="100"><img src="html/images/vol_symbol.gif"></td>
 
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=5&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ volume 5]_active[/EQ].gif" border="0" width="50" height="6"></td>
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=5&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF volume == '5' %]_active[% END %].gif" border="0" width="50" height="6"></td>
        
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=10&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ volume 10]_active[/EQ].gif" border="0" width="50" height="12"></td>
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=10&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF volume == '10' %]_active[% END %].gif" border="0" width="50" height="12"></td>
 
 
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=15&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ volume 15]_active[/EQ].gif" border="0" width="50" height="18"></td>
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=15&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF volume == '15' %]_active[% END %].gif" border="0" width="50" height="18"></td>
 
 
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=20&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ volume 20]_active[/EQ].gif" border="0" width="50" height="24"></td>
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=20&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF volume == '20' %]_active[% END %].gif" border="0" width="50" height="24"></td>
 
 
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=30&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ volume 30]_active[/EQ].gif" border="0" width="50" height="30"></td>
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=30&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF volume == '30' %]_active[% END %].gif" border="0" width="50" height="30"></td>
 
 
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=40&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ volume 40]_active[/EQ].gif" border="0" width="50" height="36"></td>       
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=40&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF volume == '40' %]_active[% END %].gif" border="0" width="50" height="36"></td>       
 
 
 
-[GT volume 39]
+[% IF volume > '39' %]
 
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=50&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ volume 50]_active[/EQ].gif" border="0" width="50" height="42"></td>
-
-
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=60&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ volume 60]_active[/EQ].gif" border="0" width="50" height="48"></td>
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=50&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF volume == '50' %]_active[% END %].gif" border="0" width="50" height="42"></td>
 
 
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=80&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ volume 80]_active[/EQ].gif" border="0" width="50" height="54"></td>
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=60&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF volume == '60' %]_active[% END %].gif" border="0" width="50" height="48"></td>
 
 
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=100&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ volume 100]_active[/EQ].gif" border="0" width="50" height="60"></td>
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=80&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF volume == '80' %]_active[% END %].gif" border="0" width="50" height="54"></td>
 
-[/GT]
+
+<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=100&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF volume == '100' %]_active[% END %].gif" border="0" width="50" height="60"></td>
+
+[% END %]
 </tr>
 </table>
 </p>
-[/IF]
+[% END %]
 
 
 <br>
 <table width="100%" border="0" cellspacing="0" cellpadding="4">
 <tr><td width="100"><img src="html/images/bass_symbol.gif"></td>
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=10&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ bass 10]_active[/EQ].gif" border="0" width="25" height="3"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=10&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF bass == '10' %]_active[% END %].gif" border="0" width="25" height="3"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=20&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ bass 20]_active[/EQ].gif" border="0" width="25" height="6"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=20&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF bass == '20' %]_active[% END %].gif" border="0" width="25" height="6"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=30&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ bass 30]_active[/EQ].gif" border="0" width="25" height="9"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=30&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF bass == '30' %]_active[% END %].gif" border="0" width="25" height="9"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=40&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ bass 40]_active[/EQ].gif" border="0" width="25" height="12"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=40&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF bass == '40' %]_active[% END %].gif" border="0" width="25" height="12"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=50&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ bass 50]_active[/EQ].gif" border="0" width="25" height="15"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=50&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF bass == '50' %]_active[% END %].gif" border="0" width="25" height="15"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=60&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ bass 60]_active[/EQ].gif" border="0" width="25" height="18"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=60&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF bass == '60' %]_active[% END %].gif" border="0" width="25" height="18"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=70&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ bass 70]_active[/EQ].gif" border="0" width="25" height="21"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=70&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF bass == '70' %]_active[% END %].gif" border="0" width="25" height="21"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=80&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ bass 80]_active[/EQ].gif" border="0" width="25" height="24"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=80&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF bass == '80' %]_active[% END %].gif" border="0" width="25" height="24"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=90&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ bass 90]_active[/EQ].gif" border="0" width="25" height="27"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=90&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF bass == '90' %]_active[% END %].gif" border="0" width="25" height="27"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=100&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ bass 100]_active[/EQ].gif" border="0" width="25" height="30"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=100&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF bass == '100' %]_active[% END %].gif" border="0" width="25" height="30"></td>
 <td></td>
 </tr></table>
 
@@ -255,44 +255,44 @@ if (document.all||document.getElementById)
 
 <tr><td width="100"><img src="html/images/treble_symbol.gif"></td>
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=10&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ treble 10]_active[/EQ].gif" border="0" width="25" height="3"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=10&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF treble == '10' %]_active[% END %].gif" border="0" width="25" height="3"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=20&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ treble 20]_active[/EQ].gif" border="0" width="25" height="6"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=20&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF treble == '20' %]_active[% END %].gif" border="0" width="25" height="6"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=30&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ treble 30]_active[/EQ].gif" border="0" width="25" height="9"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=30&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF treble == '30' %]_active[% END %].gif" border="0" width="25" height="9"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=40&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ treble 40]_active[/EQ].gif" border="0" width="25" height="12"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=40&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF treble == '40' %]_active[% END %].gif" border="0" width="25" height="12"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=50&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ treble 50]_active[/EQ].gif" border="0" width="25" height="15"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=50&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF treble == '50' %]_active[% END %].gif" border="0" width="25" height="15"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=60&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ treble 60]_active[/EQ].gif" border="0" width="25" height="18"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=60&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF treble == '60' %]_active[% END %].gif" border="0" width="25" height="18"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=70&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ treble 70]_active[/EQ].gif" border="0" width="25" height="21"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=70&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF treble == '70' %]_active[% END %].gif" border="0" width="25" height="21"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=80&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ treble 80]_active[/EQ].gif" border="0" width="25" height="24"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=80&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF treble == '80' %]_active[% END %].gif" border="0" width="25" height="24"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=90&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ treble 90]_active[/EQ].gif" border="0" width="25" height="27"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=90&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF treble == '90' %]_active[% END %].gif" border="0" width="25" height="27"></td>
 
 
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=100&player={%player}&start={start}';" valign="bottom">
-<img src="html/images/bar[EQ treble 100]_active[/EQ].gif" border="0" width="25" height="30"></td>
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=100&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF treble == '100' %]_active[% END %].gif" border="0" width="25" height="30"></td>
 
 <td></td>
 
@@ -306,15 +306,15 @@ if (document.all||document.getElementById)
 <table width="100%" border="0" cellspacing="0" cellpadding="7" align="left">
 <tr><td width="100"><img src="html/images/repeat_symbol.gif"></td>
 
-<td width="60" align="center" onclick="location.href='status.html?p0=playlist&p1=repeat&p2=1&player={%player}&start={start}'">
-<img src="html/images/song_symbol[IF repeatone]_active[/IF].gif" border="0" width="40" height="40"></a></td>
+<td width="60" align="center" onclick="location.href='status.html?p0=playlist&p1=repeat&p2=1&player=[% player | uri %]&start=[% start %]'">
+<img src="html/images/song_symbol[% IF repeatone %]_active[% END %].gif" border="0" width="40" height="40"></a></td>
 
 
-<td width="60" align="center" onclick="location.href='status.html?p0=playlist&p1=repeat&p2=2&player={%player}&start={start}'">
-<img src="html/images/playlist_symbol[IF repeatall]_active[/IF].gif" border="0" width="40" height="40"></a></td>
+<td width="60" align="center" onclick="location.href='status.html?p0=playlist&p1=repeat&p2=2&player=[% player | uri %]&start=[% start %]'">
+<img src="html/images/playlist_symbol[% IF repeatall %]_active[% END %].gif" border="0" width="40" height="40"></a></td>
 
-<td width="60" align="center" onclick="location.href='status.html?p0=playlist&p1=repeat&p2=0&player={%player}&start={start}'">
-<img src="html/images/off_symbol[IF repeatoff]_active[/IF].gif" border="0" width="40" height="40"></a></td>
+<td width="60" align="center" onclick="location.href='status.html?p0=playlist&p1=repeat&p2=0&player=[% player | uri %]&start=[% start %]'">
+<img src="html/images/off_symbol[% IF repeatoff %]_active[% END %].gif" border="0" width="40" height="40"></a></td>
 
 
 <td width="60"></td>
@@ -327,16 +327,16 @@ if (document.all||document.getElementById)
 
 <td><img src="html/images/shuffle_symbol.gif"></td>
 
-<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=1&player={%player}'">
-<img src="html/images/song_symbol[IF shuffleon]_active[/IF].gif" border="0" width="40" height="40"></a></td>
+<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=1&player=[% player | uri %]'">
+<img src="html/images/song_symbol[% IF shuffleon %]_active[% END %].gif" border="0" width="40" height="40"></a></td>
 
 
-<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=2&player={%player}'">
-<img src="html/images/album_symbol[IF shufflealbum]_active[/IF].gif" border="0" width="40" height="40"></a></td>
+<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=2&player=[% player | uri %]'">
+<img src="html/images/album_symbol[% IF shufflealbum %]_active[% END %].gif" border="0" width="40" height="40"></a></td>
 
 
-<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=0&player={%player}'">
-<img src="html/images/off_symbol[IF shuffleoff]_active[/IF].gif" border="0" width="40" height="40"></a></td>
+<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=0&player=[% player | uri %]'">
+<img src="html/images/off_symbol[% IF shuffleoff %]_active[% END %].gif" border="0" width="40" height="40"></a></td>
 
 <td></td><td></td><td></td></tr>
 
@@ -344,33 +344,33 @@ if (document.all||document.getElementById)
 
 <tr>
 <td>
-<A href="status.html?p0=button&p1=sleep&player={%player}" style="text-decoration:none"><p align="left">
+<A href="status.html?p0=button&p1=sleep&player=[% player | uri %]" style="text-decoration:none"><p align="left">
 <img src="html/images/zzz_symbol.gif" border="0"></a>
 </td>
 
 <td align="center">
-[EQ sleeptime 0]<img src="html/images/Sleep00_active.gif" border="0" width="40" height="40">[/EQ]
-[IF sleeptime]<img src="html/images/Sleep00.gif" border="0" width="40" height="40">[/IF]
+[% IF sleeptime == '0' %]<img src="html/images/Sleep00_active.gif" border="0" width="40" height="40">[% END %]
+[% IF sleeptime %]<img src="html/images/Sleep00.gif" border="0" width="40" height="40">[% END %]
 </td>
 
 <td align="center">
-[EQ sleeptime 15]<img src="html/images/Sleep15_active.gif" border="0" width="40" height="40">[/EQ]
-[NE sleeptime 15]<img src="html/images/Sleep15.gif" border="0" width="40" height="40">[/NE]
+[% IF sleeptime == '15' %]<img src="html/images/Sleep15_active.gif" border="0" width="40" height="40">[% END %]
+[% IF sleeptime != '15' %]<img src="html/images/Sleep15.gif" border="0" width="40" height="40">[% END %]
 </td>
 
 <td align="center">
-[EQ sleeptime 30]<img src="html/images/Sleep30_active.gif" border="0" width="40" height="40">[/EQ]
-[NE sleeptime 30]<img src="html/images/Sleep30.gif" border="0" width="40" height="40">[/NE]
+[% IF sleeptime == '30' %]<img src="html/images/Sleep30_active.gif" border="0" width="40" height="40">[% END %]
+[% IF sleeptime != '30' %]<img src="html/images/Sleep30.gif" border="0" width="40" height="40">[% END %]
 </td>
 
 <td align="center">
-[EQ sleeptime 45]<img src="html/images/Sleep45_active.gif" border="0" width="40" height="40">[/EQ]
-[NE sleeptime 45]<img src="html/images/Sleep45.gif" border="0" width="40" height="40">[/NE]
+[% IF sleeptime == '45' %]<img src="html/images/Sleep45_active.gif" border="0" width="40" height="40">[% END %]
+[% IF sleeptime != '45' %]<img src="html/images/Sleep45.gif" border="0" width="40" height="40">[% END %]
 </td>
 
 <td align="center">
-[EQ sleeptime 60]<img src="html/images/Sleep60_active.gif" border="0" width="40" height="40">[/EQ]
-[NE sleeptime 60]<img src="html/images/Sleep60.gif" border="0" width="40" height="40">[/NE]
+[% IF sleeptime == '60' %]<img src="html/images/Sleep60_active.gif" border="0" width="40" height="40">[% END %]
+[% IF sleeptime != '60' %]<img src="html/images/Sleep60.gif" border="0" width="40" height="40">[% END %]
 </td>
 </tr>
 
@@ -379,5 +379,5 @@ if (document.all||document.getElementById)
 </table>
 </font>
 
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]
 <!-- /Page status.html -->

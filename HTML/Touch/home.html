@@ -1,13 +1,13 @@
 <!-- Page home.html -->
-[SET title [S {playermodel}_HOME]] [SET pageicon MUSIC] [SET browse 1] [SET music 1][SET playlist 0]
+[% title = playermodel _ "_HOME" | string %] [% pageicon = 'MUSIC' %] [% browse = '1' %] [% music = '1' %][% playlist = '0' %]
 
-[INCLUDE pageheader.html]
-[INCLUDE menu.html]
+[% PROCESS pageheader.html %]
+[% PROCESS menu.html %]
 
 
 <table bgcolor="#EEEEEE" width=100% cellspacing="0" cellpadding="0" border="0">
 <tr><td width="40" height="20"></td>
-<td rowspan="2"valign="center"><font class="headertext">[S BROWSE_MUSIC]</td><td width="40"></td></tr>
+<td rowspan="2"valign="center"><font class="headertext">[% "BROWSE_MUSIC" | string %]</td><td width="40"></td></tr>
 <td align="left"><img src="html/images/leftcorner.gif" border="0"></td><td></td>
 <td align="right"><img src="html/images/rightcorner.gif" border="0"></td></tr>
 
@@ -21,58 +21,58 @@
 
 
 <tr>
-<td><a href="browse.html?player={%player}&dir=__playlists"style="text-decoration:none" onMouseDown="document.bild1.src = 'html/images/playlist_active.gif';">
+<td><a href="browse.html?player=[% player | uri %]&dir=__playlists"style="text-decoration:none" onMouseDown="document.bild1.src = 'html/images/playlist_active.gif';">
 <center><img src="html/images/playlist.gif" border="0" name="bild1"></a></td>
 
-<td><a href="browseid3.html?player={%player}"style="text-decoration:none" onMouseDown="document.bild2.src = 'html/images/genre_active.gif';">
+<td><a href="browseid3.html?player=[% player | uri %]"style="text-decoration:none" onMouseDown="document.bild2.src = 'html/images/genre_active.gif';">
 <center><img src="html/images/genre.gif" name="bild2" border="0"></a></td>
 
-<td><a href="browseid3.html?genre=*&player={%player}"style="text-decoration:none" onMouseDown="document.bild3.src = 'html/images/artist_active.gif';">
+<td><a href="browseid3.html?genre=*&player=[% player | uri %]"style="text-decoration:none" onMouseDown="document.bild3.src = 'html/images/artist_active.gif';">
 <center><img src="html/images/artist.gif" name="bild3" border="0"></a></td></tr>
 
 <tr>
-<td align="center"><font class="menutext">[S PLAYLIST]</td>
-<td align="center"><font class="menutext">[S GENRE]</td>
-<td align="center"><font class="menutext">[S ARTIST]</td>
+<td align="center"><font class="menutext">[% "PLAYLIST" | string %]</td>
+<td align="center"><font class="menutext">[% "GENRE" | string %]</td>
+<td align="center"><font class="menutext">[% "ARTIST" | string %]</td>
 </tr>
 <tr><td height="45"></td></tr>
 
 <tr>
-<td><a href="browseid3.html?genre=*&artist=*&player={%player}"style="text-decoration:none" onMouseDown="document.bild4.src = 'html/images/album_active.gif';">
+<td><a href="browseid3.html?genre=*&artist=*&player=[% player | uri %]"style="text-decoration:none" onMouseDown="document.bild4.src = 'html/images/album_active.gif';">
 <center><img src="html/images/album.gif" name="bild4" border="0"></a></td>
 
-<td><a href="browseid3.html?genre=*&artist=*&player={%player}&artwork=1"style="text-decoration:none" onMouseDown="document.bild5.src = 'html/images/artwork_active.gif';">
+<td><a href="browseid3.html?genre=*&artist=*&player=[% player | uri %]&artwork=1"style="text-decoration:none" onMouseDown="document.bild5.src = 'html/images/artwork_active.gif';">
 <center><img src="html/images/artwork.gif" name="bild5" border="0"></a></td>
 
 <td><center><a href="browse.html?dir=__playlists%5cRadio.m3u&player=00%3a04%3a20%3a04%3a06%3a23" style="text-decoration:none" onMouseDown="document.bild8.src = 'html/images/radio_active.gif';"><img src="html/images/radio.gif" name="bild8" border="0"></a>
 </td></tr>
 
 <tr>
-<td align="center"><font class="menutext">[S ALBUM]</td>
-<td align="center"><font class="menutext">[S COVERART]</td>
+<td align="center"><font class="menutext">[% "ALBUM" | string %]</td>
+<td align="center"><font class="menutext">[% "COVERART" | string %]</td>
 <td align="center"><font class="menutext">Radio</td>
 </tr>
 <tr><td height="45"></td></tr>
 <tr>
 
-[IFN nofolder]
+[% IF not nofolder %]
 
-<td><a href="browse.html?player={%player}"style="text-decoration:none" onMouseDown="document.bild6.src = 'html/images/folder_active.gif';">
+<td><a href="browse.html?player=[% player | uri %]"style="text-decoration:none" onMouseDown="document.bild6.src = 'html/images/folder_active.gif';">
 <center><img src="html/images/folder.gif" name="bild6" border="0"></a></td>
 
-[/IFN]
+[% END %]
 
-<td align="center"><a href="search.html?type=artist&player={%player}"style="text-decoration:none" onMouseDown="document.bild7.src = 'html/images/search_active.gif';"><img src="html/images/search.gif" name="bild7" border="0"></a></td>
-<td align="center"><a href="{webroot}hitlist.html" style="text-decoration:none" onMouseDown="document.bild9.src = 'html/images/statistics_active.gif';">
+<td align="center"><a href="search.html?type=artist&player=[% player | uri %]"style="text-decoration:none" onMouseDown="document.bild7.src = 'html/images/search_active.gif';"><img src="html/images/search.gif" name="bild7" border="0"></a></td>
+<td align="center"><a href="[% webroot %]hitlist.html" style="text-decoration:none" onMouseDown="document.bild9.src = 'html/images/statistics_active.gif';">
 <center><img src="html/images/statistics.gif" name="bild9" border="0"></a>
 </tr>
 
 
 <tr>
-[IFN nofolder]
-<td align="center"><font class="menutext">[S MUSIC]</td>
-[/IFN]
-<td align="center"><font class="menutext">[S SEARCH]</td>
+[% IF not nofolder %]
+<td align="center"><font class="menutext">[% "MUSIC" | string %]</td>
+[% END %]
+<td align="center"><font class="menutext">[% "SEARCH" | string %]</td>
 <td align="center"><font class="menutext">Statistics</td>
 </tr>
 
@@ -97,15 +97,15 @@
 
 
 
-[IF song_count]
+[% IF song_count %]
 <table width="100%" bgcolor="#666666"><tr><td width="4"></td><td>
-<font class="statusbartext">[S LIBRARY_CONTAINS] {album_count} [S WITH] {song_count} [S BY] {artist_count}.</td>
+<font class="statusbartext">[% "LIBRARY_CONTAINS" | string %] [% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].</td>
 <td align="right"><a href="html/about.html" style="text-decoration:none"><font class="statusbartext">About</a>&nbsp;|&nbsp;
-<a href="{webroot}setup.html?player={%player}&page=server"><font class="statusbartext">Setup</a>&nbsp;|&nbsp;
-<a href="home.html?p0=rescan" style="text-decoration:none"><font class="statusbartext">[S SETUP_RESCAN]</a></td><td width="4"></td></tr></table>
-[/IF]
+<a href="[% webroot %]setup.html?player=[% player | uri %]&page=server"><font class="statusbartext">Setup</a>&nbsp;|&nbsp;
+<a href="home.html?p0=rescan" style="text-decoration:none"><font class="statusbartext">[% "SETUP_RESCAN" | string %]</a></td><td width="4"></td></tr></table>
+[% END %]
 
 </font>
 
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]
 <!-- /Page home.html -->

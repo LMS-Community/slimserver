@@ -1,38 +1,38 @@
 <!-- Page hitlist.html -->
-[SET title [S MUSIC]] [SET pageicon MUSIC] [SET setup 1] [SET music 0][SET playlist 0] [SET status 1]
+[% title = "MUSIC" | string %] [% pageicon = 'MUSIC' %] [% setup = '1' %] [% music = '0' %][% playlist = '0' %] [% status = '1' %]
 
-[INCLUDE pageheader.html]
-[INCLUDE menu.html]
+[% PROCESS pageheader.html %]
+[% PROCESS menu.html %]
 
 <font face="arial,helvetica">
 
-<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[S STATISTICS]</h4></td></tr></table>
+<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "STATISTICS" | string %]</h4></td></tr></table>
 
 <table cellspacing="0" border="0" cellpadding="4" width="100%">
        <tr>
           <td align="center">
-                {total_song_count} [S SONGS]
+                [% total_song_count %] [% "SONGS" | string %]
           </td>
           <td align="center">
-          {album_count} [S ALBUMS]
+          [% album_count %] [% "ALBUMS" | string %]
           </td>
        </tr>
        <tr align="center">
           <td>
-                {artist_count} [S ARTISTS]
+                [% artist_count %] [% "ARTISTS" | string %]
           </td>
           <td align="center">
-                {genre_count} [S GENRES]
+                [% genre_count %] [% "GENRES" | string %]
           </td>
        </tr>
 </table>
 
-<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[S MOSTPLAYED]</h4></td></tr></table>
+<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "MOSTPLAYED" | string %]</h4></td></tr></table>
 
 <table cellspacing="0" border="0" cellpadding="0" width="100%">
-      {browse_list}
+      [% browse_list %]
 </table>
 
 </font>
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]
 <!-- /Page hitlist.html -->

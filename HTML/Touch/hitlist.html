@@ -1,25 +1,25 @@
 <!-- Page hitlist.html -->
-[SET title [S MUSIC]] [SET pageicon MUSIC] [SET setup 1] [SET music 0][SET playlist 0] [SET status 1]
+[% title = "MUSIC" | string %] [% pageicon = 'MUSIC' %] [% setup = '1' %] [% music = '0' %][% playlist = '0' %] [% status = '1' %]
 
-[INCLUDE pageheader.html]
-[INCLUDE menu.html]
+[% PROCESS pageheader.html %]
+[% PROCESS menu.html %]
 
-<table bgcolor="#EEEEEE" width=100% cellpadding="0" cellspacing="0" border="0"><tr><td width="50%" style="padding-left:40px; padding-top:12px;"><font class="headertext">[S STATISTICS]</td></tr>
+<table bgcolor="#EEEEEE" width=100% cellpadding="0" cellspacing="0" border="0"><tr><td width="50%" style="padding-left:40px; padding-top:12px;"><font class="headertext">[% "STATISTICS" | string %]</td></tr>
 
        <tr>
           <td align="center">
-                {total_song_count} [S SONGS]
+                [% total_song_count %] [% "SONGS" | string %]
           </td>
           <td align="center">
-          {album_count} [S ALBUMS]
+          [% album_count %] [% "ALBUMS" | string %]
           </td>
        </tr>
        <tr align="center">
           <td>
-                {artist_count} [S ARTISTS]
+                [% artist_count %] [% "ARTISTS" | string %]
           </td>
           <td align="center">
-                {genre_count} [S GENRES]
+                [% genre_count %] [% "GENRES" | string %]
           </td>
        </tr>
 </table>
@@ -32,13 +32,13 @@
 
 
 
-<table bgcolor="#FFFFFF" width=100%><tr><td height="30"></td></tr><tr><td style="padding-left:13px"><font class="headertext">[S MOSTPLAYED]</td></tr>
+<table bgcolor="#FFFFFF" width=100%><tr><td height="30"></td></tr><tr><td style="padding-left:13px"><font class="headertext">[% "MOSTPLAYED" | string %]</td></tr>
 <tr><td height="10"></td></tr></table>
 
 <table cellspacing="0" border="0" cellpadding="0" width="100%">
-      {browse_list}
+      [% browse_list %]
 </table>
 
 </font>
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]
 <!-- /Page hitlist.html -->

@@ -1,32 +1,32 @@
 <!-- Page help.html -->
-[SET title [S {playermodel}]:[S HELP]] [SET pageicon help]
+[% title = '[% playermodel | string %' %]:[% "HELP" | string %]] [% pageicon = 'help' %]
 
-[INCLUDE pageheader.html]
-[INCLUDE menu.html]
+[% PROCESS pageheader.html %]
+[% PROCESS menu.html %]
 
 <font face="arial,helvetica">
 <ul>
     <li>
-         <a href="{webroot}html/docs/quickstart.html" target="_top">[S GETTING_STARTED]</a>
+         <a href="[% webroot %]html/docs/quickstart.html" target="_top">[% "GETTING_STARTED" | string %]</a>
     </li>
     <li>
-         <a href="{webroot}html/docs/ipconfig.html" target="_top">[S PLAYER_SETUP]</a>
+         <a href="[% webroot %]html/docs/ipconfig.html" target="_top">[% "PLAYER_SETUP" | string %]</a>
     </li>
     <li>
-         <a href="{webroot}html/docs/interface.html" target="_top">[S USING_REMOTE]</a>
+         <a href="[% webroot %]html/docs/interface.html" target="_top">[% "USING_REMOTE" | string %]</a>
     </li>
     <li>
-         <a href="{webroot}html/docs/help_remote.html" target="_top">[S HELP_REMOTE]</a>
+         <a href="[% webroot %]html/docs/help_remote.html" target="_top">[% "HELP_REMOTE" | string %]</a>
     </li>
     <li>
-         <a href="{webroot}html/docs/radio.html" target="_top">[S RADIO]</a>
+         <a href="[% webroot %]html/docs/radio.html" target="_top">[% "RADIO" | string %]</a>
     </li>
     <li>
-         <a href="{webroot}html/docs/faq.html" target="_top">[S FAQ]</a> </li>
+         <a href="[% webroot %]html/docs/faq.html" target="_top">[% "FAQ" | string %]</a> </li>
     <li>
-         <a href="{webroot}html/docs/index.html">[S TECHNICAL_INFORMATION]</a>
+         <a href="[% webroot %]html/docs/index.html">[% "TECHNICAL_INFORMATION" | string %]</a>
     </li>
 </ul>
 </font>
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]
 <!-- /Page help.html -->

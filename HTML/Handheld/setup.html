@@ -1,45 +1,45 @@
 <!-- Page setup.html -->
-[SET title [S {playermodel}]:{pagetitle}] [SET pageicon MUSIC] [SET setup 1]
+[% title = '[% playermodel | string %' %]:[% pagetitle %]] [% pageicon = 'MUSIC' %] [% setup = '1' %]
 
-[INCLUDE pageheader.html]
-[INCLUDE menu.html]
+[% PROCESS pageheader.html %]
+[% PROCESS menu.html %]
 
 <font face="arial,helvetica">
 
-[IF children]{children}[/IF]
-[IF siblings]{siblings}[/IF]
+[% IF children %][% children %][% END %]
+[% IF siblings %][% siblings %][% END %]
 
-[IF linktree]
-    <br><small>Current Page[S COLON]</small>{linktree}<br>
-[/IF]
+[% IF linktree %]
+    <br><small>Current Page[% "COLON" | string %]</small>[% linktree %]<br>
+[% END %]
 
-[IF warning]
+[% IF warning %]
 <table width="100%" bgcolor="#cfcfcf">
-    <tr><td><b>{warning}</b></td></tr>
+    <tr><td><b>[% warning %]</b></td></tr>
 </table>
-[/IF]
+[% END %]
 
 <form method="get" action="setup.html">
-    <input type=hidden value="{player}" name="player">
-    <input type=hidden value="{playerid}" name="playerid">
-    <input type=hidden value="{page}" name="page">
-    {GroupList}
+    <input type=hidden value="[% player %]" name="player">
+    <input type=hidden value="[% playerid %]" name="playerid">
+    <input type=hidden value="[% page %]" name="page">
+    [% GroupList %]
 </form>
 
-[EQ page player]
-    <h3>[S FORGET_PLAYER]</h3>
-    <p>[S FORGET_PLAYER_DESC]</p>
-    <p><a href="{webroot}home.html?player={%player}&forget={%playerid}">[S FORGET_PLAYER_LINK]</a></p>
+[% IF page == 'player' %]
+    <h3>[% "FORGET_PLAYER" | string %]</h3>
+    <p>[% "FORGET_PLAYER_DESC" | string %]</p>
+    <p><a href="[% webroot %]home.html?player=[% player | uri %]&forget=[% playerid | uri %]">[% "FORGET_PLAYER_LINK" | string %]</a></p>
     <hr>
-[/EQ]
+[% END %]
 
-[IF versionInfo]
+[% IF versionInfo %]
     <table width="100%" bgcolor="#666666">
-        <tr><td align="center"><font color="#ffffff" size="-1">{versionInfo}</td></tr>
+        <tr><td align="center"><font color="#ffffff" size="-1">[% versionInfo %]</td></tr>
     </table>
-[/IF]
+[% END %]
 
 </font>
 
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]
 <!-- /Page setup.html -->

@@ -1,28 +1,28 @@
 <!-- Element status_list.html -->
-<tr [IFN odd]bgcolor="#EEEEEE"[/IFN]>
-   <td ><a name={num}>
-      <p align="right"><font class="numbertext">&nbsp;[EVAL]$hashref->{'num'} +1[/EVAL].&nbsp;</td><td>
-      <a href="songinfo.html?songurl={%songurl}&player={%player}">[IF currentsong]<font class="playingitemtext">&lsqb;&nbsp;[/IF][IFN currentsong]&nbsp;&nbsp;&nbsp;[/IFN]<font class="itemtext">{title}[IF currentsong]<font class="playingitemtext">&nbsp;&rsqb;[/IF]</a>
+<tr [% IF not odd %]bgcolor="#EEEEEE"[% END %]>
+   <td ><a name=[% num %]>
+      <p align="right"><font class="numbertext">&nbsp;[% num + 1 %].&nbsp;</td><td>
+      <a href="songinfo.html?songurl=[% songurl | uri %]&player=[% player | uri %]">[% IF currentsong %]<font class="playingitemtext">[&nbsp;[% END %][% IF not currentsong %]&nbsp;&nbsp;&nbsp;[% END %]<font class="itemtext">[% title %][% IF currentsong %]<font class="playingitemtext">&nbsp;][% END %]</a>
    </td>
    <td align="right"><nobr>
-           <a href="playlist.html?p0=playlist&p1=jump&p2={num}&player={%player}">
-           <font class="actiontext">[S PLAY]
+           <a href="playlist.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]">
+           <font class="actiontext">[% "PLAY" | string %]
            </a>
 	   |
-           <a href="playlist.html?p0=playlist&p1=move&p2={num}&p3={nextsongind}&player={%player}&start={start}">
-	   <font class="actiontext">[S NEXT]
+           <a href="playlist.html?p0=playlist&p1=move&p2=[% num %]&p3=[% nextsongind %]&player=[% player | uri %]&start=[% start %]">
+	   <font class="actiontext">[% "NEXT" | string %]
 	   </a>
 	   |
-           <a href="playlist.html?p0=playlist&p1=move&p2={num}&p3=%2D1&player={%player}&start={start}">
-           <font class="actiontext">[S UP]
+           <a href="playlist.html?p0=playlist&p1=move&p2=[% num %]&p3=%2D1&player=[% player | uri %]&start=[% start %]">
+           <font class="actiontext">[% "UP" | string %]
            </a>
   
-           |<a href="playlist.html?p0=playlist&p1=move&p2={num}&p3=%2B1&player={%player}&start={start}">
-           <font class="actiontext">[S DOWN]
+           |<a href="playlist.html?p0=playlist&p1=move&p2=[% num %]&p3=%2B1&player=[% player | uri %]&start=[% start %]">
+           <font class="actiontext">[% "DOWN" | string %]
            </a>
    
-           |<a href="playlist.html?p0=playlist&p1=delete&p2={num}&player={%player}&start={start}">
-           <font class="actiontext">[S DELETE]
+           |<a href="playlist.html?p0=playlist&p1=delete&p2=[% num %]&player=[% player | uri %]&start=[% start %]">
+           <font class="actiontext">[% "DELETE" | string %]
            </a></td></nobr>
 </tr>
 <!-- /Element status_list.html -->

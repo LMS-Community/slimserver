@@ -49,8 +49,8 @@ return true;
 <table width="100%" bgcolor="#EEEEEE" cellpadding="0" cellspacing="0" border="0">
 
 <tr>
-<td align="left" height="45" valign="bottom" style="padding-left:40px;"><font class="headertext">[S SEARCH]</td>
-<td align="right" colspan="4" style="padding-right:15px;"><a href="home.html?p0=rescan" style="text-decoration:none"><font class="smalltext">[S SETUP_RESCAN]</a></td>
+<td align="left" height="45" valign="bottom" style="padding-left:40px;"><font class="headertext">[% "SEARCH" | string %]</td>
+<td align="right" colspan="4" style="padding-right:15px;"><a href="home.html?p0=rescan" style="text-decoration:none"><font class="smalltext">[% "SETUP_RESCAN" | string %]</a></td>
 </tr>
 
 
@@ -59,9 +59,9 @@ return true;
 <tr><td height="20"></td></tr>
 
 <tr><td colspan="8" height="30">
-              <form name="FormSong" method="Get" action="{webroot}search.html">
+              <form name="FormSong" method="Get" action="[% webroot %]search.html">
 	      <center><input type=hidden value="song" name="type">
-              &nbsp;<input type=text name="query" value="{query}" size="20" style="
+              &nbsp;<input type=text name="query" value="[% query %]" size="20" style="
     BORDER-LEFT: black 0pt none;
     BORDER-RIGHT: black 0pt none;
     BORDER-TOP: black 0pt none;
@@ -82,7 +82,7 @@ text-align: center;
 
 <tr><td colspan="8" align="center">
 <br><center>
-	      <input type=submit value="[S SEARCH]" name="Go" style="
+	      <input type=submit value="[% "SEARCH" | string %]" name="Go" style="
     FONT-SIZE:12pt;
     FONT-FAMILY: Verdana;
     COLOR: #666666;
@@ -94,7 +94,7 @@ text-align: center;
     WIDTH: 265;
     HEIGHT: 44;"
 >
-	     <input type=reset value="[S CLEAR]" name="Reset" style="    
+	     <input type=reset value="[% "CLEAR" | string %]" name="Reset" style="    
     FONT-SIZE:12pt;
     FONT-FAMILY: Verdana;
     COLOR: #666666;
@@ -106,8 +106,8 @@ text-align: center;
     WIDTH: 265;
     HEIGHT: 44;"
 >
-              <input type=hidden value="{%player}" name="player">
-              [IF nofolder]<input type=hidden value="1" name="nofolder">[/IF]
+              <input type=hidden value="[% player | uri %]" name="player">
+              [% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
               </form>
 
 
@@ -127,11 +127,11 @@ text-align: center;
 <tr><td height="10"></td></tr>
 
 <tr><td></td><td>
-<center><input type=button value="[S SONGS]" name="Song" onclick="Activate('Song');Mode('song')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
+<center><input type=button value="[% "SONGS" | string %]" name="Song" onclick="Activate('Song');Mode('song')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
 </td><td>
-<center><input type=button value="[S ARTISTS]" name="Artist" onclick="Activate('Artist');Mode('artist')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
+<center><input type=button value="[% "ARTISTS" | string %]" name="Artist" onclick="Activate('Artist');Mode('artist')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
 </td><td>
-<center><input type=button value="[S ALBUMS]" name="Album" onclick="Activate('Album');Mode('album')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
+<center><input type=button value="[% "ALBUMS" | string %]" name="Album" onclick="Activate('Album');Mode('album')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
 </td></tr>
 </table>
 

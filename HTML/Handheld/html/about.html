@@ -1,8 +1,8 @@
 <!-- Page about.html -->
-[SET title [S {playermodel}]:Skin Info] [SET pageicon MUSIC]
+[% title = '[% playermodel | string %' %]:Skin Info] [% pageicon = 'MUSIC' %]
 
-[INCLUDE pageheader.html]
-[INCLUDE menu.html]
+[% PROCESS pageheader.html %]
+[% PROCESS menu.html %]
 
 <center>
 <font face="arial,helvetica">
@@ -12,7 +12,7 @@ Simple SlimServer skin for PocketPC by Mark Erichsen, based on the Default skin.
 </small>
 <br>
 
-<img src="{webroot}html/{playermodel}.gif" border="0" alt="Player">
+<img src="[% webroot %]html/[% playermodel %].gif" border="0" alt="Player">
 
 <br>
 <small>
@@ -22,5 +22,5 @@ Skin created August 2003, Berlin. Last Update: 21.08.03, me<br>
 </center>
 </font>
 
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]
 <!-- /Page about.html -->

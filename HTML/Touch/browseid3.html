@@ -1,15 +1,15 @@
 <!-- Page browseid3.html -->
-[SET title [S {playermodel}]:[S {browseby}]] [SET browse 0] [SET playlist 0] [SET music 1] [SET pageicon MUSIC]
+[% title = '[% playermodel | string %' %]:[% browseby | string %]] [% browse = '0' %] [% playlist = '0' %] [% music = '1' %] [% pageicon = 'MUSIC' %]
 
-[INCLUDE pageheader.html]
-[INCLUDE menu.html]
+[% PROCESS pageheader.html %]
+[% PROCESS menu.html %]
 
-[IF warn]<p><b>[S NOTE]</b> [S SCAN_WARNING] [IFN itunes][S SCAN_CLICK] <a href="browse.html?player={%player}"><font class="pagebartext">[S HERE]</a>.[/IFN]</p>[/IF]
+[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF not itunes %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]"><font class="pagebartext">[% "HERE" | string %]</a>.[% END %]</p>[% END %]
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
-    <tr><td><font class="pagebartext">&nbsp;&nbsp;{pwd_list}</td></tr>
+    <tr><td><font class="pagebartext">&nbsp;&nbsp;[% pwd_list %]</td></tr>
     <tr><td>
-    [IF browselist_pagebar]<font class="pagebartext">&nbsp;{browselist_pagebar}[/IF][IF browselist_header]<font class="pagebartext">&nbsp;|&nbsp;{browselist_header}[/IF]
+    [% IF browselist_pagebar %]<font class="pagebartext">&nbsp;[% browselist_pagebar %][% END %][% IF browselist_header %]<font class="pagebartext">&nbsp;|&nbsp;[% browselist_header %][% END %]
     </td></tr>
 </table>
 <table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
@@ -17,26 +17,26 @@
 
 <table border="0" width="100%" bgcolor="#FFFFFF"><tr><td height="15"></td></tr></table">
 
-[IF coverart]
+[% IF coverart %]
 <table width="100%"><tr><td>
-    <a href="status.html?p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}">
-    <p align="center"><img src="/music/{%coverartpath}/cover.jpg" STYLE="border: dashed #666666 15px"></a>
+    <a href="status.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]">
+    <p align="center"><img src="/music/[% coverartpath | uri %]/cover.jpg" STYLE="border: dashed #666666 15px"></a>
 </td><tr>
-[/IF]
+[% END %]
 
 
 
 <table cellspacing="0" border="0" cellpadding="0" width="100%">
-    {browse_list}
+    [% browse_list %]
 </table>
 
-[IF song_count]
+[% IF song_count %]
 <table width="100%" bgcolor="#666666"><tr><td>
-    <font class="statusbartext">[S BROWSING_MUSIC] <b>{album_count}</b> [S WITH] <b>{song_count}</b> [S BY] <b>{artist_count}</b></font>
+    <font class="statusbartext">[% "BROWSING_MUSIC" | string %] <b>[% album_count %]</b> [% "WITH" | string %] <b>[% song_count %]</b> [% "BY" | string %] <b>[% artist_count %]</b></font>
 </td></tr>
 </table>
-[/IF]
+[% END %]
 </font>
 
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]
 <!-- /Page browseid3.html -->

@@ -1,25 +1,25 @@
 <!-- Page search.html -->
-[SET title [S {playermodel}]:[S SEARCH]] [SET pageicon MUSIC]
+[% title = '[% playermodel | string %' %]:[% "SEARCH" | string %]] [% pageicon = 'MUSIC' %]
 
-[INCLUDE pageheader.html]
-[INCLUDE menu.html]
+[% PROCESS pageheader.html %]
+[% PROCESS menu.html %]
 
-[IFN query][INCLUDE searchinput.html][/IFN]
+[% IF not query %][% PROCESS searchinput.html %][% END %]
 
 <font size="+1">
-[NE numresults -1]
-    [EQ type artist][S ARTISTSMATCHING][/EQ]
-    [EQ type album][S ALBUMSMATCHING][/EQ]
-    [EQ type song][S SONGSMATCHING][/EQ] "{query}": {numresults}<p>
-[/NE]
+[% IF numresults != '-1' %]
+    [% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %]
+    [% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %]
+    [% IF type == 'song' %][% "SONGSMATCHING" | string %][% END %] "[% query %]": [% numresults %]<p>
+[% END %]
 
-[IF searchlist_pagebar]<p><font size="-1">[S PAGES]: <font size="+3">{searchlist_pagebar}</p>[/IF]
-[IF searchlist_header]<p>{searchlist_header}:</p>[/IF]
+[% IF searchlist_pagebar %]<p><font size="-1">[% "PAGES" | string %]: <font size="+3">[% searchlist_pagebar %]</p>[% END %]
+[% IF searchlist_header %]<p>[% searchlist_header %]:</p>[% END %]
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
-    {browse_list}
+    [% browse_list %]
 </table>
 
-[IF searchlist_pagebar]<p><font size="-1">[S PAGES]: <font size="+3">{searchlist_pagebar}</p>[/IF]
+[% IF searchlist_pagebar %]<p><font size="-1">[% "PAGES" | string %]: <font size="+3">[% searchlist_pagebar %]</p>[% END %]
 </font>
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]
 <!-- /Page search.html -->

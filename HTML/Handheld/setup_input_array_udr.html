@@ -1,12 +1,12 @@
 <!-- Element setup_input_array_udr.html -->
-[IF PrefsInTable]<TR><TD>[/IF]
-&nbsp;{PrefExtValue}
-[IF PrefsInTable]</TD><TD>[/IF]
-<A CLASS="linkbtn" HREF="setup.html?page={page}&{PrefNameRoot}Action{PrefIndex}=Up">Up</A>
-[IF PrefsInTable]</TD><TD>[/IF]
-<A CLASS="linkbtn" HREF="setup.html?page={page}&{PrefNameRoot}Action{PrefIndex}=Down">Down</A>
-[IF PrefsInTable]</TD><TD>[/IF]
-<A CLASS="linkbtn" HREF="setup.html?page={page}&{PrefNameRoot}Action{PrefIndex}=Remove">&times;</A>
-[IF PrefsInTable]</TD></TR>[/IF]
-[IFN PrefsInTable]<BR>[/IFN]
+[% IF PrefsInTable %]<TR><TD>[% END %]
+&nbsp;[% PrefExtValue %]
+[% IF PrefsInTable %]</TD><TD>[% END %]
+<A CLASS="linkbtn" HREF="setup.html?page=[% page %]&[% PrefNameRoot %]Action[% PrefIndex %]=Up">Up</A>
+[% IF PrefsInTable %]</TD><TD>[% END %]
+<A CLASS="linkbtn" HREF="setup.html?page=[% page %]&[% PrefNameRoot %]Action[% PrefIndex %]=Down">Down</A>
+[% IF PrefsInTable %]</TD><TD>[% END %]
+<A CLASS="linkbtn" HREF="setup.html?page=[% page %]&[% PrefNameRoot %]Action[% PrefIndex %]=Remove">&times;</A>
+[% IF PrefsInTable %]</TD></TR>[% END %]
+[% IF not PrefsInTable %]<BR>[% END %]
 <!-- /Element setup_input_array_udr.html -->

@@ -1,3 +1,3 @@
-[IF cell_full]<img src="html/images/stat_active.gif" width="10" height="20">[/IF]
+[% IF cell_full %]<img src="html/images/stat_active.gif" width="10" height="20">[% END %]
 
-[IFN cell_full]<img src="html/images/stat.gif" border="0" width="10" height="20">[/IFN]
+[% IF not cell_full %]<img src="html/images/stat.gif" border="0" width="10" height="20">[% END %]

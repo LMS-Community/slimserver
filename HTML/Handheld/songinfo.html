@@ -1,144 +1,144 @@
 <!-- Page songinfo.html -->
-[SET title [S {playermodel}]:[S SONG_INFO]] [SET pageicon MUSIC]
+[% title = '[% playermodel | string %' %]:[% "SONG_INFO" | string %]] [% pageicon = 'MUSIC' %]
 
-[INCLUDE pageheader.html]
-[INCLUDE menu.html]
+[% PROCESS pageheader.html %]
+[% PROCESS menu.html %]
 
 <font face="arial,helvetica">
 
 <table width="100%" bgcolor="#c5c5c5">
-    <tr><td align="center"><small><a href="status.html?p0=playlist&amp;p1=play&amp;p2={%itempath}&amp;player={%player}" >PLAY</a> &nbsp;&nbsp; <a href="status.html?p0=playlist&amp;p1=append&amp;p2={%itempath}&amp;player={%player}" >ADD</a></small> </td></tr>
+    <tr><td align="center"><small><a href="status.html?p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" >PLAY</a> &nbsp;&nbsp; <a href="status.html?p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" >ADD</a></small> </td></tr>
 </table>
 
 <br>
-<p>[S SONG_INFO] [S FOR] <b>{title}</b></p>
+<p>[% "SONG_INFO" | string %] [% "FOR" | string %] <b>[% title %]</b></p>
 
-[IF coverart]
-    <center><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}"><img src="/music/{%itempath}/cover.jpg" border="0" width="200"></a></center>
-[/IF]
+[% IF coverart %]
+    <center><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]"><img src="/music/[% itempath | uri %]/cover.jpg" border="0" width="200"></a></center>
+[% END %]
 
 <table width=100%>
         <tr>
                 <td>
                         <nobr>
-                                [S TITLE][S COLON]
+                                [% "TITLE" | string %][% "COLON" | string %]
                         </nobr>
                 </td>
                 <td>
-                        {title}
+                        [% title %]
                 </td>
         </tr>
-        [IF artist]
+        [% IF artist %]
         <tr>
                 <td>
-                        [S ARTIST][S COLON]
+                        [% "ARTIST" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        <a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}">{artist}</a>
+                        <a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]">[% artist %]</a>
                 </td>
         </tr>
-        [/IF] [IF composer]
+        [% END %] [% IF composer %]
         <tr>
                 <td>
-                        [S COMPOSER][S COLON]
+                        [% "COMPOSER" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        <a href="browseid3.html?genre=*&amp;artist={%composer}&amp;player={%player}">{composer}</a>
+                        <a href="browseid3.html?genre=*&amp;artist=[% composer | uri %]&amp;player=[% player | uri %]">[% composer %]</a>
                 </td>
         </tr>
-       [/IF] [IF conductor]
+       [% END %] [% IF conductor %]
         <tr>
                 <td>
-                        [S CONDUCTOR][S COLON]
+                        [% "CONDUCTOR" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        <a href="browseid3.html?genre=*&amp;artist={%conductor}&amp;player={%player}">{conductor}</a>
+                        <a href="browseid3.html?genre=*&amp;artist=[% conductor | uri %]&amp;player=[% player | uri %]">[% conductor %]</a>
                 </td>
         </tr>
-        [/IF] [IF album]
+        [% END %] [% IF album %]
         <tr>
                 <td>
-                        [S ALBUM][S COLON]
+                        [% "ALBUM" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        <a href="browseid3.html?genre=*&amp;artist=*&amp;album={%album}&amp;player={%player}">{album}</a>
+                        <a href="browseid3.html?genre=*&amp;artist=*&amp;album=[% album | uri %]&amp;player=[% player | uri %]">[% album %]</a>
                 </td>
         </tr>
-        [/IF] [IF genre]
+        [% END %] [% IF genre %]
         <tr>
                 <td>
-                        [S GENRE][S COLON]
+                        [% "GENRE" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        <a href="browseid3.html?genre={%genre}&amp;player={%player}" >{genre}
+                        <a href="browseid3.html?genre=[% genre | uri %]&amp;player=[% player | uri %]" >[% genre %]
                 </td>
         </tr>
-        [/IF] [IF track]
+        [% END %] [% IF track %]
         <tr>
                 <td>
-                        [S TRACK][S COLON]
+                        [% "TRACK" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        {track}
+                        [% track %]
                 </td>
         </tr>
-        [/IF] [IF duration]
+        [% END %] [% IF duration %]
         <tr>
                 <td>
-                        [S LENGTH][S COLON]
+                        [% "LENGTH" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        {duration}
+                        [% duration %]
                 </td>
         </tr>
-        [/IF] [IF year]
+        [% END %] [% IF year %]
         <tr>
                 <td>
-                        [S YEAR][S COLON]
+                        [% "YEAR" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        {year}
+                        [% year %]
                 </td>
         </tr>
-        [/IF] [IF comment]
+        [% END %] [% IF comment %]
         <tr>
                 <td>
-                        [S COMMENT][S COLON]
+                        [% "COMMENT" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        {comment}
+                        [% comment %]
                 </td>
         </tr>
-        [/IF] [IF filelength]
+        [% END %] [% IF filelength %]
         <tr>
                 <td>
-                        [S FILELENGTH][S COLON]
+                        [% "FILELENGTH" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        {filelength} [S BYTES]
+                        [% filelength %] [% "BYTES" | string %]
                 </td>
         </tr>
-        [/IF] [IF bitrate]
+        [% END %] [% IF bitrate %]
         <tr>
                 <td>
-                        [S BITRATE][S COLON]
+                        [% "BITRATE" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        {bitrate}
+                        [% bitrate %]
                 </td>
         </tr>
-        [/IF] [IF tagversion]
+        [% END %] [% IF tagversion %]
         <tr>
                 <td>
-                        [S TAGVERSION][S COLON]
+                        [% "TAGVERSION" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        {tagversion}
+                        [% tagversion %]
                 </td>
         </tr>
-        [/IF]
+        [% END %]
 </table>
 
 </font>
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]
 <!-- /Page songinfo.html -->

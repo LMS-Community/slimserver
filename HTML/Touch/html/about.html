@@ -1,8 +1,8 @@
 <!-- Page about.html -->
-[SET title [S {playermodel}]:Skin Info] [SET pageicon MUSIC]
+[% title = '[% playermodel | string %' %]:Skin Info] [% pageicon = 'MUSIC' %]
 
-[INCLUDE pageheader.html]
-[INCLUDE menu.html]
+[% PROCESS pageheader.html %]
+[% PROCESS menu.html %]
 
 <table width="100%" bgcolor="#EEEEEE" cellspacing="0" cellpadding="0" border="0">
 <tr><td height="20"></td></tr>
@@ -24,5 +24,5 @@ Last update: 22nd of March 2004.
 
 
 
-[INCLUDE pagefooter.html]
+[% PROCESS pagefooter.html %]
 <!-- /Page about.html -->
