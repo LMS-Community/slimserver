@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.143 2004/10/25 22:17:28 vidur Exp $
+# $Id: strings.txt,v 1.144 2004/10/26 23:36:47 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -4639,7 +4639,7 @@ RENAME
 SAVED_PLAYLISTS
 	DE	Gespeicherte Playlists
 	DK	Gemte playlister
-	EN	Playlists
+	EN	Browse Playlists
 	ES	Listas guardadas
 	FI	Tallennetut soittolistat
 	FR	Listes de lecture enregistrées
