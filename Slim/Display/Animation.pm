@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::Animation;
 
-# $Id: Animation.pm,v 1.6 2003/11/10 23:14:56 dean Exp $
+# $Id: Animation.pm,v 1.7 2003/12/05 04:54:31 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -342,7 +342,7 @@ sub scrollBottom {
 	my $line2 = shift;
 	my $overlay1 = shift;
 	my $overlay2 = shift;
-	
+	my $interlace = shift;
     if (!defined($line1)) { $line1 = ""; };
 	if (!defined($overlay1)) { $overlay1 = ""; };
     if (!defined($line2)) { $line2 = ""; };
@@ -358,15 +358,7 @@ sub scrollBottom {
 	}
 
 	# special case scrolling for nowplaying
-	if (Slim::Buttons::Playlist::showingNowPlaying($client)) {
-		#Slim::Display::Animation::scroll($client);
-		# scroll - Start Scrolling (if necessary) what's on the display and keep doing
-		# it until killAnimation is called.  This is not the only supported interface
-		# for starting scrolling.  It figures out what's on the screen and whether it
-		# needs scrolling.  If scrolling not necessary, just refreshes the screen.
-		# Otherwise, it starts the appropriate kind of scrolling (depending on display
-		# mode, etc.)
-		#
+	if ((Slim::Buttons::Playlist::showingNowPlaying($client)) || ($interlace)) {
 		if (Slim::Utils::Prefs::clientGet($client,'doublesize')) {
 			scrollDouble($client,$line2, $overlay2);
 		}
