@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.57 2004/05/05 01:50:46 kdf Exp $
+# $Id: Prefs.pm,v 1.58 2004/05/05 18:04:32 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -651,7 +651,7 @@ sub load {
 		}
 	}
 		
-	if (!-r $readFile) {
+	if (!-r $readFile && preferencesPath()) {
 		$readFile = catdir(preferencesPath(), '.slimp3.pref');
 	}
 	

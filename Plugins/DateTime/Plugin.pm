@@ -18,7 +18,7 @@ use Slim::Control::Command;
 use Slim::Utils::Strings qw (string);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.1 $,10);
+$VERSION = substr(q$Revision: 1.2 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_DATETIME');}
 
@@ -144,7 +144,7 @@ sub handleEnable {
 		);
 }
 
-sub webPages {
+sub webPages-disabled {
 	my %pages = (
 		"index\.(?:htm|xml)" => \&handleIndex,
 		"enable\.(?:htm|xml)" => \&handleEnable,

@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.98 2004/05/05 02:06:35 kdf Exp $
+# $Id: strings.txt,v 1.99 2004/05/05 18:04:31 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -2041,28 +2041,28 @@ SETUP_ITUNESSCANINTERVAL_OK
 	EN	Minimum iTunes Music Library reload time:
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE
-	EN	Autolocate iTunes Library
+	EN	Find iTunes Library Automatically
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE_DESC
-	EN	You may choose to have the server attempt to automatically set both iTunes XML Path or iTunes Library Music Path.  To skip the seach, you MUST explicitly set both iTunes XML Path or iTunes Library Music Path and set this to Use Manual Locations.
+	EN	You may choose to have the server try to find the iTunes Music Library automatically or specify the locations manually.  To specify the locations, choose Specify iTunes Library Locations below and enter the path to the iTunes Music Library.xml file and your iTunes Music folder.
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE_0
-	EN	Use Manual locations for iTunes Library
+	EN	Specify iTunes Library Locations
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE_1
 	EN	Find iTunes Library Automatically
 
 SETUP_ITUNES_LIBRARY_XML_PATH
-	EN	iTunes XML Path
+	EN	iTunes Music Library.xml Locations
 
 SETUP_ITUNES_LIBRARY_XML_PATH_DESC
-	EN	Full path and filename for iTunes Music Library.xml file.
+	EN	If you are specifying the location of your iTunes Music Library, enter the path to the iTunes Music Library.xml file here, including the whole file name.
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH
-	EN	iTunes Library Music Path
+	EN	iTunes Music Folder
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
-	EN	Full path to the location of the actual files that are part of your iTunes Music Library.
+	EN	If you are specifying the location of your iTunes Music Library, enter the path, including the folder name, containing your iTunes Music.
 
 SETUP_COVERART
 	DE	Plattencover
