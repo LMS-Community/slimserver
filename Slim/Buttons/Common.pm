@@ -275,10 +275,10 @@ our %functions = (
 			$jump = 'BROWSE_BY_ARTIST';
 		} elsif ($button eq 'menu_browse_album') {
 			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist'=>'*'});
+			$jump = 'BROWSE_BY_ALBUM';
 		} elsif ($button eq 'menu_browse_song') {
 			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist'=>'*', 'album'=>'*'});
 			$jump = 'BROWSE_BY_SONG';
-			$jump = 'BROWSE_BY_ALBUM';
 		} elsif ($button eq 'menu_browse_music') {
 			Slim::Buttons::Common::pushMode($client, 'browse');
 			Slim::Buttons::Browse::loadDir($client, '', undef, \@oldlines);
