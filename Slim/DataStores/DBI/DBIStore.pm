@@ -588,6 +588,9 @@ sub clearStaleEntries {
 		for my $url (keys %$validityCache) {
 
 			if (!$validityCache->{$url}->[VALID_INDEX]) {
+
+				$::d_info && Slim::Utils::Misc::msg("Item: $url is invalid. Removing.\n");
+
 				$self->delete($url, 0);
 			}
 		}
@@ -659,6 +662,9 @@ sub clearStaleEntries {
 
 	# Don't use _hasChanged - because that does more than we want.
 	if (!-e $filepath) {
+
+		$::d_info && Slim::Utils::Misc::msg("Track: $track no longer exists. Removing.\n");
+
 		$self->delete($track, 0);
 	}
 
@@ -1108,7 +1114,12 @@ sub _postCheckAttributes {
 
 	if ($create && !$genre && !$_unknownGenre) {
 
-		$_unknownGenre = Slim::DataStores::DBI::GenreTrack->add(string('NO_GENRE'), $track);
+		$_unknownGenre = Slim::DataStores::DBI::Genre->find_or_create({
+			'name'     => string('NO_GENRE'),
+			'namesort' => Slim::Utils::Text::ignoreCaseArticles(string('NO_GENRE')),
+		});
+
+		Slim::DataStores::DBI::GenreTrack->add($_unknownGenre, $track);
 
 	} elsif ($create && !$genre) {
 
@@ -1144,8 +1155,13 @@ sub _postCheckAttributes {
 	# Create a singleton for "No Artist"
 	if ($create && !$foundContributor && !$_unknownArtist) {
 
-		$_unknownArtist = Slim::DataStores::DBI::ContributorTrack->add(
-			string('NO_ARTIST'),
+		$_unknownArtist = Slim::DataStores::DBI::Contributor->find_or_create({
+			'name'     => string('NO_ARTIST'),
+			'namesort' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
+		});
+
+		Slim::DataStores::DBI::ContributorTrack->add(
+			$_unknownArtist,
 			$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'},
 			$track
 		);
@@ -1172,7 +1188,7 @@ sub _postCheckAttributes {
 	# Album should probably have an add() method
 	if ($create && !$album && !$_unknownAlbum) {
 
-		$_unknownAlbum = Slim::DataStores::DBI::Album->create({
+		$_unknownAlbum = Slim::DataStores::DBI::Album->find_or_create({
 			'title'     => string('NO_ALBUM'),
 			'titlesort' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ALBUM')),
 		});
