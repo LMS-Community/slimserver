@@ -1,0 +1,19 @@
+<tr>
+ <td class="browselistbuttons">[% IF descend %]
+  <img src="html/images/add.gif" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;sub=addtracks[%
+  attributes | html %]&quot;)" width="8" height="8" alt="Add"/><img alt="Play" src="html/images/play.this.gif" width="5"
+  height="9" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;sub=loadtracks[% attributes | html
+  %]&quot;)"/>[% ELSE %]
+  <img src="html/images/add.gif" onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=add&amp;p2=[% itempath |
+  uri %]&quot;)" alt="Add" width="8" height="8"/><img alt="Play" src="html/images/play.this.gif" width="5" height="9"
+  onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&quot;)"/>[% END %]
+ </td>
+ <td class="browselisting">[% IF anchor %]
+  <a name="[% anchor | uri %]"></a>[% END ; IF descend %]
+
+  <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=[% hierarchy %]&amp;level=[% level ; attributes | html
+  %]&quot;)">[% text | html %]</a>[% ELSE %]
+  <a onclick="parent.browseurl(&quot;songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&quot;)">[% text | html %]</a>[% END %]
+ </td>
+</tr>
+

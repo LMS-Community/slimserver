@@ -1,0 +1,25 @@
+[% PROCESS header.html pwd="yes" %]
+
+<div id="pwd">
+ [% IF searchlist_pagebar %]
+ <span class="pagebar">[% searchlist_pagebar %]</span>
+ [% END %]
+ <a>[%
+ SWITCH type; 
+  CASE "artist"; "SEARCHFOR_ARTIST" | string;
+  CASE 'album'; "SEARCHFOR_ALBUM" | string;
+  CASE 'song'; "SEARCHFOR_SONGTITLE" | string; END %]</a> /
+ [% IF numresults != '-1' %]
+  [% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %]
+  [% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %]
+  [% IF type == 'song' %][% "SONGSMATCHING" | string %][% END %]
+  "[% query %]"[% "COLON" | string %] [% numresults %]
+ [% END %]
+</div>
+
+<table>
+ [% browse_list %]
+</table>
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- ExBrowse2, by Jacob Potter -->
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+ <title>SlimServer</title>
+ <link rel="stylesheet" href="[% webroot %]slimserver.css" title="ExBrowse"/>
+ <!--[if IE]>
+ <link rel="stylesheet" href="[% webroot %]html/ie.css"/>
+ <![endif]-->
+ <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+ <script type="text/javascript" src="[% webroot %]html/postback.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/status.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/playlist.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/home.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/misc.js"></script>
+</head>
+<body onload="mainload()" class="mainpage">
+
+<div id="statusheader" onmouseover="scrollfix()">
+
+ <div id="logo">
+  <img src="html/images/squeezebox_logo.small.gif" alt="[% playermodel %]" width="98" height="17"/>
+ </div>
+
+ <form action="">
+  <div id="chooserlist">
+   <select id="playersel" onchange="doPlayerChange(event)" class="formfield">
+    <option></option>
+   </select>
+  </div>
+ </form>
+
+ <div id="statusmain">
+  <div id="nowplaying">
+   <img alt="[% "COVERART" | string %]" border="0" height="100" src="" class="coverart" id="coverart"/>
+ 
+   <p class="label" id="playstring"></p>
+   <p class="songtitle" id="song"></p>
+   <p class="label">[% "ARTIST" | string %]</p>
+   <p class="artistname" id="artist"></p>
+   <p class="label">[% "ALBUM" | string %]</p>
+   <p class="artistname" id="album"></p>
+ 
+   <p class="label" style="border: 0px none; " id="progressBar"></p>
+  </div>
+ 
+  <div id="controls">
+   <div id="buttons">
+    <a id="playbutton" class="fakelink" onclick="doPlay()"></a>
+    <a id="stopbutton" class="fakelink" onclick="doStop()"></a>
+    <a id="prevbutton" class="fakelink" onclick="doPrev()"></a>
+    <a id="nextbutton" class="fakelink" onclick="doNext()"></a>
+    <a id="mutebutton"></a>
+   </div>
+
+   <div id="repshuf">
+    <a id="repeatone" class="fakelink" onclick="doRepeat(1)"></a>
+    <a id="repeatall" class="fakelink" onclick="doRepeat(2)"></a>
+    <a id="repeatoff" class="fakelink" onclick="doRepeat(0)"></a>
+    <a id="shufsongs"  class="fakelink" onclick="doShuffle(1)"></a>
+    <a id="shufalbums" class="fakelink" onclick="doShuffle(2)"></a>
+    <a id="shufnone"   class="fakelink" onclick="doShuffle(0)"></a>
+   </div>
+ 
+   <div id="volumeblock">
+    [% "VOLUME" | string %]
+    <span id="volume"></span>
+   </div>
+  </div> 
+ </div>
+
+ <div id="plsheader">
+  [% "CURRENT_PLAYLIST" | string; "COLON" | string %]
+  <span id="playlistinfo"></span>
+  [
+  <span id="savebutton"><a id="savelink"     class="fakelink" onclick="doSave()">[% "SAVE" | string %]</a> | </span>
+  <a id="downloadlink" class="fakelink" onclick="doDownload()">[% "DOWNLOAD" | string %]</a> |
+  <a id="clearlink"    class="fakelink" onclick="doClear()">[% "CLEAR" | string %]</a> ]
+ </div>
+</div>
+
+<div id="loading">
+ <p>
+  Loading...
+ </p>
+</div>
+
+<div id="homebar" onmouseover="scrollfix()">
+ <form onsubmit="return(doSearchSubmit());" action="">
+  <p id="topmenu">
+   <a class="fakelink activemode" onclick="dobold(event);gobrowse()" id="library">Music Library</a> |
+   <a class="fakelink" onclick="dobold(event);browseurl('setup.html?page=server')">Server Settings</a> |
+   [% IF player %]
+   <a class="fakelink" onclick="dobold(event);goplayersettings()">Player Settings</a> | [% END %]
+   <a class="fakelink" onclick="dobold(event);browseurl('home.html?page=help')">[% "HELP" | string %]</a>
+   [% IF song_count %]
+    | [% album_count; " "; "WITH" | string; " "; song_count; " ";
+    "BY" | string; " "; artist_count %]
+   [% END %]
+  </p>
+  <p id="topmenu2">
+   <select class="formfield" name="browsemode" id="browsemode" size="1" onchange="gobrowse()">
+  [% IF additionalLinks.browse ; FOREACH link = additionalLinks.browse %]
+    <option value="[% link.value | html %]">[% link.key | string %]</option>
+  [% END; END %]
+<!--<option value="browsedb.html?hierarchy=genre,artist,album,track&amp;level=0">[% "BROWSE_BY_GENRE" | string %]</option>
+    <option value="browsedb.html?hierarchy=artist,album,track&amp;level=0">[% "BROWSE_BY_ARTIST" | string %]</option>
+    <option value="browsedb.html?hierarchy=album,track&amp;level=0">[% "BROWSE_BY_ALBUM" | string %]</option> -->
+   </select>
+   /
+   <select class="formfield" name="searchmode" id="searchmode" size="1" onchange="resetcookie()">
+  [% IF additionalLinks.search ; FOREACH link = additionalLinks.search %]
+    <option value="[% link.value | uri %]">[% link.key | string %]</option>
+  [% END; END %]
+   </select>
+   for
+   <input class="formfield" size="20" name="searchquery" id="searchquery" type="text"/>
+  </p>
+  <p id="toppwd"></p>
+ </form>
+</div>
+
+<div id="outerplaylist" onmouseover="scrollfix('outerplaylist', 'outerplaylistscrollbase');">
+ <a id="outerplaylistscrollbase"></a>
+ <table id="playlist">
+  <tr>
+   <td>
+   </td>
+  </tr>
+ </table>
+</div>
+
+<div id="outerbrowse">
+ <iframe id="browseframe" src="html/blank.html" frameborder="0" scrolling="yes"> </iframe>
+</div>
+
+<div>
+<a id="noscroll"></a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+[% PROCESS header.html pwd="yes" %]
+
+<div id="pwd">
+ <a class="fakelink" onclick="browseurl('songinfo.html?itempath=[% itempath | uri %]')">[% "SONG_INFO" | string %]
+ [% "FOR" | string %] <i>[% title | html %]</i></a> / 
+</div>
+
+<table>
+ <tr>
+  <td class="listing"> [% "TITLE" | string %][% "COLON" | string %] </td>
+  <td class="listing"> [% title | html %] </td>
+ </tr>
+[% IF artist %] 
+ <tr>
+  <td class="listing"> [% "ARTIST" | string %][% "COLON" | string %] </td>
+  <td class="listing">
+   <a onclick="browseid3('*', '[% artist | uri %]', '', '')">[% artist | html %]</a>
+  </td>
+ </tr>
+ [% END %] [% IF composer %] 
+ <tr>
+  <td class="listing"> [% "COMPOSER" | string %][% "COLON" | string %] </td>
+  <td class="listing">
+   <a onclick="browseid3('*', '[% composer | uri %]', '', '')">[% composer | html %]</a>
+  </td>
+ </tr>
+ [% END %] [% IF conductor %] 
+ <tr>
+  <td class="listing"> [% "CONDUCTOR" | string %][% "COLON" | string %] </td>
+  <td class="listing">
+   <a onclick="browseid3('*', '[% conductor | uri %]', '', '')">[% conductor | html %]</a>
+  </td>
+ </tr>
+ [% END %] [% IF band %] 
+ <tr>
+  <td class="listing"> [% "BAND" | string %][% "COLON" | string %] </td>
+  <td class="listing">
+   <a onclick="browseid3('*', '[% band | uri %]', '', '')">[% band | html %]</a>
+  </td>
+ </tr>
+ [% END %] [% IF album %] 
+ <tr>
+  <td class="listing"> [% "ALBUM" | string %] </td>
+  <td class="listing">
+   <a onclick="browseid3('*', '*', '[% album | uri %]', '')">[% album | html %]</a>
+  </td>
+ </tr>
+ [% END %] [% IF genre %] 
+ <tr>
+  <td class="listing">[% "GENRE" | string %][% "COLON" | string %] </td>
+  <td class="listing">
+   <a onclick="browseid3('[% genre | uri %]', '', '', '')">[% genre | html %]</a>
+  </td>
+ </tr>
+ [% END %] [% IF track %] 
+ <tr>
+  <td class="listing"> [% "TRACK" | string %][% "COLON" | string %] </td>
+  <td class="listing"> [% track | html %] </td>
+ </tr>
+ [% END %] [% IF duration %] 
+ <tr>
+  <td class="listing"> [% "LENGTH" | string %][% "COLON" | string %] </td>
+  <td class="listing"> [% duration | html %] </td>
+ </tr>
+ [% END %] [% IF year %] 
+ <tr>
+  <td class="listing"> [% "YEAR" | string %][% "COLON" | string %] </td>
+  <td class="listing"> [% year | html %] </td>
+ </tr>
+ [% END %] [% IF comment %] 
+ <tr>
+  <td class="listing"> [% "COMMENT" | string %][% "COLON" | string %] </td>
+  <td class="listing"> [% comment | html %] </td>
+ </tr>
+ [% END %] [% IF filelength %] 
+ <tr>
+  <td class="listing"> [% "FILELENGTH" | string %][% "COLON" | string %] </td>
+  <td class="listing"> [% filelength | html %] [% "BYTES" | string %] </td>
+ </tr>
+ [% END %] [% IF bitrate %] 
+ <tr>
+  <td class="listing"> [% "BITRATE" | string %][% "COLON" | string %] </td>
+  <td class="listing"> [% bitrate | html %] </td>
+ </tr>
+ [% END %] [% IF tagversion %] 
+ <tr>
+  <td class="listing"> [% "TAGVERSION" | string %][% "COLON" | string %] </td>
+  <td class="listing"> [% tagversion | html %] </td>
+ </tr>
+ [% END %] [% IF type %] 
+ <tr>
+  <td class="listing"> [% "TYPE" | string %][% "COLON" | string %] </td>
+  <td class="listing"> [% type %] </td>
+ </tr>
+ [% END %]  [% IF url %] 
+ <tr>
+  <td class="listing"> [% "LOCATION" | string %][% "COLON" | string %] </td>
+  <td class="listing"> <a href="[% url %]">[% itempath | html %]</a> </td>
+ </tr>
+ [% END %] [% IF modtime %] 
+ <tr>
+  <td class="listing"> [% "MODTIME" | string %][% "COLON" | string %] </td>
+  <td class="listing"> [% modtime | html %] </td>
+ </tr>
+ [% END %] [% IF coverart %] 
+ <tr>
+  <td class="listing" valign="top">[% "COVERART" | string %]</td>
+  <td class="listing">
+   <a href="/music/[% itempath | uri %]/cover.jpg" target="cover"><img src="/music/[% itempath | uri %]/cover.jpg"></a>
+  </td>
+ </tr>
+ [% END %]
+</table>
+
+<table>
+ <tr>
+  <td class="listing" width="12">
+   <img onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=add&amp;p2=[% itempath | uri %]&quot;)"
+   alt="Add" src="html/images/add.gif" width="8" height="8" border="0" hspace="0" class="fakelink"/>
+  </td>
+  <td class="listing" width="12">
+   <img onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&quot;)"
+   alt="Play" src="html/images/play.this.gif" border="0" width="5" height="9" hspace="8" class="fakelink"/>
+  </td>
+ </tr>
+</table>
+
+</body>
+</html>

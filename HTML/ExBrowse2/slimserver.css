@@ -1,0 +1,585 @@
+/*******************\
+ * Common elements *
+\*******************/
+
+p, td, ol, ul, h3, h4, body, .formfield, .button {
+	font-size: 10px;
+	font-family: verdana,tahoma,arial,helvetica,geneva,sans-serif;
+	color: #ccc;
+}
+
+body {
+	background: black;
+	margin: 0;
+	padding: 0;
+}
+
+table {
+	margin: 0;
+}
+
+body.mainpage {
+	overflow: hidden;
+}
+
+strong {
+	font-weight: bold;
+	color: white;
+	text-decoration: underline;
+}
+
+#loading {
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: black;
+	margin: 0;
+	padding: 0;
+	z-index: 10; 
+
+	width: 100%;
+	height: 100%;
+}
+
+#loading p {
+	color: white;
+	font-size: 12pt;
+	font-weight: bold;
+	padding: 10px;
+	margin: 0;
+}
+
+b {
+	font-weight: bold;
+	color: white;
+}
+
+h2, h3 {
+	font-weight: bold;
+	font-size: 15pt;
+	color: white;
+	margin-bottom: 5px;
+	padding-bottom: 10px;
+}
+
+h4, h5 {
+	font-weight: bold;
+	font-size: 12pt;
+	color: white;
+	margin-bottom: 0;
+	margin-left: 10px;
+}
+
+ul {
+	list-style-image: url(html/images/play.this.gif);
+	margin: 0;
+	background: black;
+	font-weight: bold;
+	list-style-position: outside;
+}
+
+li {
+	margin: 4px;
+}
+
+hr {
+	color: #999999;
+	height: 1px
+}	
+
+a {
+	text-decoration:none;
+	color: #ccc;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+.formfield {
+	background: #ddd;
+	color: #444;
+	display: none;
+}
+
+.fakelink {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	cursor: pointer;
+}
+
+#outerplaylistscrollbase, #outerbrowsescrollbase {
+	position: absolute;
+	top: 0;
+}
+
+/************\
+ * Frameset *
+\************/
+
+#statusheader {
+	position: absolute;
+	width: 400px;
+	height: 270px;
+	top: 0;
+	right: 0;
+	background: black;
+}
+
+#outerplaylist {
+	position: absolute;
+	top: 270px;
+	right: 0;
+	width: 400px;
+	bottom: 0;
+	height: auto;
+	overflow: auto;
+	background: black;
+}
+
+#homebar {
+	position: absolute;
+	overflow: hidden;
+	background: #61676c;
+	top: 0;
+	left: 0;
+	height: 103px;
+	right: 400px;
+	padding: 0;
+}
+
+#test {
+	position: absolute;
+	right: 400px;
+	left: 100px;
+	width: auto;
+	margin: 0;
+	padding: 0;
+	top: 0px;
+	height: 50px;
+	border: 1px solid red;
+	z-index: 1;
+	background: black;
+}
+
+#outerbrowse {
+	position: absolute;
+	top: 103px;
+	right: 400px;
+	left: 0;
+	bottom: 0;
+	height: auto;
+	padding: 0;
+	margin: 0;
+}
+
+#browseframe {
+	width: 100%;
+	height: 100%;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	background: black;
+	display: none;
+}
+
+/********\
+ * Home *
+\********/
+
+#topmenu {
+	font-size: 10px;
+	padding: 35px 5px 5px 5px;
+	height: 12px;
+	margin: 0;
+	border-right: 2px solid white;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+#topmenu a.activemode {
+	font-weight: bold;
+	color: white;
+}
+
+#topmenu2 {
+	background: #999;
+	font-size: 10px;
+	height: 18px;
+	margin: 0;
+	padding: 5px;
+	border-right: 2px solid white;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+#toppwd {
+	padding: 5px;
+	margin: 0;
+}
+
+#toppwd a, #pwd a {
+	font-weight: bold;
+	cursor: pointer;
+}
+
+/**************************\
+ * For status_header.html *
+\**************************/
+
+#logo {
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin: 5px;
+}
+
+#logo img {
+	border: 0;
+}
+
+#chooserlist {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 4px;
+	color: white;
+}
+
+#statusmain {
+	background: black;
+}
+
+#nowplaying {
+	border-top: 2px solid white;
+	position: absolute;
+	top: 28px;
+	left: 0;
+	height: 135px;
+	width: 380px;
+	margin: 0;
+	padding: 10px;
+	background: #61676c;
+	color: white;
+	z-index: 0;
+}
+
+.label {
+	font-size: 9px;
+	color: #bbb;
+	border-bottom: 1px solid #777;
+	margin: 3px 0 3px 0;
+}
+
+.songtitle {
+	margin: 0;
+	font-size: 14px;
+	font-weight: bold;
+	color: white;
+}	
+
+.artistname {
+	margin: 0;
+	font-size: 11px;
+	font-weight: normal;
+	color: white;
+}
+
+.track {
+	font-size: 9px;
+	color: silver;
+	font-weight: normal;
+}
+
+#progressBar {
+	position: absolute;
+	left: 10px;
+	top: 120px;
+	overflow: visible;
+	white-space: nowrap;
+}
+
+#progressBar img {
+	vertical-align: text-top;
+	margin-top: 1px;
+}
+
+#controls {
+        position: absolute;
+        left: 0;
+        top: 173px;
+        width: 400px;
+        height: 73px;
+        margin: 0;
+        padding: 0;
+        background: #999;
+}
+
+#buttons {
+	position: relative;
+	font-size: 9px;
+	margin: 6px;
+	height: 42px;
+}
+
+#buttons a {
+	position: absolute;
+	display: block;
+}
+
+#playbutton {
+	top: 0;
+	left: 0;
+	width: 42px;
+	height: 43px;
+	background: url(html/images/play.png);
+	cursor: pointer;
+}
+
+#playbutton.active {
+	background: url(html/images/play.png) 0 -43px no-repeat;
+	cursor: pointer;
+}
+
+#stopbutton {
+	top: 11px;
+	left: 42px;
+	width: 23px;
+	height: 32px;
+	background: url(html/images/stop.png);
+	cursor: pointer;
+}
+
+#stopbutton.active {
+	background: url(html/images/stop.png) 0 -32px no-repeat;
+	cursor: pointer;
+}
+
+#prevbutton {
+	top: 24px;
+	left: 68px;
+	width: 30px;
+	height: 19px;
+	background: url(html/images/prev.gif);
+}
+
+#nextbutton {
+	top: 24px;
+	left: 98px;
+	width: 30px;
+	height: 19px;
+	background: url(html/images/next.gif);
+}
+
+#mutebutton {
+	top: 24px;
+	left: 128px;
+	width: 30px;
+	height: 19px;
+	background: url(html/images/mute.png);
+	cursor: pointer;
+}
+
+#mutebutton.active {
+	background: url(html/images/mute.png) 0 -19px no-repeat;
+	cursor: pointer;
+}	
+
+#repshuf {
+	position: relative;
+	width: 400px;
+	height: 10px;
+	background: url(html/images/modebutton-bkg.png) 0 0 no-repeat;
+	overflow: hidden;
+}
+
+#repshuf a {
+	position: absolute;
+	top: 0;
+	height: 10px;
+	cursor: pointer;
+}
+
+#repeatone {
+	background: url(html/images/modebutton.png) 0 0 no-repeat;
+	left: 45px;
+	width: 26px;
+}
+
+#repeatone.active	{ background: url(html/images/modebutton.png) 0 -10px no-repeat;	}
+#repeatone:hover	{ background: url(html/images/modebutton.png) 0 -20px no-repeat;	}
+#repeatone.active:hover	{ background: url(html/images/modebutton.png) 0 -30px no-repeat;	}
+
+#repeatall {
+	left: 72px;
+	width: 21px;
+	background: url(html/images/modebutton.png) -27px 0px no-repeat;
+}
+
+#repeatall.active	{ background: url(html/images/modebutton.png) -27px -10px no-repeat;	}
+#repeatall:hover	{ background: url(html/images/modebutton.png) -27px -20px no-repeat;	}
+#repeatall.active:hover	{ background: url(html/images/modebutton.png) -27px -30px no-repeat;	}
+
+#repeatoff {
+	left: 94px;
+	width: 22px;
+	background: url(html/images/modebutton.png) -49px 0px no-repeat;
+}
+
+#repeatoff.active	{ background: url(html/images/modebutton.png) -49px -10px no-repeat;	}
+#repeatoff:hover	{ background: url(html/images/modebutton.png) -49px -20px no-repeat;	}
+#repeatoff.active:hover	{ background: url(html/images/modebutton.png) -49px -30px no-repeat;	}
+
+#shufsongs {
+	left: 173px;
+	width: 36px;
+	background: url(html/images/modebutton.png) -72px 0px no-repeat;
+}
+
+#shufsongs.active	{ background: url(html/images/modebutton.png) -72px -10px no-repeat;	}
+#shufsongs:hover	{ background: url(html/images/modebutton.png) -72px -20px no-repeat;	}
+#shufsongs.active:hover	{ background: url(html/images/modebutton.png) -72px -30px no-repeat;	}
+
+#shufalbums {
+	left: 210px;
+	width: 44px;
+	background: url(html/images/modebutton.png) -109px 0px no-repeat;
+}
+
+#shufalbums.active	{ background: url(html/images/modebutton.png) -109px -10px no-repeat;	}
+#shufalbums:hover	{ background: url(html/images/modebutton.png) -109px -20px no-repeat;	}
+#shufalbums.active:hover{ background: url(html/images/modebutton.png) -109px -30px no-repeat;	}
+
+#shufnone {
+	left: 255px;
+	width: 22px;
+	background: url(html/images/modebutton.png) -49px 0px no-repeat;
+}
+#shufnone.active	{ background: url(html/images/modebutton.png) -49px -10px no-repeat; }
+#shufnone:hover		{ background: url(html/images/modebutton.png) -49px -20px no-repeat; }
+#shufnone.active:hover	{ background: url(html/images/modebutton.png) -49px -30px no-repeat; }
+
+
+.sel {
+	font-weight: bold;
+	color: #00ff00;
+}
+
+#volumeblock {
+	position: absolute;
+	left: 200px;
+	top: 0;
+	margin: 6px 0;
+	padding: 9px 30px;
+	height: 24px;
+	border-left: 1px solid silver;
+	font-size: 10px;
+}
+
+#coverart {
+	float: left;
+	border-right: 10px solid #61676c;
+	background: #61676c;
+}
+
+/************\
+ * Playlist *
+\************/
+
+#playlist {
+}
+
+#plsheader {
+	position: absolute;
+	left: 0;
+	top: 246px;
+	width: 390px;
+	margin: 0;
+	padding: 5px;
+	background: #61676c;
+}
+
+.playlistbuttons {
+	white-space: nowrap;
+	width: auto;
+}
+
+.playlistbuttons img {
+	margin: 0;
+	padding: 0 1px;
+	border: 0;
+	cursor: pointer;
+}
+
+.playlistindex {
+	width: 20px;
+	text-align: right;
+	padding-left: 5px;
+	color: white;
+}
+
+.currentsong, .currentsong td, .currentsong td a {
+	color: white;
+}
+
+/**********\
+ * Browse *
+\**********/
+
+#pwd {
+	padding: 5px;
+	margin: 0;
+	background: #61676c;
+	display: none;
+}
+
+.pagebar {
+	float: right;
+}
+
+.browselistbuttons {
+	white-space: nowrap;
+	width: auto;
+}
+
+.browselistbuttons img {
+	cursor: pointer;
+	border: 0;
+	margin-right: 8px;
+}
+
+.browselisting {
+	padding-left: 4px;
+	color: #ccc;
+}
+
+.browselisting a {
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.coverartcell {
+	float: left;
+	margin: 5px;
+}
+
+.coverartcell img {
+        cursor: pointer;
+}
+
+/********\
+ * Misc *
+\********/
+
+.listing {
+	margin: 0;
+	color: #ccc;
+	
+}
+
+.listing a {
+	font-weight: bold;
+	cursor: pointer;
+}
+

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<playliststatus>
+ <cansave>[% cansave %]</cansave>
+ <playlistinfo>
+  [% IF current_playlist; current_playlist_name %] ([% IF myClientState; myClientState.playlist.size; END; %]
+  [% "SONGS" | string %]) [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END; END %]
+ </playlistinfo>
+ <playlist>
+ [% playlist_items %]
+ </playlist>
+</playliststatus>

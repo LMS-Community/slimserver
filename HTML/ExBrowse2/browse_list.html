@@ -1,0 +1,17 @@
+<tr>
+ <td class="browselistbuttons">
+  <img src="html/images/add.gif" onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=add&amp;p2=[% itempath
+  | uri %]&quot;)" alt="Add" width="8" height="8"/><img alt="Play" src="html/images/play.this.gif" width="5" height="9"
+  onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&quot;)"/>
+ </td>
+ <td class="listing">
+  [% IF anchor %]<a name="[% anchor %]"></a>[% END ; IF descend ; IF NOT nobrowse %]
+  <a onclick="parent.browseurl(&quot;browse.html?dir=[% descend %]&quot;)">[% END ; title | html ; IF NOT nobrowse %]</a>[%
+  END ; ELSE %]
+  <a onclick="parent.browseurl(&quot;songinfo.html?itempath=[% itempath | uri %]&quot;)">[% title | html %]</a>
+  [% IF album %][% "FROM" | string %][% END %]
+  <i><a onclick="browseid3('*', &quot;[% artist | uri %]&quot;, &quot;[% album | uri %]&quot;, '')"| uri %]">[% album |
+  html %]</a></i>[% IF artist %] [% "BY" | string %] [% END %]
+  <a onclick="browseid3('*', &quot;[% artist | uri %]&quot;, '', '')">[% artist | html %]</a>[% END %]
+ </td>
+</tr>

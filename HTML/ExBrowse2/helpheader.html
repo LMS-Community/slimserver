@@ -1,0 +1,9 @@
+[% PROCESS header.html pwd="yes" %]
+
+<div id="pwd">
+ <a class="fakelink" onclick="parent.browseurl('home.html?page=help')">[% "HELP" | string %]</a> / 
+ [% IF techinfo %]<a class="fakelink" onclick="parent.browseurl('html/docs/index.html')">[% "TECHNICAL_INFORMATION"
+  | string %]</a> /[% END %]
+ <a class="fakelink">[% pagetitle %]</a> / 
+</div>
+

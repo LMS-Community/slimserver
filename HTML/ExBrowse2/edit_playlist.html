@@ -1,0 +1,30 @@
+[% PROCESS header.html pwd="yes" %]
+
+<div id="pwd">
+ <a class="fakelink" onclick="browseurl('browse.html?dir=__playlists')">[% "SAVED_PLAYLISTS" | string %]</a> /
+ <a class="fakelink" onclick="browseurl(&quot;browse.html?dir=[% dir | html %]&quot;)">[% playlistname %]</a> /
+ <a class="fakelink" onclick="browseurl(&quot;edit_playlist.html?dir=[% dir | uri %]&quot;)">[% "EDIT_PLAYLIST" | string
+ %]</a> / 
+</div>
+
+<form method="get" action="edit_playlist.html">
+ <p>
+  [% "TITLE" | string %][% "COLON" | string %]
+  <input type="text" class="stdedit" name="form_title" value="[% form_title %]" size=30>
+  <input type="submit" class="stdclick" value=[% "ADD" | string %]>
+ </p>
+ <p>
+  [% "URL" | string %][% "COLON" | string %]
+  <input type=text class="stdedit" name="form_url" value="[% form_url %]" size=40>
+  <input type="hidden" name="dir" value="[% dir %]">
+  <input type="hidden" name="player" value="[% player %]">
+ </p>
+</form>
+<p>
+ <table>
+  [% playlist %]
+ </table>
+</p>
+</body>
+</html>
+
