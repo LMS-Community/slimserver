@@ -100,7 +100,6 @@ use Slim::Buttons::MoodWheel;
 use Slim::Buttons::InstantMix;
 use Slim::Player::Client;
 use Slim::Control::Command;
-use Slim::Player::Control;
 use Slim::Control::CLI;
 use Slim::Networking::Discovery;
 use Slim::Display::Display;

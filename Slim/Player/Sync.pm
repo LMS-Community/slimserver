@@ -283,7 +283,7 @@ sub checkSync {
 			if ($allReady) {
 				$::d_playlist && msg("all clients ready to sync now. unpausing them.\n");
 				foreach $everyclient ($client, syncedWith($client)) {
-					Slim::Player::Control::resume($everyclient);
+					$everyclient->resume();
 				}
 			}
 		}

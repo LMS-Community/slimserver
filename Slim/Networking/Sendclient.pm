@@ -77,7 +77,7 @@ sub udpstream {
 sub stream {
 
 	my ($client, $command) = @_;
-
+	$::d_slimproto && msg("*************stream called: $command\n");
 	assert($client->model eq 'squeezebox');
 
 	my $frame = 's   '.pack 'aaaaaaaCCCnL', (

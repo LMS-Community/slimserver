@@ -201,7 +201,7 @@ my %alarmVolumeSettingsFunctions = (
 
 		if (!defined($volume)) { $volume = Slim::Utils::Prefs::clientGet($client, "volume"); }
 		$volume += $inc;
-		if ($volume > $Slim::Player::Control::maxVolume) { $volume = $Slim::Player::Control::maxVolume; };
+		if ($volume > $Slim::Player::Client::maxVolume) { $volume = $Slim::Player::Client::maxVolume; };
 		Slim::Utils::Prefs::clientSet($client, "alarmvolume", $volume);
 		$client->update();
 	},
@@ -247,7 +247,7 @@ sub alarmVolumeLines {
 
 	if (!defined($volume)) { $volume = Slim::Utils::Prefs::clientGet($client, "volume"); }
 
-	my $level = int($volume / $Slim::Player::Control::maxVolume * 40);
+	my $level = int($volume / $Slim::Player::Client::maxVolume * 40);
 
 	my $line1 = Slim::Utils::Prefs::clientGet($client,'doublesize') ? string('ALARM_SET_VOLUME_SHORT') : string('ALARM_SET_VOLUME');
 	my $line2;

@@ -8,9 +8,10 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
+package Slim::Player::SLIMP3;
+
 use Slim::Player::Player;
 use Slim::Utils::Misc;
-package Slim::Player::SLIMP3;
 
 @ISA = ("Slim::Player::Player");
 
@@ -64,6 +65,55 @@ sub vfdmodel {
 	} else {
 		return 'noritake-katakana';
 	}		
+}
+
+sub play {
+	my $client = shift;
+	my $paused = shift;
+	my $pcm = shift;
+
+	assert(!$pcm);
+	
+	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
+	Slim::Hardware::Decoder::reset($client, $pcm);
+	Slim::Networking::Stream::newStream($client, $paused);
+	return 1;
+}
+
+#
+# tell the client to unpause the decoder
+#
+sub resume {
+	my $client = shift;
+	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
+	Slim::Networking::Stream::unpause($client);
+	return 1;
+}
+
+#
+# pause
+#
+sub pause {
+	my $client = shift;
+	Slim::Networking::Stream::pause($client);
+	return 1;
+}
+
+#
+# does the same thing as pause
+#
+sub stop {
+	my $client = shift;
+	Slim::Networking::Stream::stop($client);
+}
+
+#
+# playout - play out what's in the buffer
+#
+sub playout {
+	my $client = shift;
+	Slim::Networking::Stream::playout($client);
+	return 1;
 }
 
 

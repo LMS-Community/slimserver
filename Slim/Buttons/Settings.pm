@@ -348,7 +348,7 @@ sub setVolumeMode {
  sub volumeLines {
 	my $client = shift;
 
-	my $level = int(Slim::Utils::Prefs::clientGet($client, "volume") / $Slim::Player::Control::maxVolume * 40);
+	my $level = int(Slim::Utils::Prefs::clientGet($client, "volume") / $Slim::Player::Client::maxVolume * 40);
 
 	my $line1;
 	my $line2;

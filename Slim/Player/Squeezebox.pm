@@ -61,4 +61,50 @@ sub decoder {
 	return 'mas35x9';
 }
 
+sub play {
+	my $client = shift;
+	my $paused = shift;
+	my $pcm = shift;
+
+ 	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
+	Slim::Hardware::Decoder::reset($client, $pcm);
+	Slim::Networking::Sendclient::stream($client, 's');
+	return 1;
+}
+#
+# tell the client to unpause the decoder
+#
+sub resume {
+	my $client = shift;
+	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
+	Slim::Networking::Sendclient::stream($client, 'u');
+	return 1;
+}
+
+#
+# pause
+#
+sub pause {
+	my $client = shift;
+	Slim::Networking::Sendclient::stream($client, 'p');
+	return 1;
+}
+
+#
+# does the same thing as pause
+#
+sub stop {
+	my $client = shift;
+	Slim::Networking::Sendclient::stream($client, 'q');
+}
+
+#
+# playout - play out what's in the buffer
+#
+sub playout {
+	my $client = shift;
+	return 1;
+}
+
+
 1;

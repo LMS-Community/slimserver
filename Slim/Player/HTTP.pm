@@ -45,4 +45,15 @@ sub power {
 	return 1;
 }
 
+sub play {
+	return 1;
+}
+
+sub volume {
+	return 1;
+}
+
+sub fade_volume {
+	return 1;
+}
 1;

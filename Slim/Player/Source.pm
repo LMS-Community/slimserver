@@ -164,35 +164,35 @@ sub playmode {
 				$::d_playlist && msg("Stopping and clearing out old chunks for client " . $everyclient->id() . "\n");
 				@{$everyclient->chunks} = ();
 
-				Slim::Player::Control::stop($everyclient);
+				$everyclient->stop();
 				closeSong($everyclient);
 			} elsif ($newmode eq "play") {
 				$everyclient->readytosync(0);
 				rate($everyclient, 1);
-				Slim::Player::Control::play($everyclient, Slim::Player::Sync::isSynced($everyclient));				
+				$everyclient->play(Slim::Player::Sync::isSynced($everyclient));				
 			} elsif ($newmode eq "pause") {
 				# since we can't count on the accuracy of the fade timers, we unfade them all, but the master calls back to unpause everybody
 				if ($everyclient eq $client) {
-					Slim::Player::Control::fade_volume($everyclient, -0.3125, \&pauseSynced, [$client]);
+					$everyclient->fade_volume(-0.3125, \&pauseSynced, [$client]);
 				} else {
-					Slim::Player::Control::fade_volume($everyclient, -0.3125);
+					$everyclient->fade_volume(-0.3125);
 				}				
 				
 			} elsif ($newmode eq "pausenow") {
-				Slim::Player::Control::pause($everyclient);
+				$everyclient->pause();
 				rate($everyclient,0);
 			} elsif ($newmode eq "resumenow") {
-				Slim::Player::Control::resume($everyclient);
+				$everyclient->resume();
 				rate($everyclient, 1);
 				
 			} elsif ($newmode eq "resume") {
 				# set volume to 0 to make sure fade works properly
-				Slim::Player::Control::volume($everyclient,0);
-				Slim::Player::Control::resume($everyclient);
-				Slim::Player::Control::fade_volume($everyclient, .3125);
+				$everyclient->volume(0);
+				$everyclient->resume();
+				$everyclient->fade_volume(.3125);
 				
 			} elsif ($newmode eq "playout") {
-				Slim::Player::Control::playout($everyclient);
+				$everyclient->playout();
 				
 			} else {
 				$::d_playlist && msg(" Unknown play mode: " . $everyclient->playmode . "\n");
@@ -339,7 +339,7 @@ sub gototime {
 	if ($doitnow) {
 		foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
 			$::d_playlist && msg("gototime: stopping playback\n");
-			Slim::Player::Control::stop($everybuddy);
+			$everybuddy->stop();
 			@{$everybuddy->chunks} = ();
 		}
 	}
@@ -351,7 +351,7 @@ sub gototime {
 		foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
 			$::d_playlist && msg("gototime: restarting playback\n");
 			$everybuddy->readytosync(0);
-			Slim::Player::Control::play($everybuddy, Slim::Player::Sync::isSynced($client));
+			$everybuddy->play(Slim::Player::Sync::isSynced($client));
 		}
 	}	
 }
@@ -626,7 +626,7 @@ sub openSong {
 
 			my $mov_cmd = "\"$movbin\" \"$filepath\"";
 
-			my $lame_cmd = "\"$lamebin\" --silent -r - - &";
+			my $lame_cmd = "\"$lamebin\" --silent -b 320 -r - - &";
 	
 			$client->mp3filehandle( FileHandle->new() );
 	
@@ -649,7 +649,7 @@ sub openSong {
 			
 			my $ogg_cmd = "\"$oggbin\" -q -p 5 -d raw -f - \"$filepath\"";
 			# Added -x option to fix ogg output problem reported by users
-			my $lame_cmd = "\"$lamebin\" -r $rate -v -x --quiet - - &";
+			my $lame_cmd = "\"$lamebin\" -r $rate -b 320 -x --quiet - - &";
 			$client->mp3filehandle( FileHandle->new() );
 	
 			$client->mp3filehandle->open("$ogg_cmd | $lame_cmd |");
@@ -795,7 +795,7 @@ sub readNextChunk {
 sub pauseSynced {
 	my $client = shift;
 	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
-		Slim::Player::Control::pause($everyclient);
+		$everyclient->pause();
 		rate($everyclient, 0);
 	}
 }

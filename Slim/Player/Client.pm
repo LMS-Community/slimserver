@@ -15,6 +15,13 @@ use Slim::Utils::Misc;
 use File::Spec::Functions qw(:ALL);
 
 
+$Slim::Player::Client::maxVolume = 100;
+$Slim::Player::Client::maxTreble = 100;
+$Slim::Player::Client::minTreble = 0;
+$Slim::Player::Client::maxBass = 100;
+$Slim::Player::Client::minBass = 0;
+
+
 # This is a hash of clientState structs, indexed by the IP:PORT of the client
 # Use the access functions.
 my %clientHash = ();

@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.7 2003/08/12 00:52:43 dean Exp $
+# $Id: Command.pm,v 1.8 2003/08/20 21:13:11 dean Exp $
 
 # Slim Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -408,7 +408,7 @@ sub execute {
 					$p2 = Slim::Player::Source::currentSongIndex($client);
 				} else {
 				#	if (Slim::Player::Playlist::playmode($client) eq 'play') {
-				#		Slim::Player::Control::fade_volume($client, -0.3125, \&jumpto, [$client, $p2]);
+				#		$client->fade_volume(-0.3125, \&jumpto, [$client, $p2]);
 				#	} else {
 						Slim::Player::Source::jumpto($client, $p2);
 				#	}
@@ -446,11 +446,11 @@ sub execute {
 						$newvol = $p2;
 					}
 					
-					if ($newvol> 100) { $newvol = $Slim::Player::Control::maxVolume; }
+					if ($newvol> 100) { $newvol = $Slim::Player::Client::maxVolume; }
 					if ($newvol < 0) { $newvol = 0; }
 					Slim::Utils::Prefs::clientSet($client, "volume", $newvol);
-					Slim::Player::Control::volume($client, $newvol);
-					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newvol, "volume",\&Slim::Player::Control::volume);};
+					$client->volume($newvol);
+					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newvol, "volume",\&setVolume);};
 				}
 			} elsif ($p1 eq "muting") {
 				my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
@@ -465,7 +465,7 @@ sub execute {
 					Slim::Utils::Prefs::clientSet($client, "mute",1);
 					$fade = -0.3125;
 				}
-				Slim::Player::Control::fade_volume($client, $fade, \&Slim::Player::Control::mute, [$client]);
+				$client->fade_volume($fade, \&$client->mute, [$client]);
 				if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $fade, "mute",undef);};
 			} elsif ($p1 eq "balance") {
 				# unsupported yet
@@ -481,11 +481,11 @@ sub execute {
 					} else {
 						$newtreb = $p2;
 					}
-					if ($newtreb > $Slim::Player::Control::maxTreble) { $newtreb = $Slim::Player::Control::maxTreble; }
-					if ($newtreb < $Slim::Player::Control::minTreble) { $newtreb = $Slim::Player::Control::minTreble; }
+					if ($newtreb > $Slim::Player::Client::maxTreble) { $newtreb = $Slim::Player::Client::maxTreble; }
+					if ($newtreb < $Slim::Player::Client::minTreble) { $newtreb = $Slim::Player::Client::minTreble; }
 					Slim::Utils::Prefs::clientSet($client, "treble", $newtreb);
-					Slim::Player::Control::treble($client, $newtreb);
-					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newtreb, "treble",\&Slim::Player::Control::treble);};
+					$client->treble($newtreb);
+					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newtreb, "treble",\&$client->treble);};
 				}
 			} elsif ($p1 eq "bass") {
 				my $newbass;
@@ -499,11 +499,11 @@ sub execute {
 					} else {
 						$newbass = $p2;
 					}
-					if ($newbass > $Slim::Player::Control::maxBass) { $newbass = $Slim::Player::Control::maxBass; }
-					if ($newbass < $Slim::Player::Control::minBass) { $newbass = $Slim::Player::Control::minBass; }
+					if ($newbass > $Slim::Player::Client::maxBass) { $newbass = $Slim::Player::Client::maxBass; }
+					if ($newbass < $Slim::Player::Client::minBass) { $newbass = $Slim::Player::Client::minBass; }
 					Slim::Utils::Prefs::clientSet($client, "bass", $newbass);
-					Slim::Player::Control::bass($client, $newbass);
-					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newbass, "bass",\&Slim::Player::Control::bass);};
+					$client->bass($newbass);
+					if (Slim::Player::Sync::isSynced($client)) {syncFunction($client, $newbass, "bass",\&$client->bass);};
 				}
 			}
 		} elsif ($p0 eq "display") {
@@ -562,7 +562,7 @@ sub syncFunction {
 		foreach my $eachclient (@buddies) {
 			if (Slim::Utils::Prefs::clientGet($eachclient,'syncVolume')) {
 				if ($setting eq "mute") {
-					Slim::Player::Control::fade_volume($eachclient, $newval, \&Slim::Player::Control::mute, [$eachclient]);
+					$eachclient->fade_volume($newval, \&$eachclient->mute, [$eachclient]);
 				} else {
 					Slim::Utils::Prefs::clientSet($eachclient, $setting, $newval);
 					&$controlRef($eachclient, $newval);
@@ -573,6 +573,12 @@ sub syncFunction {
 			}
 		}
 	}
+}
+
+sub setVolume {
+	my $client = shift;
+	my $volume = shift;
+	$client->volume($volume);
 }
 
 sub setExecuteCallback {
@@ -647,7 +653,7 @@ sub singletonRef {
 sub gotosleep {
 	my $client = shift;
 	if ($client->isPlayer()) {
-		Slim::Player::Control::fade_volume($client,-60,\&turnitoff,[$client]);
+		$client->fade_volume(-60,\&turnitoff,[$client]);
 	}
 	$client->sleepTime(0);
 	$client->currentSleepTime(0);

@@ -8,8 +8,10 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-use Slim::Player::Client;
 package Slim::Player::Player;
+
+use Slim::Player::Client;
+use Slim::Hardware::Decoder;
 
 @ISA = ("Slim::Player::Client");
 
@@ -94,6 +96,119 @@ sub power {
 		}
 	}
 }			
+
+sub volume {
+	my ($client, $volume) = @_;
+
+	if (!$client->isPlayer()) {
+		return 1;
+	}
+
+	if ($volume > $Slim::Player::Client::maxVolume) { $volume = $Slim::Player::Client::maxVolume; }
+	if ($volume < 0) { $volume = 0; }
+	
+	# normalize
+	$volume = $volume / $Slim::Player::Client::maxVolume;
+
+	$::d_control && msg("volume: $volume\n");
+ 	
+	Slim::Hardware::Decoder::volume($client, $volume);
+}
+
+sub treble {
+	my ($client, $treble) = @_;
+	if ($treble > $Slim::Player::Client::maxTreble) { $treble = $Slim::Player::Client::maxTreble; }
+	if ($treble < $Slim::Player::Client::minTreble) { $treble = $Slim::Player::Client::minTreble; }
+
+	Slim::Hardware::Decoder::treble($client, $treble);
+}
+
+
+sub bass {
+	my ($client, $bass) = @_;
+	if ($bass > $Slim::Player::Client::maxBass) { $bass = $Slim::Player::Client::maxBass; }
+	if ($bass < $Slim::Player::Client::minBass) { $bass = $Slim::Player::Client::minBass; }
+
+	Slim::Hardware::Decoder::bass($client, $bass);
+}
+
+
+
+
+# fade the volume up or down
+# $fade = number of seconds to fade 100% (positive to fade up, negative to fade down) 
+# $callback is function reference to be called when the fade is complete
+# FYI 8 to 10 seems to be a good fade value
+my %fvolume;  # keep temporary fade volume for each client
+sub fade_volume {
+	my($client, $fade, $callback, $callbackargs) = @_;
+
+	my $faderate = 10;  # how often do we send updated fade volume commands per second
+	
+	Slim::Utils::Timers::killTimers($client, \&fade_volume);
+	
+	my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
+	my $mute = Slim::Utils::Prefs::clientGet($client, "mute");
+	if ($vol < 0) {
+		# the volume is muted, don't fade.
+		$callback && (&$callback(@$callbackargs));
+		return;
+	}
+	
+	if ($mute) {
+		# Set Target (Negative indicates mute, but still saves old value)
+		Slim::Utils::Prefs::clientSet($client, "volume", $vol * -1);
+	}
+
+	# on the first pass, set temporary fade volume
+	if(!$fvolume{$client} && $fade > 0) {
+		# fading up, start volume at 0
+		$fvolume{$client} = 0;
+	} elsif(!$fvolume{$client}) {
+		# fading down, start volume at current volume
+		$fvolume{$client} = $vol;
+	}
+
+	$fvolume{$client} += $Slim::Player::Client::maxVolume * (1/$faderate) / $fade; # fade volume
+
+	if($fvolume{$client} <= 0 || $fvolume{$client} >= $vol) {
+		# done fading
+		$::d_ui && msg("fade_volume done.\n");
+		$fvolume{$client} = 0; # reset temporary fade volume 
+		$callback && (&$callback(@$callbackargs));
+	} else {
+		$::d_ui && msg("fade_volume - setting volume to $fvolume{$client}\n");
+		&volume($client, $fvolume{$client}); # set volume
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time()+ (1/$faderate), \&fade_volume, ($fade, $callback, $callbackargs));
+	}
+}
+
+# mute or un-mute volume as necessary
+# A negative volume indicates that the player is muted and should be restored 
+# to the absolute value when un-muted.
+sub mute {
+	my $client = shift;
+	
+	if (!$client->isPlayer()) {
+		return 1;
+	}
+	my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
+	my $mute = Slim::Utils::Prefs::clientGet($client, "mute");
+	
+			
+	if (($vol < 0) && ($mute)) {
+		# mute volume
+		# todo: there is actually a hardware mute feature
+		# in both decoders. Need to add Decoder::mute
+		&volume($client, 0);
+	} else {
+		# un-mute volume
+		$vol *= -1;
+		&volume($client, $vol);
+	}
+	Slim::Utils::Prefs::clientSet($client, "volume", $vol);
+	Slim::Display::Display::volumeDisplay($client);
+}
 
 
 
