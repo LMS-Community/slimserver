@@ -71,4 +71,10 @@ sub bytesReceived {
 sub formats {
 	return ('mp3');
 }
+
+#dummy methods
+sub vfdmodel { return 'http';}
+sub vfd { return undef;}
+sub decoder { return 'http';}
+
 1;
