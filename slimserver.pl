@@ -469,11 +469,11 @@ sub start {
 	$::d_server && msg("Source conversion init..\n");
 	Slim::Player::Source::init();
 
-	$::d_server && msg("SlimServer Plugins init...\n");
-	Slim::Buttons::Plugins::init();
-	
 	$::d_server && msg("SlimServer Info init...\n");
 	Slim::Music::Info::init();
+
+	$::d_server && msg("SlimServer Plugins init...\n");
+	Slim::Buttons::Plugins::init();
 
 	checkDataSource();
 	
@@ -900,7 +900,7 @@ sub checkDataSource {
 	if (!(defined Slim::Utils::Prefs::get("audiodir") && 
 		-d Slim::Utils::Prefs::get("audiodir")) && !$quiet && !Slim::Music::Import::countImporters) {
 
-		msg("Your Data source needs to be configured. Please open your web browser,\n");
+		msg("Your data source needs to be configured. Please open your web browser,\n");
 		msg("go to the following URL, and click on the \"Server Settings\" link.\n\n");
 		msg(string('SETUP_URL_WILL_BE') . "\n\t" . Slim::Web::HTTP::HomeURL() . "\n");
 

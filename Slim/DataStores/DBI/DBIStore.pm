@@ -37,7 +37,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
 
 # Save the persistant DB cache on an interval
-use constant DB_SAVE_INTERVAL => 600;
+use constant DB_SAVE_INTERVAL => 300;
 
 # Entries in the database are assumed to be valid for approximately 5
 # minutes before we check date/time stamps again

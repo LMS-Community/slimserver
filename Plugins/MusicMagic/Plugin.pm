@@ -6,14 +6,12 @@ use strict;
 
 use File::Spec::Functions qw(catfile);
 
+use Slim::Player::Source;
 use Slim::Utils::Misc;
-use Slim::Utils::Strings qw(string);
-
-use LWP ();
+use Slim::Utils::Strings;
 
 my $isScanning = 0;
 my $initialized = 0;
-our %artwork;
 my $last_error = 0;
 my $export = '';
 my $count = 0;
@@ -23,9 +21,13 @@ my $MMSport;
 
 my $lastMusicLibraryFinishTime = undef;
 
-our %mixMap = ('add.single' => 'play_1',
-								'add.hold' => 'play_1',
-								);
+our %artwork = ();
+
+our %mixMap  = (
+	'add.single' => 'play_1',
+	'add.hold' => 'play_1'
+);
+
 our %mixFunctions = ();
 
 sub strings {
@@ -59,7 +61,7 @@ sub useMusicMagic {
 	$use = Slim::Utils::Prefs::get('musicmagic') && $can;
 	Slim::Music::Import::useImporter('MUSICMAGIC',$use);
 
-	$::d_musicmagic && msg("using musicmagic: $use\n");
+	$::d_import && $::d_import =~ m/musicmagic/ && msg("using musicmagic: $use\n");
 	
 	return $use;
 }
@@ -102,26 +104,36 @@ sub initPlugin {
 	return $initialized if ($initialized == 1);
 	checkDefaults();
 	
-	my $MMSport = Slim::Utils::Prefs::get('MMSport');
-	my $MMSHost = Slim::Utils::Prefs::get('MMSHost');
-	my $req = new HTTP::Request GET => "http://$MMSHost:$MMSport/api/version";
-	my $res = (new LWP::UserAgent)->request($req);
-	if ($res->is_error()) {
+	$MMSport = Slim::Utils::Prefs::get('MMSport');
+	$MMSHost = Slim::Utils::Prefs::get('MMSHost');
+
+	my $http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/version");
+
+	unless ($http) {
+
 		$initialized = 0;
+
 	} else {
-		my $content = $res->content();
-		$::d_musicmagic && msg("$content\n");
-	
+
+		my $content = $http->content();
+		$::d_import && $::d_import =~ m/musicmagic/ && msg("$content\n");
+		$http->close();
+
 		# Note: Check version restrictions if any
 		$initialized = 1;
+
 		checker();
-		Slim::Music::Import::addImporter('MUSICMAGIC',\&startScan,\&mixerFunction,\&addGroups);
-		Slim::Music::Import::useImporter('MUSICMAGIC',Slim::Utils::Prefs::get('musicmagic'));
+
+		Slim::Music::Import::addImporter('MUSICMAGIC', \&startScan, \&mixerFunction, \&addGroups);
+		Slim::Music::Import::useImporter('MUSICMAGIC', Slim::Utils::Prefs::get('musicmagic'));
+
 		Slim::Player::Source::registerProtocolHandler("musicmagicplaylist", "0");
+
 		addGroups();
 	}
 	
 	$mixFunctions{'play'} = \&playMix;
+
 	Slim::Buttons::Common::addMode('musicmagic_mix', \%mixFunctions);
 	Slim::Hardware::IR::addModeDefaultMapping('musicmagic_mix',\%mixMap);
 	
@@ -133,12 +145,12 @@ sub defaultMap {
 	return undef;
 }
 
-sub  playMix {
+sub playMix {
 	my $client = shift;
 	my $button = shift;
 	my $append = shift;
+
 	my $line1;
-	my $line2;
 	
 	if ($append) {
 		$line1 = $client->string('ADDING_TO_PLAYLIST')
@@ -147,51 +159,58 @@ sub  playMix {
 	} else {
 		$line1 = $client->string('NOW_PLAYING_FROM')
 	}
-	$line2 = $client->string('MUSICMAGIC_MIX');
+
+	my $line2 = $client->string('MUSICMAGIC_MIX');
 	
 	$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')));
 	
 	my $mixRef = Slim::Buttons::Common::param($client,'listRef');
+
 	Slim::Control::Command::execute($client, ["playlist", $append ? "append" : "play", $mixRef->[0]]);
 	
-	for (my $i=1; $i < scalar(@$mixRef); $i++) {
-	Slim::Control::Command::execute($client, ["playlist", "append", $mixRef->[$i]]);
+	for (my $i = 1; $i < scalar(@$mixRef); $i++) {
+
+		Slim::Control::Command::execute($client, ["playlist", "append", $mixRef->[$i]]);
 	}
 }
 
-
 sub addGroups {
+
 	Slim::Web::Setup::addCategory('musicmagic',&setupCategory);
+
 	my ($groupRef,$prefRef) = &setupGroup();
-	Slim::Web::Setup::addGroup('server','musicmagic',$groupRef,2,$prefRef);
-	Slim::Web::Setup::addChildren('server','musicmagic');
+
+	Slim::Web::Setup::addGroup('server', 'musicmagic', $groupRef, 2, $prefRef);
+	Slim::Web::Setup::addChildren('server', 'musicmagic');
 }
 
 sub isMusicLibraryFileChanged {
-	my $MMSport = Slim::Utils::Prefs::get('MMSport');
-	my $MMSHost = Slim::Utils::Prefs::get('MMSHost');
-	my $req = new HTTP::Request GET => "http://$MMSHost:$MMSport/api/cacheid";
-	my $res = (new LWP::UserAgent)->request($req);
-	if ($res->is_error()) {
-		return 0;
-	}
 
-	my $fileMTime = $res->content();
-	
+	my $http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/cacheid") || return 0;
+
+	my $fileMTime = $http->content();
+	$http->close();
+
 	# Only say "yes" if it has been more than one minute since we last finished scanning
 	# and the file mod time has changed since we last scanned. Note that if we are
 	# just starting, $lastMusicLibraryDate is undef, so both $fileMTime
 	# will be greater than 0 and time()-0 will be greater than 180 :-)
 	my $oldTime = Slim::Utils::Prefs::get('lastMusicMagicLibraryDate') || 0;
+
 	if ($fileMTime > $oldTime) {
+
 		my $musicmagicscaninterval = Slim::Utils::Prefs::get('musicmagicscaninterval') || 1;
-		$::d_musicmagic && msg("music library has changed!\n");
+
+		$::d_import && $::d_import =~ m/musicmagic/ && msg("music library has changed!\n");
+
 		$lastMusicLibraryFinishTime = 0 unless $lastMusicLibraryFinishTime;
-		if (time()-$lastMusicLibraryFinishTime > $musicmagicscaninterval) {
+
+		if (time() - $lastMusicLibraryFinishTime > $musicmagicscaninterval) {
+
 			return 1;
-		} else {
-			$::d_musicmagic && msg("waiting for $musicmagicscaninterval seconds to pass before rescanning\n");
 		}
+
+		$::d_import && $::d_import =~ m/musicmagic/ && msg("waiting for $musicmagicscaninterval seconds to pass before rescanning\n");
 	}
 	
 	return 0;
@@ -207,8 +226,8 @@ sub checker {
 	# make sure we aren't doing this more than once...
 	Slim::Utils::Timers::killTimers(0, \&checker);
 
-	# Call ourselves again after 5 seconds
-	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 5.0), \&checker);
+	# Call ourselves again after 60 seconds
+	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 60), \&checker);
 }
 
 sub startScan {
@@ -216,7 +235,7 @@ sub startScan {
 		return;
 	}
 		
-	$::d_musicmagic && msg("MusicMagic: start export\n");
+	$::d_import && $::d_import =~ m/musicmagic/ && msg("MusicMagic: start export\n");
 	stopScan();
 	Slim::Music::Info::clearPlaylists();
 
@@ -239,80 +258,83 @@ sub stillScanning {
 }
 
 sub doneScanning {
-	$::d_musicmagic && msg("MusicMagic: done Scanning\n");
+	$::d_import && $::d_import =~ m/musicmagic/ && msg("MusicMagic: done Scanning\n");
 
 	$isScanning = 0;
 	$scan = 0;
 	
 	$lastMusicLibraryFinishTime = time();
 
-	my $MMSport = Slim::Utils::Prefs::get('MMSport');
-	my $MMSHost = Slim::Utils::Prefs::get('MMSHost');
-	my $req = new HTTP::Request GET => "http://$MMSHost:$MMSport/api/cacheid";
-	my $res = (new LWP::UserAgent)->request($req);
-	if (!$res->is_error()) {
-		my $fileMTime = $res->content();
-		Slim::Utils::Prefs::set('lastMusicMagicLibraryDate', $fileMTime);
+	my $http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/cacheid") || return 0;
+
+	if ($http) {
+
+		Slim::Utils::Prefs::set('lastMusicMagicLibraryDate', $http->content());
+
+		$http->close();
 	}
 	
 	Slim::Music::Info::generatePlaylists();
 	
 	Slim::Music::Import::endImporter('MUSICMAGIC');
-
 }
 
 sub convertPath {
-	my $mmsPath = shift @_;
+	my $mmsPath = shift;
 	
-	return $mmsPath if  (Slim::Utils::Prefs::get('MMSHost') eq 'localhost');
+	return $mmsPath if (Slim::Utils::Prefs::get('MMSHost') eq 'localhost');
 	
 	my $remoteRoot = Slim::Utils::Prefs::get('MMSremoteRoot');
 	my $nativeRoot = Slim::Utils::Prefs::get('audiodir');
-	my $original = $mmsPath;
-	my $winPath = $mmsPath =~ m/\\/; # test if this is a windows path
+	my $original   = $mmsPath;
+	my $winPath    = $mmsPath =~ m/\\/; # test if this is a windows path
 
-	if (Slim::Utils::OSDetect::OS() eq 'unix')
-	{
+	if (Slim::Utils::OSDetect::OS() eq 'unix') {
+
 		# we are unix
-		if ($winPath)
-		{
+		if ($winPath) {
+
 			# we are running music magic on winders but
 			# slim server is running on unix
 
 			# convert any windozes paths to unix style
 			$remoteRoot =~ tr/\\/\//;
-			$::d_import && $::d_import =~ m/musimagic/ &&  msg("$remoteRoot :: $nativeRoot \n");
+			$::d_import && $::d_import =~ m/musicmagic/ &&  msg("$remoteRoot :: $nativeRoot \n");
 
 			# convert windozes paths to unix style
 			$mmsPath =~ tr/\\/\//;
 			# convert remote root to native root
 			$mmsPath =~ s/$remoteRoot/$nativeRoot/;
-			}
-		} else {
-			# we are windows
-			if (!$winPath)
-			{
-				# we recieved a unix path from music match
-				# convert any unix paths to windows style
-				# convert windows native to unix first
-				# cuz matching dont work unless we do
-				$nativeRoot =~ tr/\\/\//;
-				$::d_import && $::d_import =~ m/musimagic/ &&  msg("$remoteRoot :: $nativeRoot \n");
-
-				# convert unix root to windows root
-				$mmsPath =~ s/$remoteRoot/$nativeRoot/;
-				# convert unix paths to windows
-				$mmsPath =~ tr/\//\\/;
-			}
 		}
-	$::d_import && $::d_import =~ m/musimagic/ && msg("$original is now $mmsPath\n");
+
+	} else {
+
+		# we are windows
+		if (!$winPath) {
+
+			# we recieved a unix path from music match
+			# convert any unix paths to windows style
+			# convert windows native to unix first
+			# cuz matching dont work unless we do
+			$nativeRoot =~ tr/\\/\//;
+			$::d_import && $::d_import =~ m/musicmagic/ &&  msg("$remoteRoot :: $nativeRoot \n");
+
+			# convert unix root to windows root
+			$mmsPath =~ s/$remoteRoot/$nativeRoot/;
+			# convert unix paths to windows
+			$mmsPath =~ tr/\//\\/;
+		}
+	}
+
+	$::d_import && $::d_import =~ m/musicmagic/ && msg("$original is now $mmsPath\n");
+
 	return $mmsPath
 }
 
 sub exportFunction {
 	my $playlist;
-	my $req;
-	my $res;
+
+	my $http;
 	my @lines;
 	
 	return 0 if $export eq 'done';
@@ -326,16 +348,19 @@ sub exportFunction {
 	$MMSHost = Slim::Utils::Prefs::get('MMSHost') unless $MMSHost;
 
 	if ($export eq 'start') {
-		$req = new HTTP::Request GET => "http://$MMSHost:$MMSport/api/getSongCount";
-		$res = (new LWP::UserAgent)->request($req);
 
-		if ($res->is_error()) {
-			$count = 0;
-		} else {
-			$count = $res->content(); # convert to integer
+		$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/getSongCount");
+
+		if ($http) {
+			# convert to integer
+			chomp($count = $http->content());
+
+			$http->close();
 		}
+
+		$count += 0;
 		
-		$::d_musicmagic && msg("Got $count song(s).\n");
+		$::d_import && $::d_import =~ m/musicmagic/ && msg("Got $count song(s).\n");
 		
 		$scan = 0;
 		$export = 'songs';
@@ -346,16 +371,15 @@ sub exportFunction {
 		my %cacheEntry = ();
 		my %songInfo = ();
 		
-		$req = new HTTP::Request GET => "http://$MMSHost:$MMSport/api/getSong?index=$scan";
-		$res = (new LWP::UserAgent)->request($req);
+		$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/getSong?index=$scan") || next;
 
-		if ($res->is_error()) {
-			# NYI
-		} else {
+		if ($http) {
 
 			$scan++;
-			@lines = split(/\n/, $res->content());
+			@lines = split(/\n/, $http->content());
 			my $count2 = scalar @lines;
+
+			$http->close();
 
 			for (my $j = 0; $j < $count2; $j++) {
 				my ($song_field, $song_value) = $lines[$j] =~ /(\w+) (.*)/;
@@ -385,8 +409,14 @@ sub exportFunction {
 			if ($songInfo{'active'} eq 'yes') {
 				$cacheEntry{'MUSICMAGIC_MIXABLE'} = 1;
 			}
-			
-			$::d_musicmagic && msg("Exporting song $scan: $songInfo{'file'}\n");
+
+			$::d_import && $::d_import =~ m/musicmagic/ && msg("Exporting song $scan: $songInfo{'file'}\n");
+
+			# fileURLFromPath will turn this into UTF-8 - so we
+			# need to make sure we're in the current locale first.
+			if ($] > 5.007) {
+				$songInfo{'file'} = Encode::encode($Slim::Utils::Misc::locale, $songInfo{'file'});
+			}
 		
 			my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});
 
@@ -429,16 +459,13 @@ sub exportFunction {
 
 	if ($export eq 'genres') {
 
-		$req = new HTTP::Request GET => "http://$MMSHost:$MMSport/api/genres?active";
-		$res = (new LWP::UserAgent)->request($req);
+		$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/genres?active") || return 1;
 
-		if ($res->is_error()) {
-			return 1;
-		}
-
-		@lines = split(/\n/, $res->content());
+		@lines = split(/\n/, $http->content());
 		$count = scalar @lines;
-		$::d_import && $::d_import =~ m/musimagic/ && msg("Got $count active genre(s).\n");
+		$::d_import && $::d_import =~ m/musicmagic/ && msg("Got $count active genre(s).\n");
+
+		$http->close();
 	
 		for (my $i = 0; $i < $count; $i++) {
 
@@ -457,16 +484,13 @@ sub exportFunction {
 
 	if ($export eq 'artists') {
 
-		$req = new HTTP::Request GET => "http://$MMSHost:$MMSport/api/artists?active";
-		$res = (new LWP::UserAgent)->request($req);
+		$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/artists?active") || return 1;
 
-		if ($res->is_error()) {
-			return 1;
-		}
-
-		@lines = split(/\n/, $res->content());
+		@lines = split(/\n/, $http->content());
 		$count = scalar @lines;
-		$::d_import && $::d_import =~ m/musimagic/ && msg("Got $count active artist(s).\n");
+		$::d_import && $::d_import =~ m/musicmagic/ && msg("Got $count active artist(s).\n");
+
+		$http->close();
 
 		for (my $i = 0; $i < $count; $i++) {
 
@@ -483,36 +507,35 @@ sub exportFunction {
 	}
 	
 	if ($export eq 'playlist') {
-		$req = new HTTP::Request GET => "http://$MMSHost:$MMSport/api/playlists";
-		$res = (new LWP::UserAgent)->request($req);
 
-		if ($res->is_error()) {
-			$count = 0;
-		} else {
-			@lines = split(/\n/, $res->content());
+		$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/playlists");
+		$count = 0;
+
+		if ($http) {
+			@lines = split(/\n/, $http->content());
 			$count = scalar @lines;
+			$http->close();
 		}
 
 		#print "Checking $count playlist(s)\n";
 		for (my $i = 0; $i < $count; $i++) {
 
 			my %cacheEntry = ();
-			my @songs;
+			my @songs = ();
 			
-			$req = new HTTP::Request GET => "http://$MMSHost:$MMSport/api/getPlaylist?index=$i";
-			$res = (new LWP::UserAgent)->request($req);
-			if ($res->is_error()) {
-				# NYI
-			} else {
-				@songs = split(/\n/, $res->content());
+			$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/getPlaylist?index=$i");
 
+			if ($http) {
+
+				@songs = split(/\n/, $http->content());
 				my $count2 = scalar @songs;
+				$http->close();
 			
 				my $name = $lines[$i];
 				my $url = 'musicmagicplaylist:' . Slim::Web::HTTP::escape($name);
 
 				if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
-					$::d_musicmagic && msg("Found MusicMagic Playlist: $url\n");
+					$::d_import && $::d_import =~ m/musicmagic/ && msg("Found MusicMagic Playlist: $url\n");
 				}
 
 				# add this playlist to our playlist library
@@ -535,22 +558,23 @@ sub exportFunction {
 	}
 
 	doneScanning();
-	$::d_musicmagic && msg("exportFunction: finished export ($count records, ".scalar @{Slim::Music::Info::playlists()}." playlists)\n");
+
+	$::d_import && $::d_import =~ m/musicmagic/ && msgf("exportFunction: finished export ($count records, %d playlists)\n", scalar @{Slim::Music::Info::playlists()});
 	$export = '';
 	$ds->forceCommit();
+
 	return 0;
 }
 
 sub specialPushLeft {
-	my $client = shift @_;
-	my $step = shift @_;
+	my $client   = shift;
+	my $step     = shift;
 	my @oldlines = @_;
 
-	my $now = Time::HiRes::time();
+	my $now  = Time::HiRes::time();
 	my $when = $now + 0.5;
-	my $mixer;
 	
-	$mixer  = string('MUSICMAGIC_MIXING');
+	my $mixer  = Slim::Utils::Strings::string('MUSICMAGIC_MIXING');
 
 	if ($step == 0) {
 
@@ -689,16 +713,21 @@ sub mixExitHandler {
 	my ($client,$exittype) = @_;
 	
 	$exittype = uc($exittype);
+
 	if ($exittype eq 'LEFT') {
+
 		Slim::Buttons::Common::popModeRight($client);
+
 	} elsif ($exittype eq 'RIGHT') {
+
 		my @oldlines = Slim::Display::Display::curLines($client);
 		my $valueref = Slim::Buttons::Common::param($client,'valueRef');
+
 		Slim::Buttons::Common::pushMode($client, 'trackinfo', {'track' => $$valueref});
+
 		$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 	}
 }
-
 
 sub getMix {
 	my $id = shift;
@@ -728,34 +757,35 @@ sub getMix {
 	} elsif ($for eq "genre") {
 		$mixArgs = "genre=$id";
 	} else {
-		$::d_import && $::d_import =~ m/musimagic/ && msg("no valid type specified for instant mix");
+		$::d_import && $::d_import =~ m/musicmagic/ && msg("no valid type specified for instant mix");
 		return undef;
 	}
+
+	# url encode the request
+	$mixArgs   = Slim::Web::HTTP::escape($mixArgs);
+	$argString = Slim::Web::HTTP::escape($argString);
 	
-	my $MMSport = Slim::Utils::Prefs::get('MMSport');
-	my $MMSHost = Slim::Utils::Prefs::get('MMSHost');
+	$::d_import && $::d_import =~ m/musicmagic/ && msg("Musicmagic request: http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString\n");
 
-	$::d_musicmagic && msg("Musicmagic request: http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString\n");
+	my $http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString");
 
-	$req = new HTTP::Request GET => "http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString";
-	$res = (new LWP::UserAgent)->request($req);
-
-	if ($res->is_error()) {
+	unless ($http) {
 		# NYI
-		$::d_musicmagic && msg("Musicmagic Error!");
+		$::d_import && $::d_import =~ m/musicmagic/ && msg("Musicmagic Error - Couldn't get mix: $mixArgs\&$argString");
+		return @instant_mix;
+	}
 
-	} else {
+	my @songs = split(/\n/, $http->content());
+	my $count = scalar @songs;
 
-		my @songs = split(/\n/, $res->content());
-		my $count = scalar @songs;
-	
-		for (my $j = 0; $j < $count; $j++) {
-			my $newPath = convertPath($songs[$j]);
+	$http->close();
 
-			$::d_musicmagic && msg("Original $songs[$j] : New $newPath\n");
+	for (my $j = 0; $j < $count; $j++) {
+		my $newPath = convertPath($songs[$j]);
 
-			push @instant_mix, Slim::Utils::Misc::fileURLFromPath($newPath);
-		}
+		$::d_import && $::d_import =~ m/musicmagic/ && msg("Original $songs[$j] : New $newPath\n");
+
+		push @instant_mix, Slim::Utils::Misc::fileURLFromPath($newPath);
 	}
 
 	return @instant_mix;
@@ -845,7 +875,7 @@ sub musicmagic_mix {
 	
 	} else {
 
-		$::d_musicmagic && msg('no/unknown type specified for mix');
+		$::d_import && $::d_import =~ m/musicmagic/ && msg('no/unknown type specified for mix');
 		return 1;
 	}
 
@@ -900,8 +930,8 @@ sub setupGroup {
 			'changeIntro' => "",
 
 			'options' => {
-				'1' => string('USE_MUSICMAGIC'),
-				'0' => string('DONT_USE_MUSICMAGIC'),
+				'1' => Slim::Utils::Strings::string('USE_MUSICMAGIC'),
+				'0' => Slim::Utils::Strings::string('DONT_USE_MUSICMAGIC'),
 			},
 
 			'onChange' => sub {
@@ -927,7 +957,7 @@ sub setupCategory {
 
 	my %setupCategory = (
 
-		'title' => string('SETUP_MUSICMAGIC'),
+		'title' => Slim::Utils::Strings::string('SETUP_MUSICMAGIC'),
 		'parent' => 'server',
 		'GroupOrder' => ['Default','MusicMagicPlaylistFormat'],
 		'Groups' => {
@@ -943,8 +973,8 @@ sub setupCategory {
 				'Suppress_PrefDesc' => 1,
 				'Suppress_PrefLine' => 1,
 				'Suppress_PrefSub' => 1,
-				'GroupHead' => string('SETUP_MUSICMAGICPLAYLISTFORMAT'),
-				'GroupDesc' => string('SETUP_MUSICMAGICPLAYLISTFORMAT_DESC'),
+				'GroupHead' => Slim::Utils::Strings::string('SETUP_MUSICMAGICPLAYLISTFORMAT'),
+				'GroupDesc' => Slim::Utils::Strings::string('SETUP_MUSICMAGICPLAYLISTFORMAT_DESC'),
 				'GroupLine' => 1,
 				'GroupSub' => 1,
 			}
@@ -976,9 +1006,9 @@ sub setupCategory {
 				'validate' => \&Slim::Web::Setup::validateInList,
 				'validateArgs' => [0,1,2],
 				'options'=> {
-					'0' => string('MMMMIXTYPE_TRACKS'),
-					'1' => string('MMMMIXTYPE_MIN'),
-					'2' => string('MMMMIXTYPE_MBYTES'),
+					'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
+					'1' => Slim::Utils::Strings::string('MMMMIXTYPE_MIN'),
+					'2' => Slim::Utils::Strings::string('MMMMIXTYPE_MBYTES'),
 				}
 			},
 

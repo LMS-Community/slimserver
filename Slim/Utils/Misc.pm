@@ -218,7 +218,9 @@ sub pathFromFileURL {
 	}
 
 	# convert from the utf8 back to the local codeset.
-	eval { Encode::from_to($file, 'utf8', $locale) };
+	if ($file && $] > 5.007) {
+		eval { Encode::from_to($file, 'utf8', $locale) };
+	}
 
 	if (!defined($file))  {
 		$::d_files && msg("bad file: url $url\n");
@@ -235,7 +237,9 @@ sub fileURLFromPath {
 	return $path if (Slim::Music::Info::isURL($path));
 
 	# convert from the the local codeset to utf8
-	eval { Encode::from_to($path, $locale, 'utf8') };
+	if ($path && $] > 5.007) {
+		eval { Encode::from_to($path, $locale, 'utf8') };
+	}
 
 	my $uri  = URI::file->new($path);
 	$uri->host('');
