@@ -342,6 +342,7 @@ sub getMix {
 	}
 	
 	my $MMSport = Slim::Utils::Prefs::get('MMSport');
+	$::d_musicmagic && msg("Musicmagic request: http://localhost:$MMSport/api/mix?$mixArgs");
 	$req = new HTTP::Request GET => "http://localhost:$MMSport/api/mix?$mixArgs";
 	$res = (new LWP::UserAgent)->request($req);
 	if ($res->is_error()) {

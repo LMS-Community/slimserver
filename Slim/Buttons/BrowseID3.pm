@@ -1,5 +1,5 @@
 package Slim::Buttons::BrowseID3;
-# $Id: BrowseID3.pm,v 1.21 2004/11/25 03:51:02 kdf Exp $
+# $Id: BrowseID3.pm,v 1.22 2004/11/29 09:17:07 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -307,21 +307,21 @@ my %functions = (
 			# if we've chosen a particular song
 			if (picked($genre) && picked($artist) && picked($album) && Slim::Music::Info::isSongMMMixable($currentItem)) {
 				
-			       # For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-				Slim::Buttons::Common::pushMode($client, 'instant_mix', {'song' => $currentItem});
+				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
+				Slim::Buttons::Common::pushMode($client, 'instant_mix', {'song' => Slim::Utils::Misc::pathFromFileURL($currentItem)});
 				Slim::Buttons::VarietyCombo::specialPushLeft($client, 0, @oldlines);
 				
 			# if we've picked an artist 
 			} elsif (picked($genre) && ! picked($album) && Slim::Music::Info::isArtistMMMixable($currentItem)) {
 				
-			       # For the moment, skip straight to InstantMix mode. (See VarietyCombo)
+				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 				Slim::Buttons::Common::pushMode($client, 'instant_mix', {'artist' => $currentItem});
 				Slim::Buttons::VarietyCombo::specialPushLeft($client, 0, @oldlines);
 				
 			# if we've picked an album 
 			} elsif (picked($genre) && picked($artist) && !picked($album) && Slim::Music::Info::isAlbumMMMixable($artist, $currentItem)) {
 				
-			       # For the moment, skip straight to InstantMix mode. (See VarietyCombo)
+				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 				my $key = "$artist\@\@$currentItem";
 				Slim::Buttons::Common::pushMode($client, 'instant_mix', {'album' => $key});
 				Slim::Buttons::VarietyCombo::specialPushLeft($client, 0, @oldlines);
