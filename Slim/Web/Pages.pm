@@ -792,14 +792,14 @@ sub browser_addtolist_done {
 
 		} else {
 
-			($start, $end) = pageBar(
-				$numitems,
+			my $alphaItems = [ Slim::Music::Info::sortFilename(map { File::Basename::basename(uc($_)) } @{$itemsref}) ];
+
+			($start, $end) = alphaPageBar(
+				$alphaItems,
 				$params->{'path'},
-				0,
 				$otherparams,
 				\$params->{'start'},
 				\$params->{'browselist_header'},
-				\$params->{'browselist_pagebar'},
 				$params->{'skinOverride'},
 				$params->{'itemsPerPage'},
 			);
@@ -2005,7 +2005,6 @@ sub browsedb {
 				$otherparams,
 				\$params->{'start'},
 				\$params->{'browselist_pagebar'},
-				$ignoreArticles, 
 				$params->{'skinOverride'},
 				$params->{'itemsPerPage'},
 			);
@@ -2338,7 +2337,6 @@ sub alphaPageBar {
 	my $otherparams = shift;
 	my $startref = shift; #will be modified
 	my $pagebarref = shift; #will be modified
-	my $ignorearticles = shift;
 	my $skinOverride = shift;
 	my $maxcount = shift || Slim::Utils::Prefs::get('itemsPerPage');
 
