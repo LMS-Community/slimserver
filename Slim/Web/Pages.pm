@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.25 2003/12/08 19:26:51 dean Exp $
+# $Id: Pages.pm,v 1.26 2003/12/09 02:29:12 grotus Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -475,10 +475,10 @@ sub status {
 	my $output = "";
 	
 	if (!$$main_form_ref{'omit_playlist'}) {
+		$$main_form_ref{'callback'} = $callback;
 		$$main_form_ref{'playlist'} = playlist($client, $main_form_ref, \&status_done, $httpclientsock, $resultref, $headersref, $paramheadersref);
 		if (!$$main_form_ref{'playlist'}) {
 			#playlist went into background, stash $callback and exit
-			$$main_form_ref{'callback'} = $callback;
 			return undef;
 		} else {
 			$$main_form_ref{'playlist'} = $$$main_form_ref{'playlist'};
