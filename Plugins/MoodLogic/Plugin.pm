@@ -366,8 +366,7 @@ sub exportFunction {
 		$cacheEntry{'VALID'}      = 1;
 		
 		# cache the file date
-		$cacheEntry{'AGE'} = (stat($mixer->Mix_SongFile(-1)))[9];
-		$cacheEntry{'FS'}  = -s $mixer->Mix_SongFile(-1);
+		($cacheEntry{'FS'}, $cacheEntry{'AGE'}) = (stat($mixer->Mix_SongFile(-1)))[7,9];
 		
 		$cacheEntry{'TITLE'}      = $mixer->Mix_SongName(-1);
 		$cacheEntry{'ARTIST'}     = $mixer->Mix_ArtistName(-1);
@@ -382,13 +381,17 @@ sub exportFunction {
 		$::d_moodlogic && msg("MoodLogic: Creating entry for: $url\n");
 
 		# that's all for the track
-		$ds->updateOrCreate({
+		my $track = $ds->updateOrCreate({
+
 			'url' => $url,
 			'attributes' => \%cacheEntry,
-		});
 
-		# the above object was just created - fetch it back into something we can use
-		my $track = $ds->objectForUrl($url);
+		}) || do {
+
+			$::d_moodlogic && Slim::Utils::Misc::msg("Couldn't create track for: $url\n");
+
+			return 0;
+		};
 
 		# Now add to the contributors and genres
 		for my $contributor ($track->contributors()) {
@@ -410,12 +413,13 @@ sub exportFunction {
 			$genre->update();
 		}
 
-		if (Slim::Utils::Prefs::get('lookForArtwork')) {
-			if ($cacheEntry{'ALBUM'} && 
-				!Slim::Music::Import::artwork($cacheEntry{'ALBUM'}) && 
-				!defined Slim::Music::Info::cacheItem($url,'THUMB')) {
+		my $albumObj = $track->album();
 
-				Slim::Music::Import::artwork($cacheEntry{'ALBUM'}, $url);
+		if (Slim::Utils::Prefs::get('lookForArtwork') && $albumObj) {
+
+			if (!Slim::Music::Import::artwork($albumObj) && !defined $track->thumb()) {
+
+				Slim::Music::Import::artwork($albumObj, $track);
 			}
 		}
 		

@@ -574,10 +574,6 @@ sub scanFunction {
 			}
 
 			if ($url && (Slim::Music::Info::isSong($url, $type) || Slim::Music::Info::isHTTPURL($url))) {
-				# Force a reading of the file itself,
-				# since lazy reading can result in slow
-				# performance down the road.
-				Slim::Music::Info::info($url, 'TAG');
 
 				$cacheEntry{'CT'} = $type;
 				$cacheEntry{'TITLE'} = $curTrack{'Name'};
@@ -608,18 +604,30 @@ sub scanFunction {
 
 				$cacheEntry{'VALID'} = '1';
 
-				if (Slim::Utils::Prefs::get('lookForArtwork')) {
-					if ($cacheEntry{'ALBUM'} && !Slim::Music::Import::artwork($cacheEntry{'ALBUM'}) && !defined Slim::Music::Info::cacheItem($url,'THUMB')) {
-						Slim::Music::Import::artwork($cacheEntry{'ALBUM'},$url);
-					}
-				}
-				
-				$ds->updateOrCreate({
+				my $track = $ds->updateOrCreate({
+
 					'url'        => $url,
 					'attributes' => \%cacheEntry,
-				});
+
+				}) || do {
+
+					$::d_itunes && Slim::Utils::Misc::msg("Couldn't create track for: $url\n");
+
+					return 0;
+				};
+
+				my $albumObj = $track->album();
+
+				if (Slim::Utils::Prefs::get('lookForArtwork') && $albumObj) {
+
+					if (!Slim::Music::Import::artwork($albumObj) && !defined $albumObj->thumb()) {
+
+						Slim::Music::Import::artwork($albumObj, $track);
+					}
+				}
 
 				$tracks{$id} = $url;
+
 			} else {
 
 				$::d_itunes && warn "iTunes: unknown file type " . $curTrack{'Kind'} . " $url";
@@ -627,6 +635,7 @@ sub scanFunction {
 			} 
 
 		}
+
 	} elsif ($inPlaylists) {
 		
 		if ($curLine eq '</array>') {

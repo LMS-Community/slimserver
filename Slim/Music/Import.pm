@@ -144,13 +144,18 @@ sub stillScanning {
 }
 
 sub artwork {
-	my $cacheItem = shift;
-	my $url = shift;
+	my $album = shift;
+	my $track = shift;
 
-	if (defined $url) {
-		$artwork{$cacheItem} = $url;
+	my $key   = $album->id() || 1;
+
+	if (defined $track) {
+
+		$artwork{$key} = $track->id();
+
 	} else {
-		return exists $artwork{$cacheItem};
+
+		return exists $artwork{$key};
 	}
 }
 
@@ -158,19 +163,13 @@ sub artScan {
 	my @albums = keys %artwork;
 	my $album  = $albums[0] || return 0;
 
-	my $url    = $artwork{$album};
 	my $ds     = Slim::Music::Info::getCurrentDataStore();
-	my $track  = $ds->objectForUrl($url); 
+	my $track  = $ds->objectForId($artwork{$album}); 
 
 	# Make sure we have an object for the url, and it has a thumbnail.
 	if (defined $track && $track->coverArt('thumb')) {
 		
-		my $contributors = join(':', map { $_->id() } $track->contributors());
-		my $thumbpath = Slim::Utils::Misc::pathFromFileURL($url);
-		
-		$::d_artwork && Slim::Utils::Misc::msg("Caching $thumbpath for $album\n");
-
-		$ds->setAlbumArtwork($album, $contributors, $thumbpath);
+		$ds->setAlbumArtwork($track);
 	}
 
 	delete $artwork{$album};

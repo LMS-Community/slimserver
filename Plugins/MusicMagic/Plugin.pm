@@ -447,28 +447,31 @@ sub exportFunction {
 			my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});
 
 			my $track = $ds->updateOrCreate({
+
 				'url'        => $fileurl,
 				'attributes' => \%cacheEntry,
-			});
-			
+
+			}) || do {
+
+				$::d_musicmagic && Slim::Utils::Misc::msg("Couldn't create track for $fileurl!\n");
+				next;
+			};
+
+			my $albumObj = $track->album();
+
 			# NYI: MMM has more ways to access artwork...
-			# XXX - bogus, doesn't work with Greatest Hits
-			if (Slim::Utils::Prefs::get('lookForArtwork')) {
+			if (Slim::Utils::Prefs::get('lookForArtwork') && defined $albumObj) {
 
-				if ($cacheEntry{'ALBUM'} && 
-					!Slim::Music::Import::artwork($cacheEntry{'ALBUM'}) && 
-					!defined Slim::Music::Info::cacheItem($fileurl,'THUMB')) {
+				if (!Slim::Music::Import::artwork($albumObj) && !defined $track->thumb()) {
 
-					Slim::Music::Import::artwork($cacheEntry{'ALBUM'},$fileurl);
+					Slim::Music::Import::artwork($albumObj, $track);
 				}
 			}
 
-			if ($songInfo{'active'} eq 'yes' && defined $track) {
+			if ($songInfo{'active'} eq 'yes' && defined $albumObj) {
 
-				my $albumObj = $track->album();
-			
 				$albumObj->musicmagic_mixable(1);
-				$albumObj->update(1);
+				$albumObj->update();
 			}
 		}
 

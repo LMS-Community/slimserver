@@ -10,6 +10,7 @@ package Slim::DataStores::DBI::DBIStore;
 use strict;
 
 use DBI;
+use File::Basename qw(dirname);
 use MP3::Info;
 use Tie::Cache::LRU::Expires;
 
@@ -93,10 +94,9 @@ sub new {
 		# Optimization to cache content type for track entries rather than
 		# look them up everytime.
 		contentTypeCache => {},
-		# Optimization to cache last track accessed rather than retrieve it
-		# again. 
+		# Optimization to cache last track accessed rather than retrieve it again. 
 		lastTrackURL => '',
-		lastTrack => undef,
+		lastTrack => {},
 		# Selected list of external playlists.
 		externalPlaylists => [],
 		# Tracks that are out of date and should be deleted the next time
@@ -392,7 +392,7 @@ sub newTrack {
 		$attributeHash = $self->readTags($url);
 	}
 
-	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($attributeHash, 1);
+	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($url, $attributeHash, 1);
 
 	# Creating the track only wants lower case values from valid columns.
 	my $columnValueHash = {};
@@ -431,7 +431,7 @@ sub newTrack {
 	$self->_postCheckAttributes($track, $deferredAttributes, 1);
 
 	$self->{'lastTrackURL'} = $url;
-	$self->{'lastTrack'}    = $track;
+	$self->{'lastTrack'}->{dirname($url)} = $track;
 
 	if ($self->_includeInTrackCount($track)) { 
 
@@ -485,7 +485,7 @@ sub updateOrCreate {
 		$::d_info && Slim::Utils::Misc::msg("Merging entry for $url\n");
 
 		my $deferredAttributes;
-		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($attributeHash, 0);
+		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($url, $attributeHash, 0);
 
 		while (my ($key, $val) = each %$attributeHash) {
 			if (defined $val && exists $trackAttrs->{lc $key}) {
@@ -506,6 +506,7 @@ sub updateOrCreate {
 			'url'        => $url,
 			'attributes' => $attributeHash,
 			'readTags'   => $readTags,
+			'commit'     => $commit,
 		});
 	}
 
@@ -638,7 +639,7 @@ sub wipeAllData {
 	$self->{'thumbCache'}       = {};	
 	$self->{'contentTypeCache'} = {};
 	$self->{'lastTrackURL'}     = '';
-	$self->{'lastTrack'}        = undef;
+	$self->{'lastTrack'}        = {};
 
 	$self->clearExternalPlaylists();
 	$self->{'zombieList'}       = {};
@@ -667,6 +668,8 @@ sub forceCommit {
 	}
 
 	$self->{'zombieList'} = {};
+	$self->{'lastTrackURL'} = '';
+	$self->{'lastTrack'} = {};
 
 	$::d_info && Slim::Utils::Misc::msg("forceCommit: syncing to the database.\n");
 
@@ -697,7 +700,10 @@ sub clearExternalPlaylists {
 
 	my $playLists = Slim::DataStores::DBI::Track->externalPlaylists();
 
+	# We can specify a url prefix to only delete certain types of external
+	# playlists - ie: only iTunes, or only MusicMagic.
 	while (my $track = $playLists->next()) {
+
 		$track->delete() if (defined $url ? $track->url() =~ /^$url/ : 1);
 	}
 
@@ -733,159 +739,85 @@ sub readTags {
 
 	$::d_info && Slim::Utils::Misc::msg("Updating cache for: " . $file . "\n");
 
-	if (Slim::Music::Info::isSong($file, $type) ) {
+	if (Slim::Music::Info::isSong($file, $type) && !Slim::Music::Info::isRemoteURL($file)) {
 
-		if (Slim::Music::Info::isRemoteURL($file)) {
+		my $anchor;
 
-			# if it's an HTTP URL, guess the title from the the last
-			# part of the URL, and don't bother with the other parts
-			$::d_info && Slim::Utils::Misc::msg("Info: no title found, calculating title from url for $file\n");
-			$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
-
+		if (Slim::Music::Info::isFileURL($file)) {
+			$filepath = Slim::Utils::Misc::pathFromFileURL($file);
+			$anchor   = Slim::Utils::Misc::anchorFromURL($file);
 		} else {
+			$filepath = $file;
+		}
 
-			my $anchor;
+		# Extract tag and audio info per format
+		if (exists $tagFunctions{$type}) {
+			$attributesHash = &{$tagFunctions{$type}}($filepath, $anchor);
+		}
 
-			if (Slim::Music::Info::isFileURL($file)) {
-				$filepath = Slim::Utils::Misc::pathFromFileURL($file);
-				$anchor   = Slim::Utils::Misc::anchorFromURL($file);
-			} else {
-				$filepath = $file;
-			}
+		$::d_info && !defined($attributesHash) && Slim::Utils::Misc::msg("Info: no tags found for $filepath\n");
 
-			# Extract tag and audio info per format
-			if (exists $tagFunctions{$type}) {
-				$attributesHash = &{$tagFunctions{$type}}($filepath, $anchor);
-			}
+		if (defined $attributesHash->{'TRACKNUM'}) {
+			$attributesHash->{'TRACKNUM'} = Slim::Music::Info::cleanTrackNumber($attributesHash->{'TRACKNUM'});
+		}
+		
+		# Turn the tag SET into DISC and DISCC if it looks like # or #/#
+		if ($attributesHash->{'SET'} and $attributesHash->{'SET'} =~ /(\d+)(?:\/(\d+))?/) {
+			$attributesHash->{'DISC'} = $1;
+			$attributesHash->{'DISCC'} = $2 if defined $2;
+		}
 
-			$::d_info && !defined($attributesHash) && Slim::Utils::Misc::msg("Info: no tags found for $filepath\n");
+		Slim::Music::Info::addDiscNumberToAlbumTitle($attributesHash);
+		
+		if (!$attributesHash->{'TITLE'}) {
 
-			if (defined($attributesHash->{'TRACKNUM'})) {
-				$attributesHash->{'TRACKNUM'} = Slim::Music::Info::cleanTrackNumber($attributesHash->{'TRACKNUM'});
-			}
-			
-			# Turn the tag SET into DISC and DISCC if it looks like # or #/#
-			if ($attributesHash->{'SET'} and $attributesHash->{'SET'} =~ /(\d+)(?:\/(\d+))?/) {
-				$attributesHash->{'DISC'} = $1;
-				$attributesHash->{'DISCC'} = $2 if defined $2;
- 			}
+			$::d_info && Slim::Utils::Misc::msg("Info: no title found, using plain title for $file\n");
+			#$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
+			Slim::Music::Info::guessTags($file, $type, $attributesHash);
+		}
 
-			Slim::Music::Info::addDiscNumberToAlbumTitle($attributesHash);
-			
-			if (!$attributesHash->{'TITLE'}) {
-
-				$::d_info && Slim::Utils::Misc::msg("Info: no title found, using plain title for $file\n");
-				#$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
-				Slim::Music::Info::guessTags($file, $type, $attributesHash);
-			}
-
-			# fix the genre
-			if (defined($attributesHash->{'GENRE'}) && $attributesHash->{'GENRE'} =~ /^\((\d+)\)$/) {
-				# some programs (SoundJam) put their genres in as text digits surrounded by parens.
-				# in this case, look it up in the table and use the real value...
-				if (defined($MP3::Info::mp3_genres[$1])) {
-					$attributesHash->{'GENRE'} = $MP3::Info::mp3_genres[$1];
-				}
-			}
-
-			# cache the file size & date
-			($attributesHash->{'FS'}, $attributesHash->{'AGE'}) = (stat($filepath))[7,9];
-			
-			# rewrite the size, offset and duration if it's just a fragment
-			# This is mostly (always?) for cue sheets.
-			if ($anchor && $anchor =~ /([\d\.]+)-([\d\.]+)/ && $attributesHash->{'SECS'}) {
-				my $start = $1;
-				my $end = $2;
-				
-				my $duration = $end - $start;
-				my $byterate = $attributesHash->{'SIZE'} / $attributesHash->{'SECS'};
-				my $header = $attributesHash->{'OFFSET'};
-				my $startbytes = int($byterate * $start);
-				my $endbytes = int($byterate * $end);
-				
-				$startbytes -= $startbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
-				$endbytes -= $endbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
-				
-				$attributesHash->{'OFFSET'} = $header + $startbytes;
-				$attributesHash->{'SIZE'} = $endbytes - $startbytes;
-				$attributesHash->{'SECS'} = $duration;
-
-				if ($::d_info) {
-					Slim::Utils::Misc::msg("readTags: calculating duration for anchor: $duration\n");
-					Slim::Utils::Misc::msg("readTags: calculating header $header, startbytes $startbytes and endbytes $endbytes\n");
-				}
-			}
-			
-			# cache the content type
-			$attributesHash->{'CT'} = $type;
-			
-			# Check for Cover Artwork, only if not already present.
-			if (exists $attributesHash->{'COVER'} || exists $attributesHash->{'THUMB'}) {
-
-				$::d_artwork && Slim::Utils::Misc::msg("already checked artwork for $file\n");
-
-			} elsif (Slim::Utils::Prefs::get('lookForArtwork')) {
-
-				my $album = $attributesHash->{'ALBUM'};
-
-				$attributesHash->{'TAG'} = 1;
-
-				# cache the content type
-				$attributesHash->{'CT'} = $type; # unless defined $track->getCached('ct');
-
-				# update the cache so we can use readCoverArt without recursion.
-				# $self->updateOrCreate($track, $attributesHash);
-			
-				# Look for Cover Art and cache location
-				my ($body, $contentType, $path);
-			
-				if (defined $attributesHash->{'PIC'} || defined $attributesHash->{'APIC'}) {
-
-					($body, $contentType, $path) = Slim::Music::Info::readCoverArtTags($file, $attributesHash);
-				}
-
-				# Greatest Hits problem - need to use contributor as the top key.
-				my $contributors = $attributesHash->{'ARTIST'};
-
-				if (defined $body) {
-
-					$attributesHash->{'COVER'} = 1;
-					$attributesHash->{'THUMB'} = 1;
-
-					if ($album && !exists $self->{'artworkCache'}->{$contributors}->{$album}) {
-
-						$::d_artwork && Slim::Utils::Misc::msg("ID3 Artwork cache entry for $album: $filepath\n");
-
-						$attributesHash->{'ARTWORK'} = $filepath;
-					}
-				
-				} else {
-
-					($body, $contentType, $path) = Slim::Music::Info::readCoverArtFiles($file, 'cover');
-
-					if (defined $body) {
-						$attributesHash->{'COVER'} = $path;
-					}
-
-					# look for Thumbnail Art and cache location
-					($body, $contentType, $path) = Slim::Music::Info::readCoverArtFiles($file, 'thumb');
-
-					if (defined $body) {
-
-						$attributesHash->{'THUMB'} = $path;
-
-						if ($album && !exists $self->{'artworkCache'}->{$contributors}->{$album}) {
-
-							$::d_artwork && Slim::Utils::Misc::msg("Artwork cache entry for $album: $filepath\n");
-
-							$attributesHash->{'ARTWORK'} = $filepath;
-						}
-					}
-				}
+		# fix the genre
+		if (defined($attributesHash->{'GENRE'}) && $attributesHash->{'GENRE'} =~ /^\((\d+)\)$/) {
+			# some programs (SoundJam) put their genres in as text digits surrounded by parens.
+			# in this case, look it up in the table and use the real value...
+			if (defined($MP3::Info::mp3_genres[$1])) {
+				$attributesHash->{'GENRE'} = $MP3::Info::mp3_genres[$1];
 			}
 		}
 
-	} else {
+		# cache the file size & date
+		($attributesHash->{'FS'}, $attributesHash->{'AGE'}) = (stat($filepath))[7,9];
+		
+		# rewrite the size, offset and duration if it's just a fragment
+		# This is mostly (always?) for cue sheets.
+		if ($anchor && $anchor =~ /([\d\.]+)-([\d\.]+)/ && $attributesHash->{'SECS'}) {
+			my $start = $1;
+			my $end = $2;
+			
+			my $duration = $end - $start;
+			my $byterate = $attributesHash->{'SIZE'} / $attributesHash->{'SECS'};
+			my $header = $attributesHash->{'OFFSET'};
+			my $startbytes = int($byterate * $start);
+			my $endbytes = int($byterate * $end);
+			
+			$startbytes -= $startbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
+			$endbytes -= $endbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
+			
+			$attributesHash->{'OFFSET'} = $header + $startbytes;
+			$attributesHash->{'SIZE'} = $endbytes - $startbytes;
+			$attributesHash->{'SECS'} = $duration;
+
+			if ($::d_info) {
+				Slim::Utils::Misc::msg("readTags: calculating duration for anchor: $duration\n");
+				Slim::Utils::Misc::msg("readTags: calculating header $header, startbytes $startbytes and endbytes $endbytes\n");
+			}
+		}
+	}
+
+	# Last resort
+	if (!defined $attributesHash->{'TITLE'} || $attributesHash->{'TITLE'} =~ /^\s*$/) {
+
+		$::d_info && Slim::Utils::Misc::msg("Info: no title found, calculating title from url for $file\n");
 
 		$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
 	}
@@ -900,17 +832,18 @@ sub readTags {
 }
 
 sub setAlbumArtwork {
-	my $self = shift;
-	my $album = shift;
-	my $contributors = shift;
-	my $filepath = shift;
+	my $self  = shift;
+	my $track = shift;
 	
 	if (!Slim::Utils::Prefs::get('lookForArtwork')) {
 		return undef
 	}
 
+	my $album    = $track->album();
+	my $filepath = $track->url();
+
 	# only cache albums once each
-	if (!exists $self->{'artworkCache'}->{$contributors}->{$album}) {
+	if ($album && !exists $self->{'artworkCache'}->{$album->id}) {
 
 		if (Slim::Music::Info::isFileURL($filepath)) {
 			$filepath = Slim::Utils::Misc::pathFromFileURL($filepath);
@@ -918,17 +851,10 @@ sub setAlbumArtwork {
 
 		$::d_artwork && Slim::Utils::Misc::msg("Updating $album artwork cache: $filepath\n");
 
-		$self->{'artworkCache'}->{$contributors}->{$album} = $filepath;
+		$self->{'artworkCache'}->{$album->id} = $filepath;
 
-		my ($album) = Slim::DataStores::DBI::Album->search(
-			title => $album,
-			contributors => $contributors,
-		);
-
-		if ($album) {
-			$album->artwork_path($filepath);
-			$album->update();
-		}
+		$album->artwork_path($filepath);
+		$album->update();
 	}
 }
 
@@ -944,9 +870,12 @@ sub _retrieveTrack {
 
 	my $track;
 
+	# Keep the last track per dirname.
+	my $dirname = dirname($url);
+
 	if ($url eq $self->{'lastTrackURL'}) {
 
-		$track = $self->{'lastTrack'};
+		$track = $self->{'lastTrack'}->{$dirname};
 
 	} else {
 
@@ -957,7 +886,7 @@ sub _retrieveTrack {
 	
 	if (defined($track)) {
 		$self->{'lastTrackURL'} = $url;
-		$self->{'lastTrack'} = $track;
+		$self->{'lastTrack'}->{$dirname} = $track;
 	}
 
 	return $track;
@@ -1074,6 +1003,7 @@ sub _includeInTrackCount {
 
 sub _preCheckAttributes {
 	my $self = shift;
+	my $url = shift;
  	my $attributeHash = shift;
  	my $create = shift;
 	my $deferredAttributes = {};
@@ -1085,6 +1015,14 @@ sub _preCheckAttributes {
 	$deferredAttributes->{'GENRE'}   = delete $attributes->{'GENRE'};
 	$deferredAttributes->{'ARTWORK'} = delete $attributes->{'ARTWORK'};
 	$deferredAttributes->{'ARTIST'}  = delete $attributes->{'ARTIST'};
+
+	# Artwork is now taken care of in _postCheckAttributes()
+	$deferredAttributes->{'PIC'}     = delete $attributes->{'PIC'};
+	$deferredAttributes->{'APIC'}    = delete $attributes->{'APIC'};
+
+	# We also need these in _postCheckAttributes, but they should be set during create()
+	$deferredAttributes->{'COVER'}   = $attributes->{'COVER'};
+	$deferredAttributes->{'THUMB'}   = $attributes->{'THUMB'};
 
 	# Normalize in ContributorTrack->add() the tag may need to be split. See bug #295
 	$deferredAttributes->{'ARTISTSORT'} = delete $attributes->{'ARTISTSORT'};
@@ -1109,10 +1047,19 @@ sub _preCheckAttributes {
 
 		# If there wasn't an artist associated yet, create a dummy contributor.
 		my $albumObj;
+		my $basename = dirname($url);
 
-		if ($self->{'lastTrack'} && $self->{'lastTrack'}->album() && $self->{'lastTrack'}->album() eq $album) {
+		# Go through some contortions to see if the album we're in
+		# already exists. Because we keep contributors now, but an
+		# album can have many contributors, check the last path and
+		# album name, to see if we're actually the same.
+		if ($self->{'lastTrack'}->{$basename} && 
+			$self->{'lastTrack'}->{$basename}->album() && 
+			$self->{'lastTrack'}->{$basename}->album() eq $album &&
+			dirname($self->{'lastTrack'}->{$basename}->url()) eq $basename
+			) {
 
-			$albumObj = $self->{'lastTrack'}->album();
+			$albumObj = $self->{'lastTrack'}->{$basename}->album();
 
 			if (defined $artistObj) {
 
@@ -1213,9 +1160,11 @@ sub _postCheckAttributes {
 			# If we have an album associated with the contributors - mark it as such. 
 			if (my $albumObj = $attributes->{'ALBUM'}) {
 
-				if (my $artworkPath = $attributes->{'ARTWORK'}) {
+				my $artworkPath = $self->_findCoverArt($track->url, $attributes);
 
-					$self->{'artworkCache'}->{join(':', @contributors)}->{$albumObj->title} = $artworkPath;
+				if ($artworkPath) {
+
+					$self->{'artworkCache'}->{$albumObj->id} = $artworkPath;
 
 					$albumObj->artwork_path($artworkPath);
 				}
@@ -1230,7 +1179,7 @@ sub _postCheckAttributes {
 		}
 	}
 
-
+	# We need to create this guy the first time through..
 	if ($create && (!$foundContributor || !$_unknownArtistID)) {
 
 		($_unknownArtistID) = Slim::DataStores::DBI::ContributorTrack->add(
@@ -1238,6 +1187,72 @@ sub _postCheckAttributes {
 			$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'},
 			$track
 		);
+	}
+}
+
+sub _findCoverArt {
+	my ($self, $file, $attributesHash) = @_;
+
+	# Check for Cover Artwork, only if not already present.
+	if ($attributesHash->{'COVER'} || $attributesHash->{'THUMB'}) {
+
+		$::d_artwork && Slim::Utils::Misc::msg("already checked artwork for $file\n");
+
+		return;
+	}
+
+	# Don't bother if the user doesn't care.
+	return unless Slim::Utils::Prefs::get('lookForArtwork');
+
+	my $album    = $attributesHash->{'ALBUM'};
+	my $filepath = $file;
+
+	if (Slim::Music::Info::isFileURL($file)) {
+		$filepath = Slim::Utils::Misc::pathFromFileURL($file);
+	}
+
+	# Look for Cover Art and cache location
+	my ($body, $contentType, $path);
+
+	if (defined $attributesHash->{'PIC'} || defined $attributesHash->{'APIC'}) {
+
+		($body, $contentType, $path) = Slim::Music::Info::readCoverArtTags($file, $attributesHash);
+	}
+
+	if (defined $body) {
+
+		$attributesHash->{'COVER'} = 1;
+		$attributesHash->{'THUMB'} = 1;
+
+		if ($album && !exists $self->{'artworkCache'}->{$album->id}) {
+
+			$::d_artwork && Slim::Utils::Misc::msg("ID3 Artwork cache entry for $album: $filepath\n");
+
+			return $filepath;
+		}
+	
+	} else {
+
+		($body, $contentType, $path) = Slim::Music::Info::readCoverArtFiles($file, 'cover');
+
+		if (defined $body) {
+			$attributesHash->{'COVER'} = $path;
+		}
+
+		# look for Thumbnail Art and cache location
+		($body, $contentType, $path) = Slim::Music::Info::readCoverArtFiles($file, 'thumb');
+
+		if (defined $body) {
+
+			$attributesHash->{'THUMB'} = $path;
+
+			if ($album && !exists $self->{'artworkCache'}->{$album->id}) {
+
+				$::d_artwork && Slim::Utils::Misc::msg("Artwork cache entry for $album: $filepath\n");
+
+				return $filepath;
+			}
+		}
 	}
 }
 
