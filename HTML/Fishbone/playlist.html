@@ -3,7 +3,7 @@
     <title>[S {playermodel}_MUSIC_PLAYER] [IF player_name]{player_name}[/IF]</title>
     <link rel="stylesheet" href="slimserver.css">
   </head>
-  <body bgcolor="#000000" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload='window.location="#[EVAL]Slim::Player::Source::currentSongIndex($client)[/EVAL]-2"'>
+  <body bgcolor="#000000" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
 	  <center>[S CURRENT_PLAYLIST]
     [IF cansave] ([EVAL]defined($client) ? Slim::Player::Playlist::count($client) : '';[/EVAL] [S SONGS])&nbsp;&nbsp;<a target="browser" href="browse.html?player={%player}&dir=__playlists%2f__current.m3u">[S SAVE]</a> | [/IF]
         <a href="status.m3u?player={%player}" target="playlist">[S DOWNLOAD]</a> |

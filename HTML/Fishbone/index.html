@@ -1,8 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-	<link REL="shortcut icon" HREF="{webroot}/favicon.ico" TYPE="image/x-icon">
 <html>
-<script language="JavaScript">
-<!--Hide
+<head>
+	<link REL="shortcut icon" HREF="{webroot}favicon.ico" TYPE="image/x-icon">
+	<link rel="icon" href="{webroot}favicon.ico" type="image/x-icon" > 
+	<title>SlimServer</title>
+</head>
+<script language="JavaScript" TYPE="text/javascript">
+//<!--Hide
 function getCookie(Name) 
 &lbrc;
 	var search = Name + "=";
@@ -19,16 +23,14 @@ function getCookie(Name)
 	return "home.html?player={%player}";
 &rbrc;
 
-
-
-document.write('<title>SlimServer</title>');
-document.write('  <frameset cols="45%,*" border="2" framespacing="2">');
+document.write('<frameset cols="45%,*" border="2" framespacing="2">');
 document.write('<frame src="' +getCookie('Slimd-Browserpage') +'&player={%player}'[IF nofolder]+'&nofolder=1'[/IF] +'" name="browser">');
-document.write('    <frameset name="player_frame" ID="player_frame" border="0" frameborder="no" framespacing="0" rows="240,*">');
-document.write('	 	<frame name="statusframe" scrolling="no" src="status_header.html?player={%player}">');
-document.write('	 	<frame name="playlist" src="playlist.html?player={%player}">');
-document.write('	</frameset>');
-document.write('  </frameset>');
--->
+document.write('<frameset name="player_frame" ID="player_frame" border="0" frameborder="no" framespacing="0" rows="240,*">');
+document.write('<frame name="statusframe" noresize scrolling="no" src="status_header.html?player={%player}">');
+document.write('<frame name="playlist" noresize src="playlist.html?player={%player}">');
+document.write('</frameset>');
+document.write('</frameset>');
+//-->
 </script>
+<noframes><p>Dude, you need a browser that supports Frames!</p></noframes>
 </html>

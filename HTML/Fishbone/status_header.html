@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-	 <meta http-equiv="refresh" content="{refresh}; url=status_header.html?player={%player}&amp;start={start}">
+	 <meta http-equiv="refresh" content="{refresh}; url=status_header.html?player={%player}&amp;start={start}&amp;refresh=1">
 	<link rel="stylesheet" href="slimserver.css">
     <script language="JavaScript">
 <!--Hide
@@ -15,7 +15,7 @@ function openRemote()
 -->
 </script>
 </head>
-  <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload='javascript:parent.playlist.location="playlist.html?player={%player}&start={start}";'>
+  <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:parent.playlist.location.reload(true);">
 	  <div class="masthead">
 	  <table border="0" cellpadding="2" cellspacing="0" width="100%"  bordercolor="#111111">
 	   <tr>
