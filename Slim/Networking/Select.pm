@@ -1,6 +1,6 @@
 package Slim::Networking::Select;
 
-# $Id: Select.pm,v 1.10 2004/02/21 22:33:00 daniel Exp $
+# $Id: Select.pm,v 1.11 2004/05/05 23:05:49 dean Exp $
 
 # SlimServer Copyright (c) 2003-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,11 +11,24 @@ use strict;
 use IO::Select;
 use Slim::Utils::Misc;
 
+BEGIN {
+	if ($^O =~ /Win32/) {
+		*EWOULDBLOCK = sub () { 10035 };
+		*EINPROGRESS = sub () { 10036 };
+	} else {
+		require Errno;
+		import Errno qw(EWOULDBLOCK EINPROGRESS);
+	}
+}
+
+
 my %readSockets;
 my %readCallbacks;
 
 my %writeSockets;
 my %writeCallbacks;
+
+my %writeQueue;
 
 my $readSelects  = IO::Select->new();
 my $writeSelects = IO::Select->new();
@@ -90,6 +103,51 @@ sub select {
 	}
 
 	return $count;
+}
+
+sub writeNoBlock {
+	my $socket = shift;
+	my $chunkRef = shift;
+
+	if (defined $chunkRef) {	
+		push @{$writeQueue{"$socket"}}, {
+			'data'   => $chunkRef,
+			'offset' => 0,
+			'length' => length($$chunkRef)
+		};
+	}
+	
+	my $segment = shift(@{$writeQueue{"$socket"}});
+	
+	if (!defined $segment) {
+		addWrite($socket);
+		return;
+	}
+	
+	$::d_select && msg("writeNoBlock: writing a segment of length: " . $segment->{'length'} . "\n");
+	
+	my $sentbytes = syswrite($socket, ${$segment->{'data'}}, $segment->{'length'}, $segment->{'offset'});
+
+	if ($! == EWOULDBLOCK) {
+		$::d_select && msg("writeNoBlock: Would block while sending.\n");
+		$sentbytes = 0 unless defined $sentbytes;
+	}
+
+	if (!defined($sentbytes)) {
+		# Treat $httpClient with suspicion
+		$::d_select && msg("writeNoBlock: Send to socket had error, aborting.\n");
+		delete($writeQueue{"$socket"});
+		return;
+	}
+
+	# sent incomplete message
+	if ($sentbytes < $segment->{'length'}) {
+		$::d_select && msg("writeNoBlock: incomplete message, sent only: $sentbytes\n");
+		$segment->{'length'} -= $sentbytes;
+		$segment->{'offset'} += $sentbytes;
+		unshift @{$writeQueue{"$socket"}}, $segment;
+		addWrite($socket, \&writeNoBlock);
+	} 
 }
 
 1;

@@ -216,6 +216,7 @@ sub upgradeFirmware_SDK5 {
 	my $buf;
 	my $byteswritten;
 	my $bytesleft;
+	my $lastFraction = -1;
 	
 	while ($bytesread=read(FS, $buf, 1024)) {
 		assert(length($buf) == $bytesread);
@@ -224,13 +225,17 @@ sub upgradeFirmware_SDK5 {
 		
 		$totalbytesread += $bytesread;
 		$::d_firmware && msg("Updating firmware: $totalbytesread / $size\n");
-
-		Slim::Display::Animation::showBriefly(
-			$client,
-			string('UPDATING_FIRMWARE'),
-			Slim::Display::Display::progressBar($client, 40, $totalbytesread/$size)
-		)
-
+		
+		my $fraction = $totalbytesread/$size;
+		
+		if (($fraction - $lastFraction) > (1/200)) {
+			Slim::Display::Animation::showBriefly(
+				$client,
+				string('UPDATING_FIRMWARE'),
+				Slim::Display::Display::progressBar($client, 40, $totalbytesread/$size)
+			);
+			$lastFraction = $fraction;
+		}
 	}
 	
 	$client->sendFrame('updn'); # upgrade done
@@ -479,24 +484,7 @@ sub sendFrame {
 
 	$::d_slimproto_v && msg ("sending squeezebox frame: $type, length: $len\n");
 
-	$len = length($frame); # include the header
-	
-	my $offset = 0;
-	
-	while ($len > 0) {
-		my $sentbytes = $client->tcpsock->syswrite($frame, $len, $offset);
-		
-		if ($! == EWOULDBLOCK) {
-			$sentbytes = 0 unless defined $sentbytes;
-		}
-		if (!defined($sentbytes)) {
-			msg("error on sending frame '$type': $!\n");
-			return;
-		}
-		$::d_slimproto_v && msg ("sent squeezebox frame fragment: $sentbytes\n");
-		$len -= $sentbytes;
-		$offset += $sentbytes;
-	}
+	Slim::Networking::Select::writeNoBlock($client->tcpsock, \$frame);
 }
 
 # This function generates random strings of a given length
