@@ -30,7 +30,7 @@
    	</a></td>
    <td [IF currentsong]class="listing2"[/IF][IFN currentsong]class="listing"[/IFN] width="3" align="center">&nbsp;</td>
    <td [IF currentsong]class="listing2"[/IF][IFN currentsong]class="listing"[/IFN] width="11" align="center">
-   	<a href="songinfo.html?songurl=[EVAL]Slim::Web::HTTP::escape(Slim::Player::Playlist::song($client, $hashref->{'num'}));[/EVAL]&player={%player}" target="browser" onMouseOver="self.status='Song Info';return true">
+   	<a href="songinfo.html?songurl={%songurl}&player={%player}" target="browser" onMouseOver="self.status='Song Info';return true">
    	<img src="html/info.gif" border="0" width="9" height="9" align="center"
        	onMouseOver="self.status='Song Info';return true">
    	</a></td>
