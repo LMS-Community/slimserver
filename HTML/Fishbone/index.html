@@ -23,6 +23,7 @@
 			}
 		
 			function getHomeCookie(Name) 
+
 			{
 				var search = Name + "=";
 				if (document.cookie.length > 0) {
@@ -40,6 +41,7 @@
 					}
 				}
 				[% IF not nofolder %]return "browse.html?"[% END %]
+
 				[% IF nofolder %]return "browseid3.html?"[% END %]
 				
 			}
@@ -68,7 +70,7 @@
 			
 			document.write('<frameset cols="50%,*" framespacing="2" border="2">' );
 			document.write('<frameset name="home" ID="home" border="0" frameborder="no" framespacing="0" rows="87,*">');
-			document.write('<frame name="header" ID="header" scrolling="no" src="home.html?player='+cPlayer+'&page='+getHomeCookie('page')+'">');
+			document.write('<frame name="header" ID="header" scrolling="no" src="home.html?player='+cPlayer+'&page='+getHomeCookie('SlimServer-Browserpage')+'&searchchoice='+getHomeCookie('SlimServer-search')+'">');
 			document.write('<frame name="browser" ID="browser" src="' + getHomeCookie('SlimServer-Browserpage') +'&player='+cPlayer + '">');
 			document.write('</frameset>');
 			document.write('<frameset name="player_frame" ID="player_frame" border="0" frameborder="no" framespacing="0" rows="240,*">');

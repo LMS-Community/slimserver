@@ -33,15 +33,30 @@
 			[% IF nofolder %]return "browseid3.html?"[% END %]
 		}
 		
+		
+		function doSearch(value,option)
+		{
+			var url;
+			
+			switch(option)
+			{
+			[% IF additionalLinks.browse %]
+				[% FOREACH link = additionalLinks.search %]
+				case "[% link.key %]":
+					url = "[% link.value %]"
+					suffix = "searchchoice=[% link.key %]"
+				break
+				[% END %]
+			[% END %]
+			}
+			parent.browser.location=url + suffix + '&query=' + value + '&player=[% player %]'
+		}
+		
 		function chooseBrowser(value,option)
 		{
 			var url;
 			switch(option)
 			{
-				case 'song':
-					url="browseid3.html?genre=*&artist=*&album=*";
-					suffix ="&page=song";
-				break
 			[% IF additionalLinks.browse %]
 				[% FOREACH link = additionalLinks.browse %]
 				case "[% link.key %]":
@@ -85,24 +100,29 @@
 		<div class="menu2" width="100%" [% IF setup || help %]style='position:absolute;top:-100;'[% END %]>
 			<table border="0" cellpadding="0" cellspacing="0" width="100%">
 				<td>
-				<FORM name="browser" method="Get" action="" target="browser"><td><center><nobr>
+				<FORM name="browser" method="Get" action="/home.html" target="header"><td><center><nobr>
 					<SELECT NAME="browse" class="stdedit" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
 					[% IF additionalLinks.browse %]
 						[% FOREACH link = additionalLinks.browse %]
 						<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
 						[% END %]
 					[% END %]
-				</SELECT><nobr></center></td></FORM>
-				<FORM name=searcher onSubmit="parent.browser.location=document.searcher.search.options[document.searcher.search.selectedIndex].value + 'query=' + document.searcher.query.value + '&player=[% player %]'"><td><nobr>
-					<SELECT NAME="search" class="stdedit">
+				</SELECT><nobr></center></td>
+					<input type=hidden value="[% page %]" name="page">
+					<input type=hidden value="[% searchchoice %]" name="searchchoice">
+				</FORM>
+				<FORM name=searcher method="Get" action="/home.html" onSubmit="doSearch(query.value,'SEARCHFOR_ARTIST');"><td><nobr>
+					<SELECT NAME="search" class="stdedit" onChange="setCookie('SlimServer-search',options[selectedIndex].value)">
 					[% IF additionalLinks.search %]
 						[% FOREACH link = additionalLinks.search %]
-						<OPTION [% IF page == link.key %]selected[% END %] value="[% link.value %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
+						<OPTION [% IF searchchoice == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
 						[% END %]
 					[% END %]
 					</SELECT> [% "FOR" | string %]
 					<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
 					<input type=hidden value="[% player %]" name="player">
+					<input type=hidden value="[% page %]" name="page">
+					<input type=hidden value="[% searchchoice %]" name="searchchoice">
 					[% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
 					[% IF noartwork %]<input type=hidden value="1" name="noartwork">[% END %]</p><nobr></td>
 				</FORM></td>
