@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.104 2004/05/14 23:07:51 dean Exp $
+# $Id: HTTP.pm,v 1.105 2004/05/15 06:21:35 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -314,7 +314,7 @@ sub processHTTP {
 		my $uri   = $request->uri();
 		my $path  = $uri->path();
 		my $query = $uri->query();
-		$params->{query} = $query;
+		$params->{url_query} = $query;
 
 		# XXX - unfortunately slimserver uses a query form
 		# that can have a key without a value, yet it's
