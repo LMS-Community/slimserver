@@ -3944,6 +3944,12 @@ SORTBYFILENAME
 	PT	Ordenar por nome de ficheiro
 	SE	Sortera efter filnamn
 
+SETUP_BROWSEAGELIMIT
+	EN	New Music Limit
+
+SETUP_BROWSEAGELIMIT_DESC
+	EN	Choose the number of tracks to display when browsing for new music. Default is 100
+
 SETUP_TEMPLATECACHE
 	DE	HTML im Cache ablegen
 	DK	Cache af HTML

@@ -389,8 +389,7 @@ sub init {
 			my $level = shift;
 			my $findCriteria = shift;
 
-			# Limit to retrieving 100 records. This should be configurable.
-			return $ds->find('album', $findCriteria, 'age', 100, 0);
+			return $ds->find('album', $findCriteria, 'age', Slim::Utils::Prefs::get('browseagelimit'), 0);
 		},
 
 		'nameTransform' => 'album',

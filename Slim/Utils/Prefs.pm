@@ -140,6 +140,7 @@ our %DEFAULT = (
 	,"refreshRate"			=> 30
 	,"displaytexttimeout"	=> 1.0
 	,"filesort"				=> 0
+	,'browseagelimit'		=> 100
 	,"playtrackalbum"		=> 1
 	,"ignoredarticles"		=> "The El La Los Las Le Les"
 	,"splitList"			=> ''

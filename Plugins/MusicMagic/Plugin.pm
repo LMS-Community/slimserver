@@ -564,7 +564,7 @@ sub exportFunction {
 		}
 		
 		# skipping to done here.  Duplicates currently crash the linux version of MusicMagic.
-		$export = 'done';
+		#$export = 'duplicates';
 		#return 1;
 	}
 	
@@ -572,7 +572,7 @@ sub exportFunction {
 
 		my %cacheEntry = ();
 		my @songs = ();
-		
+		$::d_musicmagic && msg("MusicMagic: Checking for duplicates.\n");
 		$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/duplicates");
 
 		if ($http) {
@@ -585,7 +585,7 @@ sub exportFunction {
 			my $url = 'musicmagicplaylist:' . Slim::Web::HTTP::escape($name);
 
 			if ($count && (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name)) {
-				$::d_musicmagic && msg("MusicMagic: Found duplicates list\n");
+				$::d_musicmagic && msg("MusicMagic: Found duplicates list.\n");
 			}
 
 			# add this list of duplicates to our playlist library

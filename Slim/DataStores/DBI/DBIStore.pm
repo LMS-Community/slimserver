@@ -828,7 +828,7 @@ sub readTags {
 
 					if ($album && !exists $self->{artworkCache}->{$album}) {
 						$::d_artwork && Slim::Utils::Misc::msg("ID3 Artwork cache entry for $album: $filepath\n");
-						$self->setAlbumArtwork($album, $filepath);
+						$self->setAlbumArtwork($album, $contributors, $filepath);
 					}
 				
 				} else {

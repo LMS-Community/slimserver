@@ -164,12 +164,13 @@ sub artScan {
 
 	# Make sure we have an object for the url, and it has a thumbnail.
 	if (defined $track && $track->coverArt('thumb')) {
-
-		my $thumb = Slim::Utils::Misc::pathFromFileURL($url);
 		
-		$::d_artwork && Slim::Utils::Misc::msg("Caching $thumb for $album\n");
+		my $contributors = join(':', map { $_->id() } $track->contributors());
+		my $thumbpath = Slim::Utils::Misc::pathFromFileURL($url);
+		
+		$::d_artwork && Slim::Utils::Misc::msg("Caching $thumbpath for $album\n");
 
-		$ds->setAlbumArtwork($album, $thumb);
+		$ds->setAlbumArtwork($album, $contributors, $thumbpath);
 	}
 
 	delete $artwork{$album};

@@ -1509,7 +1509,7 @@ sub initSetupConfig {
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['displaytexttimeout',
-							,'playtrackalbum','searchSubString', 'ignoredarticles','splitList','filesort'
+							,'playtrackalbum','searchSubString', 'ignoredarticles','splitList','filesort','browseagelimit'
 							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
 							,'checkVersion']
 				}
@@ -1525,6 +1525,10 @@ sub initSetupConfig {
 			,'displaytexttimeout' => {
 						'validate' => \&validateNumber
 						,'validateArgs' => [0.1,undef,1]
+				}
+			,'browseagelimit' => {
+						'validate' => \&validateNumber
+						,'validateArgs' => [0,undef,1,undef]
 				}
 			,'ignoredarticles' => {
 						'validate' => \&validateAcceptAll
