@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.30 2005/01/03 20:41:34 dsully Exp $
+# $Id: Parse.pm,v 1.31 2005/01/08 07:53:52 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -229,7 +229,7 @@ sub parseCUE {
 
 	# This is needed for readTags
 	my $ds       = Slim::Music::Info::getCurrentDataStore();
-	my $trackObj = $ds->objectForUrl($filename, 0) || do {
+	my $trackObj = $ds->objectForUrl($filename, 1) || do {
 
 		$::d_parse && Slim::Utils::Misc::msg("Warning - couldn't get object for file: $filename !\n");
 		return;
