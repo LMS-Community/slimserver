@@ -23,7 +23,28 @@ function getPlayer(Player)
 	return "";
 &rbrc;
 
-var cPlayer = getPlayer('SlimServer-player');
+function getArgs() &lbrc;
+	var args = new Object();
+	var query = location.search.substring(1);
+	var pairs = query.split("&");
+	for(var i = 0; i < pairs.length; i++) &lbrc;
+		var pos = pairs[i].indexOf('=');
+		if (pos == -1) continue;
+		var argname = pairs[i].substring(0,pos);
+		var value = pairs[i].substring(pos+1);
+		args[argname] = unescape(value);
+	&rbrc;
+	return args;
+&rbrc;
+
+var args = getArgs();
+if (args.player) &lbrc;
+	var cPlayer = args.player;
+&rbrc;
+else &lbrc;
+	var cPlayer = getPlayer('SlimServer-player');
+&rbrc;
+
 document.write('<frameset cols="45%,*" framespacing="2" border="2">' );
 document.write('<frame src="home.html?player='+cPlayer+'" name="browser">');
 document.write('<frameset name="player_frame" ID="player_frame" border="0" frameborder="no" framespacing="0" rows="240,*">');
