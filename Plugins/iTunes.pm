@@ -127,9 +127,7 @@ sub canUseiTunesLibrary {
 	checkDefaults() unless $initialized;
 	$ituneslibraryfile = defined $ituneslibraryfile ? $ituneslibraryfile : findMusicLibraryFile();
 	$ituneslibrarypath = defined $ituneslibrarypath ? $ituneslibrarypath : findMusicLibrary();
-	if (defined $ituneslibraryfile && $ituneslibrarypath) {
-		initPlugin();
-	}
+
 	return defined $ituneslibraryfile && $ituneslibrarypath;
 }
 
@@ -137,15 +135,18 @@ sub getDisplayName {
 	return 'SETUP_ITUNES';
 }
 
+sub enabled {
+	return ($::VERSION !~/^5/) && initPlugin();
+}
+
 sub initPlugin {
 	return if $initialized;
 	
-	#Slim::Utils::Strings::addStrings($strings);
+	addGroups();
+	return unless canUseiTunesLibrary();
 	
 	Slim::Music::Import::addImporter('ITUNES',\&startScan,undef,\&addGroups);
 	Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
-	
-	addGroups();
 	
 	$initialized = 1;
 	

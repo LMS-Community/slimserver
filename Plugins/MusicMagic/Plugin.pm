@@ -32,6 +32,10 @@ sub strings {
 	return '';
 }
 
+sub getFunctions {
+	return '';
+}
+
 sub useMusicMagic {
 	my $newValue = shift;
 	my $can = canUseMusicMagic();
@@ -73,7 +77,7 @@ sub getDisplayName {
 }
 
 sub enabled {
-	return initPlugin();
+	return ($::VERSION !~/^5/) && initPlugin();
 }
 
 sub disablePlugin {

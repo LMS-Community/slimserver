@@ -34,6 +34,10 @@ sub strings {
 	return '';
 }
 
+sub getFunctions {
+	return '';
+}
+
 sub useMoodLogic {
 	my $newValue = shift;
 	my $can = canUseMoodLogic();
@@ -75,7 +79,7 @@ sub getDisplayName {
 }
 
 sub enabled {
-	return Slim::Utils::OSDetect::OS() eq 'win' && initPlugin();
+	return ($::VERSION !~/^5/) && Slim::Utils::OSDetect::OS() eq 'win' && initPlugin();
 }
 
 sub disablePlugin {
