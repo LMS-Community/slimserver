@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.17 2004/11/19 04:04:25 kdf Exp $
+# $Id: SqueezeboxG.pm,v 1.18 2004/12/02 02:34:16 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -20,10 +20,8 @@ use FindBin qw($Bin);
 use IO::Socket;
 use Slim::Player::Player;
 use Slim::Utils::Misc;
-use Slim::Utils::Strings qw (string);
-use MIME::Base64;
 
-our @ISA = ("Slim::Player::Squeezebox");
+use base qw(Slim::Player::Squeezebox);
 
 my $GRAPHICS_FRAMEBUF_SCRATCH = (0 * 280 * 2);
 my $GRAPHICS_FRAMEBUF_LIVE    = (1 * 280 * 2);
@@ -37,28 +35,20 @@ my $topRowMask = (chr(255) . chr(0)) x ($screensize / 2);
 my $bottomRowMask = (chr(0) . chr(255)) x ($screensize / 2);
 
 my $defaultPrefs = {
-	'activeFont'			=> ['small','medium','large','huge']
-	,'activeFont_curr'		=> 1
-	,'idleFont'				=> ['small','medium','large','huge']
-	,'idleFont_curr'		=> 1
-	,'idleBrightness'		=> 2
+	'activeFont'		=> [qw(small medium large huge)],
+	'activeFont_curr'	=> 1,
+	'idleFont'		=> [qw(small medium large huge)],
+	'idleFont_curr'		=> 1,
+	'idleBrightness'	=> 2,
 };
 
 sub new {
-	my (
-		$class,
-		$id,
-		$paddr,		# sockaddr_in
-		$revision,
-		$tcpsock,	# defined only for squeezebox
-	) = @_;
+	my $class = shift;
 
-	my $client = Slim::Player::Squeezebox->new($id, $paddr, $revision, $tcpsock);
-
-	bless $client, $class;
+	my $client = $class->SUPER::new(@_);
 
 	# make sure any preferences unique to this client may not have set are set to the default
-	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
+	Slim::Utils::Prefs::initClientPrefs($client, $defaultPrefs);
 
 	return $client;
 }
@@ -255,7 +245,8 @@ sub fonts {
 		$font	= Slim::Utils::Prefs::clientGet($client, $prefname, $size);
 	}
 	
-	my $fontref = Slim::Display::Graphics::gfonthash;
+	my $fontref = Slim::Display::Graphics::gfonthash();
+
 	return $fontref->{$font};
 }
 	
@@ -610,7 +601,5 @@ sub endAnimation {
 	Slim::Buttons::Common::param($client,'noUpdate',0); 
 	$client->update();
 }
-
-
 
 1;
