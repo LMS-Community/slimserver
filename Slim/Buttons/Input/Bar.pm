@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Bar;
 
-# $Id: Bar.pm,v 1.7 2004/10/06 15:56:07 vidur Exp $
+# $Id: Bar.pm,v 1.8 2004/10/08 08:46:16 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -123,8 +123,9 @@ sub lines {
 	$max = $max || Slim::Buttons::Common::param($client,'max') || 100;
 
 	my $val = $max == $min ? 0 : int(($$valueRef - $min)*100/($max-$min));
+	my $fullstep = 1 unless Slim::Buttons::Common::param($client,'smoothing');
 	
-	$line2 = $client->sliderBar($client->displayWidth(), $val,$max == $min ? 0 :($mid-$min)/($max-$min)*100,1);
+	$line2 = $client->sliderBar($client->displayWidth(), $val,$max == $min ? 0 :($mid-$min)/($max-$min)*100,$fullstep);
 
 	if ($client->linesPerScreen() == 1) {
 		if (Slim::Buttons::Common::param($client,'barOnDouble')) {
@@ -166,7 +167,7 @@ sub setMode {
 # mid = 0 # midpoint value for marking the division point for a balance bar.
 # increment = 2.5 # step value for each bar character or button press.
 # barOnDouble = 0 # set to 1 if the bar is preferred when using large text.
-
+# smoothing = 0 # set to 1 if you want the character display to use custom chars to smooth the movement of the bar.
 
 sub init {
 	my $client = shift;
