@@ -214,6 +214,7 @@ use Slim::Web::HTTP;
 use Slim::Hardware::IR;
 use Slim::Music::Info;
 use Slim::Music::Import;
+use Slim::Music::MusicFolderScan;
 use Slim::Utils::OSDetect;
 use Slim::Player::Playlist;
 use Slim::Player::Sync;
@@ -436,6 +437,8 @@ sub start {
 
 		Slim::Music::Info::init();
 
+		Slim::Music::MusicFolderScan::init();
+
 		Slim::Buttons::Plugins::init();
 
 		checkDataSource();
@@ -472,6 +475,9 @@ sub start {
 
 	$::d_server && msg("SlimServer Info init...\n");
 	Slim::Music::Info::init();
+
+	$::d_server && msg("SlimServer MusicFolderScan init...\n");
+	Slim::Music::MusicFolderScan::init();
 
 	$::d_server && msg("SlimServer Plugins init...\n");
 	Slim::Buttons::Plugins::init();
@@ -810,11 +816,30 @@ sub initSettings {
 		Slim::Utils::Prefs::set("cliport", $cliport);
 	}
 
-	if (defined(Slim::Utils::Prefs::get("playlistdir")) && Slim::Utils::Prefs::get("playlistdir") =~ m|[/\\]$|) {
+	# make sure we are using the actual case of the directories
+	# and that they do not end in / or \
+
+	if (defined(Slim::Utils::Prefs::get("playlistdir")) && Slim::Utils::Prefs::get("playlistdir") ne '') {
 		$playlistdir = Slim::Utils::Prefs::get("playlistdir");
 		$playlistdir =~ s|[/\\]$||;
+		$playlistdir = Slim::Utils::Misc::fixPathCase($playlistdir);
 		Slim::Utils::Prefs::set("playlistdir",$playlistdir);
 	}
+
+	if (defined(Slim::Utils::Prefs::get("audiodir")) && Slim::Utils::Prefs::get("audiodir") ne '') {
+		$audiodir = Slim::Utils::Prefs::get("audiodir");
+		$audiodir =~ s|[/\\]$||;
+		$audiodir = Slim::Utils::Misc::fixPathCase($audiodir);
+		Slim::Utils::Prefs::set("audiodir",$audiodir);
+	}
+	
+	if (defined(Slim::Utils::Prefs::get("cachedir")) && Slim::Utils::Prefs::get("cachedir") ne '') {
+		$cachedir = Slim::Utils::Prefs::get("cachedir");
+		$cachedir =~ s|[/\\]$||;
+		$cachedir = Slim::Utils::Misc::fixPathCase($cachedir);
+		Slim::Utils::Prefs::set("cachedir",$cachedir);
+	}
+	
 }
 
 sub daemonize {

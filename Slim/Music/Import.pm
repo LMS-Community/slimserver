@@ -8,7 +8,6 @@ package Slim::Music::Import;
 use strict;
 
 use Slim::Music::Info;
-use Slim::Music::MusicFolderScan;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -26,18 +25,6 @@ sub startScan {
 	# Only start if the database has been initialized
 	return unless defined Slim::Music::Info::getCurrentDataStore();
 	
-	# Don't rescan folders if we are only enabling an Import.
-	unless (defined $import) {
-
-		$::d_info && msg("Clearing tag cache\n");
-		Slim::Music::Info::clearCache();
-
-		$::d_info && msg("Starting background scanning.\n");
-		$importsRunning{'FOLDER'} = Time::HiRes::time();
-
-		Slim::Music::MusicFolderScan::startScan();
-	}
-
 	# Check Import scanners
 	foreach my $importer (keys %Importers) {
 
@@ -71,8 +58,8 @@ sub addImporter {
 	my $mixerLinkRef = shift;
 
 	$Importers{$import} = {
-		'mixer' => $mixerFuncRef,
 		'scan'  => $scanFuncRef,
+		'mixer' => $mixerFuncRef,
 		'setup' => $setupFuncRef,
 		'mixerlink' => $mixerLinkRef,
 	};

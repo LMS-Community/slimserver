@@ -3207,6 +3207,7 @@ sub validateIsFile {
 	my $allowEmpty = shift;
 	if (-r $val) {
 		$val =~ s|[/\\]$||;
+		$val = Slim::Utils::Misc::fixPathCase($val);
 		return $val;
 	} elsif ($allowEmpty && defined($val) && $val eq '') {
 		return $val;
@@ -3220,6 +3221,7 @@ sub validateIsDir {
 	my $allowEmpty = shift;
 	if (-d $val) {
 		$val =~ s|[/\\]$||;
+		$val = Slim::Utils::Misc::fixPathCase($val);
 		return $val;
 	} elsif ($allowEmpty && defined($val) && $val eq '') {
 		return $val;
@@ -3235,6 +3237,7 @@ sub validateIsAudioDir {
 	
 	if (-d $val) {
 		$val =~ s|[/\\]$||;
+		$val = Slim::Utils::Misc::fixPathCase($val);
 		return $val;
 	} elsif ($allowEmpty && defined($val) && $val eq '') {
 		return $val;

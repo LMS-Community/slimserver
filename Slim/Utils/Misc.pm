@@ -32,17 +32,18 @@ our @EXPORT = qw(assert bt msg msgf watchDog);
 our $log    = "";
 
 BEGIN {
-        if ($^O =~ /Win32/) {
-                *EWOULDBLOCK = sub () { 10035 };
-                *EINPROGRESS = sub () { 10036 };
+	if ($^O =~ /Win32/) {
+		*EWOULDBLOCK = sub () { 10035 };
+		*EINPROGRESS = sub () { 10036 };
 
 		require Win32::Shortcut;
 		require Win32::OLE::NLS;
+		require Win32;
 
-        } else {
-                require Errno;
-                import Errno qw(EWOULDBLOCK EINPROGRESS);
-        }
+	} else {
+		require Errno;
+		import Errno qw(EWOULDBLOCK EINPROGRESS);
+	}
 }
 
 # Find out what code page we're in, so we can properly translate file/directory encodings.
@@ -328,6 +329,20 @@ if (0) {
 	exit(0);
 }
 
+# fixPathCase makes sure that we are using the actual casing of paths in
+# a case-insensitive but case preserving filesystem.
+# currently only implemented for Win32
+
+sub fixPathCase {
+	my $path = shift;
+	
+	if ($^O =~ /Win32/) {
+		$path = Win32::GetLongPathName($path);
+	}
+
+	return $path;
+}
+		
 # there's not really a better way to do this..
 # fixPath takes relative file paths and puts the base path in the beginning
 # to make them full paths, if possible.

@@ -15,6 +15,14 @@ use Slim::Utils::Misc;
 my @dummylist = ();
 my $stillScanning = 0;
 
+sub init {
+	Slim::Music::Import::addImporter('FOLDER',\&startScan);
+
+	# could probably base this on the existance/nonexistance of audiodir rather
+	# than relying on startScan to abort a scan of a non-existant audiodir
+	Slim::Music::Import::useImporter('FOLDER',1)
+}
+
 sub startScan {
 
 	if (!defined(Slim::Utils::Prefs::get('audiodir')) or not -d Slim::Utils::Prefs::get("audiodir")) {

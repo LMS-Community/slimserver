@@ -259,7 +259,7 @@ our %prefChange = (
 	,'audiodir' => sub {
 		my $newvalue = shift;
 		Slim::Buttons::Browse::init();
-		Slim::Music::MusicFolderScan::startScan();
+		Slim::Music::Import::startScan('FOLDER');
 	}
 	,'lookForArtwork' => sub {
 		my $newvalue = shift;
