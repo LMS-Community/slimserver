@@ -73,7 +73,6 @@ sub power {
 			if ($on) {
 				Slim::Buttons::Common::setMode($client, 'home');
 				
-				
 				my $welcome =  Slim::Display::Display::center(Slim::Utils::Strings::string(Slim::Utils::Prefs::clientGet($client, "doublesize") ? '' : 'WELCOME_TO_' . $client->model));
 				my $welcome2 = Slim::Utils::Prefs::clientGet($client, "doublesize") ? '' : Slim::Display::Display::center(Slim::Utils::Strings::string('FREE_YOUR_MUSIC'));
 				Slim::Display::Animation::showBriefly($client, $welcome, $welcome2);

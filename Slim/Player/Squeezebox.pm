@@ -144,7 +144,8 @@ sub upgradeFirmware {
 	my $ip;
 	if (ref $client ) {
 		$ip = $client->ip;
-		Slim::Hardware::VFD::vfdBrightness($client, $Slim::Hardware::VFD::MAXBRIGHTNESS, 1);
+		Slim::Utils::Prefs::clientSet($client, "powerOnBrightness", 4);
+		Slim::Utils::Prefs::clientSet($client, "powerOffBrightness", 1);
 	} else {
 		$ip = $client;
 	}

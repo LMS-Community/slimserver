@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.16 2003/11/04 00:36:14 dean Exp $
+# $Id: Common.pm,v 1.17 2003/11/06 18:37:05 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -274,6 +274,10 @@ my %functions = (
 			Slim::Buttons::Common::pushMode($client, 'browse');
 			Slim::Buttons::Browse::loadDir($client, '', undef, \@oldlines);
 			$jump = 'BROWSE_MUSIC_FOLDER';
+		} elsif ($button eq 'menu_synchronize') {
+			Slim::Buttons::Common::pushMode($client, 'settings');
+			$jump = 'SETTINGS';
+			Slim::Buttons::Common::pushModeLeft($client, 'synchronize');
 		} elsif ($button eq 'menu_search_artist') {
 			Slim::Buttons::SearchFor::searchFor($client, 'ARTISTS');
 			Slim::Buttons::Common::pushMode($client, 'searchfor');

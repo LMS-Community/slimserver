@@ -89,16 +89,17 @@ menu_home				= menu_home
 menu_settings			= menu_settings
 menu_pop				= menu_pop
 menu_now_playing		= menu_now_playing
+menu_synchronize		= menu_synchronize
 
 [off]
 # When the player is powered off, most buttons are dead
-add.*				= dead
-arrow_down.*				= dead
+add.*					= dead
+arrow_down.*			= dead
 arrow_left				= dead
 arrow_right				= dead
 arrow_up.*				= dead
 format					= dead
-fwd.*						= dead
+fwd.*					= dead
 menu_browse_album		= dead
 menu_browse_artist		= dead
 menu_browse_genre		= dead
@@ -125,26 +126,26 @@ repeat					= dead
 repeat_all				= dead
 repeat_off				= dead
 repeat_one				= dead
-rew.*						= dead
+rew.*					= dead
 shuffle					= dead
 shuffle_off				= dead
 shuffle_on				= dead
 size					= offsize
 sleep					= dead
 stop					= dead
-voldown.*					= dead
+voldown.*				= dead
 volup.*					= dead
 
 [block]
 # When the player is blocked during a long operations, most buttons are dead
 # those not listed are safe for use in blocked mode
-add.*						= dead
-arrow_down.*				= dead
+add.*					= dead
+arrow_down.*			= dead
 arrow_left				= dead
 arrow_right				= dead
 arrow_up.*				= dead
 format					= dead
-fwd.*						= dead
+fwd.*					= dead
 menu_browse_album		= dead
 menu_browse_artist		= dead
 menu_browse_genre		= dead
@@ -162,7 +163,7 @@ now_playing				= dead
 power					= dead
 power_off				= dead
 power_on				= dead
-rew.*						= dead
+rew.*					= dead
 shuffle					= dead
 shuffle_off				= dead
 shuffle_on				= dead

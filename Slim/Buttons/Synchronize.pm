@@ -1,6 +1,6 @@
 package Slim::Buttons::Synchronize;
 
-# $Id: Synchronize.pm,v 1.5 2003/08/12 00:52:43 dean Exp $
+# $Id: Synchronize.pm,v 1.6 2003/11/06 18:37:05 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -42,17 +42,11 @@ my %functions = (
 			Slim::Player::Sync::sync($client, $selectedClient);
 		}
 		Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
-	}
+	},
 );
 
 sub getFunctions {
 	return \%functions;
-}
-
-sub setMode {
-	my $client = shift;
-
-	$client->lines(\&lines);
 }
 
 sub loadList {
@@ -88,32 +82,45 @@ sub lines {
 			} else {
 				$line1 = Slim::Utils::Strings::string('SYNC_WITH');
 			}
-			
-			my @buddies = ();
-			
-			foreach my $buddy (Slim::Player::Sync::syncedWith($selectedClient)) {
-				if ($buddy ne $client) {
-					push @buddies, $buddy;	
-				}
-			}
-			
-			if ($selectedClient ne $client) {
-				push @buddies, $selectedClient;
-			}
-			
-			while (scalar(@buddies) > 2) {
-				my $buddy = pop @buddies;
-				$line2 .= $buddy->name() . ", ";
-			}
-			
-			if (scalar(@buddies) > 1) {
-				my $buddy = pop @buddies;
-				$line2 .= $buddy->name() . " " . Slim::Utils::Strings::string('AND') . " ";		
-			}
-			my $buddy = pop @buddies;
-			$line2 .= $buddy->name();
+			$line2 = buddies($client, $selectedClient);			
 	}
 	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
+}
+
+sub buddies {
+	my $client = shift;
+	my $selectedClient = shift;
+	my @buddies = ();
+	my $list = '';
+	
+	foreach my $buddy (Slim::Player::Sync::syncedWith($selectedClient)) {
+		if ($buddy ne $client) {
+			push @buddies, $buddy;	
+		}
+	}
+	
+	if ($selectedClient ne $client) {
+		push @buddies, $selectedClient;
+	}
+	
+	while (scalar(@buddies) > 2) {
+		my $buddy = pop @buddies;
+		$list .= $buddy->name() . ", ";
+	}
+	
+	if (scalar(@buddies) > 1) {
+		my $buddy = pop @buddies;
+		$list .= $buddy->name() . " " . Slim::Utils::Strings::string('AND') . " ";		
+	}
+	my $buddy = pop @buddies;
+	$list .= $buddy->name();
+	
+	return $list;
+}
+
+sub setMode {
+	my $client = shift;
+	$client->lines(\&lines);
 }
 
 1;

@@ -1,6 +1,6 @@
 package Slim::Network::Discovery;
 
-# $Id: Discovery.pm,v 1.8 2003/08/09 19:57:53 kdf Exp $
+# $Id: Discovery.pm,v 1.9 2003/11/06 18:37:05 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -15,9 +15,20 @@ use Sys::Hostname;
 
 sub serverHostname {
 	my $hostname = hostname();
+	
+	# may return several lines of hostnames, just take the first.	
+	$hostname =~ s/\n.*//;
+
+	# may return a dotted name, just take the first part
+	$hostname =~ s/\..*//;
+	
+	# just take the first 16 characters, since that's all the space we have 
 	$hostname = substr $hostname, 0, 16;
+	
+	# pad it out to 17 characters total
 	$hostname .= pack('C', 0) x (17 - (length $hostname));
-	$::d_protocol && msg(" calculated $hostname\n");	
+
+	$::d_protocol && msg(" calculated $hostname length: " . length($hostname) . "\n");	
 	return $hostname;
 }
 

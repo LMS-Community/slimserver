@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.16 2003/10/12 19:43:57 kdf Exp $
+# $Id: Pages.pm,v 1.17 2003/11/06 18:37:07 dean Exp $
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -751,26 +751,33 @@ sub addsonginfo {
 		$$paramsref{'bitrate'} = Slim::Music::Info::bitrate($song);
 
 		my $url;
-		if (Slim::Music::Info::isURL($song)) {
+		my $songpath;
+		if (Slim::Music::Info::isHTTPURL($song)) {
 			$url = $song;
+			$songpath = $song;
 		} else {
 			my $loc = $song;
 			my @path;
+			if (Slim::Music::Info::isFileURL($song)) {
+				$loc = Slim::Utils::Misc::pathFromFileURL($loc);
+			}
 			$loc = Slim::Utils::Misc::fixPath($loc);
+			$songpath = $log;
 			my $curdir = Slim::Utils::Prefs::get('mp3dir');
 			if ($loc =~ /^\Q$curdir\E(.*)/) {
 				$url = '/music';
 				@path = splitdir($1);
+				foreach my $item (@path) {
+					$url .= '/' . Slim::Web::HTTP::escape($item);
+				}
+				$url =~ s/\/\//\//;
 			} else {
-				$url = 'file://';
-				@path  = splitdir($song);
+				$url = $log;				
 			}
-			foreach my $item (@path) {
-				$url .= '/' . Slim::Web::HTTP::escape($item);
-			}
-			$url =~ s/\/\//\//;
+	
 		}
 		$$paramsref{'url'} = $url;
+		$$paramsref{'songpath'} = $songpath;
 		
 		$$paramsref{'itempath'} = $song;
 	}

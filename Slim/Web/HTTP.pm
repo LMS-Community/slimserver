@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.40 2003/11/03 19:19:21 dean Exp $
+# $Id: HTTP.pm,v 1.41 2003/11/06 18:37:06 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -486,16 +486,19 @@ sub addstreamingresponse {
 	Slim::Networking::Select::addRead($httpclientsock, undef);
 
 	my $client = $peerclient{$httpclientsock};
-	$client->streamingsocket($httpclientsock);
-	my $newpeeraddr = getpeername($httpclientsock);
-
-	if ($newpeeraddr) {
-		$client->paddr($newpeeraddr)
-	}
+		if ($client) {
+			$client->streamingsocket($httpclientsock);
+		my $newpeeraddr = getpeername($httpclientsock);
+	
+		if ($newpeeraddr) {
+			$client->paddr($newpeeraddr)
+		}
+	}	
 	
 	if (defined $paramref->{'p0'} && $paramref->{'p0'} eq 'playlist') {
 		Slim::Control::Command::execute($client, [$paramref->{'p0'},$paramref->{'p1'},$paramref->{'p2'}]);
 	}
+
 }
 
 sub checkAuthorization {
@@ -578,7 +581,7 @@ sub sendstreamingresponse {
 		return undef;
 	}
 	
-	if ( $client && ($client->model eq 'squeezebox') && (Slim::Player::Source::playmode($client) eq 'stop')) {
+	if ( !$streamingFile && $client && ($client->model eq 'squeezebox') && (Slim::Player::Source::playmode($client) eq 'stop')) {
 		closeStreamingSocket($httpclientsock);
 		$::d_http && msg("Streaming client closed connection...\n");
 		return undef;

@@ -4250,6 +4250,9 @@ SYNCHRONIZE
 	PT	Sincroninar
 	SE	Synkronisera
 
+NOT_SYNCHRONIZED
+	EN	Not Synchronized
+
 SYNCHRONIZED_WITH
 	DK	Synkroniseret med
 	EN	Synced with
@@ -5263,7 +5266,7 @@ SONGSMATCHING
 SYNC_WITH
 	DE	Nachmaliges Rechts drücken zum synchronisieren mit:
 	DK	Tryk HØJRE for at synkronisere med:
-	EN	Press RIGHT again to sync with:
+	EN	Press RIGHT to sync with:
 	FI	Paina RIGHT uudelleen saattaaksesi ajan tasalle:
 	FR	Appuyer sur RIGHT pour se synchroniser avec :
 	NL	Druk RIGHT om te synchroniseren met:
@@ -5273,7 +5276,7 @@ SYNC_WITH
 UNSYNC_WITH
 	DE	Rechts drücken zum Aufheben der Synchronisation:
 	DK	Tryk HØJRE igen for at afslutte synkronisering med:
-	EN	Press RIGHT again to unsync with:
+	EN	Press RIGHT to unsync with:
 	FI	Paina RIGHT uudelleen poistaaksesi tasaustiedon:
 	FR	Appuyer sur RIGHT pour se désynchroniser d'avec :
 	NL	Druk nogmaals RIGHT om te desynchroniseren van:
