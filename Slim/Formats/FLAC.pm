@@ -1,6 +1,6 @@
 package Slim::Formats::FLAC;
 
-# $Id: FLAC.pm,v 1.4 2003/12/15 16:39:14 daniel Exp $
+# $Id: FLAC.pm,v 1.5 2003/12/15 17:57:50 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -20,8 +20,9 @@ use Audio::FLAC;
 use MP3::Info ();
 
 my %tagMapping = (
-	'TRACKNUMBER' => 'TRACKNUM',
-	'DATE'        => 'YEAR',
+	'TRACKNUMBER'	=> 'TRACKNUM',
+	'DATE'		=> 'YEAR',
+	'DISCNUMBER'	=> 'DISC',
 );
 
 # Given a file, return a hash of name value pairs,
