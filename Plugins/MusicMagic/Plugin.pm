@@ -514,7 +514,7 @@ sub exportFunction {
 		return 1;
 	}
 	
-	if ($export eq 'playlist') {
+	if ($export eq 'playlists') {
 
 		$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/playlists");
 		$count = 0;
@@ -549,7 +549,6 @@ sub exportFunction {
 				# add this playlist to our playlist library
 				$cacheEntry{'TITLE'} = Slim::Utils::Prefs::get('MusicMagicplaylistprefix') . $name . Slim::Utils::Prefs::get('MusicMagicplaylistsuffix');
 				
-				#print "Playlist size is $count2\n";
 				my @list;
 				for (my $j = 0; $j < $count2; $j++) {
 					push @list, Slim::Utils::Misc::fileURLFromPath(convertPath($songs[$j]));
@@ -563,12 +562,53 @@ sub exportFunction {
 				Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
 			}
 		}
+		
+		# skipping to done here.  Duplicates currently crash the linux version of MusicMagic.
+		$export = 'done';
+		#return 1;
+	}
+	
+	if ($export eq 'duplicates') {
+
+		my %cacheEntry = ();
+		my @songs = ();
+		
+		$http = Slim::Player::Source::openRemoteStream("http://$MMSHost:$MMSport/api/duplicates");
+
+		if ($http) {
+
+			@songs = split(/\n/, $http->content());
+			my $count = scalar @songs;
+			$http->close();
+		
+			my $name = "Duplicates";
+			my $url = 'musicmagicplaylist:' . Slim::Web::HTTP::escape($name);
+
+			if ($count && (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name)) {
+				$::d_musicmagic && msg("MusicMagic: Found duplicates list\n");
+			}
+
+			# add this list of duplicates to our playlist library
+			$cacheEntry{'TITLE'} = Slim::Utils::Prefs::get('MusicMagicplaylistprefix') . $name . Slim::Utils::Prefs::get('MusicMagicplaylistsuffix');
+			
+			my @list;
+			for (my $j = 0; $j < $count; $j++) {
+				push @list, Slim::Utils::Misc::fileURLFromPath(convertPath($songs[$j]));
+			}
+
+			$cacheEntry{'LIST'} = \@list;
+			$cacheEntry{'CT'} = 'mlp';
+			$cacheEntry{'TAG'} = 1;
+			$cacheEntry{'VALID'} = '1';
+
+			Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
+		}
 	}
 
 	doneScanning();
 
 	$::d_musicmagic && msgf("exportFunction: finished export ($count records, %d playlists)\n", scalar @{Slim::Music::Info::playlists()});
-	$export = '';
+	$export = 'done';
 	
 	return 0;
 }
