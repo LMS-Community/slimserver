@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.11 2004/09/01 00:14:33 dean Exp $
+# $Id: SqueezeboxG.pm,v 1.12 2004/09/03 07:26:46 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -308,7 +308,7 @@ sub measureText {
 	
 	my $fonts = $client->fonts();
 	
-	my $len = Slim::Display::Graphics::measureText($fonts->[$line-1], symbols($text));
+	my $len = Slim::Display::Graphics::measureText($fonts->[$line-1], $client->symbols($text));
 	return $len;
 }
 
