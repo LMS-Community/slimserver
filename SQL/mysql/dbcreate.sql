@@ -90,7 +90,7 @@ CREATE TABLE dirlist_track (
   id int(10) unsigned NOT NULL auto_increment,
   position  int(10) unsigned,
   dirlist  int(10) unsigned,
-  item varchar(255),
+  item text,
   PRIMARY KEY (id)
 ) TYPE=InnoDB;
 
