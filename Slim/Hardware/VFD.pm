@@ -1,6 +1,6 @@
 package Slim::Hardware::VFD;
 
-# $Id: VFD.pm,v 1.19 2004/09/02 20:54:45 dean Exp $
+# $Id: VFD.pm,v 1.20 2004/09/03 19:48:38 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -832,7 +832,7 @@ sub doubleSize {
 
 	my $center2 = $lines->{center2};
 	
-	if (defined($center2)) {
+	if (defined($center2) && $center2 ne '') {
 		$line2 = $center2;
 	}
 	return ('','') if (!defined($line2) || $line2 eq '');
