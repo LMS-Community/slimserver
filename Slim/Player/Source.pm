@@ -977,6 +977,7 @@ sub trackStartEvent {
 		$last_song->{status} = STATUS_PLAYING;
 	}
 
+	$client->currentPlaylistChangeTime(time());
 	Slim::Player::Playlist::refreshPlaylist($client);
 	Slim::Control::Command::executeCallback($client, ["newsong"]);
 
