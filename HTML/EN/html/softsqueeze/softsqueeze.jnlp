@@ -14,12 +14,12 @@
   codebase="http://[% host %]/html/softsqueeze/"
   href="softsqueeze.jnlp">
   <information>
-    <title>Softsqueeze 1.9</title>
+    <title>Softsqueeze 1.10</title>
     <vendor>Richard Titmuss, et.al.</vendor>
     <homepage href="http://softsqueeze.sourceforge.net"/>
     <description>Softsqueeze Slim Devices Squeezebox Emulator</description>
     <description kind="short">Softsqueeze Slim Devices Squeezebox Emulator</description>
-    <icon kind="splash" href="icons/splash.gif" />
+    <icon width="400" height="200" kind="splash" href="icons/splash.gif" />
     <icon width="64" height="64" href="icons/icon64.gif" />
   </information>
   <offline-allowed/>
