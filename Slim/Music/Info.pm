@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.106 2004/04/25 01:23:18 kdf Exp $
+# $Id: Info.pm,v 1.107 2004/04/25 03:14:14 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2598,7 +2598,7 @@ sub splitTag {
 			my @temp=();
 			foreach my $item (split($char,$tag)) {
 				push (@temp,$item);
-				!$::d_info && Slim::Utils::Misc::msg("Splitting $tag by $char = @temp\n") unless scalar @temp <= 1;
+				$::d_info && Slim::Utils::Misc::msg("Splitting $tag by $char = @temp\n") unless scalar @temp <= 1;
 			}
 			#store this for return only if there has been a successfil split
 			if (scalar @temp > 1) { push @splittags,@temp}
