@@ -92,7 +92,12 @@ sub open {
 	my $sock = $class->SUPER::new(
 		LocalAddr => $main::localStreamAddr,
 		Timeout	  => $timeout,
-	);
+
+	) or do {
+
+		msg("Couldn't create socket binding to $main::localStreamAddr with timeout: $timeout - $!\n");
+		return undef;
+	};
 
 	# store a IO::Select object in ourself.
 	# used for non blocking I/O
