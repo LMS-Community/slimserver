@@ -34,6 +34,14 @@ BEGIN {
 
 # We inherit new() completely from our parent class.
 
+sub init {
+	my $client = shift;
+
+	$client->SUPER::init();
+	# Ensure that a new client is stopped
+	$client->stop();
+}
+
 sub reconnect {
 	my $client = shift;
 	my $paddr = shift;
