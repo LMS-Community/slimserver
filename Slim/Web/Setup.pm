@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.62 2004/04/25 01:23:18 kdf Exp $
+# $Id: Setup.pm,v 1.63 2004/04/29 00:57:52 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -566,7 +566,7 @@ sub initSetupConfig {
 						,'GroupSub' => 1
 						},
 				'moodlogic' => {
-						'PrefOrder' => ['moodlogic','instantMixMax','varietyCombo']
+						'PrefOrder' => ['moodlogic']
 						,'Suppress_PrefLine' => 1
 						,'Suppress_PrefSub' => 1
 						,'GroupLine' => 1
@@ -623,14 +623,6 @@ sub initSetupConfig {
 							,'optionSort' => 'KR'
 							,'inputTemplate' => 'setup_input_radio.html'
 							,'PrefSize' => 'large'
-						}
-				,'instantMixMax'	=> {
-							'validate' => \&validateInt
-							,'validateArgs' => [1,undef,1]
-						}
-				,'varietyCombo'	=> {
-							'validate' => \&validateInt
-							,'validateArgs' => [1,100,1,1]
 						}
 				,'audiodir'	=> {
 							'validate' => \&validateIsAudioDir
@@ -1059,13 +1051,16 @@ sub initSetupConfig {
 	,'behavior' => {
 		'title' => string('BEHAVIOR_SETTINGS')
 		,'parent' => 'server'
-		,'GroupOrder' => ['Default']
+		,'GroupOrder' => ['Default','Moodlogic']
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['displaytexttimeout',
 							,'composerInArtists','playtrackalbum','artistinalbumsearch', 'ignoredarticles','splitchars','filesort'
 							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
 							,'savehistory','historylength','checkVersion','ignoredisableditunestracks']
+				}
+			,'Moodlogic' => {
+					'PrefOrder' => ['instantMixMax','varietyCombo']
 				}
 			}
 		,'Prefs' => {
@@ -1087,6 +1082,14 @@ sub initSetupConfig {
 			,'splitchars' => {
 						'validate' => \&validateAcceptAll
 						,'PrefSize' => 'small'
+					}
+			,'instantMixMax'	=> {
+						'validate' => \&validateInt
+						,'validateArgs' => [1,undef,1]
+					}
+			,'varietyCombo'	=> {
+						'validate' => \&validateInt
+						,'validateArgs' => [1,100,1,1]
 					}
 			,'playtrackalbum' => {
 						'validate' => \&validateTrueFalse
@@ -1176,7 +1179,7 @@ sub initSetupConfig {
 					my ($client,$paramref,$pageref) = @_;
 					removeExtraArrayEntries($client,'titleFormat',$paramref,$pageref);
 				}
-		,'GroupOrder' => ['Default','TitleFormats','GuessFileFormats','iTunesPlaylistFormat']
+		,'GroupOrder' => ['Default','TitleFormats','GuessFileFormats','iTunesPlaylistFormat','MoodLogicPlaylistFormat']
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['longdateFormat','shortdateFormat','timeFormat']
@@ -1211,18 +1214,30 @@ sub initSetupConfig {
 					,'GroupLine' => 1
 					,'GroupSub' => 1
 				}
- 			,'iTunesPlaylistFormat' => {
- 					'PrefOrder' => ['iTunesplaylistprefix','iTunesplaylistsuffix']
- 					,'PrefsInTable' => 1
- 					,'Suppress_PrefHead' => 1
- 					,'Suppress_PrefDesc' => 1
- 					,'Suppress_PrefLine' => 1
- 					,'Suppress_PrefSub' => 1
- 					,'GroupHead' => string('SETUP_ITUNESPLAYLISTFORMAT')
- 					,'GroupDesc' => string('SETUP_ITUNESPLAYLISTFORMAT_DESC')
- 					,'GroupLine' => 1
- 					,'GroupSub' => 1
- 				}
+			,'iTunesPlaylistFormat' => {
+					'PrefOrder' => ['iTunesplaylistprefix','iTunesplaylistsuffix']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupHead' => string('SETUP_ITUNESPLAYLISTFORMAT')
+					,'GroupDesc' => string('SETUP_ITUNESPLAYLISTFORMAT_DESC')
+					,'GroupLine' => 1
+					,'GroupSub' => 1
+				}
+			,'MoodLogicPlaylistFormat' => {
+					'PrefOrder' => ['MoodLogicplaylistprefix','MoodLogicplaylistsuffix']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupHead' => string('SETUP_MOODLOGICPLAYLISTFORMAT')
+					,'GroupDesc' => string('SETUP_MOODLOGICPLAYLISTFORMAT_DESC')
+					,'GroupLine' => 1
+					,'GroupSub' => 1
+				}
 			}
 		,'Prefs' => {
 			'titleFormatWeb' => {

@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.10 2004/04/28 13:10:53 kdf Exp $
+#$Id: MoodLogic.pm,v 1.11 2004/04/29 00:57:53 kdf Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -63,7 +63,7 @@ sub init {
 	require Win32::OLE;
 	import Win32::OLE qw(EVENTS);
 	
-		Win32::OLE->Option(Warn => \&OLEError);
+	Win32::OLE->Option(Warn => \&OLEError);
 	my $name = "mL_MixerCenter";
 	
 	$mixer = Win32::OLE->new("$name.MlMixerComponent");
@@ -212,8 +212,15 @@ sub exportFunction {
 	$rs->Open('SELECT tblSongObject.songId, tblSongObject.profileReleaseYear, tblAlbum.name, tblSongObject.tocAlbumTrack, tblMediaObject.bitrate, tblMediaObject.fileSize FROM tblAlbum,tblMediaObject,tblSongObject WHERE tblAlbum.albumId = tblSongObject.tocAlbumId AND tblSongObject.songId = tblMediaObject.songId ORDER BY tblSongObject.songId', $conn, 1, 1);
 	#PLAYLIST QUERY
 	$playlist->Open('Select tblPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename  From "tblPlaylist", "tblPlaylistSong", "tblMediaObject" where "tblPlaylist"."playlistId" = "tblPlaylistSong"."playlistId" AND "tblPlaylistSong"."songId" = "tblMediaObject"."songId" order by tblPlaylist.playlistId,tblPlaylistSong.playOrder', $conn, 1, 1);
-	# AUTO PLAYLIST QUERY: 
-	$auto->Open('Select tblAutoPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename From "tblAutoPlaylist", "tblAutoPlaylistSong", "tblMediaObject" where "tblAutoPlaylist"."playlistId" = tblAutoPlaylistSong.playlistId AND tblAutoPlaylistSong.songId = tblMediaObject.songId order by tblAutoPlaylist.playlistId,tblAutoPlaylistSong.playOrder', $conn, 1, 1);
+	{
+		# AUTO PLAYLIST QUERY: 
+		local $Win32::OLE::Warn = 0;
+		$auto->Open('Select tblAutoPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename From "tblAutoPlaylist", "tblAutoPlaylistSong", "tblMediaObject" where "tblAutoPlaylist"."playlistId" = tblAutoPlaylistSong.playlistId AND tblAutoPlaylistSong.songId = tblMediaObject.songId order by tblAutoPlaylist.playlistId,tblAutoPlaylistSong.playOrder', $conn, 1, 1);
+		if (Win32::OLE->LastError) {
+			$isauto = 0;
+			$::d_moodlogic && Slim::Utils::Misc::msg("No AutoPlaylists Found\n");
+		};
+	}
 
 	$browser->filterExecute();
 	my %genre_hash;
@@ -333,7 +340,7 @@ sub exportFunction {
 
 	$rs->Close;
 	$playlist->Close;
-	$auto->Close;
+	$auto->Close if $isauto;
 	$conn->Close;
 	
 	doneScanning();
