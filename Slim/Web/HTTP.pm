@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.90 2004/04/05 19:17:42 dean Exp $
+# $Id: HTTP.pm,v 1.91 2004/04/06 05:32:14 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -41,7 +41,6 @@ use Slim::Utils::Strings qw(string);
 
 # constants
 
-$Template::Filters::FILTERS->{'uri'} = \&URI::Escape::uri_escape;
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -85,6 +84,8 @@ my %keepAlives     = ();
 my $mdnsIDslimserver;
 my $mdnsIDhttp;
 
+my $CacheDir = catdir($Bin,'Cache');
+
 my %pageFunctions = ();
 
 {
@@ -114,7 +115,19 @@ my %pageFunctions = ();
 }
 
 # initialize the http server
-*init     = \&idle;
+sub init {
+	if (Slim::Utils::OSDetect::OS() eq 'mac') {
+		$CacheDir = '~/Library/SlimDevices/SlimServer.Cache';
+	}
+	my @CacheDirs = splitdir($CacheDir);
+	pop @CacheDirs;
+	my $CacheParent = catdir(@CacheDirs);
+	if ((!-e $CacheDir && !-w $CacheParent) || (-e $CacheDir && !-w $CacheDir)) {
+		$CacheDir = undef;
+	}
+
+	idle();
+}
 
 # other people call us externally.
 *escape   = \&URI::Escape::uri_escape;
@@ -1269,10 +1282,11 @@ sub newSkinTemplate {
 	}
 	$skinTemplates{$skin} = Template->new({
 		INCLUDE_PATH => \@include_path
-		,COMPILE_DIR => catdir($Bin,'Cache')
+		,COMPILE_DIR => $CacheDir
 		,FILTERS => {
 			'string' => \&Slim::Utils::Strings::string
 			,'nbsp' => \&nonBreaking
+			,'uri' => \&URI::Escape::uri_escape
 		}
 		,EVAL_PERL => 1
 	});
