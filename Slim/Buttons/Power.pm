@@ -1,6 +1,6 @@
 package Slim::Buttons::Power;
 
-# $Id: Power.pm,v 1.7 2003/12/13 08:29:17 kdf Exp $
+# $Id: Power.pm,v 1.8 2003/12/16 16:29:22 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ my %functions = (
 		my $button = shift;
 		my $offsize = Slim::Utils::Prefs::clientGet($client, "offDisplaySize") ? 0 : 1;
 		Slim::Utils::Prefs::clientSet($client, "offDisplaySize", $offsize);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 );
 
