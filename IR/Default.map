@@ -223,6 +223,26 @@ play					= done
 add						= done
 stop					= done_passback
 
+[INPUT.Time]
+0						= numberLetter_0
+1						= numberLetter_1
+2						= numberLetter_2
+3						= numberLetter_3
+4						= numberLetter_4
+5						= numberLetter_5
+6						= numberLetter_6
+7						= numberLetter_7
+8						= numberLetter_8
+9						= numberLetter_9
+arrow_left					= left
+arrow_right					= right
+search						= exit_search
+play.*						= dead
+play						= exit_play
+add.*						= dead
+add						= exit_add
+
+
 [INPUT.Text]
 0						= numberLetter_0
 1						= numberLetter_1
