@@ -510,11 +510,20 @@ sub nextChunk {
 	my $maxChunkSize = shift;
 
 	my $chunk;
+	my $len;
 
 	# if there's a chunk in the queue, then use it.
 	if (scalar(@{$client->chunks})) {
 
 		$chunk = shift @{$client->chunks};
+
+		$len = length($$chunk);
+		# A zero length chunk is a marker for the end of the stream.
+		# If we see one, close the outgoing connection.
+		if (!$len) {
+			Slim::Web::HTTP::forgetClient($client);
+			$chunk = undef;
+		}
 
 	} else {
 		#otherwise, read a new chunk
@@ -524,27 +533,26 @@ sub nextChunk {
 			
 		if (defined($chunk)) {
 
-			# let everybody I'm synced with use this chunk
-			foreach my $buddy (Slim::Player::Sync::syncedWith($client)) {
-				push @{$buddy->chunks}, $chunk;
+			$len = length($$chunk);
+
+			if ($len) {
+				# let everybody I'm synced with use this chunk
+				foreach my $buddy (Slim::Player::Sync::syncedWith($client)) {
+					push @{$buddy->chunks}, $chunk;
+				}
 			}
 		}
 	}
 	
-	if (defined($chunk)) {
+	if (defined($chunk) && ($len > $maxChunkSize)) {
+		0 && $::d_source && msg("chunk too big, pushing the excess for later.\n");
 
-		my $len = length($$chunk);
+		my $queued = substr($$chunk, $maxChunkSize - $len, $len - $maxChunkSize);
 
-		if ($len > $maxChunkSize) {
-			0 && $::d_source && msg("chunk too big, pushing the excess for later.\n");
+		unshift @{$client->chunks}, \$queued;
 			
-			my $queued = substr($$chunk, $maxChunkSize - $len, $len - $maxChunkSize);
-
-			unshift @{$client->chunks}, \$queued;
-			
-			my $returned = substr($$chunk, 0, $maxChunkSize);
-			$chunk = \$returned;
-		}
+		my $returned = substr($$chunk, 0, $maxChunkSize);
+		$chunk = \$returned;
 	}
 	
 	return $chunk;
@@ -728,9 +736,7 @@ sub gotoNext {
 
 				# We're done streaming the song, so drop the streaming
 				# connection to the client.
-				if (!scalar(@{$client->chunks})) {
-					Slim::Web::HTTP::forgetClient($client);
-				}
+				dropStreamingConnection($client);
 
 				$client->update();
 
@@ -763,9 +769,7 @@ sub gotoNext {
 			
 			# We're done streaming the song, so drop the streaming
 			# connection to the client.
-			if (!scalar(@{$client->chunks})) {
-				Slim::Web::HTTP::forgetClient($client);
-			}
+			dropStreamingConnection($client);
 
 			return 0;
 
@@ -784,6 +788,20 @@ sub gotoNext {
 	} while (!$result);
 
 	return $result;
+}
+
+sub dropStreamingConnection {
+	my $client = shift;
+
+	if (!scalar(@{$client->chunks})) {
+		Slim::Web::HTTP::forgetClient($client);
+	}
+	else {
+		push @{$client->chunks}, \'';
+	}
+	foreach my $buddy (Slim::Player::Sync::syncedWith($client)) {
+		push @{$buddy->chunks}, \'';
+	}
 }
 
 # For backwards compatability
