@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.43 2004/01/01 21:22:57 daniel Exp $
+# $Id: Info.pm,v 1.44 2004/01/02 01:38:38 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -76,6 +76,9 @@ my @infoCacheItems = (
 	'BAND',
 	'CONDUCTOR', # conductor
 );
+
+# Save the persistant DB cache every hour
+my $dbSaveInterval = 3600;
 
 # three hashes containing the types we know about, populated b tye loadTypesConfig routine below
 # hash of default mime type index by three letter content type e.g. 'mp3' => audio/mpeg
@@ -196,6 +199,8 @@ sub init {
 	if (Slim::Utils::Prefs::get('usetagdatabase')) {
 		loadDBCache();
 	}
+	
+	saveDBCacheTimer(); # Start the timer to save the DB every $dbSaveInterval
 	
 	# use all the genres we know about...
 	MP3::Info::use_winamp_genres();
@@ -339,6 +344,12 @@ sub checkForChanges {
     }
 
     $::d_info && Slim::Utils::Misc::msg("$file not in infoCacheDB! or undefined file. This shouldn't happen!\n");		    
+}
+
+# This gets called to save the infoDBCache every $dbSaveInterval seconds
+sub saveDBCacheTimer {
+	saveDBCache();
+	Slim::Utils::setTimer(0, Time::HiRes::time() + $dbSaveInterval, \&saveDBCacheTimer);
 }
 
 sub clearCache {
