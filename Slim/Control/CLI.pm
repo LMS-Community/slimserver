@@ -68,7 +68,7 @@ sub openport {
 	$selRead->add(serverSocket());   # readability on the command line interface server
 	$main::selRead->add(serverSocket());
 	
-	$mdnsID = Slim::Networking::mDNS::advertise(Slim::Utils::Prefs::get('mDNSname'), '_slimdevices_slimp3_cli._tcp', $listenerport);
+	$mdnsID = Slim::Networking::mDNS::advertise(Slim::Utils::Prefs::get('mDNSname'), '_slimdevices_slimserver_cli._tcp', $listenerport);
 
 	Slim::Control::Command::setExecuteCallback(\&Slim::Control::CLI::commandCallback);
 	

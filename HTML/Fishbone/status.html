@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-	<link rel="stylesheet" href="slimp3.css">
+	<link rel="stylesheet" href="slimserver.css">
     <script language="JavaScript">
 <!--Hide
 var count;
@@ -31,17 +31,27 @@ function doRefresh()
 	setCookie("slimp3-refresh",temp);
 &rbrc;
 
+
 function startClock() &lbrc;
+
 	if (count != "off") &lbrc;
 		count = count - 1;
+
 		if (count <= 0)
+
 		&lbrc;
 			count=30;
+
 			location.reload(true);
+
 		&rbrc;
+
 		timerID = setTimeout("startClock()", 1000);
+
 	&rbrc;
+
 &rbrc;
+
 
 function setCookie(name, value)
 &lbrc;

@@ -340,10 +340,12 @@ sub getClient {
 				$client->decoder('mas3507d');
 				$client->ticspersec(625000);
 				$client->type('slimp3');
+				$client->model('slimp3');
 			} elsif ($deviceid == 0x02) {
 				$client->decoder('mas35x9');
 				$client->ticspersec(1000);
 				$client->type('slimp3');
+				$client->model('squeezebox');
 			} else {
 				$::d_protocol && msg("bogus client: $id, fugettaboutit\n");
 				return undef;

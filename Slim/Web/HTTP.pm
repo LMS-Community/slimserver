@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.2 2003/07/23 19:35:22 dean Exp $
+# $Id: HTTP.pm,v 1.3 2003/07/23 21:29:13 dean Exp $
 
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -107,7 +107,7 @@ sub openport {
 	$::d_http && msg("Server $0 accepting http connections on port $listenerport\n");
 	
 	$mdnsIDhttp = Slim::Networking::mDNS::advertise(Slim::Utils::Prefs::get('mDNSname'), '_http._tcp', $listenerport);
-	$mdnsIDslimp3 = Slim::Networking::mDNS::advertise(Slim::Utils::Prefs::get('mDNSname'), '_slimdevices_slimp3_http._tcp', $openedport);
+	$mdnsIDslimp3 = Slim::Networking::mDNS::advertise(Slim::Utils::Prefs::get('mDNSname'), '_slimdevices_slimserver_http._tcp', $openedport);
 
 }
 
@@ -296,7 +296,7 @@ sub processHTTP {
 			}
 
 			if (!$authorized) { # no Valid authorization supplied!
-				my $name = string('SLIMP3_SERVER');
+				my $name = string('SLIM_SERVER');
 				my $message = "HTTP/1.0 401 Authorization Required" . $EOL . 
 					"WWW-Authenticate: basic realm=\"$name\"" . $EOL .
 					"Content-type: text/html$BLANK" . 
@@ -412,6 +412,12 @@ sub executeurl {
 	if (!defined($client) && Slim::Player::Client::clientCount() > 0) {
 		my @allclients = Slim::Player::Client::clients();
 		$client = $allclients[0];
+	}
+	
+	if ($client && $client->model() && $client->model() eq 'slimp3') {
+		$$paramsref{"playermodel"} = 'slimp3';
+	} else {
+		$$paramsref{"playermodel"} = 'squeezebox';
 	}
 
 	my @callbackargs = ($client, $httpclientsock, $paramsref);
@@ -636,7 +642,7 @@ sub sendstreamingresponse {
 		if ($metaDataBytes{$httpclientsock} == $METADATAINTERVAL) {
 			unshift @{$outbuf{$httpclientsock}},$message;
 			my $song = Slim::Player::Playlist::song($client);
-			my $title = $song ? Slim::Music::Info::standardTitle($client, $song) : string('WELCOME_TO_SLIMP3');
+			my $title = $song ? Slim::Music::Info::standardTitle($client, $song) : string('WELCOME_TO_SQUEEZEBOX');
 			$title =~ tr/'/ /;
 			my $metastring = "StreamTitle='" . $title . "';";
 			my $length = length($metastring);
@@ -991,7 +997,7 @@ sub generateresponse {
 			$headers{"x-audiocast-name"} = "SLIMP3";
 			if ($sendMetaData{$httpclientsock}) {
 				$headers{"icy-metaint"} = $METADATAINTERVAL;
-				$headers{"icy-name"} = string('WELCOME_TO_SLIMP3');
+				$headers{"icy-name"} = string('WELCOME_TO_SQUEEZEBOX');
 			}
 			my $output = $result . $EOL . printheaders(%headers, %paramheaders);
 			$metaDataBytes{$httpclientsock} = - length($output);

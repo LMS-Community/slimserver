@@ -1,12 +1,11 @@
 #
-# This tab-delimited file contains all the text strings used in the SLIMP3
+# This tab-delimited file contains all the text strings used in the Slim Server
 # The format should be self explanatory. To submit a new language, or a better
 # translation of an existing string, please email your changes to
 # <translate (at) slimdevices (dot) com>
 # diff files are the preferred format, but any improvements are most welcome
 #
-# Also, when submitting changes, please use the latest version in CVS, whenever possible:
-# http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/slimp3/slimp3/server/strings.txt
+# Also, when submitting changes, please use the latest version in CVS
 #
 # NOTE: Please keep the languages in alphabetical order by two-letter identifier.
 
@@ -36,28 +35,28 @@ CHOOSE_A_LANGUAGE
 	SE	Välj språk
 
 BASE_SKIN
-	EN	SLIMP3 Light
-	FR	SLIMP3 édulcoré
-	NL	SLIMP3 Light
-	PT	SLIMP3 Leve
+	EN	Light
+	FR	Édulcoré
+	NL	Light
+	PT	Leve
 
 DEFAULT_SKIN
-	EN	SLIMP3 Standard
-	ES	SLIMP3 Estandar
-	FI	SLIMP3 Normaali ulkoasu
-	FR	SLIMP3 par défaut
-	NL	SLIMP3 Standaard
-	PT	SLIMP3 Padrão
-	SE	SLIMP3 Standard-utseende
+	EN	Standard
+	ES	Estandar
+	FI	Normaali ulkoasu
+	FR	Défaut
+	NL	Standaard
+	PT	Padrão
+	SE	Standard-utseende
 
 DEFAULT_MAP
-	EN	SLIMP3 Standard
-	ES	SLIMP3 Estandar
-	FI	SLIMP3 Normaali ulkoasu
-	FR	SLIMP3 normalisé
-	NL	SLIMP3 Standaard
-	PT	SLIMP3 Padrão
-	SE	SLIMP3 Standard
+	EN	Standard
+	ES	Estandar
+	FI	Normaali ulkoasu
+	FR	normalisé
+	NL	Standaard
+	PT	Padrão
+	SE	Standard
 
 HIT_RELOAD
 	DE	<a href="/" target="_top">Klicken Sie hier</a>, um den neuen Skin zu aktivieren.
@@ -84,42 +83,42 @@ LANGUAGE_CHOICES
 	SE	Svenska
 
 SERVER_VERSION
-	DE	SLIMP3 Server Version
-	EN	SLIMP3 Server Version
-	ES	Versión del servidor SLIMP3
-	FR	Version du serveur SLIMP3
-	NL	SLIMP3 Server Versie
-	PT	Versão do servidor SLIMP3
-	SE	SLIMP3 Server-version
+	DE	Slim Server Version
+	EN	Slim Server Version
+	ES	Versión del servidor Slim
+	FR	Version du serveur Slim
+	NL	Slim Server Versie
+	PT	Versão do servidor Slim
+	SE	Slim Server-version
 
 PLAYER_VERSION
-	DE	SLIMP3 Player Firmware Version
-	EN	SLIMP3 Player Firmware Version
-	ES	Versión del firmware del SLIMP3
-	FR	Version du micrologiciel du lecteur SLIMP3
-	NL	SLIMP3 Speler Firmware Versie
-	PT	Versão do firmware do cliente SLIMP3
-	SE	SLIMP3 Spelar-version
+	DE	Player Firmware Version
+	EN	Player Firmware Version
+	ES	Versión del firmware
+	FR	Version du micrologiciel du lecteur
+	NL	Speler Firmware Versie
+	PT	Versão do firmware do cliente
+	SE	Spelar-version
 
 ABOUT_SLIMDEVICES
 	EN	About Slim Devices
 	FR	A propos de Slim Devices
 
 #
-# SLIMP3 user interface, sent by the server
+# Player user interface, sent by the server
 # Keep these as short as possible.
 #
 HOME
-	DE	SLIMP3 Hauptmenü
+	DE	Hauptmenü
 	DK	Hovedmenu
-	EN	SLIMP3 Home
+	EN	Home
 	ES	Inicio
 	FI	Alkuun
 	FR	Menu principal
-	NL	SLIMP3 Hoofdmenu
+	NL	Hoofdmenu
 	NO	Hjem
 	PT	Início
-	SE	SLIMP3 Huvudmeny
+	SE	Huvudmeny
 
 LIBRARY_CONTAINS
 	DE	Die Musikbibliothek enthält
@@ -308,31 +307,31 @@ PAUSED
 	PT	Pausado
 	SE	Pausad
 
-SLIMP3_SERVER
-	DE	SLIMP3 Server
-	DK	SLIMP3 Server
-	EN	SLIMP3 Server
-	ES	SLIMP3 Servidor
-	FI	SLIMP3 Salvelin
-	FR	SLIMP3 Serveur
-	IT	SLIMP3 Server
-	NL	SLIMP3 Server
-	NO	SLIMP3 Server
-	PT	Servidor SLIMP3
-	SE	SLIMP3-Server
+SLIM_SERVER
+	DE	Slim Server
+	DK	Slim Server
+	EN	Slim Server
+	ES	Slim Servidor
+	FI	Slim Salvelin
+	FR	Slim Serveur
+	IT	Slim Server
+	NL	Slim Server
+	NO	Slim Server
+	PT	Servidor Slim
+	SE	Slim-Server
 
 ABOUT
-	DE	SLIMP3 Server V.%s, entwickelt von:
-	DK	SLIMP3 server V.%s, skrevet af:
-	EN	SLIMP3 server V.%s, written by:
-	ES	SLIMP3 servidor V.%s, escrito por:
-	FI	SLIMP3 palvelin V.%s, tekijä:
-	FR	SLIMP3 serveur V.%s, écrit par:
-	IT	SLIMP3 server V.%s, scritto da:
-	NL	SLIMP3 Server V.%s, geschreven door:
-	NO	SLIMP3 server V.%s, skrevet av:
-	PT	Servidor SLIMP3 v.%s, escrito por
-	SE	SLIMP3-Server v.%s, skriven av:
+	DE	Slim Server V.%s, entwickelt von:
+	DK	Slim server V.%s, skrevet af:
+	EN	Slim server V.%s, written by:
+	ES	Slim servidor V.%s, escrito por:
+	FI	Slim palvelin V.%s, tekijä:
+	FR	Slim serveur V.%s, écrit par:
+	IT	Slim server V.%s, scritto da:
+	NL	Slim Server V.%s, geschreven door:
+	NO	Slim server V.%s, skrevet av:
+	PT	Servidor Slim v.%s, escrito por
+	SE	Slim-Server v.%s, skriven av:
 
 REMOVING_FROM_PLAYLIST
 	DE	Aus der Playlist löschen:
@@ -629,7 +628,9 @@ ALARM_NOW_PLAYING
 
 SLIMP3
 	EN	SLIMP3
-	PT	SLIMP3
+
+SQUEEZEBOX
+	EN	Squeezebox
 
 WELCOME_TO_SLIMP3
 	DE	Willkommen bei SLIMP3
@@ -638,11 +639,24 @@ WELCOME_TO_SLIMP3
 	ES	Bienvenido al SLIMP3
 	FI	SLIMP3 Tervetuloa!
 	FR	Bienvenue sur le SLIMP3
-	IT	Benvenuto a SlimMP3
+	IT	Benvenuto a SLIMP3
 	NL	Welkom bij SLIMP3
 	NO	Velkommen til SLIMP3
 	PT	Bem-vindo ao SLIMP3
 	SE	Välkommen till SLIMP3
+
+WELCOME_TO_SQUEEZEBOX
+	DE	Willkommen bei Squeezebox
+	DK	Velkommen til Squeezebox
+	EN	Welcome to Squeezebox
+	ES	Bienvenido al Squeezebox
+	FI	Squeezebox Tervetuloa!
+	FR	Bienvenue sur le Squeezebox
+	IT	Benvenuto a Squeezebox
+	NL	Welkom bij Squeezebox
+	NO	Velkommen til Squeezebox
+	PT	Bem-vindo ao Squeezebox
+	SE	Välkommen till Squeezebox
 
 FREE_YOUR_MUSIC
 	EN	Free your music
@@ -680,199 +694,6 @@ PROBLEM_OPENING
 	SE	Problem: Kan inte öppna fil för:
 
 #
-# Setup utility
-# These are printed on the console, so length is not critical.
-#
-SETUP_WELCOME
-	DE	Willkommen zur SLIMP3 Installation
-	DK	Velkommen til SLIMP3s konfiguration
-	EN	Welcome to the SLIMP3 Setup Tool
-	ES	Bienvenido a la configuración de SLIMP3.
-	FI	SLIMP3 asetustyökalu
-	FR	Bienvenue dans l'outil de configuration SLIMP3.
-	IT	Benvenuto alla Configuzione di SLIMP3
-	NL	Welkom bij de SLIMP3 installatie
-	NO	Velkommen til SLIMP3 konfigurasjon
-	PT	Bem-vindo à configuração do SLIMP3
-	SE	Välkommen till SLIMP3s konfigurationsverktyg
-
-SETUP_SAVING_HERE
-	DE	Ihre Einstellungen werden abgespeichert in
-	DK	Din konfiguration gemmes i
-	EN	Your preferences will be saved in
-	ES	Su configuración se guardará en
-	FI	Asetuksesi tallennetaan
-	FR	Vos préférences seront sauvegardées dans
-	IT	La Configurazione sara' salvata in
-	NL	Uw voorkeuren worden bewaard in
-	NO	Konfigurasjonen lagres i
-	PT	As configurações serão guardadas em
-	SE	Din konfiguration sparas i
-
-SETUP_CANTSAVE
-	DE	Oops! Konnte nicht speichern in
-	DK	Desværre! Kunne ikke gemme på
-	EN	Oops! Couldn't write to
-	ES	Ay! No se ha podido guardar en
-	FI	Hups! Asetusten tallentaminen ei onnistunut
-	FR	Oups ! Impossible d'écrire dans
-	IT	Oops! Non riesco a scrivere in
-	NL	Oeps! Kon niet schrijven naar
-	NO	Huffda, kunne ikke skrive til
-	PT	Não foi possível gravar em
-	SE	Hoppsan, jag kunde inte skriva till
-
-SETUP_EXAMPLE
-	DE	BEISPIEL
-	DK	EKSEMPEL
-	EN	EXAMPLE
-	ES	EJEMPLO
-	FI	ESIMERKKI
-	FR	EXEMPLE
-	IT	ESEMPIO
-	NL	VOORBEELD
-	NO	EKSEMPEL
-	PT	EXEMPLO
-	SE	EXEMPEL
-
-SETUP_BAD_DIRECTORY
-	DE	Oops - "%s" ist kein gültiges Verzeichnis. Bitte versuchen Sie es noch einmal.
-	DK	Desværre, "%s" er ikke en brugbar folder. Prøv en anden.
-	EN	Oops - "%s" doesn't seem to be a valid directory. Try again.
-	ES	Ay! La carpeta "%s" no es válido. Intente de nuevo.
-	FI	Hups! - "%s" ei ole hakemisto. Yritä uudelleen.
-	FR	Zut! Répertoire non valide. Essayez encore une fois.
-	IT	Oops - "%s" non sembra essere un percorso valido. Riprova.
-	NL	Oeps! "%s" is geen geldige folder. Probeer opnieuw.
-	NO	Huffda, "%s" er ikke en gyldig katalog. Forsøk igjen.
-	PT	A Pasta "%s" não é válida. Tente de novo.
-	SE	Hoppsan, %s verkar inte vara en godkänd mapp. Försök igen.
-
-SETUP_OK_USING
-	DE	O.K., verwendet:
-	DK	OK, anvender:
-	EN	The server will use the following path to your MP3 files:
-	ES	Vale. Utilizando:
-	FI	Palvelin käyttää seuraavaa polkua mp3 -tiedostoihisi:
-	FR	Le serveur utilisera le chemin suivant pour vos fichiers MP3 :
-	IT	Okay, uso:
-	NL	OK, het pad naar de MP3 bestanden is:
-	NO	Ok, bruker:
-	PT	O servidor irá usar a seguinte directoria para os ficheiros de áudio
-	SE	Ok, använder:
-
-SETUP_REPEAT
-	DE	Wiederholungsmodus:
-	DK	Gentagelse
-	EN	Repeat mode
-	ES	Repetición:
-	FI	Toistosoitto
-	FR	Répétition
-	NL	Herhaal modus
-	PT	Modo de Repetição
-	SE	Repetitionsläge:
-
-SETUP_VOLUME
-	DE	Pegel der Lautstärke
-	DK	Volume
-	EN	Volume level
-	ES	Nivel de volumen
-	FI	Äänenvoimakkuuden taso
-	FR	Volume
-	NL	Volume niveau
-	PT	Nível do Volume
-	SE	Volymnivå
-
-SETUP_SHUFFLE
-	DE	Zufallswiedergabemodus ein?
-	DK	Vilkårlig rækkefølge
-	EN	Shuffle mode
-	ES	Seleccionar al azar?
-	FI	Satunnaissoitto
-	FR	Ordre aléatoire
-	NL	Shuffle modus
-	PT	Modo Aleatório
-	SE	Blandad uppspelning?
-
-SETUP_Y
-	DE	J
-	DK	J
-	EN	Y
-	ES	S
-	FI	K
-	FR	O
-	IT	S
-	NL	J
-	NO	J
-	PT	S
-	SE	J
-
-SETUP_N
-	DE	N
-	DK	N
-	EN	N
-	ES	N
-	FI	E
-	FR	N
-	IT	N
-	NL	N
-	NO	N
-	PT	N
-	SE	N
-
-SETUP_WHICH_PORT
-	DE	Welche Port-Nummer möchten Sie verwenden, um auf den Server zuzugreifen?
-	DK	Hvilken port ønsker du at anvende for at tilgå serveren?
-	EN	Which port number would you like to use to access the server?
-	ES	¿Cuál puerto quiere usted utilizar para conectar al servidor web?
-	FI	Mitä porttinumeroa haluat palvelimen käyttävän?
-	FR	Quel port voulez-vous utiliser pour accéder au serveur ?
-	IT	Quale numero di porta vuoi usare per accedere al server?
-	NL	Welke poort wilt U gebruiken om de server te contacteren?
-	NO	Hvilket portnummer vil du bruke for å kontakte serveren?
-	PT	Qual o porto a usar para ligar ao servidor Web?
-	SE	Vilket portnummer vill du använda för att kontakta servern?
-
-SETUP_URL_WILL_BE
-	DE	Die Zugriffs URL zum SLIMP3 Player ist wie folgt:
-	DK	URL-adessen, der giver adgang til SLIMP3-afspilleren, vil se således ud:
-	EN	The URL to access the SLIMP3 player is now:
-	ES	La dirección para acceder al SLIMP3 será:
-	FI	Osoite, josta voit ohjata SLIMP3 soitintasi on:
-	FR	L'URL pour accéder au SLIMP3 sera :
-	IT	L'URL per poter accedere allo SLIMP3 sarà qualcosa come:
-	NL	De URL voor toegang tot de SLIMP3 speler is:
-	NO	URL-adressen for å styre SLIMP3-spilleren vil se omtrent slik ut:
-	PT	O URL para aceder ao SLIMP3 é
-	SE	URLen för att komma åt SLIMP3 spelaren är:
-
-SETUP_OK_NO_DEBUGGING
-	DE	OK. Kein Testmodus.
-	DK	OK, ingen debugging.
-	EN	Okay, no debugging.
-	ES	Vale, sin debugging.
-	FI	Seurantaa ei ole kytketty päälle.
-	FR	OK, pas de mise au point.
-	IT	Okay, diagnostica disabilitata.
-	NL	OK, geen debugging.
-	NO	Ok, ingen debugging.
-	PT	Modo de Depuração Desligado
-	SE	Ok, ingen debugging.
-
-SETUP_COMPLETE
-	DE	Installation ist vollständig!
-	DK	Konfigurationen er færdig.
-	EN	Setup is complete!
-	ES	¡Configuración completada!
-	FI	Asennus on valmis!
-	FR	La configuration est terminée !
-	IT	Configurazione completata!
-	NL	De installatie is voltooid!
-	NO	Installasjonen er ferdig!
-	PT	Configuração Terminada!
-	SE	Konfigurationen är färdig!
-
-#
 # Setup Group strings
 # Use the following naming convention when adding strings here:
 # SETUP_GROUP_$groupname == Name of group, such as would be used in the header of the group on the web page
@@ -890,15 +711,15 @@ SETUP_GROUP_BRIGHTNESS
 	SE	Ljusstyrka
 
 SETUP_GROUP_BRIGHTNESS_DESC
-	DE	Wählen Sie die Helligkeit des SLIMP3 Displays im aus- bzw. eingeschaltetem Zustand.
-	DK	Lysstyrken på SLIMP3 displayet kan angives for når enheden er tændt og slukket.
-	EN	The brightness of the SLIMP3 display can be set for when it's on and off.
-	ES	Elija la luminosidad de la pantalla del SLIMP3.
+	DE	Wählen Sie die Helligkeit des Displays im aus- bzw. eingeschaltetem Zustand.
+	DK	Lysstyrken på displayet kan angives for når enheden er tændt og slukket.
+	EN	The brightness of the player's display can be set for when it's on and off.
+	ES	Elija la luminosidad de la pantalla.
 	FI	Näytön valoisuuden voi säätää erikseen käyttöä ja lepotilaa varten.
-	FR	Il est possible de régler la luminosité de l'écran du lecteur SLIMP3 pour les états allumé et éteint.
-	NL	De helderheid van het SLIMP3 display kan afzonderlijk worden ingesteld voor de aan- en uitgeschakelde toestand.
-	PT	Pode escolher o brilho do ecrã do cliente SLIMP3 para quando estiver ligado ou desligado.
-	SE	Ljusstyrkan på SLIMP3-spelarens display kan varieras för påslaget och avslaget läge.
+	FR	Il est possible de régler la luminosité de l'écran du lecteur pour les états allumé et éteint.
+	NL	De helderheid van het display kan afzonderlijk worden ingesteld voor de aan- en uitgeschakelde toestand.
+	PT	Pode escolher o brilho do ecrã do cliente para quando estiver ligado ou desligado.
+	SE	Ljusstyrkan på display kan varieras för påslaget och avslaget läge.
 
 SETUP_GROUP_TCP_PARAMS
 	DE	TCP Parameter
@@ -939,16 +760,16 @@ SETUP_GROUP_MENUITEMS
 	FR	Personnalisation du menu principal
 	NL	Hoofdmenu aanpassen
 	PT	Personalização do Menu Inicial
-	SE	Konfigurering av SLIMP3 Huvudmeny
+	SE	Konfigurering av Huvudmeny
 
 SETUP_GROUP_MENUITEMS_DESC
 	DE	Sie können die verfügbaren Einträge im Hauptmenü anpassen. Klicken Sie zum Hoch- und Runterschieben oder Löschen der Einträge. Klicken zu auf "Hinzufügen" um einen gelöschten Eintrag wieder hinzuzufügen.
-	DK	Du kan tilpasse hovedmenuen på din SLIMP3. Klik for at flytte menupunkter op og ned eller for at fjerne dem. Klik "Tilføj" for at tilføje et fjernet menupunkt til menuen.
+	DK	Du kan tilpasse hovedmenuen på din. Klik for at flytte menupunkter op og ned eller for at fjerne dem. Klik "Tilføj" for at tilføje et fjernet menupunkt til menuen.
 	EN	You can customize the choices that are available on the top-level Home menu. Click to move items up and down or to remove menu items. Click on "Add" to add a removed item back to the menu.
 	FR	Vous pouvez personnaliser les choix disponibles dans le menu principal. Cliquez pour supprimer un choix ou pour le déplacer verticalement. Cliquer sur "Ajouter" pour restaurer un choix supprimé.
 	NL	U kunt instellen welke keuzes aanwezig zijn in het Hoofdmenu. Klik om de items naar boven of naar beneden te verplaatsen of ze te verwijderen. Klik op "Toevoegen" om een verwijderd item terug te plaatsen in het menu.
 	PT	Pode personalizar as opções disponíveis no menu inicial. Escolha as opções para mover para cima, para baixo, ou para apagar. Escolha "Adicionar" para adicionar um item ao menu.
-	SE	Du kan konfigurera vilka val som skall finnas tillgängliga från din SLIMP3 Huvudmeny. Klicka för att flytta upp, ner eller ta bort menyval. Klicka på "Lägg till" för att återställa ett menyval.
+	SE	Du kan konfigurera vilka val som skall finnas tillgängliga från din Huvudmeny. Klicka för att flytta upp, ner eller ta bort menyval. Klicka på "Lägg till" för att återställa ett menyval.
 
 SETUP_GROUP_NONMENUITEMS_INTRO
 	DE	Inaktiver Menüeintrag:
@@ -984,12 +805,12 @@ SETUP_GROUP_PLUGINS
 	SE	Tillägg
 
 SETUP_GROUP_PLUGINS_DESC
-	DE	SLIMP3 beinhaltet ein paar Plugins, die Sie zum Menü hinzufügen können. Sie können die Plugins in dem Plugin-Verzeichnis hinzufügen oder löschen. Um ein Extra zu aktivieren, klicken Sie auf die Auswahlbox. Zum deaktivieren demakieren Sie die Box. Klicken Sie auf "Ändern" zum speichern der Einstellung.
-	EN	SLIMP3 includes some extra features, called Plugins, that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. To save your changes, click Change.
+	DE	Slim Server beinhaltet ein paar Plugins, die Sie zum Menü hinzufügen können. Sie können die Plugins in dem Plugin-Verzeichnis hinzufügen oder löschen. Um ein Extra zu aktivieren, klicken Sie auf die Auswahlbox. Zum deaktivieren demakieren Sie die Box. Klicken Sie auf "Ändern" zum speichern der Einstellung.
+	EN	Slim Server includes some extra features, called Plugins, that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. To save your changes, click Change.
 	FR	Vous pouvez sélectionner des fonctionnalités supplémentaires du lecteur, appelées Plugins, disponibles à l'aide de la télécommande. Ces fonctionnalités sont situées dans le dossier Plugins. Pour activer un plugin, cocher la case correspondante. Pour le désactiver, décochez la case.
-	NL	SLIMP3 laat toe om extra functies te koppelen aan de afstandsbediening. Deze functies vindt U terug in de Plugins folder. Om een funtie te activeren klikt U het vinkje naast de functie aan. Om de funtie uit te schakelen verwijdert U het vinkje. Om de wijzigingen op te slaan klikt U op 'Aanpassen'.
-	PT	O cliente SLIMP3 inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
-	SE	SLIMP3 inkluderar tilläggs-funktioner du kan använda med din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras individuellt. För att aktivera ett tillägg, kryssa i rutan bredvid tillägget nedan. För att avaktivera ett tillägg, ta bort krysset. För att spara dina ändringar, klicka på "Ändra".
+	NL	Slim Server laat toe om extra functies te koppelen aan de afstandsbediening. Deze functies vindt U terug in de Plugins folder. Om een funtie te activeren klikt U het vinkje naast de functie aan. Om de funtie uit te schakelen verwijdert U het vinkje. Om de wijzigingen op te slaan klikt U op 'Aanpassen'.
+	PT	O cliente Slim Server inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
+	SE	Slim Server inkluderar tilläggs-funktioner du kan använda med din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras individuellt. För att aktivera ett tillägg, kryssa i rutan bredvid tillägget nedan. För att avaktivera ett tillägg, ta bort krysset. För att spara dina ändringar, klicka på "Ändra".
 
 #
 # Setup preference strings
@@ -1003,25 +824,25 @@ SETUP_GROUP_PLUGINS_DESC
 #
 # Player settings
 SETUP_PLAYERNAME
-	DE	SLIMP3 Name
-	DK	Navn på SLIMP3-afspiller
-	EN	SLIMP3 Name
-	ES	Nombre del SLIMP3
-	FI	SLIMP3 Nimi
-	FR	Nom du SLIMP3
-	NL	SLIMP3 Naam
-	PT	Nome do Cliente SLIMP3
-	SE	SLIMP3 Namn
+	DE	Player Name
+	DK	Navn på player-afspiller
+	EN	Player Name
+	ES	Nombre del player
+	FI	Player Nimi
+	FR	Nom du player
+	NL	Player Naam
+	PT	Nome do Cliente
+	SE	Player Namn
 
 SETUP_PLAYERNAME_OK
-	DE	Der neue Name für diesen SLIMP3 Player ist:
-	DK	Det nye navn for SLIMP3-afspilleren er:
+	DE	Der neue Name für diesen Player ist:
+	DK	Det nye navn for afspilleren er:
 	EN	The new name for this player is:
 	ES	El nuevo nombre para este reproductor es:
 	FI	Uuden soittimen nimi on:
 	FR	Le nouveau nom du lecteur est :
 	NL	De nieuwe naam voor deze speler is:
-	PT	O novo nome para este cliente SLIMP3 é
+	PT	O novo nome para este cliente é
 	SE	Det nya namnet för denna spelare är:
 
 SETUP_PLAYERNAME_DESC
@@ -1036,14 +857,14 @@ SETUP_PLAYERNAME_DESC
 	SE	Du kan ange ett namn för spelaren som kommer användas för att identifiera spelaren på dessa webbsidor.
 
 SETUP_PLAYERNAME_CHOOSE
-	DE	Wählen Sie einen Namen für diesen SLIMP3 Player:
+	DE	Wählen Sie einen Namen für diesen player:
 	DK	Afspiller-navn:
 	EN	Player name:
 	ES	Elija un nombre para este reproductor:
 	FI	Soittimen nimi:
 	FR	Nom du lecteur :
 	NL	Naam voor deze speler:
-	PT	Escolha um nome para este cliente SLIMP3
+	PT	Escolha um nome para este cliente
 	SE	Spelarens namn:
 
 SETUP_POWERONBRIGHTNESS
@@ -1097,10 +918,10 @@ SETUP_AUTOBRIGHTNESS
 	PT	Brilho Automático
 
 SETUP_AUTOBRIGHTNESS_DESC
-	EN	The brightness of the SLIMP3 display can be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
-	FR	La luminosité de l'affichage du lecteur SLIMP3 peut être ajustée automatiquement lorsqu'un bouton est pressé, un morceau commence à jouer, ou lorsque le lecteur est inutilisé pendant un moment. Vous pouvez désactiver ce comportement automatique.
-	NL	De helderheid van het scherm van de SLIMP3 kan automatisch aangepast worden bij knopdrukken, het begin van een liedje of na een periode van inactiviteit. Deze functie kan ook uitgeschakeld worden.
-	PT	O brilho do ecrã do SLIMP3 pode ser ajustado automaticamente quando usar um botão, começa uma música, ou fica inactivo ao fim de algum tempo. Pode desligar este comportamento automático se desejar.
+	EN	The brightness of the display can be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
+	FR	La luminosité de l'affichage du lecteur peut être ajustée automatiquement lorsqu'un bouton est pressé, un morceau commence à jouer, ou lorsque le lecteur est inutilisé pendant un moment. Vous pouvez désactiver ce comportement automatique.
+	NL	De helderheid van het scherm van kan automatisch aangepast worden bij knopdrukken, het begin van een liedje of na een periode van inactiviteit. Deze functie kan ook uitgeschakeld worden.
+	PT	O brilho do ecrã do pode ser ajustado automaticamente quando usar um botão, começa uma música, ou fica inactivo ao fim de algum tempo. Pode desligar este comportamento automático se desejar.
 
 SETUP_AUTOBRIGHTNESS_OFF
 	EN	Adjust Brightness Manually
@@ -1238,12 +1059,12 @@ SETUP_IRMAP
 	SE	Knappfunktioner på fjärrkontroll
 
 SETUP_IRMAP_DESC
-	DE	Sie können zwischen den Tastenfunktion Sets auswählen. Diese Sets bilden genau die Funktionen auf der Fernbedienung ab. Das "SLIMP3 Standart" Set ist in der Dokumentation beschrieben.
-	EN	You can choose between button function sets. These sets map particular buttons on the infrared remote to particular functions. The "SLIMP3 Default" set is the one that is described in the documentation.
-	FR	Vous pouvez choisir entre plusieurs jeux de boutons de fonctions. Ces jeux de configuration permettent d'associer les boutons de la télécommande aux fonctions disponibles. Le jeu intitulé "SLIMP3 par défaut" est celui documenté dans le manuel.
-	NL	U kan kiezen uit verschillende Knop Functie sets. Deze sets koppelen bepaalde knoppen op de infrarood afstansbediening aan bepaalde functies. The "SLIMP3 Standaard" set is degene die beschreven staat in de documentatie.
-	PT	Pode escolher entre vários mapas de botões do seu controlo remoto. Estes mapas associam botões do controlo remoto a determinadas funções. O mapa "Padrão SLIMP3" é o que está descrito na documentação.
-	SE	Du kan välja mellan olika funktionsgrupper. Dessa grupper anger vad en speciell knapp på fjärrkontroller har för speciell funktion. "SLIMP3 Standard"-gruppen är den som beskrivs i manualen.
+	DE	Sie können zwischen den Tastenfunktion Sets auswählen. Diese Sets bilden genau die Funktionen auf der Fernbedienung ab. Das "Standart" Set ist in der Dokumentation beschrieben.
+	EN	You can choose between button function sets. These sets map particular buttons on the infrared remote to particular functions. The "Default" set is the one that is described in the documentation.
+	FR	Vous pouvez choisir entre plusieurs jeux de boutons de fonctions. Ces jeux de configuration permettent d'associer les boutons de la télécommande aux fonctions disponibles. Le jeu intitulé "Défaut" est celui documenté dans le manuel.
+	NL	U kan kiezen uit verschillende Knop Functie sets. Deze sets koppelen bepaalde knoppen op de infrarood afstansbediening aan bepaalde functies. The "Standaard" set is degene die beschreven staat in de documentatie.
+	PT	Pode escolher entre vários mapas de botões do seu controlo remoto. Estes mapas associam botões do controlo remoto a determinadas funções. O mapa "Padrão" é o que está descrito na documentação.
+	SE	Du kan välja mellan olika funktionsgrupper. Dessa grupper anger vad en speciell knapp på fjärrkontroller har för speciell funktion. "Standard"-gruppen är den som beskrivs i manualen.
 
 SETUP_IRSETLIST_OK
 	DE	Fernbedienungen:
@@ -1297,15 +1118,15 @@ SETUP_LANGUAGE
 	SE	Språk
 
 SETUP_LANGUAGE_DESC
-	DE	Sie können die Sprache auswählen, die sie für das SLIMP3 System verwenden wollen.
-	DK	Du kan ændre sproget for dit SLIMP3-system.
-	EN	You can change the language that you'd like the SLIMP3 system to use.
-	ES	Puede cambiar el idioma que quiere que usa el SLIMP3.
-	FI	Voit vaihtaa SLIMP3 soittimesi kieltä halutessasi.
-	FR	Vous pouvez modifier la langue utilisée par le système SLIMP3.
-	NL	U kan de taal die het SLIMP3 systeem gebruikt instellen.
-	PT	Escolha o idioma a usar pelo sistema SLIMP3.
-	SE	Du kan ändra vilket språk du vill att SLIMP3-systemet skall använda sig av.
+	DE	Sie können die Sprache auswählen, die sie für das Slim System verwenden wollen.
+	DK	Du kan ændre sproget for dit Slim-system.
+	EN	You can change the language that you'd like the Slim system to use.
+	ES	Puede cambiar el idioma que quiere que usa el Slim.
+	FI	Voit vaihtaa Slim soittimesi kieltä halutessasi.
+	FR	Vous pouvez modifier la langue utilisée par le système Slim.
+	NL	U kan de taal die het Slim systeem gebruikt instellen.
+	PT	Escolha o idioma a usar pelo sistema Slim.
+	SE	Du kan ändra vilket språk du vill att Slim-systemet skall använda sig av.
 
 SETUP_LANGUAGE_OK
 	DE	Ihre Sprache ist nun:
@@ -1364,11 +1185,31 @@ SETUP_PLAYLISTDIR
 	PT	Directoria com Playlists
 	SE	Mapp för Sparade Spellistor
 
-#SETUP_PLAYLISTDIR_CHOOSE
-#	DE	Geben Sie den Pfad zu einem Verzeichnis zur Speicherung der Playlist Dateien ein.
-#	EN	Enter the path to a folder for saving playlists.
-#	ES	Introduzca el camino a la carpete donde quiere guardar listas discográficas.
-#	DE	Geben sie das Verzeichnis an, wo sich die gespeicherten Playlists befinden an.
+SETUP_BAD_DIRECTORY
+	DE	Oops - "%s" ist kein gültiges Verzeichnis. Bitte versuchen Sie es noch einmal.
+	DK	Desværre, "%s" er ikke en brugbar folder. Prøv en anden.
+	EN	Oops - "%s" doesn't seem to be a valid directory. Try again.
+	ES	Ay! La carpeta "%s" no es válido. Intente de nuevo.
+	FI	Hups! - "%s" ei ole hakemisto. Yritä uudelleen.
+	FR	Zut! Répertoire non valide. Essayez encore une fois.
+	IT	Oops - "%s" non sembra essere un percorso valido. Riprova.
+	NL	Oeps! "%s" is geen geldige folder. Probeer opnieuw.
+	NO	Huffda, "%s" er ikke en gyldig katalog. Forsøk igjen.
+	PT	A Pasta "%s" não é válida. Tente de novo.
+	SE	Hoppsan, %s verkar inte vara en godkänd mapp. Försök igen.
+
+SETUP_OK_USING
+	DE	O.K., verwendet:
+	DK	OK, anvender:
+	EN	The server will use the following path to your MP3 files:
+	ES	Vale. Utilizando:
+	FI	Palvelin käyttää seuraavaa polkua mp3 -tiedostoihisi:
+	FR	Le serveur utilisera le chemin suivant pour vos fichiers MP3 :
+	IT	Okay, uso:
+	NL	OK, het pad naar de MP3 bestanden is:
+	NO	Ok, bruker:
+	PT	O servidor irá usar a seguinte directoria para os ficheiros de áudio
+	SE	Ok, använder:
 
 SETUP_PLAYLISTDIR_OK
 	DE	Der Sever wird nun dieses Verzeichnis für die gespeicherten Playlist Dateien verwenden:
@@ -1414,14 +1255,14 @@ SETUP_RESCAN_BUTTON
 	SE	Läs om
 
 SETUP_RESCAN_DESC
-	DE	Wenn sie Musik hinzufügen, löschen oder Änderungen in Ihrem Musik Verzeichnis vornehmen, dann können sie die SLIMP3 Software mit einem erneuten Durchsuchen dazu veranlassen, Ihre Datenbank zu aktualisieren.
-	DK	Hvis du tilføjer, fjerner eller ændrer musik i din musiksamling kan du få SLIMP3-softwaren til at genindlæse informationerne omkring din musiksamling så du er sikker på SLIMP3s database er up-to-date.
-	EN	If you add, remove or change music in your music folder, you can have the SLIMP3 software rescan your music to make sure that its database is up to date.
-	FI	Varmistaaksesi, että SLIMP3 soittimesi tietokanta on ajan tasalla voit lukea musiikkikansiosi uudelleen.
-	FR	Si vous modifiez le contenu de votre dossier de musique, vous pouvez forcer le système de gestion du SLIMP3 à répertorier de nouveau son contenu pour garantir que sa base de données est à jour.
-	NL	Als U muziek heeft toegevoegd, verwijderd of veranderd, kunt U de SLIMP3 software opdracht geven de muziekfolder opnieuw in te lezen.
+	DE	Wenn sie Musik hinzufügen, löschen oder Änderungen in Ihrem Musik Verzeichnis vornehmen, dann können sie die Slim Server Software mit einem erneuten Durchsuchen dazu veranlassen, Ihre Datenbank zu aktualisieren.
+	DK	Hvis du tilføjer, fjerner eller ændrer musik i din musiksamling kan du få Slim Server-softwaren til at genindlæse informationerne omkring din musiksamling så du er sikker på Slim Server database er up-to-date.
+	EN	If you add, remove or change music in your music folder, you can have the Slim Server rescan your music to make sure that its database is up to date.
+	FI	Varmistaaksesi, että Slim Server soittimesi tietokanta on ajan tasalla voit lukea musiikkikansiosi uudelleen.
+	FR	Si vous modifiez le contenu de votre dossier de musique, vous pouvez forcer le système de gestion du Slim Server à répertorier de nouveau son contenu pour garantir que sa base de données est à jour.
+	NL	Als U muziek heeft toegevoegd, verwijderd of veranderd, kunt U de Slim Server software opdracht geven de muziekfolder opnieuw in te lezen.
 	PT	Se adicionar, apagar ou mudar o nome a alguma música na sua directoria de músicas, deverá forçar a re-leitura da directoria de músicas.
-	SE	Om du lägger till, tar bort eller ändrar musik in din Musikmapp kan du tvinga SLIMP3-Servern att läsa om all din musik för att säkerställa att databasen är korrekt.
+	SE	Om du lägger till, tar bort eller ändrar musik in din Musikmapp kan du tvinga Slim-Servern att läsa om all din musik för att säkerställa att databasen är korrekt.
 
 RESCANNING
 	DE	Der Server durchsucht nun das Musik-Verzeichnis erneut.
@@ -1504,14 +1345,14 @@ SETUP_ITUNES_NOT
 	SE	Servern kommer nu använda mappen som källa för ditt musikbibliotek.
 
 SETUP_ITUNES_DESC
-	DE	Der SLIMP3 Server kann Ihre iTunes 3 & 4 Musik Sammlung und Playlists verwenden. Jegliche Änderungen, die sie in iTunes vornehmen werden auf Ihrem SLIMP3 abgebildet. Wenn sie die iTunes Musiksammlung nicht verwenden wollen, dann geben sie das Verzeichnis der Musiksammlung auf Ihrem Computer an.
-	DK	SLIMP3-serveren kan anvende din iTunes 3 & 4 musiksamling og playlister. Ændringer foretaget i iTunes vil kunne ses på din SLIMP3. Hvis du ikke ønsker at bruge din iTunes musiksamling kan du indtaste stien på den mappe hvor dine musikfiler ligger på din harddisk.
-	EN	The SLIMP3 server can use your iTunes 3 & 4 music library and playlists. Any changes that you make in iTunes will be reflected on your SLIMP3. If you don't want to use your iTunes music library, you can enter the name of the directory where your music files are stored on your computer.
-	ES	El servidor SLIMP3 puede usar su librería de música y listas discográficas de iTunes 3 & 4. Cualquiera cambio que haga en iTunes se reflejerá en el SLIMP3. Si no quiere usar su librería de música de iTunes puede introducir el camino a la carpeta donde están guardados sus ficheros de música.
-	FR	Le serveur SLIMP3 peut utiliser iTunes 3 & 4 pour accéder à votre musique et à vos playlists. Tous les changements effectués dans iTunes seront pris en considération par votre SLIMP3. Si vous ne voulez pas utiliser votre bibliothèque iTunes, vous pouvez saisir le nom du dossier où se trouvent vos fichiers MP3.
-	NL	De SLIMP3 server kan Uw iTunes 3 & 4 muziek bibliotheek en playlists gebruiken. Alle wijzigingen die U maakt aan Uw iTunes zullen ook voor de SLIMP3 zichtbaar zijn. Als U Uw iTunes bibliotheek niet wilt gebruiken, kunt U de naam van een folder opgeven waarin Uw muziek bestanden zijn opgeslagen.
-	PT	O servidor SLIMP3 pode usar a biblioteca de música e as playlists do iTunes 3 e 4. As alterações efectuadas no iTunes serão reflectidas no SLIMP3. Se não quiser usar a biblioteca do iTunes, introduza a directoria que contém os ficheiros de áudio no seu computador.
-	SE	SLIMP3-Servern kan använda iTunes 3 & 4 musikbibliotek och spellistor. Alla ändringar som du gör i iTunes kommer märkas på din SLIMP3. Om du inte vill använda iTunes som musikbibliotek, kan du skriva in namnet på den mapp där din musikfiler är lagrade.
+	DE	Der Slim Server kann Ihre iTunes 3 & 4 Musik Sammlung und Playlists verwenden. Jegliche Änderungen, die sie in iTunes vornehmen werden auf Ihrem player abgebildet. Wenn sie die iTunes Musiksammlung nicht verwenden wollen, dann geben sie das Verzeichnis der Musiksammlung auf Ihrem Computer an.
+	DK	Slim-serveren kan anvende din iTunes 3 & 4 musiksamling og playlister. Ændringer foretaget i iTunes vil kunne ses på din player. Hvis du ikke ønsker at bruge din iTunes musiksamling kan du indtaste stien på den mappe hvor dine musikfiler ligger på din harddisk.
+	EN	The Slim Server can use your iTunes 3 & 4 music library and playlists. Any changes that you make in iTunes will be reflected on your player. If you don't want to use your iTunes music library, you can enter the name of the directory where your music files are stored on your computer.
+	ES	El servidor puede usar su librería de música y listas discográficas de iTunes 3 & 4. Cualquiera cambio que haga en iTunes se reflejerá en el player. Si no quiere usar su librería de música de iTunes puede introducir el camino a la carpeta donde están guardados sus ficheros de música.
+	FR	Le serveur Slim peut utiliser iTunes 3 & 4 pour accéder à votre musique et à vos playlists. Tous les changements effectués dans iTunes seront pris en considération par votre player. Si vous ne voulez pas utiliser votre bibliothèque iTunes, vous pouvez saisir le nom du dossier où se trouvent vos fichiers MP3.
+	NL	De Slim server kan Uw iTunes 3 & 4 muziek bibliotheek en playlists gebruiken. Alle wijzigingen die U maakt aan Uw iTunes zullen ook voor de player zichtbaar zijn. Als U Uw iTunes bibliotheek niet wilt gebruiken, kunt U de naam van een folder opgeven waarin Uw muziek bestanden zijn opgeslagen.
+	PT	O servidor Slim pode usar a biblioteca de música e as playlists do iTunes 3 e 4. As alterações efectuadas no iTunes serão reflectidas no player. Se não quiser usar a biblioteca do iTunes, introduza a directoria que contém os ficheiros de áudio no seu computador.
+	SE	Slim-Servern kan använda iTunes 3 & 4 musikbibliotek och spellistor. Alla ändringar som du gör i iTunes kommer märkas på din player. Om du inte vill använda iTunes som musikbibliotek, kan du skriva in namnet på den mapp där din musikfiler är lagrade.
 
 USE_MOODLOGIC
 	DE	MoodLogic verwenden
@@ -1538,12 +1379,12 @@ SETUP_MOODLOGIC
 	SE	MoodLogic
 
 SETUP_MOODLOGIC_DESC
-	DE	Der SLIMP3 Server kann Ihr MoodLogic Programm als Quelle für die Titel und Musikrichtung verwenden. Zusätzlich können Sie ein ad-hoc Mix mit Hilfe der Musikrichtung, des Interpreten und der Titel erstellen.
-	EN	The SliMP3 server can use your MoodLogic program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level.
-	FR	Le serveur SLIMP3 peut utiliser votre logiciel MoodLogic comme source pour les titres et les genres. MoodLogic permet par ailleurs de créer des mixes instantanés à partir du genre, de l'artiste ou des caractéristiques du morceau.
-	NL	De SLIMP3 server kan Uw MoodLogic programma gebruiken als basis voor titel en genre informatie. Bijkomend kan U mixen samenstellen op basis van genre, artiest of muziekstuk.
-	PT	O servidor SLIMP3 pode usar o módulo de Ambiência (MoodLogic) como fonte de títulos e informação do género de música. Adicionalmente, pode gerar misturas instantâneas a partir do género, artista ou nível de som.
-	SE	SLIMP3-Servern kan använda din MoodLogic-applikation som källa för titel- och genre-information. Utöver det kan du skapa direktmixar på genre, artist och låt nivå.
+	DE	Der Slim Server kann Ihr MoodLogic Programm als Quelle für die Titel und Musikrichtung verwenden. Zusätzlich können Sie ein ad-hoc Mix mit Hilfe der Musikrichtung, des Interpreten und der Titel erstellen.
+	EN	The Slim server can use your MoodLogic program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level.
+	FR	Le serveur Slim peut utiliser votre logiciel MoodLogic comme source pour les titres et les genres. MoodLogic permet par ailleurs de créer des mixes instantanés à partir du genre, de l'artiste ou des caractéristiques du morceau.
+	NL	De Slim server kan Uw MoodLogic programma gebruiken als basis voor titel en genre informatie. Bijkomend kan U mixen samenstellen op basis van genre, artiest of muziekstuk.
+	PT	O servidor Slim pode usar o módulo de Ambiência (MoodLogic) como fonte de títulos e informação do género de música. Adicionalmente, pode gerar misturas instantâneas a partir do género, artista ou nível de som.
+	SE	Slim-Servern kan använda din MoodLogic-applikation som källa för titel- och genre-information. Utöver det kan du skapa direktmixar på genre, artist och låt nivå.
 
 # advanced server settings
 SETUP_MENUITEM
@@ -1597,12 +1438,12 @@ SETUP_PLUGINS
 	SE	Tillägg
 
 SETUP_PLUGINS_DESC
-	DE	SLIMP3 enthält ein paar Plugins - inklusive einiger Spiele, die Sie mit Ihrer Fernbedienung bedienen können. Verwenden Sie die unten stehende Auswahl, um die Plugins dem Menü Ihres SLIMP3 Players hinzuzufügen oder zu entfernen.
-	EN	SLIMP3 includes some extra features, including some games, you can use with your remote. Use the menu below to add or remove the Plugins menu from your SLIMP3 Home.
-	FR	Le SLIMP3 comprend des fonctionnalités supplémentaires ou "plugins", dont des jeux, que vous pouvez utiliser avec votre télécommande. Utilisez le menu ci-dessous pour ajouter ou retirer le menu Plugins de votre menu principal.
-	NL	SLIMP3 biedt de mogelijkheid om extra functionaliteiten, waaronder spelletjes, toe te voegen. Deze kunnen bestuurd worden via de afstandsbediening. Gebruik onderstaande keuze om het Plugins menu aan Uw SLIMP3 Home toe te voegen of om het eruit te verwijderen.
-	PT	O SLIMP3 inclui algumas funcionalidades extras, tais como alguns jogos, que podem ser usados com o controlo remoto. Use o menu abaixo para adicionar ou remover os menus extra do cliente SLIMP3. 
-	SE	SLIMP3 inkluderar några tillägg, t.ex några spel, som du kan använda med din fjärrkontroll. Använd menyn nedan för att lägga till eller ta bort Tilläggs-menyn from din SLIMP3 Huvudmeny.
+	DE	Slim Server enthält ein paar Plugins - inklusive einiger Spiele, die Sie mit Ihrer Fernbedienung bedienen können. Verwenden Sie die unten stehende Auswahl, um die Plugins dem Menü Ihres Slim Players hinzuzufügen oder zu entfernen.
+	EN	Slim Server includes some extra features, including some games, you can use with your remote. Use the menu below to add or remove the Plugins menu from your Home.
+	FR	Le Slim comprend des fonctionnalités supplémentaires ou "plugins", dont des jeux, que vous pouvez utiliser avec votre télécommande. Utilisez le menu ci-dessous pour ajouter ou retirer le menu Plugins de votre menu principal.
+	NL	Slim biedt de mogelijkheid om extra functionaliteiten, waaronder spelletjes, toe te voegen. Deze kunnen bestuurd worden via de afstandsbediening. Gebruik onderstaande keuze om het Plugins menu aan Uw Home toe te voegen of om het eruit te verwijderen.
+	PT	O Slim Server inclui algumas funcionalidades extras, tais como alguns jogos, que podem ser usados com o controlo remoto. Use o menu abaixo para adicionar ou remover os menus extra do cliente. 
+	SE	Slim Server inkluderar några tillägg, t.ex några spel, som du kan använda med din fjärrkontroll. Använd menyn nedan för att lägga till eller ta bort Tilläggs-menyn from din Huvudmeny.
 
 SETUP_COVERART
 	EN	Cover Art
@@ -1660,13 +1501,13 @@ SETUP_CLIPORT
 
 SETUP_CLIPORT_DESC
 	DE	Sie können den Port wechseln, der für die Kommandozeilen-Schnittstellen verwendet werden soll. (Null schaltet die Kommandozeilen-Schnittstelle aus.)
-	DK	Du kan ændre hvilket port-nummer der anvendes til at styre SLIMP3-afspilleren via Command Line Interfacet. (Angiv port nummer 0 (nul) for at slå command line interfacet fra).
-	EN	You can change the port number that is used to by a command line interface to control the SLIMP3. (Set this to zero to disable the command line interface.)
-	ES	Puede cambiar el número de puerto que se usa para controlar el SLIMP3 con la linea de comandos. Pongalo como zero para desactivar esta facilidad.
-	FR	Vous pouvez changer le port utilisé par l'interface en ligne de commande pour contrôler le SLIMP3. La valeur zéro désactive cette fonctionnalité.
-	NL	U kan het poortnummer dat gebruikt wordt om de SLIMP3 via een command line interface te bedienen aanpassen. Zet dit poortnummer op 0 (nul) als U de command line interface wilt uitschakelen.
-	PT	Pode mudar o número da porta para ligação da interface de linha de comando do SLIMP3. (Escolha o valor 0 para desabilitar a opção)
-	SE	Du kan ändra portnumret som används för att via ett terminalgränssnitt kontrollera din SLIMP3. (Sätt värdet till 0 (noll) för att avaktivera terminalgränssnittet.)
+	DK	Du kan ændre hvilket port-nummer der anvendes til at styre player-afspilleren via Command Line Interfacet. (Angiv port nummer 0 (nul) for at slå command line interfacet fra).
+	EN	You can change the port number that is used to by a command line interface to control the player. (Set this to zero to disable the command line interface.)
+	ES	Puede cambiar el número de puerto que se usa para controlar el player con la linea de comandos. Pongalo como zero para desactivar esta facilidad.
+	FR	Vous pouvez changer le port utilisé par l'interface en ligne de commande pour contrôler le player. La valeur zéro désactive cette fonctionnalité.
+	NL	U kan het poortnummer dat gebruikt wordt om de player via een command line interface te bedienen aanpassen. Zet dit poortnummer op 0 (nul) als U de command line interface wilt uitschakelen.
+	PT	Pode mudar o número da porta para ligação da interface de linha de comando do player. (Escolha o valor 0 para desabilitar a opção)
+	SE	Du kan ändra portnumret som används för att via ett terminalgränssnitt kontrollera din player. (Sätt värdet till 0 (noll) för att avaktivera terminalgränssnittet.)
 
 SETUP_CLIPORT_OK
 	DE	Der folgende Port für die Kommandozeilen-Schnittstelle wird verwendet:
@@ -1691,7 +1532,7 @@ SETUP_HTTPPORT
 
 SETUP_HTTPPORT_DESC
 	DE	Sie können die Port-Nummer wechseln, die Sie für den Web-Server Zugriff verwenden wollen. (Der Standartwert ist 9000.)
-	DK	Du kan ændre hvilket port-nummer der anvendes til at tilgå SLIMP3-serveren via en web-browser. (Standard er 9000).
+	DK	Du kan ændre hvilket port-nummer der anvendes til at tilgå Slim-serveren via en web-browser. (Standard er 9000).
 	EN	You can change the port number that is used to access the server from a web browser. (The default is 9000.)
 	ES	Se puede cambiar el número de puerto para controlar el servidor con navegador (9000 por defecto)
 	FI	Voit vaihtaa WWW-palvelimen käyttämää porttinumeroa. (Oletusasetus on 9000.)
@@ -1719,11 +1560,11 @@ SETUP_TRANSCODE-OGG
 	PT	Converter Ficheiros Ogg Vorbis
 
 SETUP_TRANSCODE-OGG_DESC
-	DE	Wenn Sie die LAME und OGG Vorbis Dateien installiert haben (ogginfo und ogg123), dann kann der SLIMP3 Server Ihre OGG Vorbis Dateien automatisch zum Abspielen auf dem SLIMP3 Player konvertieren.
-	EN	If you have LAME and the Ogg Vorbis tools installed (ogginfo and ogg123), you can have your SLIMP3 Server convert your Ogg music files on-the-fly for playback on your SLIMP3 player.
-	FR	Si vous disposez de LAME et des outils Ogg Vorbis (ogginfo et ogg123), le serveur SLIMP3 peut convertir en temps réel vos morceaux au format Ogg pour qu'ils soient lus sur le SLIMP3. La conversion est effectuée sur le serveur pendant la lecture et n'est pas stockée sur le disque.
-	NL	Indien U LAME en de Ogg Vorbis hulpprogramma's (ogginfo en ogg123) geinstalleerd hebt kan U de SLIMP3 server instellen om Ogg bestanden real-time om te zetten zodat deze op Uw SLIMP3 speler afgespeeld kunnen worden.
-	PT	Se tiver instalado no sistema o LAME (utilitários de MP3) ou os utilitários do Ogg Vorbis (ogginfo e ogg123), pode configurar o servidor SLIMP3 para converter automaticamente os ficheiros para MP3, de forma a serem usados no cliente SLIMP3.
+	DE	Wenn Sie die LAME und OGG Vorbis Dateien installiert haben (ogginfo und ogg123), dann kann der Slim Server Ihre OGG Vorbis Dateien automatisch zum Abspielen auf dem Slim Player konvertieren.
+	EN	If you have LAME and the Ogg Vorbis tools installed (ogginfo and ogg123), you can have your Slim Server convert your Ogg music files on-the-fly for playback on your Slim player.
+	FR	Si vous disposez de LAME et des outils Ogg Vorbis (ogginfo et ogg123), le serveur Slim peut convertir en temps réel vos morceaux au format Ogg pour qu'ils soient lus sur le Slim. La conversion est effectuée sur le serveur pendant la lecture et n'est pas stockée sur le disque.
+	NL	Indien U LAME en de Ogg Vorbis hulpprogramma's (ogginfo en ogg123) geinstalleerd hebt kan U de Slim server instellen om Ogg bestanden real-time om te zetten zodat deze op Uw Slim speler afgespeeld kunnen worden.
+	PT	Se tiver instalado no sistema o LAME (utilitários de MP3) ou os utilitários do Ogg Vorbis (ogginfo e ogg123), pode configurar o servidor Slim para converter automaticamente os ficheiros para MP3, de forma a serem usados no cliente Slim.
 
 SETUP_TRANSCODE-OGG_OK
 	DE	Ogg Vorbis Dateien
@@ -1754,11 +1595,11 @@ SETUP_TRANSCODE-WAV
 	PT	Converter ficheiros WAV e AIFF
 
 SETUP_TRANSCODE-WAV_DESC
-	DE	Wenn Sie LAME installiert haben, kann der SLIMP3 Server Ihre WAV und AIFF Dateien automatisch zum Abspielen auf dem SLIMP3 Player konvertieren. 
-	EN	If you have LAME installed, you can have your SLIMP3 Server convert your uncompressed WAV and AIFF music files on-the-fly for playback on your SLIMP3 player.
-	FR	Si vous disposez de LAME, le serveur SLIMP3 peut convertir en temps réel vos morceaux non-compressés au format WAV et/ou AIFF pour qu'ils soient lus sur le SLIMP3. La conversion est effectuée pendant sur le serveur pendant la lecture et n'est pas stockée sur le disque.
-	NL	Indien U LAME geinstalleerd hebt kan U de SLIMP3 instellen om niet gecomrimeerde WAV en AIFF bestanden om te zetten zodat deze kunnen afgespeeld worden op de SLIMP3 speler.
-	PT	Se tiver instalado no sistema o LAME (utilitários de MP3), pode configurar o servidor SLIMP3 para converter automaticamente os ficheiros WAV e AIFF para MP3, de forma a serem usados no cliente SLIMP3.
+	DE	Wenn Sie LAME installiert haben, kann der Slim Server Ihre WAV und AIFF Dateien automatisch zum Abspielen auf dem Slim Player konvertieren. 
+	EN	If you have LAME installed, you can have your Slim Server convert your uncompressed WAV and AIFF music files on-the-fly for playback on your Slim player.
+	FR	Si vous disposez de LAME, le serveur Slim peut convertir en temps réel vos morceaux non-compressés au format WAV et/ou AIFF pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant sur le serveur pendant la lecture et n'est pas stockée sur le disque.
+	NL	Indien U LAME geinstalleerd hebt kan U de Slim instellen om niet gecomrimeerde WAV en AIFF bestanden om te zetten zodat deze kunnen afgespeeld worden op de Slim speler.
+	PT	Se tiver instalado no sistema o LAME (utilitários de MP3), pode configurar o servidor Slim para converter automaticamente os ficheiros WAV e AIFF para MP3, de forma a serem usados no cliente Slim.
 
 SETUP_TRANSCODE-WAV_OK
 	DE	WAV und AIFF Dateien
@@ -1788,9 +1629,9 @@ SETUP_TRANSCODE-MOV
 	PT	Converter ficheiros QuickTime e AAC
 
 SETUP_TRANSCODE-MOV_DESC
-	EN	Macintosh OS X only: If you have LAME installed, you can have your SLIMP3 Server convert your QuickTime movies and AAC music files on-the-fly for playback on your SLIMP3 player.
-	FR	Uniquement pour Macintosh OS X : Si vous disposez de LAME, le serveur SLIMP3 peut convertir en temps réel vos morceaux au format Quicktime movie et AAC pour qu'ils soient lus sur le SLIMP3. La conversion est effectuée pendant la lecture sur le serveur et n'est pas stockée sur le disque.
-	NL	Enkel voor Macintosh OS X: Indien U LAME geinstalleerd hebt kan U de SLIMP3 server instellen om QuickTime films (alleen het geluid) en AAC muziekbestanden real-time om te zetten voor weergave op de SLIMP3 speler.
+	EN	Macintosh OS X only: If you have LAME installed, you can have your Slim Server convert your QuickTime movies and AAC music files on-the-fly for playback on your Slim player.
+	FR	Uniquement pour Macintosh OS X : Si vous disposez de LAME, le serveur Slim peut convertir en temps réel vos morceaux au format Quicktime movie et AAC pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant la lecture sur le serveur et n'est pas stockée sur le disque.
+	NL	Enkel voor Macintosh OS X: Indien U LAME geinstalleerd hebt kan U de Slim server instellen om QuickTime films (alleen het geluid) en AAC muziekbestanden real-time om te zetten voor weergave op de Slim speler.
 	PT	Apenas Apple OS X
 
 SETUP_TRANSCODE-MOV_OK
@@ -1845,9 +1686,9 @@ SETUP_CHECKVERSION
 	PT	Actualizações
 
 SETUP_CHECKVERSION_DESC
-	EN	The server can automatically connect to www.slimdevices.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in the SLIMP3 web interface.
-	FR	Le serveur SliMP3 peut se connecter tous les jours à www.slimdevices.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Un message dans l'interface web signale cette disponibilité le cas échéant.
-	PT	O servidor poderá ligar-se automaticamente a www.slimdevices.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do SLIMP3.
+	EN	The server can automatically connect to www.slimdevices.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in the Slim Server web interface.
+	FR	Le serveur Slim peut se connecter tous les jours à www.slimdevices.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Un message dans l'interface web signale cette disponibilité le cas échéant.
+	PT	O servidor poderá ligar-se automaticamente a www.slimdevices.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
 
 SETUP_CHECKVERSION_1
 	EN	Automatically Check For Software Updates
@@ -1886,12 +1727,12 @@ SETUP_SCREENSAVERTIMEOUT
 
 SETUP_SCREENSAVERTIMEOUT_DESC
 	DE	Hier können Sie die Wartezeit einstellen. Bei Einstellung der Wartezeit auf Null wird der aktuelle Titel nie angezeigt.
-	DK	Du kan angive hvor længe der skal gå før SLIMP3-afspilleren skifter til pauseskærm. Sæt tiden til 0 (nul) for aldrig automatisk at skifte til visning af den aktuelle sang.
+	DK	Du kan angive hvor længe der skal gå før Slim-afspilleren skifter til pauseskærm. Sæt tiden til 0 (nul) for aldrig automatisk at skifte til visning af den aktuelle sang.
 	EN	You can change the duration of this wait below. Set this duration to zero to never automatically show the current song.
-	ES	Se puede cambiar el tiempo de espera haste que se activará la salvapantalla del SLIMP3. Pongalo a zero para desactivarlo.
+	ES	Se puede cambiar el tiempo de espera haste que se activará la salvapantalla del Slim. Pongalo a zero para desactivarlo.
 	FI	Voit säätää alla näytönsäästäjän ajastinta.
 	FR	Vous pouvez changer cette durée ci-dessous. Une durée de zéro fera en sorte que la pièce musicale en cours ne sera jamais affichée automatiquement.
-	NL	U kan het interval hieronder instellen. Zet de tijd op 0 (nul) als U wilt dat de SLIMP3 nooit vanzelf de songinformatie dient te tonen.
+	NL	U kan het interval hieronder instellen. Zet de tijd op 0 (nul) als U wilt dat de Slim nooit vanzelf de songinformatie dient te tonen.
 	PT	Pode alterar o tempo de espera abaixo. Escolha 0 para não mostrar automaticamente a música actual.
 	SE	Nedan kan du ändra längden på denna fördröjning. Sätt fördröjningen till 0 (noll) för att aldrig automatiskt hoppa till "Spelas nu".
 
@@ -1919,7 +1760,7 @@ SETUP_SCREENSAVERJUMP
 
 SETUP_SCREENSAVERJUMP_DESC
 	DE	Der Player wird automatisch den aktuellen Titel anzeigen, nachdem Sie die Fernbedienung für einige Zeit nicht mehr verwendet haben.
-	DK	SLIMP3-afspilleren vil automatisk vise hvilken sang der afspilles hvis fjernbetjeningen ikke anvendes i en periode.
+	DK	Slim-afspilleren vil automatisk vise hvilken sang der afspilles hvis fjernbetjeningen ikke anvendes i en periode.
 	EN	The player will automatically show the currently playing song after you stop using the remote for some amount of time. You can change what happens if you use the remote after this happens.
 	ES	El reproductor mostrará automaticamenta la canción actual si no usa el mando durante un tiempo determinado. Se puede cambiar este comportamiento.
 	FI	Kun kaukosäätimen viimeisestä napin painalluksesta on kulunut hieman aikaa, palaa soittimen näyttöön soimassa olevan kappaleen nimi. Voit vaikuttaa tähän toimintoon.
@@ -1970,7 +1811,7 @@ SETUP_DISPLAYTEXTTIMEOUT
 
 SETUP_DISPLAYTEXTTIMEOUT_DESC
 	DE	Wenn Sie einen Suchtext eingeben, dann wird der Player nach einer gewissen Zeit zum nächsten Buchstaben wechseln. Ändern Sie hier die Wartezeit.
-	DK	Når du indtaster tekst til en søgning vil SLIMP3-afspilleren gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
+	DK	Når du indtaster tekst til en søgning vil Slim-afspilleren gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
 	EN	When you are entering text for a search, the player will move on to the next letter after some amount of time. You can change the duration of this wait below.
 	FI	Syöttäessäsi tekstiä hakua varten, kursori siirtyy automaattisesti eteenpäin jonkin ajan kuluttua. Voit alla olevasta valinnasta säätää odottamiseen käytettyä aikaa.
 	FR	Le lecteur passera automatiquement à la lettre suivante après un certain délai lors de la saisie de texte. Vous pouvez choisir ce délai ci-dessous.
@@ -2314,7 +2155,7 @@ SETUP_ANIMATIONLEVEL
 
 SETUP_ANIMATIONLEVEL_DESC
 	DE	Diese Option legt die Menge der verwendeten Animationen fest. Animationen bestehen aus kurzen Mitteilungen, das Lšschen der Anzeige wŠhrend der Navigation und das Scrollen langer Titel.
-	DK	Denne indstilling angiver hvor meget animation der skal være på SLIMP3-afspilleren. Animationer inkluderer visning af små beskeder, menu-navigation og rulletekster ved lange tekster.
+	DK	Denne indstilling angiver hvor meget animation der skal være på Slim-afspilleren. Animationer inkluderer visning af små beskeder, menu-navigation og rulletekster ved lange tekster.
 	EN	This option determines the amount of animation allowed. Animations include showing brief messages, screen wipes during navigation, and scrolling long titles.
 	ES	Esta opción determina el nivel de animación permitido.
 	FI	Tämä valinta säätelee animaation määrää. (mm. valikoiden piirto)
@@ -2600,12 +2441,12 @@ SETUP_ALLOWEDHOSTS
 	SE	IP-adresser tillåtna att skapa inkommande anslutningar
 
 SETUP_FILTERRULE_DESC
-	DE	Wenn Sie das Blockieren aktiviert haben, dann können Sie IP-Adressen angeben, denen Sie die Verbindung zu Ihrem SLIMP3 Server dennocch genehmigen möchten.<br><br>Dieses Feld akzeptiert eine Liste spezifischer IP-Adressen. Verwenden Sie * als Wildcard und trennen Sie unterschiedliche IP-Adressen durch Komma. Zum Beispiel:<BR><BR><B>10.1.2.2</B> gestattet nur 10.1.2.2 eine Verbindung.<BR><BR><B>10.1.2.*</B> gestattet allen IP-Adressen die mit 10.1.2. beginnen den Zugriff.<BR><BR><B>10.1.2.2-50</B> erlaubt 10.1.2.2 - 10.1.2.50 die Verbindung.<BR><BR>Zusätzlich können mehrere Einträge durch Kommas kombiniert werden. Z.B.:<B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>Die spezielle IP-Adresse 127.0.0.1 gestattet einem Webbrowser die Verbindung mit dem SLIMP3 Server auf dem gleichen Computer.
-	EN	If you have turned on blocking you can enter the addresses that you'd like to allow to connect to the SLIMP3 server.<br><br>This field accepts a list of specific IP addresses, * style wildcards, and IP address ranges in a comma separated list. For example:<BR><BR><B>10.1.2.2</B> will allow only 10.1.2.2 to connect<BR><BR><B>10.1.2.*</B> will allow anything with an IP address that be the 10.1.2.x addresses.<BR><BR><B>10.1.2.2-50</B> will allow IP addresses in the range 10.1.2.2 - 10.1.2.50 to connect.<BR><BR>Finally, multiple entries can be combined with commas, like this <B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>The special IP address 127.0.0.1 allows a web browser to connect to the SLIMP3 server running on that same computer.
-	FR	Si vous avez activé le bloquage, vous pouvez saisir l'adresse IP des utilisateurs qui peuvent accéder au serveur SLIMP3.<br><br>Cette zone de saisie reçoit des adresses IP spécifiques, le caractère joker * et des intervalles d'adresses IP, le tout séparé par des virgules.<br>Exemples :<br><br>10.1.2.2 permet uniquement cette adresse<br>10.1.2.* permet toutes les adresses dont les trois premières composantes sont 10, 1 et 2<br>10.1.2.2-50 permet toutes les adresses comprises dans l'intervalle 10.1.2.2 à 10.1.2.50 inclusivement<br>10.1.2.2,10.1.3.*,10.1.4.2-50 permet l'adresse 10.1.2.2, toutes les adreses commençant par 10.1.3 ainsi que les adresses dans l'intervalle 10.1.4.2 à 10.1.4.50.
-	NL	Indien U 'blokkeren' heb ingesteld kan U de adressen ingeven die U toegang wil geven tot de SLIMP3 server.<br><br>Dit veld accepteert een lijst van specifieke IP adressen, * type wildcards en IP adres bereiken in een door komma's gescheiden lijst. Bijvoorbeeld:<br><br><b>10.1.2.2</b> zal enkel verbindingen toestaan vanaf adres 10.1.2.2<br><br><b>10.1.2.*</b> laat elk adres toe dat begint met 10.1.2.<br><br><b>10.1.2.2-50</b> verleent alle adressen tussen 10.1.2.2 en 10.1.2.50 toegang.<br><br>Tenslotte kunnen meerdere adressen gecombineerd worden in een door komma's gescheiden lijst, zoals in <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Het speciale adres 127.0.0.1 geeft toegang aan browsers die op de servermachine zelf draaien.
-	PT	Se activar o bloqueio por IP de origem, introduza aqui os endereços com permissões para ligar ao servidor SLIMP3.<br><br>Este campo aceita uma lista de endereços IP, redes (usando o caractér "*"), e segmentos de rede (usando "endereço-endereço"), separados por vírgulas. Por exemplo
-	SE	Om du har aktiverat blockering kan du skriva in de IP-adresser du vill tillåta för anslutning till SLIMP3-Servern.<br><br>Detta fält accepterar en komma-separerad lista med urval enligt följande exempel:<br><br><b>10.1.2.2</b> tillåter endast 10.1.2.2 att ansluta<br><br><b>10.1.2.*</b> tillåter alla med en IP-adress som börjar med 10.1.2 att ansluta.<br><br><b>10.1.2.2-50</b> tillåter alla IP-adresser mellan 10.1.2.2 och 10.1.2.50 att ansluta.<br><br>Flera olika typer kan kombineras, som t.ex <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Den speciella IP-adressen 127.0.0.1 (localhost) tillåter alltid en webläsare på samma dator som SLIMP3-Servern att ansluta.
+	DE	Wenn Sie das Blockieren aktiviert haben, dann können Sie IP-Adressen angeben, denen Sie die Verbindung zu Ihrem Slim Server dennocch genehmigen möchten.<br><br>Dieses Feld akzeptiert eine Liste spezifischer IP-Adressen. Verwenden Sie * als Wildcard und trennen Sie unterschiedliche IP-Adressen durch Komma. Zum Beispiel:<BR><BR><B>10.1.2.2</B> gestattet nur 10.1.2.2 eine Verbindung.<BR><BR><B>10.1.2.*</B> gestattet allen IP-Adressen die mit 10.1.2. beginnen den Zugriff.<BR><BR><B>10.1.2.2-50</B> erlaubt 10.1.2.2 - 10.1.2.50 die Verbindung.<BR><BR>Zusätzlich können mehrere Einträge durch Kommas kombiniert werden. Z.B.:<B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>Die spezielle IP-Adresse 127.0.0.1 gestattet einem Webbrowser die Verbindung mit dem Slim Server auf dem gleichen Computer.
+	EN	If you have turned on blocking you can enter the addresses that you'd like to allow to connect to the Slim Server.<br><br>This field accepts a list of specific IP addresses, * style wildcards, and IP address ranges in a comma separated list. For example:<BR><BR><B>10.1.2.2</B> will allow only 10.1.2.2 to connect<BR><BR><B>10.1.2.*</B> will allow anything with an IP address that be the 10.1.2.x addresses.<BR><BR><B>10.1.2.2-50</B> will allow IP addresses in the range 10.1.2.2 - 10.1.2.50 to connect.<BR><BR>Finally, multiple entries can be combined with commas, like this <B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>The special IP address 127.0.0.1 allows a web browser to connect to the Slim server running on that same computer.
+	FR	Si vous avez activé le bloquage, vous pouvez saisir l'adresse IP des utilisateurs qui peuvent accéder au serveur Slim.<br><br>Cette zone de saisie reçoit des adresses IP spécifiques, le caractère joker * et des intervalles d'adresses IP, le tout séparé par des virgules.<br>Exemples :<br><br>10.1.2.2 permet uniquement cette adresse<br>10.1.2.* permet toutes les adresses dont les trois premières composantes sont 10, 1 et 2<br>10.1.2.2-50 permet toutes les adresses comprises dans l'intervalle 10.1.2.2 à 10.1.2.50 inclusivement<br>10.1.2.2,10.1.3.*,10.1.4.2-50 permet l'adresse 10.1.2.2, toutes les adreses commençant par 10.1.3 ainsi que les adresses dans l'intervalle 10.1.4.2 à 10.1.4.50.
+	NL	Indien U 'blokkeren' heb ingesteld kan U de adressen ingeven die U toegang wil geven tot de Slim server.<br><br>Dit veld accepteert een lijst van specifieke IP adressen, * type wildcards en IP adres bereiken in een door komma's gescheiden lijst. Bijvoorbeeld:<br><br><b>10.1.2.2</b> zal enkel verbindingen toestaan vanaf adres 10.1.2.2<br><br><b>10.1.2.*</b> laat elk adres toe dat begint met 10.1.2.<br><br><b>10.1.2.2-50</b> verleent alle adressen tussen 10.1.2.2 en 10.1.2.50 toegang.<br><br>Tenslotte kunnen meerdere adressen gecombineerd worden in een door komma's gescheiden lijst, zoals in <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Het speciale adres 127.0.0.1 geeft toegang aan browsers die op de servermachine zelf draaien.
+	PT	Se activar o bloqueio por IP de origem, introduza aqui os endereços com permissões para ligar ao servidor Slim.<br><br>Este campo aceita uma lista de endereços IP, redes (usando o caractér "*"), e segmentos de rede (usando "endereço-endereço"), separados por vírgulas. Por exemplo
+	SE	Om du har aktiverat blockering kan du skriva in de IP-adresser du vill tillåta för anslutning till Slim-Servern.<br><br>Detta fält accepterar en komma-separerad lista med urval enligt följande exempel:<br><br><b>10.1.2.2</b> tillåter endast 10.1.2.2 att ansluta<br><br><b>10.1.2.*</b> tillåter alla med en IP-adress som börjar med 10.1.2 att ansluta.<br><br><b>10.1.2.2-50</b> tillåter alla IP-adresser mellan 10.1.2.2 och 10.1.2.50 att ansluta.<br><br>Flera olika typer kan kombineras, som t.ex <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Den speciella IP-adressen 127.0.0.1 (localhost) tillåter alltid en webläsare på samma dator som Slim-Servern att ansluta.
 
 #miscellaneous setup strings
 SETUP_NEW_VALUE
@@ -2691,12 +2532,12 @@ SETUP_AUTHORIZE
 	SE	Lösenordsskydd
 
 SETUP_AUTHORIZE_DESC
-	DE	Sie können das SLIMP3 Web-Interface mit einem Passwort schützen. Wählen Sie "Passwortschutz" und geben Sie einen Benutzernamen und ein Passwort ein. Klicken Sie dann auf "Ändern". Von nun an müssen Sie beim Aufruf des SLIMP3 Web-Interface den Benutzername und das Passwort eingeben.
-	EN	You can choose to password protect the SLIMP3 web interface. Choose "Password protection" below and enter a username and password, then click Change. From that point on when you use the SLIMP3 web interface, you'll need to enter this username and password in your web browser.
-	FR	Vous pouvez protéger l'interface web de votre SLIMP3 par un mot de passe. Sélectionnez "Mot de passe" ci-dessous et saisissez un mot de passe, puis cliquez sur le bouton "Modifier". À ce moment vous devrez saisir le mot de passe pour pouvoir accéder à l'interface web de votre SLIMP3.
-	NL	U kan een paswoord instellen voor de SLIMP3 webpagina. Kies 'Paswoordbeveiliging' en vul een gebruikersnaam en paswoord in. Klik vervolgens op 'Aanpassen'. Vanaf dan is deze gebruikersnaam en het paswoord vereist om toegang te krijgen tot de SLIMP3 webpagina.
+	DE	Sie können das Slim Server Web-Interface mit einem Passwort schützen. Wählen Sie "Passwortschutz" und geben Sie einen Benutzernamen und ein Passwort ein. Klicken Sie dann auf "Ändern". Von nun an müssen Sie beim Aufruf des Slim Server Web-Interface den Benutzername und das Passwort eingeben.
+	EN	You can choose to password protect the Slim Server web interface. Choose "Password protection" below and enter a username and password, then click Change. From that point on when you use the Slim Server web interface, you'll need to enter this username and password in your web browser.
+	FR	Vous pouvez protéger l'interface web de votre Slim Server par un mot de passe. Sélectionnez "Mot de passe" ci-dessous et saisissez un mot de passe, puis cliquez sur le bouton "Modifier". À ce moment vous devrez saisir le mot de passe pour pouvoir accéder à l'interface web de votre Slim Server.
+	NL	U kan een paswoord instellen voor de Slim Server webpagina. Kies 'Paswoordbeveiliging' en vul een gebruikersnaam en paswoord in. Klik vervolgens op 'Aanpassen'. Vanaf dan is deze gebruikersnaam en het paswoord vereist om toegang te krijgen tot de Slim Server webpagina.
 	PT	Pode activar uma palavra chave para proteger a interface web. Escolha "Proteção por Palavra Chave" abaixo, escolha um nome de utilizador e uma palavra chave, e seleccione "Mudar". A partir desse momento necessitará de introduzir o utilizador e chave para entrar na interface web com o seu browser.
-	SE	Du kan välja att skydda SLIMP3 webbgränssnittet med ett lösenord. Välj "Lösenordsskydd" nedan och ange ett användarnamn samt lösenord, klicka sen på "Ändra". Efter detta måste alltid användarnamn och lösenord anges i webbläsaren för att kunna använda webbgränssnittet.
+	SE	Du kan välja att skydda Slim Server webbgränssnittet med ett lösenord. Välj "Lösenordsskydd" nedan och ange ett användarnamn samt lösenord, klicka sen på "Ändra". Efter detta måste alltid användarnamn och lösenord anges i webbläsaren för att kunna använda webbgränssnittet.
 
 SETUP_USERNAME
 	DE	Benutzername
@@ -2796,7 +2637,7 @@ SETUP_MDNSNAME_OK
 
 SETUP_MDNSNAME_DESC
 	DE	Sie können einen Namen für diesen Server zur Verwendung mit Rendezvous auswählen:
-	EN	You can choose a name for this server to be used with Rendezvous.  Leave this field blank to disable Rendezvous advertising of the SLIMP3 server.  You will need to restart the server to see the effect of these changes.
+	EN	You can choose a name for this server to be used with Rendezvous.  Leave this field blank to disable Rendezvous advertising of the Slim Server.  You will need to restart the server to see the effect of these changes.
 	FR	Vous pouvez choisir un nom de serveur reconnu par Rendezvous.
 	NL	U kan een naam voor deze server kiezen die gebruikt zal worden met Rendezvous.
 	PT	Pode escolher um nome Rendezvous para este servidor
@@ -2847,17 +2688,17 @@ CURRENT_PLAYER
 	SE	Aktuell spelare:
 
 NOW_PLAYING_ON
-	DE	Aktuell spielt der SLIMP3 von
-	DK	Afspiller nu på SLIMP3
-	EN	Now playing on the SLIMP3 at
-	ES	Ahora puesto en el SLIMP3 a
-	FI	SLIMP3 - Soittaa kappaletta
-	FR	Lecture sur le SLIMP3 à
-	IT	Riproduzione in corso su SLIMP3 a
-	NL	Speelt nu af op de SLIMP3 van
-	NO	Spilles nå på SLIMP3
-	PT	A tocar no cliente SLIMP3 em
-	SE	Spelas nu på SLIMP3
+	DE	Aktuell spielt von
+	DK	Afspiller nu på player
+	EN	Now playing on the player at
+	ES	Ahora puesto en el player a
+	FI	Soittaa kappaletta
+	FR	Lecture sur le Slim Player à
+	IT	Riproduzione in corso su Slim Player a
+	NL	Speelt nu af op de Slim Player van
+	NO	Spilles nå på Slim Player
+	PT	A tocar no cliente Slim Player em
+	SE	Spelas nu på Slim Player
 
 SKIP
 	DE	Überspringen
@@ -4009,15 +3850,15 @@ RENAME_WARNING
 	SE	Namnet du valde används redan. Välj ett annat namn för din spellista.
 
 SCAN_WARNING
-	DE	Der SLIMP3 Server durchsucht immer noch Ihr Musikverzeichnis. Deshalb werden einige Lieder in diesem Bereich noch nicht angezeigt.
-	DK	SLIMP3-serveren gennemlæser stadig din musiksamling. Dette kan betyde at nogle sangtitler endnu ikke vises under dette område.
-	EN	The SLIMP3 server is still scanning your music library, so some items may not appear in this area yet.
-	ES	El servidor SLIMP3 está todavía escaneando su librería de música.
-	FI	SLIMP3 palvelin lukee yhä musiikkikansiotasi. On mahdollista, että kaikkien kappaleiden tiedot eivät ole vielä päivittyneet.
-	FR	Le serveur SLIMP3 n'a pas terminé de répertorier votre dossier de musique. Certains éléments peuvent ne pas apparaître dans la liste pour l'instant.
-	NL	De SLIMP3 server is bezig Uw Muziek Folder aan het doorzoeken, daarom zullen niet alle items worden getoond.
-	PT	O servidor SLIMP3 ainda está a analisar o arquivo musical, portanto é possível que não apareçam ainda alguns items nesta àrea.
-	SE	SLIMP3-Servern läser fortfarande in ditt musikbibliotek, så vissa poster kanske inte visas i det här fältet ännu.
+	DE	Der Slim Server durchsucht immer noch Ihr Musikverzeichnis. Deshalb werden einige Lieder in diesem Bereich noch nicht angezeigt.
+	DK	Slim-serveren gennemlæser stadig din musiksamling. Dette kan betyde at nogle sangtitler endnu ikke vises under dette område.
+	EN	The Slim server is still scanning your music library, so some items may not appear in this area yet.
+	ES	El servidor Slim está todavía escaneando su librería de música.
+	FI	Slim palvelin lukee yhä musiikkikansiotasi. On mahdollista, että kaikkien kappaleiden tiedot eivät ole vielä päivittyneet.
+	FR	Le serveur Slim n'a pas terminé de répertorier votre dossier de musique. Certains éléments peuvent ne pas apparaître dans la liste pour l'instant.
+	NL	De Slim Server is bezig Uw Muziek Folder aan het doorzoeken, daarom zullen niet alle items worden getoond.
+	PT	O servidor Slim ainda está a analisar o arquivo musical, portanto é possível que não apareçam ainda alguns items nesta àrea.
+	SE	Slim-Servern läser fortfarande in ditt musikbibliotek, så vissa poster kanske inte visas i det här fältet ännu.
 
 SCAN_CLICK
 	DE	Klicken Sie, um Ihre Musikverzeichnis direkt zu durchsuchen
@@ -4092,16 +3933,16 @@ SERVER_SETTINGS
 	PT	Configurações do Servidor
 	SE	Serverinställningar
 
-SLIMP3_SERVER_SETTINGS
-	DE	SLIMP3 Server Einstellungen
-	DK	SLIMP3-server indstillinger
-	EN	SLIMP3 Server Settings
-	ES	Configuración del servidor SLIMP3
-	FI	SLIMP3 palvelimen asetukset
-	FR	Réglages du serveur SLIMP3
-	NL	SLIMP3 Server instellingen
-	PT	Configurações do Servidor SLIMP3
-	SE	Inställningar för SLIMP3-Server
+SLIM_SERVER_SETTINGS
+	DE	Slim Server Einstellungen
+	DK	Slim-server indstillinger
+	EN	Slim Server Settings
+	ES	Configuración del servidor Slim
+	FI	Slim palvelimen asetukset
+	FR	Réglages du serveur Slim
+	NL	Slim Server instellingen
+	PT	Configurações do Servidor Slim
+	SE	Inställningar för Slim-Server
 
 ADDITIONAL_SERVER_SETTINGS
 	DE	Erweiterte Server Einstellungen
@@ -4168,9 +4009,9 @@ NETWORK_SETTINGS
 	SE	Nätverk
 
 SETUP_GROUP_DEBUG_DESC
-	EN	The SLIMP3 server has a number of debugging settings that can be used to record detailed information about the server's operation.  Check off the items that you'd like logged for display and click Change to start logging that information.  You can view the most recent log entries <a href="/log.txt" target="log">here</a>.
-	FR	Le serveur SliMP3 dispose de réglages de mise au point qui permettent d'enregistrer des informations détaillées sur son fonctionnement. Sélectionnez ci-dessous les éléments que vous voulez enregistrer. Les enregistrements les plus récents sont disponibles <a href="/log.txt" target="log">ici</a>.
-	PT	O servidor SLIMP3 tem várias opções de depuração que poderão ser usadas para gravar informação detalhada acerca das operações do servidor. Active as opções que deseja que sejam guardadas e selecione "Mudar" para começar a guardar a informação. Poderá ver as entradas mais recentes <a href="/log.txt" target="log">aqui</a>.
+	EN	The Slim Server has a number of debugging settings that can be used to record detailed information about the server's operation.  Check off the items that you'd like logged for display and click Change to start logging that information.  You can view the most recent log entries <a href="/log.txt" target="log">here</a>.
+	FR	Le serveur Slim dispose de réglages de mise au point qui permettent d'enregistrer des informations détaillées sur son fonctionnement. Sélectionnez ci-dessous les éléments que vous voulez enregistrer. Les enregistrements les plus récents sont disponibles <a href="/log.txt" target="log">ici</a>.
+	PT	O servidor Slim tem várias opções de depuração que poderão ser usadas para gravar informação detalhada acerca das operações do servidor. Active as opções que deseja que sejam guardadas e selecione "Mudar" para começar a guardar a informação. Poderá ver as entradas mais recentes <a href="/log.txt" target="log">aqui</a>.
 
 DEBUGGING_SETTINGS
 	DE	Fehlerbeseitigung
@@ -4236,15 +4077,15 @@ CHOOSE_A_NAME
 	SE	Namn:
 
 CHOOSE_BRIGHTNESS
-	DE	Wählen Sie die Helligkeit des SLIMP3 Displays in aus- bzw. eingeschaltetem Zustand.
-	DK	Lysstyrken på SLIMP3 displayet kan angives for når enheden er tændt og slukket.
-	EN	The brightness of the SLIMP3 display can be set for when it's on and off.
-	ES	Elija la luminosidad de la pantalla del SLIMP3.
+	DE	Wählen Sie die Helligkeit des Displays in aus- bzw. eingeschaltetem Zustand.
+	DK	Lysstyrken på displayet kan angives for når enheden er tændt og slukket.
+	EN	The brightness of the display can be set for when it's on and off.
+	ES	Elija la luminosidad de la pantalla.
 	FI	Näytön valoisuuden voi säätää erikseen käyttöä ja lepotilaa varten.
-	FR	Il est possible de régler la luminosité de l'écran du lecteur SLIMP3 pour les états allumé et éteint.
-	NL	De helderheid van het SLIMP3 display kan appart worden ingesteld voor de aan- en uitgeschakelde toestand.
-	PT	Escolha o brilho do ecrã do cliente SLIMP3 quando está ligado e desligado.
-	SE	Ljusstyrkan på SLIMP3-spelarens display kan varieras för påslaget och avslaget läge.
+	FR	Il est possible de régler la luminosité de l'écran du lecteur pour les états allumé et éteint.
+	NL	De helderheid van het display kan appart worden ingesteld voor de aan- en uitgeschakelde toestand.
+	PT	Escolha o brilho do ecrã do cliente quando está ligado e desligado.
+	SE	Ljusstyrkan på display kan varieras för påslaget och avslaget läge.
 
 BRIGHTNESS_ON
 	DE	Helligkeit im eingeschaltetem Zustand:
@@ -4434,7 +4275,7 @@ MP3DIR_IS_NOW
 
 PORT_NUMBER
 	DE	Sie können die Port-Nummer ändern, die für den Server-Zugriff mit Hilfe eines Web-Browsers verwendet wird (Standard ist 9000).
-	DK	Du kan ændre hvilket port-nummer der anvendes til at tilgå SLIMP3-serveren via en web-browser. (Standard er 9000).
+	DK	Du kan ændre hvilket port-nummer der anvendes til at tilgå Slim-serveren via en web-browser. (Standard er 9000).
 	EN	You can change the port number that is used to access the server from a web browser. (The default is 9000.)
 	ES	El número de puerto para acceder al servidor con navegador (9000 por defecto)
 	FI	Voit vaihtaa WWW-palvelimen käyttämää porttinumeroa. (Oletusasetus on 9000.)
@@ -4445,7 +4286,7 @@ PORT_NUMBER
 
 SCREENSAVER_TIMEOUT
 	DE	Der Player wird automatisch das aktuelle Lied anzeigen, nachdem Sie die Fernbedienung nicht mehr verwenden. Sie können die Wartezeit einstellen oder eine Null verwenden, um nie das aktuelle Lied anzuzeigen.
-	DK	SLIMP3-afspilleren vil automatisk vise hvilken sang der afspilles hvis fjernbetjeningen ikke anvendes i en periode.
+	DK	Slim-afspilleren vil automatisk vise hvilken sang der afspilles hvis fjernbetjeningen ikke anvendes i en periode.
 	EN	The player will automatically show the currently playing song after you stop using the remote for some amount of time. You can change the duration of this wait below. Set this duration to zero to never automatically show the current song.
 	ES	El reproductor mostrará automaticamenta la canción actual si no usa el mando durante un tiempo determinado. Se puede cambiar este comportamiento e incluso desactivarlo introduciendo zero.
 	FI	Kun kaukosäätimen viimeisestä napin painalluksesta on kulunut hieman aikaa, palaa soittimen näyttöön soimassa olevan kappaleen nimi. Voit vaikuttaa tähän toimintoon.
@@ -4456,7 +4297,7 @@ SCREENSAVER_TIMEOUT
 
 DISPLAYTEXT_TIMEOUT
 	DE	Wenn Sie Text fŸr eine Suche eingeben, wird der Player nach einer gewissen Zeit zum nächsten Buchstaben springen. Bestimmen Sie hier die Wartezeit.
-	DK	Når du indtaster tekst til en søgning vil SLIMP3-afspilleren gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
+	DK	Når du indtaster tekst til en søgning vil Slim-afspilleren gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
 	EN	When you are entering text for a search, the player will move on to the next letter after some amount of time. You can change the duration of this wait below.
 	FI	Syöttäessäsi tekstiä hakua varten, kursori siirtyy automaattisesti eteenpäin jonkin ajan kuluttua. Voit alla olevasta valinnasta säätää odottamiseen käytettyä aikaa.
 	FR	Le lecteur passera à la lettre suivante après un certain délai lors de la saisie de texte. Vous pouvez choisir ce délai ci-dessous.
@@ -4498,12 +4339,12 @@ CURRENT_WEB_SKIN
 	SE	Aktuellt webbutseende:
 
 DISPLAY_PLUGINS
-	DE	Anzeigen des Plugins Menü auf dem SLIMP3 Player:
-	EN	Display the Plugins menu on the SLIMP3 player:
-	FR	Afficher le menu Plugins sur le lecteur SLIMP3 :
-	NL	Toon het Plugins menu op de SLIMP3 speler:
-	PT	Mostrar menu de Extras no cliente SLIMP3
-	SE	Visa tilläggs-menyn på SLIMP3-spelaren:
+	DE	Anzeigen des Plugins Menü auf dem Slim Player:
+	EN	Display the Plugins menu on the Slim player:
+	FR	Afficher le menu Plugins sur le lecteur Slim :
+	NL	Toon het Plugins menu op de Slim speler:
+	PT	Mostrar menu de Extras no cliente Slim
+	SE	Visa tilläggs-menyn på Slim-spelaren:
 
 SHOW_PLUGINS
 	DE	Plugins anzeigen
@@ -4531,6 +4372,17 @@ SLIMP3_MUSIC_PLAYER
 	NL	SLIMP3 Muziek Speler
 	PT	Leitor de Música SLIMP3
 	SE	SLIMP3 Musikspelare
+
+SQUEEZEBOX_MUSIC_PLAYER
+	DE	Squeezebox Musik Player
+	DK	Squeezebox-afspiller
+	EN	Squeezebox Music Player
+	ES	Squeezebox Reproductor de Música
+	FI	Squeezebox soitin
+	FR	Lecteur de musique Squeezebox
+	NL	Squeezebox Muziek Speler
+	PT	Leitor de Música Squeezebox
+	SE	Squeezebog Musikspelare
 
 BY
 	DE	von
@@ -4565,25 +4417,25 @@ DELETE
 	PT	Remover
 	SE	Ta bort
 
-NO_SLIMP3_FOUND
-	DE	Kein SLIMP3 Player gefunden.
-	DK	Din SLIMP3-afspiller kunne ikke findes.
-	EN	Your SLIMP3 player was not found.
-	ES	No se ha encontrado ningún reproductor SLIMP3
-	FI	SLIMP3 soitinta ei löytynyt.
-	FR	Votre lecteur SLIMP3 est introuvable.
-	NL	Geen SLIMP3 Speler gevonden
-	PT	Não foi encontrado nenhum cliente SLIMP3.
-	SE	Din SLIMP3-spelare kunde inte hittas.
+NO_PLAYER_FOUND
+	DE	Kein Player gefunden.
+	DK	Din afspiller kunne ikke findes.
+	EN	Your player was not found.
+	ES	No se ha encontrado ningún reproductor
+	FI	Soitinta ei löytynyt.
+	FR	Votre lecteur est introuvable.
+	NL	Geen Speler gevonden
+	PT	Não foi encontrado nenhum cliente.
+	SE	Din spelare kunde inte hittas.
 
-NO_SLIMP3_DETAILS
-	DE	Stellen Sie sicher, dass Ihr SLIMP3 Player angeschlossen ist und die Netzwerkeinstellungen korrekt sind. Drücken sie auf "Aktualisierung" im Menü Ihres Browser zum erneuten Verbindungsversuch zu Ihrem SLIMP3 Player.
-	DK	Kontroller at din SLIMP3-afspiller er sluttet til og at dens netværksindstillinger er korrekte. Tryk F5 (Refresh/Genindlæs) i din web-browser for at prøve at forbinde til afspilleren igen.
-	EN	Make sure that your SLIMP3 player is plugged in and its networking settings are correct. Press the Refresh button to try to connect to your SLIMP3 player again.
-	FR	Assurez-vous que votre lecteur SLIMP3 est branché et que ses réglages de réseau sont valides. Cliquez sur le bouton "Actualiser" de votre navigateur pour vérifier de nouveau la présence du lecteur.
-	NL	Zorg ervoor dat Uw SLIMP3 speler aan het netwerk is aangesloten en dat de netwerk instellingen goed zijn. Druk de Refresh knop om opnieuw contact te maken met de SLIMP3 speler.
-	PT	Verifique se o cliente SLIMP3 está ligado e se as configurações da rede estão correctas. Actualize esta página para verificar de novo a presença do leitor.
-	SE	Se till att din SLIMP3-spelare är påslagen, inkopplad och har korrekta nätverksinställningar. Tryck på F5 (Uppdatera/Refresh) i din webbläsare för att försöka koppla upp mot din SLIMP3-spelare igen.
+NO_PLAYER_DETAILS
+	DE	Stellen Sie sicher, dass Ihr Player angeschlossen ist und die Netzwerkeinstellungen korrekt sind. Drücken sie auf "Aktualisierung" im Menü Ihres Browser zum erneuten Verbindungsversuch zu Ihrem Player.
+	DK	Kontroller at din afspiller er sluttet til og at dens netværksindstillinger er korrekte. Tryk F5 (Refresh/Genindlæs) i din web-browser for at prøve at forbinde til afspilleren igen.
+	EN	Make sure that your player is plugged in and its networking settings are correct. Press the Refresh button to try to connect to your player again.
+	FR	Assurez-vous que votre lecteur est branché et que ses réglages de réseau sont valides. Cliquez sur le bouton "Actualiser" de votre navigateur pour vérifier de nouveau la présence du lecteur.
+	NL	Zorg ervoor dat Uw speler aan het netwerk is aangesloten en dat de netwerk instellingen goed zijn. Druk de Refresh knop om opnieuw contact te maken met de speler.
+	PT	Verifique se o cliente está ligado e se as configurações da rede estão correctas. Actualize esta página para verificar de novo a presença do leitor.
+	SE	Se till att din spelare är påslagen, inkopplad och har korrekta nätverksinställningar. Tryck på F5 (Uppdatera/Refresh) i din webbläsare för att försöka koppla upp mot din spelare igen.
 
 NEED_PATH
 	DE	Sie müssen einen Pfad zum Verzeichnis mit Ihrem MP3 Dateien angeben.
@@ -4942,255 +4794,15 @@ PLAYER_SETUP
 	SE	Installation av spelare
 
 USING_REMOTE
-	DE	Verwendung der SLIMP3 Fernbedienung
-	DK	Anvendelse af SLIMP3-fjernbetjeningen (Engelsk)
-	EN	Using the SLIMP3 Remote
+	DE	Verwendung der Slim Devices Fernbedienung
+	DK	Anvendelse af Slim Devices-fjernbetjeningen (Engelsk)
+	EN	Using the Slim Devices Remote
 	ES	Cómo usar el mando
-	FI	SLIMP3 kaukosäätimen käyttö
+	FI	Slim Devices kaukosäätimen käyttö
 	FR	Utilisation de la télécommande
-	NL	De SLIMP3 Afstandsbediening gebruiken
+	NL	De Slim Devices Afstandsbediening gebruiken
 	PT	Como usar o Controlo Remoto
-	SE	Att använda fjärrkontrollen för SLIMP3
-
-HELP_REMOTE_CONFIGURE
-	DE	Um Ihre Fernbedienung fŸr Ihren SLIMP3 Player zu konfigurieren, drücken Sie die Kombination: "S DVD 0 0 7 ENT DVD"
-	DK	For at konfigurer fjernbetjeningen til brug sammen med SLIMP3-afspilleren skal du trykke følgende på fjernbetjeningen: "S DVD 0 0 7 ENT DVD".
-	EN	To configure the remote for use with SLIMP3 press the following sequence: "S DVD 0 0 7 ENT DVD".
-	ES	Para configurar el mando a distancia pulsar esta sucesión: "S DVD 0 0 7 ENT DVD"
-	FI	Käyttääksesi kaukosäädintä SLIMP3 -soittimen kanssa paina "S DVD 0 0 7 ENT DVD".
-	FR	Pour configurer la télécommande afin de l'utiliser avec le SLIMP3, veuillez appuyer dans l'ordre sur les boutons suivants : "S DVD 0 0 7 ENT DVD".
-	NL	Om de afstansbediening in te stellen op gebruik met de SLIMP3 speler druk de volgende toetsen: "S DVD 0 0 7 ENT DVD".
-	PT	Para configurar o controlo remoto para usar o SLIMP3, efectue a seguinte sequência
-	SE	För att konfigurera fjärrkontrollen för användning med SLIMP3, tryck in följande sekvens: "S DVD 0 0 7 ENT DVD".
-
-HELP_REMOTE_DVD
-	DE	Der SLIMP3 Player reagiert auf den DVD Mode Ihrer Fernbedienung. Drücken Sie die DVD Taste bevor Sie den SLIMP3 Player verwenden.
-	DK	SLIMP3-afspilleren reagerer på DVD-modusen på denne fjernbetjening. Tryk på DVD-knappen for at sætte fjernbetjeningen i DVD-modus.
-	EN	The SLIMP3 responds to the DVD mode on this remote. Press the DVD button before using the SLIMP3 to place the remote in DVD mode.
-	ES	El SLIMP3 responde al modo DVD del mando a distancia. Pulsar el botón DVD antes de usar el SLIMP3.
-	FI	SLIMP3 toimii kaukosäätimen DVD tilassa.
-	FR	Le lecteur SLIMP3 utilise le mode DVD de la télécommande. Appuyez sur le bouton DVD de la télécommande pour l'utiliser avec le lecteur SLIMP3.
-	NL	De SLIMP3 speler reageert op de DVD modus van deze afstandsbediening. Druk op de DVD toets om de afstandsbediening in DVD modus te schakelen.
-	PT	O cliente SLIMP3 responde ao modo DVD do controlo remoto. Use o botão DVD para o colocar no modo correcto.
-	SE	SLIMP3-spelaren svarar på DVD-läget på denna fjärrkontroll. Tryck på DVD-knappen för att sätta fjärrkontrollen i DVD-läge innan du börjar använda din SLIMP3.
-
-HELP_REMOTE_POWER
-	DE	Drücken Sie die POWER-Taste um den SLIMP3 Player an- und auszuschalten.
-	DK	Tryk på POWER-knappen for at tænde/slukke SLIMP3-afspilleren.
-	EN	Press the POWER button to turn the SLIMP3 player on and off.
-	ES	Pulsar el botón POWER para encender y apagar el SLIMP3.
-	FI	Paina POWER -nappulaa kytkeäksesi virta SLIMP3 -soittimeen. Soitin sammuu mikäli nappulaa painetaan uudelleen.
-	FR	Presser le bouton POWER pour allumer et éteindre le lecteur SLIMP3.
-	NL	Druk op de POWER knop om de SLIMP3 speler aan en uit te schakelen.
-	PT	Use o botão "POWER" para ligar ou desligar o cliente SLIMP3.
-	SE	Tryck på POWER-knappen för att sätta på/stänga av din SLIMP3-spelare.
-
-HELP_REMOTE_NUMBERS
-	DE	Drücken Sie eine Zahlentaste, wenn Sie zum Suchen Text eingeben wollen. Drücken Sie eine Zahlentaste zum springen innerhalb einer Liste.
-	DK	Tryk på en NUMMER-tast ved søgning for at indtaste tekst. Tryk på en NUMMER-tast når du er i en liste for at springe rundt i listen.
-	EN	Press a NUMBER button when searching to enter text. Press a number key when in a list to jump within that list.
-	ES	Pulsar un botón númerado para introducir texto para buscar. Pulsar un botón númerado mientras mirando una lista para saltarse dentro de dicha lista.
-	FI	Paina NUMBER -nappulaa, syöttääksesi hakutekstiä. Numeronäppäimen painallus hyppää listassa olevaan numeroon.
-	FR	Appuyez sur les boutons numériques pour entrer du texte. Ces boutons sont également utilisés pour se positionner rapidement dans les listes.
-	NL	Druk een NUMBER knop in als U tekst wil ingeven in zoek modus. Druk ook een nummer als U binnen een lijst wilt springen.
-	PT	Use os botões de números para introduzir texto na opção de pesquisa. Use tambem para saltar para uma lista no menu das listas.
-	SE	Tryck en nummer-knapp för att mata in text när du skall söka. Tryck en nummer-knapp när du är i en lista för att hoppa inom listan.
-
-HELP_REMOTE_PIP
-	DE	Drücken Sie die PIP-Taste um den aktuellen Titel in der Playlist anzuzeigen. Drücken Sie PIP erneut um den Zeitverlauf anzuzeigen.
-	DK	Tryk PIP-knappen for at vise den aktuelle sang der afspilles. Tryk PIP igen for at vise status for afspillet tid.
-	EN	Press the PIP button to display the current song in the playlist. Press PIP again to show progress and time indicators.
-	ES	Pulsar el botón PIP para mostrar la canción actual en la lista discográfica. Pulsar el botón PIP otra vez para mostrar el tiempo transcurrido y el indicador de progreso.
-	FI	Paina PIP -nappulaa näyttääksesi soittolistan kappaleen. Paina PIP -nappulaa uudelleen näyttääksesi muita tietoja.
-	FR	Appuyer sur le bouton PIP pour afficher la pièce musicale courante dans la liste d'écoute. Appuyer de nouveau sur le bouton PIP pour afficher la progression et le temps.
-	NL	Druk de PIP knop om het huidige nummer uit de playlist te tonen. Druk nogmaals op PIP om de voortgangs- en tijdsindicatoren te tonen.
-	PT	Use o botão "PIP" para mostrar a música actual na playlist. Use novamente para mostrar os indicadores de progresso e tempo.
-	SE	Tryck på PIP-knappen för att visa aktuell låt spellistan. Tryck på PIP-knappen igen för att växla mellan visning av olika tids-indikeringar.
-
-HELP_REMOTE_PLAY
-	DE	Drücken Sie die PLAY-Taste um den angezeigten Titel abzuspielen.
-	DK	Tryk PLAY-knappen for at spille den valgte sang (hvis i playliste hoppes til den valgte sang, hvis ikke i playliste nulstilles playlisten og sættes til at være den valgte sang eller sange).
-	EN	Press the PLAY button to play the song that is currently displayed.
-	ES	Pulsar el botón PLAY para poner la canción que aparece en la pantalla.
-	FI	Paina PLAY -nappulaa soitaaksesi valitun kappaleen.
-	FR	Appuyer sur le bouton PLAY pour jouer le morceau actuellement affiché.
-	NL	Druk op PLAY om het op dit moment getoonde nummer af te spelen.
-	PT	Use o botão "PLAY" para tocar a música visível.
-	SE	Tryck på PLAY-knappen för att spela vald låt.
-
-HELP_REMOTE_REC
-	DE	Drücken Sie die RECORD-Taste um den aktuellen Titel zum Ende der Playlist hinzuzfügen.
-	DK	Tryk RECORD-knappen for at tilføje den viste sang til slutningen af playlisten.
-	EN	Press the RECORD button to add the song that is currently displayed to the end of the playlist.
-	ES	Pulsar el botón RECORD para añadir a la lista discográfica la canción que aparece en la pantalla.
-	FI	Paina RECORD -nappulaa lisätäksesi uuden kappaleen soittolistaan.
-	FR	Appuyer sur le bouton RECORD pour ajouter le morceau actuellement affiché à la fin de la playlist.
-	NL	Druk op de RECORD toets om het getoonde nummer aan het einde van de playlist toe te voegen.
-	PT	Use o botão "RECORD" para adicionar a música visível ao fim da playlist. 
-	SE	Tryck på REC-knappen för att lägga till vald låt sist i spellistan.
-
-HELP_REMOTE_STOP
-	DE	Drücken Sie die STOP-Taste um das Abspielen zu beenden und die Playlist anzuzeigen.
-	DK	Tryk STOP-knappen for at stoppe afspilning og gennemse playlisten.
-	EN	Press the STOP button to stop playing and view the playlist.
-	ES	Pulsar el botón STOP para parar la música y mostrar la lista discográfica.
-	FI	Paina STOP -nappulaa lopetaaksesi kappaleen soiton.
-	FR	Appuyer sur le bouton STOP pour arrêter l'écoute et afficher la playlist.
-	NL	Druk op de STOP knop om het afspelen te stoppen en de playlist te tonen.
-	PT	Use o botão "STOP" para parar de tocar e ver a playlist.
-	SE	Tryck på STOP-knappen för att stoppa uppspelning och visa spellistan.
-
-HELP_REMOTE_FWD
-	DE	Drücken Sie die FORWARD-Taste um zum nächsten Titel in der Playlist zu springen.
-	DK	Tryk FORWARD-knappen for at gå til næste nummer i playlisten.
-	EN	Press the FORWARD button to skip to the next song in the playlist.
-	ES	Pulsar el botón FORWARD para saltar a la siguiente canción de la lista discográfica.
-	FI	Paina FORWARD -nappulaa päästäksesi seuraavaan kappaleeseen.
-	FR	Appuyer sur le bouton FORWARD pour passer au prochain morceau de la playlist.
-	NL	Druk op FORWARD om naar het volgende nummer in de playlist te springen.
-	PT	Use o botão "FORWARD" para saltar para a próxima música da playlist.
-	SE	Tryck på FORWARD-knappen för att hoppa till nästa låt i spellistan.
-
-HELP_REMOTE_REW
-	DE	Drücken Sie die REWIND-Taste um zum vorherigen Titel in der Playlist zu springen.
-	DK	Tryk REWIND-knappen for at gå til starten af det aktuelle nummer eller til det forrige nummer i playlisten.
-	EN	Press the REWIND button to play the current song in the playlist from the beginning. Press the rewind button again to play the previous song in the playlist.
-	ES	Pulsar el botón REWIND para saltar al principio de la canción puesta. Pulsarlo de nuevo para poner la canción anterior de la lista discográfica.
-	FI	Paina REWIND -nappulaa soittaaksesi kappaleen uudelleen alusta. Paina nappulaa uudelleen niin pääset edelliseen kappaleeseen.
-	FR	Appuyer sur le bouton REWIND pour revenir au début du morceau qui joue actuellement. Presser de nouveau pour passer au morceau précédent.
-	NL	Druk op REWIND om het huidige nummer in de playlist opnieuw af te spelen. Druk nogmaals op de REWIND knop om het vorige nummer in de playlist af te spelen.
-	PT	Use o botão "REWIND" para voltar ao início da música. Use novamente para saltar para a música anterior da playlist.
-	SE	Tryck på REWIND-knappen för att spela aktuell låt från början. Tryck på knappen igen för att spela föregående låt i spellistan.
-
-HELP_REMOTE_PAUSE
-	DE	Drücken Sie die PAUSE-Taste um den aktuellen Titel anzuhalten. Drücken Sie die Taste wiederholt um weiterzuspielen.
-	DK	Tryk PAUSE-knappen for at sætte den aktuelle sang på pause. Tryk igen for at fortsætte.
-	EN	Press the PAUSE button to pause the current song. Press again to continue.
-	ES	Pulsar el botón PAUSE para darle pausa. Pulsarlo de nuevo para quitar pausa.
-	FI	Paina PAUSE -nappulaa pysäyttääksesi kappaleen. Paina uudelleen jatkaaksesi.
-	FR	Appuyer sur le bouton PAUSE pour suspendre l'écoute du morceau courant. Appuyer de nouveau pour reprendre l'écoute.
-	NL	Druk op de PAUSE knop op het huidige nummer te pauzeren. Druk nogmaals om weer door te gaan.
-	PT	Use o botão "PAUSE" para pausar a música actual. Use novamente para continuar a tocar.
-	SE	Tryck på PAUSE-knappen för att pausa aktuell låt. Tryck på den igen för att återuppta uppspelningen.
-
-HELP_REMOTE_DISP
-	DE	Drücken Sie die DISP-Taste um die Anzeigegröße zu ändern. 
-	DK	Tryk DISP-knappen for at skifte mellem stor og lille tekststørrelse.
-	EN	Press the DISP button to change the display size.
-	ES	Pulsar el botón DISP para cambiar el tamaño del texto en la pantalla.
-	FI	Paina DISP -nappulaa vaihtaaksesi näytön kokoa.
-	FR	Appuyer sur le bouton DISP pour changer la taille du texte.
-	NL	Druk op de DISP knop om de lettergrootte op het display aan te passen.
-	PT	Use o botão "DISP" para mudar o tamanho do texto no ecrã.
-	SE	Tryck på DISP-knappen för att ändra text-storlek i displayen.
-
-HELP_REMOTE_SLEEP
-	DE	Drücken Sie die SLEEP-Taste um den Player nach einiger Zeit in den Schlafmodus zu versetzen. Drücken Sie SLEEP mehrmals um die Zeit einzustellen.
-	DK	Tryk SLEEP-knappen for at aktivere slumrefunktionen. Tryk igen for at ændre hvor lang tid der skal gå før slumrefunktionen slår til.
-	EN	Press the SLEEP button to put the player to sleep after a few minutes. Press SLEEP again to change the amount of time.
-	FI	Paina SLEEP -nappulaa ajastaaksesi soittimen sammumaan hetken päästä. Paina nappulaa uudelleen säätääksesi aikaa.
-	FR	Appuyer sur le bouton SLEEP pour programmer la mise en veille du lecteur. Appuyer de nouveau pour changer le délai de mise en veille.
-	NL	Druk de SLEEP knop om de speler na een aantal minuten in slaap modus te schakelen. Druk nogmaals op SLEEP om het aantal minuten aan te passen.
-	PT	Use o botão "SLEEP" para colocar o cliente no modo inactivo após alguns minutos. Use novamente para configurar esse tempo.
-	SE	Tryck på SLEEP-knappen för att låta spelaren sommna in/stängas av efter ett par minuter. Tryck på SLEEP igen för att ändra tiden innan avstängning/insomning.
-
-HELP_REMOTE_GUIDE
-	DE	Drücken Sie die GUIDE-Taste um die Darstellungsart der Titel zu ändern.
-	DK	Tryk GUIDE-knappen for at ændre hvordan sangtitler vises.
-	EN	Press the GUIDE button to change the way that song titles are displayed.
-	FI	Paina GUIDE -nappulaa vaihtaaksesi kappaleiden esitystapaa.
-	FR	Appuyer sur le bouton GUIDE pour changer le mode d'affichage du titre des morceaux.
-	NL	Druk op de GUIDE knop om de manier waarop titels van liedjes worden weergegeven te veranderen.
-	PT	Use o botão "GUIDe" para mudar o modo de visualização dos títulos das músicas.
-	SE	Tryck på GUIDE-knappen för att ändra hur låtarnas titlar visas på i displayen.
-
-HELP_REMOTE_ARROWS
-	DE	Zur Navigation drücken Sie UP, DOWN, LEFT und RIGHT. UP und DOWN wechselt innerhalb der aktuellen Ebene. LEFT und RIGHT wechselt die Ebene.
-	DK	Tryk UP, NED, VENSTRE, HØJRE for at navigere. OP og NED skifter mellem de forskellige aktuelle valg, mens HØJRE OG VENSTRE hhv. går ind og går ud af et menupunkt.
-	EN	Press the UP, DOWN, LEFT and RIGHT buttons to navigate. UP and DOWN scroll through the current items, RIGHT and LEFT move in to and out of the current item.
-	ES	Pulsar los botones con flechas arriba, abajo, izquierda y derecha para navigar.
-	FI	Paina UP, DOWN, LEFT ja RIGHT liikuaksesi valikoissa.
-	FR	Appuyer sur les boutons UP, DOWN, LEFT et RIGHT pour naviguer. Les boutons UP et DOWN permettent la sélection des articles du menu courant. Les boutons RIGHT et LEFT permettent de changer de niveau de menu.
-	NL	Druk op UP, DOWN, LEFT en RIGHT om te navigeren. UP en DOWN lopen door de huidige items, RIGHT en LEFT bewegen in en uit de de huidige lijst van items.
-	PT	Use os cursores para navegar. "UP" e "DOWN" para mudar entre os items disponíveis. "RIGHT" e "LEFT" para entrar ou sair dos menus correspondentes.
-	SE	Tryck på UPP/NER/VÄNSTER/HÖGER-knapparna för att navigera. UPP och NER listar posterna. HÖGER och VÄNSTER flyttar in och ut ur menyerna.
-
-HELP_REMOTE_MENU
-	DE	Drücken Sie MENU um zum SLIMP3 Hauptmenü zu wechseln.
-	DK	Tryk MENU-knappen for at hoppe til SLIMP3-Hovedmenuen.
-	EN	Press the MENU button to jump to SLIMP3 Home.
-	ES	Pulsar el botón MENU para saltar al inicio del SLIMP3
-	FI	Paina MENU -nappulaa mennäksesi takaisin alkuun.
-	FR	Appuyer sur le bouton MENU pour aller directement au menu principal.
-	NL	Druk op de MENU knop om direct naar het SLIMP3 hoofdmenu te springen.
-	PT	Use o botão "MENU" para ir para o menu inicial do SLIMP3.
-	SE	Tryck på MENU-knappen för att hoppa till SLIMP3 Huvudmeny
-
-HELP_REMOTE_OK
-	DE	Drücken Sie die OK-Taste um die Zufallsfunktion (Shuffle) an- und auszuschalten.
-	DK	Tryk OK-knappen for at spille skifte mellem hhv. vilkårlig og ikke-vilkårlig rækkefølge ved afspilning af playlisten.
-	EN	Press the OK button to shuffle and unshuffle the playlist.
-	ES	Pulsar el botón OK para (des)activar la función "al azar".
-	FI	Paina OK -nappulaa kytkeäksesi satunnaistoiston päälle/pois päältä.
-	FR	Pressez le bouton OK pour mélanger ou réordonner les morceaux.
-	NL	Druk op de OK knop om de playlist gesorteerd danwel in willekeurige volgorde af te spelen.
-	PT	Use o botão "OK" para activar ou desactivar o modo de playlist aletória.
-	SE	Tryck på OK-knappen för att växla mellan blandad och icke blandad spellista.
-
-HELP_REMOTE_VOL
-	DE	Verwenden Sie VOL+ und VOL- zum Anpassen der SLIMP3 Lautstärke.
-	DK	Tryk VOL+ og VOL- for at skrue hhv. op og ned for volumen (brug helst din forstærkers volumen-knap).
-	EN	Press the VOL+ and VOL- buttons to raise and lower the SLIMP3 volume.
-	ES	Pulsar los botones VOL+ y VOL- para subir y bajar el volúmen del SLIMP3.
-	FI	Paina VOL+ ja VOL- -nappuloita säätääksesi äänenvoimaakkuutta.
-	FR	Pressez sur les boutons VOL+ et VOL- pour changer le volume du SLIMP3.
-	NL	Druk op de VOL+ en VOL- knoppen om het Volume van de SLIMP3 te verhogen en te verlagen.
-	PT	Use os botões "VOL+" e "VOL-" para aumentar ou diminuir o volume do SLIMP3.
-	SE	Tryckp på VOL+ och VOL- knapparna för att höja och sänka SLIMP3-volymen.
-
-HELP_REMOTE_CH
-	DE	Mit Hilfe der Tasten CH+ und CH- können Sie die Helligkeit des SLIMP3 Displays ändern.
-	DK	Tryk CH+ og CH- for at skrue hhv. op og ned for lysstyrken på SLIMP3-displayet.
-	EN	Press the CH+ and CH- buttons to raise and lower the SLIMP3 display brightness.
-	ES	Pulsar los botones CH+ y CH- para subir y bajar la luminosidad de la pantalla del SLIMP3.
-	FI	Paina CH+ ja CH- -nappuloita säätääksesi näytön kirkkautta.
-	FR	Pressez sur les boutons CH+ et CH- pour changer la luminosité de l'affichage du lecteur SLIMP3.
-	NL	Druk op de CH+ en CH- knoppen om de helderheid van het display de verhogen en te verlagen.
-	PT	Use os botões "CH+" ou "CH-" para aumentar ou diminuir o brilho do ecrã do SLIMP3.
-	SE	Tryck på CH+ och CH- knapparna för att öka och minska ljusstyrkan på SLIMP3-displayen.
-
-HELP_REMOTE_MUTING
-	DE	Verwenden Sie die MUTE-Taste um die Stummschaltung an- und auszuschalten.
-	DK	Tryk MUTING for at slå lyden fra/til.
-	EN	Press the MUTING button to mute and un-mute the SLIMP3 volume.
-	ES	Pulsar el botón MUTING para (de)silenciar el SLIMP3.
-	FI	Paina MUTING -nappulaa vaientaaksesi äänenvoimakkuuden. Paina uudelleen palataksesi edelliseen voimakkuuteen.
-	FR	Appuyer sur le bouton MUTING pour couper temporairement le son et pour le réactiver.
-	NL	Druk de MUTING knop om het geluid van de SLIMP3 te dempen of weer aan te schakelen.
-	PT	Use o botão "MUTING" para suprimir ou retomar o som do SLIMP3.
-	SE	Tryck på MUTING-knappen för att tysta och återställa SLIMP3-volymen.
-
-HELP_REMOTE_RECALL
-	DE	Drücken Sie RECALL um zwischen den Wiederholungseinstellungen zu wechseln. (Alle wiederholen, aktuellen Titel wiederholen, Nichts wiederholen)
-	DK	Tryk RECALL for at ændre hvordan sange gentages. Du kan vælge mellem gentagelse af hele playlisten, den aktuelle sang eller ingen gentagelse.
-	EN	Press the RECALL button to change the repeat setting between repeat all, repeat current song and not repeating.
-	ES	Pulsar el botón RECALL para cambiar modo entre "repetir todas", "repetir canción" y "sin repetición".
-	FI	Paina RECALL -nappulaa vaihtaaksesi toistovalintoja. Vaihtoehtoja ovat toista kaikki, toista kappale ja lopeta toisto.
-	FR	Appuyer sur le bouton RECALL pour alterner entre les modes de répétition suivants : tous les morceaux, le morceau en cours, pas de répétition.
-	NL	Druk de RECALL knop om de herhaalmodus in te stellen. U schakelt tussen "alles herhalen", "huidige nummer herhalen" en "niet herhalen".
-	PT	Use o botão "RECALL" para alternar entre repetir uma música, repetir tudo ou não repetir.
-	SE	Tryck på RECALL-knappen för att växla mellan repetera låt, repetera alla och inte repetera alls.
-
-HELP_REMOTE_VOLUMEINFO
-	DE	Diese Fernbedienung muss für die Verwendung mit dem SLIMP3 Player konfiguriert werden. Um die Lautstärke zu kontrollieren, Drücken Sie zunächst die Kombination "S TV 0 2 8 ENT". Um dann die Lautstärkeregelung im DVD/SLIMP3 Mode zu aktivieren, verwenden Sie die folgende Kombination: "DVD S TV VOL+ ENT".
-	DK	Denne fjernbetjening skal konfigureres for at kunne sende volume-kommandoer til SLIMP3-afspilleren. For at programmere fjernbetjeningen skal du trykke følgende: "S TV 0 2 8 ENT" og derefter "DVD S TV VOL+ ENT".
-	EN	This remote needs to be configured to send volume commands to the SLIMP3. To program the remote to control the SLIMP3's volume, first press the following sequence: "S TV 0 2 8 ENT". Then to make the volume buttons work when in DVD/SLIMP3 mode, press the following sequence: "DVD S TV VOL+ ENT".
-	ES	El mando a distancia tiene que configurarse para mandar ordenes al SLIMP3 para cambiar el volúmen de el. Para configurarlo pulsar estas sucesiones: "S TV 0 2 8 ENT" y "DVD S TV VOL+ ENT".
-	FI	Kaukosäädin pitää ohjelmoida lähettämään äänenvoimakkuuskomentoja SLIMP3 -soittimelle. Ohjelmoidaksesi kaukosäätimen, paina seuraavia nappuloita: "S TV 0 2 8 ENT". Tämän jälkeen saadaksesi nappulat toimimaan DVD/SLIMP3 tilassa, paina: "DVD S TV VOL+ ENT".
-	FR	Cette télécommande doit être configurée pour permettre le réglage du volume du lecteur SLIMP3. Pour ce faire, appuyez dans l'ordre sur les boutons suivants: "S TV 0 2 8 ENT". Ensuite, pour permettre le contrôle du volume lorsque la télécommande est en mode DVD/SLIMP3, appuyez dans l'ordre sur les boutons suivants : "DVD S TV VOL+ ENT".
-	NL	De afstandsbediening moet worden ingesteld om volume instellingen naar de SLIMP3 te sturen. Om de afstandsbediening de SLIMP3 volume regeling te laten aansturen, drukt U eerste de volgende knoppen: "S TV 0 2 8 ENT". Daarna, om de afstandsbediening te laten werken in DVD/SLIMP3 modus, drukt U "DVD S TV VOL+ ENT".
-	PT	Este controlo remoto necessita de ser configurado para enviar comandos de volume ao SLIMP3. Para programar o volume do controlo remoto, efectue a seguinte sequência
-	SE	Denna fjärrkontroll behöver konfigureras för att kunna skicka volym-kommandon till SLIMP3-spelaren. För att programmera fjärrkontrollen för SLIMP3s volym, tryck först in denna sekvens: "S TV 0 2 8 ENT". För att sen få knapparna att fungera i DVD/SLIMP3-läge, tryck in följande sekvens: "DVD S TV VOL+ ENT".
+	SE	Att använda fjärrkontrollen för Slim Devices
 
 STATISTICS
 	DE	Statistik

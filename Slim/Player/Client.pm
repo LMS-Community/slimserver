@@ -30,6 +30,7 @@ struct( clientState => [
     
 # client variables id and version info
     type             		=>'$', # type 		"slimp3", "http"
+   	model					=>'$', # string		"slimp3", "squeezebox"
     deviceid				=>'$', # id			hardware device id (0x01 for slimp3)
     revision                =>'$', # int        firmware rev   0=unknown, 1.2 = old (1.0, 1.1, 1.2), 1.3 = new streaming protocol, 2.0 = client sends MAC address, NEC IR codes supported
     macaddress              =>'$', # string     client's MAC (V2.0 firmware)
