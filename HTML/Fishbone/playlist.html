@@ -1,9 +1,9 @@
 <html>
-  <head>
-	<title>[% playermodel _ "_MUSIC_PLAYER" | string %] [% IF player_name %][% player_name %][% END %]</title>
-	<link rel="stylesheet" href="slimserver.css">
-	<script type="text/javascript" src="[% webroot %]html/scripts.js" />
-
+	<head>
+		<title>[% playermodel _ "_MUSIC_PLAYER" | string %] [% IF player_name %][% player_name %][% END %]</title>
+		<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+		<link rel="stylesheet" href="slimserver.css">
+		<script type="text/javascript" src="[% webroot %]html/scripts.js" ></script>
 	</head>
 	<body bgcolor="#000000" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:to_currentsong()">
 		<center>[% "CURRENT_PLAYLIST" | string %]
