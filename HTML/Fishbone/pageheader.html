@@ -70,6 +70,14 @@
 					url="browse.html?";
 					suffix = "[% IF noartwork %]&noartwork=1[% END %]";
 				break
+[% IF additionalLinks.browse %]
+	[% FOREACH key = additionalLinks.browse.keys %]
+	case "[% key %]":
+		url = "[% additionalLinks.browse.$key %]
+		suffix = "[% IF noartwork %]&noartwork=1[% END %]"
+	break
+	[% END %]
+[% END %]
 			}
 			setCookie("SlimServer-Browserpage",url);
 			parent.browser.location = url + suffix + '&player=[% player | uri %]';
@@ -90,7 +98,7 @@
 					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
 				</td>
 				<td width="33%" height="13" align="center">
-					<a class="menu1" href="[% webroot %]html/docs/help.html[% IF nofolder %]?&nofolder=1[% END %]">[% IF help %]<b>[% END %][% "HELP" | string %][% IF help %]</b>[% END %]</a>
+					<a class="menu1" href="/html/docs/help.html[% IF nofolder %]?&nofolder=1[% END %]">[% IF help %]<b>[% END %][% "HELP" | string %][% IF help %]</b>[% END %]</a>
 				</td>
 			</table>
 		</div>
@@ -106,6 +114,11 @@
 						<OPTION [% IF type == 'song' %]selected[% END %][% IF browseby == 'BROWSE_BY_SONG' %]selected[% END %] label="song" value="song">[% "BROWSE_BY_SONG" | string %]</OPTION>
 						<OPTION [% IF playlist %]selected[% END %] label="playlist" value="song">[% "SAVED_PLAYLISTS" | string %]</OPTION>
 	 [% IF not nofolder %]<OPTION [% IF browse %]selected[% END %] value="song" label="folder" >[% "BROWSE_MUSIC_FOLDER" | string %]</OPTION>[% END %]
+[% IF additionalLinks.browse %]
+	[% FOREACH key = additionalLinks.browse.keys %]
+	<OPTION value="song" label="[% key %]">[% key %]</OPTION>
+	[% END %]
+[% END %]
 					</SELECT> [% "FOR" | string %]
 					<input type=text class="stdedit" name="query" value="[% query %]" size="20">
 					<input type=hidden value="[% player %]" name="player">
