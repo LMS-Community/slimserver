@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Text;
 
-# $Id: Text.pm,v 1.17 2004/08/06 02:27:04 kdf Exp $
+# $Id: Text.pm,v 1.18 2004/08/31 03:11:02 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -219,7 +219,11 @@ my %functions = (
 sub lines {
 	my $client = shift;
 	my ($line1, $line2);
-	$line1 = Slim::Buttons::Common::param($client,'header');
+	$line1 = Slim::Buttons::Input::List::getExtVal($client,undef,undef,'header');
+	if (Slim::Buttons::Common::param($client,'stringHeader') 
+			&& Slim::Utils::Strings::stringExists($line1)) {
+		$line1 = string($line1);
+	}
 	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 	if (!defined($valueRef)) { return ('',''); }
 	my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
