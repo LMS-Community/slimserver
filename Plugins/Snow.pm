@@ -23,7 +23,7 @@ use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.1 $,10);
+$VERSION = substr(q$Revision: 1.2 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_SNOW');}
 

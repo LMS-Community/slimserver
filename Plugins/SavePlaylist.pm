@@ -1,4 +1,4 @@
-# $Id: SavePlaylist.pm,v 1.3 2003/10/28 22:39:03 dean Exp $
+# $Id: SavePlaylist.pm,v 1.4 2003/12/15 21:08:30 daniel Exp $
 # This code is derived from code with the following copyright message:
 #
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
@@ -17,9 +17,9 @@ use POSIX qw(strftime);
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.3 $,10);
+$VERSION = substr(q$Revision: 1.4 $,10);
 
-my %context;
+my %context = ();
 
 my @LegalChars = (
 	Slim::Hardware::VFD::symbol('rightarrow'),
@@ -32,17 +32,18 @@ my @LegalChars = (
 	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
 );
 
-my @legalMixed = ([' ','0'], # 0
-					 ['.','-','_','1'], # 1
-					 ['a','b','c','A','B','C','2'], 				# 2
-					 ['d','e','f','D','E','F','3'], 				# 3
-					 ['g','h','i','G','H','I','4'], 				# 4
-					 ['j','k','l','J','K','L','5'], 				# 5
-					 ['m','n','o','M','N','O','6'], 				# 6
-					 ['p','q','r','s','P','Q','R','S','7'], 	# 7
-					 ['t','u','v','T','U','V','8'], 				# 8
-					 ['w','x','y','z','W','X','Y','Z','9']); 			# 9
-
+my @legalMixed = (
+	[' ','0'], 				# 0
+	['.','-','_','1'], 			# 1
+	['a','b','c','A','B','C','2'],		# 2
+	['d','e','f','D','E','F','3'], 		# 3
+	['g','h','i','G','H','I','4'], 		# 4
+	['j','k','l','J','K','L','5'], 		# 5
+	['m','n','o','M','N','O','6'], 		# 6
+	['p','q','r','s','P','Q','R','S','7'], 	# 7
+	['t','u','v','T','U','V','8'], 		# 8
+	['w','x','y','z','W','X','Y','Z','9']; 	# 9
+);
 
 sub getDisplayName { return string('SAVE_PLAYLIST'); }
 
@@ -55,14 +56,14 @@ sub setMode {
 		my $playlist = '';
 	} else {
 		$context{$client} = 'A';
-		Slim::Buttons::Common::pushMode($client,'INPUT.Text',
-						{'callback' => \&Plugins::SavePlaylist::savePluginCallback
-						,'valueRef' => \$context{$client}
-						,'charsRef' => \@LegalChars
-						,'numberLetterRef' => \@legalMixed
-						,'header' => string('PLAYLIST_AS')
-						,'cursorPos' => 0
-						});
+		Slim::Buttons::Common::pushMode($client,'INPUT.Text', {
+			'callback' => \&Plugins::SavePlaylist::savePluginCallback,
+			'valueRef' => \$context{$client},
+			'charsRef' => \@LegalChars,
+			'numberLetterRef' => \@legalMixed,
+			'header' => string('PLAYLIST_AS'),
+			'cursorPos' => 0,
+		});
 	}
 }
 
