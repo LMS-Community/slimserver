@@ -1,6 +1,6 @@
 package Slim::Buttons::ScreenSaver;
 
-# $Id: ScreenSaver.pm,v 1.12 2003/12/23 08:36:48 kdf Exp $
+# $Id: ScreenSaver.pm,v 1.13 2004/01/11 21:56:33 kdf Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -46,16 +46,16 @@ sub screenSaver {
 	$::d_time && msg("screenSaver idle display " . ($now - Slim::Hardware::IR::lastIRTime($client) - Slim::Utils::Prefs::clientGet($client,"screensavertimeout")) . "(mode:" . Slim::Buttons::Common::mode($client) . ")\n");
 	my $mode = Slim::Buttons::Common::mode($client);
 	assert($mode);
-	
+	my $saver = Slim::Utils::Prefs::clientGet($client,'screensaver');
+		
 	# dim the screen if we're not playing...  will restore brightness on next IR input.
 	if (Slim::Utils::Prefs::clientGet($client,"screensavertimeout") && 
 			 Slim::Utils::Prefs::clientGet($client, 'autobrightness') &&
 			 Slim::Hardware::IR::lastIRTime($client) &&
 			 Slim::Hardware::IR::lastIRTime($client) < $now - Slim::Utils::Prefs::clientGet($client,"screensavertimeout") && 
-			 $mode ne 'screensaver' &&
 			 $mode ne 'block' &&
+			 $mode ne $saver &&
 			 $mode ne 'off' &&
-			 Slim::Player::Source::playmode($client) ne 'play' &&
 			 Slim::Hardware::VFD::vfdBrightness($client)) {
 		Slim::Hardware::VFD::vfdBrightness($client,1);
 	}
@@ -73,7 +73,6 @@ sub screenSaver {
 		
 		# we only go into screensaver mode if we've timed out 
 		# and we're not off or blocked
-		my $saver = Slim::Utils::Prefs::clientGet($client,'screensaver');
 		if ($saver eq 'playlist') {
 			if ($mode eq 'playlist') {
 				Slim::Buttons::Playlist::jump($client);
@@ -84,7 +83,7 @@ sub screenSaver {
 				$client->update();		
 			}
 		} else {
-			if (Slim::Buttons::Common::validMode($saver)) {
+			if (Slim::Buttons::Common::validMode($saver) && Slim::Player::Source::playmode($client) ne 'play') {
 				Slim::Buttons::Common::pushMode($client, $saver);
 			} else {
 				$::d_plugins && msg("Mode ".$saver." not found, using default\n");
