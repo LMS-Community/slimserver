@@ -174,7 +174,11 @@ sub time2offset {
 	my $offset   = int($byterate * $time);
 	
 	if ($client->streamformat() eq 'mp3') {
+		Slim::Music::Info::loadTagFormatForType('mp3');
 		($offset, undef) = Slim::Formats::MP3::seekNextFrame($client->audioFilehandle(), $offset, 1);
+	} elsif ($client->streamformat() eq 'flc') {
+		Slim::Music::Info::loadTagFormatForType('flc');
+		$offset = Slim::Formats::FLAC::seekNextFrame($client->audioFilehandle(), $offset, 1);
 	} else {
 		$offset     -= $offset % $align;
 	}
@@ -1592,6 +1596,7 @@ sub readNextChunk {
 
 					$tricksegmentbytes -= $tricksegmentbytes % $song->{blockalign};
 					if ($client->streamformat() eq 'mp3') {
+						Slim::Music::Info::loadTagFormatForType('mp3');
 						($seekpos, undef) = Slim::Formats::MP3::seekNextFrame($client->audioFilehandle(), $seekpos, 1);
 						my (undef, $endsegment) = Slim::Formats::MP3::seekNextFrame($client->audioFilehandle(), $seekpos + $tricksegmentbytes, -1);
 						
@@ -1604,6 +1609,7 @@ sub readNextChunk {
 						}
 					}
 					elsif ($client->streamformat() eq 'flc') {
+						Slim::Music::Info::loadTagFormatForType('flc');
 						$seekpos = Slim::Formats::FLAC::seekNextFrame($client->audioFilehandle(), $seekpos, 1);
 						my $endsegment = Slim::Formats::FLAC::seekNextFrame($client->audioFilehandle(), $seekpos + $tricksegmentbytes, -1);
 						if ($seekpos == 0 || $endsegment == 0 ||

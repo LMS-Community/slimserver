@@ -1333,9 +1333,7 @@ sub readCoverArtTags {
 
 			$::d_artwork && Slim::Utils::Misc::msg("Looking for image in Movie metadata in file $file\n");
 
-			if (!$tagFunctions{'mov'}->{'loaded'}) {
-				loadTagFormatForType('mov');
-			}
+			loadTagFormatForType('mov');
 
 			$body = Slim::Formats::Movie::getCoverArt($file);
 
@@ -1804,6 +1802,8 @@ sub typeFromPath {
 # Dynamically load the formats modules.
 sub loadTagFormatForType {
 	my $type = shift;
+
+	return if $tagFunctions{$type}->{'loaded'};
 
 	$::d_info && Slim::Utils::Misc::msg("Trying to load $tagFunctions{$type}->{'module'}\n");
 
