@@ -238,7 +238,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 use Slim::Networking::Slimproto;
 
-use vars qw($VERSION @AUTHORS);
+use vars qw($VERSION $REVISION @AUTHORS);
 
 @AUTHORS = (
 	'Sean Adams',
@@ -347,7 +347,21 @@ sub init {
 
 	autoflush STDERR;
 	autoflush STDOUT;
-	
+
+	my $revision = catdir($Bin, 'revision.txt');
+
+	# The revision file may not exist for svn copies.
+	if (-e $revision) {
+
+		open(REV, $revision);
+		chomp($REVISION = <REV>);
+		close(REV);
+
+	} else {
+
+		$REVISION = 'trunk';
+	}
+
 	$::d_server && msg("SlimServer OSDetect init...\n");
 	Slim::Utils::OSDetect::init();
 
