@@ -1,6 +1,6 @@
 package Slim::Player::Protocols::HTTP;
 		  
-# $Id: HTTP.pm,v 1.2 2004/09/15 02:48:07 vidur Exp $
+# $Id: HTTP.pm,v 1.3 2004/09/15 05:47:33 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -188,7 +188,7 @@ sub request {
 		
 		my $oldtitle = Slim::Music::Info::title($infoUrl);
 		
-		$self = $class->open($redir, $infoUrl);
+		$self = $class->open($redir, $redir);
 		
 		# if we've opened the redirect, re-use the old title and new content type.
 		
