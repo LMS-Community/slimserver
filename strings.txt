@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.116 2004/06/21 20:38:43 dean Exp $
+# $Id: strings.txt,v 1.117 2004/07/02 13:22:37 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -76,7 +76,7 @@ HIT_RELOAD
 	NL	<a href="/" target="_top">Klik hier</a> om de nieuwe skin te tonen
 	NO	<a href="/" target="_top">Trykk her</a> or å oppdatere med nytt utseende.
 	PT	Actualize esta página para activar o novo tema.
-	SE	Ladda om denna sida för att uppdatera utseendet.
+	SE	<a href="/" target="_top">Klicka här</a> för att ladda om sidan med det nya utseendet.
 
 LANGUAGE_CHOICES
 	DE	Deutsch
@@ -375,6 +375,7 @@ PAUSED
 SLIMSERVER
 	DE	SlimServer
 	EN	SlimServer
+	SE	SlimServer
 
 ABOUT
 	DE	SlimServer V.%s, entwickelt von:
@@ -481,7 +482,7 @@ CLEARING_PLAYLIST
 	NL	Bezig met leegmaken Playlist...
 	NO	Nullstiller spillelisten...
 	PT	A limpar a playlist...
-	SE	Rensar låtlista...
+	SE	Rensar låtlistan...
 
 VIEWING_PLAYLIST
 	DE	Playlist anschauen...
@@ -494,7 +495,7 @@ VIEWING_PLAYLIST
 	NL	Bekijken van playlist...
 	NO	Viser spillelisten...
 	PT	Playlist a Tocar...
-	SE	Visar låtlista...
+	SE	Visar låtlistan...
 
 PLAYLIST_EMPTY
 	DE	Playlist ist leer
@@ -614,6 +615,7 @@ POWERING_OFF
 POWER
 	DE	Power
 	EN	Power
+	SE	Strömförsörjning
 
 ALARM
 	DE	Wecker
@@ -800,7 +802,7 @@ UPDATING_FIRMWARE
 	EN	Updating Squeezebox firmware.
 	FR	Mise à jour du micrologiciel Squeezebox
 	NO	Oppdaterer spillerens programvare ('firmware')
-	SE	Uppdaterar spelarens mjukvara ('firmware')
+	SE	Uppdaterar spelarens mjukvara
 
 CONNECTING_FOR
 	DE	Verbindet zum Abspielen:
@@ -839,11 +841,13 @@ NO_PLAYLIST_DIR
 	DE	Problem: kein Playlist Ordner
 	EN	Problem: No Saved Playlist folder.
 	FR	Dossier Listes de lecture enregistrées introuvable.
+	SE	Problem: Det finns ingen mapp för sparade spellistor
 
 NO_PLAYLIST_DIR_MORE
 	DE	Bitte Server Einstellungen überprüfen
 	EN	Visit Server Settings to fix this.
 	FR	Consultez "Réglages du serveur".
+	SE	Ändra serverinställningar för att korrigera detta
 
 #
 # Setup Group strings
@@ -1041,16 +1045,19 @@ SETUP_PLUGINS-ONTHEFLY
 	DE	Plugins während der Programmausführung laden
 	EN	Load Plugins On-The-Fly
 	FR	Charger les modules à la volée
+	SE	Ladda tilläggsprogram On-the-Fly
 
 SETUP_PLUGINS-ONTHEFLY_0
 	DE	Plugins nur beim Programmstart laden
 	EN	Load Plugins at startup Only
 	FR	Charger les modules au démarrage uniquement
+	SE	Ladda tilläggsprogram endast vid serverstart
 
 SETUP_PLUGINS-ONTHEFLY_1
 	DE	Plugins während der Programmausführung laden
 	EN	Load Plugins On-The-Fly
 	FR	Charger les modules à la volée
+	SE	Laddar tilläggsprogram
 
 SETUP_GROUP_FORMATS
 	DE	Dateikonvertierungseinstellungen
@@ -1080,6 +1087,7 @@ SETUP_FORMATSLIST_MISSING_BINARY
 	DE	Ausführbare Datei wurde nicht gefunden:
 	EN	Required binary was not found:
 	FR	Binaire introuvable :
+	SE	Programmet kunde inte hittas:
 
 SETUP_FORMATSLIST
 	DE	Dateikonvertierung
@@ -1126,6 +1134,7 @@ COMMAND
 DECODER
 	EN	Decoder
 	FR	Décodeur
+	SE	Avkodare
 
 #
 # Setup preference strings
@@ -1442,12 +1451,14 @@ SETUP_SYNCPOWER_ON
 	EN	Power off/on with group
 	FR	Allumer/éteindre avec groupe
 	NO	Strøm av/på med gruppe
+	SE	På/av med synk-gruppen
 
 SETUP_SYNCPOWER_OFF
 	DE	Getrennt ein-/ausschalten
 	EN	Power off/on separately
 	FR	Allumer/éteindre indépendamment
 	NO	Strøm av/på alene
+	SE	På/av individuellt
 
 SETUP_SYNCPOWER
 	DE	Ein-/Ausschalten synchronisieren
@@ -1495,41 +1506,49 @@ SETUP_MAXBITRATE
 	DE	Bitraten-Beschränkung
 	EN	Bitrate Limiting
 	FR	Limite transcodage
+	SE	Begränsa bitkodningstakten
 
 SETUP_MAXBITRATE_DESC
 	DE	SlimServer kann ihre WAV/AIFF oder MP3 Dateien automatisch während des Abspielens in eine geringere Bitrate umwandeln. Das ist hilfreich, wenn Sie ihren Player übers Internet mit dem SlimServer verbinden oder Probleme mit dem Wireless LAN haben. Sie können die maximale Bitrate definieren, die der SlimServer zu ihrem Player streamen soll. MP3 Lieder, die mit einer geringeren Bitrate kodiert sind, werden nicht umgewandelt. Falls Sie "Keine Einschränkung" wählen, so werden MP3 Dateien nicht konvertiert und andere Dateitypen als unkomprimiertes PCM Audio gestreamt.
 	EN	SlimServer can automatically convert your music files to WAV/AIFF or MP3 on-the-fly to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to SlimServer across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that SlimServer will stream to your player.  MP3 songs encoded at a bitrate lower than below won't be converted.  If you choose No Limit, SlimServer will stream your MP3 files without conversion and your other file types as uncompressed PCM audio.
 	FR	Le SlimServer peut convertir automatiquement et à la volée vos fichiers de musique en WAV/AIFF ou MP3 afin de limiter le débit binaire envoyé à votre platine. Ce réglage est utile lorsque vous vous connectez au SlimServer depuis l'internet ou via un réseau sans fil défectueux. Vous pouvez spécifier le débit maximum envoyé par le SlimServer à votre platine. Les fichiers MP3 encodés à un débit inférieur ne seront pas transcodés. Si vous choisissez Pas de limite, le SlimServer enverra les fichiers MP3 sans transcodage et les autres types de fichiers au format PCM audio non compressé.
+	SE	SlimServer kan automatiskt och löpande konvertera dina musikfiler till WAV/AIFF eller MP3 för att sända lägre bitkodningstakt till din spelare. Detta är användbart om du kopplar till din SlimServer över Internet, eller emellanåt har problem med överföring via trådlöst nätverk. Du kan bestämma vilken maximal bitkodningstakt Slimserver ska sända till din spelare. MP3-filer ursprungligen kodade i lägre takt kommer inte att kodas om. Om du väljer "Ingen begräsning" kommer SlimServer sända dina MP3-filer utan omkodning och övriga filtyper i det okomprimerade PCM-audio-formatet.
 
 SETUP_MP3BITRATE_DESC
 	DE	SlimServer kann ihre MP3 Dateien automatisch während des Abspielens in andere Formate als MP3 umwandeln. SlimServer kann MP3 Dateien auch mit einer geringeren Bitrate neu kodieren. Das ist hilfreich, wenn Sie ihren Player übers Internet mit dem SlimServer verbinden oder Probleme mit dem Wireless LAN haben. Sie können die maximale Bitrate definieren, die der SlimServer zu ihrem Player streamen soll. MP3 Lieder, die mit einer geringeren Bitrate kodiert sind, werden nicht umgewandelt.
 	EN	SlimServer can automatically convert your music files to MP3 on-the-fly to play back other formats than MP3.  SlimServer can also recompress your MP3 files to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to SlimServer across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that SlimServer will stream to your player.  MP3 songs encoded at a bitrate lower than below won't be converted.
 	FR	Le SlimServer peut encoder automatiquement et à la volée vos fichiers de musique non-MP3 au format MP3, ainsi que ré-encoder vos fichiers MP3 existants afin de réduire le débit binaire envoyé à votre platine. Ce réglage est utile lorsque vous vous connectez au SlimServer depuis l'internet ou via un réseau sans fil défectueux. Vous pouvez spécifier le débit maximum envoyé par le SlimServer à votre platine. Les fichiers MP3 encodés à un débit inférieur ne seront pas transcodés.
+	SE	SlimServer kan automatiskt och löpande konvertera dina musikfiler till MP3 för att spela upp andra format än MP3. SlimServer kan också komprimera om dina MP3-filer så att lägre datatakt skickas till din spelare. Detta är värdefullt om du kopplar mot en server över Internet eller via trådlöst nätverk. Du kan bestämma vilken maximal bitkodningstakt Slimserver ska sända till din spelare. MP3-filer ursprungligen kodade i lägre takt kommer inte att kodas om.
 
 CONVERTED_TO
 	DE	Konvertiert nach
 	EN	Converted to
 	FR	Converti en
+	SE	Konverterad till
 
 SETUP_LAME_NOT_FOUND
 	EN	(<b>Note</b>: You do not appear to have LAME installed. SlimServer will need the LAME MP3 encoder installed on your system to do conversion to MP3.  You can find out more about LAME <a href="http://lame.sourceforge.net/">here</a>.)
 	FR	(<b>N.B.</b> : LAME ne semble pas être installé sur votre système. Le SlimServer a besoin de LAME pour l'encodage au format MP3. Plus d'infos sur LAME <a href="http://lame.sourceforge.net/">ici</a>.)
 	DE	(<b>Achtung</b>: damit SlimServer MP3 kodieren kann, muss der LAME MP3 Kodierer auf ihrem System installiert sein. Mehr über LAME erfahren Sie <a href="http://lame.sourceforge.net/">hier</a>.)
+	SE	(<b>Notera</b>: LAME verkar inte vara installerat i ditt system. SlimServer behöver använda LAME MP3-kodaren för att konvertera till MP3.  Läs mer om LAME <a href="http://lame.sourceforge.net/">här</a>.)
 
 SETUP_LAME_FOUND
 	DE	LAME scheint korrekt auf ihrem System installiert zu sein.
 	EN	The LAME encoder appears to be installed correctly on your system.
 	FR	LAME semble être installé correctement sur votre système.
+	SE	LAME verkar vara korrekt installerad i ditt system.
 
 SETUP_MP3SILENCEPRELUDE
 	DE	Audio Startzeit
 	EN	Audio Startup Time
 	FR	Délai de décodage audio
+	SE	Audio start-fördröjning
 
 SETUP_MP3SILENCEPRELUDE_DESC
 	DE	Einige Verstärker und D/A-Konverter brauchen etwas zusätzliche Zeit, um die Dekodierung zu beginnen, wenn der Player MP3 Daten wiedergibt. Definieren Sie hier die Wartezeit in Sekunden, die nach dem Druck auf Play abgewartet werden soll. Vorgabewert ist 0, ein Wert von 0.25 Sekunden funktioniert mit den meisten Verstärkern.
 	EN	Some audio receivers and D/A converters need a little extra time to start decoding audio from the player when playing back MP3 audio.  You can specify how much time, in seconds, to wait after pressing play to start sending MP3 audio.  The default value is 0, a value of 0.25 seconds works for many receivers.
 	FR	Certains récepteurs audio et convertisseurs numérique/analogique nécessitent un délai avant de pouvoir commencer le décodage d'une source MP3. Vous pouvez définir la durée en secondes de ce délai après l'appui sur la touche lecture. La valeur par défaut est 0, une valeur de 0.25 seconde est recommandée pour la plupart des récepteurs.
+	SE	Vissa förstärkare och D/A-omvandlare behöver lite extra tid för att inleda avkodning av MP3-ljud. Du kan ange hur lång fördröjning (i sekunder) som som ska gälla från det att du trycker Play tills det att MP3-ljud börjar sändas. Standard-värdet är 0. Värdet 0.25 fungerar bra med många förstärkare.
 
 SETUP_TITLEFORMATCURR
 	DE	Aktuelles Titelformat
@@ -1579,24 +1598,28 @@ SETUP_MOODLOGICPLAYLISTFORMAT
 	EN	MoodLogic Playlist Format
 	FR	Format des listes de lecture MoodLogic
 	NO	MoodLogic spilleliste format
+	SE	MoodLogic låtlistsformat
 
 SETUP_MOODLOGICPLAYLISTFORMAT_DESC
 	DE	Diese Option definiert das Format, in welcher MoodLogic Playlists importiert werden.
 	EN	This option determines the format used when importing MoodLogic playlists.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture MoodLogic.
 	NO	Denne innstillingen avgjør hvilket format som brukes ved import av MoodLogic spillelister.
+	SE	Denna inställning styr format vid import av MoodLogic-låtlistor
 
 SETUP_MOODLOGICPLAYLISTPREFIX_CHOOSE
 	DE	Prefix:
 	EN	Prefix:
 	FR	Préfixe :
 	NO	Prefic:
+	SE	Prefix:
 
 SETUP_MOODLOGICPLAYLISTSUFFIX_CHOOSE
 	DE	Suffix:
 	EN	Suffix:
 	FR	Suffixe :
 	NO	Suffix:
+	SE	Suffix:
 
 SETUP_ITUNESPLAYLISTPREFIX_CHOOSE
 	EN	Prefix:
@@ -1736,11 +1759,13 @@ SETUP_AUDIODIR
 	DE	Musikverzeichnis
 	EN	Music Folder
 	FR	Dossier de musique
+	SE	Musikmapp
 
 SETUP_AUDIODIR_DESC
 	DE	Sie können ein Verzeichnis definieren, dessen Musikdateien vom SlimServer durchsucht und zur Musiksammlung hinzugefügt werden sollen. Definieren Sie den Pfad zum Ordner im folgenden Feld. Sie können den Eintrag leer lassen, falls Sie die Musiksammlung von iTunes oder MoodLogic verwenden.
 	EN	You can specify a folder containing music files that SlimServer will scan and add to your music library.  Enter the path to the folder below.  You can leave this field blank if you are importing your music library information from iTunes or MoodLogic.
 	FR	Vous pouvez spécifier un dossier contenant vos fichiers musicaux afin que le SlimServer le répertorie et ajoute son contenu à votre collection de musique. Entrez le chemin ci-dessous. Vous pouvez ignorer ce champ si vous utilisez iTunes ou Moodlogic pour gérer votre collection de musique.
+	SE	Du kan ange en mapp som SlimServer kommer scanna för att lägga till musik till ditt bibliotek. Ange läget nedan. Om du importerar MoodLogic eller iTunes behöver ingenting anges.
 
 SETUP_AUDIODIR_OK
 	DE	Der Server verwendet den folgenden Pfad zu ihren MP3 Dateien:
@@ -1785,6 +1810,7 @@ SETUP_BAD_FILE
 	DE	Ups! "%s" scheint keine korrekte Datei zu sein. Bitte versuchen Sie es erneut.
 	EN	Oops - "%s" doesn't seem to be a valid file. Try again.
 	FR	"%s" ne semble pas être un fichier valide. Ré-essayez.
+	SE	Oops - "%s" verkar inte vara en giltig fil. Försök igen.
 
 SETUP_BAD_DIRECTORY
 	DE	Ups! "%s" ist kein gültiges Verzeichnis. Bitte versuchen Sie es noch einmal.
@@ -1797,7 +1823,7 @@ SETUP_BAD_DIRECTORY
 	NL	Oeps! "%s" is geen geldige folder. Probeer opnieuw.
 	NO	Huffda, "%s" er ikke en gyldig katalog. Forsøk igjen.
 	PT	A Pasta "%s" não é válida. Tente de novo.
-	SE	%s verkar inte vara en godkänd mapp. Försök igen.
+	SE	"%s" verkar inte vara en godkänd mapp. Försök igen.
 
 SETUP_OK_USING
 	DE	Der Server verwendet den folgenden Pfad für ihre Musikdateien:
@@ -1908,11 +1934,13 @@ USING_ITUNES
 	DE	Der Server wird die Informationen aus iTunes importieren.
 	EN	The server will import iTunes information.
 	FR	Le SlimServer importera les données iTunes.
+	SE	SlimServer kommer importera iTunes-information
 
 NOT_USING_ITUNES
 	DE	Der Server wird keine Informationen aus iTunes mehr importieren.
 	EN	The server will no longer import iTunes information.
 	FR	Le SlimServer n'importera plus les données iTunes.
+	SE	SlimServer kommer inte att importera iTunes-information längre.
 
 USE_ITUNES
 	DE	Verwendung von iTunes
@@ -1929,6 +1957,7 @@ DONT_USE_ITUNES
 	DE	iTunes nicht verwenden
 	EN	Do Not Use iTunes
 	FR	Ne pas utiliser iTunes
+	SE	Använd inte iTunes
 
 SETUP_ITUNES
 	DE	iTunes
@@ -1944,11 +1973,13 @@ SETUP_ITUNES_OK
 	DE	Der Server wird die Informationen aus iTunes importieren.
 	EN	The server will import iTunes information.
 	FR	Le SlimServer importera les données iTunes.
+	SE	SlimServer kommer att importera iTunes-information.
   
 SETUP_ITUNES_DESC
 	DE	Der SlimServer kann ihre iTunes-Musiksammlung und -Playlists verwenden. Alle Änderungen, die Sie in iTunes vornehmen, spiegeln sich auf dem Player wieder. Aktivieren Sie die folgende Checkbox, falls Sie die Informationen aus iTunes verwenden wollen.
 	EN	The SlimServer can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. Check the box below if you want to import your iTunes Music Library information.
 	FR	Le SlimServer peut utiliser votre bibliothèque et vos listes de lecture iTunes. Les modifications que vous apporterez dans iTunes seront répercutées sur votre platine. Cochez la case ci-dessous pour importer les données de votre bibliothèque iTunes.
+	SE	SlimServer kan använda ditt iTunes-bibliotek och -låtlistor. Alla förändringar som görs via iTunes kommer att få genomslag i din spelare. Klicka i rutan nedan om du vill importera iTunes-informationen.
 
 USE_MOODLOGIC
 	DE	MoodLogic verwenden
@@ -1983,30 +2014,35 @@ SETUP_MOODLOGIC_DESC
 	DE	Der SlimServer kann MoodLogic als Quelle für Titel- und Musikstil-Informationen verwenden. Zusätzlich können Sie "Instant Mixes" auf Grund von Musikstil, Interpret und Lied-Intensität erstellen. Aktivieren Sie die folgende Checkbox, falls Sie die Informationen aus MoodLogic verwenden wollen.
 	EN	The SlimServer can use your MoodLogic program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level. Check the box below to import your MoodLogic Library information.
 	FR	Le SlimServer peut utiliser le logiciel MoodLogic comme source pour les titres et les genres. Vous pouvez par ailleurs générer des mixes instantanés par genre, artiste ou morceau. Cochez la case ci-dessous pour importer les données de votre bibliothèque MoodLogic.
+	SE	SlimServer kan använda din MoodLogic som källa till information om låtar och genrer. Dessutom kan du generera mixade låtlistor on-the-fly baserade på genre, artist och låt-nivå. Klicka i rutan nedan om du vill importera din MoodLogic-information.
 
 SETUP_INSTANTMIXMAX
 	DE	Maximale Anzahl Lieder für Instant Mix
 	EN	Instant Mix Max Count
 	FR	Nombre maximum de morceaux par Mix
 	NO	Maks antall for hurtigmiks
+	SE	Max antal låtar för "Instant Mix"
 
 SETUP_INSTANTMIXMAX_DESC
 	DE	Definiert die maximale Anzahl Lieder, die in einer als Instant Mix erstellten Playlist erfasst sein sollen. Instant Mixes können weniger Lieder haben, abhängig von den Variety Einstellungen.
 	EN	This is the maximum number of songs you want in playlists created as an Instant Mix. Instant Mixes may have fewer songs, depending on the Variety setting.
 	FR	Spécifiez le nombre maximum de morceaux que vous souhaitez voir apparaitre dans un Mix instantané. Les Mixes instantanés peuvent comporter un nombre inférieur de morceaux en fonction du réglage Variété.
 	NO	Dette er maks antall sanger som du vil ha i spillelister laget som en hurtigmiks. Hurtigmikser kan ha færre sanger, alt etter Variasjons instillinger.
+	SE	Detta är det maximala antalet låtar som du vill att en "Instant Mix"-låtlista ska innehålla. (Låtlistan kan innehålla färre låtar, beroende på Variation-inställning.) 
 
 SETUP_VARIETYCOMBO
 	DE	Moodlogic Variety
 	EN	Moodlogic Variety
 	FR	Variété MoodLogic
 	NO	Moodlogic Variasjon
+	SE	MoodLogic-Variation
 
 SETUP_VARIETYCOMBO_DESC
 	DE	Mit diesem Wert steuern Sie die Variety Einstellung für den Moodlogic Instant Mix. Kleinere Werte bedeuten eine grössere Variation an Musik, grössere Werte eine engere Auswahl. Gültige Werte sind 0-100.
 	EN	This is the value to control the variety setting for Moodlogic Instant Mixes.  Lower numbers mean a wider variety of music, higher numbers mean less variety.  Valid numbers are 0-100.
 	FR	Spécifiez un nombre pour régler le paramètre Variété des Mixes instantanés MoodLogic. Un nombre bas signifie une variété plus importante de musique, un nombre élevé une variété réduite. Les valeurs acceptées sont 0-100.
 	NO	Dette er verdien som kontrollerer variasjonsinstillingen for Moodlogic Hurtigmiks. Lavere verdi betyr bredere variasjon av musikk, høyere verdi betyr mindre variasjon. Gyldige verdier er 0-100.
+	SE	Detta värde styr variationen på musik i "Instant Mix"-listor skapade av MoodLogic. Lägre värden betyder större variation. Värden mellan 0 och 100 är möjliga.
 
 # advanced server settings
 SETUP_MENUITEM
@@ -2100,28 +2136,33 @@ SETUP_MOODLOGICSCANINTERVAL
 	DE	Moodlogic Aktualisierungs-Intervall
 	EN	Moodlogic Reload Interval
 	FR	Délai d'actualisation MoodLogic
+	SE	Intervall för uppdatering av MoodLogic
 
 SETUP_MOODLOGICSCANINTERVAL_DESC
 	DE	Wenn ihre Moodlogic Datenbank verändert wird, importiert SlimServer automatisch die Bibliotheksinformationen. Wählen Sie die minimale Wartezeit (in Sekunden), die SlimServer vor einem erneuten Import der Moodlogic Datenbank abwarten soll.
 	EN	When your Moodlogic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your Moodlogic Database again.  
 	FR	Le SlimServer importe automatiquement les modifications apportées à votre bibliothèque MoodLogic. Vous pouvez spécifier le délai minimum en secondes avant lequel le SlimServer rechargera les données MoodLogic.
+	SE	När någon förändring sker i MoodLogic-databasen importerar SlimServer automatiskt dessa ändringar. Slimserver väntar minimalt det antal sekunder som anges här.
 
 SETUP_MOODLOGICSCANINTERVAL_OK
 	DE	Minimale Wartezeit für Moodlogic Datenbank Import:
 	EN	Minimum Moodlogic Database reload time:
 	FR	Délai d'actualisation MoodLogic
+	SE	Minsta intervall mellan MoodLogic-laddningar
 
 SETUP_ITUNESSCANINTERVAL
 	DE	iTunes Aktualisierungs-Intervall
 	EN	iTunes Reload Interval
 	FR	Délai d'actualisation iTunes
 	NO	iTunes Oppdateringsintervall
+	SE	iTunes uppdateringsintervall
 
 SETUP_ITUNESSCANINTERVAL_DESC
 	DE	Wenn sich die iTunes Musiksammlung ändert, wird SlimServer automatisch die Daten neu einlesen. Sie können die Mindestwartezeit (in Sekunden) definieren, die SlimServer warten soll, bevor er die iTunes Musiksammlung neu einliest.
 	EN	When your iTunes Music Library changes SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your iTunes Music Library again.  
 	FR	Le SlimServer importe automatiquement les changements apportés à votre bibliothèque iTunes. Vous pouvez spécifier le délai minimum en secondes avant que le SlimServer actualise la bibliothèque iTunes.
 	NO	Når ditt iTunes Musikkbibliotek endres, vil SlimServer automatisk importere bibliotek informasjonen. Du kan spesifisere minimumstiden (i sekunder) som SlimServer vil vente før den oppdaterer iTunes Musikkbiblioteket igjen.
+	SE	När någon förändring sker i ditt iTunes musikbibliotek importerar SlimServer automatiskt dessa ändringar. Slimserver väntar minimalt det antal sekunder som anges här.
 
 SETUP_ITUNESSCANINTERVAL_OK
 	DE	Minimale Wartezeit fürs Einlesen der iTunes Musiksammlung
@@ -2134,41 +2175,49 @@ SETUP_ITUNES_LIBRARY_AUTOLOCATE
 	DE	iTunes Musiksammlung automatisch finden
 	EN	Find iTunes Library Automatically
 	FR	Localisation automatique de la bibliothèque iTunes
+	SE	Hitta ditt iTunes musikbibliotek
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE_DESC
 	DE	Sie können wählen, ob SlimServer versuchen soll, die iTunes Musiksammlung automatisch zu finden, oder ob Sie dies manuell tun wollen. Für eine manuelle Wahl wählen Sie "iTunes Musiksammlung manuell suchen" und geben den Pfad zur iTunes Music Library.xml Datei an.
 	EN	You may choose to have the server try to find the iTunes Music Library automatically or specify the locations manually.  To specify the locations, choose Specify iTunes Library Locations below and enter the path to the iTunes Music Library.xml file and your iTunes Music folder.
 	FR	Vous pouvez choisir que le SlimServer tente de localiser la bibliothèque iTunes automatiquement ou que son emplacement soit spécifié. Pour spécifier l'emplacement, choisissez Spécifier l'emplacement de la bibliothèque iTunes ci-dessous et entrez le chemin vers votre fichier iTunes Music Library.xml et votre dossier iTunes.
+	SE	Du kan välja mellan att låta SlimServer försöka finna iTunes automatiskt eller specificera var det är intstallerat. Klicka nedan för att specificera manuellt och ange läget på "iTunes Music Library.xml"-fil och ditt iTunes musikbibliotek
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE_0
 	DE	iTunes Musiksammlung manuell suchen
 	EN	Specify iTunes Library Locations
 	FR	Spécifier l'emplacement de la bibliothèque iTunes
+	SE	Specificera var iTunes musikbibliotek är installerat
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE_1
 	DE	iTunes Musiksammlung automatisch finden
 	EN	Find iTunes Library Automatically
 	FR	Localiser automatiquement la bibliothèque iTunes
+	SE	Hitta iTunes musikbibliotek automatiskt
 
 SETUP_ITUNES_LIBRARY_XML_PATH
 	DE	Speicherort der iTunes Music Library.xml 
 	EN	iTunes Music Library.xml Location
 	FR	Emplacement de iTunes Music Library.xml
+	SE	Läge för filen "iTunes Music Library.xml"
 
 SETUP_ITUNES_LIBRARY_XML_PATH_DESC
 	DE	Falls Sie den Speicherort ihrer iTunes Music Library.xml Datei manuell definieren wollen, so geben Sie hier den kompletten Pfad inkl. Dateiname an.
 	EN	If you are specifying the location of your iTunes Music Library, enter the path to the iTunes Music Library.xml file here, including the whole file name.
 	FR	Si vous avez choisi de spécifier l'emplacement de votre bibliothèque iTunes, entrez le chemin de votre fichier iTunes Music Library.xml ci-dessous, nom de fichier inclus.
+	SE	Om du valt att specificera läget av ditt iTunes musikbibliotek manuellt anger du läget här, inklusive hela filnamnet
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH
 	DE	iTunes Musik Ordner
 	EN	iTunes Music Folder
 	FR	Dossier musique iTunes
+	SE	iTunes musikbibliotek
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	DE	Falls Sie den Speicherort ihrer iTunes Music Library.xml Datei manuell definieren wollen, so geben Sie hier den kompletten Pfad zu ihrem iTunes Musik Ordner an.
 	EN	If you are specifying the location of your iTunes Music Library, enter the path, including the folder name, containing your iTunes Music.
 	FR	Si vous avez choisi de spécifier l'emplacement de votre bibliothèque iTunes, entrez le chemin de celle-ci ci-dessous, nom de dossier inclus.
+	SE	Om du valt att specificera iTunes anger du läget på ditt iTunes musikbibliotek här
 
 SETUP_COVERART
 	DE	Plattencover
@@ -2277,17 +2326,20 @@ SETUP_IGNOREMP3TAGS
 	EN	Ignore MP3 Tags
 	FR	Ignorer les repères MP3
 	NO	Ignorer MP3 tagger
+	SE	Ignorera MP3-taggar
 
 SETUP_IGNOREMP3TAGS_DESC
 	DE	Sie können angeben, ob der SlimServer die Informationen, die ev. in den ID3 Tags der MP3 Dateien gespeichert sind, ignorieren und seine Informationen nur aus Datei- und Ordnernamen beziehen soll.
 	EN	You can choose whether SlimServer should ignore the tag information that may be embedded in the music files and just use the file and folder names to identify your music library.
 	FR	Vous pouvez forcer le SlimServer à ignorer les repères ID3 contenus dans vos fichiers de musique et utiliser à la place les noms de dossiers et de fichier pour répertorier votre bibliothèque de musique.
+	SE	Du kan välja om SlimServer ska ignorera information lagrad i dina MP3-filer och istället läsa information från mapp- och filnamn
 
 SETUP_READMP3TAGS
 	DE	MP3 Tags einlesen
 	EN	Read MP3 Tags
 	FR	Lire les repères MP3
 	NO	Les MP3 tagger
+	SE	Läs MP3-taggar
 
 SETUP_PLUGINS_OK
 	DE	Ihr Plugin-Menü enthält:
@@ -2624,24 +2676,28 @@ SETUP_IGNOREDISABLEDITUNESTRACKS
 	EN	Ignore Songs Disabled in iTunes
 	FR	Ignorer les morceaux désactivés dans iTunes
 	NO	Ignorer sanger som er deaktivert i iTunes
+	SE	Ignorera låtar som är de-aktiverade i iTunes
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
 	DE	Wenn SlimServer ihre iTunes Musiksammlung verwendet, so kann er die in iTunes deaktivierten Musikstücke ignorieren. Falls Sie dennoch auf alle Lieder (auch die deaktivierten) zugreifen wollen, können Sie dies hier konfigurieren.
 	EN	If SlimServer is using your iTunes Music Library, it can ignore the songs that you have unchecked in iTunes.  If you want to access all the songs in your iTunes Library even if they are unchecked, you can change that setting here.
 	FR	Si le SlimServer utilise votre bibliothèque iTunes, il peut ignorer les morceaux que vous avez dé-sélectionnés depuis iTunes. Si vous voulez accéder à ces morceaux, vous pouvez le spécifier ici.
 	NO	Hvis SlimServer bruker ditt iTunes Musikkbibliotek, kan den ignorere sanger som har blitt bortvalgt i iTunes. Hvis du ønsker tilgang til sangene i iTunes biblioteket selv om de er bortvalgt, kan du velge det her.
+	SE	När Slimserver använder sig av iTunes-information, kan SlimServer välja att ignorera filer som avmarkerats. Med denna inställning kan du välja om SlimServer trots allt ska använda dessa filer
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_1
 	DE	Deaktivierte Musikstücke ignorieren
 	EN	Ignore songs unchecked in iTunes
 	FR	Ignorer les morceaux désactivés dans iTunes
 	NO	Ignorer sanger bortvalgt i iTunes
+	SE	Ignorera låtar som är omarkerade i iTunes
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_0
 	DE	Deaktivierte Musikstücke anzeigen
 	EN	Don't ignore songs unchecked in iTunes
 	FR	Ne pas ignorer les morceaux désactivés dans iTunes
 	NO	Ikke ignorer sanger bortvalgt i iTunes
+	SE	Ignorera inte låtar som är omarkerade i iTunes
 
 SETUP_HISTORYLENGTH
 	DE	Länge des Verlaufs
@@ -3045,12 +3101,14 @@ SETUP_SPLITCHARS
 	EN	Multiple Items In Tags
 	FR	Eléments multiples dans les répères ID3
 	NO	Multiple elementer i tagger
+	SE	Flera element i taggarna
 
 SETUP_SPLITCHARS_DESC
 	DE	SlimServer kann mehrere Interpreten, Albumtitel und Musikstile in den Tags ihrer Musikstücke erkennen. Falls SlimServer in den Tags eines der folgenden Trennzeichen erkennt, so kann es individuelle Einträge für die einzelnen Werte in die Listen aufnehmen. Wenn Sie z.B. den Strichpunkt als Trennzeichen definieren, so wird ein Lied mit dem Interpreten Tag "J. S. Bach;Michael Tilson Thomas" sowohl unter "J. S. Bach" als auch "Michael Tilson Thomas" aufgelistet .
 	EN	SlimServer can extract multiple artist, album titles and genres from the tags inside your music files.  If SlimServer finds any of the characters below in your tags, it will create individual listings for each item.  For example, if you put a semicolon in the list below, a song with an artist tag of "J. S. Bach;Michael Tilson Thomas" will appear in the artists area for both "J. S. Bach" and "Michael Tilson Thomas".
 	FR	Le SlimServer peut extraire plusieurs noms d'artistes, titres d'albums ou genres des repères ID3 de vos fichiers musicaux. Si le SlimServer détecte l'un des caractères ci-dessous dans les répères ID3, il créera une entrée différente pour chaque élément présent - par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le répère ID3 "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas".
 	NO	SlimServer kan lese ut multiple artister, album titler og genre fra taggene i musikkfilene dine. Dersom SlimServer finner noen av tegnene nedenfor i taggene, vil den lage individuelle oppføringer for hvert av elementene. F.eks, hvis du putter et semikolon i listen nedenfor, vil en samg med artist taggen "J. S. Back;Michael Tilson Thomas" listes under artister både med "J. S. Bach" og "Michael Tilson Thomas".
+	SE	SlimServer kan läsa multipla artister, album och genres från taggarna i dina musikfiler. Om SlimServer finner något av tecknen nedan i taggarna, skapas individuella låtar för vart och ett. Exempelvis: "J. S. Back;Michael Tilson Thomas" listes under artister både med "J. S. Bach" och "Michael Tilson Thomas" som artist.
 
 SETUP_FILESORT
 	DE	Sortieren nach Dateinamen
@@ -3411,18 +3469,21 @@ SETUP_WEBPROXY
 	EN	Web Proxy
 	FR	Proxy web
 	NO	Web Proxy
+	SE	WebProxy
 
 SETUP_WEBPROXY_DESC
 	DE	Sie können die IP Adresse und den Port eines HTTP/Web Proxys definieren, den SlimServer verwenden soll, um auf Server ausserhalb ihres Netzwerkes zugreifen zu können. Benutzen Sie das Format xxx.xxx.xxx.xxx:yyy. xxx.xxx.xxx.xxx bezeichnet die IP Adresse des Servers, während yyy die Port-Nummer definiert. Lassen Sie das Feld frei, falls Sie keinen HTTP/Web Proxy verwenden.
 	EN	You can specify the IP address and port for an HTTP/Web proxy to use when SlimServer connects to servers outside your local network.  Use the format xx.xx.xx.xx:yyyy where xx.xx.xx.xx is the IP address of the proxy, and yyyy is the port number.  Leave this field blank of you don't use a HTTP web proxy.
 	FR	Vous pouvez spécifier l'adresse IP d'un proxy HTTP/web à utiliser lorsque le SlimServer tente de se connecter à un serveur situé à l'extérieur de votre réseau local. Utilisez le format xxx.xxx.xxx.xxx:yyyy où xxx.xxx.xxx.xxx est l'adresse IP du proxy et yyyy le numéro de port. Ignorez ce réglage si vous n'utilisez pas de proxy.
 	NO	Du kan spesifisere IP adresse og port for en HTTP/Web proxy til bruk når SlimServer kobler til servere utenfor ditt lokale nettverk. Bruk formatet xx.xx.xx.xx:yyyy hvor xx.xx.xx.xx er IP adressen til proxy, og yyyy er port nummeret. La feltet stå tomt om du ikke ønsker å bruke HTTP web proxy.
+	SE	Du kan specificera IP-adress och -port på den HTTP/WebProxy som SlimServer ska ansluta sig till när den skapar anslutnignar utanför ditt lokala nätverk. Använd formatet xx.xx.xx.xx:yyyy där xx.xx.xx.xx är proxyns IP-adress, och yyyy är portnumret.  Lämna blankt om du inte använder webproxy.
 
 SETUP_WEBPROXY_CHOOSE
 	DE	Web Proxy Adresse
 	EN	Web Proxy Address
 	FR	Adresse du proxy web
 	NO	Web Proxy adresse
+	SE	Webproxy, adress
 
 SETUP_SHOWBUFFERFULLNESS
 	DE	Puffer-Füllstatus anzeigen
@@ -4391,6 +4452,7 @@ PITCH
 	DE	Pitch
 	EN	Pitch
 	NO	Pitch
+	SE	Pitch
 
 TEXTSIZE
 	DE	Textgröße
@@ -4451,6 +4513,7 @@ TITLEFORMAT
 TITLEFORMAT_DBL
 	DE	Titelformat
 	FR	Format titres
+	SE	Titelformat
 
 CURRENT_PLAYLIST
 	DE	Die aktuelle Playlist
@@ -4699,6 +4762,7 @@ CONDUCTOR
 	EN	Conductor
 	FR	Chef d'Orchestre
 	NO	Dirigent
+	SE	Dirigent
 
 BAND
 	DE	Band/Orchester
@@ -4758,22 +4822,10 @@ APE
 	EN	Monkey's Audio
 
 MP3
-	DE	MP3
 	EN	MP3
-	FR	MP3
-	NL	MP3
-	NO	MP3
-	PT	MP3
-	SE	MP3
 
 MP2
-	DE	MP2
 	EN	MP2
-	FR	MP2
-	NL	MP2
-	NO	MP2
-	PT	MP2
-	SE	MP2
 
 MOV
 	DE	Apple AAC- oder Film-Datei
@@ -4788,40 +4840,31 @@ MOV
 M3U
 	EN	M3U Playlist
 	FR	Liste M3U
+	SE	M3U-låtlista
 
 PLS
 	EN	PLS Playlist
 	FR	Liste PLS
+	SE	PLS-låtlista
 
 MPC
-	DE	MPC
 	EN	Musepack
-	NO	MPC
 
 SHN
-	DE	SHN
 	EN	Shorten
-	NO	SHN
 
 WMA
-	DE	WMA
 	EN	Windows Media
-	NO	Windows Media
 
 M4P
 	DE	Geschütztes AAC
 	EN	Protected AAC
 	FR	AAC protégé
 	NO	Beskyttet AAC
+	SE	Kopieringsskyddad ACC
 
 AIF
-	DE	AIF
 	EN	AIFF
-	FR	AIFF
-	NL	AIFF
-	NO	AIFF
-	PT	AIFF
-	SE	AIFF
 
 UNK
 	DE	Unbekannt
@@ -4834,31 +4877,13 @@ UNK
 	SE	Okänd
 
 WAV
-	DE	WAV
 	EN	WAV
-	FR	WAV
-	NL	WAV
-	NO	WAV
-	PT	WAV
-	SE	WAV
 
 FLC
-	DE	FLC
 	EN	FLAC
-	FR	FLAC
-	NL	FLAC
-	NO	FLAC
-	PT	FLAC
-	SE	FLAC
 
 OGG
-	DE	OGG
 	EN	Ogg Vorbis
-	FR	Ogg Vorbis
-	NL	Ogg Vorbis
-	NO	Ogg Vorbis
-	PT	Ogg Vorbis
-	SE	Ogg Vorbis
 
 MODTIME
 	DE	Datum geändert
@@ -5036,6 +5061,7 @@ NO_LIMIT
 	DE	Keine Einschränkung
 	EN	No Limit
 	FR	Pas de limite
+	SE	Ingen begränsning
 
 GENRES
 	DE	Stilrichtungen
@@ -5128,6 +5154,7 @@ ALL_SUBFOLDERS
 	EN	All Subfolders
 	FR	Tous les dossiers
 	NO	Alle underfoldere
+	SE	Alla undermappar
 
 OF
 	DE	von
@@ -5198,6 +5225,7 @@ SONG
 	NL	Liedje
 	NO	Sang
 	PT	Música
+	SE	Låt
 
 LCSONGS
 	DE	Titel
@@ -5209,7 +5237,7 @@ LCSONGS
 	NL	liedjes
 	NO	sanger
 	PT	músicas
-	SE	låtar
+	SE	Låtar
 
 BROWSE_MUSIC
 	DE	Musik nachschlagen
@@ -5248,7 +5276,7 @@ BROWSE_BY_ARTIST
 	NL	Doorzoeken op Artiest
 	NO	Bla i Artister
 	PT	Escolher por Artista
-	SE	Bläddra Artister
+	SE	Bläddra artister
 
 BROWSE_BY_ARTIST_DBL
 	FR	Parcours artistes
@@ -5263,7 +5291,7 @@ BROWSE_BY_ALBUM
 	NL	Doorzoeken op Albums
 	NO	Bla i Album
 	PT	Escolher por Álbum
-	SE	Bläddra Album
+	SE	Bläddra album
 
 BROWSE_BY_ALBUM_DBL
 	FR	Parcours albums
@@ -5321,6 +5349,7 @@ NOT_SYNCHRONIZED
 	DE	Nicht synchronisiert
 	EN	Not Synchronized
 	FR	Non synchronisé
+	SE	Inte synkroniserad
 
 SYNCHRONIZED_WITH
 	DE	Synchronisiert mit
