@@ -141,7 +141,7 @@ sub initPlugin {
 		# Note: Check version restrictions if any
 		$initialized = $content;
 
-		checker();
+		Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 60), \&checker);
 
 		Slim::Music::Import::addImporter('MUSICMAGIC', \&startScan, \&mixerFunction, \&addGroups, \&mixerlink);
 		Slim::Music::Import::useImporter('MUSICMAGIC', Slim::Utils::Prefs::get('musicmagic'));

@@ -180,7 +180,7 @@ sub initPlugin {
 	Plugins::MoodLogic::VarietyCombo::init();
 
 	$initialized = 1;
-	checker();
+	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 60), \&checker);
 
 	return $initialized;
 }
