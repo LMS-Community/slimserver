@@ -18,6 +18,8 @@ use Slim::Networking::Stream;
 
 use base qw(Slim::Player::Player);
 
+our $SLIMP3Connected = 0;
+
 sub new {
 	my $class    = shift;
 	my $id       = shift;
@@ -49,6 +51,9 @@ sub new {
 	}
 
 	Slim::Utils::Prefs::set("clients", join(',', @uniq));
+
+	# Turn on readUDP in the select loop.
+	$SLIMP3Connected = 1;
 
 	return $client;
 }

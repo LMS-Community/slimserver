@@ -21,7 +21,6 @@ BEGIN {
 	}
 }
 
-
 our %readSockets;
 our %readCallbacks;
 
@@ -115,25 +114,26 @@ sub select {
 		my $readsub = $readCallbacks{"$sock"};
 		$readsub->($sock) if $readsub;
 		$count++;
-		# this is totally overkill...
-		Slim::Networking::Protocol::readUDP();
+
+		# Conditionally readUDP if there are SLIMP3's connected.
+		Slim::Networking::Protocol::readUDP() if $Slim::Player::SLIMP3::SLIMP3Connected;
 	}
 	
 	foreach my $sock (@$w) {
 		my $writesub = $writeCallbacks{"$sock"};
 		$writesub->($sock) if $writesub;
 		$count++;
-		# this is totally overkill...
-		Slim::Networking::Protocol::readUDP();
+
+		Slim::Networking::Protocol::readUDP() if $Slim::Player::SLIMP3::SLIMP3Connected;
 	}
 
-      foreach my $sock (@$e) {
-              my $errorsub = $errorCallbacks{"$sock"};
-              $errorsub->($sock) if $errorsub;
-              $count++;
-              # this is totally overkill...
-              Slim::Networking::Protocol::readUDP();
-      }
+	foreach my $sock (@$e) {
+		my $errorsub = $errorCallbacks{"$sock"};
+		$errorsub->($sock) if $errorsub;
+		$count++;
+
+		Slim::Networking::Protocol::readUDP() if $Slim::Player::SLIMP3::SLIMP3Connected;
+	}
 
 	return $count;
 }

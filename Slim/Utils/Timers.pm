@@ -34,9 +34,12 @@ my $checkingTimers = 0; # Semaphore to avoid timer callbacks executing inside ea
 sub checkTimers {
 
 	return if $checkingTimers;
+
 	$checkingTimers = 1;
-    
-	Slim::Networking::Protocol::readUDP() unless $::scanOnly;
+
+	if ($Slim::Player::SLIMP3::SLIMP3Connected && !$::scanOnly) {
+		Slim::Networking::Protocol::readUDP();
+	}
 
 	my $numtimers = (@timers);
 	my $now = Time::HiRes::time();
