@@ -60,6 +60,9 @@ my ($currentDB, $localDB);
 # Save our stats.
 tie our %isFile, 'Tie::Cache::LRU', 16;
 
+# No need to do this over and over again either.
+tie our %urlToTypeCache, 'Tie::Cache::LRU', 16;
+
 sub init {
 
 	loadTypesConfig();
@@ -1558,7 +1561,12 @@ sub typeFromPath {
 
 	if (defined($fullpath) && $fullpath ne "" && $fullpath !~ /\x00/) {
 
-		if (isRemoteURL($fullpath)) {
+		# Return quickly if we have it in the cache.
+		if (defined $urlToTypeCache{$fullpath}) {
+
+			return $urlToTypeCache{$fullpath};
+
+		} elsif (isRemoteURL($fullpath)) {
 
 			$type = typeFromSuffix($fullpath, $defaultType);
 
@@ -1607,7 +1615,10 @@ sub typeFromPath {
 		$type = $defaultType;
 	}
 
+	$urlToTypeCache{$fullpath} = $type;
+
 	$::d_info && Slim::Utils::Misc::msg("$type file type for $fullpath\n");
+
 	return $type;
 }
 
