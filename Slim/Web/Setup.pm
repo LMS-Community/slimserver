@@ -1504,7 +1504,7 @@ sub initSetupConfig {
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['displaytexttimeout',
-							,'composerInArtists','playtrackalbum','artistinalbumsearch', 'searchSubString', 'ignoredarticles','splitList','filesort'
+							,'playtrackalbum','searchSubString', 'ignoredarticles','splitList','filesort'
 							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
 							,'checkVersion']
 				}
@@ -1534,20 +1534,6 @@ sub initSetupConfig {
 						,'options' => {
 								'1' => string('SETUP_PLAYTRACKALBUM_1')
 								,'0' => string('SETUP_PLAYTRACKALBUM_0')
-								}
-					}
-			,'composerInArtists' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_COMPOSERINARTISTS_1')
-								,'0' => string('SETUP_COMPOSERINARTISTS_0')
-								}
-					}
-			,'artistinalbumsearch' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_ARTISTINALBUMSEARCH_1')
-								,'0' => string('SETUP_ARTISTINALBUMSEARCH_0')
 								}
 					}
 			,'searchSubString' => {
@@ -3049,7 +3035,7 @@ sub validateInt {
 }
 
 sub validatePort {
-	my $val = shift;
+	my $val = shift || return undef;
 
 	if ($val !~ /^-?\d+$/) { #not an integer
 		return undef;
@@ -3071,7 +3057,7 @@ sub validatePort {
 }
 
 sub validateHostNameOrIPAndPort {
-	my $val = shift || return undef;
+	my $val = shift || return '';
 
 	# If we're just an IP:Port - hand off
 	if ($val =~ /^[\d\.:]+$/) {
