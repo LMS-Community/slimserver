@@ -152,7 +152,13 @@ sub read_plugins {
 
 		my $displayName = eval { &{$fullname . "::getDisplayName"}() };
 
-		if (!$@ && $displayName) {
+		# Older plugins don't send back the string token - so we don't
+		# want to load them.
+		if ($displayName && !Slim::Utils::Strings::stringExists($displayName)) {
+
+			$::d_plugins && msg("Can't load plugin $fullname - not 6.0+ compatible.\n");
+
+		} elsif (!$@ && $displayName) {
 
 			#Slim::Utils::Strings::addStringPointer(uc($plugin), $displayName);
 
@@ -176,7 +182,8 @@ sub read_plugins {
 			Slim::Buttons::Home::addMenuOption($plugins{$plugin}->{'name'},\%params);
 
 		} else {
-			$::d_plugins && msg("Can't load $fullname for Plugins menu: " . $@);
+
+			$::d_plugins && msg("Can't load $fullname for Plugins menu: $@\n");
 		}
 
 		addDefaultMaps();
