@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.153 2004/10/19 20:04:47 dean Exp $
+# $Id: Info.pm,v 1.154 2004/10/21 01:18:54 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2687,11 +2687,11 @@ sub isHTTPURL {
 }
 
 sub isRemoteURL {
-	return ((shift =~ /^([a-zA-Z\-]+):/) && $Slim::Player::Source::protocolHandlers{$1});
+	return ((shift =~ /^([a-zA-Z0-9\-]+):/) && $Slim::Player::Source::protocolHandlers{$1});
 }
 
 sub isURL {
-	return ((shift =~ /^([a-zA-Z\-]+):/) && exists($Slim::Player::Source::protocolHandlers{$1}));
+	return ((shift =~ /^([a-zA-Z0-9\-]+):/) && exists($Slim::Player::Source::protocolHandlers{$1}));
 }
 
 sub isType {
