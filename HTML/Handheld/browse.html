@@ -1,51 +1,32 @@
-[%# Page browse.html %]
-[%- title = BLOCK %]
-[%- playermodel | string %] : [% "BROWSE_MUSIC" | string -%]
-[%- END -%]
-[%- pageicon = 'MUSIC'
-    browse   = '1' 
-    music    = '1' 
-    playlist = '0' -%]
-[%- PROCESS pageheader.html -%]
-[%- PROCESS menu.html -%]
+<!-- Element browse.html -->
+	[% pagetitle = "BROWSE_MUSIC" | string %]
+	[% PROCESS pageheader.html %]
+	
+	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
+		<tr>
+			<td>/ <a href="browse.html?dir=&player=[% player | uri %]">[% "MUSIC" | string %]</a>[% pwd_list %]</td>
+		</tr>
+	    <tr><td>
+		    [% IF browselist_pagebar %][% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %][% END %]
+	    </td></tr>
+	</table>
 
-<font face="arial,helvetica">
+	[% IF badpath == '1' %]
+	    [% IF playlist %][% "NEED_PLAYLIST_PATH" | string %][% END %]
+	    [% IF not playlist %][% "NEED_PATH" | string %][% END %]
+	    <p><a href="setup.html?page=server&player=[% player | uri %]">[% "CLICK_HERE" | string %]</a> [% "TO_GO_TO_SERVER_SETTINGS" | string %]</p>
+	[% END %]
 
-<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
-       <tr><td><a href="browse.html?dir=&player=[% player | uri %]">[% "MUSIC" | string %]</a>
-       [% pwd_list %]</td>
-       [% IF not dir %]<td width="11" align="center"><nobr><a href="status.html?p0=playlist&p1=load&p2=&player=[% player | uri %]" ><img src="html/images/b_play.gif" heigth="13" width="13" border="0"></a></nobr></td>
-       <td width="3" align="center">&nbsp;</td>
-       <td width="11" align="center"><nobr><a href="status.html?p0=playlist&p1=add&p2=&player=[% player | uri %]" ><img src="html/images/b_add.gif" height="13" width="13" border="0"></a></nobr></td>
-       <td width="3" align="center">&nbsp;</td><td width="14" align="center">&nbsp;</td>[% END %]
-       </tr>
-</table>
+	[% IF coverart %]
+	    <p><center>
+	    <img src="/music/[% coverartpath | uri %]/cover.jpg" border="0" width="150"></a>
+	    </center></p>
+	[% END %]
 
-[% IF browselist_pagebar %]<p>[% "PAGES" | string %]:[% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %]</p>[% END %]
-[% IF badpath == '1' %]
-    [% IF playlist %][% "NEED_PLAYLIST_PATH" | string %][% END %]
-    [% IF not playlist %][% "NEED_PATH" | string %][% END %]
-    <p><a href="setup.html?page=server&player=[% player | uri %]">[% "CLICK_HERE" | string %]</a> [% "TO_GO_TO_SERVER_SETTINGS" | string %]</p>
-[% END %]
-[% IF coverart %]
-    <p><center>
-    <img src="/music/[% coverartpath | uri %]/cover.jpg" border="0" width="150"></a>
-    </center></p>
-[% END %]
-<center>
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-    [% browse_list %]
-</table>
-</center>
-
-[% IF browselist_pagebar %]<p>[% "PAGES" | string %]:[% browselist_pagebar %]</p>[% END %]
-
-[% IF song_count %]
-    <table width="100%" bgcolor="#666666"><tr><td>
-    <font color="#ffffff" size="-1">[% "LIBRARY_CONTAINS" | string %] <b>[% song_count %]</b> [% "BY" | string %] <b>[% artist_count %]</b>
-    </td></tr></table>
-[% END %]
-
-</font>
-[% PROCESS pagefooter.html %]
-[%# /Page browse.html %]
+	<table border="0" cellspacing="0" cellpadding="0" width="100%">
+	    [% browse_list %]
+	</table>
+	
+	[% PROCESS songcount.html %]	
+	[% PROCESS pagefooter.html %]
+<!-- Element browse.html -->

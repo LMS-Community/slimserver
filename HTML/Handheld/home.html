@@ -1,56 +1,39 @@
 <!-- Page home.html -->
-[% pagetitle = "HOME" | string %] [% pageicon = 'MUSIC' %] [% browse = '1' %] [% music = '1' %][% playlist = '0' %]
+	[% pagetitle = "HOME" | string %]
+	[% PROCESS pageheader.html %]
 
-[% PROCESS pageheader.html %]
-[% PROCESS menu.html %]
+	<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "BROWSE_MUSIC" | string %]</h4></td></tr></table>
+	<ul>
+	[% IF additionalLinks.browse %]
+    	[% FOREACH link = additionalLinks.browse %]
+    		<li><a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a></li>
+    	[% END %]
+	[% END %]
+	</ul>
 
-
-<font face="arial,helvetica">
-
-<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "BROWSE_MUSIC" | string %]</h4></td></tr></table>
-<ul>
-[% IF additionalLinks.browse %]
-    [% FOREACH link = additionalLinks.browse %]
-    <li>
- 		<a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a>
- 	</li>
-    [% END %]
-[% END %]
-</ul>
-
-<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "SEARCH" | string %]</h4></td></tr></table>
-<ul>
-[% IF additionalLinks.search %]
-    [% FOREACH key = additionalLinks.search.keys %]
-    <li>
- 		<a href="[% additionalLinks.search.$key %]player=[% player | uri %]">[% key | string %]</a>
- 	</li>
-    [% END %]
-[% END %]
-</ul>
-
-[% IF additionalLinks.plugins %]
-<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "PLUGINS" | string %]</h4></td></tr></table>
-    <ul>
-    [% FOREACH key = additionalLinks.plugins.keys %]
-    <li> <a href="[% additionalLinks.plugins.$key %]player=[% player | uri %]">[% key | string %]</a>
-    </li>
-    [% END %]
-    </ul>
-[% END %]
-
-<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "HELP" | string %]</h4></td></tr></table>
-<ul>
-    <li>
-        <a href="html/help.html">[% "HELP" | string %]</a>
-    </li>
-</ul>
-
-[% IF song_count %]
-    <table width="100%" bgcolor="#666666"><tr><td><small><font color="#ffffff">[% "LIBRARY_CONTAINS" | string %] [% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].</font></small></td></tr></table>
-[% END %]
-
-</font>
-
-[% PROCESS pagefooter.html %]
+	<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "SEARCH" | string %]</h4></td></tr></table>
+	<ul>
+	[% IF additionalLinks.search %]
+	    [% FOREACH key = additionalLinks.search.keys %]
+	    	<li><a href="[% additionalLinks.search.$key %]player=[% player | uri %]">[% key | string %]</a></li>
+	    [% END %]
+	[% END %]
+	</ul>
+	
+	[% IF additionalLinks.plugins %]
+	<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "PLUGINS" | string %]</h4></td></tr></table>
+	<ul>
+		[% FOREACH key = additionalLinks.plugins.keys %]
+			<li><a href="[% additionalLinks.plugins.$key %]player=[% player | uri %]">[% key | string %]</a></li>
+	    [% END %]
+	</ul>
+	[% END %]
+	
+	<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "HELP" | string %]</h4></td></tr></table>
+	<ul>
+	    <li><a href="[% webroot %]html/help.html">[% "HELP" | string %]</a></li>
+	</ul>
+	
+	[% PROCESS songcount.html %]	
+	[% PROCESS pagefooter.html %]
 <!-- /Page home.html -->

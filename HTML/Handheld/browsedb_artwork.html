@@ -1,0 +1,27 @@
+	<div align="left" width="100%" style="float:left">
+		<table cellpadding="5" cellspacing="0" border="0" align="left">
+			<tr><td width="[% size %]">
+				[% IF coverthumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]"><a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]"><center><img src="/music/[% thumbartpath | uri %]/thumb.jpg" border="0" height="[% size %]" width="[% size %]" alt="[% item | html %][% IF year %] ([% year %])[% END %]" title="[% item | html %][% IF year %] ([% year %])[% END %]"></a></td></table>[% END %]
+				[% IF not coverthumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]"><a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]"><center>[% item | html %][% IF year %] ([% year %])[% END %]</center></a></td><td><a href=""><img src="html/images/spacer.gif" border="0" height="[% size %]" width="0" alt="[% item | html %][% IF year %] ([% year %])[% END %]"></a></td></table>[% END %]
+			</td></tr>
+			<tr><td>
+				<table cellspacing="0" border="0" align="left">
+					<td>
+						[% IF mixable_descend %]<a href="mood_wheel.html?genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% "MOODLOGIC_SELECT_MOOD_SHORT" | string %]</a>[% END %]
+						[% IF mixable_not_descend %] <a href="instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% "MOODLOGIC_MIX" | string %]</a>[% END %]
+					</td>
+
+					<td align="right">
+						[% IF descend %]<a href="status_header.html?command=playlist&sub=loadtracks[% attributes | html %]&player=[% player | uri %]" target="status"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>[% END %]
+						[% IF not descend %]<a href="status_header.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]"></a>[% END %]
+					</td>
+
+					<td  align="right">
+						[% IF descend %]<a href="status_header.html?command=playlist&sub=addtracks[% attributes | html %]&player=[% player | uri %]" target="status"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>[% END %]	
+						[% IF not descend %]<a href="status_header.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target="status"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>[% END %]
+					</td>
+				</table>
+			</td></tr>
+		</table>
+	</div>
+	

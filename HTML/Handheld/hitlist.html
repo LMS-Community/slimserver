@@ -1,38 +1,25 @@
 <!-- Page hitlist.html -->
-[% pagetitle = "MUSIC" | string %] [% pageicon = 'MUSIC' %] [% setup = '1' %] [% music = '0' %][% playlist = '0' %] [% status = '1' %]
+	[% pagetitle = "STATISTICS" | string %]
+	[% PROCESS pageheader.html %]
 
-[% PROCESS pageheader.html %]
-[% PROCESS menu.html %]
+	<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "STATISTICS" | string %]</h4></td></tr></table>
 
-<font face="arial,helvetica">
+	<table cellspacing="0" border="0" cellpadding="4" width="100%">
+		<tr align="center">
+			<td>[% song_count %]</td>
+			<td>[% album_count %]</td>
+		</tr>
+		<tr align="center">
+			<td>[% artist_count %]</td>
+			<td align="center">[% genre_count %]</td>
+		</tr>
+	</table>
 
-<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "STATISTICS" | string %]</h4></td></tr></table>
+	<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "MOSTPLAYED" | string %]</h4></td></tr></table>
 
-<table cellspacing="0" border="0" cellpadding="4" width="100%">
-       <tr>
-          <td align="center">
-                [% song_count %]
-          </td>
-          <td align="center">
-          [% album_count %]
-          </td>
-       </tr>
-       <tr align="center">
-          <td>
-                [% artist_count %]
-          </td>
-          <td align="center">
-                [% genre_count %]
-          </td>
-       </tr>
-</table>
+	<table cellspacing="0" border="0" cellpadding="0" width="100%">
+		[% browse_list %]
+	</table>
 
-<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "MOSTPLAYED" | string %]</h4></td></tr></table>
-
-<table cellspacing="0" border="0" cellpadding="0" width="100%">
-      [% browse_list %]
-</table>
-
-</font>
-[% PROCESS pagefooter.html %]
+	[% PROCESS pagefooter.html %]
 <!-- /Page hitlist.html -->

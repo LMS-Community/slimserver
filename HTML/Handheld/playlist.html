@@ -1,41 +1,38 @@
-[%# Page playlist.html %]
-[%- title = BLOCK %]
-[%- playermodel | string %] : [% "PLAYLIST" | string -%]
-[%- END -%]
-[%- pageicon = 'MUSIC'
-    browse   = '0'
-    music    = '0'
-    playlist = '1'
-    status = '0'
-    setup = '1' -%]
-[%- PROCESS pageheader.html -%]
-[%- PROCESS menu.html -%]
+<!-- Page playlist.html -->
+	[% title = "PLAYLIST" | string %]
+	[%- PROCESS pageheader.html -%]
 
-<font face="arial,helvetica">
-<table bgcolor="#c5c5c5" width=100%><tr><td align="center">
-       [% "CURRENT_PLAYLIST" | string %]: [% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %] [% IF playlistname %]<b>[% playlistname %]</b>[% END %] ([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])
-</td></tr></table>
+	<table bgcolor="#c5c5c5" width=100%>
+		<tr><td align="center">
+			[% "CURRENT_PLAYLIST" | string %]: [% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %] [% IF playlistname %]<b>[% playlistname %]</b>[% END %] ([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])
+		</td></tr>
+		[% IF playlist_header %]
+			<tr><td align="center">[% playlist_header %]</td></tr>
+		[% END %]
+		[% IF playlist_pagebar %]
+			<tr><td>
+				[% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %]
+	    	</td></tr>
+	    [% END %]
+	</table>
 
-[% IF playlist_pagebar %]<font size="-1"><br>[% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %]</font>[% END %]
-[% IF playlist_header %]<font size="-1">&nbsp;|&nbsp;[% playlist_header %]</font><br>[% END %]
+	[% IF not playlist_items %]
+		<p>[% "EMPTY" | string %]</p>
+	[% ELSE %]
+		<table cellspacing="0" border="0" cellpadding="0" width="100%">
+			[% playlist_items %]
+		</table>
+	[% END %]
 
-<table cellspacing="0" border="0" cellpadding="0" width="100%">
-       [% IF not playlist_items %][% "EMPTY" | string %][% END %][% playlist_items %]
-</table>
+	<table bgcolor="#dfdfdf" width=100%>
+		<tr><td align="center">
+			[% IF cansave %]
+				<a href="browse.html?player=[% player | uri %]&dir=__playlists%2f__current.m3u">[% "SAVE" | string %]</a> | 
+			[% END %]
+			<a href="status.m3u?player=[% player | uri %]">[% "DOWNLOAD" | string %]</a> |
+			<a href="status.html?p0=playlist&p1=clear&player=[% player | uri %]">[% "CLEAR" | string %]</a></small></font>
+    	</td></tr>
+	</table>
 
-[% IF playlist_pagebar %][% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %][% END %]
-[% IF playlist_header %]&nbsp;|&nbsp;[% playlist_header %]<br>[% END %]
-
-</font>
-
-<table bgcolor="#dfdfdf" width=100%><tr><td align="center">
-       <font face="arial,helvetica"><small>[% IF cansave %]<a href="browse.html?player=[% player | uri %]&dir=__playlists%2f__current.m3u">[% "SAVE" | string %]</a> | [% END %]
-       <a href="status.m3u?player=[% player | uri %]">[% "DOWNLOAD" | string %]</a> |
-       <a href="status.html?p0=playlist&p1=clear&player=[% player | uri %]">[% "CLEAR" | string %]</a></small></font>
-</small>
-</center>
-
-</font>
-
-[% PROCESS pagefooter.html %]
-[%# /Page playlist.html %]
+	[% PROCESS pagefooter.html %]
+<!-- Page /playlist.html -->

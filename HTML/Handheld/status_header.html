@@ -1,105 +1,136 @@
-[%# Page status_header.html %]
-[%- title = BLOCK %]
-[%- playermodel | string %] : [% "PLAYING" | string -%]
-[%- END -%]
-[%- pageicon = 'MUSIC'
-    setup    = '1'
-    music    = '0'
-    playlist = '0'
-    status   = '1' -%]
-[%- PROCESS pageheader.html -%]
-[%- PROCESS menu.html -%]
+<!-- Page status_header.html -->
+	[% title = "PLAYING" | string %]
+	[% PROCESS pageheader.html %]
+	
+	<table width=100% border="0" cellspacing="0" cellpadding="0">
+		<tr[% IF sync %] bgcolor="#c5c5c5"[% END %]>
+			<td colspan="2">
+				[% IF player_chooser_list %]
+					<form method="get" action="[% webroot %]status.html">[% "CURRENT_PLAYER" | string %]
+						<select name="player">[% player_chooser_list %]</select>
+						<input class="stdclick" type="submit" value="Change">
+					</form>
+				[% ELSE %]
+					[% IF sync %][% "SYNCHRONIZED_WITH" | string %] [% sync %][% END %]
+				[% END %]
+			</td>
+		</tr>
 
-<font face="arial,helvetica">
-<table width=100%>
-<tr><td colspan="2"><font size="-2">
-[% IF player_chooser_list %]<form method="get" action="[% webroot %]status.html">[% "CURRENT_PLAYER" | string %] <select name="player">[% player_chooser_list %]</select><input class="stdclick" type="submit" value="Change"></form>[% END %]
-[% IF not player_chooser_list %][% IF player_name %][% player_name %][% END %] [% IF sync %][% "SYNCHRONIZED_WITH" | string %] [% sync %][% END %][% END %]
-</font>
-</td></tr>
-<tr><td colspan="2">
-<font size="-2">[% IF modeplay %][% "PLAYING" | string %][% END %]
-[% IF modepause %][% "PAUSED_ON" | string %][% END %]
-[% IF modestop %][% "STOPPED_ON" | string %][% END %]
-[% IF currentsong %]<b>[% currentsong %]</b> [% "OUT_OF" | string %] <b>&nbsp;[% songcount %]</b>&nbsp;[% END %]
-</font>
-</td><tr>
-   [% IF songtitle %]<tr><td>[% "TITLE" | string %][% "COLON" | string %]</td>
-          <td><a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% songtitle %]</a></td>
-      </tr>
-   [% END %]
-   [% IF artist %]<tr><td>[% "ARTIST" | string %][% "COLON" | string %]</td>
-          <td><a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]">[% artist %]</a></td>
-      </tr>
-   [% END %]
-      <tr>
-          <td>[% IF album %][% "ALBUM" | string %][% "COLON" | string %][% END %]</td>
-          <td>[% IF album %]<a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% album %]</a>[% END %][% IF year %] ([% year %])[% END %]</td>
-   </tr>
-[% IF coverart %]
-      <tr>
-          <td></td><td><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]"><img src="/music/[% itempath | uri %]/cover.jpg" border="0" height="100"></a></td>
-      </tr>
-   [% END %]
-</table>
+		<tr>
+			<td colspan="2">
+				[% IF modeplay %][% "PLAYING" | string %][% END %]
+				[% IF modepause %][% "PAUSED_ON" | string %][% END %]
+				[% IF modestop %][% "STOPPED_ON" | string %][% END %]
+				[% IF currentsong %]
+					<b>[% currentsong %]</b> [% "OUT_OF" | string %]<b>&nbsp;[% songcount %]</b>&nbsp;
+				[% END %]
+			</td>
+		</tr>
 
-<br>
-<table width=100% bgcolor="#c5c5c5">
-   <tr align="center">
-        <td><a href="status.html?p0=play&player=[% player | uri %]">[% IF modeplay %]<b>[% END %][% "PLAY" | string %][% IF modeplay %]</b>[% END %]</a></td>
-        <td><a href="status.html?p0=stop&player=[% player | uri %]">[% IF modestop %]<b>[% END %][% "STOP" | string %][% IF modestop %]</b>[% END %]</a></td>
-        <td><a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% player | uri %]">[% "PREV" | string %]</a></td>
-        <td><a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% player | uri %]">[% "NEXT" | string %]</a></td>
-        <td><a href="status.html?p0=pause&player=[% player | uri %]">[% IF modepause %]<b>[% END %][% "PAUSE" | string %][% IF modepause %]</b>[% END %]</a></td>
-   </tr>
-</table>
-<table width="100%">
-[% IF isplayer %]<tr>
-	<td><font size="-2">[% "VOLUME" | string %][% "COLON" | string %]</font></td>
-	<td><font size="-2"><a href="status.html?p0=mixer&p1=volume&p2=-10&player=[% player | uri %]&start=[% start %]">[% "VOLUME_SOFTER" | string %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=0&player=[% player | uri %]&start=[% start %]">[% IF volume == '0' %]<b>[% END %]1[% IF volume == '0' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=10&player=[% player | uri %]&start=[% start %]">[% IF volume == '10' %]<b>[% END %]2[% IF volume == '10' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=20&player=[% player | uri %]&start=[% start %]">[% IF volume == '20' %]<b>[% END %]3[% IF volume == '20' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=30&player=[% player | uri %]&start=[% start %]">[% IF volume == '30' %]<b>[% END %]4[% IF volume == '30' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=40&player=[% player | uri %]&start=[% start %]">[% IF volume == '40' %]<b>[% END %]5[% IF volume == '40' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=50&player=[% player | uri %]&start=[% start %]">[% IF volume == '50' %]<b>[% END %]6[% IF volume == '50' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=60&player=[% player | uri %]&start=[% start %]">[% IF volume == '60' %]<b>[% END %]7[% IF volume == '60' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=70&player=[% player | uri %]&start=[% start %]">[% IF volume == '70' %]<b>[% END %]8[% IF volume == '70' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=80&player=[% player | uri %]&start=[% start %]">[% IF volume == '80' %]<b>[% END %]9[% IF volume == '80' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=90&player=[% player | uri %]&start=[% start %]">[% IF volume == '90' %]<b>[% END %]10[% IF volume == '90' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=100&player=[% player | uri %]&start=[% start %]">[% IF volume == '100' %]<b>[% END %]11[% IF volume == '100' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=%2b10&player=[% player | uri %]&start=[% start %]">[% "VOLUME_LOUDER" | string %]</a>
-</font></td></tr>
-<tr>
-    <td><font size="-2">[% "MUTE" | string %][% "COLON" | string %]</font></td>
-    <td><a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=1"><font size="-2">[% IF volume < '1' %]<b>[% END %][% "MCON" | string %][% IF volume < '1' %]</b>[% END %]</font></a>&nbsp;<a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=0"><font size="-2">[% IF volume > '0' %]<b>[% END %][% "MCOFF" | string %][% IF volume > '0' %]</b>[% END %]</font></a></td>
-</tr>[% END %]
-<tr>
-    <td><font size="-2">[% "REPEAT" | string %][% "COLON" | string %]</font></td>
-    <td>
-    <a href="status.html?p0=playlist&p1=repeat&p2=1&player=[% player | uri %]&start=[% start %]">[% IF repeatone %]<b>[% END %]<font size="-2">[% "MCONE" | string %]</font>[% IF repeatone %]</b>[% END %]</a>&nbsp;
-    <a href="status.html?p0=playlist&p1=repeat&p2=2&player=[% player | uri %]&start=[% start %]">[% IF repeatall %]<b>[% END %]<font size="-2">[% "MCALL" | string %]</font>[% IF repeatall %]</b>[% END %]</a>&nbsp;
-    <a href="status.html?p0=playlist&p1=repeat&p2=0&player=[% player | uri %]&start=[% start %]">[% IF repeatoff %]<b>[% END %]<font size="-2">[% "MCOFF" | string %]</font>[% IF repeatoff %]</b>[% END %]</a>
-    </td>
-</tr>
-<tr>
-    <td><font size="-2">[% "SHUFFLE" | string %][% "COLON" | string %]</font></td>
-    <td>
-    <a href="status.html?p0=playlist&p1=shuffle&p2=1&player=[% player | uri %]">[% IF shuffleon %]<b>[% END %]<font size="-2">[% "SONG" | string %]</font>[% IF shuffleon %]</b>[% END %]</a>&nbsp;
-    <a href="status.html?p0=playlist&p1=shuffle&p2=2&player=[% player | uri %]">[% IF shufflealbum %]<b>[% END %]<font size="-2">[% "ALBUM" | string %]</font>[% IF shufflealbum %]</b>[% END %]</a>&nbsp;
-    <a href="status.html?p0=playlist&p1=shuffle&p2=0&player=[% player | uri %]">[% IF shuffleoff %]<b>[% END %]<font size="-2">[% "MCOFF" | string %]</font>[% IF shuffleoff %]</b>[% END %]</a>
-    </td>
-</tr>
-<tr>
-    <td><font size="-2">[% "POWER" | string %][% "COLON" | string %]</font></td>
-    <td>
-    <a href="status.html?player=[% player | uri %]&p0=power&p1=1">[% IF mode != 'off' %]<b>[% END %]<font size="-2">[% "MCON" | string %]</font>[% IF mode != 'off' %]</b>[% END %]</a>&nbsp;
-    <a href="status.html?player=[% player | uri %]&p0=power&p1=0">[% IF mode == 'off' %]<b>[% END %]<font size="-2">[% "MCOFF" | string %]</font>[% IF mode == 'off' %]</b>[% END %]</a>
-    </td>
-</tr>
-</table>
+		[% IF songtitle %]
+			<tr>
+				<td>[% "TITLE" | string %][% "COLON" | string %]</td>
+				<td><a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% songtitle %]</a></td>
+			</tr>
+		[% END %]
+	   		
+		[% FOREACH role = track.contributorRoles.sort %]
+			[% contributors = track.contributorsOfType(role) %]
+			[% IF contributors %]
+				<tr>
+					<td>[% role | upper | string %][% "COLON" | string %]</td>
+					<td>
+						[% FOREACH contributor = contributors.sort %]
+							<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% contributor.id %]&amp;player=[% player | uri %]">[% contributor.name %]</a>
+						[% END %]
+					</td>
+				</tr>
+			[% END %]
+		[% END %]
+	
+		[% IF track.album %]
+			<tr>
+				<td>[% "ALBUM" | string %][% "COLON" | string %]</td>
+				<td>
+					<a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]">[% track.album %]</a>
+					[% IF track.year %] ([% track.year %])[% END %]
+				</td>
+			</tr>
+		[% END %]
 
-</font>
+		[% IF track.coverArt %]
+			<tr>
+				<td></td>
+				<td><a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]"><img src="/music/[% itempath | uri %]/cover.jpg" border="0"></a></td>
+			</tr>
+		[% END %]
+	</table>
+	
+	<p></p>
+	<table width=100% bgcolor="#c5c5c5">
+	   <tr align="center">
+	        <td><a href="status.html?p0=play&player=[% player | uri %]">[% IF modeplay %]<b>[% END %][% "PLAY" | string %][% IF modeplay %]</b>[% END %]</a></td>
+	        <td><a href="status.html?p0=stop&player=[% player | uri %]">[% IF modestop %]<b>[% END %][% "STOP" | string %][% IF modestop %]</b>[% END %]</a></td>
+	        <td><a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% player | uri %]">[% "PREV" | string %]</a></td>
+	        <td><a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% player | uri %]">[% "NEXT" | string %]</a></td>
+	        <td><a h
+	        ref="status.html?p0=pause&player=[% player | uri %]">[% IF modepause %]<b>[% END %][% "PAUSE" | string %][% IF modepause %]</b>[% END %]</a></td>
+	   </tr>
+	</table>
+	
+	<table width="100%">
+		[% IF isplayer %]
+			<tr>
+				<td>[% "VOLUME" | string %][% "COLON" | string %]</td>
+				<td><a href="status.html?p0=mixer&p1=volume&p2=-10&player=[% player | uri %]&start=[% start %]">[% "VOLUME_SOFTER" | string %]</a>
+			       <a href="status.html?p0=mixer&p1=volume&p2=0&player=[% player | uri %]&start=[% start %]">[% IF volume == '0' %]<b>[% END %]1[% IF volume == '0' %]</b>[% END %]</a>
+			       <a href="status.html?p0=mixer&p1=volume&p2=10&player=[% player | uri %]&start=[% start %]">[% IF volume == '10' %]<b>[% END %]2[% IF volume == '10' %]</b>[% END %]</a>
+			       <a href="status.html?p0=mixer&p1=volume&p2=20&player=[% player | uri %]&start=[% start %]">[% IF volume == '20' %]<b>[% END %]3[% IF volume == '20' %]</b>[% END %]</a>
+			       <a href="status.html?p0=mixer&p1=volume&p2=30&player=[% player | uri %]&start=[% start %]">[% IF volume == '30' %]<b>[% END %]4[% IF volume == '30' %]</b>[% END %]</a>
+			       <a href="status.html?p0=mixer&p1=volume&p2=40&player=[% player | uri %]&start=[% start %]">[% IF volume == '40' %]<b>[% END %]5[% IF volume == '40' %]</b>[% END %]</a>
+			       <a href="status.html?p0=mixer&p1=volume&p2=50&player=[% player | uri %]&start=[% start %]">[% IF volume == '50' %]<b>[% END %]6[% IF volume == '50' %]</b>[% END %]</a>
+			       <a href="status.html?p0=mixer&p1=volume&p2=60&player=[% player | uri %]&start=[% start %]">[% IF volume == '60' %]<b>[% END %]7[% IF volume == '60' %]</b>[% END %]</a>
+			       <a href="status.html?p0=mixer&p1=volume&p2=70&player=[% player | uri %]&start=[% start %]">[% IF volume == '70' %]<b>[% END %]8[% IF volume == '70' %]</b>[% END %]</a>
+			       <a href="status.html?p0=mixer&p1=volume&p2=80&player=[% player | uri %]&start=[% start %]">[% IF volume == '80' %]<b>[% END %]9[% IF volume == '80' %]</b>[% END %]</a>
+			       <a href="status.html?p0=mixer&p1=volume&p2=90&player=[% player | uri %]&start=[% start %]">[% IF volume == '90' %]<b>[% END %]10[% IF volume == '90' %]</b>[% END %]</a>
+			       <a href="status.html?p0=mixer&p1=volume&p2=100&player=[% player | uri %]&start=[% start %]">[% IF volume == '100' %]<b>[% END %]11[% IF volume == '100' %]</b>[% END %]</a>
+			       <a href="status.html?p0=mixer&p1=volume&p2=%2b10&player=[% player | uri %]&start=[% start %]">[% "VOLUME_LOUDER" | string %]</a>
+				</td>
+			</tr>
+			<tr>
+	    		<td>[% "MUTE" | string %][% "COLON" | string %]</td>
+	    		<td>
+	    			<a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=1">[% IF volume < '1' %]<b>[% END %][% "MCON" | string %][% IF volume < '1' %]</b>[% END %]</a>&nbsp;<a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=0">[% IF volume > '0' %]<b>[% END %][% "MCOFF" | string %][% IF volume > '0' %]</b>[% END %]</a>
+	    		</td>
+			</tr>
+		[% END %]
 
-[% PROCESS pagefooter.html %]
-[%# /Page status_header.html %]
+		<tr>
+		    <td>[% "REPEAT" | string %][% "COLON" | string %]</td>
+	    	<td>
+			    <a href="status.html?p0=playlist&p1=repeat&p2=1&player=[% player | uri %]&start=[% start %]">[% IF repeatone %]<b>[% END %][% "MCONE" | string %][% IF repeatone %]</b>[% END %]</a>&nbsp;
+			    <a href="status.html?p0=playlist&p1=repeat&p2=2&player=[% player | uri %]&start=[% start %]">[% IF repeatall %]<b>[% END %][% "MCALL" | string %][% IF repeatall %]</b>[% END %]</a>&nbsp;
+			    <a href="status.html?p0=playlist&p1=repeat&p2=0&player=[% player | uri %]&start=[% start %]">[% IF repeatoff %]<b>[% END %][% "MCOFF" | string %][% IF repeatoff %]</b>[% END %]</a>
+	    	</td>
+		</tr>
+		
+		<tr>
+			<td>[% "SHUFFLE" | string %][% "COLON" | string %]</td>
+			<td>
+				<a href="status.html?p0=playlist&p1=shuffle&p2=1&player=[% player | uri %]">[% IF shuffleon %]<b>[% END %][% "SONG" | string %][% IF shuffleon %]</b>[% END %]</a>&nbsp;
+				<a href="status.html?p0=playlist&p1=shuffle&p2=2&player=[% player | uri %]">[% IF shufflealbum %]<b>[% END %][% "ALBUM" | string %][% IF shufflealbum %]</b>[% END %]</a>&nbsp;
+				<a href="status.html?p0=playlist&p1=shuffle&p2=0&player=[% player | uri %]">[% IF shuffleoff %]<b>[% END %][% "MCOFF" | string %][% IF shuffleoff %]</b>[% END %]</a>
+			</td>
+		</tr>
+	
+		<tr>
+			<td>[% "POWER" | string %][% "COLON" | string %]</td>
+			<td>
+				<a href="status.html?player=[% player | uri %]&p0=power&p1=1">[% IF mode != 'off' %]<b>[% END %][% "MCON" | string %][% IF mode != 'off' %]</b>[% END %]</a>&nbsp;
+				<a href="status.html?player=[% player | uri %]&p0=power&p1=0">[% IF mode == 'off' %]<b>[% END %][% "MCOFF" | string %][% IF mode == 'off' %]</b>[% END %]</a>
+			</td>
+		</tr>
+	</table>
+	
+	[% PROCESS pagefooter.html %]
+<!-- Page status_header.html -->

@@ -1,21 +1,32 @@
 <!-- Element pageheader.html -->
 <html>
-	<head>
-		<title>[% pagetitle %]</title>
-		<style type="text/css"> <!--
+<head>
+	<title>[%- playermodel | string %] : [% pagetitle %]</title>
+	<style type="text/css"> <!--
+		[% INSERT slimserver.css %]
+	--></style> 
+</head>
+<body bgcolor="#FFFFFF" text="#666666" link="#333333" vlink="#333333" alink="#333333" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"">
+	<font face="arial,helvetica,sans-serif">
+	
+	<table width="100%" bgcolor="#333333">
+		<tr>
+			<td><img src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" border="0" width="98" height="17"></td>
+			<td align="right"><a href="../"><font size="-1" color="#ffffff">[% "DEFAULT_SKIN" | string %]</font></a></td>
+		</tr>
+	</table>
 
-			[% INSERT slimserver.css %]
-
-		--></style> 
-	</head>
-
-<body bgcolor="#FFFFFF" text="#666666" link="#333333" vlink="#333333" alink="#333333" leftmargin=0 topmargin=0 marginwidth=0 marginheight=0>
-
-<table width="100%" bgcolor="#333333">
-      <tr>
-      <td><img src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" border="0" width="98" height="17"></img></td>
-      <td align="right"><a href="../"><font face="arial,helvetica" size="-1" color="#FFFFFF">[% "DEFAULT_SKIN" | string %]</font></a></td>
-      </tr>
-</table>
+<!-- Menu -->
+	<table bgcolor="#666666" border="0" cellpadding="0" cellspacing="0" width="100%">
+	   <tr colspan="4"><td><img src="[% webroot %]html/images/spacer.gif" border="0" width="4" height="2"></td></tr>
+	   <tr align="center">
+	       <td><a href="[% webroot %]home.html?player=[% player | uri %]"><font color="#FFFFFF">[% "HOME" | string %]</font></a></td>
+	       <td><a href="[% webroot %]status.html?player=[% player | uri %]"><font color="#FFFFFF">[% "STATUS" | string %]</font></a></td>
+	       <td><a href="[% webroot %]playlist.html?player=[% player | uri %]"><font color="#FFFFFF">[% "PLAYLIST" | string %]</font></a></td>
+	       <td><a href="[% webroot %]search.html?player=[% player | uri %]"><font color="#FFFFFF">[% "SEARCH" | string %]</font></a></td>
+	   </tr>
+	   <tr colspan="4"><td><img src="[% webroot %]html/images/spacer.gif" border="0" width="4" height="2"></td></tr>
+	</table>
+<!-- /Menu -->
 
 <!-- /Element pageheader.html -->

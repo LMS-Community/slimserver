@@ -1,17 +1,41 @@
-font {
+body, table, input, p, li, a, td {
+	font-size: 10px;
+	font-family: sans-serif;
+	color: #444;
+}
+
+pre, code, h3 {
+	font-size: 11px;
+}
+
+a {
+	text-decoration:none;
+}
+
+td {
+	color: #666;
+}
+
+table, td, tr, form {
+	padding: 0px;
+	margin: 0px;
+}
+
+small {
+	font-size: 100%;
 	font-family: sans-serif;
 }
 
-BODY, TABLE, INPUT, SELECT, P, li, a {
-	color: #444;
-	font-size: 10px;
+
+/*
+font {
 	font-family: sans-serif;
 }
 
 p, ol, ul, dl, dd, td, .stdclick, .stdedit, th, h5, a:active {
 	color: #666;
 }
-
+*//*
 pre, code, a:hover {
 	color: #111;
 }
@@ -20,24 +44,9 @@ th, h3, h4, h5 {
 	font-weight: bold;
 }
 
-pre, code, h3 {
-	font-size: 11px;
-}
-
-table, td, tr, form {
-	padding: 0px;
-	margin: 0px;
-}
-
-a {
-	text-decoration:none;
-}
 
 img {
 	border-style: none;
 }
 
-small {
-	font-size: 100%;
-	font-family: sans-serif;
-}
+*/

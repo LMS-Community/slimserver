@@ -1,0 +1,186 @@
+<!-- Element advanced_search.html -->
+	[% pagetitle = "SEARCH" | string %]
+	[% PROCESS pageheader.html %]
+
+	[% MACRO logicalSelectionBlock BLOCK %]	
+		<select name="[% name %]">
+			<option value="=" >[% "EQUALS" | string %]</option>
+			<option value="&lt;" >[% "LESSTHAN" | string %]</option>
+			<option value="&gt;" >[% "GREATERTHAN" | string %]</option>
+			<option value="!=" >[% "NOT" | string %]</option>
+		</select>
+	[% END %]
+	
+	[% MACRO timeSelectionBlock BLOCK %]
+		<select name="[% name %]">
+			<option value="=" >[% "IS" | string %]</option>
+			<option value="&lt;" >[% "BEFORE" | string %]</option>
+			<option value="&gt;" >[% "AFTER" | string %]</option>
+		</select>
+	[% END %]
+	
+	[% IF numresults == '-1' %]
+		<form action="advanced_search.html" method="GET" name="searchForm">
+		<table border="0" cellpadding="3" cellspacing="1" width="100%">
+			<tr>
+				<td align="right">[% "TRACK" | string %]&nbsp;</td>
+				<td align="left">
+					<input name="search.track_title" value="[% search.track_title.value %]" size="20" maxlength="100" type="text">
+				</td>
+			</tr>
+
+			<tr>
+				<td align="right">[% "ARTIST" | string %]&nbsp;</td>
+				<td align="left">
+					<input name="search.contributor_name" value="[% search.contributor_name.value %]" size="20" maxlength="100" type="text">
+				</td>
+			</tr>
+
+			<tr>
+				<td align="right">[% "ALBUM" | string %]&nbsp;</td>
+				<td align="left">
+					<input name="search.album_title" value="[% search.album_title.value %]" size="20" maxlength="100" type="text">
+				</td>
+			</tr>
+
+			<tr>
+				<td align="right">[% "GENRE" | string %]&nbsp;</td>
+				<td align="left">
+					<select name="search.genre">
+						<option value="">[% "ANY_GENRE" | string %]</option>
+						[% FOREACH genre = genres %]
+						[% NEXT IF NOT genre.name OR genre.id == 1 %]
+						<option value="[% genre.id %]" [% IF search.genre.value == genre.id %]selected[% END %]>[% genre.name %]</option>
+						[% END %]
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td align="right" nowrap="nowrap">[% "LENGTH" | string %]&nbsp;</td>
+				<td align="left">
+					[% logicalSelectionBlock(name='search.secs.op') %]
+					<input name="search.secs" value="[% search.secs.value %]" size="4" maxlength="4" style="text-align: right;" type="text">
+					[% "SECONDS" | string %]
+				</td>
+			</tr>
+
+			<tr>
+				<td align="right" nowrap="nowrap">[% "TRACK" | string %]&nbsp;</td>
+				<td align="left">
+					[% logicalSelectionBlock(name='search.tracknum.op') %]
+					<input name="search.tracknum" value="[% search.tracknum.value %]" size="3" maxlength="3" style="text-align: right;" type="text">
+				</td>
+			</tr>
+
+			<tr>
+				<td align="right" nowrap="nowrap">[% "YEAR" | string %]&nbsp;</td>
+				<td align="left">
+					[% timeSelectionBlock(name='search.year.op') %]
+					<input name="search.year" value="[% search.year.value %]" size="4" maxlength="4" style="text-align: right;" type="text">
+				</td>
+			</tr>
+
+			<tr>
+				<td align="right" nowrap="nowrap">[% "MODTIME" | string %]&nbsp;</td>
+				<td align="left">
+					[% timeSelectionBlock(name='search.age.op') %]
+					<input name="search.age" value="[% search.age.value %]" size="10" maxlength="10" type="text">
+					&nbsp; ex: [% dateFormat %]
+				</td>
+			</tr>
+
+			<tr>
+				<td align="right" nowrap="nowrap">[% "BITRATE" | string %]&nbsp;</td>
+				<td align="left">
+					[% logicalSelectionBlock(name='search.bitrate.op') %]
+					<select name="search.bitrate">
+						<option value="">[% "ANY_VALUE" | string %]</option>
+						[% FOREACH bitRate = [ 32 40 48 56 64 80 96 112 128 160 192 224 256 320 ] %]
+							<option value="[% bitRate %]" [% IF search.bitrate.value == (bitRate * 100) %]selected[% END %]>[% bitRate %]</option>
+						[% END %]
+					</select> [% "KBPS" | string %]
+				</td>
+			</tr>
+	
+<!--
+			<tr>
+				<td align="right" nowrap="nowrap">Sample Rate&nbsp;</td>
+				<td align="left">
+					[% logicalSelectionBlock(name='search.samplerate.op') %]		
+					<select name="search.samplerate">
+						<option value="">[% "ANY_VALUE" | string %]</option>
+						[% FOREACH sampleRate = [ 32000 44100 ] %]
+							<option value="[% sampleRate %]">[% sampleRate %]</option>
+						[% END %]
+					</select> kHz
+				</td>
+			</tr>
+-->
+	
+			<tr>
+				<td align="right" nowrap="nowrap">[% "TYPE" | string %]&nbsp;</td>
+				<td align="left">
+					<select name="search.ct">
+						<option value="">[% "ANY_VALUE" | string %]</option>
+						[% FOREACH type = fileTypes.keys %]
+							<option value="[% type %]" [% IF search.ct.value == type %]selected[% END %]>[% fileTypes.$type %]</option>
+						[% END %]
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td align="right" nowrap="nowrap">[% "FILELENGTH" | string %]&nbsp;</td>
+				<td align="left">
+					[% logicalSelectionBlock(name='search.size.op') %]
+					<input name="search.size" value="[% search.size.value %]" size="12" maxlength="12" style="text-align: right;" type="text">
+					[% "BYTES" | string %]
+				</td>
+			</tr>
+
+			<tr>
+				<td align="right" nowrap="nowrap">[% "COMMENT" | string %]&nbsp;</td>
+				<td align="left">
+					<input name="search.comment" value="" size="20" maxlength="1000" type="text">
+				</td>
+			</tr>
+<!-- 
+	Not yet.
+			<tr>
+				<td align="right" nowrap="nowrap">Lyrics</td>
+				<td align="left">
+				  <input name="search.lyrics" value="" size="20" maxlength="1000" type="text">
+				</td>
+			</tr>
+-->
+	
+			<tr>
+				<td colspan="2" align="center">
+					<input value="[% "SEARCH" | string %]" type="submit">
+					<input value="[% "CLEAR"  | string %]" type="reset">
+				</td>
+			</tr>
+		</table>
+		</form>
+	[% ELSE %]
+		<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
+			<tr><td>
+				[% "SONGSMATCHING" | string %][% "COLON" | string %] [% numresults %]
+			    [% IF searchlist_header %]
+				    ([% searchlist_header %])
+		    	[% END %]
+		    </td></tr>
+		    [% IF searchlist_pagebar %]
+		    <tr><td>
+			    [% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]
+		    </td></tr>
+		    [% END %]
+		</table>
+		<table cellspacing="0" cellpadding="4" width="100%">
+			[% browse_list %]
+		</table>
+	[% END %]
+
+	[% PROCESS pagefooter.html %]
+<!-- Element advanced_search.html -->

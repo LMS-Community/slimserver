@@ -1,141 +1,115 @@
-[%# Page songinfo.html %]
-[% pagetitle = BLOCK %]
-[%- playermodel | string %] : [% "SONG_INFO" | string -%]
-[%- END -%]
-[%- pageicon = 'MUSIC' -%]
-[%- PROCESS pageheader.html -%]
-[%- PROCESS menu.html -%]
+<!-- Element songinfo.html -->
+	[% pagetitle = "SONG_INFO" | string %]
+	[%- PROCESS pageheader.html -%]
 
-<font face="arial,helvetica">
-
-<table width="100%" bgcolor="#c5c5c5">
-    <tr><td align="center"><small><a href="status.html?p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" >PLAY</a> &nbsp;&nbsp; <a href="status.html?p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" >ADD</a></small> </td></tr>
-</table>
-
-<br>
-<p>[% "SONG_INFO" | string %] [% "FOR" | string %] <b>[% track.title %]</b></p>
-
-[% IF track.coverArt('cover', 1) %]
-    <center><a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]"><img src="/music/[% itempath | uri %]/cover.jpg" border="0" width="200"></a></center>
-[% END %]
-
-<table width=100%>
-        <tr>
-                <td>
-                        <nobr>
-                                [% "TITLE" | string %][% "COLON" | string %]
-                        </nobr>
-                </td>
-                <td>
-                        [% track.title %]
-                </td>
-        </tr>
-	[% FOREACH role = track.contributorRoles.sort %]
-
-		[% contributors = track.contributorsOfType(role) %]
-		[% IF contributors %]
+	<table border="0" cellspacing="1" cellpadding="0" width="100%" bgcolor="#c5c5c5">
 		<tr>
-			<td>
-				[% role | upper | string %][% "COLON" | string %]
+			<td width="100%">
+				/ [% "SONG_INFO" | string %] / [% track.title %]
 			</td>
 			<td>
-			[% FOREACH contributor = contributors.sort %]
-                                <a href="browsedb.html?hierarchy=album,track&level=0&artist=[% contributor.id %]&amp;player=[% player | uri %]">[% contributor.name %]</a>
+				<a href="status.html?p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>
+			</td>
+			<td>&nbsp;</td>
+			<td>
+				<a href="status.html?p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>
+			</td>
+		</tr>
+	</table>
+	
+	[% IF track.coverArt('cover', 1) %]
+	    <center><a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]"><img src="/music/[% itempath | uri %]/cover.jpg" border="0" width="200"></a></center>
+	[% END %]
+	
+	<table width=100%>
+		<tr>
+			<td>[% "TITLE" | string %][% "COLON" | string %]</td>
+			<td>[% track.title %]</td>
+		</tr>
+
+		[% FOREACH role = track.contributorRoles.sort %]	
+			[% contributors = track.contributorsOfType(role) %]
+			[% IF contributors %]
+			<tr>
+				<td>[% role | upper | string %][% "COLON" | string %]</td>
+				<td>
+				[% FOREACH contributor = contributors.sort %]
+					<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% contributor.id %]&amp;player=[% player | uri %]">[% contributor.name %]</a>
+				[% END %]
+				</td>
+			</tr>
+			[% END %]
+		[% END %]
+	
+		[% IF track.album %]
+		<tr>
+			<td>[% "ALBUM" | string %][% "COLON" | string %]</td>
+			<td>
+				<a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]">[% track.album.title %]</a>
+			</td>
+		</tr>
+		[% END %]
+	
+		[% IF track.genres %]
+		<tr>
+			<td>[% "GENRE" | string %][% "COLON" | string %]</td>
+			<td>
+			[% FOREACH genre = track.genres %]
+				<a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% genre.id %]&amp;player=[% player | uri %]" >[% genre.name %]</a>
 			[% END %]
 			</td>
 		</tr>
 		[% END %]
-        [% END %]
-
-        [% IF track.album %]
-        <tr>
-                <td>
-                        [% "ALBUM" | string %][% "COLON" | string %]
-                </td>
-                <td>
-                        <a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]">[% track.album.title %]</a>
-                </td>
-        </tr>
-        [% END %]
-
-	[% genres = track.genres %]
-	[% IF genres %]
-        <tr>
-                <td>
-                        [% "GENRE" | string %][% "COLON" | string %]
-                </td>
-                <td>
-			[% FOREACH genre = genres %]
-                        	<a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% genre.id %]&amp;player=[% player | uri %]" >[% genre.name %]</a>
-			[% END %]
-                </td>
-        </tr>
-        [% END %] [% IF track.tracknum %]
-        <tr>
-                <td>
-                        [% "TRACK" | string %][% "COLON" | string %]
-                </td>
-                <td>
-                        [% track.tracknum %]
-                </td>
-        </tr>
-        [% END %] [% IF track.duration %]
-        <tr>
-                <td>
-                        [% "LENGTH" | string %][% "COLON" | string %]
-                </td>
-                <td>
-                        [% track.duration %]
-                </td>
-        </tr>
-        [% END %] [% IF track.year %]
-        <tr>
-                <td>
-                        [% "YEAR" | string %][% "COLON" | string %]
-                </td>
-                <td>
-                        [% track.year %]
-                </td>
-        </tr>
-        [% END %] [% IF comment %]
-        <tr>
-                <td>
-                        [% "COMMENT" | string %][% "COLON" | string %]
-                </td>
-                <td>
-                        [% comment %]
-                </td>
-        </tr>
-        [% END %] [% IF filelength %]
-        <tr>
-                <td>
-                        [% "FILELENGTH" | string %][% "COLON" | string %]
-                </td>
-                <td>
-                        [% filelength %] [% "BYTES" | string %]
-                </td>
-        </tr>
-        [% END %] [% IF track.bitrate %]
-        <tr>
-                <td>
-                        [% "BITRATE" | string %][% "COLON" | string %]
-                </td>
-                <td>
-                        [% track.bitrate %]
-                </td>
-        </tr>
-        [% END %] [% IF track.tagversion %]
-        <tr>
-                <td>
-                        [% "TAGVERSION" | string %][% "COLON" | string %]
-                </td>
-                <td>
-                        [% track.tagversion %]
-                </td>
-        </tr>
-        [% END %]
-</table>
-
-</font>
-[% PROCESS pagefooter.html %]
-[%# /Page songinfo.html %]
+		
+		[% IF track.tracknum %]
+		<tr>
+			<td>[% "TRACK" | string %][% "COLON" | string %]</td>
+			<td>[% track.tracknum %]</td>
+		</tr>
+		[% END %]
+		
+		[% IF track.duration %]
+		<tr>
+			<td>[% "LENGTH" | string %][% "COLON" | string %]</td>
+			<td>[% track.duration %]</td>
+		</tr>
+		[% END %]
+		
+		[% IF track.year %]
+		<tr>
+			<td>[% "YEAR" | string %][% "COLON" | string %]</td>
+			<td>[% track.year %]</td>
+		</tr>
+		[% END %]
+		
+		[% IF comment %]
+		<tr>
+			<td>[% "COMMENT" | string %][% "COLON" | string %]</td>
+			<td>[% comment %]</td>
+		</tr>
+		[% END %]
+		
+		[% IF filelength %]
+		<tr>
+			<td>[% "FILELENGTH" | string %][% "COLON" | string %]</td>
+			<td>[% filelength %] [% "BYTES" | string %]</td>
+		</tr>
+		[% END %]
+		
+		[% IF track.bitrate %]
+		<tr>
+			<td>[% "BITRATE" | string %][% "COLON" | string %]</td>
+			<td>[% track.bitrate %]</td>
+		</tr>
+		[% END %]
+		
+		[% IF track.tagversion %]
+		<tr>
+			<td>[% "TAGVERSION" | string %][% "COLON" | string %]</td>
+			<td>[% track.tagversion %]</td>
+		</tr>
+		[% END %]
+	</table>
+	
+	[% PROCESS pagefooter.html %]
+<!-- /Element songinfo.html -->

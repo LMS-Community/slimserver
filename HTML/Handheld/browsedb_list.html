@@ -1,0 +1,34 @@
+<!-- Element browsedb_list.html -->
+[% oddC = '#ffffff' %]
+[% evenC = '#d0d0d0' %]
+	<tr [% IF odd %]bgcolor="[% oddC %]"[% ELSE %]bgcolor="[% evenC %]"[% END %]>
+		<td width="100%">
+			[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
+			[% IF descend %]
+				<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% text | html %]</a>
+			[% ELSE %]
+				<a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% text | html %][% IF year %] ([% year %])[% END %]</a>
+			[% END %]
+		</td>
+		<td width="13">
+			[% IF descend %]
+				<a href="status.html?command=playlist&sub=loadtracks[% attributes %]&player=[% player | uri %]"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>
+			[% ELSE %]
+				<a href="status.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>
+			[% END %]
+		</td>
+		<td>&nbsp;</td>
+		
+		<td width="13">
+			[% IF descend %]
+				<a href="status.html?command=playlist&sub=addtracks[% attributes %]&player=[% player | uri %]"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>
+			[% ELSE %]
+				<a href="status.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>
+			[% END %]
+		</td>
+		[% FOREACH mixer = mixerlinks.values.sort %]
+			[% PROCESS $mixer %]
+		[% END %]
+	</tr>
+<!-- /Element browsedb_list.html -->
+	
