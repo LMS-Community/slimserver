@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.17 2003/11/22 18:51:54 dean Exp $
+# $Id: Setup.pm,v 1.18 2003/11/23 19:16:33 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -452,7 +452,7 @@ sub initSetupConfig {
 							,'options' => undef #filled by initSetup using Slim::Utils::Strings::hash_of_languages()
 						}
 				,'itunes'	=> {
-							'validate' => \&validateITunes
+							'validate' => \&validateTrueFalse
 							,'changeIntro' => ""
 							,'options' => {
 									'1' => string('USE_ITUNES')
@@ -2154,18 +2154,18 @@ sub validateIsMP3Dir {
 	}
 }
 
-sub validateITunes {
-	my $val = shift;
-	
-	if ($val == 1) {
-	} elsif ($val == 0) {
+#sub validateITunes {
+#	my $val = shift;
+#	
+#	if ($val == 1) {
+#	} elsif ($val == 0) {
 #		Slim::Utils::Prefs::set('mp3dir', '');
-	} else {
-		$val = undef;
-	}
-	
-	return $val;
-}
+#	} else {
+#		$val = undef;
+#	}
+#	
+#	return $val;
+#}
 
 sub validateHasText {
 	my $val = shift; # value to validate
