@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.5 2004/08/06 04:57:12 dean Exp $
+# $Id: SqueezeboxG.pm,v 1.6 2004/08/17 22:59:59 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -170,6 +170,8 @@ sub render {
 	if (defined($parts->{overlay1})) {
 		$overlay1 = Slim::Display::Graphics::string($fonts->[0], "\x00" . $parts->{overlay1});
 		$line1 = substr($line1 . $blankscreen, 0, 560 - length($overlay1)) . $overlay1;
+	} else {
+		$line1 |= $blankscreen;  # make sure we have bits to fill up the whole screen
 	}
 	
 	if (defined($parts->{overlay2})) {
