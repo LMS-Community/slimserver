@@ -8,13 +8,13 @@ package Slim::Player::Playlist;
 use strict;
 
 use File::Spec::Functions qw(:ALL);
-use FileHandle;
-use IO::Socket qw(:DEFAULT :crlf);
-use Time::HiRes;
 use Slim::Control::Command;
-use Slim::Display::Display;
+use Slim::Player::Source;
+use Slim::Player::Sync;
 use Slim::Utils::Misc;
-use Slim::Utils::Scan;
+use Slim::Utils::Prefs;
+
+our %validSubCommands = map { $_ => 1 } qw(play append load_done loadalbum addalbum loadtracks addtracks clear delete move sync);
 
 #
 # accessors for playlist information
@@ -92,12 +92,14 @@ sub repeat {
 #
 
 sub copyPlaylist {
-	my $toclient = shift;
+	my $toclient   = shift;
 	my $fromclient = shift;
 
-	@{$toclient->playlist} = @{$fromclient->playlist};
+	@{$toclient->playlist}    = @{$fromclient->playlist};
 	@{$toclient->shufflelist} = @{$fromclient->shufflelist};
+
 	$toclient->currentsong(	$fromclient->currentsong);	
+
 	Slim::Utils::Prefs::clientSet($toclient, "shuffle", Slim::Utils::Prefs::clientGet($fromclient, "shuffle"));
 	Slim::Utils::Prefs::clientSet($toclient, "repeat", Slim::Utils::Prefs::clientGet($fromclient, "repeat"));
 }
@@ -112,9 +114,12 @@ sub removeTrack {
 	my $oldmode = Slim::Player::Source::playmode($client);
 	
 	if ($tracknum == Slim::Player::Source::currentSongIndex($client)) {
+
 		Slim::Player::Source::playmode($client, "stop");
 		$stopped = 1;
+
 	} elsif ($tracknum < Slim::Player::Source::currentSongIndex($client)) {
+
 		Slim::Player::Source::currentSongIndex($client,Slim::Player::Source::currentSongIndex($client) - 1);
 	}
 	
@@ -216,9 +221,9 @@ sub removeMultipleTracks {
 	refreshPlaylist($client);
 }
 
-
 sub forgetClient {
 	my $client = shift;
+
 	# clear out the playlist
 	Slim::Control::Command::execute($client, ["playlist", "clear"]);
 	
@@ -229,13 +234,14 @@ sub forgetClient {
 sub refreshPlaylist {
 	my $client = shift;
 	my $index = shift;
+
 	# make sure we're displaying the new current song in the playlist view.
 	for my $everybuddy ($client, Slim::Player::Sync::syncedWith($client)) {
+
 		if ($everybuddy->isPlayer()) {
 			Slim::Buttons::Playlist::jump($everybuddy,$index);
 		}
 	}
-	
 }
 
 sub moveSong {
@@ -253,21 +259,33 @@ sub moveSong {
 		$dest = $src + $dest;
 	}
 
-	if (defined $src && defined $dest && $src < Slim::Player::Playlist::count($client) && $dest < Slim::Player::Playlist::count($client) && $src >= 0 && $dest >=0) {
+	if (defined $src && defined $dest && 
+		$src < Slim::Player::Playlist::count($client) && 
+		$dest < Slim::Player::Playlist::count($client) && $src >= 0 && $dest >= 0) {
+
 		if (Slim::Player::Playlist::shuffle($client)) {
 			$listref = Slim::Player::Playlist::shuffleList($client);
 		} else {
 			$listref = Slim::Player::Playlist::playList($client);
 		}
+
 		if (defined $listref) {
+
 			my @item = splice @{$listref},$src, $size;
+
 			splice @{$listref},$dest, 0, @item;
+
 			my $currentSong = Slim::Player::Source::currentSongIndex($client);
+
 			if ($src == $currentSong) {
+
 				Slim::Player::Source::currentSongIndex($client,$dest);
+
 			} elsif ($dest == $currentSong) {
+
 				Slim::Player::Source::currentSongIndex($client,($dest>$src)? $currentSong - 1 : $currentSong + 1);
 			}
+
 			Slim::Player::Playlist::refreshPlaylist($client);
 		}
 	}
@@ -275,7 +293,9 @@ sub moveSong {
 
 sub clear {
 	my $client = shift;
+
 	@{Slim::Player::Playlist::playList($client)} = ();
+
 	Slim::Player::Playlist::reshuffle($client);
 }
 
@@ -440,30 +460,36 @@ sub clearExecuteCommandCallback {
 sub modifyPlaylistCallback {
 	my $client = shift;
 	my $paramsRef = shift;
+
 	if ($client && Slim::Utils::Prefs::get('playlistdir') && Slim::Utils::Prefs::get('persistPlaylists')) {
-		#Did the playlist change?
-		my $saveplaylist = $paramsRef->[0] eq 'playlist' && ($paramsRef->[1] eq 'play' 
-					|| $paramsRef->[1] eq 'append' || $paramsRef->[1] eq 'load_done'
-					|| $paramsRef->[1] eq 'loadalbum'
-					|| $paramsRef->[1] eq 'addalbum' || $paramsRef->[1] eq 'clear'
-					|| $paramsRef->[1] eq 'delete' || $paramsRef->[1] eq 'move'
-					|| $paramsRef->[1] eq 'sync');
-		#Did the playlist or the current song change?
-		my$savecurrsong = $saveplaylist || $paramsRef->[0] eq 'open' 
-					|| ($paramsRef->[0] eq 'playlist' 
-						&& ($paramsRef->[1] eq 'jump' || $paramsRef->[1] eq 'index' || $paramsRef->[1] eq 'shuffle'));
+
+		my $command    = $paramsRef->[0];
+		my $subCommand = $paramsRef->[1];
+
+		# Did the playlist change?
+		my $saveplaylist = $command eq 'playlist' && $validSubCommands{$subCommand};
+
+		# Did the playlist or the current song change?
+		my $savecurrsong = $saveplaylist || $command eq 'open' || 
+			($command eq 'playlist' && $subCommand =~ /^(jump|index|shuffle)$/);
+
 		return if !$savecurrsong;
-		my @syncedclients = Slim::Player::Sync::syncedWith($client);
-		push @syncedclients,$client;
-		my $playlistref = Slim::Player::Playlist::playList($client);
-		my $currsong = (Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Source::currentSongIndex($client)];
+
+		$::d_playlist && Slim::Utils::Misc::msg("modifyPlaylistCallback command: $command subCommand: $subCommand\n");
+
+		my @syncedclients = (Slim::Player::Sync::syncedWith($client), $client);
+		my $playlistref   = Slim::Player::Playlist::playList($client);
+		my $currsong      = (Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Source::currentSongIndex($client)];
+
 		for my $eachclient (@syncedclients) {
+
 			if ($saveplaylist) {
 				my $playlistname = "__" . $eachclient->id() . ".m3u";
 				$playlistname =~ s/\:/_/g;
 				$playlistname = catfile(Slim::Utils::Prefs::get('playlistdir'),$playlistname);
 				Slim::Formats::Parse::writeM3U($playlistref,$playlistname,$playlistname);
 			}
+
 			if ($savecurrsong) {
 				Slim::Utils::Prefs::clientSet($eachclient,'currentSong',$currsong);
 			}
