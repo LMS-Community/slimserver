@@ -205,8 +205,8 @@
 				<td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
 				<td height="13" class="label2" align="center"><nobr>
 					<b>[% "PLAYER" | string | upper%][% "COLON" | string %]&nbsp;&nbsp;</b>
-					<a target="_top" class="[% IF mode == 'off' %]dark[% END %]button" href="index.html?player=[% player | uri %]&p0=power&p1=1"><b>[% "ON" | string | upper%]</b>&nbsp;&nbsp;</a>
-					<a target="_top" class="[% IF mode != 'off' %]dark[% END %]button" href="index.html?player=[% player | uri %]&p0=power&p1=0"><b>[% "OFF" | string | upper%]</b></a>
+					<a class="[% IF mode == 'off' %]dark[% END %]button" href="status_header.html?player=[% player | uri %]&p0=power&p1=1"><b>[% "ON" | string | upper%]</b>&nbsp;&nbsp;</a>
+					<a class="[% IF mode != 'off' %]dark[% END %]button" href="status_header.html?player=[% player | uri %]&p0=power&p1=0"><b>[% "OFF" | string | upper%]</b></a>
 				</nobr></td>
 			[% END %]
 		</table></div>

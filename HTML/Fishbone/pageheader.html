@@ -53,8 +53,8 @@
 				[% END %]
 			[% END %]
 			}
-			if (submit) {suffix = suffix + "&manualSearch=1"}
-			parent.browser.location=url + suffix + '&query=' + value + '&player=[% player %]';
+			if (submit) {suffix = suffix + "&manualSearch=1&query=' + value"}
+			parent.browser.location=url + suffix + '&player=[% player %]';
 		}
 		
 		function chooseBrowser(value,option)
