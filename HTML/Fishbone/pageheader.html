@@ -12,23 +12,21 @@
    <td><img src="{webroot}html/pixel.grey.gif" width="1" height="100%" border="0"></td>
    <td width="33%" height="13" align="center"><a class="menu1" href="{webroot}html/docs/help.html[IF nofolder]?&nofolder=1[/IF]">[IF help]<b>[/IF][S HELP][IF help]</b>[/IF]</a></td>
 	</table></div>
-   <div class="menu2" width="100%" [IF setup]style='position:absolute;top:-100;'[/IF]>
+<div class="menu2" width="100%" [IF setup]style='position:absolute;top:-100;'[/IF]>
    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-	<FORM name="browse"><td width="35%"><center><nobr>
-	<SELECT NAME=URL class="stdedit" onchange="window.location=this.options[selectedIndex].value" width="65">
-	<OPTION [EQ browseby BROWSE_BY_GENRE]selected[/EQ] VALUE="{webroot}browseid3.html?player={%player}[IF nofolder]&nofolder=1[/IF]">By Genre</OPTION>
-	<OPTION [EQ browseby BROWSE_BY_ARTIST]selected[/EQ] VALUE="{webroot}browseid3.html?genre=*&player={%player}[IF nofolder]&nofolder=1[/IF]">By Artist</OPTION>
-	<OPTION [EQ browseby BROWSE_BY_ALBUM]selected[/EQ] VALUE="{webroot}browseid3.html?genre=*&artist=*&player={%player}[IF nofolder]&nofolder=1[/IF]">By Album</OPTION>
-	[IFN nofolder]<OPTION [IF browse]selected[/IF] VALUE="{webroot}browse.html?player={%player}">Music Folder</OPTION>[/IFN]
-	<OPTION [IF playlist]selected[/IF] VALUE="{webroot}browse.html?player={%player}&dir=__playlists[IF nofolder]&nofolder=1[/IF]">Saved Playlists</OPTION>
-	</SELECT><nobr></center></td></FORM>
-   <form method="Get" action="{webroot}search.html" name="search"><td width="65%" align="right"><nobr>
-	Search <select size="1" name="type" class="stdedit" STYLE="width: 60px">
-	<option [EQ type artist]selected[/EQ] value="artist">Artist</option>
-	<option [EQ type album]selected[/EQ] value="album">Album</option>
-   <option [EQ type song]selected[/EQ] value="song">Song</option>
-	</select> for
+	<FORM name="browse" method="Get" action="{webroot}search.html"><td width="35%"><center><nobr>
+	<SELECT NAME="type" class="stdedit" onchange="window.location=this.options[selectedIndex].label" onSubmit="window.location=this.options[selectedIndex].value"width="65">
+	<OPTION [EQ browseby BROWSE_BY_GENRE]selected[/EQ] value="song" label="{webroot}browseid3.html?player={%player}[IF nofolder]&nofolder=1[/IF]">By Genre</OPTION>
+	<OPTION [EQ browseby BROWSE_BY_ARTIST]selected[/EQ] value="artist" label="{webroot}browseid3.html?genre=*&player={%player}[IF nofolder]&nofolder=1[/IF]">By Artist</OPTION>
+	<OPTION [EQ browseby BROWSE_BY_ALBUM]selected[/EQ] value="album" label="{webroot}browseid3.html?genre=*&artist=*&player={%player}[IF nofolder]&nofolder=1[/IF]">By Album</OPTION>
+	[IFN nofolder]<OPTION [IF browse]selected[/IF] value="song" label="{webroot}browse.html?player={%player}">Music Folder</OPTION>[/IFN]
+	<OPTION [IF playlist]selected[/IF] label="{webroot}browse.html?player={%player}&dir=__playlists[IF nofolder]&nofolder=1[/IF]">Saved Playlists</OPTION>
+	<option [EQ type artist]selected[/EQ] label="{webroot}search.html?type=artist[IF nofolder]&nofolder=1[/IF]" value="artist"> Search Artist</option>
+	<option [EQ type album]selected[/EQ] label="{webroot}search.html?type=album[IF nofolder]&nofolder=1[/IF]" value="album">Search Album</option>
+   <option [EQ type song]selected[/EQ] label="{webroot}search.html?type=song[IF nofolder]&nofolder=1[/IF]" value="song">Search Song</option>
+	</SELECT> for 
 	<input type=text class="stdedit" name="query" value="{query}" size="20">
-	<input type=hidden value="{player}" name="player"></p>
-	</nobr></center></td></form></table></div>
+	<input type=hidden value="{%player}" name="player">
+	[IF nofolder]<input type=hidden value="1" name="nofolder">[/IF]</p><nobr></center></td></FORM>
+	</table></div>
 	[IF newVersion]<br>{newVersion}<br>[/IF]

@@ -26,8 +26,7 @@ function getCookie(Name)
 			if (!player) parent.statusframe.location="{webroot}status.html?player={%player}";
 			else {
 				var playing = getCookie("Slimp3-CurrentSong");
-				//var playing = [EVAL]defined($client)&&defined(SliMP3::Prefs::clientGet($client,"playlistItem")) ? SliMP3::Prefs::clientGet($client,"playlistItem") : 0;[/EVAL];
-				var current = [EVAL]defined($client)&&defined(SliMP3::Prefs::clientGet($client,"currentSong")) ? SliMP3::Prefs::clientGet($client,"currentSong") : 0;[/EVAL];
+				var current = [EVAL]defined($client)&&defined(Slim::Utils::Prefs::clientGet($client,"currentSong")) ? Slim::Utils::Prefs::clientGet($client,"currentSong") : 0;[/EVAL];
 				if ((current != playing)&&(parent.statusframe.location.href != "about:blank")) parent.statusframe.location="{webroot}status.html?player={%player}";
 			};
 			//-->

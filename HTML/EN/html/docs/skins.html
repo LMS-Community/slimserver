@@ -5,7 +5,7 @@
 
   <h4>Overview</h4>
   <p>
-    The web interface to the SLIMP3 server makes use of customizable html
+    The web interface to the Slim Server makes use of customizable html
     templates collected together into a skin.  These skins reside in the
     <strong>html</strong> subfolder of the folder where the SLIMP3 software was
     installed.  The skin subfolders are presented for selection in the
@@ -17,7 +17,7 @@
   </p>
   <p>
     When a page not in the <strong>html</strong> subfolder of either your skin
-    or the default skin is requested, the SLIMP3 server builds the page
+    or the default skin is requested, the Slim Server builds the page
     dynamically based on the templates within the skin subfolder.  This building
     is accomplished by replacing items either contained in square brackets
     &#91; &#93; or framed with bracketed directives with the appropriate text.
@@ -25,7 +25,7 @@
   <hr />
   <h4>Directory Structure</h4>
     
-<em>SLIMP3 server</em> 
+<em>Slim Server</em> 
 <ul>
   <li>html</li>
   <ul>
@@ -312,7 +312,8 @@
   <dl>
     <dt><strong>slimserver.css</strong></dt>
       <dd>
-        Arguably the most important file to modify to make a skin your own.
+        Arguably the most important file to modify to make a skin your own. Server version 4.2.2 and earlier used slimp3.css.  Skins for that version and earlier must
+        be changed to use slimserver.css, and the slimp3.css file renamed.
       </dd>
     <dt><strong>favicon.ico</strong></dt>
       <dd>Serves up <em>skin</em>/html/mypage.ico</dd>
