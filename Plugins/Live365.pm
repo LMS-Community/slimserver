@@ -696,7 +696,11 @@ sub getDisplayName {
 
 sub strings {
 	local $/ = undef;
-	<DATA>;
+
+	my $strings = <DATA>;
+	close DATA;
+
+	return $strings;
 }
 
 sub setupGroup {
