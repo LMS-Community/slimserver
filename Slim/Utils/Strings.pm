@@ -1,6 +1,6 @@
 package Slim::Utils::Strings;
 
-# $Id: Strings.pm,v 1.16 2004/10/06 15:56:13 vidur Exp $
+# $Id: Strings.pm,v 1.17 2004/10/08 02:43:10 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -198,7 +198,11 @@ sub doubleString {
 	if ($strings{$language.'_'.$stringname.'_DBL'}) {
 		return $strings{$language.'_'.$stringname.'_DBL'};
 	} elsif ($strings{$language.'_'.$stringname}) {
-		return $strings{$language.'_'.$stringname};
+		if (ref($strings{$language.'_'.$stringname}) eq 'CODE') {
+			return $strings{$language.'_'.$stringname}->();
+		} else {
+			return $strings{$language.'_'.$stringname};
+		}
 	} elsif ($strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname.'_DBL'}) {
 		return $strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname.'_DBL'};
 	} elsif ($strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname}) {
