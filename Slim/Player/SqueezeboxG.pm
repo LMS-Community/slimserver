@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.8 2004/08/27 16:49:35 dean Exp $
+# $Id: SqueezeboxG.pm,v 1.9 2004/08/27 21:53:56 sadams Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -70,7 +70,7 @@ sub displayWidth {
 	return 280;
 }
 
-my @brightnessMap = (0, 1, 4, 16, 32);
+my @brightnessMap = (0, 1, 4, 16, 30);
 
 sub brightness {
 	my $client = shift;

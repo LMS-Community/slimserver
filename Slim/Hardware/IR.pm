@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.22 2004/08/03 17:29:14 vidur Exp $
+# $Id: IR.pm,v 1.23 2004/08/27 21:53:56 sadams Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -45,7 +45,7 @@ sub idle {
 #$::d_ir = 1;
 my $eggseq = 'up,down,up,down,left,right,left,right';
 
-$Slim::Hardware::IR::IRMINTIME  = 0.128;    # If time between IR commands is greater than this, then the code is considered a new button press
+$Slim::Hardware::IR::IRMINTIME  = 0.140;    # If time between IR commands is greater than this, then the code is considered a new button press
 $Slim::Hardware::IR::IRHOLDTIME  = 0.512;    # 512 ms
 $Slim::Hardware::IR::IRSINGLETIME = 0.256;   # 256 ms
 
