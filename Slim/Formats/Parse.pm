@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.18 2004/07/14 02:34:04 kdf Exp $
+# $Id: Parse.pm,v 1.19 2004/08/03 17:29:14 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -301,7 +301,7 @@ sub writePLS {
 	if ($filename) {
 
 		$output = FileHandle->new($filename, "w") || do {
-			msg("Could not open $filename for writing.\n");
+			Slim::Utils::Misc::msg("Could not open $filename for writing.\n");
 			return;
 		};
 

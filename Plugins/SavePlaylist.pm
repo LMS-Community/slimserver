@@ -1,4 +1,4 @@
-# $Id: SavePlaylist.pm,v 1.7 2004/05/20 18:57:35 dean Exp $
+# $Id: SavePlaylist.pm,v 1.8 2004/08/03 17:29:07 vidur Exp $
 # This code is derived from code with the following copyright message:
 #
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
@@ -15,12 +15,14 @@ use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.7 $,10);
+$VERSION = substr(q$Revision: 1.8 $,10);
 
 my %context = ();
 
+my $rightarrow = Slim::Display::Display::symbol('rightarrow');
+
 my @LegalChars = (
-	Slim::Hardware::VFD::symbol('rightarrow'),
+	Slim::Display::Display::symbol('rightarrow'),
 	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
 	'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -94,7 +96,7 @@ sub lines {
 	} else {
 		$line1 = string('PLAYLIST_SAVE');
 		$line2 = $context{$client};
-		$arrow = Slim::Hardware::VFD::symbol('rightarrow');
+		$arrow = Slim::Display::Display::symbol('rightarrow');
 	}
 	
 	return ($line1, $line2, undef, $arrow);
@@ -107,7 +109,7 @@ sub savePlaylist {
 	my $playlistdir = Slim::Utils::Prefs::get('playlistdir');
 	$playlistfile = catfile($playlistdir,$playlistfile . ".m3u");
 	Slim::Formats::Parse::writeM3U($playlistref,$playlistfile);
-	Slim::Display::Animation::showBriefly($client,string('PLAYLIST_SAVING'),$playlistfile);
+	$client->showBriefly(string('PLAYLIST_SAVING'),$playlistfile);
 }
 
 sub getFunctions {
@@ -118,14 +120,15 @@ sub savePluginCallback {
 	my ($client,$type) = @_;
 	if ($type eq 'nextChar') {
 		my @oldlines = Slim::Display::Display::curLines($client);
-		$context{$client} = Slim::Hardware::VFD::subString($context{$client},0,Slim::Hardware::VFD::lineLength($context{$client})-1);
+
+		$context{$client} =~ s/$rightarrow//;
 		Slim::Buttons::Common::popMode($client);
-		Slim::Display::Animation::pushLeft($client, @oldlines, lines($client));
+		$client->pushLeft(\@oldlines, [lines($client)]);
 	} elsif ($type eq 'backspace') {
 		Slim::Buttons::Common::popModeRight($client);
 		Slim::Buttons::Common::popModeRight($client);
 	} else {
-		Slim::Display::Animation::bumpRight($client);
+		$client->bumpRight();
 	};
 }
 

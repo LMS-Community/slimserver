@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.89 2004/07/28 01:55:04 kdf Exp $
+# $Id: Setup.pm,v 1.90 2004/08/03 17:29:22 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -136,6 +136,22 @@ sub initSetupConfig {
 					$pageref->{'Prefs'}{'titleFormatCurr'}{'validateArgs'} = [0,$titleFormatMax,1,1];
 					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [$client->defaultName()];
 					removeExtraArrayEntries($client,'titleFormat',$paramref,$pageref);
+					
+					if (defined $client->maxBrightness) {
+						$pageref->{'Prefs'}{'powerOnBrightness'}{'validateArgs'} = [0,$client->maxBrightness,1,1];
+						$pageref->{'Prefs'}{'powerOffBrightness'}{'validateArgs'} = [0,$client->maxBrightness,1,1];
+						$pageref->{'Prefs'}{'idleBrightness'}{'validateArgs'} = [0,$client->maxBrightness,1,1];
+						
+						$pageref->{'Prefs'}{'powerOnBrightness'}{'options'}{$client->maxBrightness} =  $client->maxBrightness.' ('.string('BRIGHTNESS_BRIGHTEST').')';
+						$pageref->{'Prefs'}{'powerOffBrightness'}{'options'}{$client->maxBrightness} =  $client->maxBrightness.' ('.string('BRIGHTNESS_BRIGHTEST').')';
+						$pageref->{'Prefs'}{'idleBrightness'}{'options'}{$client->maxBrightness} =  $client->maxBrightness.' ('.string('BRIGHTNESS_BRIGHTEST').')';
+					} else {
+						$pageref->{'Prefs'}{'powerOnBrightness'}{'validateArgs'} = [0,4,1,1];
+						$pageref->{'Prefs'}{'powerOffBrightness'}{'validateArgs'} = [0,4,1,1];
+						$pageref->{'Prefs'}{'idleBrightness'}{'validateArgs'} = [0,4,1,1];
+						$pageref->{'Prefs'}{'idleBrightness'}{'options'}{'4'} =  '4 ('.string('BRIGHTNESS_BRIGHTEST').')';
+					}
+					
 					if (Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {
 					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'options'}{'6'} =  string('SETUP_SHOWBUFFERFULLNESS');
 					 	$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,6,1,1];
@@ -204,7 +220,7 @@ sub initSetupConfig {
 					'PrefOrder' => ['digitalVolumeControl','mp3SilencePrelude']
 				}
 			,'Brightness' => {
-					'PrefOrder' => ['powerOnBrightness','powerOffBrightness']
+					'PrefOrder' => ['powerOnBrightness','powerOffBrightness','idleBrightness']
 					,'PrefsInTable' => 1
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
@@ -232,24 +248,35 @@ sub initSetupConfig {
 		,'Prefs' => {
 			'powerOnBrightness' => {
 							'validate' => \&validateInt
-							,'validateArgs' => [0,4,1,1]
+							,'validateArgs' => undef
 							,'options' => {
-									'0' => string('BRIGHTNESS_DARK')
-									,'1' => string('BRIGHTNESS_DIM')
-									,'2' => string('BRIGHTNESS_BRIGHT')
-									,'3' => string('BRIGHTNESS_BRIGHTER')
-									,'4' => string('BRIGHTNESS_BRIGHTEST')
+									'0' => '0 ('.string('BRIGHTNESS_DARK').')'
+									,'1' => '1'
+									,'2' => '2'
+									,'3' => '3'
+									,'4' => '4'
 									}
 						}
 			,'powerOffBrightness' => {
 							'validate' => \&validateInt
-							,'validateArgs' => [0,4,1,1]
+							,'validateArgs' => undef
 							,'options' => {
-									'0' => string('BRIGHTNESS_DARK')
-									,'1' => string('BRIGHTNESS_DIM')
-									,'2' => string('BRIGHTNESS_BRIGHT')
-									,'3' => string('BRIGHTNESS_BRIGHTER')
-									,'4' => string('BRIGHTNESS_BRIGHTEST')
+									'0' => '0 ('.string('BRIGHTNESS_DARK').')'
+									,'1' => '1'
+									,'2' => '2'
+									,'3' => '3'
+									,'4' => '4'
+									}
+						}
+			,'idleBrightness' => {
+							'validate' => \&validateInt
+							,'validateArgs' => undef
+							,'options' => {
+									'0' => '0 ('.string('BRIGHTNESS_DARK').')'
+									,'1' => '1'
+									,'2' => '2'
+									,'3' => '3'
+									,'4' => '4'
 									}
 						}
 			,'playername' => {
@@ -1450,7 +1477,6 @@ sub initSetupConfig {
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['usetagdatabase','wipecache','templatecache','useplaylistcache',
-									# 'animationLevel',
 									'lookForArtwork','buildItemsPerPass']
 				}
 			}

@@ -1,5 +1,5 @@
 package Slim::Buttons::InstantMix;
-#$Id: InstantMix.pm,v 1.4 2004/04/22 05:47:10 kdf Exp $
+#$Id: InstantMix.pm,v 1.5 2004/08/03 17:29:09 vidur Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ my %functions = (
 		my $count = scalar @instantMix;
 		
 		if ($count < 2) {
-			Slim::Display::Animation::bumpUp($client);
+			$client->bumpUp();
 		} else {
 			my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#instantMix + 1), selection($client, 'instant_mix_index'));
 			setSelection($client, 'instant_mix_index', $newposition);
@@ -37,7 +37,7 @@ my %functions = (
 		my $count = scalar @instantMix;
 
 		if ($count < 2) {
-			Slim::Display::Animation::bumpDown($client);
+			$client->bumpDown();
 		} else {
 			my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#instantMix + 1), selection($client, 'instant_mix_index'));
 			setSelection($client, 'instant_mix_index', $newposition);
@@ -55,7 +55,7 @@ my %functions = (
 
 		my @oldlines = Slim::Display::Display::curLines($client);
 		Slim::Buttons::Common::pushMode($client, 'trackinfo', {'track' => $instantMix[selection($client, 'instant_mix_index')]});
-		Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
+		$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 	},
 	'play' => sub  {
 		my $client = shift;
@@ -73,7 +73,7 @@ my %functions = (
 		}
 		$line2 = string('MOODLOGIC_INSTANT_MIX');
 
-		Slim::Display::Animation::showBriefly($client, Slim::Display::Display::renderOverlay($line1, $line2, undef, Slim::Hardware::VFD::symbol('notesymbol')));
+		$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')));
 		
 		Slim::Control::Command::execute($client, ["playlist", $append ? "append" : "play", $instantMix[0]]);
 		
@@ -120,7 +120,7 @@ sub lines {
 	$line1 .= sprintf(" (%d ".string('OUT_OF')." %s)", selection($client, 'instant_mix_index') + 1, scalar @instantMix);
 	$line2 = Slim::Music::Info::infoFormat($instantMix[selection($client, 'instant_mix_index')], 'TITLE (ARTIST)', 'TITLE');
 
-	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
+	return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));
 }
 
 #	get the current selection parameter from the parameter stack

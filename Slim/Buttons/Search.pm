@@ -33,14 +33,14 @@ my %functions = (
 		my $client = shift;
 		my @oldlines = Slim::Display::Display::curLines($client);
 		Slim::Buttons::Common::setMode($client, 'home');
-		Slim::Display::Animation::pushRight($client, @oldlines, Slim::Display::Display::curLines($client));
+		$client->pushRight(\@oldlines, [Slim::Display::Display::curLines($client)]);
 	},
 	'right' => sub  {
 		my $client = shift;
 		my @oldlines = Slim::Display::Display::curLines($client);
 		Slim::Buttons::Common::pushMode($client, 'searchfor');
 		Slim::Buttons::SearchFor::searchFor($client, $searchChoices[$client->searchSelection]);
-		Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
+		$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 	}
 );
 
@@ -62,8 +62,8 @@ sub lines {
 	my ($line1, $line2);
 	$line1 = string('SEARCH');
 	my $menuChoice = 'SEARCHFOR_'.$searchChoices[$client->searchSelection];
-	$line2 = Slim::Utils::Prefs::clientGet($client, 'doublesize') ? Slim::Utils::Strings::doubleString($menuChoice) : string($menuChoice);
-	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
+	$line2 = ($client->linesPerScreen() == 1) ? Slim::Utils::Strings::doubleString($menuChoice) : string($menuChoice);
+	return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));
 }
 
 1;

@@ -13,7 +13,7 @@
 
 require 5.006_000;
 use strict;
-
+use warnings;
 #use diagnostics;  # don't use this as it slows down regexp parsing dramatically
 #use utf8;
 
@@ -106,6 +106,7 @@ use Slim::Control::CLI;
 use Slim::Control::xPL;
 use Slim::Networking::Discovery;
 use Slim::Display::Display;
+use Slim::Display::Graphics;
 use Slim::Web::HTTP;
 use Slim::Hardware::IR;
 use Slim::Music::Info;
@@ -162,6 +163,7 @@ use vars qw(
 	$d_files
 	$d_firmware
 	$d_formats
+	$d_graphics
 	$d_http
 	$d_http_verbose
 	$d_info
@@ -273,6 +275,9 @@ sub init {
 	
 	$::d_server && msg("SlimServer Buttons init...\n");
 	Slim::Buttons::Common::init();
+
+	$::d_server && msg("SlimServer Graphics init...\n");
+	Slim::Display::Graphics::init();
 
 	if ($priority) {
 		$::d_server && msg("SlimServer - changing process priority to $priority\n");
@@ -496,6 +501,7 @@ to the console via stderr:
     --d_filehandle   => Information about the custom FileHandle object
     --d_firmware     => Information during Squeezebox firmware updates 
     --d_formats      => Information about importing data from various file formats
+    --d_graphics     => Information bitmap graphic display 
     --d_http         => HTTP activity
     --d_http_verbose => Even more HTTP activity 
     --d_info         => MP3/ID3 track information
@@ -566,6 +572,7 @@ sub initOptions {
 		'd_files'			=> \$d_files,
 		'd_firmware'		=> \$d_firmware,
 		'd_formats'			=> \$d_formats,
+		'd_graphics'		=> \$d_graphics,
 		'd_http'			=> \$d_http,
 		'd_http_verbose'		=> \$d_http_verbose,
 		'd_info'			=> \$d_info,
@@ -743,7 +750,7 @@ sub checkVersion {
 	if ($sock) {
 
 		$::newVersion = '';
-
+		
 		while (my $line = Slim::Utils::Misc::sysreadline($sock,5)) {
 			$::newVersion .= $line;
 		}

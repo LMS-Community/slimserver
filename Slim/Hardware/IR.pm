@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.21 2004/01/26 05:44:17 dean Exp $
+# $Id: IR.pm,v 1.22 2004/08/03 17:29:14 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -564,7 +564,7 @@ sub processCode {
 
 	if ($eggseq eq $eggsofar) {
 		$client->easteregg('');
-		Slim::Display::Animation::doEasterEgg($client);
+		$client->doEasterEgg();
 	} else {
 		Slim::Control::Command::execute($client, ['button', $irCode, $irTime]);
 	}

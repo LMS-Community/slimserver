@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.57 2004/07/23 06:25:25 kdf Exp $
+# $Id: Slimproto.pm,v 1.58 2004/08/03 17:29:16 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -16,7 +16,9 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Networking::Select;
 use Slim::Player::Squeezebox;
+use Slim::Player::SqueezeboxG;
 use Slim::Player::SoftSqueeze;
+use Slim::Player::SoftSqueezeG;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -25,7 +27,7 @@ use Errno qw(:POSIX);
 my $SLIMPROTO_ADDR = 0;
 my $SLIMPROTO_PORT = 3483;
 
-my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze');
+my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox');
 
 my $slimproto_socket;
 
@@ -251,22 +253,20 @@ sub process_slimproto_frame {
 	$::d_slimproto_v && msg("Got Slimproto frame, op $op, length $len, $s\n");
 
 	if ($op eq 'HELO') {
-		if ($len != 10) {
-			$::d_slimproto && msg("bad length $len for HELO. Ignoring.\n");
-			return;
-		}
-		my ($deviceid, $revision, @mac, $wlan_channellist);
+		my ($deviceid, $revision, @mac, $bitmapped, $reserved, $wlan_channellist);
 
 		(	$deviceid, $revision, 
 			$mac[0], $mac[1], $mac[2], $mac[3], $mac[4], $mac[5],
-			$wlan_channellist
-		) = unpack("CCH2H2H2H2H2H2H4", $data);
+			$bitmapped, $reserved, $wlan_channellist,
+		) = unpack("CCH2H2H2H2H2H2B1B1B14", $data);
 		my $mac = join(':', @mac);
 		$::d_slimproto && msg(	
 			"Squeezebox says hello.\n".
 			"\tDeviceid: $deviceid\n".
 			"\trevision: $revision\n".
 			"\tmac: $mac\n".
+			"\tbitmapped: $bitmapped\n".
+			"\treserved: $reserved\n" .	
 			"\twlan_channellist: $wlan_channellist\n"
 			);
 
@@ -280,33 +280,47 @@ sub process_slimproto_frame {
 		my $paddr = sockaddr_in($s->peerport, $s->peeraddr);
 		my $client = Slim::Player::Client::getClient($id); 
 		
+		my $client_class;
+		if (!defined($deviceids[$deviceid])) {
+			$::d_slimproto && msg("unknown device id $deviceid in HELO framem closing connection\n");
+			slimproto_close($s);
+			return;
+		} elsif ($deviceids[$deviceid] eq 'squeezebox') {	
+			if ($bitmapped) {
+			    	$client_class = 'Slim::Player::SqueezeboxG';
+			} else {
+			    	$client_class = 'Slim::Player::Squeezebox';
+			}
+		} elsif ($deviceids[$deviceid] eq 'softsqueeze') {
+			if ($bitmapped) {
+			    	$client_class = 'Slim::Player::SoftSqueezeG';
+			} else {
+			    	$client_class = 'Slim::Player::SoftSqueeze';
+			}
+		} else {
+			$::d_slimproto && msg("unknown device type for $deviceid in HELO framem closing connection\n");
+			slimproto_close($s);
+			return;
+		}			
+
+		if (defined $client && !$client->isa($client_class)) {
+		    msg("forgetting client, it is not a $client_class\n");
+			Slim::Player::Client::forgetClient($client->id());
+			$client = undef;
+		}
+
 		if (!defined($client)) {
 			$::d_slimproto && msg("creating new client, id:$id ipport: $ipport{$s}\n");
-			if (!defined($deviceids[$deviceid])) {
-				$::d_slimproto && msg("unknown device id $deviceid in HELO framem closing connection\n");
-				slimproto_close($s);
-				return;
-			} elsif ($deviceids[$deviceid] eq 'squeezebox') {			
-				$client = Slim::Player::Squeezebox->new(
-					$id, 		# mac
-					$paddr,		# sockaddr_in
-					$revision,	# rev
-					$s		# tcp sock
-				);
-			} elsif ($deviceids[$deviceid] eq 'softsqueeze') {
-				$client = Slim::Player::SoftSqueeze->new(
-					$id, 		# mac
-					$paddr,		# sockaddr_in
-					$revision,	# rev
-					$s		# tcp sock
-				);			
-			} else {
-				$::d_slimproto && msg("unknown device type for $deviceid in HELO framem closing connection\n");
-				slimproto_close($s);
-				return;
-			}			
-			
+
+			$client = $client_class->new(
+				$id, 		# mac
+				$paddr,		# sockaddr_in
+				$revision,	# rev
+				$s		# tcp sock
+			);
+
 			$client->macaddress($mac);
+			$client->reconnect($paddr, $revision, $s);
 			$client->init();
 		} else {
 			$::d_slimproto && msg("hello from existing client: $id on ipport: $ipport{$s}\n");
@@ -316,7 +330,7 @@ sub process_slimproto_frame {
 		$sock2client{$s}=$client;
 		
 		if ($client->needsUpgrade()) {
-			Slim::Hardware::VFD::vfdBrightness($client,$Slim::Hardware::VFD::MAXBRIGHTNESS);
+			$client->brightness($client->maxBrightness());
 			Slim::Buttons::Block::block($client, string('PLAYER_NEEDS_UPGRADE_1'), string('PLAYER_NEEDS_UPGRADE_2'));
 		} else {
 			# workaround to handle multiple firmware versions causing blocking modes to stack
@@ -463,7 +477,7 @@ sub process_slimproto_frame {
 		}
 		
 	} else {
-		msg("Unknown slimproto op: $op\n");
+		$::d_slimproto && msg("Unknown slimproto op: $op\n");
 	}
 }
 

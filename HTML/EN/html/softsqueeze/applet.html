@@ -1,27 +1,25 @@
 <HTML>
 <HEAD>
-<TITLE>SoftSqueeze Applet</TITLE>
+<TITLE>Softsqueeze Applet</TITLE>
 </HEAD>
 
-<BODY>
-<h1>SoftSqueeze</h1>
+<BODY BGCOLOR="#2f3332">
 
-This page is for testing the SoftSqueeze applet.
-<br/>
-<br/>
-
+<center>
 <applet code="com.slim.softsqueeze.Applet"
         archive="SoftSqueeze.jar"
-        width="260" height="175">
+	bgcolor="#2f3332"
+        width="545" height="485">
     <param name="slimserver" value="[% host.match('([^:]*)').0 %]" />
     <param name="serverversion" value="5.2" />
-    <param name="skins" value="excession-applet" />
+    <param name="skins" value="slim-applet" />
+    <param name="displayemulation" value="Graphics" />
     <param name="sshtunnel" value="false" />
     <param name="sshusername" value="" />
     <param name="sshpassword" value="" />
 </applet>
-
+</center>
 
 </BODY>
-
 </HTML>
+

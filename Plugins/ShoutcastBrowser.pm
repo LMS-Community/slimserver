@@ -1,6 +1,6 @@
 # ShoutcastBrowser.pm Copyright (C) 2003 Peter Heslin
 # version 3.0, 5 Apr, 2004
-#$Id: ShoutcastBrowser.pm,v 1.13 2004/06/17 23:12:54 dean Exp $
+#$Id: ShoutcastBrowser.pm,v 1.14 2004/08/03 17:29:07 vidur Exp $
 #
 # A Slim plugin for browsing the Shoutcast directory of mp3
 # streams.  Inspired by streamtuner.
@@ -662,7 +662,7 @@ sub lines {
 		    Slim::Utils::Strings::string('OF') .  ' ' .
 			    ($#genres + 1) .  ') ' ;
 	$lines[1] = $current_stream;
-	$lines[3] = Slim::Hardware::VFD::symbol('rightarrow');
+	$lines[3] = Slim::Display::Display::symbol('rightarrow');
     }
 
     return @lines;
@@ -967,7 +967,7 @@ sub streamsLines
 	$lines[1] = $current_stream;
 	if (keys %{ $stream_data{$current_genre}{$current_stream} } > 1)
 	{
-	    $lines[3] = Slim::Hardware::VFD::symbol('rightarrow');
+	    $lines[3] = Slim::Display::Display::symbol('rightarrow');
 	}
 	}
 
@@ -1022,7 +1022,7 @@ my %StreamsFunctions =
 
 	 if ($current_genre eq $recent_name)
 	 {
-	     Slim::Display::Animation::bumpRight($client);
+	     $client->bumpRight();
 	 }
 	 else
 	 {
@@ -1329,7 +1329,7 @@ my %InfoFunctions =
      'right' => sub
      {
 	 my $client = shift;
-	 Slim::Display::Animation::bumpRight($client);
+	 $client->bumpRight();
      },
      'play' => sub
      {
@@ -1500,8 +1500,8 @@ PLUGIN_SHOUTCASTBROWSER_GENRES
 	DE	SHOUTcast Musikstile
 
 PLUGIN_SHOUTCASTBROWSER_CONNECTING
-	EN	Connecting to SHOUTcast web site ...
-	DE	Verbinde mit der SHOUTcast Web-Seite ...
+	EN	Connecting to SHOUTcast...
+	DE	Verbinde mit der SHOUTcast...
 
 PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
 	EN	Error: SHOUTcast web site not available

@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::List;
 
-# $Id: List.pm,v 1.9 2004/07/23 04:04:41 kdf Exp $
+# $Id: List.pm,v 1.10 2004/08/03 17:29:11 vidur Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -10,7 +10,7 @@ use strict;
 
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
-use Slim::Hardware::VFD;
+use Slim::Display::Display;
 use Slim::Utils::Strings qw (string);
 
 ###########################
@@ -101,6 +101,7 @@ sub lines {
 	my $listIndex = Slim::Buttons::Common::param($client,'listIndex');
 	my $listRef = Slim::Buttons::Common::param($client,'listRef');
 	if (!defined($listRef)) { return ('','');}
+
 	$line1 = getExtVal($client,$listRef->[$listIndex],$listIndex,'header');
 	if (Slim::Buttons::Common::param($client,'stringHeader') 
 			&& Slim::Utils::Strings::stringExists($line1)) {
@@ -116,7 +117,7 @@ sub lines {
 		$line2 = getExtVal($client,$listRef->[$listIndex],$listIndex,'externRef');
 		if (Slim::Buttons::Common::param($client,'stringExternRef')
 				&& Slim::Utils::Strings::stringExists($line2)) {
-			$line2 = Slim::Utils::Prefs::clientGet($client, 'doublesize') ? Slim::Utils::Strings::doubleString($line2) : string($line2);
+			$line2 = $client->linesPerScreen() == 1 ? Slim::Utils::Strings::doubleString($line2) : string($line2);
 		}
 	}
 	my @overlay = getExtVal($client,$listRef->[$listIndex],$listIndex,'overlayRef');
@@ -262,7 +263,7 @@ sub exitInput {
 	my $callbackFunct = Slim::Buttons::Common::param($client,'callback');
 	if (!defined($callbackFunct) || !(ref($callbackFunct) eq 'CODE')) {
 		if ($exitType eq 'right') {
-			Slim::Display::Animation::bumpRight($client);
+			$client->bumpRight();
 		} elsif ($exitType eq 'left') {
 			Slim::Buttons::Common::popModeRight($client);
 		} else {

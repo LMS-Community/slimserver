@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.16 2004/05/18 16:06:47 dean Exp $
+# $Id: Browse.pm,v 1.17 2004/08/03 17:29:08 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ my %functions = (
 		my $inc = shift || 1;
 		my $count = $client->numberOfDirItems();
 		if ($count < 2) {
-			Slim::Display::Animation::bumpUp($client);
+			$client->bumpUp();
 		} else {
 			$inc = ($inc =~ /\D/) ? -1 : -$inc;
 			my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, $client->currentDirItem());
@@ -43,7 +43,7 @@ my %functions = (
 		my $inc = shift || 1;
 		my $count = $client->numberOfDirItems();
 		if ($count < 2) {
-			Slim::Display::Animation::bumpDown($client);
+			$client->bumpDown();
 		} else {
 			if ($inc =~ /\D/) {$inc = 1}
 			my $newposition = Slim::Buttons::Common::scroll($client, $inc, $client->numberOfDirItems(), $client->currentDirItem());
@@ -67,7 +67,7 @@ my %functions = (
 		my $client = shift;
 		if (!$client->numberOfDirItems()) {
 			# don't do anything if the list is empty
-			Slim::Display::Animation::bumpRight($client);
+			$client->bumpRight();
 		} else {
 			my $currentItem = $client->dirItems($client->currentDirItem());
 			$::d_files && msg("currentItem == $currentItem\n");
@@ -80,7 +80,7 @@ my %functions = (
 			} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isHTTPURL($currentItem)) {
 				# enter the trackinfo mode for the track in $currentitem
 				Slim::Buttons::Common::pushMode($client, 'trackinfo', {'track' => $currentItem});
-				Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
+				$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 			} else {
 				$::d_files && msg("Error attempting to descend directory or open file: $currentItem\n");
 			}
@@ -118,7 +118,7 @@ my %functions = (
 			Slim::Buttons::Block::block($client, $line1, $line2);
 			Slim::Control::Command::execute($client, ["playlist", "add", $currentItem], \&playDone, [$client]);
 		} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isHTTPURL($currentItem)) {
-			Slim::Display::Animation::showBriefly($client, $line1, $line2, undef, 1);
+			$client->showBriefly($line1, $line2, undef, 1);
 			# we are looking at a song file, play it and all the other songs in the directory after
 			Slim::Control::Command::execute($client, ["playlist", "append", $currentItem]);
 		} else {
@@ -137,7 +137,7 @@ my %functions = (
 			Slim::Buttons::Block::block($client, $line1, $line2);
 			Slim::Control::Command::execute($client, ["playlist", "insertlist", $currentItem], \&playDone, [$client]);
 		} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isHTTPURL($currentItem)) {
-			Slim::Display::Animation::showBriefly($client, $line1, $line2, undef, 1);
+			$client->showBriefly($line1, $line2, undef, 1);
 			# we are looking at a song file, play it and all the other songs in the directory after
 			Slim::Control::Command::execute($client, ["playlist", "insert", $currentItem]);
 		} else {
@@ -164,7 +164,7 @@ my %functions = (
 			Slim::Control::Command::execute($client, ["playlist", "load", $currentItem], \&playDone, [$client]);
 		} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isHTTPURL($currentItem)) {
 			# put all the songs at this level on the playlist and start playing the selected one.
-			Slim::Display::Animation::showBriefly($client, $line1, $line2, undef, 1);
+			$client->showBriefly($line1, $line2, undef, 1);
 			if (Slim::Utils::Prefs::get('playtrackalbum') && !Slim::Music::Info::isHTTPURL($currentItem)) {
 				Slim::Control::Command::execute($client, ["playlist", "clear"]);
 				Slim::Control::Command::execute($client, ["playlist", "shuffle" , 0]);
@@ -310,9 +310,9 @@ sub opendir_done {
 
 	if (defined $direction) {
 		if ($direction eq 'left') {
-			Slim::Display::Animation::pushRight($client, @$oldlinesref, Slim::Display::Display::curLines($client));
+			$client->pushRight($oldlinesref, [Slim::Display::Display::curLines($client)]);
 		} else {
-			Slim::Display::Animation::pushLeft($client, @$oldlinesref, Slim::Display::Display::curLines($client));
+			$client->pushLeft($oldlinesref, [Slim::Display::Display::curLines($client)]);
 		}
 	}
 
@@ -394,11 +394,11 @@ sub overlay {
 	$fullpath = $client->dirItems($client->currentDirItem());
 
 	if ($fullpath && Slim::Music::Info::isList($fullpath)) {
-		return Slim::Hardware::VFD::symbol('rightarrow');
+		return Slim::Display::Display::symbol('rightarrow');
 	}
 
 	if ($fullpath && Slim::Music::Info::isSong($fullpath) || Slim::Music::Info::isHTTPURL($fullpath)) {
-		return Slim::Hardware::VFD::symbol('notesymbol');
+		return Slim::Display::Display::symbol('notesymbol');
 	}
 
 	return undef;

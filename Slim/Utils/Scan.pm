@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.11 2004/06/18 16:25:26 dean Exp $
+# $Id: Scan.pm,v 1.12 2004/08/03 17:29:18 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or

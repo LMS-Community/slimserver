@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.113 2004/07/01 01:43:25 kdf Exp $
+# $Id: HTTP.pm,v 1.114 2004/08/03 17:29:19 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -533,7 +533,7 @@ sub processURL {
 
 	$peerclient{$httpClient} = $client;
 
-	if ($client && $client->isPlayer() && $client->model() eq 'slimp3') {
+	if ($client && $client->isa("Slim::Player::SLIMP3")) {
 
 		$params->{'playermodel'} = 'slimp3';
 	} else {
@@ -1007,8 +1007,11 @@ sub sendStreamingResponse {
 	
 	$::d_http && msg("sendstreaming response begun...\n");
 
-	if ($client && ($client->model eq 'softsqueeze' || $client->model eq 'squeezebox') && defined($httpClient) &&
-		(!defined($client->streamingsocket()) || $httpClient != $client->streamingsocket())) {
+	if ($client && 
+			$client->isa("Slim::Player::Squeezebox") && 
+			defined($httpClient) &&
+			(!defined($client->streamingsocket()) || $httpClient != $client->streamingsocket())
+		) {
 
 		$::d_http && msg($client->id() . " We're done streaming this socket to client\n");
 		closeStreamingSocket($httpClient);
@@ -1021,15 +1024,19 @@ sub sendStreamingResponse {
 		return undef;
 	}
 	
-	if (!$streamingFile && $client && ($client->model eq 'softsqueeze' || $client->model eq 'squeezebox') && (Slim::Player::Source::playmode($client) eq 'stop')) {
+	if (!$streamingFile && 
+			$client && 
+			$client->isa("Slim::Player::Squeezebox") && 
+			(Slim::Player::Source::playmode($client) eq 'stop')) {
 		closeStreamingSocket($httpClient);
 		$::d_http && msg("Squeezebox closed connection...\n");
 		return undef;
 	}
 	
 	if (!defined($streamingFile) && 
-		$client && ($client->model eq 'http') && 
-		((Slim::Player::Source::playmode($client) ne 'play') || (Slim::Player::Playlist::count($client) == 0))) {
+			$client && 
+			$client->isa("Slim::Player::HTTP") && 
+			((Slim::Player::Source::playmode($client) ne 'play') || (Slim::Player::Playlist::count($client) == 0))) {
 
 		$silence = 1;
 	} 

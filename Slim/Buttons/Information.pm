@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.7 2004/04/29 22:21:51 daniel Exp $
+#	$Id: Information.pm,v 1.8 2004/08/03 17:29:09 vidur Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -45,7 +45,7 @@ package Slim::Buttons::Information;
 use strict;
 use vars qw($VERSION);
 
-$VERSION = substr(q$Revision: 1.7 $,10);
+$VERSION = substr(q$Revision: 1.8 $,10);
 
 use File::Spec::Functions qw(catdir);
 use Slim::Utils::Strings qw(string);
@@ -88,7 +88,7 @@ my %menuParams = (
 		,'externRef' => sub {return string('INFORMATION_MENU_' . uc($_[0]));}
 		,'externRefArgs' => 'V'
 		,'listRef' => ['library','player','server','module']
-		,'overlayRef' => sub {return (undef,Slim::Hardware::VFD::symbol('rightarrow'));}
+		,'overlayRef' => sub {return (undef,Slim::Display::Display::symbol('rightarrow'));}
 		,'overlayRefArgs' => ''
 		,'callback' => \&mainExitHandler
 	}
@@ -198,7 +198,7 @@ sub moduleDisplay {
 		push(@info,string('INFORMATION_VERSION') . ": $version");
 	}
 
-	return join(' ' . Slim::Hardware::VFD::symbol('rightarrow') . ' ',@info);
+	return join(' ' . Slim::Display::Display::symbol('rightarrow') . ' ',@info);
 
 }	
 
@@ -225,7 +225,7 @@ sub mainExitHandler {
 				\%nextParams
 			);
 		} else {
-			Slim::Display::Animation::bumpRight($client);
+			$client->bumpRight();
 		}
 	} else {
 		return;

@@ -1,6 +1,6 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.25 2004/06/11 18:34:08 dean Exp $
+# $Id: RemoteStream.pm,v 1.26 2004/08/03 17:29:22 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -252,7 +252,7 @@ sub readMetaData {
 			if (defined($title) && $title ne '' && $oldtitle ne $title) {
 				Slim::Music::Info::setTitle($url, $title);
 				foreach my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
-					Slim::Display::Animation::killAnimation($everybuddy);
+					$everybuddy->update();
 				}
 			}
 			

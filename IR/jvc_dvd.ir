@@ -65,6 +65,7 @@ menu_settings			= 0000f784
 menu_pop				= 0000f785
 textsize_small			= 0000f704
 textsize_large			= 0000f705
+textsize_medium			= 0000f706
 shuffle_off				= 0000f72c
 shuffle_on				= 0000f72d
 repeat_off				= 0000f7ac

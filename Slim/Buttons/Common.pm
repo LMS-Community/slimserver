@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.35 2004/07/23 06:27:08 kdf Exp $
+# $Id: Common.pm,v 1.36 2004/08/03 17:29:09 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -93,7 +93,7 @@ my %functions = (
 			return;
 		}
 		Slim::Control::Command::execute($client, ["playlist", "jump", "+1"]);
-		Slim::Display::Animation::showBriefly($client, (Slim::Buttons::Playlist::currentSongLines($client))[0..1]);
+		$client->showBriefly($client->currentSongLines());
 	},
 	'rew' => sub  {
 		my $client = shift;
@@ -115,7 +115,7 @@ my %functions = (
 		if (Slim::Player::Source::playmode($client) ne 'pause') {
 			Slim::Control::Command::execute($client, ["play"]);
 		}
-		Slim::Display::Animation::showBriefly($client, (Slim::Buttons::Playlist::currentSongLines($client))[0..1]);
+		$client->showBriefly($client->currentSongLines());
 	},
 	
 	'jump' => sub  {
@@ -164,7 +164,7 @@ my %functions = (
 		#either starts the same song over, or the previous one, or the next one depending on whether/how we jumped
 		if (Slim::Player::Source::playmode($client) ne 'pause') {
 			Slim::Control::Command::execute($client, ["play"]);
-		}Slim::Display::Animation::showBriefly($client, (Slim::Buttons::Playlist::currentSongLines($client))[0..1]);
+		}$client->showBriefly($client->currentSongLines());
 	},
 	'jumpinsong' => sub {
 		my ($client,$funct,$functarg) = @_;
@@ -211,16 +211,16 @@ my %functions = (
 		if (Slim::Player::Source::playmode($client) eq 'play' && Slim::Player::Source::rate($client) != 1) {
 			Slim::Player::Source::rate($client,1);
 		}
-		Slim::Display::Animation::showBriefly($client, (Slim::Buttons::Playlist::currentSongLines($client))[0..1]);
+		$client->showBriefly($client->currentSongLines());
 	},
 	'stop' => sub  {
 		my $client = shift;
 		if (Slim::Player::Playlist::count($client) == 0) {
-			Slim::Display::Animation::showBriefly($client, string('PLAYLIST_EMPTY'), "");
+			$client->showBriefly(string('PLAYLIST_EMPTY'), "");
 		} else {
 			Slim::Control::Command::execute($client, ["stop"]);
 			Slim::Buttons::Common::pushMode($client, 'playlist');
-			Slim::Display::Animation::showBriefly($client, string('STOPPING'), "");
+			$client->showBriefly(string('STOPPING'), "");
 		}
 	},
 	'menu_pop' => sub  {
@@ -296,16 +296,16 @@ my %functions = (
 		my $brightmode = 'power' . ((mode($client) eq 'off') ? 'Off' : 'On') . 'Brightness';
 		my $newBrightness;
 		if ($buttonarg eq 'toggle') {
-			$newBrightness = Slim::Hardware::VFD::vfdBrightness($client) - 1;
+			$newBrightness = $client->brightness() - 1;
 			if ($newBrightness < 0) {
-				$newBrightness = $Slim::Hardware::VFD::MAXBRIGHTNESS;
+				$newBrightness = $client->maxBrightness();
 			}
 		} else {
-			$newBrightness = ($buttonarg eq 'down') ? Slim::Hardware::VFD::vfdBrightness($client) - 1 : Slim::Hardware::VFD::vfdBrightness($client) + 1;
-			if ($newBrightness > $Slim::Hardware::VFD::MAXBRIGHTNESS) { $newBrightness = $Slim::Hardware::VFD::MAXBRIGHTNESS;}
+			$newBrightness = ($buttonarg eq 'down') ? $client->brightness() - 1 : $client->brightness() + 1;
+			if ($newBrightness > $client->maxBrightness()) { $newBrightness = $client->maxBrightness();}
 			if ($newBrightness < 0) { $newBrightness = 0;}
 		}
-		Slim::Utils::Prefs::clientSet($client, $brightmode,$newBrightness);
+		Slim::Utils::Prefs::clientSet($client, $brightmode, $newBrightness);
 	},
 	'playdisp' => sub  {
 		my $client = shift;
@@ -320,10 +320,10 @@ my %functions = (
 		if ($buttonarg eq 'toggle') {
 			$::d_files && msg("Switching to playlist view\n");
 			if (Slim::Player::Playlist::count($client) == 0) {
-				Slim::Display::Animation::showBriefly($client, string('PLAYLIST_EMPTY'), "");
+				$client->showBriefly(string('PLAYLIST_EMPTY'), "");
 			} else {
 				Slim::Buttons::Common::pushMode($client, 'playlist');
-				Slim::Display::Animation::showBriefly($client, string('VIEWING_PLAYLIST'), "");
+				$client->showBriefly(string('VIEWING_PLAYLIST'), "");
 			}
 		} else {
 			if ($buttonarg =~ /^[0-5]$/) {
@@ -353,11 +353,11 @@ my %functions = (
 		Slim::Control::Command::execute($client, ["playlist", "repeat",$repeat]);
 		# display the fact that we are (not) repeating
 		if (Slim::Player::Playlist::repeat($client) == 0) {
-			Slim::Display::Animation::showBriefly($client, string('REPEAT_OFF'), "");
+			$client->showBriefly(string('REPEAT_OFF'), "");
 		} elsif (Slim::Player::Playlist::repeat($client) == 1) {
-			Slim::Display::Animation::showBriefly($client, string('REPEAT_ONE'), "");
+			$client->showBriefly(string('REPEAT_ONE'), "");
 		} elsif (Slim::Player::Playlist::repeat($client) == 2) {
-			Slim::Display::Animation::showBriefly($client, string('REPEAT_ALL'), "");
+			$client->showBriefly(string('REPEAT_ALL'), "");
 		}
 	},
 	'volume' => sub {
@@ -409,9 +409,9 @@ my %functions = (
 		}
 		my $sleepTime = $sleepChoices[$i];
 		if ($sleepTime == 0) {
-			Slim::Display::Animation::showBriefly($client, string('CANCEL_SLEEP') , '');
+			$client->showBriefly(string('CANCEL_SLEEP') , '');
 		} else {
-			Slim::Display::Animation::showBriefly($client, string('SLEEPING_IN') . ' ' . $sleepTime . ' ' . string('MINUTES'),'');
+			$client->showBriefly(string('SLEEPING_IN') . ' ' . $sleepTime . ' ' . string('MINUTES'),'');
 		}
 
 		Slim::Control::Command::execute($client, ["sleep", $sleepTime * 60]);
@@ -441,11 +441,11 @@ my %functions = (
 		Slim::Control::Command::execute($client, ["playlist", "shuffle" , $shuffle]);
 		
 		if (Slim::Player::Playlist::shuffle($client) == 2) {
-				Slim::Display::Animation::showBriefly($client, string('SHUFFLE_ON_ALBUMS'), "");
+				$client->showBriefly(string('SHUFFLE_ON_ALBUMS'), "");
 		} elsif (Slim::Player::Playlist::shuffle($client) == 1) {
-				Slim::Display::Animation::showBriefly($client, string('SHUFFLE_ON_SONGS'), "");
+				$client->showBriefly(string('SHUFFLE_ON_SONGS'), "");
 		} else {
-				Slim::Display::Animation::showBriefly($client, string('SHUFFLE_OFF'), "");
+				$client->showBriefly(string('SHUFFLE_OFF'), "");
 		}
 	},
 	'titleFormat' => sub  {
@@ -457,23 +457,32 @@ my %functions = (
 	},
  	'datetime' => sub  {
  		# briefly display the time/date
- 		Slim::Display::Animation::showBriefly(shift,dateTime(),3);
+ 		shift->showBriefly(dateTime(),3);
  	},
 	'textsize' => sub  {
 		my $client = shift;
 		my $button = shift;
-		my $doublesize = Slim::Utils::Prefs::clientGet($client, "doublesize") ? 0 : 1;
+		my $doublesize = $client->textSize;
 		if ($button eq 'textsize_large') {
+			$doublesize = $client->maxTextSize;
+		} elsif ($button eq 'textsize_medium') {
 			$doublesize = 1;
 		} elsif ($button eq 'textsize_small') {
 			$doublesize = 0;
+		} elsif ($button eq 'textsize_toggle') {
+			$doublesize++;
 		}
-		Slim::Utils::Prefs::clientSet($client, "doublesize", $doublesize);
+		
+		if ($doublesize && $doublesize > $client->maxTextSize) {
+			$doublesize = 0;
+		}
+	
+		$client->textSize($doublesize);
 		$client->update();
 	},
 	'clearPlaylist' => sub {
 		my $client = shift;
-		Slim::Display::Animation::showBriefly($client, string('CLEARING_PLAYLIST'), '');
+		$client->showBriefly(string('CLEARING_PLAYLIST'), '');
 		Slim::Control::Command::execute($client, ['playlist', 'clear']);
 	},
 	'modefunction' => sub {
@@ -495,7 +504,7 @@ my %functions = (
 		my %maps = reverse %$mapref;
 		return if !exists($maps{$functarg});
 		Slim::Utils::Prefs::clientSet($client,'irmap',$maps{$functarg});
-		Slim::Display::Animation::showBriefly($client,string('SETUP_IRMAP') . ':', $functarg);
+		$client->showBriefly(string('SETUP_IRMAP') . ':', $functarg);
 	}
 
 );
@@ -1081,14 +1090,14 @@ sub pushModeLeft {
 
 	my @oldlines = Slim::Display::Display::curLines($client);
 	pushMode($client, $setmode, $paramHashRef);
-	Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
+	$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 }
 
 sub popModeRight {
 	my $client = shift;
 	my @oldlines = Slim::Display::Display::curLines($client);
 	Slim::Buttons::Common::popMode($client);
-	Slim::Display::Animation::pushRight($client, @oldlines, Slim::Display::Display::curLines($client));
+	$client->pushRight(\@oldlines, [Slim::Display::Display::curLines($client)]);
 }
 
 sub dateTime {

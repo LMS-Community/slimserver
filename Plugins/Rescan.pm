@@ -1,6 +1,6 @@
 # Rescan.pm by Andrew Hedges (andrew@hedges.me.uk) October 2002
 # Timer functions added by Kevin Deane-Freeman (kevindf@shaw.ca) June 2004
-# $Id: Rescan.pm,v 1.5 2004/07/22 01:58:43 kdf Exp $
+# $Id: Rescan.pm,v 1.6 2004/08/03 17:29:07 vidur Exp $
 
 # This code is derived from code with the following copyright message:
 #
@@ -21,7 +21,7 @@ use Slim::Utils::Strings qw (string);
 use Time::HiRes;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.5 $,10);
+$VERSION = substr(q$Revision: 1.6 $,10);
 
 my $interval = 1; # check every x seconds
 my @browseMenuChoices;
@@ -86,13 +86,13 @@ my %functions = (
 		elsif ($browseMenuChoices[$menuSelection{$client}] eq string('PLUGIN_RESCAN_TIMER_OFF')) {
 			Slim::Utils::Prefs::set("rescan-scheduled", 1);
 			$browseMenuChoices[$menuSelection{$client}] = string('PLUGIN_RESCAN_TIMER_ON');
-			Slim::Display::Animation::showBriefly($client,string('PLUGIN_RESCAN_TIMER_TURNING_ON'),'');
+			$client->showBriefly(string('PLUGIN_RESCAN_TIMER_TURNING_ON'),'');
 			setTimer($client);
 		}
 		elsif ($browseMenuChoices[$menuSelection{$client}] eq string('PLUGIN_RESCAN_TIMER_ON')) {
 			Slim::Utils::Prefs::set("rescan-scheduled", 0);
 			$browseMenuChoices[$menuSelection{$client}] = string('PLUGIN_RESCAN_TIMER_OFF');
-			Slim::Display::Animation::showBriefly($client,string('PLUGIN_RESCAN_TIMER_TURNING_OFF'),'');
+			$client->showBriefly(string('PLUGIN_RESCAN_TIMER_TURNING_OFF'),'');
 			setTimer($client);
 		}
 	},
@@ -102,9 +102,9 @@ my %functions = (
 			my @pargs=('rescan');
 			my ($line1, $line2) = (string('PLUGIN_RESCAN_MUSIC_LIBRARY'), string('PLUGIN_RESCAN_RESCANNING'));
 			Slim::Control::Command::execute($client, \@pargs, undef, undef);
-			Slim::Display::Animation::showBriefly($client,$line1, $line2);
+			$client->showBriefly( $line1, $line2);
 		} else {
-			Slim::Display::Animation::bumpRight($client);
+			$client->bumpRight();
 		}
 	}
 );
@@ -122,7 +122,7 @@ sub lines {
 	$line2 = "";
 
 	$line2 = $browseMenuChoices[$menuSelection{$client}];
-	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
+	return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));
 }
 
 sub settingsExitHandler {
@@ -132,12 +132,11 @@ sub settingsExitHandler {
 		Slim::Utils::Prefs::set("rescan-time",Slim::Buttons::Common::param($client,'valueRef'));
 		Slim::Buttons::Common::popModeRight($client);
 	} elsif ($exittype eq 'RIGHT') {
-			Slim::Display::Animation::bumpRight($client);
+			$client->bumpRight();
 	} else {
 		return;
 	}
 }
-	
 
 sub getFunctions() {
 	return \%functions;

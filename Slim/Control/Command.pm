@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.40 2004/07/25 22:47:38 dean Exp $
+# $Id: Command.pm,v 1.41 2004/08/03 17:29:12 vidur Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -334,7 +334,7 @@ sub execute {
 						$buddy = $clients[$p1];
 					}
 				}
-				Slim::Player::Sync::sync($buddy,$client) if defined $buddy;
+				Slim::Player::Sync::sync($buddy, $client) if defined $buddy;
 			}
 		} elsif ($p0 eq "playlist") {
 			# here are all the commands that add/insert/replace songs/directories/playlists on the current playlist
@@ -684,7 +684,7 @@ sub execute {
 				$p2 = $line2;
 			} else {
 				Slim::Buttons::ScreenSaver::wakeup($client);
-				Slim::Display::Animation::showBriefly($client, $p1, $p2, $p3, $p4);
+				$client->showBriefly($p1, $p2, $p3, $p4);
 			}
 		} elsif ($p0 eq "button") {
 			# all buttons now go through execute()

@@ -1,5 +1,5 @@
 package Slim::Buttons::BrowseID3;
-# $Id: BrowseID3.pm,v 1.16 2004/06/21 20:38:46 dean Exp $
+# $Id: BrowseID3.pm,v 1.17 2004/08/03 17:29:09 vidur Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ my %functions = (
 		my $inc = shift || 1;
 		my $count = scalar @{browseID3dir($client)};
 		if ($count < 2) {
-			Slim::Display::Animation::bumpUp($client);
+			$client->bumpUp();
 		} else {
 			$inc = ($inc =~ /\D/) ? -1 : -$inc;
 			my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, browseID3dirIndex($client));
@@ -42,7 +42,7 @@ my %functions = (
 		my $inc = shift || 1;
 		my $count = scalar @{browseID3dir($client)};
 		if ($count < 2) {
-			Slim::Display::Animation::bumpDown($client);
+			$client->bumpDown();
 		} else {
 			if ($inc =~ /\D/) {$inc = 1}
 			my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, browseID3dirIndex($client));
@@ -91,13 +91,13 @@ my %functions = (
 			}
 			loadDir($client);
 		}
-		Slim::Display::Animation::pushRight($client, @oldlines, Slim::Display::Display::curLines($client));
+		$client->pushRight( \@oldlines, [Slim::Display::Display::curLines($client)]);
 	},
 	'right' => sub  {
 		my $client = shift;
 		if (scalar @{browseID3dir($client)} == 0) {
 			# don't do anything if the list is empty, which shouldn't happen anyways...
-			Slim::Display::Animation::bumpRight($client);
+			$client->bumpRight();
 		} else {
 			my $currentItem = browseID3dir($client,browseID3dirIndex($client));
 			$::d_files && msg("currentItem == $currentItem\n");
@@ -128,7 +128,7 @@ my %functions = (
 				setSelection($client,'curgenre', $currentItem);
 				loadDir($client);
 			}
-			Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
+			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 		}
 	},
 	'numberScroll' => sub  {
@@ -195,10 +195,8 @@ my %functions = (
 			}
 		}
 		
-		Slim::Display::Animation::showBriefly(
-			$client,
-			Slim::Display::Display::renderOverlay(
-				$line1, $line2, undef, Slim::Hardware::VFD::symbol('notesymbol')
+		$client->showBriefly(
+			$client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')
 			),
 			undef,
 			1
@@ -257,18 +255,18 @@ my %functions = (
 			# if we've chosen a particular song
 			if (picked($genre) && picked($artist) && picked($album) && Slim::Music::Info::isSongMixable($currentItem)) {
 					Slim::Buttons::Common::pushMode($client, 'moodlogic_variety_combo', {'song' => $currentItem});
-					Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
+					$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 			# if we've picked an artist 
 			} elsif (picked($genre) && ! picked($album) && Slim::Music::Info::isArtistMixable($currentItem)) {
 					Slim::Buttons::Common::pushMode($client, 'moodlogic_mood_wheel', {'artist' => $currentItem});
-					Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
+					$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 			# if we've picked a genre 
 			} elsif (Slim::Music::Info::isGenreMixable($currentItem)) {
 					Slim::Buttons::Common::pushMode($client, 'moodlogic_mood_wheel', {'genre' => $currentItem});
-					Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
+					$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 			# don't do anything if nothing is mixable
 			} else {
-					Slim::Display::Animation::bumpLeft($client);
+					$client->bumpLeft();
 			}
 		}
 		
@@ -291,8 +289,6 @@ sub setMode {
 		setSelection($client,'cursong', selection($client,'song'));
 	}
 	
-	loadCustomChar($client);
-
 	$client->lines(\&lines);
 	loadDir($client);
 }
@@ -473,13 +469,13 @@ sub lines {
 
 		if ($songlist) {
 			$line2 = Slim::Music::Info::standardTitle($client, browseID3dir($client,browseID3dirIndex($client)));
-            $overlay1 = Slim::Hardware::VFD::symbol('moodlogic') if (Slim::Music::Info::isSongMixable(browseID3dir($client,browseID3dirIndex($client))));
-			$overlay2 = Slim::Hardware::VFD::symbol('notesymbol');
+            $overlay1 = Slim::Display::Display::symbol('moodlogic') if (Slim::Music::Info::isSongMixable(browseID3dir($client,browseID3dirIndex($client))));
+			$overlay2 = Slim::Display::Display::symbol('notesymbol');
 		} else {
 			$line2 = browseID3dir($client,browseID3dirIndex($client));
-            $overlay1 = Slim::Hardware::VFD::symbol('moodlogic') if (! defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isGenreMixable($line2));
-            $overlay1 = Slim::Hardware::VFD::symbol('moodlogic') if (defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isArtistMixable($line2));
-			$overlay2 = Slim::Hardware::VFD::symbol('rightarrow');
+            $overlay1 = Slim::Display::Display::symbol('moodlogic') if (! defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isGenreMixable($line2));
+            $overlay1 = Slim::Display::Display::symbol('moodlogic') if (defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isArtistMixable($line2));
+			$overlay2 = Slim::Display::Display::symbol('rightarrow');
 		}
 	}
 	return ($line1, $line2, $overlay1, $overlay2);
@@ -630,20 +626,6 @@ sub singletonRef {
     else {
         return [];
     }
-}
-
-sub loadCustomChar {
-        my $client = shift;
-
-	Slim::Hardware::VFD::setCustomChar('moodlogic', (
-	                    0b00011111,
-						0b00000000,
-						0b00011010,
-						0b00010101,
-						0b00010101,
-						0b00000000,
-						0b00011111,
-						0b00000000   ));
 }
 
 1;

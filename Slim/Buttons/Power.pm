@@ -1,6 +1,6 @@
 package Slim::Buttons::Power;
 
-# $Id: Power.pm,v 1.12 2004/06/21 20:38:46 dean Exp $
+# $Id: Power.pm,v 1.13 2004/08/03 17:29:10 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -21,13 +21,6 @@ my %functions = (
 		my $client = shift;
 		Slim::Control::Command::execute($client,["power",1]);
 		Slim::Control::Command::execute($client, ["play"]);
-	},
-	'offsize' => sub  {
-		my $client = shift;
-		my $button = shift;
-		my $offsize = Slim::Utils::Prefs::clientGet($client, "offDisplaySize") ? 0 : 1;
-		Slim::Utils::Prefs::clientSet($client, "offDisplaySize", $offsize);
-		$client->update();
 	},
 );
 
@@ -54,7 +47,7 @@ sub setMode {
 	
 	# switch to power off mode
 	# use our last saved brightness
-	Slim::Hardware::VFD::vfdBrightness($client, Slim::Utils::Prefs::clientGet($client, "powerOffBrightness"));
+	$client->brightness(Slim::Utils::Prefs::clientGet($client, "powerOffBrightness"));
 	$client->update();	
 }
 

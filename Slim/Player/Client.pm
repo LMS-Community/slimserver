@@ -1,5 +1,5 @@
 
-# $Id: Client.pm,v 1.53 2004/07/25 22:47:38 dean Exp $
+# $Id: Client.pm,v 1.54 2004/08/03 17:29:16 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -188,7 +188,7 @@ shoutMetaInterval() - type: int
 
 =item
 
-vfdbrightness() - type: int
+currBrightness() - type: int
 
 	current brightness setting of the client's VFD display, range 0..4
 
@@ -670,7 +670,7 @@ sub new {
 	$client->[22] = 0; # remoteStreamStartTime
 	$client->[23] = undef; # shoutMetaPointer
 	$client->[24] = undef; # shoutMetaInterval
-	$client->[25] = undef; # vfdbrightness
+	$client->[25] = undef; # currBrightness
 	$client->[26] = undef; # prevline1
 	$client->[27] = undef; # prevline2
 	$client->[28] = []; # playlist
@@ -777,7 +777,7 @@ sub new {
 
 	$client->searchCursor(0);
 
-	$client->vfdbrightness(1);
+	$client->currBrightness(1);
 
 	$clientHash{$id} = $client;
 
@@ -943,6 +943,22 @@ sub signalStrength {
 	return undef;
 }
 
+# stub out display functions, some players may not have them.
+sub update {}
+sub animating {}
+sub killAnimation {}
+sub endAnimation {}
+sub showBriefly {}
+sub pushLeft {}
+sub pushRight {}
+sub doEasterEgg {}
+sub bumpLeft {}
+sub bumpRight {}
+sub bumpUp {}
+sub bumpDown {}
+sub scrollBottom {}
+	
+
 sub pause {
 	my $client = shift;
 	$client->pauseTime(Time::HiRes::time());
@@ -1043,7 +1059,7 @@ sub shoutMetaInterval {
 	my $r = shift;
 	@_ ? ($r->[24] = shift) : $r->[24];
 }
-sub vfdbrightness {
+sub currBrightness {
 	my $r = shift;
 	@_ ? ($r->[25] = shift) : $r->[25];
 }

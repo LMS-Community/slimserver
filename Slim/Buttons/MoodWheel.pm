@@ -1,5 +1,5 @@
 package Slim::Buttons::MoodWheel;
-#$Id: MoodWheel.pm,v 1.5 2004/06/30 05:00:15 kdf Exp $
+#$Id: MoodWheel.pm,v 1.6 2004/08/03 17:29:10 vidur Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ my %functions = (
 		my $count = scalar @browseMoodChoices;
 		
 		if ($count < 2) {
-			Slim::Display::Animation::bumpUp($client);
+			$client->bumpUp();
 		} else {
 			my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index'));
 			setSelection($client, 'mood_wheel_index', $newposition);
@@ -36,7 +36,7 @@ my %functions = (
 		my $count = scalar @browseMoodChoices;
 
 		if ($count < 2) {
-			Slim::Display::Animation::bumpDown($client);
+			$client->bumpDown();
 		} else {
 			my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index'));
 			setSelection($client, 'mood_wheel_index', $newposition);
@@ -55,7 +55,7 @@ my %functions = (
 		my @oldlines = Slim::Display::Display::curLines($client);
 		Slim::Buttons::Common::pushMode($client, 'moodlogic_variety_combo', {'genre' => Slim::Buttons::Common::param($client, 'genre'), 'artist' => Slim::Buttons::Common::param($client, 'artist'), 'mood' => $browseMoodChoices[selection($client, 'mood_wheel_index')]});
 		
-		Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
+		$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 	}
 );
 
@@ -93,7 +93,7 @@ sub lines {
 	$line1 .= sprintf(" (%d ".string('OUT_OF')." %s)", selection($client, 'mood_wheel_index') + 1, scalar @browseMoodChoices);
 	$line2 = $browseMoodChoices[selection($client, 'mood_wheel_index')];
 
-	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
+	return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));
 }
 
 #	get the current selection parameter from the parameter stack

@@ -18,7 +18,7 @@ use Slim::Control::Command;
 use Slim::Utils::Strings qw (string);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.3 $,10);
+$VERSION = substr(q$Revision: 1.4 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_DATETIME');}
 
@@ -62,11 +62,11 @@ sub setMode() {
 my %functions = (
 	'up' => sub  {
 		my $client = shift;
-		Slim::Display::Animation::bumpUp($client);
+		$client->bumpUp();
 	},
 	'down' => sub  {
 	    my $client = shift;
-		Slim::Display::Animation::bumpDown($client);
+		$client->bumpDown();
 	},
 	'left' => sub  {
 		my $client = shift;
@@ -74,18 +74,18 @@ my %functions = (
 	},
 	'right' => sub  {
 		my $client = shift;
-		Slim::Display::Animation::bumpRight($client);
+		$client->bumpRight();
 	},
 	'play' => sub  {
 		my $client = shift;
 		if (Slim::Utils::Prefs::clientGet($client,'screensaver') ne 'SCREENSAVER.datetime') {
 			Slim::Utils::Prefs::clientSet($client,'screensaver','SCREENSAVER.datetime');
 			my ($line1, $line2) = (string('PLUGIN_SCREENSAVER_DATETIME'), string('PLUGIN_SCREENSAVER_DATETIME_ENABLING'));
-			Slim::Display::Animation::showBriefly($client, $line1, $line2);
+			$client->showBriefly($line1, $line2);
 		} else {
 			Slim::Utils::Prefs::clientSet($client,'screensaver','screensaver');
 			my ($line1, $line2) = (string('PLUGIN_SCREENSAVER_DATETIME'), string('PLUGIN_SCREENSAVER_DATETIME_DISABLING'));
-			Slim::Display::Animation::showBriefly($client, $line1, $line2);
+			$client->showBriefly($line1, $line2);
 		}
 	},
 	'stop' => sub {

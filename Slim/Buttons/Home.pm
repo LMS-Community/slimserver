@@ -32,7 +32,7 @@ my %functions = (
 			Slim::Buttons::Block::block($client, string('ADDING_TO_PLAYLIST'), string('MUSIC'));
 			Slim::Control::Command::execute($client, ['playlist', 'add', Slim::Utils::Prefs::get('audiodir')], \&Slim::Buttons::Block::unblock, [$client]);
 		} elsif($homeChoices[$client->homeSelection] eq 'NOW_PLAYING') {
-			Slim::Display::Animation::showBriefly($client, string('CLEARING_PLAYLIST'), '');
+			$client->showBriefly(string('CLEARING_PLAYLIST'), '');
 			Slim::Control::Command::execute($client, ['playlist', 'clear']);
 		} else {
 			(getFunctions())->{'right'}($client);
@@ -83,7 +83,7 @@ my %functions = (
 	'left' => sub  {
 		my $client = shift;
 		# doesn't do anything, we're already at the top level
-		Slim::Display::Animation::bumpLeft($client);
+		$client->bumpLeft();
 	},
 	'right' => sub  {
 		my $client = shift;
@@ -253,19 +253,19 @@ sub jump {
 sub lines {
 	my $client = shift;
 	my ($line1, $line2);
-	if ($client->model() eq 'slimp3') {
+	if ($client->isa("Slim::Player::SLIMP3")) {
 		$line1 = string('SLIMP3_HOME');
-	} elsif ($client->model() eq 'squeezebox') {
-		$line1 = string('SQUEEZEBOX_HOME');
-	} else {
+	} elsif ($client->isa("Slim::Player::Softsqueeze")) {
 		$line1 = string('SOFTSQUEEZE_HOME');
+	} else {
+		$line1 = string('SQUEEZEBOX_HOME');
 	}
 	my $menuChoice = $homeChoices[$client->homeSelection];
 	for(my $i=0;$i<=$#menuOptions;$i++){
 
 		if ($menuOptions[$i] eq $menuChoice) {
-			$line2 = Slim::Utils::Prefs::clientGet($client, 'doublesize') ? Slim::Utils::Strings::doubleString($menuChoice) : string($menuChoice);
-			return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
+			$line2 = $client->linesPerScreen() == 1 ? Slim::Utils::Strings::doubleString($menuChoice) : string($menuChoice);
+			return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));
 		} else {
 			my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
 			$line2 = $pluginsRef->{$menuChoice};
@@ -273,7 +273,7 @@ sub lines {
 
 	}
 
-	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
+	return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));
 }
 
 1;

@@ -58,6 +58,7 @@ playdisp_pbrt			= playdisp_5
 # textsize modes
 size					= textsize_toggle
 textsize_small			= textsize_small
+textsize_medium			= textsize_medium
 textsize_large			= textsize_large
 
 # shuffle modes
@@ -130,7 +131,6 @@ rew.*					= dead
 shuffle					= dead
 shuffle_off				= dead
 shuffle_on				= dead
-size					= offsize
 sleep					= dead
 stop					= dead
 voldown.*				= dead

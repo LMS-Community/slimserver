@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.95 2004/07/27 07:32:33 kdf Exp $
+# $Id: Pages.pm,v 1.96 2004/08/03 17:29:20 vidur Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -39,6 +39,7 @@ sub home {
 	addLinks("help",{'RADIO' => "html/docs/radio.html"});
 	addLinks("help",{'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
 	addLinks("help",{'FAQ' => "html/docs/faq.html"});
+	addLinks("help",{'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
 	addLinks("help",{'TECHNICAL_INFORMATION' => "html/docs/index.html"});
 
 

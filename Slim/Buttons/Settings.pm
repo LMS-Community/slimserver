@@ -35,7 +35,7 @@ my %menuParams = (
 		,'stringHeader' => 1
 		,'headerAddCount' => 1
 		,'callback' => \&settingsExitHandler
-		,'overlayRef' => sub {return (undef,Slim::Hardware::VFD::symbol('rightarrow'));}
+		,'overlayRef' => sub {return (undef,Slim::Display::Display::symbol('rightarrow'));}
 		,'overlayRefArgs' => ''
 	}
 	,catdir('settings','ALARM') => {
@@ -92,9 +92,9 @@ my %menuParams = (
 		,'stringExternRef' => 1
 		,'header' => 'TEXTSIZE'
 		,'stringHeader' => 1
-		,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0], "doublesize", $_[1]); }
+		,'onChange' => sub { $_[0]->textSize($_[1]);}
 		,'onChangeArgs' => 'CV'
-		,'initialValue' => 'doublesize'
+		,'initialValue' => sub { $_[0]->textSize();}
 	}
 	,catdir('settings','OFFDISPLAYSIZE') => {
 		'useMode' => 'INPUT.List'
@@ -168,7 +168,7 @@ sub settingsExitHandler {
 				,\%nextParams
 			);
 		} else {
-			Slim::Display::Animation::bumpRight($client);
+			$client->bumpRight();
 		}
 	} else {
 		return;
@@ -180,7 +180,7 @@ my %functions = (
 		my ($client,$funct,$functarg) = @_;
 		if (defined(Slim::Buttons::Common::param($client,'useMode'))) {
 			#in a submenu of settings, which is passing back a button press
-			Slim::Display::Animation::bumpRight($client);
+			$client->bumpRight();
 		} else {
 			#handle passback of button presses
 			settingsExitHandler($client,'RIGHT');
@@ -228,9 +228,9 @@ my %trebleSettingsFunctions = (
 		my $client = shift;
 		Slim::Buttons::Common::popModeRight($client);
 	},
-	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'play' => sub { Slim::Display::Animation::bumpRight(shift); },
+	'right' => sub { shift->bumpRight(); },
+	'add' => sub { shift->bumpRight(); },
+	'play' => sub { shift->bumpRight(); },
 );
 
 sub getTrebleFunctions {
@@ -248,8 +248,8 @@ sub setTrebleMode {
 	my $level = int(Slim::Utils::Prefs::clientGet($client, "treble")/100*40 + 0.5) - 20;
 	$line1 = string('TREBLE') . " ($level)";
 
-	$line2 = Slim::Display::Display::balanceBar($client, 40, Slim::Utils::Prefs::clientGet($client, "treble"));	
-	if (Slim::Utils::Prefs::clientGet($client,'doublesize')) { $line2 = $line1; }
+	$line2 = Slim::Display::Display::balanceBar($client, $client->displayWidth(), Slim::Utils::Prefs::clientGet($client, "treble"));	
+	if ($client->linesPerScreen() == 1) { $line2 = $line1; }
 	
 	return ($line1, $line2);
 }
@@ -268,9 +268,9 @@ my %bassSettingsFunctions = (
 		my $client = shift;
 		Slim::Buttons::Common::popModeRight($client);
 	},
-	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'play' => sub { Slim::Display::Animation::bumpRight(shift); },
+	'right' => sub { shift->bumpRight(); },
+	'add' => sub { shift->bumpRight(); },
+	'play' => sub { shift->bumpRight(); },
 );
 
 sub getBassFunctions {
@@ -289,8 +289,8 @@ sub setBassMode {
 	my $level = int(Slim::Utils::Prefs::clientGet($client, "bass")/100*40 + 0.5) - 20;
 	$line1 = string('BASS') . " ($level)";
 
-	$line2 = Slim::Display::Display::balanceBar($client, 40, Slim::Utils::Prefs::clientGet($client, "bass"));	
-	if (Slim::Utils::Prefs::clientGet($client,'doublesize')) { $line2 = $line1; }
+	$line2 = Slim::Display::Display::balanceBar($client, $client->displayWidth(), Slim::Utils::Prefs::clientGet($client, "bass"));	
+	if ($client->linesPerScreen() == 1) { $line2 = $line1; }
 	return ($line1, $line2);
 }
 
@@ -308,9 +308,9 @@ my %pitchSettingsFunctions = (
 		my $client = shift;
 		Slim::Buttons::Common::popModeRight($client);
 	},
-	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'play' => sub { Slim::Display::Animation::bumpRight(shift); },
+	'right' => sub { shift->bumpRight(); },
+	'add' => sub { shift->bumpRight(); },
+	'play' => sub { shift->bumpRight(); },
 );
 
 sub getPitchFunctions {
@@ -329,9 +329,9 @@ sub setPitchMode {
 	my $level = int(Slim::Utils::Prefs::clientGet($client, "pitch"));
 	$line1 = string('PITCH') . " ($level%)";
 
-	$line2 = Slim::Display::Display::balanceBar($client, 40, ((Slim::Utils::Prefs::clientGet($client, "pitch") - 80) / 40 * 100));	
+	$line2 = Slim::Display::Display::balanceBar($client, $client->displayWidth(), ((Slim::Utils::Prefs::clientGet($client, "pitch") - 80) / 40 * 100));	
 	
-	if (Slim::Utils::Prefs::clientGet($client,'doublesize')) { $line2 = $line1; }
+	if ($client->linesPerScreen() == 1) { $line2 = $line1; }
 	return ($line1, $line2);
 }
 
@@ -341,9 +341,9 @@ my %volumeSettingsFunctions = (
 		my $client = shift;
 		Slim::Buttons::Common::popModeRight($client);
 	},
-	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'play' => sub { Slim::Display::Animation::bumpRight(shift); },
+	'right' => sub { shift->bumpRight(); },
+	'add' => sub { shift->bumpRight(); },
+	'play' => sub { shift->bumpRight(); },
 );
 
 sub getVolumeFunctions {
@@ -370,9 +370,10 @@ sub setVolumeMode {
 		$line1 = string('VOLUME')." (".$level.")";
 	}
 
-	$line2 = Slim::Display::Display::progressBar($client, 40, $level / 40);	
+	$line2 = Slim::Display::Display::progressBar($client, $client->displayWidth(), $level / 40);	
 	
-	if (Slim::Utils::Prefs::clientGet($client,'doublesize')) { $line2 = $line1; }
+	if ($client->linesPerScreen() == 1) { $line2 = $line1; }
+
 	return ($line1, $line2);
 }
 

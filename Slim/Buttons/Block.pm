@@ -41,7 +41,7 @@ sub block {
 	$client->blocklines(2, $line2);
 	Slim::Buttons::Common::pushMode($client,'block');
 	if (defined $line1) {
-		Slim::Display::Animation::showBriefly($client, $line1, $line2);
+		$client->showBriefly($line1, $line2);
 	}
 	# set the first timer to go after .5 sec. We only want to show the status
 	# indicator if it has been a while

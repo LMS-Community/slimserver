@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.136 2004/07/28 02:31:31 kdf Exp $
+# $Id: Info.pm,v 1.137 2004/08/03 17:29:15 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -813,6 +813,7 @@ sub updateCacheEntry {
 
 sub updateCaches {
 	my $url=shift;
+
 	if (isSong($url) && !isHTTPURL($url) && (-e (Slim::Utils::Misc::pathFromFileURL($url)) )) { 
 		my $cacheEntryHash=cacheEntry($url);
 		updateGenreCache($url, $cacheEntryHash);
@@ -2120,7 +2121,10 @@ sub readTags {
 				$::d_info && Slim::Utils::Misc::msg("readTags: calculating duration for anchor: $duration\n");
 				$::d_info && Slim::Utils::Misc::msg("readTags: calculating header $header, startbytes $startbytes and endbytes $endbytes\n");
 			}
-
+			
+			# cache the content type
+			$tempCacheEntry->{'CT'} = $type;
+			
 			if (! Slim::Music::iTunes::useiTunesLibrary()) {
 				# Check for Cover Artwork, only if not already present.
 				if (exists $tempCacheEntry->{'COVER'} || exists $tempCacheEntry->{'THUMB'}) {

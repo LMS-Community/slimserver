@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.78 2004/07/28 01:55:04 kdf Exp $
+# $Id: Prefs.pm,v 1.79 2004/08/03 17:29:18 vidur Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -114,7 +114,7 @@ my %DEFAULT = (
 	,"udpChunkSize"			=> 1400
 	,"usetagdatabase"		=> 1				# use 0 for false, 1 for true
 	,"templatecache"		=> 1				# use 0 for false, 1 for true
-	,'animationLevel'		=> 3
+	,'animationLevel'		=> 3 				#DEPRECATED
 	,'itemsPerPage'			=> 100
 	,'lookForArtwork'		=> 1
 	,'includeNoArt'			=> 0
@@ -191,6 +191,7 @@ my %DEFAULT = (
 			,'power'				=> 1
 			,'powerOffBrightness'	=> 1
 			,'powerOnBrightness'	=> 4
+			,'idleBrightness'		=> 1
 			,'repeat'				=> 2
 			,'screensaver'			=> 'playlist'
 			,'screensavertimeout' 	=> 30
@@ -222,13 +223,13 @@ my %prefChange = (
 		'powerOnBrightness' => sub {
 			my ($client,$newvalue) = @_;
 			if (Slim::Buttons::Common::mode($client) && Slim::Buttons::Common::mode($client) ne 'off') {
-				Slim::Hardware::VFD::vfdBrightness($client,$newvalue);
+				$client->brightness($newvalue);
 			}
 		}
 		,'powerOffBrightness' => sub {
 			my ($client,$newvalue) = @_;
 			if (Slim::Buttons::Common::mode($client) && Slim::Buttons::Common::mode($client) eq 'off') {
-				Slim::Hardware::VFD::vfdBrightness($client,$newvalue);
+				$client->brightness($newvalue);
 			}
 		}
 		,'irmap' => sub {
@@ -532,8 +533,7 @@ sub maxRate {
 	if (!defined $rate) {
 		# Possibly the first time this pref has been accessed
 		# if maxBitrate hasn't been set yet, allow wired squeezeboxes to default to no limit, others to 320kbps
-		$rate = (($client->model() eq 'squeezebox' && !defined $client->signalStrength()) || $client->model() eq 'softsqueeze')
-			? 0 : 320;
+		$rate = ($client->isa("Slim::Player::Squeezebox") && !defined $client->signalStrength()) ? 0 : 320;
 	}
 	
 	# override the saved or default bitrate if a transcodeBitrate has been set via HTTP parameter

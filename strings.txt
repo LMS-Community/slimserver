@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.122 2004/07/28 01:55:03 kdf Exp $
+# $Id: strings.txt,v 1.123 2004/08/03 17:28:53 vidur Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -903,7 +903,7 @@ SETUP_GROUP_BRIGHTNESS
 SETUP_GROUP_BRIGHTNESS_DESC
 	DE	Wählen Sie die Helligkeit des Displays im aus- bzw. eingeschalteten Zustand.
 	DK	Lysstyrken på displayet kan angives for når enheden er tændt og slukket.
-	EN	The brightness of the player's display can be set for when it's on and off.
+	EN	The brightness of the player's display can be set for when it's on, off, or sitting idle (screensaver).
 	ES	Elija la luminosidad de la pantalla.
 	FI	Näytön valoisuuden voi säätää erikseen käyttöä ja lepotilaa varten.
 	FR	Il est possible de régler la luminosité de l'écran de la platine lorsqu'elle est allumée ou en veille.
@@ -1287,6 +1287,12 @@ SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	NO	Lysstyrke når av:
 	PT	Brilho quando Desligado
 	SE	Ljusstyrka i avslaget läge:
+
+SETUP_IDLEBRIGHTNESS
+	EN	Brightness when idle
+
+SETUP_IDLEBRIGHTNESS_CHOOSE
+	EN	Brightness when idle:
 
 SETUP_AUTOBRIGHTNESS
 	DE	Automatische Anzeigehelligkeit
@@ -5858,42 +5864,6 @@ BRIGHTNESS_DARK
 	NO	Mørk
 	PT	Apagado
 	SE	Mörk
-
-BRIGHTNESS_DIM
-	DE	Abgeblendet
-	DK	Svag
-	EN	Dim
-	ES	Oscuro
-	FI	Himmeä
-	FR	Sombre
-	NL	Gedimd
-	NO	Svak
-	PT	Escuro
-	SE	Svag
-
-BRIGHTNESS_BRIGHT
-	DE	Hell
-	DK	Mellem
-	EN	Bright
-	ES	Luminoso
-	FI	Kirkas
-	FR	Brillant
-	NL	Helder
-	NO	Lys
-	PT	Ligado
-	SE	Stark
-
-BRIGHTNESS_BRIGHTER
-	DE	Heller
-	DK	Kraftig
-	EN	Brighter
-	ES	Más luminoso
-	FI	Kirkkaampi
-	FR	Très brillant
-	NL	Helderder
-	NO	Lysere
-	PT	Brilhante
-	SE	Starkare
 
 BRIGHTNESS_BRIGHTEST
 	DE	Am hellsten

@@ -12,20 +12,19 @@
 package Slim::Buttons::AlarmClock;
 
 use Slim::Player::Playlist;
-use Slim::Utils::Strings qw (string);
 use Slim::Buttons::Common;
+use Slim::Utils::Strings qw (string);
 use Time::HiRes;
 
 my $interval = 1; # check every x seconds
+my @browseMenuChoices;
+my %menuSelection;
+my %searchCursor;
 
 # some initialization code, adding modes for this module
 Slim::Buttons::Common::addMode('alarm', getFunctions(), \&Slim::Buttons::AlarmClock::setMode);
 Slim::Buttons::Common::addMode('alarmvolume', getAlarmVolumeFunctions(), \&Slim::Buttons::AlarmClock::setAlarmVolumeMode);
 setTimer();
-
-my @browseMenuChoices;
-my %menuSelection;
-my %searchCursor;
 
 # the routines
 sub setMode() {
@@ -97,13 +96,13 @@ my %functions = (
 		elsif ($browseMenuChoices[$menuSelection{$client}] eq string('ALARM_OFF')) {
 			Slim::Utils::Prefs::clientSet($client, "alarm", 1);
 			$browseMenuChoices[$menuSelection{$client}] = string('ALARM_ON');
-			Slim::Display::Animation::showBriefly($client,string('ALARM_TURNING_ON'),'');
+			$client->showBriefly(string('ALARM_TURNING_ON'),'');
 			setTimer($client);
 		}
 		elsif ($browseMenuChoices[$menuSelection{$client}] eq string('ALARM_ON')) {
 			Slim::Utils::Prefs::clientSet($client, "alarm", 0);
 			$browseMenuChoices[$menuSelection{$client}] = string('ALARM_OFF');
-			Slim::Display::Animation::showBriefly($client,string('ALARM_TURNING_OFF'),'');
+			$client->showBriefly(string('ALARM_TURNING_OFF'),'');
 			setTimer($client);
 		}
 		elsif ($browseMenuChoices[$menuSelection{$client}] eq string('ALARM_SET_VOLUME')) {
@@ -122,7 +121,7 @@ sub exitSetHandler {
 		Slim::Utils::Prefs::clientSet($client,"alarmtime",Slim::Buttons::Common::param($client,'valueRef'));
 		Slim::Buttons::Common::popModeRight($client);
 	} elsif ($exittype eq 'RIGHT') {
-			Slim::Display::Animation::bumpRight($client);
+			$client->bumpRight();
 	} else {
 		return;
 	}
@@ -189,8 +188,8 @@ sub alarmLines {
 sub visibleAlarm {
 	my $client = shift;
 	my ($line1, $line2) =  alarmLines($client);
-#show visible alert for 30s
-	Slim::Display::Animation::showBriefly($client,$line1, $line2,30);
+	#show visible alert for 30s
+	$client->showBriefly($line1, $line2,30);
 }
 
 sub lines {
@@ -213,7 +212,7 @@ sub lines {
 sub overlay {
 	my $client = shift;
 
-	return Slim::Hardware::VFD::symbol('rightarrow');
+	return Slim::Display::Display::symbol('rightarrow');
 	
 	return undef;
 }
@@ -266,9 +265,9 @@ my %alarmVolumeSettingsFunctions = (
 		$client->update();
 	},
 
-	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
-	'play' => sub { Slim::Display::Animation::bumpRight(shift); },
+	'right' => sub { shift->bumpRight(); },
+	'add' => sub { shift->bumpRight(); },
+	'play' => sub { shift->bumpRight(); },
 
 );
 
@@ -289,7 +288,7 @@ sub alarmVolumeLines {
 
 	my $level = int($volume / $Slim::Player::Client::maxVolume * 40);
 
-	my $line1 = Slim::Utils::Prefs::clientGet($client,'doublesize') ? string('ALARM_SET_VOLUME_SHORT') : string('ALARM_SET_VOLUME');
+	my $line1 = ($client->linesPerScreen() == 1) ? string('ALARM_SET_VOLUME_SHORT') : string('ALARM_SET_VOLUME');
 	my $line2;
 
 	if ($level < 0) {
@@ -299,9 +298,9 @@ sub alarmVolumeLines {
 		$line1 .= " (".$level.")";
 	}
 
-	$line2 = Slim::Display::Display::progressBar($client, 40, $level / 40);
+	$line2 = Slim::Display::Display::progressBar($client, $client->displayWidth(), $level / 40);
 
-	if (Slim::Utils::Prefs::clientGet($client,'doublesize')) { $line2 = $line1; }
+	if ($client->linesPerScreen() == 1) { $line2 = $line1; }
 	return ($line1, $line2);
 }
 

@@ -1,6 +1,6 @@
 package Slim::Formats::Movie;
 
-# $Id: Movie.pm,v 1.16 2004/08/01 18:48:03 kdf Exp $
+# $Id: Movie.pm,v 1.17 2004/08/03 17:29:14 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -75,7 +75,9 @@ sub getTag {
 	if (ref $tags eq "HASH") {
 	   while (my ($old,$new) = each %tagMapping) {
 	      if (exists $tags->{$old}) {
+
 			 $tags->{$new} = Slim::Utils::Misc::utf8toLatin1($tags->{$old});
+
 			 delete $tags->{$old};
 	      }
 	   }

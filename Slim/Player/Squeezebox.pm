@@ -43,8 +43,6 @@ sub new {
 
 	bless $client, $class;
 
-	$client->reconnect($paddr, $revision, $tcpsock);
-		
 	return $client;
 }
 
@@ -229,10 +227,10 @@ sub upgradeFirmware_SDK5 {
 		my $fraction = $totalbytesread/$size;
 		
 		if (($fraction - $lastFraction) > (1/20)) {
-			Slim::Display::Animation::showBriefly(
-				$client,
+			$client->showBriefly(
 				string('UPDATING_FIRMWARE'),
-				Slim::Display::Display::progressBar($client, 40, $totalbytesread/$size)
+				
+				Slim::Display::Display::progressBar($client, $client->displayWidth(), $totalbytesread/$size)
 			);
 			$lastFraction = $fraction;
 		}
@@ -333,7 +331,9 @@ sub upgradeFirmware {
 
 	if (defined($err)) {
 		msg("upgrade failed: $err");
-	}		
+	} else {
+		$client->forgetClient();
+	}
 }
 
 # in order of preference based on whether we're connected via wired or wireless...

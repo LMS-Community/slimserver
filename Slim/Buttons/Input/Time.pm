@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Time;
 
-# $Id: Time.pm,v 1.3 2004/07/23 06:27:08 kdf Exp $
+# $Id: Time.pm,v 1.4 2004/08/03 17:29:12 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -12,7 +12,7 @@ use strict;
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw (string);
-use Slim::Hardware::VFD;
+use Slim::Display::Display;
 
 ###########################
 #Button mode specific junk#
@@ -93,6 +93,7 @@ my %functions = (
 				push @args, $$valueRef if $onChangeArgs =~ /v/i;
 				$onChange->(@args);
 			}
+			
 			$client->update();
 		}
 	#call callback procedure
@@ -199,7 +200,7 @@ sub timeDigits {
 sub timeString {
 	my ($client, $h0, $h1, $m0, $m1, $p) = @_;
 		
-	my $cs = Slim::Hardware::VFD::symbol('cursorpos');
+	my $cs = Slim::Display::Display::symbol('cursorpos');
 	my $c = Slim::Buttons::Common::param($client,'cursorPos') || 0;
 	
 	my $timestring = ($c == 0 ? $cs : '') . ((defined($p) && $h0 == 0) ? ' ' : $h0) . ($c == 1 ? $cs : '') . $h1 . ":" . ($c == 2 ? $cs : '') .  $m0 . ($c == 3 ? $cs : '') . $m1 . " " . ($c == 4 ? $cs : '') . (defined($p) ? $p : '');

@@ -1,6 +1,6 @@
 package Slim::Hardware::VFD;
 
-# $Id: VFD.pm,v 1.14 2004/04/15 18:49:39 dean Exp $
+# $Id: VFD.pm,v 1.15 2004/08/03 17:29:15 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -9,6 +9,7 @@ package Slim::Hardware::VFD;
 
 use strict;
 use Slim::Utils::Misc;
+use Slim::Display::Display;
 
 my %vfdCommand = ();
 
@@ -46,9 +47,8 @@ my $noritakeBrightPrelude =
 			   $vfdCodeChar;
 
 my $vfdReset = $vfdCodeCmd . $vfdCommand{"INCSC"} . $vfdCodeCmd . $vfdCommand{"HOME"};
-$Slim::Hardware::VFD::MAXBRIGHTNESS = 4;
 
-my %vfdcustomchars;
+$Slim::Hardware::VFD::MAXBRIGHTNESS = 4;
 
 my %symbolmap = (
 	'katakana' => {
@@ -71,106 +71,59 @@ my %symbolmap = (
 	}
 );
 
-# these get remapped in the iso -> vfd conversion
-#
-sub symbol {
-	my $symname = shift;
-	
-	if ($symname eq 'cursorpos') { return '__cursorpos__'; }
 
-	if ($symname eq 'center') { return '__center__'; }
-	
-	return ('vfD_'. $symname . '_Vfd');
+# depricated, use the Slim::Display functions
+sub symbol {
+	return Slim::Display::Display::symbol(@_);
 }
+
+sub lineLength {
+	return Slim::Display::Display::lineLength(@_);
+}
+
+sub splitString {
+	return Slim::Display::Display::splitString(@_);
+}
+
+sub subString {
+	return Slim::Display::Display::subString(@_);
+}
+	
 
 #
 # Given the address of the character to edit, followed by an array of eight numbers specifying
 # the bitmask of the character, caches the codes needed to create the specified character.
 #
+my %vfdcustomchars;
+
 sub setCustomChar {
 	my($charname, @rows)=@_;
 	
 	die unless ((@rows) == 8); 
-
 	$vfdcustomchars{$charname} = \@rows;
-}
-
-sub lineLength {
-	my $line = shift;
-	return 0 unless length($line);
-
-	$line =~ s/vfD_[^_]+_Vfd/x/g;
-	$line =~ s/(__cursorpos__|__center__|\n)//g;
-	return length($line);
-}
-
-sub splitString {
-	my $string = shift;
-	my @result = ();
-	$string =~ s/(vfD_[^_]+_Vfd|__cursorpos__|__center__|.)/push @result, $1;/eg;
-	return \@result;
-}
-
-sub subString {
-	my ($string,$start,$length,$replace) = @_;
-	my $newstring = '';
-	my $oldstring = '';
-	
-	if ($string =~ s/^((?:vfD_[^_]+_Vfd|(?:__(?:cursorpos|center)__)?(?:__(?:cursorpos|center)__)(?:vfD_[^_]+_Vfd|.)|.){0,$start})//) {
-		$oldstring = $1;
-	}
-	
-	if (defined($length)) {
-		if ($string =~ s/^((?:vfD_[^_]+_Vfd|(?:__(?:cursorpos|center)__)?(?:__(?:cursorpos|center)__)(?:vfD_[^_]+_Vfd|.)|.){0,$length})//) {
-			$newstring = $1;
-		}
-		if (defined($replace)) {
-			$_[0] = $oldstring . $replace . $string;
-		}
-	} else {
-		$newstring = $string;
-	}
-	return $newstring;
-}
-	
-#
-# Adjust display brightness by delta (-3 to +3)
-#
-sub vfdBrightness {
-	my ($client,$delta, $noupdate) = @_;
-
-	if (defined($delta) ) {
-		if ($delta =~ /[\+\-]\d+/) {
-			$client->vfdbrightness( $client->vfdbrightness() + $delta );
-		} else {
-			$client->vfdbrightness( $delta );
-		}
-		
-		$client->vfdbrightness(0) if ($client->vfdbrightness() < 0);
-		$client->vfdbrightness(4) if ($client->vfdbrightness() > 4);
-	
-		if (!$noupdate) {
-			my $temp1 = $client->prevline1();
-			my $temp2 = $client->prevline2();
-			vfdUpdate($client, $temp1, $temp2, 1);
-		}
-	}
-	
-	return $client->vfdbrightness();
 }
 
 my %customChars;
 
 sub vfdUpdate {
 	my $client = shift;
-	my $line1  = shift; 
-	my $line2  = shift;
+	my $lines  = shift; 
 	my $noDoubleSize = shift; #to suppress the doublesize call (in case the input lines have already been doubled)
 	my %customUsed;
 	my %newCustom;
 	my $cur = -1;
 	my $pos;
 	my $double;
+
+	my $line1;
+	my $line2;
+
+	if (ref($lines) eq 'ARRAY') {
+		$line1= $lines->[0];
+		$line2= $lines->[1];
+	} else {
+		($line1, $line2) = split("\x1elinebreak\x1e", $lines) if (defined($lines)) ;
+	}
 	
 	# convert to the VFD char set
 	my $lang = $client->vfdmodel;
@@ -182,8 +135,7 @@ sub vfdUpdate {
 
 	$::d_ui && msg("vfdUpdate $lang\nline1: $line1\nline2: $line2\n\n");
 	
-	
-	my $vfdbrightness = Slim::Hardware::VFD::vfdBrightness($client);
+	my $brightness = $client->brightness();
 
 	if (!defined($line1)) { $line1 = '' };
 	if (!defined($line2)) { $line2 = '' };
@@ -192,29 +144,28 @@ sub vfdUpdate {
 	$line1 =~ s/\n//g;
 	$line2 =~ s/\n//g;
 	
-	my $mode = Slim::Buttons::Common::mode($client);
-	
-	if (!$noDoubleSize && 
-		$mode && ((Slim::Utils::Prefs::clientGet($client,'doublesize') && (Slim::Buttons::Common::mode($client) ne 'off'))
-		||
-		(Slim::Utils::Prefs::clientGet($client,'offDisplaySize') && (Slim::Buttons::Common::mode($client) eq 'off'))))
+	if (!$noDoubleSize && $client->linesPerScreen() == 1)
 	{
-		($line1, $line2) = Slim::Display::Display::doubleSize($client,$line1, $line2);
+		($line1, $line2) = doubleSize($client,$line1, $line2);
 		$double = 1;
 	}
 
 	$client->prevline1($line1);
 	$client->prevline2($line2);
 	
-	if (defined($vfdbrightness) && ($vfdbrightness == 0)) {
+	if (defined($brightness) && ($brightness == 0)) {
 		$line1 = '';
 		$line2 = '';
 	} 
 	
 	my $line;
 
+	my $centerchar = Slim::Display::Display::symbol('center');
+	my $cursorchar = Slim::Display::Display::symbol('cursorpos');
+
 	my $centerspaces=0;
-		my $i = 0;
+	my $i = 0;
+	
 	foreach my $curline ($line1, $line2) {
 		my $linepos = 0;
 
@@ -231,14 +182,14 @@ sub vfdUpdate {
 			my $scan = substr($curline, $linepos);
 			
 			# if this is a cursor position token, remember the location and go on
-			if ($scan =~ /^__cursorpos__/) {
+			if ($scan =~ /^$cursorchar/) {
 				$cur = $i;
-				$linepos += length('__cursorpos__');
+				$linepos += length($cursorchar);
 				redo;
 			# is this a center character?
-			} elsif (index($scan, '__center__') == 0)  {
+			} elsif (index($scan,$centerchar) == 0)  {
 				# remove the center symbol
-				$curline = substr($curline, 10); # length('__center__')
+				$curline = substr($curline, length($centerchar));
 				# have we centered before?  if so, use the 
 				if (!$double || !$centerspaces) {
 					# do the work to $curline and re-start loop
@@ -253,8 +204,8 @@ sub vfdUpdate {
 				$curline = subString($curline . (' ' x 40), 0, 40);
 				redo;
 			# if this is a custom character, process it
-			} elsif ($scan =~ /^vfD_([^_]+)_Vfd/) {
-				$linepos += length('vfD_' . $1 . '_Vfd');
+			} elsif ($scan =~ /^\x1F([^\x1F]+)\x1F/) {
+				$linepos += length("\x1F". $1 . "\x1F");
 				# is it one of our existing symbols?
 				if ($symbolmap{$lang} && $symbolmap{$lang}{$1}) {
 					$line .= $symbolmap{$lang}{$1};
@@ -266,7 +217,7 @@ sub vfdUpdate {
 						$customUsed{$cchar} = $1;
 					# remember the new custom character and use temporary
 					} else {
-						$line .= 'vfD_' . $1 . '_Vfd';
+						$line .= "\x1F" . $1 . "\x1F";
 						$newCustom{$1} = 1;
 					}
 				}
@@ -284,7 +235,7 @@ sub vfdUpdate {
 	my $usedCustom = scalar keys(%customUsed);
 	my $nextChr = chr(0);
 	foreach my $custom (keys %newCustom) {
-		my $encodedCustom = 'vfD_' . $custom . '_Vfd';
+		my $encodedCustom = "\x1F" . $custom . "\x1F";
 		if ($usedCustom < 8) { # Room to add this one
 			while(defined $customUsed{$nextChr}) {
 				$nextChr = chr(ord($nextChr)+1);
@@ -327,16 +278,16 @@ sub vfdUpdate {
 
 	# force the display out of 4 bit mode if it got there somehow, then set the brightness
 	if ( $vfdmodel =~ 'futaba') {
-		$vfddata .= $vfdCodeCmd .  $vfdBrightFutaba[$vfdbrightness];
+		$vfddata .= $vfdCodeCmd .  $vfdBrightFutaba[$brightness];
 	} else {
-		$vfddata .= $noritakeBrightPrelude . $vfdBright[$vfdbrightness];
+		$vfddata .= $noritakeBrightPrelude . $vfdBright[$brightness];
 	}
 	# define required custom characters
 	while((my $custc,my $ncustom) = each %customUsed) {
-		my $bitmapref = $vfdcustomchars{$ncustom};
-			my $bitmap = pack ('C8', @$bitmapref);
+			my $bitmapref = $vfdcustomchars{$ncustom};
+				my $bitmap = pack ('C8', @$bitmapref);
 			$bitmap =~ s/(.)/$vfdCodeChar$1/gos;
-		$vfddata .= $vfdCodeCmd . pack('C',0b01000000 + (ord($custc) * 8)) . $bitmap;
+			$vfddata .= $vfdCodeCmd . pack('C',0b01000000 + (ord($custc) * 8)) . $bitmap;
 	}	
 	
 	# put us in incrementing mode and move the cursor home
@@ -366,6 +317,566 @@ sub vfdUpdate {
 	my $len = length($vfddata);
 	die "Odd vfddata: $vfddata" if ($len % 2);
 	die "VFDData too long: $len bytes: $vfddata" if ($len > 500);
+}
+
+# the following are the custom character definitions for the new progress/level bar...
+
+Slim::Hardware::VFD::setCustomChar('notesymbol',
+				 ( 0b00000100, 
+				   0b00000110, 
+				   0b00000101, 
+				   0b00000101, 
+				   0b00001101, 
+				   0b00011100, 
+				   0b00011000, 
+				   0b00000000 ));
+
+Slim::Hardware::VFD::setCustomChar('leftprogress0',
+				 ( 0b00000111, 
+				   0b00001000, 
+				   0b00010000, 
+				   0b00010000, 
+				   0b00010000, 
+				   0b00001000, 
+				   0b00000111, 
+				   0b00000000 ));
+
+Slim::Hardware::VFD::setCustomChar('leftprogress1',
+				 ( 0b00000111, 
+				   0b00001000, 
+				   0b00011000, 
+				   0b00011000, 
+				   0b00011000, 
+				   0b00001000, 
+				   0b00000111, 
+				   0b00000000 ));
+
+Slim::Hardware::VFD::setCustomChar('leftprogress2',
+				 ( 0b00000111, 
+				   0b00001100, 
+				   0b00011100, 
+				   0b00011100, 
+				   0b00011100, 
+				   0b00001100, 
+				   0b00000111, 
+				   0b00000000 ));
+
+Slim::Hardware::VFD::setCustomChar('leftprogress3',
+				 ( 0b00000111, 
+				   0b00001110, 
+				   0b00011110, 
+				   0b00011110, 
+				   0b00011110, 
+				   0b00001110, 
+				   0b00000111, 
+				   0b00000000 ));
+
+Slim::Hardware::VFD::setCustomChar('leftprogress4',
+				 ( 0b00000111, 
+				   0b00001111, 
+				   0b00011111, 
+				   0b00011111, 
+				   0b00011111, 
+				   0b00001111, 
+				   0b00000111, 
+				   0b00000000 ));
+
+Slim::Hardware::VFD::setCustomChar('middleprogress0',
+				 ( 0b01111111, 
+				   0b00000000, 
+				   0b00000000, 
+				   0b00000000, 
+				   0b00000000, 
+				   0b00000000, 
+				   0b01111111, 
+				   0b00000000 ));
+
+Slim::Hardware::VFD::setCustomChar('middleprogress1',
+				 ( 0b01111111, 
+				   0b01110000, 
+				   0b01110000, 
+				   0b01110000, 
+				   0b01110000, 
+				   0b01110000, 
+				   0b01111111, 
+				   0b00000000 ));
+
+Slim::Hardware::VFD::setCustomChar('middleprogress2',
+				 ( 0b01111111, 
+				   0b01111000, 
+				   0b01111000, 
+				   0b01111000, 
+				   0b01111000, 
+				   0b01111000, 
+				   0b01111111, 
+				   0b00000000 ));
+
+Slim::Hardware::VFD::setCustomChar('middleprogress3',
+				 ( 0b01111111, 
+				   0b01111100, 
+				   0b01111100, 
+				   0b01111100, 
+				   0b01111100, 
+				   0b01111100, 
+				   0b01111111, 
+				   0b00000000 ));
+
+Slim::Hardware::VFD::setCustomChar('middleprogress4',
+				 ( 0b01111111, 
+				   0b01111110, 
+				   0b01111110, 
+				   0b01111110, 
+				   0b01111110, 
+				   0b01111110, 
+				   0b01111111, 
+				   0b00000000 ));
+
+Slim::Hardware::VFD::setCustomChar('rightprogress0',
+				 ( 0b01111100, 
+				   0b00000010, 
+				   0b00000001, 
+				   0b00000001, 
+				   0b00000001, 
+				   0b00000010, 
+				   0b01111100, 
+				   0b00000000 ));
+
+Slim::Hardware::VFD::setCustomChar('rightprogress1',
+				 ( 0b01111100, 
+				   0b01110010, 
+				   0b01110001, 
+				   0b01110001, 
+				   0b01110001, 
+				   0b01110010, 
+				   0b01111100, 
+				   0b00000000 ));
+
+Slim::Hardware::VFD::setCustomChar('rightprogress2',
+				 ( 0b01111100, 
+				   0b01111010, 
+				   0b01111001, 
+				   0b01111001, 
+				   0b01111001, 
+				   0b01111010, 
+				   0b01111100, 
+				   0b00000000 ));
+
+Slim::Hardware::VFD::setCustomChar('rightprogress3',
+				 ( 0b01111100, 
+				   0b01111110, 
+				   0b01111101, 
+				   0b01111101, 
+				   0b01111101, 
+				   0b01111110, 
+				   0b01111100, 
+				   0b00000000 ));
+
+Slim::Hardware::VFD::setCustomChar('rightprogress4',
+				 ( 0b01111100, 
+				   0b01111110, 
+				   0b01111111, 
+				   0b01111111, 
+				   0b01111111, 
+				   0b01111110, 
+				   0b01111100, 
+				   0b00000000 ));
+				   
+Slim::Hardware::VFD::setCustomChar('moodlogic', (
+					0b00011111,
+					0b00000000,
+					0b00011010,
+					0b00010101,
+					0b00010101,
+					0b00000000,
+					0b00011111,
+					0b00000000   ));
+
+# replaces ~ in format string
+# setup the special characters
+Slim::Hardware::VFD::setCustomChar( 'toplinechar',	
+					(	0b01111111, 
+						0b00000000, 
+						0b00000000, 
+						0b00000000, 
+						0b00000000, 
+						0b00000000, 
+						0b00000000, 
+						0b00000000	 ));
+
+# replaces = in format string
+Slim::Hardware::VFD::setCustomChar( 'doublelinechar', 
+					(	0b01111111, 
+						0b00000000, 
+						0b00000000, 
+						0b00000000, 
+						0b00000000, 
+						0b00000000, 
+						0b01111111, 
+						0b00000000	 ));
+
+# replaces ? in format string.  Used in Z, ?, 7
+Slim::Hardware::VFD::setCustomChar( 'Ztop', 		
+			(      		0b01111111,
+						0b00000001,
+						0b00000001,
+						0b00000010,
+						0b00000100,
+						0b00001000,
+						0b00010000,
+						0b00100000   ));
+                  
+# replaces < in format string.  Used in Z, 2, 6
+Slim::Hardware::VFD::setCustomChar( 'Zbottom', 		
+			(   		0b00000001,
+						0b00000010,
+						0b00000100,
+						0b00001000,
+						0b00010000,
+						0b00010000,
+						0b00011111,
+						0b00000000   ));
+                  
+# replaces / in format string.
+Slim::Hardware::VFD::setCustomChar( 'slash', 	
+			 (     		0b00000001,
+						0b00000001,
+						0b00000010,
+						0b00000100,
+						0b00001000,
+						0b00010000,
+						0b00010000,
+						0b00000000   ));
+                  
+Slim::Hardware::VFD::setCustomChar( 'backslash', 	
+				( 		0b00010000,
+						0b00010000,
+						0b00001000,
+						0b00000100,
+						0b00000010,
+						0b00000001,
+						0b00000001,
+						0b00000000   ));
+                  
+Slim::Hardware::VFD::setCustomChar( 'filledcircle',		
+					 ( 	0b00000001,
+						0b00001111,
+						0b00011111,
+						0b00011111,
+						0b00011111,
+						0b00001110,
+						0b00000000,
+						0b00000000   ));	
+
+Slim::Hardware::VFD::setCustomChar( 'leftvbar',		
+					 ( 	0b00010000,
+						0b00010000,
+						0b00010000,
+						0b00010000,
+						0b00010000,
+						0b00010000,
+						0b00010000,
+						0b00000000   ));	
+
+Slim::Hardware::VFD::setCustomChar( 'rightvbar',		
+					 ( 	0b00000001,
+						0b00000001,
+						0b00000001,
+						0b00000001,
+						0b00000001,
+						0b00000001,
+						0b00000001,
+						0b00000000   ));	
+
+Slim::Hardware::VFD::setCustomChar('leftmark',
+ 					(   0b00011111,
+						0b00000001,
+						0b00000001,
+						0b00000001,
+						0b00000001,
+						0b00000001,
+						0b00011111,
+						0b00000000   ));
+                  
+Slim::Hardware::VFD::setCustomChar('rightmark',
+					( 	0b00011111,
+						0b00010000,
+						0b00010000,
+						0b00010000,
+						0b00010000,
+						0b00010000,
+						0b00011111,
+						0b00000000   ));
+                  
+
+my $leftvbar = Slim::Display::Display::symbol('leftvbar');
+my $rightvbar = Slim::Display::Display::symbol('rightvbar');
+my $slash = Slim::Display::Display::symbol('slash');
+my $backslash = Slim::Display::Display::symbol('backslash');
+my $toplinechar = Slim::Display::Display::symbol('toplinechar');
+my $doublelinechar = Slim::Display::Display::symbol('doublelinechar');
+my $Zbottom = Slim::Display::Display::symbol('Zbottom');
+my $Ztop = Slim::Display::Display::symbol('Ztop');
+my $notesymbol = Slim::Display::Display::symbol('notesymbol');
+my $filledcircle = Slim::Display::Display::symbol('filledcircle');
+my $rightarrow = Slim::Display::Display::symbol('rightarrow');
+my $cursorpos = Slim::Display::Display::symbol('cursorpos');
+my $hardspace = Slim::Display::Display::symbol('hardspace');
+my $centerchar = Slim::Display::Display::symbol('center');
+
+# double sized characters
+my %doublechars = (
+	
+	"(" => [ $slash,
+			 $backslash ],
+	
+	")" => [ $hardspace . $backslash,
+			 $hardspace . $slash ],
+	
+	"[" => [ $rightvbar . $toplinechar,
+			 $rightvbar . '_' ],
+	
+	"]" => [ $toplinechar . $leftvbar,
+			 '_' . $leftvbar],
+	
+	"<" => [ '/',
+			 $backslash ],
+	
+	">" => [ $backslash,
+			 '/' ],
+	
+	"{" => [ '(',
+			 '(' ],
+	
+	"}" => [ ')',
+			 ')' ],
+	
+	'"' => [ '\'\'',
+			 $hardspace . $hardspace],
+	"%" => [ 'o/', '/o'],
+	"&" => [ '_' . 'L', $backslash . $leftvbar],
+	"^" => [ $slash . $backslash, $hardspace . $hardspace],
+	" " => [ $hardspace . $hardspace, $hardspace . $hardspace ],
+	"'" => [ '|', $hardspace ],
+	"!" => [ '|', '.' ],
+	":" => [ '.', '.' ],
+	"." => [ $hardspace, '.' ],
+	";" => [ '.', ',' ],
+	"," => [ $hardspace, '/' ],
+	"`" => [ $backslash, $hardspace ],
+	
+	"_" => [ $hardspace . $hardspace, '_' . '_' ],
+	
+	"+" => [ '_' . 'L', $hardspace . $leftvbar],
+	
+	"*" => [ '**', '**'],
+	
+	'~' => [ $slash . $toplinechar, $hardspace . $hardspace ],
+	
+	"@" => [ $slash . 'd',
+			 $backslash . '_' ],
+	
+	"#" => [ '_' . $Zbottom . $Zbottom, $Ztop . $Ztop . $toplinechar ],
+	
+	'$' => [ '$$', '$$' ],
+	
+	"|" => [ '|',
+			 '|' ],
+	
+	"-" => [ '_' . '_',
+			 $hardspace . $hardspace ],
+	
+	"/" => [ $hardspace . $slash,
+			 $slash . $hardspace ],
+	
+	"\\" => [ $backslash . $hardspace,
+			  $hardspace . $backslash ],
+	
+	"=" => ['--'
+		   ,'--'],
+	
+	'?' => [$toplinechar . $Ztop,
+		,' .'],
+
+	$cursorpos => ['',''],
+		
+	$notesymbol => [ $leftvbar . $backslash , $filledcircle . " "],
+
+	$rightarrow => [ ' _' . $backslash , $hardspace . $toplinechar . '/'],
+
+	$hardspace => [ $hardspace, $hardspace],
+	
+	$centerchar => [$centerchar,$centerchar]
+	,'0' => [$slash . $toplinechar . $backslash, $backslash . '_' . $slash]
+	,'1' => [$hardspace . $slash . $leftvbar , $hardspace . $hardspace . $leftvbar]
+	,'2' => [$hardspace . $toplinechar . ')' , $hardspace . $Zbottom . '_']
+	,'3' => [$hardspace . $doublelinechar . ')' , ' _)']
+	,'4' => [$rightvbar . '_' . $leftvbar , $hardspace . $hardspace . $leftvbar]
+	,'5' => [$rightvbar . $doublelinechar . $toplinechar , ' _)']
+	,'6' => [$hardspace . $Zbottom . $hardspace , '(_)']
+	,'7' => [$hardspace . $toplinechar . $Ztop , $hardspace . $slash . $hardspace]
+	,'8' => ['(' . $doublelinechar . ')' , '(_)']
+	,'9' => ['(' . $doublelinechar . ')' , $hardspace . $slash . $hardspace]
+	,'A' => [$hardspace . $slash . $backslash . $hardspace , $rightvbar . $toplinechar . $toplinechar . $leftvbar]
+	,'B' => [$rightvbar . $doublelinechar . ')' , $rightvbar . '_)']
+	,'C' => [$slash . $toplinechar , $backslash . '_']
+	,'D' => [$rightvbar . $toplinechar . $backslash , $rightvbar . '_' . $slash]
+	,'E' => [$rightvbar . $doublelinechar , $rightvbar . '_']
+	,'F' => [$rightvbar . $doublelinechar , $rightvbar . $hardspace]
+	,'G' => [$slash . $toplinechar . $hardspace , $backslash . $doublelinechar . $leftvbar]
+	,'H' => [$rightvbar . '_' . $leftvbar , $rightvbar . $hardspace . $leftvbar]
+	,'I' => [$hardspace . $leftvbar , $hardspace . $leftvbar]
+	,'J' => [$hardspace . $hardspace . $leftvbar , $rightvbar . '_' . $leftvbar]
+	,'K' => [$rightvbar . $slash , $rightvbar . $backslash]
+	,'L' => [$rightvbar . $hardspace , $rightvbar . '_']
+	,'M' => [$rightvbar . $backslash . $slash . $leftvbar , $rightvbar . $hardspace . $hardspace . $leftvbar]
+	,'N' => [$rightvbar . $backslash . $leftvbar , $rightvbar . $hardspace . $leftvbar]
+	,'O' => [$slash . $toplinechar . $backslash , $backslash . '_' . $slash]
+	,'P' => [$rightvbar . $doublelinechar .')' , $rightvbar . $hardspace . $hardspace]
+	,'Q' => [$slash . $toplinechar . $backslash , $backslash . '_X']
+	,'R' => [$rightvbar . $doublelinechar . ')' , $rightvbar . $hardspace . $backslash]
+	,'S' => ['(' . $toplinechar , '_)']
+	,'T' => [$toplinechar . '|' . $toplinechar , ' | ']
+	,'U' => [$rightvbar . $hardspace . $leftvbar , $rightvbar . '_' . $leftvbar]
+	,'V' => [$leftvbar . $rightvbar , $backslash . $slash]
+	,'W' => [$leftvbar . $hardspace . $hardspace . $rightvbar , $backslash . $slash . $backslash . $slash]
+	,'X' => [$backslash . $slash , $slash . $backslash]
+	,'Y' => [$backslash . $slash , $hardspace . $leftvbar]
+	,'Z' => [$toplinechar . $Ztop , $Zbottom . '_']
+	,'Æ' => [$hardspace . $slash . $backslash . $doublelinechar , $rightvbar . $toplinechar . $toplinechar . 'L']
+	,'Ø' => [$slash . $toplinechar . 'X', $backslash . $Zbottom . $slash]
+	,'Ð' => [$rightvbar . $doublelinechar . $backslash , $rightvbar . '_'  . $slash]
+);
+
+sub addDoubleChar {
+	my ($char,$doublechar) = @_;
+	if (!exists $doublechars{$char} && ref($doublechar) eq 'ARRAY' 
+			&& Slim::Display::Display::lineLength($doublechar->[0]) == Slim::Display::Display::lineLength($doublechar->[1])) {
+		$doublechars{$char} = $doublechar;
+	} else {
+		if ($::d_display) {
+			msg("Could not add character $char, it already exists.\n") if exists $doublechars{$char};
+			msg("Could not add character $char, doublechar is not array reference.\n") if ref($doublechar) ne 'ARRAY';
+			msg("Could not add character $char, lines of doublechar have unequal lengths.\n")
+				if Slim::Display::Display::lineLength($doublechar->[0]) != Slim::Display::Display::lineLength($doublechar->[1]);
+		}
+	}
+}
+
+sub updateDoubleChar {
+	my ($char,$doublechar) = @_;
+	if (ref($doublechar) eq 'ARRAY' 
+			&& Slim::Display::Display::lineLength($doublechar->[0]) == Slim::Display::Display::lineLength($doublechar->[1])) {
+		$doublechars{$char} = $doublechar;
+	} else {
+		if ($::d_display) {
+			msg("Could not update character $char, doublechar is not array reference.\n") if ref($doublechar) ne 'ARRAY';
+			msg("Could not update character $char, lines of doublechar have unequal lengths.\n")
+				if Slim::Display::Display::lineLength($doublechar->[0]) != Slim::Display::Display::lineLength($doublechar->[1]);
+		}
+	}
+}
+
+# the font format string
+#my $double = 
+	# all digits are 3 chars wide
+#	'0/~\01 /[12 ~)23 =)34]_[45]=~56 < 67 ~?78(=)89(=)9' .
+#	'0\_/01  [12 <_23 _)34  [45 _)56(_)67 / 78(_)89 / 9' .
+#	# kerning is custom so exclude blanks here except for 'I'
+#	'A /\ AB]=)BC/~CD]~\DE]=EF]=FG/~ GH]_[HI [IJ  [J' .
+#	'A]~~[AB]_)BC\_CD]_/DE]_EF] FG\=[GH] [HI [IJ]_[J' .
+#	'K]/KL] LM]\/[MN]\[NO/~\OP]=)PQ/~\QR]=)RS(~S' .
+#	'K]\KL]_LM]  [MN] [NO\_/OP]  PQ\_xQR] \RS_)S' .
+#	'T~|~TU] [UV[]VW[  ]WX\/XY\/YZ~?Z' .
+#	'T | TU]_[UV\/VW\/\/WX/\XY [YZ<_Z';
+	
+#my $kernL = '\~\]\?\_\<\=';
+#my $kernR = '\~\[\<\_\\\\/';
+
+my $kernL = qr/(?:$toplinechar|$rightvbar|$Ztop|_|$Zbottom|$doublelinechar)$/o;
+my $kernR = qr/^(?:$toplinechar|$leftvbar|$Zbottom|_|$backslash|$slash)/o;
+
+#
+# double the height and width of line 2 of the display
+#
+sub doubleSize {
+	my $client = shift;
+	my ($line1, $line2) = (shift,shift);
+	my ($newline1, $newline2) = ("", "");
+	
+	if (!defined($line2) || $line2 eq "") { $line2 = $line1; };
+	$line2 =~ s/$cursorpos//g;
+	$line2 =~ s/^(\s*)(.*)/$2/;
+	
+	$::d_ui && msg("undoubled line1: $line1\n");
+	$::d_ui && msg("undoubled line2: $line2\n");
+	
+	$line2 =~ tr/æøð/ÆØÐ/;
+	$line2 =~ s/[åÅ]/AA/g;
+	
+	my $lastch1 = "";
+	my $lastch2 = "";
+   
+	my $lastchar = "";
+	my $split = Slim::Display::Display::splitString($line2);
+	
+	foreach my $char (@$split) {
+		if (exists($doublechars{$char}) || exists($doublechars{Slim::Utils::Text::matchCase($char)})) {
+			my ($char1,$char2);
+			if (!exists($doublechars{$char})) {
+				$char = Slim::Utils::Text::matchCase($char);
+			}
+			($char1,$char2)=  @{$doublechars{$char}};
+			if ($char =~ /[A-Z]/ && $lastchar ne ' ' && $lastchar !~ /\d/) {
+					if (($lastch1 =~ $kernL && $char1 =~ $kernR) ||
+						 ($lastch2 =~ $kernL && $char2 =~ $kernR)) {
+					
+						if ($lastchar =~ /[CGLSTZ]/ && $char =~ /[COQ]/) {
+							# Special cases to exclude kerning between
+						} else {
+						   $newline1 .= ' ';
+						   $newline2 .= ' ';
+						}
+					}
+			}
+			$lastch1 = $char1;
+			$lastch2 = $char2;
+			$newline1 .= $char1;
+			$newline2 .= $char2;
+		} else {
+			$::d_display && msg("Character $char has no double\n");
+			next;
+		}
+		$lastchar = $char;
+	}
+
+	$newline1 = $newline1 . (' ' x (40 - Slim::Display::Display::lineLength($newline1)));
+	$newline2 = $newline2 . (' ' x (40 - Slim::Display::Display::lineLength($newline1)));
+
+	return ($newline1, $newline2);
+
+}
+
+sub renderOverlay {
+	my $line1 = shift;
+	my $line2 = shift;
+	my $overlay1 = shift;
+	my $overlay2 = shift;
+	
+	($line1, $overlay1) = split("\x1eright\x1e", $line1) if (!$overlay1 && $line1);
+	($line2, $overlay2) = split("\x1eright\x1e", $line2) if (!$overlay2 && $line2);
+
+	if (defined($overlay1)) {
+		my $overlayLength =  Slim::Display::Display::lineLength($overlay1);
+		$line1 .= ' ' x 40;
+		$line1 = Slim::Display::Display::subString($line1, 0, 40 - $overlayLength) . $overlay1;
+	}
+	
+	if (defined($overlay2)) {
+		my $overlayLength =  Slim::Display::Display::lineLength($overlay2);
+		$line2 .= ' ' x 40;
+		$line2 = Slim::Display::Display::subString($line2, 0, 40 - $overlayLength) . $overlay2;
+	}
+	return ($line1, $line2);
 }
 
 1;

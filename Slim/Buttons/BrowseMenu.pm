@@ -63,7 +63,7 @@ my %functions = (
 			Slim::Buttons::Common::pushModeLeft($client, 'browseid3', {'genre'=>'*', 'artist'=>'*', 'album'=>'*'});
 		}
 		if ($push) {
-			Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
+			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 		}
 	}
 );
@@ -89,7 +89,7 @@ sub lines {
 	$line1 = string('BROWSEMENU');
 	$line2 = string($browseMenuChoices[$client->browseMenuSelection]);
 
-	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
+	return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));
 }
 
 1;

@@ -12,7 +12,7 @@ use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.4 $,10);
+$VERSION = substr(q$Revision: 1.5 $,10);
 
 # constants
 my $height = 4;
@@ -63,12 +63,12 @@ sub defaultHandler {
 			@oldlines = Slim::Display::Display::curLines($client);
 			$gamemode = 'play';
 			resetGame();
-			Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
+			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 			return 1;
 		} elsif ($gamemode eq 'gameover') {
 			@oldlines = Slim::Display::Display::curLines($client);
 			$gamemode = 'attract';
-			Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
+			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 			return 1;
 		}
 		return 0;
@@ -360,9 +360,9 @@ sub grid2char {
 
 	if ($customchar) {
 		return " " if ($val == 0);
-		return Slim::Hardware::VFD::symbol('slimtristop') if ($val == 1);
-		return Slim::Hardware::VFD::symbol('slimtrisbottom') if ($val == 2);
-		return Slim::Hardware::VFD::symbol('slimtrisboth') if ($val == 3);
+		return Slim::Display::Display::symbol('slimtristop') if ($val == 1);
+		return Slim::Display::Display::symbol('slimtrisbottom') if ($val == 2);
+		return Slim::Display::Display::symbol('slimtrisboth') if ($val == 3);
 	} else {
 		return " " if ($val == 0);
 		return "o" if ($val == 1);

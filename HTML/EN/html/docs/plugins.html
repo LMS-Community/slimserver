@@ -9,7 +9,7 @@
 <h4>Perl Module Basics</h4>
 		<p>Here are a couple of basic calls that should be made at the beginning of the Plugin code:</p>
 		<pre>use strict;</pre>
-		<p>This tells Perl to do some useful error checking to help avoid the use of undeclared variables, or ambiguous references to functions. All references must be fully qualified (ie Slim::Display::Animation::showBriefly() instead of showBriefly()).</p>
+		<p>This tells Perl to do some useful error checking to help avoid the use of undeclared variables, or ambiguous references to functions. All references must be fully qualified (ie Slim::Buttons::Common::popMode() instead of popMode()).</p>
 		<p><pre>package Plugins::pluginname;</pre></p>
 		<p>Where <code>pluginname</code> is the name of the module (which should be the same as the filename, without the .pm extension.) This defines the 'namespace' for the module. It essentially sets up the module as an entity of its own, within the server environment. This allows you to then refer to the functions and variables within this plugin by the full reference Plugins::pluginname::function.</p>
 		<hr>
@@ -69,11 +69,11 @@ sub getNewModeFunctions() &#123;
    my %functions = (
      'up' => sub  &#123;
         my $client = shift;
-        Slim::Display::Animation::bumpUp($client);
+        $client->bumpUp();
      &#125;,
      'down' => sub  &#123;
         my $client = shift;
-        Slim::Display::Animation::bumpDown($client);
+        $client->bumpDown();
      &#125;,
      'left' => sub  &#123;
         my $client = shift;
@@ -81,14 +81,14 @@ sub getNewModeFunctions() &#123;
      &#125;,
      'right' => sub  &#123;
         my $client = shift;
-        Slim::Display::Animation::bumpRight($client);
+        $client->bumpRight();
      &#125;,
      'play' => sub &#123;
         my $client = shift;
         my @pargs=('rescan');
         my ($line1, $line2) = (string('PLUGIN_RESCAN_MUSIC_LIBRARY'), string('PLUGIN_RESCAN_RESCANNING'));
         Slim::Control::Command::execute($client, \@pargs, undef, undef);
-        Slim::Display::Animation::showBriefly($client, $line1, $line2);
+        $client->showBriefly(, $line1, $line2);
      &#125;
   );
 </pre></blockquote>
@@ -98,7 +98,7 @@ sets up local variables, starts a rescan of the entire library, then shows two l
 rescan has been started.  The line "my $client = shift;" is very important here to keep track of the player status, and to pass on in server
 function calls such as: </p>
 <blockquote>
-			<pre>Slim::Display::Animation::showBriefly($client, $line1, $line2);</pre></blockquote>
+			<pre>$client->showBriefly(, $line1, $line2);</pre></blockquote>
 		<p>Examples of remote control functions include: 'up','down','play,'add' (REC button),'left','right','numberScroll' and 'stop' The full button to function map is found in the Default.map file, which is in the IR directory under the SlimServer directory.</p>
 		<hr>
 		<h4>Lines</h4>
@@ -367,11 +367,11 @@ sub enabled {
 my %functions = (
 	'up' =&gt; sub { 
 		my $client = shift;
-		Slim::Display::Animation::bumpUp($client);
+		$client->bumpUp();
 	},
 	'down' =&gt; sub { 
 	    my $client = shift;
-		Slim::Display::Animation::bumpDown($client);
+		$client->bumpDown();
 	},
 	'left' =&gt; sub {
 		my $client = shift;
@@ -379,14 +379,14 @@ my %functions = (
 	},
 	'right' =&gt; sub {
 		my $client = shift;
-		Slim::Display::Animation::bumpRight($client);
+		$client->bumpRight();
 	},
 	'play' =&gt; sub {
 		my $client = shift;
 		my @pargs=('rescan');
 		my ($line1, $line2) = (string('PLUGIN_RESCAN_MUSIC_LIBRARY'), string('PLUGIN_RESCAN_RESCANNING'));
 		Slim::Control::Command::execute($client, \@pargs, undef, undef);
-		Slim::Display::Animation::showBriefly($client, $line1, $line2);
+		$client->showBriefly(, $line1, $line2);
 	}
 );
 

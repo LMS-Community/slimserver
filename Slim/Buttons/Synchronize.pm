@@ -1,6 +1,6 @@
 package Slim::Buttons::Synchronize;
 
-# $Id: Synchronize.pm,v 1.9 2004/01/26 05:44:09 dean Exp $
+# $Id: Synchronize.pm,v 1.10 2004/08/03 17:29:11 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -43,7 +43,7 @@ my %functions = (
 		} else {
 			Slim::Player::Sync::sync($client, $selectedClient);
 		}
-		Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
+		$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 	},
 );
 
@@ -86,7 +86,7 @@ sub lines {
 			}
 			$line2 = buddies($client, $selectedClient);			
 	}
-	return ($line1, $line2, undef, Slim::Hardware::VFD::symbol('rightarrow'));
+	return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));
 }
 
 sub buddies {

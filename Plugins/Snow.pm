@@ -1,6 +1,6 @@
 package Plugins::Snow;
 
-# $Id: Snow.pm,v 1.10 2004/04/23 16:24:57 dean Exp $
+# $Id: Snow.pm,v 1.11 2004/08/03 17:29:08 vidur Exp $
 # by Phil Barrett, December 2003
 # screensaver conversion by Kevin Deane-Freeman Dec 2003
 
@@ -23,7 +23,7 @@ use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.10 $,10);
+$VERSION = substr(q$Revision: 1.11 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_SNOW');}
 
@@ -165,7 +165,7 @@ my %menuParams = (
 		,'stringHeader' => 1
 		,'headerAddCount' => 1
 		,'callback' => \&snowExitHandler
-		,'overlayRef' => sub {return (undef,Slim::Hardware::VFD::symbol('rightarrow'));}
+		,'overlayRef' => sub {return (undef,Slim::Display::Display::symbol('rightarrow'));}
 		,'overlayRefArgs' => ''
 	}
 	,catdir('snow','PLUGIN_SCREENSAVER_SNOW_ACTIVATE') => {
@@ -228,7 +228,7 @@ sub snowExitHandler {
 				,\%nextParams
 			);
 		} else {
-			Slim::Display::Animation::bumpRight($client);
+			$client->bumpRight();
 		}
 	} else {
 		return;
@@ -240,7 +240,7 @@ my %functions = (
 		my ($client,$funct,$functarg) = @_;
 		if (defined(Slim::Buttons::Common::param($client,'useMode'))) {
 			#in a submenu of settings, which is passing back a button press
-			Slim::Display::Animation::bumpRight($client);
+			$client->bumpRight();
 		} else {
 			#handle passback of button presses
 			snowExitHandler($client,'RIGHT');
@@ -317,8 +317,8 @@ my %flakes;
 sub setScreensaverSnowMode() {
 	my $client = shift;
 	$client->lines(\&screensaverSnowlines);
-	$wasDoubleSize{$client} = Slim::Utils::Prefs::clientGet($client,'doublesize');
-	Slim::Utils::Prefs::clientSet($client,'doublesize',0);
+	$wasDoubleSize{$client} = $client->textSize;
+	$client->textSize(0);
 	# save time on later lookups - we know these can't change while we're active
 	$snowStyle{$client} = Slim::Utils::Prefs::clientGet($client,'snowStyle') || 6;
 	$snowQuantity{$client} = Slim::Utils::Prefs::clientGet($client,'snowQuantity') || 1;
@@ -326,7 +326,7 @@ sub setScreensaverSnowMode() {
 
 sub leaveScreensaverSnowMode {
 	my $client = shift;
-	Slim::Utils::Prefs::clientSet($client,'doublesize',$wasDoubleSize{$client});
+	$client->textSize($wasDoubleSize{$client});
 	$lastTime{$client} = Time::HiRes::time();
 }
 
@@ -356,11 +356,11 @@ sub screensaverSnowlines {
 
 	if($style == 1 || $style == 2) {
 		# Now Playing
-		($line1, $line2) = Slim::Display::Display::renderOverlay(&Slim::Buttons::Playlist::currentSongLines($client));
+		($line1, $line2) = $client->renderOverlay(&Slim::Buttons::Playlist::currentSongLines($client));
 		$onlyInSpaces = ($style == 1);
 	} elsif($style == 3) {
 		# Date/Time
-		($line1, $line2) = Slim::Display::Display::renderOverlay(&Slim::Buttons::Common::dateTime($client));
+		($line1, $line2) = $client->renderOverlay(&Slim::Buttons::Common::dateTime($client));
 		$onlyInSpaces = 1;
 	} else {
 		# Just snow
@@ -463,9 +463,9 @@ sub insertChar {
     my $sym = shift;
     my $col = shift;
     my $len = shift;
-    return ($col > 0 ? Slim::Hardware::VFD::subString($line, 0, $col) : '') . 
+    return ($col > 0 ? Slim::Display::Display::subString($line, 0, $col) : '') . 
 	$sym .
-	($col < (40-$len) ? Slim::Hardware::VFD::subString($line, $col+$len, 40 - $len - $col) : '');
+	($col < (40-$len) ? Slim::Display::Display::subString($line, $col+$len, 40 - $len - $col) : '');
 }
 
 sub drawFlake {
@@ -476,25 +476,25 @@ sub drawFlake {
 
     my $row = int($bigrow / 3);
     my $col = int($bigcol / 2);
-    my $sym = Slim::Hardware::VFD::symbol('snow' . ($bigrow - $row * 3) . ($bigcol - $col * 2));
+    my $sym = Slim::Display::Display::symbol('snow' . ($bigrow - $row * 3) . ($bigcol - $col * 2));
     
     if(! $onlyInSpaces
        ||
-       Slim::Hardware::VFD::subString($lines->[$row], $col, 1) eq ' ') {
+       Slim::Display::Display::subString($lines->[$row], $col, 1) eq ' ') {
 	$lines->[$row] = insertChar($lines->[$row], $sym, $col, 1);
     }
 }
 
 my %flakeMap = (0 => ' ',
-		1 => Slim::Hardware::VFD::symbol('snow00'),
-		2 => Slim::Hardware::VFD::symbol('snow10'),
-		4 => Slim::Hardware::VFD::symbol('snow20'),
-		8 => Slim::Hardware::VFD::symbol('snow01'),
-		16 => Slim::Hardware::VFD::symbol('snow11'),
-		32 => Slim::Hardware::VFD::symbol('snow21'),
-		5 => Slim::Hardware::VFD::symbol('snow7'),
-		34 => Slim::Hardware::VFD::symbol('snow8'),
-		33 => Slim::Hardware::VFD::symbol('snow9'),
+		1 => Slim::Display::Display::symbol('snow00'),
+		2 => Slim::Display::Display::symbol('snow10'),
+		4 => Slim::Display::Display::symbol('snow20'),
+		8 => Slim::Display::Display::symbol('snow01'),
+		16 => Slim::Display::Display::symbol('snow11'),
+		32 => Slim::Display::Display::symbol('snow21'),
+		5 => Slim::Display::Display::symbol('snow7'),
+		34 => Slim::Display::Display::symbol('snow8'),
+		33 => Slim::Display::Display::symbol('snow9'),
 		);
 
 my %letters = (A => [3, [2], [], [0,4], [0,2,4], [], [0,4] ],
@@ -541,7 +541,7 @@ sub paintFlake {
     
     if(! $onlyInSpaces
        ||
-       Slim::Hardware::VFD::subString($lines->[$row], $col, 1) eq ' ') {
+       Slim::Display::Display::subString($lines->[$row], $col, 1) eq ' ') {
 	if($torender->[$row][$col] != -1) {
 	    return 0 if($onlyIfCanRender && !exists($flakeMap{($torender->[$row][$col]) | $bit}));
 	    $torender->[$row][$col] |= $bit;
@@ -564,7 +564,7 @@ sub renderFlakes {
 	foreach $col (0..39) {
 	    my $bits = $torender->[$row][$col];
 	    if($bits == -1) {
-		$newlines[$row] .= Slim::Hardware::VFD::subString($lines->[$row], $col, 1);
+		$newlines[$row] .= Slim::Display::Display::subString($lines->[$row], $col, 1);
 	    } elsif(exists $flakeMap{$bits}) {
 		$newlines[$row] .= $flakeMap{$bits};
 	    } else {
@@ -668,14 +668,14 @@ sub letItSnow {
 	my $i;
 	foreach $i (0,1) {
 		if(!$simple) {
-			if (index($lines[$i], Slim::Hardware::VFD::symbol('center') ) == 0)  {
-				$lines[$i] = substr($lines[$i], length(Slim::Hardware::VFD::symbol('center')));
+			if (index($lines[$i], Slim::Display::Display::symbol('center') ) == 0)  {
+				$lines[$i] = substr($lines[$i], length(Slim::Display::Display::symbol('center')));
 				s/\s*$//;
-				my $centerspaces = int((40-Slim::Hardware::VFD::lineLength($lines[$i]))/2);
+				my $centerspaces = int((40-Slim::Display::Display::lineLength($lines[$i]))/2);
 				$lines[$i] = (" " x $centerspaces).$lines[$i];
 			}
 		}
-		$lines[$i] = Slim::Hardware::VFD::subString($lines[$i] . (' ' x 40), 0, 40);
+		$lines[$i] = Slim::Display::Display::subString($lines[$i] . (' ' x 40), 0, 40);
 	}
 
 	my $torender = [[-1,-1], [-1,-1]];

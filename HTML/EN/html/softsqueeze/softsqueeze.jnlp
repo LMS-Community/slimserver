@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- JNLP File for SoftSqueeze -->
+<!-- JNLP File for Softsqueeze -->
 
 <!-- Edit the 'codebase' attribute to point to the location of your jnlp -->
 <!-- on your webserver. Note you must make sure that the webserver       -->
@@ -10,14 +10,13 @@
   codebase="http://[% host %]/html/softsqueeze/"
   href="softsqueeze.jnlp">
   <information>
-    <title>SoftSqueeze 0.5.2</title>
+    <title>Softsqueeze 1.0</title>
     <vendor>Richard Titmuss, et.al.</vendor>
     <homepage href="http://softsqueeze.sourceforge.net"/>
-    <description>SoftSqueeze music player v0.5.2</description>
-    <description kind="short">SoftSqueezer music player v0.5.2</description>
+    <description>Softsqueeze Slim Devices Squeezebox Emulator</description>
+    <description kind="short">Softsqueeze Slim Devices Squeezebox Emulator</description>
     <icon kind="splash" href="icons/splash.gif" />
     <icon width="64" height="64" href="icons/icon64.gif" />
-<!--    <icon width="32" height="32" href="icons/icon32.gif" /> -->
   </information>
   <offline-allowed/>
   <security>
@@ -27,14 +26,16 @@
     <j2se version="1.4+"/>
     <jar href="SoftSqueeze.jar"/>
     <jar href="lib/log4j-1.2.8.jar"/>
-    <jar href="lib/jl0.4.jar"/>
-<!--    <jar href="lib/ostermillerutils_1_03_00.jar"/> -->
+    <jar href="lib/tritonus_share.jar"/>
+    <jar href="lib/tritonus_mp3.jar"/>
+    <jar href="lib/jl0.4p1.jar"/>
+    <jar href="lib/jflac-1.0.jar"/>
     <jar href="lib/jsch-20040429.jar"/>
 
 <!-- Set the following properties to configure the server and firmware  -->
 
     <property name="slimserver" value="[% host.match('([^:]*)').0 %]"/>    
-    <property name="serverversion" value="5.3.0"/>    
+    <property name="serverversion" value="5.3"/>    
   </resources>
   <application-desc main-class="com.slim.softsqueeze.Application"/>
 </jnlp> 

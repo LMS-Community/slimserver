@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Text;
 
-# $Id: Text.pm,v 1.15 2004/07/01 05:10:31 dean Exp $
+# $Id: Text.pm,v 1.16 2004/08/03 17:29:11 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -15,7 +15,7 @@ use Slim::Utils::Strings qw (string);
 use Slim::Hardware::VFD;
 
 our $DOUBLEWIDTH = 10;
-my $rightarrow = Slim::Hardware::VFD::symbol('rightarrow');
+my $rightarrow = Slim::Display::Display::symbol('rightarrow');
 
 my @numberLettersMixed = ([' ','0'], # 0
 					 ['.',',',"'",'?','!','@','-','1'], # 1
@@ -48,7 +48,7 @@ my %functions = (
 			Slim::Utils::Timers::killTimers($client, \&nextChar);
 			my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 			my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
-			Slim::Hardware::VFD::subString($$valueRef,$cursorPos,1,'');
+			Slim::Display::Display::subString($$valueRef,$cursorPos,1,'');
 			$cursorPos--;
 			if ($cursorPos < 0) {
 				exitInput($client,'backspace');
@@ -56,7 +56,7 @@ my %functions = (
 			}
 			checkCursorDisplay($client,$cursorPos);
 			Slim::Buttons::Common::param($client,'cursorPos',$cursorPos);
-			Slim::Buttons::Common::param($client,'charIndex',charIndex(Slim::Buttons::Common::param($client,'charsRef'),Slim::Hardware::VFD::subString($$valueRef,$cursorPos,1)));
+			Slim::Buttons::Common::param($client,'charIndex',charIndex(Slim::Buttons::Common::param($client,'charsRef'),Slim::Display::Display::subString($$valueRef,$cursorPos,1)));
 			$client->update();
 		}
 	#delete current, staying in place, moving left if in the rightmost position
@@ -66,17 +66,17 @@ my %functions = (
 			Slim::Utils::Timers::killTimers($client, \&nextChar);
 			my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 			my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
-			Slim::Hardware::VFD::subString($$valueRef,$cursorPos,1,'');
+			Slim::Display::Display::subString($$valueRef,$cursorPos,1,'');
 			if ($$valueRef eq '') {
 				exitInput($client,'delete');
 				return;
 			}
-			if ($cursorPos == Slim::Hardware::VFD::lineLength($$valueRef)) { 
+			if ($cursorPos == Slim::Display::Display::lineLength($$valueRef)) { 
 				$cursorPos--; 
 				Slim::Buttons::Common::param($client,'cursorPos',$cursorPos);
 			}
 			checkCursorDisplay($client,$cursorPos);
-			Slim::Buttons::Common::param($client,'charIndex',charIndex(Slim::Buttons::Common::param($client,'charsRef'),Slim::Hardware::VFD::subString($$valueRef,$cursorPos,1)));
+			Slim::Buttons::Common::param($client,'charIndex',charIndex(Slim::Buttons::Common::param($client,'charsRef'),Slim::Display::Display::subString($$valueRef,$cursorPos,1)));
 			$client->update();
 		}
 	#advance to next character, exiting if last char is right arrow
@@ -85,7 +85,7 @@ my %functions = (
 			Slim::Utils::Timers::killTimers($client, \&nextChar);
 			my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 			my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
-			if (Slim::Hardware::VFD::subString($$valueRef,$cursorPos,1) eq $rightarrow) {
+			if (Slim::Display::Display::subString($$valueRef,$cursorPos,1) eq $rightarrow) {
 				exitInput($client,'nextChar');
 				return;
 			}
@@ -117,10 +117,10 @@ my %functions = (
 			}
 			my $displayPos = Slim::Buttons::Common::param($client,'displayPos');
 			my $displayPos2X = Slim::Buttons::Common::param($client,'displayPos2X');
-			if ($displayPos != $displayPos2X && Slim::Utils::Prefs::clientGet($client,'doublesize')) {
+			if ($displayPos != $displayPos2X && ($client->linesPerScreen() == 1)) {
 				$displayPos = $displayPos2X;
 			}
-			my $valueEnd = Slim::Hardware::VFD::lineLength(${Slim::Buttons::Common::param($client,'valueRef')}) - 1;
+			my $valueEnd = Slim::Display::Display::lineLength(${Slim::Buttons::Common::param($client,'valueRef')}) - 1;
 			if ($displayPos == $valueEnd && $increment > 0) {
 				exitInput($client,'scroll_right');
 				return;
@@ -150,7 +150,7 @@ my %functions = (
 			my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 			my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
 			checkCursorDisplay($client,$cursorPos);
-			Slim::Hardware::VFD::subString($$valueRef,$cursorPos,0,$char);
+			Slim::Display::Display::subString($$valueRef,$cursorPos,0,$char);
 			$client->update();
 		}
 	#clear current text
@@ -179,8 +179,8 @@ my %functions = (
 			my $char = validateChar($client,Slim::Buttons::Common::numberLetter($client, $functarg, Slim::Buttons::Common::param($client,'numberLetterRef')));
 			my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 			my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
-			Slim::Hardware::VFD::subString($$valueRef,$cursorPos,1,$char);
-			my $charIndex = charIndex(Slim::Buttons::Common::param($client,'charsRef'),Slim::Hardware::VFD::subString($$valueRef,$cursorPos));
+			Slim::Display::Display::subString($$valueRef,$cursorPos,1,$char);
+			my $charIndex = charIndex(Slim::Buttons::Common::param($client,'charsRef'),Slim::Display::Display::subString($$valueRef,$cursorPos));
 			Slim::Buttons::Common::param($client,'charIndex',$charIndex);
 			# set up a timer to automatically skip ahead
 			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + Slim::Utils::Prefs::get("displaytexttimeout"), \&nextChar);
@@ -195,7 +195,7 @@ my %functions = (
 			return unless defined($char);
 			my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 			my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
-			Slim::Hardware::VFD::subString($$valueRef,$cursorPos,1,$char);
+			Slim::Display::Display::subString($$valueRef,$cursorPos,1,$char);
 			nextChar($client);
 		}
 	#call callback procedure
@@ -224,7 +224,7 @@ sub lines {
 	if (!defined($valueRef)) { return ('',''); }
 	my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
 	my $displayPos;
-	if (!Slim::Utils::Prefs::clientGet($client,'doublesize')) {
+	if (!($client->linesPerScreen() == 1)) {
 		$displayPos = Slim::Buttons::Common::param($client,'displayPos');
 	} else {
 		$displayPos = Slim::Buttons::Common::param($client,'displayPos2X');
@@ -234,10 +234,11 @@ sub lines {
 			}
 		}
 	}
-	$line2 = Slim::Hardware::VFD::subString($$valueRef,$displayPos,40);
+	$line2 = Slim::Display::Display::subString($$valueRef,$displayPos,40);
 	if ($displayPos <= $cursorPos && ($cursorPos - $displayPos < 40)) {
-		Slim::Hardware::VFD::subString($line2,$cursorPos - $displayPos,0,Slim::Hardware::VFD::symbol('cursorpos'));
+		Slim::Display::Display::subString($line2,$cursorPos - $displayPos,0,Slim::Display::Display::symbol('cursorpos'));
 	}
+
 	return ($line1,$line2);
 }
 
@@ -246,15 +247,15 @@ sub getFunctions {
 }
 
 sub setMode {
-    my $client = shift;
-    #my $setMethod = shift;
-    #possibly skip the init if we are popping back to this mode
-    init($client);
-    $client->lines(\&lines);
+	my $client = shift;
+	#my $setMethod = shift;
+	#possibly skip the init if we are popping back to this mode
+	init($client);
+	$client->lines(\&lines);
 }
 
 my @UpperChars = (
-	Slim::Hardware::VFD::symbol('rightarrow'),
+	Slim::Display::Display::symbol('rightarrow'),
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
 	'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 	' ',
@@ -264,7 +265,7 @@ my @UpperChars = (
 	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
 );
 my @BothChars = (
-	Slim::Hardware::VFD::symbol('rightarrow'),
+	Slim::Display::Display::symbol('rightarrow'),
 	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
 	'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -348,7 +349,7 @@ sub init {
 	}
 	$$valueRef = cleanString($$valueRef,$charsRef);
 	my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
-	my $valueRefLen = Slim::Hardware::VFD::lineLength($$valueRef);
+	my $valueRefLen = Slim::Display::Display::lineLength($$valueRef);
 	if (!defined($cursorPos) || $cursorPos > $valueRefLen || $cursorPos < 0) {
 		$cursorPos = $valueRefLen;
 		Slim::Buttons::Common::param($client,'cursorPos',$cursorPos);
@@ -363,7 +364,7 @@ sub init {
 		}
 		$$valueRef .= (Slim::Buttons::Common::param($client,'charsRef'))->[$charIndex];
 	} else {
-		$charIndex = charIndex($charsRef,Slim::Hardware::VFD::subString($$valueRef,$cursorPos,1));
+		$charIndex = charIndex($charsRef,Slim::Display::Display::subString($$valueRef,$cursorPos,1));
 		if ($charIndex == -1) {
 			$charIndex = ($rightIndex == 0) ? 1 : 0;
 			#some debug message here
@@ -379,7 +380,7 @@ sub changeChar {
 	my $charIndex = Slim::Buttons::Common::scroll($client, $dir, scalar(@{$charsRef}), Slim::Buttons::Common::param($client,'charIndex'));
 	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 	my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
-	if ($charIndex == Slim::Buttons::Common::param($client,'rightIndex') && $cursorPos != (Slim::Hardware::VFD::lineLength($$valueRef) - 1)) {
+	if ($charIndex == Slim::Buttons::Common::param($client,'rightIndex') && $cursorPos != (Slim::Display::Display::lineLength($$valueRef) - 1)) {
 		#only allow right arrow in last position
 		if ($dir < 0) {
 			$charIndex--;
@@ -393,7 +394,7 @@ sub changeChar {
 			$charIndex = 0;
 		}
 	}
-	Slim::Hardware::VFD::subString($$valueRef,$cursorPos,1,$charsRef->[$charIndex]);
+	Slim::Display::Display::subString($$valueRef,$cursorPos,1,$charsRef->[$charIndex]);
 	checkCursorDisplay($client,$cursorPos);
 	Slim::Buttons::Common::param($client,'charIndex',$charIndex);
 	$client->update();
@@ -412,7 +413,7 @@ sub charIndex {
 sub cleanArray {
 	my $charsRef = shift;
 	foreach (@$charsRef) {
-		s/^(vfD_[^_]+_Vfd|.).*$/$1/;
+		$_ = Slim::Display::Display::subString($_,0,1);
 	}
 }
 
@@ -424,7 +425,7 @@ sub cleanString {
 	my %charsHash = map {$_ => 1} @{$charsRef};
 	my $replaceChar = exists($charsHash{' '}) ? '' : ' ';
 	my $outString = '';
-	foreach (@{Slim::Hardware::VFD::splitString($inString)}) {
+	foreach (@{Slim::Display::Display::splitString($inString)}) {
 		if (exists($charsHash{$_})) {
 			$outString .= $_ unless $_ eq $rightarrow;
 		} elsif (exists($charsHash{Slim::Utils::Text::matchCase($_)})) {
@@ -450,7 +451,7 @@ sub validateChar {
 	if ($char =~ /^eq/i) {
 		$char = '=';
 	}
-	return cleanString(Slim::Hardware::VFD::subString($char,0,1),$charsRef);
+	return cleanString(Slim::Display::Display::subString($char,0,1),$charsRef);
 }
 
 
@@ -480,7 +481,7 @@ sub moveCursor {
 	
 	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 	my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
-	my $valueLen = Slim::Hardware::VFD::lineLength($$valueRef);
+	my $valueLen = Slim::Display::Display::lineLength($$valueRef);
 	if ($forceMove) {
 		$cursorPos += $increment;
 	} else {
@@ -506,7 +507,7 @@ sub moveCursor {
 			return;
 		}
 	} else {
-		$charIndex = charIndex($charsRef,Slim::Hardware::VFD::subString($$valueRef,$cursorPos,1));
+		$charIndex = charIndex($charsRef,Slim::Display::Display::subString($$valueRef,$cursorPos,1));
 	}
 	checkCursorDisplay($client,$cursorPos);
 	Slim::Buttons::Common::param($client,'charIndex',$charIndex);

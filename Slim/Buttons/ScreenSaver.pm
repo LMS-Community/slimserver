@@ -1,6 +1,6 @@
 package Slim::Buttons::ScreenSaver;
 
-# $Id: ScreenSaver.pm,v 1.19 2004/04/29 22:21:52 daniel Exp $
+# $Id: ScreenSaver.pm,v 1.20 2004/08/03 17:29:10 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -57,11 +57,11 @@ sub screenSaver {
 			$mode ne 'block' &&
 			$mode ne $saver &&
 			$mode ne 'off' &&
-			Slim::Hardware::VFD::vfdBrightness($client)) {
-		Slim::Hardware::VFD::vfdBrightness($client,1);
+			$client->brightness()) {
+		$client->brightness(Slim::Utils::Prefs::clientGet($client,'idleBrightness'));
 	}
 
-	if (Slim::Display::Animation::animating($client)) {
+	if ($client->animating()) {
 		# if we're animating, let the animation play out
 	} elsif ($mode eq 'block') {
 		# blocked mode handles its own updating of the screen.
@@ -77,8 +77,7 @@ sub screenSaver {
 		if ($saver eq 'playlist') {
 			if ($mode eq 'playlist') {
 				Slim::Buttons::Playlist::jump($client);
-				my $linefunc = $client->lines();
-				Slim::Display::Animation::scrollBottom($client,&$linefunc($client));
+				$client->scrollBottom();
 			} else {
 				Slim::Buttons::Common::pushMode($client,'playlist');
 				$client->update();		
@@ -90,12 +89,11 @@ sub screenSaver {
 				$::d_plugins && msg("Mode ".$saver." not found, using default\n");
 				Slim::Buttons::Common::pushMode($client,'screensaver');
 			}
-			$client->update();		
+			$client->update();
 		} 
 	} else {
 		# try to scroll the bottom, if necessary
-		my $linefunc = $client->lines();
-		Slim::Display::Animation::scrollBottom($client,&$linefunc($client));
+		$client->scrollBottom();
 	}
 	# Call ourselves again after 1 second
 	Slim::Utils::Timers::setTimer($client, ($now + 1.0), \&screenSaver);
@@ -117,8 +115,8 @@ sub wakeup {
 		$curBrightnessPref = Slim::Utils::Prefs::clientGet($client, 'powerOnBrightness');		
 	} 
 	
-	if ($curBrightnessPref != Slim::Hardware::VFD::vfdBrightness($client)) {
-		Slim::Hardware::VFD::vfdBrightness($client, $curBrightnessPref);
+	if ($curBrightnessPref != $client->brightness()) {
+		$client->brightness($curBrightnessPref);
 	}
 	# restore preferred scrollpause
 	Slim::Buttons::Common::param($client,'scrollPause',Slim::Utils::Prefs::clientGet($client,'scrollPause'));
@@ -128,7 +126,7 @@ sub wakeup {
 		$button ne 'brightness_down' &&
 		$button ne 'brightness_up' && 
 		$button ne 'brightness_toggle' &&
-		Slim::Hardware::VFD::vfdBrightness($client) == 0 &&
+		$client->brightness() == 0 &&
 		Slim::Buttons::Common::mode($client) ne 'off') { 
 			Slim::Utils::Prefs::clientSet($client, 'powerOnBrightness', 1);		
 	}
@@ -143,7 +141,7 @@ sub setMode {
 sub lines {
 	my $client = shift;
 	$::d_time && msg("getting screensaver lines");
-	return (Slim::Buttons::Playlist::currentSongLines($client));
+	return $client->currentSongLines();
 }
 
 1;

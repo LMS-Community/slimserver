@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.103 2004/06/17 22:22:26 dean Exp $
+# $Id: Source.pm,v 1.104 2004/08/03 17:29:17 vidur Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -134,7 +134,7 @@ sub rate {
 		$client->rate($newrate);
 		
 	 	if ($newrate == 0) {
-			Slim::Player::Source::playmode($client, "pausenow");
+			playmode($client, "pausenow");
 		} else {
 	 		$::d_source && msg("rate change, jumping to the current position in order to restart the stream\n");
 			gototime($client, $time);
@@ -223,6 +223,32 @@ sub songTime {
 	}
 
 	return $songtime;
+}
+
+sub textSongTime {
+	my $client = shift;
+	my $playingDisplayMode = shift;
+
+	my $delta = 0;
+	my $sign  = '';
+
+	if (playmode($client) eq "stop") {
+		$delta = 0;
+	} else {	
+		$delta = songTime($client);
+	}
+	
+	# 2 and 5 display remaining time, not elapsed
+	if ($playingDisplayMode % 3 == 2) {
+		my $duration = $client->songduration() || 0;
+		$delta = $duration - $delta;
+
+		$sign = '-';
+	}
+
+	my $time = sprintf("%s%02d:%02d", $sign, $delta / 60, $delta % 60);
+
+	return $time;
 }
 
 sub _returnPlayMode {
@@ -751,7 +777,7 @@ sub errorOpening {
 	my $line1 = string('PROBLEM_OPENING');
 	my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
 	
-	Slim::Display::Animation::showBriefly($client, $line1, $line2, 1,1);
+	$client->showBriefly($line1, $line2, 1,1);
 	Slim::Buttons::Common::param($client,'noUpdate',1);
 }
 
@@ -759,11 +785,6 @@ sub openSong {
 	my $client = shift;
 	
 	resetSong($client);
-	
-	# We are starting a new song, lets kill any animation so we see the correct new song.
-	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) { 
-		Slim::Display::Animation::killAnimation($everyclient);
-	}
 	
 	closeSong($client);
 	
@@ -777,7 +798,7 @@ sub openSong {
 
 		my $line1 = string('CONNECTING_FOR');
 		my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));			
-		Slim::Display::Animation::showBriefly($client, $line1, $line2, undef,1);
+		$client->showBriefly($line1, $line2, undef,1);
 
 		# we don't get the content type until after the stream is opened
 		my $sock = Slim::Web::RemoteStream::openRemoteStream($fullpath, $client);
@@ -840,7 +861,7 @@ sub openSong {
 			my $line1 = string('PROBLEM_CONNECTING');
 			my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
 
-			Slim::Display::Animation::showBriefly($client, $line1, $line2, 5, 1);
+			$client->showBriefly($line1, $line2, 5, 1);
 
 			return undef;
 		}
@@ -981,7 +1002,7 @@ sub openSong {
 		my $line1 = string('PROBLEM_OPENING');
 		my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));		
 
-		Slim::Display::Animation::showBriefly($client, $line1, $line2, 5,1);
+		$client->showBriefly($line1, $line2, 5,1);
 
 		return undef;
 	}
@@ -990,6 +1011,11 @@ sub openSong {
 	
 	Slim::Control::Command::executeCallback($client,  ['open', $fullpath]);
 
+	# We are starting a new song, lets kill any animation so we see the correct new song.
+	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) { 
+		$everyclient->update();
+	}
+	
 	return 1;
 }
 

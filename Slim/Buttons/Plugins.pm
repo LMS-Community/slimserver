@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.24 2004/07/01 05:10:31 dean Exp $
+# $Id: Plugins.pm,v 1.25 2004/08/03 17:29:10 vidur Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
@@ -54,14 +54,13 @@ my %functions = (
 					$client,
 					$current->{mode},
 			);
-			Slim::Display::Animation::pushLeft(
-					$client,
-					@oldlines,
-					Slim::Display::Display::curLines($client),
+			$client->pushLeft(
+					\@oldlines,
+					[Slim::Display::Display::curLines($client)],
 			);
 		}
 		else {
-			Slim::Display::Animation::bumpRight($client);
+			$client->bumpRight();
 		}
 	},
 	'up' => sub  {
@@ -104,7 +103,7 @@ sub lines {
 		string('PLUGINS') . ' (' . ($curr_plugin{$client} + 1) . ' ' . string('OF') . ' ' . (pluginCount()) . ')',
 		$current->{name},
 	);
-	return (@lines,undef,Slim::Hardware::VFD::symbol('rightarrow'));
+	return (@lines,undef,Slim::Display::Display::symbol('rightarrow'));
 }
 sub enabledPlugins {
 	my $client = shift;
@@ -132,7 +131,6 @@ sub installedPlugins {
 	foreach my $plugindir (pluginDirs()) {
 		if (opendir(DIR, $plugindir)) {
 			no strict 'refs';
-			unshift @INC,  $plugindir;
 			foreach my $plugin ( sort(readdir(DIR)) ) {
 				if ($plugin =~ s/(.+)\.pm$/$1/i) {
 					$pluginlist{$plugin} = exists($plugins{$plugin}) ? $plugins{$plugin}{'name'} : $plugin;

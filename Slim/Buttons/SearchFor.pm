@@ -16,7 +16,7 @@ use Slim::Utils::Strings qw (string);
 Slim::Buttons::Common::addMode('searchfor',getFunctions(),\&setMode);
 
 my @searchChars = (
-	Slim::Hardware::VFD::symbol('rightarrow'),
+	Slim::Display::Display::symbol('rightarrow'),
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
 	'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 	' ',
@@ -80,7 +80,7 @@ my %functions = (
 		my $client = shift;
 		my $char = $client->searchTerm($client->searchCursor);
 		Slim::Utils::Timers::killTimers($client, \&nextChar);
-		if ($char eq Slim::Hardware::VFD::symbol('rightarrow')) {
+		if ($char eq Slim::Display::Display::symbol('rightarrow')) {
 			startSearch($client);
 		} else {
 			nextChar($client);
@@ -100,7 +100,7 @@ my %functions = (
 		$printableterm =~ s/^\*(.+)\*$/$1/;
 		
 		if (length($printableterm) == 0) {
-			Slim::Display::Animation::bumpRight($client);
+			$client->bumpRight();
 			return;
 		}
 		if (Slim::Player::Playlist::shuffle($client)) {
@@ -119,7 +119,7 @@ my %functions = (
 		
 		$line2 .= ' ' . $printableterm;
 		
-		Slim::Display::Animation::showBriefly($client, $line1, $line2);
+		$client->showBriefly($line1, $line2);
 
 		if ($client->searchFor eq 'ARTISTS') {
 			Slim::Control::Command::execute($client, ["playlist", "loadalbum", '*', searchTerm($client)]);
@@ -140,7 +140,7 @@ my %functions = (
 		my $printableterm = $term;
 		$printableterm =~ s/^\*(.+)\*$/$1/;
 		if (length($printableterm) == 0) {
-			Slim::Display::Animation::bumpRight($client);
+			$client->bumpRight();
 			return;
 		}
 		
@@ -156,7 +156,7 @@ my %functions = (
 		
 		$line2 .= ' ' . $printableterm;
 		
-		Slim::Display::Animation::showBriefly($client, $line1, $line2);
+		$client->showBriefly($line1, $line2);
 
 		if ($client->searchFor eq 'ARTISTS') {
 			Slim::Control::Command::execute($client, ["playlist", "addalbum", '*', searchTerm($client)]);
@@ -173,7 +173,7 @@ my %functions = (
 		Slim::Utils::Timers::killTimers($client, \&nextChar);
 		# if it's a different number, then skip ahead
 		if (Slim::Buttons::Common::testSkipNextNumberLetter($client, $digit) && 
-			($client->searchTerm($client->searchCursor) ne Slim::Hardware::VFD::symbol('rightarrow'))) {
+			($client->searchTerm($client->searchCursor) ne Slim::Display::Display::symbol('rightarrow'))) {
 			$client->searchCursor($client->searchCursor+1);
 			$client->update();
 		}
@@ -193,7 +193,7 @@ sub searchTerm {
 	# do the search!
 	my $term = "*";
 	foreach my $a (@{$client->searchTerm}) {
-		if (defined($a) && ($a ne Slim::Hardware::VFD::symbol('rightarrow'))) {
+		if (defined($a) && ($a ne Slim::Display::Display::symbol('rightarrow'))) {
 			$term .= $a;
 		}
 	}
@@ -207,10 +207,10 @@ sub startSearch {
 	my $mode = shift;
 	my @oldlines = Slim::Display::Display::curLines($client);
 	if ($client->searchCursor == 0) {
-		Slim::Display::Animation::bumpRight($client);
+		$client->bumpRight();
 	} else {
 		my $term = searchTerm($client);
-		Slim::Display::Animation::showBriefly($client, string('SEARCHING'));
+		$client->showBriefly(string('SEARCHING'));
 		if ($client->searchFor eq 'ARTISTS') {
 			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist' => $term } );
 		} elsif ($client->searchFor eq 'ALBUMS') {
@@ -218,16 +218,16 @@ sub startSearch {
 		} else {
 			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist' => '*', 'album' => '*', 'song' => $term } );
 		}
-		Slim::Display::Animation::pushLeft($client, @oldlines, Slim::Display::Display::curLines($client));
+		$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 	}
 }
 
 sub nextChar {
 	my $client = shift;
-	return if ($client->searchTerm($client->searchCursor) eq Slim::Hardware::VFD::symbol('rightarrow'));
+	return if ($client->searchTerm($client->searchCursor) eq Slim::Display::Display::symbol('rightarrow'));
 	$client->lastLetterDigit('');
 	$client->searchCursor($client->searchCursor+1);
-	$client->searchTerm($client->searchCursor, Slim::Hardware::VFD::symbol('rightarrow'));
+	$client->searchTerm($client->searchCursor, Slim::Display::Display::symbol('rightarrow'));
 	$client->update();
 }
 
@@ -271,7 +271,7 @@ sub lines {
 		if (!defined $client->searchTerm($i)) { last; };
 
 		if ($i == $client->searchCursor) {
-			$line2 .= Slim::Hardware::VFD::symbol('cursorpos');
+			$line2 .= Slim::Display::Display::symbol('cursorpos');
 		}
 		$line2 .= $client->searchTerm($i);
 	}
