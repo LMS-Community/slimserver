@@ -23,8 +23,6 @@ use Slim::Utils::Misc;
 
 our $dbh;
 
-tie our %lru, 'Tie::Cache::LRU', 5000;
-
 sub executeSQLFile {
 	my $class = shift;
 	my $file  = shift;
@@ -54,7 +52,7 @@ sub executeSQLFile {
 		next if $line =~ /^--/;
 		next if $line =~ /^\s*$/;
 
-		if ($line =~ /^\s*(?:CREATE|SET|INSERT|UPDATE|DROP|SELECT)\s+/oi) {
+		if ($line =~ /^\s*(?:CREATE|SET|INSERT|UPDATE|DELETE|DROP|SELECT)\s+/oi) {
 			$inStatement = 1;
 		}
 
@@ -204,6 +202,7 @@ sub wipeDB {
 	$class->clear_object_index();
 	$class->executeSQLFile("dbclear.sql");
 
+	$dbh->commit();
 	$dbh = undef;
 }
 
