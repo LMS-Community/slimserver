@@ -617,8 +617,21 @@ sub find {
 	}
 
 	# XXX - wrap in eval?
-	my $sth = $dbh->prepare_cached($sql);
-	   $sth->execute(@bind);
+	my $sth;
+
+	eval {
+		$sth = $dbh->prepare_cached($sql);
+	   	$sth->execute(@bind);
+	};
+
+	if ($@) {
+		Slim::Utils::Misc::msg("Whoops! prepare_cached() or execute() failed: $@\n");
+		Slim::Utils::Misc::bt();
+
+		# Try to return a graceful value.
+		return 0 if $count;
+		return [];
+	}
 
 	# Don't instansiate any objects if we're just counting.
 	if ($count) {
