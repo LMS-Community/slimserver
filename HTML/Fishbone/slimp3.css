@@ -1,7 +1,7 @@
 BODY {
     font-size : 9px;
     background : Black;
-    font-family : Verdana, Arial, Tahoma, helvetica;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
     color : White;
     BORDER-RIGHT: 0px; 
     BORDER-TOP: 0px; 
@@ -19,7 +19,7 @@ H3 {
 
 
 TD, P, DIV, A {
-   font-family : Verdana, Arial, Tahoma, helvetica;
+   font-family: Verdana, Arial, Helvetica, sans-serif;
    font-size : 9px;
 	margin:0in; 
 	margin-bottom:1pt;
@@ -64,7 +64,7 @@ A:hover, A:selected {
 
 .linkbtn {
    font-size : 8pt;
-   font-family: Verdana, Arial, Tahoma, helvetica
+   font-family: Verdana, Arial, Helvetica, sans-serif;
    font-weight: bold;
    color: #EE3823;
    background-color : Black;
@@ -100,7 +100,7 @@ A.linkbtn:hover {
 }
 
 .stdedit {
-   font-family: Verdana, Arial, Tahoma, helvetica; 
+   font-family: Verdana, Arial, Helvetica, sans-serif; 
    background-color : rgb(255,255,255); 
    padding : 1px;
    font-size:9px;
@@ -174,7 +174,7 @@ A.linkbtn:hover {
 
 .listing, .listing2
 {
-	font-family : Verdana, Arial, Tahoma, helvetica;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	background:black;
 	color:#999;
 	margin-top:1px;
@@ -206,7 +206,7 @@ TD.listing A, TD.listing2 A
 .menu1
 {
 	margin:0px;
-	font-family : Verdana, Arial;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 10px;
 	padding:35 5 5 5;
 	background:#61676c;
@@ -216,7 +216,7 @@ TD.listing A, TD.listing2 A
 .menu2
 {
 	margin:0px;
-	font-family : Verdana, Arial;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 10px;
 	padding:5px;
 	background:#999;

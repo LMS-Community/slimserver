@@ -5,10 +5,28 @@
 		<meta http-equiv="refresh" content="10; url=dummy.html?player={%player}">
 		<script language="JavaScript">
 			<!--hide
+			
+function getCookie(Name) 
+&lbrc;
+	var search = Name + "=";
+	if (document.cookie.length > 0) &lbrc;
+		offset = document.cookie.indexOf(search);
+		if (offset != -1) &lbrc;
+			offset += search.length;
+			end = document.cookie.indexOf(";", offset);
+				if (end == -1)
+					end = document.cookie.length;
+				return unescape(document.cookie.substring(offset, end));
+			&rbrc;
+		&rbrc;
+	return null;
+&rbrc;
+			
 			if ("{%player}") var player = "{%player}";
 			if (!player) parent.statusframe.location="{webroot}status.html?player={%player}";
 			else {
-				var playing = [EVAL]defined($client)&&defined(SliMP3::Prefs::clientGet($client,"playlistItem")) ? SliMP3::Prefs::clientGet($client,"playlistItem") : 0;[/EVAL];
+				var playing = getCookie("Slimp3-CurrentSong");
+				//var playing = [EVAL]defined($client)&&defined(SliMP3::Prefs::clientGet($client,"playlistItem")) ? SliMP3::Prefs::clientGet($client,"playlistItem") : 0;[/EVAL];
 				var current = [EVAL]defined($client)&&defined(SliMP3::Prefs::clientGet($client,"currentSong")) ? SliMP3::Prefs::clientGet($client,"currentSong") : 0;[/EVAL];
 				if ((current != playing)&&(parent.statusframe.location.href != "about:blank")) parent.statusframe.location="{webroot}status.html?player={%player}";
 			};
@@ -27,7 +45,7 @@
 		<td align="center" width="33%"><a href="{webroot}status.html?player={%player}" target="statusframe">
 			<script language="JavaScript">
 				<!--hide
-				if ("player") document.write("{%player}");
+				if ("player") document.write("{player}");
 				else document.write("No Client");
 				//-->
 			</script></a></td>
