@@ -23,7 +23,7 @@ use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.2 $,10);
+$VERSION = substr(q$Revision: 1.3 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_SNOW');}
 
@@ -238,8 +238,8 @@ sub getScreensaverSnowFunctions {
     return \%screensaverSnowFunctions;
 }
 
-my $snowStyle;
-my $snowQuantity;
+my %snowStyle;
+my %snowQuantity;
 
 sub setScreensaverSnowMode() {
     my $client = shift;
@@ -248,8 +248,8 @@ sub setScreensaverSnowMode() {
     Slim::Utils::Prefs::clientSet($client,'doublesize',0);
 
     # save time on later lookups - we know these can't change while we're active
-    $snowStyle = Slim::Utils::Prefs::clientGet($client,'snowStyle') || 0;
-    $snowQuantity = Slim::Utils::Prefs::clientGet($client,'snowQuantity') || 1;
+    $snowStyle{$client} = Slim::Utils::Prefs::clientGet($client,'snowStyle') || 0;
+    $snowQuantity{$client} = Slim::Utils::Prefs::clientGet($client,'snowQuantity') || 1;
 }
 
 sub leaveScreensaverSnowMode {
@@ -262,11 +262,11 @@ sub screensaverSnowlines {
     my ($line1, $line2) = ('','');
     my $onlyInSpaces = 0;
     my $simple = 0;
-    if($snowStyle == 0 || $snowStyle == 1) {
+    if($snowStyle{$client} == 0 || $snowStyle{$client} == 1) {
 	# Now Playing
 	($line1, $line2) = Slim::Display::Display::renderOverlay(&Slim::Buttons::Playlist::currentSongLines($client));
-	$onlyInSpaces = ($snowStyle == 0);
-    } elsif($snowStyle == 2) {
+	$onlyInSpaces = ($snowStyle{$client} == 0);
+    } elsif($snowStyle{$client} == 2) {
 	# Date/Time
 	($line1, $line2) = Slim::Display::Display::renderOverlay(&Slim::Buttons::Common::dateTime($client));
 	$onlyInSpaces = 1;
@@ -363,7 +363,7 @@ sub letItSnow {
 	
 	my $i;
 	foreach $i (0..5) {
-	    if(rand(100) < (5,10,30)[$snowQuantity]) {
+	    if(rand(100) < (5,10,30)[$snowQuantity{$client}]) {
 		my $newflake = {};
 		$newflake->{line} = 0;
 		$newflake->{pos} = int rand(80);
