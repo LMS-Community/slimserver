@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.23 2004/05/01 16:35:45 vidur Exp $
+# $Id: Plugins.pm,v 1.24 2004/07/01 05:10:31 dean Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
@@ -123,7 +123,7 @@ sub enabledPlugins {
 		
 		push @enabled, $item;
 	}
-	@enabled = sort { Slim::Music::Info::ignoreCaseArticles($plugins{$a}->{'name'}) cmp Slim::Music::Info::ignoreCaseArticles($plugins{$b}->{'name'}) } @enabled;
+	@enabled = sort { Slim::Utils::Text::ignoreCaseArticles($plugins{$a}->{'name'}) cmp Slim::Utils::Text::ignoreCaseArticles($plugins{$b}->{'name'}) } @enabled;
 	return @enabled;
 }
 

@@ -323,7 +323,7 @@ sub reshuffle {
 			my %trackToNum;
 			my $i = 0;			
 			foreach my $track (@{playList($client)}) {
-				my $album=Slim::Music::Info::matchCase(Slim::Music::Info::album($track));
+				my $album=Slim::Utils::Text::matchCase(Slim::Music::Info::album($track));
 				if (!defined($album)) {
 					$album=string('NO_ALBUM');
 				}
@@ -334,7 +334,7 @@ sub reshuffle {
 			if ($realsong == -1) {
 				$realsong=${$listRef}[Slim::Utils::Prefs::clientGet($client,'currentSong')];
 			}
-			my $curalbum=Slim::Music::Info::matchCase(Slim::Music::Info::album(${playList($client)}[$realsong]));
+			my $curalbum=Slim::Utils::Text::matchCase(Slim::Music::Info::album(${playList($client)}[$realsong]));
 			if (!defined($curalbum)) {
 				$curalbum = string('NO_ALBUM');
 			}

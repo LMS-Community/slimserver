@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.74 2004/06/25 07:07:42 kdf Exp $
+# $Id: Prefs.pm,v 1.75 2004/07/01 05:10:32 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -249,7 +249,7 @@ my %prefChange = (
 		}
 	}
 	,'ignoredarticles' => sub {
-		Slim::Music::Info::clearCaseArticleCache();
+		Slim::Utils::Text::clearCaseArticleCache();
 	}
 	,'itunes' => sub {
 		my $newvalue = shift;

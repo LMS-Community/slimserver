@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Text;
 
-# $Id: Text.pm,v 1.14 2004/01/26 05:44:10 dean Exp $
+# $Id: Text.pm,v 1.15 2004/07/01 05:10:31 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -427,8 +427,8 @@ sub cleanString {
 	foreach (@{Slim::Hardware::VFD::splitString($inString)}) {
 		if (exists($charsHash{$_})) {
 			$outString .= $_ unless $_ eq $rightarrow;
-		} elsif (exists($charsHash{Slim::Music::Info::matchCase($_)})) {
-			$outString .= Slim::Music::Info::matchCase($_);
+		} elsif (exists($charsHash{Slim::Utils::Text::matchCase($_)})) {
+			$outString .= Slim::Utils::Text::matchCase($_);
 		} else {
 			$outString .= $replaceChar;
 		}

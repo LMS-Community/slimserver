@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.90 2004/07/01 02:22:55 kdf Exp $
+# $Id: Pages.pm,v 1.91 2004/07/01 05:10:33 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -457,7 +457,7 @@ sub browser_addtolist_done {
 
 			_addStats($params, [],[],[],[]);
  						
-			my $anchor = anchor(Slim::Music::Info::getSortName($list_form{'title'}),1);
+			my $anchor = anchor(Slim::Utils::Text::getSortName($list_form{'title'}),1);
 
 			if ($lastAnchor && $lastAnchor ne $anchor) {
 				$list_form{'anchor'} = $anchor;
@@ -989,7 +989,7 @@ sub _searchArtistOrAlbum {
 			$list_form{'odd'}	   = ($itemnumber + 1) % 2;
 			$list_form{'skinOverride'} = $params->{'skinOverride'};
 
-			my $anchor = anchor(Slim::Music::Info::getSortName($item), 1);
+			my $anchor = anchor(Slim::Utils::Text::getSortName($item), 1);
 
 			if ($lastAnchor ne $anchor) {
 				$list_form{'anchor'} = $anchor;
@@ -1442,7 +1442,7 @@ sub browseid3 {
 				$list_form{'mixable_descend'} = Slim::Music::Info::isGenreMixable($item) && ($descend eq "true");
 				$list_form{'skinOverride'}    = $params->{'skinOverride'};
 
-				my $anchor = anchor(Slim::Music::Info::getSortName($item));
+				my $anchor = anchor(Slim::Utils::Text::getSortName($item));
 
 				if ($lastAnchor ne $anchor) {
 					$list_form{'anchor'} = $anchor;
@@ -1535,7 +1535,7 @@ sub browseid3 {
 				$list_form{'mixable_descend'} = Slim::Music::Info::isArtistMixable($item) && ($descend eq "true");
 				$list_form{'skinOverride'}    = $params->{'skinOverride'};
 
-				my $anchor = anchor(Slim::Music::Info::getSortName($item), 1);
+				my $anchor = anchor(Slim::Utils::Text::getSortName($item), 1);
 
 				if ($lastAnchor ne $anchor) {
 					$list_form{'anchor'} = $anchor;
@@ -1655,7 +1655,7 @@ sub browseid3 {
 				$list_form{'odd'}	   = ($itemnumber + 1) % 2;
 				$list_form{'skinOverride'} = $params->{'skinOverride'};
 
-				my $anchor = anchor(Slim::Music::Info::getSortName($item),1);
+				my $anchor = anchor(Slim::Utils::Text::getSortName($item),1);
 
 				if ($lastAnchor ne $anchor) {
 					$list_form{'anchor'} = $anchor;
@@ -1945,10 +1945,10 @@ sub anchor {
 	my $suppressArticles = shift;
 	
 	if ($suppressArticles) {
-		$item = Slim::Music::Info::ignoreCaseArticles($item);
+		$item = Slim::Utils::Text::ignoreCaseArticles($item);
 	}
 
-	return Slim::Music::Info::matchCase(substr($item, 0, 1));
+	return Slim::Utils::Text::matchCase(substr($item, 0, 1));
 }
 
 sub options {
@@ -2101,7 +2101,7 @@ sub alphapagebar {
 		$end = -1;
 		for (my $j = 0; $j < $itemcount; $j++) {
 
-			my $curLetter = anchor(Slim::Music::Info::getSortName($$itemsref[$j]), $ignorearticles);
+			my $curLetter = anchor(Slim::Utils::Text::getSortName($$itemsref[$j]), $ignorearticles);
 
 			if ($lastLetter ne $curLetter) {
 

@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.130 2004/06/15 05:45:04 dean Exp $
+# $Id: Info.pm,v 1.131 2004/07/01 05:10:32 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -27,6 +27,7 @@ use Slim::Formats::Shorten;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Text;
 
 eval "use Storable";
 
@@ -126,7 +127,6 @@ my %songCountMemoize = ();
 my %artistCountMemoize = ();
 my %albumCountMemoize = ();
 my %genreCountMemoize = ();
-my %caseArticlesMemoize = ();
 
 my %infoCacheItemsIndex;
 
@@ -166,7 +166,6 @@ if (defined @Storable::EXPORT) {
 					'albumCountMemoize'   => \%albumCountMemoize,
 					'artistCountMemoize'  => \%artistCountMemoize,
 					'artworkCache'        => \%artworkCache,
-					'caseArticlesMemoize' => \%caseArticlesMemoize,
 					'caseCache'           => \%caseCache,
 					'genreCache'          => \%genreCache,
 					'genreCountMemoize'   => \%genreCountMemoize,
@@ -240,7 +239,6 @@ if (defined @Storable::EXPORT) {
 				%albumCountMemoize   = %{$cacheToRead->{'albumCountMemoize'}};
 				%artistCountMemoize  = %{$cacheToRead->{'artistCountMemoize'}};
 				%artworkCache        = %{$cacheToRead->{'artworkCache'}};
-				%caseArticlesMemoize = %{$cacheToRead->{'caseArticlesMemoize'}};
 				%caseCache           = %{$cacheToRead->{'caseCache'}};
 				%genreCache          = %{$cacheToRead->{'genreCache'}};
 				%genreCountMemoize   = %{$cacheToRead->{'genreCountMemoize'}};
@@ -506,8 +504,16 @@ sub completeClearCache {
 	%artistCountMemoize=();
 	%albumCountMemoize=();
 	%genreCountMemoize=();
-	%caseArticlesMemoize=();
 }
+
+sub fixCase {
+	my @fixed = ();
+	foreach my $item (@_) {
+		push @fixed, $caseCache{$item};
+	}
+	return @fixed;
+}
+
 
 # Wipe the memory cache
 sub clearDBCache {
@@ -1298,10 +1304,7 @@ sub info {
 }
 
 
-sub trackNumber {
-	my $file = shift;
-	return (info($file,'TRACKNUM'));
-}
+sub trackNumber { return info(shift,'TRACKNUM'); }
 
 sub cleanTrackNumber {
 	my $tracknumber = shift;
@@ -1315,26 +1318,17 @@ sub cleanTrackNumber {
 	return $tracknumber;
 }
 
-sub genre {
-	my $file = shift;
-	return (info($file,'GENRE'));
-}
+sub genre { return info(shift,'GENRE'); }
 
-sub title {
-	my $file = shift;
-	return (info($file,'TITLE'));
-}
+sub title { return info(shift,'TITLE'); }
 
-sub artist {
-	my $file = shift;
-	return (info($file,'ARTIST'));
-}
+sub artist { return info(shift,'ARTIST'); }
 
 sub artistSort {
 	my $file = shift;
 	my $artistSort = info($file,'ARTISTSORT');
 	if (!defined($artistSort)) {
-		$artistSort = ignoreCaseArticles(artist($file));
+		$artistSort = Slim::Utils::Text::ignoreCaseArticles(artist($file));
 	}
 	return $artistSort;
 }
@@ -1343,7 +1337,7 @@ sub albumSort {
 	my $file = shift;
 	my $albumSort = info($file,'ALBUMSORT');
 	if (!defined($albumSort)) {
-		$albumSort = ignoreCaseArticles(album($file));
+		$albumSort = Slim::Utils::Text::ignoreCaseArticles(album($file));
 	}
 	return $albumSort;
 }
@@ -1352,45 +1346,24 @@ sub titleSort {
 	my $file = shift;
 	my $titleSort = info($file,'TITLESORT');
 	if (!defined($titleSort)) {
-		$titleSort = ignoreCaseArticles(title($file));
+		$titleSort = Slim::Utils::Text::ignoreCaseArticles(title($file));
 	}
 	return $titleSort;
 }
 
-sub composer {
-	my $file = shift;
-	return (info($file,'COMPOSER'));
-}
+sub composer { return info(shift,'COMPOSER'); }
 
-sub band {
-	my $file = shift;
-	return (info($file,'BAND'));
-}
+sub band { return info(shift,'BAND'); }
 
-sub conductor {
-	my $file = shift;
-	return (info($file,'CONDUCTOR'));
-}
+sub conductor {	return info(shift,'CONDUCTOR'); }
 
-sub album {
-	my $file = shift;
-	return (info($file,'ALBUM'));
-}
+sub album { return info(shift,'ALBUM'); }
 
-sub year {
-	my $file = shift;
-	return (info($file,'YEAR'));
-}
+sub year { return info(shift,'YEAR'); }
 
-sub disc {
-	my $file = shift;
-	return (info($file,'DISC'));
-}
+sub disc { return info(shift,'DISC'); }
 
-sub discCount {
-	my $file = shift;
-	return (info($file,'DISCC'));
-}
+sub discCount { return info(shift,'DISCC'); }
 
 sub comment {
 	my $file = shift;
@@ -1437,20 +1410,11 @@ sub duration {
 	}
 }
 
-sub durationSeconds {
-	my $file = shift;
-	return info($file,'SECS');
-}
+sub durationSeconds { return info(shift,'SECS'); }
 
-sub offset {
-	my $file = shift;
-	return info($file,'OFFSET');
-}
+sub offset { return info(shift,'OFFSET'); }
 
-sub size {
-	my $file = shift;
-	return info($file,'SIZE');
-}
+sub size { return info(shift,'SIZE'); }
 
 sub bitrate {
 	my $file = shift;
@@ -1462,41 +1426,20 @@ sub bitrate {
 	}
 }
 
-sub bitratenum {
-	my $file = shift;
-	return info($file,'BITRATE');
-}
+sub bitratenum { return info(shift,'BITRATE'); }
 
-sub samplerate {
-	my $file = shift;
-	return info($file,'RATE');
-}
+sub samplerate { return info(shift,'RATE'); }
 
-sub channels {
-	my $file = shift;
-	return info($file, 'CHANNELS');
-}
+sub channels { return info(shift, 'CHANNELS'); }
 
-sub blockalign {
-	my $file = shift;
-	return info($file, 'BLOCKALIGN');
-}
+sub blockalign { return info(shift, 'BLOCKALIGN'); }
 
-sub endian {
-	my $file = shift;
-	return info($file, 'ENDIAN');
-}
+sub endian { return info(shift, 'ENDIAN'); }
 
 # we cache whether we had success reading the cover art.
-sub haveCoverArt {
-	my $file = shift;
-	return info($file, 'COVER');
-}
+sub haveCoverArt { return info(shift, 'COVER'); }
 
-sub haveThumbArt {
-	my $file = shift;
-	return info($file, 'THUMB');
-}
+sub haveThumbArt { return info(shift, 'THUMB'); }
 
 sub coverArt {
 	my $file = shift;
@@ -1545,10 +1488,9 @@ sub coverArt {
 	return ($body, $contenttype, $mtime);
 }
 
-sub tagVersion {
-	my $file = shift;
-	return info($file,'TAGVERSION');
-};
+sub age { return info(shift, 'AGE'); }
+sub tagVersion { return info(shift,'TAGVERSION'); }
+sub cachedPlaylist { return info(shift, 'LIST'); }
 
 sub cachePlaylist {
 	my $path = shift;
@@ -1564,16 +1506,6 @@ sub cachePlaylist {
 	$::d_info && Slim::Utils::Misc::msg("cached an " . (scalar @{$inforef->{'LIST'}}) . " item playlist for $path\n");
 }
 
-sub cachedPlaylist {
-	my $path = shift;
-
-	return info($path, 'LIST');
-}
-
-sub age {
-	my $path = shift;
-	return info($path, 'AGE');
-}
 
 sub filterPrep {
 	my $pattern = shift;
@@ -1590,7 +1522,7 @@ sub filterPats {
 	my ($inpats) = @_;
 	my @outpats = ();
 	foreach my $pat (@$inpats) {
-		push @outpats, filterPrep(ignoreCaseArticles($pat));
+		push @outpats, filterPrep(Slim::Utils::Text::ignoreCaseArticles($pat));
 	}
 	return \@outpats;
 }
@@ -1674,7 +1606,7 @@ sub genres {
 	if ($count) {
 		return scalar @genres;
 	} else {
-		return fixCase(sortuniq(@genres));
+		return fixCase(Slim::Utils::Text::sortuniq(@genres));
 	}
 }
 
@@ -1718,7 +1650,7 @@ sub artists {
 	if ($count) {
 		return scalar @artists;
 	} else {
-		return fixCase(sortuniq_ignore_articles(@artists));
+		return fixCase(Slim::Utils::Text::sortuniq_ignore_articles(@artists));
 	}
 }
 
@@ -1730,7 +1662,7 @@ sub artwork {
 			push @covers, $key;
 		}
 	}
-	return sortuniq_ignore_articles(@covers);
+	return Slim::Utils::Text::sortuniq_ignore_articles(@covers);
 }
 
 sub albums {
@@ -1766,7 +1698,7 @@ sub albums {
 	if ($count) {
 		return scalar(@albums);
 	} else {
- 		return fixCase(sortuniq_ignore_articles(@albums));
+ 		return fixCase(Slim::Utils::Text::sortuniq_ignore_articles(@albums));
  	}
 }
 
@@ -1800,17 +1732,17 @@ sub songs {
 
 	$::d_info && Slim::Utils::Misc::msg("songs: $genre - $artist - $album - $track\n");
 
-	foreach my $g (sortIgnoringCase(filter($genre_pats, '', keys %genreCache))) {
+	foreach my $g (Slim::Utils::Text::sortIgnoringCase(filter($genre_pats, '', keys %genreCache))) {
 
-		foreach my $art (sortIgnoringCase(filter($artist_pats, '', keys %{$genreCache{$g}}))) {
+		foreach my $art (Slim::Utils::Text::sortIgnoringCase(filter($artist_pats, '', keys %{$genreCache{$g}}))) {
 
-			foreach my $alb (sortIgnoringCase(filter($album_pats, '', keys %{$genreCache{$g}{$art}}))) {
+			foreach my $alb (Slim::Utils::Text::sortIgnoringCase(filter($album_pats, '', keys %{$genreCache{$g}{$art}}))) {
 
 				my %songs = ();
 
 				foreach my $trk (values %{$genreCache{$g}{$art}{$alb}}) {
 
-					$songs{$trk} = ignoreCaseArticles(title($trk));
+					$songs{$trk} = Slim::Utils::Text::ignoreCaseArticles(title($trk));
 				}
 
 				if ($tracksort) {
@@ -1830,7 +1762,7 @@ sub songs {
 	
 	foreach my $item (@alltracks) {
 
-		unless (!defined($item) || ($item eq '') || $seen{ignoreCaseArticles($item)}++) {
+		unless (!defined($item) || ($item eq '') || $seen{Slim::Utils::Text::ignoreCaseArticles($item)}++) {
 			push(@uniq, $item);
 		}
 	}
@@ -1906,24 +1838,6 @@ sub sortByTitles {
 
 	#return an array of first elements of the entries in the sorted array
 	return map {$_->[0]} sort sortByTitlesAlg @sortinfo;
-}
-
-sub ignoreArticles {
-	my $item = shift;
-
-	return $item unless $item;
-
-	if (!defined($articles)) {
-
-		$articles =  Slim::Utils::Prefs::get("ignoredarticles");
-		# allow a space seperated list in preferences (easier for humans to deal with)
-		$articles =~ s/\s+/|/g;
-	}
-	
-	#set up array for sorting items without leading articles
-	$item =~ s/^($articles)\s+//i;
-
-	return $item;
 }
 
 #algorithm for sorting by just titles
@@ -2079,7 +1993,7 @@ sub fileName {
 
 sub sortFilename {
 	#build the sort index
-	my @nocase = map {ignoreCaseArticles(fileName($_))} @_;
+	my @nocase = map {Slim::Utils::Text::ignoreCaseArticles(fileName($_))} @_;
 	#return the input array sliced by the sorted array
 	return @_[sort {$nocase[$a] cmp $nocase[$b]} 0..$#_];
 }
@@ -2091,7 +2005,7 @@ sub songPath {
 	my $album = shift;
 	my $track = shift;
 
-	return $genreCache{ignoreCaseArticles($genre)}{ignoreCaseArticles($artist)}{ignoreCaseArticles($album)}{ignoreCaseArticles($track)};
+	return $genreCache{Slim::Utils::Text::ignoreCaseArticles($genre)}{Slim::Utils::Text::ignoreCaseArticles($artist)}{Slim::Utils::Text::ignoreCaseArticles($album)}{Slim::Utils::Text::ignoreCaseArticles($track)};
 }
 
 sub isFragment {
@@ -2274,26 +2188,26 @@ sub updateSortCache {
 	my $tempCacheEntry = shift;
 	
 	if (exists($tempCacheEntry->{'ARTISTSORT'})) {
-		$tempCacheEntry->{'ARTISTSORT'} = ignoreCaseArticles($tempCacheEntry->{'ARTISTSORT'});
+		$tempCacheEntry->{'ARTISTSORT'} = Slim::Utils::Text::ignoreCaseArticles($tempCacheEntry->{'ARTISTSORT'});
 		
 		if (exists($tempCacheEntry->{'ARTIST'})) { 
-			$sortCache{ignoreCaseArticles($tempCacheEntry->{'ARTIST'})} = $tempCacheEntry->{'ARTISTSORT'};
+			$sortCache{Slim::Utils::Text::ignoreCaseArticles($tempCacheEntry->{'ARTIST'})} = $tempCacheEntry->{'ARTISTSORT'};
 		};
 	};
 			
 	if (exists($tempCacheEntry->{'ALBUMSORT'})) {
-		$tempCacheEntry->{'ALBUMSORT'} = ignoreCaseArticles($tempCacheEntry->{'ALBUMSORT'});
+		$tempCacheEntry->{'ALBUMSORT'} = Slim::Utils::Text::ignoreCaseArticles($tempCacheEntry->{'ALBUMSORT'});
 				
 		if (exists($tempCacheEntry->{'ALBUM'})) { 
-			$sortCache{ignoreCaseArticles($tempCacheEntry->{'ALBUM'})} = $tempCacheEntry->{'ALBUMSORT'};
+			$sortCache{Slim::Utils::Text::ignoreCaseArticles($tempCacheEntry->{'ALBUM'})} = $tempCacheEntry->{'ALBUMSORT'};
 		};
 	};
 			
 	if (exists($tempCacheEntry->{'TITLESORT'})) {
-		$tempCacheEntry->{'TITLESORT'} = ignoreCaseArticles($tempCacheEntry->{'TITLESORT'});
+		$tempCacheEntry->{'TITLESORT'} = Slim::Utils::Text::ignoreCaseArticles($tempCacheEntry->{'TITLESORT'});
 
 		if (exists($tempCacheEntry->{'TITLE'})) { 
-			$sortCache{ignoreCaseArticles($tempCacheEntry->{'TITLE'})} = $tempCacheEntry->{'TITLESORT'};
+			$sortCache{Slim::Utils::Text::ignoreCaseArticles($tempCacheEntry->{'TITLE'})} = $tempCacheEntry->{'TITLESORT'};
 		};
 	};
 }
@@ -2645,12 +2559,12 @@ sub updateGenreCache {
 
 	foreach my $genre (splitTag($genre)) {
 		$genre=~s/^\s*//;$genre=~s/\s*$//;
-		my $genreCase = ignoreCaseArticles($genre);
+		my $genreCase = Slim::Utils::Text::ignoreCaseArticles($genre);
 		foreach my $artist (splitTag($artist)) {
 			$artist=~s/^\s*//;$artist=~s/\s*$//;
-			my $artistCase = ignoreCaseArticles($artist);
-			my $albumCase = ignoreCaseArticles($album);
-			my $trackCase = ignoreCaseArticles($track);
+			my $artistCase = Slim::Utils::Text::ignoreCaseArticles($artist);
+			my $albumCase = Slim::Utils::Text::ignoreCaseArticles($album);
+			my $trackCase = Slim::Utils::Text::ignoreCaseArticles($track);
 	
 			my $discNum = $cacheEntry->{'DISC'};
 			my $discCount = $cacheEntry->{'DISCC'};
@@ -2681,7 +2595,7 @@ sub includeSplitTag {
 	if (defined $tag) {
 		foreach my $tag (splitTag($tag)) {
 			$tag=~s/^\s*//;$tag=~s/\s*$//;
-			my $tagCase = ignoreCaseArticles($tag);
+			my $tagCase = Slim::Utils::Text::ignoreCaseArticles($tag);
 			$genreCache{$genreCase}{$tagCase}{$albumCase}{$trackCase} = $file;
 			$caseCache{$tagCase} = $tag; 
 		}
@@ -2717,10 +2631,7 @@ sub splitTag {
 	}
 }
 
-sub fileLength {
-	my $file = shift;
-	return (info($file,'FS'));
-}
+sub fileLength { return info(shift,'FS'); }
 
 sub isFile {
 	my $fullpath = shift;
@@ -2876,10 +2787,7 @@ sub isPlaylist {
 	}
 }
 
-sub isSongMixable {
-	my $file = shift;
-	return info($file,'MOODLOGIC_SONG_MIXABLE');
-}
+sub isSongMixable { return info(shift,'MOODLOGIC_SONG_MIXABLE'); }
 
 sub isArtistMixable {
 	my $artist = shift;
@@ -2891,10 +2799,7 @@ sub isGenreMixable {
 	return defined $genreMixCache{$genre} ? 1 : 0;
 }
 
-sub moodLogicSongId {
-	my $file = shift;
-	return info($file,'MOODLOGIC_SONG_ID');
-}
+sub moodLogicSongId { return info(shift,'MOODLOGIC_SONG_ID'); }
 
 sub moodLogicArtistId {
 	my $artist = shift;
@@ -2917,10 +2822,7 @@ sub mimeType {
 	return undef;
 };
 
-sub contentType {
-	my $file = shift;
-	return (info($file,'CT'));
-}
+sub contentType { return info(shift,'CT'); }
 
 sub typeFromSuffix {
 	my $path = shift;
@@ -2987,94 +2889,6 @@ sub typeFromPath {
 	return $type;
 }
 
-sub ignorePunct {
-	my $s = shift;
-	return undef unless defined($s);
-	$s =~ s/[!?,=+<>#%&()\"\'\$\.\\]+/ /g;
-	$s =~ s/  +/ /g; # compact multiple spaces, "L.A. Mix" -> "L A Mix", not "L A  Mix"
-	return $s;
-}
-
-sub matchCase {
-	my $s = shift;
-	return undef unless defined($s);
-	# Upper case and fold latin1 diacritical characters into their plain versions, surprisingly useful.
-	$s =~ tr{abcdefghijklmnopqrstuvwxyz¿¡¬√ƒ«»… ÀÃÕŒœ—“”‘’÷Ÿ⁄€‹‡·‚„‰ÂÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˘˙˚¸ˇ˝–}
-			{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAACEEEEIIIINOOOOOUUUUAAAAAACEEEEIIIINOOOOOUUUUYYDD};
-	return $s;
-}
-
-sub ignoreCaseArticles {
-	my $s = shift;
-	return undef unless defined($s);
-	if (defined $caseArticlesMemoize{$s}) {
-		return $caseArticlesMemoize{$s};
-	}
-
-	return ($caseArticlesMemoize{$s} = ignorePunct(ignoreArticles(matchCase($s))));
-}
-
-sub clearCaseArticleCache {
-	%caseArticlesMemoize = ();
-}
-
-sub sortIgnoringCase {
-	#set up an array without case for sorting
-	my @nocase = map {ignoreCaseArticles($_)} @_;
-	#return the original array sliced by the sorted caseless array
-	return @_[sort {$nocase[$a] cmp $nocase[$b]} 0..$#_];
-}
-
-sub fixCase {
-	my @fixed = ();
-	foreach my $item (@_) {
-		push @fixed, $caseCache{$item};
-	}
-	return @fixed;
-}
-
-sub sortuniq {
-	my %seen = ();
-	my @uniq = ();
-
-	foreach my $item (@_) {
-		if (defined($item) && ($item ne '') && !$seen{ignoreCaseArticles($item)}++) {
-			push(@uniq, $item);
-		}
-	}
-
-	return sort @uniq ;
-}
-
-# similar to above but ignore preceeding articles when sorting
-sub sortuniq_ignore_articles {
-	my %seen = ();
-	my @uniq = ();
-	my $articles =  Slim::Utils::Prefs::get("ignoredarticles");
-	# allow a space seperated list in preferences (easier for humans to deal with)
-	$articles =~ s/\s+/|/g;
-
-	foreach my $item (@_) {
-		if (defined($item) && ($item ne '') && !$seen{ignoreCaseArticles($item)}++) {
-			push(@uniq, $item);
-		}
-	}
-	#set up array for sorting items without leading articles
-	my @noarts = map {
-			my $item = $_; 
-			exists($sortCache{$item}) ? $item = $sortCache{$item} : $item =~ s/^($articles)\s+//i; 
-			$item; 
-		} @uniq;
-		
-	#return the uniq array sliced by the sorted articleless array
-	return @uniq[sort {$noarts[$a] cmp $noarts[$b]} 0..$#uniq];
-}
-
-sub getSortName {
-	my $item = shift;
-	return exists($sortCache{ignoreCaseArticles($item)}) ? $sortCache{ignoreCaseArticles($item)} : $item;
-
-}
 
 1;
 __END__

@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.15 2004/05/14 18:10:01 grotus Exp $
+# $Id: Display.pm,v 1.16 2004/07/01 05:10:31 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -703,10 +703,10 @@ sub doubleSize {
 	my $split = Slim::Hardware::VFD::splitString($line2);
 	
 	foreach my $char (@$split) {
-		if (exists($doublechars{$char}) || exists($doublechars{Slim::Music::Info::matchCase($char)})) {
+		if (exists($doublechars{$char}) || exists($doublechars{Slim::Utils::Text::matchCase($char)})) {
 			my ($char1,$char2);
 			if (!exists($doublechars{$char})) {
-				$char = Slim::Music::Info::matchCase($char);
+				$char = Slim::Utils::Text::matchCase($char);
 			}
 			($char1,$char2)=  @{$doublechars{$char}};
 			if ($char =~ /[A-Z]/ && $lastchar ne ' ' && $lastchar !~ /\d/) {
