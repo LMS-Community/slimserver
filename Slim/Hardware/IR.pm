@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.9 2003/09/04 05:12:25 grotus Exp $
+# $Id: IR.pm,v 1.10 2003/09/17 20:50:33 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -8,10 +8,9 @@ package Slim::Hardware::IR;
 # version 2.
 
 use strict;
-use File::Spec::Functions qw(updir catdir catfile);
+use File::Spec::Functions qw(catdir);
 use FindBin qw($Bin);
 
-use lib updir();
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 
