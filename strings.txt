@@ -8215,8 +8215,8 @@ FAQ
 HELP_RADIO
 	DE	Internet Radio
 	DK	Internetradio-
+	EN	Internet Radio
 	ES	Radios por Internet
-	ES	Radios de Internet
 	FR	Radios Internet
 	JP	インターネットラジオとプレイリストファイル
 	NL	Internet Radio
