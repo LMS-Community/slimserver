@@ -200,7 +200,13 @@ sub render {
 	if (!defined($parts->{overlay1bits})) {
 		if (defined($parts->{overlay1})) {
 			$parts->{overlay1bits} = Slim::Display::Graphics::string($fonts->[0], "\x00" . $parts->{overlay1});
-			$parts->{overlay1start} = $screensize - length($parts->{overlay1bits});
+			my $len = length($parts->{overlay1bits});
+			if ($len > $screensize) {
+				# ensure overlay fits on screen
+				$parts->{overlay1bits} = substr($parts->{overlay1bits}, 0, $screensize);
+				$len = $screensize;
+			}
+			$parts->{overlay1start} = $screensize - $len;
 			$line1same = 0;
 		} else {
 			$parts->{overlay1bits} = '';
@@ -213,7 +219,13 @@ sub render {
 	if (!defined($parts->{overlay2bits})) {
 		if (defined($parts->{overlay2})) {
 			$parts->{overlay2bits} = Slim::Display::Graphics::string($fonts->[1], "\x00" . $parts->{overlay2});
-			$parts->{overlay2start} = $screensize - length($parts->{overlay2bits});
+			my $len = length($parts->{overlay2bits});
+			if ($len > $screensize) {
+				# ensure overlay fits on screen
+				$parts->{overlay2bits} = substr($parts->{overlay2bits}, 0, $screensize);
+				$len = $screensize;
+			}
+			$parts->{overlay2start} = $screensize - $len;
 		} else {
 			$parts->{overlay2bits} = '';
 			$parts->{overlay2start} = $screensize;
@@ -593,8 +605,8 @@ sub scrollBottom {
 		$parts->{scrollFrameSize} = length($client->scrollHeader) + $client->screenBytes;
 		
 		$client->killAnimation();
-		$client->scrollUpdate($parts);
 		$client->animating(2);
+		$client->scrollUpdate($parts);
 
 	} else {
 		$client->refresh($parts);
@@ -629,14 +641,21 @@ sub scrollUpdate {
 			$parts->{line1bits} = undef;
 		}
 	
-		my $oldoverlay = $parts->{overlay1};
-		my $newoverlay = $parts1->{overlay1};	
+		my $oldoverlay1 = $parts->{overlay1};
+		my $newoverlay1 = $parts1->{overlay1};	
 
-		if (defined($oldoverlay) && defined($newoverlay) && $oldoverlay ne $newoverlay) {
-			$parts->{overlay1} = $newoverlay;
+		if (defined($oldoverlay1) && defined($newoverlay1) && $oldoverlay1 ne $newoverlay1) {
+			$parts->{overlay1} = $newoverlay1;
 			$parts->{overlay1bits} = undef;
 		}
 
+		my $oldoverlay2 = $parts->{overlay2};
+		my $newoverlay2 = $parts1->{overlay2};	
+
+		if (defined($oldoverlay2) && defined($newoverlay2) && $oldoverlay2 ne $newoverlay2) {
+			$parts->{overlay2} = $newoverlay2;
+			$parts->{overlay2bits} = undef;
+		}
 	}
 
 	if ($timenow < $parts->{pauseUntil}) {
