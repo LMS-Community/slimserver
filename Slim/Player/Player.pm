@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.32 2004/10/06 23:10:20 vidur Exp $
+# $Id: Player.pm,v 1.33 2004/10/08 05:16:46 kdf Exp $
 #
 package Slim::Player::Player;
 use strict;
@@ -254,14 +254,6 @@ sub power {
 				Slim::Utils::Prefs::clientSet($client, "powerOnBrightness", $powerOnBrightness);
 				#check if there is a sync group to restore
 				Slim::Player::Sync::restoreSync($client);
-				# restore volume (un-mute if necessary)
-				my $vol = $client->volume();
-				if($vol < 0) { 
-					# un-mute volume
-					$vol *= -1;
-					$client->volume($vol);
-				}
-				Slim::Control::Command::execute($client, ["mixer", "volume", $vol]);
 			} else {
 				Slim::Buttons::Common::setMode($client, 'off');
 			}
@@ -302,13 +294,13 @@ sub fade_volume {
 	
 	my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
 	my $mute = Slim::Utils::Prefs::clientGet($client, "mute");
-	if ($vol < 0) {
+	if ($vol < 0 && $fade < 0) {
 		# the volume is muted, don't fade.
 		$callback && (&$callback(@$callbackargs));
 		return;
 	}
 	
-	if ($mute) {
+	if ($mute || (!$mute && $vol < 0)) {
 		# Set Target (Negative indicates mute, but still saves old value)
 		Slim::Utils::Prefs::clientSet($client, "volume", $vol * -1);
 	}
