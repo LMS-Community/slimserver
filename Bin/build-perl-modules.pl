@@ -71,7 +71,7 @@ sub main {
 	print "These packages are needed for SlimServer 6 to function.\n";
 	print "You will need a C compiler (gcc), make, and perl installed.\n\n";
 
-	#print "*** Some tests may fail - that is ok. ***\n\n";
+	print "*** Ignore any warnings about AppConfig. ***\n\n";
 
 	print "Please enter a perl binary to use (defaults to /usr/bin/perl)\n";
 	print "This must be the same perl binary that you ran this program with --> ";
