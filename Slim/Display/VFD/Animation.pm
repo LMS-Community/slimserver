@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::VFD::Animation;
 
-# $Id: Animation.pm,v 1.4 2004/09/01 20:57:20 dean Exp $
+# $Id: Animation.pm,v 1.5 2004/09/03 20:13:23 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -314,14 +314,14 @@ sub scrollBottom {
 	my $client = shift;
 
 	my $linefunc  = $client->lines();
-	my @lines = &$linefunc($client);
+	my $lines = $client->parseLines(&$linefunc($client));
 
 	return if Slim::Buttons::Common::param($client,'noScroll');
 	
-	my $line1 = $lines[0] || '';
-	my $line2 = $lines[1] || '';
-	my $overlay1 = $lines[2] || '';
-	my $overlay2 = $lines[3] || '';
+	my $line1 = $lines->{line1} || '';
+	my $line2 = $lines->{line2} || '';
+	my $overlay1 = $lines->{overlay1} || '';
+	my $overlay2 = $lines->{overlay2} || '';
 
 	my $rate;
 	my $double = $client->linesPerScreen() == 1;
@@ -623,7 +623,7 @@ sub animateSlideWindowsOverlay {
 sub animateScrollBottom {
 	my ($client,$overdue,$initialPause
 		,$linesref,$overref,$endref,$posref,$stepref,$framedelay,$noDoubleSize) = @_;
-	
+
 	if ($initialPause) {
 		animateFrames($client,$overdue,[[$initialPause,$client->renderOverlay(@$linesref,@$overref)]],0,$noDoubleSize);
 		return ($initialPause,\&animateSlideWindowsOverlay,$linesref,$overref,$endref,$posref,$stepref,$framedelay,$noDoubleSize);
