@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.97 2004/09/11 04:27:32 dean Exp $
+# $Id: Setup.pm,v 1.98 2004/09/11 04:48:44 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2449,7 +2449,7 @@ sub skins {
 		foreach my $dir (Slim::Utils::Misc::readDirectory($templatedir)) {
 			# reject CVS and html directories as skins
 			next if $dir =~ /^(?:cvs|html)$/i;
-			next if $forUI && $dir eq 'xml';
+			next if $forUI && $dir =~ /^x/;
 			next if !-d catdir($templatedir, $dir);
 			
 			#my $path = catdir($templatedir, $dir);
