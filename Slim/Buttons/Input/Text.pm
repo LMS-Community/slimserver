@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Text;
 
-# $Id: Text.pm,v 1.18 2004/08/31 03:11:02 kdf Exp $
+# $Id: Text.pm,v 1.19 2004/09/01 02:10:33 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -83,6 +83,8 @@ my %functions = (
 	,'nextChar' => sub {
 			my ($client,$funct,$functarg) = @_;
 			Slim::Utils::Timers::killTimers($client, \&nextChar);
+			#reset last letter time to reset the character cycling.
+			$client->lastLetterTime(0);
 			my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 			my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
 			if (Slim::Display::Display::subString($$valueRef,$cursorPos,1) eq $rightarrow) {
