@@ -3,10 +3,10 @@ package Audio::FLAC::Header;
 # $Id$
 
 use strict;
-use vars qw($VERSION);
+use vars qw($VERSION $HAVE_XS);
 use File::Basename;
 
-$VERSION = '0.8';
+$VERSION = '1.2';
 
 # First four bytes of stream are always fLaC
 use constant FLACHEADERFLAG => 'fLaC';
@@ -25,9 +25,29 @@ use constant BT_SEEKTABLE      => 3;
 use constant BT_VORBIS_COMMENT => 4;
 use constant BT_CUESHEET       => 5;
 
-sub new {
+XS_BOOT: {
+        # If I inherit DynaLoader then I inherit AutoLoader
+	require DynaLoader;
+
+	# DynaLoader calls dl_load_flags as a static method.
+	*dl_load_flags = DynaLoader->can('dl_load_flags');
+
+	$HAVE_XS = eval {
+
+		do {__PACKAGE__->can('bootstrap') || \&DynaLoader::bootstrap}->(__PACKAGE__, $VERSION);
+
+		return 1;
+
+	};
+
+	# Try to use the faster code first.
+	*new = $HAVE_XS ? \&new_XS : \&new_PP;
+}
+
+sub new_PP {
 	my $class = shift;
 	my $file  = shift;
+	my $writeHack = shift;
 	my $errflag = 0;
 
 	my $self  = {};
@@ -65,41 +85,45 @@ sub new {
 		return $self;
 	};
 
-	# Parse streaminfo
-	$errflag = $self->_parseStreaminfo();
-	if ($errflag < 0) {
-		warn "[$file] Can't find streaminfo metadata block!";
-		close FILE;
-		undef $self->{'fileHandle'};
-		return $self;
-	};
+	# This is because we don't write out tags in XS yet.
+	unless ($writeHack) {
 
-	# Parse vorbis tags
-	$errflag = $self->_parseVorbisComments();
-	if ($errflag < 0) {
-		warn "[$file] Can't find/parse vorbis comment metadata block!";
-		close FILE;
-		undef $self->{'fileHandle'};
-		return $self;
-	};
+		# Parse streaminfo
+		$errflag = $self->_parseStreaminfo();
+		if ($errflag < 0) {
+			warn "[$file] Can't find streaminfo metadata block!";
+			close FILE;
+			undef $self->{'fileHandle'};
+			return $self;
+		};
 
-	# Parse cuesheet
-	$errflag = $self->_parseCueSheet();
-	if ($errflag < 0) {
-		warn "[$file] Problem parsing cuesheet metadata block!";
-		close FILE;
-		undef $self->{'fileHandle'};
-		return $self;
-	};
+		# Parse vorbis tags
+		$errflag = $self->_parseVorbisComments();
+		if ($errflag < 0) {
+			warn "[$file] Can't find/parse vorbis comment metadata block!";
+			close FILE;
+			undef $self->{'fileHandle'};
+			return $self;
+		};
 
-	# Parse third-party application metadata block
-	$errflag = $self->_parseAppBlock();
-	if ($errflag < 0) {
-		warn "[$file] Problem parsing application metadata block!";
-		close FILE;
-		undef $self->{'fileHandle'};
-		return $self;
-	};
+		# Parse cuesheet
+		$errflag = $self->_parseCueSheet();
+		if ($errflag < 0) {
+			warn "[$file] Problem parsing cuesheet metadata block!";
+			close FILE;
+			undef $self->{'fileHandle'};
+			return $self;
+		};
+
+		# Parse third-party application metadata block
+		$errflag = $self->_parseAppBlock();
+		if ($errflag < 0) {
+			warn "[$file] Problem parsing application metadata block!";
+			close FILE;
+			undef $self->{'fileHandle'};
+			return $self;
+		};
+	}
 
 	close FILE;
 	undef $self->{'fileHandle'};
@@ -153,12 +177,31 @@ sub application {
 sub write {
 	my $self = shift;
 
+	# XXX - this is a hack until I do metadata writing in XS
+	# Very ugly, I know.
+	if ($HAVE_XS) {
+
+		# Make a copy of these - otherwise we'll refcnt++
+		my %tags = %{$self->{'tags'}};
+		my %info = %{$self->{'info'}};
+
+		my $filename = $self->{'filename'};
+		my $class    = ref($self);
+
+		undef $self;
+
+		$self = $class->new_PP($filename, 1);
+
+		$self->{'tags'} = \%tags;
+		$self->{'info'} = \%info;
+	}
+
 	my @tagString = ();
 	my $numTags   = 0;
 
 	my ($idxVorbis,$idxPadding);
 	my $totalAvail = 0;
-	my $metadataBlocks = '';
+	my $metadataBlocks = FLACHEADERFLAG;
 	my $tmpnum;
 
 	# Make a list of the tags and lengths for packing into the vorbis metadata block
@@ -225,12 +268,12 @@ sub write {
 
 	# Is there a Padding block?
 	# Change the padding to reflect the new vorbis comment size
-	if ($idxPadding<0) {
+	if ($idxPadding < 0) {
 		# no padding block
-		_addNewMetadataBlock($self, BT_PADDING , ' ' x ($totalAvail - length($vorbisComment)));
+		_addNewMetadataBlock($self, BT_PADDING , "\0" x ($totalAvail - length($vorbisComment)));
 	} else {
 		# update the padding block
-		_updateMetadataBlock($self, $idxPadding, ' ' x ($totalAvail - length($vorbisComment)));
+		_updateMetadataBlock($self, $idxPadding, "\0" x ($totalAvail - length($vorbisComment)));
 	}
 
 	# Create the metadata block structure for the FLAC file
@@ -245,9 +288,6 @@ sub write {
 	# open FLAC file and write new metadata blocks
 	open FLACFILE, "+<$self->{'filename'}" or return -1;
 	binmode FLACFILE;
-
-	# seek to the location of the existing metadata blocks
-	seek FLACFILE, ($self->{'startMetadataBlocks'})-4, 0;
 
 	# overwrite the existing metadata blocks
 	print FLACFILE $metadataBlocks or return -1;
@@ -794,24 +834,23 @@ __END__
 
 =head1 NAME
 
-Audio::FLAC - An object-oriented interface to FLAC file information and
-comment fields, implemented entirely in Perl.
+Audio::FLAC::Header - interface to FLAC header metadata.
 
 =head1 SYNOPSIS
 
-	use Audio::FLAC;
-	my $flac = Audio::FLAC->new("song.flac");
+	use Audio::FLAC::Header;
+	my $flac = Audio::FLAC::Header->new("song.flac");
 
-	my $flacInfo = $flac->info();
+	my $info = $flac->info();
 
-	foreach (keys %$flacInfo) {
-		print "$_: $flacInfo->{$_}\n";
+	foreach (keys %$info) {
+		print "$_: $info->{$_}\n";
 	}
 
-	my $flacTags = $flac->tags();
+	my $tags = $flac->tags();
 
-	foreach (keys %$flacTags) {
-		print "$_: $flacTags->{$_}\n";
+	foreach (keys %$tags) {
+		print "$_: $tags->{$_}\n";
 	}
 
 =head1 DESCRIPTION
@@ -851,7 +890,6 @@ calculated from some of the information fields is keyed by:
 	trackTotalLengthSeconds : total length of track in fractional seconds
 	bitRate                 : average bits per second of file
 	fileSize                : file size, in bytes
-	filename                : filename with path
 
 =head1 CONSTRUCTORS
 
@@ -899,14 +937,18 @@ unchanged, and the function will return a non-zero value.
 
 L<http://flac.sourceforge.net/format.html>
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Erik Reckase, E<lt>cerebusjam at hotmail dot comE<gt>, with lots of help
 from Dan Sully, E<lt>daniel@cpan.orgE<gt>
 
+Dan Sully, E<lt>daniel@cpan.orgE<gt> for XS code.
+
 =head1 COPYRIGHT
 
-Copyright (c) 2003, Erik Reckase.
+Pure perl code Copyright (c) 2003-2004, Erik Reckase.
+
+XS code Copyright (c) 2004, Dan Sully.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.2 or,
