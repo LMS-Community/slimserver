@@ -22,6 +22,8 @@ use Ogg::Vorbis::Header::PurePerl;
 
 my %tagMapping = (
 	'TRACKNUMBER'	=> 'TRACKNUM',
+	'DISCNUMBER'    => 'DISC',
+	'URL'           => 'URLTAG',
 );
 
 # To turn perl's internal form into a utf-8 string.
