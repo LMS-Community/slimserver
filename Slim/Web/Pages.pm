@@ -1356,13 +1356,14 @@ sub search {
 
 		} else {
 
-			($start, $end) = alphaPageBar(
-				$results,
+			($start, $end) = pageBar(
+				$params->{'numresults'},
 				$params->{'path'},
+				0,
 				$otherparams,
 				\$params->{'start'},
+				\$params->{'searchlist_header'},
 				\$params->{'searchlist_pagebar'},
-				1,
 				$params->{'skinOverride'},
 				$params->{'itemsPerPage'},
 			);
@@ -1701,7 +1702,7 @@ sub browsedb {
 		$params->{'warn'} = 1;
 	}
 
-	if (Slim::Music::iTunes::useiTunesLibrary()) {
+	if (Slim::Utils::Prefs::get('itunes')) {
 		$params->{'itunes'} = 1;
 	}
 
