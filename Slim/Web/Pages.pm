@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.111 2004/12/17 20:33:05 dsully Exp $
+# $Id: Pages.pm,v 1.112 2004/12/20 19:48:24 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -60,7 +60,7 @@ sub home {
 	if (Slim::Utils::Prefs::get('lookForArtwork')) {
 		# Uncomment the next lines and comment the one following to enable
 		# the new web interface scheme using browsedb.
-#		addLinks("browse",{'BROWSE_BY_ARTWORK' => "browsedb.html?hierarchy=artwork,track&level=0"});
+	#	addLinks("browse",{'BROWSE_BY_ARTWORK' => "browsedb.html?hierarchy=artwork,track&level=0"});
 		addLinks("browse",{'BROWSE_BY_ARTWORK' => "browseid3.html?genre=*&artist=*&artwork=1"});
 	} else {
 		addLinks("browse",{'BROWSE_BY_ARTWORK' => undef});
@@ -82,7 +82,7 @@ sub home {
 	
 	
 	# fill out the client setup choices
-	foreach my $player (sort { $a->name() cmp $b->name() } Slim::Player::Client::clients()) {
+	for my $player (sort { $a->name() cmp $b->name() } Slim::Player::Client::clients()) {
 
 		# every player gets a page.
 		# next if (!$player->isPlayer());
@@ -275,7 +275,7 @@ sub browser {
 	my $lastpath;
 	my $aggregate = $playlist ? "__playlists" : "";
 
-	foreach my $c (splitdir($dir)) {
+	for my $c (splitdir($dir)) {
 
 		if ($c ne "" && $c ne "__playlists" && $c ne "__current.m3u") {
 
@@ -352,7 +352,7 @@ sub browser_addtolist_done {
 		$otherparams .= 'dir=' . Slim::Web::HTTP::escape($params->{'dir'}) . '&' if ($params->{'dir'});
 		$otherparams .= 'player=' . Slim::Web::HTTP::escape($current_player) . '&' if ($current_player);
 							
-		foreach my $item (@{$itemsref}) {
+		for my $item (@{$itemsref}) {
 			$::d_http && msg("browser_addtolist_done getting name for $item\n");
 			push @namearray, Slim::Music::Info::standardTitle(undef,$item) if $item;
 		}
@@ -409,7 +409,7 @@ sub browser_addtolist_done {
 			}
 		}
 		
-		foreach my $item (@{$itemsref}[$start..$end]) {
+		for my $item (@{$itemsref}[$start..$end]) {
 			
 			# make sure the players get some time...
 			::idleStreams();
@@ -776,7 +776,7 @@ sub _addPlayerList {
 
 		my %clientlist = ();
 
-		foreach my $eachclient (@players) {
+		for my $eachclient (@players) {
 
 			$clientlist{$eachclient->id()} =  $eachclient->name();
 
@@ -941,7 +941,7 @@ sub search {
 			
 			my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
 
-			foreach my $item (@searchresults[$start..$end]) {
+			for my $item (@searchresults[$start..$end]) {
 
 				my %list_form = %$params;
 
@@ -1007,7 +1007,7 @@ sub _searchArtistOrAlbum {
 		}
 
 		#
-		foreach my $item (@$searchresults[$start..$end]) {
+		for my $item (@$searchresults[$start..$end]) {
 
 			my %list_form = %$params;
 
@@ -1120,7 +1120,7 @@ sub _addSongInfo {
 
 			$downloadurl = '/music';
 
-			foreach my $item (splitdir($1)) {
+			for my $item (splitdir($1)) {
 				$downloadurl .= '/' . Slim::Web::HTTP::escape($item);
 			}
 
@@ -1500,25 +1500,37 @@ sub queryFields {
 sub browsedb {
 	my ($client, $params) = @_;
 
-	my $hierarchy   = $params->{'hierarchy'} || "genre";
-	my $level   = $params->{'level'} || 0;
-	my $player = $params->{'player'};
+	# XXX - why do we default to genre?
+	my $hierarchy = $params->{'hierarchy'} || "genre";
+	my $level     = $params->{'level'} || 0;
+	my $player    = $params->{'player'};
 
 	my @levels = split(",", $hierarchy);
+
 	my $maxLevel = scalar(@levels) - 1;
+
 	if ($level > $maxLevel)	{
 		$level = $maxLevel;
 	}
 
 	my $db = Slim::Music::Info::getCurrentDataStore();
+
 	my $itemnumber = 0;
 	my $lastAnchor = '';
 	my $descend;
+	my %names = ();
+	my @attrs = ();
+	my %findCriteria = ();	
 
-	my %names;
 	for my $field (@levels) {
-		my $info = $fieldInfo{$field} || $fieldInfo{default};
-		$names{$field} = &{$info->{idToName}}($db, $params->{$field});
+
+		# If we don't have this check, we'll create a massive query
+		# for each level in the hierarchy, even though it's not needed
+		next unless defined $params->{$field};
+
+		my $info = $fieldInfo{$field} || $fieldInfo{'default'};
+
+		$names{$field} = &{$info->{'idToName'}}($db, $params->{$field});
 	}
 
 	# warn the user if the scanning isn't complete.
@@ -1530,15 +1542,13 @@ sub browsedb {
 		$params->{'itunes'} = 1;
 	}
 
-	my $firstLevelInfo = $fieldInfo{$levels[0]} || $fieldInfo{default};
-	my $title = $firstLevelInfo->{title};
+	my $firstLevelInfo = $fieldInfo{$levels[0]} || $fieldInfo{'default'};
+	my $title = $firstLevelInfo->{'title'};
 
 	$params->{'browseby'} = $title;
 
-
-	my @attrs;
-	my %findCriteria=();	
 	for my $key (keys %fieldInfo) {
+
 		if (defined($params->{$key})) {
 			# Populate the find criteria with all query parameters in 
 			# the URL
@@ -1549,7 +1559,7 @@ sub browsedb {
 			# query constraints on a hierarchy using a field that isn't
 			# necessarily part of the hierarchy.
 			if (!grep {$_ eq $key} @levels) {
-				push @attrs, $key . '=' . URI::Escape::uri_escape($params->{$key});
+				push @attrs, $key . '=' . Slim::Web::HTTP::escape($params->{$key});
 			}
 		}
 	}
@@ -1558,48 +1568,57 @@ sub browsedb {
 		'player'       => $player,
 		'pwditem'      => string($title),
 		'skinOverride' => $params->{'skinOverride'},
-		'title'		   => $title,
-		'hierarchy'	   => $hierarchy,
-		'level'		   => '0',
+		'title'	       => $title,
+		'hierarchy'    => $hierarchy,
+		'level'	       => 0,
 		'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
 	);
+
 	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_pwdlist.html", \%list_form)};
 
 	for (my $i = 0; $i < $level ; $i++) {
+
 		my $attr = $levels[$i];
+
 		if ($params->{$attr}) {
-			push @attrs, $attr . '=' . URI::Escape::uri_escape($params->{$attr});
+
+			push @attrs, $attr . '=' . Slim::Web::HTTP::escape($params->{$attr});
+
 			my %list_form = (
-							 'player'       => $player,
-							 'pwditem'      => $names{$attr},
-							 'skinOverride' => $params->{'skinOverride'},
-							 'title'		   => $title,
-							 'hierarchy'	   => $hierarchy,
-							 'level'		   => $i+1,
-							 'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
-							 );
+				 'player'       => $player,
+				 'pwditem'      => $names{$attr},
+				 'skinOverride' => $params->{'skinOverride'},
+				 'title'	=> $title,
+				 'hierarchy'	=> $hierarchy,
+				 'level'	=> $i+1,
+				 'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
+			 );
 			
 			$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_pwdlist.html", \%list_form)};
 		}
 	}
 
 	my $otherparams = 
-		'player='		. Slim::Web::HTTP::escape($player || '') . 
-		'&hierarchy='	. $hierarchy .
-		'&level='		. $level;
+		'player='     . Slim::Web::HTTP::escape($player || '') . 
+		'&hierarchy=' . $hierarchy .
+		'&level='     . $level;
+
 	if (scalar(@attrs)) {
-		$otherparams .= '&'	. join("&", @attrs);
+		$otherparams .= '&' . join("&", @attrs);
 	}
+
 	$otherparams .= '&';
 
-	my $levelInfo = $fieldInfo{$levels[$level]} || $fieldInfo{default};
-	my $items = &{$levelInfo->{find}}($db, $levels[$level], \%findCriteria);
+	my $levelInfo = $fieldInfo{$levels[$level]} || $fieldInfo{'default'};
+	my $items     = &{$levelInfo->{'find'}}($db, $levels[$level], \%findCriteria);
 
 	if ($items && scalar(@$items)) {
+
 		my ($start, $end);
 
-		my $ignoreArticles = $levelInfo->{ignoreArticles};
-		my $alpha = $levelInfo->{alphaPageBar};
+		my $ignoreArticles = $levelInfo->{'ignoreArticles'};
+		my $alpha = $levelInfo->{'alphaPageBar'};
+
 		if (defined $params->{'nopagebar'}){
 
 			($start, $end) = Slim::Web::Pages::simpleheader(
@@ -1613,9 +1632,7 @@ sub browsedb {
 
 		} elsif ($alpha) {
 			
-			my $alphaitems;
-			my @names = map &{$levelInfo->{resultToName}}($_), @$items;
-			$alphaitems = \@names;
+			my $alphaitems = [ map &{$levelInfo->{'resultToName'}}($_), @$items ];
 
 			($start, $end) = Slim::Web::Pages::alphapagebar(
 				$alphaitems,
@@ -1627,7 +1644,9 @@ sub browsedb {
 				$params->{'skinOverride'},
 				$params->{'itemsPerPage'},
 			);
+
 		} else {
+
 			($start, $end) = pagebar(
 				scalar(@$items),
 				$params->{'path'},
@@ -1643,29 +1662,30 @@ sub browsedb {
 
 		$descend = ($level >= $maxLevel) ? undef: 'true';
 
-		if (scalar(@$items) > 1 && !$levelInfo->{suppressAll}) {
+		if (scalar(@$items) > 1 && !$levelInfo->{'suppressAll'}) {
+
 			if ($params->{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
 				# XXX include statistics
 			}
 
 			my $nextLevelInfo;
+
 			if ($descend) {
 				my $nextLevel = $levels[$level+1];
-				$nextLevelInfo = $fieldInfo{$nextLevel} || $fieldInfo{default};
-			}
-			else {
-				$nextLevelInfo = $fieldInfo{track};
+				$nextLevelInfo = $fieldInfo{$nextLevel} || $fieldInfo{'default'};
+			} else {
+				$nextLevelInfo = $fieldInfo{'track'};
 			}
 
 			if ($level == 0) {
 				$list_form{'hierarchy'}		= join(',', @levels[1..$#levels]);
-				$list_form{'level'}			= 0;
-			}
-			else {
+				$list_form{'level'}		= 0;
+			} else {
 				$list_form{'hierarchy'}		= $hierarchy;
 				$list_form{'level'}		= $descend ? $level+1 : $level;
 			}
-			$list_form{'text'} =  string($nextLevelInfo->{allTitle});
+
+			$list_form{'text'} =  string($nextLevelInfo->{'allTitle'});
 
 			$list_form{'descend'}      = 1;
 			$list_form{'player'}       = $player;
@@ -1678,26 +1698,28 @@ sub browsedb {
 			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
 		}
 
-		foreach my $item ( @{$items}[$start..$end] ) {
+		for my $item ( @{$items}[$start..$end] ) {
+
 			my %list_form = %$params;
 
-			my $itemid = &{$levelInfo->{resultToId}}($item);
-			my $itemname = &{$levelInfo->{resultToName}}($item);
-			my $attrName = $levelInfo->{nameTransform} || $levels[$level];
-			$list_form{'hierarchy'}		= $hierarchy;
-			$list_form{'level'}		= $level + 1;
-			$list_form{'attributes'}    = 
-				(scalar(@attrs) ? ('&' . join("&", @attrs)) : ''). '&' .
-				$attrName . '=' . URI::Escape::uri_escape($itemid);
-			$list_form{'text'}		= $itemname;
-			$list_form{'descend'}		= $descend;
-			$list_form{'player'}		= $player;
-			$list_form{'odd'}		= ($itemnumber + 1) % 2;
-			$list_form{$levels[$level]}	= $itemid;
-			$list_form{'skinOverride'}    = $params->{'skinOverride'};
-			$list_form{'itemnumber'} = $itemnumber;
+			my $itemid   = &{$levelInfo->{'resultToId'}}($item);
+			my $itemname = &{$levelInfo->{'resultToName'}}($item);
+			my $attrName = $levelInfo->{'nameTransform'} || $levels[$level];
 
-			&{$levelInfo->{listItem}}($db, \%list_form, $item, $itemname, $descend);
+			$list_form{'hierarchy'}	    = $hierarchy;
+			$list_form{'level'}	    = $level + 1;
+			$list_form{'attributes'}    = (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''). '&' .
+				$attrName . '=' . Slim::Web::HTTP::escape($itemid);
+
+			$list_form{'text'}	    = $itemname;
+			$list_form{'descend'}	    = $descend;
+			$list_form{'player'}	    = $player;
+			$list_form{'odd'}	    = ($itemnumber + 1) % 2;
+			$list_form{$levels[$level]} = $itemid;
+			$list_form{'skinOverride'}  = $params->{'skinOverride'};
+			$list_form{'itemnumber'}    = $itemnumber;
+
+			&{$levelInfo->{'listItem'}}($db, \%list_form, $item, $itemname, $descend);
 
 			my $anchor = Slim::Web::Pages::anchor(Slim::Utils::Text::getSortName($itemname), $ignoreArticles);
 
@@ -1707,10 +1729,10 @@ sub browsedb {
 			}
 
 			$itemnumber++;
+
 			if ($levels[$level] eq 'artwork') {
 				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_artwork.html", \%list_form)};
-			}
-			else {
+			} else {
 				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
 			}
 
@@ -1718,6 +1740,7 @@ sub browsedb {
 		}
 
 		if ($level == $maxLevel && $levels[$level] eq 'track') {
+
 			my ($body, $type, $mtime) =  Slim::Music::Info::coverArt($items->[$start]->url);
 
 			if (defined($body)) {
@@ -1731,8 +1754,6 @@ sub browsedb {
 	
 	return Slim::Web::HTTP::filltemplatefile("browseid3.html", $params);
 }
-
-
 
 sub browseid3 {
 	my ($client, $params) = @_;
@@ -1953,7 +1974,7 @@ sub browseid3 {
 				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
 			}
 			
-			foreach my $item ( @items[$start..$end] ) {
+			for my $item ( @items[$start..$end] ) {
 
 				my %list_form = %$params;
 
@@ -2049,7 +2070,7 @@ sub browseid3 {
 				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
 			}
 			
-			foreach my $item ( @items[$start..$end] ) {
+			for my $item ( @items[$start..$end] ) {
 
 				my %list_form = %$params;
 
@@ -2170,7 +2191,7 @@ sub browseid3 {
 				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
 			}
 
-			foreach my $item (@items[$start..$end]) {
+			for my $item (@items[$start..$end]) {
 
 				my %list_form = %$params;
 
@@ -2290,7 +2311,7 @@ sub browseid3 {
 				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseid3_list.html", \%list_form)};
 			}
 
-			foreach my $item ( @items[$start..$end] ) {
+			for my $item ( @items[$start..$end] ) {
 
 				my %list_form = %$params;
 
@@ -2372,7 +2393,7 @@ sub mood_wheel {
 	$params->{'pwd_list'} = &generate_pwd_list($genre, $artist, $album, $player);
 	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("mood_wheel_pwdlist.html", $params)};
 
-	foreach my $item (@items) {
+	for my $item (@items) {
 
 		my %list_form = %$params;
 
@@ -2441,7 +2462,7 @@ sub instant_mix {
 		return undef;
 	}
 
-	foreach my $item (@items) {
+	for my $item (@items) {
 
 		my %list_form = %$params;
 
@@ -2476,7 +2497,7 @@ sub searchStringSplit {
 
 	my @strings = ();
 
-	foreach my $ss (split(' ', $search)) {
+	for my $ss (split(' ', $search)) {
 		push @strings, "*" . $ss . "*";
 	}
 
@@ -2502,7 +2523,7 @@ sub options {
 
 	my $optionlist = '';
 
-	foreach my $curroption (sort { $option->{$a} cmp $option->{$b} } keys %{$option}) {
+	for my $curroption (sort { $option->{$a} cmp $option->{$b} } keys %{$option}) {
 
 		$optionlist .= ${Slim::Web::HTTP::filltemplatefile("select_option.html", {
 			'selected'     => ($curroption eq $selected),
