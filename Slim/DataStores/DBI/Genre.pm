@@ -9,7 +9,7 @@ use base 'Slim::DataStores::DBI::DataModel';
 	my $class = __PACKAGE__;
 
 	$class->table('genres');
-	$class->columns(Essential => qw/id name/);
+	$class->columns(Essential => qw/id name namesort/);
 	$class->columns(Stringify => qw/name/);
 }
 
