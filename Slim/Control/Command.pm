@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.41 2004/08/03 17:29:12 vidur Exp $
+# $Id: Command.pm,v 1.42 2004/08/05 17:42:31 dean Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -358,7 +358,7 @@ sub execute {
 					if ($p1 =~ /^(play|load|resume)$/) {
 						Slim::Player::Source::playmode($client, "stop");
 						Slim::Player::Playlist::clear($client);
-						$client->currentPlaylist($path);
+						$client->currentPlaylist(Slim::Utils::Misc::fixPath($path));
 						$client->currentPlaylistModified(0);
 					} else {
 						$client->currentPlaylistModified(1);

@@ -1,6 +1,6 @@
 package Plugins::Snow;
 
-# $Id: Snow.pm,v 1.11 2004/08/03 17:29:08 vidur Exp $
+# $Id: Snow.pm,v 1.12 2004/08/05 17:42:30 dean Exp $
 # by Phil Barrett, December 2003
 # screensaver conversion by Kevin Deane-Freeman Dec 2003
 
@@ -23,7 +23,7 @@ use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.11 $,10);
+$VERSION = substr(q$Revision: 1.12 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_SNOW');}
 
@@ -356,7 +356,7 @@ sub screensaverSnowlines {
 
 	if($style == 1 || $style == 2) {
 		# Now Playing
-		($line1, $line2) = $client->renderOverlay(&Slim::Buttons::Playlist::currentSongLines($client));
+		($line1, $line2) = $client->renderOverlay($client->currentSongLines());
 		$onlyInSpaces = ($style == 1);
 	} elsif($style == 3) {
 		# Date/Time
