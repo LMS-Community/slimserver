@@ -68,7 +68,7 @@ sub open {
 
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
 
-	my $timeout = Slim::Utils::Prefs::get('remotestreamtimeout');
+	my $timeout = $args->{'timeout'} || Slim::Utils::Prefs::get('remotestreamtimeout');
 	my $proxy   = Slim::Utils::Prefs::get('webproxy');
 
 	my $peeraddr = "$server:$port";
