@@ -850,7 +850,7 @@ sub get_mp3info {
 
 			last if ($tot - $i) < 4;
 
-			my $head = substr($byte, $i, 4);
+			my $head = substr($byte, $i, 4) || last;
 
 			next if (ord($head) != 0xff);
 
@@ -886,6 +886,11 @@ sub get_mp3info {
 sub _get_info {
 	my($h, $vbr) = @_;
 	my $i;
+
+	# No bitrate? Something's wrong.
+	unless ($h->{bitrate}) {
+		return {};
+	}
 
 	$i->{VERSION}	= $h->{IDR} == 2 ? 2 : $h->{IDR} == 3 ? 1 :
 				$h->{IDR} == 0 ? 2.5 : 0;
