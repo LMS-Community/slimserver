@@ -1,6 +1,6 @@
 package Slim::Hardware::IR;
 
-# $Id: IR.pm,v 1.23 2004/08/27 21:53:56 sadams Exp $
+# $Id: IR.pm,v 1.24 2004/10/07 21:37:10 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -515,10 +515,11 @@ sub executeButton {
 	my $button = shift;
 	my $time = shift;
 	my $mode = shift;
+	my $orFunction = shift; #allow function names as $button
 
 	my $irCode = lookupFunction($client, $button, $mode);
 	
-	if (!defined $irCode || $irCode eq '') {
+	if ($orFunction && (!defined $irCode || $irCode eq '')) {
 		$irCode = $button;
 	}
 	
@@ -566,7 +567,7 @@ sub processCode {
 		$client->easteregg('');
 		$client->doEasterEgg();
 	} else {
-		Slim::Control::Command::execute($client, ['button', $irCode, $irTime]);
+		Slim::Control::Command::execute($client, ['button', $irCode, $irTime, 0]);
 	}
 }
 
