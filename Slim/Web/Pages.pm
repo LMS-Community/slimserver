@@ -1259,7 +1259,15 @@ sub buildPlaylist {
 		$list_form{'item'}     = $track->id();
 		$list_form{'itemobj'}  = $track;
 
-		$list_form{'artists'}  = $listBuild->{'includeArtist'} ? $track->contributors() : undef;
+		if ($listBuild->{'includeArtist'}) {
+
+			if (Slim::Utils::Prefs::get('composerInArtists')) {
+				$list_form{'artists'} = $track->contributors();
+			} else {
+				$list_form{'artists'} = $track->artists();
+			}
+		}
+
 		$list_form{'album'}    = $listBuild->{'includeAlbum'}  ? $track->album() : undef;
 
 		$list_form{'start'}	   = $params->{'start'};

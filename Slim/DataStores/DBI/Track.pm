@@ -142,6 +142,14 @@ sub artistsort {
 	return ($self->contributorsOfType('artist'))[0]->namesort;
 }
 
+sub artists {
+	my $self = shift;
+
+	# Create an iterator for artists - as that's what contributors from
+	# has_many returns as well. So it can be used in the templates.
+	return Class::DBI::Iterator->new('Slim::DataStores::DBI::Contributor', [ $self->contributorsOfType('artist') ]);
+}
+
 sub composer {
 	my $self = shift;
 
