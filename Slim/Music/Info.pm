@@ -824,7 +824,19 @@ sub cachedPlaylist {
 	my $song = $currentDB->objectForUrl($url, 0) || return undef;
 
 	# We want any PlayListTracks this item may have
-	my @urls = map { $_->url } $song->tracks();
+	my @urls = ();
+
+	for my $track ($song->tracks()) {
+
+		if (defined $track && $track->can('url') {
+
+			push @urls, $track->url();
+
+		} else {
+
+			$::d_info && msg("Invalid track object for playlist $url !\n");
+		}
+	}
 
 	# Otherwise, we're actually a directory.
 	if (!scalar @urls) {
