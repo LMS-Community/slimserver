@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.15 2004/09/25 00:47:55 kdf Exp $
+# $Id: SqueezeboxG.pm,v 1.16 2004/11/04 18:12:18 dave Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -161,10 +161,10 @@ sub update {
 sub render {
 	my $client = shift;
 	my $lines = shift;
-	my $line1 = '';
-	my $line2 = '';
-	my $overlay1 = '';
-	my $overlay2 = '';
+	my $line1bits = '';
+	my $line2bits = '';
+	my $overlay1bits = '';
+	my $overlay2bits = '';
 	my $center1 = '';
 	my $center2 = '';
 	my $bits;
@@ -186,23 +186,44 @@ sub render {
 	# copy the first to the second.
 	if (!defined($fonts->[0]) && $parts->{line2} eq '') { $parts->{line2} = $parts->{line1}; };
 
-	$line1 = Slim::Display::Graphics::string($fonts->[0], $parts->{line1});
-	$line2 = Slim::Display::Graphics::string($fonts->[1], $parts->{line2});
+	# check and see if the line 1 bits have already been rendered and use those.
+	$line1bits = $parts->{line1bits};
+	if (!defined($line1bits)) {
+		$line1bits = Slim::Display::Graphics::string($fonts->[0], $parts->{line1});
+		$parts->{line1bits} = $line1bits;
+	}
+		
+	# check and see if the line 2 bits have already been rendered and use those.
+	$line2bits = $parts->{line2bits};
+	if (!defined($line2bits)) {
+		$line2bits = Slim::Display::Graphics::string($fonts->[1], $parts->{line2});
+		$parts->{line2bits} = $line2bits;
+	}
 
 	if (defined($parts->{offset2}) && $parts->{offset2} > 0) {
-		$line2 = substr($line2, $parts->{offset2});
+		$line2bits = substr($line2bits, $parts->{offset2});
 	}
 	
+	# get the first line overlay and use the rendered cached bits if possible
 	if (defined($parts->{overlay1})) {
-		$overlay1 = Slim::Display::Graphics::string($fonts->[0], "\x00" . $parts->{overlay1});
-		$line1 = substr($line1 . $blankscreen, 0, 560 - length($overlay1)) . $overlay1;
+		$overlay1bits = $parts->{overlay1bits};
+		if (!defined($overlay1bits)) {
+			$overlay1bits = Slim::Display::Graphics::string($fonts->[0], "\x00" . $parts->{overlay1});
+			$parts->{overlay1bits} = $overlay1bits;
+		}
+		$line1bits = substr($line1bits . $blankscreen, 0, 560 - length($overlay1bits)) . $overlay1bits;
 	} else {
-		$line1 |= $blankscreen;  # make sure we have bits to fill up the whole screen
+		$line1bits |= $blankscreen;  # make sure we have bits to fill up the whole screen
 	}
 	
+	# get the second line overlay and use the rendered cached bits if possible
 	if (defined($parts->{overlay2})) {
-		$overlay2 = Slim::Display::Graphics::string($fonts->[1], "\x00" . $parts->{overlay2});
-		$line2 = substr($line2 . $blankscreen, 0, 560 - length($overlay2)) . $overlay2;
+		$overlay2bits = $parts->{overlay2bits};
+		if (!defined($overlay2bits)) {
+			$overlay2bits = Slim::Display::Graphics::string($fonts->[1], "\x00" . $parts->{overlay2});
+			$parts->{overlay2bits} = $overlay2bits;
+		}
+		$line2bits = substr($line2bits . $blankscreen, 0, 560 - length($overlay2bits)) . $overlay2bits;
 	}
 	
 	if (defined($parts->{center1})) {
@@ -215,7 +236,7 @@ sub render {
 		$center2 = chr(0) x (int((560-length($center2))/4)*2) . $center2;
 	}
 	
-	$bits = substr($parts->{bits} | $line1 | $line2 | $center1 | $center2, 0, 560);
+	$bits = substr($parts->{bits} | $line1bits | $line2bits | $center1 | $center2, 0, 560);
 
 	return \$bits;
 }
@@ -540,8 +561,22 @@ sub scrollUpdate {
 	my $linefunc  = $client->lines();
 	my $parts1 = $client->parseLines(&$linefunc($client));
 	
-	$parts->{line1} = $parts1->{line1};
-	$parts->{overlay1} = $parts1->{overlay1};
+
+	my $oldline1 = $parts1->{line1};
+	my $newline1 = $parts->{line1};
+	
+	if (defined($oldline1) && defined($newline1) && $oldline1 ne $newline1) {
+		$parts->{line1} = $newline1;
+		$parts->{line1bits} = undef;
+	}
+	
+	my $newoverlay = $parts1->{overlay1};
+	my $oldoverlay = $parts->{overlay1};
+	
+	if (defined($oldoverlay) && defined($newoverlay) && $oldoverlay ne $newoverlay) {
+		$parts->{overlay1} = $newoverlay;
+		$parts->{overlay1bits} = undef;
+	}
 	
 	$client->drawFrameBuf($client->render($parts));
 	$parts->{offset2} += $parts->{scroll2};
