@@ -9,31 +9,21 @@ package Slim::Player::SoftSqueeze;
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
-use File::Spec::Functions qw(:ALL);
-use FindBin qw($Bin);
-use IO::Socket;
-use Slim::Player::Player;
-use Slim::Utils::Misc;
-use Slim::Utils::Strings qw (string);
-use MIME::Base64;
 
-@ISA = ("Slim::Player::Squeezebox");
+use strict;
+use Slim::Player::Squeezebox;
+use Slim::Utils::Prefs;
 
+use base qw(Slim::Player::Squeezebox);
 
 sub new {
-        my (
-                $class,
-                $id,
-                $paddr,                 # sockaddr_in
-                $revision,
-                $tcpsock,               # defined only for squeezebox
-        ) = @_;
+        my $class = shift;
 
-        my $client = Slim::Player::Squeezebox->new($id, $paddr, $revision, $tcpsock);
-	bless $client, $class;
+	my $client = $class->SUPER::new(@_);
 
+	# This should be a method on $client!
 	Slim::Utils::Prefs::clientSet($client, 'autobrightness', 0);
+
         return $client;
 }
 
@@ -53,5 +43,6 @@ sub needsUpgrade {
 	return 0;
 }
 
-
 1;
+
+__END__
