@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.18 2003/11/10 23:14:58 dean Exp $
+# $Id: Info.pm,v 1.19 2003/11/20 22:23:18 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1564,6 +1564,9 @@ sub readTags {
 			} elsif ($type eq "ogg") {
 				# get the Ogg comments
 				$tempCacheEntry = Slim::Formats::Ogg::get_oggtag($filepath);
+			} elsif ($type eq "flc") {
+				# get the FLAC comments
+				$tempCacheEntry = Slim::Formats::Flac::get_flactag($filepath);
 			} elsif ($type eq "wav") {
 				# get the Wav comments
 				$tempCacheEntry = Slim::Formats::Wav::get_wavtag($filepath);
@@ -2021,10 +2024,11 @@ sub isSong {
 	}
 	return ($type && (($type eq 'mp3') || 
 					  ($type eq 'mp2') || 
-					  ($type eq 'mov' && Slim::Utils::Prefs::get('transcode-mov')) || 
-					  ($type eq 'ogg' && Slim::Utils::Prefs::get('transcode-ogg')) || 
-					  ($type eq 'wav' && Slim::Utils::Prefs::get('transcode-wav')) || 
-					  ($type eq 'aif' && Slim::Utils::Prefs::get('transcode-wav'))));
+					  ($type eq 'mov') || 
+					  ($type eq 'flc') || 
+					  ($type eq 'ogg') || 
+					  ($type eq 'wav') || 
+					  ($type eq 'aif')));
 }
 
 sub isDir {
