@@ -1,21 +1,14 @@
-<!-- Page status.html -->
-<html>
-<head>
-<meta http-EQUIV="refresh" content="20; url=status.html?player=00%3a04%3a20%3a04%3a06%3a23&amp;start=&amp;refresh=1">
-
-<STYLE type="text/css">
-<!--
-A { text-decoration:none; }
--->
-</STYLE>
-</head>
-</html>
-
-
-[% title = '[% playermodel | string %' %]:[% "PLAYING" | string %]] [% pageicon = 'MUSIC' %] [% setup = '1' %] [% music = '0' %][% playlist = '0' %] [% status = '1' %]
-
-[% PROCESS pageheader.html %]
-[% PROCESS menu.html %]
+[%# Page status.html %]
+[% title = BLOCK %]
+[%- playermodel | string %] : [% "PLAYING" | string -%]
+[%- END -%]
+[%- pageicon = 'MUSIC'
+    setup    = '1'
+    music    = '0'
+    playlist = '0'
+    status   = '1' -%]
+[%- PROCESS pageheader.html -%]
+[%- PROCESS menu.html -%]
 
 <table width=100% bgcolor="#EEEEEE" border="0" cellspacing="0" cellpadding="0">
 <tr><td height="15" colspan="5"></td></tr>
@@ -380,4 +373,4 @@ if (document.all||document.getElementById)
 </font>
 
 [% PROCESS pagefooter.html %]
-<!-- /Page status.html -->
+[%# /Page status.html %]

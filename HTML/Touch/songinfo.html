@@ -1,8 +1,10 @@
-<!-- Page songinfo.html -->
-[% title = '[% playermodel | string %' %]:[% "SONG_INFO" | string %]] [% pageicon = 'MUSIC' %]
-
-[% PROCESS pageheader.html %]
-[% PROCESS menu.html %]
+[%# Page songinfo.html %]
+[% title = BLOCK %]
+[%- playermodel | string %] : [% "SONG_INFO" | string -%]
+[%- END -%]
+[%- pageicon = 'MUSIC' -%]
+[%- PROCESS pageheader.html -%]
+[%- PROCESS menu.html -%]
 
 <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#EEEEEE">
 <tr><td width="40" align="left"><img src="html/images/leftcorner.gif"></td>
@@ -39,18 +41,6 @@
 </tr>
 
 </table>
-
-
-
-
-
-
-
-
-
-
-
-
 
 <table width=100%>
 <font size="+1">
@@ -179,4 +169,4 @@
 
 </font>
 [% PROCESS pagefooter.html %]
-<!-- /Page songinfo.html -->
+[%# /Page songinfo.html %]

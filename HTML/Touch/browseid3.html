@@ -1,8 +1,13 @@
-<!-- Page browseid3.html -->
-[% title = '[% playermodel | string %' %]:[% browseby | string %]] [% browse = '0' %] [% playlist = '0' %] [% music = '1' %] [% pageicon = 'MUSIC' %]
-
-[% PROCESS pageheader.html %]
-[% PROCESS menu.html %]
+[%# Page browseid3.html %]
+[%- title = BLOCK %]
+[%- playermodel | string %] : [% browseby | string -%]
+[%- END -%]
+[%- browse   = '0'
+   playlist = '0'
+   music    = '1'
+   pageicon = 'MUSIC' -%]
+[%- PROCESS pageheader.html -%]
+[%- PROCESS menu.html -%]
 
 [% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF not itunes %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]"><font class="pagebartext">[% "HERE" | string %]</a>.[% END %]</p>[% END %]
 
@@ -39,4 +44,4 @@
 </font>
 
 [% PROCESS pagefooter.html %]
-<!-- /Page browseid3.html -->
+[%# /Page browseid3.html %]

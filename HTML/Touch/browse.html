@@ -1,8 +1,13 @@
-<!-- Page browse.html -->
-[% title = '[% playermodel | string %' %]:[% "BROWSEMUSIC" | string %]] [% pageicon = 'MUSIC' %] [% browse = '1' %] [% music = '1' %][% playlist = '0' %]
-
-[% PROCESS pageheader.html %]
-[% PROCESS menu.html %]
+[%# Page browse.html %]
+[%- title = BLOCK %]
+[%- playermodel | string %] : [% "BROWSE_MUSIC" | string -%]
+[%- END -%]
+[%- pageicon = 'MUSIC'
+    browse   = '1'
+    music    = '1'
+    playlist = '0' -%]
+[%- PROCESS pageheader.html -%]
+[%- PROCESS menu.html -%]
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
        <tr><td><a href="browse.html?dir=&player=[% player | uri %]"><font class="pagebartext">&nbsp;&nbsp;[% "MUSIC" | string %]</a>
@@ -69,4 +74,4 @@
 
 </font>
 [% PROCESS pagefooter.html %]
-<!-- /Page browse.html -->
+[%# /Page browse.html %]

@@ -1,8 +1,13 @@
-<!-- Page browse_playlist.html -->
-[% title = '[% playermodel | string %' %]:[% "SAVED_PLAYLISTS" | string %]] [% pageicon = 'MUSIC' %] [% browse = '0' %] [% playlist = '1' %] [% music = '1' %]
-
-[% PROCESS pageheader.html %]
-[% PROCESS menu.html %]
+[%# Page browse_playlist.html %]
+[%- title = BLOCK %]
+[%- playermodel | string %] : [% "SAVED_PLAYLISTS" | string -%]
+[%- END -%]
+[%- pageicon = 'MUSIC'
+    browse   = '0'
+    playlist = '1'
+    music    = '1' -%]
+[%- PROCESS pageheader.html -%]
+[%- PROCESS menu.html -%]
 
 [% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF not itunes %][% "SCAN_CLICK" | string %]<a href="browse.html?player=[% player | uri %]"><font class="pagebartext">[% "HERE" | string %]</a>.[% END %]</p>[% END %]
 [% IF RENAME_WARNING %]<p><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]</p>[% END %]
@@ -63,4 +68,4 @@
 
 </font>
 [% PROCESS pagefooter.html %]
-<!-- /Page browse_playlist.html -->
+[%# /Page browse_playlist.html %]

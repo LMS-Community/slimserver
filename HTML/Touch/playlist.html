@@ -1,8 +1,15 @@
-<!-- Page playlist.html -->
-[% title = '[% playermodel | string %' %]:[% "PLAYLIST" | string %]] [% pageicon = 'MUSIC' %] [% browse = '0' %] [% music = '0' %][% playlist = '1' %] [% status = '0' %][% setup = '1' %]
-
-[% PROCESS pageheader.html %]
-[% PROCESS menu.html %]
+[%# Page playlist.html %]
+[% title = BLOCK %]
+[%- playermodel | string %] : [% "PLAYLIST" | string -%]
+[%- END -%]
+[%- pageicon = 'MUSIC'
+    browse   = '0'
+    music    = '0'
+    playlist = '1'
+    status   = '0'
+    setup = '1' -%]
+[%- PROCESS pageheader.html -%]
+[%- PROCESS menu.html -%]
 
 <table bgcolor="#EEEEEE" width=100% border="0">
 <tr><td align="center"><font class="normaltext">[% "CURRENT_PLAYLIST" | string %][% IF playlistname %]<b>[% playlistname %]</b>[% END %] ([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])
@@ -58,4 +65,4 @@
 </font>
 
 [% PROCESS pagefooter.html %]
-<!-- /Page playlist.html -->
+[%# /Page playlist.html %]
