@@ -300,7 +300,7 @@ sub _returnPlayMode {
 
 # playmode - start playing, pause or stop
 sub playmode {
-	my ($client, $newmode) = @_;
+	my ($client, $newmode, $seekoffset) = @_;
 
 	assert($client);
 
@@ -315,7 +315,7 @@ sub playmode {
 	$::d_source && bt() && msg($client->id() . ": Switching to mode $newmode from $prevmode\n");
 
 	# don't switch modes if it's the same 
-	if ($newmode eq $prevmode) {
+	if ($newmode eq $prevmode && !$seekoffset) {
 
 		$::d_source && msg(" Already in playmode $newmode : ignoring mode change\n");
 
@@ -348,7 +348,7 @@ sub playmode {
 		}
 		
 		# if we couldn't open the song, then stop...
-		my $opened = openSong($master) || do {
+		my $opened = openSong($master, $seekoffset) || do {
 
 			$::d_source && msg("Couldn't open song.  Stopping.\n");
 
@@ -412,7 +412,7 @@ sub playmode {
 			# if this is a remote stream, then let's start after 5 seconds even if we haven't filled the buffer yet.
 			my $quickstart = Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::song($client, streamingSongIndex($client))) ? 5 : undef;
 			
-			$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat(), $quickstart);
+			$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat(), $quickstart, ($seekoffset > 0));
 
 		} elsif ($newmode eq "pause") {
 
@@ -989,7 +989,8 @@ sub errorDone {
 
 sub openSong {
 	my $client = shift;
-	
+	my $seekoffset = shift || 0;
+
 	resetSong($client);
 	
 	closeSong($client);
@@ -1140,7 +1141,7 @@ sub openSong {
 			# XXX - endian can be undef here - set to ''.
 			$size       = $track->audio_size();
 			$duration   = $track->durationSeconds();
-			$offset     = $track->audio_offset();
+			$offset     = $track->audio_offset() + $seekoffset;
 			$samplerate = $track->samplerate();
 			$blockalign = $track->block_alignment() || 1;
 			$endian     = $track->endian() || '';
@@ -1206,6 +1207,7 @@ sub openSong {
 					if (!defined(sysseek($client->audioFilehandle, $offset, 0))) {
 						msg("couldn't seek to $offset for $filepath");
 					};
+					$offset -= $seekoffset;
 				}
 
 				# pipe is a socket

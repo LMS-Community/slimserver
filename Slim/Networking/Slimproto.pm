@@ -254,16 +254,19 @@ sub process_slimproto_frame {
 	$::d_slimproto && msg("Got Slimproto frame, op $op, length $len, $s\n");
 
 	if ($op eq 'HELO') {
-		my ($deviceid, $revision, @mac, $bitmapped, $reconnect, $wlan_channellist);
+		my ($deviceid, $revision, @mac, $bitmapped, $reconnect, $wlan_channellist, $bytes_received_H, $bytes_received_L, $bytes_received);
 
 		(	$deviceid, $revision, 
 			$mac[0], $mac[1], $mac[2], $mac[3], $mac[4], $mac[5],
-			$wlan_channellist,
-		) = unpack("CCH2H2H2H2H2H2n2", $data);
+			$wlan_channellist, $bytes_received_H, $bytes_received_L
+		) = unpack("CCH2H2H2H2H2H2nNN", $data);
 
 		$bitmapped = $wlan_channellist & 0x8000;
 		$reconnect = $wlan_channellist & 0x4000;
 		$wlan_channellist = sprintf('%04x', $wlan_channellist & 0x3fff);
+		if (defined($bytes_received_H)) {
+			$bytes_received = $bytes_received_H * 2**32 + $bytes_received_L; 
+		}
 
 		my $mac = join(':', @mac);
 		$::d_slimproto && msg(	
@@ -275,6 +278,12 @@ sub process_slimproto_frame {
 			"\treconnect: $reconnect\n".
 			"\twlan_channellist: $wlan_channellist\n"
 			);
+		if (defined($bytes_received)) {
+			$::d_slimproto && msg(
+				"Squeezebox also says.\n".
+				"\tbytes_received: $bytes_received\n"
+			);
+		}
 
 		$::d_factorytest && msg("FACTORYTEST\tevent=helo\tmac=$mac\tdeviceid=$deviceid\trevision=$revision\twlan_channellist=$wlan_channellist\n");
 
@@ -328,7 +337,7 @@ sub process_slimproto_frame {
 			$client->init();
 		} else {
 			$::d_slimproto && msg("hello from existing client: $id on ipport: $ipport{$s}\n");
-			$client->reconnect($paddr, $revision, $s, $reconnect);
+			$client->reconnect($paddr, $revision, $s, $reconnect, $bytes_received);
 		}
 		
 		$sock2client{$s}=$client;

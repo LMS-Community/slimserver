@@ -40,6 +40,7 @@ sub reconnect {
 	my $revision = shift;
 	my $tcpsock = shift;
 	my $reconnect = shift;
+	my $bytes_received = shift;
 
 	$client->tcpsock($tcpsock);
 	$client->paddr($paddr);
@@ -49,18 +50,32 @@ sub reconnect {
 	if ($revision == 0 || $revision > 39) {
 		$client->sendFrame('vers', \$::VERSION);
 	}
-	
-	# if we're reconnecting (i.e. the player hasn't rebooted, just continue on)
-	# if the player's connecting the first time from boot, and were playing previously, start the track over.
-	# if we were paused, then stop.
+
+	# The reconnect bit for Squeezebox means that we're
+	# reconnecting after the control connection went down, but we
+	# didn't reboot.  For Squeezebox2, it means that we're
+	# reconnecting and there is an active data connection. In
+	# both cases, we do the same thing:
+	# If we were playing previously, either restart the track or
+	# resume streaming at the bytes_received point. If we were
+	# paused, then stop.
+
 	if (!$reconnect) {
-		if (Slim::Player::Source::playmode($client) eq 'play') {
-			Slim::Player::Source::playmode($client, "stop");
-			Slim::Player::Source::playmode($client, "play");
-		} elsif (Slim::Player::Source::playmode($client) eq 'pause') {
+		if ($client->playmode() eq 'play') {
+			# If bytes_received was sent and we're dealing 
+			# with a seekable source, just resume streaming
+			# else stop and restart.    
+			if (!$bytes_received ||
+			    $client->audioFilehandleIsSocket()) {
+				Slim::Player::Source::playmode($client, "stop");
+				$bytes_received = 0;
+			}
+			Slim::Player::Source::playmode($client, "play", $bytes_received);
+		} elsif ($client->playmode() eq 'pause') {
 			Slim::Player::Source::playmode($client, "stop");
 		}
 	}
+
 	$client->animating(0);
 
 	$client->brightness(Slim::Utils::Prefs::clientGet($client,$client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
@@ -94,8 +109,9 @@ sub play {
 	my $paused = shift;
 	my $format = shift;
 	my $quickstart = shift;
+	my $reconnect = shift;
 
-	$client->stream('s', $paused, $format);
+	$client->stream('s', $paused, $format, $reconnect);
 	# make sure volume is set, without changing temp setting
 	$client->volume($client->volume(),
 					defined($client->tempVolume()));
@@ -456,7 +472,8 @@ sub opened {
 #	u8_t spdif_enable;	// [1]  '0' = auto, '1' = on, '2' = off
 #	u8_t transition_period;	// [1]	seconds over which transition should happen
 #	u8_t transition_type;	// [1]	'0' = none, '1' = crossfade, '2' = fade in, '3' = fade out, '4' fade in & fade out
-#	u8_t loop_song;		// [1]	'0' = don't loop, '1' = loop infinitely
+#	u8_t flags;		// [1]	0x80 - loop infinitely, 0x40 - stream
+#                               //      without restarting decoder
 #	u16_t visualizer_port;	// [2]	visualizer's port - leave port 0 for no vis
 #	u32_t visualizer_ip;	// [4]	visualizer's ip - leave server 0 to use slim server's ip
 #	u16_t server_port;	// [2]	server's port
@@ -465,7 +482,7 @@ sub opened {
 #				// [24]
 #
 sub stream {
-	my ($client, $command, $paused, $format) = @_;
+	my ($client, $command, $paused, $format, $reconnect) = @_;
 
 	if ($client->opened()) {
 		$::d_slimproto && msg("*************stream called: $command\n");
@@ -535,7 +552,7 @@ sub stream {
 			0,		# s/pdif auto
 			Slim::Utils::Prefs::clientGet($client, 'transitionDuration') || 0,
 			Slim::Utils::Prefs::clientGet($client, 'transitionType') || 0,
-			0,		# loop song	     
+			$reconnect ? 0x40 : 0,		# flags	     
 			0,		# vis port - call IANA!!!  :)
 			0,		# use slim server's IP
 			Slim::Utils::Prefs::get('httpport'),		# port
