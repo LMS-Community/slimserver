@@ -54,6 +54,12 @@
 			setCookie("SlimServer-Browserpage",url + suffix);
 			parent.browser.location = url + suffix + '&player=[% player | uri %]';
 		}
+		
+		function changeAction()
+		{
+		document.header.action=document.header.search.options[document.header.search.selectedIndex].value;
+		alert(document.header.action);
+		}
 		-->
 		</script>
 	</head>
@@ -79,18 +85,26 @@
 		<div class="menu2" width="100%" [% IF setup || help %]style='position:absolute;top:-100;'[% END %]>
 			<table border="0" cellpadding="0" cellspacing="0" width="100%">
 				<td>
-				<FORM name="browse" method="Get" target="browser" action="[% webroot %]search.html"><td width="35%"><center><nobr>
-					<SELECT NAME="type" class="stdedit" onchange="chooseBrowser(selectedIndex,options[selectedIndex].label)"  width="65">
+				<FORM name="browser" method="Get" action="" target="browser"><td><center><nobr>
+					<SELECT NAME="browse" class="stdedit" onchange="chooseBrowser(selectedIndex,options[selectedIndex].label)">
 					[% IF additionalLinks.browse %]
 						[% FOREACH link = additionalLinks.browse %]
 						<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key %]">[% link.key | string %]</OPTION>
 						[% END %]
 					[% END %]
+					</SELECT><nobr></center></td></FORM>
+					<FORM name=searcher onSubmit="parent.browser.location=document.searcher.search.options[document.searcher.search.selectedIndex].value + '&query=' + document.searcher.query.value"><td><nobr>
+					<SELECT NAME="search" class="stdedit">
+					[% IF additionalLinks.search %]
+						[% FOREACH link = additionalLinks.search %]
+						<OPTION [% IF page == link.key %]selected[% END %] value="[% link.value %]" label="[% link.key %]">[% link.key | string %]</OPTION>
+						[% END %]
+					[% END %]
 					</SELECT> [% "FOR" | string %]
-					<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="20">
+					<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
 					<input type=hidden value="[% player %]" name="player">
 					[% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
-					[% IF noartwork %]<input type=hidden value="1" name="noartwork">[% END %]</p><nobr></center></td>
+					[% IF noartwork %]<input type=hidden value="1" name="noartwork">[% END %]</p><nobr></td>
 				</FORM></td>
 			</table>
 		</div>
