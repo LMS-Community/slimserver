@@ -1,6 +1,6 @@
 package Slim::Player::Protocols::MMS;
 		  
-# $Id: MMS.pm,v 1.3 2004/11/04 06:15:54 vidur Exp $
+# $Id: MMS.pm,v 1.4 2004/11/07 06:37:06 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -35,7 +35,7 @@ sub new {
 	}
 	Slim::Music::Info::setContentType($url, $format);
 
-	my $maxRate = Slim::Utils::Prefs::maxRate($client);
+	my $maxRate = defined($client) ? Slim::Utils::Prefs::maxRate($client) : 0;
 	$command = Slim::Player::Source::tokenizeConvertCommand($command,
 															$type, 
 															$url, $url,

@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.120 2004/10/21 01:17:40 vidur Exp $
+# $Id: Source.pm,v 1.121 2004/11/07 06:37:05 vidur Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1207,47 +1207,57 @@ sub getConvertCommand {
 	my $fullpath = shift;
 	
 	my $type     = Slim::Music::Info::contentType($fullpath);
-	my $player   = $client->model();
-	my $clientid = $client->id();	
+	my $player;
+	my $clientid;
 	my $command  = undef;
 	my $format   = undef;
 	my $lame = Slim::Utils::Misc::findbin('lame');
 
 	my @supportedformats = ();
-	my @playergroup      = ($client, Slim::Player::Sync::syncedWith($client));
 	my %formatcounter    = ();
 	my $audibleplayers   = 0;
 
-	my $undermax = underMax($client,$fullpath,$type);
-	$::d_source && msg("undermax = $undermax, type = $type, $player = $clientid, lame = $lame\n");
+	my $undermax;
+	if (defined($client)) {
+		$player   = $client->model();
+		$clientid = $client->id();	
+		my @playergroup      = ($client, Slim::Player::Sync::syncedWith($client));
+		$undermax = underMax($client,$fullpath,$type);
+		$::d_source && msg("undermax = $undermax, type = $type, $player = $clientid, lame = $lame\n");
 	
-	# make sure we only test formats that are supported.
-	foreach my $everyclient (@playergroup) {
-
-		next if Slim::Utils::Prefs::clientGet($everyclient,'silent');
-
-		$audibleplayers++;
-
-		foreach my $supported ($everyclient->formats()) {
-			$formatcounter{$supported}++;
+		# make sure we only test formats that are supported.
+		foreach my $everyclient (@playergroup) {
+			
+			next if Slim::Utils::Prefs::clientGet($everyclient,'silent');
+			
+			$audibleplayers++;
+			
+			foreach my $supported ($everyclient->formats()) {
+				$formatcounter{$supported}++;
+			}
+		}
+		
+		foreach my $testformat ($client->formats()) {
+			
+			if ($formatcounter{$testformat} == $audibleplayers) {
+				push @supportedformats, $testformat;
+			}
 		}
 	}
-	
-	foreach my $testformat ($client->formats()) {
-
-		if ($formatcounter{$testformat} == $audibleplayers) {
-			push @supportedformats, $testformat;
-		}
+	else {
+		$undermax = 1;
+		@supportedformats = ('aif','wav','mp3');
 	}
 
 	foreach my $checkformat (@supportedformats) {
 		
-		my @profiles = (
-			"$type-$checkformat-$player-$clientid",
-			"$type-$checkformat-*-$clientid",
-			"$type-$checkformat-$player-*",
-			"$type-$checkformat-*-*",
-		);
+		my @profiles;
+		if ($client) {
+			push @profiles, "$type-$checkformat-$player-$clientid",
+							 "$type-$checkformat-*-$clientid",
+							 "$type-$checkformat-$player-*";
+		}
+		push @profiles, "$type-$checkformat-*-*";
 		
 		foreach my $profile (@profiles) {
 			
@@ -1265,7 +1275,8 @@ sub getConvertCommand {
 		}
 
 		# only finish if the rate isn't over the limit
-		last if ($command && underMax($client,$fullpath,$format));
+		last if ($command && 
+				 (!defined($client) || underMax($client,$fullpath,$format)));
 	}
 
 	if (!defined $command) {

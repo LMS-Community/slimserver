@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.18 2004/11/03 22:58:35 vidur Exp $
+# $Id: Scan.pm,v 1.19 2004/11/07 06:37:06 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -267,17 +267,15 @@ sub addToList_run {
 	$item = $curdirState->contents($curdirState->index);
 	$curdirState->index($curdirState->index + 1);
 
+	# if $item is all spaces, that means we just get the path again
+	# so break this loop.
+	if ($item =~ /^\s+$/) {
+		return 1;
+	}
+
 	my $itempath = Slim::Utils::Misc::fixPath($item, $curdirState->path);
 	$::d_scan && msg("itempath: $item and " .  $curdirState->path . " made $itempath\n");
 
-	# XXX
-	# fixPath (really URI) strips trailing spaces from $item.
-	# if $item is all spaces, that means we just get the path again
-	# so break this loop.  This should be removed when fixPath
-	# gets fixed.
-	if ($curdirState->path eq $itempath) {
-		return 1;
-	}
 
 ######### If it's a directory or playlist and we're recursing, push it onto the stack, othwerwise add it to the list
 
@@ -367,6 +365,15 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			return 0;
 		}
 
+		# Check if it's still a playlist after we open the
+		# remote stream. We may have got a different content
+		# type while loading.
+		if (Slim::Music::Info::isSong($playlisturl)) {
+		    $::d_scan && msg("Scan::readList found that $playlisturl is a song\n");
+		    $numitems = (push @$listref, $playlisturl) - $startingsize;
+		    $playlist_filehandle->close if defined($playlist_filehandle);
+		    $playlist_filehandle = undef;
+		}
 	} else {
 
 		# it's pointing to a local file...
