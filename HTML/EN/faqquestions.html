@@ -824,12 +824,13 @@ What can I do to make the wireless connection more stable?</a>
 	<li><a href="#troubleshooting-logfile">Where does the system write it's logfile and how do I control this?</a>
 	<li><a href="#troubleshooting-anothercopy">On Windows XP, Slim Server hangs on startup, and sometimes the debug window says there is another copy running, how do I fix this?</a>
 	<li><a href="#troubleshooting-lowsamplerate">I have some audio files or radio stations that do not play when using the digital outputs on my Squeezebox, but do with the analog.  Why?</a>
+	<li><a href="#troubleshooting-permissions">On Linux/UNIX, my player flashes rapidly through song titles but does not play them.</a>
 </ul>
 <h4>Troubleshooting</h4>
 
 
 <div class="faq">
-<h5><a id="troubleshooting-sp2"></a>My Squeezebox seems to lose its wireless connection quite often.  
+<h5><a id="troubleshooting-wireless"></a>My Squeezebox seems to lose its wireless connection quite often.  
 What can I do to make the wireless connection more stable?</h5
 
 <p>
@@ -851,7 +852,7 @@ A: There are several things you can do.  Please note that if you are hearing aud
 
 <p>
 <ul>
-	<li>On Windows you can use a program called <a href="http://www.netstumbler.com">Netstumbler</a> to find out more about nearby networks.  On MacOS, you can use a program called <a href="http://www.macstumbler.com>MacStumbler</a>.  Both of these excellent tools will give you knowledge to do the following steps...
+	<li>On Windows you can use a program called <a href="http://www.netstumbler.com">Netstumbler</a> to find out more about nearby networks.  On MacOS, you can use a program called <a href="http://www.macstumbler.com">MacStumbler</a>.  Both of these excellent tools will give you knowledge to do the following steps...
 	
 	<li>Ensure that your access point does not overlap with any nearby stations on any channels.  For more information on channel overlap see this <a href="http://www.unixwiz.net/techtips/wireless-guide.html">informative guide</a>.
 	
@@ -1250,6 +1251,12 @@ But the short of it is that you need to run one command to reset the stack.  To 
 S/P-DIF, the signal sent over the optical and coaxial digital outputs, supports sampling rates of 44.1kHz and 48kHz.</p>
 <p>Some receivers may auto-sense whether a digital or analog signal is in use, as well.  If your receiver supports digital and analog connections for the input you are using, you may
 want to connect both.  That way, when an audio signal that is not compatible with S/P-DIF is sent to the Squeezebox is sent, your receiver may automatically switch to the analog input.</p>
+</div>
+
+<div class="faq">
+<h5><a id="troubleshooting-permissions"></a>On Linux/UNIX, my player flashes rapidly through song titles but does not play them.</h5>
+<p>Your file permissions may not be allowing SlimServer to read the audio files properly.  SlimServer runs under the user &quot;slimserver&quot; on Linux. Make sure that your music files have their permissions set so that the &quot;slimserver&quot; user can read the files in your music library.
+</p>
 </div>
 
 
