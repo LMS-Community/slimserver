@@ -139,6 +139,10 @@ sub bufferFullness {
 	return Slim::Networking::Stream::fullness($client);
 }
 
+sub buffersize {
+	return 131072;
+}
+
 sub formats {
 	return ('mp3');
 }

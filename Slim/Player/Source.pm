@@ -273,6 +273,8 @@ sub playmode {
 
 
 sub nextChunk {
+	use bytes;
+
 	my $client = shift;
 	my $maxChunkSize = shift;
 	my $chunkRef;
@@ -294,9 +296,9 @@ sub nextChunk {
 			}
 		}
 	}
+	
 	if (defined($chunkRef)) {
 		my $len = length($$chunkRef);
-		
 		if ($len > $maxChunkSize) {
 			push @{$client->chunks}, \substr($$chunkRef, $maxChunkSize - $len, $len - $maxChunkSize);
 			$chunkRef = \substr($$chunkRef, 0, $maxChunkSize);
@@ -318,11 +320,9 @@ sub gototime {
 	my($client, $newtime) = @_;
 	my $newoffset;
 	my $oldtime;
-
-	if (Slim::Player::Sync::isSynced($client)) {
-		$client = Slim::Player::Sync::master($client);
-	}
-
+	
+	$client = Slim::Player::Sync::masterOrSelf($client);
+	
 	return if (!Slim::Player::Playlist::song($client));
 	return if !defined($client->mp3filehandle);
 

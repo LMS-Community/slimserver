@@ -12,6 +12,7 @@ use strict;
 
 use Slim::Utils::Timers;
 use Slim::Utils::Misc;
+use Slim::Player::SLIMP3;
 
 ###
 ### lots o' knobs:
@@ -79,8 +80,7 @@ sub newStream {
 	if (!defined($seq{$client})) {
 		$seq{$client}=1;
 	}
-	
-	$client->usage(0);
+
 	$fullness{$client} = 0;
 	$packetInFlight{$client} = undef;
 	$lastAck{$client} = Time::HiRes::time();
@@ -310,8 +310,6 @@ sub gotAck {
 	
 	$fullness{$client} = $fullness;
 	
-	$client->usage( $fullness / $BUFFER_SIZE );
-	
 	$::d_stream_v && msg("bytesinflight:$bytesInFlight fullness:" . $fullness{$client} . "\n");
 	
 	if (!$packetInFlight{$client}) {
@@ -373,7 +371,7 @@ sub sendNextChunk {
 	
 	my $requestedChunkSize = Slim::Utils::Prefs::get('udpChunkSize');
 	
-	my $remainingSpace = $BUFFER_SIZE - ($curWptr * 2);
+	my $remainingSpace = $client->buffersize() - ($curWptr * 2);
 	
 	if ($remainingSpace && $requestedChunkSize > $remainingSpace) {
 		$requestedChunkSize = $remainingSpace;

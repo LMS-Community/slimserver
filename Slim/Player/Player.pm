@@ -39,6 +39,12 @@ sub init {
 	Slim::Buttons::ScreenSaver::screenSaver($client);
 }
 
+# usage							float		buffer fullness as a percentage
+sub usage {
+	my $client = shift;
+	return $client->bufferFullness() / $client->buffersize();
+}
+
 sub update {
 	my $client = shift;
 	Slim::Display::Animation::killAnimation($client);

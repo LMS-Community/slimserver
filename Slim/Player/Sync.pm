@@ -7,6 +7,8 @@ package Slim::Player::Sync;
 
 use strict;
 
+use Slim::Utils::Misc;
+
 #
 # playlist synchronization routines
 #
@@ -28,7 +30,7 @@ sub syncname {
 	}
 				
 	my @names = map {$_->name() || $_->id()} @newbuddies;
-	$::d_playlist && msg("syncname for " . $client->id() . " is " . (join ' & ',@names) . "\n");
+	$::d_sync && msg("syncname for " . $client->id() . " is " . (join ' & ',@names) . "\n");
 	my $last = pop @names;
 	if (scalar @names) {
 		return (join ', ', @names) . ' & ' . $last;
@@ -201,7 +203,7 @@ sub syncedWith {
 	# get our slaves
 	foreach $otherclient (@{$client->slaves()}) {
 		push @buddies, $otherclient;
-		$::d_sync && msg($client->id() . " : is synced with its slave " . $otherclient->id() . "\n");
+#		$::d_sync && msg($client->id() . " : is synced with its slave " . $otherclient->id() . "\n");
 	}
 	
 	return @buddies;
@@ -253,7 +255,7 @@ sub uniqueVirtualPlayers {
 sub checkSync {
 	my $client = shift;
 	
-	$::d_playlist_v && msg("checkSync: Player " . $client->id() . " has " . scalar(@{$client->chunks}) . " chunks, and " . $client->usage() . "% full buffer \n");
+#	$::d_sync && msg("checkSync: Player " . $client->id() . " has " . scalar(@{$client->chunks}) . " chunks, and " . $client->usage() . "% full buffer \n");
 
 	if (!isSynced($client)) {
 		return;
@@ -266,12 +268,12 @@ sub checkSync {
 	if ($client->readytosync == 0) {
 
 		my $usage = $client->usage();
-		$::d_playlist && msg("checking buffer usage: $usage on client $client\n");
+		$::d_sync && msg("checking buffer usage: $usage on client $client\n");
 
-		if 	($usage > 0.90) {
+		if 	(defined($usage) && $usage > 0.90) {
 			$client->readytosync(1);
 		
-			$::d_playlist && msg($client->id()." is ready to sync ".Time::HiRes::time()."\n");
+			$::d_sync && msg($client->id()." is ready to sync ".Time::HiRes::time()."\n");
 			my $allReady=1;
 			my $everyclient;
 			foreach $everyclient ($client, syncedWith($client)) {
@@ -281,7 +283,8 @@ sub checkSync {
 			}
 			
 			if ($allReady) {
-				$::d_playlist && msg("all clients ready to sync now. unpausing them.\n");
+				$::d_sync && msg("all clients ready to sync now. unpausing them.\n");
+
 				foreach $everyclient ($client, syncedWith($client)) {
 					$everyclient->resume();
 				}
@@ -300,7 +303,7 @@ sub checkSync {
 		my $readyToContinue = 0;
 		# we restart the song as soon as the first player has run out of chunks.
 		foreach $everyclient (@group) {
-			$::d_playlist && msg("Resync: Player " . $everyclient->id() . " has " . scalar(@{$everyclient->chunks}) . " chunks \n");
+			$::d_sync && msg("Resync: Player " . $everyclient->id() . " has " . scalar(@{$everyclient->chunks}) . " chunks \n");
 			if (scalar(@{$everyclient->chunks}) == 0) { 
 				$readyToContinue = 1; 
 				last; 
@@ -310,14 +313,14 @@ sub checkSync {
 		if ($readyToContinue) {
 			master($client)->resync(0);
 			Slim::Control::Command::execute($client, ["playlist", "jump", "+0"]);
-			$::d_playlist && msg("Resync restarting players on current song\n");
+			$::d_sync && msg("Resync restarting players on current song\n");
 		}
 	}
 	
 	# sanity check on queued chunks
 	foreach my $everyclient (@group) {
 		if (scalar(@{$everyclient->chunks}) > 200) { 
-			$::d_playlist && msg("Player " . $everyclient->id() . " isn't keeping up with the rest of the synced group.");
+			$::d_sync && msg("Player " . $everyclient->id() . " isn't keeping up with the rest of the synced group.");
 			@{$everyclient->chunks} = ();
 			last; 
 		}

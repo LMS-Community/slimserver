@@ -1,6 +1,6 @@
 package Slim::Hardware::VFD;
 
-# $Id: VFD.pm,v 1.6 2003/09/28 15:47:51 kdf Exp $
+# $Id: VFD.pm,v 1.7 2003/09/30 23:18:12 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -133,7 +133,7 @@ sub subString {
 # Adjust display brightness by delta (-3 to +3)
 #
 sub vfdBrightness {
-	my ($client,$delta) = @_;
+	my ($client,$delta, $noupdate) = @_;
 
 	if (defined($delta) ) {
 		if ($delta =~ /[\+\-]\d+/) {
@@ -145,10 +145,11 @@ sub vfdBrightness {
 		$client->vfdbrightness(0) if ($client->vfdbrightness() < 0);
 		$client->vfdbrightness(4) if ($client->vfdbrightness() > 4);
 	
-		my $temp1 = $client->prevline1();
-		my $temp2 = $client->prevline2();
-	
-		vfdUpdate($client, $temp1, $temp2, 1);
+		if (!$noupdate) {
+			my $temp1 = $client->prevline1();
+			my $temp2 = $client->prevline2();
+			vfdUpdate($client, $temp1, $temp2, 1);
+		}
 	}
 	
 	return $client->vfdbrightness();

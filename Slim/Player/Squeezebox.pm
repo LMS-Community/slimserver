@@ -70,9 +70,8 @@ sub play {
 	my $paused = shift;
 	my $pcm = shift;
 
- 	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
 	Slim::Hardware::Decoder::reset($client, $pcm);
-	$client->stream('s');
+	$client->stream('s', $paused);
 	return 1;
 }
 #
@@ -80,7 +79,6 @@ sub play {
 #
 sub resume {
 	my $client = shift;
-	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
 	$client->stream('u');
 	return 1;
 }
@@ -142,6 +140,7 @@ sub upgradeFirmware {
 	my $ip;
 	if (ref $client ) {
 		$ip = $client->ip;
+		Slim::Hardware::VFD::vfdBrightness($client, '+1', 1);
 	} else {
 		$ip = $client;
 	}
@@ -234,15 +233,22 @@ sub opened {
 #
 sub stream {
 
-	my ($client, $command) = @_;
+	my ($client, $command, $paused) = @_;
+	
 	if ($client->opened()) {
 		$::d_slimproto && msg("*************stream called: $command\n");
-	
+		my $autostart;
+		
+		 # autostart off when pausing or stopping, otherwise 75%
+		if ($paused || $command =~ /^[pq]$/) {
+			$autostart = 0;
+		} else {
+			$autostart = 3;
+		}
+		
 		my $frame = 's   '.pack 'aaaaaaaCCCnL', (
 			$command,	# command
-			($command =~ /^[pq]$/)
-				?'0'
-				:'3', # autostart off when pausing or stopping, otherwise 75%
+			$autostart,
 			'm',		# mpeg
 			'1',		# pcm 16-bit (pcm options are ignored for mpeg)
 			'3',		# pcm 44.1
@@ -257,7 +263,6 @@ sub stream {
 	
 		assert(length($frame) == 4+16);
 	
-	#	my $path='/music/AC-DC/Back%20In%20Black/07%20You%20Shook%20Me%20All%20Night%20Long.mp3';
 		my $path = '/stream.mp3?player='.$client->id;
 	
 		my $request_string = "GET $path HTTP/1.0\n\n";

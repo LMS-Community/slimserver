@@ -45,7 +45,6 @@ my %clientHash = ();
 	#											for him to start a new stream
 	# readytosync					bool		when starting a new synced stream, indicates whether this 
 	#											client is ready to be unpaused. 
-	# usage							float		buffer fullness as a percentage
 	# resync						bool		1 if we are in the process of resyncing clients
 
 # client variables for HTTP protocol clients
@@ -194,7 +193,7 @@ sub new {
 	$client->[12] = undef; # prevwptr
 	$client->[13] = undef; # waitforstart
 	$client->[14] = undef; # readytosync
-	$client->[15] = undef; # usage
+	$client->[15] = undef; # UNUSED
 	$client->[16] = undef; # resync
 	$client->[17] = undef; # streamingsocket
 	$client->[18] = undef; # mp3filehandle
@@ -495,10 +494,12 @@ sub readytosync {
 	my $r = shift;
 	@_ ? ($r->[14] = shift) : $r->[14];
 }
-sub usage {
-	my $r = shift;
-	@_ ? ($r->[15] = shift) : $r->[15];
-}
+
+#sub UNUSED {
+#	my $r = shift;
+#	@_ ? ($r->[15] = shift) : $r->[15];
+#}
+
 sub resync {
 	my $r = shift;
 	@_ ? ($r->[16] = shift) : $r->[16];

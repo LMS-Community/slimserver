@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.30 2003/09/30 18:08:47 dean Exp $
+# $Id: HTTP.pm,v 1.31 2003/09/30 23:18:13 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -569,8 +569,12 @@ sub addstreamingresponse {
 		
 	my $client = $peerclient{$httpclientsock};
 	$client->streamingsocket($httpclientsock);
-	$client->paddr(getpeername($httpclientsock));
+	my $newpeeraddr = getpeername($httpclientsock);
 
+	if ($newpeeraddr) {
+		$client->paddr($newpeeraddr)
+	}
+	
 	if (defined $paramref->{'p0'} && $paramref->{'p0'} eq 'playlist') {
 		Slim::Control::Command::execute($client, [$paramref->{'p0'},$paramref->{'p1'},$paramref->{'p2'}]);
 	}

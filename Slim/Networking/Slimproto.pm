@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.24 2003/09/30 18:08:46 dean Exp $
+# $Id: Slimproto.pm,v 1.25 2003/09/30 23:18:12 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -301,6 +301,8 @@ sub process_slimproto_frame {
 			Slim::Buttons::Block::block($client, string('PLAYER_NEEDS_UPGRADE_1'), string('PLAYER_NEEDS_UPGRADE_2'));
 		} else {
 			Slim::Buttons::Block::unblock($client);
+		 	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
+
 		}
 		return;
 	} 
@@ -342,14 +344,17 @@ sub process_slimproto_frame {
 		#define EVENT_ESTABLISH	'e'
 		#define EVENT_CONNECT	'c'
 
-		my %EVENT_CODES = ('t', 'TIMER',
+		my %EVENT_CODES = (
 				'a', 'AUTOSTART',
-				'f', 'CLOSE',
-				'e', 'ESTABLISH',
 				'c', 'CONNECT',
+				'e', 'ESTABLISH',
+				'f', 'CLOSE',
 				'h', 'ENDOFHEADERS',
+				'p', 'PAUSE',
+				'r', 'RESUME',
+				't', 'TIMER',
 				'u', 'UNDERRUN',
-				);
+			);
 
 		(	$status{$client}->{'event_code'},
 			$status{$client}->{'num_crlf'},
@@ -381,7 +386,6 @@ sub process_slimproto_frame {
 			$fullness = $client->buffersize() + $fullness;
 		};
 		$status{$client}->{'fullness'} = $fullness;
-		
 		$::d_slimproto && msg("Squeezebox stream status:\n".
 		"	event_code:      $status{$client}->{'event_code'}\n".
 		"	num_crlf:        $status{$client}->{'num_crlf'}\n".
@@ -395,6 +399,7 @@ sub process_slimproto_frame {
 		"	byteoffset:      $status{$client}->{'byteoffset'}\n".
 		"	bytes_received   $status{$client}->{'bytes_received'}\n".
 		"");
+		Slim::Player::Sync::checkSync($client);
 	} elsif ($op eq 'BYE!') {
 		$::d_slimproto && msg("Slimproto: Saying goodbye\n");
 		if ($data eq chr(1)) {
