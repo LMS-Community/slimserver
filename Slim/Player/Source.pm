@@ -249,6 +249,7 @@ sub playmode {
 
 				$everyclient->stop();
 				closeSong($everyclient);
+				resetSong($everyclient);
 			} elsif ($newmode eq "play") {
 				$everyclient->readytosync(0);
 				$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
@@ -473,9 +474,9 @@ sub openNext {
 		} else {
 			#stop at the end of the list
 			if (currentSongIndex($client) == (Slim::Player::Playlist::count($client) - 1)) {
-				playmode($client, $result ? 'playout-stop' : 'stop');
 				$nextsong = 0;
 				currentSongIndex($client, $nextsong);
+				playmode($client, $result ? 'playout-stop' : 'stop');
 				return 0;
 			} else {
 				$nextsong = nextsong($client);
@@ -575,7 +576,7 @@ sub closeSong {
 	}	
 }
 
-sub openSong {
+sub resetSong {
 	my $client = shift;
 
 	# at the end of a song, reset the song time
@@ -590,6 +591,14 @@ sub openSong {
 	$client->shoutMetaInterval(0);
 	$client->shoutMetaPointer(0);
 
+}
+
+
+sub openSong {
+	my $client = shift;
+	
+	resetSong($client);
+	
 	my $fullpath = '';
 
 	# We are starting a new song, lets kill any animation so we see the correct new song.

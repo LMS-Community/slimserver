@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.29 2003/12/03 21:40:43 dean Exp $
+# $Id: Info.pm,v 1.30 2003/12/04 04:50:21 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -56,7 +56,6 @@ my @infoCacheItems = (
 	'TAGSIZE', # tagsize
 	'DISC', # album number in a set 
 	'DISCC', # number of albums in a set
-	'TIMESTAMP', # last modified time stamp of the file
 	'MOODLOGIC_SONG_ID', # MoodLogic fields
 	'MOODLOGIC_ARTIST_ID', #
 	'MOODLOGIC_GENRE_ID', #
@@ -281,17 +280,7 @@ sub checkForChanges {
 
     if (defined($file) && (exists $infoCacheDB{$file})) {
 	
-	# FIXME Maybe we should check if the directory is out of date
-	#       for now we delete the cached entry!
-
-	if (-d $file) { 
-	    delete($infoCacheDB{$file});
-	    return 1; 
-	}
-	
-	# FIXME We need some way of telling if directory entries are out of date
-	#       for now we delete the cached entry!
-	# FIXME We don't delete deleted directory cache entries
+	# Check to see if the filename is URL encoded. If so, decode.
 	
 	if (isFileURL($file)) {
 	    $filepath = Slim::Utils::Misc::pathFromFileURL($file);
@@ -299,31 +288,47 @@ sub checkForChanges {
 	    $filepath = $file;
 	}
 	
-	# if it's not a directory, it must be a file...
-	# URL data (both http: and file:) is going to get dropped here.
+	# See if the file exists
+	
+	if ( -e $filepath) {
+	
 
-	if (! -e $filepath) {
-	    delete($infoCacheDB{$file});
-	    $::d_info && Slim::Utils::Misc::msg("deleting $file from cache as non-existant\n");		    
+    	    # Check FS and AGE (TIMESTAMP) to decide if we use the cached data.		
+
+	    my $cacheEntryArray = $infoCacheDB{$file};
+
+    	    my $index = $infoCacheItemsIndex{"FS"};
+	    my $fsdef=(defined $cacheEntryArray->[$index]);
+	    my $fscheck=0;
+	    if ($fsdef) { $fscheck= ( -s $filepath == $cacheEntryArray->[$index]); }
+	    
+	    $index = $infoCacheItemsIndex{"AGE"};
+	    my $agedef=(defined $cacheEntryArray->[$index]);
+	    my $agecheck=0;
+	    if ($agedef) { $agecheck=((stat($filepath))[9] == $cacheEntryArray->[$index]); }
+	    
+	    if ($fsdef && $fscheck && $agedef && $agecheck) { return 0; }
+	    if ($fsdef && $fscheck && !$agedef) { return 0; }
+	    if (!$fsdef && $agedef && $agecheck) { return 0; }
+	
+	    # File has changed so remove the cached information
+
+	    delete $infoCacheDB{$file};
+	    $::d_info && Slim::Utils::Misc::msg("deleting $file from cache as it has changed\n");		    
 	    return 1;
-	} 
+	}
 
-	# We should have file data on all files. Check FS and 
-    	# TIMESTAMP to decide if we use the cached data.		
+	# Have a default delete policy
 
-	my $cacheEntryArray = $infoCacheDB{$file};
-	my $index = $infoCacheItemsIndex{"FS"};
-	if ((defined $cacheEntryArray->[$index]) && ( -s $filepath == $cacheEntryArray->[$index])) { return 0 }		
-	$index = $infoCacheItemsIndex{"TIMESTAMP"};
-	if ((defined $cacheEntryArray->[$index]) && ( (stat($filepath))[9] == $cacheEntryArray->[$index])) { return 0 }		
+	# URL data (both http: and file:) is going to get dropped here.
+	# Directory data is also dropped as we can't tell if it's changed
 
-	# have a default delete policy
 
-	delete($infoCacheDB{$file});
-	$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as couldn't confirm validity\n");		    
+	delete $infoCacheDB{$file};
+	$::d_info && Slim::Utils::Misc::msg("deleting $file from cache as couldn't confirm it's validity\n");		    
 	return 1;
     }
-    $::d_info && Slim::Utils::Misc::msg("$file not in infoCacheDB! or undefined file...\n");		    
+    $::d_info && Slim::Utils::Misc::msg("$file not in infoCacheDB! or undefined file. This shouldn't happen!\n");		    
 }
 
 
@@ -940,7 +945,7 @@ sub info {
 			updateCoverArt($file,1);
 			$item = cacheItem($file, $tagname);
 		# load up item information if we've never seen it or we haven't loaded the tags
-		} elsif (!exists($infoCache{$file}) || !cacheItem($file, 'TAG')) {
+		} elsif (!isCached($file) || !cacheItem($file, 'TAG')) {
 			#$::d_info && Slim::Utils::Misc::bt();
 			$::d_info && Slim::Utils::Misc::msg("cache miss for $file\n");
 			$item = readTags($file)->{$tagname};
@@ -1736,9 +1741,8 @@ sub readTags {
 			}
 
 			# cache the file size & date
-			$tempCacheEntry->{'FS'} = -s $filepath;					
+	        	$tempCacheEntry->{'FS'} = -s $filepath;					
 			$tempCacheEntry->{'AGE'} = (stat($filepath))[9];
-			$tempCacheEntry->{'TIMESTAMP'} = (stat($filepath))[9];
 			
 			# rewrite the size, offset and duration if it's just a fragment
 			if ($anchor && $anchor =~ /([\d\.]+)-([\d\.]+)/ && $tempCacheEntry->{'SECS'}) {
