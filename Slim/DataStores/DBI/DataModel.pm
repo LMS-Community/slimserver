@@ -111,7 +111,12 @@ sub db_Main {
 		RootClass  => "DBIx::ContextualFetch"
 	});
 
-	$dbh || Slim::Utils::Misc::msg("Couldn't connect to info database\n");
+	# Not much we can do if there's no DB.
+	unless ($dbh) {
+		Slim::Utils::Misc::msg("Couldn't connect to info database! Error: [$!] Exiting!\n");
+		Slim::Utils::Misc::bt();
+		exit;
+	}
 
 	$::d_info && Slim::Utils::Misc::msg("Connected to database $source\n");
 
