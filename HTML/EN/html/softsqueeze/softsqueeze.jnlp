@@ -10,11 +10,11 @@
   codebase="http://[% host %]/html/softsqueeze/"
   href="softsqueeze.jnlp">
   <information>
-    <title>SoftSqueeze 1.5</title>
+    <title>SoftSqueeze 0.5.2</title>
     <vendor>Richard Titmuss, et.al.</vendor>
     <homepage href="http://softsqueeze.sourceforge.net"/>
-    <description>SoftSqueeze music player v1.5.1</description>
-    <description kind="short">SoftSqueezer music player v1.5</description>
+    <description>SoftSqueeze music player v0.5.2</description>
+    <description kind="short">SoftSqueezer music player v0.5.2</description>
     <icon kind="splash" href="icons/splash.gif" />
     <icon width="64" height="64" href="icons/icon64.gif" />
 <!--    <icon width="32" height="32" href="icons/icon32.gif" /> -->
