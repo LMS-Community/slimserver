@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.25 2003/12/01 23:02:46 dean Exp $
+# $Id: Info.pm,v 1.26 2003/12/02 06:14:54 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1554,27 +1554,14 @@ sub readTags {
 				$filepath = $file;
 			}
 
-			# we only know how to extract ID3 information from file paths and file URLs.
-			if ($type=~/^mp[23]$/) {
-				my $info;
-				# get the MP3 tag information
-				$tempCacheEntry = MP3::Info::get_mp3tag($filepath);
-				# get the MP3 info information
-				$info = MP3::Info::get_mp3info($filepath);
-				# put everything we've got into $tempCacheEntry
-				if ($info && $tempCacheEntry) {
-					%{$tempCacheEntry} = (%{$tempCacheEntry}, %{$info});
-				} elsif ($info && !$tempCacheEntry) {
-					$tempCacheEntry = $info;
-				}
+			# Extract tag and audio info per format
+			if ($type =~ /^mp[23]$/) {
+				$tempCacheEntry = Slim::Formats::MP3::get_mp3tag($filepath);
 			} elsif ($type eq "ogg") {
-				# get the Ogg comments
 				$tempCacheEntry = Slim::Formats::Ogg::get_oggtag($filepath);
 			} elsif ($type eq "flc") {
-				# get the FLAC comments
 				$tempCacheEntry = Slim::Formats::FLAC::get_flactag($filepath);
 			} elsif ($type eq "wav") {
-				# get the Wav comments
 				$tempCacheEntry = Slim::Formats::Wav::get_wavtag($filepath);
 			} elsif ($type eq "aif") {
 				$tempCacheEntry = Slim::Formats::AIFF::get_aifftag($filepath);		
@@ -1584,7 +1571,6 @@ sub readTags {
 
 			$::d_info && !defined($tempCacheEntry) && Slim::Utils::Misc::msg("Info: no tags found for $filepath\n");
 
-			
 			if ($tempCacheEntry->{'TRACKNUM'}) {
 				$tempCacheEntry->{'TRACKNUM'} = cleanTrackNumber($tempCacheEntry->{'TRACKNUM'});
 			}
