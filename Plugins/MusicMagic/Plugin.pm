@@ -25,7 +25,7 @@ our %artwork = ();
 
 our %mixMap  = (
 	'add.single' => 'play_1',
-	'add.hold' => 'play_1'
+	'add.hold' => 'play_2'
 );
 
 our %mixFunctions = ();
@@ -159,30 +159,31 @@ sub defaultMap {
 sub playMix {
 	my $client = shift;
 	my $button = shift;
-	my $append = shift;
+	my $append = shift || 0;
 
 	my $line1;
+	my $playAddInsert;
 	
-	if ($append) {
-		$line1 = $client->string('ADDING_TO_PLAYLIST')
+	if ($append == 1) {
+		$line1 = $client->string('ADDING_TO_PLAYLIST');
+		$playAddInsert = 'addtracks';
+	} elsif ($append == 2) {
+		$line1 = $client->string('INSERT_TO_PLAYLIST');
+		$playAddInsert = 'inserttracks';
 	} elsif (Slim::Player::Playlist::shuffle($client)) {
 		$line1 = $client->string('PLAYING_RANDOMLY_FROM');
+		$playAddInsert = 'playtracks';
 	} else {
-		$line1 = $client->string('NOW_PLAYING_FROM')
+		$line1 = $client->string('NOW_PLAYING_FROM');
+		$playAddInsert = 'playtracks';
 	}
 
-	my $line2 = $client->string('MUSICMAGIC_MIX');
+	my $line2 = $client->param('stringHeader') ? $client->string($client->param('header')) : $client->param('header');
 	
 	$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')));
-	
-	my $mixRef = $client->param('listRef');
 
-	Slim::Control::Command::execute($client, ["playlist", $append ? "append" : "play", $mixRef->[0]]);
+	Slim::Control::Command::execute($client, ["playlist", $playAddInsert, "listref", $client->param('listRef')]);
 	
-	for (my $i = 1; $i < scalar(@$mixRef); $i++) {
-
-		Slim::Control::Command::execute($client, ["playlist", "append", $mixRef->[$i]]);
-	}
 }
 
 sub addGroups {
@@ -927,6 +928,14 @@ sub musicmagic_mix {
 		return 1;
 	}
 
+	if (defined $mix && ref $mix eq "ARRAY") {
+		# We'll be using this to play the entire mix using 
+		# playlist (add|play|load|insert)tracks listref=musicmagic_mix
+		$client->param('musicmagic_mix',$mix);
+	} else {
+		$mix = [];
+	}
+
 	for my $item (@$mix) {
 
 		my %list_form = %$params;
@@ -949,12 +958,7 @@ sub musicmagic_mix {
 	}
 
 	if (defined $p0 && defined $client) {
-
-		Slim::Control::Command::execute($client, ["playlist", $p0 eq "append" ? "append" : "play", $mix->[0]]);
-		
-		for (my $i = 1; $i <= $#$mix; $i++) {
-			Slim::Control::Command::execute($client, ["playlist", "append", $mix->[$i]]);
-		}
+		Slim::Control::Command::execute($client, ["playlist", $p0 eq "append" ? "addtracks" : "playtracks", "listref=musicmagic_mix"]);
 	}
 
 	return Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_mix.html", $params);

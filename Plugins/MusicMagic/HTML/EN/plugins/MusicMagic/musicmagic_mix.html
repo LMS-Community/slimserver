@@ -9,7 +9,7 @@
 
     <h3>[% "MUSICMAGIC_MIX" | string %]</h3><p>
 
-    <a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a>
+    <a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a>
 	[% pwd_list %]
 
     <p><hr><p>
@@ -20,8 +20,8 @@
     </table>
    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
    <p><hr><p>
-   <p><a href="musicmagic_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&p0=play">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a>, 
-      <a href="musicmagic_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&p0=append">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a>
+   <p><a href="[% webroot %]status.html?player=[% player | uri %]&command=playlist&sub=playtracks&listref=musicmagic_mix" target="status">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a>, 
+      <a href="[% webroot %]status.html?player=[% player | uri %]&command=playlist&sub=addtracks&listref=musicmagic_mix"  target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a>
    </p>
 
   </body>

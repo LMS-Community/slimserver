@@ -899,8 +899,12 @@ sub execute {
 					
 				Slim::Player::Source::playmode($client, "stop");
 				Slim::Player::Playlist::clear($client);
-					
-				push(@{Slim::Player::Playlist::playList($client)}, parseSearchTerms($p2));
+				
+				unless ($p2 =~ /listref/) {	
+					push(@{Slim::Player::Playlist::playList($client)}, parseSearchTerms($p2));
+				} else {
+					push(@{Slim::Player::Playlist::playList($client)}, parseListRef($client,$p2,$p3));					
+				}
 					
 				Slim::Player::Playlist::reshuffle($client);
 				Slim::Player::Source::jumpto($client, 0);
@@ -909,14 +913,18 @@ sub execute {
 			
 			} elsif ($p1 eq "addtracks") {
 					
-				push(@{Slim::Player::Playlist::playList($client)}, parseSearchTerms($p2));
+				unless ($p2 =~ /listref/) {	
+					push(@{Slim::Player::Playlist::playList($client)}, parseSearchTerms($p2));
+				} else {
+					push(@{Slim::Player::Playlist::playList($client)}, parseListRef($client,$p2,$p3));					
+				}
 
 				Slim::Player::Playlist::reshuffle($client);
 				$client->currentPlaylistModified(1);
 			
 			} elsif ($p1 eq "inserttracks") {
 					
-				my @songs = parseSearchTerms($p2);
+				my @songs = $p2 =~ /listref/ ? parseListRef($client,$p2,$p3) : parseSearchTerms($p2);
 				my $size  = scalar(@songs);
 
 				my $playListSize = Slim::Player::Playlist::count($client);
@@ -929,7 +937,7 @@ sub execute {
 			
 			} elsif ($p1 eq "deletetracks") {
 
-				my @listToRemove = parseSearchTerms($p2);
+				my @listToRemove = $p2 =~ /listref/ ? parseListRef($client,$p2,$p3) : parseSearchTerms($p2);
  
 				Slim::Player::Playlist::removeMultipleTracks($client, \@listToRemove);
 				$client->currentPlaylistModified(1);
@@ -1651,6 +1659,19 @@ sub parseSearchTerms {
 	}
 
 	return @{ $ds->find('track', \%find, exists $find{'album'} ? 'tracknum' : 'title') };
+}
+
+sub parseListRef {
+	my $client  = shift;
+	my $term    = shift;
+	my $listRef = shift;
+
+	if ($term =~ /listref=(.+?)&/) {
+		$listRef = $client->param($1);
+	}
+	if (defined $listRef && ref $listRef eq "ARRAY") {
+		return @$listRef;
+	}
 }
 
 # Extended CLI API helper subs
