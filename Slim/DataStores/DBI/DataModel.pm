@@ -538,7 +538,14 @@ sub find {
 
 			} else {
 
-				$whereHash{$searchFieldMap{$key}} = $val;
+				if (ref $val && ref $val eq 'ARRAY' && scalar @$val > 0) {
+
+					$whereHash{$searchFieldMap{$key}} = $val;
+
+				} elsif (ref $val && ref $val eq 'HASH' && scalar keys %$val > 0) {
+
+					$whereHash{$searchFieldMap{$key}} = $val;
+				}
 			}
 
 			# if our $key is something like contributor.name -
