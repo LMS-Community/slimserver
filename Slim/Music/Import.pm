@@ -11,6 +11,7 @@ use Slim::Utils::Misc;
 
 # Total of how many file scanners are running
 my %importsRunning;
+my $scantime;
 
 # TODO make this into a hash of import functions.
 sub startScan {
@@ -19,7 +20,7 @@ sub startScan {
 	Slim::Music::Info::clearCache();
 	
 	$::d_info && msg("Starting background scanning.\n");
-	
+	$scantime = Time::HiRes::time();
 	if (Slim::Music::iTunes::useiTunesLibrary()) { 
 		Slim::Music::iTunes::startScan();
 	}
@@ -35,19 +36,21 @@ sub startScan {
 sub addImport {
 	my $import = shift;
 	$::d_info && msg("Adding $import Scan\n");
-	$importsRunning{$import} = 1;
+	$importsRunning{$import} = Time::HiRes::time();;
 }
 
 sub delImport {
 	my $import = shift;
 	if (exists $importsRunning{$import}) { 
+		$::d_info && msg("Completing $import Scan in ".(Time::HiRes::time() - $importsRunning{$import})." seconds\n");
 		delete $importsRunning{$import};
-		$::d_info && msg("Completing $import Scan\n");
 	}
 	if (scalar keys %importsRunning == 0) {
 		Slim::Music::Info::clearStaleCacheEntries();
 		Slim::Music::Info::reBuildCaches();
-		$::d_info && msg("Finished background scanning.\n");
+		my $now = Time::HiRes::time();
+		$scantime = $now - $scantime;
+		$::d_info && msg("Finished background scanning at ".$scantime." seconds.\n");
 		Slim::Music::Info::saveDBCache();
 	}
 }
