@@ -9,15 +9,14 @@ package Slim::Utils::Misc;
 
 use strict;
 use File::Spec::Functions qw(:ALL);
-use File::Which;
+use File::Which ();
 use FindBin qw($Bin);
 use Fcntl;
 use Slim::Music::Info;
 use Slim::Utils::OSDetect;
 use POSIX qw(strftime setlocale LC_TIME LC_CTYPE);
-use Net::hostent qw(gethost);
 use Sys::Hostname;
-use Socket;
+use Socket qw(inet_ntoa inet_aton);
 use Symbol qw(qualify_to_ref);
 use URI;
 use URI::file;
@@ -889,7 +888,6 @@ sub isAllowedHost {
 	return 0;
 }
 
-
 sub hostaddr {
 	my @hostaddr = ();
 
@@ -899,14 +897,35 @@ sub hostaddr {
 
 		next if !$hostname;
 
-		my $host = gethost($hostname) || next;
-
-		foreach my $addr ( @{$host->addr_list} ) {
-			push @hostaddr, inet_ntoa($addr) if $addr;
-		} 
+		if ($hostname =~ /^\d+(?:\.\d+(?:\.\d+(?:\.\d+)?)?)?$/) {
+			push @hostaddr, addrToHost($hostname);
+		} else {
+			push @hostaddr, hostToAddr($hostname);
+		}
 	}
 
 	return @hostaddr;
+}
+
+sub hostToAddr {
+	my $host  = shift;
+	my @addrs = (gethostbyname($host))[4];
+
+	my $addr  = defined $addrs[0] ? inet_ntoa($addrs[0]) : $host;
+
+	return $addr;
+}
+
+sub addrToHost {
+	my $addr = shift;
+	my $aton = inet_aton($addr);
+
+	return $addr unless defined $aton;
+
+	my $host = (gethostbyaddr($aton, Socket::AF_INET))[0];
+
+	return $host if defined $host;
+	return $addr;
 }
 
 sub stillScanning {

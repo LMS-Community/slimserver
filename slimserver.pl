@@ -924,7 +924,7 @@ sub checkDataSource {
 	# warn if there's no audiodir preference
 	# FIXME put the strings in strings.txt
 	if (!(defined Slim::Utils::Prefs::get("audiodir") && 
-		-d Slim::Utils::Prefs::get("audiodir")) && !$quiet && !Slim::Music::Import::countImporters) {
+		-d Slim::Utils::Prefs::get("audiodir")) && !$quiet && !Slim::Music::Import::countImporters()) {
 
 		msg("Your data source needs to be configured. Please open your web browser,\n");
 		msg("go to the following URL, and click on the \"Server Settings\" link.\n\n");

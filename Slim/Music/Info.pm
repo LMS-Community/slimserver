@@ -54,7 +54,7 @@ our $articles = undef;
 my %lastFile      = ();
 my %display_cache = ();
 
-my ($currentDB, $localDB);
+my ($currentDB, $localDB, $ncElemstring, $ncElems, $elemstring, $elems);
 
 # Save our stats.
 tie our %isFile, 'Tie::Cache::LRU', 16;
@@ -63,6 +63,21 @@ tie our %isFile, 'Tie::Cache::LRU', 16;
 tie our %urlToTypeCache, 'Tie::Cache::LRU', 16;
 
 sub init {
+
+	# non-cached elements
+	$ncElemstring = "VOLUME|PATH|FILE|EXT|DURATION|LONGDATE|SHORTDATE|CURRTIME|FROM|BY";
+	$ncElems = qr/$ncElemstring/;
+
+	$elemstring = (join '|', map { uc $_ } 
+		keys %{Slim::DataStores::DBI::Track->attributes()},
+		$ncElemstring,
+		"ARTIST|ALBUM|GENRE|ALBUMSORT|ARTISTSORT|DISC|DISCC"
+	);
+
+	#. "|VOLUME|PATH|FILE|EXT" #file data (not in infoCache)
+	#. "|DURATION" # SECS expressed as mm:ss (not in infoCache)
+	#. "|LONGDATE|SHORTDATE|CURRTIME" #current date/time (not in infoCache)
+	$elems = qr/$elemstring/;
 
 	loadTypesConfig();
 
@@ -324,20 +339,6 @@ sub setBitrate {
 		'readTags'   => 1,
 	});
 }
-
-my $ncElemstring = "VOLUME|PATH|FILE|EXT|DURATION|LONGDATE|SHORTDATE|CURRTIME|FROM|BY"; #non-cached elements
-my $ncElems = qr/$ncElemstring/;
-
-my $elemstring = (join '|', map { uc $_ } keys %{Slim::DataStores::DBI::Track->attributes()}, $ncElemstring, "ARTIST|ALBUM|GENRE|ALBUMSORT|ARTISTSORT|DISC|DISCC");
-#		. "|VOLUME|PATH|FILE|EXT" #file data (not in infoCache)
-#		. "|DURATION" # SECS expressed as mm:ss (not in infoCache)
-#		. "|LONGDATE|SHORTDATE|CURRTIME" #current date/time (not in infoCache)
-my $elems = qr/$elemstring/;
-
-
-#TODO Add elements for size dependent items (volume bar, progress bar)
-#my $sdElemstring = "VOLBAR|PROGBAR"; #size dependent elements (also not cached)
-#my $sdElems = qr/$sdElemstring/;
 
 sub elemLookup {
 	my $element     = shift;
