@@ -180,7 +180,7 @@ sub jump {
 	my $client = shift;
 	my $pos = shift;
 	
-	if (Slim::Buttons::Common::mode($client) eq 'playlist') {
+	if (Slim::Buttons::Common::mode($client) eq 'playlist' || showingNowPlaying($client)) {
 		if (!defined($pos)) { 
 			$pos = Slim::Player::Source::playingSongIndex($client);
 		}
