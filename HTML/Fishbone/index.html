@@ -35,14 +35,14 @@
 							end = document.cookie.length;
 						url = unescape(document.cookie.substring(offset, end));
 						if (url == 'undefined') [% IF not nofolder %]return "browse.html?"[% END %]
-												[% IF nofolder and noartwork %]return "browseid3.html?noartwork=1"[% END %]
-												[% IF nofolder and not noartwork %]return "browseid3.html?nofolder=1"[% END %]
+												[% IF nofolder and noartwork %]return "browsedb.html?noartwork=1"[% END %]
+												[% IF nofolder and not noartwork %]return "browsedb.html?nofolder=1"[% END %]
 						return url [% IF nosetup %]+"&nosetup=1"[% END %];
 					}
 				}
 				[% IF not nofolder %]return "browse.html?"[% END %]
 
-				[% IF nofolder %]return "browseid3.html?"[% END %]
+				[% IF nofolder %]return "browsedb.html?"[% END %]
 				
 			}
 			
