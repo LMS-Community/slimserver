@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.52 2004/03/16 01:45:28 kdf Exp $
+# $Id: Pages.pm,v 1.53 2004/03/17 04:18:20 kdf Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -999,7 +999,7 @@ sub _addSongInfo {
 
 		my $curdir = Slim::Utils::Prefs::get('audiodir');
 
-		if ($loc =~ /^\Q$curdir\E(.*)/) {
+		if ($loc =~ /^\Q$curdir\E(.*)/i) {
 
 			$url = '/music';
 
@@ -1011,7 +1011,7 @@ sub _addSongInfo {
 
 		} else {
 
-			$url = $loc;				
+			$url = $loc;
 		}
 	}
 
