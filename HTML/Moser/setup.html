@@ -13,6 +13,7 @@
     <div class="linktree"><ul><li><a href="home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a></li>[% IF linktree %][% linktree %][% END %]</ul></div>
     [% IF warning %]<div id="warning">[% warning %]</div>[% END %]
     [% IF siblings %]<div id="setuptabs"><ul>[% siblings %]</ul></div>[% END %]
+    [% IF children %]<div id="setuptabs"><ul>[% children %]</ul></div>[% END %]
 	<form method="get" action="setup.html">
 	<input type=hidden value="[% player %]" name="player">
 	<input type=hidden value="[% playerid %]" name="playerid">
@@ -25,7 +26,6 @@
 		<p><a href="[% webroot %]home.html?player=[% player | uri %]&forget=[% playerid | uri %]">[% "FORGET_PLAYER_LINK" | string %]</a></p>
    <hr>
 [% END %]
-    [% IF children %]<div class="hlist"><ul>[% children %]</ul></div><hr>[% END %]
     [% IF versionInfo %][% versionInfo %]<hr>[% END %]
   </body>
 </html>
