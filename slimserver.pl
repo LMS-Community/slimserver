@@ -91,6 +91,7 @@ use Slim::Control::Stdio;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 use Slim::Music::MoodLogic;
+use Slim::Networking::Slimproto;
 
 
 use vars qw($VERSION
@@ -257,8 +258,10 @@ sub start {
 		Slim::Control::Stdio::init(\*STDIN, \*STDOUT);
 	}
 
-	$::d_server && msg("Slim Server Protocol init...\n");
+	$::d_server && msg("Old SLIMP3 Protocol init...\n");
 	Slim::Networking::Protocol::init();
+	$::d_server && msg("Slimproto Init...\n");
+	Slim::Networking::Slimproto::init();
 	$::d_server && msg("Slim Server Info init...\n");
 	Slim::Music::Info::init();
 	$::d_server && msg("Slim Server HTTP init...\n");
@@ -338,6 +341,8 @@ sub idle {
 	# handle client protocol activity
 	Slim::Networking::Protocol::idle();
 	if ($::d_perf) { $to = watchDog($to, "Protocol::idle"); }
+
+	Slim::Networking::Slimproto::idle();
 	
 	# handle queued IR activity
 	Slim::Hardware::IR::idle();
@@ -380,6 +385,7 @@ sub idle {
 	#   reopening sockets if the port has changed, 
 	#   and handling HTTP traffic
 	Slim::Web::HTTP::idle();
+	
 	if ($::d_perf) { $to = watchDog($to, "http::idle"); }
 
 	Slim::Control::CLI::idle();

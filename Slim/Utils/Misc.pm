@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.3 2003/07/28 22:28:18 sadams Exp $
+# $Id: Misc.pm,v 1.4 2003/07/30 00:45:35 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -499,8 +499,11 @@ sub timeF {
 }
 
 sub assert {
-	my $client = shift;
-	!defined($client) && msg("Assertion failed: " && bt());
+	my $exp = shift;
+	defined($exp) && $exp && return;
+
+	msg("Assertion failed: " && bt());
+	exit();
 }
 
 sub bt {
