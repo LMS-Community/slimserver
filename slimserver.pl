@@ -57,6 +57,9 @@ sub Install {
 	}
 }
 
+sub Interactive {
+	main::main();	
+}
 
 sub Remove {
 	# add your additional remove messages or functions here
