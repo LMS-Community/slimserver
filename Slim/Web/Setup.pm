@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.103 2004/09/14 16:21:29 dean Exp $
+# $Id: Setup.pm,v 1.104 2004/09/14 16:54:59 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1339,8 +1339,6 @@ sub initSetupConfig {
 				my $i = 0;
 				my %formats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
 				my $formatslistref = Slim::Player::Source::Conversions();
-use Data::Dumper;
-print Dumper(\%formats, $formatslistref);
 
 				foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
 					next if $formats eq 'mp3-lame-*-*';
@@ -2250,9 +2248,7 @@ sub setup_HTTP {
 	processChanges($client,$changed,$paramref,\%pagesetup);
 
 	if (defined $pagesetup{'postChange'}) {
-		if ($client) {
 			&{$pagesetup{'postChange'}}($client,$paramref,\%pagesetup);
-		}
 	}
 
 	#fill the option lists
