@@ -32,7 +32,6 @@ sub startScan {
 
 	$::d_info && msg("Starting music folder scan\n");
 	Slim::Utils::Scan::addToList(\@dummylist, Slim::Utils::Prefs::get('audiodir'), 1, 0, \&doneScanning, 0);
-	Slim::Music::Import::startScan('folder');
 }
 
 sub doneScanning {
@@ -40,7 +39,7 @@ sub doneScanning {
 
 	$stillScanning = 0;
 	@dummylist = ();
-	Slim::Music::Import::endImporter('folder');
+	Slim::Music::Import::endImporter('FOLDER');
 }
 
 sub stillScanning {

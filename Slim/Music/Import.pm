@@ -33,7 +33,7 @@ sub startScan {
 		Slim::Music::Info::clearCache();
 
 		$::d_info && msg("Starting background scanning.\n");
-		$importsRunning{'folder'} = Time::HiRes::time();
+		$importsRunning{'FOLDER'} = Time::HiRes::time();
 
 		Slim::Music::MusicFolderScan::startScan();
 	}

@@ -67,10 +67,6 @@ sub init {
 	loadTypesConfig();
 
 	$currentDB = $localDB = Slim::DataStores::DBI::DBIStore->new();
-
-	if (!$::noScan && $currentDB->count('track') == 0) {
-		Slim::Music::Import::startScan();
-	}
 	
 	# use all the genres we know about...
 	MP3::Info::use_winamp_genres();
