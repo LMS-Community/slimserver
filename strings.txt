@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.83 2004/04/18 06:53:34 kdf Exp $
+# $Id: strings.txt,v 1.84 2004/04/18 18:13:42 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -842,7 +842,7 @@ SETUP_GROUP_TCP_PARAMS
 SETUP_GROUP_TCP_PARAMS_DESC
 	DE	Diese Einstellung passt die Parameter des TCP Netzwerks des Servers an.
 	DK	Disse indstillinger påvirker hvorledes serveren håndterer TCP over netværket.
-	EN	These settings adjust the parameters of the TCP networking in the server.
+	EN	These settings adjust the parameters of the TCP/IP networking in the server.
 	ES	Estos parametros cambiarán el comportamiento del TCP en el servidor.
 	FI	Seuraavat asetukset vaikuttavat palvelimen TCP/IP verkkotoimintaan.
 	FR	Ces réglages ajustent les paramètres du réseau TCP pour le serveur.
@@ -3034,13 +3034,13 @@ SETUP_UDPCHUNKSIZE
 	SE	Maximal storlek på UDP-data
 
 SETUP_UDPCHUNKSIZE_CHOOSE
-	DE	Maximale Anzahl Bytes an Audiodaten, die in UDP-Paketen zum Player geschickt werden
-	DK	Maksimum antal bytes audiodata der sendes til afspilleren i en UDP-pakke
-	EN	Maximum number of bytes of audio data to send to player in a UDP packet
-	FR	Nombre maximum d'octets de données audio à envoyer à la platine par paquet UDP :
-	NL	Maximaal aantal bytes audio data dat in een UDP packet naar de speler wordt gestuurd
-	PT	Máximo de bytes de dados áudio a enviar ao cliente por pacote UDP
-	SE	Maximalt antal bytes ljud-data att skicka till spelaren i ett UDP-paket
+	DE	Maximale Anzahl Bytes an Audiodaten, die in UDP-Paketen zum Player geschickt werden (SLIMP3): 
+	DK	Maksimum antal bytes audiodata der sendes til afspilleren i en UDP-pakke (SLIMP3): 
+	EN	Maximum number of bytes of audio data to send to player in a UDP packet (SLIMP3 only): 
+	FR	Nombre maximum d'octets de données audio à envoyer à la platine par paquet UDP : 
+	NL	Maximaal aantal bytes audio data dat in een UDP packet naar de speler wordt gestuurd (SLIMP3): 
+	PT	Máximo de bytes de dados áudio a enviar ao cliente por pacote UDP (SLIMP): 
+	SE	Maximalt antal bytes ljud-data att skicka till spelaren i ett UDP-paket (SLIMP3): 
 
 SETUP_SHOWBUFFERFULLNESS
 	DE	Puffer-Füllstatus anzeigen
