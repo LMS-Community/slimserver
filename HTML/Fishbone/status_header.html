@@ -11,10 +11,22 @@ function openRemote()
 &lbrc;
 	window.open('status_header.html?player={%player}&start={start}&refresh=1', 'access', 'width=500,height=240');
 &rbrc;
+
+function checkReload()
+&lbrc;
+   if (parent.playlist.location != 'playlist.html?player={%player}')
+	&lbrc;
+		parent.playlist.location = 'playlist.html?player={%player}';
+	&rbrc;
+	else 
+	&lbrc;
+	    parent.playlist.location.reload(true);
+	&rbrc;
+&rbrc;
 -->
 </script>
 </head>
-  <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:parent.playlist.location.reload(true);">
+  <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:checkReload();">
 	  <div class="masthead">
 	  <table border="0" cellpadding="2" cellspacing="0" width="100%"  bordercolor="#111111">
 	   <tr>
@@ -31,7 +43,7 @@ function openRemote()
 				<td><nobr><span class="songtitle">[IF player_name]{player_name}[/IF]</span></nobr></td>
 				<td valign="bottom" width="22%"><nobr><a href="setup.html?page=player&player={%player}&playerid={%player}" target="browser">[S PLAYER_SETTINGS]</a></nobr></td>
   	         <td valign="bottom" width="22%"><nobr><a href="javascript:openRemote()">Undock</a></nobr></td>
-  	         <td valign="bottom" width="22%"><nobr><a href="hitlist.html?player={%player}" target="statusframe">[S STATISTICS]</a></nobr></td>
+  	         <td valign="bottom" width="22%"><nobr><a href="hitlist.html?player={%player}" target="playlist">[S STATISTICS]</a></nobr></td>
   	      </table>
   	   </tr>
   	   </table></div>

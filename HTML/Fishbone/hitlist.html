@@ -3,14 +3,14 @@
     <title>[S STATISTICS]</title>
     <link rel="stylesheet" href="slimserver.css">
   </head>
-  <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onLoad="javascript:top.document.getElementById('player_frame').rows = '100%, 0%';">
+  <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onLoad="javascript:top.document.getElementById('player_frame').rows = '0%, 100%';parent.statusframe.location='about:blank';">
 	<div class="masthead">
 	   <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse" bordercolor="#111111">
 	   <tr>
 	      <td valign="bottom" width="33%">
 	         <img border="0" src="html/images/{playermodel}_logo.small.gif" width="98"><nobr><span class="songtitle">[S STATISTICS]</span></nobr>
   	      </td><td valign="bottom" width="40%">&nbsp;
-          </td><td valign="bottom"><a href="status_header.html?player={%player}" target='statusframe'>[S PLAYLIST]</a>
+          </td><td valign="bottom"><a href="javascript:parent.playlist.location='playlist.html?player={%player}';parent.statusframe.location='status_header.html?player={%player}'">[S PLAYLIST]</a>
   	      </td>
   	   </tr>
   	   </table>
