@@ -670,7 +670,7 @@ sub processURL {
 =cut
 
 sub generateHTTPResponse {
-	my ($client, $httpClient, $response, $params, $pCommands) = @_;
+	my ($client, $httpClient, $response, $params) = @_;
 
 	# this is a scalar ref because of the potential size of the body.
 	# not sure if it actually speeds things up considerably.
@@ -679,14 +679,6 @@ sub generateHTTPResponse {
 	# default to 200
 	$response->code(RC_OK);
 
-	# parse the param headers
-	if (ref($pCommands) && ref($pCommands) eq 'ARRAY') {
-
-		for (my $i = 0; $i <= scalar @{$pCommands}; $i++) {
-			$response->header("x-p$i" => $pCommands->[$i]);
-		}
-	}
-	
 	$params->{'player'} = '';
 
 	my $path = $params->{"path"};
@@ -759,10 +751,6 @@ sub generateHTTPResponse {
 	} elsif ($path =~ /^(?:stream\.mp3|stream)$/o) {
 
 		# short circuit here if it's a slim/squeezebox
-		buildStatusHeaders($client, $response);
-
-		$response->header("x-audiocast-name" => string('SLIMSERVER'));
-
 		if ($sendMetaData{$httpClient}) {
 			$response->header("icy-metaint" => METADATAINTERVAL);
 			$response->header("icy-name"    => string('WELCOME_TO_SLIMSERVER'));
@@ -791,7 +779,6 @@ sub generateHTTPResponse {
 		if (defined($imageData)) {
 
 			$body = \$imageData;
-			buildStatusHeaders($client, $response);
 
 		} else {
 
@@ -810,8 +797,6 @@ sub generateHTTPResponse {
 			my $songHandle =  FileHandle->new(Slim::Utils::Misc::pathFromFileURL($file));
 
 			if ($songHandle) {
-
-				buildStatusHeaders($client, $response);
 
 				$response->content_type(Slim::Music::Info::mimeType($file));
 				$response->content_length(Slim::Music::Info::fileLength($file));
@@ -837,8 +822,6 @@ sub generateHTTPResponse {
 	} elsif ($path =~ /status\.txt/ || $path =~ /log\.txt/) {
 
 		# if the HTTP client has asked for a text file, then always return the text on the display
-		buildStatusHeaders($client, $response);
-
 		$contentType = "text/plain";
 
 		$response->header("Refresh" => "30; url=$path");
@@ -859,8 +842,6 @@ sub generateHTTPResponse {
 	} elsif ($path =~ /status\.m3u/) {
 
 		# if the HTTP client has asked for a .m3u file, then always return the current playlist as an M3U
-		buildStatusHeaders($client, $response);
-
 		if (defined($client)) {
 
 			my $count = Slim::Player::Playlist::count($client) && do {
@@ -1610,60 +1591,6 @@ sub fixHttpPath {
 	} 
 
 	return undef;
-}
-
-sub buildStatusHeaders {
-	my $client   = shift || return;
-	my $response = shift;
-
-	# send headers
-	my %headers = ( 
-		"x-player"		=> $client->id(),
-		"x-playername"		=> $client->name(),
-		"x-playertracks" 	=> Slim::Player::Playlist::count($client),
-		"x-playershuffle" 	=> Slim::Player::Playlist::shuffle($client) ? "1" : "0",
-		"x-playerrepeat" 	=> Slim::Player::Playlist::repeat($client),
-
-		# unsupported yet
-	#	"x-playerbalance" => "0",
-	#	"x-playerbase" => "0",
-	#	"x-playertreble" => "0",
-	#	"x-playersleep" => "0",
-	);
-	
-	if ($client->isPlayer()) {
-
-		$headers{"x-playervolume"} = int($client->volume() + 0.5);
-		$headers{"x-playermode"}   = Slim::Buttons::Common::mode($client) eq "power" ? "off" : Slim::Player::Source::playmode($client);
-
-		my $sleep = $client->sleepTime() - Time::HiRes::time();
-
-		$headers{"x-playersleep"}  = $sleep < 0 ? 0 : int($sleep/60);
-	}	
-	
-	if (Slim::Player::Playlist::count($client)) { 
-
-		$headers{"x-playertrack"}    = Slim::Player::Playlist::song($client); 
-		$headers{"x-playerindex"}    = Slim::Player::Source::currentSongIndex($client) + 1;
-		$headers{"x-playertime"}     = Slim::Player::Source::songTime($client);
-		$headers{"x-playerduration"} = Slim::Music::Info::durationSeconds(Slim::Player::Playlist::song($client));
-
-		my $i = Slim::Music::Info::artist(Slim::Player::Playlist::song($client));
-		$headers{"x-playerartist"} = $i if $i;
-
-		$i = Slim::Music::Info::album(Slim::Player::Playlist::song($client));
-		$headers{"x-playeralbum"} = $i if $i;
-
-		$i = Slim::Music::Info::title(Slim::Player::Playlist::song($client));
-		$headers{"x-playertitle"} = $i if $i;
-
-		$i = Slim::Music::Info::genre(Slim::Player::Playlist::song($client));
-		$headers{"x-playergenre"} = $i if $i;
-	};
-
-	while (my ($key, $value) = each %headers) {
-		$response->header($key => $value);
-	}
 }
 
 sub forgetClient {
