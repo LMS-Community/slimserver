@@ -13,6 +13,16 @@ use FindBin qw($Bin);
 use IO::Socket qw(:DEFAULT :crlf);
 use Time::HiRes;
 
+BEGIN {
+	if ($^O =~ /Win32/) {
+		*EWOULDBLOCK = sub () { 10035 };
+		*EINPROGRESS = sub () { 10036 };
+	} else {
+		require Errno;
+		import Errno qw(EWOULDBLOCK EINPROGRESS);
+	}
+}
+
 use Slim::Control::Command;
 use Slim::Display::Display;
 use Slim::Utils::Misc;
@@ -611,7 +621,7 @@ sub openSong {
 				$client->mp3filehandleIsSocket(1);
 				$client->remoteStreamStartTime(time());
 
-#				defined(Slim::Utils::Misc::blocking($sock,0)) || die "Cannot set remote stream nonblocking";
+				defined(Slim::Utils::Misc::blocking($sock,0)) || die "Cannot set remote stream nonblocking";
 
 			# if it's one of our playlists, parse it...
 			} elsif (Slim::Music::Info::isList($fullpath)) {
@@ -894,8 +904,13 @@ sub readNextChunk {
 			my $readlen = $client->mp3filehandle()->read($chunk, $chunksize);
 			
 			if (!defined($readlen)) { 
-				$::d_source && msg("readlen undef $!\n"); 
-				$endofsong = 1; 
+				if ($! != EWOULDBLOCK) {
+					$::d_source && msg("readlen undef $!" . ($! + 0) . "\n"); 
+					$endofsong = 1; 
+				} else {
+					$::d_source && msg("would have blocked, will try again later\n");
+					return undef;	
+				}	
 			}
 			
 			if (!$client->mp3filehandleIsSocket && $readlen == 0) { 

@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.43 2003/11/10 23:15:03 dean Exp $
+# $Id: HTTP.pm,v 1.44 2003/11/14 21:07:40 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -31,19 +31,19 @@ use Slim::Web::Pages;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::EditPlaylist;
 
-BEGIN {
- 		if ($^O =~ /Win32/) {
- 			*EWOULDBLOCK = sub () { 10035 };
- 			*EINPROGRESS = sub () { 10036 };
- 		} else {
- 			require Errno;
- 			import Errno qw(EWOULDBLOCK EINPROGRESS);
- 		}
-}
-
 #
 #constants
 #
+BEGIN {
+	if ($^O =~ /Win32/) {
+		*EWOULDBLOCK = sub () { 10035 };
+		*EINPROGRESS = sub () { 10036 };
+	} else {
+		require Errno;
+		import Errno qw(EWOULDBLOCK EINPROGRESS);
+	}
+}
+
 my($EOL) = "\015\012";
 my($BLANK) = $EOL x 2;
 my($NEWLINE) = "\012";
