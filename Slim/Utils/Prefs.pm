@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.88 2004/09/23 21:36:26 dean Exp $
+# $Id: Prefs.pm,v 1.89 2004/10/13 19:29:12 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -230,11 +230,11 @@ my %prefChange = (
 		foreach my $client (Slim::Player::Client::clients()) {
 			Slim::Buttons::Home::updateMenu($client);
 		}
-		Slim::Music::Import::startScan();
+		Slim::Music::iTunes::startScan();
 	}
 	,'moodlogic' => sub {
 		my $newvalue = shift;
-		Slim::Music::Import::startScan();
+		Slim::Music::MoodLogic::startScan();
 	}
 	,'audiodir' => sub {
 		my $newvalue = shift;

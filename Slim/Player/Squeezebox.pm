@@ -100,16 +100,27 @@ sub play {
 	my $client = shift;
 	my $paused = shift;
 	my $format = shift;
+	my $quickstart = shift;
 
 	$client->stream('s', $paused, $format);
 	$client->volume($client->volume());
+
+	Slim::Utils::Timers::killTimers($client, \&quickstart);
+	if ($quickstart) {
+		Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $quickstart,\&quickstart);
+	}
+	
 	return 1;
 }
+
 #
 # tell the client to unpause the decoder
 #
 sub resume {
 	my $client = shift;
+
+	Slim::Utils::Timers::killTimers($client, \&quickstart);
+
 	$client->stream('u');
 	$client->SUPER::resume();
 	return 1;
@@ -120,6 +131,9 @@ sub resume {
 #
 sub pause {
 	my $client = shift;
+
+	Slim::Utils::Timers::killTimers($client, \&quickstart);
+
 	$client->stream('p');
 	$client->SUPER::pause();
 	return 1;
@@ -127,10 +141,25 @@ sub pause {
 
 sub stop {
 	my $client = shift;
+
+	Slim::Utils::Timers::killTimers($client, \&quickstart);
+
 	$client->stream('q');
 	Slim::Networking::Slimproto::stop($client);
 	# disassociate the streaming socket to the client from the client.  HTTP.pm will close the socket on the next select.
 	$client->streamingsocket(undef);
+}
+
+sub quickstart {
+	my $client = shift;
+	my $fullness = $client->bufferFullness() / $client->bufferSize();
+
+	# make sure we have at least 5% buffer fullness before starting with a quickstart.  If not, then check again in a second.
+	if ($fullness > 0.05) {
+		$client->resume();
+	} else {
+		Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&quickstart);
+	}
 }
 
 #

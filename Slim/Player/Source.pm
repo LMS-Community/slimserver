@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.117 2004/10/11 19:17:18 vidur Exp $
+# $Id: Source.pm,v 1.118 2004/10/13 19:29:12 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -395,7 +395,11 @@ sub playmode {
 			$everyclient->readytosync(0);
 			$everyclient->volume($client->volume(),1);
 			$everyclient->streamBytes(0);
-			$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat());
+			
+			# if this is a remote stream, then let's start after 5 seconds even if we haven't filled the buffer yet.
+			my $quickstart = Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::song($client)) ? 5 : undef;
+			
+			$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat(), $quickstart);
 
 		} elsif ($newmode eq "pause") {
 
