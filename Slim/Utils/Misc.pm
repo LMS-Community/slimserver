@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.9 2003/09/29 22:40:35 dean Exp $
+# $Id: Misc.pm,v 1.10 2003/10/03 21:42:04 grotus Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -25,7 +25,18 @@ require Exporter;
 @ISA = qw(Exporter);
 @EXPORT = qw(assert bt msg msgf watchDog);    # we export these so it's less typing to use them
 @EXPORT_OK = qw(assert bt msg msgf watchDog);    # we export these so it's less typing to use them
- 
+
+sub blocking {   
+	my $sock = shift;
+ 	return $sock->blocking(@_) unless $^O =~ /Win32/;
+	my $nonblocking = $_[0] ? "0" : "1";
+	my $retval = ioctl($sock, 0x8004667e, \$nonblocking);
+	if (!defined($retval) && $] >= 5.008) {
+		$retval = "0 but true";
+	}
+	return $retval;
+}
+
 sub findbin {
 	my $executable = shift;
 	
