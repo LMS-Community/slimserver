@@ -17,7 +17,7 @@
 #
 #------------------------------------------------------------------------
 #
-#   $Id: Config.pm,v 1.2 2004/05/30 16:26:14 dean Exp $
+#   $Id$
 #
 #========================================================================
  
@@ -57,6 +57,9 @@ $LATEX_PATH    = '';
 $PDFLATEX_PATH = '';
 $DVIPS_PATH    = '';
 
+# Keep a cache of our loaded modules - eval() is expensive.
+my %loaded = ();
+
 #========================================================================
 #                       --- CLASS METHODS ---
 #========================================================================
@@ -90,12 +93,20 @@ sub load {
     my ($class, $module) = @_;
     $module =~ s[::][/]g;
     $module .= '.pm';
-#    print STDERR "loading $module\n"
+
+    return 1 if $loaded{$module};
+
+#    print STDERR "loading $module\n";
 #	if $DEBUG;
     eval {
 	require $module;
     };
-    return $@ ? $class->error("failed to load $module: $@") : 1;
+
+    if ($@) {
+        return $class->error("failed to load $module: $@")
+    }
+
+    return $loaded{$module} = 1;
 }
 
 
