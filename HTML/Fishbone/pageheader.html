@@ -26,12 +26,10 @@
 					if (end == -1)
 						end = document.cookie.length;
 					url = unescape(document.cookie.substring(offset, end));
-					if (url == 'undefined') return "browse.html?"
-					return url [% IF nosetup %]+"&nosetup=1"[% END %];
+					if (url == 'undefined') return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
 				}
 			}
-			[% IF not nofolder %]return "browse.html?"[% END %]
-			[% IF nofolder %]return "browseid3.html?"[% END %]
+			return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
 		}
 		
 		

@@ -34,16 +34,11 @@
 						if (end == -1)
 							end = document.cookie.length;
 						url = unescape(document.cookie.substring(offset, end));
-						if (url == 'undefined') [% IF not nofolder %]return "browse.html?"[% END %]
-												[% IF nofolder and noartwork %]return "browsedb.html?noartwork=1"[% END %]
-												[% IF nofolder and not noartwork %]return "browsedb.html?nofolder=1"[% END %]
+						if (url == 'undefined') return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
 						return url [% IF nosetup %]+"&nosetup=1"[% END %];
 					}
 				}
-				[% IF not nofolder %]return "browse.html?"[% END %]
-
-				[% IF nofolder %]return "browsedb.html?"[% END %]
-				
+				return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
 			}
 			
 			function getArgs() {
@@ -70,7 +65,7 @@
 			
 			document.write('<frameset cols="50%,*" framespacing="2" border="2">' );
 			document.write('<frameset name="home" ID="home" border="0" frameborder="no" framespacing="0" rows="87,*">');
-			document.write('<frame name="header" ID="header" scrolling="no" src="home.html?player='+cPlayer+'&page='+getHomeCookie('SlimServer-Browserpage')+'&searchchoice='+getHomeCookie('SlimServer-search')+'">');
+			document.write('<frame name="header" ID="header" scrolling="no" src="home.html?player='+cPlayer+'">');
 			document.write('<frame name="browser" ID="browser" src="' + getHomeCookie('SlimServer-Browserpage') +'&player='+cPlayer + '">');
 			document.write('</frameset>');
 			document.write('<frameset name="player_frame" ID="player_frame" border="0" frameborder="no" framespacing="0" rows="250,*">');
