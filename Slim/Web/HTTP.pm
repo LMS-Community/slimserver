@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.105 2004/05/15 06:21:35 dean Exp $
+# $Id: HTTP.pm,v 1.106 2004/06/11 17:31:26 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -868,10 +868,19 @@ sub sendResponse {
 	my $sentbytes  = 0;
 
 	# abort early if we don't have anything.
-	unless ($segment && $httpClient->connected()) {
+	unless ($httpClient->connected()) {
 
 		$::d_http && msg("Got nothing for message to " . $peeraddr{$httpClient} . ", closing socket\n");
 		closeHTTPSocket($httpClient);
+		return;
+	}
+
+	unless ($segment) {
+		$::d_http && msg("No segment to send to " . $peeraddr{$httpClient} . ", waiting for next request..\n");
+		# Nothing to send, so we take the socket out of the write list.
+		# When we process the next request, it will get put back on.
+		Slim::Networking::Select::addWrite($httpClient, undef); 
+
 		return;
 	}
 
