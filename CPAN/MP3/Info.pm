@@ -23,8 +23,8 @@ use vars qw(
 	all	=> [@EXPORT, @EXPORT_OK]
 );
 
-# $Id: Info.pm,v 1.6 2004/01/05 04:45:55 dean Exp $
-($REVISION) = ' $Revision: 1.6 $ ' =~ /\$Revision:\s+([^\s]+)/;
+# $Id: Info.pm,v 1.7 2004/01/15 00:33:15 dean Exp $
+($REVISION) = ' $Revision: 1.7 $ ' =~ /\$Revision:\s+([^\s]+)/;
 $VERSION = '1.01';
 
 =pod
@@ -1147,6 +1147,7 @@ BEGIN {
 		'TRK' => 'TRACKNUM',
 		'TCO' => 'GENRE', # not clean mapping, but ...
 		'TPA' => 'SET',
+		'PIC' => 'PIC',
 		# v2.3 tags
 		'TIT2' => 'TITLE',
 		'TPE1' => 'ARTIST',
@@ -1155,7 +1156,8 @@ BEGIN {
 		'COMM' => 'COMMENT',
 		'TRCK' => 'TRACKNUM',
 		'TCON' => 'GENRE',
-		'TPOS' => 'SET'
+		'TPOS' => 'SET',
+		'APIC' => 'PIC',
 	);
 
 	%v2_tag_names = (

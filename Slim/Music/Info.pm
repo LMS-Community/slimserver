@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.52 2004/01/15 00:23:38 dean Exp $
+# $Id: Info.pm,v 1.53 2004/01/15 00:33:16 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1012,11 +1012,11 @@ sub guessTags {
 			}
 		}		
 		
-		!$::d_info && Slim::Utils::Misc::msg("Testing $file against format \"$pat\"...\n" );
+		$::d_info && Slim::Utils::Misc::msg("Testing $file against format \"$pat\"...\n" );
 
 		# Check if this format matches		
 		if( $file =~ $pat ) {
-			!$::d_info && Slim::Utils::Misc::msg("Format string $pat matched $file\n" );
+			$::d_info && Slim::Utils::Misc::msg("Format string $pat matched $file\n" );
 			
 			# Again, I'm too stupid... Collect all matches into an arr
 			# and the keys (original substring positions) of the tags
@@ -1025,7 +1025,10 @@ sub guessTags {
 			
 			# Apply the correct match to the function argument hash
 			foreach my $ix ( 0 .. scalar @k - 1 ) {
-				!$::d_info && Slim::Utils::Misc::msg( "$ixmap{ $k[ $ix ] } -> $matches[ $ix ]\n" );
+				$::d_info && Slim::Utils::Misc::msg( "$ixmap{ $k[ $ix ] } -> $matches[ $ix ]\n" );
+				
+				if ($ixmap{ $k[ $ix ] }  eq 'TRACKNUM') { $matches[ $ix ] = cleanTrackNumber($matches[ $ix ]); }
+				
 				$taghash->{ $ixmap{ $k[ $ix ] } } = $matches[ $ix ];
 			}
 			
