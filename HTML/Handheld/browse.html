@@ -1,0 +1,46 @@
+<!-- Page browse.html -->
+[SET title [S {playermodel}]:[S BROWSEMUSIC]] [SET pageicon MUSIC] [SET browse 1] [SET music 1][SET playlist 0]
+
+[INCLUDE pageheader.html]
+[INCLUDE menu.html]
+
+<font face="arial,helvetica">
+
+<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
+       <tr><td><a href="browse.html?dir=&player={%player}">[S MUSIC]</a>
+       {pwd_list}</td>
+       [IFN dir]<td width="11" align="center"><nobr><a href="status.html?p0=playlist&p1=load&p2=&player={%player}" ><img src="html/images/b_play.gif" heigth="13" width="13" border="0"></a></nobr></td>
+       <td width="3" align="center">&nbsp;</td>
+       <td width="11" align="center"><nobr><a href="status.html?p0=playlist&p1=add&p2=&player={%player}" ><img src="html/images/b_add.gif" height="13" width="13" border="0"></a></nobr></td>
+       <td width="3" align="center">&nbsp;</td><td width="14" align="center">&nbsp;</td>[/IFN]
+       </tr>
+</table>
+
+[IF browselist_pagebar]<p>[S PAGES]:{browselist_pagebar}[/IF][IF browselist_header]&nbsp;|&nbsp;{browselist_header}</p>[/IF]
+[EQ badpath 1]
+    [IF playlist][S NEED_PLAYLIST_PATH][/IF]
+    [IFN playlist][S NEED_PATH][/IFN]
+    <p><a href="setup.html?page=server&player={%player}">[S CLICK_HERE]</a> [S TO_GO_TO_SERVER_SETTINGS]</p>
+[/EQ]
+[IF coverart]
+    <p><center>
+    <img src="/music/{%coverartpath}/cover.jpg" border="0" width="150"></a>
+    </center></p>
+[/IF]
+<center>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+    {browse_list}
+</table>
+</center>
+
+[IF browselist_pagebar]<p>[S PAGES]:{browselist_pagebar}</p>[/IF]
+
+[IF song_count]
+    <table width="100%" bgcolor="#666666"><tr><td>
+    <font color="#ffffff" size="-2">[S LIBRARY_CONTAINS] <b>{song_count}</b> [S BY] <b>{artist_count}</b>
+    </td></tr></table>
+[/IF]
+
+</font>
+[INCLUDE pagefooter.html]
+<!-- /Page browse.html -->

@@ -1,0 +1,37 @@
+<!-- Page playlist.html -->
+[SET title [S {playermodel}]:[S PLAYLIST]] [SET pageicon MUSIC] [SET browse 0] [SET music 0][SET playlist 1] [SET status 0][SET setup 1]
+
+[INCLUDE pageheader.html]
+[INCLUDE menu.html]
+
+<font face="arial,helvetica">
+<table bgcolor="#c5c5c5" width=100%><tr><td align="center">
+       [S CURRENT_PLAYLIST] [IF playlistname]<b>{playlistname}</b>[/IF] ([EVAL]defined($client) ? Slim::Player::Playlist::count($client) : '';[/EVAL] [S SONGS])
+</td></tr></table>
+
+[IF playlist_pagebar]<font size="-1"><br>[S PAGES]:{playlist_pagebar}</font>[/IF]
+[IF playlist_header]<font size="-1">&nbsp;|&nbsp;{playlist_header}</font><br>[/IF]
+
+<table cellspacing="0" border="0" cellpadding="0" width="100%">
+       [IFN playlist_items][S EMPTY][/IFN]{playlist_items}
+</table>
+
+[IF playlist_pagebar][S PAGES]:{playlist_pagebar}[/IF]
+[IF playlist_header]&nbsp;|&nbsp;{playlist_header}<br>[/IF]
+
+<script language="JavaScript">
+        [EVAL]defined($client) ? Slim::Utils::Prefs::clientSet($client, "playlistItem",(Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Playlist::currentSongIndex($client)]) : '';[/EVAL]
+</script>
+</font>
+
+<table bgcolor="#dfdfdf" width=100%><tr><td align="center">
+       <font face="arial,helvetica"><small>[IF cansave]<a target="browser" href="browse.html?player={%player}&dir=__playlists%2f__current.m3u">[S SAVE]</a> | [/IF]
+       <a href="status.m3u?player={%player}" target="playlist">[S DOWNLOAD]</a> |
+       <a href="status.html?p0=playlist&p1=clear&player={%player}" target="statusframe">[S CLEAR]</a></small></font>
+</small>
+</center>
+
+</font>
+
+[INCLUDE pagefooter.html]
+<!-- /Page playlist.html -->

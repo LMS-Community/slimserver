@@ -1,0 +1,28 @@
+<!-- Element status_list.html -->
+<tr [IFN odd]bgcolor="#dfdfdf"[/IFN]>
+   <td ><a name={num}>
+      <a href="status.html?p0=playlist&p1=jump&p2={num}&player={%player}">&nbsp;[EVAL]$hashref->{'num'} +1[/EVAL].&nbsp;</a>
+      <a href="songinfo.html?songurl=[EVAL]Slim::Web::HTTP::escape(Slim::Player::Playlist::song($client, $hashref->{'num'}));[/EVAL]&player={%player}">{title}</a>
+   </td>
+   <td width="13" align="center">
+           <a href="status.html?p0=playlist&p1=jump&p2={num}&player={%player}">
+           <img src="html/images/b_play.gif" width="13" height="13" border="0" align="center" alt="Play">
+           </a></td>
+   <td width="3" align="center">&nbsp;</td>
+   <td width="13" align="center">
+           <a href="status.html?p0=playlist&p1=move&p2={num}&p3=%2D1&player={%player}&start={start}">
+           <img src="html/images/b_up.gif" border="0" width="13" height="13" align="center" alt="Move up">
+           </a></td>
+   <td width="3" align="center">&nbsp;</td>
+   <td width="13" align="center">
+           <a href="status.html?p0=playlist&p1=move&p2={num}&p3=%2B1&player={%player}&start={start}">
+           <img src="html/images/b_down.gif" border="0" width="13" height="13" align="center" alt="Move down">
+           </a></td>
+   <td width="3" align="center">&nbsp;</td>
+   <td width="13" align="center">
+           <a href="status.html?p0=playlist&p1=delete&p2={num}&player={%player}&start={start}">
+           <img src="html/images/b_delete.gif" border="0" width="13" height="13" align="center" alt="Remove">
+           </a></td>
+   <td width="3" align="center">&nbsp;</td>
+</tr>
+<!-- /Element status_list.html -->

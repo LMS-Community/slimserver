@@ -1,0 +1,38 @@
+<!-- Page hitlist.html -->
+[SET title [S MUSIC]] [SET pageicon MUSIC] [SET setup 1] [SET music 0][SET playlist 0] [SET status 1]
+
+[INCLUDE pageheader.html]
+[INCLUDE menu.html]
+
+<font face="arial,helvetica">
+
+<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[S STATISTICS]</h4></td></tr></table>
+
+<table cellspacing="0" border="0" cellpadding="4" width="100%">
+       <tr>
+          <td align="center">
+                {total_song_count} [S SONGS]
+          </td>
+          <td align="center">
+          {album_count} [S ALBUMS]
+          </td>
+       </tr>
+       <tr align="center">
+          <td>
+                {artist_count} [S ARTISTS]
+          </td>
+          <td align="center">
+                {genre_count} [S GENRES]
+          </td>
+       </tr>
+</table>
+
+<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[S MOSTPLAYED]</h4></td></tr></table>
+
+<table cellspacing="0" border="0" cellpadding="0" width="100%">
+      {browse_list}
+</table>
+
+</font>
+[INCLUDE pagefooter.html]
+<!-- /Page hitlist.html -->

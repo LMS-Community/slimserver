@@ -1,0 +1,26 @@
+<!-- Element searchinput.html -->
+<br>
+<br>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr>
+          <td>
+              <form name="browse" method="Get" action="{webroot}search.html">
+              <font face="arial,hlevetica">&nbsp;[S SEARCH]</font>
+              <select name="type" width="65">
+              <option [eq type song]selected[/eq] value="song">
+              [S SONGS]</option>
+              <option [eq type artist]selected[/eq] value="artist">
+              [S ARTISTS]</option>
+              <option [eq type album]selected[/eq] value="album">
+              [S ALBUMS]</option>
+              </select><font face="arial,hlevetica"> [S FOR]</font><br>
+              &nbsp;<input type=text name="query" value="{query}" size="20">
+              <input type=hidden value="{%player}" name="player">
+              [IF nofolder]<input type=hidden value="1" name="nofolder">[/IF]
+              </form>
+          </td>
+      </tr>
+</table>
+<br>
+<br>
+<!-- /Element searchinput.html -->

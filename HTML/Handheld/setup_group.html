@@ -1,0 +1,14 @@
+<!-- Element setup_group.html -->
+[IF GroupHead]
+<table bgcolor="#c5c5c5" width=100%><tr><td><h4>{GroupHead}</h4></td></tr></table>
+[/IF]
+    [IF GroupDesc]<p><small>{GroupDesc}</small></p>[/IF]
+    [IF PrefsInTable]<table border="0" cellspacing="0">[/IF]
+    {GroupPrefHead}
+    {PrefList}
+    {GroupPrefFoot}
+    [IF PrefsInTable]</table>[/IF]
+    [IF GroupSub]<input type=submit value={ChangeButton} class="stdclick">[/IF]
+[IF GroupHead][/IF]
+[IF GroupLine][/IF]
+<!-- /Element setup_group.html -->

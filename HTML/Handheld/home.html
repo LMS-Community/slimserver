@@ -1,0 +1,67 @@
+<!-- Page home.html -->
+[SET title [S {playermodel}_HOME]] [SET pageicon MUSIC] [SET browse 1] [SET music 1][SET playlist 0]
+
+[INCLUDE pageheader.html]
+[INCLUDE menu.html]
+
+
+<font face="arial,helvetica">
+<table bgcolor="#c5c5c5" width=100%><tr><td><h4>Quickstart</h4></td></tr></table>
+<ul>
+    <li>
+        <a href="status.html?p0=playlist&p1=load&p2=&player={%player}">[S PLAY] [S ALL_SONGS] ([S SHUFFLE])</a>
+    </li>
+    <li>
+        <a href="setup.html?player={%player}&rescan=rescan&page=server">[S SETUP_RESCAN]</a>
+    </li>
+</ul>
+
+<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[S BROWSE_MUSIC]</h4></td></tr></table>
+<ul>
+    <li>
+         <a href="browse.html?player={%player}&dir=__playlists">[S SAVED_PLAYLISTS]</a>
+    </li>
+    <li>
+        <a href="browseid3.html?player={%player}">[S BROWSE_BY_GENRE]</a>
+    </li>
+    <li>
+         <a href="browseid3.html?genre=*&player={%player}">[S BROWSE_BY_ARTIST]</a>
+    </li>
+    <li>
+         <a href="browseid3.html?genre=*&artist=*&player={%player}">[S BROWSE_BY_ALBUM]</a>
+    </li>
+    [IFN nofolder]
+    <li>
+         <a href="browse.html?player={%player}">[S BROWSE_MUSIC_FOLDER]</a>
+    </li>
+    [/IFN]
+</ul>
+
+<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[S SEARCH]</h4></td></tr></table>
+<ul>
+    <li>
+         <a href="search.html?type=artist&player={%player}">[S SEARCHFOR] [S ARTIST]</a>
+    </li>
+    <li>
+         <a href="search.html?type=album&player={%player}">[S SEARCHFOR] [S ALBUM]</a>
+    </li>
+    <li>
+         <a href="search.html?type=song&player={%player}">[S SEARCHFOR] [S SONGTITLE]</a>
+    </li>
+</ul>
+<br>
+<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[S HELP]</h4></td></tr></table>
+<ul>
+    <li>
+        <a href="html/help.html">[S HELP]</a>
+    </li>
+</ul>
+
+[IF song_count]
+    <table width="100%" bgcolor="#666666"><tr><td><small><font color="#ffffff">[S LIBRARY_CONTAINS] {album_count} [S WITH] {song_count} [S BY] {artist_count}.</font></small></td></tr></table>
+[/IF]
+
+</font>
+
+[INCLUDE pagefooter.html]
+<!-- /Page home.html -->

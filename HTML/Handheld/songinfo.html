@@ -1,0 +1,135 @@
+<!-- Page songinfo.html -->
+[SET title [S {playermodel}]:[S SONG_INFO]] [SET pageicon MUSIC]
+
+[INCLUDE pageheader.html]
+[INCLUDE menu.html]
+
+<font face="arial,helvetica">
+
+<table width="100%" bgcolor="#c5c5c5">
+    <tr><td align="center"><small><a href="status.html?p0=playlist&amp;p1=play&amp;p2={%itempath}&amp;player={%player}" >PLAY</a> &nbsp;&nbsp; <a href="status.html?p0=playlist&amp;p1=append&amp;p2={%itempath}&amp;player={%player}" >ADD</a></small> </td></tr>
+</table>
+
+<br>
+<p>[S SONG_INFO] [S FOR] <b>{title}</b></p>
+
+[IF coverart]
+    <center><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}"><img src="/music/{%itempath}/cover.jpg" border="0" width="200"></a></center>
+[/IF]
+
+<table width=100%>
+        <tr>
+                <td>
+                        <nobr>
+                                [S TITLE]:
+                        </nobr>
+                </td>
+                <td>
+                        {title}
+                </td>
+        </tr>
+        [IF artist]
+        <tr>
+                <td>
+                        [S ARTIST]:
+                </td>
+                <td>
+                        <a href="browseid3.html?genre=*&amp;artist={%artist}&amp;player={%player}">{artist}</a>
+                </td>
+        </tr>
+        [/IF] [IF composer]
+        <tr>
+                <td>
+                        [S COMPOSER]:
+                </td>
+                <td>
+                        <a href="browseid3.html?genre=*&amp;artist={%composer}&amp;player={%player}">{composer}</a>
+                </td>
+        </tr>
+        [/IF] [IF album]
+        <tr>
+                <td>
+                        [S ALBUM]:
+                </td>
+                <td>
+                        <a href="browseid3.html?genre=*&amp;artist=*&amp;album={%album}&amp;player={%player}">{album}</a>
+                </td>
+        </tr>
+        [/IF] [IF genre]
+        <tr>
+                <td>
+                        [S GENRE]:
+                </td>
+                <td>
+                        <a href="browseid3.html?genre={%genre}&amp;player={%player}" >{genre}
+                </td>
+        </tr>
+        [/IF] [IF track]
+        <tr>
+                <td>
+                        [S TRACK]:
+                </td>
+                <td>
+                        {track}
+                </td>
+        </tr>
+        [/IF] [IF duration]
+        <tr>
+                <td>
+                        [S LENGTH]:
+                </td>
+                <td>
+                        {duration}
+                </td>
+        </tr>
+        [/IF] [IF year]
+        <tr>
+                <td>
+                        [S YEAR]:
+                </td>
+                <td>
+                        {year}
+                </td>
+        </tr>
+        [/IF] [IF comment]
+        <tr>
+                <td>
+                        [S COMMENT]:
+                </td>
+                <td>
+                        {comment}
+                </td>
+        </tr>
+        [/IF] [IF filelength]
+        <tr>
+                <td>
+                        [S FILELENGTH]:
+                </td>
+                <td>
+                        {filelength} [S BYTES]
+                </td>
+        </tr>
+        [/IF] [IF bitrate]
+        <tr>
+                <td>
+                        [S BITRATE]:
+                </td>
+                <td>
+                        {bitrate}
+                </td>
+        </tr>
+        [/IF] [IF tagversion]
+        <tr>
+                <td>
+                        [S TAGVERSION]:
+                </td>
+                <td>
+                        {tagversion}
+                </td>
+        </tr>
+        [/IF]
+</table>
+
+</font>
+[INCLUDE pagefooter.html]
+<!-- /Page songinfo.html -->

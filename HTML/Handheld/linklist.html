@@ -1,0 +1,16 @@
+<!-- Element linklist.html -->
+[IF usePrefix]
+[EQ separator tree] / [/EQ]
+[EQ separator tab][/EQ]
+[EQ separator list][/EQ]
+[/IF]
+<small>
+[IFN currpage]<a href="{linkpage}{paramlist}{fragment}">{linktitle}</a>[/IFN]
+[IF currpage]<b>{linktitle}</b>[/IF]
+</small>
+[IF useSuffix]
+[EQ separator tree] [/EQ]
+[EQ separator tab] [/EQ]
+[EQ separator list] [/EQ]
+[/IF]
+<!-- /Element linklist.html -->

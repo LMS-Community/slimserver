@@ -1,0 +1,19 @@
+<!-- Element browseid3_list.html -->
+<tr [IFN odd]bgcolor="#dfdfdf"[/IFN]>
+  <td >
+      [IF anchor]<a name="{anchor}"></a>[/IF]
+      [IF  descend]<a href="browseid3.html?song={%song}&artist={%artist}&album={%album}&genre={%genre}&player={%player}">+ {title}</a>  [/IF]
+      [IFN descend]<a href="songinfo.html?songurl={%itempath}&player={%player}">{title}</a>[/IFN]
+  </td>
+  <td width="11" align="center"><font face="arial,helvetica">
+      [IF  descend]<nobr><a href="status.html?p0=playlist&p1=loadalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="statusframe"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13" ></a></nobr>[/IF]
+      [IFN descend]<nobr><a href="status.html?p0=playlist&p1=play&p2={%itempath}&player={%player}" target="statusframe"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13" ></a></nobr>[/IFN]
+  </td>
+  <td width="3" align="center">&nbsp;</td>
+  <td width="11" align="center"><font face="arial,helvetica">
+      [IF descend]<nobr><a href="status.html?p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="statusframe"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13" onMouseOver="self.status='Add This Item';return true"></a></nobr>[/IF]
+      [IFN descend]<nobr><a href="status.html?p0=playlist&p1=append&p2={%itempath}&player={%player}" target="statusframe"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13" ></a></nobr>[/IFN]
+  </td>
+  <td  class="listing" width="3" align="center">&nbsp;</td>
+</tr>
+<!-- /Element browseid3_list.html -->
