@@ -50,7 +50,7 @@ sub getTag {
 		return $tags;
 	}
 
-	if ($ogg->info('length') == 0) {
+	if (!$ogg->info('length')) {
 		$::d_formats && Slim::Utils::Misc::msg("Length for Ogg file: $file is 0 - skipping.\n");
 		return $tags;
 	}
