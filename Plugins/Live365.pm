@@ -377,7 +377,7 @@ sub findChannelStartingWith {
 sub getCurrentChannelURL {
 	my $self = shift;
 
-	my $url = $self->{Directory}->{LIVE365_STATION}->[$self->{stationPointer}]->{STATION_ADDRESS};
+	my $url = $self->{Stations}->[$self->{stationPointer}]->{STATION_ADDRESS};
 	$url =~ s/^http:/live365:/;
 	if( $self->{sessionid} ) {
 		$url .= '?sessionid=' . $self->{sessionid};
@@ -576,6 +576,7 @@ sub getPlaylist {
 	if ($newTitle) {
 		$::d_plugins && msg( "Live365 Now Playing: $newTitle\n" );
 		$::d_plugins && msg( "Live365 next update: $nextRefresh seconds\n" );
+		$client->killAnimation();
 		Slim::Music::Info::setTitle( $url, $newTitle );
 	}
 
