@@ -1,11 +1,12 @@
 package Audio::FLAC;
 
-# $Id: FLAC.pm,v 1.4 2004/01/12 23:34:41 daniel Exp $
+# $Id: FLAC.pm,v 1.5 2004/01/27 04:13:41 daniel Exp $
 
 use strict;
 use vars qw($VERSION);
+use File::Basename;
 
-$VERSION = '0.5';
+$VERSION = '0.6';
 
 # First four bytes of stream are always fLaC
 use constant FLACHEADERFLAG => 'fLaC';
@@ -76,7 +77,16 @@ sub new {
 	# Parse vorbis tags
 	$errflag = $self->_parseVorbisComments();
 	if ($errflag < 0) {
-		warn "Can't find vorbis comment metadata block!";
+		warn "Can't find/parse vorbis comment metadata block!";
+		close FILE;
+		undef $self->{'fileHandle'};
+		return $self;
+	};
+
+	# Parse cuesheet
+	$errflag = $self->_parseCueSheet();
+	if ($errflag < 0) {
+		warn "Problem parsing cuesheet metadata block!";
 		close FILE;
 		undef $self->{'fileHandle'};
 		return $self;
@@ -108,6 +118,16 @@ sub tags {
 
 	# otherwise, return the value for the given key
 	return $self->{'tags'}->{$key};
+}
+
+sub cuesheet {
+	my $self = shift;
+
+	# if the cuesheet block exists, return it as an arrayref
+	return $self->{'cuesheet'} if exists($self->{'cuesheet'});
+
+	# otherwise, return an empty arrayref
+	return [];
 }
 
 sub write {
@@ -381,9 +401,8 @@ sub _parseVorbisComments {
 	my $tags = {};
 	my $idx  = $self->_findMetadataIndex(BT_VORBIS_COMMENT);
 
-	if ($idx < 0) {
-		return -1;
-	}
+	# continue parsing, even if we can't find the comment.
+	return 0 if $idx < 0;
 
 	# Parse out the tags from the metadata block
 	my $tmpBlock         = $self->{'metadataBlocks'}[$idx]->{'contents'};
@@ -417,6 +436,232 @@ sub _parseVorbisComments {
 	$self->{'tags'} = $tags;
 
 	return 0;
+}
+
+sub _parseCueSheet {
+	my $self = shift;
+
+	my $idx  = $self->_findMetadataIndex(BT_CUESHEET);
+
+        # No cuesheet block found. 
+        # Not really an error, but no need to continue.
+	return 0 if $idx < 0;
+
+	my $cuesheet = [];
+
+	# Parse out the tags from the metadata block
+	my $tmpBlock  = $self->{'metadataBlocks'}[$idx]->{'contents'};
+
+	# First field in block is the Media Catalog Number
+	my $catalog   = substr($tmpBlock,0,128);
+	$catalog =~ s/\x00*$//; # trim nulls off of the end
+
+	push (@$cuesheet, "CATALOG $catalog\n") if length($catalog) > 0;
+	$tmpBlock     = substr($tmpBlock,128);
+
+	# metaflac uses "dummy.wav" but we're going to use the actual filename
+	# this will help external parsers that have to associate the resulting
+	# cuesheet with this flac file.
+	push (@$cuesheet, "FILE \"" . basename("$self->{'filename'}") ."\" FLAC\n");
+
+	# Next field is the number of lead-in samples for CD-DA
+	my $highbits  = unpack('N', substr($tmpBlock,0,4));
+	my $leadin    = $highbits * 2 ** 32 + unpack('N', (substr($tmpBlock,4,4)));
+	$tmpBlock     = substr($tmpBlock,8);
+
+	# Flag to determine if this represents a CD
+	my $bits      = unpack('B8', substr($tmpBlock, 0, 1));
+	my $isCD      = substr($bits, 0, 1);
+
+	# Some sanity checking related to the CD flag
+	if ($isCD && length($catalog) != 13 && length($catalog) != 0) {
+		warn "Invalid Catalog entry\n";
+		return -1;
+	}
+
+	if (!$isCD && $leadin > 0) {
+		warn "Lead-in detected for non-CD cue sheet.\n";
+		return -1;
+	}
+
+	# The next few bits should be zero.
+	my $reserved  = _bin2dec(substr($bits, 1, 7));
+	$reserved     += unpack('B*', substr($tmpBlock, 1, 258));
+
+	if ($reserved != 0) {
+		warn "Either the cue sheet is corrupt, or it's a newer revision than I can parse\n";
+		#return -1; # ?? may be harmless to continue ...
+	}
+
+	$tmpBlock     = substr($tmpBlock,259);
+
+	# Number of tracks
+	my $numTracks = _bin2dec(unpack('B8',substr($tmpBlock,0,1)));
+	$tmpBlock     = substr($tmpBlock,1);
+
+	if ($numTracks < 1 || ($isCD && $numTracks > 100)) {
+		warn "Invalid number of tracks $numTracks\n";
+		return -1;
+	}
+
+	# Parse individual tracks now
+	my %seenTracknumber = {};
+	my $leadout = 0;
+	my $leadouttracknum = 0;
+
+	for (my $i = 1; $i <= $numTracks; $i++) {
+
+		$highbits    = unpack('N', substr($tmpBlock,0,4));
+
+		my $trackOffset   = $highbits * 2 ** 32 + unpack('N', (substr($tmpBlock,4,4)));
+
+		if ($isCD && $trackOffset % 588) {
+			warn "Invalid track offset $trackOffset\n";
+			return -1;
+		}
+
+		my $tracknum = _bin2dec(unpack('B8',substr($tmpBlock,8,1))) || do {
+
+			warn "Invalid track numbered \"0\" detected\n";
+			return -1;
+		};
+
+		if ($isCD && $tracknum > 99 && $tracknum != 170) {
+			warn "Invalid track number for a CD $tracknum\n";
+			return -1;
+		}
+
+		if (defined $seenTracknumber{$tracknum}) {
+			warn "Invalid duplicate track number $tracknum\n";
+			return -1;
+		}
+
+		$seenTracknumber{$tracknum} = 1;
+
+		my $isrc = substr($tmpBlock,9,12);
+		   $isrc =~ s/\x00*$//;
+
+		if ((length($isrc) != 0) && (length($isrc) != 12)) {
+			warn "Invalid ISRC code $isrc\n";
+			return -1;
+		}
+
+		$bits           = unpack('B8', substr($tmpBlock, 21, 1));
+		my $isAudio     = !substr($bits, 0, 1);
+		my $preemphasis = substr($bits, 1, 1);
+
+		# The next few bits should be zero.
+		$reserved  = _bin2dec(substr($bits, 2, 6));
+		$reserved     += unpack('B*', substr($tmpBlock, 22, 13));
+
+		if ($reserved != 0) {
+			warn "Either the cue sheet is corrupt, " .
+			     "or it's a newer revision than I can parse\n";
+			#return -1; # ?? may be harmless to continue ...
+		}
+
+		my $numIndexes = _bin2dec(unpack('B8',substr($tmpBlock,35,1)));		
+
+		$tmpBlock = substr($tmpBlock,36);
+
+		# If we're on the lead-out track, stop before pushing TRACK info
+		if ($i == $numTracks)  {
+			$leadout = $trackOffset;
+
+			if ($isCD && $tracknum != 170) {
+				warn "Incorrect lead-out track number $tracknum for CD\n";
+				return -1;
+			}
+
+			$leadouttracknum = $tracknum;
+			next;
+		}
+
+		# Add TRACK info to cuesheet
+		my $trackline = sprintf("  TRACK %02d %s\n", $tracknum, $isAudio ? "AUDIO" : "DATA");
+
+		push (@$cuesheet, $trackline);
+		push (@$cuesheet, "    FLAGS PRE\n") if ($preemphasis);
+		push (@$cuesheet, "    ISRC " . $isrc . "\n") if ($isrc);
+
+		if ($numIndexes < 1 || ($isCD && $numIndexes > 100)) {
+			warn "Invalid number of Indexes $numIndexes for track $tracknum\n";
+			return -1;
+		}
+
+		# Itterate through the indexes for this track
+		for (my $j = 0; $j < $numIndexes; $j++) {
+
+			$highbits    = unpack('N', substr($tmpBlock,0,4));
+
+			my $indexOffset   = $highbits * 2 ** 32 + unpack('N', (substr($tmpBlock,4,4)));
+
+			if ($isCD && $indexOffset % 588) {
+				warn "Invalid index offset $indexOffset\n";
+				return -1;
+			}
+
+			my $indexnum = _bin2dec(unpack('B8',substr($tmpBlock,8,1)));
+			#TODO: enforce sequential indexes
+
+			$reserved  = 0;
+			$reserved += unpack('B*', substr($tmpBlock, 9, 3));
+
+			if ($reserved != 0) {
+				warn "Either the cue sheet is corrupt, " .
+				     "or it's a newer revision than I can parse\n";
+				#return -1; # ?? may be harmless to continue ...
+			}
+
+			my $timeoffset = _samplesToTime(($trackOffset + $indexOffset), $self->{'info'}->{'SAMPLERATE'});
+
+			return -1 if $timeoffset == -1;
+
+			my $indexline = sprintf ("    INDEX %02d %s\n", $indexnum, $timeoffset);
+
+			push (@$cuesheet, $indexline);
+
+			$tmpBlock = substr($tmpBlock,12);
+		}
+	}
+
+	# Add final comments just like metaflac would
+	push (@$cuesheet, "REM FLAC__lead-in " . $leadin . "\n");
+	push (@$cuesheet, "REM FLAC__lead-out " . $leadouttracknum . " " . $leadout . "\n");
+
+	$self->{'cuesheet'} = $cuesheet;
+
+	return 0;
+}
+
+ # Take an offset as number of flac samples 
+# and return CD-DA style mm:ss:ff
+sub _samplesToTime {
+        my $samples    = shift;
+	my $samplerate = shift;
+
+	if ($samplerate == 0) {
+	        warn "Couldn't find SAMPLERATE for time calculation!\n";
+		return -1;
+	}
+
+	my $totalSeconds = $samples / $samplerate;
+
+	if ($totalSeconds == 0) {
+	        # handled specially to avoid division by zero errors
+	        return "00:00:00";		
+	}
+
+	my $trackMinutes  = int(int($totalSeconds) / 60);
+	my $trackSeconds  = int($totalSeconds % 60);
+	my $trackFrames   = ($totalSeconds - int($totalSeconds)) * 75;
+
+	# Poor man's rounding. Needed to match the output of metaflac.
+	$trackFrames = int($trackFrames + 0.5); 
+	
+	my $formattedTime = sprintf("%02d:%02d:%02d", $trackMinutes, $trackSeconds, $trackFrames); 
+
+	return $formattedTime;
 }
 
 sub _bin2dec {
@@ -522,7 +767,8 @@ comment fields, implemented entirely in Perl.
 =head1 DESCRIPTION
 
 This module returns a hash containing basic information about a FLAC file,
-as well as tag information contained in the FLAC file's Vorbis tags.
+a representation of the embedded cue sheet if one exists,  as well as tag 
+information contained in the FLAC file's Vorbis tags.
 There is no complete list of tag keys for Vorbis tags, as they can be
 defined by the user; the basic set of tags used for FLAC files include:
 
@@ -581,6 +827,16 @@ the file's Vorbis Comment header.
 
 The optional parameter, key, allows you to retrieve a single value from
 the tag hash.  Returns C<undef> if the key is not found.
+
+=head2 C<cuesheet ()>
+
+Returns an arrayref which contains a textual representation of the
+cuesheet metada block. Each element in the array corresponds to one
+line in a .cue file. If there is no cuesheet block in this FLAC file
+the array will be empty. The resulting cuesheet should match the
+output of metaflac's --export-cuesheet-to option, with the exception
+of the FILE line, which includes the actual file name instead of 
+"dummy.wav".
 
 =head2 C<write ()>
 
