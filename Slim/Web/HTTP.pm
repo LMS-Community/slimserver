@@ -142,6 +142,21 @@ sub init {
 		}
 	}
 
+	# Try and use the faster XS module if it's available.
+	eval { require Template::Stash::XS };
+
+	if ($@) {
+
+		# Pure perl is the default, so we don't need to do anything.
+		$::d_http && msg("Couldn't find Template::Stash::XS - falling back to pure perl version.\n");
+
+	} else {
+
+		$::d_http && msg("Found Template::Stash::XS!\n");
+
+		$Template::Config::STASH = 'Template::Stash::XS';
+	}
+
 	# this initializes the %fieldInfo structure
 	Slim::Web::Pages::init();
 
