@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.77 2004/04/05 15:05:16 dean Exp $
+# $Id: strings.txt,v 1.78 2004/04/06 03:10:50 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -908,15 +908,13 @@ SETUP_SCROLLPAUSE
 	FR	Pause avant défilement
 	
 SETUP_SCROLLPAUSE_DESC
-	DE	Zeit, befor lange Textzeilen zu scrollen beginnen. Mehrfache von 0.9 funktionieren am besten. Null deaktiviert die Pause.
-	EN	You can adjust the amount of time that the player waits before scrolling another letter of text on the display. Enter a value, in seconds, for the amount of time to wait.  Lower numbers make it scroll faster.  0.15 seconds is the default.
-	FR	Le délai durant lequel l'affichage s'arrête avant de faire défiler les lignes longues peut être modifié en multiples de 0.9 secondes. Entrez 0 pour supprimer la pause.
+	EN	You can adjust the amount of time that the player waits before starting horizontal scrolling of the text on the display.  Enter a value, in seconds, for the amount of time to wait before scrolling or between scrolling.  Enter zero to not pause at all and scroll immediately. 3.6 seconds is the default.
 
 SETUP_SCROLLRATE
 	EN	Scroll Rate
 	
 SETUP_SCROLLRATE_DESC
-	EN	You can adjust the amount of time that the player waits before starting horizontal scrolling of the text on the display.  Enter a value, in seconds, for the amount of time to wait before scrolling or between scrolling.  Enter zero to not pause at all and scroll immediately. 3.6 seconds is the default.
+	EN	You can adjust the amount of time that the player waits before scrolling another letter of text on the display. Enter a value, in seconds, for the amount of time to wait.  Lower numbers make it scroll faster.  0.15 seconds is the default.
 
 SETUP_GROUP_ALARM
 	DE	Wecker
