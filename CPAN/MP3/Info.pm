@@ -23,8 +23,8 @@ use vars qw(
 	all	=> [@EXPORT, @EXPORT_OK]
 );
 
-# $Id: Info.pm,v 1.3 2003/09/30 18:08:46 dean Exp $
-($REVISION) = ' $Revision: 1.3 $ ' =~ /\$Revision:\s+([^\s]+)/;
+# $Id: Info.pm,v 1.4 2003/11/20 16:58:00 dean Exp $
+($REVISION) = ' $Revision: 1.4 $ ' =~ /\$Revision:\s+([^\s]+)/;
 $VERSION = '1.01';
 
 =pod
@@ -1040,7 +1040,7 @@ BEGIN {
 		'National Folk',
 		'Swing',
 		'Fast Fusion',
-		'Bebob',
+		'Bebop',
 		'Latin',
 		'Revival',
 		'Celtic',

@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.1 2003/11/03 23:22:32 dean Exp $
+#	$Id: Information.pm,v 1.2 2003/11/20 16:58:02 dean Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -48,7 +48,7 @@ use Slim::Utils::Strings qw(string);
 use strict;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.1 $,10);
+$VERSION = substr(q$Revision: 1.2 $,10);
 
 my $modes_set;
 my $modules;
@@ -155,17 +155,20 @@ my %functions = (
     'right' => sub {
 		my $client = shift;
 		my $nextmode = find_nextmode($client);
-		my $listfunc = $menu{$nextmode}->{list};
+
+		if (defined($nextmode)) {		
+			my $listfunc = $menu{$nextmode}->{list};
 		
-		if ($nextmode && ref(&$listfunc($client))) {
-			Slim::Buttons::Common::pushModeLeft(
-			$client,
-			"information-$nextmode",
-			);
+			if ($listfunc && $nextmode && ref(&$listfunc($client))) {
+				Slim::Buttons::Common::pushModeLeft(
+				$client,
+				"information-$nextmode",
+				);
+				return;
+			}
 		}
-		else {
-			Slim::Display::Animation::bumpRight($client);
-		}
+		
+		Slim::Display::Animation::bumpRight($client);
     },
     'up' => sub {
 		my $client = shift;

@@ -153,13 +153,18 @@ sub read_plugins {
 			my $strings;
 			eval {$strings = &{$fullname . "::strings"}()};
 			if (!$@ && $strings) { Slim::Utils::Strings::addStrings($strings); }
-			
-			my $ref = {
-				module => $fullname,
-				name => &{$fullname . "::getDisplayName"}(),
-				mode => "PLUGIN.$name",
-			};
-			$plugins{$name} = $ref;
+			my $names;
+			eval {$names = &{$fullname . "::getDisplayName"}()};
+			if (!$@ && $names) {
+				my $ref = {
+					module => $fullname,
+					name => &{$fullname . "::getDisplayName"}(),
+					mode => "PLUGIN.$name",
+				};
+				$plugins{$name} = $ref;
+			} else {
+				$::d_plugins && msg("Can't load $fullname for Plugins menu: " . $@);
+			}
 			addDefaultMaps();
 		}
     }

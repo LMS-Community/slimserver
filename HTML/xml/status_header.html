@@ -19,6 +19,7 @@
 	<player_status>
 		<transport>
 			<mode>{&mode}</mode>
+			<playmode>[IF modeplay]playing[/IF][IF modepause]paused[/IF][IF modestop]stopped[/IF]</playmode>
     		[IF modeplay]<playing/>[/IF]
     		[IF modepause]<paused/>[/IF]
     		[IF modestop]<stopped/>[/IF]

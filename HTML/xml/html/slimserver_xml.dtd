@@ -88,6 +88,7 @@ is off
 <!ELEMENT playing 		EMPTY>		<!-- Player is playing                   -->
 <!ELEMENT paused 		EMPTY>		<!-- Player is paused                    -->
 <!ELEMENT stopped 		EMPTY>		<!-- Player is stopped                   -->
+<!ELEMENT playmode 	    (#PCDATA)>	<!-- the play mode, but inside a tag     -->
 
 <!ELEMENT play_url 		(#PCDATA)>
 <!-- URL to start playing the current playlist. Use URLs in browse pages to 

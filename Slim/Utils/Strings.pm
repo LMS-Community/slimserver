@@ -1,6 +1,6 @@
 package Slim::Utils::Strings;
 
-# $Id: Strings.pm,v 1.6 2003/11/10 23:15:02 dean Exp $
+# $Id: Strings.pm,v 1.7 2003/11/20 16:58:03 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -63,6 +63,8 @@ sub stringsFiles {
       push @stringsFiles, 'strings.txt';
       push @stringsFiles, ".slimp3-strings.txt";
       push @stringsFiles, "slimp3-strings.txt"; 
+      push @stringsFiles, ".slimserver-strings.txt";
+      push @stringsFiles, "slimserver-strings.txt"; 
       return @stringsFiles;
 }
 

@@ -5060,7 +5060,7 @@ UPGRADE_COMPLETE_DETAILS
 	EN	Your update is complete.
 
 UPGRADE_COMPLETE
-	EN	Firmware Update Complete
+	EN	Firmware Update
 
 NEED_PATH
 	DE	Sie müssen einen Pfad zum Verzeichnis mit Ihrem MP3 Dateien angeben.

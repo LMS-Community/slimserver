@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.19 2003/11/10 23:15:03 dean Exp $
+# $Id: Pages.pm,v 1.20 2003/11/20 16:58:03 dean Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -1553,6 +1553,7 @@ sub update_firmware {
 	my($client, $paramsref) = @_;
 	my $result;
 	$result = Slim::Player::Squeezebox::upgradeFirmware($paramsref->{'ipaddress'});
-	$$paramsref{'warning'} = $result;
+	$$paramsref{'warning'} = $result || string('UPGRADE_COMPLETE_DETAILS');
+	
 	Slim::Web::HTTP::filltemplatefile("update_firmware.html", $paramsref);	
 }

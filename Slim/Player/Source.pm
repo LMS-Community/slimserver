@@ -948,7 +948,7 @@ sub readNextChunk {
 		return undef;
 	}
 	
-	$::d_source_verbose && msg("read a chunk of " . length($chunk) . " length\n");
+	$::d_source && msg("read a chunk of " . length($chunk) . " length\n");
 	$client->songBytes($client->songBytes + length($chunk));
 	
 	return \$chunk;
