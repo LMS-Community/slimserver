@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.44 2004/04/04 20:42:01 kdf Exp $
+# $Id: Prefs.pm,v 1.45 2004/04/06 03:13:58 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -52,20 +52,6 @@ sub defaultAudioDir {
 	}
 }
 
-sub defaultArtFolder {
-	my $path;
-
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		$path = $ENV{'HOME'} . '/Music/Artwork';
-	} elsif (Slim::Utils::OSDetect::OS() eq 'win') {
-		$path = $Bin . '/Artwork';
-	} else {
-		$path = $Bin . '/Artwork';
-	}
-
-	return $path;
-}
-
 sub defaultPlaylistDir {
 	my $path;
 
@@ -90,7 +76,6 @@ my %DEFAULT = (
 	,"cliport"				=> 9090
 	,"music"				=> defaultAudioDir()
 	,"playlistdir"			=> defaultPlaylistDir()
-	,"artfolder"			=> defaultArtFolder()
 	,"skin"					=> "Default"
 	,"language"				=> "EN"
 	,"refreshRate"			=> 30

@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.90 2004/04/05 23:11:49 dean Exp $
+# $Id: Info.pm,v 1.91 2004/04/06 03:13:58 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2348,7 +2348,7 @@ sub readCoverArtFiles {
 		$::d_artwork && Slim::Utils::Misc::msg("Variable $artworktype: $artwork from $1\n");
 		my $artpath = catdir(@components, $artwork);
 		$body = getImageContent($artpath);
-		if (!$body) {
+		if (!$body && defined Slim::Utils::Prefs::get('artfolder')) {
 				$artpath = catdir(Slim::Utils::Prefs::get('artfolder'),$artwork);
 				$body = getImageContent($artpath);
 			}
