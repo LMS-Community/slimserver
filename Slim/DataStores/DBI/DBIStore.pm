@@ -261,7 +261,13 @@ sub find {
 
 	if (!$count && defined($items) && 
 		($field eq 'track' || $field eq 'lightweighttrack')) {
+
 		$items = [ grep $self->_includeInTrackCount($_), @$items ];
+
+		# Does the track still exist?
+		if ($field ne 'lightweighttrack') {
+			$items = [ grep $self->_checkValidity($_), @$items ];
+		}
 	}
 	
 	return $items if $count;
@@ -1042,6 +1048,9 @@ sub _hasChanged {
 		$::d_info && Slim::Utils::Misc::msg("deleting $url from cache as it no longer exists\n");
 	}
 
+	# Tell the DB to sync - if we're deleting something.
+	$Slim::DataStores::DBI::DataModel::dirtyCount++;
+
 	return $self->{'zombieList'}->{$id} = 1;
 }
 
@@ -1051,8 +1060,7 @@ sub _includeInTrackCount {
 	my $url   = $track->get('url');
 
 	return 1 if (Slim::Music::Info::isSong($url, $track->get('ct')) && 
-				 !Slim::Music::Info::isRemoteURL($url) && 
-				 (-e (Slim::Utils::Misc::pathFromFileURL($url))));
+				 !Slim::Music::Info::isRemoteURL($url));
 
 	return 0;
 }

@@ -143,6 +143,10 @@ BEGIN {
 	# when a new XS based module is added to our CPAN tree.
 	my @modules = qw(Time::HiRes DBD::SQLite DBI XML::Parser HTML::Parser Compress::Zlib);
 
+	if ($] <= 5.007) {
+		push @modules, qw(Storable Digest::MD5);
+	}
+
 	my @SlimINC = (
 		$Bin, 
 		catdir($Bin,'CPAN'), 
@@ -987,10 +991,6 @@ sub checkDataSource {
 		if (!$::noScan && $ds->count('track') == 0) {
 
 			Slim::Music::Import::startScan();
-
-		} elsif (!$::noScan) {
-	
-			Slim::Utils::Scheduler::add_task(\&Slim::Music::Info::clearStaleCacheEntries);
 		}
 	}
 }
