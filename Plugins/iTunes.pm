@@ -1031,6 +1031,10 @@ sub checkDefaults {
 	if (!Slim::Utils::Prefs::isDefined('itunes_library_autolocate')) {
 		Slim::Utils::Prefs::set('itunes_library_autolocate',1);
 	}
+
+	if (!Slim::Utils::Prefs::isDefined('lastITunesMusicLibraryDate')) {
+		Slim::Utils::Prefs::set('lastITunesMusicLibraryDate',0);
+	}
 }
 
 sub setupCategory {

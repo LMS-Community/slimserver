@@ -214,6 +214,7 @@ our %DEFAULT = (
 								'Best of...',
 								'Live'
 								]
+	,'rank-PLUGIN_PICKS_MODULE_NAME'			=> 4
 );
 
 # The following hash contains functions that are executed when the pref corresponding to
