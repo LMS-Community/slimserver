@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.155 2004/11/24 05:39:12 kdf Exp $
+# $Id: Info.pm,v 1.156 2004/11/25 03:11:40 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -271,7 +271,12 @@ if (defined @Storable::EXPORT) {
 			foreach my $file (keys %infoCache) {
 			
 				my $cacheEntryArray = $infoCache{$file};
-
+				
+				# delete imported playlist since we'll reconstruct them anyway
+				if (isPlaylistURL($file)) {
+					delete $infoCache{$file};
+				}
+				
 				# Mark all data as invalid for now
 				$cacheEntryArray->[$validindex] = '0';
 
@@ -2688,6 +2693,11 @@ sub isHTTPURL {
 
 sub isRemoteURL {
 	return ((shift =~ /^([a-zA-Z0-9\-]+):/) && $Slim::Player::Source::protocolHandlers{$1});
+}
+
+sub isPlaylistURL {
+	my $url = shift;
+	return (defined($url) && ($url =~ /^([a-zA-Z\-]+):/) && exists($Slim::Player::Source::protocolHandlers{$1}) && !isFileURL($url));
 }
 
 sub isURL {
