@@ -223,6 +223,11 @@ a:hover {
 	font-size: 10px;
 }
 
+.coverart {
+	float: left;
+	border-right: 10px solid #61676c;
+}
+
 /*************************************\
  * For lists (playlist, browse, etc) *
 \*************************************/
