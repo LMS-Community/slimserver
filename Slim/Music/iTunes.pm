@@ -441,7 +441,10 @@ sub scanFunction {
 					
 					if ($url) {
 						Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
-						Slim::Music::Info::updateGenreCache($url, \%cacheEntry);					
+						Slim::Music::Info::updateGenreCache($url, \%cacheEntry);
+						if ($cacheEntry{'ALBUM'} && !defined Slim::Music::Info::haveThumbArt($url)) {
+							Slim::Music::Info::updateAlbumCache($url, \%cacheEntry)
+						}
 						$tracks{$id} = $url;
 					}
 				} else {
