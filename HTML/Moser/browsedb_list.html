@@ -1,0 +1,37 @@
+        <li class="[% IF odd %]odd[% END %][% IF not odd %]even[% END %]">
+        [%- IF anchor %]
+          <a name="[% anchor %]"></a>
+        [%- END %]
+          <div class="controls">
+            <ul class="songctl">
+              <li><a href="status.html?
+				[%- IF descend %]command=playlist&amp;sub=loadtracks[% attributes | html -%]
+				[%- ELSE %]p0=playlist&amp;p1=play&amp;p2=[% itempath | uri -%]
+              	[%- END %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %]"><span>&gt;</span></a></li>
+              <li><a href="status.html?
+				[%- IF descend %]command=playlist&amp;sub=inserttracks[% attributes | html -%]
+				[%- ELSE %]p0=playlist&amp;p1=insert&amp;p2=[% itempath | uri %]
+				[%- END %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %] [% "NEXT" | string %]"><span>&gt;|</span></a></li>
+              <li><a href="status.html?
+				[%- IF descend %]command=playlist&amp;sub=addtracks[% attributes | html -%]
+				[%- ELSE %]p0=playlist&amp;p1=append&amp;p2=[% itempath | uri -%]
+				[%- END %]&amp;player=[% player | uri %]"  target="status" title="[% "ADD_TO_PLAYLIST" | string %]"><span>+</span></a></li>
+            </ul>
+          </div>
+          <div class="browseline">
+          [%- IF descend %]
+            <a href="browsedb.html?hierarchy=[% hierarchy %]&amp;level=[% level %][% attributes | html %]&amp;player=[% player | uri %]">[% text | html %]</a>
+          [%- ELSE %]
+            <span class="songtitle"><a href="songinfo.html?itempath=[% itempath | uri %]&amp;player=[% player | uri %]">[% text | html %]</a></span>
+           [%- IF includeAlbum %]
+            [% "FROM" | string %] <span class="album"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album | html %]</a></span>
+           [%- END %]
+           [%- IF includeArtist %]
+            [% "BY" | string %] <span class="artist"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser">[% artist | html %]</a></span>
+           [%- END %]
+           [%- IF year %]
+            (<a href="browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year=[% year %]&amp;player=[% player | uri %]">[% year %]</a>)
+           [%- END %]
+          [%- END %]
+          </div>
+        </li>
