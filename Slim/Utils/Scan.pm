@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.20 2004/11/25 03:51:05 kdf Exp $
+# $Id: Scan.pm,v 1.21 2004/12/16 22:05:39 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -74,8 +74,8 @@ struct (addToList_jobState => [
 	recursive      => '$', # do we descend directories
 	sorted		   => '$', # 1 = return the entries in sorted order
 	numstack       => '$', # number of levels on the stack
-    numitems       => '$', # number of items currently in the list
-    numitems_start => '$', # number of items in the list before addToList
+	numitems       => '$', # number of items currently in the list
+	numitems_start => '$', # number of items in the list before addToList
 	playlisturl	   => '$', # initial value of playlist URL
 
 	callbackf      => '$', #function to call when we're done
@@ -474,3 +474,4 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 1;
 
+__END__

@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.115 2004/12/07 20:19:57 dsully Exp $
+# $Id: Setup.pm,v 1.116 2004/12/16 22:05:40 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -34,7 +34,6 @@ my %setup = ();
 # setup hash's keys:
 # 'player' => hash of per player settings
 # 'server' => hash of main server settings on the setup server web page
-# 'advanced' => hash of main server settings on the setup advanced web page
 
 # page hash's keys:
 # 'preEval' => sub ref taking $client,$paramref,$pageref as parameters used to refresh a setup entry on each page load
@@ -1882,19 +1881,11 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['usetagdatabase','wipecache','templatecache','useplaylistcache',
-									'lookForArtwork','itemsPerPass']
+					'PrefOrder' => ['wipecache','templatecache','useplaylistcache', 'lookForArtwork','itemsPerPass']
 				}
 			}
 		,'Prefs' => {
-			'usetagdatabase' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'0' => string('SETUP_DONT_CACHE')
-								,'1' => string('SETUP_CACHE')
-								}
-					}
-			,'wipecache' => {
+			'wipecache' => {
 						'validate' => \&validateAcceptAll
 						,'onChange' => sub {	
 									my $client = shift;
@@ -2022,24 +2013,6 @@ sub initSetupConfig {
 				}
 			}
 		} #end of setup{'network'} hash
-	,'advanced' => {
-		'title' => string('ADDITIONAL_SERVER_SETTINGS')
-		,'GroupOrder' => ['Default']
-		,'Groups' => {
-			'Default' => {
-					'PrefOrder' => ['usetagdatabase']
-				}
-			}
-		,'Prefs' => {
-			'usetagdatabase' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'0' => string('SETUP_DONT_SAVE_TAG_INFO')
-								,'1' => string('SETUP_SAVE_TAG_INFO')
-							}
-						}
-		}
-		} #end of setup{'advanced'} hash
 	,'debug' => {
 		'title' => string('DEBUGGING_SETTINGS')
 		,'parent' => 'server'

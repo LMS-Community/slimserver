@@ -84,9 +84,11 @@ use lib (
 	$Bin, 
 	catdir($Bin,'CPAN'), 
 	catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{archname}), 
+	catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{archname}, 'auto'), 
 	catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{archname}), 
+	catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{archname}, 'auto'), 
 	catdir($Bin,'CPAN','arch',$Config::Config{archname})
-	);
+);
 
 use Time::HiRes;
 
@@ -373,12 +375,6 @@ sub start {
 	# start background scanning based on a timer...
 	Slim::Music::Import::startup();
 	
-	# start scanning if we're not persisting the database
-	if (!Slim::Utils::Prefs::get('usetagdatabase')) {
-		$::d_server && msg("SlimServer Inital Scan init...\n");
-		Slim::Music::Import::startScan();
-	};
-		
 	$lastlooptime = Time::HiRes::time();
 	$loopcount = 0;
 	$loopsecond = int($lastlooptime);

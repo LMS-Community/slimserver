@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.131 2004/12/16 01:13:55 vidur Exp $
+# $Id: HTTP.pm,v 1.132 2004/12/16 22:05:39 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -743,7 +743,7 @@ sub generateHTTPResponse {
 
 		if (defined($imageData)) {
 
-			$body  = \$imageData;
+			$body = \$imageData;
 			buildStatusHeaders($client, $response);
 
 		} else {
