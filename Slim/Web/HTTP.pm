@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.7 2003/08/04 22:23:23 sadams Exp $
+# $Id: HTTP.pm,v 1.8 2003/08/04 23:53:47 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -491,19 +491,21 @@ sub addstreamingresponse {
 
 	$::d_http && msg("addstreamingresponse: $address\n");
 
-	my $client = Slim::Player::Client::getClient($address);
+	my $client;
+
+#	my $client = Slim::Player::Client::getClient($address);
 	
-	if (!defined($client) && !defined($streamingFiles{$httpclientsock})) {
+#	if (!defined($client) && !defined($streamingFiles{$httpclientsock})) {
 		$client = Slim::Player::Client::newClient(
 			$address,
 			getpeername($httpclientsock), 
-			getpeername($httpclientsock), 
+			$address,
 			0, 
 			0, 
 			0, 
 			$httpclientsock);
 		$newclient = 1;
-	}
+#	}
 	
 #	if (defined($client)) {
 #		$client->paddr(getpeername($httpclientsock));

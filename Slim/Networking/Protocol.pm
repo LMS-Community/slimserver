@@ -100,6 +100,7 @@ sub init {
 			#make sure any new preferences get set to default values
 
 			assert($addr);
+			next unless ($addr=~/\d+\.\d+\.\d+\.:\d+/); # skip client addrs that don't have a port
 			### FIXME don't say hello to http clients!!!
 			Slim::Network::Discovery::sayHello($udpsock, ipaddress2paddr($addr));
 			

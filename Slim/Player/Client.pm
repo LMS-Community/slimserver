@@ -236,8 +236,8 @@ sub getClient {
 sub newClient {
 	my (
 		$id,
-		$paddr,
-		$newplayeraddr,
+		$paddr,			# sockaddr_in
+		$newplayeraddr,		# ASCII ip:port  TODO don't pass both of these in
 		$deviceid,
 		$revision,
 		$udpsock,		# defined only for Slimp3
@@ -309,8 +309,6 @@ sub newClient {
 		# make sure any preferences this client may not have set are set to the default
 		Slim::Utils::Prefs::checkClientPrefs($client);
 
-		# skip player initialization for http clients
-		return unless (defined($newplayeraddr) && $newplayeraddr);
 	}
 
 	# the rest of this stuff is set each time the client connects, even if we know him already.
