@@ -270,7 +270,7 @@ sub upgradeFirmware {
 
 # in order of preference
 sub formats {
-	return ('aif','wav','mp3');
+	return ('mp3', 'aif','wav');
 }
 
 sub vfd {
