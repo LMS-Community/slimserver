@@ -359,8 +359,8 @@ sub addToList_run {
 		# enough - getting the tag attribute will ensure that
 		# we've read from file.
 		my $ds = Slim::Music::Info::getCurrentDataStore();
-		my $track = $ds->objectForUrl($itempath, 1);
-		$track->tag if defined($track);
+		my $track = $ds->objectForUrl($itempath, 1, 1);
+		#$track->tag if defined($track);
 
 		$ds->markEntryAsValid($itempath);
 

@@ -119,16 +119,24 @@ sub new {
 
 sub contentType {
 	my $self = shift;
-	my $url = shift;
-	my $create = shift;
+	my $url  = shift;
 
-	my $ct = $self->{'contentTypeCache'}->{$url};
+	my $ct;
+
+	# Can't get a content type on a undef url
+	unless (defined $url) {
+
+		$ct = 'unk';
+		return wantarray ? ($ct) : $ct;
+	}
+
+	$ct = $self->{'contentTypeCache'}->{$url};
 
 	if (defined($ct)) {
 		return wantarray ? ($ct, $self->_retrieveTrack($url)) : $ct;
 	}
 
-	my $track = $self->objectForUrl($url, $create);
+	my $track = $self->objectForUrl($url);
 
 	if (defined($track)) {
 		$ct = $track->content_type();
@@ -145,6 +153,7 @@ sub objectForUrl {
 	my $self   = shift;
 	my $url    = shift;
 	my $create = shift;
+	my $readTag = shift;
 
 	if (!defined($url)) {
 		Slim::Utils::Misc::msg("Null track request!\n"); 
@@ -167,7 +176,7 @@ sub objectForUrl {
 		    Slim::Music::Info::isList($url, $type) ||
 		    Slim::Music::Info::isPlaylist($url, $type)) {
 
-			$track = $self->newTrack($url, { 'url' => $url });
+			$track = $self->newTrack($url, { 'URL' => $url }, undef, $readTag);
 		}
 	}
 
@@ -365,15 +374,37 @@ sub newTrack {
 	my $url = shift || return;
  	my $attributeHash = shift;
 	my $commit = shift;
+	my $readTag = shift;
 	my $deferredAttributes;
 	
 	$::d_info && Slim::Utils::Misc::msg("New track for $url\n");
 
 	($attributeHash, $deferredAttributes) = _preCheckAttributes($attributeHash, 1);
-	
-	my $track = Slim::DataStores::DBI::Track->create($attributeHash) || return undef;
 
-	_postCheckAttributes($track, $deferredAttributes, 1);
+	# Creating the track only wants lower case values from valid columns.
+	my $columnValueHash = { url => $url };
+
+	my $trackAttrs = Slim::DataStores::DBI::Track::attributes();
+
+	while (my ($key, $val) = each %$attributeHash) {
+
+		if (defined $val && exists $trackAttrs->{lc $key}) {
+			$columnValueHash->{lc $key} = $val;
+		}
+	}
+
+	# Create the track - or bail. We should probably spew an error.
+	my $track = Slim::DataStores::DBI::Track->create($columnValueHash) || return undef;
+
+	# Explictly read the tag, and call through to updateOrCreate again.
+	if ($readTag) {
+
+		$self->readTags($track);
+
+	} else {
+
+		_postCheckAttributes($track, $deferredAttributes, 1);
+	}
 
 	$self->{'lastTrackURL'} = $url;
 	$self->{'lastTrack'}    = $track;
@@ -439,16 +470,7 @@ sub updateOrCreate {
 
 	} else {
 
-		my $columnValueHash = { url => $url };
-
-		while (my ($key, $val) = each %$attributeHash) {
-
-			if (defined $val && exists $trackAttrs->{lc $key}) {
-				$columnValueHash->{lc $key} = $val;
-			}
-		}
-
-		$track = $self->newTrack($url, $columnValueHash);
+		$track = $self->newTrack($url, $attributeHash, undef, 1);
 	}
 
 	if ($attributeHash->{'CT'}) {
@@ -1063,6 +1085,8 @@ sub _preCheckAttributes {
 	# Push these back until we have a Track object.
 	for my $tag (qw(COMMENT BAND COMPOSER CONDUCTOR)) {
 
+		next unless defined $attributes->{$tag};
+
 		$deferredAttributes->{$tag} = $attributes->{$tag};
 		delete $attributes->{$tag};
 	}
@@ -1088,15 +1112,7 @@ sub _postCheckAttributes {
 	# 'No Genre' object, create one.
 	if (my $genre = $attributes->{'GENRE'}) {
 
-		my @genres = Slim::DataStores::DBI::GenreTrack->add($genre, $track);
-
-		# I don't quite understand what this is doing..
-		if (!$create && defined $_unknownGenreID) {
-
-			foreach my $gen (@genres) {
-				$gen->delete() if ($gen->id() eq $_unknownGenreID);
-			}
-		}
+		Slim::DataStores::DBI::GenreTrack->add($genre, $track);
 
 	} elsif ($create && !defined $_unknownGenreID) {
 
@@ -1104,35 +1120,35 @@ sub _postCheckAttributes {
 	}
 
 	# Do a similar thing for artist, conductor, etc
+	my $foundContributor = 0;
+
 	for my $tag (qw(ARTIST BAND COMPOSER CONDUCTOR)) {
 
-		if (my $contributor = $attributes->{$tag}) {
+		my $contributor = $attributes->{$tag};
+
+		if ($contributor) {
 
 			# Is ARTISTSORT/TSOP always right for non-artist
 			# contributors? I think so. ID3 doesn't have
 			# "BANDSORT" or similar at any rate.
-			my @contributors = Slim::DataStores::DBI::ContributorTrack->add(
+			Slim::DataStores::DBI::ContributorTrack->add(
 				$contributor, 
 				$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{$tag},
 				$track,
 				$attributes->{'ARTISTSORT'}
 			);
 
-			if (!$create && defined $_unknownArtistID) {
-				
-				foreach my $contrib (@contributors) {
-					$contrib->delete() if ($contrib->id() eq $_unknownArtistID);
-				} 
-			}
-
-		} elsif ($create && !defined $_unknownArtistID) {
-
-			($_unknownArtistID) = Slim::DataStores::DBI::ContributorTrack->add(
-				string('NO_ARTIST'),
-				$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'},
-				$track
-			);
+			$foundContributor = 1;
 		}
+	}
+
+	if ($create && (!$foundContributor || !$_unknownArtistID)) {
+
+		($_unknownArtistID) = Slim::DataStores::DBI::ContributorTrack->add(
+			string('NO_ARTIST'),
+			$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'},
+			$track
+		);
 	}
 }
 

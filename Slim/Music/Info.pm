@@ -232,6 +232,7 @@ sub generatePlaylists {
 
 sub isCached {
 	my $url = shift;
+
 	return defined($currentDB->objectForUrl($url, 0));
 }
 
@@ -935,7 +936,7 @@ sub sortByTitlesAlg ($$) {
 #Sets up an array entry for performing complex sorts
 sub getInfoForSort {
 	my $item = shift;
-	my $obj  = $currentDB->objectForUrl($item);
+	my $obj  = $currentDB->objectForUrl($item) || return [ $item ];
 
 	my $list = isList($obj);
 
@@ -1463,7 +1464,7 @@ sub isType {
 	my $pathOrObj = shift || return 0;
 	my $testtype  = shift;
 
-	my $type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj, 1);
+	my $type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj);
 
 	if ($type && ($type eq $testtype)) {
 		return 1;
@@ -1512,7 +1513,7 @@ sub isSong {
 	my $pathOrObj = shift;
 	my $type = shift;
 
-	$type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj, 1) unless defined $type;
+	$type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj) unless defined $type;
 
 	if ($type && $slimTypes{$type} && $slimTypes{$type} eq 'audio') {
 		return $type;
@@ -1553,7 +1554,7 @@ sub isList {
 	my $pathOrObj = shift;
 	my $type = shift;
 
-	$type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj, 1) unless defined $type;
+	$type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj) unless defined $type;
 
 	if ($type && $slimTypes{$type} && $slimTypes{$type} =~ /list/) {
 		return $type;
@@ -1564,7 +1565,7 @@ sub isPlaylist {
 	my $pathOrObj = shift;
 	my $type = shift;
 
-	$type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj, 1) unless defined $type;
+	$type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj) unless defined $type;
 
 	if ($type && $slimTypes{$type} && $slimTypes{$type} eq 'playlist') {
 		return $type;
@@ -1636,7 +1637,9 @@ sub mimeType {
 };
 
 sub contentType { 
-	return $currentDB->contentType(shift, 1); 
+	my $url = shift;
+
+	return $currentDB->contentType($url); 
 }
 
 sub typeFromSuffix {

@@ -265,7 +265,7 @@ sub preloadLines {
 		push (@{$client->trackInfoContent}, 'GENRE');
 	}
 
-	if (my $ct = $ds->contentType($track, 1)) {
+	if (my $ct = $ds->contentType($track)) {
 		push (@{$client->trackInfoLines}, $client->string('TYPE') . ": " . $client->string(uc($ct)));
 		push (@{$client->trackInfoContent}, undef);
 	}

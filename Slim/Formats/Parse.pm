@@ -239,7 +239,7 @@ sub parseCUE {
 
 	# This is needed for readTags
 	my $ds       = Slim::Music::Info::getCurrentDataStore();
-	my $wholeFile = $ds->objectForUrl($filename, 1) || do {
+	my $wholeFile = $ds->objectForUrl($filename, 1, 1) || do {
 
 		$::d_parse && Slim::Utils::Misc::msg("Warning - couldn't get object for file: $filename !\n");
 		return;
@@ -266,8 +266,6 @@ sub parseCUE {
 		if (!defined $track->{'START'} || !defined $filename ) { next; }
 
 		if (!defined $track->{'END'}) {
-
-			$ds->readTags($wholeFile);
 
 			$track->{'END'} = $wholeFile->secs() || '';
 		}
@@ -335,6 +333,9 @@ sub parseCUE {
 
 		$ds->updateOrCreate($trackObj, $cacheEntry);
 	}
+
+	# don't keep this around.
+	$wholeFile->delete();
 
 	$::d_parse && Slim::Utils::Misc::msg("    returning: " . scalar(@items) . " items\n");	
 	return @items;
