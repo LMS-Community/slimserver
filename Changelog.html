@@ -1,3 +1,198 @@
+<h2><a name="v5.3.0" id="v5.3.0"></a>Version 5.3.0 - 2004-09-20</h2>
+<ul>
+
+	<li>Security
+		<ul>
+		<li>Added a referrer check for settings pages, to patch a theoretical security problem where a thirdparty web page could cause your browser to trigger changes to setup. This problem also extends to any changes via the web interface, but the setup is the most problematic.
+		<li>Added registry keys for Windows XP that allow SlimServer ports and protocols access through the XP firewall.</li>
+		</ul>
+	</li>
+
+	<li>SoftSqueeze
+		<ul>
+		<li>Updated to version 1.4</li>
+		<li>Updated Softsqueeze to work with modified slimproto</li>
+		<li>Fixes sample rate bug that caused bad mp3 playback
+		<li>Refactored UI code, and added a fullscreen mode with album art and playlist
+		<li>Make SoftSqueeze launch page easier to launch softsqueeze.</li>
+		<li>Fixed broken background images in Softsqueeze.</li>
+		</ul>
+	</li>
+
+	<li>Web User Interface
+		<ul>
+		<li>Making the home menu settings per-player.</li>
+		<li>Modified patch from KDF to enable choosing fonts from the settings page.  Also updates web setting for alarm. Reorganized player settings to be less intimidating.
+		<li>Adding Jacob Potter's ExBrowse skin to the standard release.
+			Included a patch that he needs to display some info in his skin.
+		<li>Bug 490: Fix search field in handheld skin</li>
+		<li>Show percentage after the signal strength in the web interface.</li>
+		<li>Suppress skins that start with 'x' from the setup pages, like xml and xul, as they aren't fit for human consumption, browserwise. Rename the Default skin to Default for human consumption.</li>
+		<li>Show year support for Fishbone, Default and EN skins.
+		<li>Fix blank playlist page when clients first connect</li>
+		<li>Fix naming on web interfaces.  Not SLIMP3 Home or Squeezebox Home anymore, just Home.
+		<li>Fix crash in getting player settings on HTTP clients.</li>
+		<li>Textsize settings fixed, selectable from the available fonts for each player.</li>
+		<li>Bug 314: Highlight the closest volume setting in the default skin.
+		<li>Bug 446: Patch from KDF to fix sorting issue in cover art.</li>
+		<li>Bug 466: Support for ID3 BPM Tag (TBPM, TBP) includes support in EN, Fishbone, and Default skins.
+		</ul>
+	</li>
+
+	<li>Internet Radio
+		<ul>
+		<li>Fix a problem with the path to radio stations imported from iTunes.
+		<li>Jim Knepley pointed out a problem where internet radio stations that had redirects and only gave title information on the redirected response lost that title information.</li>
+		</ul>
+	</li>
+	
+	<li>Player User Interface
+		<ul>
+		<li>Timing problem resolved with autodim and screensaver timing.
+		<li>Tweak the note symbol to be prettier
+		<li>add a space at the edge of the overlays.</li>
+		<li>FROM and BY weren't really being replaced in Title Format strings.  Now they will be.</li>
+		<li>Fix problem when doing pushes from screens without overlays.  (For example, the Search screen...</li>
+		<li>Don't use "turbo" brightness levels, which cause ghosting
+		<li>When squeezeboxen reconnect, restart the current track if we were playing before.</li>
+		<li>KDF found a problem with centered large font text on non-graphics players.  Fixed.
+		<li>Fix scrolling timing</li>
+		<li>Fix static ip menu</li>
+		<li>Fix warning and cosmetic bug when brightness is set to zero when powered off</li>
+		<li>Make it possible to adjust pitch, treble and bass with a remote. Fix a bug that was causing some warnings if you adjust treble/bass</li>
+		<li>Fix Shooter and SlimTris to work with SqueezeboxG.</li>
+		<li>Fix missing moodlogic icon on bitmapped displays.
+		<li>Found bug where sometimes on non-G players we'd see blank double-high lines where we should see the content.</li>
+		<li>If we're stopped and somebody sends a an unpause command, then let's start playing the current track.
+		<li>Bug 135: Include YEAR when listing ALBUMS for ARTIST. There is a performance hit, so this is a server-formatting setting that is disabled by default
+		<li>Bug 140: Playlist starts at top of list when pressing down to access next song caused by the "now playing (jump back)" screensaver. fix this by staying in "now playing" when jump back is the enabled screensaver.
+		<li>Bug 477: Now playing screensaver scrolling restarts.
+		<li>Bug 513: trim playlist count when viewing the end of the list and tracks are deleted.  also partly fixes Bug 505 by preventing 17 of 16 display.</li>
+		</ul>
+	</li>
+
+	<li>Audio
+		<ul>
+		<li>Fixed volume curve for squeezebox when in fixed-digital mode.  It's not exactly the same as when in variable volume mode, but it's much closer.
+		<li>Fixed pitch control to preserve pitch settings across songs and adjust during a song.
+		<li>Some users are decompressing mp3s to wav. lets check the bitrate limits again before we consider a conversion command valid.</li>
+		<li>M4B files are the same as M4A, so add that content type.</li>
+		</ul>
+	</li>
+
+	<li>File Formats
+		<ul>
+		<li>Escape $ ` and " in file names for playback.  This caused some files with these characters in the file names to not play.
+		<li>Fix a problem using itunes with linux when the music folder is mapped to a windows root.  fold multiple // in path after itunes normalisation.</li>
+		<li>Bug 418: #EXTINFO ignored - Persist the $title variable so that the EXTINFO can be linked to the next line (playlist item) tested and works with stream playlist.  This is linked with Bug 198 and $title may still overrride the ID3.</li>
+		<li>Bug 489: Accepted patch from David Lutz that fixes a problem with FLAC files longer than an hour.</li>
+		<li>Bug 492: Accept patch from Michael the Fallen Angel for handling flac cuesheets.</li>
+		<li>Bug 499: flac cue sheets content type gineg overwritten
+		</ul>
+	</li>
+	
+	<li>Localization and Internationalization
+		<ul>
+			<li>Paulo Mannheimer updated the PT translation.</li>
+			<li>Nicolas Guillemain submitted some French translations.</li>
+			<li>French translation updated by Paul Williamson. 
+		</ul>
+	</li>
+
+	<li>Automation
+		<ul>
+		<li>Fix crasher when d_cli is turned on and you disconnect immediatly after sending commands via CLI.</li>
+		<li>Fix a bad URL in the XML skin. </li>
+		<li>Status.m3u HTTP response was broken.</li>
+		</ul>
+	</li>
+
+	<li>Documentation
+		<ul>
+		<li>Fix missing quote in faq, also sync up with web site.</li>
+		<li>Kevin updated the FAQ with some SP2 specific hints about the new XP firewall.
+		<li>Update docs for INPUT.time for stringHeader param</li>
+		<li>Update remote docs to include auxiliiary functions of ADD and PLAY, etc</li>
+		<li>Update docs to reflect use of Template Toolkit.  Still need to review parameters available to each template.</li>
+		<li>Docs for INPUT.Bar added to help section</li>
+		</ul>
+	</li>
+
+	<li>Developer Issues
+		<ul>
+		<li>Tweak brightness levels.  Add basic font documentation.</li>
+		<li>Update CPAN LWP package.
+		<li>Accepted patch for simplifying the squeezebox.version file format.</li>
+		<li>Adding a default package base for template toolkit plugins - "Plugins::TT" Place any Template Toolkit plugins in the &lt;slimserver&gt;/Plugins/TT directory.</li> Package Namespace is HTML::&lt;skinname&gt;::&lt;PackageName&gt;.</li>
+		<li>Also allow Template Toolkit plugins in the Skin Directories.
+		<li>Cleaned up internal handling of volume, treble, bass and pitch.  They are now client methods rather than a mix of client methods, client prefs and module functions.
+		<li>Add comment stating that filltemplate() is obsolete.</li>
+		<li>Add stringHeader param option for INPUT.Text</li>
+		<li>Remove a bogus assert() from Select.pm</li>
+		<li>Moved client default settings to the client objects for initialization, as some of them are client type specific, especially the font stuff.</li>
+		<li>Created the notion of protocol handlers in Source.pm. These are classes that can be registered to handle specific URL schemes for remote streams. Changed most of the isHTTPURL checks to isRemoteURL. In the long run, the different codepaths for local vs. remote shouldn't exist. There should be handler for file: URLs and more should be pushed into the handler. Moved http: and icy: protocols, including shoutcast metadata handling into a separate registered handler class. Wrote a RadioIO plugin that adds a handler.</li>
+		<li>Added --diag option which gives verbose diagnostic information (use diagnostics;) use sparingly, as it DRAMATICALLY slows down regular expression parsing.</li>
+		</ul>
+	</li>
+
+	<li>Player Firmware
+		<ul>
+		<li>Updated to version 38
+		<li>Fixed a number of potential crashes during setup
+		<li>fix lost contact with server message
+		<li>re-enable ethernet link/activity signals
+		<li>Fix crashes when changing tracks repeatedly.
+		<li>Fix stuck pixels in display
+		<li>accellerate internal graphics copying to make the visualizer run well at high frame rates
+		<li>added client-side support for visualizer a/v synchronization. Some work left to do in the vis application still.
+		<li>fixed possible data corruption in audio and graphics data
+		<li>Fixed problems with missed or duplicate button presses
+		<li>Notify the server more quickly when buffer is full. Synced players should start up faster.
+		<li>Vastly improves UI snappiness. Simplified player protocol to reduce chattiness.  Removed many redundant status messages.
+		<li>Add default firmware version support to server. This should allow folks easy downgrading after this.
+		<li>need to keep slimproto frames even length so they're aligned in memory on the client</li>
+		<li>Bug 495: Move to small text size when forcing upgrade.</li>
+		</ul>
+	</li>
+
+	<li>Performance
+		<ul>
+		<li>Safety check to prevent a crash when a player unexpectedly disconnects.
+		</ul>
+	</li>
+	
+	<li>Misc.
+		<ul>
+		<li>Fix a warning when scanning playlists pointing to streamin stations.</li>
+		<li>Fix a warning when streaming MP3.</li>
+		<li>Fixed a warning when stopping the windows service.
+		<li>Don't crash if you try to access a player settings page for a nonexistant player.
+		<li>Fixed a bug where date strings might cause latin1 characters to appear incorrectly in other places.
+		<li>Bug 258: scan time summary each import hash stores the start time as the value d_info debug lines will include total time for all scans, plues individulal time for each import scan</li>
+		<li>Bug 417: Perl 5.6.0 uses a different syntax for ReuseAddr.</li>
+		<li>Bug 444: Accepted patch for default Cachedir in home directory for non-mac unix systems.</li>
+		<li>Bug 464: can't find itunes playlist with 'Find iTunes Library Automatically' registry check for "my music" was returning "" in one case, cannot replicate. try to check both "my music" and "personal" to try to lessen the effect of this problem</li>
+		<li>Bug 467: clearing of "Artwork" format string not accepted via web interface now Accepts All input, even blank.
+		<li>Bug 468: variable artwork setting interfered with flac cue sheets</li>
+		<li>Bug 474: Multiple problems with INPUT.Text fixes display of right arrow in graphics module. makes use of variable display widths to control scrolling</li>
+		<li>Bug 476: slimserver 5.3.0b1 text size control inverted	textSize got inverted for character module.
+		<li>Bug 489: fix typo from patching
+		<li>Bug 508: blank lines when popping back from an INPUT.List mode settings, snow and search push straight into INPUT.List, and need to pop through when exiting the input mode. PopModeRight shoudl be done in the exit handler, so only popMode is needed in setMode.</li>
+		<li>Bug 514: problems entering search text Search now uses INPUT.Text mode for common entry style
+		<li>Bug 514: Text input issues set lastLetterTime = 0 on pressing right, so that character toggle is reset to the start for each new char.</li>
+		<li>Bug 514: reset button timer to reset character cycle on backspace</li>
+		<li>Bug 530: prevent a crash when there is an unexpected exit from INPUT.Text while the nextChar timer is still active</li>
+		<li>Bug 539: kill existing animations when a new song is opened.</li>
+		<li>Bug 540: rework animation in places where the new line parsing is needed.</li>
+		</ul>
+	<li>
+</ul>
+
+
+
+
+
+
 <h2><a name="v5.3.0b1" id="v5.3.0b1"></a>Version 5.3.0b1 - 2004-08-03</h2>
 <ul>
 	<li>Added support for Squeezebox with a 280x16 graphical display:
@@ -236,7 +431,6 @@
 			<li>fix lists and sorting created by 'ALL_ALBUMS' and/or 'ALL_SONGS' while browsing using the remote.
 		</ul>
 	</li>
-	
 	<li>iTunes Support
 		<ul>
 			<li>Added a server setting to allow folks to set the minimum wait time between iTunes library importing.  The default is (and was) 60.
