@@ -1494,7 +1494,7 @@ sub search {
 
 	my $player = $params->{'player'};
 	my $query  = $params->{'query'};
-	my $type   = $params->{'type'} || 'song';
+	my $type   = $params->{'type'} || 'track';
 	my $results;
 	my $descend = 'true';
 
@@ -1521,7 +1521,7 @@ sub search {
 
 		$results = $ds->find('album', { "album.title" => $searchStrings }, 'album');
 
-	} elsif ($type eq 'song') {
+	} elsif ($type eq 'track') {
 
 		my $sortBy = 'title';
 		my %find   = ();
@@ -1546,7 +1546,7 @@ sub _fillInSearchResults {
 
 	my $player = $params->{'player'};
 	my $query  = $params->{'query'}  || '';
-	my $type   = $params->{'type'}   || 'song';
+	my $type   = $params->{'type'}   || 'track';
 
 	my $otherParams = 'player=' . Slim::Web::HTTP::escape($player) . 
 			  '&type=' . ($type ? $type : ''). 
