@@ -450,6 +450,9 @@ sub getFunctions {
     \%functions;
 }
 
+sub strings {
+	return '';
+}
 
 1;
 
