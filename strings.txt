@@ -7644,6 +7644,15 @@ LCMUTED
 	PT	silencioso
 	SE	tyst
 
+ADVANCEDSEARCH
+	DE	Vorgerückt Suchen
+	EN	Advanced Search
+	ES	Búsqueda Avanzada
+	FR	Recherche Avançée
+	IT	Ricerca Avanzata
+	JP	高度の調査
+	PT	Busca Avançada
+
 SEARCH
 	DE	Suchen
 	DK	Søg efter musik
@@ -8484,11 +8493,68 @@ INFORMATION_DATE_FORMAT
 	JP	${shortdateFormat}  ${timeFormat}
 	NO	${shortdateFormat} kl ${timeFormat}
 
+BEFORE
+	DE	vorher
+	EN	before
+	ES	antes
+	FR	avant
+	IT	prima
+	JP	前に
+
+AFTER
+	DE	nach
+	EN	after
+	ES	después
+	FR	après
+	IT	dopo
+	JP	後
+
+IS
+	DE	ist
+	EN	is
+	ES	de
+	FR	est
+	IT	è
+	JP	ある
+
+EQUALS
+	DE	gleichgestellte
+	EN	equals
+	ES	están los iguales
+	FR	les égales moins
+	IT	uguali
+	JP	同輩
+
+LESSTHAN
+	DE	kleiner als
+	EN	less than
+	ES	menos que
+	FR	que plus
+	IT	meno più
+	JP	より少しより
+
+GREATERTHAN
+	DE	grösser als
+	EN	greater than
+	ES	mayores que
+	FR	grandes que
+	IT	grandi di
+	JP	大きいより
+
+NOT
+	DE	nicht
+	EN	not
+	ES	no
+	FR	non
+	IT	non
+	JP	ない
+	SE	inte
+
 COLON
 	DE	:
 	EN	: 
 	ES	:
-	FR	 : 
+	FR	: 
 	JP	:
 	NO	:
 	SE	: 
@@ -8497,3 +8563,4 @@ SETUP_GROUP_RADIO_DESC
 	DE	SlimServer unterstützt Internet Radio durch verschiedene Radiostationen. Sie können auf dieser Seite diese Unterstützung für einige Anbieter konfigurieren, inklusive der Angabe von Benutzername und Passwort für Premium-Zugänge.
 	EN	SlimServer includes support for Internet Radio through several radio providers. You can configure support for some of these providers, including entering your username and password for premium access, on this page. To save your changes, click Change.
 	ES	Slimserver incluye soporte para Radios de Internet de varios proveedores de radio. Se puede configurar el soporte para algunos de estos proveedodes, incluyendo el ingreso de usuario y contraseña para servicios Premium, en esta página. Para guardar los cambio, haga click en Cambiar.
+	JP	SlimServer は複数の無線の提供者を通してインターネ ットのラジオのためのサポートを含んでいる。あなたはこのペー ジの優れたアクセスのためのあなたのusername そしてパスワード を, 入れることを含むこれらの提供者のいくつかのためのサポー トを, 形成できる。あなたの変更を救うため, かちりと言う音の 変更。

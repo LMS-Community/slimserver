@@ -116,7 +116,7 @@ sub init {
 		qr/^index\.(?:htm|xml)/		=> \&Slim::Web::Pages::home,
 		qr/^browseid3\.(?:htm|xml)/	=> \&Slim::Web::Pages::browseid3,
 		qr/^browsedb\.(?:htm|xml)/	=> \&Slim::Web::Pages::browsedb,
-		qr/^browse\.(?:htm|xml)/		=> \&Slim::Web::Pages::browser,
+		qr/^browse\.(?:htm|xml)/	=> \&Slim::Web::Pages::browser,
 		qr/^edit_playlist\.(?:htm|xml)/	=> \&Slim::Web::EditPlaylist::editplaylist,  # Needs to be before playlist
 		qr/^firmware\.(?:html|xml)/	=> \&Slim::Web::Pages::firmware,
 		qr/^hitlist\.(?:htm|xml)/	=> \&Slim::Web::History::hitlist,
@@ -126,12 +126,14 @@ sub init {
 		qr/^olsondetail\.(?:htm|xml)/	=> \&Slim::Web::Olson::olsondetail,
 		qr/^olsonmain\.(?:htm|xml)/	=> \&Slim::Web::Olson::olsonmain,
 		qr/^playlist\.(?:htm|xml)/	=> \&Slim::Web::Pages::playlist,
-		qr/^search\.(?:htm|xml)/		=> \&Slim::Web::Pages::search,
+		qr/^search\.(?:htm|xml)/	=> \&Slim::Web::Pages::search,
+		qr/^advanced_search\.(?:htm|xml)/ => \&Slim::Web::Pages::advancedSearch,
 		qr/^songinfo\.(?:htm|xml)/	=> \&Slim::Web::Pages::songInfo,
 		qr/^status_header\.(?:htm|xml)/	=> \&Slim::Web::Pages::status_header,
-		qr/^status\.(?:htm|xml)/		=> \&Slim::Web::Pages::status,
+		qr/^status\.(?:htm|xml)/	=> \&Slim::Web::Pages::status,
 		qr/^setup\.(?:htm|xml)/		=> \&Slim::Web::Setup::setup_HTTP,
 		qr/^update_firmware\.(?:htm|xml)/ => \&Slim::Web::Pages::update_firmware,
+		qr/^livesearch\.(?:htm|xml)/    => \&Slim::Web::Pages::livesearch,
 	);
 
 	# pull in the memory usage module if requested.

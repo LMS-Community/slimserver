@@ -2,6 +2,7 @@
 [% pageicon = 'Search' %]
 [% bodyscript = 'onload="document.searchForm.query.focus();"' %]
 [% PROCESS pageheader.html %]
+<script type="text/javascript"> liveSearchInit(); </script>
 <TR height="44"> 
   <TD width="4" height="44"><IMG SRC="html/images/spacer.gif" WIDTH=8 HEIGHT=39 ALT=""></TD>
 				<td valign="top" class="medgrey" height="44">
@@ -14,7 +15,7 @@
 						<tr>
 							<td width="8"><img src="html/images/spacer.gif" width=8 height=8 alt=""></td>
 							
-        <td class="exlisting" valign=top><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / <a href="search.html?player=[% player | uri %]&type=[% type %]">[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</a></td>
+        <td class="exlisting" valign=top><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / <a href="search.html?player=[% player | uri %]">[% "SEARCH" | string %]</a></td>
 							<td width="4"></td>
 						</tr>
 						<tr height="5">
@@ -32,18 +33,31 @@
 				
   <td valign="top" height="100%"> 
     <p>&nbsp;</p>
-    <form name="searchForm" method="get" action="search.html">
-      [% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %][% "COLON" | string %]
-      <input type=text class="stdedit" name="query" value="[% query %]" size=40>
-      <input name="submit" type=submit class="stdclick" value=[% "SEARCH" | string %]>
-      <input type=hidden value="[% type %]" name="type">
-      <input type=hidden value="[% player %]" name="player">
-    </form>
+	[% IF liveSearch %]
+
+	<form id="searchForm" name="searchForm" method="GET" action="livesearch.html">
+		<input type="text" id="livesearch" name="query" size="40" autocomplete="off" onkeypress="liveSearchStart()" />
+
+	[% ELSE %]
+
+	<form id="searchForm" name="searchForm" method="GET" action="livesearch.html">
+		<input type="text" id="livesearch" name="query" size="40" value="[% query %]"/>
+
+	[% END %]
+
+		<input name="submit" type=submit class="stdclick" value=[% "SEARCH" | string %]><p>
+		<input type="hidden" value="1" name="manualSearch">
+		<input type="hidden" value="[% player %]" name="player">
+		<!-- <div id="LSResult" style="display: none;"><ul id="LSShadow"><li>&#160;</li></ul></div> -->
+	</form>
+	<br>
+		<div id="LSResult" style="display: none;"></div>
+
+		[% IF searchError %]
+			[% searchError %]
+		[% END %]
+
     <p></p>
-    <p>[% IF numresults != '-1' %]</p>
-    <hr>
-    <p>[% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %][% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %][% IF type == 'song' %][% "SONGSMATCHING" | string %][% END %] "[% query %]"[% "COLON" | string %][% numresults %]</p>
-    <p>[% END %]</p>
     [% IF searchlist_pagebar %]
     <p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
     [% END %][% IF searchlist_header %]

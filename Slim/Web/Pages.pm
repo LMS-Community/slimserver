@@ -9,8 +9,11 @@ package Slim::Web::Pages;
 
 use strict;
 
+use Date::Parse qw(str2time);
 use File::Spec::Functions qw(:ALL);
 use POSIX ();
+
+use Slim::Music::LiveSearch;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -413,9 +416,11 @@ sub home {
 	}
 
 	if (!exists $additionalLinks{"search"}) {
-		addLinks("search",{'SEARCHFOR_ARTIST' => "search.html?type=artist"});
-		addLinks("search",{'SEARCHFOR_ALBUM' => "search.html?type=album"});
-		addLinks("search",{'SEARCHFOR_SONGTITLE' => "search.html?type=song"});
+		addLinks("search", {'SEARCH' => "livesearch.html"});
+		addLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
+		#addLinks("search",{'SEARCHFOR_ARTIST' => "search.html?type=artist"});
+		#addLinks("search",{'SEARCHFOR_ALBUM' => "search.html?type=album"});
+		#addLinks("search",{'SEARCHFOR_SONGTITLE' => "search.html?type=song"});
 	}
 
 	if (!exists $additionalLinks{"help"}) {
@@ -1285,11 +1290,157 @@ sub memory_usage {
 	}
 }
 
-sub search {
+sub livesearch {
 	my ($client, $params) = @_;
 
+	my $player = $params->{'player'};
+	my $query  = $params->{'query'};
+
+	# set some defaults for the template
 	$params->{'browse_list'} = " ";
 	$params->{'numresults'}  = -1;
+	$params->{'liveSearch'}  = 1;
+
+	# short circuit
+	unless ($query) {
+		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
+	}
+
+	return unless length($query) > 2;
+
+	my $data = Slim::Music::LiveSearch->query($query);
+
+	# The user has hit enter, or has a browser that can't handle the javascript.
+	if ($params->{'manualSearch'}) {
+
+		# Tell the template not to do a livesearch request anymore.
+		$params->{'liveSearch'} = 0;
+
+		for my $item (@$data) {
+
+			$params->{'type'} = $item->[0];
+
+			_fillInSearchResults($params, $item->[1], undef, []);
+		}
+
+		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
+	}
+
+	# do it live - and send back the div
+	return Slim::Music::LiveSearch->renderAsXML($query, $data, $player);
+}
+
+sub advancedSearch {
+	my ($client, $params) = @_;
+
+	my $player  = $params->{'player'};
+	my %query   = ();
+	my @qstring = ();
+	my $ds      = Slim::Music::Info::getCurrentDataStore();
+
+	# template defaults
+	$params->{'browse_list'} = " ";
+	$params->{'numresults'}  = -1;
+	$params->{'liveSearch'}  = 0;
+
+	# Prep the date format
+	$params->{'dateFormat'} = Slim::Utils::Misc::shortDateF();
+
+	# Check for valid search terms
+	for my $key (keys %$params) {
+		
+		next unless $key =~ /^search\.(\S+)/;
+		next unless $params->{$key};
+
+		my $newKey = $1;
+
+		# Stuff the requested item back into the params hash, under
+		# the special "search" hash. Because Template Toolkit uses '.'
+		# as a delimiter for hash access.
+		$params->{'search'}->{$newKey}->{'value'} = $params->{$key};
+
+		# Apply the logical operator to the item in question.
+		if ($key =~ /\.op$/) {
+
+			my $op = $params->{$key};
+
+			$key    =~ s/\.op$//;
+			$newKey =~ s/\.op$//;
+
+			next unless $params->{$key};
+
+			# Do the same for 'op's
+			$params->{'search'}->{$newKey}->{'op'} = $params->{$key};
+
+			# add these onto the query string. kinda jankey.
+			push @qstring, join('=', "$key.op", $op);
+			push @qstring, join('=', $key, $params->{$key});
+
+			# Bitrate needs to changed a bit
+			if ($key =~ /bitrate$/) {
+				$params->{$key} *= 100;
+			}
+
+			# Duration is also special
+			if ($key =~ /age$/) {
+				$params->{$key} = str2time($params->{$key});
+			}
+
+			# Map the type to the query
+			# This will be handed to SQL::Abstract
+			$query{$newKey} = { $op => $params->{$key} };
+
+			delete $params->{$key};
+
+			next;
+		}
+
+		# Append to the query string
+		push @qstring, join('=', $key, Slim::Web::HTTP::escape($params->{$key}));
+
+		# Normalize the string queries
+		# 
+		# Turn the track_title into track.title for the query.
+		# We need the _'s in the form, because . means hash key.
+		if ($newKey =~ s/_(title|name)$/\.$1/) {
+
+			$params->{$key} = searchStringSplit($params->{$key});
+		}
+
+		$query{$newKey} = $params->{$key};
+	}
+
+	# Turn our conversion list into a nice type => name hash.
+	my %types  = ();
+
+	for my $type (keys %{ Slim::Player::Source::Conversions() }) {
+
+		$type = (split /-/, $type)[0];
+
+		$types{$type} = string($type);
+	}
+
+	$params->{'fileTypes'} = \%types;
+
+	# load up the genres we know about.
+	$params->{'genres'}    = $ds->find('genre', {}, 'genre');
+
+	# short-circuit the query
+	if (scalar keys %query == 0) {
+
+		return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
+	}
+
+	# Do the actual search
+	my $results = $ds->find('track', \%query, 'title');
+
+	_fillInSearchResults($params, $results, undef, \@qstring);
+
+	return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
+}
+
+sub search {
+	my ($client, $params) = @_;
 
 	my $player = $params->{'player'};
 	my $query  = $params->{'query'};
@@ -1297,16 +1448,17 @@ sub search {
 	my $results;
 	my $descend = 'true';
 
+	# template defaults
+	$params->{'browse_list'} = " ";
+	$params->{'numresults'}  = -1;
+	$params->{'liveSearch'}  = 0;
+
 	# short circuit
 	unless ($query) {
 		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
 	}
 
 	my $ds = Slim::Music::Info::getCurrentDataStore();
-
-	my $otherparams = 'player=' . Slim::Web::HTTP::escape($player) . 
-			  '&type=' . ($type ? $type : ''). 
-			  '&query=' . Slim::Web::HTTP::escape($params->{'query'}) . '&';
 
 	my $searchStrings = searchStringSplit($query, $params->{'searchSubString'});
 
@@ -1332,6 +1484,28 @@ sub search {
 
 		$descend = undef;
 	}
+
+	_fillInSearchResults($params, $results, $descend, []);
+
+	return Slim::Web::HTTP::filltemplatefile("search.html", $params);
+}
+
+sub _fillInSearchResults {
+	my ($params, $results, $descend, $qstring) = @_;
+
+	my $player = $params->{'player'};
+	my $query  = $params->{'query'}  || '';
+	my $type   = $params->{'type'}   || 'song';
+
+	my $otherParams = 'player=' . Slim::Web::HTTP::escape($player) . 
+			  '&type=' . ($type ? $type : ''). 
+			  '&query=' . Slim::Web::HTTP::escape($query) . '&' .
+			  join('&', @$qstring);
+
+	# set some defaults for the template
+	$params->{'browse_list'} = " ";
+	$params->{'numresults'}  = -1;
+	$params->{'liveSearch'}  = 0;
 
 	# Make sure that we have something to show.
 	if (defined $results && ref($results) eq 'ARRAY') {
@@ -1360,7 +1534,7 @@ sub search {
 				$params->{'numresults'},
 				$params->{'path'},
 				0,
-				$otherparams,
+				$otherParams,
 				\$params->{'start'},
 				\$params->{'searchlist_header'},
 				\$params->{'searchlist_pagebar'},
@@ -1385,6 +1559,7 @@ sub search {
 			if ($type eq 'song') {
 
 				$list_form{'title'} = Slim::Music::Info::standardTitle(undef, $item);
+				$list_form{'item'}  = $item->id();
 				$list_form{'itempath'} = $item->url();
 
 			} else {
@@ -1405,7 +1580,7 @@ sub search {
 
 			$itemnumber++;
 
-			my $anchor = anchor(Slim::Utils::Text::getSortName($title), 1);
+			my $anchor = anchor(Slim::Utils::Text::getSortName($title), 1) || '';
 
 			if ($lastAnchor ne $anchor) {
 				$list_form{'anchor'} = $lastAnchor = $anchor;
@@ -1414,8 +1589,6 @@ sub search {
 			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
 		}
 	}
-
-	return Slim::Web::HTTP::filltemplatefile("search.html", $params);
 }
 
 sub _addSongInfo {
@@ -2115,7 +2288,9 @@ sub searchStringSplit {
 	
 	my @strings = ();
 
-	for my $string (split(/\s+/, $search)) {
+	# Don't split - causes an explict AND, which is what we want.. I think.
+	#for my $string (split(/\s+/, $search)) {
+	my $string = $search;
 
 		if ($searchSubString) {
 
@@ -2125,7 +2300,7 @@ sub searchStringSplit {
 
 			push @strings, [ "$string\*", "\* $string\*" ];
 		}
-	}
+	#}
 
 	return \@strings;
 }
