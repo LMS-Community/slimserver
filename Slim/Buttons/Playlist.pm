@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.15 2003/12/05 04:54:30 kdf Exp $
+# $Id: Playlist.pm,v 1.16 2003/12/05 05:12:54 kdf Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -233,8 +233,8 @@ sub currentSongLines {
 		} 
 		$line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
 		$overlay2 = Slim::Hardware::VFD::symbol('notesymbol');
+		($line1,$line2, $overlay1, $overlay2) = nowPlayingModeLines($client, $line1, $line2, $overlay1, $overlay2);
 	}
-	($line1,$line2, $overlay1, $overlay2) = nowPlayingModeLines($client, $line1, $line2, $overlay1, $overlay2);
 	return ($line1, $line2, $overlay1, $overlay2);
 }
 
