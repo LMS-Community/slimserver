@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.124 2004/08/06 04:16:43 kdf Exp $
+# $Id: strings.txt,v 1.125 2004/08/27 23:54:53 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -990,6 +990,32 @@ SETUP_GROUP_XPL_DESC
 	FR	Ces réglages permettent de paramétrer le protocole xPL.
 	NO	Dette er innstillinger for xPL-protokollen
 	SE	Detta är inställningar för xPL-protokollet
+
+SETUP_DOUBLESIZE
+	DE	Textgröße
+	DK	Tekststørrelse
+	EN	Text Size
+	ES	Tamaño de texto
+	FI	Tekstin koko
+	FR	Taille du texte
+	NL	Tekstgrootte
+	NO	Tekststørrelse
+	PT	Tamanho do Texto
+	SE	Textstorlek
+
+SETUP_DOUBLESIZE_DESC
+	EN	Choose the size of text for player display
+
+SETUP_OFFDISPLAYSIZE
+	DE	Textgrösse im Standby Modus
+	EN	Standby Text Size
+	FR	Taille du texte en veille
+	NO	Tekststørrelse i standby modus
+	PT	Tamanho do Texto ao Desligar
+	SE	Textstorlek i standby-läge
+
+SETUP_OFFDISPLAYSIZE_DESC
+	EN	Choose the size(font) of text for player when it is in 'off' or 'standby' mode.
 
 SETUP_SCROLLPAUSE
 	DE	Pause vor dem Scrollen
@@ -2086,6 +2112,13 @@ SETUP_INSTANTMIXMAX_DESC
 	FR	Spécifiez le nombre maximum de morceaux que vous souhaitez voir apparaitre dans un Mix instantané. Les Mixes instantanés peuvent comporter un nombre inférieur de morceaux en fonction du réglage Variété.
 	NO	Dette er maks antall sanger som du vil ha i spillelister laget som en hurtigmiks. Hurtigmikser kan ha færre sanger, alt etter Variasjons instillinger.
 	SE	Detta är det maximala antalet låtar som du vill att en "Instant Mix"-låtlista ska innehålla. (Låtlistan kan innehålla färre låtar, beroende på Variation-inställning.) 
+
+SETUP_VARIETYCOMBO_DBL
+	DE	Variety
+	EN	Variety
+	FR	Variété
+	NO	Variasjon
+	SE	Variation
 
 SETUP_VARIETYCOMBO
 	DE	Moodlogic Variety

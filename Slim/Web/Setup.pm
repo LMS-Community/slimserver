@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.91 2004/08/06 04:16:51 kdf Exp $
+# $Id: Setup.pm,v 1.92 2004/08/27 23:54:54 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -425,6 +425,11 @@ sub initSetupConfig {
 				my $playlistRef = playlists();
 				$pageref->{'Prefs'}{'alarmplaylist'}{'options'} = $playlistRef;
 				$pageref->{'Prefs'}{'alarmplaylist'}{'validateArgs'} = [$playlistRef];
+				my @text = (0..$client->maxTextSize);
+				$pageref->{'Prefs'}{'doublesize'}{'validateArgs'} = \@text;
+				$pageref->{'Prefs'}{'doublesize'}{'options'} = fonts($client);
+				$pageref->{'Prefs'}{'offDisplaySize'}{'validateArgs'} = \@text;
+				$pageref->{'Prefs'}{'offDisplaySize'}{'options'} = fonts($client);
 				if (scalar(keys %{Slim::Buttons::Common::hash_of_savers()}) > 0) {
 					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[7] = 'screensaver';
 					$pageref->{'Prefs'}{'screensaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
@@ -474,7 +479,7 @@ sub initSetupConfig {
 		# if more than one ir map exists the undef will be replaced by 'Default'
 		,'Groups' => {
 			'Default' => {
-				'PrefOrder' => ['autobrightness','screensavertimeout','scrollPause','scrollPauseDouble','scrollRate','scrollRateDouble']
+				'PrefOrder' => ['autobrightness','doublesize','offDisplaySize','screensavertimeout','scrollPause','scrollPauseDouble','scrollRate','scrollRateDouble']
 			}
 			,'AlarmClock' => {
 				'PrefOrder' => ['alarm','alarmtime','alarmvolume','alarmplaylist']
@@ -518,6 +523,21 @@ sub initSetupConfig {
 			'screensavertimeout' => {
 				'validate' => \&validateNumber
 				,'validateArgs' => [0,undef,1]
+			},
+			'doublesize' => {
+				'validate' => \&validateInList
+				,'validateArgs' => undef
+				,'options' => undef
+				,'currentValue' => sub { shift->textSize();}
+				,'onChange' => sub { 
+									my ($client,$changeref,$paramref,$pageref) = @_;
+									$client->textSize($changeref->{'textsize'}{'new'});
+						}
+			},
+			'offDisplaySize' => {
+				'validate' => \&validateInList
+				,'validateArgs' => undef
+				,'options' => undef
 			},
 			'autobrightness' => {
 				'validate' => \&validateTrueFalse  
@@ -570,21 +590,21 @@ sub initSetupConfig {
 						my $timestring = ((defined($p) && $h0 == 0) ? ' ' : $h0) . $h1 . ":" . $m0 . $m1 . " " . (defined($p) ? $p : '');
 						return $timestring;
 					}
-					,'onChange' => sub {
-							my ($client,$changeref,$paramref,$pageref) = @_;
-							my $time = $changeref->{'alarmtime'}{'new'};
-							my $newtime = 0;
-							$time =~ s{
-								^(0?[0-9]|1[0-9]|2[0-4]):([0-5][0-9])\s*(P|PM|A|AM)?$
-							}{
-								if (defined $3) {
-									$newtime = ($1 == 12?0:$1 * 60 * 60) + ($2 * 60) + ($3 =~ /P/?12 * 60 * 60:0);
-								} else {
-									$newtime = ($1 * 60 * 60) + ($2 * 60);
-								}
-							}iegsx;
-							Slim::Utils::Prefs::clientSet($client,'alarmtime',$newtime);
-						}
+				,'onChange' => sub {
+						my ($client,$changeref,$paramref,$pageref) = @_;
+						my $time = $changeref->{'alarmtime'}{'new'};
+						my $newtime = 0;
+						$time =~ s{
+							^(0?[0-9]|1[0-9]|2[0-4]):([0-5][0-9])\s*(P|PM|A|AM)?$
+						}{
+							if (defined $3) {
+								$newtime = ($1 == 12?0:$1 * 60 * 60) + ($2 * 60) + ($3 =~ /P/?12 * 60 * 60:0);
+							} else {
+								$newtime = ($1 * 60 * 60) + ($2 * 60);
+							}
+						}iegsx;
+						Slim::Utils::Prefs::clientSet($client,'alarmtime',$newtime);
+					}
 			},
 			'alarmvolume'	=> {
 				'validate' => \&validateNumber
@@ -2177,6 +2197,18 @@ sub removeExtraArrayEntries {
 		}
 	}
 }
+
+sub fonts {
+	my $client = shift;
+	my %fonts_hash;
+	my $i=0;
+	for ($i=0; $i<=$client->maxTextSize; $i++) {
+		my $fontname = ${$client->fonts($i)}[1];
+		$fontname =~ s/(\.2)?//g;
+		$fonts_hash{$i} = Slim::Utils::Strings::stringExists($fontname) ? string($fontname) : $fontname;
+	}
+	return \%fonts_hash;
+};
 
 sub playlists {
 	my %list_hash;

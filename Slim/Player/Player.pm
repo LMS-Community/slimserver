@@ -8,7 +8,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.23 2004/08/25 23:24:45 dean Exp $
+# $Id: Player.pm,v 1.24 2004/08/27 23:54:54 kdf Exp $
 #
 package Slim::Player::Player;
 use strict;
@@ -130,7 +130,8 @@ sub minBass {	return 0; }
 
 sub fonts {
 	my $client = shift;
-	my $size = shift || $client->textSize();
+	my $size = shift;
+	unless (defined $size) {$size = $client->textSize();}
 	return $fonttable[$size];
 }
 

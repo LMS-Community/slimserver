@@ -1,6 +1,6 @@
 package Slim::Player::SqueezeboxG;
 
-# $Id: SqueezeboxG.pm,v 1.9 2004/08/27 21:53:56 sadams Exp $
+# $Id: SqueezeboxG.pm,v 1.10 2004/08/27 23:54:54 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -260,7 +260,8 @@ sub parseLines {
 
 sub fonts {
 	my $client = shift;
-	my $size = shift || $client->textSize();
+	my $size = shift;
+	unless (defined $size) {$size = $client->textSize();}
 	return $fonttable[$size];
 }
 	

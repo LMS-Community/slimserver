@@ -1,5 +1,5 @@
 package Slim::Buttons::VarietyCombo;
-#$Id: VarietyCombo.pm,v 1.5 2004/08/03 17:29:11 vidur Exp $
+#$Id: VarietyCombo.pm,v 1.6 2004/08/27 23:54:53 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -113,7 +113,7 @@ sub lines {
 	my $variety = Slim::Utils::Prefs::get('varietyCombo');
 	my $level = int($variety / 100 * 40);
 	
-	$line1 = string('SETUP_VARIETYCOMBO');
+	$line1 = $client->linesPerScreen() == 2 ? string('SETUP_VARIETYCOMBO') : string('SETUP_VARIETYCOMBO_DBL');
 	$line1 .= " (".$variety.")";
 
 	$line2 = Slim::Display::Display::progressBar($client, $client->displayWidth(), $level / 40);
