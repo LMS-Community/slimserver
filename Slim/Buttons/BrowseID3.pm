@@ -700,9 +700,16 @@ sub lines {
 
 			$line2 = Slim::Music::Info::standardTitle($client, $obj);
 
-			if ($obj->moodlogic_mixable() || $obj->musicmagic_mixable()) {
+			if (defined $obj && ref $obj) {
 
-				$overlay1 = Slim::Display::Display::symbol('mixable');
+				if ($obj->moodlogic_mixable() || $obj->musicmagic_mixable()) {
+
+					$overlay1 = Slim::Display::Display::symbol('mixable');
+				}
+
+			} else {
+
+				Slim::Utils::Misc::msg("Couldn't get object for url: [$line]\n");
 			}
 
 			$overlay2 = Slim::Display::Display::symbol('notesymbol');
