@@ -48,8 +48,8 @@ sub setMode {
 	if (!defined($menuSelection{$client})) { $menuSelection{$client} = 0; };
 	$client->lines(\&lines);
 	#get previous alarm time or set a default
-	my $time = Slim::Utils::Prefs::get($client, "rescan-time");
-	if (!defined($time)) { Slim::Utils::Prefs::set($client, "rescan-time", 9 * 60 * 60 ); }
+	my $time = Slim::Utils::Prefs::get("rescan-time");
+	if (!defined($time)) { Slim::Utils::Prefs::set("rescan-time", 9 * 60 * 60 ); }
 
 }
 
