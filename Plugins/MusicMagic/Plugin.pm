@@ -139,7 +139,7 @@ sub initPlugin {
 		$http->close();
 
 		# Note: Check version restrictions if any
-		$initialized = 1;
+		$initialized = $content;
 
 		checker();
 
@@ -616,8 +616,8 @@ sub exportFunction {
 		}
 		
 		# skipping to done here.  Duplicates currently crash the linux version of MusicMagic.
-		#$export = 'duplicates';
-		#return 1;
+		$export = 'duplicates' if ($initialized !~ m/1\.1\.3$/);
+		return 1;
 	}
 	
 	if ($export eq 'duplicates') {
