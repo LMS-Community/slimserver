@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.96 2004/04/18 18:13:43 dean Exp $
+# $Id: Info.pm,v 1.97 2004/04/19 09:05:31 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2332,15 +2332,15 @@ sub readCoverArtFiles {
 	my %nameslist = map { $_ => [do { my $t=$_; map { "$t.$_" } @ext }] } @names ;
 	
 	if ($image eq 'thumb') {
-		if (Slim::Utils::Prefs::get('coverThumb')) {
-			$artwork = Slim::Utils::Prefs::get('coverThumb');
-		}
 		@filestotry = map { @{$nameslist{$_}} } qw(thumb albumartsmall cover folder album);
+		if (Slim::Utils::Prefs::get('coverThumb')) {
+			$ artwork = Slim::Utils::Prefs::get('coverThumb');
+		}
 	} else {
+		@filestotry = map { @{$nameslist{$_}} } qw(cover folder album thumb albumartsmall);
 		if (Slim::Utils::Prefs::get('coverArt')) {
 			$artwork = Slim::Utils::Prefs::get('coverArt');
 		}
-		@filestotry = map { @{$nameslist{$_}} } qw(cover folder album thumb albumartsmall);
 	}
 	if (defined $artwork && $artwork =~ /^%(.*?)(\..*?){0,1}$/) {
 		my $suffix = $2 ? $2 : ".jpg";
@@ -2359,6 +2359,8 @@ sub readCoverArtFiles {
 			$lastFile{$image} = $artpath;
 			return ($body, $contenttype, $artpath);
 		}
+	} else {
+		unshift @filestotry,$artwork;
 	}
 
 	if (defined $artworkDir && $artworkDir eq catdir(@components)) {
