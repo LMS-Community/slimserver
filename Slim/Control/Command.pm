@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.46 2004/09/22 02:51:27 kdf Exp $
+# $Id: Command.pm,v 1.47 2004/10/07 21:40:07 grotus Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -680,7 +680,7 @@ sub execute {
 			}
 		} elsif ($p0 eq "button") {
 			# all buttons now go through execute()
-			Slim::Hardware::IR::executeButton($client, $p1, $p2);
+			Slim::Hardware::IR::executeButton($client, $p1, $p2, undef, defined($p3) ? $p3 : 1);
 		} elsif ($p0 eq "ir") {
 			# all ir signals go through execute()
 			Slim::Hardware::IR::processIR($client, $p1, $p2);
