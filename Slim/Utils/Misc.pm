@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.4 2003/07/30 00:45:35 sadams Exp $
+# $Id: Misc.pm,v 1.5 2003/07/30 18:22:47 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -502,22 +502,46 @@ sub assert {
 	my $exp = shift;
 	defined($exp) && $exp && return;
 
-	msg("Assertion failed: " && bt());
-	exit();
+	msg("OOPS! An error has occurred in the Slim Server which may cause \n");
+	msg("incorrect behvior or an eventual crash. The information below\n");
+	msg("indicates where the error occurred. For help, please contact\n"); 
+	msg("support\@slimdevices.com, and include the following error message:\n");
+	bt();
 }
 
 sub bt {
         my $frame = 1;
 
-        my $msg = "Backtrace:\n";
+        my $msg = "Backtrace:\n\n";
+
+	my $assertfile = '';
+	my $assertline = 0;
 
         while( my ($package, $filename, $line, $subroutine, $hasargs, 
 		$wantarray, $evaltext, $is_require) = caller($frame++) ) {
                 
-                $msg .= sprintf("   frame %d: $subroutine ($filename line $line)\n", $frame - 2);
+                $msg.=sprintf("   frame %d: $subroutine ($filename line $line)\n", $frame - 2);
+		if ($subroutine=~/assert$/) {
+			$assertfile = $filename;
+			$assertline = $line;			
+		}
         }
         
-	msg($msg);
+	if ($assertfile) {
+		open SRC, $assertfile;
+		my $line;
+		my $line_n=0;
+		$msg.="\nHere's the problem. $assertfile, line $assertline:\n\n";
+		while ($line=<SRC>) {
+			$line_n++;
+			if (abs($assertline-$line_n) <=10) {
+				$msg.="$line_n\t$line";
+			}
+		}
+	}
+	$msg.="\n";
+
+	&msg($msg);
 }
 
 sub watchDog {
