@@ -575,7 +575,7 @@ sub scanFunction {
 			}
 			
 			if ($url && !defined($type)) {
-				$type = Slim::Music::Info::typeFromPath($url, 'mp3');
+				$type = Slim::Music::Info::typeFromPath($url);
 			}
 
 			if ($url && (Slim::Music::Info::isSong($url, $type) || Slim::Music::Info::isHTTPURL($url))) {
