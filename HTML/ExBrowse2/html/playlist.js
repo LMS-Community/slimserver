@@ -295,10 +295,12 @@ function doSave() {
 }
 
 function doDownload() {
+	if (controlLockout) return;
 	document.location.href = "/playlist.m3u?player=" + currentPlayer; 
 }
 
 function doClear() {
+	if (controlLockout) return;
 	listbox = document.getElementById("playlist");
 	displayCurrentSong("", "", "");
 	playlistNames = new Array();

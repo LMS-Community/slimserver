@@ -102,19 +102,22 @@ function loadCookie() {
 
 	if (begin >= 0) { 
 		var end = dc.indexOf(";", begin);
-		if (end == -1) {
-			end = dc.length;
+		if (end == -1) { end = dc.length;
 		}
 		var cookie = unescape(dc.substring(begin + prefix.length, end));
 		var delim = cookie.indexOf("/");
 		if (delim > 0) {
+			browseind = 0;
+			searchind = 0;
 			browseind = cookie.substring(0, delim) * 1;
 			searchind = cookie.substring(delim + 1, cookie.length) * 1;
-			document.getElementById("browsemode").selectedIndex = browseind;
-			document.getElementById("searchmode").selectedIndex = searchind;
+			try {
+				document.getElementById("browsemode").selectedIndex = browseind;
+				document.getElementById("searchmode").selectedIndex = searchind;
+			} catch(e) {
+			}
 		}
 	}
-
 	gobrowseindex(browseind, searchind);
 
 }
@@ -130,10 +133,9 @@ function resetcookie() {
 }
 
 function gobrowseindex(browseind, searchind) {
-	dest = document.getElementById("browsemode").options[browseind].value;
-	if (dest) {
-		last_browse_mode = dest;
-		browseurl(unescape(dest));
+	if (document.getElementById("browsemode").options[browseind]) {
+		last_browse_mode = document.getElementById("browsemode").options[browseind].value;
+		browseurl(unescape(last_browse_mode));
 	}
 
 	resetLinks(document.getElementById("library"));

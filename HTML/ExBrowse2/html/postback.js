@@ -95,7 +95,7 @@ function postback_handler(req, url, handler) {
 }
 
 function postback_timeout() {
-	document.getElementById('maindeck').selectedIndex = 2;
+//	document.getElementById('maindeck').selectedIndex = 2;
 	lostContact = 1;
 	postback("/ExBrowse2/home.xml", updateHome_handler);
 }

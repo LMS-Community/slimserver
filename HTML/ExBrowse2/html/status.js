@@ -6,6 +6,7 @@
 
 var lastCounterPos;
 var counterResyncFlag;
+var clearedLastTime;
 
 var totalTime, progressAt, progressEnd;
 
@@ -13,6 +14,8 @@ var curPlayMode;
 
 var currentSong;
 var songCount;
+
+var controlLockout;
 
 function initStatus() {
         progbar = document.getElementById("progressBar");
@@ -78,8 +81,22 @@ function updateStatus_handler(req, url) {
 	var response = req.responseXML;
 	var player = getdata(response, "playermodel");
 	if (player == "NOPLAYER") {
-//		document.getElementById("rightdeck").selectedIndex = 1;
+		currentSong = 0;
+		songCount = 0;
+		progressEnd = 0;
+	        totalTime = ' ' + timetostr(progressEnd);
+		displayPlayMode("stop");
+		songCounterUpdate();
+
+		displayPlayMode("none");
+		displayRepeat(-1);
+		displayShuffle(-1);
+		displayCoverArt("");
+
+
+		controlLockout = 1;
 	} else {	
+		controlLockout = 0;
 //		document.getElementById("rightdeck").selectedIndex = 0;
 //		document.getElementById("player").value = player;
 
@@ -129,13 +146,16 @@ function displayPlayMode(mode) {
         } else {
                 document.getElementById("playbutton").className = "";
 
-		if (mode == "stop") {
+		if (mode == "pause") {
+			document.getElementById("stopbutton").className = "";
+			curPlayMode = "pause";
+		} else if (mode == "stop") {
 			document.getElementById("stopbutton").className = "active";
 			curPlayMode = "stop";
 		} else {
 			document.getElementById("stopbutton").className = "";
-			curPlayMode = "pause";
-		}	
+			curPlayMode = "none";
+		}
         }
 
 	displayPlayString();	
@@ -184,10 +204,14 @@ function displayRepeat(mode) {
 		document.getElementById("repeatone").className = "fakelink";
 		document.getElementById("repeatall").className = "fakelink active";
 		document.getElementById("repeatoff").className = "fakelink";
-	} else {
+	} else if (mode == 0) {
 		document.getElementById("repeatone").className = "fakelink";
 		document.getElementById("repeatall").className = "fakelink";
 		document.getElementById("repeatoff").className = "fakelink active";
+	} else {
+		document.getElementById("repeatone").className = "fakelink";
+		document.getElementById("repeatall").className = "fakelink";
+		document.getElementById("repeatoff").className = "fakelink";
 	}
 }
 
@@ -200,11 +224,15 @@ function displayShuffle(mode) {
                 document.getElementById("shufsongs").className = "fakelink";
                 document.getElementById("shufalbums").className = "fakelink active";
                 document.getElementById("shufnone").className = "fakelink";
-        } else {
+        } else if (mode == 0) {
                 document.getElementById("shufsongs").className = "fakelink";
                 document.getElementById("shufalbums").className = "fakelink";
                 document.getElementById("shufnone").className = "fakelink active";
-        }
+        } else {
+                document.getElementById("shufsongs").className = "fakelink";
+                document.getElementById("shufalbums").className = "fakelink";
+                document.getElementById("shufnone").className = "fakelink";
+	}
 }
 
 function displayVolume(volume) {
@@ -239,6 +267,7 @@ function doPlayerChange(event) {
 }
 
 function doPlay() {
+	if (controlLockout) return;
         if (curPlayMode == "play") {
                 displayPlayMode("pause");
                 updateStatus("&p0=pause");
@@ -249,11 +278,13 @@ function doPlay() {
 }
 
 function doStop() {
+	if (controlLockout) return;
         displayPlayMode("stop");
         updateStatus("&p0=stop");
 }
 
 function doPrev() {
+	if (controlLockout) return;
         currentSong--;
         if (currentSong == 0) currentSong = songCount;
         displayCurrentSong(playlistNames[currentSong - 1], playlistArtists[currentSong - 1], playlistAlbums[currentSong - 1]);
@@ -265,6 +296,7 @@ function doPrev() {
 }
 
 function doNext() {
+	if (controlLockout) return;
         currentSong++;
         if (currentSong > songCount) currentSong = 1;
         displayCurrentSong(playlistNames[currentSong - 1], playlistArtists[currentSong - 1], playlistAlbums[currentSong - 1]);
@@ -276,6 +308,7 @@ function doNext() {
 }
 
 function doVolume(e) {
+	if (controlLockout) return;
 	if (!e) e = window.event;
 	if (e.target) et = e.target; else et = e.srcElement;
 	if (et.volval == 0) et.volval = "0";
@@ -286,12 +319,14 @@ function doVolume(e) {
 }
 
 function doRepeat(repmode) {
+	if (controlLockout) return;
 	displayRepeat(repmode);
         cmdstring = "&p0=playlist&p1=repeat&p2=" + repmode;
         updateStatus(cmdstring);
 }
 
 function doShuffle(shufmode) {
+	if (controlLockout) return;
 	displayShuffle(shufmode);
         cmdstring = "&p0=playlist&p1=shuffle&p2=" + shufmode;
         updateStatusCombined(cmdstring);
@@ -301,12 +336,17 @@ function doShuffle(shufmode) {
 function songCounterUpdate() {
 	var progbar = document.getElementById("progressBar");
 
-	if (curPlayMode == "stop") {
-		for (i = 0; i < 50; i++) { 
-        		progbar.childNodes[i].src = "html/images/pixel.png";
+	if (curPlayMode == "stop" || curPlayMode == "none") {
+		if (clearedLastTime != 1) {
+			for (i = 0; i < 50; i++) { 
+        			progbar.childNodes[i].src = "html/images/pixel.png";
+			}
+        		progbar.lastChild.nodeValue = ' ' + timetostr(0) + ' / ' + totalTime;
+			clearedLastTime = 1;
 		}
-        	progbar.lastChild.nodeValue = ' ' + timetostr(0) + ' / ' + totalTime;
 	} else {
+		clearedLastTime = 0;
+
 		p = Math.floor(progressAt * 50 / progressEnd);
 
 		if (p == lastCounterPos) {
