@@ -327,7 +327,12 @@ sub checkSync {
 			foreach $everyclient (@group) {
 				$everyclient->readytosync(0);
 			}
-			Slim::Player::Source::skipahead($client);
+			if ($client->playmode ne 'playout-stop') {Slim::Player::Source::skipahead($client);}
+			else {
+				$::d_sync && msg("End of playlist, and players have played out. Going to playmode stop.\n");
+				Slim::Player::Source::playmode($client,'stop');
+				$client->update();
+			}
 		}
 	}
 }
