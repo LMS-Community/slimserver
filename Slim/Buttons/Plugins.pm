@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.35 2004/12/21 03:53:26 kdf Exp $
+# $Id: Plugins.pm,v 1.36 2004/12/22 01:12:00 kdf Exp $
 #
 package Slim::Buttons::Plugins;
 
@@ -362,19 +362,20 @@ sub shutdownPlugins {
 	}
 }
 
-sub pluginOptions {
+sub unusedPluginOptions {
 	my $client = shift;
 	
-	my %menuChoices = (
-		"" => "",
-	);
+	my %menuChoices = ();
 
 	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
+	my %homeplugins = map { $_ => 1 } @{Slim::Buttons::Home::getHomeChoices($client)};
+
 	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
 	
 	for my $menuOption (keys %{$pluginsRef}) {
 
 		next if exists $disabledplugins{$menuOption};
+		next if exists $homeplugins{$pluginsRef->{$menuOption}};
 		no strict 'refs';
 
 		if (exists &{"Plugins::" . $menuOption . "::enabled"} && $client &&
@@ -385,19 +386,6 @@ sub pluginOptions {
 		$menuChoices{$menuOption} = $client->string($pluginsRef->{$menuOption});
 
 	}
-	return %menuChoices;
-}
-
-sub unusedPluginOptions {
-	my $client = shift;
-	my %menuChoices = pluginOptions($client);
-	
-	delete $menuChoices{""};
-
-	for my $usedOption (@{Slim::Buttons::Home::getHomeChoices($client)}) {
-		delete $menuChoices{$usedOption};
-	}
-
 	return sort { $menuChoices{$a} cmp $menuChoices{$b} } keys %menuChoices;
 }
 

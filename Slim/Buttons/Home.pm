@@ -278,7 +278,7 @@ sub getMenu {
 	#top level reference
 	$current = $current->{shift @depth};
 	# recursive submenus
-	foreach my $level (@depth) {
+	for my $level (@depth) {
 		$current = $current->{'submenus'}->{$level};
 	}
 	return $current;
@@ -378,7 +378,7 @@ sub createList {
 
 	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
 	
-	foreach my $sub (sort {((Slim::Utils::Prefs::get("rank-$b") || 0) <=> 
+	for my $sub (sort {((Slim::Utils::Prefs::get("rank-$b") || 0) <=> 
 				(Slim::Utils::Prefs::get("rank-$a") || 0)) || 
 				    (lc($client->string($a)) cmp lc($client->string($b)))} 
 			 keys %{$params->{'submenus'}}) {
@@ -438,8 +438,9 @@ sub menuOptions {
 	my $client = shift;
 	my %menuChoices = ();
 	$menuChoices{""} = "";
+	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
 	
-	foreach my $menuOption (sort keys %home) {
+	for my $menuOption (sort keys %home) {
 		if ($menuOption eq 'BROWSE_MUSIC_FOLDER' && !Slim::Utils::Prefs::get('audiodir')) {
 			next;
 		}
@@ -456,7 +457,11 @@ sub unusedMenuOptions {
 	my %menuChoices = menuOptions($client);
 	delete $menuChoices{""};
 	
-	foreach my $usedOption (@{$homeChoices{$client}}) {
+	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
+	for my $plugin (values %{$pluginsRef}) {
+		delete $menuChoices{$plugin};
+	}
+	for my $usedOption (@{$homeChoices{$client}}) {
 		delete $menuChoices{$usedOption};
 	}
 	return sort { $menuChoices{$a} cmp $menuChoices{$b} } keys %menuChoices;
@@ -473,7 +478,7 @@ sub updateMenu {
 	
 	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
-	foreach my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
+	for my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
 		next if (exists $disabledplugins{$menuItem});
 		next if (!exists $home{$menuItem} && !exists $pluginsRef->{$menuItem});
 		if (exists $pluginsRef->{$menuItem}) {
