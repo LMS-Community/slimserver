@@ -357,6 +357,7 @@ sub _calculateTrackLength {
 	my $len = $data->{'INFO'}{'blocksize_0'};
 
 	if ($len == 0) {
+		print "Ogg::Vorbis::Header::PurePerl:\n";
 		warn "blocksize_0 is 0! Should be a power of 2! http://www.xiph.org/ogg/vorbis/doc/vorbis-spec-ref.html\n";
 		return;
 	}
@@ -368,7 +369,7 @@ sub _calculateTrackLength {
 
 	for (my $i = 0; $i < $len; $i++) {
 
-		last if ($len - $i) < 4;
+		last if length($buf) < 4;
 
 		if (substr($buf, $i, 4) eq 'OggS') {
 			substr($buf, 0, ($i+4), '');
@@ -378,13 +379,13 @@ sub _calculateTrackLength {
 	}
 
 	unless ($foundHeader) {
-		warn "Didn't find an ogg header - invalid file?\n";
+		warn "Ogg::Vorbis::Header::PurePerl: Didn't find an ogg header - invalid file?\n";
 		return;
 	}
 
 	# stream structure version - must be 0x00
 	if (ord(substr($buf, 0, 1, '')) != 0x00) {
-		warn "Invalid stream structure version: " . sprintf("%x", ord($buf));
+		warn "Ogg::Vorbis::Header::PurePerl: Invalid stream structure version: " . sprintf("%x", ord($buf));
 		return;
  	}
 
