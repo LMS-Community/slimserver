@@ -32,6 +32,7 @@ use Slim::Control::Command;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Display::Display;
+use Slim::Utils::Strings qw (string);
 use HTML::Entities ();
 use XML::Simple ();
 
@@ -154,8 +155,8 @@ our $lump_singletons = 1;
 ################### End Configuration Section ####################
 
 ## Order for info sub-mode
-our @info_order = ('Bitrate', 'Name', 'Listeners', 'Genre', 'Was Playing', 'Url' );
-our @info_index = ( 4,		 2,	  3,		   6,	   5,			 0	);
+our @info_order;
+our @info_index;
 
 our $all_name = '';
 our $sort_bitrate_up = 0;
@@ -327,6 +328,9 @@ sub setMode {
 	$client->lines(\&lines);
 	$status{$client} = 0;
 	$number{$client} = undef;
+	
+	@info_order = ($client->string('BITRATE'), $client->string('PLUGIN_SHOUTCASTBROWSER_STREAM_NAME'), $client->string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS'), $client->string('GENRE'), $client->string('PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING'), $client->string('URL') );
+	@info_index = (                    4,                                         2,                                                          3,                                               6,                                         5,                                   0);
 	
 	$client->update();
 	
@@ -1546,6 +1550,14 @@ PLUGIN_SHOUTCASTBROWSER_SORTING
 	EN	Sorting streams ...
 	DE	Sortiere Streams...
 	ES	Ordenando streams...
+
+PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING
+	DE	Spielte zuletzt
+	EN	Was playing
+
+PLUGIN_SHOUTCASTBROWSER_STREAM_NAME
+	DE	Name
+	EN	Name
 
 SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER
 	EN	SHOUTcast Internet Radio
