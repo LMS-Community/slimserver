@@ -834,19 +834,37 @@ sub get_mp3info {
 
 	$h = _get_head($byte);
 	my $is_mp3 = _is_mp3($h); 
-	until ($is_mp3) {
+
+	# the head wasn't where we were expecting it.. dig deeper.
+	unless ($is_mp3) {
+
+		# do only one read - it's _much_ faster
 		$off++;
 		seek $fh, $off, 0;
-		read $fh, $byte, 4;
+		read $fh, $byte, $tot;
+
+		my $i;
+
+		# now walk the bytes looking for the head
+		for ($i = 0; $i < $tot; $i++) {
+
+			my $head = substr($byte, $i, 4);
+
+			next if (ord($head) != 0xff);
+
+			$h = _get_head($head);
+			$is_mp3 = _is_mp3($h);
+			last if $is_mp3;
+		}
+
+		# adjust where we are for _get_vbr()
+		$off += $i;
+
 		if ($off > $tot && !$try_harder) {
 			_close($file, $fh);
-			$@ = "Couldn't find MP3 header (perhaps set " .
-			     '$MP3::Info::try_harder and retry)';
+			$@ = "Couldn't find MP3 header (perhaps set \$MP3::Info::try_harder and retry)";
 			return undef;
 		}
-		next if (ord($byte) != 0xff);
-		$h = _get_head($byte);
-		$is_mp3 = _is_mp3($h);
 	}
 
 	my $vbr = _get_vbr($fh, $h, \$off);
@@ -963,19 +981,23 @@ sub _is_mp3 {
 	);
 }
 
+sub _vbr_seek {
+	my $fh    = shift;
+	my $off   = shift;
+	my $bytes = shift;
+	my $n     = shift || 4;
+
+	seek $fh, $$off, 0;
+	read $fh, $$bytes, $n;
+
+	$$off += $n;
+}
+
 sub _get_vbr {
 	my($fh, $h, $roff) = @_;
-	my($off, $bytes, @bytes, $myseek, %vbr);
+	my($off, $bytes, @bytes, %vbr);
 
 	$off = $$roff;
-	@_ = ();	# closure confused if we don't do this
-
-	$myseek = sub {
-		my $n = $_[0] || 4;
-		seek $fh, $off, 0;
-		read $fh, $bytes, $n;
-		$off += $n;
-	};
 
 	$off += 4;
 
@@ -985,30 +1007,30 @@ sub _get_vbr {
 		$off += $h->{mode} == 3 ? 9 : 17;
 	}
 
-	&$myseek;
+	_vbr_seek($fh, \$off, \$bytes);
 	return unless $bytes eq 'Xing';
 
-	&$myseek;
+	_vbr_seek($fh, \$off, \$bytes);
 	$vbr{flags} = _unpack_head($bytes);
 
 	if ($vbr{flags} & 1) {
-		&$myseek;
+		_vbr_seek($fh, \$off, \$bytes);
 		$vbr{frames} = _unpack_head($bytes);
 	}
 
 	if ($vbr{flags} & 2) {
-		&$myseek;
+		_vbr_seek($fh, \$off, \$bytes);
 		$vbr{bytes} = _unpack_head($bytes);
 	}
 
 	if ($vbr{flags} & 4) {
-		$myseek->(100);
+		_vbr_seek($fh, \$off, \$bytes, 100);
 # Not used right now ...
 #		$vbr{toc} = _unpack_head($bytes);
 	}
 
 	if ($vbr{flags} & 8) { # (quality ind., 0=best 100=worst)
-		&$myseek;
+		_vbr_seek($fh, \$off, \$bytes);
 		$vbr{scale} = _unpack_head($bytes);
 	} else {
 		$vbr{scale} = -1;
