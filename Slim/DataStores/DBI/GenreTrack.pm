@@ -47,17 +47,27 @@ sub add {
 		unless ($_cache{$genreSub}) {
 
 			my $namesort = Slim::Utils::Text::ignoreCaseArticles($genreSub);
+			my $genreObj;
 
-			($_cache{$genreSub}) = Slim::DataStores::DBI::Genre->search({ 
+			($genreObj) = Slim::DataStores::DBI::Genre->search({ 
 				namesort => $namesort
 			});
 
 			unless ($_cache{$genreSub}) {
 
-				$_cache{$genreSub} = Slim::DataStores::DBI::Genre->create({ 
+				$genreObj = Slim::DataStores::DBI::Genre->create({ 
 					name     => ucfirst($genreSub),
 					namesort => $namesort,
 				});
+			}
+
+			if ($Class::DBI::Weaken_Is_Available) {
+
+				Scalar::Util::weaken($_cache{$genreSub} = $genreObj);
+
+			} else {
+
+				$_cache{$genreSub} = $genreObj;
 			}
 		}
 

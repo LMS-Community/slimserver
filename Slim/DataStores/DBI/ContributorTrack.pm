@@ -81,7 +81,15 @@ sub add {
 			$artistObj->namesort($sort);
 			$artistObj->update();
 
-			$_cache{$name} = $artistObj;
+			# Try to prevent leaks and circular references.
+			if ($Class::DBI::Weaken_Is_Available) {
+
+				Scalar::Util::weaken($_cache{$name} = $artistObj);
+
+			} else {
+
+				$_cache{$name} = $artistObj;
+			}
 		}
 
 		push @contributors, $artistObj;

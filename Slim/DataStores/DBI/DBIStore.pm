@@ -262,7 +262,17 @@ sub find {
 
 	if (!defined $lastFind{$findKey}) {
 
-		$lastFind{$findKey} = Slim::DataStores::DBI::DataModel->find($field, $findCriteria, $sortBy, $limit, $offset, $count);
+		# refcnt-- if we can, to prevent leaks.
+		if ($Class::DBI::Weaken_Is_Available && !$count) {
+		 
+			Scalar::Util::weaken($lastFind{$findKey} = Slim::DataStores::DBI::DataModel->find(
+				$field, $findCriteria, $sortBy, $limit, $offset, $count
+			));
+
+		} else {
+
+			$lastFind{$findKey} = Slim::DataStores::DBI::DataModel->find($field, $findCriteria, $sortBy, $limit, $offset, $count);
+		}
 
 	} else {
 
