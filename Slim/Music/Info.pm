@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.100 2004/04/20 15:54:52 dean Exp $
+# $Id: Info.pm,v 1.101 2004/04/20 17:41:58 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -136,96 +136,118 @@ my %lastFile;
 # if we don't have storable, then stub out the cache routines
 
 if (defined @Storable::EXPORT) {
+
 	eval q{
 		sub saveDBCache {
+
 			if (Slim::Utils::Prefs::get('usetagdatabase') && $dbCacheDirty) {
 		
-				my $hashref;
-				$hashref->{'infoCache'}=\%infoCache;
-				$hashref->{'genreCache'}=\%genreCache;
-				$hashref->{'caseCache'}=\%caseCache;
-				$hashref->{'sortCache'}=\%sortCache;
-				$hashref->{'songCountMemoize'}=\%songCountMemoize;
-				$hashref->{'artistCountMemoize'}=\%artistCountMemoize;
-				$hashref->{'albumCountMemoize'}=\%albumCountMemoize;
-				$hashref->{'genreCountMemoize'}=\%genreCountMemoize;
-				$hashref->{'caseArticlesMemoize'}=\%caseArticlesMemoize;
-				$hashref->{'songCount'}=\$songCount;
-				$hashref->{'total_time'}=\$total_time;
-				$hashref->{'ver'}=$DBVERSION;
+				my $cacheToStore = {
+					'infoCache'           => \%infoCache,
+					'genreCache'          => \%genreCache,
+					'caseCache'           => \%caseCache,
+					'sortCache'           => \%sortCache,
+					'songCountMemoize'    => \%songCountMemoize,
+					'artistCountMemoize'  => \%artistCountMemoize,
+					'albumCountMemoize'   => \%albumCountMemoize,
+					'genreCountMemoize'   => \%genreCountMemoize,
+					'caseArticlesMemoize' => \%caseArticlesMemoize,
+					'songCount'           => \$songCount,
+					'total_time'          => \$total_time,
+					'ver'                 => $DBVERSION,
+				};
 			
 				$::d_info && Slim::Utils::Misc::msg("saving DB cache\n");
-				store ($hashref, $dbname);
+
+				store($cacheToStore, $dbname);
+
 				$::d_info && Slim::Utils::Misc::msg("DB cache saved\n");
 
-				$dbCacheDirty=0;
+				$dbCacheDirty = 0;
 			}
 		}
 		
 		sub loadDBCache {
-			if (Slim::Utils::Prefs::get('usetagdatabase')) {
+
+			return unless Slim::Utils::Prefs::get('usetagdatabase');
 			
-				$::d_info && Slim::Utils::Misc::msg("ID3 tag database support is ON, saving into: $dbname\n");
+			$::d_info && Slim::Utils::Misc::msg("ID3 tag database support is ON, saving into: $dbname\n");
 
-				clearDBCache();
+			clearDBCache();
 
-				if (-f $dbname && ! -z $dbname)	{
-					my $dataload;
-					my $hashref= retrieve($dbname);
-					my $version=$hashref->{'ver'};
-					if (!defined($version) || $version ne $DBVERSION) {
-					    $::d_info && Slim::Utils::Misc::msg("Deleting Tag database. DB is version ".$version." and SlimServer is $DBVERSION\n");
-					    %infoCache=();
-					    Slim::Music::MusicFolderScan::startScan(1);
-					    $dbCacheDirty=1;
-					} else {
-						%infoCache=%{$hashref->{'infoCache'}};
-						%genreCache=%{$hashref->{'genreCache'}};
-						%caseCache=%{$hashref->{'caseCache'}};
-						%sortCache=%{$hashref->{'sortCache'}}; 
-						%songCountMemoize=%{$hashref->{'songCountMemoize'}};
-						%artistCountMemoize=%{$hashref->{'artistCountMemoize'}};
-						%albumCountMemoize=%{$hashref->{'albumCountMemoize'}};
-						%genreCountMemoize=%{$hashref->{'genreCountMemoize'}};
-						%caseArticlesMemoize=%{$hashref->{'caseArticlesMemoize'}};
-						$songCount=${$hashref->{'songCount'}};
-						$total_time=${$hashref->{'total_time'}};
-						$dbCacheDirty=0;
-					}
-	
-				} else {
-					$::d_info && warn "Tag database $dbname does not exist or has zero size";
-					$dbCacheDirty=0;
-				}	
+			if (! -f $dbname || -z $dbname) {
+
+				$::d_info && warn "Tag database $dbname does not exist or has zero size";
+
+				$dbCacheDirty = 0;
+
+				return;
+			}
+
+			# Pull in the flushed data from Storable.
+			my $cacheToRead = retrieve($dbname);
+			my $version     = $cacheToRead->{'ver'};
+
+			if (!defined($version) || $version ne $DBVERSION) {
+
+				$::d_info && Slim::Utils::Misc::msg(
+					"Deleting Tag database. DB is version ". $version ." and SlimServer is $DBVERSION\n"
+				);
+
+				%infoCache = ();
+
+				Slim::Music::MusicFolderScan::startScan(1);
+
+				$dbCacheDirty = 1;
+
+			} else {
+
+				%infoCache           = %{$cacheToRead->{'infoCache'}};
+				%genreCache          = %{$cacheToRead->{'genreCache'}};
+				%caseCache           = %{$cacheToRead->{'caseCache'}};
+				%sortCache           = %{$cacheToRead->{'sortCache'}}; 
+				%songCountMemoize    = %{$cacheToRead->{'songCountMemoize'}};
+				%artistCountMemoize  = %{$cacheToRead->{'artistCountMemoize'}};
+				%albumCountMemoize   = %{$cacheToRead->{'albumCountMemoize'}};
+				%genreCountMemoize   = %{$cacheToRead->{'genreCountMemoize'}};
+				%caseArticlesMemoize = %{$cacheToRead->{'caseArticlesMemoize'}};
+				$songCount           = ${$cacheToRead->{'songCount'}};
+				$total_time          = ${$cacheToRead->{'total_time'}};
+				$dbCacheDirty        = 0;
 			}
 		}
 		
 		sub scanDBCache {
-			if (Slim::Utils::Prefs::get('usetagdatabase')) {
-				$::d_info && Slim::Utils::Misc::msg("starting cache scan\n");
+
+			return unless Slim::Utils::Prefs::get('usetagdatabase');
+
+			$::d_info && Slim::Utils::Misc::msg("starting cache scan\n");
+		
+			my $validindex = $infoCacheItemsIndex{"VALID"};
+			my $thumbindex = $infoCacheItemsIndex{"THUMB"};
+			my $coverindex = $infoCacheItemsIndex{"COVER"};
 			
-				my $validindex = $infoCacheItemsIndex{"VALID"};
-				my $thumbindex = $infoCacheItemsIndex{"THUMB"};
-				my $coverindex = $infoCacheItemsIndex{"COVER"};
-				
-				foreach my $file (keys %infoCache) {
-				
-					my $cacheEntryArray = $infoCache{$file};
+			foreach my $file (keys %infoCache) {
+			
+				my $cacheEntryArray = $infoCache{$file};
 
-					# Mark all data as invalid for now
-					$cacheEntryArray->[$validindex] = '0';
+				# Mark all data as invalid for now
+				$cacheEntryArray->[$validindex] = '0';
 
-					# Remove any entry for uncached coverart - we scan for it again once upon a rescan
-					if (defined $cacheEntryArray->[$thumbindex] && $cacheEntryArray->[$thumbindex] eq "0") { 
-						$cacheEntryArray->[$thumbindex] = undef;
-					}
-					if (defined $cacheEntryArray->[$coverindex] && $cacheEntryArray->[$coverindex] eq "0") { 
-						$cacheEntryArray->[$coverindex] = undef;
-					}
-				
+				# Remove any entry for uncached coverart - we scan for it again once upon a rescan
+				if (defined $cacheEntryArray->[$thumbindex] && $cacheEntryArray->[$thumbindex] eq "0") { 
+
+					$cacheEntryArray->[$thumbindex] = undef;
 				}
-				$::d_info && Slim::Utils::Misc::msg("finished cache scan\n");
+
+				if (defined $cacheEntryArray->[$coverindex] && $cacheEntryArray->[$coverindex] eq "0") { 
+
+					$cacheEntryArray->[$coverindex] = undef;
+				}
+			
 			}
+
+			$::d_info && Slim::Utils::Misc::msg("finished cache scan\n");
 		}
 	};
 
@@ -480,22 +502,27 @@ sub total_time {
 
 sub memoizedCount {
 	my ($memoized,$function,$genre,$artist,$album,$track)=@_;
-	if (!defined($genre)) { $genre = [] }
+
+	if (!defined($genre))  { $genre  = [] }
 	if (!defined($artist)) { $artist = [] }
-	if (!defined($album)) { $album = [] }
-	if (!defined($track)) { $track = [] }
+	if (!defined($album))  { $album  = [] }
+	if (!defined($track))  { $track  = [] }
 
 	my $key=join("\1",@$genre) . "\0" .
 		    join("\1",@$artist). "\0" .
 			join("\1",@$album) . "\0" .
 			join("\1",@$track);
-	if (defined($$memoized{$key})) {
-		return $$memoized{$key};
+
+	if (defined($memoized->{$key})) {
+		return $memoized->{$key};
 	}
+
 	my $count = &$function($genre,$artist,$album,$track);
+
 	if (!Slim::Utils::Misc::stillScanning()) {
-		return ($$memoized{$key}=$count);
+		return ($memoized->{$key} = $count);
 	}
+
 	return $count;
 }
 
