@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.28 2004/03/12 03:39:38 kdf Exp $
+# $Id: Command.pm,v 1.29 2004/03/12 06:11:22 kdf Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -527,6 +527,7 @@ sub execute {
 				if ($zapref) {
 					my @zaplist = ($zapsong);
 					my $zapitem = Slim::Formats::Parse::writeM3U(\@zaplist);
+					print $zapref $zapitem;
 					close $zapref;
 				} else {
 					msg("Could not open $zapped for writing.\n");
