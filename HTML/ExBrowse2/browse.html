@@ -1,8 +1,8 @@
 [% PROCESS header.html pwd="yes" %]
 
 <div id="pwd">
- [% IF browselist_pagebar %]
- <span class="pagebar">[% browselist_pagebar %]</span>[% END %]
+ [% IF browselist_header %]
+ <span class="pagebar">[% browselist_header %]</span>[% END %]
  <a class="fakelink" onclick="browseurl('browse.html?dir=')">[% "MUSIC" | string %]</a>
  [% pwd_list %] /
 </div>
