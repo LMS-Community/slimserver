@@ -1,5 +1,6 @@
-# $Id: Text.pm,v 1.10 2003/11/25 07:02:35 grotus Exp $
 package Slim::Buttons::Input::Text;
+
+# $Id: Text.pm,v 1.11 2003/11/25 07:13:31 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -302,7 +303,7 @@ sub init {
 	if (!defined(Slim::Buttons::Common::param($client,'parentMode'))) {
 		my $i = -2;
 		while ($client->modeStack->[$i] =~ /^INPUT./) { $i--; }
-		Slim::Buttons::Common::param($client,'parentMode',$client->modeStack->[-2]);
+		Slim::Buttons::Common::param($client,'parentMode',$client->modeStack->[$i]);
 	}
 	if (!defined(Slim::Buttons::Common::param($client,'header'))) {
 		Slim::Buttons::Common::param($client,'header','Enter Text:');
