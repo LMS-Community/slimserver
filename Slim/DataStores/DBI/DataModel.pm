@@ -678,7 +678,7 @@ sub print {
 	for my $column (sort ($class->columns('All'))) {
 
 		# this is needed if the accessor was mutated.
-		$column = $class->accessor_name($column);
+		$column = $class->accessor_name($column) || next;
 
 		my $value = defined($self->$column()) ? $self->$column() : '';
 

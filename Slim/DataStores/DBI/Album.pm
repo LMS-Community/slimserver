@@ -49,7 +49,7 @@ sub contributors {
 		for my $id (split /:/, $self->get('contributors')) {
 
 			# Need a better way to do this.
-			# Remove "No Album", which is always id 1 from the list.
+			# Remove "No Artist", which is always id 1 from the list.
 			next if $id == 1;
 
 			$contributorMap{$id} = 1;
