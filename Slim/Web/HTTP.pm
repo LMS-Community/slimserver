@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.106 2004/06/11 17:31:26 vidur Exp $
+# $Id: HTTP.pm,v 1.107 2004/06/11 18:42:58 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -14,7 +14,6 @@ use FileHandle;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 use HTTP::Daemon;
-use HTTP::Headers;
 use HTTP::Status;
 use MIME::Base64;
 use HTML::Entities;
@@ -23,10 +22,8 @@ use Sys::Hostname;
 use Template;
 use Tie::RegexpHash;
 use URI::Escape;
-
 use Slim::Networking::mDNS;
 use Slim::Networking::Select;
-
 use Slim::Player::HTTP;
 
 use Slim::Web::EditPlaylist;
@@ -182,6 +179,7 @@ sub checkHTTP {
 		$::d_http && msg("closing http server socket\n");
 		Slim::Networking::Select::addRead($http_server_socket, undef);
 		$http_server_socket->close();
+		undef($http_server_socket);
 		$openedport = 0;
 	}
 
@@ -197,7 +195,7 @@ sub checkHTTP {
 
 sub idle {
 	# check to see if the HTTP settings have changed
-	Slim::Web::HTTP::checkHTTP();
+	checkHTTP();
 }
 
 sub connectedSocket {
@@ -205,7 +203,10 @@ sub connectedSocket {
 }
 
 sub acceptHTTP {
-	return if Slim::Web::HTTP::connectedSocket() > Slim::Utils::Prefs::get("tcpConnectMaximum");
+	if (connectedSocket() > Slim::Utils::Prefs::get("tcpConnectMaximum")) {
+		$::d_http && msg("Too many sockets open, not accepting...\n");
+		return;
+	}
 
 	# try and pull the handle
 	my $httpClient = $http_server_socket->accept() || do {
@@ -232,6 +233,7 @@ sub acceptHTTP {
 
 			$peeraddr{$httpClient} = $peer;
 			Slim::Networking::Select::addRead($httpClient, \&processHTTP);
+                      	Slim::Networking::Select::addError($httpClient, \&closeStreamingSocket);
 			$connected++;
 			$::d_http && msg("Accepted connection $connected from ". $peeraddr{$httpClient} . "\n");
 
@@ -239,6 +241,7 @@ sub acceptHTTP {
 
 			$::d_http && msg("Did not accept HTTP connection from $peer, unauthorized source\n");
 			$httpClient->close();
+			undef($httpClient);
 		}
 
 	} else {
@@ -253,7 +256,6 @@ sub processHTTP {
 
 	my $params     = {};
 	my $request    = $httpClient->get_request();
-
 	$::d_http && msg("reading request...\n");
 
 	# socket half-closed from client
@@ -280,7 +282,7 @@ sub processHTTP {
 		msg("Request Headers: [\n" . $request->as_string() . "]\n");
 	}
 
-	#
+
 	if ($request->method() eq 'GET' || $request->method() eq 'HEAD') {
 
 		$sendMetaData{$httpClient} = 0;
@@ -306,7 +308,7 @@ sub processHTTP {
 			$response->www_authenticate(sprintf('Basic realm="%s"', string('SLIMSERVER')));
 
 			$httpClient->send_response($response);
-
+			closeHTTPSocket($httpClient);
 			return;
 		}
 			
@@ -424,7 +426,6 @@ sub processHTTP {
 				}
 			}
 		}
-
 		# process the commands
 		processURL($httpClient, $response, $params);
 
@@ -729,6 +730,8 @@ sub generateHTTPResponse {
 
 		if ($path =~ /status/) {
 			my ($line1, $line2) = Slim::Display::Display::curLines($client);
+                      $line1 = '' if (!defined($line1));
+                      $line2 = '' if (!defined($line2));
 			$$body = $line1 . $CRLF . $line2 . $CRLF;
 		} else {
 			$$body = $Slim::Utils::Misc::log;
@@ -800,7 +803,8 @@ sub prepareResponseForSending {
 	my $mtime   = $response->last_modified() || 0;
 
 	# Don't send back content if it hasn't been modified.
-	if (my $ifModified = $request->if_modified_since()) {
+	my $ifModified = $request->if_modified_since();
+	if (0 && $ifModified) {
 
 		if ($mtime && $mtime <= $ifModified) {
 
@@ -1333,7 +1337,6 @@ sub getStaticContentForTemplate {
 
 sub _generateContentFromFile {
 	my ($type, $path, $params) = @_;
-
 	my ($content, $mtime);
 	my $skin = $params->{'skinOverride'} || Slim::Utils::Prefs::get('skin');
 
@@ -1515,9 +1518,10 @@ sub forgetClient {
 
 sub closeHTTPSocket {
 	my $httpClient = shift;
-
+	
 	Slim::Networking::Select::addRead($httpClient, undef);
 	Slim::Networking::Select::addWrite($httpClient, undef);
+      	Slim::Networking::Select::addError($httpClient, undef);
 
 	# clean up the various caches
 	delete($outbuf{$httpClient});
@@ -1525,9 +1529,10 @@ sub closeHTTPSocket {
 	delete($metaDataBytes{$httpClient});
 	delete($peeraddr{$httpClient});
 	delete($keepAlives{$httpClient});
+	delete($peerclient{$httpClient});
 
 	$httpClient->close();
-
+	undef($httpClient);
 	$connected--;
 }
 
@@ -1548,7 +1553,6 @@ sub closeStreamingSocket {
 		}
 	}
 
-	delete($peerclient{$httpClient});
 	closeHTTPSocket($httpClient);
 
 	return;

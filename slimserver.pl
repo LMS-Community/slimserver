@@ -79,7 +79,6 @@ use File::Spec::Functions qw(:ALL);
 use FileHandle;
 use POSIX qw(:signal_h :errno_h :sys_wait_h setsid);
 use Socket qw(:DEFAULT :crlf);
-
 use lib (
 	$Bin, 
 	catdir($Bin,'CPAN'), 
@@ -370,7 +369,6 @@ sub main {
 sub idle {
 
 	my $select_time;
-
 	my $now = Time::HiRes::time();
 	my $to;
 
@@ -430,7 +428,6 @@ sub idle {
 
 	Slim::Control::CLI::idle();
 	if ($::d_perf) { $to = watchDog($to, "cli::idle"); }
-
 	return $::stop;
 }
 

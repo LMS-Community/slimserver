@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.54 2004/05/06 03:14:28 dean Exp $
+# $Id: Slimproto.pm,v 1.55 2004/06/11 18:42:58 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -105,7 +105,7 @@ sub slimproto_accept {
 	$inputbuffer{$clientsock}='';
 
 	Slim::Networking::Select::addRead($clientsock, \&client_readable);
-	# Slim::Networking::Select::addWrite($clientsock, \&client_writable);  # for now assume it's always writeable.
+	Slim::Networking::Select::addError($clientsock, \&slimproto_close);
 
 	$::d_slimproto && msg ("Slimproto accepted connection from: $tmpaddr\n");
 }

@@ -123,6 +123,7 @@ sub acceptSocket {
 		if (!(Slim::Utils::Prefs::get('filterHosts')) || (Slim::Utils::Misc::isAllowedHost($tmpaddr))) {
 
 			Slim::Networking::Select::addRead($clientsock, \&processRequest);
+                      Slim::Networking::Select::addError($clientsock, \&closer);
 			$connected++;
 			$listen{$clientsock} = 0;
 			$::d_cli && msg("Accepted connection $connected from ". $tmpaddr . "\n");
@@ -255,6 +256,7 @@ sub closer {
 
 	Slim::Networking::Select::addWrite($clientsock, undef);
 	Slim::Networking::Select::addRead($clientsock, undef);
+      Slim::Networking::Select::addError($clientsock, undef);
 	
 	close $clientsock;
 

@@ -1,6 +1,6 @@
 package Slim::Networking::Select;
 
-# $Id: Select.pm,v 1.11 2004/05/05 23:05:49 dean Exp $
+# $Id: Select.pm,v 1.12 2004/06/11 18:42:58 dean Exp $
 
 # SlimServer Copyright (c) 2003-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -28,10 +28,14 @@ my %readCallbacks;
 my %writeSockets;
 my %writeCallbacks;
 
+my %errorSockets;
+my %errorCallbacks;
+
 my %writeQueue;
 
 my $readSelects  = IO::Select->new();
 my $writeSelects = IO::Select->new();
+my $errorSelects  = IO::Select->new();
 
 sub addRead {
 	my $r = shift;
@@ -74,16 +78,37 @@ sub addWrite {
 	$::d_select && msg("now: " . scalar(keys %writeSockets) . "/" . $writeSelects->count . "\n");
 }
 
+sub addError {
+      my $e = shift;
+      my $callback = shift;
+
+      if (!$callback) {
+
+              delete $errorSockets{"$e"};
+              delete $errorCallbacks{"$e"};
+              $::d_select && msg("removing select error $e\n");
+
+      } else {
+
+              $errorSockets{"$e"} = $e;
+              $errorCallbacks{"$e"} = $callback;
+              $::d_select && msg("adding select error $e $callback\n");
+      }
+
+      $errorSelects = IO::Select->new(map {$errorSockets{$_}} (keys %errorSockets));
+}
+
+
 sub select {
 	my $select_time = shift;
 	
-	my ($r, $w, $e) = IO::Select->select($readSelects,$writeSelects,undef,$select_time);
+	my ($r, $w, $e) = IO::Select->select($readSelects,$writeSelects,$errorSelects,$select_time);
 
 	$::d_select && msg("select returns ($select_time): reads: " . 
 		(defined($r) && scalar(@$r)) . " of " . $readSelects->count .
 		" writes: " . (defined($w) && scalar(@$w)) . " of " . $writeSelects->count .
-		" err: " . (defined($e) && scalar(@$e)) . "\n");
-					
+		" errors: " . (defined($e) && scalar(@$e)) . " of " . $errorSelects->count . "\n");
+	
 	my $count = 0;
 
 	foreach my $sock (@$r) {
@@ -101,6 +126,14 @@ sub select {
 		# this is totally overkill...
 		Slim::Networking::Protocol::readUDP();
 	}
+
+      foreach my $sock (@$e) {
+              my $errorsub = $errorCallbacks{"$sock"};
+              $errorsub->($sock) if $errorsub;
+              $count++;
+              # this is totally overkill...
+              Slim::Networking::Protocol::readUDP();
+      }
 
 	return $count;
 }
