@@ -128,6 +128,17 @@ where: </p>
   <p>Request: &quot;04:20:00:12:23:45 sleep 300&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sleep 300&lt;CR&gt;&quot;</p>
 </blockquote>
 <hr>
+<p><strong>sync &lt;<em>number</em>|-|?&gt;</strong></p>
+<p>The &quot;sync&quot; command specifies the player to synchronise with the given playerID. You may query which players are 
+already synced with this player by passing in a &quot;?&quot; parameter. The server will return the IDs of any players synced
+with the player used in the query.  Multiple ID's are separated by a space. To unsync a player, simply use the - parameter.</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 sync 1&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sync 1&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 sync ?&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sync 04:20:00:12:23:21&lt;CR&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 sync -&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sync -&lt;CR&gt;&quot;</p>
+</blockquote>
+<hr>
 <p><strong>power &lt;0|1|?&gt;</strong></p>
 <p> The &quot;power&quot; command turns the player on or off.</p>
 <p>Examples: </p>
