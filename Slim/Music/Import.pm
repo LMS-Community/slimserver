@@ -117,6 +117,9 @@ sub endImporter {
 			Slim::Utils::Scheduler::add_task(\&artScan);
 		}
 
+		# schedule cleanup of the db
+		Slim::Utils::Scheduler::add_task(\&Slim::Music::Info::clearStaleCacheEntries);
+
 		$::d_info && msg("Finished background scanning.\n");
 		Slim::Music::Info::saveDBCache();
 	}

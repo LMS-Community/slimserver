@@ -24,6 +24,7 @@ use Slim::Utils::Misc;
 
 our $dbh;
 our $dirtyCount = 0;
+our $cleanupIterator;
 
 sub executeSQLFile {
 	my $class = shift;
@@ -710,17 +711,32 @@ sub removeStaleDBEntries {
 	my $class   = shift;
 	my $foreign = shift;
 
-	my $items = $class->retrieve_all();
+	unless ($cleanupIterator) {
 
-	while (my $item = $items->next()) {
+		$::d_info && Slim::Utils::Misc::msg("Starting stale cleanup for class $class / $foreign\n");
 
-		if ($item->$foreign()->count() == 0) {
-
-			$::d_info && Slim::Utils::Misc::msg("DB garbage collection - removing $class: $item - no more tracks!\n");
-
-			$item->delete();
-		}
+		$cleanupIterator = $class->retrieve_all();
 	}
+
+	my $item = $cleanupIterator->next() || do {
+
+		$::d_info && Slim::Utils::Misc::msg("Finished stale cleanup for class $class / $foreign\n");
+
+		$cleanupIterator = undef;
+
+		return 0;
+	};
+
+	if ($item && $item->$foreign()->count() == 0) {
+
+		$::d_info && Slim::Utils::Misc::msg("DB garbage collection - removing $class: $item - no more tracks!\n");
+
+		$item->delete();
+
+		$dirtyCount++;
+	}
+
+	return 1;
 }
 
 # overload update() to maintain $dirtyCount

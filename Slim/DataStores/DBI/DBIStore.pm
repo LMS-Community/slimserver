@@ -67,6 +67,10 @@ our %tagFunctions = (
 # cached value of commonAlbumTitles pref
 our $common_albums;
 
+# hold the current cleanup state
+our $cleanupIterator;
+our $cleanupStage;
+
 # Singleton objects for Unknowns
 our ($_unknownArtist, $_unknownGenre, $_unknownAlbum);
 
@@ -119,7 +123,7 @@ sub new {
 	$common_albums = Slim::Utils::Prefs::get('commonAlbumTitles');
 
 	Slim::Utils::Prefs::addPrefChangeHandler('commonAlbumTitles', \&commonAlbumTitlesChanged);
-	
+
 	return $self;
 }
 
@@ -575,54 +579,90 @@ sub markEntryAsValid {
 sub clearStaleEntries {
 	my $self = shift;
 
-	$::d_info && Slim::Utils::Misc::msg("starting scan for expired items\n");
+	unless ($cleanupIterator) {
 
-	my $validityCache = $self->{'validityCache'};
+		$::d_info && Slim::Utils::Misc::msg("starting scan for expired items\n");
 
-	for my $url (keys %$validityCache) {
+		my $validityCache = $self->{'validityCache'};
 
-		if (!$validityCache->{$url}->[VALID_INDEX]) {
-			$self->delete($url, 0);
+		for my $url (keys %$validityCache) {
+
+			if (!$validityCache->{$url}->[VALID_INDEX]) {
+				$self->delete($url, 0);
+			}
 		}
+
+		# Cleanup any stale entries in the database.
+		# 
+		# First walk the list of tracks, checking to see if the
+		# file/directory/shortcut still exists on disk. If it doesn't, delete
+		# it. This will cascade ::Track's has_many relationships, including
+		# contributor_track, etc.
+		#
+		# After that, walk the Album, Contributor & Genre tables, to see if
+		# each item has valid tracks still. If it doesn't, remove the object.
+
+		$::d_info && Slim::Utils::Misc::msg("Starting db garbage collection..\n");
+
+		$cleanupIterator = Slim::DataStores::DBI::Track->retrieve_all();
 	}
 
-	# Cleanup any stale entries in the database.
-	# 
-	# First walk the list of tracks, checking to see if the
-	# file/directory/shortcut still exists on disk. If it doesn't, delete
-	# it. This will cascade ::Track's has_many relationships, including
-	# contributor_track, etc.
-	#
-	# After that, walk the Album, Contributor & Genre tables, to see if
-	# each item has valid tracks still. If it doesn't, remove the object.
-	$::d_info && Slim::Utils::Misc::msg("Starting db garbage collection..\n");
+	# return 0 when we're done, and there are no more rows.
+	my $track = $cleanupIterator->next() || do {
 
-	my $tracks = Slim::DataStores::DBI::Track->retrieve_all();
+		$::d_info && Slim::Utils::Misc::msg(
+			"Finished with stale track cleanup. Adding tasks for Contributors, Albums & Genres.\n"
+		);
 
-	while (my $track = $tracks->next()) {
+		$cleanupStage = 'contributors';
+
+		# Setup a little state machine so that the db cleanup can be
+		# scheduled appropriately - ie: one record per run.
+		Slim::Utils::Scheduler::add_task(sub { 
+
+			if ($cleanupStage eq 'contributors') {
+
+				unless (Slim::DataStores::DBI::Contributor->removeStaleDBEntries('contributorTracks')) {
+					$cleanupStage = 'albums';
+				}
+
+				return 1;
+			}
+
+			if ($cleanupStage eq 'albums') {
+
+				unless (Slim::DataStores::DBI::Album->removeStaleDBEntries('tracks')) {
+					$cleanupStage = 'genres';
+				}
+
+				return 1;
+			}
+
+			if ($cleanupStage eq 'genres') {
+				return Slim::DataStores::DBI::Genre->removeStaleDBEntries('genreTracks');
+			}
+
+			return 0;
+		});
+
+		$cleanupIterator = undef;
+
+		return 0;
+	};
+
+	# return 1 to move onto the next track
+	unless (Slim::Music::Info::isFileURL($track->url())) {
+		return 1;
+	}
 	
-		unless (Slim::Music::Info::isFileURL($track->url())) {
-			undef $track;
-			next;
-		}
-		
-		my $filepath = Slim::Utils::Misc::pathFromFileURL($track->url());
+	my $filepath = Slim::Utils::Misc::pathFromFileURL($track->url());
 
-		# Don't use _hasChanged - because that does more than we want.
-		if (!-e $filepath) {
-			$self->delete($track, 0);
-		}
-
-		undef $track;
+	# Don't use _hasChanged - because that does more than we want.
+	if (!-e $filepath) {
+		$self->delete($track, 0);
 	}
 
-	Slim::DataStores::DBI::Contributor->removeStaleDBEntries('contributorTracks');
-	Slim::DataStores::DBI::Album->removeStaleDBEntries('tracks');
-	Slim::DataStores::DBI::Genre->removeStaleDBEntries('genreTracks');
-
-	$::d_info && Slim::Utils::Misc::msg("Ending db garbage collection.\n");
-
-	$self->forceCommit();
+	return 1;
 }
 
 # Wipe all data in the database

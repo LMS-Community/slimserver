@@ -942,6 +942,10 @@ sub checkDataSource {
 		if (!$::noScan && $ds->count('track') == 0) {
 			
 			Slim::Music::Import::startScan();
+
+		} elsif (!$::noScan) {
+	
+			Slim::Utils::Scheduler::add_task(\&Slim::Music::Info::clearStaleCacheEntries);
 		}
 	}
 }
