@@ -57,26 +57,35 @@ our %otherColumns = (
 
 our %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );
 
-__PACKAGE__->table('tracks');
-__PACKAGE__->columns(Primary => keys %primaryColumns);
-__PACKAGE__->columns(Essential => keys %allColumns);
-# Combine essential and other for now for performance, at the price of
-# larger in-memory object size
-#__PACKAGE__->columns(Others => keys %otherColumns);
-__PACKAGE__->columns(Stringify => qw/url/);
+{
+	my $class = __PACKAGE__;
 
-__PACKAGE__->has_a(album => 'Slim::DataStores::DBI::Album');
-__PACKAGE__->has_many(genres => ['Slim::DataStores::DBI::GenreTrack' => 'genre'] => 'track');
-__PACKAGE__->has_many(comments => ['Slim::DataStores::DBI::Comment' => 'value'] => 'track');
-__PACKAGE__->has_many(contributors => ['Slim::DataStores::DBI::ContributorTrack' => 'contributor'] => 'track');
-__PACKAGE__->has_many(tracks => [ 'Slim::DataStores::DBI::PlaylistTrack' => 'track' ] => 'playlist');
-__PACKAGE__->has_many(diritems => [ 'Slim::DataStores::DBI::DirlistTrack' => 'item' ] => 'dirlist');
+	$class->table('tracks');
 
-__PACKAGE__->add_constructor(externalPlaylists => qq{
-	url LIKE 'itunesplaylist:%' OR
-	url LIKE 'moodlogicplaylist:%' OR
-	url LIKE 'musicmagicplaylist:%'
-});
+	$class->columns(Primary => keys %primaryColumns);
+	$class->columns(Essential => keys %allColumns);
+
+	# Combine essential and other for now for performance, at the price of
+	# larger in-memory object size
+	#$class->columns(Others => keys %otherColumns);
+	$class->columns(Stringify => qw/url/);
+
+	# setup our relationships
+	$class->has_a(album => 'Slim::DataStores::DBI::Album');
+
+	$class->has_many(genres => ['Slim::DataStores::DBI::GenreTrack' => 'genre'] => 'track');
+	$class->has_many(comments => ['Slim::DataStores::DBI::Comment' => 'value'] => 'track');
+	$class->has_many(contributors => ['Slim::DataStores::DBI::ContributorTrack' => 'contributor'] => 'track');
+	$class->has_many(tracks => [ 'Slim::DataStores::DBI::PlaylistTrack' => 'track' ] => 'playlist');
+	$class->has_many(diritems => [ 'Slim::DataStores::DBI::DirlistTrack' => 'item' ] => 'dirlist');
+
+	# And some custom sql
+	$class->add_constructor(externalPlaylists => qq{
+		url LIKE 'itunesplaylist:%' OR
+		url LIKE 'moodlogicplaylist:%' OR
+		url LIKE 'musicmagicplaylist:%'
+	});
+}
 
 tie our %_cache, 'Tie::Cache::LRU', 5000;
 
