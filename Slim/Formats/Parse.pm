@@ -356,7 +356,16 @@ sub parseCUE {
 		}
 
 		# $noUTF8 will be set if this is an external cuesheet, in
-		# which case we don't want to readTags on the source FLAC file.
+		# which case we don't want to readTags on the source file.
+		if ($noUTF8) {
+
+			$ds->updateOrCreate({
+				'url'        => $filename,
+				'attributes' => { 'CT' => 'cur' },
+				'readTags'   => 0,
+			});
+		}
+
 		$ds->updateOrCreate({
 			'url'        => $url,
 			'attributes' => $cacheEntry,
