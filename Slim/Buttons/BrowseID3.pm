@@ -26,6 +26,12 @@ sub init {
 
 	my %browse = (
 
+		'BROWSE_NEW_MUSIC' => {
+			'useMode'  => 'browseid3',
+			'genre'    => '*',
+			'artist'   => '*',
+		},
+
 		'BROWSE_BY_GENRE'  => {
 			'useMode'  => 'browseid3',
 		},
@@ -584,11 +590,19 @@ sub loadDir {
 
 	} elsif (picked($genre) && picked($artist)) {
 
-		@{browseID3dir($client)} = $ds->find('album', $find, 'album');
+		# The user has selected the New Music item
+		if ($client->curSelection($client->curDepth()) eq 'BROWSE_NEW_MUSIC') {
 
-		if (scalar @{browseID3dir($client)} > 1) {
+			@{browseID3dir($client)} = $ds->find('album', $find, 'age', Slim::Utils::Prefs::get('browseagelimit'), 0);
 
-			push @{browseID3dir($client)}, $client->string('ALL_SONGS');
+		} else {
+
+			@{browseID3dir($client)} = $ds->find('album', $find, 'album');
+
+			if (scalar @{browseID3dir($client)} > 1) {
+
+				push @{browseID3dir($client)}, $client->string('ALL_SONGS');
+			}
 		}
 
 	} elsif (picked($genre)) {
