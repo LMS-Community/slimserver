@@ -30,7 +30,7 @@ sub startScan {
 	unless (defined $import) {
 		$::d_info && msg("Clearing ID3 cache\n");
 		Slim::Music::Info::clearCache();
-		!$::d_info && msg("Starting background scanning.\n");
+		$::d_info && msg("Starting background scanning.\n");
 		$importsRunning{'folder'} = Time::HiRes::time();
 		Slim::Music::MusicFolderScan::startScan();
 	}
@@ -41,7 +41,7 @@ sub startScan {
 			if (!defined $import || (defined $import && ($importer eq $import))) {
 				$importsRunning{$importer} = Time::HiRes::time();
 				# rescan each enabled Import, or scan the newly enabled Import
-				!$::d_info && msg("Starting $importer scanning.\n");
+				$::d_info && msg("Starting $importer scanning.\n");
 				&{$Importers{$importer}->{'scan'}};
 			}
 		}
@@ -92,7 +92,7 @@ sub useImporter {
 sub endImporter {
 	my $import = shift;
 	if (exists $importsRunning{$import}) { 
-		!$::d_info && msg("Completing $import Scan in ".(Time::HiRes::time() - $importsRunning{$import})." seconds\n");
+		$::d_info && msg("Completing $import Scan in ".(Time::HiRes::time() - $importsRunning{$import})." seconds\n");
 		delete $importsRunning{$import};
 	}
 

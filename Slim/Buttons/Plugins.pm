@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.32 2004/12/17 10:09:30 kdf Exp $
+# $Id: Plugins.pm,v 1.33 2004/12/17 10:28:50 kdf Exp $
 #
 package Slim::Buttons::Plugins;
 
@@ -132,7 +132,7 @@ sub read_plugins {
 
 		if (!$@ && $displayName) {
 
-			Slim::Utils::Strings::addStringPointer(uc($plugin), $displayName);
+			#Slim::Utils::Strings::addStringPointer(uc($plugin), $displayName);
 
 			$plugins{$plugin} = {
 				module => $fullname,
@@ -156,7 +156,6 @@ sub read_plugins {
 
 	addWebPages();
 	addScreensavers();
-	#addSetupGroups();
 	addMenus();
 	$plugins_read = 1 unless $read_onfly;
 }
@@ -274,6 +273,10 @@ sub addWebPages {
 			}
 		}
 	}
+}
+
+sub clearGroups {
+	$addGroups = 0;
 }
 
 sub addSetupGroups {
