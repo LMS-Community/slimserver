@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.59 2004/01/24 18:50:25 dean Exp $
+# $Id: Source.pm,v 1.60 2004/01/24 19:44:29 dean Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1004,11 +1004,11 @@ sub readNextChunk {
 					return undef;	
 				}	
 
-			} elsif ($readlen == 0 && ($client->audioFilehandleIsSocket != 1)) { 
+			} elsif ($readlen == 0) { 
 				$::d_source && msg("Read to end of file or pipe\n");  
 				$endofsong = 1;
 			} else {
-#				print "$readlen\n";
+				$::d_source && msg("Read $readlen bytes from source\n");
 			}
 			
 			if ($client->shoutMetaInterval()) {
