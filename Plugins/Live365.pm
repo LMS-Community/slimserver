@@ -640,7 +640,7 @@ sub getPlaylist {
 		$::d_plugins && msg( "Live365 next update: $nextRefresh seconds\n" );
 		
 		$client->killAnimation();
-		Slim::Music::Info::setTitle( $url, $newTitle);
+		Slim::Music::Info::setCurrentTitle( $url, $newTitle);
 		
 		#XXX Fixme $client->songDuration doesn't exist any more, need
 		# a different way to set the time. perhaps changing setTitle above
