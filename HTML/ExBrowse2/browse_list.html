@@ -8,12 +8,12 @@
   [% IF anchor %]<a name="[% anchor %]"></a>[% END ; IF descend ; IF NOT nobrowse %]
   <a onclick="parent.browseurl(&quot;browse.html?dir=[% descend %]&quot;)">[% END ; title | html ; IF NOT nobrowse %]</a>[%
   END ; ELSE %]
-  <a onclick="parent.browseurl(&quot;songinfo.html?item=[% item.id %]&quot;)">[% title | html %]</a>
-  [% IF album %][% "FROM" | string %][% END %]
-  <i><a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=artist,album,track&amp;level=2&amp;artist=[% artist.id
-   %]&amp;album=[% album.id %]&quot;)">[% album | html %]</a></i>
-  [% IF artist %][% "BY" | string %] [% END %]
-  <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=artist,album,track&amp;level=1&amp;artist=[% artist.id
-   %]&quot;)">[% artist | html %]</a>[% END %]
+  <a onclick="parent.browseurl(&quot;songinfo.html?item=[% item %]&quot;)">[% title | html %]</a>
+  [% IF includeAlbum && album %][% "FROM" | string %][% END %]
+  <i><a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% itemobj.album.id
+   %]&quot;)">[% album | html %]</a></i>
+  [% IF includeArtist %][% "BY" | string %] [% END %]
+  <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=artist,album,track&amp;level=1&amp;artist=[%
+   itemobj.contributorsOfType('artist').first.id %]&quot;)">[% artist | html %]</a>[% END %]
  </td>
 </tr>
