@@ -402,37 +402,21 @@ sub scanFunction {
 				$cacheEntry{'TITLE'} = $curTrack{'Name'};
 				$cacheEntry{'ARTIST'} = $curTrack{'Artist'};
 				$cacheEntry{'COMPOSER'} = $curTrack{'Composer'};
+				$cacheEntry{'TRACKNUM'} = $curTrack{'Track Number'};
 
-				# Handle multi-disc sets with the same title (otherwise, same-numbered tracks are overridden)
-				# by appending a disc count to the track's album name.
-				# If "disc <num>" (localized or English) is present in the title, we assume it's already unique and don't
-				# add the suffix.
-				# If there's only one disc in the set, we don't bother with "disc 1 of 1"
-				if (defined($curTrack{'Disc Number'}) && defined($curTrack{'Disc Count'}))
-				{
-				    my $discNum = $curTrack{'Disc Number'};
-				    my $discCount = $curTrack{'Disc Count'};
-				    my $discWord = string('DISC');
-					
-				    $cacheEntry{'DISC'} = $discNum;
-				    $cacheEntry{'DISCC'} = $discCount;
-				    
-				    if ($discCount > 1 && !($curTrack{'Album'} =~ /(${discWord})|(Disc)\s+[0-9]+/i))
-				    {
-					# Add space to handle > 10 album sets and sorting. Is suppressed in the HTML.
-					if ($discCount > 9 && $discNum < 10) { $discNum = ' ' . $discNum; };
-						
-					$curTrack{'Album'} = $curTrack{'Album'} . " ($discWord $discNum " . string('OF') . " $discCount)";
-				    }
-				}
+				my $discNum = $curTrack{'Disc Number'};
+				my $discCount = $curTrack{'Disc Count'};
+				$cacheEntry{'DISC'} = $discNum if defined $discNum;
+				$cacheEntry{'DISCC'} = $discCount if defined $discCount;
 				$cacheEntry{'ALBUM'} = $curTrack{'Album'};			
+
+				Slim::Music::Info::addDiscNumberToAlbumTitle(\%cacheEntry);
 				
 				$cacheEntry{'GENRE'} = $curTrack{'Genre'};
 				$cacheEntry{'FS'} = $curTrack{'Size'};
 				if ($curTrack{'Total Time'}) { $cacheEntry{'SECS'} = $curTrack{'Total Time'} / 1000; };
 				$cacheEntry{'BITRATE'} = $curTrack{'Bit Rate'};
 				$cacheEntry{'YEAR'} = $curTrack{'Year'};
-				$cacheEntry{'TRACKNUM'} = $curTrack{'Track Number'};
 				$cacheEntry{'COMMENT'} = $curTrack{'Comments'};
 				# cacheEntry{'???'} = $curTrack{'Track Count'};
 				# cacheEntry{'???'} = $curTrack{'Sample Rate'};

@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.41 2003/12/23 00:36:45 dean Exp $
+# $Id: Info.pm,v 1.42 2003/12/24 07:19:02 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -679,6 +679,11 @@ sub elemLookup {
 	my $infoHashref = shift;
 	my $value;
 
+	# don't return disc number if known to be single disc set
+	if ($element eq "DISC") {
+		my $discCount = $infoHashref->{"DISCC"};
+		return undef if defined $discCount and $discCount == 1;
+	}
 	$value = $infoHashref->{$element};
 
 	return $value;
@@ -1739,38 +1744,7 @@ sub readTags {
 			   $tempCacheEntry->{'DISC'} = $1;
 			   $tempCacheEntry->{'DISCC'} = $2 if defined $2;
  			}
-
-			# Modify the ALBUM tag to look like " (Disc X)" or perhaps
-			# " (Disc X of Y)" if we have DISC/DISCC info.  Skipped if
-			# the 'groupdiscs' pref is enabled
-			if (not Slim::Utils::Prefs::get ('groupdiscs')
-				and exists $tempCacheEntry->{'DISC'}) {
-			   my $discNum = $tempCacheEntry->{'DISC'};
-				
-			   my $discCount = exists $tempCacheEntry->{'DISCC'} ?
-				 $tempCacheEntry->{'DISCC'} : 0;
-				
-				my $discWord = string('DISC');
-				
-			   if ($discNum && $tempCacheEntry->{'ALBUM'} &&
-				   $tempCacheEntry->{'ALBUM'} !~ /($discWord|disc)\s+\d+/i) {
-					# disc 1 of 1 isn't interesting
-				  if (!($discCount == 1 && $discNum == 1)) {
-					 # Add space to handle > 10 album sets and
-					 # sorting. Is suppressed in the HTML.
-					 if ($discCount && $discCount > 9 && $discNum < 10) {
-						$discNum = ' ' . $discNum;
-					 }
-							
-						$tempCacheEntry->{'ALBUM'} = $tempCacheEntry->{'ALBUM'} . " ($discWord $discNum";
-						if ($discCount) {
-							$tempCacheEntry->{'ALBUM'} .= " ". string('OF') . " $discCount)";
-						} else {
-							$tempCacheEntry->{'ALBUM'} .= ")";
-						}
-					}
-				}
-			}
+			addDiscNumberToAlbumTitle($tempCacheEntry);
 			
 			if (!$tempCacheEntry->{'TITLE'} && !defined(cacheItem($file, 'TITLE'))) {
 				$::d_info && Slim::Utils::Misc::msg("Info: no title found, using plain title for $file\n");
@@ -1856,6 +1830,37 @@ sub readTags {
 	updateCacheEntry($file, $tempCacheEntry);
 
 	return $tempCacheEntry;
+}
+
+sub addDiscNumberToAlbumTitle
+{
+	my $entry = shift;
+	# Unless the groupdiscs preference is selected:
+	# Handle multi-disc sets with the same title
+	# by appending a disc count to the track's album name.
+	# If "disc <num>" (localized or English) is present in 
+	# the title, we assume it's already unique and don't
+	# add the suffix.
+	# If it seems like there is only one disc in the set, 
+	# avoid adding "disc 1 of 1"
+	return if Slim::Utils::Prefs::get('groupdiscs');
+	my $discNum = $entry->{'DISC'};
+	return unless defined $discNum and $discNum > 0;
+	my $discCount = $entry->{'DISCC'};
+	if (defined $discCount) {
+		return if $discCount == 1;
+		undef $discCount if $discCount < 1; # errornous count
+	}
+	my $discWord = string('DISC');
+	return if $entry->{'ALBUM'} =~ /\b(${discWord})|(Disc)\s+\d+/i;
+	if (defined $discCount) {
+		# add spaces to discNum to help plain text sorting
+		my $discCountLen = length($discCount);
+		$entry->{'ALBUM'} .= sprintf(" (%s %${discCountLen}d %s %d)",
+				$discWord, $discNum, string('OF'), $discCount);
+	} else {
+		$entry->{'ALBUM'} .= " ($discWord $discNum)";
+	}
 }
 
 sub getImageContent {
@@ -2078,6 +2083,13 @@ sub updateGenreCache {
 	my $albumCase = ignoreCaseArticles($album);
 	my $trackCase = ignoreCaseArticles($track);
 	
+	my $discNum = $cacheEntry->{'DISC'};
+	my $discCount = $cacheEntry->{'DISCC'};
+	if (defined($discNum) && (!defined($discCount) || $discCount > 1)) {
+		my $discCountLen = defined($discCount) ? length($discCount) : 1;
+		$trackCase = sprintf("%0${discCountLen}d-%s", $discNum, $trackCase);
+	}
+
 	$genreCache{$genreCase}{$artistCase}{$albumCase}{$trackCase} = $file;
 
 	$caseCache{$genreCase} = $genre;

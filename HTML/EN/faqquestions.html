@@ -42,8 +42,8 @@
 <h5><a id="about-80211"></a>What kind of wireless networks can Squeezebox connect to?</h5>
 <p>Squeezebox can connect to any 802.11b compatible wireless network including Apple Airport, 802.11g, 802.11b/g, and 802.11a/b/g networks.</p>
 
-<h5><a id="about-wep"></a>Does Squeezebox support WEP?</h5>
-<p>Yes, Squeezebox supports both 128 bit and 64 bit WEP encryption?</p>
+<h5><a id="about-wep"></a>Does Squeezebox support WEP? What about computer-to-computer or Ad Hoc networks?</h5>
+<p>Yes, Squeezebox supports both 128 bit and 64 bit WEP encryption.  Squeezebox also supports both Infrastructure and Ad Hoc (aka computer-to-computer) wireless networks.  Squeezebox does not yet support WPA security, but it's something we hope to support soon.</p>
 
 <h5><a id="about-slimp3sync"></a>Does SlimServer support synchronization between SLIMP3 and Squeezebox?</h5>
 <p>Yes, SlimServer can sync multiple SLIMP3 and Squeezebox players.  Software MP3 players cannot be synced with the hardware players due to the inability to control delay through the software players.</p>
@@ -132,7 +132,8 @@ The SlimServer software can automatically handle many formats, including Ogg Vor
 <p>Unfortunately, the licensing issues surrounding these formats make it impossible for us to convert these formats  on the fly.</p>
 <h5><a id="formats-aac"/></a>Does Squeezebox support AAC?</h5>
 <p>Squeezebox's hardware decoder supports MP3 and uncompressed formats for decoding. Under Mac OS X and Windows, Squeezebox software can convert iTunes AAC files to uncompressed for playback on Squeezebox on-the-fly. To enable this feature, you'll need to install the free (and high quality) LAME MP3 encoder. For more information about LAME in general, <a href="http://lame.sourceforge.net/">click here</a>. LAME is free, but in some countries you may need to pay a license fee in order to legally encode MP3 files. 
-<p>There are several ways to install LAME, including the excellent <a href="http://www.blacktree.com/apps/index.html?iTunes-LAME/index.html">iTunes-LAME Encoder</a>, <a href="http://www.culater.net/osd/packages.html">an Installer package provided by Mike Solomon</a>, and the <a href="http://fink.sourceforge.net/">Fink package system.</a></p>
+<p>There are several ways to install LAME.  Mac users can install the excellent 
+<a href="http://www.blacktree.com/apps/index.html?iTunes-LAME/index.html">iTunes-LAME Encoder</a>.  Windows users can download lame.exe from one of the links on <a href="http://lame.sourceforge.net/links.html#software">this</a> page, including <a href="http://mitiok.cjb.net/">here</a>.  Place the lame.exe file in either C:\Windows or C:\Program Files\SlimServer\server\Bin, then restart the SlimServer.</p>
 <p>Once you have LAME installed, you should be able to playback iTunes-ripped AAC files (.m4a) as well as the audio from any QuickTime movie (.mov). Music purchased from the Apple Music Store (.m4p files) is protected and cannot be played back with Squeezebox until Apple provides the necessary hooks to enable this. In the mean time, it is possible to burn your Apple Music Store songs to CD and re-rip them.</p>
 <p>Note that LAME-based encoding to MP3 for playback can use a substantial amount of CPU power.  We continue to recommend high-bitrate MP3 encoded files for best performance, highest audio quality, and best compatibililty.</p>
 <h5><a id="formats-ogg"/>Does Squeezebox support Ogg Vorbis?</h5>
@@ -322,6 +323,7 @@ Version=2</pre></p>
 <h4><a href="#troubleshooting">Troubleshooting</a></h4>
 <ul>
 	<li><a href="#troubleshooting-sleep">After several minutes my player turns off and stops responding.  What's going on?</a>
+	<li><a href="#troubleshooting-wep">I'm having trouble connecting my Squeezebox to a wireless network with WEP enabled.</a>
 	<li><a href="#troubleshooting-remote">The IR remote is not responding, or is functioning erratically.</a>
 	<li><a href="#troubleshooting-dhcp">SLIMP3 doesn't find a DHCP server.</a>
 	<li><a href="#troubleshooting-findserver">The player doesn't find a SlimServer.</a>
@@ -345,8 +347,14 @@ Version=2</pre></p>
 	<li><a href="#troubleshooting-annoyingclick">When the SlimServer software pages reload I hear an annoying click.  How do I get rid of it?</a>
 </ul>
 <h4><a id="troubleshooting"></a>Troubleshooting</h4>
-<h5><a href="#troubleshooting-sleep"></a>After several minutes my player turns off and stops responding.  What's going on?</h5>
+
+<h5><a id="troubleshooting-sleep"></a>After several minutes my player turns off and stops responding.  What's going on?</h5>
 <p>Make sure that your energy saver settings on your computer are set so that your computer doesn't go to sleep.  If it does, your player will go to sleep as well.   If that's not the problem, make sure that the IP address on your computer isn't changing.  To do this, adjust  your TCP/IP settings to use a static IP address.</a>
+
+<h5><a id="troubleshooting-wep"></a>I'm having trouble connecting my Squeezebox to a wireless network with WEP enabled.</h5>
+<p>Double check that the WEP key that you have entered is correct.  Also, make sure that your access point is configured to use Shared-Key Authentication, 
+not Open-System Authentication, which is less secure.</p>
+
 <h5><a id="troubleshooting-remote"></a>The IR remote is not responding, or is functioning erratically.</h5>
 <p>Make sure the batteries in your remote are fresh and installed properly and that you have installed the latest SlimServer software and firmware.</p>
 <p>If you have one of the old Sony universal remotes try the following steps.</p></div>
@@ -441,10 +449,10 @@ Version=2</pre></p>
 	<li>Check that you CANNOT ping the SLIMP3 device when you have disconnected it from the network to make sure that some other device isn't using that IP address.
 </ul>
 
-<h5><a id="#troubleshooting-autoupdate"></a>The SlimServer software seems to be connecting to a website on its own every time I run the software.  What's going on?</h5>
+<h5><a id="troubleshooting-autoupdate"></a>The SlimServer software seems to be connecting to a website on its own every time I run the software.  What's going on?</h5>
 <p>The SlimServer software connects to the server update.slimdevices.com every time it starts up and every 24 hours after that to check for updates. You can disable this feature in the Additional Server Settings area of the SlimServer.</p>
 
-<h5><a id="#troubleshooting-annoyingclick"></a>When the SlimServer software pages reload I hear an annoying click.  How do I get rid of it?</h5>
+<h5><a id="troubleshooting-annoyingclick"></a>When the SlimServer software pages reload I hear an annoying click.  How do I get rid of it?</h5>
 <p>This is a "feature" of Internet Explorer on Windows. To turn off the annoying "click" when exploring/ clicking on hyperlinks, navigate to <i>Start Menu / Settings / Sounds and Multimedia / Sounds</i>.  Look for the sound settings: <i>Windows Explorer / Start Navigation</i> and change the selected sound to "none".</p>
 
 <hr>

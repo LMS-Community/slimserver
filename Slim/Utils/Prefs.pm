@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.27 2003/12/23 00:36:45 dean Exp $
+# $Id: Prefs.pm,v 1.28 2003/12/24 07:19:02 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -89,9 +89,16 @@ my %DEFAULT = (
     ,'ignoreDirRE'          => ''
     ,'checkVersion'			=> 1
     ,'mDNSname'				=> 'SlimServer'
-	,'titleFormat'			=> ['TITLE', 'TRACKNUM. TITLE', 'TRACKNUM. ARTIST - TITLE', 'TRACKNUM. TITLE (ARTIST)'
-						, 'TRACKNUM. TITLE - ARTIST - ALBUM', 'FILE.EXT', 'TRACKNUM. TITLE from ALBUM by ARTIST'
-						, 'TITLE (ARTIST)', 'ARTIST - TITLE']
+	,'titleFormat'			=> ['TITLE',
+		'DISC-TRACKNUM. TITLE',
+		'TRACKNUM. TITLE',
+		'TRACKNUM. ARTIST - TITLE',
+		'TRACKNUM. TITLE (ARTIST)',
+		'TRACKNUM. TITLE - ARTIST - ALBUM',
+		'FILE.EXT',
+		'TRACKNUM. TITLE from ALBUM by ARTIST',
+		'TITLE (ARTIST)',
+		'ARTIST - TITLE']
 	,'menuItem'			=> ['NOW_PLAYING', 'BROWSE_BY_GENRE', 'BROWSE_BY_ARTIST', 'BROWSE_BY_ALBUM', 'BROWSE_MUSIC_FOLDER'
 						, 'SEARCH', 'SAVED_PLAYLISTS', 'SETTINGS']
 	,'disabledplugins'		=> []
