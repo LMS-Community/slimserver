@@ -1,5 +1,5 @@
 # RssNews Ticker v1.0
-# $Id: RssNews.pm,v 1.3 2004/11/05 02:32:29 dave Exp $
+# $Id: RssNews.pm,v 1.4 2004/11/05 23:41:10 dave Exp $
 # Copyright (c) 2004 Slim Devices, Inc. (www.slimdevices.com)
 
 # Based on BBCTicker 1.3 which had this copyright...
@@ -85,7 +85,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Prefs;
 
-$VERSION = substr(q$Revision: 1.3 $,10);
+$VERSION = substr(q$Revision: 1.4 $,10);
 my %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
@@ -402,10 +402,13 @@ sub retrieveNews {
 			$show_error = 1;
         }
 		if ($show_error) {
+			# we did not get the news
 			Slim::Display::Animation::showBriefly($client, 
 												  string('PLUGIN_RSSNEWS_ERROR_IN_FEED'));
+		  } else {
+			  # record the time we last got the news
+			  $thenews{$feedname}{"refresh_last"} = $now;
 		  }
-        $thenews{$feedname}{"refresh_last"} = $now;
     }
 	
     return $thenews{$feedname};
@@ -464,7 +467,7 @@ sub setupGroup {
 					return $feed_order[$2];
 				}
 
-				return string('PLUGIN_RSSNEWS_ADD_NEW');
+				return '';
 			}
 			,'onChange' => sub {
 				my ($client,$changeref,$paramref,$pageref) = @_;
@@ -591,7 +594,7 @@ sub lines {
 				$i++;
 			}
 			# remove tags
-			$line2 =~ s/<[A-Za-z]+>/ /g;
+			$line2 =~ s/<\/?[A-Za-z]+ ?\/?>/ /g; # matches, for example, "<b>" and "<br />"
 			# convert newlines in line2 to spaces
 			$line2 =~ s/\n/ /g;
 			$display_current_items->{$display_current}->{'next_item'} = $i;
@@ -764,7 +767,9 @@ sub mainModeCallback {
         my $feedname = $feed_order[$listIndex];
         
         retrieveNews($client, $feedname);
-        if ($thenews{$feedname}) {
+        if ($thenews{$feedname} &&
+			$thenews{$feedname}->{title} &&
+			@{$thenews{$feedname}->{item}}) {
             Slim::Buttons::Common::pushModeLeft($client, 
                                                 'PLUGIN.RssNews.headlines',
                                                 { feed => $thenews{$feedname}->{title},
