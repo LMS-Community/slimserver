@@ -792,7 +792,21 @@ sub browser_addtolist_done {
 				$params->{'itemsPerPage'},
 				0,
 			);
-
+		} elsif (defined $params->{'dir'} && 
+				 $params->{'dir'} =~ '__playlists') {
+			# Numeric page bar for playlists, since they shouldn't
+			# be sorted.
+			($start, $end) = pageBar(
+				$numitems,
+				$params->{'path'},
+				0,
+				$otherparams,
+				\$params->{'start'},
+				\$params->{'browselist_header'},
+				\$params->{'browselist_pagebar'},
+				$params->{'skinOverride'},
+				$params->{'itemsPerPage'},
+			);
 		} else {
 
 			my $alphaItems = [ map { File::Basename::basename(uc($_)) } @{$itemsref} ];
