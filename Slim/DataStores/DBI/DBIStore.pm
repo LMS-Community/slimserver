@@ -631,12 +631,18 @@ sub clearExternalPlaylists {
 	my $self = shift;
 
 	$self->{'externalPlaylists'} = [];
+
+	my $playLists = Slim::DataStores::DBI::Track->externalPlaylists();
+
+	while (my $track = $playLists->next()) {
+		$track->delete();
+	}
+
+	$self->forceCommit();
 }
 
 sub generateExternalPlaylists {
 	my $self = shift;
-
-	$self->clearExternalPlaylists();
 
 	$self->{'externalPlaylists'} = [ Slim::Utils::Text::sortIgnoringCase(
 		map { $_->url() } Slim::DataStores::DBI::Track->externalPlaylists
