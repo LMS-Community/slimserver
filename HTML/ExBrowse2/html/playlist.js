@@ -258,10 +258,10 @@ function doSelect(e) {
 	if (!et) return;
 	if (et && et.parentNode && et.parentNode.parentNode) {
 		etpp = et.parentNode.parentNode;
-		if (etpp.rowIndex) {
-			selIndex = etpp.rowIndex;
-		} else {
+		if (etpp.parentNode.rowIndex) {
 			selIndex = etpp.parentNode.rowIndex;
+		} else {
+			selIndex = etpp.rowIndex;
 		}
 	} else {
 		return;
@@ -283,10 +283,10 @@ function doArtist(e) {
 	if (!et) return;
 	if (et && et.parentNode && et.parentNode.parentNode) {
 		etpp = et.parentNode.parentNode;
-		if (etpp.rowIndex) {
-			selIndex = etpp.rowIndex;
-		} else {
+		if (etpp.parentNode.rowIndex) {
 			selIndex = etpp.parentNode.rowIndex;
+		} else {
+			selIndex = etpp.rowIndex;
 		}
 	} else {
 		return;

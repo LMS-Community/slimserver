@@ -31,7 +31,7 @@
  <tr>
   <td class="listing"> [% "ALBUM" | string %] </td>
   <td class="listing">
-   <a onclick="browseurl('browsedb.html?hierarch=track&level=0&album=[% album %]')">[% track.album.title | html %]</a>
+   <a onclick="browseurl('browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% album %]')">[% track.album.title | html %]</a>
   </td>
  </tr>
  [% END %]
@@ -42,7 +42,7 @@
   <td class="listing">[% "GENRE" | string %][% "COLON" | string %] </td>
   <td class="listing">
 	[% FOREACH genre = genres %]
-   		<a onclick="browseid3('[% genre.id %]', '', '', '')">[% genre.name | html %]</a>
+   		<a onclick="browseurl('browsedb.html?hierarchy=genre&amp;level=0&amp;genre=[% genre.id %]')">[% genre.name | html %]</a>
 	[% END %]
   </td>
  </tr>
