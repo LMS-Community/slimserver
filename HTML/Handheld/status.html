@@ -69,11 +69,11 @@
        <a href="status.html?p0=mixer&p1=volume&p2=90&player=[% player | uri %]&start=[% start %]">[% IF volume == '90' %]<b>[% END %]10[% IF volume == '90' %]</b>[% END %]</a>
        <a href="status.html?p0=mixer&p1=volume&p2=100&player=[% player | uri %]&start=[% start %]">[% IF volume == '100' %]<b>[% END %]11[% IF volume == '100' %]</b>[% END %]</a>
        <a href="status.html?p0=mixer&p1=volume&p2=%2b10&player=[% player | uri %]&start=[% start %]">[% "VOLUME_LOUDER" | string %]</a>
-</font></td></tr>[% END %]
+</font></td></tr>
 <tr>
     <td><font size="-2">[% "MUTE" | string %][% "COLON" | string %]</font></td>
     <td><a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=1"><font size="-2">[% IF volume < '1' %]<b>[% END %][% "MCON" | string %][% IF volume < '1' %]</b>[% END %]</font></a>&nbsp;<a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=0"><font size="-2">[% IF volume > '0' %]<b>[% END %][% "MCOFF" | string %][% IF volume > '0' %]</b>[% END %]</font></a></td>
-</tr>
+</tr>[% END %]
 <tr>
     <td><font size="-2">[% "REPEAT" | string %][% "COLON" | string %]</font></td>
     <td>
