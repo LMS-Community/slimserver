@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.18 2003/12/13 08:29:16 kdf Exp $
+# $Id: Playlist.pm,v 1.19 2003/12/16 04:30:22 kdf Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -241,12 +241,9 @@ sub currentSongLines {
 
 sub nowPlayingModeLines {
 	my ($client,$line1,$line2,$overlay1,$overlay2) = @_;
-	#if (!defined($line1)) { $line1 = ""; };
 	if (!defined($overlay1)) { $overlay1 = ""; };
-	#if (!defined($line2)) { $line2 = ""; };
-	#if (!defined($overlay2)) { $overlay2 = ""; };
 	my $playingDisplayMode = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
-	Slim::Buttons::Common::param($client,'animateTop',$playingDisplayMode);
+	Slim::Buttons::Common::param($client,'animateTop',(Slim::Player::Source::playmode($client) ne "stop") ? $playingDisplayMode : 0);
 	my $fractioncomplete = 0;
 	
 	if (!defined($playingDisplayMode)) { $playingDisplayMode = 1; };
