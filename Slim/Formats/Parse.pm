@@ -1,6 +1,6 @@
 package Slim::Formats::Parse;
 
-# $Id: Parse.pm,v 1.23 2004/10/15 23:48:24 vidur Exp $
+# $Id: Parse.pm,v 1.24 2004/11/27 05:53:18 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -80,7 +80,8 @@ sub _updateMetaData {
 		Slim::Music::Info::setContentType($entry,'mp3');
 	}
 
-	if (defined($title)) {
+	# Update title MetaData only if its not a local file with Title information already cached.
+	if (defined($title) && !(Slim::Music::Info::cacheItem($entry, 'TITLE') && Slim::Music::Info::isFileURL($entry))) {
 		Slim::Music::Info::setTitle($entry, $title);
 		$title = undef;
 	}
