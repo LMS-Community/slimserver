@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.137 2005/01/08 06:04:41 kdf Exp $
+# $Id: HTTP.pm,v 1.138 2005/01/11 04:11:41 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,7 +10,6 @@ package Slim::Web::HTTP;
 use strict;
 
 use Digest::MD5;
-use Data::Dumper;
 use FileHandle;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
