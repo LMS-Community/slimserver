@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.78 2004/03/05 21:59:38 daniel Exp $
+# $Id: Info.pm,v 1.79 2004/03/06 05:56:45 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1330,7 +1330,7 @@ sub coverArt {
 
 	if (! Slim::Utils::Prefs::get('lookForArtwork')) { return undef};
 
-	$::d_info && Slim::Utils::Misc::msg("Cover Art ($art) for: $file\n");
+	$::d_artwork && Slim::Utils::Misc::msg("Retrieving artwork ($art) for: $file\n");
 	
 	my ($body, $contenttype, $mtime, $path);
 	my $cover = haveCoverArt($file);
@@ -1339,7 +1339,7 @@ sub coverArt {
 	if (($art eq 'cover') && $cover && ($cover ne '1')) {
 		$body = getImageContent($cover);
 		if ($body) {
-			$::d_info && Slim::Utils::Misc::msg("Found cached cover art: $cover\n");
+			$::d_artwork && Slim::Utils::Misc::msg("Found cached artwork file: $cover\n");
 			$contenttype = mimeType($cover);
 			$path = $cover;
 		} else {
@@ -1349,7 +1349,7 @@ sub coverArt {
 	elsif (($art eq 'thumb') && $thumb && ($thumb ne '1')) {
 		$body = getImageContent($thumb);
 		if ($body) {
-			$::d_info && Slim::Utils::Misc::msg("Found cached thumb art: $thumb\n");
+			$::d_artwork && Slim::Utils::Misc::msg("Found cached thumbnail file: $thumb\n");
 			$contenttype = mimeType($thumb);
 			$path = $thumb;
 		} else {
@@ -1357,12 +1357,8 @@ sub coverArt {
 		}
 	}
 	elsif ( (($art eq 'cover') && $cover) || 
-
-		(($art eq 'thumb') && $thumb) ) {
-		$::d_info && Slim::Utils::Misc::msg("Reading $art from $file\n");
-
-		($body, $contenttype, $path) = readCoverArt($file, $art);
-
+			(($art eq 'thumb') && $thumb) ) {
+		($body, $contenttype,$path) = readCoverArt($file,$art);
 	}
 
 	# kick this back up to the webserver so we can set last-modified
@@ -2075,40 +2071,41 @@ sub readTags {
 					$sortCache{ignoreCaseArticles($tempCacheEntry->{'TITLE'})} = $tempCacheEntry->{'TITLESORT'};
 				};
 			};
-			
-			# Check for Cover Artwork, only if not already present.
-			if (exists $tempCacheEntry->{'COVER'} || exists $tempCacheEntry->{'THUMB'}) {
-				$::d_info && Slim::Utils::Misc::msg("already checked artwork for $file\n");
-			} elsif (Slim::Utils::Prefs::get('lookForArtwork')) {
-				my $album = $tempCacheEntry->{'ALBUM'};
-				$tempCacheEntry->{'TAG'} = 1;
-				#update the cache so we can use readCoverArt without recursion.
-				updateCacheEntry($file, $tempCacheEntry);
-				# Look for Cover Art and cache location
-				my ($body,$contenttype,$path);
-				if (defined $tempCacheEntry->{'PIC'}) {
-					($body,$contenttype,$path) = readCoverArtTags($filepath,'cover');
-				}
-				if (defined $body) {
-					$tempCacheEntry->{'COVER'} = 1;
-					$tempCacheEntry->{'THUMB'} = 1;
-					if ($album && !exists $artworkCache{$album}) {
-						$::d_info && Slim::Utils::Misc::msg("ID3 Artwork cache entry for $album: $filepath\n");
-						$artworkCache{$album} = $filepath;
+			if (! Slim::Music::iTunes::useiTunesLibrary()) {
+				# Check for Cover Artwork, only if not already present.
+				if (exists $tempCacheEntry->{'COVER'} || exists $tempCacheEntry->{'THUMB'}) {
+					$::d_artwork && Slim::Utils::Misc::msg("already checked artwork for $file\n");
+				} elsif (Slim::Utils::Prefs::get('lookForArtwork')) {
+					my $album = $tempCacheEntry->{'ALBUM'};
+					$tempCacheEntry->{'TAG'} = 1;
+					#update the cache so we can use readCoverArt without recursion.
+					updateCacheEntry($file, $tempCacheEntry);
+					# Look for Cover Art and cache location
+					my ($body,$contenttype,$path);
+					if (defined $tempCacheEntry->{'PIC'}) {
+						($body,$contenttype,$path) = readCoverArtTags($filepath,'cover');
 					}
-				} else {
-					($body,$contenttype,$path) = readCoverArtFiles($filepath,'cover');
 					if (defined $body) {
-						$tempCacheEntry->{'COVER'} = $path;
-					}
-					# look for Thumbnail Art and cache location
-					($body,$contenttype,$path) = readCoverArtFiles($filepath,'thumb');
-					if (defined $body) {
-						$tempCacheEntry->{'THUMB'} = $path;
-						# add song entry to %artworkcache if we have valid artwork
+						$tempCacheEntry->{'COVER'} = 1;
+						$tempCacheEntry->{'THUMB'} = 1;
 						if ($album && !exists $artworkCache{$album}) {
-							$::d_info && Slim::Utils::Misc::msg("Artwork cache entry for $album: $filepath\n");
+							$::d_artwork && Slim::Utils::Misc::msg("ID3 Artwork cache entry for $album: $filepath\n");
 							$artworkCache{$album} = $filepath;
+						}
+					} else {
+						($body,$contenttype,$path) = readCoverArtFiles($filepath,'cover');
+						if (defined $body) {
+							$tempCacheEntry->{'COVER'} = $path;
+						}
+						# look for Thumbnail Art and cache location
+						($body,$contenttype,$path) = readCoverArtFiles($filepath,'thumb');
+						if (defined $body) {
+							$tempCacheEntry->{'THUMB'} = $path;
+							# add song entry to %artworkcache if we have valid artwork
+							if ($album && !exists $artworkCache{$album}) {
+								$::d_artwork && Slim::Utils::Misc::msg("Artwork cache entry for $album: $filepath\n");
+								$artworkCache{$album} = $filepath;
+							}
 						}
 					}
 				}
@@ -2174,10 +2171,10 @@ sub getImageContent {
 		$$contentref=join('',<TEMPLATE>);
 		close TEMPLATE;
 	} else {
-		$::d_info && Slim::Utils::Misc::msg("Couldn't open image $path\n");
+		$::d_artwork && Slim::Utils::Misc::msg("Couldn't open image $path\n");
 	}
 	
-	defined($$contentref) && length($$contentref) || $::d_info && Slim::Utils::Misc::msg("Image File empty or couldn't read: $path\n");
+	defined($$contentref) && length($$contentref) || $::d_artwork && Slim::Utils::Misc::msg("Image File empty or couldn't read: $path\n");
 	return $$contentref;
 }
 
@@ -2205,7 +2202,7 @@ sub readCoverArtTags {
 	my $body;	
 	my $contenttype;
 	
-	$::d_info && Slim::Utils::Misc::msg("Updating image for $fullpath\n");
+	$::d_artwork && Slim::Utils::Misc::msg("Updating image for $fullpath\n");
 	
 	if (isSong($fullpath) && isFile($fullpath)) {
 	
@@ -2219,7 +2216,7 @@ sub readCoverArtTags {
 	
 			my $file = Slim::Utils::Misc::virtualToAbsolute($filepath);
 			
-			$::d_info && Slim::Utils::Misc::msg("Looking for image in ID3 tag in file $file\n");
+			$::d_artwork && Slim::Utils::Misc::msg("Looking for image in ID3 tag in file $file\n");
 
 			my $tags = MP3::Info::get_mp3tag($file, 2, 1);
 			if ($tags) {
@@ -2308,38 +2305,41 @@ sub readCoverArtFiles {
 
 	my @components = splitdir($file);
 	pop @components;
-	$::d_info && Slim::Utils::Misc::msg("Looking for image files for $file\n");
+	$::d_artwork && Slim::Utils::Misc::msg("Looking for image files in ".catdir(@components)."\n");
 
 	my @filestotry = ();
+	my @names = qw(cover thumb album albumartsmall folder);
+	my @ext = qw(jpg gif);
+	my %nameslist = map { $_ => [do { my $t=$_; map { "$t.$_" } @ext }] } @names ;
+	
 	if ($image eq 'thumb') {
 		if (Slim::Utils::Prefs::get('coverThumb')) {
-			my $cover = Slim::Utils::Prefs::get('coverThumb');
-			if ($cover =~ /^%(.*?)(\..*?){0,1}$/) {
-				my $suffix = $2 ? $2 : ".jpg";
-				$cover = infoFormat($file, $1)."$suffix";
-				$::d_info && Slim::Utils::Misc::msg("Variable Thumbnail: $cover from $1\n");
-			}
-			if (defined $cover) {push @filestotry, $cover;}
+			$cover = Slim::Utils::Prefs::get('coverThumb');
 		}
-		push @filestotry, ('thumb.jpg', 'albumartsmall.jpg', 'cover.jpg',  'folder.jpg', 'album.jpg');
+		@filestotry = map { @{$nameslist{$_}} } qw(thumb albumartsmall cover folder album);
+
 	} else {
 		if (Slim::Utils::Prefs::get('coverArt')) {
-			my $cover = Slim::Utils::Prefs::get('coverArt');
-			if ($cover =~ /^%(.*?)(\..*?){0,1}$/) {
-				my $suffix = $2 ? $2 : ".jpg";
-				$cover = infoFormat($file, $1)."$suffix";
-				$::d_info && Slim::Utils::Misc::msg("Variable Cover: $cover from $1\n");
-			}
-			if (defined $cover) {push @filestotry, $cover;}
+			$cover = Slim::Utils::Prefs::get('coverArt');
 		}
-		push @filestotry, ('cover.jpg', 'albumartsmall.jpg', 'folder.jpg', 'album.jpg', 'thumb.jpg');
+		@filestotry = map { @{$nameslist{$_}} } qw(cover albumartsmall folder album thumb);
 	}
+	if (defined $cover && $cover =~ /^%(.*?)(\..*?){0,1}$/) {
+		my $suffix = $2 ? $2 : ".jpg";
+		$cover = infoFormat($file, $1)."$suffix";
+		my $cover_type = $image eq 'thumb' ? "Thumbnail" : "Cover";
+		$::d_artwork && Slim::Utils::Misc::msg("Variable $cover_type: $cover from $1\n");
+	}
+
+	if (defined $cover) {unshift  @filestotry, $cover;}
 							
+
 	foreach my $file (@filestotry) {
 		$file = catdir(@components, $file);
 		$body = getImageContent($file);
+		$::d_artwork && Slim::Utils::Misc::msg("checking for $file found: ".(($body) ? "yes" : "no") . "\n");
 		if ($body) {
-			$::d_info && Slim::Utils::Misc::msg("Found image file: $file\n");
+			$::d_artwork && Slim::Utils::Misc::msg("Found image file: $file\n");
 			$contenttype = mimeType($file);
 			$cover = $file;
 			last;
@@ -2366,7 +2366,7 @@ sub updateCoverArt {
  		} elsif ($type eq 'thumb') {
  			$info->{'THUMB'} = $path;
  		}
- 		$::d_info && Slim::Utils::Misc::msg("$type caching $path for $fullpath\n");
+ 		$::d_artwork && Slim::Utils::Misc::msg("$type caching $path for $fullpath\n");
  	} else {
 		if ($type eq 'cover') {
  			$info->{'COVER'} = '0';
@@ -2389,9 +2389,6 @@ sub updateCoverArt {
  			$info->{'THUMBTYPE'} = '0';
  		}
  	}
-
- 	$::d_info && $body && Slim::Utils::Misc::msg("Got image $path for $fullpath!\n");
-
  	updateCacheEntry($fullpath, $info);
 }
 
@@ -2410,7 +2407,7 @@ sub updateArtworkCache {
 			if (isFileURL($file)) {
 				$filepath = Slim::Utils::Misc::pathFromFileURL($file);
 			}
-			$::d_info && Slim::Utils::Misc::msg("Updating $album artwork cache: $filepath\n");
+			$::d_artwork && Slim::Utils::Misc::msg("Updating $album artwork cache: $filepath\n");
 			$artworkCache{$album} = $filepath;
 		}
 	}

@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.78 2004/03/06 04:31:06 daniel Exp $
+# $Id: HTTP.pm,v 1.79 2004/03/06 05:56:45 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -454,6 +454,19 @@ sub processURL {
 				$client = Slim::Player::HTTP->new($address, $paddr, $httpClient);
 				$client->init();
 			}
+		}
+		if (defined($params->{'bitrate'})) {
+			# must validate 32 40 48 56 64 80 96 112 128 160 192 224 256 320 CBR
+			#set to the closest lower value of its not a match
+			my $temprate = $params->{'bitrate'};
+			foreach my $i (320, 256, 244, 192, 160, 128, 112, 96, 80, 64, 56, 48, 40, 32) {
+				$temprate = $i;
+				last if ($i <= $params->{'bitrate'});
+			}
+			Slim::Utils::Prefs::clientSet($client,'transcodeBitrate',$temprate);
+			$::d_http && msg("Setting transcode bitrate to $temprate\n");
+		} else {
+			Slim::Utils::Prefs::clientSet($client,'transcodeBitrate',undef);
 		}
 	}
 

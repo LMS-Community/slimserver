@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.41 2004/03/05 21:59:39 daniel Exp $
+# $Id: Setup.pm,v 1.42 2004/03/06 05:56:46 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -166,7 +166,7 @@ sub initSetupConfig {
 		#,'template' => 'setup_player.html'
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['playername','playingDisplayMode','synchronize','syncVolume','digitalVolumeControl'] 
+					'PrefOrder' => ['playername','playingDisplayMode','synchronize','syncVolume','digitalVolumeControl','maxBitrate'] 
 				}
 			,'Brightness' => {
 					'PrefOrder' => ['powerOnBrightness','powerOffBrightness']
@@ -271,6 +271,10 @@ sub initSetupConfig {
 									,'0' => string('SETUP_DIGITALVOLUMECONTROL_OFF')
 								}
 						}
+			,'maxBitrate' => {
+							'validate' => \&validateInList
+							,'validateArgs' => [0,32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320]
+						}
 			,'titleFormat'		=> {
 							'isArray' => 1
 							,'arrayAddExtra' => 1
@@ -351,7 +355,7 @@ sub initSetupConfig {
 		# if more than one ir map exists the undef will be replaced by 'Default'
 		,'Groups' => {
 			'Default' => {
-				'PrefOrder' => ['autobrightness','screensavertimeout','scrollPause']
+				'PrefOrder' => ['autobrightness','screensavertimeout','scrollPause','scrollRate']
 			}
 			,'AlarmClock' => {
 				'PrefOrder' => ['alarm','alarmtime','alarmvolume','alarmplaylist']
@@ -405,7 +409,11 @@ sub initSetupConfig {
 			},
 			'scrollPause' => {
 				'validate' => \&validateNumber
-				,'validateArgs' => [0,undef,5]
+				,'validateArgs' => [0.001,5,1,1]
+			},
+			'scrollRate' => {
+				'validate' => \&validateNumber
+				,'validateArgs' => [0,undef,1]
 			},
 			'irsetlist' => {
 				'isArray' => 1
@@ -625,8 +633,8 @@ sub initSetupConfig {
 							'validate' => \&validateAcceptAll
 							,'onChange' => sub {	
 										my $client = shift;
-	    									Slim::Control::Command::execute
-	        								 ($client, ["wipecache"], undef, undef);
+											Slim::Control::Command::execute
+											 ($client, ["wipecache"], undef, undef);
 										}
 							,'inputTemplate' => 'setup_input_submit.html'
 							,'changeIntro' => string('RESCANNING')
@@ -1059,7 +1067,7 @@ sub initSetupConfig {
 					my ($client,$paramref,$pageref) = @_;
 					removeExtraArrayEntries($client,'titleFormat',$paramref,$pageref);
 				}
-		,'GroupOrder' => ['Default','TitleFormats']
+		,'GroupOrder' => ['Default','TitleFormats','GuessFileFormats']
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['longdateFormat','shortdateFormat','timeFormat']
@@ -1074,6 +1082,21 @@ sub initSetupConfig {
 					,'GroupHead' => string('SETUP_TITLEFORMAT')
 					,'GroupDesc' => string('SETUP_GROUP_TITLEFORMATS_DESC')
 					,'GroupPrefHead' => '<tr><th>' . string('SETUP_CURRENT') .
+									    '</th><th></th><th>' . string('SETUP_FORMATS') .
+									    '</th><th></th></tr>'
+					,'GroupLine' => 1
+					,'GroupSub' => 1
+				}
+			,'GuessFileFormats' => {
+					'PrefOrder' => ['guessFileFormats']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupHead' => string('SETUP_GUESSFILEFORMATS')
+					,'GroupDesc' => string('SETUP_GROUP_GUESSFILEFORMATS_DESC')
+					,'GroupPrefHead' => '<tr><th>' .
 									    '</th><th></th><th>' . string('SETUP_FORMATS') .
 									    '</th><th></th></tr>'
 					,'GroupLine' => 1
@@ -1105,6 +1128,26 @@ sub initSetupConfig {
 									processArrayChange($client,'titleFormat',$paramref,$pageref);
 									fillTitleFormatOptions();
 									$changeref->{'titleFormat'}{'Processed'} = 1;
+								}
+							}
+			,'guessFileFormats'	=> {
+						'isArray' => 1
+						,'arrayAddExtra' => 1
+						,'arrayDeleteNull' => 1
+						,'arrayDeleteValue' => ''
+						,'arrayBasicValue' => 0
+						,'PrefSize' => 'large'
+						,'inputTemplate' => 'setup_input_array_txt.html'
+						,'validate' => \&validateFormat
+						,'changeAddlText' => 'All files without tags will be processed this way'
+						,'onChange' => sub {
+									my ($client,$changeref,$paramref,$pageref) = @_;
+									if (exists($changeref->{'guessFileFormats'}{'Processed'})) {
+										return;
+									}
+									processArrayChange($client,'guessFileFormats',$paramref,$pageref);
+									fillGuessTagOptions();
+									$changeref->{'guessFileFormats'}{'Processed'} = 1;
 								}
 					}
 			,"longdateFormat" => {
@@ -1484,6 +1527,11 @@ sub initSetup {
 	$setup{'formatting'}{'Prefs'}{'shortdateFormat'}{'validateArgs'} = [$setup{'formatting'}{'Prefs'}{'shortdateFormat'}{'options'}];
 	$setup{'formatting'}{'Prefs'}{'timeFormat'}{'validateArgs'} = [$setup{'formatting'}{'Prefs'}{'timeFormat'}{'options'}];
 	fillTitleFormatOptions();
+	fillGuessTagOptions();
+}
+
+sub fillGuessTagOptions {
+	$setup{'formatting'}{'Prefs'}{'guessFileFormats'}{'options'} = {hash_of_guesstags()};
 }
 
 sub fillTitleFormatOptions {
@@ -1509,6 +1557,23 @@ sub hash_of_titleFormats {
 	}
 	
 	return %titleFormats;
+}
+
+sub hash_of_guesstags {
+	my %taglist;
+	
+	# hack around a race condition at startup
+	if (!Slim::Utils::Prefs::getArrayMax('guessFileFormats')) {
+		return;
+	};
+	
+	$taglist{'-1'} = ' '; #used to delete a title format from the list
+	my $tf = 0;
+	foreach my $tag (Slim::Utils::Prefs::getArray('guessFileFormats')) {
+		$taglist{$tf++} = $tag;
+	}
+	
+	return %taglist;
 }
 
 #returns a hash reference to syncGroups available for a client

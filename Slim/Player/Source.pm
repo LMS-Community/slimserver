@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.63 2004/02/25 00:39:41 dean Exp $
+# $Id: Source.pm,v 1.64 2004/03/06 05:56:45 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -511,7 +511,7 @@ sub openNext {
 		} elsif (Slim::Player::Playlist::repeat($client) == 1 && $result) {
 			#play the same song again
 		} else {
-			#stop at the end of the list or when there is no list
+			#stop at the end of the list or when list is empty
 			if (currentSongIndex($client) == (Slim::Player::Playlist::count($client) - 1) || !Slim::Player::Playlist::count($client)) {
 				$nextsong = 0;
 				currentSongIndex($client, $nextsong);
@@ -728,23 +728,23 @@ sub openSong {
 			$offset     = Slim::Music::Info::offset($fullpath);
 			$samplerate = Slim::Music::Info::samplerate($fullpath);
 			$blockalign = Slim::Music::Info::blockalign($fullpath);
-			
 			$::d_source && msg("openSong: getting duration  $duration, size $size, and offset $offset for $fullpath\n");
-
 			if (!$size || !$duration) {
 				$::d_source && msg("openSong: not bothering opening file with zero size or duration\n");
 				return undef;
 			}
 		}
-		
-		my ($command, $type, $format) = getCommand($client, $fullpath);
+		# smart bitrate calculations
+		my $rate = Slim::Music::Info::bitratenum($fullpath)/1000;
+		my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate') 
+				|| Slim::Utils::Prefs::clientGet($client,'maxBitrate');
+		if (!defined $maxRate) {$maxRate = 0;}
+		my ($command, $type, $format) = getCommand($client, $fullpath,(($maxRate > $rate)||($maxRate == 0)));
 		
 		$::d_source && msg("openSong: this is an $type file: $fullpath\n");
-		$::d_source && msg("  file type: $type format: $format\n");
+		$::d_source && msg("  file type: $type format: $format inrate: $rate maxRate: $maxRate\n");
 		$::d_source && msg("  command: $command\n");
-
 		if (defined($command)) {
-
 			# this case is when we play the file through as-is
 			if ($command eq '-') {
 				$client->audioFilehandle( FileHandle->new() );		
@@ -781,8 +781,9 @@ sub openSong {
 				my $swap = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
 				$fullCommand =~ s/\$-x\$/$swap/g;
 				
-				my $bitrate = Slim::Utils::Prefs::get('transcodeBitrate');				
-				$fullCommand =~ s/\$BITRATE\$/$bitrate/g;
+				#if player setting is 0 or we have no birate defined, use the server fallback of 320
+				if ((!defined $maxRate) || !$maxRate) {$maxRate = Slim::Utils::Prefs::get('maxBitrate');}				
+				$fullCommand =~ s/\$BITRATE\$/$maxRate/g;
 				
 				$fullCommand =~ s/\$([^\$]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
@@ -799,7 +800,7 @@ sub openSong {
 				$client->remoteStreamStartTime(Time::HiRes::time());
 				$client->pauseTime(0);
 				
-				$size   = $duration * ($bitrate * 1000) / 8;
+				$size   = $duration * ($maxRate * 1000) / 8;
 				$offset = 0;
 			}
 		
@@ -846,6 +847,7 @@ sub openSong {
 sub getCommand {
 	my $client = shift;
 	my $fullpath = shift;
+	my $undermax = shift || 0;
 	
 	my $type = Slim::Music::Info::contentType($fullpath);
 	my $player = $client->model();
@@ -894,7 +896,13 @@ sub getCommand {
 		}
 
 		$format = $checkformat;
-		last if ($command);
+		#special case for mp3 to mp3.
+		if (defined $command && $command eq "-" && !$undermax && $type eq "mp3") {
+				$command = $commandTable{"$type-$checkformat-downsample-*"};;
+				$undermax = 1;
+		}
+		#only finish if the rate isn't over the limit, or the file is set to transcode to mp3 (which gets set to maxRate)
+		last if ($command && ($undermax || ($format eq "mp3")))
 	}
 
 	if (!defined $command) {

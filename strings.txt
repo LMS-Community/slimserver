@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.62 2004/02/28 02:05:49 kdf Exp $
+# $Id: strings.txt,v 1.63 2004/03/06 05:56:44 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -906,8 +906,14 @@ SETUP_SCROLLPAUSE
 	
 SETUP_SCROLLPAUSE_DESC
 	DE	Zeit, befor lange Textzeilen zu scrollen beginnen. Mehrfache von 0.9 funktionieren am besten. Null deaktiviert die Pause.
-	EN	Time for scrolling of long lines to start. Multiples of 0.9 work best. Zero is an option for no pause delay.
+	EN	Time for scrolling of long lines to start. Non-zero multiples of 0.9 work best. Use 0.001 for zero pause delay.
 	FR	Le délai durant lequel l'affichage s'arrête avant de faire défiler les lignes longues peut être modifié en multiples de 0.9 secondes. Entrez 0 pour supprimer la pause.
+
+SETUP_SCROLLRATE
+	EN	Scroll Rate
+	
+SETUP_SCROLLRATE_DESC
+	EN	Time delay in seconds between scrolling frames.  0.15 is the default.  Any value between 0 and 1 can be used to increase or decrease the speed of scrolling text.
 
 SETUP_GROUP_ALARM
 	DE	Wecker
@@ -1290,6 +1296,12 @@ SETUP_DIGITALVOLUMECONTROL_DESC
 	EN	You can choose to have the digital audio output on your player be fixed at maximum level or be controlled by the volume buttons.  If you choose to have a fixed digital audio volume level, the analog outputs will have the highest quality possible.  With either setting, the analog output levels are adjusted by the volume buttons.
 	FR	Le niveau de la sortie audio numérique de votre platine peut être soit fixé à son maximum, soit contrôlé par les boutons de volume. Si le niveau de la sortie audio numérique est fixe, la qualité de la sortie analogique sera optimale. Dans tous les cas, le niveau de la sortie analogique est contrôlé par les boutons de volume.
 
+SETUP_MAXBITRATE
+	EN	Maximum Transcoding Bitrate
+
+SETUP_MAXBITRATE_DESC
+	EN	Maximum transcoding bitrate for this player.  All transcoded files or streams that are higher will be downsampled.  Lesser rates are left unchanged. Connecting to a stream with a bitrate parameter will override (eg. stream.mp3?bitrate=128). Valid bitrates are 0,32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320. Zero disables maximum Bitrate limits.
+
 SETUP_TITLEFORMATCURR
 	DE	Aktuelles Titelformat
 	DK	Valgt sangtitelformat
@@ -1324,6 +1336,12 @@ SETUP_TITLEFORMAT_DESC
 	NL	Als U de GUIDE toets op de afstandsbediening indrukt, kunt U kiezen tussen verschillende manieren om de titel van het nummer te tonen. U kan het display aanpassen door de gewenste formaten te selecteren in het onderstaande menu. Klik op een knop in de "Huidig" kolom om het huidige formaat te selecteren. Als U klaar bent, druk op de "Wijzig" knop om de selecties te bewaren.
 	PT	Ao usar o botão "GUIDE" no controlo remoto, pode mudar entre várias formas de mostrar o título da música no ecrã. Pode personalizar o ecrã escolhendo os formatos que deseja, a partir dos menus abaixo. Escolha o botão na coluna "Actual" para mudar o formato actual. Quando terminar, escolha o botão "Mudar" para gravar as suas preferências.
 	SE	När du trycker på GUIDE-knappen på fjärrkontrollen kan du växla mellan olika sätt att visa den aktuella låtens titel. Du kan själv konfigurera displayen genom att välja mellan de olika format som finns tillgängliga i menyerna nedan. Klicka på en knapp i "Vald"-kolumnen för att ändra aktuellt format. När du är klar, klicka på "Ändra" för att spara dina val.
+
+SETUP_GUESSFILEFORMATS
+	EN	Guess Tags Formats
+
+SETUP_GROUP_GUESSFILEFORMATS_DESC
+	EN	For files that do not have reasonable tags, you can have the server guess at tags using the path and filename. Using the same variables as Title Format, you can create a pattern to match your file naming conventions so that the server can make a good guess at what the tags should be.  Priority goes in the order listed below.  The first valid pattern match is used.
 
 SETUP_IRMAP
 	DE	Funktionen der Fernbedienungstasten
@@ -4121,6 +4139,9 @@ MOV
 
 FLC
 	EN	FLAC
+
+MPC
+	EN	Musepack
 
 SHN
 	EN	Shorten

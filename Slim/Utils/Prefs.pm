@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.38 2004/02/09 19:00:08 dean Exp $
+# $Id: Prefs.pm,v 1.39 2004/03/06 05:56:45 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -122,17 +122,21 @@ my %DEFAULT = (
 		'TRACKNUM. TITLE from ALBUM by ARTIST',
 		'TITLE (ARTIST)',
 		'ARTIST - TITLE']
-	,'guessFileFormats'		=> ['(ARTIST - ALBUM) TRACKNUM - TITLE', '/ARTIST/ALBUM/TRACKNUM - TITLE', '/ARTIST/ALBUM/TRACKNUM TITLE', '/ARTIST/ALBUM/TRACKNUM. TITLE' ]
+	,'guessFileFormats'		=> [
+		'(ARTIST - ALBUM) TRACKNUM - TITLE', 
+		'/ARTIST/ALBUM/TRACKNUM - TITLE', 
+		'/ARTIST/ALBUM/TRACKNUM TITLE', 
+		'/ARTIST/ALBUM/TRACKNUM. TITLE' ]
 	,'menuItem'			=> ['NOW_PLAYING', 'BROWSE_BY_GENRE', 'BROWSE_BY_ARTIST', 'BROWSE_BY_ALBUM', 'BROWSE_MUSIC_FOLDER'
 						, 'SEARCH', 'SAVED_PLAYLISTS', 'PLUGINS', 'SETTINGS']
 	,'disabledplugins'		=> []
 	,'persistPlaylists'		=> 1
 	,'reshuffleOnRepeat'	=> 0
-	,'transcodeBitrate'		=> 320	# Maximum bitrate for maximum quality.  MPEG-1 layer III bitrates (kbps): 32 40 48 56 64 80 96 112 128 160 192 224 256 320
+	,'maxBitrate'		=> 320	# Maximum bitrate for maximum quality.  MPEG-1 layer III bitrates (kbps): 32 40 48 56 64 80 96 112 128 160 192 224 256 320
 	,'savehistory'			=> 1
 	,'historylength'		=> 1000
 	,'composerInArtists'	=> 1 # include composer and band information in the artists list
-    ,'groupdiscs' 			=> 0
+	,'groupdiscs' 			=> 0
 	,'livelog'				=> 102400 # keep around an in-memory log of 100kbytes, available from the web interfaces
 	,'remotestreamtimeout'  => 5 # seconds to try to connect for a remote stream
 	,"CLIENTPREFS" => {
@@ -151,6 +155,8 @@ my %DEFAULT = (
 			,'screensaver'		=> 'playlist'
 			,"screensavertimeout" 	=> 30
 			,"scrollPause"		=> 3.6
+			,"scrollRate"		=> 0.15
+			,'maxBitrate' => 0
 			,'titleFormatCurr'	=> 1
 			,'titleFormat'		=> [5, 1, 3, 6]
 			,'disabledirsets'	=> []

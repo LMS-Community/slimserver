@@ -1,5 +1,5 @@
 package Slim::Buttons::BrowseID3;
-# $Id: BrowseID3.pm,v 1.9 2004/01/26 05:44:02 dean Exp $
+# $Id: BrowseID3.pm,v 1.10 2004/03/06 05:56:44 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -168,11 +168,11 @@ my %functions = (
 		my $genre = selection($client,'curgenre');
 		my $artist = selection($client,'curartist');
 		my $album = selection($client,'curalbum');
-		my $sortbytitle;
-		my $all_songs;
 		my $all_albums;
-		if (defined($album) && $album eq string('ALL_SONGS')) { $album = '*'; $sortbytitle = 1; $all_songs = 1;};
+		my $sortbytitle;
+		if (defined($album) && $album eq string('ALL_SONGS')) { $album = '*'; $sortbytitle = 1;};
 		if (defined($artist) && ($artist eq string('ALL_ALBUMS'))) { $artist = '*';  $sortbytitle = 1; $all_albums = 1;};
+		
 		my $currentItem = browseID3dir($client,browseID3dirIndex($client));
 		my $line1;
 		my $line2;
@@ -228,14 +228,16 @@ my %functions = (
 		# if we've picked an album to append, then append the album
 		} elsif (picked($genre) && picked($artist) && !$all_albums) { 
 			my $whichalbum = picked($album) ?  $album : (($currentItem eq string('ALL_SONGS')) ? '*' : $currentItem);
-			Slim::Control::Command::execute($client, ["playlist", $command, $genre, $artist, $whichalbum,undef, $sortbytitle]);	
+			Slim::Control::Command::execute($client, ["playlist", $command, $genre, $artist, $whichalbum,undef,  $currentItem eq string('ALL_SONGS')]);	
 		# if we've picked an artist to append or play, then do so.
 		} elsif (picked($genre)) {
 			my $whichartist = picked($artist) ? $artist : (($currentItem eq string('ALL_ALBUMS')) ? '*' : $currentItem);
-			my $whichalbum = $all_albums ? $currentItem : '*';
-			Slim::Control::Command::execute($client, ["playlist", $command, $genre, $whichartist, $whichalbum,undef, $sortbytitle]);		
+			my $whichalbum = ($album eq string('ALL_SONGS')) ? '*' : $currentItem;
+			my $whichgenre = ($genre eq string('ALL_ALBUMS')) ? '*' : $genre;
+			Slim::Control::Command::execute($client, ["playlist", $command, $whichgenre, $whichartist, $whichalbum,undef, $sortbytitle]);		
 		# if we've picked a genre to play or append, then do so
 		} else {
+			$currentItem = ($currentItem eq string('ALL_ALBUMS')) ? '*' : $currentItem;
 			Slim::Control::Command::execute($client, ["playlist", $command, $currentItem, "*", "*"]);
 		}
 		$::d_files && msg("currentItem == $currentItem\n");
