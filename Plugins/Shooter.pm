@@ -13,7 +13,7 @@ use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.3 $,10);
+$VERSION = substr(q$Revision: 1.4 $,10);
 
 my @topchars = ("placeholder!", " ", " ",    "\x1F", "\x1C");
 my @btmchars = ("placeholder!", "_", "\x1F", "\xFF", " ");
@@ -23,8 +23,6 @@ my $framerate = .1; # 10 FPS
 my $maxobs = 8;
 
 my $lastrun;
-
-Slim::Buttons::Common::addMode('shooter',Plugins::Shooter::getFunctions(),\&Plugins::Shooter::setMode);
 
 sub getDisplayName { 'Shooter' }
 
