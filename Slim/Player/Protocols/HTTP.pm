@@ -19,6 +19,15 @@ BEGIN {
 	if ($^O =~ /Win32/) {
 		*EWOULDBLOCK = sub () { 10035 };
 		*EINPROGRESS = sub () { 10036 };
+
+		*IO::Socket::blocking = sub {
+			my ($self, $blocking) = @_;
+
+			my $nonblocking = $blocking ? "0" : "1";
+
+			ioctl($self, 0x8004667e, $nonblocking);
+		};
+
 	} else {
 		require Errno;
 		import Errno qw(EWOULDBLOCK EINPROGRESS);
@@ -61,31 +70,42 @@ sub open {
 	my $peeraddr = "$server:$port";
 	if ($proxy) {
 		$peeraddr = $proxy;
+		($server, $port) = split /:/, $proxy;
 		$::d_remotestream && msg("Opening connection using proxy $proxy\n");
 	}
 
 	$::d_remotestream && msg("Opening connection to $url: [$server on port $port with path $path with timeout $timeout]\n");
 
 	my $sock = $class->SUPER::new(
-
-		PeerAddr  => $peeraddr,
 		LocalAddr => $main::localStreamAddr,
 		Timeout	  => $timeout,
-		Blocking  => 0,
-
-	) || do {
-
-		my $errnum = 0 + $!;
-		$::d_remotestream && msg("Can't open socket to [$server:$port]: $errnum: $!\n");
-
-		return undef;
-	};
-
-	Slim::Utils::Misc::blocking($sock, 0);
+	);
 
 	# store a IO::Select object in ourself.
 	# used for non blocking I/O
 	${*$sock}{'_sel'} = IO::Select->new($sock);
+
+	# Manually connect, so we can set blocking.
+	# I hate Windows.
+	Slim::Utils::Misc::blocking($sock, 0) || do {
+		$::d_remotestream && msg("Couldn't set non-blocking on socket!\n");
+	};
+
+        $sock->connect(pack_sockaddr_in($port, inet_aton($server))) || do {
+
+		my $errnum = 0 + $!;
+
+		if ($errnum != EWOULDBLOCK && $errnum != EINPROGRESS) {
+			$::d_remotestream && msg("Can't open socket to [$server:$port]: $errnum: $!\n");
+			return undef;
+		}
+
+		() = ${*$sock}{'_sel'}->can_write($timeout) or do {
+
+			$::d_remotestream && msgf("Timeout on connect to [$server:$port]: $errnum: $!\n");
+			return undef;
+		};
+	};
 
 	return $sock->request($url, $infoUrl, $post);
 }
