@@ -1,5 +1,7 @@
 package Slim::Buttons::Search;
 
+# $Id: Search.pm,v 1.14 2004/12/14 19:18:22 grotus Exp $
+
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -30,13 +32,13 @@ my %menuParams = (
 		,'overlayRefArgs' => ''
 		,'submenus' => {
 				'ARTISTS' => {
-				'useMode' => 'INPUT.Text'
-				,'header' => 'SEARCHFOR_ARTISTS'
-				,'stringHeader' => 1
-				,'cursorPos' => 0
-				,'charsRef' => 'UPPER'
-				,'numberLetterRef' => 'UPPER'
-				,'callback' => \&searchHandler
+					'useMode' => 'INPUT.Text'
+					,'header' => 'SEARCHFOR_ARTISTS'
+					,'stringHeader' => 1
+					,'cursorPos' => 0
+					,'charsRef' => 'UPPER'
+					,'numberLetterRef' => 'UPPER'
+					,'callback' => \&searchHandler
 				}
 				,'ALBUMS' => {
 					'useMode' => 'INPUT.Text'
