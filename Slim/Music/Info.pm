@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.102 2004/04/21 22:21:54 dean Exp $
+# $Id: Info.pm,v 1.103 2004/04/21 22:47:54 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -143,18 +143,17 @@ if (defined @Storable::EXPORT) {
 			if (Slim::Utils::Prefs::get('usetagdatabase') && $dbCacheDirty) {
 		
 				my $cacheToStore = {
-					'infoCache'           => \%infoCache,
-					'genreCache'          => \%genreCache,
-					'artworkCache'        => \%artworkCache,
-					'caseCache'           => \%caseCache,
-					'sortCache'           => \%sortCache,
-					'songCountMemoize'    => \%songCountMemoize,
+					'albumCountMemoize'   => \%albumCountMemoize,
 					'artistCountMemoize'  => \%artistCountMemoize,
 					'artworkCache'        => \%artworkCache,
-					'albumCountMemoize'   => \%albumCountMemoize,
-					'genreCountMemoize'   => \%genreCountMemoize,
 					'caseArticlesMemoize' => \%caseArticlesMemoize,
+					'caseCache'           => \%caseCache,
+					'genreCache'          => \%genreCache,
+					'genreCountMemoize'   => \%genreCountMemoize,
+					'infoCache'           => \%infoCache,
 					'songCount'           => \$songCount,
+					'songCountMemoize'    => \%songCountMemoize,
+					'sortCache'           => \%sortCache,
 					'total_time'          => \$total_time,
 					'ver'                 => $DBVERSION,
 				};
@@ -204,17 +203,16 @@ if (defined @Storable::EXPORT) {
 
 			} else {
 
-				%infoCache           = %{$cacheToRead->{'infoCache'}};
-				%genreCache          = %{$cacheToRead->{'genreCache'}};
-				%artworkCache        = %{$cacheToRead->{'artworkCache'}};
-				%caseCache           = %{$cacheToRead->{'caseCache'}};
-				%sortCache           = %{$cacheToRead->{'sortCache'}};
-				%artworkCache        = %{$cacheToRead->{'artworkCache'}};
-				%songCountMemoize    = %{$cacheToRead->{'songCountMemoize'}};
-				%artistCountMemoize  = %{$cacheToRead->{'artistCountMemoize'}};
 				%albumCountMemoize   = %{$cacheToRead->{'albumCountMemoize'}};
-				%genreCountMemoize   = %{$cacheToRead->{'genreCountMemoize'}};
+				%artistCountMemoize  = %{$cacheToRead->{'artistCountMemoize'}};
+				%artworkCache        = %{$cacheToRead->{'artworkCache'}};
 				%caseArticlesMemoize = %{$cacheToRead->{'caseArticlesMemoize'}};
+				%caseCache           = %{$cacheToRead->{'caseCache'}};
+				%genreCache          = %{$cacheToRead->{'genreCache'}};
+				%genreCountMemoize   = %{$cacheToRead->{'genreCountMemoize'}};
+				%infoCache           = %{$cacheToRead->{'infoCache'}};
+				%songCountMemoize    = %{$cacheToRead->{'songCountMemoize'}};
+				%sortCache           = %{$cacheToRead->{'sortCache'}};
 				$songCount           = ${$cacheToRead->{'songCount'}};
 				$total_time          = ${$cacheToRead->{'total_time'}};
 				$dbCacheDirty        = 0;
