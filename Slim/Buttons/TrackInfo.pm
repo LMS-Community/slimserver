@@ -253,7 +253,7 @@ sub preloadLines {
 	if (Slim::Music::Info::bitrate($url)) {
 		my $undermax = Slim::Player::Source::underMax($client,$url);
 		my $rate = (defined $undermax && $undermax) ? Slim::Music::Info::bitrate($url) 
-				: Slim::Utils::Prefs::setMaxRate($client).Slim::Utils::Strings::string('KBPS')." CBR";
+				: Slim::Utils::Prefs::maxRate($client).Slim::Utils::Strings::string('KBPS')." CBR";
 		push (@{$client->trackInfoLines}, 
 			Slim::Utils::Strings::string('BITRATE').": ".Slim::Music::Info::bitrate($url).' '
 				.((Slim::Buttons::Common::param($client, 'current') && (defined $undermax && !$undermax)) 

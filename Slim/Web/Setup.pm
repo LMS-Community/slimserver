@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.84 2004/05/20 20:10:38 dean Exp $
+# $Id: Setup.pm,v 1.85 2004/06/10 23:39:07 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -126,7 +126,7 @@ sub initSetupConfig {
 						$pageref->{'GroupOrder'}[3] = undef;
 					}
 					my @formats = $client->formats();
-					Slim::Utils::Prefs::setMaxRate($client);
+					Slim::Utils::Prefs::maxRate($client);
 					if ($formats[0] ne 'mp3') {
 						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = string('SETUP_MAXBITRATE_DESC');
 						$pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'} = '  '.string('NO_LIMIT');
@@ -976,9 +976,10 @@ sub initSetupConfig {
 				my $i = 0;
 				my %formats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
 				my $formatslistref = Slim::Player::Source::Conversions();
-				delete $formatslistref->{'mp3-lame-*-*'};
 				foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
-					if (exists $paramref->{"formatslist$i"} && $paramref->{"formatslist$i"} == (exists $formats{$formats} ? 0 : 1)) {
+					next if $formats eq 'mp3-lame-*-*';
+					my $oldVal = exists $formats{$formats} ? 0 : (Slim::Player::Source::checkBin($formats) ? 1 : 0);
+					if (exists $paramref->{"formatslist$i"} && $paramref->{"formatslist$i"} == $oldVal) {
 						delete $paramref->{"formatslist$i"};
 					}
 					$i++;
@@ -992,14 +993,32 @@ sub initSetupConfig {
 				Slim::Utils::Prefs::delete('disabledformats');
 				my $formatslistref = Slim::Player::Source::Conversions();
 				foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
+					next if $formats eq 'mp3-lame-*-*';
+					my $binAvailable = Slim::Player::Source::checkBin($formats);
+
+					# First time through, set the value of the checkbox
+					# based on whether the conversion was explicitly 
+					# disabled or implicitly disallowed because the 
+					# corresponding binary does not exist.
 					if (!exists $paramref->{"formatslist$i"}) {
-						$paramref->{"formatslist$i"} = exists $formats{$formats} ? 0 : 1;
-					} else {
-						my $test = $paramref->{"formatslist$i"} && Slim::Player::Source::checkBin($formats);
-						if ($paramref->{"formatslist$i"} && !$test) {$paramref->{'warning'} .= string('SETUP_FORMATSLIST_MISSING_BINARY')." ".$formatslistref->{$formats}."<br>";}
-						$paramref->{"formatslist$i"} = $test;
-					}
-					unless ($paramref->{"formatslist$i"} || $formats eq 'mp3-lame-*-*') {
+						$paramref->{"formatslist$i"} = exists $formats{$formats} ? 0 : ($binAvailable ? 1 : 0);					
+					} 
+					# If the conversion pref is checked confirm that 
+					# it's allowed to be checked.
+					elsif ($paramref->{"formatslist$i"} && !$binAvailable) {
+						$paramref->{'warning'} .= 
+							string('SETUP_FORMATSLIST_MISSING_BINARY') .
+								" " . $formatslistref->{$formats}."<br>";
+						$paramref->{"formatslist$i"} = $binAvailable;
+					} 
+
+					# If the conversion pref is not checked, persist
+					# the pref only in the explicit change case: if
+					# the binary is available or if it previously was
+					# explicitly disabled.  This way we don't persist
+					# the pref if it wasn't explicitly changed.
+					if (!$paramref->{"formatslist$i"} &&
+						($binAvailable || exists $formats{$formats})) {
 						Slim::Utils::Prefs::push('disabledformats',$formats);
 					}
 					$i++;
@@ -1042,7 +1061,7 @@ sub initSetupConfig {
 									
 								if ($key =~ /\D+(\d+)$/) {
 									my $formatslistref = Slim::Player::Source::Conversions();
-									my $profile = (sort {$a cmp $b} (keys %{$formatslistref}))[$1];
+									my $profile = (sort {$a cmp $b} (grep {$_ ne 'mp3-lame-*-*'} (keys %{$formatslistref})))[$1];
 									my @profileitems = split('-', $profile);
 									pop @profileitems; # drop ID
 									$profileitems[0] = string($profileitems[0]);

@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.99 2004/06/08 20:22:40 kdf Exp $
+# $Id: Source.pm,v 1.100 2004/06/10 23:39:06 vidur Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -105,9 +105,7 @@ sub loadConversionTables {
 				$commandTable{"$inputtype-$outputtype-$clienttype-$clientid"} = $command;
 			}
 		}
-		foreach my $profile (keys %commandTable) {
-				checkBin("$profile");
-		}
+
 		close CONVERT;
 	}
 }
@@ -883,11 +881,7 @@ sub openSong {
 		my $rate    = (Slim::Music::Info::bitratenum($fullpath) || 0) / 1000;
 
 		# if http client has used the query param, use transcodeBitrate. otherwise we can use maxBitrate.
-		my $maxRate = Slim::Utils::Prefs::setMaxRate($client);
-		
-		if (!defined $maxRate) {
-			setMaxRate($client);
-		}
+		my $maxRate = Slim::Utils::Prefs::maxRate($client);
 
 		my ($command, $type, $format) = getConvertCommand($client, $fullpath);
 		
@@ -1044,7 +1038,6 @@ sub checkBin {
 		if (!Slim::Utils::Misc::findbin($1)) {
 			$command = undef;
 			$::d_source && msg("   drat, missing binary $1\n");
-			unless ($profile eq 'mp3-lame-*-*') {Slim::Utils::Prefs::push('disabledformats',$profile);}
 		}
 	}
 			
@@ -1055,16 +1048,27 @@ sub checkBin {
 sub underMax {
 	my $client = shift;
 	my $fullpath = shift;
+	my $type = shift;
+
+	my $maxRate = Slim::Utils::Prefs::maxRate($client);
+	# If we're not rate limited, we're under the maximum.
+	# If we don't have lame, we can't transcode, so we
+	# fall back to saying we're under the maximum.
+	return 1 if $maxRate == 0 || (!Slim::Utils::Misc::findbin('lame'));
+
+	# If the input type is mp3, we determine whether the 
+	# input bitrate is under the maximum.
+	if ($type eq 'mp3') {
+		my $rate = (Slim::Music::Info::bitratenum($fullpath) || 0)/1000;
+		return ($maxRate >= $rate);
+	}
 	
-	my $maxRate = Slim::Utils::Prefs::setMaxRate($client);
-	return 1 if $maxRate == 0;
-	my @formats = $client->formats();
-	if (!Slim::Utils::Misc::findbin('lame')) {
-		return 1 unless $formats[0] eq 'mp3';
-		return undef;
-	};
-	my $rate = (Slim::Music::Info::bitratenum($fullpath) || 0)/1000;
-	return ($maxRate >= $rate);
+	# For now, we assume the output is raw 44.1Khz, 16 bit, stereo PCM
+	# in all other cases. In that case, we're over any set maximum. 
+	# In the future, we may want to do finer grained testing here - the 
+	# PCM may be of other types and we may be able to stream other
+	# types.
+	return 0;
 }
 
 sub getConvertCommand {
@@ -1083,7 +1087,7 @@ sub getConvertCommand {
 	my %formatcounter    = ();
 	my $audibleplayers   = 0;
 
-	my $undermax = underMax($client,$fullpath);
+	my $undermax = underMax($client,$fullpath,$type);
 	$::d_source && msg("undermax = $undermax, type = $type, $player = $clientid, lame = $lame\n");
 	
 	# make sure we only test formats that are supported.
@@ -1107,10 +1111,6 @@ sub getConvertCommand {
 
 	foreach my $checkformat (@supportedformats) {
 		
-		# if there is a limiting bitrate and we have lame, don't even check WAV or AIFF
-		my $maxRate = Slim::Utils::Prefs::setMaxRate($client);
-		next if ($maxRate != 0 && $checkformat ne 'mp3' && $lame);
-
 		my @profiles = (
 			"$type-$checkformat-$player-$clientid",
 			"$type-$checkformat-*-$clientid",
@@ -1128,14 +1128,13 @@ sub getConvertCommand {
 		$format = $checkformat;
 
 		# special case for mp3 to mp3 when input is higher than specified max bitrate.
-		if (defined $command && $command eq "-" && !$undermax && $type eq "mp3" && $lame) {
+		if (defined $command && $command eq "-" && !$undermax && $type eq "mp3") {
 				$command = $commandTable{"$type-lame-*-*"};
 				$undermax = 1;
 		}
 
-		# only finish if the rate isn't over the limit, or the file is
-		# set to transcode to mp3 (which gets set to maxRate)
-		last if ($command && ((defined $undermax && $undermax) || ($format eq "mp3")));
+		# only finish if the rate isn't over the limit
+		last if ($command && $undermax);
 	}
 
 	if (!defined $command) {

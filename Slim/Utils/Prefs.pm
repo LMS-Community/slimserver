@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.69 2004/05/25 00:14:45 dean Exp $
+# $Id: Prefs.pm,v 1.70 2004/06/10 23:39:06 vidur Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -523,7 +523,7 @@ sub clientSet {
 	onChange($key, $value, $ind, $client);
 }
 
-sub setMaxRate {
+sub maxRate {
 	my $client = shift;
 	my $maxRate = clientGet($client,'maxBitrate');
 	if (!defined $maxRate) {
@@ -531,7 +531,6 @@ sub setMaxRate {
 		# if maxBitrate hasn't been set yet, allow wired squeezeboxes to default to no limit, others to 320kbps
 		$maxRate = (($client->model() eq 'squeezebox' && !defined $client->signalStrength()) || $client->model() eq 'softsqueeze')
 			? 0 : 320;
-		clientSet($client,'maxBitrate',$maxRate);
 	}
 	# return the maxrate, or override with ?bitrate= query if it exists.
 	my $rate = 0;

@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.85 2004/05/31 04:02:23 dean Exp $
+# $Id: Pages.pm,v 1.86 2004/06/10 23:39:07 vidur Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -612,7 +612,7 @@ sub status {
 		# for current song, display the playback bitrate instead.
 		my $undermax = Slim::Player::Source::underMax($client,$song);
 		if (defined $undermax && !$undermax) {
-			$params->{'bitrate'} = string('CONVERTED_TO')." ".Slim::Utils::Prefs::setMaxRate($client).Slim::Utils::Strings::string('KBPS').' CBR';
+			$params->{'bitrate'} = string('CONVERTED_TO')." ".Slim::Utils::Prefs::maxRate($client).Slim::Utils::Strings::string('KBPS').' CBR';
 		}
 		if (Slim::Utils::Prefs::get("playlistdir")) {
 			$params->{'cansave'} = 1;
