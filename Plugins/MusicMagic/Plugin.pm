@@ -417,22 +417,17 @@ sub exportFunction {
 				$songInfo{$song_field} = $song_value;
 			}
 		
-			$cacheEntry{'ALBUM'} = $songInfo{'album'};
 			$cacheEntry{'TRACKNUM'} = $songInfo{'track'};
 
 			if ($songInfo{'bitrate'}) {
 				$cacheEntry{'BITRATE'} = $songInfo{'bitrate'} * 1000;
 			}
 
-			$cacheEntry{'YEAR'} = $songInfo{'year'};
-		
-			$cacheEntry{'CT'} = Slim::Music::Info::typeFromPath($songInfo{'file'},'mp3');
-			$cacheEntry{'TAG'} = 1;
+			$cacheEntry{'YEAR'}  = $songInfo{'year'};
+			$cacheEntry{'CT'}    = Slim::Music::Info::typeFromPath($songInfo{'file'},'mp3');
+			$cacheEntry{'TAG'}   = 1;
 			$cacheEntry{'VALID'} = 1;
-			$cacheEntry{'TITLE'} = $songInfo{'name'};
-			$cacheEntry{'ARTIST'} = $songInfo{'artist'};
-			$cacheEntry{'GENRE'} = $songInfo{'genre'};
-			$cacheEntry{'SECS'} = $songInfo{'seconds'};
+			$cacheEntry{'SECS'}  = $songInfo{'seconds'};
 		
 			if ($songInfo{'active'} eq 'yes') {
 				$cacheEntry{'MUSICMAGIC_MIXABLE'} = 1;
@@ -444,7 +439,17 @@ sub exportFunction {
 			# need to make sure we're in the current locale first.
 			if ($] > 5.007) {
 				$songInfo{'file'} = Encode::encode($Slim::Utils::Misc::locale, $songInfo{'file'}, Encode::FB_QUIET());
+
+				for my $key (qw(album artist genre name)) {
+					$songInfo{$key} = Encode::encode('utf8', $songInfo{$key}, Encode::FB_QUIET());
+				}
 			}
+
+			# Assign these after they may have been verified as UTF-8
+			$cacheEntry{'ALBUM'}  = $songInfo{'album'};
+			$cacheEntry{'TITLE'}  = $songInfo{'name'};
+			$cacheEntry{'ARTIST'} = $songInfo{'artist'};
+			$cacheEntry{'GENRE'}  = $songInfo{'genre'};
 		
 			my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});
 
