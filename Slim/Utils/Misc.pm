@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.27 2004/03/17 16:46:01 dean Exp $
+# $Id: Misc.pm,v 1.28 2004/03/17 18:42:03 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -535,6 +535,20 @@ sub localeStrftime {
       }
       setlocale(LC_TIME, "");
       return $time;
+}
+
+sub fracSecToMinSec {
+	my $seconds = shift;
+
+	my ($min, $sec, $frac, $fracrounded);
+
+	$min = ($seconds/60)%60;
+	$sec = $seconds%60;
+	$sec = "0$sec" if length($sec) < 2;
+	$fracrounded = sprintf "%0.2f", $seconds;
+	($frac) = ($fracrounded =~ /\.(\d\d)$/);
+									
+	return "$min:$sec.$frac";
 }
 
 sub assert {

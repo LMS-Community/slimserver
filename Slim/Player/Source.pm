@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.70 2004/03/17 16:46:00 dean Exp $
+# $Id: Source.pm,v 1.71 2004/03/17 18:42:02 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -787,6 +787,16 @@ sub openSong {
 				$fullCommand =~ s/\$FILE\$/"$filepath"/g;
 				$fullCommand =~ s/\$URL\$/"$fullpath"/g;
 				$fullCommand =~ s/\$RATE\$/$samplerate/g;
+				if ($type eq 'flc') {
+					if ($fullpath =~ /#([^-]+)-([^-]+)$/) {
+						my ($start, $end) = ($1, $2);
+						$fullCommand =~ s/\$START\$/Slim::Utils::Misc::fracSecToMinSec($start)/eg;
+						$fullCommand =~ s/\$END\$/Slim::Utils::Misc::fracSecToMinSec($end)/eg;
+					} else {
+						$fullCommand =~ s/\$START\$/0/g;
+						$fullCommand =~ s/\$END\$/Slim::Music::Info::duration($fullpath)/eg;
+					}
+				}
 				
 				my $swap = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
 				$fullCommand =~ s/\$-x\$/$swap/g;
