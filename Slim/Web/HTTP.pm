@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.70 2004/02/17 18:56:43 daniel Exp $
+# $Id: HTTP.pm,v 1.71 2004/02/22 21:47:23 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -339,19 +339,12 @@ sub processHTTP {
 sub executeurl {
 	my($httpclientsock, $paramsref) = @_;
 	my $output = "";
-	my($command);
+	#my($command);
 	my @p;
 	my($client) = undef;
 
 	my $path = $$paramsref{"path"};
 	
-	$path =~ /(?:\/|)([^.]*)(|\.[^.]+)$/;
-	
-	# Commands are extracted from the parameters p0 through pN
-	#   For example:
-	#       http://host/status.html?p0=stop
-	# Both examples above execute a stop command, and sends an html status response
-	#
 	# Command parameters are query parameters named p0 through pN
 	# 	For example:
 	#		http://host/status.m3u?p0=playlist&p1=jump&p2=2 
@@ -362,7 +355,6 @@ sub executeurl {
 	#		http://host/status.html?p0=mixer&p1=volume&p2=11&player=10.0.1.203:69
 	#
 
-	$command = $1;
 
 	my $i = 0;
 	while (defined $$paramsref{"p$i"}) {
@@ -370,7 +362,7 @@ sub executeurl {
 		$i++;
 	}
 	
-	$::d_http && msg("ExecuteURL Clients $command: ".join(" ", Slim::Player::Client::clientIPs())."\n");
+	$::d_http && msg("ExecuteURL Clients $path: ".join(" ", Slim::Player::Client::clientIPs())."\n");
 
 	# explicitly specified player (for web browsers or squeezeboxen)
 	
@@ -418,7 +410,7 @@ sub executeurl {
 	my @callbackargs = ($client, $httpclientsock, $paramsref);
 
 	# only execute a command on the client if there is one and if we have a command.
-	if (defined($client) && defined($p[0]) && $command ne 'stream') {
+	if (defined($client) && defined($p[0]) && $path =~ /(?:\/|)stream(?:|\.[^.]+)$/) {
 		if (defined($$paramsref{"player"}) && $$paramsref{"player"} eq "*") {
 			foreach my $client2 (Slim::Player::Client::clients()) {
 				next if $client eq $client2;
