@@ -229,7 +229,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 use Slim::Networking::Slimproto;
 
-use vars qw($VERSION @AUTHORS);
+use vars qw($VERSION $REVISION @AUTHORS);
 
 @AUTHORS = (
 	'Sean Adams',
@@ -248,7 +248,9 @@ use vars qw($VERSION @AUTHORS);
 	'Dan Sully',
 );
 
-$VERSION = '6.0b1';
+$VERSION  = '6.0b1';
+$REVISION = '$Revision$';
+$REVISION =~ s/\$Revision:\s*(\d+)\s*\$/r$1/;
 
 # old preferences settings, only used by the .slim.conf configuration.
 # real settings are stored in the new preferences file:  .slim.pref

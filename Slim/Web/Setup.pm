@@ -1187,7 +1187,7 @@ sub initSetupConfig {
 				my ($client,$paramref,$pageref) = @_;
 				Slim::Buttons::Plugins::addSetupGroups();
 				
-				$paramref->{'versionInfo'} = string('SERVER_VERSION') . string("COLON") . $::VERSION;
+				$paramref->{'versionInfo'} = sprintf('%s%s %s - %s', string('SERVER_VERSION'), string("COLON"), $::VERSION, $::REVISION);
 				$paramref->{'newVersion'} = $::newVersion;
 			}
 		,'GroupOrder' => ['language', 'Default']
