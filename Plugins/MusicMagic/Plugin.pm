@@ -141,7 +141,7 @@ sub initPlugin {
 		# Note: Check version restrictions if any
 		$initialized = $content;
 
-		Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 60), \&checker);
+		checker($initialized);
 
 		Slim::Music::Import::addImporter('MUSICMAGIC', \&startScan, \&mixerFunction, \&addGroups, \&mixerlink);
 		Slim::Music::Import::useImporter('MUSICMAGIC', Slim::Utils::Prefs::get('musicmagic'));
@@ -240,9 +240,11 @@ sub isMusicLibraryFileChanged {
 }
 
 sub checker {
+	my $firstTime = shift || 0;
+	
 	return unless (Slim::Utils::Prefs::get('musicmagic'));
 	
-	if (!stillScanning() && isMusicLibraryFileChanged()) {
+	if (!$firstTime && !stillScanning() && isMusicLibraryFileChanged()) {
 		startScan();
 	}
 
@@ -944,6 +946,8 @@ sub musicmagic_mix {
 	my $player = $params->{'player'};
 	my $p0     = $params->{'p0'};
 
+	my $composerIn   = Slim::Utils::Prefs::get('composerInArtists');
+	
 	my $itemnumber = 0;
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
@@ -1028,16 +1032,28 @@ sub musicmagic_mix {
 		# user's database is likely out of date. Bug 863
 		my $trackObj  = $ds->objectForUrl($item) || next;
 		
-		$list_form{'artist'}        = $track ? $track->artist() : $artist;
-		$list_form{'album'}         = $track ? $track->album() : $album;
 		$list_form{'genre'}         = $genre;
 		$list_form{'player'}        = $player;
 		$list_form{'itempath'}      = $item; 
 		$list_form{'item'}          = $trackObj->id; 
+		$list_form{'itemobj'}       = $trackObj;
 		$list_form{'title'}         = Slim::Music::Info::infoFormat($trackObj, $webFormat, 'TITLE');
 		$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
 		$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
 		$list_form{'odd'}           = ($itemnumber + 1) % 2;
+		$list_form{'album'}         = $list_form{'includeArtist'} ? $trackObj->album() : undef;
+		
+		if ($list_form{'includeArtist'} && $trackObj) {
+
+			if ($composerIn) {
+				if (my ($contributor) = $trackObj->contributors()) {
+					$list_form{'artist'}   = $contributor->name();
+					$list_form{'artistid'} = $contributor->id();
+				}
+			} else {
+				$list_form{'artist'} = $trackObj->artist();
+			}
+		}
 
 		$itemnumber++;
 

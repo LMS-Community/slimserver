@@ -1,7 +1,12 @@
 <tr>
-  <td  class="listing">&nbsp;<nobr>
-	  [% IF anchor %]<a name="[% anchor %]"></a>[% END %]
-      <a href="[% webroot %]songinfo.html?item=[% item | uri %]&player=[% player | uri %]">[% title %]</a>
+	<td  class="listing">&nbsp;<nobr>
+	[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
+		<a href="[% webroot %]songinfo.html?item=[% item | uri %]&player=[% player | uri %]"><b>[% title %]</b></a>
+		[% IF includeArtist && artist && artist != noArtist %][% "BY" | string %] 
+		<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% itemobj.contributorsOfType('artist').first.id %]&player=[% player | uri %]" target="browser">[% artist | html %]</a>[% END %]
+		[% IF includeAlbum && album  && album != noAlbum %][% "FROM" | string %]
+		<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>[% END %]
+
   </nobr></td>
   <td  class="listing" width="11" align="center">
       <nobr><a href="[% webroot %]status_header.html?p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/queue.gif" border=0 align="center" width="6" height="9" onMouseOver="self.status='Queue This Item';return true"></a></nobr>

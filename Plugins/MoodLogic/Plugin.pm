@@ -180,7 +180,7 @@ sub initPlugin {
 	Plugins::MoodLogic::VarietyCombo::init();
 
 	$initialized = 1;
-	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 60), \&checker);
+	checker($initialized);
 
 	return $initialized;
 }
@@ -218,9 +218,11 @@ sub isMusicLibraryFileChanged {
 }
 
 sub checker {
+	my $firstTime = shift || 0;
+
 	return unless (Slim::Utils::Prefs::get('moodlogic'));
 	
-	if (!stillScanning() && isMusicLibraryFileChanged()) {
+	if (!$firstTime && !stillScanning() && isMusicLibraryFileChanged()) {
 		startScan();
 	}
 
@@ -847,7 +849,7 @@ sub instant_mix {
 	} elsif (defined $genre && $genre ne "" && $genre ne "*" && $mood ne "") {
 
 		# XXX - only grab the first genre. This may be wrong
-		#my $genre = ($track->genres())[0];
+		#my $genre = ($trackObj->genres())[0];
 
 		$items = getMix($ds->objectForId('genre', $genre)->moodlogic_id(), $mood, 'genre');
 
@@ -862,17 +864,30 @@ sub instant_mix {
 		my %list_form = %$params;
 		my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
 		
-		$list_form{'artist'}        = $track ? $track->artist() : $artist;
-		$list_form{'album'}         = $track ? $track->album() : $album;
+		my $trackObj  = $ds->objectForUrl($item) || next;
+		
 		$list_form{'genre'}         = $genre;
 		$list_form{'player'}        = $player;
 		$list_form{'itempath'}      = $item; 
-		$list_form{'item'}          = $item; 
+		$list_form{'item'}          = $item;
+		$list_form{'itemobj'}       = $trackObj;
 		$list_form{'title'}         = Slim::Music::Info::infoFormat($item, $webFormat, 'TITLE');
 		$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
 		$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
 		$list_form{'odd'}           = ($itemnumber + 1) % 2;
+		$list_form{'album'}         = $list_form{'includeArtist'} ? $trackObj->album() : undef;
+		
+		if ($list_form{'includeArtist'} && $trackObj) {
 
+			if (Slim::Utils::Prefs::get('composerInArtists') && $trackObj) {
+				if (my ($contributor) = $trackObj->contributors()) {
+					$list_form{'artist'}   = $contributor->name();
+					$list_form{'artistid'} = $contributor->id();
+				}
+			} else {
+				$list_form{'artist'} = $trackObj->artist();
+			}
+		}
 		$itemnumber++;
 
 		$params->{'instant_mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("plugins/MoodLogic/instant_mix_list.html", \%list_form)};
