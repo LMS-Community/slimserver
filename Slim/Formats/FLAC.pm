@@ -24,7 +24,6 @@ use Slim::Formats::Parse;
 
 my %tagMapping = (
 	'TRACKNUMBER'	=> 'TRACKNUM',
-	'DATE'		=> 'YEAR',
 	'DISCNUMBER'	=> 'SET',
 	'URL'		=> 'URLTAG',
 );
@@ -130,6 +129,13 @@ sub doTagMapping {
 			delete $tags->{$old};
 		}
 	}
+
+	# Special handling for DATE tags
+	# Parse the date down to just the year, for compatibility with other formats
+	if (defined $tags->{'DATE'} && !defined $tags->{'YEAR'}) {
+		($tags->{'YEAR'} = $tags->{'DATE'}) =~ s/.*(\d\d\d\d).*/$1/;
+	}
+
 }
 
 sub addInfoTags {

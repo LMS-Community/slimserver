@@ -36,7 +36,6 @@ my $oggHeaderClass;
 
 my %tagMapping = (
 	'TRACKNUMBER'	=> 'TRACKNUM',
-	'DATE'		=> 'YEAR',
 );
 
 # To turn perl's internal form into a utf-8 string.
@@ -87,6 +86,13 @@ sub getTag {
 			$tags->{$new} = $tags->{$old};
 			delete $tags->{$old};
 		}
+
+	}
+
+	# Special handling for DATE tags
+	# Parse the date down to just the year, for compatibility with other formats
+	if (defined $tags->{'DATE'} && !defined $tags->{'YEAR'}) {
+		($tags->{'YEAR'} = $tags->{'DATE'}) =~ s/.*(\d\d\d\d).*/$1/;
 	}
 
 	# Add additional info
