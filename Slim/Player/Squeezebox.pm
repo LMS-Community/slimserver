@@ -145,6 +145,7 @@ sub needsUpgrade {
 }
 
 sub upgradeFirmware {
+	use bytes;
 	my $client = shift;
 	my $ip;
 	if (ref $client ) {
@@ -166,11 +167,11 @@ sub upgradeFirmware {
 	my $proto   = getprotobyname('tcp');
 
 	socket(SOCK, PF_INET, SOCK_STREAM, $proto)	|| return("Couldn't open socket: $!\n");
+	binmode SOCK;
 
 	connect(SOCK, $paddr) || return("Connect failed $!\n");
 	
 	open FS, $file || return("Open failed for: $file\n");
-	
 	binmode FS;
 	
 	my $size = -s $file;	
@@ -182,7 +183,7 @@ sub upgradeFirmware {
 	my $buf;
 	
 	while ($bytesread=read(FS, $buf, 256)) {
-		print SOCK $buf;
+		syswrite SOCK, $buf;
 		$totalbytesread += $bytesread;
 		$::d_firmware && msg("Updating firmware: $totalbytesread / $size\n");
 	}

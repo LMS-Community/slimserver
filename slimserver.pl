@@ -157,6 +157,7 @@ use vars qw(
 		$d_command
 		$d_display
 		$d_factorytest
+		$d_firmware
 		$d_files
 		$d_http
 		$d_info
@@ -471,6 +472,7 @@ to the console via stderr:
     --d_display      => Show what (should be) on the player's display 
     --d_factorytest  => Information used during factory testing
     --d_files        => Files, paths, opening and closing
+    --d_firmware     => Information during Squeezebox firmware updates 
     --d_http         => HTTP activity
     --d_info         => MP3/ID3 track information
     --d_ir           => Infrared activity
@@ -487,7 +489,7 @@ to the console via stderr:
     --d_prefs        => Preferences file information
     --d_remotestream => Information about remote HTTP streams and playlists
     --d_scan         => Information about scanning directories and filelists
-	--d_select		 => Information about the select process
+    --d_select       => Information about the select process
     --d_server       => Basic server functionality
     --d_scheduler    => Internal scheduler information
     --d_slimproto    => Slimproto debugging information
@@ -531,6 +533,7 @@ sub initOptions {
 		'd_control'			=> \$d_control,
 		'd_display'			=> \$d_display,
 		'd_factorytest'		=> \$d_factorytest,
+		'd_firmware'		=> \$d_firmware,
 		'd_files'			=> \$d_files,
 		'd_http'			=> \$d_http,
 		'd_info'			=> \$d_info,
