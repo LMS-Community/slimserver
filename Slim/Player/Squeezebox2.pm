@@ -188,6 +188,12 @@ sub nowPlayingModes {
 	return $count;
 }
 
+# squeezebox does not need an update here, so a noop is OK.
+sub refresh {
+	# my $client = shift;
+}
+
+
 sub showVisualizer {
 	my $client = shift;
 	
