@@ -1,4 +1,4 @@
-# $Id: DBI.pm,v 1.1 2004/08/13 20:18:30 vidur Exp $
+# $Id: DBI.pm,v 1.2 2004/12/13 07:31:59 vidur Exp $
 # vim: ts=8:sw=4
 #
 # Copyright (c) 1994-2004  Tim Bunce  Ireland
@@ -149,7 +149,7 @@ L<"http://search.cpan.org/search?query=DBI&mode=all">.
 
 package DBI;
 
-my $Revision = substr(q$Revision: 1.1 $, 10);
+my $Revision = substr(q$Revision: 1.2 $, 10);
 
 use Carp();
 use DynaLoader ();

@@ -1,5 +1,5 @@
 ###
-### $Id: FAQ.pm,v 1.1 2004/08/13 20:18:43 vidur Exp $
+### $Id: FAQ.pm,v 1.2 2004/12/13 07:32:01 vidur Exp $
 ###
 ### DBI Frequently Asked Questions POD
 ###
@@ -19,6 +19,9 @@
 ### made to Alligator Descartes <I<http://www.symbolstone.org/descarte/contact.html>>.
 ### 
 ### $Log: FAQ.pm,v $
+### Revision 1.2  2004/12/13 07:32:01  vidur
+### Based on Dan Sully's suggestion, upgraded to Class::DBI 0.96 which has object caching. Fixed Windows line endings in some CPAN files.
+###
 ### Revision 1.1  2004/08/13 20:18:43  vidur
 ### Adding DBI, DBD::SQLite, Class::DBI and dependents to CPAN directory. The first two are ActiveState specific. Versions for other platforms will be added shortly.
 ###

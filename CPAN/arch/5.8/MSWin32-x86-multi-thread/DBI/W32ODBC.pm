@@ -1,7 +1,7 @@
 package
   DBI;	# hide this non-DBI package from simple indexers
 
-# $Id: W32ODBC.pm,v 1.1 2004/08/13 20:18:52 vidur Exp $
+# $Id: W32ODBC.pm,v 1.2 2004/12/13 07:32:02 vidur Exp $
 #
 # Copyright (c) 1997,1999 Tim Bunce
 # With many thanks to Patrick Hollins for polishing.
@@ -40,7 +40,7 @@ Volunteers welcome!
 ${'DBI::VERSION'}	# hide version from PAUSE indexer
    = "0.01";
 
-my $Revision = substr(q$Revision: 1.1 $, 10);
+my $Revision = substr(q$Revision: 1.2 $, 10);
 
 sub DBI::W32ODBC::import { }	# must trick here since we're called DBI/W32ODBC.pm
 

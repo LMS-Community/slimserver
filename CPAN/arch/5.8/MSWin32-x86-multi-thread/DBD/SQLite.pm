@@ -1,4 +1,4 @@
-# $Id: SQLite.pm,v 1.2 2004/12/11 23:51:03 vidur Exp $
+# $Id: SQLite.pm,v 1.3 2004/12/13 07:32:00 vidur Exp $
 
 package DBD::SQLite;
 use strict;

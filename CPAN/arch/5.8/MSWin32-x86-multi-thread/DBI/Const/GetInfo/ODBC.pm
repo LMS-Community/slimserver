@@ -1,4 +1,4 @@
-# $Id: ODBC.pm,v 1.1 2004/08/13 20:18:57 vidur Exp $
+# $Id: ODBC.pm,v 1.2 2004/12/13 07:32:03 vidur Exp $
 #
 # Copyright (c) 2002  Tim Bunce  Ireland
 #
@@ -35,7 +35,7 @@ The API for this module is private and subject to change.
 =cut
 
 my
-$VERSION = sprintf "%d.%02d", '$Revision: 1.1 $ ' =~ /(\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", '$Revision: 1.2 $ ' =~ /(\d+)\.(\d+)/;
 
 %InfoTypes =
 (

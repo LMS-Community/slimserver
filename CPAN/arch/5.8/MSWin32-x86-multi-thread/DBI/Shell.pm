@@ -41,7 +41,7 @@ use Carp;
 @ISA = qw(Exporter DBI::Shell::Std);
 @EXPORT = qw(shell);
 
-$VERSION = sprintf( "%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/ );
+$VERSION = sprintf( "%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/ );
 
 my $warning = <<'EOM';
 

@@ -2,10 +2,10 @@ package DBI::DBD;
 
 use vars qw($VERSION);	# set $VERSION early so we don't confuse PAUSE/CPAN etc
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/o);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/o);
 
 
-# $Id: DBD.pm,v 1.1 2004/08/13 20:18:42 vidur Exp $
+# $Id: DBD.pm,v 1.2 2004/12/13 07:32:01 vidur Exp $
 #
 # Copyright (c) 1997-2003 Jonathan Leffler, Jochen Wiedmann, Steffen
 # Goeldner and Tim Bunce
@@ -58,8 +58,8 @@ DBI::DBD - Perl DBI Database Driver Writer's Guide
 
 =head2 Version and volatility
 
-  $Revision: 1.1 $
-  $Date: 2004/08/13 20:18:42 $
+  $Revision: 1.2 $
+  $Date: 2004/12/13 07:32:01 $
 
 This document is I<still> a minimal draft which is in need of further work.
 
@@ -708,7 +708,7 @@ version 1.10 to precede version 1.9, so that using a raw CVS, RCS or
 SCCS version number is probably not appropriate (despite being very
 common). For RCS or CVS you can use this code:
 
-  $VERSION = sprintf "%d.%02d", '$Revision: 1.1 $ ' =~ /(\d+)\.(\d+)/;
+  $VERSION = sprintf "%d.%02d", '$Revision: 1.2 $ ' =~ /(\d+)\.(\d+)/;
 
 which pads out the fractional part with leading zeros so all is well
 (so long as you don't go past x.99)

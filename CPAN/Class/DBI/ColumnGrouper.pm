@@ -31,9 +31,14 @@ use Carp;
 use Storable 'dclone';
 use Class::DBI::Column;
 
-sub unique {
+sub _unique {
 	my %seen;
 	map { $seen{$_}++ ? () : $_ } @_;
+}
+
+sub _uniq {
+	my %tmp;
+	return grep !$tmp{$_}++, @_;
 }
 
 =head2 new
@@ -41,6 +46,12 @@ sub unique {
 	my $colg = Class::DBI::ColumnGrouper->new;
 
 A new blank ColumnnGrouper object.
+
+=head2 clone
+
+	my $colg2 = $colg->clone;
+
+Clone an existing ColumnGrouper.
 
 =cut
 
@@ -57,19 +68,12 @@ sub clone {
 	return dclone $prev;
 }
 
-=head2 add_group
+=head2 add_column / find_column 
 
-	$colg->add_group(People => qw/star director producer/);
+	$colg->add_column($name);
+	my Class::DBI::Column $col = $colg->find_column($name);
 
-This adds a list of columns as a column group.
-
-=cut
-
-=head2 column 
-
-	my Class::DBI::Column $col = $cols->column($name);
-
-Return a Column object for the given column name.
+Add or return a Column object for the given column name.
 
 =cut
 
@@ -85,6 +89,14 @@ sub find_column {
 	return unless $self->{_allcol}->{ lc $name };
 }
 
+=head2 add_group
+
+	$colg->add_group(People => qw/star director producer/);
+
+This adds a list of columns as a column group.
+
+=cut
+
 sub add_group {
 	my ($self, $group, @names) = @_;
 	$self->add_group(Primary => $names[0])
@@ -93,7 +105,7 @@ sub add_group {
 	$self->add_group(Essential => @names)
 		if $group eq "All"
 		and !$self->essential;
-	@names = unique($self->primary, @names) if $group eq "Essential";
+	@names = _unique($self->primary, @names) if $group eq "Essential";
 
 	my @cols = map $self->add_column($_), @names;
 	$_->add_group($group) foreach @cols;
@@ -101,11 +113,13 @@ sub add_group {
 	return $self;
 }
 
-=head2 group_cols
+=head2 group_cols / groups_for
 
 	my @colg = $cols->group_cols($group);
+	my @groups = $cols->groups_for(@cols);
 
-This returns a list of all columns which are in the given group.
+This returns a list of all columns which are in the given group, or the
+groups a given column is in.
 
 =cut
 
@@ -117,17 +131,20 @@ sub group_cols {
 
 sub groups_for {
 	my ($self, @cols) = @_;
-	return uniq(map $_->groups, @cols);
+	return _uniq(map $_->groups, @cols);
 }
+
+=head2 columns_in
+
+	my @cols = $colg->columns_in(@groups);
+
+This returns a list of all columns which are in the given groups.
+
+=cut
 
 sub columns_in {
 	my ($self, @groups) = @_;
-	return uniq(map $self->group_cols($_), @groups);
-}
-
-sub uniq {
-	my %tmp;
-	return grep !$tmp{$_}++, @_;
+	return _uniq(map $self->group_cols($_), @groups);
 }
 
 =head2 all_columns

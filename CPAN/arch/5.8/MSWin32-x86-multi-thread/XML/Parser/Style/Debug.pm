@@ -1,4 +1,4 @@
-# $Id: Debug.pm,v 1.2 2004/10/06 15:55:52 vidur Exp $
+# $Id: Debug.pm,v 1.3 2004/12/13 07:32:06 vidur Exp $
 
 package XML::Parser::Style::Debug;
 use strict;

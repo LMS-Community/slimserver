@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DataModel;
 
-# $Id: DataModel.pm,v 1.1 2004/12/11 23:51:31 vidur Exp $
+# $Id: DataModel.pm,v 1.2 2004/12/13 07:32:07 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -149,6 +149,7 @@ sub findUpgrade {
 
 
 sub wipeDB {
+	Slim::DataStores::DBI::DataModel->clear_object_index();
 	executeSQLFile("dbclear.sql");
 	$dbh = undef;
 }

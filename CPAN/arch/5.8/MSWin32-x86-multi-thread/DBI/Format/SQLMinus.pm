@@ -27,7 +27,7 @@ use Data::Dumper;
 
 use vars qw($VERSION);
 
-$VERSION = sprintf( "%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/ );
+$VERSION = sprintf( "%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/ );
 
 sub header {
     my($self, $sth, $fh, $sep) = @_;

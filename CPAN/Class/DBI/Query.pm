@@ -40,7 +40,7 @@ __PACKAGE__->mk_accessors(
 
 =head1 NAME
 
-Class::DBI::Query - Manage SQL for Class::DBI
+Class::DBI::Query - Deprecated SQL manager for Class::DBI
 
 =head1 SYNOPSIS
 
@@ -109,6 +109,8 @@ multiple WHERE clauses this will extend the last one.
 
 sub new {
 	my ($class, $self) = @_;
+	require Carp;
+	Carp::carp "Class::DBI::Query deprecated";
 	$self->{owner}     ||= caller;
 	$self->{kings}     ||= $self->{owner};
 	$self->{essential} ||= [ $self->{owner}->_essential ];

@@ -14,6 +14,7 @@ Class::DBI::Iterator - Iterate over Class::DBI search results
 	while ($it->next) { ... }
 
 	my @slice = $it->slice(10,19);
+	my $slice = $it->slice(10,19);
 
 	$it->reset;
 
@@ -49,7 +50,8 @@ sub new {
 		_data   => $data,
 		_mapper => [@mapper],
 		_place  => 0,
-	}, $me;
+		},
+		ref $me || $me;
 }
 
 sub set_mapping_method {
@@ -92,7 +94,10 @@ sub slice {
 	while ($self->{_place} <= $end) {
 		push @return, $self->next || last;
 	}
-	return @return;
+	return @return if wantarray;
+
+	my $slice = $self->new($self->class, \@return, $self->mapper,);
+	return $slice;
 }
 
 sub delete_all {

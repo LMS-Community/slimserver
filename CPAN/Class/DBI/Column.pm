@@ -28,10 +28,13 @@ dealing with this directly.
 use strict;
 use base 'Class::Accessor';
 
-__PACKAGE__->mk_accessors(qw/name accessor mutator/);
+__PACKAGE__->mk_accessors(
+	qw/name accessor mutator placeholder
+		is_constrained/
+);
 
 use overload
-	'""' => sub { shift->name_lc },
+	'""'     => sub { shift->name_lc },
 	fallback => 1;
 
 =head2 new
@@ -44,7 +47,13 @@ A new object for this column.
 
 sub new {
 	my ($class, $name) = @_;
-	bless { name => $name, _groups => {} }, $class;
+	return $class->SUPER::new(
+		{
+			name        => $name,
+			_groups     => {},
+			placeholder => '?'
+		}
+	);
 }
 
 sub name_lc { lc shift->name }

@@ -24,7 +24,7 @@ use Carp;
 require Symbol;
 
 $DBI::PurePerl = $ENV{DBI_PUREPERL} || 1;
-$DBI::PurePerl::VERSION = sprintf "%d.%02d", '$Revision: 1.1 $ ' =~ /(\d+)\.(\d+)/;
+$DBI::PurePerl::VERSION = sprintf "%d.%02d", '$Revision: 1.2 $ ' =~ /(\d+)\.(\d+)/;
 $DBI::neat_maxlen ||= 400;
 
 $DBI::tfh = Symbol::gensym();

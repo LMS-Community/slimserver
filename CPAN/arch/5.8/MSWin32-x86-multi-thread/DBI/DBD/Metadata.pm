@@ -1,6 +1,6 @@
 package DBI::DBD::Metadata;
 
-# $Id: Metadata.pm,v 1.1 2004/08/13 20:18:59 vidur Exp $
+# $Id: Metadata.pm,v 1.2 2004/12/13 07:32:03 vidur Exp $
 #
 # Copyright (c) 1997-2003 Jonathan Leffler, Jochen Wiedmann,
 # Steffen Goeldner and Tim Bunce
@@ -21,7 +21,7 @@ use DBI::Const::GetInfoType qw(%GetInfoType);
 use strict;
 
 my
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 =head1 NAME
 
