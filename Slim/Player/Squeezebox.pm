@@ -477,6 +477,9 @@ sub stream {
 		}
 		
 		$request_string .= "\n";
+		if (length($request_string) % 2) {
+			$request_string .= "\n";
+		}
 
 		$frame .= $request_string;
 
