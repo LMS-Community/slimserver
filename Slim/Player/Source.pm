@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.114 2004/09/23 01:57:17 kdf Exp $
+# $Id: Source.pm,v 1.115 2004/09/23 21:59:05 vidur Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -33,6 +33,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Scan;
 use Slim::Utils::Strings qw(string);
+use Slim::Web::RemoteStream;
 use Slim::Player::Protocols::HTTP;
 
 my $TRICKSEGMENTDURATION = 1.0;
