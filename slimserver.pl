@@ -237,7 +237,6 @@ use Slim::Control::Stdio;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 use Slim::Networking::Slimproto;
-use Slim::Networking::SimpleAsyncHTTP;
 
 use vars qw($VERSION @AUTHORS);
 
@@ -1002,28 +1001,19 @@ sub checkVersion {
 	$::d_time && msg("checking version now.\n");
 	my $url  = "http://update.slimdevices.com/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
 
-	my $http = Slim::Networking::SimpleAsyncHTTP->new(\&checkVersionCB,
-													  \&checkVersionError);
-	$http->get($url); # will call checkVersionCB when complete
+	# XXX - dsully - this really shouldn't be overloaded like this.
+	my $sock = Slim::Player::Source::openRemoteStream($url);
 
+	if ($sock) {
+
+		$::newVersion = Slim::Utils::Misc::sysreadline($sock,5);
+		chomp($::newVersion);
+		
+		$sock->close();
+	}
 	Slim::Utils::Prefs::set('checkVersionLastTime', Time::HiRes::time());
 	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + Slim::Utils::Prefs::get('checkVersionInterval'), \&checkVersion);
 }
-
-# called when check version request is complete
-sub checkVersionCB {
-	my $http = shift;
-	# store result in global variable, to be displayed by browser
-	$::newVersion = $http->content();
-}
-
-# called only if check version request fails
-sub checkVersionError {
-	my $http = shift;
-	msg("Error while checking server version.\n");
-}
-
-
 
 #------------------------------------------
 #
