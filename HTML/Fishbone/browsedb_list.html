@@ -2,7 +2,7 @@
 	<td  class="listing">&nbsp;
 		[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
 		[% IF descend %]<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% text | html %]</a>[% END %]
-		[% IF not descend %]<b><a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]">[% text | html %]</a></b>
+		[% IF not descend %]<b><a href="songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&player=[% player | uri %]">[% text | html %]</a></b>
 			[% IF includeArtist && artist %][% "BY" | string %]
 				<a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist %]</a>
 			[% END %]
