@@ -505,10 +505,6 @@ sub delete {
 	my $commit = shift;
 
 	my $track = ref $urlOrObj ? $urlOrObj : undef;
-	if (ref($track) eq 'Class::DBI::Iterator') {
-		Slim::Utils::Misc::msg("Somehow got a Class::DBI::Iterator instead of a track?! urlOrObj: [$urlOrObj]\n");
-		Slim::Utils::Misc::bt();
-	}
 	my $url   = ref $urlOrObj ? $track->url : $urlOrObj;
 
 	if (!defined($track)) {
@@ -810,7 +806,7 @@ sub readTags {
 	my $self  = shift;
 	my $file  = shift;
 
-	my ($filepath, $attributesHash);
+	my ($filepath, $attributesHash, $anchor);
 
 	if (!defined($file) || $file eq '') {
 		return {};
@@ -819,18 +815,16 @@ sub readTags {
 	# get the type without updating the cache
 	my $type = Slim::Music::Info::typeFromPath($file);
 
-	$::d_info && Slim::Utils::Misc::msg("Updating cache for: " . $file . "\n");
+	$::d_info && Slim::Utils::Misc::msg("reading tags for: $file\n");
+
+	if (Slim::Music::Info::isFileURL($file)) {
+		$filepath = Slim::Utils::Misc::pathFromFileURL($file);
+		$anchor   = Slim::Utils::Misc::anchorFromURL($file);
+	} else {
+		$filepath = $file;
+	}
 
 	if (Slim::Music::Info::isSong($file, $type) && !Slim::Music::Info::isRemoteURL($file)) {
-
-		my $anchor;
-
-		if (Slim::Music::Info::isFileURL($file)) {
-			$filepath = Slim::Utils::Misc::pathFromFileURL($file);
-			$anchor   = Slim::Utils::Misc::anchorFromURL($file);
-		} else {
-			$filepath = $file;
-		}
 
 		# Extract tag and audio info per format
 		if (exists $Slim::Music::Info::tagFunctions{$type}) {
@@ -877,9 +871,6 @@ sub readTags {
 			}
 		}
 
-		# cache the file size & date
-		($attributesHash->{'FS'}, $attributesHash->{'AGE'}) = (stat($filepath))[7,9];
-		
 		# rewrite the size, offset and duration if it's just a fragment
 		# This is mostly (always?) for cue sheets.
 		if ($anchor && $anchor =~ /([\d\.]+)-([\d\.]+)/ && $attributesHash->{'SECS'}) {
@@ -912,6 +903,11 @@ sub readTags {
 		$::d_info && Slim::Utils::Misc::msg("Info: no title found, calculating title from url for $file\n");
 
 		$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
+	}
+
+	if (Slim::Music::Info::isFile($filepath)) {
+		# cache the file size & date
+		($attributesHash->{'FS'}, $attributesHash->{'AGE'}) = (stat($filepath))[7,9];
 	}
 
 	# Only set if we couldn't read it from the file.
@@ -1084,7 +1080,7 @@ sub _hasChanged {
 		if ($agedef) {
 			$agecheck = ((stat(_))[9] == $timestamp);
 		}
-			
+
 		return 0 if  $fsdef && $fscheck && $agedef && $agecheck;
 		return 0 if  $fsdef && $fscheck && !$agedef;
 		return 0 if !$fsdef && $agedef  && $agecheck;
