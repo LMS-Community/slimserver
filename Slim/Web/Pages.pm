@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.14 2003/10/10 20:44:54 dean Exp $
+# $Id: Pages.pm,v 1.15 2003/10/11 01:49:55 kdf Exp $
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -885,7 +885,20 @@ sub browseid3 {
 	
 	addStats($paramsref, $genreref, $artistref, $albumref, $songref);
 
-	if (defined($genre) && $genre eq '*' && 
+	if (defined($album) && $album eq '*' && 
+	    defined($genre) && $genre eq '*' && 
+	    defined($artist) && $artist eq '*') {
+		%list_form=();
+		$list_form{'song'} = '';
+		$list_form{'album'} = '*';
+		$list_form{'artist'} = '*';
+		$list_form{'genre'} = '*';
+		$list_form{'player'} = $player;
+		$list_form{'pwditem'} = string('BROWSE_BY_SONG');
+		$list_form{'skinOverride'} = $$paramsref{'skinOverride'};
+		$$paramsref{'pwd_list'} .= &Slim::Web::HTTP::filltemplatefile("browseid3_pwdlist.html", \%list_form);
+		$$paramsref{'browseby'} = 'BROWSE_BY_SONG';
+	} elsif (defined($genre) && $genre eq '*' && 
 	    defined($artist) && $artist eq '*') {
 		%list_form=();
 		$list_form{'song'} = '';
