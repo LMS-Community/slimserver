@@ -175,22 +175,32 @@ use Slim::Formats::Parse;
 use Slim::Player::Source;
 
 sub new {
-	my $class = shift;
-	my $url = shift;
-	my $client = shift;
+	my $class  = shift;
+	my $args   = shift;
 
-	if ($url =~ /^radioio:\/\/(.*?)\.mp3/) {
-		my $pls = Plugins::RadioIO::getHTTPURL($1);
-		my $sock = Slim::Player::Source::openRemoteStream($pls, $client);
-		return undef if !defined($sock);
-		
-		my @items = Slim::Formats::Parse::parseList($pls, $sock);
-		return undef if !scalar(@items);
+	my $url    = $args->{'url'};
+	my $client = $args->{'client'};
 
-		return $class->SUPER::new($items[0], $client, $url);
+	if ($url !~ /^radioio:\/\/(.*?)\.mp3/) {
+		return undef;
 	}
+
+	my $pls  = Plugins::RadioIO::getHTTPURL($1);
+
+	my $sock = $class->SUPER::new({
+		'url'    => $pls,
+		'client' => $client
+	}) || return undef;
 	
-	return undef;
+	my @items = Slim::Formats::Parse::parseList($pls, $sock);
+
+	return undef unless scalar(@items);
+
+	return $class->SUPER::new({
+		'url'     => $items[0],
+		'client'  => $client,
+		'infoUrl' => $url,
+	});
 }
 
 1;

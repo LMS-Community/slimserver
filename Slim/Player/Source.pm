@@ -851,8 +851,6 @@ sub openSong {
 
 		if ($sock) {
 
-			Slim::Music::Info::setContentType($fullpath, $sock->contentType());
-
 			# if it's an mp3 stream, then let's stream it.
 			if (Slim::Music::Info::isSong($track)) {
 
@@ -1548,7 +1546,6 @@ sub registerProtocolHandler {
 sub openRemoteStream {
 	my $url = shift;
 	my $client = shift;
-	my $post   = shift;
 	
 	$::d_source && msg("Trying to open protocol stream for $url\n");
 	if ($url =~ /^(.*?):\/\//i) {
@@ -1557,16 +1554,21 @@ sub openRemoteStream {
 		$::d_source && msg("Looking for handler for protocol $proto\n");
 		if (my $protoClass = $Slim::Player::Source::protocolHandlers{lc $proto}) {
 			$::d_source && msg("Found handler for protocol $proto\n");
-			return $protoClass->new($url, $client, undef, $post);
+
+			return $protoClass->new({
+				'url'    => $url,
+				'client' => $client,
+			});
 		}
 	}
 
 	$::d_source && msg("Couldn't find protocol handler for $url\n");
+
 	return undef;
 }
 
-
 1;
+
 __END__
 
 # Local Variables:

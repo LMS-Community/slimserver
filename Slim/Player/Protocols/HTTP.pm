@@ -40,17 +40,21 @@ use Slim::Utils::Misc;
 
 sub new {
 	my $class = shift;
-	my $url = shift;
-	my $client = shift;
-	my $infoUrl = shift || $url;
-	my $post = shift;
+	my $args  = shift;
 
-	my $self = $class->open($url, $infoUrl, $post);
+	unless ($args->{'url'}) {
+		Slim::Utils::Misc::msg("No url passed to Slim::Player::Protocols->new() !\n");
+		return undef;
+	}
+
+	$args->{'infoUrl'} ||= $args->{'url'};
+	
+	my $self = $class->open($args);
 
 	if (defined($self)) {
-		${*$self}{'url'} = $url;
-		${*$self}{'infoUrl'} = $infoUrl;
-		${*$self}{'client'} = $client;
+		${*$self}{'url'}     = $args->{'url'};
+		${*$self}{'infoUrl'} = $args->{'infoUrl'};
+		${*$self}{'client'}  = $args->{'client'};
 	}
 
 	return $self;
@@ -58,9 +62,9 @@ sub new {
 
 sub open {
 	my $class = shift;
-	my $url = shift;
-	my $infoUrl = shift;
-	my $post = shift;
+	my $args  = shift;
+
+	my $url   = $args->{'url'};
 
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
 
@@ -110,14 +114,22 @@ sub open {
 		};
 	};
 
-	return $sock->request($url, $infoUrl, $post);
+	return $sock->request($args);
 }
 
 sub request {
 	my $self = shift;
-	my $url = shift;
-	my $infoUrl = shift;
-	my $post = shift;
+	my $args = shift;
+
+	my $url     = $args->{'url'};
+	my $infoUrl = $args->{'infoUrl'};
+	my $post    = $args->{'post'};
+	my $create  = $args->{'create'};
+
+	# Most callers will want create on. Some want it off. So check for the explict 0 value.
+	unless (defined $create) {
+		$create = 1;
+	}
 
 	my $class = ref $self;
 
@@ -188,9 +200,10 @@ sub request {
 	}
 	
 	my $redir = '';
-	my $ct = Slim::Music::Info::typeFromPath($infoUrl, 'mp3');
+	my $ct    = Slim::Music::Info::typeFromPath($infoUrl, 'mp3');
 
 	${*$self}{'contentType'} = $ct;
+	Slim::Music::Info::setContentType($infoUrl, $ct) if $create;
 
 	while(my $header = Slim::Utils::Misc::sysreadline($self, $timeout)) {
 
@@ -204,13 +217,13 @@ sub request {
 				$title = Encode::decode('iso-8859-1', $title);
 			}
 
-			Slim::Music::Info::setTitle($infoUrl, $title);
+			Slim::Music::Info::setTitle($infoUrl, $title) if $create;
 
 			${*$self}{'title'} = $title;
 		}
 
 		if ($header =~ /^icy-br:\s*(.+)\015\012$/i) {
-			Slim::Music::Info::setBitrate($infoUrl, $1 * 1000);
+			Slim::Music::Info::setBitrate($infoUrl, $1 * 1000) if $create;
 		}
 		
 		if ($header =~ /^icy-metaint:\s*(.+)$CRLF$/) {
@@ -230,7 +243,9 @@ sub request {
 				$contentType = '';
 			}
 			
-			 ${*$self}{'contentType'} = $contentType;
+			${*$self}{'contentType'} = $contentType;
+
+			Slim::Music::Info::setContentType($infoUrl, $contentType) if $create;
 		}
 		
 		if ($header =~ /^Content-Length:\s*(.*)$CRLF$/i) {
@@ -280,8 +295,10 @@ sub request {
 
 			my $redirectedContentType = Slim::Music::Info::contentType($redir);
 
-			$::d_remotestream && msg("Content type ($redirectedContentType) of $infoUrl is being set to the content type of the redir: $redir\n");
+			$::d_remotestream && msg("Content type ($redirectedContentType) of $infoUrl is being set to the contentType of: $redir\n");
+
 			${*$self}{'contentType'} = $redirectedContentType;
+			Slim::Music::Info::setContentType($infoUrl, $redirectedContentType) if $create;
 		}
 		
 		return $self;
