@@ -27,7 +27,7 @@ package Plugins::ShoutcastBrowser;
 use strict;
 
 use IO::Socket qw(:DEFAULT :crlf);
-use File::Spec::Functions ();
+use File::Spec::Functions qw(catdir catfile);
 use Slim::Control::Command;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
@@ -160,11 +160,13 @@ our @info_index = ( 4,		 2,	  3,		   6,	   5,			 0	);
 our $all_name = '';
 our $sort_bitrate_up = 0;
 
-our ($recent_name, $misc_genre, $position_of_recent);
+our ($recent_name, $recent_dir,$misc_genre, $position_of_recent);
 our (%recent_filename, %recent_data);
 our $recent_dirname = 'ShoutcastBrowser_Recently_Played';
-our $recent_dir = File::Spec::Functions::catdir(Slim::Utils::Prefs::get('playlistdir'), $recent_dirname);
-mkdir $recent_dir unless (-d $recent_dir);
+if (Slim::Utils::Prefs::get('playlistdir')) {
+	$recent_dir = catdir(Slim::Utils::Prefs::get('playlistdir'), $recent_dirname);
+	mkdir $recent_dir unless (-d $recent_dir);
+}
 
 our ($top_limit, $most_popular_name, $custom_genres, %custom_genres);
 
@@ -342,8 +344,8 @@ sub setMode {
 	$recent_name = $client->string('PLUGIN_SHOUTCASTBROWSER_RECENT');
 	$most_popular_name = $client->string('PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR');
 	$misc_genre= $client->string('PLUGIN_SHOUTCASTBROWSER_MISC');
-	$recent_filename{$client} = File::Spec::Functions::catfile($recent_dir, $client->name() . '.m3u');
-
+	$recent_filename{$client} = catfile($recent_dir,$client->name() . '.m3u') if defined $recent_dir;
+	
 	# Get streams
 	unless (@genres) {
 		%stream_data = ();
