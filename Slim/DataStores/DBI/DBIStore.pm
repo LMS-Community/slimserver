@@ -420,7 +420,7 @@ sub newTrack {
 
 	if ($self->_includeInTrackCount($track)) { 
 
-		my $time = $track->getCached('secs');
+		my $time = $track->get('secs');
 
 		if ($time) {
 			$self->{'totalTime'} += $time;
@@ -523,7 +523,7 @@ sub delete {
 
 			$self->{'trackCount'}--;
 
-			my $time = $track->getCached('secs');
+			my $time = $track->get('secs');
 
 			if ($time) {
 				$self->{'totalTime'} -= $time;
@@ -913,8 +913,8 @@ sub _checkValidity {
 	my $self  = shift;
 	my $track = shift;
 
-	my $id  = $track->getCached('id');
-	my $url = $track->getCached('url');
+	my $id  = $track->get('id');
+	my $url = $track->get('url');
 
 	return undef if $self->{'zombieList'}->{$id};
 
@@ -940,8 +940,8 @@ sub _checkValidity {
 sub _hasChanged {
 	my $self  = shift;
 	my $track = shift;
-	my $url   = shift || $track->getCached('url');
-	my $id    = shift || $track->getCached('id');
+	my $url   = shift || $track->get('url');
+	my $id    = shift || $track->get('id');
 
 	# We return 0 if the file hasn't changed
 	#    return 1 if the file has (cached entry is deleted by us)
@@ -995,9 +995,9 @@ sub _hasChanged {
 sub _includeInTrackCount {
 	my $self  = shift;
 	my $track = shift;
-	my $url   = $track->getCached('url');
+	my $url   = $track->get('url');
 
-	return 1 if (Slim::Music::Info::isSong($url, $track->getCached('ct')) && 
+	return 1 if (Slim::Music::Info::isSong($url, $track->get('ct')) && 
 				 !Slim::Music::Info::isRemoteURL($url) && 
 				 (-e (Slim::Utils::Misc::pathFromFileURL($url))));
 
@@ -1302,7 +1302,7 @@ sub _updateTrackValidity {
 	my $self  = shift;
 	my $track = shift;
 
-	my $url   = $track->getCached('url');
+	my $url   = $track->get('url');
 
 	$self->{'validityCache'}->{$url}->[0] = 1;
 

@@ -130,21 +130,16 @@ sub get {
 	return $item;
 }
 
-sub set {
+sub artist {
 	my $self = shift;
-	
-	$self->{'cachedArtist'} = undef;
-	$self->{'cachedArtistSort'} = undef;
-	$self->{'cachedGenre'} = undef;
 
-	return $self->SUPER::set(@_);
+	return ($self->contributorsOfType('artist'))[0];
 }
 
-sub getCached {
+sub artistsort {
 	my $self = shift;
-	my $attr = shift;
 
-	return $self->SUPER::get($attr);
+	return ($self->contributorsOfType('artist'))[0]->namesort;
 }
 
 sub composer {
@@ -163,6 +158,12 @@ sub band {
 	my $self = shift;
 
 	return $self->contributorsOfType('band');
+}
+
+sub genre {
+	my $self = shift;
+
+	return ($self->genres)[0];
 }
 
 sub comment {
@@ -303,39 +304,6 @@ sub coverArt {
 	} else {
 		return $body;
 	}
-}
-
-# String version of contributors list
-sub artist {
-	my $self = shift;
-
-	# FIXME Possible premature optimization - cache the artist string.
-	# XXX - we may be able to replace this with the LRU cache
-	return $self->{'cachedArtist'} ||= join(", ", map { $_->name } $self->contributors());
-}
-
-sub artistsort {
-	my $self = shift;
-
-	# FIXME Possible premature optimization - cache the artistsort string.
-	# XXX - we may be able to replace this with the LRU cache
-	return $self->{'cachedArtistSort'} ||= join(", ", map { $_->namesort } $self->contributors());
-}
-
-sub albumsort {
-	my $self = shift;
-	my $album = $self->album();
-
-	return $album->titlesort();
-}
-
-# String version of genre list
-sub genre {
-	my $self = shift;
-
-	# FIXME Possible premature optimization - cache the genre string.
-	# XXX - we may be able to replace this with the LRU cache
-	return $self->{'cachedGenre'} ||= join(", ", map { $_->name } $self->genres());
 }
 
 sub setTracks {

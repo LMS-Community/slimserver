@@ -744,9 +744,17 @@ sub infoHash {
 		}
 	}
 
-	$cacheEntryHash->{"ARTIST"}     = $track->artist;
-	$cacheEntryHash->{"ARTISTSORT"} = $track->artistsort;
-	$cacheEntryHash->{"GENRE"}      = $track->genre;
+	if ($track) {
+
+		if ($track->artist()) {
+			$cacheEntryHash->{"ARTIST"}     = $track->artist()->name();
+			$cacheEntryHash->{"ARTISTSORT"} = $track->artist()->namesort();
+		}
+
+		if ($track->genre()) {
+			$cacheEntryHash->{"GENRE"}      = $track->genre()->name();
+		}
+	}
 
 	return $cacheEntryHash;
 }
@@ -906,7 +914,7 @@ sub getInfoForSort {
 		$item,
 		$list,
 		$list ? undef : $obj->artistsort(),
-		$list ? undef : $obj->albumsort(),
+		$list ? undef : $obj->album()->titlesort(),
 		$list ? undef : $obj->tracknum(),
 		$obj->titlesort(),
 		$list ? undef : $obj->album()->disc()
