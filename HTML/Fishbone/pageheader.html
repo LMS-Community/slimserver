@@ -7,19 +7,12 @@
 		<!--Hide
 		
 		function setCookie(name, value)
-
 		{
-
 			var expires = new Date();
-
 			expires.setTime(expires.getTime() + 1000*60*60*24*365);
-
 			document.cookie =
-
 				name + "=" + escape(value) +
-
 				((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
-
 		}
 		
 		function goAdvanced(value)
@@ -95,7 +88,7 @@
 	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" 
 	[% IF setup || help %]onload="top.document.getElementById('home').rows = ' 0 , *';"
 	onunload = "top.document.getElementById('home').rows = ' 87 , *';"
-	[% ELSE %] 
+	[% ELSIF not query %] 
 	onload="parent.browser.location = getHomeCookie('SlimServer-Browserpage')+'&player=[% player | uri %]';"
 	[% END %]>
 	<div class="menu1" width="100%">
