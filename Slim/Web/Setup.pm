@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.35 2004/01/26 05:44:24 dean Exp $
+# $Id: Setup.pm,v 1.36 2004/01/28 04:36:56 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -485,8 +485,10 @@ sub initSetupConfig {
 				}
 				if (Slim::Music::iTunes::useiTunesLibrary()) {
 					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[2] = undef;
+					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = undef;
 				} else {
 					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[2] = 'rescan';
+					$pageref->{'Groups'}{'Default'}{'PrefOrder'}[3] = 'wipecache';
 				}
 				if (Slim::Music::MoodLogic::canUseMoodLogic()) {
 					$pageref->{'GroupOrder'}[2] = 'moodlogic';
@@ -529,9 +531,10 @@ sub initSetupConfig {
 						,'GroupSub' => 1
 					},
 				'Default' => {
-						'PrefOrder' => [undef,'playlistdir',undef]
+						'PrefOrder' => [undef,'playlistdir',undef,undef]
 						#if not able to use iTunesLibrary then undef at [0] will be replaced by 'audiodir'
 						#if not using iTunesLibrary then undef at [2] will be replaced by 'rescan'
+						#if not using iTunesLibrary then undef at [3] will be replaced by 'wipecache'
 						}
 			}
 		,'Prefs' => {
@@ -603,6 +606,21 @@ sub initSetupConfig {
 							,'dontSet' => 1
 							,'changeMsg' => ''
 						}
+				,'wipecache' => {
+							'validate' => \&validateAcceptAll
+							,'onChange' => sub {	
+										my $client = shift;
+	    									Slim::Control::Command::execute
+	        								 ($client, ["wipecache"], undef, undef);
+										}
+							,'inputTemplate' => 'setup_input_submit.html'
+							,'changeIntro' => string('RESCANNING')
+							,'ChangeButton' => string('SETUP_WIPECACHE_BUTTON')
+							,'dontSet' => 1
+							,'changeMsg' => ''
+						}
+						
+		
 			}
 		} #end of setup{'server'} hash
 	,'plugins' => {

@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.24 2004/01/26 05:44:11 dean Exp $
+# $Id: Command.pm,v 1.25 2004/01/28 04:36:56 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -118,6 +118,7 @@ sub execute {
 	# playerpref	<prefname>	?		
 	
 	# rescan	
+	# wipecache
 	
 	if (!defined($p0)) {
 		# ignore empty commands
@@ -161,6 +162,9 @@ sub execute {
 		}
 		$p2 = Slim::Utils::Prefs::get($p1);
 	} elsif ($p0 eq "rescan") {
+		Slim::Music::MusicFolderScan::startScan();
+	} elsif ($p0 eq "wipecache") {
+		Slim::Music::Info::wipeDBCache();
 		Slim::Music::MusicFolderScan::startScan();
 	} elsif ($p0 eq "info") {
 		if (!defined($p1)) {
