@@ -23,7 +23,7 @@ use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.3 $,10);
+$VERSION = substr(q$Revision: 1.4 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_SNOW');}
 
@@ -100,16 +100,16 @@ my %menuParams = (
 		,'overlayRef' => sub {return (undef,Slim::Hardware::VFD::symbol('rightarrow'));}
 		,'overlayRefArgs' => ''
 	}
-        ,catdir('snow','PLUGIN_SCREENSAVER_SNOW_ACTIVATE') => {
-	    'useMode' => 'INPUT.List'
-	    ,'listRef' => [0,1]
-	    ,'externRef' => ['PLUGIN_SCREENSAVER_SNOW_DEFAULT', 'PLUGIN_SCREENSAVER_SNOW_ACTIVATED']
-	    ,'stringExternRef' => 1
-	    ,'header' => 'PLUGIN_SCREENSAVER_SNOW_ACTIVATE_TITLE'
-	    ,'stringHeader' => 1
-	    ,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0],'screensaver',$_[1]?'SCREENSAVER.snow':'screensaver'); }
-	    ,'onChangeArgs' => 'CV'
-	    ,'initialValue' => sub { (Slim::Utils::Prefs::clientGet($_[0],'screensaver') eq 'SCREENSAVER.snow' ? 1 : 0); }
+	,catdir('snow','PLUGIN_SCREENSAVER_SNOW_ACTIVATE') => {
+		'useMode' => 'INPUT.List'
+		,'listRef' => [0,1]
+		,'externRef' => ['PLUGIN_SCREENSAVER_SNOW_DEFAULT', 'PLUGIN_SCREENSAVER_SNOW_ACTIVATED']
+		,'stringExternRef' => 1
+		,'header' => 'PLUGIN_SCREENSAVER_SNOW_ACTIVATE_TITLE'
+		,'stringHeader' => 1
+		,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0],'screensaver',$_[1]?'SCREENSAVER.snow':'screensaver'); }
+		,'onChangeArgs' => 'CV'
+		,'initialValue' => sub { (Slim::Utils::Prefs::clientGet($_[0],'screensaver') eq 'SCREENSAVER.snow' ? 1 : 0); }
 	}
 	,catdir('snow','PLUGIN_SCREENSAVER_SNOW_QUANTITY') => {
 		'useMode' => 'INPUT.List'
@@ -212,74 +212,78 @@ sub setMode {
 # First, Register the screensaver mode here.  Must make the call to addStrings in order to have plugin
 # localization available at this point.
 sub screenSaver() {
-    Slim::Buttons::Common::addSaver('SCREENSAVER.snow', 
-				    getScreensaverSnowFunctions(),
-				    \&setScreensaverSnowMode, 
-				    \&leaveScreensaverSnowMode,
-				    string('PLUGIN_SCREENSAVER_SNOW'));
+	Slim::Buttons::Common::addSaver('SCREENSAVER.snow', 
+				getScreensaverSnowFunctions(),
+				\&setScreensaverSnowMode, 
+				\&leaveScreensaverSnowMode,
+				string('PLUGIN_SCREENSAVER_SNOW'));
 }
 
-my $wasDoubleSize;
+my %wasDoubleSize;
 
 my %screensaverSnowFunctions = (
 	'done' => sub  {
-	    my ($client, $funct, $functarg) = @_;
-	    Slim::Buttons::Common::popMode($client);
-	    $client->update();
-	    #pass along ir code to new mode if requested
-	    if (defined $functarg && $functarg eq 'passback') {
-		Slim::Hardware::IR::resendButton($client);
-	    }
+		my ($client, $funct, $functarg) = @_;
+		Slim::Buttons::Common::popMode($client);
+		$client->update();
+		#pass along ir code to new mode if requested
+		if (defined $functarg && $functarg eq 'passback') {
+			Slim::Hardware::IR::resendButton($client);
+		}
 	}
-	,'textsize' => sub { $wasDoubleSize = !$wasDoubleSize; }
+	,'textsize' => sub { 
+		my $client = shift;
+		$wasDoubleSize{$client} = !$wasDoubleSize{$client}; 
+	}
 );
 
 sub getScreensaverSnowFunctions {
-    return \%screensaverSnowFunctions;
+	return \%screensaverSnowFunctions;
 }
 
 my %snowStyle;
 my %snowQuantity;
+my %lastTime;
+my %flakes;
+my $flakes_ref;
 
 sub setScreensaverSnowMode() {
-    my $client = shift;
-    $client->lines(\&screensaverSnowlines);
-    $wasDoubleSize = Slim::Utils::Prefs::clientGet($client,'doublesize');
-    Slim::Utils::Prefs::clientSet($client,'doublesize',0);
-
-    # save time on later lookups - we know these can't change while we're active
-    $snowStyle{$client} = Slim::Utils::Prefs::clientGet($client,'snowStyle') || 0;
-    $snowQuantity{$client} = Slim::Utils::Prefs::clientGet($client,'snowQuantity') || 1;
+	my $client = shift;
+	$client->lines(\&screensaverSnowlines);
+	$wasDoubleSize{$client} = Slim::Utils::Prefs::clientGet($client,'doublesize');
+	Slim::Utils::Prefs::clientSet($client,'doublesize',0);
+	$flakes_ref = $flakes{client};
+	# save time on later lookups - we know these can't change while we're active
+	$snowStyle{$client} = Slim::Utils::Prefs::clientGet($client,'snowStyle') || 0;
+	$snowQuantity{$client} = Slim::Utils::Prefs::clientGet($client,'snowQuantity') || 1;
 }
 
 sub leaveScreensaverSnowMode {
-    my $client = shift;
-    Slim::Utils::Prefs::clientSet($client,'doublesize',$wasDoubleSize);
+	my $client = shift;
+	Slim::Utils::Prefs::clientSet($client,'doublesize',$wasDoubleSize{$client});
+	$lastTime{$client} = Time::HiRes::time();
 }
 
 sub screensaverSnowlines {
-    my $client = shift;
-    my ($line1, $line2) = ('','');
-    my $onlyInSpaces = 0;
-    my $simple = 0;
-    if($snowStyle{$client} == 0 || $snowStyle{$client} == 1) {
-	# Now Playing
-	($line1, $line2) = Slim::Display::Display::renderOverlay(&Slim::Buttons::Playlist::currentSongLines($client));
-	$onlyInSpaces = ($snowStyle{$client} == 0);
-    } elsif($snowStyle{$client} == 2) {
-	# Date/Time
-	($line1, $line2) = Slim::Display::Display::renderOverlay(&Slim::Buttons::Common::dateTime($client));
-	$onlyInSpaces = 1;
-    } else {
-	# Just snow
-	$simple = 1;
-    }
-
-    ($line1, $line2) = letItSnow($client, $line1, $line2, $onlyInSpaces, $simple);
-    return ($line1, $line2);
+	my $client = shift;
+	my ($line1, $line2) = ('','');
+	my $onlyInSpaces = 0;
+	my $simple = 0;
+	if($snowStyle{$client} == 0 || $snowStyle{$client} == 1) {
+		# Now Playing
+		($line1, $line2) = Slim::Display::Display::renderOverlay(&Slim::Buttons::Playlist::currentSongLines($client));
+		$onlyInSpaces = ($snowStyle{$client} == 0);
+	} elsif($snowStyle{$client} == 2) {
+		# Date/Time
+		($line1, $line2) = Slim::Display::Display::renderOverlay(&Slim::Buttons::Common::dateTime($client));
+		$onlyInSpaces = 1;
+	} else {
+		# Just snow
+		$simple = 1;
+	}
+	($line1, $line2,$flakes_ref) = letItSnow($client, $line1, $line2, $onlyInSpaces, $simple,$flakes_ref);
+	return ($line1, $line2);
 }
-
-my @flakes;
 
 Slim::Hardware::VFD::setCustomChar('star01',
                                  ( 0b00000010,
@@ -336,74 +340,73 @@ Slim::Hardware::VFD::setCustomChar('star20',
                                    0b00001000,
                                    0b00000000 ));
 
-my $lastTime = Time::HiRes::time();
-
 sub tick {
-    my $client = shift;
-    Slim::Utils::Timers::killTimers($client, \&tick);
-    $client->update();
+	my $client = shift;
+	Slim::Utils::Timers::killTimers($client, \&tick);
+	$client->update();
 }
 
 sub letItSnow {
-    my $client = shift;
-    my @lines = (shift, shift);
-    my $onlyInSpaces = shift;
-    my $simple = shift;
-
-    if(Time::HiRes::time() - $lastTime > 0.25) {
-	$lastTime = Time::HiRes::time();
-	my $flake;
-	foreach $flake (@flakes) {
-	    $flake->{line} ++;
-	    $flake->{pos} += (int rand(3) - 1);
+	my $client = shift;
+	my @lines = (shift, shift);
+	my $onlyInSpaces = shift;
+	my $simple = shift;
+	my $flakes_ref = shift;
+	
+	$lastTime{$client} = defined($lastTime{$client}) ? $lastTime{$client} : 0;
+	if (Time::HiRes::time() - $lastTime{$client} > 0.25) {
+		$lastTime{$client} = Time::HiRes::time();
+		my $flake;
+		foreach $flake (@$flakes_ref) {
+			$flake->{line} ++;
+			$flake->{pos} += (int rand(3) - 1);
+		}
+		
+		# cull flakes which have left the screen
+		@$flakes_ref = grep { $_->{line} < 6 && $_->{pos} >= 0 && $_->{pos} < 80} @$flakes_ref;
+		
+		my $i;
+		foreach $i (0..5) {
+			if(rand(100) < (5,10,30)[$snowQuantity{$client}]) {
+				my $newflake = {};
+				$newflake->{line} = 0;
+				$newflake->{pos} = int rand(80);
+				push @$flakes_ref, $newflake;
+			}
+		}
 	}
-	
-	# cull flakes which have left the screen
-	@flakes = grep { $_->{line} < 6 && $_->{pos} >= 0 && $_->{pos} < 80} @flakes;
-	
+
 	my $i;
-	foreach $i (0..5) {
-	    if(rand(100) < (5,10,30)[$snowQuantity{$client}]) {
-		my $newflake = {};
-		$newflake->{line} = 0;
-		$newflake->{pos} = int rand(80);
-		push @flakes, $newflake;
-	    }
+	foreach $i (0,1) {
+		if(!$simple) {
+			if (index($lines[$i], Slim::Hardware::VFD::symbol('center') ) == 0)  {
+				$lines[$i] = substr($lines[$i], length(Slim::Hardware::VFD::symbol('center')));
+				s/\s*$//;
+				my $centerspaces = int((40-Slim::Hardware::VFD::lineLength($lines[$i]))/2);
+				$lines[$i] = (" " x $centerspaces).$lines[$i];
+			}
+		}
+		$lines[$i] = Slim::Hardware::VFD::subString($lines[$i] . (' ' x 40), 0, 40);
 	}
-    }
 
-    my $i;
-    foreach $i (0,1) {
-	if(!$simple) {
-	    if (index($lines[$i], Slim::Hardware::VFD::symbol('center') ) == 0)  {
-		$lines[$i] = substr($lines[$i], length(Slim::Hardware::VFD::symbol('center')));
-		s/\s*$//;
-		my $centerspaces = int((40-Slim::Hardware::VFD::lineLength($lines[$i]))/2);
-		$lines[$i] = (" " x $centerspaces).$lines[$i];
-	    }
+	foreach my $flake (@$flakes_ref) {
+		my $row = int($flake->{line} / 3);
+		my $col = int($flake->{pos} / 2);
+		my $sym = 'star' . ($flake->{line} - $row * 3) . ($flake->{pos} - $col * 2);
+	
+		if(! $onlyInSpaces
+			||
+			Slim::Hardware::VFD::subString($lines[$row], $col, 1) eq ' ') {
+			$lines[$row] =
+			($col > 0 ? Slim::Hardware::VFD::subString($lines[$row], 0, $col) : '') . 
+			Slim::Hardware::VFD::symbol($sym) .
+			($col < 39 ? Slim::Hardware::VFD::subString($lines[$row], $col+1, 39 - $col) : '');
+		}
 	}
-	$lines[$i] = Slim::Hardware::VFD::subString($lines[$i] . (' ' x 40), 0, 40);
-    }
 
-    my $flake;
-    foreach $flake (@flakes) {
-	my $row = int($flake->{line} / 3);
-	my $col = int($flake->{pos} / 2);
-	my $sym = 'star' . ($flake->{line} - $row * 3) . ($flake->{pos} - $col * 2);
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.25, \&tick);
 
-	if(! $onlyInSpaces
-	   ||
-	   Slim::Hardware::VFD::subString($lines[$row], $col, 1) eq ' ') {
-	    $lines[$row] =
-		($col > 0 ? Slim::Hardware::VFD::subString($lines[$row], 0, $col) : '') . 
-		Slim::Hardware::VFD::symbol($sym) .
-		($col < 39 ? Slim::Hardware::VFD::subString($lines[$row], $col+1, 39 - $col) : '');
-	}
-    }
-
-    Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.25, \&tick);
-
-    return @lines;
+	return @lines,$flakes_ref;
 }
 
 1;
