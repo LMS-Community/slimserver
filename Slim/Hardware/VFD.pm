@@ -1,6 +1,6 @@
 package Slim::Hardware::VFD;
 
-# $Id: VFD.pm,v 1.23 2004/12/17 10:09:32 kdf Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -770,9 +770,9 @@ my %doublechars = (
 	,'X' => [$backslash . $slash , $slash . $backslash]
 	,'Y' => [$backslash . $slash , $hardspace . $leftvbar]
 	,'Z' => [$toplinechar . $Ztop , $Zbottom . '_']
-	,'Æ' => [$hardspace . $slash . $backslash . $doublelinechar , $rightvbar . $toplinechar . $toplinechar . 'L']
-	,'Ø' => [$slash . $toplinechar . 'X', $backslash . $Zbottom . $slash]
-	,'Ð' => [$rightvbar . $doublelinechar . $backslash , $rightvbar . '_'  . $slash]
+	,'Ã†' => [$hardspace . $slash . $backslash . $doublelinechar , $rightvbar . $toplinechar . $toplinechar . 'L']
+	,'Ã˜' => [$slash . $toplinechar . 'X', $backslash . $Zbottom . $slash]
+	,'Ã' => [$rightvbar . $doublelinechar . $backslash , $rightvbar . '_'  . $slash]
 );
 
 sub addDoubleChar {
@@ -851,8 +851,8 @@ sub doubleSize {
 	$::d_ui && msg("undoubled line1: $line1\n");
 	$::d_ui && msg("undoubled line2: $line2\n");
 
-	$line2 =~ tr/æøð/ÆØÐ/;
-	$line2 =~ s/[åÅ]/AA/g;
+	$line2 =~ tr/\x{00E6}\x{00F8}\x{00F0}/\x{00C6}\x{00D8}\x{00D0}/;
+	$line2 =~ tr/\x{00C5}\x{00E5}/AA/;
 	
 	my $lastch1 = "";
 	my $lastch2 = "";
