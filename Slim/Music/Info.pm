@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.86 2004/04/03 02:41:11 kdf Exp $
+# $Id: Info.pm,v 1.87 2004/04/04 17:47:24 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2788,6 +2788,13 @@ sub typeFromPath {
 	return $type;
 }
 
+sub ignorePunct {
+       my $s = shift;
+       return undef unless defined($s);
+       $s =~ s/[^\w\s-]//g;
+       return $s;
+}
+
 sub matchCase {
 	my $s = shift;
 	return undef unless defined($s);
@@ -2804,7 +2811,7 @@ sub ignoreCaseArticles {
 		return $caseArticlesMemoize{$s};
 	}
 
-	return ($caseArticlesMemoize{$s} = ignoreArticles(matchCase($s)));
+	return ($caseArticlesMemoize{$s} = ignorePunct(ignoreArticles(matchCase($s))));
 }
 
 sub clearCaseArticleCache {

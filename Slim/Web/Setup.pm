@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.53 2004/04/03 02:41:10 kdf Exp $
+# $Id: Setup.pm,v 1.54 2004/04/04 17:47:25 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1045,7 +1045,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['displaytexttimeout'
+					'PrefOrder' => ['displaytexttimeout',
 							,'composerInArtists','playtrackalbum','artistinalbumsearch', 'ignoredarticles','filesort'
 							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
 							,'savehistory','historylength','checkVersion']
@@ -1390,13 +1390,17 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['usetagdatabase','templatecache','useplaylistcache',
+					'PrefOrder' => ['itunesscaninterval','usetagdatabase','templatecache','useplaylistcache',
 									# 'animationLevel',
 									'lookForArtwork','ignoreMP3Tags','buildItemsPerPass','showbufferfullness']
 				}
 			}
 		,'Prefs' => {
-			'usetagdatabase' => {
+			'itunesscaninterval' => {
+						'validate' => \&validateNumber
+						,'validateArgs' => [0,undef,1000]
+				}
+			,'usetagdatabase' => {
 						'validate' => \&validateTrueFalse
 						,'options' => {
 								'0' => string('SETUP_DONT_CACHE')

@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.73 2004/04/03 02:46:15 kdf Exp $
+# $Id: strings.txt,v 1.74 2004/04/04 17:47:24 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1401,7 +1401,7 @@ SETUP_ITUNESPLAYLISTPREFIX_CHOOSE
 SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE
 	EN	Suffix:
 	FR	Suffixe :
-
+	
 SETUP_GUESSFILEFORMATS
 	EN	Guess Tags Formats
 
@@ -1843,6 +1843,15 @@ SETUP_REFRESHRATE_OK
 	EN	Refresh time set to
 	FR	Délai d'attente entre recharge réglé à 
 
+SETUP_ITUNESSCANINTERVAL
+	EN	iTunes Reload Interval
+
+SETUP_ITUNESSCANINTERVAL_DESC
+	EN	When your iTunes Music Library changes SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your iTunes Music Library again.  
+
+SETUP_ITUNESSCANINTERVAL_OK
+	EN	Minimum iTunes Music Library reload time:
+	
 SETUP_COVERART
 	DE	Plattencover
 	DK	Cover-billeder

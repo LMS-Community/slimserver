@@ -25,7 +25,6 @@ my $isScanning = 0;
 my $opened = 0;
 my $locked = 0;
 my $iBase = '';
-my $ITUNESSCANINTERVAL = 60;
 
 #$::d_itunes = 1;
 #$::d_itunes_verbose = 1;
@@ -244,11 +243,12 @@ sub isMusicLibraryFileChanged {
 	# just starting, $lastMusicLibraryDate is undef, so both $fileMTime
 	# will be greater than 0 and time()-0 will be greater than 180 :-)
 	if ($file && $fileMTime > $lastMusicLibraryDate) {
+		my $itunesscaninterval = Slim::Utils::Prefs::get('itunesscaninterval');
 		$::d_itunes && msg("music library has changed!\n");
-		if (time()-$lastMusicLibraryFinishTime > $ITUNESSCANINTERVAL) {
+		if (time()-$lastMusicLibraryFinishTime > $itunesscaninterval) {
 			return 1;
 		} else {
-			$::d_itunes && msg("waiting for $ITUNESSCANINTERVAL seconds to pass before rescanning\n");
+			$::d_itunes && msg("waiting for $itunesscaninterval seconds to pass before rescanning\n");
 		}
 	}
 	
@@ -364,9 +364,13 @@ sub scanFunction {
 		return $artScan;
 	}
 
+	my $musicLibraryFile = findMusicLibraryFile();
+	my $defaultAudioDir = $musicLibraryFile;
+	$defaultAudioDir =~ s/\sLibrary\.xml//;
+
 	# this assumes that iTunes uses file locking when writing the xml file out.
 	if (!$opened) {
-		my $file = findMusicLibraryFile();
+		my $file = $musicLibraryFile;
 		if (!open(ITUNESLIBRARY, "<$file")) {
 			$::d_itunes && warn "Couldn't open iTunes Library: $file";
 			return 0;	
@@ -382,7 +386,7 @@ sub scanFunction {
 		if ($locked) {
 			$::d_itunes && msg("Got file lock on iTunes Library\n");
 			$locked = 1;
-			my $len = read ITUNESLIBRARY, $ituneslibrary, -s findMusicLibraryFile();
+			my $len = read ITUNESLIBRARY, $ituneslibrary, -s $musicLibraryFile;
 			die "couldn't read itunes library!" if (!defined($len));
 			flock(ITUNESLIBRARY, LOCK_UN) unless ($^O eq 'MSWin32');
 			close ITUNESLIBRARY;
@@ -413,6 +417,9 @@ sub scanFunction {
 				warn "Danger, the Track ID (" . $curTrack{'Track ID'} . ") and the key ($id) don't match.\n";
 			}
 			
+			# skip track if Disabled in iTunes
+			return 1 if $curTrack{'Disabled'};
+
 			$::d_itunes && msg("got a track named " . $curTrack{'Name'} . "\n");
 			my $kind = $curTrack{'Kind'};
 			my $location = $curTrack{'Location'};
@@ -426,14 +433,7 @@ sub scanFunction {
 				}
 			}
 			
-			if ($location && ($location =~ /automount/)) {
-					#Strip out automounter 'private' paths.
-					#OSX wants us to use file://Network/ or timeouts occur
-					#There may be more combinations
-					$location =~ s/private\/var\/automount\///;
-					$location =~ s/private\/automount\///;
-					$location =~ s/automount\/static\///;
-			}
+			$location = strip_automounter($location);
 
 			if ($location && !defined($type)) {
 				$type = Slim::Music::Info::typeFromPath($location, 'mp3');
@@ -533,8 +533,9 @@ sub scanFunction {
 		} elsif ($curLine eq "<key>Music Folder</key>") {
 			$iBase = getValue();
 			#$iBase = Slim::Utils::Misc::pathFromFileURL($iBase);
+			$iBase = strip_automounter($iBase);
 			$::d_itunes && msg("iTunes: found the music folder: $iBase\n");
-#			Slim::Utils::Prefs::set("audiodir", $musicPath);
+			Slim::Utils::Prefs::set("audiodir", $defaultAudioDir);
 		} elsif ($curLine eq "<key>Tracks</key>") {
 			$inTracks = 1;
 			$inPlaylists = 0;
@@ -681,6 +682,18 @@ sub resetScanState {
 	@playlists = ();
 }
 
+sub strip_automounter {
+	my $path = shift;
+	if ($path && ($path =~ /automount/)) {
+		#Strip out automounter 'private' paths.
+		#OSX wants us to use file://Network/ or timeouts occur
+		#There may be more combinations
+		$path =~ s/private\/var\/automount\///;
+		$path =~ s/private\/automount\///;
+		$path =~ s/automount\/static\///;
+	}
+	return $path;
+}
 1;
 __END__
 

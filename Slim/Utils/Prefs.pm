@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.42 2004/03/11 20:16:12 dean Exp $
+# $Id: Prefs.pm,v 1.43 2004/04/04 17:47:25 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -110,6 +110,7 @@ my %DEFAULT = (
 	,'titleFormatWeb'		=> 1
 	,'iTunesplaylistprefix'	=> 'iTunes: '
  	,'iTunesplaylistsuffix'	=> ''
+ 	,'itunesscaninterval'	=> 60
     ,'ignoreDirRE'          => ''
     ,'checkVersion'			=> 1
     ,'mDNSname'				=> 'SlimServer'
