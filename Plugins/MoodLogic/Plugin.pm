@@ -384,7 +384,7 @@ sub exportFunction {
 		if ($] > 5.007) {
 
 			for my $key (qw(ALBUM ARTIST GENRE TITLE)) {
-				$cacheEntry{$key} = Encode::encode('utf8', $cacheEntry{$key}, Encode::FB_QUIET());
+				$cacheEntry{$key} = Encode::encode('utf8', $cacheEntry{$key}, Encode::FB_QUIET()) if defined $cacheEntry{$key};
 			}
 		}
 
