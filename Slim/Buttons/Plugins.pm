@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $ Id: this module $
+# $Id: Plugins.pm,v 1.11 2003/12/24 08:35:00 kdf Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
