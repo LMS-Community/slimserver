@@ -49,6 +49,22 @@
  	</li>
 [% player_list %]
 	</ul>[% END %]
+
+[% IF pluginlist %]
+    [% FOREACH plugin = pluginlist %]
+        [% IF plugin.path %][% webPlugins = 1 %][% END %]
+    [% END %]
+[% END %]
+[% IF webPlugins %]    <h4>[% "PLUGINS" | string %]</h4>
+    <ul>
+    [% FOREACH plugin = pluginlist %]
+        [% IF plugin.path %]
+    <li> <a href="[% plugin.path %]">[% plugin.name %]</a>
+    </li>
+        [% END %]
+    [% END %]
+    </ul>
+[% END %]
     <h4>[% "HELP" | string %]</h4>
 	<ul>
     <li>

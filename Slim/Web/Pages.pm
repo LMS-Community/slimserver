@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.67 2004/04/22 05:47:13 kdf Exp $
+# $Id: Pages.pm,v 1.68 2004/04/23 18:58:24 vidur Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -39,7 +39,32 @@ sub home {
 		$listform{'skinOverride'} = $params->{'skinOverride'};
 		$params->{'player_list'} .= ${Slim::Web::HTTP::filltemplatefile("homeplayer_list.html", \%listform)};
 	}
-	
+
+	# fill out plugin information
+	Slim::Buttons::Plugins::addSetupGroups();
+	my @pluginlist;
+	my $pluginsref = Slim::Buttons::Plugins::installedPlugins();
+	foreach my $plugin (Slim::Buttons::Plugins::enabledPlugins()) {
+		my $pages = Slim::Buttons::Plugins::getWebPages($plugin);
+		my $path;
+		if (defined($pages)) {
+			$path = $pages->{'path'} . $pages->{'index'};
+		}
+		elsif (Slim::Web::Setup::existsCategory("PLUGINS.${plugin}")) {
+			$path = "setup.html?page=PLUGINS.${plugin}";
+		}
+		if ($path && $params->{'player'}) {
+			$path .= (($path =~ /\?/) ? '&' : '?') . 'player=' . $params->{'player'};
+		}
+		push @pluginlist, {
+			path => $path,
+			name => $pluginsref->{$plugin},				
+		};
+	}
+	if (scalar(@pluginlist)) {
+		$params->{'pluginlist'} = \@pluginlist;
+	}
+
 	#
 	_addStats($params, [], [], [], []);
 
@@ -2113,3 +2138,10 @@ sub update_firmware {
 }
 
 1;
+
+__END__
+
+# Local Variables:
+# tab-width:4
+# indent-tabs-mode:t
+# End:

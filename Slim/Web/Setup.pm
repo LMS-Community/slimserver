@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.60 2004/04/22 20:41:09 dean Exp $
+# $Id: Setup.pm,v 1.61 2004/04/23 18:58:24 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2403,6 +2403,32 @@ sub delGroup {
 	}
 	return;
 }
+
+sub addCategory {
+	my ($category,$categoryref) = @_;
+
+	unless (defined $category && defined $categoryref) {
+		warn "No category information supplied!\n";
+		return;
+	}
+
+	$setup{$category} = $categoryref;
+}
+sub delCategory {
+	my $category = shift;
+
+	unless (defined $category) {
+		warn "No category information supplied!\n";
+		return;
+	}
+
+	delete $setup{$category};
+}
+sub existsCategory {
+	my $category = shift;
+	return exists $setup{$category};
+}
+
 ######################################################################
 # Validation Functions
 ######################################################################

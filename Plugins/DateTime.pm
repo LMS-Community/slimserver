@@ -18,7 +18,7 @@ use Slim::Control::Command;
 use Slim::Utils::Strings qw (string);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.3 $,10);
+$VERSION = substr(q$Revision: 1.4 $,10);
 
 sub getDisplayName() {return string('PLUGIN_SCREENSAVER_DATETIME');}
 
@@ -110,6 +110,49 @@ sub getFunctions() {
 	return \%functions;
 }
 
+sub handleIndex {
+	my ($client, $params) = @_;
+	my $body;
+
+	$params->{'enable'} =
+		(Slim::Utils::Prefs::clientGet($client,'screensaver') eq 'SCREENSAVER.datetime') ? 0 : 1;
+
+	return Slim::Web::HTTP::filltemplatefile(
+			'plugins/DateTime/index.html',
+			$params,
+		);
+}
+
+sub handleEnable {
+	my ($client, $params) = @_;
+	my $body;
+
+	if ($params->{'enable'}) {
+		Slim::Utils::Prefs::clientSet(
+			$client,
+			'screensaver',
+			'SCREENSAVER.datetime');
+	} else {
+		Slim::Utils::Prefs::clientSet(
+			$client,
+			'screensaver',
+			'screensaver');
+	}
+	return Slim::Web::HTTP::filltemplatefile(
+			'plugins/DateTime/enable.html',
+			$params,
+		);
+}
+
+sub webPages {
+	my %pages = (
+		"index\.(?:htm|xml)" => \&handleIndex,
+		"enable\.(?:htm|xml)" => \&handleEnable,
+	);
+
+	return (\%pages, "index.html");
+}
+
 ###################################################################
 ### Section 3. Your variables for your screensaver mode go here ###
 ###################################################################
@@ -150,3 +193,10 @@ sub screensaverDateTimelines {
 }
 
 1;
+
+__END__
+
+# Local Variables:
+# tab-width:4
+# indent-tabs-mode:t
+# End:

@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.20 2004/04/19 19:32:26 grotus Exp $
+# $Id: Plugins.pm,v 1.21 2004/04/23 18:58:23 vidur Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
@@ -183,6 +183,7 @@ sub read_plugins {
 			addDefaultMaps();
 		}
 	}
+	addWebPages();
 	$plugins_read = 1 unless $read_onfly;
 }
 
@@ -199,6 +200,58 @@ sub addDefaultMaps {
 	}
 }
 
+sub getPluginDir {
+	my $plugin = shift;
+
+	return ($plugin =~ /^(.+?)::/) ? $1 : $plugin;
+}
+
+sub addWebPages {
+	no strict 'refs';
+	foreach my $plugin (keys %{installedPlugins()}) {
+		my $ref = getWebPages($plugin);
+		if (defined($ref)) {
+			foreach my $page (keys %{$ref->{'pages'}}) {
+				Slim::Web::HTTP::addPageFunction($ref->{'path'} . $page,
+												 $ref->{'pages'}->{$page});
+			}
+			foreach my $plugindir (pluginDirs()) {
+				my $path = getPluginDir($plugin);
+				my $htmldir = catdir($plugindir, $path, "HTML");
+				if (-r $htmldir) {
+					Slim::Web::HTTP::addTemplateDirectory($htmldir);
+				}
+			}
+		}
+	}
+}
+
+sub getWebPages {
+	my $plugin = shift;
+
+	no strict 'refs';
+	if (exists($plugins{$plugin}) &&
+		UNIVERSAL::can("Plugins::${plugin}","webPages")) {
+		my ($pagesref, $index);
+		eval {($pagesref, $index) = &{"Plugins::${plugin}::webPages"}()};
+		
+		if ($@) {
+			$::d_plugins && msg("Can't get web page handlers for plugin $plugin : " . $@);
+		}
+		elsif ($pagesref && $index) {
+			my $path = "plugins/" . 
+				getPluginDir($plugin) . "/";
+			return {
+				path => $path,
+				pages => $pagesref,
+				index => $index,
+			};
+		}
+	}
+
+	return undef;
+}
+
 sub addSetupGroups {
 	no strict 'refs';
 	foreach my $plugin (keys %{installedPlugins()}) {
@@ -209,7 +262,12 @@ sub addSetupGroups {
 				$::d_plugins && msg("Can't get setup group for plugin $plugin : " . $@);
 			} else {
 				if ($groupRef && $prefRef && exists($plugins{$plugin})) {
-					Slim::Web::Setup::addGroup('plugins',$plugin,$groupRef,undef,$prefRef)
+					Slim::Web::Setup::addGroup('plugins',$plugin,$groupRef,undef,$prefRef);
+					Slim::Web::Setup::addCategory("PLUGINS.${plugin}",
+									 { title => $plugins{$plugin}->{'name'},
+									   Groups => { 'Default' => $groupRef },
+									   GroupOrder => ['Default'],
+									   Prefs => $prefRef });
 				}
 			}
 		}

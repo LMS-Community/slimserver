@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.96 2004/04/22 18:45:38 grotus Exp $
+# $Id: HTTP.pm,v 1.97 2004/04/23 18:58:24 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -85,6 +85,15 @@ my $mdnsIDhttp;
 
 my $CacheDir = catdir($Bin,'Cache');
 
+my @templateDirs;
+{
+	if (Slim::Utils::OSDetect::OS() eq 'mac') {
+		push @templateDirs, $ENV{'HOME'} . "/Library/SlimDevices/html/";
+		push @templateDirs, "/Library/SlimDevices/html/";
+	}
+
+	push @templateDirs, catdir($Bin, 'HTML');
+}
 my %pageFunctions = ();
 
 {
@@ -355,7 +364,7 @@ sub processHTTP {
 				$params->{'webroot'} = "/slimserver/"
 			}
 
-			if ($path =~ m|^/(.+?)/.*| && $path !~ m{^/(?:html|music)/}i) {
+			if ($path =~ m|^/(.+?)/.*| && $path !~ m{^/(?:html|music|plugins)/}i) {
 
 				my $desiredskin = $1;
 
@@ -1285,9 +1294,9 @@ sub newSkinTemplate {
 	my $skin = shift;
 	my $baseSkin = baseSkin();
 	my @include_path = ();
-	my @templatedirs = HTMLTemplateDirs();
+
 	foreach my $dir ($skin, $baseSkin) {
-		foreach my $rootdir (@templatedirs) {
+		foreach my $rootdir (HTMLTemplateDirs()) {
 			push @include_path, catdir($rootdir,$dir);
 		}
 	}
@@ -1422,18 +1431,8 @@ sub HomeURL {
 	return "http://$host:$port/";
 }
 
-# XXX - cache this, or at the very least, inline
 sub HTMLTemplateDirs {
-	my @dirs = ();
-
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		push @dirs, $ENV{'HOME'} . "/Library/SlimDevices/html/";
-		push @dirs, "/Library/SlimDevices/html/";
-	}
-
-	push @dirs, catdir($Bin, 'HTML');
-
-	return @dirs;
+	return @templateDirs;
 }
 
 sub fixHttpPath {
@@ -1590,6 +1589,20 @@ sub checkAuthorization {
 	}
 
 	return $ok;
+}
+
+sub addPageFunction {
+	my ($regexp, $func) = @_;
+
+	$::d_http && msg("Adding handler for regular expression /$regexp\n");
+	$pageFunctions{$regexp} = $func;
+}
+
+sub addTemplateDirectory {
+	my $dir = shift;
+
+	$::d_http && msg("Adding template directory $dir\n");
+	push @templateDirs, $dir;
 }
 
 1;
