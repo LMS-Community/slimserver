@@ -162,12 +162,12 @@ sub renderItem {
 	push @xml,"<td align=\"right\" class=\"$rowType\"></td>\n
 		<td align=\"right\" width=\"13\" class=\"$rowType\">\n
 
-		<nobr><a href=\"status_header.html?command=playlist&amp;sub=loadtracks\&amp;$type=$id\&amp;player=$player\" target=\"status\">\n
+		<nobr><a href=\"status_header.html?command=playlist&amp;subcommand=loadtracks\&amp;$type=$id\&amp;player=$player\" target=\"status\">\n
 		<img src=\"html/images/b_play.gif\" width=\"13\" height=\"13\" alt=\"Play\" title=\"Play\"/></a></nobr>\n\n
 
 		</td>
 		<td  align=\"right\" width=\"13\" class=\"$rowType\">\n
-			<nobr><a href=\"status_header.html?command=playlist&amp;sub=addtracks\&amp;$type=$id\&amp;player=$player\" target=\"status\">\n
+			<nobr><a href=\"status_header.html?command=playlist&amp;subcommand=addtracks\&amp;$type=$id\&amp;player=$player\" target=\"status\">\n
 			<img src=\"html/images/b_add.gif\" width=\"13\" height=\"13\" alt=\"Add to playlist\" title=\"Add to playlist\"/></a></nobr> \n
 		</td>\n
 		</tr>\n";
