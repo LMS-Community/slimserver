@@ -87,13 +87,16 @@
 				<td>
 					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
 				</td>
-				
+				[% IF not nosetup && not noserver %]
 				<td width="33%" height="13" align="center">
 					<nobr><a class="menu1" href="[% webroot %]setup.html?page=server&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser">[% IF setup %]<b>[% END %][% "SERVER_SETTINGS" | string %][% IF setup %]</b>[% END %]</a></nobr>
 				</td>
 				<td>
 					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
 				</td>
+				[% ELSE %]
+				<td colspan="2" width="0"></td>
+				[% END %]
 				<td width="33%" height="13" align="center">
 					<a class="menu1" href="[% webroot %]home.html?page=help&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser">[% IF help %]<b>[% END %][% "HELP" | string %][% IF help %]</b>[% END %]</a>
 				</td>

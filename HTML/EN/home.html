@@ -32,9 +32,11 @@
     </ul>
 [% IF not nosetup %]    <h4>[% "SETTINGS" | string %]</h4>
 	<ul>
+	[% IF not noserver %]
     <li>
  		<a href="setup.html?page=server&player=[% player | uri %]">[% "SERVER_SETTINGS" | string %]</a>
  	</li>
+	[% END %]
 [% player_list %]
 [% IF additionalLinks.settings %]
     [% FOREACH key = additionalLinks.settings.keys %]

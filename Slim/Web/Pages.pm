@@ -375,7 +375,7 @@ sub init {
 
 	# These can refer to other entries.
 	$fieldInfo{'age'} = {
-		'title' => 'BROWSE_BY_AGE',
+		'title' => 'BROWSE_NEW_MUSIC',
 		'allTitle' => 'ALL_ALBUMS',
 
 		'idToName'           => $fieldInfo{'album'}->{'idToName'},
@@ -428,29 +428,21 @@ sub home {
 		Slim::Player::Client::forgetClient($params->{'forget'});
 	}
 
-	$params->{'nosetup'} = 1   if $::nosetup;
+	$params->{'nosetup'}  = 1 if $::nosetup;
+	$params->{'noserver'} = 1 if $::noserver;
 	$params->{'newVersion'} = $::newVersion if $::newVersion;
 
 	if (!exists $additionalLinks{"browse"}) {
-		# Uncomment these lines and comment the ones following to enable
-		# the new web interface scheme using browsedb. Look a few lines
-		# below for cover art related browsing.
 		addLinks("browse",{'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=artist,album,track&level=0"});
 		addLinks("browse",{'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
 		addLinks("browse",{'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0"});
 		addLinks("browse",{'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0"});
-		addLinks("browse",{'BROWSE_BY_AGE'    => "browsedb.html?hierarchy=age,track&level=0"});
-		#addLinks("browse",{'BROWSE_BY_ARTIST' => "browseid3.html?genre=*"});
-		#addLinks("browse",{'BROWSE_BY_GENRE'  => "browseid3.html"});
-		#addLinks("browse",{'BROWSE_BY_ALBUM'  => "browseid3.html?genre=*&artist=*"});
+		addLinks("browse",{'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&level=0"});
 	}
 
 	if (!exists $additionalLinks{"search"}) {
 		addLinks("search", {'SEARCH' => "livesearch.html"});
 		addLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
-		#addLinks("search",{'SEARCHFOR_ARTIST' => "search.html?type=artist"});
-		#addLinks("search",{'SEARCHFOR_ALBUM' => "search.html?type=album"});
-		#addLinks("search",{'SEARCHFOR_SONGTITLE' => "search.html?type=song"});
 	}
 
 	if (!exists $additionalLinks{"help"}) {
@@ -466,10 +458,7 @@ sub home {
 	}
 
 	if (Slim::Utils::Prefs::get('lookForArtwork')) {
-		# Uncomment the next lines and comment the one following to enable
-		# the new web interface scheme using browsedb.
 		addLinks("browse",{'BROWSE_BY_ARTWORK' => "browsedb.html?hierarchy=artwork,track&level=0"});
-		#addLinks("browse",{'BROWSE_BY_ARTWORK' => "browseid3.html?genre=*&artist=*&artwork=1"});
 	} else {
 		addLinks("browse",{'BROWSE_BY_ARTWORK' => undef});
 		$params->{'noartwork'} = 1;

@@ -674,6 +674,8 @@ sub generateHTTPResponse {
 	$response->code(RC_OK);
 
 	$params->{'player'} = '';
+	$params->{'nosetup'} = 1   if $::nosetup;
+	$params->{'noserver'} = 1   if $::noserver;
 
 	my $path = $params->{"path"};
 	my $type = Slim::Music::Info::typeFromSuffix($path, 'htm');
