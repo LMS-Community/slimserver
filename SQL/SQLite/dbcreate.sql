@@ -44,18 +44,11 @@ CREATE TABLE tracks (
   tagsize integer,         -- tagsize
   drm integer,             -- DRM enabled
   rating integer,          -- track rating - placeholder
+  moodlogic_id integer,    -- moodlogic fields - will eventually be created by the plugin
   playCount integer,       -- number of times the track has been played - placeholder
   lastPlayed integer,      -- timestamp of the last play - placeholder
-  moodlogic_song_id integer, -- moodlogic fields
-  moodlogic_artist_id integer,
-  moodlogic_genre_id integer,
-  moodlogic_song_mixable integer,
-  moodlogic_artist_mixable integer,
-  moodlogic_genre_mixable integer,
-  musicmagic_genre_mixable integer, -- musicmagic fields
-  musicmagic_artist_mixable integer,
-  musicmagic_album_mixable integer,
-  musicmagic_song_mixable integer
+  moodlogic_mixable integer,
+  musicmagic_mixable integer
 );
 
 CREATE INDEX trackURLIndex ON tracks (url);
@@ -91,7 +84,8 @@ CREATE TABLE albums (
   contributors varchar,    -- stringified list of contributors
   artwork_path varchar,    -- path to cover art
   disc integer,            -- album number in set
-  discc integer            -- number of albums in set
+  discc integer,           -- number of albums in set
+  musicmagic_mixable integer
 );
 
 CREATE INDEX albumsTitleIndex ON albums (title);
@@ -101,7 +95,10 @@ CREATE INDEX albumsSortIndex ON albums (titlesort);
 CREATE TABLE contributors (
   id integer UNIQUE PRIMARY KEY NOT NULL,
   name varchar,           -- name of contributor
-  namesort varchar        -- version of name used for sorting 
+  namesort varchar,       -- version of name used for sorting 
+  moodlogic_id integer,   -- these will eventually be dynamically created by the plugin
+  moodlogic_mixable integer,
+  musicmagic_mixable integer
 );
 
 CREATE INDEX contributorsNameIndex ON contributors (name);
@@ -128,7 +125,10 @@ CREATE INDEX contributor_trackSortIndex ON contributor_track (namesort);
 CREATE TABLE genres (
   id integer UNIQUE PRIMARY KEY NOT NULL,
   name varchar,           -- genre name
-  namesort varchar        -- version of name used for sorting 
+  namesort varchar,       -- version of name used for sorting 
+  moodlogic_id integer,   -- these will eventually be dynamically created by the plugin
+  moodlogic_mixable integer,
+  musicmagic_mixable integer -- musicmagic fields
 );
 
 CREATE INDEX genreNameIndex ON genres (name);

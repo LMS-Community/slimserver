@@ -8,9 +8,6 @@ package Slim::Music::Import;
 use strict;
 
 use Slim::Music::Info;
-use Slim::Music::iTunes;
-use Slim::Music::MoodLogic;
-use Slim::Music::MusicMagic;
 use Slim::Music::MusicFolderScan;
 use Slim::Utils::Misc;
 
@@ -55,12 +52,10 @@ sub startScan {
 	}
 }
 
-sub startup {
-	$::d_info && msg("Starting background import monitors.\n");
-
-	Slim::Music::iTunes::checker();
-	Slim::Music::MoodLogic::checker();
-	Slim::Music::MusicMagic::checker();
+sub deleteImporter {
+	my $import = shift;
+	
+	delete $Importers{$import};
 }
 
 sub addImporter {
@@ -128,9 +123,6 @@ sub endImporter {
 			Slim::Utils::Scheduler::add_task(\&artScan);
 		}
 
-		Slim::Music::Info::clearStaleCacheEntries();
-		Slim::Music::Info::reBuildCaches();
-
 		$::d_info && msg("Finished background scanning.\n");
 		Slim::Music::Info::saveDBCache();
 	}
@@ -147,7 +139,7 @@ sub stillScanning {
 sub artwork {
 	my $cacheItem = shift;
 	my $url = shift;
-	
+
 	if (defined $url) {
 		$artwork{$cacheItem} = $url;
 	} else {
@@ -171,7 +163,7 @@ sub artScan {
 		
 		$::d_artwork && Slim::Utils::Misc::msg("Caching $thumb for $album\n");
 
-		$ds->setAlbumArtwork($album, $thumb)
+		$ds->setAlbumArtwork($album, $thumb);
 	}
 
 	delete $artwork{$album};

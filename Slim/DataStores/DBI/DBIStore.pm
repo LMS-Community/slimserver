@@ -97,8 +97,7 @@ sub new {
 		# again. 
 		lastTrackURL => '',
 		lastTrack => undef,
-		# Selected list of external (for now iTunes and Moodlogic)
-		# playlists.
+		# Selected list of external playlists.
 		externalPlaylists => [],
 		# Tracks that are out of date and should be deleted the next time
 		# we get around to it.
@@ -263,10 +262,11 @@ sub find {
 	my $items = $lastFind{$findKey};
 
 	if (!$count && defined($items) && $field eq 'track') {
-		return [ grep $self->_includeInTrackCount($_), @$items ];
+		$items = [ grep $self->_includeInTrackCount($_), @$items ];
 	}
-
-	return $items;
+	
+	return $items if $count;
+	return wantarray() ? @$items : $items;
 }
 
 sub count {
@@ -785,69 +785,66 @@ sub readTags {
 			# cache the content type
 			$attributesHash->{'CT'} = $type;
 			
-			if (!Slim::Utils::Prefs::get('itunes')) {
+			# Check for Cover Artwork, only if not already present.
+			if (exists $attributesHash->{'COVER'} || exists $attributesHash->{'THUMB'}) {
 
-				# Check for Cover Artwork, only if not already present.
-				if (exists $attributesHash->{'COVER'} || exists $attributesHash->{'THUMB'}) {
+				$::d_artwork && Slim::Utils::Misc::msg("already checked artwork for $file\n");
 
-					$::d_artwork && Slim::Utils::Misc::msg("already checked artwork for $file\n");
+			} elsif (Slim::Utils::Prefs::get('lookForArtwork')) {
 
-				} elsif (Slim::Utils::Prefs::get('lookForArtwork')) {
+				my $album = $attributesHash->{'ALBUM'};
 
-					my $album = $attributesHash->{'ALBUM'};
+				$attributesHash->{'TAG'} = 1;
 
-					$attributesHash->{'TAG'} = 1;
+				# cache the content type
+				$attributesHash->{'CT'} = $type unless defined $track->getCached('ct');
 
-					# cache the content type
-					$attributesHash->{'CT'} = $type unless defined $track->getCached('ct');
+				# update the cache so we can use readCoverArt without recursion.
+				$self->updateOrCreate($track, $attributesHash);
+			
+				# Look for Cover Art and cache location
+				my ($body, $contenttype, $path);
+			
+				if (defined $attributesHash->{'PIC'} || defined $attributesHash->{'APIC'}) {
+					($body,$contenttype,$path) = Slim::Music::Info::readCoverArtTags($file, $attributesHash);
+				}
 
-					# update the cache so we can use readCoverArt without recursion.
-					$self->updateOrCreate($track, $attributesHash);
+				# Greatest Hits problem - need to use contributor as the top key.
+				my $contributors = join(':', map { $_->id() } $track->contributors());
 
-					# Look for Cover Art and cache location
-					my ($body, $contenttype, $path);
+				if (defined $body) {
 
-					if (defined $attributesHash->{'PIC'} || defined $attributesHash->{'APIC'}) {
-						($body,$contenttype,$path) = Slim::Music::Info::readCoverArtTags($file, $attributesHash);
+					$attributesHash->{'COVER'} = 1;
+					$attributesHash->{'THUMB'} = 1;
+
+					if ($album && !exists $self->{artworkCache}->{$album}) {
+						$::d_artwork && Slim::Utils::Misc::msg("ID3 Artwork cache entry for $album: $filepath\n");
+						$self->setAlbumArtwork($album, $filepath);
 					}
+				
+				} else {
 
-					# Greatest Hits problem - need to use contributor as the top key.
-					my $contributors = join(':', map { $_->id() } $track->contributors());
+					($body,$contenttype,$path) = Slim::Music::Info::readCoverArtFiles($file, 'cover');
 
 					if (defined $body) {
+						$attributesHash->{'COVER'} = $path;
+					}
 
-						$attributesHash->{'COVER'} = 1;
-						$attributesHash->{'THUMB'} = 1;
+					# look for Thumbnail Art and cache location
+					($body,$contenttype,$path) = Slim::Music::Info::readCoverArtFiles($file, 'thumb');
+
+					if (defined $body) {
+						$attributesHash->{'THUMB'} = $path;
 
 						if ($album && !exists $self->{'artworkCache'}->{$contributors}->{$album}) {
-							$::d_artwork && Slim::Utils::Misc::msg("ID3 Artwork cache entry for $album: $filepath\n");
+							$::d_artwork && Slim::Utils::Misc::msg("Artwork cache entry for $album: $filepath\n");
 							$self->setAlbumArtwork($album, $contributors, $filepath);
-						}
-
-					} else {
-
-						($body,$contenttype,$path) = Slim::Music::Info::readCoverArtFiles($file, 'cover');
-
-						if (defined $body) {
-							$attributesHash->{'COVER'} = $path;
-						}
-
-						# look for Thumbnail Art and cache location
-						($body,$contenttype,$path) = Slim::Music::Info::readCoverArtFiles($file, 'thumb');
-
-						if (defined $body) {
-							$attributesHash->{'THUMB'} = $path;
-
-							if ($album && !exists $self->{'artworkCache'}->{$contributors}->{$album}) {
-								$::d_artwork && Slim::Utils::Misc::msg("Artwork cache entry for $album: $filepath\n");
-								$self->setAlbumArtwork($album, $contributors, $filepath);
-							}
 						}
 					}
 				}
 			}
-		} 
-
+		}
+			
 	} else {
 
 		if (!defined($track->getCached('title'))) {
@@ -1196,6 +1193,7 @@ sub _postCheckAttributes {
 			$foundContributor = 1;
 		}
 	}
+
 
 	if ($create && (!$foundContributor || !$_unknownArtistID)) {
 

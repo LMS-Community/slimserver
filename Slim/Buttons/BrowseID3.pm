@@ -17,6 +17,7 @@ use Slim::Music::Info;
 use Slim::Utils::Misc;
 
 our %functions = ();
+our $mixer;
 
 # Code to browse music folder by ID3 information.
 sub init {
@@ -367,18 +368,69 @@ sub init {
 			my $client = shift;
 
 			my $Imports = Slim::Music::Import::importers();
-			if (exists $Imports->{'moodlogic'}->{'mixer'}) {
-				&{$Imports->{'moodlogic'}->{'mixer'}}($client);
-			} elsif (exists $Imports->{'musicmagic'}->{'mixer'}) {
-				&{$Imports->{'musicmagic'}->{'mixer'}}($client);
+		
+			my @mixers = ();
+			
+			for my $import (keys %{$Imports}) {
+			
+				if (defined $Imports->{$import}->{'mixer'}) {
+					push @mixers, $import;
+				}
+			}
+
+			if (scalar @mixers == 1) {
+				
+				$::d_plugins && msg("Running Mixer $mixers[0]\n");
+				&{$Imports->{$mixers[0]}->{'mixer'}}($client);
+				
+			} elsif (@mixers) {
+				
+				my $params = $client->modeParameterStack(-1);
+				$params->{'listRef'} = \@mixers;
+				$params->{'stringExternRef'} = 1;
+				
+				$params->{'header'} = 'INSTANT_MIX';
+				$params->{'headerAddCount'} = 1;
+				$params->{'callback'} = \&mixerExitHandler;
+		
+				$params->{'overlayRef'} = sub { return (undef, Slim::Display::Display::symbol('rightarrow')) };
+		
+				$params->{'overlayRefArgs'} = '';
+				$params->{'valueRef'} = \$mixer;
+				
+				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', $params);
+			
 			} else {
+			
 				# if we don't have mix generation, then just play
 				(getFunctions())->{'play'}($client);
 			}
-			
 		},
 
 	);
+}
+
+sub mixerExitHandler {
+	my ($client,$exittype) = @_;
+	
+	$exittype = uc($exittype);
+	
+	if ($exittype eq 'LEFT') {
+		Slim::Buttons::Common::popModeRight($client);
+	
+	} elsif ($exittype eq 'RIGHT') {
+		my $Imports = Slim::Music::Import::importers();
+	
+		if (defined $Imports->{$mixer}->{'mixer'}) {
+			$::d_plugins && msg("Running Mixer $mixer\n");
+			&{$Imports->{$mixer}->{'mixer'}}($client);
+		} else {
+			$client->bumpRight();
+		}
+	
+	} else {
+		return;
+	}
 }
 
 sub getFunctions {
@@ -525,11 +577,11 @@ sub loadDir {
 
 		my $sortBy  = $sortByTitle ? 'title' : 'tracknum';
 
-		@{browseID3dir($client)} = @{ $ds->find('track', $find, $sortBy) };
+		@{browseID3dir($client)} = $ds->find('track', $find, $sortBy);
 
 	} elsif (picked($genre) && picked($artist)) {
 
-		@{browseID3dir($client)} = @{ $ds->find('album', $find, 'album') };
+		@{browseID3dir($client)} = $ds->find('album', $find, 'album');
 
 		if (scalar @{browseID3dir($client)} > 1) {
 
@@ -538,7 +590,7 @@ sub loadDir {
 
 	} elsif (picked($genre)) {
 
-		@{browseID3dir($client)} = @{ $ds->find('artist', $find, 'artist') };
+		@{browseID3dir($client)} = $ds->find('artist', $find, 'artist');
 
 		if (scalar @{browseID3dir($client)} > 1) {
 			push @{browseID3dir($client)}, $client->string('ALL_ALBUMS');
@@ -546,7 +598,7 @@ sub loadDir {
 
 	} else {
 
-		@{browseID3dir($client)} = @{ $ds->find('genre', $find, 'genre') };
+		@{browseID3dir($client)} = $ds->find('genre', $find, 'genre');
 
 		if (scalar @{browseID3dir($client)} > 1) { 
 			push @{browseID3dir($client)}, $client->string('ALL_ARTISTS');
@@ -616,13 +668,16 @@ sub lines {
 
 		$line1 .= sprintf(" (%d %s %s)", browseID3dirIndex($client) + 1, $client->string('OUT_OF'), scalar @$list);
 
+		my $ds = Slim::Music::Info::getCurrentDataStore();
+
 		if ($songlist) {
 
 			my $line = browseID3dir($client, browseID3dirIndex($client));
+			my $obj  = $ds->objectForUrl($line);
 
-			$line2 = Slim::Music::Info::standardTitle($client, $line);
+			$line2 = Slim::Music::Info::standardTitle($client, $obj);
 
-			if (Slim::Music::Info::isSongMixable($line) || Slim::Music::Info::isSongMMMixable($line)) {
+			if ($obj->moodlogic_mixable() || $obj->musicmagic_mixable()) {
 
 				$overlay1 = Slim::Display::Display::symbol('mixable');
 			}
@@ -632,25 +687,33 @@ sub lines {
 		} else {
 
 			$line2 = browseID3dir($client, browseID3dirIndex($client));
+			my $obj;
 
-			if (!defined($genre) && !defined($artist) && !defined($album) && 
-				(Slim::Music::Info::isGenreMixable($line2) || 
-				 Slim::Music::Info::isGenreMMMixable($line2))) {
+			# genre
+			if (!defined($genre) && !defined($artist) && !defined($album)) {
 
-				$overlay1 = Slim::Display::Display::symbol('mixable')
+				($obj) = $ds->find('genre', { 'genre' => $line2 });
 			}
 
-			if (defined($genre) && !defined($artist) && !defined($album) && 
-				(Slim::Music::Info::isArtistMixable($line2) || 
-				 Slim::Music::Info::isArtistMMMixable($line2))) {
+			# artist
+			if (defined($genre) && !defined($artist) && !defined($album)) {
 
-				$overlay1 = Slim::Display::Display::symbol('mixable');
+				($obj) = $ds->find('contributor', { 'contributor' => $line2 });
 			}
 
-			if (defined($genre) && defined($artist) && ! defined($album) && 
-				Slim::Music::Info::isAlbumMMMixable($artist, $line2)) {
+			# album
+			if (defined($genre) && defined($artist) && ! defined($album)) {
 
-				$overlay1 = Slim::Display::Display::symbol('mixable');
+				($obj) = $ds->find('album', { 'album' => $line2 });
+			}
+
+			# Music Magic is everywhere, MoodLogic doesn't exist on albums
+			if (defined $obj && ref $obj) {
+
+				if (($obj->can('moodlogic_mixable') && $obj->moodlogic_mixable()) || $obj->musicmagic_mixable()) {
+
+					$overlay1 = Slim::Display::Display::symbol('mixable');
+				}
 			}
 
 			$overlay2 = Slim::Display::Display::symbol('rightarrow');

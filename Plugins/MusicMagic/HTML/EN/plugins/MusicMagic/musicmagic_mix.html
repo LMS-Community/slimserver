@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>[% "MUSICMAGIC_MIX" | string %]</title>
+    <link rel="stylesheet" href="slimserver.css">
+  </head>
+  <body bgcolor="#FFFFFF">
+
+    <p>
+
+    <h3>[% "MUSICMAGIC_MIX" | string %]</h3><p>
+
+    <a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a>
+	[% pwd_list %]
+
+    <p><hr><p>
+	[% IF browselist_header %][% browselist_header %][% END %]
+    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+    <table cellspacing="0" border="0" cellpadding="4" width="100%">
+      [% mix_list %]
+    </table>
+   [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+   <p><hr><p>
+   <p><a href="musicmagic_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&p0=play">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a>, 
+      <a href="musicmagic_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&p0=append">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a>
+   </p>
+
+  </body>
+</html>

@@ -2087,6 +2087,15 @@ MUSICMAGIC_MIXING
 	EN	MusicMagic Mixing
 	ES	Mezcla MusicMagic 
 
+MOODLOGIC_MIXING
+	EN	MoodLogic Mixing
+
+MOODLOGIC
+	EN	MoodLogic
+	
+MUSICMAGIC
+	EN	MusicMagic
+
 SETUP_MOODLOGICPLAYLISTPREFIX_CHOOSE
 	DE	Prefix:
 	EN	Prefix:
@@ -7983,15 +7992,11 @@ MOODLOGIC_MIX
 	PT	Mixtura
 	SE	Mix
 
-INSTANT_MIX
-	DE	Instant Mix
-	DK	Hurtig-mix
-	EN	Instant Mix
-	ES	Mezcla instantánea
-	FR	Mix instantané
-	NL	Instant Mix
-	NO	Hurtig Mix
-	PT	Mistura instatânea de Ambiente
+MUSICMAGIC_MIX
+	EN	MusicMagic Mix
+
+MOODLOGIC_INSTANT_MIX
+	EN	MoodLogic Instant Mix
 
 MOODLOGIC_MOOD_0
 	DE	Überraschung

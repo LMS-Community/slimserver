@@ -53,8 +53,9 @@ sub init {
 
 	# Do this at runtime, not compile time.
 	$read_onfly = Slim::Utils::Prefs::get('plugins-onthefly');
-
-	addPluginModes();
+	
+	read_plugins() unless $plugins_read;
+	
 
 	for my $plugin (enabledPlugins()) {
 		# We use initPlugin() instead of the more succinct
@@ -166,7 +167,10 @@ sub read_plugins {
 				'header'  => $plugins{$plugin}->{'name'},
 			);
 
-			Slim::Buttons::Home::addSubMenu("PLUGINS", $plugins{$plugin}->{'name'}, \%params);
+			if (UNIVERSAL::can("Plugins::${plugin}","setMode") && UNIVERSAL::can("Plugins::${plugin}","getFunctions")) {
+				Slim::Buttons::Home::addSubMenu("PLUGINS", $plugins{$plugin}->{'name'}, \%params);
+				Slim::Buttons::Common::addMode("PLUGIN.$plugin",&{"Plugins::${plugin}::getFunctions"},\&{"Plugins::${plugin}::setMode"});
+			}
 			
 			#add toplevel info for the option of having a plugin at the top level.
 			Slim::Buttons::Home::addMenuOption($plugins{$plugin}->{'name'},\%params);
@@ -402,17 +406,6 @@ sub unusedPluginOptions {
 	return sort { $menuChoices{$a} cmp $menuChoices{$b} } keys %menuChoices;
 }
 
-sub addPluginModes {
-	read_plugins() unless $plugins_read;
-
-	no strict 'refs';
-	for my $plugin (keys %plugins) {
-		Slim::Buttons::Common::addMode($plugins{$plugin}{'mode'},
-										&{$plugins{$plugin}->{'module'} . '::getFunctions'},
-										\&{$plugins{$plugin}->{'module'} . '::setMode'});
-	}
-}
-										
 sub pluginCount {
 	return scalar(enabledPlugins(shift));
 }

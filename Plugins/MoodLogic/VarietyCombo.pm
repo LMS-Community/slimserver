@@ -1,6 +1,6 @@
-package Slim::Buttons::VarietyCombo;
+package Plugins::MoodLogic::VarietyCombo;
 
-#$Id$
+#$Id: VarietyCombo.pm 1866 2005-01-30 01:20:17Z kdf $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -9,8 +9,9 @@ package Slim::Buttons::VarietyCombo;
 
 use strict;
 use Slim::Buttons::Common;
-use Slim::Music::MoodLogic;
+use Plugins::MoodLogic::Plugin;
 use Slim::Utils::Timers;
+use Slim::Music::Info;
 use Slim::Display::Display;
 
 our %functions = ();
@@ -67,30 +68,26 @@ sub init {
 		'right' => sub  {
 			my $client = shift;
 			my $instantMix;
+
+			my $mood   = Slim::Buttons::Common::param($client,'mood');
+			my $track  = Slim::Buttons::Common::param($client,'song');
+			my $artist = Slim::Buttons::Common::param($client,'artist');
+			my $genre  = Slim::Buttons::Common::param($client,'genre');
+			my $ds     = Slim::Music::Info::getCurrentDataStore();
 			
-			if (defined Slim::Buttons::Common::param($client, 'song')) {
+			if (defined $track) {
 
-				$instantMix = Slim::Music::MoodLogic::getMix(
-					Slim::Music::Info::moodLogicSongId(Slim::Buttons::Common::param($client, 'song')), undef, 'song'
-				);
+				$instantMix = Plugins::MoodLogic::Plugin::getMix($track->moodlogic_id(), undef, 'song');
 
-			} elsif (defined Slim::Buttons::Common::param($client,'mood') && defined Slim::Buttons::Common::param($client,'artist')) {
+			} elsif (defined $mood && defined $artist) {
 
-				$instantMix = Slim::Music::MoodLogic::getMix(
-					Slim::Music::Info::moodLogicArtistId(Slim::Buttons::Common::param($client, 'artist')),
-					Slim::Buttons::Common::param($client, 'mood'),
-					'artist'
-				);
+				$instantMix = Plugins::MoodLogic::Plugin::getMix($artist->moodlogic_id(), $mood, 'artist');
 
-			} elsif (defined Slim::Buttons::Common::param($client,'mood') &&defined Slim::Buttons::Common::param($client,'genre')) {
+			} elsif (defined $mood && defined $genre) {
 
-				$instantMix = Slim::Music::MoodLogic::getMix(
-					Slim::Music::Info::moodLogicGenreId(Slim::Buttons::Common::param($client, 'genre')),
-					Slim::Buttons::Common::param($client, 'mood'),
-					'genre'
-				);
+				$instantMix = Plugins::MoodLogic::Plugin::getMix($genre->moodlogic_id(), $mood, 'genre');
 			}
-			
+
 			if (scalar @$instantMix) {
 				my @oldlines = Slim::Display::Display::curLines($client);
 				Slim::Buttons::Common::pushMode($client, 'instant_mix', { 'mix' => $instantMix });

@@ -44,18 +44,11 @@ our %otherColumns = (
 	'tagversion' => 'tagversion',
 	'tagsize' => 'tagsize',
 	'drm' => 'drm',
+	'moodlogic_id' => 'moodlogic_id',
+	'moodlogic_mixable' => 'moodlogic_mixable',
+	'musicmagic_mixable' => 'musicmagic_mixable',
 	'playCount' => 'playCount',
 	'lastPlayed' => 'lastPlayed',
-	'moodlogic_song_id' => 'moodlogic_song_id',
-	'moodlogic_artist_id' => 'moodlogic_artist_id',
-	'moodlogic_genre_id' => 'moodlogic_genre_id',
-	'moodlogic_song_mixable' => 'moodlogic_song_mixable',
-	'moodlogic_artist_mixable' => 'moodlogic_artist_mixable',
-	'moodlogic_genre_mixable' => 'moodlogic_genre_mixable',
-	'musicmagic_genre_mixable' => 'musicmagic_genre_mixable',
-	'musicmagic_artist_mixable' => 'musicmagic_artist_mixable',
-	'musicmagic_album_mixable' => 'musicmagic_album_mixable',
-	'musicmagic_song_mixable' => 'musicmagic_song_mixable',
 );
 
 our %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );
@@ -276,10 +269,14 @@ sub coverArt {
 		} else {
 
 			($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($self->url, $art);
+			$art eq 'cover' ? $self->cover($path) : $self->thumb($path);
+			$self->update();
 		}
 
 	} else {
 		($body, $contenttype,$path) = Slim::Music::Info::readCoverArt($self->url, $art);
+		$art eq 'cover' ? $self->cover($path) : $self->thumb($path);
+		$self->update();
 	}
 
 	# kick this back up to the webserver so we can set last-modified

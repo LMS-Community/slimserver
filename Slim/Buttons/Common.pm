@@ -68,8 +68,6 @@ sub init {
 	Slim::Buttons::Browse::init();
 	Slim::Buttons::BrowseID3::init();
 	Slim::Buttons::Information::init();
-	Slim::Buttons::InstantMix::init();
-	Slim::Buttons::MoodWheel::init();
 	Slim::Buttons::Playlist::init();
 	Slim::Buttons::Power::init();
 	Slim::Buttons::ScreenSaver::init();
@@ -77,25 +75,24 @@ sub init {
 	Slim::Buttons::Settings::init();
 	Slim::Buttons::Synchronize::init();
 	Slim::Buttons::TrackInfo::init();
-	Slim::Buttons::VarietyCombo::init();
 }
 
 sub addSaver {
- 	my $name = shift;
- 	my $buttonFunctions = shift;
- 	my $setModeFunction = shift;
- 	my $leaveModeFunction = shift;
- 	my $displayName = shift;
+	my $name = shift;
+	my $buttonFunctions = shift;
+	my $setModeFunction = shift;
+	my $leaveModeFunction = shift;
+	my $displayName = shift;
 
-   	$savers{$name} = $displayName;
+	$savers{$name} = $displayName;
 
- 	$::d_plugins && msg("Registering screensaver $displayName\n");
+	$::d_plugins && msg("Registering screensaver $displayName\n");
 
- 	addMode($name, $buttonFunctions, $setModeFunction, $leaveModeFunction);
+	addMode($name, $buttonFunctions, $setModeFunction, $leaveModeFunction);
 }
 
 sub hash_of_savers {
- 	return \%savers;
+	return \%savers;
 }
 
 sub addMode {

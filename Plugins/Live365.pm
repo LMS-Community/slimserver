@@ -577,7 +577,7 @@ sub getPlaylist {
 	my ( $client, $self, $handle, $url, $isVIP ) = @_;
 
 	# store the original title as a fallback, once.
-	${*$self}{live365_original_title} ||= Slim::Music::Info::title();
+	#${*$self}{live365_original_title} ||= Slim::Music::Info::title();
 
 	my $getPlaylist = sprintf( "GET /pls/front?handler=playlist&cmd=view&handle=%s%s&viewType=xml\n\n",
 			$isVIP ? 'afl:' : '',

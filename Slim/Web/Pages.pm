@@ -87,7 +87,22 @@ sub init {
 				$form->{'includeAlbum'}        = ($webFormat !~ /ALBUM/) ;
 				$form->{'item'}	               = $item->id;
 				$form->{'itempath'}	       = $item->url;
-				$form->{'mixable_not_descend'} = Slim::Music::Info::isSongMixable($item->url);
+
+				if ($item->moodlogic_mixable()) {
+					# set up a moodlogic link
+					addLinks("mixer", {'MOODLOGIC' => "plugins/MoodLogic/mixerlink.html"},1);
+					$form->{'mixable_not_descend'} = 1;
+				} else {
+					addLinks("mixer", {'MOODLOGIC' => undef});
+				}
+				if ($item->musicmagic_mixable() && Plugins::MusicMagic::Plugin::canUseMusicMagic()) {
+					#set up a musicmagic link
+					addLinks("mixer", {'MUSICMAGIC' => "plugins/MusicMagic/mixerlink.html"},1);
+					$form->{'mmmixable_not_descend'} = 1;
+				} else {
+					addLinks("mixer", {'MUSICMAGIC' => undef});
+				}
+				$form->{'mixerlinks'} = $additionalLinks{'mixer'};
 
 				if ($item->coverArt()) {
 					$form->{'coverart'} = 1;
@@ -135,12 +150,26 @@ sub init {
 
 			'listItem' => sub {
 				my $ds = shift;
-				my $list_form = shift;
+				my $form = shift;
 				my $item = shift;
 				my $itemname = shift;
 				my $descend = shift;
 
-				$list_form->{'mixable_descend'} = Slim::Music::Info::isGenreMixable($itemname) && ($descend eq "true");
+				if ($item->moodlogic_mixable() && ($descend eq "true")) {
+					# set up a moodlogic link
+					addLinks("mixer", {'MOODLOGIC' => "plugins/MoodLogic/mixerlink.html"},1);
+					$form->{'mixable_descend'} = 1;
+				} else {
+					addLinks("mixer", {'MOODLOGIC' => undef});
+				}
+				if ($item->musicmagic_mixable() && Plugins::MusicMagic::Plugin::canUseMusicMagic() && ($descend eq "true")) {
+					#set up a musicmagic link
+					addLinks("mixer", {'MUSICMAGIC' => "plugins/MusicMagic/mixerlink.html"},1);
+					$form->{'mmmixable_descend'} = 1;
+				} else {
+					addLinks("mixer", {'MUSICMAGIC' => undef});
+				}
+				$form->{'mixerlinks'} = $additionalLinks{'mixer'};
 			},
 
 			'ignoreArticles' => 0,
@@ -197,6 +226,15 @@ sub init {
 						$form->{'year'} = $track->year();
 					}
 				}
+				
+				if ($item->musicmagic_mixable() && Plugins::MusicMagic::Plugin::canUseMusicMagic() && ($descend eq "true")) {
+					#set up a musicmagic link
+					addLinks("mixer", {'MUSICMAGIC' => "plugins/MusicMagic/mixerlink.html"},1);
+					$form->{'mmmixable_descend'} = 1;
+				} else {
+					addLinks("mixer", {'MUSICMAGIC' => undef});
+				}
+				$form->{'mixerlinks'} = $additionalLinks{'mixer'};
 			},
 
 			'ignoreArticles' => 1,
@@ -315,7 +353,21 @@ sub init {
 				my $itemname = shift;
 				my $descend = shift;
 
-				$form->{'mixable_descend'} = Slim::Music::Info::isArtistMixable($itemname) && ($descend eq "true");
+				if ($item->moodlogic_mixable() && ($descend eq "true")) {
+					# set up a moodlogic link
+					addLinks("mixer", {'MOODLOGIC' => "plugins/MoodLogic/mixerlink.html"},1);
+					$form->{'mixable_descend'} = 1;
+				} else {
+					addLinks("mixer", {'MOODLOGIC' => undef});
+				}
+				if ($item->musicmagic_mixable() && Plugins::MusicMagic::Plugin::canUseMusicMagic() && ($descend eq "true")) {
+					#set up a musicmagic link
+					addLinks("mixer", {'MUSICMAGIC' => "plugins/MusicMagic/mixerlink.html"},1);
+					$form->{'mmmixable_descend'} = 1;
+				} else {
+					addLinks("mixer", {'MUSICMAGIC' => undef});
+				}
+				$form->{'mixerlinks'} = $additionalLinks{'mixer'};
 			},
 
 			'ignoreArticles' => 1,
@@ -483,14 +535,14 @@ sub home {
 }
 
 sub addLinks {
-	my ($category, $links) = @_;
+	my ($category, $links,$noquery) = @_;
 
 	return if (ref($links) ne 'HASH');
 
 	while (my ($title, $path) = each %$links) {
 		if (defined($path)) {
 			$additionalLinks{$category}->{$title} = $path . 
-				(($path =~ /\?/) ? '&' : '?');
+				($noquery ? '' : (($path =~ /\?/) ? '&' : '?'));
 		} else {
 			delete($additionalLinks{$category}->{$title});
 		}
@@ -579,7 +631,7 @@ sub browser {
 
 	if (!$fulldir || !Slim::Music::Info::isList($fulldir)) {
 
-		# check if we're just showing itunes playlists
+		# check if we're just showing external playlists
 		if (Slim::Music::Import::countImporters()) {
 			browser_addtolist_done($current_player, $callback, $httpClient, $params, [], $response);
 			return undef;
@@ -868,7 +920,7 @@ sub browser_addtolist_done {
 			$list_form{'itempath'}            = Slim::Utils::Misc::virtualToAbsolute($item);
 			$list_form{'odd'}	  	  = ($itemnumber + $offset) % 2;
 			$list_form{'player'}	          = $current_player;
-			$list_form{'mixable_not_descend'} = Slim::Music::Info::isSongMixable($item);
+			$list_form{'mixable_not_descend'} = $obj->moodlogic_mixable() if ($obj && $obj->can('moodlogic_mixable'));
 
 			my $anchor = anchor(Slim::Utils::Text::getSortName($list_form{'title'}),1);
 
@@ -1635,7 +1687,7 @@ sub _addSongInfo {
 
 		$params->{'filelength'} = Slim::Utils::Misc::delimitThousands($track->filesize());
 		$params->{'songtitle'}  = Slim::Music::Info::standardTitle(undef, $track);
-		$params->{'mixable'}    = Slim::Music::Info::isSongMixable($song);
+		$params->{'mixable'}	= $track->moodlogic_mixable;
 
 		# make urls in comments into links
 		for my $comment ($track->comment()) {
@@ -1717,6 +1769,11 @@ sub queryFields {
 	return keys %fieldInfo;
 }
 
+# XXX FIXME queryFields is used, but other methods might need full access to the hash.
+sub fieldInfo {
+	return \%fieldInfo;
+}
+
 sub browsedb {
 	my ($client, $params) = @_;
 
@@ -1767,10 +1824,6 @@ sub browsedb {
 	# warn the user if the scanning isn't complete.
 	if (Slim::Utils::Misc::stillScanning()) {
 		$params->{'warn'} = 1;
-	}
-
-	if (Slim::Utils::Prefs::get('itunes')) {
-		$params->{'itunes'} = 1;
 	}
 
 	# This pulls the appropriate anonymous function list out of the
@@ -2036,140 +2089,6 @@ sub browseid3 {
 	$params->{'hierarchy'} = join(',', @hierarchy);
 
 	return browsedb($client, $params);
-}
-
-# the following two functions are MoodLogic related.
-sub mood_wheel {
-	my ($client, $params) = @_;
-
-	my @items = ();
-
-	my $song   = $params->{'song'};
-	my $artist = $params->{'artist'};
-	my $album  = $params->{'album'};
-	my $genre  = $params->{'genre'};
-	my $player = $params->{'player'};
-
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-
-	my $itemnumber = 0;
-	
-	if (defined $artist && $artist ne "") {
-
-		@items = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicArtistId(&{$fieldInfo{'artist'}->{'idToName'}}($ds,$artist)), 'artist');
-
-	} elsif (defined $genre && $genre ne "" && $genre ne "*") {
-
-		@items = Slim::Music::MoodLogic::getMoodWheel(Slim::Music::Info::moodLogicGenreId(&{$fieldInfo{'genre'}->{'idToName'}}($ds,$genre)), 'genre');
-
-	} else {
-
-		$::d_moodlogic && msg('no/unknown type specified for mood wheel');
-		return undef;
-	}
-
-	#$params->{'pwd_list'} = generate_pwd_list($genre, $artist, $album, $player);
-	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("mood_wheel_pwdlist.html", $params)};
-
-	for my $item (@items) {
-
-		my %list_form = %$params;
-
-		$list_form{'mood'}     = $item;
-		$list_form{'genre'}    = $genre;
-		$list_form{'artist'}   = $artist;
-		$list_form{'album'}    = $album;
-		$list_form{'player'}   = $player;
-		$list_form{'itempath'} = $item; 
-		$list_form{'item'}     = $item; 
-		$list_form{'odd'}      = ($itemnumber + 1) % 2;
-
-		$itemnumber++;
-
-		$params->{'mood_list'} .= ${Slim::Web::HTTP::filltemplatefile("mood_wheel_list.html", \%list_form)};
-	}
-
-	return Slim::Web::HTTP::filltemplatefile("mood_wheel.html", $params);
-}
-
-sub instant_mix {
-	my ($client, $params) = @_;
-
-	my $output = "";
-	my $items  = "";
-
-	my $song   = $params->{'song'};
-	my $artist = $params->{'artist'};
-	my $album  = $params->{'album'};
-	my $genre  = $params->{'genre'};
-	my $player = $params->{'player'};
-	my $mood   = $params->{'mood'};
-	my $p0     = $params->{'p0'};
-
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-	
-	my $itemnumber = 0;
-
-	#$params->{'pwd_list'} = generate_pwd_list($genre, $artist, $album, $player);
-
-	if (defined $mood && $mood ne "") {
-		$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("mood_wheel_pwdlist.html", $params)};
-	}
-
-	if (defined $song && $song ne "") {
-		$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $song);
-	} elsif (defined $mood && $mood ne "") {
-		$params->{'src_mix'} = $mood;
-	}
-
-	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("instant_mix_pwdlist.html", $params)};
-
-	if (defined $song && $song ne "") {
-
-		$items = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicSongId($song), undef, 'song');
-
-	} elsif (defined $artist && $artist ne "" && $artist ne "*" && $mood ne "") {
-
-		$items = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicArtistId($artist),$mood, 'artist');
-
-	} elsif (defined $genre && $genre ne "" && $genre ne "*" && $mood ne "") {
-
-		$items = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicGenreId($genre), $mood, 'genre');
-
-	} else {
-
-		$::d_moodlogic && msg('no/unknown type specified for instant mix');
-		return undef;
-	}
-
-	for my $item (@$items) {
-
-		my %list_form = %$params;
-
-		$list_form{'artist'}   = $artist;
-		$list_form{'album'}    = $album;
-		$list_form{'genre'}    = $genre;
-		$list_form{'player'}   = $player;
-		$list_form{'itempath'} = $item; 
-		$list_form{'item'}     = $item; 
-		$list_form{'title'}    = Slim::Music::Info::infoFormat($item, 'TITLE (ARTIST)', 'TITLE');
-		$list_form{'odd'}      = ($itemnumber + 1) % 2;
-
-		$itemnumber++;
-
-		$params->{'instant_mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("instant_mix_list.html", \%list_form)};
-	}
-
-	if (defined $p0 && defined $client) {
-
-		Slim::Control::Command::execute($client, ["playlist", $p0 eq "append" ? "append" : "play", $items->[0]]);
-		
-		for (my $i = 1; $i <= $#$items; $i++) {
-			Slim::Control::Command::execute($client, ["playlist", "append", $items->[$i]]);
-		}
-	}
-
-	return Slim::Web::HTTP::filltemplatefile("instant_mix.html", $params);
 }
 
 sub searchStringSplit {

@@ -1,6 +1,6 @@
-package Slim::Buttons::InstantMix;
+package Plugins::MoodLogic::InstantMix;
 
-#$Id$
+#$Id: InstantMix.pm 1757 2005-01-18 21:22:50Z dsully $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -74,7 +74,7 @@ sub init {
 			} else {
 				$line1 = $client->string('NOW_PLAYING_FROM')
 			}
-			$line2 = $client->string('INSTANT_MIX');
+			$line2 = $client->string('MOODLOGIC_INSTANT_MIX');
 			
 			$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')));
 			
@@ -99,9 +99,7 @@ sub setMode {
 		setSelection($client, 'instant_mix_index', 0);
 		
 		if (defined Slim::Buttons::Common::param($client, 'mix')) {
-				@instantMix = @{Slim::Buttons::Common::param($client,'mix')};
-		} else {
-				die 'no/unknown type specified for instant mix';
+			@instantMix = @{Slim::Buttons::Common::param($client,'mix')};
 		}
 	}
 

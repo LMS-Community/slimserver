@@ -46,16 +46,6 @@ our %suffixes = ();
 our %slimTypes = ();
 
 # Global caches:
-
-# moodlogic cache for genre and artist mix indicator; empty if moodlogic isn't used
-my %genreMixCache = ();
-my %artistMixCache = ();
-
-# musicmagic cache for genre and artist mix indicator; empty if musicmagic isn't used
-my %genreMMMixCache = ();
-my %artistMMMixCache = ();
-my %albumMMMixCache = ();
-
 my %artworkCache = ();
 my $artworkDir   = '';
 
@@ -177,17 +167,7 @@ sub clearCache {
 		$currentDB->markAllEntriesStale();
 		$::d_info && Slim::Utils::Misc::msg("clearing validity for rescan\n");
 	}
-
-	# moodlogic caches
-	%genreMixCache = ();
-	%artistMixCache = ();
-	
-	# musicmagic caches
-	%genreMMMixCache = ();
-	%artistMMMixCache = ();
-	%albumMMMixCache = ();
 }
-
 
 sub saveDBCache {
 	$currentDB->forceCommit();
@@ -248,7 +228,7 @@ sub cacheItem {
 		return $track->album()->title();
 	}
 
-        return $track->get(lc $item) || undef;
+	return $track->get(lc $item) || undef;
 }
 
 sub updateCacheEntry {
@@ -272,54 +252,11 @@ sub updateCacheEntry {
 	if ($cacheEntryHash->{'LIST'}) {
 		$list = $cacheEntryHash->{'LIST'};
 	}
-
+	
 	my $song = $currentDB->updateOrCreate($url, $cacheEntryHash);
 	if ($list) {
 		my @tracks = map { $currentDB->objectForUrl($_, 1); } @$list;
 		$song->setTracks(@tracks);
-	}
-}
-
-sub reBuildCaches {
-}
-
-sub updateGenreMixCache {
-	my $cacheEntry = shift;
-	
-	if (defined $cacheEntry->{MOODLOGIC_GENRE_MIXABLE} &&
-		$cacheEntry->{MOODLOGIC_GENRE_MIXABLE} == 1) {
-		$genreMixCache{$cacheEntry->{'GENRE'}} = $cacheEntry->{'MOODLOGIC_GENRE_ID'};
-	}
-}
-
-sub updateArtistMixCache {
-	my $cacheEntry = shift;
-	
-	if (defined $cacheEntry->{MOODLOGIC_ARTIST_MIXABLE} &&
-		$cacheEntry->{MOODLOGIC_ARTIST_MIXABLE} == 1) {
-		$artistMixCache{$cacheEntry->{'ARTIST'}} = $cacheEntry->{'MOODLOGIC_ARTIST_ID'};
-	}
-}
-
-sub updateGenreMMMixCache {
-	my $genre = shift;
-	$genreMMMixCache{$genre} = $genre;
-}
-
-sub updateArtistMMMixCache {
-	my $artist = shift;
-	$artistMMMixCache{$artist} = $artist;
-}
-
-sub updateAlbumMMMixCache {
-	my $cacheEntry = shift;
-
-	if (defined $cacheEntry->{MUSICMAGIC_ALBUM_MIXABLE} &&
-		$cacheEntry->{MUSICMAGIC_ALBUM_MIXABLE} == 1) {
-		my $artist = $cacheEntry->{'ARTIST'};
-		my $album = $cacheEntry->{'ALBUM'};
-		my $key = "$artist\@\@$album";
-		$albumMMMixCache{$key} = 1;
 	}
 }
 
@@ -936,6 +873,7 @@ sub sortByTitlesAlg ($$) {
 #Sets up an array entry for performing complex sorts
 sub getInfoForSort {
 	my $item = shift;
+
 	my $obj  = $currentDB->objectForUrl($item) || return [ $item ];
 
 	my $list = isList($obj);
@@ -1570,57 +1508,6 @@ sub isPlaylist {
 	if ($type && $slimTypes{$type} && $slimTypes{$type} eq 'playlist') {
 		return $type;
 	}
-}
-
-sub isSongMixable {
-	my $song = shift;
-
-	return info($song,'MOODLOGIC_SONG_MIXABLE'); 
-}
-
-sub isSongMMMixable {
-	my $song = shift;
-
-	return defined info($song,'MUSICMAGIC_SONG_MIXABLE') ? 1 : 0; 
-}
-
-sub isAlbumMMMixable {
-	my $artist = shift;
-	my $album = shift;
-	my $key = "$artist\@\@$album";
-	return defined $albumMMMixCache{$key} ? 1 : 0;
-}
-
-sub isArtistMixable {
-	my $artist = shift;
-	return defined $artistMixCache{$artist} ? 1 : 0;
-}
-
-sub isArtistMMMixable {
-	my $artist = shift;
-	return defined $artistMMMixCache{$artist} ? 1 : 0;
-}
-
-sub isGenreMixable {
-	my $genre = shift;
-	return defined $genreMixCache{$genre} ? 1 : 0;
-}
-
-sub isGenreMMMixable {
-	my $genre = shift;
-	return defined $genreMMMixCache{$genre} ? 1 : 0;
-}
-
-sub moodLogicSongId { return info(shift,'MOODLOGIC_SONG_ID'); }
-
-sub moodLogicArtistId {
-	my $artist = shift;
-	return $artistMixCache{$artist};
-}
-
-sub moodLogicGenreId {
-	my $genre = shift;
-	return $genreMixCache{$genre};
 }
 
 sub mimeType {

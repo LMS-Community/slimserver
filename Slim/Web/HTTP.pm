@@ -119,8 +119,6 @@ sub init {
 		qr/^firmware\.(?:html|xml)/	=> \&Slim::Web::Pages::firmware,
 		qr/^hitlist\.(?:htm|xml)/	=> \&Slim::Web::History::hitlist,
 		qr/^home\.(?:htm|xml)/		=> \&Slim::Web::Pages::home,
-		qr/^instant_mix\.(?:htm|xml)/	=> \&Slim::Web::Pages::instant_mix,
-		qr/^mood_wheel\.(?:htm|xml)/	=> \&Slim::Web::Pages::mood_wheel,
 		qr/^playlist\.(?:htm|xml)/	=> \&Slim::Web::Pages::playlist,
 		qr/^search\.(?:htm|xml)/	=> \&Slim::Web::Pages::search,
 		qr/^advanced_search\.(?:htm|xml)/ => \&Slim::Web::Pages::advancedSearch,
@@ -764,8 +762,9 @@ sub generateHTTPResponse {
 
 		my $song  = Slim::Utils::Misc::virtualToAbsolute($1);
 		my $image = $2;
+
 		my $ds    = Slim::Music::Info::getCurrentDataStore();
-		my $obj   = $ds->objectForUrl(Slim::Utils::Misc::fileURLFromPath($song));
+		my $obj   = $ds->objectForUrl(Slim::Utils::Misc::fileURLFromPath($song)) || return 0;
 
 		my $imageData;
 
@@ -1485,7 +1484,7 @@ sub _generateContentFromFile {
 		my $output = '';
 		unless ($template->process($path,$params,\$output)) {
 			print $template->error() . "\n";
-	 	}
+		}
 		return \$output;
 	} else {
 		($content, $mtime) = _getFileContent($path, $skin, 1);
@@ -1589,6 +1588,7 @@ sub fixHttpPath {
 
 	foreach my $dir (HTMLTemplateDirs()) {
 		my $fullpath = catdir($dir, $skin, $path);
+		$::d_http && msg("Checking for $fullpath.\n");
 		return $fullpath if (-r $fullpath);
 	} 
 

@@ -1,6 +1,6 @@
-package Slim::Buttons::MoodWheel;
+package Plugins::MoodLogic::MoodWheel;
 
-#$Id$
+#$Id: MoodWheel.pm 1866 2005-01-30 01:20:17Z kdf $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -9,7 +9,7 @@ package Slim::Buttons::MoodWheel;
 
 use strict;
 use Slim::Buttons::Common;
-use Slim::Music::MoodLogic;
+use Plugins::MoodLogic::Plugin;
 
 # 
 our @browseMoodChoices = ();
@@ -61,16 +61,13 @@ sub init {
 		'right' => sub  {
 			my $client = shift;
 		
-			my @oldlines = Slim::Display::Display::curLines($client);
-
-			Slim::Buttons::Common::pushMode($client, 'moodlogic_variety_combo', {
+			Slim::Buttons::Common::pushModeLeft($client, 'moodlogic_variety_combo', {
 
 				'genre'  => Slim::Buttons::Common::param($client, 'genre'),
 				'artist' => Slim::Buttons::Common::param($client, 'artist'),
 				'mood'   => $browseMoodChoices[selection($client, 'mood_wheel_index')]
 			});
 			
-			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 		}
 	);
 }
@@ -81,18 +78,19 @@ sub getFunctions {
 
 sub setMode {
 	my $client = shift;
-	my $push = shift;
+	my $push   = shift;
 
-	if (defined Slim::Buttons::Common::param($client, 'genre')) {
-		@browseMoodChoices = Slim::Music::MoodLogic::getMoodWheel(
-			Slim::Music::Info::moodLogicGenreId(Slim::Buttons::Common::param($client, 'genre')), 'genre'
-		);
+	my $ds     = Slim::Music::Info::getCurrentDataStore();
+	my $genre  = Slim::Buttons::Common::param($client, 'genre');
+	my $artist = Slim::Buttons::Common::param($client, 'artist');
 
-	} elsif (defined Slim::Buttons::Common::param($client, 'artist')) {
+	if (defined $genre) {
 
-		@browseMoodChoices = Slim::Music::MoodLogic::getMoodWheel(
-			Slim::Music::Info::moodLogicArtistId(Slim::Buttons::Common::param($client, 'artist')), 'artist'
-		);
+		@browseMoodChoices = @{Plugins::MoodLogic::Plugin::getMoodWheel($genre->moodlogic_id(), 'genre')};
+
+	} elsif (defined $artist) {
+
+		@browseMoodChoices = @{Plugins::MoodLogic::Plugin::getMoodWheel($artist->moodlogic_id(), 'artist')};
 
 	} else {
 		die 'no/unknown type specified for mood wheel';

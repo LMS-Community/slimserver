@@ -435,14 +435,14 @@ sub execute {
  		my $badconfig = 0;
  		my $dirscan = 1;
  		
- 		if (!Slim::Utils::Prefs::get("playlistdir") && !(Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic())) {
+ 		if (!Slim::Utils::Prefs::get("playlistdir") && !Slim::Music::Info::playlists()) {
  #			$::d_http && msg("no valid playlists directory!!\n");
  			$badconfig = 1;
  		}
  		
  		if (!$fulldir || !Slim::Music::Info::isList($fulldir)) {	
- 			# check if we're just showing itunes playlists
- 			if (Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic()) {
+ 			# check if we're just showing external playlists
+ 			if (Slim::Music::Info::playlists()) {
  				$dirscan = 0;
  			} else {
  #				$::d_http && msg("the selected playlist $fulldir isn't good!!.\n");
@@ -467,7 +467,7 @@ sub execute {
  				Slim::Utils::Scan::addToList($items, $fulldir, 0, undef, undef);
  			}
  
- 			if ($dir eq '__playlists' && (Slim::Music::MoodLogic::useMoodLogic() || Slim::Music::iTunes::useiTunesLibrary())) {
+ 			if ($dir eq '__playlists' && Slim::Music::Info::playlists()) {
  				push @$items, @{Slim::Music::Info::playlists()};
  			}
  			

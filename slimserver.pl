@@ -197,9 +197,6 @@ use Slim::Buttons::Home;
 use Slim::Buttons::Power;
 use Slim::Buttons::Search;
 use Slim::Buttons::ScreenSaver;
-use Slim::Buttons::MoodWheel;
-use Slim::Buttons::InstantMix;
-use Slim::Buttons::VarietyCombo;
 use Slim::Buttons::Plugins;
 use Slim::Buttons::Synchronize;
 use Slim::Buttons::Input::Text;
@@ -274,11 +271,12 @@ use vars qw(
 	$d_irtm
 	$d_itunes
 	$d_itunes_verbose
+	$d_import
 	$d_mdns
 	$d_memory
 	$d_moodlogic
-	$d_musicmagic
 	$d_mp3
+	$d_musicmagic
 	$d_os
 	$d_perf
 	$d_parse
@@ -436,7 +434,9 @@ sub start {
 		msg("Will only scan music library, then exit!\n");
 
 		Slim::Music::Info::init();
-		Slim::Music::Import::startup();
+		
+		#FIXME: This will need a method for loading the import plugins
+		#Slim::Music::Import::startup();
 
 		# Run the scanner - but don't kill the CPU.
 		while (Slim::Music::Import::stillScanning()) {
@@ -459,9 +459,6 @@ sub start {
 	$::d_server && msg("Slimproto Init...\n");
 	Slim::Networking::Slimproto::init();
 
-	$::d_server && msg("SlimServer Info init...\n");
-	Slim::Music::Info::init();
-
 	$::d_server && msg("SlimServer HTTP init...\n");
 	Slim::Web::HTTP::init();
 
@@ -474,6 +471,11 @@ sub start {
 	$::d_server && msg("SlimServer Plugins init...\n");
 	Slim::Buttons::Plugins::init();
 	
+	$::d_server && msg("SlimServer Info init...\n");
+	Slim::Music::Info::init();
+
+	checkDataSource();
+	
 	$::d_server && msg("SlimServer persist playlists...\n");
 	if (Slim::Utils::Prefs::get('persistPlaylists')) {
 		Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
@@ -484,9 +486,6 @@ sub start {
 		Slim::Control::xPL::init();
 	}		
 
-	# start background scanning based on a timer...
-	Slim::Music::Import::startup() unless $noScan;
-	
 	$lastlooptime = Time::HiRes::time();
 	$loopcount = 0;
 	$loopsecond = int($lastlooptime);
@@ -682,32 +681,31 @@ to the console via stderr:
 Commands may be sent to the server through standard in and will be echoed via
 standard out.  See complete documentation for details on the command syntax.
 EOF
-
 }
 
 sub initOptions {
 	if (!GetOptions(
-		'user=s'   			=> \$user,
-		'group=s'   		=> \$group,
-		'cliaddr=s'   		=> \$cliaddr,
-		'cliport=s'   		=> \$cliport,
-		'daemon'   			=> \$daemon,
-		'diag'   			=> \$diag,
-		'httpaddr=s'   		=> \$httpaddr,
-		'httpport=s'   		=> \$httpport,
-		'logfile=s'   		=> \$logfile,
-		'audiodir=s' 		=> \$audiodir,
+		'user=s'			=> \$user,
+		'group=s'			=> \$group,
+		'cliaddr=s'			=> \$cliaddr,
+		'cliport=s'			=> \$cliport,
+		'daemon'			=> \$daemon,
+		'diag'				=> \$diag,
+		'httpaddr=s'		=> \$httpaddr,
+		'httpport=s'		=> \$httpport,
+		'logfile=s'			=> \$logfile,
+		'audiodir=s'		=> \$audiodir,
 		'playlistdir=s'		=> \$playlistdir,
-		'cachedir=s' 		=> \$cachedir,
-		'pidfile=s' 		=> \$pidfile,
+		'cachedir=s'		=> \$cachedir,
+		'pidfile=s'			=> \$pidfile,
 		'playeraddr=s'		=> \$localClientNetAddr,
-		'priority=i'        => \$priority,
+		'priority=i'		=> \$priority,
 		'stdio'				=> \$stdio,
 		'streamaddr=s'		=> \$localStreamAddr,
-		'prefsfile=s' 		=> \$prefsfile,
-		'quiet'   			=> \$quiet,
-		'scanonly'   			=> \$scanOnly,
-		'noscan'   			=> \$noScan,
+		'prefsfile=s'		=> \$prefsfile,
+		'quiet'				=> \$quiet,
+		'scanonly'			=> \$scanOnly,
+		'noscan'			=> \$noScan,
 		'nosetup'			=> \$nosetup,
 		'noserver'			=> \$noserver,
 		'd_artwork'			=> \$d_artwork,
@@ -721,7 +719,8 @@ sub initOptions {
 		'd_formats'			=> \$d_formats,
 		'd_graphics'		=> \$d_graphics,
 		'd_http'			=> \$d_http,
-		'd_http_verbose'		=> \$d_http_verbose,
+		'd_http_verbose'	=> \$d_http_verbose,
+		'd_import=s'		=> \$d_import,
 		'd_info'			=> \$d_info,
 		'd_ir'				=> \$d_ir,
 		'd_irtm'			=> \$d_irtm,
@@ -730,8 +729,8 @@ sub initOptions {
 		'd_mdns'			=> \$d_mdns,
 		'd_memory'			=> \$d_memory,
 		'd_moodlogic'		=> \$d_moodlogic,
-		'd_musicmagic'		=> \$d_musicmagic,
 		'd_mp3'				=> \$d_mp3,
+		'd_musicmagic'		=> \$d_musicmagic,
 		'd_os'				=> \$d_os,
 		'd_paths'			=> \$d_paths,
 		'd_perf'			=> \$d_perf,
@@ -748,17 +747,17 @@ sub initOptions {
 		'd_slimproto'		=> \$d_slimproto,
 		'd_slimproto_v'		=> \$d_slimproto_v,
 		'd_source'			=> \$d_source,
-		'd_source_v'			=> \$d_source_v,
-		'd_sql'			=> \$d_sql,
+		'd_source_v'		=> \$d_source_v,
+		'd_sql'				=> \$d_sql,
 		'd_stdio'			=> \$d_stdio,
 		'd_stream'			=> \$d_stream,
 		'd_stream_v'		=> \$d_stream_v,
 		'd_sync'			=> \$d_sync,
-		'd_sync_v'		=> \$d_sync_v,
+		'd_sync_v'			=> \$d_sync_v,
 		'd_time'			=> \$d_time,
 		'd_ui'				=> \$d_ui,
 		'd_usage'			=> \$d_usage,
-		'd_filehandle'	=> \$d_filehandle,
+		'd_filehandle'		=> \$d_filehandle,
 	)) {
 		showUsage();
 		exit(1);
@@ -807,28 +806,6 @@ sub initSettings {
 
 	if (defined($cliport)) {
 		Slim::Utils::Prefs::set("cliport", $cliport);
-	}
-
-	# warn if there's no audiodir preference
-	# FIXME put the strings in strings.txt
-	if (!(defined Slim::Utils::Prefs::get("audiodir") && 
-		-d Slim::Utils::Prefs::get("audiodir")) && 
-		!$quiet && 
-		!Slim::Music::iTunes::useiTunesLibrary() &&
-		!Slim::Music::MoodLogic::useMoodLogic() &&
-		!Slim::Music::MusicMagic::useMusicMagic()) {
-
-		msg("Your MP3 directory needs to be configured. Please open your web browser,\n");
-		msg("go to the following URL, and click on the \"Server Settings\" link.\n\n");
-		msg(string('SETUP_URL_WILL_BE') . "\n\t" . Slim::Web::HTTP::HomeURL() . "\n");
-
-	} else {
-
-		if (defined(Slim::Utils::Prefs::get("audiodir")) && Slim::Utils::Prefs::get("audiodir") =~ m|[/\\]$|) {
-			$audiodir = Slim::Utils::Prefs::get("audiodir");
-			$audiodir =~ s|[/\\]$||;
-			Slim::Utils::Prefs::set("audiodir",$audiodir);
-		}
 	}
 
 	if (defined(Slim::Utils::Prefs::get("playlistdir")) && Slim::Utils::Prefs::get("playlistdir") =~ m|[/\\]$|) {
@@ -914,6 +891,26 @@ sub daemonize {
 	
 	if (!setsid) { die "Can't start a new session: $!"; }
 	if (!open STDERR, '>&STDOUT') { die "Can't dup stdout: $!"; }
+}
+
+sub checkDataSource {
+	# warn if there's no audiodir preference
+	# FIXME put the strings in strings.txt
+	if (!(defined Slim::Utils::Prefs::get("audiodir") && 
+		-d Slim::Utils::Prefs::get("audiodir")) && !$quiet && !Slim::Music::Import::countImporters) {
+
+		msg("Your Data source needs to be configured. Please open your web browser,\n");
+		msg("go to the following URL, and click on the \"Server Settings\" link.\n\n");
+		msg(string('SETUP_URL_WILL_BE') . "\n\t" . Slim::Web::HTTP::HomeURL() . "\n");
+
+	} else {
+
+		if (defined(Slim::Utils::Prefs::get("audiodir")) && Slim::Utils::Prefs::get("audiodir") =~ m|[/\\]$|) {
+			$audiodir = Slim::Utils::Prefs::get("audiodir");
+			$audiodir =~ s|[/\\]$||;
+			Slim::Utils::Prefs::set("audiodir",$audiodir);
+		}
+	}
 }
 
 sub checkVersion {

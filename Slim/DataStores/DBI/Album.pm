@@ -9,7 +9,9 @@ use base 'Slim::DataStores::DBI::DataModel';
 	my $class = __PACKAGE__;
 
 	$class->table('albums');
-	$class->columns(Essential => qw/id title titlesort contributors artwork_path disc discc/);
+
+	$class->columns(Essential => qw/id title titlesort contributors artwork_path disc discc musicmagic_mixable/);
+
 	$class->columns(Stringify => qw/title/);
 
 	$class->add_constructor('hasArtwork' => 'artwork_path IS NOT NULL');

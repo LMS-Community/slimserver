@@ -3,10 +3,10 @@
 		[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
 		[% IF descend %]<a href="browse.html?dir=[% descend | uri %]&player=[% player | uri %]" title='View'><b><font style="color:yellow">+ </font>[% title | html %]</b></a>  [% END %]
 		[% IF not descend %]<a href="songinfo.html?itempath=[% itempath | uri %]&player=[% player | uri %]"><b>[% title | html %]</b></a>
-			[% IF artist %] [% "BY" | string %] [% END %]
-			<a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist | html %]</a>
-			[% IF album %] [% "FROM" | string %] [% END %]
-			<i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>
+			[% IF includeArtist AND artist %] [% "BY" | string %]
+			<a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist | html %]</a>[% END %]
+			[% IF includeAlbum AND album %] [% "FROM" | string %]
+			<i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>[% END %]
 		[% END %]
 	</td>
 	<td class="listing" width="11" align="center">

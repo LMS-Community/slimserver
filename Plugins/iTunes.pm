@@ -1,4 +1,4 @@
-package Slim::Music::iTunes;
+package Plugins::iTunes;
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -66,7 +66,7 @@ my $minorVersion;
 my $ituneslibrary;
 my $ituneslibraryfile;
 my $ituneslibrarypath;
-
+	
 my $initialized = 0;
 
 # mac file types
@@ -98,8 +98,6 @@ our %filetypes = (
 # of $newValue, since set or not we still called canUseiTunesLibrary().
 # All the extra code wasn't really gaining us anything.
 sub useiTunesLibrary {
-	$::d_itunes_verbose && msg("useiTunesLibrary().\n");
-	
 	my $newValue = shift;
 	
 	if (defined($newValue)) {
@@ -117,7 +115,7 @@ sub useiTunesLibrary {
 	}
 	
 	$use = Slim::Utils::Prefs::get('itunes');
-	Slim::Music::Import::useImporter('itunes',$use && $can);
+	Slim::Music::Import::useImporter('ITUNES',$use && $can);
 	
 	$::d_itunes && msg("using itunes library: $use\n");
 	
@@ -130,24 +128,54 @@ sub canUseiTunesLibrary {
 	$ituneslibraryfile = defined $ituneslibraryfile ? $ituneslibraryfile : findMusicLibraryFile();
 	$ituneslibrarypath = defined $ituneslibrarypath ? $ituneslibrarypath : findMusicLibrary();
 	if (defined $ituneslibraryfile && $ituneslibrarypath) {
-		init();
+		initPlugin();
 	}
 	return defined $ituneslibraryfile && $ituneslibrarypath;
 }
 
-sub init {
-	return if $initialized;
-	#Slim::Utils::Strings::addStrings($strings);
-	Slim::Music::Import::addImporter('itunes',\&startScan,undef,\&addGroups);
-	Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
-	addGroups();
-	$initialized = 1;
+sub getDisplayName {
+	return 'SETUP_ITUNES';
 }
+
+sub initPlugin {
+	return if $initialized;
+	
+	#Slim::Utils::Strings::addStrings($strings);
+	
+	Slim::Music::Import::addImporter('ITUNES',\&startScan,undef,\&addGroups);
+	Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
+	
+	addGroups();
+	
+	$initialized = 1;
+	
+	checker();
+	#startScan() if Slim::Utils::Prefs::get('itunes');
+}
+
+sub disablePlugin {
+	# turn off checker
+	Slim::Utils::Timers::killTimers(0, \&checker);
+	
+	# remove playlists
+	
+	# disable protocol handler
+	#Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
+	
+	# delGroups, categories and prefs
+	Slim::Web::Setup::delCategory('itunes');
+	Slim::Web::Setup::delGroup('server','itunes',1);
+	
+	# set importer to not use
+	Slim::Utils::Prefs::set('itunes', 0);
+	Slim::Music::Import::useImporter('ITUNES',0);
+}
+
 
 sub addGroups {
 	Slim::Web::Setup::addChildren('server','itunes',3);
 	Slim::Web::Setup::addCategory('itunes',&setupCategory);
-	my ($groupRef,$prefRef) = &setupGroup();
+	my ($groupRef,$prefRef) = &setupUse();
 	Slim::Web::Setup::addGroup('server','itunes',$groupRef,1,$prefRef);
 }
 
@@ -272,8 +300,6 @@ sub findMusicLibraryFile {
 
 
 sub findMusicLibrary {
-	$::d_itunes_verbose && msg("findMusicLibrary().\n");
- 	
 	my $autolocate = Slim::Utils::Prefs::get('itunes_library_autolocate');
 	my $path = undef;
 	my $file = $ituneslibraryfile || findMusicLibraryFile();
@@ -309,8 +335,6 @@ sub playlists {
 }
 
 sub isMusicLibraryFileChanged {
-	$::d_itunes_verbose && msg("isMusicLibraryFileChanged().\n");
-
 	my $file = $ituneslibraryfile || findMusicLibraryFile();
 	my $fileMTime = (stat $file)[9];
 	
@@ -336,8 +360,6 @@ sub isMusicLibraryFileChanged {
 }
 
 sub checker {
-	$::d_itunes_verbose && msg("checker().\n");
-
 	return unless (useiTunesLibrary());
 	
 	if (!stillScanning() && isMusicLibraryFileChanged()) {
@@ -352,7 +374,7 @@ sub checker {
 }
 
 sub startScan {
-	$::d_itunes_verbose && msg("startScan().\n");
+
 	if (!useiTunesLibrary()) {
 		return;
 	}
@@ -377,7 +399,6 @@ sub startScan {
 } 
 
 sub stopScan {
-	$::d_itunes_verbose && msg("stopScan().\n");
 	if (stillScanning()) {
 		Slim::Utils::Scheduler::remove_task(\&scanFunction);
 		doneScanning();
@@ -403,7 +424,7 @@ sub doneScanning {
 	
 	Slim::Music::Info::generatePlaylists();
 	
-	Slim::Music::Import::endImporter('itunes');
+	Slim::Music::Import::endImporter('ITUNES');
 }
 
 ###########################################################################################
@@ -414,8 +435,6 @@ sub doneScanning {
     # Abandon all hope ye who enter here...
 ###########################################################################################
 sub scanFunction {
-	$::d_itunes_verbose && msg("scanFunction()\n");
-
 	my $file = $ituneslibraryfile || findMusicLibraryFile();;
 	
 	# this assumes that iTunes uses file locking when writing the xml file out.
@@ -537,6 +556,10 @@ sub scanFunction {
 						Slim::Music::Import::artwork($cacheEntry{'ALBUM'},$url);
 					}
 				}
+				
+				#XXX - FIXME We need to call this twice for the datastore to add thigns like Genre, etc
+				# for a track since certain items seem to be dropped for new tracks.
+				Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
 				Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
 				$tracks{$id} = $url;
 			} else {
@@ -586,7 +609,7 @@ sub scanFunction {
 		} elsif ($curLine eq "<key>Playlists</key>") {
 			$inPlaylists = 1;
 			$inTracks = 0;
-			# todo, clear out the old moodlogic playlists from the info database.
+			# todo, clear out the old itunes playlists from the info database.
 			$::d_itunes && msg("iTunes: starting playlist parsing\n");
 		}
 	}
@@ -626,7 +649,7 @@ sub getValue {
 	my $curLine = getLine();
 	my $data = '';
 	if ($curLine =~ /^<(?=[ids])(?:integer|date|string)>([^<]*)<\/(?=[ids])(?:integer|date|string)>$/) {
-               $data = $1;
+		$data = $1;
 	} elsif ($curLine eq '<true/>') {
 		$data = 1;
 	} elsif ($curLine eq '<data>') {
@@ -655,7 +678,7 @@ sub getValue {
 sub getPlaylistTrackArray {
 	my @playlist = ();
 	my $curLine = getLine();
-	$::d_itunes_verbose && msg("Starting parsing of playlist\n");
+	
 	if ($curLine ne '<array>') {
 		warn "Unexpected $curLine in playlist track array while looking for <array>";
 		return;
@@ -769,7 +792,7 @@ sub strip_automounter {
 	return $path;
 }
 
-sub setupGroup {
+sub setupUse {
 	my $client = shift;
 	my %setupGroup = (
 		'PrefOrder' => ['itunes']
@@ -797,8 +820,47 @@ sub setupGroup {
 					foreach my $client (Slim::Player::Client::clients()) {
 						Slim::Buttons::Home::updateMenu($client);
 					}
-					Slim::Music::Import::useImporter('itunes',$changeref->{'itunes'}{'new'});
-					Slim::Music::Import::startScan('itunes');
+					Slim::Music::Import::useImporter('ITUNES',$changeref->{'itunes'}{'new'});
+					Slim::Music::Import::startScan('ITUNES');
+				}
+			,'optionSort' => 'KR'
+			,'inputTemplate' => 'setup_input_radio.html'
+		}
+	);
+	return (\%setupGroup,\%setupPrefs);
+}
+
+sub setupGroup {
+	my $client = shift;
+	my %setupGroup = (
+		'PrefOrder' => ['debug']
+		,'PrefsInTable' => 1
+		,'Suppress_PrefHead' => 1
+		,'Suppress_PrefDesc' => 1
+		,'Suppress_PrefLine' => 1
+		,'Suppress_PrefSub' => 1
+		,'GroupHead' => string('SETUP_ITUNES')
+		,'GroupDesc' => string('SETUP_ITUNES_DESC')
+		,'GroupLine' => 1
+				,'GroupSub' => 1
+	);
+	my %setupPrefs = (
+		'debug'	=> {
+			'validate' => \&Slim::Web::Setup::validateTrueFalse
+			,'changeIntro' => "iTunes Debug"
+			,'options' => {
+					'1' => string('ON')
+					,'0' => string('OFF')
+				}
+			,'onChange' => 	sub {
+					my ($client,$changeref,$paramref,$pageref) = @_;
+
+					if ($changeref->{'debug'}{'new'}) {
+						$::d_import .= ($::d_itunes) ? "" : "itunes";
+					} else {
+						$::d_import =~ s/itunes//ig;
+					}
+					print $::d_import;
 				}
 			,'optionSort' => 'KR'
 			,'inputTemplate' => 'setup_input_radio.html'
