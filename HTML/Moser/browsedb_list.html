@@ -5,15 +5,15 @@
           <div class="controls">
             <ul class="songctl">
               <li><a href="status.html?
-				[%- IF descend %]command=playlist&amp;sub=loadtracks[% attributes | html -%]
+				[%- IF descend %]command=playlist&amp;subcommand=loadtracks[% attributes | html -%]
 				[%- ELSE %]p0=playlist&amp;p1=play&amp;p2=[% itempath | uri -%]
               	[%- END %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %]"><span>&gt;</span></a></li>
               <li><a href="status.html?
-				[%- IF descend %]command=playlist&amp;sub=inserttracks[% attributes | html -%]
+				[%- IF descend %]command=playlist&amp;subcommand=inserttracks[% attributes | html -%]
 				[%- ELSE %]p0=playlist&amp;p1=insert&amp;p2=[% itempath | uri %]
 				[%- END %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %] [% "NEXT" | string %]"><span>&gt;|</span></a></li>
               <li><a href="status.html?
-				[%- IF descend %]command=playlist&amp;sub=addtracks[% attributes | html -%]
+				[%- IF descend %]command=playlist&amp;subcommand=addtracks[% attributes | html -%]
 				[%- ELSE %]p0=playlist&amp;p1=append&amp;p2=[% itempath | uri -%]
 				[%- END %]&amp;player=[% player | uri %]"  target="status" title="[% "ADD_TO_PLAYLIST" | string %]"><span>+</span></a></li>
             </ul>

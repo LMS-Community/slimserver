@@ -24,11 +24,11 @@ function doTransform(rxml) {
 		for (j = 0; j < results.length; j++) {
 			id = results[j].getAttribute("id");
 			output += '<tr><td class="browselistbuttons">';
-			output += '<img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;sub=addtracks';
+			output += '<img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks';
 			output += '&amp;' + type + '=' + id + '&quot;)" src="html/images/add.gif" width="8" height="8"/>';
 			output += '<img src="html/images/play.this.gif" width="5" height="9" onclick="parent.updateStatus';
 			output += 'Combined(&quot;&amp;command=playlist&amp;';
-			output += 'sub=loadtracks&amp;' + type + '=' + id + '&quot;)"/> </td><td class="browselisting">';
+			output += 'subcommand=loadtracks&amp;' + type + '=' + id + '&quot;)"/> </td><td class="browselisting">';
 			output += '<a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=' + hierarchy + '&amp;';
 			output += 'level=0&amp;' + type + '=' + id + '&quot;)">' + results[j].firstChild.data + '</a>';
 			output += '</td></tr>';

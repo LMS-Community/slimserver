@@ -6,9 +6,9 @@
   <a onclick="parent.browseurl(&quot;songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&quot;)">[% text | html %]</a>[% END %]
  </td>
  <td class="browselistbuttons">[% IF descend %]
-  <img height="13" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;sub=loadtracks[% attributes | html
+  <img height="13" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks[% attributes | html
   %]&quot;)" width="13" src="html/images/b/b_play.gif" alt="Play" /><img src="html/images/b/b_add.gif" width="13" alt="Add"
-  onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;sub=addtracks[% attributes | html %]&quot;)"
+  onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks[% attributes | html %]&quot;)"
   height="13"/>[% ELSE %]
   <img width="13" height="13" onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=play&amp;p2=[% itempath |
   uri %]&quot;)" src="html/images/b/b_play.gif" alt="Play"/><img src="html/images/b/b_add.gif" width="13" height="13"

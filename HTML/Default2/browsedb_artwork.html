@@ -10,9 +10,9 @@
   [% END %]
  </div>
  <br><span class="browselistbuttons">[% IF descend %]
- <img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;sub=addtracks[% attributes | html %]&quot;)"
+ <img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks[% attributes | html %]&quot;)"
  alt="Add" src="html/images/add.gif" width="8" height="8"/><img src="html/images/play.this.gif" width="5" height="9"
- alt="Play" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;sub=loadtracks[% attributes | html
+ alt="Play" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks[% attributes | html
  %]&quot;)"/>[% ELSE %]
  <img src="html/images/add.gif" onclick="parent.updateStatusCombined(&quot;&amp;p0=playlist&amp;p1=add&amp;p2=[% itempath |
  uri %]&quot;)" alt="Add" width="8" height="8"/><img alt="Play" src="html/images/play.this.gif" width="5" height="9"

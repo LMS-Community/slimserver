@@ -11,9 +11,9 @@
     <xsl:for-each select="livesearchitem">
      <tr>
       <td class="browselistbuttons">
-       <img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;sub=addtracks&amp;{../@type}={@id}&quot;)"
+       <img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks&amp;{../@type}={@id}&quot;)"
             src="html/images/add.gif" width="8" height="8"/>
-       <img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;sub=loadtracks&amp;{../@type}={@id}&quot;)"
+       <img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks&amp;{../@type}={@id}&quot;)"
             src="html/images/play.this.gif" width="5" height="9"/>
       </td>
       <td class="browselisting">
