@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.106 2004/09/01 00:14:33 dean Exp $
+# $Id: Source.pm,v 1.107 2004/09/08 00:27:52 dean Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -241,13 +241,22 @@ sub textSongTime {
 	# 2 and 5 display remaining time, not elapsed
 	if ($playingDisplayMode % 3 == 2) {
 		my $duration = $client->songduration() || 0;
-		$delta = $duration - $delta;
-
-		$sign = '-';
+		if ($duration) {
+			$delta = $duration - $delta;	
+			$sign = '-';
+		}
 	}
-
-	my $time = sprintf("%s%02d:%02d", $sign, $delta / 60, $delta % 60);
-
+	
+	my $hrs = int($delta / (60 * 60));
+	my $min = int(($delta - $hrs * 60 * 60) / 60);
+	my $sec = $delta - ($hrs * 60 * 60 + $min * 60);
+	
+	my $time;
+	if ($hrs) {
+		$time = sprintf("%s%d:%02d:%02d", $sign, $hrs, $min, $sec);
+	} else {
+		$time = sprintf("%s%02d:%02d", $sign, $min, $sec);
+	}
 	return $time;
 }
 
@@ -778,7 +787,6 @@ sub errorOpening {
 	my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
 	
 	$client->showBriefly($line1, $line2, 1,1);
-	Slim::Buttons::Common::param($client,'noUpdate',1);
 }
 
 sub openSong {
