@@ -137,9 +137,6 @@ sub _parseTags {
 	my $fh	 = $self->{'fileHandle'};
 	my ($tmp,$tagLen,$tagItemKey,$tagFlags,$tagItemVal);
 
-	seek $fh, 2, 0;
-	my $filelen = tell $fh;
-	
 	# Seek to the location of the known APE header/footer
 	seek $fh, $self->{'APETagLoc'}, 0;
 
@@ -166,9 +163,8 @@ sub _parseTags {
 		# actual tag info
 	}
 
-	return -1 if (!$self->{'tagTotalSize'} || ($self->{'tagTotalSize'} < 0) || ($self->{'tagTotalSize'} > $filelen));
+	return -1 if (!$self->{'tagTotalSize'} || ($self->{'tagTotalSize'} < 0));
 	
-	print  $self->{'tagTotalSize'}  . "\n";
 	# Read in the entire tag structure
 	read($fh, $tmp, $self->{'tagTotalSize'}) or return -1;
 
@@ -182,7 +178,7 @@ sub _parseTags {
 		$tagFlags = _grabInt32(\$tmp);
 
 		if ($tmp =~ /^(.*?)\0/) {
-			$tagItemKey = $1;
+			$tagItemKey = uc($1);
 		}
 
 		$tmp =~ s/^.*?\0//;

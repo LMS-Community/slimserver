@@ -22,7 +22,7 @@ use Audio::Musepack;
 use MP3::Info ();
 
 my %tagMapping = (
-	'TRACKNUMBER'	=> 'TRACKNUM',
+	'TRACK'	=> 'TRACKNUM',
 	'DATE'		=> 'YEAR',
 	'DISCNUMBER'	=> 'DISC',
 );
