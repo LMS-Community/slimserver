@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.9 2003/09/15 18:50:21 dean Exp $
+# $Id: Pages.pm,v 1.10 2003/09/22 23:42:48 dean Exp $
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -381,9 +381,12 @@ sub status {
 		$$main_form_ref{'player_chooser_list'} = options($client->id(),\%clientlist,$$main_form_ref{'skinOverride'});
 	}
 
+	$$main_form_ref{'refresh'} = Slim::Utils::Prefs::get("refreshRate");
+	
 	if (!defined($client)) {
 		return Slim::Web::HTTP::filltemplatefile("status_noclients.html", $main_form_ref);
 	} elsif ($client->needsUpgrade()) {
+		$$main_form_ref{'player_needs_upgrade'} = '1';
 		return Slim::Web::HTTP::filltemplatefile("status_needs_upgrade.html", $main_form_ref);
 	}
 
@@ -392,7 +395,6 @@ sub status {
 	 
 	if (defined($client)) {
 		$songcount = Slim::Player::Playlist::count($client);
-		$$main_form_ref{'refresh'} = Slim::Utils::Prefs::get("refreshRate");
 		
 		if ($client->defaultName() ne $client->name()) {
 			$$main_form_ref{'player_name'} = $client->name();
@@ -488,6 +490,7 @@ sub playlist {
 	my $main_form_ref = shift;
 	
 	if (defined($client) && $client->needsUpgrade()) {
+		$$main_form_ref{'player_needs_upgrade'} = '1';
 		return Slim::Web::HTTP::filltemplatefile("playlist_needs_upgrade.html", $main_form_ref);
 	}
 	

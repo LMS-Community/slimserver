@@ -1,21 +1,21 @@
 <tr>
-  <td [IF odd]class="odd" bgcolor="#ececec" width="100%"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF" width="100%"[/IFN]>
+  <td width="100%" [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN]>
 	  [IF anchor]<a name="{anchor}"></a>[/IF]
-      [IF  descend] <a href="browseid3.html?song={%song}&artist={%artist}&album={%album}&genre={%genre}&player={%player}">{&title}</a>  [/IF]
+      [IF  descend]<a href="browseid3.html?song={%song}&artist={%artist}&album={%album}&genre={%genre}&player={%player}">{&title}</a>  [/IF]
       [IFN descend]<a href="songinfo.html?songurl={%itempath}&player={%player}">{&title}</a>
       [/IFN]
  </td>
-<td   [IF odd]class="odd" bgcolor="#ececec" align="right"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF" align="right"[/IFN]> 
-      [IF mixable_descend]<nobr><a href="mood_wheel.html?genre={%genre}&artist={%artist}&album={%album}&player={%player}"><img src="html/images/b_mix.gif" width=13 height=13 alt="" border="0"></a></nobr> [/IF]
-      [IF mixable_not_descend] <nobr><a href="instant_mix.html?song={%item}&genre={%genre}&artist={%artist}&album={%album}&player={%player}"><img src="html/images/b_mix.gif" width=13 height=13 alt="" border="0"></a></nobr> [/IF]
+<td align="right" [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN]> 
+      [IF mixable_descend]<nobr><a href="mood_wheel.html?genre={%genre}&artist={%artist}&album={%album}&player={%player}"><img src="html/images/b_mix.gif" width=13 height=13 alt=""></a></nobr> [/IF]
+      [IF mixable_not_descend] <nobr><a href="instant_mix.html?song={%item}&genre={%genre}&artist={%artist}&album={%album}&player={%player}"><img src="html/images/b_mix.gif" width=13 height=13 alt=""></a></nobr> [/IF]
  </td>
-  <td [IF odd]class="odd" bgcolor="#ececec" align="right" width="13"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF" align="right" width="13"[/IFN]>
-      [IF descend]  <nobr><a href="status_header.html?p0=playlist&p1=loadalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt="" border="0"></a></nobr> [/IF]
-      [IFN descend] <nobr><a href="status_header.html?p0=playlist&p1=play&p2={%itempath}&player={%player}" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt="" border="0"></a></nobr> [/IFN]
+  <td align="right" width="13" [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN]>
+      [IF descend]<nobr><a href="status_header.html?p0=playlist&p1=loadalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt=""></a></nobr> [/IF]
+      [IFN descend]<nobr><a href="status_header.html?p0=playlist&p1=play&p2={%itempath}&player={%player}" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt=""></a></nobr> [/IFN]
 </td>
-  <td [IF odd]class="odd" bgcolor="#ececec" align="right" width="13"[/IF] [IFN odd]class="even" bgcolor="#FFFFFF" align="right" width="13"[/IFN]>
-      [IF descend]   <nobr><a href="status_header.html?p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt="" border="0"></a></nobr> [/IF]
-      [IFN descend]  <nobr><a href="status_header.html?p0=playlist&p1=append&p2={%itempath}&player={%player}" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt="" border="0"></a></nobr> [/IFN]
+  <td  align="right" width="13" [IF odd]class="odd"[/IF] [IFN odd]class="even"[/IFN]>
+      [IF descend]<nobr><a href="status_header.html?p0=playlist&p1=addalbum&p2={%genre}&p3={%artist}&p4={%album}&player={%player}" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt=""></a></nobr> [/IF]
+      [IFN descend]<nobr><a href="status_header.html?p0=playlist&p1=append&p2={%itempath}&player={%player}" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt=""></a></nobr> [/IFN]
   </td>
 </tr>
 
