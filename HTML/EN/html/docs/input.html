@@ -790,5 +790,180 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
   </p>
   <h4><a id="Bar"></a>Bar</h4>
   <h5>Description</h5>
-  <p>Not currently implemented.</p>
+  <p>
+    The <strong>Bar</strong> input mode is used to select a value that is best represented as
+    on a sliding scale.  This may be a single direction or bi-directional slider.
+  </p>
+  <p>
+    On entry into the mode, the initial selection will depend on the supplied
+    parameters.  If <var>valueRef</var> is supplied, then the mode will begin with that value.
+    If <var>valueRef</var> is not supplied, or if its value does not appear in
+    fit withing the bounds supplied in the other parameters, the value will be assumed to be zero.
+  <p>
+    This mode will not maintain state between invocations, so if such state
+    information needs to be kept, it is the responsibility of the calling
+    mode to do so.
+  </p>
+  <h5>Parameters</h5>
+  <p>
+    The following parameters are used by the <strong>INPUT.Bar</strong> mode. They are
+    listed in the order of likelyhood to be supplied. Other parameters can be
+    supplied for use by the callback, external display, or change handler
+    functions, but will not otherwise have any effect on the <strong>INPUT.Bar</strong>
+    behavior.
+  </p>
+  <p>
+    The <var>header</var> parameter can be supplied in a number of different ways.  If a scalar, it
+    will be displayed as is. If a code reference, it will be invoked with the
+    arguments specified in the corresponding <var>Args</var> parameter
+    (<var>header</var> would use <var>headerArgs</var> etc.) and the return value
+    will be displayed. If a hash reference, the value corresponding to the key
+    indicated by the referenced value of <var>valueRef</var> will be displayed.
+    If an array ref, the value at <var>listIndex</var> of the array is extracted
+    and then interpreted as above. If the extracted value is itself an array ref,
+    the array referenced is returned.
+  </p>
+  <p>
+    <dl>
+      <dt>header</dt>
+      <dd>Default: &quot;Select item:&quot; (not localized)</dd>
+      <dd>
+        String to display on the top line of the display. This parameter can
+        be interpreted in a number of ways, see above. After the value to be
+        displayed is determined, it is then modified according to the
+        <var>stringHeader</var> and <var>headerAddCount</var> parameters, below.
+      </dd>
+      <dt>headerArgs</dt>
+      <dd>Default: &quot;CV&quot;</dd>
+      <dd>
+        One of &quot;CV&quot;, &quot;C&quot;, &quot;V&quot;, or &quot;&quot;.
+        The C indicates that the client object should be passed to the function
+        to determine the header value, the V indicates that the internal value
+        should be passed.
+      </dd>
+      <dt>stringHeader</dt>
+      <dd>Default: undef</dd>
+      <dd>
+        If set to a true value, the display value of <var>header</var> is
+        passed to the <code>string()</code> function to be localized. If no
+        localized string is defined for the value of <var>header</var>, it is
+        displayed as is.
+      </dd>
+      <dt>callback</dt>
+      <dd>Default: none</dd>
+      <dd>
+        A code reference which is called whenever an exit event occurs. If
+        this parameter is not supplied, <strong>INPUT.Bar</strong> will 
+        perform a pop mode right on left exit event, bump right on right exit
+        events, and a simple pop mode on other types of exit event. This
+        behavior should be sufficient for simple list displays where nothing
+        needs to happen on a right exit event. The procedure referenced should
+        take the client object as the first parameter and the exit event type
+        as the second.
+      </dd>
+      <dt>valueRef</dt>
+      <dd>
+        Default: reference to copy of item in <var>listIndex</var> position in list
+      </dd>
+      <dd>
+        <var>valueRef</var> contains a reference to the currently selected item.
+        Typically this will be a reference to a variable local to the calling
+        mode, so that the final value will not need to be explicitly assigned
+        to some local variable.
+      </dd>
+      <dt>min</dt>
+      <dd>Default: 0</dd>
+      <dd>
+        Sets the minimum value allowed for selection.  The slider will stop and hold 
+        at this value unless the user selects a greater value.
+      </dd>
+      <dt>max</dt>
+      <dd>Default: 100</dd>
+      <dd>
+        Sets the maximum value allowed for selection.  The slider will stop and hold 
+        at this value unless the user selects a lesser value.
+      </dd>
+      <dt>mid</dt>
+      <dd>Default: 0</dd>
+      <dd>
+        Sets the midpoint reference for bi-directional sliders.  Accellerated scrolling 
+        will pause at this point, and the bar will display mirrored output centred on this point.
+      </dd>
+      <dt>increment</dt>
+      <dd>Default: 2.5</dd>
+      <dd>
+        Determines the value increase for each step in the scrolling function.
+      </dd>
+      <dt>barOnDouble</dt>
+      <dd>Default: 0</dd>
+      <dd>
+        Determines the display when large fonts are used.  Setting to 1 will show only the Bar on large fonts.
+        The default of 0 shows the header line provided by the <var>header</var> parameter.
+      </dd>
+      <dt>onChange</dt>
+      <dd>Default: none</dd>
+      <dd>
+        A code reference which is executed each time the currently selected
+        item changes. It is passed arguments according to the value of
+        <var>onChangeArgs</var>. Any return value will be ignored.
+      </dd>
+      <dt>onChangeArgs</dt>
+      <dd>Default: &quot;CV&quot;</dd>
+      <dd>
+        One of &quot;CV&quot;, &quot;C&quot;, &quot;V&quot;, or &quot;&quot;.
+        The C indicates that the client object should be passed to the function,
+        the V indicates that the internal value should be passed.
+      </dd>
+    </dl>
+  </p>
+  <h5>Exit Event Types</h5>
+  <p>
+    The callback function should handle the following event types in some way.
+    Ignoring them is acceptable, crashing the server is not.
+  </p>
+  <p>
+    <dl>
+      <dt>left</dt>
+      <dd>
+        By default, generated by a left button press. If no callback function
+        specified, this will result in leaving the mode with the animated
+        push to the right.
+      </dd>
+      <dt>right</dt>
+      <dd>
+        By default, generated by a right button press. If no callback function
+        specified, this will result in a bump right animation.
+      </dd>
+      <dt><em>Other</em></dt>
+      <dd>
+        Generated by the exit function where the type is determined by the
+        argument supplied. Usually will be a button name like play or add, but
+        be prepared for anything.
+      </dd>
+    </dl>
+  </p>
+  <h5>Functions</h5>
+  <p>
+    <dl>
+      <dt>up</dt>
+      <dd>Changes the current position in the list. Repeat is allowed and accelerates.
+      If the bar is bi-directional, there will be a pause at the middle value</dd>
+      <dt>down</dt>
+      <dd>Changes the current position in the list. Repeat is allowed and accelerates.
+      If the bar is bi-directional, there will be a pause at the middle value</dd>
+      <dt>exit</dt>
+      <dd>
+        Takes an argument. An exit event is generated with the type being the
+        supplied argument. If no argument is supplied, the exit event type is
+        <em>exit</em>.
+      </dd>
+      <dt>passback</dt>
+      <dd>
+        Executes the last button event (button plus pressing style) in the
+        context of the parent mode (set by the parentMode parameter). This
+        allows for parent modes to map button presses to functions without
+        needing to modify the mapping of the <strong>INPUT.List</strong> mode.
+      </dd>
+    </dl>
+  </p>
 [% PROCESS helpfooter.html %]
