@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.73 2004/02/25 17:23:23 dean Exp $
+# $Id: HTTP.pm,v 1.74 2004/02/25 19:21:19 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -497,10 +497,6 @@ sub addstreamingresponse {
 			$client->paddr($newpeeraddr)
 		}
 	}	
-	
-	if (defined $paramref->{'p0'} && $paramref->{'p0'} eq 'playlist') {
-		Slim::Control::Command::execute($client, [$paramref->{'p0'},$paramref->{'p1'},$paramref->{'p2'}]);
-	}
 }
 
 sub checkAuthorization {
