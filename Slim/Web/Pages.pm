@@ -1117,6 +1117,7 @@ sub playlist {
 
 	$params->{'playlist_items'} = '';
 	$params->{'skinOverride'} ||= '';
+	$params->{'start'} ||= 0;
 
 	if ($client && $client->currentPlaylist()) {
 		$params->{'current_playlist'} = $client->currentPlaylist();
@@ -1126,8 +1127,13 @@ sub playlist {
 
 	if ($::d_playlist && $client && $client->currentPlaylistRender() && ref($client->currentPlaylistRender()) eq 'ARRAY') {
 
-		Slim::Utils::Misc::msg("currentPlaylistChangeTime: " . localtime($client->currentPlaylistChangeTime()) . "\n");
-		Slim::Utils::Misc::msg("currentPlaylistRender    : " . localtime($client->currentPlaylistRender()->[0]) . "\n");
+		Slim::Utils::Misc::msg("currentPlaylistChangeTime : " . localtime($client->currentPlaylistChangeTime()) . "\n");
+		Slim::Utils::Misc::msg("currentPlaylistRender     : " . localtime($client->currentPlaylistRender()->[0]) . "\n");
+		Slim::Utils::Misc::msg("currentPlaylistRenderSkin : " . $client->currentPlaylistRender()->[1] . "\n");
+		Slim::Utils::Misc::msg("currentPlaylistRenderStart: " . $client->currentPlaylistRender()->[2] . "\n");
+
+		Slim::Utils::Misc::msg("skinOverride: $params->{'skinOverride'}\n");
+		Slim::Utils::Misc::msg("start: $params->{'start'}\n");
 	}
 
 	# Only build if we need to.
@@ -1252,7 +1258,7 @@ sub buildPlaylist {
 
 	$params->{'playlist_items'} = '';
 
-	Slim::Utils::Misc::msg("Starting playlist build.\n");
+	$::d_playlist && Slim::Utils::Misc::msg("Starting playlist build.\n");
 
 	# This is a hot loop.
 	# But it's better done all at once than through the scheduler.
@@ -1312,7 +1318,7 @@ sub buildPlaylist {
 		}
 	}
 
-	Slim::Utils::Misc::msg("End playlist build. $itemCount items\n");
+	$::d_playlist && Slim::Utils::Misc::msg("End playlist build. $itemCount items\n");
 
 	undef %$listBuild;
 
@@ -1323,7 +1329,7 @@ sub buildPlaylist {
 		$client->currentPlaylistRender([
 			time(),
 			($params->{'skinOverride'} || ''),
-			$params->{'start'},
+			($params->{'start'} || 0),
 			$params->{'playlist_header'},
 			$params->{'playlist_pagebar'},
 			$params->{'playlist_items'}
