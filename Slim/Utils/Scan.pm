@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.23 2005/01/04 08:53:38 dsully Exp $
+# $Id: Scan.pm,v 1.24 2005/01/06 03:41:07 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -342,9 +342,14 @@ sub addToList_run {
 		push @$arrayref, $itempath;
 		$jobState->numitems($jobState->numitems+1);
 		
-		# force the loading of ID3 data
-		#Slim::Music::Info::title($itempath);
-		Slim::Music::Info::markAsScanned($itempath);
+		# force the loading of ID3 data. Getting the object isn't
+		# enough - getting the tag attribute will ensure that
+		# we've read from file.
+		my $ds = Slim::Music::Info::getCurrentDataStore();
+		my $track = $ds->objectForUrl($itempath, 1);
+		$track->tag if defined($track);
+
+		$ds->markEntryAsValid($itempath);
 
 		# Try not to kill the CPU - leave a little time for streaming
 		Time::HiRes::sleep(0.25);

@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DBIStore;
 
-# $Id: DBIStore.pm,v 1.6 2005/01/04 03:38:52 dsully Exp $
+# $Id: DBIStore.pm,v 1.7 2005/01/06 03:41:07 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -456,7 +456,7 @@ sub updateOrCreate {
 
 		while (my ($key, $val) = each %$attributeHash) {
 
-			if (defined $val && exists $trackAttrs->{$key}) {
+			if (defined $val && exists $trackAttrs->{lc $key}) {
 				$columnValueHash->{$key} = $val;
 			}
 		}
