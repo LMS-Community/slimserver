@@ -586,7 +586,23 @@ sub idle {
 }
 
 sub idleStreams {
-	Slim::Networking::Select::select(0);
+	my $timeout = shift || 0;
+	my $select_time = 0;
+	my $to;
+
+	if ($timeout) {
+		my $select_time = Slim::Utils::Timers::nextTimer();
+		if (!defined($select_time) || $select_time > $timeout) { $select_time = $timeout };	    
+	}
+
+	$::d_time && msg("select_time - idleStreams: $select_time\n");
+
+	Slim::Networking::Select::select($select_time);
+
+	if ($::d_perf) { $to = watchDog(); }
+
+	Slim::Utils::Timers::checkTimers();		    
+	if ($::d_perf) { $to = watchDog($to, "checkTimers - idleStreams"); }
 }
 
 sub showUsage {

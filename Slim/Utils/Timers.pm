@@ -26,10 +26,16 @@ my $pos2 = 0;
 my $string;
 my $sline = -1;
 
+my $checkingTimers = 0; # Semaphore to avoid timer callbacks executing inside each other
+
 #
 # Call any pending timers which have now elapsed.
 #
 sub checkTimers {
+
+	return if $checkingTimers;
+	$checkingTimers = 1;
+    
 	Slim::Networking::Protocol::readUDP() unless $::scanOnly;
 
 	my $numtimers = (@timers);
@@ -59,6 +65,8 @@ sub checkTimers {
 	if (defined($timer)) {
 		unshift @timers, $timer;
 	}
+
+	$checkingTimers = 0;
 }
 
 #

@@ -344,11 +344,14 @@ sub content {
 	my $self   = shift;
 	my $length = shift || $self->contentLength() || Slim::Web::HTTP::MAXCHUNKSIZE();
 
-        my $content = '';
+	my $content = '';
+	my $bytesread = $self->sysread($content, $length);
 
-	while (($self->sysread($content, $length) != 0)) {
+	while ((defined($bytesread) && ($bytesread != 0)) || (!defined($bytesread) && $! == EWOULDBLOCK )) {
 
-		::idleStreams();
+		::idleStreams(0.1);
+
+		$bytesread = $self->sysread($content, $length);
 	}
 
 	return $content;
@@ -360,17 +363,11 @@ sub sysread {
 
 	my $metaInterval = ${*$self}{'metaInterval'};
 	my $metaPointer  = ${*$self}{'metaPointer'};
- 	my $timeout      = $self->timeout();
 
 	if ($metaInterval && ($metaPointer + $chunkSize) > $metaInterval) {
 
 		$chunkSize = $metaInterval - $metaPointer;
 		$::d_source && msg("reduced chunksize to $chunkSize for metadata\n");
-	}
-
-	unless (${*$self}{'_sel'}->can_read($timeout)) {
-		$::d_remotestream && msg("Couldn't sysread - hit timeout: $timeout!\n");
-		return;
 	}
 
 	my $readLength = CORE::sysread($self, $_[1], $chunkSize, length($_[1]));
