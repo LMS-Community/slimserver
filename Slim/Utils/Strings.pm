@@ -1,6 +1,6 @@
 package Slim::Utils::Strings;
 
-# $Id: Strings.pm,v 1.18 2004/12/07 20:19:56 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -35,6 +35,10 @@ my $failsafe_language = 'EN';
 
 sub init {
 	my $usr_strings;
+
+	# clear these so they can be reused for Michael's translator plugin
+	%strings   = ();
+	%languages = ();
 
 	for my $dir (stringsDirs()) {
 
@@ -89,23 +93,29 @@ sub load_strings_file {
 	# Force the UTF-8 layer opening of the strings file.
 	#
 	# Be backwards compatible with perl 5.6.x
+	# 
+	# Setting $/ to undef and slurping is much faster than join('', <STRINGS>)
+	# it also avoids creating an extra in memory copy of the string.
 	if ($] > 5.007) {
 
+		local $/ = undef;
+
 		open(STRINGS, '<:utf8', $file) || die "couldn't open $file\n";
-		$strings = join('', <STRINGS>);
+		$strings = <STRINGS>;
 		close STRINGS;
 
 	} else {
 
 		# This is lexically scoped.
 		use utf8;
+		local $/ = undef;
 
 		open(STRINGS, $file) || die "couldn't open $file\n";
-		$strings = join('', <STRINGS>);
+		$strings = <STRINGS>;
 		close STRINGS;
 	}
 
-	addStrings($strings);
+	addStrings(\$strings);
 }
 
 # Add a single string with a pointer to another string.
@@ -120,33 +130,37 @@ sub addStringPointer {
 
 sub addStrings {
 	my $strings = shift;
-	my @list = split('\n', $strings);
+
+	# memory saver by passing in a ref.
+	if (ref($strings) ne 'SCALAR') {
+		$strings = \$strings;
+	}
 
 	my $string = '';
 	my $language = '';
 	my $stringname = '';
-	my $line = '';
 	my $ln = 0;
 	
-	LINE: foreach $line (@list) {
+	LINE: for my $line (split('\n', $$strings)) {
+
 		$ln++;
 		chomp($line);
 		
-		next if ($line=~/^#/);
-		next if (!($line =~/\S/));
+		next if $line =~ /^#/;
+		next if $line !~ /\S/;
 
-		if ($line=~/^(\S+)$/) {
+		if ($line =~ /^(\S+)$/) {
 
 			$stringname = $1;
-			$string='';
+			$string = '';
 			next LINE;
 
-		} elsif ($line=~/^\t(\S*)\t(.+)$/) {
+		} elsif ($line =~ /^\t(\S*)\t(.+)$/) {
 
 			my $one = $1;
 			$string = $2;
 
-			if ($one=~/./) {
+			if ($one =~ /./) {
 				# if the string spans multiple lines, language can be left blank, and
 				# we'll remember it from the last time we saw it.
 				$language = uc($one);
@@ -201,7 +215,7 @@ sub string {
 
 		next unless $strings{$stringname}->{$tryLang};
 
-		return $strings{$stringname}->{$tryLang};
+		return $strings{$stringname}->{$tryLang} . (($tryLang ne $language) && Slim::Utils::Prefs::get('translatorMode') ? " {$stringname}" : '');
 	}
 
 	unless ($dontWarn) {
