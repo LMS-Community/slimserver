@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.13 2003/10/02 21:00:40 dean Exp $
+# $Id: Pages.pm,v 1.14 2003/10/10 20:44:54 dean Exp $
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -361,11 +361,11 @@ sub browser_addtolist_done {
 
 sub status_header {
 	my($client, $main_form_ref) = @_;
-	return status($client, $main_form_ref, 0);
+	return status($client, $main_form_ref, 1);
 }
 
 sub status {
-	my($client, $main_form_ref, $add_playlist) = @_;
+	my($client, $main_form_ref, $omit_playlist) = @_;
 
 	$$main_form_ref{'playercount'} = Slim::Player::Client::clientCount();
 	
@@ -471,11 +471,11 @@ sub status {
 	
 	my $output = "";
 	
-	if ($add_playlist) {
+	if (!$omit_playlist) {
 		$$main_form_ref{'playlist'} = playlist($client, $main_form_ref);
 	}
 			  
-	$output .= &Slim::Web::HTTP::filltemplatefile($add_playlist ? "status.html" : "status_header.html", $main_form_ref);
+	$output .= &Slim::Web::HTTP::filltemplatefile($omit_playlist ? "status_header.html" : "status.html" , $main_form_ref);
 
 	if (($$main_form_ref{'Content-Type'} eq 'text/html') && 
 	    (!$$main_form_ref{'refresh'} || !$client->htmlstatusvalid() || !Slim::Utils::Prefs::get('templatecache'))) {
