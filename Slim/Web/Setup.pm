@@ -3121,9 +3121,10 @@ sub validateInt {
 }
 
 sub validatePort {
-	my $val = shift || return undef;
+	my $val = shift;
 
-	if ($val !~ /^-?\d+$/) { #not an integer
+	# not an integer
+	if (!defined $val || $val !~ /^-?\d+$/) {
 		return undef;
 	}
 
