@@ -284,9 +284,9 @@ package Plugins::Rescan;
 use Slim::Player::Playlist;
 use Slim::Utils::Strings qw (string);
 
-sub getDisplayName() [% return string('PLUGIN_RESCAN_MUSIC_LIBRARY') %]
+sub getDisplayName() (return string('PLUGIN_RESCAN_MUSIC_LIBRARY'));
 
-sub strings() [%  return '
+sub strings() {  return '
 PLUGIN_RESCAN_MUSIC_LIBRARY
 	EN	Rescan Music Library
 	
@@ -295,63 +295,63 @@ PLUGIN_RESCAN_RESCANNING
 
 PLUGIN_RESCAN_PRESS_PLAY
 	EN	Press PLAY to rescan your music folder
-' %];
+'};
 
 ##################################################
 ### Section 2. Your variables and code go here ###
 ##################################################
 
 
-sub setMode() [% 
+sub setMode() {
 	my $client = shift;
 	$client-&gt;lines(\&amp;lines);
- %]
+}
 
-sub enabled [% 
+sub enabled { 
 	my $client = shift;
 	return !Slim::Music::iTunes::useiTunesLibrary();
- %]
+}
 
 my %functions = (
-	'up' =&gt; sub  [% 
+	'up' =&gt; sub { 
 		my $client = shift;
 		Slim::Display::Animation::bumpUp($client);
-	 %],
-	'down' =&gt; sub  [% 
+	},
+	'down' =&gt; sub { 
 	    my $client = shift;
 		Slim::Display::Animation::bumpDown($client);
-	 %],
-	'left' =&gt; sub  [% 
+	},
+	'left' =&gt; sub {
 		my $client = shift;
 		Slim::Buttons::Common::popModeRight($client);
-	 %],
-	'right' =&gt; sub  [% 
+	},
+	'right' =&gt; sub {
 		my $client = shift;
 		Slim::Display::Animation::bumpRight($client);
-	 %],
-	'play' =&gt; sub [% 
+	},
+	'play' =&gt; sub {
 		my $client = shift;
 		my @pargs=('rescan');
 		my ($line1, $line2) = (string('PLUGIN_RESCAN_MUSIC_LIBRARY'), string('PLUGIN_RESCAN_RESCANNING'));
 		Slim::Control::Command::execute($client, \@pargs, undef, undef);
 		Slim::Display::Animation::showBriefly($client, $line1, $line2);
-	 %]
+	}
 );
 
-sub lines [% 
+sub lines {
 	my ($line1, $line2);
 	$line1 = string('PLUGIN_RESCAN_MUSIC_LIBRARY');
 	$line2 = string('PLUGIN_RESCAN_PRESS_PLAY');
 	return ($line1, $line2);
- %]
+}
 	
 ################################################
 ### End of Section 2.                        ###
 ################################################
 
-sub getFunctions() [% 
+sub getFunctions() {
 	return \%functions;
- %]
+}
 
 1;
 </pre>
