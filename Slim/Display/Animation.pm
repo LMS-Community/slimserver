@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::Animation;
 
-# $Id: Animation.pm,v 1.18 2004/07/22 02:03:47 kdf Exp $
+# $Id: Animation.pm,v 1.19 2004/07/28 01:55:04 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -659,11 +659,16 @@ sub animateScrollSingle1 {
 	my $text22_length = shift;
 	my $pause_count = shift(@_) + $overdue;
 	my $hold = Slim::Buttons::Common::paramOrPref($client,'scrollPause');
+	my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');
+	if ($rate == 0) {
+		$client->update();
+		return;
+	}
 	
 	my ($line1,$line2) = Slim::Display::Display::curLines($client);
 	if ($pause_count < $hold) {
 		Slim::Hardware::VFD::vfdUpdate($client, $line1, $line2, 0);
-		return ($scrollSingleLine1FrameRate,\&animateScrollSingle1, $text22, $text22_length,
+		return ($rate,\&animateScrollSingle1, $text22, $text22_length,
 				$pause_count + $scrollSingleLine1FrameRate);
 	} else {
 		return animateScrollSingle2($client, 0, $text22, 0, $text22_length, \$line1, 0);
@@ -689,7 +694,7 @@ sub animateScrollSingle2 {
 	}
 	
 	if ($ind < $len) {
-		if ($line1_age > $scrollSingleLine1FrameRate) {
+		if ($line1_age > $rate) {
 			# If there is a track time display on line 1, we'd like to refresh it
 			# often enough to have it look smooth.  But calling curLines can be
 			# kind of expensive, so we'll try to keep the old value for just a
@@ -713,7 +718,7 @@ sub animateScrollDouble {
 	my $text22 = shift;
 	my $ind = shift;
 	my $len = shift;
-	my $hold = Slim::Buttons::Common::paramOrPref($client,'scrollPause');
+	my $hold = Slim::Buttons::Common::paramOrPref($client,'scrollPauseDouble');
 	my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRateDouble');
 	if ($rate == 0) {
 		$client->update();
@@ -725,7 +730,7 @@ sub animateScrollDouble {
 	if ($ind > $len) {
 		Slim::Hardware::VFD::vfdUpdate($client, Slim::Hardware::VFD::subString($$text11, 0, 40), 
 				Slim::Hardware::VFD::subString($$text22, 0, 40), 1);
-		return ($hold, \&animateScrollDouble, $text11, $text22, 0, $len);
+		return ($hold + $rate, \&animateScrollDouble, $text11, $text22, 0, $len);
 	}
 	else {
 		Slim::Hardware::VFD::vfdUpdate($client, Slim::Hardware::VFD::subString($$text11, $ind, 40),

@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.77 2004/07/17 01:33:41 kdf Exp $
+# $Id: Prefs.pm,v 1.78 2004/07/28 01:55:04 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -195,10 +195,11 @@ my %DEFAULT = (
 			,'screensaver'			=> 'playlist'
 			,'screensavertimeout' 	=> 30
 			,'scrollPause'			=> 3.6
+			,'scrollPauseDouble'	=> 3.6
 			,'scrollRate'			=> 0.15
 			,'scrollRateDouble'		=> 0.1
 			,'shuffle'				=> 0
-			,'showbufferfullness'   => 0
+			,'showbufferfullness'	=> 0
 			,'silent'				=> 0
 			,'syncPower'			=> 0
 			,'syncVolume'			=> 0

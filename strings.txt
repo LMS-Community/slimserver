@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.121 2004/07/25 22:47:36 dean Exp $
+# $Id: strings.txt,v 1.122 2004/07/28 01:55:03 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1003,6 +1003,12 @@ SETUP_SCROLLPAUSE_DESC
 	EN	You can adjust the amount of time that the player waits before starting horizontal scrolling of the text on the display.  Enter a value, in seconds, for the amount of time to wait before scrolling or between scrolling.  Enter zero to not pause at all and scroll immediately. 3.6 seconds is the default.
 	FR	Vous pouvez ajuster le temps de pause avant que la platine active le défilement horizontal du texte sur l'afficheur. Entrez le temps d'attente avant défilement en secondes. Entrez zéro (0) pour un défilement continu. La valeur par défaut est de 3.6 secondes.
 	SE	Fördröjning innan scrollning av långa texter börjar. Multipel av 0.9 fungerar bäst. 0.001 rekommenderas som lägsta värde.
+
+SETUP_SCROLLPAUSEDOUBLE
+	EN	Double-Size Scroll Pause
+
+SETUP_SCROLLPAUSEDOUBLE_DESC
+	EN	Scroll Pause control for double-size font.
 
 SETUP_SCROLLRATE
 	DE	Scrollrate
