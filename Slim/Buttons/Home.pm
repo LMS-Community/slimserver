@@ -193,7 +193,7 @@ sub setMode {
 	if ($method eq 'pop') {
 		Slim::Buttons::Common::popMode($client);
 		updateMenu($client);
-		unless (defined $client->curDepth()) {$client->curDepth('');}
+		$client->curDepth('');
 		if (!defined($client->curSelection($client->curDepth()))) {
 			$client->curSelection($client->curDepth(),'NOW_PLAYING');
 		}
@@ -201,7 +201,7 @@ sub setMode {
 	}
 	
 	updateMenu($client);
-	unless (defined $client->curDepth()) {$client->curDepth('');}
+	$client->curDepth('');
 	if (!defined($client->curSelection($client->curDepth()))) {
 		$client->curSelection($client->curDepth(),'NOW_PLAYING');
 	}
