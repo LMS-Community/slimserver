@@ -27,6 +27,7 @@ our %Config = (
 	ServiceName => "slimsvc",
 );
 
+
 sub Startup {
 
 	# added to workaround a problem with 5.8 and perlsvc.
@@ -42,18 +43,30 @@ sub Startup {
 }
 
 
+
 sub Install {
+
 	my($Username,$Password);
+
     Getopt::Long::GetOptions(
+
         'username=s' => \$Username,
+
         'password=s' => \$Password,
+
     );
+
+
 
     if ((defined $Username) && ((defined $Password) && length($Password) != 0)) {
         $Config{UserName} = $Username;
+
         $Config{Password} = $Password;
+
     }
+
 }
+
 
 sub Remove {
     # add your additional remove messages or functions here
@@ -129,7 +142,7 @@ use vars qw($VERSION
 	'Daniel Sully',
 );
 
-$VERSION = '5.0.0';
+$VERSION = '5.0.1';
 
 # old preferences settings, only used by the .slim.conf configuration.
 # real settings are stored in the new preferences file:  .slim.pref
