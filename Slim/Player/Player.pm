@@ -337,15 +337,11 @@ sub fade_volume {
 	
 	my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
 	my $mute = Slim::Utils::Prefs::clientGet($client, "mute");
+	
 	if ($vol < 0 && $fade < 0) {
 		# the volume is muted, don't fade.
 		$callback && (&$callback(@$callbackargs));
 		return;
-	}
-	
-	if ($mute || (!$mute && $vol < 0)) {
-		# Set Target (Negative indicates mute, but still saves old value)
-		Slim::Utils::Prefs::clientSet($client, "volume", $vol * -1);
 	}
 
 	# on the first pass, set temporary fade volume
@@ -364,7 +360,7 @@ sub fade_volume {
 
 	$client->volume($fvolume{$client},1); # set volume
 
-	if ($fvolume{$client} == 0 || $fvolume{$client} == $vol) {	
+	if (($fvolume{$client} == 0 && $fade < 0) || ($fvolume{$client} == $vol && $fade > 0)) {	
 		# done fading
 		$::d_ui && msg("fade_volume done.  fade: $fade to $fvolume{$client} (vol: $vol)\n");
 		$fvolume{$client} = 0; # reset temporary fade volume 
@@ -392,7 +388,7 @@ sub mute {
 		# mute volume
 		# todo: there is actually a hardware mute feature
 		# in both decoders. Need to add Decoder::mute
-		$client->volume(0);;
+		$client->volume(0);
 	} else {
 		# un-mute volume
 		$vol *= -1;
