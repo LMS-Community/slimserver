@@ -177,7 +177,7 @@ sub init {
 			'headerAddCount' => 1,
 			'listRef' => undef, # filled in setMode
 			'externRef' => \&moduleDisplay,
-			'externRefArgs' => 'V',
+			'externRefArgs' => 'CV',
 			'menuName' => 'module',
 		}
 	);
@@ -219,11 +219,12 @@ sub infoDisplay {
 
 # function providing the second line of the display for the module menu
 sub moduleDisplay {
+	my $client = shift;
 	my $item = shift;
 
-	my @info = $modules->{$item};
+	my @info = $client->string($modules->{$item});
 
-	push(@info, string('INFORMATION_DISABLED')) unless $enabled{$item};
+	push(@info, $client->string('INFORMATION_DISABLED')) unless $enabled{$item};
 
 	my $version = eval {
 		no strict 'refs';
@@ -231,13 +232,13 @@ sub moduleDisplay {
 	};
 
 	if ($@ || !$version) {
-		push @info, string('INFORMATION_NO_VERSION');
+		push @info, $client->string('INFORMATION_NO_VERSION');
 	} else {
 
 		$version =~ s/^\s+//;
 		$version =~ s/\s+$//;
 
-		push @info, string('INFORMATION_VERSION') . ": $version";
+		push @info, $client->string('INFORMATION_VERSION') . ": $version";
 	}
 
 	return join(' ' . Slim::Display::Display::symbol('rightarrow') . ' ', @info);
