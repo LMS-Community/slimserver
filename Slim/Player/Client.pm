@@ -1,4 +1,4 @@
-# $Id: Client.pm,v 1.59 2004/10/06 15:56:11 vidur Exp $
+# $Id: Client.pm,v 1.60 2004/10/18 18:48:26 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -710,7 +710,7 @@ sub new {
 	$client->[58] = []; # trackInfoLines
 	$client->[59] = []; # trackInfoContent
 	$client->[60] = {}; # lastID3Selection
-	$client->[61] = []; # blocklines
+	$client->[61] = undef; # blocklines
 	$client->[62] = {}; # curSelection
 	$client->[63] = undef; # pluginsSelection
 	$client->[64] = undef; # pwd
@@ -1282,9 +1282,7 @@ sub lastID3Selection {
 }
 sub blocklines {
 	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[61];
-	@_ ? ($r->[61]->[$i] = shift) : $r->[61]->[$i];
+	@_ ? ($r->[61] = shift) : $r->[61];
 }
 sub curSelection {
 	my $r = shift;

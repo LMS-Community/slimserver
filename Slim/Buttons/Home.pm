@@ -133,7 +133,7 @@ sub delMenuOption {
 my %homeChoices;
 
 # TODO: some of this is obvious cruft.  'MUSIC' doesn't seem to exist an a menu option any more.
-# This is also a big sourc eof the inconsistency in "play" and "add" functions.
+# This is also a big source of the inconsistency in "play" and "add" functions.
 # We might want to make this a simple...'add' = clear playlist, 'play' = play everything
 my %functions = (
 	'add' => sub  {
@@ -322,21 +322,25 @@ sub homeExitHandler {
 			);
 		# if here are no submenus, check for the way out.
 		} elsif (exists($nextParams->{'useMode'})) {
-			if (($nextParams->{'useMode'} eq 'INPUT.List' || $nextParams->{'useMode'} eq 'INPUT.Bar')  && exists($nextParams->{'initialValue'})) {
-				#set up valueRef for current pref
-				my $value;
-				if (ref($nextParams->{'initialValue'}) eq 'CODE') {
-					$value = $nextParams->{'initialValue'}->($client);
-				} else {
-					$value = Slim::Utils::Prefs::clientGet($client,$nextParams->{'initialValue'});
+			if (ref($nextParams->{'useMode'}) eq 'CODE') {
+				$nextParams->{'useMode'}->($client);
+			} else {
+				if (($nextParams->{'useMode'} eq 'INPUT.List' || $nextParams->{'useMode'} eq 'INPUT.Bar')  && exists($nextParams->{'initialValue'})) {
+					#set up valueRef for current pref
+					my $value;
+					if (ref($nextParams->{'initialValue'}) eq 'CODE') {
+						$value = $nextParams->{'initialValue'}->($client);
+					} else {
+						$value = Slim::Utils::Prefs::clientGet($client,$nextParams->{'initialValue'});
+					}
+					$nextParams->{'valueRef'} = \$value;
 				}
-				$nextParams->{'valueRef'} = \$value;
+				Slim::Buttons::Common::pushModeLeft(
+					$client
+					,$nextParams->{'useMode'}
+					,$nextParams
+				);
 			}
-			Slim::Buttons::Common::pushModeLeft(
-				$client
-				,$nextParams->{'useMode'}
-				,$nextParams
-			);
 		} elsif (Slim::Buttons::Common::validMode("PLUGIN.".$nextmenu)){
 			Slim::Buttons::Common::pushModeLeft($client,"PLUGIN.".$nextmenu);
 		} else {

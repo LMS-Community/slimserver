@@ -11,14 +11,12 @@ use Slim::Utils::Misc;
 
 # Total of how many file scanners are running
 my %importsRunning;
-my $scantime;
 
 # Force a rescan of all the importers (TODO: Make importers pluggable)
 sub startScan {
 		
 	$::d_info && msg("Clearing ID3 cache\n");
 	Slim::Music::Info::clearCache();
-	$scantime = Time::HiRes::time();
 	
 	$::d_info && msg("Starting background folder, itunes and moodlogic scanning.\n");
 	Slim::Music::MusicFolderScan::startScan();
@@ -50,9 +48,7 @@ sub delImport {
 	if (scalar keys %importsRunning == 0) {
 		Slim::Music::Info::clearStaleCacheEntries();
 		Slim::Music::Info::reBuildCaches();
-		my $now = Time::HiRes::time();
-		$scantime = $now - $scantime;
-		$::d_info && msg("Finished background scanning at ".$scantime." seconds.\n");
+		$::d_info && msg("Finished background scanning.\n");
 		Slim::Music::Info::saveDBCache();
 	}
 }

@@ -54,6 +54,7 @@ sub reconnect {
 	my $paddr = shift;
 	my $revision = shift;
 	my $tcpsock = shift;
+	my $reconnect = shift;
 
 	$client->tcpsock($tcpsock);
 	$client->paddr($paddr);
@@ -62,13 +63,16 @@ sub reconnect {
 	# tell the client the server version
 #	$client->sendFrame('vers', \$::VERSION);
 	
-	# if we're reconnecting and were playing previously, start the track over.
+	# if we're reconnecting (i.e. the player hasn't rebooted, just continue on)
+	# if the player's connecting the first time from boot, and were playing previously, start the track over.
 	# if we were paused, then stop.
-	if (Slim::Player::Source::playmode($client) eq 'play') {
-		Slim::Player::Source::playmode($client, "stop");
-		Slim::Player::Source::playmode($client, "play");
-	} elsif (Slim::Player::Source::playmode($client) eq 'pause') {
-		Slim::Player::Source::playmode($client, "stop");
+	if (!$reconnect) {
+		if (Slim::Player::Source::playmode($client) eq 'play') {
+			Slim::Player::Source::playmode($client, "stop");
+			Slim::Player::Source::playmode($client, "play");
+		} elsif (Slim::Player::Source::playmode($client) eq 'pause') {
+			Slim::Player::Source::playmode($client, "stop");
+		}
 	}
 	
 	$client->update();	

@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.64 2004/10/02 02:55:18 dean Exp $
+# $Id: Slimproto.pm,v 1.65 2004/10/18 18:48:26 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -251,7 +251,7 @@ sub process_slimproto_frame {
 	$::d_slimproto_v && msg("Got Slimproto frame, op $op, length $len, $s\n");
 
 	if ($op eq 'HELO') {
-		my ($deviceid, $revision, @mac, $bitmapped, $wlan_channellist);
+		my ($deviceid, $revision, @mac, $bitmapped, $reconnect, $wlan_channellist);
 
 		(	$deviceid, $revision, 
 			$mac[0], $mac[1], $mac[2], $mac[3], $mac[4], $mac[5],
@@ -259,7 +259,8 @@ sub process_slimproto_frame {
 		) = unpack("CCH2H2H2H2H2H2n2", $data);
 
 		$bitmapped = $wlan_channellist & 0x8000;
-		$wlan_channellist = sprintf('%04x', $wlan_channellist & 0x7fff);
+		$reconnect = $wlan_channellist & 0x4000;
+		$wlan_channellist = sprintf('%04x', $wlan_channellist & 0x2fff);
 
 		my $mac = join(':', @mac);
 		$::d_slimproto && msg(	
@@ -268,6 +269,7 @@ sub process_slimproto_frame {
 			"\trevision: $revision\n".
 			"\tmac: $mac\n".
 			"\tbitmapped: $bitmapped\n".
+			"\treconnect: $reconnect\n".
 			"\twlan_channellist: $wlan_channellist\n"
 			);
 
@@ -321,11 +323,11 @@ sub process_slimproto_frame {
 			);
 
 			$client->macaddress($mac);
-			$client->reconnect($paddr, $revision, $s);
+			$client->reconnect($paddr, $revision, $s, 0);  # don't "reconnect" if the player is new.
 			$client->init();
 		} else {
 			$::d_slimproto && msg("hello from existing client: $id on ipport: $ipport{$s}\n");
-			$client->reconnect($paddr, $revision, $s);
+			$client->reconnect($paddr, $revision, $s, $reconnect);
 		}
 		
 		$sock2client{$s}=$client;

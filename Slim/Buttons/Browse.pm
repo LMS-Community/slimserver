@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.19 2004/10/06 15:56:03 vidur Exp $
+# $Id: Browse.pm,v 1.20 2004/10/18 18:48:25 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -24,15 +24,19 @@ Slim::Buttons::Common::addMode('browse',Slim::Buttons::Browse::getFunctions(),\&
 sub init {
 	my %browse = (
 		'BROWSE_MUSIC_FOLDER' => {
-			'useMode' => 'browse'
-			,'valueRef' => sub {
-				Slim::Buttons::Browse::loadDir(shift, '', 'right',shift);
+			'useMode' => sub {
+				my $client = shift;
+				my @oldlines = Slim::Display::Display::curLines($client);
+				Slim::Buttons::Common::pushMode($client, 'browse');
+				Slim::Buttons::Browse::loadDir($client, '', 'right', \@oldlines);
 			}
 		}
 		,'SAVED_PLAYLISTS' => {
-			'useMode' => 'browse'
-			,'valueRef' => sub {
-				Slim::Buttons::Browse::loadDir(shift, '__playlists', 'right',shift);
+			'useMode' => sub {
+				my $client = shift;
+				my @oldlines = Slim::Display::Display::curLines($client);
+				Slim::Buttons::Common::pushMode($client, 'browse');
+				Slim::Buttons::Browse::loadDir($client, '__playlists', 'right', \@oldlines);
 			}
 		}
 	);
@@ -248,7 +252,7 @@ sub setMode {
 	my $method = shift;
 	
 	my @oldlines = Slim::Display::Display::curLines($client);
-
+	
 	$client->lines(\&lines);
 	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
 	if ($method ne 'pop' && defined $valueRef && ref($valueRef) eq 'CODE') {
@@ -350,7 +354,7 @@ sub opendir_done {
 
 		$client->pwd($pwd);
 	}
-
+	
 	if (defined $direction) {
 		if ($direction eq 'left') {
 			$client->pushRight($oldlinesref, [Slim::Display::Display::curLines($client)]);

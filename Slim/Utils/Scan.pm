@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.16 2004/09/24 01:45:21 kdf Exp $
+# $Id: Scan.pm,v 1.17 2004/10/18 18:48:27 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -386,9 +386,14 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			return 0;
 		}
 
-		if (Slim::Music::Info::isITunesPlaylistURL($playlistpath) || Slim::Music::Info::isMoodLogicPlaylistURL($playlistpath) ||
-			(defined Slim::Music::Info::cachedPlaylist($playlistpath) && 
-			(Slim::Music::Info::isDir($playlistpath) && (((stat(Slim::Utils::Misc::pathFromFileURL($playlistpath)))[9]) == Slim::Music::Info::age($playlistpath))))
+		if (Slim::Music::Info::isITunesPlaylistURL($playlistpath) || 
+			Slim::Music::Info::isMoodLogicPlaylistURL($playlistpath) ||
+			(
+				defined Slim::Music::Info::cachedPlaylist($playlistpath) && 
+			  	(Slim::Music::Info::isDir($playlistpath) && 
+			  	(((stat(Slim::Utils::Misc::pathFromFileURL($playlistpath)))[9]) == Slim::Music::Info::age($playlistpath))) &&
+			  	(((stat(Slim::Utils::Misc::pathFromFileURL($playlistpath)))[9]) != 315529200)
+			  )
 			) {
 			
 			$::d_scan && msg("*** found a current entry for $playlisturl in playlist cache ***\n");

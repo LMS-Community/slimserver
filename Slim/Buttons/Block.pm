@@ -37,12 +37,18 @@ sub block {
 	my $client = shift;
 	my $line1 = shift;
 	my $line2 = shift;
-	$client->blocklines(1, $line1);
-	$client->blocklines(2, $line2);
+	
+	# since we'll be doing an in-place replacement of the overlay, 
+	# we need to parse out the text, in case it's already been
+	# stringified or parsed.
+	$client->blocklines($client->parseLines([$line1,$line2]));
+
 	Slim::Buttons::Common::pushMode($client,'block');
+
 	if (defined $line1) {
 		$client->showBriefly($line1, $line2);
 	}
+
 	# set the first timer to go after .5 sec. We only want to show the status
 	# indicator if it has been a while
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time()+$tickdelay, \&updateBlockedStatus);
@@ -71,11 +77,12 @@ sub lines {
 	my $client = shift;
 	
 	my $pos = int(Time::HiRes::time() / $ticklength) % (@tickchars);
-	my $tickchar = $tickchars[$pos];
 
-	my ($line1, $line2) = ($client->blocklines(1), $client->blocklines(2));
+	my $parsed = $client->blocklines();
 
-	return($line1, $line2, $tickchar, undef);
+	$parsed->{overlay1} = $tickchars[$pos];
+	
+	return($parsed);
 }
 
 1;

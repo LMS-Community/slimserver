@@ -143,6 +143,7 @@ sub _parseWMAHeader {
 
 	# some sanity checks
 	return -1 if ($objectSize > $self->{'size'});
+	return -1 if ($objectSize < 30);
 	
 	if ($DEBUG) {
 		printf("ObjectId: [%s]\n", _byteStringToGUID($objectId));
