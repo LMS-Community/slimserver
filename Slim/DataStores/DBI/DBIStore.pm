@@ -690,7 +690,7 @@ sub readTags {
 			}
 
 			# cache the file size & date
-			$attributesHash->{'FS'} = -s $filepath;					
+			$attributesHash->{'FS'}  = -s $filepath;
 			$attributesHash->{'AGE'} = (stat($filepath))[9];
 			
 			# rewrite the size, offset and duration if it's just a fragment
@@ -774,8 +774,7 @@ sub readTags {
 	} else {
 
 		if (!defined($track->getCached('title'))) {
-			my $title = Slim::Music::Info::plainTitle($file, $type);
-			$attributesHash->{'TITLE'} = $title;
+			$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
 		}
 	}
 	
@@ -897,12 +896,14 @@ sub _hasChanged {
 		
 	# Return if it's a directory - they expire themselves 
 	# Todo - move directory expire code here?
-	return 0 if -d $filepath;
-	
+	#return 0 if -d $filepath;
+	return 0 if Slim::Music::Info::isDir($track);
+	return 0 if Slim::Music::Info::isWinShortcut($track);
+
 	# See if the file exists
 	#
 	# Reuse _, as we only need to stat() once.
-	if (-e _) {
+	if (-e $filepath) {
 
 		my $filesize  = $track->filesize();
 		my $timestamp = $track->timestamp();

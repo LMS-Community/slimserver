@@ -433,9 +433,11 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		# it's pointing to a local file...
 		if (Slim::Music::Info::isWinShortcut($playlisturl)) {
 
-			if (defined Slim::Music::Info::cachedPlaylist($playlisturl)) {
+			my $cached = Slim::Music::Info::cachedPlaylist($playlisturl);
 
-				$playlistpath = ${Slim::Music::Info::cachedPlaylist($playlisturl)}[0];
+			if (defined $cached && ref($cached) eq 'ARRAY') {
+
+				$playlistpath = $cached->[0];
 
 			} else {
 
@@ -541,7 +543,13 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 					
 		$::d_scan && msg("Scan::readList loaded playlist with $numitems items\n");
 	}
-	
+
+	# If we started out a with a lnk but ended up with a dir, the lnk is
+	# still valid and we don't want it removed from the datastore.
+	if ($playlistpath ne $playlisturl) {
+		Slim::Music::Info::markAsScanned($playlisturl);
+	}
+
 	Slim::Music::Info::markAsScanned($playlistpath);
 	
 	return $numitems
