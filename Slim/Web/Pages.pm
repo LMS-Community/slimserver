@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.117 2005/01/08 04:20:47 kdf Exp $
+# $Id: Pages.pm,v 1.118 2005/01/08 08:20:16 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -858,7 +858,7 @@ sub status {
 		}
 
 		#
-		if("play" eq Slim::Player::Source::playmode($client)) {
+		if (Slim::Player::Source::playmode($client) eq 'play') {
 
 			$params->{'modeplay'} = "Play";
 
@@ -871,7 +871,7 @@ sub status {
 				}
 			}
 
-		} elsif ("pause" eq Slim::Player::Source::playmode($client)) {
+		} elsif (Slim::Player::Source::playmode($client) eq 'pause') {
 
 			$params->{'modepause'} = "Pause";
 		
@@ -899,7 +899,7 @@ sub status {
 			$params->{'volume'}    = int($client->volume() + 0.5);
 			$params->{'bass'}      = int($client->bass() + 0.5);
 			$params->{'treble'}    = int($client->treble() + 0.5);
-			$params->{'pitch'}    = int($client->pitch() + 0.5);
+			$params->{'pitch'}     = int($client->pitch() + 0.5);
 
 			my $sleep = $client->sleepTime() - Time::HiRes::time();
 			$params->{'sleep'} = $sleep < 0 ? 0 : int($sleep/60);
@@ -914,8 +914,10 @@ sub status {
 		$params->{'currentsong'} = Slim::Player::Source::currentSongIndex($client) + 1;
 		$params->{'thissongnum'} = Slim::Player::Source::currentSongIndex($client);
 		$params->{'songcount'}   = $songcount;
+		$params->{'itempath'}    = $song;
 
-		_addSongInfo($client, $song, $params);
+		_addSongInfo($client, $params);
+
 		# for current song, display the playback bitrate instead.
 		my $undermax = Slim::Player::Source::underMax($client,$song);
 		if (defined $undermax && !$undermax) {
@@ -1326,7 +1328,11 @@ sub _searchArtistOrAlbum {
 }
 
 sub _addSongInfo {
-	my ($client, $song, $id, $params) = @_;
+	my ($client, $params) = @_;
+
+	# 
+	my $song = $params->{'itempath'};
+	my $id   = $params->{'item'};
 
 	# kinda pointless, but keeping with compatibility
 	return unless $song || $id;
@@ -1441,7 +1447,7 @@ sub _addSongInfo {
 sub songInfo {
 	my ($client, $params) = @_;
 
-	_addSongInfo($client, $params->{'itempath'}, $params->{'item'}, $params);
+	_addSongInfo($client, $params);
 
 	return Slim::Web::HTTP::filltemplatefile("songinfo.html", $params);
 }
