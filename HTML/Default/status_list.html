@@ -40,7 +40,7 @@
 			[% END %]
 
 		[% ELSE %]
-
+			[% "BY" | string %]
 			[% WHILE (artist = artists.next) %]
 
 				[% NEXT IF artist.name == noArtist %]
