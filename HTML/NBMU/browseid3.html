@@ -34,7 +34,16 @@
       <p>{browselist_pagebar}</p>
       [/IF] 
       <table cellspacing="0" border="0" cellpadding="4" width="100%">
-        {browse_list} 
+	[IF coverart]
+	  <tr>
+	    <td>
+	      <p><a href="/music/{%coverartpath}/cover.jpg" target="cover"><img src="/music/{%coverartpath}/cover.jpg" border=0></a></p>
+	    </td>
+	   </tr>
+	[/IF]
+			  
+	  {browse_list} 
+
       </table>
       [IF browselist_pagebar]
       <p>{browselist_pagebar}</p>

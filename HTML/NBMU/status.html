@@ -54,6 +54,7 @@
                 href="status.html?p0=playlist&p1=shuffle&p2=0&player={%player}">[IF 
       shuffleoff]<b><font color="#FF0000">[/IF][S OFF][IF shuffleoff]</font></b>[/IF]</a> 
       <br>
+      [IF coverthumb]<a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}" target="browser"><img src="/music/{%itempath}/thumb.jpg" border="0" height="100"><br>[/IF]
       <br>
       [S VOLUME]: <a href="status.html?p0=mixer&p1=volume&p2=-10&player={%player}&start={start}">[S 
       VOLUME_SOFTER]</a> <a href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}">[EQ 
