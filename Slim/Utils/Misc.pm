@@ -703,8 +703,9 @@ sub localeStrftime {
 	my $saved_locale = setlocale(LC_TIME, $serverlocale);
 	my $time = strftime $format, localtime($ltime);
 	
+	# XXX - we display in utf8 now
 	# these strings may come back as utf8, make sure they are latin1 when we display them
-	$time = utf8toLatin1($time);
+	# $time = utf8toLatin1($time);
 	
 	setlocale(LC_TIME, "");
 	return $time;
