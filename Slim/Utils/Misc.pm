@@ -80,9 +80,11 @@ our $locale = '';
 			$lc = 'iso-8859-1';
 		}
 
-		# Apparently the iso-NNNN-N notation isn't standard. Try to normalize it.
-		$lc =~ s/_/-/g;
-		$lc =~ s/iso(\d{4})-?(\d)/iso-$1-$2/;
+		# ISO encodings with 4 or more digits use a hyphen after "ISO"
+		$lc =~ s/^iso(\d{4})/iso-$1/;
+
+		# Special case ISO 2022 and 8859 to be nice
+		$lc =~ s/^iso-(2022|8859)([^-])/iso-$1-$2/;
 
 		$lc =~ s/utf-8/utf8/gi;
 
