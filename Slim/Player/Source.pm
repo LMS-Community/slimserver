@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.90 2004/05/15 19:15:30 kdf Exp $
+# $Id: Source.pm,v 1.91 2004/05/16 04:52:18 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1059,7 +1059,7 @@ sub underMax {
 	my $maxRate = Slim::Utils::Prefs::clientGet($client,'transcodeBitrate') ||
 	Slim::Utils::Prefs::clientGet($client,'maxBitrate');
 
-	return ($maxRate > $rate) || ($maxRate == 0);
+	return ($maxRate >= $rate) || ($maxRate == 0);
 }
 
 sub getConvertCommand {
