@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.94 2004/04/15 18:49:42 dean Exp $
+# $Id: HTTP.pm,v 1.95 2004/04/19 05:16:46 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -217,7 +217,9 @@ sub acceptHTTP {
 	};
 
 	defined(Slim::Utils::Misc::blocking($httpClient,0)) || die "Cannot set port nonblocking";
-
+	
+	binmode($httpClient);
+	
 	my $peer = $httpClient->peeraddr();
 
 	if ($httpClient->connected() && $peer) {
@@ -963,7 +965,6 @@ sub clearOutputBuffer {
 	my $client = shift;
 	foreach my $httpClient (keys %peerclient) {
 		if ($client eq $peerclient{$httpClient}) {
-		print "Clearing output buffer\n";
 			delete $outbuf{$httpClient};
 			last;
 		}
