@@ -391,7 +391,7 @@ sub isMusicLibraryFileChanged {
 }
 
 sub checker {
-	return unless (useiTunesLibrary());
+	return unless (Slim::Utils::Prefs::get('itunes'));
 	
 	if (!stillScanning() && isMusicLibraryFileChanged()) {
 		startScan();

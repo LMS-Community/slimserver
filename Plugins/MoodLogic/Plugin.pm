@@ -470,7 +470,7 @@ sub exportFunction {
 			# add this playlist to our playlist library
 			$cacheEntry{'TITLE'} =  $prefix . $name . $suffix;
 			$cacheEntry{'LIST'} = getPlaylistItems($auto);
-			$cacheEntry{'CT'} = 'itu';
+			$cacheEntry{'CT'} = 'mlp';
 			$cacheEntry{'TAG'} = 1;
 			$cacheEntry{'VALID'} = '1';
 
