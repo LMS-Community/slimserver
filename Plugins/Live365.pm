@@ -351,6 +351,20 @@ sub getStationListLength {
 	return $self->{Directory}->{LIVE365_DIRECTORY_FILTERS}->{DIRECTORY_ROWS_RETURNED};
 }
 
+sub getChannelModePointer {
+	my $self = shift;
+	my $mode = shift;
+
+	return $self->{modePointer}->{$mode};
+}
+
+sub setChannelModePointer {
+	my $self = shift;
+	my $mode = shift;
+	my $pointer = shift;
+
+	$self->{modePointer}->{$mode} = $pointer;
+}
 
 sub findChannelStartingWith {
 	# Very, very slow for long search spaces.
@@ -696,12 +710,12 @@ sub playOrAddCurrentStation {
 MAINMODE: {
 my $mainModeIdx = 0;
 my @mainModeItems = (
-	[ 'Live365Channels', 'PLUGIN_LIVE365_PRESETS' ],
-	[ 'searchMode', 'PLUGIN_LIVE365_SEARCH' ],
 	[ 'genreMode', 'PLUGIN_LIVE365_BROWSEGENRES' ],
 	[ 'Live365Channels', 'PLUGIN_LIVE365_BROWSEPICKS' ],
 	[ 'Live365Channels', 'PLUGIN_LIVE365_BROWSEPROS' ],
 	[ 'Live365Channels', 'PLUGIN_LIVE365_BROWSEALL' ],
+	[ 'searchMode', 'PLUGIN_LIVE365_SEARCH' ],
+	[ 'Live365Channels', 'PLUGIN_LIVE365_PRESETS' ],
 	[ 'loginMode', 'PLUGIN_LIVE365_LOGIN_MODE' ]
 );
 
@@ -711,7 +725,9 @@ sub setMode {
 
 	$client->lines( \&mainModeLines );
 
-	$live365->{$client} = new Plugins::Live365::Live365API();
+	unless (defined($live365->{$client})) {
+		$live365->{$client} = new Plugins::Live365::Live365API();
+	}
 
 	if( $entryType eq 'push' ) {
 		if( my $sessionid = Slim::Utils::Prefs::get( 'plugin_live365_sessionid' ) ) {
@@ -820,7 +836,7 @@ my %mainModeFunctions = (
 		$client->update();
 
 		if( $success ) {
-			Slim::Buttons::Common::pushModeLeft( $client, $mainModeItems[$mainModeIdx][0] );
+			Slim::Buttons::Common::pushModeLeft( $client, $mainModeItems[$mainModeIdx][0], { source => $mainModeItems[$mainModeIdx][1] } );
 		}
 	}
 );
@@ -834,7 +850,11 @@ sub mainModeLines {
 		return @lines;
 	}
 
-	$lines[0] = string( 'PLUGIN_LIVE365_MODULE_NAME' );
+	$lines[0] = string( 'PLUGIN_LIVE365_MODULE_NAME' ) . 
+		' (' . ($mainModeIdx+1) .
+		' ' .  string('OF') . 
+		' ' . (scalar(@mainModeItems)) . 
+		')';
 	$lines[1] = string( $mainModeItems[$mainModeIdx][1] );
 
 	$lines[3] = Slim::Hardware::VFD::symbol('rightarrow');
@@ -1070,7 +1090,7 @@ my %genreModeFunctions = (
 		);
 
  		if( $loaded ) {
-			Slim::Buttons::Common::pushModeLeft( $client, 'Live365Channels' );
+			Slim::Buttons::Common::pushModeLeft( $client, 'Live365Channels', { source => $genreList[ $genrePointer ][0] } );
 		} else {
 			$::d_plugins && msg( "No stations for genre: " . $genreList[ $genrePointer ][0] . "\n" );
 			Slim::Display::Animation::showBriefly( $client, string( 'PLUGIN_LIVE365_NOSTATIONS' ), ' ' );
@@ -1116,6 +1136,18 @@ CHANNELMODE: {
 my $setChannelMode = sub {
 	my $client = shift;
 
+	my $source = Slim::Buttons::Common::param($client, 'source');
+	if (defined($source)) {
+		$live365->{$client}->setStationListPointer(
+			$live365->{$client}->getChannelModePointer($source) ||
+		        0);
+	}
+
+	my $pointer = $live365->{$client}->getStationListPointer();
+	my $listlength = $live365->{$client}->getStationListLength();
+	if ($listlength && $pointer >= $listlength) {
+		$live365->{$client}->setStationListPointer($listlength-1);
+	}
 	$client->lines( \&channelModeLines );
 };
 
@@ -1168,12 +1200,28 @@ my %channelModeFunctions = (
     },
 
     'left' => sub {
-        Slim::Buttons::Common::popModeRight( shift );
+        my $client = shift;
+
+	my $source = Slim::Buttons::Common::param($client, 'source');
+	if (defined($source)) {
+		$live365->{$client}->setChannelModePointer($source, 
+				$live365->{$client}->getStationListPointer());
+	}
+
+        Slim::Buttons::Common::popModeRight( $client );
     },
 
-	'right' => sub {
-		Slim::Buttons::Common::pushModeLeft( shift, 'ChannelInfo' );
-	},
+    'right' => sub {
+        my $client = shift;
+
+	my $source = Slim::Buttons::Common::param($client, 'source');
+	if (defined($source)) {
+		$live365->{$client}->setChannelModePointer($source, 
+				$live365->{$client}->getStationListPointer());
+	}
+	
+        Slim::Buttons::Common::pushModeLeft( $client, 'ChannelInfo' );
+    },
 
     'play' => sub {
 		my $client = shift;
@@ -1439,6 +1487,7 @@ sub doSearch {
 	$client->lines( $oldLineFunc );
 	$client->update();
 
+	$live365->{$client}->setStationListPointer( 0 );
 	Slim::Buttons::Common::pushModeLeft( $client, 'Live365Channels' );
 }
 
@@ -1475,13 +1524,13 @@ PLUGIN_LIVE365_MODULE_NAME
 	EN	Live365 Internet Radio
 
 PLUGIN_LIVE365_LOGIN_MODE
-	EN	Manage your Live365 session
+	EN	Manage your session
 
 PLUGIN_LIVE365_LOGIN
-	EN	Log in to Live365
+	EN	Log in
 
 PLUGIN_LIVE365_LOGOUT
-	EN	Log out from Live365
+	EN	Log out
 
 PLUGIN_LIVE365_LOGIN_HEADER
 	EN	Logged on to Live365 as %s
@@ -1499,22 +1548,22 @@ PLUGIN_LIVE365_NO_CREDENTIALS
 	EN	No Live365 account information
 
 PLUGIN_LIVE365_LOGIN_SUCCESS
-	EN	Live365 operation successful
+	EN	Login successful
 
 PLUGIN_LIVE365_LOGIN_ERROR_NAME
-	EN	Live365 member name problem
+	EN	Member name problem
 
 PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
-	EN	Live365 login problem
+	EN	Login problem
 
 PLUGIN_LIVE365_LOGIN_ERROR_ACTION
-	EN	Live365 unknown action
+	EN	Unknown action
 
 PLUGIN_LIVE365_LOGIN_ERROR_ORGANIZATION
-	EN	Live365 unknown organization
+	EN	Unknown organization
 
 PLUGIN_LIVE365_LOGIN_ERROR_SESSION
-	EN	Live365 session no longer valid
+	EN	Session no longer valid. Log in again.
 
 PLUGIN_LIVE365_LOGIN_ERROR_HTTP
 	EN	Live365 website error, try again
@@ -1526,37 +1575,37 @@ PLUGIN_LIVE365_LOADING_GENRES_ERROR
 	EN	Error loading genres, try again
 
 PLUGIN_LIVE365_PRESETS
-	EN	Browse your Live365 presets
+	EN	My presets
 
 PLUGIN_LIVE365_BROWSEGENRES
-	EN	Browse Live365 by genre
+	EN	Browse genres
 
 PLUGIN_LIVE365_BROWSEALL
-	EN	Browse all Live365 stations (many)
+	EN	Browse all stations (many)
 
 PLUGIN_LIVE365_BROWSEPICKS
-	EN	Browse Live365 Editor Station Picks
+	EN	Browse editor picks
 
 PLUGIN_LIVE365_BROWSEPROS
-	EN	Browse Live365 Professional stations
+	EN	Browse professional stations
 
 PLUGIN_LIVE365_SEARCH
-	EN	Search Live365 stations
+	EN	Search Live365
 
 PLUGIN_LIVE365_SEARCHPROMPT
-	EN	Enter search term:
+	EN	Search Live365:
 
 PLUGIN_LIVE365_LOADING_DIRECTORY
-	EN	Loading directory list from Live365...
+	EN	Loading...
 
 PLUGIN_LIVE365_NOSTATIONS
-	EN	Live365 returned no stations
+	EN	No stations found
 
 PLUGIN_LIVE365_LOADING_INFORMATION
 	EN	Loading channel information...
 
 PLUGIN_LIVE365_DESCRIPTION
-	EN	Description
+	EN	Station Description
 
 PLUGIN_LIVE365_STATION_LISTENERS_ACTIVE
 	EN	Active listeners
@@ -1589,31 +1638,31 @@ PLUGIN_LIVE365_SEARCH_T
 	EN	Search Tracks
 
 PLUGIN_LIVE365_SEARCH_C
-	EN	Search CDs
+	EN	Search Albums
 
 PLUGIN_LIVE365_SEARCH_E
-	EN	Search Live365 stations
+	EN	Search Stations
 
 PLUGIN_LIVE365_SEARCH_L
-	EN	Search Live365 locations
+	EN	Search Locations
 
 PLUGIN_LIVE365_SEARCH_H
-	EN	Search Live365 broadcasters
+	EN	Search Broadcasters
 
 SETUP_GROUP_PLUGIN_LIVE365
-	EN	Live365 - The World's Largest Internet Radio Network
+	EN	Live365 Internet Radio
 
 SETUP_GROUP_PLUGIN_LIVE365_DESC
 	EN	Search, browse, and tune Live365 stations
 
 SETUP_PLUGIN_LIVE365_USERNAME
-	EN	Live365 username
+	EN	Live365 Username
 
 SETUP_PLUGIN_LIVE365_USERNAME_DESC
 	EN	Your Live365 username, visit live365.com to sign up
 
 SETUP_PLUGIN_LIVE365_PASSWORD
-	EN	Live365 password
+	EN	Live365 Password
 
 SETUP_PLUGIN_LIVE365_PASSWORD_DESC
 	EN	Your Live365 password
