@@ -22,11 +22,14 @@ our %current = ();
 
 our %stations = (
 	'radioio70s'  => '3765',			
+	'radioio70sPOP'  => '3910',			
 	'radioio80s'  => '3795',
+	'radioio80sPOP'  => '3935',			
 	'radioioACOUSTIC' => '3675',
 	'radioioAMBIENT'  => '3605',
 	'radioioBEAT' => '3725',
 	'radioioCLASSICAL' => '3635',
+	'radioioCOUNTRY' => '3055',				 
 	'radioioECLECTIC' => '3586',
 	'radioioEDGE' => '3995',
 	'radioioJAM' => '3970',
