@@ -234,6 +234,7 @@ sub visualizer {
 	
 	if (!$paramsref) {
 		my $visu = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
+
 		$visu = 0 if (!$client->showVisualizer());
 		
 		if ($visu < 0) { 
@@ -243,9 +244,10 @@ sub visualizer {
 		if ($visu >= $nmodes) { 
 			$visu = $nmodes - 1;
 		}
+		
 		$paramsref = $visualizerParameters[$visu];
 	}
-
+	
 	my @params = @{$paramsref};
 	
 	my $which = shift @params;

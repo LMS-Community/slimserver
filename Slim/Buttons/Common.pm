@@ -1079,6 +1079,9 @@ sub popMode {
 	}
 
 	$::d_files && msg("popped to button mode: " . (mode($client) || 'empty!') . "\n");
+
+	# some modes require periodic updates
+	startPeriodicUpdates($client);
 	
 	return $oldMode
 }
@@ -1147,7 +1150,9 @@ sub _periodicUpdate {
 	return unless $interval;
 	
 	# do the update if there's no animation going on.
-	if (!$client->animating()) { $client->update(); }
+	if (!$client->animating()) { 
+		$client->update(); 
+	}
 	
 	# do it again at the next period
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $interval,
