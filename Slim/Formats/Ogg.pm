@@ -1,6 +1,6 @@
 package Slim::Formats::Ogg;
 
-# $Id: Ogg.pm,v 1.9 2003/12/29 06:35:08 daniel Exp $
+# $Id: Ogg.pm,v 1.10 2003/12/29 08:01:08 daniel Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -67,7 +67,7 @@ sub getTag {
 
 	# why this is an array, I don't know.
 	foreach my $key ($ogg->comment_tags()) {
-		$tags->{$key} = ($ogg->comment($key))[0];
+		$tags->{uc($key)} = ($ogg->comment($key))[0];
 	}
 
 	# Correct ogginfo tags
