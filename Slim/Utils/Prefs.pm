@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.1 2003/07/18 19:42:15 dean Exp $
+# $Id: Prefs.pm,v 1.2 2003/07/24 23:14:04 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -62,7 +62,7 @@ my %DEFAULT = (
 	,'titleFormatWeb'		=> 1
     ,'ignoreDirRE'          => ''
     ,'checkVersion'			=> 1
-    ,'mDNSname'				=> 'SLIMP3 Server'
+    ,'mDNSname'				=> 'Slim Server'
 	,'titleFormat'			=> ['TITLE', 'TRACKNUM. TITLE', 'TRACKNUM. ARTIST - TITLE', 'TRACKNUM. TITLE (ARTIST)'
 						, 'TRACKNUM. TITLE - ARTIST - ALBUM', 'FILE.EXT', 'TRACKNUM. TITLE from ALBUM by ARTIST'
 						, 'TITLE (ARTIST)', 'ARTIST - TITLE']
@@ -491,7 +491,7 @@ sub preferencesPath {
 		if (not -d $ENV{'windir'}) {
 			$prefsPath = '';
 		}
-# Now we save them in the same place as slimp3.pl
+# Now we save them in the same place as slimserver.pl
 		if (!-f(catdir($prefsPath, 'SLIMP3.PRF'))) {
 			$prefsPath = $Bin;
 		}

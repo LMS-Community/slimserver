@@ -1,6 +1,6 @@
 package Slim::Control::CLI;
 
-# SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
+# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -20,7 +20,7 @@ use Slim::Utils::OSDetect;
 use Slim::Networking::mDNS;
 
 
-# This module provides a command-line interface to the slimp3 via a TCP/IP port.
+# This module provides a command-line interface to the server via a TCP/IP port.
 # see the documentation in Stdio.pm for details on the command syntax
 #
 #constants

@@ -1,6 +1,6 @@
 package Slim::Player::Playlist;
 
-# SliMP3 Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
+# Slim Server Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -194,7 +194,7 @@ sub playmode {
 			$::d_playlist && msg(" New play mode: " . $newmode . "\n");
 			
 			# wake up the display if we've switched modes.
-			if (Slim::Player::Client::isSliMP3($everyclient)) { Slim::Buttons::ScreenSaver::wakeup($everyclient); };
+			if (Slim::Player::Client::isPlayer($everyclient)) { Slim::Buttons::ScreenSaver::wakeup($everyclient); };
 			
 			# when you resume, you go back to play mode
 			if (($newmode eq "resume") ||($newmode eq "resumenow")) {
@@ -615,10 +615,10 @@ sub isSyncedWith {
 sub canSyncWith {
 	my $client = shift;
 	my @buddies = ();
-	if (Slim::Player::Client::isSliMP3($client)) {
+	if (Slim::Player::Client::isPlayer($client)) {
 		foreach my $otherclient (Slim::Player::Client::clients()) {
 			next if ($client eq $otherclient);					# skip ourself
-			next if (!Slim::Player::Client::isSliMP3($otherclient));  # we only sync SliMP3 devices
+			next if (!Slim::Player::Client::isPlayer($otherclient));  # we only sync hardware devices
 			next if (isSlave($otherclient)); 					# only include masters and un-sync'ed clients.
 			push @buddies, $otherclient;
 		}
@@ -782,7 +782,7 @@ sub refreshPlaylist {
 	my $client = shift;
 	# make sure we're displaying the new current song in the playlist view.
 	foreach my $everybuddy ($client, syncedWith($client)) {
-		if (Slim::Player::Client::isSliMP3($everybuddy)) {
+		if (Slim::Player::Client::isPlayer($everybuddy)) {
 			Slim::Buttons::Playlist::jump($everybuddy);
 		}
 		$client->htmlstatusvalid(0); #invalidate cached htmlplaylist

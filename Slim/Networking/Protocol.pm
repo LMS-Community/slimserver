@@ -1,4 +1,4 @@
-# SLIMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
+# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -25,7 +25,7 @@ my $SIMULATE_RX_DELAY = 000;  # delay, milliseconds
 
 #-------- You probably don't want to change this -----------------#
 my $OLDSERVERPORT = 1069;   # Port that 1.2 and earlier clients use
-my $SERVERPORT = 3483;		# IANA-assigned port for the SliMP3 protocol, used in firmware 1.3+
+my $SERVERPORT = 3483;		# IANA-assigned port for the Slim protocol, used in firmware 1.3+
 #-----------------------------------------------------------------#
 
 # Select objects and select array ref returns
@@ -104,7 +104,7 @@ sub sendClient {
 	if (defined $sock) {		
 		return send( $sock, shift, 0, $client->paddr()); 
 	} else {
-		if ($::d_protocol && $client->type eq 'slimp3') {
+		if ($::d_protocol && $client->type eq 'player') {
 			bt();
 			die Slim::Player::Client::id($client) . " no udpsock ready for client";
 		}
@@ -171,7 +171,7 @@ sub init {
 	);
 	
 	if (!$udpsock) {
-		msg("Problem: There is already another copy of the SliMP3 server running on this machine.\n");
+		msg("Problem: There is already another copy of the Slim Server running on this machine.\n");
 		exit 1;
 	}
 
@@ -339,12 +339,12 @@ sub getClient {
 			if ($deviceid == 0x01) {
 				$client->decoder('mas3507d');
 				$client->ticspersec(625000);
-				$client->type('slimp3');
+				$client->type('player');
 				$client->model('slimp3');
 			} elsif ($deviceid == 0x02) {
 				$client->decoder('mas35x9');
 				$client->ticspersec(1000);
-				$client->type('slimp3');
+				$client->type('player');
 				$client->model('squeezebox');
 			} else {
 				$::d_protocol && msg("bogus client: $id, fugettaboutit\n");

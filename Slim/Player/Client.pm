@@ -1,4 +1,4 @@
-# SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
+# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -29,9 +29,9 @@ struct( clientState => [
     id                 		=>'$', # string     client's ip & port as string
     
 # client variables id and version info
-    type             		=>'$', # type 		"slimp3", "http"
+    type             		=>'$', # type 		"player", "http"
    	model					=>'$', # string		"slimp3", "squeezebox"
-    deviceid				=>'$', # id			hardware device id (0x01 for slimp3)
+    deviceid				=>'$', # id			hardware device id (0x01 for slimp3, 0x02 for squeezebox)
     revision                =>'$', # int        firmware rev   0=unknown, 1.2 = old (1.0, 1.1, 1.2), 1.3 = new streaming protocol, 2.0 = client sends MAC address, NEC IR codes supported
     macaddress              =>'$', # string     client's MAC (V2.0 firmware)
     paddr                   =>'$', # sockaddr_in client's ip and port
@@ -40,7 +40,7 @@ struct( clientState => [
 	vfdmodel				=>'$', # string		hardware revision number for VFD display module
 	decoder                 =>'$', # string     client decoder type: mas3507, shoutcast
 
-# client variables for SliMP3 protocol networking
+# client variables for slim protocol networking
     udpsock                 =>'$', # filehandle the socket we should use to talk to this client
     RTT                     =>'$', # float      rtt estimate (seconds)
     prevwptr                =>'$', # int        wptr at previous request - see protocol docs
@@ -365,7 +365,7 @@ sub power {
 	my $client = shift;
 	my $on = shift;
 	
-	if (!isSliMP3($client)) {
+	if (!isPlayer($client)) {
 		return 1;
 	}
 	my $mode = Slim::Buttons::Common::mode($client);
@@ -382,7 +382,7 @@ sub power {
 				Slim::Buttons::Common::setMode($client, 'home');
 				
 				
-				my $welcome =  Slim::Display::Display::center(Slim::Utils::Strings::string(Slim::Utils::Prefs::clientGet($client, "doublesize") ? 'SLIMP3' : 'WELCOME_TO_SLIMP3'));
+				my $welcome =  Slim::Display::Display::center(Slim::Utils::Strings::string(Slim::Utils::Prefs::clientGet($client, "doublesize") ? 'SQUEEZEBOX' : 'WELCOME_TO_SQUEEZEBOX'));
 				my $welcome2 = Slim::Utils::Prefs::clientGet($client, "doublesize") ? '' : Slim::Display::Display::center(Slim::Utils::Strings::string('FREE_YOUR_MUSIC'));
 				Slim::Display::Animation::showBriefly($client, $welcome, $welcome2);
 				
@@ -412,11 +412,11 @@ sub power {
 	}
 }			
 
-sub isSliMP3 {
+sub isPlayer {
 	my $client = shift;
 	assert($client);
 	assert($client->type);
-	return ($client->type eq 'slimp3');
+	return ($client->type eq 'player');
 }
 
 1;

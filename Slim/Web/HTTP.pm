@@ -1,8 +1,8 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.3 2003/07/23 21:29:13 dean Exp $
+# $Id: HTTP.pm,v 1.4 2003/07/24 23:14:04 dean Exp $
 
-# SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
+# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -70,7 +70,7 @@ my %streamingFiles;
 my %peeraddr;
 my %paddr;
 
-my $mdnsIDslimp3;
+my $mdnsIDslimserver;
 my $mdnsIDhttp;
 
 # initialize the http server
@@ -107,7 +107,7 @@ sub openport {
 	$::d_http && msg("Server $0 accepting http connections on port $listenerport\n");
 	
 	$mdnsIDhttp = Slim::Networking::mDNS::advertise(Slim::Utils::Prefs::get('mDNSname'), '_http._tcp', $listenerport);
-	$mdnsIDslimp3 = Slim::Networking::mDNS::advertise(Slim::Utils::Prefs::get('mDNSname'), '_slimdevices_slimserver_http._tcp', $openedport);
+	$mdnsIDslimserver = Slim::Networking::mDNS::advertise(Slim::Utils::Prefs::get('mDNSname'), '_slimdevices_slimserver_http._tcp', $openedport);
 
 }
 
@@ -118,7 +118,7 @@ sub checkHTTP {
 		# if we've already opened a socket, let's close it
 		if ($openedport) {
 
-			if ($mdnsIDslimp3) { Slim::Networking::mDNS::stopAdvertise($mdnsIDslimp3); };
+			if ($mdnsIDslimserver) { Slim::Networking::mDNS::stopAdvertise($mdnsIDslimserver); };
 			if ($mdnsIDhttp) { Slim::Networking::mDNS::stopAdvertise($mdnsIDhttp); };
 			
 			$::d_http && msg("closing http server socket\n");
@@ -301,7 +301,7 @@ sub processHTTP {
 					"WWW-Authenticate: basic realm=\"$name\"" . $EOL .
 					"Content-type: text/html$BLANK" . 
 					"<HTML><HEAD><TITLE>401 Authorization Required</TITLE></HEAD>" . 
-					"<BODY>401 Authorization is Required to access this SLIMP3 Server</BODY></HTML>$EOL";
+					"<BODY>401 Authorization is Required to access this Slim Server</BODY></HTML>$EOL";
 				addresponse($httpclientsock,$message);
 				return undef;
 			}
@@ -333,8 +333,8 @@ sub processHTTP {
 			
 			if ($path) {
 				$params{'webroot'} = '/';
-				if ($path =~ s{^/SLIMP3/}{/}i) {
-					$params{'webroot'} = "/SLIMP3/"
+				if ($path =~ s{^/slimserver/}{/}i) {
+					$params{'webroot'} = "/slimserver/"
 				}
 				if ($path =~ m|^/(.+?)/.*| && $path !~ m|^/html/|i) {
 					#Requesting a specific skin, verify and set the skinOverride param
@@ -994,7 +994,7 @@ sub generateresponse {
 
 	    } elsif ($path =~ /(stream\.mp3|stream)$/) {
 			%headers = statusHeaders($client);
-			$headers{"x-audiocast-name"} = "SLIMP3";
+			$headers{"x-audiocast-name"} = string('SLIM_SERVER');
 			if ($sendMetaData{$httpclientsock}) {
 				$headers{"icy-metaint"} = $METADATAINTERVAL;
 				$headers{"icy-name"} = string('WELCOME_TO_SQUEEZEBOX');
@@ -1068,7 +1068,7 @@ sub generateresponse {
 			} else {
 				$body = Slim::Web::Setup::setup_HTTP($client, $paramsref);
 			}
-	    } elsif ($path =~ /slimp3\.css/) {
+	    } elsif ($path =~ /slimserver\.css/) {
 	    	$body = getStaticContent($path, $paramsref);
 		} elsif ($path =~ /status\.txt/) {
 			# if the HTTP client has asked for a text file, then always return the text on the display
@@ -1173,7 +1173,7 @@ sub statusHeaders {
 	#		"x-playersleep" => "0",
 	);
 	
-	if (Slim::Player::Client::isSliMP3($client)) {
+	if (Slim::Player::Client::isPlayer($client)) {
 		$headers{"x-playervolume"} = int(Slim::Utils::Prefs::clientGet($client, "volume") + 0.5);
 		$headers{"x-playermode"} = Slim::Buttons::Common::mode($client) eq "power" ? "off" : Slim::Player::Playlist::playmode($client);
 		$headers{"x-playersleep"} = $sleeptime;

@@ -1,6 +1,6 @@
 package Slim::Player::Control;
 
-# SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
+# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -28,7 +28,7 @@ sub play {
 	my $paused = shift;
 	my $pcm = shift;
 
-	if (!Slim::Player::Client::isSliMP3($client)) {
+	if (!Slim::Player::Client::isPlayer($client)) {
 		return 1;
 	}
 
@@ -54,7 +54,7 @@ sub play {
 sub volume {
 	my ($client, $volume) = @_;
 
-	if (!Slim::Player::Client::isSliMP3($client)) {
+	if (!Slim::Player::Client::isPlayer($client)) {
 		return 1;
 	}
 
@@ -105,7 +105,7 @@ sub fade_volume {
 
 	my $faderate = 10;  # how often do we send updated fade volume commands per second
 	
-	if (!Slim::Player::Client::isSliMP3($client)) {
+	if (!Slim::Player::Client::isPlayer($client)) {
 		return 1;
 	}
 	Slim::Utils::Timers::killTimers($client, \&fade_volume);
@@ -152,7 +152,7 @@ sub fade_volume {
 sub mute {
 	my $client = shift;
 	
-	if (!Slim::Player::Client::isSliMP3($client)) {
+	if (!Slim::Player::Client::isPlayer($client)) {
 		return 1;
 	}
 	my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
@@ -179,7 +179,7 @@ sub mute {
 sub resume {
 	my $client = shift;
 
-	if (!Slim::Player::Client::isSliMP3($client)) {
+	if (!Slim::Player::Client::isPlayer($client)) {
 		return 1;
 	}
 
@@ -195,7 +195,7 @@ sub resume {
 #
 sub pause {
 	my $client = shift;
-	if (!Slim::Player::Client::isSliMP3($client)) {
+	if (!Slim::Player::Client::isPlayer($client)) {
 		return 1;
 	}
 	Slim::Networking::Stream::pause($client);
@@ -208,7 +208,7 @@ sub pause {
 sub stop {
 	my $client = shift;
 
-	if (!Slim::Player::Client::isSliMP3($client)) {
+	if (!Slim::Player::Client::isPlayer($client)) {
 		return 1;
 	}
 
@@ -220,7 +220,7 @@ sub stop {
 #
 sub playout {
 	my $client = shift;
-	if (!Slim::Player::Client::isSliMP3($client)) {
+	if (!Slim::Player::Client::isPlayer($client)) {
 		return 1;
 	}
 	Slim::Networking::Stream::playout($client);

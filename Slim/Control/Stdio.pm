@@ -1,6 +1,6 @@
 package Slim::Control::Stdio;
 
-# SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
+# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -18,7 +18,7 @@ use vars qw($stdin);
 
 #$::d_stdio = 1;
 
-# This module provides a command-line interface to the slimp3 via standard in and out.
+# This module provides a command-line interface to the server via standard in and out.
 
 # Each command is terminated by a carriage return.  The server will reply echoing the request.
 # The format of the commands is as follows:

@@ -1,8 +1,8 @@
 package Slim::Web::RemoteStream;
 
-# $Id: RemoteStream.pm,v 1.1 2003/07/18 19:42:15 dean Exp $
+# $Id: RemoteStream.pm,v 1.2 2003/07/24 23:14:04 dean Exp $
 
-# SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
+# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -45,8 +45,8 @@ sub openRemoteStream {
 	# make the request
 	my $request =   "GET $path HTTP/1.0" . $CRLF . 
 					"Host: " . $server . ":" . $port . $CRLF .
-#					"User-Agent: SliMP3/" . $::VERSION . " (" . $^O . ")" . $CRLF .
-					"User-Agent: iTunes/3.0 (" . $^O . "; SLIMP3 " . $::VERSION . ")" . $CRLF .
+#					"User-Agent: Slim Server/" . $::VERSION . " (" . $^O . ")" . $CRLF .
+					"User-Agent: iTunes/3.0 (" . $^O . "; SlimServer " . $::VERSION . ")" . $CRLF .
 					"Accept: */*" . $CRLF .
 					"Cache-Control: no-cache" . $CRLF .
 					"Connection: close" . $CRLF .

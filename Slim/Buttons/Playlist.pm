@@ -1,8 +1,8 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.1 2003/07/18 19:42:13 dean Exp $
+# $Id: Playlist.pm,v 1.2 2003/07/24 23:14:03 dean Exp $
 
-# SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
+# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -217,7 +217,7 @@ sub currentSongLines {
 		if (Slim::Player::Playlist::playmode($client) eq "pause") {
 			$line1 = sprintf string('PAUSED')." (%d %s %d) ", Slim::Player::Playlist::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen;
 
-		# for taking photos of the SliMP3 display, comment out the line above, and use this one instead.
+		# for taking photos of the display, comment out the line above, and use this one instead.
 		# this will cause the display to show the "Now playing" screen to show when paused.
 		#	$line1 = "Now playing" . sprintf " (%d %s %d) ", Slim::Player::Playlist::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen;
 

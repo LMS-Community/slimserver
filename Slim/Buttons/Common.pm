@@ -1,8 +1,8 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.1 2003/07/18 19:42:13 dean Exp $
+# $Id: Common.pm,v 1.2 2003/07/24 23:14:03 dean Exp $
 
-# SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
+# Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

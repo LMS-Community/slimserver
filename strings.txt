@@ -2673,6 +2673,19 @@ LANGUAGE
 	PT	Idioma
 	SE	Språk
 
+SETUP_URL_WILL_BE
+	DE	Die Zugriffs URL zum Slim Server ist wie folgt:
+	DK	URL-adessen, der giver adgang til Slim-afspilleren, vil se således ud:
+	EN	The URL to access the Slim Server is now:
+	ES	La dirección para acceder al Slim Server será:
+	FI	Osoite, josta voit ohjata Slim soitintasi on:
+	FR	L'URL pour accéder au Slim sera :
+	IT	L'URL per poter accedere allo Slim sarà qualcosa come:
+	NL	De URL voor toegang tot de Slim speler is:
+	NO	URL-adressen for å styre Slim-spilleren vil se omtrent slik ut:
+	PT	O URL para aceder ao Slim Server é
+	SE	URLen för att komma åt Slim spelaren är:
+
 #
 # Web interface
 #

@@ -1,6 +1,6 @@
 package Slim::Music::iTunes;
 
-# SliMP3 Server Copyright (C) 2001-2003 Sean Adams, Slim Devices Inc.
+# Slim Server Copyright (C) 2001-2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
