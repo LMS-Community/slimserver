@@ -1,4 +1,4 @@
-# $Id: SavePlaylist.pm,v 1.4 2003/12/15 21:08:30 daniel Exp $
+# $Id: SavePlaylist.pm,v 1.5 2003/12/16 08:14:30 kdf Exp $
 # This code is derived from code with the following copyright message:
 #
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
@@ -17,7 +17,7 @@ use POSIX qw(strftime);
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.4 $,10);
+$VERSION = substr(q$Revision: 1.5 $,10);
 
 my %context = ();
 
@@ -42,7 +42,7 @@ my @legalMixed = (
 	['m','n','o','M','N','O','6'], 		# 6
 	['p','q','r','s','P','Q','R','S','7'], 	# 7
 	['t','u','v','T','U','V','8'], 		# 8
-	['w','x','y','z','W','X','Y','Z','9']; 	# 9
+	['w','x','y','z','W','X','Y','Z','9'] 	# 9
 );
 
 sub getDisplayName { return string('SAVE_PLAYLIST'); }
