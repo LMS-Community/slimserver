@@ -95,7 +95,7 @@ function openRemote()
 		        <tr>
 		        		<td><a href="status_header.html?p0=rate&p1=-2&player={%player}&start={start}"><img src="html/rew[EQ rate rew]_s[/EQ].gif" border="0" width="30" height="10"></td>
 		        		<td><a href="status_header.html?p0=rate&p1=8&player={%player}&start={start}"><img src="html/ffwd2[EQ rate ffwd]_s[/EQ].gif" border="0" width="30" height="10"></a></td>
-		        [IF slimp3]</tr><tr>[/IF]
+		        [IF isplayer]</tr><tr>[/IF]
 			        <td><a href="status_header.html?p0=playlist&p1=jump&p2=-1&player={%player}"><img src="html/back.gif" border=0 width=30 height=19></a></td>
 			        <td><a href="status_header.html?p0=playlist&p1=jump&p2=%2b1&player={%player}"><img src="html/forward.gif" border=0 width=30 height=19></a></td>
 			        <td><a href="status_header.html?p0=pause&player={%player}"><img src="html/pause[IF modepause]_s[/IF].gif" border=0 width=30 height=19></a></td>
@@ -103,7 +103,7 @@ function openRemote()
 		        </tr></td></table>
 	        </tr></table>
         </center></td>
-     [IF slimp3]<td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
+     [IF isplayer]<td><img src="html/pixel.grey.gif" width="1" height="100%" border="0"></td>
      <td align="center" class="label2">
         <table border="0" cellspacing="0" cellpadding="0">
         <td align="right"  valign="bottom" class="label2"><nobr><B>VOLUME:</B><p>

@@ -4,12 +4,12 @@
 [INCLUDE helpheader.html]
 
 <h4>Overview</h4>
-<p>This document describes the XML skin, that allows the SLIMP3 server to return 
-XML instead of HTML. It is designed to enable the integration of the SliMP3 with 
+<p>This document describes the XML skin, that allows the Slim Server to return 
+XML instead of HTML. It is designed to enable the integration of the Slim Server with 
 third party automation tools, such as AMX/Crestron touchpanels, or other 
 &quot;home grown&quot; solutions.</p>
 <p>The XML skin only changes what is returned by the Server, and not its 
-interface. Please refer to <a href="http.html">The SLIMP3 Web Interface</a> 
+interface. Please refer to <a href="http.html">The Slim Server Web Interface</a> 
 documentation.</p>
 <h4>Usage</h4>
 <p>Because it is of no interest to human beings, this skin is hidden from the 
@@ -19,7 +19,7 @@ this general form: </p>
 <p>where <code>server</code>, <code>port</code>, <code>page</code>, and 
 <code>parameter</code> must be replaced by appropriate values. For example, 
 to browse the music library (in the following 
-examples, the SLIMP3 server is running on a computer with the IP address of 
+examples, the Slim Server is running on a computer with the IP address of 
 10.0.1.201 using the default port 9000):
 </p>
 <pre>http://10.0.1.201:9000/xml/browse.xml</pre>
@@ -39,8 +39,8 @@ http://10.0.1.201:9000/xml/browse.xml
 </font>
 <font color="#FF0000">
 &lt;?xml version="1.0" standalone="no"?&gt;
-&lt;!DOCTYPE browse SYSTEM "html/slimp3_xml.dtd"&gt;
-&lt;browse xmlns="http://www.slimdevices.com/slimp3/xml"&gt;
+&lt;!DOCTYPE browse SYSTEM "html/slimserver_xml.dtd"&gt;
+&lt;browse xmlns="http://www.slimdevices.com/slimserver/xml"&gt;
   &lt;offsets&gt;
     &lt;from&gt;0&lt;/from&gt;
     &lt;to&gt;7&lt;/to&gt;
@@ -112,7 +112,7 @@ URL targetting a player, such as <code>replace_url</code> above.</p>
 <h5><code>hitlist.xml</code> parameters</h5>
 <p><code>hitlist.xml</code> takes no parameters.</p>
 <h5>Other pages parameters</h5>
-<p>Please refer to <a href="http.html">The SLIMP3 Web Interface</a> 
+<p>Please refer to <a href="http.html">The Slim Server Web Interface</a> 
 documentation for parameters to the <code>status.xml</code> page. Discovering the 
 parameters of the other pages is left as an exercise to the reader.</p>
 <p>PS: Seriously, the only way for a client to discover the value of parameters 
@@ -121,7 +121,7 @@ is to use the XML interface to browse the library in the first place. Therefore,
 the links will have been calculated for you already in the <code>_url</code> tags!.<p>
 <h4>The DTD</h4>
 <p>The XML skin comes with a heavily commented DTD, indicated in <code>DOCTYPE</code> 
-and that can be served by the Slimp3 Server. Please refer to it for more information 
+and that can be served by the Slim Server. Please refer to it for more information 
 on the various tags returned.</p>
 <h4>Limitations</h4>
 <p>The skin does not support:</p>

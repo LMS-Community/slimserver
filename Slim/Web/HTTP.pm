@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.20 2003/08/23 19:32:55 sadams Exp $
+# $Id: HTTP.pm,v 1.21 2003/08/25 22:52:37 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -222,7 +222,9 @@ sub connectedSocket {
 sub acceptHTTP {
 	my $httpclientsock = $http_server_socket->accept();
 
-	defined($httpclientsock->blocking(0))  || die "Cannot set port nonblocking";
+ 	if( $^O !~ /Win32/ ) {
+ 		defined($http_server_socket->blocking(0))  || die "Cannot set port nonblocking";
+ 	}
 
 	if ($httpclientsock) {
 		my $peer = $httpclientsock->peeraddr;

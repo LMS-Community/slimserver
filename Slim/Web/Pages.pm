@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.5 2003/08/12 00:52:45 dean Exp $
+# $Id: Pages.pm,v 1.6 2003/08/25 22:52:37 dean Exp $
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -412,7 +412,7 @@ sub status {
 		
 		$$main_form_ref{'mode'} = Slim::Buttons::Common::mode($client);
 		if ($client->isPlayer()) {
-			$$main_form_ref{'slimp3'} = 1;
+			$$main_form_ref{'isplayer'} = 1;
 			$$main_form_ref{'volume'} = int(Slim::Utils::Prefs::clientGet($client, "volume") + 0.5);
 			$$main_form_ref{'bass'} = int(Slim::Utils::Prefs::clientGet($client, "bass") + 0.5);
 			$$main_form_ref{'treble'} = int(Slim::Utils::Prefs::clientGet($client, "treble") + 0.5);

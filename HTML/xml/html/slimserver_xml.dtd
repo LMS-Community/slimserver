@@ -1,10 +1,10 @@
 <!-- ....................................................................... -->
-<!-- slimp3_xml.dtd ........................................................ -->
-<!-- SliMP3 Server Copyright (C) 2003 Slim Devices Inc.  ....................-->
+<!-- slimserver_xml.dtd .................................................... -->
+<!-- Slim Server Copyright (C) 2003 Slim Devices Inc.  ......................-->
 <!-- ....................................................................... -->
 
 <!--
-This DTD describes the data returned by the SliMP3 Server XML skin.
+This DTD describes the data returned by the Slim Server XML skin.
 
 NOTES: 
 - URLs returned are already URL escaped. You must escape any element you add,
@@ -425,9 +425,9 @@ May be returned by any request if server settings or parameters are incorrect.
 <!-- Namespace stuff........................................................ -->
 <!-- ....................................................................... -->
 
-<!ATTLIST status xmlns CDATA #FIXED "http://www.slimdevices.com/slimp3/xml">
-<!ATTLIST search xmlns CDATA #FIXED "http://www.slimdevices.com/slimp3/xml">
-<!ATTLIST songinfo xmlns CDATA #FIXED "http://www.slimdevices.com/slimp3/xml">
-<!ATTLIST browse xmlns CDATA #FIXED "http://www.slimdevices.com/slimp3/xml">
-<!ATTLIST hitlist xmlns CDATA #FIXED "http://www.slimdevices.com/slimp3/xml">
-<!ATTLIST badpath xmlns CDATA #FIXED "http://www.slimdevices.com/slimp3/xml">
+<!ATTLIST status xmlns CDATA #FIXED "http://www.slimdevices.com/slimserver/xml">
+<!ATTLIST search xmlns CDATA #FIXED "http://www.slimdevices.com/slimserver/xml">
+<!ATTLIST songinfo xmlns CDATA #FIXED "http://www.slimdevices.com/slimserver/xml">
+<!ATTLIST browse xmlns CDATA #FIXED "http://www.slimdevices.com/slimserver/xml">
+<!ATTLIST hitlist xmlns CDATA #FIXED "http://www.slimdevices.com/slimserver/xml">
+<!ATTLIST badpath xmlns CDATA #FIXED "http://www.slimdevices.com/slimserver/xml">

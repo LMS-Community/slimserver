@@ -1,11 +1,11 @@
 <html>
   <head>
     <meta http-equiv="refresh" content="30; url={path}?player={%player}&start={start}&refresh=1">
-    <title>[S SLIMP3_MUSIC_PLAYER] [IF player_name]{&player_name}[/IF] </title>
+    <title>[S {playermodel}_MUSIC_PLAYER] [IF player_name]{&player_name}[/IF] </title>
     <link rel="stylesheet" href="slimserver.css">
   </head>
   <body bgcolor="#FFFFFF">
-	<h3>[S SLIMP3_MUSIC_PLAYER] [IF player_name]{&player_name}[/IF]</h3>
+	<h3>[S {playermodel}_MUSIC_PLAYER] [IF player_name]{&player_name}[/IF]</h3>
   	[IF player_chooser_list]<form method="get" action="{webroot}index.html" target="_top">[S CURRENT_PLAYER] <select name="player">{player_chooser_list}</select><input class="stdclick" type="submit" value="Change"></form>[/IF]
      
     [IF modeplay][S PLAYING][/IF]
@@ -34,7 +34,7 @@
                 href="status.html?p0=playlist&p1=shuffle&p2=2&player={%player}">[IF shufflealbum]<b>[/IF][S LCALBUMS][IF shufflealbum]</b>[/IF]</a>/<a
                 href="status.html?p0=playlist&p1=shuffle&p2=1&player={%player}">[IF shuffleon]<b>[/IF][S LCSONGS][IF shuffleon]</b>[/IF]</a>
 
-[IF slimp3]
+[IF isplayer]
 		<br><br>[S VOLUME]: <a href="status.html?p0=mixer&p1=volume&p2=-10&player={%player}&start={start}">[S VOLUME_SOFTER]</a>
        <a href="status.html?p0=mixer&p1=volume&p2=0&player={%player}&start={start}">[EQ volume 0]<b>[/EQ]1[EQ volume 0]</b>[/EQ]</a>
        <a href="status.html?p0=mixer&p1=volume&p2=10&player={%player}&start={start}">[EQ volume 10]<b>[/EQ]2[EQ volume 10]</b>[/EQ]</a>

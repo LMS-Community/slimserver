@@ -5,7 +5,7 @@
 
   <h4>Overview</h4>
   <p>
-    The Player IR interface to the SLIMP3 server associates human actions 
+    The Player IR interface to the Slim server associates human actions 
     (pressing a button on the remote) with functions on the server (jumping to
     the next song). There are a number of translations, or mappings between the
     human action and the server function.
@@ -30,12 +30,12 @@
   </p>
   <p>
     The mapping files, both <em>.ir</em> and <em>.map</em>, are stored in the 
-    <strong>IR</strong> subfolder of the folder where the SLIMP3 software was
+    <strong>IR</strong> subfolder of the folder where the Slim Server software was
     installed. Included with the software are two <em>.ir</em> files:
-    <em>jvc_dvd.ir</em> and <em>SLIMP3_Remote.ir</em> which handle the codesets
+    <em>jvc_dvd.ir</em> and <em>Slim_Devices_Remote.ir</em> which handle the codesets
     sent by the JVC DVD player (which is the codeset most commonly used by the
-    SLIMP3 player prior to the production of the SLIMP3 specific remotes) and the
-    SLIMP3 specific remote respectively. One <em>.map</em> file(<em>Default.map</em>),
+    Slim Devices player prior to the production of the Slim Devices specific remotes) and the
+    Slim Devices specific remote respectively. One <em>.map</em> file(<em>Default.map</em>),
     representing the default mapping is included.
   </p>
   <hr>
@@ -43,7 +43,7 @@
   <h5>Code to Button Name</h5>
   <p>
     The code to button name mapping is contained within <em>.ir</em> files located
-    in the <strong>IR</strong> subfolder of the SLIMP3 server folder. The files
+    in the <strong>IR</strong> subfolder of the Slim Server folder. The files
     consist of lines with the button name followed by an equals sign (<strong>=</strong>)
     followed by the IR code in hex (no 0x necessary). Everything after a <strong>#</strong>
     is considered a comment. Leading and trailing whitespace is ignored, as is whitespace
@@ -65,7 +65,7 @@
     configurable from the web interface by following the
     &quot;[S PLAYERIR_SETTINGS]&quot; or &quot;[S ADDITIONAL_PLAYER_SETTINGS]&quot;
     links from the &quot;[S PLAYER_SETTINGS]&quot; page. This can be useful if
-    you have JVC equipment co-located with the SLIMP3 player and want to prevent
+    you have JVC equipment co-located with the Slim Devices player and want to prevent
     it from reacting to remote signals intended for the other equipment.
   </p>
   <p>
@@ -81,7 +81,7 @@ B# = 0000f7c6        #BAD! # also not allowed in button names
   <h5>Button Name to Function</h5>
   <p>
     The button name to function mapping is contained within <em>.map</em> files
-    located in the <strong>IR</strong> subfolder of the SLIMP3 server folder.
+    located in the <strong>IR</strong> subfolder of the Slim Server folder.
     The files consist of lines with the button name followed by an equals sign
     (<strong>=</strong>) followed by the function. Everything after a
     <strong>#</strong> is considered a comment. Leading and trailing whitespace

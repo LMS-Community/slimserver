@@ -131,7 +131,7 @@ sub hitlist {
 			$list_form{'album'} 	= Slim::Music::Info::album($song);
 			$list_form{'itempath'} = $song;
 			$list_form{'odd'}	  = ($itemnumber + 1) % 2;
-			$list_form{'song_bar'} = hitlist_bar( $items[$i][1], $maxplayed );
+			$list_form{'song_bar'} = hitlist_bar($paramref, $items[$i][1], $maxplayed );
 			$list_form{'player'} = $$paramref{'player'};
 			$itemnumber++;
 
@@ -150,32 +150,31 @@ sub hitlist {
 }
 
 sub hitlist_bar {
+	my $paramRef = shift;
     my $curr = shift;
     my $max = shift;
     my $returnval="";
     
-    my %list_form=();
-    
-    $list_form{'cell_full'} = (($curr*100)/$max) > 9;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", \%list_form);
-    $list_form{'cell_full'} = (($curr*100)/$max) > 19;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", \%list_form);
-    $list_form{'cell_full'} = (($curr*100)/$max) > 29;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", \%list_form);
-    $list_form{'cell_full'} = (($curr*100)/$max) > 39;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", \%list_form);
-    $list_form{'cell_full'} = (($curr*100)/$max) > 49;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", \%list_form);
-    $list_form{'cell_full'} = (($curr*100)/$max) > 59;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", \%list_form);
-    $list_form{'cell_full'} = (($curr*100)/$max) > 69;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", \%list_form);
-    $list_form{'cell_full'} = (($curr*100)/$max) > 79;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", \%list_form);
-    $list_form{'cell_full'} = (($curr*100)/$max) > 89;
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", \%list_form);
-    $list_form{'cell_full'} = ($curr == $max);
-    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", \%list_form);
+    $paramRef->{'cell_full'} = (($curr*100)/$max) > 9;
+    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $paramRef->{'cell_full'} = (($curr*100)/$max) > 19;
+    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $paramRef->{'cell_full'} = (($curr*100)/$max) > 29;
+    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $paramRef->{'cell_full'} = (($curr*100)/$max) > 39;
+    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $paramRef->{'cell_full'} = (($curr*100)/$max) > 49;
+    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $paramRef->{'cell_full'} = (($curr*100)/$max) > 59;
+    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $paramRef->{'cell_full'} = (($curr*100)/$max) > 69;
+    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $paramRef->{'cell_full'} = (($curr*100)/$max) > 79;
+    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $paramRef->{'cell_full'} = (($curr*100)/$max) > 89;
+    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
+    $paramRef->{'cell_full'} = ($curr == $max);
+    $returnval .= &Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $paramRef);
     
     return $returnval;
 }

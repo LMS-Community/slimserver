@@ -1,19 +1,19 @@
 [SET pageicon help]
-[SET title SLIMP3 Web Interface]
+[SET title Slim Server Web Interface]
 [SET techinfo 1]
 [INCLUDE helpheader.html]
 
 <h4>Overview</h4>
 <p>This document describes the interface to the HTTP server that's built into 
-  the SLIMP3 server. </p>
-<p>The SLIMP3 server provides an HTTP server that can be used to:</p>
+  the Slim Server. </p>
+<p>The Slim Server provides an HTTP server that can be used to:</p>
 <ol>
-  <li> Browse the SLIMP3 music library. </li>
+  <li> Browse the music library. </li>
   <li> View the status and playlist of the player.</li>
   <li> Control the player.</li>
   <li>Configure the server.</li>
 </ol>
-<p>When the SLIMP3 server is started, it starts listening for HTTP connections 
+<p>When the Slim Server is started, it starts listening for HTTP connections 
   on the default port of 9000. </p>
 <p>The HTTP server may be accessed by the user with a traditional web browser 
   to navigate around the music library and control the player. The HTTP server 
@@ -21,10 +21,10 @@
   or <i>curl</i>, for example) as a way to access and control the player via HTTP.
   The server can return XML instead of HTML for such "automation" uses (see 
   <a href="xml_skin.html">The XML Skin</a> documentation.)</p>
-<p> In the examples in this document the SLIMP3 server is running on a computer 
+<p> In the examples in this document the Slim Server is running on a computer 
   with the IP address of 10.0.1.201.</p>
 <h4>HTTP Access</h4>
-<p>To access the main page to control the SLIMP3 via a web browser use this URL: 
+<p>To access the main page to control the player via a web browser use this URL: 
 </p>
 <pre>http://10.0.1.201:9000/</pre>
 <p>This provides a frameset containing two pages, one for browsing the music library:
@@ -52,12 +52,12 @@
   status in HTML. If the &quot;suffix&quot; is .m3u then the response will be 
   the player's current playlist as an .m3u file. If the suffix is &quot;.txt&quot; 
   then the response will consist of two lines of text corresponding to the text 
-  on the SLIMP3 display. If the suffix is omitted, then the response will be the 
+  on the player's display. If the suffix is omitted, then the response will be the 
   empty.</p>
 		<p><b>Note: </b>Commands that use paths to songs or playlists can use relative paths from the root of the Music Library folder to specify songs.  For example, if the Music Library is specified as &quot;D:\mymusic&quot; and you'd like to refer to a song in that folder named &quot;foo.mp3&quot;  you can specify just &quot;foo.mp3&quot; in the command parameter.  Likewise, to refer to items in the Saved Playlist folder, you can use a prefix of  &quot;__playlists/&quot; before the path.  For example, to refer to the saved playlist &quot;bar.m3u&quot; in the Saved Playlists folder, you can specify a path of &quot;__playlists/bar.m3u&quot;.</p>
 		<h4>Commands</h4>
 <p>The following is a summary of the supported commands. Additional information
-  about the command set is available in the <a href="crestronCLI.html">SLIMP3
+  about the command set is available in the <a href="crestronCLI.html">Slim Server
   Command Line Interface </a>documentation.</p>
 <table border="1" cellspacing=0 cellpadding=3>
   <tr> 
@@ -267,7 +267,7 @@
     <td width="96">&lt;line2&gt;</td>
     <td width="69">&lt;duration&gt;</td>
     <td width="13">&nbsp;</td>
-    <td width="672">Put text on the SLIMP3 display. line 1 is specified by p1, 
+    <td width="672">Put text on the player's display. line 1 is specified by p1, 
       line 2 is specified by p2. The text is displayed for a number of seconds 
       as specified by p3. If p3 is omitted, then a default time is used of approximately 
       1.5 seconds.</td>
@@ -336,7 +336,7 @@
   </tr>
 </table>
 <h4>Multiple Players</h4>
-<p>Finally, if more than one player is connected to the system, you can specify that player with a player parameter consisting of the IP address and port or the MAC address of the SLIMP3 device being controlled.</p>
+<p>Finally, if more than one player is connected to the system, you can specify that player with a player parameter consisting of the IP address and port or the MAC address of the device being controlled.</p>
 <p>For example, the following pauses the player and then returns the status as an HTML page for the player at IP address 10.0.1.202:</p>
 <pre>http://10.0.1.201:9000/status.html?p0=pause&amp;p1=1&amp;player=10.0.1.202:69</pre>
 <p>For example, the following pauses the player and then returns the status as an HTML page for the player at MAC address: 04:00:20:12:45:AB</p>
@@ -365,11 +365,11 @@
 <pre>http://10.0.1.201:9000/html/test.html</pre>
 <p>This will return the file test.html within the 'html' subdirectory in the root 
   content directory for the http server. Currently this resides in:</p>
-<pre>slimp3/server/html/EN/html/test.html</pre>
+<pre>slim/server/html/EN/html/test.html</pre>
 <h4>
   Player Status
 </h4>
-<p>When you use the HTTP interface to control the SLIMP3 server (and player) to 
+<p>When you use the HTTP interface to control the Slim Server (and player) to 
   obtain status the server returns a response that contains:</p>
 <ul>
   <li>A header indicating a content type</li>
@@ -414,7 +414,7 @@
       <p>http://host:port/status.txt</p>
       <p></p>
     </td>
-    <td>Plain text of SLIMP3 display contents</td>
+    <td>Plain text of player's display contents</td>
     <td>text/plain</td>
   </tr>
 </table>
@@ -526,8 +526,8 @@
 </table>
 
 <p>The following is an example of an HTTP status transactions.  
-The text in blue is sent from the client to the SLIMP3 HTTP server.  
-Text in red is returned by the SLIMP3 HTTP server.
+The text in blue is sent from the client to the Slim Server HTTP server.  
+Text in red is returned by the Slim Server HTTP server.
 </p>
 <pre><font color="#0000FF">
 GET /status.html?p0=pause&amp;p1=1 HTTP/1.0

@@ -1,11 +1,11 @@
 <html>
   <head>
     <meta http-equiv="refresh" content="30; url=status.html?player={%player}&start={start}&refresh=1">
-    <title>[S SLIMP3_MUSIC_PLAYER]</title>
+    <title>[S {playermodel}_MUSIC_PLAYER]</title>
     <link rel="stylesheet" href="slimserver.css">
   </head>
   <body bgcolor="#FFFFFF">
-	<h3>[S SLIMP3_MUSIC_PLAYER]</h3>
+	<h3>[S {playermodel}_MUSIC_PLAYER]</h3>
   	[IF player_chooser_list]<form method="get" action="{webroot}index.html" target="_top">[S CURRENT_PLAYER] <select name="player">{player_chooser_list}</select><input type="submit" value="Change"></form>[/IF]
      
     [IF modeplay][S PLAYING][/IF]

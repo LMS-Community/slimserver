@@ -38,7 +38,7 @@
     The input mode names are INPUT.<em>modulename</em>, where <em>modulename</em>
     is the name of the .pm file. A typical entry into the INPUT.Text mode follows:
 <pre>
-SliMP3::Buttons::Common::pushMode($client,'INPUT.Text',
+Slim::Buttons::Common::pushMode($client,'INPUT.Text',
 					&#123;'callback' =&gt; \&amp;myCallback
 					,'valueRef' =&gt; 'Some Initial String'
 					,'charsRef' =&gt; 'Upper'
@@ -132,7 +132,7 @@ SliMP3::Buttons::Common::pushMode($client,'INPUT.Text',
         to the character to replace, and values equal to the character to use
         in doublesize mode. For example, to replace the custom character myCustom
         with &quot;M&quot; when doublesized would be 
-        <code>&#123;SliMP3::VFD::symbol(&quot;myCustom&quot;) =&gt; &quot;M&quot;&#125;</code>
+        <code>&#123;Slim::Hardware::VFD::symbol(&quot;myCustom&quot;) =&gt; &quot;M&quot;&#125;</code>
       </dd>
       <dt>charIndex</dt>
       <dd>Default: index of the current character within the charsRef array</dd>
@@ -329,7 +329,7 @@ SliMP3::Buttons::Common::pushMode($client,'INPUT.Text',
       <dt>numberLetter</dt>
       <dd>
         This function takes an argument, which it then passes to
-        SliMP3::Buttons::Common::numberLetter.  The returned character is then
+        Slim::Buttons::Common::numberLetter.  The returned character is then
         checked against the list of allowable characters, and replaced by a
         space if not present. The cursor is advanced to the next character if
         a different button is pressed than the previous, or after an amount of

@@ -1,15 +1,15 @@
 [SET pageicon help]
-[SET title SLIMP3 Command Line Interface]
+[SET tSQUEEZEBOX Command Line Interface]
 [SET techinfo 1]
 [INCLUDE helpheader.html]
 
 <h4>Introduction</h4>
-<p>The SLIMP3 server provides a command-line interface to the SLIMP3 players via standard in and out and
+<p>The Slim Server provides a command-line interface to the Slim Devices players via standard in and out and
   a TCP/IP port.  After starting the server, commands may be sent by connecting to a specific TCP/IP 
   port or directly from the command line.  Each command is terminated by a carriage return. The server will 
   reply echoing the request. If the request included a &quot;?&quot; in a parameter 
   to request a value from the server, the &quot;?&quot; will be replaced by the 
-  requested value in the reply.  By default, the SLIMP3 server will listen for 
+  requested value in the reply.  By default, the Slim Server will listen for 
   connections on TCP/IP port 9090. This format is designed for ease of integration 
   into Crestron and other automation systems.</p>
 <p>The format of the commands is as follows:</p>
@@ -291,7 +291,7 @@ where: </p>
 <p><strong>display &lt;line1&gt; &lt;line2&gt; &lt;duration&gt;<br>
   </strong><strong>display ? ?</strong></p>
 <p>The &quot;display&quot; command specifies some text to be displayed on the 
-  SLIMP3 screen for a specified amount of time, or may be used to obtain the text 
+  player screen for a specified amount of time, or may be used to obtain the text 
   that is currently displayed on the screen. A duration &lt;in seconds&gt; may be specified 
   to indicate how long the text should remain on the screen.</p>
 <p>Examples:</p>
@@ -302,8 +302,8 @@ where: </p>
 <hr>
 <p><strong>pref &lt;prefname&gt; &lt;prefvalue&gt;<br>
   </strong><strong>pref &lt;prefname&gt; ?</strong></p>
-<p>The &quot;pref&quot; command allows the caller to set and query the SLIMP3 
-  server's internal preferences values. Preference values are escaped with HTTP-style 
+<p>The &quot;pref&quot; command allows the caller to set and query the Slim 
+  Server's internal preferences values. Preference values are escaped with HTTP-style 
   (percent) escaping..</p>
 <p>Examples:</p>
 <blockquote> 
@@ -315,8 +315,8 @@ where: </p>
 <hr>
 <p><strong>playerpref &lt;prefname&gt; &lt;prefvalue&gt;<br>
   </strong><strong>pref &lt;prefname&gt; ?</strong></p>
-<p>The &quot;pref&quot; command allows the caller to set and query the SLIMP3 
-  server's internal player-specific preferences values. Preference values are escaped with HTTP-style 
+<p>The &quot;pref&quot; command allows the caller to set and query the Slim 
+  Server's internal player-specific preferences values. Preference values are escaped with HTTP-style 
   (percent) escaping..</p>
 <p>Examples:</p>
 <blockquote> 
@@ -329,7 +329,7 @@ where: </p>
   debug &lt;d_debugflag&gt; 1<br>
   debug &lt;d_debugflag&gt;</strong></p>
 <p>The &quot;debug&quot; command allows the caller to query, clear, set or toggle 
-  the SLIMP3 server's internal debug flags. Use 0 to clear, 1 to set, ? to query 
+  the Slim Server's internal debug flags. Use 0 to clear, 1 to set, ? to query 
   and no parameter to toggle the debug flag value.</p>
 <p>Examples:</p>
 <blockquote> 
@@ -345,7 +345,7 @@ where: </p>
 </blockquote>
 <hr>
 <p><strong>rescan</strong></p>
-<p>The &quot;rescan&quot; command allows the caller to have the SLIMP3 server 
+<p>The &quot;rescan&quot; command allows the caller to have the Slim Server 
   rescan its music library, reloading the music file information.</p>
 <p>Examples:</p>
 <blockquote> 
@@ -356,7 +356,7 @@ where: </p>
 <hr>
 
 <p><strong>button &lt;<em>buttoncode</em>&gt;</strong></p>
-<p>The &quot;button&quot; command simulates a button press from a SLIMP3 infrared remote, and has the same effect on the player as receiving that IR command. Valid button codes correspond to the functions defined in the Default.map file: add&quot;, &quot;brightness_down&quot;, &quot;brightness_toggle&quot;, &quot;brightness_up&quot;, &quot;done&quot;, &quot;down&quot;, &quot;fire&quot;, &quot;jump_fwd&quot;, &quot;jump_rew&quot;, &quot;left&quot;, &quot;left_repeat&quot;, &quot;menu_browse_album&quot;, &quot;menu_browse_artist&quot;, &quot;menu_browse_genre&quot;, &quot;menu_browse_music&quot;, &quot;menu_browse_playlists&quot;, &quot;menu_plugins&quot;, &quot;menu_home&quot;, &quot;menu_now_playing&quot;, &quot;menu_playlist&quot;, &quot;menu_pop&quot;, &quot;menu_search_album&quot;, &quot;menu_search_artist&quot;, &quot;menu_search_song&quot;, &quot;menu_settings&quot;, &quot;muting&quot;, &quot;numberScroll_0&quot;, &quot;numberScroll_1&quot;, &quot;numberScroll_2&quot;, &quot;numberScroll_3&quot;, &quot;numberScroll_4&quot;, &quot;numberScroll_5&quot;, &quot;numberScroll_6&quot;, &quot;numberScroll_7&quot;, &quot;numberScroll_8&quot;, &quot;numberScroll_9&quot;, &quot;pause&quot;, &quot;play&quot;, &quot;play_0&quot;, &quot;play_1&quot;, &quot;playdisp_0&quot;, &quot;playdisp_1&quot;, &quot;playdisp_2&quot;, &quot;playdisp_3&quot;, &quot;playdisp_4&quot;, &quot;playdisp_5&quot;, &quot;playdisp_toggle&quot;, &quot;power_off&quot;, &quot;power_on&quot;, &quot;power_toggle&quot;, &quot;repeat_0&quot;, &quot;repeat_1&quot;, &quot;repeat_2&quot;, &quot;repeat_toggle&quot;, &quot;right&quot;, &quot;right&quot;, &quot;scan_end&quot;, &quot;scan_fwd&quot;, &quot;scan_rew&quot;, &quot;search&quot;, &quot;shuffle_off&quot;, &quot;shuffle_on&quot;, &quot;shuffle_toggle&quot;, &quot;sleep&quot;, &quot;slimtrisButtonHandler_add&quot;, &quot;slimtrisButtonHandler_down&quot;, &quot;slimtrisButtonHandler_left&quot;, &quot;slimtrisButtonHandler_play&quot;, &quot;slimtrisButtonHandler_right&quot;, &quot;slimtrisButtonHandler_up&quot;, &quot;stop&quot;, &quot;textsize_large&quot;, &quot;textsize_small&quot;, &quot;textsize_toggle&quot;, &quot;titleFormat&quot;, &quot;up&quot;, &quot;volume_down&quot;, &amp; &quot;volume_up&quot;.<p>Example:
+<p>The &quot;button&quot; command simulates a button press from a Slim Devices infrared remote, and has the same effect on the player as receiving that IR command. Valid button codes correspond to the functions defined in the Default.map file: add&quot;, &quot;brightness_down&quot;, &quot;brightness_toggle&quot;, &quot;brightness_up&quot;, &quot;done&quot;, &quot;down&quot;, &quot;fire&quot;, &quot;jump_fwd&quot;, &quot;jump_rew&quot;, &quot;left&quot;, &quot;left_repeat&quot;, &quot;menu_browse_album&quot;, &quot;menu_browse_artist&quot;, &quot;menu_browse_genre&quot;, &quot;menu_browse_music&quot;, &quot;menu_browse_playlists&quot;, &quot;menu_plugins&quot;, &quot;menu_home&quot;, &quot;menu_now_playing&quot;, &quot;menu_playlist&quot;, &quot;menu_pop&quot;, &quot;menu_search_album&quot;, &quot;menu_search_artist&quot;, &quot;menu_search_song&quot;, &quot;menu_settings&quot;, &quot;muting&quot;, &quot;numberScroll_0&quot;, &quot;numberScroll_1&quot;, &quot;numberScroll_2&quot;, &quot;numberScroll_3&quot;, &quot;numberScroll_4&quot;, &quot;numberScroll_5&quot;, &quot;numberScroll_6&quot;, &quot;numberScroll_7&quot;, &quot;numberScroll_8&quot;, &quot;numberScroll_9&quot;, &quot;pause&quot;, &quot;play&quot;, &quot;play_0&quot;, &quot;play_1&quot;, &quot;playdisp_0&quot;, &quot;playdisp_1&quot;, &quot;playdisp_2&quot;, &quot;playdisp_3&quot;, &quot;playdisp_4&quot;, &quot;playdisp_5&quot;, &quot;playdisp_toggle&quot;, &quot;power_off&quot;, &quot;power_on&quot;, &quot;power_toggle&quot;, &quot;repeat_0&quot;, &quot;repeat_1&quot;, &quot;repeat_2&quot;, &quot;repeat_toggle&quot;, &quot;right&quot;, &quot;right&quot;, &quot;scan_end&quot;, &quot;scan_fwd&quot;, &quot;scan_rew&quot;, &quot;search&quot;, &quot;shuffle_off&quot;, &quot;shuffle_on&quot;, &quot;shuffle_toggle&quot;, &quot;sleep&quot;, &quot;slimtrisButtonHandler_add&quot;, &quot;slimtrisButtonHandler_down&quot;, &quot;slimtrisButtonHandler_left&quot;, &quot;slimtrisButtonHandler_play&quot;, &quot;slimtrisButtonHandler_right&quot;, &quot;slimtrisButtonHandler_up&quot;, &quot;stop&quot;, &quot;textsize_large&quot;, &quot;textsize_small&quot;, &quot;textsize_toggle&quot;, &quot;titleFormat&quot;, &quot;up&quot;, &quot;volume_down&quot;, &amp; &quot;volume_up&quot;.<p>Example:
 <blockquote> 
   <p>Request: &quot;04:20:00:12:23:45 button stop&lt;CR&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 button stop&lt;CR&gt;&quot;</p>
 </blockquote>

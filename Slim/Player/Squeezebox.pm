@@ -1,3 +1,5 @@
+package Slim::Player::Squeezebox;
+
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -8,9 +10,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
+use File::Spec::Functions qw(:ALL);
+use FindBin qw($Bin);
 use Slim::Player::Player;
-
-package Slim::Player::Squeezebox;
 
 @ISA = ("Slim::Player::Player");
 
@@ -119,4 +121,45 @@ sub bytesReceived {
 	return Slim::Networking::Slimproto::bytesReceived(@_);
 }
 
+sub updateFirmware {
+	my $ip = shift;
+
+	my $file = shift || dircat($Bin, "Firmware", "squeezebox.bin");
+
+	$::d_firmware && msg("Connecting to squeezebox at $remote:$port\n");
+	
+	my $iaddr   = inet_aton($ip) || return("Bad IP address: $ip\n");
+	
+	my $paddr   = sockaddr_in($port, $iaddr);
+	
+	my $proto   = getprotobyname('tcp');
+
+	socket(SOCK, PF_INET, SOCK_STREAM, $proto)	|| msg("Couldn't open socket: $!\n");
+
+	connect(SOCK, $paddr) || msg("Connect failed $!\n");
+	
+	open FS, $file || msg("Open failed for: $file\n");
+	
+	binmode FS;
+	
+	my $size = -s $file;	
+	
+	$::d_firmware && msg("Updating firmware: Sending $size bytes\n");
+	
+	my $bytesread=0;
+	my $totalbytesread=0;
+	my $buf;
+	
+	while ($bytesread=read(FS, $buf, 256)) {
+		print SOCK $buf;
+		$totalbytesread += $bytesread;
+		$::d_firmware && msg("Updating firmware: $totalbytesread / $size\n");
+	}
+	
+	$::d_firmware && msg("Firmware updated successfully.\n");
+	
+	close (SOCK) || return("Couldn't close socket to player.");
+	
+	return undef; 
+}
 1;
