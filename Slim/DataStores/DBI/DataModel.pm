@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DataModel;
 
-# $Id: DataModel.pm,v 1.7 2004/12/18 18:24:02 dsully Exp $
+# $Id: DataModel.pm,v 1.8 2004/12/18 18:57:13 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -51,7 +51,7 @@ sub executeSQLFile {
 		next if $line =~ /^--/;
 		next if $line =~ /^\s*$/;
 
-		if ($line =~ /^(?:CREATE|SET|INSERT|UPDATE|DROP|SELECT)/oi) {
+		if ($line =~ /^\s*(?:CREATE|SET|INSERT|UPDATE|DROP|SELECT)\s+/oi) {
 			$inStatement = 1;
 		}
 
