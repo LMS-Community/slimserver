@@ -169,13 +169,15 @@ sub new {
 	my $clientAlreadyKnown = 0;
 	bless $client, $class;
 
-	print "new($id)\n";
+	$::d_protocol && msg "new($id)\n";
 
 	if (defined(getClient($id))) {
 		$::d_protocol && msg("We know this client. Skipping client prefs and state initialization.\n");
 		$client=getClient($id);
 		$clientAlreadyKnown = 1;
 	} else {
+		$::d_protocol && msg("This a new client. Initializing\n");
+
 		$client->[0] = undef; # id 	
 
 		# client variables id and version info

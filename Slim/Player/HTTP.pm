@@ -22,7 +22,8 @@ sub new {
 	
 	my $client = Slim::Player::Client->new($id, $paddr);
 	$client->streamingsocket($tcpsock);
-	bless $client, $class;
+
+	bless $client, $class unless ($client->isPlayer());
 
 	return $client;
 }
