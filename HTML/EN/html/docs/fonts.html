@@ -1,0 +1,52 @@
+[% pageicon = 'help' %]
+[% pagetitle = 'Font Files' %]
+[% techinfo = '1' %]
+[% PROCESS helpheader.html %]
+<h4>Squeezebox Graphics Font Files</h4>
+<p>Font files reside in the Graphics folder</p>
+
+<p>For each font set (one font for the top line of the display, 
+another for the bottom) there's a separate BMP file.  For example:</p>
+
+<ul>
+<li><b>medium.1.font.bmp</b> - the font used at the top of the screen when in "medium" display mode
+<li><b>medium.2.font.bmp</b> - the font used at the bottom of the screen when in "medium" display mode
+</ul>
+
+<p>(Single-line display modes, such as the Huge font, only require the bottom font file.)
+
+<p>Open these files and you'll see a long horizontal line of characters.  
+
+<p>The first 16 rows of pixels are the font bitmaps themselves.  
+
+<p>The 17th row is used to mark the beginning and end of characters.  
+
+<p>Each file has up to 256 characters using the latin1 character set, in order from 0 to 255.  
+
+<p>The first 31 characters are reserved for use in special graphics characters:
+
+<ul>
+	<li>0 - Inter-character spacing
+	<li>1 - Note symbol
+	<li>2 - Right arrow
+	<li>3 - Progress indicator end
+	<li>4 - Progress indicator first column (empty)
+	<li>5 - Progress indicator second column (empty)
+	<li>6 - Progress indicator additional columns (empty)
+	<li>7 - Progress indicator first column (full)
+	<li>8 - Progress indicator second column (full)
+	<li>9 - Progress indicator additional columns (full)
+	<li>10 - Cursor overlay
+	<li>11 - Moodlogic symbol
+</ul>
+
+<p>The 32nd character is a space character, and the rest follow the latin1 character set.
+
+<p>We used photoshop to create the font files, saving them as 1bpp Windows BMP files.    
+
+<p>For the time being, if you modify a font file, you'll need to restart SlimServer 
+to see your changes.  Also, there's no user interface for selecting additional fonts, 
+so you'll need to swap out one of the existing ones until we update the software 
+to allow you to choose from the web interface.  (Which should only be a couple of days...)
+	
+[% PROCESS helpfooter.html %]
