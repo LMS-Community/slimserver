@@ -1,5 +1,5 @@
 # RssNews Ticker v1.0
-# $Id: RssNews.pm,v 1.11 2004/11/24 20:55:53 dave Exp $
+# $Id: RssNews.pm,v 1.12 2004/11/24 23:08:40 dave Exp $
 # Copyright (c) 2004 Slim Devices, Inc. (www.slimdevices.com)
 
 # Based on BBCTicker 1.3 which had this copyright...
@@ -88,7 +88,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Prefs;
 
-$VERSION = substr(q$Revision: 1.11 $,10);
+$VERSION = substr(q$Revision: 1.12 $,10);
 my %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
@@ -382,10 +382,13 @@ sub getFeedXml {
         my $xml;
 		# forcearray to treat items as array,
 		# keyattr => [] prevents id attrs from overriding
-        eval {$xml = XMLin($response->content,
-						   forcearray => ["item"],
-						   keyattr => [])};
+        eval {
+			$xml = XMLin($response->content,
+						 forcearray => ["item"],
+						 keyattr => []);
+		};
         if ($@) {
+			$::d_plugins && msg("RssNews failed to parse feed <$feed_url> because:\n$@");
             return 0;  
         }
         return $xml;
