@@ -26,11 +26,10 @@ dealing with this directly.
 =cut
 
 use strict;
-use base 'Class::Accessor';
+use base 'Class::Accessor::Fast';
 
 __PACKAGE__->mk_accessors(
-	qw/name accessor mutator placeholder
-		is_constrained/
+	qw/name accessor mutator placeholder is_constrained/
 );
 
 use overload

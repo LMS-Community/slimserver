@@ -3,7 +3,7 @@ package Class::DBI::Relationship;
 use strict;
 use warnings;
 
-use base 'Class::Accessor';
+use base 'Class::Accessor::Fast';
 
 __PACKAGE__->mk_accessors(qw/name class accessor foreign_class args/);
 
@@ -20,6 +20,7 @@ sub _init {
 	my $proto = shift;
 	my $name  = shift;
 	my ($class, $accessor, $foreign_class, $args) = $proto->remap_arguments(@_);
+	$class->clear_object_index;
 	return $proto->new({
 			name          => $name,
 			class         => $class,

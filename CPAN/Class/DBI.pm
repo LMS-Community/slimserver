@@ -23,14 +23,11 @@ use UNIVERSAL::moniker;
 use vars qw($Weaken_Is_Available);
 
 BEGIN {
-	$Weaken_Is_Available = 1;
-	eval {
+	$Weaken_Is_Available = eval {
 		require Scalar::Util;
 		import Scalar::Util qw(weaken);
+		1;
 	};
-	if ($@) {
-		$Weaken_Is_Available = 0;
-	}
 
 	# XXX - dsully for decoding utf8 from the database
 	if ($] > 5.007) {
@@ -510,59 +507,90 @@ sub _attribute_exists {
 	exists $self->{$attribute};
 }
 
-# keep an index of live objects using weak refs
-my %Live_Objects;
-my $Init_Count = 0;
-
-sub _live_object_key {
+sub _init {
 	my ($class, $data) = @_;
-	my @primary_columns = $class->primary_columns;
-
-	# no key unless all PK columns are defined
-	return "" unless @primary_columns == grep defined $data->{$_}, @primary_columns;
-
-	# create single unique key for this object
-	return join "\030", ref($class)||$class, map { $_ . "\032" . $data->{$_} }
-		       sort @primary_columns;
+	# give index/caching mechanism being used by this class the
+	# responsibility to get the object so it can, for example,
+	# use a) no index, b) standard weakref based index (the default),
+	# c) non-weakref based "cache" (including LRU or age limited) etc.
+	return $class->_live_object_fetch($data || {}, 1);
 }
 
-sub _init {
-	my $class = shift;
-	my $data = shift || {};
-	my $obj;
-	my $obj_key = $class->_live_object_key($data);
+sub _fresh_init {
+	my ($class, $data) = @_;
+	my $obj = bless {}, $class;
+        $obj->_attribute_store(%$data);
+	return $obj;
+}
 
-	unless (defined($obj = $Live_Objects{$obj_key})) {
+#----------------------------------------------------------------------
+# Live Object Index (using weak refs if available)
+#----------------------------------------------------------------------
+my %Live_Objects;
+my $_live_object_store_count = 0;
 
-		# not in the object_index, or we don't have all keys yet
-		$obj = bless {}, $class;
-		$obj->_attribute_store(%$data);
+sub _live_object_index {
+	my ($self) = @_;
+	my $class  = ref($self) || $self;
+	return \%Live_Objects if $class eq "Class::DBI";
+	return $Live_Objects{$class};
+}
 
-		# don't store it unless all keys are present
-		if ($obj_key && $Weaken_Is_Available) {
-			weaken($Live_Objects{$obj_key} = $obj);
+sub _live_object_key {
+	my ($me, $data) = @_;
+	# Return key to use for this object in the live object index.
+	# Key string must uniquely and permenantly identify the object.
+	# Return empty string if object doesn't have full indentity yet.
+	# Subclass can use "sub _live_object_key { '' }" to disable.
+	my $class   = ref($me) || $me;
+	my @primary = $class->primary_columns;
 
-			# time to clean up your room?
-			$class->purge_dead_from_object_index
-				if ++$Init_Count % $class->purge_object_index_every == 0;
-		}
-	}
+	my $caller = (caller(1))[3];
 
+	# no key unless all PK columns are defined
+	return "" unless @primary == grep defined $data->{$_}, @primary;
+
+	# create single unique key for this object
+	return join "\030", $class, map $_ . "\032" . $data->{$_}, sort @primary;
+}
+
+sub _live_object_store {
+	my ($self, $key) = @_;
+	return unless $key && $Weaken_Is_Available;
+	my $class = ref $self;
+	weaken($Live_Objects{$class}{$key} = $self);
+	# time to clean up your room?
+	$class->purge_dead_from_object_index
+		if ++$_live_object_store_count % $class->purge_object_index_every == 0;
+}
+
+sub _live_object_fetch {
+	my ($class, $data, $vivify) = @_;
+	my $key = $class->_live_object_key($data);
+	my $obj = $Live_Objects{$class}{$key};
+	return $obj if $obj or !$vivify;
+	$obj = $class->_fresh_init($data);
+	$obj->_live_object_store($key);
 	return $obj;
 }
 
 sub purge_dead_from_object_index {
-	delete @Live_Objects{ grep !defined $Live_Objects{$_}, keys %Live_Objects };
+	while ( my ($class, $lo) = each %Live_Objects ) {
+		my @dead_keys = grep {!defined $lo->{$_} } keys %$lo;
+		delete @{$lo}{ @dead_keys };
+	}
 }
 
 sub remove_from_object_index {
 	my $self            = shift;
-	my $obj_key = $self->_live_object_key($self);
-	delete $Live_Objects{$obj_key};
+	my $class   = ref $self or return;
+	my $obj_key = $class->_live_object_key($self->{_DATA});
+	delete $Live_Objects{$class}{$obj_key};
 }
 
 sub clear_object_index {
-	%Live_Objects = ();
+	my $lo = shift->_live_object_index(@_) or return;
+	%$lo = ();
 }
 
 sub _prepopulate_id {
@@ -666,23 +694,29 @@ sub _bind_param {
 }
 
 sub retrieve {
-	my $class           = shift;
+	my $class = shift;
+	my @args  = @_;
 	my @primary_columns = $class->primary_columns
 		or return $class->_croak(
 		"Can't retrieve unless primary columns are defined");
-	my %key_value;
-	if (@_ == 1 && @primary_columns == 1) {
-		my $id = shift;
-		return unless defined $id;
-		return $class->_croak("Can't retrieve a reference") if ref($id);
-		$key_value{ $primary_columns[0] } = $id;
-	} else {
-		%key_value = @_;
-		$class->_croak(
-			"$class->retrieve(@_) parameters don't include values for all primary key columns (@primary_columns)"
-			)
-			if keys %key_value < @primary_columns;
+
+	if (@args == 1 && @primary_columns == 1) {
+		my $id = shift @args;
+		return $class->_croak("Can't retrieve a reference")
+			if ref $id and !UNIVERSAL::isa($id => 'Class::DBI');
+		@args = ($primary_columns[0] => $id)
 	}
+
+	my %key_value = @args;
+	while (my ($col, $val) = splice @args, 0, 2) { # as per _do_search:
+		my $column = $class->find_column($col)
+			|| (List::Util::first { $_->accessor eq $col } $class->columns)
+			|| $class->_croak("$col is not a column of $class");
+		$key_value{$column} = $val; # search() deflate for us
+	}
+	$class->_croak("$class->retrieve(@_) parameters don't include defined values for all primary key columns (@primary_columns)")
+		unless @primary_columns == grep defined, @key_value{@primary_columns};
+
 	my @rows = $class->search(%key_value);
 	$class->_carp("$class->retrieve(@_) selected " . @rows . " rows")
 		if @rows > 1;
@@ -742,6 +776,7 @@ sub move {
 sub delete {
 	my $self = shift;
 	return $self->_search_delete(@_) if not ref $self;
+	$self->remove_from_object_index;
 	$self->call_trigger('before_delete');
 
 	eval { $self->sql_DeleteMe->execute($self->id) };
@@ -1080,23 +1115,43 @@ sub _do_search {
 	my $class = ref $proto || $proto;
 
 	@args = %{ $args[0] } if ref $args[0] eq "HASH";
-	my (@cols, @vals);
 	my $search_opts = @args % 2 ? pop @args : {};
+	my %search_for;
 	while (my ($col, $val) = splice @args, 0, 2) {
 		my $column = $class->find_column($col)
 			|| (List::Util::first { $_->accessor eq $col } $class->columns)
 			|| $class->_croak("$col is not a column of $class");
-		push @cols, $column;
-		push @vals, $class->_deflated_column($column, $val);
+		$search_for{$column} = $class->_deflated_column($column, $val);
 	}
 
-	my $frag = join " AND ",
-		map defined($vals[$_]) ? "$cols[$_] $search_type ?" : "$cols[$_] IS NULL",
-		0 .. $#cols;
+	# if we're searching using "=" and we have all the PK fields
+	# then we can bypass the db search if the object is already cached
+	# and all the searched-for field values match. If any don't match,
+	# or don't exist in the cached object, then we fall through and db search.
+	if ($search_type eq "=" and my $obj_key = $class->_live_object_key(\%search_for)) {
+		my $obj = $Live_Objects{$class}{$obj_key};
+		# do we have a cached object that also matches the search criteria?
+		# for now we use the cached object only if the PK was the only search criteria
+		# (wouldn't be hard to add more through check of %search_for values)
+		my @primary_columns = $class->primary_columns;
+		return $obj if defined $obj and keys %search_for == @primary_columns;
+	}
+
+	my (@qual, @bind);
+	for my $column (sort keys %search_for) { # canonical order (for prepare_cached)
+	    if (defined(my $value = $search_for{$column})) {
+		push @qual, "$column $search_type ?";
+		push @bind, $value;
+	    }
+	    else {
+		# perhaps _carp if $search_type ne "="
+		push @qual, "$column IS NULL";
+	    }
+	}
+	my $frag = join " AND ", @qual;
 	$frag .= " ORDER BY $search_opts->{order_by}"
 		if $search_opts->{order_by};
-	return $class->sth_to_objects($class->sql_Retrieve($frag),
-		[ grep defined, @vals ]);
+	return $class->sth_to_objects($class->sql_Retrieve($frag), \@bind);
 
 }
 

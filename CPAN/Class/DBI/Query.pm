@@ -2,7 +2,7 @@ package Class::DBI::Query::Base;
 
 use strict;
 
-use base 'Class::Accessor';
+use base 'Class::Accessor::Fast';
 use Storable 'dclone';
 
 sub new {
@@ -33,9 +33,7 @@ package Class::DBI::Query;
 use base 'Class::DBI::Query::Base';
 
 __PACKAGE__->mk_accessors(
-	qw/
-		owner essential sqlname where_clause restrictions order_by kings
-		/
+	qw/owner essential sqlname where_clause restrictions order_by kings/
 );
 
 =head1 NAME
