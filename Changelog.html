@@ -1,3 +1,45 @@
+<h2><a name="v5.3.0b1" id="v5.3.0b1"></a>Version 5.3.0b1 - 2004-08-03</h2>
+<ul>
+	<li>Added support for Squeezebox with a 280x16 graphical display:
+		<ul>
+			<li>Proportional fonts
+			<li>Graphics additions to the client protocol
+			<li>Support for animation
+		</ul>
+	</li>
+	<li>Assorted enhancements and bug fixes:
+		<ul>
+			<li>Support for embedded cuesheets in Flac from Michael Turner.		
+			<li>Added XML parser (SAX::PurePerl) because it's useful for lots fo plugins.
+			<li>Significant improvements to Input modes for plugin developers.
+			<li>Improvements to the Handheld skin from Michael Herger.
+			<li>bug440 - fix an error in Fishbone skin that would prevent rendering in OSX with IE 5.2
+			<li>Moodlogic: fix a bad cut/paste that would generate a playlist of 0 items, fix a crash when entering instant misx for a song fix a crash when entering mood wheel, bug 451: add moodlogic artistMixCache and genreMixCache to the storable dB.
+			<li>Fix for bug 308, where web interface pages weren't showing up after a skin change.
+			<li>Fix Bug 428: creating a scrollrate setting specific to Double Size text.
+			<li>Bug 453: If you fail to upgrade in a timely manner, the web interface will nag you badly.
+			<li>Various fixes to the Fishbone skin from kdf.
+			<li>Plugins: added a scheduled rescan feature to the Rescan plugin using INPUT.Time
+			<li>CLI: Bug256 adding sync commands via CLI.
+			<li>Firmware: fix bug 398: unblock client so that the update required message will not be there when the client reboots.
+			<li>Bug 457: Link at top of help pages was broken.
+			<li>Bug458 Plugins in home menu are now removed temporarily if they are disabled of fail on startup. Allow browsemenu to be added to the home menu.
+			<li>Bug 463: Crash if there's a QuickTime movie or AAC file with zero duration in your library.
+			<li>Bug 461: discrete scrollPause setting for double height text improve scrollPause for single height as well.
+			<li>Fix genre tag extraction from AAC files.
+			<li>Skip 0 length PADDING block - from David Brittain.
+		</ul>
+	</li>
+	<li>Squeezebox Firmware Version 31
+		<ul>
+			<li>Support for graphics display.
+			<li>Disable runtime debug, assertions, turbo 2-wire disable TCP reassembly (found a case where I could consistently cause dropouts streaming AIFF from osx - goes away when reassembly is off). 
+			<li>Increase the window in which we will accept garbage ir codes as a repeat of the previous code, from 125 to 150 ms. 
+			<li>Fixes spurious extra button press.
+		</ul>
+	</li>			
+</ul>
+
 <h2><a name="v5.2.1" id="v5.2.1"></a>Version 5.2.1 - 2004-07-03</h2>
 <ul>
 	<li>SlimServer Bug Fixes
