@@ -172,6 +172,7 @@ use vars qw(
 	$d_stream
 	$d_stream_v
 	$d_sync
+	$d_sync_v
 	$d_time
 	$d_ui
 	$d_usage
@@ -495,6 +496,7 @@ to the console via stderr:
     --d_stream       => Information about player streaming protocol 
     --d_stream_v     => Verbose information about player streaming protocol 
     --d_sync         => Information about multi player synchronization
+    --d_sync_v       => Verbose information about multi player synchronization
     --d_time         => Internal timer information
     --d_ui           => Player user interface information
     --d_usage        => Display buffer usage codes on the player's display
@@ -558,6 +560,7 @@ sub initOptions {
 		'd_stream'			=> \$d_stream,
 		'd_stream_v'		=> \$d_stream_v,
 		'd_sync'			=> \$d_sync,
+		'd_sync_v'		=> \$d_sync_v,
 		'd_time'			=> \$d_time,
 		'd_ui'				=> \$d_ui,
 		'd_usage'			=> \$d_usage,
