@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.45 2003/11/21 18:25:04 dean Exp $
+# $Id: HTTP.pm,v 1.46 2003/11/22 20:31:08 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -51,6 +51,7 @@ my($defaultskin)="Default";
 my($baseskin)="EN";
 my($METADATAINTERVAL) = 32768;
 
+my($RETRY_TIME) = 0.05;
 
 #
 # Package variables
@@ -622,7 +623,7 @@ sub sendstreamingresponse {
 			}
 			
 			# otherwise, queue up the next chunk of sound
-			if ($chunkRef) {
+			if ($chunkRef && length($chunkRef)) {
 				$::d_http && msg("(audio: " . length($$chunkRef) . "bytes)\n" );
 				my %segment = ( 
 					'data' => $chunkRef,
@@ -630,7 +631,12 @@ sub sendstreamingresponse {
 					'length' => length($$chunkRef)
 				);
 				unshift @{$outbuf{$httpclientsock}},\%segment;
-			} 
+			} else {
+				# let's try again after RETRY_TIME
+				$::d_http && msg("Nothing to stream, let's wait for $RETRY_TIME seconds...\n");
+				Slim::Networking::Select::addWrite($httpclientsock, 0);
+				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $RETRY_TIME, \&tryStreamingLater,($httpclientsock));
+			}
 		}
 		# try again...
 		$segmentref = shift(@{$outbuf{$httpclientsock}});
@@ -710,6 +716,12 @@ sub sendstreamingresponse {
 
 	$::d_http && $sentbytes && msg("Streamed $sentbytes to " . $peeraddr{$httpclientsock} . "\n");
 	return $sentbytes;
+}
+
+sub tryStreamingLater {
+	my $client = shift;
+	my $httpclientsock = shift;
+	Slim::Networking::Select::addWrite($httpclientsock, \&sendstreamingresponse);
 }
 
 #
