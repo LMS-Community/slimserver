@@ -47,7 +47,7 @@ sub add {
 	# Handle the case where $genre is already an object:
 	if (ref $artist && $artist->isa('Slim::DataStores::DBI::Contributor')) {
 
-		Slim::DataStores::DBI::ContributorTrack->create({
+		Slim::DataStores::DBI::ContributorTrack->find_or_create({
 			track => $track,
 			contributor => $artist,
 			role => $role,
@@ -86,7 +86,7 @@ sub add {
 
 		push @contributors, $artistObj;
 
-		Slim::DataStores::DBI::ContributorTrack->create({
+		Slim::DataStores::DBI::ContributorTrack->find_or_create({
 			track => $track,
 			contributor => $artistObj,
 			role => $role,

@@ -31,7 +31,7 @@ sub add {
 	# Handle the case where $genre is already an object:
 	if (ref $genre && $genre->isa('Slim::DataStores::DBI::Genre')) {
 
-		Slim::DataStores::DBI::GenreTrack->create({
+		Slim::DataStores::DBI::GenreTrack->find_or_create({
 			track => $track,
 			genre => $genre,
 		});
@@ -63,7 +63,7 @@ sub add {
 
 		push @genres, $_cache{$genreSub};
 		
-		Slim::DataStores::DBI::GenreTrack->create({
+		Slim::DataStores::DBI::GenreTrack->find_or_create({
 			track => $track,
 			genre => $_cache{$genreSub},
 		});
