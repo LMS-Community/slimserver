@@ -492,7 +492,15 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td>search</td>
-		<td>Search substring. The search is case insensitive.</td>
+		<td>Search string. The search is case insensitive and obeys the &quot;Search Within Words&quot; server parameter.</td>
+	</tr>
+	<tr>
+		<td>artist_id</td>
+		<td>Limit results to those genres proposed by the artist identified by artist_id.</td>
+	</tr>
+	<tr>
+		<td>album_id</td>
+		<td>Limit results to those genres available on the album identified by album_id.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
@@ -515,16 +523,20 @@ preferences values.</p>
 		<td></td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;<b>genre</b></td>
-		<td>Genre name. Item delimiter.</td>
+		<td>&nbsp;&nbsp;<b>genre_id</b></td>
+		<td>Genre ID. Item delimiter.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;genre</td>
+		<td>Genre name.</td>
 	</tr>
 </table>
 <p>Example:</p>
 <blockquote> 
   <p> Request: &quot;genres 0 5&lt;LF&gt;&quot;<br>
-  	 Response: &quot;genres 0 5 rescan:1 count:6 genre:Acid%20Jazz genre:Alternative%20&%20Punk genre:French genre:No%20Genre genre:Pop&lt;LF&gt;&quot;</p>
+  	 Response: &quot;genres 0 5 rescan:1 count:6 genre_id:3 genre:Acid%20Jazz genre_id:4 genre:Alternative%20&%20Punk genre_id:5 genre:French genre_id:6 genre:No%20Genre genre_id:7 genre:Pop&lt;LF&gt;&quot;</p>
   <p> Request: &quot;genres 0 5 search:unk&lt;LF&gt;&quot;<br>
-  	 Response: genres 0 5 search:unk count:1 genre:Alternative%20&%20Punk&lt;LF&gt;&quot;</p>
+  	 Response: genres 0 5 search:unk count:1 genre_id:4 genre:Alternative%20&%20Punk&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p id="artists"><strong><code>artists &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
@@ -537,15 +549,15 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td>search</td>
-		<td>Search substring. The search is case insensitive.</td>
+		<td>Search substring. The search is case insensitive and obeys the &quot;Search Within Words&quot; server parameter.</td>
 	</tr>
 	<tr>
-		<td>genre</td>
-		<td>Genre name, to restrict the results to those artists with songs of that genre.</td>
+		<td>genre_id</td>
+		<td>Genre ID, to restrict the results to those artists with songs of that genre.</td>
 	</tr>
 	<tr>
-		<td>album</td>
-		<td>Album name, to restrict the results to those artists with songs of that album.</td>
+		<td>album_id</td>
+		<td>Album ID, to restrict the results to those artists with songs of that album.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
@@ -568,16 +580,20 @@ preferences values.</p>
 		<td></td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;<b>artist</b></td>
-		<td>Artist name. Item delimiter.</td>
+		<td>&nbsp;&nbsp;<b>artist_id</b></td>
+		<td>Artist ID. Item delimiter.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;artist</td>
+		<td>Artist name.</td>
 	</tr>
 </table>
 <p>Example:</p>
 <blockquote> 
   <p> Request: &quot;artists 0 5&lt;LF&gt;&quot;<br>
-  	 Response: artists 0 5 count:7 artist:Anastacia artist:Calogero artist:Evanescence artist:Leftfield%20%26%20Lydon artist:Llorca&lt;LF&gt;&quot;</p>
-  <p> Request: &quot;artists 0 5 genre:Pop&lt;LF&gt;&quot;<br>
-  	 Response: artists 0 5 genre:Pop count:2 artist:Anastacia artist:Sarah%20Connor&lt;LF&gt;&quot;</p>
+  	 Response: artists 0 5 count:7 artist_id:2 artist:Anastacia artist_id:3 artist:Calogero artist_id:4 artist:Evanescence artist_id:5 artist:Leftfield%20%26%20Lydon artist_id:18 artist:Llorca&lt;LF&gt;&quot;</p>
+  <p> Request: &quot;artists 0 5 genre_id:7&lt;LF&gt;&quot;<br>
+  	 Response: artists 0 5 genre_id:7 count:2 artist_id:2 artist:Anastacia artist_id:19 artist:Sarah%20Connor&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p id="albums"><strong><code>albums &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
@@ -590,15 +606,15 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td>search</td>
-		<td>Search substring. The search is case insensitive.</td>
+		<td>Search substring. The search is case insensitive and obeys the &quot;Search Within Words&quot; server parameter.</td>
 	</tr>
 	<tr>
-		<td>genre</td>
-		<td>Genre name, to restrict the results to those albums with songs of that genre.</td>
+		<td>genre_id</td>
+		<td>Genre ID, to restrict the results to those albums with songs of that genre.</td>
 	</tr>
 	<tr>
-		<td>artist</td>
-		<td>Artist name, to restrict the results to those albums with songs of that artist.</td>
+		<td>artist_id</td>
+		<td>Artist ID, to restrict the results to those albums with songs of that artist.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
@@ -621,18 +637,22 @@ preferences values.</p>
 		<td></td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;<b>album</b></td>
+		<td>&nbsp;&nbsp;<b>album_id</b></td>
+		<td>Album ID. Item delimiter.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;album</td>
 		<td>Album name. Item delimiter.</td>
 	</tr>
 </table>
 <p>Example:</p>
 <blockquote> 
   <p> Request: &quot;albums 0 4&lt;LF&gt;&quot;<br>
-  	 Response: &quot;albums 0 4 count:14 album:Amadeus%20(Disc%201%20of%202) album:Anastacia album:Bounce%20[Single] album:Fallen&lt;LF&gt;&quot;</p>
-  <p> Request: &quot;albums 0 5 genre:Pop&lt;LF&gt;&quot;<br>
-  	 Response: &quot;albums 0 5 genre:Pop count:2 album:Anastacia album:Bounce%20[Single]&lt;LF&gt;&quot;</p>
-  <p> Request: &quot;albums 0 5 artist:Sarah%20Connor&lt;LF&gt;&quot;<br>
-  	 Response: &quot;albums 0 5 artist:Sarah%20Connor count:1 album:Bounce%20[Single]&lt;LF&gt;&quot;</p>
+  	 Response: &quot;albums 0 4 count:14 album_id:1 album:Amadeus%20(Disc%201%20of%202) album_id:4 album:Anastacia album_id:5 album:Bounce%20[Single] album_id:6 album:Fallen&lt;LF&gt;&quot;</p>
+  <p> Request: &quot;albums 0 5 genre_id:7&lt;LF&gt;&quot;<br>
+  	 Response: &quot;albums 0 5 genre_id:7 count:2  album_id:4 album:Anastacia  album_id:5 album:Bounce%20[Single]&lt;LF&gt;&quot;</p>
+  <p> Request: &quot;albums 0 5 artist_id:19&lt;LF&gt;&quot;<br>
+  	 Response: &quot;albums 0 5 artist_id:19 count:1 album_id:5 album:Bounce%20[Single]&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p id="songinfo"><strong><code>songinfo &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
@@ -681,9 +701,19 @@ preferences values.</p>
 		<td>Genre name. Only if known.</td>
 	</tr>
 	<tr>
+		<td><b>p</b></td>
+		<td>genre_id</td>
+		<td>Genre ID. Only if known.</td>
+	</tr>
+	<tr>
 		<td><b>a</b></td>
 		<td>artist</td>
 		<td>Artist name. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>s</b></td>
+		<td>artist_id</td>
+		<td>Artist ID. Only if known.</td>
 	</tr>
 	<tr>
 		<td><b>c</b></td>
@@ -704,6 +734,11 @@ preferences values.</p>
 		<td><b>l</b></td>
 		<td>album</td>
 		<td>Album name. Only if known.</td>
+	</tr>
+	<tr>
+		<td><b>e</b></td>
+		<td>album_id</td>
+		<td>Album ID. Only if known.</td>
 	</tr>
 	<tr>
 		<td><b>d</b></td>
@@ -802,16 +837,16 @@ preferences values.</p>
 		<td><b>Description</b></td>
 	</tr>
 	<tr>
-		<td>genre</td>
-		<td>Genre name, to restrict the results to the titles of that genre.</td>
+		<td>genre_id</td>
+		<td>Genre ID, to restrict the results to the titles of that genre.</td>
 	</tr>
 	<tr>
-		<td>artist</td>
-		<td>Artist name, to restrict the results to the titles of that artist.</td>
+		<td>artist_id</td>
+		<td>Artist ID, to restrict the results to the titles of that artist.</td>
 	</tr>
 	<tr>
-		<td>album</td>
-		<td>Album name, to restrict the results to the titles of that album.</td>
+		<td>album_id</td>
+		<td>Album ID, to restrict the results to the titles of that album.</td>
 	</tr>
 	<tr>
 		<td>tags</td>
@@ -821,12 +856,12 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td>search</td>
-		<td>Search substring. The search is case insensitive.</td>
+		<td>Search substring. The search is case insensitive and obeys the &quot;Search Within Words&quot; server parameter.</td>
 	</tr>
 	<tr>
 		<td>sort</td>
-		<td>Sorting, one of &quot;titles&quot; (the default) or &quot;tracks&quot;. The track field (&quot;t&quot;) is added 
-		automatically to the response. Sorting by tracks is possible only if tracks are defined and for a single album.</td>
+		<td>Sorting, one of &quot;title&quot; (the default) or &quot;tracknum&quot; (in which case the track field (&quot;t&quot;) is added 
+		automatically to the response). Sorting by tracks is possible only if tracks are defined and for a single album.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>

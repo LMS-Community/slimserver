@@ -777,9 +777,11 @@ sub generateHTTPResponse {
 		
 		if ($1 eq "current" && defined $client) {
 
+			# If the object doesn't have any cover art - fall
+			# through to the generic cover image.
 			$obj  = $ds->objectForUrl(Slim::Utils::Misc::fileURLFromPath(
 				Slim::Player::Playlist::song($client)
-			)) || return 0;
+			));
 
 		} else {
 

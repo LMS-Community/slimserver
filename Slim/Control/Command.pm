@@ -20,9 +20,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Scan;
 use Slim::Utils::Strings qw(string);
 
-our %executeCallbacks;
-
-
+our %executeCallbacks = ();
 
 our %searchMap = (
 
@@ -323,16 +321,24 @@ sub execute {
  		my %params = parseParams($parrayref, \@returnArray);
 
 		if (defined $searchMap{$label} && Slim::Buttons::BrowseID3::specified($params{'search'})) {
-
-			$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit(
-				Slim::Utils::Text::ignoreCaseArticles($params{'search'})
-			);
+			$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit(Slim::Utils::Text::ignoreCaseArticles($params{'search'}));
 		}
-
+		
+		if (defined $params{'genre_id'}){
+			$find->{'genre'} = $params{'genre_id'};
+		}
+		if (defined $params{'artist_id'}){
+			$find->{'artist'} = $params{'artist_id'};
+		}
+		if (defined $params{'album_id'}){
+			$find->{'album'} = $params{'album_id'};
+		}
+		
+		
  		if (Slim::Utils::Misc::stillScanning()) {
  			push @returnArray, "rescan:1";
  		}
- 
+
 		my $results = $ds->find($label, $find, $label);
 		my $count   = scalar @$results;
 
@@ -343,6 +349,7 @@ sub execute {
  		if ($valid) {
 
  			for my $eachitem (@$results[$start..$end]) {
+ 				push @returnArray, $label . '_id:'. $eachitem->id;
  				push @returnArray, $label . ':' . $eachitem;
  			}
  		}
@@ -360,21 +367,23 @@ sub execute {
  		my %params = parseParams($parrayref, \@returnArray);
 
 		if (defined $searchMap{$label} && Slim::Buttons::BrowseID3::specified($params{'search'})) {
-
-			$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit(
-				Slim::Utils::Text::ignoreCaseArticles($params{'search'})
-			);
+			$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit(Slim::Utils::Text::ignoreCaseArticles($params{'search'}));
 		}
 
-#		if (defined $params{$label} && !Slim::Buttons::BrowseID3::specified($params{$label})) {
-#
-#			$find->{ $searchMap{$label} } = singletonRef(Slim::Web::Pages::searchStringSplit($params{$label}));
-#		}
+		if (defined $params{'genre_id'}){
+			$find->{'genre'} = $params{'genre_id'};
+		}
+		if (defined $params{'artist_id'}){
+			$find->{'artist'} = $params{'artist_id'};
+		}
+		if (defined $params{'album_id'}){
+			$find->{'album'} = $params{'album_id'};
+		}
  		
  		$sort = $params{'sort'} if defined($params{'sort'});
  		$tags = $params{'tags'} if defined($params{'tags'});
  		
- 		if ($sort eq "tracks") {
+ 		if ($sort eq "tracknum") {
  			$tags = $tags . "t";
  		}
  		
@@ -1709,6 +1718,7 @@ sub parseListRef {
 	if ($term =~ /listref=(.+?)&/) {
 		$listRef = $client->param($1);
 	}
+
 	if (defined $listRef && ref $listRef eq "ARRAY") {
 		return @$listRef;
 	}
@@ -1719,7 +1729,7 @@ sub parseListRef {
 
 # This maps the extended CLI commands to methods on Track.
 # Allocation map: capital letters are still free:
-#  a b c d E f g h i j k l m n o P q r S t u v X y z
+#  a b c d e f g h i j k l m n o p q r s t u v X y z
 
 our %cliTrackMap = (
 	'g' => 'genre',
@@ -1728,7 +1738,6 @@ our %cliTrackMap = (
 	'b' => 'band',
 	'h' => 'conductor',
 	'l' => 'album',
-#	'd' => 'duration',
 	't' => 'tracknum',
 	'y' => 'year',
 	'm' => 'bpm',
@@ -1740,12 +1749,16 @@ our %cliTrackMap = (
 	'u' => 'url',
 	'f' => 'filesize',
 );
+
 # Special cased:
 # d duration
 # i disc
 # j Cover art
 # o type
 # q disc count
+# e album_id
+# p genre_id
+# s artist_id
 
 sub pushSong {
 	my $pathOrObj = shift;
@@ -1772,9 +1785,23 @@ sub pushSong {
 
 		if ($tag eq 'd' && defined(my $duration = $track->secs())) {
 			push @returnArray, "duration:$duration";
-			
+			next;
 		}
 
+		if ($tag eq 'e' && defined(my $id = $track->album()->id())) {
+			push @returnArray, "album_id:$id";
+			next;
+		}
+
+		if ($tag eq 'p' && defined(my $id = $track->genre()->id())) {
+			push @returnArray, "genre_id:$id";
+			next;
+		}
+
+		if ($tag eq 's' && defined(my $id = $track->artist()->id())) {
+			push @returnArray, "artist_id:$id";
+		}
+		
 		# Cover art!
 		if ($tag eq 'j') {
 
@@ -1871,4 +1898,3 @@ __END__
 # tab-width:4
 # indent-tabs-mode:t
 # End:
-
