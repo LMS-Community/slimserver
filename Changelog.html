@@ -1,3 +1,140 @@
+<h2><a name="v6.0" id="v6.0"></a>Version 6.0 - 2005-03-27</h2>
+<ul>
+	<h3>Summary:</h3>
+		<ul>
+			<li>Support for the new Squeezebox2 player.
+			<li>Faster scanning, searching and browsing&mdash;scales to very large music libraries (100K+ tracks).
+			<li>Advanced search features and new browse categories.
+			<li>Integrates with MusicMagic Mixer from Predixis, MoodLogic and iTunes.
+			<li>Unicode support&mdash;web interface translated to even more languages, including Japanese.
+			<li>Many more improvements and bug fixes.
+		</ul>
+	<p>
+
+	<li>Performance & Memory Usage:<p>
+		<ul>
+
+			<li>Only load the strings for the currently active language, make plugins re-loadable for language changes. 
+			<li>Memory usage further reduced by dynamically loading SLIMP3 & xPL modules.
+			<li>iTunes rescan performance is now much faster.
+		</ul>
+	<br>
+
+	<li>General:<p>
+		<ul>
+			<li>Don't check for stale tracks on startup - this is back to 5.4 behavior.
+			<li>Stale Album, Contributor and Genre cleanup happens only after a rescan.
+			<li>Updated to the latest Squeezebox2 Firmware.
+		</ul>
+	<br>
+
+	<li>Formats:<p>
+		<ul>
+			<li>Use sox instead of oggdec for ogg decoding.<br> With sox, we can specify the output audio parameters, so that we will always get 44.1Khz 16-bit audio, even if the input is of a different sample rate.<br>This fixes the chipmunk problem with serveral Ogg streams. 
+		</ul>
+	<br>
+
+	<li>Command Line Interface:<p>
+		<ul>
+			<li>More updates from Frederic Thomas.
+		</ul>
+	<br>
+
+	<li>Softsqueeze:<p>
+		<ul>
+			<li>Fixed spectrum analyzer to work correctly.
+			<li>Fixed visualizer crash when using fwd/rew.
+			<li>Fixed volume control following change in slimserver.
+			<li>Do allow Softsqueeze2 to run when connected to 5.4.x server.
+			<li>Short tracks were not being played, force the playback to start if the stream is closed and we are still buffering.
+			<li>Fixed Softsqueeze configuration, when used for the first time then mac address was not sticky.
+			<li>Fixed Softsqueeze configuration error, that could stop ssh tunneling from working.
+			<li>Fixed aac playback in Softsqueeze
+			<li>Fix playback of non 44100 frame rates in Softsqueeze. Let's lose those radio chipmunks.
+			<li>Softsqueeze could not play mp3 streams transcoded to 64 or 96 kbit/s.<br>With these low bit rate streams the output buffer would fill before the decoder buffer reached the autostart threshold.<br>Now we start playback if either buffer is full.
+			<li>Fix display brightness.
+		</ul>
+	<br>
+
+	<li>Skins:<p>
+		<ul>
+			<li>xmlTelCanto has been updated for 6.0
+			<li>Gordon "Flash" skin. has been removed.
+			<li>Fixes for ExBrowse2, NBMU, Touch, Default2 & Handheld.
+		</ul>
+	<br>
+
+	<li>Games:<p>
+		<ul>
+			<li>SlimTris updated for Squeezebox2!
+			<li>Shooter has been removed, as it doesn't work.
+		</ul>
+	<br>
+
+	<li>Platform Support:<p>
+		<ul>
+			<li>Removed bogus setting of the IO::Socket::blocking method on Windows.
+		</ul>
+	<br>
+
+	<li>Known Issues:<p>
+		<ul>
+			<li>All Albums/Songs in search results for the Player UI are broken and have been removed.
+			<li>Artists or Albums with '*' in the string cause the Player UI to behave strangely.
+			<li>MusicMagic connection settings need to be exposed when plugin is enabled, even though connection cannot be established.
+			<li>Streaming to a SB1 using OSX Tiger has dropouts. Panther works fine.
+		</ul>
+	<br>
+
+	<li>Bugs fixed:<p>
+		<ul>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=253">#253</a> - Nx FWD and RWD work incorrectly for single file MP3 w/ CUE Sheet
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=521">#521</a> - /html/controller.html broken for some button modes
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=875">#875</a> - Browse Folder in web should have an alpha pagebar not a number page bar
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=906">#906</a> - if a small visualizer was enabled, standby clock screen is shifted left
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=923">#923</a> - album artwork images getting truncated or not shown
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=954">#954</a> - SB2 messages dont' fit properly in the excession skin
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=954">#954</a> - SB2 messages dont' fit properly in the excession skin
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=958">#958</a> - Connedting to SlimServer... stays on forever
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=975">#975</a> - upon install, UI says 1 album, not zero
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=984">#984</a> - now playing information isn't updated
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=991">#991</a> - Does not appear to ignore songs disabled in iTunes
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1027">#1027</a> - Mute does not work
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1029">#1029</a> - Server should send STREAMINFO header with FLAC stream
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1041">#1041</a> - images in software should be of squeezebox2
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1046">#1046</a> - player font settings need to match player type
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1066">#1066</a> - PDA / Handheld skin problems selecting album in 6.0b1
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1071">#1071</a> - To many artists listed (started in #995)
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1072">#1072</a> - no indication in UI of 8s limitation for transition time
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1075">#1075</a> - Cannot show 'time remaining' on now playing screen
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1122">#1122</a> - playlist caching
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1124">#1124</a> - 'Now playing (jump back on wake)' does not change with song title change
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1129">#1129</a> - Fix xmlTelCanto skin
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1137">#1137</a> - ExBrowse2: Error browsing directory with &quot;+&quot; in its name
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1141">#1141</a> - crash when hitting Now Playing after changing buffer fullness settings in web interface
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1146">#1146</a> - 6.0 b3 Crash while playing some music - formatting
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1151">#1151</a> - DateTime screensaver does not work on SB2
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1152">#1152</a> - SlimServer execute with the user argument creates log and conf with incorrect and unusable privileges.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1155">#1155</a> - Server rescan having more trouble with Ogg tags
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1156">#1156</a> - script error when browsing music folder
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1158">#1158</a> - null track request?
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1159">#1159</a> - sb2 firmware update could mention sb2
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1166">#1166</a> - Slimserver 6 doesn't read COMPOSER tag from flac embedded cuesheets
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1168">#1168</a> - starting with no DB and __$MAC playlists may not scan
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1169">#1169</a> - Playing items using player Browse Artist menu/remote doesn't work when TSOP (sort order performer tag) is different from ID3 artist name
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1170">#1170</a> - 6.0b3 crashes at startup in SqueezeboxG.pm line 111
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1171">#1171</a> - Playlists folder not automatically created on Mac.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1174">#1174</a> - proxy settings interfere with localhost
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1185">#1185</a> - tons of errors reported after performing an SB2 firmware update
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1191">#1191</a> - firmware.html page for updating squeezebox1 is broken in 6.0 beta
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1194">#1194</a> - Mozart Forever, Always station from Live365 crashes the server
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1198">#1198</a> - errors reported after &quot;punching&quot; left from SB2 home to setup menu
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1201">#1201</a> - analog vu meter, digital vu meter, spectrum analyzer screensavers broken
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1203">#1203</a> - Resetting... not shown anymore after firmware update
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1210">#1210</a> - Shortcut when editing playlists
+		</ul>
+</ul>
+
 <h2><a name="v6.0b3" id="v6.0b3"></a>Version 6.0b3 - 2005-03-19</h2>
 <ul>
 	<li>Performance:<p>
@@ -605,7 +742,7 @@
 	<li>Firmware 40:
 		<ul>
 			<li>Fix a problem with 32 character long SSIDs.
-			<li> When reconnecting, the player tells the
+			<li>When reconnecting, the player tells the
 	  server if it rebooted.  The server will now only restart
 	  streams if the player has rebooted.
 			<li>Updated squeezebox firmware to ignore
@@ -652,7 +789,7 @@
 	  incorrectly when activated from another INPUT.Bar mode
 			<li>fix a bug in fishbone skin that made all
 	  searches into search for artist
-			<li> Added postulated fix for WMA files that
+			<li>Added postulated fix for WMA files that
 	  have broken headers with block lengths that are shorter than
 	  possible.
 			<li>Fixed a problem where the spinning cursor
@@ -691,7 +828,7 @@
 	  Formats::Musepack to get the correct track number.
 			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=588">588</a>: M3U and PLS files that SlimServer
 	  writes should use file paths, not file: URLs.</li>
-			<li> bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=593">593</a>: fix a bug where fishbone undock
+			<li>bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=593">593</a>: fix a bug where fishbone undock
 	  link only opened first player now opens a window for the
 	  current player, each player can have its own undocked
 	  window</li>
