@@ -1,6 +1,6 @@
 # ShoutcastBrowser.pm Copyright (C) 2003 Peter Heslin
 # version 3.0, 5 Apr, 2004
-#$Id$
+#$Id: ShoutcastBrowser.pm 2620 2005-03-21 08:40:35Z mherger $
 #
 # A Slim plugin for browsing the Shoutcast directory of mp3
 # streams.  Inspired by streamtuner.
@@ -22,7 +22,7 @@
 #
 # * Add a web interface
 
-package Plugins::ShoutcastBrowser;
+package Plugins::ShoutcastBrowser::Plugin;
 
 use strict;
 
@@ -343,170 +343,179 @@ sub setMode {
 	
 	# Get streams
 	unless (@genres) {
-		%stream_data = ();
-		%streams = ();
-		%bitrates = ();
-		$current_genre{$client} = 0;
-		$current_stream{$client} = 0;
-		$current_bitrate{$client} = 0;
-		
-		my %in_genres;
-		
-		$all_name = $client->string('PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS');
-
-		my $u = unpack 'u', q{M:'1T<#HO+W-H;W5T8V%S="YC;VTO<V)I;B]X;6QL:7-T97(N<&AT;6P_<V5R+=FEC93U3;&E-4#,`};
-		
-		$u .= '&no_compress=1' unless $have_zlib;
-		$u .= "&limit=$how_many_streams" if $how_many_streams;
-		
-		my $http = Slim::Player::Source::openRemoteStream($u) || do {
-			$status{$client} = -1;
-			$client->update();
-			return;
-		};
-
-		my $xml  = $http->content();
-		$http->close();
-		
-		$last_time = time;
-		&setup_custom_genres() if $custom_genres;
-		
-		unless ($xml) {
-			$status{$client} = -1;
-			$client->update();
-			return;
-		}
-		
-		if ($have_zlib) {
-			$xml = Compress::Zlib::uncompress($xml);
-		}
-
-		# Using XML::Simple reduces the memory footprint by nearly 2 megs vs the old manual scanning.
-		my $data  = XML::Simple::XMLin($xml);
-		my $label = $data->{'playlist'}->{'label'};
-
-		for my $entry (@{$data->{'playlist'}->{'entry'}}) {
-
-			my $url		 = $entry->{'Playstring'};
-			my $name		= $entry->{'Name'};
-			my $genre	   = $entry->{'Genre'};
-			my $now_playing = $entry->{'Nowplaying'};
-			my $listeners   = $entry->{'Listeners'};
-			my $bitrate	 = $entry->{'Bitrate'};
-	
-			next if ($min_bitrate and $bitrate < $min_bitrate);
-			next if ($max_bitrate and $bitrate > $max_bitrate);
-	
-			$genre =~ s/%([\dA-F][\dA-F])/chr hex $1/gei;#encoded chars
-			$name =~ s/%([\dA-F][\dA-F])/chr hex $1/gei;
-			$now_playing =~ s/%([\dA-F][\dA-F])/chr hex $1/gei;
-	
-			HTML::Entities::decode_entities($name);
-			HTML::Entities::decode_entities($genre);
-			HTML::Entities::decode_entities($now_playing);
-	
-			$name =~ s#\b([\w-]) ([\w-]) #$1$2#g;#S P A C E D  W O R D S
-			$name =~ s#\b(ICQ|AIM|MP3Pro)\b##i;# we don't care
-			$name =~ s#\W\W\W\W+# #g;# excessive non-word characters
-			$name =~ s#^\W+##;# leading non-word characters
-			$genre =~ s/\s+/ /g;
-	
-			my $full_text;
-			my @keywords = ();
-			my $original = $genre;
-	
-			if ($custom_genres) {
-				$genre = "\L$genre";
-				$genre =~ s/\s+/ /g;
-				$genre =~ s/^ //;
-				$genre =~ s/ $//;
-			
-				my $match = 0;
-			
-				for my $key (keys %custom_genres) {
-					my $re = $custom_genres{$key};
-					while ($genre =~ m/$re/g) {
-						push @keywords, $key;
-						$match++;
-					}
-				}
-			
-				if ($match == 0) {
-					@keywords = ($misc_genre);
-				}
-			
-				$full_text= "$name | ${bitrate}kbps | $listeners online | $original | ";
-			
-			} elsif ($munge_genres) {
-				$genre = "\L$genre";
-				$genre =~ s/\s+/ /g;
-				$genre =~ s/^ //;
-				$genre =~ s/ $//;
-	
-				for (keys %genre_transform) {
-					$genre =~ s/$_/$genre_transform{$_}/g;
-				}
-			
-				while ($genre =~ m/($genre_list)/g) {
-					push @keywords, "\u$1";
-				}
-			
-				$genre = "\u$genre";
-				$genre = 'Unknown' if ($genre eq ' ' or $genre eq '');
-	
-				$full_text= "$name | ${bitrate}kbps | $listeners online | $original | ";
-				@keywords = ($genre) unless @keywords;
-			
-			} else {
-				$full_text= "$name | ${bitrate}kbps | $listeners online | ";
-				@keywords = ($genre);
-			}
-	
-			my $data = [$url, $full_text, $name, $listeners, $bitrate, $now_playing, $original];
-	
-			foreach my $g (@keywords) {
-				$stream_data{$g}{$name}{$bitrate} = $data;
-				$in_genres{$name}++;
-			}
-			
-			$stream_data{$all_name}{$name}{$bitrate} = $data;
-		}
-	
-		undef $xml;
-		undef $data;
-	
-		if ($lump_singletons and not $custom_genres) {
-	
-			foreach my $g (keys %stream_data) {
-	
-				if ((exists $legit_genres{$g}) or (keys %{ $stream_data{$g} } > 1)) {
-					push @genres, $g;
-				} else {
-					my ($n) = keys %{ $stream_data{$g} };
-					
-					unless (exists $stream_data{$misc_genre}{$n}) {
-						$in_genres{$n}--;
-						
-						if ($in_genres{$n} == 0) {
-							$stream_data{$misc_genre}{$n} = $stream_data{$g}{$n};
-						}
-						
-						delete $stream_data{$g};
-					}
-				}
-			}
-		}
-		
-		@genres = sort genre_sort keys %stream_data;
-	
-		unshift @genres, $most_popular_name;
-	
-		unshift @genres, $recent_name;
-		$position_of_recent = 0;
+		getStreams();
 	}
 	
 	$status{$client} = 1;
 	$client->update();
+}
+
+sub getStreams {
+	my $client = shift;
+
+	%stream_data = ();
+	%streams = ();
+	%bitrates = ();
+	if (defined $client) {
+		$current_genre{$client} = 0;
+		$current_stream{$client} = 0;
+		$current_bitrate{$client} = 0;
+	}
+	
+	my %in_genres;
+	
+	$all_name = string('PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS');
+
+	my $u = unpack 'u', q{M:'1T<#HO+W-H;W5T8V%S="YC;VTO<V)I;B]X;6QL:7-T97(N<&AT;6P_<V5R+=FEC93U3;&E-4#,`};
+	
+	$u .= '&no_compress=1' unless $have_zlib;
+	$u .= "&limit=$how_many_streams" if $how_many_streams;
+	
+	my $http = Slim::Player::Source::openRemoteStream($u) || do {
+		$status{$client} = -1;
+		$client->update() if (defined $client);
+		return;
+	};
+
+	my $xml  = $http->content();
+	$http->close();
+	
+	$last_time = time;
+	&setup_custom_genres() if $custom_genres;
+	
+	unless ($xml) {
+		$status{$client} = -1;
+		$client->update() if (defined $client);
+		return;
+	}
+	
+	if ($have_zlib) {
+		$xml = Compress::Zlib::uncompress($xml);
+	}
+
+		# Using XML::Simple reduces the memory footprint by nearly 2 megs vs the old manual scanning.
+	my $data  = XML::Simple::XMLin($xml);
+	my $label = $data->{'playlist'}->{'label'};
+
+	for my $entry (@{$data->{'playlist'}->{'entry'}}) {
+
+		my $url		 = $entry->{'Playstring'};
+		my $name		= $entry->{'Name'};
+		my $genre	   = $entry->{'Genre'};
+		my $now_playing = $entry->{'Nowplaying'};
+		my $listeners   = $entry->{'Listeners'};
+		my $bitrate	 = $entry->{'Bitrate'};
+
+		next if ($min_bitrate and $bitrate < $min_bitrate);
+		next if ($max_bitrate and $bitrate > $max_bitrate);
+
+		$genre =~ s/%([\dA-F][\dA-F])/chr hex $1/gei;#encoded chars
+		$name =~ s/%([\dA-F][\dA-F])/chr hex $1/gei;
+		$now_playing =~ s/%([\dA-F][\dA-F])/chr hex $1/gei;
+
+		HTML::Entities::decode_entities($name);
+		HTML::Entities::decode_entities($genre);
+		HTML::Entities::decode_entities($now_playing);
+
+		$name =~ s#\b([\w-]) ([\w-]) #$1$2#g;#S P A C E D  W O R D S
+		$name =~ s#\b(ICQ|AIM|MP3Pro)\b##i;# we don't care
+		$name =~ s#\W\W\W\W+# #g;# excessive non-word characters
+		$name =~ s#^\W+##;# leading non-word characters
+		$genre =~ s/\s+/ /g;
+
+		my $full_text;
+		my @keywords = ();
+		my $original = $genre;
+
+		if ($custom_genres) {
+			$genre = "\L$genre";
+			$genre =~ s/\s+/ /g;
+			$genre =~ s/^ //;
+			$genre =~ s/ $//;
+		
+			my $match = 0;
+		
+			for my $key (keys %custom_genres) {
+				my $re = $custom_genres{$key};
+				while ($genre =~ m/$re/g) {
+					push @keywords, $key;
+					$match++;
+				}
+			}
+		
+			if ($match == 0) {
+				@keywords = ($misc_genre);
+			}
+		
+			$full_text= "$name | ${bitrate}kbps | $listeners online | $original | ";
+		
+		} elsif ($munge_genres) {
+			$genre = "\L$genre";
+			$genre =~ s/\s+/ /g;
+			$genre =~ s/^ //;
+			$genre =~ s/ $//;
+
+			for (keys %genre_transform) {
+				$genre =~ s/$_/$genre_transform{$_}/g;
+			}
+		
+			while ($genre =~ m/($genre_list)/g) {
+				push @keywords, "\u$1";
+			}
+		
+			$genre = "\u$genre";
+			$genre = 'Unknown' if ($genre eq ' ' or $genre eq '');
+
+			$full_text= "$name | ${bitrate}kbps | $listeners online | $original | ";
+			@keywords = ($genre) unless @keywords;
+		
+		} else {
+			$full_text= "$name | ${bitrate}kbps | $listeners online | ";
+			@keywords = ($genre);
+		}
+
+		my $data = [$url, $full_text, $name, $listeners, $bitrate, $now_playing, $original];
+
+		foreach my $g (@keywords) {
+			$stream_data{$g}{$name}{$bitrate} = $data;
+			$in_genres{$name}++;
+		}
+		
+		$stream_data{$all_name}{$name}{$bitrate} = $data;
+	}
+
+	undef $xml;
+	undef $data;
+
+	if ($lump_singletons and not $custom_genres) {
+
+		foreach my $g (keys %stream_data) {
+
+			if ((exists $legit_genres{$g}) or (keys %{ $stream_data{$g} } > 1)) {
+				push @genres, $g;
+			} else {
+				my ($n) = keys %{ $stream_data{$g} };
+				
+				unless (exists $stream_data{$misc_genre}{$n}) {
+					$in_genres{$n}--;
+					
+					if ($in_genres{$n} == 0) {
+						$stream_data{$misc_genre}{$n} = $stream_data{$g}{$n};
+					}
+					
+					delete $stream_data{$g};
+				}
+			}
+		}
+
+	}
+	
+	@genres = sort genre_sort keys %stream_data;
+
+	unshift @genres, $most_popular_name;
+
+	unshift @genres, $recent_name;
+	$position_of_recent = 0;
 }
 
 sub genre_sort {
@@ -554,7 +563,7 @@ sub genre_sort {
 sub reload_xml {
 	my $client = shift;
 	
-	if (time() < $last_time + 60) {
+	if (time() < $last_time + 3600) {
 	
 		$status{$client} = -2;
 		$client->update();
@@ -722,48 +731,58 @@ sub setupGroup
 	my %setupPrefs = (
 		plugin_shoutcastbrowser_how_many_streams => {
  			validate => \&Slim::Web::Setup::validateInt,
- 			validateArgs => [1,2000,1,2000]
+ 			validateArgs => [1,2000,1,2000],
+			onChange => sub { @genres = (); }
 		},
 		
 		plugin_shoutcastbrowser_custom_genres => {
 			validate => \&validateIsFile,
-			PrefSize => 'large'
+			PrefSize => 'large',
+			onChange => sub { @genres = (); }
 		},
 		
 		plugin_shoutcastbrowser_genre_primary_criterion => {
-			options => \%genre_options
+			options => \%genre_options,
+			onChange => sub { @genres = (); }
 		},
 	
 		plugin_shoutcastbrowser_genre_secondary_criterion => {
-			options => \%genre_options
+			options => \%genre_options,
+			onChange => sub { @genres = (); }
 		},
 		
 		plugin_shoutcastbrowser_stream_primary_criterion => {
-			options => \%stream_options
+			options => \%stream_options,
+			onChange => sub { @genres = (); }
 		},
 		
 		plugin_shoutcastbrowser_stream_secondary_criterion => {
-			options => \%stream_options
+			options => \%stream_options,
+			onChange => sub { @genres = (); }
 		},
 		
 		plugin_shoutcastbrowser_min_bitrate => {
 			validate => \&Slim::Web::Setup::validateInt,
-			validateArgs => [0, undef, 0]
+			validateArgs => [0, undef, 0],
+			onChange => sub { @genres = (); }
 		},
 		
 		plugin_shoutcastbrowser_max_bitrate => {
 			validate => \&Slim::Web::Setup::validateInt,
-			validateArgs => [0, undef, 0]
+			validateArgs => [0, undef, 0],
+			onChange => sub { @genres = (); }
 		},
 		
 		plugin_shoutcastbrowser_max_recent => {
 			validate => \&Slim::Web::Setup::validateInt,
-			validateArgs => [0, undef, 0]
+			validateArgs => [0, undef, 0],
+			onChange => sub { @genres = (); }
 		},
 		
 		plugin_shoutcastbrowser_max_popular => {
 			validate => \&Slim::Web::Setup::validateInt,
-			validateArgs => [0, undef, 0]
+			validateArgs => [0, undef, 0],
+			onChange => sub { @genres = (); }
 		}
 	);
 	
@@ -825,6 +844,21 @@ sub checkDefaults {
 
 
 ##### Sub-mode for streams #####
+our $popular_sort = sub {
+	my $r = 0;
+	my ($aa, $bb) = (0, 0);
+	
+	$aa += $stream_data{$all_name}{$a}{$_}[3]
+	foreach keys %{ $stream_data{$all_name}{$a} };
+	$bb += $stream_data{$all_name}{$b}{$_}[3]
+	foreach keys %{ $stream_data{$all_name}{$b} };
+
+			$r = $bb <=> $aa;
+	return $r if $r;
+	
+	$r = lc($a) cmp lc($b);
+	return $r;
+};
 
 our $mode_sub = sub {
 	my $client = shift;
@@ -863,27 +897,6 @@ our $mode_sub = sub {
 			
 			return $r if $r;
 		}
-		
-		return $r;
-	};
-
-	my $popular_sort = sub {
-		my $r = 0;
-		my ($aa, $bb) = (0, 0);
-		
-		$aa += $stream_data{$all_name}{$a}{$_}[3]
-		
-		foreach keys %{ $stream_data{$all_name}{$a} };
-		
-		$bb += $stream_data{$all_name}{$b}{$_}[3]
-		
-		foreach keys %{ $stream_data{$all_name}{$b} };
-		
-		$r = $bb <=> $aa;
-		
-		return $r if $r;
-		
-		$r = lc($a) cmp lc($b);
 		
 		return $r;
 	};
@@ -1480,6 +1493,89 @@ Slim::Buttons::Common::addMode('ShoutcastBitrates', \%BitrateFunctions,
 
 Slim::Buttons::Common::addMode('ShoutcastStreamInfo', \%InfoFunctions,
 				$info_mode_sub, $leave_info_mode_sub);
+
+
+# Web pages
+
+sub webPages {
+    my %pages = ("index\.htm" => \&handleWebIndex);
+	Slim::Web::Pages::addLinks("radio", { 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME' => "plugins/ShoutcastBrowser/index.html" });
+    return (\%pages);
+}
+
+sub handleWebIndex {
+	my ($client, $params) = @_;
+
+	&get_prefs;
+	
+	$recent_name = string('PLUGIN_SHOUTCASTBROWSER_RECENT');
+	$most_popular_name = string('PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR');
+	$misc_genre= string('PLUGIN_SHOUTCASTBROWSER_MISC');
+
+	if (time() >= $last_time + 3600) {
+		@genres = ();
+	}
+
+	unless (@genres) {
+		getStreams($client);
+	}
+
+	if ($params->{'p0'}) {
+		my $stream_sort = sub {
+			my $r = 0;
+		
+			for my $criterion (@stream_criteria) {
+				if ($criterion =~ m/^listener/i) {
+					my ($aa, $bb) = (0, 0);
+					my $current_genre = $genres[$current_genre{$client}];
+					
+					$aa += $stream_data{$current_genre}{$a}{$_}[3]
+					
+					foreach keys %{ $stream_data{$current_genre}{$a} };
+					
+					$bb += $stream_data{$current_genre}{$b}{$_}[3]
+					
+					foreach keys %{ $stream_data{$current_genre}{$b} };
+					
+					$r = $bb <=> $aa;
+				
+				} elsif ($criterion =~ m/^name/i or $criterion =~ m/default/i) {
+					$r = lc($a) cmp lc($b);
+				}
+				
+				$r = -1 * $r if $criterion =~ m/reverse$/i;
+				
+				return $r if $r;
+			}
+			
+			return $r;
+		};
+	
+		if ($params->{'p0'} eq $most_popular_name) {
+			my @top = sort $popular_sort keys %{ $stream_data{$all_name} };
+			
+			splice @top, $top_limit;
+			$params->{'top'} = \@top;
+			$params->{'streams'} = \%{ $stream_data{$all_name} };
+			$params->{'genre'} = $params->{'p0'};
+
+		} elsif (defined $params->{'p1'}) {
+			$params->{'genre'} = $params->{'p1'};
+			$params->{'streaminfo'} = $stream_data{$all_name}{$params->{'p0'}}{$params->{'p2'}} ;
+		} else {
+			my @mystreams = sort $stream_sort keys %{ $stream_data{$params->{'p0'}} };
+			$params->{'genre'} = $params->{'p0'};
+			$params->{'streams'} = \%{ $stream_data{$params->{'p0'}} };
+		}
+	}
+	else {
+		# don't show "Recent streams" - can be found in playlist folder
+		$params->{'genres'} = [ grep !/$recent_name/i, @genres];
+	}
+
+	return Slim::Web::HTTP::filltemplatefile('plugins/ShoutcastBrowser/index.html', $params);
+}
+
 
 
 sub strings {

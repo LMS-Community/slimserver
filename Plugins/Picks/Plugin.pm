@@ -1,4 +1,4 @@
-# $Id$
+# $Id: Picks.pm 2766 2005-03-27 22:16:25Z vidur $
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,7 +10,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
 # GNU General Public License for more details.
 #
-package Plugins::Picks;
+package Plugins::Picks::Plugin;
 
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
@@ -219,6 +219,34 @@ sub getDisplayName {
 sub addMenu {
 	return "RADIO";
 }
+
+
+# Web pages
+
+sub webPages {
+    my %pages = ("index\.htm" => \&handleWebIndex);
+	Slim::Web::Pages::addLinks("radio", { 'PLUGIN_PICKS_MODULE_NAME' => "plugins/Picks/index.html" });
+    return (\%pages);
+}
+
+sub handleWebIndex {
+	my ($client, $params) = @_;
+	
+	my $now = Time::HiRes::time();
+	# Only regrab every hour
+	unless (defined($stationList) && (($now - $lastStationLoadTime) < PLAYLIST_RELOAD_INTERVAL)) {
+		$stationList = [];
+		Slim::Utils::Scan::addToList($stationList, $picksurl, 0, 0);
+	}
+
+	$params->{'stationList'} = {};
+	foreach (@$stationList) {
+		$params->{'stationList'}{Slim::Music::Info::standardTitle($client, $_)} = $_;
+	}
+
+	return Slim::Web::HTTP::filltemplatefile('plugins/Picks/index.html', $params);
+}
+
 
 sub strings {
 	return "

@@ -1,4 +1,4 @@
-# $Id$
+# $Id: RadioIO.pm 2278 2005-03-02 08:44:14Z dsully $
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,7 +10,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-package Plugins::RadioIO;
+package Plugins::RadioIO::Plugin;
 
 use Slim::Buttons::Common;
 use Slim::Control::Command;
@@ -155,11 +155,27 @@ sub getDisplayName {
 	return 'PLUGIN_RADIOIO_MODULE_NAME';
 }
 
+# Web pages
+
+sub webPages {
+    my %pages = ("index\.htm" => \&handleWebIndex);
+	Slim::Web::Pages::addLinks("radio", { 'PLUGIN_RADIOIO_MODULE_NAME' => "plugins/RadioIO/index.html" });
+    return (\%pages);
+}
+
+sub handleWebIndex {
+	my ($client, $params) = @_;
+	$params->{'station_names'} = \@station_names;
+
+	return Slim::Web::HTTP::filltemplatefile('plugins/RadioIO/index.html', $params);
+}
+
+
 sub strings
 {
 	return "
 PLUGIN_RADIOIO_MODULE_NAME
-	DE	radioio.com Internet Radio
+	DE	radioio.com - no boundaries.
 	EN	radioio.com - no boundaries.
 	ES	radioio.com - sin límites.
 
@@ -190,7 +206,7 @@ sub new {
 		return undef;
 	}
 
-	my $pls  = Plugins::RadioIO::getHTTPURL($1);
+	my $pls  = Plugins::RadioIO::Plugin::getHTTPURL($1);
 
 	my $sock = $class->SUPER::new({
 		'url'    => $pls,

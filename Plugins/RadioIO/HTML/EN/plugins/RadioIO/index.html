@@ -1,0 +1,37 @@
+<html>
+	<head>
+		<title>[% "PLUGIN_RADIOIO_MODULE_TITLE" | string %]</title>
+		<link rel="stylesheet" href="[% webroot %]slimserver.css">
+	</head>
+	<body bgcolor="#FFFFFF">
+		<h3>[% "PLUGIN_RADIOIO_MODULE_NAME" | string %]</h3><p>
+		
+		<p><a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / [% "PLUGIN_RADIOIO_MODULE_NAME" | string %]</p>
+		
+		<hr/>
+		
+		<!-- start plugins output -->
+		<table border="0" cellspacing="0" cellpadding="4" width="100%">
+			[% odd = 1 %]
+			[% FOREACH station = station_names %]
+			<tr>
+				<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+			 		<a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% station | uri %].mp3&player=[% player | uri %]" target="status">[% station %]</a>
+				</td>
+			
+				<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+					<nobr><a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% station | uri %].mp3&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
+				</td>
+			
+				<td  [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+					<nobr><a href="[% webroot %]status_header.html?p0=playlist&p1=add&p2=[% 'radioio://' | uri %][% station | uri %].mp3&player=[% player | uri %]" target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr>
+			  	</td>
+			</tr>
+			[% odd = (not odd) %]
+			[% END %]
+		</table>
+		<!-- end plugins output -->
+		
+	</body>
+</html>
+
