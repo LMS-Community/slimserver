@@ -75,6 +75,11 @@ our $locale = '';
 			$lc = lc((split(/\./, $lc))[1]);
 		}
 
+		# Locale can end up with nothing, if it's invalid, such as "en_US"
+		if (!defined $lc || $lc =~ /^\s*$/) {
+			$lc = 'iso-8859-1';
+		}
+
 		$lc =~ s/utf-8/utf8/gi;
 
 		$locale = $lc;
