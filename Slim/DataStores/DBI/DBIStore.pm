@@ -21,6 +21,7 @@ use Slim::DataStores::DBI::Contributor;
 use Slim::DataStores::DBI::ContributorTrack;
 use Slim::DataStores::DBI::Genre;
 use Slim::DataStores::DBI::GenreTrack;
+use Slim::DataStores::DBI::LightWeightTrack;
 
 use Slim::Formats::Movie;
 use Slim::Formats::AIFF;
@@ -285,7 +286,8 @@ sub find {
 
 	my $items = $lastFind{$findKey};
 
-	if (!$count && defined($items) && $field eq 'track') {
+	if (!$count && defined($items) && 
+		($field eq 'track' || $field eq 'lightweighttrack')) {
 		$items = [ grep $self->_includeInTrackCount($_), @$items ];
 	}
 	
@@ -1198,6 +1200,9 @@ sub _postCheckAttributes {
 
 	# Now handle Album creation
 	my $album = $attributes->{'ALBUM'};
+	my $disc  = $attributes->{'DISC'};
+	my $discc = $attributes->{'DISCC'};
+	my $albumObj;
 
 	# Create a singleton for "No Album"
 	# Album should probably have an add() method
@@ -1209,22 +1214,17 @@ sub _postCheckAttributes {
 		});
 
 		$track->album($_unknownAlbum);
-		$track->update();
+		$albumObj = $_unknownAlbum;
 
 	} elsif ($create && !$album) {
 
 		$track->album($_unknownAlbum);
-		$track->update();
+		$albumObj = $_unknownAlbum;
 
 	} elsif ($create && $album) {
 
 		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
-		my $disc  = $attributes->{'DISC'};
-		my $discc = $attributes->{'DISCC'};
-
-		# If there wasn't an artist associated yet, create a dummy contributor.
-		my $albumObj;
 
 		# Used for keeping track of the album name.
 		my $basename = dirname($track->url);
@@ -1251,12 +1251,15 @@ sub _postCheckAttributes {
 			# the same album name.
 			$search->{'disc'} = $disc if $disc;
 
+			# Check if the album name is one of the "common album names"
+			# we've identified in prefs. If so, we require a match on
+			# both album name and primary artist name.
 			if ((grep $album =~ m/^$_$/i, @$common_albums) && 
 				$contributors[0]) {
 
 				$search->{'contributors'} = $contributors[0]->namesort;
 
-				($albumObj) = Slim::DataStores::DBI::Album->search($search);			
+				($albumObj) = Slim::DataStores::DBI::Album->search($search);
 
 			} else {
 
@@ -1297,8 +1300,23 @@ sub _postCheckAttributes {
 		$albumObj->update();
 
 		$track->album($albumObj);
-		$track->update();
 	}
+
+	# Compute a compound sort key we'll use for queries that involve
+	# multiple albums. Rather than requiring a multi-way join to get
+	# all the individual sort keys from different tables, this is an
+	# optimization that only requires the tracks table.
+	$albumObj ||= $track->album;
+	my $albumName = defined($albumObj) ? $albumObj->titlesort : '';
+	my $primary_contributor = defined($contributors[0]) ? $contributors[0]->namesort :  defined($albumObj) ? $albumObj->contributors : '';
+	my @keys;
+	push @keys, $primary_contributor || '';
+	push @keys, $albumName || '';
+	push @keys, $disc if defined($disc);
+	push @keys, sprintf("%03d", $track->tracknum) if defined($track->tracknum);
+	push @keys, $track->titlesort() || '';
+	$track->multialbumsortkey(join ' ', @keys);
+	$track->update();
 
 	# Add comments if we have them:
 	if ($attributes->{'COMMENT'}) {

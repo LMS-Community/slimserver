@@ -746,6 +746,7 @@ sub execute {
 			# Query for the passed params
 			if ($p1 =~ /^(play|load|add|insert|delete)album$/) {
 
+				my $sort = 'track';
 				# XXX - FIXME - searching for genre.name with
 				# anything else kills the database. As a
 				# stop-gap, don't add the search for
@@ -760,13 +761,14 @@ sub execute {
 
 				if (Slim::Buttons::BrowseID3::specified($p4)) {
 					$find->{'album.title'} = singletonRef($p4);
+					$sort = 'tracknum';
 				}
 
 				if (Slim::Buttons::BrowseID3::specified($p5)) {
 					$find->{'track.title'} = singletonRef($p5);
 				}
 
-				$results = $ds->find('track', $find, 'tracknum');
+				$results = $ds->find('lightweighttrack', $find, $sort);
 			}
 
 			# here are all the commands that add/insert/replace songs/directories/playlists on the current playlist
@@ -1697,7 +1699,7 @@ sub parseSearchTerms {
 	# default to a sort
 	$sort ||= exists $find{'album'} ? 'tracknum' : 'track';
 
-	return @{ $ds->find('track', \%find, $sort, $limit, $offset) };
+	return map { $_->url } @{ $ds->find('lightweighttrack', \%find, $sort, $limit, $offset) };
 }
 
 sub parseListRef {

@@ -25,6 +25,7 @@ our %essentialColumns = (
 	'tag' => 'tag',
 	'disc' => 'disc',
 	'thumb' => 'thumb',
+	'multialbumsortkey' => 'multialbumsortkey',
 );
 
 our %otherColumns = (

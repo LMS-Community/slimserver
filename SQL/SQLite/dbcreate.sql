@@ -11,7 +11,7 @@ CREATE TABLE metainformation (
   total_time integer      -- cumulative play time
 );
 
-INSERT INTO metainformation VALUES (5, 0, 0);
+INSERT INTO metainformation VALUES (6, 0, 0);
 
 CREATE TABLE tracks (
   id integer UNIQUE PRIMARY KEY NOT NULL,
@@ -49,7 +49,8 @@ CREATE TABLE tracks (
   playCount integer,       -- number of times the track has been played - placeholder
   lastPlayed integer,      -- timestamp of the last play - placeholder
   moodlogic_mixable integer,
-  musicmagic_mixable integer
+  musicmagic_mixable integer,
+  multialbumsortkey varchar -- used for sorting tracks in multi album lists
 );
 
 CREATE INDEX trackURLIndex ON tracks (url);
@@ -63,6 +64,8 @@ CREATE INDEX trackSortIndex ON tracks (titlesort);
 CREATE INDEX trackRatingIndex ON tracks (rating);
 
 CREATE INDEX trackPlayCountIndex ON tracks (playCount);
+
+CREATE INDEX trackSortKeyIndex ON tracks (multialbumsortkey);
 
 CREATE TABLE playlist_track (
   id integer UNIQUE PRIMARY KEY NOT NULL,

@@ -262,6 +262,7 @@ sub getWhereValues {
 
 our %fieldHasClass = (
 	'track' => 'Slim::DataStores::DBI::Track',
+	'lightweighttrack' => 'Slim::DataStores::DBI::LightWeightTrack',
 	'genre' => 'Slim::DataStores::DBI::Genre',
 	'album' => 'Slim::DataStores::DBI::Album',
 	'artist' => 'Slim::DataStores::DBI::Contributor',
@@ -325,7 +326,7 @@ our %sortFieldMap = (
 	'album' => ['albums.titlesort','albums.disc'],
 	'contributor' => ['contributors.namesort'],
 	'artist' => ['contributors.namesort'],
-	'track' => ['albums.contributors','albums.titlesort','tracks.disc','tracks.tracknum','tracks.titlesort'],
+	'track' => ['tracks.multialbumsortkey'],
 	'tracknum' => ['tracks.disc','tracks.tracknum','tracks.titlesort'],
 	'year' => ['tracks.year'],
 	'lastPlayed' => ['tracks.lastPlayed'],
