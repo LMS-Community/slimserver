@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.51 2004/01/14 00:11:29 dean Exp $
+# $Id: Info.pm,v 1.52 2004/01/15 00:23:38 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -947,6 +947,98 @@ sub standardTitle {
 }
 
 #
+# Guess the important tags from the filename; use the strings in preference
+# 'guessFileFormats' to generate candidate regexps for matching. First
+# match is accepted and applied to the argument tag hash.
+#
+sub guessTags {
+	my $file = shift;
+	my $type = shift;
+	my $taghash = shift;
+
+	$::d_info && Slim::Utils::Misc::msg("Guessing tags for: " . $file);
+
+	# Rip off from plainTitle()
+	if (isHTTPURL($file)) {
+		$file = Slim::Web::HTTP::unescape($file);
+	} else {
+		if (isFileURL($file)) {
+			$file = Slim::Utils::Misc::pathFromFileURL($file);
+		}
+		# directories don't get the suffixes
+		if ($file && !($type && $type eq 'dir')) {
+				$file =~ s/\.[^.]+$//;
+		}
+	}
+
+	# Replace all backslashes in the filename
+	$file =~ s/\\/\//g;
+	
+	# Get the candidate file name formats
+	my @guessformats = Slim::Utils::Prefs::getArray("guessFileFormats");
+
+	# Check each format
+	foreach my $guess ( @guessformats ) {
+		# Create pattern from string format
+		my $pat = $guess;
+		
+		# FIXME: Need to escape _all_ regex special chars
+		$pat =~ s/(\\|\||\.|\+|\?|\*|\(|\))/\\$1/g;
+
+		# Replace the TAG string in the candidate format string
+		# with regex (.+) Since I'm too stupid to manage iteration
+		# over regex matches and tying them back to the correct TAG
+		# elegantly, I use two stupid hashes for matching $1, $2, ...
+		# back to the correct tag
+		
+		# Map with <position of TAG in format string> -> <tag> mapping
+		my %ixmap = ();
+		
+		# Replace the TAGs and record their position in the string in a map#
+		# Positions change during replacement but that's ok
+		foreach my $tag ( ( 'DISC', 'DISCC', 'ARTIST', 'ALBUM', 'TITLE', 'TRACKNUM' ) ) {
+			# Is the TAG contained in the pat?
+			my $ix = index( $pat, $tag );
+			if( $ix >= 0 ) {
+				# Remember that position
+				$ixmap{ $ix } = $tag;
+				
+				# Replace by (.+), unless it's a  track number or disc number, in which case it has to be a number.
+				if ($tag eq 'TRACKNUM' || $tag eq 'DISC' || $tag eq 'DISCC') {
+					$pat =~ s/$tag/\(\\d+\)/;
+				} else {
+					$pat =~ s/$tag/\(\[^\\\/\]\+\)/;
+				}
+			}
+		}		
+		
+		!$::d_info && Slim::Utils::Misc::msg("Testing $file against format \"$pat\"...\n" );
+
+		# Check if this format matches		
+		if( $file =~ $pat ) {
+			!$::d_info && Slim::Utils::Misc::msg("Format string $pat matched $file\n" );
+			
+			# Again, I'm too stupid... Collect all matches into an arr
+			# and the keys (original substring positions) of the tags
+			my @matches = ( $1, $2, $3, $4, $5, $6, $7, $8, $9 );
+			my @k = sort {  $a <=> $b } keys %ixmap;
+			
+			# Apply the correct match to the function argument hash
+			foreach my $ix ( 0 .. scalar @k - 1 ) {
+				!$::d_info && Slim::Utils::Misc::msg( "$ixmap{ $k[ $ix ] } -> $matches[ $ix ]\n" );
+				$taghash->{ $ixmap{ $k[ $ix ] } } = $matches[ $ix ];
+			}
+			
+			return;
+		}
+	}
+	
+	# Nothing found; revert to plain title
+	$taghash->{'TITLE'} = plainTitle($file, $type);	
+}
+
+
+#
 # Return a structure containing the ID3 tag attributes of the given MP3 file.
 #
 sub infoHash {
@@ -1873,7 +1965,8 @@ sub readTags {
 			
 			if (!$tempCacheEntry->{'TITLE'} && !defined(cacheItem($file, 'TITLE'))) {
 				$::d_info && Slim::Utils::Misc::msg("Info: no title found, using plain title for $file\n");
-				$tempCacheEntry->{'TITLE'} = plainTitle($file, $type);					
+				#$tempCacheEntry->{'TITLE'} = plainTitle($file, $type);					
+				guessTags( $file, $type, $tempCacheEntry );
 			}
 
 			# fix the genre

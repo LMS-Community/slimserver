@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.48 2004/01/13 08:12:55 kdf Exp $
+# $Id: strings.txt,v 1.49 2004/01/15 00:23:38 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -4000,7 +4000,10 @@ SHN
 	EN	Shorten
 
 WMA
-	EN	Windows Media 
+	EN	Windows Media
+
+M4P
+	EN	Protected AAC
 
 AIF
 	EN	AIFF

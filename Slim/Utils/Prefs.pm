@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.33 2004/01/13 08:12:56 kdf Exp $
+# $Id: Prefs.pm,v 1.34 2004/01/15 00:23:39 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -121,6 +121,7 @@ my %DEFAULT = (
 		'TRACKNUM. TITLE from ALBUM by ARTIST',
 		'TITLE (ARTIST)',
 		'ARTIST - TITLE']
+	,'guessFileFormats'		=> ['(ARTIST - ALBUM) TRACKNUM - TITLE', '/ARTIST/ALBUM/TRACKNUM - TITLE', '/ARTIST/ALBUM/TRACKNUM - TITLE', '/ARTIST/ALBUM/TRACKNUM. TITLE' ]
 	,'menuItem'			=> ['NOW_PLAYING', 'BROWSE_BY_GENRE', 'BROWSE_BY_ARTIST', 'BROWSE_BY_ALBUM', 'BROWSE_MUSIC_FOLDER'
 						, 'SEARCH', 'SAVED_PLAYLISTS', 'PLUGINS', 'SETTINGS']
 	,'disabledplugins'		=> []
