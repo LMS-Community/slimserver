@@ -26,12 +26,12 @@ use vars qw($stdin);
 # Each command is terminated by a carriage return.  The server will reply echoing the request.
 # The format of the commands is as follows:
 #
-#    <playerip> <p0> <p1> <p2> <p3> <p4><CR>
+#    <playerid> <p0> <p1> <p2> <p3> <p4><CR>
 #
 # where:  
-#       <playerip> is the IP address & port of the player to control (e.g. 10.0.1.201:69).  
-#                  The <playerip> may be omitted if there is only one player in the system.
-#                  <playerip> may be obtained by using the "player address" command.
+#       <playerid> is the unique identifier to specify the player to control.  
+#                  The <playerid> may be omitted if there is only one player in the system.
+#                  <playerid> may be obtained by using the "player id" command.
 #
 #       <p0> through <p4> are command parameters. 
 #                         Pass a "?" to obtain a value for that parameter in the response.
@@ -40,49 +40,49 @@ use vars qw($stdin);
 #
 #   player	count			?
 #   player	name			<playerindex>				?
-#   player	address			<playerindex>				?
+#   player	id				<playerindex>				?
 #   debug	d_debugflag		<?|0|1>
-#   <playerip> play
-#   <playerip> pause 		(0|1|)
-#   <playerip> stop
-#   <playerip> mode			<play|pause|stop|?>
-#   <playerip> sleep 		<0..n|?>															
-#	<playerip> power 	    (0|1|?)
-#   <playerip> time			(0..n sec)|(-n..+n sec)|?
-#   <playerip> genre		?
-#   <playerip> artist		?
-#   <playerip> album		?
-#   <playerip> title		?
-#   <playerip> duration  	?
-#   <playerip> playlist 	play 	    <song>
-#   <playerip> playlist 	append 	    <song>
-#   <playerip> playlist 	load 	    <playlist>
-#   <playerip> playlist 	resume 		<playlist>
-#   <playerip> playlist 	save 		<playlist>
-#   <playerip> playlist 	add 	    <playlist>
-#   <playerip> playlist   	loadalbum   <genre>						<artist>	<album>
-#   <playerip> playlist   	addalbum	<genre> 					<artist>	<album>
-#   <playerip> playlist		clear
-#   <playerip> playlist 	move 		<fromoffset> 				<tooffset>
-#   <playerip> playlist 	delete 		<songoffset>
-#   <playerip> playlist 	jump 		<index>
-#   <playerip> playlist 	index		<index>						?
-#   <playerip> playlist		genre		<index>						?
-#   <playerip> playlist		artist		<index>						?
-#   <playerip> playlist		album		<index>						?
-#   <playerip> playlist		title		<index>						?
-#   <playerip> playlist		duration	<index>						?
-#   <playerip> playlist		tracks		?
-#   <playerip> mixer		volume		(0 .. 100)|(-100 .. +100)
-#   <playerip> mixer		volume		?
-#   <playerip> mixer		balance		(-100 .. 100)|(-200 .. +200)							(not implemented!)
-#   <playerip> mixer		base		(0 .. 100)|(-100 .. +100)								(not implemented!)
-#   <playerip> mixer		treble		(0 .. 100)|(-100 .. +100)								(not implemented!)
-#   <playerip> display   	<line1> 	<line2>                     (duration)
-#   <playerip> display   	? 			?
-#   <playerip> button   	buttoncode
+#   <playerid> play
+#   <playerid> pause 		(0|1|)
+#   <playerid> stop
+#   <playerid> mode			<play|pause|stop|?>
+#   <playerid> sleep 		<0..n|?>															
+#	<playerid> power 	    (0|1|?)
+#   <playerid> time			(0..n sec)|(-n..+n sec)|?
+#   <playerid> genre		?
+#   <playerid> artist		?
+#   <playerid> album		?
+#   <playerid> title		?
+#   <playerid> duration  	?
+#   <playerid> playlist 	play 	    <song>
+#   <playerid> playlist 	append 	    <song>
+#   <playerid> playlist 	load 	    <playlist>
+#   <playerid> playlist 	resume 		<playlist>
+#   <playerid> playlist 	save 		<playlist>
+#   <playerid> playlist 	add 	    <playlist>
+#   <playerid> playlist   	loadalbum   <genre>						<artist>	<album>
+#   <playerid> playlist   	addalbum	<genre> 					<artist>	<album>
+#   <playerid> playlist		clear
+#   <playerid> playlist 	move 		<fromoffset> 				<tooffset>
+#   <playerid> playlist 	delete 		<songoffset>
+#   <playerid> playlist 	jump 		<index>
+#   <playerid> playlist 	index		<index>						?
+#   <playerid> playlist		genre		<index>						?
+#   <playerid> playlist		artist		<index>						?
+#   <playerid> playlist		album		<index>						?
+#   <playerid> playlist		title		<index>						?
+#   <playerid> playlist		duration	<index>						?
+#   <playerid> playlist		tracks		?
+#   <playerid> mixer		volume		(0 .. 100)|(-100 .. +100)
+#   <playerid> mixer		volume		?
+#   <playerid> mixer		balance		(-100 .. 100)|(-200 .. +200)							(not implemented!)
+#   <playerid> mixer		base		(0 .. 100)|(-100 .. +100)								(not implemented!)
+#   <playerid> mixer		treble		(0 .. 100)|(-100 .. +100)								(not implemented!)
+#   <playerid> display   	<line1> 	<line2>                     (duration)
+#   <playerid> display   	? 			?
+#   <playerid> button   	buttoncode
 
-# To obtain information about the players in the system, use the "player count", "player name" and "player address" commands.
+# To obtain information about the players in the system, use the "player count", "player name" and "player id" commands.
 #
 #		Request:  "player count ?<cr>"
 # 		Response: "player count 2<cr>"
@@ -90,19 +90,19 @@ use vars qw($stdin);
 #		Request:  "player name 0 ?<cr>"
 #		Request:  "player name 0 Living Room<cr>"
 #
-#		Request:  "player address 0 ?<cr>"
-#		Request:  "player address 0 10.0.1.203:69<cr>"
+#		Request:  "player id 0 ?<cr>"
+#		Request:  "player id 0 01:02:03:04:05:06<cr>"
 
 # Basic commands to control playback include "stop", "pause", "play", "jump"
 # Examples:
-#		Request:  "10.0.1.203:69 pause 1<cr>"
-# 		Response: "10.0.1.203:69 pause 1<cr>"
+#		Request:  "01:02:03:04:05:06 pause 1<cr>"
+# 		Response: "01:02:03:04:05:06 pause 1<cr>"
 #
-#		Request:  "10.0.1.203:69 stop<cr>"
-# 		Response: "10.0.1.203:69 stop<cr>"
+#		Request:  "01:02:03:04:05:06 stop<cr>"
+# 		Response: "01:02:03:04:05:06 stop<cr>"
 #
-#		Request:  "10.0.1.203:69 jump +1<cr>"
-# 		Response: "10.0.1.203:69 jump +1<cr>"
+#		Request:  "01:02:03:04:05:06 jump +1<cr>"
+# 		Response: "01:02:03:04:05:06 jump +1<cr>"
 #
 
 #
@@ -110,77 +110,77 @@ use vars qw($stdin);
 #
 # index   - will return the numerical index within the playlist of the current song (1 is the first item, etc.)
 # Example: 
-#		Request:  "10.0.1.203:69 playlist index ?<cr>"
-#		Response: "10.0.1.203:69 playlist index 2<cr>"
+#		Request:  "01:02:03:04:05:06 playlist index ?<cr>"
+#		Response: "01:02:03:04:05:06 playlist index 2<cr>"
 #
 # genre, artist, album, title, duration - will return the requested information for a the current song  or a given song in the current playlist
 # Examples: 
-#		Request:  "10.0.1.203:69 genre ?<cr>"
-#		Response: "10.0.1.203:69 genre Rock<cr>"
+#		Request:  "01:02:03:04:05:06 genre ?<cr>"
+#		Response: "01:02:03:04:05:06 genre Rock<cr>"
 
-#		Request:  "10.0.1.203:69 artist ?<cr>"
-#		Response: "10.0.1.203:69 artist Abba<cr>"
+#		Request:  "01:02:03:04:05:06 artist ?<cr>"
+#		Response: "01:02:03:04:05:06 artist Abba<cr>"
 
-#		Request:  "10.0.1.203:69 album ?<cr>"
-#		Response: "10.0.1.203:69 album Greatest Hits<cr>"
+#		Request:  "01:02:03:04:05:06 album ?<cr>"
+#		Response: "01:02:03:04:05:06 album Greatest Hits<cr>"
 
-#		Request:  "10.0.1.203:69 title ?<cr>"
-#		Response: "10.0.1.203:69 title Voulez vous<cr>"
+#		Request:  "01:02:03:04:05:06 title ?<cr>"
+#		Response: "01:02:03:04:05:06 title Voulez vous<cr>"
 
-#		Request:  "10.0.1.203:69 duration ?<cr>"
-#		Response: "10.0.1.203:69 duration 103.2<cr>"
+#		Request:  "01:02:03:04:05:06 duration ?<cr>"
+#		Response: "01:02:03:04:05:06 duration 103.2<cr>"
 
-#		Request:  "10.0.1.203:69 playlist genre 3 ?<cr>"
-#		Request:  "10.0.1.203:69 playlist genre 3 Rock<cr>"
+#		Request:  "01:02:03:04:05:06 playlist genre 3 ?<cr>"
+#		Request:  "01:02:03:04:05:06 playlist genre 3 Rock<cr>"
 
-#		Request:  "10.0.1.203:69 playlist artist 3 ?<cr>"
-#		Response: "10.0.1.203:69 playlist artist 3 Abba<cr>"
+#		Request:  "01:02:03:04:05:06 playlist artist 3 ?<cr>"
+#		Response: "01:02:03:04:05:06 playlist artist 3 Abba<cr>"
 
-#		Request:  "10.0.1.203:69 playlist album 3 ?<cr>"
-#		Response: "10.0.1.203:69 playlist album 3 Greatest Hits<cr>"
+#		Request:  "01:02:03:04:05:06 playlist album 3 ?<cr>"
+#		Response: "01:02:03:04:05:06 playlist album 3 Greatest Hits<cr>"
 
-#		Request:  "10.0.1.203:69 playlist title 3 ?<cr>"
-#		Response: "10.0.1.203:69 playlist title 3 Voulez Vous<cr>"
+#		Request:  "01:02:03:04:05:06 playlist title 3 ?<cr>"
+#		Response: "01:02:03:04:05:06 playlist title 3 Voulez Vous<cr>"
 
-#		Request:  "10.0.1.203:69 playlist duration 3 ?<cr>"
-#		Response: "10.0.1.203:69 playlist duration 3 103.2<cr>"
+#		Request:  "01:02:03:04:05:06 playlist duration 3 ?<cr>"
+#		Response: "01:02:03:04:05:06 playlist duration 3 103.2<cr>"
 
 
 #
 # mixer volume  - will return the current volume setting for the player (0-99)
 # Example: 
-#		Request:  "10.0.1.203:69 mixer volume ?<cr>"
-#		Response: "10.0.1.203:69 mixer volume 98<cr>"
+#		Request:  "01:02:03:04:05:06 mixer volume ?<cr>"
+#		Response: "01:02:03:04:05:06 mixer volume 98<cr>"
 #
 # tracks  - will return the total number of tracks in the current playlist
 # Example: 
-#		Request:  "10.0.1.203:69 playlist tracks ?<cr>"
-#		Response: "10.0.1.203:69 playlist tracks 7<cr>"
+#		Request:  "01:02:03:04:05:06 playlist tracks ?<cr>"
+#		Response: "01:02:03:04:05:06 playlist tracks 7<cr>"
 #
 # shuffle - will return the playlist shuffle state -  0=no, 1=yes
 # Example: 
-#		Request:  "10.0.1.203:69 playlist shuffle ?<cr>"
-#		Response: "10.0.1.203:69 playlist shuffle 1<cr>"
+#		Request:  "01:02:03:04:05:06 playlist shuffle ?<cr>"
+#		Response: "01:02:03:04:05:06 playlist shuffle 1<cr>"
 #
 # repeat  - will return the playlist repeat state -  0=stop at end, 1=repeat current song, 2=repeat all songs
 # Example: 
-#		Request:  "10.0.1.203:69 playlist repeat ?<cr>"
-#		Response: "10.0.1.203:69 playlist repeat 2<cr>"
+#		Request:  "01:02:03:04:05:06 playlist repeat ?<cr>"
+#		Response: "01:02:03:04:05:06 playlist repeat 2<cr>"
 #
 # mode    - will return the current player mode - <play|pause|stop|off>
 # Example: 
-#		Request:  "10.0.1.203:69 mode ?<cr>"
-#		Response: "10.0.1.203:69 mode play<cr>"
+#		Request:  "01:02:03:04:05:06 mode ?<cr>"
+#		Response: "01:02:03:04:05:06 mode play<cr>"
 #
 # time    - will return the number of seconds of the song that have been played. Floating point value.
 # Example: 
-#		Request:  "10.0.1.203:69 time ?<cr>"
-#		Response: "10.0.1.203:69 time 32.3<cr>"
+#		Request:  "01:02:03:04:05:06 time ?<cr>"
+#		Response: "01:02:03:04:05:06 time 32.3<cr>"
 #
 # pref    - will set or query a prefs value
 # Example: 
-#		Request:  "10.0.1.203:69 pref mp3dir ?<cr>"
-#		Response: "10.0.1.203:69 pref mp3dir %2fUsers%2fdean%2fDesktop%2ftest%20music<cr>"
+#		Request:  "01:02:03:04:05:06 pref mp3dir ?<cr>"
+#		Response: "01:02:03:04:05:06 pref mp3dir %2fUsers%2fdean%2fDesktop%2ftest%20music<cr>"
 
 
 my $stdout;

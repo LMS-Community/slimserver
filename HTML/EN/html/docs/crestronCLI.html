@@ -20,11 +20,13 @@
 </blockquote>
 where: </p> 
 <blockquote> 
-  <p> <strong>&lt;<em>playerid</em>&gt;</strong> is the unique identifier for the player, usually (but not guaranteed to be) the IP address or MAC address of the player. The <strong>&lt;<em>playerid</em>&gt;</strong> 
+  <p> <strong>&lt;<em>playerid</em>&gt;</strong> is the unique identifier for the player, 
+  usually (but not guaranteed to be) the IP address or MAC address of the player. 
+  The <strong>&lt;<em>playerid</em>&gt;</strong> 
     may be omitted if there is only one player in the system or when using the 
     &quot;player&quot; commands.</p>
   <p> <strong>&lt;<em>playerid</em>&gt;</strong> may be obtained by using the 
-    &quot;player address&quot; command.</p>
+    &quot;player id&quot; command.</p>
   <p> <strong>&lt;<em>p0</em>&gt;</strong> through <strong>&lt;<em>p4</em>&gt;</strong> 
     are command parameters. Pass a &quot;?&quot; to obtain a value for that parameter
      in the response. Each parameter  needs to be encoded
@@ -37,16 +39,18 @@ where: </p>
 <p>The following commands are supported:</p>
 <p><strong>player count ?<br>
   </strong><strong>player name &lt;<em>playerindex</em>&gt; ?<br>
-  </strong><strong>player address &lt;<em>playerindex</em>&gt; ?</strong></p>
+  </strong><strong>player id &lt;<em>playerindex</em>&gt; ?<br>
   </strong><strong>player ip &lt;<em>playerindex</em>&gt; ?</strong></p>
-<p>To obtain information about the players in the system, use the &quot;player 
-  count&quot;, &quot;player name&quot; and &quot;player address&quot; commands. 
+<p>To obtain information about the players in the system, use the &quot player count&quot;, &quot;player id&quot;, 
+  &quot;player name&quot;.
+
   The &quot;player count&quot; command returns the number of players in the system. 
   The &quot;player name&quot; command returns the human-readable name for the 
   specified player.  (If the name has not been specified by the user in the Player 
-  Settings, then the IP address will be returned.) 
-  The &quot;player ip&quot; command returns the IP address of the specified player.
-  The &quot;player address&quot; command returns the player's unique MAC address. 
+  Settings, then a default name will be used, usually the IP address will be returned.) 
+  The &quot;player ip&quot; command returns the IP address (along with port number) of the specified player.
+  Note:  The IP address and or port may change if the player reconnects or is rebooted.  Use the player's id to uniquely identify the player.
+  The &quot;player id&quot; command returns the player's unique MAC address. 
   This value is used when specifying a player in subsequent 
   commands. </p>
 <blockquote> 
@@ -54,7 +58,8 @@ where: </p>
     Response: &quot;player count 2&lt;CR&gt;&quot;</p>
   <p> Request: &quot;player name 0 ?&lt;CR&gt;&quot;<br>
     Response: &quot;player name 0 Living Room&lt;CR&gt;&quot;</p>
-  <p> Request: &quot;player address 0 ?&lt;CR&gt;&quot;<br>Response: &quot;player address 0 04:20:00:12:23:45&lt;CR&gt;&quot;</p>
+  <p> Request: &quot;player id 0 ?&lt;CR&gt;&quot;<br>
+  Response: &quot;player id 0 04:20:00:12:23:45&lt;CR&gt;&quot;</p>
 </blockquote>
 <hr>
 <p><strong>play<br>

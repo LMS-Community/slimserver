@@ -336,9 +336,10 @@
   </tr>
 </table>
 <h4>Multiple Players</h4>
-<p>Finally, if more than one player is connected to the system, you can specify that player with a player parameter consisting of the IP address and port or the MAC address of the device being controlled.</p>
+<p>Finally, if more than one player is connected to the system, you can specify that player with a unique player identifier for the device being controlled. This unique identifyer is generated when the player connects. This identifier may be in the form of an IP address or MAC address, depending on the kind of client that's connecting.</p>
+
 <p>For example, the following pauses the player and then returns the status as an HTML page for the player at IP address 10.0.1.202:</p>
-<pre>http://10.0.1.201:9000/status.html?p0=pause&amp;p1=1&amp;player=10.0.1.202:69</pre>
+<pre>http://10.0.1.201:9000/status.html?p0=pause&amp;p1=1&amp;player=10.0.1.202</pre>
 <p>For example, the following pauses the player and then returns the status as an HTML page for the player at MAC address: 04:00:20:12:45:AB</p>
 <pre>http://10.0.1.201:9000/status.html?p0=pause&amp;p1=1&amp;player=04:00:20:12:45:AB</pre>
 <p>Examples</p>
@@ -490,7 +491,7 @@
   <tr>
     <td>x-player</td>
     <td>&lt;playerid&gt;</td>
-    <td>The identifier (IP address &amp; port) for the given player</td>
+    <td>The identifier for the given player</td>
   </tr>
   <tr>
     <td>x-playername</td>

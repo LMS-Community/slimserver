@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.19 2003/12/11 17:04:39 dean Exp $
+# $Id: Command.pm,v 1.20 2003/12/19 20:31:21 dean Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -107,9 +107,10 @@ sub execute {
 	# display   	? 			?	
 	# button   		<buttoncode>	
 	# player		count		?	
+	# player		id			<playerindex|playerid>				?	
 	# player		name		<playerindex|playerid>				?	
-	# player		address		<playerindex|playerid>				?	
 	# player		ip			<playerindex|playerid>				?	
+	# player		address		<playerindex|playerid>				?	  (deprecated)
 	# pref			<prefname>	<prefvalue>	
 	# pref			<prefname>	?		
 	# playerpref	<prefname>	<prefvalue>	
@@ -125,7 +126,7 @@ sub execute {
 		
 		} elsif ($p1 eq "count") {
 			$p2 = Slim::Player::Client::clientCount();
-		} elsif ($p1 eq "name" || $p1 eq "address" || $p1 eq "ip") {
+		} elsif ($p1 eq "name" || $p1 eq "address" || $p1 eq "ip" || $p1 eq "id") {
 		
 			my $p2client;
 			
@@ -144,7 +145,7 @@ sub execute {
 			if (defined $p2client) {
 				if ($p1 eq "name") {
 					$p3 = $p2client->name();
-				} elsif ($p1 eq "address") {
+				} elsif ($p1 eq "address" || $p1 eq "id") {
 					$p3 = $p2client->id();
 				} elsif ($p1 eq "ip") {
 					$p3 = $p2client->ipport();

@@ -376,7 +376,13 @@ sub defaultName {
 sub getClient {
 	my $id = shift;
 	my $ret = $clientHash{$id};
-	#$::d_protocol && msg ("getClient($id) == ".(defined($ret)?$ret:'UNDEF')."\n");
+	if (!defined($ret)) {
+		while (my ($key, $value) = each(%clientHash)) {
+			return $value if (ipport($value) eq $id);
+			return $value if (ip($value) eq $id);
+			return $value if (name($value) eq $id);
+		}
+	}
 	return($ret);
 }
 
