@@ -1,4 +1,4 @@
-# $Id: Text.pm,v 1.8 2003/11/10 23:14:55 dean Exp $
+# $Id: Text.pm,v 1.9 2003/11/19 07:04:23 grotus Exp $
 package Slim::Buttons::Input::Text;
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
@@ -206,6 +206,13 @@ my %functions = (
 			}
 			exitInput($client,$functarg);
 		}
+	,'passback' => sub {
+			my ($client,$funct,$functarg) = @_;
+			my $parentMode = Slim::Buttons::Common::param($client,'parentMode');
+			if (defined($parentMode)) {
+				Slim::Hardware::IR::executeButton($client,$client->lastirbutton,$client->lastirtime,$parentMode);
+			}
+		}
 );
 
 sub lines {
@@ -283,11 +290,18 @@ my @BothChars = (
 # doublesizeReplace = undef
 	# hashref of characters where the keys are the characters to replace
 	# and the values are the replacement characters
+# parentMode = $client->modeStack->[-2]
+	# mode to which to pass button presses mapped to the passback function
+	# defaults to mode in second to last position on call stack (which is
+	# the mode that called INPUT.Text)
 # other parameters used
 # rightIndex = charIndex($charsRef,symbol('rightarrow'))
 	# index of right arrow within charsRef array
 sub init {
 	my $client = shift;
+	if (!defined(Slim::Buttons::Common::param($client,'parentMode'))) {
+		Slim::Buttons::Common::param($client,'parentMode',$client->modeStack->[-2]);
+	}
 	if (!defined(Slim::Buttons::Common::param($client,'header'))) {
 		Slim::Buttons::Common::param($client,'header','Enter Text:');
 	}
