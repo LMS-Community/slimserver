@@ -258,7 +258,7 @@ sub sendresponse {
 	if ($message) {
 		$::d_cli && msg("Sending response\n");
 		
-		$sentbytes = send $clientsock, substr($message,0,Slim::Utils::Prefs::get("tcpChunkSize")),0;
+		$sentbytes = send $clientsock, $message,0;
 		if (defined($sentbytes)) {
 			if ($sentbytes < length($message)) { #sent incomplete message
 				unshift @{$outbuf{$clientsock}},substr($message,$sentbytes);

@@ -168,6 +168,8 @@ use vars qw(
 		$d_scan
 		$d_server
 		$d_scheduler
+		$d_slimproto
+		$d_slimproto_v
 		$d_stdio
 		$d_stream
 		$d_stream_v
@@ -485,6 +487,8 @@ to the console via stderr:
     --d_scan         => Information about scanning directories and filelists
     --d_server       => Basic server functionality
     --d_scheduler    => Internal scheduler information
+    --d_slimproto    => Slimproto debugging information
+    --d_slimproto_v  => Slimproto verbose debugging information
     --d_stdio        => Standard I/O command debugging
     --d_stream       => Information about player streaming protocol 
     --d_stream_v     => Verbose information about player streaming protocol 
@@ -539,6 +543,8 @@ sub initOptions {
 		'd_scan'			=> \$d_scan,
 		'd_server'			=> \$d_server,
 		'd_scheduler'		=> \$d_scheduler,
+		'd_slimproto'		=> \$d_slimproto,
+		'd_slimproto_v'		=> \$d_slimproto_v,
 		'd_stdio'			=> \$d_stdio,
 		'd_stream'			=> \$d_stream,
 		'd_stream_v'		=> \$d_stream_v,

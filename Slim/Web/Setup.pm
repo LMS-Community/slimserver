@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.6 2003/08/09 19:55:23 kdf Exp $
+# $Id: Setup.pm,v 1.7 2003/08/11 20:56:08 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1133,7 +1133,7 @@ sub initSetupConfig {
 					'PrefOrder' => ['httpport','cliport','mDNSname']
 				}
 			,'TCP_Params' => {
-					'PrefOrder' => ['tcpReadMaximum','tcpWriteMaximum','tcpConnectMaximum','tcpChunkSize','udpChunkSize']
+					'PrefOrder' => ['tcpReadMaximum','tcpWriteMaximum','tcpConnectMaximum','udpChunkSize']
 					,'PrefsInTable' => 1
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
@@ -1175,10 +1175,6 @@ sub initSetupConfig {
 			,"tcpConnectMaximum" => {
 						'validate' => \&validateInt
 						,'validateArgs' => [1,undef,1]
-					}
-			,"tcpChunkSize" => {
-						'validate' => \&validateInt
-						,'validateArgs' => [1,1024000,1,1] #limit to 1MB
 					}
 			,"udpChunkSize" => {
 						'validate' => \&validateInt

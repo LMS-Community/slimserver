@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.16 2003/08/10 21:47:23 sadams Exp $
+# $Id: HTTP.pm,v 1.17 2003/08/11 20:56:08 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -64,7 +64,8 @@ my $httpSelWrite = IO::Select->new();
 
 my $streamingSelWrite = IO::Select->new();
 
-my %outbuf = ();
+my %outbuf = (); # a hash for each writeable socket containing a queue of output segments
+                 #   each segment is a hash of a ref to data, an offset and a length
 my %sendMetaData;
 my %metaDataBytes;
 my %streamingFiles;
@@ -442,26 +443,33 @@ sub executeurl {
 sub addresponse {
 	my $httpclientsock = shift;
 	my $message = shift;
-	push @{$outbuf{$httpclientsock}}, $message;
+	my %segment = ( 
+		'data' => \$message,
+		'offset' => 0,
+		'length' => length($message)
+	);
+	push @{$outbuf{$httpclientsock}}, \%segment;
 	$httpSelWrite->add($httpclientsock);
 	$main::selWrite->add($httpclientsock);
 }
 
 sub sendresponse {
 	my $httpclientsock = shift;
-	my $message = shift(@{$outbuf{$httpclientsock}});
+	my $segmentref = shift(@{$outbuf{$httpclientsock}});
 	my $sentbytes;
-	if ($message && $httpclientsock->connected) {
+	if ($segmentref && $httpclientsock->connected) {
 		$::d_http && msg("Sending message to " . $peeraddr{$httpclientsock} . "\n");
-		$sentbytes = send $httpclientsock,substr($message,0,Slim::Utils::Prefs::get("tcpChunkSize")),0;
+		$sentbytes = syswrite $httpclientsock,${$segmentref->{'data'}}, $segmentref->{'length'}, $segmentref->{'offset'};
 
 		if ($! == EWOULDBLOCK) {
 			$sentbytes = 0 unless defined($sentbytes);
 		}	
 
 		if (defined($sentbytes)) {
-			if ($sentbytes < length($message)) { #sent incomplete message
-				unshift @{$outbuf{$httpclientsock}},substr($message,$sentbytes);
+			if ($sentbytes < $segmentref->{'length'}) { #sent incomplete message
+				$segmentref->{'length'} -= $sentbytes;
+				$segmentref->{'offset'} += $sentbytes;
+				unshift @{$outbuf{$httpclientsock}},$segmentref;
 			} else { #sent full message
 				if (@{$outbuf{$httpclientsock}} == 0) { #no more messages to send
 					$::d_http && msg("No more messages to send to " . $peeraddr{$httpclientsock} . ", closing socket\n");
@@ -486,7 +494,12 @@ sub addstreamingresponse {
 	my $httpclientsock = shift;
 	my $message = shift;
 	my $paramref = shift;
-	
+	my %segment = ( 
+		'data' => \$message,
+		'offset' => 0,
+		'length' => length($message)
+	);
+
 	my $address = $peeraddr{$httpclientsock};
 
 	# Use squeezebox's client id if specified, otherwise just the IP
@@ -512,7 +525,7 @@ sub addstreamingresponse {
 		$client->paddr(getpeername($httpclientsock));
 	}
 
-	push @{$outbuf{$httpclientsock}}, $message;
+	push @{$outbuf{$httpclientsock}}, \%segment;
 	$streamingSelWrite->add($httpclientsock);
 	$main::selWrite->add($httpclientsock);
 		
@@ -604,7 +617,7 @@ sub sendstreamingresponse {
 	my $address = inet_ntoa($httpclientsock->peeraddr);
 	my $client = Slim::Player::Client::getClient($peerid{$httpclientsock});
 	assert($client);
-	my $message = shift(@{$outbuf{$httpclientsock}});
+	my $segmentref = shift(@{$outbuf{$httpclientsock}});
 	my $streamingFile = $streamingFiles{$httpclientsock};
 	my $silence = 0;
 	
@@ -613,29 +626,40 @@ sub sendstreamingresponse {
 	}
 	
 	# if we don't have anything in our queue, then get something
-	if (!defined($message)) {
+	if (!defined($segmentref)) {
 		# if we aren't playing something, then queue up some silence
 		if ($silence) {
 			$::d_http && msg("(silence)");
 			$silence = 1;
-			unshift @{$outbuf{$httpclientsock}},getStaticContent("html/silence.mp3");
+			my $silencedata = getStaticContent("html/silence.mp3");
+			my %segment = ( 
+				'data' => \$silencedata,
+				'offset' => 0,
+				'length' => length($silencedata)
+			);
+			unshift @{$outbuf{$httpclientsock}},\%segment;
 		} else {
 			my $chunkRef;
 			if (defined($streamingFile)) {
 				my $chunk;
-				$streamingFile->read($chunk, Slim::Utils::Prefs::get("tcpChunkSize"));
+				$streamingFile->sysread($chunk, 32768);
 				$chunkRef = \$chunk;
 			} else {
-				$chunkRef = Slim::Player::Playlist::nextChunk($client, Slim::Utils::Prefs::get("tcpChunkSize"));
+				$chunkRef = Slim::Player::Playlist::nextChunk($client, 32768);
 			}
 			# otherwise, queue up the next chunk of sound
 			if ($chunkRef) {
 				$::d_http && msg("(audio)");
-				unshift @{$outbuf{$httpclientsock}},$$chunkRef;
+				my %segment = ( 
+					'data' => $chunkRef,
+					'offset' => 0,
+					'length' => length($$chunkRef)
+				);
+				unshift @{$outbuf{$httpclientsock}},\%segment;
 			}
 		}
 		# try again...
-		$message = shift(@{$outbuf{$httpclientsock}});
+		$segmentref = shift(@{$outbuf{$httpclientsock}});
 	}
 	
 	# try to send metadata, if appropriate
@@ -643,7 +667,7 @@ sub sendstreamingresponse {
 		# if the metadata would appear in the middle of this message, just send the bit before
 		$::d_http && msg("metadata bytes: " . $metaDataBytes{$httpclientsock} . "\n");
 		if ($metaDataBytes{$httpclientsock} == $METADATAINTERVAL) {
-			unshift @{$outbuf{$httpclientsock}},$message;
+			unshift @{$outbuf{$httpclientsock}},$segmentref;
 			my $song = Slim::Player::Playlist::song($client);
 			my $title = $song ? Slim::Music::Info::standardTitle($client, $song) : string('WELCOME_TO_SQUEEZEBOX');
 			$title =~ tr/'/ /;
@@ -651,33 +675,54 @@ sub sendstreamingresponse {
 			my $length = length($metastring);
 			$metastring .= chr(0) x (16 - ($length % 16));
 			$length = length($metastring) / 16;
-			$message = chr($length) . $metastring;
+			my $message = chr($length) . $metastring;
+			my %segment = ( 
+				'data' => \$message,
+				'offset' => 0,
+				'length' => length($message)
+			);
+			$segmentref = \%segment;
+			
 			$metaDataBytes{$httpclientsock} = 0;
 			$::d_http && msg("sending metadata of length $length: '$metastring' (" . length($message) . " bytes)\n");
-		} elsif (defined($message) && $metaDataBytes{$httpclientsock} + length($message) > $METADATAINTERVAL) {
-			unshift @{$outbuf{$httpclientsock}},substr($message,$METADATAINTERVAL - $metaDataBytes{$httpclientsock});
-			$message = substr($message,0,$METADATAINTERVAL - $metaDataBytes{$httpclientsock});
-			$metaDataBytes{$httpclientsock} += length($message);
-			$::d_http && msg("splitting message for metadata at " . length($message) . "\n");
+		} elsif (defined($segmentref) && $metaDataBytes{$httpclientsock} + $segmentref->{'length'} > $METADATAINTERVAL) {
+			my $splitpoint = $METADATAINTERVAL - $metaDataBytes{$httpclientsock};
+			
+			# make a copy of the segment, and point to the second half, to be sent later.
+			my %splitsegment = %$segmentref;
+			$splitsegment{'offset'} += $splitpoint;
+			$splitsegment{'length'} -= $splitpoint;
+			
+			unshift @{$outbuf{$httpclientsock}},\%splitsegment;
+			
+			#only send the first part
+			$segmentref->{'length'} = $splitpoint;
+			
+			$metaDataBytes{$httpclientsock} += $splitpoint;
+			$::d_http && msg("splitting message for metadata at " . $splitpoint . "\n");
+		
 		# if it's time to send the metadata, just send the metadata
 		} else {
-			if (defined($message)) {
-				$metaDataBytes{$httpclientsock} += length($message);
+			if (defined($segmentref)) {
+				$metaDataBytes{$httpclientsock} += $segmentref->{'length'};
 			}
 		}
 	}
 
-	if ($message && $httpclientsock->connected) {
-		$sentbytes = send $httpclientsock,substr($message,0,Slim::Utils::Prefs::get("tcpChunkSize")),0;	
+	if (defined($segmentref) && $httpclientsock->connected) {
+		$sentbytes = syswrite $httpclientsock,${$segmentref->{'data'}}, $segmentref->{'length'}, $segmentref->{'offset'};
 
 		if ($! == EWOULDBLOCK) {
 			$sentbytes = 0 unless defined($sentbytes);
 		}	
 
 		if (defined($sentbytes)) {
-			if ($sentbytes < length($message)) { #sent incomplete message
-				unshift @{$outbuf{$httpclientsock}},substr($message,$sentbytes);
-				$metaDataBytes{$httpclientsock} -= length($message) - $sentbytes;
+			if ($sentbytes < $segmentref->{'length'}) { #sent incomplete message
+				$::d_http && $sentbytes && msg("sent incomplete chunk, requeuing " . ($segmentref->{'length'} - $sentbytes). " bytes\n");
+				$metaDataBytes{$httpclientsock} -= $segmentref->{'length'} - $sentbytes;
+				$segmentref->{'length'} -= $sentbytes;
+				$segmentref->{'offset'} += $sentbytes;
+				unshift @{$outbuf{$httpclientsock}},$segmentref;
 				$fullsend = 0;
 			} else {
 				$fullsend = 1;

@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.13 2003/08/10 20:27:46 sadams Exp $
+# $Id: Slimproto.pm,v 1.14 2003/08/11 20:56:07 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -63,7 +63,7 @@ sub init {
 	$slimSelRead->add($slimproto_socket);
 	$main::selRead->add($slimproto_socket);
 
-	$::d_protocol && msg "Squeezebox protocol listening on port $listenerport\n";	
+	$::d_slimproto && msg "Squeezebox protocol listening on port $listenerport\n";	
 }
 
 sub idle {
@@ -102,7 +102,7 @@ sub slimproto_accept {
 	my $peer = $clientsock->peeraddr;
 
 	if (!($clientsock->connected && $peer)) {
-		$::d_protocol && msg ("Slimproto accept failed; couldn't get peer addr.\n");
+		$::d_slimproto && msg ("Slimproto accept failed; couldn't get peer addr.\n");
 		return;
 	}
 
@@ -110,7 +110,7 @@ sub slimproto_accept {
 
 	if ((Slim::Utils::Prefs::get('filterHosts')) &&
 		!(Slim::Utils::Misc::isAllowedHost($tmpaddr))) {
-		$::d_protocol && msg ("Slimproto unauthorized host, accept denied: $tmpaddr\n");
+		$::d_slimproto && msg ("Slimproto unauthorized host, accept denied: $tmpaddr\n");
 		$clientsock->close();
 		return;
 	}
@@ -125,7 +125,7 @@ sub slimproto_accept {
 	$::main::selRead->add($clientsock);
 #	$::main::selWrite->add($clientsock);
 
-	$::d_protocol && msg ("Slimproto accepted connection from: $tmpaddr\n");
+	$::d_slimproto && msg ("Slimproto accepted connection from: $tmpaddr\n");
 }
 
 sub slimproto_close {
@@ -156,10 +156,10 @@ sub client_writeable {
 	# just ignore if it shouldn't exist.
 	return unless (defined($ipport{$clientsock})); 
 	
-	$::d_protocol_verbose && msg("Slimproto client writeable: ".$ipport{$clientsock}."\n");
+	$::d_slimproto_v && msg("Slimproto client writeable: ".$ipport{$clientsock}."\n");
 
 	if (!($clientsock->connected)) {
-		$::d_protocol && msg("Slimproto connection closed by peer.\n");
+		$::d_slimproto && msg("Slimproto connection closed by peer.\n");
 		slimproto_close($clientsock);		
 		return;
 	}		
@@ -168,20 +168,20 @@ sub client_writeable {
 sub client_readable {
 	my $s = shift;
 
-	$::d_protocol_verbose && msg("Slimproto client readable: ".$ipport{$s}."\n");
+	$::d_slimproto_v && msg("Slimproto client readable: ".$ipport{$s}."\n");
 
 	my $total_bytes_read=0;
 
 GETMORE:
 	if (!($s->connected)) {
-		$::d_protocol && msg("Slimproto connection closed by peer.\n");
+		$::d_slimproto && msg("Slimproto connection closed by peer.\n");
 		slimproto_close($s);		
 		return;
 	}			
 
 	my $bytes_remaining;
 
-	$::d_protocol_verbose && msg(join(', ', 
+	$::d_slimproto_v && msg(join(', ', 
 		"state: ".$parser_state{$s},
 		"framelen: ".$parser_framelength{$s},
 		"inbuflen: ".length($inputbuffer{$s})
@@ -199,7 +199,7 @@ GETMORE:
 	}
 	assert ($bytes_remaining > 0);
 
-	$::d_protocol_verbose && msg("attempting to read $bytes_remaining bytes\n");
+	$::d_slimproto_v && msg("attempting to read $bytes_remaining bytes\n");
 
 	my $indata;
 	my $bytes_read = $s->sysread($indata, $bytes_remaining);
@@ -209,12 +209,12 @@ GETMORE:
 
 	if (!defined($bytes_read) || ($bytes_read == 0)) {
 		if ($total_bytes_read == 0) {
-			$::d_protocol && msg("Slimproto half-close from client: ".$ipport{$s}."\n");
+			$::d_slimproto && msg("Slimproto half-close from client: ".$ipport{$s}."\n");
 			slimproto_close($s);
 			return;
 		}
 
-		$::d_protocol_verbose && msg("no more to read.\n");
+		$::d_slimproto_v && msg("no more to read.\n");
 		return;
 
 	}
@@ -223,7 +223,7 @@ GETMORE:
 	$inputbuffer{$s}.=$indata;
 	$bytes_remaining -= $bytes_read;
 
-	$::d_protocol_verbose && msg ("Got $bytes_read bytes from client, $bytes_remaining remaining\n");
+	$::d_slimproto_v && msg ("Got $bytes_read bytes from client, $bytes_remaining remaining\n");
 
 	assert ($bytes_remaining>=0);
 
@@ -243,7 +243,7 @@ GETMORE:
 			$inputbuffer{$s} = '';
 
 			if ($parser_framelength{$s} > 1000) {
-				$::d_protocol && msg ("Client gave us insane length ".$parser_framelength{$s}." for slimproto frame. Disconnecting him.\n");
+				$::d_slimproto && msg ("Client gave us insane length ".$parser_framelength{$s}." for slimproto frame. Disconnecting him.\n");
 				slimproto_close($s);
 				return;
 			}
@@ -259,7 +259,7 @@ GETMORE:
 		}
 	}
 
-	$::d_protocol_verbose && msg("new state: ".$parser_state{$s}."\n");
+	$::d_slimproto_v && msg("new state: ".$parser_state{$s}."\n");
 	goto GETMORE;
 }
 
@@ -269,22 +269,22 @@ sub process_slimproto_frame {
 
 	my $len = length($data);
 
-	$::d_protocol_verbose && msg("Got Slimptoto frame, op $op, length $len\n");
+	$::d_slimproto_v && msg("Got Slimptoto frame, op $op, length $len\n");
 
 	if ($op eq 'HELO') {
 		if ($len != 8) {
-			$::d_protocol && msg("bad length $len for HELO. Ignoring.\n");
+			$::d_slimproto && msg("bad length $len for HELO. Ignoring.\n");
 			return;
 		}
 		my ($deviceid, $revision, @mac) = unpack("CCH2H2H2H2H2H2", $data);
 		$revision = int($revision / 16) + ($revision % 16)/10.0;
 		my $mac = join(':', @mac);
-		$::d_protocol && msg("Squeezebox says hello. Deviceid: $deviceid, revision: $revision, mac: $mac\n");
+		$::d_slimproto && msg("Squeezebox says hello. Deviceid: $deviceid, revision: $revision, mac: $mac\n");
 
 		my $id=$mac;
 		my $paddr = sockaddr_in($s->peerport, $s->peeraddr);
 
-		$::d_protocol && msg("creating new client, id:$id ipport: $ipport{$s}\n");
+		$::d_slimproto && msg("creating new client, id:$id ipport: $ipport{$s}\n");
 		my $client=Slim::Player::Squeezebox->new(
 			$id, 		# mac
 			$paddr,		# sockaddr_in
@@ -309,7 +309,7 @@ sub process_slimproto_frame {
 		# [1]	number of bits 
 		# [4]   the IR code, up to 32 bits      
 		if ($len != 10) {
-			$::d_protocol && msg("bad length $len for IR. Ignoring\n");
+			$::d_slimproto && msg("bad length $len for IR. Ignoring\n");
 			return;
 		}
 
@@ -317,7 +317,7 @@ sub process_slimproto_frame {
 		Slim::Hardware::IR::enqueue($client, $irCode, $irTime);
 	} elsif ($op eq 'RESP') {
 		# HTTP stream headers
-		print "Squeezebox got HTTP response:\n$data";
+		$::d_slimproto && msg("Squeezebox got HTTP response:\n$data\n");
 	}
 }
 

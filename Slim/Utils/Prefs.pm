@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.3 2003/08/09 16:23:45 dean Exp $
+# $Id: Prefs.pm,v 1.4 2003/08/11 20:56:08 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -48,7 +48,6 @@ my %DEFAULT = (
 	,"tcpWriteMaximum"		=> 20
 	,"tcpConnectMaximum"	=> 30
 	,"streamWriteMaximum"	=> 30
-	,"tcpChunkSize"			=> 4096
 	,"udpChunkSize"			=> 1400
 	,"usetagdatabase"		=> 0				# use 0 for false, 1 for true
 	,"templatecache"		=> 1				# use 0 for false, 1 for true

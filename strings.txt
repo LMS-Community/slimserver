@@ -2378,28 +2378,6 @@ SETUP_TCPCONNECTMAXIMUM_CHOOSE
 	PT	Número máximo de conexões TCP simultâneas a aceitar
 	SE	Maximalt antal samtidiga TCP-uppkopplingar:
 
-SETUP_TCPCHUNKSIZE
-	DE	Anzahl der Daten Bytes, die pro Versuch auf TCP Socket geschrieben werden:
-	DK	Bytes data der skrives til TCP socket pr. forsøg
-	EN	Bytes of data to write to TCP socket per attempt
-	ES	Bytes de datos para escribir al enchufe TCP por intento
-	FI	Yhdellä TCP -yhteydellä kirjoitettavien tavujen määrä
-	FR	Nombre d'octets à écrire dans la prise TCP à chaque tentative
-	NL	Aantal bytes dat per poging naar de TCP socket wordt geschreven
-	PT	Bytes de dados a escrever no socket TCP por cada tentativa
-	SE	Antal byte data att skriva till "TCP-socket" vid varje försök
-
-SETUP_TCPCHUNKSIZE_CHOOSE
-	DE	Anzahl der Daten Bytes, die pro Versuch auf TCP Socket geschrieben werden:
-	DK	Bytes data der skrives til TCP socket pr. forsøg:
-	EN	Bytes of data to write to TCP socket per attempt
-	ES	Bytes de datos para escribir al enchufe TCP por intento
-	FI	Yhdellä TCP -yhteydellä kirjoitettavien tavujen määrä
-	FR	Nombre d'octets à écrire dans la prise TCP à chaque tentative :
-	NL	Aantal bytes dat per poging naar de TCP socket wordt geschreven:
-	PT	Bytes de dados a escrever no socket TCP por cada tentativa
-	SE	Antal byte data att skriva till "TCP-socket" vid varje försök
-
 SETUP_UDPCHUNKSIZE
 	DE	Maximale UDP-Datengröße
 	EN	Maximum UDP Data Size
