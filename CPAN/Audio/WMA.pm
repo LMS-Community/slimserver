@@ -11,7 +11,7 @@ if ($] > 5.007) {
 	require Encode;
 }
 
-$VERSION = '0.7';
+$VERSION = '0.7.1';
 
 my %guidMapping   = _knownGUIDs();
 my %reversedGUIDs = reverse %guidMapping;
@@ -108,7 +108,7 @@ sub _readAndIncrementInlineOffset {
 sub _UTF16ToUTF8 {
 	my $data = shift;
 
-	if ($utf8) {
+	if ($utf8 && $] > 5.007) {
 
 		# This also turns on the utf8 flag - perldoc Encode
 		$data = Encode::decode('UTF-16LE', $data);
@@ -141,10 +141,6 @@ sub _parseWMAHeader {
 	my $reserved1     = vec(substr($headerObjectData, 28, 1), 0, 4);
 	my $reserved2     = vec(substr($headerObjectData, 29, 1), 0, 4);
 
-	# some sanity checks
-	return -1 if ($objectSize > $self->{'size'});
-	return -1 if ($objectSize < 30);
-	
 	if ($DEBUG) {
 		printf("ObjectId: [%s]\n", _byteStringToGUID($objectId));
 		print  "\tobjectSize: [$objectSize]\n";
@@ -152,6 +148,10 @@ sub _parseWMAHeader {
 		print  "\treserved1 [$reserved1]\n";
 		print  "\treserved2 [$reserved2]\n\n";
 	}
+
+	# some sanity checks
+	return -1 if ($objectSize > $self->{'size'});
+	return -1 if ($objectSize < 30);
 
 	read($fh, $self->{'headerData'}, ($objectSize - 30));
 
@@ -352,7 +352,7 @@ sub _parseASFExtendedContentDescriptionObject {
 
 		if ($ext{'content'}->{$id}->{'value_type'} <= 1) {
 
-			$ext{'content'}->{$id}->{'value'} = _denull($value);
+			$ext{'content'}->{$id}->{'value'} = _UTF16ToUTF8($value);
 
 		} elsif($ext{'content'}->{$id}->{'value_type'} == 4) {
 
