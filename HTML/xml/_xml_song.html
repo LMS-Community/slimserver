@@ -3,8 +3,10 @@
 
 	[% genres = track.genres %]
 	[% IF genres %]
-		<genre>[% genre.name | html %]</genre> 
-		<genre_browse_url><![CDATA[xml/browsedb.xml?hierarchy=artist,album,track&level=0&genre=[% genre.id %]]]></genre_browse_url>
+		[% FOREACH genre = genres %]
+			<genre>[% genre.name | html %]</genre> 
+			<genre_browse_url><![CDATA[xml/browsedb.xml?hierarchy=artist,album,track&level=0&genre=[% genre.id %]]]></genre_browse_url>
+		[% END %]
 	[% END %] 
 
 	[% FOREACH role = track.contributorRoles.sort %]
