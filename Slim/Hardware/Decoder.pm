@@ -56,12 +56,13 @@ sub reset {
 sub volume {
 	my ($client, $volume) = @_;
 
-	# volume squared seems to correlate better with the linear scale.  I'm sure there's something
-	# optimal, but this is better.
-	my $level = sprintf('%X', 0xFFFFF - 0x7FFFF * $volume * $volume);
-
 	if ($client->decoder eq 'mas3507d') {
 		
+		# volume squared seems to correlate better with the linear scale.  
+		# I'm sure there's something optimal, but this is better.
+
+		my $level = sprintf('%X', 0xFFFFF - 0x7FFFF * ($volume ** 2));
+
 		Slim::Networking::Sendclient::i2c($client,
 			 Slim::Hardware::mas3507d::masWrite('ll', $level)
 			.Slim::Hardware::mas3507d::masWrite('rr', $level)
@@ -69,6 +70,14 @@ sub volume {
 
 	} else {
 
+		# for Squeezebox, we reduce the range in the digital volume matrix to prevent clipping
+		# The factor of 23/40 was determined experimentally to achieve the highest level
+		# for a max-volume 1KHz test tone without any clipping. Gets us 3.04 v Pk-Pk (1.07 RMS)
+		# TODO: figure out the right way to do this so we're affecting the s/pdif output while
+		# also doing the analog volume control in analog land. Is it possible or do we maybe need
+		# different modes to accomplish both?
+
+		my $level = sprintf('%X', 0xFFFFF - 0x7FFFF * (($volume * 23/40)**2));
 		Slim::Networking::Sendclient::i2c($client,
 			Slim::Hardware::mas35x9::masWrite('out_LL', $level)
 			.Slim::Hardware::mas35x9::masWrite('out_RR', $level)
