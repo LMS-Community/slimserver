@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.74 2004/05/13 22:36:18 dean Exp $
+# $Id: Setup.pm,v 1.75 2004/05/13 22:56:39 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -555,7 +555,7 @@ sub initSetupConfig {
 				$pageref->{'children'}[9] = 'itunes';
 				
 				# show moodlogic setting if moodlogic is installed.
-				if (Slim::Music::MoodLogic::canUseMoodlogic()) {
+				if (Slim::Music::MoodLogic::canUseMoodLogic()) {
 					$pageref->{'children'}[10] = 'moodlogic';
 				} else {
 					pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
@@ -2711,14 +2711,16 @@ sub validateIsDir {
 
 sub validateIsAudioDir {
 	my $val = shift;
-	my $allowEmpty = shift;
 	
-	if (-d $val) {
+	my $allowEmpty = shift;
+	print "validating [$val]\n";	
+	if (opendir TEST, $val) {
 		$val =~ s|[/\\]$||;
 		return $val;
 	} elsif ($allowEmpty && defined($val) && $val eq '') {
 		return $val;
 	} else  {
+		print $!;
 		return (undef, "SETUP_BAD_DIRECTORY") ;
 	}
 }
