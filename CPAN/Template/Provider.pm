@@ -27,7 +27,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Provider.pm,v 1.2 2004/05/30 16:26:16 dean Exp $
+# $Id: Provider.pm,v 1.3 2004/07/13 23:11:47 vidur Exp $
 #
 #============================================================================
 
@@ -44,7 +44,7 @@ use Template::Document;
 use File::Basename;
 use File::Spec;
 
-$VERSION  = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION  = sprintf("%d.%02d", q$Revision: 1.3 $ =~ /(\d+)\.(\d+)/);
 
 # name of document class
 $DOCUMENT = 'Template::Document' unless defined $DOCUMENT;
@@ -579,6 +579,16 @@ sub _load_compiled {
     # %INC entry to ensure it is reloaded (we don't 
     # want 1 returned by require() to say it's in memory)
     delete $INC{ $file };
+    # Ugly stop-gap hack to deal with a difference in the
+    # ActiveState interpreter used in executables generated
+    # with PerlApp. Windows file separators were getting
+    # converted to Unix file separators in the %INC hash.
+    # The patch tries to remove both versions from the hash.
+    if ($file =~ /\\/) {
+        my $file2 = $file;
+        $file2 =~ s/\\/\//g;
+        delete $INC{ $file2 };
+    }
     eval { $compiled = require $file; };
     return $@
         ? $self->error("compiled template $compiled: $@")
