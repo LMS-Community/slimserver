@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.23 2003/12/06 00:52:14 grotus Exp $
+# $Id: Pages.pm,v 1.24 2003/12/06 00:59:04 grotus Exp $
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -387,10 +387,10 @@ sub status {
 	$$main_form_ref{'refresh'} = Slim::Utils::Prefs::get("refreshRate");
 	
 	if (!defined($client)) {
-		return ${Slim::Web::HTTP::filltemplatefile("status_noclients.html", $main_form_ref)};
+		return Slim::Web::HTTP::filltemplatefile("status_noclients.html", $main_form_ref);
 	} elsif ($client->needsUpgrade()) {
 		$$main_form_ref{'player_needs_upgrade'} = '1';
-		return ${Slim::Web::HTTP::filltemplatefile("status_needs_upgrade.html", $main_form_ref)};
+		return Slim::Web::HTTP::filltemplatefile("status_needs_upgrade.html", $main_form_ref);
 	}
 
 	my $current_player;
