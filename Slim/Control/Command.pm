@@ -24,10 +24,10 @@ our %executeCallbacks = ();
 
 our %searchMap = (
 
-	'artist' => 'contributor.name',
-	'genre'  => 'genre.name',
-	'album'  => 'album.title',
-	'track'  => 'track.title',
+	'artist' => 'contributor.namesort',
+	'genre'  => 'genre.namesort',
+	'album'  => 'album.titlesort',
+	'track'  => 'track.titlesort',
 );
 
 #############################################################################
@@ -1725,7 +1725,7 @@ sub singletonRef {
 		return [];
 	} elsif ($arg) {
 		# force stringification of a possible object.
-		return [ Slim::Utils::Text::ignoreCaseArticles("$arg") ];
+		return [ "" . $arg ];
 	} else {
 		return [];
 	}

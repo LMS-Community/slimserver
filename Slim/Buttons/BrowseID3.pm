@@ -512,6 +512,7 @@ sub loadDir {
 	my $search = selection($client, 'cursearch');
 
 	my $sortByTitle;
+	my $allArtists = 0;
 
 	# This whole * or not * thing is very wonky to me. Maybe it can be
 	# cleaned up with the new DataStores API.
@@ -527,6 +528,7 @@ sub loadDir {
 
 	if (defined($genre) && ($genre eq $client->string('ALL_ARTISTS'))) {
 		$genre = '*';
+		$allArtists = 1;
 		$sortByTitle = picked($album) ? 0 : 1;
 	}
 
@@ -562,9 +564,9 @@ sub loadDir {
 
 	if ($search) {
 
-		$find->{'contributor.name'} = singletonRef($artist) if defined $artist && !specified($artist);
-		$find->{'album.title'}      = singletonRef($album)  if defined $album  && !specified($album);
-		$find->{'track.title'}      = singletonRef($song)   if defined $song   && !specified($song);
+		$find->{'contributor.namesort'} = singletonRef($artist) if defined $artist && !specified($artist);
+		$find->{'album.titlesort'}      = singletonRef($album)  if defined $album  && !specified($album);
+		$find->{'track.titlesort'}      = singletonRef($song)   if defined $song   && !specified($song);
 
 		# Don't try to search again when we're walking through the results tree.
 		setSelection($client, 'cursearch', 0);
@@ -579,9 +581,10 @@ sub loadDir {
 
 	# Limit ourselves to artists only by default.
 	if (($find->{'contributor'} || 
-	     $find->{'contributor.name'} || 
+	     $find->{'contributor.namesort'} || 
 	     $find->{'genre'} || 
-	     $client->curSelection($client->curDepth()) eq 'BROWSE_BY_ARTIST')
+	     $client->curSelection($client->curDepth()) eq 'BROWSE_BY_ARTIST' ||
+	     $allArtists)
 			&& !Slim::Utils::Prefs::get('composerInArtists')) {
 
 		#Slim::Utils::Misc::msg("Not including composers/bands/conductors in artist list!\n");
@@ -611,7 +614,10 @@ sub loadDir {
 
 			@{browseID3dir($client)} = $ds->find('album', $find, 'album');
 
-			if (scalar @{browseID3dir($client)} > 1) {
+			# Until we fix the ALL_ case in search results, don't include
+			# it.
+			if (scalar @{browseID3dir($client)} > 1 &&
+				!$search) {
 
 				push @{browseID3dir($client)}, $client->string('ALL_SONGS');
 			}
@@ -620,8 +626,11 @@ sub loadDir {
 	} elsif (picked($genre)) {
 
 		@{browseID3dir($client)} = $ds->find('artist', $find, 'artist');
-
-		if (scalar @{browseID3dir($client)} > 1) {
+		
+		# Until we fix the ALL_ case in search results, don't include
+		# it.
+		if (scalar @{browseID3dir($client)} > 1 &&
+			!$search) {
 			push @{browseID3dir($client)}, $client->string('ALL_ALBUMS');
 		}
 
@@ -629,7 +638,10 @@ sub loadDir {
 
 		@{browseID3dir($client)} = $ds->find('genre', $find, 'genre');
 
-		if (scalar @{browseID3dir($client)} > 1) { 
+		# Until we fix the ALL_ case in search results, don't include
+		# it.
+		if (scalar @{browseID3dir($client)} > 1 &&
+			!$search) { 
 			push @{browseID3dir($client)}, $client->string('ALL_ARTISTS');
 		}
 	}

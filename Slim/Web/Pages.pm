@@ -1597,11 +1597,11 @@ sub search {
 	# Search for each type of data we have
 	if ($type eq 'artist') {
 
-		$results = $ds->find('contributor', { "contributor.name" => $searchStrings }, 'contributor');
+		$results = $ds->find('contributor', { "contributor.namesort" => $searchStrings }, 'contributor');
 
 	} elsif ($type eq 'album') {
 
-		$results = $ds->find('album', { "album.title" => $searchStrings }, 'album');
+		$results = $ds->find('album', { "album.titlesort" => $searchStrings }, 'album');
 
 	} elsif ($type eq 'track') {
 
@@ -1609,7 +1609,7 @@ sub search {
 		my %find   = ();
 
 		for my $string (@{$searchStrings}) {
-			push @{$find{'track.title'}}, [ $string ];
+			push @{$find{'track.titlesort'}}, [ $string ];
 		}
 
 		$results = $ds->find('track', \%find, $sortBy);
@@ -2171,7 +2171,7 @@ sub browseid3 {
 			# then turn it into the ID suitable for browsedb()
 			$params->{$category} = (@{$ds->find(
 				$category,
-				{ $queryMap{$category} => Slim::Utils::Text::ignoreCaseArticles($params->{$category}) }
+				{ $queryMap{$category} => $params->{$category} }
 			)})[0]->id();
 		}
 	}
