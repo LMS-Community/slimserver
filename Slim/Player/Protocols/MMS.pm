@@ -1,6 +1,6 @@
 package Slim::Player::Protocols::MMS;
 		  
-# $Id: MMS.pm,v 1.1 2004/10/11 19:17:18 vidur Exp $
+# $Id: MMS.pm,v 1.2 2004/10/21 01:17:40 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,12 +10,13 @@ package Slim::Player::Protocols::MMS;
 use strict;
 
 use File::Spec::Functions qw(:ALL);
-use FileHandle;
 use IO::Socket qw(:DEFAULT :crlf);
+
+use Slim::Player::Pipeline;
 
 use vars qw(@ISA);
 
-@ISA = qw(FileHandle);
+@ISA = qw(Slim::Player::Pipeline);
 
 use Slim::Display::Display;
 use Slim::Utils::Misc;
@@ -25,8 +26,6 @@ sub new {
 	my $url = shift;
 	my $client = shift;
 
-	my $self = $class->SUPER::new();
-	
 	# Set the content type to 'wma' to get the convert command
 	Slim::Music::Info::setContentType($url, 'wma');
 	my ($command, $type, $format) = Slim::Player::Source::getConvertCommand($client, $url);
@@ -40,12 +39,9 @@ sub new {
 	$command = Slim::Player::Source::tokenizeConvertCommand($command,
 															$type, 
 															$url, $url,
-															0 , $maxRate);
+															0, $maxRate, 1);
 
-	unless ($self->open($command)) {
-		$::d_remotestream && msg "Error launching conversion helper: $!\n";
-		return undef;
-	}
+	my $self = $class->SUPER::new(undef, $command);
 
 	return $self;
 }

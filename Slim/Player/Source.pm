@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.119 2004/10/15 23:46:55 vidur Exp $
+# $Id: Source.pm,v 1.120 2004/10/21 01:17:40 vidur Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -852,7 +852,8 @@ sub openSong {
 
 				$::d_source && msg("remoteURL is a song : $fullpath\n");
 
-				unless (defined(Slim::Utils::Misc::blocking($sock, 0))) {
+				if ($sock->opened() &&
+					!defined(Slim::Utils::Misc::blocking($sock, 0))) {
 					$::d_source && msg("Cannot set remote stream nonblocking\n");
 					errorOpening($client);
 					return undef;
@@ -1088,7 +1089,7 @@ sub openSong {
 	# make sure the filehandle was actually set
 	if ($client->audioFilehandle()) {
 
-		if ($client->audioFilehandleIsSocket() != 2) {
+		if ($client->audioFilehandle()->opened()) {
 			binmode($client->audioFilehandle());
 		}
 		Slim::Web::History::record(Slim::Player::Playlist::song($client));

@@ -1,6 +1,6 @@
 package Slim::Player::Pipeline;
 
-# $Id: Pipeline.pm,v 1.2 2004/10/16 00:16:03 vidur Exp $
+# $Id: Pipeline.pm,v 1.3 2004/10/21 01:17:40 vidur Exp $
 
 # SlimServer Copyright (C) 2001-2004 Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -45,46 +45,56 @@ sub new {
 			$::d_source && msg "Error creating listen socket for reader: !@\n";
 			return undef;
 		}
-		my $listenWriter = IO::Socket::INET->new(LocalAddr => 'localhost',
-												 Listen => 5);
-		unless (defined($listenWriter)) {
-			$::d_source && msg "Error creating listen socket for writer: !@\n";
-			return undef;
+		my $readerPort = $listenReader->sockport;
+		
+		my ($listenWriter, $writerPort);
+		if ($source) {
+			$listenWriter = IO::Socket::INET->new(LocalAddr => 'localhost',
+												  Listen => 5);
+			unless (defined($listenWriter)) {
+				$::d_source && msg "Error creating listen socket for writer: !@\n";
+				return undef;
+			}
+			$writerPort = $listenWriter->sockport;
 		}
 		
-		my $readerPort = $listenReader->sockport;
-		my $writerPort = $listenWriter->sockport;
-		
 		$command =~ s/"/\\"/g;
-		$command = '"' . Slim::Utils::Misc::findbin('socketwrapper') . 
-			'" -i ' . $writerPort . ' -o ' . $readerPort . ' -c "' .
-				$command . '"';
+		my $newcommand = '"' . Slim::Utils::Misc::findbin('socketwrapper') . 
+			'" ';
+		if ($listenWriter) {
+			$newcommand .= '-i ' . $writerPort . ' ';
+		}
+		$newcommand .=  '-o ' . $readerPort . ' -c "' .
+			$command . '"';
 
-		$::d_source && msg "Launching process with command: $command\n";
+		$::d_source && msg "Launching process with command: $newcommand\n";
 
 		eval "use Win32::Process";
 		my $processObj;
 		unless (Win32::Process::Create($processObj,
 								   Slim::Utils::Misc::findbin("socketwrapper"),
-								   $command,
+								   $newcommand,
 								   0, 0x20,
 								   ".")) {
 			$::d_source && msg "Couldn't create socketwrapper process\n";
 			$listenReader->close();
-			$listenWriter->close();
+			if ($listenWriter) {
+				$listenWriter->close();
+			}
 			return undef;
 		}
 
 		${*$listenReader}{'pipeline'} = $self;
-		${*$listenWriter}{'pipeline'} = $self;
-
 		${*$self}{'pipeline_listen_reader'} = $listenReader;
-		${*$self}{'pipeline_listen_writer'} = $listenWriter;
-		
 		Slim::Networking::Select::addRead($listenReader, \&acceptReader);
 		Slim::Networking::Select::addError($listenReader, \&selectError);
-		Slim::Networking::Select::addRead($listenWriter, \&acceptWriter);
-		Slim::Networking::Select::addError($listenWriter, \&selectError);
+
+		if ($listenWriter) {
+			${*$listenWriter}{'pipeline'} = $self;
+			${*$self}{'pipeline_listen_writer'} = $listenWriter;	
+			Slim::Networking::Select::addRead($listenWriter, \&acceptWriter);
+			Slim::Networking::Select::addError($listenWriter, \&selectError);
+		}
 	}
 	else {
 		$reader = IO::Handle->new();
@@ -109,7 +119,9 @@ sub new {
 		binmode($writer);
 	}
 
-	binmode($source);
+	if (defined($source)) {
+		binmode($source);
+	}
 
 	${*$self}{'pipeline_reader'} = $reader;
 	${*$self}{'pipeline_writer'} = $writer;
@@ -189,7 +201,8 @@ sub sysread {
 
 	my $reader = ${*$self}{'pipeline_reader'};
 	my $writer = ${*$self}{'pipeline_writer'};
-	unless (defined($reader) && defined($writer)) {
+	my $source = ${*$self}{'pipeline_source'};
+	unless (defined($reader) && (!defined($source) || defined($writer))) {
 		$! = EWOULDBLOCK;
 		return undef;
 	}
@@ -200,7 +213,7 @@ sub sysread {
 		$readlen = $reader->sysread($_[1], $chunksize);
 
 		# We'd block on the reader, so see if we can write more
-		if (!defined($readlen) && ($! == EWOULDBLOCK)) {
+		if (!defined($readlen) && ($! == EWOULDBLOCK) && defined($source)) {
 			my $pendingBytes = ${*$self}{'pipeline_pending_bytes'};
 			my $pendingSize = ${*$self}{'pipeline_pending_size'};
 
@@ -209,7 +222,6 @@ sub sysread {
 			}
 			else {
 				$::d_source && msg("Pipeline doesn't have  pending bytes - trying to get some from source\n");
-				my $source = ${*$self}{'pipeline_source'};
 				my $socketReadlen = $source->sysread($pendingBytes, 
 													 $chunksize);
 				if (!$socketReadlen) {
