@@ -718,10 +718,11 @@ sub openSong {
 				my $swap = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
 				$fullCommand =~ s/\$-x\$/$swap/g;
 				
+				my $bitrate = Slim::Utils::Prefs::get('transcodeBitrate');				
+				$fullCommand =~ s/\$BITRATE\$/$bitrate/g;
+				
 				$fullCommand =~ s/\$([^\$]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
-				my $bitrate = Slim::Utils::Prefs::get('transcodeBitrate');				
-				$fullCommand =~ s/\$BITRATE\$/$bitrate/;
 				$fullCommand .= Slim::Utils::OSDetect::OS() eq 'win' ? "" : " &";
 
 				$fullCommand .= ' |';
