@@ -200,29 +200,30 @@ sub exportFunction {
             }
                 
 	    $mixer->{Seed_SID} = -$song_id;
-            $cacheEntry{'CT'} = 'mp3';
-            $cacheEntry{'TAG'} = 1;
-            $cacheEntry{'TITLE'} = $mixer->Mix_SongName(-1);
-            $cacheEntry{'ARTIST'} = $mixer->Mix_ArtistName(-1);
-            $filename = $mixer->Mix_SongFile(-1);
-            $cacheEntry{'GENRE'} = $genre_hash{$browser->FLT_Song_MGID($i)}[0] if (defined $genre_hash{$browser->FLT_Song_MGID($i)});
-            $cacheEntry{'SECS'} = int($mixer->Mix_SongDuration(-1) / 1000);
-            $cacheEntry{'SIZE'} = -s $filename;
-            $cacheEntry{'OFFSET'} = 0;
-            
-            $cacheEntry{'MOODLOGIC_SONG_ID'} = $song_id;
-            $cacheEntry{'MOODLOGIC_ARTIST_ID'} = $browser->FLT_Song_AID($i);
-            $cacheEntry{'MOODLOGIC_GENRE_ID'} = $browser->FLT_Song_MGID($i);
-            $mixer->{Seed_SID} = $song_id;
-            $cacheEntry{'MOODLOGIC_SONG_MIXABLE'} = $mixer->Seed_SID_Mixable();
-            $mixer->{Seed_AID} = $browser->FLT_Song_AID($i);
-            $cacheEntry{'MOODLOGIC_ARTIST_MIXABLE'} = $mixer->Seed_AID_Mixable();
-            $cacheEntry{'MOODLOGIC_GENRE_MIXABLE'} = $genre_hash{$browser->FLT_Song_MGID($i)}[1] if (defined $genre_hash{$browser->FLT_Song_MGID($i)});
-                
-            Slim::Music::Info::updateCacheEntry($filename, \%cacheEntry);
-            Slim::Music::Info::updateGenreCache($filename, \%cacheEntry);
-            Slim::Music::Info::updateGenreMixCache(\%cacheEntry);
-            Slim::Music::Info::updateArtistMixCache(\%cacheEntry);
+		$cacheEntry{'CT'} = 'mp3';
+		$cacheEntry{'TAG'} = 1;
+		$cacheEntry{'TITLE'} = $mixer->Mix_SongName(-1);
+		$cacheEntry{'ARTIST'} = $mixer->Mix_ArtistName(-1);
+		$filename = $mixer->Mix_SongFile(-1);
+		$cacheEntry{'GENRE'} = $genre_hash{$browser->FLT_Song_MGID($i)}[0] if (defined $genre_hash{$browser->FLT_Song_MGID($i)});
+		$cacheEntry{'SECS'} = int($mixer->Mix_SongDuration(-1) / 1000);
+		$cacheEntry{'SIZE'} = -s $filename;
+		$cacheEntry{'OFFSET'} = 0;
+		$cacheEntry{'BLOCKALIGN'} = 1;
+		
+		$cacheEntry{'MOODLOGIC_SONG_ID'} = $song_id;
+		$cacheEntry{'MOODLOGIC_ARTIST_ID'} = $browser->FLT_Song_AID($i);
+		$cacheEntry{'MOODLOGIC_GENRE_ID'} = $browser->FLT_Song_MGID($i);
+		$mixer->{Seed_SID} = $song_id;
+		$cacheEntry{'MOODLOGIC_SONG_MIXABLE'} = $mixer->Seed_SID_Mixable();
+		$mixer->{Seed_AID} = $browser->FLT_Song_AID($i);
+		$cacheEntry{'MOODLOGIC_ARTIST_MIXABLE'} = $mixer->Seed_AID_Mixable();
+		$cacheEntry{'MOODLOGIC_GENRE_MIXABLE'} = $genre_hash{$browser->FLT_Song_MGID($i)}[1] if (defined $genre_hash{$browser->FLT_Song_MGID($i)});
+			
+		Slim::Music::Info::updateCacheEntry($filename, \%cacheEntry);
+		Slim::Music::Info::updateGenreCache($filename, \%cacheEntry);
+		Slim::Music::Info::updateGenreMixCache(\%cacheEntry);
+		Slim::Music::Info::updateArtistMixCache(\%cacheEntry);
 	}
 
         $rs->Close;

@@ -111,7 +111,7 @@ sub readUDP {
 	my $sock = shift || $udpsock;
 	my $clientpaddr;
 	my $msg = '';
-	
+
 	do {
 		$clientpaddr = recv($sock,$msg,1500,0);
 		

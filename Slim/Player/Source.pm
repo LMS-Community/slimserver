@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.55 2004/01/17 22:18:32 kdf Exp $
+# $Id: Source.pm,v 1.56 2004/01/20 20:30:59 dean Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -169,7 +169,7 @@ sub songTime {
 	my $duration	  	= $client->songduration();
 	my $byterate	  	= $duration ? ($songLengthInBytes / $duration) : 0;
 
-	my $bytesReceived 	= $client->bytesReceived()  || 0;
+	my $bytesReceived 	= ($client->bytesReceived() || 0) - $client->bytesReceivedOffset();
 	my $fullness	  	= $client->bufferFullness() || 0;
 	my $realpos	  	= $bytesReceived - $fullness;
 	my $rate	  	= $client->rate();
@@ -197,6 +197,7 @@ sub playmode {
 	my($client, $newmode) = @_;
 
 	assert($client);
+	my $master = Slim::Player::Sync::masterOrSelf($client);
 
 	if (defined($newmode)) {
 	
@@ -220,7 +221,7 @@ sub playmode {
 					$client->power(1);
 				}
 				
-				$opened = openSong(Slim::Player::Sync::masterOrSelf($client));
+				$opened = openSong($master);
 	
 				# if we couldn't open the song, then stop...
 				if (!$opened) {
@@ -231,7 +232,7 @@ sub playmode {
 			
 			# when we change modes, make sure we do it to all the synced clients.
 			foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
-				$::d_source && msg($client->id() . " New play mode: " . $newmode . "\n");
+				$::d_source && msg($everyclient->id() . " New play mode: " . $newmode . "\n");
 				
 				# wake up the display if we've switched modes.
 				if ($everyclient->isPlayer()) { Slim::Buttons::ScreenSaver::wakeup($everyclient); };
@@ -261,7 +262,7 @@ sub playmode {
 				} elsif ($newmode eq "play") {
 					$everyclient->readytosync(0);
 					$everyclient->volume(Slim::Utils::Prefs::clientGet($everyclient, "volume"));
-					$everyclient->play(Slim::Player::Sync::isSynced($everyclient));				
+					$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat());				
 				} elsif ($newmode eq "pause") {
 					# since we can't count on the accuracy of the fade timers, we unfade them all, but the master calls back to pause everybody
 					if ($everyclient eq $client) {
@@ -355,7 +356,7 @@ sub nextChunk {
 		my $len = length($$chunkRef);
 
 		if ($len > $maxChunkSize) {
-			$::d_playlist && msg("chunk too big, pushing the excess for later.\n");
+			$::d_source && msg("chunk too big, pushing the excess for later.\n");
 			
 			my $queued = substr($$chunkRef, $maxChunkSize - $len, $len - $maxChunkSize);
 
@@ -440,7 +441,7 @@ sub gototime {
 	foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
 		$::d_source && msg("gototime: restarting playback\n");
 		$everybuddy->readytosync(0);
-		$everybuddy->play(Slim::Player::Sync::isSynced($client));
+		$everybuddy->play(Slim::Player::Sync::isSynced($client), $client->streamformat());
 	}
 }
 
@@ -601,7 +602,7 @@ sub resetSong {
 	# at the end of a song, reset the song time
 	$client->songtotalbytes(0);
 	$client->songduration(0);
-	$client->bytesReceived(0);
+	$client->bytesReceivedOffset($client->bytesReceived());
 	$client->songBytes(0);
 	$client->lastskip(0);
 	$client->songStartStreamTime(0);
@@ -829,31 +830,50 @@ sub getCommand {
 	
 	my $type = Slim::Music::Info::contentType($fullpath);
 	my $player = $client->model();
-	my $clientid = $client->id();
+	my $clientid = $client->id();	
 	my $command = undef;
 	my $format = undef;
+	my @supportedformats;
+	my @playergroup = ($client, Slim::Player::Sync::syncedWith($client));
+	my %formatcounter;
 	
-	foreach my $checkformat ($client->formats()) {
+	# make sure we only test formats that are supported.
+	foreach my $everyclient (@playergroup) {
+		foreach my $supported ($everyclient->formats()) {
+			$formatcounter{$supported}++;
+		}
+	}
+	
+	foreach my $testformat ($client->formats()) {
+		if ($formatcounter{$testformat} == scalar(@playergroup)) {
+			push @supportedformats, $testformat;
+		}
+	}
+
+	foreach my $checkformat (@supportedformats) {
+
 		$::d_source && msg("checking formats for: $type-$checkformat-$player-$clientid\n");
+
 		# TODO: match partial wildcards in IP addresses.
 		# todo: pre-check to see if the necessary  binaries are installed.
 		# use Data::Dumper; print Dumper(\%commandTable);
 		$command = $commandTable{"$type-$checkformat-$player-$clientid"};
 		if (defined($command)) {
-			$::d_source && msg("Matched $type-checkformat-$player-$clientid\n");
+			$::d_source && msg("Matched $type-$checkformat-$player-$clientid\n");
 		} else {
 			$command = $commandTable{"$type-$checkformat-*-$clientid"};
 		}
 		if (defined $command) {
-			$::d_source && msg("Matched $type-checkformat-$player-*\n");
+			$::d_source && msg("Matched $type-$checkformat-$player-*\n");
 		} else {
 			$command = $commandTable{"$type-$checkformat-$player-*"};
 		}
 		if (defined($command)) {
-			$::d_source && msg("Matched $type-checkformat-$player-*\n");
+			$::d_source && msg("Matched $type-$checkformat-$player-*\n");
 		} else {
 			$command = $commandTable{"$type-$checkformat-*-*"};
 		}
+
 		$format = $checkformat;
 		last if ($command);
 	}
@@ -972,6 +992,8 @@ sub readNextChunk {
 			} elsif ($readlen == 0 && ($client->audioFilehandleIsSocket != 1)) { 
 				$::d_source && msg("Read to end of file or pipe\n");  
 				$endofsong = 1;
+			} else {
+#				print "$readlen\n";
 			}
 			
 			if ($client->shoutMetaInterval()) {

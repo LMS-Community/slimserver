@@ -174,7 +174,7 @@ sub parseCUE {
 		   $tracks{$currtrack}->{uc $1} = $2;
 		} elsif (defined $currtrack and
 			 /^\s+INDEX\s+01\s+(\d+):(\d+):(\d+)/i) {
-			$tracks{$currtrack}->{'START'} = ($1 * 60) + $2 + ($3 / 100);
+			$tracks{$currtrack}->{'START'} = ($1 * 60) + $2 + ($3 / 75);
 		}
 	}
 

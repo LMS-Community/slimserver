@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.27 2004/01/13 02:02:25 daniel Exp $
+# $Id: Common.pm,v 1.28 2004/01/20 20:30:57 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -49,6 +49,7 @@ sub init {
 	$modeFunctions{'INPUT.List'} = Slim::Buttons::Input::List::getFunctions();
 	Slim::Buttons::Plugins::getPluginModes(\%modes);
 	Slim::Buttons::Plugins::getPluginFunctions(\%modeFunctions);
+	Slim::Buttons::ScreenSaver::init();
 }
 
 sub addSaver {

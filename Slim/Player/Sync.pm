@@ -161,7 +161,8 @@ sub saveSyncPrefs {
 		Slim::Utils::Prefs::clientSet($client->master,'syncgroupid',$masterID);
 		
 	} else {
-		Slim::Utils::Prefs::clientSet($client,'syncgroupid','');
+		$client->syncgroupid(undef);
+		Slim::Utils::Prefs::clientDelete($client,'syncgroupid');
 		$::d_sync && msg("Clearing Sync master for $clientID\n");
 	}
 }
@@ -309,15 +310,6 @@ sub checkSync {
 				$everyclient->readytosync(0);
 			}
 			Slim::Player::Source::skipahead($client);
-		}
-	}
-	
-	# sanity check on queued chunks
-	foreach my $everyclient (@group) {
-		if (scalar(@{$everyclient->chunks}) > 200) { 
-			$::d_sync && msg("Player " . $everyclient->id() . " isn't keeping up with the rest of the synced group.");
-			@{$everyclient->chunks} = ();
-			last; 
 		}
 	}
 }

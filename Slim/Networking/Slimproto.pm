@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.42 2004/01/19 22:48:30 dean Exp $
+# $Id: Slimproto.pm,v 1.43 2004/01/20 20:30:59 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -371,16 +371,7 @@ sub process_slimproto_frame {
 			$status{$client}->{'jiffies'}
 		) = unpack ('a4CCCNNNNnN', $data);
 		
-		my $firststatus;
-		if (!defined($status{$client}->{'bytes_received'}) && defined($status{$client}->{'byteoffset'})) {
-			$firststatus = 1;
-		}
-		
 		$status{$client}->{'bytes_received'} = $status{$client}->{'bytes_received_H'} * 2**32 + $status{$client}->{'bytes_received_L'}; 
-		
-		if ($firststatus) {
-			$status{$client}->{'byteoffset'} += $status{$client}->{'bytes_received'};
-		}
 		
 		my $fullness = $status{$client}->{'wptr'} - $status{$client}->{'rptr'};
 		if ($fullness < 0) {
@@ -401,8 +392,7 @@ sub process_slimproto_frame {
 		"	wptr:            $status{$client}->{'wptr'}\n".
 		"	bytes_rec_H      $status{$client}->{'bytes_received_H'}\n".
 		"	bytes_rec_L      $status{$client}->{'bytes_received_L'}\n".
-		"	fullness:        $status{$client}->{'fullness'}\n".
-		"	byteoffset:      $status{$client}->{'byteoffset'}\n".
+		"	fullness:        $status{$client}->{'fullness'} (" . int($status{$client}->{'fullness'}/$client->buffersize()*100) . "%)\n".
 		"	bytes_received   $status{$client}->{'bytes_received'}\n".
 		"	signal_strength: $status{$client}->{'signal_strength'}\n".
 		"	jiffies:         $status{$client}->{'jiffies'}\n".
@@ -445,25 +435,26 @@ sub signalStrength {
 
 sub fullness {
 	my $client = shift;
-	my $set = shift;
 	
-	if (defined($set)) { $status{$client}->{'fullness'} = $set; }
-	
-	return $status{$client}->{'fullness'} || 0;
+	return $status{$client}->{'fullness'};
 }
 
 # returns how many bytes have been received by the player.  Can be reset to an arbitrary value.
 sub bytesReceived {
 	my $client = shift;
-	my $preset = shift;
-
-	if (defined($preset)) {
-		$::d_slimproto && msg("presetting streamed bytes to: $preset\n");
-		$status{$client}->{'byteoffset'} = ($status{$client}->{'bytes_received'} || 0) + $preset;
-	}
-
-	return ($status{$client}->{'bytes_received'} || 0) - ($status{$client}->{'byteoffset'} || 0);
+	return ($status{$client}->{'bytes_received'});
 }
+
+sub stop {
+	my $client = shift;
+	$status{$client}->{'fullness'} = 0;
+	$status{$client}->{'rptr'} = 0;
+	$status{$client}->{'wptr'} = 0;
+	$status{$client}->{'bytes_received_H'} = 0;
+	$status{$client}->{'bytes_received_L'} = 0;
+	$status{$client}->{'bytes_received'} = 0;
+}
+
 1;
 
 

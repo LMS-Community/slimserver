@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.61 2004/01/19 22:48:30 dean Exp $
+# $Id: Info.pm,v 1.62 2004/01/20 20:30:58 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2031,20 +2031,19 @@ sub readTags {
 				if (defined $tempCacheEntry->{'APIC'} || defined $tempCacheEntry->{'PIC'}) {
 					$tempCacheEntry->{'COVER'} = $filepath;
 					$tempCacheEntry->{'THUMB'} = $filepath;
-					$artworkCache{$album} = $filepath;
+					if ($album) { $artworkCache{$album} = $filepath; }
 				} else {
-					
 					$tempCacheEntry->{'TAG'} = 1;
 					updateCacheEntry($file, $tempCacheEntry);
 					my ($body,$contenttype,$path) = readCoverArtFiles($filepath,'cover');
 					if (defined $body) {
 						$tempCacheEntry->{'COVER'} = $path;
-						if (!exists $artworkCache{$album}) {$artworkCache{$album} = $filepath;}
+						if ($album && !exists $artworkCache{$album}) {$artworkCache{$album} = $filepath;}
 					} else {$tempCacheEntry->{'COVER'} = '0';}
 					($body,$contenttype,$path) = readCoverArtFiles($filepath,'thumb');
 					if (defined $body) {
 						$tempCacheEntry->{'THUMB'} = $path;
-						if (!exists $artworkCache{$album}) {$artworkCache{$album} = $filepath;}
+						if ($album && !exists $artworkCache{$album}) {$artworkCache{$album} = $filepath;}
 					} else {$tempCacheEntry->{'THUMB'} = '0';}
 				}
 			}

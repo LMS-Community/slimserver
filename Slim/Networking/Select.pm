@@ -1,6 +1,6 @@
 package Slim::Networking::Select;
 
-# $Id: Select.pm,v 1.7 2003/12/29 22:12:53 dean Exp $
+# $Id: Select.pm,v 1.8 2004/01/20 20:30:58 dean Exp $
 
 # SlimServer Copyright (c) 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -56,7 +56,7 @@ sub addWrite {
 
 sub select {
 	my $select_time = shift;
-
+	
 	my ($r, $w, $e) = IO::Select->select($readSelects,$writeSelects,undef,$select_time);
 
 	$::d_select && msg("select returns ($select_time): reads: " . (defined($r) && scalar(@$r)) . " of " . $readSelects->count .

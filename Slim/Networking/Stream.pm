@@ -302,7 +302,7 @@ sub gotAck {
 		$::d_stream && msg($client->id() . ": received a stray ack from an unknown client - ignoring.\n");
 		return;
 	}
-	
+
 	$::d_stream_v && msg($client->id() . " ".Time::HiRes::time() .  " gotAck for seq: $seq ");
 	$::d_stream_v && msg("ack: wptr:$wptr, rptr:$rptr, seq:$seq, ");
 

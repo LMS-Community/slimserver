@@ -69,9 +69,10 @@ sub decoder {
 sub play {
 	my $client = shift;
 	my $paused = shift;
+	my $format = shift;
 
-	Slim::Hardware::Decoder::reset($client, $client->streamformat());
-	$client->stream('s', $paused, $client->streamformat());
+	Slim::Hardware::Decoder::reset($client, $format);
+	$client->stream('s', $paused, $format);
 	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
 	return 1;
 }
@@ -97,9 +98,8 @@ sub pause {
 
 sub stop {
 	my $client = shift;
-	$client->bufferFullness(0);
-	$client->bytesReceived(0);
 	$client->stream('q');
+	Slim::Networking::Slimproto::stop($client);
 }
 
 #

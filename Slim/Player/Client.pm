@@ -262,6 +262,7 @@ sub new {
 	$client->[84] = undef; # songBytes
 	$client->[85] = 0; # pauseTime
 	$client->[86] = 1; # songblockalign
+	$client->[87] = 0; # bytesReceivedOffset
 
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -845,6 +846,11 @@ sub pauseTime {
 sub songblockalign {
 	my $r = shift;
 	@_ ? ($r->[86] = shift) : $r->[86];
+}
+
+sub bytesReceivedOffset {
+	my $r = shift;
+	@_ ? ($r->[87] = shift) : $r->[87];
 }
 
 1;

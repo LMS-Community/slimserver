@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.35 2004/01/16 05:08:55 grotus Exp $
+# $Id: Prefs.pm,v 1.36 2004/01/20 20:31:00 dean Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -147,7 +147,7 @@ my %DEFAULT = (
 			,'offDisplaySize'	=> 0
 			,'playingDisplayMode'	=> 0
 			,'playername'		=> undef
-			,'screensaver'		=> 'screensaver'
+			,'screensaver'		=> 'playlist'
 			,"screensavertimeout" 	=> 30
 			,"scrollPause"		=> 3.6
 			,'titleFormatCurr'	=> 1

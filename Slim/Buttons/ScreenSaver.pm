@@ -1,6 +1,6 @@
 package Slim::Buttons::ScreenSaver;
 
-# $Id: ScreenSaver.pm,v 1.13 2004/01/11 21:56:33 kdf Exp $
+# $Id: ScreenSaver.pm,v 1.14 2004/01/20 20:30:57 dean Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -18,8 +18,6 @@ use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
 
-Slim::Buttons::Common::addSaver('screensaver',getFunctions(),\&setMode,undef,'Default');
-
 # Each button on the remote has a function:
 my %functions = (
 	'done' => sub  {
@@ -34,6 +32,10 @@ my %functions = (
 		}
 	}
 );
+
+sub init {
+	Slim::Buttons::Common::addSaver('screensaver',getFunctions(),\&setMode,undef,string('SCREENSAVER_JUMP_BACK_NAME'));
+}
 
 sub getFunctions {
 	return \%functions;

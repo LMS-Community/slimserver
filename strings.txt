@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.50 2004/01/19 17:04:20 dean Exp $
+# $Id: strings.txt,v 1.51 2004/01/20 20:30:56 dean Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -2184,6 +2184,9 @@ SCREENSAVERJUMP_BACK
 	NL	Ga terug naar de laatste locatie die U bezocht met de afstandsbediening.
 	PT	Voltar ao ultimo menu selecionado com o controlo remoto.
 	SE	Återgå till där du var innan.
+
+SCREENSAVER_JUMP_BACK_NAME
+	EN	Now Playing (Jump back on wake.)
 
 SCREENSAVERJUMP_STAY
 	DE	Im Abspiel-Bereich bleiben.

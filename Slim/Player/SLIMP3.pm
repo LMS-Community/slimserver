@@ -88,12 +88,9 @@ sub vfdmodel {
 sub play {
 	my $client = shift;
 	my $paused = shift;
-	my $pcm = shift;
-
-	assert(!$pcm);
 	
 	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
-	Slim::Hardware::Decoder::reset($client, $pcm);
+	Slim::Hardware::Decoder::reset($client);
 	Slim::Networking::Stream::newStream($client, $paused);
 	return 1;
 }
