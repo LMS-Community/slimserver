@@ -16,27 +16,25 @@ use Slim::Utils::Misc;
 use Slim::Hardware::mas3507d;
 use Slim::Networking::Stream;
 
-our @ISA = ("Slim::Player::Player");
+use base qw(Slim::Player::Player);
 
 sub new {
-	my (
-		$class,
-		$id,
-		$paddr,			# sockaddr_in
-		$revision,
-		$udpsock,		# defined only for Slimp3
-	) = @_;
+	my $class    = shift;
+	my $id       = shift;
+	my $paddr    = shift;
+	my $revision = shift;
+	my $udpsock  = shift;
 	
-	my $client = Slim::Player::Player->new( $id, $paddr, $revision);
+	my $client = $class->SUPER::new($id, $paddr, $revision);
 
+	# defined only for Slimp3
 	$client->udpsock($udpsock);
 
-	bless $client, $class;
-	
 	# add the new client all the currently known clients so we can say hello to them later
 	my $clientlist = Slim::Utils::Prefs::get("clients");
 
 	my $newplayeraddr = $client->ipport();
+
 	if (defined($clientlist)) {
 		$clientlist .= ",$newplayeraddr";
 	} else {
@@ -49,6 +47,7 @@ sub new {
 	foreach my $item (split( /,/, $clientlist)) {
 		push(@uniq, $item) unless $seen{$item}++ || $item eq '';
 	}
+
 	Slim::Utils::Prefs::set("clients", join(',', @uniq));
 
 	return $client;
@@ -240,5 +239,5 @@ sub treble {
 
 	return $treble;
 }
-1;
 
+1;
