@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.15 2003/08/09 16:23:46 dean Exp $
+# $Id: HTTP.pm,v 1.16 2003/08/10 21:47:23 sadams Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -495,9 +495,10 @@ sub addstreamingresponse {
 
 	$::d_http && msg("addstreamingresponse: id=$id, address=$address\n");
 
-	my $client = Slim::Player::Client->getClient($id);
+	my $client = Slim::Player::Client::getClient($id);
 	
 	if (!defined($client)) {
+		$::d_http && msg ("new http client\n");
 		$client = Slim::Player::HTTP->new(
 			$id,
 			getpeername($httpclientsock), 
@@ -505,6 +506,7 @@ sub addstreamingresponse {
 			
 		$client->init();
 	} else {
+		$::d_http && msg("squeezebox or http client re-connecting\n");
 		# in the case that this is a reconnect, make sure we have up-to-date networking info
 		$client->streamingsocket($httpclientsock);
 		$client->paddr(getpeername($httpclientsock));

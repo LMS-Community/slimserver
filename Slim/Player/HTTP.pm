@@ -21,9 +21,12 @@ sub new {
 	) = @_;
 	
 	my $client = Slim::Player::Client->new($id, $paddr);
+
+	assert (!$client->isPlayer());
+
 	$client->streamingsocket($tcpsock);
 
-	bless $client, $class unless ($client->isPlayer());
+	bless $client, $class;
 
 	return $client;
 }

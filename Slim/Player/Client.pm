@@ -315,6 +315,9 @@ sub new {
 	}
 
 	# the rest of this stuff is set each time the client connects, even if we know him already.
+
+	assert($clientHash{$id} == $client);
+
 	$client->paddr($paddr);
 
 	# skip the rest of this if the client was already known
@@ -391,7 +394,9 @@ sub defaultName {
 
 sub getClient {
 	my $id = shift;
-	return $clientHash{$id};
+	my $ret = $clientHash{$id};
+	$::d_protocol_verbose && msg ("getClient($id) == ".(defined($ret)?$ret:'UNDEF')."\n");
+	return($ret);
 }
 
 sub forgetClient {
