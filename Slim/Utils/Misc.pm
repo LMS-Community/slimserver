@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.37 2004/04/29 17:51:34 vidur Exp $
+# $Id: Misc.pm,v 1.38 2004/04/29 21:11:09 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -132,6 +132,7 @@ sub pathFromFileURL {
 	my $url = shift;
 	my $file;
 	
+	
 	my $uri = URI->new($url);
 
 	# TODO - FIXME - this isn't mac or dos friendly with the path...
@@ -149,8 +150,10 @@ sub pathFromFileURL {
 		if (($path !~ /\.\.[\/\\]/) || Slim::Music::Info::isCached($url)) {
 			$file = Slim::Web::HTTP::unescape($path);
 		} 
+	} else {
+		msg("pathFromFileURL: $url isn't a file URL...\n");
 	}
-
+	
 	if (!defined($file))  {
 		$::d_files && msg("bad file: url $url\n");
 	} else {
@@ -162,9 +165,10 @@ sub pathFromFileURL {
 
 sub fileURLFromPath {
 	my $path = shift;
-	my $uri  = URI->new($path);
-
-	return sprintf('file://%s', $uri->path());
+	my $uri  = URI::file->new($path);
+	$uri->host('');
+	
+	return $uri->as_string;
 }
 
 sub anchorFromURL {

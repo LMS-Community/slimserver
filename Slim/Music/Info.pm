@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.111 2004/04/28 13:10:53 kdf Exp $
+# $Id: Info.pm,v 1.112 2004/04/29 21:11:09 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -684,7 +684,7 @@ sub updateCacheEntry {
 	}
 	
 	if (!isURL($url)) { 
-		Slim::Utils::Misc::msg("None URL passed to updateCacheEntry::info ($url)\n");
+		Slim::Utils::Misc::msg("Non-URL passed to updateCacheEntry::info ($url)\n");
 		Slim::Utils::Misc::bt();
 		$url=Slim::Utils::Misc::fileURLFromPath($url); 
 	}
@@ -1147,7 +1147,7 @@ sub infoHash {
 	};
 	
 	if (!isURL($file)) { 
-		Slim::Utils::Misc::msg("None URL passed to InfoHash::info ($file)\n");
+		Slim::Utils::Misc::msg("Non-URL passed to InfoHash::info ($file)\n");
 		Slim::Utils::Misc::bt();
 		$file=Slim::Utils::Misc::fileURLFromPath($file); 
 	}
@@ -1178,7 +1178,7 @@ sub info {
 	$::d_info && Slim::Utils::Misc::msg("Request for $tagname on file $file\n");
 	
 	if (!isURL($file)) { 
-		$::d_info && Slim::Utils::Misc::msg("None URL passed to Info::info ($file)\n");
+		$::d_info && Slim::Utils::Misc::msg("Non-URL passed to Info::info ($file)\n");
 		$::d_info && Slim::Utils::Misc::bt();
 		$file=Slim::Utils::Misc::fileURLFromPath($file); 
 	}
