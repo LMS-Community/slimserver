@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.98 2004/04/26 17:23:25 dean Exp $
+# $Id: HTTP.pm,v 1.99 2004/04/26 21:54:53 daniel Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1373,7 +1373,7 @@ sub _getFileContent {
 	if (Slim::Utils::Prefs::get('templatecache')) {
 
 		if (defined $templatefiles{$skinkey}) {
-			return $templatefiles{$skinkey};
+			return @{$templatefiles{$skinkey}};
 		}
 	}
 
@@ -1416,7 +1416,7 @@ sub _getFileContent {
 	
 	# add this template to the cache if we are using it
 	if (Slim::Utils::Prefs::get('templatecache') && defined($content)) {
-		$templatefiles{$skinkey} = \$content;
+		$templatefiles{$skinkey} = [\$content, $mtime];
 	}
 
 	return (\$content, $mtime);
