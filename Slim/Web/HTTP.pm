@@ -1056,7 +1056,7 @@ sub sendResponse {
 		return;
 	}
 
-	if (defined $segment->{'data'} && defined ${$segment->{'data'}} && $segment->{'length'} > $segment->{'offset'}) {
+	if (defined $segment->{'data'} && defined ${$segment->{'data'}}) {
 
 		$sentbytes = syswrite($httpClient, ${$segment->{'data'}}, $segment->{'length'}, $segment->{'offset'});
 	}
