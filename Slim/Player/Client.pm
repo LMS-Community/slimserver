@@ -1026,7 +1026,7 @@ sub bumpRight {}
 sub bumpUp {}
 sub bumpDown {}
 sub scrollBottom {}
-	
+sub parseLines {}
 
 sub pause {
 	my $client = shift;
