@@ -14,7 +14,9 @@ function getCookie(Name)
 		offset = document.cookie.indexOf(search);
 		if (offset != -1) &lbrc;
 			offset += search.length;
-			end = document.cookie.indexOf(";", offset);
+			end = document.cookie.indexOf("nofolder", offset);
+			if (end == -1)
+				end = document.cookie.indexOf(";", offset);
 			if (end == -1)
 				end = document.cookie.length;
 			url = unescape(document.cookie.substring(offset, end));
@@ -54,5 +56,4 @@ document.write('</frameset>');
 document.write('</frameset>');
 //-->
 </script>
-<noframes><p>Dude, you need a browser that supports Frames!</p></noframes>
 </html>
