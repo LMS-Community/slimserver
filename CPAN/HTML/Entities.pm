@@ -1,6 +1,6 @@
 package HTML::Entities;
 
-# $Id: Entities.pm,v 1.2 2004/04/16 15:33:07 dean Exp $
+# $Id: Entities.pm,v 1.3 2005/01/11 04:20:35 dsully Exp $
 
 =head1 NAME
 
@@ -31,12 +31,35 @@ character entities.  The module provides the following functions:
 
 =over 4
 
-=item decode_entities( $string )
+=item decode_entities( $string, ... )
 
 This routine replaces HTML entities found in the $string with the
-corresponding ISO-8859-1 character, and if possible (under perl 5.8
-or later) will replace to Unicode characters.  Unrecognized
+corresponding Unicode character.  Under perl 5.6 and earlier only
+characters in the Latin-1 range are replaced. Unrecognized
 entities are left alone.
+
+If multiple strings are provided as argument they are each decoded
+separately and the same number of strings are returned.
+
+If called in void context the arguments are decoded in-place.
+
+This routine is exported by default.
+
+=item _decode_entities( $string, \%entity2char )
+
+=item _decode_entities( $string, \%entity2char, $allow_unterminated )
+
+This will in-place replace HTML entities in $string.  The %entity2char
+hash must be provided.  Named entities not found in the %entity2char
+hash are left alone.  Numeric entities are always expanded.
+
+If $allow_unterminated is TRUE then we also unterminated named
+entities will also be expanded.  The longest matching name in
+%entity2char will be used.
+
+   $string = "foo&nbspbar";
+   _decode_entities($string, { nb => "@", nbsp => "\xA0" }, 1);
+   print $string;  # will print "foo bar"
 
 This routine is exported by default.
 
@@ -89,7 +112,7 @@ corresponding entities (and vice versa, respectively).
 
 =head1 COPYRIGHT
 
-Copyright 1995-2003 Gisle Aas. All rights reserved.
+Copyright 1995-2004 Gisle Aas. All rights reserved.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
@@ -107,11 +130,11 @@ require Exporter;
 @EXPORT = qw(encode_entities decode_entities _decode_entities);
 @EXPORT_OK = qw(%entity2char %char2entity encode_entities_numeric);
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.3 $ =~ /(\d+)\.(\d+)/);
 sub Version { $VERSION; }
 
-# XXX - SlimServer mod, until HTML::Parser is included for all the platforms.
-# require HTML::Parser;  # for fast XS implemented decode_entities
+require HTML::Parser;  # for fast XS implemented decode_entities
+
 
 %entity2char = (
  # Some normal chars that have special meaning in SGML context
@@ -394,7 +417,7 @@ for (0 .. 255) {
 
 my %subst;  # compiled encoding regexps
 
-sub decode_entities
+sub decode_entities_old
 {
     my $array;
     if (defined wantarray) {

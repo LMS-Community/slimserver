@@ -80,15 +80,96 @@ use File::Spec::Functions qw(:ALL);
 use FileHandle;
 use POSIX qw(:signal_h :errno_h :sys_wait_h setsid);
 use Socket qw(:DEFAULT :crlf);
-use lib (
-	$Bin, 
-	catdir($Bin,'CPAN'), 
-	catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{archname}), 
-	catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{archname}, 'auto'), 
-	catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{archname}), 
-	catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{archname}, 'auto'), 
-	catdir($Bin,'CPAN','arch',$Config::Config{archname})
-);
+
+BEGIN {
+	use Symbol;
+
+	# This begin statement contains some trickery to deal with modules
+	# that need to load XS code. Previously, we would check in a module
+	# under CPAN/arch/$VERSION/auto/... including it's binary parts and
+	# the pure perl parts. This got to be messy and unwieldly, as we have
+	# many copies of DBI.pm (and associated modules) in each version and
+	# arch directory. The new world has only the binary modules in the
+	# arch/$VERSION/auto directories - and single copies of the
+	# corresponding .pm files at the top CPAN/ level.
+	#
+	# This causes a problem in that when we 'use' one of these modules,
+	# the CPAN/Foo.pm would be loaded, and then Dynaloader would be
+	# called, which loads the architecture specifc parts - But Dynaloader
+	# ignores @INC, and tries to pull from the system install of perl. If
+	# that module exists in the system perl, but the $VERSION's aren't the
+	# same, Dynaloader fails.
+	#
+	# The workaround is to munge @INC and eval'ing the known modules that
+	# we include with SlimServer, first checking our CPAN path, then if
+	# there are any modules that couldn't be loaded, splicing CPAN/ out,
+	# and attempting to load the system version of the module. When we are
+	# done, put our CPAN/ path back in @INC.
+	#
+	# We use Symbol's (included with 5.6+) delete_package() function &
+	# removing the "require" style name from %INC and attempt to load
+	# these modules two different ways. Only the failed modules are tried again.
+	#
+	# Hopefully the actual implmentation below is fairly straightforward
+	# once the problem domain is understood.
+
+	# Given a list of modules, attempt to load them, otherwise pass back
+	# the failed list to the caller.
+	sub tryModuleLoad {
+		my @modules = @_;
+
+		my @failed  = ();
+
+		for my $module (@modules) {
+
+			eval "use $module";
+
+			if ($@) {
+				Symbol::delete_package($module);
+
+				push @failed, $module;
+
+				$module =~ s|::|/|g;
+				$module .= '.pm';
+
+				delete $INC{$module};
+			}
+		}
+
+		return @failed;
+	}
+
+	# Here's what we want to try and load. This will need to be updated
+	# when a new XS based module is added to our CPAN tree.
+	my @modules = qw(Time::HiRes DBD::SQLite DBI XML::Parser HTML::Parser Compress::Zlib);
+
+	my @SlimINC = (
+		$Bin, 
+		catdir($Bin,'CPAN'), 
+		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}), 
+		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'), 
+		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}), 
+		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}, 'auto'), 
+		catdir($Bin,'CPAN','arch',$Config::Config{archname})
+	);
+
+	# This works like 'use lib'
+	# prepend our directories to @INC so we look there first.
+	unshift @INC, @SlimINC;
+
+	# Try and load the modules - some will fail if we don't include the
+	# binaries for that version/architecture combo
+	my @failed = tryModuleLoad(@modules);
+
+	# Remove our CPAN path so we can try loading the failed modules from
+	# the default system @INC
+	splice(@INC, 0, scalar @SlimINC);
+
+	tryModuleLoad(@failed);
+
+	# And we're done with the trying - put our CPAN path back on @INC.
+	unshift @INC, @SlimINC;
+};
 
 use Time::HiRes;
 
@@ -96,12 +177,14 @@ use Time::HiRes;
 # here so other packages don't have to worry about it. If we
 # don't have XML::Parser installed, we fall back to PurePerl.
 use XML::Simple;
+
 eval {
-    local($^W) = 0;      # Suppress warning from Expat.pm re File::Spec::load()
-    require XML::Parser; 
+	local($^W) = 0;      # Suppress warning from Expat.pm re File::Spec::load()
+	require XML::Parser; 
 };
+
 if (!$@) {
-    $XML::Simple::PREFERRED_PARSER = 'XML::Parser';
+	$XML::Simple::PREFERRED_PARSER = 'XML::Parser';
 }
 
 use Slim::Utils::Misc;
