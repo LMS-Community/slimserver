@@ -476,7 +476,7 @@ sub getCDDBTag {
 
 			if ($track == $1) {
 
-				if ($tags->{$key} =~ m|^(.+)\s*/\s*(.+)$|) {
+				if ($tags->{$key} =~ m|^(.+\S)\s*/\s*(.+)$|) {
 
 					if ($order eq "standard") {
 						$tags->{'ARTIST'} = $1;
