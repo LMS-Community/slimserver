@@ -182,7 +182,7 @@ sub upgradeFirmware_SDK5 {
 	Slim::Utils::Prefs::clientSet($client, "powerOnBrightness", 4);
 	Slim::Utils::Prefs::clientSet($client, "powerOffBrightness", 1);
 
-	Slim::Utils::Misc::blocking($client->tcpsock, 1);
+#	Slim::Utils::Misc::blocking($client->tcpsock, 1);
 
 	open FS, $filename || return("Open failed for: $filename\n");
 
@@ -195,13 +195,20 @@ sub upgradeFirmware_SDK5 {
 	my $bytesread=0;
 	my $totalbytesread=0;
 	my $buf;
+	my $byteswritten;
+	my $bytesleft;
 	
 	while ($bytesread=read(FS, $buf, 1024)) {
 		assert(length($buf) == $bytesread);
 
 		$frame = pack('n',$bytesread+4) . 'upda' . $buf;  # upgrade data
 
-		$client->tcpsock->syswrite($frame, length($frame));
+		$bytesleft = length($frame);
+		while ($bytesleft > 0) {
+			$byteswritten = $client->tcpsock->syswrite($frame, length($frame));
+			$bytesleft-=$byteswritten;
+			$frame = substr($frame, -$bytesleft);
+		}
 		
 		$totalbytesread += $bytesread;
 		$::d_firmware && msg("Updating firmware: $totalbytesread / $size\n");
@@ -221,7 +228,7 @@ sub upgradeFirmware_SDK5 {
 
 	$::d_firmware && msg("Firmware updated successfully.\n");
 	
-	Slim::Utils::Misc::blocking($client->tcpsock, 0);
+#	Slim::Utils::Misc::blocking($client->tcpsock, 0);
 	
 	return undef;
 }
