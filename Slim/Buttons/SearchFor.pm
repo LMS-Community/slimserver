@@ -41,7 +41,7 @@ my %functions = (
 		if ($index < 0) { $index = scalar @searchChars - 1; };
 		$client->searchTerm($client->searchCursor,$searchChars[$index]);
 		Slim::Utils::Timers::killTimers($client, \&nextChar);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'down' => sub  {
 		my $client = shift;
@@ -56,7 +56,7 @@ my %functions = (
 		if ($index >= scalar @searchChars) { $index = 0 };
 		$client->searchTerm($client->searchCursor,$searchChars[$index]);
 		Slim::Utils::Timers::killTimers($client, \&nextChar);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'left' => sub  {
 		my $client = shift;
@@ -70,7 +70,7 @@ my %functions = (
 		} else {
 			$client->searchTerm($client->searchCursor, undef);
 			$client->searchCursor($client->searchCursor - 1);
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	},
 	'right' => sub  {
@@ -178,7 +178,7 @@ my %functions = (
 		# set up a timer to automatically skip ahead
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + Slim::Utils::Prefs::get("displaytexttimeout"), \&nextChar);
 		#update the display
-		Slim::Display::Display::update($client);
+		$client->update();
 	}
 );
 
@@ -221,7 +221,7 @@ sub nextChar {
 	my $client = shift;
 	$client->searchCursor($client->searchCursor+1);
 	$client->searchTerm($client->searchCursor, Slim::Hardware::VFD::symbol('rightarrow'));
-	Slim::Display::Display::update($client);
+	$client->update();
 }
 
 sub getFunctions {

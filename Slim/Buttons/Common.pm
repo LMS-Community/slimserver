@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.3 2003/07/30 18:02:49 dean Exp $
+# $Id: Common.pm,v 1.4 2003/08/09 05:47:13 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -170,7 +170,7 @@ my %functions = (
 			if ($rate > 0) { $rate = 1; }
 			Slim::Control::Command::execute($client, ['rate', -abs($rate * $SCAN_RATE_MULTIPLIER)]);
 		}
-		Slim::Display::Display::update($client);
+		$client->update();
 
 	},
 	'pause' => sub  {
@@ -196,7 +196,7 @@ my %functions = (
 	'menu_pop' => sub  {
 		my $client = shift;
 		Slim::Buttons::Common::popMode($client);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'menu' => sub  {
 		my $client = shift;
@@ -249,7 +249,7 @@ my %functions = (
 			$jump = 'SETTINGS';
 		}
 		Slim::Buttons::Home::jump($client,$jump);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'brightness' => sub  {
 		my $client = shift;
@@ -301,7 +301,7 @@ my %functions = (
 		my $playdisp = undef;
 		if (mode($client) ne 'search') {
 			Slim::Buttons::Common::pushMode($client, 'search');
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	},	
 	'repeat' => sub  {
@@ -416,7 +416,7 @@ my %functions = (
 		my $client = shift;
 		Slim::Utils::Prefs::clientSet($client, "titleFormatCurr"
 				, (Slim::Utils::Prefs::clientGet($client, "titleFormatCurr") + 1) % (Slim::Utils::Prefs::clientGetArrayMax($client, "titleFormat") + 1));
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
  	'datetime' => sub  {
  		# briefly display the time/date
@@ -432,7 +432,7 @@ my %functions = (
 			$doublesize = 0;
 		}
 		Slim::Utils::Prefs::clientSet($client, "doublesize", $doublesize);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'clearPlaylist' => sub {
 		my $client = shift;
@@ -614,7 +614,7 @@ sub mixer {
 	Slim::Control::Command::execute($client, ["mixer", $feature, $cmd]);
 	#TO DO: make a function like Slim::Display::Display::volumeDisplay for bass/treble
 	#       so that this function can work from anywhere and not just settings
-	Slim::Display::Display::update($client);
+	$client->update();
 }
 
 my @numberletters = ([' ','0'], # 0

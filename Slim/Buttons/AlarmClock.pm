@@ -43,14 +43,14 @@ my %functions = (
 		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#browseMenuChoices + 1), $menuSelection{$client});
 
 		$menuSelection{$client} =$newposition;
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'down' => sub  {
 	   my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#browseMenuChoices + 1), $menuSelection{$client});
 
 		$menuSelection{$client} =$newposition;
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'left' => sub  {
 		my $client = shift;
@@ -203,7 +203,7 @@ my %alarmVolumeSettingsFunctions = (
 		$volume += $inc;
 		if ($volume > $Slim::Player::Control::maxVolume) { $volume = $Slim::Player::Control::maxVolume; };
 		Slim::Utils::Prefs::clientSet($client, "alarmvolume", $volume);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 
 	'down' => sub {
@@ -223,7 +223,7 @@ my %alarmVolumeSettingsFunctions = (
 		$volume -= $inc;
 		if ($volume < 0) { $volume = 0; };
 		Slim::Utils::Prefs::clientSet($client, "alarmvolume", $volume);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 
 	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
@@ -284,7 +284,7 @@ my %alarmSetFunctions = (
 		if ($searchCursor{$client} < 0) {
 			Slim::Buttons::Common::popModeRight($client);
 		} else {
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	 },
 	'right' => sub {
@@ -299,7 +299,7 @@ my %alarmSetFunctions = (
 			$searchCursor{$client} = $max;
 			#Slim::Buttons::Common::popModeRight($client);
 		}
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 
 	'add' => sub { Slim::Display::Animation::bumpRight(shift); },
@@ -325,10 +325,10 @@ my %alarmSetFunctions = (
 
 		my $time = ($h0 * 10 + $h1) * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
 		Slim::Utils::Prefs::clientSet($client, "alarmtime", $time);
-		Slim::Display::Display::update($client);
+		$client->update();
 
 		#update the display
-		Slim::Display::Display::update($client);
+		$client->update();
 	}
 );
 
@@ -382,7 +382,7 @@ sub scrollDigit {
 		my $time = $h * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
 
 		Slim::Utils::Prefs::clientSet($client, "alarmtime", $time);
-		Slim::Display::Display::update($client);
+		$client->update();
 }
 
 sub timeDigits {
@@ -431,7 +431,7 @@ my %alarmPlaylistSettingsFunctions = (
 		$client->currentDirItem($newposition);
 		Slim::Utils::Prefs::clientSet($client, "alarmplaylist", $client->dirItems($client->currentDirItem));
 
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 
 	'down' => sub {
@@ -441,7 +441,7 @@ my %alarmPlaylistSettingsFunctions = (
 		$client->currentDirItem($newposition);
 		Slim::Utils::Prefs::clientSet($client, "alarmplaylist", $client->dirItems($client->currentDirItem) );
 
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 
 	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
@@ -455,7 +455,7 @@ my %alarmPlaylistSettingsFunctions = (
 		my $i = Slim::Buttons::Common::numberScroll($client, $digit, $client->dirItems);
 
 		$client->currentDirItem($i);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 
 );

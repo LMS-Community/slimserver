@@ -69,13 +69,13 @@ my %functions = (
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#homeChoices + 1), $client->homeSelection);
 		$client->homeSelection($newposition);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'down' => sub  {
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#homeChoices + 1), $client->homeSelection);
 		$client->homeSelection($newposition);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'left' => sub  {
 		my $client = shift;
@@ -125,7 +125,7 @@ my %functions = (
 		my $digit = shift;
 		my $newpos;
 		$client->homeSelection(Slim::Buttons::Common::numberScroll($client, $digit, \@homeChoices, 0));
-		Slim::Display::Display::update($client);
+		$client->update();
 	}
 );
 

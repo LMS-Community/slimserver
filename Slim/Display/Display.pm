@@ -1,6 +1,6 @@
 package Slim::Display::Display;
 
-# $Id: Display.pm,v 1.4 2003/07/30 18:02:50 dean Exp $
+# $Id: Display.pm,v 1.5 2003/08/09 05:47:15 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -18,9 +18,7 @@ use POSIX qw(strftime);
 # Kill the animation and display what we expect to be showing
 sub update {
 	my $client = shift;
-	
-	Slim::Display::Animation::killAnimation($client);
-	Slim::Hardware::VFD::vfdUpdate($client, curLines($client));
+	$client->update();
 }
 
 sub renderOverlay {

@@ -12,7 +12,7 @@ use Slim::Display::Display;
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.1 $,10);
+$VERSION = substr(q$Revision: 1.2 $,10);
 
 my @topchars = ("placeholder!", " ", " ",    "\x1F", "\x1C");
 my @btmchars = ("placeholder!", "_", "\x1F", "\xFF", " ");
@@ -39,7 +39,7 @@ my %functions = (
 			}
 			if ($client->otype($mostrec) == 3) {
 				$client->otype($mostrec, 2);
-				Slim::Display::Display::update($client);
+				$client->update();
 			}
 		} else {
 			$client->gplay(1);
@@ -52,12 +52,12 @@ my %functions = (
 	'up' => sub  {
 	        my $client = shift;
 	        $client->cpos(1);
-	        Slim::Display::Display::update($client);
+	        $client->update();
 	},
 	'down' => sub  {
 	        my $client = shift;
 	        $client->cpos(2);
-	        Slim::Display::Display::update($client);
+	        $client->update();
 	},
 	'left' => sub  {
 	        my $client = shift;
@@ -115,7 +115,7 @@ sub g_replace {
 sub g_return {
 	my $client = shift;
 	$client->gplay(0);
-	Slim::Display::Display::update($client);
+	$client->update();
 }
 
 sub g_advance {
@@ -135,7 +135,7 @@ sub g_advance {
             }
          }
       }
-      Slim::Display::Display::update($client);
+      $client->update();
    }
    my $nextrun = Time::HiRes::time() + $framerate;
 

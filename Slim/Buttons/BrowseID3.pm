@@ -31,7 +31,7 @@ my %functions = (
 			my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, browseID3dirIndex($client));
 			browseID3dirIndex($client,$newposition);
 			updateLastSelection($client);
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	},
 	'down' => sub  {
@@ -46,7 +46,7 @@ my %functions = (
 			my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, browseID3dirIndex($client));
 			browseID3dirIndex($client,$newposition);
 			updateLastSelection($client);
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	},
 	'left' => sub  {
@@ -155,7 +155,7 @@ my %functions = (
 		}
 		browseID3dirIndex($client,$newposition);
 		updateLastSelection($client);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	# this routine handles play, add and insert ($addorinsert would be undef, 1 or 2 respectively)
 	'play' => sub  {

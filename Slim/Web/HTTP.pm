@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.11 2003/08/09 00:17:52 dean Exp $
+# $Id: HTTP.pm,v 1.12 2003/08/09 05:47:17 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -417,7 +417,7 @@ sub executeurl {
 		$client = $allclients[0];
 	}
 	
-	if ($client && $client->model() && $client->model() eq 'slimp3') {
+	if ($client && $client->type eq 'player' && $client->model() eq 'slimp3') {
 		$$paramsref{"playermodel"} = 'slimp3';
 	} else {
 		$$paramsref{"playermodel"} = 'squeezebox';

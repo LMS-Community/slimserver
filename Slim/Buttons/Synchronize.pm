@@ -1,6 +1,6 @@
 package Slim::Buttons::Synchronize;
 
-# $Id: Synchronize.pm,v 1.2 2003/07/24 23:14:03 dean Exp $
+# $Id: Synchronize.pm,v 1.3 2003/08/09 05:47:15 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -18,12 +18,12 @@ my %functions = (
 	'up' => sub  {
 			my $client = shift;
 			$client->syncSelection(Slim::Buttons::Common::scroll($client,-1,scalar(@{$client->syncSelections}),$client->syncSelection));
-			Slim::Display::Display::update($client);
+			$client->update();
 	},
 	'down' => sub {
 		my $client = shift;
 		$client->syncSelection(Slim::Buttons::Common::scroll($client,1,scalar(@{$client->syncSelections}),$client->syncSelection));
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'left' => sub {
 		my $client = shift;

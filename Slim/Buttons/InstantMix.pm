@@ -23,7 +23,7 @@ my %functions = (
 		} else {
                     my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#instantMix + 1), selection($client, 'instant_mix_index'));
                     setSelection($client, 'instant_mix_index', $newposition);
-                    Slim::Display::Display::update($client);
+                    $client->update();
 		}
 	},
 	
@@ -36,7 +36,7 @@ my %functions = (
 		} else {
                     my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#instantMix + 1), selection($client, 'instant_mix_index'));
                     setSelection($client, 'instant_mix_index', $newposition);
-                    Slim::Display::Display::update($client);
+                    $client->update();
 		}
 	},
 	

@@ -21,7 +21,7 @@ my %functions = (
 		} else {
                     my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index'));
                     setSelection($client, 'mood_wheel_index', $newposition);
-                    Slim::Display::Display::update($client);
+                    $client->update();
 		}
 	},
 	
@@ -34,7 +34,7 @@ my %functions = (
 		} else {
                     my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index'));
                     setSelection($client, 'mood_wheel_index', $newposition);
-                    Slim::Display::Display::update($client);
+                    $client->update();
 		}
 	},
 	

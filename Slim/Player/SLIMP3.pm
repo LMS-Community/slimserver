@@ -9,7 +9,7 @@
 # GNU General Public License for more details.
 #
 use Slim::Player::Player;
-
+use Slim::Utils::Misc;
 package Slim::Player::SLIMP3;
 
 @ISA = ("Slim::Player::Player");

@@ -20,14 +20,14 @@ my %functions = (
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#browseMenuChoices + 1), $client->browseMenuSelection);
 		$client->browseMenuSelection($newposition);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	
 	'down' => sub  {
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#browseMenuChoices + 1), $client->browseMenuSelection);
 		$client->browseMenuSelection($newposition);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	
 	'left' => sub  {

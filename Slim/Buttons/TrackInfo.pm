@@ -93,12 +93,12 @@ my %functions = (
 	'up' => sub  {
 		my $client = shift;
 		currentLine($client, Slim::Buttons::Common::scroll($client, -1, $#{$client->trackInfoLines} + 1, currentLine($client)));
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'down' => sub  {
 		my $client = shift;
 		currentLine($client, Slim::Buttons::Common::scroll($client, +1, $#{$client->trackInfoLines} + 1, currentLine($client)));
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'left' => sub  {
 		my $client = shift;
@@ -140,7 +140,7 @@ my %functions = (
 		my $button = shift;
 		my $digit = shift;
 		currentLine($client, Slim::Buttons::Common::numberScroll($client, $digit, $client->trackInfoLines, 0));
-		Slim::Display::Display::update($client);
+		$client->update();
 	}
 );
 

@@ -19,13 +19,13 @@ my %functions = (
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#searchChoices + 1), $client->searchSelection);
 		$client->searchSelection($newposition);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'down' => sub  {
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#searchChoices + 1), $client->searchSelection);
 		$client->searchSelection($newposition);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'left' => sub  {
 		my $client = shift;

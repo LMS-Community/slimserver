@@ -51,7 +51,7 @@ sub updateBlockedStatus {
 
 	die unless ($client);
 
-	Slim::Display::Display::update($client);
+	$client->update();
 
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time()+$ticklength, \&updateBlockedStatus);
 }

@@ -1,6 +1,6 @@
 package Slim::Buttons::ScreenSaver;
 
-# $Id: ScreenSaver.pm,v 1.3 2003/08/04 22:23:22 sadams Exp $
+# $Id: ScreenSaver.pm,v 1.4 2003/08/09 05:47:14 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@ my %functions = (
 		   ,$funct
 		   ,$functarg) = @_;
 		Slim::Buttons::Common::popMode($client);
-		Slim::Display::Display::update($client);
+		$client->update();
 		#pass along ir code to new mode if requested
 		if (defined $functarg && $functarg eq 'passback') {
 			Slim::Hardware::IR::resendButton($client);
@@ -78,11 +78,11 @@ sub screenSaver {
 				Slim::Display::Animation::scrollBottom($client, &$linefunc($client));
 			} else {
 				Slim::Buttons::Common::pushMode($client,'playlist');
-				Slim::Display::Display::update($client);		
+				$client->update();		
 			}
 		} else {
 			Slim::Buttons::Common::pushMode($client,'screensaver');
-			Slim::Display::Display::update($client);		
+			$client->update();		
 		} 
 	} else {
 		# try to scroll the bottom, if necessary

@@ -58,7 +58,7 @@ my %functions = (
 			pluginCount(),
 			$curr_plugin{$client},
 		);
-		Slim::Display::Display::update($client);
+		$client->update();
     },
     'down' => sub  {
 		my $client = shift;
@@ -69,7 +69,7 @@ my %functions = (
 			pluginCount(),
 			$curr_plugin{$client},
 		);
-		Slim::Display::Display::update($client);
+		$client->update();
     },
 );
 

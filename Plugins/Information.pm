@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.2 2003/08/03 22:35:39 kdf Exp $
+#	$Id: Information.pm,v 1.3 2003/08/09 05:47:11 dean Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -47,7 +47,7 @@ use Slim::Utils::Strings qw(string);
 use strict;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.2 $,10);
+$VERSION = substr(q$Revision: 1.3 $,10);
 
 my @main_list = qw(
     library
@@ -163,7 +163,7 @@ my %functions = (
 	    ($#{$ref->{list}} + 1),
 	    $ref->{$ref->{current}},
 	);
-	Slim::Display::Display::update($client);
+	$client->update();
     },
     'down' => sub {
 	my $client = shift;
@@ -175,7 +175,7 @@ my %functions = (
 	    ($#{$ref->{list}} + 1),
 	    $ref->{$ref->{current}},
 	);
-	Slim::Display::Display::update($client);
+	$client->update();
     },
 );
 
@@ -341,7 +341,7 @@ sub setmode_submenu {
     $ref->{$ref->{current}} ||= 0;
 
     $client->lines($menu{$ref->{current}}->{lines});
-    Slim::Display::Display::update($client);
+    $client->update();
 }
 
 sub setMode {
@@ -370,7 +370,7 @@ sub setMode {
     $context{$client}->{main} ||= 0;
 
     $client->lines(\&main_lines);
-    Slim::Display::Display::update($client);
+    $client->update();
 }
 
 sub getFunctions {

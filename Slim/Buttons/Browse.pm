@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.3 2003/07/31 22:41:41 dean Exp $
+# $Id: Browse.pm,v 1.4 2003/08/09 05:47:12 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@ my %functions = (
 			$inc = ($inc =~ /\D/) ? -1 : -$inc;
 			my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, $client->currentDirItem());
 			$client->currentDirItem($newposition);
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	},
 	'down' => sub  {
@@ -46,7 +46,7 @@ my %functions = (
 			if ($inc =~ /\D/) {$inc = 1}
 			my $newposition = Slim::Buttons::Common::scroll($client, $inc, $client->numberOfDirItems(), $client->currentDirItem());
 			$client->currentDirItem($newposition);
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	},
 	'left' => sub  {
@@ -102,7 +102,7 @@ my %functions = (
 			);
 
 		$client->currentDirItem($i);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'add' => sub  {
 		my $client = shift;
@@ -198,7 +198,7 @@ sub playDone {
 	Slim::Buttons::Block::unblock($client);
 	
 	#The following commented out to allow showBriefly to finish
-	#Slim::Display::Display::update($client);
+	#$client->update();
 	if (defined($startindex)) { Slim::Control::Command::execute($client, ["playlist", "jump", $startindex]); }
 	if (defined($shuffled)) { Slim::Control::Command::execute($client, ["playlist", "shuffle" , $shuffled]); }
 

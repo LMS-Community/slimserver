@@ -12,7 +12,7 @@ use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.1 $,10);
+$VERSION = substr(q$Revision: 1.2 $,10);
 
 # constants
 my $height = 4;
@@ -88,7 +88,7 @@ my %functions = (
 		if (defaultHandler($client)) {return};
 		if ((!Slim::Hardware::IR::holdTime($client) || Slim::Hardware::IR::repeatCount($client,2,0)) && $functarg =~ /-?1/) {
 			rotate($functarg);
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	},
 	'left' => sub  {
@@ -100,16 +100,16 @@ my %functions = (
 		my $client = shift;
 		if (defaultHandler($client)) {return};
 		while (move(1,0)) {
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'up' => sub  {
 		my $client = shift;
 		if (defaultHandler($client)) {return};
 		if (!Slim::Hardware::IR::holdTime($client) || Slim::Hardware::IR::repeatCount($client,2,0)) {
 			move(0,-1);
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	},
 	'down' => sub  {
@@ -117,7 +117,7 @@ my %functions = (
 		if (defaultHandler($client)) {return};
 		if (!Slim::Hardware::IR::holdTime($client) || Slim::Hardware::IR::repeatCount($client,2,0)) {
 			move(0,1);
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	},
 );

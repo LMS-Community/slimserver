@@ -239,7 +239,7 @@ sub getUdpClient {
 					$udpsock,
 					undef
 				);			
-			
+			$client->macaddress($mac);
 			$client->init();
 
 		} else {

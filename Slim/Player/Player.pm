@@ -30,6 +30,12 @@ sub init {
                 
 	# start the screen saver
 	Slim::Buttons::ScreenSaver::screenSaver($client);
+}
+
+sub update {
+	my $client = shift;
+	Slim::Display::Animation::killAnimation($client);
+	Slim::Hardware::VFD::vfdUpdate($client, Slim::Display::Display::curLines($client));
 }	
 
 sub model {

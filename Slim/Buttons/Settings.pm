@@ -23,13 +23,13 @@ my %functions = (
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#settingsChoices + 1), $client->settingsSelection);
 		$client->settingsSelection($newposition);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'down' => sub  {
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#settingsChoices + 1), $client->settingsSelection);
 		$client->settingsSelection($newposition);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'left' => sub   {
 		my $client = shift;
@@ -101,13 +101,13 @@ my %repeatSettingsFunctions = (
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#repeatSettingsChoices + 1), Slim::Player::Playlist::repeat($client) );
 		Slim::Control::Command::execute($client, ["playlist", "repeat", $newposition]);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'down' => sub {
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#repeatSettingsChoices + 1), Slim::Player::Playlist::repeat($client) );
 		Slim::Control::Command::execute($client, ["playlist", "repeat", $newposition]);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'left' => $functions{'left'},
 	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
@@ -141,13 +141,13 @@ my %shuffleSettingsFunctions = (
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#shuffleSettingsChoices + 1), Slim::Player::Playlist::shuffle($client));
 		Slim::Control::Command::execute($client, ["playlist", "shuffle", $newposition]);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'down' => sub {
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#shuffleSettingsChoices + 1), Slim::Player::Playlist::shuffle($client));
 		Slim::Control::Command::execute($client, ["playlist", "shuffle", $newposition]);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'left' => $functions{'left'},
 	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
@@ -181,13 +181,13 @@ my %textSizeSettingsFunctions = (
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#textSizeSettingsChoices + 1), (Slim::Utils::Prefs::clientGet($client, "doublesize")) ? 1 : 0 );
 		Slim::Utils::Prefs::clientSet($client, "doublesize", $newposition);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'down' => sub {
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#textSizeSettingsChoices + 1), (Slim::Utils::Prefs::clientGet($client, "doublesize")) ? 1 : 0 );
 		Slim::Utils::Prefs::clientSet($client, "doublesize", $newposition);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'left' => $functions{'left'},
 	'right' => sub { Slim::Display::Animation::bumpRight(shift); },
@@ -221,13 +221,13 @@ my %titleFormatSettingsFunctions = (
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#titleFormatSettingsChoices + 1), Slim::Utils::Prefs::clientGet($client, "titleFormatCurr"));
 		Slim::Utils::Prefs::clientSet($client, "titleFormatCurr", $newposition);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'down' => sub {
 		my $client = shift;
 		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#titleFormatSettingsChoices + 1), Slim::Utils::Prefs::clientGet($client, "titleFormatCurr"));
 		Slim::Utils::Prefs::clientSet($client, "titleFormatCurr", $newposition);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'left' => $functions{'left'},
 	'right' => sub { Slim::Display::Animation::bumpRight(shift); },

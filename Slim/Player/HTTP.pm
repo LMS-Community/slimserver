@@ -21,11 +21,15 @@ sub new {
 }
 
 sub init {
+	my $client = shift;
 	Slim::Player::Client::startup($client);
 }
 
 sub type {
 	return 'http';
+}
+
+sub update {
 }
 
 1;

@@ -42,7 +42,7 @@ my %functions = (
 			checkCursorDisplay($client,$cursorPos);
 			Slim::Buttons::Common::param($client,'cursorPos',$cursorPos);
 			Slim::Buttons::Common::param($client,'charIndex',charIndex(Slim::Buttons::Common::param($client,'charsRef'),Slim::Hardware::VFD::subString($$valueRef,$cursorPos,1)));
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	#delete current, staying in place, moving left if in the rightmost position
 	#,exiting if string empty
@@ -62,7 +62,7 @@ my %functions = (
 			}
 			checkCursorDisplay($client,$cursorPos);
 			Slim::Buttons::Common::param($client,'charIndex',charIndex(Slim::Buttons::Common::param($client,'charsRef'),Slim::Hardware::VFD::subString($$valueRef,$cursorPos,1)));
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	#advance to next character, exiting if last char is right arrow
 	,'nextChar' => sub {
@@ -121,7 +121,7 @@ my %functions = (
 			}
 			Slim::Buttons::Common::param($client,'displayPos',$displayPos);
 			Slim::Buttons::Common::param($client,'displayPos2X',$displayPos);
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	#Insert char at current cursor position
 	,'insert' => sub {
@@ -136,7 +136,7 @@ my %functions = (
 			my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
 			checkCursorDisplay($client,$cursorPos);
 			Slim::Hardware::VFD::subString($$valueRef,$cursorPos,0,$char);
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	#clear current text
 	,'clear' => sub {
@@ -151,7 +151,7 @@ my %functions = (
 			Slim::Buttons::Common::param($client,'cursorPos',0);
 			Slim::Buttons::Common::param($client,'displayPos',0);
 			Slim::Buttons::Common::param($client,'displayPos2X',0);
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	#use numbers to enter characters
 	,'numberLetter' => sub {
@@ -171,7 +171,7 @@ my %functions = (
 			# set up a timer to automatically skip ahead
 			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + Slim::Utils::Prefs::get("displaytexttimeout"), \&nextChar);
 			#update the display
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	#use characters to enter characters
 	,'letter' => sub {
@@ -357,7 +357,7 @@ sub changeChar {
 	Slim::Hardware::VFD::subString($$valueRef,$cursorPos,1,$charsRef->[$charIndex]);
 	checkCursorDisplay($client,$cursorPos);
 	Slim::Buttons::Common::param($client,'charIndex',$charIndex);
-	Slim::Display::Display::update($client);
+	$client->update();
 }
 
 #find the position of the character in the character array
@@ -472,7 +472,7 @@ sub moveCursor {
 	checkCursorDisplay($client,$cursorPos);
 	Slim::Buttons::Common::param($client,'charIndex',$charIndex);
 	Slim::Buttons::Common::param($client,'cursorPos',$cursorPos);
-	Slim::Display::Display::update($client);
+	$client->update();
 	return;
 }
 

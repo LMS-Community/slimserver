@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.4 2003/08/04 17:57:18 dean Exp $
+# $Id: Playlist.pm,v 1.5 2003/08/09 05:47:13 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -46,7 +46,7 @@ my %functions = (
 			}
 		}
 		Slim::Utils::Prefs::clientSet($client, "playingDisplayMode", $pdm);
-		Slim::Display::Display::update($client);
+		$client->update();
 	},
 	'up' => sub  {
 		my $client = shift;
@@ -59,7 +59,7 @@ my %functions = (
 			$inc = ($inc =~ /\D/) ? -1 : -$inc;
 			my $newposition = Slim::Buttons::Common::scroll($client, $inc, $songcount, browseplaylistindex($client));
 			browseplaylistindex($client, $newposition);
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	},
 	'down' => sub  {
@@ -73,7 +73,7 @@ my %functions = (
 			if ($inc =~ /\D/) {$inc = 1}
 			my $newposition = Slim::Buttons::Common::scroll($client, $inc, $songcount, browseplaylistindex($client));
 			browseplaylistindex($client,$newposition);
-			Slim::Display::Display::update($client);
+			$client->update();
 		}
 	},
 	'left' => sub  {
@@ -102,7 +102,7 @@ my %functions = (
 		# do an unsorted jump
 		$newposition = Slim::Buttons::Common::numberScroll($client, $digit, Slim::Player::Playlist::shuffleList($client), 0);
 		browseplaylistindex($client,$newposition);
-		Slim::Display::Display::update($client);	
+		$client->update();	
 	},
 	'add' => sub  {
 		my $client = shift;
@@ -157,7 +157,7 @@ my %functions = (
 		} else {
 			Slim::Control::Command::execute($client, ["playlist", "jump", browseplaylistindex($client)]);
 		}
-		Slim::Display::Display::update($client);
+		$client->update();
 	}
 );
 

@@ -40,7 +40,7 @@ if you have chosen one, returns two strings. One for each line of the display.  
 line:</p>
 <blockquote>
 			<pre>
-Slim::Display::Display::update($client);
+$client->update();
 </pre></blockquote>
 <p>Also included in the setModes subroutine are any commands or functions that must be run each time the plugin is called.  This may be loading an array for a menu system,
 default settings, or running any number of other subroutines that are needed for the operation of the plugin.
@@ -105,7 +105,7 @@ function calls such as: </p>
 <p>The lines subroutine returns the text that the Slim Client will display while using your plugin. The setMode() function creates the reference for the lines subroutine, and your lines subroutine name must match that. Each mode may have its own set of lines, and each is named after the reference created in each setMode. The input for this function is the current client information, and the return is two strings for main display and optionally a pair of strings which may need to be overlayed on top of the first pair, right justified. The lines are sent to the display at any time using the command:</p>
 <blockquote>
 			<pre>
-Slim::Display::Display::update($client);
+$client->update();
 </pre></blockquote>
 <p>The simple line subroutine, below, is taken from Rescan.pm.</p>
 <blockquote>
