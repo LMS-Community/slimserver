@@ -652,7 +652,7 @@ sub lines {
 		$line1 = $client->string('SONGS');
 		$songlist = 1;
 	} elsif ($genre eq '*' && $artist eq '*' && $album eq '*' && !specified($song)) {
-		$line1 = $client->string('SONG'.$plural.'MATCHING') . " \"" . searchTerm($song) . "\"";
+		$line1 = $client->string('TRACK'.$plural.'MATCHING') . " \"" . searchTerm($song) . "\"";
 		$songlist = 1;
 	} elsif ($genre eq '*' && $artist eq '*' && !specified($album)) {
 		$line1 = $client->string('ALBUM'.$plural.'MATCHING') . " \"" . searchTerm($album) . "\"";

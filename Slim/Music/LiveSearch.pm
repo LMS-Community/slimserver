@@ -19,7 +19,7 @@ use constant MAXRESULTS => 10;
 our %queries = (
 	'artist' => [qw(contributor contributor.name)],
 	'album'  => [qw(album album.title)],
-	'song'   => [qw(track track.title)],
+	'track'   => [qw(track track.title)],
 );
 
 sub query {
@@ -107,37 +107,51 @@ sub renderItem {
 
 	my $hierarchy = $Slim::Web::Pages::hierarchy{$type} || '';
 	my $id = $item->id(),
+	my @xml = ();
 	
 	my $name;
 	
 	if ($item->can('url')) {
 		$name = Slim::Music::Info::standardTitle(undef,$item);
+		
+		# Starting work on the standard track list format, but its a work in progress.
+		#my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
+
+		#$name .= ($webFormat !~ /ARTIST/ && $item->can('artist')) ? " by ".$item->artist() : "";
+		#$name .= ($webFormat !~ /ALBUM/ && $item->can('album')) ? " from ".$item->album() : "";
+
 	} elsif ($item->can('title')) {
 		$name = $item->title();
+
 	} else {
 		$name = $item->name();
 	}
 	
-	return <<EOF;
-	<tr>
-	<td width="100%" class="$rowType">
-		<a href="browsedb.html?hierarchy=$hierarchy\&amp;level=0\&amp;$type=$id\&amp;player=$player">$name</a>  
-	</td>
+	# We need to handle the different urls that are needed for different result types
+	my $url = ($type eq 'track') ? "songinfo.html?item=$id"
+		: "browsedb.html?hierarchy=$hierarchy\&amp;level=0\&amp;$type=$id";
+	
+	push @xml,"<tr>
+		<td width=\"100%\" class=\"$rowType\">
+			<a href=\"$url\&amp;player=$player\">$name</a>  
+		</td>";
+		
+	push @xml,"<td align=\"right\" class=\"$rowType\"></td>\n
+		<td align=\"right\" width=\"13\" class=\"$rowType\">\n
 
-	<td align="right" class="$rowType"></td>
-	<td align="right" width="13" class="$rowType">
+		<nobr><a href=\"status_header.html?command=playlist&amp;sub=loadtracks\&amp;$type=$id\&amp;player=$player\" target=\"status\">\n
+		<img src=\"html/images/b_play.gif\" width=\"13\" height=\"13\" alt=\"Play\" title=\"Play\"/></a></nobr>\n\n
 
-		<nobr><a href="status_header.html?command=playlist&amp;sub=loadtracks\&amp;$type=$id\&amp;player=$player" target="status">
-		<img src="html/images/b_play.gif" width="13" height="13" alt="Play" title="Play"/></a></nobr> 
+		</td>
+		<td  align=\"right\" width=\"13\" class=\"$rowType\">\n
+			<nobr><a href=\"status_header.html?command=playlist&amp;sub=addtracks\&amp;$type=$id\&amp;player=$player\" target=\"status\">\n
+			<img src=\"html/images/b_add.gif\" width=\"13\" height=\"13\" alt=\"Add to playlist\" title=\"Add to playlist\"/></a></nobr> \n
+		</td>\n
+		</tr>\n";
 
-	</td>
-	<td  align="right" width="13" class="$rowType">
-		<nobr><a href="status_header.html?command=playlist&amp;sub=addtracks\&amp;$type=$id\&amp;player=$player" target="status">
-		<img src="html/images/b_add.gif" width="13" height="13" alt="Add to playlist" title="Add to playlist"/></a></nobr> 
-	</td>
-	</tr>
-EOF
+	my $string = join('', @xml);
 
+	return $string;
 }
 
 sub outputAsXML { 

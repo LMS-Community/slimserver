@@ -7923,7 +7923,7 @@ ALBUMSMATCHING
 	PT	Albums encontrados
 	SE	Album som matchar
 
-SONGMATCHING
+TRACKMATCHING
 	DE	Passende Titel
 	DK	Matchende sangtitler
 	EN	Song title matching
@@ -7936,7 +7936,7 @@ SONGMATCHING
 	PT	Músicas encontradas
 	SE	Låtar som matchar
 
-SONGSMATCHING
+TRACKSMATCHING
 	DE	Passende Titel
 	DK	Matchende sangtitler
 	EN	Song titles matching
