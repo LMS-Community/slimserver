@@ -44,7 +44,7 @@
       [% "SHUFFLE" | string %][% "COLON" | string %]<a href="status.html?p0=playlist&p1=shuffle&p2=1&player=[% player | uri %]">[% IF shuffleon %]<b><font color="#FF0000">[% END %][% "ON" | string %][% IF shuffleon %]</font></b>[% END %]</a>/<a
                 href="status.html?p0=playlist&p1=shuffle&p2=0&player=[% player | uri %]">[% IF shuffleoff %]<b><font color="#FF0000">[% END %][% "OFF" | string %][% IF shuffleoff %]</font></b>[% END %]</a> 
       <br>
-      [% IF coverThumb %]<a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser"><img src="/music/[% itempath | uri %]/thumb.jpg" border="0" height="100"><br>[% END %]
+      [% IF coverThumb %]<a href="browsedb.html?level=0&hierarchy=track&album=[% track.album.id | uri %]&player=[% player | uri %]" target="browser"><img src="/music/[% coverThumb %]/thumb.jpg" border="0" height="100"><[% END %]
       <br>
       [% "VOLUME" | string %][% "COLON" | string %]<a href="status.html?p0=mixer&p1=volume&p2=-10&player=[% player | uri %]&start=[% start %]">[% "VOLUME_SOFTER" | string %]</a> <a href="status.html?p0=mixer&p1=volume&p2=0&player=[% player | uri %]&start=[% start %]">[% IF volume == '0' %]<b><font color="#FF0000">[% END %]1[% IF volume == '0' %]</font></b>[% END %]</a> 
       <a href="status.html?p0=mixer&p1=volume&p2=10&player=[% player | uri %]&start=[% start %]">[% IF volume == '10' %]<b><font color="#FF0000">[% END %]2[% IF volume == '10' %]</font></b>[% END %]</a> 
