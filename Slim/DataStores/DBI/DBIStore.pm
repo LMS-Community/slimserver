@@ -322,32 +322,6 @@ sub search {
 	return Slim::DataStores::DBI::Track->searchColumn($pattern, $field);
 }
 
-# XXX - dsully - this isn't quite used yet, and may not be the right thing to
-# do. I think it's semi-redundant with some code in Buttons/BrowseID3 - which
-# should probaably be moved to here anyways.
-sub searchWithCriteria {
-	my $class	 = shift;
-	my $findCriteria = shift;
-
-	# First turn Artist 'ACDC' => id 10, etc.
-	while (my ($key, $value) = each %$findCriteria) {
-
-		if (defined $value && scalar @$value && defined $value->[0] && $value->[0] ne '*') {
-
-			# normalize the values
-			for (my $i = 0; $i < scalar(@$value); $i++) {
-				$value->[$i] = Slim::Utils::Text::ignoreCaseArticles($value->[$i]);
-			}
-
-			my $results = $class->search($key, $value);
-
-			return () unless scalar @$results;
-
-			$findCriteria->{$key} = $results;
-		}
-	}
-}
-
 sub albumsWithArtwork {
 	my $self = shift;
 	
