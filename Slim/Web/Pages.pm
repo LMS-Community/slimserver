@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.87 2004/06/18 01:58:54 kdf Exp $
+# $Id: Pages.pm,v 1.88 2004/06/18 15:40:46 vidur Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -61,6 +61,7 @@ sub home {
 	Slim::Buttons::Plugins::addSetupGroups();
 	$params->{'additionalLinks'} = \%additionalLinks;
 
+	_addPlayerList($client, $params);
 	
 	_addStats($params, [], [], [], []);
 
@@ -479,26 +480,7 @@ sub status_header {
 sub status {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 
-	$params->{'playercount'} = Slim::Player::Client::clientCount();
-	
-	my @players = Slim::Player::Client::clients();
-
-	if (scalar(@players) > 1) {
-
-		my %clientlist = ();
-
-		foreach my $eachclient (@players) {
-
-			$clientlist{$eachclient->id()} =  $eachclient->name();
-
-			if (Slim::Player::Sync::isSynced($eachclient)) {
-				$clientlist{$eachclient->id()} .= " (".string('SYNCHRONIZED_WITH')." ".
-					Slim::Player::Sync::syncwith($eachclient).")";
-			}	
-		}
-
-		$params->{'player_chooser_list'} = options($client->id(), \%clientlist, $params->{'skinOverride'});
-	}
+	_addPlayerList($client, $params);
 
 	$params->{'refresh'} = Slim::Utils::Prefs::get('refreshRate');
 	
@@ -732,6 +714,31 @@ sub playlist {
 	}
 
 	return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
+}
+
+sub _addPlayerList {
+	my ($client, $params) = @_;
+
+	$params->{'playercount'} = Slim::Player::Client::clientCount();
+	
+	my @players = Slim::Player::Client::clients();
+
+	if (scalar(@players) > 1) {
+
+		my %clientlist = ();
+
+		foreach my $eachclient (@players) {
+
+			$clientlist{$eachclient->id()} =  $eachclient->name();
+
+			if (Slim::Player::Sync::isSynced($eachclient)) {
+				$clientlist{$eachclient->id()} .= " (".string('SYNCHRONIZED_WITH')." ".
+					Slim::Player::Sync::syncwith($eachclient).")";
+			}	
+		}
+
+		$params->{'player_chooser_list'} = options($client->id(), \%clientlist, $params->{'skinOverride'});
+	}
 }
 
 sub buildPlaylist {
