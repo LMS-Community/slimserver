@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.135 2004/07/17 16:30:26 kdf Exp $
+# $Id: Info.pm,v 1.136 2004/07/28 02:31:31 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2129,6 +2129,8 @@ sub readTags {
 					my $album = $tempCacheEntry->{'ALBUM'};
 					$tempCacheEntry->{'TAG'} = 1;
 					$tempCacheEntry->{'VALID'} = 1;
+					# cache the content type
+					$tempCacheEntry->{'CT'} = $type;
 					#update the cache so we can use readCoverArt without recursion.
 					updateCacheEntry($file, $tempCacheEntry);
 					# Look for Cover Art and cache location
