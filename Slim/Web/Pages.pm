@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.84 2004/05/27 07:10:22 kdf Exp $
+# $Id: Pages.pm,v 1.85 2004/05/31 04:02:23 dean Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -204,20 +204,25 @@ sub browser {
 				$params->{'RENAME_WARNING'} = 1;
 			}
 		}
-
-	} elsif ($playlist && $params->{'delete'} && -f $fulldir && unlink $fulldir) {
-
-		my @newpath  = splitdir(Slim::Utils::Misc::pathFromFileURL($fulldir));
-		pop @newpath;
-
-		my $container = Slim::Utils::Misc::fileURLFromPath(catdir(@newpath));
-
-		Slim::Music::Info::clearCache($container);
-		Slim::Music::Info::clearCache($fulldir);
-
-		$dir = Slim::Utils::Misc::ascendVirtual($dir);
-		$params->{'dir'} = $dir;
-		$fulldir = Slim::Utils::Misc::virtualToAbsolute($dir);
+	} elsif ($playlist && $params->{'delete'} ) {
+		my $path = Slim::Utils::Misc::pathFromFileURL($fulldir);
+		
+		if ($path && -f $path && unlink $path) {
+			$::d_http && msg("deleted playlist: $path\n");
+			my @newpath  = splitdir(Slim::Utils::Misc::pathFromFileURL($fulldir));
+			pop @newpath;
+	
+			my $container = Slim::Utils::Misc::fileURLFromPath(catdir(@newpath));
+	
+			Slim::Music::Info::clearCache($container);
+			Slim::Music::Info::clearCache($fulldir);
+	
+			$dir = Slim::Utils::Misc::ascendVirtual($dir);
+			$params->{'dir'} = $dir;
+			$fulldir = Slim::Utils::Misc::virtualToAbsolute($dir);
+		} else {
+			$::d_http && msg("couldn't delete playlist: $path\n");
+		}
 	}
 
 	#
