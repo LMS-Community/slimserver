@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.48 2004/01/06 08:19:44 daniel Exp $
+# $Id: Source.pm,v 1.49 2004/01/07 18:58:53 daniel Exp $
 
 # SlimServer Copyright (C) 2001,2002,2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -677,7 +677,7 @@ sub openSong {
 				return openSong($client);
 
 			} else {
-w
+
 				$::d_source && msg("don't know how to handle content for $fullpath\n");
 				$sock->close();
 				$sock = undef;
