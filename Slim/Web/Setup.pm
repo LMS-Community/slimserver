@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.108 2004/10/14 05:19:47 dean Exp $
+# $Id: Setup.pm,v 1.109 2004/10/27 23:36:16 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1273,6 +1273,27 @@ sub initSetupConfig {
 				}
 			}
 		} #end of setup{'plugins'}
+	,'radio' => {
+		'title' => string('RADIO')
+		,'parent' => 'server'
+		,'preEval' => sub {
+				Slim::Buttons::Plugins::addSetupGroups();
+			}
+		,'GroupOrder' => ['Default']
+		,'Groups' => {
+				'Default' => {
+					'PrefOrder' => []
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupHead' => string('RADIO')
+					,'GroupDesc' => string('SETUP_GROUP_RADIO_DESC')
+					,'GroupLine' => 1
+					,'GroupSub' => 0
+				}
+			}
+		} #end of setup{'radio'}
 	,'interface' => {
 		'title' => string('INTERFACE_SETTINGS')
 		,'parent' => 'server'
@@ -2113,6 +2134,10 @@ sub initSetupConfig {
 	}
 	if (scalar(keys %{Slim::Buttons::Plugins::installedPlugins()})) {
 		push @{$setup{'server'}{'children'}},'plugins';
+		# XXX This should be added conditionally based on whether there
+		# are any radio plugins. We need to find a place to make that
+		# check *after* plugins have been correctly initialized.
+		push @{$setup{'server'}{'children'}},'radio';
 	}
 }
 

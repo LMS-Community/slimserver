@@ -9,7 +9,7 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.27 2004/10/06 15:56:06 vidur Exp $
+# $Id: Plugins.pm,v 1.28 2004/10/27 23:36:15 vidur Exp $
 #
 package Slim::Buttons::Plugins;
 use strict;
@@ -244,6 +244,13 @@ sub addSetupGroups {
 					} else {
 						Slim::Web::Setup::addGroup('plugins',$plugin,$groupRef,undef,$prefRef);
 						Slim::Web::Setup::addCategory("PLUGINS.${plugin}",\%params);
+						if (UNIVERSAL::can("Plugins::${plugin}","addMenu")) {
+							my $menu;
+							eval { $menu = &{"Plugins::${plugin}::addMenu"}()};
+							if (!$@ && defined $menu && $menu eq "RADIO") {
+								Slim::Web::Setup::addGroup('radio',$plugin,$groupRef,undef,$prefRef);
+							}
+						}
 					}
 				}
 			}

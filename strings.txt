@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.144 2004/10/26 23:36:47 dean Exp $
+# $Id: strings.txt,v 1.145 2004/10/27 23:36:14 vidur Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -6762,14 +6762,14 @@ FAQ
 	SE	FAQ / Ofta förekommande frågor
 
 HELP_RADIO
-	DE	Internet Radio und Playlists
-	DK	Internetradio- og playlist-filer
-	EN	Internet Radio and Playlist Files
-	FR	Radios Internet et liste de lecture
-	NL	Internet Radio en Playlist Bestanden
-	NO	Internet Radio og Spillelister
-	PT	Rádio via Internet e Ficheiros de Playlist
-	SE	Internetradio och låtlistor
+	DE	Internet Radio
+	DK	Internetradio-
+	EN	Internet Radio
+	FR	Radios Internet
+	NL	Internet Radio
+	NO	Internet Radio
+	PT	Rádio via Internet
+	SE	Internetradio
 
 REMOTE_STREAMING
 	DE	Fernsteuerung
@@ -7072,15 +7072,5 @@ COLON
 	NO	:
 	SE	: 
 
-TUNE_IN
-	EN	Tune In
-
-TUNED_INTO_STATION
-	EN	Tuned into station
-
-TUNE_IN_DESC
-	EN	Enter the URL of the station you would like to listen to and hit the "Tune In" button. You can enter the URL of either the radio stream itself (e.g. http://62.49.59.50:8000) or the playlist file that is pointing to the stream (e.g. http://www.hitzradio.com/hitzradio.pls).
-
-RADIO_URL
-	EN	Radio URL
-
+SETUP_GROUP_RADIO_DESC
+	EN	SlimServer includes support for Internet Radio through several radio providers. You can configure support for some of these providers, including entering your username and password for premium access, on this page. To save your changes, click Change.
