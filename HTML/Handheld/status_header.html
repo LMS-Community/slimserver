@@ -6,7 +6,7 @@
 		<tr[% IF sync %] bgcolor="#c5c5c5"[% END %]>
 			<td colspan="2">
 				[% IF player_chooser_list %]
-					<form method="get" action="[% webroot %]status.html">[% "CURRENT_PLAYER" | string %]
+					<form method="get" action="[% webroot %]status.html">
 						<select name="player">[% player_chooser_list %]</select>
 						<input class="stdclick" type="submit" value="[% "CHANGE" | string %]">
 					</form>
@@ -23,7 +23,7 @@
 					[% IF modepause %][% "PAUSED_ON" | string %][% END %]
 					[% IF modestop %][% "STOPPED_ON" | string %][% END %]
 					<b>[% currentsong %]</b> [% "OUT_OF" | string %]<b>&nbsp;[% songcount %]</b>&nbsp;
-					(<a href="status_header.html?p0=playlist&amp;p1=delete&amp;p2=[% thissongnum %]&amp;player=[% player | uri %]&amp;start=[% start %]">[% "REMOVE_FROM_PLAYLIST" | string %]</a>)
+					(<a href="status_header.html?p0=playlist&amp;p1=delete&amp;p2=[% thissongnum %]&amp;player=[% player | uri %]&amp;start=[% start %]">[% "DELETE" | string %]</a>)
 				[% ELSE %]
 					<p><br>[% 'PLAYLIST_EMPTY' | string %]</p>
 				[% END %]
@@ -33,7 +33,7 @@
 		[% IF songtitle %]
 			<tr>
 				<td>[% "TITLE" | string %][% "COLON" | string %]</td>
-				<td><a href="songinfo.html?item=[% track.id %]&player=[% player | uri %]">[% songtitle %]</a></td>
+				<td><a href="songinfo.html?item=[% track.id %]&player=[% player | uri %]">[% track.title %]</a></td>
 			</tr>
 		[% END %]
 	   		
