@@ -112,6 +112,7 @@ sub open {
 	my $in_addr = inet_aton($server) || do {
 
 		Slim::Utils::Misc::msg("Couldn't resolve IP address for: $server\n");
+		close $sock;
 		return undef;
 	};
 
@@ -121,12 +122,14 @@ sub open {
 
 		if ($errnum != EWOULDBLOCK && $errnum != EINPROGRESS) {
 			$::d_remotestream && msg("Can't open socket to [$server:$port]: $errnum: $!\n");
+			close $sock;
 			return undef;
 		}
 
 		() = ${*$sock}{'_sel'}->can_write($timeout) or do {
 
 			$::d_remotestream && msgf("Timeout on connect to [$server:$port]: $errnum: $!\n");
+			close $sock;
 			return undef;
 		};
 	};
@@ -526,13 +529,9 @@ sub contentLength {
 }
 
 sub contentType {
-
 	my $self = shift;
 
-
-
 	return ${*$self}{'contentType'};
-
 }
 
 sub skipForward {
