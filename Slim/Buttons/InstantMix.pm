@@ -1,5 +1,5 @@
 package Slim::Buttons::InstantMix;
-#$Id: InstantMix.pm,v 1.5 2004/08/03 17:29:09 vidur Exp $
+#$Id: InstantMix.pm,v 1.6 2004/11/25 03:51:02 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -9,11 +9,12 @@ package Slim::Buttons::InstantMix;
 use strict;
 use Slim::Buttons::Common;
 use Slim::Music::MoodLogic;
+use Slim::Music::MusicMagic;
 use Slim::Utils::Strings qw (string);
 use Slim::Utils::Timers;
 use Slim::Hardware::VFD;
 
-Slim::Buttons::Common::addMode('moodlogic_instant_mix',getFunctions(),\&setMode);
+Slim::Buttons::Common::addMode('instant_mix',getFunctions(),\&setMode);
 
 # button functions for browse directory
 my @instantMix = ();
@@ -94,14 +95,28 @@ sub setMode {
 	if ($push eq "push") {
 		setSelection($client, 'instant_mix_index', 0);
 		
-		if (defined Slim::Buttons::Common::param($client, 'song')) {
-		@	instantMix = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicSongId(Slim::Buttons::Common::param($client, 'song')), undef, 'song');
-		} elsif (defined Slim::Buttons::Common::param($client, 'artist') && defined Slim::Buttons::Common::param($client, 'mood')) {
-			@instantMix = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicArtistId(Slim::Buttons::Common::param($client, 'artist')), Slim::Buttons::Common::param($client, 'mood'), 'artist');
-		} elsif (defined Slim::Buttons::Common::param($client, 'genre') && defined Slim::Buttons::Common::param($client, 'mood')) {
-			@instantMix = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicGenreId(Slim::Buttons::Common::param($client, 'genre')), Slim::Buttons::Common::param($client, 'mood'), 'genre');
-		} else {
-			die 'no/unknown type specified for instant mix';
+		if (Slim::Music::MoodLogic::useMoodLogic()) {
+			if (defined Slim::Buttons::Common::param($client, 'song')) {
+				@instantMix = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicSongId(Slim::Buttons::Common::param($client, 'song')), undef, 'song');
+			} elsif (defined Slim::Buttons::Common::param($client, 'artist') && defined Slim::Buttons::Common::param($client, 'mood')) {
+				@instantMix = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicArtistId(Slim::Buttons::Common::param($client, 'artist')), Slim::Buttons::Common::param($client, 'mood'), 'artist');
+			} elsif (defined Slim::Buttons::Common::param($client, 'genre') && defined Slim::Buttons::Common::param($client, 'mood')) {
+				@instantMix = Slim::Music::MoodLogic::getMix(Slim::Music::Info::moodLogicGenreId(Slim::Buttons::Common::param($client, 'genre')), Slim::Buttons::Common::param($client, 'mood'), 'genre');
+			} else {
+				die 'no/unknown type specified for instant mix';
+			}
+		} elsif (Slim::Music::MusicMagic::useMusicMagic()) {
+			if (defined Slim::Buttons::Common::param($client, 'song')) {
+				@instantMix = Slim::Music::MusicMagic::getMix(Slim::Buttons::Common::param($client, 'song'), 'song');
+			} elsif (defined Slim::Buttons::Common::param($client, 'album')) {
+				@instantMix = Slim::Music::MusicMagic::getMix(Slim::Buttons::Common::param($client, 'album'), 'album');
+			} elsif (defined Slim::Buttons::Common::param($client, 'artist')) {
+				@instantMix = Slim::Music::MusicMagic::getMix(Slim::Buttons::Common::param($client, 'artist'), 'artist');
+			} elsif (defined Slim::Buttons::Common::param($client, 'genre')) {
+				@instantMix = Slim::Music::MusicMagic::getMix(Slim::Buttons::Common::param($client, 'genre'), 'genre');
+			} else {
+				die 'no/unknown type specified for instant mix';
+			}
 		}
 	}
 	$client->lines(\&lines);
@@ -116,7 +131,11 @@ sub lines {
 	my $client = shift;
 	my ($line1, $line2);
 
-	$line1 = string('MOODLOGIC_INSTANT_MIX');
+	if (Slim::Music::MoodLogic::useMoodLogic()) {
+		$line1 = string('MOODLOGIC_INSTANT_MIX');
+	} else {
+		$line1 = string('MUSICMAGIC_INSTANT_MIX');
+	}
 	$line1 .= sprintf(" (%d ".string('OUT_OF')." %s)", selection($client, 'instant_mix_index') + 1, scalar @instantMix);
 	$line2 = Slim::Music::Info::infoFormat($instantMix[selection($client, 'instant_mix_index')], 'TITLE (ARTIST)', 'TITLE');
 

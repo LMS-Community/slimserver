@@ -1,6 +1,6 @@
 # Rescan.pm by Andrew Hedges (andrew@hedges.me.uk) October 2002
 # Timer functions added by Kevin Deane-Freeman (kevindf@shaw.ca) June 2004
-# $Id: Rescan.pm,v 1.6 2004/08/03 17:29:07 vidur Exp $
+# $Id: Rescan.pm,v 1.7 2004/11/25 03:51:02 kdf Exp $
 
 # This code is derived from code with the following copyright message:
 #
@@ -21,7 +21,7 @@ use Slim::Utils::Strings qw (string);
 use Time::HiRes;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.6 $,10);
+$VERSION = substr(q$Revision: 1.7 $,10);
 
 my $interval = 1; # check every x seconds
 my @browseMenuChoices;
@@ -164,8 +164,8 @@ sub checkScanTimer
 			my $scantime =  Slim::Utils::Prefs::get("rescan-time");
 			if ($scantime) {
 			   if ($time == $scantime +60 ) {$interval=1;}; #alarm is done, so reset to find the beginning of a minute
-				if ($time == $scantime && !Slim::Music::MusicFolderScan::stillScanning()) {
-					Slim::Music::MusicFolderScan::startScan();
+				if ($time == $scantime && !Slim::Music::Import::MusicFolderScan::stillScanning()) {
+					Slim::Music::Import::MusicFolderScan::startScan();
 				}
 			}
 		}

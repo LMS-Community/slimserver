@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.19 2004/11/07 06:37:06 vidur Exp $
+# $Id: Scan.pm,v 1.20 2004/11/25 03:51:05 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -402,8 +402,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			return 0;
 		}
 
-		if (Slim::Music::Info::isITunesPlaylistURL($playlistpath) || 
-			Slim::Music::Info::isMoodLogicPlaylistURL($playlistpath) ||
+		if (Slim::Music::Info::isPlaylistURL($playlistpath) ||
 			(
 				defined Slim::Music::Info::cachedPlaylist($playlistpath) && 
 			  	(Slim::Music::Info::isDir($playlistpath) && 

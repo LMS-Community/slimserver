@@ -184,7 +184,7 @@ stop					= dead
 
 [browseid3]
 play.single				= play_0
-play.hold				= moodlogic_mix
+play.hold				= create_mix
 add.single				= play_1
 add.hold				= play_2
 

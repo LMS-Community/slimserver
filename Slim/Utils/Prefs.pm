@@ -1,6 +1,6 @@
 package Slim::Utils::Prefs;
 
-# $Id: Prefs.pm,v 1.92 2004/11/19 04:04:26 kdf Exp $
+# $Id: Prefs.pm,v 1.93 2004/11/25 03:51:05 kdf Exp $
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -137,12 +137,15 @@ my %DEFAULT = (
 	,'iTunesplaylistsuffix'	=> ''
 	,'MoodLogicplaylistprefix'		=> 'MoodLogic: '
 	,'MoodLogicplaylistsuffix'		=> ''
+	,'MusicMagicplaylistprefix'		=> 'MusicMagic: '
+	,'MusicMagicplaylistsuffix'		=> ''
 	,'itunesscaninterval'	=> 60
 	,'moodlogicscaninterval'		=> 60
+	,'musicmagicscaninterval'		=> 60
+	,'MMSport'						=> 10002
 	,'itunes_library_autolocate'	=> 1
 	,'itunes_library_music_path'	=> defaultAudioDir()
 	,'ignoredisableditunestracks'	=> 0
-	,'lastITunesMusicLibraryDate'	=> 0
 	,'instantMixMax'		=> 12
 	,'varietyCombo'			=> 50
 	,'ignoreDirRE'			=> ''
@@ -181,7 +184,6 @@ my %DEFAULT = (
 	,'xplir'				=> 'both'
 	,'xplinterval'			=> 5
 	,'xplsupport'			=> 0
-	,'rank-Picks'			=> 4
 );
 
 # The following hash contains functions that are executed when the pref corresponding to
@@ -237,6 +239,10 @@ my %prefChange = (
 	,'moodlogic' => sub {
 		my $newvalue = shift;
 		Slim::Music::MoodLogic::startScan();
+	}
+	,'musicmagic' => sub {
+		my $newvalue = shift;
+		Slim::Music::MusicMagic::startScan();
 	}
 	,'audiodir' => sub {
 		my $newvalue = shift;

@@ -1,5 +1,5 @@
 package Slim::Buttons::BrowseID3;
-# $Id: BrowseID3.pm,v 1.20 2004/10/19 23:35:36 vidur Exp $
+# $Id: BrowseID3.pm,v 1.21 2004/11/25 03:51:02 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -12,6 +12,7 @@ use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
+use Slim::Buttons::VarietyCombo;
 use Slim::Utils::Strings qw (string);
 use Slim::Utils::Misc;
 
@@ -269,12 +270,10 @@ my %functions = (
 		$::d_files && msg("currentItem == $currentItem\n");
 	},
 
-	'moodlogic_mix' => sub  {
+	'create_mix' => sub  {
 		my $client = shift;
-		# if we don't have moodlogic, then just play
-		if (!Slim::Music::MoodLogic::useMoodLogic()) {
-			(getFunctions())->{'play'}($client);
-		} else {
+		# Check for moodlogic
+		if (Slim::Music::MoodLogic::useMoodLogic()) {
 			my $genre = selection($client,'curgenre');
 			my $artist = selection($client,'curartist');
 			my $album = selection($client,'curalbum');
@@ -297,6 +296,50 @@ my %functions = (
 			} else {
 					$client->bumpLeft();
 			}
+		# Check for musicmagic
+		} elsif (Slim::Music::MusicMagic::useMusicMagic()) {
+			my $genre = selection($client,'curgenre');
+			my $artist = selection($client,'curartist');
+			my $album = selection($client,'curalbum');
+			my $currentItem = browseID3dir($client,browseID3dirIndex($client));
+			my @oldlines = Slim::Display::Display::curLines($client);
+			
+			# if we've chosen a particular song
+			if (picked($genre) && picked($artist) && picked($album) && Slim::Music::Info::isSongMMMixable($currentItem)) {
+				
+			       # For the moment, skip straight to InstantMix mode. (See VarietyCombo)
+				Slim::Buttons::Common::pushMode($client, 'instant_mix', {'song' => $currentItem});
+				Slim::Buttons::VarietyCombo::specialPushLeft($client, 0, @oldlines);
+				
+			# if we've picked an artist 
+			} elsif (picked($genre) && ! picked($album) && Slim::Music::Info::isArtistMMMixable($currentItem)) {
+				
+			       # For the moment, skip straight to InstantMix mode. (See VarietyCombo)
+				Slim::Buttons::Common::pushMode($client, 'instant_mix', {'artist' => $currentItem});
+				Slim::Buttons::VarietyCombo::specialPushLeft($client, 0, @oldlines);
+				
+			# if we've picked an album 
+			} elsif (picked($genre) && picked($artist) && !picked($album) && Slim::Music::Info::isAlbumMMMixable($artist, $currentItem)) {
+				
+			       # For the moment, skip straight to InstantMix mode. (See VarietyCombo)
+				my $key = "$artist\@\@$currentItem";
+				Slim::Buttons::Common::pushMode($client, 'instant_mix', {'album' => $key});
+				Slim::Buttons::VarietyCombo::specialPushLeft($client, 0, @oldlines);
+				
+			# if we've picked a genre 
+			} elsif (Slim::Music::Info::isGenreMMMixable($currentItem)) {
+				
+			       # For the moment, skip straight to InstantMix mode. (See VarietyCombo)
+				Slim::Buttons::Common::pushMode($client, 'instant_mix', {'genre' => $currentItem});
+				Slim::Buttons::VarietyCombo::specialPushLeft($client, 0, @oldlines);
+				
+			# don't do anything if nothing is mixable
+			} else {
+				$client->bumpLeft();
+			}
+		} else {
+			# if we don't have mix generation, then just play
+			(getFunctions())->{'play'}($client);
 		}
 		
 	},
@@ -498,12 +541,16 @@ sub lines {
 
 		if ($songlist) {
 			$line2 = Slim::Music::Info::standardTitle($client, browseID3dir($client,browseID3dirIndex($client)));
-			$overlay1 = Slim::Display::Display::symbol('moodlogic') if (Slim::Music::Info::isSongMixable(browseID3dir($client,browseID3dirIndex($client))));
+			$overlay1 = Slim::Display::Display::symbol('moodlogic') if ( Slim::Music::Info::isSongMixable(browseID3dir($client,browseID3dirIndex($client))) );
+			$overlay1 = Slim::Display::Display::symbol('musicmagic') if ( Slim::Music::Info::isSongMMMixable(browseID3dir($client,browseID3dirIndex($client))) );
 			$overlay2 = Slim::Display::Display::symbol('notesymbol');
 		} else {
 			$line2 = browseID3dir($client,browseID3dirIndex($client));
 			$overlay1 = Slim::Display::Display::symbol('moodlogic') if (! defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isGenreMixable($line2));
 			$overlay1 = Slim::Display::Display::symbol('moodlogic') if (defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isArtistMixable($line2));
+			$overlay1 = Slim::Display::Display::symbol('musicmagic') if (! defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isGenreMMMixable($line2));
+			$overlay1 = Slim::Display::Display::symbol('musicmagic') if (defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isArtistMMMixable($line2));
+			$overlay1 = Slim::Display::Display::symbol('musicmagic') if (defined($genre) && defined($artist) && ! defined($album) && Slim::Music::Info::isAlbumMMMixable($artist, $line2));
 			$overlay2 = Slim::Display::Display::symbol('rightarrow');
 		}
 	}

@@ -1,5 +1,5 @@
 package Slim::Buttons::VarietyCombo;
-#$Id: VarietyCombo.pm,v 1.6 2004/08/27 23:54:53 kdf Exp $
+#$Id: VarietyCombo.pm,v 1.7 2004/11/25 03:51:03 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -66,11 +66,11 @@ my %functions = (
 		if (defined Slim::Buttons::Common::param($client, 'song')) {
 			my @oldlines = Slim::Display::Display::curLines($client);
 			$currentItem = Slim::Buttons::Common::param($client, 'song');
-			Slim::Buttons::Common::pushMode($client, 'moodlogic_instant_mix', {'song' => Slim::Buttons::Common::param($client, 'song')});
+			Slim::Buttons::Common::pushMode($client, 'instant_mix', {'song' => Slim::Buttons::Common::param($client, 'song')});
 			specialPushLeft($client, 0, @oldlines);
 		} elsif (defined Slim::Buttons::Common::param($client,'mood')) {
 			my @oldlines = Slim::Display::Display::curLines($client);
-			Slim::Buttons::Common::pushMode($client, 'moodlogic_instant_mix', {'genre' => Slim::Buttons::Common::param($client, 'genre'),
+			Slim::Buttons::Common::pushMode($client, 'instant_mix', {'genre' => Slim::Buttons::Common::param($client, 'genre'),
 					'artist' => Slim::Buttons::Common::param($client, 'artist'),
 					'mood' => Slim::Buttons::Common::param($client, 'mood')});
 			specialPushLeft($client, 0, @oldlines);
@@ -84,7 +84,7 @@ my %functions = (
 		if (defined Slim::Buttons::Common::param($client, 'song')) {
 			my @oldlines = Slim::Display::Display::curLines($client);
 			$currentItem = Slim::Buttons::Common::param($client, 'song');
-			Slim::Buttons::Common::pushMode($client, 'moodlogic_instant_mix', {'song' => Slim::Buttons::Common::param($client, 'song')});
+			Slim::Buttons::Common::pushMode($client, 'instant_mix', {'song' => Slim::Buttons::Common::param($client, 'song')});
 			specialPushLeft($client, 0, @oldlines);
 		} else {
 			$client->bumpRight()
@@ -130,16 +130,22 @@ sub specialPushLeft {
 
 	my $now = Time::HiRes::time();
 	my $when = $now + 0.5;
+	my $mixer;
 	
+	if (Slim::Music::MoodLogic::useMoodLogic()) {
+		$mixer  = string('MOODLOGIC_MIXING');
+	} elsif (Slim::Music::MusicMagic::useMusicMagic()) {
+		$mixer  = string('MUSICMAGIC_MIXING');
+	}
 	if ($step == 0) {
 		Slim::Buttons::Common::pushMode($client, 'block');
-		$client->pushLeft(\@oldlines, [string('MOODLOGIC_MIXING')]);
+		$client->pushLeft(\@oldlines, [$mixer]);
 		Slim::Utils::Timers::setTimer($client,$when,\&specialPushLeft,$step+1);
 	} elsif ($step == 3) {
 		Slim::Buttons::Common::popMode($client);            
-		$client->pushLeft([string('MOODLOGIC_MIXING')."...", ""], [Slim::Display::Display::curLines($client)]);
+		$client->pushLeft([$mixer."...", ""], [Slim::Display::Display::curLines($client)]);
 	} else {
-		$client->update( [$client->renderOverlay(string('MOODLOGIC_MIXING').("." x $step))], undef);
+		$client->update( [$client->renderOverlay($mixer.("." x $step))], undef);
 		Slim::Utils::Timers::setTimer($client,$when,\&specialPushLeft,$step+1);
 	}
 }

@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.20 2004/10/18 18:48:25 dean Exp $
+# $Id: Browse.pm,v 1.21 2004/11/25 03:51:02 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -48,7 +48,8 @@ sub init {
 		if ($name eq 'SAVED_PLAYLISTS' && 
 			!Slim::Utils::Prefs::get('playlistdir') && 
 			!Slim::Music::iTunes::useiTunesLibrary() && 
-			!Slim::Music::MoodLogic::useMoodLogic() ) {
+			!Slim::Music::MoodLogic::useMoodLogic() && 
+			!Slim::Music::MusicMagic::useMusicMagic() ) {
 			next;
 		}
 		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC',$name,$browse{$name});
@@ -298,7 +299,7 @@ sub loadDir {
 
 	unless (defined($abspwd) && 
 			(Slim::Music::Info::isRemoteURL($abspwd) || 
-			 Slim::Music::Info::isITunesPlaylistURL($abspwd) || Slim::Music::Info::isMoodLogicPlaylistURL($abspwd) ||
+			 Slim::Music::Info::isPlaylistURL($abspwd) ||
 			 (Slim::Music::Info::isFileURL($abspwd) && -e (Slim::Utils::Misc::pathFromFileURL($abspwd)))
 			)
 		) {

@@ -1,4 +1,4 @@
-# $Id: strings.txt,v 1.147 2004/11/24 20:11:28 dean Exp $
+# $Id: strings.txt,v 1.148 2004/11/25 03:51:01 kdf Exp $
 #
 # This tab-delimited file contains all the text strings used in the SlimServer
 # The format should be self explanatory. To submit a new language, or a better
@@ -1709,6 +1709,20 @@ SETUP_MOODLOGICPLAYLISTFORMAT_DESC
 	NO	Denne innstillingen avgjør hvilket format som brukes ved import av MoodLogic spillelister.
 	SE	Denna inställning styr format vid import av MoodLogic-låtlistor
 
+SETUP_MUSICMAGICPLAYLISTFORMAT
+	DE	MusicMagic Playlist Format
+	EN	MusicMagic Playlist Format
+	FR	Format des listes de lecture MusicMagic
+	NO	MusicMagic spilleliste format
+	SE	MusicMagic låtlistsformat
+
+SETUP_MUSICMAGICPLAYLISTFORMAT_DESC
+	DE	Diese Option definiert das Format, in welcher MusicMagic Playlists importiert werden.
+	EN	This option determines the format used when importing MusicMagic playlists.
+	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture MusicMagic.
+	NO	Denne innstillingen avgjør hvilket format som brukes ved import av MusicMagic spillelister.
+	SE	Denna inställning styr format vid import av MusicMagic-låtlistor
+
 SETUP_MOODLOGICPLAYLISTPREFIX_CHOOSE
 	DE	Prefix:
 	EN	Prefix:
@@ -1744,6 +1758,14 @@ SETUP_MOODLOGICPLAYLISTPREFIX
 SETUP_MOODLOGICPLAYLISTSUFFIX
 	DE	Der Suffix für MoodLogic Wiedergabelisten wurde geändert auf:
 	EN	MoodLogic playlist suffix changed to:
+
+SETUP_MUSICMAGICPLAYLISTPREFIX
+	DE	Der Prefix für MusicMagic Wiedergabelisten wurde geändert auf:
+	EN	MusicMagic playlist prefix changed to:
+
+SETUP_MUSICMAGICPLAYLISTSUFFIX
+	DE	Der Suffix für MusicMagic Wiedergabelisten wurde geändert auf:
+	EN	MusicMagic playlist suffix changed to:
 
 SETUP_ITUNESPLAYLISTPREFIX
 	DE	Der Prefix für iTunes Wiedergabelisten wurde geändert auf:
@@ -2130,6 +2152,26 @@ DONT_USE_MOODLOGIC
 	PT	Não usar MoodLogic
 	SE	Använd inte MoodLogic
 
+USE_MUSICMAGIC
+	DE	MusicMagic verwenden
+	DK	Anvend MusicMagic
+	EN	Use MusicMagic
+	FR	Utiliser MusicMagic
+	NL	MusicMagic Inschakelen
+	NO	Bruk MusicMagic
+	PT	Usar MusicMagic
+	SE	Använd MusicMagic
+
+DONT_USE_MUSICMAGIC
+	DE	MusicMagic nicht verwenden
+	DK	Anvend ikke MusicMagic
+	EN	Don't use MusicMagic
+	FR	Ne pas utiliser MusicMagic
+	NL	Schakel MusicMagic uit
+	NO	Ikke bruk MusicMagic
+	PT	Não usar MusicMagic
+	SE	Använd inte MusicMagic
+
 SETUP_MOODLOGIC
 	DE	MoodLogic
 	EN	MoodLogic
@@ -2138,6 +2180,13 @@ SETUP_MOODLOGIC
 	NO	MoodLogic
 	PT	MoodLogic
 	SE	MoodLogic
+
+SETUP_MUSICMAGIC
+	EN	MusicMagic
+
+SETUP_MUSICMAGIC_DESC
+	EN	The SlimServer can use your MusicMagic program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level. Check the box below to import your MusicMagic Library information.
+
 
 SETUP_MOODLOGIC_DESC
 	DE	Der SlimServer kann MoodLogic als Quelle für Titel- und Musikstil-Informationen verwenden. Zusätzlich können Sie "Instant Mixes" auf Grund von Musikstil, Interpret und Lied-Intensität erstellen. Aktivieren Sie die folgende Checkbox, falls Sie die Informationen aus MoodLogic verwenden wollen.
@@ -2279,6 +2328,18 @@ SETUP_MOODLOGICSCANINTERVAL_DESC
 	EN	When your Moodlogic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your Moodlogic Database again.
 	FR	Le SlimServer importe automatiquement les modifications apportées à votre bibliothèque MoodLogic. Vous pouvez spécifier le délai minimum en secondes avant lequel le SlimServer rechargera les données MoodLogic.
 	SE	När någon förändring sker i MoodLogic-databasen importerar SlimServer automatiskt dessa ändringar. Slimserver väntar minimalt det antal sekunder som anges här.
+
+SETUP_MUSICMAGICSCANINTERVAL
+	EN	MusicMagic Reload Interval
+
+SETUP_MUSICMAGICSCANINTERVAL_DESC
+	EN	When your MusicMagic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your MusicMagic Database again.  
+
+SETUP_MMSPORT
+	EN	MusicMagic HTTP Port
+
+SETUP_MMSPORT_DESC
+	EN	The MusicMagic Service API allows the selection of an http port to use for queries to the MusicMagic API. Enter the port number here to match the setting you have chosen in MusicMagic Mixer settings.
 
 SETUP_MOODLOGICSCANINTERVAL_OK
 	DE	Minimale Wartezeit für Moodlogic Datenbank Import:
@@ -6682,6 +6743,24 @@ MOODLOGIC_INSTANT_MIX
 	NL	MoodLogic Instant Mix
 	NO	MoodLogic Hurtig Mix
 	PT	Mistura instatânea de Ambiente "MoodLogic"
+
+MUSICMAGIC_MIXING
+	DE	MusicMagic mixt...
+	DK	MusicMagic Mixning
+	EN	MusicMagic Mixing
+	FR	MusicMagic Mix
+	NL	MusicMagic Mix
+	NO	MusicMagic Mix
+	PT	Mistura de Ambiente
+
+MUSICMAGIC_INSTANT_MIX
+	DE	MusicMagic Instant Mix
+	DK	MusicMagic Hurtig-mix
+	EN	MusicMagic Instant Mix
+	FR	MusicMagic Mix instantané
+	NL	MusicMagic Instant Mix
+	NO	MusicMagic Hurtig Mix
+	PT	Mistura instatânea de Ambiente "MusicMagic"
 
 MOODLOGIC_MOOD_0
 	DE	Überraschung

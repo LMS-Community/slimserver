@@ -1,6 +1,6 @@
 package Slim::Music::DBI;
 
-# $Id: DBI.pm,v 1.1 2004/08/13 07:42:31 vidur Exp $
+# $Id: DBI.pm,v 1.2 2004/11/25 03:51:03 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -200,7 +200,8 @@ __PACKAGE__->has_a(ARTIST_ID => 'Slim::Music::Artist');
 __PACKAGE__->has_many(tracks => [ 'Slim::Music::Track' => 'track' ] => 'playlist');
 __PACKAGE__->add_constructor(externalPlaylists => qq{
 	url LIKE 'itunesplaylist:%' OR
-	url LIKE 'moodlogicplaylist:%'
+	url LIKE 'moodlogicplaylist:%' OR
+	url LIKE 'musicmagicplaylist:%'
 });
 
 sub columnNames {

@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.156 2004/11/25 03:11:40 kdf Exp $
+# $Id: Info.pm,v 1.157 2004/11/25 03:51:04 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -65,6 +65,10 @@ my @infoCacheItems = (
 	'MOODLOGIC_SONG_MIXABLE', #
 	'MOODLOGIC_ARTIST_MIXABLE', #
 	'MOODLOGIC_GENRE_MIXABLE', #
+	'MUSICMAGIC_GENRE_MIXABLE', #
+	'MUSICMAGIC_ARTIST_MIXABLE', #
+	'MUSICMAGIC_ALBUM_MIXABLE', #
+	'MUSICMAGIC_SONG_MIXABLE', #
 	'COVER', # cover art
 	'COVERTYPE', # cover art content type
 	'THUMB', # thumbnail cover art
@@ -122,6 +126,11 @@ my %infoCache = ();
 my %genreMixCache = ();
 my %artistMixCache = ();
 
+# musicmagic cache for genre and artist mix indicator; empty if musicmagic isn't used
+my %genreMMMixCache = ();
+my %artistMMMixCache = ();
+my %albumMMMixCache = ();
+
 my $songCount = 0;
 my $total_time = 0;
 
@@ -133,7 +142,7 @@ my %genreCountMemoize = ();
 my %infoCacheItemsIndex;
 
 my $dbname;
-my $DBVERSION = 15;
+my $DBVERSION = 16;
 
 my %artworkCache = ();
 my $artworkDir;
@@ -166,13 +175,16 @@ if (defined @Storable::EXPORT) {
 		
 				my $cacheToStore = {
 					'albumCountMemoize'   => \%albumCountMemoize,
+					'albumMMMixCache'     => \%albumMMMixCache,
 					'artistCountMemoize'  => \%artistCountMemoize,
 					'artistMixCache'      => \%artistMixCache,
+					'artistMMMixCache'    => \%artistMMMixCache,
 					'artworkCache'        => \%artworkCache,
 					'caseCache'           => \%caseCache,
 					'genreCache'          => \%genreCache,
 					'genreCountMemoize'   => \%genreCountMemoize,
 					'genreMixCache'       => \%genreMixCache,
+					'genreMMMixCache'     => \%genreMMMixCache,
 					'infoCache'           => \%infoCache,
 					'songCount'           => \$songCount,
 					'songCountMemoize'    => \%songCountMemoize,
@@ -241,13 +253,16 @@ if (defined @Storable::EXPORT) {
 			} else {
 
 				%albumCountMemoize   = %{$cacheToRead->{'albumCountMemoize'}};
+				%albumMMMixCache     = %{$cacheToRead->{'albumMMMixCache'}};
 				%artistCountMemoize  = %{$cacheToRead->{'artistCountMemoize'}};
 				%artistMixCache      = %{$cacheToRead->{'artistMixCache'}};
+				%artistMMMixCache    = %{$cacheToRead->{'artistMMMixCache'}};
 				%artworkCache        = %{$cacheToRead->{'artworkCache'}};
 				%caseCache           = %{$cacheToRead->{'caseCache'}};
 				%genreCache          = %{$cacheToRead->{'genreCache'}};
 				%genreCountMemoize   = %{$cacheToRead->{'genreCountMemoize'}};
 				%genreMixCache       = %{$cacheToRead->{'genreMixCache'}};
+				%genreMMMixCache     = %{$cacheToRead->{'genreMMMixCache'}};
 				%infoCache           = %{$cacheToRead->{'infoCache'}};
 				%songCountMemoize    = %{$cacheToRead->{'songCountMemoize'}};
 				%sortCache           = %{$cacheToRead->{'sortCache'}};
@@ -498,8 +513,14 @@ sub clearCache {
 			completeClearCache();
 		}
 
+		# moodlogic caches
 		%genreMixCache = ();
 		%artistMixCache = ();
+		
+		# musicmagic caches
+		%genreMMMixCache = ();
+		%artistMMMixCache = ();
+		%albumMMMixCache = ();
 	}
 }
 
@@ -631,7 +652,7 @@ sub generatePlaylists {
 
 	foreach my $url (keys %infoCache) {
 
- 		if (isITunesPlaylistURL($url) || isMoodLogicPlaylistURL($url)) {
+ 		if (isPlaylistURL($url)) {
 
 			push @playlists, $url;
 
@@ -864,6 +885,29 @@ sub updateArtistMixCache {
             $artistMixCache{$cacheEntry->{'ARTIST'}} = $cacheEntry->{'MOODLOGIC_ARTIST_ID'};
         }
 }
+
+sub updateGenreMMMixCache {
+	my $genre = shift;
+	$genreMMMixCache{$genre} = $genre;
+}
+
+sub updateArtistMMMixCache {
+	my $artist = shift;
+	$artistMMMixCache{$artist} = $artist;
+}
+
+sub updateAlbumMMMixCache {
+	my $cacheEntry = shift;
+
+	if (defined $cacheEntry->{MUSICMAGIC_ALBUM_MIXABLE} &&
+		$cacheEntry->{MUSICMAGIC_ALBUM_MIXABLE} == 1) {
+		my $artist = $cacheEntry->{'ARTIST'};
+		my $album = $cacheEntry->{'ALBUM'};
+		my $key = "$artist\@\@$album";
+		$albumMMMixCache{$key} = 1;
+	}
+}
+
 
 ##################################################################################
 # this routine accepts both our three letter content types as well as mime types.
@@ -1160,7 +1204,7 @@ sub standardTitle {
 	my $title;
 	my $format;
 
-	if (isITunesPlaylistURL($fullpath) || isMoodLogicPlaylistURL($fullpath)) {
+	if (isPlaylistURL($fullpath)) {
 		$format = 'TITLE';
 	} elsif (defined($client)) {
 		#in array syntax this would be $titleFormat[$clientTitleFormat[$clientTitleFormatCurr]]
@@ -2313,10 +2357,9 @@ sub readCoverArtTags {
 			
 		if (isMP3($fullpath) || isWav($fullpath) || isAIFF($fullpath)) {
 	
-			$::d_artwork && Slim::Utils::Misc::msg("Looking for image in ID3 tag in file $file\n");
-
 			$tags = MP3::Info::get_mp3tag($file, 2, 1);
-			if ($tags) {
+			if (defined $tags) {
+				$::d_artwork && Slim::Utils::Misc::msg("Looking for image in ID3 2.2 tag in file $file\n");
 				# look for ID3 v2.2 picture
 				my $pic = $tags->{'PIC'};
 				if (defined($pic)) {
@@ -2327,7 +2370,7 @@ sub readCoverArtTags {
 					my $len = length($description) + 1 + 5;
 					if ($encoding) { $len++; } # skip extra terminating null if unicode
 					
-					if ($len < length($pic)) {		
+					if ($len < (length($pic))) {		
 						my ($data) = unpack "x$len A*", $pic;
 						
 						$::d_artwork && Slim::Utils::Misc::msg( "PIC format: $format length: " . length($pic) . "\n");
@@ -2673,18 +2716,6 @@ sub isFileURL {
 	return (defined($url) && ($url =~ /^file:\/\//i));
 }
 
-sub isITunesPlaylistURL { 
-	my $url = shift;
-
-	return (defined($url) && ($url =~ /^itunesplaylist:/i));
-}
-
-sub isMoodLogicPlaylistURL { 
-	my $url = shift;
-
-	return (defined($url) && ($url =~ /^moodlogicplaylist:/i));
-}
-
 sub isHTTPURL {
 	my $url = shift;
 
@@ -2692,7 +2723,13 @@ sub isHTTPURL {
 }
 
 sub isRemoteURL {
-	return ((shift =~ /^([a-zA-Z0-9\-]+):/) && $Slim::Player::Source::protocolHandlers{$1});
+	my $url = shift;
+	return (defined($url) && ($url =~ /^([a-zA-Z\-]+):/) && $Slim::Player::Source::protocolHandlers{$1});
+}
+
+sub isPlaylistURL {
+	my $url = shift;
+	return (defined($url) && ($url =~ /^([a-zA-Z\-]+):/) && exists($Slim::Player::Source::protocolHandlers{$1}) && !isFileURL($url));
 }
 
 sub isPlaylistURL {
@@ -2701,7 +2738,8 @@ sub isPlaylistURL {
 }
 
 sub isURL {
-	return ((shift =~ /^([a-zA-Z0-9\-]+):/) && exists($Slim::Player::Source::protocolHandlers{$1}));
+	my $url = shift;
+	return (defined($url) && ($url =~ /^([a-zA-Z\-]+):/) && exists($Slim::Player::Source::protocolHandlers{$1}));
 }
 
 sub isType {
@@ -2812,16 +2850,42 @@ sub isPlaylist {
 	}
 }
 
-sub isSongMixable { return info(shift,'MOODLOGIC_SONG_MIXABLE'); }
+sub isSongMixable {
+	my $song = shift;
+	return info($song,'MOODLOGIC_SONG_MIXABLE'); 
+}
+
+sub isSongMMMixable {
+	my $song = shift;
+	my $result = defined info($song,'MUSICMAGIC_SONG_MIXABLE') ? 1 : 0; 
+	return $result;
+}
+
+sub isAlbumMMMixable {
+	my $artist = shift;
+	my $album = shift;
+	my $key = "$artist\@\@$album";
+	return defined $albumMMMixCache{$key} ? 1 : 0;
+}
 
 sub isArtistMixable {
 	my $artist = shift;
 	return defined $artistMixCache{$artist} ? 1 : 0;
 }
 
+sub isArtistMMMixable {
+	my $artist = shift;
+	return defined $artistMMMixCache{$artist} ? 1 : 0;
+}
+
 sub isGenreMixable {
 	my $genre = shift;
 	return defined $genreMixCache{$genre} ? 1 : 0;
+}
+
+sub isGenreMMMixable {
+	my $genre = shift;
+	return defined $genreMMMixCache{$genre} ? 1 : 0;
 }
 
 sub moodLogicSongId { return info(shift,'MOODLOGIC_SONG_ID'); }

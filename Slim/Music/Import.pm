@@ -7,10 +7,16 @@ package Slim::Music::Import;
 
 use strict;
 use Slim::Utils::Misc;
+use Slim::Music::iTunes;
+use Slim::Music::MoodLogic;
+use Slim::Music::MusicMagic;
+use Slim::Music::MusicFolderScan;
+
 # background scanning and cache prefilling of music information to speed up UI...
 
 # Total of how many file scanners are running
 my %importsRunning;
+my $importCount=0;
 
 # Force a rescan of all the importers (TODO: Make importers pluggable)
 sub startScan {
@@ -18,24 +24,32 @@ sub startScan {
 	$::d_info && msg("Clearing ID3 cache\n");
 	Slim::Music::Info::clearCache();
 	
-	$::d_info && msg("Starting background folder, itunes and moodlogic scanning.\n");
+	$::d_info && msg("Starting background folder, itunes, moodlogic and musicmagic scanning.\n");
+	$importCount=0;
 	Slim::Music::MusicFolderScan::startScan();
 	Slim::Music::iTunes::startScan();
 	Slim::Music::MoodLogic::startScan();
+	Slim::Music::MusicMagic::startScan();
 }
 
 sub startup {
-	$::d_info && msg("Starting itunes and/or moodlogic background scanners.\n");
+	$::d_info && msg("Starting itunes/moodlogic/musicmagic background scanners.\n");
 
+	$importCount=0;
 	Slim::Music::iTunes::checker();
 	Slim::Music::MoodLogic::checker();
+	Slim::Music::MusicMagic::checker();
 }
-
 
 sub addImport {
 	my $import = shift;
+	$importCount ++;
 	$::d_info && msg("Adding $import Scan\n");
-	$importsRunning{$import} = Time::HiRes::time();;
+	$importsRunning{$import} = Time::HiRes::time();
+}
+
+sub countImports {
+	return $importCount;
 }
 
 sub delImport {
@@ -43,6 +57,7 @@ sub delImport {
 	if (exists $importsRunning{$import}) { 
 		$::d_info && msg("Completing $import Scan in ".(Time::HiRes::time() - $importsRunning{$import})." seconds\n");
 		delete $importsRunning{$import};
+		$importCount--;
 	}
 
 	if (scalar keys %importsRunning == 0) {
@@ -54,7 +69,9 @@ sub delImport {
 }
 
 sub stillScanning {
-	return scalar keys %importsRunning;
+	my $imports = scalar keys %importsRunning;
+	$::d_info && msg("Scanning with $imports import plugins\n");
+	return $imports;
 }
 
 

@@ -1,6 +1,6 @@
 package Slim::Web::Pages;
 
-# $Id: Pages.pm,v 1.104 2004/10/13 00:51:39 dean Exp $
+# $Id: Pages.pm,v 1.105 2004/11/25 03:51:05 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -58,7 +58,7 @@ sub home {
 		$params->{'nofolder'}=1;
 	}
 	
-	if (Slim::Utils::Prefs::get('playlistdir') || Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic()) {
+	if (Slim::Utils::Prefs::get('playlistdir') || Slim::Music::Import::countImports()) {
 		addLinks("browse",{'SAVED_PLAYLISTS' => "browse.html?dir=__playlists"});
 	} else {
 		addLinks("browse",{'SAVED_PLAYLISTS' => undef});
@@ -143,7 +143,7 @@ sub browser {
 		$playlist = 1;
 		$params->{'playlist'} = 1;
 
-		if (!Slim::Utils::Prefs::get("playlistdir") && !(Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic())) {
+		if (!Slim::Utils::Prefs::get("playlistdir") && !Slim::Music::Import::countImports()) {
 			$::d_http && msg("no valid playlists directory!!\n");
 			return Slim::Web::HTTP::filltemplatefile("badpath.html", $params);
 		}
@@ -173,7 +173,7 @@ sub browser {
 	if (!$fulldir || !Slim::Music::Info::isList($fulldir)) {
 
 		# check if we're just showing itunes playlists
-		if (Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic()) {
+		if (Slim::Music::Import::countImports()) {
 			browser_addtolist_done($current_player, $callback, $httpClient, $params, [], $response);
 			return undef;
 		} else {
@@ -309,7 +309,7 @@ sub browser {
 sub browser_addtolist_done {
 	my ($current_player, $callback, $httpClient, $params, $itemsref, $response) = @_;
 
-	if (defined $params->{'dir'} && $params->{'dir'} eq '__playlists' && (Slim::Music::MoodLogic::useMoodLogic() || Slim::Music::iTunes::useiTunesLibrary())) {
+	if (defined $params->{'dir'} && $params->{'dir'} eq '__playlists' && (Slim::Music::Import::countImports())) {
 
 		$::d_http && msg("just showing imported playlists\n");
 
@@ -1550,7 +1550,7 @@ sub browseid3 {
 				$list_form{'descend'}         = $descend;
 				$list_form{'player'}          = $player;
 				$list_form{'odd'}	      = ($itemnumber + 1) % 2;
-				$list_form{'mixable_descend'} = Slim::Music::Info::isArtistMixable($item) && ($descend eq "true");
+				$list_form{'mixable_descend'} = (Slim::Music::Info::isArtistMixable($item) || Slim::Music::Info::isArtistMMMixable($item)) && ($descend eq "true");
 				$list_form{'skinOverride'}    = $params->{'skinOverride'};
 
 				my $anchor = anchor(Slim::Utils::Text::getSortName($item), 1);

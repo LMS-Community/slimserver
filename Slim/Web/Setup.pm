@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.111 2004/11/19 04:04:26 kdf Exp $
+# $Id: Setup.pm,v 1.112 2004/11/25 03:51:06 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1137,16 +1137,24 @@ sub initSetupConfig {
 
 				if (Slim::Music::MoodLogic::canUseMoodLogic()) {
 					$pageref->{'GroupOrder'}[2] = 'moodlogic';
-					push @{$pageref->{'children'}}, 'moodlogic' if $pageref->{'children'}[-1] ne 'moodlogic';;
+					push @{$pageref->{'children'}}, 'moodlogic' if $pageref->{'children'}[-1] ne 'moodlogic';
 				} else {
 					$pageref->{'GroupOrder'}[2] = undef;
 					pop @{$pageref->{'children'}} if $pageref->{'children'}[-1] eq 'moodlogic';
 				}
 				
+				if (Slim::Music::MusicMagic::canUseMusicMagic()) {
+					$pageref->{'GroupOrder'}[3] = 'musicmagic';
+					push @{$pageref->{'children'}}, 'musicmagic' if $pageref->{'children'}[-1] ne 'musicmagic';
+				} else {
+					$pageref->{'GroupOrder'}[3] = undef;
+					pop @{$pageref->{'children'}} if $pageref->{'children'}[-1] eq 'musicmagic';
+				}
+
 				$paramref->{'versionInfo'} = string('SERVER_VERSION') . string("COLON") . $::VERSION;
 				$paramref->{'newVersion'} = $::newVersion;
 			}
-		,'GroupOrder' => ['language', undef, undef, 'Default']
+		,'GroupOrder' => ['language', undef, undef, undef, 'Default']
 			#if able to use iTunesLibrary then undef at [1] will be replaced by 'iTunes'
 		#,'template' => 'setup_server.html'
 		,'Groups' => {
@@ -1167,6 +1175,13 @@ sub initSetupConfig {
 						},
 				'moodlogic' => {
 						'PrefOrder' => ['moodlogic']
+						,'Suppress_PrefLine' => 1
+						,'Suppress_PrefSub' => 1
+						,'GroupLine' => 1
+						,'GroupSub' => 1
+					},
+				'musicmagic' => {
+						'PrefOrder' => ['musicmagic']
 						,'Suppress_PrefLine' => 1
 						,'Suppress_PrefSub' => 1
 						,'GroupLine' => 1
@@ -1200,6 +1215,16 @@ sub initSetupConfig {
 							,'options' => {
 								'1' => string('USE_MOODLOGIC')
 								,'0' => string('DONT_USE_MOODLOGIC')
+							}
+							,'optionSort' => 'KR'
+							,'inputTemplate' => 'setup_input_radio.html'
+						}
+				,'musicmagic' => {
+							'validate' => \&validateTrueFalse
+							,'changeIntro' => ""
+							,'options' => {
+								'1' => string('USE_MUSICMAGIC')
+								,'0' => string('DONT_USE_MUSICMAGIC')
 							}
 							,'optionSort' => 'KR'
 							,'inputTemplate' => 'setup_input_radio.html'
@@ -2162,6 +2187,51 @@ sub initSetupConfig {
 					}
 			}
 		}
+	,'musicmagic' => {
+		'title' => string('SETUP_MUSICMAGIC')
+		,'parent' => 'server'
+		,'GroupOrder' => ['Default','MusicMagicPlaylistFormat']
+		,'Groups' => {
+			'Default' => {
+					#'PrefOrder' => ['instantMixMax','varietyCombo','musicmagicscaninterval']
+					'PrefOrder' => ['instantMixMax','musicmagicscaninterval','MMSport']
+				}
+			,'MusicMagicPlaylistFormat' => {
+					'PrefOrder' => ['MusicMagicplaylistprefix','MusicMagicplaylistsuffix']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupHead' => string('SETUP_MUSICMAGICPLAYLISTFORMAT')
+					,'GroupDesc' => string('SETUP_MUSICMAGICPLAYLISTFORMAT_DESC')
+					,'GroupLine' => 1
+					,'GroupSub' => 1
+				}
+			}
+		,'Prefs' => {
+			'MusicMagicplaylistprefix' => {
+						'validate' => \&validateAcceptAll
+						,'PrefSize' => 'large'
+					}
+			,'MusicMagicplaylistsuffix' => {
+						'validate' => \&validateAcceptAll
+						,'PrefSize' => 'large'
+					}
+			,'musicmagicscaninterval' => {
+						'validate' => \&validateNumber
+						,'validateArgs' => [0,undef,1000]
+				}
+			,'instantMixMax'	=> {
+						'validate' => \&validateInt
+						,'validateArgs' => [1,undef,1]
+					}
+			,'MMSport'	=> {
+						'validate' => \&validateInt
+						,'validateArgs' => [1025,65535,undef,1]
+					}
+			}
+		}
 		
 	); #end of setup hash
 	foreach my $key (sort keys %main:: ) {
@@ -2577,7 +2647,8 @@ sub playlists {
 	
 	return undef unless Slim::Utils::Prefs::get('playlistdir');
 	Slim::Utils::Scan::addToList(\@list, Slim::Utils::Prefs::get('playlistdir'), 0);
-	if (Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic()) {
+	if (Slim::Music::iTunes::useiTunesLibrary() || Slim::Music::MoodLogic::useMoodLogic() ||
+		Slim::Music::MusicMagic::useMusicMagic()) {
 		push @list, @{Slim::Music::Info::playlists()};
 	}
 	foreach my $item ( @list) {

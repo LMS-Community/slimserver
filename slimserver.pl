@@ -131,8 +131,6 @@ use Slim::Display::Graphics;
 use Slim::Web::HTTP;
 use Slim::Hardware::IR;
 use Slim::Music::Info;
-use Slim::Music::iTunes;
-use Slim::Music::MusicFolderScan;
 use Slim::Music::Import;
 use Slim::Utils::OSDetect;
 use Slim::Player::Playlist;
@@ -146,7 +144,6 @@ use Slim::Web::Setup;
 use Slim::Control::Stdio;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
-use Slim::Music::MoodLogic;
 use Slim::Networking::Slimproto;
 
 use vars qw($VERSION @AUTHORS);
@@ -193,6 +190,7 @@ use vars qw(
 	$d_itunes_verbose
 	$d_mdns
 	$d_moodlogic
+	$d_musicmagic
 	$d_mp3
 	$d_os
 	$d_perf
@@ -538,6 +536,7 @@ to the console via stderr:
     --d_itunes_verbose => verbose iTunes Synchronization information
     --d_mdns         => Multicast DNS aka Zeroconf aka Rendezvous information
     --d_moodlogic    => MoodLogic synchronization information
+    --d_musicmagic   => MusicMagic synchronization information
     --d_mp3    		 => MP3 frame detection
     --d_os           => Operating system detection information
     --d_paths        => File path processing information
@@ -611,6 +610,7 @@ sub initOptions {
 		'd_itunes_verbose'	=> \$d_itunes_verbose,
 		'd_mdns'			=> \$d_mdns,
 		'd_moodlogic'		=> \$d_moodlogic,
+		'd_musicmagic'		=> \$d_musicmagic,
 		'd_mp3'				=> \$d_mp3,
 		'd_os'				=> \$d_os,
 		'd_paths'			=> \$d_paths,
@@ -679,7 +679,8 @@ sub initSettings {
 		-d Slim::Utils::Prefs::get("audiodir")) && 
 		!$quiet && 
 		!Slim::Music::iTunes::useiTunesLibrary() &&
-		!Slim::Music::MoodLogic::useMoodLogic()) {
+		!Slim::Music::MoodLogic::useMoodLogic() &&
+		!Slim::Music::MusicMagic::useMusicMagic()) {
 
 		msg("Your MP3 directory needs to be configured. Please open your web browser,\n");
 		msg("go to the following URL, and click on the \"Server Settings\" link.\n\n");
