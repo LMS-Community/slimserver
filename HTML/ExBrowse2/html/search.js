@@ -1,10 +1,16 @@
 var searchInProgress = 0;
+var xslp;
 
-function searchhandler(req, url) {
-	searchInProgress = 0;
-	document.getElementById("activesearch").style.display = "block";
-	rxml = req.responseXML;
+var forcejs = 0;
 
+function loadxslhandler(req, url) {
+	if (XSLTProcessor) {
+		xslp = new XSLTProcessor();
+		xslp.importStylesheet(req.responseXML);
+	}
+}
+
+function doTransform(rxml) {
 	var resultsets = rxml.getElementsByTagName("searchresults");
 
 	var output = "";
@@ -17,10 +23,6 @@ function searchhandler(req, url) {
 
 		for (j = 0; j < results.length; j++) {
 			id = results[j].getAttribute("id");
-
-			// Isn't this what XSLT is for?
-			// Unfortunately, Safari doesn't support XSLTProcessor, so I'll do this the hard way...
-
 			output += '<tr><td class="browselistbuttons">';
 			output += '<img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;sub=addtracks';
 			output += '&amp;' + type + '=' + id + '&quot;)" src="html/images/add.gif" width="8" height="8"/>';
@@ -33,10 +35,26 @@ function searchhandler(req, url) {
 
 		}
 		output += "</table>";
-
 	}
+	return output;
+}
 
-	document.getElementById("activesearchdiv").innerHTML = output;
+function searchhandler(req, url) {
+	searchInProgress = 0;
+	document.getElementById("activesearch").style.display = "block";
+	rxml = req.responseXML;
+
+	asearchdiv = document.getElementById("activesearch");
+
+	if (xslp && !forcejs) {
+		var fragment = xslp.transformToFragment(rxml, document);
+		asearchdiv.replaceChild(fragment, asearchdiv.firstChild);
+		timestr = "XSLT ";
+	} else {
+		var output = doTransform(rxml)
+		asearchdiv.innerHTML = output;
+		timestr = "JS ";
+	}
 }
 
 function searchsend() {
@@ -61,3 +79,4 @@ function searchkey() {
 	return true;
 }
 
+postback("html/search.xsl", loadxslhandler);

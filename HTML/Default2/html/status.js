@@ -213,7 +213,7 @@ function displayCurrentSong(song, artist, album) {
 	if (artist != "") songstring += "</b> by <b>" + artist;
 	songstring += "</b>";
 
-	if (document.getElementById("song").innerHTML != song) {
+	if (document.getElementById("song").innerHTML != songstring) {
 	       	document.getElementById("song").innerHTML = songstring;
 	}
 }
