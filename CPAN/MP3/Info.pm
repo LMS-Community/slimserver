@@ -887,8 +887,8 @@ sub _get_info {
 	my($h, $vbr) = @_;
 	my $i;
 
-	# No bitrate? Something's wrong.
-	unless ($h->{bitrate}) {
+	# No bitrate or sample rate? Something's wrong.
+	unless ($h->{bitrate} && $h->{fs}) {
 		return {};
 	}
 
