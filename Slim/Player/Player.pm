@@ -465,6 +465,8 @@ sub displayWidth {
 	return 40;
 }
 
+sub sendFrame {};
+
 sub currentSongLines {
 	my $client = shift;
 	my $parts;
