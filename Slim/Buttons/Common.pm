@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.22 2003/11/26 02:58:10 grotus Exp $
+# $Id: Common.pm,v 1.23 2003/11/27 03:48:36 grotus Exp $
 
 # SlimServer Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -510,6 +510,15 @@ my %functions = (
  			$modefunctarg = $2;
  		}
 		&$coderef($client,$modefunct,$modefunctarg) if $coderef;
+	}
+	,'changeMap' => sub {
+		my ($client,$funct,$functarg) = @_;
+		return if !$functarg;
+		my $mapref = Slim::Hardware::IR::mapfiles();
+		my %maps = reverse %$mapref;
+		return if !exists($maps{$functarg});
+		Slim::Utils::Prefs::clientSet($client,'irmap',$maps{$functarg});
+		Slim::Display::Animation::showBriefly($client,string('SETUP_IRMAP') . ':', $functarg);
 	}
 
 );
