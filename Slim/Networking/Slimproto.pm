@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.53 2004/04/29 22:21:52 daniel Exp $
+# $Id: Slimproto.pm,v 1.54 2004/05/06 03:14:28 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -16,6 +16,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Networking::Select;
 use Slim::Player::Squeezebox;
+use Slim::Player::SoftSqueeze;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -23,6 +24,8 @@ use Errno qw(:POSIX);
 
 my $SLIMPROTO_ADDR = 0;
 my $SLIMPROTO_PORT = 3483;
+
+my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze');
 
 my $slimproto_socket;
 
@@ -278,12 +281,30 @@ sub process_slimproto_frame {
 		
 		if (!defined($client)) {
 			$::d_slimproto && msg("creating new client, id:$id ipport: $ipport{$s}\n");
-			$client = Slim::Player::Squeezebox->new(
-				$id, 		# mac
-				$paddr,		# sockaddr_in
-				$revision,	# rev
-				$s		# tcp sock
-			);
+			if (!defined($deviceids[$deviceid])) {
+				$::d_slimproto && msg("unknown device id $deviceid in HELO framem closing connection\n");
+				slimproto_close($s);
+				return;
+			} elsif ($deviceids[$deviceid] eq 'squeezebox') {			
+				$client = Slim::Player::Squeezebox->new(
+					$id, 		# mac
+					$paddr,		# sockaddr_in
+					$revision,	# rev
+					$s		# tcp sock
+				);
+			} elsif ($deviceids[$deviceid] eq 'softsqueeze') {
+				$client = Slim::Player::SoftSqueeze->new(
+					$id, 		# mac
+					$paddr,		# sockaddr_in
+					$revision,	# rev
+					$s		# tcp sock
+				);			
+			} else {
+				$::d_slimproto && msg("unknown device type for $deviceid in HELO framem closing connection\n");
+				slimproto_close($s);
+				return;
+			}			
+			
 			$client->macaddress($mac);
 			$client->init();
 		} else {

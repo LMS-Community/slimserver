@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.41 2004/05/04 17:08:46 dean Exp $
+# $Id: Misc.pm,v 1.42 2004/05/06 03:14:28 dean Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -153,6 +153,7 @@ sub pathFromFileURL {
 		} 
 	} else {
 		msg("pathFromFileURL: $url isn't a file URL...\n");
+		bt();
 	}
 	
 	if (!defined($file))  {
