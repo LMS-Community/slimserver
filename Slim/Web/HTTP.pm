@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.71 2004/02/22 21:47:23 grotus Exp $
+# $Id: HTTP.pm,v 1.72 2004/02/25 02:08:04 grotus Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -339,7 +339,6 @@ sub processHTTP {
 sub executeurl {
 	my($httpclientsock, $paramsref) = @_;
 	my $output = "";
-	#my($command);
 	my @p;
 	my($client) = undef;
 
@@ -410,7 +409,7 @@ sub executeurl {
 	my @callbackargs = ($client, $httpclientsock, $paramsref);
 
 	# only execute a command on the client if there is one and if we have a command.
-	if (defined($client) && defined($p[0]) && $path =~ /(?:\/|)stream(?:|\.[^.]+)$/) {
+	if (defined($client) && defined($p[0]) && $path !~ /(?:\/|)stream(?:|\.[^.]+)$/) {
 		if (defined($$paramsref{"player"}) && $$paramsref{"player"} eq "*") {
 			foreach my $client2 (Slim::Player::Client::clients()) {
 				next if $client eq $client2;
