@@ -239,6 +239,11 @@ sub parseCUE {
 
 	$::d_parse && Slim::Utils::Misc::msg("parseCUE: cuedir: [$cuedir] secs: [$secs] noUTF8: [$noUTF8]\n");
 
+	if (!@$lines) {
+		$::d_parse && Slim::Utils::Misc::msg("parseCUE skipping empty cuesheet.\n");
+		return;
+	}
+
 	for (@$lines) {
 
 		unless ($noUTF8) {
@@ -421,6 +426,7 @@ sub readCUE {
 	while (my $line = <$cuefile>) {
 		chomp($line);
 		$line =~ s/\cM//g;  
+		next if ($line =~ /^\s*$/);
 		push @lines, $line;
 	}
 
