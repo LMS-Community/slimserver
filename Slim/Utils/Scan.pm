@@ -1,6 +1,6 @@
 package Slim::Utils::Scan;
           
-# $Id: Scan.pm,v 1.17 2004/10/18 18:48:27 dean Exp $
+# $Id: Scan.pm,v 1.18 2004/11/03 22:58:35 vidur Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -269,6 +269,15 @@ sub addToList_run {
 
 	my $itempath = Slim::Utils::Misc::fixPath($item, $curdirState->path);
 	$::d_scan && msg("itempath: $item and " .  $curdirState->path . " made $itempath\n");
+
+	# XXX
+	# fixPath (really URI) strips trailing spaces from $item.
+	# if $item is all spaces, that means we just get the path again
+	# so break this loop.  This should be removed when fixPath
+	# gets fixed.
+	if ($curdirState->path eq $itempath) {
+		return 1;
+	}
 
 ######### If it's a directory or playlist and we're recursing, push it onto the stack, othwerwise add it to the list
 
