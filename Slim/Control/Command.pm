@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# $Id: Command.pm,v 1.45 2004/09/14 19:37:19 dean Exp $
+# $Id: Command.pm,v 1.46 2004/09/22 02:51:27 kdf Exp $
 #
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -789,7 +789,8 @@ sub executeCallback {
 
 sub load_done {
 	my ($client, $index, $callbackf, $callbackargs)=@_;
-	Slim::Player::Playlist::reshuffle($client);
+	# dont' keep current song on loading a playlist
+	Slim::Player::Playlist::reshuffle($client,1);
 	if (defined($index)) {
 		Slim::Player::Source::jumpto($client, $index);
 	}

@@ -1,6 +1,6 @@
 package Slim::Music::MoodLogic;
 
-#$Id: MoodLogic.pm,v 1.22 2004/09/11 02:47:09 kdf Exp $
+#$Id: MoodLogic.pm,v 1.23 2004/09/22 02:51:29 kdf Exp $
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -295,7 +295,7 @@ sub exportFunction {
 		while (defined $playlist && !$playlist->EOF) {
 			my $name= $playlist->Fields('name')->value;
 			my %cacheEntry = ();
-			my $url = 'moodlogicplaylist://' . Slim::Web::HTTP::escape($name);
+			my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
 			if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
 				$::d_moodlogic && msg("Found MoodLogic Playlist: $url\n");
 			}
@@ -314,7 +314,7 @@ sub exportFunction {
 				my $name= $auto->Fields('name')->value;
 				
 				my %cacheEntry = ();
-				my $url = 'moodlogicplaylist://' . Slim::Web::HTTP::escape($name);
+				my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
 				if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
 					$::d_moodlogic && msg("Found MoodLogic Auto Playlist: $url\n");
 				}

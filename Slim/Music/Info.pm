@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.143 2004/09/10 03:07:38 vidur Exp $
+# $Id: Info.pm,v 1.144 2004/09/22 02:51:28 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -2695,7 +2695,7 @@ sub isURL {
 
 	push @protocols, ("itunesplaylist", "moodlogicplaylist", "file");
 
-	return (defined($url) && scalar(grep { $url =~ /^$_:\/\//i } @protocols));
+	return (defined($url) && scalar(grep { $url =~ /^$_:(\/\/)?/i } @protocols));
 }
 
 sub isType {

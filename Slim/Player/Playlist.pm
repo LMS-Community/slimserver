@@ -335,7 +335,7 @@ sub reshuffle {
 				$trackToNum{$track}=$i;
 				$i++;
 			}
-			if ($realsong == -1) {
+			if ($realsong == -1 && !$dontpreservecurrsong) {
 				$realsong=${$listRef}[Slim::Utils::Prefs::clientGet($client,'currentSong')];
 			}
 			my $curalbum=Slim::Utils::Text::matchCase(Slim::Music::Info::album(${playList($client)}[$realsong]));

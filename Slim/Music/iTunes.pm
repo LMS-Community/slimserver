@@ -601,7 +601,7 @@ sub scanFunction {
 			my %curPlaylist = getDict();
 			my %cacheEntry = ();
 			my $name = $curPlaylist{'Name'};
-			my $url = 'itunesplaylist://' . Slim::Web::HTTP::escape($name);
+			my $url = 'itunesplaylist:' . Slim::Web::HTTP::escape($name);
 			$::d_itunes && msg("got a playlist ($url) named $name\n");
 			# add this playlist to our playlist library
 #	'LIST',	 # list items (array)

@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.111 2004/09/16 15:34:17 dean Exp $
+# $Id: Source.pm,v 1.112 2004/09/22 02:51:29 kdf Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -309,7 +309,7 @@ sub playmode {
 	}
 	
 	# if we're playing, then open the new song the master.		
-	if ($newmode eq "play") {
+	if ($newmode eq "play" || $newmode eq "resume") {
 
 		# if the player is off, we automatically power on when we start to play
 		if (!$client->power()) {
