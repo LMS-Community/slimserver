@@ -5,38 +5,36 @@
 [INCLUDE menu.html]
 
 <font face="arial,helvetica">
-<small>
+<table width=100%>
+<tr><td colspan="2"><font size="-2">
 [IF player_chooser_list]<form method="get" action="{webroot}index.html" target="_top">[S CURRENT_PLAYER] <select name="player">{player_chooser_list}</select><input class="stdclick" type="submit" value="Change"></form>[/IF]
-[IFN player_chooser_list][IF player_name]{player_name}[/IF] [IF sync][S SYNCHRONIZED_WITH] {sync}[/IF]:[/IFN]</small>
-<small>
-[IF modeplay][S PLAYING][/IF]
+[IFN player_chooser_list][IF player_name]{player_name}[/IF] [IF sync][S SYNCHRONIZED_WITH] {sync}[/IF][/IFN]
+</font>
+</td></tr>
+<tr><td colspan="2">
+<font size="-2">[IF modeplay][S PLAYING][/IF]
 [IF modepause][S PAUSED_ON][/IF]
 [IF modestop][S STOPPED_ON][/IF]
 [IF currentsong]<b>{currentsong}</b> [S OUT_OF] <b>&nbsp;{songcount}</b>&nbsp;[/IF]
-<a href="browse.html?dir=&player={%player}">({title})</a><br>
-</small>
-<br>
-<table width=100%>
-   [IF coverart]
-      <tr>
-          <td colspan="2"><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}"><img src="/music/{%itempath}/cover.jpg" border="0" height="100"></a></td>
-      </tr>
-   [/IF]
-   [IF songtitle]<tr><td>[S PLAYING]</td>
+</font>
+</td><tr>
+   [IF songtitle]<tr><td>[S TITLE]:</td>
           <td><a href="songinfo.html?songurl={%itempath}&player={%player}">{songtitle}</a></td>
       </tr>
    [/IF]
-   [IF artist]<tr><td>[S BY]</td>
+   [IF artist]<tr><td>[S ARTIST]:</td>
           <td><a href="browseid3.html?genre=*&artist={%artist}&player={%player}">{artist}</a></td>
       </tr>
    [/IF]
       <tr>
-          <td>[IF album]
-          [S FROM][/IF]</td>
-          <td>[IF album]<a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}">{album}</a>
-          [/IF]
-          [IF year]&nbsp;({year})[/IF]</td>
+          <td>[IF album][S ALBUM]:[/IF]</td>
+          <td>[IF album]<a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}">{album}</a>[/IF][IF year] ({year})[/IF]</td>
    </tr>
+   [IF coverart]
+      <tr>
+          <td></td><td><a href="browseid3.html?genre=*&artist={%artist}&album={%album}&player={%player}"><img src="/music/{%itempath}/cover.jpg" border="0" height="100"></a></td>
+      </tr>
+   [/IF]
 </table>
 
 <br>

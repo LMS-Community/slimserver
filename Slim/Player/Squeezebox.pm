@@ -68,10 +68,10 @@ sub decoder {
 sub play {
 	my $client = shift;
 	my $paused = shift;
-	my $pcm = shift;
 
-	Slim::Hardware::Decoder::reset($client, $pcm);
-	$client->stream('s', $paused);
+	Slim::Hardware::Decoder::reset($client, $client->streamformat());
+	$client->stream('s', $paused, $client->streamformat());
+	$client->volume(Slim::Utils::Prefs::clientGet($client, "volume"));
 	return 1;
 }
 #
@@ -194,8 +194,9 @@ sub upgradeFirmware {
 	return undef; 
 }
 
+# in order of preference
 sub formats {
-	return ('mp3');
+	return ('aif','wav','mp3');
 }
 
 sub vfd {
@@ -241,9 +242,8 @@ sub opened {
 #				// [16]
 #
 sub stream {
+	my ($client, $command, $paused, $format) = @_;
 
-	my ($client, $command, $paused) = @_;
-	
 	if ($client->opened()) {
 		$::d_slimproto && msg("*************stream called: $command\n");
 		my $autostart;
@@ -255,14 +255,43 @@ sub stream {
 			$autostart = 3;
 		}
 		
+		my $formatbyte;
+		my $pcmsamplesize;
+		my $pcmsamplerate;
+		my $pcmendian;
+		my $pcmchannels;
+		
+		$format = 'mp3'	if (!$format); 
+		
+		if ($format eq 'wav') {
+			$formatbyte = 'p';
+			$pcmsamplesize = '1';
+			$pcmsamplerate = '3';
+			$pcmendian = '1';
+			$pcmchannels = '2';
+		} elsif ($format eq 'aif') {
+			$formatbyte = 'p';
+			$pcmsamplesize = '1';
+			$pcmsamplerate = '3';
+			$pcmendian = '0';
+			$pcmchannels = '2';
+		} else { # assume MP3
+			$formatbyte = 'm';
+			$pcmsamplesize = '?';
+			$pcmsamplerate = '?';
+			$pcmendian = '?';
+			$pcmchannels = '?';
+		}
+		$::d_slimproto && msg("starting with decoder with options: format: $formatbyte samplesize: $pcmsamplesize samplerate: $pcmsamplerate endian: $pcmendian channels: $pcmchannels\n");
+		
 		my $frame = 'strm'.pack 'aaaaaaaCCCnL', (
 			$command,	# command
 			$autostart,
-			'm',		# mpeg
-			'1',		# pcm 16-bit (pcm options are ignored for mpeg)
-			'3',		# pcm 44.1
-			'1',		# pcm mono
-			'0',		# pcm big endian
+			$formatbyte,
+			$pcmsamplesize,
+			$pcmsamplerate,
+			$pcmchannels,
+			$pcmendian,
 			5,		# mpeg pre-buffer 5 frames of silence
 			0,		# s/pdif auto
 			0,		# reserved

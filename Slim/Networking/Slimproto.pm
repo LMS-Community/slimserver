@@ -1,6 +1,6 @@
 package Slim::Networking::Slimproto;
 
-# $Id: Slimproto.pm,v 1.28 2003/10/09 18:52:02 dean Exp $
+# $Id: Slimproto.pm,v 1.29 2003/10/13 23:57:33 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -39,6 +39,14 @@ my %parser_framelength; # total number of bytes for data frame
 my %parser_frametype;   # frame type eg "HELO", "IR  ", etc.
 my %sock2client;	# reference to client for each sonnected sock
 my %status;
+
+my %callbacks;
+
+sub setEventCallback {
+	my $event	= shift;
+	my $funcptr = shift;
+	$callbacks{$event} = $funcptr;
+}
 
 sub init {
 	my ($listenerport, $listeneraddr) = ($SLIMPROTO_PORT, $SLIMPROTO_ADDR);
@@ -100,9 +108,8 @@ sub slimproto_accept {
 	return unless $clientsock;
 
 	defined(Slim::Utils::Misc::blocking($clientsock,0)) || die "Cannot set port nonblocking";
-#	setsockopt($clientsock, SOL_SOCKET, &TCP_NODELAY, 1);  # no nagle
 
-	$clientsock->setsockopt(6, TCP_NODELAY, 1);
+#	$clientsock->sockopt(Socket::TCP_NODELAY => 1);
 
 	my $peer = $clientsock->peeraddr;
 
@@ -219,7 +226,6 @@ GETMORE:
 
 		$::d_slimproto_v && msg("no more to read.\n");
 		return;
-
 	}
 
 	$total_bytes_read += $bytes_read;
@@ -316,7 +322,7 @@ sub process_slimproto_frame {
 		return;
 	} 
 
-	my $client=$sock2client{$s};
+	my $client = $sock2client{$s};
 	
 	assert($client);
 
@@ -349,6 +355,19 @@ sub process_slimproto_frame {
         #		 u16_t  signal_strength;
 		#        u32_t  jiffies;
 		#
+		
+		# event types:
+		# 	vfdc - vfd received
+		#   i2cc - i2c command recevied
+		#	STMa - AUTOSTART    
+		#	STMc - CONNECT      
+		#	STMe - ESTABLISH    
+		#	STMf - CLOSE        
+		#	STMh - ENDOFHEADERS 
+		#	STMp - PAUSE        
+		#	STMr - UNPAUSE           // "resume"
+		#	STMt - TIMER        
+		#	STMu - UNDERRUN     
 		
 		(	$status{$client}->{'event_code'},
 			$status{$client}->{'num_crlf'},
@@ -394,6 +413,11 @@ sub process_slimproto_frame {
 		"	jiffies:         $status{$client}->{'jiffies'}\n".
 		"");
 		Slim::Player::Sync::checkSync($client);
+		
+		my $callback = $callbacks{$status{$client}->{'event_code'}};
+
+		&$callback($client) if $callback;
+		
 	} elsif ($op eq 'BYE!') {
 		$::d_slimproto && msg("Slimproto: Saying goodbye\n");
 		if ($data eq chr(1)) {

@@ -23,7 +23,7 @@ use Slim::Networking::Stream;
 
 sub reset {
 	my $client = shift;
-	my $pcm = shift;
+	my $format = shift;
 
 	if ($client->decoder eq 'mas3507d') {
 

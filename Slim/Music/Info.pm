@@ -1,6 +1,6 @@
 package Slim::Music::Info;
 
-# $Id: Info.pm,v 1.13 2003/10/06 05:33:29 grotus Exp $
+# $Id: Info.pm,v 1.14 2003/10/13 23:57:33 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -68,6 +68,7 @@ my @infoCacheItems = (
 	'ARTISTSORT',
 	'TITLESORT',
 	'RATE', # Sample rate
+	'SAMPLESIZE', # Sample size
 	'CHANNELS', # number of channels
 	'BAND'
 );

@@ -68,6 +68,7 @@ sub loadConversionTables {
 
 sub init {
 	loadConversionTables();
+	Slim::Networking::Slimproto::setEventCallback('STMu', \&underrun);
 }
 
 # rate can be negative for rew, zero for pause, 1 for playback and greater than one for ffwd
@@ -141,7 +142,10 @@ sub songTime {
 		$byterate = $size / $duration;
 	}
 
-	my $realpos = $client->bytesReceived() - $client->bufferFullness();
+	my $bytesReceived = $client->bytesReceived() || 0;
+	my $fullness = $client->bufferFullness() || 0;
+	my $realpos =  $bytesReceived - $fullness;
+	
 	$::d_source && msg("realpos $realpos calcuated from bytes received: " . $client->bytesReceived() . " minus buffer fullness: " . $client->bufferFullness() . "\n");
 	
 	if ($realpos<0) {
@@ -162,7 +166,6 @@ sub songTime {
 	$::d_source && msg( "songTime: $songtime = ($realpos(realpos) / $size(size) * $duration(duration) * $rate(rate)) + $startStream(time offset of started stream)\n");
 
 	return($songtime);
-
 }	
 
 
@@ -222,7 +225,6 @@ sub playmode {
 			} elsif ($newmode eq "playout") {
 				$everyclient->playmode("stop");
 				closeSong($everyclient);
-				currentSongIndex($everyclient, "0");
 			} else {
 				$everyclient->playmode($newmode);
 			}
@@ -272,6 +274,14 @@ sub playmode {
 	return $client->playmode();
 }
 
+sub underrun {
+	my $client = shift;
+	# the only way we'll get an underrun event while stopped is if we were playing out.  so we need to open the next item and play it!
+	if ($client && $client->playmode eq 'stop') {
+		openNext($client);
+		playmode($client, 'play');
+	}
+}
 
 sub nextChunk {
 	use bytes;
@@ -432,7 +442,9 @@ sub openNext {
 	$::d_source && msg("opening next song...\n"); 
 	my $client = shift;
 	my $result = 1;
-		
+	
+	my $oldstreamformat = $client->streamformat;
+	my $nextsong;
 	closeSong($client);
 
 	# we're at the end of a song, let's figure out which song to open up.
@@ -441,22 +453,32 @@ sub openNext {
 	
 		if (Slim::Player::Playlist::repeat($client) == 2  && $result) {
 			# play the next song and start over if necessary
-			skipsong($client);
+			$nextsong = nextsong($client);
 		} elsif (Slim::Player::Playlist::repeat($client) == 1 && $result) {
 			#play the same song again
 		} else {
 			#stop at the end of the list
 			if (currentSongIndex($client) == (Slim::Player::Playlist::count($client) - 1)) {
 				playmode($client, $result ? 'playout' : 'stop');
-				currentSongIndex($client, 0);
+				$nextsong = 0;
+				currentSongIndex($client, $nextsong);
 				return 0;
 			} else {
-				skipsong($client);
+				$nextsong = nextsong($client);
 			}
 		}
+
+		my ($command, $type, $newstreamformat) = getCommand($client, Slim::Player::Playlist::song($client, $nextsong));
 		
-		$result = openSong($client);
-		
+		if ($oldstreamformat ne $newstreamformat && playmode($client) eq 'play') {
+			$::d_source && msg("switching formats from $oldstreamformat to ". $newstreamformat. "--playing out \n");
+			playmode($client, 'playout');
+			return 0;
+		} else {
+			currentSongIndex($client, $nextsong);
+			$result = openSong($client);
+		}
+
 		# if we're playing backwards, we need to start at the end of the file.
 		if ($client->rate() < 0) {
 			gototime($client, $client->songduration() - $TRICKSEGMENTLENGTH);
@@ -494,32 +516,43 @@ sub currentSongIndex {
 	return $client->currentsong;
 }
 
-# skipsong is just for playing the next song when the current one ends
-sub skipsong {
-	my ($client) = @_;
-	# mark htmlplaylist invalid so the current song changes
-	$client->htmlstatusvalid(0);
+# todo: hook this in
+sub reshuffleOnRepeat {
+	my $client = shift;
 	
-	return if (Slim::Player::Playlist::count($client) == 0);
+	if (Slim::Player::Playlist::shuffle($client) && Slim::Utils::Prefs::get('reshuffleOnRepeat')) {
+		my $playmode = playmode($client);
+		playmode($client,'stop');
+		Slim::Player::Playlist::reshuffle($client);
+		playmode($client,$playmode);
+	}
+}
+
+# nextsong is for figuring out what the next song will be.
+sub nextsong {
+	my ($client) = @_;
+	my $nextsong;
+	my $currsong = currentSongIndex($client);
+	
+	return 0 if (Slim::Player::Playlist::count($client) == 0);
 	
 	my $direction = 1;
+	
 	if ($client->rate() < 0) { $direction = -1; }
 	 
-	currentSongIndex($client, currentSongIndex($client) + $direction);
+	$nextsong = currentSongIndex($client) + $direction;
 
-	if (currentSongIndex($client) >= Slim::Player::Playlist::count($client)) {
-		if (Slim::Player::Playlist::shuffle($client) && Slim::Utils::Prefs::get('reshuffleOnRepeat')) {
-			my $playmode = playmode($client);
-			playmode($client,'stop');
-			Slim::Player::Playlist::reshuffle($client);
-			playmode($client,$playmode);
-		}
-		currentSongIndex($client, 0);
+	if ($nextsong >= Slim::Player::Playlist::count($client)) {
+		$nextsong = 0;
 	}
 	
-	if (currentSongIndex($client) < 0) {
-		currentSongIndex($client, Slim::Player::Playlist::count($client) - 1);
+	if ($nextsong < 0) {
+		$nextsong = Slim::Player::Playlist::count($client) - 1;
 	}
+	
+	$::d_source && msg("the next song is number $nextsong, was $currsong\n");
+	
+	return $nextsong;
 }
 
 sub closeSong {
@@ -564,7 +597,6 @@ sub openSong {
 	unless ($fullpath) {
 		return undef;
 	}
-
 
 	$::d_source && msg("openSong on: $fullpath\n");
 	####################
@@ -650,21 +682,11 @@ sub openSong {
 			$::d_source && msg("openSong: not bothering opening file with zero size or duration\n");
 			return undef;
 		}
-
-		my $type = Slim::Music::Info::contentType($fullpath);
-		my $player = $client->model();
-		my @supportedFormats = $client->formats();
 		
-		my $command = undef;
-		foreach my $format ($client->formats()) {
-			$command = $commandTable{"$type-$format-$player"};
-			if (!defined($command)) {
-				$command = $commandTable{"$type-$format-*"};
-			}
-			last if ($command);
-		}
-
+		my ($command, $type, $format) = getCommand($client, $fullpath);
+		
 		$::d_source && msg("openSong: this is an $type file: $fullpath\n");
+		$::d_source && msg("  file type: $type format: $format\n");
 		$::d_source && msg("  command: $command\n");
 		if (defined($command)) {
 
@@ -694,6 +716,8 @@ sub openSong {
 				$fullCommand =~ s/\$RATE\$/$samplerate/g;
 				$fullCommand =~ s/\$([^\$]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
+				my $bitrate = Slim::Utils::Prefs::get('transcodeBitrate');				
+				$fullCommand =~ s/\$BITRATE\$/$bitrate/;
 				$fullCommand .= Slim::Utils::OSDetect::OS() eq 'win' ? "" : " &";
 
 				$fullCommand .= ' |';
@@ -706,14 +730,18 @@ sub openSong {
 				$client->mp3filehandleIsSocket(1);
 				$client->remoteStreamStartTime(time());
 				
+				$size = $duration * $bitrate / 8;
+				$offset = 0;
 			}
 		
 			$client->songtotalbytes($size);
 			$client->songduration($duration);
 			$client->songoffset($offset);
+			$client->streamformat($format);
+			$::d_source && msg("Streaming with format: $format\n");
 		
 		} else {
-			$::d_source && msg("Couldn't create command line for $type playback on $player (command: $command) for $fullpath\n");
+			$::d_source && msg("Couldn't create command line for $type playback (command: $command) for $fullpath\n");
 			return undef;
 		}
 	} else {
@@ -740,6 +768,29 @@ sub openSong {
 	Slim::Control::Command::executeCallback($client,  ['open', $fullpath]);
 
 	return 1;
+}
+
+sub getCommand {
+	my $client = shift;
+	my $fullpath = shift;
+	
+	my $type = Slim::Music::Info::contentType($fullpath);
+	my $player = $client->model();
+	
+	my $command = undef;
+	my $format = undef;
+	
+	foreach my $checkformat ($client->formats()) {
+		$::d_source && msg("checking formats for: $type-$checkformat-$player\n");
+		
+		$command = $commandTable{"$type-$checkformat-$player"};
+		if (!defined($command)) {
+			$command = $commandTable{"$type-$checkformat-*"};
+		}
+		$format = $checkformat;
+		last if ($command);
+	}
+	return ($command, $type, $format);
 }
 
 sub readNextChunk {

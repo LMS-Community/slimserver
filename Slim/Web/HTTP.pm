@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.34 2003/10/09 04:19:52 dean Exp $
+# $Id: HTTP.pm,v 1.35 2003/10/13 23:57:34 dean Exp $
 
 # Slim Server Copyright (c) 2001, 2002, 2003 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -223,7 +223,7 @@ sub idleStreams {
 			foreach my $sockHand (@$streamingSelCanWrite) {
 				$::d_http && msg("...writing...");
 				my $sent = Slim::Web::HTTP::sendstreamingresponse($sockHand);
-				$writes += $sent;
+				$writes += $sent if $sent;
 				
 				$continue = ($sent && !main::networkPending() && ($count < $streamWriteMaximum) && $continue );
 				$count++;
@@ -864,7 +864,7 @@ sub filltemplate {
 	my $client = defined($hashref) ? $$hashref{'myClientState'} : undef;
 
 	my $out = '';
-	$template=~s{\[EVAL\](.*?)\[/EVAL\]}{eval($1)}esg;
+	$template=~s{\[EVAL\](.*?)\[/EVAL\]}{eval($1) || ''}esg;
 	
 	# first, substitute {%key} with the url escaped value for the given key in the hash
 	$template=~s/{%([^{}]+)}/defined($$hashref{$1}) ? escape($$hashref{$1}) : ""/eg;

@@ -193,7 +193,7 @@ sub new {
 	$client->[12] = undef; # prevwptr
 	$client->[13] = undef; # waitforstart
 	$client->[14] = undef; # readytosync
-	$client->[15] = undef; # UNUSED
+	$client->[15] = undef; # streamformat
 	$client->[16] = undef; # resync
 	$client->[17] = undef; # streamingsocket
 	$client->[18] = undef; # mp3filehandle
@@ -499,10 +499,10 @@ sub readytosync {
 	@_ ? ($r->[14] = shift) : $r->[14];
 }
 
-#sub UNUSED {
-#	my $r = shift;
-#	@_ ? ($r->[15] = shift) : $r->[15];
-#}
+sub streamformat {
+	my $r = shift;
+	@_ ? ($r->[15] = shift) : $r->[15];
+}
 
 sub resync {
 	my $r = shift;

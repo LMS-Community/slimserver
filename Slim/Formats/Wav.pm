@@ -50,6 +50,7 @@ sub get_wavtag
 
 	# This hash will map the keys in the tag to their values.
 	my $tag = MP3::Info::get_mp3tag($file);
+
 	# bogus files are considered empty
 	if (!defined($tag->{'SIZE'})) { $tag->{'SIZE'} = 0; }
 	if (!defined($tag->{'SECS'})) { $tag->{'SECS'} = 0; }
@@ -64,12 +65,11 @@ sub get_wavtag
 	
 	my $read = $wav->read($file);
 	if (!$bail) {
-		my $nSeconds = $read->length_seconds();
-		my $nLength = Slim::Utils::Prefs::get("wavmp3samplerate") * 1000 / 8 * $nSeconds;	# kbit per second to bytes per second
-	
-		$tag->{'SIZE'} = $nLength;
-		$tag->{'SECS'} = $nSeconds;
+		$tag->{'OFFSET'} = $read->position();
+		$tag->{'SIZE'} = $read->length();
+		$tag->{'SECS'} = $read->length_seconds();
 	} else {
+	
 	}
 	return $tag;
 }
