@@ -14,7 +14,7 @@ BEGIN {
   require XML::Parser::Expat;
   $VERSION = '2.34';
   die "Parser.pm and Expat.pm versions don't match"
-    unless $VERSION eq $XML::Parser::Expat::VERSION;
+    unless $XML::Parser::Expat::VERSION && $VERSION eq $XML::Parser::Expat::VERSION;
 }
 
 use strict;
