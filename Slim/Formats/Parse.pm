@@ -370,7 +370,9 @@ sub parseCUE {
 		}
 
 		# $noUTF8 will be set if this is an external cuesheet, in
-		# which case we don't want to readTags on the source file.
+		# which case we want to set the content type on the source file
+		# so it won't show up in music listings
+
 		if ($noUTF8) {
 
 			$ds->updateOrCreate({
@@ -383,7 +385,7 @@ sub parseCUE {
 		$ds->updateOrCreate({
 			'url'        => $url,
 			'attributes' => $cacheEntry,
-			'readTags'   => !$noUTF8,
+			'readTags'   => 1,
 		});
 	}
 

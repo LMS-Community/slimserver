@@ -443,7 +443,7 @@ sub updateOrCreate {
 
 	#
 	my $urlOrObj      = $args->{'url'};
-	my $attributeHash = $args->{'attributes'};
+	my $attributeHash = $args->{'attributes'} || {};
 	my $commit        = $args->{'commit'};
 	my $readTags      = $args->{'readTags'};
 
