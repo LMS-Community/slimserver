@@ -24,8 +24,8 @@ use vars qw(
 	all	=> [@EXPORT, @EXPORT_OK]
 );
 
-# $Id: Info.pm,v 1.11 2004/12/02 23:49:32 dsully Exp $
-($REVISION) = ' $Revision: 1.11 $ ' =~ /\$Revision:\s+([^\s]+)/;
+# $Id: Info.pm,v 1.12 2004/12/07 20:19:34 dsully Exp $
+($REVISION) = ' $Revision: 1.12 $ ' =~ /\$Revision:\s+([^\s]+)/;
 $VERSION = '1.02';
 
 =pod
@@ -165,13 +165,16 @@ with the C<:utf8> or C<:all> export tag.
 
 =cut
 
-my $unicode_module = eval { require Unicode::String };
+my $unicode_module = eval { require Encode; require Encode::Guess };
 my $UNICODE = 0;
 
 sub use_mp3_utf8 {
 	my($val) = @_;
 	if ($val == 1) {
-		$UNICODE = 1 if $unicode_module;
+		if ($unicode_module) {
+			$UNICODE = 1;
+			$Encode::Guess::NoUTFAutoGuess = 1;
+		}
 	} elsif ($val == 0) {
 		$UNICODE = 0;
 	}
@@ -502,8 +505,7 @@ sub get_mp3tag {
 			if ($UNICODE) {
 				for my $key (keys %info) {
 					next unless $info{$key};
-					my $u = Unicode::String::latin1($info{$key});
-					$info{$key} = $u->utf8;
+					$info{$key} = Encode::encode_utf8($info{$key});
 				}
 			}
 		} elsif ($ver == 1) {
@@ -564,13 +566,25 @@ sub get_mp3tag {
 							}
 
 							if ($UNICODE) {
+
 								if ($encoding eq "\001" || $encoding eq "\002") {  # UTF-16, UTF-16BE
-									my $u = Unicode::String::utf16($data);
-									$data = $u->utf8;
-									$data =~ s/^\xEF\xBB\xBF//;     # strip BOM
+
+									$data = Encode::decode('utf16', $data);
+
 								} elsif ($encoding eq "\000") {
-									my $u = Unicode::String::latin1($data);
-									$data = $u->utf8;
+
+									# Try and guess the encoding, otherwise just use latin1
+									my $dec = Encode::Guess->guess($data);
+
+									if (ref($dec)) {
+
+										$data = $dec->decode($data);
+
+									} else {
+
+										# Best try
+										$data = Encode::decode('iso-8859-1', $data);
+									}
 								}
 
 							} else {

@@ -1,4 +1,4 @@
-# $Id: SavePlaylist.pm,v 1.9 2004/11/30 09:19:38 kdf Exp $
+# $Id: SavePlaylist.pm,v 1.10 2004/12/07 20:19:44 dsully Exp $
 # This code is derived from code with the following copyright message:
 #
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
@@ -10,12 +10,11 @@ package Plugins::SavePlaylist;
 
 use strict;
 use Slim::Player::Playlist;
-use Slim::Utils::Strings qw(string);
 use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.9 $,10);
+$VERSION = substr(q$Revision: 1.10 $,10);
 
 my %context = ();
 
@@ -45,7 +44,9 @@ my @legalMixed = (
 	['w','x','y','z','W','X','Y','Z','9'] 	# 9
 );
 
-sub getDisplayName { return string('SAVE_PLAYLIST'); }
+sub getDisplayName { 
+	return 'SAVE_PLAYLIST';
+}
 
 # the routines
 sub setMode {
@@ -62,7 +63,7 @@ sub setMode {
 			'valueRef' => \$context{$client},
 			'charsRef' => \@LegalChars,
 			'numberLetterRef' => \@legalMixed,
-			'header' => string('PLAYLIST_AS'),
+			'header' => $client->string('PLAYLIST_AS'),
 			'cursorPos' => 0,
 		});
 	}
@@ -91,10 +92,10 @@ sub lines {
 	my ($line1, $line2, $arrow);
 	
 	if (!Slim::Utils::Prefs::get('playlistdir')) {
-		$line1 = string('NO_PLAYLIST_DIR');
-		$line2 = string('NO_PLAYLIST_DIR_MORE');
+		$line1 = $client->string('NO_PLAYLIST_DIR');
+		$line2 = $client->string('NO_PLAYLIST_DIR_MORE');
 	} else {
-		$line1 = string('PLAYLIST_SAVE');
+		$line1 = $client->string('PLAYLIST_SAVE');
 		$line2 = $context{$client};
 		$arrow = Slim::Display::Display::symbol('rightarrow');
 	}
@@ -109,7 +110,7 @@ sub savePlaylist {
 	my $playlistdir = Slim::Utils::Prefs::get('playlistdir');
 	my $playlistfilename = catfile($playlistdir,$playlistfile . ".m3u");
 	Slim::Formats::Parse::writeM3U($playlistref,$playlistfile,$playlistfilename);
-	$client->showBriefly(string('PLAYLIST_SAVING'),$playlistfilename);
+	$client->showBriefly($client->string('PLAYLIST_SAVING'),$playlistfilename);
 }
 
 sub getFunctions {

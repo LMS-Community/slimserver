@@ -12,14 +12,13 @@ use Slim::Buttons::Common;
 use Slim::Buttons::Browse;
 use Slim::Buttons::AlarmClock;
 use Slim::Utils::Misc;
-use Slim::Utils::Strings qw (string);
 use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
 
 Slim::Buttons::Common::addMode('settings',Slim::Buttons::Settings::getFunctions(),\&Slim::Buttons::Settings::setMode);
 
 # button functions for browse directory
-my @defaultSettingsChoices = ('ALARM','VOLUME', 'BASS','TREBLE','REPEAT','SHUFFLE','TITLEFORMAT','TEXTSIZE','OFFDISPLAYSIZE','INFORMATION','SETUP_SCREENSAVER');
+my @defaultSettingsChoices = qw(ALARM VOLUME BASS TREBLE REPEAT SHUFFLE TITLEFORMAT TEXTSIZE OFFDISPLAYSIZE INFORMATION SETUP_SCREENSAVER);
 my @settingsChoices;
 
 my %current;
@@ -106,34 +105,25 @@ my %menuParams = (
 		,'onChangeArgs' => 'C'
 	}
 	,'settings/TEXTSIZE' => {
-		'useMode' => 'INPUT.List'
-		,'listRef' => undef #filled before changing modes
-		,'externRef' => sub {
-								my @font = @{$_[0]->fonts};
-								my $fontname = $font[1];
-								$fontname =~ s/(\.2)?//g;
-								return Slim::Utils::Strings::stringExists($fontname) ? string($fontname) : $fontname;
-							}
-		,'header' => 'TEXTSIZE'
-		,'stringHeader' => 1
-		,'onChange' => sub { $_[0]->textSize($_[1]);}
-		,'onChangeArgs' => 'CV'
-		,'initialValue' => sub { $_[0]->textSize();}
+		'useMode' => 'INPUT.List',
+		'listRef' => undef, #filled before changing modes
+		'externRef' => \&_fontExists,
+		'header' => 'TEXTSIZE',
+		'stringHeader' => 1,
+		'onChange' => sub { $_[0]->textSize($_[1]) },
+		'onChangeArgs' => 'CV',
+		'initialValue' => sub { $_[0]->textSize() },
 	}
+
 	,'settings/OFFDISPLAYSIZE' => {
-		'useMode' => 'INPUT.List'
-		,'listRef' => undef #filled before changing modes
-		,'externRef' => sub {
-								my @font = @{$_[0]->fonts($_[1])};
-								my $fontname = $font[1];
-								$fontname =~ s/(\.2)?//g;
-								return Slim::Utils::Strings::stringExists($fontname) ? string($fontname) : $fontname;
-							}
-		,'header' => 'OFFDISPLAYSIZE'
-		,'stringHeader' => 1
-		,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0], "offDisplaySize", $_[1]); }
-		,'onChangeArgs' => 'CV'
-		,'initialValue' => 'offDisplaySize'
+		'useMode' => 'INPUT.List',
+		'listRef' => undef, #filled before changing modes
+		'externRef' => \&_fontExists,
+		'header' => 'OFFDISPLAYSIZE',
+		'stringHeader' => 1,
+		'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0], "offDisplaySize", $_[1]) },
+		'onChangeArgs' => 'CV',
+		'initialValue' => 'offDisplaySize',
 	}
 	,'settings/INFORMATION' => {
 		'useMode' => 'information'
@@ -149,13 +139,20 @@ my %menuParams = (
 		'useMode' => 'INPUT.List'
 		,'listRef' => undef
 		,'externRef' => undef
-		,'stringExternRef' => 0
+		,'stringExternRef' => 1
 		,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0], "screensaver", $_[1]); }
 		,'header' => 'SETUP_SCREENSAVER'
 		,'stringHeader' => 1
 		,'initialValue' => 'screensaver'
 	}
 );
+
+sub _fontExists {
+	my $fontname = (@{$_[0]->fonts})[1];
+	   $fontname =~ s/(\.2)?//go;
+
+	return Slim::Utils::Strings::stringExists($fontname) ? $_[0]->string($fontname) : $fontname;
+}
 
 sub settingsExitHandler {
 	my ($client,$exittype) = @_;
@@ -254,22 +251,22 @@ sub setMode {
 
 sub volumeHeader {
 	my ($client,$arg) = @_;
-	return string('VOLUME').' ('.($arg <= 0 ? string('MUTED') : int($arg/100*40+0.5)).')';
+	return $client->string('VOLUME').' ('.($arg <= 0 ? $client->string('MUTED') : int($arg/100*40+0.5)).')';
 }
 
 sub bassHeader {
 	my ($client,$arg) = @_;
-	return string('BASS').' ('.(int($arg/100*40 + 0.5) - 20).')';
+	return $client->string('BASS').' ('.(int($arg/100*40 + 0.5) - 20).')';
 }
 
 sub trebleHeader {
 	my ($client,$arg) = @_;
-	return string('TREBLE').' ('.(int($arg/100*40 + 0.5) - 20).')';
+	return $client->string('TREBLE').' ('.(int($arg/100*40 + 0.5) - 20).')';
 }
 
 sub pitchHeader {
 	my ($client,$arg) = @_;
-	return string('PITCH').' ('.(int($arg)).'%)';
+	return $client->string('PITCH').' ('.(int($arg)).'%)';
 }
 
 sub volumeLines {
@@ -302,7 +299,6 @@ sub trebleLines {
 	my $treblestring = trebleHeader($client,$treble);
 	return Slim::Buttons::Input::Bar::lines($client,$treble,$treblestring, $client->minTreble(), ($client->maxTreble() + $client->minTreble() ) / 2, $client->maxTreble());
 }
-
 
 1;
 

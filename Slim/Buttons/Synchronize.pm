@@ -1,6 +1,6 @@
 package Slim::Buttons::Synchronize;
 
-# $Id: Synchronize.pm,v 1.10 2004/08/03 17:29:11 vidur Exp $
+# $Id: Synchronize.pm,v 1.11 2004/12/07 20:19:49 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,7 +10,6 @@ package Slim::Buttons::Synchronize;
 use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
-use Slim::Utils::Strings qw(string);
 use Slim::Display::Display;
 
 Slim::Buttons::Common::addMode('synchronize',getFunctions(),\&setMode);
@@ -65,7 +64,8 @@ sub loadList {
 }
 
 sub lines {
-	my $client=shift;
+	my $client = shift;
+
 	my $line1;
 	my $line2;
 	my $symbol = undef;
@@ -73,19 +73,23 @@ sub lines {
 	loadList($client);
 	
 	if (scalar @{$client->syncSelections} < 1) {
+
 		warn "Can't sync without somebody to sync with!";
 		Slim::Buttons::Common::popMode($client);
+
 	} else {
 			# get the currently selected client
 			my $selectedClient = $client->syncSelections($client->syncSelection);
 			
 			if (Slim::Player::Sync::isSyncedWith($client, $selectedClient) || $selectedClient eq $client) {
-				$line1 = Slim::Utils::Strings::string('UNSYNC_WITH');
+				$line1 = $client->string('UNSYNC_WITH');
 			} else {
-				$line1 = Slim::Utils::Strings::string('SYNC_WITH');
+				$line1 = $client->string('SYNC_WITH');
 			}
+
 			$line2 = buddies($client, $selectedClient);			
 	}
+
 	return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));
 }
 
@@ -112,7 +116,7 @@ sub buddies {
 	
 	if (scalar(@buddies) > 1) {
 		my $buddy = pop @buddies;
-		$list .= $buddy->name() . " " . Slim::Utils::Strings::string('AND') . " ";		
+		$list .= $buddy->name() . " " . $client->string('AND') . " ";		
 	}
 	my $buddy = pop @buddies;
 	$list .= $buddy->name();

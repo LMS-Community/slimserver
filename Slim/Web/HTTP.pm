@@ -1,6 +1,6 @@
 package Slim::Web::HTTP;
 
-# $Id: HTTP.pm,v 1.125 2004/11/24 20:11:30 dean Exp $
+# $Id: HTTP.pm,v 1.126 2004/12/07 20:19:57 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -36,8 +36,6 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 
 # constants
-
-
 BEGIN {
 	if ($^O =~ /Win32/) {
 		*EWOULDBLOCK = sub () { 10035 };
@@ -45,6 +43,10 @@ BEGIN {
 	} else {
 		require Errno;
 		import Errno qw(EWOULDBLOCK EINPROGRESS);
+	}
+
+	if ($] > 5.007) {
+		require Encode;
 	}
 }
 
@@ -123,20 +125,18 @@ sub init {
 }
 
 # other people call us externally.
-*escape   = \&URI::Escape::uri_escape;
+*escape   = \&URI::Escape::uri_escape_utf8;
 
 # don't use the external one because it doesn't know about the difference between a param and not...
 #*unescape = \&URI::Escape::unescape;
 sub unescape {
-	my $in = shift;
-	my $isparam = shift;
-	if (defined $in) {
-		if ($isparam) {$in =~ s/\+/ /g;}
-		$in =~ s/%([\da-fA-F][\da-fA-F])/chr(hex($1))/eg;
-		return $in;
-	} else {
-		return '';
-	}
+	my $in      = shift || return '';
+	my $isParam = shift;
+
+	$in =~ s/\+/ /g if $isParam;
+	$in =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
+
+	return $in;
 }
 
 sub openport {
@@ -255,7 +255,7 @@ sub isaSkin {
 	my $name = shift;
 	my %skins = Slim::Web::Setup::skins();
 	my $skinlist = join '|',keys %skins;
-	if ($name =~ /^($skinlist)$/i) {
+	if ($name =~ /^($skinlist)$/io) {
 		return $1;
 	} else {
 		return undef;
@@ -323,7 +323,7 @@ sub processHTTP {
 			closeHTTPSocket($httpClient);
 			return;
 		}
-			
+
 		# parse out URI:
 		my $uri   = $request->uri();
 		my $path  = $uri->path();
@@ -342,6 +342,15 @@ sub processHTTP {
 
 					my $name  = unescape($1, 1);
 					my $value = unescape($2, 1);
+
+					# We need to turn perl's internal
+					# representation of the unescaped
+					# UTF-8 string into a "real" UTF-8
+					# string with the appropriate magic set.
+					if ($value ne '*' && $value ne '' && $] > 5.007) {
+
+						$value = Encode::decode_utf8($value);
+					}
 
 					$params->{$name} = $value;
 
@@ -814,6 +823,7 @@ sub generateHTTPResponse {
 			# otherwise just send back the binary file
 			($body, $mtime) = getStaticContent($path, $params);
 		}
+
 	} else {
 		# who knows why we're here, we just know that something ain't right
 		$$body = undef;
@@ -829,6 +839,12 @@ sub generateHTTPResponse {
 
 	# for our static content
 	$response->last_modified($mtime) if defined $mtime;
+
+	# Always send back UTF8 for these.
+	if ($contentType =~ m!^text/(?:html|xml)!) {
+		$contentType .= '; charset=utf-8';
+	}
+
 	$response->content_type($contentType);
 
 	# if the reference to the body is itself undefined, then we've started
@@ -919,6 +935,8 @@ sub sendResponse {
 
 	my $segment    = shift(@{$outbuf{$httpClient}});
 	my $sentbytes  = 0;
+
+	use bytes;
 
 	# abort early if we don't have anything.
 	unless ($httpClient->connected()) {
@@ -1205,6 +1223,8 @@ sub sendStreamingResponse {
 
 	if (defined($segment) && $httpClient->connected()) {
 
+		use bytes;
+
 		my $prebytes = $segment->{'length'};
 		$sentbytes   = syswrite($httpClient, ${$segment->{'data'}}, $segment->{'length'}, $segment->{'offset'});
 
@@ -1305,7 +1325,7 @@ sub filltemplate {
 	$template =~ s{\[EVAL\](.*?)\[/EVAL\]}{eval($1) || ''}esg;
 	
 	# first, substitute {%key} with the url escaped value for the given key in the hash
-	$template =~ s/{%([^{}]+)}/defined($hashref->{$1}) ? uri_escape($hashref->{$1}) : ""/eg;
+	$template =~ s/{%([^{}]+)}/defined($hashref->{$1}) ? uri_escape_utf8($hashref->{$1}) : ""/eg;
 	
 	# first, substitute {%key} with the url escaped value for the given key in the hash
 	#
@@ -1338,7 +1358,7 @@ sub filltemplate {
 	$template =~ s/\[NB\](.+?)\[\/NB\]/nonBreaking($1)/esg;
 	
 	# escape any text between [E] and [/E]
-	$template =~ s/\[E\](.+?)\[\/E\]/uri_escape($1)/esg;
+	$template =~ s/\[E\](.+?)\[\/E\]/uri_escape_utf8($1)/esg;
 	
 	$template =~ s/&lsqb;/\[/g;
 	$template =~ s/&rsqb;/\]/g;
@@ -1361,22 +1381,28 @@ sub newSkinTemplate {
 	my @include_path = ();
 
 	foreach my $dir ($skin, $baseSkin) {
+
 		foreach my $rootdir (HTMLTemplateDirs()) {
 			push @include_path, catdir($rootdir,$dir);
 		}
 	}
+
 	$skinTemplates{$skin} = Template->new({
-		INCLUDE_PATH => \@include_path
-		,COMPILE_DIR => Slim::Utils::Prefs::get('cachedir')
-		,PLUGIN_BASE => ['Plugins::TT',"HTML::$skin"]
-		,FILTERS => {
-			'string' => \&Slim::Utils::Strings::string
-			,'nbsp' => \&nonBreaking
-			,'uri' => \&URI::Escape::uri_escape
-			,'unuri' => \&URI::Escape::uri_unescape
-		}
-		,EVAL_PERL => 1
+
+		INCLUDE_PATH => \@include_path,
+		COMPILE_DIR => Slim::Utils::Prefs::get('cachedir'),
+		PLUGIN_BASE => ['Plugins::TT',"HTML::$skin"],
+
+		FILTERS => {
+			'string' => \&Slim::Utils::Strings::string,
+			'nbsp' => \&nonBreaking,
+			'uri' => \&URI::Escape::uri_escape_utf8,
+			'unuri' => \&URI::Escape::uri_unescape,
+		},
+
+		EVAL_PERL => 1,
 	});
+
 	return $skinTemplates{$skin};
 }
 

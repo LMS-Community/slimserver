@@ -1,4 +1,4 @@
-# $Id: Picks.pm,v 1.3 2004/10/22 20:24:48 vidur Exp $
+# $Id: Picks.pm,v 1.4 2004/12/07 20:19:43 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -15,7 +15,6 @@ package Plugins::Picks;
 use LWP::UserAgent;
 use HTTP::Request;
 
-use Slim::Utils::Strings qw (string);
 use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 
@@ -90,11 +89,9 @@ sub doneLoading {
 	$context{$client}->{blocking} = 0;
 
 	if (scalar @{$context{$client}->{stations}} == 0) {
-		Slim::Display::Animation::showBriefly($client, 
-						string('PLUGIN_PICKS_LOADING_ERROR'));
+		Slim::Display::Animation::showBriefly($client, $client->string('PLUGIN_PICKS_LOADING_ERROR'));
 		Slim::Buttons::Common::popMode($client);
-	}
-	else {
+	} else {
 		$lastStationLoadTime = Time::HiRes::time();
 		$stationList = $context{$client}->{stations};
 		listStations($client);
@@ -140,15 +137,11 @@ sub setMode {
 		listStations($client);
 	}
 	else {
-		Slim::Buttons::Block::block($client, 
-									string('PLUGIN_PICKS_LOADING_PICKS'));
+		Slim::Buttons::Block::block($client, $client->string('PLUGIN_PICKS_LOADING_PICKS'));
 		$context{$client}->{blocking} = 1;
 
 		$context{$client}->{stations} = [];
-		Slim::Utils::Scan::addToList($context{$client}->{stations},
-									 $picksurl,
-									 0, 0, 
-									 \&doneLoading, $client);
+		Slim::Utils::Scan::addToList($context{$client}->{stations}, $picksurl, 0, 0, \&doneLoading, $client);
 	}
 }
 
@@ -205,8 +198,8 @@ sub detailsSetMode {
 	my $stationURL = Slim::Buttons::Common::param($client, 'stationURL');
 	my $stationTitle = Slim::Buttons::Common::param($client, 'stationTitle');
 
-	my @details = ( string('PLUGIN_PICKS_STATION') . ': ' . $stationTitle,
-					string('URL') . ': ' . $stationURL );
+	my @details = ( $client->string('PLUGIN_PICKS_STATION') . ': ' . $stationTitle,
+					$client->string('URL') . ': ' . $stationURL );
 	my %params = (
 		header => $stationTitle,
 		listRef => \@details,
@@ -225,7 +218,9 @@ Slim::Buttons::Common::addMode('PLUGIN.Picks.details',
 							   \%detailsModeFunctions, 
 							   \&detailsSetMode);
 
-sub getDisplayName { return string('PLUGIN_PICKS_MODULE_NAME') }
+sub getDisplayName { 
+	return 'PLUGIN_PICKS_MODULE_NAME';
+}
 
 sub addMenu {
 	return "RADIO";

@@ -18,16 +18,16 @@
 <blockquote>
 <p><em>Example 1</em></p>
 <pre>
-  sub setMode() &#123;
+  sub setMode &#123;
      my $client = shift;
      $client->lines(\&lines);
   &#125;
 
-  sub getFunctions() &#123;
+  sub getFunctions &#123;
      return \%functions;
   &#125;
 
-  sub getDisplayName() &#123; return "My Plugin Name")&#125;
+  sub getDisplayName &#123; return "My Plugin Name")&#125;
 
 			</pre></blockquote>
 <hr>
@@ -51,12 +51,12 @@ to add your new mode with its setMode and getFunctions references.  </p>
 			<pre>Slim::Buttons::Common::addMode('newmodename', getNewModeFunctions(), \&amp;::PluginName::setNewMode);</pre></blockquote>
 <p>and then you can include the following in your plugin to hook-in to your new mode:</p>
 <blockquote><pre>
-sub setNewMode() &#123;
+sub setNewMode &#123;
    my $client = shift;
    $client->lines(\&newModeLines);
 &#125;
 
-sub getNewModeFunctions() &#123;
+sub getNewModeFunctions &#123;
    return \%newModeFunctions;
 &#125;</pre>
 </blockquote>
@@ -86,7 +86,7 @@ sub getNewModeFunctions() &#123;
      'play' => sub &#123;
         my $client = shift;
         my @pargs=('rescan');
-        my ($line1, $line2) = (string('PLUGIN_RESCAN_MUSIC_LIBRARY'), string('PLUGIN_RESCAN_RESCANNING'));
+        my ($line1, $line2) = ($client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'), $client->string('PLUGIN_RESCAN_RESCANNING'));
         Slim::Control::Command::execute($client, \@pargs, undef, undef);
         $client->showBriefly(, $line1, $line2);
      &#125;
@@ -111,9 +111,10 @@ $client->update();
 <blockquote>
 <p><em>Example 3</em></p>
 <pre>sub lines &#123;
+   my $client = shift;
    my ($line1, $line2);
-   $line1 = string('PLUGIN_RESCAN_MUSIC_LIBRARY');
-   $line2 = string('PLUGIN_RESCAN_PRESS_PLAY');
+   $line1 = $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY');
+   $line2 = $client->string('PLUGIN_RESCAN_PRESS_PLAY');
    return ($line1, $line2);
 &#125;;
 </pre></blockquote>
@@ -124,8 +125,8 @@ $client->update();
 	<dl>
 <dt>PrefOrder</dt><dd>list of prefs to appear in group, in order</dd>
 <dt>PrefsInTable</dt><dd>set if prefs should appear in a table</dd>
-<dt>GroupHead</dt><dd>Name of the group, usually set to string('SETUP_GROUP+$groupname'), no default</dd>
-<dt>GroupDesc</dt><dd>Description of the group, usually set to string('SETUP_GROUP_$groupname_DESC'), no default</dd>
+<dt>GroupHead</dt><dd>Name of the group, usually set to Slim::Utils::Strings::string('SETUP_GROUP+$groupname'), no default</dd>
+<dt>GroupDesc</dt><dd>Description of the group, usually set to Slim::Utils::Strings::string('SETUP_GROUP_$groupname_DESC'), no default</dd>
 <dt>GroupLine</dt><dd>set if an &lt;hr&gt; should appear after the group</dd>
 <dt>GroupSub</dt><dd>set if a submit button should appear after the group</dd>
 <dt>Suppress_PrefHead</dt><dd>set to prevent the heading of preferences in the group from showing</dd>
@@ -152,17 +153,17 @@ $client->update();
 <dt>currentValue</dt><dd>sub ref taking $client,$key,$ind as parameters, returns current value of preference.  Only needed for preferences which don't use Slim::Utils::Prefs</dd>
 <dt>noWarning</dt><dd>flag to suppress change information</dd>
 <dt>externalValue</dt><dd>sub ref taking $client,$value, $key as parameters, used to map an internal value to an external one</dd>
-<dt>PrefName</dt><dd>friendly name of the preference (defaults to string('SETUP_$prefname')</dd>
-<dt>PrefDesc</dt><dd>long description of the preference (defaults to string('SETUP_$prefname_DESC')</dd>
-<dt>PrefChoose</dt><dd>label to use for input of the preference (defaults to string('SETUP_$prefname_CHOOSE')</dd>
+<dt>PrefName</dt><dd>friendly name of the preference (defaults to Slim::Utils::Strings::string('SETUP_$prefname')</dd>
+<dt>PrefDesc</dt><dd>long description of the preference (defaults to Slim::Utils::Strings::string('SETUP_$prefname_DESC')</dd>
+<dt>PrefChoose</dt><dd>label to use for input of the preference (defaults to Slim::Utils::Strings::string('SETUP_$prefname_CHOOSE')</dd>
 <dt>PrefSize</dt><dd>size to use for text box of input (choices are 'small','medium', and 'large', default 'small'). Actual size to use is determined by the setup_input_txt.html template (in EN skin values are 10,20,40)</dd>
-<dt>ChangeButton</dt><dd>Text to display on the submit button within the input for this preference. Defaults to string('CHANGE')</dd>
+<dt>ChangeButton</dt><dd>Text to display on the submit button within the input for this preference. Defaults to Slim::Utils::Strings::string('CHANGE')</dd>
 <dt>inputTemplate</dt><dd>template to use for the input of the preference (defaults to setup_input_sel.html for preferences with 'options', setup_input_txt.html otherwise)</dd>
-<dt>changeIntro</dt><dd>template for the change introductory text (defaults to 'string('SETUP_NEW_VALUE') string('SETUP_prefname'):') for array prefs the default is 'string('SETUP_NEW_VALUE') string('SETUP_prefname') %s:' sprintf'd with array index</dd>
+<dt>changeIntro</dt><dd>template for the change introductory text (defaults to 'Slim::Utils::Strings::string('SETUP_NEW_VALUE') Slim::Utils::Strings::string('SETUP_prefname'):') for array prefs the default is 'Slim::Utils::Strings::string('SETUP_NEW_VALUE') Slim::Utils::Strings::string('SETUP_prefname') %s:' sprintf'd with array index</dd>
 <dt>changeMsg</dt><dd>template for change value (defaults to %s), this will be sprintf'd to stick in the value</dd>
 <dt>changeAddlText</dt><dd>template for any additional text to display after a change (default '')</dd>
-<dt>rejectIntro</dt><dd>template for the rejection introductory text (defaults to 'string('SETUP_NEW_VALUE') string('SETUP_prefname') string('SETUP_REJECTED'):')(sprintf'd with array index for array settings) for array prefs the default is 'string('SETUP_NEW_VALUE') string('SETUP_prefname') %s string('SETUP_REJECTED'):' sprintf'd with array index</dd>
-<dt>rejectMsg</dt><dd>template for rejected value message (defaults to 'string('SETUP_BAD_VALUE')%s'), this will be sprintf'd to stick in the value</dd>
+<dt>rejectIntro</dt><dd>template for the rejection introductory text (defaults to 'Slim::Utils::Strings::string('SETUP_NEW_VALUE') Slim::Utils::Strings::string('SETUP_prefname') Slim::Utils::Strings::string('SETUP_REJECTED'):')(sprintf'd with array index for array settings) for array prefs the default is 'Slim::Utils::Strings::string('SETUP_NEW_VALUE') Slim::Utils::Strings::string('SETUP_prefname') %s Slim::Utils::Strings::string('SETUP_REJECTED'):' sprintf'd with array index</dd>
+<dt>rejectMsg</dt><dd>template for rejected value message (defaults to '$client->string('SETUP_BAD_VALUE')%s'), this will be sprintf'd to stick in the value</dd>
 <dt>rejectAddlText</dt><dd>template for any additional text to display after a rejection (default '')</dd>
 </dl>
 	The default values are used for keys which do not exist() for a particular preference for most preferences the only values to set will be 'validate', 'validateArgs', and 'options'
@@ -181,11 +182,13 @@ $client->update();
 <p><em>Example 4</em></p>
 <pre>
 sub setupGroup {
+   my $client = shift;
+
    my %setupGroup = (
       PrefOrder =>
       ['plugin-pluginName-pref-one','plugin-pluginName-pref-two']
-      ,GroupHead => string('SETUP_GROUP_PLUGIN_PLUGINNAME')
-      ,GroupDesc => string('SETUP_GROUP_PLUGIN_PLUGINNAME_DESC')
+      ,GroupHead => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_PLUGINNAME')
+      ,GroupDesc => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_PLUGINNAME_DESC')
       ,GroupLine => 1
       ,GroupSub => 1
       ,Suppress_PrefSub => 1
@@ -199,8 +202,8 @@ sub setupGroup {
       'plugin-pluginName-pref-two' => {
          'validate' => \&Slim::Web::Setup::validateTrueFalse  
          ,'options' => {
-            '0' => string('SETUP_PLUGIN-PLUGINNAME_PREFTWO_NO)
-            ,'1' => string('SETUP_PLUGIN-PLUGINNAME_PREFTWO_YES)
+            '0' => Slim::Utils::Strings::string('SETUP_PLUGIN-PLUGINNAME_PREFTWO_NO)
+            ,'1' => Slim::Utils::Strings::string('SETUP_PLUGIN-PLUGINNAME_PREFTWO_YES)
          }
       },
    );	
@@ -212,21 +215,21 @@ sub setupGroup {
 <p>The plugin API also allows you to add in your own localization. The format of the strings list follows the same format as the strings.txt file used by the SlimServer for localization. The function strings() can be used within the plugin to extract a strings for the user's specified language. Defining the strings is done as follows:</p>
 <blockquote>
 <p><em>Example 5</em></p>
-<pre>sub strings() &#123; return '
+<pre>sub strings &#123; return '
 PLUGIN_STRING_ONE
 &lt;tab&gt; EN &lt;tab&gt; English version of line one
 &lt;tab&gt; FR &lt;tab&gt; Version française de la ligne une
 '&#125;;
 </pre></blockquote>and to use your strings in your module, you make the call to strings in any place where you would use a text string.   For example, referring to the getDisplayName() call from Example 1:
 <blockquote>
-			<pre>sub getDisplayName() &#123; return "My Plugin Name" &#125;</pre></blockquote>
+			<pre>sub getDisplayName &#123; return "My Plugin Name" &#125;</pre></blockquote>
 
 can be changed to
 <blockquote>
-			<pre>sub getDisplayName() &#123; return strings('PLUGIN_NAME') &#125;</pre></blockquote>
+			<pre>sub getDisplayName &#123; my $client = shift; return $client->strings('PLUGIN_NAME') &#125;</pre></blockquote>
 where your strings function contains:
 <blockquote><pre>
-sub strings() &#123; return '
+sub strings &#123; return '
 PLUGIN_NAME
 <i>&lt;tab&gt;</i> EN <i>&lt;tab&gt;</i> My Plugin Name
 '&#125;;
@@ -279,7 +282,7 @@ the URL path must include the "plugins/&lt;pluginname&gt;/" prefix.
 
 <blockquote>
 <pre>Slim::Web::Pages::addLinks("search", {
-    string('PLUGIN_MYPLUGIN_SEARCH_LINK') => "plugins/MyPlugin/search.html",
+    $client->string('PLUGIN_MYPLUGIN_SEARCH_LINK') => "plugins/MyPlugin/search.html",
 );
 </pre>
 </blockquote>
@@ -289,12 +292,14 @@ the URL path must include the "plugins/&lt;pluginname&gt;/" prefix.
 You can turn any plugin into a custom screensaver by registering your plugin as a screensaver.  The plugin should 
 be used to give the user any settings options or to set the screensaver as active or reset to default.  You can register the screensaver using the following subroutine:
 <pre>
-sub screenSaver() {
+sub screenSaver {
+	my $client = shift;
+
 	Slim::Buttons::Common::addSaver('SCREENSAVER.saverModeName',
 		getScreensaverFunctions(),
 		\&setScreensaverMode,
 		\&leaveScreensaverMode,
-		string('PLUGIN_SCREENSAVER_NAME'));
+		$client->string('PLUGIN_SCREENSAVER_NAME'));
 }
 </pre>
 <dl>
@@ -302,7 +307,7 @@ sub screenSaver() {
 <dt>getScreensaverFunctions()</dt><dd>This subroutine, just like getFunctions points to the function has for the screensaver mode.</dd>
 <dt>setScreensaverMode</dt><dd>subroutine just like setMode to initialize anything you need for the screensaver mode.</dd>
 <dt>leaveScreensaverMode</dt><dd>subroutine to execute before the mode exits</dd>
-<dt>string('SCREENSAVER_NAME')</dt><dd>SCREENSAVER_NAME should be change to a unique identifier for your plugin name.  This can be the same as your plugin, or something different.  This allows for future nationalisation for the other languages supported by SlimServer.</dd>
+<dt>$client->string('SCREENSAVER_NAME')</dt><dd>SCREENSAVER_NAME should be change to a unique identifier for your plugin name.  This can be the same as your plugin, or something different.  This allows for future nationalisation for the other languages supported by SlimServer.</dd>
 </dl>
 <hr>
 <h4>Summary</h4>
@@ -336,9 +341,13 @@ package Plugins::Rescan;
 use Slim::Player::Playlist;
 use Slim::Utils::Strings qw (string);
 
-sub getDisplayName() (return string('PLUGIN_RESCAN_MUSIC_LIBRARY'));
+sub getDisplayName {
+	my $client = shift;
 
-sub strings() {  return '
+	return $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY')
+};
+
+sub strings {  return '
 PLUGIN_RESCAN_MUSIC_LIBRARY
 	EN	Rescan Music Library
 	
@@ -354,7 +363,7 @@ PLUGIN_RESCAN_PRESS_PLAY
 ##################################################
 
 
-sub setMode() {
+sub setMode {
 	my $client = shift;
 	$client-&gt;lines(\&amp;lines);
 }
@@ -384,16 +393,17 @@ my %functions = (
 	'play' =&gt; sub {
 		my $client = shift;
 		my @pargs=('rescan');
-		my ($line1, $line2) = (string('PLUGIN_RESCAN_MUSIC_LIBRARY'), string('PLUGIN_RESCAN_RESCANNING'));
+		my ($line1, $line2) = ($client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'), $client->string('PLUGIN_RESCAN_RESCANNING'));
 		Slim::Control::Command::execute($client, \@pargs, undef, undef);
 		$client->showBriefly(, $line1, $line2);
 	}
 );
 
 sub lines {
+	my $client = shift;
 	my ($line1, $line2);
-	$line1 = string('PLUGIN_RESCAN_MUSIC_LIBRARY');
-	$line2 = string('PLUGIN_RESCAN_PRESS_PLAY');
+	$line1 = $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY');
+	$line2 = $client->string('PLUGIN_RESCAN_PRESS_PLAY');
 	return ($line1, $line2);
 }
 	
@@ -401,7 +411,7 @@ sub lines {
 ### End of Section 2.                        ###
 ################################################
 
-sub getFunctions() {
+sub getFunctions {
 	return \%functions;
 }
 

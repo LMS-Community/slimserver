@@ -1,6 +1,6 @@
 package Slim::Buttons::Common;
 
-# $Id: Common.pm,v 1.42 2004/11/19 04:04:24 kdf Exp $
+# $Id: Common.pm,v 1.43 2004/12/07 20:19:47 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,7 +11,6 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use Slim::Player::Client;
-use Slim::Utils::Strings qw (string);
 use Slim::Utils::Misc;
 use Slim::Buttons::Plugins;
 use Slim::Display::Display;
@@ -61,15 +60,16 @@ sub hash_of_savers {
  	return \%savers;
 }
 
- sub addMode {
+sub addMode {
  	my $name = shift;
  	my $buttonFunctions = shift;
  	my $setModeFunction = shift;
  	my $leaveModeFunction = shift;
+
  	$modeFunctions{$name} = $buttonFunctions;
  	$modes{$name} = $setModeFunction;
  	$leaveMode{$name} = $leaveModeFunction;
- }
+}
  	
 # Common functions for more than one mode:
 my %functions = (
@@ -207,11 +207,11 @@ my %functions = (
 	'stop' => sub  {
 		my $client = shift;
 		if (Slim::Player::Playlist::count($client) == 0) {
-			$client->showBriefly(string('PLAYLIST_EMPTY'), "");
+			$client->showBriefly($client->string('PLAYLIST_EMPTY'), "");
 		} else {
 			Slim::Control::Command::execute($client, ["stop"]);
 			Slim::Buttons::Common::pushMode($client, 'playlist');
-			$client->showBriefly(string('STOPPING'), "");
+			$client->showBriefly($client->string('STOPPING'), "");
 		}
 	},
 	'menu_pop' => sub  {
@@ -311,10 +311,10 @@ my %functions = (
 		if ($buttonarg eq 'toggle') {
 			$::d_files && msg("Switching to playlist view\n");
 			if (Slim::Player::Playlist::count($client) == 0) {
-				$client->showBriefly(string('PLAYLIST_EMPTY'), "");
+				$client->showBriefly($client->string('PLAYLIST_EMPTY'), "");
 			} else {
 				Slim::Buttons::Common::pushMode($client, 'playlist');
-				$client->showBriefly(string('VIEWING_PLAYLIST'), "");
+				$client->showBriefly($client->string('VIEWING_PLAYLIST'), "");
 			}
 		} else {
 			if ($buttonarg =~ /^[0-5]$/) {
@@ -344,11 +344,11 @@ my %functions = (
 		Slim::Control::Command::execute($client, ["playlist", "repeat",$repeat]);
 		# display the fact that we are (not) repeating
 		if (Slim::Player::Playlist::repeat($client) == 0) {
-			$client->showBriefly(string('REPEAT_OFF'), "");
+			$client->showBriefly($client->string('REPEAT_OFF'), "");
 		} elsif (Slim::Player::Playlist::repeat($client) == 1) {
-			$client->showBriefly(string('REPEAT_ONE'), "");
+			$client->showBriefly($client->string('REPEAT_ONE'), "");
 		} elsif (Slim::Player::Playlist::repeat($client) == 2) {
-			$client->showBriefly(string('REPEAT_ALL'), "");
+			$client->showBriefly($client->string('REPEAT_ALL'), "");
 		}
 	},
 	'volume' => sub {
@@ -491,9 +491,9 @@ my %functions = (
 		}
 		my $sleepTime = $sleepChoices[$i];
 		if ($sleepTime == 0) {
-			$client->showBriefly(string('CANCEL_SLEEP') , '');
+			$client->showBriefly($client->string('CANCEL_SLEEP') , '');
 		} else {
-			$client->showBriefly(string('SLEEPING_IN') . ' ' . $sleepTime . ' ' . string('MINUTES'),'');
+			$client->showBriefly($client->string('SLEEPING_IN') . ' ' . $sleepTime . ' ' . $client->string('MINUTES'),'');
 		}
 
 		Slim::Control::Command::execute($client, ["sleep", $sleepTime * 60]);
@@ -523,11 +523,11 @@ my %functions = (
 		Slim::Control::Command::execute($client, ["playlist", "shuffle" , $shuffle]);
 		
 		if (Slim::Player::Playlist::shuffle($client) == 2) {
-				$client->showBriefly(string('SHUFFLE_ON_ALBUMS'), "");
+				$client->showBriefly($client->string('SHUFFLE_ON_ALBUMS'), "");
 		} elsif (Slim::Player::Playlist::shuffle($client) == 1) {
-				$client->showBriefly(string('SHUFFLE_ON_SONGS'), "");
+				$client->showBriefly($client->string('SHUFFLE_ON_SONGS'), "");
 		} else {
-				$client->showBriefly(string('SHUFFLE_OFF'), "");
+				$client->showBriefly($client->string('SHUFFLE_OFF'), "");
 		}
 	},
 	'titleFormat' => sub  {
@@ -564,7 +564,7 @@ my %functions = (
 	},
 	'clearPlaylist' => sub {
 		my $client = shift;
-		$client->showBriefly(string('CLEARING_PLAYLIST'), '');
+		$client->showBriefly($client->string('CLEARING_PLAYLIST'), '');
 		Slim::Control::Command::execute($client, ['playlist', 'clear']);
 	},
 	'modefunction' => sub {
@@ -586,7 +586,7 @@ my %functions = (
 		my %maps = reverse %$mapref;
 		return if !exists($maps{$functarg});
 		Slim::Utils::Prefs::clientSet($client,'irmap',$maps{$functarg});
-		$client->showBriefly(string('SETUP_IRMAP') . ':', $functarg);
+		$client->showBriefly($client->string('SETUP_IRMAP') . ':', $functarg);
 	}
 
 );

@@ -16,7 +16,6 @@ use FindBin qw($Bin);
 use IO::Socket;
 use Slim::Player::Player;
 use Slim::Utils::Misc;
-use Slim::Utils::Strings qw (string);
 use MIME::Base64;
 
 use Slim::Hardware::mas35x9;
@@ -287,7 +286,7 @@ sub upgradeFirmware_SDK5 {
 		
 		if (($fraction - $lastFraction) > (1/20)) {
 			$client->showBriefly(
-				string('UPDATING_FIRMWARE'),
+				$client->string('UPDATING_FIRMWARE'),
 				
 				Slim::Display::Display::progressBar($client, $client->displayWidth(), $totalbytesread/$size)
 			);

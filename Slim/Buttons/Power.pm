@@ -1,6 +1,6 @@
 package Slim::Buttons::Power;
 
-# $Id: Power.pm,v 1.14 2004/09/10 03:07:38 vidur Exp $
+# $Id: Power.pm,v 1.15 2004/12/07 20:19:49 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,7 +10,6 @@ package Slim::Buttons::Power;
 use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
-use Slim::Utils::Strings qw(string);
 
 Slim::Buttons::Common::addMode('off',getFunctions(),\&setMode);
 
@@ -30,8 +29,11 @@ sub getFunctions {
 
 sub setMode {
 	my $client = shift;
+
 	$client->lines(\&lines);
+
 	my $sync = Slim::Utils::Prefs::clientGet($client,'syncPower');
+
 	if (defined $sync && $sync == 0) {
 		$::d_sync && Slim::Utils::Misc::msg("Temporary Unsync ".$client->id()."\n");
 		Slim::Player::Sync::unsync($client,1);

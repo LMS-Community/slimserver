@@ -1,6 +1,6 @@
 package Slim::Player::Source;
 
-# $Id: Source.pm,v 1.124 2004/11/29 19:26:49 dean Exp $
+# $Id: Source.pm,v 1.125 2004/12/07 20:19:54 dsully Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -32,7 +32,6 @@ use Slim::Display::Display;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Scan;
-use Slim::Utils::Strings qw(string);
 use Slim::Player::Pipeline;
 use Slim::Web::RemoteStream;
 use Slim::Player::Protocols::HTTP;
@@ -814,7 +813,8 @@ sub resetSong {
 
 sub errorOpening {
 	my $client = shift;
-	my $line1 = string('PROBLEM_OPENING');
+
+	my $line1 = $client->string('PROBLEM_OPENING');
 	my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
 	
 	$client->showBriefly($line1, $line2, 1,1);
@@ -843,7 +843,7 @@ sub openSong {
 
 		$::d_source && msg("URL is remote : $fullpath\n");
 
-		my $line1 = string('CONNECTING_FOR');
+		my $line1 = $client->string('CONNECTING_FOR');
 		my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));			
 		$client->showBriefly($line1, $line2, undef,1);
 
@@ -954,7 +954,7 @@ sub openSong {
 			$::d_source && msg("Remote stream failed to open, showing message.\n");
 			$client->audioFilehandle(undef);
 			
-			my $line1 = string('PROBLEM_CONNECTING');
+			my $line1 = $client->string('PROBLEM_CONNECTING');
 			my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));
 
 			$client->showBriefly($line1, $line2, 5, 1);
@@ -1106,7 +1106,7 @@ sub openSong {
 
 		$::d_source && msg("Can't open [$fullpath] : $!\n");
 
-		my $line1 = string('PROBLEM_OPENING');
+		my $line1 = $client->string('PROBLEM_OPENING');
 		my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client));		
 
 		$client->showBriefly($line1, $line2, 5,1);
@@ -1251,10 +1251,10 @@ sub getConvertCommand {
 				push @supportedformats, $testformat;
 			}
 		}
-	}
-	else {
+
+	} else {
 		$undermax = 1;
-		@supportedformats = ('aif','wav','mp3');
+		@supportedformats = qw(aif wav mp3);
 	}
 
 	foreach my $checkformat (@supportedformats) {

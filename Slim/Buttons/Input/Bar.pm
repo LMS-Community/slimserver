@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Bar;
 
-# $Id: Bar.pm,v 1.9 2004/10/21 02:13:16 kdf Exp $
+# $Id: Bar.pm,v 1.10 2004/12/07 20:19:50 dsully Exp $
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -11,9 +11,8 @@ use strict;
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 use Slim::Display::Display;
-use Slim::Utils::Strings qw (string);
 
-Slim::Buttons::Common::addMode('INPUT.Bar',getFunctions(),\&setMode);
+Slim::Buttons::Common::addMode('INPUT.Bar', getFunctions(), \&setMode);
 
 ###########################
 #Button mode specific junk#

@@ -11,34 +11,43 @@ use File::Spec::Functions qw(:ALL);
 use Slim::Buttons::BrowseID3;
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
-use Slim::Utils::Strings qw (string);
 
 my %home = ();
 
 Slim::Buttons::Common::addMode('home',getFunctions(),\&setMode);
 
+# More documentation needed for all this magic.
 my %defaultParams = (
-	'listRef' => undef
-	,'externRef' => sub {
-		my $client = $_[0];
-		my $line2;
-		$line2 = (defined $client && $client->linesPerScreen() == 1) ? Slim::Utils::Strings::doubleString($_[1]) : string($_[1]);
-		return $line2;
-	}
-	,'onChange' => sub {
+	'listRef' => undef,
+
+	'externRef' => sub {
+		my $client = shift;
+		my $string = shift;
+
+		if (defined $client && $client->linesPerScreen() == 1) {
+			return $client->doubleString($string);
+		}
+
+		return $client->string($string);
+	},
+
+	'onChange' => sub {
 		my ($client, $value) = @_;
 		my $curMenu = Slim::Buttons::Common::param($client,'curMenu');
 		$client->curSelection($curMenu,$value);
-	}
-	,'onChangeArgs' => 'CV'
-	,'externRefArgs' => 'CV'
-	,'stringExternRef' => 0
-	,'header' => undef
-	,'headerAddCount' => 1
-	,'callback' => \&homeExitHandler
-	,'overlayRef' => sub {return (undef,Slim::Display::Display::symbol('rightarrow'));}
-	,'overlayRefArgs' => ''
-	,'valueRef' => undef
+	},
+
+	'onChangeArgs' => 'CV',
+	'externRefArgs' => 'CV',
+	'stringExternRef' => 1,
+	'header' => undef,
+	'headerAddCount' => 1,
+	'callback' => \&homeExitHandler,
+
+	'overlayRef' => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+
+	'overlayRefArgs' => '',
+	'valueRef' => undef,
 );
 	
 ########################################################################
@@ -51,11 +60,14 @@ my %defaultParams = (
 # plus any installed and active plugins
 ###########################################################################
 sub initHomeConfig {
+
 	%home = (
+
 		'NOW_PLAYING' => {
 			'useMode' => 'playlist'
-		}
-		,'SETTINGS' => {
+		},
+
+		'SETTINGS' => {
 			'useMode' => 'settings'
 		}
 	)
@@ -72,18 +84,22 @@ initHomeConfig();
 # will be created 
 sub addSubMenu {
 	my ($menu,$submenuname,$submenuref) = @_;
+
 	unless (exists $home{$menu}) {
-		#warn "menu $menu does not exist\n";
+		# warn "menu $menu does not exist\n";
 		addMenuOption($menu);
 	}
+
 	if (exists $home{$menu}{'useMode'}) {
 		warn "Menu $menu cannot take submenus\n";
 		return;
 	}
+
 	unless (defined $submenuname && defined $submenuref) {
 		warn "No submenu information supplied!\n";
 		return;
 	}
+
 	$home{$menu}{'submenus'}{$submenuname} = $submenuref;
 	return;
 }
@@ -141,10 +157,10 @@ my %functions = (
 	
 		if ($client->curSelection($client->curDepth()) eq 'MUSIC') {
 			# add the whole of the music folder to the playlist!
-			Slim::Buttons::Block::block($client, string('ADDING_TO_PLAYLIST'), string('MUSIC'));
+			Slim::Buttons::Block::block($client, $client->string('ADDING_TO_PLAYLIST'), $client->string('MUSIC'));
 			Slim::Control::Command::execute($client, ['playlist', 'add', Slim::Utils::Prefs::get('audiodir')], \&Slim::Buttons::Block::unblock, [$client]);
 		} elsif($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
-			$client->showBriefly(string('CLEARING_PLAYLIST'), '');
+			$client->showBriefly($client->string('CLEARING_PLAYLIST'), '');
 			Slim::Control::Command::execute($client, ['playlist', 'clear']);
 		} else {
 			Slim::Buttons::Common::pushModeLeft($client,'playlist');
@@ -156,9 +172,9 @@ my %functions = (
 		if ($client->curSelection($client->curDepth()) eq 'MUSIC') {
 			# play the whole of the music folder!
 			if (Slim::Player::Playlist::shuffle($client)) {
-				Slim::Buttons::Block::block($client, string('PLAYING_RANDOMLY_FROM'), string('MUSIC'));
+				Slim::Buttons::Block::block($client, $client->string('PLAYING_RANDOMLY_FROM'), $client->string('MUSIC'));
 			} else {
-				Slim::Buttons::Block::block($client, string('NOW_PLAYING_FROM'), string('MUSIC'));
+				Slim::Buttons::Block::block($client, $client->string('NOW_PLAYING_FROM'), $client->string('MUSIC'));
 			}
 			Slim::Control::Command::execute($client, ['playlist', 'load', Slim::Utils::Prefs::get('audiodir')], \&Slim::Buttons::Block::unblock, [$client]);
 		} elsif($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
@@ -171,9 +187,9 @@ my %functions = (
 				  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_ALBUM')  ||
 				  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_SONG')) {
 			if (Slim::Player::Playlist::shuffle($client)) {
-				Slim::Buttons::Block::block($client, string('PLAYING_RANDOMLY'), string('EVERYTHING'));
+				Slim::Buttons::Block::block($client, $client->string('PLAYING_RANDOMLY'), $client->string('EVERYTHING'));
 			} else {
-				Slim::Buttons::Block::block($client, string('NOW_PLAYING'), string('EVERYTHING'));
+				Slim::Buttons::Block::block($client, $client->string('NOW_PLAYING'), $client->string('EVERYTHING'));
 			}
 			Slim::Control::Command::execute($client, ["playlist", "loadalbum", "*", "*", "*"], \&Slim::Buttons::Block::unblock, [$client]);
 		} else {
@@ -301,12 +317,12 @@ sub homeExitHandler {
 		if (exists ($nextParams->{'submenus'})) {
 			my %params = %defaultParams;
 			
-			$params{'header'} = string($client->curSelection($client->curDepth()));
+			$params{'header'} = $client->string($client->curSelection($client->curDepth()));
 			# move reference to new depth
 			$client->curDepth($client->curDepth()."-".$client->curSelection($client->curDepth()));
 			
 			# check for disalbed plugins in item list.
-			$params{'listRef'} = &createList($nextParams);
+			$params{'listRef'} = createList($client, $nextParams);
 			$params{'overlayRef'} = undef if scalar @{$params{'listRef'}} == 0;
 			$params{'curMenu'} = $client->curDepth();
 			
@@ -336,9 +352,9 @@ sub homeExitHandler {
 					$nextParams->{'valueRef'} = \$value;
 				}
 				Slim::Buttons::Common::pushModeLeft(
-					$client
-					,$nextParams->{'useMode'}
-					,$nextParams
+					$client,
+					$nextParams->{'useMode'},
+					$nextParams,
 				);
 			}
 		} elsif (Slim::Buttons::Common::validMode("PLUGIN.".$nextmenu)){
@@ -353,17 +369,22 @@ sub homeExitHandler {
 
 # load the submenu hash keys into an array of valid entries.
 sub createList {
-	my $paramsref = shift;
-	my @list;
-	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
+	my $client = shift;
+	my $params = shift;
+
+	my @list = ();
+
+	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
 	
 	foreach my $sub (sort {((Slim::Utils::Prefs::get("rank-$b") || 0) <=> 
 				(Slim::Utils::Prefs::get("rank-$a") || 0)) || 
-				    (lc(string($a)) cmp lc(string($b)))} 
-			 keys %{$paramsref->{'submenus'}}) {
-		next if (exists $disabledplugins{$sub});
+				    (lc($client->string($a)) cmp lc($client->string($b)))} 
+			 keys %{$params->{'submenus'}}) {
+
+		next if exists $disabledplugins{$sub};
 		push @list, $sub;
 	}
+
 	return \@list;
 }
 
@@ -388,9 +409,9 @@ sub jumpToMenu {
 	Slim::Buttons::Home::jump($client,$menu,$depth);
 	my $nextParams = Slim::Buttons::Home::getNextList($client);
 	Slim::Buttons::Common::pushModeLeft(
-		$client
-		,'INPUT.List'
-		,$nextParams
+		$client,
+		'INPUT.List',
+		$nextParams,
 	);
 }
 
@@ -399,11 +420,11 @@ sub homeheader {
 	my $line1;
 	
 	if ($client->isa("Slim::Player::SLIMP3")) {
-		$line1 = string('SLIMP3_HOME');
+		$line1 = $client->string('SLIMP3_HOME');
 	} elsif ($client->isa("Slim::Player::Softsqueeze")) {
-		$line1 = string('SOFTSQUEEZE_HOME');
+		$line1 = $client->string('SOFTSQUEEZE_HOME');
 	} else {
-		$line1 = string('SQUEEZEBOX_HOME');
+		$line1 = $client->string('SQUEEZEBOX_HOME');
 	}
 	return $line1;
 }
@@ -423,7 +444,7 @@ sub menuOptions {
 		if ($menuOption eq 'SAVED_PLAYLISTS' && !Slim::Utils::Prefs::get('playlistdir')) {
 			next;
 		}
-		$menuChoices{$menuOption} = string($menuOption);
+		$menuChoices{$menuOption} = $client->string($menuOption);
 	}
 	return %menuChoices;
 }

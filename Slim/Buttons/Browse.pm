@@ -1,6 +1,6 @@
 package Slim::Buttons::Browse;
 
-# $Id: Browse.pm,v 1.21 2004/11/25 03:51:02 kdf Exp $
+# $Id: Browse.pm,v 1.22 2004/12/07 20:19:46 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -16,7 +16,6 @@ use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
 use Slim::Utils::Misc;
 use Slim::Buttons::Home;
-use Slim::Utils::Strings qw (string);
 use Slim::Utils::Scan;
 
 Slim::Buttons::Common::addMode('browse',Slim::Buttons::Browse::getFunctions(),\&Slim::Buttons::Browse::setMode);
@@ -147,7 +146,7 @@ my %functions = (
 	'add' => sub  {
 		my $client = shift;
 		my $currentItem = $client->dirItems($client->currentDirItem());
-		my $line1 = string('ADDING_TO_PLAYLIST');
+		my $line1 = $client->string('ADDING_TO_PLAYLIST');
 		my $line2 = Slim::Music::Info::standardTitle($client, $currentItem);
 		$::d_files && msg("currentItem == $currentItem\n");
 		if (Slim::Music::Info::isList($currentItem)) {
@@ -166,7 +165,7 @@ my %functions = (
 	'insert' => sub  {
 		my $client = shift;
 		my $currentItem = $client->dirItems($client->currentDirItem());
-		my $line1 = string('INSERT_TO_PLAYLIST');
+		my $line1 = $client->string('INSERT_TO_PLAYLIST');
 		my $line2 = Slim::Music::Info::standardTitle($client, $currentItem);
 		$::d_files && msg("currentItem == $currentItem\n");
 		if (Slim::Music::Info::isList($currentItem)) {
@@ -189,10 +188,10 @@ my %functions = (
 		my $line2 = Slim::Music::Info::standardTitle($client, $currentItem);
 		my $shuffled = 0;
 		if (Slim::Player::Playlist::shuffle($client)) {
-			$line1 = string('PLAYING_RANDOMLY_FROM');
+			$line1 = $client->string('PLAYING_RANDOMLY_FROM');
 			$shuffled = 1;
 		} else {
-			$line1 = string('NOW_PLAYING_FROM');
+			$line1 = $client->string('NOW_PLAYING_FROM');
 		
 		}
 		if (Slim::Music::Info::isList($currentItem)) {
@@ -388,9 +387,9 @@ sub line1 {
 	my $line1;
 
 	if ($client->pwd() eq "__playlists") {
-		$line1 = string('SAVED_PLAYLISTS');
+		$line1 = $client->string('SAVED_PLAYLISTS');
 	} elsif ((defined $client->pwd() and $client->pwd() =~ m|^[/\\]?$|) || !Slim::Utils::Prefs::get('audiodir')) {
-		$line1 = string('MUSIC');
+		$line1 = $client->string('MUSIC');
 	} else {
 		my $dir;
 		# show only deepest two levels past the root dir
@@ -413,7 +412,7 @@ sub line1 {
 	}
 
 	if ($client->numberOfDirItems()) {
-		$line1 .= sprintf(" (%d ".string('OUT_OF')." %s)", $client->currentDirItem + 1, $client->numberOfDirItems());
+		$line1 .= sprintf(" (%d %s %s)", $client->currentDirItem + 1, $client->string('OUT_OF'), $client->numberOfDirItems());
 	}
 
 	return $line1;
@@ -424,10 +423,9 @@ sub line2 {
 	my $line2;
 
 	if (!$client->numberOfDirItems()) {
-		$line2 = string('EMPTY');
+		$line2 = $client->string('EMPTY');
 	} else {
-		my $fullpath;
-		$fullpath = $client->dirItems($client->currentDirItem());
+		my $fullpath = $client->dirItems($client->currentDirItem());
 
 		# try and use the id3 tag
 		$line2 = Slim::Music::Info::standardTitle($client, $fullpath);

@@ -15,7 +15,6 @@ use Slim::Control::Command;
 use Slim::Display::Display;
 use Slim::Utils::Misc;
 use Slim::Utils::Scan;
-use Slim::Utils::Strings qw(string);
 
 #
 # accessors for playlist information
@@ -342,7 +341,7 @@ sub reshuffle {
 
 		foreach my $track (@{playList($client)}) {
 
-			my $album = Slim::Utils::Text::matchCase(Slim::Music::Info::album($track)) || string('NO_ALBUM');
+			my $album = Slim::Utils::Text::matchCase(Slim::Music::Info::album($track)) || $client->string('NO_ALBUM');
 
 			push @{$albtracks{$album}}, $i;
 			$trackToNum{$track} = $i++;
@@ -352,7 +351,7 @@ sub reshuffle {
 			$realsong = $listRef->[Slim::Utils::Prefs::clientGet($client,'currentSong')];
 		}
 
-		my $curalbum = Slim::Utils::Text::matchCase(Slim::Music::Info::album(${playList($client)}[$realsong])) || string('NO_ALBUM');
+		my $curalbum = Slim::Utils::Text::matchCase(Slim::Music::Info::album(${playList($client)}[$realsong])) || $client->string('NO_ALBUM');
 
 		my @albums = keys(%albtracks);
 

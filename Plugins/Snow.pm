@@ -1,6 +1,6 @@
 package Plugins::Snow;
 
-# $Id: Snow.pm,v 1.14 2004/09/01 01:27:18 kdf Exp $
+# $Id: Snow.pm,v 1.15 2004/12/07 20:19:46 dsully Exp $
 # by Phil Barrett, December 2003
 # screensaver conversion by Kevin Deane-Freeman Dec 2003
 
@@ -17,17 +17,18 @@ use strict;
 ###########################################
 
 use Slim::Control::Command;
-use Slim::Utils::Strings qw (string);
 use Slim::Utils::Timers;
 use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.14 $,10);
+$VERSION = substr(q$Revision: 1.15 $,10);
 
-sub getDisplayName() {return string('PLUGIN_SCREENSAVER_SNOW');}
+sub getDisplayName {
+	return 'PLUGIN_SCREENSAVER_SNOW';
+}
 
-sub strings() { return '
+sub strings { return '
 PLUGIN_SCREENSAVER_SNOW
 	DE	Schnee Bildschirmschoner
 	EN	Snow Screensaver
@@ -282,12 +283,13 @@ sub setMode {
 
 # First, Register the screensaver mode here.  Must make the call to addStrings in order to have plugin
 # localization available at this point.
-sub screenSaver() {
+sub screenSaver {
 	Slim::Buttons::Common::addSaver('SCREENSAVER.snow', 
-				getScreensaverSnowFunctions(),
-				\&setScreensaverSnowMode, 
-				\&leaveScreensaverSnowMode,
-				string('PLUGIN_SCREENSAVER_SNOW'));
+		getScreensaverSnowFunctions(),
+		\&setScreensaverSnowMode, 
+		\&leaveScreensaverSnowMode,
+		'PLUGIN_SCREENSAVER_SNOW',
+	);
 }
 
 my %wasDoubleSize;
@@ -340,10 +342,11 @@ sub screensaverSnowlines {
 	my $simple = 0;
 	my $words = 0;
 	my $style = $snowStyle{$client};
+
 	if( $client && $client->isa( "Slim::Player::SqueezeboxG")) {
-    	$line1 = string('PLUGIN_SCREENSAVER_SNOW');
-	    $line2 = string('PLUGIN_SCREENSAVER_SNOW_SORRY');
-	    return ($line1, $line2);
+		$line1 = $client->string('PLUGIN_SCREENSAVER_SNOW');
+		$line2 = $client->string('PLUGIN_SCREENSAVER_SNOW_SORRY');
+		return ($line1, $line2);
 	} 	 
 
 	if($style == 5) {
@@ -714,9 +717,9 @@ sub letItSnow {
 	    
 	    if($wordState{$client} == -1) {
 		# Not showing a word right now. Should we start next time?
-		$word{$client} = string('PLUGIN_SCREENSAVER_SNOW_WORD_' . $wordIndex{$client});
+		$word{$client} = $client->string('PLUGIN_SCREENSAVER_SNOW_WORD_' . $wordIndex{$client});
 		$wordIndex{$client}++;
-		$wordIndex{$client} = 0 if($wordIndex{$client} == string('PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS'));
+		$wordIndex{$client} = 0 if($wordIndex{$client} == $client->string('PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS'));
 		$wordState{$client} = 0;
 		foreach $col (0..39) {
 		    $offsets{$client}->[$col] = int(rand(24));

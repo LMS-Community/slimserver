@@ -1,6 +1,6 @@
 package Slim::Formats::MP3;
 
-# $Id: MP3.pm,v 1.12 2004/11/15 18:58:39 dean Exp $
+# $Id: MP3.pm,v 1.13 2004/12/07 20:19:52 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -13,14 +13,19 @@ use MP3::Info;
 
 use Slim::Utils::Misc;
 
-#$::d_mp3 = 1;
+# Don't try and convert anything to latin1
+if ($] > 5.007) {
+
+	MP3::Info::use_mp3_utf8(1);
+}
 
 sub getTag {
-
 	my $file = shift || "";
 
+	# What is this for? Trailing null?
 	open my $fh, "< $file\0" or return undef;
 	
+	# Seems redundant.
 	return undef if (!$fh);
 
 	$::d_mp3 && Slim::Utils::Misc::msg("Getting tags for: $file\n");	
@@ -156,6 +161,5 @@ sub seekNextFrame {
 		return(0,0);
 	}
 }
-
 
 1;

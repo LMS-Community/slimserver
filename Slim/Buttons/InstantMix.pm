@@ -1,5 +1,6 @@
 package Slim::Buttons::InstantMix;
-#$Id: InstantMix.pm,v 1.7 2004/11/27 06:51:54 kdf Exp $
+
+#$Id: InstantMix.pm,v 1.8 2004/12/07 20:19:48 dsully Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,7 +11,6 @@ use strict;
 use Slim::Buttons::Common;
 use Slim::Music::MoodLogic;
 use Slim::Music::MusicMagic;
-use Slim::Utils::Strings qw (string);
 use Slim::Utils::Timers;
 use Slim::Hardware::VFD;
 
@@ -66,17 +66,19 @@ my %functions = (
 		my $line2;
 		
 		if ($append) {
-			$line1 = string('ADDING_TO_PLAYLIST')
+			$line1 = $client->string('ADDING_TO_PLAYLIST')
 		} elsif (Slim::Player::Playlist::shuffle($client)) {
-			$line1 = string('PLAYING_RANDOMLY_FROM');
+			$line1 = $client->string('PLAYING_RANDOMLY_FROM');
 		} else {
-			$line1 = string('NOW_PLAYING_FROM')
+			$line1 = $client->string('NOW_PLAYING_FROM')
 		}
+
 		if (Slim::Music::MoodLogic::useMoodLogic()) {
-			$line2 = string('MOODLOGIC_INSTANT_MIX');
+			$line2 = $client->string('MOODLOGIC_INSTANT_MIX');
 		} else {
-			$line2 = string('MUSICMAGIC_INSTANT_MIX');
+			$line2 = $client->string('MUSICMAGIC_INSTANT_MIX');
 		}
+
 		$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')));
 		
 		Slim::Control::Command::execute($client, ["playlist", $append ? "append" : "play", $instantMix[0]]);
@@ -135,11 +137,13 @@ sub lines {
 	my ($line1, $line2);
 
 	if (Slim::Music::MoodLogic::useMoodLogic()) {
-		$line1 = string('MOODLOGIC_INSTANT_MIX');
+		$line1 = $client->string('MOODLOGIC_INSTANT_MIX');
 	} else {
-		$line1 = string('MUSICMAGIC_INSTANT_MIX');
+		$line1 = $client->string('MUSICMAGIC_INSTANT_MIX');
 	}
-	$line1 .= sprintf(" (%d ".string('OUT_OF')." %s)", selection($client, 'instant_mix_index') + 1, scalar @instantMix);
+
+	$line1 .= sprintf(" (%d %s %s)", selection($client, 'instant_mix_index') + 1, $client->string('OUT_OF'), scalar @instantMix);
+
 	$line2 = Slim::Music::Info::infoFormat($instantMix[selection($client, 'instant_mix_index')], 'TITLE (ARTIST)', 'TITLE');
 
 	return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));

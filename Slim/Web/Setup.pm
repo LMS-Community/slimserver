@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.114 2004/11/30 04:05:15 kdf Exp $
+# $Id: Setup.pm,v 1.115 2004/12/07 20:19:57 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -1320,12 +1320,18 @@ sub initSetupConfig {
 				,'externalValue' => sub {
 							my ($client,$value,$key) = @_;
 
-							if ($key =~ /\D+(\d+)$/) {
-								my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
-								return $pluginlistref->{(sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref}))[$1]};
-							} else {
+							if ($key !~ /\D+(\d+)$/) {
 								return $value;
 							}
+
+							my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
+
+							# Stick real names in the list - so we can be I18N'd properly.
+							for my $plugin (keys %{$pluginlistref}) {
+								$pluginlistref->{$plugin} = string($pluginlistref->{$plugin});
+							}
+
+							return $pluginlistref->{(sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref}))[$1]};
 						}
 			}
 			,'plugins-onthefly' => {
@@ -2299,14 +2305,25 @@ sub playerChildren {
 
 sub menuItemName {
 	my ($client,$value) = @_;
+
 	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
+
 	if (Slim::Utils::Strings::stringExists($value)) {
-		return string($value);
+
+		my $string = $client->string($value);
+
+		if (Slim::Utils::Strings::stringExists($string)) {
+			return $client->string($string);
+		}
+
+		return $string;
+
 	} elsif (exists $pluginsRef->{$value}) {
-		return $pluginsRef->{$value};
-	} else {
-		return $value;
+
+		return $client->string($pluginsRef->{$value});
 	}
+
+	return $value;
 }
 
 #returns a hash of title formats with the key being their array index and the value being the
@@ -2422,112 +2439,170 @@ sub buildLinkList {
 
 sub buildHTTP {
 	my ($client,$paramref,$pageref) = @_;
+
 	my ($page,@pages) = ();
+
 	foreach my $group (@{$pageref->{'GroupOrder'}}) {
-		if (!$group || !defined($pageref->{'Groups'}{$group})) {next;}
+
+		next if !$group || !defined($pageref->{'Groups'}{$group});
+
 		my %groupparams = %{$pageref->{'Groups'}{$group}};
+
 		$groupparams{'skinOverride'} = $$paramref{'skinOverride'};
-		foreach my $pref (@{$pageref->{'Groups'}{$group}{'PrefOrder'}}) {
-			if (!defined($pref) || !defined($pageref->{'Prefs'}{$pref})) { next; }
+
+		for my $pref (@{$pageref->{'Groups'}{$group}{'PrefOrder'}}) {
+
+			next if !defined($pref) || !defined($pageref->{'Prefs'}{$pref});
+
 			my %prefparams = (%{$paramref}, %{$pageref->{'Prefs'}{$pref}});
+
 			$prefparams{'Suppress_PrefHead'} = $groupparams{'Suppress_PrefHead'};
 			$prefparams{'Suppress_PrefDesc'} = $groupparams{'Suppress_PrefDesc'};
-			$prefparams{'Suppress_PrefSub'} = $groupparams{'Suppress_PrefSub'};
+			$prefparams{'Suppress_PrefSub'}  = $groupparams{'Suppress_PrefSub'};
 			$prefparams{'Suppress_PrefLine'} = $groupparams{'Suppress_PrefLine'};
-			$prefparams{'PrefsInTable'} = $groupparams{'PrefsInTable'} ||
-				$prefparams{'PrefInTable'};
-			$prefparams{'skinOverride'} = $groupparams{'skinOverride'};
+			$prefparams{'PrefsInTable'}      = $groupparams{'PrefsInTable'} || $prefparams{'PrefInTable'};
+			$prefparams{'skinOverride'}      = $groupparams{'skinOverride'};
 			
+			my $token  = 'SETUP_' . uc($pref);
+			my $tokenDesc   = 'SETUP_' . uc($pref) . '_DESC';
+			my $tokenChoose = 'SETUP_' . uc($pref) . '_CHOOSE';
+
 			if (!exists $prefparams{'PrefHead'}) {
-				$prefparams{'PrefHead'} = Slim::Utils::Strings::stringExists('SETUP_' . uc($pref)) ? string('SETUP_' . uc($pref)) : $pref;
+				$prefparams{'PrefHead'} = (Slim::Utils::Strings::resolveString($token) || $pref);
 			}
-			if (!exists $prefparams{'PrefDesc'} && Slim::Utils::Strings::stringExists('SETUP_' . uc($pref) . '_DESC')) {
-				$prefparams{'PrefDesc'} = string('SETUP_' . uc($pref) . '_DESC');
+
+			if (!exists $prefparams{'PrefDesc'} && Slim::Utils::Strings::stringExists($tokenDesc)) {
+				$prefparams{'PrefDesc'} = string($tokenDesc);
 			}
-			if (!exists $prefparams{'PrefChoose'} && Slim::Utils::Strings::stringExists('SETUP_' . uc($pref) . '_CHOOSE')) {
-				$prefparams{'PrefChoose'} = string('SETUP_' . uc($pref) . '_CHOOSE');
+
+			if (!exists $prefparams{'PrefChoose'} && Slim::Utils::Strings::stringExists($tokenChoose)) {
+				$prefparams{'PrefChoose'} = string($tokenChoose);
 			}
+
 			if (!exists $prefparams{'inputTemplate'}) {
 				$prefparams{'inputTemplate'} = (exists $prefparams{'options'}) ? 'setup_input_sel.html' : 'setup_input_txt.html';
 			}
+
 			if (!exists $prefparams{'ChangeButton'}) {
 				$prefparams{'ChangeButton'} = string('CHANGE');
 			}
+
 			$prefparams{'page'} = $paramref->{'page'};
 
 			my $arrayMax = 0;
 			my $arrayCurrent;
+
 			if (exists($pageref->{'Prefs'}{$pref}{'isArray'})) {
+
 				if (defined($pageref->{'Prefs'}{$pref}{'arrayMax'})) {
 					$arrayMax = $pageref->{'Prefs'}{$pref}{'arrayMax'};
 				} else {
-					$arrayMax = ($client) ? Slim::Utils::Prefs::clientGetArrayMax($client,$pref) : Slim::Utils::Prefs::getArrayMax($pref);
+					$arrayMax = ($client) ? Slim::Utils::Prefs::clientGetArrayMax($client,$pref) : 
+						Slim::Utils::Prefs::getArrayMax($pref);
 				}
+
 				if (defined($pageref->{'Prefs'}{$pref}{'arrayCurrentPref'})) {
+
 					$prefparams{'PrefArrayCurrName'} = $pageref->{'Prefs'}{$pref}{'arrayCurrentPref'};
+
 					$arrayCurrent = ($client) ? Slim::Utils::Prefs::clientGet($client,$pageref->{'Prefs'}{$pref}{'arrayCurrentPref'})
 								: Slim::Utils::Prefs::get($pageref->{'Prefs'}{$pref}{'arrayCurrentPref'});
 				}
+
 				if (defined($pageref->{'Prefs'}{$pref}{'arrayAddExtra'})) {
-					my $adval = defined($pageref->{'Prefs'}{$pref}{'arrayDeleteValue'}) ? $pageref->{'Prefs'}{$pref}{'arrayDeleteValue'} : '';
+
+					my $adval = defined($pageref->{'Prefs'}{$pref}{'arrayDeleteValue'}) ? 
+						$pageref->{'Prefs'}{$pref}{'arrayDeleteValue'} : '';
+
 					for (my $i = $arrayMax + 1; $i <= $arrayMax + $pageref->{'Prefs'}{$pref}{'arrayAddExtra'}; $i++) {
+
 						$paramref->{$pref . $i} = $adval;
 					}
+
 					$arrayMax += $pageref->{'Prefs'}{$pref}{'arrayAddExtra'};
 				}
 			}
+
 			$prefparams{'PrefInput'} = '';
-			for (my $i=0; $i <= $arrayMax; $i++) {
+
+			for (my $i = 0; $i <= $arrayMax; $i++) {
+
 				my $pref2 = $pref . (exists($pageref->{'Prefs'}{$pref}{'isArray'}) ? $i : '');
+
 				$prefparams{'PrefName'} = $pref2;
 				$prefparams{'PrefNameRoot'} = $pref;
 				$prefparams{'PrefIndex'} = $i;
+
 				if (!exists($paramref->{$pref2}) && !exists($pageref->{'Prefs'}{$pref}{'dontSet'})) {
+
 					if (!exists($pageref->{'Prefs'}{$pref}{'isArray'})) {
-						$paramref->{$pref2} = ($client) ? Slim::Utils::Prefs::clientGet($client,$pref2) : Slim::Utils::Prefs::get($pref2);
+
+						$paramref->{$pref2} = ($client) ? Slim::Utils::Prefs::clientGet($client,$pref2) : 
+							Slim::Utils::Prefs::get($pref2);
+
 					} else {
-						$paramref->{$pref2} = ($client) ? Slim::Utils::Prefs::clientGet($client,$pref,$i) : Slim::Utils::Prefs::getInd($pref,$i);
+
+						$paramref->{$pref2} = ($client) ? Slim::Utils::Prefs::clientGet($client,$pref,$i) : 
+							Slim::Utils::Prefs::getInd($pref,$i);
 					}
 				}
+
 				$prefparams{'PrefValue'} = $paramref->{$pref2};
+
 				if (exists $pageref->{'Prefs'}{$pref}{'externalValue'}) {
+
 					if (exists $pageref->{'Prefs'}{$pref}{'isClient'}) {
 						$client = Slim::Player::Client::getClient($paramref->{'playerid'});
 					}
+
 					$prefparams{'PrefExtValue'} = &{$pageref->{'Prefs'}{$pref}{'externalValue'}}($client,$paramref->{$pref2},$pref2);
+
 				} else {
+
 					$prefparams{'PrefExtValue'} = $paramref->{$pref2};
 				}
+
 				$prefparams{'PrefOptions'} = $paramref->{$pref2 . '_options'};
+
 				if (exists($pageref->{'Prefs'}{$pref}{'isArray'})) {
+
 					$prefparams{'PrefSelected'} = (defined($arrayCurrent) && ($arrayCurrent eq $i)) ? 'checked' : undef;
+
 				} else {
+
 					$prefparams{'PrefSelected'} = $paramref->{$pref2} ? 'checked' : undef;
 				}
+
 				if (defined $prefparams{'inputTemplate'}) {
 					$prefparams{'PrefInput'} .= ${Slim::Web::HTTP::filltemplatefile($prefparams{'inputTemplate'},\%prefparams)};
 				}
 			}
+
 			$groupparams{'PrefList'} .= ${Slim::Web::HTTP::filltemplatefile('setup_pref.html',\%prefparams)};
 		}
+
 		if (!exists $groupparams{'ChangeButton'}) {
 			$groupparams{'ChangeButton'} = string('CHANGE');
 		}
 
 		$paramref->{'GroupList'} .= ${Slim::Web::HTTP::filltemplatefile('setup_group.html',\%groupparams)};
 	}
-	#set up pagetitle
+
+	# set up pagetitle
 	$paramref->{'pagetitle'} = $pageref->{'title'};
-	#set up link tree
+
+	# set up link tree
 	$page = $paramref->{'page'};
+
 	@pages = ();
+
 	while (defined $page) {
 		unshift @pages,$page;
 		$page = $setup{$page}{'parent'};
 	}
 	$paramref->{'linktree'} = buildLinkList('tree',$paramref,@pages);;
 	
-	#set up sibling bar
+	# set up sibling bar
 	if (defined $pageref->{'parent'} && defined $setup{$pageref->{'parent'}}{'children'}) {
 		@pages = @{$setup{$pageref->{'parent'}}{'children'}};
 		if (scalar(@pages) > 1) {
@@ -2535,23 +2610,25 @@ sub buildHTTP {
 		}
 	}
 	
-	#set up children bar and single child link
+	# set up children bar and single child link
 	if (defined $pageref->{'children'} && defined $pageref->{'children'}[0]) {
+
 		@pages = @{$pageref->{'children'}};
 		$paramref->{'children'} = buildLinkList('list',$paramref,@pages);
+
 		my %linkinfo = ('linkpage' => 'setup.html'
 				,'paramlist' => '?page=' . $pageref->{'children'}[0] . '&player=' . Slim::Web::HTTP::escape($paramref->{'player'}) . '&playerid=' . (defined $paramref->{'playerid'} ? Slim::Web::HTTP::escape($paramref->{'playerid'}) : "")
 				,'skinOverride' => $$paramref{'skinOverride'}
 				);
+
 		if (defined $pageref->{'singleChildLinkText'}) {
 			$linkinfo{'linktitle'} = $pageref->{'singleChildLinkText'};
 		} else {
 			$linkinfo{'linktitle'} = $setup{$pageref->{'children'}[0]}{'title'};
 		}
-		$paramref->{'singleChildLink'} = ${Slim::Web::HTTP::filltemplatefile('linklist.html',\%linkinfo)};
-		
-	}
 
+		$paramref->{'singleChildLink'} = ${Slim::Web::HTTP::filltemplatefile('linklist.html',\%linkinfo)};
+	}
 }
 
 sub processChanges {
@@ -2879,48 +2956,72 @@ sub options_HTTP {
 	}
 }
 
+# pass in the selected value and a hash of value => text pairs to get the option list filled
+# with the correct option selected.  Since the text portion can be a template (for stringification)
+# perform a filltemplate on the completed list
+
 sub fillOptions {
-	#pass in the selected value and a hash of value => text pairs to get the option list filled
-	#with the correct option selected.  Since the text portion can be a template (for stringification)
-	#perform a filltemplate on the completed list
-	my ($selected,$optionref,$optionsort) = @_;
-	my $optionlist = '';
-	my @optionarray = keys %$optionref;
-	if (!defined $optionsort || $optionsort =~ /K/i) {
-		@optionarray = sort @optionarray;
-	} else {
-		@optionarray = sort {$optionref->{$a} cmp $optionref->{$b}} @optionarray;
+	my ($selected, $optionref, $sort) = @_;
+
+	my @optionlist = ();
+	my $options    = _sortOptionArray($optionref, $sort);
+
+	for my $curOption (@{$options}) {
+
+		push @optionlist, '<option ' .
+			((defined $selected && $curOption eq $selected) ? 'selected ' : '') .
+			qq(value="$curOption">$optionref->{$curOption}</option>);
 	}
-	if (defined $optionsort && $optionsort =~ /R/i) {
-		@optionarray = reverse @optionarray;
-	}
-	foreach my $curroption (@optionarray) {
-		$optionlist .= "<option " . ((defined($selected) && ($curroption eq $selected)) ? "selected " : ""). qq(value="${curroption}">$optionref->{$curroption}</option>)
-	}
-	return $optionlist;
+
+	return join("\n", @optionlist);
 }
 
+# pass in the selected value and a hash of value => text pairs to get the option list filled
+# with the correct option selected.  Since the text portion can be a template (for stringification)
+# perform a filltemplate on the completed list
+
 sub fillRadioOptions {
-	#pass in the selected value and a hash of value => text pairs to get the option list filled
-	#with the correct option selected.  Since the text portion can be a template (for stringification)
-	#perform a filltemplate on the completed list
-	my ($selected,$optionref,$option,$optionsort) = @_;
-	my $optionlist = '';
-	my @optionarray = keys %$optionref;
-	if (!defined $optionsort || $optionsort =~ /K/i) {
-		@optionarray = sort @optionarray;
+	my ($selected,$optionref,$option,$sort) = @_;
+
+	my @optionlist = ();
+	my $options    = _sortOptionArray($optionref, $sort);
+
+	for my $curOption (@{$options}) {
+
+		push @optionlist, '<p><input type="radio" ' . 
+			((defined $selected && $curOption eq $selected) ? 'checked ' : '') .
+			qq(value="$curOption" name="$option">$optionref->{$curOption}</p>);
+	}
+
+	return join("\n", @optionlist);
+}
+
+# Utility used by both fill*Options functions
+sub _sortOptionArray {
+	my ($optionref, $sort) = @_;
+
+	# First - resolve any string pointers
+	while (my ($key, $value) = each %{$optionref}) {
+
+		if (Slim::Utils::Strings::stringExists($value)) {
+			$optionref->{$key} = string($value);
+		}
+	}
+
+	# Now sort
+	my @options = keys %$optionref;
+
+	if (!defined $sort || $sort =~ /K/i) {
+		@options = sort @options;
 	} else {
-		@optionarray = sort {$optionref->{$a} cmp $optionref->{$b}} @optionarray;
+		@options = sort {$optionref->{$a} cmp $optionref->{$b}} @options;
 	}
-	if (defined $optionsort && $optionsort =~ /R/i) {
-		@optionarray = reverse @optionarray;
+
+	if (defined $sort && $sort =~ /R/i) {
+		@options = reverse @options;
 	}
-	foreach my $curroption (@optionarray) {
-		$optionlist .= "<p><input type=\"radio\" " . 
-						((defined($selected) && ($curroption eq $selected)) ? "checked " : ""). 
-						qq(value="${curroption}" name="$option">$optionref->{$curroption}</p>)
-	}
-	return $optionlist;
+
+	return \@options;
 }
 
 ######################################################################
@@ -2928,6 +3029,7 @@ sub fillRadioOptions {
 ######################################################################
 # Adds the preference to the PrefOrder array of the supplied group at the
 # supplied position (or at the end if no position supplied)
+
 sub addPrefToGroup {
 	my ($category,$groupname,$prefname,$position) = @_;
 	unless (exists $setup{$category} && exists $setup{$category}{'Groups'}{$groupname}) {
@@ -2941,6 +3043,7 @@ sub addPrefToGroup {
 	splice(@{$setup{$category}{'Groups'}{$groupname}{'PrefOrder'}},$position,0,$prefname);
 	return;
 }
+
 # Removes the preference from the PrefOrder array of the supplied group
 # in the supplied category
 sub removePrefFromGroup {
@@ -2965,6 +3068,7 @@ sub removePrefFromGroup {
 	}
 	return;
 }
+
 # Adds the preference to the category.  A reference to a hash containing the
 # preference data must be supplied.
 sub addPref {
@@ -2979,6 +3083,7 @@ sub addPref {
 	}
 	return;
 }
+
 # Removes the preference from the supplied category, optionally removes
 # all references to the preference from the PrefOrder arrays of the groups
 # within the category
@@ -2997,6 +3102,7 @@ sub delPref {
 	}
 	return;
 }
+
 # Adds a group to the supplied category.  A reference to a hash containing the
 # group data must be supplied.  If a reference to a hash of preferences is supplied,
 # they will also be added to the category.
@@ -3030,6 +3136,7 @@ sub addGroup {
 	}
 	return;
 }
+
 # Deletes a group from a category and optionally the associated preferences
 sub delGroup {
 	my ($category,$groupname,$andPrefs) = @_;

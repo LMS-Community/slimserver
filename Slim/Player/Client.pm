@@ -1,4 +1,4 @@
-# $Id: Client.pm,v 1.60 2004/10/18 18:48:26 dean Exp $
+# $Id: Client.pm,v 1.61 2004/12/07 20:19:53 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -14,6 +14,7 @@ package Slim::Player::Client;
 
 use strict;
 use Slim::Utils::Misc;
+use Slim::Utils::Strings;
 use File::Spec::Functions qw(:ALL);
 
 # depricated, use $client->maxVolume
@@ -639,6 +640,10 @@ my $defaultPrefs = {
 		,'titleFormatCurr'		=> 1
 	};
 
+# Do this once for speed.
+my $failsafeLanguage     = Slim::Utils::Strings::failsafeLanguage();
+my %validClientLanguages = Slim::Utils::Strings::validClientLanguages();
+
 sub new {
 	my ($class, $id, $paddr) = @_;
 	
@@ -857,6 +862,8 @@ sub defaultName {
 sub getClient {
 	my $id = shift;
 	my $ret = $clientHash{$id};
+
+	# Try a brute for match for the client.
 	if (!defined($ret)) {
 		while (my ($key, $value) = each(%clientHash)) {
 			return $value if (ipport($value) eq $id);
@@ -1033,6 +1040,39 @@ sub resume {
 		$client->pauseTime(0);
 	}
 	$client->pauseTime(undef);
+}
+
+#
+sub string {
+	my $client = shift;
+	my $string = shift;
+
+	my $language = Slim::Utils::Strings::getLanguage();
+
+	# We're in the list - ok.
+	if ($validClientLanguages{$language}) {
+
+		return Slim::Utils::Misc::utf8toLatin1(Slim::Utils::Strings::string($string, $language));
+	}
+
+	# Otherwise return using the failsafe.
+	return Slim::Utils::Strings::string($string, $failsafeLanguage);
+}
+
+sub doubleString {
+	my $client = shift;
+	my $string = shift;
+
+	my $language = Slim::Utils::Strings::getLanguage();
+
+	# We're in the list - ok.
+	if ($validClientLanguages{$language}) {
+
+		return Slim::Utils::Misc::utf8toLatin1(Slim::Utils::Strings::string($string, $language));
+	}
+
+	# Otherwise return using the failsafe.
+	return Slim::Utils::Strings::doubleString($string, $failsafeLanguage);
 }
 
 # data accessors

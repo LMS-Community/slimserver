@@ -1,6 +1,6 @@
 package Slim::Utils::Strings;
 
-# $Id: Strings.pm,v 1.17 2004/10/08 02:43:10 kdf Exp $
+# $Id: Strings.pm,v 1.18 2004/12/07 20:19:56 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -8,20 +8,21 @@ package Slim::Utils::Strings;
 # version 2.
 
 use strict;
-use vars qw($VERSION @ISA @EXPORT @EXPORT_OK @EXPORT_FAIL);
-use File::Spec::Functions qw(:ALL);
-use FindBin qw($Bin);
+use vars qw(@EXPORT_OK);
+use base qw(Exporter);
 
-require Exporter;
-@ISA = qw(Exporter);
-@EXPORT = qw( );
-@EXPORT_OK = qw (string);    # we export string() so it's less typing to use it
+# we export string() so it's less typing to use it
+@EXPORT_OK = qw(string);
+
+use File::Spec::Functions qw(:ALL);
+use FindBin;
+use Slim::Utils::Misc;
 
 #-------------------------------------------------
 
-my %strings=();
-my %languages=();
-my $failsafe_language ="";
+my %strings   = ();
+my %languages = ();
+my $failsafe_language = 'EN';
 
 #
 # Initializes the module
@@ -34,65 +35,86 @@ my $failsafe_language ="";
 
 sub init {
 	my $usr_strings;
-	$Slim::Utils::Strings::failsafe_language = 'EN';
 
-	foreach my $dir (stringsDirs()) {
-		foreach my $stringfile (stringsFiles()) {
+	for my $dir (stringsDirs()) {
+
+		for my $stringfile (stringsFiles()) {
 			load_strings_file(catdir($dir, $stringfile));
 		}
 	}
 
-	foreach my $lang (keys(%languages)) {
+	for my $lang (keys(%languages)) {
 		$languages{$lang} = languageName($lang);
 	}
 }
 
 sub stringsDirs {
-      my @pluginDirs;
-      push @pluginDirs, $Bin;
-      push @pluginDirs, Slim::Utils::Prefs::preferencesPath();
-      if (Slim::Utils::OSDetect::OS() eq 'mac') {
-              push @pluginDirs, $ENV{'HOME'} . "/Library/SlimDevices/";
-              push @pluginDirs, "/Library/SlimDevices/";
-      }
-      return @pluginDirs;
+
+	my @pluginDirs = ($FindBin::Bin, Slim::Utils::Prefs::preferencesPath());
+
+	if (Slim::Utils::OSDetect::OS() eq 'mac') {
+	        push @pluginDirs, ($ENV{'HOME'} . "/Library/SlimDevices/", "/Library/SlimDevices/");
+	}
+
+	return @pluginDirs;
 }
 
 sub stringsFiles {
-      my @stringsFiles;
-      push @stringsFiles, 'strings.txt';
-      push @stringsFiles, ".slimp3-strings.txt";
-      push @stringsFiles, "slimp3-strings.txt"; 
-      push @stringsFiles, ".slimserver-strings.txt";
-      push @stringsFiles, "slimserver-strings.txt";
-      push @stringsFiles, ".custom-strings.txt";
-      push @stringsFiles, "custom-strings.txt"; 
-      return @stringsFiles;
+
+	my @stringsFiles = qw(
+		strings.txt
+		.slimp3-strings.txt
+		slimp3-strings.txt 
+		.slimserver-strings.txt
+		slimserver-strings.txt
+		.custom-strings.txt
+		custom-strings.txt
+	);
+
+	return @stringsFiles;
 }
 
 #
 # Loads a file containing strings
 #
 sub load_strings_file {
-	my $strings_file = shift;
+	my $file = shift;
 
-	if (!-e $strings_file) {
+	if (!-e $file) {
 		return;
 	}
-		
-	open STRINGS, $strings_file || die "couldn't open $strings_file\n";
-	my $strings = join('', <STRINGS>);
+
+	my $strings;
+
+	# Force the UTF-8 layer opening of the strings file.
+	#
+	# Be backwards compatible with perl 5.6.x
+	if ($] > 5.007) {
+
+		open(STRINGS, '<:utf8', $file) || die "couldn't open $file\n";
+		$strings = join('', <STRINGS>);
+		close STRINGS;
+
+	} else {
+
+		# This is lexically scoped.
+		use utf8;
+
+		open(STRINGS, $file) || die "couldn't open $file\n";
+		$strings = join('', <STRINGS>);
+		close STRINGS;
+	}
+
 	addStrings($strings);
-	close STRINGS;
 }
 
-# link a string to a function reference instead of a file
-sub addstringRef {
-	my $stringname = shift;
-	my $stringRef = shift;
-	
-	foreach my $language (&list_of_languages) {
-		$strings{$language.'_'.$stringname} = $stringRef;
+# Add a single string with a pointer to another string.
+sub addStringPointer {
+	my $name    = shift;
+	my $pointer = shift;
+	       
+	foreach my $language (list_of_languages()) {
+		$strings{$name}->{$language} = $pointer;
 	}
 }
 
@@ -114,12 +136,16 @@ sub addStrings {
 		next if (!($line =~/\S/));
 
 		if ($line=~/^(\S+)$/) {
+
 			$stringname = $1;
 			$string='';
 			next LINE;
+
 		} elsif ($line=~/^\t(\S*)\t(.+)$/) {
+
 			my $one = $1;
 			$string = $2;
+
 			if ($one=~/./) {
 				# if the string spans multiple lines, language can be left blank, and
 				# we'll remember it from the last time we saw it.
@@ -127,63 +153,64 @@ sub addStrings {
 
 				# keep track of all the languages we've seen
 				if (!exists($languages{$language})) {
-					$languages{$language}= $language;
+					$languages{$language} = $language;
 				}
-				if (defined $strings{$language.'_'.$stringname}) { 
-					delete $strings{$language.'_'.$stringname};
+
+				if (defined $strings{$stringname}->{$language}) { 
+					delete $strings{$stringname}->{$language};
 				};
 			} 
-			if (defined $strings{$language.'_'.$stringname}) {
-				$strings{$language.'_'.$stringname} .= "\n".$string;
+
+			if (defined $strings{$stringname}->{$language}) { 
+				$strings{$stringname}->{$language} .= "\n$string";
 			} else {
-				$strings{$language.'_'.$stringname} = $string;
+				$strings{$stringname}->{$language} = $string;
 			}
+
 		} else {
 			Slim::Utils::Misc::msg("Parse error on line $ln: $line\n");
 		}
 	}
 }
 
-#
-# Returns a list of all the available languages
-#
+# These should be self explainatory.
 sub list_of_languages {
 	return sort(keys(%languages));
 }
-
-#
-# Returns the hash of all available languages
-#
 
 sub hash_of_languages {
 	return %languages;
 }
 
-#
+sub hashref_of_strings {
+	return \%strings;
+}
+
 # Returns a string in the requested language
 #
+# We can pass in a language to override the default.
+# Currently used for falling back to English when the selected language is a
+# non-latin1 language such as Japanese.
 
 sub string {
-	my ($stringname) = @_;
-	
-	my $language = getLanguage();
-	
-	$stringname = uc($stringname);
-	
-	if ($strings{$language.'_'.$stringname}) {
-		if (ref($strings{$language.'_'.$stringname}) eq 'CODE') {
-			return $strings{$language.'_'.$stringname}->();
-		} else {
-			return $strings{$language.'_'.$stringname};
-		}
-	} else {
-		if ($strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname}) {
-			return $strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname};
-		} else {
-			Slim::Utils::Misc::msg("Undefined string: $stringname\nrequested language: $language\nfailsafe language: $Slim::Utils::Strings::failsafe_language\n");
-			return '';
-		}
+	my $stringname = uc(shift);
+	my $language   = shift || Slim::Utils::Prefs::get('language');
+	my $dontWarn   = shift || 0;
+
+	for my $tryLang ($language, $failsafe_language) {
+
+		next unless $strings{$stringname}->{$tryLang};
+
+		return $strings{$stringname}->{$tryLang};
 	}
+
+	unless ($dontWarn) {
+		Slim::Utils::Misc::msg(
+			"Undefined string: $stringname\nrequested language: $language\nfailsafe language: $failsafe_language\n"
+		);
+	}
+
+	return '';
 }
 
 #
@@ -191,26 +218,12 @@ sub string {
 #
 
 sub doubleString {
-	my ($stringname) = @_;
-	
-	my $language = Slim::Utils::Prefs::get('language');
-	$stringname = uc($stringname);
-	if ($strings{$language.'_'.$stringname.'_DBL'}) {
-		return $strings{$language.'_'.$stringname.'_DBL'};
-	} elsif ($strings{$language.'_'.$stringname}) {
-		if (ref($strings{$language.'_'.$stringname}) eq 'CODE') {
-			return $strings{$language.'_'.$stringname}->();
-		} else {
-			return $strings{$language.'_'.$stringname};
-		}
-	} elsif ($strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname.'_DBL'}) {
-		return $strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname.'_DBL'};
-	} elsif ($strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname}) {
-		return $strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname};
-	} else {
-		warn "Undefined string: $stringname\nrequested language: $language\nfailsafe language: $Slim::Utils::Strings::failsafe_language\n";
-		return '';
-	}
+	my $stringname = uc(shift);
+	my $language   = shift || Slim::Utils::Prefs::get('language');
+
+	# Try the double size string first - but don't warn if we can't find
+	# it. Then fallback to the regular string.
+	return string($stringname.'_DBL', $language, 1) || string($stringname, $language);
 }
 
 #
@@ -218,11 +231,29 @@ sub doubleString {
 #
 
 sub stringExists {
-	my $stringname = shift;
-	if (!defined $stringname) {return 0;}
-	$stringname = uc($stringname);
-	my $language = Slim::Utils::Prefs::get('language');
-	return ($strings{$language.'_'.$stringname} || $strings{$Slim::Utils::Strings::failsafe_language.'_'.$stringname}) ? 1 : 0;
+	my $stringname = uc(shift) || return 0;
+	my $language   = shift || Slim::Utils::Prefs::get('language');
+
+	return ($strings{$stringname}->{$language} || $strings{$stringname}->{$failsafe_language}) ? 1 : 0;
+}
+
+# "Pointer chase" a string - useful for plugins where we don't have $client yet.
+sub resolveString {
+	my $string   = shift;
+	my $language = shift || Slim::Utils::Prefs::get('language');
+
+	my $value  = '';
+
+	if (stringExists($string, $language)) {
+
+		$value = string($string, $language);
+
+		if (stringExists($value, $language)) {
+			$value = string($value, $language);
+		}
+	}
+
+	return $value;
 }
 
 #
@@ -234,12 +265,13 @@ sub stringExists {
 sub setLanguage {
 	my $lang = shift;
 	
-	$lang=~tr/a-z/A-Z/;
+	$lang =~ tr/a-z/A-Z/;
 	
-	if (defined($languages{$lang})) {
-		Slim::Utils::Prefs::set('language',$lang);
+	if (defined $languages{$lang}) {
+		Slim::Utils::Prefs::set('language', $lang);
 		return 1;
 	}
+
 	return 0;
 }
 
@@ -249,14 +281,22 @@ sub getLanguage {
 
 sub languageName {
 	my $lang = shift;
-	return $strings{$lang.'_LANGUAGE_CHOICES'};
+
+	return $strings{'LANGUAGE_CHOICES'}->{$lang};
 }
 
 #
 # Returns the failsafe language:
 #
 sub failsafeLanguage {
-	return $Slim::Utils::Strings::failsafe_language;
+	return $failsafe_language;
+}
+
+sub validClientLanguages {
+
+	# This should really be dynamically generated - how?
+	# list_of_languages grab - and walk the list - check for stringExists(VALID_CLIENT_LANGUAGE)
+	return map { $_, 1 } qw(DE DK EN ES FI FR IT NL NO PT SE);
 }
 
 1;

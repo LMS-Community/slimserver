@@ -1,5 +1,5 @@
 package Slim::Buttons::BrowseID3;
-# $Id: BrowseID3.pm,v 1.22 2004/11/29 09:17:07 kdf Exp $
+# $Id: BrowseID3.pm,v 1.23 2004/12/07 20:19:47 dsully Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -13,45 +13,52 @@ use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
 use Slim::Buttons::VarietyCombo;
-use Slim::Utils::Strings qw (string);
 use Slim::Utils::Misc;
 
 # Code to browse music folder by ID3 information.
 Slim::Buttons::Common::addMode('browseid3',Slim::Buttons::BrowseID3::getFunctions(),\&Slim::Buttons::BrowseID3::setMode);
 
 sub init {
+
 	my %browse = (
+
 		'BROWSE_BY_GENRE' => {
-			'useMode' => 'browseid3'
-		}
-		,'BROWSE_BY_ARTIST' => {
-			'useMode' => 'browseid3'
-			,'genre'=>'*'
-		}
-		,'BROWSE_BY_ALBUM' => {
-			'useMode' => 'browseid3'
-			,'genre'=>'*'
-			,'artist'=>'*'
-		}
-		,'BROWSE_BY_SONG' => {
-			'useMode' => 'browseid3'
-			,'genre'=>'*'
-			,'artist'=>'*'
-			,'album'=>'*'
-		}
+			'useMode' => 'browseid3',
+		},
+
+		'BROWSE_BY_ARTIST' => {
+			'useMode' => 'browseid3',
+			'genre'=>'*',
+		},
+
+		'BROWSE_BY_ALBUM' => {
+			'useMode' => 'browseid3',
+			'genre'=>'*',
+			'artist'=>'*',
+		},
+
+		'BROWSE_BY_SONG' => {
+			'useMode' => 'browseid3',
+			'genre'=>'*',
+			'artist'=>'*',
+			'album'=>'*',
+		},
 	);
 	
 	foreach my $name (sort keys %browse) {
+
 		if ($name ne 'BROWSE_BY_SONG') {
-			Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC',$name,$browse{$name});
+			Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $name, $browse{$name});
 		}
-		Slim::Buttons::Home::addMenuOption($name,$browse{$name});
+
+		Slim::Buttons::Home::addMenuOption($name, $browse{$name});
 	};
 }
 
 # Each button on the remote has a function:
 
 my %functions = (
+
 	'up' => sub  {
 		my $client = shift;
 		my $button = shift;
@@ -201,28 +208,40 @@ my %functions = (
 		my $album = selection($client,'curalbum');
 		my $all_albums;
 		my $sortbytitle;
-		if (defined($album) && ($album eq string('ALL_SONGS'))) { $album = '*'; $sortbytitle = 1;};
-		if (defined($artist) && ($artist eq string('ALL_ALBUMS'))) { $artist = '*';  $sortbytitle = 1;};
-		if (defined($genre) && ($genre eq string('ALL_ARTISTS'))) { $genre = '*';};
+
+		if (defined($album) && ($album eq $client->string('ALL_SONGS'))) {
+			$album = '*';
+			$sortbytitle = 1;
+		}
+
+		if (defined($artist) && ($artist eq $client->string('ALL_ALBUMS'))) {
+			$artist = '*';
+			$sortbytitle = 1;
+		}
+
+		if (defined($genre) && ($genre eq $client->string('ALL_ARTISTS'))) {
+			$genre = '*';
+		}
 		
-		my $currentItem = browseID3dir($client,browseID3dirIndex($client));
+		my $currentItem = browseID3dir($client, browseID3dirIndex($client));
+
 		my ($line1, $line2) = lines($client);
 		
 		my $command;
 		my $songcommand;
 		
 		if ($addorinsert == 1) {
-			$line1 = string('ADDING_TO_PLAYLIST');
+			$line1 = $client->string('ADDING_TO_PLAYLIST');
 			$command = "addalbum";	
 		} elsif ($addorinsert == 2) {
-			$line1 = string('INSERT_TO_PLAYLIST');
+			$line1 = $client->string('INSERT_TO_PLAYLIST');
 			$command = "insertalbum";
 		} else {
 			$command = "loadalbum";			
 			if (Slim::Player::Playlist::shuffle($client)) {
-				$line1 = string('PLAYING_RANDOMLY_FROM');
+				$line1 = $client->string('PLAYING_RANDOMLY_FROM');
 			} else {
-				$line1 = string('NOW_PLAYING_FROM');
+				$line1 = $client->string('NOW_PLAYING_FROM');
 			}
 		}
 		
@@ -251,20 +270,20 @@ my %functions = (
 		# if we've picked an album to append, then append the album
 		} elsif (picked($genre) && picked($artist)) {
 			$::d_files && msg("song  or album $currentItem\n"); 
-			my $whichalbum = picked($album) ?  $album : (($currentItem eq string('ALL_SONGS')) ? '*' : $currentItem);
-			Slim::Control::Command::execute($client, ["playlist", $command, $genre, $artist, $whichalbum,undef,  $currentItem eq string('ALL_SONGS')]);	
+			my $whichalbum = picked($album) ?  $album : (($currentItem eq $client->string('ALL_SONGS')) ? '*' : $currentItem);
+			Slim::Control::Command::execute($client, ["playlist", $command, $genre, $artist, $whichalbum,undef,  $currentItem eq $client->string('ALL_SONGS')]);	
 		# if we've picked an artist to append or play, then do so.
 		} elsif (picked($genre)) {
 			$::d_files && msg("artist $currentItem\n");
-			my $whichartist = picked($artist) ? $artist : (($currentItem eq string('ALL_ALBUMS')) ? '*' : $currentItem);
+			my $whichartist = picked($artist) ? $artist : (($currentItem eq $client->string('ALL_ALBUMS')) ? '*' : $currentItem);
 			#TODO this sometime causes a warning
-			my $whichalbum = (defined $album && $album ne string('ALL_ALBUMS')) ? $currentItem : '*';
-			my $whichgenre = ($genre eq string('ALL_ARTISTS')) ? '*' : $genre;
+			my $whichalbum = (defined $album && $album ne $client->string('ALL_ALBUMS')) ? $currentItem : '*';
+			my $whichgenre = ($genre eq $client->string('ALL_ARTISTS')) ? '*' : $genre;
 			Slim::Control::Command::execute($client, ["playlist", $command, $whichgenre, $whichartist, $whichalbum,undef, $sortbytitle]);		
 		# if we've picked a genre to play or append, then do so
 		} else {
 			$::d_files && msg("genre: $currentItem\n");
-			$currentItem = ($currentItem eq string('ALL_ALBUMS')) ? '*' : $currentItem;
+			$currentItem = ($currentItem eq $client->string('ALL_ALBUMS')) ? '*' : $currentItem;
 			Slim::Control::Command::execute($client, ["playlist", $command,$currentItem, "*", "*"]);
 		}
 		$::d_files && msg("currentItem == $currentItem\n");
@@ -408,17 +427,17 @@ sub loadDir {
 
 	my $sortbytitle;
 
-	if (defined($album) && $album eq string('ALL_SONGS')) {
+	if (defined($album) && $album eq $client->string('ALL_SONGS')) {
 		$album = '*';
 		$sortbytitle = 1;
 	};
 
-	if (defined($artist) && ($artist eq string('ALL_ALBUMS'))) {
+	if (defined($artist) && ($artist eq $client->string('ALL_ALBUMS'))) {
 		$artist = '*';
 		$sortbytitle = picked($album) ? 0 : 1;
 	};
 
-	if (defined($genre) && ($genre eq string('ALL_ARTISTS'))) {
+	if (defined($genre) && ($genre eq $client->string('ALL_ARTISTS'))) {
 		$genre = '*';
 		$sortbytitle = picked($album) ? 0 : 1;
 	};
@@ -453,7 +472,7 @@ sub loadDir {
 
 		if (scalar @{browseID3dir($client)} > 1) {
 
-			push @{browseID3dir($client)}, string('ALL_SONGS');
+			push @{browseID3dir($client)}, $client->string('ALL_SONGS');
 		}
 
 	} elsif (picked($genre)) {
@@ -466,7 +485,7 @@ sub loadDir {
 		);
 
 		if (scalar @{browseID3dir($client)} > 1) {
-			push @{browseID3dir($client)}, string('ALL_ALBUMS');
+			push @{browseID3dir($client)}, $client->string('ALL_ALBUMS');
 		}
 
 	} else {
@@ -478,7 +497,7 @@ sub loadDir {
 		);
 		
 		if (scalar @{browseID3dir($client)} > 1) { 
-			push @{browseID3dir($client)}, string('ALL_ARTISTS'); }
+			push @{browseID3dir($client)}, $client->string('ALL_ARTISTS'); }
 	}
 
 	return browseID3dirIndex($client, getLastSelection($client));
@@ -500,24 +519,24 @@ sub lines {
 	my $plural = scalar @{browseID3dir($client)} > 1 ? 'S' : '';
 
 	if (!defined($genre)) {
-		$line1 = string('GENRES');
+		$line1 = $client->string('GENRES');
 	} elsif ($genre eq '*' && !defined($artist)) {
-		$line1 = string('ARTISTS');
+		$line1 = $client->string('ARTISTS');
 	} elsif ($genre eq '*' && $artist eq '*' && !defined($album)) {
-		$line1 = string('ALBUMS');
+		$line1 = $client->string('ALBUMS');
 	} elsif ($genre eq '*' && $artist eq '*' && $album eq '*' && !defined($song)) {
-		$line1 = string('SONGS');
+		$line1 = $client->string('SONGS');
 		$songlist = 1;
 	} elsif ($genre eq '*' && $artist eq '*' && $album eq '*' && !specified($song)) {
-		$line1 = string('SONG'.$plural.'MATCHING') . " \"" . searchTerm($song) . "\"";
+		$line1 = $client->string('SONG'.$plural.'MATCHING') . " \"" . searchTerm($song) . "\"";
 		$songlist = 1;
 	} elsif ($genre eq '*' && $artist eq '*' && !specified($album)) {
-		$line1 = string('ALBUM'.$plural.'MATCHING') . " \"" . searchTerm($album) . "\"";
+		$line1 = $client->string('ALBUM'.$plural.'MATCHING') . " \"" . searchTerm($album) . "\"";
 	} elsif ($genre eq '*' && $artist eq '*' && specified($album) && !defined($song)) {
 		$line1 = $album;
 		$songlist = 1;
 	} elsif ($genre eq '*' && !specified($artist)) {
-		$line1 = string('ARTIST'.$plural.'MATCHING') . " \"" . searchTerm($artist) . "\"";
+		$line1 = $client->string('ARTIST'.$plural.'MATCHING') . " \"" . searchTerm($artist) . "\"";
 	} elsif (specified($genre) && !defined($artist)) {
 		$line1 = $genre;
 	} elsif ($genre eq '*' && specified($artist) && !defined($album)) {
@@ -535,29 +554,56 @@ sub lines {
 	}
 
 	if (scalar @{browseID3dir($client)} == 0) {
-			$line2 = string('EMPTY');
+
+			$line2 = $client->string('EMPTY');
 	} else {
-		$line1 .= sprintf(" (%d ".string('OUT_OF')." %s)", browseID3dirIndex($client) + 1, scalar @{browseID3dir($client)});
+
+		$line1 .= sprintf(" (%d %s %s)", browseID3dirIndex($client) + 1, $client->string('OUT_OF'), scalar @{browseID3dir($client)});
 
 		if ($songlist) {
+
 			$line2 = Slim::Music::Info::standardTitle($client, browseID3dir($client,browseID3dirIndex($client)));
-			$overlay1 = Slim::Display::Display::symbol('moodlogic') if ( Slim::Music::Info::isSongMixable(browseID3dir($client,browseID3dirIndex($client))) );
-			$overlay1 = Slim::Display::Display::symbol('musicmagic') if ( Slim::Music::Info::isSongMMMixable(browseID3dir($client,browseID3dirIndex($client))) );
+
+			if (Slim::Music::Info::isSongMixable(browseID3dir($client,browseID3dirIndex($client)))) {
+				$overlay1 = Slim::Display::Display::symbol('moodlogic');
+			}
+
+			if (Slim::Music::Info::isSongMMMixable(browseID3dir($client,browseID3dirIndex($client)))) {
+				$overlay1 = Slim::Display::Display::symbol('musicmagic');
+			}
+
 			$overlay2 = Slim::Display::Display::symbol('notesymbol');
+
 		} else {
+
 			$line2 = browseID3dir($client,browseID3dirIndex($client));
-			$overlay1 = Slim::Display::Display::symbol('moodlogic') if (! defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isGenreMixable($line2));
-			$overlay1 = Slim::Display::Display::symbol('moodlogic') if (defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isArtistMixable($line2));
-			$overlay1 = Slim::Display::Display::symbol('musicmagic') if (! defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isGenreMMMixable($line2));
-			$overlay1 = Slim::Display::Display::symbol('musicmagic') if (defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isArtistMMMixable($line2));
-			$overlay1 = Slim::Display::Display::symbol('musicmagic') if (defined($genre) && defined($artist) && ! defined($album) && Slim::Music::Info::isAlbumMMMixable($artist, $line2));
+
+			if (! defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isGenreMixable($line2)) {
+				$overlay1 = Slim::Display::Display::symbol('moodlogic');
+			}
+
+			if (defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isArtistMixable($line2)) {
+				$overlay1 = Slim::Display::Display::symbol('moodlogic');
+			}
+
+			if (! defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isGenreMMMixable($line2)) {
+				$overlay1 = Slim::Display::Display::symbol('musicmagic');
+			}
+
+			if (defined($genre) && ! defined($artist) && ! defined($album) && Slim::Music::Info::isArtistMMMixable($line2)) {
+				$overlay1 = Slim::Display::Display::symbol('musicmagic');
+			}
+
+			if (defined($genre) && defined($artist) && ! defined($album) && Slim::Music::Info::isAlbumMMMixable($artist, $line2)) {
+				$overlay1 = Slim::Display::Display::symbol('musicmagic');
+			}
+
 			$overlay2 = Slim::Display::Display::symbol('rightarrow');
 		}
 	}
+
 	return ($line1, $line2, $overlay1, $overlay2);
 }
-
-
 
 sub browseID3dir {
 	my $client = shift;
@@ -682,26 +728,33 @@ sub searchTerm {
 }
 
 sub singletonRef {
-    my $arg = shift;
-	if (! defined($arg)) {
+	my $arg = shift;
+
+	unless (defined($arg)) {
+
 		return $arg;
-	}
-	elsif ($arg eq '*') {
-        return [];
-    }
-	elsif (my ($g1) = ($arg =~ /^\*(.*)\*$/)) {
+
+	} elsif ($arg eq '*') {
+
+		return [];
+
+	} elsif (my ($g1) = ($arg =~ /^\*(.*)\*$/)) {
+
 		my @sa = ();
 		foreach my $ss (split(' ',$g1)) {
 			push @sa, "*" . $ss . "*";
 		}
+
 		return \@sa;
+
+	} elsif ($arg) {
+
+		return [$arg];
+
+	} else {
+
+		return [];
 	}
-    elsif ($arg) {
-        return [$arg];
-    }
-    else {
-        return [];
-    }
 }
 
 1;

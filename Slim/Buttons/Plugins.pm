@@ -9,32 +9,35 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm,v 1.30 2004/11/20 01:45:26 kdf Exp $
+# $Id: Plugins.pm,v 1.31 2004/12/07 20:19:48 dsully Exp $
 #
 package Slim::Buttons::Plugins;
+
 use strict;
+
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
-use Slim::Utils::Strings qw (string);
 use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 
 use FindBin qw($Bin);
 
 sub pluginDirs {
-	my @pluginDirs;
-	push @pluginDirs, catdir($Bin, "Plugins");
+	my @pluginDirs = catdir($Bin, "Plugins");
+
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @pluginDirs, $ENV{'HOME'} . "/Library/SlimDevices/Plugins/";
 		push @pluginDirs, "/Library/SlimDevices/Plugins/";
 	}
+
 	return @pluginDirs;
 }
 
 use lib (pluginDirs());
 
-my $read_onfly = Slim::Utils::Prefs::get('plugins-onthefly');	# set to 1 to pick up modules on the fly rather than
-			# on the first visit to the plug-ins section
+# set to 1 to pick up modules on the fly rather than
+# on the first visit to the plug-ins section
+my $read_onfly = Slim::Utils::Prefs::get('plugins-onthefly');
 my %plugins = ();
 my %curr_plugin = ();
 my $plugins_read;
@@ -42,10 +45,13 @@ my %playerplugins = ();
 
 sub enabledPlugins {
 	my $client = shift;
-	my @enabled;
+
+	my @enabled = ();
 	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
-	my $pluginlistref = installedPlugins();
-	foreach my $item (keys %{$pluginlistref}) {
+	my $pluginlistref   = installedPlugins();
+
+	for my $item (keys %{$pluginlistref}) {
+
 		next if (exists $disabledplugins{$item});
 		next if (!exists $plugins{$item});
 		
@@ -57,7 +63,11 @@ sub enabledPlugins {
 		
 		push @enabled, $item;
 	}
-	@enabled = sort { Slim::Utils::Text::ignoreCaseArticles($plugins{$a}->{'name'}) cmp Slim::Utils::Text::ignoreCaseArticles($plugins{$b}->{'name'}) } @enabled;
+
+	@enabled = sort { 
+		Slim::Utils::Text::ignoreCaseArticles($plugins{$a}->{'name'}) cmp 
+		Slim::Utils::Text::ignoreCaseArticles($plugins{$b}->{'name'}) } @enabled;
+
 	return @enabled;
 }
 
@@ -67,61 +77,81 @@ sub playerPlugins {
 
 sub installedPlugins {
 	my %pluginlist = ();
-	foreach my $plugindir (pluginDirs()) {
-		if (opendir(DIR, $plugindir)) {
-			no strict 'refs';
-			foreach my $plugin ( sort(readdir(DIR)) ) {
-				next if ($plugin =~ m/^\./i);
-				if ($plugin =~ s/(.+)\.pm$/$1/i) {
-					$pluginlist{$plugin} = exists($plugins{$plugin}) ? $plugins{$plugin}{'name'} : $plugin;
-				}
-				elsif (-d catdir($plugindir, $plugin) &&
-					   -e catdir($plugindir, $plugin, "Plugin.pm")) {
-					my $pluginname = $plugin . '::' . "Plugin";
-					$pluginlist{$pluginname} = exists($plugins{$pluginname}) ? $plugins{$pluginname}{'name'} : $plugin;
-				}
+
+	for my $plugindir (pluginDirs()) {
+
+		opendir(DIR, $plugindir) || next;
+
+		for my $plugin ( sort(readdir(DIR)) ) {
+
+			next if ($plugin =~ m/^\./i);
+
+			if ($plugin =~ s/(.+)\.pm$/$1/i) {
+
+				$pluginlist{$plugin} = exists($plugins{$plugin}) ? $plugins{$plugin}{'name'} : $plugin;
+
+			} elsif (-d catdir($plugindir, $plugin) && -e catdir($plugindir, $plugin, "Plugin.pm")) {
+
+				my $pluginname = $plugin . '::' . "Plugin";
+
+				$pluginlist{$pluginname} = exists($plugins{$pluginname}) ? $plugins{$pluginname}{'name'} : $plugin;
 			}
-			closedir(DIR);
 		}
+
+		closedir(DIR);
 	}
+
 	return \%pluginlist;
 }
 
 sub read_plugins {
 	no strict 'refs';
 
-	foreach my $name (keys %{installedPlugins()}) {
-		my $fullname = "Plugins::$name";
+	for my $plugin (keys %{installedPlugins()}) {
+
+		my $fullname = "Plugins::$plugin";
 		$::d_plugins && msg("Requiring $fullname plugin.\n");	
+
 		eval "require $fullname";
+
 		if ($@) {
 			$::d_plugins && msg("Can't require $fullname for Plugins menu: " . $@);
-		} else {
-			# load up the localized strings, if available
-			my $strings;
-			eval {$strings = &{$fullname . "::strings"}()};
-			if (!$@ && $strings) { Slim::Utils::Strings::addStrings($strings); }
-			my $names;
-			eval {$names = &{$fullname . "::getDisplayName"}()};
-			if (!$@ && $names) {
-				Slim::Utils::Strings::addstringRef(uc($name),\&{$fullname . "::getDisplayName"});
-				my $ref = {
-					module => $fullname,
-					name => &{$fullname . "::getDisplayName"}(),
-					mode => "PLUGIN.$name",
-				};
-				$plugins{$name} = $ref;
-				my %params = (
-					'useMode' => "PLUGIN.$name"
-					,'header' => $plugins{$name}->{'name'}
-					);
-				Slim::Buttons::Home::addSubMenu("PLUGINS",$name,\%params);
-			} else {
-				$::d_plugins && msg("Can't load $fullname for Plugins menu: " . $@);
-			}
-			addDefaultMaps();
+			next;
 		}
+
+		# load up the localized strings, if available
+		my $strings = eval { &{$fullname . "::strings"}() };
+
+		if (!$@ && $strings) {
+			Slim::Utils::Strings::addStrings($strings);
+		}
+
+		my $displayName = eval { &{$fullname . "::getDisplayName"}() };
+
+		if (!$@ && $displayName) {
+
+			Slim::Utils::Strings::addStringPointer(uc($plugin), $displayName);
+
+			$plugins{$plugin} = {
+				module => $fullname,
+				name   => $displayName,
+				mode   => "PLUGIN.$plugin",
+			};
+
+			my %params = (
+				'useMode' => "PLUGIN.$plugin",
+				'header'  => $plugins{$plugin}->{'name'},
+			);
+
+			Slim::Buttons::Home::addSubMenu("PLUGINS", $plugin, \%params);
+
+		} else {
+			$::d_plugins && msg("Can't load $fullname for Plugins menu: " . $@);
+		}
+
+		addDefaultMaps();
 	}
+
 	addWebPages();
 	addScreensavers();
 	#addSetupGroups();
@@ -131,21 +161,27 @@ sub read_plugins {
 
 sub addMenus {
 	no strict 'refs';
-	foreach my $plugin (keys %{installedPlugins()}) {
-		my $menu;
-		if (UNIVERSAL::can("Plugins::${plugin}","addMenu")) {
-			eval { $menu = &{"Plugins::${plugin}::addMenu"}()};
-			if (!$@ && defined $menu) {
-				my %params = (
-					'useMode' => "PLUGIN.$plugin"
-					,'header' => $plugins{$plugin}->{'name'}
-					);
-				$::d_plugins && msg("Adding $plugin to menu: $menu\n");
-				Slim::Buttons::Home::addSubMenu($menu,$plugin,\%params);
-				if ($menu ne "PLUGINS") {
-					Slim::Buttons::Home::delSubMenu("PLUGINS",$plugin);
-					Slim::Buttons::Home::addSubMenu("PLUGINS",$menu,&Slim::Buttons::Home::getMenu("-".$menu));
-				}
+
+	for my $plugin (keys %{installedPlugins()}) {
+
+		next unless UNIVERSAL::can("Plugins::${plugin}","addMenu");
+
+		my $menu = eval { &{"Plugins::${plugin}::addMenu"}() };
+
+		if (!$@ && defined $menu) {
+
+			my %params = (
+				'useMode' => "PLUGIN.$plugin",
+				'header'  => $plugins{$plugin}->{'name'}
+			);
+
+			$::d_plugins && msg("Adding $plugin to menu: $menu\n");
+
+			Slim::Buttons::Home::addSubMenu($menu, $plugin, \%params);
+
+			if ($menu ne "PLUGINS") {
+				Slim::Buttons::Home::delSubMenu("PLUGINS", $plugin);
+				Slim::Buttons::Home::addSubMenu("PLUGINS", $menu, &Slim::Buttons::Home::getMenu("-".$menu));
 			}
 		}
 	}
@@ -153,67 +189,79 @@ sub addMenus {
 
 sub addScreensavers {
 	no strict 'refs';
-	foreach my $plugin (keys %{installedPlugins()}) {
+
+	for my $plugin (keys %{installedPlugins()}) {
+
 		# load screensaver, if one exists.
-		if (UNIVERSAL::can("Plugins::${plugin}","screenSaver")) {
-			eval { &{"Plugins::${plugin}::screenSaver"}() };
-			if ($@) { $::d_plugins && msg("Failed screensaver for $plugin: " . $@);}
-			elsif (!UNIVERSAL::can("Plugins::${plugin}","addMenu")) {
-				my %params = (
-					'useMode' => "PLUGIN.$plugin"
-					,'header' => $plugins{$plugin}->{'name'}
-					);
-				Slim::Buttons::Home::addSubMenu("SCREENSAVERS",$plugin,\%params);
-				Slim::Buttons::Home::delSubMenu("PLUGINS",$plugin);
-				Slim::Buttons::Home::addSubMenu("PLUGINS","SCREENSAVERS",&Slim::Buttons::Home::getMenu("-SCREENSAVERS"));
-			}
+		next unless UNIVERSAL::can("Plugins::${plugin}","screenSaver");
+
+		eval { &{"Plugins::${plugin}::screenSaver"}() };
+
+		if ($@) {
+
+			$::d_plugins && msg("Failed screensaver for $plugin: " . $@);
+
+		} elsif (!UNIVERSAL::can("Plugins::${plugin}","addMenu")) {
+
+			my %params = (
+				'useMode' => "PLUGIN.$plugin",
+				'header'  => $plugins{$plugin}->{'name'}
+			);
+
+			Slim::Buttons::Home::addSubMenu("SCREENSAVERS", $plugin, \%params);
+			Slim::Buttons::Home::delSubMenu("PLUGINS", $plugin);
+			Slim::Buttons::Home::addSubMenu("PLUGINS", "SCREENSAVERS", &Slim::Buttons::Home::getMenu("-SCREENSAVERS"));
 		}
 	}
 }
 			
 sub addDefaultMaps {
 	no strict 'refs';
-	foreach my $plugin (keys %{installedPlugins()}) {
-		my $defaultMap;
-		if (UNIVERSAL::can("Plugins::${plugin}","defaultMap")) {
-			eval {$defaultMap = &{"Plugins::${plugin}::defaultMap"}()};
-			if ($defaultMap && exists($plugins{$plugin})) {
-				Slim::Hardware::IR::addModeDefaultMapping($plugins{$plugin}{'mode'},$defaultMap)
-			}
+
+	for my $plugin (keys %{installedPlugins()}) {
+
+		next unless UNIVERSAL::can("Plugins::${plugin}","defaultMap");
+
+		my $defaultMap = eval { &{"Plugins::${plugin}::defaultMap"}() };
+
+		if ($defaultMap && exists($plugins{$plugin})) {
+			Slim::Hardware::IR::addModeDefaultMapping($plugins{$plugin}{'mode'}, $defaultMap)
 		}
 	}
 }
 
 sub addWebPages {
 	no strict 'refs';
-	foreach my $plugin (keys %{installedPlugins()}) {
-		if (exists($plugins{$plugin}) &&
-			UNIVERSAL::can("Plugins::${plugin}","webPages")) {
-			no strict 'refs';
+
+	for my $plugin (keys %{installedPlugins()}) {
+
+		if (exists($plugins{$plugin}) && UNIVERSAL::can("Plugins::${plugin}","webPages")) {
 
 			# Get the page function map and index URL from the plugin
-			my ($pagesref, $index);
-			eval {($pagesref, $index) = &{"Plugins::${plugin}::webPages"}()};
-			
+			my ($pagesref, $index) = eval { &{"Plugins::${plugin}::webPages"}() };
+
 			if ($@) {
+
 				$::d_plugins && msg("Can't get web page handlers for plugin $plugin : " . $@);
-			}
-			elsif ($pagesref) {
+
+			} elsif ($pagesref) {
+
 				my $path = ($plugin =~ /^(.+?)::/) ? $1 : $plugin;
 				my $urlbase = 'plugins/' . $path . '/';
 
 				# Add the page handlers
-				foreach my $page (keys %$pagesref) {
-					Slim::Web::HTTP::addPageFunction($urlbase . $page,
-													 $pagesref->{$page});
+				for my $page (keys %$pagesref) {
+					Slim::Web::HTTP::addPageFunction($urlbase . $page, $pagesref->{$page});
 				}
 				
 				# Add any template directories that may exist for the plugin
-				foreach my $plugindir (pluginDirs()) {
+				for my $plugindir (pluginDirs()) {
+
 					my $htmldir = catdir($plugindir, $path, "HTML");
+
 					if (-r $htmldir) {
 						Slim::Web::HTTP::addTemplateDirectory($htmldir);
-					  }
+					}
 				}
 
 				if ($index) {
@@ -228,32 +276,45 @@ sub addWebPages {
 
 sub addSetupGroups {
 	no strict 'refs';
-	foreach my $plugin (keys %{installedPlugins()}) {
-		my ($groupRef,$prefRef,$isClient);
-		if (UNIVERSAL::can("Plugins::${plugin}","setupGroup")) {
-			eval {($groupRef,$prefRef,$isClient) = &{"Plugins::${plugin}::setupGroup"}()};
-			if ($@) {
-				$::d_plugins && msg("Can't get setup group for plugin $plugin : " . $@);
+
+	for my $plugin (keys %{installedPlugins()}) {
+
+		next unless UNIVERSAL::can("Plugins::${plugin}","setupGroup");
+
+		my ($groupRef, $prefRef, $isClient) = eval { &{"Plugins::${plugin}::setupGroup"}() };
+
+		if ($@) {
+			$::d_plugins && msg("Can't get setup group for plugin $plugin : " . $@);
+			next;
+		}
+
+		if ($groupRef && $prefRef && exists($plugins{$plugin})) {
+
+			my %params =  (
+				title      => $plugins{$plugin}->{'name'},
+				Groups     => { 'Default' => $groupRef },
+				GroupOrder => ['Default'],
+				Prefs      => $prefRef
+			);
+
+			if (defined $isClient) {
+
+				$playerplugins{$plugins{$plugin}->{'name'}} = 1;
+
+				Slim::Web::Setup::addGroup('player_plugins', $plugin, $groupRef, undef, $prefRef);
+
 			} else {
-				if ($groupRef && $prefRef && exists($plugins{$plugin})) {
-					my %params =  ( title => $plugins{$plugin}->{'name'},
-						Groups => { 'Default' => $groupRef },
-						GroupOrder => ['Default'],
-						Prefs => $prefRef
-						);
-					if (defined $isClient) {
-						$playerplugins{$plugins{$plugin}->{'name'}} = 1;
-						Slim::Web::Setup::addGroup('player_plugins',$plugin,$groupRef,undef,$prefRef);
-					} else {
-						Slim::Web::Setup::addGroup('plugins',$plugin,$groupRef,undef,$prefRef);
-						Slim::Web::Setup::addCategory("PLUGINS.${plugin}",\%params);
-						if (UNIVERSAL::can("Plugins::${plugin}","addMenu")) {
-							my $menu;
-							eval { $menu = &{"Plugins::${plugin}::addMenu"}()};
-							if (!$@ && defined $menu && $menu eq "RADIO") {
-								Slim::Web::Setup::addGroup('radio',$plugin,$groupRef,undef,$prefRef);
-							}
-						}
+
+				Slim::Web::Setup::addGroup('plugins', $plugin, $groupRef, undef, $prefRef);
+
+				Slim::Web::Setup::addCategory("PLUGINS.${plugin}", \%params);
+
+				if (UNIVERSAL::can("Plugins::${plugin}","addMenu")) {
+
+					my $menu = eval { &{"Plugins::${plugin}::addMenu"}() };
+
+					if (!$@ && defined $menu && $menu eq "RADIO") {
+						Slim::Web::Setup::addGroup('radio', $plugin, $groupRef, undef, $prefRef);
 					}
 				}
 			}
@@ -263,10 +324,12 @@ sub addSetupGroups {
 
 sub init {
 	no strict 'refs';
-	foreach my $plugindir (pluginDirs()) {
+
+	for my $plugindir (pluginDirs()) {
 		unshift @INC,  $plugindir;
 	}
-	foreach my $plugin (enabledPlugins()) {
+
+	for my $plugin (enabledPlugins()) {
 		# We use initPlugin() instead of the more succinct
 		# init() because it's less likely to cause backward
 		# compatibility problems.
@@ -278,7 +341,7 @@ sub init {
 
 sub shutdownPlugins {
 	no strict 'refs';
-	foreach my $plugin (enabledPlugins()) {
+	for my $plugin (enabledPlugins()) {
 		# We use shutdownPlugin() instead of the more succinct
 		# shutdown() because it's less likely to cause backward
 		# compatibility problems.
@@ -291,19 +354,25 @@ sub shutdownPlugins {
 sub pluginOptions {
 	my $client = shift;
 	
-	my %menuChoices = ();
-	$menuChoices{""} = "";
-	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
+	my %menuChoices = (
+		"" => "",
+	);
+
+	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
 	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
 	
-	foreach my $menuOption (keys %{$pluginsRef}) {
-		next if (exists $disabledplugins{$menuOption});
+	for my $menuOption (keys %{$pluginsRef}) {
+
+		next if exists $disabledplugins{$menuOption};
 		no strict 'refs';
+
 		if (exists &{"Plugins::" . $menuOption . "::enabled"} && $client &&
 			! &{"Plugins::" . $menuOption . "::enabled"}($client) ) {
 			next;
 		}
-		$menuChoices{$menuOption} = string($menuOption);
+
+		$menuChoices{$menuOption} = $client->string($pluginsRef->{$menuOption});
+
 	}
 	return %menuChoices;
 }
@@ -313,9 +382,11 @@ sub unusedPluginOptions {
 	my %menuChoices = pluginOptions($client);
 	
 	delete $menuChoices{""};
-	foreach my $usedOption (@{Slim::Buttons::Home::getHomeChoices($client)}) {
+
+	for my $usedOption (@{Slim::Buttons::Home::getHomeChoices($client)}) {
 		delete $menuChoices{$usedOption};
 	}
+
 	return sort { $menuChoices{$a} cmp $menuChoices{$b} } keys %menuChoices;
 }
 
@@ -324,8 +395,8 @@ sub getPluginModes {
 
 	read_plugins() unless $plugins_read;
 
-	foreach (keys %plugins){
-		$mode->{$plugins{$_}->{mode}} = \&{$plugins{$_}->{module} . "::setMode"}
+	for my $plugin (keys %plugins) {
+		$mode->{$plugins{$plugin}->{'mode'}} = \&{$plugins{$plugin}->{'module'} . '::setMode'};
 	}
 }
 
@@ -334,9 +405,9 @@ sub getPluginFunctions {
 
 	read_plugins() unless $plugins_read;
 
-	foreach (keys %plugins){
+	for my $plugin (keys %plugins) {
 		no strict 'refs';
-		$function->{$plugins{$_}->{mode}} = &{$plugins{$_}->{module} . "::getFunctions"}
+		$function->{$plugins{$plugin}->{'mode'}} = &{$plugins{$plugin}->{'module'} . '::getFunctions'};
 	}
 }
 
@@ -345,6 +416,7 @@ sub pluginCount {
 }
 
 1;
+
 __END__
 
 # Local Variables:

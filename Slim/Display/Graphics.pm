@@ -9,11 +9,14 @@ use strict;
 use File::Spec::Functions qw(catdir);
 use FindBin qw($Bin);
 
-use Slim::Buttons::Common;
 use Slim::Utils::Misc;
+use Slim::Utils::OSDetect;
 
 my %fonts;
 my %fonthash;
+
+my $char0 = chr(0);
+my $ord0a = ord("\x0a");
 
 sub init {
 	%fonts = ();
@@ -37,16 +40,12 @@ sub fontnames {
 };
 
 sub string {
-	use bytes;
-	my $bits = '';
-	my $fontname = shift;
-	my $string = shift;
-	
-	return '' if (!$fontname || !defined($string));
+	my $fontname = shift || return '';
+	my $string   = shift || return '';
 
-	my $font = $fonts{$fontname};
-	
-	if (!$font) {
+	my $bits = '';
+
+	my $font = $fonts{$fontname} || do {
 		msg(" Invalid font $fontname\n"); 
 		return '';
 	};
@@ -54,30 +53,40 @@ sub string {
 	my $interspace = $font->[0];
 	my $cursorpos = undef;
 	my $cursorend = 0;
-	foreach my $char (split(//, $string)) {
-		if ($char eq "\x1d") { 
+
+	# U - unpacks Unicode chars into ords, much faster than split(//, $string)
+	for my $ord (unpack('U*', $string)) {
+
+		# 29 == \x1d, 28 == \x1c, 10 == \x0a
+		if ($ord == 29) { 
 			$interspace = ''; 
-		} elsif ($char eq "\x1c") {
+		} elsif ($ord == 28) {
 			$interspace = $font->[0]; 
-		} elsif ($char eq "\x0a") {
+		} elsif ($ord == 10) {
 			$cursorpos = length($bits);
 		} else {
-			if (defined($cursorpos) && !$cursorend) { 
-				$cursorend = length($font->[ord($char)])/2; 
+
+			# We don't handle anything outside ISO-8859-1 right now.
+			if ($ord > 255) {
+				$ord = 63; # 63 == '?'
 			}
-			$bits .= $font->[ord($char)] . $interspace;
+
+			if (defined($cursorpos) && !$cursorend) { 
+				$cursorend = length($font->[$ord])/2; 
+			}
+
+			$bits .= $font->[$ord] . $interspace;
 		}
 	}
 	
 	if (defined($cursorpos)) {
-		$bits |= (chr(0) x $cursorpos) . ($font->[ord("\x0a")] x $cursorend);
+		$bits |= ($char0 x $cursorpos) . ($font->[$ord0a] x $cursorend);
 	}
 		
 	return $bits;
 }
 
 sub measureText {
-	use bytes;
 	my $fontname = shift;
 	my $string = shift;
 	my $bits = string($fontname, $string);
@@ -87,16 +96,16 @@ sub measureText {
 }
 	
 sub graphicsDirs {
-	my @dirs;
-	
-	push @dirs, catdir($Bin,"Graphics");
+
+	my @dirs = catdir($Bin,"Graphics");
+
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @dirs, $ENV{'HOME'} . "/Library/SlimDevices/Graphics/";
 		push @dirs, "/Library/SlimDevices/Graphics/";
 	}
+
 	return @dirs;
 }
-
 
 #returns a reference to a hash of filenames/external names
 sub fontfiles {
@@ -177,14 +186,13 @@ sub parseBMP {
 	
 	# slurp in bitmap file
 	{
-		use bytes;
-		local( $/ );
-		my $fh;
-		if (!open($fh, $fontfile ))
-			{ 
-				msg(" couldn't open fontfile $fontfile\n"); 
-				return undef;
-			}
+		local $/;
+
+		open(my $fh, $fontfile) or do {
+			msg(" couldn't open fontfile $fontfile\n"); 
+			return undef;
+		};
+
 		binmode $fh;
 		$fontstring = <$fh>;
 	}
@@ -206,7 +214,18 @@ sub parseBMP {
 	$bitsPerLine += 32 if ($biWidth % 32); # round up to 32 pixels wide
 
 	for (my $i = 0 ; $i < $biHeight; $i++) {
-		my @line = split( //, substr(unpack( "B$bitsPerLine", substr($fontstring, $i * $bitsPerLine / 8) ), 0,$biWidth));
+
+		my @line = ();
+
+		my $bitstring = substr(unpack( "B$bitsPerLine", substr($fontstring, $i * $bitsPerLine / 8) ), 0,$biWidth);
+		my $bsLength  = length($bitstring);
+
+		# Surprisingly, this loop is about 20% faster than doing split(//, $bitString)
+		for (my $j = 0; $j < $bsLength; $j++) {
+
+			$line[$j] = substr($bitstring, $j, 1);
+		}
+
 		$font[$biHeight-$i-1] = \@line;
 	}	
 

@@ -1,5 +1,5 @@
 # RssNews Ticker v1.0
-# $Id: RssNews.pm,v 1.14 2004/11/29 20:24:57 dave Exp $
+# $Id: RssNews.pm,v 1.15 2004/12/07 20:19:44 dsully Exp $
 # Copyright (c) 2004 Slim Devices, Inc. (www.slimdevices.com)
 
 # Based on BBCTicker 1.3 which had this copyright...
@@ -80,7 +80,6 @@ my %default_feeds = (
 use Slim::Buttons::Common;
 use Slim::Web::RemoteStream;
 use Slim::Control::Command;
-use Slim::Utils::Strings qw (string);
 use Slim::Utils::Timers;
 use Slim::Utils::Misc;
 use Socket;
@@ -92,7 +91,7 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Prefs;
 
-$VERSION = substr(q$Revision: 1.14 $,10);
+$VERSION = substr(q$Revision: 1.15 $,10);
 my %thenews = ();
 my $state = "wait";
 my $refresh_last = 0;
@@ -104,7 +103,7 @@ my $running_as = 'plugin';
 # This value is ignored when a refresh is manually requested via the remote.
 my $refresh_sec = 30 * 60; 
 
-sub strings() { return q!
+sub strings { return q!
 PLUGIN_RSSNEWS
 	EN	RSS News Ticker
 	
@@ -203,7 +202,9 @@ sub param {
 
 # Plugin descriptions
 
-sub getDisplayName() {return string('PLUGIN_RSSNEWS')}
+sub getDisplayName {
+	return 'PLUGIN_RSSNEWS';
+}
 
 # advance to next RSS feed
 sub nextTopic {
@@ -428,8 +429,7 @@ sub retrieveNews {
     if ($must_get_news) {
         $thenews{$feedname} = ();
 		if (!Slim::Buttons::Common::param($client, 'PLUGIN.RssNews.screensaver_mode')){
-			Slim::Buttons::Block::block($client, 
-										string('PLUGIN_RSSNEWS_LOADING_FEED'));
+			Slim::Buttons::Block::block($client, $client->string('PLUGIN_RSSNEWS_LOADING_FEED'));
 		}
 
         my $xml = getFeedXml($feed_urls{$feedname});
@@ -458,8 +458,7 @@ sub retrieveNews {
         }
 		if ($show_error) {
 			# we did not get the news
-			Slim::Display::Animation::showBriefly($client, 
-												  string('PLUGIN_RSSNEWS_ERROR_IN_FEED'));
+			Slim::Display::Animation::showBriefly($client, $client->string('PLUGIN_RSSNEWS_ERROR_IN_FEED'));
 		  } else {
 			  # record the time we last got the news
 			  $thenews{$feedname}{"refresh_last"} = $now;
@@ -474,8 +473,8 @@ sub setupGroup {
 		PrefOrder => [
 			'plugin_RssNews_items_per_feed', 'plugin_RssNews_reset', 'plugin_RssNews_feeds', 
 		],
-		GroupHead => string( 'SETUP_GROUP_PLUGIN_RSSNEWS' ),
-		GroupDesc => string( 'SETUP_GROUP_PLUGIN_RSSNEWS_DESC' ),
+		GroupHead => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_RSSNEWS'),
+		GroupDesc => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_RSSNEWS_DESC'),
 		GroupLine => 1,
 		GroupSub => 1,
 		Suppress_PrefSub  => 1,
@@ -500,8 +499,8 @@ sub setupGroup {
 				initPlugin();
 			}
 			,'inputTemplate' => 'setup_input_submit.html'
-			,'changeIntro' => string('PLUGIN_RSSNEWS_RESETTING')
-			,'ChangeButton' => string('SETUP_PLUGIN_RSSNEWS_RESET_BUTTON')
+			,'changeIntro' => Slim::Utils::Strings::string('PLUGIN_RSSNEWS_RESETTING')
+			,'ChangeButton' => Slim::Utils::Strings::string('SETUP_PLUGIN_RSSNEWS_RESET_BUTTON')
 			,'dontSet' => 1
 			,'changeMsg' => ''
 		},
@@ -529,14 +528,12 @@ sub setupGroup {
 				if (exists($changeref->{'plugin_RssNews_feeds'}{'Processed'})) {
 					return;
 				}
-				Slim::Web::Setup::processArrayChange($client,
-													 'plugin_RssNews_feeds',
-													 $paramref, $pageref);
+				Slim::Web::Setup::processArrayChange($client, 'plugin_RssNews_feeds', $paramref, $pageref);
 				updateFeedNames();
 
 				$changeref->{'plugin_RssNews_feeds'}{'Processed'} = 1;
 			}
-			,'changeMsg' => string('SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE')
+			,'changeMsg' => Slim::Utils::Strings::string('SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE')
 		},
 	);
 
@@ -678,9 +675,9 @@ sub lines {
 			my $line1 = "RSS News - ".$display_current;
 			my $line2;
 			if ($state eq 'wait') {
-				$line2 = string('PLUGIN_RSSNEWS_WAIT');
+				$line2 = $client->string('PLUGIN_RSSNEWS_WAIT');
 			} else {
-				$line2 = string('PLUGIN_RSSNEWS_ERROR');
+				$line2 = $client->string('PLUGIN_RSSNEWS_ERROR');
 			}
 			$lineref->[0] = $line1;
 			$lineref->[1] = $line2;
@@ -690,11 +687,17 @@ sub lines {
 	return @$lineref;
 }
 
+sub screenSaver {
+	Slim::Utils::Strings::addStrings(&strings());
 
-sub screenSaver() {
-    Slim::Utils::Strings::addStrings(&strings());
-      Slim::Buttons::Common::addSaver('SCREENSAVER.rssnews', getScreensaverRssNews(), \&setScreensaverRssNewsMode,\&leaveScreenSaverRssNews,string('PLUGIN_RSSNEWS_SCREENSAVER'));
-  }
+	Slim::Buttons::Common::addSaver(
+		'SCREENSAVER.rssnews',
+		getScreensaverRssNews(),
+		\&setScreensaverRssNewsMode,
+		\&leaveScreenSaverRssNews,
+		'PLUGIN_RSSNEWS_SCREENSAVER'
+	);
+}
 
 my %screensaverRssNewsFunctions = (
         'done' => sub  {
@@ -847,8 +850,7 @@ sub mainModeCallback {
                                                 { feed => unescapeAndTrim($thenews{$feedname}->{title}),
                                                   feedItems => $thenews{$feedname}->{item} });
           } else {
-              Slim::Display::Animation::showBriefly($client, 
-                                                    string('PLUGIN_RSSNEWS_ERROR'));
+              Slim::Display::Animation::showBriefly($client, $client->string('PLUGIN_RSSNEWS_ERROR'));
                 return;  
             }
     }
@@ -907,7 +909,7 @@ sub headlinesModeCallback {
         my $description;
 		if (!$item->{description} ||
 			ref($item->{description})) {
-			$description = string('PLUGIN_RSSNEWS_NO_DESCRIPTION');
+			$description = $client->string('PLUGIN_RSSNEWS_NO_DESCRIPTION');
 			# we could show them an error message about no description found, but instead just bump.
 			$client->bumpRight();
 			return;
@@ -918,7 +920,7 @@ sub headlinesModeCallback {
 		if ($item->{title}) {
 			$title = $item->{title};
 		} else {
-			$title = string('PLUGIN_RSSNEWS_NO_TITLE');
+			$title = $client->string('PLUGIN_RSSNEWS_NO_TITLE');
 		}
         my $feed = Slim::Buttons::Common::param($client, 'feed');
         

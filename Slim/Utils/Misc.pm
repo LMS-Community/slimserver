@@ -1,6 +1,6 @@
 package Slim::Utils::Misc;
 
-# $Id: Misc.pm,v 1.57 2004/12/02 02:28:08 dsully Exp $
+# $Id: Misc.pm,v 1.58 2004/12/07 20:19:56 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -679,6 +679,8 @@ sub watchDog {
 }
 
 sub msg {
+	use bytes;
+
 	my $entry = strftime "%Y-%m-%d %H:%M:%S.", localtime;
 	my $now = int(Time::HiRes::time() * 10000);
 	$entry .= (substr $now, -4) . " ";
@@ -784,8 +786,15 @@ sub stillScanning {
 sub utf8toLatin1 {
 	my $data = shift;
 
-	$data =~ s/([\xC0-\xDF])([\x80-\xBF])/chr(ord($1)<<6&0xC0|ord($2)&0x3F)/eg; 
-	$data =~ s/[\xE2][\x80][\x99]/'/g;
+	if ($] > 5.007) {
+
+		$data = Encode::encode('iso-8859-1', $data);
+
+	} else {
+
+		$data =~ s/([\xC0-\xDF])([\x80-\xBF])/chr(ord($1)<<6&0xC0|ord($2)&0x3F)/eg; 
+		$data =~ s/[\xE2][\x80][\x99]/'/g;
+	}
 
 	return $data;
 }

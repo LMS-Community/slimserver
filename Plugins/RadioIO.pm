@@ -1,4 +1,4 @@
-# $Id: RadioIO.pm,v 1.3 2004/10/25 15:41:44 vidur Exp $
+# $Id: RadioIO.pm,v 1.4 2004/12/07 20:19:43 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -15,7 +15,6 @@ package Plugins::RadioIO;
 use FileHandle;
 use IO::Socket qw(:DEFAULT :crlf);
 use File::Spec::Functions qw(:ALL);
-use Slim::Utils::Strings qw (string);
 use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 
@@ -25,7 +24,7 @@ my %stations = (
 	'radioio70s'  => '3765',			
 	'radioio80s'  => '3795',
 	'radioioACOUSTIC' => '3675',
-    'radioioAMBIENT'  => '3605',
+	'radioioAMBIENT'  => '3605',
 	'radioioBEAT' => '3725',
 	'radioioCLASSICAL' => '3635',
 	'radioioECLECTIC' => '3586',
@@ -131,10 +130,10 @@ sub lines {
 	my @lines;
 	my $name = $station_names[$current{$client}];
 
-	$lines[0] = Slim::Utils::Strings::string('PLUGIN_RADIOIO_MODULE_TITLE').
+	$lines[0] = $client->string('PLUGIN_RADIOIO_MODULE_TITLE').
 	    ' (' .
 		($current{$client} + 1) .  ' ' .
-		  Slim::Utils::Strings::string('OF') .  ' ' .
+		  $client->string('OF') .  ' ' .
 			  (scalar(@station_names)) .  ') ' ;
 	$lines[1] = $name;
 	$lines[3] = Slim::Display::Display::symbol('notesymbol');
@@ -142,13 +141,13 @@ sub lines {
 	return @lines;
 }
 
-sub setMode() {
+sub setMode {
 	my $client = shift;
 	$current{$client} ||= 0;
 	$client->lines(\&lines);
 }
 
-sub getFunctions() {
+sub getFunctions {
 	return \%functions;
 }
 
@@ -157,7 +156,9 @@ sub addMenu {
 	return $menu;
 }
 
-sub getDisplayName() { return string('PLUGIN_RADIOIO_MODULE_NAME') }
+sub getDisplayName {
+	return 'PLUGIN_RADIOIO_MODULE_NAME';
+}
 
 sub strings
 {

@@ -1,5 +1,6 @@
 package Slim::Buttons::MoodWheel;
-#$Id: MoodWheel.pm,v 1.6 2004/08/03 17:29:10 vidur Exp $
+
+#$Id: MoodWheel.pm,v 1.7 2004/12/07 20:19:48 dsully Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -9,7 +10,6 @@ package Slim::Buttons::MoodWheel;
 use strict;
 use Slim::Buttons::Common;
 use Slim::Music::MoodLogic;
-use Slim::Utils::Strings qw (string);
 
 Slim::Buttons::Common::addMode('moodlogic_mood_wheel',getFunctions(),\&setMode);
 
@@ -89,8 +89,8 @@ sub lines {
 	my $client = shift;
 	my ($line1, $line2);
 
-	$line1 = string('MOODLOGIC_SELECT_MOOD');
-	$line1 .= sprintf(" (%d ".string('OUT_OF')." %s)", selection($client, 'mood_wheel_index') + 1, scalar @browseMoodChoices);
+	$line1 = $client->string('MOODLOGIC_SELECT_MOOD');
+	$line1 .= sprintf(" (%d %s %s)", selection($client, 'mood_wheel_index') + 1, $client->string('OUT_OF'), scalar @browseMoodChoices);
 	$line2 = $browseMoodChoices[selection($client, 'mood_wheel_index')];
 
 	return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));

@@ -1,3 +1,5 @@
+package Slim::Player::Player;
+
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -8,20 +10,18 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# $Id: Player.pm,v 1.39 2004/11/30 04:05:14 kdf Exp $
+# $Id: Player.pm,v 1.40 2004/12/07 20:19:53 dsully Exp $
 #
-package Slim::Player::Player;
+
 use strict;
 use Slim::Player::Client;
 use Slim::Utils::Misc;
-use Slim::Utils::Strings qw (string);
 use Slim::Display::VFD::Animation;
 use Slim::Hardware::IR;
 
-our @ISA = ("Slim::Player::Client");
+use base qw(Slim::Player::Client);
 
-my @fonttable = ( ['small', 'small'],
-		   		  [ undef, 'large']);
+my @fonttable = ( ['small', 'small'], [ undef, 'large']);
 
 my $defaultPrefs = {
 		'autobrightness'		=> 1
@@ -31,14 +31,14 @@ my $defaultPrefs = {
 		,'doublesize'			=> 0
 		,'idleBrightness'		=> 1
 		,'irmap'				=> Slim::Hardware::IR::defaultMapFile()
-		,'menuItem'				=> ['NOW_PLAYING', 
-									'BROWSE_MUSIC', 
-									'SEARCH', 
-									'SAVED_PLAYLISTS', 
-									'RADIO', 
-									'SETTINGS',
-									'PLUGINS', 
-									]
+		,'menuItem'				=> [qw( NOW_PLAYING
+										BROWSE_MUSIC
+										SEARCH
+										SAVED_PLAYLISTS
+										RADIO
+										SETTINGS
+										PLUGINS
+							   )]
 		,'mp3SilencePrelude' 	=> 0
 		,'lameQuality'			=> 9
 		,'offDisplaySize'		=> 0
@@ -66,49 +66,60 @@ my $defaultPrefs = {
 	};
 
 my %upgradeScripts = (
-      '5.4b1' => sub {
-	  my $client = shift;
 
-	  my $ind = 0;
-	  foreach my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
-		if ($menuItem eq 'ShoutcastBrowser') {
-			Slim::Utils::Prefs::clientSet($client, 'menuItem', 
-						      'RADIO', $ind);
-			last;
+	# Allow the "upgrading" of old menu items to new ones.
+	'5.4b1' => sub {
+
+		my $client = shift;
+		my $index  = 0;
+
+		foreach my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
+
+			if ($menuItem eq 'ShoutcastBrowser') {
+				Slim::Utils::Prefs::clientSet($client, 'menuItem', 'RADIO', $index);
+				last;
+			}
+
+			$index++;
 		}
-		$ind++;
-	  }
-      },
-      '5.4b2' => sub {
-	  my $client = shift;
+	},
 
-	  my $addedBrowse = 0;
-	  my @newitems = ();
-	  foreach my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
-		if ($menuItem =~ 'BROWSE_') {
-			if (!$addedBrowse) {
-				push @newitems, 'BROWSE_MUSIC';
-				$addedBrowse = 1;
+	'5.4b2' => sub {
+		my $client = shift;
+
+		my $addedBrowse = 0;
+		my @newitems = ();
+
+		foreach my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
+
+			if ($menuItem =~ 'BROWSE_') {
+
+				if (!$addedBrowse) {
+					push @newitems, 'BROWSE_MUSIC';
+					$addedBrowse = 1;
+				}
+
+			} else {
+
+				push @newitems, $menuItem;
 			}
 		}
-		else {
-			push @newitems, $menuItem;
-		}
-	  }
-	  Slim::Utils::Prefs::clientSet($client, 'menuItem', \@newitems);
-      },
+
+		Slim::Utils::Prefs::clientSet($client, 'menuItem', \@newitems);
+	},
 );
 
 sub new {
-	my $class = shift;
-	my $id = shift;
-	my $paddr = shift;
+	my $class    = shift;
+	my $id       = shift;
+	my $paddr    = shift;
 	my $revision = shift;
-	my $client = Slim::Player::Client->new($id, $paddr);
-	bless $client, $class;
+
+	my $client = $class->SUPER::new($id, $paddr);
 
 	# make sure any preferences this client may not have set are set to the default
-	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
+	# This should be a method on client!
+	Slim::Utils::Prefs::initClientPrefs($client, $defaultPrefs);
 
 	# initialize model-specific features:
 	$client->revision($revision);
@@ -127,6 +138,7 @@ sub init {
 	}
 
 	Slim::Buttons::Home::updateMenu($client);
+
 	# fire it up!
 	$client->power(Slim::Utils::Prefs::clientGet($client,'power'));
 	$client->startup();
@@ -147,10 +159,10 @@ sub update {
 	my $lines = shift;
 	my $nodoublesize = shift;
 
-	if (Slim::Buttons::Common::param($client,'noUpdate')) {
-		#mode has blocked client updates temporarily
-	}	else	{ 
+	unless (Slim::Buttons::Common::param($client,'noUpdate')) {
+
 		$client->killAnimation();
+
 		if (!defined($lines)) {
 			Slim::Hardware::VFD::vfdUpdate($client, [Slim::Display::Display::curLines($client)]);
 		} else {
@@ -169,8 +181,9 @@ sub symbols {
 	return $line;
 }
 	
-	# parse the stringified display commands into a hash.  try to extract them if they come as a reference to an array,
-	# a scalar, a reference to a scalar or even a pre-processed hash.
+# parse the stringified display commands into a hash.  try to extract them if
+# they come as a reference to an array, a scalar, a reference to a scalar or
+# even a pre-processed hash.
 sub parseLines {
 	my $client = shift;
 	my $lines = shift;
@@ -206,7 +219,7 @@ sub parseLines {
 		
 		if (!defined($line1)) { $line1 = ''; }
 		if (!defined($line2)) { $line2 = ''; }
-		
+
 		$line1 .= "\x1eright\x1e" . $line3 if (defined($line3));
 
 		$line2 .= "\x1eright\x1e" . $line4 if (defined($line4));
@@ -215,7 +228,7 @@ sub parseLines {
 			$line1 .= "\x1elinebreak\x1e" . $line2;
 		}
 	}
-	
+
 	while ($line1 =~ s/\x1eframebuf\x1e(.*)\x1e\/framebuf\x1e//s) {
 		$bits |= $1;
 	}
@@ -250,30 +263,35 @@ sub power {
 	
 	my $currOn = Slim::Utils::Prefs::clientGet($client,'power') || 0;
 	
-	if (!defined $on) {
-		return ($currOn);
-	} else {
-		if (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on)) {
-			Slim::Utils::Prefs::clientSet($client, 'power', $on);
-			if ($on) {
-				Slim::Buttons::Common::setMode($client, 'home');
-				
-				my $welcome = ($client->linesPerScreen() == 1) ? '' : Slim::Display::Display::center(Slim::Utils::Strings::string('WELCOME_TO_' . $client->model));
-				my $welcome2 = ($client->linesPerScreen() == 1) ? '' : Slim::Display::Display::center(Slim::Utils::Strings::string('FREE_YOUR_MUSIC'));
-				$client->showBriefly($welcome, $welcome2);
-				
-				# restore the saved brightness, unless its completely dark...
-				my $powerOnBrightness = Slim::Utils::Prefs::clientGet($client, "powerOnBrightness");
-				if ($powerOnBrightness < 1) { 
-					$powerOnBrightness = 1;
-				}
-				Slim::Utils::Prefs::clientSet($client, "powerOnBrightness", $powerOnBrightness);
-				#check if there is a sync group to restore
-				Slim::Player::Sync::restoreSync($client);
-			} else {
-				Slim::Buttons::Common::setMode($client, 'off');
-			}
+	return $currOn unless defined $on;
+
+	if (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on)) {
+
+		Slim::Utils::Prefs::clientSet($client, 'power', $on);
+
+		unless ($on) {
+			Slim::Buttons::Common::setMode($client, 'off');
+			return;
 		}
+
+		Slim::Buttons::Common::setMode($client, 'home');
+		
+		my $welcome  = ($client->linesPerScreen() == 1) ? '' : Slim::Display::Display::center($client->string('WELCOME_TO_' . $client->model));
+		my $welcome2 = ($client->linesPerScreen() == 1) ? '' : Slim::Display::Display::center($client->string('FREE_YOUR_MUSIC'));
+
+		$client->showBriefly($welcome, $welcome2);
+		
+		# restore the saved brightness, unless its completely dark...
+		my $powerOnBrightness = Slim::Utils::Prefs::clientGet($client, "powerOnBrightness");
+
+		if ($powerOnBrightness < 1) { 
+			$powerOnBrightness = 1;
+		}
+
+		Slim::Utils::Prefs::clientSet($client, "powerOnBrightness", $powerOnBrightness);
+
+		# check if there is a sync group to restore
+		Slim::Player::Sync::restoreSync($client);
 	}
 }
 
@@ -289,7 +307,11 @@ sub minBass {	return 0; }
 sub fonts {
 	my $client = shift;
 	my $size = shift;
-	unless (defined $size) {$size = $client->textSize();}
+
+	unless (defined $size) {
+		$size = $client->textSize();
+	}
+
 	return $fonttable[$size];
 }
 
@@ -298,8 +320,10 @@ sub fonts {
 # $fade = number of seconds to fade 100% (positive to fade up, negative to fade down) 
 # $callback is function reference to be called when the fade is complete
 my %fvolume;  # keep temporary fade volume for each client
+
 sub fade_volume {
 	my($client, $fade, $callback, $callbackargs) = @_;
+
 	$::d_ui && msg("entering fade_volume:  fade: $fade to $fvolume{$client}\n");
 	
 	my $faderate = 20;  # how often do we send updated fade volume commands per second
@@ -355,6 +379,7 @@ sub mute {
 	if (!$client->isPlayer()) {
 		return 1;
 	}
+
 	my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
 	my $mute = Slim::Utils::Prefs::clientGet($client, "mute");
 	
@@ -368,6 +393,7 @@ sub mute {
 		$vol *= -1;
 		$client->volume($vol);
 	}
+
 	Slim::Utils::Prefs::clientSet($client, "volume", $vol);
 	Slim::Display::Display::volumeDisplay($client);
 }
@@ -438,16 +464,16 @@ sub currentSongLines {
 
 	if ($playlistlen < 1) {
 
-		$line1 = string('NOW_PLAYING');
-		$line2 = string('NOTHING');
+		$line1 = $client->string('NOW_PLAYING');
+		$line2 = $client->string('NOTHING');
 
 	} else {
 
 		if (Slim::Player::Source::playmode($client) eq "pause") {
 
 			$line1 = sprintf(
-				string('PAUSED')." (%d %s %d) ",
-				Slim::Player::Source::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen
+				$client->string('PAUSED')." (%d %s %d) ",
+				Slim::Player::Source::currentSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
 			);
 
 		# for taking photos of the display, comment out the line above, and use this one instead.
@@ -457,27 +483,27 @@ sub currentSongLines {
 		} elsif (Slim::Player::Source::playmode($client) eq "stop") {
 
 			$line1 = sprintf(
-				string('STOPPED')." (%d %s %d) ",
-				Slim::Player::Source::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen
+				$client->string('STOPPED')." (%d %s %d) ",
+				Slim::Player::Source::currentSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
 			);
 
 		} else {
 
 			if (Slim::Player::Source::rate($client) != 1) {
-				$line1 = string('NOW_SCANNING') . ' ' . Slim::Player::Source::rate($client) . 'x';
+				$line1 = $client->string('NOW_SCANNING') . ' ' . Slim::Player::Source::rate($client) . 'x';
 			} elsif (Slim::Player::Playlist::shuffle($client)) {
-				$line1 = string('PLAYING_RANDOMLY');
+				$line1 = $client->string('PLAYING_RANDOMLY');
 			} else {
-				$line1 = string('PLAYING');
+				$line1 = $client->string('PLAYING');
 			}
 			
 			if ($client->volume() < 0) {
-				$line1 .= " ".string('LCMUTED')
+				$line1 .= " ". $client->string('LCMUTED');
 			}
 
 			$line1 = $line1 . sprintf(
 				" (%d %s %d) ",
-				Slim::Player::Source::currentSongIndex($client) + 1, string('OUT_OF'), $playlistlen
+				Slim::Player::Source::currentSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
 			);
 		} 
 
@@ -492,7 +518,7 @@ sub currentSongLines {
 
 
 sub nowPlayingModeLines {
-	my ($client,$line1) = @_;
+	my ($client, $line1) = @_;
 	my $overlay;
 	my $fractioncomplete   = 0;
 	my $playingDisplayMode = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
@@ -625,7 +651,7 @@ sub renderOverlay {
 	
 	return $line1 if (ref($line1) eq 'HASH');
 	return $line1 if $line1 =~ /\x1e(framebuf|linebreak|right)\x1e/s;
-	
+
 	if (defined($overlay1)) { 
 		$line1 .= "\x1eright\x1e" . $overlay1;
 	}
@@ -746,10 +772,6 @@ sub balanceBar {
 	return sliderBar(shift,shift,shift,50);
 }
 
-
-
-
-
-
 1;
 
+__END__

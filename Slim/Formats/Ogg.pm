@@ -1,6 +1,6 @@
 package Slim::Formats::Ogg;
 
-# $Id: Ogg.pm,v 1.12 2004/01/26 05:44:14 dean Exp $
+# $Id: Ogg.pm,v 1.13 2004/12/07 20:19:52 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -39,6 +39,11 @@ my %tagMapping = (
 	'DATE'		=> 'YEAR',
 );
 
+# To turn perl's internal form into a utf-8 string.
+if ($] > 5.007) {
+	require Encode;
+}
+
 # Given a file, return a hash of name value pairs,
 # where each name is a tag name.
 sub getTag {
@@ -65,9 +70,14 @@ sub getTag {
 		return $tags;
 	}
 
-	# why this is an array, I don't know.
+	# Tags can be stacked, in an array.
 	foreach my $key ($ogg->comment_tags()) {
-		$tags->{uc($key)} = ($ogg->comment($key))[0];
+
+		if ($] > 5.007) {
+			$tags->{uc($key)} = Encode::decode("utf8", ($ogg->comment($key))[0]);
+		} else {
+			$tags->{uc($key)} = Slim::Utils::Misc::utf8toLatin1(($ogg->comment($key))[0]);
+		}
 	}
 
 	# Correct ogginfo tags

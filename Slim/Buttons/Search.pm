@@ -10,10 +10,9 @@ use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
 use Slim::Display::Display;
-use Slim::Utils::Strings qw (string);
 
 # button functions for search directory
-my @defaultSearchChoices = ('ARTISTS','ALBUMS','SONGS');
+my @defaultSearchChoices = qw(ARTISTS ALBUMS SONGS);
 my $rightarrow = Slim::Display::Display::symbol('rightarrow');
 
 my %current;
@@ -107,7 +106,8 @@ sub startSearch {
 	my @oldlines = Slim::Display::Display::curLines($client);
 
 	my $term = searchTerm($client);
-	$client->showBriefly(string('SEARCHING'));
+	$client->showBriefly($client->string('SEARCHING'));
+
 	if ($client->searchFor eq 'ARTISTS') {
 		Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist' => $term } );
 	} elsif ($client->searchFor eq 'ALBUMS') {

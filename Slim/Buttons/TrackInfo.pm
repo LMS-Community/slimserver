@@ -9,7 +9,6 @@ use strict;
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Utils::Misc;
-use Slim::Utils::Strings qw (string);
 
 # button functions for track info screens
 
@@ -23,9 +22,9 @@ my %functions = (
 			my ($line1, $line2);
 			
 			if (Slim::Player::Playlist::shuffle($client)) {
-				$line1 = string('PLAYING_RANDOMLY_FROM');
+				$line1 = $client->string('PLAYING_RANDOMLY_FROM');
 			} else {
-				$line1 = string('NOW_PLAYING_FROM')
+				$line1 = $client->string('NOW_PLAYING_FROM')
 			}
 			
 			if ($curitem && $curitem eq 'GENRE') {
@@ -69,7 +68,7 @@ my %functions = (
 			my $curitem = $client->trackInfoContent->[currentLine($client)];
 			my ($line1, $line2);
 			
-			$line1 = string('ADDING_TO_PLAYLIST');
+			$line1 = $client->string('ADDING_TO_PLAYLIST');
 			
 			if ($curitem && $curitem eq 'GENRE') {
 				$line2 = Slim::Music::Info::genre(track($client));
@@ -191,83 +190,83 @@ sub preloadLines {
 	@{$client->trackInfoContent} = ();
 
 	if (Slim::Music::Info::title($url)) {
-		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('TITLE').": ".Slim::Music::Info::title($url));
+		push (@{$client->trackInfoLines}, $client->string('TITLE').": ".Slim::Music::Info::title($url));
 		push (@{$client->trackInfoContent}, undef);
 	}
 
 	if (Slim::Music::Info::artist($url)) {
-		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('ARTIST').": ".Slim::Music::Info::artist($url));
+		push (@{$client->trackInfoLines}, $client->string('ARTIST').": ".Slim::Music::Info::artist($url));
 		push (@{$client->trackInfoContent}, 'ARTIST');
 	}
 
 	if (Slim::Music::Info::band($url)) {
-		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('BAND').": ".Slim::Music::Info::band($url));
+		push (@{$client->trackInfoLines}, $client->string('BAND').": ".Slim::Music::Info::band($url));
 		push (@{$client->trackInfoContent}, 'BAND');
 	}
 
 	if (Slim::Music::Info::composer($url)) {
-		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('COMPOSER').": ".Slim::Music::Info::composer($url));
+		push (@{$client->trackInfoLines}, $client->string('COMPOSER').": ".Slim::Music::Info::composer($url));
 		push (@{$client->trackInfoContent}, 'COMPOSER');
 	}
 
  	if (Slim::Music::Info::conductor($url)) {
- 		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('CONDUCTOR').": ".Slim::Music::Info::conductor($url));
+ 		push (@{$client->trackInfoLines}, $client->string('CONDUCTOR').": ".Slim::Music::Info::conductor($url));
  		push (@{$client->trackInfoContent}, 'CONDUCTOR');
  	}
 
 	if (Slim::Music::Info::album($url)) {
-		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('ALBUM').": ".Slim::Music::Info::album($url));
+		push (@{$client->trackInfoLines}, $client->string('ALBUM').": ".Slim::Music::Info::album($url));
 		push (@{$client->trackInfoContent}, 'ALBUM');
 	}
 
 	if (Slim::Music::Info::trackNumber($url)) {
-		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('TRACK').": ".Slim::Music::Info::trackNumber($url));
+		push (@{$client->trackInfoLines}, $client->string('TRACK').": ".Slim::Music::Info::trackNumber($url));
 		push (@{$client->trackInfoContent}, undef);
 	}
 
 	if (Slim::Music::Info::year($url)) {
-		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('YEAR').": ".Slim::Music::Info::year($url));
+		push (@{$client->trackInfoLines}, $client->string('YEAR').": ".Slim::Music::Info::year($url));
 		push (@{$client->trackInfoContent}, undef);
 	}
 
 	if (Slim::Music::Info::genre($url)) {
-		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('GENRE').": ".Slim::Music::Info::genre($url));
+		push (@{$client->trackInfoLines}, $client->string('GENRE').": ".Slim::Music::Info::genre($url));
 		push (@{$client->trackInfoContent}, 'GENRE');
 	}
 
 	if (Slim::Music::Info::contentType($url)) {
-		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('TYPE').": ". string(uc(Slim::Music::Info::contentType($url))));
+		push (@{$client->trackInfoLines}, $client->string('TYPE').": ". $client->string(uc(Slim::Music::Info::contentType($url))));
 		push (@{$client->trackInfoContent}, undef);
 	}
 
 	if (Slim::Music::Info::comment($url)) {
-		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('COMMENT').": ".Slim::Music::Info::comment($url));
+		push (@{$client->trackInfoLines}, $client->string('COMMENT').": ".Slim::Music::Info::comment($url));
 		push (@{$client->trackInfoContent}, undef);
 	}
 
 	if (Slim::Music::Info::duration($url)) {
-		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('LENGTH').": ". Slim::Music::Info::duration($url));
+		push (@{$client->trackInfoLines}, $client->string('LENGTH').": ". Slim::Music::Info::duration($url));
 		push (@{$client->trackInfoContent}, undef);
 	}
 
 	if (Slim::Music::Info::bitrate($url)) {
 		my $undermax = Slim::Player::Source::underMax($client,$url);
 		my $rate = (defined $undermax && $undermax) ? Slim::Music::Info::bitrate($url) 
-				: Slim::Utils::Prefs::maxRate($client).Slim::Utils::Strings::string('KBPS')." CBR";
+				: Slim::Utils::Prefs::maxRate($client).$client->string('KBPS')." CBR";
 		push (@{$client->trackInfoLines}, 
-			Slim::Utils::Strings::string('BITRATE').": ".Slim::Music::Info::bitrate($url).' '
+			$client->string('BITRATE').": ".Slim::Music::Info::bitrate($url).' '
 				.((Slim::Buttons::Common::param($client, 'current') && (defined $undermax && !$undermax)) 
-					? '('.string('CONVERTED_TO').' '.$rate.')' : ''));
+					? '('.$client->string('CONVERTED_TO').' '.$rate.')' : ''));
 		push (@{$client->trackInfoContent}, undef);
 	}
 
 	if (Slim::Music::Info::fileLength($url)) {
-		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('FILELENGTH').": ".Slim::Utils::Misc::delimitThousands(Slim::Music::Info::fileLength($url)));
+		push (@{$client->trackInfoLines}, $client->string('FILELENGTH').": ".Slim::Utils::Misc::delimitThousands(Slim::Music::Info::fileLength($url)));
 		push (@{$client->trackInfoContent}, undef);
 	}
 
 	if (Slim::Music::Info::age($url)) {
-		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('MODTIME').": ".Slim::Utils::Misc::shortDateF(Slim::Music::Info::age($url)) . ", " . Slim::Utils::Misc::timeF(Slim::Music::Info::age($url)));
+		push (@{$client->trackInfoLines}, $client->string('MODTIME').": ".Slim::Utils::Misc::shortDateF(Slim::Music::Info::age($url)) . ", " . Slim::Utils::Misc::timeF(Slim::Music::Info::age($url)));
 		push (@{$client->trackInfoContent}, undef);
 	}
 
@@ -277,12 +276,12 @@ sub preloadLines {
 	}
 
 	if (Slim::Music::Info::tagVersion($url)) {
-		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('TAGVERSION').": ".Slim::Music::Info::tagVersion($url));
+		push (@{$client->trackInfoLines}, $client->string('TAGVERSION').": ".Slim::Music::Info::tagVersion($url));
 		push (@{$client->trackInfoContent}, undef);
 	}
 
 	if (Slim::Music::Info::digitalrights($url)) {
-		push (@{$client->trackInfoLines}, Slim::Utils::Strings::string('DRM'));
+		push (@{$client->trackInfoLines}, $client->string('DRM'));
 		push (@{$client->trackInfoContent}, undef);
 	}
 

@@ -1,6 +1,6 @@
 package Slim::Buttons::Playlist;
 
-# $Id: Playlist.pm,v 1.37 2004/11/19 04:04:24 kdf Exp $
+# $Id: Playlist.pm,v 1.38 2004/12/07 20:19:48 dsully Exp $
 
 # Slim Server Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -13,7 +13,6 @@ use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
 use Slim::Buttons::Browse;
 use Slim::Utils::Misc;
-use Slim::Utils::Strings qw(string);
 
 Slim::Buttons::Common::addMode('playlist',getFunctions(),\&setMode);
 
@@ -114,18 +113,16 @@ my %functions = (
 			# rec button deletes an entry if you are browsing the playlist...
 			my $songtitle = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, browseplaylistindex($client)));
 			Slim::Control::Command::execute($client, ["playlist", "delete", browseplaylistindex($client)]);	
-			$client->showBriefly(
-					string('REMOVING_FROM_PLAYLIST'), 
-					$songtitle, undef, 1);
+			$client->showBriefly( $client->string('REMOVING_FROM_PLAYLIST'), $songtitle, undef, 1);
 		}
 	},
 	
  	'zap' => sub {
  		my $client = shift;
- 		my $zapped=catfile(Slim::Utils::Prefs::get('playlistdir'), string('ZAPPED_SONGS') . '.m3u');
+ 		my $zapped=catfile(Slim::Utils::Prefs::get('playlistdir'), $client->string('ZAPPED_SONGS') . '.m3u');
 		if (Slim::Player::Playlist::count($client) > 0) {
 			$client->showBriefly(
-					string('ZAPPING_FROM_PLAYLIST'),
+					$client->string('ZAPPING_FROM_PLAYLIST'),
 					Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, browseplaylistindex($client))), undef, 1);
 			Slim::Control::Command::execute($client, ["playlist", "zap", browseplaylistindex($client)]);
 		}
@@ -183,7 +180,7 @@ sub lines {
 		if ( browseplaylistindex($client) + 1 > Slim::Player::Playlist::count($client)) {
 			browseplaylistindex($client,Slim::Player::Playlist::count($client)-1)
 		}
-		$line1 = sprintf "%s (%d %s %d) ", string('PLAYLIST'), browseplaylistindex($client) + 1, string('OUT_OF'), Slim::Player::Playlist::count($client);
+		$line1 = sprintf "%s (%d %s %d) ", $client->string('PLAYLIST'), browseplaylistindex($client) + 1, $client->string('OUT_OF'), Slim::Player::Playlist::count($client);
 		$line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, browseplaylistindex($client)));
 		$overlay2 = Slim::Display::Display::symbol('notesymbol');
 		return ($line1, $line2, undef, $overlay2);
@@ -212,6 +209,7 @@ sub browseplaylistindex {
 sub nowPlayingModeLines {
 	shift->nowPlayingModeLines(shift);
 }
+
 1;
 
 __END__

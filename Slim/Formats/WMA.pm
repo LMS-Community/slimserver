@@ -1,6 +1,6 @@
 package Slim::Formats::WMA;
 
-# $Id: WMA.pm,v 1.8 2004/10/22 17:38:01 dean Exp $
+# $Id: WMA.pm,v 1.9 2004/12/07 20:19:52 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -17,6 +17,11 @@ my %tagMapping = (
 	'VBR'		=> 'VBR_SCALE',
 );
 
+# WMA tags are stored as UTF-16 by default.
+if ($] > 5.007) {
+	Audio::WMA->setConvertTagsToUTF8(1);
+}
+
 sub getTag {
 
 	my $file = shift || "";
@@ -26,7 +31,7 @@ sub getTag {
 
 	my $wma  = Audio::WMA->new($file) || return $tags;
 	
-	# why this is an array, I don't know.
+	# We can have stacked tags for multple artists.
 	if ($wma->tags()) {
 		foreach my $key (keys %{$wma->tags()}) {
 			$tags->{uc $key} = $wma->tags($key);

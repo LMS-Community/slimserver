@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package Slim::Display::VFD::Animation;
 
-# $Id: Animation.pm,v 1.7 2004/09/11 02:03:11 kdf Exp $
+# $Id: Animation.pm,v 1.8 2004/12/07 20:19:51 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -225,7 +225,7 @@ sub doEasterEgg {
 	my $frame_rate = 0.15;
 
 	if ($easter == 0) {
-		my $text1 = sprintf(Slim::Utils::Strings::string('ABOUT'), $main::VERSION );
+		my $text1 = sprintf($client->string('ABOUT'), $main::VERSION );
 		$text1 = (' ' x (int((40-Slim::Display::Display::lineLength($text1))/2))) . $text1 . (' ' x (int((40-Slim::Display::Display::lineLength($text1))/2)));
 		my $text2 =  join(', ', @main::AUTHORS) . ', ';
 		$text2 = $text2 . $text2 . $text2 . $text2;
@@ -248,7 +248,7 @@ sub doEasterEgg {
 			,$frame_rate,1);
 		$easter++;
 	} elsif ($easter ==2) {
-		my $text1 = sprintf(Slim::Utils::Strings::string('ABOUT'), $main::VERSION );
+		my $text1 = sprintf($client->string('ABOUT'), $main::VERSION );
 		$text1 = (' ' x (40-Slim::Display::Display::lineLength($text1))) . $text1 . (' ' x (40-Slim::Display::Display::lineLength($text1)));
 		my $text2 =  join(', ', @main::AUTHORS) . ', ';
 		while (Slim::Display::Display::lineLength($text2) < 40) { $text2 .= $text2; }

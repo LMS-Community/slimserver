@@ -1,6 +1,6 @@
 package Slim::Hardware::VFD;
 
-# $Id: VFD.pm,v 1.21 2004/11/25 03:51:03 kdf Exp $
+# $Id: VFD.pm,v 1.22 2004/12/07 20:19:52 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -127,6 +127,7 @@ sub render {
 	} else {
 		$line1 = $lines->{line1} if defined($lines->{line1});
 		$line2 = $lines->{line2} if defined($lines->{line2});
+
 		if (defined($lines->{overlay1})) {
 			my $overlayLength =  Slim::Display::Display::lineLength($lines->{overlay1});
 			$line1 .= $spaces;
@@ -209,6 +210,13 @@ sub vfdUpdate {
 
 	foreach my $curline ($line1, $line2) {
 		my $linepos = 0;
+
+		# Always force the character displays into latin1
+		# XXX - does this work for the european and katakana VFDs?
+		#
+		# If this isn't here - selecting a song with non-latin1 chars
+		# will cause the server to crash.
+		$curline = Slim::Utils::Misc::utf8toLatin1($curline);
 			
 		while (1) {
 			# if we're done with the line, break;

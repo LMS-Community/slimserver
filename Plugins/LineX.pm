@@ -28,20 +28,21 @@ use strict;
 ###########################################
 
 use Slim::Control::Command;
-use Slim::Utils::Strings qw (string);
 use Slim::Utils::Timers;
 use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Misc;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.1 $,10);
+$VERSION = substr(q$Revision: 1.2 $,10);
 
 # ----------------------------------------------------------------------------
-sub getDisplayName() {return string('PLUGIN_SCREENSAVER_LINEX');}
+sub getDisplayName {
+	return 'PLUGIN_SCREENSAVER_LINEX';
+}
 
 # ----------------------------------------------------------------------------
-sub strings() { return '
+sub strings { return '
 PLUGIN_SCREENSAVER_LINEX
 	EN	LineX Screensaver
 
@@ -218,12 +219,13 @@ sub setMode {
 # ----------------------------------------------------------------------------
 # First, Register the screensaver mode here.  Must make the call to addStrings in order to have plugin
 # localization available at this point.
-sub screenSaver() {
-    Slim::Buttons::Common::addSaver('SCREENSAVER.linex',
-				    getScreensaverLineXFunctions(),
-				    \&setScreensaverLineXMode,
-				    \&leaveScreensaverLineXMode,
-				    string('PLUGIN_SCREENSAVER_LINEX'));
+sub screenSaver {
+	Slim::Buttons::Common::addSaver('SCREENSAVER.linex',
+		getScreensaverLineXFunctions(),
+		\&setScreensaverLineXMode,
+		\&leaveScreensaverLineXMode,
+		'PLUGIN_SCREENSAVER_LINEX',
+	);
 }
 
 # ----------------------------------------------------------------------------
@@ -329,8 +331,8 @@ sub screensaverLineXlines {
     $line1 .= Slim::Display::Display::symbol("/framebuf");
     Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.2, \&tick);
   } else {
-    $line1 = string('PLUGIN_SCREENSAVER_LINEX');
-    $line2 = string('PLUGIN_SCREENSAVER_LINEX_NEEDS_GRAPHICS_DISPLAY');
+    $line1 = $client->string('PLUGIN_SCREENSAVER_LINEX');
+    $line2 = $client->string('PLUGIN_SCREENSAVER_LINEX_NEEDS_GRAPHICS_DISPLAY');
   }
 
   return( $line1, $line2);

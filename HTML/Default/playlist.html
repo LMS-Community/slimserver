@@ -1,10 +1,9 @@
-<HTML>
-<HEAD>
-<TITLE>Browse</TITLE>
-		<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
-	<style type="text/css"> <!--
-		[% INSERT slimserver.css %]
-	--> </style>
+<html>
+<head>
+	<title>Browse</title>
+	<style type="text/css"> <!-- [% INSERT slimserver.css %] --> </style>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
  	<script type="text/javascript">
 		<!--
 		function to_currentsong() {
@@ -14,8 +13,9 @@
 		}
 		-->
 	</script>
-	</HEAD>
-<BODY LEFTMARGIN=0 TOPMARGIN=0 MARGINWIDTH=0 MARGINHEIGHT=0 onload="javascript:to_currentsong()">
+</head>
+
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="javascript:to_currentsong()">
 
 <table cellspacing="0" width=100% >
 	[% IF playercount == '0' %]
@@ -76,5 +76,5 @@
 	</tr>[% END %]
 
 </table>
-	</BODY>
-</HTML>
+	</body>
+</html>

@@ -708,7 +708,8 @@ sub getValue {
 	}
 	$data =~ s/&#(\d*);/chr($1)/ge;
 	
-	return Slim::Utils::Misc::utf8toLatin1($data);
+	return $data;
+	#return Slim::Utils::Misc::utf8toLatin1($data);
 }
 
 sub getPlaylistTrackArray {

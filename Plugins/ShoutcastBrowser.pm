@@ -1,6 +1,6 @@
 # ShoutcastBrowser.pm Copyright (C) 2003 Peter Heslin
 # version 3.0, 5 Apr, 2004
-#$Id: ShoutcastBrowser.pm,v 1.15 2004/10/06 15:56:01 vidur Exp $
+#$Id: ShoutcastBrowser.pm,v 1.16 2004/12/07 20:19:45 dsully Exp $
 #
 # A Slim plugin for browsing the Shoutcast directory of mp3
 # streams.  Inspired by streamtuner.
@@ -217,7 +217,6 @@ use FileHandle;
 use IO::Socket qw(:DEFAULT :crlf);
 use File::Spec::Functions qw(:ALL);
 use Slim::Control::Command;
-use Slim::Utils::Strings qw (string);
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Display::Display;
@@ -231,7 +230,9 @@ eval
 };
 my $have_zlib = 1 unless $@;
 
-sub getDisplayName {return string('PLUGIN_SHOUTCASTBROWSER_MODULE_NAME')}
+sub getDisplayName {
+	return 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME';
+}
 
 sub strings
 {
@@ -341,9 +342,9 @@ sub setMode
     $number{$client} = undef;
     $client->update();
     &get_prefs;
-    $recent_name = Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_RECENT');
-    $most_popular_name = Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR');
-    $misc_genre= Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_MISC');
+    $recent_name = $client->string('PLUGIN_SHOUTCASTBROWSER_RECENT');
+    $most_popular_name = $client->string('PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR');
+    $misc_genre= $client->string('PLUGIN_SHOUTCASTBROWSER_MISC');
     $recent_filename{$client} =
 	catfile($recent_dir,
 		$client->name() . '.m3u');
@@ -358,7 +359,7 @@ sub setMode
 	$current_stream{$client} = 0;
 	$current_bitrate{$client} = 0;
 	my %in_genres;
-	$all_name = Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS');
+	$all_name = $client->string('PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS');
 
 	my $u = unpack 'u', q{M:'1T<#HO+W-H;W5T8V%S="YC;VTO<V)I;B]X;6QL:7-T97(N<&AT;6P_<V5R
 +=FEC93U3;&E-4#,`
@@ -640,26 +641,26 @@ sub lines {
 
     if ($status{$client} == 0)
     {
-	$lines[0] = Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_CONNECTING');
+	$lines[0] = $client->string('PLUGIN_SHOUTCASTBROWSER_CONNECTING');
 	$lines[1] = '';
     }
     elsif ($status{$client} == -1)
     {
-	$lines[0] = Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR');
+	$lines[0] = $client->string('PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR');
 	$lines[1] = '';
     }
     elsif ($status{$client} == -2)
     {
-	$lines[0] = Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_TOO_SOON');
+	$lines[0] = $client->string('PLUGIN_SHOUTCASTBROWSER_TOO_SOON');
 	$lines[1] = '';
     }
     elsif ($status{$client} == 1)
     {
 	my $current_stream = $genres[$current_genre{$client}];
-	$lines[0] = Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_GENRES').
+	$lines[0] = $client->string('PLUGIN_SHOUTCASTBROWSER_GENRES').
 	    ' (' .
 		($current_genre{$client} + 1) .  ' ' .
-		    Slim::Utils::Strings::string('OF') .  ' ' .
+		    $client->string('OF') .  ' ' .
 			    ($#genres + 1) .  ') ' ;
 	$lines[1] = $current_stream;
 	$lines[3] = Slim::Display::Display::symbol('rightarrow');
@@ -692,8 +693,8 @@ sub setupGroup
 	  'plugin_shoutcastbrowser_max_recent',
 	  'plugin_shoutcastbrowser_max_popular'
 	 ],
-	 GroupHead => string('SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER'),
-	 GroupDesc => string('SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER_DESC'),
+	 GroupHead => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER'),
+	 GroupDesc => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER_DESC'),
 	 GroupLine => 1,
 	 GroupSub => 1,
 	 Suppress_PrefSub => 1,
@@ -703,30 +704,20 @@ sub setupGroup
 
 
     my %genre_options = (
-			 name_reverse =>
-			  string('SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE'),
-			 streams =>
-			  string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS'),
-			 streams_reverse =>
-			  string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS_REVERSE'),
-			 default =>
-			  string('SETUP_PLUGIN_SHOUTCASTBROWSER_DEFAULT_ALPHA'),
-			 keyword =>
-			  string('SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD'),
-			 keyword_reverse =>
-			  string('SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD_REVERSE'),
+			 name_reverse => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE'),
+			 streams => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS'),
+			 streams_reverse => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS_REVERSE'),
+			 default => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_DEFAULT_ALPHA'),
+			 keyword => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD'),
+			 keyword_reverse => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD_REVERSE'),
 
 			);
 
     my %stream_options = (
-			  name_reverse =>
-			   string('SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE'),
-			  listeners =>
-			   string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS'),
-			  listeners_reverse =>
-			   string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS_REVERSE'),
-			  default =>
-			   string('SETUP_PLUGIN_SHOUTCASTBROWSER_DEFAULT_ALPHA')
+			  name_reverse => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE'),
+			  listeners => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS'),
+			  listeners_reverse => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS_REVERSE'),
+			  default => Slim::Utils::Strings::string('SETUP_PLUGIN_SHOUTCASTBROWSER_DEFAULT_ALPHA'),
 			);
 
 
@@ -796,7 +787,7 @@ sub validateIsFile
     }
     else
     {
-	return (undef, "SETUP_BAD_DIRECTORY");
+	return (undef, string("SETUP_BAD_DIRECTORY"));
     }
 }
 
@@ -936,23 +927,22 @@ sub streamsLines
 
     if ($status{$client} == 0)
     {
-	$lines[0] = Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_CONNECTING');
+	$lines[0] = $client->string('PLUGIN_SHOUTCASTBROWSER_CONNECTING');
 	$lines[1] = '';
     }
     elsif ($status{$client} == -1)
     {
-	$lines[0] = Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR');
+	$lines[0] = $client->string('PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR');
 	$lines[1] = '';
     }
     elsif ($status{$client} == -2)
     {
-	$lines[0] = Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_TOO_SOON');
+	$lines[0] = $client->string('PLUGIN_SHOUTCASTBROWSER_TOO_SOON');
 	$lines[1] = '';
     }
     elsif ($status{$client} == -3)
     {
-	$lines[0] =
-	    Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_SORTING');
+	$lines[0] = $client->string('PLUGIN_SHOUTCASTBROWSER_SORTING');
 	$lines[1] = '';
     }
     elsif ($status{$client} == 1)
@@ -963,11 +953,11 @@ sub streamsLines
 	my $current_genre = $genres[$current_genre{$client}];
 	my $current_stream = $streams[$current_stream{$client}];
 
-	$lines[0] = Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_SHOUTCAST').': '.
+	$lines[0] = $client->string('PLUGIN_SHOUTCASTBROWSER_SHOUTCAST').': '.
 		    $genres[$current_genre{$client}] .
 			' (' .
 			    ($current_stream{$client} + 1) .  ' ' .
-				Slim::Utils::Strings::string('OF') .  ' ' .
+				$client->string('OF') .  ' ' .
 					($#streams + 1) .  ') ' ;
 	$lines[1] = $current_stream;
 	if (keys %{ $stream_data{$current_genre}{$current_stream} } > 1)
@@ -1163,12 +1153,12 @@ sub bitrateLines
 
     $lines[0] = $current_stream;
     $lines[3] = ' (' . ($current_bitrate{$client} + 1) .  ' ' .
-	Slim::Utils::Strings::string('OF') .  ' ' .
+	$client->string('OF') .  ' ' .
 		($#bitrates + 1) .  ')' ;
 
-    $lines[1] = Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_BITRATE') . ': ' .
+    $lines[1] = $client->string('PLUGIN_SHOUTCASTBROWSER_BITRATE') . ': ' .
 	$bitrates[$current_bitrate{$client}] . ' ' .
-	    Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_KBPS');
+	    $client->string('PLUGIN_SHOUTCASTBROWSER_KBPS');
     return @lines;
 }
 
@@ -1292,8 +1282,7 @@ sub infoLines
     {
 	$lines[0] = $current_bitrate . 'kbps - ' .$current_stream;
     }
-    my $info = $current_data->[$info_index[$cur]] ||
-	Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_NONE');
+    my $info = $current_data->[$info_index[$cur]] || $client->string('PLUGIN_SHOUTCASTBROWSER_NONE');
     $lines[1] = $info_order[$cur] . ': ' . $info;
 
     return @lines;
@@ -1422,7 +1411,7 @@ sub get_recent_streams
 	    return [ @recent ];
 	}
     }
-    return [ Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_NONE') ];
+    return [ $client->string('PLUGIN_SHOUTCASTBROWSER_NONE') ];
 }
 
 
@@ -1446,8 +1435,7 @@ sub add_recent_stream
     {
 	@recent = @{ get_recent_streams($client) };
     }
-    @recent = () if (@recent == 1 and $recent[0] eq
-		     Slim::Utils::Strings::string('PLUGIN_SHOUTCASTBROWSER_NONE'));
+    @recent = () if (@recent == 1 and $recent[0] eq $client->string('PLUGIN_SHOUTCASTBROWSER_NONE'));
 
     my ($i) = grep $recent[$_] eq $new, 0..$#recent;
     if (defined $i)

@@ -1,5 +1,5 @@
 #
-#	$Id: Information.pm,v 1.8 2004/08/03 17:29:09 vidur Exp $
+#	$Id: Information.pm,v 1.9 2004/12/07 20:19:47 dsully Exp $
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
 #
@@ -45,10 +45,9 @@ package Slim::Buttons::Information;
 use strict;
 use vars qw($VERSION);
 
-$VERSION = substr(q$Revision: 1.8 $,10);
+$VERSION = substr(q$Revision: 1.9 $,10);
 
 use File::Spec::Functions qw(catdir);
-use Slim::Utils::Strings qw(string);
 
 my $modules;
 my %enabled;
@@ -85,13 +84,14 @@ my %menuParams = (
 		'header' => 'INFORMATION'
 		,'stringHeader' => 1
 		,'headerAddCount' => 1
-		,'externRef' => sub {return string('INFORMATION_MENU_' . uc($_[0]));}
-		,'externRefArgs' => 'V'
+		,'externRef' => sub {return $_[0]->string('INFORMATION_MENU_' . uc($_[1]));}
+		,'externRefArgs' => 'CV'
 		,'listRef' => ['library','player','server','module']
 		,'overlayRef' => sub {return (undef,Slim::Display::Display::symbol('rightarrow'));}
 		,'overlayRefArgs' => ''
 		,'callback' => \&mainExitHandler
 	}
+
 	,catdir('main','library') => {
 		'header' => 'INFORMATION_MENU_LIBRARY'
 		,'stringHeader' => 1
@@ -152,9 +152,7 @@ my %menuParams = (
 		,'externRefArgs' => 'V'
 		,'menuName' => 'module'
 	}
-
 );
-
 
 # hash of current locations in the menu structure
 # This is keyed by the $client object, then the second level
@@ -170,10 +168,10 @@ sub infoDisplay {
 	my $formatRef = Slim::Buttons::Common::param($client,'formatRef');
 	my $valueFunctRef = Slim::Buttons::Common::param($client,'valueFunctRef');
 	if (defined($formatRef) && defined($formatRef->[$listIndex])) {
-		return string('INFORMATION_' . uc($value)) . ': '
+		return $client->string('INFORMATION_' . uc($value)) . ': '
 		. $formatRef->[$listIndex]->($valueFunctRef->[$listIndex]->($client));
 	} else {
-		return string('INFORMATION_' . uc($value)) . ': '
+		return $client->string('INFORMATION_' . uc($value)) . ': '
 		. $valueFunctRef->[$listIndex]->($client);
 	}
 }
@@ -181,24 +179,27 @@ sub infoDisplay {
 # function providing the second line of the display for the module menu
 sub moduleDisplay {
 	my $item = shift;
-	my @info;
-	push(@info,$modules->{$item});
-	push(@info,string('INFORMATION_DISABLED')) unless $enabled{$item};
+
+	my @info = $modules->{$item};
+
+	push(@info, string('INFORMATION_DISABLED')) unless $enabled{$item};
 
 	my $version = eval {
 		no strict 'refs';
 		${"Plugins::${item}::VERSION"};
 	};
+
 	if ($@ || !$version) {
-		push(@info,string('INFORMATION_NO_VERSION'));
-	}
-	else {
+		push @info, string('INFORMATION_NO_VERSION');
+	} else {
+
 		$version =~ s/^\s+//;
 		$version =~ s/\s+$//;
-		push(@info,string('INFORMATION_VERSION') . ": $version");
+
+		push @info, string('INFORMATION_VERSION') . ": $version";
 	}
 
-	return join(' ' . Slim::Display::Display::symbol('rightarrow') . ' ',@info);
+	return join(' ' . Slim::Display::Display::symbol('rightarrow') . ' ', @info);
 
 }	
 
@@ -258,4 +259,3 @@ sub getFunctions {
 }
 
 1;
-

@@ -33,6 +33,11 @@ my @tagNames = qw(ALBUM ARTIST BAND COMPOSER CONDUCTOR DISCNUMBER TITLE TRACKNUM
 # peem id (http://flac.sf.net/id.html http://peem.iconoclast.net/)
 my $PEEM = 1835361648;
 
+# Turn perl's internal string representation into UTF-8
+if ($] > 5.007) {
+	require Encode;
+}
+
 # Choose between returning a standard tag
 # or parsing through an embedded cuesheet
 sub getTag {
@@ -80,6 +85,7 @@ sub getTag {
 
 	# set fields appropriate for a playlist
 	$tags->{'CT'}    = "fec";
+
 	return $tags;
 }
 
@@ -97,11 +103,14 @@ sub getStandardTag {
 	# There should be a TITLE tag if the VORBIS tags are to be trusted
 	if (defined $tags->{'TITLE'}) {
 
-		# Convert the tag values to from utf8 to latin1
 		foreach my $tag (@tagNames) {
-			if (exists $tags->{$tag}) {
-				my $utf8tag = $tags->{$tag};
-				$tags->{$tag} = Slim::Utils::Misc::utf8toLatin1($utf8tag);
+
+			next unless exists $tags->{$tag};
+
+			if ($] > 5.007) {
+				$tags->{$tag} = Encode::decode("utf8", $tags->{$tag});
+			} else {
+				$tags->{$tag} = Slim::Utils::Misc::utf8toLatin1($tags->{$tag});
 			}
 		}
 

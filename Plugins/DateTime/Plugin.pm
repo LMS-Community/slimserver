@@ -15,14 +15,15 @@ use strict;
 package Plugins::DateTime::Plugin;
 
 use Slim::Control::Command;
-use Slim::Utils::Strings qw (string);
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.4 $,10);
+$VERSION = substr(q$Revision: 1.5 $,10);
 
-sub getDisplayName() {return string('PLUGIN_SCREENSAVER_DATETIME');}
+sub getDisplayName {
+	return 'PLUGIN_SCREENSAVER_DATETIME';
+}
 
-sub strings() { return '
+sub strings { return '
 PLUGIN_SCREENSAVER_DATETIME
 	DE	Datum/Zeit Bildschirmschoner
 	EN	Datetime Screensaver
@@ -54,7 +55,7 @@ PLUGIN_SCREENSAVER_DATETIME_DISABLING
 ##################################################
 
 
-sub setMode() {
+sub setMode {
 	my $client = shift;
 	$client->lines(\&lines);
 }
@@ -80,11 +81,11 @@ my %functions = (
 		my $client = shift;
 		if (Slim::Utils::Prefs::clientGet($client,'screensaver') ne 'SCREENSAVER.datetime') {
 			Slim::Utils::Prefs::clientSet($client,'screensaver','SCREENSAVER.datetime');
-			my ($line1, $line2) = (string('PLUGIN_SCREENSAVER_DATETIME'), string('PLUGIN_SCREENSAVER_DATETIME_ENABLING'));
+			my ($line1, $line2) = ($client->string('PLUGIN_SCREENSAVER_DATETIME'), $client->string('PLUGIN_SCREENSAVER_DATETIME_ENABLING'));
 			$client->showBriefly($line1, $line2);
 		} else {
 			Slim::Utils::Prefs::clientSet($client,'screensaver','screensaver');
-			my ($line1, $line2) = (string('PLUGIN_SCREENSAVER_DATETIME'), string('PLUGIN_SCREENSAVER_DATETIME_DISABLING'));
+			my ($line1, $line2) = ($client->string('PLUGIN_SCREENSAVER_DATETIME'), $client->string('PLUGIN_SCREENSAVER_DATETIME_DISABLING'));
 			$client->showBriefly($line1, $line2);
 		}
 	},
@@ -97,16 +98,16 @@ my %functions = (
 sub lines {
 	my $client = shift;
 	my ($line1, $line2);
-	$line1 = string('PLUGIN_SCREENSAVER_DATETIME');
+	$line1 = $client->string('PLUGIN_SCREENSAVER_DATETIME');
 	if (Slim::Utils::Prefs::clientGet($client,'screensaver') ne 'SCREENSAVER.datetime') {
-		$line2 = string('PLUGIN_SCREENSAVER_DATETIME_ENABLE');
+		$line2 = $client->string('PLUGIN_SCREENSAVER_DATETIME_ENABLE');
 	} else {
-		$line2 = string('PLUGIN_SCREENSAVER_DATETIME_DISABLE');
+		$line2 = $client->string('PLUGIN_SCREENSAVER_DATETIME_DISABLE');
 	};
 	return ($line1, $line2);
 }
 
-sub getFunctions() {
+sub getFunctions {
 	return \%functions;
 }
 
@@ -159,23 +160,28 @@ sub webPages_disabled {
 
 # First, Register the screensaver mode here.  Must make the call to addStrings in order to have plugin
 # localization available at this point.
-sub screenSaver() {
-	#slim::Utils::Strings::addStrings(&strings());
-	Slim::Buttons::Common::addSaver('SCREENSAVER.datetime', getScreensaverDatetime(), \&setScreensaverDateTimeMode,undef,string('PLUGIN_SCREENSAVER_DATETIME'));
+sub screenSaver {
+	Slim::Buttons::Common::addSaver(
+		'SCREENSAVER.datetime',
+		getScreensaverDatetime(),
+		\&setScreensaverDateTimeMode,
+		undef,
+		'PLUGIN_SCREENSAVER_DATETIME',
+	);
 }
 
 my %screensaverDateTimeFunctions = (
 	'done' => sub  {
-					my ($client
-		   			,$funct
-		   			,$functarg) = @_;
-					Slim::Buttons::Common::popMode($client);
-					$client->update();
-					#pass along ir code to new mode if requested
-					if (defined $functarg && $functarg eq 'passback') {
-						Slim::Hardware::IR::resendButton($client);
-					}
-				},
+		my ($client ,$funct ,$functarg) = @_;
+
+		Slim::Buttons::Common::popMode($client);
+		$client->update();
+
+		# pass along ir code to new mode if requested
+		if (defined $functarg && $functarg eq 'passback') {
+			Slim::Hardware::IR::resendButton($client);
+		}
+	},
 );
 
 sub getScreensaverDatetime {

@@ -13,7 +13,6 @@ package Slim::Buttons::AlarmClock;
 
 use Slim::Player::Playlist;
 use Slim::Buttons::Common;
-use Slim::Utils::Strings qw (string);
 use Time::HiRes;
 
 my $interval = 1; # check every x seconds
@@ -22,25 +21,37 @@ my %menuSelection;
 my %searchCursor;
 
 # some initialization code, adding modes for this module
-Slim::Buttons::Common::addMode('alarm', getFunctions(), \&Slim::Buttons::AlarmClock::setMode);
-Slim::Buttons::Common::addMode('alarmvolume', getAlarmVolumeFunctions(), \&Slim::Buttons::AlarmClock::setAlarmVolumeMode);
-setTimer();
+{
+	Slim::Buttons::Common::addMode('alarm', getFunctions(), \&Slim::Buttons::AlarmClock::setMode);
+	Slim::Buttons::Common::addMode('alarmvolume', getAlarmVolumeFunctions(), \&Slim::Buttons::AlarmClock::setAlarmVolumeMode);
+	setTimer();
+}
 
 # the routines
-sub setMode() {
+sub setMode {
+
 	my $client = shift;
+
 	@browseMenuChoices = (
-		string('ALARM_SET'),
-		string('ALARM_SELECT_PLAYLIST'),
-		string('ALARM_SET_VOLUME'),
-		string('ALARM_OFF'),
-		);
-	if (!defined($menuSelection{$client})) { $menuSelection{$client} = 0; };
+		$client->string('ALARM_SET'),
+		$client->string('ALARM_SELECT_PLAYLIST'),
+		$client->string('ALARM_SET_VOLUME'),
+		$client->string('ALARM_OFF'),
+	);
+
+	unless (defined $menuSelection{$client}) {
+		$menuSelection{$client} = 0;
+	}
+
 	$client->lines(\&lines);
-	#get previous alarm time or set a default
+
+	# get previous alarm time or set a default
 	my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
-	if (!defined($time)) { Slim::Utils::Prefs::clientSet($client, "alarmtime", 9 * 60 * 60 ); }
-   }
+
+	unless (defined $time) {
+		Slim::Utils::Prefs::clientSet($client, "alarmtime", 9 * 60 * 60 );
+	}
+}
 
 my %functions = (
 	'up' => sub  {
@@ -66,9 +77,9 @@ my %functions = (
 		my $client = shift;
 		my @oldlines = Slim::Display::Display::curLines($client);
 
-		if ($browseMenuChoices[$menuSelection{$client}] eq string('ALARM_SET')) {
+		if ($browseMenuChoices[$menuSelection{$client}] eq $client->string('ALARM_SET')) {
 			my %params = (
-				'header' => string('ALARM_SET')
+				'header' => $client->string('ALARM_SET')
 				,'valueRef' => Slim::Utils::Prefs::clientGet($client,"alarmtime")
 				,'cursorPos' => 1
 				,'callback' => \&exitSetHandler
@@ -77,7 +88,7 @@ my %functions = (
 			);
 			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Time',\%params);
 		}
-		if ($browseMenuChoices[$menuSelection{$client}] eq string('ALARM_SELECT_PLAYLIST')) {
+		if ($browseMenuChoices[$menuSelection{$client}] eq $client->string('ALARM_SELECT_PLAYLIST')) {
 			my @dirItems=();	
 			Slim::Utils::Scan::addToList(\@dirItems, Slim::Utils::Prefs::get('playlistdir'), 0);
 			push @dirItems, @{Slim::Music::Info::playlists()};
@@ -93,19 +104,19 @@ my %functions = (
 			);
 			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List',\%params);
 		}
-		elsif ($browseMenuChoices[$menuSelection{$client}] eq string('ALARM_OFF')) {
+		elsif ($browseMenuChoices[$menuSelection{$client}] eq $client->string('ALARM_OFF')) {
 			Slim::Utils::Prefs::clientSet($client, "alarm", 1);
-			$browseMenuChoices[$menuSelection{$client}] = string('ALARM_ON');
-			$client->showBriefly(string('ALARM_TURNING_ON'),'');
+			$browseMenuChoices[$menuSelection{$client}] = $client->string('ALARM_ON');
+			$client->showBriefly($client->string('ALARM_TURNING_ON'),'');
 			setTimer($client);
 		}
-		elsif ($browseMenuChoices[$menuSelection{$client}] eq string('ALARM_ON')) {
+		elsif ($browseMenuChoices[$menuSelection{$client}] eq $client->string('ALARM_ON')) {
 			Slim::Utils::Prefs::clientSet($client, "alarm", 0);
-			$browseMenuChoices[$menuSelection{$client}] = string('ALARM_OFF');
-			$client->showBriefly(string('ALARM_TURNING_OFF'),'');
+			$browseMenuChoices[$menuSelection{$client}] = $client->string('ALARM_OFF');
+			$client->showBriefly($client->string('ALARM_TURNING_OFF'),'');
 			setTimer($client);
 		}
-		elsif ($browseMenuChoices[$menuSelection{$client}] eq string('ALARM_SET_VOLUME')) {
+		elsif ($browseMenuChoices[$menuSelection{$client}] eq $client->string('ALARM_SET_VOLUME')) {
 			Slim::Buttons::Common::pushModeLeft($client, 'alarmvolume');
 		}
 	},
@@ -115,20 +126,26 @@ my %functions = (
 );
 
 sub exitSetHandler {
-	my ($client,$exittype) = @_;
+	my ($client, $exittype) = @_;
+
 	$exittype = uc($exittype);
+
 	if ($exittype eq 'LEFT' || $exittype eq 'PLAY') {
+
 		Slim::Utils::Prefs::clientSet($client,"alarmtime",Slim::Buttons::Common::param($client,'valueRef'));
 		Slim::Buttons::Common::popModeRight($client);
+
 	} elsif ($exittype eq 'RIGHT') {
-			$client->bumpRight();
+
+		$client->bumpRight();
+
 	} else {
 		return;
 	}
 }
 
 sub setTimer {
-#timer to check alarms on an interval
+	# timer to check alarms on an interval
 	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&checkAlarms);
 }
 
@@ -141,6 +158,7 @@ sub checkAlarms
 	if ($sec == 0) { # once we've reached the beginning of a minute, only check every 60s
 		$interval = 60;
 	}
+
 	if ($sec >= 50) { # if we end up falling behind, go back to checking each second
 		$interval = 1;
 	}
@@ -180,7 +198,7 @@ sub playDone {
 
 sub alarmLines {
 	my $client = shift;
-	my $line1 = string('ALARM_NOW_PLAYING');
+	my $line1 = $client->string('ALARM_NOW_PLAYING');
 	my $line2 = Slim::Utils::Prefs::clientGet($client, "alarmplaylist") ? Slim::Music::Info::standardTitle($client,Slim::Utils::Prefs::clientGet($client, "alarmplaylist")) : "";
 	return ($line1, $line2);
 }
@@ -197,10 +215,10 @@ sub lines {
 	my ($line1, $line2, $overlay);
 
 	$overlay = overlay($client);
-	$line1 = string('ALARM');
+	$line1 = $client->string('ALARM');
 
-	if (Slim::Utils::Prefs::clientGet($client, "alarm") && $browseMenuChoices[$menuSelection{$client}] eq string('ALARM_OFF')) {
-		$browseMenuChoices[$menuSelection{$client}] = string('ALARM_ON');
+	if (Slim::Utils::Prefs::clientGet($client, "alarm") && $browseMenuChoices[$menuSelection{$client}] eq $client->string('ALARM_OFF')) {
+		$browseMenuChoices[$menuSelection{$client}] = $client->string('ALARM_ON');
 	}
 	$line2 = "";
 
@@ -287,11 +305,11 @@ sub alarmVolumeLines {
 
 	my $level = int($volume / $client->maxVolume() * 40);
 
-	my $line1 = ($client->linesPerScreen() == 1) ? string('ALARM_SET_VOLUME_SHORT') : string('ALARM_SET_VOLUME');
+	my $line1 = ($client->linesPerScreen() == 1) ? $client->string('ALARM_SET_VOLUME_SHORT') : $client->string('ALARM_SET_VOLUME');
 	my $line2;
 
 	if ($level < 0) {
-		$line1 .= " (". string('MUTED') . ")";
+		$line1 .= " (". $client->string('MUTED') . ")";
 		$level = 0;
 	} else {
 		$line1 .= " (".$level.")";
@@ -306,4 +324,3 @@ sub alarmVolumeLines {
 1;
 
 __END__
-

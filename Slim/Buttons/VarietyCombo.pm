@@ -1,5 +1,6 @@
 package Slim::Buttons::VarietyCombo;
-#$Id: VarietyCombo.pm,v 1.7 2004/11/25 03:51:03 kdf Exp $
+
+#$Id: VarietyCombo.pm,v 1.8 2004/12/07 20:19:49 dsully Exp $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -9,7 +10,6 @@ package Slim::Buttons::VarietyCombo;
 use strict;
 use Slim::Buttons::Common;
 use Slim::Music::MoodLogic;
-use Slim::Utils::Strings qw (string);
 use Slim::Utils::Timers;
 use Slim::Display::Display;
 
@@ -113,7 +113,7 @@ sub lines {
 	my $variety = Slim::Utils::Prefs::get('varietyCombo');
 	my $level = int($variety / 100 * 40);
 	
-	$line1 = $client->linesPerScreen() == 2 ? string('SETUP_VARIETYCOMBO') : string('SETUP_VARIETYCOMBO_DBL');
+	$line1 = $client->linesPerScreen() == 2 ? $client->string('SETUP_VARIETYCOMBO') : $client->string('SETUP_VARIETYCOMBO_DBL');
 	$line1 .= " (".$variety.")";
 
 	$line2 = Slim::Display::Display::progressBar($client, $client->displayWidth(), $level / 40);
@@ -124,27 +124,33 @@ sub lines {
 }
 
 sub specialPushLeft {
-	my $client = shift @_;
-	my $step = shift @_;
+	my $client   = shift;
+	my $step     = shift;
 	my @oldlines = @_;
 
-	my $now = Time::HiRes::time();
+	my $now  = Time::HiRes::time();
 	my $when = $now + 0.5;
 	my $mixer;
 	
 	if (Slim::Music::MoodLogic::useMoodLogic()) {
-		$mixer  = string('MOODLOGIC_MIXING');
+		$mixer  = $client->string('MOODLOGIC_MIXING');
 	} elsif (Slim::Music::MusicMagic::useMusicMagic()) {
-		$mixer  = string('MUSICMAGIC_MIXING');
+		$mixer  = $client->string('MUSICMAGIC_MIXING');
 	}
+
 	if ($step == 0) {
+
 		Slim::Buttons::Common::pushMode($client, 'block');
 		$client->pushLeft(\@oldlines, [$mixer]);
 		Slim::Utils::Timers::setTimer($client,$when,\&specialPushLeft,$step+1);
+
 	} elsif ($step == 3) {
+
 		Slim::Buttons::Common::popMode($client);            
 		$client->pushLeft([$mixer."...", ""], [Slim::Display::Display::curLines($client)]);
+
 	} else {
+
 		$client->update( [$client->renderOverlay($mixer.("." x $step))], undef);
 		Slim::Utils::Timers::setTimer($client,$when,\&specialPushLeft,$step+1);
 	}

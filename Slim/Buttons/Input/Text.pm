@@ -1,6 +1,6 @@
 package Slim::Buttons::Input::Text;
 
-# $Id: Text.pm,v 1.22 2004/10/06 15:56:08 vidur Exp $
+# $Id: Text.pm,v 1.23 2004/12/07 20:19:50 dsully Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,7 +11,6 @@ use strict;
 
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
-use Slim::Utils::Strings qw (string);
 use Slim::Hardware::VFD;
 
 our $DOUBLEWIDTH = 10;
@@ -222,22 +221,29 @@ my %functions = (
 
 sub lines {
 	my $client = shift;
-	my ($line1, $line2);
-	$line1 = Slim::Buttons::Input::List::getExtVal($client,undef,undef,'header');
-	if (Slim::Buttons::Common::param($client,'stringHeader') 
-			&& Slim::Utils::Strings::stringExists($line1)) {
-		$line1 = string($line1);
+
+	my $line1 = Slim::Buttons::Input::List::getExtVal($client,undef,undef,'header');
+	my $line2;
+
+	if (Slim::Buttons::Common::param($client,'stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
+		$line1 = $client->string($line1);
 	}
-	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
-	if (!defined($valueRef)) { return ('',''); }
+
+	my $valueRef  = Slim::Buttons::Common::param($client,'valueRef') || return ('','');
 	my $cursorPos = Slim::Buttons::Common::param($client,'cursorPos');
+
 	my $displayPos;
+
 	if (!($client->linesPerScreen() == 1)) {
 		$displayPos = Slim::Buttons::Common::param($client,'displayPos');
 	} else {
+
 		$displayPos = Slim::Buttons::Common::param($client,'displayPos2X');
+
 		if (my $doublereplaceref = Slim::Buttons::Common::param($client,'doublesizeReplace')) {
-			while (my ($find,$replace) = each(%$doublereplaceref)) {
+
+			while (my ($find, $replace) = each %$doublereplaceref) {
+
 				$line2 =~ s/$find/$replace/g;
 			}
 		}
@@ -251,7 +257,7 @@ sub lines {
 		Slim::Display::Display::subString($line2,$cursorPos - $displayPos,0,Slim::Display::Display::symbol('cursorpos'));
 	}
 
-	return ($line1,$line2);
+	return ($line1, $line2);
 }
 
 sub getFunctions {
@@ -594,4 +600,3 @@ sub scroll_noacc_nowrap {
 }
 
 1;
-
