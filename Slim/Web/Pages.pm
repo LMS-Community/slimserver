@@ -1187,7 +1187,9 @@ sub buildPlaylist {
 
 	} else {
 
-		$params->{'playlist_items'} = join('', @{$listBuild->{'playlist_items'}});
+		if (defined $listBuild->{'playlist_items'}) {
+			$params->{'playlist_items'} = join('', @{$listBuild->{'playlist_items'}});
+		}
 
 		undef %$listBuild;
 
