@@ -419,15 +419,26 @@ sub reshuffle {
 		my $i  = 0;
 		my $ds = Slim::Music::Info::getCurrentDataStore();
 
+		my $defaultAlbum = Slim::Utils::Text::matchCase($client->string('NO_ALBUM'));
+
 		for my $track (@{playList($client)}) {
+
+			# Can't shuffle remote URLs - as they most likely
+			# won't have distinct album names.
+			next if Slim::Music::Info::isRemoteURL($track);
 
 			my $trackObj = $ds->objectForUrl($track);
 
 			if (defined $trackObj && ref($trackObj)) {
 
-				my $album = Slim::Utils::Text::matchCase($trackObj->album()->title()) || $client->string('NO_ALBUM');
+				my $albumObj = $trackObj->album();
+				my $title    = $defaultAlbum;
 
-				push @{$albtracks{$album}}, $i;
+				if ($albumObj) {
+					$title = $albumObj->titlesort();
+				}
+
+				push @{$albtracks{$title}}, $i;
 
 				$trackToNum{$trackObj->url} = $i++;
 
@@ -463,10 +474,15 @@ sub reshuffle {
 		}
 
 		my @shufflelist = ();
-		my $album = shift(@albums);
-		my @albumorder = map { ${playList($client)}[$_] } @{$albtracks{$album}};
+		my $album       = shift(@albums);
+		my @albumorder  = ();
 
-		@albumorder = Slim::Music::Info::sortByAlbum(@albumorder);
+		if ($album && scalar @albums) {
+
+			@albumorder = map { ${playList($client)}[$_] } @{$albtracks{$album}};
+			@albumorder = Slim::Music::Info::sortByAlbum(@albumorder);
+		}
+
 		$i = 0;
 
 		for my $trackname (@albumorder) {
@@ -491,7 +507,8 @@ sub reshuffle {
 	
 	for (my $i = 0; $i < $songcount; $i++) {
 		for (my $j = 0; $j <= $#$queue; $j++) {
-			if (defined($realqueue[$j]) && $realqueue[$j] == $listRef->[$i]) {
+
+			if (defined($realqueue[$j]) && defined $listRef->[$i] && $realqueue[$j] == $listRef->[$i]) {
 				$queue->[$j]->{index} = $i;
 			}
 		}
