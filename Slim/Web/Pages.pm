@@ -594,6 +594,7 @@ sub browser {
 			$dir = Slim::Utils::Misc::ascendVirtual($dir);
 			$params->{'dir'} = $dir;
 			$fulldir = Slim::Utils::Misc::virtualToAbsolute($dir);
+			$suffix = Slim::Formats::Parse::getPlaylistSuffix($fulldir);
 
 		} else {
 
