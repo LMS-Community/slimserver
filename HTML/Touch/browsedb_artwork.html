@@ -5,12 +5,12 @@
 
 [% IF coverThumb %]
 <center><table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]">
-<a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&artwork=[% artwork %]">
+<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">
 <center><img src="/music/[% coverThumb %]/thumb.jpg" border="0" height="[% size %]" width="[% size %]" alt="[% album | html %]" STYLE="border: dashed #DDDDDD 10px"/></a></tr></td></table>[% END %]
 
 [% IF not coverThumb %]
 <table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]">
-<a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&artwork=[% artwork %]">
+<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">
 <center>[% album | html %]</center></a></td><td>
 <a href=""><img src="html/images/spacer.gif" border="0" height="80" width="0" alt="[% album | html %]"></a></td></table>[% END %]
 
