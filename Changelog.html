@@ -1,3 +1,152 @@
+<h2><a name="v5.3.1" id="v5.3.1"></a>Version 5.4 - 2004-10-25</h2>
+<ul>
+
+	<li>Menu system changes:
+		<ul>
+			<li>Simplified home menu structure. The
+			top-level items are Now Playing, Browse Music,
+			Search Music, Playlists, Internet Radio,
+			Settings and Plugins.
+    			<li>Plugins are now placed in different menu
+    			categories - Games, Screensavers, Internet
+    			Radio, etc. The Internet Radio plugin category
+    			is now at the top-level.
+			<li>Remove Browse Songs from Browse Music
+	  submenu (it's too slow to be useful.)
+			<li>When in Browse Music, use a dynamically
+			generated menu.
+			<li>kdf reimplemented much of the home menu system to be more flexible using INPUT.List.
+			<li>Added a way to run an upgrade
+	  script on a per-client basis. Added a script that replaces
+	  Shoutcast in the home menu with Internet Radio.
+		</ul>
+	</li>
+
+	<li>Radio Plugins:
+		<ul>
+			<li>New plugin: Slim Devices Picks.
+			<li>New plugin: Live365 Internet Radio is now part of the default installation.
+			<li>radioio plugin: fixed branding and wrong port for Acoustic station.
+			<li>Added a simple web UI to play a radio
+	  stream if you know its URL, without having to create a
+	  playlist file. The page is linked to from the "Internet
+	  Radio and Playlists" document.
+		</ul>
+	</li>
+
+	<li>Remote Streaming and Formats:
+		<ul>
+			<li>Based on a submission from Craig
+	  Eales, added the ability to do format conversion/transcoding of a
+	  remote stream. This enables Ogg radio streaming!
+			<li>Support for the mms: protocol (on Windows
+	  only for now) using wmadec's ability to deal with URLs.With
+	  ASX support already added, we should be able to play WMA
+	  radio streams...on Windows only for now, unfortunately.
+			<li>Added support for parsing WPL (submitted
+	  by Danny Rego) and ASX playlists. Also made playlist
+	  handling a little bit more contained so that adding support
+	  for a new type requires adding code to just Parse.pm.
+			<li>When streaming remote streams, start when
+	  the buffer is 75% full or after 5 seconds and at least 5%
+	  full. This allows rate limiting streams to start faster.
+			<li>Support for mono streams in wmadec
+			<li>Updated WMA code
+	  to handle sample_rate.
+			<li>bug552: DRM protected WMA files are now
+	  reported as such in songinfo and trackinfo playback of a DRM
+	  WMA will produce an error on the player display and server
+	  will skip to next song in the playlist.
+			<li>Bugs #388, 447, 581 Add binaries for flac
+	  1.1.1, and update convert.conf to enable --skip and --until
+	  Also add oggdec binaries.
+		</ul>
+	</li>
+
+	<li>SoftSqueeze 1.10
+		<ul>
+			<li>Music search contributed by Brian Hein (alpha status).
+			<li>Simpler configuration dialog.
+			<li>An error is reported if Softsqueeze is not correctly installed.
+			<li>Reset window positions if the window has been lost off the screen.
+			<li>Display a warning if Softsqueeze needs upgrading to work with the slimserver.
+			<li>Fixed configuration of non standard slimserver http port.
+			<li>Fixed window dragging for OS X, use Option key to drag windows.
+			<li>Fixed error reported by java web start on OS X.
+			<li>Fixed music restarting when connection to server is lost. 
+		</ul>
+	</li>
+
+	<li>Firmware 40:
+		<ul>
+			<li>Fix a problem with 32 character long SSIDs.
+			<li> When reconnecting, the player tells the
+	  server if it rebooted.  The server will now only restart
+	  streams if the player has rebooted.
+			<li>Updated squeezebox firmware to ignore
+	  unknown frame types, rather than getting confused.  When
+	  squeezebox connects, slimserver sends the latest version
+	  number of the server.
+		</ul>
+	</li>
+	<li>Add some nice text explaining to folks what they can do if the
+	  server doesn't find their player. (HTTP streaming, SoftSqueeze,
+	  fix their player)
+	<li>Nicolas Guillemain updated the french translations. German updates from Pascal Berger...
+	<li>Various bug fixes:
+		<ul>
+			<li>fix a bug where volume bar is rendered
+	  incorrectly when activated from another INPUT.Bar mode
+			<li>fix a bug in fishbone skin that made all
+	  searches into search for artist
+			<li> Added postulated fix for WMA files that
+	  have broken headers with block lengths that are shorter than
+	  possible.
+			<li>Fixed a problem where the spinning cursor
+	  animation while blocked on long operations (like entering a
+	  LARGE directory) was broken.
+			<li>fix bug626 - add persistence for search
+	  choice in Fishbone skin.  fix cookies and page loading so
+	  that forms are reset properly on submit
+			<li>Fix logic in how we trigger rescans...
+	  Rescanning should happen at the right time now.
+			<li>Fix pulldown menus in
+	  Fishbone skin for Safari.
+			<li>Move history load at startup to happen, so
+	  plugins that install protocol handlers do it sooner, before
+	  we start dealing with non-standard URLs.
+			<li>Fixed a problem where sometimes iTunes and
+	  Moodlogic background checking might not start automatically.
+	  At startup, now always start checking the libraries.
+	  Remember the last import time across server restarts.
+			<li>When adding a playlist to a current
+	      shuffled playlist, make sure we keep the curent song
+	      when playing or paused
+			<li>Fix bug561 fix mute handling so that
+	      players no longer unpause to muted
+			<li>Fix a problem where the slimproto port
+	  was not bound to the specified interface when starting with
+	  command line options.
+			<li>Windows installer fixes: it doesn't need
+	  stuff from other platforms. When installing a nightly, make
+	  sure we update the slimserver.exe file, even if it doesn't
+	  have a new verison number.
+			<li>bug 592 and 450: APEtags were being
+	  ignored in MPC files.  excessive sanity checks caused the
+	  tags not to be read convert keys to all caps for better
+	  matching with slimserver fix TRACK tag mapping in
+	  Formats::Musepack to get the correct track number.
+			<li>Bug 588: M3U and PLS files that SlimServer
+	  writes should use file paths, not file: URLs.</li>
+			<li> bug593: fix a bug where fishbone undock
+	  link only opened first player now opens a window for the
+	  current player, each player can have its own undocked
+	  window</li>
+
+		</ul>
+	</li>
+</ul>
+
 <h2><a name="v5.3.1" id="v5.3.1"></a>Version 5.3.1 - 2004-09-24</h2>
 <ul>
 	<li>Fixed problem that stalled the installer on Windows 98/ME.</li>
