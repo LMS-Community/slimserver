@@ -8,7 +8,6 @@ package Slim::Control::Stdio;
 use strict;
 use FindBin qw($Bin);
 use File::Spec::Functions qw(:ALL);
-use Text::ParseWords qw(shellwords);
 
 use Slim::Networking::Select;
 use Slim::Utils::Strings qw(string);
@@ -225,10 +224,8 @@ sub executeCmd {
 	my $command = shift;
 
 	my $output  = undef;
-	# This was reverted by Fred, because spaces weren't working. Still
-	# need to come up with a spaces in quotes work around.
-#	my @params  = shellwords($command);
-	my @params = split(" ", $command);
+	# People wanting spaces need to use %20
+	my @params  = split(" ", $command);
 
 	foreach my $param (@params) {
 		$param = Slim::Web::HTTP::unescape($param);
