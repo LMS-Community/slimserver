@@ -1,6 +1,6 @@
 package Slim::Web::Setup;
 
-# $Id: Setup.pm,v 1.82 2004/05/17 19:46:40 kdf Exp $
+# $Id: Setup.pm,v 1.83 2004/05/19 01:23:07 kdf Exp $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -571,39 +571,17 @@ sub initSetupConfig {
 
 				if (Slim::Music::MoodLogic::canUseMoodLogic()) {
 					$pageref->{'GroupOrder'}[2] = 'moodlogic';
-				} else {
-					$pageref->{'GroupOrder'}[2] = undef;
-				}
-				
-				# always show the itunes advanced settings.
-				$pageref->{'children'}[9] = 'itunes';
-				
-				# show moodlogic setting if moodlogic is installed.
-				if (Slim::Music::MoodLogic::canUseMoodLogic()) {
 					$pageref->{'children'}[10] = 'moodlogic';
 				} else {
+					$pageref->{'GroupOrder'}[2] = undef;
 					pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
 				}
+				
+				#show itunes settings all the time
+				$pageref->{'children'}[9] = 'itunes';
 				
 				$paramref->{'versionInfo'} = string('SERVER_VERSION') . string("COLON") . $::VERSION;
 				$paramref->{'newVersion'} = $::newVersion;
-			}
-		,'postChange' => sub {
-				my ($client,$paramref,$pageref) = @_;
-				if (Slim::Music::iTunes::useiTunesLibrary()) {
-					$pageref->{'children'}[9] = 'itunes';
-					if (Slim::Music::MoodLogic::useMoodLogic()) {
-						$pageref->{'children'}[10] = 'moodlogic';
-					} else {
-						pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
-					}
-				} elsif (Slim::Music::MoodLogic::useMoodLogic()) {
-					$pageref->{'children'}[9] = 'moodlogic';
-					pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
-				} else {
-					pop @{$pageref->{'children'}} if $pageref->{'children'}[10];
-					pop @{$pageref->{'children'}} if $pageref->{'children'}[9];
-				}
 			}
 		,'GroupOrder' => ['language', undef, undef, 'Default']
 			#if able to use iTunesLibrary then undef at [1] will be replaced by 'iTunes'
@@ -1018,10 +996,11 @@ sub initSetupConfig {
 					if (!exists $paramref->{"formatslist$i"}) {
 						$paramref->{"formatslist$i"} = exists $formats{$formats} ? 0 : 1;
 					} else {
-						$paramref->{"formatslist$i"} = $paramref->{"formatslist$i"} && Slim::Player::Source::checkBin($formats);
-						unless ($paramref->{"formatslist$i"}) {$paramref->{"warning"} = string('SETUP_FORMATSLIST_MISSING_BINARY')." ".$formatslistref->{$formats};}
+						my $test = $paramref->{"formatslist$i"} && Slim::Player::Source::checkBin($formats);
+						if ($paramref->{"formatslist$i"} && !$test) {$paramref->{'warning'} .= string('SETUP_FORMATSLIST_MISSING_BINARY')." ".$formatslistref->{$formats}."<br>";}
+						$paramref->{"formatslist$i"} = $test;
 					}
-					unless ($paramref->{"formatslist$i"} && $formats ne 'mp3-lame-*-*') {
+					unless ($paramref->{"formatslist$i"} || $formats eq 'mp3-lame-*-*') {
 						Slim::Utils::Prefs::push('disabledformats',$formats);
 					}
 					$i++;
