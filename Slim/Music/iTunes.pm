@@ -329,14 +329,14 @@ sub artScan {
 	my $thumb = Slim::Music::Info::haveThumbArt($artwork{$album});
 
 	if (defined $thumb && $thumb) {
-		$::d_itunes && Slim::Utils::Misc::msg("Caching thumbnail for $album\n");
+		$::d_artwork && Slim::Utils::Misc::msg("Caching thumbnail for $album\n");
 		Slim::Music::Info::updateArtworkCache($artwork{$album}, {'ALBUM' => $album, 'THUMB' => $thumb})
 	}
 
 	delete $artwork{$album};
 
 	if (!%artwork) { 
-		$::d_itunes && Slim::Utils::Misc::msg("Completed Artwork Scan\n");
+		$::d_artwork && Slim::Utils::Misc::msg("Completed Artwork Scan\n");
 		return 0;
 	}
 	
@@ -463,8 +463,8 @@ sub scanFunction {
 				if (Slim::Music::Info::isFileURL($url)) {
 					if (Slim::Utils::OSDetect::OS() eq 'unix') {
 						my $base = Slim::Utils::Prefs::get('audiodir');
-						$::d_itunes && msg("Correcting for Linux: $iBase to $base\n");
 						$url =~ s/$iBase/$base\//isg;
+						$::d_itunes && msg("Correcting for Linux: $iBase to $url\n");
 						$url = Slim::Web::HTTP::unescape($url);
 					};
 					$url =~ s/\/$//;

@@ -138,6 +138,7 @@ $VERSION = '5.1.1';
 use vars qw($audiodir $httpport);
 
 use vars qw(
+	$d_artwork
 	$d_cli
 	$d_control
 	$d_command
@@ -477,6 +478,7 @@ Usage: $0 [--audiodir <dir>] [--daemon] [--stdio] [--logfile <logfilepath>]
 The following are debugging flags which will print various information 
 to the console via stderr:
 
+	--d_artwork			=> Display information on artwork display
     --d_cli          => Display debugging information for the 
                         command line interface interface
     --d_command      => Display internal command execution
@@ -544,6 +546,7 @@ sub initOptions {
 		'prefsfile=s' 		=> \$prefsfile,
 		'quiet'   			=> \$quiet,
 		'nosetup'			=> \$nosetup,
+		'd_artwork'			=> \$d_artwork,
 		'd_cli'				=> \$d_cli,
 		'd_command'			=> \$d_command,
 		'd_control'			=> \$d_control,

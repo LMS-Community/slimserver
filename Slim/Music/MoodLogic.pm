@@ -14,6 +14,7 @@ my $isScanning = 0;
 my $initialized = 0;
 my @mood_names;
 my %mood_hash;
+my %artwork;
 my $last_error = 0;
 
 sub useMoodLogic {
@@ -157,6 +158,28 @@ sub doneScanning {
 	$::d_moodlogic && msg("MoodLogic: done Scanning\n");
 
 	$isScanning = 0;
+	
+	Slim::Utils::Scheduler::add_task(\&artScan);
+}
+
+sub artScan {
+	my @albums = keys %artwork;
+	my $album = $albums[0];
+	my $thumb = Slim::Music::Info::haveThumbArt($artwork{$album});
+
+	if (defined $thumb && $thumb) {
+		$::d_moodlogic && Slim::Utils::Misc::msg("Caching $thumb for $album\n");
+		Slim::Music::Info::updateArtworkCache($artwork{$album}, {'ALBUM' => $album, 'THUMB' => $thumb})
+	}
+
+	delete $artwork{$album};
+
+	if (!%artwork) { 
+		$::d_moodlogic && Slim::Utils::Misc::msg("Completed Artwork Scan\n");
+		return 0;
+	}
+	
+	return 1;
 }
 
 sub exportFunction {
@@ -222,6 +245,10 @@ sub exportFunction {
 			
 		Slim::Music::Info::updateCacheEntry($filename, \%cacheEntry);
 		Slim::Music::Info::updateGenreCache($filename, \%cacheEntry);
+		if ($cacheEntry{'ALBUM'} && !exists $artwork{$cacheEntry{'ALBUM'}} && !defined Slim::Music::Info::cacheItem($filename,'THUMB')) {
+			$artwork{$cacheEntry{'ALBUM'}} = $filename;
+			$::d_moodlogic && msg("$cacheEntry{'ALBUM'} refers to $filename\n");
+		}
 		Slim::Music::Info::updateGenreMixCache(\%cacheEntry);
 		Slim::Music::Info::updateArtistMixCache(\%cacheEntry);
 	}
