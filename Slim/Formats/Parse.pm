@@ -336,7 +336,7 @@ sub parseCUE {
 		my $ds = Slim::Music::Info::getCurrentDataStore();
 		my $track = $ds->updateOrCreate({
 			'url'        => $filename,
-			'attributes' => {},
+#			'attributes' => {},
 			'readTags'   => 1,
 		});
 
@@ -487,10 +487,15 @@ sub readCUE {
 
 		push @items, $track->{'URI'}; #url;
 
-		# our tracks won't be visible if we don't include this
-		$track->{'fs'} = $basetrack->{'fs'};
-		$track->{'age'} = $basetrack->{'age'};
-			
+		# our tracks won't be visible if we don't include some data from the base file
+		for my $attribute (keys %$basetrack) {
+			next if $attribute eq 'id';
+			next if $attribute eq 'url';
+			next if $attribute =~ /^_/;
+			next unless $basetrack->{$attribute};
+			$track->{$attribute} = $basetrack->{$attribute} unless exists $track->{uc $attribute};
+		}
+
 		# Do the actual data store
 		# Skip readTags since we'd just be reading the same file over and over
 		$ds->updateOrCreate({

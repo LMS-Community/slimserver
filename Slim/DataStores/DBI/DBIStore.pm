@@ -347,7 +347,7 @@ sub newTrack {
 	my $self = shift;
 	my $args = shift;
 
-	# 
+	#
 	my $url           = $args->{'url'} || return;
  	my $attributeHash = $args->{'attributes'} || {};
 
@@ -356,14 +356,14 @@ sub newTrack {
 	$::d_info && Slim::Utils::Misc::msg("New track for $url\n");
 
 	# Explictly read the tag, and start populating the database.
-	# XXX For now, always readTags for a new track, since none of our
-	# callers expect anything different.
-	# if ($args->{'readTags'}) {
+	# XXX This was made unconditional in revision 2619,
+	# reverting it back now and testing, I don't see the problem mentioned there.
+	if ($args->{'readTags'}) {
 
 		$::d_info && Slim::Utils::Misc::msg("readTag was set for $url\n");
 
 		$attributeHash = { %{$self->readTags($url)}, %$attributeHash  };
-	#}
+	}
 
 	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($url, $attributeHash, 1);
 

@@ -26,7 +26,8 @@ use IO::Seekable qw(SEEK_SET);
 my %tagMapping = (
 	'TRACKNUMBER'	=> 'TRACKNUM',
 	'DISCNUMBER'	=> 'DISC',
-	'URL'		=> 'URLTAG',
+	'URL'			=> 'URLTAG',
+	'musicbrainz_sortname'	=> 'ARTISTSORT',
 );
 
 my @tagNames = qw(ALBUM ARTIST BAND COMPOSER CONDUCTOR DISCNUMBER TITLE TRACKNUMBER DATE);
@@ -54,12 +55,6 @@ sub getTag {
 
 	# if there's no embedded cuesheet, then we're either a single song
 	# or we have pseudo CDTEXT in the external cuesheet.
-	#
-	# if we do have an embedded cuesheet, but no anchor then we need to parse
-	# the cuesheet.
-	#
-	# if we have an anchor then we're already parsing it, and we look for
-	# metadata that matches our piece of the file.
 
 	unless (@$cuesheet > 0) {
 
@@ -68,34 +63,27 @@ sub getTag {
 		return getStandardTag($file, $flac);
 	}
 
-	if ($anchor) {
-		# we have an anchor, so lets find metadata for this piece
-		## depricated -- new parsing should allow removing this block.
-		## this can hopefully be removed once updateOrCreate is fixed to honor
-		## readTags => 0
-#		$::d_parse && Slim::Utils::Misc::msg("WARN: some flac code still using anchors!\n"
-#											 ."      $file $anchor\n");
-		return getSubFileTag($file, $anchor, $flac);
-	}
-
-	# no anchor, handle the base file
+	# if we do have an embedded cuesheet, we need to parse the metadata
+	# for the individual tracks.
+	#
 	# cue parsing will return file url references with start/end anchors
 	# we can now pretend that this (bare no-anchor) file is a playlist
-	my $taginfo = getStandardTag($file, $flac);
+
+	my $tags = getStandardTag($file, $flac);
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
 	if (!defined $ds) {
 		$::d_parse && Slim::Utils::Misc::msg("FLAC getTag has no datastore\n");
-		return $taginfo; # should we return a more severe error?
+		return $tags; # should we return a more severe error?
 	}
 
 	push(@$cuesheet, "    REM END " . sprintf("%02d:%02d:%02d",
-		int(int($taginfo->{'SECS'})/60),
-		int($taginfo->{'SECS'} % 60),
-		(($taginfo->{'SECS'} - int($taginfo->{'SECS'})) * 75)
+		int(int($tags->{'SECS'})/60),
+		int($tags->{'SECS'} % 60),
+		(($tags->{'SECS'} - int($tags->{'SECS'})) * 75)
 	));
 
-	$taginfo->{'FILENAME'} = $file;
+	$tags->{'FILENAME'} = $file;
 
 	# get the tracks from the cuesheet
 	my $tracks = Slim::Formats::Parse::parseCUE($cuesheet, dirname($file));
@@ -106,8 +94,13 @@ sub getTag {
 	# fallback if we can't parse metadata
 	if ($items < 1) {
 		$::d_parse && Slim::Utils::Misc::msg("Unable to find metadata for tracks referenced by cuesheet\n");
-		return $taginfo;
+		return $tags;
 	}
+
+	# set fields appropriate for a playlist
+	$tags->{'CT'}    = "fec";
+
+	my $fileurl = Slim::Utils::Misc::fileURLFromPath("$file") . "#$anchor";
 
 	# Do the actual data store
 	for my $key (keys %$tracks) {
@@ -120,14 +113,18 @@ sub getTag {
 			'readTags'   => 0,  # avoid the loop, don't read tags
 		});
 
-	}
+		# if we were passed in an anchor, then the caller is expecting back tags for
+		# the single track indicated.
+		if (($anchor) && ($track->{'URI'} eq "$fileurl")) {
+			$tags = $track;
+			$::d_parse && Slim::Utils::Misc::msg("    found tags for $file#$anchor\n");	
+		}
 
-	# set fields appropriate for a playlist
-	$taginfo->{'CT'}    = "fec";
+	}
 
 	$::d_parse && Slim::Utils::Misc::msg("    returning: $items items\n");	
 
-	return $taginfo;
+	return $tags;
 }
 
 # Given a file, return a hash of name value pairs,
