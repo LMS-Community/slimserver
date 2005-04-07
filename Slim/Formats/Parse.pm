@@ -691,8 +691,8 @@ sub writeWPL {
 	my $string;
 
 	my $output = _filehandleFromNameOrString($filename, \$string) || return;
-	print $output $wplfile if $filename;
-	close $output;
+	print $output $wplfile;
+	close $output if $filename;
 
 	return $string;
 }
