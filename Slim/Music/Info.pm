@@ -1702,7 +1702,7 @@ sub isPLS {
 sub isCUE {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'cue');
+	return isType($pathOrObj, 'cue') || isType($pathOrObj, 'fec');
 }
 
 sub isKnownType {
