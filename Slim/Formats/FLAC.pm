@@ -33,7 +33,7 @@ my %tagMapping = (
 my @tagNames = qw(ALBUM ARTIST BAND COMPOSER CONDUCTOR DISCNUMBER TITLE TRACKNUMBER DATE);
 
 # peem id (http://flac.sf.net/id.html http://peem.iconoclast.net/)
-my $PEEM = 1835361648;
+my $PEEM = 1885693293;
 
 # Turn perl's internal string representation into UTF-8
 if ($] > 5.007) {
@@ -1023,6 +1023,12 @@ sub getCUEinVCs {
 	# so we can just fake it
 	my $metadata = Slim::Formats::Parse::parseCUE(\@cuesheet, "/BOGUS/PATH/");
 
+
+	# grab file info tags
+	# don't pass $metadata through addInfoTags() or it'll decodeUTF8 too many times
+	my $infoTags = {};
+	addInfoTags($flac, $infoTags);
+
 	# merge the existing track data and cuesheet metadata
 	for my $key (keys %$tracks) {
 
@@ -1032,9 +1038,8 @@ sub getCUEinVCs {
 			next;
 		}
 
-		%{$tracks->{$key}} = (%{$metadata->{$key}}, %{$tracks->{$key}});
+		%{$tracks->{$key}} = (%{$infoTags}, %{$metadata->{$key}}, %{$tracks->{$key}});
 		doTagMapping($tracks->{$key});
-		addInfoTags($flac, $tracks->{$key});
 		$items++;
 	}
 

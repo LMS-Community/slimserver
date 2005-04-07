@@ -362,8 +362,8 @@ sub parseCUE {
 
 		my $track = $tracks->{$key};
 	
-#		if (!defined $track->{'START'} || !defined $track->{'END'} || !defined $filename ) { next; }
-		if (!defined $track->{'START'} || !defined $filename ) { next; }
+		if (!defined $track->{'START'} || !defined $track->{'END'} || !defined $filename ) { next; }
+#		if (!defined $track->{'START'} || !defined $filename ) { next; }
 
 		# Don't use $track->{'URL'} or the db will break
 		$track->{'URI'} = "$filename#".$track->{'START'}."-".$track->{'END'};
