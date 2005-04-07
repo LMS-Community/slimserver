@@ -517,7 +517,7 @@ sub writePLS {
 	my $filename = shift;
 
 	my $string = '';
-	my $output = _filehandleFromNameOrString($filename, $string) || return;
+	my $output = _filehandleFromNameOrString($filename, \$string) || return;
 
 	print $output "[playlist]\nPlaylistName=$playlistname\n";
 
@@ -543,7 +543,7 @@ sub writePLS {
 
 	print $output "NumberOfItems=$itemnum\nVersion=2\n";
 
-	close $output;
+	close $output if $filename;
 	return $string;
 }
 
@@ -555,7 +555,7 @@ sub writeM3U {
 	my $resumetrack = shift;
 
 	my $string = '';
-	my $output = _filehandleFromNameOrString($filename, $string) || return;
+	my $output = _filehandleFromNameOrString($filename, \$string) || return;
 
 	print $output "#CURTRACK $resumetrack\n" if defined($resumetrack);
 	print $output "#EXTM3U\n" if $addTitles;
@@ -587,7 +587,8 @@ sub writeM3U {
 		print $output "$path\n";
 	}
 
-	close $output;
+	close $output if $filename;
+
 	return $string;
 }
 
@@ -689,8 +690,8 @@ sub writeWPL {
 
 	my $string;
 
-	my $output = _filehandleFromNameOrString($filename, $string) || return;
-	print $output $wplfile;
+	my $output = _filehandleFromNameOrString($filename, \$string) || return;
+	print $output $wplfile if $filename;
 	close $output;
 
 	return $string;
@@ -826,7 +827,7 @@ sub _filehandleFromNameOrString {
 
 	} else {
 
-		$output = IO::String->new($outstring);
+		$output = IO::String->new($$outstring);
 	}
 
 	return $output;
