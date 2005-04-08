@@ -76,36 +76,37 @@ my (%genre_aka, @genre_keywords, @legit_genres);
 	'70' => '70s',  
 	'80' => '80s',  
 	'90' => '90s', 
-	'top40|chart|top_hits' => 'top_40', 
-	'dnb|d&b|d_&_b|drum_and_bass|drum|bass' => 'drum_&_bass', 
-	'hiphop|hip_hop' => 'rap', 
-	'humor|humour' => 'comedy', 
-	'oldskool|old_skool|oldschool' => 'old_school', 
-	'holland|netherland|nederla' => 'dutch', 
-	'any|every|mixed|eclectic|mix|variety|random|misc' => 'various', 
-	'rnb|r_n_b|r&b' => 'r_&_b',  
-	'ragga|dancehall|dance_hall' => 'reggae', 
-	'hungar' => 'hungarian', 
 	'africa' => 'african',
-	'symphonic' => 'classical',
-	'videogame gaming' => 'video_game', 
-	'psych' => 'psychedelic',
+	'animation' => 'anime', 
+	'any|every|mixed|eclectic|mix|variety|varied|random|misc' => 'various', 
+	'breakbeats' => 'breakbeat', 
+	'britpop' => 'british',
 	'christian|praise|worship|prayer|inspirational|bible|religious' => 'spiritual',
+	'dnb|d&b|d & b|drum and bass|drum|bass' => 'drum & bass', 
+	'electro|electronica' => 'electronic',
+	'film|movie' => 'soundtrack',
 	'freestyle' => 'freeform', 
 	'greece' => 'greek', 
-	'punjab' => 'punjabi',
-	'breakbeats' => 'breakbeat', 
-	'newage' => 'new_age',
-	'britpop' => 'british',
-	'local' => 'community', 
-	'lowfi|lofi' => 'low_fi',
-	'animation' => 'anime', 
-	'electro|electronica' => 'electronic',
-	'tranc' => 'trance', 
-	'spoken|politics' => 'talk', 
 	'goth' => 'gothic',
+	'hiphop|hip hop' => 'rap', 
+	'holland|netherland|nederla' => 'dutch', 
+	'humor|humour' => 'comedy', 
+	'hungar' => 'hungarian', 
+	'local' => 'community', 
+	'lowfi|lofi' => 'low fi',
+	'newage' => 'new age',
 	'oldie' => 'oldies', 
-	'film|movie' => 'soundtrack',
+	'oldskool|old skool|oldschool' => 'old school', 
+	'psych' => 'psychedelic',
+	'punjab' => 'punjabi',
+	'ragga|dancehall|dance hall' => 'reggae', 
+	'rnb|r n b|r&b' => 'r & b',  
+	'spoken|politics' => 'talk', 
+	'symphonic' => 'classical',
+	'top40|chart|top hits' => 'top 40', 
+	'tranc' => 'trance', 
+	'turk|t.rkce' => 'turkish',
+	'videogame gaming' => 'video_game', 
 	'vivo' => 'live'
 );
 
@@ -136,13 +137,12 @@ my (@info_order, @info_index);
 my %custom_genres;
 
 # keep track of client status
-my %status;
+# TODO mh: put these back to "my"!
+my (%status, %stream_data, %genres_data);
+
 
 # time of last list refresh
 my $last_time = 0;
-
-# lists and hashes for stream information
-my (@genres, %streams, %bitrates, %stream_data);
 
 checkDefaults();
 
@@ -208,6 +208,23 @@ sub setup_custom_genres {
 	}
 }
 
+my $popular_sort = sub {
+	my $r = 0;
+	my ($aa, $bb) = (0, 0);
+	
+	$aa += $stream_data{getAllName()}{$a}{$_}[1] 
+		foreach keys %{ $stream_data{getAllName()}{$a} };
+		
+	$bb += $stream_data{getAllName()}{$b}{$_}[1]
+		foreach keys %{ $stream_data{getAllName()}{$b} };
+
+	$r = $bb <=> $aa;
+	return $r if $r;
+
+	return lc($a) cmp lc($b);
+};
+
+
 ##### Main mode for genres #####
 
 sub setMode {
@@ -230,32 +247,30 @@ sub setMode {
 	
 	$status{$client}{recent_filename} = catfile($recent_dir,$client->name() . '.m3u') if defined $recent_dir;
 	
-	# Get streams
-	unless (@genres) {
-		getStreams();
-	}
+	loadStreamList();
 	
 	$status{$client}{status} = 1;
 	$client->update();
 }
 
-sub getStreams {
+sub loadStreamList {
 	my $client = shift;
+	
+	# only reload every hour
+	return if (%stream_data and (time() <= $last_time + 3600));
 
 	eval { require Compress::Zlib };
 	my	$have_zlib = 1 unless $@;
 
 	%stream_data = ();
-	%streams = ();
-	%bitrates = ();
 	if (defined $client) {
 		$status{$client}{genre} = 0;
 		$status{$client}{stream} = 0;
+		$status{$client}{streams} = ();
 		$status{$client}{bitrate} = 0;
 	}
 
 	my $u = unpack 'u', q{M:'1T<#HO+W-H;W5T8V%S="YC;VTO<V)I;B]X;6QL:7-T97(N<&AT;6P_<V5R+=FEC93U3;&E-4#,`};
-	
 	$u .= '&no_compress=1' unless $have_zlib;
 	$u .= '&limit=' . Slim::Utils::Prefs::get('plugin_shoutcastbrowser_how_many_streams') if Slim::Utils::Prefs::get('plugin_shoutcastbrowser_how_many_streams');
 
@@ -292,6 +307,7 @@ sub getStreams {
 
 	# Using XML::Simple reduces the memory footprint by nearly 2 megs vs the old manual scanning.
 	my $data  = XML::Simple::XMLin($xml, SuppressEmpty => '');
+
 	for my $entry (@{$data->{'playlist'}->{'entry'}}) {
 		my $bitrate	 = $entry->{'Bitrate'};
 		next if ($min_bitrate and $bitrate < $min_bitrate);
@@ -331,7 +347,7 @@ sub getStreams {
 				$genre =~ s/\b($_)\b/$genre_aka{$_}/g;
 			}
 
-			foreach (grep { $genre =~ /$_/i } @genre_keywords) {
+			foreach (grep { $genre =~ /\b$_\b/i } @genre_keywords) {
 				push @keywords, "\u$_";
 			}
 
@@ -350,19 +366,16 @@ sub getStreams {
 
 	undef $xml;
 
+	# remove singletons
 	if (($criterions[0] =~ /default/i) and not $custom_genres and Slim::Utils::Prefs::get('plugin_shoutcastbrowser_munge_genre')) {
 		foreach my $g (keys %stream_data) {
 			my @n = keys %{ $stream_data{$g} };
-			if ((grep(/$g/i, @legit_genres)) or ($#n > 1)) {
-				push @genres, $g;
-			} else {
+			
+			if (not (grep(/$g/i, @legit_genres) or ($#n > 0))) {
 				unless (exists $stream_data{getMiscName()}{$n[0]}) {
-					if ($#n == 1) {
-						$stream_data{getMiscName()}{$n[0]} = $stream_data{$g}{$n[0]};
-					}
-					
-					delete $stream_data{$g};
+					$stream_data{getMiscName()}{$n[0]} = $stream_data{$g}{$n[0]};
 				}
+				delete $stream_data{$g};
 			}
 		}
 
@@ -404,11 +417,13 @@ sub getStreams {
 		return $r;
 	};
 
-	@genres = sort $genre_sort keys %stream_data;
+	$genres_data{genres} = [ sort $genre_sort keys %stream_data ];
+	unshift @{$genres_data{genres}}, getMostPopularName();
+	unshift @{$genres_data{genres}}, getRecentName();
 
-	unshift @genres, getMostPopularName();
-	unshift @genres, getRecentName();
-
+	$genres_data{top} = [ sort $popular_sort keys %{ $stream_data{getAllName()} } ];
+	splice @{$genres_data{top}}, Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_popular');
+	$stream_data{getMostPopularName()} = $stream_data{getAllName()};
 }
 
 sub cleanMe {
@@ -427,7 +442,8 @@ sub cleanMe {
 sub reload_xml {
 	my $client = shift;
 	
-	if (time() < $last_time + 3600) {
+	# only allow reload every 10 minutes
+	if (time() < $last_time + 600) {
 	
 		$status{$client}{status} = -2;
 		$client->update();
@@ -439,10 +455,19 @@ sub reload_xml {
 	
 		$status{$client}{status} = 0;
 		$client->update();
-		@genres = ();
+		%stream_data = ();
 		&setMode($client);
 	
 	}
+}
+
+sub getCurrentGenre {
+	my $client = shift;
+	return @{$genres_data{genres}}[$status{$client}{genre}];
+}
+
+sub getGenreCount {
+	return ($#{$genres_data{genres}} + 1);
 }
 
 my %functions = (
@@ -454,7 +479,7 @@ my %functions = (
 		$status{$client}{genre} = Slim::Buttons::Common::scroll(
 						$client,
 						-1,
-						$#genres + 1,
+						getGenreCount(),
 						$status{$client}{genre} || 0,
 						);
 		
@@ -468,7 +493,7 @@ my %functions = (
 		$status{$client}{genre} = Slim::Buttons::Common::scroll(
 						$client,
 						1,
-						$#genres + 1,
+						getGenreCount(),
 						$status{$client}{genre} || 0,
 						);
 		
@@ -526,14 +551,12 @@ sub lines {
 		$lines[1] = '';
 	
 	} elsif ($status{$client}{status} == 1) {
-		my $current_stream = $genres[$status{$client}{genre}];
-	
 		$lines[0] = $client->string('PLUGIN_SHOUTCASTBROWSER_GENRES').
 			' (' .
 			($status{$client}{genre} + 1) .  ' ' .
 				$client->string('OF') .  ' ' .
-					($#genres + 1) .  ') ' ;
-		$lines[1] = $current_stream;
+					getGenreCount() .  ') ' ;
+		$lines[1] = getCurrentGenre($client);
 		$lines[3] = Slim::Display::Display::symbol('rightarrow');
 	}
 
@@ -542,10 +565,7 @@ sub lines {
 
 sub getFunctions { return \%functions; }
 
-sub addMenu {
-	my $menu = "RADIO";
-	return $menu;
-}
+sub addMenu { return 'RADIO'; }
 
 sub setupGroup
 {
@@ -592,13 +612,13 @@ sub setupGroup
 		plugin_shoutcastbrowser_how_many_streams => {
  			validate => \&Slim::Web::Setup::validateInt,
  			validateArgs => [1,2000,1,2000],
-			onChange => sub { @genres = (); }
+			onChange => sub { %stream_data = (); }
 		},
 		
 		plugin_shoutcastbrowser_custom_genres => {
 			validate => sub { Slim::Web::Setup::validateIsFile(shift, 1); },
 			PrefSize => 'large',
-			onChange => sub { @genres = (); }
+			onChange => sub { %stream_data = (); }
 		},
 		
 		plugin_shoutcastbrowser_genre_criterion => {
@@ -613,7 +633,7 @@ sub setupGroup
 					return;
 				}
 				Slim::Web::Setup::processArrayChange($client, 'plugin_shoutcastbrowser_genre_criterion', $paramref, $pageref);
-				@genres = ();
+				%stream_data = ();
 				$changeref->{'plugin_shoutcastbrowser_genre_criterion'}{'Processed'} = 1;
 			},
 			
@@ -631,7 +651,7 @@ sub setupGroup
 					return;
 				}
 				Slim::Web::Setup::processArrayChange($client, 'plugin_shoutcastbrowser_stream_criterion', $paramref, $pageref);
-				@genres = ();
+				%stream_data = ();
 				$changeref->{'plugin_shoutcastbrowser_stream_criterion'}{'Processed'} = 1;
 			},
 			
@@ -640,13 +660,13 @@ sub setupGroup
 		plugin_shoutcastbrowser_min_bitrate => {
 			validate => \&Slim::Web::Setup::validateInt,
 			validateArgs => [0, undef, 0],
-			onChange => sub { @genres = (); }
+			onChange => sub { %stream_data = (); }
 		},
 		
 		plugin_shoutcastbrowser_max_bitrate => {
 			validate => \&Slim::Web::Setup::validateInt,
 			validateArgs => [0, undef, 0],
-			onChange => sub { @genres = (); }
+			onChange => sub { %stream_data = (); }
 		},
 		
 		plugin_shoutcastbrowser_max_recent => {
@@ -708,22 +728,6 @@ sub checkDefaults {
 
 
 ##### Sub-mode for streams #####
-my $popular_sort = sub {
-	my $r = 0;
-	my ($aa, $bb) = (0, 0);
-	
-	$aa += $stream_data{getAllName()}{$a}{$_}[1] 
-		foreach keys %{ $stream_data{getAllName()}{$a} };
-		
-	$bb += $stream_data{getAllName()}{$b}{$_}[1]
-		foreach keys %{ $stream_data{getAllName()}{$b} };
-
-	$r = $bb <=> $aa;
-	return $r if $r;
-
-	return lc($a) cmp lc($b);
-};
-
 # Closure for the sake of $client
 sub stream_sort {
 	my $client = shift;
@@ -732,13 +736,12 @@ sub stream_sort {
 	for my $criterion (Slim::Utils::Prefs::getArray('plugin_shoutcastbrowser_stream_criterion')) {
 		if ($criterion =~ m/^listener/i) {
 			my ($aa, $bb) = (0, 0);
-			my $current_genre = $genres[$status{$client}{genre}];
 			
-			$aa += $stream_data{$current_genre}{$a}{$_}[1]
-				foreach keys %{ $stream_data{$current_genre}{$a} };
+			$aa += $stream_data{getCurrentGenre($client)}{$a}{$_}[1]
+				foreach keys %{ $stream_data{getCurrentGenre($client)}{$a} };
 			
-			$bb += $stream_data{$current_genre}{$b}{$_}[1]
-				foreach keys %{ $stream_data{$current_genre}{$b} };
+			$bb += $stream_data{getCurrentGenre($client)}{$b}{$_}[1]
+				foreach keys %{ $stream_data{getCurrentGenre($client)}{$b} };
 			
 			$r = $bb <=> $aa;
 		} elsif ($criterion =~ m/^name/i or $criterion =~ m/default/i) {
@@ -763,26 +766,12 @@ my $mode_sub = sub {
 	$status{$client}{stream} = $status{$client}{old_stream}{$status{$client}{genre}};
 	$client->update();
 
-	# %streams is indexed by client, since the streams for recently
-	# played are different for each; for the others, this is somewhat
-	# wasteful of memory.
-	unless(exists $streams{$client}{$status{$client}{genre}}) {
-		my $current_genre = $genres[$status{$client}{genre}];
-
-		if ($current_genre eq getRecentName()) {
-			$streams{$client}{$status{$client}{genre}} = get_recent_streams($client);
-		
-		} elsif ($current_genre eq getMostPopularName()) {
-			my @top = sort $popular_sort keys %{ $stream_data{getAllName()} };
-			
-			splice @top, Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_popular');
-			$streams{$client}{$status{$client}{genre}} = [ @top ];
-			$stream_data{getMostPopularName()} = $stream_data{getAllName()}
-		
-		} else {
-			$streams{$client}{$status{$client}{genre}} =
-			[ sort { stream_sort($client) } keys %{ $stream_data{$current_genre} } ];
-		}
+	if (getCurrentGenre($client) eq getRecentName()) {
+		$status{$client}{streams} = get_recent_streams($client);
+	} elsif (getCurrentGenre($client) eq getMostPopularName()) {
+		$status{$client}{streams} = $genres_data{top};
+	} else {
+		$status{$client}{streams} = [ sort { stream_sort($client) } keys %{ $stream_data{getCurrentGenre($client)} } ];
 	}
 	
 	$status{$client}{status} = 1;
@@ -791,7 +780,6 @@ my $mode_sub = sub {
 
 my $leave_mode_sub = sub {
 	my $client = shift;
-	
 	$status{$client}{number} = undef;
 	$status{$client}{old_stream}{$status{$client}{genre}} = $status{$client}{stream};
 };
@@ -819,22 +807,30 @@ sub streamsLines {
 		$lines[1] = '';
 	
 	} elsif ($status{$client}{status} == 1) {
-		my @streams = @{ $streams{$client}{$status{$client}{genre}} };
-	
 		$lines[0] = $client->string('PLUGIN_SHOUTCASTBROWSER_SHOUTCAST').': '.
-				$genres[$status{$client}{genre}] .
+				getCurrentGenre($client) .
 				' (' .
 					($status{$client}{stream} + 1) .  ' ' .
 					$client->string('OF') .  ' ' .
-						($#streams + 1) .  ') ' ;
-		$lines[1] = $streams[$status{$client}{stream}];
+						getStreamCount($client) .  ') ' ;
+		$lines[1] = getCurrentStreamName($client);
 		
-		if (keys %{ $stream_data{$genres[$status{$client}{genre}]}{$streams[$status{$client}{stream}]} } > 1) {
+		if (keys %{ $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)} } > 1) {
 			$lines[3] = Slim::Display::Display::symbol('rightarrow');
 		}
 	}
 
 	return @lines;
+}
+
+sub getStreamCount {
+	my $client = shift;
+	return ($#{ $status{$client}{streams} } + 1);
+}
+
+sub getCurrentStreamName {
+	my $client = shift;
+	return @{ $status{$client}{streams} }[$status{$client}{stream}];
 }
 
 my %StreamsFunctions = (
@@ -843,11 +839,10 @@ my %StreamsFunctions = (
 		
 		$status{$client}{number} = undef;
 		
-		my @streams = @{ $streams{$client}{$status{$client}{genre}} };
 		$status{$client}{stream} = Slim::Buttons::Common::scroll(
 						$client,
 						-1,
-						$#streams + 1,
+						getStreamCount($client),
 						$status{$client}{stream} || 0,
 					);
 		$client->update();
@@ -858,11 +853,10 @@ my %StreamsFunctions = (
 		
 		$status{$client}{number} = undef;
 		
-		my @streams = @{ $streams{$client}{$status{$client}{genre}} };
 		$status{$client}{stream} = Slim::Buttons::Common::scroll(
 						$client,
 						1,
-						$#streams + 1,
+						getStreamCount($client),
 						$status{$client}{stream} || 0,
 					);
 		$client->update();
@@ -870,9 +864,6 @@ my %StreamsFunctions = (
 	
 	'left' => sub {
 		my $client = shift;
-		
-		$status{$client}{number} = undef;
-		$leave_mode_sub->($client);
 		Slim::Buttons::Common::popModeRight($client);
 	},
 	
@@ -881,15 +872,10 @@ my %StreamsFunctions = (
 	
 		$status{$client}{number} = undef;
 	
-		my @streams = @{ $streams{$client}{$status{$client}{genre}} };
-		
-		&bitrate_mode_helper($client);
-
-		if ($genres[$status{$client}{genre}] eq getRecentName()) {
+		if (getCurrentGenre($client) eq getRecentName()) {
 			$client->bumpRight();
 		} else {
-		
-			if (keys %{ $stream_data{$genres[$status{$client}{genre}]}{$streams[$status{$client}{stream}]}} == 1) {
+			if (keys %{ $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}} == 1) {
 				Slim::Buttons::Common::pushModeLeft($client, 'ShoutcastStreamInfo');
 			} else {
 				Slim::Buttons::Common::pushModeLeft($client, 'ShoutcastBitrates');
@@ -903,13 +889,11 @@ my %StreamsFunctions = (
 	
 		Slim::Control::Command::execute($client, ['playlist', 'clear']);
 	
-		my @streams = @{ $streams{$client}{$status{$client}{genre}} };
-	
-		if ($genres[$status{$client}{genre}] eq getRecentName()) {
-			my $playlist_url = $status{$client}{recent_data}{$streams[$status{$client}{stream}]};
+		if (getCurrentGenre($client) eq getRecentName()) {
+			my $playlist_url = $status{$client}{recent_data}{getCurrentStreamName($client)};
 			
 			Slim::Control::Command::execute($client, ['playlist', 'add', $playlist_url]);
-			add_recent_stream($client, $streams[$status{$client}{stream}], undef);
+			add_recent_stream($client, getCurrentStreamName($client), undef);
 			$status{$client}{stream} = 0;
 		}
 		
@@ -917,14 +901,14 @@ my %StreamsFunctions = (
 		# one to the recently played list
 		my $first = 1;
 		
-		for my $b (sort bitrate_sort keys %{ $stream_data{$genres[$status{$client}{genre}]}{$streams[$status{$client}{stream}]} }) {
-			my $current_data = $stream_data{$genres[$status{$client}{genre}]}{$streams[$status{$client}{stream}]}{$b};
+		for my $b (sort bitrate_sort keys %{ $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)} }) {
+			my $current_data = $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{$b};
 			my $playlist_url = $current_data->[0];
 			
 			Slim::Control::Command::execute($client, ['playlist', 'add', $playlist_url]);
 			
 			if ($first) {
-				add_recent_stream($client, $streams[$status{$client}{stream}], $b, $current_data);
+				add_recent_stream($client, getCurrentStreamName($client), $b, $current_data);
 			}
 			
 			$first = 0;
@@ -935,10 +919,9 @@ my %StreamsFunctions = (
 	
 	'add' => sub {
 		my $client = shift;
-		my @streams = @{ $streams{$client}{$status{$client}{genre}} };
 	
-		for my $b (sort bitrate_sort keys %{ $stream_data{$genres[$status{$client}{genre}]}{$streams[$status{$client}{stream}]} }) {
-			Slim::Control::Command::execute($client, ['playlist', 'add', $stream_data{$genres[$status{$client}{genre}]}{$streams[$status{$client}{stream}]}{$b}->[0]]);
+		for my $b (sort bitrate_sort keys %{ $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)} }) {
+			Slim::Control::Command::execute($client, ['playlist', 'add', $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{$b}->[0]]);
 		}
 	},
 	
@@ -966,29 +949,27 @@ my %StreamsFunctions = (
 
 ##### Sub-mode for bitrates #####
 
-my $bitrate_mode_sub = sub
-{
+sub getBitrates {
 	my $client = shift;
-	unless(exists $bitrates{$status{$client}{genre}}{$status{$client}{stream}}) {
-		bitrate_mode_helper($client);
-	}
-	$client->lines(\&bitrateLines);
-	$client->update();
-};
-
-
-sub bitrate_mode_helper {
-	my $client = shift;
-	my @streams = @{ $streams{$client}{$status{$client}{genre}} };
-
-	my @bitrates = sort bitrate_sort keys
-		%{ $stream_data{$genres[$status{$client}{genre}]}{$streams[$status{$client}{stream}]} };
-
-	$bitrates{$status{$client}{genre}}{$status{$client}{stream}} = [@bitrates];
+	return sort bitrate_sort keys %{ $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)} };
 }
 
-my $leave_bitrate_mode_sub = sub {
+sub getBitrateCount {
 	my $client = shift;
+	my @bitrates = getBitrates($client);
+	return ($#bitrates + 1);
+}
+
+sub getCurrentBitrate {
+	my $client = shift;
+	my @bitrates = getBitrates($client);
+	return $bitrates[$status{$client}{bitrate}];
+}
+
+my $bitrate_mode_sub = sub {
+	my $client = shift;
+	$client->lines(\&bitrateLines);
+	$client->update();
 };
 
 sub bitrate_sort {
@@ -1001,17 +982,14 @@ sub bitrateLines {
 	my $client = shift;
 	my (@lines);
 
-	my @bitrates = @{ $bitrates{$status{$client}{genre}}{$status{$client}{stream}} };
-	my @streams = @{ $streams{$client}{$status{$client}{genre}} };
-
-	$lines[0] = $streams[$status{$client}{stream}];
+	$lines[0] = getCurrentStreamName($client);
 	
-	$lines[3] = ' (' . ($status{$client}{bitrate} + 1) .  ' ' .
+	$lines[3] = ' (' . ($status{$client}{bitrate} + 1) . ' ' .
 		$client->string('OF') .  ' ' .
-		($#bitrates + 1) .  ')' ;
+		getBitrateCount($client) .  ')' ;
 
 	$lines[1] = $client->string('PLUGIN_SHOUTCASTBROWSER_BITRATE') . ': ' .
-		$bitrates[$status{$client}{bitrate}] . ' ' .
+		getCurrentBitrate($client) . ' ' .
 		$client->string('PLUGIN_SHOUTCASTBROWSER_KBPS');
 	
 	return @lines;
@@ -1020,12 +998,10 @@ sub bitrateLines {
 my %BitrateFunctions = (
 	'up' => sub {
 		my $client = shift;
-		my @bitrates = @{ $bitrates{$status{$client}{genre}}{$status{$client}{stream}} };
-		
 		$status{$client}{bitrate} = Slim::Buttons::Common::scroll(
 						$client,
 						-1,
-						$#bitrates + 1,
+						getBitrateCount($client),
 						$status{$client}{bitrate} || 0,
 					);
 		$client->update();
@@ -1033,12 +1009,10 @@ my %BitrateFunctions = (
 	
 	'down' => sub {
 		my $client = shift;
-		my @bitrates = @{ $bitrates{$status{$client}{genre}}{$status{$client}{stream}} };
-		
 		$status{$client}{bitrate} = Slim::Buttons::Common::scroll(
 						$client,
 						1,
-						$#bitrates + 1,
+						getBitrateCount($client),
 						$status{$client}{bitrate} || 0,
 					);
 		$client->update();
@@ -1046,47 +1020,31 @@ my %BitrateFunctions = (
 	
 	'left' => sub {
 		my $client = shift;
-	
-		$leave_bitrate_mode_sub->($client);
 		Slim::Buttons::Common::popModeRight($client);
 	},
 	
 	'right' => sub {
 		my $client = shift;
-		
 		Slim::Buttons::Common::pushModeLeft($client, 'ShoutcastStreamInfo');
 	},
 	
 	'play' => sub {
 		my $client = shift;
-		my $current_genre = $genres[$status{$client}{genre}];
-		my @streams = @{ $streams{$client}{$status{$client}{genre}} };
-		my $current_stream = $streams[$status{$client}{stream}];
-		my @bitrates = @{ $bitrates{$status{$client}{genre}}{$status{$client}{stream}} };
-		my $current_bitrate = $bitrates[$status{$client}{bitrate}];
-		my $current_data = $stream_data{$current_genre}{$current_stream}{$current_bitrate};
-		my $playlist_url = $current_data->[0];
+		my $current_data = $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{getCurrentBitrate($client)};
 		
-		Slim::Control::Command::execute($client, ['playlist', 'load', $playlist_url]);
-		add_recent_stream($client, $current_stream, $current_bitrate, $current_data);
+		Slim::Control::Command::execute($client, ['playlist', 'load', $current_data->[0]]);
+		add_recent_stream($client, getCurrentStreamName($client), getCurrentBitrate($client), $current_data);
 	},
 	
 	'add' => sub {
 		my $client = shift;
-		my $current_genre = $genres[$status{$client}{genre}];
-		my @streams = @{ $streams{$client}{$status{$client}{genre}} };
-		my $current_stream = $streams[$status{$client}{stream}];
-		my @bitrates = @{ $bitrates{$status{$client}{genre}}{$status{$client}{stream}} };
-		my $current_bitrate = $bitrates[$status{$client}{bitrate}];
-		my $current_data = $stream_data{$current_genre}{$current_stream}{$current_bitrate};
-		my $playlist_url = $current_data->[0];
+		my $current_data = $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{getCurrentBitrate($client)};
 	
-		Slim::Control::Command::execute($client, ['playlist', 'add', $playlist_url]);
+		Slim::Control::Command::execute($client, ['playlist', 'add', $current_data->[0]]);
 	},
 	
 	'jump_rew' => sub {
 		my $client = shift;
-	
 		$status{$client}{number} = undef;
 		
 		Slim::Buttons::Common::popModeRight($client);
@@ -1106,45 +1064,27 @@ my $info_mode_sub = sub {
 	$client->update();
 };
 
-my $leave_info_mode_sub = sub {
-	my $client = shift;
-};
-
 sub infoLines {
 	my $client = shift;
-	my (@lines);
-	
-	$status{$client}{genre} ||= 0;
-	$status{$client}{stream} ||= 0;
-
-	my $current_genre = $genres[$status{$client}{genre}];
-	my @streams = @{ $streams{$client}{$status{$client}{genre}} };
-	my $current_stream = $streams[$status{$client}{stream}];
-	my @bitrates = @{ $bitrates{$status{$client}{genre}}{$status{$client}{stream}} };
-	my $current_bitrate = $bitrates[$status{$client}{bitrate}];
-
+	my @lines = ($client->string('PLUGIN_SHOUTCASTBROWSER_MODULE_NAME'), $client->string('PLUGIN_SHOUTCASTBROWSER_NONE'));
 	my $current_data;
 	
-	if (defined $current_genre and defined $current_stream and defined $current_bitrate) {
-		$current_data = $stream_data{$current_genre}{$current_stream}{$current_bitrate};
-	}
+	if (defined getCurrentGenre($client) and defined getCurrentStreamName($client) and defined getCurrentBitrate($client)) {
+		$current_data = $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{getCurrentBitrate($client)};
 	
-	my $cur = $status{$client}{info} || 0;
-
-	if (defined $current_stream and defined $current_bitrate) {
-		$lines[0] = $current_bitrate . 'kbps - ' .$current_stream;
-	}
+		my $cur = $status{$client}{info} || 0;
 	
-	my $info;
-	# get the stream's name from the hash key, not the array
-	if ($info_index[$cur] == -1) {
-		$info = $current_stream;
+		$lines[0] = getCurrentBitrate($client) . $client->string('PLUGIN_SHOUTCASTBROWSER_KBPS') . ' - ' . getCurrentStreamName($client);
+		
+		$lines[1] = $info_order[$cur] . ': ';
+		# get the stream's name from the hash key, not the array
+		if ($info_index[$cur] == -1) {
+			$lines[1] .= getCurrentStreamName($client);
+		}
+		else {
+			$lines[1] .= $current_data->[$info_index[$cur]] || $client->string('PLUGIN_SHOUTCASTBROWSER_NONE');
+		}
 	}
-	else {
-		$info = $current_data->[$info_index[$cur]] || $client->string('PLUGIN_SHOUTCASTBROWSER_NONE');
-	}
-	
-	$lines[1] = $info_order[$cur] . ': ' . $info;
 
 	return @lines;
 }
@@ -1176,49 +1116,29 @@ my %InfoFunctions = (
 	
 	'left' => sub {
 		my $client = shift;
-		
-		$leave_info_mode_sub->($client);
 		Slim::Buttons::Common::popModeRight($client);
 	},
 	
 	'right' => sub {
 		my $client = shift;
-	
 		$client->bumpRight();
 	},
 	
 	'play' => sub {
 		my $client = shift;
-		
-		my $current_genre = $genres[$status{$client}{genre}];
-		my @streams = @{ $streams{$client}{$status{$client}{genre}} };
-		my $current_stream = $streams[$status{$client}{stream}];
-		my @bitrates = @{ $bitrates{$status{$client}{genre}}{$status{$client}{stream}} };
-		my $current_bitrate = $bitrates[$status{$client}{bitrate}];
-		my $current_data = $stream_data{$current_genre}{$current_stream}{$current_bitrate};
-		my $playlist_url = $current_data->[0];
-	
-		Slim::Control::Command::execute($client, ['playlist', 'load', $playlist_url]);
-		add_recent_stream($client, $current_stream, $current_bitrate, $current_data);
+		my $current_data = $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{getCurrentBitrate($client)};
+		Slim::Control::Command::execute($client, ['playlist', 'load', $current_data->[0]]);
+		add_recent_stream($client, getCurrentStreamName($client), getCurrentBitrate($client), $current_data);
 	},
 	
 	'add' => sub {
 		my $client = shift;
-		
-		my $current_genre = $genres[$status{$client}{genre}];
-		my @streams = @{ $streams{$client}{$status{$client}{genre}} };
-		my $current_stream = $streams[$status{$client}{stream}];
-		my @bitrates = @{ $bitrates{$status{$client}{genre}}{$status{$client}{stream}} };
-		my $current_bitrate = $bitrates[$status{$client}{bitrate}];
-		my $current_data = $stream_data{$current_genre}{$current_stream}{$current_bitrate};
-		my $playlist_url = $current_data->[0];
-	
-		Slim::Control::Command::execute($client, ['playlist', 'add', $playlist_url]);
+		my $current_data = $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{getCurrentBitrate($client)};
+		Slim::Control::Command::execute($client, ['playlist', 'add', $current_data->[0]]);
 	},
 	
 	'jump_rew' => sub {
 		my $client = shift;
-	
 		$status{$client}{number} = undef;
 		
 		Slim::Buttons::Common::popModeRight($client);
@@ -1230,8 +1150,7 @@ my %InfoFunctions = (
 );
 
 
-sub get_recent_streams
-{
+sub get_recent_streams {
 	my $client = shift;
 
 	my @recent = ();
@@ -1279,21 +1198,21 @@ sub get_recent_streams
 }
 
 sub add_recent_stream
+# TODO mh: verify recent_stuff and integrate with web interface
 {
 	my ($client, $new, $bitrate, $data) = @_;
 	my $url = $data->[0];
 	
-	if (defined $bitrate)
-	{
-	$new = "$bitrate kbps: " . $new;
+	if (defined $bitrate) {
+		$new = "$bitrate kbps: " . $new;
 	}
 	
 	$status{$client}{recent_data}{$new} = $url;
 
 	my @recent;
 
-	if (exists $streams{$client}{getRecentName()}) {
-		@recent = @ { $streams{$client}{getRecentName()} };
+	if (exists $status{client}{recent_data}) {
+		@recent = keys %{ $status{client}{recent_data} };
 	} else {
 		@recent = @{ get_recent_streams($client) };
 	}
@@ -1326,21 +1245,14 @@ sub add_recent_stream
 		
 		close FH;
 	}
-	
-	$streams{$client}{POSITION_OF_RECENT} = [ @recent ];
 }
 
 
 
 # Add extra modes
-Slim::Buttons::Common::addMode('ShoutcastStreams', \%StreamsFunctions,
-				$mode_sub, $leave_mode_sub);
-
-Slim::Buttons::Common::addMode('ShoutcastBitrates', \%BitrateFunctions,
-				$bitrate_mode_sub, $leave_bitrate_mode_sub);
-
-Slim::Buttons::Common::addMode('ShoutcastStreamInfo', \%InfoFunctions,
-				$info_mode_sub, $leave_info_mode_sub);
+Slim::Buttons::Common::addMode('ShoutcastStreams', \%StreamsFunctions, $mode_sub, $leave_mode_sub);
+Slim::Buttons::Common::addMode('ShoutcastBitrates', \%BitrateFunctions, $bitrate_mode_sub);
+Slim::Buttons::Common::addMode('ShoutcastStreamInfo', \%InfoFunctions, $info_mode_sub);
 
 
 # Web pages
@@ -1355,56 +1267,47 @@ sub webPages {
 sub handleWebIndex {
 	my ($client, $params) = @_;
 
-	if (time() >= $last_time + 3600) {
-		@genres = ();
-	}
+	loadStreamList($client);
 
-	unless (@genres) {
-		getStreams($client);
-	}
+	if ($params->{'genreID'}) {
+		$params->{'genre'} = @{$genres_data{genres}}[$params->{'genreID'}];
 
-	if ($params->{'p0'}) {
 		# show stream information
-		if (defined $params->{'p1'}) {
-			$params->{'genreID'} = $params->{'p1'};
-			$params->{'genre'} = $genres[$params->{'p1'}];
-			$params->{'streaminfo'} = $stream_data{getAllName()}{$params->{'p0'}}{$params->{'p2'}};
-			$params->{'stream'} = $params->{'p0'};
+		if (defined $params->{'action'} && ($params->{'action'} eq 'info')) {
+			my @mystreams = @{ getWebStreamList($client, $params->{'genre'}, $params->{'genreID'} == 1) };
+			$params->{'stream'} = $mystreams[$params->{'streamID'}];
+			$params->{'streaminfo'} = $stream_data{getAllName()}{$params->{'stream'}}{$params->{'bitrate'}};
 		} 
 		# show streams of the wanted genre
 		else {
-			$params->{'genre'} = $genres[$params->{'p0'}];
-			$params->{'genreID'} = $params->{'p0'};
-
-			# most popular
-			if ($params->{'p0'} == 1) {
-				my @top = sort $popular_sort keys %{ $stream_data{getAllName()} };
-				splice @top, Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_popular');
-				$params->{'mystreams'} = \@top;
-				$params->{'streams'} = \%{ $stream_data{getAllName()} };
-			}
-			else {
-				# TODO mh: sort is somehow broken for listeners
-				$params->{'mystreams'} = [ sort { stream_sort($client) } keys %{ $stream_data{$params->{'genre'}} } ];
-				$params->{'streams'} = \%{ $stream_data{$params->{'genre'}} };
-			}
+			$params->{'streams'} = \%{ $stream_data{$params->{'genre'}} };
+			$params->{'mystreams'} = getWebStreamList($client, $params->{'genre'}, $params->{'genreID'} == 1);
 		}
 	}
 	else {
 		# don't show "Recent streams" - can be found in playlist folder
 		my $recentName = getRecentName();
-		$params->{'genres'} = [ grep !/$recentName/i, @genres];
+		$params->{'genres'} = [ grep !/$recentName/i, @{$genres_data{genres}}];
 	}
 
 	return Slim::Web::HTTP::filltemplatefile('plugins/ShoutcastBrowser/index.html', $params);
 }
 
+sub getWebStreamList {
+	my ($client, $genre, $isPopular) = @_;
+	if ($isPopular) {
+		return $genres_data{top};
+	}
+	else {
+		# TODO mh: sort is somehow broken for listeners
+		return [ sort { stream_sort($client) } keys %{ $stream_data{$genre} } ];
+	}
+}
 
 
 sub strings {
 	return q^PLUGIN_SHOUTCASTBROWSER_MODULE_NAME
 	EN	SHOUTcast Internet Radio
-	DE	SHOUTcast Internet Radio
 	ES	Radio por Internet SHOUTcast
 
 PLUGIN_SHOUTCASTBROWSER_GENRES
@@ -1424,7 +1327,6 @@ PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
 
 PLUGIN_SHOUTCASTBROWSER_SHOUTCAST
 	EN	SHOUTcast
-	DE	SHOUTcast
 
 PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS
 	EN	All Streams
@@ -1438,12 +1340,10 @@ PLUGIN_SHOUTCASTBROWSER_NONE
 
 PLUGIN_SHOUTCASTBROWSER_BITRATE
 	EN	Bitrate
-	DE	Bitrate
 	ES	Tasa de bits
 
 PLUGIN_SHOUTCASTBROWSER_KBPS
 	EN	kbps
-	DE	kbps
 
 PLUGIN_SHOUTCASTBROWSER_RECENT
 	DE	Kürzlich gehört
@@ -1475,7 +1375,6 @@ PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING
 	EN	Was playing
 
 PLUGIN_SHOUTCASTBROWSER_STREAM_NAME
-	DE	Name
 	EN	Name
 
 SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER
