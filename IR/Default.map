@@ -319,6 +319,19 @@ search.*					= passback
 stop.*						= passback
 pause.*						= passback
 
+[INPUT.Choice]
+arrow_left					= exit_left
+arrow_right					= right
+arrow_right.single			= rt_single
+arrow_right.hold			= rt_hold
+play.*						= dead
+play						= play
+add.*						= dead
+add                         = add
+search.*					= passback
+stop.*						= passback
+pause.*						= passback
+
 [INPUT.Bar]
 arrow_left					= exit_left
 arrow_right					= exit_right

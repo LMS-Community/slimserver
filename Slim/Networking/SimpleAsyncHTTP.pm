@@ -40,8 +40,10 @@ sub params {
 	my $self = shift;
 	my $key = shift;
 	my $value = shift;
-	
-	if ($value) {
+
+	if (!defined($key)) {
+		return $self->{params};
+	} elsif ($value) {
 		$self->{params}->{$key} = $value;
 	} else {
 		return $self->{params}->{$key};
@@ -125,6 +127,10 @@ sub bodyCB {
 sub content {
 	my $self = shift;
 	return $self->{content};
+}
+sub headers {
+	my $self = shift;
+	return $self->{headers};
 }
 
 sub url {

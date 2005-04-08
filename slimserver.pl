@@ -215,6 +215,7 @@ use Slim::Buttons::Synchronize;
 use Slim::Buttons::Input::Text;
 use Slim::Buttons::Input::Time;
 use Slim::Buttons::Input::List;
+use Slim::Buttons::Input::Choice;
 use Slim::Buttons::Input::Bar;
 use Slim::Player::Client;
 use Slim::Control::Command;
@@ -240,6 +241,7 @@ use Slim::Control::Stdio;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 use Slim::Networking::Slimproto;
+use Slim::Networking::SimpleAsyncHTTP;
 
 use vars qw($VERSION $REVISION @AUTHORS);
 
@@ -278,6 +280,7 @@ use vars qw(
 	$d_formats
 	$d_graphics
 	$d_http
+	$d_http_async
 	$d_http_verbose
 	$d_info
 	$d_ir
@@ -720,6 +723,7 @@ to the console via stderr:
     --d_formats      => Information about importing data from various file formats
     --d_graphics     => Information bitmap graphic display 
     --d_http         => HTTP activity
+    --d_http_async   => AsyncHTTP activity
     --d_http_verbose => Even more HTTP activity 
     --d_info         => MP3/ID3 track information
     --d_ir           => Infrared activity
@@ -799,6 +803,7 @@ sub initOptions {
 		'd_formats'			=> \$d_formats,
 		'd_graphics'		=> \$d_graphics,
 		'd_http'			=> \$d_http,
+		'd_http_async'		=> \$d_http_async,
 		'd_http_verbose'	=> \$d_http_verbose,
 		'd_import=s'		=> \$d_import,
 		'd_info'			=> \$d_info,
@@ -1026,7 +1031,7 @@ sub checkVersion {
 	}
 
 	my $lastTime = Slim::Utils::Prefs::get('checkVersionLastTime');
-
+	$lastTime = undef; # temporary, for fix
 	if ($lastTime) {
 		my $delta = Time::HiRes::time() - $lastTime;
 		if (($delta > 0) && ($delta < Slim::Utils::Prefs::get('checkVersionInterval'))) {
@@ -1039,19 +1044,30 @@ sub checkVersion {
 	$::d_time && msg("checking version now.\n");
 	my $url  = "http://update.slimdevices.com/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
 
-	# XXX - dsully - this really shouldn't be overloaded like this.
-	my $sock = Slim::Player::Source::openRemoteStream($url);
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(\&checkVersionCB,
+													  \&checkVersionError);
+	$http->get($url); # will call checkVersionCB when complete
 
-	if ($sock) {
-
-		$::newVersion = Slim::Utils::Misc::sysreadline($sock,5);
-		chomp($::newVersion);
-		
-		$sock->close();
-	}
 	Slim::Utils::Prefs::set('checkVersionLastTime', Time::HiRes::time());
 	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + Slim::Utils::Prefs::get('checkVersionInterval'), \&checkVersion);
 }
+
+# called when check version request is complete
+sub checkVersionCB {
+	my $http = shift;
+	# store result in global variable, to be displayed by browser
+	$::newVersion = $http->content();
+	msg("CheckVersionCB: " . $http->content() . "\n"); # temp
+}
+
+# called only if check version request fails
+sub checkVersionError {
+	my $http = shift;
+	# TODO: l10n
+	msg("Error while checking for updates to SlimServer:\n" . $http->error . "\n");
+}
+
+
 
 #------------------------------------------
 #
