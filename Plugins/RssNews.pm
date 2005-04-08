@@ -95,10 +95,9 @@ my $refresh_last = 0;
 my $screensaver_timeout = 0;
 my $screensaver_reset_interval = 0;
 my $running_as = 'plugin';
-# $refresh_min is the minimum time in seconds between refreshes of the ticker from the RSS.
+# $refresh_sec is the minimum time in seconds between refreshes of the ticker from the RSS.
 # Please do not lower this value. It prevents excessive queries to the RSS.
-# This value is ignored when a refresh is manually requested via the remote.
-my $refresh_sec = 30 * 60; 
+my $refresh_sec = 60 * 60;
 
 sub strings { return q!
 PLUGIN_RSSNEWS
@@ -266,6 +265,13 @@ sub nextTopic {
     #Move up the list of topics
     if($display_stack) {
         $display_current=shift @{$display_stack};
+		if (!$display_current) {
+			$::d_plugins && msg("RssNews: display_current not set!\n");
+			$::d_plugins && msg("RssNews: feed order:\n" . 
+								join('\n', @feed_order) . "\n");
+		} else {
+			$d::plugins && msg("RssNews: display_current is $display_current\n");
+		}
 		$client->param('PLUGIN.RssNews.display_current', $display_current);
     } else {
 		assert(0, 'display stack empty');
@@ -322,14 +328,14 @@ sub updateFeedNames {
 			my $name = $feed_names{$feed};
 			if ($name && $name !~ /^http\:/) {
 				push @names, $name;
-			}
-			elsif ($feed =~ /^http\:/) {
+			} elsif ($feed =~ /^http\:/) {
 				my $xml = getFeedXml($feed);
 				if ($xml && exists $xml->{channel}->{title}) {
-					push @names, $xml->{channel}->{title};
+					# trim required to remove leading newlines
+					push @names, trim($xml->{channel}->{title});
 				}
 				else {
-					push @names, $feed;
+					push @names, trim($feed);
 				}
 			}
 		}
@@ -409,7 +415,9 @@ sub unescapeAndTrim {
 
 sub getFeedXml {
     my $feed_url = shift;
-    
+
+	$::d_plugins && msg("RssNews: getting feed from $feed_url\n");
+
     my $http = Slim::Player::Protocols::HTTP->new({
 	'url'    => $feed_url,
 	'create' => 0,
@@ -422,6 +430,10 @@ sub getFeedXml {
 	$http->close();
 
 	return 0 unless defined $content;
+
+	# very verbose debugging
+	#$::d_plugins && msg("RssNews: $feed_url\n");
+	#$::d_plugins && msg("\n$content\n\n");
 
 	# forcearray to treat items as array,
 	# keyattr => [] prevents id attrs from overriding
@@ -485,7 +497,8 @@ sub retrieveNews {
                 }
             } else {
                 # TODO: better error handling
-                $::d_plugins && msg("RssNews.pm failed to parse from $feed_urls{$feedname}. \n");
+                $::d_plugins && msg("RssNews: failed to parse from $feed_urls{$feedname}. \n");
+				$::d_plugins && msg("RssNews: Here's the xml:\n\n$xml\n\n");
 				$show_error = 1;
             }
         } else {
@@ -600,11 +613,10 @@ sub autoScrollTimer {
         $wait_time = $screensaver_sec_per_channel;
     } else {
         my ($line1, $line2) = lines($client);
-		$::d_plugins && assert($line2, 'Line2 not defined.\n');
-		# when is line2 not defined?  Occasionally, but I'm not sure why.
-		# its not really a problem because the screensaver will simply go the next topic, but this code prevents any message from appearing.
+		assert($line2);
+		# line2 should always be set, but just in case...
 		if (!$line2) {
-			$line2 = '';
+			$line2 = $line1;
 		}
 		if ($client->linesPerScreen() != 1) {
 			$wait_time = length($line2) * $screensaver_sec_per_letter;
@@ -625,7 +637,7 @@ sub lines {
 
 	# the current RSS feed
 	my $display_current = $client->param('PLUGIN.RssNews.display_current');
-	assert($display_current, 'current rss feed not set\n');
+	assert($display_current, "current rss feed not set\n");
 
 	# the current item within each feed.
 	my $display_current_items = $client->param('PLUGIN.RssNews.display_current_items');
@@ -686,6 +698,10 @@ sub lines {
 				if (length($line2) + length($text) > $screensaver_chars_per_feed) {
 					$char_limit_exceeded = 1;
 					$::d_plugins && msg("RssNews screensaver character limit exceeded.  Displaying fewer than $screensaver_items_per_feed items.\n");
+					# handle case of single item being too long
+					if (!$line2) {
+						$line2 = $text; # will be truncated below
+					}
 				} else {
 					$line2 .= $text;
 					$i++;
