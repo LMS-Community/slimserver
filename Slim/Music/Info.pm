@@ -349,9 +349,16 @@ sub updateCacheEntry {
 sub setContentType {
 	my $url = shift;
 	my $type = shift;
-	
+
+	if ($type =~ /(.*);(.*)/) {
+		# content type has ";" followed by encoding
+		$::d_info && Slim::Utils::Misc::msg("Info: truncating content type.  Was: $type, now: $1\n");
+		# TODO: remember encoding as it could be useful later
+		$type = $1; # truncate at ";"
+	}
+
 	$type = lc($type);
-	
+
 	if ($types{$type}) {
 		# we got it
 	} elsif ($mimeTypes{$type}) {

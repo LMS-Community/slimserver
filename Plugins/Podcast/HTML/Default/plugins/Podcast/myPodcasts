@@ -1,0 +1,91 @@
+<rss version="2.0" xmlsns:slim="NotYetDocumented">
+<!-- 
+This is an _experimental_ example of the Slim Markup Language, which is
+a glorified way of saying a slightly modified RSS feed.  Hey, if it
+works for podcasters, it just might work for SlimDevices!
+
+In the current version of Podcast Plugin, editing this file is the
+only way to configure the podcasts you want to play.  We'll come up
+with something more user friendly before long.  In the meantime, edit
+the file below, but be forewarned we may not continue supporting this
+format.  This really is an experiment.
+
+The xmlns:slim extension is just like RSS 2.0, except <slim:link> tags refer to RSS feeds and podcasts, not HTML pages.  That is, the plugin will attempt to follow <slim:link> but not <link> tags.
+-->
+<channel>
+  <title>My Podcasts</title>
+  <link></link>
+  <!--
+  <description>
+	Welcome to the Podcast Browser Plugin.
+	You can configure your choice of podcasts by editing
+	[SERVER_HOME]/Plugins/Podcast/HTML/Default/plugins/Podcast/myPodcasts.
+	Have fun!
+  </description>
+  -->
+
+<!-- what follows is a fairly arbitrary selection of podcasts -->
+
+<item>
+  <title>Amplified</title>
+	    <slim:link>http://feeds.feedburner.com/amplified</slim:link>
+	    <description>
+		</description>
+</item>
+
+
+<item>
+  <title>Vinyl Podcast</title>
+	    <slim:link>http://vinyl.codyhanson.com/wp-rss2.php</slim:link>
+	    <description>
+		</description>
+		<!-- enclosure tag allows user to play the entire podcast -->
+		<enclosure type="audio/podcast" 
+				   url="http://vinyl.codyhanson.com/wp-rss2.php"/>
+</item>
+
+<item>
+  <title>IT Conversations</title>
+	    <slim:link>http://feeds.feedburner.com/ITConversations-EverythingMP3</slim:link>
+	    <description>
+		</description>
+		<enclosure type="audio/podcast"
+				   url="http://feeds.feedburner.com/ITConversations-EverythingMP3"/>
+</item>
+
+<item>
+  <title>weblogs.com 100 Freshest</title>
+	    <slim:link>http://audio.weblogs.com/rss100.xml</slim:link>
+	    <description>
+		</description>
+		<enclosure type="audio/podcast"
+				   url="http://audio.weblogs.com/rss100.xml"/>
+</item>
+
+<item>
+  <title>Public Radio Exchange</title>
+	    <slim:link>http://about.prx.org/podcast.xml</slim:link>
+	    <description>
+		</description>
+</item>
+<item>
+  <!-- here's an example linking to another local page... -->
+  <title>KCRW Podcasts</title>
+  <slim:link>http://localhost:9000/plugins/Podcast/myPodcasts2</slim:link>
+  <description>
+  </description>
+</item>
+
+
+<!--
+<item>
+  <title></title>
+	    <slim:link></slim:link>
+	    <description>
+		</description>
+		<enclosure type="audio/podcast"
+		  url=""/>
+</item>
+-->
+</channel>
+</rss>

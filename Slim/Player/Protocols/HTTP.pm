@@ -256,8 +256,10 @@ sub request {
 		if ($header =~ /^Content-Type:\s*(.*)$CRLF$/i) {
 			my $contentType = $1;
 			
-			if ($contentType =~ /text/i) {
-				# webservers often lie about playlists.  This will make it guess from the suffix. 
+			if (($contentType =~ /text/i) &&
+				!($contentType =~ /text\/xml/i)) {
+				# webservers often lie about playlists.  This will
+				# make it guess from the suffix.  (unless text/xml)
 				$contentType = '';
 			}
 			

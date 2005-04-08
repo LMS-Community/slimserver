@@ -1,0 +1,178 @@
+<rss version="2.0" xmlsns:slim="NotYetDocumented">
+
+  <channel>
+	<title>KCRW Podcasts</title>
+	<slim:link>http://www.kcrw.org/podcast/</slim:link>
+	<description>A list of podcasts from KCRW's website</description>
+	<ttl>0</ttl>
+
+	<item>
+	  <title>The Road Less Traveled</title>
+	  <slim:link>http://kcrw.com/podcast/show/rl</slim:link>
+	  <description>
+	  </description>
+	</item>
+	
+	<item>
+	  <title>le Show</title>
+	  <slim:link>http://kcrw.com/podcast/show/ls</slim:link>
+	  <description>
+	  </description>
+	</item>
+
+<item>
+  <title>Left, Right &amp; Center</title>
+  <slim:link>http://kcrw.com/podcast/show/lr</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>The Politics of Culture</title>
+  <slim:link>http://kcrw.com/podcast/show/pc</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>Bookworm</title>
+  <slim:link>http://kcrw.com/podcast/show/bw</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>The Treatment</title>
+  <slim:link>http://kcrw.com/podcast/show/tt</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>Good Food</title>
+  <slim:link>http://kcrw.com/podcast/show/gf</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>To the Point</title>
+  <slim:link>http://kcrw.com/podcast/show/tp</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>Which Way, LA?</title>
+  <slim:link>http://kcrw.com/podcast/show/ww</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>DnA: Design &amp; Architecture</title>
+  <slim:link>http://kcrw.com/podcast/show/de</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>The Business</title>
+  <slim:link>http://kcrw.com/podcast/show/tb</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>Final Curtain</title>
+  <slim:link>http://kcrw.com/podcast/show/fc</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>The Road Less Traveled</title>
+  <slim:link>http://kcrw.com/podcast/show/rl</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>The Urban Man</title>
+  <slim:link>http://kcrw.com/podcast/show/ur</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>Art Talk</title>
+  <slim:link>http://kcrw.com/podcast/show/at</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>Martini Shot</title>
+  <slim:link>http://kcrw.com/podcast/show/ma</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>Theatre Talk</title>
+  <slim:link>http://kcrw.com/podcast/show/th</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>Film Reviews</title>
+  <slim:link>http://kcrw.com/podcast/show/fr</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>The Score</title>
+  <slim:link>http://kcrw.com/podcast/show/ts</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>On the Beat</title>
+  <slim:link>http://kcrw.com/podcast/show/ob</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>Overbooked</title>
+  <slim:link>http://kcrw.com/podcast/show/ov</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>Back Channels</title>
+  <slim:link>http://kcrw.com/podcast/show/bc</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>A Second Opinion</title>
+  <slim:link>http://kcrw.com/podcast/show/so</slim:link>
+  <description>
+  </description>
+</item>
+
+<item>
+  <title>Music Exchange</title>
+  <slim:link>http://kcrw.com/podcast/show/mu</slim:link>
+  <description>
+  </description>
+</item>
+
+</channel>
+</rss>
