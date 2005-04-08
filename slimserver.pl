@@ -1031,7 +1031,7 @@ sub checkVersion {
 	}
 
 	my $lastTime = Slim::Utils::Prefs::get('checkVersionLastTime');
-	$lastTime = undef; # temporary, for fix
+
 	if ($lastTime) {
 		my $delta = Time::HiRes::time() - $lastTime;
 		if (($delta > 0) && ($delta < Slim::Utils::Prefs::get('checkVersionInterval'))) {
@@ -1040,7 +1040,7 @@ sub checkVersion {
 			return;
 		}
 	}
-			
+
 	$::d_time && msg("checking version now.\n");
 	my $url  = "http://update.slimdevices.com/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
 
@@ -1057,7 +1057,8 @@ sub checkVersionCB {
 	my $http = shift;
 	# store result in global variable, to be displayed by browser
 	$::newVersion = $http->content();
-	msg("CheckVersionCB: " . $http->content() . "\n"); # temp
+	chomp($::newVersion);
+	# msg("CheckVersionCB: '" . $::newVersion . "'\n"); # temp
 }
 
 # called only if check version request fails
