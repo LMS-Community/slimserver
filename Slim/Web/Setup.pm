@@ -1268,12 +1268,7 @@ sub initSetupConfig {
 				my ($client,$paramref,$pageref) = @_;
 				my $i = 0;
 				my %plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
-
-				Slim::Buttons::Plugins::addSetupGroups();
-				Slim::Buttons::Plugins::addWebPages();
-				Slim::Buttons::Plugins::addMenus();
-				Slim::Buttons::Plugins::addScreensavers();
-
+				
 				Slim::Utils::Prefs::delete('disabledplugins');
 
 				my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
@@ -1315,11 +1310,19 @@ sub initSetupConfig {
 				for my $group (Slim::Utils::Prefs::getArray('disabledplugins')) {
 					
 					delGroup('plugins',$group,1);
+					delGroup('player_plugins',$group,1);
 					
 					if (exists &{"Plugins::" . $group . "::disablePlugin"}) {
 						&{"Plugins::" . $group . "::disablePlugin"};
 					}
 				}
+				
+				# call addSetupGroups last, since it sets a flag to say we're done refreshing plugins.
+				Slim::Buttons::Plugins::read_plugins();
+				#Slim::Buttons::Plugins::addWebPages();
+				#Slim::Buttons::Plugins::addMenus();
+				#Slim::Buttons::Plugins::addScreensavers();
+
 			}
 		,'GroupOrder' => ['Default']
 		# if more than one ir map exists the undef will be replaced by 'Default'

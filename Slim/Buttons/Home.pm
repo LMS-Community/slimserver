@@ -142,8 +142,8 @@ sub init {
 sub addSubMenu {
 	my ($menu,$submenuname,$submenuref) = @_;
 
-	unless (exists $home{$menu}) {
-		# warn "menu $menu does not exist\n";
+	if (!exists $home{$menu} && defined $submenuref) {
+		$::d_plugins && Slim::Utils::Misc::msg("$menu does not exist. creating...\n");
 		addMenuOption($menu);
 	}
 
@@ -152,29 +152,53 @@ sub addSubMenu {
 		return;
 	}
 
-	unless (defined $submenuname && defined $submenuref) {
-		warn "No submenu information supplied!\n";
-		return;
-	}
+	if (!defined $submenuref) {
+		
+		#return unless (defined $submenuname);
+		
+		if (exists $home{$menu}{'submenus'}{$submenuname}) {
+			$::d_plugins && Slim::Utils::Misc::msg("Deleting $submenuname from menu: $menu\n");
+			
+			delete $home{$menu}{'submenus'}{$submenuname};
+			
+			if (not keys %{$home{$menu}{'submenus'}}) {
+				delete $home{$menu}{'submenus'};
+				delete $home{$menu};
+				$::d_plugins && Slim::Utils::Misc::msg("Deleting empty $menu submenu\n");
+				delSubMenu("PLUGINS",$menu);
+			}
+			
+		}
+	} else {
 
-	$home{$menu}{'submenus'}{$submenuname} = $submenuref;
+		$home{$menu}{'submenus'}{$submenuname} = $submenuref;
+	}
+	
 	return;
 }
 
 # Deletes a subMenu from a menuOption
 sub delSubMenu {
 	my ($menu,$submenuname) = @_;
+	
+	#$::d_plugins && Slim::Utils::Misc::msg("deleting $submenuname from $menu\n");
+	
 	unless (exists $home{$menu}{'submenus'}) {
 		return;
 	}
 	unless (defined $submenuname) {
 		warn "No submenu information supplied!\n";
+		Slim::Utils::Misc::bt();
 		return;
 	}
 	if (exists $home{$menu}{'submenus'}{$submenuname}) {
 			delete $home{$menu}{'submenus'}{$submenuname};
-			if (!scalar keys %{$home{$menu}{'submenus'}}) {delete $home{$menu};}
+			if (not keys %{$home{$menu}{'submenus'}}) {
+				delete $home{$menu}{'submenus'};
+				delSubMenu("PLUGINS",$menu);
+			}
 	}
+
 	return;
 }
 
@@ -459,7 +483,8 @@ sub unusedMenuOptions {
 
 	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
 	for my $plugin (values %{$pluginsRef}) {
-		delete $menuChoices{$plugin};
+		next unless defined $plugin;
+		delete $menuChoices{$plugin} if defined $menuChoices{$plugin};
 	}
 
 	for my $usedOption (@{$homeChoices{$client}}) {

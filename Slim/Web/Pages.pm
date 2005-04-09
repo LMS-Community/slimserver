@@ -520,7 +520,7 @@ sub home {
 }
 
 sub addLinks {
-	my ($category, $links,$noquery) = @_;
+	my ($category, $links, $noquery) = @_;
 
 	return if (ref($links) ne 'HASH');
 
@@ -531,6 +531,10 @@ sub addLinks {
 		} else {
 			delete($additionalLinks{$category}->{$title});
 		}
+	}
+
+	if (not keys %{$additionalLinks{$category}}) {
+		delete($additionalLinks{$category});
 	}
 }
 
