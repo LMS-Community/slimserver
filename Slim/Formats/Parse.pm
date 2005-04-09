@@ -336,7 +336,6 @@ sub parseCUE {
 		my $ds = Slim::Music::Info::getCurrentDataStore();
 		my $track = $ds->updateOrCreate({
 			'url'        => $filename,
-#			'attributes' => {},
 			'readTags'   => 1,
 		});
 
@@ -464,7 +463,6 @@ sub readCUE {
 		'readTags'   => 1,
 	});
 
-
 	# Remove entries from other sources. This cuesheet takes precedence.
 	if ((defined $previousContentType) && ($previousContentType ne 'cur')) {
 		my $find = {'url', $tracks->{$sometrack}->{'FILENAME'} . "#*" };
@@ -492,9 +490,11 @@ sub readCUE {
 			next if $attribute eq 'id';
 			next if $attribute eq 'url';
 			next if $attribute =~ /^_/;
-			next unless $basetrack->{$attribute};
-			$track->{$attribute} = $basetrack->{$attribute} unless exists $track->{uc $attribute};
+			next unless exists $basetrack->{$attribute};
+			$track->{uc $attribute} = $basetrack->{$attribute} unless exists $track->{uc $attribute};
 		}
+
+		processAnchor($track);
 
 		# Do the actual data store
 		# Skip readTags since we'd just be reading the same file over and over
@@ -509,6 +509,37 @@ sub readCUE {
 	$::d_parse && Slim::Utils::Misc::msg("    returning: " . scalar(@items) . " items\n");	
 
 	return @items;
+}
+
+sub processAnchor {
+	my $attributesHash = shift;
+
+	my ($start, $end) = Slim::Music::Info::isFragment($attributesHash->{'URI'});
+
+	# rewrite the size, offset and duration if it's just a fragment
+	# This is mostly (always?) for cue sheets.
+	unless (defined $start && $end && $attributesHash->{'SECS'}) {
+		$::d_parse && Slim::Utils::Misc::msg("parse: Couldn't process anchored file fragment for " . $attributesHash->{'URI'} . "\n");
+		return 0;
+	}
+
+	my $duration = $end - $start;
+	my $byterate = $attributesHash->{'SIZE'} / $attributesHash->{'SECS'};
+	my $header = $attributesHash->{'OFFSET'} || 0;
+	my $startbytes = int($byterate * $start);
+	my $endbytes = int($byterate * $end);
+			
+	$startbytes -= $startbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
+	$endbytes -= $endbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
+			
+	$attributesHash->{'OFFSET'} = $header + $startbytes;
+	$attributesHash->{'SIZE'} = $endbytes - $startbytes;
+	$attributesHash->{'SECS'} = $duration;
+
+	if ($::d_parse) {
+		Slim::Utils::Misc::msg("parse: calculating duration for anchor: $duration\n");
+		Slim::Utils::Misc::msg("parse: calculating header $header, startbytes $startbytes and endbytes $endbytes\n");
+	}		
 }
 
 sub writePLS {

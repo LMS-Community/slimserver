@@ -888,30 +888,31 @@ sub readTags {
 			}
 		}
 
-		# rewrite the size, offset and duration if it's just a fragment
-		# This is mostly (always?) for cue sheets.
-		if ($anchor && $anchor =~ /([\d\.]+)-([\d\.]+)/ && $attributesHash->{'SECS'}) {
-			my $start = $1;
-			my $end = $2;
-			
-			my $duration = $end - $start;
-			my $byterate = $attributesHash->{'SIZE'} / $attributesHash->{'SECS'};
-			my $header = $attributesHash->{'OFFSET'};
-			my $startbytes = int($byterate * $start);
-			my $endbytes = int($byterate * $end);
-			
-			$startbytes -= $startbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
-			$endbytes -= $endbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
-			
-			$attributesHash->{'OFFSET'} = $header + $startbytes;
-			$attributesHash->{'SIZE'} = $endbytes - $startbytes;
-			$attributesHash->{'SECS'} = $duration;
-
-			if ($::d_info) {
-				Slim::Utils::Misc::msg("readTags: calculating duration for anchor: $duration\n");
-				Slim::Utils::Misc::msg("readTags: calculating header $header, startbytes $startbytes and endbytes $endbytes\n");
-			}
-		}
+#       moved this out to Slim::Formats::Parse::processAnchor()
+#		# rewrite the size, offset and duration if it's just a fragment
+#		# This is mostly (always?) for cue sheets.
+#		if ($anchor && $anchor =~ /([\d\.]+)-([\d\.]+)/ && $attributesHash->{'SECS'}) {
+#			my $start = $1;
+#			my $end = $2;
+#			
+#			my $duration = $end - $start;
+#			my $byterate = $attributesHash->{'SIZE'} / $attributesHash->{'SECS'};
+#			my $header = $attributesHash->{'OFFSET'};
+#			my $startbytes = int($byterate * $start);
+#			my $endbytes = int($byterate * $end);
+#			
+#			$startbytes -= $startbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
+#			$endbytes -= $endbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
+#			
+#			$attributesHash->{'OFFSET'} = $header + $startbytes;
+#			$attributesHash->{'SIZE'} = $endbytes - $startbytes;
+#			$attributesHash->{'SECS'} = $duration;
+#
+#			if ($::d_info) {
+#				Slim::Utils::Misc::msg("readTags: calculating duration for anchor: $duration\n");
+#				Slim::Utils::Misc::msg("readTags: calculating header $header, startbytes $startbytes and endbytes $endbytes\n");
+#			}
+#		}
 	}
 
 	# Last resort

@@ -51,6 +51,7 @@ sub getTag {
 		return {};
 	};
 
+	my $tags = getStandardTag($file, $flac);
 	my $cuesheet = $flac->cuesheet();
 
 	# if there's no embedded cuesheet, then we're either a single song
@@ -60,7 +61,7 @@ sub getTag {
 
 		# no embedded cuesheet.
 		# this is either a single song, or has an external cuesheet
-		return getStandardTag($file, $flac);
+		return $tags;
 	}
 
 	# if we do have an embedded cuesheet, we need to parse the metadata
@@ -69,7 +70,6 @@ sub getTag {
 	# cue parsing will return file url references with start/end anchors
 	# we can now pretend that this (bare no-anchor) file is a playlist
 
-	my $tags = getStandardTag($file, $flac);
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
 	if (!defined $ds) {
@@ -107,6 +107,9 @@ sub getTag {
 		my $track = $tracks->{$key};
 
 		next unless exists $track->{'URI'};
+
+		Slim::Formats::Parse::processAnchor($track);
+
 		$ds->updateOrCreate({
 			'url'        => $track->{'URI'},
 			'attributes' => $track,
