@@ -35,7 +35,7 @@ our %playlistInfo = (
 sub registerParser {
 	my ($type, $readfunc, $writefunc, $suffix) = @_;
 
-	$::d_parse && Slim::Utils::Misc::msg("Resistering external parser for type $type\n");
+	$::d_parse && Slim::Utils::Misc::msg("Registering external parser for type $type\n");
 
 	$playlistInfo{$type} = [$readfunc, $writefunc, $suffix];
 }
@@ -280,7 +280,7 @@ sub parseCUE {
 			$album = $1;
 
 		} elsif (/^PERFORMER\s+\"(.*)\"/i) {
-			$artist->{'ARTIST'} = $1;
+			$artist = $1;
 
 		} elsif (/^(?:REM\s+)?YEAR\s+\"(.*)\"/i) {
 			$year = $1;
@@ -414,7 +414,6 @@ sub parseCUE {
 	}
 
 	return $tracks;
-
 }
 
 sub readCUE {
