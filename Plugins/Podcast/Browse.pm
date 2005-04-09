@@ -5,14 +5,8 @@
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-package Plugins::Podcast::Plugin;
+package Plugins::Podcast::Browse;
 use strict;
-
-# For now, browsing starts from a file served up by our own server.
-# this is likely to change and become more like the Picks plugin, or
-# choose from a configurable list, like the Rss News plugin
-# So caveat emptor, this behavior will change.
-our $default_feed = 'http://localhost:9000/plugins/Podcast/myPodcasts';
 
 # When to expire feeds from cache, in seconds.
 our $default_cache_expiration = 60 * 60;
@@ -28,14 +22,8 @@ use Plugins::Podcast::Parse;
 our %browseCache = (); # remember where each client is browsing
 our $feedCache = Plugins::Podcast::Cache->new();
 
-sub getDisplayName {
-	return 'PLUGIN_PODCAST';
-}
-
 sub initPlugin {
-	$::d_plugins && msg("Podcast Plugin initializing.\n");
-
-	Slim::Buttons::Common::addMode('PLUGIN.Podcast', getFunctions(),
+	Slim::Buttons::Common::addMode('PLUGIN.Browse', getFunctions(),
 								   \&setMode);
 }
 
@@ -47,36 +35,34 @@ sub setMode {
 	my $client = shift;
 	my $method = shift;
 
-	$::d_plugins && msg("Podcast: setMode $method\n");
+	$::d_plugins && msg("Browser: setMode $method\n");
 	if ($method eq 'pop') {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
 
-	my $url = $client->param('url') || $default_feed;
+	my $url = $client->param('url');
 
-	getFeedAsync($client, $url);
+	# if no url, error
+	if (!$url) {
+		my @lines = (
+			# TODO: l10n
+			"Podcast Browse Mode requires url param",
+		);
+		#TODO: display the error on the client
+		my %params = (
+			header => "{PODCAST_ERROR} {count}",
+			listRef => \@lines,
+		);
+		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
+	} else {
 
-	# we're done.  gotFeed callback will finish setting up mode.
+		getFeedAsync($client, $url);
+
+		# we're done.  gotFeed callback will finish setting up mode.
+	}
 }
 
-sub webPages {
-	my %pages = (
-		myPodcasts => sub {webPage('myPodcasts', @_)},
-		myPodcasts2 => sub {webPage('myPodcasts2', @_)},
-	);
-	return \%pages;
-}
-
-sub webPage {
-	my $page = shift;
-	my $client = shift;
-	my $params = shift;
-
-	# TODO: set content type to XML
-	return Slim::Web::HTTP::filltemplatefile("plugins/Podcast/$page",
-											 $params);
-}
 
 
 sub getFeedAsync {
@@ -177,11 +163,6 @@ sub gotFeed {
 				displayItemLink($client, $item);
 			}
 		},
-# 		onRightHold => sub {
-# 			my $client = shift;
-# 			my $item = shift;
-# 			displayItemLink($client, $item);
-# 		},
 		onPlay => sub {
 			my $client = shift;
 			my $item = shift;
@@ -333,19 +314,6 @@ sub displayItemDescription {
 			my $item = $client->param('item');
 			playItem($client, $item, 'add');
 		},
-# 		overlayRef => sub {
-# 			my $client = shift;
-# 			my $item = $client->param('item');
-
-# 			my $overlay;
-# 			if (hasAudio($item)) {
-# 				$overlay .= Slim::Display::Display::symbol('notesymbol');
-# 			}
-# 			if (hasLink($item)) {
-# 				$overlay .= Slim::Display::Display::symbol('rightarrow');
-# 			}
-# 			return [ undef, $overlay ];
-# 		},
 	);
 
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
@@ -449,7 +417,7 @@ sub displayItemLink {
 		url => $url,
 		title => $item->{'title'},
 	);
-	Slim::Buttons::Common::pushModeLeft($client, 'PLUGIN.Podcast', \%params);
+	Slim::Buttons::Common::pushModeLeft($client, 'PLUGIN.Browse', \%params);
 }
 
 sub playItem {
@@ -528,8 +496,8 @@ sub gotViaHTTP {
 	}
 
 	# verbose debug
-	use Data::Dumper;
-	print Dumper($xml);
+	#use Data::Dumper;
+	#print Dumper($xml);
 
 	# convert XML into data structure
 	my $feed = feedFromXML($xml);
@@ -650,44 +618,5 @@ sub unescapeAndTrim {
 }
 
 
-sub strings { return q!
-PLUGIN_PODCAST
-	EN	Podcast Browser
-
-PODCAST_ERROR
-	EN	Error
-
-PODCAST_GET_FAILED
-	EN	Failed to parse
-
-PODCAST_LOADING
-	EN	Fetching...
-
-PODCAST_LINK
-	EN	Link
-
-PODCAST_URL
-	EN	Url
-
-PODCAST_DATE
-	EN	Date
-
-PODCAST_EDITOR
-	EN	Editor
-
-PODCAST_ENCLOSURE
-	EN	Enclosure
-
-PODCAST_AUDIO_ENCLOSURES
-	EN	Audio Enclosures
-
-PODCAST_NOTHING_TO_PLAY
-	EN	Nothing to play
-
-PODCAST_FEED_DESCRIPTION
-	EN	About this podcast
-
-
-!};
 
 1;
