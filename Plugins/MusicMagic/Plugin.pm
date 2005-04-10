@@ -103,8 +103,9 @@ sub disablePlugin {
 	Slim::Web::Setup::delCategory('musicmagic');
 	Slim::Web::Setup::delGroup('server','musicmagic',1);
 	
-	# set importer to not use
-	Slim::Utils::Prefs::set('musicmagic', 0);
+	# set importer to not use, but only for this session.
+	# leave server pref as is to support reenabling the features, 
+	# without needing a forced rescan
 	Slim::Music::Import::useImporter('MUSICMAGIC',0);
 }
 
