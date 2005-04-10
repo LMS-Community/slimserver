@@ -326,7 +326,7 @@ sub parseCUE {
 	}
 
 	# calc song ending times from start of next song from end to beginning.
-	my $lastpos = $tracks->{$currtrack}->{'END'} if (defined $tracks->{$currtrack}->{'END'});
+	my $lastpos = $tracks->{$currtrack}->{'END'};
 
 	# If we can't get $lastpos from the cuesheet, try and read it from the original file.
 	if (!$lastpos) {
@@ -449,28 +449,24 @@ sub readCUE {
 	# for now we only support one FILE statement in the cuesheet
 	my ($sometrack) = (keys %$tracks);
 
-	my $previousContentType = Slim::Music::Info::info($tracks->{$sometrack}->{'FILENAME'}, 'ct');
-
 	# We may or may not have run updateOrCreate on the base filename
 	# during parseCUE, depending on the cuesheet contents.
 	# Run it here just to be sure.
 	# Set the content type on the base file to hide it from listings.
 	# Grab data from the base file to pass on to our individual tracks.
 	my $basetrack = $ds->updateOrCreate({
-	    'url'        => $tracks->{$sometrack}->{'FILENAME'},
+		'url'        => $tracks->{$sometrack}->{'FILENAME'},
 		'attributes' => { 'CT' => 'cur' },
 		'readTags'   => 1,
 	});
 
 	# Remove entries from other sources. This cuesheet takes precedence.
-	if ((defined $previousContentType) && ($previousContentType ne 'cur')) {
-		my $find = {'url', $tracks->{$sometrack}->{'FILENAME'} . "#*" };
+	my $find = {'url', $tracks->{$sometrack}->{'FILENAME'} . "#*" };
 
-		my @oldtracks = $ds->find('url', $find);
-		for my $oldtrack (@oldtracks) {
-			$::d_parse && Slim::Utils::Misc::msg("Deleting previous entry for $oldtrack\n");
-			$ds->delete($oldtrack);
-		}
+	my @oldtracks = $ds->find('url', $find);
+	for my $oldtrack (@oldtracks) {
+		$::d_parse && Slim::Utils::Misc::msg("Deleting previous entry for $oldtrack\n");
+		$ds->delete($oldtrack);
 	}
 
 	# Process through the individual tracks
