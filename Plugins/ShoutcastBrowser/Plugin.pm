@@ -137,7 +137,7 @@ my (@info_order, @info_index);
 my %custom_genres;
 
 # keep track of client status
-# TODO mh: put these back to "my"!
+# TODO mh: put these back to "my" ("our" only for debugging)!
 my (%status, %stream_data, %genres_data);
 
 
@@ -163,19 +163,43 @@ sub getDisplayName {
 }
 
 sub getAllName {
-	return string('PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS');
+	my $client = shift;
+	if (defined $client) {
+		return $client->string('PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS');
+	}
+	else {
+		return string('PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS');
+	}
 }
 
 sub getRecentName {
-	return string('PLUGIN_SHOUTCASTBROWSER_RECENT');
+	my $client = shift;
+	if (defined $client) {
+		return $client->string('PLUGIN_SHOUTCASTBROWSER_RECENT');
+	}
+	else {
+		return string('PLUGIN_SHOUTCASTBROWSER_RECENT');
+	}
 }
 
 sub getMostPopularName {
-	return string('PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR');
+	my $client = shift;
+	if (defined $client) {
+		return $client->string('PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR');
+	}
+	else {
+		return string('PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR');
+	}
 }
 
 sub getMiscName {
-	return string('PLUGIN_SHOUTCASTBROWSER_MISC');
+	my $client = shift;
+	if (defined $client) {
+		return $client->string('PLUGIN_SHOUTCASTBROWSER_MISC');
+	}
+	else {
+		return string('PLUGIN_SHOUTCASTBROWSER_MISC');
+	}
 }
 
 sub setup_custom_genres {
@@ -233,21 +257,16 @@ sub setMode {
 	$client->lines(\&lines);
 	$status{$client}{status} = 0;
 	$status{$client}{number} = undef;
+	$client->update();
 	
 	@info_order = ($client->string('BITRATE'), $client->string('PLUGIN_SHOUTCASTBROWSER_STREAM_NAME'), $client->string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS'), $client->string('GENRE'), $client->string('PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING'), $client->string('URL') );
 	@info_index = (                    2,                                         -1,                                                          1,                                               4,                                         3,                                   0);
-	
-	$client->update();
-	
-	my $recent_dir;
-	if (Slim::Utils::Prefs::get('playlistdir')) {
-		$recent_dir = catdir(Slim::Utils::Prefs::get('playlistdir'), RECENT_DIRNAME);
-		mkdir $recent_dir unless (-d $recent_dir);
+
+	if (not loadStreamList()) {
+		$status{$client}{number} = undef;
+		$client->showBriefly($client->string('PLUGIN_SHOUTCASTBROWSER_MODULE_NAME'), $client->string('PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR'));
+		Slim::Buttons::Common::popModeRight($client);
 	}
-	
-	$status{$client}{recent_filename} = catfile($recent_dir,$client->name() . '.m3u') if defined $recent_dir;
-	
-	loadStreamList();
 	
 	$status{$client}{status} = 1;
 	$client->update();
@@ -257,10 +276,10 @@ sub loadStreamList {
 	my $client = shift;
 	
 	# only reload every hour
-	return if (%stream_data and (time() <= $last_time + 3600));
+	return 1 if (%stream_data and (time() <= $last_time + 3600));
 
 	eval { require Compress::Zlib };
-	my	$have_zlib = 1 unless $@;
+	my $have_zlib = 1 unless $@;
 
 	%stream_data = ();
 	if (defined $client) {
@@ -275,9 +294,11 @@ sub loadStreamList {
 	$u .= '&limit=' . Slim::Utils::Prefs::get('plugin_shoutcastbrowser_how_many_streams') if Slim::Utils::Prefs::get('plugin_shoutcastbrowser_how_many_streams');
 
 	my $http = Slim::Player::Source::openRemoteStream($u) || do {
-		$status{$client}{status} = -1;
-		$client->update() if (defined $client);
-		return;
+		if (defined $client) {
+			$status{$client}{status} = -1;
+			$client->update();
+		}
+		return 0;
 	};
 
 	my $xml  = $http->content();
@@ -292,9 +313,11 @@ sub loadStreamList {
 	my $munge_genres = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_munge_genre');
 	
 	unless ($xml) {
-		$status{$client}{status} = -1;
-		$client->update() if (defined $client);
-		return;
+		if (defined $client) {
+			$status{$client}{status} = -1;
+			$client->update();
+		}
+		return 0;
 	}
 	
 	if ($have_zlib) {
@@ -424,6 +447,8 @@ sub loadStreamList {
 	$genres_data{top} = [ sort $popular_sort keys %{ $stream_data{getAllName()} } ];
 	splice @{$genres_data{top}}, Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_popular');
 	$stream_data{getMostPopularName()} = $stream_data{getAllName()};
+	
+	1;
 }
 
 sub cleanMe {
@@ -767,7 +792,7 @@ my $mode_sub = sub {
 	$client->update();
 
 	if (getCurrentGenre($client) eq getRecentName()) {
-		$status{$client}{streams} = get_recent_streams($client);
+		$status{$client}{streams} = readRecentStreamList($client) || [ $client->string('PLUGIN_SHOUTCASTBROWSER_NONE') ];
 	} elsif (getCurrentGenre($client) eq getMostPopularName()) {
 		$status{$client}{streams} = $genres_data{top};
 	} else {
@@ -886,42 +911,29 @@ my %StreamsFunctions = (
 	
 	'play' => sub {
 		my $client = shift;
-	
-		Slim::Control::Command::execute($client, ['playlist', 'clear']);
-	
 		if (getCurrentGenre($client) eq getRecentName()) {
-			my $playlist_url = $status{$client}{recent_data}{getCurrentStreamName($client)};
-			
-			Slim::Control::Command::execute($client, ['playlist', 'add', $playlist_url]);
-			add_recent_stream($client, getCurrentStreamName($client), undef);
-			$status{$client}{stream} = 0;
+			playRecentStream($client, $status{$client}{recent_data}{getCurrentStreamName($client)}, getCurrentStreamName($client), 'play');
 		}
-		
-		# Add all bitrates to current playlist, but only the first
-		# one to the recently played list
-		my $first = 1;
-		
-		for my $b (sort bitrate_sort keys %{ $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)} }) {
-			my $current_data = $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{$b};
-			my $playlist_url = $current_data->[0];
+		else {
+			# Add all bitrates to current playlist, but only the first one to the recently played list
+			my @bitrates = sort bitrate_sort keys %{ $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)} };
+			playStream($client, getCurrentGenre($client), getCurrentStreamName($client), shift @bitrates, 'play');
 			
-			Slim::Control::Command::execute($client, ['playlist', 'add', $playlist_url]);
-			
-			if ($first) {
-				add_recent_stream($client, getCurrentStreamName($client), $b, $current_data);
+			for my $b (@bitrates) {
+				playStream($client, getCurrentGenre($client), getCurrentStreamName($client), $b, 'add', 0);
 			}
-			
-			$first = 0;
 		}
-		
-		Slim::Control::Command::execute($client, ['play']);
 	},
 	
 	'add' => sub {
 		my $client = shift;
-	
-		for my $b (sort bitrate_sort keys %{ $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)} }) {
-			Slim::Control::Command::execute($client, ['playlist', 'add', $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{$b}->[0]]);
+		if (getCurrentGenre($client) eq getRecentName()) {
+			playRecentStream($client, $status{$client}{recent_data}{getCurrentStreamName($client)}, getCurrentStreamName($client), 'add');
+		}
+		else {
+			for my $b (sort bitrate_sort keys %{ $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)} }) {
+				playStream($client, getCurrentGenre($client), getCurrentStreamName($client), $b, 'add');
+			}
 		}
 	},
 	
@@ -1030,17 +1042,12 @@ my %BitrateFunctions = (
 	
 	'play' => sub {
 		my $client = shift;
-		my $current_data = $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{getCurrentBitrate($client)};
-		
-		Slim::Control::Command::execute($client, ['playlist', 'load', $current_data->[0]]);
-		add_recent_stream($client, getCurrentStreamName($client), getCurrentBitrate($client), $current_data);
+		playStream($client, getCurrentGenre($client), getCurrentStreamName($client), getCurrentBitrate($client), 'play');
 	},
 	
 	'add' => sub {
 		my $client = shift;
-		my $current_data = $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{getCurrentBitrate($client)};
-	
-		Slim::Control::Command::execute($client, ['playlist', 'add', $current_data->[0]]);
+		playStream($client, getCurrentGenre($client), getCurrentStreamName($client), getCurrentBitrate($client), 'add');
 	},
 	
 	'jump_rew' => sub {
@@ -1126,15 +1133,12 @@ my %InfoFunctions = (
 	
 	'play' => sub {
 		my $client = shift;
-		my $current_data = $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{getCurrentBitrate($client)};
-		Slim::Control::Command::execute($client, ['playlist', 'load', $current_data->[0]]);
-		add_recent_stream($client, getCurrentStreamName($client), getCurrentBitrate($client), $current_data);
+		playStream($client, getCurrentGenre($client), getCurrentStreamName($client), getCurrentBitrate($client), 'play');
 	},
 	
 	'add' => sub {
 		my $client = shift;
-		my $current_data = $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{getCurrentBitrate($client)};
-		Slim::Control::Command::execute($client, ['playlist', 'add', $current_data->[0]]);
+		playStream($client, getCurrentGenre($client), getCurrentStreamName($client), getCurrentBitrate($client), 'add');
 	},
 	
 	'jump_rew' => sub {
@@ -1149,13 +1153,48 @@ my %InfoFunctions = (
 	},
 );
 
+sub playStream {
+	my ($client, $currentGenre, $currentStream, $currentBitrate, $method, $addToRecent) = @_;
+	my $current_data = $stream_data{$currentGenre}{$currentStream}{$currentBitrate};
+	Slim::Control::Command::execute($client, ['playlist', $method, $current_data->[0], $currentStream]);
+	unless (defined $addToRecent && not $addToRecent) {
+		writeRecentStreamList($client, $currentStream, $currentBitrate, $current_data);
+	}
+}
 
-sub get_recent_streams {
+sub playRecentStream {
+	my ($client, $url, $currentStream, $method) = @_;
+	writeRecentStreamList($client, $currentStream, undef, [ $url ]);
+	if ($currentStream =~ /\d+ \w+?: (.*)/i) {
+		$currentStream = $1;
+	}
+	Slim::Control::Command::execute($client, ['playlist', $method, $url, $currentStream]);
+	$status{$client}{streams} = readRecentStreamList($client) || [ $client->string('PLUGIN_SHOUTCASTBROWSER_NONE') ];
+	$status{$client}{stream} = 0;
+}
+
+sub getRecentFilename {
+	my $client = shift;
+	
+	unless ($status{$client}{recent_filename}) {
+		my $recentDir;
+		if (Slim::Utils::Prefs::get('playlistdir')) {
+			$recentDir = catdir(Slim::Utils::Prefs::get('playlistdir'), RECENT_DIRNAME);
+			mkdir $recentDir unless (-d $recentDir);
+		}
+		$status{$client}{recent_filename} = catfile($recentDir, $client->name() . '.m3u') if defined $recentDir;
+	}
+	
+	return $status{$client}{recent_filename};
+}
+
+sub readRecentStreamList {
 	my $client = shift;
 
 	my @recent = ();
-	open FH, $status{$client}{recent_filename} or do {
-			return [ $client->string('PLUGIN_SHOUTCASTBROWSER_NONE') ];
+	unless (defined $client && open(FH, getRecentFilename($client))) {
+		# if there's no client, we can't display a client specific list...
+		return undef;
 	};
 
 	# Using Slim::Formats::Parse::M3U is unreliable, since it
@@ -1166,27 +1205,17 @@ sub get_recent_streams {
 	# versa.
 	my $title;
 	
-	while(my $entry = <FH>)
-	{
+	while (my $entry = <FH>) {
 		chomp($entry);
-		# strip carriage return from dos playlists
-		$entry =~ s/\cM//g;
+		$entry =~ s/^\s*(\S.*\S)\s*$/$1/sg;
 
-		# strip whitespace from beginning and end
-		$entry =~ s/^\s*//;
-		$entry =~ s/\s*$//;
-
-		if ($entry =~ /^#EXTINF:.*?,(.*)$/)
-		{
+		if ($entry =~ /^#EXTINF:.*?,(.*)$/) {
 			$title = $1;
 		}
 
-		next if $entry =~ /^#/;
-		next if $entry eq "";
-		$entry =~ s|$LF||g;
+		next if ($entry =~ /^#/ || not $entry);
 
-		if (defined($title))
-		{
+		if (defined($title)) {
 			$status{$client}{recent_data}{$title} = $entry;
 			push @recent, $title;
 			$title = undef;
@@ -1197,52 +1226,41 @@ sub get_recent_streams {
 	return [ @recent ];
 }
 
-sub add_recent_stream
-# TODO mh: verify recent_stuff and integrate with web interface
-{
-	my ($client, $new, $bitrate, $data) = @_;
-	my $url = $data->[0];
+sub writeRecentStreamList {
+	my ($client, $streamname, $bitrate, $data) = @_;
 	
-	if (defined $bitrate) {
-		$new = "$bitrate kbps: " . $new;
-	}
-	
-	$status{$client}{recent_data}{$new} = $url;
+	$streamname = "$bitrate kbps: $streamname" if (defined $bitrate);
+	$status{$client}{recent_data}{$streamname} = $data->[0];
 
 	my @recent;
-
-	if (exists $status{client}{recent_data}) {
-		@recent = keys %{ $status{client}{recent_data} };
+	if (exists $status{$client}{recent_data}) {
+		@recent = keys %{ $status{$client}{recent_data} };
 	} else {
-		@recent = @{ get_recent_streams($client) };
+		@recent = @{ readRecentStreamList($client) };
 	}
-	
-	@recent = () if (@recent == 1 and $recent[0] eq $client->string('PLUGIN_SHOUTCASTBROWSER_NONE'));
 
-	my ($i) = grep $recent[$_] eq $new, 0..$#recent;
+	# put current stream at the top of the list if already in the list	
+	my ($i) = grep $recent[$_] eq $streamname, 0..$#recent;
 	
 	if (defined $i) {
 		splice @recent, $i, 1;
-		unshift @recent, $new;
+		unshift @recent, $streamname;
 	} else {
-		unshift @recent, $new;
+		unshift @recent, $streamname;
 		pop @recent if @recent > Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_recent');
 	}
 
-	if (defined $status{$client}{recent_filename})
-	{
-		open FH, ">$status{$client}{recent_filename}" or do {
-			print STDERR "Could not open $status{$client}{recent_filename} for writing.\n";
+	if (defined getRecentFilename($client)) {
+		open(FH, ">" . getRecentFilename($client)) or do {
+#			print STDERR "Could not open " . getRecentFilename($client) . " for writing.\n";
 			return;
 		};
 	
 		print FH "#EXTM3U\n";
-	
 		foreach my $name (@recent) {
 			print FH "#EXTINF:-1,$name\n";
-			print FH $status{$client}{recent_data}{$name}."\n";
+			print FH $status{$client}{recent_data}{$name} . "\n";
 		}
-		
 		close FH;
 	}
 }
@@ -1263,40 +1281,70 @@ sub webPages {
     return (\%pages);
 }
 
-
 sub handleWebIndex {
 	my ($client, $params) = @_;
 
-	loadStreamList($client);
+	if (loadStreamList($client)) {
+		if (defined $params->{'genreID'}) {
+			$params->{'genre'} = @{$genres_data{genres}}[$params->{'genreID'}];
 
-	if ($params->{'genreID'}) {
-		$params->{'genre'} = @{$genres_data{genres}}[$params->{'genreID'}];
-
-		# show stream information
-		if (defined $params->{'action'} && ($params->{'action'} eq 'info')) {
-			my @mystreams = @{ getWebStreamList($client, $params->{'genre'}, $params->{'genreID'} == 1) };
-			$params->{'stream'} = $mystreams[$params->{'streamID'}];
-			$params->{'streaminfo'} = $stream_data{getAllName()}{$params->{'stream'}}{$params->{'bitrate'}};
-		} 
-		# show streams of the wanted genre
+			# play/add stream
+			if (defined $params->{'action'} && ($params->{'action'} =~ /(add|play|insert|delete)/i)) {
+				my $myStream = @{ getWebStreamList($client, $params->{'genre'}) }[$params->{'streamID'}];
+				
+				if ($params->{'genre'} eq getRecentName()) {
+					playRecentStream($client, $status{$client}{recent_data}{$myStream}, $myStream, $params->{'action'});
+				}
+				else {
+					playStream($client, $params->{'genre'}, $myStream, $params->{'bitrate'}, $params->{'action'});
+				}
+			}
+	
+			# show stream information
+			if (defined $params->{'action'} && ($params->{'action'} eq 'info')) {
+				my @mystreams = @{ getWebStreamList($client, $params->{'genre'}) };
+				$params->{'stream'} = $mystreams[$params->{'streamID'}];
+				$params->{'streaminfo'} = $stream_data{getAllName()}{$params->{'stream'}}{$params->{'bitrate'}};
+			} 
+			# show streams of the wanted genre
+			else {
+				$params->{'mystreams'} = getWebStreamList($client, $params->{'genre'});
+				# we don't have any information about recent streams -> fill in some fake values
+				if ($params->{'genre'} eq getRecentName()) {
+					if (defined @{$params->{'mystreams'}}) {
+						foreach (@{$params->{'mystreams'}}) {
+							$params->{'streams'}->{$_}->{'0'} = ();
+						}
+					}
+					else {
+						$params->{'streams'} = 1;
+						$params->{'msg'} = string('PLUGIN_SHOUTCASTBROWSER_NONE');
+					}
+				}
+				else {
+					$params->{'streams'} = \%{ $stream_data{$params->{'genre'}} };
+				}
+			}
+		}
+		# show genre list
 		else {
-			$params->{'streams'} = \%{ $stream_data{$params->{'genre'}} };
-			$params->{'mystreams'} = getWebStreamList($client, $params->{'genre'}, $params->{'genreID'} == 1);
+			$params->{'genres'} = $genres_data{genres};
 		}
 	}
 	else {
-		# don't show "Recent streams" - can be found in playlist folder
-		my $recentName = getRecentName();
-		$params->{'genres'} = [ grep !/$recentName/i, @{$genres_data{genres}}];
+		$params->{'msg'} = string('PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR');
 	}
 
 	return Slim::Web::HTTP::filltemplatefile('plugins/ShoutcastBrowser/index.html', $params);
 }
 
 sub getWebStreamList {
-	my ($client, $genre, $isPopular) = @_;
-	if ($isPopular) {
+	my ($client, $genre) = @_;
+	if ($genre eq getMostPopularName()) {
 		return $genres_data{top};
+	}
+	elsif ($genre eq getRecentName()) {
+		return readRecentStreamList($client);
 	}
 	else {
 		# TODO mh: sort is somehow broken for listeners
@@ -1311,31 +1359,31 @@ sub strings {
 	ES	Radio por Internet SHOUTcast
 
 PLUGIN_SHOUTCASTBROWSER_GENRES
-	EN	SHOUTcast Internet Radio
 	DE	SHOUTcast Musikstile
+	EN	SHOUTcast Internet Radio
 	ES	Radio por Internet SHOUTcast
 
 PLUGIN_SHOUTCASTBROWSER_CONNECTING
-	EN	Connecting to SHOUTcast...
 	DE	Verbinde mit SHOUTcast...
+	EN	Connecting to SHOUTcast...
 	ES	Conectando a SHOUTcast...
 
 PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
-	EN	Error: SHOUTcast web site not available
 	DE	Fehler: SHOUTcast Web-Seite nicht verfügbar
+	EN	Error: SHOUTcast web site not available
 	ES	Error: el sitio web de SHOUTcast no está disponible
 
 PLUGIN_SHOUTCASTBROWSER_SHOUTCAST
 	EN	SHOUTcast
 
 PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS
-	EN	All Streams
 	DE	Alle Streams
+	EN	All Streams
 	ES	Todos los streams
 
 PLUGIN_SHOUTCASTBROWSER_NONE
-	EN	None
 	DE	Keine
+	EN	None
 	ES	Ninguno
 
 PLUGIN_SHOUTCASTBROWSER_BITRATE
@@ -1351,23 +1399,23 @@ PLUGIN_SHOUTCASTBROWSER_RECENT
 	ES	Recientemente escuchado
 
 PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR
-	EN	Most Popular
 	DE	Populäre Streams
+	EN	Most Popular
 	ES	Más Popular
 
 PLUGIN_SHOUTCASTBROWSER_MISC
-	EN	Misc. genres
 	DE	Diverse Stile
+	EN	Misc. genres
 	ES	Géneros misceláneos
 
 PLUGIN_SHOUTCASTBROWSER_TOO_SOON
-	EN	Try again in a minute
 	DE	Versuche es in einer Minute wieder
+	EN	Try again in a minute
 	ES	Volver a intentar en un minuto
 
 PLUGIN_SHOUTCASTBROWSER_SORTING
-	EN	Sorting streams ...
 	DE	Sortiere Streams...
+	EN	Sorting streams ...
 	ES	Ordenando streams...
 
 PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING
@@ -1382,133 +1430,133 @@ SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER
 	ES	Radio por Internet SHOUTcast
 
 SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER_DESC
-	EN	Browse SHOUTcast list of Internet Radio streams.  Hit rewind after changing any settings to reload the list of streams.
 	DE	Blättere durch die Liste der SHOUTcast Internet Radiostationen. Drücke nach jedem Einstellungswechsel REW, um die Liste neu zu laden.
+	EN	Browse SHOUTcast list of Internet Radio streams.  Hit rewind after changing any settings to reload the list of streams.
 	ES	Recorrer la lista de streams de Radio por Internet de  SHOUTcast. Presionar rewind después de cambiar la configuración, para recargar la lista de streams.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_HOW_MANY_STREAMS
-	EN	Number of Streams
 	DE	Anzahl Streams
+	EN	Number of Streams
 	ES	Número de Streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_HOW_MANY_STREAMS_DESC
-	EN	How many streams to get.  Default is 300, maximum is 2000.
 	DE	Anzahl aufzulistender Streams (Radiostationen). Voreinstellung ist 300, das Maximum 2000.
+	EN	How many streams to get.  Default is 300, maximum is 2000.
 	ES	Cuántos streams traer. Por defecto es 300, máximo es 2000.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_CRITERION
-	EN	Sort Criterion for Genres
 	DE	Sortierkriterium für Musikstile
+	EN	Sort Criterion for Genres
 	ES	Criterio para Ordenar por Géneros
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_CRITERION_DESC
-	EN	Criterion for sorting genres.
 	DE	Kriterium für die Sortierung der Musikstile
+	EN	Criterion for sorting genres.
 	ES	Criterio para Ordenar por Géneros
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_CRITERION
-	EN	Sort Criterion for Streams
 	DE	Sortierkriterium für Streams
+	EN	Sort Criterion for Streams
 	ES	Criterio para ordenar streams.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_CRITERION_DESC
-	EN	Criterion for sorting streams.
 	DE	Kriterium für die Sortierung der Streams (Radiostationen)
+	EN	Criterion for sorting streams.
 	ES	Criterio para ordenar streams.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MIN_BITRATE
-	EN	Minimum Bitrate
 	DE	Minimale Bitrate
+	EN	Minimum Bitrate
 	ES	Mínima Tasa de Bits
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MIN_BITRATE_DESC
-	EN	Minimum Bitrate in which you are interested (0 for no limit).
 	DE	Minimal erwünschte Bitrate (0 für unbeschränkt).
+	EN	Minimum Bitrate in which you are interested (0 for no limit).
 	ES	Mínima Tasa de Bits que nos interesa (0 para no tener límite).
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_BITRATE
-	EN	Maximum Bitrate
 	DE	Maximale Bitrate
+	EN	Maximum Bitrate
 	ES	Máxima Tasa de Bits
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_BITRATE_DESC
-	EN	Maximum Bitrate in which you are interested (0 for no limit).
 	DE	Maximal erwünschte Bitrate (0 für unbeschränkt).
+	EN	Maximum Bitrate in which you are interested (0 for no limit).
 	ES	Máxima Tasa de Bits que nos interesa (0 para no tener límite).
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT
-	EN	Recent Streams
 	DE	Zuletzt gehörte Streams
+	EN	Recent Streams
 	ES	Streams recientes
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT_DESC
-	EN	Maximum number of recently played streams to remember.
 	DE	Anzahl zu merkender Streams (Radiostationen)
+	EN	Maximum number of recently played streams to remember.
 	ES	Máximo número a recordar de streams escuchados recientemente.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR
-	EN	Most Popular
 	DE	Populäre Streams
+	EN	Most Popular
 	ES	Más Popular
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR_DESC
-	EN	Number of streams to include in the category of most popular streams, measured by the total of all listeners at all bitrates.
 	DE	Die Anzahl Streams, die unter "Populäre Streams" aufgeführt werden sollen. Die Beliebtheit misst sich an der Anzahl Hörer aller Bitraten.
+	EN	Number of streams to include in the category of most popular streams, measured by the total of all listeners at all bitrates.
 	ES	Número de streams a incluir en la categoría de streams más populares, medida por el total de oyentes en todas las tasas de bits.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_CUSTOM_GENRES
-	EN	Custom Genre Definitions
 	DE	Eigene Musikstil-Definitionen
+	EN	Custom Genre Definitions
 	ES	Definiciones Personalizadas de Géneros
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_CUSTOM_GENRES_DESC
-	EN	You can define your own SHOUTcast categories by indicating the name of a custom genre definition file here.  Each line in this file defines a category per line, and each line consists of a series of terms separated by whitespace.  The first term is the name of the genre, and each subsequent term is a pattern associated with that genre.  If any of these patterns matches the advertised genre of a stream, that stream is considered to belong to that genre.  You may use an underscore to represent a space within any of these terms, and in the patterns, case does not matter.
 	DE	Sie können eigene SHOUTcast-Kategorien definieren, indem Sie hier eine Datei mit den eigenen Musikstil-Definitionen angeben. Jede Zeile dieser Datei bezeichnet eine Kategorie, und besteht aus einer Serie von Ausdrücken, die durch Leerzeichen getrennt sind. Der erste Ausdruck ist der Name des Musikstils, alle folgenden bezeichnen ein Textmuster, das mit diesem Musikstil assoziiert wird. Jeder Stream, dessen Stil eines dieser Textmuster enthält, wird diesem Musikstil zugeordnet. Leerzeichen innerhalb eines Begriffs können durch Unterstriche (_) definiert werden. Gross-/Kleinschreibung ist irrelevant.
+	EN	You can define your own SHOUTcast categories by indicating the name of a custom genre definition file here.  Each line in this file defines a category per line, and each line consists of a series of terms separated by whitespace.  The first term is the name of the genre, and each subsequent term is a pattern associated with that genre.  If any of these patterns matches the advertised genre of a stream, that stream is considered to belong to that genre.  You may use an underscore to represent a space within any of these terms, and in the patterns, case does not matter.
 	ES	Se pueden definir categorías propias para SHOUTcast, indicando el nombre de un archivo de definición de géneros propio aquí. Cada línea de este archivo define una categoría, y cada línea consiste de una serie de términos separados por espacions en blanco. El primer término es el nombre del género, y cada término subsiguiente es un patrón asociado a ese género. Si cualquiera de estos patrones concuerda con el género promocionado de un stream, se considerará que ese stream pertenece a ese género. Se puede utilizar un guión bajo (un derscore) para representar un espacio dentro de estos términos, y no hay distinción de mayúsculas y minúsculas en los patrones.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE
-	EN	Alphabetical (reverse)
 	DE	Alphabetisch (umgekehrte Reihenfolge)
+	EN	Alphabetical (reverse)
 	ES	Alfabético (reverso)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS
-	EN	Number of streams
 	DE	Anzahl Streams
+	EN	Number of streams
 	ES	Número de streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS_REVERSE
-	EN	Number of streams (reverse)
 	DE	Anzahl Streams (umgekehrte Reihenfolge)
+	EN	Number of streams (reverse)
 	ES	Número de Streams (reverso)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_DEFAULT_ALPHA
-	EN	Default (alphabetical)
 	DE	Standard (alphabetisch)
+	EN	Default (alphabetical)
 	ES	Por Defecto ( alfabético)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS
-	EN	Number of listeners
 	DE	Anzahl Hörer
+	EN	Number of listeners
 	ES	Número de oyentes
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_LISTENERS
-	EN	Listeners
 	DE	Hörer
+	EN	Listeners
 	ES	Oyentes
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS_REVERSE
-	EN	Number of listeners (reverse)
 	DE	Anzahl Hörer (umgekehrte Reihenfolge)
+	EN	Number of listeners (reverse)
 	ES	Número de oyentes (reverso)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD
-	EN	Order of definition
 	DE	Definitions-Reihenfolge
+	EN	Order of definition
 	ES	Orden de definición
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD_REVERSE
-	EN	Order of definition (reverse)
 	DE	Definitions-Reihenfolge (umgekehrt)
+	EN	Order of definition (reverse)
 	ES	Orden de definición (reverso)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MUNGE_GENRE
