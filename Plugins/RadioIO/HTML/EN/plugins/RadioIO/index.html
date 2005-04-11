@@ -16,15 +16,15 @@
 			[% FOREACH station = station_names %]
 			<tr>
 				<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-			 		<a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% station | uri %].mp3&player=[% player | uri %]" target="status">[% station %]</a>
+			 		<a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% station | uri %].mp3&p3=[% station | uri %]&player=[% player | uri %]" target="status">[% station %]</a>
 				</td>
 			
 				<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-					<nobr><a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% station | uri %].mp3&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
+					<nobr><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% station | uri %].mp3&p3=[% station | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
 				</td>
 			
 				<td  [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-					<nobr><a href="[% webroot %]status_header.html?p0=playlist&p1=add&p2=[% 'radioio://' | uri %][% station | uri %].mp3&player=[% player | uri %]" target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr>
+					<nobr><a href="[% webroot %]status.html?p0=playlist&p1=add&p2=[% 'radioio://' | uri %][% station | uri %].mp3&p3=[% station | uri %]&player=[% player | uri %]" target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr>
 			  	</td>
 			</tr>
 			[% odd = (not odd) %]
