@@ -1740,6 +1740,18 @@ sub isPlaylist {
 	}
 }
 
+sub isContainer {
+	my $pathOrObj = shift;
+
+	for my $type (qw{cur fec}) {
+		if (isType($pathOrObj, $type)) {
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
 sub mimeType {
 	my $file = shift;
 

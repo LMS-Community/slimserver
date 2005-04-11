@@ -100,6 +100,9 @@ sub getTag {
 	# set fields appropriate for a playlist
 	$tags->{'CT'}    = "fec";
 
+	# set a resonable "title" for the bare file
+	$tags->{'TITLE'} = $tags->{'ALBUM'};
+
 	my $fileurl = Slim::Utils::Misc::fileURLFromPath("$file") . "#$anchor";
 
 	# Do the actual data store

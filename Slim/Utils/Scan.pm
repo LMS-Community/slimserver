@@ -604,6 +604,27 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 				$::d_scan && msg("adding $numitems to playlist cache: $playlistpath\n"); 
 			}
 
+		} elsif (Slim::Music::Info::isContainer($playlistpath)) {
+
+			# read the items inside the container
+			# first, let's see if we can grab this from the existing cache
+			my $find = {'url', $playlistpath . "#*" };
+
+			my @cachedtracks = $ds->find('url', $find);
+
+			$::d_scan && msg("*** found " . @cachedtracks . " cached entries for $playlisturl ***\n");
+
+			if (!@cachedtracks) {
+				#TODO: rescan container if it's not type 'cur'
+				$::d_scan && msg("*** scanning container $playlisturl to get contents ***\n");
+
+			}
+			
+			for my $track (@cachedtracks) {
+				push @$listref, $track;
+				$numitems++;
+			}
+
 		} else {
 
 			# it's a playlist file
