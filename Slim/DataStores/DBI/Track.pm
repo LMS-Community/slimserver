@@ -141,7 +141,10 @@ sub artist {
 sub artistsort {
 	my $self = shift;
 
-	return ($self->contributorsOfType('artist'))[0]->namesort;
+	my $obj  = ($self->contributorsOfType('artist'))[0];
+
+	return $obj->namesort() if $obj && ref($obj);
+	return undef;
 }
 
 sub artists {
