@@ -372,7 +372,7 @@ sub reshuffle {
 
 		@{$listRef} = ();
 
-		Slim::Player::Source::streamingSongIndex($client, 0);
+		Slim::Player::Source::streamingSongIndex($client, 0, 1);
 		refreshPlaylist($client);
 
 		return;

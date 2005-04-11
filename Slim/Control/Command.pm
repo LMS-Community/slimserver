@@ -1713,13 +1713,19 @@ sub insert_done {
 		for (my $i = 0; $i < $size; $i++) {
 			push @reshuffled,$listsize+$i;
 		};
-
+			
 		$client = Slim::Player::Sync::masterOrSelf($client);
 		
-		splice @{$client->shufflelist}, $playlistIndex, 0, @reshuffled;
-
+		if (Slim::Player::Playlist::count($client) != $size) {	
+			splice @{$client->shufflelist}, $playlistIndex, 0, @reshuffled;
+		}
+		else {
+			push @{$client->shufflelist}, @reshuffled;
+		}
 	} else {
-		Slim::Player::Playlist::moveSong($client, $listsize, $playlistIndex,$size);
+		if (Slim::Player::Playlist::count($client) != $size) {
+			Slim::Player::Playlist::moveSong($client, $listsize, $playlistIndex,$size);
+		}
 		Slim::Player::Playlist::reshuffle($client);
 	}
 

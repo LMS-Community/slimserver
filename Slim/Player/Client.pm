@@ -931,7 +931,10 @@ sub initial_add_done {
 		# reshuffle set this properly, for album shuffle
 		# no need to move the streamingSongIndex
 	} else {
-		if ($currsong >= Slim::Player::Playlist::count($client)) {
+		if (Slim::Player::Playlist::count($client) == 0) {
+			$currsong = 0;
+		}
+		elsif ($currsong >= Slim::Player::Playlist::count($client)) {
 			$currsong = Slim::Player::Playlist::count($client) - 1;
 		}
 		Slim::Player::Source::streamingSongIndex($client,$currsong);
