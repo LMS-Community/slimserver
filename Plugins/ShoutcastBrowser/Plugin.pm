@@ -1229,6 +1229,8 @@ sub readRecentStreamList {
 sub writeRecentStreamList {
 	my ($client, $streamname, $bitrate, $data) = @_;
 	
+	return if not defined $client;
+	
 	$streamname = "$bitrate kbps: $streamname" if (defined $bitrate);
 	$status{$client}{recent_data}{$streamname} = $data->[0];
 
@@ -1347,7 +1349,6 @@ sub getWebStreamList {
 		return readRecentStreamList($client);
 	}
 	else {
-		# TODO mh: sort is somehow broken for listeners
 		return [ sort { stream_sort($client) } keys %{ $stream_data{$genre} } ];
 	}
 }
