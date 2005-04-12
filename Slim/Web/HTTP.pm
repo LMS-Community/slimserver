@@ -79,6 +79,7 @@ our %streamingFiles = ();
 our %peeraddr       = ();
 our %peerclient     = ();
 our %keepAlives     = ();
+our %skinTemplates  = ();
 
 my $mdnsIDslimserver;
 my $mdnsIDhttp;
@@ -1379,109 +1380,11 @@ sub tryStreamingLater {
 	Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse);
 }
 
-=pod
-
-=HEAD1 Templates
-# The filltemplate code described below is not currently in use.  It has
-# been replaced by Template Toolkit
-#  all the HTML is read from template files, to make it easier to edit
-#  templates are parsed with the following rules, in this order:
-#
-#  replace this:			with this:
-#
-#  [EVAL]bar[/EVAL]			evaluate bar as perl code and replace with
-#                       	the value of the $out variable
-#  {foo}					$hash{'foo'}
-#  {%foo}					&uri_escape($hash{'foo'})
-#  {&foo}                   &encode_entities($hash{'foo'})
-
-#  [S stringname]			string('stringname')
-
-#  [SET foo bob] 			$hash{'foo'} = 'bob'
-#  [IF foo]bar[/IF] 		if $hash{'foo'} then 'bar' else ''
-#  [IFN foo]bar[/IFN] 		if !$hash{'foo'} then 'bar' else ''
-#  [EQ foo bob]bar[/EQ] 	if ($hash{'foo'} eq 'bob') then 'bar' else ''
-#  [NE foo bob]bar[/NE] 	if ($hash{'foo'} ne 'bob') then 'bar' else ''
-#  [GT foo bob]bar[/GT] 	if ($hash{'foo'} > 'bob') then 'bar' else ''
-#  [LT foo bob]bar[/LT] 	if ($hash{'foo'} < 'bob') then 'bar' else ''
-
-#  [INCLUDE foo.html]       include and parse the HTML file specified
-#  [STATIC foo.html]		include, but don't parse the file specified
-#  [E]foo[/E]				uri_escape('foo');
-#  [NB]foo[/NB]				nonBreak('foo');
-
-#  &lsqb;          	[
-#  &rsqb;			]
-#  &lbrc;          	{
-#  &rbrc;			}
-
-#
-# Fills the template string $template with the key/values in the hash pointed to by hashref
-# returns the filled template string
-
-=cut
-
-sub filltemplate {
-	my ($template, $hashref) = @_;
-
-	return \$template if (!defined($template) || length($template) == 0);
-
-	my $client = defined($hashref) ? $hashref->{'myClientState'} : undef;
-
-	my $out = '';
-
-	$template =~ s{\[EVAL\](.*?)\[/EVAL\]}{eval($1) || ''}esg;
-	
-	# first, substitute {%key} with the url escaped value for the given key in the hash
-	$template =~ s/{%([^{}]+)}/defined($hashref->{$1}) ? uri_escape_utf8($hashref->{$1}) : ""/eg;
-	
-	# first, substitute {%key} with the url escaped value for the given key in the hash
-	#
-	# This is using a slightly modified version of HTML::Entities, that
-	# doesn't rely on HTML::Parser, which is implemented as native code.
-	# When we get around to compiling that, use it. 
-	$template =~ s/{&([^{}]+)}/defined($hashref->{$1}) ? encode_entities($hashref->{$1}) : ""/eg;
-
-	# do the same, but without the escape when given {key}
-	$template =~ s/{([^{}]+)}/defined($hashref->{$1}) ? $hashref->{$1} : ""/eg;
-	
-	# look up localized strings with [S stringname]
-	$template =~ s/\[S\s+([^\[\]]+)\]/&string($1)/eg;
-	
-	# set the value of a hash item
-	$template =~ s/\[SET\s+([^\[\] ]+)\s+([^\]]+)\]/$hashref->{$1} = $2; ""/esg;
-
-	# [IF hashkey], [IFN hashkey], [EQ hashkey value], and [NE hashkey value]
-	$template =~ s/\[IF\s+([^\[\]]+)\](.*?)\[\/IF\]/$hashref->{$1} ? $2 : ''/esg;
-	$template =~ s/\[IFN\s+([^\[\]]+)\](.*?)\[\/IFN\]/$hashref->{$1} ? '' : $2/esg;
-	$template =~ s/\[EQ\s+([^\[\]]+)\s+(.+?)\](.*?)\[\/EQ\]/(defined($hashref->{$1}) && $hashref->{$1} eq $2) ? $3 :  ''/esg;
-	$template =~ s/\[NE\s+([^\[\]]+)\s+(.+?)\](.*?)\[\/NE\]/(!defined($hashref->{$1}) || $hashref->{$1} ne $2) ? $3 :  ''/esg;
-	$template =~ s/\[GT\s+([^\[\]]+)\s+(.+?)\](.*?)\[\/GT\]/(defined($hashref->{$1}) && $hashref->{$1} > $2) ? $3 :  ''/esg;
-	$template =~ s/\[LT\s+([^\[\]]+)\s+(.+?)\](.*?)\[\/LT\]/(defined($hashref->{$1}) && $hashref->{$1} < $2) ? $3 :  ''/esg;
-
-	$template =~ s|\[INCLUDE\s+([^\[\]]+)\]|${filltemplatefile($1, $hashref)}|esg;
-	$template =~ s{\[STATIC\s+([^\[\]]+)\]}{getStaticContentForTemplate($1, $hashref)}esg;
-
-	# make strings with spaces in them non-breaking by replacing the spaces with &nbsp;
-	$template =~ s/\[NB\](.+?)\[\/NB\]/nonBreaking($1)/esg;
-	
-	# escape any text between [E] and [/E]
-	$template =~ s/\[E\](.+?)\[\/E\]/uri_escape_utf8($1)/esg;
-	
-	$template =~ s/&lsqb;/\[/g;
-	$template =~ s/&rsqb;/\]/g;
-	$template =~ s/&lbrc;/{/g;
-	$template =~ s/&rbrc;/}/g;
-
-	return \$template;
-}
-
 sub nonBreaking {
 	my $string = shift;
 	$string =~ s/\s/\&nbsp;/g;
 	return $string;
 }
-my %skinTemplates;
 
 sub newSkinTemplate {
 	my $skin = shift;

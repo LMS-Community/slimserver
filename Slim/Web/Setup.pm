@@ -2810,7 +2810,7 @@ sub setup_changes_HTTP {
 		}
 		#force eval on the filltemplate call
 		if (defined($changedval) && $changemsg) {
-			$paramref->{'warning'} .= sprintf(${Slim::Web::HTTP::filltemplate($changemsg,undef,1)},$changedval);
+			$paramref->{'warning'} .= sprintf($changemsg, $changedval);
 		}
 	}
 }
@@ -2842,7 +2842,7 @@ sub setup_rejects_HTTP {
 			$rejectmsg .= $settingsref->{$keyA}{'rejectAddlText'};
 		}
 		#force eval on the filltemplate call
-		$paramref->{'warning'} .= sprintf(${Slim::Web::HTTP::filltemplate($rejectmsg,undef,1)},$rejectref->{$key});
+		$paramref->{'warning'} .= sprintf($rejectmsg, $rejectref->{$key});
 	}
 }
 
