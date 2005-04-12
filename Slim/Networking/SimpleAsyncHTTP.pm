@@ -83,7 +83,6 @@ sub get {
 
 # TODO: support POST as well as GET
 
-# TODO: check for http redirects, handle them seamlessly for the caller
 sub headerCB {
 	my $state = shift;
 	my $error = shift;
@@ -92,7 +91,19 @@ sub headerCB {
 	my $self = $state->{ez};
 	my $http = $state->{socket};
 
-	$::d_http_async && msg("SimpleAsyncHTTP: status for ". $self->{url} . " is $mess\n");
+	$::d_http_async && msg("SimpleAsyncHTTP: status for ". $self->{url} . " is " . ($mess || $code) . "\n");
+
+	# verbose debug
+	#use Data::Dumper;
+	#print Dumper(%h);
+
+	# handle http redirect
+	if (my $location = $h{'Location'}) {
+		$::d_http_async && msg("SimpleAsyncHTTP: redirecting to $location.  Original URL ". $self->{url} . "\n");
+		$self->get($location);
+		$http->close();
+		return;
+	}
 
 	if ($error) {
 		&{$self->{ecb}}($self);
