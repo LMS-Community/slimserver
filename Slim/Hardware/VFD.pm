@@ -216,8 +216,19 @@ sub vfdUpdate {
 		#
 		# If this isn't here - selecting a song with non-latin1 chars
 		# will cause the server to crash.
+
+		# Fix for bug 1294 - Windows "smart" apostrophe to a normal one.
+		# For whatever reason, utf8toLatin1() doesn't convert this to
+		# a ' - \x{2019}, so do it manually. Otherwise the server will
+		# crash. We should also investigate Encode::compat - for 5.6.x
+		if ($] > 5.007) {
+			Encode::_utf8_off($curline);
+		}
+
+		$curline =~ s/\xe2\x80\x99/'/g;
+
 		$curline = Slim::Utils::Misc::utf8toLatin1($curline);
-			
+
 		while (1) {
 			# if we're done with the line, break;
 			if ($linepos >= length($curline)) {
