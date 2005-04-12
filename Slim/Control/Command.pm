@@ -684,19 +684,28 @@ sub execute {
 		} elsif ($p0 =~ /^(duration|artist|album|title|genre)$/) {
 
 			my $method = $1;
+			my $url    = Slim::Player::Playlist::song($client);
 			my $track  = $ds->objectForUrl(Slim::Player::Playlist::song($client));
 
-			if ($p0 eq 'title') {
+			if ($track) {
 
-				$p1 = Slim::Music::Info::getCurrentTitle($client, $track->url());
+				if ($p0 eq 'title') {
 
-			} elsif ($p0 eq 'duration') {
-			
-				$p1 = $track->secs() || 0;
+					$p1 = Slim::Music::Info::getCurrentTitle($client, $track->url());
+
+				} elsif ($p0 eq 'duration') {
 				
+					$p1 = $track->secs() || 0;
+					
+				} else {
+
+					$p1 = $track->$method() || 0;
+				}
+
 			} else {
 
-				$p1 = $track->$method() || 0;
+				Slim::Utils::Misc::msg("Couldn't fetch object for URL: [$url] - skipping track\n");
+				Slim::Utils::Misc::bt();
 			}
 
 		} elsif ($p0 eq "path") {
