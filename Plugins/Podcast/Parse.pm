@@ -25,6 +25,12 @@ sub init {
 										 \&readPodcast,
 										 undef,
 										 undef);
+	# at least one uses application/rss+xml, which types.conf maps to 'pod'
+	Slim::Formats::Parse::registerParser('pod',
+										 \&readPodcast,
+										 undef,
+										 undef);
+
 }
 
 sub readPodcast {
