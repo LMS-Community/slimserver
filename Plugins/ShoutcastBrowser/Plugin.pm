@@ -467,8 +467,8 @@ sub cleanMe {
 sub reload_xml {
 	my $client = shift;
 	
-	# only allow reload every 10 minutes
-	if (time() < $last_time + 600) {
+	# only allow reload every 1 minute
+	if (time() < $last_time + 60) {
 	
 		$status{$client}{status} = -2;
 		$client->update();
@@ -1410,9 +1410,9 @@ PLUGIN_SHOUTCASTBROWSER_MISC
 	ES	Géneros misceláneos
 
 PLUGIN_SHOUTCASTBROWSER_TOO_SOON
-	DE	Versuche es in einer Minute wieder
-	EN	Try again in a minute
-	ES	Volver a intentar en un minuto
+	DE	Versuche es in ein paar Minuten wieder...
+	EN	Try again in a few minute
+	ES	Volver a intentar en unos minutos
 
 PLUGIN_SHOUTCASTBROWSER_SORTING
 	DE	Sortiere Streams...
@@ -1431,9 +1431,9 @@ SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER
 	ES	Radio por Internet SHOUTcast
 
 SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER_DESC
-	DE	Blättere durch die Liste der SHOUTcast Internet Radiostationen. Drücke nach jedem Einstellungswechsel REW, um die Liste neu zu laden.
-	EN	Browse SHOUTcast list of Internet Radio streams.  Hit rewind after changing any settings to reload the list of streams.
-	ES	Recorrer la lista de streams de Radio por Internet de  SHOUTcast. Presionar rewind después de cambiar la configuración, para recargar la lista de streams.
+	DE	Blättere durch die Liste der SHOUTcast Internet Radiostationen.
+	EN	Browse SHOUTcast list of Internet Radio streams.
+	ES	Recorrer la lista de streams de Radio por Internet de  SHOUTcast.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_HOW_MANY_STREAMS
 	DE	Anzahl Streams
@@ -1570,4 +1570,3 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_MUNGE_GENRE_DESC
 }
 
 1;
-
