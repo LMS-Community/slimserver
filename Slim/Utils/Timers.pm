@@ -11,65 +11,99 @@ use strict;
 use Slim::Utils::Misc;
 
 # Timers are stored in a list of hashes containing:
-#  the time after which the timer should fire, 
-#  a reference to the function, 
-#  and a list of arguments.
+# - the time after which the timer should fire, 
+# - a reference to the function, 
+# - and a list of arguments.
 #
-# Timers are checked whenever we come out of select, or every 10ms,
-# whichever is greater.
-
-our @timers = ();
-our @secondlines = ();
-
-my $pos = 0;
-my $pos2 = 0;
-my $string;
-my $sline = -1;
-
-my $checkingTimers = 0; # Semaphore to avoid timer callbacks executing inside each other
-
+# Two classes of timer exist - Normal timers and High Priority timers
+# - High priority timers that are due are always execute first, even if a normal timer 
+#   is due at an earlier time.
+# - Functions assigned for callback on a normal timer may call ::idleStreams
+# - Any normal timers which are due will not be executed if another normal timer is
+#   currently being executed.
+# - High priority timers are only blocked from execution if another High Priority
+#   timer is executing (this should not occur).  They are intended for animation
+#   routines which should run within ::idleStreams.
+#
+# Timers are checked whenever we come out of select.
+  
+our @normalTimers = ();
+our @highTimers = ();
+  
+my $nextNormal;
+my $nextHigh;
+  
+my $checkingNormalTimers = 0; # Semaphore to avoid normal timer callbacks executing inside each other
+my $checkingHighTimers = 0;   # Semaphore for high priority timers
+  
 #
 # Call any pending timers which have now elapsed.
 #
 sub checkTimers {
 
-	return if $checkingTimers;
+ 	# Check High Priority timers (animation) first - return if already inside one
+ 	if ($checkingHighTimers) {
+ 		$::d_time && msg("blocked checking high timers - already processing a high timer!\n");
+ 		return;
+ 	}
+ 	$checkingHighTimers = 1;
 
-	$checkingTimers = 1;
+	my $now = Time::HiRes::time();
+	my $fired = 0;
+  	
+	while (defined($nextHigh) && ($nextHigh <= $now)) {
+
+	    	my $high_timer = shift(@highTimers);
+		$nextHigh = defined($highTimers[0]) ? $highTimers[0]->{'when'} : undef;
+		$fired++;
+
+		my $high_subptr = $high_timer->{'subptr'};
+		my $high_client = $high_timer->{'client'};
+		my $high_args = $high_timer->{'args'};
+	
+		$::d_time && msg("firing high timer " . ($now - $high_timer->{'when'}) . " late.\n");
+	
+		no strict 'refs';
+		&$high_subptr($high_client, @{$high_args});
+
+		$::d_perf && ((Time::HiRes::time() - $now) > 0.05) && msg("high timer $high_subptr too long: " . (Time::HiRes::time() - $now) . "seconds!\n");
+
+	}
+
+	$checkingHighTimers = 0;
+	return if $fired;
+	# completed check of High Priority timers
 
 	if ($Slim::Player::SLIMP3::SLIMP3Connected && !$::scanOnly) {
 		Slim::Networking::Protocol::readUDP();
 	}
-
-	my $numtimers = (@timers);
-	my $now = Time::HiRes::time();
-	
-	if ($numtimers > 500) {
-		die "Insane number of timers: $numtimers\n";		
+  	
+	# Check Normal timers - return if already inside one
+	if ($checkingNormalTimers) {
+		$::d_time && msg("blocked checking normal timers - already processing a normal timer!\n");
+		return;
 	}
-	
-	my $timer = shift(@timers);
-	
-	if (defined($timer) && ($timer->{'when'} <= $now)) {
+	$checkingNormalTimers = 1;
+  
+	if (defined($nextNormal) && ($nextNormal <= $now)) {
+
+		my $timer = shift(@normalTimers);
+		$nextNormal = defined($normalTimers[0]) ? $normalTimers[0]->{'when'} : undef;
 
 		my $subptr = $timer->{'subptr'};
 		my $client = $timer->{'client'};
-		my $args =	$timer->{'args'};
+		my $args = $timer->{'args'};
 	
 		$::d_time && msg("firing timer " . ($now - $timer->{'when'}) . " late.\n");
 	
 		no strict 'refs';
 		&$subptr($client, @{$args});
+
 		$::d_perf && ((Time::HiRes::time() - $now) > 0.5) && msg("timer $subptr too long: " . (Time::HiRes::time() - $now) . "seconds!\n");
 
-		$timer = shift(@timers);
-	}
-	
-	if (defined($timer)) {
-		unshift @timers, $timer;
 	}
 
-	$checkingTimers = 0;
+	$checkingNormalTimers = 0;
 }
 
 #
@@ -80,20 +114,25 @@ sub adjustAllTimers {
 	my $delta = shift;
 	
 	$::d_time && msg("adjustAllTimers: time travel!");
-	foreach my $timer (@timers) {
+	foreach my $timer (@highTimers, @normalTimers) {
 		$timer->{'when'} = $timer->{'when'} + $delta;
 	}
+	$nextHigh = defined($highTimers[0]) ? $highTimers[0]->{'when'} : undef;
+	$nextNormal = defined($normalTimers[0]) ? $normalTimers[0]->{'when'} : undef;
 }
 
 #
 # Return the time until the next timer is set to go off, 0 if overdue
 # Return nothing if there are no timers
 #
-
 sub nextTimer {
-	return (undef) if (!scalar(@timers) || $checkingTimers );
+	my $next = (defined($nextNormal) && !$checkingNormalTimers) ? $nextNormal : undef;
+	if (defined($nextHigh) && (!defined($next) || $nextHigh < $next) && !$checkingHighTimers ) {
+		$next = $nextHigh;
+	}
+	return undef if !defined $next;
 
-	my $delta = $timers[0]{'when'} - Time::HiRes::time();
+	my $delta = $next - Time::HiRes::time();
 	
 	# return 0 if the timer is overdue
 	$delta = 0 if ($delta <=0);
@@ -105,33 +144,36 @@ sub nextTimer {
 #  For debugging - prints out a list of all pending timers
 #
 sub listTimers {
-	msg("timers: \n");
-
-	foreach my $timer (@timers) {
+	msg("High timers: \n");
+	foreach my $timer (@highTimers) {
+		msg(join("\t", $timer->{'client'}, $timer->{'when'}, $timer->{'subptr'}, "\n"));
+	}
+	msg("Normal timers: \n");
+	foreach my $timer (@normalTimers) {
 		msg(join("\t", $timer->{'client'}, $timer->{'when'}, $timer->{'subptr'}, "\n"));
 	}
 }
 
 #
-#  Schedule a timer for $client to fire after $when, calling $subptr with
-#  arguments @args.  Returns a referen to the timer so that it can be killed specifically later.
+#  Schedule a High Priority timer for $client to fire after $when, calling $subptr with
+#  arguments @args.  Returns a reference to the timer so that it can be killed specifically later.
 #
-sub setTimer {
+sub setHighTimer {
 	my ($client, $when, $subptr, @args) = @_;
 	if ($::d_time) {
 		my $now = Time::HiRes::time();
-		msg("settimer: $subptr, now: $now, time: $when \n");
+		msg("settimer High: $subptr, now: $now, time: $when \n");
 		if ($when < $now) {
-			msg("}{}{}{}{}{}{}{}{}{}  Set a timer in the past!");
+			msg("}{}{}{}{}{}{}{}{}{}  Set a timer in the past!\n");
 		}
 	}
 
-    # The list of timers is maintained in sorted order, so
-    # we only have to check the head.
+	# The list of timers is maintained in sorted order, so
+	# we only have to check the head.
 
 	# Find the slot where we should insert this new timer
 	my $i = 0;
-	foreach my $timer (@timers) { 
+	foreach my $timer (@highTimers) { 
 		last if ($timer->{'when'} > $when);
 		$i++;
 	}
@@ -143,7 +185,53 @@ sub setTimer {
 	$newtimer->{'subptr'} = $subptr;
 	$newtimer->{'args'} = \@args;
 
-	splice(@timers, $i, 0, $newtimer);
+	$nextHigh = $when if $i == 0;
+
+	splice(@highTimers, $i, 0, $newtimer);
+	return $newtimer;
+}
+
+
+#
+#  Schedule a Normal priority timer for $client to fire after $when, calling $subptr with
+#  arguments @args.  Returns a reference to the timer so that it can be killed specifically later.
+#
+sub setTimer {
+	my ($client, $when, $subptr, @args) = @_;
+	if ($::d_time) {
+		my $now = Time::HiRes::time();
+		msg("settimer Normal: $subptr, now: $now, time: $when \n");
+		if ($when < $now) {
+			msg("}{}{}{}{}{}{}{}{}{}  Set a timer in the past!\n");
+		}
+	}
+
+	# The list of timers is maintained in sorted order, so
+	# we only have to check the head.
+
+	# Find the slot where we should insert this new timer
+	my $i = 0;
+	foreach my $timer (@normalTimers) { 
+		last if ($timer->{'when'} > $when);
+		$i++;
+	}
+
+	my $newtimer = {};
+
+	$newtimer->{'client'} = $client;
+	$newtimer->{'when'} = $when;
+	$newtimer->{'subptr'} = $subptr;
+	$newtimer->{'args'} = \@args;
+
+	$nextNormal = $when if $i == 0;
+
+	splice(@normalTimers, $i, 0, $newtimer);
+
+	my $numtimers = (@normalTimers);
+	if ($numtimers > 500) {
+		die "Insane number of timers: $numtimers\n";		
+	}
+
 	return $newtimer;
 }
 
@@ -154,17 +242,28 @@ sub killTimers {
 	my $killed = 0;
 	my $timer;
 	
-	if (defined($client) && defined($subptr)) {
+	return 0 unless defined $client && defined $subptr;
 
-		while ($timer = $timers[$i]) {
-			if (($timer->{'client'} eq $client) && ($timer->{'subptr'} eq $subptr)) {
-				splice( @timers, $i, 1);
-				$killed++;
-			} else {
-				$i++;
-			}
+	while ($timer = $highTimers[$i]) {
+		if (($timer->{'client'} eq $client) && ($timer->{'subptr'} eq $subptr)) {
+			splice( @highTimers, $i, 1);
+			$killed++;
+		} else {
+			$i++;
 		}
 	}
+	$i = 0;
+	while ($timer = $normalTimers[$i]) {
+		if (($timer->{'client'} eq $client) && ($timer->{'subptr'} eq $subptr)) {
+			splice( @normalTimers, $i, 1);
+			$killed++;
+		} else {
+			$i++;
+		}
+	}
+
+	$nextHigh = defined($highTimers[0]) ? $highTimers[0]->{'when'} : undef;
+	$nextNormal = defined($normalTimers[0]) ? $normalTimers[0]->{'when'} : undef;
 
 	return $killed;
 }
@@ -174,10 +273,26 @@ sub killOneTimer {
 	my ($client, $subptr) = @_;
 	my $i = 0;
 	my $timer;
+
+	return unless defined $client && defined $subptr;
 	
-	while ($timer = $timers[$i]) {
+	while ($timer = $highTimers[$i]) {
 		if (($timer->{'client'} eq $client) && ($timer->{'subptr'} eq $subptr)) {
-			splice( @timers, $i, 1);
+			splice( @highTimers, $i, 1);
+			if ($i == 0) {
+			    	$nextHigh = defined($highTimers[0]) ? $highTimers[0]->{'when'} : undef;
+			}
+			return
+		}
+		$i++;
+	}
+	$i = 0;
+	while ($timer = $normalTimers[$i]) {
+		if (($timer->{'client'} eq $client) && ($timer->{'subptr'} eq $subptr)) {
+			splice( @normalTimers, $i, 1);
+			if ($i == 0) {
+			    	$nextNormal = defined($normalTimers[0]) ? $normalTimers[0]->{'when'} : undef;
+			}
 			return
 		}
 		$i++;
@@ -186,24 +301,50 @@ sub killOneTimer {
 
 sub forgetClient {
 	my $client = shift;
-	my $count = scalar(@timers);
+	my $count;
+
+	$count = scalar(@highTimers);
 	for (my $i = 0; $i < $count; $i++) {
-		my $timer = $timers[$i];
+		my $timer = $highTimers[$i];
 		if (defined($timer) && ($timer->{'client'} eq $client)) {
-			splice( @timers, $i, 1);
+			splice( @highTimers, $i, 1);
 			redo;
 		}
 	}
+	$count = scalar(@normalTimers);
+	for (my $i = 0; $i < $count; $i++) {
+		my $timer = $normalTimers[$i];
+		if (defined($timer) && ($timer->{'client'} eq $client)) {
+			splice( @normalTimers, $i, 1);
+			redo;
+		}
+	}
+	$nextHigh = defined($highTimers[0]) ? $highTimers[0]->{'when'} : undef;
+	$nextNormal = defined($normalTimers[0]) ? $normalTimers[0]->{'when'} : undef;
 }
 
 # kill a specific timer
 sub killSpecific {
 	my $timer = shift;
-	my $count = scalar(@timers);
+	my $count;
 
+	$count = scalar(@highTimers);
 	for (my $i = 0; $i < $count; $i++) {
-		if ($timers[$i] == $timer) {
-			splice( @timers, $i, 1);
+		if ($highTimers[$i] == $timer) {
+			splice( @highTimers, $i, 1);
+			if ($i == 0) {
+			    	$nextHigh = defined($highTimers[0]) ? $highTimers[0]->{'when'} : undef;
+			}
+			return 1;
+		}
+	}	
+	$count = scalar(@normalTimers);
+	for (my $i = 0; $i < $count; $i++) {
+		if ($normalTimers[$i] == $timer) {
+			splice( @normalTimers, $i, 1);
+			if ($i == 0) {
+			    	$nextNormal = defined($normalTimers[0]) ? $normalTimers[0]->{'when'} : undef;
+			}
 			return 1;
 		}
 	}	
@@ -218,7 +359,7 @@ sub pendingTimers {
 	my $count = 0;
 
 	# count pending matching timers 
-	foreach my $timer (@timers) {
+	foreach my $timer (@highTimers, @normalTimers) {
 		if (($timer->{'client'} eq $client) && ($timer->{'subptr'} eq $subptr) ) {
 			$count++;
 		}
@@ -231,13 +372,32 @@ sub firePendingTimer {
 	my $client = shift;
 	my $subptr = shift;
 	my $foundTimer;
-	my $count = scalar(@timers);
+	my $count;
+
 	# find first pending matching timers 
+	$count = scalar(@highTimers);
 	for (my $i = 0; $i < $count; $i++) {
-		my $timer = $timers[$i];
+		my $timer = $highTimers[$i];
 		if (defined($timer) && ($timer->{'client'} eq $client) && ($timer->{'subptr'} eq $subptr) ) {
-			$foundTimer = splice( @timers, $i, 1);
+			$foundTimer = splice( @highTimers, $i, 1);
+			if ($i == 0) {
+			    	$nextHigh = defined($highTimers[0]) ? $highTimers[0]->{'when'} : undef;
+			}
 			last;
+		}
+	}
+
+	if (!defined $foundTimer) {
+		$count = scalar(@normalTimers);
+		for (my $i = 0; $i < $count; $i++) {
+			my $timer = $normalTimers[$i];
+			if (defined($timer) && ($timer->{'client'} eq $client) && ($timer->{'subptr'} eq $subptr) ) {
+				$foundTimer = splice( @normalTimers, $i, 1);
+				if ($i == 0) {
+			    		$nextNormal = defined($normalTimers[0]) ? $normalTimers[0]->{'when'} : undef;
+				}
+				last;
+			}
 		}
 	}
 	

@@ -468,7 +468,7 @@ sub animate {
 	}
 	if (defined($animationFunction) && $framedelay) {
 		my $when = $now + $framedelay;
-		Slim::Utils::Timers::setTimer($client,$when,\&animate,$animationFunction,$when,@animateArgs);
+		Slim::Utils::Timers::setHighTimer($client,$when,\&animate,$animationFunction,$when,@animateArgs);
 		$client->animating(1);
 	} else {
 		$client->animating(0);

@@ -527,7 +527,7 @@ sub pushUpdate {
 	
 	$client->drawFrameBuf(\$screen);
 	if ($offset != $end) {
-		Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $deltatime,\&pushUpdate,[$allbits,$offset,$delta,$end,$deltatime]);
+		Slim::Utils::Timers::setHighTimer($client,Time::HiRes::time() + $deltatime,\&pushUpdate,[$allbits,$offset,$delta,$end,$deltatime]);
 		$client->animating(1);
 	} else {
 		$client->animating(0);
@@ -544,7 +544,7 @@ sub bumpDown {
 	
 	$client->drawFrameBuf(\$startbits);
 
-	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 0.125,\&update);
+	Slim::Utils::Timers::setHighTimer($client,Time::HiRes::time() + 0.125,\&update);
 	$client->animating(1);
 }
 
@@ -557,7 +557,7 @@ sub bumpUp {
 
 	$client->drawFrameBuf(\$startbits);
 
-	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 0.125,\&update);
+	Slim::Utils::Timers::setHighTimer($client,Time::HiRes::time() + 0.125,\&update);
 	$client->animating(1);
 }
 
@@ -661,7 +661,7 @@ sub scrollUpdate {
 	if ($timenow < $parts->{pauseUntil}) {
 		# slow timer for updates during scrolling pause
 		$parts->{refreshTime} = $parts->{updateTime};
-		Slim::Utils::Timers::setTimer($client, $parts->{updateTime}, \&scrollUpdate, $parts);
+		Slim::Utils::Timers::setHighTimer($client, $parts->{updateTime}, \&scrollUpdate, $parts);
 
 	} else {
 
@@ -681,7 +681,7 @@ sub scrollUpdate {
 			}
 		}
 		# fast timer during scroll
-		Slim::Utils::Timers::setTimer($client, $parts->{refreshTime}, \&scrollUpdate, $parts);
+		Slim::Utils::Timers::setHighTimer($client, $parts->{refreshTime}, \&scrollUpdate, $parts);
 	}
 }
 
