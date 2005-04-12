@@ -101,6 +101,9 @@ sub main {
 		die "Couldn't find a valid SlimServer path. Exiting.\n";
 	}
 
+	# Let the build process use modules installed already:
+	$ENV{'PERL5LIB'} = "$slimServerPath/CPAN";
+
 	# This is where the binaries will end up.
 	my $cpanDest = "$slimServerPath/CPAN/arch/$version/$archname/auto";
 
