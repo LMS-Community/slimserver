@@ -13,6 +13,11 @@
 	<p></p>
 		[% IF msg %]<p>[% msg %]</p>[% END %]
 
+		[% IF redirect %]
+			<p><br>[% 'PLUGIN_SHOUTCASTBROWSER_REDIRECT' | string %]</p>
+			<p>(<a href="[% redirect.url %]">[% 'PLUGIN_SHOUTCASTBROWSER_CLICK_REDIRECT' | string %]</a>)</p>
+		[% END %]
+
 		<table border="0" cellspacing="0" cellpadding="4" width="100%">
 			[% IF streaminfo %]
 				<tr>

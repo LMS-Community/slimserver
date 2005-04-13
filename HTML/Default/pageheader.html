@@ -6,7 +6,8 @@
 		[% INSERT slimserver.css %]
 	--> </style>
 	<link rel="shortcut icon" href="[% webroot %]favicon.ico" type="image/x-icon">
-    <link rel="icon" href="[% webroot %]favicon.ico" type="image/x-icon"> 
+    <link rel="icon" href="[% webroot %]favicon.ico" type="image/x-icon">
+    [% IF redirect %]<meta http-equiv="refresh" content="[% redirect.delay %]; URL=[% redirect.url %]">[% END %] 
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" [% bodyscript %]>
 	<table cellspacing="0" width="100%">

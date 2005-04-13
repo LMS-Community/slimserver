@@ -2,6 +2,7 @@
 	<head>
 		<title>[% pagetitle %]</title>
 		<link rel="stylesheet" href="[% webroot %]slimserver.css">
+	    [% IF redirect %]<meta http-equiv="refresh" content="[% redirect.delay %]; URL=[% redirect.url %]">[% END %] 
 	</head>
 	<body bgcolor="#FFFFFF">
 	    <p>
@@ -17,6 +18,11 @@
 
 		<!-- start plugins output -->
 		[% IF msg %]<p>[% msg %]</p><hr/>[% END %]
+
+		[% IF redirect %]
+			<p><br>[% 'PLUGIN_SHOUTCASTBROWSER_REDIRECT' | string %]</p>
+			<p>(<a href="[% redirect.url %]">[% 'PLUGIN_SHOUTCASTBROWSER_CLICK_REDIRECT' | string %]</a>)</p>
+		[% END %]
 		
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			[% IF streaminfo %]

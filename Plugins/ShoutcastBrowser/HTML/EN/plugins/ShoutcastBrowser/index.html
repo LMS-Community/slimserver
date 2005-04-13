@@ -2,6 +2,7 @@
 	<head>
 		<title>[% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %]</title>
 		<link rel="stylesheet" href="[% webroot %]slimserver.css">
+	    [% IF redirect %]<meta http-equiv="refresh" content="[% redirect.delay %]; URL=[% redirect.url %]">[% END %] 
 	</head>
 	<body bgcolor="#FFFFFF">
 		<h3>[% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %]</h3><p>
@@ -13,6 +14,11 @@
 		</p>
 		<hr/>
 		[% IF msg %]<p>[% msg %]</p>[% END %]
+
+		[% IF redirect %]
+			<p><br>[% 'PLUGIN_SHOUTCASTBROWSER_REDIRECT' | string %]</p>
+			<p>(<a href="[% redirect.url %]">[% 'PLUGIN_SHOUTCASTBROWSER_CLICK_REDIRECT' | string %]</a>)</p>
+		[% END %]
 
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			[% IF streaminfo %]

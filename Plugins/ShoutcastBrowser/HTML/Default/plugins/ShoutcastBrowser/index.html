@@ -32,8 +32,14 @@
 <tr height="100%">
 	<td width="4" height="100%"></td>
 	<td valign="top" height="100%">
-		[% IF msg %]<p>[% msg %]</p>[% END %]
 		<table border="0" cellspacing="0" cellpadding="4" width="100%">
+			[% IF msg %]<tr><td>[% msg %]</td></tr>[% END %]
+
+			[% IF redirect %]
+				<p><br>[% 'PLUGIN_SHOUTCASTBROWSER_REDIRECT' | string %]</p>
+				<p>(<a href="[% redirect.url %]">[% 'PLUGIN_SHOUTCASTBROWSER_CLICK_REDIRECT' | string %]</a>)</p>
+			[% END %]
+
 			[% IF streaminfo %]
 				<tr>
 					<td width="30%">[% 'PLUGIN_SHOUTCASTBROWSER_STREAM_NAME' | string %][% "COLON" | string %]</td>
@@ -100,6 +106,7 @@
 					[% streamID = streamID + 1 %]
 				[% END %]
 			[% END %]
+			
 		</table>
 
 	</td>
