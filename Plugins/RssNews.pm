@@ -99,6 +99,7 @@ my $running_as = 'plugin';
 # Please do not lower this value. It prevents excessive queries to the RSS.
 my $refresh_sec = 60 * 60;
 
+
 sub strings { return q!
 PLUGIN_RSSNEWS
 	EN	RSS News Ticker
@@ -1102,10 +1103,24 @@ Slim::Buttons::Common::addMode('PLUGIN.RssNews.description',
                                \&descriptionSetMode);
 
 sub addMenu {
-	# add a mode to the screensaver submenu...
-	my %params = ('useMode' => "PLUGIN.RssNews.screensaversettings",
-				  'header' => "PLUGIN_RSSNEWS_SCREENSAVER");
-	Slim::Buttons::Home::addSubMenu("SCREENSAVERS","PLUGIN_RSSNEWS_SCREENSAVER", \%params);	  
+	# some questionable code follows... This method is designed to simply
+	# return the name of a menu.  But this plugin wants to appear both
+	# in plugins and screensavers.
+
+	# it would be nice if the plugin code gave us a clean way to do
+	# this.  Until it does, we do the following hack.
+
+	my $disabled = scalar(grep {$_ eq 'RssNews'} Slim::Utils::Prefs::getArray('disabledplugins'));
+	$disabled && $::d_plugins && msg("RssNews: RssNews plugin disabled.\n");
+
+	if ($disabled) {
+		Slim::Buttons::Home::addSubMenu("SCREENSAVERS","PLUGIN_RSSNEWS_SCREENSAVER", undef);
+	} else {
+		# add a mode to the screensaver submenu...
+		my %params = ('useMode' => "PLUGIN.RssNews.screensaversettings",
+					  'header' => "PLUGIN_RSSNEWS_SCREENSAVER");
+		Slim::Buttons::Home::addSubMenu("SCREENSAVERS","PLUGIN_RSSNEWS_SCREENSAVER", \%params);
+	}
 
 	# also add ourselves to the plugins menu
 	return "PLUGINS";
