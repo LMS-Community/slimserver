@@ -1798,13 +1798,13 @@ sub typeFromPath {
 			
 			return $type if $type ne 'unk';
 
-		} elsif (isRemoteURL($fullpath)) {
-
-			$type = typeFromSuffix($fullpath, $defaultType);
-
 		} elsif ($fullpath =~ /^([a-z]+:)/ && defined($suffixes{$1})) {
 
 			$type = $suffixes{$1};
+
+		} elsif (isRemoteURL($fullpath)) {
+
+			$type = typeFromSuffix($fullpath, $defaultType);
 
 		} else {
 			my $filepath;
