@@ -959,6 +959,15 @@ sub resetSongQueue {
 	$::d_source && msg("Song queue is now " . join(',', map { $_->{index} } @$queue) . "\n");
 }
 
+sub markStreamingTrackAsPlayed {
+	my $client = shift;
+
+	my $song = streamingSong($client);
+	if (defined($song)) {
+		$song->{status} = STATUS_PLAYING;
+	}
+}
+
 sub trackStartEvent {
 	my $client = shift || return;
 
@@ -966,8 +975,8 @@ sub trackStartEvent {
 	my $queue = $client->currentsongqueue();
 	my $last_song = $queue->[-1];
 
-	if (defined($last_song) && $last_song->{status} == STATUS_PLAYING && 
-		scalar(@$queue) > 1) {
+	while (defined($last_song) && $last_song->{status} == STATUS_PLAYING && 
+		   scalar(@$queue) > 1) {
 		$::d_source && msg("Song " . $last_song->{index} . " had already started, so it's not longer in the queue\n");
 		pop @{$queue};
 		$last_song = $queue->[-1];
@@ -1058,6 +1067,11 @@ sub resetSong {
 sub errorOpening {
 	my $client = shift;
 
+	if ($client->reportsTrackStart()) {
+		$::d_source && msg("Error opening current track, so mark it as already played\n");
+		markStreamingTrackAsPlayed($client);
+	}
+	
 	my $line1 = shift || $client->string('PROBLEM_OPENING');
 	my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, streamingSongIndex($client)));
 	
@@ -1810,6 +1824,14 @@ bail:
 		$::d_source && msg("end of file or error on socket, opening next song, (song pos: " .
 				$client->songBytes() . "(tell says: . " . systell($client->audioFilehandle()).
 				"), totalbytes: " . $song->{totalbytes} . ")\n");
+
+		if ($client->streamBytes() == 0 && $client->reportsTrackStart()) {
+			# If we haven't streamed any bytes, then we can't rely on 
+			# the player to tell us when the next track has started,
+			# so we manually mark the track as played.
+			$::d_source && msg("Didn't stream any bytes for this song, so just mark it as played\n");
+			markStreamingTrackAsPlayed($client);
+		}
 
 		if (!gotoNext($client, 1)) {
 			$::d_source && msg($client->id() . ": Can't opennext, returning no chunk.\n");
