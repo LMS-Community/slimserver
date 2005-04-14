@@ -35,7 +35,7 @@ use XML::Simple;
 ################### Configuration Section ########################
 
 ### These first few preferences can only be set by editing this file
-my (%genre_aka, @genre_keywords, @legit_genres);
+our (%genre_aka, @genre_keywords, @legit_genres);
 
 # If you choose to munge the genres, here is the list of keywords that
 # define various genres.  If any of these words or phrases is found in
@@ -71,44 +71,43 @@ my (%genre_aka, @genre_keywords, @legit_genres);
 # canonical form.
 
 %genre_aka = (
-	'50' => '50s', 
-	'60' => '60s',
-	'70' => '70s',  
-	'80' => '80s',  
-	'90' => '90s', 
-	'africa' => 'african',
-	'animation' => 'anime', 
-	'any|every|mixed|eclectic|mix|variety|varied|random|misc' => 'various', 
-	'breakbeats' => 'breakbeat', 
-	'britpop' => 'british',
-	'christian|praise|worship|prayer|inspirational|bible|religious' => 'spiritual',
-	'dnb|d&b|d & b|drum and bass|drum|bass' => 'drum & bass', 
-	'electro|electronica' => 'electronic',
-	'film|movie' => 'soundtrack',
-	'freestyle' => 'freeform', 
-	'greece' => 'greek', 
-	'goth' => 'gothic',
-	'hiphop|hip hop' => 'rap', 
-	'holland|netherland|nederla' => 'dutch', 
-	'humor|humour' => 'comedy', 
-	'hungar' => 'hungarian', 
-	'local' => 'community', 
-	'lowfi|lofi' => 'low fi',
-	'newage' => 'new age',
-	'oldie' => 'oldies', 
-	'oldskool|old skool|oldschool' => 'old school', 
-	'psych' => 'psychedelic',
-	'punjab' => 'punjabi',
-	'ragga|dancehall|dance hall' => 'reggae', 
-	'rnb|r n b|r&b' => 'r & b',  
-	'spoken|politics' => 'talk', 
-	'symphonic' => 'classical',
-	'top40|chart|top hits' => 'top 40', 
-	'tranc' => 'trance', 
-	'turk|t.rkce' => 'turkish',
-	'varied' => 'various',
-	'videogame gaming' => 'video_game', 
-	'vivo' => 'live'
+	'50s' => '50', 
+	'60s' => '60',
+	'70s' => '70',  
+	'80s' => '80',  
+	'90s' => '90', 
+	'african' => 'africa',
+	'anime' => 'animation', 
+	'breakbeat' => 'breakbeats', 
+	'british' => 'britpop',
+	'spiritual' => 'christian|praise|worship|prayer|inspirational|bible|religious',
+	'drum & bass' => 'dnb|d&b|d & b|drum and bass|drum|bass', 
+	'electronic' => 'electro|electronica',
+	'soundtrack' => 'film|movie',
+	'freeform' => 'freestyle', 
+	'greek' => 'greece', 
+	'gothic' => 'goth',
+	'rap' => 'hiphop|hip hop', 
+	'dutch' => 'holland|netherla|nederla', 
+	'comedy' => 'humor|humour', 
+	'hungarian' => 'hungar', 
+	'community' => 'local', 
+	'low fi' => 'lowfi|lofi',
+	'new age' => 'newage',
+	'oldies' => 'oldie|old time radio', 
+	'old school' => 'oldskool|old skool|oldschool', 
+	'psychedelic' => 'psych',
+	'punjabi' => 'punjab',
+	'reggae' => 'ragga|dancehall|dance hall', 
+	'r & b' => 'rnb|r n b|r&b',  
+	'talk' => 'spoken|politics', 
+	'classical' => 'symphonic',
+	'top 40' => 'top40|chart|top hits', 
+	'trance' => 'tranc', 
+	'turkish' => 'turk|turkce',
+	'video_game' => 'videogame|gaming', 
+	'live' => 'vivo',
+	'various' => 'all|any|every|mixed|eclectic|mix|variety|varied|random|misc|unknown'
 );
 
 ## These are useful, descriptive genres, which should not be removed
@@ -135,7 +134,7 @@ use constant POSITION_OF_RECENT => 0;
 ## Order for info sub-mode
 my (@info_order, @info_index);
 
-my %custom_genres;
+my (%custom_genres, %keyword_index);
 
 # keep track of client status
 # TODO mh: put these back to "my" ("our" only for debugging)!
@@ -147,17 +146,23 @@ my $httpError;
 # time of last list refresh
 my $last_time = 0;
 
-checkDefaults();
-
-@genre_keywords = map { s/_/ /g; $_; } @genre_keywords;
-@legit_genres = map { s/_/ /g; $_; } @legit_genres;
-
-my %keyword_index;
-{
+sub initPlugin {
+	checkDefaults();
+	
+	@genre_keywords = map { s/_/ /g; $_; } @genre_keywords;
+	@legit_genres = map { s/_/ /g; $_; } @legit_genres;
+	
 	my $i = 1;
 	for (@genre_keywords) {
 		$keyword_index{$_} = $i;
 		$i++;
+	}
+	
+	foreach my $genre (keys %genre_aka) {
+		foreach (split /\|/, $genre_aka{$genre}) {
+			$genre_aka{$_} = $genre;
+		}
+		delete $genre_aka{$genre};
 	}
 }
 
@@ -293,21 +298,29 @@ sub gotViaHTTP {
 	my $params = $http->params();
 	my $data;
 
+	$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: get XML content\n");
 	if ($data = extractStreamInfoXML($http->content())) {
 		%stream_data = ();
 		%genres_data = ();
+		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: custom genres\n");
 		setupCustomGenres();	
+		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: extract streams\n");
 		extractStreamInfo($params->{'client'}, $data);
+		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: remove singletons\n");
 		removeSingletons($params->{'client'});
+		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: sort genres\n");
 		sortGenres($params->{'client'});
 		$httpError = 0;
 	}
 	else {
+		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: error getting XML\n");
 		$httpError = 1;
 	}
 	undef $data;
 	
+	$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: create page\n");
 	createAsyncWebPage($params);
+	$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: that's it\n");
 	Slim::Buttons::Block::unblock($params->{'client'}) if defined $params->{'client'};
 }
 
@@ -389,17 +402,19 @@ sub extractStreamInfo {
 			}
 		
 		} elsif ($munge_genres) {
-			for (split / /, $genre) {
-				if ($genre_aka{$_}) {
-					$genre =~ s/\b($_)\b/$genre_aka{$_}/
+			my %new_genre;
+			for my $old_genre (split / /, $genre) {
+				if (my $new_genre = $genre_aka{$old_genre}) {
+					$new_genre{"\u$new_genre"}++;
+				}
+				elsif ($keyword_index{$old_genre}) {
+					$new_genre{"\u$old_genre"}++;
 				}
 			}
 
-			foreach (split / /, $genre) {
-				push @keywords, "\u$_" if $keyword_index{$_};
+			if (not (@keywords = keys %new_genre)) {
+				@keywords = ($genre ? ("\u$genre") : (getMiscName($client)));			
 			}
-
-			@keywords = ($genre ? ("\u$genre") : (getMiscName($client))) unless @keywords;
 	
 		} else {
 			@keywords = ($original);
@@ -1319,6 +1334,11 @@ sub webPages {
 sub handleWebIndex {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 
+	if (defined $params->{'action'} && ($params->{'action'} eq 'refresh')) {
+		$params->{'action'} = undef;
+		$httpError = undef;
+	}
+		
 	if (not defined $httpError) {
 		loadStreamList($client, $params, $callback, $httpClient, $response);
 		return undef;
@@ -1421,6 +1441,10 @@ PLUGIN_SHOUTCASTBROWSER_REDIRECT
 PLUGIN_SHOUTCASTBROWSER_CLICK_REDIRECT
 	DE	Klicken Sie hier, falls die Seite nicht automatisch aktualisiert wird
 	EN	Click here if this page isn't updated automatically
+
+PLUGIN_SHOUTCASTBROWSER_REFRESH
+	DE	Aktualisieren
+	EN	Refresh
 
 PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
 	DE	Fehler: SHOUTcast Web-Seite nicht verfügbar

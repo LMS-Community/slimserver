@@ -9,7 +9,10 @@
 
 		<h3>[% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %]</h3><p>
 		
-		<p>/ [% IF streams || streaminfo %]<a href="index.html?player=[% player | uri %]">[% END %][% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %][% IF streams || streaminfo %]</a> / [% END %]
+		<p>/ [% IF streams || streaminfo %]<a href="index.html?player=[% player | uri %]">[% END %][% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %][% IF streams || streaminfo %]</a> / 
+			[% ELSE %]
+				(<a href="index.html?player=[% player | uri %]&action=refresh">[% 'PLUGIN_SHOUTCASTBROWSER_REFRESH' | string %]</a>)
+			[% END %]
 			[% IF streams || streaminfo %][% IF streaminfo %]<a href="index.html?genreID=[% genreID | uri %]&player=[% player | uri %]">[% END %][% genre %][% IF streaminfo %]</a> /[% END %][% END %]
 			[% IF streaminfo %][% stream %][% END %]
 		</p>

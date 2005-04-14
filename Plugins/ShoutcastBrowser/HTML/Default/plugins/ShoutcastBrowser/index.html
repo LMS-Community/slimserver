@@ -13,7 +13,10 @@
 				<td width="8"><img src="[% webroot %]html/images/spacer.gif" width="8" height="8" alt=""></td>
 				<td valign="top" class="exlisting">
 					<a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / 
-			[% IF streams || streaminfo %]<a href="index.html?player=[% player | uri %]">[% END %][% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %][% IF streams || streaminfo %]</a> / [% END %]
+			[% IF streams || streaminfo %]<a href="index.html?player=[% player | uri %]">[% END %][% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %][% IF streams || streaminfo %]</a> / 
+			[% ELSE %]
+				(<a href="index.html?player=[% player | uri %]&action=refresh">[% 'PLUGIN_SHOUTCASTBROWSER_REFRESH' | string %]</a>)
+			[% END %]
 			[% IF streams || streaminfo %][% IF streaminfo %]<a href="index.html?genreID=[% genreID | uri %]&player=[% player | uri %]">[% END %][% genre %][% IF streaminfo %]</a> /[% END %][% END %]
 			[% IF streaminfo %][% stream %][% END %]
 				</td>
