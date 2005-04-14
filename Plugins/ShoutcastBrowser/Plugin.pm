@@ -35,7 +35,7 @@ use XML::Simple;
 ################### Configuration Section ########################
 
 ### These first few preferences can only be set by editing this file
-our (%genre_aka, @genre_keywords, @legit_genres);
+my (%genre_aka, @genre_keywords, @legit_genres);
 
 # If you choose to munge the genres, here is the list of keywords that
 # define various genres.  If any of these words or phrases is found in
@@ -80,34 +80,34 @@ our (%genre_aka, @genre_keywords, @legit_genres);
 	'anime' => 'animation', 
 	'breakbeat' => 'breakbeats', 
 	'british' => 'britpop',
-	'spiritual' => 'christian|praise|worship|prayer|inspirational|bible|religious',
-	'drum & bass' => 'dnb|d&b|d & b|drum and bass|drum|bass', 
-	'electronic' => 'electro|electronica',
-	'soundtrack' => 'film|movie',
-	'freeform' => 'freestyle', 
-	'greek' => 'greece', 
-	'gothic' => 'goth',
-	'rap' => 'hiphop|hip hop', 
-	'dutch' => 'holland|netherla|nederla', 
+	'classical' => 'symphonic',
 	'comedy' => 'humor|humour', 
-	'hungarian' => 'hungar', 
 	'community' => 'local', 
+	'drum & bass' => 'dnb|d&b|d & b|drum and bass|drum|bass', 
+	'dutch' => 'holland|netherla|nederla', 
+	'electronic' => 'electro|electronica',
+	'freeform' => 'freestyle', 
+	'gothic' => 'goth',
+	'greek' => 'greece', 
+	'hungarian' => 'hungar', 
+	'live' => 'vivo',
 	'low fi' => 'lowfi|lofi',
 	'new age' => 'newage',
-	'oldies' => 'oldie|old time radio', 
 	'old school' => 'oldskool|old skool|oldschool', 
+	'oldies' => 'oldie|old time radio', 
 	'psychedelic' => 'psych',
 	'punjabi' => 'punjab',
-	'reggae' => 'ragga|dancehall|dance hall', 
 	'r & b' => 'rnb|r n b|r&b',  
+	'reggae' => 'ragga|dancehall|dance hall', 
+	'rap' => 'hiphop|hip hop', 
+	'soundtrack' => 'film|movie',
+	'spiritual' => 'christian|praise|worship|prayer|inspirational|bible|religious',
 	'talk' => 'spoken|politics', 
-	'classical' => 'symphonic',
 	'top 40' => 'top40|chart|top hits', 
 	'trance' => 'tranc', 
 	'turkish' => 'turk|turkce',
-	'video_game' => 'videogame|gaming', 
-	'live' => 'vivo',
-	'various' => 'all|any|every|mixed|eclectic|mix|variety|varied|random|misc|unknown'
+	'various' => 'all|any|every|mixed|eclectic|mix|variety|varied|random|misc|unknown',
+	'video_game' => 'videogame|gaming'
 );
 
 ## These are useful, descriptive genres, which should not be removed
@@ -129,7 +129,7 @@ our (%genre_aka, @genre_keywords, @legit_genres);
 # rather constants than variables (never changed in the code)
 use constant SORT_BITRATE_UP => 0;
 use constant RECENT_DIRNAME => 'ShoutcastBrowser_Recently_Played';
-use constant POSITION_OF_RECENT => 0;
+use constant UPDATEINTERVAL => 86400;
 
 ## Order for info sub-mode
 my (@info_order, @info_index);
@@ -138,7 +138,7 @@ my (%custom_genres, %keyword_index);
 
 # keep track of client status
 # TODO mh: put these back to "my" ("our" only for debugging)!
-our (%status, %stream_data, %genres_data);
+my (%status, %stream_data, %genres_data);
 
 # http status: 0 = ok, -1 = loading, >0 = error, undef = not loaded
 my $httpError;
@@ -253,6 +253,8 @@ sub setMode {
 	@info_order = ($client->string('BITRATE'), $client->string('PLUGIN_SHOUTCASTBROWSER_STREAM_NAME'), $client->string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS'), $client->string('GENRE'), $client->string('PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING'), $client->string('URL') );
 	@info_index = (                    2,                                         -1,                                                          1,                                               4,                                         3,                                   0);
 
+	check4Update();
+	
 	if (not defined $httpError) {
 		Slim::Buttons::Block::block($client, $client->string('PLUGIN_SHOUTCASTBROWSER_CONNECTING'));
 		loadStreamList($client);
@@ -280,6 +282,9 @@ sub loadStreamList {
 	
 	# only start if it's not been launched by another client
 	if (not defined $httpError) {
+		$last_time = time();
+		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: next update " . localtime($last_time + UPDATEINTERVAL) . "\n");
+		
 		$httpError = -1;
 		my $http = Slim::Networking::SimpleAsyncHTTP->new(\&gotViaHTTP, \&gotErrorViaHTTP, {client => $client, params => $params, callback => $callback, httpClient => $httpClient, response => $response});
 	
@@ -507,12 +512,12 @@ sub sortGenres {
 
 sub cleanMe {
 	my $arg = shift;
-	$arg =~ s/%([\dA-F][\dA-F])/chr hex $1/gei;#encoded chars
+	$arg =~ s/%([\dA-F][\dA-F])/chr hex $1/gei;	# encoded chars
 	$arg = decode_entities($arg);
-	$arg =~ s#\b([\w-]) ([\w-]) #$1$2#g;#S P A C E D  W O R D S
-	$arg =~ s#\b(ICQ|AIM|MP3Pro)\b##i;# we don't care
-	$arg =~ s#\W\W\W\W+# #g;# excessive non-word characters
-	$arg =~ s#^\W+##;# leading non-word characters
+	$arg =~ s#\b([\w-]) ([\w-]) #$1$2#g;		# S P A C E D  W O R D S
+	$arg =~ s#\b(ICQ|AIM|MP3Pro)\b##i;			# we don't care
+	$arg =~ s#\W\W\W\W+# #g;					# excessive non-word characters
+	$arg =~ s#^\W+##;							# leading non-word characters
 	$arg =~ s/\s+/ /g;
 	return $arg;
 }
@@ -1302,7 +1307,6 @@ sub writeRecentStreamList {
 
 	if (defined getRecentFilename($client)) {
 		open(FH, ">" . getRecentFilename($client)) or do {
-#			print STDERR "Could not open " . getRecentFilename($client) . " for writing.\n";
 			return;
 		};
 	
@@ -1338,6 +1342,8 @@ sub handleWebIndex {
 		$params->{'action'} = undef;
 		$httpError = undef;
 	}
+		
+	check4Update();
 		
 	if (not defined $httpError) {
 		loadStreamList($client, $params, $callback, $httpClient, $response);
@@ -1418,6 +1424,9 @@ sub getWebStreamList {
 	}
 }
 
+sub check4Update {
+	$httpError = undef if (time() - $last_time > UPDATEINTERVAL);
+}
 
 sub strings {
 	return q^PLUGIN_SHOUTCASTBROWSER_MODULE_NAME
