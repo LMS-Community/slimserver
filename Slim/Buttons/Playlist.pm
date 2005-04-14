@@ -85,7 +85,7 @@ sub init {
 		'left' => sub  {
 			my $client = shift;
 			my @oldlines = Slim::Display::Display::curLines($client);
-			Slim::Buttons::Home::jump($client, 'NOW_PLAYING');
+			
 			Slim::Buttons::Common::setMode($client, 'home');
 			$client->pushRight(\@oldlines, [Slim::Display::Display::curLines($client)]);
 		},

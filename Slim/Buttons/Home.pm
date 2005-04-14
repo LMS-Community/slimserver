@@ -154,7 +154,7 @@ sub addSubMenu {
 
 	if (!defined $submenuref) {
 		
-		#return unless (defined $submenuname);
+		return unless (defined $submenuname);
 		
 		if (exists $home{$menu}{'submenus'}{$submenuname}) {
 			$::d_plugins && Slim::Utils::Misc::msg("Deleting $submenuname from menu: $menu\n");
@@ -239,7 +239,7 @@ sub setMode {
 		updateMenu($client);
 		$client->curDepth('');
 		if (!defined($client->curSelection($client->curDepth()))) {
-			$client->curSelection($client->curDepth(),'NOW_PLAYING');
+			$client->curSelection($client->curDepth(),$@{$homeChoices{$client}}->[0]);
 		}
 		return;
 	}
@@ -247,8 +247,9 @@ sub setMode {
 	updateMenu($client);
 	$client->curDepth('');
 	if (!defined($client->curSelection($client->curDepth()))) {
-		$client->curSelection($client->curDepth(),'NOW_PLAYING');
+		$client->curSelection($client->curDepth(),$homeChoices{$client}->[0]);
 	}
+	
 	my %params = %defaultParams;
 	$params{'header'} = \&homeheader;
 	$params{'listRef'} = \@{$homeChoices{$client}};
@@ -325,6 +326,7 @@ sub homeExitHandler {
 	
 	} elsif ($exittype eq 'RIGHT') {
 		my $nextmenu = $client->curSelection($client->curDepth());
+		
 		# map default selection in case no onChange was done in INPUT.List
 		if (!defined($nextmenu)) { 
 			$nextmenu = ${$client->param('valueRef')};
@@ -334,6 +336,7 @@ sub homeExitHandler {
 			$client->bumpRight();
 			return;
 		}
+		
 		my $nextParams;
 		# some menus might need function return values for params, so test here and grab
 		if (ref(getNextList($client)) eq 'CODE') {
