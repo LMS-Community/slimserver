@@ -1057,14 +1057,16 @@ sub getInfoForSort {
 
 	my $list = isList($obj);
 
+	my $album = $obj->album();
+
 	return [
 		$item,
 		$list,
 		$list ? undef : $obj->artistsort(),
-		$list ? undef : $obj->album()->titlesort(),
+		$list ? undef : (defined($album) ? $album->titlesort() : undef),
 		$list ? undef : $obj->tracknum(),
 		$obj->titlesort(),
-		$list ? undef : $obj->album()->disc()
+		$list ? undef : (defined($album) ? $album->disc() : undef)
 	];
 }	
 
