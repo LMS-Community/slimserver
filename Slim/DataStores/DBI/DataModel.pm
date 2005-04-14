@@ -205,7 +205,10 @@ sub wipeDB {
 	$dirtyCount      = 0;
 	$cleanupIterator = undef;
 
-	$class->clear_object_index();
+	for my $c qw(Track LightWeightTrack Album Contributor Genre Comment ContributorTrack DirlistTrack GenreTrack PlaylistTrack) {
+		my $package = 'Slim::DataStores::DBI::' . $c;
+		$package->clear_object_index();
+	}
 	$class->executeSQLFile("dbdrop.sql");
 
 	$dbh->commit();
