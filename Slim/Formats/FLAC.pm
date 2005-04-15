@@ -105,11 +105,20 @@ sub getTag {
 
 	my $fileurl = Slim::Utils::Misc::fileURLFromPath("$file") . "#$anchor";
 
+	# Handle all the UTF-8 decoding into perl's native format.
+	# basefile tags first
+	_decodeUTF8($tags);
+
 	# Do the actual data store
 	for my $key (keys %$tracks) {
 		my $track = $tracks->{$key};
 
 		next unless exists $track->{'URI'};
+
+		# Handle all the UTF-8 decoding into perl's native format.
+		# for each track
+		_decodeUTF8($track);
+
 
 		Slim::Formats::Parse::processAnchor($track);
 
@@ -184,8 +193,6 @@ sub addInfoTags {
 	my $tags = shift;
 
 	return unless defined $tags;
-	# Handle all the UTF-8 decoding into perl's native format.
-	_decodeUTF8($tags);
 
 	# add more information to these tags
 	# these are not tags, but calculated values from the streaminfo
@@ -739,13 +746,16 @@ sub getNumberedVCs {
 			# Make the key uppercase
 			my $tkey  = uc($1);
 			my $value = $2;
+
+			$::d_parse && Slim::Utils::Misc::msg("matched: $tkey = $value\n");
 			
 			# Match track number
 			my $group;
 			if ($tkey =~ /^(.+)\s*[\(\[\{\<](\d+)[\)\]\}\>]/) {
 				$tkey = $1;
 				$group = $2 + 0;
-			}
+				$::d_parse && Slim::Utils::Misc::msg("grouped as track $group\n");
+			}			
 
 			if (defined $group) {
 				$tracks->{$group}->{$tkey} = $value;

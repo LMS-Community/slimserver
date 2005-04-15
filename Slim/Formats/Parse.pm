@@ -255,7 +255,7 @@ sub parseCUE {
 	my $currtrack;
 	my $tracks = {};
 
-	$::d_parse && Slim::Utils::Misc::msg("parseCUE: cuedir: [$cuedir] noUTF8: [$noUTF8]\n");
+	$::d_parse && Slim::Utils::Misc::msg("parseCUE: cuedir: [$cuedir]\n");
 
 	if (!@$lines) {
 		$::d_parse && Slim::Utils::Misc::msg("parseCUE skipping empty cuesheet.\n");
@@ -264,14 +264,14 @@ sub parseCUE {
 
 	for (@$lines) {
 
-		unless ($noUTF8) {
-
-			if ($] > 5.007) {
-				$_ = eval { Encode::decode("utf8", $_, Encode::FB_QUIET()) };
-			} else {
-				$_ = Slim::Utils::Misc::utf8toLatin1($_);
-			}
-		}
+#		unless ($noUTF8) {
+#
+#			if ($] > 5.007) {
+#				$_ = eval { Encode::decode("utf8", $_, Encode::FB_QUIET()) };
+#			} else {
+#				$_ = Slim::Utils::Misc::utf8toLatin1($_);
+#			}
+#		}
 
 		# strip whitespace from end
 		s/\s*$//;
@@ -323,6 +323,11 @@ sub parseCUE {
 			 /^\s*REM\s+END\s+(\d+):(\d+):(\d+)/i) {
 			$tracks->{$currtrack}->{'END'} = ($1 * 60) + $2 + ($3 / 75);			
 		}
+	}
+
+	if (!$currtrack || $currtrack < 1) {
+		$::d_parse && Slim::Utils::Misc::msg("parseCUE unable to extract tracks from cuesheet\n");
+		return {};
 	}
 
 	# calc song ending times from start of next song from end to beginning.
