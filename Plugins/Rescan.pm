@@ -194,9 +194,7 @@ sub checkScanTimer {
 			}
 
 			if ($time == $scantime && !Slim::Music::Import::stillScanning()) {
-
-				Slim::Music::Import::cleanupDatabase(1);
-				Slim::Music::Import::startScan();
+				Slim::Control::Command::execute('rescan');
 			}
 		}
 	}

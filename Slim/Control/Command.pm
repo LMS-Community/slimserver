@@ -229,6 +229,7 @@ sub execute {
 	} elsif ($p0 eq "rescan") {
 
 		Slim::Music::Import::cleanupDatabase(1);
+		Slim::Music::Info::clearPlaylists();
 		Slim::Music::Import::startScan();
 
 		$client = undef;
