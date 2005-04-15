@@ -1,6 +1,6 @@
 package Slim::Formats::Shorten;
 
-# $Id: Shorten.pm,v 1.1 2003/12/10 23:02:04 dean Exp $
+# $Id$
 
 ###############################################################################
 # FILE: Slim::Formats::Shorten.pm
@@ -32,7 +32,13 @@ sub getTag {
 	# shorten's error message "failed to write decompressed
 	# stream".  Note that this requires a slightly modified
 	# Audio/Wav.pm
-	$file = "shorten -x \Q$file\E - 2>/dev/null|";
+	my $shorten = Slim::Utils::Misc::findbin('shorten') || return undef;
+	
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+		$file = $shorten." -x \"$file\" - 2>nul|";
+	} else {
+		$file = $shorten." -x \Q$file\E - 2>/dev/null|";
+	}
 
 	$::d_source &&
 	  Slim::Utils::Misc::msg( "Reading WAV information from $file\n");
