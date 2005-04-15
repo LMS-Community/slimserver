@@ -76,7 +76,7 @@ sub enabledPlugins {
 	for my $item (keys %{$pluginlistref}) {
 
 		next if (exists $disabledplugins{$item});
-		next unless $plugins{$item};
+		next unless defined $plugins{$item};
 		
 		no strict 'refs';
 		if (exists &{$plugins{$item}->{'module'} . "::enabled"} && 
