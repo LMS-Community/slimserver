@@ -998,12 +998,17 @@ sub musicmagic_mix {
 
 		if ($obj && $obj->musicmagic_mixable()) {
 
+			my $artistObj = $ds->objectForId('contributor', $artist);
+
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			my $key = $artist eq "" ? 
-				Slim::Utils::Misc::pathFromFileURL($obj->{'url'}) : 
-				$ds->objectForId('contributor', $artist)->name()."\@\@".$obj->title();
-				
-			$mix = getMix($key, 'album');
+			if ($artistObj) {
+
+				my $key = $artist eq "" ? 
+					Slim::Utils::Misc::pathFromFileURL($obj->{'url'}) : 
+					$artistObj->name()."\@\@".$obj->title();
+					
+				$mix = getMix($key, 'album');
+			}
 		}
 		
 	} elsif (defined $genre && $genre ne "" && $genre ne "*") {
