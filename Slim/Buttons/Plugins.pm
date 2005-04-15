@@ -76,7 +76,7 @@ sub enabledPlugins {
 	for my $item (keys %{$pluginlistref}) {
 
 		next if (exists $disabledplugins{$item});
-		next if (!exists $plugins{$item});
+		next unless $plugins{$item};
 		
 		no strict 'refs';
 		if (exists &{$plugins{$item}->{'module'} . "::enabled"} && 
@@ -179,6 +179,7 @@ sub read_plugins {
 
 			$::d_plugins && msg("Can't load plugin $fullname - not 6.0+ compatible.\n");
 			Slim::Utils::Prefs::push('disabledplugins',$plugin);
+			next;
 
 		} elsif (!$@ && $displayName) {
 
@@ -198,6 +199,7 @@ sub read_plugins {
 		} else {
 
 			$::d_plugins && msg("Can't load $fullname for Plugins menu: $@\n");
+			
 		}
 
 		addDefaultMaps();
@@ -442,8 +444,10 @@ sub unusedPluginOptions {
 
 	for my $menuOption (keys %{$pluginsRef}) {
 
+		next unless $pluginsRef->{$menuOption};
 		next if exists $disabledplugins{$menuOption};
 		next if exists $homeplugins{$pluginsRef->{$menuOption}->{'name'}};
+
 		next if (!UNIVERSAL::can("$pluginsRef->{$menuOption}->{'module'}","setMode"));
 		next if (!UNIVERSAL::can("$pluginsRef->{$menuOption}->{'module'}","getFunctions"));
 		
