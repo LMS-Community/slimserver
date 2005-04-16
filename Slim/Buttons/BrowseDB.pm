@@ -368,8 +368,8 @@ sub browsedbItemName {
 	
 	my $fieldInfo = Slim::Web::Pages::fieldInfo();
 	my $levelInfo = $fieldInfo->{$levels[$level]} || $fieldInfo->{'default'};
-
-	return &{$levelInfo->{'resultToName'}}($item);
+	
+	return ($levels[$level] eq 'track') ? Slim::Music::Info::standardTitle($client, $item) : &{$levelInfo->{'resultToName'}}($item);
 }
 
 # Method invoked by INPUT.List to map an item in the list
