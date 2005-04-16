@@ -54,6 +54,10 @@ sub getTag {
 	my $tags = getStandardTag($file, $flac);
 	my $cuesheet = $flac->cuesheet();
 
+	# Handle all the UTF-8 decoding into perl's native format.
+	# basefile tags first
+	_decodeUTF8($tags);
+
 	# if there's no embedded cuesheet, then we're either a single song
 	# or we have pseudo CDTEXT in the external cuesheet.
 
@@ -104,10 +108,6 @@ sub getTag {
 	$tags->{'TITLE'} = $tags->{'ALBUM'};
 
 	my $fileurl = Slim::Utils::Misc::fileURLFromPath("$file") . "#$anchor";
-
-	# Handle all the UTF-8 decoding into perl's native format.
-	# basefile tags first
-	_decodeUTF8($tags);
 
 	# Do the actual data store
 	for my $key (keys %$tracks) {
