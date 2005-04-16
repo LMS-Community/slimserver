@@ -218,6 +218,7 @@ sub initPlugin {
 sub strings {
 	return "
 PLUGIN_FAVORITES_MODULE_NAME
+	DE	Favoriten
 	EN	Favorites
 
 

@@ -6513,6 +6513,7 @@ PAGES
 	SE	Sidor
 
 ITEMS
+	DE	Einträge
 	EN	Items
 
 SONGS
@@ -8708,23 +8709,26 @@ MIDWORDS_UPPER
 	DE	1
 	EN	0
 
-
-# Strings for favorites
-
 FAVORITES_FAVORITE_NUM
+	DE	Favorit Nr.
 	EN	Favorite #
 
 FAVORITES_RIGHT_TO_DELETE
+	DE	 (RECHTS zum löschen)
 	EN	 (RIGHT to delete)
 
 FAVORITES_NOT_A_FAVORITE
+	DE	Kein Favorit
 	EN	Not a favorite
 
 FAVORITES_RIGHT_TO_ADD
+	DE	RECHTS drücken um den Favoriten zuzuordnen
 	EN	Press RIGHT to add to favorites
 
 FAVORITES_ADDING
+	DE	Favoriten werden gespeichert...
 	EN	Saving favorites...
 
 FAVORITES_DELETING
+	DE	Favorit wird gelöscht...
 	EN	Deleting favorite...

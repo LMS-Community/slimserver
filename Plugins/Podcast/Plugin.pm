@@ -333,12 +333,15 @@ PLUGIN_PODCAST
 	EN	Podcast Browser
 
 PODCAST_ERROR
+	DE	Fehler
 	EN	Error
 
 PODCAST_GET_FAILED
+	DE	Fehler beim Auslesen
 	EN	Failed to parse
 
 PODCAST_LOADING
+	DE	Hole Casts...
 	EN	Fetching...
 
 PODCAST_LINK
@@ -348,39 +351,49 @@ PODCAST_URL
 	EN	Url
 
 PODCAST_DATE
+	DE	Datum
 	EN	Date
 
 PODCAST_EDITOR
+	DE	Herausgeber
 	EN	Editor
 
 PODCAST_ENCLOSURE
 	EN	Enclosure
 
 PODCAST_AUDIO_ENCLOSURES
+	DE	Audio Enclosure
 	EN	Audio Enclosures
 
 PODCAST_NOTHING_TO_PLAY
+	DE	Nichts zu spielen
 	EN	Nothing to play
 
 PODCAST_FEED_DESCRIPTION
+	DE	Über diesen Podcast
 	EN	About this podcast
 
 PODCAST_GROUP_DESC
+	DE	Der Podcast Browser erlaubt es, Podcasts anzusehen und abzuspielen.
 	EN	The Podcast Browser plugin allows you to view and listen to podcasts.
 
 PODCAST_RESET_BUTTON
+	DE	Zurücksetzen
 	EN	Reset
 
 PODCAST_RESETTING
+	DE	Setze Podcasts zurück
 	EN	Resetting to default podcasts
 
 PODCAST_FEEDS_CHANGE
+	DE	Die Podcast Liste wurde geändert.
 	EN	Podcast list changed.
 
 SETUP_PLUGIN_PODCAST_FEEDS
 	EN	Podcasts
 
 SETUP_PLUGIN_PODCAST_RESET
+	DE	Podcasts zurücksetzen
 	EN	Reset default Podcasts
 
 

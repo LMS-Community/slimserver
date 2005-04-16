@@ -1731,6 +1731,7 @@ PLUGIN_LIVE365_RECENT
 	ES	Reciente
 
 PLUGIN_LIVE365_NO_INFO
+	DE	Fehler beim Laden der Informationen
 	EN	Error loading info
 
 	^;
