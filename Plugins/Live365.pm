@@ -797,24 +797,34 @@ sub setMode {
 our %mainModeFunctions = (
 	'up' => sub {
 		my $client = shift;
-		$mainModeIdx = Slim::Buttons::Common::scroll(
+		my $newpos = Slim::Buttons::Common::scroll(
 			$client,
 			-1,
 			scalar @mainModeItems,
 			$mainModeIdx
 		);
-		$client->pushUp();
+		if (scalar(@mainModeItems) < 2) {
+			$client->bumpUp();
+		} elsif ($newpos != $mainModeIdx) {
+			$mainModeIdx = $newpos;
+			$client->pushUp();
+		}
 	},
 
 	'down' => sub {
 		my $client = shift;
-		$mainModeIdx = Slim::Buttons::Common::scroll(
+		my $newpos = Slim::Buttons::Common::scroll(
 			$client,
 			1,
 			scalar @mainModeItems,
 			$mainModeIdx
 		);
-		$client->pushDown();
+		if (scalar(@mainModeItems) < 2) {
+			$client->bumpDown();
+		} elsif ($newpos != $mainModeIdx) {
+			$mainModeIdx = $newpos;
+			$client->pushDown();
+		}
 	},
 
 	'left' => sub {

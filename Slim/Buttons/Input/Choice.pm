@@ -204,7 +204,13 @@ sub changePos {
 	if (ref($onChange) eq 'CODE') {
 		$onChange->($client, $valueRef ? ($$valueRef) : undef);
 	}
-	$client->update();
+	if ($newposition != $listIndex) {
+		if ($dir < 0) {
+			$client->pushUp();
+		} else {
+			$client->pushDown();
+		}
+	}
 }
 
 # callers can specify strings (i.e. header) as a string like this...

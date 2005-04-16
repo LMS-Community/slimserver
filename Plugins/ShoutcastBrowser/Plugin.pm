@@ -931,7 +931,7 @@ my %StreamsFunctions = (
 					);
 		if ($newpos != $status{$client}{stream}) {
 			$status{$client}{stream} = $newpos;
-			$client->pushDown();
+			$client->pushUp();
 		}
 	},
 	

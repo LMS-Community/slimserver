@@ -23,7 +23,9 @@ sub init {
 		'up' => sub  {
 			my $client = shift;
 			my $newpos = Slim::Buttons::Common::scroll($client,-1,scalar(@{$client->syncSelections}),$client->syncSelection);
-			if ($newpos != $client->syncSelection) {
+			if (scalar(@{$client->syncSelections}) < 2) {
+				$client->bumpUp();
+			} elsif ($newpos != $client->syncSelection) {
 				$client->syncSelection($newpos);
 				$client->pushUp();
 			}
@@ -32,7 +34,9 @@ sub init {
 		'down' => sub {
 			my $client = shift;
 			my $newpos = Slim::Buttons::Common::scroll($client,1,scalar(@{$client->syncSelections}),$client->syncSelection);
-			if ($newpos != $client->syncSelection) {
+			if (scalar(@{$client->syncSelections}) < 2) {
+				$client->bumpDown();
+			} elsif ($newpos != $client->syncSelection) {
 				$client->syncSelection($newpos);
 				$client->pushDown();
 			}

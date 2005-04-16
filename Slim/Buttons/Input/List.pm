@@ -101,7 +101,13 @@ sub changePos {
 		$onChange->(@args);
 	}
 	
-	if ($newposition != $listIndex) {
+	if (scalar(@$listRef) < 2) {
+		if ($dir < 0) {
+			$client->bumpUp();
+		} else {
+			$client->bumpDown();
+		}
+	} elsif ($newposition != $listIndex) {
 		if ($dir < 0) {
 			$client->pushUp();
 		} else {
