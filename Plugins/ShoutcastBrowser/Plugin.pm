@@ -1137,98 +1137,38 @@ my %BitrateFunctions = (
 
 my $info_mode_sub = sub {
 	my $client = shift;
-
-	$status{$client}{info} = 0;
-	$client->lines(\&infoLines);
-	$client->update();
-};
-
-sub infoLines {
-	my $client = shift;
-	my @lines = ($client->string('PLUGIN_SHOUTCASTBROWSER_MODULE_NAME'), $client->string('PLUGIN_SHOUTCASTBROWSER_NONE'));
-	my $current_data;
-	
-	if (defined getCurrentGenre($client) and defined getCurrentStreamName($client) and defined getCurrentBitrate($client)) {
-		$current_data = $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{getCurrentBitrate($client)};
-	
-		my $cur = $status{$client}{info} || 0;
-	
-		$lines[0] = getCurrentBitrate($client) . $client->string('PLUGIN_SHOUTCASTBROWSER_KBPS') . ' - ' . getCurrentStreamName($client);
-		
-		$lines[1] = $info_order[$cur] . ': ';
-		# get the stream's name from the hash key, not the array
-		if ($info_index[$cur] == -1) {
-			$lines[1] .= getCurrentStreamName($client);
-		}
-		else {
-			$lines[1] .= $current_data->[$info_index[$cur]] || $client->string('PLUGIN_SHOUTCASTBROWSER_NONE');
-		}
+	my $method = shift;
+   	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
 	}
 
-	return @lines;
-}
+	my $current_data = $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{getCurrentBitrate($client)};
+	my $title = getCurrentStreamName($client);
+	my $url = $current_data->[0]; # 0 is index for url
+	my @details;
+	my $i = -1;
+	for my $index (@info_index) {
+		$i++;
+		# skip url and title, as remotestreaminfo will display them
+		if ($index == 0 || $index == -1) {
+			next;
+		}
+		push @details, $info_order[$i] . ': '. $current_data->[$index] || $client->string('PLUGIN_SHOUTCASTBROWSER_NONE');
+	}
+
+	my %params = (
+		url => $url,
+		title => $title,
+		details => \@details,
+	);
+	Slim::Buttons::Common::pushMode($client,
+									'remotetrackinfo',
+									\%params);
+};
+
 
 my %InfoFunctions = (
-	'up' => sub {
-		my $client = shift;
-		
-		my $newpos = Slim::Buttons::Common::scroll(
-						$client,
-						-1,
-						$#info_order + 1,
-						$status{$client}{info} || 0,
-					);
-		if ($status{$client}{info} != $newpos) {
-			$status{$client}{info} = $newpos;
-			$client->pushUp();
-		}
-	},
-	
-	'down' => sub {
-		my $client = shift;
-		
-		my $newpos = Slim::Buttons::Common::scroll(
-						$client,
-						1,
-						$#info_order + 1,
-						$status{$client}{info} || 0,
-					);
-		if ($status{$client}{info} != $newpos) {
-			$status{$client}{info} = $newpos;
-			$client->pushDown();
-		}
-	},
-	
-	'left' => sub {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	
-	'right' => sub {
-		my $client = shift;
-		$client->bumpRight();
-	},
-	
-	'play' => sub {
-		my $client = shift;
-		playStream($client, getCurrentGenre($client), getCurrentStreamName($client), getCurrentBitrate($client), 'play');
-	},
-	
-	'add' => sub {
-		my $client = shift;
-		playStream($client, getCurrentGenre($client), getCurrentStreamName($client), getCurrentBitrate($client), 'add');
-	},
-	
-	'jump_rew' => sub {
-		my $client = shift;
-		$status{$client}{number} = undef;
-		
-		Slim::Buttons::Common::popModeRight($client);
-		Slim::Buttons::Common::popModeRight($client);
-		Slim::Buttons::Common::popModeRight($client);
-		
-		reloadXML($client);
-	},
 );
 
 sub playStream {

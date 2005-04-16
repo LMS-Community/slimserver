@@ -260,7 +260,7 @@ sub displayItemDescription {
 	#use Data::Dumper;
 	#print Dumper($item);
 
-	# use INPUT.Choice mode to display item in detail
+	# use remotetrackinfo mode to display item in detail
 
 	# break description into lines
 	my @lines;
@@ -292,31 +292,50 @@ sub displayItemDescription {
 			name => '{PODCAST_ENCLOSURE}: ' . $item->{'enclosure'}->{'url'},
 			value => $item->{'enclosure'}->{'url'},
 			overlayRef => [ undef, Slim::Display::Display::symbol('notesymbol') ],
-		}
+		};
+
+		# its a remote audio source, use remotetrackinfo
+		my %params = (
+			title =>$item->{'title'},
+			url => $item->{'enclosure'}->{'url'},
+			details => \@lines,
+			onRight => sub {
+				my $client = shift;
+				my $item = $client->param('item');
+				displayItemLink($client, $item);
+			},
+			hideTitle => 1,
+			hideURL => 1,
+		);
+		Slim::Buttons::Common::pushMode($client,
+										'remotetrackinfo',
+										\%params);
+	} else {
+		# its not audio, use INPUT.Choice to display...
+
+		my %params = (
+			item => $item,
+			header => $item->{'title'} . ' {count}',
+			listRef => \@lines,
+			onRight => sub {
+				my $client = shift;
+				my $item = $client->param('item');
+				displayItemLink($client, $item);
+			},
+			onPlay => sub {
+				my $client = shift;
+				my $item = $client->param('item');
+				playItem($client, $item);
+			},
+			onAdd => sub {
+				my $client = shift;
+				my $item = $client->param('item');
+				playItem($client, $item, 'add');
+			},
+		);
+
+		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 	}
-
-	my %params = (
-		item => $item,
-		header => $item->{'title'} . ' {count}',
-		listRef => \@lines,
-		onRight => sub {
-			my $client = shift;
-			my $item = $client->param('item');
-			displayItemLink($client, $item);
-		},
-		onPlay => sub {
-			my $client = shift;
-			my $item = $client->param('item');
-			playItem($client, $item);
-		},
-		onAdd => sub {
-			my $client = shift;
-			my $item = $client->param('item');
-			playItem($client, $item, 'add');
-		},
-	);
-
-	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 }
 
 sub displayFeedDescription {
@@ -327,7 +346,7 @@ sub displayFeedDescription {
 	#use Data::Dumper;
 	#print Dumper($feed);
 
-	# use INPUT.Choice mode to display item in detail
+	# use remotetrackinfo mode to display item in detail
 
 	# break description into lines
 	my @lines;
@@ -370,35 +389,16 @@ sub displayFeedDescription {
 
 	my %params = (
 		url => $client->param('url'),
+		title => $feed->{'title'},
 		feed => $feed,
 		header => $feed->{'title'} . ' {count}',
-		listRef => \@lines,
-# 		onRight => sub {
-# 			my $client = shift;
-# 			my $item = $client->param('feed');
-# 			displayItemLink($client, $item);
-# 		},
-		onPlay => sub {
-			my $client = shift;
-			# play this feed as a playlist
-			Slim::Control::Command::execute( $client,
-										 [ 'playlist', 'play',
-										   $client->param('url'),
-										   $client->param('feed')->{'title'},
-									   ] );
-		},
-		onAdd => sub {
-			my $client = shift;
-			# play this feed as a playlist
-			Slim::Control::Command::execute( $client,
-										 [ 'playlist', 'add',
-										   $client->param('url'),
-										   $client->param('feed')->{'title'},
-									   ] );
-		},
+		details => \@lines,
+		hideTitle => 1,
+		hideURL => 1,
+
 	);
 
-	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
+	Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
 }
 
 sub displayItemLink {

@@ -102,7 +102,16 @@ our %functions = (
 	},
 	'right' => sub {
 		my $client = shift;
-		$client->bumpRight();
+		# use remotetrackinfo mode to display details
+		my $url = getRadioIOURL($current{$client} || 0);
+		my $title = $station_names[$current{$client}];
+		my %params = (
+			url => $url,
+			title => $title,
+		);
+		Slim::Buttons::Common::pushModeLeft($client,
+											'remotetrackinfo',
+											\%params);
 	},
 	'play' => sub {
 		my $client = shift;

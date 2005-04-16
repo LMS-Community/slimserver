@@ -67,10 +67,10 @@ sub mainModeCallback {
 		my $stations = $client->param( 'stations');
 
 		my %params = (
-			stationTitle => $context{$client}->{mainModeIndex},
-			stationURL => $stations->[$listIndex],
+			title => $context{$client}->{mainModeIndex},
+			url => $stations->[$listIndex],
 		);
-		Slim::Buttons::Common::pushModeLeft($client, 'PLUGIN.Picks.details',
+		Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo',
 											\%params);
 	}
 	else {

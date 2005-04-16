@@ -1246,26 +1246,43 @@ Slim::Buttons::Common::addMode( 'Live365Channels', \%channelModeFunctions, $setC
 # Information mode {{{
 #
 INFOMODE: {
-our @infoItems = ();
-my $infoItem = 0;
 
 our $setInfoMode = sub {
 	my $client = shift;
-	$client->lines( \&infoModeLines );
+	my $method = shift;
+	
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
 
 	$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_INFORMATION' );
 	$client->update();
 
-	$live365->{$client}->loadInfoForStation( $live365->{$client}->getCurrentStation()->{STATION_ID} ) or
-		Slim::Buttons::Common::popModeRight( $client );
+	my $haveInfo = $live365->{$client}->loadInfoForStation( $live365->{$client}->getCurrentStation()->{STATION_ID} );
 
-	@infoItems = $live365->{$client}->getStationInfo();
-	# unshift @infoItems, [ 'DESCRIPTION', $live365->{$client}->getStationInfoString( 'STATION_DESCRIPTION' ) ];
+	my @infoItems;
+	my @items;
+	if ($haveInfo) {
+		@infoItems = $live365->{$client}->getStationInfo();
+		@items = map {"{PLUGIN_LIVE365_". $_->[0] . "}: " . $_->[1]} @infoItems;
+	} else {
+		push @items, "{PLUGIN_LIVE365_NO_INFO}";
+	}
+	my $url = $live365->{$client}->getCurrentChannelURL();
+	my $title = $live365->{$client}->getCurrentStation()->{STATION_TITLE};
+
+	# use remotetrackinfo mode to show all details
+	my %params = (
+		url => $url,
+		title => $title,
+		details => \@items,
+	);
 
 	$live365->{$client}->clearBlockingStatus();
-	$client->update();
+	Slim::Buttons::Common::pushMode($client, 'remotetrackinfo', \%params);
 
-	$infoItem = 0;
+	$client->update();
 };
 
 our $noInfoMode = sub {
@@ -1273,67 +1290,7 @@ our $noInfoMode = sub {
 };
 
 our %infoModeFunctions = (
-	'up' => sub {
-		my $client = shift;
-		$infoItem = Slim::Buttons::Common::scroll(
-			$client,
-			-1,
-			scalar @infoItems,
-			$infoItem
-		);
-		$client->pushUp();
-	},
-
-	'down' => sub {
-		my $client = shift;
-		$infoItem = Slim::Buttons::Common::scroll(
-			$client,
-			1,
-			scalar @infoItems,
-			$infoItem
-        );
-		$client->pushDown()
-	},
-
-	'left' => sub {
-		Slim::Buttons::Common::popModeRight( shift );
-	},
-
-	'right' => sub {
-		Slim::Display::Animation::bumpRight( shift );
-	},
-
-	'play' => sub {
-		my $client = shift;
-
-		playOrAddCurrentStation($client, 1);
-    },
-
-	'add' => sub {
-		my $client = shift;
-
-		playOrAddCurrentStation($client, 0);
-    }
 );
-
-sub infoModeLines {
-	my $client = shift;
-	my @lines;
-
-	if( my $APImessage = $live365->{$client}->status() ) {
-		$lines[0] = $client->string( $APImessage );
-		return @lines;
-	}
-
-	$lines[0] = $live365->{$client}->getStationInfoString( 'STATION_TITLE' );
-
-	$lines[1] = sprintf( "%s: %s",
-		$client->string( 'PLUGIN_LIVE365_' . $infoItems[ $infoItem ]->[0] ),
-		$infoItems[ $infoItem ]->[1]
-	);
-
-	return @lines;
-}
 
 Slim::Buttons::Common::addMode( 'ChannelInfo', \%infoModeFunctions, $setInfoMode, $noInfoMode );
 
@@ -1762,6 +1719,10 @@ PLUGIN_LIVE365_RECENT
 	DE	Kürzlich gehört
 	EN	Recent
 	ES	Reciente
+
+PLUGIN_LIVE365_NO_INFO
+	EN	Error loading info
+
 	^;
 }
 
