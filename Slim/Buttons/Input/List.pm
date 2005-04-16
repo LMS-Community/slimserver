@@ -93,7 +93,14 @@ sub changePos {
 		push @args, $client->param('listIndex') if $onChangeArgs =~ /i/i;
 		$onChange->(@args);
 	}
-	$client->update();
+	
+	if ($newposition != $listIndex) {
+		if ($dir < 0) {
+			$client->pushUp();
+		} else {
+			$client->pushDown();
+		}
+	}
 }
 
 sub lines {

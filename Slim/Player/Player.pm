@@ -176,6 +176,16 @@ sub update {
 	}
 }	
 
+sub pushUp {
+	my $client = shift;
+	$client->update();
+}
+
+sub pushDown {
+	my $client = shift;
+	$client->update();
+}
+
 sub isPlayer {
 	return 1;
 }

@@ -36,7 +36,7 @@ BEGIN {
 
 # squeezebox does not need an update here, so a noop is OK.
 sub refresh {
-	shift->update(@_);
+	# my $client = shift;
 }
 
 sub reconnect {

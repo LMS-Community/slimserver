@@ -68,15 +68,20 @@ sub init {
 		'up' => sub  {
 			my $client = shift;
 
-			currentLine($client, Slim::Buttons::Common::scroll($client, -1, $#{$client->trackInfoLines} + 1, currentLine($client)));
-			$client->update();
+			my $newpos = Slim::Buttons::Common::scroll($client, -1, $#{$client->trackInfoLines} + 1, currentLine($client));
+			if ($newpos != 	currentLine($client)) {
+				currentLine($client, $newpos);
+				$client->pushUp();
+			}
 		},
 
 		'down' => sub  {
 			my $client = shift;
-
-			currentLine($client, Slim::Buttons::Common::scroll($client, +1, $#{$client->trackInfoLines} + 1, currentLine($client)));
-			$client->update();
+			my $newpos = Slim::Buttons::Common::scroll($client, +1, $#{$client->trackInfoLines} + 1, currentLine($client));
+			if ($newpos != 	currentLine($client)) {
+				currentLine($client, $newpos);
+				$client->pushDown();
+			}
 		},
 
 		'left' => sub  {

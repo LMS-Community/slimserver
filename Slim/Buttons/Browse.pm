@@ -38,8 +38,10 @@ sub init {
 			} else {
 				$inc = ($inc =~ /\D/) ? -1 : -$inc;
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, $client->currentDirItem());
-				$client->currentDirItem($newposition);
-				$client->update();
+				if ($client->currentDirItem() != $newposition) {
+					$client->currentDirItem($newposition);
+					$client->pushUp();
+				}
 			}
 		},
 		'down' => sub  {
@@ -52,8 +54,10 @@ sub init {
 			} else {
 				if ($inc =~ /\D/) {$inc = 1}
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $client->numberOfDirItems(), $client->currentDirItem());
-				$client->currentDirItem($newposition);
-				$client->update();
+				if ($client->currentDirItem() != $newposition) {
+					$client->currentDirItem($newposition);
+					$client->pushDown();
+				}
 			}
 		},
 		'left' => sub  {

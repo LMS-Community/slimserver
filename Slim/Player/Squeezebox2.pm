@@ -188,12 +188,6 @@ sub nowPlayingModes {
 	return $count;
 }
 
-# squeezebox does not need an update here, so a noop is OK.
-sub refresh {
-	# my $client = shift;
-}
-
-
 sub showVisualizer {
 	my $client = shift;
 	
@@ -272,7 +266,7 @@ sub drawFrameBuf {
 	my $framebufref = shift;
 	my $parts = shift;
 	my $transition = shift || 'c';
-	my $param = shift || pack('c', 0);
+	my $param = shift || 0;
 	
 	if ($client->opened()) {
 		# for now, we'll send a visu packet with each screen update.	
@@ -280,7 +274,7 @@ sub drawFrameBuf {
 
 		my $framebuf = pack('n', 0) .   # offset of zero
 						   $transition . # transition
-						   $param . # transition parameter
+						   pack('c', $param) . # param byte
 						   substr($$framebufref, 0, $client->displayWidth() * $client->bytesPerColumn()); # truncate if necessary
 	
 		$client->sendFrame('grfe', \$framebuf);
@@ -328,6 +322,40 @@ sub visualizer {
 	}
 
 	$client->sendFrame('visu', \$parambytes);
+}
+
+sub pushUp {
+	my $client = shift;
+	my $end = shift;
+	
+	$client->pushUpDown($end, 'u');
+}
+
+sub pushDown {
+	my $client = shift;
+	my $end = shift;
+	
+	$client->pushUpDown($end, 'd');
+}
+
+sub pushUpDown {
+	my $client = shift;
+	my $end = shift;
+	my $dir = shift;
+	
+	if (!defined($end)) {
+		my @end = Slim::Display::Display::curLines($client);
+		$end = \@end;
+	}
+	
+	$client->killAnimation();
+	$client->animating(1);
+	
+	my $parts = $client->preRender($end);
+	my $fonts = $parts->{fonts};
+
+	# start the push animation, passing in the extent of the second line
+	$client->drawFrameBuf($parts->{rendered}, undef, $dir, Slim::Display::Graphics::extent($fonts->[1]));
 }
 
 # push the old screen off the left side

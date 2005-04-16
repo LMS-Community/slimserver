@@ -105,23 +105,29 @@ PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 our %configFunctions = (
 	'up' => sub  {
 		my $client = shift;
-		$client_context{$client}->{position} = Slim::Buttons::Common::scroll(
+		my $newpos = Slim::Buttons::Common::scroll(
 								$client,
 								-1,
 								scalar(@{$client_context{$client}->{list}}),
 								$client_context{$client}->{position},
 								);
-		$client->update();
+		if ($client_context{$client}->{position} != $newpos) {
+			$client_context{$client}->{position} = $newpos;
+			$client->pushUp();
+		}
 	},
 	'down' => sub  {
 		my $client = shift;
-		$client_context{$client}->{position} = Slim::Buttons::Common::scroll(
+		my $newpos = Slim::Buttons::Common::scroll(
 								$client,
 								1,
 								scalar(@{$client_context{$client}->{list}}),
 								$client_context{$client}->{position},
 								);
-		$client->update();
+		if ($client_context{$client}->{position} != $newpos) {
+			$client_context{$client}->{position} = $newpos;
+			$client->pushDown();
+		}
 	},
 	'left' => sub  {
 		my $client = shift;

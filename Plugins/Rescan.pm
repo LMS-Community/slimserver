@@ -32,16 +32,20 @@ sub initPlugin {
 			my $client = shift;
 			my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#browseMenuChoices + 1), $menuSelection{$client});
 
-			$menuSelection{$client} =$newposition;
-			$client->update();
+			if ($newposition != $menuSelection{$client}) {
+				$menuSelection{$client} =$newposition;
+				$client->pushUp();
+			}
 		},
 
 		'down' => sub  {
 			my $client = shift;
 			my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#browseMenuChoices + 1), $menuSelection{$client});
 
-			$menuSelection{$client} =$newposition;
-			$client->update();
+			if ($newposition != $menuSelection{$client}) {
+				$menuSelection{$client} =$newposition;
+				$client->pushDown();
+			}
 		},
 
 		'left' => sub  {

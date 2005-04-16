@@ -64,8 +64,10 @@ sub init {
 			} else {
 				$inc = ($inc =~ /\D/) ? -1 : -$inc;
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $songcount, browseplaylistindex($client));
-				browseplaylistindex($client, $newposition);
-				$client->update();
+				if ($newposition != browseplaylistindex($client)) {
+					browseplaylistindex($client,$newposition);
+					$client->pushUp();
+				}
 			}
 		},
 		'down' => sub  {
@@ -78,8 +80,10 @@ sub init {
 			} else {
 				if ($inc =~ /\D/) {$inc = 1}
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $songcount, browseplaylistindex($client));
-				browseplaylistindex($client,$newposition);
-				$client->update();
+				if ($newposition != browseplaylistindex($client)) {
+					browseplaylistindex($client,$newposition);
+					$client->pushDown();
+				}
 			}
 		},
 		'left' => sub  {

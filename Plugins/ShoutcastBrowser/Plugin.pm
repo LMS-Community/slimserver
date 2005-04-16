@@ -554,28 +554,35 @@ my %functions = (
 		my $client = shift;
 		
 		$status{$client}{number} = undef;
-		$status{$client}{genre} = Slim::Buttons::Common::scroll(
+		my $newpos = Slim::Buttons::Common::scroll(
 						$client,
 						-1,
 						getGenreCount(),
 						$status{$client}{genre} || 0,
 						);
 		
-		$client->update();
+		if ($newpos != $status{$client}{genre}) {
+			$status{$client}{genre} = $newpos;
+			$client->pushUp();
+		}
 	},
 	
 	'down' => sub {
 		my $client = shift;
 		
 		$status{$client}{number} = undef;
-		$status{$client}{genre} = Slim::Buttons::Common::scroll(
+		
+		my $newpos = Slim::Buttons::Common::scroll(
 						$client,
 						1,
 						getGenreCount(),
 						$status{$client}{genre} || 0,
 						);
-		
-		$client->update();
+		if ($newpos != $status{$client}{genre}) {
+			$status{$client}{genre} = $newpos;
+			$client->pushDown();
+		}
+			
 	},
 	
 	'left' => sub {
@@ -916,13 +923,16 @@ my %StreamsFunctions = (
 		
 		$status{$client}{number} = undef;
 		
-		$status{$client}{stream} = Slim::Buttons::Common::scroll(
+		my $newpos = Slim::Buttons::Common::scroll(
 						$client,
 						-1,
 						getStreamCount($client),
 						$status{$client}{stream} || 0,
 					);
-		$client->update();
+		if ($newpos != $status{$client}{stream}) {
+			$status{$client}{stream} = $newpos;
+			$client->pushDown();
+		}
 	},
 	
 	'down' => sub {
@@ -930,13 +940,16 @@ my %StreamsFunctions = (
 		
 		$status{$client}{number} = undef;
 		
-		$status{$client}{stream} = Slim::Buttons::Common::scroll(
+		my $newpos = Slim::Buttons::Common::scroll(
 						$client,
 						1,
 						getStreamCount($client),
 						$status{$client}{stream} || 0,
 					);
-		$client->update();
+		if ($newpos != $status{$client}{stream}) {
+			$status{$client}{stream} = $newpos;
+			$client->pushDown();
+		}
 	},
 	
 	'left' => sub {
@@ -1063,24 +1076,30 @@ sub bitrateLines {
 my %BitrateFunctions = (
 	'up' => sub {
 		my $client = shift;
-		$status{$client}{bitrate} = Slim::Buttons::Common::scroll(
+		my $newpos = Slim::Buttons::Common::scroll(
 						$client,
 						-1,
 						getBitrateCount($client),
 						$status{$client}{bitrate} || 0,
 					);
-		$client->update();
+		if ($newpos != $status{$client}{bitrate}) {
+			$status{$client}{bitrate} = $newpos;
+			$client->pushUp();
+		}
 	},
 	
 	'down' => sub {
 		my $client = shift;
-		$status{$client}{bitrate} = Slim::Buttons::Common::scroll(
+		my $newpos = Slim::Buttons::Common::scroll(
 						$client,
 						1,
 						getBitrateCount($client),
 						$status{$client}{bitrate} || 0,
 					);
-		$client->update();
+		if ($newpos != $status{$client}{bitrate}) {
+			$status{$client}{bitrate} = $newpos;
+			$client->pushDown();
+		}
 	},
 	
 	'left' => sub {
@@ -1153,25 +1172,31 @@ my %InfoFunctions = (
 	'up' => sub {
 		my $client = shift;
 		
-		$status{$client}{info} = Slim::Buttons::Common::scroll(
+		my $newpos = Slim::Buttons::Common::scroll(
 						$client,
 						-1,
 						$#info_order + 1,
 						$status{$client}{info} || 0,
 					);
-		$client->update();
+		if ($status{$client}{info} != $newpos) {
+			$status{$client}{info} = $newpos;
+			$client->pushUp();
+		}
 	},
 	
 	'down' => sub {
 		my $client = shift;
 		
-		$status{$client}{info} = Slim::Buttons::Common::scroll(
+		my $newpos = Slim::Buttons::Common::scroll(
 						$client,
 						1,
 						$#info_order + 1,
 						$status{$client}{info} || 0,
 					);
-		$client->update();
+		if ($status{$client}{info} != $newpos) {
+			$status{$client}{info} = $newpos;
+			$client->pushDown();
+		}
 	},
 	
 	'left' => sub {

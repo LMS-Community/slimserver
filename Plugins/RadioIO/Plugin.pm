@@ -82,13 +82,19 @@ sub getRadioIOURL {
 our %functions = (
 	'up' => sub {
 		my $client = shift;
-		$current{$client} = Slim::Buttons::Common::scroll($client, -1, scalar(@station_names), $current{$client} || 0);
-		$client->update();
+		my $newpos = Slim::Buttons::Common::scroll($client, -1, scalar(@station_names), $current{$client} || 0);
+		if ($newpos != $current{$client}) {
+			$current{$client} = $newpos;
+			$client->pushUp();
+		}
 	},
 	'down' => sub {
 		my $client = shift;
-		$current{$client} = Slim::Buttons::Common::scroll($client, 1, scalar(@station_names), $current{$client} || 0);
-		$client->update();
+		my $newpos = Slim::Buttons::Common::scroll($client, 1, scalar(@station_names), $current{$client} || 0);
+		if ($newpos != $current{$client}) {
+			$current{$client} = $newpos;
+			$client->pushDown();
+		}
 	},
 	'left' => sub {
 		my $client = shift;

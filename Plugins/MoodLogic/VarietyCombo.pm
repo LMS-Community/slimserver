@@ -38,7 +38,7 @@ sub init {
 			$variety += $inc;
 			if ($variety > 100) { $variety = 100; };
 			Slim::Utils::Prefs::set('varietyCombo', $variety);
-			$client->update();
+			$client->pushUp();
 		},
 
 		'down' => sub  {
@@ -57,7 +57,7 @@ sub init {
 			$variety -= $inc;
 			if ($variety < 0) { $variety = 0; };
 			Slim::Utils::Prefs::set('varietyCombo', $variety);
-			$client->update();
+			$client->pushDown();
 		},
 		
 		'left' => sub  {

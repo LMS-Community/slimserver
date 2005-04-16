@@ -15,6 +15,7 @@ use Slim::Utils::OSDetect;
 our %fonts;
 our %fonthash;
 our %fontheight;
+our %fontextents;
 
 my $char0 = chr(0);
 my $ord0a = ord("\x0a");
@@ -45,6 +46,29 @@ sub fontheight {
 	return $fontheight{$fontname};
 }
 
+# extent returns the number of rows high a font is rendered (useful for vertical scrolling)
+# based on char 0x1f, which is a bitmask of the valid rows.
+# negative values are for top-row fonts
+sub extent {
+	my $fontname = shift;
+
+	my $extent = $fontextents{$fontname};
+	
+	return $extent if defined($extent);
+	
+	my $extentbytes = string($fontname, chr(0x1f));	
+	
+	# count the number of set bits in the extent bytes (up to 32)
+	$extent = unpack( '%32b*', $extentbytes ); 
+	
+	if ($fontname =~ /\.1/) { $extent = -$extent; }
+	
+	$fontextents{$fontname} = $extent;
+	
+	$::d_graphics && msg(" extent of: $fontname is $extent\n");
+	return $extent;
+}
+
 sub string {
 	my $fontname = shift || return '';
 	my $string   = shift || return '';
@@ -52,7 +76,8 @@ sub string {
 	my $bits = '';
 
 	my $font = $fonts{$fontname} || do {
-		msg(" Invalid font $fontname\n"); 
+		msg(" Invalid font $fontname\n");
+		bt();
 		return '';
 	};
 	

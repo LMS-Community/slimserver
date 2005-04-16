@@ -1244,7 +1244,7 @@ sub openSong {
 			# XXX - endian can be undef here - set to ''.
 			$size       = $track->audio_size();
 			$duration   = $track->durationSeconds();
-			$offset     = $track->audio_offset() + $seekoffset;
+			$offset     = $track->audio_offset() || 0 + $seekoffset;
 			$samplerate = $track->samplerate();
 			$blockalign = $track->block_alignment() || 1;
 			$endian     = $track->endian() || '';

@@ -22,14 +22,20 @@ sub init {
 	%functions = (
 		'up' => sub  {
 			my $client = shift;
-			$client->syncSelection(Slim::Buttons::Common::scroll($client,-1,scalar(@{$client->syncSelections}),$client->syncSelection));
-			$client->update();
+			my $newpos = Slim::Buttons::Common::scroll($client,-1,scalar(@{$client->syncSelections}),$client->syncSelection);
+			if ($newpos != $client->syncSelection) {
+				$client->syncSelection($newpos);
+				$client->pushUp();
+			}
 		},
 
 		'down' => sub {
 			my $client = shift;
-			$client->syncSelection(Slim::Buttons::Common::scroll($client,1,scalar(@{$client->syncSelections}),$client->syncSelection));
-			$client->update();
+			my $newpos = Slim::Buttons::Common::scroll($client,1,scalar(@{$client->syncSelections}),$client->syncSelection);
+			if ($newpos != $client->syncSelection) {
+				$client->syncSelection($newpos);
+				$client->pushDown();
+			}
 		},
 
 		'left' => sub {

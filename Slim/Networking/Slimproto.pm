@@ -318,7 +318,7 @@ sub process_slimproto_frame {
 
 		if (defined $client && !$client->isa($client_class)) {
 		    msg("forgetting client, it is not a $client_class\n");
-			Slim::Player::Client::forgetClient($client->id());
+			Slim::Player::Client::forgetClient($client);
 			$client = undef;
 		}
 

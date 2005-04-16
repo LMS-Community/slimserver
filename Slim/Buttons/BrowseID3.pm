@@ -76,9 +76,11 @@ sub init {
 			} else {
 				$inc = ($inc =~ /\D/) ? -1 : -$inc;
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, browseID3dirIndex($client));
-				browseID3dirIndex($client,$newposition);
-				updateLastSelection($client);
-				$client->update();
+				if ($newposition !=  browseID3dirIndex($client)) {
+					browseID3dirIndex($client,$newposition);
+					updateLastSelection($client);
+					$client->pushUp();
+				}
 			}
 		},
 
@@ -92,9 +94,11 @@ sub init {
 			} else {
 				if ($inc =~ /\D/) {$inc = 1}
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $count, browseID3dirIndex($client));
-				browseID3dirIndex($client,$newposition);
-				updateLastSelection($client);
-				$client->update();
+				if ($newposition !=  browseID3dirIndex($client)) {
+					browseID3dirIndex($client,$newposition);
+					updateLastSelection($client);
+					$client->pushDown();
+				}
 			}
 		},
 

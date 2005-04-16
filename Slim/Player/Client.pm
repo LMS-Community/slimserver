@@ -862,14 +862,13 @@ sub getClient {
 }
 
 sub forgetClient {
-	my $id = shift;
-	my $client = getClient($id);
+	my $client = shift;
 	
 	if ($client) {
 		Slim::Web::HTTP::forgetClient($client);
 		Slim::Player::Playlist::forgetClient($client);
 		Slim::Utils::Timers::forgetClient($client);
-		delete $clientHash{$id};
+		delete $clientHash{$client->id()};
 	}	
 }
 

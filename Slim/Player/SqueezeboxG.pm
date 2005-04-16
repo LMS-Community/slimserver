@@ -152,7 +152,7 @@ sub update {
 	}
 }	
 
-sub render {
+sub preRender {
 	use bytes;
 	my $client = shift;
 	my $lines = shift;
@@ -169,11 +169,12 @@ sub render {
 	my $bits = '';
 	my $otherbits = undef;
 	my $fonts;	
-	if ($parts->{fonts}) {
-		$fonts = $parts->{fonts};
-	} else {
-		$fonts = $client->fonts();
+	
+	if (!defined($parts->{fonts})) {
+		$parts->{fonts} = $client->fonts();
 	}
+	
+	$fonts = $parts->{fonts};
 	
 	my $screensize = $client->screenBytes();
 	my $line1same = 1;
@@ -236,7 +237,8 @@ sub render {
 	if (defined($parts->{scrolling}) && $line1same) {
 		$bits = $parts->{cache} | $frameHeader . substr($parts->{line2bits}, $parts->{offset2}, $parts->{overlay2start})
 			. $parts->{overlay2bits};
-		return \$bits;
+		$parts->{rendered} = \$bits;
+		return $parts;
 	}
 	
 	# render other text - no caching
@@ -277,7 +279,15 @@ sub render {
 	}
 	$bits |= $otherbits if defined $otherbits;
 
-	return \$bits;
+	$parts->{rendered} = \$bits;
+	
+	return $parts;
+}
+
+sub render {
+	my $client = shift;
+	my $parts = $client->preRender(@_);
+	return $parts->{rendered};
 }
 
 sub fonts {

@@ -31,7 +31,7 @@ sub init {
 			} else {
 				my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#instantMix + 1), selection($client, 'instant_mix_index'));
 				setSelection($client, 'instant_mix_index', $newposition);
-				$client->update();
+				$client->pushUp();
 			}
 		},
 		
@@ -44,7 +44,7 @@ sub init {
 			} else {
 				my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#instantMix + 1), selection($client, 'instant_mix_index'));
 				setSelection($client, 'instant_mix_index', $newposition);
-				$client->update();
+				$client->pushDown();
 			}
 		},
 		

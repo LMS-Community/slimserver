@@ -34,7 +34,7 @@ sub init {
 				);
 
 				setSelection($client, 'mood_wheel_index', $newposition);
-				$client->update();
+				$client->pushUp();
 			}
 		},
 		
@@ -49,7 +49,7 @@ sub init {
 					$client, +1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index')
 				);
 				setSelection($client, 'mood_wheel_index', $newposition);
-				$client->update();
+				$client->pushDown();
 			}
 		},
 		

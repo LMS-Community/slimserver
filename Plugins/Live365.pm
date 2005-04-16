@@ -803,7 +803,7 @@ our %mainModeFunctions = (
 			scalar @mainModeItems,
 			$mainModeIdx
 		);
-		$client->update();
+		$client->pushUp();
 	},
 
 	'down' => sub {
@@ -814,7 +814,7 @@ our %mainModeFunctions = (
 			scalar @mainModeItems,
 			$mainModeIdx
 		);
-		$client->update();
+		$client->pushDown();
 	},
 
 	'left' => sub {
@@ -1032,7 +1032,7 @@ our %genreModeFunctions = (
 			scalar @genreList,
 			$genrePointer
 		);
-		$client->update();
+		$client->pushUp();
 	},
 
 	'down' => sub {
@@ -1043,7 +1043,7 @@ our %genreModeFunctions = (
 			scalar @genreList,
 			$genrePointer
 		);
-		$client->update();
+		$client->pushDown();
 	},
 
 	'left' => sub {
@@ -1148,7 +1148,7 @@ our %channelModeFunctions = (
             $live365->{$client}->getStationListPointer()
         ) );
 
-        $client->update();
+        $client->pushUp();
     },
 
     'down' => sub {
@@ -1170,7 +1170,7 @@ our %channelModeFunctions = (
         	$live365->{$client}->setStationListPointer( $newStationPointer );
 		}
 
-        $client->update();
+        $client->pushDown();
     },
 
     'left' => sub {
@@ -1281,7 +1281,7 @@ our %infoModeFunctions = (
 			scalar @infoItems,
 			$infoItem
 		);
-		$client->update();
+		$client->pushUp();
 	},
 
 	'down' => sub {
@@ -1292,7 +1292,7 @@ our %infoModeFunctions = (
 			scalar @infoItems,
 			$infoItem
         );
-		$client->update()
+		$client->pushDown()
 	},
 
 	'left' => sub {
@@ -1377,7 +1377,7 @@ our %searchModeFunctions = (
 			scalar @searchModeItems,
 			$searchModeIdx
 		);
-		$client->update();
+		$client->pushUp();
 	},
 
 	'down' => sub {
@@ -1388,7 +1388,7 @@ our %searchModeFunctions = (
 			scalar @searchModeItems,
 			$searchModeIdx
 		);
-		$client->update();
+		$client->pushDown();
 	},
 
 	'left' => sub {
