@@ -73,6 +73,7 @@ sub init {
 	Slim::Buttons::Settings::init();
 	Slim::Buttons::Synchronize::init();
 	Slim::Buttons::TrackInfo::init();
+	Slim::Buttons::RemoteTrackInfo::init();
 
 	$savers{'playlist'} = Slim::Utils::Strings::string('NOW_PLAYING');
 }
@@ -103,6 +104,8 @@ sub addMode {
  	my $buttonFunctions = shift;
  	my $setModeFunction = shift;
  	my $leaveModeFunction = shift;
+
+	assert($setModeFunction);
 
  	$modeFunctions{$name} = $buttonFunctions;
  	$modes{$name} = $setModeFunction;
@@ -556,6 +559,16 @@ sub getFunction {
  		return;
  	}
 }
+
+# setFunction enables a Plugin to affect all common modes.
+# (originally added to allow Favorites plugin to make holding a number be a shortcut to playing a users favorite station.)
+sub setFunction {
+	my $mapping = shift;
+	my $function = shift;
+
+	$functions{$mapping} = $function;
+}
+
 
 sub pushButton {
 	my $sub = shift;
@@ -1044,7 +1057,10 @@ sub pushMode {
 	push @{$client->modeParameterStack}, $paramHashRef;
 
 	my $fun = $modes{$setmode};
-
+	if (!$fun) {
+		bt();
+		msg("Crashing because '$setmode' has no mode function.  Perhaps you mis-typed the mode name.\n");
+	}
 	&$fun($client,'push');
 
 	# some modes require periodic updates

@@ -14,6 +14,7 @@ use Slim::Buttons::Block;
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
+use Slim::Buttons::RemoteTrackInfo;
 use Slim::Utils::Misc;
 use Slim::Buttons::Home;
 use Slim::Utils::Scan;

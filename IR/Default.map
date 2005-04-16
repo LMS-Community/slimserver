@@ -15,6 +15,16 @@
 7						= numberScroll_7
 8						= numberScroll_8
 9						= numberScroll_9
+0.hold					= playFavorite_0
+1.hold					= playFavorite_1
+2.hold					= playFavorite_2
+3.hold					= playFavorite_3
+4.hold					= playFavorite_4
+5.hold					= playFavorite_5
+6.hold					= playFavorite_6
+7.hold					= playFavorite_7
+8.hold					= playFavorite_8
+9.hold					= playFavorite_9
 arrow_down				= down
 arrow_down.repeat		= down_repeat
 arrow_left				= left

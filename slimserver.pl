@@ -275,6 +275,7 @@ use vars qw(
 	$d_command
 	$d_display
 	$d_factorytest
+	$d_favorites
 	$d_files
 	$d_firmware
 	$d_formats
@@ -717,6 +718,7 @@ to the console via stderr:
     --d_control      => Low level player control information
     --d_display      => Show what (should be) on the player's display 
     --d_factorytest  => Information used during factory testing
+    --d_favorites    => Information about favorite tracks
     --d_files        => Files, paths, opening and closing
     --d_filehandle   => Information about the custom FileHandle object
     --d_firmware     => Information during Squeezebox firmware updates 
@@ -798,6 +800,7 @@ sub initOptions {
 		'd_control'			=> \$d_control,
 		'd_display'			=> \$d_display,
 		'd_factorytest'		=> \$d_factorytest,
+		'd_favorites'		=> \$d_favorites,
 		'd_files'			=> \$d_files,
 		'd_firmware'		=> \$d_firmware,
 		'd_formats'			=> \$d_formats,

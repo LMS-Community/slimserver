@@ -177,7 +177,7 @@ sub read_plugins {
 		# want to load them.
 		if ($displayName && !Slim::Utils::Strings::stringExists($displayName)) {
 
-			$::d_plugins && msg("Can't load plugin $fullname - not 6.0+ compatible.\n");
+			$::d_plugins && msg("Can't load plugin $fullname - not 6.0+ compatible. (displayName must return a string token)\n");
 			Slim::Utils::Prefs::push('disabledplugins',$plugin);
 			next;
 

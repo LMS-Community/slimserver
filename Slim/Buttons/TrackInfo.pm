@@ -9,6 +9,7 @@ use strict;
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Utils::Misc;
+use Slim::Utils::Favorites;
 
 our %functions = ();
 
@@ -135,6 +136,20 @@ sub init {
 					'findCriteria' => { 'genre' => $genre->id() },
 				});
 
+			} elsif ($curitem eq 'FAVORITE') {
+				my $num = $client->param('favorite');
+				if ($num < 0) {
+					my $num = Slim::Utils::Favorites->clientAdd($client, track($client), $track->title());
+					$client->showBriefly($client->string('FAVORITES_ADDING'),
+										 $track->title());
+					$client->param('favorite', $num);
+				} else {
+					Slim::Utils::Favorites->deleteByClientAndURL($client, track($client));
+					$client->showBriefly($client->string('FAVORITES_DELETING'),
+										 $track->title());
+					$client->param('favorite', -1);
+				}
+				$push = 0;
 			} else {
 
 				$push = 0;
@@ -335,6 +350,17 @@ sub preloadLines {
 		push (@{$client->trackInfoLines}, $client->string('DRM'));
 		push (@{$client->trackInfoContent}, undef);
 	}
+
+	if (Slim::Music::Info::isURL($url)) {
+		my $fav = Slim::Utils::Favorites->findByClientAndURL($client, $url);
+		if ($fav) {
+			$client->param('favorite', $fav->{'num'});
+		} else {
+			$client->param('favorite', -1);
+		}
+		push (@{$client->trackInfoLines}, 'FAVORITE'); # replaced in lines()
+		push (@{$client->trackInfoContent}, 'FAVORITE');
+	}
 }
 
 #
@@ -345,10 +371,20 @@ sub lines {
 
 	# Show the title of the song with a note symbol
 	my $line1 = Slim::Music::Info::standardTitle($client, track($client));
-	my $line2 = $client->trackInfoLines->[currentLine($client)];
-
 	my $overlay1 = Slim::Display::Display::symbol('notesymbol');
+
+	my $line2 = $client->trackInfoLines->[currentLine($client)];
 	my $overlay2 = defined($client->trackInfoContent->[currentLine($client)]) ? Slim::Display::Display::symbol('rightarrow') : undef;
+
+	# special case favorites line, which must be determined dynamically
+	if ($line2 eq 'FAVORITE') {
+		if ((my $num = $client->param('favorite')) < 0) {
+			$line2 = $client->string('FAVORITES_RIGHT_TO_ADD');
+		} else {
+			$line2 = $client->string('FAVORITES_FAVORITE_NUM') . "$num " . $client->string('FAVORITES_RIGHT_TO_DELETE');
+		}
+		$overlay2 = undef;
+	}
 
 	return ($line1, $line2, $overlay1, $overlay2);
 }

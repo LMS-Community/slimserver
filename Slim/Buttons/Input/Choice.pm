@@ -353,8 +353,6 @@ sub exitInput {
 	my $onRight;
 	my $valueRef;
 
-	$::d_plugins && msg("Podcast: exit $exitType\n");
-
 	if (!defined($callbackFunct) || !(ref($callbackFunct) eq 'CODE')) {
 		if ($exitType eq 'right') {
 			# if user has requested a callback when right is pressed, give it to 'em

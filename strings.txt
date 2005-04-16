@@ -8707,3 +8707,24 @@ WMA_NO_CONVERT_CMD
 MIDWORDS_UPPER
 	DE	1
 	EN	0
+
+
+# Strings for favorites
+
+FAVORITES_FAVORITE_NUM
+	EN	Favorite #
+
+FAVORITES_RIGHT_TO_DELETE
+	EN	 (RIGHT to delete)
+
+FAVORITES_NOT_A_FAVORITE
+	EN	Not a favorite
+
+FAVORITES_RIGHT_TO_ADD
+	EN	Press RIGHT to add to favorites
+
+FAVORITES_ADDING
+	EN	Saving favorites...
+
+FAVORITES_DELETING
+	EN	Deleting favorite...
