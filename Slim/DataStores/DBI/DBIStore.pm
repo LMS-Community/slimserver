@@ -355,12 +355,15 @@ sub newTrack {
 
 	$::d_info && Slim::Utils::Misc::msg("New track for $url\n");
 
-	# Explictly read the tag, and start populating the database.
-	# XXX This was made unconditional in revision 2619,
-	# reverting it back now and testing, I don't see the problem mentioned there.
+	# Default the tag reading behaviour if not explicitly set
+	if (!defined $args->{readTags}) {
+		$args->{readTags} = "default";
+	}
+
+	# Read the tag, and start populating the database.
 	if ($args->{'readTags'}) {
 
-		$::d_info && Slim::Utils::Misc::msg("readTag was set for $url\n");
+		$::d_info && Slim::Utils::Misc::msg("readTag was ". $args->{'readTags'}  ." for $url\n");
 
 		$attributeHash = { %{$self->readTags($url)}, %$attributeHash  };
 	}
