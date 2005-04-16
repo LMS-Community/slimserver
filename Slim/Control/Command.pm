@@ -324,7 +324,7 @@ sub execute {
 		my $label = $1;
  		my %params = parseParams($parrayref, \@returnArray);
 
-		if (defined $searchMap{$label} && Slim::Buttons::BrowseID3::specified($params{'search'})) {
+		if (defined $searchMap{$label} && specified($params{'search'})) {
 			$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit(Slim::Utils::Text::ignoreCaseArticles($params{'search'}));
 		}
 		
@@ -370,7 +370,7 @@ sub execute {
  		
  		my %params = parseParams($parrayref, \@returnArray);
 
-		if (defined $searchMap{$label} && Slim::Buttons::BrowseID3::specified($params{'search'})) {
+		if (defined $searchMap{$label} && specified($params{'search'})) {
 			$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit(Slim::Utils::Text::ignoreCaseArticles($params{'search'}));
 		}
 
@@ -843,20 +843,20 @@ sub execute {
 				# anything else kills the database. As a
 				# stop-gap, don't add the search for
 				# genre.name if we have a more specific query.
-				if (Slim::Buttons::BrowseID3::specified($p2) && !Slim::Buttons::BrowseID3::specified($p3)) {
+				if (specified($p2) && !specified($p3)) {
 					$find->{'genre.name'} = singletonRef($p2);
 				}
 
-				if (Slim::Buttons::BrowseID3::specified($p3)) {
+				if (specified($p3)) {
 					$find->{'contributor.name'} = singletonRef($p3);
 				}
 
-				if (Slim::Buttons::BrowseID3::specified($p4)) {
+				if (specified($p4)) {
 					$find->{'album.title'} = singletonRef($p4);
 					$sort = 'tracknum';
 				}
 
-				if (Slim::Buttons::BrowseID3::specified($p5)) {
+				if (specified($p5)) {
 					$find->{'track.title'} = singletonRef($p5);
 				}
 
@@ -2001,6 +2001,15 @@ sub parseParams {
 	}
 	
 	return %params;
+}
+
+# defined, but does not contain a *
+sub specified {
+	my $i = shift;
+
+	return 0 if ref($i) eq 'ARRAY';
+	return 0 unless defined $i;
+	return $i !~ /\*/;
 }
 
 1;

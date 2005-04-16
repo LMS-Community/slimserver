@@ -209,9 +209,11 @@ shuffle_on				= dead
 sleep					= dead
 stop					= dead
 
-[browseid3]
+[browsedb]
+play					= dead
 play.single				= play_0
 play.hold				= create_mix
+add					= dead
 add.single				= play_1
 add.hold				= play_2
 

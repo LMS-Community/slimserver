@@ -555,8 +555,9 @@ sub find {
 
 			# if our $key is something like contributor.name -
 			# strip off the name so that our join is correctly optimized.
-			$key =~ s/\.\w+$//o;
+			$key =~ s/(\.\w+)$//o;
 
+			my $fieldQuery = $1;
 			my $startNode = $fieldToNodeMap{$key} || 'default';
 
 			# Find the query path that gives us the tables
@@ -565,16 +566,11 @@ sub find {
 
 			$::d_sql && Slim::Utils::Misc::msg("Start and End node: [$startNode:$endNode]\n");
 
-			for my $i (0..$#{$path}) {
-
-				my $table = $path->[$i];
-				$tables{$table} = $tableSort{$table};
-				
-				if ($i < $#{$path}) {
-					my $nextTable = $path->[$i + 1];
-					my $join = $joinGraph{$table}{$nextTable};
-					$joins{$join} = 1;
-				}
+			addQueryPath($path, \%tables, \%joins);
+			if ($fieldQuery && exists($queryPath{"$startNode:$startNode"})) {
+				$::d_sql && Slim::Utils::Misc::msg("Field query. Need additional join. start and End node: [$startNode:$startNode]\n");
+				$path = $queryPath{"$startNode:$startNode"};
+				addQueryPath($path, \%tables, \%joins);
 			}
 		}
 	}
@@ -671,6 +667,22 @@ sub find {
 	$sth->finish();
 
 	return $objects;
+}
+
+sub addQueryPath {
+	my ($path, $tables, $joins) = @_;
+
+	for my $i (0..$#{$path}) {
+
+		my $table = $path->[$i];
+		$tables->{$table} = $tableSort{$table};
+				
+		if ($i < $#{$path}) {
+			my $nextTable = $path->[$i + 1];
+			my $join = $joinGraph{$table}{$nextTable};
+			$joins->{$join} = 1;
+		}
+	}	
 }
 
 sub print {

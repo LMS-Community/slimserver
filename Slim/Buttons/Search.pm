@@ -149,29 +149,26 @@ sub startSearch {
 
 	if ($client->searchFor eq 'ARTISTS') {
 
-		Slim::Buttons::Common::pushMode($client, 'browseid3', {
+		Slim::Buttons::Common::pushMode($client, 'browsedb', {
 			'search' => $term,
-			'genre'  => '*',
-			'artist' => $term,
+			'hierarchy' => 'artist,album,track',
+			'level' => 0,
 		});
 
 	} elsif ($client->searchFor eq 'ALBUMS') {
 
-		Slim::Buttons::Common::pushMode($client, 'browseid3', {
+		Slim::Buttons::Common::pushMode($client, 'browsedb', {
 			'search' => $term,
-			'genre'  => '*',
-			'artist' => '*',
-			'album'  => $term
+			'hierarchy' => 'album,track',
+			'level' => 0,
 		});
 
 	} else {
 
-		Slim::Buttons::Common::pushMode($client, 'browseid3', {
+		Slim::Buttons::Common::pushMode($client, 'browsedb', {
 			'search' => $term,
-			'genre'  => '*',
-			'artist' => '*',
-			'album'  => '*',
-			'song'   => $term
+			'hierarchy' => 'track',
+			'level' => 0,
 		});
 	}
 

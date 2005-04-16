@@ -724,73 +724,72 @@ sub specialPushLeft {
 sub mixerFunction {
 	my $client = shift;
 	
-	my $genre       = Slim::Buttons::BrowseID3::selection($client,'curgenre');
-	my $artist      = Slim::Buttons::BrowseID3::selection($client,'curartist');
-	my $album       = Slim::Buttons::BrowseID3::selection($client,'curalbum');
-	my $currentItem = Slim::Buttons::BrowseID3::browseID3dir($client,Slim::Buttons::BrowseID3::browseID3dirIndex($client));
+	# look for parentParams (needed when multiple mixers have been used)
+	my $listIndex = $client->param('parentParams')->{'listIndex'} || $client->param('listIndex');
+
+	my $items = $client->param('parentParams')->{'listRef'} || $client->param('listRef');
+	my $hierarchy = $client->param('parentParams')->{'hierarchy'} || $client->param('hierarchy');
+	my $level	   = $client->param('parentParams')->{'level'} || $client->param('level') || 0;
+	my $descend   = $client->param('parentParams')->{'descend'} || $client->param('descend');
+	
+	my $currentItem = $items->[$listIndex];
+	my $all = !ref($currentItem);
+	
+	my @levels = split(",", $hierarchy);
+	
 	my @oldlines    = Slim::Display::Display::curLines($client);
 
 	my $ds          = Slim::Music::Info::getCurrentDataStore();
 	my $mix;
 	
 	# if we've chosen a particular song
-	if (Slim::Buttons::BrowseID3::picked($genre) && 
-		Slim::Buttons::BrowseID3::picked($artist) && 
-		Slim::Buttons::BrowseID3::picked($album)) {
+	if (!$descend || $levels[$level] eq 'song') {
 
-		my ($obj) = $ds->objectForUrl($currentItem);
-
-		if ($obj && $obj->musicmagic_mixable()) {
+		if ($currentItem && $currentItem->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix(Slim::Utils::Misc::pathFromFileURL($currentItem), 'song');
+			$mix = getMix(Slim::Utils::Misc::pathFromFileURL($currentItem->title()), 'song');
 		}
 
 	# if we've picked an artist 
-	} elsif (Slim::Buttons::BrowseID3::picked($genre) && 
-		!Slim::Buttons::BrowseID3::picked($artist) &&
-		!Slim::Buttons::BrowseID3::picked($album)) {
+	} elsif ($levels[$level] eq 'artist') {
 
-		my ($obj) = $ds->find('contributor', { 'contributor' => $currentItem });
-
-		if ($obj && $obj->musicmagic_mixable()) {
+		if ($currentItem && $currentItem->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix($currentItem, 'artist');
+			$mix = getMix($currentItem->name(), 'artist');
 		}
 
 	# if we've picked an album 
-	} elsif (Slim::Buttons::BrowseID3::picked($genre) && 
-		Slim::Buttons::BrowseID3::picked($artist) &&
-		!Slim::Buttons::BrowseID3::picked($album)) {
+	} elsif ($levels[$level] eq 'album') {
 
 		# If $artist is selected (as in picked Album by Artist) then we
 		# need to include artist in the find.  If artist is not chosen (as in any Album of 
 		# a given title) then we cannot include the contributor key, and want any track 
 		# from the album to key the mixer.
-		my ($obj) = $artist eq "*" ? 
-			$ds->find('track', {'album' => $currentItem,}) : 
-			$ds->find('album', {'album' => $currentItem,'contributor' => $artist,});
+#		my ($obj) = $currentItem eq "*" ? 
+#			$ds->find('track', {'album' => $currentItem,}) : 
+#			$ds->find('album', {'album' => $currentItem,'contributor' => $currentItem,});
 
-		if ($obj && $obj->musicmagic_mixable()) {
+		my $album = $currentItem->title();
+		my ($artists) = $currentItem->contributors();
+
+		if ($currentItem && $currentItem->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			my $key = $artist eq "*" ? 
-				Slim::Utils::Misc::pathFromFileURL($obj->{'url'}) : 
-				"$artist\@\@$currentItem";
+			my $key = $currentItem eq "*" ? 
+				Slim::Utils::Misc::pathFromFileURL($currentItem->{'url'}) : 
+				"$artists\@\@$album";
 				
 			$mix = getMix($key, 'album');
 		}
 
 	} else {
 
-		# if we've picked a genre 
-		my ($obj) = $ds->find('genre', { 'genre' => $currentItem });
-
-		if ($obj && $obj->musicmagic_mixable()) {
+		if ($currentItem && $currentItem->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix($currentItem, 'genre');
+			$mix = getMix($currentItem->name(), 'genre');
 		}
 	}
 

@@ -64,7 +64,7 @@ sub init {
 
 	Slim::Buttons::AlarmClock::init();
 	Slim::Buttons::Browse::init();
-	Slim::Buttons::BrowseID3::init();
+	Slim::Buttons::BrowseDB::init();
 	Slim::Buttons::Information::init();
 	Slim::Buttons::Playlist::init();
 	Slim::Buttons::Power::init();
@@ -268,16 +268,16 @@ our %functions = (
 			Slim::Buttons::Common::pushMode($client, 'playlist');
 			$jump = 'NOW_PLAYING';
 		} elsif ($button eq 'menu_browse_genre') {
-			Slim::Buttons::Common::pushMode($client, 'browseid3',{});
+			Slim::Buttons::Common::pushMode($client, 'browsedb',{ 'hierarchy' => 'genre,artist,album,track', 'level' => 0 });
 			$jump = 'BROWSE_BY_GENRE';
 		} elsif ($button eq 'menu_browse_artist') {
-			Slim::Buttons::Common::pushMode($client, 'browseid3',{'genre'=>'*'});
+			Slim::Buttons::Common::pushMode($client, 'browsedb',{'hierarchy' => 'artist,album,track', 'level' => 0});
 			$jump = 'BROWSE_BY_ARTIST';
 		} elsif ($button eq 'menu_browse_album') {
-			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist'=>'*'});
+			Slim::Buttons::Common::pushMode($client, 'browsedb', {'hierarchy' => 'album,track', 'level' => 0});
 			$jump = 'BROWSE_BY_ALBUM';
 		} elsif ($button eq 'menu_browse_song') {
-			Slim::Buttons::Common::pushMode($client, 'browseid3', {'genre'=>'*', 'artist'=>'*', 'album'=>'*'});
+			Slim::Buttons::Common::pushMode($client, 'browsedb', {'hierarchy' => 'track', 'level' => 0});
 			$jump = 'BROWSE_BY_SONG';
 		} elsif ($button eq 'menu_browse_music') {
 			Slim::Buttons::Common::pushMode($client, 'browse');

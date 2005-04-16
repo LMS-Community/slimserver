@@ -108,27 +108,31 @@ sub init {
 
 				my $album = $track->album();
 
-				Slim::Buttons::BrowseID3::setSelection($client, '*', '*', $album, undef);
-
-				Slim::Buttons::Common::pushMode($client, 'browseid3', {
-					'genre'  => '*',
-					'artist' => '*',
-					'album'  => $album
+				Slim::Buttons::Common::pushMode($client, 'browsedb', {
+					'hierarchy'  => 'track',
+					'level'      => 0,
+					'findCriteria' => { 'album' => $album->id() },
 				});
 
 			} elsif ($curitem =~ /^(?:ARTIST|COMPOSER|CONDUCTOR|BAND)$/) {
 
 				my $lcItem = lc($curitem);
 
-				Slim::Buttons::Common::pushMode($client, 'browseid3', {
-					'genre'  => '*',
-					'artist' => $track->$lcItem(),
+				my ($contributor) = $track->$lcItem();
+
+				Slim::Buttons::Common::pushMode($client, 'browsedb', {
+					'hierarchy'  => 'album,track',
+					'level'      => 0,
+					'findCriteria' => { 'artist' => $contributor->id() },
 				});
 
 			} elsif ($curitem eq 'GENRE') {
 
-				Slim::Buttons::Common::pushMode($client, 'browseid3', {
-					'genre' => $track->genre(),
+				my $genre = $track->genre();
+				Slim::Buttons::Common::pushMode($client, 'browsedb', {
+					'hierarchy'  => 'artist,album,track',
+					'level'      => 0,
+					'findCriteria' => { 'genre' => $genre->id() },
 				});
 
 			} else {

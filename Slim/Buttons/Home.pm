@@ -8,7 +8,7 @@ package Slim::Buttons::Home;
 use strict;
 use File::Spec::Functions qw(:ALL);
 
-use Slim::Buttons::BrowseID3;
+use Slim::Buttons::BrowseDB;
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 

@@ -29,6 +29,7 @@ our %functions = (
 	,'numberScroll' => sub {
 			my ($client,$funct,$functarg) = @_;
 			my $isSorted = $client->param('isSorted');
+			my $lookupRef = $client->param('lookupRef');
 			my $listRef = $client->param('listRef');
 			my $numScrollRef;
 			if ($isSorted && uc($isSorted) eq 'E') {
@@ -38,7 +39,7 @@ our %functions = (
 				# not sorted or sorted by the internal value
 				$numScrollRef = $listRef;
 			}
-			my $newIndex = Slim::Buttons::Common::numberScroll($client, $functarg, $numScrollRef, $isSorted ? 1 : 0);
+			my $newIndex = Slim::Buttons::Common::numberScroll($client, $functarg, $numScrollRef, $isSorted ? 1 : 0, $lookupRef);
 			if (defined $newIndex) {
 				$client->param('listIndex',$newIndex);
 				my $valueRef = $client->param('valueRef');
@@ -75,10 +76,16 @@ sub changePos {
 	my ($client, $dir) = @_;
 	my $listRef = $client->param('listRef');
 	my $listIndex = $client->param('listIndex');
-	if ($client->param('noWrap') 
-		&& (($listIndex == 0 && $dir < 0) || ($listIndex == (scalar(@$listRef) - 1) && $dir > 0))) {
-			#not wrapping and at end of list
+	if ($client->param('noWrap')) {
+		#not wrapping and at end of list
+		if ($listIndex == 0 && $dir < 0) {
+			$client->bumpUp();
 			return;
+		}
+		if ($listIndex >= (scalar(@$listRef) - 1) && $dir > 0) {
+			$client->bumpDown();
+			return;
+		}
 	}
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
 	my $valueRef = $client->param('valueRef');
@@ -202,7 +209,8 @@ sub setMode {
 
 # other parameters used
 # isSorted = undef # whether the interal or external list is sorted 
-	#(I for internal, E for external, undef or anything else for unsorted)
+	#(I for internal, E for external, L for lookup, undef or anything else for unsorted)
+# lookupRef = undef # function that returns the sortable version of item
 
 sub init {
 	my $client = shift;
@@ -226,7 +234,8 @@ sub init {
 	}
 	return undef if !defined($listRef);
 	my $isSorted = $client->param('isSorted');
-	if ($isSorted && ($isSorted !~ /[iIeE]/ || (uc($isSorted) eq 'E' && ref($externRef) ne 'ARRAY'))) {
+	my $lookupRef = $client->param('lookupRef');
+	if ($isSorted && ($isSorted !~ /[iIeElL]/ || (uc($isSorted) eq 'E' && ref($externRef) ne 'ARRAY') || (uc($isSorted) eq 'L' && ref($lookupRef) ne 'CODE'))) {
 		$client->param('isSorted',0);
 	}
 	my $listIndex = $client->param('listIndex');

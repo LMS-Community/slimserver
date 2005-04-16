@@ -64,6 +64,21 @@ sub init {
 				return $ds->find('track', $findCriteria, exists $findCriteria->{'album'} ? 'tracknum' : 'track');
 			},
 
+			'search' => sub {
+				my $ds = shift;
+				my $terms = shift;
+				my $type = shift || 'track';
+
+				my $sortBy = 'title';
+				my %find   = ();
+
+				for my $string (@{$terms}) {
+					push @{$find{'track.titlesort'}}, [ $string ];
+				}
+
+				return $ds->find($type, \%find, $sortBy);
+			},
+
 			'listItem' => sub {
 				my $ds   = shift;
 				my $form = shift;
@@ -194,6 +209,14 @@ sub init {
 				my $findCriteria = shift;
 
 				return $ds->find('album', $findCriteria, 'album');
+			},
+
+			'search' => sub {
+				my $ds = shift;
+				my $terms = shift;
+				my $type = shift || 'album';
+
+				return $ds->find($type, { "album.titlesort" => $terms }, 'album');
 			},
 
 			'listItem' => sub {
@@ -330,6 +353,14 @@ sub init {
 				}
 
 				return $ds->find('artist', $findCriteria, 'artist');
+			},
+
+			'search' => sub {
+				my $ds = shift;
+				my $terms = shift;
+				my $type = shift || 'contributor';
+
+				return $ds->find($type, { "contributor.namesort" => $terms }, 'contributor');
 			},
 
 			'listItem' => sub {

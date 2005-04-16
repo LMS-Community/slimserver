@@ -529,22 +529,34 @@ sub getMoodWheel {
 sub mixerFunction {
 	my $client = shift;
 	
-	my $genre = Slim::Buttons::BrowseID3::selection($client,'curgenre');
-	my $artist = Slim::Buttons::BrowseID3::selection($client,'curartist');
-	my $album = Slim::Buttons::BrowseID3::selection($client,'curalbum');
-	my $currentItem = Slim::Buttons::BrowseID3::browseID3dir($client,Slim::Buttons::BrowseID3::browseID3dirIndex($client));
-	my @oldlines = Slim::Display::Display::curLines($client);
+	# look for parentParams (needed when multiple mixers have been used)
+	my $listIndex = $client->param('parentParams')->{'listIndex'} || $client->param('listIndex');
+
+	my $items = $client->param('parentParams')->{'listRef'} || $client->param('listRef');
+	my $hierarchy = $client->param('parentParams')->{'hierarchy'} || $client->param('hierarchy');
+	my $level	   = $client->param('parentParams')->{'level'} || $client->param('level') || 0;
+	my $descend   = $client->param('parentParams')->{'descend'} || $client->param('descend');
+	
+	my $currentItem = $items->[$listIndex];
+	my $all = !ref($currentItem);
+	
+	my @levels = split(",", $hierarchy);
+	
+	my @oldlines    = Slim::Display::Display::curLines($client);
+
+	my $ds          = Slim::Music::Info::getCurrentDataStore();
+	my $mix;
 
 	# if we've chosen a particular song
-	if (Slim::Buttons::BrowseID3::picked($genre) && Slim::Buttons::BrowseID3::picked($artist) && Slim::Buttons::BrowseID3::picked($album) && $currentItem->moodlogic_mixable()) {
+	if ($levels[$level] eq 'track' && $currentItem && $currentItem->moodlogic_mixable()) {
 			Slim::Buttons::Common::pushMode($client, 'moodlogic_variety_combo', {'song' => $currentItem});
 			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 	# if we've picked an artist 
-	} elsif (Slim::Buttons::BrowseID3::picked($genre) && ! Slim::Buttons::BrowseID3::picked($album) && $currentItem->moodlogic_mixable()) {
+	} elsif ($levels[$level] eq 'artist' && $currentItem && $currentItem->moodlogic_mixable()) {
 			Slim::Buttons::Common::pushMode($client, 'moodlogic_mood_wheel', {'artist' => $currentItem});
 			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 	# if we've picked a genre 
-	} elsif ($currentItem->moodlogic_mixable()) {
+	} elsif ($levels[$level] eq 'genre' && $currentItem && $currentItem->moodlogic_mixable()) {
 			Slim::Buttons::Common::pushMode($client, 'moodlogic_mood_wheel', {'genre' => $currentItem});
 			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
 	# don't do anything if nothing is mixable
