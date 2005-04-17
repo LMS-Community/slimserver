@@ -19,8 +19,6 @@
 # * Get rid of hard-coded @genre_keywords, and generate it
 #  instead from a word frequency list -- which will mean a list of
 #  excluded, rather than included, words.
-#
-# * Add a web interface
 
 package Plugins::ShoutcastBrowser::Plugin;
 
@@ -130,9 +128,6 @@ my (%genre_aka, @genre_keywords, @legit_genres);
 use constant SORT_BITRATE_UP => 0;
 use constant RECENT_DIRNAME => 'ShoutcastBrowser_Recently_Played';
 use constant UPDATEINTERVAL => 86400;
-
-## Order for info sub-mode
-my (@info_order, @info_index);
 
 my (%custom_genres, %keyword_index);
 
@@ -249,9 +244,6 @@ sub setMode {
 	$status{$client}{status} = 0;
 	$status{$client}{number} = undef;
 	$client->update();
-	
-	@info_order = ($client->string('BITRATE'), $client->string('PLUGIN_SHOUTCASTBROWSER_STREAM_NAME'), $client->string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS'), $client->string('GENRE'), $client->string('PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING'), $client->string('URL') );
-	@info_index = (                    2,                                         -1,                                                          1,                                               4,                                         3,                                   0);
 
 	check4Update();
 	
@@ -378,9 +370,9 @@ sub extractStreamInfo {
 		next if ($max_bitrate and $bitrate > $max_bitrate);
 
 		my $url         = $entry->{'Playstring'};
-		my $name		= cleanMe($entry->{'Name'});
-		my $genre       = cleanMe($entry->{'Genre'});
-		my $now_playing = cleanMe($entry->{'Nowplaying'});
+		my $name		= cleanStreamInfo($entry->{'Name'});
+		my $genre       = cleanStreamInfo($entry->{'Genre'});
+		my $now_playing = cleanStreamInfo($entry->{'Nowplaying'});
 		my $listeners   = $entry->{'Listeners'};
 
 		my @keywords = ();
@@ -510,7 +502,7 @@ sub sortGenres {
 	$stream_data{getMostPopularName($client)} = $stream_data{$allName};
 }
 
-sub cleanMe {
+sub cleanStreamInfo {
 	my $arg = shift;
 	$arg =~ s/%([\dA-F][\dA-F])/chr hex $1/gei;	# encoded chars
 	$arg = decode_entities($arg);
@@ -1145,28 +1137,27 @@ my %BitrateFunctions = (
 sub showStreamInfo {
 	my $client = shift;
 	my $current_data = $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{getCurrentBitrate($client)};
-	my $title = getCurrentStreamName($client);
-	my $url = $current_data->[0]; # 0 is index for url
-	my @details;
-	my $i = -1;
-	for my $index (@info_index) {
-		$i++;
-		# skip url and title, as remotestreaminfo will display them
-		if ($index == 0 || $index == -1) {
-			next;
-		}
-		push @details, $info_order[$i] . ': '. $current_data->[$index] || $client->string('PLUGIN_SHOUTCASTBROWSER_NONE');
-	}
+	my @details = (
+		$client->string('BITRATE') . ': ' 
+			. $current_data->[2] || $client->string('PLUGIN_SHOUTCASTBROWSER_NONE'),
+		$client->string('SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS') . ': ' 
+			. $current_data->[1] || $client->string('PLUGIN_SHOUTCASTBROWSER_NONE'),
+		$client->string('GENRE') . ': ' 
+			. $current_data->[4] || $client->string('PLUGIN_SHOUTCASTBROWSER_NONE'),
+		$client->string('PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING') . ': ' 
+			. $current_data->[3] || $client->string('PLUGIN_SHOUTCASTBROWSER_NONE')
+	);
 
 	my %params = (
-		url => $url,
-		title => $title,
-		details => \@details,
+		url => $current_data->[0],
+		title => getCurrentStreamName($client),
+		details => \@details
 	);
+	
 	Slim::Buttons::Common::pushModeLeft($client,
 									'remotetrackinfo',
 									\%params);
-};
+}
 
 sub playStream {
 	my ($client, $currentGenre, $currentStream, $currentBitrate, $method, $addToRecent) = @_;
