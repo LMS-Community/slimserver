@@ -891,16 +891,23 @@ sub streamsLines {
 		$lines[1] = '';
 	
 	} elsif ($status{$client}{status} == 1) {
-		$lines[0] = $client->string('PLUGIN_SHOUTCASTBROWSER_SHOUTCAST').': '.
-				getCurrentGenre($client) .
-				' (' .
-					($status{$client}{stream} + 1) .  ' ' .
-					$client->string('OF') .  ' ' .
-						getStreamCount($client) .  ') ' ;
-		$lines[1] = getCurrentStreamName($client);
+		if (getStreamCount($client)) {
+			$lines[0] = $client->string('PLUGIN_SHOUTCASTBROWSER_SHOUTCAST') . ': ' .
+					getCurrentGenre($client) .
+					' (' .
+						($status{$client}{stream} + 1) .  ' ' .
+						$client->string('OF') .  ' ' .
+							getStreamCount($client) .  ') ' ;
+			$lines[1] = getCurrentStreamName($client);
 
-		if (keys %{ $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)} } > 1) {
-			$lines[3] = Slim::Display::Display::symbol('rightarrow');
+			if (keys %{ $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)} } > 1) {
+				$lines[3] = Slim::Display::Display::symbol('rightarrow');
+			}
+		}
+		else {
+			$lines[0] = $client->string('PLUGIN_SHOUTCASTBROWSER_SHOUTCAST') . ': ' .
+					getCurrentGenre($client);
+			$lines[1] = $client->string('PLUGIN_SHOUTCASTBROWSER_NONE');
 		}
 	}
 
@@ -966,7 +973,7 @@ my %StreamsFunctions = (
 			$client->bumpRight();
 		} else {
 			if (keys %{ $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}} == 1) {
-				Slim::Buttons::Common::pushModeLeft($client, 'ShoutcastStreamInfo');
+				showStreamInfo($client);
 			} else {
 				Slim::Buttons::Common::pushModeLeft($client, 'ShoutcastBitrates');
 			}
@@ -1109,7 +1116,7 @@ my %BitrateFunctions = (
 	
 	'right' => sub {
 		my $client = shift;
-		Slim::Buttons::Common::pushModeLeft($client, 'ShoutcastStreamInfo');
+		showStreamInfo($client);
 	},
 	
 	'play' => sub {
@@ -1135,14 +1142,8 @@ my %BitrateFunctions = (
 
 ##### Sub-mode for stream info #####
 
-my $info_mode_sub = sub {
+sub showStreamInfo {
 	my $client = shift;
-	my $method = shift;
-   	if ($method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
-
 	my $current_data = $stream_data{getCurrentGenre($client)}{getCurrentStreamName($client)}{getCurrentBitrate($client)};
 	my $title = getCurrentStreamName($client);
 	my $url = $current_data->[0]; # 0 is index for url
@@ -1162,14 +1163,10 @@ my $info_mode_sub = sub {
 		title => $title,
 		details => \@details,
 	);
-	Slim::Buttons::Common::pushMode($client,
+	Slim::Buttons::Common::pushModeLeft($client,
 									'remotetrackinfo',
 									\%params);
 };
-
-
-my %InfoFunctions = (
-);
 
 sub playStream {
 	my ($client, $currentGenre, $currentStream, $currentBitrate, $method, $addToRecent) = @_;
@@ -1289,7 +1286,6 @@ sub writeRecentStreamList {
 # Add extra modes
 Slim::Buttons::Common::addMode('ShoutcastStreams', \%StreamsFunctions, $mode_sub, $leave_mode_sub);
 Slim::Buttons::Common::addMode('ShoutcastBitrates', \%BitrateFunctions, $bitrate_mode_sub);
-Slim::Buttons::Common::addMode('ShoutcastStreamInfo', \%InfoFunctions, $info_mode_sub);
 
 
 # Web pages
