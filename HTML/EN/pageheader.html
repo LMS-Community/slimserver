@@ -1,6 +1,7 @@
 <html>
 	<head>
-		<title>[% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %]</title>
+		<title>[% IF pagetitle %][% pagetitle %]
+		[% ELSE %][% "WELCOME_TO_SLIMSERVER" | string %][% END %]</title>
 		<link rel="stylesheet" href="[% webroot %]slimserver.css">
 	</head>
 	<body>

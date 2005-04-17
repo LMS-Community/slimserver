@@ -1,9 +1,5 @@
-<html>
-	<head>
-		<title>[% "PLUGIN_RADIOIO_MODULE_TITLE" | string %]</title>
-		<link rel="stylesheet" href="[% webroot %]slimserver.css">
-	</head>
-	<body bgcolor="#FFFFFF">
+[% pagetitle = 'PLUGIN_RADIOIO_MODULE_NAME' | string %]
+[% PROCESS pageheader.html %]
 		<h3>[% "PLUGIN_RADIOIO_MODULE_NAME" | string %]</h3><p>
 		
 		<p><a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / [% "PLUGIN_RADIOIO_MODULE_NAME" | string %]</p>
@@ -31,7 +27,4 @@
 			[% END %]
 		</table>
 		<!-- end plugins output -->
-		
-	</body>
-</html>
-
+[% PROCESS pagefooter.html %]

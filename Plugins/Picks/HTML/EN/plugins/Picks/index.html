@@ -1,9 +1,5 @@
-<html>
-	<head>
-		<title>[% "PLUGIN_PICKS_MODULE_NAME" | string %]</title>
-		<link rel="stylesheet" href="[% webroot %]slimserver.css">
-	</head>
-	<body bgcolor="#FFFFFF">
+[% pagetitle = 'PLUGIN_PICKS_MODULE_NAME' | string %]
+[% PROCESS pageheader.html %]
 		<h3>[% "PLUGIN_PICKS_MODULE_NAME" | string %]</h3><p>
 		
 		<p><a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / [% "PLUGIN_PICKS_MODULE_NAME" | string %]</p>
@@ -31,7 +27,4 @@
 			[% END %]
 		</table>
 		<!-- end plugins output -->
-		
-	</body>
-</html>
-
+[% PROCESS pageheader.html %]
