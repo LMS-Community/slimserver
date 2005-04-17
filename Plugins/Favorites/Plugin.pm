@@ -176,10 +176,10 @@ sub playFavorite {
 	my @urls = $favs->urls();
 
 	if (!$urls[$index]) {
-		$client->showBriefly("Favorite #$digit not defined.");
+		$client->showBriefly(sprintf($client->string('PLUGIN_FAVORITES_NOT_DEFINED'), $digit));
 	} else {
 		$::d_favorites && msg("Favorites Plugin: playing favorite number $digit, " . $titles[$index] . "\n");
-		$client->showBriefly("Playing favorite #$digit", $titles[$index]);
+		$client->showBriefly(sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $digit, $titles[$index]));
 		Slim::Control::Command::execute( $client, [ 'playlist', 'clear' ] );
 		Slim::Control::Command::execute( $client, 
 										 [ 'playlist', 'add', 
@@ -221,7 +221,13 @@ PLUGIN_FAVORITES_MODULE_NAME
 	DE	Favoriten
 	EN	Favorites
 
+PLUGIN_FAVORITES_NOT_DEFINED
+	DE	Favorit Nr. %s existiert nicht!
+	EN	Favorite #%s not defined.
 
+PLUGIN_FAVORITES_PLAYING
+	DE	Spiele Favorit Nr. %s...
+	EN	Playing favorite #%s, %s
 ";}
 
 1;
