@@ -6667,7 +6667,7 @@ BROWSE_BY_YEAR
 	ES	Examinar Años
 
 BROWSE_MUSIC_FOLDER
-	DE	Musikverzeichnis nachschlagen
+	DE	Musikverzeichnis durchsuchen
 	DK	Gennemse hele musiksamlingen
 	EN	Browse Music Folder
 	ES	Examinar Carpeta de Música
@@ -7606,7 +7606,7 @@ PLAYER_NEEDS_UPGRADE
 	SE	Mjukvara ('firmware') i din spelare behöver uppdateras
 
 PLAYER_NEEDS_UPGRADE_DETAILS
-	DE	Die Software in ihrer Squeezebox muss aktualisiert werden.  Bitte drücken Sie den BRIGHTNESS Knopf auf der Fernsteuerung und halten ihn gedrückt, bis ihre Squeezebox anzeigt, dass das Update installiert wird. Dieser Vorgang dauert nur wenige Sekunden.<p>Sollte ihre Squeezebox blockieren, währenddem auf dem Display steht, dass sie parat für das Upgrade sei, und die IP Adresse angezeigt wird, klicken Sie <a href="firmware.html">hier</a>.
+	DE	Die Software in ihrer Squeezebox muss aktualisiert werden.  Bitte halten Sie den BRIGHTNESS Knopf auf der Fernsteuerung gedrückt, bis ihre Squeezebox anzeigt, dass das Update installiert wird. Dieser Vorgang dauert nur wenige Sekunden.<p>Sollte ihre Squeezebox blockieren, währenddem auf dem Display steht, dass sie parat für das Upgrade sei, und die IP Adresse angezeigt wird, klicken Sie <a href="firmware.html">hier</a>.
 	EN	The software in your Squeezebox needs to be updated to the latest version.  Please press and hold the BRIGHTNESS button on your remote until the display on your Squeezebox indicates that the update has begun.  The update only takes a few seconds.<p>If your Squeezebox is stuck on a screen that indicates that it's ready for an upgrade and is displaying its IP address, click <a href="firmware.html">here</a>.
 	ES	El software en tu Squeezebox necesita actualizarse a la última versión. Por favor, presionar y mantener presionado el botón BRIGHTNESS (Luminosidad) en el control remoto hasta que en la pantalla del Squeezebox se indique que la actualización comenzó. La actualización puede tomar algunos segundos. <p>Si el Squeezebox se detiene en una pantalla que indica que está listo para una actualización, y está mostrando su dirección IP, hacer click <a href="firmware.html">aquí</a>.
 	FR	Le logiciel de votre Squeezebox doit être mis à jour. Veuillez appuyer et laisser appuyer le bouton BRIGHTNESS de votre télécommande jusqu'à ce que la Squeezbox indique la mise à jour. Cette procédure prendra quelques secondes.
@@ -7624,7 +7624,7 @@ PLAYER_NEEDS_UPGRADE_1
 	SE	Mjukvaruppgradering av spelaren
 
 PLAYER_NEEDS_UPGRADE_2
-	DE	Drücken und halten Sie BRIGHTNESS gedrückt, um den Vorgang zu starten.
+	DE	Halten Sie BRIGHTNESS gedrückt, um den Vorgang zu starten.
 	EN	Press and hold BRIGHTNESS key to begin.
 	ES	Presione y mantenga presionado el botón de BRIGHTNESS (Luminosidad) para comenzar.
 	FR	Appuyez sur BRIGHTNESS et laissez appuyé pour lancer la mise à jour
@@ -7633,7 +7633,7 @@ PLAYER_NEEDS_UPGRADE_2
 	SE	Tryck och håll ned BRIGHTNESS på din Slim-fjärrkontroll för att initiera uppgradering
 
 PLAYER_UPGRADE_INSTRUCTIONS
-	DE	Falls die IP Adresse ihres Players nicht angezeigt wirde, drücken Sie den Knopf BRIGHTNESS und lassen ihn gedrückt, bis diese erscheint. Geben Sie dann die angezeigte IP Adresse hier ein:
+	DE	Falls die IP Adresse ihres Players nicht angezeigt wird, drücken Sie den Knopf BRIGHTNESS und lassen ihn gedrückt, bis diese erscheint. Geben Sie dann die angezeigte IP Adresse hier ein:
 	EN	If the IP address of your player is not displayed on its screen, press and hold the BRIGHTNESS button until it is.  Then enter the IP address displayed on the screen here:
 	ES	Si la dirección IP del reproductor no se muestra en su pantalla, presione y mantenga presionado el botón de BRIGHTNESS (Luminosidad) hasta que se muestre. Luego, ingrese aquí la dirección IP que se muestra en pantalla:
 	FR	Si l'adresse IP de votre platine n'est pas affichée sur son écran, appuyez et laissez appuyé BRIGHTNESS jusqu'à ce qu'elle soit affichée, puis entrez l'adresse ici :
