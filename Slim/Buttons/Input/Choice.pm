@@ -153,9 +153,9 @@ my %functions = (
 	'passback' => \&passback,
 	'play' => sub {callCallback('onPlay', @_)},
 	'add' => sub {callCallback('onAdd', @_)},
-	'right' => sub {callCallback('onRight', @_)},
-	'rt_single' => sub {callCallback('onRightSingle', @_)},
-	'rt_hold' => sub {callCallback('onRightHold', @_)},
+
+	# right and left buttons is handled in exitInput
+
 	# add more explicit callbacks if necessary here.
 );
 

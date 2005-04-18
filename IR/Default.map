@@ -334,9 +334,7 @@ pause.*						= passback
 
 [INPUT.Choice]
 arrow_left					= exit_left
-arrow_right					= right
-arrow_right.single			= rt_single
-arrow_right.hold			= rt_hold
+arrow_right					= exit_right
 play.*						= dead
 play						= play
 add.*						= dead
