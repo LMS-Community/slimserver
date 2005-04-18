@@ -609,16 +609,21 @@ table {
 	white-space: nowrap;
 	width: 42px;
 	margin: 0;
+	padding: 0;
+	border: 0;
+	height: 21px;
 }
 
 .browselistbuttons img {
 	cursor: pointer;
 	border: 0;
+	padding: 0;
+	vertical-align: text-top;
 	margin: 4px;
 }
 
 .browselisting {
-	padding: 4px;
+	padding-left: 4px;
 	margin: 0;
 	color: #666;
 }
