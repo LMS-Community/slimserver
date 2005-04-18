@@ -5,7 +5,7 @@
 # A Slim plugin for browsing the Shoutcast directory of mp3
 # streams.  Inspired by streamtuner.
 #
-# With contributions from Okko, Kevin Walsh and Rob Funk.
+# With contributions from Okko, Kevin Walsh, Michael Herger and Rob Funk.
 #
 # This code is derived from code with the following copyright message:
 #
@@ -296,22 +296,27 @@ sub gotViaHTTP {
 	my $data;
 
 	$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: get XML content\n");
-	if ($data = extractStreamInfoXML($http->content())) {
+	$httpError = 1 if not ($data = $http->content());
+
+	$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: parse XML \n");
+	$httpError = 2 if not ($data = extractStreamInfoXML($data));
+
+	if ((not defined $httpError) || ($httpError < 1)) {
 		%stream_data = ();
 		%genres_data = ();
+
 		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: custom genres\n");
 		setupCustomGenres();	
+
 		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: extract streams\n");
 		extractStreamInfo($params->{'client'}, $data);
+
 		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: remove singletons\n");
 		removeSingletons($params->{'client'});
+
 		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: sort genres\n");
 		sortGenres($params->{'client'});
 		$httpError = 0;
-	}
-	else {
-		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: error getting XML\n");
-		$httpError = 1;
 	}
 	undef $data;
 	
@@ -346,13 +351,18 @@ sub createAsyncWebPage {
 
 sub extractStreamInfoXML {
 	my $data = shift;
-	
 	return 0 unless ($data);
 	
 	eval { require Compress::Zlib };
 	$data = Compress::Zlib::uncompress($data) unless ($@);
-	$data = XML::Simple::XMLin($data, SuppressEmpty => '');
-	return $data;
+	$data = eval { XML::Simple::XMLin($data, SuppressEmpty => ''); };
+	if ($@) {
+		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: problem reading XML: $@\n");
+		return 0;
+	}
+	else {
+		return $data;
+	}
 }
 
 sub extractStreamInfo {
@@ -1354,8 +1364,12 @@ sub handleWebIndex {
 		$params->{'redirect'}{delay} = 3;
 		$params->{'redirect'}{url} = "index.html?$params->{'url_query'}";
 	}
+	elsif ($httpError == 2) {
+		# there was a problem parsing XML
+		$params->{'msg'} = string('PLUGIN_SHOUTCASTBROWSER_PARSE_ERROR') . " ($httpError)";
+		$httpError = undef;	
+	}
 	else {
-		# TODO mh:print some  "plaease try again...
 		$params->{'msg'} = string('PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR') . " ($httpError)";
 		$httpError = undef;
 	}
@@ -1411,6 +1425,10 @@ PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
 	DE	Fehler: SHOUTcast Web-Seite nicht verfügbar
 	EN	Error: SHOUTcast web site not available
 	ES	Error: el sitio web de SHOUTcast no está disponible
+
+PLUGIN_SHOUTCASTBROWSER_PARSE_ERROR
+	DE	Beim Auswerten der Stream-Informationen ist ein Fehler aufgetreten. Reduzieren Sie allenfalls die Anzahl Streams, falls Sie eine grosse Zahl anfordern wollten.
+	EN	There was an error parsing the stream information. Try reducing the number of streams if you've set a great number.
 
 PLUGIN_SHOUTCASTBROWSER_SHOUTCAST
 	EN	SHOUTcast
