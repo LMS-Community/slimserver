@@ -38,32 +38,16 @@ sub readPodcast {
 
 	$::d_plugins && msg("Podcast: parsing...\n");
 
-	# XMLin seems to barf on $in.  This appears to be because $in does
-	# not contain all the content.  the while loop commented out below
-	# results in only about 2500 chars of a feed.
-	# calling content() works for our http handler but will break for other
-	# types of input.
-
-	#while (<$in>) {
-	#	$str .= $_;
-	#}
-
-	my $str = $in->content(); # works for HTTP protocol handler
-
-	#$::d_plugins && msg("Podcast: parse string is " . length($str) . " chars.\n");
-
 	my @urls = ();
 
 	# async http request succeeded.  Parse XML
 	# forcearray to treat items as array,
 	# keyattr => [] prevents id attrs from overriding
-	my $xml = eval { XMLin($str,
+	my $xml = eval { XMLin($in,
 						   forcearray => ["item"], keyattr => []) };
 
 	if ($@) {
 		$::d_plugins && msg("Podcast: failed to parse feed because:\n$@\n");
-		$::d_plugins && msg("Podcast: ============ failed xml =========\n" .
-							$str . "\n ================================\n");
 		# TODO: how can we get error message to client?
 		return undef;
 	}
