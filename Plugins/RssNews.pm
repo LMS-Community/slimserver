@@ -775,11 +775,11 @@ sub setScreensaverRssNewsMode() {
 
     $client->param('PLUGIN.RssNews.screensaver_mode', 1);
 
-    # call the method that updates the display...
-    autoScrollTimer($client);
-
     $client->lines(\&lines);
 
+    # call the method that updates the display...
+	# because autoScrollTimer calls update, it cannot be called before the lines method is set (above)
+    autoScrollTimer($client);
 }
 
 sub leaveScreenSaverRssNews {
