@@ -105,8 +105,6 @@ sub addMode {
  	my $setModeFunction = shift;
  	my $leaveModeFunction = shift;
 
-	assert($setModeFunction);
-
  	$modeFunctions{$name} = $buttonFunctions;
  	$modes{$name} = $setModeFunction;
  	$leaveMode{$name} = $leaveModeFunction;
