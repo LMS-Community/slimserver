@@ -986,7 +986,7 @@ sub execute {
 				Slim::Player::Source::playmode($client, "stop");
 				Slim::Player::Playlist::clear($client);
 
-				push(@{Slim::Player::Playlist::playList($client)}, map { $_->url } @$results);
+				push(@{Slim::Player::Playlist::playList($client)}, @$results);
 
 				Slim::Player::Playlist::reshuffle($client, 1);
 				Slim::Player::Source::jumpto($client, 0);
@@ -995,7 +995,7 @@ sub execute {
 			
 			} elsif ($p1 eq "addalbum") {
 
-				push(@{Slim::Player::Playlist::playList($client)}, map { $_->url } @$results);
+				push(@{Slim::Player::Playlist::playList($client)}, @$results);
 
 				Slim::Player::Playlist::reshuffle($client);
 				$client->currentPlaylistModified(1);
@@ -1006,7 +1006,7 @@ sub execute {
 				my $playListSize = Slim::Player::Playlist::count($client);
 				my $size = scalar(@$results);
 
-				push(@{Slim::Player::Playlist::playList($client)}, map { $_->url } @$results);
+				push(@{Slim::Player::Playlist::playList($client)}, @$results);
 					
 				insert_done($client, $playListSize, $size);
 				#Slim::Player::Playlist::reshuffle($client);
@@ -1273,6 +1273,7 @@ sub execute {
 				$client->currentPlaylistModified(1);
 				$client->currentPlaylistChangeTime(time());
 			}
+
 			Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
 
 		} elsif ($p0 eq "mixer") {
@@ -1721,7 +1722,7 @@ sub insert_done {
 	if (Slim::Player::Playlist::shuffle($client)) {
 
 		for (my $i = 0; $i < $size; $i++) {
-			push @reshuffled,$listsize+$i;
+			push @reshuffled, ($listsize + $i);
 		};
 			
 		$client = Slim::Player::Sync::masterOrSelf($client);
@@ -1813,7 +1814,7 @@ sub parseSearchTerms {
 	# default to a sort
 	$sort ||= exists $find{'album'} ? 'tracknum' : 'track';
 
-	return map { $_->url } @{ $ds->find('lightweighttrack', \%find, $sort, $limit, $offset) };
+	return @{ $ds->find('lightweighttrack', \%find, $sort, $limit, $offset) };
 }
 
 sub parseListRef {

@@ -395,6 +395,8 @@ sub reshuffle {
 
 	@{$listRef} = (0 .. ($songcount - 1));
 
+	# 1 is shuffle by song
+	# 2 is shuffle by album
 	if (shuffle($client) == 1) {
 
 		fischer_yates_shuffle($listRef);
@@ -414,33 +416,45 @@ sub reshuffle {
 
 	} elsif (shuffle($client) == 2) {
 
-		my %albtracks;
-		my %trackToNum;
+		my %albumTracks     = ();
+		my %trackToPosition = ();
 		my $i  = 0;
 		my $ds = Slim::Music::Info::getCurrentDataStore();
 
-		my $defaultAlbum = Slim::Utils::Text::matchCase($client->string('NO_ALBUM'));
+		my $defaultAlbumTitle = Slim::Utils::Text::matchCase($client->string('NO_ALBUM'));
 
+		# Because the playList might consist of objects - we can avoid doing an extra objectForUrl call.
 		for my $track (@{playList($client)}) {
 
 			# Can't shuffle remote URLs - as they most likely
 			# won't have distinct album names.
 			next if Slim::Music::Info::isRemoteURL($track);
 
-			my $trackObj = $ds->objectForUrl($track);
+			my $trackObj = $track;
 
-			if (defined $trackObj && ref($trackObj)) {
+			unless (ref($track)) {
 
-				my $albumObj = $trackObj->album();
-				my $title    = $defaultAlbum;
+				$::d_playlist && Slim::Utils::Misc::msg("Track: $track isn't an object - fetching\n");
 
-				if ($albumObj) {
-					$title = $albumObj->titlesort();
+				# Try to fetch a LightWeightTrack object
+				$trackObj = $ds->objectForUrl($track, 0, 0, 1);
+			}
+
+			# Pull out the album title, and accumulate all of the
+			# tracks for that album into a hash. Also map that
+			# object to a poisition in the playlist.
+			if (defined $trackObj && ref $trackObj) {
+
+				my $albumObj  = $trackObj->album();
+				my $titlesort = $defaultAlbumTitle;
+
+				if ($albumObj && ref $albumObj) {
+					$titlesort = $albumObj->titlesort() || $defaultAlbumTitle;
 				}
 
-				push @{$albtracks{$title}}, $i;
+				push @{$albumTracks{$titlesort}}, $trackObj;
 
-				$trackToNum{$trackObj->url} = $i++;
+				$trackToPosition{$trackObj} = $i++;
 
 			} else {
 
@@ -449,60 +463,44 @@ sub reshuffle {
 			}
 		}
 
+		# Not quite sure what this is doing - not changing the current song?
 		if ($realsong == -1 && !$dontpreservecurrsong) {
 			$realsong = $listRef->[Slim::Utils::Prefs::clientGet($client,'currentSong')];
 		}
 
-		my $curtrack = $ds->objectForUrl(${playList($client)}[$realsong]);
+		my $currentTrack = $ds->objectForUrl(${playList($client)}[$realsong]);
 
-		my $curalbum = Slim::Utils::Text::matchCase($curtrack->album()) || $client->string('NO_ALBUM');
+		my $currentAlbum = Slim::Utils::Text::matchCase($currentTrack->album()) || $client->string('NO_ALBUM');
 
-		my @albums = keys(%albtracks);
+		# @albums is now a list of Album names. Shuffle that list.
+		my @albums = keys %albumTracks;
 
 		fischer_yates_shuffle(\@albums);
 
+		# Put the album for the currently playing track at the beginning of the list.
 		for (my $i = 0; $i <= $#albums && $realsong != -1; $i++) {
 
-			my $album = shift(@albums);
+			if ($albums[$i] eq $currentAlbum) {
 
-			if ($album ne $curalbum) {
-				push(@albums,$album);
-			} else {
-				unshift(@albums,$album);
+				my $album = splice(@albums, $i, 1);
+
+				unshift(@albums, $album);
+
 				last;
 			}
 		}
 
-		my @shufflelist = ();
-		my $album       = shift(@albums);
-		my @albumorder  = ();
-
-		if ($album && scalar @albums) {
-
-			@albumorder = map { ${playList($client)}[$_] } @{$albtracks{$album}};
-			@albumorder = Slim::Music::Info::sortByAlbum(@albumorder);
-		}
-
-		$i = 0;
-
-		for my $trackname (@albumorder) {
-
-			push @shufflelist, $trackToNum{$trackname};
-			$i++
-		}
+		# Clear out the list ref - we'll be reordering it.
+		@{$listRef} = ();
 
 		for my $album (@albums) {
 
-			my @albumorder = map { ${playList($client)}[$_] } @{$albtracks{$album}};
+			# Sort each track within the album by Album, Disc, Tracknum and Track Name
+			for my $track (sort { $a->multialbumsortkey() cmp $b->multialbumsortkey() } @{$albumTracks{$album}}) {
 
-			@albumorder = Slim::Music::Info::sortByAlbum(@albumorder);
-
-			for my $trackname (@albumorder) {
-				push @shufflelist, $trackToNum{$trackname};
+				push @{$listRef}, $trackToPosition{$track};
 			}
 		}
-
-		@{$listRef} = @shufflelist;
 	} 
 	
 	for (my $i = 0; $i < $songcount; $i++) {
