@@ -1879,12 +1879,12 @@ SETUP_DIGITALVOLUMECONTROL_ON
 
 SETUP_DIGITALVOLUMECONTROL_OFF
 	DE	Lautstärke der digitalen Ausgabe ist fixiert
-	EN	Digital output level is fixed (Best analog quality)
-	ES	El nivel de la salida digital es fijo (Mejor calidad análoga)
-	FR	Niveau sortie numérique fixe (qualité analogique optimale)
-	JP	デジタル出力は固定です（アナログ音質は最高）
-	NO	Digital utgangsnivå er fast (gir best analog kvalitet)
-	SE	Den digitala utnivån är fixerad (ger bäst analog kvalitet)
+	EN	Digital output level is fixed
+	ES	El nivel de la salida digital es fijo
+	FR	Niveau sortie numérique fixe
+	JP	デジタル出力は固定です
+	NO	Digital utgangsnivå er fast
+	SE	Den digitala utnivån är fixerad
 
 SETUP_DIGITALVOLUMECONTROL
 	DE	Lautstärkekontrolle des digitalen Ausgangs
@@ -1896,13 +1896,13 @@ SETUP_DIGITALVOLUMECONTROL
 	SE	Digital volymkontroll
 
 SETUP_DIGITALVOLUMECONTROL_DESC
-	DE	Sie können wählen, ob sie die Lautstärke der digitalen Ausgabe auf dem maximalen Level fixieren oder über die Fernsteuerung kontrollieren wollen. Falls Sie die Fixierung wählen, so hat die analoge Ausgabe die höchste Qualität. Mit beiden Einstellungen lässt sich die analoge Ausgabe über die Fernsteuerung regeln.
-	EN	You can choose to have the digital audio output on your player be fixed at maximum level or be controlled by the volume buttons.  If you choose to have a fixed digital audio volume level, the analog outputs will have the highest quality possible.  With either setting, the analog output levels are adjusted by the volume buttons.
-	ES	Se puede elegir que las salidas de audio digital del reproductor estén fijas al máximo nivel o que sean controladas por los botones de volumen. Si se elige un nivel digital fijo de volumen, la salidas analogicas tendrán la mayor calidad posible. Con cualquiera de las dos opciones, los niveles de las salidas analógicas (no digitales) pueden ser ajustadas por los botones de volumen.
-	FR	Le niveau de la sortie audio numérique de votre platine peut être soit fixé à son maximum, soit contrôlé par les boutons de volume. Si le niveau de la sortie audio numérique est fixe, la qualité de la sortie analogique sera optimale. Dans tous les cas, le niveau de la sortie analogique est contrôlé par les boutons de volume.
-	JP	デジタル出力のボリュームを固定、あるいは調整可能にできます。デジタル出力を固定にするとアナログの音質は最高になります。どちらのセッティングでも、音量はボリュームボタンで調節することができます。
-	NO	Du kan velge mellom å la digitalt volum være fast på maks nivå eller la den styres av volumkontrollen. Når du velger fast digitalt utgangsnivå, får det analoge signalet maksimal kvalitet. Uansett innstilling påvirkes analogt volum av volumknappene.
-	SE	Du kan välja mellan att låta ditital volym vara fix på max nivå, eller låta den styras av volymkontroller. När du väljer fix digital signalvolym, får den analoga signalen maximal kvalitet. Oavsett inställning, så påverkar påverkas analog volym av volymknapparna.
+	DE	Sie können wählen, ob sie die Lautstärke der digitalen Ausgabe auf dem maximalen Level fixieren oder über die Fernsteuerung kontrollieren wollen. Mit beiden Einstellungen lässt sich die analoge Ausgabe über die Fernsteuerung regeln.
+	EN	You can choose to have the digital audio output on your player be fixed at maximum level or be controlled by the volume buttons.  With either setting, the analog output levels are adjusted by the volume buttons.
+	ES	Se puede elegir que las salidas de audio digital del reproductor estén fijas al máximo nivel o que sean controladas por los botones de volumen. Con cualquiera de las dos opciones, los niveles de las salidas analógicas (no digitales) pueden ser ajustadas por los botones de volumen.
+	FR	Le niveau de la sortie audio numérique de votre platine peut être soit fixé à son maximum, soit contrôlé par les boutons de volume. Dans tous les cas, le niveau de la sortie analogique est contrôlé par les boutons de volume.
+	JP	デジタル出力のボリュームを固定、あるいは調整可能にできます。どちらのセッティングでも、音量はボリュームボタンで調節することができます。
+	NO	Du kan velge mellom å la digitalt volum være fast på maks nivå eller la den styres av volumkontrollen. Uansett innstilling påvirkes analogt volum av volumknappene.
+	SE	Du kan välja mellan att låta ditital volym vara fix på max nivå, eller låta den styras av volymkontroller. Oavsett inställning, så påverkar påverkas analog volym av volymknapparna.
 
 SETUP_MAXBITRATE
 	DE	Bitraten-Beschränkung
