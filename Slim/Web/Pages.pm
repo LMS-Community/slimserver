@@ -862,7 +862,7 @@ sub browser_addtolist_done {
 			);
 		} else {
 
-			my $alphaItems = [ map { File::Basename::basename(uc($_)) } @{$itemsref} ];
+			my $alphaItems = [ map { uc(Slim::Music::Info::fileName($_)) } @{$itemsref} ];
 
 			($start, $end) = alphaPageBar(
 				$alphaItems,
