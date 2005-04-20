@@ -212,7 +212,7 @@ sub resetState {
 	$lastITunesMusicLibraryDate = -1;
 
 	# set to -1 to force all the tracks to be updated.
-	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $lastITunesMusicLibraryDate);
+	Slim::Utils::Prefs::set('iTunesXMLModificationDate', $lastITunesMusicLibraryDate);
 }
 
 sub disablePlugin {
@@ -444,7 +444,7 @@ sub isMusicLibraryFileChanged {
 	my $fileMTime = (stat $file)[9];
 
 	# Set this so others can use it without going through Prefs in a tight loop.
-	$lastITunesMusicLibraryDate = Slim::Utils::Prefs::get('lastITunesMusicLibraryDate');
+	$lastITunesMusicLibraryDate = Slim::Utils::Prefs::get('iTunesXMLModificationDate');
 	
 	# Only say "yes" if it has been more than one minute since we last finished scanning
 	# and the file mod time has changed since we last scanned. Note that if we are
@@ -548,7 +548,7 @@ sub doneScanning {
 		msgf("iTunes: scan completed in %d seconds.\n", (time() - $iTunesScanStartTime));
 	}
 
-	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $lastITunesMusicLibraryDate);
+	Slim::Utils::Prefs::set('iTunesXMLModificationDate', $lastITunesMusicLibraryDate);
 	
 	Slim::Music::Info::generatePlaylists();
 	
@@ -791,7 +791,8 @@ sub scanFunction {
 			my %cacheEntry = ();
 			my $name = $curPlaylist{'Name'};
 			my $url = 'itunesplaylist:' . Slim::Web::HTTP::escape($name);
-		
+			$url = Slim::Utils::Misc::fixPath($url);
+
 			$::d_itunes && msg("iTunes: got a playlist ($url) named $name\n");
 
 			if ($name eq 'Library') {
@@ -1178,8 +1179,8 @@ sub checkDefaults {
 		Slim::Utils::Prefs::set('itunes_library_autolocate',1);
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('lastITunesMusicLibraryDate')) {
-		Slim::Utils::Prefs::set('lastITunesMusicLibraryDate',0);
+	if (!Slim::Utils::Prefs::isDefined('iTunesXMLModificationDate')) {
+		Slim::Utils::Prefs::set('iTunesXMLModificationDate',0);
 	}
 }
 
