@@ -5753,7 +5753,7 @@ RENAME
 	SE	Byt namn
 
 SAVED_PLAYLISTS
-	DE	Playlists nachschlagen
+	DE	Playlisten nachschlagen
 	DK	Gemte playlister
 	EN	Browse Playlists
 	ES	Elegir de  Listas Guardadas
@@ -5766,13 +5766,13 @@ SAVED_PLAYLISTS
 	SE	Sparade låtlistor
 
 SAVED_PLAYLISTS_DBL
-	DE	Wiedergabelisten
+	DE	Playlisten
 	FR	Listes de lecture
 	JP	保存されたプレイリスト
 	SE	Låtlistor
 
 PLAYLISTDIR
-	DE	Gespeichertes Verzeichnis der Playlists
+	DE	Verzeichnis für Playlisten
 	DK	Mappe med playlister
 	EN	Saved Playlists Folder
 	ES	Carpeta de Listas Guardadas
@@ -5785,7 +5785,7 @@ PLAYLISTDIR
 	SE	Mapp för sparade låtlistor
 
 PLAYLISTDIR_IS_NOW
-	DE	Sie können den Pfad zu dem Verzeichnis angeben, in welchem Sie ihre Playlists gespeichert haben. (Sie können das Feld leer lassen, wenn Sie keine Playlists speichern wollen)
+	DE	Sie können den Pfad zu dem Verzeichnis angeben, in welchem Sie ihre Playlisten gespeichert haben. (Sie können das Feld leer lassen, wenn Sie keine Playlists speichern wollen)
 	DK	Du kan angive stien til en mappe hvor dine gemte playlister er placeret. Lad feltet være tomt hvis du ikke ønsker at anvende gemte playlister.
 	EN	You can enter the path to a directory where your saved playlist files are stored on your hard disk. (You can leave this blank if you don't want to save playlists.)
 	ES	Puede introducir el camino a una carpeta donde quiere guardar listas en su disco duro (déjelo en blanco si no quiere poder guardar listas).
@@ -7673,7 +7673,7 @@ NEED_PATH
 	SE	Du måste ange en sökväg till den mapp som innehåller dina MP3-filer.
 
 NEED_PLAYLIST_PATH
-	DE	Sie müssen das Verzeichnis ihrer abgespeicherten Playlists angeben.
+	DE	Sie müssen das Verzeichnis ihrer abgespeicherten Playlisten angeben.
 	DK	Du skal angive stien til mappen med dine gemte playlister.
 	EN	You need to specify a path to a directory for your saved playlist files.
 	ES	Es necesario especificar el camino a la carpeta que contiene los archivos de listas guardadas.
