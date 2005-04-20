@@ -221,11 +221,16 @@ sub vfdUpdate {
 		# For whatever reason, utf8toLatin1() doesn't convert this to
 		# a ' - \x{2019}, so do it manually. Otherwise the server will
 		# crash. We should also investigate Encode::compat - for 5.6.x
+		my $wasUTF8;
 		if ($] > 5.007) {
-			Encode::_utf8_off($curline);
+			$wasUTF8 = Encode::_utf8_off($curline);
 		}
 
 		$curline =~ s/\xe2\x80\x99/'/g;
+
+		if ($] > 5.007 and $wasUTF8) {
+			Encode::_utf8_on($curline);
+		}
 
 		$curline = Slim::Utils::Misc::utf8toLatin1($curline);
 
