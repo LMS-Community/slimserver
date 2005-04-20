@@ -862,7 +862,7 @@ sub browser_addtolist_done {
 			);
 		} else {
 
-			my $alphaItems = [ map { uc(Slim::Music::Info::fileName($_)) } @{$itemsref} ];
+			my $alphaItems = [ map { Slim::Utils::Text::ignorePunct(Slim::Utils::Text::matchCase(Slim::Music::Info::fileName($_))) } @{$itemsref} ];
 
 			($start, $end) = alphaPageBar(
 				$alphaItems,
@@ -2406,7 +2406,8 @@ sub alphaPageBar {
 		# This could be more efficient.
 		for (my $j = 0; $j < $itemcount; $j++) {
 
-			my $curLetter = substr($itemsref->[$j], 0, 1) || '';
+			my $curLetter = substr($itemsref->[$j], 0, 1);
+			$curLetter = '' if (!defined($curLetter));
 
 			if ($lastLetter ne $curLetter) {
 
