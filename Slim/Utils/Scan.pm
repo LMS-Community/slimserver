@@ -51,6 +51,7 @@ package Slim::Utils::Scan;
 use strict;
 use File::Spec::Functions qw(:ALL);
 use FileHandle;
+use IO::String;
 use Class::Struct;
 use Time::HiRes;
 
@@ -488,7 +489,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		# convert the resulting string into the stream expected by the
 		# parsers.
 		my $playlist_str = $playlist_filehandle->content();
-		$playlist_filehandle = IO::String($playlist_str);
+		$playlist_filehandle = IO::String->new($playlist_str);
 
 		# Check if it's still a playlist after we open the
 		# remote stream. We may have got a different content
