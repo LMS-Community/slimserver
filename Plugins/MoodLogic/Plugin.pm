@@ -473,6 +473,7 @@ sub exportFunction {
 			
 			my %cacheEntry = ();
 			my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
+			$url = Slim::Utils::Misc::fixPath($url);
 
 			if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
 				$::d_moodlogic && msg("MoodLogic: Found MoodLogic Auto Playlist: $url\n");

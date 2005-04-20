@@ -615,6 +615,7 @@ sub exportFunction {
 			
 				my $name = $lines[$i];
 				my $url = 'musicmagicplaylist:' . Slim::Web::HTTP::escape($name);
+				$url = Slim::Utils::Misc::fixPath($url);
 
 				if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
 					$::d_musicmagic && msg("MusicMagic: Found playlist: $url\n");
