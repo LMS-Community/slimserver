@@ -239,9 +239,23 @@ sub handleWebIndex {
 		Slim::Utils::Scan::addToList($stationList, $picksurl, 0, 0);
 	}
 
-	$params->{'stationList'} = {};
-	foreach (@$stationList) {
-		$params->{'stationList'}{Slim::Music::Info::standardTitle($client, $_)} = $_;
+	if (defined $params->{'p0'}) {
+		# let's open the stream to get some more information
+		my $stream = Plugins::RadioIO::ProtocolHandler->new({ url => $params->{'p0'}});
+		my $ds = Slim::Music::Info::getCurrentDataStore();
+		my $track = $ds->objectForUrl($params->{'p0'}, 1, 1);
+
+		$params->{'stationname'} = Slim::Music::Info::standardTitle($client, $params->{'p0'});
+		$params->{'bitrate'} = $track->bitrate();
+		$params->{'type'} = Slim::Music::Info::contentType($params->{'p0'});
+		$params->{'url'} = $params->{'p0'};
+		undef $stream;
+	}
+	else {
+		$params->{'stationList'} = {};
+		foreach (@$stationList) {
+			$params->{'stationList'}{Slim::Music::Info::standardTitle($client, $_)} = $_;
+		}
 	}
 
 	return Slim::Web::HTTP::filltemplatefile('plugins/Picks/index.html', $params);

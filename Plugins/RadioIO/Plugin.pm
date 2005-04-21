@@ -180,7 +180,24 @@ sub webPages {
 
 sub handleWebIndex {
 	my ($client, $params) = @_;
-	$params->{'station_names'} = \@station_names;
+	
+	if (defined $params->{'p0'} && $stations{$params->{'p0'}}) {
+		$params->{'stationname'} = $params->{'p0'};
+
+		# let's open the stream to get some more information
+		my $url = "radioio://$params->{'p0'}.mp3";
+		my $stream = Plugins::RadioIO::ProtocolHandler->new({ url => $url });
+		my $ds = Slim::Music::Info::getCurrentDataStore();
+		my $track = $ds->objectForUrl($url, 1, 1);
+
+		$params->{'fulltitle'} = Slim::Music::Info::getCurrentTitle($client, $url);
+		$params->{'bitrate'} = $track->bitrate();
+		$params->{'type'} = Slim::Music::Info::contentType($url);
+		undef $stream;
+	}
+	else {
+		$params->{'stationnames'} = \@station_names;
+	}
 
 	return Slim::Web::HTTP::filltemplatefile('plugins/RadioIO/index.html', $params);
 }

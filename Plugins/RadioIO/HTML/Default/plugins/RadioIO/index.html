@@ -14,7 +14,8 @@
 				<td width="8"><img src="[% webroot %]html/images/spacer.gif" width="8" height="8" alt=""></td>
 				<td valign="top" class="exlisting">
 					<a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a>
-					/ [% "PLUGIN_RADIOIO_MODULE_NAME" | string %]
+					/ [% IF stationname %]<a href="index.html?player=[% player | uri %]">[% END %][% "PLUGIN_RADIOIO_MODULE_NAME" | string %][% IF stationname %]</a> 
+					/ [% stationname %][% END %]
 				</td>
 				<td width="4"></td>
 			</tr>
@@ -33,22 +34,49 @@
 	<td valign="top" height="100%">			
 		<!-- start plugins output -->
 		<table cellspacing="0" width="100%">
-			[% odd = 1 %]
-			[% FOREACH station = station_names %]
+			[% IF stationnames %]
+				[% odd = 1 %]
+				[% FOREACH station = stationnames %]
+					<tr>
+						<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+							<a href="index.html?p0=[% station | uri %]&player=[% player | uri %]">[% station %]</a>
+						</td>
+	
+						<td align="right" width="13" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+							<a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% station | uri %].mp3&p3=[% station | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
+						</td>
+					
+						<td  align="right" width="13" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+							<a href="[% webroot %]status_header.html?p0=playlist&p1=add&p2=[% 'radioio://' | uri %][% station | uri %].mp3&p3=[% station | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a>
+						</td>
+					</tr>
+					[% odd = (not odd) %]
+				[% END %]
+			[% END %]
+					
+			[% IF stationname %]
 				<tr>
-					<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-						<a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% station | uri %].mp3&p3=[% station | uri %]&player=[% player | uri %]" target="status">[% station %]</a>
-					</td>
-
-					<td align="right" width="13" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-						<a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% station | uri %].mp3&p3=[% station | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
-					</td>
-				
-					<td  align="right" width="13" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-						<a href="[% webroot %]status_header.html?p0=playlist&p1=add&p2=[% 'radioio://' | uri %][% station | uri %].mp3&p3=[% station | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a>
-					</td>
+					<td>[% 'TITLE' | string %][% 'COLON' | string %]&nbsp;</td>
+					<td><a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% stationname | uri %].mp3&p3=[% stationname | uri %]&player=[% player | uri %]" target="status">
+						[% IF fulltitle %][% fulltitle %][% ELSE %][% stationname %][% END %]
+					</a></td>
 				</tr>
-				[% odd = (not odd) %]
+				[% IF bitrate %]
+					<tr>
+						<td>[% 'BITRATE' | string %][% 'COLON' | string %]&nbsp;</td>
+						<td>[% bitrate %]</td>
+					</tr>
+				[% END %]
+				[% IF type %]
+					<tr>
+						<td>[% 'TYPE' | string %][% 'COLON' | string %]&nbsp;</td>
+						<td>[% type %]</td>
+					</tr>
+				[% END %]
+				<tr>
+					<td>[% 'URL' | string %][% 'COLON' | string %]&nbsp;</td>
+					<td><a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% stationname | uri %].mp3&p3=[% stationname | uri %]&player=[% player | uri %]" target="status">[% 'radioio://' %][% stationname %].mp3</a></td>
+				</tr>
 			[% END %]
 		</table>
 		<!-- end plugins output -->

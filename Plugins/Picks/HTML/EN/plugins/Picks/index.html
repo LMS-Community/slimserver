@@ -2,28 +2,56 @@
 [% PROCESS pageheader.html %]
 		<h3>[% "PLUGIN_PICKS_MODULE_NAME" | string %]</h3><p>
 		
-		<p><a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / [% "PLUGIN_PICKS_MODULE_NAME" | string %]</p>
+		<p><a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> 
+			/ [% IF stationname %]<a href="index.html?player=[% player | uri %]">[% END %][% "PLUGIN_PICKS_MODULE_NAME" | string %][% IF stationname %]</a> 
+			/ [% stationname %][% END %]
+		</p>
 		
 		<hr/>
 		
 		<!-- start plugins output -->
 		<table border="0" cellspacing="0" cellpadding="4" width="100%">
-			[% odd = 1 %]
-			[% FOREACH station = stationList %]
-			<tr>
-				<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-			 		<a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% station.value | uri %]&player=[% player | uri %]" target="status">[% station.key %]</a>
-				</td>
-			
-				<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-					<nobr><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% station.value | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
-				</td>
-			
-				<td  [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-					<nobr><a href="[% webroot %]status.html?p0=playlist&p1=add&p2=[% station.value | uri %]&player=[% player | uri %]" target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr>
-			  	</td>
-			</tr>
-			[% odd = (not odd) %]
+			[% IF stationList %]
+				[% odd = 1 %]
+				[% FOREACH station = stationList %]
+					<tr>
+						<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+					 		<a href="index.html?p0=[% station.value | uri %]&player=[% player | uri %]">[% station.key %]</a>
+						</td>
+					
+						<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+							<nobr><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% station.value | uri %]&p3=[% station.key | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
+						</td>
+					
+						<td  [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+							<nobr><a href="[% webroot %]status.html?p0=playlist&p1=add&p2=[% station.value | uri %]&p3=[% station.key | uri %]&player=[% player | uri %]" target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr>
+					  	</td>
+					</tr>
+					[% odd = (not odd) %]
+				[% END %]
+			[% END %]
+					
+			[% IF stationname %]
+				<tr>
+					<td>[% 'TITLE' | string %][% 'COLON' | string %]&nbsp;</td>
+					<td><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% url | uri %][% stationname | uri %].mp3&p3=[% stationname | uri %]&player=[% player | uri %]" target="status">[% stationname %]</a></td>
+				</tr>
+				[% IF bitrate %]
+					<tr>
+						<td>[% 'BITRATE' | string %][% 'COLON' | string %]&nbsp;</td>
+						<td>[% bitrate %]</td>
+					</tr>
+				[% END %]
+				[% IF type %]
+					<tr>
+						<td>[% 'TYPE' | string %][% 'COLON' | string %]&nbsp;</td>
+						<td>[% type %]</td>
+					</tr>
+				[% END %]
+				<tr>
+					<td>[% 'URL' | string %][% 'COLON' | string %]&nbsp;</td>
+					<td><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% url | uri %][% stationname | uri %].mp3&p3=[% stationname | uri %]&player=[% player | uri %]" target="status">[% url %]</a></td>
+				</tr>
 			[% END %]
 		</table>
 		<!-- end plugins output -->
