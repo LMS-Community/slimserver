@@ -459,112 +459,6 @@ This also makes it more difficult for an attacker to trick your SlimServer into 
     <td>text/plain</td>
   </tr>
 </table>
-<p>For each of these formats additional headers are returned:</p>
-<table  border="1">
-  <tr>
-    <td>x-playerindex:</td>
-    <td>&lt;currentitem&gt;</td>
-    <td>Index of the currently played item. 1 is the first item</td>
-  </tr>
-  <tr> 
-    <td>x-playervolume:</td>
-    <td>&lt;currentvolume&gt;</td>
-    <td>The current volume of the player, range 0-99</td>
-  </tr>
-  <tr> 
-    <td>x-playertracks:</td>
-    <td>&lt;trackcount&gt;</td>
-    <td>Total number of tracks in the playlist</td>
-  </tr>
-  <tr> 
-    <td>x-playershuffle:</td>
-    <td>&lt;0|1&gt;</td>
-    <td>Playlist shuffle state: 0=no, 1=yes</td>
-  </tr>
-  <tr> 
-    <td>x-playerrepeat:</td>
-    <td>&lt;0|1|2&gt;</td>
-    <td>Playlist repeat state: 0=stop at end, 1=repeat current song, 2=repeat 
-      all songs</td>
-  </tr>
-  <tr> 
-    <td>x-playermode:</td>
-    <td>&lt;play|pause|stop|off&gt;</td>
-    <td>Current player state: play, pause, stop, powered off</td>
-  </tr>
-  <tr> 
-    <td>x-playertime:</td>
-    <td>&lt;seconds&gt;</td>
-    <td>Number of seconds of the song that have been played. Floating point value.</td>
-  </tr>
-  <tr> 
-    <td>x-playerduration:</td>
-    <td>&lt;seconds</td>
-    <td>Duration of current song in seconds. Floating point value.</td>
-  </tr>
-  <tr> 
-    <td>x-playerartist:</td>
-    <td>&lt;artistname&gt;</td>
-    <td>Name of the artist associated with the currently playing song.</td>
-  </tr>
-  <tr> 
-    <td>x-playeralbum:</td>
-    <td>&lt;albumname&gt;</td>
-    <td>Name of the album associated with the currently playing song.</td>
-  </tr>
-  <tr> 
-    <td>x-playertitle:</td>
-    <td>&lt;songtitle&gt;</td>
-    <td>Title of the song currently playing.</td>
-  </tr>
-  <tr>
-    <td>x-playertrack:</td>
-    <td>&lt;tracknumber&gt;</td>
-    <td>Track number associated with the song currently playing.</td>
-  </tr>
-  <tr> 
-    <td>x-playergenre:</td>
-    <td>&lt;genrename&gt;</td>
-    <td><p>Genre associated with the currently playing song.</p>
-    </td>
-  </tr>
-  <tr>
-    <td>x-player</td>
-    <td>&lt;playerid&gt;</td>
-    <td>The identifier for the given player</td>
-  </tr>
-  <tr>
-    <td>x-playername</td>
-    <td>&lt;playername&gt;</td>
-    <td>The human readable name assigned to the player</td>
-  </tr>
-  <tr>
-    <td>x-p0</td>
-    <td>&lt;p0&gt;</td>
-    <td>The value of p0 after the command has been executed</td>
-  </tr>
-  <tr>
-    <td>x-p1</td>
-    <td>&lt;p1&gt;</td>
-    <td>The value of p0 after the command has been executed</td>
-  </tr>
-  <tr>
-    <td>x-p2</td>
-    <td>&lt;p2&gt;</td>
-    <td>The value of p0 after the command has been executed</td>
-  </tr>
-  <tr>
-    <td>x-p3</td>
-    <td>&lt;p3&gt;</td>
-    <td>The value of p0 after the command has been executed</td>
-  </tr>
-  <tr>
-    <td>x-p4</td>
-    <td>&lt;p4&gt;</td>
-    <td><p>The value of p0 after the command has been executed</p>
-    </td>
-  </tr>
-</table>
 
 <p>The following is an example of an HTTP status transactions.  
 The text in blue is sent from the client to the SlimServer HTTP server.  
@@ -577,23 +471,6 @@ GET /status.html?p0=pause&amp;p1=1 HTTP/1.0
 
 HTTP/1.0 200 OK
 Content-Type: audio/x-mpegurl
-x-playerindex: 11
-x-playervolume: 71.5
-x-playertracks: 14
-x-playershuffle: 0
-x-playerrepeat: 2
-x-playermode: play
-x-playertime: 23.245
-x-playerduration: 234.33
-x-playerartist: A Tribe Called Quest
-x-playeralbum: The Low End Theory
-x-playertitle: Jazz (We've Got)
-x-playertrack: 11
-x-playergenre: HipHop
-x-player: 10.0.1.204:69
-x-playername: Living room
-x-p0: pause
-x-p1: 1
 
 /Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/01. Excursions.mp3
 /Volumes/10.0.1.201/A Tribe Called Quest/The Low End Theory/02. Buggin' Out.mp3
