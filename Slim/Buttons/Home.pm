@@ -371,6 +371,7 @@ sub homeExitHandler {
 			if (ref($nextParams->{'useMode'}) eq 'CODE') {
 				$nextParams->{'useMode'}->($client);
 			} else {
+				my %params = %$nextParams;
 				if (($nextParams->{'useMode'} eq 'INPUT.List' || $nextParams->{'useMode'} eq 'INPUT.Bar')  && exists($nextParams->{'initialValue'})) {
 					#set up valueRef for current pref
 					my $value;
@@ -379,12 +380,12 @@ sub homeExitHandler {
 					} else {
 						$value = Slim::Utils::Prefs::clientGet($client,$nextParams->{'initialValue'});
 					}
-					$nextParams->{'valueRef'} = \$value;
+					$params{'valueRef'} = \$value;
 				}
 				Slim::Buttons::Common::pushModeLeft(
 					$client,
 					$nextParams->{'useMode'},
-					$nextParams,
+					\%params,
 				);
 			}
 		} elsif (Slim::Buttons::Common::validMode("PLUGIN.".$nextmenu)){
