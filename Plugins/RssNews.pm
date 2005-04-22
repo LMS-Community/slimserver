@@ -414,40 +414,54 @@ sub unescapeAndTrim {
 	return $data;
 }
 
+# see bug 1307
+# avoid deep recursion
+my $getFeedXml_semaphore = 0;
+
 sub getFeedXml {
     my $feed_url = shift;
 
 	$::d_plugins && msg("RssNews: getting feed from $feed_url\n");
 
+	# bug 1307.  Avoid recursion.
+	if ($getFeedXml_semaphore) {
+		return 0;
+	} else {
+		$getFeedXml_semaphore = 1;
+	}
+
     my $http = Slim::Player::Protocols::HTTP->new({
-	'url'    => $feed_url,
-	'create' => 0,
+		'url'    => $feed_url,
+		'create' => 0,
     });
-    
+
     if (defined $http) {
 
-	my $content = $http->content();
+		my $content = $http->content();
 
-	$http->close();
+		$http->close();
 
-	return 0 unless defined $content;
+		return 0 unless defined $content;
 
-	# very verbose debugging
-	#$::d_plugins && msg("RssNews: $feed_url\n");
-	#$::d_plugins && msg("\n$content\n\n");
+		# very verbose debugging
+		#$::d_plugins && msg("RssNews: $feed_url\n");
+		#$::d_plugins && msg("\n$content\n\n");
 
-	# forcearray to treat items as array,
-	# keyattr => [] prevents id attrs from overriding
+		# forcearray to treat items as array,
+		# keyattr => [] prevents id attrs from overriding
         my $xml = eval { XMLin($content, forcearray => ["item"], keyattr => []) };
 
+		$getFeedXml_semaphore = 0;
+
         if ($@) {
-		$::d_plugins && msg("RssNews failed to parse feed <$feed_url> because:\n$@");
-		return 0;  
+			$::d_plugins && msg("RssNews failed to parse feed <$feed_url> because:\n$@");
+			return 0;
         }
 
         return $xml;
     }
 
+	$getFeedXml_semaphore = 0;
     return 0;
 }
 
@@ -737,7 +751,7 @@ sub lines {
 			$lineref->[1] = $line2;
 		}
 	}
-	
+
 	return @$lineref;
 }
 
