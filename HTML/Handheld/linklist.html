@@ -1,8 +1,7 @@
-<!-- Element linklist.html -->
 [% IF usePrefix %]
 [% IF separator == 'tree' %] / [% END %]
-[% IF separator == 'tab' %][% END %]
-[% IF separator == 'list' %][% END %]
+[% IF separator == 'tab' %] | [% END %]
+[% IF separator == 'list' %] | [% END %]
 [% END %]
 <small>
 [% IF not currpage %]<a href="[% linkpage %][% paramlist %][% fragment %]">[% linktitle %]</a>[% END %]
@@ -13,4 +12,3 @@
 [% IF separator == 'tab' %] [% END %]
 [% IF separator == 'list' %] [% END %]
 [% END %]
-<!-- /Element linklist.html -->
