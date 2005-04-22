@@ -583,6 +583,7 @@ sub nextChunk {
 		# A zero length chunk is a marker for the end of the stream.
 		# If we see one, close the outgoing connection.
 		if (!$len) {
+			$::d_source && msg("Found an empty chunk on the queue - this means we should drop the streaming connection.\n");
 			Slim::Web::HTTP::forgetClient($client);
 			$chunk = undef;
 		}
@@ -873,9 +874,11 @@ sub dropStreamingConnection {
 	my $client = shift;
 
 	if (!scalar(@{$client->chunks})) {
+		$::d_source && msg("No pending chunks - we're dropping the streaming connection\n");
 		Slim::Web::HTTP::forgetClient($client);
 	}
 	else {
+		$::d_source && msg("There are pending chunks - queue an empty chunk and wait till the chunk queue is empty before dropping the connection.\n");
 		push @{$client->chunks}, \'';
 	}
 	foreach my $buddy (Slim::Player::Sync::syncedWith($client)) {
@@ -1396,6 +1399,7 @@ sub openSong {
 	}
 
 	if (!$client->reportsTrackStart()) {
+		$client->currentPlaylistChangeTime(time());
 		Slim::Player::Playlist::refreshPlaylist($client);
 		Slim::Control::Command::executeCallback($client, ["newsong"])
 	}
@@ -1626,8 +1630,12 @@ sub tokenizeConvertCommand {
 	$command =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
 	# escape $ and * in file names and URLs.
-	$filepath =~ s/([\$\"\`])/\\$1/g;
-	$fullpath =~ s/([\$\"\`])/\\$1/g;
+	# Except on Windows where $ and ` shouldn't be escaped and "
+	# isn't allowed in filenames.
+	if (Slim::Utils::OSDetect::OS() ne 'win') {
+		$filepath =~ s/([\$\"\`])/\\$1/g;
+		$fullpath =~ s/([\$\"\`])/\\$1/g;
+	}
 	
 	$command =~ s/\$FILE\$/"$filepath"/g;
 	$command =~ s/\$URL\$/"$fullpath"/g;
