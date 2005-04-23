@@ -76,7 +76,7 @@ sub revertToDefaults {
 	my @names = map { $_->{'name'}} @feeds;
 	Slim::Utils::Prefs::set('plugin_podcast_feeds', \@urls);
 	Slim::Utils::Prefs::set('plugin_podcast_names', \@names);
-	Slim::Utils::Prefs::set('plugin_podcast_version', FEEDS_VERSION);
+	Slim::Utils::Prefs::set('plugin_podcast_feeds_version', FEEDS_VERSION);
 
 	# feed_names should reflect current names
 	%feed_names = ();
