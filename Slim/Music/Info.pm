@@ -135,7 +135,7 @@ sub init {
 	$elemstring = (join '|', map { uc $_ } 
 		keys %{Slim::DataStores::DBI::Track->attributes()},
 		$ncElemstring,
-		"ARTIST|COMPOSER|CONDUCTOR|BAND|ALBUM|GENRE|ALBUMSORT|ARTISTSORT|DISC|DISCC"
+		"ARTIST|COMPOSER|CONDUCTOR|BAND|ALBUM|GENRE|ALBUMSORT|ARTISTSORT|DISC|DISCC|COMMENT"
 	);
 
 	#. "|VOLUME|PATH|FILE|EXT" #file data (not in infoCache)
@@ -889,6 +889,10 @@ sub infoHash {
 		if ($track->genre()) {
 			$cacheEntryHash->{"GENRE"}      = $track->genre()->name();
 		}
+
+		if (my $comment = $track->comment()) {
+			$cacheEntryHash->{"COMMENT"}      = $track->comment();
+		}
 	}
 
 	return $cacheEntryHash;
@@ -922,11 +926,11 @@ sub info {
 		return $album->title()     if $tagname eq 'ALBUM';
 		return $album->titlesort() if $tagname eq 'ALBUMSORT';
 		return $album->disc()      if $tagname eq 'DISC';
-		return $album->disccc()    if $tagname eq 'DISCCC';
+		return $album->discc()    if $tagname eq 'DISCC';
 	}
 
 	#FIXME
-	if ($tagname =~ /^(?:COMPOSER|BAND|CONDUCTOR|COMMENT)$/o) {
+	if ($tagname =~ /^(?:COMPOSER|BAND|CONDUCTOR)$/o) {
 		return undef;
 	}
 	
@@ -934,7 +938,7 @@ sub info {
 	my $lcTag = lc($tagname);
 
 	# These need to go through their overridden methods.
-	if ($tagname =~ /^(?:GENRE|ARTIST|ARTISTSORT)$/o) {
+	if ($tagname =~ /^(?:GENRE|ARTIST|ARTISTSORT|COMMENT)$/o) {
 		return $track->$lcTag();
 	}
 
