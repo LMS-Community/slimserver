@@ -167,9 +167,13 @@ sub mixerDisplay {
 	$client->modeParam('visu', [0]);
 
 	my @lines = Slim::Buttons::Input::Bar::lines($client, $featureValue, $featureHeader,
-												 $client->mixerConstant($feature,'min'),
-												 $mid,
-												 $client->mixerConstant($feature,'max'));
+													{
+														'min' => $client->mixerConstant($feature,'min'),
+														'mid' => $mid,
+														'max' => $client->mixerConstant($feature,'max'),
+														'noOverlay' => 1,
+													}
+												);
 	# trim off any overlay for showBriefly
 	$client->showBriefly(@lines[0,1]);
 

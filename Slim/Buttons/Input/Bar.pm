@@ -106,10 +106,12 @@ sub lines {
 	# These parameters are used when calling this function from Slim::Display::Display
 	my $value = shift;
 	my $header = shift;
+	my $args = shift;
 
-	my $min = shift;
-	my $mid = shift;
-	my $max = shift;
+	my $min = $args->{'min'};
+	my $mid = $args->{'mid'};
+	my $max = $args->{'max'};
+	my $noOverlay = $args->{'noOverlay'} || 0;
 
 	my ($line1, $line2);
 
@@ -147,7 +149,7 @@ sub lines {
 			$line2 = $line1;
 		}
 	}
-	my @overlay = Slim::Buttons::Input::List::getExtVal($client,$valueRef,$listIndex,'overlayRef');
+	my @overlay = $noOverlay ? undef : Slim::Buttons::Input::List::getExtVal($client,$valueRef,$listIndex,'overlayRef');
 	return ($line1,$line2,@overlay);
 }
 
