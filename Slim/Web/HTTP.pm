@@ -676,7 +676,7 @@ sub processURL {
 =cut
 
 sub generateHTTPResponse {
-	my ($client, $httpClient, $response, $params) = @_;
+	my ($client, $httpClient, $response, $params, $p) = @_;
 
 	# this is a scalar ref because of the potential size of the body.
 	# not sure if it actually speeds things up considerably.
@@ -852,7 +852,7 @@ sub generateHTTPResponse {
 		$contentType = "text/plain";
 
 		$response->header("Refresh" => "30; url=$path");
-		buildStatusHeaders($client, $response);
+		buildStatusHeaders($client, $response, $p);
 		if ($path =~ /status/) {
 			if (defined($client)) {
 				my $parsed = $client->parseLines(Slim::Display::Display::curLines($client));
@@ -1593,6 +1593,7 @@ sub fixHttpPath {
 sub buildStatusHeaders {
 	my $client   = shift || return;
 	my $response = shift;
+	my $p = shift;
 
 	# send headers
 	my %headers = ( 
@@ -1640,13 +1641,20 @@ sub buildStatusHeaders {
 		$i = $track->genre();
 		$headers{"x-playergenre"} = $i if $i;
 	};
-
+	
+	# include returned parameters
+	my $i = 0;
+	foreach my $pn (@$p) {
+		$headers{"x-p$i"} = $pn;
+		$i++;
+	}
+	
 	# simple quoted printable encoding
 	while (my ($key, $value) = each %headers) {
 		if ($value && length($value)) {
 			if ( $] > 5.007) {
 				$value = Encode::encode("iso-8859-1", $value);
-				$value = encode_qp($value, "\n");
+				$value = encode_qp($value, "\n");	
 			}
 			$response->header($key => $value);
 		}
