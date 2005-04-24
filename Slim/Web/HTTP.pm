@@ -650,8 +650,8 @@ sub processURL {
 
 	my @callbackargs = ($client, $httpClient, $response, $params);
 
-	# only execute a command on the client if there is one and if we have a command.
-	if (defined($client) && defined($p[0])) {
+	# only execute a command if we have a command.
+	if (defined($p[0])) {
 
 		if (defined($params->{"player"}) && $params->{"player"} eq "*") {
 
@@ -859,9 +859,10 @@ sub generateHTTPResponse {
 				my $line1 = $parsed->{line1} || '';
 				my $line2 = $parsed->{line2} || '';
 				$$body = $line1 . $CRLF . $line2 . $CRLF;
+			} else {
+				$$body = '';
 			}
 		} else {
-
 			$$body = $Slim::Utils::Misc::log;
 
 		}
@@ -1591,56 +1592,60 @@ sub fixHttpPath {
 }
 
 sub buildStatusHeaders {
-	my $client   = shift || return;
+	my $client   = shift;
 	my $response = shift;
 	my $p = shift;
 
-	# send headers
-	my %headers = ( 
-		"x-player"		=> $client->id(),
-		"x-playername"		=> $client->name(),
-		"x-playertracks" 	=> Slim::Player::Playlist::count($client),
-		"x-playershuffle" 	=> Slim::Player::Playlist::shuffle($client) ? "1" : "0",
-		"x-playerrepeat" 	=> Slim::Player::Playlist::repeat($client),
-
-		# unsupported yet
-	#	"x-playerbalance" => "0",
-	#	"x-playerbase" => "0",
-	#	"x-playertreble" => "0",
-	#	"x-playersleep" => "0",
-	);
+	my %headers;
 	
-	if ($client->isPlayer()) {
-
-		$headers{"x-playervolume"} = int($client->volume() + 0.5);
-		$headers{"x-playermode"}   = Slim::Buttons::Common::mode($client) eq "power" ? "off" : Slim::Player::Source::playmode($client);
-
-		my $sleep = $client->sleepTime() - Time::HiRes::time();
-
-		$headers{"x-playersleep"}  = $sleep < 0 ? 0 : int($sleep/60);
-	}	
+	if ($client) {
+		# send headers
+		%headers = ( 
+			"x-player"		=> $client->id(),
+			"x-playername"		=> $client->name(),
+			"x-playertracks" 	=> Slim::Player::Playlist::count($client),
+			"x-playershuffle" 	=> Slim::Player::Playlist::shuffle($client) ? "1" : "0",
+			"x-playerrepeat" 	=> Slim::Player::Playlist::repeat($client),
 	
-	if ($client && Slim::Player::Playlist::count($client)) { 
-		my $ds      = Slim::Music::Info::getCurrentDataStore();
-		my $track   = $ds->objectForUrl(Slim::Player::Playlist::song($client));
-
-		$headers{"x-playertrack"}    = Slim::Player::Playlist::song($client); 
-		$headers{"x-playerindex"}    = Slim::Player::Source::currentSongIndex($client) + 1;
-		$headers{"x-playertime"}     = Slim::Player::Source::songTime($client);
-		$headers{"x-playerduration"} = Slim::Music::Info::total_time(Slim::Player::Playlist::song($client));
-
-		my $i = $track->artist();
-		$headers{"x-playerartist"} = $i if $i;
-
-		$i = $track->album->title();
-		$headers{"x-playeralbum"} = $i if $i;
-
-		$i = $track->title();
-		$headers{"x-playertitle"} = $i if $i;
-
-		$i = $track->genre();
-		$headers{"x-playergenre"} = $i if $i;
-	};
+			# unsupported yet
+		#	"x-playerbalance" => "0",
+		#	"x-playerbase" => "0",
+		#	"x-playertreble" => "0",
+		#	"x-playersleep" => "0",
+		);
+		
+		if ($client->isPlayer()) {
+	
+			$headers{"x-playervolume"} = int($client->volume() + 0.5);
+			$headers{"x-playermode"}   = Slim::Buttons::Common::mode($client) eq "power" ? "off" : Slim::Player::Source::playmode($client);
+	
+			my $sleep = $client->sleepTime() - Time::HiRes::time();
+	
+			$headers{"x-playersleep"}  = $sleep < 0 ? 0 : int($sleep/60);
+		}	
+		
+		if ($client && Slim::Player::Playlist::count($client)) { 
+			my $ds      = Slim::Music::Info::getCurrentDataStore();
+			my $track   = $ds->objectForUrl(Slim::Player::Playlist::song($client));
+	
+			$headers{"x-playertrack"}    = Slim::Player::Playlist::song($client); 
+			$headers{"x-playerindex"}    = Slim::Player::Source::currentSongIndex($client) + 1;
+			$headers{"x-playertime"}     = Slim::Player::Source::songTime($client);
+			$headers{"x-playerduration"} = Slim::Music::Info::total_time(Slim::Player::Playlist::song($client));
+	
+			my $i = $track->artist();
+			$headers{"x-playerartist"} = $i if $i;
+	
+			$i = $track->album->title();
+			$headers{"x-playeralbum"} = $i if $i;
+	
+			$i = $track->title();
+			$headers{"x-playertitle"} = $i if $i;
+	
+			$i = $track->genre();
+			$headers{"x-playergenre"} = $i if $i;
+		}
+	}
 	
 	# include returned parameters
 	my $i = 0;
@@ -1651,7 +1656,7 @@ sub buildStatusHeaders {
 	
 	# simple quoted printable encoding
 	while (my ($key, $value) = each %headers) {
-		if ($value && length($value)) {
+		if (defined($value) && length($value)) {
 			if ( $] > 5.007) {
 				$value = Encode::encode("iso-8859-1", $value);
 				$value = encode_qp($value, "\n");	
