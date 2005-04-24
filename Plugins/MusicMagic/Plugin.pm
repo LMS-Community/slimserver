@@ -726,12 +726,13 @@ sub mixerFunction {
 	my $client = shift;
 	
 	# look for parentParams (needed when multiple mixers have been used)
-	my $listIndex = $client->param('parentParams')->{'listIndex'} || $client->param('listIndex');
-
-	my $items = $client->param('parentParams')->{'listRef'} || $client->param('listRef');
-	my $hierarchy = $client->param('parentParams')->{'hierarchy'} || $client->param('hierarchy');
-	my $level	   = $client->param('parentParams')->{'level'} || $client->param('level') || 0;
-	my $descend   = $client->param('parentParams')->{'descend'} || $client->param('descend');
+	my $paramref = defined $client->param('parentParams') ? $client->param('parentParams') : $client->modeParameterStack(-1);
+	my $listIndex = $paramref->{'listIndex'};
+	
+	my $items = $paramref->{'listRef'};
+	my $hierarchy = $paramref->{'hierarchy'};
+	my $level	   = $paramref->{'level'} || 0;
+	my $descend   = $paramref->{'descend'};
 	
 	my $currentItem = $items->[$listIndex];
 	my $all = !ref($currentItem);
