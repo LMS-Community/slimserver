@@ -78,13 +78,19 @@ sub add {
 
 			$artistObj = $_cache{$name};
 
+			# If we had an explicitly specified sort tag, modify
+			# the existing object.
+			if ($artist ne $artistSort) {
+				$artistObj->namesort($sort);
+			}
+
 		} else {
 
 			$artistObj = Slim::DataStores::DBI::Contributor->find_or_create({ 
-				namesort => $sort,
+				name => $name,
 			});
 
-			$artistObj->name($name);
+			$artistObj->namesort($sort);
 			$artistObj->update();
 
 			# Try to prevent leaks and circular references.

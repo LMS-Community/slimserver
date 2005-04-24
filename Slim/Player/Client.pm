@@ -924,7 +924,7 @@ sub initial_add_done {
 		
 		$currsong = 0;
 		
-		Slim::Player::Source::streamingSongIndex($client,$currsong);
+		Slim::Player::Source::streamingSongIndex($client,$currsong, 1);
 		
 	} elsif (Slim::Player::Playlist::shuffle($client) == 2) {
 		# reshuffle set this properly, for album shuffle
@@ -936,7 +936,7 @@ sub initial_add_done {
 		elsif ($currsong >= Slim::Player::Playlist::count($client)) {
 			$currsong = Slim::Player::Playlist::count($client) - 1;
 		}
-		Slim::Player::Source::streamingSongIndex($client,$currsong);
+		Slim::Player::Source::streamingSongIndex($client,$currsong, 1);
 	}
 	
 	Slim::Utils::Prefs::clientSet($client,'currentSong',$currsong);
@@ -1603,7 +1603,7 @@ sub trickSegmentRemaining {
 }
 
 sub currentPlaylist {
-	my $r = shift;
+	my $r = Slim::Player::Sync::masterOrSelf(shift);
 	@_ ? ($r->[91] = shift) : $r->[91];
 }
 sub currentPlaylistModified {
