@@ -609,8 +609,10 @@ sub getPlaylist {
 	$::d_plugins && msg( "Got playlist response: $playlist\n" );
 
 	my $newTitle = '';
-	my $nowPlaying = XMLin( $playlist, ForceContent => 1 );
+	my $nowPlaying;
 	my $nextRefresh;
+	eval '$nowPlaying = XMLin( $playlist, ForceContent => 1 )';
+	$@ && $::d_plugins && msg( "Live365 playlist didn't parse: '$@'\n" );
 
 	if( defined $nowPlaying && defined $nowPlaying->{PlaylistEntry} && defined $nowPlaying->{Refresh} ) {
 
@@ -633,7 +635,7 @@ sub getPlaylist {
 		$newTitle = ${*$self}{live365_original_title};
 	}
 
-	if ($newTitle) {
+	if ( $newTitle and $newTitle ne Slim::Music::Info::getCurrentTitle( $client, Slim::Player::Playlist::song($client) ) ) {
 		$::d_plugins && msg( "Live365 Now Playing: $newTitle\n" );
 		$::d_plugins && msg( "Live365 next update: $nextRefresh seconds\n" );
 		
@@ -648,7 +650,7 @@ sub getPlaylist {
 		#$client->songduration($nextRefresh) if $nextRefresh;
 	}
 
-	if ( $nextRefresh and $currentSong =~ /^live365:/ ) {
+	if ( $nextRefresh and $currentSong =~ /^live365:/ and $currentMode eq 'play' ) {
 		Slim::Utils::Timers::setTimer(
 			$client,
 			Time::HiRes::time() + $nextRefresh,
