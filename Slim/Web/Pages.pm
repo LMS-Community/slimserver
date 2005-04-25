@@ -822,7 +822,12 @@ sub browser_addtolist_done {
 
 		$::d_http && msg("just showing imported playlists\n");
 
-		push @$itemsref, @{Slim::Music::Info::playlists()};
+		my $importedPlaylists = Slim::Music::Info::playlists();
+		if (scalar(@$importedPlaylists)) {
+			push @$itemsref, @$importedPlaylists;
+			# Re-sort with imported playlists
+			@$itemsref = Slim::Music::Info::sortByTitles(@$itemsref);
+		}
 
 		if (Slim::Music::Import::stillScanning()) {
 			$params->{'warn'} = 1;
