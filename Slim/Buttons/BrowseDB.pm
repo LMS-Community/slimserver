@@ -369,7 +369,26 @@ sub browsedbItemName {
 	my $fieldInfo = Slim::Web::Pages::fieldInfo();
 	my $levelInfo = $fieldInfo->{$levels[$level]} || $fieldInfo->{'default'};
 	
-	return ($levels[$level] eq 'track') ? Slim::Music::Info::standardTitle($client, $item) : &{$levelInfo->{'resultToName'}}($item);
+	if ($levels[$level] eq 'track') {
+
+		return Slim::Music::Info::standardTitle($client, $item);
+
+	} elsif ($levels[$level] eq 'album') {
+
+		my ($track) = $item->tracks();
+		my $artist  = $track->artist();
+		my $name    = &{$levelInfo->{'resultToName'}}($item);
+
+		if (defined $artist && $artist ne $client->string('NO_ARTIST')) {
+			$name .= " ($artist)";
+		}
+
+		return $name;
+
+	} else {
+
+		return &{$levelInfo->{'resultToName'}}($item);
+	}
 }
 
 # Method invoked by INPUT.List to map an item in the list

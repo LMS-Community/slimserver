@@ -226,12 +226,22 @@ sub init {
 				my $itemname = shift;
 				my $descend = shift;
 
+				my ($track) = $item->tracks();
+
 				if (my $showYear = Slim::Utils::Prefs::get('showYear')) {
 
 					$form->{'showYear'} = $showYear;
+					$form->{'year'} = $track->year() if $track;
+				}
 
-					if (my ($track) = $item->tracks()) {
-						$form->{'year'} = $track->year();
+				# Show the artist in the album view
+				if ($track) {
+
+					my $artist = $track->artist();
+
+					if ($artist) {
+						$form->{'artist'} = $artist;
+						$form->{'includeArtist'} = 1;
 					}
 				}
 				
