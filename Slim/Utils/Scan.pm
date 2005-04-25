@@ -482,15 +482,6 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			return 0;
 		}
 
-		# we've just opened a remote playlist.  Due to the synchronous
-		# nature of our parsing code and our http socket code, we have
-		# to make sure we download the entire file right now, before
-		# parsing.  To do that, we use the content() method.  Then we
-		# convert the resulting string into the stream expected by the
-		# parsers.
-		my $playlist_str = $playlist_filehandle->content();
-		$playlist_filehandle = IO::String->new($playlist_str);
-
 		# Check if it's still a playlist after we open the
 		# remote stream. We may have got a different content
 		# type while loading.
@@ -658,6 +649,17 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			pop(@parts);			
 			$playlist_base = Slim::Utils::Misc::fileURLFromPath(catdir(@parts));
 			$::d_scan && msg("gonna scan $playlisturl, with path $path, for base: $playlist_base\n");
+		}
+
+		if (ref($playlist_filehandle) eq 'Slim::Player::Protocols::HTTP') {
+			# we've just opened a remote playlist.  Due to the synchronous
+			# nature of our parsing code and our http socket code, we have
+			# to make sure we download the entire file right now, before
+			# parsing.  To do that, we use the content() method.  Then we
+			# convert the resulting string into the stream expected by the
+			# parsers.
+			my $playlist_str = $playlist_filehandle->content();
+			$playlist_filehandle = IO::String->new($playlist_str);
 		}
 
 		$::d_scan && msg("Scan::readList loading $playlisturl with base $playlist_base\n");
