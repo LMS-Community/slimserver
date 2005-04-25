@@ -608,11 +608,12 @@ sub unescapeAndTrim {
 	# strip all markup tags
 	$data =~ s/<[a-zA-Z\/][^>]*>//gi;
 
-	# apparently utf8::decode is not available in perl 5.6.
-	# (Some characters may not appear correctly in perl < 5.8 !)
-	if ($] >= 5.008) {
-		utf8::decode($data);
-	  }
+	# the following taken from Rss News plugin, but apparently
+	# it results in an unnecessary decode, which actually causes problems
+	# and things seem to work fine without it, so commenting it out.
+	#if ($] >= 5.008) {
+	#	utf8::decode($data);
+	#}
 
 	return $data;
 }
