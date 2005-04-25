@@ -448,9 +448,9 @@ sub getXMLTags {
 	my $cuesheet = $flac->cuesheet();
 
 	# crude regex matching until we get a real rdf/xml parser in place
-	my $mbAlbum  = qr{"(http://musicbrainz.org/album/[\w-]+)"};
-	my $mbArtist = qr{"(http://musicbrainz.org/artist/[\w-]+)"};
-	my $mbTrack  = qr{"(http://musicbrainz.org/track/[\w-]+)"};
+	my $mbAlbum  = qr{"(http://musicbrainz.org/(?:mm-2.1/)album/[\w-]+)"};
+	my $mbArtist = qr{"(http://musicbrainz.org/(?:mm-2.1/)artist/[\w-]+)"};
+	my $mbTrack  = qr{"(http://musicbrainz.org/(?:mm-2.1/)track/[\w-]+)"};
 
 	# get list of albums included in this file
 	# TODO: handle a collection of tracks without an album association (<mm:trackList> at a file level)
