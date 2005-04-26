@@ -5,12 +5,36 @@
   onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks[% IF descend; attributes|html;
   ELSE %]&amp;track=[% item; END %]&quot;)" src="html/images/play.this.gif" width="5" height="9"/>
  </td>
- <td class="browselisting">[% IF anchor %]
-  <a name="[% anchor | uri %]"></a>[% END ; IF descend %]
+ <td class="browselisting">
+  [% IF anchor %]
+   <a name="[% anchor | uri %]"></a>
+  [% END %]
 
-  <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=[% hierarchy %]&amp;level=[% level ; attributes | html
-  %]&quot;)">[% text | html %]</a>[% ELSE %]
-  <a onclick="parent.browseurl(&quot;songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&quot;)">[% text | html %]</a>[% END %]
+  [% IF descend %]
+   <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=[%hierarchy%]&amp;level=[%level;attributes|html%]&quot;)">
+    [% text | html %]
+   </a>
+   [% IF level == 1 && includeArtist && artist ; "BY" | string %]
+    <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=artist,album,track&amp;level=1&amp;artist=[% artist.id %]&quot;)">
+     [% artist.name | html %]
+    </a>
+   [% END %]
+  [% ELSE %]
+   <a onclick="parent.browseurl(&quot;songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&quot;)">
+    [% text | html %]
+   </a>
+   [% IF includeAlbum && album ; "FROM" | string %]
+    <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% itemobj.album.id %]&quot;)">
+     [% album | html %]
+    </a>
+   [% END %]
+   [% IF includeArtist && artist ; "BY" | string %]
+    <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=artist,album,track&amp;level=1&amp;artist=[% 
+     itemobj.contributorsOfType('artist').first.id %]&quot;)">
+     [% artist | html %]
+    </a>
+   [% END %]
+  [% END %]
  </td>
 </tr>
 
