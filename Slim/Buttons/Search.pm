@@ -98,8 +98,11 @@ sub searchExitHandler {
 	$exitType = uc($exitType);
 
 	if ($exitType eq 'LEFT') {
+		my @oldlines = Slim::Display::Display::curLines($client);
 
-		Slim::Buttons::Common::popModeRight($client);
+		Slim::Buttons::Home::jump($client, 'SEARCH');
+		Slim::Buttons::Common::setMode($client, 'home');
+		$client->pushRight(\@oldlines, [Slim::Display::Display::curLines($client)]);
 
 	} elsif ($exitType eq 'RIGHT') {
 
