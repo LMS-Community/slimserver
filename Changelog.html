@@ -1,16 +1,21 @@
 <h2><a name="v6.0.2" id="v6.0.2"></a>Version 6.0.2 - 2005-04-27</h2>
 <ul>
-	<li>Squeezebox2 Firmware (revision 11) fixes:<p>
+	<li>Squeezebox2 Firmware (revision 11):<p>
 		<ul>
-			<li>3Com 3CRWE454G72 firmware 1.03.07A has a bug that prevented us from connecting. This firmware contains a workaround.
+			<li>Work around a bug in 3Com wireless router model 3CRWE454G72 with  firmware 1.03.07A that prevented Squeezebox2 from connecting. 
 		</ul>
 	</li>
 	<br>
 
-	<li>Softsqueeze (revision 2.0b6) fixes:<p>
+	<li>Softsqueeze (revision 2.0b6):<p>
 		<ul>
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1410">#1410</a> - static from SoftSqueeze when it's synced to a hardware player
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1411">#1411</a> - softsqueeze stops playing when synced and playing flac
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1271">#1271</a> - Fixed Softsqueeze to send track start events (STMs) when streaming wav.
+			<li>Fix softsqueeze version number, this was not being read correctly from the configuration file.
+			<li>Fix ssh port number, this was not initialised correctly in the Softsqueeze 2.0b1 - 2.0b3 releases.
+			<li>Fixed off by one error in Softsqueeze audio buffer. Also tightened up the thread synchronization.
+			<li>Moved the Java MP3 Plugin prompt into the audio preference tab. 
 		</ul>
 	</li>
 	<br>
