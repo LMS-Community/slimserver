@@ -1,3 +1,65 @@
+<h2><a name="v6.0.2" id="v6.0.2"></a>Version 6.0.2 - 2005-04-27</h2>
+<ul>
+	<li>Squeezebox2 Firmware (revision 11) fixes:<p>
+		<ul>
+			<li>3Com 3CRWE454G72 firmware 1.03.07A has a bug that prevented us from connecting. This firmware contains a workaround.
+		</ul>
+	</li>
+	<br>
+
+	<li>Softsqueeze (revision 2.0b6) fixes:<p>
+		<ul>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1410">#1410</a> - static from SoftSqueeze when it's synced to a hardware player
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1411">#1411</a> - softsqueeze stops playing when synced and playing flac
+		</ul>
+	</li>
+	<br>
+
+	<li>CLI and web interface:<p>
+		<ul>
+			<li>CLI fixes and documentation updates from Frederic Thomas.
+			<li>Updates to web interface to support Salling Clicker
+		</ul>
+	</li>
+	<br>
+
+	<li>Lots o' SlimServer bug fixes:<p>
+		<ul>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1314">#1314</a> - clicking on download playlist downloads an empty file called status.m3u
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1293">#1293</a> - Prefs.pm 'mkpath $CacheDir' will not allow server to start
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1248">#1248</a> - Artists containing special characters in iTunes are missing
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1345">#1345</a> - trying to access playlists from webUI crashes server
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1294">#1294</a> - Crashes and odd display behavior when displaying "smart" apostrophe
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=974">#974</a> - rpm install refers user to http://localhost:/ (leaves out port number)
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1329">#1329</a> - Incorrect (wrong) song playing on Squeezebox player
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1370">#1370</a> - removing Now Playing from player menu creates weird behavior
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1364">#1364</a> - mime-type for Monkey's Audio incorrect
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1216">#1216</a> - Volume Resetting With New Song
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=179">#179</a> - shn doesn't work on windows
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1167">#1167</a> - Plugins show up on player even when disabled
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1278">#1278</a> - itunes playlists coming up empty or not at all
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1226">#1226</a> - Parts or full albums missing.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1299">#1299</a> - Incorrect first letter links in Browse Music folder
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1317">#1317</a> - digital output volume fixed option shouldn't say 'better analog quality'
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1220">#1220</a> - Now Playing list in web interface doesn't always update correctly
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=589">#589</a> - Transcoding WMA files fails when filename contains $
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1391">#1391</a> - Remote has become too sensitive
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1307">#1307</a> - RSS Reader being banned from Slashdot
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1357">#1357</a> - Using COMMENT in Title format doesn't work anymore
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1418">#1418</a> - Can crash server at will with volume button
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1005">#1005</a> - unset tags shouldn't stomp on tags that are set
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1306">#1306</a> - Get duplicate artist entries when using artist separator characters
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1382">#1382</a> - $client->currentPlaylist() not updated with synced players
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1247">#1247</a> - Live365 causes SlimServer Service to halt
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1335">#1335</a> - First Track Name displayed incorrectly
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1427">#1427</a> - Sorting of iTunes playlists incorrect
+			<li>Wipe Cache sometimes leaves the database in a bad state</li>
+			<li>mms: protocol recognized as "audio" type so we don't open the stream more than once to check the type</li>
+		</ul>
+	<br>
+</ul>
+
+
 <h2><a name="v6.0.1" id="v6.0.1"></a>Version 6.0.1 - 2005-04-05</h2>
 <ul>
 	<li>Squeezebox2 Firmware:<p>
