@@ -56,7 +56,7 @@ our %protocolHandlers = (
 );
 
 sub systell {
-	$_[0]->sysseek(0, SEEK_CUR)
+	$_[0]->sysseek(0, SEEK_CUR) if $_[0]->can('syseek');
 }
 
 sub Conversions {
