@@ -1,4 +1,7 @@
-<!-- Page status_header.html -->
+	[% IF refresh;
+		uriplayer = player FILTER uri;
+		refreshurl = "url=status_header.html?player=uriplayer&amp;start=$start&amp;refresh=1";
+	   END %]
 	[% pagetitle = "NOW_PLAYING" | string %]
 	[% PROCESS pageheader.html %]
 	
@@ -76,8 +79,7 @@
 	        <td><a href="status.html?p0=stop&player=[% player | uri %]">[% IF modestop %]<b>[% END %][% "STOP" | string %][% IF modestop %]</b>[% END %]</a></td>
 	        <td><a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% player | uri %]">[% "PREV" | string %]</a></td>
 	        <td><a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% player | uri %]">[% "NEXT" | string %]</a></td>
-	        <td><a h
-	        ref="status.html?p0=pause&player=[% player | uri %]">[% IF modepause %]<b>[% END %][% "PAUSE" | string %][% IF modepause %]</b>[% END %]</a></td>
+	        <td><a href="status.html?p0=pause&player=[% player | uri %]">[% IF modepause %]<b>[% END %][% "PAUSE" | string %][% IF modepause %]</b>[% END %]</a></td>
 	   </tr>
 	</table>
 	
@@ -136,4 +138,3 @@
 	</table>
 	
 	[% PROCESS pagefooter.html %]
-<!-- Page status_header.html -->
