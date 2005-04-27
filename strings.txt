@@ -925,7 +925,6 @@ WELCOME_TO_SOFTSQUEEZE
 	SE	Välkommen till SoftSqueeze
 
 FREE_YOUR_MUSIC
-	DE	Befreie deine Musik!
 	DK	Lyt til din musik!
 	EN	Free your music
 	ES	Libera tu música
@@ -2932,7 +2931,9 @@ SETUP_MOODLOGICSCANINTERVAL
 	SE	Intervall för uppdatering av MoodLogic
 
 SETUP_MOODLOGICSCANINTERVAL_DESC
+	DE	Wenn ihre Moodlogic Datenbank verändert wird, importiert SlimServer automatisch die Bibliotheksinformationen. Wählen Sie die minimale Wartezeit (in Sekunden), die SlimServer vor einem erneuten Import der Moodlogic Datenbank abwarten soll. Ein Wert von 0 deaktiviert die automatische Aktualisierung.
 	EN	When your Moodlogic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your Moodlogic Database again. A value of zero disables the reload.
+	FR	Le SlimServer importe automatiquement les modifications apportées à votre bibliothèque MoodLogic. Vous pouvez spécifier le délai minimum en secondes avant lequel le SlimServer rechargera les données MoodLogic. La valeur zéro désactive cette fonctionnalité.
 
 SETUP_MUSICMAGICSCANINTERVAL
 	DE	MusicMagic Aktualisierungs-Intervall
@@ -2940,6 +2941,7 @@ SETUP_MUSICMAGICSCANINTERVAL
 	ES	Intervalo de recarga de MusicMagic
 
 SETUP_MUSICMAGICSCANINTERVAL_DESC
+	DE	Sobald MusicMagic seine Informationssammlung ändert, importiert SlimServer die Daten erneut. Sie können ein minimales Zeitintervall definieren (in Sekunden), das SlimServer warten soll, bevor es die Daten neu importiert. Ein Wert von 0 deaktiviert die automatische Aktualisierung.
 	EN	When your MusicMagic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your MusicMagic Database again. A value of zero disables the reload.
 
 SETUP_MMSPORT
@@ -2969,7 +2971,9 @@ SETUP_ITUNESSCANINTERVAL
 	SE	iTunes uppdateringsintervall
 
 SETUP_ITUNESSCANINTERVAL_DESC
+	DE	Wenn sich die iTunes Musiksammlung ändert, wird SlimServer automatisch die Daten neu einlesen. Sie können die Mindestwartezeit (in Sekunden) definieren, die SlimServer warten soll, bevor er die iTunes Musiksammlung neu einliest. Ein Wert von 0 deaktiviert die automatische Aktualisierung.
 	EN	When your iTunes Music Library changes SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your iTunes Music Library again. A value of zero disables the reload.
+	FR	Le SlimServer importe automatiquement les changements apportés à votre bibliothèque iTunes. Vous pouvez spécifier le délai minimum en secondes avant que le SlimServer actualise la bibliothèque iTunes. La valeur zéro désactive cette fonctionnalité.
 
 SETUP_ITUNESSCANINTERVAL_OK
 	DE	Minimale Wartezeit fürs Einlesen der iTunes Musiksammlung
@@ -3454,7 +3458,7 @@ SETUP_TRANSCODE-MOV_0
 	SE	Konvertera INTE automatiskt
 
 SETUP_SAVESHUFFLED
-	DE	Zufalls-Playlist speichern
+	DE	Zufalls-Playliste speichern
 	EN	Save Shuffled Playlist
 	ES	Guardar Lista Desordenada
 	FR	Sauvegarde des listes de lecture aléatoires
@@ -3900,7 +3904,7 @@ SETUP_COMMONALBUMTITLES
 	ES	Títulos Comunes de Discos
 
 SETUP_COMMONALBUMTITLES_DESC
-	DE	Meist gruppiert SlimServer Songs mit dem gleichen Albumnamen auch dann, wenn sie in unterschiedlichen Ordnern liegen. Für sehr geläufige Albumtitel wie z.B. "Greatest Hits" muss zusätzlich der Artist mit einbezogen werden. Diese Liste definiert die Albumtitel, für welche SlimServer auch den Interpreten berücksichtigen soll.
+	DE	Meist gruppiert SlimServer Songs mit dem gleichen Albumnamen auch dann, wenn sie in unterschiedlichen Ordnern liegen. Für sehr geläufige Albentitel wie z.B. "Greatest Hits" muss zusätzlich der Artist mit einbezogen werden. Diese Liste definiert die Albentitel, für welche SlimServer auch den Interpreten berücksichtigen soll.
 	EN	In most cases, SlimServer groups songs from the same album together even if the songs are in different folders. For very common album titles, such as "Greatest Hits", it additionally requires a match on artist name to correctly group tracks from the same album. The list below represents the album titles for which SlimServer requires an artist match for album grouping.
 	ES	En la mayoría de los casos, SlimServer agrupa las canciones del mismo disco, incluso si las canciones estan en carpetas diferentes. Para títulos muy comunes de discos, como "Grandes Exitos", se requiere además que concuerde al nombre del artista, para que la agrupación sea correcta con las canciones del mismo disco. La lista debajo representa los títulos de discos para los cuales SlimServer requerirá que coincida el artista para agrupar el disco.
 
@@ -5046,7 +5050,7 @@ SETUP_URL_WILL_BE
 	SE	URL för att komma åt SlimServer är:
 
 SETUP_GROUPDISCS
-	DE	Albums gruppieren
+	DE	Alben gruppieren
 	EN	Group Discs
 	ES	Discos múltiples
 	FR	Disques multiples
