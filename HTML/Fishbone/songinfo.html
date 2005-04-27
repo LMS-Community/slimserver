@@ -177,18 +177,6 @@
 			<td> [% track.modificationTime | html %] </td>
 		</tr>
 	[% END %]
-	[% IF track.playCount %] 
-		<tr> 
-			<td> [% "COUNT" | string; "COLON" | string %]</td>
-			<td> [% track.playCount | html %] </td>
-		</tr>
-	[% END %]
-	[% IF track.lastPlayed %] 
-		<tr> 
-			<td> [% "LAST" | string; "COLON" | string %]</td>
-			<td> [% track.lastPlayed | html %] </td>
-		</tr>
-	[% END %]
 	[% IF track.drm %]
 		<tr>
 			<td>
