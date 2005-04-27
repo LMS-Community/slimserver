@@ -217,6 +217,15 @@ sub getDisplayName {
 }
 
 sub addMenu {
+	my $disabled = scalar(grep {$_ eq 'Picks::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins'));
+	$disabled && $::d_plugins && Slim::Utils::Misc::msg("Picks: plugin disabled.\n");
+
+	if ($disabled) {
+		Slim::Web::Pages::addLinks("radio", { 'PLUGIN_PICKS_MODULE_NAME' => undef });
+	} else {
+		Slim::Web::Pages::addLinks("radio", { 'PLUGIN_PICKS_MODULE_NAME' => "plugins/Picks/index.html" });
+	}
+
 	return "RADIO";
 }
 
@@ -225,7 +234,6 @@ sub addMenu {
 
 sub webPages {
     my %pages = ("index\.htm" => \&handleWebIndex);
-	Slim::Web::Pages::addLinks("radio", { 'PLUGIN_PICKS_MODULE_NAME' => "plugins/Picks/index.html" });
     return (\%pages);
 }
 

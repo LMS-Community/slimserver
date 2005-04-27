@@ -1238,7 +1238,7 @@ sub initSetupConfig {
 		,'parent' => 'server'
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
-
+	
 				Slim::Buttons::Plugins::addSetupGroups();
 
 				my $i = 0;
@@ -1310,6 +1310,7 @@ sub initSetupConfig {
 				for my $group (Slim::Utils::Prefs::getArray('disabledplugins')) {
 					
 					delGroup('plugins',$group,1);
+					delGroup('radio',$group,1);
 					delGroup('player_plugins',$group,1);
 					
 					if (exists &{"Plugins::" . $group . "::disablePlugin"}) {
@@ -1318,6 +1319,7 @@ sub initSetupConfig {
 				}
 				
 				# call addSetupGroups last, since it sets a flag to say we're done refreshing plugins.
+				Slim::Web::HTTP::initSkinTemplateCache();
 				Slim::Buttons::Plugins::read_plugins();
 				#Slim::Buttons::Plugins::addWebPages();
 				#Slim::Buttons::Plugins::addMenus();
@@ -1385,7 +1387,7 @@ sub initSetupConfig {
 		'title' => string('RADIO')
 		,'parent' => 'server'
 		,'preEval' => sub {
-				#Slim::Buttons::Plugins::addSetupGroups();
+				Slim::Buttons::Plugins::addSetupGroups();
 			}
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
@@ -3140,6 +3142,7 @@ sub delCategory {
 
 	delete $setup{$category};
 }
+
 sub existsCategory {
 	my $category = shift;
 	return exists $setup{$category};

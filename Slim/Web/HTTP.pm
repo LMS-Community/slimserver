@@ -1421,6 +1421,10 @@ sub newSkinTemplate {
 	return $skinTemplates{$skin};
 }
 
+sub initSkinTemplateCache {
+	%skinTemplates = ();
+}
+
 # Fills the template file specified as $path, using either the currently
 # selected skin, or an override. Returns the filled template string
 # these are all very similar
@@ -1769,7 +1773,7 @@ sub addTemplateDirectory {
 	my $dir = shift;
 
 	$::d_http && msg("Adding template directory $dir\n");
-	push @templateDirs, $dir;
+	push @templateDirs, $dir if (not grep({$_ eq $dir} @templateDirs));
 }
 
 sub isCsrfAuthCodeValid {
