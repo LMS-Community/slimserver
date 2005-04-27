@@ -212,6 +212,15 @@ sub isMusicLibraryFileChanged {
 		my $moodlogicscaninterval = Slim::Utils::Prefs::get('moodlogicscaninterval');
 		
 		$::d_moodlogic && msg("MoodLogic: music library has changed!\n");
+		
+		unless ($moodlogicscaninterval) {
+			
+			# only scan if moodlogicscaninterval is non-zero.
+			$::d_moodlogic && msg("MoodLogic: Scan Interval set to 0, rescanning disabled\n");
+
+			return 0;
+		}
+
 		return 1 if (!$lastMusicLibraryFinishTime);
 		
 		if (time() - $lastMusicLibraryFinishTime > $moodlogicscaninterval) {

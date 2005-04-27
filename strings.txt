@@ -2932,12 +2932,7 @@ SETUP_MOODLOGICSCANINTERVAL
 	SE	Intervall för uppdatering av MoodLogic
 
 SETUP_MOODLOGICSCANINTERVAL_DESC
-	DE	Wenn ihre Moodlogic Datenbank verändert wird, importiert SlimServer automatisch die Bibliotheksinformationen. Wählen Sie die minimale Wartezeit (in Sekunden), die SlimServer vor einem erneuten Import der Moodlogic Datenbank abwarten soll.
-	EN	When your Moodlogic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your Moodlogic Database again.
-	ES	Cuando la base de datos de MoodLogic cambie, SlimServer importará automaticamente la información de la colección. Se puede especificar el tiempo mínimo (en segundos) que SlimServer esperará anted de recargar la base de datos de MoodLogic.
-	FR	Le SlimServer importe automatiquement les modifications apportées à votre bibliothèque MoodLogic. Vous pouvez spécifier le délai minimum en secondes avant lequel le SlimServer rechargera les données MoodLogic.
-	JP	ムードロジックのデータベースに変更があった場合、SlimServerは自動的にライブラリー情報をインポートします。ムードロジックのデータベースを更新する時間を秒数でセットすることができます。
-	SE	När någon förändring sker i MoodLogic-databasen importerar SlimServer automatiskt dessa ändringar. Slimserver väntar minimalt det antal sekunder som anges här.
+	EN	When your Moodlogic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your Moodlogic Database again. A value of zero disables the reload.
 
 SETUP_MUSICMAGICSCANINTERVAL
 	DE	MusicMagic Aktualisierungs-Intervall
@@ -2945,9 +2940,7 @@ SETUP_MUSICMAGICSCANINTERVAL
 	ES	Intervalo de recarga de MusicMagic
 
 SETUP_MUSICMAGICSCANINTERVAL_DESC
-	DE	Sobald MusicMagic seine Informationssammlung ändert, importiert SlimServer die Daten erneut. Sie können ein minimales Zeitintervall definieren (in Sekunden), das SlimServer warten soll, bevor es die Daten neu importiert.
-	EN	When your MusicMagic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your MusicMagic Database again.  
-	ES	Cuando la base de datos de MusicMagic cambie, SlimServer importará automaticamente la información de la colección. Se puede especificar el tiempo mínimo (en segundos) que SlimServer esperará anted de recargar la base de datos de MusicMagic.
+	EN	When your MusicMagic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your MusicMagic Database again. A value of zero disables the reload.
 
 SETUP_MMSPORT
 	EN	MusicMagic HTTP Port
@@ -2976,13 +2969,7 @@ SETUP_ITUNESSCANINTERVAL
 	SE	iTunes uppdateringsintervall
 
 SETUP_ITUNESSCANINTERVAL_DESC
-	DE	Wenn sich die iTunes Musiksammlung ändert, wird SlimServer automatisch die Daten neu einlesen. Sie können die Mindestwartezeit (in Sekunden) definieren, die SlimServer warten soll, bevor er die iTunes Musiksammlung neu einliest.
-	EN	When your iTunes Music Library changes SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your iTunes Music Library again.
-	ES	Cuando iTunes Music Library cambia, SlimServer importará automaticamente la información. Se puede especificar el tiempo mínimo (en segundos) que SlimServer esperará antes de cargar nuevamente la iTunes Music Library.
-	FR	Le SlimServer importe automatiquement les changements apportés à votre bibliothèque iTunes. Vous pouvez spécifier le délai minimum en secondes avant que le SlimServer actualise la bibliothèque iTunes.
-	JP	iTunesの音楽ライブラリーに変更があった場合、SlimServerは自動的にライブラリー情報をインポートします。iTunesの音楽ライブラリーを更新する時間を秒数でセットすることができます
-	NO	Når ditt iTunes Musikkbibliotek endres, vil SlimServer automatisk importere bibliotek informasjonen. Du kan spesifisere minimumstiden (i sekunder) som SlimServer vil vente før den oppdaterer iTunes Musikkbiblioteket igjen.
-	SE	När någon förändring sker i ditt iTunes musikbibliotek importerar SlimServer automatiskt dessa ändringar. Slimserver väntar minimalt det antal sekunder som anges här.
+	EN	When your iTunes Music Library changes SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your iTunes Music Library again. A value of zero disables the reload.
 
 SETUP_ITUNESSCANINTERVAL_OK
 	DE	Minimale Wartezeit fürs Einlesen der iTunes Musiksammlung

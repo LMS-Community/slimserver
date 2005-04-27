@@ -229,9 +229,17 @@ sub isMusicLibraryFileChanged {
 
 	if ($fileMTime > $oldTime) {
 
-		my $musicmagicscaninterval = Slim::Utils::Prefs::get('musicmagicscaninterval') || 1;
+		my $musicmagicscaninterval = Slim::Utils::Prefs::get('musicmagicscaninterval');
 
 		$::d_musicmagic && msg("MusicMagic: music library has changed!\n");
+		
+		unless ($musicmagicscaninterval) {
+			
+			# only scan if musicmagicscaninterval is non-zero.
+			$::d_musicmagic && msg("MusicMagic: Scan Interval set to 0, rescanning disabled\n");
+
+			return 0;
+		}
 
 		$lastMusicLibraryFinishTime = 0 unless $lastMusicLibraryFinishTime;
 

@@ -455,6 +455,14 @@ sub isMusicLibraryFileChanged {
 		my $itunesscaninterval = Slim::Utils::Prefs::get('itunesscaninterval');
 
 		$::d_itunes && msgf("iTunes: music library has changed: %s\n", scalar localtime($lastITunesMusicLibraryDate));
+		
+		unless ($itunesscaninterval) {
+			
+			# only scan if itunesscaninterval is non-zero.
+			$::d_itunes && msg("iTunes: Scan Interval set to 0, rescanning disabled\n");
+
+			return 0;
+		}
 
 		return 1 if (!$lastMusicLibraryFinishTime);
 		
