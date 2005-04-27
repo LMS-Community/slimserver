@@ -376,7 +376,16 @@ sub browsedbItemName {
 	} elsif ($levels[$level] eq 'album') {
 
 		my ($track) = $item->tracks();
-		my $artist  = $track->artist();
+		my $artist;
+		
+		if ($track) {
+			$artist  = $track->artist();
+		} else {
+			msg("Item has no tracks\n");
+			use Data::Dumper;
+			print Dumper($item);
+		}
+		
 		my $name    = &{$levelInfo->{'resultToName'}}($item);
 
 		if (defined $artist && $artist ne $client->string('NO_ARTIST')) {

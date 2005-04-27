@@ -745,6 +745,14 @@ sub execute {
 				}
 
 				$client->power($p1);
+				
+				if ($p1 eq "0") {
+					# Powering off cancels sleep...
+					Slim::Utils::Timers::killTimers($client, \&sleepStartFade);
+					Slim::Utils::Timers::killTimers($client, \&sleepPowerOff);
+					$client->sleepTime(0);
+					$client->currentSleepTime(0);
+				}
 			}
 
 		} elsif ($p0 eq "sync") {
