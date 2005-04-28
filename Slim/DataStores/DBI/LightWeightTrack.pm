@@ -17,6 +17,7 @@ our %essentialColumns = (
 	'url' => 'url',
 	'ct' => 'content_type',
 	'multialbumsortkey' => 'multialbumsortkey',
+	'album' => 'album',
 );
 
 our %otherColumns;

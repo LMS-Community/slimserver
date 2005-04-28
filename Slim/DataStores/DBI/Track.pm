@@ -132,6 +132,13 @@ sub get {
 	return $item;
 }
 
+sub albumid {
+	my $self = shift;
+
+	my ($albumid) = $self->_attrs('album');
+	return $albumid;
+}
+
 sub artist {
 	my $self = shift;
 

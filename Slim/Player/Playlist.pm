@@ -98,7 +98,7 @@ sub copyPlaylist {
 	@{$toclient->playlist}    = @{$fromclient->playlist};
 	@{$toclient->shufflelist} = @{$fromclient->shufflelist};
 
-	Slim::Player::Source::streamingSongIndex($toclient, Slim::Player::Source::streamingSongIndex($fromclient));
+	Slim::Player::Source::streamingSongIndex($toclient, Slim::Player::Source::streamingSongIndex($fromclient), 1);
 
 	Slim::Utils::Prefs::clientSet($toclient, "shuffle", Slim::Utils::Prefs::clientGet($fromclient, "shuffle"));
 	Slim::Utils::Prefs::clientSet($toclient, "repeat", Slim::Utils::Prefs::clientGet($fromclient, "repeat"));
@@ -440,19 +440,14 @@ sub reshuffle {
 				$trackObj = $ds->objectForUrl($track, 0, 0, 1);
 			}
 
-			# Pull out the album title, and accumulate all of the
+			# Pull out the album id, and accumulate all of the
 			# tracks for that album into a hash. Also map that
 			# object to a poisition in the playlist.
 			if (defined $trackObj && ref $trackObj) {
 
-				my $albumObj  = $trackObj->album();
-				my $titlesort = $defaultAlbumTitle;
+				my $albumid  = $trackObj->albumid() || 0;
 
-				if ($albumObj && ref $albumObj) {
-					$titlesort = $albumObj->titlesort() || $defaultAlbumTitle;
-				}
-
-				push @{$albumTracks{$titlesort}}, $trackObj;
+				push @{$albumTracks{$albumid}}, $trackObj;
 
 				$trackToPosition{$trackObj} = $i++;
 
@@ -470,7 +465,7 @@ sub reshuffle {
 
 		my $currentTrack = $ds->objectForUrl(${playList($client)}[$realsong]);
 
-		my $currentAlbum = Slim::Utils::Text::matchCase($currentTrack->album()) || $client->string('NO_ALBUM');
+		my $currentAlbum = $currentTrack->albumid() || 0;
 
 		# @albums is now a list of Album names. Shuffle that list.
 		my @albums = keys %albumTracks;
