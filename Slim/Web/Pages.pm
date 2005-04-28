@@ -235,7 +235,7 @@ sub init {
 				}
 
 				# Show the artist in the album view
-				if ($track) {
+				if ($track && Slim::Utils::Prefs::get('showArtist')) {
 
 					my $artist = $track->artist();
 
@@ -313,9 +313,19 @@ sub init {
 					}
 				}
 
+				# Show the artist in the album view
+				if (Slim::Utils::Prefs::get('showArtist') && (my ($track) = $item->tracks())) {
+
+					my $artist = $track->artist();
+
+					if ($artist) {
+						$form->{'artist'} = $artist;
+					}
+				}
+
 				$form->{'item'}    = $itemname;
 				$form->{'artwork'} = 1;
-				$form->{'size'}	   = Slim::Utils::Prefs::get('thumbSize');
+				$form->{'size'}    = Slim::Utils::Prefs::get('thumbSize');
 			},
 
 			'nameTransform' => 'album',

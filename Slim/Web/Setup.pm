@@ -1706,7 +1706,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default','TitleFormats','GuessFileFormats']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['longdateFormat','shortdateFormat','timeFormat','showYear']
+					'PrefOrder' => ['longdateFormat','shortdateFormat','timeFormat','showArtist','showYear']
 				}
 			,'TitleFormats' => {
 					'PrefOrder' => ['titleFormat']
@@ -1769,6 +1769,13 @@ sub initSetupConfig {
 									processArrayChange($client,'titleFormat',$paramref,$pageref);
 									fillFormatOptions();
 									$changeref->{'titleFormat'}{'Processed'} = 1;
+								}
+							}
+			,'showArtist' => {
+						'validate' => \&validateTrueFalse
+						,'options' => {
+									'0' => string('DISABLED')
+									,'1' => string('ENABLED')
 								}
 							}
 			,'showYear' => {

@@ -2265,7 +2265,7 @@ SETUP_ITUNESPLAYLISTSUFFIX
 	ES	Sufijo de listas de iTunes cambiado a:
 
 SETUP_SHOWYEAR
-	DE	Jahr für Alben anzeigen
+	DE	Jahr beim Durchsuchen der Alben anzeigen
 	EN	Show Year with Albums
 	ES	Mostrar Año con Discos
 	FR	Affichage de l'année avec l'album
@@ -2277,6 +2277,16 @@ SETUP_SHOWYEAR_DESC
 	ES	Se puede elegir mostrar el año de edición de un disco cuando se recorre por Disco o Arte de Tapa. Cuando está habilitado, el año del disco se mostrará junto al título del disco.
 	FR	Vous pouvez afficher l'année de sortie d'un album en mode Parcourir les albums ou Parcourir les pochettes. Si ce réglage est activé, l'année sera affichée à la suite du titre de l'album.
 	JP	アルバムまたはアートワークで検索する時に、アルバム年を表示することができます。アルバムタイトルの横に表示されます。
+
+SETUP_SHOWARTIST
+	DE	Artist beim Durchsuchen der Alben anzeigen
+	EN	Show Artist with Albums
+	FR	Affichage de l'artiste avec l'album
+
+SETUP_SHOWARTIST_DESC
+	DE	Sie können den Artisten eines Albums anzeigen lassen, wenn Sie nach Album nachschlagen. Er wird neben dem Albumtitel angezeigt.
+	EN	You may choose to show the artist when browsing by Albums.  When enabled, the album' artist will be shown next to the album title.
+	FR	Vous pouvez afficher l'artiste d'un album en mode Parcourir les albums. Si ce réglage est activé, l'artiste sera affichée à la suite du titre de l'album.
 
 SETUP_GUESSFILEFORMATS
 	DE	Tag Format erraten

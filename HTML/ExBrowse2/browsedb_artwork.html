@@ -1,12 +1,12 @@
 <div align="left" width="100%" class="coverartcell">
  <div class="browseimagecell" style="width:[%size%]px;height:[%size%]px;text-align:center;">
   [% IF coverThumb %]
-  <img src="/music/[% coverThumb %]/thumb.jpg" height="[% size %]" alt="[% album | html %][% IF year %] ([% year
+  <img src="/music/[% coverThumb %]/thumb.jpg" height="[% size %]" alt="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year
   %])[% END %]" border="0" onclick="parent.browseurl(&quot;browsedb.html?hierarchy=[% hierarchy %]&amp;level=[% level %][%
-  attributes | html %]&quot;)" width="[% size %]" title="[% album | html %][% IF year %] ([% year %])[% END %]"/>
+  attributes | html %]&quot;)" width="[% size %]" title="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]"/>
   [% ELSE %]
   <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=[% hierarchy %]&amp;level=[% level %][% attributes | html
-  %]&quot;)" class="fakelink">[% item | html %][% IF year %] ([% year %])[% END %]</a>
+  %]&quot;)" class="fakelink">[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]</a>
   [% END %]
  </div>
  <br><span class="browselistbuttons">[% IF descend %]
