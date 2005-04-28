@@ -126,7 +126,7 @@ sub readM3U {
 		# sysread(). So skip those m3u files entirely.
 		my $enc;
 
-		if (ref($m3u) !~ /Slim::Player::Protocols/) {
+		if (ref($m3u) !~ /(?:Slim::Player::Protocols|IO::String)/) {
 
 			$enc = File::BOM::get_encoding_from_filehandle($m3u);
 		}
