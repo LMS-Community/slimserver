@@ -54,6 +54,9 @@ sub setMode {
 		}
 	}
 	
+	# this is a date-time screen, so it should get updated every second
+	$client->param('modeUpdateInterval', 1);
+	
 	# switch to power off mode
 	# use our last saved brightness
 	$client->brightness(Slim::Utils::Prefs::clientGet($client, "powerOffBrightness"));
