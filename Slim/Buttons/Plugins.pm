@@ -219,7 +219,6 @@ sub addMenus {
 	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
 	
 	for my $plugin (keys %{installedPlugins()}) {
-
 		# don't bother if name isn't defined (corrupt/invalid plugin)
 		next unless defined $plugins{$plugin}->{'name'};
 		
@@ -228,7 +227,11 @@ sub addMenus {
 				'header'  => $plugins{$plugin}->{'name'}
 			);
 		
-		unless (exists $disabledplugins{$plugin} || !(UNIVERSAL::can("Plugins::${plugin}","setMode") && UNIVERSAL::can("Plugins::${plugin}","getFunctions"))) {
+		if (exists $disabledplugins{$plugin} || !(UNIVERSAL::can("Plugins::${plugin}","setMode") && UNIVERSAL::can("Plugins::${plugin}","getFunctions"))) {
+			Slim::Buttons::Home::addSubMenu("PLUGINS", $plugins{$plugin}->{'name'}, undef);
+			Slim::Buttons::Home::addMenuOption($plugins{$plugin}->{'name'}, undef);
+		}
+		else {
 			Slim::Buttons::Home::addSubMenu("PLUGINS", $plugins{$plugin}->{'name'}, \%params);
 			#add toplevel info for the option of having a plugin at the top level.
 			Slim::Buttons::Home::addMenuOption($plugins{$plugin}->{'name'},\%params);
@@ -250,6 +253,7 @@ sub addMenus {
 			}
 		
 		} else {
+			$::d_plugins && msg("Removing $plugin from menu: $menu\n");
 			Slim::Buttons::Home::addSubMenu($menu, $plugins{$plugin}->{'name'}, undef);
 		}
 	}
