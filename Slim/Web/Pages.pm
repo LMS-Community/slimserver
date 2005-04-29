@@ -1257,6 +1257,10 @@ sub playlist {
 		$client->currentPlaylistRender()->[2] eq $params->{'start'} &&
 		$client->currentPlaylistChangeTime() < $client->currentPlaylistRender()->[0]) {
 
+		if (Slim::Utils::Prefs::get("playlistdir")) {
+			$params->{'cansave'} = 1;
+		}
+
 		$::d_playlist && Slim::Utils::Misc::msg("Skipping playlist build - not modified.\n");
 
 		$params->{'playlist_header'}  = $client->currentPlaylistRender()->[3];

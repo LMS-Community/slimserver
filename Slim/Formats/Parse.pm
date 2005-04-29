@@ -597,7 +597,11 @@ sub writeM3U {
 
 		if ($addTitles && Slim::Music::Info::isURL($item)) {
 
-			my $track = $ds->objectForUrl($item);
+			my $track = $ds->objectForUrl($item) || do {
+				Slim::Utils::Misc::msg("Couldn't retrieve objectForUrl: [$item] - skipping!\n");
+				next;
+			};
+			
 			my $title = $track->title();
 
 			if ($] > 5.007) {
