@@ -168,9 +168,9 @@ sub getFunctions {
 sub initPlugin {
 	return 1 if $initialized;
 
-	addGroups();
-
 	return unless canUseiTunesLibrary();
+
+	addGroups();
 
 	$::d_itunes && Slim::Utils::Misc::msg("iTunes: Can use iTunes Music Folder - adding importer.\n");
 
