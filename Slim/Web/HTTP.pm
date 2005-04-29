@@ -1680,6 +1680,7 @@ sub forgetClient {
 
 sub closeHTTPSocket {
 	my $httpClient = shift;
+	my $streaming = shift;
 	
 	Slim::Networking::Select::addRead($httpClient, undef);
 	Slim::Networking::Select::addWrite($httpClient, undef);
@@ -1692,6 +1693,16 @@ sub closeHTTPSocket {
 	delete($peeraddr{$httpClient});
 	delete($keepAlives{$httpClient});
 	delete($peerclient{$httpClient});
+
+	# Fix for bug 1289. A close on its own wasn't always actually
+	# sending a FIN or RST packet until significantly later for
+	# streaming connections. The call to shutdown seems to be a
+	# little more assertive about closing the socket. Windows-only
+	# for now, but could be considered for other platforms and
+	# non-streaming connections.
+	if ($streaming && Slim::Utils::OSDetect::OS() eq 'win') {
+		$httpClient->shutdown(2);
+	}
 
 	$httpClient->close();
 	undef($httpClient);
@@ -1717,7 +1728,7 @@ sub closeStreamingSocket {
 		}
 	}
 
-	closeHTTPSocket($httpClient);
+	closeHTTPSocket($httpClient, 1);
 
 	return;
 }
