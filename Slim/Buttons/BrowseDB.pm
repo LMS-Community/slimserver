@@ -373,7 +373,7 @@ sub browsedbItemName {
 
 		return Slim::Music::Info::standardTitle($client, $item);
 
-	} elsif (($levels[$level] eq 'album') && Slim::Utils::Prefs::get('showArtist')) {
+	} elsif (($levels[$level] eq 'album') && $level == 0 && Slim::Utils::Prefs::get('showArtist')) {
 
 		my ($track) = $item->tracks();
 		my $artist;
