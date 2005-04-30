@@ -219,6 +219,9 @@ sub isMusicLibraryFileChanged {
 	}) || return 0;
 
 	my $fileMTime = $http->content();
+	
+	$::d_musicmagic && msg("MusicMagic: read cacheid of $fileMTime\n");
+	
 	$http->close();
 
 	# Only say "yes" if it has been more than one minute since we last finished scanning
@@ -232,6 +235,8 @@ sub isMusicLibraryFileChanged {
 		my $musicmagicscaninterval = Slim::Utils::Prefs::get('musicmagicscaninterval');
 
 		$::d_musicmagic && msg("MusicMagic: music library has changed!\n");
+		
+		$::d_musicmagic && msg("	Details: \n\t\tCacheid - $fileMTime\n\t\tLastCacheid - $oldTime\n\t\tReload Interval - $musicmagicscaninterval\n\t\tLast Scan - $lastMusicLibraryFinishTime\n");
 		
 		unless ($musicmagicscaninterval) {
 			
