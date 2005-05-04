@@ -1124,10 +1124,7 @@ sub addMenu {
 	# it would be nice if the plugin code gave us a clean way to do
 	# this.  Until it does, we do the following hack.
 
-	my $disabled = scalar(grep {$_ eq 'RssNews'} Slim::Utils::Prefs::getArray('disabledplugins'));
-	$disabled && $::d_plugins && msg("RssNews: RssNews plugin disabled.\n");
-
-	if ($disabled) {
+	if (grep {$_ eq 'RssNews'} Slim::Utils::Prefs::getArray('disabledplugins')) {
 		Slim::Buttons::Home::addSubMenu("SCREENSAVERS","PLUGIN_RSSNEWS_SCREENSAVER", undef);
 	} else {
 		# add a mode to the screensaver submenu...
@@ -1137,7 +1134,7 @@ sub addMenu {
 	}
 
 	# also add ourselves to the plugins menu
-	return "PLUGINS";
+	return "plugins";
 }
 
 

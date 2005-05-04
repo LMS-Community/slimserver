@@ -162,18 +162,7 @@ sub getFunctions {
 }
 
 sub addMenu {
-	my $menu = "RADIO";
-
-	my $disabled = scalar(grep {$_ eq 'RadioIO::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins'));
-	$disabled && $::d_plugins && Slim::Utils::Misc::msg("RadioIO: plugin disabled.\n");
-
-	if ($disabled) {
-		Slim::Web::Pages::addLinks("radio", { 'PLUGIN_RADIOIO_MODULE_NAME' => undef });
-	} else {
-		Slim::Web::Pages::addLinks("radio", { 'PLUGIN_RADIOIO_MODULE_NAME' => "plugins/RadioIO/index.html" });
-	}
-
-	return $menu;
+	return 'RADIO';
 }
 
 sub getDisplayName {
@@ -184,6 +173,13 @@ sub getDisplayName {
 
 sub webPages {
 	my %pages = ("index\.htm" => \&handleWebIndex);
+
+	if (grep {$_ eq 'RadioIO::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+		Slim::Web::Pages::addLinks("radio", { 'PLUGIN_RADIOIO_MODULE_NAME' => undef });
+	} else {
+		Slim::Web::Pages::addLinks("radio", { 'PLUGIN_RADIOIO_MODULE_NAME' => "plugins/RadioIO/index.html" });
+	}
+	
     return (\%pages);
 }
 

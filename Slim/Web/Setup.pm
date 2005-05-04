@@ -112,7 +112,6 @@ sub initSetupConfig {
 		,'preEval' => sub {
 					my ($client,$paramref,$pageref) = @_;
 					return if (!defined($client));
-					Slim::Buttons::Plugins::addSetupGroups();
 					playerChildren($client, $pageref);
 
 					if ($client->isPlayer()) {
@@ -558,7 +557,6 @@ sub initSetupConfig {
 					my ($client,$paramref,$pageref) = @_;
 					return if (!defined($client));
 					playerChildren($client, $pageref);
-					Slim::Buttons::Plugins::addSetupGroups();
 					$pageref->{'Prefs'}{'menuItemAction'}{'arrayMax'} = Slim::Utils::Prefs::clientGetArrayMax($client,'menuItem');
 					my $i = 0;
 					foreach my $nonItem (Slim::Buttons::Home::unusedMenuOptions($client)) {
@@ -1162,7 +1160,6 @@ sub initSetupConfig {
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
 				return if (!defined($client));
-				Slim::Buttons::Plugins::addSetupGroups();
 				playerChildren($client, $pageref);
 			}
 	} # end of setup{'ADDITIONAL_PLAYER'} hash
@@ -1175,8 +1172,7 @@ sub initSetupConfig {
 		,'singleChildLinkText' => string('ADDITIONAL_SERVER_SETTINGS')
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
-				Slim::Buttons::Plugins::addSetupGroups();
-				
+
 				$paramref->{'versionInfo'} = sprintf('%s%s %s - %s',
 					string('SERVER_VERSION'), string("COLON"), $::VERSION, $::REVISION
 				);
@@ -1200,7 +1196,7 @@ sub initSetupConfig {
 							,'options' => undef #filled by initSetup using Slim::Utils::Strings::hash_of_languages()
 							,'onChange' => sub {
 								Slim::Utils::Strings::init();
-								Slim::Buttons::Plugins::read_plugins();
+								Slim::Buttons::Plugins::initPlugins();
 								Slim::Web::Setup::initSetup();
 							}
 						}
@@ -1238,93 +1234,11 @@ sub initSetupConfig {
 		,'parent' => 'server'
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
-	
-				Slim::Buttons::Plugins::addSetupGroups();
-
-				my $i = 0;
-				my %plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
-				my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
-
-				for my $plugin (keys %{$pluginlistref}) {
-					if (Slim::Utils::Strings::stringExists($pluginlistref->{$plugin})) {
-						$pluginlistref->{$plugin} = string($pluginlistref->{$plugin});
-					} else {
-						delete $pluginlistref->{$plugin};
-					}
-				}
-
-				for my $plugin (sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref})) {	
-					
-					if ((exists $paramref->{"pluginlist$i"} && $paramref->{"pluginlist$i"} == (exists $plugins{$plugin} ? 0 : 1))) {
-						delete $paramref->{"pluginlist$i"};
-					}
-
-					$i++;
-				}
-
-				$pageref->{'Prefs'}{'pluginlist'}{'arrayMax'} = $i - 1;
+				$pageref->{'Prefs'}{'pluginlist'}{'arrayMax'} = fillPluginsList($client, $paramref);
 			}
 		,'postChange' => sub {
 				my ($client,$paramref,$pageref) = @_;
-				my $i = 0;
-				my %plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
-				
-				Slim::Utils::Prefs::delete('disabledplugins');
-
-				my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
-
-				for my $plugin (keys %{$pluginlistref}) {
-					if (Slim::Utils::Strings::stringExists($pluginlistref->{$plugin})) {
-						$pluginlistref->{$plugin} = string($pluginlistref->{$plugin});
-					} else {
-						delete $pluginlistref->{$plugin};
-					}
-				}
-
-				no strict 'refs';
-				for my $plugin (sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref})) {	
-
-					if ($paramref->{"pluginlist$i"} && UNIVERSAL::can("Plugins::$plugin","initPlugin")) {
-						&{"Plugins::" . $plugin . "::initPlugin"};
-					}
-						
-
-					if (!exists $paramref->{"pluginlist$i"}) {
-						$paramref->{"pluginlist$i"} = exists $plugins{$plugin} ? 0 : 1;
-					}
-
-					unless ($paramref->{"pluginlist$i"}) {
-						Slim::Utils::Prefs::push('disabledplugins',$plugin);
-					}
-
-					# disable and remove groups for non-disabled Plugins that fail enable citeria
-					if (!exists $plugins{$plugin} && exists &{"Plugins::" . $plugin . "::enabled"} && 
-							! &{"Plugins::" . $plugin . "::enabled"}($client)) {
-						$paramref->{"pluginlist$i"} = 0;
-						delGroup('plugins',$plugin,1);
-					}
-
-					$i++;
-				}
-				
-				for my $group (Slim::Utils::Prefs::getArray('disabledplugins')) {
-					
-					delGroup('plugins',$group,1);
-					delGroup('radio',$group,1);
-					delGroup('player_plugins',$group,1);
-					
-					if (exists &{"Plugins::" . $group . "::disablePlugin"}) {
-						&{"Plugins::" . $group . "::disablePlugin"};
-					}
-				}
-				
-				# call addSetupGroups last, since it sets a flag to say we're done refreshing plugins.
-				Slim::Web::HTTP::initSkinTemplateCache();
-				Slim::Buttons::Plugins::read_plugins();
-				#Slim::Buttons::Plugins::addWebPages();
-				#Slim::Buttons::Plugins::addMenus();
-				#Slim::Buttons::Plugins::addScreensavers();
-
+				processPluginsList($client, $paramref);
 			}
 		,'GroupOrder' => ['Default']
 		# if more than one ir map exists the undef will be replaced by 'Default'
@@ -1352,28 +1266,10 @@ sub initSetupConfig {
 				,'changeMsg' => string('SETUP_PLUGINLIST_CHANGE')
 				,'onChange' => \&Slim::Buttons::Plugins::clearGroups
 				,'externalValue' => sub {
-					my ($client,$value,$key) = @_;
-
-					if ($key !~ /\D+(\d+)$/) {
-						return $value;
+						my ($client, $value, $key) = @_;
+						return getPluginState($client, $value, $key);
 					}
-
-					my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
-
-					# Stick real names in the list - so we can be I18N'd properly.
-					# fallback to the plugin package name, so we at least have 
-					# something, instead of a blank space.
-					for my $plugin (keys %{$pluginlistref}) {
-						if (Slim::Utils::Strings::stringExists($pluginlistref->{$plugin})) {
-							$pluginlistref->{$plugin} = string($pluginlistref->{$plugin});
-						} else {
-							delete $pluginlistref->{$plugin};
-						}
-					}
-
-					return $pluginlistref->{(sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref}))[$1]};
 				}
-			}
 			,'plugins-onthefly' => {
 				'validate' => \&validateTrueFalse
 				,'options' => {
@@ -1383,16 +1279,22 @@ sub initSetupConfig {
 				}
 			}
 		} #end of setup{'plugins'}
-	,'radio' => {
+	,'RADIO' => {
 		'title' => string('RADIO')
 		,'parent' => 'server'
 		,'preEval' => sub {
-				Slim::Buttons::Plugins::addSetupGroups();
+				my ($client,$paramref,$pageref) = @_;
+				$pageref->{'Prefs'}{'pluginlist'}{'arrayMax'} = fillPluginsList($client, $paramref, 'RADIO');
+			}
+		,'postChange' => sub {
+				my ($client,$paramref,$pageref) = @_;
+				processPluginsList($client, $paramref, 'RADIO');
 			}
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 				'Default' => {
-					'PrefOrder' => []
+					'PrefOrder' => [ 'pluginlist' ]
+					,'PrefsInTable' => 1
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
@@ -1400,10 +1302,25 @@ sub initSetupConfig {
 					,'GroupHead' => string('RADIO')
 					,'GroupDesc' => string('SETUP_GROUP_RADIO_DESC')
 					,'GroupLine' => 1
-					,'GroupSub' => 0
+					,'GroupSub' => 1
 				}
 			}
-		} #end of setup{'radio'}
+		,'Prefs' => {
+			'pluginlist' => {
+				'isArray' => 1
+				,'dontSet' => 1
+				,'validate' => \&validateTrueFalse
+				,'inputTemplate' => 'setup_input_array_chk.html'
+				,'arrayMax' => undef #set in preEval
+				,'changeMsg' => string('SETUP_PLUGINLIST_CHANGE')
+				,'onChange' => \&Slim::Buttons::Plugins::clearGroups
+				,'externalValue' => sub {
+						my ($client,$value,$key) = @_;
+						return getPluginState($client, $value, $key, 'RADIO');
+					}
+				}
+			}
+		} #end of setup{'RADIO'}
 	,'interface' => {
 		'title' => string('INTERFACE_SETTINGS')
 		,'parent' => 'server'
@@ -2151,7 +2068,7 @@ sub initSetupConfig {
 		# XXX This should be added conditionally based on whether there
 		# are any radio plugins. We need to find a place to make that
 		# check *after* plugins have been correctly initialized.
-		Slim::Web::Setup::addChildren('server','radio');
+		Slim::Web::Setup::addChildren('server','RADIO');
 	}
 }
 
@@ -3032,6 +2949,7 @@ sub delPref {
 # they will also be added to the category.
 sub addGroup {
 	my ($category,$groupname,$groupref,$position,$prefsref,$categoryKey) = @_;
+
 	unless (exists $setup{$category}) {
 		warn "Category $category does not exist\n";
 		return;
@@ -3154,6 +3072,117 @@ sub existsCategory {
 	my $category = shift;
 	return exists $setup{$category};
 }
+
+sub getCategoryPlugins {
+	no strict 'refs';
+	my $client = shift;
+	my $category = shift || 'plugins';
+	my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
+
+	for my $plugin (keys %{$pluginlistref}) {
+		if (Slim::Utils::Strings::stringExists($pluginlistref->{$plugin}) || Slim::Utils::Strings::stringExists(Slim::Buttons::Plugins::canPlugin($plugin))) {
+			my $menu = 'plugins';
+
+			if (UNIVERSAL::can("Plugins::${plugin}", "addMenu")) {
+				$menu = eval { &{"Plugins::${plugin}::addMenu"}() };
+				# if there's a problem or a category does not exist, reset $menu
+				$menu = 'plugins' if ($@ || not existsCategory($menu));
+			}
+
+			# only return the current category's plugins
+			if ($menu eq $category) {
+				$pluginlistref->{$plugin} = Slim::Utils::Strings::string($pluginlistref->{$plugin});
+				next;
+			}
+		}
+		delete $pluginlistref->{$plugin};
+	}
+	
+	return $pluginlistref;
+}
+
+sub fillPluginsList {
+	my ($client, $paramref, $category) = @_;
+
+	my %plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
+	my $pluginlistref = getCategoryPlugins($client, $category);
+	my $i = 0;
+
+	for my $plugin (sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref})) {	
+		if ((exists $paramref->{"pluginlist$i"} && $paramref->{"pluginlist$i"} == (exists $plugins{$plugin} ? 0 : 1))) {
+			delete $paramref->{"pluginlist$i"};
+		}
+
+		$i++;
+	}
+
+	return $i - 1;
+}
+
+sub processPluginsList {
+	my ($client, $paramref, $category) = @_;
+	my %plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
+	my $i = 0;
+
+	Slim::Utils::Prefs::delete('disabledplugins');
+
+	my $pluginlistref = getCategoryPlugins($client, $category);
+
+	no strict 'refs';
+	for my $plugin (sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref})) {
+		if (defined $paramref->{"pluginlist$i"}) {
+			if ($paramref->{"pluginlist$i"} && UNIVERSAL::can("Plugins::$plugin","initPlugin")) {
+				&{"Plugins::" . $plugin . "::initPlugin"};
+			}
+			elsif ((not $paramref->{"pluginlist$i"}) && UNIVERSAL::can("Plugins::$plugin","disablePlugin")) {
+				&{"Plugins::" . $plugin . "::disablePlugin"};
+			}
+		}
+
+		if (!exists $paramref->{"pluginlist$i"}) {
+			$paramref->{"pluginlist$i"} = exists $plugins{$plugin} ? 0 : 1;
+		}
+
+		unless ($paramref->{"pluginlist$i"}) {
+			Slim::Utils::Prefs::push('disabledplugins',$plugin);
+		}
+		delete $plugins{$plugin};
+
+		$i++;
+	}
+
+	# add remaining disabled plugins (other categories)
+	foreach (keys %plugins) {
+		Slim::Utils::Prefs::push('disabledplugins', $_);
+	}
+
+	Slim::Web::HTTP::initSkinTemplateCache();
+	Slim::Buttons::Plugins::initPlugins();
+	Slim::Buttons::Plugins::addSetupGroups();
+
+	$i = 0;
+	# refresh the list of plugins as some of them might have been disable during intialization
+	%plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
+	for my $plugin (sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref})) {	
+		if (exists $plugins{$plugin} && $plugins{$plugin}) {
+			$paramref->{"pluginlist$i"} = 0;
+		}
+
+		$i++;
+	}
+}
+
+sub getPluginState {
+	my ($client,$value,$key, $category) = @_;
+
+	if ($key !~ /\D+(\d+)$/) {
+		return $value;
+	}
+
+	my $pluginlistref = getCategoryPlugins($client, $category);
+	return $pluginlistref->{(sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref}))[$1]};
+}
+
 
 ######################################################################
 # Validation Functions
