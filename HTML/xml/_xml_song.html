@@ -1,7 +1,7 @@
 
-	[% IF track.title %]<title>[% track.title | html %]</title>[% END %]
+	[% IF itemobj.title %]<title>[% itemobj.title | html %]</title>[% END %]
 
-	[% genres = track.genres %]
+	[% genres = itemobj.genres %]
 	[% IF genres %]
 		[% FOREACH genre = genres %]
 			<genre>[% genre.name | html %]</genre> 
@@ -9,9 +9,9 @@
 		[% END %]
 	[% END %] 
 
-	[% FOREACH role = track.contributorRoles.sort %]
+	[% FOREACH role = itemobj.contributorRoles.sort %]
 
-		[% contributors = track.contributorsOfType(role) %]
+		[% contributors = itemobj.contributorsOfType(role) %]
 		[% IF contributors %]
 
 			[% FOREACH contributor = contributors %]
@@ -23,21 +23,21 @@
 
 	[% END %]
 
-	[% IF track.album %] 
-		<album>[% track.album.title | html %]</album>
-		<album_browse_url><![CDATA[xml/browsedb.xml?hierarchy=track&level=0&album=[% track.album.id %]]]></album_browse_url>
+	[% IF itemobj.album %] 
+		<album>[% itemobj.album.title | html %]</album>
+		<album_browse_url><![CDATA[xml/browsedb.xml?hierarchy=track&level=0&album=[% itemobj.album.id %]]]></album_browse_url>
 	[% END %]
 
-	[% IF track.tracknum %]<track>[% track.tracknum | html %]</track>[% END %]
-	[% IF track.content_type %]<type>[% track.content_type | string | html %]</type>[% END %]
-	[% IF track.duration %]<duration>[% track.duration | html %]</duration>[% END %]
-	[% IF track.year %]<year>[% track.year | html %]</year>[% END %]
+	[% IF itemobj.tracknum %]<track>[% itemobj.tracknum | html %]</track>[% END %]
+	[% IF itemobj.content_type %]<type>[% itemobj.content_type | string | html %]</type>[% END %]
+	[% IF itemobj.duration %]<duration>[% itemobj.duration | html %]</duration>[% END %]
+	[% IF itemobj.year %]<year>[% itemobj.year | html %]</year>[% END %]
 	[% IF comment %]<comment>[% comment | html %]</comment>[% END %]
 	[% IF filelength %]<filelength>[% filelength | html %]</filelength>[% END %]
-	[% IF track.bitrate %]<bitrate>[% track.bitrate | html %]</bitrate>[% END %]
-	[% IF track.tagversion %]<tagversion>[% track.tagversion | html %]</tagversion>[% END %]
-	[% IF track.modificationTime %]<modtime>[% track.modificationTime | html %]</modtime>[% END %]
+	[% IF itemobj.bitrate %]<bitrate>[% itemobj.bitrate | html %]</bitrate>[% END %]
+	[% IF itemobj.tagversion %]<tagversion>[% itemobj.tagversion | html %]</tagversion>[% END %]
+	[% IF itemobj.modificationTime %]<modtime>[% itemobj.modificationTime | html %]</modtime>[% END %]
  	<song_url><![CDATA[[% itempath %]]]></song_url>
 	<download_url><![CDATA[[% download %]]]></download_url>
-  	[% IF track.coverArt('cover', 1) %]<coverart><![CDATA[/music/[% itempath | uri %]/cover.jpg]]></coverart>[% END %]
+  	[% IF itemobj.coverArt('cover', 1) %]<coverart><![CDATA[/music/[% itempath | uri %]/cover.jpg]]></coverart>[% END %]
  	[% IF mixable %]<mixable>[% mixable | html %]</mixable>[% END %]
