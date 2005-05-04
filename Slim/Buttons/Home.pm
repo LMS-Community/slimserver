@@ -419,26 +419,42 @@ sub createList {
 	return \@list;
 }
 
-# Set a specific home position
+# Set a specific item from the list of chosen top level items.
+# if the given item does not exist, default to the first item
+# from the home menu pref for the current player
 sub jump {
 	my $client = shift;
 	my $item = shift;
 	my $depth = shift;
 	
 	$depth = "" unless defined $depth;
-	$client->curDepth($depth);
-	$client->curSelection($client->curDepth(),$item);
+	for my $menuitem (@{$homeChoices{$client}}) {
+		
+		next unless $menuitem eq $item;
+		
+		$client->curDepth($depth);
+		$client->curSelection($client->curDepth(),$item);
+	}
+	
+	if (!defined($client->curSelection($client->curDepth()))) {
+			$client->curSelection($client->curDepth(),$@{$homeChoices{$client}}->[0]);
+	}
 }
 
-# PushMode to a  specific target pointer within the home menu tree.
+# PushMode to a  specific target pointer within the home menu tree 
+# disregarding home menu settings.
 sub jumpToMenu {
 	my $client = shift;
 	my $menu = shift;
 	my $depth = shift;
-	
+
 	$depth = "" unless defined $depth;
-	Slim::Buttons::Home::jump($client,$menu,$depth);
+	
+	$client->curDepth($depth);
+	$client->curSelection($client->curDepth(),$menu);
+	
 	my $nextParams = Slim::Buttons::Home::getNextList($client);
+
 	Slim::Buttons::Common::pushModeLeft(
 		$client,
 		'INPUT.List',
