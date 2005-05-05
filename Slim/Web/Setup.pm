@@ -1658,10 +1658,12 @@ sub initSetupConfig {
 			}
 		,'Prefs' => {
 			'titleFormatWeb' => {
-						'validate' => \&validateInHash
-						,'validateArgs' => undef #filled in initSetup using hash_of_prefs
-						,'options' => undef #filled by initSetup using hash_of_prefs('titleFormatWeb')
+						'validate' => \&validateInt
+						,'validateArgs' => [0,undef,1]
 						,'onChange' => sub {
+								if (Slim::Utils::Prefs::get('titleFormatWeb') > Slim::Utils::Prefs::getArrayMax('titleFormat')) {
+									Slim::Utils::Prefs::set('titleFormatWeb', Slim::Utils::Prefs::getArrayMax('titleFormat'));
+								}
 								for my $client (Slim::Player::Client::clients()) {
 									$client->currentPlaylistChangeTime(time());
 								}
@@ -2086,14 +2088,12 @@ sub initSetup {
 
 sub fillFormatOptions {
 	$setup{'formatting'}{'Prefs'}{'guessFileFormats'}{'options'} = {hash_of_prefs('guessFileFormats')};
-	$setup{'formatting'}{'Prefs'}{'titleFormatWeb'}{'options'} = {hash_of_prefs('titleFormat')};
-	$setup{'formatting'}{'Prefs'}{'titleFormatWeb'}{'validateArgs'} = [$setup{'formatting'}{'Prefs'}{'titleFormatWeb'}{'options'}];
 }
 
 sub fillSetupOptions {
 	my ($set,$pref,$hash) = @_;
 	$setup{$set}{'Prefs'}{$pref}{'options'} = {hash_of_prefs($hash)};
-	$setup{$set}{'Prefs'}{$pref}{'validateArgs'} = [$setup{'player'}{'Prefs'}{$pref}{'options'}];
+	$setup{$set}{'Prefs'}{$pref}{'validateArgs'} = [$setup{$set}{'Prefs'}{$pref}{'options'}];
 }
 
 
@@ -3332,8 +3332,8 @@ sub validateTime {
 	}
 }
 
-#determines if the value is one of the keys of the supplied hash
-#the hash is supplied in the form of a reference either to a hash, or to code which returns a hash
+# determines if the value is one of the keys of the supplied hash
+# the hash is supplied in the form of a reference either to a hash, or to code which returns a hash
 sub validateInHash {
 	my $val = shift;
 	my $ref = shift;
@@ -3426,7 +3426,7 @@ sub validatePassword {
 	}
 }
 
-#TODO make this actually check to see if the format is valid
+# TODO make this actually check to see if the format is valid
 sub validateFormat {
 	my $val = shift;
 	if (!defined($val)) {
@@ -3438,7 +3438,7 @@ sub validateFormat {
 	}
 }
 
-#Verify allowed hosts is in somewhat proper format, always prepend 127.0.0.1 if not there
+# Verify allowed hosts is in somewhat proper format, always prepend 127.0.0.1 if not there
 sub validateAllowedHosts {
 	my $val = shift;
 	$val =~ s/\s+//g;
