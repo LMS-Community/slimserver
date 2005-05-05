@@ -152,9 +152,10 @@ sub addSubMenu {
 		return;
 	}
 
+	# Don't add/remove submenu if there is no name or its an empty string
+	return unless (defined $submenuname && $submenuname);
+	
 	if (!defined $submenuref) {
-		
-		return unless (defined $submenuname);
 		
 		if (exists $home{$menu}{'submenus'}{$submenuname}) {
 			$::d_plugins && Slim::Utils::Misc::msg("Deleting $submenuname from menu: $menu\n");
@@ -299,10 +300,13 @@ sub getMenu {
 	my $current = \%home;
 	return $current if $depth eq "";
 	my @depth = split(/-/,$depth);
+	
 	#home reference is "" so drop first item
 	shift @depth;
+	
 	#top level reference
 	$current = $current->{shift @depth};
+	
 	# recursive submenus
 	for my $level (@depth) {
 		$current = $current->{'submenus'}->{$level};
@@ -313,9 +317,14 @@ sub getMenu {
 sub homeExitHandler {
 	my ($client,$exittype) = @_;
 	$exittype = uc($exittype);
+
+
 	if ($exittype eq 'LEFT') {
 		if ($client->curDepth() ne "") {
 			$client->curDepth(getLastDepth($client));
+			
+			# call jump in case top level has changed.
+			jump($client,$client->curSelection($client->curDepth()));
 			Slim::Buttons::Common::popModeRight($client);
 		} else {
 			# We've hit the home root
@@ -425,14 +434,14 @@ sub createList {
 sub jump {
 	my $client = shift;
 	my $item = shift;
-	my $depth = shift;
 	
-	$depth = "" unless defined $depth;
+	# force top level
+	$client->curDepth("");
+	$client->curSelection($client->curDepth(),undef);
+	
 	for my $menuitem (@{$homeChoices{$client}}) {
-		
 		next unless $menuitem eq $item;
 		
-		$client->curDepth($depth);
 		$client->curSelection($client->curDepth(),$item);
 	}
 	
