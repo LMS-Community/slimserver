@@ -932,6 +932,9 @@ sub streamingSongIndex {
 
 sub streamingSong {
 	my $client = Slim::Player::Sync::masterOrSelf(shift);
+	unless (scalar(@{$client->currentsongqueue()})) {
+		streamingSongIndex($client, 0);
+	}
 	return $client->currentsongqueue()->[0];
 }
 
