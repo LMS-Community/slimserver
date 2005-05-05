@@ -93,10 +93,6 @@ sub playerPlugins {
 	foreach (keys %playerplugins) {
 		delete $playerplugins{$_} if (not $playerplugins{$_});
 	}
-
-	foreach (keys %playerplugins) {
-Slim::Utils::Misc::msg("playerplugin? $_: $playerplugins{$_}\n");
-	}
 	
 	return \%playerplugins;
 }
