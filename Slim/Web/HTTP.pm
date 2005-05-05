@@ -852,6 +852,7 @@ sub generateHTTPResponse {
 		$contentType = "text/plain";
 
 		$response->header("Refresh" => "30; url=$path");
+		$response->header("Content-Type" => "text/plain; charset=utf-8");
 		buildStatusHeaders($client, $response, $p);
 		if ($path =~ /status/) {
 			if (defined($client)) {
@@ -1636,18 +1637,26 @@ sub buildStatusHeaders {
 			$headers{"x-playerindex"}    = Slim::Player::Source::currentSongIndex($client) + 1;
 			$headers{"x-playertime"}     = Slim::Player::Source::songTime($client);
 			$headers{"x-playerduration"} = Slim::Music::Info::total_time(Slim::Player::Playlist::song($client));
-	
-			my $i = $track->artist();
-			$headers{"x-playerartist"} = $i if $i;
-	
-			$i = $track->album->title();
-			$headers{"x-playeralbum"} = $i if $i;
-	
-			$i = $track->title();
-			$headers{"x-playertitle"} = $i if $i;
-	
-			$i = $track->genre();
-			$headers{"x-playergenre"} = $i if $i;
+			if ($track) {
+				my $i = $track->artist();
+				$i = $i->name() if ($i);
+				$headers{"x-playerartist"} = $i if $i;
+		
+				$i = $track->album();
+				$i = $i->title() if ($i);
+				$headers{"x-playeralbum"} = $i if $i;
+		
+				$i = $track->title();
+				$headers{"x-playertitle"} = $i if $i;
+		
+				$i = $track->genre();
+				$i = $i->name() if ($i);
+				$headers{"x-playergenre"} = $i if $i;
+				
+				if ($track->coverArt()) {
+					$headers{"x-playercoverart"} = "/music/" . $track->id() . "/cover.jpg";
+				}
+			}
 		}
 	}
 	

@@ -118,13 +118,17 @@ sub play {
 	my $client = shift;
 	my $paused = shift;
 	my $format = shift;
-	my $quickstart = shift;
+	my $url = shift;
 	my $reconnect = shift;
 
-	$client->stream('s', $paused, $format, $reconnect);
+	$client->stream('s', $paused, $format, $url, $reconnect);
+
 	# make sure volume is set, without changing temp setting
 	$client->volume($client->volume(),
 					defined($client->tempVolume()));
+
+	# if this is a remote stream, then let's start after 5 seconds even if we haven't filled the buffer yet.
+	my $quickstart = Slim::Music::Info::isRemoteURL($url) ? 5 : undef;
 
 	Slim::Utils::Timers::killTimers($client, \&quickstart);
 	if ($quickstart) {
@@ -474,7 +478,7 @@ sub opened {
 # Squeezebox control for tcp stream
 #
 #	u8_t command;		// [1]	's' = start, 'p' = pause, 'u' = unpause, 'q' = stop, 't' = status
-#	u8_t autostart;		// [1]	'0' = don't auto-start, '1' = auto-start
+#	u8_t autostart;		// [1]	'0' = don't auto-start, '1' = auto-start, '2' = direct streaming
 #	u8_t mode;		// [1]	'm' = mpeg bitstream, 'p' = PCM
 #	u8_t pcm_sample_size;	// [1]	'0' = 8, '1' = 16, '2' = 24, '3' = 32
 #	u8_t pcm_sample_rate;	// [1]	'0' = 11kHz, '1' = 22, '2' = 32, '3' = 44.1, '4' = 48
@@ -494,10 +498,11 @@ sub opened {
 #				// [24]
 #
 sub stream {
-	my ($client, $command, $paused, $format, $reconnect) = @_;
+	my ($client, $command, $paused, $format, $url, $reconnect) = @_;
 
 	if ($client->opened()) {
-		$::d_slimproto && msg("*************stream called: $command\n");
+		$::d_slimproto && msg("*************stream called: $command paused: $paused format: $format url: $url\n");
+		$::d_slimproto && bt();
 		my $autostart;
 		
 		# autostart off when pausing or stopping, otherwise 75%
@@ -549,9 +554,54 @@ sub stream {
 			$pcmendian = '?';
 			$pcmchannels = '?';
 		}
-
-		$::d_slimproto && msg("starting with decoder with options: format: $formatbyte samplesize: $pcmsamplesize samplerate: $pcmsamplerate endian: $pcmendian channels: $pcmchannels\n");
 		
+		my $request_string;
+		my ($server_port, $server_ip);
+		if ($command eq 's' && $client->canDirectStream($url)) {
+			$::d_directstream && msg("This player supports direct streaming for $url, let's do it.\n");
+		
+			my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
+			my ($name, $liases, $addrtype, $length, @addrs) = gethostbyname($server);
+			if ($port && $addrs[0]) {
+				$server_port = $port;
+				$server_ip = unpack('N',$addrs[0]);
+			}
+
+			$request_string = Slim::Player::Protocols::HTTP::requestString($url);  
+			$autostart += 2;
+			if (!$server_port || !$server_ip) {
+				$::d_directstream && msg("Couldn't get an IP and Port for direct stream ($server_ip:$server_port), failing.\n");
+				$client->failedDirectStream();
+				Slim::Networking::Slimproto::stop($client);
+				return;
+			} else {
+				$::d_directstream && msg("setting up direct stream ($server_ip:$server_port) autostart: $autostart.\n");
+				$::d_directstream && msg("request string: $request_string\n");
+				$client->directURL($url);
+			}			
+	
+		} else {
+			my $path = '/stream.mp3?player='.$client->id;
+		
+			$request_string = "GET $path HTTP/1.0\n";
+			
+			if (Slim::Utils::Prefs::get('authorize')) {
+				$client->password(generate_random_string(10));
+				
+				my $password = encode_base64('squeezebox:' . $client->password);
+				
+				$request_string .= "Authorization: Basic $password\n";
+			}
+			$server_port = Slim::Utils::Prefs::get('httpport');		# port
+			$server_ip = 0;		# server IP of 0 means use IP of control server
+			$request_string .= "\n";
+			if (length($request_string) % 2) {
+				$request_string .= "\n";
+			}
+		}
+		
+		$::d_slimproto && msg("starting with decoder with format: $formatbyte autostart: $autostart threshold: $bufferThreshold samplesize: $pcmsamplesize samplerate: $pcmsamplerate endian: $pcmendian channels: $pcmchannels\n");
+
 		my $frame = pack 'aaaaaaaCCCaCnLnL', (
 			$command,	# command
 			$autostart,
@@ -567,30 +617,15 @@ sub stream {
 			$reconnect ? 0x40 : 0,		# flags	     
 			0,		# vis port - call IANA!!!  :)
 			0,		# use slim server's IP
-			Slim::Utils::Prefs::get('httpport'),		# port
-			0,		# server IP of 0 means use IP of control server
+			$server_port,
+			$server_ip
 		);
 	
 		assert(length($frame) == 24);
 	
-		my $path = '/stream.mp3?player='.$client->id;
-	
-		my $request_string = "GET $path HTTP/1.0\n";
-		
-		if (Slim::Utils::Prefs::get('authorize')) {
-			$client->password(generate_random_string(10));
-			
-			my $password = encode_base64('squeezebox:' . $client->password);
-			
-			$request_string .= "Authorization: Basic $password\n";
-		}
-		
-		$request_string .= "\n";
-		if (length($request_string) % 2) {
-			$request_string .= "\n";
-		}
-
 		$frame .= $request_string;
+
+		$::d_slimproto && msg("sending strm frame of length: " . length($frame) . " request string:\n$request_string\n");
 
 		$client->sendFrame('strm',\$frame);
 		
@@ -616,7 +651,7 @@ sub sendFrame {
 	
 	my $frame = pack('n', $len + 4) . $type . $$dataRef;
 
-	$::d_slimproto && msg ("sending squeezebox frame: $type, length: $len\n");
+	$::d_slimproto_v && msg ("sending squeezebox frame: $type, length: $len\n");
 
 	Slim::Networking::Select::writeNoBlock($client->tcpsock, \$frame);
 }

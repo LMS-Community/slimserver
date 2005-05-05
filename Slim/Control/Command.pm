@@ -80,6 +80,7 @@ sub execute {
 # N    listen          <0|1|?|>
 # N    pref            <prefname>                  <prefvalue|?>
 # N    exit
+# N    version			?
 
 # PLAYERS
 # N    player          count                       ?
@@ -621,7 +622,7 @@ sub execute {
 
 		} elsif ($p0 eq "rate") {
 
-			if ($client->audioFilehandleIsSocket) {
+			if ($client->directURL() || $client->audioFilehandleIsSocket) {
 				Slim::Player::Source::rate($client, 1);
 			} elsif (!defined($p1) || $p1 eq "?") {
 				$p1 = Slim::Player::Source::rate($client);
@@ -1583,6 +1584,11 @@ sub execute {
 		} elsif ($p0 eq "listen") {
 
 			$client = undef;
+
+		} elsif ($p0 eq "version") {
+
+			$client = undef;
+			$p1 = $::VERSION;
 
 		} elsif ($p0 eq "exit") {
 

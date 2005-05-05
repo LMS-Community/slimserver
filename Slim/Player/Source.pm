@@ -404,6 +404,7 @@ sub playmode {
 		};
 
 		$client->bytesReceivedOffset(0);
+		
 	}
 	
 	# when we change modes, make sure we do it to all the synced clients.
@@ -461,10 +462,9 @@ sub playmode {
 			}
 			$everyclient->streamBytes(0);
 			
-			# if this is a remote stream, then let's start after 5 seconds even if we haven't filled the buffer yet.
-			my $quickstart = Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::song($client, streamingSongIndex($client))) ? 5 : undef;
+			my $currentSong = Slim::Player::Playlist::song($client, streamingSongIndex($client));
 			
-			$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat(), $quickstart, (defined($seekoffset) && $seekoffset > 0));
+			$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat(), $currentSong, (defined($seekoffset) && $seekoffset > 0));
 
 		} elsif ($newmode eq "pause") {
 
@@ -508,11 +508,18 @@ sub playmode {
 			return $everyclient->playmode();
 		}
 
+		if ($newmode eq 'play' && $everyclient->directURL()) {
+			$everyclient->playmode('playout-play');
+		}
+
 		Slim::Player::Playlist::refreshPlaylist($everyclient);
 	}
-
+	
 	$::d_source && msg($client->id() . ": Current playmode: $newmode\n");
+	# if we're doing direct streaming, we want to handle the end of the stream gracefully...
 
+
+	
 	return _returnPlayMode($client);
 }
 
@@ -724,7 +731,8 @@ sub gototime {
 
 		$everybuddy->readytosync(0);
 
-		$everybuddy->play(Slim::Player::Sync::isSynced($client), $client->streamformat());
+		$everybuddy->play(Slim::Player::Sync::isSynced($client), $client->streamformat(),
+				Slim::Player::Playlist::song($client));
 
 		$everybuddy->playmode("play");
 	}
@@ -1055,6 +1063,7 @@ sub closeSong {
 		$client->audioFilehandle(undef);
 		$client->audioFilehandleIsSocket(0);
 	}
+	$client->directURL(undef);
 }
 
 sub resetSong {
@@ -1087,10 +1096,22 @@ sub errorDone {
 	$_[0]->param('noUpdate',0);
 }
 
+sub explodeSong {
+	my $client = shift;
+	my $items = shift;
+
+	# insert the list onto the playlist
+	splice @{Slim::Player::Playlist::playList($client)}, streamingSongIndex($client), 1, @{$items};
+	
+	# update the shuffle list
+	Slim::Player::Playlist::reshuffle($client);
+}
+
 sub openSong {
 	my $client = shift;
 	my $seekoffset = shift || 0;
 
+	my $directStream = 0;
 	resetSong($client);
 	
 	closeSong($client);
@@ -1106,129 +1127,165 @@ sub openSong {
 	# parse the filetype
 	if (Slim::Music::Info::isRemoteURL($fullpath)) {
 
-		$::d_source && msg("URL is remote : $fullpath\n");
-
 		my $line1 = $client->string('CONNECTING_FOR');
 		my $line2 = Slim::Music::Info::standardTitle($client, $fullpath);			
 		$client->showBriefly($line1, $line2, undef,1);
 
-		# we don't get the content type until after the stream is opened
-		my $sock = openRemoteStream($fullpath, $client);
-
-		if ($sock) {
-
-			# Refetch the track if we didn't have an object for it the
-			# first time - opening the stream might have created one.
-			if (!defined($track)) {
-				$track    = $ds->objectForUrl($fullpath);
-			}
-
-			# if it's an mp3 stream, then let's stream it.
-			if (Slim::Music::Info::isSong($track)) {
-
-				$::d_source && msg("remoteURL is a song : $fullpath\n");
-
-				if ($sock->opened() &&
-					!defined(Slim::Utils::Misc::blocking($sock, 0))) {
-					$::d_source && msg("Cannot set remote stream nonblocking\n");
-					errorOpening($client);
-					return undef;
+		if ($client->canDirectStream($fullpath)) {
+			$directStream = 1;
+			$client->streamformat(Slim::Music::Info::contentType($fullpath));
+		} 
+		if (!$directStream) {
+			$::d_source && msg("URL is remote : $fullpath\n");
+			# we don't get the content type until after the stream is opened
+			my $sock = openRemoteStream($fullpath, $client);
+	
+			if ($sock) {
+	
+				# Refetch the track if we didn't have an object for it the
+				# first time - opening the stream might have created one.
+				if (!defined($track)) {
+					$track    = $ds->objectForUrl($fullpath);
 				}
-
-				my ($command, $type, $format) = getConvertCommand($client, $fullpath);
-				$::d_source && msg("remoteURL command $command type $type format $format\n");
-				$::d_source && msgf("remoteURL stream format : %s\n", Slim::Music::Info::contentType($fullpath));
-				$client->streamformat($format);
-
-				unless (defined($command)) {
-					$::d_source && msg("Couldn't create command line for $type playback for $fullpath\n");
-					errorOpening($client);
-					
-					return undef;
-				}
-
-				my $duration  = $track->durationSeconds();
-
-				if (defined($duration)) {
-					$song->{duration} = $duration;
-				}
-
-				# this case is when we play the file through as-is
-				if ($command eq '-') {
-					$client->audioFilehandle($sock);
-					$client->audioFilehandleIsSocket(1);
-				}
-				else {
-					my $maxRate = Slim::Utils::Prefs::maxRate($client);
-					my $quality = Slim::Utils::Prefs::clientGet($client,'lameQuality');
-					
-					$command = tokenizeConvertCommand($command, $type, '-', $fullpath, 0 , $maxRate, 1, $quality);
-					$::d_source && msg("tokenized command $command\n");
-					my $pipeline = Slim::Player::Pipeline->new($sock, $command);
-					if (!defined($pipeline)) {
-						$::d_source && msg("Error creating conversion pipeline\n");
+	
+				# if it's an mp3 stream, then let's stream it.
+				if (Slim::Music::Info::isSong($track)) {
+	
+					$::d_source && msg("remoteURL is a song : $fullpath\n");
+	
+					if ($sock->opened() &&
+						!defined(Slim::Utils::Misc::blocking($sock, 0))) {
+						$::d_source && msg("Cannot set remote stream nonblocking\n");
 						errorOpening($client);
 						return undef;
 					}
-					$client->audioFilehandle($pipeline);
-					$client->audioFilehandleIsSocket(2);
-					
-				}
-
-				$client->remoteStreamStartTime(Time::HiRes::time());
-				$client->pauseTime(0);
-
-			# if it's one of our playlists, parse it...
-			} elsif (Slim::Music::Info::isList($track)) {
-
-				$::d_source && msg("openSong on a remote list!\n");
-				# handle the case that we've actually got a playlist in the list,
-				# rather than a stream.
-
-				# parse out the list
-				my @items = Slim::Formats::Parse::parseList($fullpath, $sock);
-				
-				# hack to preserve the title of a song redirected through a playlist
-				if (scalar(@items) == 1 && defined($track->title())) {
-					Slim::Music::Info::setTitle($items[0], $track->title());
-				} 
-				
-				# close the socket
-				$sock->close();
-				$sock = undef;
-				$client->audioFilehandle(undef);
-
-				# insert the list onto the playlist
-				splice @{Slim::Player::Playlist::playList($client)}, streamingSongIndex($client), 1, @items;
-
-				# update the shuffle list
-				Slim::Player::Playlist::reshuffle($client);
-
-				# try to open the first item in the list, if there is one.
-				return openSong($client);
-
-			} else {
-
-				$::d_source && msg("don't know how to handle content for $fullpath\n");
-				$sock->close();
-				$sock = undef;
-				$client->audioFilehandle(undef);
-			}
-		} 
+	
+					my ($command, $type, $format) = getConvertCommand($client, $fullpath);
+					$::d_source && msg("remoteURL command $command type $type format $format\n");
+					$::d_source && msgf("remoteURL stream format : %s\n", Slim::Music::Info::contentType($fullpath));
+					$client->streamformat($format);
+	
+					unless (defined($command)) {
+						$::d_source && msg("Couldn't create command line for $type playback for $fullpath\n");
+						errorOpening($client);
+						
+						return undef;
+					}
+	
+					my $duration  = $track->durationSeconds();
+	
+					if (defined($duration)) {
+						$song->{duration} = $duration;
+					}
+	
+					# this case is when we play the file through as-is
+					if ($command eq '-') {
+						$client->audioFilehandle($sock);
+						$client->audioFilehandleIsSocket(1);
+					}
+					else {
+						my $maxRate = Slim::Utils::Prefs::maxRate($client);
+						my $quality = Slim::Utils::Prefs::clientGet($client,'lameQuality');
+						
+						$command = tokenizeConvertCommand($command, $type, '-', $fullpath, 0 , $maxRate, 1, $quality);
+						$::d_source && msg("tokenized command $command\n");
+						my $pipeline = Slim::Player::Pipeline->new($sock, $command);
+						if (!defined($pipeline)) {
+							$::d_source && msg("Error creating conversion pipeline\n");
+							errorOpening($client);
+							return undef;
+						}
 		
-		if (!$sock) {
-
-			$::d_source && msg("Remote stream failed to open, showing message.\n");
-			$client->audioFilehandle(undef);
+						my ($command, $type, $format) = getConvertCommand($client, $fullpath);
+						$::d_source && msg("remoteURL command $command type $type format $format\n");
+						$::d_source && msgf("remoteURL stream format : %s\n", Slim::Music::Info::contentType($fullpath));
+						$client->streamformat($format);
+		
+						unless (defined($command)) {
+							$::d_source && msg("Couldn't create command line for $type playback for $fullpath\n");
+							errorOpening($client);
+							
+							return undef;
+						}
+		
+						my $duration  = $track->durationSeconds();
+		
+						if (defined($duration)) {
+							$song->{duration} = $duration;
+						}
+		
+						# this case is when we play the file through as-is
+						if ($command eq '-') {
+							$client->audioFilehandle($sock);
+							$client->audioFilehandleIsSocket(1);
+						}
+						else {
+							my $maxRate = Slim::Utils::Prefs::maxRate($client);
+							my $quality = Slim::Utils::Prefs::clientGet($client,'lameQuality');
+							
+							$command = tokenizeConvertCommand($command, $type, '-', $fullpath, 0 , $maxRate, 1, $quality);
+							$::d_source && msg("tokenized command $command\n");
+							my $pipeline = Slim::Player::Pipeline->new($sock, $command);
+							if (!defined($pipeline)) {
+								$::d_source && msg("Error creating conversion pipeline\n");
+								errorOpening($client);
+								return undef;
+							}
+							$client->audioFilehandle($pipeline);
+							$client->audioFilehandleIsSocket(2);
+							
+						}
+		
+						$client->remoteStreamStartTime(Time::HiRes::time());
+						$client->pauseTime(0);
+					}
+				# if it's one of our playlists, parse it...
+				} elsif (Slim::Music::Info::isList($track)) {
+	
+					$::d_source && msg("openSong on a remote list!\n");
+					# handle the case that we've actually got a playlist in the list,
+					# rather than a stream.
+	
+					# parse out the list
+					my @items = Slim::Formats::Parse::parseList($fullpath, $sock);
+					
+					# hack to preserve the title of a song redirected through a playlist
+					if (scalar(@items) == 1 && defined($track->title())) {
+						Slim::Music::Info::setTitle($items[0], $track->title());
+					}
+					
+					# close the socket
+					$sock->close();
+					$sock = undef;
+					$client->audioFilehandle(undef);
+	
+					explodeSong($client, \@items);
+	
+					# try to open the first item in the list, if there is one.
+					return openSong($client);
+	
+				} else {
+	
+					$::d_source && msg("don't know how to handle content for $fullpath\n");
+					$sock->close();
+					$sock = undef;
+					$client->audioFilehandle(undef);
+				}
+			} 
 			
-			my $line1 = $client->string('PROBLEM_CONNECTING');
-			my $line2 = Slim::Music::Info::standardTitle($client, $fullpath);
-
-			$client->showBriefly($line1, $line2, 5, 1);
-
-			return undef;
+			if (!$sock) {
+	
+				$::d_source && msg("Remote stream failed to open, showing message.\n");
+				$client->audioFilehandle(undef);
+				
+				my $line1 = $client->string('PROBLEM_CONNECTING');
+				my $line2 = Slim::Music::Info::standardTitle($client, $fullpath);
+	
+				$client->showBriefly($line1, $line2, 5, 1);
+	
+				return undef;
+			}
 		}
-
 	} elsif (Slim::Music::Info::isSong($track)) {
 	
 		my $filepath;
@@ -1374,9 +1431,9 @@ sub openSong {
 
 	######################
 	# make sure the filehandle was actually set
-	if ($client->audioFilehandle()) {
+	if ($client->audioFilehandle() || $directStream) {
 
-		if ($client->audioFilehandle()->opened()) {
+		if ($client->audioFilehandle() && $client->audioFilehandle()->opened()) {
 			binmode($client->audioFilehandle());
 		}
 

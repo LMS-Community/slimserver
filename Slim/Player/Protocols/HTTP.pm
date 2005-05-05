@@ -80,7 +80,7 @@ sub open {
 	}
 
 	$::d_remotestream && msg("Opening connection to $url: [$server on port $port with path $path with timeout $timeout]\n");
-
+		
 	my $sock = $class->SUPER::new(
 		LocalAddr => $main::localStreamAddr,
 		Timeout	  => $timeout,
@@ -145,54 +145,13 @@ sub request {
 
 	my $class = ref $self;
 
-	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
- 	my $timeout = $self->timeout();
-
-	my $proxy = Slim::Utils::Prefs::get('webproxy');
-
-	if ($proxy && $server ne 'localhost' && $server ne '127.0.0.1') {
-		$path = "http://$server:$port$path";
-	}
-
-	my $type = $post ? 'POST' : 'GET';
-
-	# Although the port can be part of the Host: header, some hosts (such
-	# as online.wsj.com don't like it, and will infinitely redirect.
-	# According to the spec, http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
-	# The port is optional if it's 80, so follow that rule.
-	my $host = $port == 80 ? $server : "$server:$port";
-
-	# make the request
-	my $request = join($CRLF, (
-		"$type $path HTTP/1.0",
-		"Host: $host",
-		"User-Agent: iTunes/3.0 ($^O; SlimServer $::VERSION)",
-		"Accept: */*",
-		"Cache-Control: no-cache",
-		"Connection: close",
-		"Icy-MetaData:1" . $CRLF,
-	));
+	my $request = requestString($url, $post);
 	
-	if (defined($user) && defined($password)) {
-		$request .= "Authorization: Basic " . MIME::Base64::encode_base64($user . ":" . $password,'') . $CRLF;
-	}
-
-	# Send additional information if we're POSTing
-	if ($post) {
-
-		$request .= "Content-Type: application/x-www-form-urlencoded$CRLF";
-		$request .= sprintf("Content-Length: %d$CRLF", length($post));
-		$request .= $CRLF . $post . $CRLF;
-
-	} else {
-
-		$request .= $CRLF;
-	}
-
 	$::d_remotestream && msg("Request: $request");
 
 	$self->syswrite($request);
 
+	my $timeout = $self->timeout();
 	my $response = Slim::Utils::Misc::sysreadline($self, $timeout);
 
 	$::d_remotestream && msg("Response: $response");
@@ -463,6 +422,7 @@ sub readMetaData {
 		
 		$::d_remotestream && msg("metadata: $metadata\n");
 		
+#		my $title = parseMetadata($metadata);
 		if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
 
 			my $url      = ${*$self}{'infoUrl'};
@@ -531,6 +491,54 @@ sub skipBack {
 	return 0;
 }
 
+
+sub requestString {
+	my $url = shift;
+	my $post = shift;
+
+	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
+ 
+	my $proxy = Slim::Utils::Prefs::get('webproxy');
+	if ($proxy && $server ne 'localhost' && $server ne '127.0.0.1') {
+		$path = "http://$server:$port$path";
+	}
+
+	my $type = $post ? 'POST' : 'GET';
+
+	# Although the port can be part of the Host: header, some hosts (such
+	# as online.wsj.com don't like it, and will infinitely redirect.
+	# According to the spec, http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
+	# The port is optional if it's 80, so follow that rule.
+	my $host = $port == 80 ? $server : "$server:$port";
+
+	# make the request
+	my $request = join($CRLF, (
+		"$type $path HTTP/1.0",
+		"Accept: */*",
+		"Cache-Control: no-cache",
+		"User-Agent: iTunes/4.7.1 ($^O; SlimServer $::VERSION)",
+		"Icy-MetaData: 1",
+		"Connection: close",
+		"Host: $host" ,
+		$CRLF
+	));
+	
+	if (defined($user) && defined($password)) {
+		$request .= "Authorization: Basic " . MIME::Base64::encode_base64($user . ":" . $password,'') . $CRLF;
+	}
+
+	# Send additional information if we're POSTing
+	if ($post) {
+
+		$request .= "Content-Type: application/x-www-form-urlencoded$CRLF";
+		$request .= sprintf("Content-Length: %d$CRLF", length($post));
+		$request .= $CRLF . $post . $CRLF;
+
+	} else {
+		$request .= $CRLF;
+	}
+	return $request;
+}
 1;
 
 __END__

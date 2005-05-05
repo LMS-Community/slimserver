@@ -89,6 +89,10 @@ sub maxBrightness {
 	return $#brightnessMap;
 }
 
+sub upgradeFont {
+	return 'small';
+}
+
 sub maxTextSize {
 	my $client = shift;
 
@@ -313,7 +317,7 @@ sub fonts {
 	
 	return $fontref->{$font};
 }
-	
+
 # returns progress bar text
 sub progressBar {
 	return sliderBar(shift,shift,(shift)*100,0);

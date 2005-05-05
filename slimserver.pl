@@ -273,6 +273,7 @@ use vars qw(
 	$d_cli
 	$d_control
 	$d_command
+	$d_directstream
 	$d_display
 	$d_factorytest
 	$d_favorites
@@ -716,6 +717,7 @@ to the console via stderr:
                         command line interface interface
     --d_command      => Display internal command execution
     --d_control      => Low level player control information
+    --d_directstream => Debugging info on direct streaming 
     --d_display      => Show what (should be) on the player's display 
     --d_factorytest  => Information used during factory testing
     --d_favorites    => Information about favorite tracks
@@ -798,6 +800,7 @@ sub initOptions {
 		'd_cli'				=> \$d_cli,
 		'd_command'			=> \$d_command,
 		'd_control'			=> \$d_control,
+		'd_directstream'	=> \$d_directstream,
 		'd_display'			=> \$d_display,
 		'd_factorytest'		=> \$d_factorytest,
 		'd_favorites'		=> \$d_favorites,

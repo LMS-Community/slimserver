@@ -1771,6 +1771,10 @@ sub mimeType {
 	return undef;
 };
 
+sub mimeToType {
+	return $mimeTypes{lc(shift)};
+}
+
 sub contentType { 
 	my $url = shift;
 

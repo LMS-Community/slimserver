@@ -224,7 +224,7 @@ GETMORE:
 			$parser_state{$s} = 'DATA';
 			$inputbuffer{$s} = '';
 
-			if ($parser_framelength{$s} > 1000) {
+			if ($parser_framelength{$s} > 10000) {
 				$::d_slimproto && msg ("Client gave us insane length ".$parser_framelength{$s}." for slimproto frame. Disconnecting him.\n");
 				slimproto_close($s);
 				return;
@@ -356,7 +356,7 @@ sub process_slimproto_frame {
 							defined($client->tempVolume()));
 		}
 		return;
-	} 
+	}
 
 	my $client = $sock2client{$s};
 	
@@ -391,7 +391,17 @@ sub process_slimproto_frame {
 	} elsif ($op eq 'RESP') {
 		# HTTP stream headers
 		$::d_slimproto && msg("Squeezebox got HTTP response:\n$data\n");
-
+		if ($client->can('directHeaders')) {
+			$client->directHeaders($data);
+		}
+	} elsif ($op eq 'DSCO') {
+		$::d_slimproto && msg("Squeezebox got disconnection on the data channel why: ". unpack('C', $data) . " \n");
+		
+	} elsif ($op eq 'BODY') {
+		$::d_slimproto && msg("Squeezebox got body response\n");
+		if ($client->can('directBodyFrame')) {
+			$client->directBodyFrame($data);
+		}
 	} elsif ($op eq 'STAT') {
 
 		#struct status_struct {
@@ -467,18 +477,18 @@ sub process_slimproto_frame {
 # TODO make a "verbose" option for this
 #		0 &&
 		$::d_slimproto && msg($client->id() . " Squeezebox stream status:\n".
-		"	event_code:      $status{$client}->{'event_code'}\n".
-		"	num_crlf:        $status{$client}->{'num_crlf'}\n".
-		"	mas_initiliazed: $status{$client}->{'mas_initialized'}\n".
-		"	mas_mode:        $status{$client}->{'mas_mode'}\n".
-		"	bytes_rec_H      $status{$client}->{'bytes_received_H'}\n".
-		"	bytes_rec_L      $status{$client}->{'bytes_received_L'}\n".
+#		"	event_code:      $status{$client}->{'event_code'}\n".
+#		"	num_crlf:        $status{$client}->{'num_crlf'}\n".
+#		"	mas_initiliazed: $status{$client}->{'mas_initialized'}\n".
+#		"	mas_mode:        $status{$client}->{'mas_mode'}\n".
+#		"	bytes_rec_H      $status{$client}->{'bytes_received_H'}\n".
+#		"	bytes_rec_L      $status{$client}->{'bytes_received_L'}\n".
 		"	fullness:        $status{$client}->{'fullness'} (" . int($status{$client}->{'fullness'}/$client->bufferSize()*100) . "%)\n".
 		"	bytes_received   $status{$client}->{'bytes_received'}\n".
-		"	signal_strength: $status{$client}->{'signal_strength'}\n".
-		"	jiffies:         $status{$client}->{'jiffies'}\n".
+#		"	signal_strength: $status{$client}->{'signal_strength'}\n".
+#		"	jiffies:         $status{$client}->{'jiffies'}\n".
 		"");
-		$::d_slimproto && defined($status{$client}->{'output_buffer_size'}) && msg("".
+		$::d_slimproto_v && defined($status{$client}->{'output_buffer_size'}) && msg("".
 		"	output size:     $status{$client}->{'output_buffer_size'}\n".
 		"	output fullness: $status{$client}->{'output_buffer_fullness'}\n".
 		"	elapsed seconds: $status{$client}->{'elapsed_seconds'}\n".
@@ -498,6 +508,8 @@ sub process_slimproto_frame {
 
 	} elsif ($op eq 'ANIC') {
 		$client->animating(0);
+	} elsif ($op eq 'META') {
+		$::d_directstream && msg("metadata (len: $len): $data\n");
 	} elsif ($op eq 'BYE!') {
 		# THIS IS ONLY FOR THE OLD SDK4.X UPDATER
 

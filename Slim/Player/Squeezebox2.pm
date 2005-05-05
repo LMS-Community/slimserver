@@ -20,6 +20,7 @@ use IO::Socket;
 use Slim::Player::Player;
 use Slim::Utils::Misc;
 use MIME::Base64;
+use Data::Dumper;
 
 our @ISA = ("Slim::Player::SqueezeboxG");
 
@@ -222,6 +223,10 @@ sub minPitch { 0 };
 
 sub model {
 	return 'squeezebox2';
+};
+
+sub upgradeFont {
+	return 'light';
 };
 
 # in order of preference based on whether we're connected via wired or wireless...
@@ -568,6 +573,156 @@ sub songElapsedSeconds {
 	}
 
 	return $client->SUPER::songElapsedSeconds(@_);
+}
+
+sub canDirectStreamDisabled {
+	my $client = shift;
+	my $url = shift;
+	
+	my $type = Slim::Music::Info::contentType($url);
+	my $cando = (Slim::Music::Info::isHTTPURL($url) && ($client->contentTypeSupported($type) || $type eq 'unk' || Slim::Music::Info::isList($url)) );
+	
+	$::d_directstream && msg("Direct stream type: $type can: $cando: for $url\n");
+	return $cando;
+}
+	
+sub directHeaders {
+	my $client = shift;
+	my $headers = shift;
+	$::d_directstream && msg("processing headers for direct streaming\n");
+	$::d_directstream && msg(Dumper($headers));
+	$::d_directstream && bt();
+	my $url = $client->directURL();
+	
+	return unless $url;
+	
+	$headers =~ s/\r/\n/g;
+	$headers =~ s/\n\n/\n/g;
+	my @headers = split "\n", $headers;
+	chomp(@headers);
+	
+	my $response = shift @headers;
+	
+	if (!$response || $response !~ / (\d\d\d)/) {
+		$::d_directstream && msg("Invalid response code ($response) from remote stream $url\n");
+		$client->failedDirectStream();
+	} else {
+	
+		$response = $1;
+		
+		if ($response < 200) {
+			$::d_directstream && msg("Invalid response code ($response) from remote stream $url\n");
+			$client->failedDirectStream();
+		} elsif ($response > 399) {
+			$::d_directstream && msg("Invalid response code ($response) from remote stream $url\n");
+			$client->failedDirectStream();
+		} else {
+			my $redir = '';
+			my $metaint = 0;
+			my $length;
+			my $title;
+			my $contentType = "audio/mpeg";  # assume it's audio.  Some servers don't send a content type.
+			my $bitrate;
+			$::d_directstream && msg("processing " . scalar(@headers) . " headers\n");
+			foreach my $header (@headers) {
+				
+				$::d_directstream && msg("header: " . $header . "\n");
+		
+				if ($header =~ /^ic[ey]-name:\s*(.+)/i) {
+		
+					$title = $1;
+		
+					if ($title && $] > 5.007) {
+						$title = Encode::decode('iso-8859-1', $title, Encode::FB_QUIET());
+					}	
+				}
+	
+				if ($header =~ /^icy-br:\s*(.+)\015\012$/i) {
+					$bitrate = $1 * 1000;
+				}
+				
+				if ($header =~ /^icy-metaint:\s*(.+)/) {
+					$metaint = $1;
+				}
+				
+				if ($header =~ /^Location:\s*(.*)/i) {
+					$redir = $1;
+				}
+		
+				if ($header =~ /^Content-Type:\s*(.*)/i) {
+					$contentType = $1;
+				}
+				
+				if ($header =~ /^Content-Length:\s*(.*)/i) {
+					$length = $1;
+				}
+			}
+		
+			# update bitrate, content-type title for this URL...
+			Slim::Music::Info::setContentType($url, $contentType) if $contentType;
+			Slim::Music::Info::setBitrate($url, $bitrate) if $bitrate;
+			Slim::Music::Info::setCurrentTitle($url, $title) if $title;
+			$::d_directstream && msg("got a stream type:: $contentType  bitrate: $bitrate  title: $title\n");
+
+			if ($redir) {
+				$::d_directstream && msg("Redirecting to: $redir\n");
+				$client->stop();
+				$client->play(Slim::Player::Sync::isSynced($client), ($client->masterOrSelf())->streamformat(), $redir); 
+
+			} elsif ($client->contentTypeSupported(Slim::Music::Info::mimeToType($contentType))) {
+				$::d_directstream && msg("Beginning direct stream!\n");
+				$client->streamformat(Slim::Music::Info::mimeToType($contentType));
+				$client->sendFrame('cont', \(pack('N',$metaint)));		
+			} elsif (Slim::Music::Info::isList($url)) {
+				$::d_directstream && msg("Direct stream is list, get body to explode\n");
+				$client->directBody('');
+				# we've got a playlist in all likelyhood, have the player send it to us
+				$client->sendFrame('body', \(pack('N', $length)));
+			} else {
+				$::d_directstream && msg("Direct stream failed\n");
+				$client->failedDirectStream();
+			}
+		}
+	}
+}
+
+sub directBodyFrame {
+	my $client = shift;
+	my $body = shift;
+	$::d_directstream && msg("got some body from the player, length " . length($body) . ": $body\n");
+	if (length($body)) {
+		$::d_directstream && msg("saving away that body message until we get an empty body\n");
+		$client->directBody($client->directBody() . $body);
+	} else {
+		if (length($client->directBody())) {
+			$::d_directstream && msg("empty body means we should parse what we have for " . $client->directURL() . "\n");
+			# done getting body of playlist, let's parse it!
+			my $io = IO::String->new($client->directBody());
+			my @items = Slim::Formats::Parse::parseList($client->directURL(), $io);
+	
+			if (@items && scalar(@items)) { 
+				Slim::Player::Source::explodeSong($client, \@items);
+				Slim::Player::Source::openSong($client);
+			} else {
+				$::d_directstream && msg("body had no parsable items in it.\n");
+
+				$client->failedDirectStream()
+			}
+		} else {
+			$::d_directstream && msg("actually, the body was empty.  Got nobody...\n");
+		}
+	}
+} 
+
+sub failedDirectStream {
+	my $client = shift;
+	my $url = $client->directURL();
+	$::d_directstream && msg("Oh, well failed to do a direct stream for: $url\n");
+	$client->directURL(undef);
+	$client->directBody(undef);
+	
+	$client->stop();
+	# todo notify upper layers that this is a bad station.
 }
 
 1;

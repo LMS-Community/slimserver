@@ -729,6 +729,8 @@ sub new {
 	# 95 is currentPlaylistRender
 	# 96 is currentPlaylistChangeTime
 	$client->[97] = undef; # tempVolume temporary volume setting
+	$client->[98] = undef; # directurl
+	$client->[99] = undef; # directbody
 	
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -801,7 +803,7 @@ sub clientIPs {
 }
 
 sub clientCount {
-	return scalar keys %clientHash;
+	return scalar(keys %clientHash);
 }
 
 sub clients {
@@ -968,6 +970,8 @@ sub minTreble {	return 50; }
 
 sub maxBass {	return 50; }
 sub minBass {	return 50; }
+
+sub canDirectStream { return 0; }
 
 # mixerConstant returns the requested aspect of a given mixer feature
 # Supported features: volume, pitch, bass, treble
@@ -1154,6 +1158,10 @@ sub maxTransitionDuration {
 
 sub reportsTrackStart {
 	return 0;
+}
+
+sub upgradeFont {
+	return undef;
 }
 
 sub param {
@@ -1631,4 +1639,13 @@ sub currentPlaylistChangeTime {
 	@_ ? ($r->[96] = shift) : $r->[96];
 }
 
+sub directURL {
+	my $r = shift;
+	@_ ? ($r->[98] = shift) : $r->[98];
+}
+
+sub directBody {
+	my $r = shift;
+	@_ ? ($r->[99] = shift) : $r->[99];
+}
 1;
