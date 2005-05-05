@@ -364,7 +364,7 @@ sub fischer_yates_shuffle {
 sub reshuffle {
 	my $client = shift;
 	my $dontpreservecurrsong = shift;
-
+  
 	my $songcount = count($client);
 	my $listRef   = shuffleList($client);
 
@@ -490,9 +490,7 @@ sub reshuffle {
 
 		for my $album (@albums) {
 
-			# Sort each track within the album by Album, Disc, Tracknum and Track Name
-			for my $track (sort { $a->multialbumsortkey() cmp $b->multialbumsortkey() } @{$albumTracks{$album}}) {
-
+			for my $track (@{$albumTracks{$album}}) {
 				push @{$listRef}, $trackToPosition{$track};
 			}
 		}
