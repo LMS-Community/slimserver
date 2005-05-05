@@ -131,7 +131,7 @@ sub initPlugin {
 		$::d_musicmagic && msg("MusicMagic: Cannot Connect\n");
 		
 		my ($groupRef,$prefRef) = &setupGroup();
-		Slim::Web::Setup::addGroup('plugins', 'musicmagic_connect', $groupRef, undef, $prefRef);
+		Slim::Web::Setup::addGroup('PLUGINS', 'musicmagic_connect', $groupRef, undef, $prefRef);
 
 	} else {
 
@@ -167,6 +167,7 @@ sub initPlugin {
 }
 
 sub defaultMap {
+	#Slim::Buttons::Common::addMode('musicmagic_mix', \%mixFunctions);
 	Slim::Hardware::IR::addModeDefaultMapping('musicmagic_mix',\%mixMap);
 	return undef;
 }

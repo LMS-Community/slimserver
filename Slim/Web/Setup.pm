@@ -1229,7 +1229,7 @@ sub initSetupConfig {
 		
 			}
 		} #end of setup{'server'} hash
-	,'plugins' => {
+	,'PLUGINS' => {
 		'title' => string('PLUGINS')
 		,'parent' => 'server'
 		,'preEval' => sub {
@@ -1278,7 +1278,7 @@ sub initSetupConfig {
 					}
 				}
 			}
-		} #end of setup{'plugins'}
+		} #end of setup{'PLUGINS'}
 	,'RADIO' => {
 		'title' => string('RADIO')
 		,'parent' => 'server'
@@ -2063,7 +2063,7 @@ sub initSetupConfig {
 	}
 	if (scalar(keys %{Slim::Buttons::Plugins::installedPlugins()})) {
 		
-		Slim::Web::Setup::addChildren('server','plugins');
+		Slim::Web::Setup::addChildren('server','PLUGINS');
 
 		# XXX This should be added conditionally based on whether there
 		# are any radio plugins. We need to find a place to make that
@@ -3076,17 +3076,17 @@ sub existsCategory {
 sub getCategoryPlugins {
 	no strict 'refs';
 	my $client = shift;
-	my $category = shift || 'plugins';
+	my $category = shift || 'PLUGINS';
 	my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
 
 	for my $plugin (keys %{$pluginlistref}) {
 		if (Slim::Utils::Strings::stringExists($pluginlistref->{$plugin}) || Slim::Utils::Strings::stringExists(Slim::Buttons::Plugins::canPlugin($plugin))) {
-			my $menu = 'plugins';
+			my $menu = 'PLUGINS';
 
 			if (UNIVERSAL::can("Plugins::${plugin}", "addMenu")) {
 				$menu = eval { &{"Plugins::${plugin}::addMenu"}() };
 				# if there's a problem or a category does not exist, reset $menu
-				$menu = 'plugins' if ($@ || not existsCategory($menu));
+				$menu = 'PLUGINS' if ($@ || not existsCategory($menu));
 			}
 
 			# only return the current category's plugins

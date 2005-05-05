@@ -1134,7 +1134,7 @@ sub addMenu {
 	}
 
 	# also add ourselves to the plugins menu
-	return "plugins";
+	return "PLUGINS";
 }
 
 
