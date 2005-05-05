@@ -265,7 +265,7 @@ sub addMenus {
 		$::d_plugins && msg("Adding $plugin to menu: $menu\n");
 		Slim::Buttons::Home::addSubMenu($menu, $plugins{$plugin}->{'name'}, \%params);
 		
-		if (uc($menu) ne "PLUGINS") {
+		if ($menu ne "PLUGINS") {
 			Slim::Buttons::Home::delSubMenu("PLUGINS", $plugins{$plugin}->{'name'});
 			Slim::Buttons::Home::addSubMenu("PLUGINS", $menu, &Slim::Buttons::Home::getMenu("-".$menu));
 		}
