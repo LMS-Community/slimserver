@@ -594,7 +594,6 @@ sub setMode {
 	}
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
-	$client->update();
 }
 
 sub searchTerm {
