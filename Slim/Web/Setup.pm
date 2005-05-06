@@ -1727,16 +1727,17 @@ sub initSetupConfig {
 			,"longdateFormat" => {
 						'validate' => \&validateInHash
 						,'validateArgs' => [] # set in initSetup
-						,'options' => { #WWWW is the name of the day of the week
-								#WWW is the abbreviation of the name of the day of the week
-								#MMMM is the full month name
-								#MMM is the abbreviated month name
-								#DD is the day of the month
-								#YYYY is the 4 digit year
-								#YY is the 2 digit year
+						,'options' => { # WWWW is the name of the day of the week
+								# WWW is the abbreviation of the name of the day of the week
+								# MMMM is the full month name
+								# MMM is the abbreviated month name
+								# DD is the day of the month
+								# YYYY is the 4 digit year
+								# YY is the 2 digit year
 								q(%A, %B |%d, %Y)	=> "WWWW, MMMM DD, YYYY"
 								,q(%a, %b |%d, %Y)	=> "WWW, MMM DD, YYYY"
-								,q(%a, %b |%d, '%y)	=> "WWW, MMM DD, 'YY"
+								,q(%a, %b |%d, '%y)	=> "WWW, MMM DD, 'YY" # '" 
+									# The previous comment fixes syntax highlighting thrown off by the embedded single quote
 								,q(%A, |%d %B %Y)	=> "WWWW, DD MMMM YYYY"
 								,q(%A, |%d. %B %Y)	=> "WWWW, DD. MMMM YYYY"
 								,q(%a, |%d %b %Y)	=> "WWW, DD MMM YYYY"
@@ -1750,10 +1751,10 @@ sub initSetupConfig {
 			,"shortdateFormat" => {
 						'validate' => \&validateInHash
 						,'validateArgs' => [] # set in initSetup
-						,'options' => { #MM is the month of the year
-								#DD is the day of the year
-								#YYYY is the 4 digit year
-								#YY is the 2 digit year
+						,'options' => { # MM is the month of the year
+								# DD is the day of the year
+								# YYYY is the 4 digit year
+								# YY is the 2 digit year
 								q(%m/%d/%Y)	=> "MM/DD/YYYY"
 								,q(%m/%d/%y)	=> "MM/DD/YY"
 								,q(%m-%d-%Y)	=> "MM-DD-YYYY"
@@ -1772,12 +1773,12 @@ sub initSetupConfig {
 			,"timeFormat" => {
 						'validate' => \&validateInHash
 						,'validateArgs' => [] # set in initSetup
-						,'options' => { #hh is hours
-								#h is hours (leading zero removed)
-								#mm is minutes
-								#ss is seconds
-								#pm is either AM or PM
-								#anything at the end in parentheses is just a comment
+						,'options' => { # hh is hours
+								# h is hours (leading zero removed)
+								# mm is minutes
+								# ss is seconds
+								# pm is either AM or PM
+								# anything at the end in parentheses is just a comment
 								q(%I:%M:%S %p)	=> "hh:mm:ss pm (12h)"
 								,q(%I:%M %p)	=> "hh:mm pm (12h)"
 								,q(%H:%M:%S)	=> "hh:mm:ss (24h)"
@@ -2692,9 +2693,16 @@ sub setup_changes_HTTP {
 	my $paramref = shift;
 	my $settingsref = shift;
 	foreach my $key (keys %{$changeref}) {
-		$key =~ /(.+?)(\d*)$/;
-		my $keyA = $1;
-		my $keyI = $2;
+		my ($keyA,$keyI);
+		# split up array preferences into the base + index
+		# debug variables start with d_ and should not be split
+		if ($key =~ /^(?!d_)(.+?)(\d*)$/) {
+			$keyA = $1;
+			$keyI = $2;
+		} else {
+			$keyA = $key;
+			$keyI = '';
+		}
 		my $changemsg = undef;
 		my $changedval = undef;
 		if (exists $settingsref->{$keyA}{'noWarning'}) {
@@ -2705,8 +2713,8 @@ sub setup_changes_HTTP {
 		} elsif (Slim::Utils::Strings::stringExists('SETUP_' . uc($keyA) . '_OK')) {
 			$changemsg = string('SETUP_' . uc($keyA) . '_OK');
 		} else {
-			$changemsg = (string('SETUP_' . uc($keyA)) || $keyA) 
-				. ' ' . $keyI . ':';
+			$changemsg = (Slim::Utils::Strings::stringExists('SETUP_' . uc($keyA)) ?
+							string('SETUP_' . uc($keyA)) : $keyA) . ' ' . $keyI . ':';
 		}
 		$changemsg .= '<p>';
 		#use external value from 'options' hash
@@ -2734,7 +2742,6 @@ sub setup_changes_HTTP {
 		if (exists $settingsref->{$keyA}{'changeAddlText'}) {
 			$changemsg .= $settingsref->{$keyA}{'changeAddlText'};
 		}
-		#force eval on the filltemplate call
 		if (defined($changedval) && $changemsg) {
 			$paramref->{'warning'} .= sprintf($changemsg, $changedval);
 		}
