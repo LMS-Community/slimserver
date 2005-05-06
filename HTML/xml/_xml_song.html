@@ -39,5 +39,5 @@
 	[% IF itemobj.modificationTime %]<modtime>[% itemobj.modificationTime | html %]</modtime>[% END %]
  	<song_url><![CDATA[[% itempath %]]]></song_url>
 	<download_url><![CDATA[[% download %]]]></download_url>
-  	[% IF itemobj.coverArt('cover', 1) %]<coverart><![CDATA[/music/[% itempath | uri %]/cover.jpg]]></coverart>[% END %]
+  	[% IF itemobj.coverArt('cover', 1) %]<coverart><![CDATA[music/[% itempath | uri %]/cover.jpg]]></coverart>[% END %]
  	[% IF mixable %]<mixable>[% mixable | html %]</mixable>[% END %]
