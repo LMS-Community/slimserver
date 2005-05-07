@@ -3087,7 +3087,12 @@ sub getCategoryPlugins {
 	my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
 
 	for my $plugin (keys %{$pluginlistref}) {
-		if (Slim::Utils::Strings::stringExists($pluginlistref->{$plugin}) || Slim::Utils::Strings::stringExists(Slim::Buttons::Plugins::canPlugin($plugin))) {
+		# get plugin's displayName if it's not available, yet
+		unless (Slim::Utils::Strings::stringExists($pluginlistref->{$plugin})) {
+			$pluginlistref->{$plugin} = Slim::Buttons::Plugins::canPlugin($plugin);
+		}
+		
+		if (Slim::Utils::Strings::stringExists($pluginlistref->{$plugin})) {
 			my $menu = 'PLUGINS';
 
 			if (UNIVERSAL::can("Plugins::${plugin}", "addMenu")) {
