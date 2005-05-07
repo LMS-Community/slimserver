@@ -2554,17 +2554,7 @@ SETUP_PLAYLISTDIR_DESC
 	SE	Sökväg till mappen där dina sparade spellistor lagras.<br>(Du kan lämna detta fält tomt om du inte vill spara spellistor.)
 
 SETUP_RESCAN
-	DE	Erneutes Durchsuchen
-	DK	Genindlæs
-	EN	Rescan
-	ES	Recopilar nuevamente
-	FI	Lue uudelleen
-	FR	Répertorier de nouveau
-	JP	再スキャン
-	NL	Opnieuw inlezen
-	NO	Les på nytt
-	PT	Ler Directoria com Lista de Músicas
-	SE	Läs om
+	EN	Rescan Music Library
 
 SETUP_RESCAN_BUTTON
 	DE	Erneutes Durchsuchen
@@ -2580,44 +2570,10 @@ SETUP_RESCAN_BUTTON
 	SE	Scanna musikmappen på nytt
 
 SETUP_RESCAN_DESC
-	DE	Wenn Sie Musik hinzufügen, löschen oder Änderungen in ihrem Musik Verzeichnis vornehmen, dann können Sie die SlimServer Software mit einem erneuten Durchsuchen dazu veranlassen, ihre Datenbank zu aktualisieren.
-	DK	Hvis du tilføjer, fjerner eller ændrer musik i din musiksamling kan du få SlimServer-softwaren til at genindlæse informationerne omkring din musiksamling så du er sikker på SlimServer database er up-to-date.
-	EN	If you add, remove or change music in your music library, you can have SlimServer rescan your music to make sure that its database is up to date.
-	ES	Si se añade, elimina o cambia música en la colección musical, se puede hacer que el SlimServer recopile nuevamente la música disponible para asegurarse que la base de datos está actualizada.
-	FI	Varmistaaksesi, että SlimServer soittimesi tietokanta on ajan tasalla voit lukea musiikkikansiosi uudelleen.
-	FR	Si vous modifiez le contenu de votre dossier de musique, vous pouvez forcer le système de gestion du SlimServer à répertorier de nouveau son contenu pour garantir que sa base de données est à jour.
-	JP	ミュージックフォルダーの中身を削除や変更した場合には、再スキャンして最新の情報にすることができます。
-	NL	Als U muziek heeft toegevoegd, verwijderd of veranderd, kunt U de SlimServer software opdracht geven de muziekfolder opnieuw in te lezen.
-	NO	Om du legger til, fjerner eller endrer musikk i musikkfolderen din, kan du be SlimServer om å søke gjennom musikken for å oppdatere databasen.
-	PT	Se adicionar, apagar ou mudar o nome a alguma música na sua directoria de músicas, deverá forçar a re-leitura da directoria de músicas.
-	SE	Om du lägger till, tar bort eller ändrar musik in din Musikmapp kan du tvinga SlimServer att läsa av all din musik på nytt för att säkerställa att databasen är korrekt.
-
+	EN	Click Rescan to have SlimServer scan through your music library and add new music or update songs that have changed.  Click the checkbox and then click Rescan to make SlimServer forget about your entire library and rescan from scratch.
+	
 SETUP_WIPECACHE
-	DE	Cache initialisieren
-	EN	Wipe Cache
-	ES	Limpiar Cache
-	FR	Ré-initialiser le cache
-	JP	キャッシュをクリアする
-	NO	Tøm cache-minnet
-	SE	Töm cache-minnet
-
-SETUP_WIPECACHE_BUTTON
-	DE	Cache initialisieren
-	EN	Wipe Cache
-	ES	Limpiar Cache
-	FR	Ré-initialiser
-	JP	キャッシュをクリアする
-	NO	Tøm cache-minnet
-	SE	Töm cache-minnet
-
-SETUP_WIPECACHE_DESC
-	DE	Falls Sie die Informationen zu den Musikdateien im Cache ablegen, so können Sie hier diesen Speicher neu initialisieren. Dies löscht die gespeicherten Werte und liest die Musiksammlung neu ein.
-	EN	If you use the tag database you may want to clear the disk based cache of tag information. This option does that and then rescans your music files (in the same way as the rescan button does).
-	ES	Si se utiliza la base de datos de tags, se puede querer limpiar el cache en disco de información de tags. Esta opción realiza esa limpieza y recopila nuevamente todos los archivos de música (de la misma forma en que lo hace el botón de "Recopilar Nuevamente")
-	FR	Si vous utilisez la mise en cache disque des tags ID3, vous pouvez remettre celle-ci à zéro avec cette option (le serveur va ensuite répertorier à nouveau votre dossier de musique).
-	JP	タグ データベースを使用するのてあれば、ディスクキャッシュをクリアする必要があるかもしれません。このオプションはキャッシュをクリアし、音楽ファイルを再スキャンします。
-	NO	Hvis du bruker tag databasen kan du trenge å slette den disk baserte cache med tag informasjon. Dette valget gjør det og scanner så gjennom musikkfilene (på samme måte som rescan).
-	SE	Om du använder funktionen 'lagra musikdatabas på disken', kanske du vill tömma densamma. Denna inställning tömmer och scannar sedan musikmappen på nytt.
+	EN	Clear library before rescan
 
 RESCANNING
 	DE	Der Server durchsucht nun ihre Musiksammlung.

@@ -1179,15 +1179,28 @@ sub initSetupConfig {
 
 				$paramref->{'newVersion'} = $::newVersion;
 			}
-		,'GroupOrder' => ['language', 'Default']
+		,'GroupOrder' => ['language', 'Default','Rescan']
 		#,'template' => 'setup_server.html'
 		,'Groups' => {
 				'language' => {
 						'PrefOrder' => ['language']
 						},
 				'Default' => {
-						'PrefOrder' => ['audiodir','playlistdir','rescan',undef]
-						}
+						'PrefOrder' => ['audiodir','playlistdir',undef]
+						},
+				'Rescan' => {
+					'PrefOrder' => ['rescan']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub' => 1
+					,'ChangeButton' => string('SETUP_RESCAN_BUTTON')
+					,'GroupHead' => string('SETUP_RESCAN')
+					,'GroupDesc' => string('SETUP_RESCAN_DESC')
+					,'GroupLine' => 1
+					,'GroupSub' => 1
+				}
 			}
 		,'Prefs' => {
 				'language'	=> {
@@ -1215,14 +1228,14 @@ sub initSetupConfig {
 							,'PrefSize' => 'large'
 						}
 				,'rescan' => {
-							'validate' => \&validateAcceptAll
+							'validate' => \&validateTrueFalse
 							,'onChange' => sub {
-											my $client = shift;
-											Slim::Control::Command::execute($client, ["rescan"], undef, undef);
+											my ($client,$changeref) = @_;
+											Slim::Control::Command::execute($client, [$changeref->{'rescan'}{'new'} ? "wipe" : "rescan"], undef, undef);
 										}
-							,'inputTemplate' => 'setup_input_submit.html'
+							,'inputTemplate' => 'setup_input_chk.html'
+							,'PrefChoose' => string('SETUP_WIPECACHE')
 							,'changeIntro' => string('RESCANNING')
-							,'ChangeButton' => string('SETUP_RESCAN_BUTTON')
 							,'dontSet' => 1
 							,'changeMsg' => ''
 						}
@@ -1879,20 +1892,7 @@ sub initSetupConfig {
 				}
 			}
 		,'Prefs' => {
-			'wipecache' => {
-						'validate' => \&validateAcceptAll
-						,'onChange' => sub {	
-									my $client = shift;
-										Slim::Control::Command::execute
-										 ($client, ["wipecache"], undef, undef);
-									}
-						,'inputTemplate' => 'setup_input_submit.html'
-						,'changeIntro' => string('RESCANNING')
-						,'ChangeButton' => string('SETUP_WIPECACHE_BUTTON')
-						,'dontSet' => 1
-						,'changeMsg' => ''
-					}
-			,'templatecache' => {
+			'templatecache' => {
 						'validate' => \&validateTrueFalse
 						,'options' => {
 								'0' => string('SETUP_DONT_CACHE')

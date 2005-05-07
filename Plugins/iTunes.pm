@@ -243,7 +243,7 @@ sub addGroups {
 
 	my ($groupRef,$prefRef) = setupUse();
 
-	Slim::Web::Setup::addGroup('server','itunes',$groupRef,2,$prefRef);
+	Slim::Web::Setup::addGroup('server','itunes',$groupRef,3,$prefRef);
 }
 
 sub findLibraryFromPlist {

@@ -208,7 +208,7 @@ sub addGroups {
 
 	my ($groupRef,$prefRef) = &setupUse();
 
-	Slim::Web::Setup::addGroup('server', 'musicmagic', $groupRef, 2, $prefRef);
+	Slim::Web::Setup::addGroup('server', 'musicmagic', $groupRef, 3, $prefRef);
 	Slim::Web::Setup::addChildren('server', 'musicmagic');
 }
 

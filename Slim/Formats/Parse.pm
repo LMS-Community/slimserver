@@ -643,8 +643,15 @@ sub readWPL {
 	$::d_parse && Slim::Utils::Misc::msg("parsing WPL: $wplfile\n");
 
 	if (exists($wpl_playlist->{body}->{seq}->{media})) {
-
-		for my $entry_info (@{$wpl_playlist->{body}->{seq}->{media}}) {
+		
+		my @media;
+		if (ref $wpl_playlist->{body}->{seq}->{media} ne 'ARRAY') {
+			push @media, $wpl_playlist->{body}->{seq}->{media};
+		} else {
+			@media = @{$wpl_playlist->{body}->{seq}->{media}};
+		}
+		
+		for my $entry_info (@media) {
 
 			my $entry=$entry_info->{src};
 

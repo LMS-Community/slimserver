@@ -194,7 +194,7 @@ sub initPlugin {
 
 sub addGroups {
 	my ($groupRef,$prefRef) = &setupUse();
-	Slim::Web::Setup::addGroup('server','moodlogic',$groupRef,2,$prefRef);
+	Slim::Web::Setup::addGroup('server','moodlogic',$groupRef,3,$prefRef);
 	Slim::Web::Setup::addChildren('server','moodlogic');
 	Slim::Web::Setup::addCategory('moodlogic',&setupCategory);
 }
