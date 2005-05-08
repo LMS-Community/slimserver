@@ -168,7 +168,7 @@ sub init {
 			}
 			# Else if we pick a single song
 			else {
-				my $album = $client->param('album');
+				my $album = ${$client->param('findCriteria')}{'album'};
 
 				# In some cases just deal with the song individually
 				if ($addorinsert || !$album || !Slim::Utils::Prefs::get('playtrackalbum')) {
