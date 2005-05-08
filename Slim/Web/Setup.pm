@@ -1189,17 +1189,15 @@ sub initSetupConfig {
 						'PrefOrder' => ['audiodir','playlistdir',undef]
 						},
 				'Rescan' => {
-					'PrefOrder' => ['rescan']
+					'PrefOrder' => ['wipedb','rescan']
 					,'PrefsInTable' => 1
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
 					,'Suppress_PrefSub' => 1
-					,'ChangeButton' => string('SETUP_RESCAN_BUTTON')
 					,'GroupHead' => string('SETUP_RESCAN')
 					,'GroupDesc' => string('SETUP_RESCAN_DESC')
 					,'GroupLine' => 1
-					,'GroupSub' => 1
 				}
 			}
 		,'Prefs' => {
@@ -1228,15 +1226,24 @@ sub initSetupConfig {
 							,'PrefSize' => 'large'
 						}
 				,'rescan' => {
-							'validate' => \&validateTrueFalse
+							'validate' => \&validateAcceptAll
 							,'onChange' => sub {
 											my ($client,$changeref) = @_;
-											Slim::Control::Command::execute($client, [$changeref->{'rescan'}{'new'} ? "wipe" : "rescan"], undef, undef);
+											Slim::Control::Command::execute($client, [$changeref->{'wipedb'}{'new'} ? "wipecache" : "rescan"], undef, undef);
 										}
-							,'inputTemplate' => 'setup_input_chk.html'
-							,'PrefChoose' => string('SETUP_WIPECACHE')
+							,'inputTemplate' => 'setup_input_submit.html'
+							,'ChangeButton' => string('SETUP_RESCAN_BUTTON')
 							,'changeIntro' => string('RESCANNING')
 							,'dontSet' => 1
+							,'changeMsg' => ''
+						}
+				,'wipedb' => {
+							'validate' => \&validateAcceptAll
+							,'inputTemplate' => 'setup_input_chk.html'
+							,'PrefChoose' => string('SETUP_WIPECACHE')
+							,'currentValue' => sub { return 0; }
+							,'dontSet' => 1
+							,'changeIntro' => ''
 							,'changeMsg' => ''
 						}
 		
