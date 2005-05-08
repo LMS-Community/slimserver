@@ -385,6 +385,9 @@ sub isSlave {
 
 sub masterOrSelf {
 	my $client = shift;
+	
+	assert($client);
+	
 	return $client->master || $client;
 }
 
