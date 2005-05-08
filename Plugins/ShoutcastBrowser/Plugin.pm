@@ -208,7 +208,7 @@ sub getMiscName {
 sub setupCustomGenres {
 	my $i = 1;
 	
-	open FH, Slim::Utils::Prefs::get('plugin_shoutcastbrowser_custom_genres') or return;
+	if (Slim::Utils::Prefs::get('plugin_shoutcastbrowser_custom_genres') && open FH, Slim::Utils::Prefs::get('plugin_shoutcastbrowser_custom_genres'))
 	{
 		while(my $entry = <FH>) {
 			
@@ -285,7 +285,7 @@ sub loadStreamList {
 		eval { require Compress::Zlib };
 		$url .= '&no_compress=1' if $@;
 		
-		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: async request: $url\n");
+		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: async request\n");
 		$http->get($url);
 	}
 }
