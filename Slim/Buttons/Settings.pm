@@ -16,7 +16,7 @@ use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
 
 # button functions for browse directory
-our @defaultSettingsChoices = qw(ALARM VOLUME REPEAT SHUFFLE TITLEFORMAT TEXTSIZE OFFDISPLAYSIZE INFORMATION SETUP_SCREENSAVER);
+our @defaultSettingsChoices = qw(ALARM VOLUME REPEAT SHUFFLE TITLEFORMAT TEXTSIZE INFORMATION SETUP_SCREENSAVER);
 
 our @settingsChoices = ();
 our %current = ();
@@ -156,20 +156,6 @@ sub init {
 			'onChangeArgs' => 'CV',
 			'initialValue' => sub { $_[0]->textSize() },
 		},
-
-		# note, this does not work, since fonts returns names based
-		# on the active mode, which will never be off
-		# TODO make this work
-		#'settings/OFFDISPLAYSIZE' => {
-		#	'useMode' => 'INPUT.List',
-		#	'listRef' => undef, #filled before changing modes
-		#	'externRef' => \&_fontExists,
-		#	'header' => 'OFFDISPLAYSIZE',
-		#	'stringHeader' => 1,
-		#	'onChange' => \&setPref,
-		#	'pref' =>  "offDisplaySize",
-		#	'initialValue' => 'offDisplaySize',
-		#},
 
 		'settings/INFORMATION' => {
 			'useMode' => 'information'
