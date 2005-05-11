@@ -1225,7 +1225,9 @@ sub playlist {
 
 	$params->{'playlist_items'} = '';
 	$params->{'skinOverride'} ||= '';
-	$params->{'start'} ||= 0;
+	
+	my $count = Slim::Utils::Prefs::get('itemsPerPage');
+	$params->{'start'} = (int(Slim::Player::Source::playingSongIndex($client)/$count)*$count) unless (defined($params->{'start'}) && $params->{'start'} ne '');
 
 	if ($client && $client->currentPlaylist()) {
 		$params->{'current_playlist'} = $client->currentPlaylist();
@@ -1441,7 +1443,7 @@ sub buildPlaylist {
 		$client->currentPlaylistRender([
 			time(),
 			($params->{'skinOverride'} || ''),
-			($params->{'start'} || 0),
+			($params->{'start'}),
 			$params->{'playlist_header'},
 			$params->{'playlist_pagebar'},
 			$params->{'playlist_items'}
@@ -2352,6 +2354,7 @@ sub pageBar {
 	my $start = (defined($$startref) && $$startref ne '') ? $$startref : (int($currentitem/$count)*$count);
 	if ($start >= $itemcount) { $start = $itemcount - $count; }
 	$$startref = $start;
+
 	my $end = $start+$count-1;
 	if ($end >= $itemcount) { $end = $itemcount - 1;}
 	if ($itemcount > $count) {
