@@ -907,8 +907,6 @@ sub generateHTTPResponse {
 		$body = filltemplatefile('html/errors/404.html', $params);
 	}
 
-	return 0 unless $body;
-
 	# for our static content
 	$response->last_modified($mtime) if defined $mtime;
 
@@ -924,6 +922,8 @@ sub generateHTTPResponse {
 	}
 
 	$response->content_type($contentType);
+
+	return 0 unless $body;
 
 	# if the reference to the body is itself undefined, then we've started
 	# generating the page in the background
