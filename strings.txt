@@ -3768,7 +3768,7 @@ SETUP_SEARCHSUBSTRING_1
 	ES	Buscar Dentro de Palabras
 
 SETUP_SEARCHSUBSTRING_DESC
-	DE	Beim Suchen können Sie SlimServer anweisen, den gewünschten Ausdruck nur am Wortanfang zu suchen, oder auch als beliebigen Teil eines Wortes. Beispielsweise findt die Suche nach dem Wortanfang "RAIN" im Wort "RAINBO". Bei der Suche innerhalb eines Wortes würde auch "TRAIN" gefunden.
+	DE	Beim Suchen können Sie SlimServer anweisen, den gewünschten Ausdruck nur am Wortanfang zu suchen, oder auch als beliebigen Teil eines Wortes. Beispielsweise findet die Suche nach dem Wortanfang "RAIN" den Begriff "RAINBOW". Bei der Suche innerhalb eines Wortes würde auch "TRAIN" gefunden.
 	EN	When you search for music, you can have SlimServer find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN".
 	ES	Cuando se busca música, se puede hacer que Slimserver encuentre coincidencias entre items que contienen palabras que comiencen con las mismas letras de la cadena de búsqueda, o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar comienzos de palabras con "RAIN", encontrará items con la palabra "RAINBOW". Buscar dentro de palabras, también encontrará la palabra "TRAIN"
 
@@ -7968,7 +7968,7 @@ TRACKMATCHING
 	SE	Låtar som matchar
 
 TRACKSMATCHING
-	DE	Passende Titel
+	DE	Passende Einträge
 	DK	Matchende sangtitler
 	EN	Song titles matching
 	ES	Canciones encontradas
@@ -7979,6 +7979,10 @@ TRACKSMATCHING
 	NO	Sanger som traff
 	PT	Músicas encontradas
 	SE	Låtar som matchar
+
+MORE_MATCHES
+	DE	Mehr Treffer...
+	EN	More matches...
 
 SYNC_WITH
 	DE	RIGHT drücken zum synchronisieren mit:

@@ -79,9 +79,8 @@ sub outputAsXHTML {
 
 		for my $item (@{$data}) {
 
-			my $rowType = $count % 2 ? 'even' : 'odd';
-
 			if ($count <= MAXRESULTS) {
+				my $rowType = $count % 2 ? 'even' : 'odd';
 
 				push @results, renderItem(
 					$rowType,
@@ -101,8 +100,9 @@ sub outputAsXHTML {
 		push @xml, @results if $count;
 
 		if ($count && $count > MAXRESULTS) {
-			my $rowType = $count % 2 ? 'even' : 'odd';
-			push @xml, sprintf("<tr><td class=\"%s\"> <p> <a href=\"search.html?liveSearch=0&amp;query=%s&amp;type=%s&amp;player=%s\">more matches...</a></p><br/></td></tr>\n",
+			# don't respect the absolute number of matches, but only the displayed number
+			my $rowType = MAXRESULTS % 2 ? 'odd' : 'even';
+			push @xml, sprintf("<tr><td class=\"%s\"> <p> <a href=\"search.html?liveSearch=0&amp;query=%s&amp;type=%s&amp;player=%s\">" . Slim::Utils::Strings::string('MORE_MATCHES') . "</a></p></td></tr>\n",
 				$rowType, $query, $type, $player
 			);
 		}
