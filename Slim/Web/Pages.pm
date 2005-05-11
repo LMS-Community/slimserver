@@ -1227,7 +1227,9 @@ sub playlist {
 	$params->{'skinOverride'} ||= '';
 	
 	my $count = Slim::Utils::Prefs::get('itemsPerPage');
-	$params->{'start'} = (int(Slim::Player::Source::playingSongIndex($client)/$count)*$count) unless (defined($params->{'start'}) && $params->{'start'} ne '');
+	$params->{'start'} = defined $client && !(defined($params->{'start'}) && $params->{'start'} ne '') ? 
+		(int(Slim::Player::Source::playingSongIndex($client)/$count)*$count) :
+		0 ;
 
 	if ($client && $client->currentPlaylist()) {
 		$params->{'current_playlist'} = $client->currentPlaylist();
