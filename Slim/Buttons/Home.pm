@@ -324,7 +324,7 @@ sub homeExitHandler {
 			$client->curDepth(getLastDepth($client));
 			
 			# call jump in case top level has changed.
-			jump($client,$client->curSelection($client->curDepth()));
+			#jump($client,$client->curSelection($client->curDepth()));
 			Slim::Buttons::Common::popModeRight($client);
 		} else {
 			# We've hit the home root
