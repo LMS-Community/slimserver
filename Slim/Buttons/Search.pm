@@ -205,7 +205,7 @@ sub searchTerm {
 	# search which is effectively \b for the query. We might (should?)
 	# deal with alternate separator characters other than space.
 	if (Slim::Utils::Prefs::get('searchSubString')) {
-		return $term;
+		return [ $term ];
 	}
 
 	return [ $term, "* $term" ];

@@ -69,14 +69,7 @@ sub init {
 				my $terms = shift;
 				my $type = shift || 'track';
 
-				my $sortBy = 'title';
-				my %find   = ();
-
-				for my $string (@{$terms}) {
-					push @{$find{'track.titlesort'}}, [ $string ];
-				}
-
-				return $ds->find($type, \%find, $sortBy);
+				return $ds->find($type, { "track.titlesort" => $terms }, 'title');
 			},
 
 			'listItem' => sub {

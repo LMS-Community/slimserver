@@ -7968,7 +7968,7 @@ TRACKMATCHING
 	SE	Låtar som matchar
 
 TRACKSMATCHING
-	DE	Passende Einträge
+	DE	Passende Titel
 	DK	Matchende sangtitler
 	EN	Song titles matching
 	ES	Canciones encontradas
