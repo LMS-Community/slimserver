@@ -557,7 +557,8 @@ sub stream {
 		
 		my $request_string;
 		my ($server_port, $server_ip);
-		if ($command eq 's' && $client->canDirectStream($url)) {
+		$url = $client->canDirectStream($url);
+		if ($command eq 's' && $url) {
 			$::d_directstream && msg("This player supports direct streaming for $url, let's do it.\n");
 		
 			my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
@@ -581,6 +582,8 @@ sub stream {
 			}			
 	
 		} else {
+			$::d_directstream && msg("No direct streaming.\n");
+
 			my $path = '/stream.mp3?player='.$client->id;
 		
 			$request_string = "GET $path HTTP/1.0\n";
@@ -602,7 +605,7 @@ sub stream {
 		
 		$::d_slimproto && msg("starting with decoder with format: $formatbyte autostart: $autostart threshold: $bufferThreshold samplesize: $pcmsamplesize samplerate: $pcmsamplerate endian: $pcmendian channels: $pcmchannels\n");
 
-		my $frame = pack 'aaaaaaaCCCaCnLnL', (
+		my $frame = pack 'aaaaaaaCCCaCnNnN', (
 			$command,	# command
 			$autostart,
 			$formatbyte,

@@ -591,6 +591,19 @@ sub new {
 	return $self;
 }
 
+sub convertToHTTP {
+	my $self = shift;
+	my $url = shift;
+
+	if ($url !~ m{^live365://(www.live365.com/play/([^/?]+).+)$}) {
+	    return undef;
+	}
+
+	my $api = new Plugins::Live365::Live365API();
+
+	return $api->getRedirectURL( $url );
+}
+
 sub getPlaylist {
 	my ( $client, $self, $handle, $url, $isVIP ) = @_;
 

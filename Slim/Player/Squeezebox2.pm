@@ -578,12 +578,18 @@ sub songElapsedSeconds {
 sub canDirectStreamDisabled {
 	my $client = shift;
 	my $url = shift;
+
+	my ($protocol) = $url =~ /^([a-zA-Z0-9\-]+):/;
+	my $handler = $Slim::Player::Source::protocolHandlers{lc $protocol};
+	if ($handler && $handler->can('convertToHTTP')) {
+	    $url = $handler->convertToHTTP($url);
+	}
 	
 	my $type = Slim::Music::Info::contentType($url);
 	my $cando = (Slim::Music::Info::isHTTPURL($url) && ($client->contentTypeSupported($type) || $type eq 'unk' || Slim::Music::Info::isList($url)) );
 	
 	$::d_directstream && msg("Direct stream type: $type can: $cando: for $url\n");
-	return $cando;
+	return $cando ? $url : undef;
 }
 	
 sub directHeaders {
@@ -702,7 +708,7 @@ sub directBodyFrame {
 	
 			if (@items && scalar(@items)) { 
 				Slim::Player::Source::explodeSong($client, \@items);
-				Slim::Player::Source::openSong($client);
+				Slim::Player::Source::playmode($client, 'play');
 			} else {
 				$::d_directstream && msg("body had no parsable items in it.\n");
 

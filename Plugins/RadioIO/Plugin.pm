@@ -261,6 +261,17 @@ sub new {
 	});
 }
 
+sub convertToHTTP {
+	my $self = shift;
+	my $url = shift;
+
+	if ($url !~ /^radioio:\/\/(.*?)\.mp3/) {
+		return undef;
+	}
+
+	return Plugins::RadioIO::Plugin::getHTTPURL($1);
+}
+
 1;
 
 
