@@ -137,6 +137,8 @@ sub initPlugins {
 	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
 
 	for my $plugin (keys %{installedPlugins()}) {
+		next if exists $disabledplugins{$plugin};
+		
 		if (addPlugin($plugin)) {
 			addMenus($plugin, \%disabledplugins);
 			addScreensavers($plugin, \%disabledplugins);
