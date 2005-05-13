@@ -1202,7 +1202,13 @@ sub status_done {
 sub playlist {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 	
-	if (defined($client) && $client->needsUpgrade()) {
+	if (!defined($client)) {
+
+		# fixed faster rate for noclients
+		$params->{'playercount'} = 0;
+		return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
+	
+	} elsif ($client->needsUpgrade()) {
 
 		$params->{'player_needs_upgrade'} = '1';
 		return Slim::Web::HTTP::filltemplatefile("playlist_needs_upgrade.html", $params);
@@ -1210,27 +1216,21 @@ sub playlist {
 
 	$params->{'playercount'} = Slim::Player::Client::clientCount();
 	
-	my $songcount = 0;
-
-	if (defined($client)) {
-		$songcount = Slim::Player::Playlist::count($client);
-	}
+	my $songcount = Slim::Player::Playlist::count($client);
 
 	$params->{'playlist_items'} = '';
 	$params->{'skinOverride'} ||= '';
 	
 	my $count = Slim::Utils::Prefs::get('itemsPerPage');
-	$params->{'start'} = defined $client && !(defined($params->{'start'}) && $params->{'start'} ne '') ? 
-		(int(Slim::Player::Source::playingSongIndex($client)/$count)*$count) :
-		0 ;
+	$params->{'start'} = (int(Slim::Player::Source::playingSongIndex($client)/$count)*$count) unless (defined($params->{'start'}) && $params->{'start'} ne '');
 
-	if ($client && $client->currentPlaylist()) {
+	if ($client->currentPlaylist()) {
 		$params->{'current_playlist'} = $client->currentPlaylist();
 		$params->{'current_playlist_modified'} = $client->currentPlaylistModified();
 		$params->{'current_playlist_name'} = Slim::Music::Info::standardTitle($client,$client->currentPlaylist());
 	}
 
-	if ($::d_playlist && $client && $client->currentPlaylistRender() && ref($client->currentPlaylistRender()) eq 'ARRAY') {
+	if ($::d_playlist && $client->currentPlaylistRender() && ref($client->currentPlaylistRender()) eq 'ARRAY') {
 
 		Slim::Utils::Misc::msg("currentPlaylistChangeTime : " . localtime($client->currentPlaylistChangeTime()) . "\n");
 		Slim::Utils::Misc::msg("currentPlaylistRender     : " . localtime($client->currentPlaylistRender()->[0]) . "\n");
@@ -1244,7 +1244,6 @@ sub playlist {
 	# Only build if we need to.
 	# Check to see if we're newer, and the same skin.
 	if ($songcount > 0 && 
-		$client &&
 		defined $params->{'skinOverride'} &&
 		defined $params->{'start'} &&
 		$client->currentPlaylistRender() && 
