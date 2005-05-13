@@ -137,15 +137,13 @@ sub initPlugins {
 	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
 
 	for my $plugin (keys %{installedPlugins()}) {
-		next if exists $disabledplugins{$plugin};
-		
 		if (addPlugin($plugin)) {
 			addMenus($plugin, \%disabledplugins);
 			addScreensavers($plugin, \%disabledplugins);
 			addDefaultMaps($plugin, \%disabledplugins);
 			addWebPages($plugin, \%disabledplugins);
 		}
-		else {
+		elsif (not exists $disabledplugins{$plugin}) {
 			Slim::Utils::Prefs::push('disabledplugins',$plugin);
 		}
 	}
