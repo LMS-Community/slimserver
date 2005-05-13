@@ -164,7 +164,9 @@ sub removeTrack {
 		}
 	}
 
-	refreshPlaylist($client,Slim::Buttons::Playlist::browseplaylistindex($client));
+	refreshPlaylist($client,Slim::Buttons::Playlist::showingNowPlaying($client) ?
+		undef : 
+		Slim::Buttons::Playlist::browseplaylistindex($client));
 }
 
 sub removeMultipleTracks {

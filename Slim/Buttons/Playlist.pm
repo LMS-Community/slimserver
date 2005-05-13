@@ -62,6 +62,7 @@ sub init {
 			if ($songcount < 2) {
 				$client->bumpUp() if ($button !~ /repeat/);
 			} else {
+				$client->param('showingnowplaying',0);
 				$inc = ($inc =~ /\D/) ? -1 : -$inc;
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $songcount, browseplaylistindex($client));
 				if ($newposition != browseplaylistindex($client)) {
@@ -78,6 +79,7 @@ sub init {
 			if ($songcount < 2) {
 				$client->bumpDown() if ($button !~ /repeat/);
 			} else {
+				$client->param('showingnowplaying',0);
 				if ($inc =~ /\D/) {$inc = 1}
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $songcount, browseplaylistindex($client));
 				if ($newposition != browseplaylistindex($client)) {
@@ -130,7 +132,6 @@ sub init {
 				Slim::Control::Command::execute($client, ["playlist", "delete", browseplaylistindex($client)]);	
 				$client->showBriefly( $client->string('REMOVING_FROM_PLAYLIST'), $songtitle, undef, 1);
 			}
-			jump($client);
 		},
 		
 		'zap' => sub {
@@ -142,12 +143,11 @@ sub init {
 				$client->showBriefly(
 					$client->string('ZAPPING_FROM_PLAYLIST'),
 					Slim::Music::Info::standardTitle($client, 
-						Slim::Player::Playlist::song($client, browseplaylistindex($client))), undef, 1
+					Slim::Player::Playlist::song($client, browseplaylistindex($client))), undef, 1
 				);
 
 				Slim::Control::Command::execute($client, ["playlist", "zap", browseplaylistindex($client)]);
 			}
-			jump($client);
 		},
 
 		'play' => sub  {
@@ -186,10 +186,12 @@ sub jump {
 	my $client = shift;
 	my $pos = shift;
 	
-	if (Slim::Buttons::Common::mode($client) eq 'playlist' || showingNowPlaying($client)) {
+	if (showingNowPlaying($client) || ! defined browseplaylistindex($client)) {
 		if (!defined($pos)) { 
 			$pos = Slim::Player::Source::playingSongIndex($client);
 		}
+		
+		$::d_playlist && Slim::Utils::Misc::msg("Playlist: Jumping to song index: $pos\n");
 		
 		#kill the animation to allow the information to update;
 		$client->killAnimation();
@@ -233,15 +235,21 @@ sub lines {
 	return ($line1, $line2, undef, $overlay2);
 }
 
-# this is somewhat confusing.
 sub showingNowPlaying {
 	my $client = shift;
-
-	return (
+	
+	# special case of playlist mode, to indicate when server needs to
+	# display the now playing details.  This includes playlist mode and
+	# now playing (jump back on wake) screensaver.
+	my $nowshowing = (
 		(Slim::Buttons::Common::mode($client) eq 'screensaver') || 
 		(Slim::Buttons::Common::mode($client) eq 'playlist') && 
-			(browseplaylistindex($client) == Slim::Player::Source::playingSongIndex($client))
+			((browseplaylistindex($client)|| 0) == Slim::Player::Source::playingSongIndex($client))
 	);
+	
+	my $wasshowing = $client->param('showingnowplaying');
+	
+	return $client->param('showingnowplaying',$nowshowing || $wasshowing);
 }
 
 sub browseplaylistindex {
