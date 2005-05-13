@@ -582,8 +582,6 @@ sub stream {
 			}			
 	
 		} else {
-			$::d_directstream && msg("No direct streaming.\n");
-
 			my $path = '/stream.mp3?player='.$client->id;
 		
 			$request_string = "GET $path HTTP/1.0\n";

@@ -510,6 +510,9 @@ sub process_slimproto_frame {
 		$client->animating(0);
 	} elsif ($op eq 'META') {
 		$::d_directstream && msg("metadata (len: $len): $data\n");
+		if ($client->can('directMetadata')) {
+			$client->directMetadata($data);
+		}
 	} elsif ($op eq 'BYE!') {
 		# THIS IS ONLY FOR THE OLD SDK4.X UPDATER
 

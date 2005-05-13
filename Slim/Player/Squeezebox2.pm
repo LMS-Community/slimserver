@@ -720,6 +720,16 @@ sub directBodyFrame {
 	}
 } 
 
+sub directMetadata {
+	my $client = shift;
+	my $metadata = shift;
+
+	Slim::Player::Protocols::HTTP::parseMetadata($client, Slim::Player::Playlist::song($client), $metadata);
+	
+	# new song, so reset counters
+	$client->songBytes(0);
+}
+
 sub failedDirectStream {
 	my $client = shift;
 	my $url = $client->directURL();

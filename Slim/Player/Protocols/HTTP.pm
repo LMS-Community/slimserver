@@ -422,48 +422,58 @@ sub readMetaData {
 		
 		$::d_remotestream && msg("metadata: $metadata\n");
 		
-#		my $title = parseMetadata($metadata);
-		if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
+		my $url = ${*$self}{'infoUrl'};
+		my $title = parseMetadata($client, $url, $metadata);
 
-			my $url      = ${*$self}{'infoUrl'};
-
-			my $oldTitle = Slim::Music::Info::getCurrentTitle(undef, $url) || '';
-			my $title    = $1;
-
-			if ($title && $] > 5.007) {
-				$title = Encode::decode('iso-8859-1', $title, Encode::FB_QUIET());
-			}
-			
-			# capitalize titles that are all lowercase
-			if (lc($title) eq $title) {
-				$title =~ s/ (
-                        (^\w)    #at the beginning of the line
-						|        # or
-						(\s\w)   #preceded by whitespace
-						|        # or
-						(-\w)   #preceded by dash
-						)
-					/\U$1/xg;
-			}
-
-			if (defined($title) && $title ne '' && $oldTitle ne $title) {
-
-				Slim::Music::Info::setCurrentTitle($url, $title);
-
-				${*$self}{'title'} = $title;
-
-				for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
-					$everybuddy->update();
-				}
-			}
-			
-			$::d_remotestream && msg("shoutcast title = $1\n");
-		}
+		${*$self}{'title'} = $title;
 
 		# new song, so reset counters
 		$client->songBytes(0);
 	}
 }
+
+sub parseMetadata {
+	my $client = shift;
+	my $url = shift;
+	my $metadata = shift;
+
+	if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
+
+		my $oldTitle = Slim::Music::Info::getCurrentTitle(undef, $url) || '';
+		my $title    = $1;
+
+		if ($title && $] > 5.007) {
+			$title = Encode::decode('iso-8859-1', $title, Encode::FB_QUIET());
+		}
+			
+		# capitalize titles that are all lowercase
+		if (lc($title) eq $title) {
+			$title =~ s/ (
+					  (^\w)    #at the beginning of the line
+					  |        # or
+					  (\s\w)   #preceded by whitespace
+					  |        # or
+					  (-\w)   #preceded by dash
+					  )
+				/\U$1/xg;
+		}
+
+		if (defined($title) && $title ne '' && $oldTitle ne $title) {
+
+			Slim::Music::Info::setCurrentTitle($url, $title);
+
+			for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
+				$everybuddy->update();
+			}
+		}
+			
+		$::d_remotestream && msg("shoutcast title = $1\n");
+		return $title;
+	}
+
+	return undef;
+}
+
 
 sub title {
 	my $self = shift;
