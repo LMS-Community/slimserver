@@ -880,7 +880,7 @@ sub browser_addtolist_done {
 			);
 		} else {
 
-			my $alphaItems = [ map { Slim::Utils::Text::ignorePunct(Slim::Utils::Text::matchCase(Slim::Music::Info::fileName($_))) } @{$itemsref} ];
+			my $alphaItems = [ map { Slim::Utils::Text::ignoreArticles(Slim::Utils::Text::ignorePunct(Slim::Utils::Text::matchCase(Slim::Music::Info::fileName($_))_) } @{$itemsref} ];
 
 			($start, $end) = alphaPageBar(
 				$alphaItems,
