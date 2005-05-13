@@ -2554,10 +2554,12 @@ SETUP_PLAYLISTDIR_DESC
 	SE	Sökväg till mappen där dina sparade spellistor lagras.<br>(Du kan lämna detta fält tomt om du inte vill spara spellistor.)
 
 SETUP_RESCAN
+	DE	Musiksammlung neu einlesen
 	EN	Rescan Music Library
+	FR	Répertorier le dossier de musique
 
 SETUP_RESCAN_BUTTON
-	DE	Erneutes Durchsuchen
+	DE	Musiksammlung aktualisieren
 	DK	Genindlæs
 	EN	Rescan
 	ES	Recopilar nuevamente
@@ -2570,10 +2572,14 @@ SETUP_RESCAN_BUTTON
 	SE	Scanna musikmappen på nytt
 
 SETUP_RESCAN_DESC
+	DE	Klicken Sie auf "Musiksammlung aktualisieren", damit SlimServer ihre Musiksammlung erneut nach neuen oder veränderten Musikstücken durchsucht. Kreuzen Sie die Checkbox an, damit SlimServer die bestehende Datenbank vor dem Durchsuchen löscht und diese von Grund auf neu aufbaut.
 	EN	Click Rescan to have SlimServer scan through your music library and add new music or update songs that have changed.  Click the checkbox and then click Rescan to make SlimServer forget about your entire library and rescan from scratch.
+	FR	Cliquer "Répertorier" et  SlimServer va répertorier de nouveau son contenu. Si vous cochez la case, SlimServer va remettre à zéro la bibliothèque existante.
 	
 SETUP_WIPECACHE
+	DE	Datenbank vor dem Durchsuchen löschen
 	EN	Clear library before rescan
+	FR	Initialiser la bibliothèque avant de répertorier
 
 RESCANNING
 	DE	Der Server durchsucht nun ihre Musiksammlung.

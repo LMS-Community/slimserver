@@ -1190,7 +1190,7 @@ sub initSetupConfig {
 						},
 				'Rescan' => {
 					'PrefOrder' => ['wipedb','rescan']
-					,'PrefsInTable' => 1
+					,'PrefsInTable' => 0
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
