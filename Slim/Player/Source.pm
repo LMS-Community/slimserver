@@ -777,6 +777,7 @@ sub jumpto {
 	}
 
 	$client->currentPlaylistChangeTime(time());
+	Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1);
 	
 	playmode($client,"play");
 }
@@ -1090,13 +1091,7 @@ sub errorOpening {
 	my $line1 = shift || $client->string('PROBLEM_OPENING');
 	my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, streamingSongIndex($client)));
 	
-	$client->showBriefly($line1, $line2, 1,1);
-	$client->param('noUpdate',1);
-	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&errorDone);
-}
-
-sub errorDone {
-	$_[0]->param('noUpdate',0);
+	$client->showBriefly($line1, $line2, 5, 1, 1);
 }
 
 sub explodeSong {
@@ -1238,7 +1233,7 @@ sub openSong {
 							$client->audioFilehandleIsSocket(2);
 							
 						}
-		
+
 						$client->remoteStreamStartTime(Time::HiRes::time());
 						$client->pauseTime(0);
 					}
@@ -1453,7 +1448,7 @@ sub openSong {
 		my $line1 = $client->string('PROBLEM_OPENING');
 		my $line2 = Slim::Music::Info::standardTitle($client, $fullpath);
 
-		$client->showBriefly($line1, $line2, 5,1);
+		$client->showBriefly($line1, $line2, 5, 1);
 
 		return undef;
 	}

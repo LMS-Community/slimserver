@@ -40,12 +40,14 @@ my $scrollSeparator = "      ";
 # function takes as arguments; the client object, the animation function to call
 # and the arguments to pass to that function.
 
-# The public functions check the animation level, and if it is equal to or
-# greater than the level required for the function, animate() is called.  If less
-# the display is updated and the function exits.
+# Update and animation routines use $client->updateMode() and $client->animateState() with the following values:
+# updateMode: 0 = normal, 1 = periodic updates are blocked, 2 = all updates are blocked
+# animateState: 
+#   0 = no animation
+#   1 = animation
+#   5 = server side showBriefly [for alignment with SBG/SB2]
 
-# The following public functions provide information about whether the animation
-# is running, and allow the animation to be stopped.
+# The following public functions allow the animation to be stopped.
 
 # All animations will have a pending timer for animate() if they are currently animating
 
@@ -53,16 +55,15 @@ my $scrollSeparator = "      ";
 sub killAnimation {
 	my $client = shift;
 	if (!$client->isPlayer()) { return; };
-	Slim::Buttons::Common::param($client,'noUpdate',0);
 	Slim::Utils::Timers::killTimers($client, \&animate);
 	Slim::Utils::Timers::killTimers($client, \&endAnimation);
-	Slim::Utils::Timers::killTimers($client, \&update);
-	$client->animating(0);
+	$client->animateState(0);
+	$client->updateMode(0);
 }
 
 sub endAnimation {
 	my $client = shift;
-	Slim::Buttons::Common::param($client,'noUpdate',0); 
+	$client->updateMode(0);
 	$client->update();
 }
 
@@ -77,9 +78,13 @@ sub showBriefly {
 	my $line2 = shift;
 	my $duration = shift;
 	my $firstLineIfDoubled = shift;
+	my $blockUpdate = shift;
 
 	my $parsed;
-	
+
+	# return if update blocked or not player
+	return if (($client->updateMode() == 2) || !$client->isPlayer());
+
 	if (ref($line1) eq 'HASH') {
 		$parsed = $line1;
 	} else {
@@ -92,39 +97,30 @@ sub showBriefly {
 	
 	my $pause = Slim::Buttons::Common::paramOrPref($client,'scrollPause');
 	
-	if (!$client->isPlayer()) { return; };
-
 	if (!$duration) {
 		$duration = 1;
 	}
-	
+
 	my ($measure1, $measure2);
-	
+	my $rate;
+
 	my $double = ($client->linesPerScreen() == 1);
 	
 	if ($double) {
 		($measure1, $measure2) = Slim::Hardware::VFD::doubleSize($client,$parsed);
+		$rate = Slim::Buttons::Common::paramOrPref($client,'scrollRateDouble');
 	} else {
 		($measure1, $measure2) = ($parsed->{line1}, $parsed->{line2});
+		$rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');
 	}
 	
-	if (($duration >  $pause) && (Slim::Display::Display::lineLength($measure2) > 40) || (Slim::Display::Display::lineLength($measure1) > 40)) {
+	if (($duration >  $pause) && ($rate != 0) && (Slim::Display::Display::lineLength($measure2) > 40) || (Slim::Display::Display::lineLength($measure1) > 40)) {
 
 		my @newqueue = ();
 		my ($t1, $t2);
-		
-		my $rate;
 	
-		# double them
 		if ($double) {
-			$rate = Slim::Buttons::Common::paramOrPref($client,'scrollRateDouble');
 			($parsed->{line1}, $parsed->{line2}) = Slim::Hardware::VFD::doubleSize($client,$parsed);
-		} else {
-			$rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');
-		}
-		if ($rate == 0) {
-			$client->update();
-			return;
 		}
 	
 		# add some blank space to the end of each line
@@ -150,6 +146,9 @@ sub showBriefly {
 		my $len2 = Slim::Display::Display::lineLength($measure2);
 		my $len1 = Slim::Display::Display::lineLength($measure1);
 
+		killAnimation($client);
+		$client->animateState(5);
+		$client->updateMode($blockUpdate ? 2 : 1);
 		startAnimate ($client,\&animateScrollBottom
 				,$pause
 				,[$parsed->{line1},$parsed->{line2}] #lines
@@ -159,12 +158,13 @@ sub showBriefly {
 				,[$double || (Slim::Display::Display::lineLength($parsed->{line1}) > 40),Slim::Display::Display::lineLength($parsed->{line2}) > 40] #scroll the top if doublesize
 				,$rate,$double);
 		
-		$client->animating(2);
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $duration, \&endAnimation);
 	} else {
+		killAnimation($client);
 		$client->update($parsed);
-	
-		Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $duration,\&update)
+		$client->animateState(5);
+		$client->updateMode($blockUpdate ? 2 : 1);
+		Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $duration,\&endAnimation)
 	}
 }
 
@@ -184,6 +184,9 @@ sub pushLeft {
 	$start1 = Slim::Display::Display::subString($start1 . ' ' x (40 - Slim::Display::Display::lineLength($start1)),0,40);
 	$start2 = Slim::Display::Display::subString($start2 . ' ' x (40 - Slim::Display::Display::lineLength($start2)),0,40);
 
+	killAnimation($client);
+	$client->animateState(1);
+	$client->updateMode(1);
 	startAnimate($client,\&animateSlideWindows
 			,[$start1 . $end1,$start2 . $end2] #lines
 			,[40,40],[1,1],[3,3] #end, pos, step
@@ -202,6 +205,9 @@ sub pushRight {
 	$start1 = Slim::Display::Display::subString($start1 . ' ' x (40 - Slim::Display::Display::lineLength($start1)),0,40);
 	$start2 = Slim::Display::Display::subString($start2 . ' ' x (40 - Slim::Display::Display::lineLength($start2)),0,40);
 
+	killAnimation($client);
+	$client->animateState(1);
+	$client->updateMode(1);
 	startAnimate($client,\&animateSlideWindows
 			,[$end1 . $start1,$end2 . $start2] #lines
 			,[40,40],[39,39],[-3,-3] #end, pos, step
@@ -220,6 +226,10 @@ sub doEasterEgg {
 		$text1 = (' ' x (int((40-Slim::Display::Display::lineLength($text1))/2))) . $text1 . (' ' x (int((40-Slim::Display::Display::lineLength($text1))/2)));
 		my $text2 =  join(', ', @main::AUTHORS) . ', ';
 		$text2 = $text2 . $text2 . $text2 . $text2;
+
+		killAnimation($client);
+		$client->animateState(1);
+		$client->updateMode(1);
 		startAnimate($client,\&animateSlideWindows
 			,[$text1,$text2] #lines
 			,[40,Slim::Display::Display::lineLength($text2) - 40],[0,0],[0,1] #end, pos, step
@@ -233,6 +243,10 @@ sub doEasterEgg {
 		$text2 = Slim::Display::Display::subString(($text2 . (' ' x (40 - Slim::Display::Display::lineLength($text2)))),0,40);
 		my $line1 = $text1 . join('',reverse(@{Slim::Display::Display::splitString($text2)})) . $text1;
 		my $line2 = $text2 . join('',reverse(@{Slim::Display::Display::splitString($text1)})) . $text2;
+
+		killAnimation($client);
+		$client->animateState(1);
+		$client->updateMode(1);
 		startAnimate($client,\&animateSlideWindows
 			,[$line1,$line2] #lines
 			,[80,80],[80,0],[-1,1] #end, pos, step
@@ -244,6 +258,10 @@ sub doEasterEgg {
 		my $text2 =  join(', ', @main::AUTHORS) . ', ';
 		while (Slim::Display::Display::lineLength($text2) < 40) { $text2 .= $text2; }
 		$text2 .= Slim::Display::Display::subString($text2,0,40);
+
+		killAnimation($client);
+		$client->animateState(1);
+		$client->updateMode(1);
 		startAnimate($client,\&animateFunky
 			,[$text1,$text2] #lines
 			,[Slim::Display::Display::lineLength($text1) - 40,Slim::Display::Display::lineLength($text2) - 40],[0,0],[1,1] #end, pos, step
@@ -310,7 +328,7 @@ sub scrollBottom {
 	my $lines = $client->parseLines(&$linefunc($client));
 
 	return if Slim::Buttons::Common::param($client,'noScroll');
-	
+
 	my $line1 = $lines->{line1} || '';
 	my $line2 = $lines->{line2} || '';
 	my $overlay1 = $lines->{overlay1} || '';
@@ -333,6 +351,9 @@ sub scrollBottom {
 		}
 		return;
 	}
+	
+	# cache line2 so we can test whether it changes
+	$client->scrollData($line2);
 
 	# special case scrolling for nowplaying
 	# now uses a client param, undef or zero for static top line, non-zero for a dynamic top line.
@@ -378,6 +399,9 @@ sub scrollBottom {
 	
 		$len = Slim::Display::Display::lineLength($measure2);
 
+		killAnimation($client);
+		$client->animateState(1);
+		$client->updateMode(1);
 		startAnimate ($client,\&animateScrollBottom
 				,$now
 				,[$line1,$line2] #lines
@@ -410,6 +434,9 @@ sub scrollSingle {
 		$text2 = $text2 . $scrollSeparator;
 		my $text22 = $text2 . $text2;
 
+		killAnimation($client);
+		$client->animateState(1);
+		$client->updateMode(1);
 		startAnimate($client,\&animateScrollSingle1, \$text22, Slim::Display::Display::lineLength($text2), 0);
 	}
 }
@@ -437,6 +464,9 @@ sub scrollDouble {
 		my $text11 = $text1 . $text1;
 		my $text22 = $text2 . $text2;
 
+		killAnimation($client);
+		$client->animateState(1);
+		$client->updateMode(1);
 		startAnimate($client,\&animateScrollDouble,\$text11,\$text22,Slim::Display::Display::lineLength($text1),
 					 Slim::Display::Display::lineLength($text1),$rate);
 	}
@@ -450,7 +480,6 @@ sub scrollDouble {
 # animations.
 sub startAnimate {
 	my ($client,$animationFunction,@args) = @_;
-	killAnimation($client);
 	animate($client,$animationFunction,Time::HiRes::time(),@args);
 }
 
@@ -469,9 +498,9 @@ sub animate {
 	if (defined($animationFunction) && $framedelay) {
 		my $when = $now + $framedelay;
 		Slim::Utils::Timers::setHighTimer($client,$when,\&animate,$animationFunction,$when,@animateArgs);
-		$client->animating(1);
 	} else {
-		$client->animating(0);
+		$client->animateState(0);
+		$client->updateMode(0);
 	}
 }
 
@@ -498,7 +527,7 @@ sub animateFrames {
 		$frameref = shift @$framesref;
 	}
 
-	$client->update([$frameref->[1],$frameref->[2]],$noDoubleSize);
+	$client->animateUpdate([$frameref->[1],$frameref->[2]],$noDoubleSize);
 	if ($repeat) { push @$framesref,$frameref; }
 	if (@$framesref) {
 		return ($frameref->[0],\&animateFrames,$framesref,$repeat,$noDoubleSize);
@@ -524,7 +553,7 @@ sub animatePush {
 		$pos += $step * (int($overdue/0.0125));
 		if ($pos >40) { $pos = 40; }
 	}
-	$client->update(
+	$client->animateUpdate(
 		[(Slim::Display::Display::subString($linesref->[0][0],$pos,40-$pos) . $linesref->[0][1])
 		,(Slim::Display::Display::subString($linesref->[1][0],$pos,40-$pos) . $linesref->[1][1])]
 		,$noDoubleSize);
@@ -562,7 +591,7 @@ sub animateSlideWindows {
 		}
 	}
 	
-	$client->update([Slim::Display::Display::subString($linesref->[0],$posref->[0],40)
+	$client->animateUpdate([Slim::Display::Display::subString($linesref->[0],$posref->[0],40)
 		,Slim::Display::Display::subString($linesref->[1],$posref->[1],40)]
 		,$noDoubleSize);
 	$posref->[0] += $stepref->[0];
@@ -603,7 +632,7 @@ sub animateSlideWindowsOverlay {
 			$$posref[$i] = $$endref[$i] if $$posref[$i] > $$endref[$i];
 		}
 	}
-	$client->update([$client->renderOverlay(Slim::Display::Display::subString($linesref->[0],$posref->[0],40)
+	$client->animateUpdate([$client->renderOverlay(Slim::Display::Display::subString($linesref->[0],$posref->[0],40)
 							,Slim::Display::Display::subString($linesref->[1],$posref->[1],40)
 							,@$overref)]
 		,$noDoubleSize);
@@ -666,13 +695,19 @@ sub animateScrollSingle1 {
 	my $hold = Slim::Buttons::Common::paramOrPref($client,'scrollPause');
 	my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');
 	if ($rate == 0) {
-		$client->update();
+		$client->animateUpdate();
 		return;
 	}
 
 	my $lines = $client->parseLines(Slim::Display::Display::curLines($client));
+	# check whether line2 has changed and quit scrolling if so
+	if (!defined($lines->{line2}) || ($lines->{line2} ne $client->scrollData())) {
+		killAnimation($client);
+		return;
+	}
+	
 	if ($pause_count < $hold) {
-		$client->update($lines,0);
+		$client->animateUpdate($lines,0);
 		return ($rate,\&animateScrollSingle1, $text22, $text22_length,
 				$pause_count + $rate);
 	} else {
@@ -691,7 +726,7 @@ sub animateScrollSingle2 {
 	my $line1_age = shift(@_) + $overdue;
 	my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRate');
 	if ($rate == 0) {
-		$client->update();
+		$client->animateUpdate();
 		return;
 	}
 	if ($overdue > $rate) {
@@ -706,8 +741,13 @@ sub animateScrollSingle2 {
 			# little less than a second.
 			$lines = $client->parseLines(Slim::Display::Display::curLines($client));
 			$line1_age = 0;
+			# check whether line2 has changed and quit scrolling if so
+			if (!defined($lines->{line2}) || ($lines->{line2} ne $client->scrollData())) {
+				killAnimation($client);
+				return;
+			}
 		}
-		$client->update([$lines->{line1}, Slim::Display::Display::subString($$text22, $ind, 40),$lines->{overlay1}], 0);
+		$client->animateUpdate([$lines->{line1}, Slim::Display::Display::subString($$text22, $ind, 40),$lines->{overlay1}], 0);
 
 		return ($rate, \&animateScrollSingle2, $text22, $ind+1, $len,
 				 $lines, $line1_age + $rate);
@@ -726,18 +766,18 @@ sub animateScrollDouble {
 	my $hold = Slim::Buttons::Common::paramOrPref($client,'scrollPauseDouble');
 	my $rate = Slim::Buttons::Common::paramOrPref($client,'scrollRateDouble');
 	if ($rate == 0) {
-		$client->update();
+		$client->animateUpdate();
 		return;
 	}
 	if ($overdue > $rate) {
 		$ind += int($overdue/$rate);
 	}
 	if ($ind > $len) {
-		$client->update([Slim::Display::Display::subString($$text11, 0, 40), Slim::Display::Display::subString($$text22, 0, 40)], 1);
+		$client->animateUpdate([Slim::Display::Display::subString($$text11, 0, 40), Slim::Display::Display::subString($$text22, 0, 40)], 1);
 		return ($hold + $rate, \&animateScrollDouble, $text11, $text22, 0, $len);
 	}
 	else {
-		$client->update([ Slim::Display::Display::subString($$text11, $ind, 40), Slim::Display::Display::subString($$text22, $ind, 40)], 1);
+		$client->animateUpdate([ Slim::Display::Display::subString($$text11, $ind, 40), Slim::Display::Display::subString($$text22, $ind, 40)], 1);
 		return ($rate,\&animateScrollDouble, $text11, $text22, $ind+1, $len);
 	}
 }

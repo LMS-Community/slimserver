@@ -71,6 +71,23 @@ sub new {
 	return $client;
 }
 
+sub init {
+	my $client = shift;
+
+	$client->SUPER::init();
+
+	$client->periodicScreenRefresh(); 
+}
+
+# periodic screen refresh
+sub periodicScreenRefresh {
+	my $client = shift;
+
+	$client->scrollBottom() unless ($client->updateMode());
+
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&periodicScreenRefresh);
+}
+
 sub connected {
 	return 1;
 }
@@ -187,10 +204,6 @@ sub formats {
 	return ('mp3');
 }
 
-sub refresh {
-	shift->update(@_);
-}
-
 sub vfd {
 	my $client = shift;
 	my $data = shift;
@@ -264,5 +277,6 @@ sub treble {
 
 	return $treble;
 }
+
 
 1;

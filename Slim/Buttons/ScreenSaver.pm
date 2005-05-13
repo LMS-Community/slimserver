@@ -81,9 +81,8 @@ sub screenSaver {
 		$client->brightness($dim);
 	}
 
-	if ($client->animating() == 1) {
-		# don't interrupt client side animations for regular animations 
-		# animating() would return 2 if we're just scrolling
+	if ($client->updateMode() == 2) {
+		# don't change whilst updates blocked
 	} elsif ($mode eq 'block') {
 		# blocked mode handles its own updating of the screen.
 	} elsif ($timeout && 
@@ -98,10 +97,8 @@ sub screenSaver {
 		if ($saver eq 'playlist') {
 			if ($mode eq 'playlist') {
 				Slim::Buttons::Playlist::jump($client);
-				$client->scrollBottom();
 			} else {
 				Slim::Buttons::Common::pushMode($client,'playlist');
-				$client->update();
 			}
 		} else {
 			if (Slim::Buttons::Common::validMode($saver)) {
@@ -110,8 +107,9 @@ sub screenSaver {
 				$::d_plugins && msg("Mode ".$saver." not found, using default\n");
 				Slim::Buttons::Common::pushMode($client,'screensaver');
 			}
-			$client->update();
 		}
+		$client->update();
+
 	} elsif (!$client->power()) {
 		$saver = Slim::Utils::Prefs::clientGet($client,'offsaver');
 		$saver =~ s/^SCREENSAVER\./OFF\./;
@@ -123,12 +121,9 @@ sub screenSaver {
 				Slim::Buttons::Common::setMode($client,'off') unless $mode eq 'off';
 			}
 			$client->update();
-		} else {
-			$client->scrollBottom() if ($client->animating() != 2);
 		}
 	} else {
-		# try to scroll the bottom, if necessary
-		$client->scrollBottom() if ($client->animating() != 2);
+		# do nothing - periodic updates handled per client where required
 	}
 	# Call ourselves again after 1 second
 	Slim::Utils::Timers::setTimer($client, ($now + 1.0), \&screenSaver);

@@ -34,9 +34,21 @@ BEGIN {
 
 # We inherit new() completely from our parent class.
 
-# squeezebox does not need an update here, so a noop is OK.
-sub refresh {
-	# my $client = shift;
+sub init {
+	my $client = shift;
+
+	$client->SUPER::init();
+
+	$client->periodicScreenRefresh(); 
+}
+
+# periodic screen refresh for players requiring it
+sub periodicScreenRefresh {
+	my $client = shift;
+
+	$client->scrollBottom() unless ($client->updateMode());
+
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&periodicScreenRefresh);
 }
 
 sub reconnect {
@@ -86,7 +98,8 @@ sub reconnect {
 		}
 	}
 
-	$client->animating(0);
+	$client->animateState(0);
+	$client->updateMode(0);
 
 	$client->brightness(Slim::Utils::Prefs::clientGet($client,$client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 	$client->update();	
@@ -798,4 +811,5 @@ sub treble {
 sub requestStatus {
 	shift->sendFrame('i2cc');
 }
+
 1;

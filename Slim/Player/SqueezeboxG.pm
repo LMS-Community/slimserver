@@ -33,6 +33,7 @@ our $defaultPrefs = {
 	'idleBrightness'	=> 2,
 };
 
+
 sub new {
 	my $class = shift;
 
@@ -45,6 +46,37 @@ sub init {
 	my $client = shift;
 	# make sure any preferences unique to this client may not have set are set to the default
 	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
+
+	# init renderCache for client
+	my $cache = {
+		'changed'      => 0,        # last render resulted in no change to screen
+		'scrolling'    => 0,        # last render enabled line2 scroll mode
+		'newscrollbits'=> 0,        # change to scroll bits on last render
+		'bitsref'      => undef,    # ref to bitmap result of last render
+		'fonts'        => 0,        # font used for last render
+		'screensize'   => 0,        # screensize for last render [0 forces reset on first render]
+		'line1'        => undef,    # line1 text at last render
+		'line1bits'    => '',       # result of rendering above line1
+		'line1finish'  => 0,        # length of line1 bits
+		'line2'        => undef,    # line2 text at last render
+		'line2bits'    => '',       # result of rendering line2 if not scrolling
+		'line2finish'  => 0,        # length of line2 bits
+		'scrollbitsref'=> undef,    # ref to result of rendering line2 if scrolling required
+		'endscroll'    => 0,        # offset for ending scroll at
+		'overlay1'     => undef,    # overlay1 at last render
+		'overlay1bits' => '',       # result of rendering overlay1
+		'overlay1start'=> 0,        # start position for overlay1 
+		'overlay2'     => undef,    # overlay2 at last render
+		'overlay2bits' => '',       # result of rendering overlay2
+		'overlay2start'=> 0,        # start position for overlay2 
+		'center1'      => undef,    # center1 at last render 
+		'center1bits'  => '',       # result of rendering center1
+		'center2'      => undef,    # center2 at last render
+		'center2bits'  => '',       # result of rendering center2
+		'line2height'  => 0,        # height of line2 fonts - scrollable portion
+	};
+	$client->renderCache($cache);
+
 	$client->SUPER::init();
 }
 
@@ -124,7 +156,6 @@ sub linesPerScreen {
 my %fontSymbols = (
 	'notesymbol' => "\x01",
 	'rightarrow' => "\x02",
-	
 	'progressEnd' => "\x03",
 	'progress1e' => "\x04",
 	'progress2e' => "\x05",
@@ -134,33 +165,14 @@ my %fontSymbols = (
 	'progress3' => "\x09",
 	'cursor'	=> "\x0a",
 	'mixable' => "\x0b",
-	
 	'hardspace' => "\x20"
 );
 
-sub update {
-	my $client = shift;
-	my $lines = shift;
-	my $nodoublesize = shift;
-
-	if ($client->param('noUpdate')) {
-		#mode has blocked client updates temporarily
-	} else { 
-		$client->killAnimation();
-		if (!defined($lines)) {
-			my @lines = Slim::Display::Display::curLines($client);
-			$lines = \@lines;
-		}
-	
-		$client->drawFrameBuf($client->render($lines),$lines);
-	}
-}	
-
-sub preRender {
+sub render {
 	use bytes;
 	my $client = shift;
 	my $lines = shift;
-	my $frameHeader = shift || '';
+	my $scroll = shift || 0; # horiz line 2 scroll mode enabled if set and line2 too long
 
 	my $parts;
 	
@@ -170,128 +182,276 @@ sub preRender {
 		$parts = $client->parseLines($lines);
 	}
 
-	my $bits = '';
-	my $otherbits = undef;
-	my $fonts;	
-	
-	if (!defined($parts->{fonts})) {
-		$parts->{fonts} = $client->fonts();
-	}
-	
-	$fonts = $parts->{fonts};
-	
+	my $cache = $client->renderCache();
+	$cache->{changed} = 0;
+	$cache->{newscrollbits} = 0;
+
 	my $screensize = $client->screenBytes();
-	my $line1same = 1;
-	
-	# check and see if the line 1 bits have already been rendered and use those.
-	if (!defined($parts->{line1bits})) {
-	    $client->prevline1($parts->{line1});	    
-		$parts->{line1bits} = Slim::Display::Graphics::string($fonts->[0], $parts->{line1});
-		$parts->{line1finish} = length($parts->{line1bits});
-		$line1same = 0;
-	}
-		
-	# check and see if the line 2 bits have already been rendered and use those.
-	if (!defined($parts->{line2bits})) {
-		$client->prevline2($parts->{line2});
-		# if we're only displaying the second line (i.e. single line mode) and the second line is blank,
-		# copy the first to the second.
-		if (!defined($fonts->[0]) && $parts->{line2} eq '') { $parts->{line2} = $parts->{line1}; };
-		$parts->{line2bits} = Slim::Display::Graphics::string($fonts->[1], $parts->{line2});
-		$parts->{line2finish} = length($parts->{line2bits});
+	if ($screensize != $cache->{screensize}) {
+		$cache->{screensize} = $screensize;
+		$cache->{changed} = 1;
 	}
 
-	# get the first line overlay and use the rendered cached bits if possible
-	if (!defined($parts->{overlay1bits})) {
-		if (defined($parts->{overlay1})) {
-			$parts->{overlay1bits} = Slim::Display::Graphics::string($fonts->[0], "\x00" . $parts->{overlay1});
-			my $len = length($parts->{overlay1bits});
-			if ($len > $screensize) {
-				# ensure overlay fits on screen
-				$parts->{overlay1bits} = substr($parts->{overlay1bits}, 0, $screensize);
-				$len = $screensize;
-			}
-			$parts->{overlay1start} = $screensize - $len;
-			$line1same = 0;
-		} else {
-			$parts->{overlay1bits} = '';
-			$parts->{overlay1start} = $screensize;
-			$line1same = 0;
-		}
-	}
-		
-	# get the second line overlay and use the rendered cached bits if possible
-	if (!defined($parts->{overlay2bits})) {
-		if (defined($parts->{overlay2})) {
-			$parts->{overlay2bits} = Slim::Display::Graphics::string($fonts->[1], "\x00" . $parts->{overlay2});
-			my $len = length($parts->{overlay2bits});
-			if ($len > $screensize) {
-				# ensure overlay fits on screen
-				$parts->{overlay2bits} = substr($parts->{overlay2bits}, 0, $screensize);
-				$len = $screensize;
-			}
-			$parts->{overlay2start} = $screensize - $len;
-		} else {
-			$parts->{overlay2bits} = '';
-			$parts->{overlay2start} = $screensize;
-		}
+	my $fonts = defined($parts->{fonts}) ? $parts->{fonts} : $client->fonts();
+	if ($fonts != $cache->{fonts}) {
+		$cache->{fonts} = $fonts;
+		$cache->{line2height} = Slim::Display::Graphics::extent($fonts->[1]);
+		$cache->{changed} = 1;
 	}
 
-	# fast bitmap assemble for scrolling and no changes - assume no other text
-	if (defined($parts->{scrolling}) && $line1same) {
-		$bits = $parts->{cache} | $frameHeader . substr($parts->{line2bits}, $parts->{offset2}, $parts->{overlay2start})
-			. $parts->{overlay2bits};
-		$parts->{rendered} = \$bits;
-		return $parts;
+	if ($cache->{changed}) {
+		# force full rerender with new font or new screensize
+		$cache->{scrolling} = 0;
+		$cache->{line1} = undef;
+		$cache->{line1bits} = '';
+		$cache->{line1finish} = 0;
+		$cache->{line2} = undef;
+		$cache->{line2bits} = '';
+		$cache->{line2finish} = 0;
+		$cache->{scrollbitsref} = undef;
+		$cache->{overlay1} = undef;
+		$cache->{overlay1bits} = '';
+		$cache->{overlay1start} = $screensize;
+		$cache->{overlay2} = undef;
+		$cache->{overlay2bits} = '';
+		$cache->{overlay2start} = $screensize;
+		$cache->{center1} = undef;
+		$cache->{center1bits} = '';
+   		$cache->{center2} = undef;
+		$cache->{center2bits} = '';
 	}
+
+	# if we're only displaying the second line (i.e. single line mode) and the second line is blank,
+	# copy the first to the second.
+	if (!defined($fonts->[0]) && $parts->{line2} eq '') { $parts->{line2} = $parts->{line1}; }
 	
-	# render other text - no caching
-	if (defined($parts->{center1}) || defined($parts->{center2}) || $parts->{bits}) {
-		my $center1 = '';
-		my $center2 = '';
-		if (defined($parts->{center1})) {
-			$center1 = Slim::Display::Graphics::string($fonts->[0], $parts->{center1});
-			$center1 = chr(0) x ( int( ($screensize-length($center1)) / ($client->bytesPerColumn()*2) )
+	# line 1 - render if changed
+	if (defined($parts->{line1}) && (!defined($cache->{line1}) || ($parts->{line1} ne $cache->{line1}))) {
+		$cache->{line1} = $parts->{line1};
+		$cache->{line1bits} = Slim::Display::Graphics::string($fonts->[0], $parts->{line1});
+		$cache->{line1finish} = length($cache->{line1bits});
+		$cache->{changed} = 1;
+	} elsif (!defined($parts->{line1}) && defined($cache->{line1})) {
+		$cache->{line1} = undef;
+		$cache->{line1bits} = '';
+		$cache->{line1finish} = 0;
+		$cache->{changed} = 1;
+	}
+
+	# line 2 - render if changed
+	if (defined($parts->{line2}) && 
+		(!defined($cache->{line2}) || ($parts->{line2} ne $cache->{line2}) || (!$scroll && $cache->{scrolling}) )) {
+		$cache->{line2} = $parts->{line2};
+		$cache->{line2bits} = Slim::Display::Graphics::string($fonts->[1], $parts->{line2});
+		$cache->{scrollbitsref} = undef;
+		$cache->{scrolling} = 0;
+		$cache->{line2finish} = length($cache->{line2bits});
+		$cache->{changed} = 1;
+	} elsif (!defined($parts->{line2}) && defined($cache->{line2})) {
+		$cache->{line2} = undef;
+		$cache->{line2bits} = '';
+		$cache->{line2finsh} = 0;
+		$cache->{changed} = 1;
+		$cache->{scrolling} = 0;
+		$cache->{scrollbitsref} = undef;
+	}
+
+	# overlay 1 - render if changed
+	if (defined($parts->{overlay1}) && (!defined($cache->{overlay1}) || ($parts->{overlay1} ne $cache->{overlay1}))) {
+		$cache->{overlay1} = $parts->{overlay1};
+		$cache->{overlay1bits} = Slim::Display::Graphics::string($fonts->[0], "\x00" . $parts->{overlay1});
+		if (length($cache->{overlay1bits}) > $screensize ) {
+			$cache->{overlay1bits} = substr($cache->{overlay1bits}, 0, $screensize);
+		}
+		$cache->{overlay1start} = $screensize - length($cache->{overlay1bits});
+		$cache->{changed} = 1;
+	} elsif (!defined($parts->{overlay1}) && defined($cache->{overlay1})) {
+		$cache->{overlay1} = undef;
+		$cache->{overlay1bits} = '';
+		$cache->{overlay1start} = $screensize;
+		$cache->{changed} = 1;
+	}
+
+	# overlay 2 - render if changed
+	if (defined($parts->{overlay2}) && (!defined($cache->{overlay2}) || ($parts->{overlay2} ne $cache->{overlay2}))) {
+		$cache->{overlay2} = $parts->{overlay2};
+		$cache->{overlay2bits} = Slim::Display::Graphics::string($fonts->[1], "\x00" . $parts->{overlay2});
+		if (length($cache->{overlay2bits}) > $screensize ) {
+			$cache->{overlay2bits} = substr($cache->{overlay2bits}, 0, $screensize);
+		}
+		$cache->{overlay2start} = $screensize - length($cache->{overlay2bits});
+		$cache->{changed} = 1;
+	} elsif (!defined($parts->{overlay2}) && defined($cache->{overlay2})) {
+		$cache->{overlay2} = undef;
+		$cache->{overlay2bits} = '';
+		$cache->{overlay2start} = $screensize;
+		$cache->{changed} = 1;
+	}
+
+	# center 1 - render if changed
+	if (defined($parts->{center1}) && (!defined($cache->{center1}) || ($parts->{center1} ne $cache->{center1}))) {
+		$cache->{center1} = $parts->{center1};
+		my $center1 = Slim::Display::Graphics::string($fonts->[0], $parts->{center1});
+		$center1 = chr(0) x ( int( ($screensize-length($center1)) / ($client->bytesPerColumn()*2) )
 					      * $client->bytesPerColumn() ) . $center1;
-		}
-	
-		if (defined($parts->{center2})) {
-			$center2 = Slim::Display::Graphics::string($fonts->[1], $parts->{center2});				
-			$center2 = chr(0) x ( int( ($screensize-length($center2)) / ($client->bytesPerColumn()*2) )
+		$cache->{center1bits} = substr($center1, 0, $screensize);
+		$cache->{changed} = 1;
+	} elsif (!defined($parts->{center1}) && defined($cache->{center1})) {
+		$cache->{center1} = undef;
+		$cache->{center1bits} = '';
+		$cache->{changed} = 1;
+	}
+
+	# center 2 - render if changed
+	if (defined($parts->{center2}) && (!defined($cache->{center2}) || ($parts->{center2} ne $cache->{center2}))) {
+		$cache->{center2} = $parts->{center2};
+		my $center2 = Slim::Display::Graphics::string($fonts->[1], $parts->{center2});
+		$center2 = chr(0) x ( int( ($screensize-length($center2)) / ($client->bytesPerColumn()*2) )
 					      * $client->bytesPerColumn() ) . $center2;
-		}
-		$line1same = 0;
-		$otherbits = $frameHeader . substr($parts->{bits} | $center1 | $center2 , 0, $screensize);
+		$cache->{center2bits} = substr($center2, 0, $screensize);
+		$cache->{changed} = 1;
+	} elsif (!defined($parts->{center2}) && defined($cache->{center2})) {
+		$cache->{center2} = undef;
+		$cache->{center2bits} = '';
+		$cache->{changed} = 1;
 	}
+			
+	# Assemble components
 
-	# standard bitmap assemble
+	my $bits;
+
 	# 1st line
-	if ($parts->{line1finish} < $parts->{overlay1start}) {
-		$parts->{cache} = $frameHeader . $parts->{line1bits}. chr(0) x ($parts->{overlay1start} - $parts->{line1finish}) 
-			. $parts->{overlay1bits};
+	if ($cache->{line1finish} < $cache->{overlay1start}) {
+		$bits = $cache->{line1bits}. chr(0) x ($cache->{overlay1start} - $cache->{line1finish}) 
+			. $cache->{overlay1bits};
 	} else {
-		$parts->{cache} = $frameHeader . substr($parts->{line1bits}, 0, $parts->{overlay1start}). $parts->{overlay1bits};
+		$bits = substr($cache->{line1bits}, 0, $cache->{overlay1start}). $cache->{overlay1bits};
 	}
-	# 2nd line
-	$parts->{offset2} = 0 unless defined $parts->{offset2};
-	if ($parts->{line2finish} < $parts->{overlay2start}) {
-		$bits = $parts->{cache} | $frameHeader . $parts->{line2bits} 
-		    . chr(0) x ($parts->{overlay2start} - $parts->{line2finish}) . $parts->{overlay2bits};
+	# Add 2nd line
+	if ($cache->{line2finish} < $cache->{overlay2start}) {
+		$bits |= $cache->{line2bits}. chr(0) x ($cache->{overlay2start} - $cache->{line2finish}) 
+			. $cache->{overlay2bits};
 	} else {
-		$bits = $parts->{cache} | $frameHeader . substr($parts->{line2bits}, $parts->{offset2}, $parts->{overlay2start}) 
-			. $parts->{overlay2bits};
-	}
-	$bits |= $otherbits if defined $otherbits;
+		if ($scroll) {
+			# enable line 2 scrolling, remove line2bits from base display and move to scrollbits
+			if ($cache->{line2finish} != 0) {
+				my $scrollbits = $cache->{line2bits} .  chr(0) x (40 * $client->bytesPerColumn()) . $cache->{line2bits};
+				$cache->{scrollbitsref} = \$scrollbits;
+				$cache->{line2bits} = '';
+				$cache->{endscroll} = $cache->{line2finish} + (40 * $client->bytesPerColumn());
+				$cache->{line2finish} = 0;
+				$cache->{scrolling} = 1;
+				$cache->{newscrollbits} = 1;
 
-	$parts->{rendered} = \$bits;
-	
-	return $parts;
+			}
+			$bits |= chr(0) x $cache->{overlay2start} . $cache->{overlay2bits};
+
+		} else {
+			# scrolling not enabled - truncate line2
+			$bits |= substr($cache->{line2bits}, 0, $cache->{overlay2start}). $cache->{overlay2bits};
+		}
+	}
+
+	# Add other bits
+	if (defined($cache->{center1})) { 
+		$bits |= $cache->{center1bits};
+	}
+	if (defined($cache->{center2})) { 
+		$bits |= $cache->{center2bits};
+	}
+	if (defined($parts->{bits}) && length($parts->{bits})) { 
+		$bits |= substr($parts->{bits}, 0, $screensize);
+		$cache->{changed} = 1;
+	}
+
+	$cache->{bitsref} = \$bits;
+
+	return $cache;
 }
 
-sub render {
+# Update and animation routines use $client->updateMode() and $client->animateState(), $client->scrollState()
+#
+# updateMode: 
+#   0 = normal
+#   1 = periodic updates are blocked
+#   2 = all updates are blocked
+#
+# animateState: 
+#   0 = no animation
+#   1 = client side push/bump animations
+#   2 = update scheduled (timer set to callback update)
+#   3 = server side push & bumpLeft/Right
+#   4 = server side bumpUp/Down
+#   5 = server side showBriefly
+#
+# scrollState:
+#   0 = no scrolling
+#   1 = server side scrolling
+#  2+ = <reserved for client side scrolling>
+
+sub update {
 	my $client = shift;
-	my $parts = $client->preRender(@_);
-	return $parts->{rendered};
+	my $lines = shift;
+	my $nodoublesize = shift;    # backwards compatibility - not used
+	my $scrollMode = shift || 0; # 0 = normal scroll, 1 = scroll once only, 2 = no scroll
+
+	# return if updates are blocked
+	return if ($client->updateMode() == 2);
+
+	# clear any server side animations or pending updates, don't kill scrolling
+	$client->killAnimation(1) if ($client->animateState() >= 2);
+
+	my $scroll = ($scrollMode == 0 || $scrollMode == 1) ? 1: 0;
+	my $scrollonce = ($scrollMode == 1) ? 1 : 0;
+
+	my $render;
+
+	if (defined($lines)) {
+		$render = $client->render($lines, $scroll);
+	} else {
+		my $linefunc  = $client->lines();
+		my $parts = $client->parseLines(&$linefunc($client));
+		$render = $client->render($parts, $scroll);
+	}
+
+	if (!$render->{scrolling}) {
+		# lines don't require scrolling
+		if ($client->scrollState() == 1) {
+			$client->scrollStop();
+		}
+		
+		# only refresh screen if changed - once SB1 supports this and SB2 does not need the visu frames
+		#$client->drawFrameBuf($render->{bitsref}) if $render->{changed};
+		# for now always refresh screen:
+		$client->drawFrameBuf($render->{bitsref});
+	} else {
+		if ($client->scrollState() != 1) {
+			# start scrolling - new scolling text
+			$client->scrollInit($render, $scrollonce);
+		} elsif ($render->{newscrollbits}) {
+			# new scrolling text and background - restart 
+			$client->scrollStop();
+			$client->scrollInit($render, $scrollonce);
+		} else {
+			# same scrolling text, possibly new background
+			# for the moment always update it
+			# later only do so if $render->{changed}
+			# [currently need for SB1 in pause mode and SB2 to trigger visu frames]
+			$client->scrollUpdateBackground($render);
+		}			  
+	}
+}
+
+sub prevline1 {
+	my $client = shift;
+	my $cache = $client->renderCache();
+	return $cache->{line1};
+}
+
+sub prevline2 {
+	my $client = shift;
+	my $cache = $client->renderCache();
+	return $cache->{line2};
 }
 
 sub fonts {
@@ -469,16 +629,21 @@ sub showBriefly {
 	my $line2 = shift;
 	my $duration = shift;
 	my $firstLineIfDoubled = shift;
+	my $blockUpdate = shift;
+
+	# return if update blocked
+	return if ($client->updateMode() == 2);
+
 	my @lines = [$line1,$line2];
-
 	$client->update(@lines);
-
+	
 	if (!$duration) {
 		$duration = 1;
 	}
-
-	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $duration,\&update);
-	$client->animating(1);
+	
+	$client->updateMode( $blockUpdate ? 2 : 1 );
+	$client->animateState(5);
+	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $duration, \&endAnimation);
 }
 
 # push the old screen off the left side
@@ -487,8 +652,8 @@ sub pushLeft {
 	my $start = shift;
 	my $end = shift;
 
-	my $startbits = $client->render($start);
-	my $endbits = $client->render($end);
+	my $startbits = $client->render($start)->{bitsref};
+	my $endbits = $client->render($end)->{bitsref};
 	
 	my $allbits = $$startbits . $$endbits;
 
@@ -502,8 +667,8 @@ sub pushRight {
 	my $start = shift;
 	my $end = shift;
 
-	my $startbits = $client->render($start);
-	my $endbits = $client->render($end);
+	my $startbits = $client->render($start)->{bitsref};
+	my $endbits = $client->render($end)->{bitsref};
 	
 	my $allbits = $$endbits . $$startbits;
 	
@@ -513,7 +678,7 @@ sub pushRight {
 
 sub bumpRight {
 	my $client = shift;
-	my $startbits = $client->render(Slim::Display::Display::curLines($client));
+	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
 	$startbits = $$startbits .  (chr(0) x 16);
 	$client->killAnimation();
 	$client->pushUpdate([\$startbits, 16, -8, 0, 0.125]);	
@@ -521,7 +686,7 @@ sub bumpRight {
 
 sub bumpLeft {
 	my $client = shift;
-	my $startbits = $client->render(Slim::Display::Display::curLines($client));
+	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
 	$startbits =  (chr(0) x 16) . $$startbits;
 	$client->killAnimation();
 	$client->pushUpdate([\$startbits, 0, 8, 16, 0.125]);	
@@ -541,38 +706,41 @@ sub pushUpdate {
 	
 	$client->drawFrameBuf(\$screen);
 	if ($offset != $end) {
+		$client->updateMode(1);
+		$client->animateState(3);
 		Slim::Utils::Timers::setHighTimer($client,Time::HiRes::time() + $deltatime,\&pushUpdate,[$allbits,$offset,$delta,$end,$deltatime]);
-		$client->animating(1);
 	} else {
-		$client->animating(0);
+		$client->endAnimation();
 	}
 }
 
 sub bumpDown {
 	my $client = shift;
 
-	my $startbits = $client->render(Slim::Display::Display::curLines($client));
+	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
 	$startbits = substr((chr(0) . $$startbits) & ((chr(0) . chr(255)) x ($client->screenBytes() / 2)), 0, $client->screenBytes());
 
 	$client->killAnimation();
 	
 	$client->drawFrameBuf(\$startbits);
 
-	Slim::Utils::Timers::setHighTimer($client,Time::HiRes::time() + 0.125,\&update);
-	$client->animating(1);
+	$client->updateMode(1);
+	$client->animateState(4);
+	Slim::Utils::Timers::setHighTimer($client,Time::HiRes::time() + 0.125, \&endAnimation);
 }
 
 sub bumpUp {
 	my $client = shift;
-	my $startbits = $client->render(Slim::Display::Display::curLines($client));
+	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
 	$startbits = substr(($$startbits . chr(0)) & ((chr(0) . chr(255)) x ($client->screenBytes() / 2)), 1, $client->screenBytes());
 	
 	$client->killAnimation();
 
 	$client->drawFrameBuf(\$startbits);
 
-	Slim::Utils::Timers::setHighTimer($client,Time::HiRes::time() + 0.125,\&update);
-	$client->animating(1);
+	$client->updateMode(1);
+	$client->animateState(4);
+	Slim::Utils::Timers::setHighTimer($client,Time::HiRes::time() + 0.125, \&endAnimation);
 }
 
 
@@ -581,138 +749,159 @@ sub doEasterEgg {
 	$client->update();
 }
 
-sub scrollBottom {
+sub scrollInit {
 	my $client = shift;
-	my $lines = shift;
-	return if $client->param('noScroll');
-	
-	my $rate = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollRateDouble': 'scrollRate');
+	my $render = shift;
+	my $scrollonce = shift || 0; # 0 = scroll to endscroll and then stop, 1 = pause and then scroll again
+
+	my $refresh = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollRateDouble': 'scrollRate');
 	my $pause = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollPauseDouble': 'scrollPause');	
 	my $pixels = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollPixelsDouble': 'scrollPixels');	
+	my $now = Time::HiRes::time();
 
-	my $linefunc  = $client->lines();
-	my $parts = $client->parseLines(&$linefunc($client));
+	my $start = $now + (($pause > 0.5) ? $pause : 0.5);
 
-	my $fonts = $client->fonts();
+	my $scroll = {
+		'endscroll'       => $render->{endscroll},
+		'offset'          => 0,
+		'scrollonce'      => $scrollonce,
+		'refreshInt'      => $refresh,
+		'pauseInt'        => $pause,
+		'shift'           => $pixels * $client->bytesPerColumn(),
+		'pauseUntil'      => $start,
+		'refreshTime'     => $start,
+		'paused'          => 0,
+		'scrollHeader'    => $client->scrollHeader,
+		'scrollFrameSize' => length($client->scrollHeader) + $client->screenBytes,
+		'bitsref'         => $render->{bitsref},
+		'scrollbitsref'   => $render->{scrollbitsref},
+		'overlay2start'   => $render->{overlay2start},
+		};
+
+	$client->scrollData($scroll);
 	
-	my $interspace = '     ';
-	
-	my $line2bits = Slim::Display::Graphics::string($fonts->[1], $parts->{line2}) || '';
-	my $overlay2bits = Slim::Display::Graphics::string($fonts->[1], $parts->{overlay2}) || '';
+	$client->scrollState(1);
+	$client->scrollUpdate();
+}
 
-	if ($rate && ((length($line2bits) + length($overlay2bits)) > $client->screenBytes() )) {
+sub scrollStop {
+	my $client = shift;
 
-		my $interspaceBits = Slim::Display::Graphics::string($fonts->[1], $interspace) || '';
+	Slim::Utils::Timers::killTimers($client, \&scrollUpdate);
+	$client->scrollState(0);
+	$client->scrollData(undef);
+}
 
-		$parts->{line2} .= $interspace . $parts->{line2};
-		$parts->{endscroll2} = length($line2bits) + length($interspaceBits);
-		$parts->{scroll2} = $client->bytesPerColumn() * $pixels;
-		$parts->{offset2} = 0;
+sub scrollUpdateBackground {
+	my $client = shift;
+	my $render = shift;
 
-		$parts->{updateInt} = 0.5; # update at least twice a second
-		$parts->{pauseInt} = $pause;
-		$parts->{updateTime} = Time::HiRes::time();
-		$parts->{pauseUntil} = $parts->{updateTime} + $pause;
-		$parts->{refresh} = $rate;
-		$parts->{refreshTime} = $parts->{updateTime};
-		$parts->{scrollHeader} = $client->scrollHeader;
-		$parts->{scrollFrameSize} = length($client->scrollHeader) + $client->screenBytes;
-		
-		$client->killAnimation();
-		$client->animating(2);
-		$client->scrollUpdate($parts);
+	my $scroll = $client->scrollData();
+	$scroll->{bitsref} = $render->{bitsref};
+	$scroll->{overlay2start} = $render->{overlay2start};
 
-	} else {
-		$client->refresh($parts);
+	# force update of screen for server side scrolling if paused, otherwise rely on scrolling to update
+	if ($scroll->{paused}) {
+		Slim::Utils::Timers::firePendingTimer($client, \&scrollUpdate);
 	}
 }
 
 sub scrollUpdate {
 	my $client = shift;
-	my $parts = shift;
-	
+
+	my $scroll = $client->scrollData();
+	my $bitsref = $scroll->{bitsref};
+	my $scrollref = $scroll->{scrollbitsref};
+
+	my $frame = $scroll->{scrollHeader} . 
+		($$bitsref | substr($$scrollref, $scroll->{offset}, $scroll->{overlay2start}));
+
+	# check for congestion on slimproto socket and send update if not congested
+	if (defined($client->tcpsock) && !Slim::Networking::Select::writeNoBlockQLen($client->tcpsock) && (length($frame) == $scroll->{scrollFrameSize})) {
+		Slim::Networking::Select::writeNoBlock($client->tcpsock, \$frame);
+	}
+
 	my $timenow = Time::HiRes::time();
 
-	# implement drawFrameBuf in here to avoid string copies
-	my $framebuf = $client->render($parts, $parts->{scrollHeader} );
-	if (length($$framebuf) == $parts->{scrollFrameSize}) {
-		Slim::Networking::Select::writeNoBlock($client->tcpsock, $framebuf);
-	}
-
-	if ($timenow > $parts->{updateTime}) {
-		# get the latest content from line every updateInt
-		# can take some time so do after updating screen
-		$parts->{updateTime} += $parts->{updateInt};
-
-		my $linefunc  = $client->lines();
-		my $parts1 = $client->parseLines(&$linefunc($client));
-
-		my $oldline1 = $parts->{line1};
-		my $newline1 = $parts1->{line1};
-	
-		if (defined($oldline1) && defined($newline1) && $oldline1 ne $newline1) {
-			$parts->{line1} = $newline1;
-			$parts->{line1bits} = undef;
-		}
-	
-		my $oldoverlay1 = $parts->{overlay1};
-		my $newoverlay1 = $parts1->{overlay1};	
-
-		if (defined($oldoverlay1) && defined($newoverlay1) && $oldoverlay1 ne $newoverlay1) {
-			$parts->{overlay1} = $newoverlay1;
-			$parts->{overlay1bits} = undef;
-		}
-
-		my $oldoverlay2 = $parts->{overlay2};
-		my $newoverlay2 = $parts1->{overlay2};	
-
-		if (defined($oldoverlay2) && defined($newoverlay2) && $oldoverlay2 ne $newoverlay2) {
-			$parts->{overlay2} = $newoverlay2;
-			$parts->{overlay2bits} = undef;
-		}
-	}
-
-	if ($timenow < $parts->{pauseUntil}) {
-		# slow timer for updates during scrolling pause
-		$parts->{refreshTime} = $parts->{updateTime};
-		Slim::Utils::Timers::setHighTimer($client, $parts->{updateTime}, \&scrollUpdate, $parts);
+	if ($timenow < $scroll->{pauseUntil}) {
+		# called early for background update - reset timer for end of pause
+		Slim::Utils::Timers::setHighTimer($client, $scroll->{pauseUntil}, \&scrollUpdate);
 
 	} else {
-
 		# update refresh time and skip frame if running behind actual timenow
 		do {
-			$parts->{offset2} += $parts->{scroll2};
-			$parts->{refreshTime} += $parts->{refresh};
-		} while ($parts->{refreshTime} < Time::HiRes::time() );
+			$scroll->{offset} += $scroll->{shift};
+			$scroll->{refreshTime} += $scroll->{refreshInt};
+		} while ($scroll->{refreshTime} < $timenow );
 
-		$parts->{scrolling} = 1;
-
-		if ($parts->{offset2} > $parts->{endscroll2}) {
-			$parts->{offset2} = 0;
-			if ($parts->{pauseInt} > 0) {
-				$parts->{pauseUntil} = $parts->{refreshTime} + $parts->{pauseInt};
-				$parts->{scrolling} = undef;
+		$scroll->{paused} = 0;
+		if ($scroll->{offset} > $scroll->{endscroll}) {
+			$scroll->{offset} = 0;
+			if ($scroll->{scrollonce}) {
+				# finished one scroll - stop scrolling and clean up
+				$scroll = undef;
+				$client->scrollStop();
+				return;
+			}
+			if ($scroll->{pauseInt} > 0) {
+				$scroll->{pauseUntil} = $scroll->{refreshTime} + $scroll->{pauseInt};
+				$scroll->{refreshTime} = $scroll->{pauseUntil};
+				$scroll->{paused} = 1;
+				# sleep for pauseInt
+				Slim::Utils::Timers::setHighTimer($client, $scroll->{pauseUntil}, \&scrollUpdate);
+				return;
 			}
 		}
 		# fast timer during scroll
-		Slim::Utils::Timers::setHighTimer($client, $parts->{refreshTime}, \&scrollUpdate, $parts);
+		Slim::Utils::Timers::setHighTimer($client, $scroll->{refreshTime}, \&scrollUpdate);
 	}
 }
 
 # find all the queued up animation frames and toss them
 sub killAnimation {
 	my $client = shift;
-	$client->param('noUpdate',0);
-	Slim::Utils::Timers::killTimers($client, \&pushUpdate);
-	Slim::Utils::Timers::killTimers($client, \&update);
-	Slim::Utils::Timers::killTimers($client, \&scrollUpdate);
-	$client->animating(0);
+	my $exceptScroll = shift; # all but scrolling to be killed (used by showBriefly)
+
+	my $animate = $client->animateState();
+	Slim::Utils::Timers::killTimers($client, \&update) if ($animate == 2);
+	Slim::Utils::Timers::killTimers($client, \&pushUpdate) if ($animate == 3);	
+	Slim::Utils::Timers::killTimers($client, \&endAnimation) if ($animate == 4 || $animate == 5);	
+	Slim::Utils::Timers::killTimers($client, \&scrollUpdate) if ($client->scrollState() == 1 && !$exceptScroll) ;
+	$client->animateState(0);
+	$client->scrollState(0) unless $exceptScroll;
+	$client->updateMode(0);
 }
 
 sub endAnimation {
+	# called after after an animation to display the screen and initiate scrolling
 	my $client = shift;
-	$client->param('noUpdate',0); 
-	$client->update();
+	my $delay = shift;
+
+	if ($delay) {
+		$client->animateState(2);
+		$client->updateMode(1);
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $delay, \&update);
+	} else {
+		$client->animateState(0);
+		$client->updateMode(0);
+		$client->update();
+	}
+}	
+
+# temporary for SBG to ensure periodic screen update
+sub periodicScreenRefresh {
+	my $client = shift;
+
+	$client->update() unless ($client->updateMode());
+
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&periodicScreenRefresh);
 }
 
+
 1;
+
+# Local Variables:
+# tab-width:4
+# indent-tabs-mode:t
+# End:
+

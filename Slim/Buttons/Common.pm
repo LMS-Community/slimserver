@@ -1152,9 +1152,23 @@ sub startPeriodicUpdates {
 	Slim::Utils::Timers::killTimers($client, \&_periodicUpdate);
 	my $interval = $client->param('modeUpdateInterval');
 	return unless $interval;
-	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $interval,
-								  \&_periodicUpdate,
-								  $client);
+
+	my $time = Time::HiRes::time() + $interval;
+	Slim::Utils::Timers::setTimer($client, $time, \&_periodicUpdate, $client);
+	$client->periodicUpdateTime($time);
+}
+
+# resych periodic updates to $time - to synchonise updates with time/elaspsed time
+sub syncPeriodicUpdates {
+	my $client = shift;
+	my $time = shift || Time::HiRes::time();
+	# unset any previous timers
+	Slim::Utils::Timers::killTimers($client, \&_periodicUpdate);
+	my $interval = $client->param('modeUpdateInterval');
+	return unless $interval;
+
+	Slim::Utils::Timers::setTimer($client, $time, \&_periodicUpdate, $client);
+	$client->periodicUpdateTime($time);
 }
 
 sub _periodicUpdate {
@@ -1163,15 +1177,19 @@ sub _periodicUpdate {
 	# if interval is not set, we have left the mode that needed the update
 	return unless $interval;
 	
-	# do the update if there's no animation going on.
-	if (!$client->animating()) { 
-		$client->update(); 
-	}
-	
-	# do it again at the next period
-	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $interval,
-								  \&_periodicUpdate,
-								  $client);
+	# schedule the next update time, skip if running late
+	my $time = $client->periodicUpdateTime();
+	my $timenow = Time::HiRes::time();
+
+	do {
+		$time += $interval;
+	} while ($time < $timenow);
+
+	Slim::Utils::Timers::setTimer($client, $time, \&_periodicUpdate, $client);
+	$client->periodicUpdateTime($time);
+
+	# do the update if there's no block on updates
+	$client->update() unless ($client->updateMode());
 }
 
 

@@ -164,15 +164,26 @@ sub update {
 	my $lines = shift;
 	my $nodoublesize = shift;
 
-	unless ($client->param('noUpdate')) {
+	return if ($client->updateMode() == 2); # updates blocked
 
-		$client->killAnimation();
+	$client->killAnimation() if ($client->animateState());
 
-		if (!defined($lines)) {
-			Slim::Hardware::VFD::vfdUpdate($client, [Slim::Display::Display::curLines($client)]);
-		} else {
-			Slim::Hardware::VFD::vfdUpdate($client, $lines, $nodoublesize);
-		}
+	if (!defined($lines)) {
+		Slim::Hardware::VFD::vfdUpdate($client, [Slim::Display::Display::curLines($client)]);
+	} else {
+		Slim::Hardware::VFD::vfdUpdate($client, $lines, $nodoublesize);
+	}
+}	
+
+sub animateUpdate {
+	my $client = shift;
+	my $lines = shift;
+	my $nodoublesize = shift;
+
+	if (!defined($lines)) {
+		Slim::Hardware::VFD::vfdUpdate($client, [Slim::Display::Display::curLines($client)]);
+	} else {
+		Slim::Hardware::VFD::vfdUpdate($client, $lines, $nodoublesize);
 	}
 }	
 

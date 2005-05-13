@@ -137,8 +137,8 @@ sub playingModeOptions {
 	my $client = shift;
 	my %options = (
 		'0' => $client->string('BLANK'),
-		'1' => $client->string('REMAINING'),
-		'2' => $client->string('ELAPSED') ,
+		'1' => $client->string('ELAPSED'),
+		'2' => $client->string('REMAINING') ,
 		'3' => $client->string('VISUALIZER_VUMETER_SMALL'),
 		'4' => $client->string('VISUALIZER_VUMETER_SMALL'). ' ' . $client->string('AND') . ' ' . $client->string('ELAPSED'),
 		'5' => $client->string('VISUALIZER_VUMETER_SMALL'). ' ' . $client->string('AND') . ' ' . $client->string('REMAINING'),
@@ -272,7 +272,7 @@ sub drawFrameBuf {
 	my $parts = shift;
 	my $transition = shift || 'c';
 	my $param = shift || 0;
-	
+
 	if ($client->opened()) {
 		# for now, we'll send a visu packet with each screen update.	
 		$client->visualizer();
@@ -285,6 +285,19 @@ sub drawFrameBuf {
 		$client->sendFrame('grfe', \$framebuf);
 	}
 }	
+
+sub periodicScreenRefresh {
+    my $client = shift;
+    # noop for this player - not required
+}    
+
+# following required to send periodic visu frames whilst scrolling
+sub scrollUpdateBackground {
+    my $client = shift;
+    my $render = shift;
+    $client->visualizer();
+    $client->SUPER::scrollUpdateBackground($render);
+}
 
 # preformed frame header for fast scolling - contains header added by sendFrame and drawFrameBuf
 sub scrollHeader {
@@ -316,6 +329,8 @@ sub visualizer {
 		$paramsref = $modes[$visu]{params};
 	}
 	
+	return if (defined($paramsref) && ($paramsref == $client->lastVisMode())); 
+
 	my @params = @{$paramsref};
 	
 	my $which = shift @params;
@@ -327,19 +342,20 @@ sub visualizer {
 	}
 
 	$client->sendFrame('visu', \$parambytes);
+	$client->lastVisMode($paramsref);
 }
 
 sub pushUp {
 	my $client = shift;
 	my $end = shift;
-	
+
 	$client->pushUpDown($end, 'u');
 }
 
 sub pushDown {
 	my $client = shift;
 	my $end = shift;
-	
+
 	$client->pushUpDown($end, 'd');
 }
 
@@ -354,13 +370,13 @@ sub pushUpDown {
 	}
 	
 	$client->killAnimation();
-	$client->animating(1);
+	$client->animateState(1);
+	$client->updateMode(1);
 	
-	my $parts = $client->preRender($end);
-	my $fonts = $parts->{fonts};
+	my $render = $client->render($end);
 
 	# start the push animation, passing in the extent of the second line
-	$client->drawFrameBuf($parts->{rendered}, undef, $dir, Slim::Display::Graphics::extent($fonts->[1]));
+	$client->drawFrameBuf($render->{bitsref}, undef, $dir, $render->{line2height});
 }
 
 # push the old screen off the left side
@@ -368,9 +384,11 @@ sub pushLeft {
 	my $client = shift;
 	my $start = shift;
 	my $end = shift;
+
 	$client->killAnimation();
-	$client->animating(1);
-	$client->drawFrameBuf($client->render($end), undef, 'r', 0);
+	$client->animateState(1);
+	$client->updateMode(1);
+	$client->drawFrameBuf($client->render($end)->{bitsref}, undef, 'r', 0);
 }
 
 # push the old screen off the right side
@@ -380,47 +398,52 @@ sub pushRight {
 	my $end = shift;
 
 	$client->killAnimation();	
-	$client->animating(1);
-	$client->drawFrameBuf($client->render($end), undef, 'l', 0);
+	$client->animateState(1);
+	$client->updateMode(1);
+	$client->drawFrameBuf($client->render($end)->{bitsref}, undef, 'l', 0);
 }
 
 # bump left against the edge
 sub bumpLeft {
 	my $client = shift;
-	my $startbits = $client->render(Slim::Display::Display::curLines($client));
+	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
 	
 	$client->killAnimation();	
-	$client->animating(1);
+	$client->animateState(1);
+	$client->updateMode(1);
 	$client->drawFrameBuf($startbits, undef, 'L', 0);
 }
 
 # bump right against the edge
 sub bumpRight {
 	my $client = shift;
-	my $startbits = $client->render(Slim::Display::Display::curLines($client));
+	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
 	
 	$client->killAnimation();	
-	$client->animating(1);
+	$client->animateState(1);
+	$client->updateMode(1);
 	$client->drawFrameBuf($startbits, undef, 'R', 0);
 }
 
 # bump left against the edge
 sub bumpUp {
 	my $client = shift;
-	my $startbits = $client->render(Slim::Display::Display::curLines($client));
+	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
 	
-	$client->killAnimation();	
-	$client->animating(1);
+	$client->killAnimation();
+	$client->animateState(1);
+	$client->updateMode(1);
 	$client->drawFrameBuf($startbits, undef, 'U', 0);
 }
 
 # bump right against the edge
 sub bumpDown {
 	my $client = shift;
-	my $startbits = $client->render(Slim::Display::Display::curLines($client));
+	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
 
 	$client->killAnimation();	
-	$client->animating(1);
+	$client->animateState(1);
+	$client->updateMode(1);
 	$client->drawFrameBuf($startbits, undef, 'D', 0);
 }
 

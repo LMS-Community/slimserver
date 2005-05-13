@@ -185,6 +185,11 @@ sub writeNoBlock {
 	} 
 }
 
+sub writeNoBlockQLen {
+	my $socket = shift;
+	return scalar @{$writeQueue{"$socket"}};
+}
+
 1;
 
 __END__

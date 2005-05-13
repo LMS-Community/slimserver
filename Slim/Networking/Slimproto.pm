@@ -507,7 +507,7 @@ sub process_slimproto_frame {
 		$client->upgradeFirmware();		
 
 	} elsif ($op eq 'ANIC') {
-		$client->animating(0);
+		$client->endAnimation(0.5);
 	} elsif ($op eq 'META') {
 		$::d_directstream && msg("metadata (len: $len): $data\n");
 		if ($client->can('directMetadata')) {

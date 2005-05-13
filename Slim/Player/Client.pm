@@ -725,13 +725,19 @@ sub new {
 	$client->[91] = undef; # currentPlaylist
 	$client->[92] = undef; # currentPlaylistModified
 	$client->[93] = undef; # songElapsedSeconds
-	$client->[94] = 0; #animating
+	$client->[94] = 0; # updateMode [0 = normal, 1 = periodic update blocked, 2 = all updates blocked]
 	# 95 is currentPlaylistRender
 	# 96 is currentPlaylistChangeTime
 	$client->[97] = undef; # tempVolume temporary volume setting
 	$client->[98] = undef; # directurl
 	$client->[99] = undef; # directbody
-	
+	$client->[100] = undef; # renderCache
+	$client->[101] = undef; # scrollData
+	$client->[102] = 0; # periodicUpdateTime
+	$client->[103] = 0; # lastVisMode
+	$client->[104] = 0; # animateState
+	$client->[105] = 0; # scrollState
+
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
 	$client->lastircode(0);
@@ -1624,7 +1630,7 @@ sub songElapsedSeconds {
 	@_ ? ($r->[93] = shift) : $r->[93];
 }
 
-sub animating {
+sub updateMode {
 	my $r = shift;
 	@_ ? ($r->[94] = shift) : $r->[94];
 }
@@ -1648,4 +1654,36 @@ sub directBody {
 	my $r = shift;
 	@_ ? ($r->[99] = shift) : $r->[99];
 }
+
+sub renderCache {
+	my $r = shift;
+	@_ ? ($r->[100] = shift) : $r->[100];
+}    
+
+sub scrollData {
+	my $r = shift;
+	@_ ? ($r->[101] = shift) : $r->[101];
+}    
+
+sub periodicUpdateTime {
+	my $r = shift;
+	@_ ? ($r->[102] = shift) : $r->[102];
+}    
+
+sub lastVisMode {
+	my $r = shift;
+	@_ ? ($r->[103] = shift) : $r->[103];
+}    
+
+sub animateState {
+	my $r = shift;
+	@_ ? ($r->[104] = shift) : $r->[104];
+}    
+
+sub scrollState {
+	my $r = shift;
+	@_ ? ($r->[105] = shift) : $r->[105];
+}    
+
+
 1;
