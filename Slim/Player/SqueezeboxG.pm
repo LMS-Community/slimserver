@@ -250,7 +250,7 @@ sub render {
 	} elsif (!defined($parts->{line2}) && defined($cache->{line2})) {
 		$cache->{line2} = undef;
 		$cache->{line2bits} = '';
-		$cache->{line2finsh} = 0;
+		$cache->{line2finish} = 0;
 		$cache->{changed} = 1;
 		$cache->{scrolling} = 0;
 		$cache->{scrollbitsref} = undef;
