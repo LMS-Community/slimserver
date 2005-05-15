@@ -1468,7 +1468,7 @@ sub execute {
  			push @returnArray, "player_connected:" . $connected;
  			push @returnArray, "power:".$power;
  			
- 			if ($client->model() eq "squeezebox") {
+ 			if ($client->model() eq "squeezebox" || $client->model() eq "squeezebox2") {
  				push @returnArray, "signalstrength:".($client->signalStrength() || 0);
  			}
  			
