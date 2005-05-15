@@ -268,18 +268,16 @@ sub execute {
 			if (!defined($p2)) {
 
 				$$debugsymbol = ! $$debugsymbol;
-				$p2 = $$debugsymbol;
 
 			} elsif ($p2 eq "?")  {
 
 				$p2 = $$debugsymbol;
+				$p2 ||= 0;
 
 			} else {
 
 				$$debugsymbol = $p2;
-			}	
-
-			$p2 ||= 0;
+			}
 		}
 
  		$client = undef;
