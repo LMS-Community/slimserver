@@ -318,7 +318,7 @@ sub visualizer {
 
 		$visu = 0 if (!$client->showVisualizer());
 		
-		if ($visu < 0) { 
+		if (!defined $visu || $visu < 0) { 
 			$visu = 0; 
 		}
 		my $nmodes = $client->nowPlayingModes();
