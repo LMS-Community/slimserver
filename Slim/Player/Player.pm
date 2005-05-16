@@ -18,6 +18,7 @@ use Slim::Player::Client;
 use Slim::Utils::Misc;
 use Slim::Display::VFD::Animation;
 use Slim::Hardware::IR;
+use Slim::Buttons::SqueezeNetwork;
 
 use base qw(Slim::Player::Client);
 
@@ -63,6 +64,7 @@ our $defaultPrefs = {
 		,'treble'				=> 50
 		,'upgrade-5.4b1-script'		=> 1
 		,'upgrade-5.4b2-script'		=> 1
+		,'upgrade-6.1b1-script'		=> 1
 		,'volume'				=> 50
 		,'syncBufferThreshold'		=> 128
 		,'bufferThreshold'		=> 255
@@ -109,6 +111,15 @@ our %upgradeScripts = (
 		}
 
 		Slim::Utils::Prefs::clientSet($client, 'menuItem', \@newitems);
+	},
+
+	'6.1b1' => sub {
+		my $client = shift;
+
+		if (Slim::Buttons::SqueezeNetwork::clientIsCapable($client)) {
+			# append a menu item to connect to squeezenetwork to the home menu
+			Slim::Utils::Prefs::clientPush($client, 'menuItem', 'SQUEEZENETWORK_CONNECT');
+		}
 	},
 );
 

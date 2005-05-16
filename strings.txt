@@ -8699,3 +8699,17 @@ FAVORITES_ADDING
 FAVORITES_DELETING
 	DE	Favorit wird gelöscht...
 	EN	Deleting favorite...
+
+
+SQUEEZENETWORK
+	EN	SqueezeNetwork
+
+SQUEEZENETWORK_CONNECT
+	EN	Connect to SqueezeNetwork
+
+SQUEEZENETWORK_CONNECTING
+	EN	Connecting to SqueezeNetwork...
+
+SQUEEZENETWORK_SB2_REQUIRED
+	EN	Sorry, requires Squeezebox2.
+

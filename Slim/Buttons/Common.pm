@@ -14,6 +14,7 @@ use Slim::Player::Client;
 use Slim::Utils::Misc;
 use Slim::Buttons::Plugins;
 use Slim::Display::Display;
+use Slim::Buttons::SqueezeNetwork;
 
 # hash of references to functions to call when we leave a mode
 our %leaveMode = ();
@@ -71,6 +72,7 @@ sub init {
 	Slim::Buttons::ScreenSaver::init();
 	Slim::Buttons::Search::init();
 	Slim::Buttons::Settings::init();
+	Slim::Buttons::SqueezeNetwork::init();
 	Slim::Buttons::Synchronize::init();
 	Slim::Buttons::TrackInfo::init();
 	Slim::Buttons::RemoteTrackInfo::init();
