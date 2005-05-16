@@ -700,8 +700,18 @@ sub directHeaders {
 
 			} elsif ($client->contentTypeSupported(Slim::Music::Info::mimeToType($contentType))) {
 				$::d_directstream && msg("Beginning direct stream!\n");
+				my $loop = 0;
+				if ($length) {
+				    my $currentDB = Slim::Music::Info::getCurrentDataStore();
+				    $currentDB->updateOrCreate({
+					'url'        => $url,
+					'attributes' => { 'SIZE' => $length },
+				    });
+				    
+				    $loop = Slim::Player::Source::shouldLoop($client);
+				}
 				$client->streamformat(Slim::Music::Info::mimeToType($contentType));
-				$client->sendFrame('cont', \(pack('N',$metaint)));		
+				$client->sendFrame('cont', \(pack('NC',$metaint, $loop)));		
 			} elsif (Slim::Music::Info::isList($url)) {
 				$::d_directstream && msg("Direct stream is list, get body to explode\n");
 				$client->directBody('');
@@ -762,6 +772,17 @@ sub failedDirectStream {
 	
 	$client->stop();
 	# todo notify upper layers that this is a bad station.
+}
+
+sub canLoop {
+	my $client = shift;
+	my $length = shift;
+
+	if ($length < 3*1024*1024) {
+	    return 1;
+	}
+
+	return 0;
 }
 
 1;

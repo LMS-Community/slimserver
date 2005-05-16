@@ -133,8 +133,9 @@ sub play {
 	my $format = shift;
 	my $url = shift;
 	my $reconnect = shift;
+	my $loop = shift;
 
-	$client->stream('s', $paused, $format, $url, $reconnect);
+	$client->stream('s', $paused, $format, $url, $reconnect, $loop);
 
 	# make sure volume is set, without changing temp setting
 	$client->volume($client->volume(),
@@ -511,7 +512,7 @@ sub opened {
 #				// [24]
 #
 sub stream {
-	my ($client, $command, $paused, $format, $url, $reconnect) = @_;
+	my ($client, $command, $paused, $format, $url, $reconnect, $loop) = @_;
 
 	if ($client->opened()) {
 		$::d_slimproto && msg("*************stream called: $command paused: $paused format: $format url: $url\n");
@@ -616,6 +617,10 @@ sub stream {
 		
 		$::d_slimproto && msg("starting with decoder with format: $formatbyte autostart: $autostart threshold: $bufferThreshold samplesize: $pcmsamplesize samplerate: $pcmsamplerate endian: $pcmendian channels: $pcmchannels\n");
 
+		my $flags = 0;
+		$flags |= 0x40 if $reconnect;
+		$flags |= 0x80 if $loop;
+
 		my $frame = pack 'aaaaaaaCCCaCnNnN', (
 			$command,	# command
 			$autostart,
@@ -628,7 +633,7 @@ sub stream {
 			0,		# s/pdif auto
 			Slim::Utils::Prefs::clientGet($client, 'transitionDuration') || 0,
 			Slim::Utils::Prefs::clientGet($client, 'transitionType') || 0,
-			$reconnect ? 0x40 : 0,		# flags	     
+			$flags,		# flags	     
 			0,		# vis port - call IANA!!!  :)
 			0,		# use slim server's IP
 			$server_port,
