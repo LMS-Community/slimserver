@@ -187,7 +187,13 @@ sub writeNoBlock {
 
 sub writeNoBlockQLen {
 	my $socket = shift;
-	return scalar @{$writeQueue{"$socket"}};
+
+	if (defined $socket && defined $writeQueue{"$socket"} && ref($writeQueue{"$socket"}) eq 'ARRAY') {
+
+		return scalar @{$writeQueue{"$socket"}};
+	}
+
+	return 0;
 }
 
 1;
