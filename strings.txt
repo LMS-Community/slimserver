@@ -8700,16 +8700,20 @@ FAVORITES_DELETING
 	DE	Favorit wird gelöscht...
 	EN	Deleting favorite...
 
-
 SQUEEZENETWORK
 	EN	SqueezeNetwork
 
 SQUEEZENETWORK_CONNECT
+	DE	Mit dem SqueezeNetwork verbinden
 	EN	Connect to SqueezeNetwork
+	FR	Connecter à SqueezeNetwork
 
 SQUEEZENETWORK_CONNECTING
+	DE	Verbinde zum SqueezeNetwork...
 	EN	Connecting to SqueezeNetwork...
+	FR	Connecte à SqueezeNetwork...
 
 SQUEEZENETWORK_SB2_REQUIRED
+	DE	Diese Funktion benötigt eine Squeezebox2.
 	EN	Sorry, requires Squeezebox2.
-
+	FR	Cette fonction nécessite Squeezebox2.
