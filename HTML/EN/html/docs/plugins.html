@@ -216,8 +216,8 @@ sub setupGroup {
    my %setupGroup = (
       PrefOrder =>
       ['plugin-pluginName-pref-one','plugin-pluginName-pref-two']
-      ,GroupHead => $client->string('SETUP_GROUP_PLUGIN_PLUGINNAME')
-      ,GroupDesc => $client->string('SETUP_GROUP_PLUGIN_PLUGINNAME_DESC')
+      ,GroupHead => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_PLUGINNAME')
+      ,GroupDesc => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_PLUGINNAME_DESC')
       ,GroupLine => 1
       ,GroupSub => 1
       ,Suppress_PrefSub => 1
@@ -231,8 +231,8 @@ sub setupGroup {
       'plugin-pluginName-pref-two' => {
          'validate' => \&Slim::Web::Setup::validateTrueFalse  
          ,'options' => {
-            '0' => $client->string('SETUP_PLUGIN-PLUGINNAME_PREFTWO_NO)
-            ,'1' => $client->string('SETUP_PLUGIN-PLUGINNAME_PREFTWO_YES)
+            '0' => Slim::Utils::Strings::string('SETUP_PLUGIN-PLUGINNAME_PREFTWO_NO)
+            ,'1' => Slim::Utils::Strings::string('SETUP_PLUGIN-PLUGINNAME_PREFTWO_YES)
          }
       },
    );	
