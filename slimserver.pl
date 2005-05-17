@@ -980,8 +980,10 @@ sub changeEffectiveUserAndGroup {
 
 			$) = $gid;
 
-			# The $) is space separated "effective real" - so compare against that.
-			if ($) !~ /^$gid /) {
+			# $) is a space separated list that begins with the effective gid then lists
+			# any supplementary group IDs, so compare against that.  On some systems
+			# no supplementary group IDs are present at system startup or at all.
+			if ( $) !~ /^$gid\b/) {
 				die "Unable to set effective group(s) to $group ($gid) is: $): $!\n";
 			}
 		}
