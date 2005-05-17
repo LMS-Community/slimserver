@@ -9,7 +9,6 @@ package Plugins::Podcast::Plugin;
 use strict;
 
 use Slim::Utils::Misc;
-use Plugins::Podcast::Browse;
 use constant FEEDS_VERSION => 1;
 
 use XML::Simple;
@@ -17,10 +16,10 @@ use XML::Simple;
 # default can be overridden by prefs.  See initPlugin()
 # TODO: come up with a better list of defaults.
 our @default_feeds = (
-	{name => 'Amplified',
-	 value => 'http://feeds.feedburner.com/amplified'},
-	{name => 'Vinyl',
-	 value => 'http://vinyl.codyhanson.com/wp-rss2.php'},
+	{name => 'PodcastAlley Top 50',
+	 value => 'http://podcastalley.com/PodcastAlleyTop50.opml'},
+	{name => 'PodcastAlley 10 Newest',
+	 value => 'http://podcastalley.com/PodcastAlley10Newest.opml'},
 );
 
 our @feeds = ();
@@ -28,8 +27,6 @@ our %feed_names; # cache of feed names
 
 sub initPlugin {
 	$::d_plugins && msg("Podcast Plugin initializing.\n");
-
-	Plugins::Podcast::Browse::initPlugin();
 
 	Slim::Buttons::Common::addMode('PLUGIN.Podcast', getFunctions(),
 								   \&setMode);
@@ -112,7 +109,7 @@ sub setMode {
 				url => $item->{'value'},
 				title => $item->{'name'},
 			);
-			Slim::Buttons::Common::pushModeLeft($client, 'PLUGIN.Browse', \%params);
+			Slim::Buttons::Common::pushModeLeft($client, 'podcastbrowser', \%params);
 		},
 		onPlay => sub {
 			my $client = shift;
@@ -370,7 +367,7 @@ PODCAST_NOTHING_TO_PLAY
 	EN	Nothing to play
 
 PODCAST_FEED_DESCRIPTION
-	DE	Über diesen Podcast
+	DE	Ãber diesen Podcast
 	EN	About this podcast
 
 PODCAST_GROUP_DESC
@@ -378,22 +375,22 @@ PODCAST_GROUP_DESC
 	EN	The Podcast Browser plugin allows you to view and listen to podcasts.
 
 PODCAST_RESET_BUTTON
-	DE	Zurücksetzen
+	DE	ZurÃ¼cksetzen
 	EN	Reset
 
 PODCAST_RESETTING
-	DE	Setze Podcasts zurück
+	DE	Setze Podcasts zurÃ¼ck
 	EN	Resetting to default podcasts
 
 PODCAST_FEEDS_CHANGE
-	DE	Die Podcast Liste wurde geändert.
+	DE	Die Podcast Liste wurde geÃ¤ndert.
 	EN	Podcast list changed.
 
 SETUP_PLUGIN_PODCAST_FEEDS
 	EN	Podcasts
 
 SETUP_PLUGIN_PODCAST_RESET
-	DE	Podcasts zurücksetzen
+	DE	Podcasts zurÃ¼cksetzen
 	EN	Reset default Podcasts
 
 

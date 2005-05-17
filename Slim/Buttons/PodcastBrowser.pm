@@ -5,7 +5,13 @@
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-package Plugins::Podcast::Browse;
+# This file create the 'podcastbrowser' mode.  The mode allows users
+# to scroll through podcast entries and play audio enclosures.  The
+# name is a misnomer, really, as this mode also browses RSS news
+# feeds, and recently added, some OPML outlines.  (someone could
+# rename this file and mode if they have a better name idea).
+
+package Slim::Buttons::PodcastBrowser;
 use strict;
 
 # When to expire feeds from cache, in seconds.
@@ -16,14 +22,13 @@ use Slim::Networking::SimpleAsyncHTTP;
 use XML::Simple;
 use Slim::Buttons::Common;
 use Slim::Control::Command;
-use Plugins::Podcast::Cache;
-use Plugins::Podcast::Parse;
+use Slim::Utils::Cache;
 
 our %browseCache = (); # remember where each client is browsing
-our $feedCache = Plugins::Podcast::Cache->new();
+our $feedCache = Slim::Utils::Cache->new();
 
-sub initPlugin {
-	Slim::Buttons::Common::addMode('PLUGIN.Browse', getFunctions(),
+sub init {
+	Slim::Buttons::Common::addMode('podcastbrowser', getFunctions(),
 								   \&setMode);
 }
 
@@ -95,6 +100,21 @@ sub gotFeed {
 
 	# unblock client
 	Slim::Buttons::Block::unblock($client);
+
+	# "feed" was originally an RSS feed.  Now it could be either RSS or an OPML outline.
+	if ($feed->{'type'} eq 'rss') {
+		return gotRSS($client, $url, $feed);
+	} elsif ($feed->{'type'} eq 'opml') {
+		return gotOPML($client, $url, $feed);
+	} else {
+		msg("Podcast Browser: Unknown feed type for $url\n");
+	}
+}
+
+sub gotRSS {
+	my $client = shift;
+	my $url = shift;
+	my $feed = shift;
 
 	# restore client to where they were last browsing this feed.
 	my $initialValue;
@@ -196,11 +216,58 @@ sub gotFeed {
 			}
 			return [ undef, $overlay ];
 		},
-		#TODO: overlay
 
 	);
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
 }
+
+# use INPUT.Choice to display an OPML list of links. OPML support added
+# because podcast alley uses OPML to list its top 10, and newest
+# podcasts.  Currently this has been tested only with those OPML
+# examples, it may or may not work perfectly with others.
+sub gotOPML {
+	my $client = shift;
+	my $url = shift;
+	my $feed = shift;
+
+	# restore client to where they were last browsing this feed.
+	my $initialValue;
+	if ($browseCache{$client->id()}) {
+		$initialValue = $browseCache{$client->id()}->{$url};
+	}
+
+	my %params = (
+		url => $url,
+		feed => $feed,
+		initialValue => $initialValue,
+		header => $feed->{'title'} . ' {count}',
+		listRef => $feed->{'items'},
+		onRight => sub {
+			my $client = shift;
+			my $item = shift;
+			my %params = (
+				url => $item->{'value'},
+				title => $item->{'name'},
+			);
+			Slim::Buttons::Common::pushModeLeft($client, 'podcastbrowser',
+												\%params);
+		},
+		onChange => sub {
+			my $client = shift;
+			my $item = shift;
+
+			# remember where client was browsing
+			if (!defined($browseCache{$client->id()})) {
+				$browseCache{$client->id()} = {};
+			}
+			$browseCache{$client->id}->{$client->param('url')} = $item->{'value'};
+		},
+		overlayRef => [undef, Slim::Display::Display::symbol('rightarrow')],
+	);
+
+	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
+}
+
 
 sub hasAudio {
 	my $item = shift;
@@ -417,7 +484,7 @@ sub displayItemLink {
 		url => $url,
 		title => $item->{'title'},
 	);
-	Slim::Buttons::Common::pushModeLeft($client, 'PLUGIN.Browse', \%params);
+	Slim::Buttons::Common::pushModeLeft($client, 'podcastbrowser', \%params);
 }
 
 sub playItem {
@@ -485,7 +552,7 @@ sub gotViaHTTP {
 	# forcearray to treat items as array,
 	# keyattr => [] prevents id attrs from overriding
 	my $xml = eval { XMLin($http->content(), 
-						   forcearray => ["item"],
+						   forcearray => ["item", "outline"],
 						   keyattr => []) };
 
 	if ($@) {
@@ -500,7 +567,15 @@ sub gotViaHTTP {
 	#print Dumper($xml);
 
 	# convert XML into data structure
-	my $feed = feedFromXML($xml);
+	my $feed;
+	if ($xml && $xml->{body} && $xml->{body}->{outline}) {
+		# its OPML outline
+		$feed = parseOPML($xml);
+	} else {
+		# its RSS or podcast
+		$feed = parseRSS($xml);
+	}
+
 	if (!$feed) {
 		# call ecb
 		gotError($params->{'client'}, $http->url(), '{PARSE_ERROR}');
@@ -518,10 +593,11 @@ sub gotViaHTTP {
 
 # takes XML podcast
 # returns 'feed': a data structure summarizing the xml.
-sub feedFromXML {
+sub parseRSS {
 	my $xml = shift;
 
 	my %feed;
+	$feed{'type'} = 'rss';
 	$feed{'items'} = ();
 
 	$feed{'title'} = unescapeAndTrim($xml->{channel}->{title});
@@ -559,6 +635,23 @@ sub feedFromXML {
 		push @{$feed{'items'}}, \%item;
 	}
 
+	return \%feed;
+}
+
+# represent OPML in a simple data structure compatable with INPUT.Choice mode.
+sub parseOPML {
+	my $xml = shift;
+
+	my %feed;
+	$feed{'type'} = 'opml';
+	$feed{'title'} = unescapeAndTrim($xml->{head}->{title});
+	my $outlines = $xml->{body}->{outline};
+	for my $itemXML (@$outlines) {
+		my %item;
+		$item{'name'} = $itemXML->{text};
+		$item{'value'} = $itemXML->{url};
+		push @{$feed{'items'}}, \%item;
+	}
 	return \%feed;
 }
 

@@ -7,10 +7,10 @@
 
 # A simple cache for arbitrary data.
 # Each entry has an expiration time (Time::HiRes).
-# TODO: user timers to periodically clean up expired entries.
+# TODO: use timers to periodically clean up expired entries. (currently does lazy cleanup)
 # TODO: persist this cache on filesystem or database
 
-package Plugins::Podcast::Cache;
+package Slim::Utils::Cache;
 use strict;
 
 use Time::HiRes;

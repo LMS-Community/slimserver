@@ -15,6 +15,7 @@ use Slim::Utils::Misc;
 use Slim::Buttons::Plugins;
 use Slim::Display::Display;
 use Slim::Buttons::SqueezeNetwork;
+use Slim::Buttons::PodcastBrowser;
 
 # hash of references to functions to call when we leave a mode
 our %leaveMode = ();
@@ -68,6 +69,7 @@ sub init {
 	Slim::Buttons::BrowseDB::init();
 	Slim::Buttons::Information::init();
 	Slim::Buttons::Playlist::init();
+	Slim::Buttons::PodcastBrowser::init();
 	Slim::Buttons::Power::init();
 	Slim::Buttons::ScreenSaver::init();
 	Slim::Buttons::Search::init();
@@ -1062,6 +1064,8 @@ sub pushMode {
 		msg("Crashing because '$setmode' has no mode function.  Perhaps you mis-typed the mode name.\n");
 	}
 	&$fun($client,'push');
+
+	$client->update();
 
 	# some modes require periodic updates
 	startPeriodicUpdates($client);
