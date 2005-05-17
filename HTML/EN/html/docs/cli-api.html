@@ -12,7 +12,7 @@
   SlimServer will listen for connections on TCP/IP port 9090. This format is designed for ease of integration 
   into AMX, Crestron and other automation systems.</p>
 <p>The end of line separator is line feed (&lt;LF&gt; ASCII decimal 10, hexadecimal 0x0A). The server accepts LF or 
-  CRLF as end of line, but always terminates replies with LF.</p>
+  CRLF as end of line, but always terminates replies with LF. For strings, SlimServer uses the UTF-8 charset.</p>
   
 <p>To use the command line interface interactively, use the telnet command from your system's command prompt:
   <em>telnet localhost 9090</em> and when it connects, you can start typing commands. Beware that the server
@@ -108,7 +108,10 @@
   allowed hosts. If password protection is enabled, the &quot;<a href="#login">login</a>&quot; command must be the first command sent after
   the connection. Any error in the user and/or password, or using any other command as the first one, results in
   the server disconnecting.</li>
-
+<p></p>
+<li>All SlimServer preferences apply to the CLI data. For examples, the preference about composers appearing
+  in the artists list applies to the data returned by the &quot;<a href="#artists">artists</a>&quot; query.</li>
+<p></p>
 <li>Commands that use paths to songs or playlists (<code>&lt;item&gt;</code> parameters below)  can use 
   relative paths from the root of the Music Library folder to specify songs.  For example, if the Music Library is 
   specified as &quot;D:\mymusic&quot; and you'd like to refer to a song in that folder named &quot;foo.mp3&quot;  you 
@@ -326,8 +329,11 @@ already synced with this player by passing in a &quot;?&quot; parameter.  Multip
   <p>Request: &quot;04:20:00:12:23:45 connected ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 connected 1&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; mixer volume &lt;0 .. 100|-100 .. +100|?&gt;</code></strong></p>
-<p>The &quot;mixer volume&quot; command returns or sets the current volume setting for the player.</p>
+<br><p id="volume"><strong><code>&lt;playerid&gt; mixer volume &lt;0 .. 100|-100 .. +100|?&gt;</code></strong></p>
+<p>The &quot;mixer volume&quot; command returns or sets the current volume setting for the player. The scale is
+   0 to 100, in real numbers (i.e. 34.5 is valid). Note that players display a 0 to 40 scale, that is, the 0..100 volume 
+   divided by 2,5. Likewise, using the &quot;<a href="#button">button</a>&quot; command with &quot;volume_up&quot; or &quot;volume_down&quot;
+   parameters increases or decreases the volume by 2,5.</p>
 <p> Example: </p>
 <blockquote> 
   <p>Request: &quot;04:20:00:12:23:45 mixer volume ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer volume 98&lt;LF&gt;&quot;</p>
@@ -343,7 +349,8 @@ already synced with this player by passing in a &quot;?&quot; parameter.  Multip
 </blockquote>
 
 <br><p><strong><code>&lt;playerid&gt; mixer bass &lt;0 .. 100|-100 .. +100|?&gt;</code></strong></p>
-<p>The &quot;mixer bass&quot; command returns or sets the current bass setting for the player.</p>
+<p>The &quot;mixer bass&quot; command returns or sets the current bass setting for the player. For more information on
+   the 0 to 100 scale, please refer to the &quot;<a href="#volume">mixer volume</a>&quot; command.</p>
 <p> Example: </p>
 <blockquote> 
   <p>Request: &quot;04:20:00:12:23:45 mixer bass ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer bass 98&lt;LF&gt;&quot;</p>
@@ -352,7 +359,8 @@ already synced with this player by passing in a &quot;?&quot; parameter.  Multip
 </blockquote>
 
 <br><p><strong><code>&lt;playerid&gt; mixer treble &lt;0 .. 100|-100 .. +100|?&gt;</code></strong></p>
-<p>The &quot;mixer treble&quot; command returns or sets the current treble setting for the player.</p>
+<p>The &quot;mixer treble&quot; command returns or sets the current treble setting for the player. For more information on
+   the 0 to 100 scale, please refer to the &quot;<a href="#volume">mixer volume</a>&quot; command.</p>
 <p> Example: </p>
 <blockquote> 
   <p>Request: &quot;04:20:00:12:23:45 mixer treble ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer treble 98&lt;LF&gt;&quot;</p>
@@ -421,7 +429,7 @@ preferences values.</p>
   <p>Request: &quot;04:20:00:12:23:45 playerpref doublesize 0&quot;<br>Response: &quot;04:20:00:12:23:45 playerpref doublesize 0&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; button &lt;buttoncode&gt;</code></strong></p>
+<br><p id="button"><strong><code>&lt;playerid&gt; button &lt;buttoncode&gt;</code></strong></p>
 <p>The &quot;button&quot; command simulates a button press. Valid button codes correspond to the functions defined in the Default.map file.
 <p>Example:</p>
 <blockquote> 
