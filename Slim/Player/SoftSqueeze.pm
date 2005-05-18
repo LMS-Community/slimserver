@@ -44,7 +44,7 @@ sub needsUpgrade {
 }
 
 sub maxTransitionDuration {
-        return 0;
+	return 0;
 }
 
 1;

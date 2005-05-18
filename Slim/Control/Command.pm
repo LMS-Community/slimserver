@@ -170,6 +170,11 @@ sub execute {
 
 		# ignore empty commands
 
+	} elsif ($p0 eq "version") {
+
+		$client = undef;
+		$p1 = $::VERSION;
+
 	} elsif ($p0 eq "player") {
 
 		if (!defined($p1)) {
@@ -585,9 +590,12 @@ sub execute {
 
  		$client = undef;
 
+################################################################################
+# The following commands require a valid client to be specified
+################################################################################
+
 	} elsif ($client) {
 
-		#the following commands require a valid client to be specified
 		if ($p0 eq "playerpref") {
 
 			if (defined($p2) && $p2 ne '?' && !$::nosetup) {
@@ -1587,11 +1595,6 @@ sub execute {
 		} elsif ($p0 eq "listen") {
 
 			$client = undef;
-
-		} elsif ($p0 eq "version") {
-
-			$client = undef;
-			$p1 = $::VERSION;
 
 		} elsif ($p0 eq "exit") {
 
