@@ -8,8 +8,8 @@
 	    				<a href="[% webroot %]setup.html?player=[% player | uri %]&page=server">[% "SERVER" | string %]</a> /
 	    			[% END %]
 	    			<a href="[% webroot %]setup.html?player=[% player | uri %]&playerid=[% player | uri %]&page=player">[% "PLAYER" | string %]</a> -- 
-	    		[% END %]<a href="[% webroot %]hitlist.html">[% "STATISTICS" | string %]</a> -- 
-	    		<a href="[% webroot %]html/about.html">[% "ABOUT_SHORT" | string %]</a>
+	    		[% END %]<a href="[% webroot %]hitlist.html?player=[% player | uri %]">[% "STATISTICS" | string %]</a> -- 
+	    		<a href="[% webroot %]html/about.html?player=[% player | uri %]">[% "ABOUT_SHORT" | string %]</a>
 	    	</small>
 	    	</td>
 	    </tr>
