@@ -1065,8 +1065,6 @@ sub pushMode {
 	}
 	&$fun($client,'push');
 
-	$client->update();
-
 	# some modes require periodic updates
 	startPeriodicUpdates($client);
 }
