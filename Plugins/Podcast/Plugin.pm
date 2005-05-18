@@ -20,6 +20,9 @@ our @default_feeds = (
 	 value => 'http://podcastalley.com/PodcastAlleyTop50.opml'},
 	{name => 'PodcastAlley 10 Newest',
 	 value => 'http://podcastalley.com/PodcastAlley10Newest.opml'},
+	# here's a nice list of radio programs.  Unfortunately the list is a little stale.  For instance all Air America links seem wrong.  Not sure yet whether it should be included in our defaults.
+#	{name => 'Public Radio Feeds (Todd Maffin)',
+#	 value => 'http://todmaffin.com/radio.opml'},
 );
 
 our @feeds = ();
@@ -92,7 +95,6 @@ sub setMode {
 	my $client = shift;
 	my $method = shift;
 
-	$::d_plugins && msg("Podcast: setMode $method\n");
 	if ($method eq 'pop') {
 		Slim::Buttons::Common::popMode($client);
 		return;
@@ -102,6 +104,7 @@ sub setMode {
 	my %params = (
 		header => '{PLUGIN_PODCAST} {count}',
 		listRef => \@feeds,
+		modeName => 'Podcast Plugin',
 		onRight => sub {
 			my $client = shift;
 			my $item = shift;
@@ -251,7 +254,11 @@ sub updateFeedNames {
 				# does a synchronous get
 				my $xml = getFeedXml($url);
 				if ($xml && exists $xml->{channel}->{title}) {
-					$feedNamePrefs[$i] = Plugins::Podcast::Browse::unescapeAndTrim($xml->{channel}->{title});
+					# here for podcasts and RSS
+					$feedNamePrefs[$i] = Slim::Buttons::PodcastBrowser::unescapeAndTrim($xml->{channel}->{title});
+				} elsif ($xml && exists $xml->{head}->{title}) {
+					# here for OPML
+					$feedNamePrefs[$i] = Slim::Buttons::PodcastBrowser::unescapeAndTrim($xml->{head}->{title});
 				} else {
 					# use url as title since we have nothing else
 					$feedNamePrefs[$i] = $url;
@@ -291,7 +298,7 @@ sub updateFeedNames {
 # copied from RSS news plugin
 # gets the xml for a feed synchronously
 # only used to support the web interface
-# when browsing, feeds are downloaded asynchronously, see Browse.pm
+# when browsing, feeds are downloaded asynchronously, see PodcastBrowser.pm
 sub getFeedXml {
     my $feed_url = shift;
     
