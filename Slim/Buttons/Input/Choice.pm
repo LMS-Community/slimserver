@@ -23,6 +23,9 @@ use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 use Slim::Display::Display;
 
+# TODO: move browseCache into Client object, where it will be cleaned up after client is forgotten
+our %browseCache = (); # remember where each client is browsing
+
 Slim::Buttons::Common::addMode('INPUT.Choice',getFunctions(),\&setMode);
 
 # get the value the user is currently referencing.
@@ -201,6 +204,7 @@ sub changePos {
 	$$valueRef = $listRef->[$newposition];
 	Slim::Buttons::Common::param($client,'listIndex',$newposition);
 	my $onChange = getParam($client,'onChange');
+
 	if (ref($onChange) eq 'CODE') {
 		$onChange->($client, $valueRef ? ($$valueRef) : undef);
 	}
@@ -210,6 +214,15 @@ sub changePos {
 		} else {
 			$client->pushDown();
 		}
+	}
+
+	# if unique mode name supplied, remember where client was browsing
+	if ($client->param("modeName") && $$valueRef) {
+		my $value = $$valueRef;
+		if (ref($value) eq 'HASH' && $value->{'value'}) {
+			$value = $value->{'value'};
+		}
+		$browseCache{$client}{$client->param("modeName")} = $value;
 	}
 }
 
@@ -332,6 +345,10 @@ sub init {
 	my $listIndex = Slim::Buttons::Common::param($client,'listIndex') || 0;
 	if ($setMethod eq 'push') {
 		my $initialValue = getExtVal($client, getParam($client, 'initialValue'));
+		# if initialValue not provided, use the one we saved
+		if (!$initialValue && $client->param("modeName")) {
+			$initialValue = $browseCache{$client}{$client->param("modeName")};
+		}
 		if ($initialValue) {
 			my $newIndex;
 			for ($newIndex = 0; $newIndex < scalar(@$listRef); $newIndex++) {
