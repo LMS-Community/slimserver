@@ -880,7 +880,6 @@ sub screensaverSettingsSetMode {
 	$params{'valueRef'} = \$current{$client};
 	
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
-	$client->update();
 }
 
 our %noModeFunctions = ();
@@ -945,7 +944,6 @@ sub setMode {
                       );
         
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
-	$client->update();
 }
 
 # needed in getFunctions
@@ -1029,7 +1027,6 @@ sub headlinesSetMode {
                   );
     
     Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
-    $client->update();
 }
 
 Slim::Buttons::Common::addMode('PLUGIN.RssNews.headlines', 
@@ -1108,7 +1105,6 @@ sub descriptionSetMode {
                   );
     
     Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
-    $client->update();
     
 }
 
