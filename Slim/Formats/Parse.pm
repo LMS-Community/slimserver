@@ -838,7 +838,7 @@ sub readASX {
 sub readPodcast {
 	my $in = shift;
 
-	$::d_parse && Slim::Utils::Misc::msg("Parsing podcast...\n");
+	#$::d_parse && Slim::Utils::Misc::msg("Parsing podcast...\n");
 
 	my @urls = ();
 
@@ -849,7 +849,7 @@ sub readPodcast {
 						   forcearray => ["item"], keyattr => []) };
 
 	if ($@) {
-		$::d_plugins && msg("Podcast: failed to parse feed because:\n$@\n");
+		$::d_parse && msg("Parse: failed to parse podcast because:\n$@\n");
 		# TODO: how can we get error message to client?
 		return undef;
 	}
@@ -881,8 +881,6 @@ sub readPodcast {
 	# since they openned it.  But I'm copying other read routines
 	# which call close at the end.
 	close $in;
-
-	$::d_plugins && msg("Podcast: parsed podcast.  Returning urls:\n" . join("\n", @urls) . "\n");
 
 	return @urls;
 }
