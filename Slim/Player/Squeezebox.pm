@@ -101,6 +101,12 @@ sub reconnect {
 	$client->animateState(0);
 	$client->updateMode(0);
 
+	# initialize the irtime to the current time so that
+	# (re)connecting counts as activity (and we don't
+	# immediately switch into a screensaver).
+	my $now = Time::HiRes::time();
+	$client->epochirtime($now);
+
 	$client->brightness(Slim::Utils::Prefs::clientGet($client,$client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 	$client->update();	
 }
