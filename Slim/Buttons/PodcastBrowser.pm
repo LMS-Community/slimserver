@@ -24,7 +24,6 @@ use Slim::Buttons::Common;
 use Slim::Control::Command;
 use Slim::Utils::Cache;
 
-our %browseCache = (); # remember where each client is browsing
 our $feedCache = Slim::Utils::Cache->new();
 
 sub init {
@@ -40,7 +39,6 @@ sub setMode {
 	my $client = shift;
 	my $method = shift;
 
-	$::d_plugins && msg("Browser: setMode $method\n");
 	if ($method eq 'pop') {
 		Slim::Buttons::Common::popMode($client);
 		return;
@@ -116,12 +114,6 @@ sub gotRSS {
 	my $url = shift;
 	my $feed = shift;
 
-	# restore client to where they were last browsing this feed.
-	my $initialValue;
-	if ($browseCache{$client->id()}) {
-		$initialValue = $browseCache{$client->id()}->{$url};
-	}
-
 	# Include an item to access feed info
 	if (($feed->{'items'}->[0]->{'value'} ne 'description') &&
 		# skip this if xmlns:slim is used, and no description found
@@ -165,7 +157,8 @@ sub gotRSS {
 	my %params = (
 		url => $url,
 		feed => $feed,
-		initialValue => $initialValue,
+		# unique modeName allows INPUT.Choice to remember where user was browsing
+		modeName => "PodcastBrowser:$url",
 		header => $feed->{'title'} . ' {count}',
 		# TODO: we show only items here, we skip the description of the entire channel
 		listRef => $feed->{'items'},
@@ -192,16 +185,6 @@ sub gotRSS {
 			my $client = shift;
 			my $item = shift;
 			playItem($client, $item, 'add');
-		},
-		onChange => sub {
-			my $client = shift;
-			my $item = shift;
-
-			# remember where client was browsing
-			if (!defined($browseCache{$client->id()})) {
-				$browseCache{$client->id()} = {};
-			}
-			$browseCache{$client->id}->{$client->param('url')} = $item->{'value'};
 		},
 		overlayRef => sub {
 			my $client = shift;
@@ -230,37 +213,30 @@ sub gotOPML {
 	my $url = shift;
 	my $feed = shift;
 
-	# restore client to where they were last browsing this feed.
-	my $initialValue;
-	if ($browseCache{$client->id()}) {
-		$initialValue = $browseCache{$client->id()}->{$url};
-	}
-
 	my %params = (
 		url => $url,
 		feed => $feed,
-		initialValue => $initialValue,
+		# unique modeName allows INPUT.Choice to remember where user was browsing
+		modeName => "PodcastBrowser:$url",
 		header => $feed->{'title'} . ' {count}',
 		listRef => $feed->{'items'},
 		onRight => sub {
 			my $client = shift;
 			my $item = shift;
-			my %params = (
-				url => $item->{'value'},
-				title => $item->{'name'},
-			);
-			Slim::Buttons::Common::pushModeLeft($client, 'podcastbrowser',
-												\%params);
-		},
-		onChange => sub {
-			my $client = shift;
-			my $item = shift;
-
-			# remember where client was browsing
-			if (!defined($browseCache{$client->id()})) {
-				$browseCache{$client->id()} = {};
+			if ($item->{'url'}) {
+				# follow a link
+				my %params = (
+					url => $item->{'url'},
+					title => $item->{'name'},
+				);
+				Slim::Buttons::Common::pushModeLeft($client, 'podcastbrowser',
+													\%params);
+			} elsif ($item->{'items'}) {
+				#recurse into OPML item
+				browseOPML($client, $client->param('url'), $item);
+			} else {
+				$client->bumpRight();
 			}
-			$browseCache{$client->id}->{$client->param('url')} = $item->{'value'};
 		},
 		overlayRef => [undef, Slim::Display::Display::symbol('rightarrow')],
 	);
@@ -268,6 +244,42 @@ sub gotOPML {
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
 }
 
+#recusively browse OPML outline
+sub browseOPML {
+	my $client = shift;
+	my $url = shift;
+	my $item = shift;
+
+	my %params = (
+		url => $url,
+		item => $item,
+		# unique modeName allows INPUT.Choice to remember where user was browsing
+		modeName => "PodcastBrowser:$url:" . $item->{'name'},
+		header => $item->{'name'} . ' {count}',
+		listRef => $item->{'items'},
+		onRight => sub {
+			my $client = shift;
+			my $item = shift;
+			if ($item->{'value'}) {
+				# follow a link
+				my %params = (
+					url => $item->{'value'},
+					title => $item->{'name'},
+				);
+				Slim::Buttons::Common::pushModeLeft($client, 'podcastbrowser',
+													\%params);
+			} elsif ($item->{'items'}) {
+				#recurse into OPML item
+				browseOPML($client, $client->param('url'), $item);
+			} else {
+				$client->bumpRight();
+			}
+		},
+		overlayRef => [undef, Slim::Display::Display::symbol('rightarrow')],
+	);
+
+	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
+}
 
 sub hasAudio {
 	my $item = shift;
@@ -374,7 +386,7 @@ sub displayItemDescription {
 			hideTitle => 1,
 			hideURL => 1,
 		);
-		Slim::Buttons::Common::pushMode($client,
+		Slim::Buttons::Common::pushModeLeft($client,
 										'remotetrackinfo',
 										\%params);
 	} else {
@@ -557,6 +569,7 @@ sub gotViaHTTP {
 
 	if ($@) {
 		$::d_plugins && msg("Podcast: failed to parse feed because:\n$@\n");
+		$::d_plugins && msg("Podcast: here's the bad feed:\n" . $http->content() . "\n\n");
 		# call ecb
 		gotError($params->{'client'}, $http->url(), $@);
 		return;
@@ -645,15 +658,26 @@ sub parseOPML {
 	my %feed;
 	$feed{'type'} = 'opml';
 	$feed{'title'} = unescapeAndTrim($xml->{head}->{title});
-	my $outlines = $xml->{body}->{outline};
-	for my $itemXML (@$outlines) {
-		my %item;
-		$item{'name'} = $itemXML->{text};
-		$item{'value'} = $itemXML->{url};
-		push @{$feed{'items'}}, \%item;
-	}
+	$feed{'items'} = _parseOPMLOutline($xml->{body}->{outline});
 	return \%feed;
 }
+
+# recursively parse an OPML outline entry
+sub _parseOPMLOutline {
+	my $outlines = shift;
+	my @items;
+	for my $itemXML (@$outlines) {
+		my %item;
+		# compatable with INPUT.Choice, which expects 'name' and 'value'
+		$item{'name'} = $itemXML->{text};
+		$item{'value'} = $itemXML->{url} || $itemXML->{text};
+		$item{'url'} = $itemXML->{url};
+		$item{'items'} = _parseOPMLOutline($itemXML->{outline});
+		push @items, \%item;
+	}
+	return \@items;
+}
+
 
 #### Some routines for munging strings
 sub unescape {
