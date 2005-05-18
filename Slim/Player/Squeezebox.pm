@@ -571,18 +571,18 @@ sub stream {
 		
 		my $request_string;
 		my ($server_port, $server_ip);
-		$url = $client->canDirectStream($url);
-		if ($command eq 's' && $url) {
-			$::d_directstream && msg("This player supports direct streaming for $url, let's do it.\n");
+		my $server_url = $client->canDirectStream($url);
+		if ($command eq 's' && $server_url) {
+			$::d_directstream && msg("This player supports direct streaming for $url as $server_url, let's do it.\n");
 		
-			my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
+			my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($server_url);
 			my ($name, $liases, $addrtype, $length, @addrs) = gethostbyname($server);
 			if ($port && $addrs[0]) {
 				$server_port = $port;
 				$server_ip = unpack('N',$addrs[0]);
 			}
 
-			$request_string = Slim::Player::Protocols::HTTP::requestString($url);  
+			$request_string = Slim::Player::Protocols::HTTP::requestString($server_url);  
 			$autostart += 2;
 			if (!$server_port || !$server_ip) {
 				$::d_directstream && msg("Couldn't get an IP and Port for direct stream ($server_ip:$server_port), failing.\n");

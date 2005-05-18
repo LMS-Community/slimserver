@@ -1995,6 +1995,15 @@ sub openRemoteStream {
 	return undef;
 }
 
+sub protocolHandlerForURL {
+	my $url = shift;
+	
+	my ($protocol) = $url =~ /^([a-zA-Z0-9\-]+):/;
+	return undef if !$protocol;
+
+	return $Slim::Player::Source::protocolHandlers{lc $protocol};
+}
+
 1;
 
 __END__

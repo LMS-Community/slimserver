@@ -602,8 +602,7 @@ sub canDirectStreamDisabled {
 	my $client = shift;
 	my $url = shift;
 
-	my ($protocol) = $url =~ /^([a-zA-Z0-9\-]+):/;
-	my $handler = $Slim::Player::Source::protocolHandlers{lc $protocol};
+	my $handler = Slim::Player::Source::protocolHandlerForURL($url);
 	if ($handler && $handler->can('convertToHTTP')) {
 	    $url = $handler->convertToHTTP($url);
 	}
@@ -735,9 +734,19 @@ sub directBodyFrame {
 	} else {
 		if (length($client->directBody())) {
 			$::d_directstream && msg("empty body means we should parse what we have for " . $client->directURL() . "\n");
+
+			my $url = $client->directURL();
+			my $handler = Slim::Player::Source::protocolHandlerForURL($url);
+
+			my @items;
 			# done getting body of playlist, let's parse it!
-			my $io = IO::String->new($client->directBody());
-			my @items = Slim::Formats::Parse::parseList($client->directURL(), $io);
+			if ($handler && $handler->can('parseList')) {
+				@items = $handler->parseList($client->directURL(), $client->directBody());
+			}
+			else {
+				my $io = IO::String->new($client->directBody());
+				@items = Slim::Formats::Parse::parseList($client->directURL(), $io);
+			}
 	
 			if (@items && scalar(@items)) { 
 				Slim::Player::Source::explodeSong($client, \@items);

@@ -265,11 +265,37 @@ sub convertToHTTP {
 	my $self = shift;
 	my $url = shift;
 
-	if ($url !~ /^radioio:\/\/(.*?)\.mp3/) {
-		return undef;
+	if ($url =~ /^radioio:\/\/stream\/(.*)/) {
+		return 'http://' . Plugins::RadioIO::Plugin::decrypt($1);
+	}
+	elsif ($url =~ /^radioio:\/\/(.*?)\.mp3/) {
+		return Plugins::RadioIO::Plugin::getHTTPURL($1);
 	}
 
-	return Plugins::RadioIO::Plugin::getHTTPURL($1);
+	return undef;
+}
+
+sub parseList {
+	my $self = shift;
+	my $url = shift;
+	my $body = shift;
+
+	my $io = IO::String->new($body);
+	my @items = Slim::Formats::Parse::parseList($url, $io);
+
+	return () unless scalar(@items);
+
+	my $stream = $items[0];
+	$stream =~ s/http:\/\///;
+	$stream = 'radioio://stream/' . Plugins::RadioIO::Plugin::decrypt($stream);
+
+	my $currentDB = Slim::Music::Info::getCurrentDataStore();
+	my $track = $currentDB->objectForUrl($url);
+	if (defined($track)) {
+		Slim::Music::Info::setTitle($stream, $track->title());
+	}
+
+	return ($stream);
 }
 
 1;
