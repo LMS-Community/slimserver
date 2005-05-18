@@ -107,7 +107,6 @@ sub setMode {
 	);
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
-	$client->update();
 }
 
 1;

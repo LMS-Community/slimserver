@@ -92,7 +92,6 @@ sub listFavorites {
 	);
 
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
-	$client->update();
 }
 
 

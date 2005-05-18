@@ -112,7 +112,6 @@ sub listStations {
 	);
 
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
-	$client->update();
 }
 
 sub setMode {
@@ -207,7 +206,6 @@ sub detailsSetMode {
 	);
 
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
-	$client->update();
 }
 
 Slim::Buttons::Common::addMode('PLUGIN.Picks.details', \%detailsModeFunctions, \&detailsSetMode);

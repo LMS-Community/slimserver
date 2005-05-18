@@ -243,7 +243,6 @@ sub setMode {
 	$client->lines(\&lines);
 	$status{$client}{status} = 0;
 	$status{$client}{number} = undef;
-	$client->update();
 
 	check4Update();
 	
@@ -265,8 +264,6 @@ sub setMode {
 	else {
 		$status{$client}{status} = 1;
 	}
-	
-	$client->update();
 }
 
 sub loadStreamList {
@@ -323,7 +320,10 @@ sub gotViaHTTP {
 	$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: create page\n");
 	createAsyncWebPage($params);
 	$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: that's it\n");
-	Slim::Buttons::Block::unblock($params->{'client'}) if defined $params->{'client'};
+	if (defined $params->{'client'}) {
+		Slim::Buttons::Block::unblock($params->{'client'});
+		$params->{'client'}->update();
+	}
 }
 
 sub gotErrorViaHTTP {
@@ -332,7 +332,10 @@ sub gotErrorViaHTTP {
 
 	$httpError = 99;
 	createAsyncWebPage($params);
-	Slim::Buttons::Block::unblock($params->{'client'}) if defined $params->{'client'};
+	if (defined $params->{'client'}) {
+		Slim::Buttons::Block::unblock($params->{'client'});
+		$params->{'client'}->update();
+	}
 }
 
 sub createAsyncWebPage {
@@ -852,7 +855,6 @@ my $mode_sub = sub {
 	$status{$client}{status} = -3;
 	$status{$client}{number} = undef;
 	$status{$client}{stream} = $status{$client}{old_stream}{$status{$client}{genre}};
-	$client->update();
 
 	if (getCurrentGenre($client) eq getRecentName($client)) {
 		$status{$client}{streams} = readRecentStreamList($client) || [ $client->string('PLUGIN_SHOUTCASTBROWSER_NONE') ];
@@ -863,7 +865,6 @@ my $mode_sub = sub {
 	}
 	
 	$status{$client}{status} = 1;
-	$client->update();
 };
 
 my $leave_mode_sub = sub {
@@ -1064,7 +1065,6 @@ sub getCurrentBitrate {
 my $bitrate_mode_sub = sub {
 	my $client = shift;
 	$client->lines(\&bitrateLines);
-	$client->update();
 };
 
 sub bitrateLines {

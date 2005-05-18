@@ -805,8 +805,6 @@ sub setMode {
 	} else {
 		$loginModePtr->[1] = 'PLUGIN_LIVE365_LOGIN';
 	}
-
-	$client->update();
 }
 
 our %mainModeFunctions = (
@@ -1041,7 +1039,6 @@ our $setGenreMode = sub {
 	}
 
 	$live365->{$client}->clearBlockingStatus();
-	$client->update();
 };
 
 our $noGenreMode = sub {
@@ -1306,8 +1303,6 @@ our $setInfoMode = sub {
 
 	$live365->{$client}->clearBlockingStatus();
 	Slim::Buttons::Common::pushMode($client, 'remotetrackinfo', \%params);
-
-	$client->update();
 };
 
 our $noInfoMode = sub {
