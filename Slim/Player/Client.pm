@@ -743,7 +743,11 @@ sub new {
 	$client->lastircode(0);
 	$client->lastircodebytes(0);
 	$client->startirhold(0);
-	$client->epochirtime(0);
+	# initialize the irtime to the current time so that
+	# (re)connecting counts as activity (and we don't
+	# immediately switch into a screensaver).
+	my $now = Time::HiRes::time();
+	$client->epochirtime($now);
 	$client->irrepeattime(0);
 	$client->irtimediff(0);
 

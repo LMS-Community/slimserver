@@ -101,7 +101,7 @@ sub reconnect {
 	$client->animateState(0);
 	$client->updateMode(0);
 
-	# initialize the irtime to the current time so that
+	# reinitialize the irtime to the current time so that
 	# (re)connecting counts as activity (and we don't
 	# immediately switch into a screensaver).
 	my $now = Time::HiRes::time();
