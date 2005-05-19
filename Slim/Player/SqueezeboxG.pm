@@ -817,7 +817,7 @@ sub scrollUpdate {
 		($$bitsref | substr($$scrollref, $scroll->{offset}, $scroll->{overlay2start}));
 
 	# check for congestion on slimproto socket and send update if not congested
-	if (defined($client->tcpsock) && !Slim::Networking::Select::writeNoBlockQLen($client->tcpsock) && (length($frame) == $scroll->{scrollFrameSize})) {
+	if ((Slim::Networking::Select::writeNoBlockQLen($client->tcpsock) == 0) && (length($frame) == $scroll->{scrollFrameSize})) {
 		Slim::Networking::Select::writeNoBlock($client->tcpsock, \$frame);
 	}
 

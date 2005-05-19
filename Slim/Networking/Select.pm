@@ -193,7 +193,7 @@ sub writeNoBlockQLen {
 		return scalar @{$writeQueue{"$socket"}};
 	}
 
-	return 0;
+	return -1;
 }
 
 1;
