@@ -96,17 +96,19 @@ sub gotFeed {
 	my $url = shift;
 	my $feed = shift;
 
-	# unblock client
+	# must unblock now, before pushMode is called by getRSS or gotOPML
 	Slim::Buttons::Block::unblock($client);
 
 	# "feed" was originally an RSS feed.  Now it could be either RSS or an OPML outline.
 	if ($feed->{'type'} eq 'rss') {
-		return gotRSS($client, $url, $feed);
+		gotRSS($client, $url, $feed);
 	} elsif ($feed->{'type'} eq 'opml') {
-		return gotOPML($client, $url, $feed);
+		gotOPML($client, $url, $feed);
 	} else {
 		msg("Podcast Browser: Unknown feed type for $url\n");
 	}
+
+	$client->update();
 }
 
 sub gotRSS {
