@@ -664,6 +664,10 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 		$::d_scan && msg("Scan::readList loading $playlisturl with base $playlist_base\n");
 		$numitems = (push @$listref, Slim::Formats::Parse::parseList($playlisturl, $playlist_filehandle, $playlist_base)) - $startingsize;
+
+		if (ref($playlist_filehandle) eq 'IO::String') {
+			untie $playlist_filehandle;
+		}
 					
 		$::d_scan && msg("Scan::readList loaded playlist with $numitems items\n");
 	}

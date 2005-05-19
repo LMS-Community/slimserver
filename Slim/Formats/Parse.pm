@@ -236,7 +236,7 @@ sub readPLS {
 		push @items, $entry;
 	}
 
-	close $pls;
+	close $pls if (ref($pls) ne 'IO::String');
 
 	return @items;
 }
