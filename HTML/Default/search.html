@@ -4,79 +4,82 @@
 [% PROCESS pageheader.html %]
 <script type="text/javascript" src="/html/livesearch.js"></script>
 <script type="text/javascript"> liveSearchInit(); </script>
-<TR height="44"> 
-  <TD width="4" height="44"><IMG SRC="html/images/spacer.gif" WIDTH=8 HEIGHT=39 ALT=""></TD>
-				<td valign="top" class="medgrey" height="44">
-					<table cellspacing="0" width=100% >
-						<tr height="5">
-							<td width="8" height="5"><img src="html/images/spacer.gif" width=8 height=5 alt=""></td>
-							<td height="5"><img src="html/images/spacer.gif" width=305 height=5 alt=""></td>
-							<td width="4" height="5"><img src="html/images/spacer.gif" width=4 height=5 alt=""></td>
-						</tr>
-						<tr>
-							<td width="8"><img src="html/images/spacer.gif" width=8 height=8 alt=""></td>
-							
-        <td class="exlisting" valign=top><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / <a href="search.html?player=[% player | uri %]">[% "SEARCH" | string %]</a></td>
-							<td width="4"></td>
-						</tr>
-						<tr height="5">
-							<td width="8" height="5"><img src="html/images/spacer.gif" width=8 height=5 alt=""></td>
-							<td height="5"><img src="html/images/spacer.gif" width=305 height=5 alt=""></td>
-							<td width="4" height="5"></td>
-						</tr>
-					</table>
+<tr height="44"> 
+	<td width="4" height="44"><IMG SRC="html/images/spacer.gif" WIDTH=8 HEIGHT=39 ALT=""></td>
+	<td valign="top" class="medgrey" height="44">
+		<table cellspacing="0" width=100% >
+			<tr height="22">
+				<td width="8"><img src="html/images/spacer.gif" width=8 height=8 alt=""></td>	
+    			<td class="exlisting" valign=top><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / <a href="search.html?player=[% player | uri %][% IF liveSearch %]&amp;livesearch=1[% END %]">[% "SEARCH" | string %]</a></td>
+				<td width="4"></td>
+			</tr>
+			<tr height="2"><td colspan=3><img src="html/images/spacer.gif" height="2" alt=""></td></tr>
+			<tr height="20">
+				<td width="8"><img src="html/images/spacer.gif" width="8" alt=""></td>
+				<td valign="middle">
+					[% IF searchlist_header %]
+						[% searchlist_header %]
+					[% END %]
 				</td>
-				<TD width="4" height="44">
-			<p><IMG SRC="html/images/spacer.gif" WIDTH=4 HEIGHT=19 ALT=""></p></TD>
-			</TR>
+				<td width="4"></td>
+			</tr>
+		</table>
+	</td>
+	<td width="4" height="44">
+		<p><IMG SRC="html/images/spacer.gif" WIDTH=4 HEIGHT=19 ALT=""></p>
+	</td>
+</tr>
 <tr height="100%">
-				<td width="4" height="100%"></td>
+	<td width="4" height="100%"></td>
 				
-  <td valign="top" height="100%"> 
-    <p>&nbsp;</p>
-	[% IF liveSearch %]
+	<td valign="top" height="100%"> 
+		<p>&nbsp;</p>
+		[% IF liveSearch %]
 
-	<form id="searchForm" name="searchForm" method="GET" action="livesearch.html">
-		<input type="text" id="livesearch" name="query" size="40" autocomplete="off" onkeydown="liveSearchStart()" />
+		<form id="searchForm" name="searchForm" method="GET" action="livesearch.html">
+			<input type="text" id="livesearch" name="query" size="40" autocomplete="off" onkeydown="liveSearchStart()" />
 
-	[% ELSE %]
+		[% ELSE %]
 
-	<form id="searchForm" name="searchForm" method="GET" action="livesearch.html">
-		<input type="text" id="livesearch" name="query" size="40" value="[% query %]"/>
+		<form id="searchForm" name="searchForm" method="GET" action="livesearch.html">
+			<input type="text" id="livesearch" name="query" size="40" value="[% query %]"/>
 
-	[% END %]
+		[% END %]
 
-		<input name="submit" type=submit class="stdclick" value="[% "SEARCH" | string %]"><p>
-		<input type="hidden" value="1" name="manualSearch">
-		<input type="hidden" value="[% player %]" name="player">
-		<!-- <div id="LSResult" style="display: none;"><ul id="LSShadow"><li>&#160;</li></ul></div> -->
-	</form>
-	<br>
+			<input name="submit" type=submit class="stdclick" value="[% "SEARCH" | string %]"><p>
+			<input type="hidden" value="1" name="manualSearch">
+			<input type="hidden" value="[% player %]" name="player">
+			<!-- <div id="LSResult" style="display: none;"><ul id="LSShadow"><li>&#160;</li></ul></div> -->
+		</form>
 		<div id="LSResult" style="display: none;"></div>
 
 		[% IF searchError %]
 			[% searchError %]
 		[% END %]
 
-    <p></p>
-    [% IF searchlist_pagebar %]
-    <p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
-    [% END %][% IF searchlist_header %]
-    <p>[% searchlist_header %][% "COLON" | string %]</p>
-    [% END %] 
-    <table cellspacing="0" cellpadding="4">
-      [% browse_list %] 
-    </table>
-    [% IF numresults != '-1' %]
-		<center><p>[% "ALL_SONGS" | string %]</p>
-		<p><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a>, 
-			<a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=addtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a>
-		</p></center>
-	[% END %]
-    [% IF searchlist_pagebar %]
-    <p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
-    [% END %] 
-    <p>&nbsp;</p></td>
-				<td width="4" height="100%"></td>
+		[% IF searchlist_pagebar %]
+			<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
+		[% END %] 
+		<table cellspacing="0" cellpadding="4">
+			[% IF numresults != '-1' && numresults != '0' %]
+			<tr>
+				<td width="100%" class="even">[% "ALL_SONGS" | string %]</td>
+				<td align="right" width="13" class="even">
+				      <nobr><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a></nobr>
+				</td>
+				
+				<td align="right" width="13" class="even">
+				      <nobr><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=addtracks&listref=searchResults" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a></nobr>
+				</td>
 			</tr>
+			[% END %]
+			[% browse_list %] 
+	    </table>
+		[% IF searchlist_pagebar %]
+			<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
+		[% END %] 
+    	<p>&nbsp;</p>
+    </td>
+	<td width="4" height="100%"></td>
+</tr>
 [% PROCESS pagefooter.html %]

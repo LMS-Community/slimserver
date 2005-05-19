@@ -100,10 +100,8 @@ sub outputAsXHTML {
 		push @xml, @results if $count;
 
 		if ($count && $count > MAXRESULTS) {
-			# don't respect the absolute number of matches, but only the displayed number
-			my $rowType = MAXRESULTS % 2 ? 'odd' : 'even';
-			push @xml, sprintf("<tr><td class=\"%s\"> <p> <a href=\"search.html?liveSearch=0&amp;query=%s&amp;type=%s&amp;player=%s\">" . Slim::Utils::Strings::string('MORE_MATCHES') . "</a></p></td></tr>\n",
-				$rowType, $query, $type, $player
+			push @xml, sprintf("<tr><td class=\"even\"> <p> <a href=\"search.html?liveSearch=0&amp;query=%s&amp;type=%s&amp;player=%s\">%s</a></p></td></tr>\n",
+				$query, $type, $player, Slim::Utils::Strings::string('MORE_MATCHES')
 			);
 		}
 	}
