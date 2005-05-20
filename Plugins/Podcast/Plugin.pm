@@ -374,7 +374,7 @@ PODCAST_NOTHING_TO_PLAY
 	EN	Nothing to play
 
 PODCAST_FEED_DESCRIPTION
-	DE	Ãber diesen Podcast
+	DE	Über diesen Podcast
 	EN	About this podcast
 
 PODCAST_GROUP_DESC
@@ -382,22 +382,22 @@ PODCAST_GROUP_DESC
 	EN	The Podcast Browser plugin allows you to view and listen to podcasts.
 
 PODCAST_RESET_BUTTON
-	DE	ZurÃ¼cksetzen
+	DE	Zurücksetzen
 	EN	Reset
 
 PODCAST_RESETTING
-	DE	Setze Podcasts zurÃ¼ck
+	DE	Setze Podcasts zurück
 	EN	Resetting to default podcasts
 
 PODCAST_FEEDS_CHANGE
-	DE	Die Podcast Liste wurde geÃ¤ndert.
+	DE	Die Podcast Liste wurde geändert.
 	EN	Podcast list changed.
 
 SETUP_PLUGIN_PODCAST_FEEDS
 	EN	Podcasts
 
 SETUP_PLUGIN_PODCAST_RESET
-	DE	Podcasts zurÃ¼cksetzen
+	DE	Podcasts zurücksetzen
 	EN	Reset default Podcasts
 
 
