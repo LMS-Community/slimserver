@@ -194,7 +194,7 @@ sub initPlugin {
 
 sub addGroups {
 	my ($groupRef,$prefRef) = &setupUse();
-	Slim::Web::Setup::addGroup('server','moodlogic',$groupRef,3,$prefRef);
+	Slim::Web::Setup::addGroup('server','moodlogic',$groupRef,undef,$prefRef);
 	Slim::Web::Setup::addChildren('server','moodlogic');
 	Slim::Web::Setup::addCategory('moodlogic',&setupCategory);
 }
@@ -892,35 +892,19 @@ sub instant_mix {
 	for my $item (@$items) {
 
 		my %list_form = %$params;
-		my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
-		
+		my $fieldInfo = Slim::Web::Pages::fieldInfo();
+
+		# If we can't get an object for this url, skip it, as the
+		# user's database is likely out of date. Bug 863
 		my $trackObj  = $ds->objectForUrl($item) || next;
 		
-		$list_form{'genre'}         = $genre;
-		$list_form{'player'}        = $player;
-		$list_form{'itempath'}      = $item; 
-		$list_form{'item'}          = $item;
-		$list_form{'itemobj'}       = $trackObj;
-		$list_form{'title'}         = Slim::Music::Info::infoFormat($item, $webFormat, 'TITLE');
-		$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
-		$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
-		$list_form{'odd'}           = ($itemnumber + 1) % 2;
-		$list_form{'album'}         = $list_form{'includeArtist'} ? $trackObj->album() : undef;
-		
-		if ($list_form{'includeArtist'} && $trackObj) {
+		my $itemname = &{$fieldInfo->{'track'}->{'resultToName'}}($trackObj);
 
-			if (Slim::Utils::Prefs::get('composerInArtists') && $trackObj) {
-				if (my ($contributor) = $trackObj->contributors()) {
-					$list_form{'artist'}   = $contributor->name();
-					$list_form{'artistid'} = $contributor->id();
-				}
-			} else {
-				$list_form{'artist'} = $trackObj->artist();
-			}
-		}
+		&{$fieldInfo->{'track'}->{'listItem'}}($ds, \%list_form, $trackObj, $itemname, 0);
+
 		$itemnumber++;
 
-		$params->{'instant_mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("plugins/MoodLogic/instant_mix_list.html", \%list_form)};
+		$params->{'instant_mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
 	}
 
 	if (defined $p0 && defined $client) {

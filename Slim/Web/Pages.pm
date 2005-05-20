@@ -94,7 +94,8 @@ sub init {
 				$form->{'includeArtist'}       = ($webFormat !~ /ARTIST/);
 				$form->{'includeAlbum'}        = ($webFormat !~ /ALBUM/) ;
 				$form->{'item'}	               = $item->id;
-				$form->{'itempath'}	       = $item->url;
+				$form->{'itempath'}	           = $item->url;
+				$form->{'itemobj'}             = $item;
 
 				my $Imports = Slim::Music::Import::importers();
 				for my $mixer (keys %{$Imports}) {
@@ -220,6 +221,8 @@ sub init {
 				my $descend = shift;
 
 				my ($track) = $item->tracks();
+
+				$form->{'text'} = $item->title();
 
 				if (my $showYear = Slim::Utils::Prefs::get('showYear')) {
 
@@ -382,6 +385,8 @@ sub init {
 				my $item = shift;
 				my $itemname = shift;
 				my $descend = shift;
+
+				$form->{'text'} = $item->name();
 
 				my $Imports = Slim::Music::Import::importers();
 				for my $mixer (keys %{$Imports}) {
@@ -1780,7 +1785,6 @@ sub _fillInSearchResults {
 			);
 		}
 		
-		my $webFormat  = Slim::Utils::Prefs::getInd("titleFormat", Slim::Utils::Prefs::get("titleFormatWeb"));
 		my $itemnumber = 0;
 		my $lastAnchor = '';
 
@@ -1791,22 +1795,24 @@ sub _fillInSearchResults {
 			my $sorted    = $item->can('titlesort') ? $item->titlesort() : $item->namesort();
 			my %list_form = %$params;
 
-			$list_form{'includeArtist'}    = ($webFormat !~ /ARTIST/);
-			$list_form{'includeAlbum'}     = ($webFormat !~ /ALBUM/) ;
-
 			if ($type eq 'track') {
-				$list_form{'text'}    = Slim::Music::Info::standardTitle(undef, $item);
-				$list_form{'artist'}   = $item->artist();
-				$list_form{'album'}    = $item->album();
-				$list_form{'item'}     = $item->id();
-				$list_form{'itempath'} = $item->url();
+				
+				# if $ds is undefined here, make sure we have it now.
+				$ds = Slim::Music::Info::getCurrentDataStore() unless $ds;
+				
+				# If we can't get an object for this url, skip it, as the
+				# user's database is likely out of date. Bug 863
+				my $itemObj  = $ds->objectForUrl($item) || next;
+				
+				my $itemname = &{$fieldInfo{$type}->{'resultToName'}}($itemObj);
+
+				&{$fieldInfo{$type}->{'listItem'}}($ds, \%list_form, $itemObj, $itemname, 0);
 
 			} else {
 
 				$list_form{'text'} = $title;
 			}
 
-			$list_form{'itemobj'}      = $item;
 			$list_form{'attributes'}   = '&' . join('=', $type, $item->id());
 			$list_form{'hierarchy'}	   = $hierarchy{$type};
 			$list_form{'level'}        = 0;

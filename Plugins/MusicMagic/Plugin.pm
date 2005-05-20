@@ -20,8 +20,6 @@ my $scan = 0;
 my $MMSHost;
 my $MMSport;
 
-my $lastMusicLibraryFinishTime = undef;
-
 our %artwork = ();
 
 our %mixMap  = (
@@ -94,7 +92,7 @@ sub disablePlugin {
 	
 	# reset last scan time
 
-	$lastMusicLibraryFinishTime = undef;
+	Slim::Utils::Prefs::set('MMMlastMusicLibraryFinishTime',undef);
 
 
 	$initialized = 0;
@@ -208,28 +206,40 @@ sub addGroups {
 
 	my ($groupRef,$prefRef) = &setupUse();
 
-	Slim::Web::Setup::addGroup('server', 'musicmagic', $groupRef, 3, $prefRef);
+	Slim::Web::Setup::addGroup('server', 'musicmagic', $groupRef, undef, $prefRef);
 	Slim::Web::Setup::addChildren('server', 'musicmagic');
 }
 
 sub isMusicLibraryFileChanged {
 
 	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'    => "http://$MMSHost:$MMSport/api/cacheid",
+		'url'    => "http://$MMSHost:$MMSport/api/cacheid?contents",
 		'create' => 0,
+		'timeout' => 5,
 	}) || return 0;
 
 	my $fileMTime = $http->content();
 	
-	$::d_musicmagic && msg("MusicMagic: read cacheid of $fileMTime\n");
+	$::d_musicmagic && msg("MusicMagic: read cacheid of $fileMTime");
+
+	$http = Slim::Player::Protocols::HTTP->new({
+		'url'    => "http://$MMSHost:$MMSport/api/getStatus",
+		'create' => 0,
+		'timeout' => 5,
+	}) || return 0;
 	
+	my $MMMstatus = $http->content();
+	
+	$::d_musicmagic && msg("MusicMagic: got status - $MMMstatus");
+
 	$http->close();
 
 	# Only say "yes" if it has been more than one minute since we last finished scanning
 	# and the file mod time has changed since we last scanned. Note that if we are
 	# just starting, $lastMusicLibraryDate is undef, so both $fileMTime
 	# will be greater than 0 and time()-0 will be greater than 180 :-)
-	my $oldTime = Slim::Utils::Prefs::get('lastMusicMagicLibraryDate') || 0;
+	my $oldTime = Slim::Utils::Prefs::get('MMMlastMusicMagicLibraryDate') || 0;
+	my $lastMusicLibraryFinishTime = Slim::Utils::Prefs::get('MMMlastMusicLibraryFinishTime') || 0;
 
 	if ($fileMTime > $oldTime) {
 
@@ -237,7 +247,7 @@ sub isMusicLibraryFileChanged {
 
 		$::d_musicmagic && msg("MusicMagic: music library has changed!\n");
 		
-		$::d_musicmagic && msg("	Details: \n\t\tCacheid - $fileMTime\n\t\tLastCacheid - $oldTime\n\t\tReload Interval - $musicmagicscaninterval\n\t\tLast Scan - $lastMusicLibraryFinishTime\n");
+		$::d_musicmagic && msg("	Details: \n\t\tCacheid - $fileMTime\t\tLastCacheid - $oldTime\n\t\tReload Interval - $musicmagicscaninterval\n\t\tLast Scan - $lastMusicLibraryFinishTime\n");
 		
 		unless ($musicmagicscaninterval) {
 			
@@ -246,9 +256,7 @@ sub isMusicLibraryFileChanged {
 
 			return 0;
 		}
-
-		$lastMusicLibraryFinishTime = 0 unless $lastMusicLibraryFinishTime;
-
+		
 		if (time() - $lastMusicLibraryFinishTime > $musicmagicscaninterval) {
 
 			return 1;
@@ -265,6 +273,7 @@ sub checker {
 	
 	return unless (Slim::Utils::Prefs::get('musicmagic'));
 	
+	my $change = 0;
 	if (!$firstTime && !stillScanning() && isMusicLibraryFileChanged()) {
 		startScan();
 	}
@@ -308,16 +317,16 @@ sub doneScanning {
 	$isScanning = 0;
 	$scan = 0;
 	
-	$lastMusicLibraryFinishTime = time();
+	Slim::Utils::Prefs::set('MMMlastMusicLibraryFinishTime',time());
 
 	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'    => "http://$MMSHost:$MMSport/api/cacheid",
+		'url'    => "http://$MMSHost:$MMSport/api/cacheid?contents",
 		'create' => 0,
 	}) || return 0;
 
 	if ($http) {
 
-		Slim::Utils::Prefs::set('lastMusicMagicLibraryDate', $http->content());
+		Slim::Utils::Prefs::set('MMMlastMusicMagicLibraryDate', $http->content());
 
 		$http->close();
 	}
@@ -652,7 +661,7 @@ sub exportFunction {
 			}
 		}
 		
-		# skipping to done here.  Duplicates currently crash the linux version of MusicMagic.
+		# skipping to done here.  Duplicates currently crash the linux version of MusicMagic 1.1.3.
 		if ($initialized !~ m/1\.1\.3$/) {
 			$export = 'duplicates';
 			return 1;
@@ -1053,38 +1062,19 @@ sub musicmagic_mix {
 	for my $item (@$mix) {
 
 		my %list_form = %$params;
-		my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
+		my $fieldInfo = Slim::Web::Pages::fieldInfo();
 
 		# If we can't get an object for this url, skip it, as the
 		# user's database is likely out of date. Bug 863
 		my $trackObj  = $ds->objectForUrl($item) || next;
 		
-		$list_form{'genre'}         = $genre;
-		$list_form{'player'}        = $player;
-		$list_form{'itempath'}      = $item; 
-		$list_form{'item'}          = $trackObj->id; 
-		$list_form{'itemobj'}       = $trackObj;
-		$list_form{'title'}         = Slim::Music::Info::infoFormat($trackObj, $webFormat, 'TITLE');
-		$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
-		$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
-		$list_form{'odd'}           = ($itemnumber + 1) % 2;
-		$list_form{'album'}         = $list_form{'includeArtist'} ? $trackObj->album() : undef;
-		
-		if ($list_form{'includeArtist'} && $trackObj) {
+		my $itemname = &{$fieldInfo->{'track'}->{'resultToName'}}($trackObj);
 
-			if ($composerIn) {
-				if (my ($contributor) = $trackObj->contributors()) {
-					$list_form{'artist'}   = $contributor->name();
-					$list_form{'artistid'} = $contributor->id();
-				}
-			} else {
-				$list_form{'artist'} = $trackObj->artist();
-			}
-		}
+		&{$fieldInfo->{'track'}->{'listItem'}}($ds, \%list_form, $trackObj, $itemname, 0);
 
 		$itemnumber++;
 
-		$params->{'mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_mix_list.html", \%list_form)};
+		$params->{'mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
 	}
 
 	if (defined $p0 && defined $client) {

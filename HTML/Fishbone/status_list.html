@@ -3,19 +3,11 @@
 		<a style="font-size: 10px;color:white" href="status_header.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">&nbsp;[% num + 1 %].&nbsp;</a>
 		<b><a href="status_header.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">[% title | html %]</a></b>
 	<nobr>
-		[% IF artists.count == 1 %]
-			[% artist = artists.next %]
-			[% IF artist && artist != noArtist %]
-				[% "BY" | string %]
-				<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
-			[% END %]
-		[% ELSE %]
-			[% IF artists %][% "BY" | string %][% END %]
-			[% WHILE (artist = artists.next) %]
-				[% NEXT IF artist.name == noArtist %]
-				<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
-			[% END %]
-		[% END %]	
+		[% artist = artists.next %]
+		[% IF artist && artist != noArtist %]
+			[% "BY" | string %]
+			<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
+		[% END %]
 	</nobr><nobr>[% IF album && album != noAlbum %] [% "FROM" | string %] <i><a href="browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album.title %]</a></i>[% END %]
 	</nobr></td>
 	<td [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] width="11" align="center">

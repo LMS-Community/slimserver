@@ -5,27 +5,27 @@
 
 [% IF descend %]
 
-	<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% text | html %]</a>
+	<a href="[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% text | html %]</a>
 
 	<!-- Include the artist for the album view -->
 	[% IF level == 1 && includeArtist && artist %]
 	 
 		[% "BY" | string %]
-		<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a></i>
+		<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a></i>
 
 	[% END %]
 
 [% ELSE %]
 
-	<a href="songinfo.html?item=[% item %]&player=[% player | uri %]">[% text | html %][% IF year %] ([% year %])[% END %]</a>
+	<a href="[% webroot %]songinfo.html?item=[% item %]&player=[% player | uri %]">[% text | html %][% IF year %] ([% year %])[% END %]</a>
 
 	[% IF includeAlbum && album %][% "FROM" | string %]
-        	<i><a href="browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>
+        	<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>
 	[% END %]
 
 	[% IF includeArtist && artist %][% "BY" | string %]
 
-        	<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% itemobj.contributorsOfType('artist').first.id %]&player=[% player | uri %]" target="browser">[% artist | html %]</a></i>
+        	<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% itemobj.contributorsOfType('artist').first.id %]&player=[% player | uri %]" target="browser">[% artist | html %]</a></i>
 	[% END %]
 
 [% END %]
@@ -34,10 +34,10 @@
 <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
 
 [% IF descend %]
-	<nobr><a href="status.html?command=playlist&subcommand=loadtracks[% attributes %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
+	<nobr><a href="[% webroot %]status.html?command=playlist&subcommand=loadtracks[% attributes %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
 
 [% ELSE %]
-	<nobr><a href="status.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
+	<nobr><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
 [% END %]
 
 </td>
@@ -45,11 +45,11 @@
 
 [% IF descend %]
 
-	<nobr><a href="status.html?command=playlist&subcommand=addtracks[% attributes %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr>
+	<nobr><a href="[% webroot %]status.html?command=playlist&subcommand=addtracks[% attributes %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr>
 
 [% ELSE %]
 
-	<nobr><a href="status.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr>
+	<nobr><a href="[% webroot %]status.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr>
 
 [% END %]
 
