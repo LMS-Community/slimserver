@@ -373,23 +373,33 @@ sub browsedbItemName {
 
 		return Slim::Music::Info::standardTitle($client, $item);
 
-	} elsif (($levels[$level] eq 'album') && $level == 0 && Slim::Utils::Prefs::get('showArtist')) {
+	} elsif (($levels[$level] eq 'album') && $level == 0) {
 
+		my $name = &{$levelInfo->{'resultToName'}}($item);
 		my ($track) = $item->tracks();
-		my $artist;
 		
-		if ($track) {
-			$artist  = $track->artist();
-		} else {
-			msg("Item has no tracks\n");
-			use Data::Dumper;
-			print Dumper($item);
+		if (my $showYear = Slim::Utils::Prefs::get('showYear')) {
+			my $year = $track->year() if $track;
+			
+			$name .= " (".$year.")" if $year;
 		}
 		
-		my $name = &{$levelInfo->{'resultToName'}}($item);
-
-		if (defined $artist && $artist ne $client->string('NO_ARTIST')) {
-			$name .= " ($artist)";
+		if (my $showArtist = Slim::Utils::Prefs::get('showArtist')) {
+			
+			my $artist;
+			
+			if ($track) {
+				$artist  = $track->artist();
+			} else {
+				msg("Item has no tracks\n");
+				use Data::Dumper;
+				print Dumper($item);
+			}
+			
+	
+			if (defined $artist && $artist ne $client->string('NO_ARTIST')) {
+				$name .= " by $artist";
+			}
 		}
 
 		return $name;
