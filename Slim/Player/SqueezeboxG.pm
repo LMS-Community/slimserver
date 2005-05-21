@@ -321,29 +321,35 @@ sub render {
 	my $bits;
 
 	# 1st line
-	if ($cache->{line1finish} < $cache->{overlay1start}) {
+	if ($cache->{line1finish} <= $cache->{overlay1start}) {
 		$bits = $cache->{line1bits}. chr(0) x ($cache->{overlay1start} - $cache->{line1finish}) 
 			. $cache->{overlay1bits};
 	} else {
 		$bits = substr($cache->{line1bits}, 0, $cache->{overlay1start}). $cache->{overlay1bits};
 	}
 	# Add 2nd line
-	if ($cache->{line2finish} < $cache->{overlay2start}) {
+	if ($cache->{line2finish} <= $cache->{overlay2start}) {
 		$bits |= $cache->{line2bits}. chr(0) x ($cache->{overlay2start} - $cache->{line2finish}) 
 			. $cache->{overlay2bits};
 	} else {
 		if ($scroll) {
 			# enable line 2 scrolling, remove line2bits from base display and move to scrollbits
-			if ($cache->{line2finish} != 0) {
-				my $scrollbits = $cache->{line2bits} .  chr(0) x (40 * $client->bytesPerColumn()) . $cache->{line2bits};
-				$cache->{scrollbitsref} = \$scrollbits;
-				$cache->{line2bits} = '';
-				$cache->{endscroll} = $cache->{line2finish} + (40 * $client->bytesPerColumn());
-				$cache->{line2finish} = 0;
-				$cache->{scrolling} = 1;
-				$cache->{newscrollbits} = 1;
-
+			# add padding to ensure end back at start of text for all scrollPixel settings
+			my $bytesPerColumn = $client->bytesPerColumn;
+			my $pixels = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollPixelsDouble': 'scrollPixels');
+			my $bytesPerScroll = $pixels * $bytesPerColumn;
+			my $padBytes = 40 * $bytesPerColumn;
+			my $len = $padBytes + $cache->{line2finish};
+			if ($pixels > 1) {
+				$padBytes += $bytesPerScroll - int($bytesPerScroll * ($len/$bytesPerScroll - int($len/$bytesPerScroll)) + 0.1);
 			}
+			my $scrollbits = $cache->{line2bits} .  chr(0) x $padBytes . $cache->{line2bits};
+			$cache->{scrollbitsref} = \$scrollbits;
+			$cache->{line2bits} = '';
+			$cache->{endscroll} = $cache->{line2finish} + $padBytes;
+			$cache->{line2finish} = 0;
+			$cache->{scrolling} = 1;
+			$cache->{newscrollbits} = 1;
 			$bits |= chr(0) x $cache->{overlay2start} . $cache->{overlay2bits};
 
 		} else {
@@ -824,7 +830,9 @@ sub scrollUpdate {
 	my $timenow = Time::HiRes::time();
 
 	if ($timenow < $scroll->{pauseUntil}) {
-		# called early for background update - reset timer for end of pause
+		# called during pause phase - don't scroll
+		$scroll->{paused} = 1;
+		$scroll->{refreshTime} = $scroll->{pauseUntil};
 		Slim::Utils::Timers::setHighTimer($client, $scroll->{pauseUntil}, \&scrollUpdate);
 
 	} else {
@@ -835,21 +843,22 @@ sub scrollUpdate {
 		} while ($scroll->{refreshTime} < $timenow );
 
 		$scroll->{paused} = 0;
-		if ($scroll->{offset} > $scroll->{endscroll}) {
-			$scroll->{offset} = 0;
+		if ($scroll->{offset} >= $scroll->{endscroll}) {
 			if ($scroll->{scrollonce}) {
-				# finished one scroll - stop scrolling and clean up
-				$scroll = undef;
-				$client->scrollStop();
-				return;
-			}
-			if ($scroll->{pauseInt} > 0) {
+				if ($scroll->{scrollonce} == 1) {
+					# finished scrolling at next scrollUpdate
+					$scroll->{scrollonce} = 2;
+					$scroll->{offset} = $scroll->{endscroll};
+				} else {
+					# end scroll now
+					$client->scrollStop();
+					return;
+				}
+			} elsif ($scroll->{pauseInt} > 0) {
+				$scroll->{offset} = 0;
 				$scroll->{pauseUntil} = $scroll->{refreshTime} + $scroll->{pauseInt};
-				$scroll->{refreshTime} = $scroll->{pauseUntil};
-				$scroll->{paused} = 1;
-				# sleep for pauseInt
-				Slim::Utils::Timers::setHighTimer($client, $scroll->{pauseUntil}, \&scrollUpdate);
-				return;
+			} else {
+				$scroll->{offset} = 0;
 			}
 		}
 		# fast timer during scroll
