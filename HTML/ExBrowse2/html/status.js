@@ -50,7 +50,8 @@ function initStatus() {
                 volumeContainer.appendChild(theImg);
         }
 
-	document.getElementById("playlist").deleteRow(0);
+	thepl = document.getElementById("playlist");
+	if (thepl.firstChild) thepl.removeChild(thepl.firstChild);
 	// XXX ^ that should be in initPlaylist, but it's not worth making another function for
 
 	document.getElementById("playersel").options.length = 0;

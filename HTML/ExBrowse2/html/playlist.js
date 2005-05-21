@@ -12,6 +12,102 @@ var playlistinfo = "";
 var BY;
 var FROM;
 
+//////////////////////
+//                  //
+// Playlist -- Drag //
+//                  //
+//////////////////////
+
+function playlistDragMove(dragEvent) {
+	var helpers = ToolMan.helpers();
+	var coordinates = ToolMan.coordinates();
+	var opl = document.getElementById("outerplaylist");
+
+	var item = dragEvent.group.element;
+	var xmouse = dragEvent.transformedMouseOffset;
+	var moveTo = null;
+
+	var previous = helpers.previousItem(item, item.nodeName);
+	while (previous != null) {
+		var bottomRight = coordinates.bottomRightOffset(previous);
+		if (xmouse.y <= (bottomRight.y - opl.scrollTop) && xmouse.x <= bottomRight.x) {
+			moveTo = previous;
+			dragEvent.group.movecount--;
+		}
+		previous = helpers.previousItem(previous, item.nodeName);
+	}
+	if (moveTo != null) {
+		helpers.moveBefore(item, moveTo);
+		return;
+	}
+
+	var next = helpers.nextItem(item, item.nodeName);
+	while (next != null) {
+		var topLeft = coordinates.topLeftOffset(next);
+		if ((topLeft.y - opl.scrollTop) <= xmouse.y && topLeft.x <= xmouse.x) {
+			moveTo = next;
+			dragEvent.group.movecount++;
+		}
+		next = helpers.nextItem(next, item.nodeName);
+	}
+	if (moveTo != null) {
+		helpers.moveBefore(item, helpers.nextItem(moveTo, item.nodeName));
+		return;
+	}
+
+
+}
+function playlistDragEnd(dragEvent) {
+	ToolMan.coordinates().create(0, 0).reposition(dragEvent.group.element);
+
+	dragEvent.group.element.parentNode.isDragging = 0;
+
+	var elementpos = dragEvent.group.element.pos;
+	var elementparent = dragEvent.group.element.parentNode;
+
+	if ((dragEvent.group.movecount >= 1) || (dragEvent.group.movecount <= -1)) {
+		newpos = dragEvent.group.movecount + elementpos;
+		cmdstring = '&p0=playlist&p1=move&p2=' + elementpos + '&p3=' + newpos;
+		updateStatusCombined(cmdstring);
+	}
+
+	for (i = 0; i < elementparent.childNodes.length; i++) {
+		elementparent.childNodes[i].pos = i;
+		elementparent.childNodes[i].childNodes[1].innerHTML = i + 1;
+	}
+
+}
+
+function playlistDragMakeSortable(item, handle) {
+	var coordinates = ToolMan.coordinates();
+	listbox = document.getElementById("playlist");
+
+	var group = ToolMan.drag().createSimpleGroup(item, handle);
+
+	// This is unnecessary if we have a separate handle:
+	//group.setThreshold(4);
+
+	var min, max;
+
+	group.register('dragstart', function(dragEvent) {
+		dragEvent.group.movecount = 0;
+		dragEvent.group.element.parentNode.isDragging = 1;
+
+		var items = listbox.getElementsByTagName("li");
+		min = coordinates.topLeftOffset(items[0]);
+		max = coordinates.topLeftOffset(items[items.length - 1]);
+	});
+
+	group.register('dragmove', playlistDragMove);
+	group.register('dragend', playlistDragEnd);
+
+	group.addTransform(function(coordinate, dragEvent) {
+		return coordinate.constrainTo(min, max);
+	});
+
+	group.verticalOnly();
+}
+
 //////////////////////////////////////
 //                                  //
 //  Playlist -- Update And Display  //
@@ -26,14 +122,12 @@ function updatePlaylist(args) {
 	postback(url, updatePlaylist_handler);
 }
 
-function updatePlaylist_handler(req, url) {
-	playlistnodes = req.responseXML.getElementsByTagName("playlistitem");
-	var resp = req.responseXML;
+function updatePlaylistList(resp, listbox) {
+	var playlistnodes = resp.getElementsByTagName("playlistitem");
 	var newPlaylist = new Array();
-	listbox = document.getElementById("playlist");
 
-
-	csIndex = currentSong - 1;
+	var baselength;
+	var csIndex = currentSong - 1;
 
 	for (i = 0; i < playlistnodes.length; i++) {
 		newitem = new Object();
@@ -64,66 +158,91 @@ function updatePlaylist_handler(req, url) {
 			newHTML += BY + '<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
 		}
 
-		if (listbox.rows[i].childNodes[2].innerHTML != newHTML) {
-			listbox.rows[i].childNodes[2].innerHTML = newHTML;
+		if (listbox.childNodes[i].childNodes[2].innerHTML != newHTML) {
+			listbox.childNodes[i].childNodes[2].innerHTML = newHTML;
 		}
 
 		newNum = i + 1 + "";
-		if (listbox.rows[i].childNodes[1].innerHTML != newNum) {
-			listbox.rows[i].childNodes[1].innerHTML = newNum;
+		if (listbox.childNodes[i].childNodes[1].innerHTML != newNum) {
+			listbox.childNodes[i].childNodes[1].innerHTML = newNum;
 		}
 
-		if (listbox.rows[i].url != newPlaylist[i].url) {
-			listbox.rows[i].url = newPlaylist[i].url;
+		if (listbox.childNodes[i].url != newPlaylist[i].url) {
+			listbox.childNodes[i].url = newPlaylist[i].url;
 		}
 
 		if (i == csIndex) {
-			listbox.rows[i].className = "currentsong";
+			listbox.childNodes[i].className = "currentsong";
 		} else {
-			listbox.rows[i].className = "";
+			listbox.childNodes[i].className = "";
 		}
+		listbox.childNodes[i].pos = i;
 	}
 
 	if (playlist.length < newPlaylist.length) {
 		for (i = baselength; i < newPlaylist.length; i++) {
-			theTR = listbox.insertRow(-1);
+			theTR = document.createElement('li');
+
 			theTR.url = newPlaylist[i].url;
+			theTR.pos = i;
+
 			if (i == csIndex) {
 				theTR.className = "currentsong";
 			} else {
 				theTR.className = "";
 			}
 
-			buttonsTD = document.createElement('td');
-			buttonsTD.innerHTML = '<img onclick="doRemove(event)" src="html/images/remove.gif"/><img ' +
-				'onclick="doMoveUp(event)" src="html/images/move_up.gif"/><img onclick="doMoveDown(' +
-				'event)" src="html/images/move_down.gif"/>';
+			buttonsTD = document.createElement('div');
+			//buttonsTD.innerHTML = '<img onclick="doRemove(event)" src="html/images/remove.gif"/><img ' +
+			//	'onclick="doMoveUp(event)" src="html/images/move_up.gif"/><img onclick="doMoveDown(' +
+			//	'event)" src="html/images/move_down.gif"/>';
+			buttonsTD.innerHTML = '<img onclick="doRemove(event)" src="html/images/remove.gif"/>';
 			buttonsTD.className = "playlistbuttons";
 
-			indexTD = document.createElement('td');
+			dragButton = document.createElement('img');
+			dragButton.src = 'html/images/moveupdown.gif';
+			dragButton.className = 'dragbutton';
+			buttonsTD.appendChild(dragButton);
+
+			indexTD = document.createElement('div');
 			indexTD.innerHTML = i + 1;
 			indexTD.className = "playlistindex";
 
-			titleTD = document.createElement('td');
+			titleTD = document.createElement('div');
 			titleTD.innerHTML = '<a onclick="doSelect(event)">' + newPlaylist[i].title + '</a>' + BY +
 				'<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
-			titleTD.className = "listing";
+			titleTD.className = "playlistlisting";
 
 			theTR.appendChild(buttonsTD);
 			theTR.appendChild(indexTD);
 			theTR.appendChild(titleTD);
+
+			listbox.appendChild(theTR);
+
+			playlistDragMakeSortable(theTR, dragButton);
 		}
 	}
+
 	if (newPlaylist.length < playlist.length) {
 		extras = playlist.length - baselength;
 		for (i = 0; i < extras; i++) {
-			listbox.deleteRow(baselength);
+			listbox.removeChild(listbox.childNodes[baselength]);
 		}
 	}
 
 	highlightCurrentSong();
 
 	playlist = newPlaylist;
+}
+
+
+function updatePlaylist_handler(req, url) {
+	var resp = req.responseXML;
+	var listbox = document.getElementById("playlist");
+
+	if (!listbox.isDragging) {
+		updatePlaylistList(resp, listbox);
+	}
 
 	cansave = getdata(resp, "cansave");
 	playlistinfo = getdata(resp, "playlistinfo");
@@ -138,12 +257,12 @@ function updatePlaylist_handler(req, url) {
 function highlightCurrentSong() {
         listbox = document.getElementById("playlist");
 	for (i = 0; i < songCount; i++) {
-		if (listbox.rows[i]) {
-			listbox.rows[i].className = "";
+		if (listbox.childNodes[i]) {
+			listbox.childNodes[i].className = "";
 		}
 	}
-        if (currentSong > 0 && listbox.rows[currentSong - 1]) {
-                listbox.rows[currentSong - 1].className = "currentsong";
+        if (currentSong > 0 && listbox.childNodes[currentSong - 1]) {
+                listbox.childNodes[currentSong - 1].className = "currentsong";
         }
 }
 
@@ -168,14 +287,14 @@ function doRemove(e) {
 	et = (e.target || e.srcElement);
 	if (!et) return;
 	if (et && et.parentNode && et.parentNode.parentNode) {
-		selIndex = et.parentNode.parentNode.rowIndex;
+		selIndex = et.parentNode.parentNode.pos;
 	} else {
 		return;
 	}
 
 	if (selIndex < 0) return;
 	listbox = document.getElementById("playlist");
-	listbox.deleteRow(selIndex);
+	listbox.removeChild(listbox.childNodes[selIndex]);
 	playlist.splice(selIndex, 1);
 	if (songCount == 1) {
 		displayCurrentSong("", "", "");
@@ -187,7 +306,7 @@ function doRemove(e) {
 
 	if (selIndex < songCount - 1) {
 		for (i = selIndex; i < songCount - 1; i++) {
-                	listbox.rows[i].childNodes[1].innerHTML = i + 1;
+                	listbox.childNodes[i].childNodes[1].innerHTML = i + 1;
 		}
 	}
 
@@ -208,16 +327,16 @@ function doMoveUp(e) {
 	et = (e.target || e.srcElement);
 	if (!et) return;
 	if (et && et.parentNode && et.parentNode.parentNode) {
-		selIndex = et.parentNode.parentNode.rowIndex;
+		selIndex = et.parentNode.parentNode.pos;
 	} else {
 		return;
 	}
 	if (selIndex < 1) return;
 	listbox = document.getElementById("playlist");
 
-	selrow = listbox.rows[selIndex - 1].childNodes[2].innerHTML;
-	listbox.rows[selIndex - 1].childNodes[2].innerHTML = listbox.rows[selIndex].childNodes[2].innerHTML;
-	listbox.rows[selIndex].childNodes[2].innerHTML = selrow;
+	selrow = listbox.childNodes[selIndex - 1].childNodes[2].innerHTML;
+	listbox.childNodes[selIndex - 1].childNodes[2].innerHTML = listbox.childNodes[selIndex].childNodes[2].innerHTML;
+	listbox.childNodes[selIndex].childNodes[2].innerHTML = selrow;
 
 	if (selIndex == currentSong) {
 		currentSong++;
@@ -238,15 +357,15 @@ function doMoveDown(e) {
 	et = (e.target || e.srcElement);
 	if (!et) return;
 	if (et && et.parentNode && et.parentNode.parentNode) {
-		selIndex = et.parentNode.parentNode.rowIndex;
+		selIndex = et.parentNode.parentNode.pos;
 	} else {
 		return;
 	}
 	if (selIndex < 0 || selIndex >= (songCount - 1)) return;
 
-	selrow = listbox.rows[selIndex].childNodes[2].innerHTML;
-	listbox.rows[selIndex].childNodes[2].innerHTML = listbox.rows[selIndex + 1].childNodes[2].innerHTML;
-	listbox.rows[selIndex + 1].childNodes[2].innerHTML = selrow;
+	selrow = listbox.childNodes[selIndex].childNodes[2].innerHTML;
+	listbox.childNodes[selIndex].childNodes[2].innerHTML = listbox.childNodes[selIndex + 1].childNodes[2].innerHTML;
+	listbox.childNodes[selIndex + 1].childNodes[2].innerHTML = selrow;
 
 	if (selIndex == (currentSong - 1)) {
 		currentSong++;
@@ -268,10 +387,10 @@ function doSelect(e) {
 	if (!et) return;
 	if (et && et.parentNode && et.parentNode.parentNode) {
 		etpp = et.parentNode.parentNode;
-		if (etpp.parentNode.rowIndex) {
-			selIndex = etpp.parentNode.rowIndex;
+		if (etpp.parentNode.pos) {
+			selIndex = etpp.parentNode.pos;
 		} else {
-			selIndex = etpp.rowIndex;
+			selIndex = etpp.pos;
 		}
 	} else {
 		return;
@@ -293,10 +412,10 @@ function doArtist(e) {
 	if (!et) return;
 	if (et && et.parentNode && et.parentNode.parentNode) {
 		etpp = et.parentNode.parentNode;
-		if (etpp.parentNode.rowIndex) {
-			selIndex = etpp.parentNode.rowIndex;
+		if (etpp.parentNode.pos) {
+			selIndex = etpp.parentNode.pos;
 		} else {
-			selIndex = etpp.rowIndex;
+			selIndex = etpp.pos;
 		}
 	} else {
 		return;
@@ -340,7 +459,7 @@ function doClear() {
 	displayCurrentSong("", "", "");
 	playlist = new Array();
 	for (i = 0; i < songCount; i++) {
-		listbox.deleteRow(0);
+		listbox.removeChild(listbox.firstChild);
 	}
 	currentSong = 0;
 	songCount = 0;

@@ -15,3 +15,7 @@ html, body {
         width: expression(document.documentElement.clientWidth - 400);
 }
 
+#playlist li {
+	list-style: none outside;
+	margin: 1px 4px;
+}

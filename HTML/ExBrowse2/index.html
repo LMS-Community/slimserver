@@ -15,6 +15,13 @@
  <script type="text/javascript" src="[% webroot %]html/playlist.js"></script>
  <script type="text/javascript" src="[% webroot %]html/home.js"></script>
  <script type="text/javascript" src="[% webroot %]html/misc.js"></script>
+
+ <script type="text/javascript" src="html/toolmanx/core.js"></script>
+ <script type="text/javascript" src="html/toolmanx/events.js"></script>
+ <script type="text/javascript" src="html/toolmanx/css.js"></script>
+ <script type="text/javascript" src="html/toolmanx/coordinates.js"></script>
+ <script type="text/javascript" src="html/toolmanx/drag.js"></script>
+
 </head>
 <body onload="mainload()" class="mainpage">
 
@@ -117,13 +124,8 @@
 </div>
 
 <div id="outerplaylist" onmouseover="scrollfix('outerplaylist', 'outerplaylistscrollbase');">
- <a id="outerplaylistscrollbase"></a>
- <table id="playlist">
-  <tr>
-   <td>
-   </td>
-  </tr>
- </table>
+ <a id="outerplaylistscrollbase"> </a>
+ <ul id="playlist"> </ul>
 </div>
 
 <div id="outerbrowse">
