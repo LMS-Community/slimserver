@@ -1861,6 +1861,7 @@ sub _addSongInfo {
 
 		# let the template access the object directly.
 		$params->{'track'}      = $track;
+		$params->{'itemobj'}    = $track unless $params->{'itemobj'};
 
 		$params->{'filelength'} = Slim::Utils::Misc::delimitThousands($track->filesize());
 		$params->{'bitrate'}    = $track->bitrate();
