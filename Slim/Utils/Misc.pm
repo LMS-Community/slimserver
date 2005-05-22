@@ -411,8 +411,18 @@ sub fixPath {
 				}
 			}
 			$fixed = fixPath($file);
+
 		} else {
-			$fixed = fixPath(catfile($base, $file));
+
+			if (Slim::Utils::OSDetect::OS() eq "win") {
+
+				# rel2abs will convert ../../ paths correctly only for windows
+				$fixed = fixPath(rel2abs($file,$base));
+
+			} else {
+
+				$fixed = fixPath(stripRel(catfile($base, $file)));
+			}
 		}
 
 	} elsif (file_name_is_absolute($file)) {
@@ -430,6 +440,17 @@ sub fixPath {
 	} else {
 		return Slim::Utils::Misc::fileURLFromPath($fixed, $donttranslate);  
 	}
+}
+
+sub stripRel {
+	my $file = shift;
+	
+	while ($file =~ m#[\/\\]\.\.[\/\\]#) {
+		$file =~ s#([\/\\])\w+[\/\\]\.\.[\///]#$1#isg;
+	}
+	
+	$::d_paths && msg("stripRel result: $file\n");
+	return $file;
 }
 
 sub ascendVirtual {
