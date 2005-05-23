@@ -521,7 +521,7 @@ our %functions = (
 	'modefunction' => sub {
 		my ($client,$funct,$functarg) = @_;
 		return if !$functarg;
-		my ($mode,$modefunct) = split('->',$functarg);
+		my ($mode,$modefunct) = split('->',$functarg,2);
 		return if !exists($modeFunctions{$mode});
 		my $coderef = $modeFunctions{$mode}{$modefunct};
 		my $modefunctarg;
