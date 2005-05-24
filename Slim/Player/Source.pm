@@ -1268,12 +1268,12 @@ sub openSong {
 							}
 							$client->audioFilehandle($pipeline);
 							$client->audioFilehandleIsSocket(2);
-							
 						}
 
-						$client->remoteStreamStartTime(Time::HiRes::time());
-						$client->pauseTime(0);
 					}
+					$client->remoteStreamStartTime(Time::HiRes::time());
+					$client->pauseTime(0);
+
 				# if it's one of our playlists, parse it...
 				} elsif (Slim::Music::Info::isList($track)) {
 	
