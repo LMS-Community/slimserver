@@ -271,6 +271,7 @@ use vars qw($audiodir $playlistdir $httpport);
 use vars qw(
 	$d_artwork
 	$d_cli
+	$d_client
 	$d_control
 	$d_command
 	$d_directstream
@@ -715,6 +716,7 @@ to the console via stderr:
     --d_artwork      => Display information on artwork display
     --d_cli          => Display debugging information for the 
                         command line interface interface
+    --d_client       => Display per-client debugging.
     --d_command      => Display internal command execution
     --d_control      => Low level player control information
     --d_directstream => Debugging info on direct streaming 
@@ -798,6 +800,7 @@ sub initOptions {
 		'noserver'			=> \$noserver,
 		'd_artwork'			=> \$d_artwork,
 		'd_cli'				=> \$d_cli,
+		'd_client'			=> \$d_client,
 		'd_command'			=> \$d_command,
 		'd_control'			=> \$d_control,
 		'd_directstream'	=> \$d_directstream,
@@ -855,7 +858,10 @@ sub initOptions {
 	};
 }
 
-sub initSettings {	
+sub initSettings {
+
+	Slim::Utils::Prefs::init();
+
 	Slim::Utils::Prefs::load($prefsfile, $nosetup || $noserver);
 	Slim::Utils::Prefs::checkServerPrefs();
 

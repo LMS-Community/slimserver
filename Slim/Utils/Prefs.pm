@@ -14,14 +14,234 @@ use FindBin qw($Bin);
 use Digest::MD5;
 
 use Slim::Utils::Misc;
-use Slim::Hardware::IR;
-use Slim::Utils::Strings qw(string);
 
 our %prefs = ();
 my $prefsPath;
 my $prefsFile;
 my $canWrite;
 my $writePending = 0;
+
+our %upgradeScripts = ();
+our %DEFAULT = ();
+our %prefChange = ();
+
+sub init {
+
+	# These are scripts that are run once on old prefs file to bring them
+	# up-to-date with specific changes we want to push out to default prefs.
+	%upgradeScripts = (
+		# Default browse mode for music folders is sort by filename				   
+		'6.0b3' => sub {
+			Slim::Utils::Prefs::set('filesort', 1);
+		},
+	);
+
+	# When adding new server and client preference options, put a default value for the option
+	# into the DEFAULT hash.  For client options put the key => value pair in the client hash
+	# in the client key of the main hash.
+	# If the preference ends in a digit or a # then it will be interpreted as an array preference,
+	# so if this is not what you intend, don't end it with a digit or a #
+	# Squeezebox G may include several prefs not needed by other players.  For those defaults, use
+	# %Slim::Player::Player::GPREFS
+	%DEFAULT = (
+		"httpport"		=> 9000,
+		"cliport"		=> 9090,
+		"music"			=> defaultAudioDir(),
+		"playlistdir"		=> defaultPlaylistDir(),
+		"cachedir"		=> defaultCacheDir(),
+		"securitySecret"	=> makeSecuritySecret(),
+		"csrfProtectionLevel"	=> 1,
+		"skin"			=> "Default",
+		"language"		=> "EN",
+		"refreshRate"		=> 30,
+		"displaytexttimeout"	=> 1.0,
+		"filesort"		=> 1,
+		'browseagelimit'	=> 100,
+		"playtrackalbum"	=> 1,
+		"ignoredarticles"	=> "The El La Los Las Le Les",
+		"splitList"		=> '',
+		"authorize"		=> 0,				# No authorization by default
+		"username"		=> '',
+		"password"		=> '',
+		"filterHosts"		=> 0,				# No filtering by default
+		"allowedHosts"		=> join(',', Slim::Utils::Misc::hostaddr()),
+		"tcpReadMaximum"	=> 20,
+		"tcpWriteMaximum"	=> 20,
+		"tcpConnectMaximum"	=> 30,
+		"streamWriteMaximum"	=> 30,
+		'webproxy'		=> '',
+		"udpChunkSize"		=> 1400,
+		'itemsPerPage'		=> 50,
+		'lookForArtwork'	=> 1,
+		'includeNoArt'		=> 0,
+		'artfolder'		=> '',
+		'coverThumb'		=> '',
+		'coverArt'		=> '',
+		'thumbSize'		=> 100,
+		'itemsPerPass'		=> 5,
+		'plugins-onthefly'	=> 0,
+		'longdateFormat'	=> q(%A, %B |%d, %Y),
+		'shortdateFormat'	=> q(%m/%d/%Y),
+		'showYear'		=> 0,
+		'timeFormat'		=> q(|%I:%M:%S %p),
+		'titleFormatWeb'	=> 1,
+		'ignoreDirRE'		=> '',
+		'checkVersion'		=> 1,
+		'checkVersionInterval'	=> 60*60*24,
+		'mDNSname'		=> 'SlimServer',
+		'titleFormat'		=> [
+			'TITLE',
+			'DISC-TRACKNUM. TITLE',
+			'TRACKNUM. TITLE',
+			'TRACKNUM. ARTIST - TITLE',
+			'TRACKNUM. TITLE (ARTIST)',
+			'TRACKNUM. TITLE - ARTIST - ALBUM',
+			'FILE.EXT',
+			'TRACKNUM. TITLE from ALBUM by ARTIST',
+			'TITLE (ARTIST)',
+			'ARTIST - TITLE'
+		],
+		'guessFileFormats'	=> [
+			'(ARTIST - ALBUM) TRACKNUM - TITLE', 
+			'/ARTIST/ALBUM/TRACKNUM - TITLE', 
+			'/ARTIST/ALBUM/TRACKNUM TITLE', 
+			'/ARTIST/ALBUM/TRACKNUM. TITLE' 
+		],
+		'disabledplugins'	=> [],
+		'enabledfonts'		=> ['small', 'medium', 'large', 'huge'],
+		'persistPlaylists'	=> 1,
+		'reshuffleOnRepeat'	=> 0,
+		'saveShuffled'		=> 0,
+		'searchSubString'	=> 0,
+		'maxBitrate'		=> 320,
+		'composerInArtists'	=> 0,
+		'groupdiscs' 		=> 0,
+		'livelog'		=> 102400, # keep around an in-memory log of 100kbytes, available from the web interfaces
+		'remotestreamtimeout'	=> 5, # seconds to try to connect for a remote stream
+		'xplir'			=> 'both',
+		'xplinterval'		=> 5,
+		'xplsupport'		=> 0,
+		'prefsWriteDelay'	=> 30,
+		'dbsource'		=> 'dbi:SQLite:dbname=%s',
+		'dbusername'		=> '',
+		'dbpassword'		=> '',
+		'commonAlbumTitles'	=> ['Greatest Hits', 'Best of...', 'Live'],
+		'upgrade-6.0b3-script'	=> 1,
+		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
+	);
+
+	# The following hash contains functions that are executed when the pref corresponding to
+	# the hash key is changed.  Client specific preferences are contained in a hash stored
+	# under the main hash key 'CLIENTPREFS'.
+	# The functions expect the parameters $pref and $newvalue for non-client specific functions
+	# where $pref is the preference which changed and $newvalue is the new value of the preference.
+	# Client specific functions also expect a $client param containing a reference to the client
+	# struct.  The param order is $client,$pref,$newvalue.
+	%prefChange = (
+
+		'CLIENTPREFS' => {
+
+			'powerOnBrightness' => sub {
+				my ($client,$newvalue) = @_;
+				if ($client->power()) {
+					$client->brightness($newvalue);
+				}
+			},
+
+			'powerOffBrightness' => sub {
+				my ($client,$newvalue) = @_;
+				if (!$client->power()) {
+					$client->brightness($newvalue);
+				}
+			},
+
+			'irmap' => sub {
+				my ($client,$newvalue) = @_;
+
+				require Slim::Hardware::IR;
+
+				Slim::Hardware::IR::loadMapFile($newvalue);
+
+				if ($newvalue eq Slim::Hardware::IR::defaultMapFile()) {
+					Slim::Buttons::Plugins::addDefaultMaps();
+				}
+			},
+		},
+
+		'language' => sub {
+			my $newvalue = shift;
+
+			Slim::Buttons::Plugins::clearGroups();
+			Slim::Web::Setup::initSetup();
+			Slim::Music::Import::resetSetupGroups();
+			Slim::Web::HTTP::clearCaches();
+		},
+
+		'checkVersion' => sub {
+			my $newValue = shift;
+			if ($newValue) {
+				main::checkVersion();
+			}
+		},
+
+		'ignoredarticles' => sub {
+			Slim::Utils::Text::clearCaseArticleCache();
+		},
+
+		'audiodir' => sub {
+			my $newvalue = shift;
+
+			Slim::Buttons::Browse::menuInit();
+
+			if (defined(Slim::Utils::Prefs::get('audiodir')) && -d Slim::Utils::Prefs::get("audiodir")) {
+
+				Slim::Music::Import::useImporter('FOLDER', 1);
+			} else {
+				Slim::Music::Import::useImporter('FOLDER', 0);
+			}
+
+			Slim::Music::Import::startScan('FOLDER');
+		},
+
+		'lookForArtwork' => sub {
+			my $lookForArtwork = shift;
+
+			Slim::Music::Import::startScan() if $lookForArtwork;
+		},
+
+		'playlistdir' => sub {
+			my $newvalue = shift;
+
+			if (defined($newvalue) && $newvalue ne '' && !-d $newvalue) {
+				mkdir $newvalue || ($::d_files && msg("Could not create $newvalue\n"));
+			}
+
+			Slim::Buttons::Browse::init();
+
+			for my $client (Slim::Player::Client::clients()) {
+				Slim::Buttons::Home::updateMenu($client);
+			}
+		},
+
+		'persistPlaylists' => sub {
+
+			my $newvalue = shift;
+
+			if ($newvalue) {
+
+				Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
+
+				for my $client (Slim::Player::Client::clients()) {
+					next if Slim::Player::Sync::isSlave($client);
+					Slim::Player::Playlist::modifyPlaylistCallback($client,['playlist','load_done']);
+				}
+
+			} else {
+				Slim::Control::Command::clearExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
+			}
+		}
+	);
+}
 
 sub makeSecuritySecret {
 	
@@ -150,182 +370,6 @@ sub defaultCacheDir {
 	return $CacheDir;
 }
 
-# When adding new server and client preference options, put a default value for the option
-# into the DEFAULT hash.  For client options put the key => value pair in the client hash
-# in the client key of the main hash.
-# If the preference ends in a digit or a # then it will be interpreted as an array preference,
-# so if this is not what you intend, don't end it with a digit or a #
-# Squeezebox G may include several prefs not needed by other players.  For those defaults, use
-# %Slim::Player::Player::GPREFS
-our %DEFAULT = (
-	"httpport"				=> 9000
-	,"cliport"				=> 9090
-	,"music"				=> defaultAudioDir()
-	,"playlistdir"			=> defaultPlaylistDir()
-	,"cachedir"				=> defaultCacheDir()
-	,"securitySecret"			=> makeSecuritySecret()
-	,"csrfProtectionLevel"			=> 1
-	,"skin"					=> "Default"
-	,"language"				=> "EN"
-	,"refreshRate"			=> 30
-	,"displaytexttimeout"	=> 1.0
-	,"filesort"				=> 1
-	,'browseagelimit'		=> 100
-	,"playtrackalbum"		=> 1
-	,"ignoredarticles"		=> "The El La Los Las Le Les"
-	,"splitList"			=> ''
-	,"authorize"			=> 0				# No authorization by default
-	,"username"				=> ''
-	,"password"				=> ''
-	,"filterHosts"			=> 0				# No filtering by default
-	,"allowedHosts"			=> join(',', Slim::Utils::Misc::hostaddr())
-	,"tcpReadMaximum"		=> 20
-	,"tcpWriteMaximum"		=> 20
-	,"tcpConnectMaximum"	=> 30
-	,"streamWriteMaximum"	=> 30
-	,'webproxy'				=> ''
-	,"udpChunkSize"			=> 1400
-	,'animationLevel'		=> 3 				#DEPRECATED
-	,'itemsPerPage'			=> 50
-	,'lookForArtwork'		=> 1
-	,'includeNoArt'			=> 0
-	,'artfolder'			=> ''
-	,'coverThumb'			=> ''
-	,'coverArt'				=> ''
-	,'thumbSize'			=> 100
-	,'itemsPerPass'			=> 5
-	,'plugins-onthefly'		=> 0
-	,'longdateFormat'		=> q(%A, %B |%d, %Y)
-	,'shortdateFormat'		=> q(%m/%d/%Y)
-	,'showYear'				=> 0
-	,'timeFormat'			=> q(|%I:%M:%S %p)
-	,'titleFormatWeb'		=> 1
-	,'ignoreDirRE'			=> ''
-	,'checkVersion'			=> 1
-	,'checkVersionInterval' => 60*60*24
-	,'mDNSname'				=> 'SlimServer'
-	,'titleFormat'			=> ['TITLE',
-								'DISC-TRACKNUM. TITLE',
-								'TRACKNUM. TITLE',
-								'TRACKNUM. ARTIST - TITLE',
-								'TRACKNUM. TITLE (ARTIST)',
-								'TRACKNUM. TITLE - ARTIST - ALBUM',
-								'FILE.EXT',
-								'TRACKNUM. TITLE from ALBUM by ARTIST',
-								'TITLE (ARTIST)',
-								'ARTIST - TITLE'
-								]
-	,'guessFileFormats'		=> [
-								'(ARTIST - ALBUM) TRACKNUM - TITLE', 
-								'/ARTIST/ALBUM/TRACKNUM - TITLE', 
-								'/ARTIST/ALBUM/TRACKNUM TITLE', 
-								'/ARTIST/ALBUM/TRACKNUM. TITLE' 
-								]
-	,'disabledplugins'		=> []
-	,'enabledfonts'			=> ['small', 'medium', 'large', 'huge']
-	,'persistPlaylists'		=> 1
-	,'reshuffleOnRepeat'	=> 0
-	,'saveShuffled'			=> 0
-	,'searchSubString'		=> 0
-	,'maxBitrate'			=> 320	# Maximum bitrate for maximum quality.  MPEG-1 layer III bitrates (kbps): 32 40 48 56 64 80 96 112 128 160 192 224 256 320
-	,'composerInArtists'		=> 0 
-	,'groupdiscs' 			=> 0
-	,'livelog'				=> 102400 # keep around an in-memory log of 100kbytes, available from the web interfaces
-	,'remotestreamtimeout'	=> 5 # seconds to try to connect for a remote stream
-	,'xplir'				=> 'both'
-	,'xplinterval'			=> 5
-	,'xplsupport'			=> 0
-	,'prefsWriteDelay'		=> 30
-	,'dbsource'				=> 'dbi:SQLite:dbname=%s'
-	,'dbusername'			=> ''
-	,'dbpassword'			=> ''
-	,'commonAlbumTitles'	=> ['Greatest Hits',
-								'Best of...',
-								'Live'
-								]
-	,'rank-PLUGIN_PICKS_MODULE_NAME'			=> 4
-	,'upgrade-6.0b3-script'		=> 1
-);
-
-# The following hash contains functions that are executed when the pref corresponding to
-# the hash key is changed.  Client specific preferences are contained in a hash stored
-# under the main hash key 'CLIENTPREFS'.
-# The functions expect the parameters $pref and $newvalue for non-client specific functions
-# where $pref is the preference which changed and $newvalue is the new value of the preference.
-# Client specific functions also expect a $client param containing a reference to the client
-# struct.  The param order is $client,$pref,$newvalue.
-our %prefChange = (
-	'CLIENTPREFS' => {
-		'powerOnBrightness' => sub {
-			my ($client,$newvalue) = @_;
-			if ($client->power()) {
-				$client->brightness($newvalue);
-			}
-		}
-		,'powerOffBrightness' => sub {
-			my ($client,$newvalue) = @_;
-			if (!$client->power()) {
-				$client->brightness($newvalue);
-			}
-		}
-		,'irmap' => sub {
-			my ($client,$newvalue) = @_;
-			Slim::Hardware::IR::loadMapFile($newvalue);
-			if ($newvalue eq Slim::Hardware::IR::defaultMapFile()) {
-				Slim::Buttons::Plugins::addDefaultMaps();
-			}
-		}
-	}
-	,'language' => sub {
-		my $newvalue = shift;
-		Slim::Buttons::Plugins::clearGroups();
-		Slim::Web::Setup::initSetup();
-		Slim::Music::Import::resetSetupGroups();
-		Slim::Web::HTTP::clearCaches();
-	}
-	,'checkVersion' => sub {
-		my $newValue = shift;
-		if ($newValue) {
-			main::checkVersion();
-		}
-	}
-	,'ignoredarticles' => sub {
-		Slim::Utils::Text::clearCaseArticleCache();
-	}
-	,'audiodir' => sub {
-		my $newvalue = shift;
-		Slim::Buttons::Browse::menuInit();
-		Slim::Music::Import::useImporter('FOLDER', (defined(Slim::Utils::Prefs::get('audiodir')) && -d Slim::Utils::Prefs::get("audiodir"))?1:0);
-		Slim::Music::Import::startScan('FOLDER');
-	}
-	,'lookForArtwork' => sub {
-		my $newvalue = shift;
-		if ($newvalue) {Slim::Music::Import::startScan();}
-	}
-	,'playlistdir' => sub {
-		my $newvalue = shift;
-		if (defined($newvalue) && $newvalue ne '' && !-d $newvalue) {
-			mkdir $newvalue || ($::d_files && msg("Could not create $newvalue\n"));
-		}
-		Slim::Buttons::Browse::init();
-		for my $client (Slim::Player::Client::clients()) {
-			Slim::Buttons::Home::updateMenu($client);
-		}
-	}
-	,'persistPlaylists' => sub {
-		my $newvalue = shift;
-		if ($newvalue) {
-			Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
-			for my $client (Slim::Player::Client::clients()) {
-				next if Slim::Player::Sync::isSlave($client);
-				Slim::Player::Playlist::modifyPlaylistCallback($client,['playlist','load_done']);
-			}
-		} else {
-			Slim::Control::Command::clearExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
-		}
-	}
-);
-
 # Some routines to add and remove preference change handlers
 sub addPrefChangeHandler {
 	my ($pref,$handlerRef,$forClient) = @_;
@@ -366,15 +410,6 @@ sub onChange {
 		}
 	}
 }
-
-# These are scripts that are run once on old prefs file to bring them
-# up-to-date with specific changes we want to push out to default prefs.
-our %upgradeScripts = (
-	# Default browse mode for music folders is sort by filename				   
-	'6.0b3' => sub {
-		Slim::Utils::Prefs::set('filesort', 1);
-	},
-);
 
 # This makes sure all the server preferences defined in %DEFAULT are in the pref file.
 # If they aren't there already they are set to the value in %DEFAULT
