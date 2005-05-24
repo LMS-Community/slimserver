@@ -14,7 +14,9 @@ use FileHandle;
 use File::Basename qw(basename);
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
+use HTTP::Date qw(time2str);
 use HTTP::Daemon;
+use HTTP::Headers::ETag;
 use HTTP::Status;
 use MIME::Base64;
 use MIME::QuotedPrint;
@@ -64,8 +66,6 @@ use constant MAXKEEPALIVES    => 30;
 use constant KEEPALIVETIMEOUT => 10;
 
 # Package variables
-
-our %templatefiles = ();
 
 my $openedport = 0;
 my $http_server_socket;
@@ -313,6 +313,9 @@ sub processHTTP {
 		return;
 	}
 
+	# Set the request time - for If-Modified-Since
+	$request->client_date(time());
+
 	$::d_http && msg(
 		"HTTP request: from " . $peeraddr{$httpClient} . " ($httpClient) for " .
 		join(' ', ($request->method(), $request->protocol(), $request->uri()), "\n")
@@ -340,7 +343,7 @@ sub processHTTP {
 	$response->request($request);
 
 	if ($::d_http_verbose) {
-		msg("Request Headers: [\n" . $request->as_string() . "]\n");
+		#msg("Request Headers: [\n" . $request->as_string() . "]\n");
 	}
 
 	if ($request->method() eq 'GET' || $request->method() eq 'HEAD') {
@@ -546,8 +549,8 @@ sub processHTTP {
 
 	# what does our response look like?
 	if ($::d_http_verbose) {
-		$response->content("");
-		msg("Response Headers: [\n" . $response->as_string() . "]\n");
+		#$response->content("");
+		#msg("Response Headers: [\n" . $response->as_string() . "]\n");
 	}
 
 	$::d_http && msg(
@@ -618,10 +621,10 @@ sub processURL {
 
 		if (defined($params->{'bitrate'})) {
 			# must validate 32 40 48 56 64 80 96 112 128 160 192 224 256 320 CBR
-			#set to the closest lower value of its not a match
+			# set to the closest lower value of its not a match
 			my $temprate = $params->{'bitrate'};
 
-			foreach my $i (320, 256, 244, 192, 160, 128, 112, 96, 80, 64, 56, 48, 40, 32) {
+			foreach my $i (qw(320 256 244 192 160 128 112 96 80 64 56 48 40 32)) {
 				$temprate = $i; 	 
 				last if ($i <= $params->{'bitrate'}); 	 
 			}
@@ -630,7 +633,8 @@ sub processURL {
 			$::d_http && msg("Setting transcode bitrate to $temprate\n"); 	 
 
 		} else {
-				Slim::Utils::Prefs::clientSet($client,'transcodeBitrate',undef);
+
+			Slim::Utils::Prefs::clientSet($client,'transcodeBitrate',undef);
 		}
 	}
 
@@ -680,7 +684,7 @@ sub generateHTTPResponse {
 
 	# this is a scalar ref because of the potential size of the body.
 	# not sure if it actually speeds things up considerably.
-	my ($body, $mtime); 
+	my ($body, $mtime, $inode, $size); 
 
 	# default to 200
 	$response->code(RC_OK);
@@ -697,7 +701,7 @@ sub generateHTTPResponse {
 
 	# setup our defaults
 	$response->content_type($contentType);
-	$response->expires(0);
+	#$response->expires(0);
 
 	# short-circuit if we don't have a content type to respond to.
 	unless (defined($contentType)) {
@@ -730,7 +734,7 @@ sub generateHTTPResponse {
 
 		# images should expire from cache one year from now
 		$response->expires(time() + HALFYEAR);
-		$response->header('Cache-Control' => sprintf('public; max-age=%d', HALFYEAR));
+		$response->header('Cache-Control' => sprintf('max-age=%d, public', 3600));
 	}
 
 	if ($contentType =~ /text/) {
@@ -803,7 +807,7 @@ sub generateHTTPResponse {
 
 		} else {
 
-			($body, $mtime) = getStaticContent("html/images/cover.png");
+			($body, $mtime, $inode, $size) = getStaticContent("html/images/cover.png");
 			$contentType = "image/png";
 		}
 
@@ -840,11 +844,21 @@ sub generateHTTPResponse {
 
 	} elsif ($path =~ /favicon\.ico/) {
 
-		($body, $mtime) = getStaticContent("html/mypage.ico", $params); 
+		($mtime, $inode, $size) = getFileInfoForStaticContent($path, $params);
+
+		if (contentHasBeenModified($response, $mtime, $inode, $size)) {
+
+			($body, $mtime, $inode, $size) = getStaticContent("html/mypage.ico", $params); 
+		}
 
 	} elsif ($path =~ /slimserver\.css/) {
 
-		($body, $mtime) = getStaticContent($path, $params);
+		($mtime, $inode, $size) = getFileInfoForStaticContent($path, $params);
+
+		if (contentHasBeenModified($response, $mtime, $inode, $size)) {
+
+			($body, $mtime, $inode, $size) = getStaticContent($path, $params);
+		}
 
 	} elsif ($path =~ /status\.txt/ || $path =~ /log\.txt/) {
 
@@ -853,8 +867,11 @@ sub generateHTTPResponse {
 
 		$response->header("Refresh" => "30; url=$path");
 		$response->header("Content-Type" => "text/plain; charset=utf-8");
+
 		buildStatusHeaders($client, $response, $p);
+
 		if ($path =~ /status/) {
+
 			if (defined($client)) {
 				my $parsed = $client->parseLines(Slim::Display::Display::curLines($client));
 				my $line1 = $parsed->{line1} || '';
@@ -863,6 +880,7 @@ sub generateHTTPResponse {
 			} else {
 				$$body = '';
 			}
+
 		} else {
 			$$body = $Slim::Utils::Misc::log;
 
@@ -891,8 +909,13 @@ sub generateHTTPResponse {
 
 		} else {
 
-			# otherwise just send back the binary file
-			($body, $mtime) = getStaticContent($path, $params);
+			($mtime, $inode, $size) = getFileInfoForStaticContent($path, $params);
+
+			if (contentHasBeenModified($response, $mtime, $inode, $size)) {
+
+				# otherwise just send back the binary file
+				($body, $mtime, $inode, $size) = getStaticContent($path, $params);
+			}
 		}
 
 	} else {
@@ -901,14 +924,50 @@ sub generateHTTPResponse {
 	}
 
 	# if there's a reference to an empty value, then there is no valid page at all
-	if (defined $body && !defined $$body) {
+	if (!$response->code() || $response->code() ne RC_NOT_MODIFIED) {
 
-		$response->code(RC_NOT_FOUND);
-		$body = filltemplatefile('html/errors/404.html', $params);
+		if (defined $body && !defined $$body) {
+
+			$response->code(RC_NOT_FOUND);
+			$body = filltemplatefile('html/errors/404.html', $params);
+		}
+
+		return 0 unless $body;
+
+	} else {
+
+		# Set the body to nothing, so the length() check won't fail.
+		$$body = "";
+	}
+
+	# Tell the browser not to reload the playlist unless it's changed.
+	# XXXX - not fully baked. Need more testing.
+	if (0 && !defined $mtime && defined $client && ref($client->currentPlaylistRender())) {
+
+		$mtime = $client->currentPlaylistRender()->[0] || undef;
+
+		if (defined $mtime) {
+			$response->expires($mtime + 60);
+		}
 	}
 
 	# for our static content
 	$response->last_modified($mtime) if defined $mtime;
+
+	# Create an ETag based on the mtime, file size and inode of the
+	# content. This will allow us us to send back 304 (Not Modified)
+	# headers. Very similar to how Apache does it.
+	{
+		my @etag = ();
+
+		$size ||= length($$body);
+
+		push @etag, sprintf('%lx', $inode) if $inode;
+		push @etag, sprintf('%lx', $size)  if $size;
+		push @etag, sprintf('%lx', $mtime) if $mtime;
+
+		$response->etag(join('-', @etag));
+	}
 
 	# If we're perl 5.8 or above, always send back utf-8
 	# Otherwise, send back the charset from the current locale
@@ -923,6 +982,10 @@ sub generateHTTPResponse {
 
 	$response->content_type($contentType);
 
+	#if (defined $params->{'refresh'}) {
+	#	$response->header('Refresh', $params->{'refresh'});
+	#}
+
 	return 0 unless $body;
 
 	# if the reference to the body is itself undefined, then we've started
@@ -930,38 +993,151 @@ sub generateHTTPResponse {
 	return prepareResponseForSending($client, $params, $body, $httpClient, $response);
 }
 
+sub contentHasBeenModified {
+	my $response = shift;
+	my $mtime    = shift || $response->last_modified() || 0;
+
+	my $request  = $response->request();
+	my $method   = $request->method();
+
+	# From Apache:
+	#
+	# Check for conditional requests --- note that we only want to do
+	# this if we are successful so far and we are not processing a
+	# subrequest or an ErrorDocument.
+	#
+	# The order of the checks is important, since ETag checks are supposed
+	# to be more accurate than checks relative to the modification time.
+
+	# If an If-Match request-header field was given
+	# AND the field value is not "*" (meaning match anything)
+	# AND if our strong ETag does not match any entity tag in that field,
+	#     respond with a status of 412 (Precondition Failed).
+	my $ifMatch = $request->if_match();
+	my $etag    = $response->etag();
+
+	my $ifModified  = $request->if_modified_since();
+	my $requestTime = $request->client_date();
+
+	if ($ifMatch) {
+
+		if ($ifMatch ne '*' && (!$etag || $etag eq 'W' || $etag ne $ifMatch)) {
+
+			$::d_http_verbose && msgf("\tifMatch - RC_PRECONDITION_FAILED\n");
+			$response->code(RC_PRECONDITION_FAILED);
+		}
+
+	 } else {
+
+		# Else if a valid If-Unmodified-Since request-header field was given
+		# AND the requested resource has been modified since the time
+		# specified in this field, then the server MUST
+		#     respond with a status of 412 (Precondition Failed).
+		my $ifUnmodified = $request->if_unmodified_since();
+
+		if ($ifUnmodified && time() > $ifUnmodified) {
+
+			 $::d_http_verbose && msgf("\tifUnmodified - RC_PRECONDITION_FAILED\n");
+
+			 $response->code(RC_PRECONDITION_FAILED);
+         	}
+	 }
+
+	# return early.
+	if ($response->code() eq RC_PRECONDITION_FAILED) {
+
+		return 1;
+        }
+
+	# If an If-None-Match request-header field was given
+	# AND the field value is "*" (meaning match anything)
+	#     OR our ETag matches any of the entity tags in that field, fail.
+	#
+	# If the request method was GET or HEAD, failure means the server
+	#    SHOULD respond with a 304 (Not Modified) response.
+	# For all other request methods, failure means the server MUST
+	#    respond with a status of 412 (Precondition Failed).
+	#
+	# GET or HEAD allow weak etag comparison, all other methods require
+	# strong comparison.  We can only use weak if it's not a range request.
+	my $ifNoneMatch = $request->if_none_match();
+
+	if ($ifNoneMatch) {
+
+		if ($ifNoneMatch eq '*') {
+
+			$::d_http_verbose && msg("\tifNoneMatch - * - returning 304\n");
+ 			$response->code(RC_NOT_MODIFIED);
+
+		} elsif ($etag) {
+
+			if ($request->if_range()) {
+
+				if ($etag ne 'W' && $ifNoneMatch eq $etag) {
+
+					$::d_http_verbose && msg("\tETag is not weak and ifNoneMatch eq ETag - returning 304\n");
+					$response->code(RC_NOT_MODIFIED);
+				}
+
+			} elsif ($ifNoneMatch eq $etag) {
+
+				$::d_http_verbose && msg("\tifNoneMatch eq ETag - returning 304\n");
+				$response->code(RC_NOT_MODIFIED);
+			}
+ 		}
+
+	} else {
+
+		# Else if a valid If-Modified-Since request-header field was given
+		# AND it is a GET or HEAD request
+		# AND the requested resource has not been modified since the time
+		# specified in this field, then the server MUST
+		#    respond with a status of 304 (Not Modified).
+		# A date later than the server's current request time is invalid.
+
+		my $ifModified  = $request->if_modified_since();
+		my $requestTime = $request->client_date();
+
+		if ($ifModified && $requestTime && $mtime) {
+
+			if (($ifModified >= $mtime) && ($ifModified <= $requestTime)) {
+
+				$::d_http && msgf("Content at: %s has not been modified - returning 304.\n", $request->uri());
+
+				$response->code(RC_NOT_MODIFIED);
+			}
+		}
+ 	}
+ 
+ 	if ($response->code() eq RC_NOT_MODIFIED) {
+
+ 		for my $header (qw(Content-Length Content-Type Last-Modified)) {
+ 			$response->remove_header($header);
+ 		}
+
+		return 0;
+ 	}
+ 
+	if ($response->code() eq RC_OK) {
+		msgf("\tReponse for %s is code is: %s\n", $request->uri(), $response->code());
+	}
+
+	return 1;
+}
+
 sub prepareResponseForSending {
 	my ($client, $params, $body, $httpClient, $response) = @_;
 
 	use bytes;
 
-	# Set the Content-Length - valid for either HEAD or GET, even if HEAD
-	# will clear out the actual content below.
+	# Set the Content-Length - valid for either HEAD or GET
 	$response->content_length(length($$body));
 	$response->date(time());
 
-	my $request = $response->request();
-	my $mtime   = $response->last_modified() || 0;
-	my $method  = $request->method();
+	# If we're already a 304 - that means we've already checked before the static content fetch.
+	if ($response->code() ne RC_NOT_MODIFIED) {
 
-	my $ifModified  = $request->if_modified_since();
-	my $requestTime = $request->client_date();
-
-	if (0 && $ifModified && $requestTime && $mtime) {
-
-		if (($ifModified >= $mtime) && ($ifModified <= $requestTime)) {
-
-			$::d_http && msg("Content has not been modified - returning 304.\n");
-
-			$response->code(RC_NOT_MODIFIED);
-		}
-	}
-
-	if ($response->code() eq RC_NOT_MODIFIED) {
-
-		for my $header (qw(Content-Length Cache-Control Content-Type Expires Last-Modified)) {
-			$response->remove_header($header);
-		}
+		contentHasBeenModified($response);
 	}
 
 	addHTTPResponse($httpClient, $response, $body);
@@ -973,15 +1149,17 @@ sub prepareResponseForSending {
 sub _stringifyHeaders {
 	my $response = shift;
 
-	my $data = sprintf("%s %s %s%s",
-		$response->protocol(),
-		$response->code(),
-    		status_message($response->code()) || "",
-		$CRLF
-	);
+	my $code = $response->code();
+	my $data = '';
+
+	$data .= sprintf("%s %s %s%s", $response->protocol(), $code, status_message($code) || "", $CRLF);
+
+	$data .= sprintf("Date: %s%s", time2str(time), $CRLF);
+
+	$data .= sprintf("Server: SlimServer (%s - %s)%s", $::VERSION, $::REVISION, $CRLF);
 
 	$data .= $response->headers_as_string($CRLF);
-	
+
 	# hack to make xmms like the audio better, since it appears to be case sensitive on for headers.
 	$data =~ s/^(Icy-.+\:)/\L$1/mg; 
 
@@ -1022,7 +1200,9 @@ sub addHTTPResponse {
 
 	# And now the body.
 	# Don't send back any content on a HEAD or 304 response.
-	if ($response->request()->method() ne 'HEAD' && $response->code() ne RC_NOT_MODIFIED) {
+	if ($response->request()->method() ne 'HEAD' && 
+		$response->code() ne RC_NOT_MODIFIED &&
+		$response->code() ne RC_PRECONDITION_FAILED) {
 
 		push @{$outbuf{$httpClient}}, {
 			'data'     => $body,
@@ -1438,6 +1618,10 @@ sub getStaticContent {
 	return _generateContentFromFile('get', @_);
 }
 
+sub getFileInfoForStaticContent {
+	return _generateContentFromFile('mtime', @_);
+}
+
 sub getStaticContentForTemplate {
 	return ${_generateContentFromFile('get', @_)};
 }
@@ -1474,11 +1658,16 @@ sub _generateContentFromFile {
 		return \$output;
 	}
 
-	my ($content, $mtime) = _getFileContent($path, $skin, 1);
+	my ($content, $mtime, $inode, $size) = _getFileContent($path, $skin, 1, $type eq 'mtime' ? 1 : 0);
+
+	if ($type eq 'mtime') {
+
+		return ($mtime, $inode, $size);
+	}
 
 	# some callers want the mtime for last-modified
 	if (wantarray()) {
-		return ($content, $mtime);
+		return ($content, $mtime, $inode, $size);
 	} else {
 		return $content;
 	}
@@ -1487,27 +1676,14 @@ sub _generateContentFromFile {
 # Retrieves the file specified as $path, relative to HTMLTemplateDir() and
 # the specified $skin or the $baseskin if not present in the $skin.
 # Uses binmode to read file if $binary is specified.
-# Keeps a cache of files internally to reduce file i/o.
 # Returns a reference to the file data.
 
 sub _getFileContent {
-	my ($path, $skin, $binary) = @_;
+	my ($path, $skin, $binary, $statOnly) = @_;
 
-	my $content = undef;
-	my $template;
-	my $mtime;
+	my ($content, $template, $mtime, $inode, $size);
+
 	my $skinkey = "${skin}/${path}";
-
-	# return if we have the template cached.
-	if (Slim::Utils::Prefs::get('templatecache')) {
-
-		if (defined $templatefiles{$skinkey}) {
-
-			$::d_http && msg("Sending $skinkey from cache\n");
-
-			return @{$templatefiles{$skinkey}};
-		}
-	}
 
 	$::d_http && msg("reading http file for ($skin $path)\n");
 
@@ -1529,14 +1705,22 @@ sub _getFileContent {
 			# try to open language specific files, and if not, the specified one.
 			open($template, $defaultpath . '.' . lc(Slim::Utils::Prefs::get('language'))) || open($template, $defaultpath);
 
-			$mtime = (stat($template))[9];
+			($inode, $size, $mtime) = (stat($template))[1,7,9];
 		} 
 
 	} else {
-		$mtime = (stat($template))[9];
+
+		($inode, $size, $mtime) = (stat($template))[1,7,9];
 	}
-	
-	if ($template) {
+
+	# If we only want the file attributes and not the content - close the
+	# filehandle before slurping in the bits.
+	if ($statOnly) {
+
+		close $template if $template;
+
+	} elsif ($template) {
+
 		local $/ = undef;
 		binmode($template) if $binary;
 		$content = <$template>;
@@ -1544,32 +1728,11 @@ sub _getFileContent {
 		$::d_http && (length($content) || msg("File empty: $path"));
 
 	} else {
+
 		$::d_http && msg("Couldn't open: $path\n");
 	}
 	
-	# add this template to the cache if we are using it
-	if (Slim::Utils::Prefs::get('templatecache') && defined($content)) {
-
-		# Don't cache SoftSqueeze files - .jar, etc. They are large,
-		# and are cached on the client side by JWS.
-		if ($path !~ m|html/softsqueeze|) {
-			$templatefiles{$skinkey} = [\$content, $mtime];
-		}
-	}
-
-	# don't return the mtime time the first time to make sure we reload the client cache.
-	# useful when we switch skins.  unfortunately, reloads the clients cache when the server restarts.
-	#
-	# Also - return the mtime the first time for SoftSqueeze, since it is skin independent.
-	if ($path !~ m|html/softsqueeze|) {
-		$mtime = time();
-	}
-
-	return (\$content, $mtime);
-}
-
-sub clearCaches {
-	%templatefiles = ();
+	return (\$content, $mtime, $inode, $size);
 }
 
 sub HomeURL {

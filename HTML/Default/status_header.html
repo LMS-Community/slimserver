@@ -2,12 +2,24 @@
 <head>
 	<title>[% "SQUEEZEBOX_MUSIC_PLAYER" | string %] [% IF player_name %][% player_name | html %][% END %]</title> 
 	<meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]">
-	<meta http-equiv="refresh" content="[% refresh %]; url=status_header.html?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1">
 	<style type="text/css"> <!--
 		[% INSERT slimserver.css %]
 	--> </style>
 	<script language="JavaScript">
 	<!-- Start Hiding the Script
+
+function doLoad() {
+
+	setTimeout( "refresh()", [% refresh %]*1000);
+
+	if (parent.playlist.location != '') {
+		parent.playlist.location.reload(false);
+	}
+}
+
+function refresh() {
+	window.location.href="status_header.html?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1";
+}
 
 function switchPlayer(player_List){
    var player = player_List.options[player_List.selectedIndex].value;
@@ -17,7 +29,7 @@ function switchPlayer(player_List){
 // Stop Hiding script --->
 	</script> 
 </head>
-<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="if (parent.playlist.location != '') parent.playlist.location.reload(true);">
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="doLoad();">
 	<table width="100%" cellspacing="0">
 		<tr height="32">
 			<td width="4" class="darkgrey"></td>

@@ -1173,8 +1173,8 @@ sub initSetupConfig {
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
 
-				$paramref->{'versionInfo'} = sprintf('%s%s %s - %s',
-					string('SERVER_VERSION'), string("COLON"), $::VERSION, $::REVISION
+				$paramref->{'versionInfo'} = sprintf('%s%s %s - %s - locale: %s',
+					string('SERVER_VERSION'), string("COLON"), $::VERSION, $::REVISION, $Slim::Utils::Misc::locale,
 				);
 
 				$paramref->{'newVersion'} = $::newVersion;
@@ -1895,33 +1895,26 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['wipecache','templatecache','lookForArtwork','itemsPerPass','prefsWriteDelay']
+				'PrefOrder' => ['lookForArtwork','itemsPerPass','prefsWriteDelay']
+			}
+		}
+		,'Prefs' => {
+			'lookForArtwork' => {
+				'validate' => \&validateTrueFalse
+				,'options' => {
+					'0' => string('SETUP_NO_ARTWORK')
+					,'1' => string('SETUP_LOOKFORARTWORK')
 				}
 			}
-		,'Prefs' => {
-			'templatecache' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'0' => string('SETUP_DONT_CACHE')
-								,'1' => string('SETUP_CACHE')
-								}
-					}
-			,'lookForArtwork' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'0' => string('SETUP_NO_ARTWORK')
-								,'1' => string('SETUP_LOOKFORARTWORK')
-								}
-					}
 			,'itemsPerPass' => {
-						'validate' => \&validateInt
-						}
-			,'prefsWriteDelay' => {
-						'validate' => \&validateInt
-						,'validateArgs' => [0,undef,1]
-						}
+				'validate' => \&validateInt
 			}
-		} #end of setup{'performance'} hash
+			,'prefsWriteDelay' => {
+				'validate' => \&validateInt
+				,'validateArgs' => [0,undef,1]
+			}
+		}
+	} #end of setup{'performance'} hash
 	,'network' => {
 		'title' => string('NETWORK_SETTINGS')
 		,'parent' => 'server'

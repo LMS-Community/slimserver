@@ -185,7 +185,6 @@ our %DEFAULT = (
 	,"streamWriteMaximum"	=> 30
 	,'webproxy'				=> ''
 	,"udpChunkSize"			=> 1400
-	,"templatecache"		=> 1				# use 0 for false, 1 for true
 	,'animationLevel'		=> 3 				#DEPRECATED
 	,'itemsPerPage'			=> 50
 	,'lookForArtwork'		=> 1
@@ -312,11 +311,6 @@ our %prefChange = (
 		for my $client (Slim::Player::Client::clients()) {
 			Slim::Buttons::Home::updateMenu($client);
 		}
-	}
-	,'templatecache' => sub {
-		my $newvalue = shift;
-		#clear cache whether you are turning it on or off.
-		Slim::Web::HTTP::clearCaches();
 	}
 	,'persistPlaylists' => sub {
 		my $newvalue = shift;
