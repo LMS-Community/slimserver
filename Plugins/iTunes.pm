@@ -658,6 +658,16 @@ sub scanFunction {
 			# Use this for playlist verification.
 			$tracks{$id} = $url;
 
+			# skip track if Disabled in iTunes
+			if ($curTrack{'Disabled'} && Slim::Utils::Prefs::get('ignoredisableditunestracks')) {
+
+				$::d_itunes && msg("iTunes: deleting disabled track $url\n");
+
+				$ds->markEntryAsInvalid($url);
+
+				return 1;
+			}
+
 			if (Slim::Music::Info::isFileURL($url)) {
 
 				# pathFromFileURL needs to convert from the
@@ -701,16 +711,6 @@ sub scanFunction {
 
 					return 1;
 				}
-			}
-
-			# skip track if Disabled in iTunes
-			if ($curTrack{'Disabled'} && Slim::Utils::Prefs::get('ignoredisableditunestracks')) {
-
-				$::d_itunes && msg("iTunes: deleting disabled track $url\n");
-
-				$ds->markEntryAsInvalid($url);
-
-				return 1;
 			}
 
 			$::d_itunes && msg("iTunes: got a track named " . $curTrack{'Name'} . " location: $location\n");
