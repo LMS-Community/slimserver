@@ -78,10 +78,10 @@ sub init {
 			
 			$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')));
 			
-			Slim::Control::Command::execute($client, ["playlist", $append ? "append" : "play", $instantMix[0]]);
+			$client->execute(["playlist", $append ? "append" : "play", $instantMix[0]]);
 			
 			for (my $i=1; $i<=$#instantMix; $i++) {
-				Slim::Control::Command::execute($client, ["playlist", "append", $instantMix[$i]]);
+				$client->execute(["playlist", "append", $instantMix[$i]]);
 			}
 		},
 	);

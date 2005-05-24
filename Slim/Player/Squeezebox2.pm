@@ -477,9 +477,7 @@ sub maxBrightness {
 sub upgradeFirmware {
 	my $client = shift;
 
-	my $to_version;
-
-	$to_version = $client->needsUpgrade();
+	my $to_version = $client->needsUpgrade();
 
 	if (!$to_version) {
 		$to_version = $client->revision;
@@ -488,16 +486,16 @@ sub upgradeFirmware {
 
 	my $filename = catdir($Bin, "Firmware", $client->model . "_$to_version.bin");
 
-	if (!-f$filename) {
+	if (!-f $filename) {
 		warn("file does not exist: $filename\n");
 		return(0);
 	}
 	
-	Slim::Control::Command::execute($client, ["stop"]);
+	$client->execute(["stop"]);
 
-	my $err;
 	$::d_firmware && msg("using new update mechanism: $filename\n");
-	$err = $client->upgradeFirmware_SDK5($filename);
+
+	my $err = $client->upgradeFirmware_SDK5($filename);
 
 	if (defined($err)) {
 		msg("upgrade failed: $err");

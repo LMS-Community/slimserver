@@ -909,10 +909,10 @@ sub instant_mix {
 
 	if (defined $p0 && defined $client) {
 
-		Slim::Control::Command::execute($client, ["playlist", $p0 eq "append" ? "append" : "play", $items->[0]]);
+		$client->execute(["playlist", $p0 eq "append" ? "append" : "play", $items->[0]]);
 		
 		for (my $i = 1; $i <= $#$items; $i++) {
-			Slim::Control::Command::execute($client, ["playlist", "append", $items->[$i]]);
+			$client->execute(["playlist", "append", $items->[$i]]);
 		}
 	}
 

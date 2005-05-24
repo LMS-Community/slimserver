@@ -78,7 +78,7 @@ sub init {
 			if ($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
 
 				$client->showBriefly($client->string('CLEARING_PLAYLIST'), '');
-				Slim::Control::Command::execute($client, ['playlist', 'clear']);
+				$client->execute(['playlist', 'clear']);
 
 			} else {
 
@@ -91,7 +91,7 @@ sub init {
 		
 			if ($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
 
-				Slim::Control::Command::execute($client, ['play']);
+				$client->execute(['play']);
 
 				# The address of the %functions hash changes from compile time to run time
 				# so it is necessary to get a reference to it from a function outside of the hash
@@ -122,7 +122,7 @@ sub init {
 					$command = ['playlist', 'loadtracks', "sort=age&offset=0&limit=$limit"];
 				}
 
-				Slim::Control::Command::execute($client, $command, \&Slim::Buttons::Block::unblock, [$client]);
+				$client->execute($command, \&Slim::Buttons::Block::unblock, [$client]);
 
 			} else {
 

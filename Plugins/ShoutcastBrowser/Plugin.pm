@@ -1174,7 +1174,7 @@ sub showStreamInfo {
 sub playStream {
 	my ($client, $currentGenre, $currentStream, $currentBitrate, $method, $addToRecent) = @_;
 	my $current_data = $stream_data{$currentGenre}{$currentStream}{$currentBitrate};
-	Slim::Control::Command::execute($client, ['playlist', $method, $current_data->[0], $currentStream]);
+	$client->execute(['playlist', $method, $current_data->[0], $currentStream]);
 	unless (defined $addToRecent && not $addToRecent) {
 		writeRecentStreamList($client, $currentStream, $currentBitrate, $current_data);
 	}
@@ -1186,7 +1186,7 @@ sub playRecentStream {
 	if ($currentStream =~ /\d+ \w+?: (.*)/i) {
 		$currentStream = $1;
 	}
-	Slim::Control::Command::execute($client, ['playlist', $method, $url, $currentStream]);
+	$client->execute(['playlist', $method, $url, $currentStream]);
 	$status{$client}{streams} = readRecentStreamList($client) || [ $client->string('PLUGIN_SHOUTCASTBROWSER_NONE') ];
 	$status{$client}{stream} = 0;
 }

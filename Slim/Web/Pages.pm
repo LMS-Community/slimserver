@@ -658,9 +658,12 @@ sub browser {
 
 			# write out the current playlist to a file with the special name __current
 			if (defined($client)) {
+
 				my $count = Slim::Player::Playlist::count($client);
+
 				$::d_http && msg("Saving playlist of $count items to $fulldir\n");
-				Slim::Control::Command::execute($client, ['playlist', 'save', '__current']) if $count;
+
+				$client->execute(['playlist', 'save', '__current']) if $count;
 
 			} else {
 				$::d_http && msg("no client, so we can't save a file!!\n");

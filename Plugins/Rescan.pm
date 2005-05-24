@@ -90,7 +90,7 @@ sub initPlugin {
 
 				my @pargs=('rescan');
 				my ($line1, $line2) = ($client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'), $client->string('PLUGIN_RESCAN_RESCANNING'));
-				Slim::Control::Command::execute($client, \@pargs, undef, undef);
+				$client->execute(\@pargs, undef, undef);
 				$client->showBriefly( $line1, $line2);
 
 			} else {

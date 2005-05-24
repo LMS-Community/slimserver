@@ -129,7 +129,7 @@ sub init {
 					Slim::Player::Playlist::song($client, browseplaylistindex($client))
 				);
 
-				Slim::Control::Command::execute($client, ["playlist", "delete", browseplaylistindex($client)]);	
+				$client->execute(["playlist", "delete", browseplaylistindex($client)]);	
 				$client->showBriefly( $client->string('REMOVING_FROM_PLAYLIST'), $songtitle, undef, 1);
 			}
 		},
@@ -146,7 +146,7 @@ sub init {
 					Slim::Player::Playlist::song($client, browseplaylistindex($client))), undef, 1
 				);
 
-				Slim::Control::Command::execute($client, ["playlist", "zap", browseplaylistindex($client)]);
+				$client->execute(["playlist", "zap", browseplaylistindex($client)]);
 			}
 		},
 
@@ -154,14 +154,14 @@ sub init {
 			my $client = shift;
 			if (showingNowPlaying($client)) {
 				if (Slim::Player::Source::playmode($client) eq 'pause') {
-					Slim::Control::Command::execute($client, ["pause"]);
+					$client->execute(["pause"]);
 				} elsif (Slim::Player::Source::rate($client) != 1) {
-					Slim::Control::Command::execute($client, ["rate", 1]);
+					$client->execute(["rate", 1]);
 				} else {
-					Slim::Control::Command::execute($client, ["playlist", "jump", browseplaylistindex($client)]);
+					$client->execute(["playlist", "jump", browseplaylistindex($client)]);
 				}	
 			} else {
-				Slim::Control::Command::execute($client, ["playlist", "jump", browseplaylistindex($client)]);
+				$client->execute(["playlist", "jump", browseplaylistindex($client)]);
 			}
 			$client->update();
 		}

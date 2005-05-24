@@ -122,9 +122,9 @@ sub unsync {
 	# when we unsync, we stop, but save settings first if we're doing at temporary unsync.
 	if ($temp) {
 		saveSyncPrefs($client,defined $temp);
-		Slim::Control::Command::execute($client, ["stop"]);
+		$client->execute(["stop"]);
 	} else {
-		Slim::Control::Command::execute($client, ["stop"]);
+		$client->execute(["stop"]);
 		saveSyncPrefs($client,defined $temp);
 	}
 }
@@ -156,14 +156,13 @@ sub sync {
 	push (@{$client->master->slaves}, $client);
 	
 	if (Slim::Player::Source::playmode($buddy) eq "play") {
-		Slim::Control::Command::execute($client, ["playlist", "jump", "+0"]);
+		$client->execute(["playlist", "jump", "+0"]);
 	}
 	
 	# Save Status to Prefs file
 	saveSyncPrefs($client,$buddy);
 	
 	Slim::Control::Command::executeCallback($client, ['playlist','sync']);
-
 }
 
 sub saveSyncPrefs {

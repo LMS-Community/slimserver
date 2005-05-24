@@ -957,6 +957,13 @@ sub initial_add_done {
 	}
 }	
 
+# Wrapper method so "execute" can be called as an object method on $client.
+sub execute {
+	my $self = shift;
+
+	Slim::Control::Command::execute($self, @_);
+}
+
 sub needsUpgrade {
 	return 0;
 }

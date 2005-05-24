@@ -118,21 +118,13 @@ sub setMode {
 			my $client = shift;
 			my $item = shift;
 			# url is also a playlist
-			Slim::Control::Command::execute( $client,
-											 [ 'playlist', 'play',
-											   $item->{'value'},
-											   $item->{'name'},
-										   ] );
+			$client->execute(['playlist', 'play', $item->{'value'}, $item->{'name'}]);
 		},
 		onAdd => sub {
 			my $client = shift;
 			my $item = shift;
 			# url is also a playlist
-			Slim::Control::Command::execute( $client,
-											 [ 'playlist', 'add',
-											   $item->{'value'},
-											   $item->{'name'},
-										   ] );
+			$client->execute(['playlist', 'add', $item->{'value'}, $item->{'name'}]);
 		},
 		overlayRef => [undef,
 					   Slim::Display::Display::symbol('notesymbol') .

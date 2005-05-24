@@ -173,21 +173,21 @@ sub checkAlarms
 			if ($alarmtime) {
 			   if ($time == $alarmtime +60 ) {$interval=1;}; #alarm is done, so reset to find the beginning of a minute
 				if ($time == $alarmtime) {
-					Slim::Control::Command::execute($client, ['stop']);
+					$client->execute(['stop']);
 					my $volume = Slim::Utils::Prefs::clientGet($client, "alarmvolume");
 					if (defined ($volume)) {
-						Slim::Control::Command::execute($client, ["mixer", "volume", $volume]);
+						$client->execute(["mixer", "volume", $volume]);
 					}
 
 					# fade volume over time
 					$client->fade_volume(Slim::Utils::Prefs::clientGet($client, "alarmfadeseconds"));
 
 					if (defined Slim::Utils::Prefs::clientGet($client, "alarmplaylist")) {
-						Slim::Control::Command::execute($client, ["power", 1]);
+						$client->execute(["power", 1]);
 						Slim::Buttons::Block::block($client,alarmLines($client));
-						Slim::Control::Command::execute($client, ["playlist", "load", Slim::Utils::Prefs::clientGet($client, "alarmplaylist")], \&playDone, [$client]);
+						$client->execute(["playlist", "load", Slim::Utils::Prefs::clientGet($client, "alarmplaylist")], \&playDone, [$client]);
 					} else {
-						Slim::Control::Command::execute($client, ['play']);
+						$client->execute(['play']);
 						Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);	
 					}
 				}

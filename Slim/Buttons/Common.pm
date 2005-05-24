@@ -126,7 +126,7 @@ our %functions = (
 		if ($playlistlen == 0 || ($rate != 0 && $rate != 1)) {
 			return;
 		}
-		Slim::Control::Command::execute($client, ["playlist", "jump", "+1"]);
+		$client->execute(["playlist", "jump", "+1"]);
 		$client->showBriefly($client->currentSongLines());
 	},
 	'rew' => sub  {
@@ -140,14 +140,14 @@ our %functions = (
 		}
 		
 		if (Time::HiRes::time() - Slim::Hardware::IR::lastIRTime($client) < 1.0) {  #  less than second, jump back to the previous song
-			Slim::Control::Command::execute($client, ["playlist", "jump", "-1"]);
+			$client->execute(["playlist", "jump", "-1"]);
 		} else {
 			# otherwise, restart this song.
-			Slim::Control::Command::execute($client, ["playlist", "jump", "+0"]);
+			$client->execute(["playlist", "jump", "+0"]);
 		}
 		#either starts the same song over, or the previous one, depending on whether we jumped back.
 		if (Slim::Player::Source::playmode($client) ne 'pause') {
-			Slim::Control::Command::execute($client, ["play"]);
+			$client->execute(["play"]);
 		}
 		$client->showBriefly($client->currentSongLines());
 	},
@@ -174,7 +174,7 @@ our %functions = (
 		}
 		# if we aren't scanning that way, then use it to stop scanning  and just play.
 		if ($rate != 0 && $rate != 1) {
-			Slim::Control::Command::execute($client, ["play"]);
+			$client->execute(["play"]);
 			return;	
 		}
 		
@@ -184,20 +184,20 @@ our %functions = (
 			if (Slim::Player::Source::songTime($client) < 5 || Slim::Player::Source::playmode($client) eq "stop") {
 				#jump back a song if stopped, invalid songtime, or current song has been playing less
 				#than 5 seconds (use modetime instead of now when paused)
-				Slim::Control::Command::execute($client, ["playlist", "jump", "-1"]);
+				$client->execute(["playlist", "jump", "-1"]);
 			} else { #restart current song
-				Slim::Control::Command::execute($client, ["playlist", "jump", "+0"]);
+				$client->execute(["playlist", "jump", "+0"]);
 			}
 			
 		} elsif ($functarg eq 'fwd') { # jump to next song
-			Slim::Control::Command::execute($client, ["playlist", "jump", "+1"]);
+			$client->execute(["playlist", "jump", "+1"]);
 		} else { #restart current song
-			Slim::Control::Command::execute($client, ["playlist", "jump", "+0"]);
+			$client->execute(["playlist", "jump", "+0"]);
 		}
 
 		#either starts the same song over, or the previous one, or the next one depending on whether/how we jumped
 		if (Slim::Player::Source::playmode($client) ne 'pause') {
-			Slim::Control::Command::execute($client, ["play"]);
+			$client->execute(["play"]);
 		}$client->showBriefly($client->currentSongLines());
 	},
 	'jumpinsong' => sub {
@@ -215,7 +215,7 @@ our %functions = (
 		} else {
 			return;
 		}
-		Slim::Control::Command::execute($client, ['gototime', $dir]);
+		$client->execute(['gototime', $dir]);
 	},
 	'scan' => sub {
 		my ($client,$funct,$functarg) = @_;
@@ -225,11 +225,11 @@ our %functions = (
 		} elsif ($functarg eq 'fwd') {
 			Slim::Buttons::Common::pushMode($client, 'playlist');
 			if ($rate < 0) { $rate = 1; }
-			Slim::Control::Command::execute($client, ['rate', $rate * $SCAN_RATE_MULTIPLIER]);
+			$client->execute(['rate', $rate * $SCAN_RATE_MULTIPLIER]);
 		} elsif ($functarg eq 'rew') {
 			Slim::Buttons::Common::pushMode($client, 'playlist');
 			if ($rate > 0) { $rate = 1; }
-			Slim::Control::Command::execute($client, ['rate', -abs($rate * $SCAN_RATE_MULTIPLIER)]);
+			$client->execute(['rate', -abs($rate * $SCAN_RATE_MULTIPLIER)]);
 		}
 		$client->update();
 
@@ -241,7 +241,7 @@ our %functions = (
 		if ($playlistlen == 0) {
 			return;
 		}
-		Slim::Control::Command::execute($client, ["pause"]);
+		$client->execute(["pause"]);
 		if (Slim::Player::Source::playmode($client) eq 'play' && Slim::Player::Source::rate($client) != 1) {
 			Slim::Player::Source::rate($client,1);
 		}
@@ -252,7 +252,7 @@ our %functions = (
 		if (Slim::Player::Playlist::count($client) == 0) {
 			$client->showBriefly($client->string('PLAYLIST_EMPTY'), "");
 		} else {
-			Slim::Control::Command::execute($client, ["stop"]);
+			$client->execute(["stop"]);
 			Slim::Buttons::Common::pushMode($client, 'playlist');
 			$client->showBriefly($client->string('STOPPING'), "");
 		}
@@ -384,7 +384,7 @@ our %functions = (
 		if (defined $buttonarg && $buttonarg =~ /^[0-2]$/) {
 			$repeat = $buttonarg;
 		}
-		Slim::Control::Command::execute($client, ["playlist", "repeat",$repeat]);
+		$client->execute(["playlist", "repeat",$repeat]);
 		# display the fact that we are (not) repeating
 		if (Slim::Player::Playlist::repeat($client) == 0) {
 			$client->showBriefly($client->string('REPEAT_OFF'), "");
@@ -425,7 +425,7 @@ our %functions = (
 	},
 	'muting' => sub  {
 		my $client = shift;
-		Slim::Control::Command::execute($client, ["mixer", "muting"]);
+		$client->execute(["mixer", "muting"]);
 	},
 	'sleep' => sub  {
 		my $client = shift;
@@ -447,7 +447,7 @@ our %functions = (
 			$client->showBriefly($client->string('SLEEPING_IN') . ' ' . $sleepTime . ' ' . $client->string('MINUTES'),'');
 		}
 
-		Slim::Control::Command::execute($client, ["sleep", $sleepTime * 60]);
+		$client->execute(["sleep", $sleepTime * 60]);
 		$client->currentSleepTime($sleepTime);
 	},
 	'power' => sub  {
@@ -455,11 +455,11 @@ our %functions = (
 		my $button = shift;
 		my $power= undef;
 		if ($button eq 'power_on') {
-			Slim::Control::Command::execute($client,["power",1]);
+			$client->execute(["power",1]);
 		} elsif ($button eq 'power_off') {
-			Slim::Control::Command::execute($client,["power",0]);
+			$client->execute(["power",0]);
 		} else {
-			Slim::Control::Command::execute($client,["power"]);
+			$client->execute(["power"]);
 		}
 	},
 	'shuffle' => sub  {
@@ -471,7 +471,7 @@ our %functions = (
 		} elsif ($button eq 'shuffle_off') {
 			$shuffle = 0;
 		}
-		Slim::Control::Command::execute($client, ["playlist", "shuffle" , $shuffle]);
+		$client->execute(["playlist", "shuffle" , $shuffle]);
 		
 		if (Slim::Player::Playlist::shuffle($client) == 2) {
 				$client->showBriefly($client->string('SHUFFLE_ON_ALBUMS'), "");
@@ -516,7 +516,7 @@ our %functions = (
 	'clearPlaylist' => sub {
 		my $client = shift;
 		$client->showBriefly($client->string('CLEARING_PLAYLIST'), '');
-		Slim::Control::Command::execute($client, ['playlist', 'clear']);
+		$client->execute(['playlist', 'clear']);
 	},
 	'modefunction' => sub {
 		my ($client,$funct,$functarg) = @_;
@@ -866,7 +866,7 @@ sub mixer {
 		return;
 	}
 		
-	Slim::Control::Command::execute($client, ["mixer", $feature, $cmd]);
+	$client->execute(["mixer", $feature, $cmd]);
 	
 	Slim::Display::Display::mixerDisplay($client,$feature);
 }

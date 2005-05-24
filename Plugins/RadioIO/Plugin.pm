@@ -109,9 +109,7 @@ our %functions = (
 			url => $url,
 			title => $title,
 		);
-		Slim::Buttons::Common::pushModeLeft($client,
-											'remotetrackinfo',
-											\%params);
+		Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
 	},
 	'play' => sub {
 		my $client = shift;
@@ -119,9 +117,9 @@ our %functions = (
 		my $url = getRadioIOURL($current{$client} || 0);
 
 		if (defined($url)) {
-			Slim::Control::Command::execute($client, ['playlist', 'clear']);
-			Slim::Control::Command::execute($client, ['playlist', 'add', $url]);
-			Slim::Control::Command::execute($client, ['play']);
+			$client->execute(['playlist', 'clear']);
+			$client->execute(['playlist', 'add', $url]);
+			$client->execute(['play']);
 		}
 	},
 	'add' => sub {
@@ -130,7 +128,7 @@ our %functions = (
 		my $url = getRadioIOURL($current{$client} || 0);
 
 		if (defined($url)) {
-			Slim::Control::Command::execute($client, ['playlist', 'add', $url]);
+			$client->execute(['playlist', 'add', $url]);
 		}
 	},
 );

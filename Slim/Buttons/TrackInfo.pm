@@ -27,7 +27,7 @@ sub init {
 
 			unless ($curItem) {
 				Slim::Buttons::Common::popModeRight($client);
-				Slim::Control::Command::execute($client, ["button", "play", undef]);
+				$client->execute(["button", "play", undef]);
 				return;
 			}
 
@@ -43,8 +43,8 @@ sub init {
 
 			$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
 
-			Slim::Control::Command::execute($client, ['playlist', 'loadalbum', @search]);
-			Slim::Control::Command::execute($client, ['playlist', 'jump', 0]);
+			$client->execute(['playlist', 'loadalbum', @search]);
+			$client->execute(['playlist', 'jump', 0]);
 		},
 		
 		'add' => sub  {
@@ -54,7 +54,7 @@ sub init {
 
 			unless ($curItem) {
 				Slim::Buttons::Common::popModeRight($client);
-				Slim::Control::Command::execute($client, ["button", "add", undef]);
+				$client->execute(["button", "add", undef]);
 				return;
 			}
 
@@ -63,7 +63,7 @@ sub init {
 
 			$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
 
-			Slim::Control::Command::execute($client, ["playlist", "addalbum", @search]);
+			$client->execute(["playlist", "addalbum", @search]);
 		},
 		
 		'up' => sub  {

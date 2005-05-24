@@ -156,7 +156,7 @@ sub readUDP {
 				$::d_protocol && msg("UDP: executecommand($ecArgs)\n");
 				my $clientipport = shift(@ecArgs);
 				my $client = Slim::Player::Client::getClient($clientipport);
-				Slim::Control::Command::execute($client, \@ecArgs);
+				$client->execute(\@ecArgs);
 
 			} else {
 

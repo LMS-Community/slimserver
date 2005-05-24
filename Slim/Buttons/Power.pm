@@ -21,8 +21,9 @@ sub init {
 	%functions = (
 		'play' => sub  {
 			my $client = shift;
-			Slim::Control::Command::execute($client,["power",1]);
-			Slim::Control::Command::execute($client, ["play"]);
+
+			$client->execute(["power",1]);
+			$client->execute(["play"]);
 		},
 	);
 }
@@ -48,9 +49,9 @@ sub setMode {
 	
 	if (Slim::Player::Source::playmode($client) eq 'play' && Slim::Player::Playlist::song($client)) {
 		if (Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::song($client))) {
-			Slim::Control::Command::execute($client, ["stop"]);
+			$client->execute(["stop"]);
 		} else {
-			Slim::Control::Command::execute($client, ["pause", 1]);
+			$client->execute(["pause", 1]);
 		}
 	}
 	

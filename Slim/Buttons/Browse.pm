@@ -141,11 +141,11 @@ sub init {
 			if (Slim::Music::Info::isList($currentItem)) {
 				# we are looking at an playlist file or directory
 				Slim::Buttons::Block::block($client, $line1, $line2);
-				Slim::Control::Command::execute($client, ["playlist", "add", $currentItem], \&playDone, [$client]);
+				$client->execute(["playlist", "add", $currentItem], \&playDone, [$client]);
 			} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isRemoteURL($currentItem)) {
 				$client->showBriefly($line1, $line2, undef, 1);
 				# we are looking at a song file, play it and all the other songs in the directory after
-				Slim::Control::Command::execute($client, ["playlist", "append", $currentItem]);
+				$client->execute(["playlist", "append", $currentItem]);
 			} else {
 				$::d_files && msg("Error attempting to add directory or file to playlist.\n");
 				return;
@@ -160,11 +160,11 @@ sub init {
 			if (Slim::Music::Info::isList($currentItem)) {
 				# we are looking at an playlist file or directory
 				Slim::Buttons::Block::block($client, $line1, $line2);
-				Slim::Control::Command::execute($client, ["playlist", "insertlist", $currentItem], \&playDone, [$client]);
+				$client->execute(["playlist", "insertlist", $currentItem], \&playDone, [$client]);
 			} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isRemoteURL($currentItem)) {
 				$client->showBriefly($line1, $line2, undef, 1);
 				# we are looking at a song file, play it and all the other songs in the directory after
-				Slim::Control::Command::execute($client, ["playlist", "insert", $currentItem]);
+				$client->execute(["playlist", "insert", $currentItem]);
 			} else {
 				$::d_files && msg("Error attempting to add directory or file to playlist.\n");
 				return;
@@ -186,35 +186,37 @@ sub init {
 			if (Slim::Music::Info::isList($currentItem)) {
 				# we are looking at an playlist file or directory
 				Slim::Buttons::Block::block($client,$line1, $line2);
-				Slim::Control::Command::execute($client, ["playlist", "load", $currentItem], \&playDone, [$client]);
+				$client->execute(["playlist", "load", $currentItem], \&playDone, [$client]);
 			} elsif (Slim::Music::Info::isSong($currentItem) || Slim::Music::Info::isRemoteURL($currentItem)) {
 				# put all the songs at this level on the playlist and start playing the selected one.
 				$client->showBriefly($line1, $line2, undef, 1);
 				if (Slim::Utils::Prefs::get('playtrackalbum') && !Slim::Music::Info::isRemoteURL($currentItem)) {
-					Slim::Control::Command::execute($client, ["playlist", "clear"]);
-					Slim::Control::Command::execute($client, ["playlist", "shuffle" , 0]);
+					$client->execute(["playlist", "clear"]);
+					$client->execute(["playlist", "shuffle" , 0]);
 					my $startindex = 0;
 					my $startindexcounter = 0;
 					my $dirref = $client->dirItems;
 
 					if (Slim::Music::Info::isPlaylist(Slim::Utils::Misc::virtualToAbsolute($client->pwd()))) {
+
 						$startindex = $client->currentDirItem();
-						Slim::Control::Command::execute(
-							$client, ["playlist", "load", $client->pwd()], \&playDone, [$client, $startindex, $shuffled]
+
+						$client->execute(
+							["playlist", "load", $client->pwd()], \&playDone, [$client, $startindex, $shuffled]
 						);
 
 					} else {
 						for my $song (@$dirref) {
 							if (Slim::Music::Info::isSong($song)) {
 								if ($song eq $currentItem) { $startindex = $startindexcounter; }
-								Slim::Control::Command::execute($client, ["playlist", "append", $song]);
+								$client->execute(["playlist", "append", $song]);
 								$startindexcounter++;
 							}
 						}
 						playDone($client, $startindex, $shuffled);
 					}
 				} else {
-					Slim::Control::Command::execute($client, ["playlist", "play", $currentItem]);
+					$client->execute(["playlist", "play", $currentItem]);
 				}
 
 			} else {
@@ -273,8 +275,8 @@ sub playDone {
 	
 	#The following commented out to allow showBriefly to finish
 	#$client->update();
-	Slim::Control::Command::execute($client, ["playlist", "jump", $startindex])   if defined $startindex;
-	Slim::Control::Command::execute($client, ["playlist", "shuffle" , $shuffled]) if defined $shuffled;
+	$client->execute(["playlist", "jump", $startindex])   if defined $startindex;
+	$client->execute(["playlist", "shuffle" , $shuffled]) if defined $shuffled;
 }
 
 sub getFunctions {

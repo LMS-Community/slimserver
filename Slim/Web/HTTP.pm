@@ -660,12 +660,14 @@ sub processURL {
 		if (defined($params->{"player"}) && $params->{"player"} eq "*") {
 
 			for my $client2 (Slim::Player::Client::clients()) {
+
 				next if $client eq $client2;
-				Slim::Control::Command::execute($client2, \@p);
+
+				$client2->execute(\@p);
 			}
 		}
 
-		Slim::Control::Command::execute($client, \@p, \&generateHTTPResponse, \@callbackargs);
+		$client->execute(\@p, \&generateHTTPResponse, \@callbackargs);
 
 	} else {
 

@@ -84,7 +84,7 @@ sub idle {
 	if (scalar(@queuedBytes)) {
 
 		my $client = shift @queuedClient;		
-		Slim::Control::Command::execute($client, ['ir', (shift @queuedBytes), (shift @queuedTime)]);
+		$client->execute(['ir', (shift @queuedBytes), (shift @queuedTime)]);
 		
 		if ($::d_irtm) {
 			# compute current time in microseconds
@@ -637,7 +637,7 @@ sub processCode {
 		$client->easteregg('');
 		$client->doEasterEgg();
 	} else {
-		Slim::Control::Command::execute($client, ['button', $irCode, $irTime, 1]);
+		$client->execute(['button', $irCode, $irTime, 1]);
 	}
 }
 

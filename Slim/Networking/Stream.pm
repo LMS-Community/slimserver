@@ -284,7 +284,7 @@ sub timeout {
 	if (($lastAck{$client} + $ACK_TIMEOUT) < Time::HiRes::time()) {
 		# we haven't gotten an ack in a long time.  shut it down and don't bother resending.
 		Slim::Player::Sync::unsync($client);
-		Slim::Control::Command::execute($client, ["stop"]);
+		$client->execute(["stop"]);
 	} else {
 		sendStreamPkt($client, $packet);
 	}

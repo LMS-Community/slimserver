@@ -46,9 +46,9 @@ my %mainModeFunctions = (
 	   my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
 	   my $urls = Slim::Buttons::Common::param($client, 'urls');
 	   
-	   Slim::Control::Command::execute( $client, [ 'playlist', 'clear' ] );
-	   Slim::Control::Command::execute( $client, [ 'playlist', 'add', $urls->[$listIndex]] );
-	   Slim::Control::Command::execute( $client, [ 'play' ] );
+	   $client->execute([ 'playlist', 'clear' ] );
+	   $client->execute([ 'playlist', 'add', $urls->[$listIndex]] );
+	   $client->execute([ 'play' ] );
    },
 );
 
@@ -179,13 +179,10 @@ sub playFavorite {
 	} else {
 		$::d_favorites && msg("Favorites Plugin: playing favorite number $digit, " . $titles[$index] . "\n");
 		$client->showBriefly(sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $digit, $titles[$index]));
-		Slim::Control::Command::execute( $client, [ 'playlist', 'clear' ] );
-		Slim::Control::Command::execute( $client, 
-										 [ 'playlist', 'add', 
-										   $urls[$index] ] );
-		Slim::Control::Command::execute( $client, [ 'play' ] );
+		$client->execute(['playlist', 'clear']);
+		$client->execute(['playlist', 'add', $urls[$index]]);
+		$client->execute(['play']);
 	}
-
 }
 
 sub addFavorite {
@@ -194,9 +191,7 @@ sub addFavorite {
 	my $url = Slim::Player::Playlist::song($client);
 	my $title = Slim::Music::Info::standardTitle($client, $url);
 
-	Slim::Control::Command::execute($client, 
-									['favorite', 'add',
-									 $url, $title]);
+	$client->execute(['favorite', 'add', $url, $title]);
 }
 
 sub initPlugin {

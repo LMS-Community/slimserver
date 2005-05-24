@@ -155,15 +155,11 @@ sub init {
 					my $items = &{$info->{'search'}}($ds, $search, 'track');
 					$client->param('searchResults', $items);
 
-					Slim::Control::Command::execute($client, 
-						["playlist", $command, 'listref=searchResults&']
-					);
+					$client->execute(["playlist", $command, 'listref=searchResults&']);
 				}
 				# Otherwise rely on the execute to do the search for us
 				else {
-					Slim::Control::Command::execute($client, 
-						["playlist", $command, $termlist]
-					);
+					$client->execute(["playlist", $command, $termlist]);
 				}
 			}
 			# Else if we pick a single song
@@ -176,7 +172,7 @@ sub init {
 					$command = 'append' if $addorinsert == 1;
 					$command = 'insert' if $addorinsert == 2;
 
-					Slim::Control::Command::execute($client, ["playlist", $command, $currentItem->url()]);
+					$client->execute(["playlist", $command, $currentItem->url()]);
 				}
 				# Otherwise deal with it in the context of the 
 				# containing album.
@@ -185,64 +181,61 @@ sub init {
 
 					Slim::Player::Playlist::shuffle($client, 0);
 
-					Slim::Control::Command::execute($client, ["playlist", "clear"]);
-					Slim::Control::Command::execute($client, 
-						["playlist", "addtracks", $termlist]
-					);
-
-					Slim::Control::Command::execute($client, ["playlist", "jump", $listIndex]);
+					$client->execute(["playlist", "clear"]);
+					$client->execute(["playlist", "addtracks", $termlist]);
+					$client->execute(["playlist", "jump", $listIndex]);
 
 					if ($wasShuffled) {
-						Slim::Control::Command::execute($client, ["playlist", "shuffle", 1]);
+						$client->execute(["playlist", "shuffle", 1]);
 					}
 				}
 			}
 		},
 
 		'create_mix' => sub  {
-				my $client = shift;
-	
-				my $Imports = Slim::Music::Import::importers();
-			
-				my @mixers = ();
-				
-				for my $import (keys %{$Imports}) {
-				
-					if (defined $Imports->{$import}->{'mixer'} && $Imports->{$import}->{'use'}) {
-						push @mixers, $import;
-					}
-				}
+			my $client = shift;
 
-				if (scalar @mixers == 1) {
-					
-					$::d_plugins && msg("Running Mixer $mixers[0]\n");
-					&{$Imports->{$mixers[0]}->{'mixer'}}($client);
-					
-				} elsif (@mixers) {
-					my $params;
-					
-					# store existing browsedb params for use later.
-					$params->{'parentParams'} = $client->modeParameterStack(-1);
-					
-					$params->{'listRef'} = \@mixers;
-					$params->{'stringExternRef'} = 1;
-					
-					$params->{'header'} = 'INSTANT_MIX';
-					$params->{'headerAddCount'} = 1;
-					$params->{'callback'} = \&mixerExitHandler;
+			my $Imports = Slim::Music::Import::importers();
+		
+			my @mixers = ();
 			
-					$params->{'overlayRef'} = sub { return (undef, Slim::Display::Display::symbol('rightarrow')) };
+			for my $import (keys %{$Imports}) {
 			
-					$params->{'overlayRefArgs'} = '';
-					$params->{'valueRef'} = \$mixer;
-					
-					Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', $params);
-				
-				} else {
-				
-					# if we don't have mix generation, then just play
-					(getFunctions())->{'play'}($client);
+				if (defined $Imports->{$import}->{'mixer'} && $Imports->{$import}->{'use'}) {
+					push @mixers, $import;
 				}
+			}
+
+			if (scalar @mixers == 1) {
+				
+				$::d_plugins && msg("Running Mixer $mixers[0]\n");
+				&{$Imports->{$mixers[0]}->{'mixer'}}($client);
+				
+			} elsif (@mixers) {
+				my $params;
+				
+				# store existing browsedb params for use later.
+				$params->{'parentParams'} = $client->modeParameterStack(-1);
+				
+				$params->{'listRef'} = \@mixers;
+				$params->{'stringExternRef'} = 1;
+				
+				$params->{'header'} = 'INSTANT_MIX';
+				$params->{'headerAddCount'} = 1;
+				$params->{'callback'} = \&mixerExitHandler;
+		
+				$params->{'overlayRef'} = sub { return (undef, Slim::Display::Display::symbol('rightarrow')) };
+		
+				$params->{'overlayRefArgs'} = '';
+				$params->{'valueRef'} = \$mixer;
+				
+				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', $params);
+			
+			} else {
+			
+				# if we don't have mix generation, then just play
+				(getFunctions())->{'play'}($client);
+			}
 		},
 	);
 }

@@ -196,7 +196,7 @@ sub playMix {
 	
 	$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')));
 
-	Slim::Control::Command::execute($client, ["playlist", $playAddInsert, "listref", $client->param('listRef')]);
+	$client->execute(["playlist", $playAddInsert, "listref", $client->param('listRef')]);
 	
 }
 
@@ -1078,7 +1078,7 @@ sub musicmagic_mix {
 	}
 
 	if (defined $p0 && defined $client) {
-		Slim::Control::Command::execute($client, ["playlist", $p0 eq "append" ? "addtracks" : "playtracks", "listref=musicmagic_mix"]);
+		$client->execute(["playlist", $p0 eq "append" ? "addtracks" : "playtracks", "listref=musicmagic_mix"]);
 	}
 
 	return Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_mix.html", $params);

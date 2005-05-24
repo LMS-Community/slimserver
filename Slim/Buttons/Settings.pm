@@ -200,7 +200,7 @@ sub executeCommand {
 	my $command = $client->param('command');
 	my $subcmd  = $client->param('subcommand');
 	
-	Slim::Control::Command::execute($client, [$command, $subcmd, $value]);
+	$client->execute([$command, $subcmd, $value]);
 }
 	
 sub _fontExists {

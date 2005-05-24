@@ -763,9 +763,9 @@ sub playOrAddCurrentStation {
 	Slim::Music::Info::setTitle($stationURL, 
 		   $live365->{$client}->getCurrentStation()->{STATION_TITLE});
 
-	$play and Slim::Control::Command::execute( $client, [ 'playlist', 'clear' ] );
-	Slim::Control::Command::execute( $client, [ 'playlist', 'add', $stationURL ] );
-	$play and Slim::Control::Command::execute( $client, [ 'play' ] );
+	$play and $client->execute([ 'playlist', 'clear' ] );
+	$client->execute([ 'playlist', 'add', $stationURL ] );
+	$play and $client->execute([ 'play' ] );
 }
 
 # }}}
