@@ -1119,10 +1119,6 @@ sub contentHasBeenModified {
 
 		return 0;
  	}
- 
-	if ($response->code() eq RC_OK) {
-		msgf("\tReponse for %s is code is: %s\n", $request->uri(), $response->code());
-	}
 
 	return 1;
 }
