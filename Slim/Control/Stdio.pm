@@ -247,7 +247,7 @@ sub executeCmd {
 			$client = $allclients[0];
 		}
 	
-		my @outputParams = $client->execute(\@params);
+		my @outputParams = Slim::Control::Command::execute($client, \@params);
 		
 		foreach my $param (@outputParams) {
 			$param = Slim::Web::HTTP::escape($param);
