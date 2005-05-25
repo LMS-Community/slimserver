@@ -18,7 +18,7 @@ function doLoad() {
 }
 
 function refresh() {
-	window.location.href="status_header.html?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1";
+	window.location.replace("status_header.html?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1");
 }
 
 function switchPlayer(player_List){
