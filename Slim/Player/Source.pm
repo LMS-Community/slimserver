@@ -1898,7 +1898,7 @@ sub readNextChunk {
 					$::d_source && msg("readlen undef: ($!)" . ($! + 0) . "\n"); 
 					$endofsong = 1; 
 				} else {
-					$::d_source && msg("would have blocked, will try again later\n");
+					$::d_source_v && msg("would have blocked, will try again later\n");
 					return undef;	
 				}	
 
