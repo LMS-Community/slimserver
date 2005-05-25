@@ -229,7 +229,7 @@ sub disablePlugin {
 	$initialized = 0;
 
 	# delGroups, categories and prefs
-	Slim::Web::Setup::delCategory('itunes');
+	#Slim::Web::Setup::delCategory('itunes');
 	Slim::Web::Setup::delGroup('server','itunes',1);
 
 	# set importer to not use
