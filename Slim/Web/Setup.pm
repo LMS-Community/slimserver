@@ -1230,7 +1230,7 @@ sub initSetupConfig {
 							,'onChange' => sub {
 								my ($client,$changeref) = @_;
 
-								$client->execute([$changeref->{'wipedb'}{'new'} ? "wipecache" : "rescan"], undef, undef);
+								Slim::Control::Command::execute($client, [$changeref->{'wipedb'}{'new'} ? "wipecache" : "rescan"], undef, undef);
 							}
 							,'inputTemplate' => 'setup_input_submit.html'
 							,'ChangeButton' => string('SETUP_RESCAN_BUTTON')
@@ -1609,7 +1609,7 @@ sub initSetupConfig {
 						,'onChange' => sub {
 							my $client = shift;
 
-							$client->execute(["wipecache"], undef, undef);
+							Slim::Control::Command::execute($client, ["wipecache"], undef, undef);
 						}
 						,'options' => {
 								'1' => string ('SETUP_GROUPDISCS_1')
