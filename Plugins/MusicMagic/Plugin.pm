@@ -773,7 +773,7 @@ sub mixerFunction {
 		if ($currentItem && $currentItem->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix(Slim::Utils::Misc::pathFromFileURL($currentItem->title()), 'song');
+			$mix = getMix(Slim::Utils::Misc::pathFromFileURL($currentItem->{'url'}), 'song');
 		}
 
 	# if we've picked an artist 
