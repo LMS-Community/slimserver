@@ -143,9 +143,7 @@ sub initPlugins {
 			addDefaultMaps($plugin, \%disabledplugins);
 			addWebPages($plugin, \%disabledplugins);
 		}
-		elsif (not exists $disabledplugins{$plugin}) {
-			Slim::Utils::Prefs::push('disabledplugins',$plugin);
-		}
+
 	}
 
 	$plugins_read = 1 unless Slim::Utils::Prefs::get('plugins-onthefly');
