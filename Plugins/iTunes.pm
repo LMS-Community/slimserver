@@ -168,7 +168,8 @@ sub getFunctions {
 sub initPlugin {
 	return 1 if $initialized;
 
-	addGroups();
+	Slim::Web::Setup::addChildren('server','itunes',3);
+	Slim::Web::Setup::addCategory('itunes',&setupCategory);
 
 	return unless canUseiTunesLibrary();
 
@@ -191,6 +192,9 @@ sub initPlugin {
 
 	Slim::Music::Import::useImporter('ITUNES', Slim::Utils::Prefs::get('itunes'));
 	Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
+
+	my ($groupRef,$prefRef) = setupUse();
+	Slim::Web::Setup::addGroup('server','itunes',$groupRef,3,$prefRef);
 
 	$initialized = 1;
 
@@ -229,21 +233,12 @@ sub disablePlugin {
 	$initialized = 0;
 
 	# delGroups, categories and prefs
-	#Slim::Web::Setup::delCategory('itunes');
+	Slim::Web::Setup::delCategory('itunes');
 	Slim::Web::Setup::delGroup('server','itunes',1);
 
 	# set importer to not use
 	Slim::Utils::Prefs::set('itunes', 0);
 	Slim::Music::Import::useImporter('ITUNES',0);
-}
-
-sub addGroups {
-	Slim::Web::Setup::addChildren('server','itunes',3);
-	Slim::Web::Setup::addCategory('itunes',&setupCategory);
-
-	my ($groupRef,$prefRef) = setupUse();
-
-	Slim::Web::Setup::addGroup('server','itunes',$groupRef,3,$prefRef);
 }
 
 sub findLibraryFromPlist {
