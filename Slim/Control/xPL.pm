@@ -17,6 +17,7 @@ use strict;
 use IO::Socket;
 use Slim::Utils::Prefs;
 use Sys::Hostname;
+use Slim::DataStores::DBI::DBIStore;
 
 my $xpl_source = "slimdev-slimserv";
 my $localip;
@@ -160,6 +161,7 @@ sub handleAudioMessage {
 	my $msg = shift;
 	my $clientid = shift;
 
+
 	# If client is undefined, send to all clients
 	if (!defined($clientid)) {
 
@@ -207,6 +209,7 @@ sub handleAudioMessage {
 		# Handle SlimServ-specific commands
 		my $params;
 		$xplcmd = lc getparam($msg,"extended");
+
 		if (!defined($xplcmd)) {
 			return;
 		}
@@ -245,27 +248,49 @@ sub sendXplHBeatMsg {
 	my $clientName = validInstance($client->name);
 	my $playmode = $client->playmode;
 	my $song = $client->currentplayingsong();
-	my $prevline1 = $client->prevline1();
+        my $prevline1 = $client->prevline1();
 	my $prevline2 = $client->prevline2();
 
+        my $album = " ";
+        my $artist = " ";
+        my $trackname = " ";
+        my $power = $client->power();
+
 	if ($playmode eq 'play') {
-		$playmode = "playing";
+            $playmode = "playing";
+            my $currentDB = Slim::DataStores::DBI::DBIStore->new();
+            my $url = Slim::Player::Playlist::song($client);
+            my $track = ref $url ? $url : $currentDB->objectForUrl($url, 1, 1);
+            if (defined($track->album())) {
+                if (defined($track->album()->title())) {
+                    $album = $track->album()->title();
+                }
+            }
+            if (defined($track->artist())) {
+                if (defined($track->artist()->name())) {
+                    $artist = $track->artist()->name();
+                }
+            }
+            $trackname = Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::song($client));
+            # if the song name has the track number at the beginning, remove it
+            $trackname =~ s/^[0-9]*\.//g;
+            $trackname =~ s/^ //g;
 	} elsif ($playmode eq 'stop') {
-		$playmode = "stopped";
-	} elsif ($playmode eq 'pause') {
-		$playmode = "paused";
-	}
+            $playmode = "stopped";
+        } elsif ($playmode eq 'pause') {
+            $playmode = "paused";
+        }                
 
 	if (defined($_[1])) {
 		$msg = "status=$playmode";
-		$msg = "$msg\nsong=$song\nline1=$prevline1\nline2=$prevline2";
+		$msg = "$msg\nARTIST=$artist\nALBUM=$album\nTRACK=$trackname\nPOWER=$power";
 		sendxplmsg("xpl-stat",
-			"*","audio.slimserv",
+			"*","audio.basic",
 			$msg,
 			$clientName);
 	} else {
 		$msg = "interval=$xpl_interval\nport=$xpl_port\nremote-ip=$localip\nschema=audio.slimserv\nstatus=$playmode";
-		$msg = "$msg\nsong=$song\nline1=$prevline1\nline2=$prevline2";		
+		$msg = "$msg"; #\nsong=$song\nline1=$prevline1\nline2=$prevline2";
 		sendxplmsg("xpl-stat",
 			"*","hbeat.app",
 			$msg,
@@ -282,6 +307,19 @@ sub sendxplhbeat {
 	}
 
 	Slim::Utils::Timers::setTimer("", Time::HiRes::time() + ($xpl_interval*60), \&sendxplhbeat);
+}
+sub sendXplStatusMsg {
+	my $msg;
+	my $client = $_[0];
+	my $status = $_[1];
+	my $clientName = validInstance($client->name);
+	my $playmode = $client->playmode;
+        $msg = "status=$playmode";
+        $msg = "$msg\nupdate=$status";
+        sendxplmsg("xpl-stat",
+                   "*","audio.slimserv",
+                   $msg,
+                   $clientName);
 }
 
 # Generic routine for sending an xPL message.

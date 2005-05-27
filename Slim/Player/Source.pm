@@ -16,6 +16,7 @@ use IO::Socket qw(:DEFAULT :crlf);
 use Time::HiRes;
 use Fcntl qw(SEEK_CUR);
 use bytes;
+use Slim::Control::xPL;
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -513,6 +514,10 @@ sub playmode {
 		}
 
 		Slim::Player::Playlist::refreshPlaylist($everyclient);
+		# force xpl msg for new song
+		if (Slim::Utils::Prefs::get('xplsupport')) {
+			Slim::Control::xPL::sendXplHBeatMsg($client, 1);
+		}
 	}
 	
 	$::d_source && msg($client->id() . ": Current playmode: $newmode\n");
@@ -826,6 +831,11 @@ sub gotoNext {
 				# We're done streaming the song, so drop the streaming
 				# connection to the client.
 				dropStreamingConnection($client);
+
+				# send xpl to tell them we're done
+				if (Slim::Utils::Prefs::get('xplsupport')) {
+					Slim::Control::xPL::sendXplStatusMsg($client,"end of list");
+                		}
 
 				$client->update();
 

@@ -19,6 +19,7 @@ use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Utils::Scan;
 use Slim::Utils::Strings qw(string);
+use Slim::Control::xPL;
 
 our %executeCallbacks = ();
 
@@ -745,6 +746,11 @@ sub execute {
 
 				$client->power(!$client->power());
 
+				# send xpl message when power toggles
+				if (Slim::Utils::Prefs::get('xplsupport')) {
+					Slim::Control::xPL::sendXplHBeatMsg($client,1);
+                }
+
 			} elsif ($p1 eq "?") {
 
 				$p1 = $client->power();
@@ -757,6 +763,11 @@ sub execute {
 				}
 
 				$client->power($p1);
+
+				# send xpl message when power toggles
+				if (Slim::Utils::Prefs::get('xplsupport')) {
+					Slim::Control::xPL::sendXplHBeatMsg($client,1);
+                		}
 				
 				if ($p1 eq "0") {
 					# Powering off cancels sleep...
