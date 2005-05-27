@@ -174,7 +174,6 @@ sub init {
 			Slim::Buttons::Plugins::clearGroups();
 			Slim::Web::Setup::initSetup();
 			Slim::Music::Import::resetSetupGroups();
-			Slim::Web::HTTP::clearCaches();
 		},
 
 		'checkVersion' => sub {
