@@ -209,8 +209,11 @@ function updatePlaylistList(resp, listbox) {
 			indexTD.className = "playlistindex";
 
 			titleTD = document.createElement('div');
-			titleTD.innerHTML = '<a onclick="doSelect(event)">' + newPlaylist[i].title + '</a>' + BY +
-				'<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
+			newHTML = '<a onclick="doSelect(event)">' + newPlaylist[i].title + '</a>'
+			if (!newPlaylist[i].noartist && newPlaylist[i].artist != "") {
+				newHTML += BY + '<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
+			}
+			titleTD.innerHTML = newHTML;
 			titleTD.className = "playlistlisting";
 
 			theTR.appendChild(buttonsTD);
