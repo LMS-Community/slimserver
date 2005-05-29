@@ -202,6 +202,8 @@ sub executeCmd {
 					$::d_cli && msg("CLI authentication successful.\n");
 					$authenticated{$clientsock} = 1;
 					$output = "login " . Slim::Web::HTTP::escape($user) . " ******";
+					addresponse($clientsock, $output . $LF);
+					return;
 				}
 			}
 			

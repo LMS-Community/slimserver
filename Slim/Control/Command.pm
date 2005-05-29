@@ -82,6 +82,7 @@ sub execute {
 # N    pref            <prefname>                  <prefvalue|?>
 # N    exit
 # N    version			?
+# N    login           <user>                      <pwd>
 
 # PLAYERS
 # N    player          count                       ?
@@ -110,7 +111,7 @@ sub execute {
 # Y    rate            <rate|?>
 
 #DATABASE    
-# N    rescan    
+# N    rescan          <?>    	
 # N    wipecache
 # N    info            total                       genres                        ?
 # N    info            total                       artists                       ?
@@ -173,8 +174,20 @@ sub execute {
 
 	} elsif ($p0 eq "version") {
 
-		$client = undef;
 		$p1 = $::VERSION;
+
+		$client = undef;
+
+	} elsif ($p0 eq "login") {
+
+		# login is handled in CLI.pm, this is just to return the stars if
+		# the command is issued when unnecessary.
+
+		if (defined $p2) {
+			$p2 = "******"
+		}
+
+		$client = undef;
 
 	} elsif ($p0 eq "player") {
 
@@ -234,20 +247,27 @@ sub execute {
 		$client = undef;
 
 	} elsif ($p0 eq "rescan") {
-
-		Slim::Music::Import::cleanupDatabase(1);
-		Slim::Music::Info::clearPlaylists();
-		Slim::Music::Import::resetImporters();
-		Slim::Music::Import::startScan();
+	
+		if (defined $p1 && $p1 eq '?') {
+			$p1 = Slim::Utils::Misc::stillScanning();
+		}
+		elsif (!Slim::Utils::Misc::stillScanning()) {
+			Slim::Music::Import::cleanupDatabase(1);
+			Slim::Music::Info::clearPlaylists();
+			Slim::Music::Import::resetImporters();
+			Slim::Music::Import::startScan();
+		}
 
 		$client = undef;
 
 	} elsif ($p0 eq "wipecache") {
 
-		Slim::Music::Info::wipeDBCache();
-		Slim::Music::Import::resetImporters();
-		Slim::Music::Import::startScan();
-
+		if (!Slim::Utils::Misc::stillScanning()) {
+			Slim::Music::Info::wipeDBCache();
+			Slim::Music::Import::resetImporters();
+			Slim::Music::Import::startScan();
+		}
+		
 		$client = undef;
 
 	} elsif ($p0 eq "info") {
@@ -815,51 +835,55 @@ sub execute {
  			my $ds     = Slim::Music::Info::getCurrentDataStore();
  			my %params = parseParams($parrayref, \@returnArray);
  			my @songs;
+ 			my $size = 0;
  			
- 			my $load = ($params{'cmd'} eq 'load');
-			my $insert = ($params{'cmd'} eq 'insert');
-			my $add = ($params{'cmd'} eq 'add');
-			my $delete = ($params{'cmd'} eq 'delete');
-
-			Slim::Player::Source::playmode($client, "stop") if $load;
-			Slim::Player::Playlist::clear($client) if $load;
-			
-			if (defined $params{'genre_id'}){
-				$find->{'genre'} = $params{'genre_id'};
-			}
-			if (defined $params{'artist_id'}){
-				$find->{'artist'} = $params{'artist_id'};
-			}
-			if (defined $params{'album_id'}){
-				$find->{'album'} = $params{'album_id'};
-			}
-			if (defined $params{'track_id'}){
-				$find->{'id'} = $params{'track_id'};
-			}
-				
-			my $sort = exists $find->{'album'} ? 'tracknum' : 'track';
-			if ($load || $add || $insert || $delete){
-				@songs = map { $_->url } @{ $ds->find('lightweighttrack', $find, $sort) } ;
-			}
-			
-			my $size  = scalar(@songs);
-			my $playListSize = Slim::Player::Playlist::count($client);
-			
-			push(@{Slim::Player::Playlist::playList($client)}, @songs) if ($load || $add || $insert);
-			Slim::Player::Playlist::removeMultipleTracks($client, \@songs) if $delete;
-			
-			insert_done($client, $playListSize, $size) if $insert;
-			
-			Slim::Player::Playlist::reshuffle($client,$load?1:0) if ($load || $add);
-			Slim::Player::Source::jumpto($client, 0) if $load;
-
-			$client->currentPlaylistModified(1) if ($add || $insert || $delete);
-			$client->currentPlaylistChangeTime(time()) if ($load || $add || $insert || $delete);
-			$client->currentPlaylist(undef) if $load;
-			
  			if (Slim::Utils::Misc::stillScanning()) {
  				push @returnArray, "rescan:1";
  			}
+
+			if (defined $params{'cmd'}) {
+
+				my $load = ($params{'cmd'} eq 'load');
+				my $insert = ($params{'cmd'} eq 'insert');
+				my $add = ($params{'cmd'} eq 'add');
+				my $delete = ($params{'cmd'} eq 'delete');
+	
+				Slim::Player::Source::playmode($client, "stop") if $load;
+				Slim::Player::Playlist::clear($client) if $load;
+				
+				if (defined $params{'genre_id'}){
+					$find->{'genre'} = $params{'genre_id'};
+				}
+				if (defined $params{'artist_id'}){
+					$find->{'artist'} = $params{'artist_id'};
+				}
+				if (defined $params{'album_id'}){
+					$find->{'album'} = $params{'album_id'};
+				}
+				if (defined $params{'track_id'}){
+					$find->{'id'} = $params{'track_id'};
+				}
+					
+				my $sort = exists $find->{'album'} ? 'tracknum' : 'track';
+				if ($load || $add || $insert || $delete){
+					@songs = map { $_->url } @{ $ds->find('lightweighttrack', $find, $sort) } ;
+				}
+				
+				$size  = scalar(@songs);
+				my $playListSize = Slim::Player::Playlist::count($client);
+				
+				push(@{Slim::Player::Playlist::playList($client)}, @songs) if ($load || $add || $insert);
+				Slim::Player::Playlist::removeMultipleTracks($client, \@songs) if $delete;
+				
+				insert_done($client, $playListSize, $size) if $insert;
+				
+				Slim::Player::Playlist::reshuffle($client,$load?1:0) if ($load || $add);
+				Slim::Player::Source::jumpto($client, 0) if $load;
+	
+				$client->currentPlaylistModified(1) if ($add || $insert || $delete);
+				$client->currentPlaylistChangeTime(time()) if ($load || $add || $insert || $delete);
+				$client->currentPlaylist(undef) if $load;
+			}			
 
 	 		push @returnArray, "count:$size";
 
