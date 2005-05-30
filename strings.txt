@@ -607,7 +607,7 @@ BROWSING_MUSIC
 	SE	Bläddrar...
 
 NOW_PLAYING_FROM
-	DE	Jetzt abspielen von:
+	DE	Starte Wiedergabe von:
 	DK	Spiller nu fra:
 	EN	Now playing from:
 	ES	Reproduciendo de:
@@ -955,7 +955,7 @@ UPDATING_FIRMWARE_SQUEEZEBOX2
 	SE	Uppdaterar spelarens mjukvara
 
 CONNECTING_FOR
-	DE	Verbindet zum Abspielen:
+	DE	Verbinde zum Abspielen:
 	DK	Forbinder for afspilning:
 	EN	Connecting to play:
 	ES	Conectando a:
