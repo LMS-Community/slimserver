@@ -1506,6 +1506,14 @@ sub openSong {
 		Slim::Control::Command::executeCallback($client, ["newsong"])
 	}
 	
+	# force xpl msg for new song
+	if (Slim::Utils::Prefs::get('xplsupport')) {
+		my $playmode = $client->playmode;
+		if ($playmode eq 'play') {
+			Slim::Control::xPL::sendXplHBeatMsg($client, 1);
+		}
+	}
+	
 	Slim::Control::Command::executeCallback($client,  ['open', $fullpath]);
 
 	return 1;

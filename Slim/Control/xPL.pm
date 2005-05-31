@@ -248,38 +248,42 @@ sub sendXplHBeatMsg {
 	my $clientName = validInstance($client->name);
 	my $playmode = $client->playmode;
 	my $song = $client->currentplayingsong();
-        my $prevline1 = $client->prevline1();
+	my $prevline1 = $client->prevline1();
 	my $prevline2 = $client->prevline2();
 
-        my $album = " ";
-        my $artist = " ";
-        my $trackname = " ";
-        my $power = $client->power();
+	my $album = " ";
+	my $artist = " ";
+	my $trackname = " ";
+	my $power = "1";
+
+	if (defined($client->revision())) {
+		$power = $client->power();
+	}
 
 	if ($playmode eq 'play') {
-            $playmode = "playing";
-            my $currentDB = Slim::DataStores::DBI::DBIStore->new();
-            my $url = Slim::Player::Playlist::song($client);
-            my $track = ref $url ? $url : $currentDB->objectForUrl($url, 1, 1);
-            if (defined($track->album())) {
-                if (defined($track->album()->title())) {
-                    $album = $track->album()->title();
-                }
-            }
-            if (defined($track->artist())) {
-                if (defined($track->artist()->name())) {
-                    $artist = $track->artist()->name();
-                }
-            }
-            $trackname = Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::song($client));
-            # if the song name has the track number at the beginning, remove it
-            $trackname =~ s/^[0-9]*\.//g;
-            $trackname =~ s/^ //g;
+		$playmode = "playing";
+		my $currentDB = Slim::DataStores::DBI::DBIStore->new();
+		my $url = Slim::Player::Playlist::song($client);
+		my $track = ref $url ? $url : $currentDB->objectForUrl($url, 1, 1);
+		if (defined($track->album())) {
+			if (defined($track->album()->title())) {
+				$album = $track->album()->title();
+			}
+		}
+		if (defined($track->artist())) {
+			if (defined($track->artist()->name())) {
+				$artist = $track->artist()->name();
+			}
+		}
+		$trackname = Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::song($client));
+		# if the song name has the track number at the beginning, remove it
+		$trackname =~ s/^[0-9]*\.//g;
+		$trackname =~ s/^ //g;
 	} elsif ($playmode eq 'stop') {
-            $playmode = "stopped";
-        } elsif ($playmode eq 'pause') {
-            $playmode = "paused";
-        }                
+		$playmode = "stopped";
+	} elsif ($playmode eq 'pause') {
+		$playmode = "paused";
+	}
 
 	if (defined($_[1])) {
 		$msg = "status=$playmode";
