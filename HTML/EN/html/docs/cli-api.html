@@ -27,6 +27,8 @@
 	determine, for example, the availability of the commands described here.</li>
 <li>Changed &quot;<a href="#rescan">rescan</a>&quot; command to add a query mode returning if a scan is
 	in progress.</li>
+<li>Removed field &quot;coverThumb&quot; in all queries returning song
+	information to align data with SlimServer behaviour.</li>
 </ul>
 
 <h4>General command format</h4>
@@ -129,19 +131,19 @@
   you can use a prefix of  &quot;__playlists/&quot; before the path.  For example, to refer to the saved playlist 
   &quot;bar.m3u&quot; in the Saved Playlists folder, you can specify a path of &quot;__playlists/bar.m3u&quot;.</li>
 <p></p>
-<li>The HTTP server can return cover art for songs using the path URL as returned by any of the CLI functions.
+<li>The HTTP server can return cover art for songs using the track ID as returned by the CLI functions.
   If no cover art exists for the given song, the server returns special "no artwork" image. Please refer to 
   the <a href="artwork.html">Artwork Setup</a> documentation for more details on artwork management in SlimServer. 
   Use the following URLs:
 <blockquote> 
-  <p><strong><code>http://&lt;server&gt;:&lt;port&gt;/music/&lt;path&gt;/cover.jpg</code></strong><br> 
-     <strong><code>http://&lt;server&gt;:&lt;port&gt;/music/&lt;path&gt;/thumb.jpg</code></strong></p> 
+  <p><strong><code>http://&lt;server&gt;:&lt;port&gt;/music/&lt;track_id&gt;/cover.jpg</code></strong><br> 
+     <strong><code>http://&lt;server&gt;:&lt;port&gt;/music/&lt;track_id&gt;/thumb.jpg</code></strong></p> 
 </blockquote>
 where: <br> 
 <blockquote>
 	<code>&lt;server&gt;</code> is the ip address or name of the server.<br>
 	<code>&lt;port&gt;</code> is the HTTP port of the server (not the same as the CLI port).<br>
-	<code>&lt;path&gt;</code> is the song path as returned by the CLI functions.<br>
+	<code>&lt;track_id&gt;</code> is the track ID as returned by the CLI functions.<br>
 </blockquote>
 <p>In addition, there is a shortcut URL to return the artwork of the currently playing song for a player:
 <blockquote> 
@@ -906,11 +908,6 @@ preferences values.</p>
 		<td><b>j</b></td>
 		<td>coverart</td>
 		<td>1 if coverart is available for this song. Not listed otherwise.</td>
-	</tr>
-	<tr>
-		<td><b>h</b></td>
-		<td>coverThumb</td>
-		<td>1 if cover thumbnail is available for this song. Not listed otherwise.</td>
 	</tr>
 	<tr>
 		<td><b>n</b></td>

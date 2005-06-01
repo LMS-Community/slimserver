@@ -575,11 +575,15 @@ sub execute {
  		$tags = $params{'tags'} if defined($params{'tags'});
  		
  		if (defined $id){
- 			$tags .= 'u';
+ 			if ($tags !~ /u/) {
+ 				$tags .= 'u';
+ 			}
  			$track = $ds->objectForId('track', $id);
  		} else {
  			if (defined $path && Slim::Music::Info::isSong($path)){
- 				$tags .= 'x';
+ 				if ($tags !~ /x/) {
+ 					$tags .= 'x';
+ 				}
  				$track = $ds->objectForUrl($path)
  			}
  		}
@@ -587,8 +591,6 @@ sub execute {
  		if (Slim::Utils::Misc::stillScanning()) {
  			push @returnArray, "rescan:1";
  		}
- 		
- 		
  		
  		if (defined $track) {
  
@@ -1897,9 +1899,6 @@ sub parseListRef {
 our %cliTrackMap = (
 	'g' => 'genre',
 	'a' => 'artist',
-	'c' => 'composer',
-	'b' => 'band',
-	'h' => 'conductor',
 	'l' => 'album',
 	't' => 'tracknum',
 	'y' => 'year',
@@ -1914,6 +1913,9 @@ our %cliTrackMap = (
 );
 
 # Special cased:
+#	'c' => 'composer',
+#	'b' => 'band',
+#	'h' => 'conductor',
 # d duration
 # i disc
 # j Cover art
@@ -1959,48 +1961,62 @@ sub pushSong {
 			next;
 		}
 
-		if ($tag eq 'e' && defined(my $id = $track->album()->id())) {
-			push @returnArray, "album_id:$id";
+		if ($tag eq 'c' && (my @composers = $track->composer())) {
+			push @returnArray, "composer:" . $composers[0];
 			next;
 		}
 
-		if ($tag eq 'p' && defined(my $id = $track->genre()->id())) {
-			push @returnArray, "genre_id:$id";
+		if ($tag eq 'b' && (my @bands = $track->band())) {
+			push @returnArray, "band:" . $bands[0];
 			next;
 		}
 
-		if ($tag eq 's' && defined(my $id = $track->artist()->id())) {
-			push @returnArray, "artist_id:$id";
+		if ($tag eq 'h' && (my @conductors = $track->conductor())) {
+			push @returnArray, "conductor:" . $conductors[0];
+			next;
+		}
+
+		if ($tag eq 'p' && defined(my $genre = $track->genre())) {
+			if (defined(my $id = $genre->id())) {
+				push @returnArray, "genre_id:$id";
+				next;
+			}
+		}
+
+		if ($tag eq 's' && defined(my $artist = $track->artist())) {
+			if ($tag eq 's' && defined(my $id = $artist->id())) {
+				push @returnArray, "artist_id:$id";
+				next;
+			}
 		}
 		
 		# Cover art!
-		if ($tag eq 'j') {
-
-			if ($track->coverArt()) {
-
-				push @returnArray, "coverart:1";
-
-			} elsif ($track->coverArt('thumb')) {
-
-				push @returnArray, "coverthumb:1";
-			}
-
+		if ($tag eq 'j' && $track->coverArt()) {
+			push @returnArray, "coverart:1";
 			next;
+		}
+	
+		if ($tag eq 'o' && defined(my $ct = $track->content_type())) {
+			push @returnArray, sprintf('type:%s', string(uc($ct)));
 		}
 
 		# Handle album specifics
-		my $album = $track->album();
+		if (defined(my $album = $track->album())) {
 
-		if ($tag eq 'i' && defined(my $disc = $album->disc())) {
-			push @returnArray, "disc:$disc";
-		}
+			if (defined(my $id = $album->id())) {
+				push @returnArray, "album_id:$id";
+				next;
+			}
 
-		if ($tag eq 'q' && defined(my $discc = $album->discc())) {
-			push @returnArray, "disccount:$discc";
-		}
-
-		if ($tag eq 'o' && defined(my $ct = $track->content_type())) {
-			push @returnArray, sprintf('type:%s', string(uc($ct)));
+			if ($tag eq 'i' && defined(my $disc = $album->disc)) {
+				push @returnArray, "disc:$disc";
+				next;
+			}
+	
+			if ($tag eq 'q' && defined(my $discc = $album->discc())) {
+				push @returnArray, "disccount:$discc";
+				next;
+			}
 		}
 	}
 
