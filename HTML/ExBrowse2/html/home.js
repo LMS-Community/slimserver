@@ -1,4 +1,4 @@
-/////////////////////////////////////////////
+////////////////////////////////////////////
 //
 // Home
 //
@@ -41,7 +41,7 @@ function updatePlayer(nosub) {
 }
 
 function initHome() {
-        homebackend = JXTK.Backend().createBackend('/ExBrowseD/home.xml?page=xml');
+        homebackend = JXTK.Backend().createBackend(webroot + 'home.xml?page=xml');
 	homebackend.addHandler(homeHandler);
 
 	homecookie = JXTK.Cookie().createCookie("ExBrowse2Mode");

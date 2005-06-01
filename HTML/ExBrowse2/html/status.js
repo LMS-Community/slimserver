@@ -216,7 +216,7 @@ function initStatusControls() {
 }
 
 function initStatus() {
-	statusbackend = JXTK.Backend().createBackend('/ExBrowseD/status.xml');
+	statusbackend = JXTK.Backend().createBackend(webroot + 'status.xml');
 
 	initStatusControls();
 
