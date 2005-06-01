@@ -1,200 +1,71 @@
-/////////////////////////////////////////
-//                                     //
-//  Status Header -- Variables + Init  //
-//                                     //
-/////////////////////////////////////////
+/* * * * * * * * *\
+ *    Status     *
+\* * * * * * * * */
 
-var lastCounterPos;
-var counterResyncFlag;
-var clearedLastTime;
+var statusbackend;
 
-var totalTime, progressAt, progressEnd;
+var playbutton, stopbutton;
+var prevbutton, nextbutton;
+var repeatbuttons = new Array();
+var shufflebuttons = new Array();
+var volumebar, progressbar, progresstext;
+var playstringtext, songtext, artisttext, albumtext;
 
+var progressAt, progressEnd, progressEndText;
 var curPlayMode;
+var lastCoverArt, currentSong, songCount;
 
-var currentSong;
-var songCount;
-
-var repMode, shufMode, curVol;
-
-var controlLockout;
-
-var lastCoverArt;
-
-function initStatus() {
-        progbar = document.getElementById("progressBar");
-
-        for (i = 0; i < 50; i++) {
-                theImg = document.createElement('IMG');
-                theImg.height = 8;
-                theImg.width = 4;
-                theImg.hspace = 1;
-                theImg.border = 0;
-                theImg.src = 'html/images/pixel.png';
-                progbar.appendChild(theImg);
-        }
-        theTxt = document.createTextNode(' ');
-        progbar.appendChild(theTxt);
-
-        volumeContainer = document.getElementById("volume");
-
-        for (i = 0; i < 11; i++) {
-                theImg = document.createElement('IMG');
-                theImg.style.height = (i*2 + 4) + "px";
-                theImg.style.width = "7px";
-                theImg.src = 'html/images/volpixel.gif';
-                theImg.hspace = 0;
-                theImg.volval = i*10;
-                theImg.onclick = doVolume;
-                theImg.className = "fakelink";
-                volumeContainer.appendChild(theImg);
-        }
-
-	thepl = document.getElementById("playlist");
-	if (thepl.firstChild) thepl.removeChild(thepl.firstChild);
-	// XXX ^ that should be in initPlaylist, but it's not worth making another function for
-
-	document.getElementById("playersel").options.length = 0;
-
-	updateCounterPeriodically();
-
-	document.onkeypress = handlekey;
+function getStatusPeriodically() {
+	statusbackend.submit();
+	setTimeout(getStatusPeriodically, 5000);
 }
 
-function handlekey(e) {
-	if (!e) e = window.event;
-	if (e.keyCode) kcval = e.keyCode;
-	else if (e.which) kcval = e.which;
-	else return true;
-	kc = String.fromCharCode(kcval);
-
-	if (e.ctrlKey || e.altKey) return true;
-
-	if (kc == 'c') doPlay();
-	else if (kc == 'b') doNext();
-	else if (kc == 'z') doPrev();
-	else if (kc == 'v') doStop();
-	else if (kc == 'r') rotateRepeat();
-	else if (kc == 's') rotateShuffle();
-	else if (kc == '-') decVolume();
-	else if (kc == '+' || kc == '=') incVolume();
-	else return true;
-
-	return false;
-}
-
-function abortkey(e) {
-	return true;
-}
-
-///////////////////////////////////////////
-//                                       //
-//  Status Header -- Update And Display  //
-//                                       //
-///////////////////////////////////////////
-
-function updateStatus(args) {
-	var url = webroot + "status_header.xml?player=" + currentPlayer;
-	if (args) {
-		url = url + args;
-	}
-	postback(url, updateStatus_handler);
-}
-
-function getdata(resp, respname) {
-	resps = resp.getElementsByTagName(respname);
-	if (resps && resps[0] && resps[0].firstChild) {
-		return resps[0].firstChild.data;
-	} else {
-		return "";
-	}
-}
-
-function updateStatus_handler(req, url) {
-	var response = req.responseXML;
-	var player = getdata(response, "playermodel");
-	if (player == "NOPLAYER") {
-		currentSong = 0;
-		songCount = 0;
-		progressEnd = 0;
-	        totalTime = ' ' + timetostr(progressEnd);
-		displayPlayMode("stop");
-		songCounterUpdate();
-
-		displayPlayMode("none");
-		displayRepeat(-1);
-		displayShuffle(-1);
-		displayCoverArt("");
-
-
-		controlLockout = 1;
-	} else {	
-		controlLockout = 0;
-//		document.getElementById("rightdeck").selectedIndex = 0;
-//		document.getElementById("player").value = player;
-
-		playmode = getdata(response, "playmode");
-
-		currentSong = getdata(response, "currentsong");
-		songCount = getdata(response, "songcount");
-
-		displayPlayMode(playmode);
-
-		progressAt = getdata(response, "songtime");
-		progressEnd = getdata(response, "songlength");
-	        totalTime = ' ' + timetostr(progressEnd);
-
-		songCounterUpdate();
-
-		var albumdisplay = getdata(response, "album");
-		displayCurrentSong(getdata(response, "songtitle"), getdata(response, "artist"), albumdisplay);
-
-		highlightCurrentSong();
-
-		displayRepeat(getdata(response, "repeat"));
-		displayShuffle(getdata(response, "shuffle"));
-
-		displayVolume(getdata(response, "volume"));
-	
-		displayCoverArt(getdata(response, "coverart"));
-
-	}
-
-	if (response.getElementsByTagName("playlist").length > 0) {
-		updatePlaylist_handler(req, url);
-	}
-
-	if (statusRefs == 0) {
-		statusRefs++;
-		maybeDoneLoading();
-	}
-}
-
-
-function displayPlayMode(mode) {
-        if (mode == "play") {
-                document.getElementById("playbutton").className = "active";
-		document.getElementById("stopbutton").className = "";
-		curPlayMode = "play";
-        } else {
-                document.getElementById("playbutton").className = "";
-
-		if (mode == "pause") {
-			document.getElementById("stopbutton").className = "";
-			curPlayMode = "pause";
-		} else if (mode == "stop") {
-			document.getElementById("stopbutton").className = "active";
-			curPlayMode = "stop";
-		} else {
-			document.getElementById("stopbutton").className = "";
-			curPlayMode = "none";
+function makeRepShufClosure(i, buttonlist, cmdstring) {
+	return function() {
+		for (var j = 0; j < 3; j++) {
+			buttonlist[j].setState(j == i ? true : false);
 		}
-        }
-
-	displayPlayString();	
+		statusbackend.submit(cmdstring + i);
+	}
 }
 
-function displayPlayString() {
+function timetostr(t) {
+	var mins = Math.floor(t / 60);
+	var secs = (t % 60);
+	if (secs == 0) {
+		return mins + ':00';
+	} else if (secs < 10) {
+		return mins + ':0' + secs;
+	} else {
+		return mins + ':' + secs;
+	}
+}
+
+function updateProgressBar() {
+	if (curPlayMode == "play" || curPlayMode == "pause") {
+		progressbar.setValue(progressAt / progressEnd * 50);
+		if (progressEnd == 0) {
+			progresstext.setText(' ' + timetostr(progressAt));
+		} else {
+			progresstext.setText(' ' + timetostr(progressAt) + ' / ' + progressEndText);
+		}
+	} else {
+		progressbar.setValue(-1);
+		progresstext.setText(' 0:00 / ' + progressEndText);
+	}
+}
+
+function updateCounterPeriodically() {
+	setTimeout("updateCounterPeriodically()", 1000);
+
+	if (curPlayMode == "play") {
+		progressAt++;
+		if(progressAt > progressEnd && progressEnd > 0) progressAt = progressAt % progressEnd;
+	}
+	updateProgressBar();
+}
+
+function updatePlayString() {
 	var playstring;
 	if (curPlayMode == "play") {
 		playstring = "Now playing";
@@ -203,85 +74,21 @@ function displayPlayString() {
 	} else {
 		playstring = "Now stopped on";
 	}
-	if (currentSong != "") {
+	if (currentSong) {
 		playstring += " <b>" + currentSong + "</b> of <b>" + songCount + "</b>";
 	}
+	playstringtext.setText(playstring);
+};
 
-        if (document.getElementById("playstring").innerHTML != playstring) {
-        	document.getElementById("playstring").innerHTML = playstring;
-	}
+function displaySong(song, artist, album) {
+	songtext.setText(song);
+	artisttext.setText(artist);
+	albumtext.setText(album);
 }
 
-function displayCurrentSong(song, artist, album) {
-        // Checking first prevents flicker (at least with Firefox) on slow computers.
-
-	if (document.getElementById("song").innerHTML != song) {
-        	document.getElementById("song").innerHTML = song;
-	}
-
-        if (document.getElementById("artist").innerHTML != artist) {
-        	document.getElementById("artist").innerHTML = artist;
-	}
-
-	if (document.getElementById("album").innerHTML != album) {
-		document.getElementById("album").innerHTML = album;
-	}
-}
-
-function displayRepeat(mode) {
-	repMode = mode;
-	if (mode == 1) {
-		document.getElementById("repeatone").className = "fakelink active";
-		document.getElementById("repeatall").className = "fakelink";
-		document.getElementById("repeatoff").className = "fakelink";
-	} else if (mode == 2) {
-		document.getElementById("repeatone").className = "fakelink";
-		document.getElementById("repeatall").className = "fakelink active";
-		document.getElementById("repeatoff").className = "fakelink";
-	} else if (mode == 0) {
-		document.getElementById("repeatone").className = "fakelink";
-		document.getElementById("repeatall").className = "fakelink";
-		document.getElementById("repeatoff").className = "fakelink active";
-	} else {
-		document.getElementById("repeatone").className = "fakelink";
-		document.getElementById("repeatall").className = "fakelink";
-		document.getElementById("repeatoff").className = "fakelink";
-	}
-}
-
-function displayShuffle(mode) {
-	shufMode = mode;
-        if (mode == 1) {
-                document.getElementById("shufsongs").className = "fakelink active";
-                document.getElementById("shufalbums").className = "fakelink";
-                document.getElementById("shufnone").className = "fakelink";
-        } else if (mode == 2) {
-                document.getElementById("shufsongs").className = "fakelink";
-                document.getElementById("shufalbums").className = "fakelink active";
-                document.getElementById("shufnone").className = "fakelink";
-        } else if (mode == 0) {
-                document.getElementById("shufsongs").className = "fakelink";
-                document.getElementById("shufalbums").className = "fakelink";
-                document.getElementById("shufnone").className = "fakelink active";
-        } else {
-                document.getElementById("shufsongs").className = "fakelink";
-                document.getElementById("shufalbums").className = "fakelink";
-                document.getElementById("shufnone").className = "fakelink";
-	}
-}
-
-function displayVolume(volume) {
-	curVol = volume;
-        for (i = 0; i*10 <= volume; i++) {
-                document.getElementById("volume").childNodes[i].src = 'html/images/volpixel_s.gif';
-        }
-        for (; i < 11; i++) {
-                document.getElementById("volume").childNodes[i].src = 'html/images/volpixel.gif';
-        }
-}
-
-function displayCoverArt(url) {
-	if (url != "") {
+function statusMiscHandler(resp) {
+	var url = resp.getTag("coverart");
+	if (url) {
 		if (url != lastCoverArt) {
 			document.getElementById("coverart").src = "/music/" + url + "/thumb.jpg";
 			lastCoverArt = url;
@@ -294,177 +101,132 @@ function displayCoverArt(url) {
 		document.getElementById("playtext").style.left = "10px";
 		document.getElementById("playtext").style.width = "380px";
 	}
-}
 
-/////////////////////////////////
-//                             //
-//  Status Header -- Commands  //
-//                             //
-/////////////////////////////////
+	displaySong(resp.getTag("songtitle"), resp.getTag("artist"), resp.getTag("album"));
 
-function doPlayerChange(event) {
-        currentPlayer = document.getElementById("playersel").value;
-        updateStatusCombined();
-}
+	currentSong = resp.getTag("currentsong");
+	songCount = resp.getTag("songcount");
 
-function doPlay() {
-	if (controlLockout) return;
-        if (curPlayMode == "play") {
-                displayPlayMode("pause");
-                updateStatus("&p0=pause");
-	} else {
-                displayPlayMode("play");
-                updateStatus("&p0=play");
-        }
-}
+	curPlayMode = resp.getTag("playmode");
+	updatePlayString();
 
-function doStop() {
-	if (controlLockout) return;
-        displayPlayMode("stop");
-        updateStatus("&p0=stop");
-}
-
-function doPrev() {
-	if (controlLockout) return;
-        currentSong--;
-        if (currentSong == 0) currentSong = songCount;
-        displayCurrentSong(playlist[currentSong - 1].title, playlist[currentSong - 1].artist, playlist[currentSong - 1].album);
-        displayPlayMode("play");
-	progressAt = 0;
-	resyncSongCounter();
-	highlightCurrentSong();
-        updateStatus('&p0=playlist&p1=jump&p2=-1');
-}
-
-function doNext() {
-	if (controlLockout) return;
-        currentSong++;
-        if (currentSong > songCount) currentSong = 1;
-        displayCurrentSong(playlist[currentSong - 1].title, playlist[currentSong - 1].artist, playlist[currentSong - 1].album);
-        displayPlayMode("play");
-	progressAt = 0;
-	resyncSongCounter();
-	highlightCurrentSong();
-        updateStatus('&p0=playlist&p1=jump&p2=%2b1');
-}
-
-function doVolume(e) {
-	if (controlLockout) return;
-	if (!e) e = window.event;
-	if (e.target) et = e.target; else et = e.srcElement;
-	if (et.volval == 0) et.volval = "0";
-	if (et.volval) {
-		displayVolume(et.volval);
-		updateStatus("&p0=mixer&p1=volume&p2=" + et.volval);
+	progressAt = resp.getTag("songtime");
+	var newProgressEnd = resp.getTag("songlength");
+	if (progressEnd != newProgressEnd) {
+		progressEnd = newProgressEnd;
+		progressEndText = timetostr(progressEnd);
 	}
+
+	updateProgressBar();
 }
 
-function incVolume() {
-	// Firefox seems to think that 20 + 10 = 2010...
-	curVol -= -10;
-	if (curVol > 100) curVol = 100;
-	displayVolume(curVol);
-	updateStatus("&p0=mixer&p1=volume&p2=" + curVol);
+function statusFirstLoad() {
+	statusRefs++;
+	maybeDoneLoading();
+	statusbackend.removeHandler(statusFirstLoad);
 }
 
-function decVolume() {
-	curVol -= 10;
-	if (curVol < 0) curVol = 0;
-	displayVolume(curVol);
-	updateStatus("&p0=mixer&p1=volume&p2=" + curVol);
-}
+function initStatusControls() {
+	statusbackend.addHandler(statusMiscHandler);
 
-function doRepeat(repmode) {
-	if (controlLockout) return;
-	displayRepeat(repmode);
-        cmdstring = "&p0=playlist&p1=repeat&p2=" + repmode;
-        updateStatus(cmdstring);
-}
-
-function rotateRepeat() {
-	repMode++;
-	if (repMode == 3) repMode = 0;
-	doRepeat(repMode);
-}
-
-function doShuffle(shufmode) {
-	if (controlLockout) return;
-	displayShuffle(shufmode);
-        cmdstring = "&p0=playlist&p1=shuffle&p2=" + shufmode;
-        updateStatusCombined(cmdstring);
-        updatePlaylist();
-}
-
-function rotateShuffle() {
-	shufMode++;
-	if (shufMode == 3) shufMode = 0;
-	doShuffle(shufMode);
-}
-
-function songCounterUpdate() {
-	var progbar = document.getElementById("progressBar");
-
-	if (curPlayMode == "stop" || curPlayMode == "none") {
-		if (clearedLastTime != 1) {
-			for (i = 0; i < 50; i++) { 
-        			progbar.childNodes[i].src = "html/images/pixel.png";
-			}
-        		progbar.lastChild.nodeValue = ' ' + timetostr(0) + ' / ' + totalTime;
-			clearedLastTime = 1;
-			lastCounterPos = 0;
-		}
-	} else {
-		clearedLastTime = 0;
-
-		p = Math.floor(progressAt * 50 / progressEnd);
-
-		if (p == lastCounterPos) {
-		} else if (p == lastCounterPos + 1) {
-        		progbar.childNodes[p].src = "html/images/pixel_s.png";
+	playbutton = JXTK.Button().createSimpleButton(statusbackend, "playbutton", "playmode", "play", function() {
+		if (curPlayMode != "play") {
+			playbutton.setState(true);
+			curPlayMode = "play";
 		} else {
-			for (i = 0; i < 50; i++) { 
-        			progbar.childNodes[i].src = "html/images/pixel" + (i <= p ? '_s' : '') + ".png";
-			}
+			playbutton.setState(false);
+			curPlayMode = "pause";
 		}
+		stopbutton.setState(false);
+		updatePlayString();
+		statusbackend.submit("&p0=pause");
+	});
 
-		if (progressEnd == 0) {
-        		progbar.lastChild.nodeValue = ' ' + timetostr(progressAt);
-		} else {
-        		progbar.lastChild.nodeValue = ' ' + timetostr(progressAt) + ' / ' + totalTime;
-		}
+	stopbutton = JXTK.Button().createSimpleButton(statusbackend, "stopbutton", "playmode", "stop", function() {
+		playbutton.setState(false);
+		stopbutton.setState(true);
+		curPlayMode = "stop";
+		updatePlayString();
+		progressAt = 0;
+		updateProgressBar();
+		statusbackend.submit("&p0=stop");
+	});
 
-		lastCounterPos = p;
+	prevbutton = JXTK.Button().createButton("prevbutton");
+	prevbutton.addClickHandler(function() {
+		currentSong--;
+		if (currentSong == 0) currentSong = songCount;
+		playlistcombo.selectIndex(currentSong-1);
+		displaySong(playlist[currentSong-1].title, playlist[currentSong-1].artist, playlist[currentSong-1].album);
+		updatePlayString();
+		progressAt = 0;
+		updateProgressBar();
+		statusbackend.submit("&p0=playlist&p1=jump&p2=-1");
+	});
+
+	nextbutton = JXTK.Button().createButton("nextbutton");
+	nextbutton.addClickHandler(function() {
+		currentSong++;
+		if (currentSong > songCount) currentSong = 1;
+		playlistcombo.selectIndex(currentSong-1);
+		displaySong(playlist[currentSong-1].title, playlist[currentSong-1].artist, playlist[currentSong-1].album);
+		updatePlayString();
+		progressAt = 0;
+		updateProgressBar();
+		statusbackend.submit("&p0=playlist&p1=jump&p2=%2b1");
+	});
+
+	for (var i = 0; i < 3; i++) {
+		repeatbuttons[i] = JXTK.Button().createSimpleButton(
+			statusbackend, "repeat" + i, "repeat", i,
+			makeRepShufClosure(i, repeatbuttons, "&p0=playlist&p1=repeat&p2=")
+		);
 	}
+
+	for (var i = 0; i < 3; i++) {
+		shufflebuttons[i] = JXTK.Button().createSimpleButton(
+			statusbackend, "shuf" + i, "shuffle", i,
+			makeRepShufClosure(i, shufflebuttons, "&p0=playlist&p1=shuffle&p2=")
+		);
+	}
+
+	playstringtext = JXTK.Textbox().createTextbox("playstring");
+
+	songtext = JXTK.Textbox().createTextbox("song");
+	artisttext = JXTK.Textbox().createTextbox("artist");
+	albumtext = JXTK.Textbox().createTextbox("album");
+
+	volumebar = JXTK.ButtonBar().createButtonBar("volume");
+	volumebar.populate("IMG", 11, "html/images/volpixel_t.gif", 4, 2);
+	volumebar.useXMLValue(statusbackend, function(resp) {
+		return resp.getTag("volume") / 10;
+	});
+	volumebar.addClickHandler(function (button) {
+		var volindex = button.el.index;
+		volumebar.setValue(volindex);
+		statusbackend.submit("&p0=mixer&p1=volume&p2=" + volindex * 10);
+	});
+
+	progressbar = JXTK.ButtonBar().createButtonBar("progressbar");
+	progressbar.populate("IMG", 50, "html/images/pixel.gif");
+
+	progresstext = JXTK.Textbox().createTextbox("progresstext");
+
+	statusbackend.addHandler(statusFirstLoad);
 }
 
-function timetostr(t) {
-        mins = Math.floor(t / 60);
-        secs = (t % 60);
-        if (secs == 0) {
-                return mins + ':00';
-        } else if (secs < 10) {
-                return mins + ':0' + secs;
-        } else {
-                return mins + ':' + secs;
-	}
+function initStatus() {
+	statusbackend = JXTK.Backend().createBackend('/ExBrowseD/status.xml');
+
+	initStatusControls();
+
+	updateCounterPeriodically();
 }
 
-function updateCounterPeriodically() {
-	if (counterResyncFlag == 1) {
-		counterResyncFlag = 0;
-		return;
-	}
-        setTimeout("updateCounterPeriodically()", 1000);
-
-	if (curPlayMode == "play") { 
-	        progressAt++;
-        	if(progressAt > progressEnd && progressEnd > 0) progressAt = progressAt % progressEnd;
-
-	}
-	songCounterUpdate();
+function updateStatusCombined(str) {
+	// Technically this is "the old way" and should be replaced, but it's probably a good
+	// thing to have all calls from external HTML filtered through just one function, so I'm
+	// leaving it here. I also really don't want to go through and replace all the calls to
+	// updateStatusCombined in each of the templates.
+	statusbackend.submit(str);
 }
-
-function resyncSongCounter() {
-	songCounterUpdate();
-}
-

@@ -6,6 +6,13 @@
 
 var strings;
 
+var homebackend;
+var homecookie;
+
+var playerlistbox;
+
+	// XXX FIXME: The browse/settings/help/search links should be JXTK Buttons.
+
 function goplayersettings() {
 	browseurl("setup.html?page=player&playerid=" + currentPlayer);
 }
@@ -24,106 +31,87 @@ function browseurl(url) {
 	document.getElementById("browseframe").src = webroot + url + "&player=" + currentPlayer;
 }
 
+function updatePlayer(nosub) {
+	currentPlayer = playerlistbox.input.value;
+
+	homebackend.globalArg = '?player=' + currentPlayer;
+	statusbackend.globalArg = '?player=' + currentPlayer;
+
+	if(!nosub) statusbackend.submit();
+}
+
+function initHome() {
+        homebackend = JXTK.Backend().createBackend('/ExBrowseD/home.xml?page=xml');
+	homebackend.addHandler(homeHandler);
+
+	homecookie = JXTK.Cookie().createCookie("ExBrowse2Mode");
+
+	playerlistbox = JXTK.ListBox().createListBox("playersel");
+	playerlistbox.addHandler(updatePlayer);
+}
+
+
 function loadHome() {
 	currentPlayer = document.getElementById("playersel").value;
+
 	updateHome();
 }
 
 function updateHome() {
-	postback(webroot + "home.xml?page=xml", updateHome_handler);
+	homebackend.submit();
 	setTimeout(updateHome, 10000);
 }
 
-function updateHome_handler(req, url) {
-	resp = req.responseXML;
-	players = resp.getElementsByTagName("player");
-	playersel = document.getElementById("playersel");
+function homeHandler(resp) {
+	var players = resp.xml.getElementsByTagName("player");
+	var newPlayerList = new Array();
+	var indexToSelect = 0;
 
 	if (players.length == 1) {
-		playersel.style.visibility = "hidden";
+		playerlistbox.input.style.visibility = "hidden";
 	} else {
-		playersel.style.visibility = "visible";
+		playerlistbox.input.style.visibility = "visible";
 	}
 
-	if (playersel.options) {
-		olength = playersel.options.length;
-	} else {
-		olength = 0;
-	}
-
-	if (olength < players.length) {
-		clength = olength;
-	} else {
-		clength = players.length;
-	}
-
-	indexToSelect = 0;
-
-	for (i = 0; i < clength; i++) {
-		pname = players[i].getElementsByTagName("playername")[0].firstChild.data;
+	for (var i = 0; i < players.length; i++) {
+		var newItem = new Object();
+		newItem.name = players[i].getElementsByTagName("playername")[0].firstChild.data;
 		pid = players[i].getElementsByTagName("playerid")[0].firstChild.data;
-		playersel.options[i].text = pname;
-		playersel.options[i].value = pid;
-		if (pid == currentPlayer) indexToSelect = i;
-	}
+		newItem.value = pid;
+		newPlayerList.push(newItem);
 
-	if (players.length > clength) {
-		for (i = clength; i < players.length; i++) {
-			pname = players[i].getElementsByTagName("playername")[0].firstChild.data;
-			pid = players[i].getElementsByTagName("playerid")[0].firstChild.data;
-			newopt = new Option (pname, pid);
-			playersel.options[playersel.options.length] = newopt;
-			if (pid == currentPlayer) indexToSelect = i;
+		if (pid == currentPlayer) {
+			indexToSelect = i;
 		}
-	}
+	};
 
-	if (olength > clength) {
-		playersel.options.length = clength;
-	}
+	playerlistbox.update(newPlayerList);
+	playerlistbox.selectIndex(indexToSelect);
 
-	playersel.selectedIndex = indexToSelect;
+	if (!currentPlayer) currentPlayer = playerlistbox.input.value;
+	updatePlayer(true);
 
-	if (!currentPlayer) currentPlayer = playersel.value;
-
-        strings = resp.getElementsByTagName("strings")[0];
-        FROM = " " + strings.getAttribute("from") + " ";
-        BY = " " + strings.getAttribute("by") + " ";
+	// XXX FIXME: Initialize JXTK._Strings{} from homeHandler.
+        //strings = resp.getElementsByTagName("strings")[0];
+        //FROM = " " + strings.getAttribute("from") + " ";
+        //BY = " " + strings.getAttribute("by") + " ";
 
 	if (homeRefs == 0) {
 		loadCookie();
 		homeRefs++;
-		updateStatusCombinedPeriodically();
+		getStatusPeriodically();
 	}
 }
 
 function loadCookie() {
-	var dc = document.cookie;
-	var prefix = "ExBrowseMode=";
-	var begin = dc.indexOf(prefix);
+	var browseind = homecookie.getValue();
 
-	var browseind = 0;
-	var searchind = 0;
-
-	if (begin >= 0) { 
-		var end = dc.indexOf(";", begin);
-		if (end == -1) { end = dc.length;
-		}
-		var cookie = unescape(dc.substring(begin + prefix.length, end));
-		var delim = cookie.indexOf("/");
-		if (delim > 0) {
-			browseind = 0;
-			searchind = 0;
-			browseind = cookie.substring(0, delim) * 1;
-			searchind = cookie.substring(delim + 1, cookie.length) * 1;
-			try {
-				document.getElementById("browsemode").selectedIndex = browseind;
-				document.getElementById("searchmode").selectedIndex = searchind;
-			} catch(e) {
-			}
-		}
+	try {
+		document.getElementById("browsemode").selectedIndex = browseind;
+	} catch(e) {
 	}
-	gobrowseindex(browseind, searchind);
 
+	gobrowseindex(browseind);
 }
 
 function gobrowse() {
@@ -131,26 +119,20 @@ function gobrowse() {
 }
 
 function resetcookie() {
-	resetcookieindex(document.getElementById("browsemode").selectedIndex,
-		document.getElementById("searchmode").selectedIndex);
+	homecookie.setValue(document.getElementById("browsemode").selectedIndex);
 }
 
-function gobrowseindex(browseind, searchind) {
-	if (document.getElementById("browsemode").options[browseind]) {
-		last_browse_mode = document.getElementById("browsemode").options[browseind].value;
-		browseurl(unescape(last_browse_mode));
+function gobrowseindex(browseind) {
+	if (!document.getElementById("browsemode").options[browseind]) {
+		browseind = 0;
 	}
+
+	last_browse_mode = document.getElementById("browsemode").options[browseind].value;
+	browseurl(unescape(last_browse_mode));
 
 	resetLinks(document.getElementById("library"));
 
-	resetcookieindex(browseind, searchind);
-}
-
-function resetcookieindex(browseind, searchind) {
-	var expires = new Date(); 
-	expires.setTime(expires.getTime() + (60*24*60*60*1000));
-	cookiestring = "ExBrowseMode=" + browseind + "/" + searchind + "; expires=" + expires.toGMTString();
-	document.cookie = "ExBrowseMode=" + browseind + "/" + searchind + "; expires=" + expires.toGMTString();
+	homecookie.setValue(browseind);
 }
 
 function pushpwd(text) {
@@ -158,8 +140,7 @@ function pushpwd(text) {
 }
 
 function dobold(e) {
-	if (!e) var e = window.event;
-	resetLinks(e.target || e.srcElement);
+	resetLinks(JXTK.Misc().fixEvent(e).targ);
 }
 
 function resetLinks(active) {
@@ -170,5 +151,3 @@ function resetLinks(active) {
 	active.className = "fakelink activemode";
 }
 
-function initBrowse() {
-}

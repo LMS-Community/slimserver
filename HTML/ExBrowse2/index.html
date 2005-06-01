@@ -10,18 +10,22 @@
  <![endif]-->
  <meta http-equiv="content-type" content="text/html; charset=[% LOCALE %]"/>
  <script type="text/javascript">var webroot="[% webroot %]";</script>
- <script type="text/javascript" src="[% webroot %]html/postback.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/jxtk/jxtk.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/jxtk/backend.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/jxtk/button.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/jxtk/cookie.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/jxtk/combolist.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/jxtk/listbox.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/jxtk/textbox.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/main.js"></script>
  <script type="text/javascript" src="[% webroot %]html/status.js"></script>
  <script type="text/javascript" src="[% webroot %]html/playlist.js"></script>
  <script type="text/javascript" src="[% webroot %]html/home.js"></script>
- <script type="text/javascript" src="[% webroot %]html/misc.js"></script>
-
- <script type="text/javascript" src="html/toolmanx/core.js"></script>
- <script type="text/javascript" src="html/toolmanx/events.js"></script>
- <script type="text/javascript" src="html/toolmanx/css.js"></script>
- <script type="text/javascript" src="html/toolmanx/coordinates.js"></script>
- <script type="text/javascript" src="html/toolmanx/drag.js"></script>
-
+ <script type="text/javascript" src="[% webroot %]html/toolmanx/core.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/toolmanx/coordinates.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/toolmanx/css.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/toolmanx/drag.js"></script>
+ <script type="text/javascript" src="[% webroot %]html/toolmanx/events.js"></script>
 </head>
 <body onload="mainload()" class="mainpage">
 
@@ -33,9 +37,7 @@
 
  <form action="">
   <div id="chooserlist">
-   <select id="playersel" onchange="doPlayerChange(event)" class="formfield">
-    <option></option>
-   </select>
+   <select id="playersel" class="formfield"><option>XXX</option></select>
   </div>
  </form>
 
@@ -50,25 +52,25 @@
     <p class="label">[% "ALBUM" | string %]</p>
     <p class="artistname" id="album"></p>
    </div>
-   <p class="label" style="border: 0px none; " id="progressBar"></p>
+   <p class="label" id="progress"><span id="progressbar"></span><span id="progresstext"></span></p>
   </div>
  
   <div id="controls">
    <div id="buttons">
-    <a id="playbutton" class="fakelink" onclick="doPlay()"></a>
-    <a id="stopbutton" class="fakelink" onclick="doStop()"></a>
-    <a id="prevbutton" class="fakelink" onclick="doPrev()"></a>
-    <a id="nextbutton" class="fakelink" onclick="doNext()"></a>
+    <a id="playbutton" class="fakelink"></a>
+    <a id="stopbutton" class="fakelink"></a>
+    <a id="prevbutton" class="fakelink"></a>
+    <a id="nextbutton" class="fakelink"></a>
     <a id="mutebutton"></a>
    </div>
 
    <div id="repshuf">
-    <a id="repeatone" class="fakelink" onclick="doRepeat(1)"></a>
-    <a id="repeatall" class="fakelink" onclick="doRepeat(2)"></a>
-    <a id="repeatoff" class="fakelink" onclick="doRepeat(0)"></a>
-    <a id="shufsongs"  class="fakelink" onclick="doShuffle(1)"></a>
-    <a id="shufalbums" class="fakelink" onclick="doShuffle(2)"></a>
-    <a id="shufnone"   class="fakelink" onclick="doShuffle(0)"></a>
+    <a id="repeat1" class="fakelink"></a>
+    <a id="repeat2" class="fakelink"></a>
+    <a id="repeat0" class="fakelink"></a>
+    <a id="shuf1" class="fakelink"></a>
+    <a id="shuf2" class="fakelink"></a>
+    <a id="shuf0" class="fakelink"></a>
    </div>
  
    <div id="volumeblock">
@@ -88,11 +90,7 @@
  </div>
 </div>
 
-<div id="loading">
- <p>
-  Loading...
- </p>
-</div>
+<div id="loading"><p>Loading...</p></div>
 
 <div id="homebar" onmouseover="scrollfix()">
  <form onsubmit="return false;" action="">

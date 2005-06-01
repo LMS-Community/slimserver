@@ -313,17 +313,26 @@ a:hover {
 	font-weight: normal;
 }
 
-#progressBar {
+#progress {
 	position: absolute;
 	left: 10px;
 	top: 120px;
 	overflow: visible;
 	white-space: nowrap;
+	border: 0;
 }
 
-#progressBar img {
+#progressbar img {
 	vertical-align: text-top;
 	margin-top: 1px;
+	width: 4px;
+	height: 8px;
+	margin: 1px;
+	background: #808080;
+}
+
+#progressbar img.active {
+	background: #00cc00;
 }
 
 #controls {
@@ -422,64 +431,64 @@ a:hover {
 	cursor: pointer;
 }
 
-#repeatone {
+#repeat1 {
 	background: url(html/images/modebutton.gif) 0 0 no-repeat;
 	left: 45px;
 	width: 26px;
 }
 
-#repeatone.active	{ background: url(html/images/modebutton.gif) 0 -10px no-repeat;	}
-#repeatone:hover	{ background: url(html/images/modebutton.gif) 0 -20px no-repeat;	}
-#repeatone.active:hover	{ background: url(html/images/modebutton.gif) 0 -30px no-repeat;	}
+#repeat1.active		{ background: url(html/images/modebutton.gif) 0 -10px no-repeat;	}
+#repeat1:hover		{ background: url(html/images/modebutton.gif) 0 -20px no-repeat;	}
+#repeat1.active:hover	{ background: url(html/images/modebutton.gif) 0 -30px no-repeat;	}
 
-#repeatall {
+#repeat2 {
 	left: 72px;
 	width: 21px;
 	background: url(html/images/modebutton.gif) -27px 0px no-repeat;
 }
 
-#repeatall.active	{ background: url(html/images/modebutton.gif) -27px -10px no-repeat;	}
-#repeatall:hover	{ background: url(html/images/modebutton.gif) -27px -20px no-repeat;	}
-#repeatall.active:hover	{ background: url(html/images/modebutton.gif) -27px -30px no-repeat;	}
+#repeat2.active		{ background: url(html/images/modebutton.gif) -27px -10px no-repeat;	}
+#repeat2:hover		{ background: url(html/images/modebutton.gif) -27px -20px no-repeat;	}
+#repeat2.active:hover	{ background: url(html/images/modebutton.gif) -27px -30px no-repeat;	}
 
-#repeatoff {
+#repeat0 {
 	left: 94px;
 	width: 22px;
 	background: url(html/images/modebutton.gif) -49px 0px no-repeat;
 }
 
-#repeatoff.active	{ background: url(html/images/modebutton.gif) -49px -10px no-repeat;	}
-#repeatoff:hover	{ background: url(html/images/modebutton.gif) -49px -20px no-repeat;	}
-#repeatoff.active:hover	{ background: url(html/images/modebutton.gif) -49px -30px no-repeat;	}
+#repeat0.active		{ background: url(html/images/modebutton.gif) -49px -10px no-repeat;	}
+#repeat0:hover		{ background: url(html/images/modebutton.gif) -49px -20px no-repeat;	}
+#repeat0.active:hover	{ background: url(html/images/modebutton.gif) -49px -30px no-repeat;	}
 
-#shufsongs {
+#shuf1 {
 	left: 173px;
 	width: 36px;
 	background: url(html/images/modebutton.gif) -72px 0px no-repeat;
 }
 
-#shufsongs.active	{ background: url(html/images/modebutton.gif) -72px -10px no-repeat;	}
-#shufsongs:hover	{ background: url(html/images/modebutton.gif) -72px -20px no-repeat;	}
-#shufsongs.active:hover	{ background: url(html/images/modebutton.gif) -72px -30px no-repeat;	}
+#shuf1.active		{ background: url(html/images/modebutton.gif) -72px -10px no-repeat;	}
+#shuf1:hover		{ background: url(html/images/modebutton.gif) -72px -20px no-repeat;	}
+#shuf1.active:hover	{ background: url(html/images/modebutton.gif) -72px -30px no-repeat;	}
 
-#shufalbums {
+#shuf2 {
 	left: 210px;
 	width: 44px;
 	background: url(html/images/modebutton.gif) -109px 0px no-repeat;
 }
 
-#shufalbums.active	{ background: url(html/images/modebutton.gif) -109px -10px no-repeat;	}
-#shufalbums:hover	{ background: url(html/images/modebutton.gif) -109px -20px no-repeat;	}
-#shufalbums.active:hover{ background: url(html/images/modebutton.gif) -109px -30px no-repeat;	}
+#shuf2.active		{ background: url(html/images/modebutton.gif) -109px -10px no-repeat;	}
+#shuf2:hover		{ background: url(html/images/modebutton.gif) -109px -20px no-repeat;	}
+#shuf2.active:hover{ background: url(html/images/modebutton.gif) -109px -30px no-repeat;	}
 
-#shufnone {
+#shuf0 {
 	left: 255px;
 	width: 22px;
 	background: url(html/images/modebutton.gif) -49px 0px no-repeat;
 }
-#shufnone.active	{ background: url(html/images/modebutton.gif) -49px -10px no-repeat; }
-#shufnone:hover		{ background: url(html/images/modebutton.gif) -49px -20px no-repeat; }
-#shufnone.active:hover	{ background: url(html/images/modebutton.gif) -49px -30px no-repeat; }
+#shuf0.active		{ background: url(html/images/modebutton.gif) -49px -10px no-repeat; }
+#shuf0:hover		{ background: url(html/images/modebutton.gif) -49px -20px no-repeat; }
+#shuf0.active:hover	{ background: url(html/images/modebutton.gif) -49px -30px no-repeat; }
 
 
 .sel {
@@ -497,6 +506,16 @@ a:hover {
 	border-left: 1px solid silver;
 	font-size: 10px;
 }
+
+#volume img {
+	width: 7px;
+	background: #808080;
+}
+
+#volume img.active {
+	background: #00cc00;
+}
+
 /*
 #coverart {
 	float: left;
@@ -572,7 +591,8 @@ a:hover {
 	font-weight: bold;
 	cursor: pointer;
 }
-.currentsong, .currentsong, .currentsong a {
+
+#playlist li.active, #playlist li.active a {
 	color: white;
 }
 
