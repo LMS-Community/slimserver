@@ -933,8 +933,10 @@ sub browser_addtolist_done {
 				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browse_list.html", \%list_form)};
 			}
 		}
-		my $noArtist     = Slim::Utils::Strings::string('NO_ARTIST');
-		my $noAlbum      = Slim::Utils::Strings::string('NO_ALBUM');
+
+		my $noArtist = Slim::Utils::Strings::string('NO_ARTIST');
+		my $noAlbum  = Slim::Utils::Strings::string('NO_ALBUM');
+		my $osName   = Slim::Utils::OSDetect::OS();
 	
 		for my $item (@{$itemsref}[$start..$end]) {
 			
@@ -950,8 +952,7 @@ sub browser_addtolist_done {
 			my $shortitem = Slim::Utils::Misc::descendVirtual($params->{'dir'}, $item, $itemnumber);
 
 			# Create objects, and read tags if needed.
-			my $obj = $ds->objectForUrl($item, 1, 1, 1);
-			next if !defined($obj);
+			my $obj = $ds->objectForUrl($item, 1, 1, 1) || next;
 
 			if (Slim::Music::Info::isList($obj)) {
 
@@ -992,9 +993,14 @@ sub browser_addtolist_done {
 
 			if ($filesort || Slim::Music::Info::isDir($obj)) {
 				$list_form{'title'}  = Slim::Music::Info::fileName($item);
+			} else {
+				$list_form{'title'}  = Slim::Music::Info::standardTitle(undef, $obj);
 			}
-			else {
-				$list_form{'title'}         = Slim::Music::Info::standardTitle(undef, $obj);
+
+			# Decode the string for proper display - Mac only
+			# though. Everyone else is correct without this.
+			if ($Slim::Utils::Misc::locale eq 'utf8' && $osName eq 'mac') {
+				$list_form{'title'} = Slim::Utils::Misc::utf8decode($list_form{'title'});
 			}
 
 			$list_form{'item'}	= $obj->id();

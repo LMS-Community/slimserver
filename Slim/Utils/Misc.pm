@@ -23,6 +23,7 @@ use URI::file;
 
 if ($] > 5.007) {
 	require Encode;
+	require Test::utf8;
 }
 
 use base qw(Exporter);
@@ -229,7 +230,7 @@ sub pathFromFileURL {
 	}
 
 	# convert from the utf8 back to the local codeset.
-	if (!$donttranslate && $file && $] > 5.007) {
+	if (!$donttranslate && $file && $] > 5.007 && $locale ne 'utf8') {
 		eval { Encode::from_to($file, 'utf8', $locale) };
 	}
 
@@ -249,7 +250,7 @@ sub fileURLFromPath {
 	return $path if (Slim::Music::Info::isURL($path));
 
 	# convert from the the local codeset to utf8
-	if (!$donttranslate && $path && $] > 5.007) {
+	if (!$donttranslate && $path && $] > 5.007 && $locale ne 'utf8') {
 		eval { Encode::from_to($path, $locale, 'utf8') };
 	}
 
@@ -261,8 +262,20 @@ sub fileURLFromPath {
 sub utf8decode {
 	my $string = shift;
 
-	if ($string && $] > 5.007) {
-		return Encode::decode('utf8', $string, Encode::FB_QUIET());
+	my $orig = $string;
+
+	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
+
+		$string = Encode::decode('utf8', $string, Encode::FB_QUIET());
+
+	} elsif ($string && $] > 5.007) {
+
+		Encode::_utf8_on($string);
+	}
+
+	if ($string && $] > 5.007 && !Test::utf8::is_sane_utf8($string)) {
+
+		$string = $orig;
 	}
 
 	return $string;
@@ -271,8 +284,35 @@ sub utf8decode {
 sub utf8encode {
 	my $string = shift;
 
+	my $orig = $string;
+
+	# Don't try to encode a string which isn't utf8
+	# 
+	# If the incoming string already is utf8, turn off the utf8 flag.
+	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
+
+		$string = Encode::encode('utf8', $string, Encode::FB_QUIET());
+
+	} elsif ($string && $] > 5.007) {
+
+		Encode::_utf8_off($string);
+	}
+
+	# Check for doubly encoded strings - and revert back to our original
+	# string if that's the case.
+	if ($string && $] > 5.007 && !Test::utf8::is_sane_utf8($string)) {
+
+		$string = $orig;
+	}
+
+	return $string;
+}
+
+sub utf8off {
+	my $string = shift;
+
 	if ($string && $] > 5.007) {
-		return Encode::encode('utf8', $string, Encode::FB_QUIET());
+		Encode::_utf8_off($string);
 	}
 
 	return $string;

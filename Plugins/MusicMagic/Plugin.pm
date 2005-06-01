@@ -472,7 +472,7 @@ sub exportFunction {
 			# fileURLFromPath will turn this into UTF-8 - so we
 			# need to make sure we're in the current locale first.
 			if ($] > 5.007) {
-				$songInfo{'file'} = Encode::encode($Slim::Utils::Misc::locale, $songInfo{'file'}, Encode::FB_QUIET());
+				$songInfo{'file'} = Slim::Utils::Misc::utf8encode($songInfo{'file'})
 
 				for my $key (qw(album artist genre name)) {
 
@@ -480,12 +480,11 @@ sub exportFunction {
 					# The windows version of MMM doesn't send back proper UTF-8
 					if (Slim::Utils::OSDetect::OS() eq 'win' && $initialized =~ /1\.1\.4$/) {
 
-						$songInfo{$key} = Encode::decode($Slim::Utils::Misc::locale, $songInfo{$key}, Encode::FB_QUIET());
+						$songInfo{$key} = Slim::Utils::Misc::utf8decode($songInfo{$key});
 
 					} else {
 
-						$songInfo{$key} = Encode::encode('utf8', $songInfo{$key}, Encode::FB_QUIET());
-						#Encode::_utf8_on($songInfo{$key});
+						$songInfo{$key} = Slim::Utils::Misc::utf8encode($songInfo{$key});
 					}
 				}
 			}
@@ -916,9 +915,7 @@ sub getMix {
 	# Work around for bug #881 The windows version of MMM doesn't send back proper UTF-8
 	if (Slim::Utils::OSDetect::OS() eq 'win' && $initialized =~ /1\.1\.4$/) {
 
-		$mixArgs = Encode::encode($Slim::Utils::Misc::locale, $mixArgs, Encode::FB_QUIET());
-
-		$mixArgs = URI::Escape::uri_escape($mixArgs);
+		$mixArgs = URI::Escape::uri_escape( Slim::Utils::Misc::utf8encode($mixArgs) );
 
 	} else {
 

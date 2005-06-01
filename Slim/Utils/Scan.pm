@@ -569,6 +569,8 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 					# octet sequence is correct.
 					if ($Slim::Utils::Misc::locale eq 'utf8') {
 						$entry = Slim::Utils::Misc::utf8encode($entry);
+					} else {
+						$entry = Slim::Utils::Misc::utf8off($entry);
 					}
 
 					push @$listref, $entry;
