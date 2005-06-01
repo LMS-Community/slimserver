@@ -529,8 +529,7 @@ sub requestString {
 		"User-Agent: iTunes/4.7.1 ($^O; SlimServer $::VERSION)",
 		"Icy-MetaData: 1",
 		"Connection: close",
-		"Host: $host" ,
-		$CRLF
+		"Host: $host",
 	));
 	
 	if (defined($user) && defined($password)) {
@@ -547,8 +546,10 @@ sub requestString {
 	} else {
 		$request .= $CRLF;
 	}
+
 	return $request;
 }
+
 1;
 
 __END__
