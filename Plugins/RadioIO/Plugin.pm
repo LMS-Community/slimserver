@@ -117,6 +117,8 @@ our %functions = (
 		my $url = getRadioIOURL($current{$client} || 0);
 
 		if (defined($url)) {
+			$client->showBriefly($client->string('CONNECTING_FOR'), $station_names[$current{$client}]);
+			
 			$client->execute(['playlist', 'clear']);
 			$client->execute(['playlist', 'add', $url]);
 			$client->execute(['play']);
@@ -128,6 +130,7 @@ our %functions = (
 		my $url = getRadioIOURL($current{$client} || 0);
 
 		if (defined($url)) {
+			$client->showBriefly($client->string('ADDING_TO_PLAYLIST'), $station_names[$current{$client}]);
 			$client->execute(['playlist', 'add', $url]);
 		}
 	},

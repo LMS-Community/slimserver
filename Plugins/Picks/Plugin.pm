@@ -43,7 +43,9 @@ our %mainModeFunctions = (
 
 	   my $listIndex = $client->param( 'listIndex');
 	   my $stations = $client->param( 'stations');
-
+	   my $stationTitles = $client->param('listRef');
+	   
+       $client->showBriefly($client->string('CONNECTING_FOR'), $stationTitles->[$listIndex]);
 	   $client->execute([ 'playlist', 'play', $stations->[$listIndex]] );
    },
    'add' => sub {
@@ -51,7 +53,9 @@ our %mainModeFunctions = (
 
 	   my $listIndex = $client->param( 'listIndex');
 	   my $stations = $client->param( 'stations');
+	   my $stationTitles = $client->param('listRef');
 
+       $client->showBriefly($client->string('ADDING_TO_PLAYLIST'), $stationTitles->[$listIndex]);
 	   $client->execute([ 'playlist', 'add', $stations->[$listIndex]] );
    }
 );
@@ -156,7 +160,9 @@ our %detailsModeFunctions = (
 	   my $client = shift;
 
 	   my $station = $client->param( 'stationURL');
+	   my $stationTitle = $client->param('header');
 
+       $client->showBriefly($client->string('CONNECTING_FOR'), $stationTitle);
 	   $client->execute(['playlist', 'clear']);
 	   $client->execute(['playlist', 'add', $station]);
 	   $client->execute(['play']);
@@ -165,7 +171,9 @@ our %detailsModeFunctions = (
 	   my $client = shift;
 
 	   my $station = $client->param( 'stationURL');
+	   my $stationTitle = $client->param('header');
 
+       $client->showBriefly($client->string('ADDING_TO_PLAYLIST'), $stationTitle);
 	   $client->execute(['playlist', 'add', $station]);
    }
 );

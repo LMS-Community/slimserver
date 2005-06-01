@@ -988,6 +988,7 @@ my %StreamsFunctions = (
 	
 	'play' => sub {
 		my $client = shift;
+		$client->showBriefly($client->string('CONNECTING_FOR'), getCurrentStreamName($client));
 		if (getCurrentGenre($client) eq getRecentName($client)) {
 			playRecentStream($client, $status{$client}{recent_data}{getCurrentStreamName($client)}, getCurrentStreamName($client), 'play');
 		}
@@ -1004,6 +1005,7 @@ my %StreamsFunctions = (
 	
 	'add' => sub {
 		my $client = shift;
+		$client->showBriefly($client->string('ADDING_TO_PLAYLIST'), getCurrentStreamName($client));
 		if (getCurrentGenre($client) eq getRecentName($client)) {
 			playRecentStream($client, $status{$client}{recent_data}{getCurrentStreamName($client)}, getCurrentStreamName($client), 'add');
 		}
@@ -1125,11 +1127,13 @@ my %BitrateFunctions = (
 	
 	'play' => sub {
 		my $client = shift;
+		$client->showBriefly($client->string('CONNECTING_FOR'), getCurrentStreamName($client));
 		playStream($client, getCurrentGenre($client), getCurrentStreamName($client), getCurrentBitrate($client), 'play');
 	},
 	
 	'add' => sub {
 		my $client = shift;
+		$client->showBriefly($client->string('ADDING_TO_PLAYLIST'), getCurrentStreamName($client));
 		playStream($client, getCurrentGenre($client), getCurrentStreamName($client), getCurrentBitrate($client), 'add');
 	},
 	
