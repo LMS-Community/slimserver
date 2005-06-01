@@ -1,4 +1,4 @@
-////////////////////////////////////////////
+/////////////////////////////////////////////
 //
 // Home
 //
@@ -8,6 +8,7 @@ var strings;
 
 var homebackend;
 var homecookie;
+var playercookie;
 
 var playerlistbox;
 
@@ -37,7 +38,9 @@ function updatePlayer(nosub) {
 	homebackend.globalArg = '?player=' + currentPlayer;
 	statusbackend.globalArg = '?player=' + currentPlayer;
 
-	if(!nosub) statusbackend.submit();
+	playercookie.setValue(currentPlayer);
+
+	if(nosub != true) statusbackend.submit();
 }
 
 function initHome() {
@@ -45,6 +48,7 @@ function initHome() {
 	homebackend.addHandler(homeHandler);
 
 	homecookie = JXTK.Cookie().createCookie("ExBrowse2Mode");
+	playercookie = JXTK.Cookie().createCookie("ExBrowse2Player");
 
 	playerlistbox = JXTK.ListBox().createListBox("playersel");
 	playerlistbox.addHandler(updatePlayer);
@@ -52,7 +56,17 @@ function initHome() {
 
 
 function loadHome() {
-	currentPlayer = document.getElementById("playersel").value;
+	var loc = window.location.href;
+	var qpos = loc.indexOf("?player=");
+	if (qpos < 0) qpos = loc.indexOf("&player=");
+
+	if (qpos < 0) {
+		currentPlayer = escape(playercookie.getValue());
+	} else {
+		var pl = loc.substring(qpos + 8);
+		var end = pl.indexOf("&");
+		currentPlayer = pl.substring(0, end).replace(/:/g,"%3A");
+	}
 
 	updateHome();
 }
