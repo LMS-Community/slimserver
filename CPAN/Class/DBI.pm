@@ -563,7 +563,20 @@ sub _live_object_fetch {
 	my ($class, $data, $vivify) = @_;
 	my $key = $class->_live_object_key($data);
 	my $obj = $Live_Objects{$class}{$key};
-	return $obj if $obj or !$vivify;
+
+	# Mon Apr 11 18:09:58 PDT 2005 - This should fix bug 1311
+	# Somehow the object is getting deleted between the time it's fetched.
+	if ((ref($obj) && ref($obj) ne 'Class::DBI::Object::Has::Been::Deleted') or !$vivify) {
+		return $obj;
+	}
+
+	if ((ref($obj) && ref($obj) eq 'Class::DBI::Object::Has::Been::Deleted')) {
+		use Data::Dumper;
+		print "Class $class tried to fetch an object that has been deleted with data:\n";
+		print Dumper($data);
+		Slim::Utils::Misc::bt();
+	}
+
 	$obj = $class->_fresh_init($data);
 	$obj->_live_object_store($key);
 	return $obj;
