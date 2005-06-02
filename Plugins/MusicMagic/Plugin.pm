@@ -472,7 +472,7 @@ sub exportFunction {
 			# fileURLFromPath will turn this into UTF-8 - so we
 			# need to make sure we're in the current locale first.
 			if ($] > 5.007) {
-				$songInfo{'file'} = Slim::Utils::Misc::utf8encode($songInfo{'file'})
+				$songInfo{'file'} = Slim::Utils::Misc::utf8encode($songInfo{'file'});
 
 				for my $key (qw(album artist genre name)) {
 
