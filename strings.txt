@@ -8090,7 +8090,7 @@ HELP
 	SE	Hjälp
 
 HELP_REMOTE
-	DE	Fernbedienungsreferenzen
+	DE	Fernbedienungsreferenz
 	DK	Fjernbetjeningen
 	EN	Remote Control Reference
 	ES	Ayuda del control remoto
@@ -8153,7 +8153,7 @@ HELP_RADIO
 	SE	Internetradio
 
 REMOTE_STREAMING
-	DE	Fernsteuerung
+	DE	Streaming
 	DK	Fjern-streaming
 	EN	Remote Streaming
 	ES	Transmisión remota
@@ -8177,7 +8177,7 @@ PLAYER_SETUP
 	SE	Installation av spelare
 
 USING_REMOTE
-	DE	Verwendung der Slim Devices Fernbedienung
+	DE	Die Slim Devices Fernbedienung verwenden
 	DK	Anvendelse af Slim Devices-fjernbetjeningen (Engelsk)
 	EN	Using the Slim Devices Remote
 	ES	Cómo usar el control remoto
