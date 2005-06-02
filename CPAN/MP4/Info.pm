@@ -1,10 +1,11 @@
 package MP4::Info;
+
 use overload;
 use strict;
 use Carp;
 use Symbol;
 use Encode;
-use Encode::Guess;
+use Encode::Guess qw(latin1);
 
 use vars qw(
 	    $VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $AUTOLOAD
@@ -12,14 +13,14 @@ use vars qw(
 	   );
 
 @ISA = 'Exporter';
-@EXPORT      = qw(get_mp4tag get_mp4info use_winamp_genres);
+@EXPORT      = qw(get_mp4tag get_mp4info);
 @EXPORT_OK   = qw(use_mp4_utf8);
 %EXPORT_TAGS = (
 		utf8	=> [qw(use_mp4_utf8)],
 		all	=> [@EXPORT, @EXPORT_OK]
 	       );
 
-$VERSION = '1.00';
+$VERSION = '1.03';
 
 my $debug = 0;
 
@@ -47,8 +48,8 @@ MP4::Info - Fetch info from MPEG-4 files (.mp4, .m4a, .m4p)
 =head1 DESCRIPTION
 
 The MP4::Info module can be used to extract tag and meta information from
-MPEG-4 files. It is designed as a drop-in replacement for
-L<MP3::Info|MP3::Info>.
+MPEG-4 audio (AAC) and video files. It is designed as a drop-in replacement
+for L<MP3::Info|MP3::Info>.
 
 Note that this module does not allow you to update the information in MPEG-4
 files.
@@ -139,15 +140,6 @@ sub use_mp4_utf8
 }
 
 
-# Does nothing - exists for compatibility with L<MP3::Info|MP3::Info>.
-sub use_winamp_genres
-{
-    return 1;
-}
-
-
-=pod
-
 =item get_mp4tag (FILE)
 
 Returns hash reference containing the tag information from the MP4 file.
@@ -160,20 +152,20 @@ The following keys may be defined:
 	CPIL	Compilation (boolean)
 	CPRT	Copyright statement
 	DAY	Year
-	DISK	Disk number (2 integers)
+	DISK	Disk number & total (2 integers)
 	GNRE	Genre
 	GRP	Grouping
 	NAM	Title
 	RTNG	Rating (integer)
 	TMPO	Tempo (integer)
 	TOO	Encoder
-	TRKN	Track number (2 integers)
+	TRKN	Track number & total (2 integers)
 	WRT	Composer
 
 Any and all of these keys may be undefined if the corresponding information
 is missing from the MPEG-4 file.
 
-For compatibility with L<MP3::Info|MP3::Info>, the mp3 ID3v1-style tags
+For compatibility with L<MP3::Info|MP3::Info>, the MP3 ID3v1-style tags
 TITLE, ARTIST, ALBUM, YEAR, COMMENT, GENRE and TRACKNUM are created as
 synonyms for NAM, ART, ALB, DAY, CMT, GNRE and TRKN[0].
 
@@ -193,8 +185,6 @@ sub get_mp4tag
 }
 
 
-=pod
-
 =item get_mp4info (FILE)
 
 Returns hash reference containing file information from the MPEG-4 file.
@@ -206,11 +196,11 @@ The following keys may be defined:
 	FREQUENCY	frequency in kHz
 	SIZE		bytes in audio stream
 
-	SECS		total seconds
+	SECS		total seconds, rounded to nearest second
 	MM		minutes
 	SS		leftover seconds
-	MS		leftover milliseconds
-	TIME		time in MM:SS
+	MS		leftover milliseconds, rounded to nearest millisecond
+	TIME		time in MM:SS, rounded to nearest second
 
 	COPYRIGHT	boolean for audio is copyrighted
 
@@ -247,7 +237,7 @@ my %data_atoms =
      ART  => 1,
      CMT  => 1,
      CNID => 1,	# ???
-##   COVR => 1,
+     COVR => 1,
      CPIL => 1,
      CPRT => 1,
      DAY  => 1,
@@ -353,7 +343,7 @@ sub parse_file
     if ((read ($fh, $header, 8) != 8) || (lc substr ($header, 4) ne "ftyp"))
     {
 	close ($fh);
-	$@ = "Not an MP4 file";
+	$@ = "Not an MPEG-4 file";
 	return -1;
     }
     seek $fh, 0, 0;
@@ -495,7 +485,6 @@ sub parse_mdat
 sub parse_meta
 {
     my ($fh, $level, $size, $tags) = @_;
-    my ($data, $data_format, $channels, $frequency);
 
     # META is just a container preceded by a version field
     seek $fh, 4, 1;
@@ -509,7 +498,7 @@ sub parse_meta
 sub parse_mvhd
 {
     my ($fh, $level, $size, $tags) = @_;
-    my ($data, $data_format, $version, $scale, $duration, $secs);
+    my ($data, $version, $scale, $duration, $secs);
 
     if ($size < 32)
     {
@@ -581,9 +570,11 @@ sub parse_stsd
 	($data_format eq "samr"))
     {
 #	$version = unpack "n", substr ($data, 24, 2);
+#       s8.16 is inconsistent. In practice, channels always appears == 2.
 #	$tags->{STEREO}  = (unpack ("n", substr ($data, 32, 2))  >  1) ? 1 : 0;
+#       Old Quicktime field. No longer used.
 #	$tags->{VBR}     = (unpack ("n", substr ($data, 36, 2)) == -2) ? 1 : 0;
-	$tags->{FREQUENCY} = unpack ("N", substr ($data, 40, 4)) >> 16;
+	$tags->{FREQUENCY} = unpack ("N", substr ($data, 40, 4)) / 65536000;
     }
 
     return 0;
@@ -633,7 +624,14 @@ sub parse_data
     }
     elsif ($type==1)	# Char data
     {
-	$data = Encode::decode("Guess", $data);	# Checks for utf8 and utf16
+	# faac 1.24 and Real 10.0 encode data as unspecified 8 bit, which
+	# goes against s8.28 of ISO/IEC 14496-12:2004. How tedious.
+	# Assume data is utf8 if it could be utf8, otherwise assume latin1.
+	my $decoder = Encode::Guess->guess ($data);
+	$data = (ref ($decoder)) ?
+	    $decoder->decode($data) :	# found one of utf8, utf16, latin1
+	    decode("utf8", $data);	# can't tell; assume utf8
+
 	if ($id eq "GEN")
 	{
 	    return 0 if defined ($tags->{GNRE});
@@ -647,6 +645,9 @@ sub parse_data
 	elsif ($id eq "DAY")
 	{
 	    $data = substr ($data, 0, 4);
+	    # Real 10.0 supplies DAY=0 instead of deleting the atom if the
+	    # year is not known. What's wrong with these people?
+	    return 0 if $data==0;
 	}
 	$tags->{$id} = ($utf8 ? $data : encode("latin1", $data));
     }
@@ -688,11 +689,14 @@ __END__
 
 ############################################################################
 
-=pod
-
 =back
 
 =head1 BUGS
+
+Doesn't support writing tag information to MPEG-4 files.
+
+The calculation of bitrate is not very accurate, and tends to be under the
+real bitrate.
 
 If you find a bug, please send me a patch. If you cannot figure out why it
 does not work for you, please put the MP4 file in a place where I can get it
@@ -714,7 +718,7 @@ Chris Nandor E<lt>pudge@pobox.comE<gt> for writing L<MP3::Info|MP3::Info>
 
 =item MP4::Info Project Page
 
-L<http://www.marginal.org.uk/mp4info/>
+L<http://search.cpan.org/~jhar/MP4-Info>
 
 =item ISO 14496-12:2004 - Coding of audio-visual objects - Part 12: ISO base media file format
 
@@ -741,9 +745,13 @@ L<http://search.cpan.org/~cnandor/MP3-Info/>
 
 =head1 COPYRIGHT and LICENSE
 
-Copyright (c) 2004, Jonathan Harris E<lt>jhar@cpan.orgE<gt>
+Copyright (c) 2004, 2005, Jonathan Harris E<lt>jhar@cpan.orgE<gt>
 
 This program is free software; you can redistribute it and/or modify it
 under the the same terms as Perl itself.
 
 =cut
+
+# Local Variables:
+# cperl-set-style: BSD
+# End:
