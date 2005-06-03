@@ -65,7 +65,8 @@ function loadHome() {
 	} else {
 		var pl = loc.substring(qpos + 8);
 		var end = pl.indexOf("&");
-		currentPlayer = pl.substring(0, end).replace(/:/g,"%3A");
+		if (end > 0) pl = pl.substring(0, end);
+		currentPlayer = pl.replace(/:/g,"%3A");
 	}
 
 	updateHome();

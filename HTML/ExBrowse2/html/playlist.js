@@ -54,7 +54,7 @@ function doSelect(event) {
 	curPlayMode = "play";
 	currentSong = selIndex + 1;
 	displaySong(playlist[selIndex].title, playlist[selIndex].artist, playlist[selIndex].album);
-	updatePlayString();
+	updatePlayInfo();
 	playlistcombo.selectIndex(selIndex);
 	progressAt = 0;
 
@@ -93,7 +93,7 @@ function playlistXButtonHandler(button) {
 		displaySong(playlist[selIndex].title, playlist[selIndex].artist, playlist[selIndex].album);
 	}
 
-	updatePlayString();
+	updatePlayInfo();
 
 	playlistcombo.deleteRow(selIndex);
 	if (songCount > 0) playlistcombo.selectIndex(currentSong - 1);
@@ -104,6 +104,31 @@ function playlistXButtonHandler(button) {
 function playlistDragEndHandler(movecount, elementpos) {
 	var newpos = movecount + elementpos;
 	statusbackend.submit('&p0=playlist&p1=move&p2=' + elementpos + '&p3=' + newpos);
+}
+
+function doSave() {
+	// XXX FIXME: Consider whether a JXTK::TextButton widget would be good for these buttons
+
+	browseurl("browse.html?dir=__playlists/__current.m3u");
+}
+
+function doDownload() {
+	document.location.href = "/playlist.m3u?player=" + currentPlayer;
+}
+
+function doClear() {
+	displaySong("", "", "");
+	playlist = new Array();
+	playlistcombo.update(playlist);
+	currentSong = 0;
+	songCount = 0;
+	curPlayMode = "stop";
+	updatePlayInfo();
+	progressAt = 0;
+	progressEnd = 0;
+	progressEndText = timetostr(0);
+	updateProgressBar();
+	statusbackend.submit("&p0=playlist&p1=clear");
 }
 
 function initPlaylist() {

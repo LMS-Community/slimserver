@@ -65,14 +65,20 @@ function updateCounterPeriodically() {
 	updateProgressBar();
 }
 
-function updatePlayString() {
+function updatePlayInfo() {
 	var playstring;
 	if (curPlayMode == "play") {
 		playstring = "Now playing";
+		playbutton.setState(true);
+		stopbutton.setState(false);
 	} else if (curPlayMode == "pause") {
 		playstring = "Now paused on";
+		playbutton.setState(false);
+		stopbutton.setState(false);
 	} else {
 		playstring = "Now stopped on";
+		playbutton.setState(false);
+		stopbutton.setState(true);
 	}
 	if (currentSong) {
 		playstring += " <b>" + currentSong + "</b> of <b>" + songCount + "</b>";
@@ -108,7 +114,7 @@ function statusMiscHandler(resp) {
 	songCount = resp.getTag("songcount");
 
 	curPlayMode = resp.getTag("playmode");
-	updatePlayString();
+	updatePlayInfo();
 
 	progressAt = resp.getTag("songtime");
 	var newProgressEnd = resp.getTag("songlength");
@@ -131,22 +137,17 @@ function initStatusControls() {
 
 	playbutton = JXTK.Button().createSimpleButton(statusbackend, "playbutton", "playmode", "play", function() {
 		if (curPlayMode != "play") {
-			playbutton.setState(true);
 			curPlayMode = "play";
 		} else {
-			playbutton.setState(false);
 			curPlayMode = "pause";
 		}
-		stopbutton.setState(false);
-		updatePlayString();
+		updatePlayInfo();
 		statusbackend.submit("&p0=pause");
 	});
 
 	stopbutton = JXTK.Button().createSimpleButton(statusbackend, "stopbutton", "playmode", "stop", function() {
-		playbutton.setState(false);
-		stopbutton.setState(true);
 		curPlayMode = "stop";
-		updatePlayString();
+		updatePlayInfo();
 		progressAt = 0;
 		updateProgressBar();
 		statusbackend.submit("&p0=stop");
@@ -158,7 +159,8 @@ function initStatusControls() {
 		if (currentSong == 0) currentSong = songCount;
 		playlistcombo.selectIndex(currentSong-1);
 		displaySong(playlist[currentSong-1].title, playlist[currentSong-1].artist, playlist[currentSong-1].album);
-		updatePlayString();
+		curPlayMode = "play";
+		updatePlayInfo();
 		progressAt = 0;
 		updateProgressBar();
 		statusbackend.submit("&p0=playlist&p1=jump&p2=-1");
@@ -170,7 +172,8 @@ function initStatusControls() {
 		if (currentSong > songCount) currentSong = 1;
 		playlistcombo.selectIndex(currentSong-1);
 		displaySong(playlist[currentSong-1].title, playlist[currentSong-1].artist, playlist[currentSong-1].album);
-		updatePlayString();
+		curPlayMode = "play";
+		updatePlayInfo();
 		progressAt = 0;
 		updateProgressBar();
 		statusbackend.submit("&p0=playlist&p1=jump&p2=%2b1");
