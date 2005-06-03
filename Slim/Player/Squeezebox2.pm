@@ -291,7 +291,17 @@ sub periodicScreenRefresh {
     # noop for this player - not required
 }    
 
+
+
 # following required to send periodic visu frames whilst scrolling
+sub scrollInit {
+    my $client = shift;
+    my $render = shift;
+    my $scrollonce = shift;
+    $client->visualizer();    
+    $client->SUPER::scrollInit($render, $scrollonce);
+}
+
 sub scrollUpdateBackground {
     my $client = shift;
     my $render = shift;
