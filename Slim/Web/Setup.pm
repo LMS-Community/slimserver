@@ -74,7 +74,8 @@ our %setup = ();
 # 'validate' => reference to validation function (will be passed value to validate) (default validateAcceptAll)
 # 'validateArgs' => array of arguments to be passed to validation function (in addition to value) (no default)
 # 'options' => hash of value => text pairs to be used in building a list (no default)
-# 'optionSort' => controls sort order of the options, one of K (key), KR (key reversed), V (value) VR (value reversed) - (default K)
+# 'optionSort' => controls sort order of the options, one of K (key), KR (key reversed), V (value), VR (value reversed),
+#	 NK (numeric key), NKR (numeric key reversed), NV (numeric value), NVR (numeric value reversed) - (default K)
 # 'dontSet' => flag to suppress actually changing the preference
 # 'currentValue' => sub ref taking $client,$key,$ind as parameters, returns current value of preference.  Only needed for preferences which don't use Slim::Utils::Prefs
 # 'noWarning' => flag to suppress change information
@@ -207,6 +208,7 @@ sub initSetupConfig {
 							'validate' => \&validateInt
 							,'validateArgs' => undef
 							,'options' => undef
+							,'optionSort' => 'NK'
 							,'PrefChoose' => string('SETUP_PLAYINGDISPLAYMODE').string('COLON')
 							,'onChange'   => sub { shift->update(); }
 						}
@@ -228,6 +230,7 @@ sub initSetupConfig {
 							,'validate' => \&validateInHash
 							,'validateArgs' => [] #filled by initSetup
 							,'options' => {} #filled by initSetup using hash_of_prefs('titleFormat')
+							,'optionSort' => 'NK'
 							,'onChange' => sub {
 										my ($client,$changeref,$paramref,$pageref) = @_;
 										if (exists($changeref->{'titleFormat'}{'Processed'})) {
@@ -399,6 +402,7 @@ sub initSetupConfig {
 			'powerOnBrightness' => {
 							'validate' => \&validateInt
 							,'validateArgs' => undef
+							,'optionSort' => 'NK'
 							,'options' => {
 									'0' => '0 ('.string('BRIGHTNESS_DARK').')'
 									,'1' => '1'
@@ -410,6 +414,7 @@ sub initSetupConfig {
 			,'powerOffBrightness' => {
 							'validate' => \&validateInt
 							,'validateArgs' => undef
+							,'optionSort' => 'NK'
 							,'options' => {
 									'0' => '0 ('.string('BRIGHTNESS_DARK').')'
 									,'1' => '1'
@@ -421,6 +426,7 @@ sub initSetupConfig {
 			,'idleBrightness' => {
 							'validate' => \&validateInt
 							,'validateArgs' => undef
+							,'optionSort' => 'NK'
 							,'options' => {
 									'0' => '0 ('.string('BRIGHTNESS_DARK').')'
 									,'1' => '1'
@@ -942,12 +948,12 @@ sub initSetupConfig {
 			'maxBitrate' => {
 							'validate' => \&validateInList
 							,'validateArgs' => [0, 64, 96, 128, 160, 192, 256, 320]
-							,'optionSort' => 'V'
+							,'optionSort' => 'NK'
 							,'currentValue' => sub { return Slim::Utils::Prefs::maxRate(shift, 1); }
 							,'options' => {
-									'0' => '  '.string('NO_LIMIT')
-									,'64' => ' 64 '.string('KBPS')
-									,'96' => ' 96 '.string('KBPS')
+									'0' => string('NO_LIMIT')
+									,'64' => '64 '.string('KBPS')
+									,'96' => '96 '.string('KBPS')
 									,'128' => '128 '.string('KBPS')
 									,'160' => '160 '.string('KBPS')
 									,'192' => '192 '.string('KBPS')
@@ -966,7 +972,7 @@ sub initSetupConfig {
 			,'lameQuality' => {
 							'validate' => \&validateInt
 							,'validateArgs' => [0,9,1,1]
-							,'optionSort' => 'V'
+							,'optionSort' => 'NK'
 							,'options' => {
 									'0' => '0 '.string('LAME0')
 									,'1' => '1'
@@ -2850,6 +2856,9 @@ sub fillRadioOptions {
 sub _sortOptionArray {
 	my ($optionref, $sort) = @_;
 
+	# default $sort to K
+	$sort = 'K' unless defined $sort;
+
 	# First - resolve any string pointers
 	while (my ($key, $value) = each %{$optionref}) {
 
@@ -2860,14 +2869,28 @@ sub _sortOptionArray {
 
 	# Now sort
 	my @options = keys %$optionref;
-
-	if (!defined $sort || $sort =~ /K/i) {
-		@options = sort @options;
+	
+	if ($sort =~ /N/i) {
+		# N - numeric sort
+		if($sort =~ /K/i) {
+			# K - by key
+			@options = sort {$a <=> $b} @options;
+		} else {
+			# V - by value
+			@options = sort {$optionref->{$a} <=> $optionref->{$b}} @options;
+		}
 	} else {
-		@options = sort {$optionref->{$a} cmp $optionref->{$b}} @options;
+		# regular sort
+		if($sort =~ /K/i) {
+			# K - by key
+			@options = sort @options;
+		} else {
+			# V - by value
+			@options = sort {$optionref->{$a} cmp $optionref->{$b}} @options;
+		}
 	}
 
-	if (defined $sort && $sort =~ /R/i) {
+	if ($sort =~ /R/i) {
 		@options = reverse @options;
 	}
 
