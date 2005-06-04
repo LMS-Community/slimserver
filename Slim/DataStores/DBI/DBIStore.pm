@@ -577,20 +577,9 @@ sub markEntryAsInvalid {
 sub cleanupStaleEntries {
 	my $self = shift;
 
-	$::d_info && Slim::Utils::Misc::msg("Starting cleanupStaleTableEntries()\n");
-
-	# We're lazyily taking care of track entries right now.
-	if (0) {
-		$self->cleanupStaleTrackEntries();
-	}
-
-	# Proceed with Albums, Genres & Contributors
-	$cleanupStage = 'contributors';
-	$staleCounter = 0;
-
 	# Setup a little state machine so that the db cleanup can be
 	# scheduled appropriately - ie: one record per run.
-	Slim::Utils::Scheduler::add_task(\&cleanupStaleTableEntries, $self);
+	Slim::Utils::Scheduler::add_task(\&cleanupStaleTrackEntries, $self);
 }
 
 # Clear all stale track entries.
@@ -623,7 +612,7 @@ sub cleanupStaleTrackEntries {
 
 		$::d_info && Slim::Utils::Misc::msg("Starting db garbage collection..\n");
 
-		$cleanupIterator = Slim::DataStores::DBI::LightWeightTrack->retrieve_all();
+		$cleanupIterator = Slim::DataStores::DBI::Track->search_retrieveAllOnlyIds();
 	}
 
 	# Only cleanup every 20th time through the scheduler.
@@ -637,29 +626,32 @@ sub cleanupStaleTrackEntries {
 			"Finished with stale track cleanup. Adding tasks for Contributors, Albums & Genres.\n"
 		);
 
+		$cleanupIterator = undef;
+
+		# Proceed with Albums, Genres & Contributors
 		$cleanupStage = 'contributors';
 		$staleCounter = 0;
 
 		# Setup a little state machine so that the db cleanup can be
 		# scheduled appropriately - ie: one record per run.
-		Slim::Utils::Scheduler::add_task(\&_clearDanglingEntries);
-
-		$cleanupIterator = undef;
+		Slim::Utils::Scheduler::add_task(\&cleanupStaleTableEntries, $self);
 
 		return 0;
 	};
 
+	my $url = $track->url;
+
 	# return 1 to move onto the next track
-	unless (Slim::Music::Info::isFileURL($track->url())) {
+	unless (Slim::Music::Info::isFileURL($url)) {
 		return 1;
 	}
-	
-	my $filepath = Slim::Utils::Misc::pathFromFileURL($track->url());
+
+	my $filepath = Slim::Utils::Misc::pathFromFileURL($url);
 
 	# Don't use _hasChanged - because that does more than we want.
-	if (!-e $filepath) {
+	if (!-r $filepath) {
 
-		$::d_info && Slim::Utils::Misc::msg("Track: $track no longer exists. Removing.\n");
+		$::d_info && Slim::Utils::Misc::msg("Track: $filepath no longer exists. Removing.\n");
 
 		$self->delete($track, 0);
 	}

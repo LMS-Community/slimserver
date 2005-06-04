@@ -26,6 +26,13 @@ our $dbh;
 our $dirtyCount = 0;
 our $cleanupIterator;
 
+{
+	my $class = __PACKAGE__;
+
+	# Create a low-memory & cpu usage call for DB cleanup
+	$class->set_sql('retrieveAllOnlyIds' => 'SELECT id FROM __TABLE__');
+}
+
 sub executeSQLFile {
 	my $class = shift;
 	my $file  = shift;
@@ -745,7 +752,7 @@ sub removeStaleDBEntries {
 
 		$::d_info && Slim::Utils::Misc::msg("Starting stale cleanup for class $class / $foreign\n");
 
-		$cleanupIterator = $class->retrieve_all();
+		$cleanupIterator = $class->search_retrieveAllOnlyIds();
 	}
 
 	my $item = $cleanupIterator->next() || do {
