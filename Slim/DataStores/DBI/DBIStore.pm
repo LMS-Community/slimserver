@@ -39,7 +39,7 @@ use constant DB_CACHE_LIFETIME => 5 * 60;
 our $common_albums;
 
 # hold the current cleanup state
-our $cleanupIterator;
+our $cleanupIds;
 our $cleanupStage;
 
 # Singleton objects for Unknowns
@@ -598,7 +598,7 @@ sub cleanupStaleTrackEntries {
 	# that retrieve_all() is lazy, and only fetches a $sth->row when
 	# $obj->next is called.
 
-	unless ($cleanupIterator) {
+	unless ($cleanupIds) {
 
 		# Cleanup any stale entries in the database.
 		# 
@@ -612,21 +612,24 @@ sub cleanupStaleTrackEntries {
 
 		$::d_info && Slim::Utils::Misc::msg("Starting db garbage collection..\n");
 
-		$cleanupIterator = Slim::DataStores::DBI::Track->search_retrieveAllOnlyIds();
+		$cleanupIds = Slim::DataStores::DBI::Track->retrieveAllOnlyIds();
 	}
 
 	# Only cleanup every 20th time through the scheduler.
 	$staleCounter++;
 	return 1 if $staleCounter % 20;
 
-	# return 0 when we're done, and there are no more rows.
-	my $track = $cleanupIterator->next() || do {
+	# fetch one at a time to keep memory usage in check.
+	my $item  = shift(@{$cleanupIds});
+	my $track = Slim::DataStores::DBI::Track->retrieve($item->[0]) if defined $item;
+
+	if (!defined $track && !defined $item && scalar @{$cleanupIds} == 0) {
 
 		$::d_info && Slim::Utils::Misc::msg(
 			"Finished with stale track cleanup. Adding tasks for Contributors, Albums & Genres.\n"
 		);
 
-		$cleanupIterator = undef;
+		$cleanupIds = undef;
 
 		# Proceed with Albums, Genres & Contributors
 		$cleanupStage = 'contributors';
@@ -688,7 +691,8 @@ sub cleanupStaleTableEntries {
 	}
 
 	if ($cleanupStage eq 'genres') {
-		return Slim::DataStores::DBI::Genre->removeStaleDBEntries('genreTracks');
+
+		Slim::DataStores::DBI::Genre->removeStaleDBEntries('genreTracks');
 	}
 
 	# We're done.

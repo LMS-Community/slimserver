@@ -24,7 +24,7 @@ use Slim::Utils::Misc;
 
 our $dbh;
 our $dirtyCount = 0;
-our $cleanupIterator;
+our $cleanupIds;
 
 {
 	my $class = __PACKAGE__;
@@ -210,7 +210,7 @@ sub wipeDB {
 	my $class = shift;
 
 	$dirtyCount      = 0;
-	$cleanupIterator = undef;
+	$cleanupIds = undef;
 
 	for my $c qw(Track LightWeightTrack Album Contributor Genre Comment ContributorTrack DirlistTrack GenreTrack PlaylistTrack) {
 		my $package = 'Slim::DataStores::DBI::' . $c;
@@ -748,32 +748,48 @@ sub removeStaleDBEntries {
 	my $class   = shift;
 	my $foreign = shift;
 
-	unless ($cleanupIterator) {
+	unless ($cleanupIds) {
 
 		$::d_info && Slim::Utils::Misc::msg("Starting stale cleanup for class $class / $foreign\n");
 
-		$cleanupIterator = $class->search_retrieveAllOnlyIds();
+		$cleanupIds = $class->retrieveAllOnlyIds();
 	}
 
-	my $item = $cleanupIterator->next() || do {
+	# fetch one at a time to keep memory usage in check.
+	my $item = shift(@{$cleanupIds});
+	my $obj  = $class->retrieve($item->[0]) if defined $item;
+
+	if (!defined $obj && !defined $item && scalar @{$cleanupIds} == 0) {
 
 		$::d_info && Slim::Utils::Misc::msg("Finished stale cleanup for class $class / $foreign\n");
 
-		$cleanupIterator = undef;
+		$cleanupIds = undef;
 
 		return 0;
 	};
 
-	if ($item && $item->$foreign()->count() == 0) {
+	if ($obj && $obj->$foreign()->count() == 0) {
 
-		$::d_info && Slim::Utils::Misc::msg("DB garbage collection - removing $class: $item - no more tracks!\n");
+		$::d_info && Slim::Utils::Misc::msg("DB garbage collection - removing $class: $obj - no more tracks!\n");
 
-		$item->delete();
+		$obj->delete();
 
 		$dirtyCount++;
 	}
 
 	return 1;
+}
+
+sub retrieveAllOnlyIds {
+	my ($class, @args) = @_;
+
+	my $sth = $class->sql_retrieveAllOnlyIds;
+	   $sth->execute(@args);
+
+	my $ids = $sth->fetchall();
+	   $sth->finish();
+
+	return $ids;
 }
 
 # overload update() to maintain $dirtyCount
