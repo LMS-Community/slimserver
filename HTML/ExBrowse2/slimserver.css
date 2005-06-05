@@ -490,6 +490,24 @@ a:hover {
 #shuf0:hover		{ background: url(html/images/modebutton.gif) -49px -20px no-repeat; }
 #shuf0.active:hover	{ background: url(html/images/modebutton.gif) -49px -30px no-repeat; }
 
+#power1 {
+	left: 332px;
+	width: 19px;
+	background: url(html/images/modebutton.gif) -154px 0px no-repeat;
+}
+#power1.active		{ background: url(html/images/modebutton.gif) -154px -10px no-repeat; }
+#power1:hover		{ background: url(html/images/modebutton.gif) -154px -20px no-repeat; }
+#power1.active:hover	{ background: url(html/images/modebutton.gif) -154px -30px no-repeat; }
+
+#power0 {
+	left: 353px;
+	width: 22px;
+	background: url(html/images/modebutton.gif) -49px 0px no-repeat;
+}
+#power0.active		{ background: url(html/images/modebutton.gif) -49px -10px no-repeat; }
+#power0:hover		{ background: url(html/images/modebutton.gif) -49px -20px no-repeat; }
+#power0.active:hover	{ background: url(html/images/modebutton.gif) -49px -30px no-repeat; }
+
 
 .sel {
 	font-weight: bold;

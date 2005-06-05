@@ -8,6 +8,7 @@ var playbutton, stopbutton;
 var prevbutton, nextbutton;
 var repeatbuttons = new Array();
 var shufflebuttons = new Array();
+var powerbuttons = new Array();
 var volumebar, progressbar, progresstext;
 var playstringtext, songtext, artisttext, albumtext;
 
@@ -22,7 +23,7 @@ function getStatusPeriodically() {
 
 function makeRepShufClosure(i, buttonlist, cmdstring) {
 	return function() {
-		for (var j = 0; j < 3; j++) {
+		for (var j = 0; j < buttonlist.length; j++) {
 			buttonlist[j].setState(j == i ? true : false);
 		}
 		statusbackend.submit(cmdstring + i);
@@ -192,6 +193,13 @@ function initStatusControls() {
 			makeRepShufClosure(i, shufflebuttons, "&p0=playlist&p1=shuffle&p2=")
 		);
 	}
+
+	powerbuttons[0] = JXTK.Button().createSimpleButton(
+		statusbackend, "power0", "mode", "off", makeRepShufClosure(0, powerbuttons, "&p0=power&p1=")
+	);
+	powerbuttons[1] = JXTK.Button().createSimpleButton(
+		statusbackend, "power1", "mode", "on", makeRepShufClosure(1, powerbuttons, "&p0=power&p1=")
+	);
 
 	playstringtext = JXTK.Textbox().createTextbox("playstring");
 
