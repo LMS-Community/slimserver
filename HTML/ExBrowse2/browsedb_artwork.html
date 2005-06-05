@@ -1,4 +1,4 @@
-<div align="left" width="100%" class="coverartcell">
+[% ADD = "ADD" | string ; PLAY = "PLAY" | string %]<div align="left" width="100%" class="coverartcell">
  <div class="browseimagecell" style="width:[%size%]px;height:[%size%]px;text-align:center;">
   [% IF coverThumb %]
   <img src="/music/[% coverThumb %]/thumb.jpg" height="[% size %]" alt="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year
@@ -11,13 +11,13 @@
  </div>
  <br><span class="browselistbuttons">[% IF descend %]
  <img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks[% attributes|html %]&quot;)"
- alt="Add" src="html/images/add.gif" width="8" height="8"/><img src="html/images/play.this.gif" width="5" height="9"
- alt="Play" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks[% attributes | html
- %]&quot;)"/>[% ELSE %]
-  <img height="8" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks&amp;track=[%
-  item %]&quot;)" width="8" src="html/images/add.gif" alt="Add"/><img alt="Play" src="html/images/play.this.gif" width="5"
+  alt="[%ADD%]" title="[%ADD%]" src="html/images/add.gif" width="8" height="8"/><img src="html/images/play.this.gif" 
+  width="5" height="9" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks[%
+  attributes | html %]&quot;)" alt="[%PLAY%]" title="[%PLAY%]" />[% ELSE %]
+ <img height="8" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks&amp;track=[%
+  item %]&quot;)" width="8" src="html/images/add.gif" alt="[%ADD%]" title="[%ADD%]"/><img alt="[%PLAY%]" title="[%PLAY%]"
   onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks&amp;track=[% item %]&quot;)"
-  height="9"/>[% END %]
+  src="html/images/play.this.gif" width="5" height="9"/>[% END %]
  </span>
 </div>
 

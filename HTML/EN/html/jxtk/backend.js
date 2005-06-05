@@ -32,9 +32,9 @@ _JXTKBackend.prototype = {
 		return false;
 	},
 
-	submit : function (args) {
+	submit : function (args, sync) {
 		var backend = this;
-		var request = new _JXTKBackendRequest(backend, args);
+		var request = new _JXTKBackendRequest(backend, args, sync);
 
 		if (!this.factory.reqInProgress) {
 			this.factory.reqInProgress = 1;
@@ -103,9 +103,10 @@ function _JXTKBackendRequestHandler(request) {
 	}
 }
 
-function _JXTKBackendRequest(backend, args) {
+function _JXTKBackendRequest(backend, args, sync) {
 	this.backend = backend;
 	this.args = args;
+	this.sync = sync;
 	this.url = backend.baseurl + backend.globalArg;
 	if (args) this.url += args;
 
@@ -120,7 +121,7 @@ function _JXTKBackendRequest(backend, args) {
 		return;
 	}
 
-	this.xmlreq.open("GET", this.url);
+	this.xmlreq.open("GET", this.url, !sync);
 
 	try {
 		this.xmlreq.setRequestHeader("Referer", document.location.href);
@@ -132,11 +133,18 @@ function _JXTKBackendRequest(backend, args) {
 
 	var request = this;
 
-	this.submit = function () {
-		request.xmlreq.send('');
-	};
+	if (sync) {
+		this.submit = function () {
+			request.xmlreq.send('');
+			_JXTKBackendRequestHandler(request);
+		};
+	} else {
+		this.submit = function () {
+			request.xmlreq.send('');
+		};
 
-	this.xmlreq.onreadystatechange = function() { _JXTKBackendRequestHandler(request); } ;
+		this.xmlreq.onreadystatechange = function() { _JXTKBackendRequestHandler(request); } ;
+	}
 }
 
 
@@ -145,7 +153,7 @@ function _JXTKBackendCallHandlers(request) {
 
 	for (handlercount = 0; handlercount < request.backend.handlers.length; handlercount++) {
 		var thehandler = request.backend.handlers[handlercount];
-		thehandler(resp);
+		if (thehandler(resp) == true) break;
 		if (thehandler != request.backend.handlers[handlercount]) {
 			handlercount--;
 		}

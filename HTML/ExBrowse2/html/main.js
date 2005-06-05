@@ -19,9 +19,9 @@ function mainload() {
 }
 
 function continueload() {
+	initHome();
 	initStatus();
 	initPlaylist();
-	initHome();
 	document.getElementById("loading").firstChild.innerHTML = "Connecting...";
 	loadHome();
 }

@@ -1,9 +1,10 @@
-<tr>
+[% ADD = "ADD" | string ; PLAY = "PLAY" | string %]<tr>
  <td class="browselistbuttons">
-  <img height="8" width="8" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks[% IF
-  descend; attributes|html; ELSE %]&amp;track=[% item; END %]&quot;)" src="html/images/add.gif" alt="Add"/><img alt="Play" 
-  onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks[% IF descend; attributes|html;
-  ELSE %]&amp;track=[% item; END %]&quot;)" src="html/images/play.this.gif" width="5" height="9"/>
+  <img height="8" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks[% IF descend;
+  attributes|html; ELSE %]&amp;track=[% item; END %]&quot;)" src="html/images/add.gif" alt="[%ADD%]" title="[%ADD%]"
+  width="8"/><img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks[% IF descend;
+  attributes|html; ELSE %]&amp;track=[% item; END %]&quot;)" src="html/images/play.this.gif" width="5" height="9"
+  alt="[%PLAY%]" title="[%PLAY%]"/>
  </td>
  <td class="browselisting">
   [% IF anchor %]

@@ -1,10 +1,11 @@
 <tr>
  <td class="playlistbuttons">
   <img src="html/images/remove.gif" onclick="parent.browseurl(&quot;edit_playlist.html?delete=[% num %]&amp;dir=[% dir |
-  uri %]&quot;)" width="9" height="10" alt="Remove"/><img src="html/images/move_up.gif" width="11" height="10"
-  alt="Move Up" onclick="parent.browseurl(&quot;edit_playlist.html?up=[% num %]&amp;dir=[% dir | uri %]&quot;)"/><img
+  uri %]&quot;)" width="9" height="10" alt="[%'DELETE'|string%]" title="[%'DELETE'|string%]"/><img width="11" height="10"
+  src="html/images/move_up.gif" alt="[%'MOVEUP'|string%]" title="[%'MOVEUP'|string%]" 
+  onclick="parent.browseurl(&quot;edit_playlist.html?up=[% num %]&amp;dir=[% dir | uri %]&quot;)"/><img width="11"
   src="html/images/move_down.gif" onclick="parent.browseurl(&quot;edit_playlist.html?down=[% num %]&amp;dir=[% dir | uri
-  %]&quot;)" width="11" height="10" alt="Move Down"/>
+  %]&quot;)" width="11" height="10" alt="[%'MOVEDOWN'|string%]" title="[%'MOVEDOWN'|string%]"/>
  </td>
  <td class="playlistindex">
   [% num + 1 %]

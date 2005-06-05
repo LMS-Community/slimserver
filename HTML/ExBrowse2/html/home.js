@@ -45,13 +45,15 @@ function updatePlayer(nosub) {
 
 function initHome() {
         homebackend = JXTK.Backend().createBackend(webroot + 'home.xml?page=xml');
-	homebackend.addHandler(homeHandler);
 
 	homecookie = JXTK.Cookie().createCookie("ExBrowse2Mode");
 	playercookie = JXTK.Cookie().createCookie("ExBrowse2Player");
 
 	playerlistbox = JXTK.ListBox().createListBox("playersel");
 	playerlistbox.addHandler(updatePlayer);
+
+	homebackend.addHandler(stringsHandler);
+	homebackend.submit("", true);
 }
 
 
@@ -75,6 +77,21 @@ function loadHome() {
 function updateHome() {
 	homebackend.submit();
 	setTimeout(updateHome, 10000);
+}
+
+function stringsHandler(resp) {
+	strings = resp.xml.getElementsByTagName("string");
+	for (i = 0; i < strings.length; i++) {
+		JXTK.Strings().registerString(
+			strings[i].getAttribute("name"),
+			strings[i].firstChild.nodeValue
+		);
+	}
+
+	homebackend.removeHandler(stringsHandler);
+	homebackend.addHandler(homeHandler);
+
+	return true;
 }
 
 function homeHandler(resp) {
@@ -105,11 +122,6 @@ function homeHandler(resp) {
 
 	if (!currentPlayer) currentPlayer = playerlistbox.input.value;
 	updatePlayer(true);
-
-	// XXX FIXME: Initialize JXTK._Strings{} from homeHandler.
-        //strings = resp.getElementsByTagName("strings")[0];
-        //FROM = " " + strings.getAttribute("from") + " ";
-        //BY = " " + strings.getAttribute("by") + " ";
 
 	if (homeRefs == 0) {
 		loadCookie();

@@ -54,9 +54,8 @@ var JXTK = {
 		return JXTK._Misc;
 	},
 
-	String : function(str) {
-		if (JXTK._Strings[str]) return JXTK._Strings[str];
-		else return null;
+	Strings : function(str) {
+		return JXTK._Strings;
 	},
 
 	Textbox : function() {
@@ -71,11 +70,6 @@ var JXTK = {
 	}
 }
 
-JXTK._Strings = {
-	BY : " by ",
-	FROM : " from "
-};
-
 JXTK._Misc = {
 	fixEvent : function(e) {
 		if (!e) e = window.event;
@@ -86,3 +80,15 @@ JXTK._Misc = {
 		return e;
 	}
 };
+
+JXTK._Strings = {
+	getString : function(str) {
+		if (JXTK._Strings._StringTable[str]) return JXTK._Strings._StringTable[str];
+		else return null;
+	},
+	registerString : function(name, value) {
+		JXTK._Strings._StringTable[name] = value;
+	}
+};
+
+JXTK._Strings._StringTable = new Array();

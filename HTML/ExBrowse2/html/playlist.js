@@ -38,7 +38,7 @@ function playlistHandler(resp) {
 		newitem = new Object();
 		newitem.title = '<a onclick="doSelect(event)">' + newPlaylist[i].title + '</a>';
 		if (!newPlaylist[i].noartist && newPlaylist[i].artist != "") {
-			newitem.title += JXTK.String("BY") + '<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
+			newitem.title += JXTK.Strings().getString("BY") + '<a onclick="doArtist(event)">' + newPlaylist[i].artist + '</a>';
 		}
 		combolist.push(newitem);
 	}
@@ -137,11 +137,15 @@ function initPlaylist() {
 
 	var xButton = document.createElement('img');
 	xButton.src = 'html/images/remove.gif';
+	xButton.title = JXTK.Strings().getString("DELETE");
+	xButton.alt = JXTK.Strings().getString("DELETE");
 	buttonsTemplate.appendChild(xButton);
 
 	var dragButton = document.createElement('img');
 	dragButton.src = 'html/images/moveupdown.gif';
 	dragButton.className = 'dragbutton';
+	dragButton.title = JXTK.Strings().getString("MOVE");
+	dragButton.alt = JXTK.Strings().getString("MOVE");
 	buttonsTemplate.appendChild(dragButton);
 
 	playlistcombo = JXTK.ComboList().createComboList("playlist", buttonsTemplate, function(row) {

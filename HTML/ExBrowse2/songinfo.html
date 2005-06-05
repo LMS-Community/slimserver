@@ -112,11 +112,13 @@
  <tr>
   <td class="listing" width="12">
    <img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks&amp;track=[%item%]&quot;)"
-   alt="Add" src="html/images/add.gif" width="8" height="8" border="0" hspace="0" class="fakelink"/>
+   alt="[%'ADD'|string%]" title="[%'ADD'|string%] src="html/images/add.gif" width="8" height="8" border="0" hspace="0"
+   class="fakelink"/>
   </td>
   <td class="listing" width="12">
-   <img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks&amp;track=[%item%]&quot;)"
-   alt="Play" src="html/images/play.this.gif" border="0" width="5" height="9" hspace="8" class="fakelink"/>
+   <img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks&amp;track=[% item
+   %]&quot;)" alt="[%'PLAY'|string%]" title="[%'PLAY'|string%]" src="html/images/play.this.gif" border="0" width="5"
+   height="9" hspace="8" class="fakelink"/>
   </td>
  </tr>
 </table>

@@ -25,7 +25,12 @@
   <searchlink loc="[% link.value | uri %]">[% link.key | string %]</searchlink>
  [% END %]
  </helplinks>
- <strings from="[% "FROM" | string %]" by="[% "BY" | string %]"/>
+ <strings>
+  <string name="FROM"> [% "FROM" | string %] </string>
+  <string name="BY"> [% "BY" | string %] </string>
+  <string name="DELETE">[% "DELETE" | string %]</string>
+  <string name="MOVE">Move</string>
+ </strings>
 </slimhome>
 [% ELSE ; PROCESS header.html pwd="yes" %]
 
