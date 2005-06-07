@@ -28,16 +28,17 @@ $VERSION = 1.10;
 use XML::Simple;
 use IO::Socket;
 
+my $live365_base = "http://www.live365.com";
+
 sub new {
 	my $class = shift;  
 	my $self  = {
 		member_name		=> '',
 		password		=> '',
 		sessionid		=> '',
-		DirectoryLoaded	=> 0,
-		GenresLoaded	=> 0,
 		stationPointer	=> 0,
 		genrePointer	=> 0,
+		stationSource   => '',
 		reqBatch		=> 1,
 		status			=> 0,
 		@_
@@ -68,72 +69,47 @@ sub status {
 	return $self->{status};
 }
 
+sub stopLoading {
+	my $self = shift;
+
+	if (defined($self->{asyncHTTP})) {
+		$self->{asyncHTTP}->close();
+	}
+}
 
 #############################
 # Web functions
 #
-sub httpRequest {
+sub asyncHTTPRequest {
 	my $self = shift;
-	my $url  = shift;
+	my $path  = shift;
 	my $args = shift;
-	my $response;
+	my $loadCallback = shift;
+	my $errorCallback = shift;
+	my $callbackArgs = shift;
 
-	my $proxy = Slim::Utils::Prefs::get('webproxy');
-	my $peeraddr = 'www.live365.com';
-	if ($proxy) {
-		$peeraddr = $proxy;
-		$url = "http://www.live365.com$url";
-	}
-
-	my $socket = new IO::Socket::INET(
-		PeerAddr	=> $peeraddr,
-		PeerPort	=> 80,
-		Proto		=> 'tcp',
-		Type		=> SOCK_STREAM
-	) or return undef;
+	my $http = Slim::Networking::SimpleAsyncHTTP->new($loadCallback,
+													  $errorCallback,
+													  $callbackArgs);
 
 	my $stringArgs = join( '&', map { "$_=$args->{$_}" } grep { $args->{$_} } keys %$args );
-	$url .= "?$stringArgs" if( $stringArgs );
-	my $getRequest = "GET $url HTTP/1.0\n\n";
+	my $url = $live365_base . $path . '?' . $stringArgs;
+	$http->get($url);
 
-	print $socket $getRequest;
-	{
-		local $/ = undef;
-		$response = <$socket>;
-	}
-	$response =~ s/\015?\012/\n/g;
+	$::d_plugins && Slim::Utils::Misc::msg("Live365: Loading $url\n");
 
-	close $socket;
-
-	my ( $headers, $content ) = split( /\n\n/, $response, 2 );
-
-	if( $headers !~ /^HTTP\/1.. 200 OK/ ) {
-		$content = undef;
-	}
-
-	return wantarray ? ( $headers, $content ) : $content; 
+	$self->{asyncHTTP} = $http;
 }
-
 
 #############################
 # Protocol handler functions
 #
-sub getRedirectURL {
-    my $self = shift;
-    my $url  = shift;
-
-    my( $headers, $content ) = $self->httpRequest( $url );
-
-    $headers =~ /^HTTP\/1\.\d 302/ or return undef;
-    my( $redir ) = $headers =~ /Location: (.+)/ or return undef;
-
-    return $redir;
-}
-
 sub GetLive365Playlist {
     my $self   = shift;
     my $isVIP  = shift;
     my $handle = shift;
+	my $callback = shift;
+	my $callbackargs = shift;
 
     my %args = (
         handler  => 'playlist',
@@ -142,18 +118,46 @@ sub GetLive365Playlist {
         viewType => 'xml'
     );
 
-    my( $headers, $playlist ) = $self->httpRequest( '/pls/front', \%args );
-
-    return $playlist;
+	$self->asyncHTTPRequest('/pls/front',
+							\%args,
+							\&playlistLoadSub,
+							\&playlistErrorSub,
+							{self => $self,
+							 callback => $callback,
+							 callbackargs => $callbackargs});
 }
 
+sub playlistLoadSub {
+	my $http = shift;
+	my $self = $http->params('self');
+	my $callback = $http->params('callback');
+	my $callbackargs = $http->params('callbackargs');
+
+	$self->{asyncHTTP} = undef;
+
+	&$callback($http->content(), $callbackargs);
+}
+
+sub playlistErrorSub {
+	my $http = shift;
+	my $self = $http->params('self');
+	my $callback = $http->params('callback');
+	my $callbackargs = $http->params('callbackargs');
+
+	$self->{asyncHTTP} = undef;
+
+	&$callback(undef, $callbackargs);
+}
 
 #############################
 # Login functions
 #
 sub login {
 	my $self = shift;
-	my ( $username, $password ) = @_;
+	my $username = shift;
+	my $password = shift;
+	my $client = shift;
+	my $callback = shift;
 
 	my %args = (
 		action		=> 'login',
@@ -163,25 +167,24 @@ sub login {
 		password	=> $password
 	);
 
-	my $xmlResponse = $self->httpRequest( '/cgi-bin/api_login.cgi', \%args );
-	if( !defined $xmlResponse ) {
-		return 6;  # PLUGIN_LIVE365_LOGIN_ERROR_HTTP
-	}
-
-	eval '$self->{Login} = XMLin( $xmlResponse )'; 
-	return 2 if $@; # PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
-	
-	$self->{sessionid} = $self->{Login}->{Session_ID};
-	$self->{vip} = $self->{Login}->{Member_Status} eq 'PREFERRED';
-
-	return $self->{Login}->{Code};
+	$self->asyncHTTPRequest('/cgi-bin/api_login.cgi',
+							\%args,
+							\&authLoadSub,
+							\&authErrorSub,
+							{self => $self,
+							 client => $client,
+							 callback => $callback,
+							 login => 1});
 }
+
 
 sub logout {
 	my $self = shift;
+	my $client = shift;
+	my $callback = shift;
 
 	if( !$self->{sessionid} ) {
-		return 1;
+		&$callback($client, 0);
 	}
 
 	my %args = (
@@ -190,17 +193,56 @@ sub logout {
 		org			=> 'live365'
 	);
 
-	my $xmlResponse = $self->httpRequest( '/cgi-bin/api_login.cgi', \%args ); 
+	$self->asyncHTTPRequest('/cgi-bin/api_login.cgi',
+							\%args,
+							\&authLoadSub,
+							\&authErrorSub,
+							{self => $self,
+							 client => $client,
+							 callback => $callback});
+}
+
+sub authLoadSub {
+	my $http = shift;
+	my $self = $http->params('self');
+	my $client = $http->params('client');
+	my $callback = $http->params('callback');
+	my $login = $http->params('login');
+
+	$self->{asyncHTTP} = undef;
+
+	my $xmlResponse = $http->content();
 	if( !defined $xmlResponse ) {
-		return 6;  # PLUGIN_LIVE365_LOGIN_ERROR_HTTP
+		&$callback($client, 6); # PLUGIN_LIVE365_LOGIN_ERROR_HTTP
+		return;  
 	}
 
-	eval '$self->{Logout} = XMLin( $xmlResponse )'; 
-	return 2 if $@; # PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
-	
-	$self->{sessionid} = undef;
+	my $resp;
+	eval '$resp = XMLin( $xmlResponse )'; 
+	if ($@) {
+		&$callback($client, 2); # PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
+		return;  
+	}
 
-	return $self->{Logout}->{Code};
+	if ($login) {
+		$self->{sessionid} = $resp->{Session_ID};
+		$self->{vip} = $resp->{Member_Status} eq 'PREFERRED';
+	}
+	else {
+		$self->{sessionid} = undef;
+	}
+
+	&$callback($client, $resp->{Code});
+}
+
+sub authErrorSub {
+	my $http = shift;
+	my $self = $http->params('self');
+	my $client = $http->params('client');
+	my $callback = $http->params('callback');
+
+	$self->{asyncHTTP} = undef;
+	&$callback($client, 6); # PLUGIN_LIVE365_LOGIN_ERROR_HTTP
 }
 
 sub getSessionID {
@@ -240,27 +282,52 @@ sub getMemberStatus {
 #
 sub loadGenreList {
 	my $self = shift;
-
-	# If we've already loaded the genres, don't do it again.
-	if( defined( $self->{Genres}->{Code} ) && $self->{Genres}->{Code} == 0 ) {
-		return @{ $self->{GenreList} };
-	}
+	my $client = shift;
+	my $loadSub = shift;
+	my $errorSub = shift;
 
 	my %args = (
-		format => 'xml'
+		format		=> 'xml',
 	);
 
-	my $xmlGenres = $self->httpRequest( '/cgi-bin/api_genres.cgi', \%args );
+	$self->asyncHTTPRequest('/cgi-bin/api_genres.cgi',
+							\%args,
+							\&genreListLoadSub,
+							\&genreListErrorSub,
+							{self => $self,
+							 client => $client,
+							 loadSub => $loadSub,
+							 errorSub => $errorSub,});
+}
 
-	return undef if !defined $xmlGenres;
+sub genreListLoadSub {
+	my $http = shift;
+	my $self = $http->params('self');
+	my $client = $http->params('client');
+	my $loadSub = $http->params('loadSub');
+	my $errorSub = $http->params('errorSub');
 
-	eval '$self->{Genres} = XMLin( $xmlGenres )'; 
-	return undef if $@;
+	my $xmlGenres = $http->content();
 
+	$self->{asyncHTTP} = undef;
+
+	if (!defined($xmlGenres)) {
+		&$errorSub($client);
+		return;
+	}
+
+	my $genres;
+	eval '$genres = XMLin( $xmlGenres )'; 
+	if ($@) {
+		&$errorSub($client);
+		return;
+	}
+
+	my @list = ();
 	# Build full display names for genres that list a Parent_ID
 	# (...and I'm happy I get to use an Orcish maneuver, it's a geek thing)
 	my %parentNameCache = ();
-	my @tmpGenres = @{ $self->{Genres}->{Genres}->{Genre} };
+	my @tmpGenres = @{ $genres->{Genres}->{Genre} };
 	foreach my $g ( @tmpGenres ) {
 		if ( $g->{Parent_ID} != 0 ) {
 			my $baseName = $parentNameCache{ $g->{Parent_ID} }
@@ -268,18 +335,44 @@ sub loadGenreList {
 			$g->{Display_Name} = "$baseName $g->{Display_Name}";
 		}
 
-		push @{ $self->{GenreList} }, [ $g->{Display_Name}, $g->{Name} ];
+		push @list, [ $g->{Display_Name}, $g->{Name} ];
 	}
 
-	return @{ $self->{GenreList} };
+	&$loadSub($client, \@list);
 }
 
+sub genreListErrorSub {
+	my $http = shift;
+	my $self = $http->params('self');
+	my $client = $http->params('client');
+	my $errorSub = $http->params('errorSub');
+
+	$self->{asyncHTTP} = undef;
+	&$errorSub($client);
+}
+
+sub getGenrePointer {
+	my $self = shift;
+
+	return $self->{genrePointer} || 0;
+}
+
+sub setGenrePointer {
+	my $self = shift;
+	my $pointer = shift;
+
+	$self->{genrePointer} = $pointer;
+}
 
 #############################
 # Station preset functions
 #
 sub loadMemberPresets {
 	my $self = shift;
+	my $source = shift;
+	my $client = shift;
+	my $loadSub = shift;
+	my $errorSub = shift;
 
 	my %args = (
 		action		=> "get",
@@ -292,13 +385,40 @@ sub loadMemberPresets {
 		format		=> "xml"
 	);
 
-	my $xmlPresets = $self->httpRequest( '/cgi-bin/api_presets.cgi', \%args );
+	$self->{stationSource} = $source;
+
+	$self->asyncHTTPRequest('/cgi-bin/api_presets.cgi',
+							\%args,
+							\&presetsLoadSub,
+							\&presetsErrorSub,
+							{self => $self,
+							 client => $client,
+							 loadSub => $loadSub,
+							 errorSub => $errorSub,});
+}
+
+sub presetsLoadSub {
+	my $http = shift;
+	my $self = $http->params('self');
+	my $client = $http->params('client');
+	my $loadSub = $http->params('loadSub');
+	my $errorSub = $http->params('errorSub');
+
+	my $xmlPresets = $http->content();
+
+	$self->{asyncHTTP} = undef;
+
 	if( !defined $xmlPresets ) {
-		return undef;
+		&$errorSub($client);
+		return;
 	}
 
 	eval '$self->{Directory} = XMLin( $xmlPresets, forcearray => [ "LIVE365_STATION" ] )';
-	return undef if $@;
+	if ($@) {
+		$::d_plugins && Slim::Utils::Misc::msg("Error parsing presets: $@" );
+		&$errorSub($client);
+		return;
+	}
 	
 	if( defined $self->{Directory}->{LIVE365_STATION} ) {
 		push @{ $self->{Stations} }, @{ $self->{Directory}->{LIVE365_STATION} };
@@ -306,15 +426,28 @@ sub loadMemberPresets {
 		$self->{Directory}->{LIVE365_STATION} = [];
 	}
 
-	return scalar @{ $self->{Directory}->{LIVE365_STATION} } > 0;
+	&$loadSub($client);
 }
 
+sub presetsErrorSub {
+	my $http = shift;
+	my $self = $http->params('self');
+	my $client = $http->params('client');
+	my $errorSub = $http->params('errorSub');
+
+	$self->{asyncHTTP} = undef;
+	&$errorSub($client);
+}
 
 #############################
 # Station functions
 #
 sub loadStationDirectory {
 	my $self = shift;
+	my $source = shift;
+	my $client = shift;
+	my $loadSub = shift;
+	my $errorSub = shift;
 
 	my %args = (
 		site		=> "xml",		# requests the data in XML format
@@ -337,13 +470,40 @@ sub loadStationDirectory {
 		@_
 	);
 
-	my $xmlDirectory = $self->httpRequest( '/cgi-bin/directory.cgi', \%args );
+	$self->{stationSource} = $source;
+
+	$self->asyncHTTPRequest('/cgi-bin/directory.cgi',
+							\%args,
+							\&stationLoadSub,
+							\&stationErrorSub,
+							{self => $self,
+							 client => $client,
+							 loadSub => $loadSub,
+							 errorSub => $errorSub,});
+}
+
+sub stationLoadSub {
+	my $http = shift;
+	my $self = $http->params('self');
+	my $client = $http->params('client');
+	my $loadSub = $http->params('loadSub');
+	my $errorSub = $http->params('errorSub');
+
+	my $xmlDirectory = $http->content();
+
+	$self->{asyncHTTP} = undef;
+
 	if( !defined $xmlDirectory ) {
-		return undef;
+		&$errorSub($client);
+		return;
 	}
 
 	eval '$self->{Directory} = XMLin( $xmlDirectory, forcearray => [ "LIVE365_STATION" ] )';
-	return undef if $@;
+	if ($@) {
+		$::d_plugins && Slim::Utils::Misc::msg("Error parsing station directory: $@" );	
+		&$errorSub($client);
+		return;
+	}
 	
 	if( defined $self->{Directory}->{LIVE365_STATION} ) {
 		push @{ $self->{Stations} }, @{ $self->{Directory}->{LIVE365_STATION} };
@@ -351,7 +511,17 @@ sub loadStationDirectory {
 		$self->{Directory}->{LIVE365_STATION} = [];
 	}
 
-	return scalar @{ $self->{Directory}->{LIVE365_STATION} } > 0;
+	&$loadSub($client);
+}
+
+sub stationErrorSub {
+	my $http = shift;
+	my $self = $http->params('self');
+	my $client = $http->params('client');
+	my $errorSub = $http->params('errorSub');
+
+	$self->{asyncHTTP} = undef;
+	&$errorSub($client);
 }
 
 sub clearStationDirectory {
@@ -380,6 +550,12 @@ sub getStationListPointer {
 	return $self->{stationPointer};
 }
 
+sub getStationSource {
+	my $self = shift;
+
+	return $self->{stationSource};
+}
+
 sub willRequireLoad {
 	my $self = shift;
 	my $req  = shift;
@@ -391,12 +567,18 @@ sub willRequireLoad {
 sub setStationListPointer { 
 	my $self = shift;
 	my $req  = shift;
-
-	if( $req > $#{ $self->{Stations} } && $self->{Directory}->{LIVE365_DIRECTORY_FILTERS}->{DIRECTORY_MORE_ROWS_AVAILABLE} ) {
-		$self->loadStationDirectory( first => scalar @{ $self->{Stations} } );
-	}
+	my $client = shift;
+	my $loadSub = shift;
+	my $errorSub = shift;
 
 	$self->{stationPointer} = $req;
+
+	if( $req > $#{ $self->{Stations} } && $self->{Directory}->{LIVE365_DIRECTORY_FILTERS}->{DIRECTORY_MORE_ROWS_AVAILABLE} ) {
+		$self->loadStationDirectory( $client, $self->{stationSource}, $loadSub, $errorSub, first => scalar @{ $self->{Stations} } );
+	}
+	elsif (defined($loadSub)) {
+		&$loadSub($client);
+	}
 }
 
 sub getStationListLength {
@@ -461,26 +643,69 @@ sub getCurrentChannelURL {
 sub loadInfoForStation {
 	my $self = shift;
 	my $stationID = shift;
+	my $client = shift;
+	my $loadSub = shift;
+	my $errorSub = shift;
 
-	return 1 if( defined $self->{currentStationInfo} && $stationID == $self->{currentStationInfo} );
+	if ( defined $self->{currentStationInfo} && $stationID == $self->{currentStationInfo} ) {
+		&$loadSub($client);
+		return;
+	}
 
 	my %args = (
 		format	=> 'xml',
 		in		=> 'STATIONS',
 		channel	=> $stationID
-	); 
+	);
 
-	my $xmlInfo = $self->httpRequest( '/cgi-bin/station_info.cgi', \%args );
-	if( !defined $xmlInfo ) {
-		return undef;
+	$self->asyncHTTPRequest('/cgi-bin/station_info.cgi',
+							\%args,
+							\&infoLoadSub,
+							\&infoErrorSub,
+							{self => $self,
+							 client => $client,
+							 loadSub => $loadSub,
+							 errorSub => $errorSub,
+							 stationID => $stationID});
+}
+
+sub infoLoadSub {
+	my $http = shift;
+	my $self = $http->params('self');
+	my $client = $http->params('client');
+	my $loadSub = $http->params('loadSub');
+	my $errorSub = $http->params('errorSub');
+	my $stationID = $http->params('stationID');
+
+	my $xmlInfo = $http->content();
+
+	$self->{asyncHTTP} = undef;
+
+	if (!defined($xmlInfo)) {
+		&$errorSub($client);
+		return;
 	}
 
 	eval '$self->{StationInfo} = XMLin( $xmlInfo )';
-	return undef if $@;
-	
-	$self->{currentStationInfo} = $stationID;
+	if ($@) {
+		$::d_plugins && Slim::Utils::Misc::msg("Error parsing station info: $@" );	
+		&$errorSub($client);
+		return;
+	}
 
-    return defined $self->{StationInfo}->{LIVE365_STATION};
+	$self->{currentStationInfo} = $stationID;
+	
+	&$loadSub($client);
+}
+
+sub infoErrorSub {
+	my $http = shift;
+	my $self = $http->params('self');
+	my $client = $http->params('client');
+	my $errorSub = $http->params('errorSub');
+
+	$self->{asyncHTTP} = undef;
+	&$errorSub($client);
 }
 
 sub getStationInfo {
@@ -561,12 +786,8 @@ sub new {
 	if( my( $station, $handle ) = $url =~ m{^live365://(www.live365.com/play/([^/?]+).+)$} ) {
 		$::d_plugins && msg( "Live365.protocolHandler requested: $url ($handle)\n" );	
 
-		my $realURL = $api->getRedirectURL( $url ) or do {
-			$::d_plugins && msg( "Live365.protocolHandler can't determine real station URL.\n" );
-			return undef;
-		};
-
-		$::d_plugins && msg( "Live365 station really at: '$realURL'\n" );
+		my $realURL = $url;
+		$realURL =~ s/live365\:/http\:/;
 
 		$self = $class->SUPER::new({ 
 				'url' => $realURL, 
@@ -599,33 +820,58 @@ sub convertToHTTP {
 	    return undef;
 	}
 
-	my $api = new Plugins::Live365::Live365API();
+	my $realURL = $url;
+	$realURL =~ s/live365\:/http\:/;
 
-	return $api->getRedirectURL( $url );
+	return $realURL;
 }
 
 sub getPlaylist {
 	my ( $client, $self, $handle, $url, $isVIP ) = @_;
 
-	my $currentSong = Slim::Player::Playlist::playList($client)->[0];
+	return unless (defined($client));
+
+	my $currentSong = Slim::Player::Playlist::song($client);
 	my $currentMode = Slim::Player::Source::playmode($client);
 	 
-	return undef if ($currentSong !~ /^live365:/ || $currentMode ne 'play');
+	return if ($currentSong !~ /^live365:/ || $currentMode ne 'play');
 
 	# store the original title as a fallback, once.
-	#${*$self}{live365_original_title} ||= Slim::Music::Info::title();
+	${*$self}{live365_original_title} ||= Slim::Music::Info::getCurrentTitle( $client, $currentSong );
 
-	my $api = new Plugins::Live365::Live365API();
+	my $api = ${*$self}{live365_api};
+	unless (defined($api)) {
+		$api = new Plugins::Live365::Live365API();
+		${*$self}{live365_api} = $api;
+	}
 
-	my $playlist = $api->GetLive365Playlist( $isVIP, $handle );
+	$api->GetLive365Playlist( $isVIP, $handle, \&playlistLoaded, {
+		client => $client,
+		self => $self,
+		url => $url,
+		handle => $handle,
+		isVIP => $isVIP
+	});
+}
 
-	$::d_plugins && msg( "Got playlist response: $playlist\n" );
+sub playlistLoaded {
+	my ( $playlist, $args ) = @_;
+
+	my $client = $args->{client};
+	my $self = $args->{self};
+	my $url = $args->{url};
+	my $handle = $args->{handle};
+	my $isVIP = $args->{isVIP};
 
 	my $newTitle = '';
 	my $nowPlaying;
 	my $nextRefresh;
-	eval '$nowPlaying = XMLin( $playlist, ForceContent => 1 )';
-	$@ && $::d_plugins && msg( "Live365 playlist didn't parse: '$@'\n" );
+	if (defined($playlist)) {
+		$::d_plugins && msg( "Got playlist response: $playlist\n" );
+
+		eval '$nowPlaying = XMLin( $playlist, ForceContent => 1 )';
+		$@ && $::d_plugins && msg( "Live365 playlist didn't parse: '$@'\n" );
+	}
 
 	if( defined $nowPlaying && defined $nowPlaying->{PlaylistEntry} && defined $nowPlaying->{Refresh} ) {
 
@@ -663,6 +909,11 @@ sub getPlaylist {
 		#$client->songduration($nextRefresh) if $nextRefresh;
 	}
 
+	my $currentSong = Slim::Player::Playlist::song($client);
+	my $currentMode = Slim::Player::Source::playmode($client);
+	 
+	return if ($currentSong !~ /^live365:/ || $currentMode ne 'play');
+
 	if ( $nextRefresh and $currentSong =~ /^live365:/ and $currentMode eq 'play' ) {
 		Slim::Utils::Timers::setTimer(
 			$client,
@@ -680,6 +931,11 @@ sub DESTROY {
 
 	Slim::Utils::Timers::killTimers( ${*$self}{client}, \&getPlaylist )
 		or $::d_plugins && msg( "Live365 failed to kill playlist job timer.\n" );
+
+	my $api = ${*$self}{live365_api};
+	if (defined($api)) {
+		$api->stopLoading();
+	}
 }
 
 1;
@@ -846,63 +1102,57 @@ our %mainModeFunctions = (
 
 	'right' => sub {
 		my $client = shift;
-		$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_DIRECTORY' );
-		$client->update();
 
 		my $success = 0;
+		my $stationParams = {};
 		SWITCH: {
 			$mainModeItems[$mainModeIdx][1] eq 'PLUGIN_LIVE365_PRESETS' && do {
 				if( !$live365->{$client}->getSessionID() ) {
-					$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_NOT_LOGGED_IN' );
-					$client->update();
-					sleep 1;
+					Slim::Display::Animation::showBriefly( $client, $client->string( 'PLUGIN_LIVE365_NOT_LOGGED_IN' ));
 				} else {
-					$live365->{$client}->clearStationDirectory();
-					$live365->{$client}->loadMemberPresets() and $success = 1;
+					$success = 1;
 				}
 				last SWITCH;
 			};
 
 			$mainModeItems[$mainModeIdx][1] eq 'PLUGIN_LIVE365_BROWSEALL' && do {
-				$live365->{$client}->clearStationDirectory();
-				$live365->{$client}->loadStationDirectory(
+				$stationParams = {
 					sort			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
 					searchfields	=> Slim::Utils::Prefs::get( 'plugin_live365_search_fields' )
-				) and $success = 1;
+				};
+				$success = 1;
 				last SWITCH;
 			};
 
 			$mainModeItems[$mainModeIdx][1] eq 'PLUGIN_LIVE365_BROWSEPICKS' && do {
-				$live365->{$client}->clearStationDirectory();
-				$live365->{$client}->loadStationDirectory(
+				$stationParams = {
 					sort			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
 					searchfields	=> Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
 					genre 			=> 'ESP'
-				) and $success = 1;
+				};
+				$success = 1;
 				last SWITCH;
 			};
 
 			$mainModeItems[$mainModeIdx][1] eq 'PLUGIN_LIVE365_BROWSEPROS' && do {
-				$live365->{$client}->clearStationDirectory();
-				$live365->{$client}->loadStationDirectory(
+				$stationParams = {
 					sort			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
 					searchfields	=> Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
 					genre			=> 'Pro'
-				) and $success = 1;
+				};
+				$success = 1;
 				last SWITCH;
 			};
 
 			$success = 1;
 		}
-		$live365->{$client}->clearBlockingStatus();
-		$client->update();
 
 		if( $success ) {
 			if ($mainModeItems[$mainModeIdx][0] eq 'loginMode') {
 				Slim::Buttons::Common::pushMode( $client, $mainModeItems[$mainModeIdx][0] );
 			}
 			else {
-				Slim::Buttons::Common::pushModeLeft( $client, $mainModeItems[$mainModeIdx][0], { source => $mainModeItems[$mainModeIdx][1] } );
+				Slim::Buttons::Common::pushModeLeft( $client, $mainModeItems[$mainModeIdx][0], { source => $mainModeItems[$mainModeIdx][1], stationParams => $stationParams } );
 			}
 		}
 	}
@@ -940,20 +1190,20 @@ sub getFunctions {
 #############################
 # Login mode {{{
 #
+our @statusText = qw(
+	PLUGIN_LIVE365_LOGIN_SUCCESS
+	PLUGIN_LIVE365_LOGIN_ERROR_NAME
+	PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
+	PLUGIN_LIVE365_LOGIN_ERROR_ACTION
+	PLUGIN_LIVE365_LOGIN_ERROR_ORGANIZATION
+	PLUGIN_LIVE365_LOGIN_ERROR_SESSION
+	PLUGIN_LIVE365_LOGIN_ERROR_HTTP
+);
+
 LOGINMODE: {
 our $setLoginMode = sub {
 	my $client = shift;
 	my $silent = $client->param( 'silent');
-
-	my @statusText = qw(
-		PLUGIN_LIVE365_LOGIN_SUCCESS
-		PLUGIN_LIVE365_LOGIN_ERROR_NAME
-		PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
-		PLUGIN_LIVE365_LOGIN_ERROR_ACTION
-		PLUGIN_LIVE365_LOGIN_ERROR_ORGANIZATION
-		PLUGIN_LIVE365_LOGIN_ERROR_SESSION
-		PLUGIN_LIVE365_LOGIN_ERROR_HTTP
-	);
 
 	my $userID   = Slim::Utils::Prefs::get( 'plugin_live365_username' );
 	my $password = unpack( 'u', Slim::Utils::Prefs::get( 'plugin_live365_password' ) );
@@ -961,51 +1211,64 @@ our $setLoginMode = sub {
 
 	if( $loggedIn ) {
 		$::d_plugins && msg( "Logging out $userID\n" );
-		my $logoutStatus = $live365->{$client}->logout();
-
-		if( $logoutStatus == 0 ) {
-			Slim::Display::Animation::showBriefly( $client, $client->string( $statusText[ $logoutStatus ] ) );
-			$::d_plugins && msg( "Live365 logged out.\n" );
-		} else {
-			Slim::Display::Animation::showBriefly( $client, $client->string( $statusText[ $logoutStatus ] ) );
-			$::d_plugins && msg( "Live365 logout error: $statusText[ $logoutStatus ]\n" );
-		}
-
-		$live365->{$client}->setLoggedIn( 0 );
-		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', '' );
+		my $logoutStatus = $live365->{$client}->logout($client, \&logoutDone);
 	} else {
 		if( $userID and $password ) {
 			$::d_plugins && msg( "Logging in $userID\n" );
-			my $loginStatus = $live365->{$client}->login( $userID, $password );
-
-			if( $loginStatus == 0 ) {
-				Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $live365->{$client}->getSessionID() );
-				Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', $live365->{$client}->getMemberStatus() );
-				unless ($silent) {
-					Slim::Display::Animation::showBriefly( $client, $client->string( 'PLUGIN_LIVE365_LOGIN_SUCCESS' ) );
-				}
-				$live365->{$client}->setLoggedIn( 1 );
-				$::d_plugins && msg( "Live365 logged in: " . $live365->{$client}->getSessionID() . "\n" );
-			} else {
-				Slim::Utils::Prefs::set( 'plugin_live365_sessionid', undef );
-				Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', undef );
-				Slim::Display::Animation::showBriefly( $client, $client->string( $statusText[ $loginStatus ] ) );
-				$live365->{$client}->setLoggedIn( 0 );
-				$::d_plugins && msg( "Live365 login failure: " . $statusText[ $loginStatus ] . "\n" );
-			}
+			my $loginStatus = $live365->{$client}->login( $userID, $password,
+														  $client, \&loginDone);
 		} else {
 			$::d_plugins && msg( "Live365.login: no credentials set\n" );
 			unless ($silent) {
 				Slim::Display::Animation::showBriefly( $client, $client->string( 'PLUGIN_LIVE365_NO_CREDENTIALS' ) );
 			}
+			Slim::Buttons::Common::popMode( $client );
 		}
 	}
-
-	unless ($silent) {
-		sleep 1;
-	}
-	Slim::Buttons::Common::popMode( $client );
 };
+
+sub loginDone {
+	my $client = shift;
+	my $loginStatus = shift;
+
+	my $silent = $client->param( 'silent');
+
+	if( $loginStatus == 0 ) {
+		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $live365->{$client}->getSessionID() );
+		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', $live365->{$client}->getMemberStatus() );
+		unless ($silent) {
+			Slim::Display::Animation::showBriefly( $client, $client->string( 'PLUGIN_LIVE365_LOGIN_SUCCESS' ) );
+		}
+		$live365->{$client}->setLoggedIn( 1 );
+		$::d_plugins && msg( "Live365 logged in: " . $live365->{$client}->getSessionID() . "\n" );
+	} else {
+		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', undef );
+		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', undef );
+		Slim::Display::Animation::showBriefly( $client, $client->string( $statusText[ $loginStatus ] ) );
+		$live365->{$client}->setLoggedIn( 0 );
+		$::d_plugins && msg( "Live365 login failure: " . $statusText[ $loginStatus ] . "\n" );
+	}
+
+	Slim::Buttons::Common::popMode( $client );
+}
+
+sub logoutDone {
+	my $client = shift;
+	my $logoutStatus = shift;
+
+	if( $logoutStatus == 0 ) {
+		Slim::Display::Animation::showBriefly( $client, $client->string( $statusText[ $logoutStatus ] ) );
+		  $::d_plugins && msg( "Live365 logged out.\n" );
+	} else {
+		Slim::Display::Animation::showBriefly( $client, $client->string( $statusText[ $logoutStatus ] ) );
+		$::d_plugins && msg( "Live365 logout error: $statusText[ $logoutStatus ]\n" );
+	}
+
+	$live365->{$client}->setLoggedIn( 0 );
+	Slim::Utils::Prefs::set( 'plugin_live365_sessionid', '' );
+
+	Slim::Buttons::Common::popMode( $client );
+}
 
 my $noLoginMode = sub {
 	my $client = shift;
@@ -1021,25 +1284,36 @@ Slim::Buttons::Common::addMode( 'loginMode', {}, $setLoginMode, $noLoginMode );
 # Genre mode {{{
 #
 my @genreList = ();
-my $genrePointer = 0;
 
 GENREMODE: {
 our $setGenreMode = sub {
 	my $client = shift;
 	$client->lines( \&GenreModeLines );
 
-	$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_GENRES' );
-	$client->update();
-
-	@genreList = $live365->{$client}->loadGenreList();
-
-	if ( !@genreList ) {
-		Slim::Display::Animation::showBriefly( $client, $client->string( 'PLUGIN_LIVE365_LOGIN_ERROR_HTTP' ), ' ' );
-		Slim::Buttons::Common::popModeRight( $client );
+	if (!scalar(@genreList)) {
+		$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_GENRES' );
+		$live365->{$client}->loadGenreList($client, \&genreModeLoad, \&genreModeError);
 	}
+};
+
+sub genreModeLoad {
+	my $client = shift;
+	my $list = shift;
+
+	@genreList = @$list;
 
 	$live365->{$client}->clearBlockingStatus();
-};
+	$client->update();
+}
+
+sub genreModeError {
+	my $client = shift;
+
+	$live365->{$client}->clearBlockingStatus();
+
+	Slim::Display::Animation::showBriefly( $client, $client->string( 'PLUGIN_LIVE365_LOGIN_ERROR_HTTP' ), ' ' );
+	Slim::Buttons::Common::popModeRight( $client );
+}
 
 our $noGenreMode = sub {
 	my $client = shift;
@@ -1048,53 +1322,65 @@ our $noGenreMode = sub {
 our %genreModeFunctions = (
 	'up' => sub {
 		my $client = shift;
-		$genrePointer = Slim::Buttons::Common::scroll(
+		if (!scalar(@genreList)) {
+			$client->bumpUp();
+			return;
+		}
+		my $genrePointer = $live365->{$client}->getGenrePointer();
+		my $newPointer = Slim::Buttons::Common::scroll(
 			$client,
 			-1,
 			scalar @genreList,
 			$genrePointer
 		);
-		$client->pushUp();
+		if ($newPointer != $genrePointer) {
+			$live365->{$client}->setGenrePointer($newPointer);
+			$client->pushUp();
+		}
 	},
 
 	'down' => sub {
 		my $client = shift;
-		$genrePointer = Slim::Buttons::Common::scroll(
+		if (!scalar(@genreList)) {
+			$client->bumpDown();
+			return;
+		}
+		my $genrePointer = $live365->{$client}->getGenrePointer();
+		my $newPointer = Slim::Buttons::Common::scroll(
 			$client,
 			1,
 			scalar @genreList,
 			$genrePointer
 		);
-		$client->pushDown();
+		if ($newPointer != $genrePointer) {
+			$live365->{$client}->setGenrePointer($newPointer);
+			$client->pushDown();
+		}
 	},
 
 	'left' => sub {
-		Slim::Buttons::Common::popModeRight( shift );
+		my $client = shift;
+		$live365->{$client}->stopLoading();
+		Slim::Buttons::Common::popModeRight( $client );
 	},
 
 	'right' => sub {
 		my $client = shift;
-		$live365->{$client}->setStationListPointer( 0 );
-		$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_DIRECTORY' );
-		$client->update();
+		if (!scalar(@genreList)) {
+			$client->bumpRight();
+			return;
+		}
 
-		$live365->{$client}->clearStationDirectory();
-		my $loaded = $live365->{$client}->loadStationDirectory(
+		my $genrePointer = $live365->{$client}->getGenrePointer();
+
+		my $stationParams = {
 			genre			=> $genreList[ $genrePointer ][1],
 			sort			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
 			searchfields	=> Slim::Utils::Prefs::get( 'plugin_live365_search_fields' )
-		);
-
- 		if( $loaded ) {
-			Slim::Buttons::Common::pushModeLeft( $client, 'Live365Channels', { source => $genreList[ $genrePointer ][0] } );
-		} else {
-			$::d_plugins && msg( "No stations for genre: " . $genreList[ $genrePointer ][0] . "\n" );
-			Slim::Display::Animation::showBriefly( $client, $client->string( 'PLUGIN_LIVE365_NOSTATIONS' ), ' ' );
-			sleep 1;
-		}
-
-		$live365->{$client}->clearBlockingStatus();
-		$client->update();
+		};
+		Slim::Buttons::Common::pushModeLeft( $client, 'Live365Channels', 
+							{ source => $genreList[ $genrePointer ][0], 
+							  stationParams => $stationParams  } );
 	}
 );
 
@@ -1106,6 +1392,8 @@ sub GenreModeLines {
 		$lines[0] = $client->string( $APImessage );
 		return @lines;
 	}
+
+	my $genrePointer = $live365->{$client}->getGenrePointer();
 
 	$lines[0] = sprintf( "%s (%d %s %d)",
 		$client->string( 'PLUGIN_LIVE365_GENRES' ),
@@ -1131,21 +1419,69 @@ Slim::Buttons::Common::addMode( 'genreMode', \%genreModeFunctions, $setGenreMode
 CHANNELMODE: {
 our $setChannelMode = sub {
 	my $client = shift;
+	my $method = shift;
+
+	$client->lines( \&channelModeLines );
+	
+	if ($method ne 'pop') {
+		$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_DIRECTORY' );
+
+		my $source = $client->param('source');
+		if (defined($source) && $source eq 'PLUGIN_LIVE365_PRESETS') {
+			$live365->{$client}->clearStationDirectory();
+			$live365->{$client}->loadMemberPresets($source,
+												   $client, 
+												   \&channelModeLoad,
+												   \&channelModeError);
+			return;
+		}
+		elsif (!defined($source) ||
+			   $source ne $live365->{$client}->getStationSource()) {
+			$live365->{$client}->clearStationDirectory();
+			$live365->{$client}->loadStationDirectory(
+													  $source,
+													  $client, 
+													  \&channelModeLoad,
+													  \&channelModeError,
+													  %{ $client->param('stationParams') });
+			return;
+		}
+		channelModeLoad($client);
+	}
+};
+
+sub channelModeLoad {
+	my $client = shift;
+
+	my $source = $client->param('source');
+	
+	# Check if the current pointer for the source mode is greater than
+	# the number of stations currently loaded. If so, clip it.
+	my $pointer = defined($source) ? $live365->{$client}->getChannelModePointer($source) || 0 : 0;
+	my $listlength = $live365->{$client}->getStationListLength();
+	if ($listlength) {
+		if ($pointer >= $listlength) {
+			$pointer = $listlength - 1;
+		}
+		
+		$live365->{$client}->setStationListPointer($pointer);
+	}
+
+	$live365->{$client}->clearBlockingStatus();
+	$client->update();
+}
+
+sub channelModeError {
+	my $client = shift;
 
 	my $source = $client->param( 'source');
-	if (defined($source)) {
-		$live365->{$client}->setStationListPointer(
-			$live365->{$client}->getChannelModePointer($source) ||
-		        0);
-	}
 
-	my $pointer = $live365->{$client}->getStationListPointer();
-	my $listlength = $live365->{$client}->getStationListLength();
-	if ($listlength && $pointer >= $listlength) {
-		$live365->{$client}->setStationListPointer($listlength-1);
-	}
-	$client->lines( \&channelModeLines );
-};
+	$live365->{$client}->clearBlockingStatus();
+
+	$::d_plugins && defined($source) && Slim::Utils::Misc::msg( "No stations for source: $source\n");
+	Slim::Display::Animation::showBriefly( $client, $client->string( 'PLUGIN_LIVE365_NOSTATIONS' ), ' ' );
+	Slim::Buttons::Common::popModeRight( $client );
+}
 
 my $noChannelMode = sub {
 	my $client = shift;
@@ -1159,22 +1495,30 @@ our %channelModeFunctions = (
 		# we can't wrap around from the top. This will be addressed in a later
 		# version.
 		if( $live365->{$client}->getStationListPointer() == 0 ) {
-			Slim::Display::Animation::bumpUp( $client );
+			$client->bumpUp();
 			return;
 		}
 
-		$live365->{$client}->setStationListPointer( Slim::Buttons::Common::scroll(
+		my $newStationPointer = Slim::Buttons::Common::scroll(
             $client,
             -1,
             $live365->{$client}->getStationListLength(),
             $live365->{$client}->getStationListPointer()
-        ) );
-
-        $client->pushUp();
+		);
+		if ($newStationPointer != $live365->{$client}->getStationListPointer()) {
+			$live365->{$client}->setStationListPointer($newStationPointer);
+			
+			$client->pushUp();
+		}
     },
 
     'down' => sub {
         my $client = shift;
+
+		if (!$live365->{$client}->getStationListLength()) {
+			$client->bumpDown();
+			return;
+		}
 		
         my $newStationPointer = Slim::Buttons::Common::scroll(
             $client,
@@ -1186,23 +1530,27 @@ our %channelModeFunctions = (
 		if( $live365->{$client}->willRequireLoad( $newStationPointer ) ) {
 			$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_DIRECTORY' );
 			$client->update();
+        	$live365->{$client}->setStationListPointer($newStationPointer, 
+													   $client,
+													   \&channelAdditionalLoad,
+													   \&channelAdditionalError);
+		} elsif ($newStationPointer != $live365->{$client}->getStationListPointer()) {
         	$live365->{$client}->setStationListPointer( $newStationPointer );
-			$live365->{$client}->clearBlockingStatus();
-		} else {
-        	$live365->{$client}->setStationListPointer( $newStationPointer );
+			$client->pushDown();
 		}
 
-        $client->pushDown();
     },
 
     'left' => sub {
         my $client = shift;
 
-	my $source = $client->param( 'source');
-	if (defined($source)) {
-		$live365->{$client}->setChannelModePointer($source, 
+		my $source = $client->param( 'source');
+		if (defined($source)) {
+			$live365->{$client}->setChannelModePointer($source, 
 				$live365->{$client}->getStationListPointer());
-	}
+		}
+
+		$live365->{$client}->stopLoading();
 
         Slim::Buttons::Common::popModeRight( $client );
     },
@@ -1210,11 +1558,16 @@ our %channelModeFunctions = (
     'right' => sub {
         my $client = shift;
 
-	my $source = $client->param( 'source');
-	if (defined($source)) {
-		$live365->{$client}->setChannelModePointer($source, 
+		if (!$live365->{$client}->getStationListLength()) {
+			$client->bumpRight();
+			return;
+		}
+
+		my $source = $client->param( 'source');
+		if (defined($source)) {
+			$live365->{$client}->setChannelModePointer($source, 
 				$live365->{$client}->getStationListPointer());
-	}
+		}
 	
         Slim::Buttons::Common::pushModeLeft( $client, 'ChannelInfo' );
     },
@@ -1231,6 +1584,20 @@ our %channelModeFunctions = (
 		playOrAddCurrentStation($client, 0);
     }
 );
+
+sub channelAdditionalLoad {
+	my $client = shift;
+
+	$live365->{$client}->clearBlockingStatus();
+	$client->update();
+}
+
+sub channelAdditionalError {
+	my $client = shift;
+
+	$live365->{$client}->clearBlockingStatus();
+	$client->update();
+}
 
 sub channelModeLines {
 	my $client = shift;
@@ -1281,16 +1648,27 @@ our $setInfoMode = sub {
 	$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_INFORMATION' );
 	$client->update();
 
-	my $haveInfo = $live365->{$client}->loadInfoForStation( $live365->{$client}->getCurrentStation()->{STATION_ID} );
+	$live365->{$client}->loadInfoForStation( $live365->{$client}->getCurrentStation()->{STATION_ID}, $client, \&infoModeLoad, \&infoModeError );;
+};
 
-	my @infoItems;
-	my @items;
-	if ($haveInfo) {
-		@infoItems = $live365->{$client}->getStationInfo();
-		@items = map {"{PLUGIN_LIVE365_". $_->[0] . "}: " . $_->[1]} @infoItems;
-	} else {
-		push @items, "{PLUGIN_LIVE365_NO_INFO}";
-	}
+sub infoModeLoad {
+	my $client = shift;
+
+	my @infoItems = $live365->{$client}->getStationInfo();
+	my @items = map {"{PLUGIN_LIVE365_". $_->[0] . "}: " . $_->[1]} @infoItems;
+
+	infoModeCommon($client, @items);
+}
+
+sub infoModeError {
+	my $client = shift;
+
+	infoModeCommon($client, "{PLUGIN_LIVE365_NO_INFO}");
+}
+
+sub infoModeCommon {
+	my $client = shift;
+
 	my $url = $live365->{$client}->getCurrentChannelURL();
 	my $title = $live365->{$client}->getCurrentStation()->{STATION_TITLE};
 
@@ -1298,12 +1676,13 @@ our $setInfoMode = sub {
 	my %params = (
 		url => $url,
 		title => $title,
-		details => \@items,
+		details => \@_,
 	);
 
 	$live365->{$client}->clearBlockingStatus();
-	Slim::Buttons::Common::pushMode($client, 'remotetrackinfo', \%params);
-};
+	Slim::Buttons::Common::pushMode($client, 'remotetrackinfo', \%params);  
+	$client->update();
+}
 
 our $noInfoMode = sub {
 	my $client = shift;
@@ -1348,24 +1727,30 @@ our $setSearchMode = sub {
 our %searchModeFunctions = (
 	'up' => sub {
 		my $client = shift;
-		$searchModeIdx = Slim::Buttons::Common::scroll(
+		my $newIdx = Slim::Buttons::Common::scroll(
 			$client,
 			-1,
 			scalar @searchModeItems,
 			$searchModeIdx
 		);
-		$client->pushUp();
+		if ($searchModeIdx != $newIdx) {
+			$searchModeIdx = $newIdx;
+			$client->pushUp();
+		}
 	},
 
 	'down' => sub {
 		my $client = shift;
-		$searchModeIdx = Slim::Buttons::Common::scroll(
+		my $newIdx = Slim::Buttons::Common::scroll(
 			$client,
 			1,
 			scalar @searchModeItems,
 			$searchModeIdx
 		);
-		$client->pushDown();
+		if ($searchModeIdx != $newIdx) {
+			$searchModeIdx = $newIdx;
+			$client->pushDown();
+		}
 	},
 
 	'left' => sub {
@@ -1418,28 +1803,14 @@ sub doSearch {
 		return;
 	}
 
-	# callback runs in the INPUT.Text mode, so setBlockingStatus is irrelevant unless we reassign.
-	my $oldLineFunc = $client->lines();
-	$client->lines( \&searchModeLines );
-
-	$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_DIRECTORY' );
-	$client->update();
-
-	$live365->{$client}->clearStationDirectory();
-	$live365->{$client}->loadStationDirectory(
+	my $stationParams = {
 		searchdesc	=> $searchString{$client},
 		sort		=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
 		searchfields	=> $searchModeItems[$searchModeIdx][1]
-	);
+	};
 
-	$live365->{$client}->clearBlockingStatus();
-	$client->update();
-
-	$client->lines( $oldLineFunc );
-	$client->update();
-
-	$live365->{$client}->setStationListPointer( 0 );
-	Slim::Buttons::Common::pushModeLeft( $client, 'Live365Channels' );
+	Slim::Buttons::Common::pushModeLeft( $client, 'Live365Channels',
+										 { stationParams => $stationParams } );
 }
 
 sub searchModeLines {
