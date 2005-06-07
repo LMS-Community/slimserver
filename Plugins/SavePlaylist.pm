@@ -141,11 +141,16 @@ sub strings {
 # Adds a mapping for 'save' function in Now Playing mode.
 ####################################################################
 our %mapping = ('play.hold' => 'save');
-sub defaultMap { return \%mapping; }
-Slim::Hardware::IR::addModeDefaultMapping('playlist',\%mapping);
-our $functref = Slim::Buttons::Playlist::getFunctions();
-$functref->{'save'} = $functions{'save'};
 
+sub defaultMap { 
+	return \%mapping; 
+}
+
+sub initPlugin {
+	Slim::Hardware::IR::addModeDefaultMapping('playlist',\%mapping);
+	our $functref = Slim::Buttons::Playlist::getFunctions();
+	$functref->{'save'} = $functions{'save'};
+}
 1;
 
 __END__
