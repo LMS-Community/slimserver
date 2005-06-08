@@ -176,7 +176,7 @@ sub defaultMap {
 sub defaultMapFile {
 
 	unless (defined($defaultMapFile)) {
-		$defaultMapFile = catdir((IRFileDirs())[0],defaultMap() . '.map');
+		$defaultMapFile = defaultMap() . '.map';
 	}
 
 	return $defaultMapFile;
@@ -195,11 +195,10 @@ sub mapfiles {
 			next unless $mapfile =~ /(.+)\.map$/;
 
 			$::d_ir && msg(" key mapping file entry: $mapfile\n");
-			my $path = catdir($irfiledir,$mapfile);
 
 			if ($1 eq defaultMap()) {
 						$maplist{$mapfile} = Slim::Utils::Strings::string('DEFAULT_MAP');
-						$defaultMapFile = $mapfile
+						$defaultMapFile = $mapfile;
 			} else {
 				$maplist{$mapfile} = $1;
 			}
