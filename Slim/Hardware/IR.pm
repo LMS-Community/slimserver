@@ -55,6 +55,7 @@ sub enqueue {
 	my $clientTime = shift;
 
 	my $irTime = $clientTime / $client->ticspersec;
+
 	assert($client);
 	assert($irCodeBytes);
 	assert($irTime);
@@ -74,7 +75,9 @@ sub enqueue {
 		# record information so the client can time each response
 		my ($serverSeconds, $serverMicros) = gettimeofday();
 		my $serverTime = ($serverSeconds - $serverStartSeconds) * 1000000;
+
 		$serverTime += $serverMicros;
+
 		push @queuedClientTime, $clientTime;
 		push @queuedServerTime, $serverTime;
 	}
@@ -90,16 +93,20 @@ sub idle {
 			# compute current time in microseconds
 			my ($nowSeconds, $nowMicros) = gettimeofday();
 			my $nowTime = ($nowSeconds - $serverStartSeconds) * 1000000;
+
 			$nowTime += $nowMicros;
+
 			# pop diagnostic info off stack
 			my $clientTime = shift(@queuedClientTime);
 			my $serverReceivedTime = shift(@queuedServerTime);
 			my $clientCount = Slim::Player::Client::clientCount();
+
 			# send a message to the client that the IR has been processed.
 			# note that during execute() above, the client's display may have been updated a number of times.  So the deltaT we return here may be longer than what the client experienced.  However, a pending command from another client could have been waiting all that time.
 			if ($client->isa("Slim::Player::Squeezebox")) {
 				my $serverDeltaT = $nowTime - $serverReceivedTime;
 				my $msg = "<irtm clientSentTime=$clientTime serverReceivedTime=$serverReceivedTime serverDeltaT=$serverDeltaT clientCount=$clientCount>";
+
 				$client->sendFrame('irtm', \$msg);
 			}
 		}
@@ -144,7 +151,9 @@ sub irfiles {
 			next unless $irfile =~ /(.+)\.ir$/;
 
 			$::d_ir && msg(" irfile entry: $irfile\n");
-			$irfilelist{catdir($irfiledir, $irfile)} = $1;
+			my $path = catdir($irfiledir,$irfile);
+
+			$irfilelist{$irfile} = $1;
 		}
 
 		closedir(DIR);
@@ -156,6 +165,7 @@ sub irfiles {
 sub irfileName {
 	my $file = shift;
 	my %files = %{irfiles()};
+
 	return $files{$file};
 }
 
@@ -164,9 +174,11 @@ sub defaultMap {
 }
 
 sub defaultMapFile {
+
 	unless (defined($defaultMapFile)) {
 		$defaultMapFile = catdir((IRFileDirs())[0],defaultMap() . '.map');
 	}
+
 	return $defaultMapFile;
 }
 
@@ -186,10 +198,10 @@ sub mapfiles {
 			my $path = catdir($irfiledir,$mapfile);
 
 			if ($1 eq defaultMap()) {
-				$maplist{$path} = Slim::Utils::Strings::string('DEFAULT_MAP');
-				$defaultMapFile = $path
+						$maplist{$mapfile} = Slim::Utils::Strings::string('DEFAULT_MAP');
+						$defaultMapFile = $mapfile
 			} else {
-				$maplist{$path} = $1;
+				$maplist{$mapfile} = $1;
 			}
 		}
 
@@ -212,15 +224,27 @@ sub addModeDefaultMapping {
 	}
 }
 
+sub IRPath {
+	my $mapfile = shift;
+	my $path;
+
+	foreach my $irfiledir (IRFileDirs()) {
+		$path = catdir($irfiledir,$mapfile);
+		last if -r $path;
+	}
+
+	return $path;
+}
+
 sub loadMapFile {
 	my $mapfile = shift;
 	my $mode;
-
-	$::d_ir && msg("opening map file $mapfile\n");
-	
-	if (-r $mapfile) {
-		delete $irMap{$mapfile};
-		open(MAP, $mapfile);
+	$::d_ir && msg(" key mapping file entry: $mapfile\n");
+	my $path = -r $mapfile ? $mapfile : IRPath($mapfile);
+	$::d_ir && msg("opening map file $path\n");
+	if (-r $path) {
+		delete $irMap{$path};
+		open(MAP, $path);
 		while (<MAP>) {
 			if (/\[(.+)\]/) {
 				$mode = $1;
@@ -233,25 +257,23 @@ sub loadMapFile {
 			next unless length;	#anything left?
 			my ($buttonName, $function) = split(/\s*=\s*/, $_, 2);
 			unless ($buttonName =~ /(.+)\.\*/) {
-				$irMap{$mapfile}{$mode}{$buttonName} = $function;
+				$irMap{$path}{$mode}{$buttonName} = $function;
 			} else {
-				for my $style (@buttonPressStyles) {
-					$irMap{$mapfile}{$mode}{$1 . $style} = $function unless exists($irMap{$mapfile}{$mode}{$1 . $style}) ;
+				foreach my $style (@buttonPressStyles) {
+					$irMap{$path}{$mode}{$1 . $style} = $function unless exists($irMap{$path}{$mode}{$1 . $style}) ;
 				}
 			}
 		}
 		close(MAP);
-		
 	} else {
-		$::d_ir && msg("failed to open $mapfile\n");
+		$::d_ir && msg("failed to open $path\n");
 	}
 }
 
 sub loadIRFile {
 	my $irfile = shift;
-
+	$irfile = -r $irfile ? $irfile : IRPath($irfile);
 	$::d_ir && msg("opening IR file $irfile\n");
-	
 	if (-r $irfile) {
 		delete $irCodes{$irfile};
 		open(IRCODES, $irfile);
@@ -262,11 +284,9 @@ sub loadIRFile {
 			s/\s*#.*$//;		# trim comments (note, no #'s or ='s allowed in button names)
 			next unless length;	#anything left?
 			my ($buttonName, $irCode) = split(/\s*=\s*/, $_, 2);
-			
 			$irCodes{$irfile}{$irCode} = $buttonName;
 		}
 		close(IRCODES);
-		
 	} else {
 		$::d_ir && msg("failed to open $irfile\n");
 	}
@@ -287,6 +307,7 @@ sub lookup {
 		for (Slim::Utils::Prefs::clientGetArray($client,'disabledirsets')) {delete $enabled{$_}};
 		
 		for my $irset (keys %enabled) {
+			$irset = -r $irset ? $irset : IRPath($irset);
 			if (defined $irCodes{$irset}{$code}) {
 				$::d_ir && msg("found button $irCodes{$irset}{$code} for $code\n");
 				$code = $irCodes{$irset}{$code};
@@ -312,7 +333,10 @@ sub lookupFunction {
 	my $mode = shift;
 
 	$mode = Slim::Buttons::Common::mode($client) unless defined($mode);
+
 	my $map = Slim::Utils::Prefs::clientGet($client,'irmap');
+	$map = -r $map ? $map : IRPath($map);
+
 	assert($client);
 	assert($map);
 	assert($mode);
@@ -321,18 +345,23 @@ sub lookupFunction {
 	if (defined $irMap{$map}{$mode}{$code}) {
 		$::d_ir && msg("found function " . $irMap{$map}{$mode}{$code} . " for button $code in mode $mode from map $map\n");
 		return $irMap{$map}{$mode}{$code};
+	
 	} elsif (defined $irMap{$defaultMapFile}{$mode}{$code}) {
 		$::d_ir && msg("found function " . $irMap{$defaultMapFile}{$mode}{$code} . " for button $code in mode $mode from map " . defaultMap() . "\n");
 		return $irMap{$defaultMapFile}{$mode}{$code};
+	
 	} elsif ($mode =~ /(.+)\..+/ && defined $irMap{$map}{lc($1)}{$code}) {
 		$::d_ir && msg("found function " . $irMap{$map}{lc($1)}{$code} . " for button $code in mode class ".lc($1)." from map $map\n");
 		return $irMap{$map}{lc($1)}{$code};
+	
 	} elsif ($mode =~ /(.+)\..+/ && defined$irMap{$defaultMapFile}{lc($1)}{$code}) {
 		$::d_ir && msg("found function " . $irMap{$defaultMapFile}{lc($1)}{$code} . " for button $code in mode class ".lc($1)." from map " . defaultMap() . "\n");
 		return $irMap{$defaultMapFile}{lc($1)}{$code};			
+	
 	} elsif (defined $irMap{$map}{'common'}{$code}) {
 		$::d_ir && msg("found function " . $irMap{$map}{'common'}{$code} . " for button $code in mode common from map $map\n");
 		return $irMap{$map}{'common'}{$code};
+	
 	} elsif (defined $irMap{$defaultMapFile}{'common'}{$code}) {
 		$::d_ir && msg("found function " . $irMap{$defaultMapFile}{'common'}{$code} . " for button $code in mode common from map " . defaultMap() . "\n");
 		return $irMap{$defaultMapFile}{'common'}{$code};
@@ -353,19 +382,24 @@ sub checkRelease {
 	my $now = Time::HiRes::time();
 	
 	if ($startIRCodeBytes ne $client->lastircodebytes) {
+
 		# a different button was pressed, so the original must have been released
 		if ($releaseType ne 'hold_check') {
 			releaseCode($client,$startIRCodeBytes,$releaseType, $estIRTime);
 			return 0; #should check for single press release
 		}
+
 	} elsif ($startIRTime != $client->startirhold) {
+
 		# a double press possibly occurred
 		if ($releaseType eq 'hold_check') {
 			#not really a double press
 			return 0;
+
 		} elsif ($releaseType eq 'hold_release') {
 			releaseCode($client,$startIRCodeBytes,$releaseType, $estIRTime);
 			return 0;
+
 		} else {
 			releaseCode($client,$startIRCodeBytes,'double',$estIRTime);
 			#reschedule to check for whether to fire hold_release
@@ -374,26 +408,34 @@ sub checkRelease {
 						,$client->startirhold + $Slim::Hardware::IR::IRHOLDTIME);
 			return 1; #don't check for single press release
 		}
+
 	} elsif ($estIRTime - $client->lastirtime < $Slim::Hardware::IR::IRMINTIME) {
 		# still holding button down, so reschedule
 		my $nexttime;
+
 		if ($estIRTime >= ($startIRTime + $Slim::Hardware::IR::IRHOLDTIME)) {
 			$releaseType = 'hold_release';
 			# check for hold release every 1/2 hold time
 			$nexttime = $Slim::Hardware::IR::IRHOLDTIME /2;
+
 		} elsif (($estIRTime + $Slim::Hardware::IR::IRSINGLETIME) > ($startIRTime + $Slim::Hardware::IR::IRHOLDTIME)) {
 			$nexttime = $startIRTime + $Slim::Hardware::IR::IRHOLDTIME - $estIRTime;
+
 		} else {
 			$nexttime = $Slim::Hardware::IR::IRSINGLETIME;
 		}
+
 		Slim::Utils::Timers::setTimer($client,$now+($nexttime),\&checkRelease
 					,$releaseType,$startIRTime,$startIRCodeBytes,$estIRTime + $nexttime);
 		return 1;
+
 	} else {
 		#button released
+
 		if ($releaseType ne 'hold_check') {
 			releaseCode($client,$startIRCodeBytes,$releaseType, $estIRTime);
 		}
+
 		return 0;
 	}
 }
@@ -472,6 +514,7 @@ sub resetHoldStart {
 sub resendButton {
 	my $client = shift;
 	my $ircode = lookup($client,$client->lastircodebytes);
+
 	if (defined $ircode) {
 		processCode($client,$ircode, $client->lastirtime);
 	}
@@ -508,6 +551,7 @@ sub holdCode {
 	my $irCodeBytes = shift;
 	
 	my $holdtime = holdTime($client);
+
 	if ($holdtime >= $Slim::Hardware::IR::IRHOLDTIME && ($holdtime - $Slim::Hardware::IR::IRHOLDTIME) < $client->irtimediff) {
 		# the time for the hold firing took place within the last ir interval
 		my $ircode = lookup($client,$irCodeBytes, 'hold');
@@ -538,19 +582,24 @@ sub repeatCount {
 	my $maxrate = shift;
 	my $accel = shift;
 	my $holdtime = holdTime($client);
+
 	if (!$holdtime) { return 0;} #nothing on the initial time through
+
 	if ($accel) {
+
 		#calculate the number of repetitions we should have made by this time
 		if ($maxrate && $maxrate < $holdtime * $accel) {
 			#done accelerating, so number of repeats during the acceleration
 			#plus the max repeat rate times the time since acceleration was finished
 			my $flattime = $holdtime - $maxrate/$accel;
 			return int($maxrate * $flattime) - int($maxrate * ($flattime - $client->irtimediff));
+
 		} else {
 			#number of repeats is the expected integer number of repeats for the current time
 			#minus the expected integer number of repeats for the last ir time.
 			return int(accelCount($holdtime,$accel)) - int(accelCount($holdtime - $client->irtimediff,$accel));
 		}
+
 	} else {
 		return int($maxrate * $holdtime) - int($maxrate * ($holdtime - $client->irtimediff));
 	}
@@ -570,6 +619,7 @@ sub holdTime {
 	if ($client->lastirtime ==  0) { return 0;}
 
 	my $holdtime = $client->lastirtime - $client->startirhold;
+
 	if ($holdtime < 0) {
 		$holdtime += 0xffffffff / $client->ticspersec();
 	}
