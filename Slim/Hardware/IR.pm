@@ -243,7 +243,7 @@ sub loadMapFile {
 	my $path = -r $mapfile ? $mapfile : IRPath($mapfile);
 	$::d_ir && msg("opening map file $path\n");
 	if (-r $path) {
-		delete $irMap{$path};
+		delete $irMap{$mapfile};
 		open(MAP, $path);
 		while (<MAP>) {
 			if (/\[(.+)\]/) {
@@ -257,10 +257,10 @@ sub loadMapFile {
 			next unless length;	#anything left?
 			my ($buttonName, $function) = split(/\s*=\s*/, $_, 2);
 			unless ($buttonName =~ /(.+)\.\*/) {
-				$irMap{$path}{$mode}{$buttonName} = $function;
+				$irMap{$mapfile}{$mode}{$buttonName} = $function;
 			} else {
 				foreach my $style (@buttonPressStyles) {
-					$irMap{$path}{$mode}{$1 . $style} = $function unless exists($irMap{$path}{$mode}{$1 . $style}) ;
+					$irMap{$mapfile}{$mode}{$1 . $style} = $function unless exists($irMap{$mapfile}{$mode}{$1 . $style}) ;
 				}
 			}
 		}
@@ -272,11 +272,11 @@ sub loadMapFile {
 
 sub loadIRFile {
 	my $irfile = shift;
-	$irfile = -r $irfile ? $irfile : IRPath($irfile);
+	my $irpath = -r $irfile ? $irfile : IRPath($irfile);
 	$::d_ir && msg("opening IR file $irfile\n");
-	if (-r $irfile) {
+	if (-r $irpath) {
 		delete $irCodes{$irfile};
-		open(IRCODES, $irfile);
+		open(IRCODES, $irpath);
 		while (<IRCODES>) {
 			chomp; 			# no newline
 			s/^\s+//;		# no leading white
@@ -303,11 +303,11 @@ sub lookup {
 
 	if (defined $code) {
 	
-		my %enabled = %{irfiles()};
+		my %enabled = %irCodes;
+		
 		for (Slim::Utils::Prefs::clientGetArray($client,'disabledirsets')) {delete $enabled{$_}};
 		
 		for my $irset (keys %enabled) {
-			$irset = -r $irset ? $irset : IRPath($irset);
 			if (defined $irCodes{$irset}{$code}) {
 				$::d_ir && msg("found button $irCodes{$irset}{$code} for $code\n");
 				$code = $irCodes{$irset}{$code};
@@ -335,7 +335,6 @@ sub lookupFunction {
 	$mode = Slim::Buttons::Common::mode($client) unless defined($mode);
 
 	my $map = Slim::Utils::Prefs::clientGet($client,'irmap');
-	$map = -r $map ? $map : IRPath($map);
 
 	assert($client);
 	assert($map);
