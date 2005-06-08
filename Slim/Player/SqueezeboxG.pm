@@ -889,7 +889,7 @@ sub endAnimation {
 	if ($delay) {
 		$client->animateState(2);
 		$client->updateMode(1);
-		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $delay, \&update);
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $delay, \&update, $client->renderCache());
 	} else {
 		$client->animateState(0);
 		$client->updateMode(0);
