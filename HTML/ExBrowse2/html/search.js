@@ -1,12 +1,12 @@
 var searchInProgress = 0;
-var xslp;
+var xslp, searchreq;
 
 var forcejs = 0;
 
-function loadxslhandler(req, url) {
+function loadxslhandler(req) {
 	if (XSLTProcessor) {
 		xslp = new XSLTProcessor();
-		xslp.importStylesheet(req.responseXML);
+		xslp.importStylesheet(req.xml);
 	}
 }
 
@@ -39,10 +39,10 @@ function doTransform(rxml) {
 	return output;
 }
 
-function searchhandler(req, url) {
+function searchhandler(req) {
 	searchInProgress = 0;
 	document.getElementById("activesearch").style.display = "block";
-	rxml = req.responseXML;
+	rxml = req.xml;
 
 	asearchdiv = document.getElementById("activesearch");
 
@@ -61,12 +61,13 @@ function searchsend() {
 	try {
 		searchtext = document.getElementById('searchquery').value;
 		if (searchtext.length > 2) {
-			postback("livesearch.xml?xmlmode=1&query=" + searchtext, searchhandler);
+			searchreq.submit(searchtext);
 		} else {
 			searchInProgress = 0;
 			document.getElementById("activesearch").style.display = "none";
 		}
 	} catch (err) {
+		alert(err);
 	}
 	return false;
 }
@@ -79,4 +80,13 @@ function searchkey() {
 	return true;
 }
 
-postback("html/search.xsl", loadxslhandler);
+function searchinit() {
+	searchreq = JXTK.Backend().createBackend(webroot + 'livesearch.xml?xmlmode=1&query=');
+	searchreq.addHandler(searchhandler);
+
+	var xslreq = JXTK.Backend().createBackend(webroot + 'html/search.xsl');
+	xslreq.addHandler(loadxslhandler);
+	xslreq.submit("", true);
+}
+
+searchinit();

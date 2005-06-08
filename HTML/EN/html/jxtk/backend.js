@@ -14,8 +14,12 @@ JXTK._BackendFactory = {
 	reqInProgress : 0,
 	requests : new Array(),
 	reqTimeout : null,
+	reloadTrigger : null,
 	lostContact : 0,
-	contactTimeout : 10000
+	errorCount : 0,
+	contactTimeout : 5000,	// Lost contact after waiting 5 seconds for a response
+	errorThresh : 2,	// Lost contact after 2 consecutive XMLHTTPRequest errors
+	reloadDelay : 5000	// Reload 5 seconds after losing contact
 }
 
 _JXTKBackend.prototype = {
@@ -65,15 +69,17 @@ function _JXTKBackendRequestHandler(request) {
 
 	if (request.xmlreq.readyState == 4) {
 		if (request.xmlreq.status != 200) {
-			alert('Error loading postback: ' + request.xmlreq.status);
+			if (request.xmlreq.status == undefined) {
+				factory.errorCount++;
+				if (factory.errorCount >= factory.errorThresh) _JXTKBackendTimeout();
+			}
+			// alert('Error loading postback: ' + request.xmlreq.status);
 			return false;
 		}
 
+		factory.errorCount = 0;
+
 		clearTimeout(backend.factory.reqTimeout);
-		if (backend.factory.lostContact) {
-// XXX FIXME: Do something better than a dumb reload when we lose contact with the server.
-			window.location.reload(true);
-		}
 		
 		if (factory.requests.length > 0) {
 
@@ -162,7 +168,11 @@ function _JXTKBackendCallHandlers(request) {
 
 
 function _JXTKBackendTimeout() {
-	lostContact = 1;
+	JXTK.Backend().lostContact = 1;
+
+	setTimeout(function() { window.location.reload(true); }, JXTK.Backend().reloadDelay);
+	
+	if (JXTK.Backend().reloadTrigger) JXTK.Backend().reloadTrigger();
 }
 
 

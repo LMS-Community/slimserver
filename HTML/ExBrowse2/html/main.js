@@ -13,7 +13,13 @@ var scrollcurrent = "";
 
 var currentPlayer;
 
+function displayreload() {
+	document.getElementById("loading").style.display = "block";
+	document.getElementById("loading").firstChild.innerHTML = "Lost connection, reloading...";
+}
+
 function mainload() {
+	JXTK.Backend().reloadTrigger = displayreload;
 	document.getElementById("loading").style.display = "block";
 	setTimeout(continueload, 100);
 }
@@ -58,4 +64,8 @@ function scrollfix(divname, scrollbase) {
 
 function handlekey() {
 	// XXX FIXME: the iframe's onkeypress event will call this. Just a stub until keyboard shortcuts are done.
+}
+
+function abortkey() {
+	return true;
 }
