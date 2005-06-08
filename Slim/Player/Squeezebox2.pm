@@ -272,7 +272,7 @@ sub drawFrameBuf {
 	my $parts = shift;
 	my $transition = shift || 'c';
 	my $param = shift || 0;
-bt();
+
 	if ($client->opened()) {
 		# for now, we'll send a visu packet with each screen update.	
 		$client->visualizer();

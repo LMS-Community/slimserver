@@ -258,16 +258,6 @@ sub removeMultipleTracks {
 	refreshPlaylist($client);
 }
 
-sub forgetClient {
-	my $client = shift;
-
-	# clear out the playlist
-	Slim::Control::Command::execute($client, ["playlist", "clear"]);
-	
-	# trying to play will close out any open files.
-	Slim::Control::Command::execute($client, ["play"]);
-}
-
 sub refreshPlaylist {
 	my $client = shift;
 	my $index = shift;
