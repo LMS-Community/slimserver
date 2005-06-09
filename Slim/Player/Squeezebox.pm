@@ -366,7 +366,7 @@ sub upgradeFirmware_SDK5 {
 				
 		Slim::Display::Display::progressBar($client, $client->displayWidth(), 1)
 	);
-	$client->sendFrame('updn'); # upgrade done
+	$client->sendFrame('updn',\(' ')); # upgrade done
 
 	$::d_firmware && msg("Firmware updated successfully.\n");
 	
