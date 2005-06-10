@@ -953,13 +953,18 @@ sub generateHTTPResponse {
 		}
 	}
 
-	# for our static content
-	$response->last_modified($mtime) if defined $mtime;
-
 	# Create an ETag based on the mtime, file size and inode of the
 	# content. This will allow us us to send back 304 (Not Modified)
 	# headers. Very similar to how Apache does it.
-	{
+	#
+	# ETags can and should get smarter with our dynamic data - because we
+	# know when it was updated, we can change the ETag. Until that
+	# happens, only enable it for static content - ie: when an mtime exists.
+	if (defined $mtime) {
+
+		# for our static content
+		$response->last_modified($mtime) if defined $mtime;
+
 		my @etag = ();
 
 		$size ||= length($$body);
