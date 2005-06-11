@@ -3145,7 +3145,7 @@ sub fillPluginsList {
 	my $pluginlistref = getCategoryPlugins($client, $category);
 	my $i = 0;
 
-	for my $plugin (sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref})) {	
+	for my $plugin (sort {uc($pluginlistref->{$a}) cmp uc($pluginlistref->{$b})} (keys %{$pluginlistref})) {	
 		if ((exists $paramref->{"pluginlist$i"} && $paramref->{"pluginlist$i"} == (exists $plugins{$plugin} ? 0 : 1))) {
 			delete $paramref->{"pluginlist$i"};
 		}
@@ -3164,9 +3164,10 @@ sub processPluginsList {
 	Slim::Utils::Prefs::delete('disabledplugins');
 
 	my $pluginlistref = getCategoryPlugins($client, $category);
+	my @sorted = (sort {uc($pluginlistref->{$a}) cmp uc($pluginlistref->{$b})} (keys %{$pluginlistref}));
 
 	no strict 'refs';
-	for my $plugin (sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref})) {
+	for my $plugin (@sorted) {
 		if (defined $paramref->{"pluginlist$i"}) {
 			if ($paramref->{"pluginlist$i"} && UNIVERSAL::can("Plugins::$plugin","initPlugin")) {
 				&{"Plugins::" . $plugin . "::initPlugin"};
@@ -3200,7 +3201,7 @@ sub processPluginsList {
 	$i = 0;
 	# refresh the list of plugins as some of them might have been disable during intialization
 	%plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
-	for my $plugin (sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref})) {	
+	for my $plugin (@sorted) {	
 		if (exists $plugins{$plugin} && $plugins{$plugin}) {
 			$paramref->{"pluginlist$i"} = 0;
 		}
@@ -3217,7 +3218,7 @@ sub getPluginState {
 	}
 
 	my $pluginlistref = getCategoryPlugins($client, $category);
-	return $pluginlistref->{(sort {$pluginlistref->{$a} cmp $pluginlistref->{$b}} (keys %{$pluginlistref}))[$1]};
+	return $pluginlistref->{(sort {uc($pluginlistref->{$a}) cmp uc($pluginlistref->{$b})} (keys %{$pluginlistref}))[$1]};
 }
 
 

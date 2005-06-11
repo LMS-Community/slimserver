@@ -456,6 +456,7 @@ sub elemLookup {
 		my $discCount = $infoHashref->{"DISCC"};
 		return undef if defined $discCount and $discCount == 1;
 	}
+	return undef if defined $infoHashref->{$element} and Slim::Utils::Strings::stringExists("NO_".$element) and $infoHashref->{$element} eq string("NO_".$element);
 
 	return $infoHashref->{$element};
 }
