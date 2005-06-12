@@ -116,6 +116,17 @@ function _JXTKBackendRequest(backend, args, sync) {
 	this.url = backend.baseurl + backend.globalArg;
 	if (args) this.url += args;
 
+	var ua = navigator.userAgent;
+	if (ua.indexOf("AppleWebKit/")) {
+		var wkversion = ua.substring(ua.indexOf("AppleWebKit/") + 12);
+		wkversion = wkversion.substring(0, wkversion.indexOf(" "));
+		if (wkversion <= 412 && wkversion > 126) {
+			this.url += '&safariworkaround=' + Date.parse(new Date); 
+		} else {
+			alert('ok');
+		}
+	}
+
 	try {
 		if (window.ActiveXObject) {
 			this.xmlreq = new ActiveXObject("Microsoft.XMLHTTP");
