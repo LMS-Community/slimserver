@@ -27,6 +27,9 @@
 	determine, for example, the availability of the commands described here.</li>
 <li>Changed &quot;<a href="#rescan">rescan</a>&quot; command to add a query mode returning if a scan is
 	in progress.</li>
+<li>Slightly changed the &quot;<a href="#status">status</a>&quot; query to only
+	repeat playlist information in the &quot;current&quot; mode and to be
+	smarter about repeating when shuffling is on.</li>
 <li>Removed field &quot;coverThumb&quot; in all queries returning song
 	information to align data with SlimServer behaviour.</li>
 </ul>
@@ -397,7 +400,7 @@ already synced with this player by passing in a &quot;?&quot; parameter.  Multip
 </blockquote>
 
 <br><p><strong><code>&lt;playerid&gt; rate &lt;rate|?&gt;</code></strong></p>
-<p>The &quot;rate&quot; command returns or sets the current play rate for the player.</p>
+<p>The &quot;rate&quot; command returns or sets the current play rate for the player. 1 is normal, 2 is 2x fast forward, 0 is paused, -1 is rewind, etc.</p>
 <p> Example: </p>
 <blockquote> 
   <p>Request: &quot;04:20:00:12:23:45 rate ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 rate 1&lt;LF&gt;&quot;</p>
@@ -923,7 +926,7 @@ preferences values.</p>
 <p>Example:</p>
 <blockquote> 
   <p> Request: &quot;songinfo 0 6 url:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%2520Outside%2520Alone.mp3&lt;LF&gt;&quot;<br>
-  	 Response: &quot;songinfo 0 6 url:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%2520Outside%2520Alone.mp3 count:17 
+  	 Response: &quot;songinfo 0 6 url:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%2520Outside%2520Alone.mp3 count:6 
   	 title:Left%20Outside%20Alone genre:Pop artist:Anastacia composer:D.%20Austin/G.%20Ballard album:Anastacia duration:257.488975&lt;LF&gt;&quot;</p>
 </blockquote>
 
@@ -1416,7 +1419,12 @@ and saves in the top level of the playlists directory.</p>
 
 <br><p id="status"><strong><code>&lt;playerid&gt; status &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
 <p>The &quot;status&quot; command returns the complete status about a given player, including the current playlist. Set the &lt;start&gt; parameter
-to &quot;-&quot; to have the command return the playlist data starting from the current song.</p>
+to &quot;-&quot; to get the playlist data starting from the current song. <br>
+In this &quot;curent&quot; mode and if repeat is on, SlimServer will attempt to return &lt;itemsPerResponse&gt;
+elements, by repeating the playlist at most once, unless shuffling is on and SlimServer is configured to re-shuffle the playlist at each loop (in which
+case it is impossible to predict the song following the last one in the playlist until this last song has finished playing).<br>
+Similarly, in the &quot;curent&quot; mode, if repeat is one, only the current song is returned, regardless of the value
+of &lt;itemsPerResponse&gt;.</p>
 <p>Accepted tagged parameters:</p>
 <table border="0" spacing="50">
 	<tr>

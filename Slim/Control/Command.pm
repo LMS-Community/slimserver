@@ -427,6 +427,7 @@ sub execute {
  		}
 
 		my $results = $ds->find($label, $find, $sort);
+		
 		my $count   = scalar @$results;
 
  		push @returnArray, "count:$count";
@@ -1523,7 +1524,7 @@ sub execute {
  			if ($power) {
  			
  				#push @returnArray, "player_mode:".Slim::Buttons::Common::mode($client);
- 		    		push @returnArray, "mode:". Slim::Player::Source::playmode($client);
+ 		    	push @returnArray, "mode:". Slim::Player::Source::playmode($client);
 
  				if (Slim::Player::Playlist::song($client)) { 
 					my $track = $ds->objectForUrl(Slim::Player::Playlist::song($client));
@@ -1586,7 +1587,7 @@ sub execute {
  				}
  				
  				# if repeat is 1 (song) and modecurrent, then show the current song
- 				if ($modecurrent && ($repeat == 1)) {
+ 				if ($modecurrent && ($repeat == 1) && $p2) {
 
  					push @returnArray, "playlist index:".($idx);
  					push @returnArray, pushSong(Slim::Player::Playlist::song($client, $idx), $tags);	
@@ -1611,7 +1612,14 @@ sub execute {
  							::idleStreams() ;
  						}
  						
- 						if (($repeat == 2) && ($shuffle == 0) && ($count < scalar($p2))) {
+ 						my $repShuffle = Slim::Utils::Prefs::get('reshuffleOnRepeat');
+ 						my $canPredictFuture = ($repeat == 2)  			# we're repeating all
+ 												&& 						# and
+ 												(	($shuffle == 0)		# either we're not shuffling
+ 													||					# or
+ 													(!$repShuffle));	# we don't reshuffle
+ 						
+ 						if ($modecurrent && $canPredictFuture && ($count < scalar($p2))) {
 
  							# wrap around the playlist...
  							($valid, $start, $end) = normalize(0, (scalar($p2) - $count), $songCount);		
