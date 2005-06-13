@@ -122,8 +122,6 @@ function _JXTKBackendRequest(backend, args, sync) {
 		wkversion = wkversion.substring(0, wkversion.indexOf(" "));
 		if (wkversion <= 412 && wkversion > 126) {
 			this.url += '&safariworkaround=' + Date.parse(new Date); 
-		} else {
-			alert('ok');
 		}
 	}
 
