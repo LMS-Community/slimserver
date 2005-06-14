@@ -976,14 +976,6 @@ sub musicmagic_mix {
 	my $itemnumber = 0;
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
-	if (defined $song && $song ne "" && Slim::Music::Info::isFileURL($song)) {
-		$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $song);
-	}
-
-	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_pwdlist.html", $params)};
-
-	my $track = $ds->objectForUrl($song);
-
 	if (defined $song && $song ne "") {
 
 		my ($obj) = $ds->objectForId('track', $song);
@@ -1052,6 +1044,8 @@ sub musicmagic_mix {
 	} else {
 		$mix = [];
 	}
+
+	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_pwdlist.html", $params)};
 
 	for my $item (@$mix) {
 
