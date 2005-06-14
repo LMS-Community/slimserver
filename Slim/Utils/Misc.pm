@@ -219,8 +219,7 @@ sub pathFromFileURL {
 		$::d_files && msg("Got $path from file url $url\n");
 
 		# only allow absolute file URLs and don't allow .. in files...
-		# make sure they are in the audiodir or are already in the library...		
-		if (($path !~ /[\/\\]\.\.[\/\\]/) || Slim::Music::Info::isCached($url)) {
+		if ($path !~ /[\/\\]\.\.[\/\\]/) {
 			$file = $uri->file();
 		} 
 

@@ -1180,11 +1180,7 @@ sub execute {
 
 						$contents = Slim::Music::Info::cachedPlaylist($p2);
 
-						if (defined($contents)) {
-
-							$contents = [Slim::Music::Info::cachedPlaylist($p2)];
-
-						} else {
+						if (!defined $contents) {
 
 							my $playlist_filehandle;
 

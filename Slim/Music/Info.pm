@@ -289,12 +289,6 @@ sub generatePlaylists {
 	$currentDB->generateExternalPlaylists();
 }
 
-sub isCached {
-	my $url = shift;
-
-	return defined($currentDB->objectForUrl($url, 0));
-}
-
 sub cacheItem {
 	my $url = shift;
 	my $item = shift;
@@ -964,14 +958,18 @@ sub cleanTrackNumber {
 }
 
 sub cachedPlaylist {
-	my $url = shift;
+	my $urlOrObj = shift || return;
 
-	my $song = $currentDB->objectForUrl($url, 0) || return undef;
+	# We might have gotten an object passed in for effeciency. Check for
+	# that, and if not, make sure we get a valid object from the db.
+	my $obj = ref $urlOrObj ? $urlOrObj : $currentDB->objectForUrl($urlOrObj, 0);
+
+	return undef unless $obj;
 
 	# We want any PlayListTracks this item may have
 	my @urls = ();
 
-	for my $track ($song->tracks()) {
+	for my $track ($obj->tracks()) {
 
 		if (defined $track && $track->can('url')) {
 
@@ -979,13 +977,13 @@ sub cachedPlaylist {
 
 		} else {
 
-			$::d_info && Slim::Utils::Misc::msg("Invalid track object for playlist $url !\n");
+			$::d_info && Slim::Utils::Misc::msgf("Invalid track object for playlist [%s]!\n", $obj->url);
 		}
 	}
 
 	# Otherwise, we're actually a directory.
 	if (!scalar @urls) {
-		@urls = $song->diritems();
+		@urls = $obj->diritems();
 	}
 
 	return \@urls if scalar(@urls);

@@ -228,12 +228,14 @@ sub addToList_run {
 				}
 			}
 
-			my $itemsToAddref = $curdirState->itemsToAdd;
+			my $itemsToAddref  = $curdirState->itemsToAdd;
+			my $cachedPlaylist = Slim::Music::Info::cachedPlaylist($curdirState->path);
 
-			if (Slim::Music::Info::isWinShortcut($curdirState->path) && 
-					Slim::Music::Info::isDir(@{Slim::Music::Info::cachedPlaylist($curdirState->path)})) {
-				$curdirState->path(@{Slim::Music::Info::cachedPlaylist($curdirState->path)});
+			if (Slim::Music::Info::isWinShortcut($curdirState->path) && Slim::Music::Info::isDir(@{$cachedPlaylist})) {
+
+				$curdirState->path(@{$cachedPlaylist});
 			}
+
 			# Special case if we're not recursing.
 			# Just iterate through the list and confirm that it's
 			# a known type. We then return immediately if not
@@ -545,10 +547,11 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 		# 315529200 is a bogus windows time value
 		my $obj = $ds->objectForUrl($playlistpath, 0);
+		my $pls = Slim::Music::Info::cachedPlaylist($obj);
 
 		if (Slim::Music::Info::isPlaylistURL($playlistpath) ||
 			(
-				defined Slim::Music::Info::cachedPlaylist($playlistpath) && 
+				defined $pls && 
 			  	(Slim::Music::Info::isDir($playlistpath) && 
 			  	($playlistpathAge == $obj->timestamp())) &&
 			  	($playlistpathAge != 315529200)
@@ -557,11 +560,9 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			
 			$::d_scan && msg("*** found a current entry for $playlisturl in playlist cache ***\n");
 
-			my $cacheentryref = Slim::Music::Info::cachedPlaylist( $playlistpath );
+			if ($pls) {
 
-			if ($cacheentryref) {
-
-				for my $entry (@$cacheentryref) {
+				for my $entry (@$pls) {
 
 					# pathFromFileURL above will turn utf8
 					# into the local code page. If that
