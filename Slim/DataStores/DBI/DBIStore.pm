@@ -465,9 +465,9 @@ sub updateOrCreate {
 		my $deferredAttributes;
 		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($url, $attributeHash, 0);
 
-		while (my ($key, $val) = each %$attributeHash) {
+		my %set = ();
 
-			my %set = ();
+		while (my ($key, $val) = each %$attributeHash) {
 
 			if (defined $val && exists $trackAttrs->{lc $key}) {
 
@@ -475,10 +475,10 @@ sub updateOrCreate {
 
 				$set{$key} = $val;
 			}
-
-			# Just make one call.
-			$track->set(%set);
 		}
+
+		# Just make one call.
+		$track->set(%set);
 
 		$self->_postCheckAttributes($track, $deferredAttributes, 0);
 
