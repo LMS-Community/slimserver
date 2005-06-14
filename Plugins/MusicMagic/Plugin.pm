@@ -197,7 +197,6 @@ sub playMix {
 	$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')));
 
 	$client->execute(["playlist", $playAddInsert, "listref", $client->param('listRef')]);
-	
 }
 
 sub addGroups {
@@ -974,14 +973,10 @@ sub musicmagic_mix {
 	my $player = $params->{'player'};
 	my $p0     = $params->{'p0'};
 
-	my $composerIn   = Slim::Utils::Prefs::get('composerInArtists');
-	
 	my $itemnumber = 0;
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
-	#$params->{'pwd_list'} = Slim::Web::Pages::generate_pwd_list($genre, $artist, $album, $player);
-
-	if (defined $song && $song ne "") {
+	if (defined $song && $song ne "" && Slim::Music::Info::isFileURL($song)) {
 		$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $song);
 	}
 
@@ -991,12 +986,17 @@ sub musicmagic_mix {
 
 	if (defined $song && $song ne "") {
 
-		my ($obj) = $ds->objectForUrl($song);
+		my ($obj) = $ds->objectForId('track', $song);
 
-		if ($obj && $obj->musicmagic_mixable()) {
+		if ($obj) {
 
-			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix(Slim::Utils::Misc::pathFromFileURL($song), 'song');
+			if ($obj->musicmagic_mixable) {
+
+				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
+				$mix = getMix(Slim::Utils::Misc::pathFromFileURL($obj->url), 'song');
+			}
+
+			$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $obj);
 		}
 
 	} elsif (defined $artist && $artist ne "" && !$album) {
@@ -1011,22 +1011,19 @@ sub musicmagic_mix {
 
 	} elsif (defined $album && $album ne "") {
 
-		my ($albobj) = $ds->objectForId('album', $album);
+		my ($obj) = $ds->objectForId('album', $album);
 		
-		my ($obj) = $artist eq "" ? 
-				$ds->find('track', {'album' => $albobj,}) : 
-				$albobj;
-
 		if ($obj && $obj->musicmagic_mixable()) {
 
-			my $artistObj = $ds->objectForId('contributor', $artist);
+			my $trackObj  = $obj->tracks->next;
+			my $artistObj = $trackObj->contributors->next;
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 			if ($artistObj) {
 
-				my $key = $artist eq "" ? 
-					Slim::Utils::Misc::pathFromFileURL($obj->{'url'}) : 
-					$artistObj->name()."\@\@".$obj->title();
+				my $key = !defined $artistObj ?
+					Slim::Utils::Misc::pathFromFileURL($trackObj->url) : 
+					join('@@', $artistObj->name, $obj->title);
 					
 				$mix = getMix($key, 'album');
 			}
@@ -1039,7 +1036,7 @@ sub musicmagic_mix {
 		if ($obj && $obj->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix($genre, 'genre');
+			$mix = getMix($obj->name, 'genre');
 		}
 	
 	} else {
