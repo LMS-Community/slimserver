@@ -25,6 +25,15 @@ function postback(url, handler) {
 		return;
 	}
 
+	var ua = navigator.userAgent;
+	if (ua.indexOf("AppleWebKit/")) {
+		var wkversion = ua.substring(ua.indexOf("AppleWebKit/") + 12);
+		wkversion = wkversion.substring(0, wkversion.indexOf(" "));
+		if (wkversion <= 412 && wkversion > 126) {
+			url += '&safariworkaround=' + Date.parse(new Date);
+		}
+	}
+
 	req.open("GET",  url);
 	req.onreadystatechange = function() { postback_handler(req, url, handler); } ;
 
