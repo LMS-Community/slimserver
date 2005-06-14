@@ -347,7 +347,7 @@ sub _find_columns {
 
 sub has_real_column {    # is really in the database
 	my ($class, $want) = @_;
-	return ($class->find_column($want) || return)->in_database;
+	return ($class->__grouper->find_column($want) || return);
 }
 
 sub data_type {
@@ -624,10 +624,11 @@ sub _create {
 
 	# Reinstate data
 	my ($real, $temp) = ({}, {});
-	foreach my $col (grep $self->_attribute_exists($_), $self->all_columns) {
-		($class->has_real_column($col) ? $real : $temp)->{$col} =
-			$self->_attrs($col);
+
+	foreach my $col (grep exists $self->{$_}, $self->all_columns) {
+		$real->{$col} = @{$self}{$col};
 	}
+
 	$self->_insert_row($real);
 
 	my @primary_columns = $class->primary_columns;
@@ -884,17 +885,17 @@ sub get {
 	my @cols = $self->_find_columns(@_);
 	return $self->_croak("Can't get() nothing!") unless @cols;
 
-	if (my @fetch_cols = grep !$self->_attribute_exists($_), @cols) {
+	if (my @fetch_cols = grep !exists $self->{$_}, @cols) {
 		$self->_flesh($self->__grouper->groups_for(@fetch_cols));
 	}
 
-	return $self->_attrs(@cols);
+	return @{$self}{@cols};
 }
 
 sub _flesh {
 	my ($self, @groups) = @_;
 	my @real = grep $_ ne "TEMP", @groups;
-	if (my @want = grep !$self->_attribute_exists($_),
+	if (my @want = grep !exists $self->{$_}, 
 		$self->__grouper->columns_in(@real)) {
 		my %row;
 		@row{@want} = $self->sql_Flesh(join ", ", @want)->select_row($self->id);
@@ -931,10 +932,7 @@ sub set {
 	return 1;
 }
 
-sub is_changed {
-	my $self = shift;
-	grep $self->has_real_column($_), keys %{ $self->{__Changed} };
-}
+*is_changed = \&any_changed;
 
 sub any_changed { keys %{ shift->{__Changed} } }
 

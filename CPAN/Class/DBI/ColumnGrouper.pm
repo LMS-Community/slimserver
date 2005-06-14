@@ -169,7 +169,7 @@ This returns a list of the columns in the Essential group.
 
 sub all_columns {
 	my $self = shift;
-	return grep $_->in_database, values %{ $self->{_allcol} };
+	return values %{ $self->{_allcol} };
 }
 
 sub primary {

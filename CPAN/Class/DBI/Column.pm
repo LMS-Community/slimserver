@@ -33,7 +33,7 @@ __PACKAGE__->mk_accessors(
 );
 
 use overload
-	'""'     => sub { shift->name_lc },
+	'""'     => sub { lc shift->{'name'} },
 	fallback => 1;
 
 =head2 new
@@ -55,7 +55,7 @@ sub new {
 	);
 }
 
-sub name_lc { lc shift->name }
+sub name_lc { lc shift->{'name'} }
 
 sub add_group {
 	my ($self, $group) = @_;
