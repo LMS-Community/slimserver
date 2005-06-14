@@ -225,7 +225,7 @@ sub init {
 				my $terms = shift;
 				my $type = shift || 'album';
 
-				return $ds->find($type, { "album.titlesort" => $terms }, 'album');
+				return $ds->find($type, { "album.titlesort" => $terms }, $type);
 			},
 
 			'listItem' => sub {
