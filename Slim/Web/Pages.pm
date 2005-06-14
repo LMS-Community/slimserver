@@ -82,19 +82,21 @@ sub init {
 				$form->{'text'} = Slim::Music::Info::standardTitle(undef, $item);
 
 				if (my ($contributor) = $item->contributors()) {
-					$form->{'artist'}   = $contributor->name();
-					$form->{'artistid'} = $contributor->id();
+
+					($form->{'artist'}, $form->{'artistid'}) = $contributor->get(qw(name id));
 				}
 
 				if (my $album = $item->album()) {
-					$form->{'album'}   = $album->title();
-					$form->{'albumid'} = $album->id();
+
+					($form->{'album'}, $form->{'albumid'}) = $album->get(qw(title id));
 				}
+
+				my ($id, $url) = $item->get(qw(id url));
 
 				$form->{'includeArtist'}       = ($webFormat !~ /ARTIST/);
 				$form->{'includeAlbum'}        = ($webFormat !~ /ALBUM/) ;
-				$form->{'item'}	               = $item->id;
-				$form->{'itempath'}	           = $item->url;
+				$form->{'item'}	               = $id;
+				$form->{'itempath'}	       = $url;
 				$form->{'itemobj'}             = $item;
 
 				my $Imports = Slim::Music::Import::importers();
@@ -107,7 +109,7 @@ sub init {
 				$form->{'mixerlinks'} = $additionalLinks{'mixer'};
 
 				if ($item->coverArt()) {
-					$form->{'coverArt'} = $item->id();
+					$form->{'coverArt'} = $id;
 				}
 			},
 
@@ -301,16 +303,16 @@ sub init {
 
 				$form->{'coverThumb'} = $item->artwork_path() || 0;
 
+				my ($track) = $item->tracks();
+
 				# add the year to artwork browsing if requested.
 				if (Slim::Utils::Prefs::get('showYear')) {
 
-					if (my ($track) = $item->tracks()) {
-						$form->{'year'} = $track->year();
-					}
+					$form->{'year'} = $track->year() if $track;
 				}
 
 				# Show the artist in the album view
-				if (Slim::Utils::Prefs::get('showArtist') && (my ($track) = $item->tracks())) {
+				if (Slim::Utils::Prefs::get('showArtist') && $track) {
 
 					my $artist = $track->artist();
 
@@ -483,7 +485,6 @@ sub init {
 	addLinks("help",{'FAQ' => "html/docs/faq.html"});
 	addLinks("help",{'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
 	addLinks("help",{'TECHNICAL_INFORMATION' => "html/docs/index.html"});
-
 }
 
 sub home {
@@ -953,6 +954,7 @@ sub browser_addtolist_done {
 
 			# Create objects, and read tags if needed.
 			my $obj = $ds->objectForUrl($item, 1, 1, 1) || next;
+			my $id  = $obj->id();
 
 			if (Slim::Music::Info::isList($obj)) {
 
@@ -965,19 +967,21 @@ sub browser_addtolist_done {
 				if (!$filesort) {
 
 					my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
+					my $artist    = ($obj->contributors)[0];
+					my $album     = $obj->album();
+
 					$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
 					$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
 
-
-					$list_form{'artist'} = $list_form{'includeArtist'} && ($obj->contributors)[0] ne $noArtist ? ($obj->contributors)[0] : undef;
-					$list_form{'album'}	= $list_form{'includeAlbum'} && $obj->album() ne $noAlbum ? $obj->album() : undef;
+					$list_form{'artist'} = $list_form{'includeArtist'} && ($artist ne $noArtist ? $artist : undef);
+					$list_form{'album'}  = $list_form{'includeAlbum'}  && ($album  ne $noAlbum  ? $album  : undef);
 
 				}
 
 				if (!defined $cover) {
 
 					if ($obj->coverArt('cover')) {
-						$params->{'coverArt'} = $obj->id();
+						$params->{'coverArt'} = $id;
 						$cover = 1;
 					}
 				}
@@ -985,7 +989,7 @@ sub browser_addtolist_done {
 				if (!defined $thumb) {
 
 					if ($obj->coverArt('thumb')) {
-						$params->{'coverThumb'} = $obj->id();
+						$params->{'coverThumb'} = $id;
 						$thumb = 1;
 					}
 				}
@@ -1003,7 +1007,7 @@ sub browser_addtolist_done {
 				$list_form{'title'} = Slim::Utils::Misc::utf8decode($list_form{'title'});
 			}
 
-			$list_form{'item'}	= $obj->id();
+			$list_form{'item'}	= $id;
 			$list_form{'itempath'}	= Slim::Utils::Misc::virtualToAbsolute($item);
 			$list_form{'itemobj'}	= $obj;
 			$list_form{'odd'}	= ($itemnumber + $offset) % 2;
@@ -1847,23 +1851,23 @@ sub _addSongInfo {
 	my ($client, $params, $getCurrentTitle) = @_;
 
 	# 
-	my $song = $params->{'itempath'};
-	my $id   = $params->{'item'};
+	my $url = $params->{'itempath'};
+	my $id  = $params->{'item'};
 
 	# kinda pointless, but keeping with compatibility
-	return unless $song || $id;
+	return unless $url || $id;
 
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 	my $track;
 
-	if ($song) {
+	if ($url) {
 
-		$track = $ds->objectForUrl($song, 1, 1);
+		$track = $ds->objectForUrl($url, 1, 1);
 
 	} elsif ($id) {
 
 		$track = $ds->objectForId('track', $id);
-		$song  = $track->url() if $track;
+		$url   = $track->url() if $track;
 	}
 
 	if ($track) {
@@ -1900,17 +1904,15 @@ sub _addSongInfo {
 			$params->{'coverThumb'} = $track->id;
 		}
 
-		if (Slim::Music::Info::isRemoteURL($track->url)) {
+		if (Slim::Music::Info::isRemoteURL($url)) {
 
-			$params->{'download'} = $track->url();
+			$params->{'download'} = $url;
 
 		} else {
 
 			$params->{'download'} = sprintf('%smusic/%d/download', $params->{'webroot'}, $track->id());
 		}
 	}
-	
-	$params->{'itempath'} = $song;
 }
 
 sub songInfo {

@@ -726,21 +726,35 @@ sub print {
 	}
 }
 
+sub find_or_create {
+	my $class    = shift;
+	my $hash     = ref $_[0] eq "HASH" ? shift: {@_};
+	my ($exists) = $class->_do_search("="  => $hash);
+	return defined($exists) ? $exists : $class->_create($hash);
+}
+
 # overload Class::DBI's get, because DBI doesn't support auto-flagging of utf8
 # data retrieved from the db, we need to do it ourselves.
 sub get {
-	my $self = shift;
-	my $attr = shift;
+	my ($self, @attrs) = @_;
 
-	my $data = $self->SUPER::get($attr, @_);
+	my @values = ();
+	my $i = 0;
 
-	# I don't like the hardcoded list - but we don't want to flag
-	# everything. url's will get munged otherwise. - dsully
-	if ($] > 5.007 && $attr =~ /^(?:(?:name|title)(?:sort)?|item|value|text)$/o) {
-		Encode::_utf8_on($data);
+	for my $value ($self->SUPER::get(@attrs)) {
+
+		# I don't like the hardcoded list - but we don't want to flag
+		# everything. url's will get munged otherwise. - dsully
+		if ($] > 5.007 && $attrs[$i] =~ /^(?:(?:name|title)(?:sort)?|item|value|text)$/o) {
+			Encode::_utf8_on($value);
+		}
+
+		push @values, $value;
+
+		$i++;
 	}
 
-	return $data;
+	return wantarray ? @values : $values[0];
 }
 
 # Walk any table and check for foreign rows that still exist.

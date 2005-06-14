@@ -107,29 +107,30 @@ sub accessor_name {
 	return $allColumns{$column};
 }
 
-# For now, only allow one attribute to be fetched at a time
 sub get {
-	my $self = shift;
-	my $attr = shift;
+	my ($self, @attrs) = @_;
 
-	my $item = $self->SUPER::get($attr);
+	my @items = $self->SUPER::get(@attrs);
 
-	if (!defined $item) {
+	for (my $i = 0; $i <= $#attrs; $i++) {
 
-		if ($attr =~ /^(COVER|COVERTYPE)$/) {
+		if (!defined $items[$i]) {
 
-			$loader->updateCoverArt($self->SUPER::get('url'), 'cover');
+			if ($attrs[$i] =~ /^(COVER|COVERTYPE)$/) {
 
-		} elsif ($attr =~ /^(THUMB|THUMBTYPE)$/) {
+				$loader->updateCoverArt($self->SUPER::get('url'), 'cover');
 
-			# defer thumb information until needed
-			$loader->updateCoverArt($self->SUPER::get('url'), 'thumb');
+			} elsif ($attrs[$i] =~ /^(THUMB|THUMBTYPE)$/) {
+
+				# defer thumb information until needed
+				$loader->updateCoverArt($self->SUPER::get('url'), 'thumb');
+			}
+
+			$items[$i] = $self->SUPER::get($attrs[$i]);
 		}
-
-		$item = $self->SUPER::get($attr);
 	}
 
-	return $item;
+	return wantarray ? @items : $items[0];
 }
 
 sub albumid {
@@ -239,14 +240,14 @@ sub bitrate {
 	my $self = shift;
 	my $only = shift;
 
-	my $bitrate = $self->get('bitrate');
+	my ($bitrate, $vbrScale) = $self->get(qw(bitrate vbr_scale));
 
 	# Source only wants the raw bitrate
 	if ($only) {
 		return $bitrate || 0;
 	}
 
-	my $mode = (defined $self->vbr_scale()) ? 'VBR' : 'CBR';
+	my $mode = defined $vbrScale ? 'VBR' : 'CBR';
 
 	if ($bitrate) {
 		return int ($bitrate/1000) . Slim::Utils::Strings::string('KBPS') . ' ' . $mode;

@@ -411,7 +411,7 @@ sub newTrack {
 
 	if ($self->_includeInTrackCount($track)) { 
 
-		my $time = $track->get('secs');
+		my $time = $columnValueHash->{'secs'};
 
 		if ($time) {
 			$self->{'totalTime'} += $time;
@@ -466,12 +466,18 @@ sub updateOrCreate {
 		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($url, $attributeHash, 0);
 
 		while (my ($key, $val) = each %$attributeHash) {
+
+			my %set = ();
+
 			if (defined $val && exists $trackAttrs->{lc $key}) {
 
 				$::d_info && Slim::Utils::Misc::msg("Updating $url : $key to $val\n");
 
-				$track->set(lc $key => $val);
+				$set{$key} = $val;
 			}
+
+			# Just make one call.
+			$track->set(%set);
 		}
 
 		$self->_postCheckAttributes($track, $deferredAttributes, 0);
@@ -648,7 +654,7 @@ sub cleanupStaleTrackEntries {
 	unless (Slim::Music::Info::isFileURL($url)) {
 		return 1;
 	}
-
+	
 	my $filepath = Slim::Utils::Misc::pathFromFileURL($url);
 
 	# Don't use _hasChanged - because that does more than we want.
@@ -945,10 +951,11 @@ sub setAlbumArtwork {
 	}
 
 	my $album    = $track->album();
+	my $albumId  = $album->id() if $album;
 	my $filepath = $track->url();
 
 	# only cache albums once each
-	if ($album && !exists $self->{'artworkCache'}->{$album->id}) {
+	if ($album && !exists $self->{'artworkCache'}->{$albumId}) {
 
 		if (Slim::Music::Info::isFileURL($filepath)) {
 			$filepath = Slim::Utils::Misc::pathFromFileURL($filepath);
@@ -956,7 +963,7 @@ sub setAlbumArtwork {
 
 		$::d_artwork && Slim::Utils::Misc::msg("Updating $album artwork cache: $filepath\n");
 
-		$self->{'artworkCache'}->{$album->id} = 1;
+		$self->{'artworkCache'}->{$albumId} = 1;
 
 		$album->artwork_path($track->id);
 		$album->update();
@@ -1185,6 +1192,8 @@ sub _postCheckAttributes {
 		return;
 	}
 
+	my ($trackId, $trackUrl) = $track->get(qw(id url));
+
 	# We don't want to add "No ..." entries for remote URLs, or meta
 	# tracks like iTunes playlists.
 	my $isLocal = Slim::Music::Info::isSong($track) && !Slim::Music::Info::isRemoteURL($track);
@@ -1290,7 +1299,7 @@ sub _postCheckAttributes {
 
 
 		# Used for keeping track of the album name.
-		my $basename = dirname($track->url);
+		my $basename = dirname($trackUrl);
 
 		# Go through some contortions to see if the album we're in
 		# already exists. Because we keep contributors now, but an
@@ -1341,13 +1350,13 @@ sub _postCheckAttributes {
 		# Associate cover art with this album, and keep it cached.
 		unless ($self->{'artworkCache'}->{$albumObj->id}) {
 
-			my $artworkPath = $self->_findCoverArt($track->url, $albumObj, $attributes);
+			my $artworkPath = $self->_findCoverArt($trackUrl, $albumObj, $attributes);
 
 			if ($artworkPath) {
 
 				$self->{'artworkCache'}->{$albumObj->id} = 1;
 
-				$albumObj->artwork_path($track->id);
+				$albumObj->artwork_path($trackId);
 			}
 		}
 
@@ -1374,13 +1383,16 @@ sub _postCheckAttributes {
 	my $albumName = defined($albumObj) ? $albumObj->titlesort : '';
 	my $primary_contributor = defined($contributors[0]) ? $contributors[0]->namesort :  defined($albumObj) ? $albumObj->contributors : '';
 
+	# Save 2 get calls
+	my ($titlesort, $tracknum) = $track->get(qw(titlesort tracknum));
+
 	my @keys = ();
 
 	push @keys, $primary_contributor || '';
 	push @keys, $albumName || '';
 	push @keys, $disc if defined($disc);
-	push @keys, sprintf("%03d", $track->tracknum) if defined($track->tracknum);
-	push @keys, $track->titlesort() || '';
+	push @keys, sprintf("%03d", $tracknum) if defined $tracknum;
+	push @keys, $titlesort || '';
 
 	$track->multialbumsortkey(join ' ', @keys);
 	$track->update();
@@ -1389,7 +1401,7 @@ sub _postCheckAttributes {
 	if ($attributes->{'COMMENT'}) {
 
 		Slim::DataStores::DBI::Comment->find_or_create({
-			'track' => $track->id,
+			'track' => $trackId,
 			'value' => $attributes->{'COMMENT'},
 		});
 	}

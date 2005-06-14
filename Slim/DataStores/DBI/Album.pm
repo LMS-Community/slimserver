@@ -29,9 +29,7 @@ sub title {
 		return $self->get('title');
 	}
 
-	return Slim::Music::Info::addDiscNumberToAlbumTitle(
-		$self->get('title'), $self->get('disc'), $self->get('discc')
-	);
+	return Slim::Music::Info::addDiscNumberToAlbumTitle( $self->get(qw(title disc discc)) );
 }
 
 1;

@@ -708,7 +708,7 @@ sub standardTitle {
 	my $fullpath  = ref $pathOrObj ? $track->url : $pathOrObj;
 	my $format;
 
-	if (isPlaylistURL($fullpath) || isList($fullpath)) {
+	if (isPlaylistURL($fullpath) || isList($track)) {
 
 		$format = 'TITLE';
 
@@ -745,7 +745,7 @@ sub standardTitle {
 		$ref = $display_cache{$client} = {
 			'fullpath' => $fullpath,
 			'format'   => $format,
-			'display'  => infoFormat($fullpath, $format, 'TITLE'),
+			'display'  => infoFormat($track, $format, 'TITLE'),
 		};
 	}
 
@@ -849,51 +849,56 @@ sub infoHash {
 	
 	my $cacheEntryHash = {};
 
-	foreach my $attribute (keys %{Slim::DataStores::DBI::Track->attributes}) {
+	# Make as few get requests as possible.
+	my $album  = $track->album();
+	my $artist = $track->artist();
+	my $genre  = $track->genre();
 
-		if ($attribute eq "album") {
+	# 
+	if ($album) {
+		$cacheEntryHash->{'ALBUM'} = $album->title();
 
-			my $album = $track->album() || next;
+		my @values = $album->get(qw(titlesort disc discc));
 
-			$cacheEntryHash->{"ALBUM"}     = $album->title;
-			$cacheEntryHash->{"ALBUMSORT"} = $album->titlesort;
-			$cacheEntryHash->{"DISC"}      = $album->disc;
-			$cacheEntryHash->{"DISCC"}     = $album->discc;
+		for my $attr (qw(ALBUMSORT DISC DISCC)) {
 
-			next;
-		}
+			my $value = shift @values;
 
-		if (my $item = $track->get($attribute)) {
-			$cacheEntryHash->{uc $attribute} = $item;
+			if (defined $value) {
+				$cacheEntryHash->{$attr} = $value;
+			}
 		}
 	}
 
-	if ($track) {
+	my @attributes = grep { !/^album$/ } keys %{Slim::DataStores::DBI::Track->attributes};
+	my @values     = $track->get(@attributes);
 
-		if ($track->artist()) {
-			$cacheEntryHash->{"ARTIST"}     = $track->artist()->name();
-			$cacheEntryHash->{"ARTISTSORT"} = $track->artist()->namesort();
+	for my $attr (@attributes) {
+		$cacheEntryHash->{uc $attr} = shift @values;
+	}
+
+	if ($artist) {
+		($cacheEntryHash->{"ARTIST"}, $cacheEntryHash->{"ARTISTSORT"}) = $artist->get(qw(name namesort));
+	}
+
+	for my $contributorType (qw(COMPOSER CONDUCTOR BAND)) {
+
+		# $contributor must be in array context, otherwise
+		# we'll get an iterator.
+		my $method        = lc($contributorType);
+		my ($contributor) = $track->$method();
+
+		if ($contributor) {
+			$cacheEntryHash->{$contributorType} = $contributor->name();
 		}
+	}
 
-		for my $contributorType (qw(COMPOSER CONDUCTOR BAND)) {
+	if ($genre) {
+		$cacheEntryHash->{"GENRE"}   = $genre->name();
+	}
 
-			# $contributor must be in array context, otherwise
-			# we'll get an iterator.
-			my $method        = lc($contributorType);
-			my ($contributor) = $track->$method();
-
-			if ($contributor) {
-				$cacheEntryHash->{$contributorType} = $contributor->name();
-			}
-		}
-
-		if ($track->genre()) {
-			$cacheEntryHash->{"GENRE"}      = $track->genre()->name();
-		}
-
-		if (my $comment = $track->comment()) {
-			$cacheEntryHash->{"COMMENT"}      = $track->comment();
-		}
+	if (my $comment = $track->comment()) {
+		$cacheEntryHash->{"COMMENT"} = $comment;
 	}
 
 	return $cacheEntryHash;
@@ -927,7 +932,7 @@ sub info {
 		return $album->title()     if $tagname eq 'ALBUM';
 		return $album->titlesort() if $tagname eq 'ALBUMSORT';
 		return $album->disc()      if $tagname eq 'DISC';
-		return $album->discc()    if $tagname eq 'DISCC';
+		return $album->discc()     if $tagname eq 'DISCC';
 	}
 
 	#FIXME
@@ -1054,24 +1059,30 @@ sub sortByTitlesAlg ($$) {
 	return ($j->[5] || 0) cmp ($k->[5] || 0);
 }
 
-#Sets up an array entry for performing complex sorts
+# Sets up an array entry for performing complex sorts
 sub getInfoForSort {
 	my $item = shift;
 
 	my $obj  = $currentDB->objectForUrl($item) || return [ $item, 0, undef, undef, undef, '', undef ];
 
-	my $list = isList($obj);
-
+	my $list  = isList($obj);
 	my $album = $obj->album();
+
+	my ($trackTitleSort, $trackNum) = $obj->get(qw(titlesort tracknum));
+	my ($albumTitleSort, $disc);
+
+	if (defined $album) {
+		($albumTitleSort, $disc) = $album->get(qw(titlesort disc));
+	}
 
 	return [
 		$item,
 		$list,
 		$list ? undef : $obj->artistsort(),
-		$list ? undef : (defined($album) ? $album->titlesort() : undef),
-		$list ? undef : $obj->tracknum(),
-		$obj->titlesort(),
-		$list ? undef : (defined($album) ? $album->disc() : undef)
+		$list ? undef : $albumTitleSort,
+		$list ? undef : $trackNum,
+		$trackTitleSort,
+		$list ? undef : $disc,
 	];
 }	
 
