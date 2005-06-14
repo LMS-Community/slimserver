@@ -16,7 +16,7 @@ use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
 
 # button functions for browse directory
-our @defaultSettingsChoices = qw(ALARM VOLUME REPEAT SHUFFLE TITLEFORMAT TEXTSIZE INFORMATION SETUP_SCREENSAVER);
+our @defaultSettingsChoices = qw(ALARM VOLUME REPEAT SHUFFLE TITLEFORMAT TEXTSIZE INFORMATION SETUP_SCREENSAVER SETUP_IDLESAVER SETUP_OFFSAVER);
 
 our @settingsChoices = ();
 our %current = ();
@@ -180,7 +180,32 @@ sub init {
 			'header' => 'SETUP_SCREENSAVER',
 			'stringHeader' => 1,
 			'initialValue' => 'screensaver',
-		}
+		},
+		
+		'settings/SETUP_OFFSAVER' => {
+			'useMode' => 'INPUT.List',
+			'listRef' => undef,
+			'externRef' => undef,
+			'stringExternRef' => 1,
+			'onChange' => \&setPref,
+			'pref' => "offsaver",
+			'header' => 'SETUP_OFFSAVER',
+			'stringHeader' => 1,
+			'initialValue' => 'offsaver',
+		},
+
+		'settings/SETUP_IDLESAVER' => {
+			'useMode' => 'INPUT.List',
+			'listRef' => undef,
+			'externRef' => undef,
+			'stringExternRef' => 1,
+			'onChange' => \&setPref,
+			'pref' => "idlesaver",
+			'header' => 'SETUP_IDLESAVER',
+			'stringHeader' => 1,
+			'initialValue' => 'idlesaver',
+		},
+
 	);
 }
 
@@ -236,14 +261,14 @@ sub settingsExitHandler {
 				$nextParams{'externRef'} = \@externTF;
 				$nextParams{'listIndex'} = Slim::Utils::Prefs::clientGet($client,'titleFormatCurr');	
 			}
-			if ($nextmenu eq 'settings/SETUP_SCREENSAVER') {
+			if ($nextmenu eq 'settings/SETUP_SCREENSAVER' || $nextmenu eq 'settings/SETUP_OFFSAVER' || $nextmenu eq 'settings/SETUP_IDLESAVER') {
 				my %hash = %{&Slim::Buttons::Common::hash_of_savers};
 				my @modes = keys %hash;
 				my @names = values %hash;
 				$nextParams{'listRef'} = \@modes;
 				$nextParams{'externRef'} = \@names;
 			}
-			if ($nextmenu eq 'settings/TEXTSIZE' || $nextmenu eq 'settings/OFFDISPLAYSIZE') {
+			if ($nextmenu eq 'settings/TEXTSIZE') {
 				my @text = (0..$client->maxTextSize);
 				$nextParams{'listRef'} = \@text;
 			}
