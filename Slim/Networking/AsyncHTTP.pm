@@ -174,7 +174,20 @@ sub readHeaderCallback {
 
 	my $state = ${*self}{'httpasync_state'};
 
-	my($code, $mess, %h) = $self->SUPER::read_response_headers;
+	my($code, $mess, %h);
+
+	# Wrap call to base in an eval to prevent dieing. An error
+	# should result in an error callback invocation for the next
+	# layer up.
+	eval {
+		($code, $mess, %h) = $self->SUPER::read_response_headers;
+	};
+
+	if ($@) {
+		$self->errorCallback();
+		return;
+	}
+
 	if ($code) {
 		# headers complete, remove ourselves from select loop
 		Slim::Networking::Select::addError($self);
