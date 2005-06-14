@@ -460,7 +460,7 @@ sub exportFunction {
 			$cacheEntry{'CT'}    = Slim::Music::Info::typeFromPath($songInfo{'file'},'mp3');
 			$cacheEntry{'TAG'}   = 1;
 			$cacheEntry{'VALID'} = 1;
-			$cacheEntry{'SECS'}  = $songInfo{'seconds'};
+			$cacheEntry{'SECS'}  = $songInfo{'seconds'} if $songInfo{'seconds'};
 		
 			if ($songInfo{'active'} eq 'yes') {
 				$cacheEntry{'MUSICMAGIC_MIXABLE'} = 1;
