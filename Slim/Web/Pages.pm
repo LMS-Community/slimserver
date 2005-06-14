@@ -61,6 +61,14 @@ sub init {
 				my $ds = shift;
 				my $level = shift;
 				my $findCriteria = shift;
+
+				# Don't filter by genre - it's unneccesary and
+				# creates a intensive query. We're already at
+				# the track level for an album. Same goes for artist.
+				delete $findCriteria->{'genre'};
+				delete $findCriteria->{'artist'};
+				delete $findCriteria->{'contributor_track.role'};
+
 				return $ds->find('track', $findCriteria, exists $findCriteria->{'album'} ? 'tracknum' : 'track');
 			},
 
@@ -203,6 +211,11 @@ sub init {
 				my $ds = shift;
 				my $level = shift;
 				my $findCriteria = shift;
+
+				# Don't filter by genre - it's unneccesary and
+				# creates a intensive query. We're already at
+				# the album level for an artist
+				delete $findCriteria->{'genre'};
 
 				return $ds->find('album', $findCriteria, 'album');
 			},
