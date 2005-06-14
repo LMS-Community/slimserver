@@ -2353,6 +2353,11 @@ sub simpleHeader {
 		$end = $itemCount - 1;
 	}
 
+	# Don't bother with a pagebar on a non-pagable item.
+	if ($itemCount < $count) {
+		return ($start, $end);
+	}
+
 	$$headerRef = ${Slim::Web::HTTP::filltemplatefile("pagebarheader.html", {
 		"start"        => $start,
 		"end"          => $end,
@@ -2382,6 +2387,12 @@ sub pageBar {
 
 	my $end = $start+$count-1;
 	if ($end >= $itemcount) { $end = $itemcount - 1;}
+
+	# Don't bother with a pagebar on a non-pagable item.
+	if ($itemcount < $count) {
+		return ($start, $end);
+	}
+
 	if ($itemcount > $count) {
 		$$headerref = ${Slim::Web::HTTP::filltemplatefile("pagebarheader.html", { "start" => ($start+1), "end" => ($end+1), "itemcount" => $itemcount, 'skinOverride' => $skinOverride})};
 
@@ -2451,6 +2462,11 @@ sub alphaPageBar {
 	$$startref = $start;
 
 	my $end = $itemcount - 1;
+
+	# Don't bother with a pagebar on a non-pagable item.
+	if ($itemcount < $maxcount) {
+		return ($start, $end);
+	}
 
 	if ($itemcount > ($maxcount / 2)) {
 
