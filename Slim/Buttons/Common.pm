@@ -326,8 +326,22 @@ our %functions = (
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
+		
 		unless (defined $buttonarg) { return; }
-		my $brightmode = 'power' . ($client->power() ? 'On' : 'Off') . 'Brightness';
+		
+		my $brightmode;
+		my $mode = Slim::Buttons::Common::mode($client);
+		
+		if ($client->power()) {
+			$brightmode = 'powerOnBrightness';
+			if ($mode eq Slim::Utils::Prefs::clientGet($client,'screensaver') ||
+					$mode eq Slim::Utils::Prefs::clientGet($client,'idlesaver')) {
+				$brightmode = 'idleBrightness';
+			}
+		} else {
+			$brightmode = 'powerOffBrightness';
+		}
+		
 		my $newBrightness;
 		if ($buttonarg eq 'toggle') {
 			$newBrightness = $client->brightness() - 1;
@@ -339,6 +353,7 @@ our %functions = (
 			if ($newBrightness > $client->maxBrightness()) { $newBrightness = $client->maxBrightness();}
 			if ($newBrightness < 0) { $newBrightness = 0;}
 		}
+
 		Slim::Utils::Prefs::clientSet($client, $brightmode, $newBrightness);
 	},
 	'playdisp' => sub  {
@@ -448,7 +463,6 @@ our %functions = (
 		}
 
 		$client->execute(["sleep", $sleepTime * 60]);
-		$client->currentSleepTime($sleepTime);
 	},
 	'power' => sub  {
 		my $client = shift;

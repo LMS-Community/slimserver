@@ -133,6 +133,8 @@ sub wakeup {
 	my $client = shift;
 	my $button = shift;
 	
+	return if ($button && $button =~ "brightness");
+	
 	Slim::Hardware::IR::setLastIRTime($client, Time::HiRes::time());
 
 	if (!Slim::Utils::Prefs::clientGet($client, 'autobrightness')) { return; };
@@ -142,7 +144,7 @@ sub wakeup {
 	if (Slim::Buttons::Common::mode($client) eq 'off' || !$client->power()) {
 		$curBrightnessPref = Slim::Utils::Prefs::clientGet($client, 'powerOffBrightness');
 	} else {
-		$curBrightnessPref = Slim::Utils::Prefs::clientGet($client, 'powerOnBrightness');		
+		$curBrightnessPref = Slim::Utils::Prefs::clientGet($client, 'powerOnBrightness');
 	} 
 	
 	if ($curBrightnessPref != $client->brightness()) {
@@ -158,7 +160,7 @@ sub wakeup {
 		$button ne 'brightness_toggle' &&
 		$client->brightness() == 0 &&
 		$client->power()) { 
-			Slim::Utils::Prefs::clientSet($client, 'powerOnBrightness', 1);		
+			Slim::Utils::Prefs::clientSet($client, 'powerOnBrightness', 1);
 	}
 } 
 
