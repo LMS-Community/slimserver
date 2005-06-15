@@ -295,8 +295,12 @@ our $setLoginMode = sub {
 	my $silent = $client->param( 'silent');
 
 	my $userID   = Slim::Utils::Prefs::get( 'plugin_live365_username' );
-	my $password = unpack( 'u', Slim::Utils::Prefs::get( 'plugin_live365_password' ) );
+	my $password = Slim::Utils::Prefs::get( 'plugin_live365_password' );
 	my $loggedIn = $live365->{$client}->isLoggedIn();
+
+	if (defined $password) {
+	    $password = unpack('u', $password);
+	}
 
 	if( $loggedIn ) {
 		$::d_plugins && msg( "Logging out $userID\n" );
