@@ -46,8 +46,7 @@
            		<option [% IF type == 'station' %]selected[% END %] value="station">[% "PLUGIN_LIVE365_SEARCH_E" | string %]</option>
            		<option [% IF type == 'location' %]selected[% END %] value="location">[% "PLUGIN_LIVE365_SEARCH_L" | string %]</option>
            		<option [% IF type == 'broadcaster' %]selected[% END %] value="broadcaster">[% "PLUGIN_LIVE365_SEARCH_H" | string %]</option>
-        	</select>
-        	[% "COLON" | string %]
+        	</select>[% "COLON" | string %]
 		<input type=text class="stdedit" name="query" value="[% query %]" size=30>
 		<input name="submit" type=submit class="stdclick" value="[% "SEARCH" | string %]"><p>
 

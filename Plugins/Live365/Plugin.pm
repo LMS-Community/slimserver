@@ -1199,9 +1199,11 @@ SETUP_PLUGIN_LIVE365_SORT_LISTENERS
 	ES	Número de Oyentes
 
 SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS
+	DE	Detaillierte Live365 Suchresultate
 	EN	Detailed Live365 search results
 
 SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS_DESC
+	DE	Zeige detaillierte Suchresultate, wenn im Live365 Webinterface gesucht wird. Dies beinhaltet Interpreten, Titel und Albuminformationen wenn nach einem dieser Kriterien gesucht wird. Dies kann die Suchresultate etwas unübersichtlicher machen.
 	EN	Show detailed results when searching Live365 through the web interface.  Includes artist, track, and album info when searching for one of these.  May make your search results longer and harder to browse.
 
 PLUGIN_LIVE365_GENRES
