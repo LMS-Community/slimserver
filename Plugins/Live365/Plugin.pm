@@ -33,6 +33,8 @@ use Plugins::Live365::Web;
 use Plugins::Live365::ProtocolHandler;
 use Plugins::Live365::Live365API;
 
+use constant ROWS_TO_RETRIEVE => 50;
+
 # {{{ Initialize
 our $live365;
 Slim::Player::Source::registerProtocolHandler("live365", "Plugins::Live365::ProtocolHandler");
@@ -525,6 +527,21 @@ our $setChannelMode = sub {
 		}
 		elsif (!defined($source) ||
 			   $source ne $live365->{$client}->getStationSource()) {
+
+			my $pointer = defined($source) ? $live365->{$client}->getChannelModePointer($source) || 0 : 0;
+
+			my $stationParams = $client->param('stationParams');
+
+			# If the last position within the station list is greater than
+			# the default number of rows to retrieve, get enough so that
+			# we have a non-sparse station array.
+			if ($pointer > ROWS_TO_RETRIEVE) {
+				$stationParams->{'rows'} = $pointer + ROWS_TO_RETRIEVE;
+			}
+			else {
+				$stationParams->{'rows'} = ROWS_TO_RETRIEVE;
+			}
+
 			$live365->{$client}->clearStationDirectory();
 			$live365->{$client}->loadStationDirectory(
 													  $source,
@@ -532,7 +549,7 @@ our $setChannelMode = sub {
 													  \&channelModeLoad,
 													  \&channelModeError,
 													  0,
-													  %{ $client->param('stationParams') });
+													  %$stationParams);
 			return;
 		}
 		channelModeLoad($client);

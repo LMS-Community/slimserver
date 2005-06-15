@@ -92,7 +92,7 @@ sub asyncHTTPRequest {
 													  $errorCallback,
 													  $callbackArgs);
 
-	my $stringArgs = join( '&', map { "$_=$args->{$_}" } grep { $args->{$_} } keys %$args );
+	my $stringArgs = join( '&', map { "$_=" . URI::Escape::uri_escape($args->{$_}) } grep { $args->{$_} } keys %$args );
 	my $url = $live365_base . $path . '?' . $stringArgs;
 	$http->get($url);
 
@@ -385,14 +385,13 @@ sub loadMemberPresets {
 		format		=> "xml"
 	);
 
-	$self->{stationSource} = $source;
-
 	$self->asyncHTTPRequest('/cgi-bin/api_presets.cgi',
 							\%args,
 							\&presetsLoadSub,
 							\&presetsErrorSub,
 							{self => $self,
 							 client => $client,
+							 source => $source,
 							 loadSub => $loadSub,
 							 errorSub => $errorSub,});
 }
@@ -401,6 +400,7 @@ sub presetsLoadSub {
 	my $http = shift;
 	my $self = $http->params('self');
 	my $client = $http->params('client');
+	my $source = $http->params('source');
 	my $loadSub = $http->params('loadSub');
 	my $errorSub = $http->params('errorSub');
 
@@ -425,6 +425,8 @@ sub presetsLoadSub {
 	} else {
 		$self->{Directory}->{LIVE365_STATION} = [];
 	}
+
+	$self->{stationSource} = $source;
 
 	&$loadSub($client);
 }
@@ -486,6 +488,7 @@ sub loadStationDirectory {
 							\&stationErrorSub,
 							{self => $self,
 							 client => $client,
+							 source => $source,
 							 loadSub => $loadSub,
 							 errorSub => $errorSub,});
 }
@@ -494,6 +497,7 @@ sub stationLoadSub {
 	my $http = shift;
 	my $self = $http->params('self');
 	my $client = $http->params('client');
+	my $source = $http->params('source');
 	my $loadSub = $http->params('loadSub');
 	my $errorSub = $http->params('errorSub');
 
@@ -518,6 +522,8 @@ sub stationLoadSub {
 	} else {
 		$self->{Directory}->{LIVE365_STATION} = [];
 	}
+
+	$self->{stationSource} = $source;
 
 	&$loadSub($client);
 }
