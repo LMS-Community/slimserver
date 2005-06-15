@@ -682,7 +682,11 @@ sub doLoginLogout() {
 	my $action = $params->{'action'};
 
 	my $userID   = Slim::Utils::Prefs::get( 'plugin_live365_username' );
-	my $password = unpack( 'u', Slim::Utils::Prefs::get( 'plugin_live365_password' ) );
+	my $password = Slim::Utils::Prefs::get( 'plugin_live365_password' );
+
+	if (defined $password) {
+		$password = unpack('u', $password);
+	}
 
 	if ($action eq 'in') {
 		if( $userID and $password ) {
