@@ -26,6 +26,9 @@ sub init {
 sub setMode {
 	my $client = shift;
 
+	# Stop the player before disconnecting
+	Slim::Control::Command::execute($client, ['stop']);
+
 	$client->lines(\&lines);
 
 	# we want to disconnect, but not immediately, because that
