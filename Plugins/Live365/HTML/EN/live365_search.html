@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <title>[% "PLUGIN_LIVE365_SEARCH" | string %]</title>
+    <link rel="stylesheet" href="slimserver.css">
+  </head>
+  <body bgcolor="#FFFFFF">
+
+    <p>
+
+    <h3>[% "PLUGIN_LIVE365_SEARCH" | string %]</h3>
+    <p>
+
+    <a href="[% webroot %]home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a> /
+    <a href="index.html?player=[% player | uri %]">[% "PLUGIN_LIVE365_MODULE_NAME" | string %]</a> /
+    <a href="search.html?player=[% player | uri %]&type=[% type %]">[% "PLUGIN_LIVE365_SEARCH" | string %]</a>
+
+	<form method="get" action="search.html">
+        <select name="type">
+           <option [% IF type == 'tac' %]selected[% END %] value="tac">[% "PLUGIN_LIVE365_SEARCH_TAC" | string %]</option>
+           <option [% IF type == 'artist' %]selected[% END %] value="artist">[% "PLUGIN_LIVE365_SEARCH_A" | string %]</option>
+           <option [% IF type == 'track' %]selected[% END %] value="track">[% "PLUGIN_LIVE365_SEARCH_T" | string %]</option>
+           <option [% IF type == 'cd' %]selected[% END %] value="cd">[% "PLUGIN_LIVE365_SEARCH_C" | string %]</option>
+           <option [% IF type == 'station' %]selected[% END %] value="station">[% "PLUGIN_LIVE365_SEARCH_E" | string %]</option>
+           <option [% IF type == 'location' %]selected[% END %] value="location">[% "PLUGIN_LIVE365_SEARCH_L" | string %]</option>
+           <option [% IF type == 'broadcaster' %]selected[% END %] value="broadcaster">[% "PLUGIN_LIVE365_SEARCH_H" | string %]</option>
+        </select>
+        [% "COLON" | string %]
+	<input type=text class="stdedit" name="query" value="[% query %]" size=35>
+	<input type=submit class="stdclick" value=[% "SEARCH" | string %]>
+	<input type=hidden value="[% player %]" name="player">
+	</form>
+
+    <p><hr>
+
+    <p>[% IF numresults != '-1' %]
+	[% IF type == 'tac' %][% "TACMATCHING" | string %][% END %]
+	[% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %]
+	[% IF type == 'track' %][% "TRACKSMATCHING" | string %][% END %]
+	[% IF type == 'cd' %][% "ALBUMSMATCHING" | string %][% END %]
+	[% IF type == 'station' %][% "STATIONSMATCHING" | string %][% END %]
+	[% IF type == 'location' %][% "LOCATIONSMATCHING" | string %][% END %]
+	[% IF type == 'broadcaster' %][% "BROADCASTERSMATCHING" | string %][% END %]
+       "[% query %]"[% "COLON" | string %][% numresults %]</p>
+    [% END %]
+
+[% IF errmsg %]
+	<p align="center"><b>[% errmsg | string %]</b></p>
+[% END %]
+
+	[% IF browselist_header %]<p>[% browselist_header %]</p>[% END %]
+    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+   <table border="0" cellspacing="0" cellpadding="4" width="100%">
+       [% browse_list %]
+    </table>
+   [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+
+  </body>
+</html>
+

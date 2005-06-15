@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <title>[% 'PLUGIN_LIVE365_MODULE_NAME' | string %]</title>
+    <link rel="stylesheet" href="slimserver.css">
+  </head>
+  <body bgcolor="#FFFFFF">
+
+    <p>
+
+    <h3>[% 'PLUGIN_LIVE365_MODULE_NAME' | string %]</h3><p>
+
+    <a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / <a href="index.html?player=[% player | uri %]">[% "PLUGIN_LIVE365_MODULE_NAME" | string %]</a>
+	[% pwd_list %]
+
+    <p><hr>
+
+	    <p><h3>[% listname %]</h3><p>
+
+	[% IF errmsg %]
+		<p align="center"><b>[% errmsg | string %]</b></p>
+	[% END %]
+	
+	<p>
+	[% IF browselist_header %][% browselist_header %][% END %]
+    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+    <table cellspacing="0" border="0" cellpadding="4" width="100%">
+      [% browse_list %]
+    </table>
+   [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+
+
+  </body>
+</html>

@@ -1,0 +1,62 @@
+ <html>
+  <head>
+    <title>[% "PLUGIN_LIVE365_MODULE_NAME" | string %]</title>
+    <link rel="stylesheet" href="slimserver.css">
+  </head>
+  <body bgcolor="#FFFFFF">
+
+    <p>
+
+    <h3>[% "PLUGIN_LIVE365_MODULE_NAME" | string %]</h3><p>
+
+    <a href="[% webroot %]home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a> / <a href="index.html?player=[% player | uri %]">[% "PLUGIN_LIVE365_MODULE_NAME" | string %]</a>
+
+	<p><hr></p>
+
+[% IF errmsg %]
+	<p align="center"><b>[% errmsg | string %]</b></p>
+[% END %]
+
+    <h4>Browse Music</h4><p>
+    <ul>
+    <li>
+ 		<a href="browse.html?type=presets&player=[% player | uri %]">[% "PLUGIN_LIVE365_PRESETS" | string %]</a>
+ 	</li>
+
+    <li>
+ 		<a href="browse.html?type=genres&id=root&player=[% player | uri %]">[% "PLUGIN_LIVE365_BROWSEGENRES" | string %]</a>
+ 	</li>
+
+    <li>
+ 		<a href="browse.html?type=picks&player=[% player | uri %]">[% "PLUGIN_LIVE365_BROWSEPICKS" | string %]</a>
+ 	</li>
+
+    <li>
+ 		<a href="browse.html?type=pro&player=[% player | uri %]">[% "PLUGIN_LIVE365_BROWSEPROS" | string %]</a>
+ 	</li>
+
+    <li>
+ 		<a href="browse.html?type=all&player=[% player | uri %]">[% "PLUGIN_LIVE365_BROWSEALL" | string %]</a>
+ 	</li>
+    </ul>
+
+    <h4>Search Music</h4><p>
+    <ul>
+    <li>
+ 		<a href="search.html?type=tac&player=[% player | uri %]">[% "PLUGIN_LIVE365_SEARCH" | string %]</a>
+ 	</li>
+    </ul>
+
+    <h4>Account</h4><p>
+    <ul>
+    <li>
+[% IF loggedin %]
+ 		<a href="loginout.html?action=out&player=[% player | uri %]">[% "PLUGIN_LIVE365_LOGOUT" | string %]</a>
+[% ELSE %]
+ 		<a href="loginout.html?action=in&player=[% player | uri %]">[% "PLUGIN_LIVE365_LOGIN" | string %]</a>
+[% END %]
+ 	</li>
+
+    </ul>
+  </body>
+</html>
