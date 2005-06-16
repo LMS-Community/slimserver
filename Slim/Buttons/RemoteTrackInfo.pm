@@ -46,7 +46,7 @@ sub setMode {
 
 	# is it a favorite?
 	# INPUT.Choice will display 'name' dynamically
-	push @list, {
+	unshift @list, {
 		value => $url,
 		name => sub {
 			my $client = shift;
