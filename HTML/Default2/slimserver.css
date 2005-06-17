@@ -27,6 +27,14 @@ table, tr, td, form {
 	padding: 0;
 }
 
+table.songinfotable tr td {
+	padding: 2px 3px 3px;
+}
+
+table.songinfotable tr td.fc {
+	white-space: nowrap;
+}
+
 body.mainpage {
 	overflow: hidden;
 }

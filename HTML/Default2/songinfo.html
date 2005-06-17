@@ -7,118 +7,133 @@
  <i>[% track.title | html %]</i></a> 
 </p>
 
-<table>
+<p>
+ <a onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks&amp;track=[%item%]&quot;)"
+  class="fakelink">[% "PLAY_THIS_SONG" | string %]</a>
+</p>
+<p>
+ <a onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks&amp;track=[%item%]&quot;)"
+   class="fakelink">[% "ADD_THIS_SONG_TO_PLAYLIST" | string %]</a>
+</p>
+
+<table class="songinfotable">
  <tr>
-  <td class="listing"> [% "TITLE" | string %][% "COLON" | string %] </td>
-  <td class="listing"> [% track.title | html %] </td>
+  <td class="fc"> [% "TITLE" | string %][% "COLON" | string %] </td>
+  <td> [% track.title | html %] </td>
  </tr>
 
-[% FOREACH role = track.contributorRoles.sort %]
-
-	[% contributors = track.contributorsOfType(role) %]
-	[% IF contributors %]
-		<tr>
-			<td class="listing"> [% role | upper | string %][% "COLON" | string %] </td>
-			<td class="listing">
-			[% FOREACH contributor = contributors.sort %]
-				<a onclick="browseurl('')">[% contributor.name | html %]</a>
-			[% END %]
-			</td>
-		</tr>
-	[% END %]
-
-[% END %]
+ [% FOREACH role = track.contributorRoles.sort %]
+  [% contributors = track.contributorsOfType(role) %]
+  [% IF contributors %]
+ <tr>
+  <td class="fc"> [% role | upper | string %][% "COLON" | string %] </td>
+  <td>
+   [% FOREACH contributor = contributors.sort %]
+    <a onclick="parent.browseurl('browsedb.html?hierarchy=artist,album,track&level=1&artist=[%contributor.id%]')">[% contributor.name | html %]</a>
+   [% END %]
+  </td>
+ </tr>
+  [% END %]
+ [% END %]
 
  [% IF track.album %] 
  <tr>
-  <td class="listing"> [% "ALBUM" | string %] </td>
-  <td class="listing">
-   <a onclick="browseurl('browsedb.html?hierarch=track&level=0&album=[% album %]')">[% track.album.title | html %]</a>
+  <td class="fc"> [% "ALBUM" | string %] </td>
+  <td>
+   <a onclick="parent.browseurl('browsedb.html?hierarchy=album,track&level=1&album=[% track.album.id %]')">[% track.album.title | html %]</a>
   </td>
  </tr>
  [% END %]
 
-[% genres = track.genres %]
-[% IF genres %]
+ [% IF track.genres %]
  <tr>
-  <td class="listing">[% "GENRE" | string %][% "COLON" | string %] </td>
-  <td class="listing">
-	[% FOREACH genre = genres %]
-   		<a onclick="browseid3('[% genre.id %]', '', '', '')">[% genre.name | html %]</a>
-	[% END %]
+  <td class="fc"> [% "GENRE" | string %][% "COLON" | string %] </td>
+  <td>
+   [% FOREACH genre = track.genres %]
+    <a onclick="parent.browseurl('browsedb.html?hierarchy=genre,artist,album,track&level=1&genre=[% genre.id %]')">[% genre.name | html %]</a>
+   [% END %]
   </td>
  </tr>
-[% END %]
+ [% END %]
 
-[% IF track.tracknum %] 
+ [% IF track.tracknum %] 
  <tr>
-  <td class="listing"> [% "TRACK" | string %][% "COLON" | string %] </td>
-  <td class="listing"> [% track.tracknum | html %] </td>
+  <td class="fc"> [% "TRACK" | string %][% "COLON" | string %] </td>
+  <td> [% track.tracknum | html %] </td>
  </tr>
- [% END %] [% IF track.duration %] 
+ [% END %]
+
+ [% IF track.content_type %] 
  <tr>
-  <td class="listing"> [% "LENGTH" | string %][% "COLON" | string %] </td>
-  <td class="listing"> [% track.duration | html %] </td>
+  <td class="fc"> [% "TYPE" | string %][% "COLON" | string %] </td>
+  <td> [% track.content_type | string %] </td>
  </tr>
- [% END %] [% IF track.year %] 
+ [% END %]
+
+ [% IF track.duration %] 
  <tr>
-  <td class="listing"> [% "YEAR" | string %][% "COLON" | string %] </td>
-  <td class="listing"> [% track.year | html %] </td>
+  <td class="fc"> [% "LENGTH" | string %][% "COLON" | string %] </td>
+  <td> [% track.duration | html %] </td>
  </tr>
- [% END %] [% IF comment %] 
+ [% END %]
+
+ [% IF track.year %] 
  <tr>
-  <td class="listing"> [% "COMMENT" | string %][% "COLON" | string %] </td>
-  <td class="listing"> [% comment | html %] </td>
+  <td class="fc"> [% "YEAR" | string %][% "COLON" | string %] </td>
+  <td> [% track.year | html %] </td>
  </tr>
- [% END %] [% IF filelength %] 
+ [% END %]
+
+ [% IF comment %] 
  <tr>
-  <td class="listing"> [% "FILELENGTH" | string %][% "COLON" | string %] </td>
-  <td class="listing"> [% filelength | html %] [% "BYTES" | string %] </td>
+  <td class="fc"> [% "COMMENT" | string %][% "COLON" | string %] </td>
+  <td> [% comment | html %] </td>
  </tr>
- [% END %] [% IF track.bitrate %] 
+ [% END %]
+
+ [% IF filelength %] 
  <tr>
-  <td class="listing"> [% "BITRATE" | string %][% "COLON" | string %] </td>
-  <td class="listing"> [% track.bitrate | html %] </td>
+  <td class="fc"> [% "FILELENGTH" | string %][% "COLON" | string %] </td>
+  <td> [% filelength | html %] [% "BYTES" | string %] </td>
  </tr>
- [% END %] [% IF track.tagversion %] 
+ [% END %]
+
+ [% IF track.bitrate %] 
  <tr>
-  <td class="listing"> [% "TAGVERSION" | string %][% "COLON" | string %] </td>
-  <td class="listing"> [% track.tagversion | html %] </td>
+  <td class="fc"> [% "BITRATE" | string %][% "COLON" | string %] </td>
+  <td> [% track.bitrate | html %] </td>
  </tr>
- [% END %] [% IF track.content_type %] 
+ [% END %]
+
+ [% IF track.tagversion %] 
  <tr>
-  <td class="listing"> [% "TYPE" | string %][% "COLON" | string %] </td>
-  <td class="listing"> [% track.content_type | string %] </td>
+  <td class="fc"> [% "TAGVERSION" | string %][% "COLON" | string %] </td>
+  <td> [% track.tagversion | html %] </td>
  </tr>
- [% END %]  [% IF url %] 
+ [% END %]
+
+ [% IF itempath %] 
  <tr>
-  <td class="listing"> [% "LOCATION" | string %][% "COLON" | string %] </td>
-  <td class="listing"> <a href="[% url | uri %]">[% itempath | html %]</a> </td>
+  <td class="fc"> [% "LOCATION" | string %][% "COLON" | string %] </td>
+  <td> [% itempath | unuri | utf8decode | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a> </td>
  </tr>
- [% END %] [% IF track.modificationTime %] 
+ [% END %]
+
+ [% IF track.modificationTime %] 
  <tr>
-  <td class="listing"> [% "MODTIME" | string %][% "COLON" | string %] </td>
-  <td class="listing"> [% track.modificationTime | html %] </td>
+  <td class="fc"> [% "MODTIME" | string %][% "COLON" | string %] </td>
+  <td> [% track.modificationTime | html %] </td>
  </tr>
- [% END %] [% IF track.coverArt('cover', 1) %] 
+ [% END %]
+
+ [% IF track.coverArt('cover', 1) %] 
  <tr>
-  <td class="listing" valign="top">[% "COVERART" | string %]</td>
-  <td class="listing">
+  <td class="fc" valign="top">[% "COVERART" | string %]</td>
+  <td>
    <a href="/music/[% track.id %]/cover.jpg" target="cover"><img src="/music/[% itempath | uri %]/cover.jpg"></a>
   </td>
  </tr>
  [% END %]
-</table>
-
-<table>
- <tr>
-  <td class="listing">
-   <img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks&amp;track=[%item%]&quot;)"
-   alt="Add" src="html/images/b/b_add.gif" width="13" height="13" border="0" hspace="0" class="fakelink"/>
-   <img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks&amp;track=[%item%]&quot;)"
-   alt="Play" src="html/images/b/b_play.gif" border="0" width="13" height="13" hspace="8" class="fakelink"/>
-  </td>
- </tr>
 </table>
 
 </body>

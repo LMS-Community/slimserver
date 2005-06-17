@@ -254,12 +254,9 @@ function doSelect(e) {
 	et = (e.target || e.srcElement);
 	if (!et) return;
 	if (et && et.parentNode && et.parentNode.parentNode) {
-		etpp = et.parentNode.parentNode;
-		if (etpp.parentNode.rowIndex) {
-			selIndex = etpp.parentNode.rowIndex;
-		} else {
-			selIndex = etpp.rowIndex;
-		}
+		if (et.nodeType == 3) etpp = et.parentNode.parentNode.parentNode;
+		else etpp = et.parentNode.parentNode;
+		selIndex = etpp.rowIndex;
 	} else {
 		return;
 	}
@@ -279,12 +276,9 @@ function doArtist(e) {
 	et = (e.target || e.srcElement);
 	if (!et) return;
 	if (et && et.parentNode && et.parentNode.parentNode) {
-		etpp = et.parentNode.parentNode;
-		if (etpp.parentNode.rowIndex) {
-			selIndex = etpp.parentNode.rowIndex;
-		} else {
-			selIndex = etpp.rowIndex;
-		}
+		if (et.nodeType == 3) etpp = et.parentNode.parentNode.parentNode;
+		else etpp = et.parentNode.parentNode;
+		selIndex = etpp.rowIndex;
 	} else {
 		return;
 	}
@@ -298,12 +292,9 @@ function doAlbum(e) {
 	et = (e.target || e.srcElement);
 	if (!et) return;
 	if (et && et.parentNode && et.parentNode.parentNode) {
-		etpp = et.parentNode.parentNode;
-		if (etpp.parentNode.rowIndex) {
-			selIndex = etpp.parentNode.rowIndex;
-		} else {
-			selIndex = etpp.rowIndex;
-		}
+		if (et.nodeType == 3) etpp = et.parentNode.parentNode.parentNode;
+		else etpp = et.parentNode.parentNode;
+		selIndex = etpp.rowIndex;
 	} else {
 		return;
 	}
