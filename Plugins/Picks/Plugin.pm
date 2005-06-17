@@ -40,12 +40,17 @@ my %mapping = (
 our %mainModeFunctions = (
    'play' => sub {
 	   my $client = shift;
-
+	   
 	   my $listIndex = $client->param( 'listIndex');
 	   my $stations = $client->param( 'stations');
-	   my $stationTitles = $client->param('listRef');
-	   
-       $client->showBriefly($client->string('CONNECTING_FOR'), $stationTitles->[$listIndex]);
+	   my $stationTitles = $client->param('listRef');  
+
+	   $client->showBriefly(
+			$client->renderOverlay($client->string('CONNECTING_FOR'), $stationTitles->[$listIndex], undef, Slim::Display::Display::symbol('notesymbol')),
+			undef,
+			1
+	   );
+
 	   $client->execute([ 'playlist', 'play', $stations->[$listIndex]] );
    },
    'add' => sub {
@@ -55,7 +60,12 @@ our %mainModeFunctions = (
 	   my $stations = $client->param( 'stations');
 	   my $stationTitles = $client->param('listRef');
 
-       $client->showBriefly($client->string('ADDING_TO_PLAYLIST'), $stationTitles->[$listIndex]);
+	   $client->showBriefly(
+			$client->renderOverlay($client->string('ADDING_TO_PLAYLIST'), Slim::Music::Info::standardTitle($client, $stations->[$listIndex]), undef, Slim::Display::Display::symbol('notesymbol')),
+			undef,
+			1
+	   );
+	   
 	   $client->execute([ 'playlist', 'add', $stations->[$listIndex]] );
    }
 );
@@ -162,7 +172,12 @@ our %detailsModeFunctions = (
 	   my $station = $client->param( 'stationURL');
 	   my $stationTitle = $client->param('header');
 
-       $client->showBriefly($client->string('CONNECTING_FOR'), $stationTitle);
+	   $client->showBriefly(
+			$client->renderOverlay($client->string('CONNECTING_FOR'), Slim::Music::Info::standardTitle($client, $station), undef, Slim::Display::Display::symbol('notesymbol')),
+			undef,
+			1
+	   );
+
 	   $client->execute(['playlist', 'clear']);
 	   $client->execute(['playlist', 'add', $station]);
 	   $client->execute(['play']);
@@ -173,7 +188,12 @@ our %detailsModeFunctions = (
 	   my $station = $client->param( 'stationURL');
 	   my $stationTitle = $client->param('header');
 
-       $client->showBriefly($client->string('ADDING_TO_PLAYLIST'), $stationTitle);
+	   $client->showBriefly(
+			$client->renderOverlay($client->string('ADDING_TO_PLAYLIST'), Slim::Music::Info::standardTitle($client, $station), undef, Slim::Display::Display::symbol('notesymbol')),
+			undef,
+			1
+	   );
+
 	   $client->execute(['playlist', 'add', $station]);
    }
 );

@@ -104,9 +104,23 @@ sub playOrAddCurrentStation {
 	my $stationURL = $live365->{$client}->getCurrentChannelURL();
 	$::d_plugins && msg( "Live365.ChannelMode URL: $stationURL\n" );
 
+	my $line1;
+	if ($play) {
+		$line1 = $client->string('CONNECTING_FOR');
+	}
+	else {
+		$line1 = $client->string('ADDING_TO_PLAYLIST');
+	}
+
+	my $title = $live365->{$client}->getCurrentStation()->{STATION_TITLE};
+	$client->showBriefly(
+		$client->renderOverlay($line1, $title, undef, Slim::Display::Display::symbol('notesymbol')),
+		undef,
+		1
+	);
+
 	Slim::Music::Info::setContentType($stationURL, 'mp3');
-	Slim::Music::Info::setTitle($stationURL, 
-		   $live365->{$client}->getCurrentStation()->{STATION_TITLE});
+	Slim::Music::Info::setTitle($stationURL, $title);
 
 	$play and $client->execute([ 'playlist', 'clear' ] );
 	$client->execute([ 'playlist', 'add', $stationURL ] );

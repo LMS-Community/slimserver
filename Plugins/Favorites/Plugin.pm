@@ -45,10 +45,22 @@ my %mainModeFunctions = (
 	   
 	   my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
 	   my $urls = Slim::Buttons::Common::param($client, 'urls');
+
+	   $client->showBriefly(sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $listIndex+1), Slim::Music::Info::standardTitle($client, $urls->[$listIndex]));
 	   
 	   $client->execute([ 'playlist', 'clear' ] );
 	   $client->execute([ 'playlist', 'add', $urls->[$listIndex]] );
 	   $client->execute([ 'play' ] );
+   },
+   'add' => sub {
+	   my $client = shift;
+
+	   my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
+	   my $urls = Slim::Buttons::Common::param($client, 'urls');
+
+	   $client->showBriefly(sprintf($client->string('PLUGIN_FAVORITES_ADDING'), $listIndex+1), Slim::Music::Info::standardTitle($client, $urls->[$listIndex]));  
+	   
+	   Slim::Control::Command::execute( $client, [ 'playlist', 'add', $urls->[$listIndex]] );
    },
 );
 
@@ -178,7 +190,7 @@ sub playFavorite {
 		$client->showBriefly(sprintf($client->string('PLUGIN_FAVORITES_NOT_DEFINED'), $digit));
 	} else {
 		$::d_favorites && msg("Favorites Plugin: playing favorite number $digit, " . $titles[$index] . "\n");
-		$client->showBriefly(sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $digit, $titles[$index]));
+		$client->showBriefly(sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $digit), $titles[$index]);
 		$client->execute(['playlist', 'clear']);
 		$client->execute(['playlist', 'add', $urls[$index]]);
 		$client->execute(['play']);
@@ -205,7 +217,6 @@ sub initPlugin {
 	Slim::Buttons::Common::setFunction('playFavorite', \&playFavorite);
 	Slim::Buttons::Common::setFunction('addFavorite', \&addFavorite);
 
-
 }
 
 
@@ -221,7 +232,10 @@ PLUGIN_FAVORITES_NOT_DEFINED
 
 PLUGIN_FAVORITES_PLAYING
 	DE	Spiele Favorit Nr. %s...
-	EN	Playing favorite #%s, %s
+	EN	Playing favorite #%s
+
+PLUGIN_FAVORITES_ADDING
+	EN	Adding favorite #%s
 ";}
 
 1;

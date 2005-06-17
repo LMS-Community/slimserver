@@ -113,12 +113,17 @@ our %functions = (
 	},
 	'play' => sub {
 		my $client = shift;
+		my $index = $current{$client} || 0;
 
-		my $url = getRadioIOURL($current{$client} || 0);
+		my $url = getRadioIOURL($index);
 
 		if (defined($url)) {
-			$client->showBriefly($client->string('CONNECTING_FOR'), $station_names[$current{$client}]);
-			
+			$client->showBriefly(
+				$client->renderOverlay($client->string('CONNECTING_FOR'), $station_names[$index], undef, Slim::Display::Display::symbol('notesymbol')),
+				undef,
+				1
+			);
+
 			$client->execute(['playlist', 'clear']);
 			$client->execute(['playlist', 'add', $url]);
 			$client->execute(['play']);
@@ -126,11 +131,17 @@ our %functions = (
 	},
 	'add' => sub {
 		my $client = shift;
+		my $index = $current{$client} || 0;
 		
-		my $url = getRadioIOURL($current{$client} || 0);
+		my $url = getRadioIOURL($index);
 
 		if (defined($url)) {
-			$client->showBriefly($client->string('ADDING_TO_PLAYLIST'), $station_names[$current{$client}]);
+			$client->showBriefly(
+				$client->renderOverlay($client->string('ADDING_TO_PLAYLIST'), $station_names[$index], undef, Slim::Display::Display::symbol('notesymbol')),
+				undef,
+				1
+			);
+
 			$client->execute(['playlist', 'add', $url]);
 		}
 	},
