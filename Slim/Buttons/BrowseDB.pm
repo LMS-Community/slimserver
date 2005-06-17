@@ -274,11 +274,6 @@ sub browsedbExitCallback {
 
 	# Set the last selection position within the list
 	my $listIndex = $client->param('listIndex');
-	my $selectionKey = $client->param('selectionKey');
-	
-	if (defined($selectionKey)) {
-		$client->lastID3Selection($selectionKey, $listIndex);
-	}
 
 	# Left means pop out of this mode
 	if ($exittype eq 'LEFT') {
@@ -564,10 +559,13 @@ sub setMode {
 		listRef => $items,
 		listIndex => $listIndex,
 		noWrap => (scalar(@$items) <= 1),
-		valueRef => \$client->curSelection($client->curDepth()),
 		callback => \&browsedbExitCallback,
 		externRef => \&browsedbItemName,
 		overlayRef => \&browsedbOverlay,
+		onChange => sub {
+			$_[0]->lastID3Selection($selectionKey,$_[1]);
+		},
+		onChangeArgs => 'CI',
 
 		# Parameters that reflect the state of this mode
 		hierarchy => $hierarchy,

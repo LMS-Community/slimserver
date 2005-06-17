@@ -35,13 +35,6 @@ sub init {
 			return $client->string($string);
 		},
 
-		'onChange' => sub {
-			my ($client, $value) = @_;
-			my $curMenu = $client->param('curMenu');
-			$client->curSelection($curMenu,$value);
-		},
-
-		'onChangeArgs' => 'CV',
 		'externRefArgs' => 'CV',
 		'stringExternRef' => 1,
 		'header' => undef,
@@ -254,7 +247,7 @@ sub setMode {
 	my %params = %defaultParams;
 	$params{'header'} = \&homeheader;
 	$params{'listRef'} = \@{$homeChoices{$client}};
-	$params{'valueRef'} = \$client->curSelection($client->curDepth());
+	$params{'valueRef'} = \${$client->curSelection()}{$client->curDepth()};
 	$params{'curMenu'} = $client->curDepth();
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
 }
@@ -365,7 +358,7 @@ sub homeExitHandler {
 			$params{'overlayRef'} = undef if scalar @{$params{'listRef'}} == 0;
 			$params{'curMenu'} = $client->curDepth();
 			
-			$params{'valueRef'} = \$client->curSelection($client->curDepth());
+			$params{'valueRef'} = \${$client->curSelection()}{$client->curDepth()};
 			# If the ExitHandler is changing, backtrack the pointer for when we return home.
 			if (exists $nextParams->{'callback'}) {$client->curDepth(getLastDepth($client));}
 			# merge next list params over the default params where they exist.
