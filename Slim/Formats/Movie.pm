@@ -121,8 +121,15 @@ sub getCoverArt {
 	my $tags = QuickTime::Movie::readUserData($file);
 
 	my $coverart;
-	
-	$coverart = $tags->{'covr'};
+
+	if (defined $tags && ref($tags) eq 'HASH') {
+
+		$coverart = $tags->{'covr'};
+
+	} else {
+
+		Slim::Utils::Misc::msg("Got invalid tag data back from file: [$file]\n");
+	}
 	
 	return $coverart;
 }
