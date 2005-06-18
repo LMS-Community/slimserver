@@ -186,7 +186,6 @@ sub initPlugin {
 
 	Slim::Music::Import::addImporter('ITUNES', {
 		'scan'  => \&startScan, 
-		'setup' => \&addGroups,
 		'reset' => \&resetState,
 	});
 
