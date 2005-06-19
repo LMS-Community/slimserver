@@ -662,6 +662,13 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			# convert the resulting string into the stream expected by the
 			# parsers.
 			my $playlist_str = $playlist_filehandle->content();
+
+			# Be sure to close the socket before reusing the
+			# scalar - otherwise we'll leave the socket in a
+			# CLOSE_WAIT state.
+			$playlist_filehandle->close;
+			$playlist_filehandle = undef;
+
 			$playlist_filehandle = IO::String->new($playlist_str);
 		}
 
@@ -671,6 +678,8 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		if (ref($playlist_filehandle) eq 'IO::String') {
 			untie $playlist_filehandle;
 		}
+
+		undef $playlist_filehandle;
 					
 		$::d_scan && msg("Scan::readList loaded playlist with $numitems items\n");
 	}

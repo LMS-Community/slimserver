@@ -240,7 +240,11 @@ sub request {
 
 	if ($redir) {
 		# Redirect -- maybe recursively?
+
+		# Close the existing handle and refcnt-- to avoid keeping the
+		# socket in a CLOSE_WAIT state and leaking.
 		$self->close();
+		undef $self;
 
 		$::d_remotestream && msg("Redirect to: $redir\n");
 
@@ -474,7 +478,6 @@ sub parseMetadata {
 	return undef;
 }
 
-
 sub title {
 	my $self = shift;
 
@@ -501,6 +504,31 @@ sub skipBack {
 	return 0;
 }
 
+sub DESTROY {
+	my $self = shift;
+ 
+	if ($::d_remotestream && defined ${*$self}{'url'}) {
+
+		my $class = ref($self);
+
+		Slim::Utils::Misc::msgf("%s - in DESTROY\n", $class);
+		Slim::Utils::Misc::msgf("%s About to close socket to: [%s]\n", $class, ${*$self}{'url'});
+	}
+
+	$self->close;
+}
+
+sub close {
+	my $self = shift;
+
+	# Remove the reference to ourselves that is the IO::Select handle.
+	if (defined $self && defined ${*$self}{'_sel'}) {
+		${*$self}{'_sel'}->remove($self);
+		${*$self}{'_sel'} = undef;
+	}
+
+	$self->SUPER::close;
+}
 
 sub requestString {
 	my $url = shift;
