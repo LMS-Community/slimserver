@@ -8655,9 +8655,7 @@ SQUEEZENETWORK
 	EN	SqueezeNetwork
 
 SQUEEZENETWORK_CONNECT
-	DE	Mit dem SqueezeNetwork verbinden
-	EN	Connect to SqueezeNetwork
-	FR	Connecter à SqueezeNetwork
+	EN	SqueezeNetwork
 
 SQUEEZENETWORK_CONNECTING
 	DE	Verbinde zum SqueezeNetwork...
