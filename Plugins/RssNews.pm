@@ -21,29 +21,23 @@ our %feed_urls;
 our %feed_names;
 our @feed_order;
 our %context;
-my $screensaver_mode = 0;
 
 # in screensaver mode, number of items to display per channel before switching
 my $screensaver_items_per_feed;
 
-# we need to limit the number of characters we scroll through, because the server could crash rendering on pre-SqueezeboxG displays.
-my $screensaver_chars_per_feed = 1024;
-
-# how long to scroll news before switching channels.
-my $screensaver_sec_per_channel = 0; # if 0, we use sec_per_letter instead
-my $screensaver_sec_per_letter = (1/6); # about 6 letters per second
-my $screensaver_sec_per_letter_double = (1/4); # When extra large fonts shown
+# we need to limit the number of characters we add to the ticker, because the server could crash rendering on pre-SqueezeboxG displays.
+my $screensaver_chars_per_item = 1024;
 
 # How to display items shown by screen saver.
 # %1\$s is item 'number'
 # %2\$s is item title
 # %3\%s is item description
-my $screensaver_item_format = "%2\$s -- %3\$s                         ";
+my $screensaver_item_format = "%2\$s -- %3\$s";
 # if user is running perl 5.6, we're going to run into trouble.
 # first the sprintf format defined above will not work.
 if ($] < 5.008) {
 	# perl version < 5.8 does not support the sprintf syntax above
-	$screensaver_item_format = "%s) %s -- %s                           ";
+	$screensaver_item_format = "%s) %s -- %s";
 }
 
 # defaults only if file not found...
@@ -91,10 +85,6 @@ use Slim::Utils::Prefs;
 $VERSION = substr(q$Revision: 1.17 $,10);
 our %thenews = ();
 my $state = "wait";
-my $refresh_last = 0;
-my $screensaver_timeout = 0;
-my $screensaver_reset_interval = 0;
-my $running_as = 'plugin';
 # $refresh_sec is the minimum time in seconds between refreshes of the ticker from the RSS.
 # Please do not lower this value. It prevents excessive queries to the RSS.
 my $refresh_sec = 60 * 60;
@@ -610,45 +600,52 @@ sub setupGroup {
 # ScreenSaver Mode
 #
 
-sub autoScrollTimer {
+sub tickerUpdate {
     my $client = shift;
-    
-    my $display_current = &nextTopic($client);
-    # retrieveNews will only really get new news after refresh_sec time
-    &retrieveNews($client, $display_current);
-	
-	# forget any lines we've cached...
-	$client->param('PLUGIN.RssNews.lines',
-								 0);
-	# ensure the display is refreshed
-    $client->update();
-	
-    my $wait_time;
-    if ($screensaver_sec_per_channel > 0) {
-        $wait_time = $screensaver_sec_per_channel;
-    } else {
-        my ($line1, $line2) = lines($client);
-		assert($line2);
-		# line2 should always be set, but just in case...
-		if (!$line2) {
-			$line2 = $line1;
-		}
-		if ($client->linesPerScreen() != 1) {
-			$wait_time = length($line2) * $screensaver_sec_per_letter;
-		} else {
-			$wait_time = length($line2) * $screensaver_sec_per_letter_double;
-		}
-    }
-    
-    Slim::Utils::Timers::setTimer($client, time() + $wait_time,
-                                  \&autoScrollTimer);
+
+	if ($client->param('PLUGIN.RssNews.newfeed')) {
+		# fetch new feed
+		my $display_current = &nextTopic($client);
+		# retrieveNews will only really get new news after refresh_sec time
+		retrieveNews($client, $display_current);
+		$client->param('PLUGIN.RssNews.line1', 0);
+	}
+
+	# add item to ticker
+	$client->update(tickerLines($client));
+		
+	my ($complete, $queue) = $client->scrollTickerTimeLeft();
+	my $newfeed = $client->param('PLUGIN.RssNews.newfeed');
+
+	# schedule for next item as soon as queue drains if same feed or after ticker completes if new feed
+	my $next = $newfeed ? $complete : $queue;
+    Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + (($next > 1) ? $next : 1), \&tickerUpdate);
 }
 
-sub lines {
-    #This returns the 2 lines to display on the unit 
+sub blankLines {
+	# lines when called by server - e.g. on screensaver start or change of font size
+	# add undef line2 item to ticker, schedule tickerUpdate to add to ticker if necessary
+	my $client = shift;
+
+	my $parts = {
+		'line1' => $client->param('PLUGIN.RssNews.line1') || '',
+		'line2' => undef,
+		'scrollmode' => 'ticker'
+	};
+
+    if (Slim::Utils::Timers::killTimers($client, \&tickerUpdate)) {
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.1, \&tickerUpdate);
+	}
+
+	return $parts;
+}
+
+sub tickerLines {
+    # lines for tickerUpdate to add to ticker
     my $client = shift;
-    my $lineref;
-    my $now = time();
+
+    my $parts;
+	my $new_feed_next = 0; # use new feed next call
 
 	# the current RSS feed
 	my $display_current = $client->param('PLUGIN.RssNews.display_current');
@@ -657,102 +654,73 @@ sub lines {
 	# the current item within each feed.
 	my $display_current_items = $client->param('PLUGIN.RssNews.display_current_items');
 
-	#remember which item in feed we are currently showing
-	# this will be stored on a per-client basis
 	if (!defined ($display_current_items)) {
-		$display_current_items = {$display_current => {'next_item' => 0}};
+		$display_current_items = {$display_current => {'next_item' => 0, 'first_item' => 0}};
 	} elsif (!defined($display_current_items->{$display_current})) {
-		$display_current_items->{$display_current} = {'next_item' => 0};
+		$display_current_items->{$display_current} = {'next_item' => 0, 'first_item' => 0};
 	}
-    if (!scalar(%thenews) ||
-		!($thenews{$display_current})) {
-        &retrieveNews($client, $display_current);
-        # use this to display new news each time through the screensaver
-        $display_current_items->{$display_current}->{'next_item'} = 0;
-		$client->param('PLUGIN.RssNews.lines',
-									 undef);
-    }
 	
-    if (exists($thenews{$display_current}) &&
-		$client->param('PLUGIN.RssNews.lines')) {
-		$lineref = $client->param('PLUGIN.RssNews.lines');
-	}
+	# add item to ticker or display error and wait for tickerUpdate to retrieve news
+	if (defined($thenews{$display_current})) {
+	
+		my $line1 = unescapeAndTrim($thenews{$display_current}->{title});
+		my $i = $display_current_items->{$display_current}->{'next_item'};
+		my $description;
 
-	# if we don't have lines cached, get them from cached news...
-	if (!($lineref) || ($lineref->[1] eq "")) {
-		# if no cached news theres a problem.
-		if (defined($thenews{$display_current})) {
-			#if (!exists($display_current_items->{$display_current}->{'next_item'})) {
-				#$display_current_items->{$display_current}->{'next_item'} = 0;
-			#}
-			# if we've already seen all items in this channel, loop back to first item
-			if (!exists($thenews{$display_current}->{item}[$display_current_items->{$display_current}->{'next_item'}])) {
-				$display_current_items->{$display_current}->{'next_item'} = 0;
-			}
-			my $line1 = unescapeAndTrim($thenews{$display_current}->{title});
-			my $line2 = "";
-			my $i = $display_current_items->{$display_current}->{'next_item'};
-			my $max = $i + $screensaver_items_per_feed;
-			my $char_limit_exceeded = 0;
-			while (($i < $max) &&
-				   ($thenews{$display_current}->{item}[$i]) &&
-				   !$char_limit_exceeded) {
-				my $description;
-				if ((!($thenews{$display_current}->{item}[$i]->{description})) ||
-					ref ($thenews{$display_current}->{item}[$i]->{description})) {
-					# description not available, just show title
-					$description = "";
-				} else {
-					$description = $thenews{$display_current}->{item}[$i]->{description};
-				}
-				my $text = sprintf($screensaver_item_format,
-								   $i + 1,
-								   unescapeAndTrim($thenews{$display_current}->{item}[$i]->{title}),
-								   unescapeAndTrim($description));
-				# append the next item, unless it makes the string too long.
-				if (length($line2) + length($text) > $screensaver_chars_per_feed) {
-					$char_limit_exceeded = 1;
-					$::d_plugins && msg("RssNews screensaver character limit exceeded.  Displaying fewer than $screensaver_items_per_feed items.\n");
-					# handle case of single item being too long
-					if (!$line2) {
-						$line2 = $text; # will be truncated below
-					}
-				} else {
-					$line2 .= $text;
-					$i++;
-				}
-			}
-			# remove tags
-			# this is now done in unescape and trim
-			#$line2 =~ s/<\/?[A-Za-z]+ ?\/?>/ /g; # matches, for example, "<b>" and "<br />"
-			# convert newlines in line2 to spaces
-			#$line2 =~ s/\n/ /g; # no longer needed (unescape and trim)
-
-			# if character limit exceeded, truncate string
-			if (length($line2) > $screensaver_chars_per_feed) {
-				$line2 = substr($line2, 0, $screensaver_chars_per_feed);
-				$::d_plugins && msg("RssNews screensaver character limit exceeded.  Truncating.\n");				
-			}
-
-			$display_current_items->{$display_current}->{'next_item'} = $i;
-			$lineref->[0] = $line1;
-			$lineref->[1] = $line2;
-			$client->param('PLUGIN.RssNews.lines', $lineref);
-			$client->param('PLUGIN.RssNews.display_current_items', $display_current_items);
+		if ((!($thenews{$display_current}->{item}[$i]->{description})) ||
+			ref ($thenews{$display_current}->{item}[$i]->{description})) {
+			# description not available, just show title
+			$description = "";
 		} else {
-			my $line1 = "RSS News - ".$display_current;
-			my $line2;
-			if ($state eq 'wait') {
-				$line2 = $client->string('PLUGIN_RSSNEWS_WAIT');
-			} else {
-				$line2 = $client->string('PLUGIN_RSSNEWS_ERROR');
-			}
-			$lineref->[0] = $line1;
-			$lineref->[1] = $line2;
+			$description = $thenews{$display_current}->{item}[$i]->{description};
 		}
+
+		my $line2 = sprintf($screensaver_item_format,
+						   $i + 1,
+						   unescapeAndTrim($thenews{$display_current}->{item}[$i]->{title}),
+						   unescapeAndTrim($description));
+
+		if (length($line2) > $screensaver_chars_per_item) {
+			$line2 = substr($line2, 0, $screensaver_chars_per_item);
+			$::d_plugins && msg("RssNews screensaver character limit exceeded - truncating.\n");
+		}
+
+		$display_current_items->{$display_current}->{'next_item'} = $i + 1;
+		if (!exists($thenews{$display_current}->{item}[$display_current_items->{$display_current}->{'next_item'}])) {
+			$display_current_items->{$display_current}->{'next_item'} = 0;
+			$display_current_items->{$display_current}->{'first_item'} -= ($i + 1);
+			if ($screensaver_items_per_feed >= ($i + 1)) {
+				$new_feed_next = 1;
+				$display_current_items->{$display_current}->{'first_item'} = 0;
+			}
+		}
+
+		if (($display_current_items->{$display_current}->{'next_item'} - $display_current_items->{$display_current}->{'first_item'}) >= $screensaver_items_per_feed) {
+			# displayed $screensaver_items_per_feed of this feed, move on to next saving position
+			$new_feed_next = 1;
+			$display_current_items->{$display_current}->{'first_item'} = $display_current_items->{$display_current}->{'next_item'};
+		}
+
+		$parts = {
+			'line1' => $line1,
+			'line2' => $line2,
+			'scrollmode' => 'ticker',
+		};
+		$client->param('PLUGIN.RssNews.line1', $line1);
+		$client->param('PLUGIN.RssNews.display_current_items', $display_current_items);
+
+	} else {
+
+		$parts = {
+			'line1' => "RSS News - ".$display_current,
+			'line2' => ($state eq 'wait') ? $client->string('PLUGIN_RSSNEWS_WAIT') : $client->string('PLUGIN_RSSNEWS_ERROR'),
+		};
+		$new_feed_next = 1;
 	}
 
-	return @$lineref;
+	$client->param('PLUGIN.RssNews.newfeed', $new_feed_next);
+
+	return $parts;
 }
 
 sub screenSaver {
@@ -787,19 +755,20 @@ sub getScreensaverRssNews {
 sub setScreensaverRssNewsMode() {
     my $client = shift;
 
+	# init params
+	$client->param('PLUGIN.RssNews.newfeed', 1);
+	$client->param('PLUGIN.RssNews.line1', 0);
     $client->param('PLUGIN.RssNews.screensaver_mode', 1);
+    $client->lines(\&blankLines);
 
-    $client->lines(\&lines);
-
-    # call the method that updates the display...
-	# because autoScrollTimer calls update, it cannot be called before the lines method is set (above)
-    autoScrollTimer($client);
+	# start tickerUpdate in future after updates() caused by server mode change
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.5, \&tickerUpdate);
 }
 
 sub leaveScreenSaverRssNews {
-    #kill timers
+    # kill tickerUpdate
     my $client = shift;
-    Slim::Utils::Timers::killTimers($client, \&autoScrollTimer);
+    Slim::Utils::Timers::killTimers($client, \&tickerUpdate);
     $client->param('PLUGIN.RssNews.screensaver_mode', 0);
 }
 

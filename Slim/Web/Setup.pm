@@ -266,7 +266,7 @@ sub initSetupConfig {
 		'title' => string('DISPLAY_SETTINGS')
 		,'parent' => 'player'
 		,'isClient' => 1
-		,'GroupOrder' => [undef,undef,undef,'ScrollPause','ScrollRate', undef]
+		,'GroupOrder' => [undef,undef,undef,'ScrollMode','ScrollPause','ScrollRate', undef]
 		,'preEval' => sub {
 					my ($client,$paramref,$pageref) = @_;
 					return if (!defined($client));
@@ -277,7 +277,7 @@ sub initSetupConfig {
 						if ($client->isa("Slim::Player::SqueezeboxG")) {
 							$pageref->{'GroupOrder'}[1] = 'activeFont'; 
 							$pageref->{'GroupOrder'}[2] = 'idleFont';
-							$pageref->{'GroupOrder'}[5] = 'ScrollPixels';
+							$pageref->{'GroupOrder'}[6] = 'ScrollPixels';
 
 							my $activeFontMax = Slim::Utils::Prefs::clientGetArrayMax($client,'activeFont') + 1;
 							my $idleFontMax = Slim::Utils::Prefs::clientGetArrayMax($client,'idleFont') + 1;
@@ -297,7 +297,7 @@ sub initSetupConfig {
 						$pageref->{'GroupOrder'}[0] = undef;
 						$pageref->{'GroupOrder'}[1] = undef;
 						$pageref->{'GroupOrder'}[2] = undef;
-						$pageref->{'GroupOrder'}[5] = undef;
+						$pageref->{'GroupOrder'}[6] = undef;
 					}
 
 					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [$client->defaultName()];
@@ -366,6 +366,16 @@ sub initSetupConfig {
 					,'GroupPrefHead' => ''
 					,'GroupLine' => 1
 				}
+			,'ScrollMode' => {
+				'PrefOrder' => ['scrollMode']
+				,'PrefsInTable' => 1
+				,'Suppress_PrefHead' => 1
+				,'Suppress_PrefDesc' => 1
+				,'Suppress_PrefLine' => 1
+				,'GroupHead' => string('SETUP_SCROLLMODE')
+				,'GroupDesc' => string('SETUP_SCROLLMODE_DESC')
+				,'GroupLine' => 1
+			}
 			,'ScrollRate' => {
 				'PrefOrder' => ['scrollRate','scrollRateDouble']
 				,'PrefsInTable' => 1
@@ -517,6 +527,15 @@ sub initSetupConfig {
 							}
 						,'changeIntro' => string ('SETUP_AUTOBRIGHTNESS_CHOOSE')
 					}
+			,'scrollMode' => {
+				'validate' => \&validateNumber
+				,'validateArgs' => [0,undef,2]
+				,'options' => {
+					 '0' => string('SETUP_SCROLLMODE_DEFAULT')
+					,'1' => string('SETUP_SCROLLMODE_SCROLLONCE')
+					,'2' => string('SETUP_SCROLLMODE_NOSCROLL')
+				},
+			},
 			,'scrollPause' => {
 				'validate' => \&validateNumber
 				,'validateArgs' => [0,undef,1]

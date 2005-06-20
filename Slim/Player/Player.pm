@@ -16,7 +16,6 @@ package Slim::Player::Player;
 use strict;
 use Slim::Player::Client;
 use Slim::Utils::Misc;
-use Slim::Display::VFD::Animation;
 use Slim::Hardware::IR;
 use Slim::Buttons::SqueezeNetwork;
 
@@ -51,6 +50,7 @@ our $defaultPrefs = {
 		,'idlesaver'			=> 'playlist'
 		,'offsaver'				=> 'SCREENSAVER.datetime'
 		,'screensavertimeout'	=> 30
+		,'scrollMode'           => 0
 		,'scrollPause'			=> 3.6
 		,'scrollPauseDouble'	=> 3.6
 		,'scrollRate'			=> 0.15
@@ -69,6 +69,9 @@ our $defaultPrefs = {
 		,'syncBufferThreshold'		=> 128
 		,'bufferThreshold'		=> 255
 	};
+
+my $scroll_pad_scroll = 6; # chars of padding between scrolling text
+my $scroll_pad_ticker = 8; # chars of padding in ticker mode
 
 our %upgradeScripts = (
 
@@ -144,6 +147,14 @@ sub init {
 	# This should be a method on client!
 	Slim::Utils::Prefs::initClientPrefs($client, $defaultPrefs);
 
+	# init renderCache for client
+	my $cache = {
+		'screensize'   => 0,        # screensize for last render [0 forces init of cache on first render]
+		'fonts'        => 0,        # graphics mode only - font used
+		'double'       => 0,        # text mode only - double text
+	};
+	$client->renderCache($cache);
+
 	$client->SUPER::init();
 	
 	for my $version (sort keys %upgradeScripts) {
@@ -170,33 +181,425 @@ sub usage {
 	return $client->bufferSize() ? $client->bufferFullness() / $client->bufferSize() : 0;
 }
 
+sub render {
+	my $client = shift;
+	my $lines = shift;
+	my $scroll = shift || 0; # 0 = no scroll, 1 = normal horiz scroll mode if line 2 too long, 2 = ticker scroll
+
+	my $parts;
+	my $line1double;
+	my $line2double;
+	
+	if ((ref($lines) eq 'HASH')) {
+		$parts = $lines;
+	} else {
+		$parts = $client->parseLines($lines);
+	}
+
+	my $cache = $client->renderCache();
+	$cache->{changed} = 0;
+	$cache->{newscroll} = 0;
+	$cache->{restartticker} = 0;
+
+	if ($cache->{screensize} != 40) {
+	    $cache->{screensize} = 40;
+		$cache->{changed} = 1;
+		$cache->{restartticker} = 1;
+	}
+
+	my $double = ($client->linesPerScreen() == 1) ? 1 : 0;
+	if ($double != $cache->{double}) {
+		$cache->{double} = $double;
+		$cache->{changed} = 1;
+		$cache->{restartticker} = 1;
+	}
+
+	if ($double && !defined($parts->{double})) {
+		if (!$parts->{line2} || $parts->{line2} eq '') {
+			if ($scroll != 2) {
+				# normal mode - double line1
+				$parts->{line2} = $parts->{line1};
+				($line1double, $line2double) = Slim::Hardware::VFD::doubleSize($client,$parts);
+			} else {
+				# ticker mode - don't double line1
+				$line1double = '';
+				$line2double = '';
+			}
+		} else {
+			($line1double, $line2double) = Slim::Hardware::VFD::doubleSize($client,$parts);
+		}
+	}
+	
+	if ($cache->{changed}) {
+		# force full rerender
+		$cache->{scrolling} = 0;
+		$cache->{line1} = undef;
+		$cache->{line1text} = '';
+		$cache->{line1finish} = 0;
+		$cache->{line2} = undef;
+		$cache->{line2text} = '';
+		$cache->{line2finish} = 0;
+		$cache->{scrollline1ref} = undef;
+		$cache->{scrollline2ref} = undef;
+		$cache->{overlay1} = undef;
+		$cache->{overlay1text} = '';
+		$cache->{overlay1start} = 40;
+		$cache->{overlay2} = undef;
+		$cache->{overlay2text} = '';
+		$cache->{overlay2start} = 40;
+		$cache->{center1} = undef;
+		$cache->{center1text} = undef;
+   		$cache->{center2} = undef;
+		$cache->{centre2text} = undef;
+		$cache->{ticker} = 0;
+	}
+
+	# line 1 - render if changed
+	if (defined($parts->{line1}) && 
+		(!defined($cache->{line1}) || ($parts->{line1} ne $cache->{line1}) || (!$scroll && $cache->{scrolling}) ||
+		 ($scroll == 2) || ($scroll == 1 && $cache->{ticker}) )) {
+		$cache->{line1} = $parts->{line1};
+		$cache->{line1text} = $parts->{line1};
+		$cache->{line1finish} = Slim::Display::Display::lineLength($cache->{line1text});
+		$cache->{changed} = 1;
+	} elsif (!defined($parts->{line1}) && defined($cache->{line1})) {
+		$cache->{line1} = undef;
+		$cache->{line1text} = '';
+		$cache->{line1finish} = 0;
+		$cache->{changed} = 1;
+	}
+
+	# line 2 - render if changed
+	if (defined($parts->{line2}) && 
+		(!defined($cache->{line2}) || ($parts->{line2} ne $cache->{line2}) || (!$scroll && $cache->{scrolling}) ||
+		 ($scroll == 2) || ($scroll == 1 && $cache->{ticker}) )) {
+		$cache->{line2} = $parts->{line2};
+		if (!$double) {
+			$cache->{line2text} = $parts->{line2};
+			$cache->{line2finish} = Slim::Display::Display::lineLength($cache->{line2text});
+		} else {
+			$cache->{line1text} = $line1double;
+			$cache->{line2text} = $line2double;
+			$cache->{line1finish} = Slim::Display::Display::lineLength($cache->{line1text});
+			$cache->{line2finish} = Slim::Display::Display::lineLength($cache->{line2text});
+		}
+		$cache->{scrollline1ref} = undef;
+		$cache->{scrollline2ref} = undef;
+		$cache->{scrolling} = 0;
+		$cache->{ticker} = 0 if ($scroll != 2);
+		$cache->{changed} = 1;
+	} elsif (!defined($parts->{line2}) && defined($cache->{line2})) {
+		$cache->{line2} = undef;
+		$cache->{line2text} = '';
+		$cache->{line2finish} = 0;
+		$cache->{changed} = 1;
+		$cache->{scrolling} = 0;
+		$cache->{ticker} = 0 if ($scroll != 2);
+		$cache->{scrollline1ref} = undef;
+		$cache->{scrollline2ref} = undef;
+	}
+
+	# overlay 1 - render if changed
+	if (defined($parts->{overlay1}) && (!defined($cache->{overlay1}) || ($parts->{overlay1} ne $cache->{overlay1}))) {
+		$cache->{overlay1} = $parts->{overlay1};
+		if (!$double) {
+			$cache->{overlay1text} = $parts->{overlay1};
+		} else {
+			$cache->{overlay1text} = '';
+		}
+		if (Slim::Display::Display::lineLength($cache->{overlay1text}) > 40 ) {
+			$cache->{overlay1text} = Slim::Display::Display::subString($cache->{overlay1text}, 0, 40);
+		}
+		$cache->{overlay1start} = 40 - Slim::Display::Display::lineLength($cache->{overlay1text});
+		$cache->{changed} = 1;
+	} elsif (!defined($parts->{overlay1}) && defined($cache->{overlay1})) {
+		$cache->{overlay1} = undef;
+		$cache->{overlay1text} = '';
+		$cache->{overlay1start} = 40;
+		$cache->{changed} = 1;
+	}
+
+	# overlay 2 - render if changed
+	if (defined($parts->{overlay2}) && (!defined($cache->{overlay2}) || ($parts->{overlay2} ne $cache->{overlay2}))) {
+		$cache->{overlay2} = $parts->{overlay2};
+		if (!$double) {
+			$cache->{overlay2text} = $parts->{overlay2};
+		} else {
+			$cache->{overlay2text} = '';
+		}
+		if (Slim::Display::Display::lineLength($cache->{overlay2text}) > 40 ) {
+			$cache->{overlay2text} = Slim::Display::Display::subString($cache->{overlay2text}, 0, 40);
+		}
+		$cache->{overlay2start} = 40 - Slim::Display::Display::lineLength($cache->{overlay2text});
+		$cache->{changed} = 1;
+	} elsif (!defined($parts->{overlay2}) && defined($cache->{overlay2})) {
+		$cache->{overlay2} = undef;
+		$cache->{overlay2text} = '';
+		$cache->{overlay2start} = 40;
+		$cache->{changed} = 1;
+	}
+
+	# center 1 - render if changed
+	if (defined($parts->{center1}) && (!defined($cache->{center1}) || ($parts->{center1} ne $cache->{center1}))) {
+		$cache->{center1} = $parts->{center1};
+		if (!$double) {
+			my $len = Slim::Display::Display::lineLength($cache->{center1}); 
+			if ($len < 39) {
+				$cache->{center1text} = ' ' x ((40 - $len)/2) . $cache->{center1} . ' ' x (40 - $len - int((40 - $len)/2));
+			} else {
+				$cache->{center1text} = Slim::Display::Display::subString($cache->{center1} . ' ', 0 ,40);
+			}
+		} else {
+			$cache->{center1text} = undef;
+			$cache->{line1text} = $line1double;
+			$cache->{line2text} = $line2double;
+		}
+		$cache->{changed} = 1;		
+	} elsif (!defined($parts->{center1}) && defined($cache->{center1})) {
+		$cache->{center1} = undef;
+		$cache->{center1text} = undef;
+		$cache->{changed} = 1;
+	}
+
+	# center 2 - render if changed
+	if (defined($parts->{center2}) && (!defined($cache->{center2}) || ($parts->{center2} ne $cache->{center2}))) {
+		$cache->{center2} = $parts->{center2};
+		if (!$double) {
+			my $len = Slim::Display::Display::lineLength($cache->{center2}); 
+			if ($len < 39) {
+				$cache->{center2text} = ' ' x ((40 - $len)/2) . $cache->{center2} . ' ' x (40 - $len - int((40 - $len)/2));
+			} else {
+				$cache->{center2text} = Slim::Display::Display::subString($cache->{center2} . ' ', 0 ,40);
+			}
+		} else {
+			$cache->{center2text} = undef;
+			$cache->{line1text} = $line1double;
+			$cache->{line2text} = $line2double;
+		}
+		$cache->{changed} = 1;
+	} elsif (!defined($parts->{center2}) && defined($cache->{center2})) {
+		$cache->{center2} = undef;
+		$cache->{center2text} = undef;
+		$cache->{changed} = 1;
+	}
+			
+	# Assemble components
+
+	my ($line1, $line2);
+
+	# 1st line
+	if (defined($cache->{center1text})) { 
+		$line1 = $cache->{center1text};
+
+	} else {
+
+		if ($cache->{line1finish} <= $cache->{overlay1start}) {
+			$line1 = $cache->{line1text} . ' ' x ($cache->{overlay1start} - $cache->{line1finish}) . 
+				$cache->{overlay1text};
+		} else {
+			$line1 = Slim::Display::Display::subString($cache->{line1text}, 0, $cache->{overlay1start}). 
+				$cache->{overlay1text};
+		}
+	}
+
+	# Add 2nd line
+	if (defined($cache->{center2text})) { 
+		$line2 = $cache->{center2text};
+
+	} else {
+
+		if ( ($cache->{line2finish} <= $cache->{overlay2start}) && ($scroll != 2) ) {
+			$line2 = $cache->{line2text} . ' ' x ($cache->{overlay2start} - $cache->{line2finish}) . 
+				$cache->{overlay2text};
+		} else {
+			if ($scroll) {
+				my $scroll1text = $cache->{line1text} if $double;
+				my $scroll2text = $cache->{line2text};
+
+				if ($scroll == 1) {
+					# enable line 2 scrolling, remove line2text from base display and move to scrolltext
+					my $padlen = $scroll_pad_scroll;
+					my $pad = ' ' x $padlen;
+					$scroll1text .= $pad . Slim::Display::Display::subString($cache->{line1text}, 0, 40) if $double;
+					$scroll2text .= $pad . Slim::Display::Display::subString($cache->{line2text}, 0, 40);
+					$cache->{endscroll} = $cache->{line2finish} + $padlen;
+					$cache->{newscroll} = 1;
+					
+				} else {
+					# ticker mode
+					my $padlen = $scroll_pad_ticker;
+					my $pad = ' ' x $padlen;
+					if ($cache->{line2finish} > 0 || !$cache->{ticker}) {
+						$scroll1text .= $pad if $double;
+						$scroll2text .= $pad;
+						$cache->{endscroll} = $cache->{line2finish};
+						$cache->{newscroll} = 1;
+					} else {
+						$cache->{endscroll} = 0;
+					}
+					$cache->{ticker} = 1;
+				}
+				$cache->{scrolling} = 1;					
+				if ($double) {
+					$cache->{scrollline1ref} = \$scroll1text;
+					$cache->{line1text} = '';
+					$cache->{line1finish} = 0;
+				}
+				$cache->{scrollline2ref} = \$scroll2text;
+				$cache->{line2text} = '';
+				$cache->{line2finish} = 0;
+				$cache->{scrolling} = 1;					
+
+				$line2 = ' ' x $cache->{overlay2start} . $cache->{overlay2text};
+
+			} else {
+				# scrolling not enabled - truncate line2
+				$line2 = Slim::Display::Display::subString($cache->{line2text}, 0, $cache->{overlay2start}). $cache->{overlay2text};
+			}
+		}
+	}
+
+	$cache->{line1ref} = \$line1;
+	$cache->{line2ref} = \$line2;
+
+	return $cache;
+}
+
+# Update and animation routines use $client->updateMode() and $client->animateState(), $client->scrollState()
+#
+# updateMode: 
+#   0 = normal
+#   1 = periodic updates are blocked
+#   2 = all updates are blocked
+#
+# animateState: 
+#   0 = no animation
+#   1 = client side push/bump animations
+#   2 = update scheduled (timer set to callback update)
+#   3 = server side push & bumpLeft/Right
+#   4 = server side bumpUp/Down
+#   5 = server side showBriefly
+#
+# scrollState:
+#   0 = no scrolling
+#   1 = server side normal scrolling
+#   2 = server side ticker mode
+#  3+ = <reserved for client side scrolling>
+
 sub update {
 	my $client = shift;
 	my $lines = shift;
-	my $nodoublesize = shift;
+	my $scrollMode = shift; # 0 = normal scroll, 1 = scroll once only, 2 = no scroll, 3 = ticker scroll
 
-	return if ($client->updateMode() == 2); # updates blocked
+	# return if updates are blocked
+	return if ($client->updateMode() == 2);
 
-	$client->killAnimation() if ($client->animateState());
+	# clear any server side animations or pending updates, don't kill scrolling
+	$client->killAnimation(1) if ($client->animateState() > 0);
 
-	if (!defined($lines)) {
-		Slim::Hardware::VFD::vfdUpdate($client, [Slim::Display::Display::curLines($client)]);
+	my $parts;
+	if (defined($lines)) {
+		$parts = $client->parseLines($lines);
 	} else {
-		Slim::Hardware::VFD::vfdUpdate($client, $lines, $nodoublesize);
+		my $linefunc  = $client->lines();
+		$parts = $client->parseLines(&$linefunc($client));
 	}
-}	
 
-sub animateUpdate {
+	if (defined($parts->{scrollmode})) {
+		$scrollMode = 1 if ($parts->{scrollmode} eq 'scrollonce');
+		$scrollMode = 3 if ($parts->{scrollmode} eq 'ticker');
+	} elsif (!defined($scrollMode)) {
+		$scrollMode = $client->paramOrPref('scrollMode');
+	}
+
+	my ($scroll, $scrollonce, $ticker);
+	if    ($scrollMode == 0) { $scroll = 1; $scrollonce = 0; $ticker = 0; }
+	elsif ($scrollMode == 1) { $scroll = 1; $scrollonce = 1; $ticker = 0; }
+	elsif ($scrollMode == 2) { $scroll = 0; $scrollonce = 0; $ticker = 0; }
+	elsif ($scrollMode == 3) { $scroll = 2; $scrollonce = 1; $ticker = 1; }
+
+	my $render = $client->render($parts, $scroll);
+
+	my $state = $client->scrollState();
+
+	if (!$render->{scrolling}) {
+		# lines don't require scrolling
+		if ($state > 0) {
+			$client->scrollStop();
+		}
+		$client->updateScreen($render);
+	} else {
+		if ($state == 0) {
+			# not scrolling - start scrolling
+			$client->scrollInit($render, $scrollonce, $ticker);
+		} elsif (($state == 1 && $render->{newscroll}) || 
+				 ($state == 2 && (!$ticker || $render->{restartticker})) ) {
+			# currently scrolling and new text, or in ticker mode need to exit or new font
+			$client->scrollStop();
+			$client->scrollInit($render, $scrollonce, $ticker);
+		} elsif (($state == 2) && $ticker && $render->{newscroll}) {
+			# staying in ticker mode - add to ticker queue & update background
+			$client->scrollUpdateTicker($render);
+			$client->scrollUpdateBackground($render);
+		} else {
+			# same scrolling text, possibly new background
+			$client->scrollUpdateBackground($render);
+		}			  
+	}
+}
+
+# update screen for character display
+sub updateScreen {
 	my $client = shift;
-	my $lines = shift;
-	my $nodoublesize = shift;
+	my $render = shift;
+	Slim::Hardware::VFD::vfdUpdate($client, ${$render->{line1ref}}, ${$render->{line2ref}});
+}
 
-	if (!defined($lines)) {
-		Slim::Hardware::VFD::vfdUpdate($client, [Slim::Display::Display::curLines($client)]);
+sub prevline1 {
+	my $client = shift;
+	my $cache = $client->renderCache();
+	return $cache->{line1};
+}
+
+sub prevline2 {
+	my $client = shift;
+	my $cache = $client->renderCache();
+	return $cache->{line2};
+}
+
+sub showBriefly {
+	my $client = shift;
+	my $line1 = shift;
+	my $line2 = shift;
+	my $duration = shift;
+	my $firstLineIfDoubled = shift;
+	my $blockUpdate = shift;
+
+	# return if update blocked
+	return if ($client->updateMode() == 2);
+
+	my $parsed;
+
+	if (ref($line1) eq 'HASH') {
+		$parsed = $line1;
 	} else {
-		Slim::Hardware::VFD::vfdUpdate($client, $lines, $nodoublesize);
+		$parsed = $client->parseLines([$line1,$line2]);
 	}
-}	
+
+	if ($firstLineIfDoubled && ($client->linesPerScreen() == 1)) {
+		$parsed->{line2} = $parsed->{line1};
+	}
+
+	$client->update($parsed);
+	
+	if (!$duration) {
+		$duration = 1;
+	}
+	
+	$client->updateMode( $blockUpdate ? 2 : 1 );
+	$client->animateState(5);
+	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $duration, \&endAnimation);
+}
 
 sub pushUp {
 	my $client = shift;
@@ -207,6 +610,354 @@ sub pushDown {
 	my $client = shift;
 	$client->update();
 }
+
+sub pushLeft {
+	my $client = shift;
+	my $start = shift;
+	my $end = shift;
+
+	my $renderstart = $client->render($start);
+	my ($line1start, $line2start) = ($renderstart->{line1ref}, $renderstart->{line2ref});
+	my $renderend = $client->render($end);
+	my ($line1end, $line2end) = ($renderend->{line1ref}, $renderend->{line2ref});
+
+	my $line1 = $$line1start . $$line1end;
+	my $line2 = $$line2start . $$line2end;
+
+	$client->killAnimation();
+	$client->pushUpdate([\$line1, \$line2, 0, 5, 40,  0.02]);
+}
+
+sub pushRight {
+	my $client = shift;
+	my $start = shift;
+	my $end = shift;
+
+	my $renderstart = $client->render($start);
+	my ($line1start, $line2start) = ($renderstart->{line1ref}, $renderstart->{line2ref});
+	my $renderend = $client->render($end);
+	my ($line1end, $line2end) = ($renderend->{line1ref}, $renderend->{line2ref});
+
+	my $line1 = $$line1end . $$line1start;
+	my $line2 = $$line2end . $$line2start;
+
+	$client->killAnimation();
+	$client->pushUpdate([\$line1, \$line2, 40, -5, 0,  0.02]);
+}
+
+sub bumpRight {
+	my $client = shift;
+	my $render = $client->render(Slim::Display::Display::curLines($client));
+	my $line1 = ${$render->{line1ref}} . Slim::Display::Display::symbol('hardspace');
+	my $line2 = ${$render->{line2ref}} . Slim::Display::Display::symbol('hardspace');
+	$client->killAnimation();
+	$client->pushUpdate([\$line1, \$line2, 2, -1, 0, 0.125]);	
+}
+
+sub bumpLeft {
+	my $client = shift;
+	my $render = $client->render(Slim::Display::Display::curLines($client));
+	my $line1 = Slim::Display::Display::symbol('hardspace') . ${$render->{line1ref}};
+	my $line2 = Slim::Display::Display::symbol('hardspace') . ${$render->{line2ref}};
+	$client->killAnimation();
+	$client->pushUpdate([\$line1, \$line2, -1, 1, 1, 0.125]);	
+}
+
+sub pushUpdate {
+	my $client = shift;
+	my $params = shift;
+	my ($line1, $line2, $offset, $delta, $end, $deltatime) = @$params;
+	
+	$offset += $delta;
+
+	my $screenline1 = Slim::Display::Display::subString($$line1, $offset, 40);
+	my $screenline2 = Slim::Display::Display::subString($$line2, $offset, 40);
+
+	Slim::Hardware::VFD::vfdUpdate($client, $screenline1, $screenline2);		
+
+	if ($offset != $end) {
+		$client->updateMode(1);
+		$client->animateState(3);
+		Slim::Utils::Timers::setHighTimer($client,Time::HiRes::time() + $deltatime,\&pushUpdate,[$line1,$line2,$offset,$delta,$end,$deltatime]);
+	} else {
+		$client->endAnimation();
+	}
+}
+
+sub bumpUp {
+	my $client = shift;
+	my $render = $client->render(Slim::Display::Display::curLines($client));
+	my $line1 = ${$render->{line2ref}};
+	my $line2 = ' ' x 40;
+	Slim::Hardware::VFD::vfdUpdate($client, $line1, $line2);		
+	$client->updateMode(1);
+	$client->animateState(4);
+	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 0.125, \&endAnimation);
+}
+
+sub bumpDown {
+	my $client = shift;
+	my $render = $client->render(Slim::Display::Display::curLines($client));
+	my $line1 = ' ' x 40;
+	my $line2 = ${$render->{line1ref}};
+	$client->showBriefly($line1, $line2, 0.125);
+	Slim::Hardware::VFD::vfdUpdate($client, $line1, $line2);		
+	$client->updateMode(1);
+	$client->animateState(4);
+	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 0.125, \&endAnimation);
+}
+
+sub scrollInit {
+	my $client = shift;
+	my $render = shift;
+	my $scrollonce = shift; # 0 = continue scrolling after pause, 1 = scroll to endscroll and then stop
+	my $ticker = shift;     # 0 = normal pause-scroll, 1 = ticker mode
+
+	my $refresh = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollRateDouble': 'scrollRate');
+	my $pause = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollPauseDouble': 'scrollPause');	
+	my $now = Time::HiRes::time();
+
+	my $start = $now + ($ticker ? 0 : (($pause > 0.5) ? $pause : 0.5));
+
+	my $scroll = {
+		'endscroll'       => $render->{endscroll},
+		'offset'          => 0,
+		'scrollonce'      => $scrollonce,
+		'refreshInt'      => $refresh,
+		'pauseInt'        => $pause,
+		'pauseUntil'      => $start,
+		'refreshTime'     => $start,
+		'paused'          => 0,
+		'overlay2start'   => $render->{overlay2start},
+		'ticker'          => $ticker,
+	};
+
+	if (defined($render->{line1ref})) {
+		# character display
+		my $double = $render->{double};
+		$scroll->{line1ref} = $render->{line1ref};
+		$scroll->{line2ref} = $render->{line2ref};
+		$scroll->{shift} = 1;
+		$scroll->{double} = $double;
+		$scroll->{overlay2text}= $render->{overlay2text};
+		if (!$ticker) {
+			$scroll->{scrollline1ref} = $render->{scrollline1ref} if $double;
+			$scroll->{scrollline2ref} = $render->{scrollline2ref};
+		} else {
+			my $line1 = (' ' x $render->{overlay2start}) . ${$render->{scrollline1ref}} if $double;
+			my $line2 = (' ' x $render->{overlay2start}) . ${$render->{scrollline2ref}};
+			$scroll->{scrollline1ref} = \$line1 if $double;
+			$scroll->{scrollline2ref} = \$line2;
+			$scroll->{endscroll} += $render->{overlay2start};
+		}
+	}
+
+	if (defined($render->{bitsref})) {
+		# graphics display
+		my $pixels = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollPixelsDouble': 'scrollPixels');	
+		$scroll->{shift} = $pixels * $client->bytesPerColumn();
+		$scroll->{scrollHeader} = $client->scrollHeader;
+		$scroll->{scrollFrameSize} = length($client->scrollHeader) + $client->screenBytes;
+		$scroll->{bitsref} = $render->{bitsref};
+		if (!$ticker) {
+			$scroll->{scrollbitsref} = $render->{scrollbitsref};
+		} else {
+			my $tickerbits = (chr(0) x $render->{overlay2start}) . ${$render->{scrollbitsref}};
+			$scroll->{scrollbitsref} = \$tickerbits;
+			$scroll->{endscroll} += $render->{overlay2start};
+		}
+	}
+
+	$client->scrollData($scroll);
+	
+	$client->scrollState($ticker ? 2 : 1);
+	$client->scrollUpdate();
+}
+
+sub scrollStop {
+	my $client = shift;
+
+	Slim::Utils::Timers::killTimers($client, \&scrollUpdate);
+	$client->scrollState(0);
+	$client->scrollData(undef);
+}
+
+sub scrollUpdateBackground {
+	my $client = shift;
+	my $render = shift;
+
+	my $scroll = $client->scrollData();
+
+	if (defined($render->{line1ref})) {
+		# character display
+		$scroll->{line1ref} = $render->{line1ref};
+		$scroll->{line2ref} = $render->{line2ref};
+		$scroll->{overlay2text} = $render->{overlay2text};
+
+	} elsif (defined($render->{bitsref})) {
+		# graphics display
+		$scroll->{bitsref} = $render->{bitsref};
+	}
+
+	$scroll->{overlay2start} = $render->{overlay2start};
+
+	# force update of screen for if paused, otherwise rely on scrolling to update
+	if ($scroll->{paused}) {
+		$client->scrollUpdateDisplay($scroll);
+	}
+}
+
+# indicate length of queue for ticker mode 
+sub scrollTickerTimeLeft {
+	# returns: time to complete ticker, time to expose queued up text
+	my $client = shift;
+
+	my $scroll = $client->scrollData();
+
+	if (!$scroll) {
+		return (0, 0);
+	} 
+
+	my $todisplay = $scroll->{endscroll} - $scroll->{offset};
+	my $completeTime = $todisplay / ($scroll->{shift} / $scroll->{refreshInt});
+
+	my $notdisplayed = $todisplay - $scroll->{overlay2start};
+	my $queueTime = ($notdisplayed > 0) ? $notdisplayed / ($scroll->{shift} / $scroll->{refreshInt}) : 0;
+
+	return ($completeTime, $queueTime);
+}
+
+# update scrolling for character display
+sub scrollUpdateDisplay {
+	my $client = shift;
+	my $scroll = shift;
+
+	my ($line1, $line2);
+
+	if (!($scroll->{double})) {
+		$line1 = ${$scroll->{line1ref}};
+		$line2 = Slim::Display::Display::subString(${$scroll->{scrollline2ref}}, $scroll->{offset}, $scroll->{overlay2start}) . $scroll->{overlay2text};
+	} else {
+		$line1 = Slim::Display::Display::subString(${$scroll->{scrollline1ref}}, $scroll->{offset}, 40);
+		$line2 = Slim::Display::Display::subString(${$scroll->{scrollline2ref}}, $scroll->{offset}, 40);
+	}
+
+	Slim::Hardware::VFD::vfdUpdate($client, $line1, $line2);
+}
+
+sub scrollUpdateTicker {
+	my $client = shift;
+	my $render = shift;
+
+	my $scroll = $client->scrollData();
+	my $double = $scroll->{double};
+
+	my $line1 = Slim::Display::Display::subString(${$scroll->{scrollline1ref}}, $scroll->{offset}) if $double;
+	my $line2 = Slim::Display::Display::subString(${$scroll->{scrollline2ref}}, $scroll->{offset});
+
+	my $len = $scroll->{endscroll} - $scroll->{offset};
+	my $padChar = $scroll_pad_ticker;
+
+	my $pad = 0;
+	if ($render->{overlay2start} > ($len + $padChar)) {
+		$pad = $render->{overlay2start} - $len - $padChar;
+		$line1 .= ' ' x $pad if $double;
+		$line2 .= ' ' x $pad;
+	}
+
+	$line1 .= ${$render->{scrollline1ref}} if $double;
+	$line2 .= ${$render->{scrollline2ref}};
+
+	$scroll->{scrollline1ref} = \$line1 if $double;
+	$scroll->{scrollline2ref} = \$line2;
+
+	$scroll->{endscroll} = $len + $padChar + $pad + $render->{endscroll};
+	$scroll->{offset} = 0;
+}
+
+sub scrollUpdate {
+	my $client = shift;
+	my $scroll = $client->scrollData();
+
+	# update display
+	$client->scrollUpdateDisplay($scroll);
+
+	my $timenow = Time::HiRes::time();
+
+	if ($timenow < $scroll->{pauseUntil}) {
+		# called during pause phase - don't scroll
+		$scroll->{paused} = 1;
+		$scroll->{refreshTime} = $scroll->{pauseUntil};
+		Slim::Utils::Timers::setHighTimer($client, $scroll->{pauseUntil}, \&scrollUpdate);
+
+	} else {
+		# update refresh time and skip frame if running behind actual timenow
+		do {
+			$scroll->{offset} += $scroll->{shift};
+			$scroll->{refreshTime} += $scroll->{refreshInt};
+		} while ($scroll->{refreshTime} < $timenow);
+
+		$scroll->{paused} = 0;
+		if ($scroll->{offset} >= $scroll->{endscroll}) {
+			if ($scroll->{scrollonce}) {
+				$scroll->{offset} = $scroll->{endscroll};
+				if ($scroll->{ticker}) {
+					# keep going to wait for ticker to fill
+				} elsif ($scroll->{scrollonce} == 1) {
+					# finished scrolling at next scrollUpdate
+					$scroll->{scrollonce} = 2;
+				} elsif ($scroll->{scrollonce} == 2) {
+					# transition to permanent scroll pause state, don't schedule a new update
+					$scroll->{offset} = 0;
+					$scroll->{paused} = 1;
+					return;
+				}
+			} elsif ($scroll->{pauseInt} > 0) {
+				$scroll->{offset} = 0;
+				$scroll->{pauseUntil} = $scroll->{refreshTime} + $scroll->{pauseInt};
+			} else {
+				$scroll->{offset} = 0;
+			}
+		}
+		# fast timer during scroll
+		Slim::Utils::Timers::setHighTimer($client, $scroll->{refreshTime}, \&scrollUpdate);
+	}
+}
+
+sub killAnimation {
+	my $client = shift;
+	my $exceptScroll = shift; # all but scrolling to be killed
+
+	my $animate = $client->animateState();
+	Slim::Utils::Timers::killTimers($client, \&update) if ($animate == 2);
+	Slim::Utils::Timers::killTimers($client, \&pushUpdate) if ($animate == 3);	
+	Slim::Utils::Timers::killTimers($client, \&endAnimation) if ($animate == 4 || $animate == 5);	
+	$client->scrollStop() if (($client->scrollState() > 0) && !$exceptScroll) ;
+	$client->animateState(0);
+	$client->updateMode(0);
+}
+
+sub endAnimation {
+	# called after after an animation to display the screen and initiate scrolling
+	my $client = shift;
+	my $delay = shift;
+
+	if ($delay) {
+		# set timer to call update after delay - use lines stored in render cache
+		# called when SB2 ends client side animation and sends ANIC frame
+		$client->animateState(2);
+		$client->updateMode(1);
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $delay, \&update, $client->renderCache());
+	} else {
+		# call update using lines stored in render cache except for showBriefly and bump Up/Down
+		my $screen;
+		my $animate = $client->animateState();
+		$screen = $client->renderCache() unless ($animate == 4 || $animate == 5);
+		$client->animateState(0);
+		$client->updateMode(0);
+		$client->update($screen);
+	}
+}	
 
 sub isPlayer {
 	return 1;
@@ -311,20 +1062,21 @@ sub power {
 			return;
 		}
 
+		$client->updateMode(2);
 		Slim::Buttons::Common::setMode($client, 'home');
+		$client->updateMode(0);
 		
 		my $welcome  = ($client->linesPerScreen() == 1) ? '' : Slim::Display::Display::center($client->string('WELCOME_TO_' . $client->model));
-		my $welcome2 = ($client->linesPerScreen() == 1) ? '' : Slim::Display::Display::center($client->string('FREE_YOUR_MUSIC'));
+		my $welcome2 = ($client->linesPerScreen() == 1) ? Slim::Display::Display::center($client->string($client->model)) : Slim::Display::Display::center($client->string('FREE_YOUR_MUSIC'));
 
-		$client->showBriefly($welcome, $welcome2);
-		
+		$client->showBriefly($welcome, $welcome2, undef, undef, 1);
+
 		# restore the saved brightness, unless its completely dark...
 		my $powerOnBrightness = Slim::Utils::Prefs::clientGet($client, "powerOnBrightness");
 
 		if ($powerOnBrightness < 1) { 
 			$powerOnBrightness = 1;
 		}
-
 		Slim::Utils::Prefs::clientSet($client, "powerOnBrightness", $powerOnBrightness);
 
 		# check if there is a sync group to restore
@@ -445,10 +1197,8 @@ sub brightness {
 		$client->currBrightness(0) if ($client->currBrightness() < 0);
 		$client->currBrightness($client->maxBrightness()) if ($client->currBrightness() > $client->maxBrightness());
 	
-		if (!$noupdate) {
-			my $temp1 = $client->prevline1();
-			my $temp2 = $client->prevline2();
-			$client->update([$temp1, $temp2], 1);
+		if (!$noupdate && !$client->scrollState()) {
+			$client->update($client->renderCache());
 		}
 	}
 	
@@ -657,77 +1407,25 @@ sub measureText {
 	return Slim::Display::Display::lineLength($text);
 }
 
-sub killAnimation {
-	Slim::Display::VFD::Animation::killAnimation(@_);
-}
-
-sub endAnimation {
-	Slim::Display::VFD::Animation::endAnimation(@_);
-}
-
-sub showBriefly {
-	Slim::Display::VFD::Animation::showBriefly(@_);
-}
-
-sub pushLeft {
-	Slim::Display::VFD::Animation::pushLeft(@_);
-}
-
-sub pushRight {
-	Slim::Display::VFD::Animation::pushRight(@_);
-}
-
-sub doEasterEgg {
-	Slim::Display::VFD::Animation::doEasterEgg(@_);
-}
-
-sub bumpLeft {
-	Slim::Display::VFD::Animation::bumpLeft(@_);
-}
-
-sub bumpRight {
-	Slim::Display::VFD::Animation::bumpRight(@_);
-}
-
-sub bumpUp {
-	Slim::Display::VFD::Animation::bumpUp(@_);
-}
-
-sub bumpDown {
-	Slim::Display::VFD::Animation::bumpDown(@_);
-}
-
-sub scrollBottom {
-	Slim::Display::VFD::Animation::scrollBottom(@_);
-}
 
 sub renderOverlay {
 	my $client = shift;
-	my $line1 = shift || '';
-	my $line2 = shift || '';
+	my $line1 = shift;
+	my $line2 = shift;
 	my $overlay1 = shift;
 	my $overlay2 = shift;
 	
 	return $line1 if (ref($line1) eq 'HASH');
 	return $line1 if $line1 =~ /\x1e(framebuf|linebreak|right)\x1e/s;
 
-	if (defined($overlay1)) { 
-		$line1 .= "\x1eright\x1e" . $overlay1;
-	}
-	
-	if (defined($overlay2) || defined($line2)) {
-		$line1 .= "\x1elinebreak\x1e";
-	}
-	
-	if (defined($line2)) {
-		$line1 .= $line2;
-	}
-	
-	if (defined($overlay2)) {
-		$line1 .= "\x1eright\x1e" . $overlay2;
-	}
+	my $parts;
 
-	return $line1;
+	$parts->{line1} = defined($line1) ? $client->symbols($line1) : undef;
+	$parts->{line2} = defined($line2) ? $client->symbols($line2) : undef;
+	$parts->{overlay1} = defined($overlay1) ? $client->symbols($overlay1) : undef;
+	$parts->{overlay2} = defined($overlay2) ? $client->symbols($overlay2) : undef;
+
+	return $parts;
 }
 
 # Draws a slider bar, bidirectional or single direction is possible.
@@ -866,6 +1564,12 @@ sub textSongTime {
 	return $time;
 }
 
+
 1;
 
 __END__
+
+# Local Variables:
+# tab-width:4
+# indent-tabs-mode:t
+# End:

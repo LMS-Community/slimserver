@@ -82,8 +82,8 @@ sub screenSaver {
 		$client->brightness($dim);
 	}
 
-	if ($client->updateMode() == 2) {
-		# don't change whilst updates blocked
+	if ($client->updateMode() == 2 || $client->animateState() ) {
+		# don't change whilst updates blocked or animating (non scrolling)
 	} elsif ($mode eq 'block') {
 		# blocked mode handles its own updating of the screen.
 	} elsif ($saver eq 'nosaver') {

@@ -83,7 +83,7 @@ sub init {
 sub periodicScreenRefresh {
 	my $client = shift;
 
-	$client->scrollBottom() unless ($client->updateMode());
+	$client->update() unless ($client->updateMode() || $client->scrollState() == 2 || $client->param('modeUpdateInterval'));
 
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&periodicScreenRefresh);
 }

@@ -25,8 +25,6 @@ my @queuedClient = ();
 my @buttonPressStyles = ( '','.single','.double','.repeat','.hold','.hold_release');
 my $defaultMapFile;
 
-my $eggseq = 'up,down,up,down,left,right,left,right';
-
 # If time between IR commands is greater than this, then the code is considered a new button press
 $Slim::Hardware::IR::IRMINTIME  = 0.140;
 
@@ -674,19 +672,7 @@ sub processCode {
 	$::d_ir && msg("irCode: $irCode, ".$client->id()."\n");
 
 	$client->lastircode($irCode);
-	$client->easteregg($client->easteregg ? ($client->easteregg . ',' . $irCode) : $irCode);
-
-	my $eggsofar = $client->easteregg;
-	if (!($eggseq=~/^$eggsofar/)) {
-		$client->easteregg('');
-	}
-
-	if ($eggseq eq $eggsofar) {
-		$client->easteregg('');
-		$client->doEasterEgg();
-	} else {
-		$client->execute(['button', $irCode, $irTime, 1]);
-	}
+	$client->execute(['button', $irCode, $irTime, 1]);
 }
 
 1;

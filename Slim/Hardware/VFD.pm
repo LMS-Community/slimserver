@@ -107,77 +107,15 @@ sub setCustomChar {
 
 my %customChars;
 
-sub render {
-	my $client = shift;
-	my $lines = shift;
-	my $noDoubleSize = shift;
-	my $double;
-	my ($line1, $line2) = ('','');
-	my ($overlay1, $overlay2);
-	my ($center1, $center2);	
-
-	if (ref($lines) ne 'HASH') {
-		$lines = $client->parseLines($lines);
-	}
-	
-	if (!$noDoubleSize && $client->linesPerScreen() == 1)
-	{
-		($line1, $line2) = doubleSize($client,$lines);
-		$double = 1;
-	} else {
-		$line1 = $lines->{line1} if defined($lines->{line1});
-		$line2 = $lines->{line2} if defined($lines->{line2});
-
-		if (defined($lines->{overlay1})) {
-			my $overlayLength =  Slim::Display::Display::lineLength($lines->{overlay1});
-			$line1 .= $spaces;
-			$line1 = Slim::Display::Display::subString($line1, 0, 40 - $overlayLength) . $lines->{overlay1};
-		} 
-		
-		if (defined($lines->{overlay2})) {
-			my $overlayLength =  Slim::Display::Display::lineLength($lines->{overlay2});
-			$line2 .= $spaces;
-			$line2 = Slim::Display::Display::subString($line2, 0, 40 - $overlayLength) . $lines->{overlay2};
-		}
-	
-		if (defined($lines->{center1})) {
-			my $len = lineLength($lines->{center1}); 
-			if ($len < 39) {
-				$line1 = ' ' x ((40 - $len)/2) . $lines->{center1};
-			} else {
-				$line1 = $lines->{center1};
-			}
-		}
-	
-		if (defined($lines->{center2})) {
-			my $len = lineLength($lines->{center2}); 
-			if ($len < 39) {
-				$line2 = ' ' x ((40 - $len)/2) . $lines->{center2};
-			} else {
-				$line2 = $lines->{center2};
-			}
-		}
-	}
-
-	$line1 = subString($line1 . ($spaces), 0, 40);
-	$line2 = subString($line2 . ($spaces), 0, 40);
-
-	return ($line1, $line2);
-}
-
-
 sub vfdUpdate {
 	my $client = shift;
-	my $lines  = shift; 
-	my $noDoubleSize = shift; #to suppress the doublesize call (in case the input lines have already been doubled)
+	my $line1  = shift; 
+	my $line2  = shift;
+
 	my %customUsed;
 	my %newCustom;
 	my $cur = -1;
 	my $pos;
-
-	my ($line1, $line2);
-
-	($line1, $line2) = render($client, $lines, $noDoubleSize);
 
 	# convert to the VFD char set
 	my $lang = $client->vfdmodel;
@@ -194,9 +132,6 @@ sub vfdUpdate {
 	if (!defined($line1)) { $line1 = $spaces };
 	if (!defined($line2)) { $line2 = $spaces };
 
-	$client->prevline1($line1);
-	$client->prevline2($line2);
-	
 	if (defined($brightness) && ($brightness == 0)) {
 		$line1 = $spaces;
 		$line2 = $spaces;

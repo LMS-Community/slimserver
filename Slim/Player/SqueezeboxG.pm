@@ -33,6 +33,8 @@ our $defaultPrefs = {
 	'idleBrightness'	=> 2,
 };
 
+my $scroll_pad_scroll = 40; # lines of padding between scrolling text
+my $scroll_pad_ticker = 60; # lines of padding in ticker mode
 
 sub new {
 	my $class = shift;
@@ -46,36 +48,6 @@ sub init {
 	my $client = shift;
 	# make sure any preferences unique to this client may not have set are set to the default
 	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
-
-	# init renderCache for client
-	my $cache = {
-		'changed'      => 0,        # last render resulted in no change to screen
-		'scrolling'    => 0,        # last render enabled line2 scroll mode
-		'newscrollbits'=> 0,        # change to scroll bits on last render
-		'bitsref'      => undef,    # ref to bitmap result of last render
-		'fonts'        => 0,        # font used for last render
-		'screensize'   => 0,        # screensize for last render [0 forces reset on first render]
-		'line1'        => undef,    # line1 text at last render
-		'line1bits'    => '',       # result of rendering above line1
-		'line1finish'  => 0,        # length of line1 bits
-		'line2'        => undef,    # line2 text at last render
-		'line2bits'    => '',       # result of rendering line2 if not scrolling
-		'line2finish'  => 0,        # length of line2 bits
-		'scrollbitsref'=> undef,    # ref to result of rendering line2 if scrolling required
-		'endscroll'    => 0,        # offset for ending scroll at
-		'overlay1'     => undef,    # overlay1 at last render
-		'overlay1bits' => '',       # result of rendering overlay1
-		'overlay1start'=> 0,        # start position for overlay1 
-		'overlay2'     => undef,    # overlay2 at last render
-		'overlay2bits' => '',       # result of rendering overlay2
-		'overlay2start'=> 0,        # start position for overlay2 
-		'center1'      => undef,    # center1 at last render 
-		'center1bits'  => '',       # result of rendering center1
-		'center2'      => undef,    # center2 at last render
-		'center2bits'  => '',       # result of rendering center2
-		'line2height'  => 0,        # height of line2 fonts - scrollable portion
-	};
-	$client->renderCache($cache);
 
 	$client->SUPER::init();
 }
@@ -172,7 +144,7 @@ sub render {
 	use bytes;
 	my $client = shift;
 	my $lines = shift;
-	my $scroll = shift || 0; # horiz line 2 scroll mode enabled if set and line2 too long
+	my $scroll = shift || 0; # 0 = no scroll, 1 = normal horiz scroll mode if line 2 too long, 2 = ticker scroll
 
 	my $parts;
 	
@@ -184,12 +156,14 @@ sub render {
 
 	my $cache = $client->renderCache();
 	$cache->{changed} = 0;
-	$cache->{newscrollbits} = 0;
+	$cache->{newscroll} = 0;
+	$cache->{restartticker} = 0;
 
 	my $screensize = $client->screenBytes();
 	if ($screensize != $cache->{screensize}) {
 		$cache->{screensize} = $screensize;
 		$cache->{changed} = 1;
+		$cache->{restartticker} = 1;
 	}
 
 	my $fonts = defined($parts->{fonts}) ? $parts->{fonts} : $client->fonts();
@@ -197,6 +171,7 @@ sub render {
 		$cache->{fonts} = $fonts;
 		$cache->{line2height} = Slim::Display::Graphics::extent($fonts->[1]);
 		$cache->{changed} = 1;
+		$cache->{restartticker} = 1;
 	}
 
 	if ($cache->{changed}) {
@@ -219,11 +194,14 @@ sub render {
 		$cache->{center1bits} = '';
    		$cache->{center2} = undef;
 		$cache->{center2bits} = '';
+		$cache->{ticker} = 0;
 	}
 
 	# if we're only displaying the second line (i.e. single line mode) and the second line is blank,
-	# copy the first to the second.
-	if (!defined($fonts->[0]) && $parts->{line2} eq '') { $parts->{line2} = $parts->{line1}; }
+	# copy the first to the second.  Don't do for ticker mode.
+	if (!defined($fonts->[0]) && (!$parts->{line2} || $parts->{line2} eq '') && $scroll != 2) {
+		$parts->{line2} = $parts->{line1};
+	}
 	
 	# line 1 - render if changed
 	if (defined($parts->{line1}) && (!defined($cache->{line1}) || ($parts->{line1} ne $cache->{line1}))) {
@@ -240,11 +218,13 @@ sub render {
 
 	# line 2 - render if changed
 	if (defined($parts->{line2}) && 
-		(!defined($cache->{line2}) || ($parts->{line2} ne $cache->{line2}) || (!$scroll && $cache->{scrolling}) )) {
+		(!defined($cache->{line2}) || ($parts->{line2} ne $cache->{line2}) || (!$scroll && $cache->{scrolling}) ||
+		 ($scroll == 2) || ($scroll == 1 && $cache->{ticker}) )) {
 		$cache->{line2} = $parts->{line2};
 		$cache->{line2bits} = Slim::Display::Graphics::string($fonts->[1], $parts->{line2});
 		$cache->{scrollbitsref} = undef;
 		$cache->{scrolling} = 0;
+		$cache->{ticker} = 0 if ($scroll != 2);
 		$cache->{line2finish} = length($cache->{line2bits});
 		$cache->{changed} = 1;
 	} elsif (!defined($parts->{line2}) && defined($cache->{line2})) {
@@ -253,6 +233,7 @@ sub render {
 		$cache->{line2finish} = 0;
 		$cache->{changed} = 1;
 		$cache->{scrolling} = 0;
+		$cache->{ticker} = 0 if ($scroll != 2);
 		$cache->{scrollbitsref} = undef;
 	}
 
@@ -328,28 +309,43 @@ sub render {
 		$bits = substr($cache->{line1bits}, 0, $cache->{overlay1start}). $cache->{overlay1bits};
 	}
 	# Add 2nd line
-	if ($cache->{line2finish} <= $cache->{overlay2start}) {
+	if ( ($cache->{line2finish} <= $cache->{overlay2start}) && ($scroll != 2) ) {
 		$bits |= $cache->{line2bits}. chr(0) x ($cache->{overlay2start} - $cache->{line2finish}) 
 			. $cache->{overlay2bits};
 	} else {
 		if ($scroll) {
-			# enable line 2 scrolling, remove line2bits from base display and move to scrollbits
-			# add padding to ensure end back at start of text for all scrollPixel settings
 			my $bytesPerColumn = $client->bytesPerColumn;
-			my $pixels = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollPixelsDouble': 'scrollPixels');
-			my $bytesPerScroll = $pixels * $bytesPerColumn;
-			my $padBytes = 40 * $bytesPerColumn;
-			my $len = $padBytes + $cache->{line2finish};
-			if ($pixels > 1) {
-				$padBytes += $bytesPerScroll - int($bytesPerScroll * ($len/$bytesPerScroll - int($len/$bytesPerScroll)) + 0.1);
+			my $scrollbits = $cache->{line2bits};
+			if ($scroll == 1) {
+				# enable line 2 normal scrolling, remove line2bits from base display to scrollbits
+				# add padding to ensure end back at start of text for all scrollPixel settings
+				my $padBytes = $scroll_pad_scroll * $bytesPerColumn;
+				my $pixels = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollPixelsDouble': 'scrollPixels');
+				my $bytesPerScroll = $pixels * $bytesPerColumn;
+
+				my $len = $padBytes + $cache->{line2finish};
+				if ($pixels > 1) {
+					$padBytes += $bytesPerScroll - int($bytesPerScroll * ($len/$bytesPerScroll - int($len/$bytesPerScroll)) + 0.1);
+				}
+				$scrollbits .= chr(0) x $padBytes . substr($cache->{line2bits}, 0, $screensize);
+				$cache->{endscroll} = $cache->{line2finish} + $padBytes;
+				$cache->{newscroll} = 1;
+			} else {
+				# ticker mode
+				my $padBytes = $scroll_pad_ticker * $bytesPerColumn;			
+				if ($cache->{line2finish} > 0 || !$cache->{ticker}) {
+					$scrollbits .= chr(0) x $padBytes;
+					$cache->{endscroll} = $cache->{line2finish};
+					$cache->{newscroll} = 1;
+				} else {
+					$cache->{endscroll} = 0;
+				}
+				$cache->{ticker} = 1;
 			}
-			my $scrollbits = $cache->{line2bits} .  chr(0) x $padBytes . substr($cache->{line2bits}, 0, $screensize);
 			$cache->{scrollbitsref} = \$scrollbits;
 			$cache->{line2bits} = '';
-			$cache->{endscroll} = $cache->{line2finish} + $padBytes;
 			$cache->{line2finish} = 0;
 			$cache->{scrolling} = 1;
-			$cache->{newscrollbits} = 1;
 			$bits |= chr(0) x $cache->{overlay2start} . $cache->{overlay2bits};
 
 		} else {
@@ -375,89 +371,11 @@ sub render {
 	return $cache;
 }
 
-# Update and animation routines use $client->updateMode() and $client->animateState(), $client->scrollState()
-#
-# updateMode: 
-#   0 = normal
-#   1 = periodic updates are blocked
-#   2 = all updates are blocked
-#
-# animateState: 
-#   0 = no animation
-#   1 = client side push/bump animations
-#   2 = update scheduled (timer set to callback update)
-#   3 = server side push & bumpLeft/Right
-#   4 = server side bumpUp/Down
-#   5 = server side showBriefly
-#
-# scrollState:
-#   0 = no scrolling
-#   1 = server side scrolling
-#  2+ = <reserved for client side scrolling>
-
-sub update {
+# update screen for graphics display
+sub updateScreen {
 	my $client = shift;
-	my $lines = shift;
-	my $nodoublesize = shift;    # backwards compatibility - not used
-	my $scrollMode = shift || 0; # 0 = normal scroll, 1 = scroll once only, 2 = no scroll
-
-	# return if updates are blocked
-	return if ($client->updateMode() == 2);
-
-	# clear any server side animations or pending updates, don't kill scrolling
-	$client->killAnimation(1) if ($client->animateState() >= 2);
-
-	my $scroll = ($scrollMode == 0 || $scrollMode == 1) ? 1: 0;
-	my $scrollonce = ($scrollMode == 1) ? 1 : 0;
-
-	my $render;
-
-	if (defined($lines)) {
-		$render = $client->render($lines, $scroll);
-	} else {
-		my $linefunc  = $client->lines();
-		my $parts = $client->parseLines(&$linefunc($client));
-		$render = $client->render($parts, $scroll);
-	}
-
-	if (!$render->{scrolling}) {
-		# lines don't require scrolling
-		if ($client->scrollState() == 1) {
-			$client->scrollStop();
-		}
-		
-		# only refresh screen if changed - once SB1 supports this and SB2 does not need the visu frames
-		#$client->drawFrameBuf($render->{bitsref}) if $render->{changed};
-		# for now always refresh screen:
-		$client->drawFrameBuf($render->{bitsref});
-	} else {
-		if ($client->scrollState() != 1) {
-			# start scrolling - new scolling text
-			$client->scrollInit($render, $scrollonce);
-		} elsif ($render->{newscrollbits}) {
-			# new scrolling text and background - restart 
-			$client->scrollStop();
-			$client->scrollInit($render, $scrollonce);
-		} else {
-			# same scrolling text, possibly new background
-			# for the moment always update it
-			# later only do so if $render->{changed}
-			# [currently need for SB1 in pause mode and SB2 to trigger visu frames]
-			$client->scrollUpdateBackground($render);
-		}			  
-	}
-}
-
-sub prevline1 {
-	my $client = shift;
-	my $cache = $client->renderCache();
-	return $cache->{line1};
-}
-
-sub prevline2 {
-	my $client = shift;
-	my $cache = $client->renderCache();
-	return $cache->{line2};
+	my $render = shift;
+	$client->drawFrameBuf($render->{bitsref});
 }
 
 sub fonts {
@@ -629,29 +547,6 @@ sub scrollHeader {
 	return pack('n', length($header) + $client->screenBytes ) . $header;
 }
 
-sub showBriefly {
-	my $client = shift;
-	my $line1 = shift;
-	my $line2 = shift;
-	my $duration = shift;
-	my $firstLineIfDoubled = shift;
-	my $blockUpdate = shift;
-
-	# return if update blocked
-	return if ($client->updateMode() == 2);
-
-	my @lines = [$line1,$line2];
-	$client->update(@lines);
-	
-	if (!$duration) {
-		$duration = 1;
-	}
-	
-	$client->updateMode( $blockUpdate ? 2 : 1 );
-	$client->animateState(5);
-	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $duration, \&endAnimation);
-}
-
 # push the old screen off the left side
 sub pushLeft {
 	my $client = shift;
@@ -749,159 +644,68 @@ sub bumpUp {
 	Slim::Utils::Timers::setHighTimer($client,Time::HiRes::time() + 0.125, \&endAnimation);
 }
 
-
-sub doEasterEgg {
+# update display for graphics scrolling
+sub scrollUpdateDisplay {
 	my $client = shift;
-	$client->update();
-}
-
-sub scrollInit {
-	my $client = shift;
-	my $render = shift;
-	my $scrollonce = shift || 0; # 0 = scroll to endscroll and then stop, 1 = pause and then scroll again
-
-	my $refresh = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollRateDouble': 'scrollRate');
-	my $pause = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollPauseDouble': 'scrollPause');	
-	my $pixels = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollPixelsDouble': 'scrollPixels');	
-	my $now = Time::HiRes::time();
-
-	my $start = $now + (($pause > 0.5) ? $pause : 0.5);
-
-	my $scroll = {
-		'endscroll'       => $render->{endscroll},
-		'offset'          => 0,
-		'scrollonce'      => $scrollonce,
-		'refreshInt'      => $refresh,
-		'pauseInt'        => $pause,
-		'shift'           => $pixels * $client->bytesPerColumn(),
-		'pauseUntil'      => $start,
-		'refreshTime'     => $start,
-		'paused'          => 0,
-		'scrollHeader'    => $client->scrollHeader,
-		'scrollFrameSize' => length($client->scrollHeader) + $client->screenBytes,
-		'bitsref'         => $render->{bitsref},
-		'scrollbitsref'   => $render->{scrollbitsref},
-		'overlay2start'   => $render->{overlay2start},
-		};
-
-	$client->scrollData($scroll);
-	
-	$client->scrollState(1);
-	$client->scrollUpdate();
-}
-
-sub scrollStop {
-	my $client = shift;
-
-	Slim::Utils::Timers::killTimers($client, \&scrollUpdate);
-	$client->scrollState(0);
-	$client->scrollData(undef);
-}
-
-sub scrollUpdateBackground {
-	my $client = shift;
-	my $render = shift;
-
-	my $scroll = $client->scrollData();
-	$scroll->{bitsref} = $render->{bitsref};
-	$scroll->{overlay2start} = $render->{overlay2start};
-
-	# force update of screen for server side scrolling if paused, otherwise rely on scrolling to update
-	if ($scroll->{paused}) {
-		Slim::Utils::Timers::firePendingTimer($client, \&scrollUpdate);
-	}
-}
-
-sub scrollUpdate {
-	my $client = shift;
-
-	my $scroll = $client->scrollData();
-	my $bitsref = $scroll->{bitsref};
-	my $scrollref = $scroll->{scrollbitsref};
+	my $scroll = shift;
 
 	my $frame = $scroll->{scrollHeader} . 
-		($$bitsref | substr($$scrollref, $scroll->{offset}, $scroll->{overlay2start}));
+		(${$scroll->{bitsref}} | substr(${$scroll->{scrollbitsref}}, $scroll->{offset}, $scroll->{overlay2start}));
 
 	# check for congestion on slimproto socket and send update if not congested
 	if ((Slim::Networking::Select::writeNoBlockQLen($client->tcpsock) == 0) && (length($frame) == $scroll->{scrollFrameSize})) {
 		Slim::Networking::Select::writeNoBlock($client->tcpsock, \$frame);
 	}
+}
 
-	my $timenow = Time::HiRes::time();
+sub scrollUpdateTicker {
+	my $client = shift;
+	my $render = shift;
 
-	if ($timenow < $scroll->{pauseUntil}) {
-		# called during pause phase - don't scroll
-		$scroll->{paused} = 1;
-		$scroll->{refreshTime} = $scroll->{pauseUntil};
-		Slim::Utils::Timers::setHighTimer($client, $scroll->{pauseUntil}, \&scrollUpdate);
+	my $scroll = $client->scrollData();
 
-	} else {
-		# update refresh time and skip frame if running behind actual timenow
-		do {
-			$scroll->{offset} += $scroll->{shift};
-			$scroll->{refreshTime} += $scroll->{refreshInt};
-		} while ($scroll->{refreshTime} < $timenow );
+	my $scrollbits = substr(${$scroll->{scrollbitsref}}, $scroll->{offset});
+	my $len = $scroll->{endscroll} - $scroll->{offset};
+	my $padBytes = $scroll_pad_ticker * $client->bytesPerColumn;
 
-		$scroll->{paused} = 0;
-		if ($scroll->{offset} >= $scroll->{endscroll}) {
-			if ($scroll->{scrollonce}) {
-				if ($scroll->{scrollonce} == 1) {
-					# finished scrolling at next scrollUpdate
-					$scroll->{scrollonce} = 2;
-					$scroll->{offset} = $scroll->{endscroll};
-				} else {
-					# end scroll now
-					$client->scrollStop();
-					return;
-				}
-			} elsif ($scroll->{pauseInt} > 0) {
-				$scroll->{offset} = 0;
-				$scroll->{pauseUntil} = $scroll->{refreshTime} + $scroll->{pauseInt};
-			} else {
-				$scroll->{offset} = 0;
-			}
-		}
-		# fast timer during scroll
-		Slim::Utils::Timers::setHighTimer($client, $scroll->{refreshTime}, \&scrollUpdate);
+	my $pad = 0;
+	if ($render->{overlay2start} > ($len + $padBytes)) {
+		$pad = $render->{overlay2start} - $len - $padBytes;
+		$scrollbits .= chr(0) x $pad;
 	}
+	
+	$scrollbits .= ${$render->{scrollbitsref}};
+
+	$scroll->{scrollbitsref} = \$scrollbits;
+	$scroll->{endscroll} = $len + $padBytes + $pad + $render->{endscroll};
+	$scroll->{offset} = 0;
 }
 
 # find all the queued up animation frames and toss them
 sub killAnimation {
 	my $client = shift;
-	my $exceptScroll = shift; # all but scrolling to be killed (used by showBriefly)
+	my $exceptScroll = shift; # all but scrolling to be killed
 
 	my $animate = $client->animateState();
-	Slim::Utils::Timers::killTimers($client, \&update) if ($animate == 2);
+	Slim::Utils::Timers::killTimers($client, \&Slim::Player::Player::update) if ($animate == 2);
 	Slim::Utils::Timers::killTimers($client, \&pushUpdate) if ($animate == 3);	
-	Slim::Utils::Timers::killTimers($client, \&endAnimation) if ($animate == 4 || $animate == 5);	
-	Slim::Utils::Timers::killTimers($client, \&scrollUpdate) if ($client->scrollState() == 1 && !$exceptScroll) ;
+	Slim::Utils::Timers::killTimers($client, \&endAnimation) if ($animate == 4);	
+	Slim::Utils::Timers::killTimers($client, \&Slim::Player::Player::endAnimation) if ($animate == 5);	
+	$client->scrollStop() if (($client->scrollState() > 0) && !$exceptScroll) ;
 	$client->animateState(0);
-	$client->scrollState(0) unless $exceptScroll;
 	$client->updateMode(0);
 }
 
 sub endAnimation {
-	# called after after an animation to display the screen and initiate scrolling
 	my $client = shift;
-	my $delay = shift;
-
-	if ($delay) {
-		$client->animateState(2);
-		$client->updateMode(1);
-		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $delay, \&update, $client->renderCache());
-	} else {
-		$client->animateState(0);
-		$client->updateMode(0);
-		$client->update();
-	}
-}	
+	$client->SUPER::endAnimation(@_);
+}
 
 # temporary for SBG to ensure periodic screen update
 sub periodicScreenRefresh {
 	my $client = shift;
 
-	$client->update() unless ($client->updateMode());
+	$client->update() unless ($client->updateMode() || $client->scrollState() == 2 || $client->param('modeUpdateInterval'));
 
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&periodicScreenRefresh);
 }

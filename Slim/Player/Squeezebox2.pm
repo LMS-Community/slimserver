@@ -286,27 +286,32 @@ sub drawFrameBuf {
 	}
 }	
 
+
 sub periodicScreenRefresh {
     my $client = shift;
     # noop for this player - not required
 }    
 
-
-
-# following required to send periodic visu frames whilst scrolling
-sub scrollInit {
-    my $client = shift;
-    my $render = shift;
-    my $scrollonce = shift;
-    $client->visualizer();    
-    $client->SUPER::scrollInit($render, $scrollonce);
+# update screen - supressing unchanged screens
+sub updateScreen {
+	my $client = shift;
+	my $render = shift;
+	$client->drawFrameBuf($render->{bitsref}) if $render->{changed};
 }
 
+# update visualizer and init scrolling
+sub scrollInit {
+    my $client = shift;
+    $client->visualizer();    
+    $client->SUPER::scrollInit(@_);
+}
+
+# update visualiser and scroll background - suppressing unchanged backgrounds
 sub scrollUpdateBackground {
     my $client = shift;
     my $render = shift;
     $client->visualizer();
-    $client->SUPER::scrollUpdateBackground($render);
+    $client->SUPER::scrollUpdateBackground($render) if $render->{changed};
 }
 
 # preformed frame header for fast scolling - contains header added by sendFrame and drawFrameBuf

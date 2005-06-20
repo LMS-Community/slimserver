@@ -339,12 +339,6 @@ irrepeattime() - type: float
 
 =item
 
-easteregg() - type: string
-
-	IR history for the easter egg, see IR.pm
-
-=item
-
 epochirtime	() - type: int
 
 		epoch time that we last received an IR signal
@@ -685,7 +679,7 @@ sub new {
 	$client->[50] = undef; # startirhold
 	$client->[51] = undef; # irtimediff
 	$client->[52] = undef; # irrepeattime
-	$client->[53] = undef; # easteregg
+	$client->[53] = undef; # unused
 	$client->[54] = undef; # epochirtime
 	$client->[55] = []; # modeStack
 	$client->[56] = []; # modeParameterStack
@@ -1449,10 +1443,6 @@ sub irtimediff {
 sub irrepeattime {
 	my $r = shift;
 	@_ ? ($r->[52] = shift) : $r->[52];
-}
-sub easteregg {
-	my $r = shift;
-	@_ ? ($r->[53] = shift) : $r->[53];
 }
 sub epochirtime {
 	my $r = shift;
