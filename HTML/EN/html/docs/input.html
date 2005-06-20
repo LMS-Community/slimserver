@@ -5,7 +5,7 @@
 
   <h4>Overview</h4>
   <p>
-    The SlimServer software comes equipped with a number (currently one) of
+    The SlimServer software comes equipped with a number (currently five) of
     generic input modes which can be used by other modes to handle interaction
     with the user via the remote. This allows module writers to concentrate on
     what to do with the input rather than the gathering of that input.
@@ -25,6 +25,14 @@
     indicating the client and the type of exit event. The input modes do not
     exit themselves, it is left to the <var>callback</var> function to decide
     when to leave the input mode.
+  </p>
+  <p>
+    Input modes will generally have a <var>valueRef</var> parameter. This will
+    reference the current value of the input. It is a reference so that variables
+    in the calling mode (or elsewhere in the program) can be directly modified
+    by the input mode.  Variables not directly modifiable by means of a
+    reference can be modified in the <var>callback</var> function, or in an
+    <var>onChange</var> function, if available to the input mode.
   </p>
   <p>
     It should be noted that the parameters supplied to the input modes are
@@ -141,7 +149,8 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       <dd>Default: reference to internal @numberLettersMixed array</dd>
       <dd>
         <var>numberLetterRef</var> contains a reference to the list of characters to use for number key entry.
-        It can be supplied as an array reference, or unsupplied for the default array..
+        It can be supplied as an array reference, or unsupplied for the default array.  It can also be supplied
+        as the string &quot;upper&quot; to refer to @numberLettersUpper.
       </dd>
       <dt>doublesizeReplace</dt>
       <dd>Default: none</dd>
@@ -237,7 +246,7 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       <dt>delete</dt>
       <dd>
         Generated when the delete function is called on the last character in the
-        string.
+        string, resulting in the empty string.
       <dd>
       <dt>nextChar</dt>
       <dd>
@@ -286,8 +295,8 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       <dt>delete</dt>
       <dd>
         Similar to backspace, except the cursor is not moved. If the last character
-        in the string is deleted, an exit event of type <em>delete</em> is generated.
-        This function is not designed to be used with repeat.
+        remaining in the string is deleted, an exit event of type <em>delete</em>
+        is generated. This function is not designed to be used with repeat.
       </dd>
       <dt>nextchar</dt>
       <dd>
@@ -384,6 +393,8 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         context of the parent mode (set by the parentMode parameter). This
         allows for parent modes to map button presses to functions without
         needing to modify the mapping of the <strong>INPUT.Text</strong> mode.
+        The mode is not actually changed by this function, so all mode
+        parameters are still available.
       </dd>
     </dl>
   </p>
@@ -399,10 +410,20 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
     On entry into the mode, the initial selection will depend on the supplied
     parameters.  If <var>valueRef</var> is supplied, and the value it references
     is contained in the list referenced by the supplied <var>listRef</var>, then
-    <var>listIndex</var> is updated to reflect the position of the supplied value.
+    <var>listIndex</var> is updated to reflect the position of the supplied value,
+    if it does not already match. This is done through a sequential search of the
+    supplied <var>listRef</var>. If the list is of significant size and a faster
+    search method is available, it is recommended that the calling mode use that
+    method to supply the <var>listIndex</var> parameter.
+  </p>
+  <p>
     If <var>valueRef</var> is not supplied, or if its value does not appear in
     the list, it will be updated to be the value at position <var>listIndex</var>
-    (if supplied and in bounds, 0 if not supplied or out of bounds).
+    (if supplied and in bounds, 0 if not supplied or out of bounds). If
+    <var>valueRef</var> is not being used to update a variable outside the input
+    mode, it is recommended to leave it undefined, and allow it to be initialized
+    by the input mode.
+  </p>
   <p>
     This mode will not maintain state between invocations, so if such state
     information needs to be kept, it is the responsibility of the calling
@@ -440,6 +461,18 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         ref is supplied for <var>externRef</var> but not <var>listRef</var>,
         <var>listRef</var> will be set to the same reference as
         <var>externRef</var>.
+      </dd>
+      <dt>callback</dt>
+      <dd>Default: none</dd>
+      <dd>
+        A code reference which is called whenever an exit event occurs. If
+        this parameter is not supplied, <strong>INPUT.List</strong> will 
+        perform a pop mode right on left exit event, bump right on right exit
+        events, and a simple pop mode on other types of exit event. This
+        behavior should be sufficient for simple list displays where nothing
+        needs to happen on a right exit event. The procedure referenced should
+        take the client object as the first parameter and the exit event type
+        as the second.
       </dd>
       <dt>header</dt>
       <dd>Default: &quot;Select item:&quot; (not localized)</dd>
@@ -499,18 +532,6 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         localized string is defined for the value of <var>externRef</var>, it
         is displayed as is.
       </dd>
-      <dt>callback</dt>
-      <dd>Default: none</dd>
-      <dd>
-        A code reference which is called whenever an exit event occurs. If
-        this parameter is not supplied, <strong>INPUT.List</strong> will 
-        perform a pop mode right on left exit event, bump right on right exit
-        events, and a simple pop mode on other types of exit event. This
-        behavior should be sufficient for simple list displays where nothing
-        needs to happen on a right exit event. The procedure referenced should
-        take the client object as the first parameter and the exit event type
-        as the second.
-      </dd>
       <dt>valueRef</dt>
       <dd>
         Default: reference to copy of item in <var>listIndex</var> position in list
@@ -561,9 +582,12 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       <dt>onChangeArgs</dt>
       <dd>Default: &quot;CV&quot;</dd>
       <dd>
-        One of &quot;CV&quot;, &quot;C&quot;, &quot;V&quot;, or &quot;&quot;.
+        Some combination of the letters C, V, and I, or the empty string.
         The C indicates that the client object should be passed to the function,
-        the V indicates that the internal value should be passed.
+        the V indicates that the internal value should be passed, and the I
+        indicates that the index of the current item should be passed. The
+        arguments will always come in the order C, then V, then I, skipping
+        arguments which do not appear.
       </dd>
       <dt>parentMode</dt>
       <dd>Default: name of mode which called <strong>INPUT.List</strong></dd>
@@ -579,9 +603,16 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       <dd>
         Indicates whether the internal or external list is sorted for purposes
         of the numberScroll function. <strong>I</strong> indicates that the
-        internal list is sorted and <strong>E</strong>, the external. Any other
-        value, or no supplied value, means that the list will be treated as
-        unsorted.
+        internal list is sorted and <strong>E</strong>, the external. A value
+        of <strong>L</strong> indicates that a lookup function, supplied in
+        <var>lookupRef</var> determined the sort order. Any other value, or no
+        supplied value, means that the list will be treated as unsorted.
+      </dd>
+      <dt>lookupRef</var>
+      <dd>Default: undef</dd>
+      <dd>
+        Lookup function reference, as used by Slim::Buttons::Common::numberScroll().
+        Takes an index and returns a value for that index.
       </dd>
     </dl>
   </p>
@@ -630,6 +661,8 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         context of the parent mode (set by the parentMode parameter). This
         allows for parent modes to map button presses to functions without
         needing to modify the mapping of the <strong>INPUT.List</strong> mode.
+        The mode is not actually changed by this function, so all mode
+        parameters are still available.
       </dd>
     </dl>
   </p>
@@ -715,19 +748,23 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
     <dl>
       <dt>play</dt>
       <dd>
-        Generated when the backspace function is called when the cursor is at the
-        beginning of the string.
+        By default, generated when the play button is pressed.
+      </dd>
+      <dt>add</dt>
+      <dd>
+        By default, generated when the add button is pressed.
+      </dd>
+      <dt>search</dt>
+      <dd>
+        By default, generated when the search button is pressed.
       </dd>
       <dt>left</dt>
       <dd>
-        By default, generated by a left button press. If no callback function
-        specified, this will result in leaving the mode with the animated
-        push to the right.
+        Generated when the cursor is moved left from the leftmost position.
       </dd>
       <dt>right</dt>
       <dd>
-        By default, generated by a right button press. If no callback function
-        specified, this will result in a bump right animation.
+        Generated when the cursor is moved right from the rightmost position.
       </dd>
       <dt><em>Other</em></dt>
       <dd>
@@ -795,6 +832,8 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         context of the parent mode (set by the parentMode parameter). This
         allows for parent modes to map button presses to functions without
         needing to modify the mapping of the <strong>INPUT.Time</strong> mode.
+        The mode is not actually changed by this function, so all mode
+        parameters are still available.
       </dd>
     </dl>
   </p>
@@ -972,7 +1011,9 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         Executes the last button event (button plus pressing style) in the
         context of the parent mode (set by the parentMode parameter). This
         allows for parent modes to map button presses to functions without
-        needing to modify the mapping of the <strong>INPUT.List</strong> mode.
+        needing to modify the mapping of the <strong>INPUT.Bar</strong> mode.
+        The mode is not actually changed by this function, so all mode
+        parameters are still available.
       </dd>
     </dl>
   </p>
