@@ -252,7 +252,8 @@ sub init {
 		$$valueRef = $listRef->[$listIndex];
 		$client->param('valueRef',$valueRef);
 	} elsif (!ref($valueRef)) {
-		$$valueRef = $valueRef;
+		my $value = $valueRef
+		$valueRef = \$value;
 		$client->param('valueRef',$valueRef);
 	}
 	if ($$valueRef != $listRef->[$listIndex]) {
