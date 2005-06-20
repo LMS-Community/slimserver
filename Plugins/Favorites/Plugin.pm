@@ -235,6 +235,7 @@ PLUGIN_FAVORITES_PLAYING
 	EN	Playing favorite #%s
 
 PLUGIN_FAVORITES_ADDING
+	DE	Füge Favorit Nr. %s zur Playlist hinzu...
 	EN	Adding favorite #%s
 ";}
 
