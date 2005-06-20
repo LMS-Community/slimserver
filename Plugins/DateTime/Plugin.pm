@@ -26,7 +26,7 @@ sub getDisplayName {
 sub strings { return '
 PLUGIN_SCREENSAVER_DATETIME
 	DE	Datum/Zeit Bildschirmschoner
-	EN	Datetime Screensaver
+	EN	Date and Time
 	ES	Salvapantallas de Fecha y Hora
 	FR	Ecran de veille Date/Heure
 	
@@ -59,6 +59,9 @@ PLUGIN_SCREENSAVER_DATETIME_DISABLING
 ### Section 2. Your variables and code go here ###
 ##################################################
 
+sub enabled {
+	return ($::VERSION ge '6.1');
+}
 
 sub setMode {
 	my $client = shift;
