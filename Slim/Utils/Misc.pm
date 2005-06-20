@@ -11,7 +11,7 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Which ();
 use FindBin qw($Bin);
-use Fcntl;
+use Fcntl qw(:seek);
 use Slim::Music::Info;
 use Slim::Utils::OSDetect;
 use POSIX qw(strftime setlocale LC_TIME LC_CTYPE);
@@ -23,7 +23,7 @@ use URI::file;
 
 if ($] > 5.007) {
 	require Encode;
-	require Test::utf8;
+	require File::BOM;
 }
 
 use base qw(Exporter);
@@ -49,6 +49,7 @@ BEGIN {
 
 # Find out what code page we're in, so we can properly translate file/directory encodings.
 our $locale = '';
+our $utf8_re_bits;
 
 {
         if ($^O =~ /Win32/) {
@@ -95,6 +96,9 @@ our $locale = '';
 
 		$locale = $lc;
 	}
+
+	# Create a regex for looks_like_utf8()
+	$utf8_re_bits = join "|", map { latin1toUTF8(chr($_)) } (127..255);
 }
 
 sub blocking {   
@@ -258,6 +262,8 @@ sub fileURLFromPath {
 	return $uri->as_string;
 }
 
+# Unicode / Encoding functions.
+
 sub utf8decode {
 	my $string = shift;
 
@@ -272,7 +278,7 @@ sub utf8decode {
 		Encode::_utf8_on($string);
 	}
 
-	if ($string && $] > 5.007 && !Test::utf8::is_sane_utf8($string)) {
+	if ($string && $] > 5.007 && !looks_like_utf8($string)) {
 
 		$string = $orig;
 	}
@@ -299,7 +305,7 @@ sub utf8encode {
 
 	# Check for doubly encoded strings - and revert back to our original
 	# string if that's the case.
-	if ($string && $] > 5.007 && !Test::utf8::is_sane_utf8($string)) {
+	if ($string && $] > 5.007 && !looks_like_utf8($string)) {
 
 		$string = $orig;
 	}
@@ -316,6 +322,166 @@ sub utf8off {
 
 	return $string;
 }
+
+sub utf8on {
+	my $string = shift;
+
+	if ($string && $] > 5.007) {
+		Encode::_utf8_on($string);
+	}
+
+	return $string;
+}
+
+sub looks_like_ascii { 
+
+	return 1 if $_[0] !~ /([^\x{00}-\x{7f}])/;
+}
+
+sub looks_like_latin1 { 
+
+	return 1 if $_[0] !~ /([^\x{00}-\x{ff}])/;
+}
+
+sub looks_like_utf8 {
+
+	return 1 if $_[0] =~ /($utf8_re_bits)/o;
+}
+
+sub latin1toUTF8 {
+	my $data = shift;
+
+	if ($] > 5.007) {
+
+		$data = eval { Encode::encode('utf8', $data, Encode::FB_QUIET()) } || $data;
+
+	} else {
+
+		$data =~ s/([\x80-\xFF])/chr(0xC0|ord($1)>>6).chr(0x80|ord($1)&0x3F)/eg;
+	}
+
+	return $data;
+}
+
+sub utf8toLatin1 {
+	my $data = shift;
+
+	if ($] > 5.007) {
+
+		$data = eval { Encode::encode('iso-8859-1', $data, Encode::FB_QUIET()) } || $data;
+
+	} else {
+
+		$data =~ s/([\xC0-\xDF])([\x80-\xBF])/chr(ord($1)<<6&0xC0|ord($2)&0x3F)/eg; 
+		$data =~ s/[\xE2][\x80][\x99]/'/g;
+	}
+
+	return $data;
+}
+
+sub encodingFromString {
+
+	my $encoding = 'raw';
+
+	# Don't copy a potentially large string - just read it from the stack.
+	if (looks_like_ascii($_[0])) {
+
+		$encoding = 'ascii';
+
+	} elsif (looks_like_utf8($_[0])) {
+	
+		$encoding = 'utf8';
+
+	} elsif (looks_like_latin1($_[0])) {
+	
+		$encoding = 'iso-8859-1';
+	}
+
+	return $encoding;
+}
+
+sub encodingFromFileHandle {
+	my $fh = shift;
+
+	# If we didn't get a filehandle, not much we can do.
+	if (!fileno $fh) {
+
+		msg("Warning: Not a filehandle in encodingFromFileHandle()\n");
+		bt();
+
+		return;
+	}
+
+	local $/ = undef;
+
+	# Save the old position (if any)
+	# And find the file size.
+	my $pos  = sysseek($fh, 0, SEEK_CUR);
+	my $size = sysseek($fh, 0, SEEK_END);
+
+	# Don't do any translation.
+	binmode($fh, ":raw");
+
+	# Try to find a BOM on the file - otherwise check the string
+	#
+	# Although get_encoding_from_filehandle tries to determine if
+	# the handle is seekable or not - the Protocol handlers don't
+	# implement a seek() method, and even if they did, File::BOM
+	# internally would try to read(), which doesn't mix with
+	# sysread(). So skip those m3u files entirely.
+	my $enc = '';
+
+	if (ref($fh) && ref($fh) !~ /(?:Slim::Player::Protocols|IO::String)/) {
+
+		$enc = File::BOM::get_encoding_from_filehandle($fh);
+	}
+
+	# File::BOM got something - let's get out of here.
+	return $enc if $enc;
+
+	# Seek to the beginning of the file.
+	sysseek($fh, 0, SEEK_SET);
+
+	#
+	sysread($fh, my $string, $size);
+
+	# Seek back to where we started.
+	sysseek($fh, $pos, SEEK_SET);
+
+	return encodingFromString($string);
+}
+
+# Handle either a filename or filehandle
+sub encodingFromFile {
+	my $file = shift;
+
+	my $encoding = $locale;
+
+	if (ref($file) && fileno($file)) {
+
+		$encoding = encodingFromFileHandle($file);
+
+	} elsif (-r $file) {
+
+		open(FH, $file) or do {
+			msg("Couldn't open file: [$file] : $!\n");
+			return $encoding;
+		};
+
+		$encoding = encodingFromFileHandle(\*FH);
+
+		close(FH);
+
+	} else {
+
+		msg("Warning: Not a filename or filehandle encodingFromFile( $file )\n");
+		bt();
+	}
+
+	return $encoding;
+}
+
+########
 
 sub anchorFromURL {
 	my $url = shift;
@@ -716,6 +882,7 @@ my %_ignoredItems = (
 	'.AppleDB' => 1,
 	'.AppleDouble' => 1,
 	'.Metadata' => 1,
+	'.DS_Store' => 1,
 
 	# Items we should ignore on a linux vlume
 	'lost+found' => 1,
@@ -747,7 +914,7 @@ sub readDirectory {
 	for my $dir (readdir(DIR)) {
 
 		# Ignore items starting with a period on non-windows machines
-		next if $dir =~ /^\./ && (Slim::Utils::OSDetect::OS() ne 'win');
+		next if $dir =~ /^\.\.?$/ && (Slim::Utils::OSDetect::OS() ne 'win');
 
 		my $fullpath = catdir($dirname, $dir);
 
@@ -927,10 +1094,10 @@ sub msg {
 
 	print STDERR $entry;
 	
-	if (Slim::Utils::Prefs::get('livelog')) {
-		 $Slim::Utils::Misc::log .= $entry;
-		 $Slim::Utils::Misc::log = substr($Slim::Utils::Misc::log, -Slim::Utils::Prefs::get('livelog'));
-	}
+	#if (Slim::Utils::Prefs::get('livelog')) {
+	#	 $Slim::Utils::Misc::log .= $entry;
+	#	 $Slim::Utils::Misc::log = substr($Slim::Utils::Misc::log, -Slim::Utils::Prefs::get('livelog'));
+	#}
 }
 
 sub msgf {
@@ -1036,22 +1203,6 @@ sub addrToHost {
 
 sub stillScanning {
 	return Slim::Music::Import::stillScanning();
-}
-
-sub utf8toLatin1 {
-	my $data = shift;
-
-	if ($] > 5.007) {
-
-		$data = eval { Encode::encode('iso-8859-1', $data, Encode::FB_QUIET()) } || $data;
-
-	} else {
-
-		$data =~ s/([\xC0-\xDF])([\x80-\xBF])/chr(ord($1)<<6&0xC0|ord($2)&0x3F)/eg; 
-		$data =~ s/[\xE2][\x80][\x99]/'/g;
-	}
-
-	return $data;
 }
 
 # this function based on a posting by Tom Christiansen: http://www.mail-archive.com/perl5-porters@perl.org/msg71350.html

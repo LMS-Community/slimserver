@@ -19,7 +19,6 @@ use Slim::Music::Info;
 use Slim::Utils::Misc;
 
 if ($] > 5.007) {
-	require File::BOM;
 	require Encode;
 }
 
@@ -50,11 +49,6 @@ sub parseList {
 	my $type = Slim::Music::Info::contentType($list);
 	my $parser;
 	my @items = ();
-
-	# This should work..
-	if ($] > 5.007) {
-		binmode($file, ":encoding($Slim::Utils::Misc::locale)");
-	}
 
 	if (exists $playlistInfo{$type} && ($parser = $playlistInfo{$type}->[0])) {
 		return &$parser($file, $base, $list);
@@ -111,29 +105,10 @@ sub readM3U {
 
 	my @items  = ();
 	my $title;
-	my $mode   = $Slim::Utils::Misc::locale;
+	my $enc    = Slim::Utils::Misc::encodingFromFile($m3u);
 
-	# Try to find a BOM on the file - otherwise default to the current locale.
-	# XXX - should this move to Slim::Utils::Scan::readList() ?
 	if ($] > 5.007) {
-
-		binmode($m3u, ":raw");
-
-		# Although get_encoding_from_filehandle tries to determine if
-		# the handle is seekable or not - the Protocol handlers don't
-		# implement a seek() method, and even if they did, File::BOM
-		# internally would try to read(), which doesn't mix with
-		# sysread(). So skip those m3u files entirely.
-		my $enc;
-
-		if (ref($m3u) !~ /(?:Slim::Player::Protocols|IO::String)/) {
-
-			$enc = File::BOM::get_encoding_from_filehandle($m3u);
-		}
-
-		$mode = $enc if $enc;
-
-		binmode($m3u, ":encoding($mode)");
+		binmode($m3u, ":encoding($enc)");
 	}
 
 	$::d_parse && Slim::Utils::Misc::msg("parsing M3U: $m3u\n");
@@ -143,7 +118,7 @@ sub readM3U {
 		my $donttranslate = 0;
 		# Turn the UTF-8 back into a sequences of octets -
 		# fileURLFromPath will turn it back into UTF-8
-		if ($] > 5.007 && $mode =~ /utf-?8/i) {
+		if ($] > 5.007 && $enc =~ /utf-?8/i) {
 			if (Encode::is_utf8($entry, 1)) {
 				$entry = Encode::encode_utf8($entry);
 				$donttranslate = 1;
@@ -194,7 +169,10 @@ sub readPLS {
 	
 	# parse the PLS file format
 	if ($] > 5.007) {
-		binmode($pls, ":encoding($Slim::Utils::Misc::locale)");
+
+		my $enc = Slim::Utils::Misc::encodingFromFile($pls);
+
+		binmode($pls, ":encoding($enc)");
 	}
 
 	$::d_parse && Slim::Utils::Misc::msg("Parsing playlist: $pls \n");
@@ -434,7 +412,10 @@ sub readCUE {
 
 	# The cuesheet will/may be encoded.
 	if ($] > 5.007) {
-		binmode($cuefile, ":encoding($Slim::Utils::Misc::locale)");
+
+		my $enc = Slim::Utils::Misc::encodingFromFile($cuefile);
+
+		binmode($cuefile, ":encoding($enc)");
 	}
 
 	while (my $line = <$cuefile>) {
@@ -448,6 +429,7 @@ sub readCUE {
 
 	# Don't redecode it when parsing the cuesheet.
 	my $tracks = (parseCUE([@lines], $cuedir, 1));
+
 	return @items unless defined $tracks && keys %$tracks > 0;
 
 	# Grab a random track to pull a filename from.
