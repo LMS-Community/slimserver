@@ -8668,17 +8668,22 @@ SQUEEZENETWORK_SB2_REQUIRED
 	FR	Cette fonction nécessite Squeezebox2.
 
 SETUP_SCROLLMODE
+	DE	Scroll Modus
 	EN	Scroll Mode
 
 SETUP_SCROLLMODE_DESC
+	DE	Sie können wählen, wie Text, der zu breit für eine Zeile ist, auf der zweiten Zeile angezeigt werden soll. Der normale Scrollmodus wartet erst während der definierten Zeitdauer, bevor die Zeile vorbei gescrollt wird. Dies wiederholt sich so lange, wie der Text angezeigt werden soll. Alternativ kann der Scrollvorgang nach einmaligem Scrollen unterdrückt oder gänzlich deaktiviert werden.
 	EN	You can select how a player will display text on the second line of the display which is too long to fit on the screen.  The standard horizontal scrolling mode will wait for the Scroll Pause interval and then scroll the text to show the whole line.  Scrolling will continue for as long as the player is displaying this screen.  The alternative modes support scrolling the text once and then stopping, or not scrolling the text at all.
 
 SETUP_SCROLLMODE_DEFAULT
+	DE	Normales Scrollen
 	EN	Standard scrolling
 
 SETUP_SCROLLMODE_SCROLLONCE
+	DE	Einmal scrollen, dann anhalten
 	EN	Scroll once and stop
 
 SETUP_SCROLLMODE_NOSCROLL
+	DE	Nicht scrollen
 	EN	Do not scroll
 
