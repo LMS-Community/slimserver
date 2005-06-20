@@ -22,6 +22,7 @@ our %functions = ();
 sub init {
 
 	Slim::Buttons::Common::addSaver('screensaver', getFunctions(), \&setMode, undef, string('SCREENSAVER_JUMP_BACK_NAME'));
+	Slim::Buttons::Common::addSaver('nosaver', undef, undef, undef, string('SCREENSAVER_NONE'));
 
 	# Each button on the remote has a function:
 	%functions = (
@@ -85,6 +86,8 @@ sub screenSaver {
 		# don't change whilst updates blocked
 	} elsif ($mode eq 'block') {
 		# blocked mode handles its own updating of the screen.
+	} elsif ($saver eq 'nosaver') {
+		# don't change modes when none (just dim) is the screensaver.
 	} elsif ($timeout && 
 			$irtime < $now - $timeout && 
 			$mode ne $saver &&
