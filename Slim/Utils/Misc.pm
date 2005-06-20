@@ -1094,10 +1094,10 @@ sub msg {
 
 	print STDERR $entry;
 	
-	#if (Slim::Utils::Prefs::get('livelog')) {
-	#	 $Slim::Utils::Misc::log .= $entry;
-	#	 $Slim::Utils::Misc::log = substr($Slim::Utils::Misc::log, -Slim::Utils::Prefs::get('livelog'));
-	#}
+	if (Slim::Utils::Prefs::get('livelog')) {
+		 $Slim::Utils::Misc::log .= $entry;
+		 $Slim::Utils::Misc::log = substr($Slim::Utils::Misc::log, -Slim::Utils::Prefs::get('livelog'));
+	}
 }
 
 sub msgf {
